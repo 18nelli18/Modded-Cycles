@@ -1,0 +1,10 @@
+# Ne JAMAIS versionner ni distribuer d'image firmware Elektron (originale ou modifiée)
+firmware/
+*.syx
+*.zip
+# Outils tiers clonés, sorties de build et captures audio
+vendor/
+build/
+*.wav
+__pycache__/
+.DS_Store
