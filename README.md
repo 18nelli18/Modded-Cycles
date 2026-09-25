@@ -13,14 +13,17 @@ au lieu du seul mix stéréo, puis explorer des extensions (mix + pistes, panora
 Chaîne d'outils **Python pur**, sans dépendance ni image firmware : voir [`BUILD.md`](BUILD.md).
 ```sh
 python3 tools/build.py --list
-python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-multiout
+python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-multiout   # référence (testée en cross-flash)
+python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup      # garde l'upgrade USB (jamais flashée)
 ```
 **Flasher** : scripts clés en main (installent les dépendances, vérifient, guident, flashent) — voir [`FLASH.md`](FLASH.md).
 ```sh
 ./flash.sh            # macOS / Linux
 flash.bat             # Windows (double-clic)
 ```
-⚠️ Le flash passe par le **MIDI IN** de l'appareil (sa prise jack TRS 3,5 mm : câble jack stéréo depuis une interface à sortie TRS, ou adaptateur DIN fourni), jamais par l'USB. Lis [`FLASH.md`](FLASH.md) avant.
+⚠️ Le flash passe par le **MIDI IN** de l'appareil (sa prise jack TRS 3,5 mm : câble jack stéréo depuis une interface à sortie TRS, ou adaptateur DIN fourni).
+Le menu de démarrage ignore l'USB, et `6ch-multiout` casse l'upgrade USB ; la variante `6ch-usbup` devrait le garder (à tester, [note 13](notes/13-6ch-upgrade-usb.md)).
+Lis [`FLASH.md`](FLASH.md) avant.
 
 ## Contenu
 
@@ -38,6 +41,7 @@ flash.bat             # Windows (double-clic)
 | Fonction | État |
 |---|---|
 | Sortie multipiste **6 canaux** | ✅ code prêt, buildable ici — **attend un test matériel** |
+| Garder l'**upgrade USB** avec le mod 6 canaux | 🟡 variante `6ch-usbup` prête et vérifiée en émulation — **attend un test matériel** ([note 13](notes/13-6ch-upgrade-usb.md)) |
 | Sortie multipiste **12 canaux** (pan par piste) | 🟡 faisable, à développer (via un jalon **8 canaux**) |
 | Modifier les **algos d'effet** | 🔴 non (réglages de paramètres : 🟡) |
 | **Moteur Sample** (façon Model:Samples) | 🔴 hors de portée comme mod du M:C |

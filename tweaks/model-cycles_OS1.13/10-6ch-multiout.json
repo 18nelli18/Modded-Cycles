@@ -11,6 +11,9 @@
  "device": "Model:Cycles",
  "os": "1.13",
  "section": 3,
+ "conflicts": [
+  "6ch-usbup"
+ ],
  "writes": [
   {
    "off": 8507,

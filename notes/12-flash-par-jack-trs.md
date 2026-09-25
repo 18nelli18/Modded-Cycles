@@ -179,6 +179,7 @@ Un script `tools/syx2wav.py`, en Python pur (module standard `wave`), qui :
   - Cela ne vaut que pour le **premier** flash : tant que le mod est installé, l'upgrade USB ne marche plus ([01 §3](01-ms-multi-output.md#3-principe-technique-résumé-du-readme-fait)). Le retour à l'OS officiel repasse donc par le MIDI IN.
 - **Piste durable** ([08 §E](08-feuille-de-route.md#e-récupérer-lupgrade-usb-et-le-full-speed)) : loger les stubs dans les caves `0xff` ([09 §4bis](09-analyse-firmware-1.13.md#4bis-caves-de-code-libres-0xff--ressource-pour-toutes-les-extensions)).
   Le mod ne **casserait plus l'upgrade USB** : toutes les mises à jour passeraient par USB, et le MIDI IN ne servirait plus qu'en secours.
+  C'est fait dans la variante `6ch-usbup`, qui reste à tester sur matériel ([13](13-6ch-upgrade-usb.md)).
 
 ## 5. Recommandation
 

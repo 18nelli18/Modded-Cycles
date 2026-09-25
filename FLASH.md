@@ -20,7 +20,10 @@ Le MIDI IN du Model:Cycles accepte les deux brochages TRS (type A et type B) : n
 En revanche, la **sortie casque** de l'ordinateur ne suffit pas : elle sort de l'audio, pas du MIDI.
 Détails, liste d'interfaces et piste expérimentale « sortie casque » : [`notes/12-flash-par-jack-trs.md`](notes/12-flash-par-jack-trs.md).
 
-Le port USB du Model:Cycles sert à l'audio et à la mise à jour « normale » via l'appli Transfer, mais **pas** à récupérer un appareil, et notre mod multipiste casse justement l'USB. Donc pour le modding : **tout passe par le MIDI IN**.
+Le port USB du Model:Cycles sert à l'audio et à la mise à jour « normale » via l'appli Transfer, mais **pas** à récupérer un appareil.
+Et le mod 6 canaux de référence (`6ch-multiout`) casse justement cette mise à jour par USB.
+La variante `6ch-usbup` devrait la garder, mais c'est à tester ([note 13](notes/13-6ch-upgrade-usb.md)).
+Donc pour le modding : **tout passe par le MIDI IN**, et le secours y passera toujours.
 
 ---
 
@@ -33,7 +36,8 @@ Le port USB du Model:Cycles sert à l'audio et à la mise à jour « normale » 
   ```
   python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-multiout
   ```
-  → produit `model-cycles_OS1.13_mod.syx`.
+  → produit `model-cycles_OS1.13_mod.syx`. Avec `-t 6ch-usbup`, tu obtiens la variante qui devrait garder la mise à jour par USB
+  (jamais flashée : suis le protocole de la [note 13](notes/13-6ch-upgrade-usb.md) §6).
 
 ---
 

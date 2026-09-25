@@ -12,12 +12,15 @@ de ton .syx, puis reconstruit et re-signe le conteneur (checksums + HMAC-SHA256)
 
 Sécurité : chaque octet « old » est vérifié avant écriture ; le SHA-256 de la section 3
 d'origine est vérifié ; après build, tous les checksums et le HMAC sont recontrôlés.
+Deux tweaks déclarés incompatibles (champ « conflicts ») sont refusés ensemble. Un tweak
+qui écrit dans une zone 0xFF (cave) est refusé si l'image d'origine pointe dans cette zone.
 Seule la section 3 est touchée : bootloader et updater sont conservés à l'identique,
 donc la récupération par le STARTUP MENU (MIDI IN) reste disponible.
 
 Le moteur bas niveau (mtlib) vient de drumkilla/elektron-model-tweaks (MIT) ; voir tools/mtlib/LICENSE.
 """
 import argparse
+import array
 import hashlib
 import json
 import pathlib
@@ -31,6 +34,7 @@ from mtlib import aplib, container            # noqa: E402
 from mtlib.syx import unwrap, wrap, BYTES_PER_MSG  # noqa: E402
 
 TWEAKS = ROOT / "tweaks"
+BASE = 0x40000400                             # VA du premier octet de la section 3 (MAIN OS)
 
 
 def sha(b):
@@ -41,10 +45,10 @@ def load_catalog():
     """{ 'model-cycles_OS1.13': (device_dict, {id: tweak_dict}) }"""
     cat = {}
     for d in sorted(TWEAKS.glob("*_OS*")):
-        dev = json.loads((d / "device.json").read_text())
+        dev = json.loads((d / "device.json").read_text(encoding="utf-8"))
         tweaks = {}
         for f in sorted(d.glob("[0-9]*.json")):
-            t = json.loads(f.read_text())
+            t = json.loads(f.read_text(encoding="utf-8"))
             tweaks[t["id"]] = t
         cat[d.name] = (dev, tweaks)
     return cat
@@ -61,7 +65,107 @@ def cmd_list(cat):
     for name, (dev, tweaks) in cat.items():
         print(f"{dev['device']} OS {dev['os']}  ({name})")
         for t in tweaks.values():
-            print(f"  {t['id']:16} {t['name']}")
+            excl = f"  (incompatible avec : {', '.join(t['conflicts'])})" if t.get("conflicts") else ""
+            print(f"  {t['id']:16} {t['name']}{excl}")
+
+
+def check_conflicts(chosen):
+    ids = {t["id"] for t in chosen}
+    for t in chosen:
+        for other in t.get("conflicts", []):
+            if other in ids:
+                raise SystemExit(f"!! {t['id']} et {other} sont incompatibles (ils modifient les memes octets) : "
+                                 "choisis l'un ou l'autre avec -t")
+
+
+def cave_zones(main_os, chosen):
+    """Blocs 0xFF de l'image d'origine ou un tweak ecrit (caves), etendus au bloc entier : [(lo, hi)] en offsets."""
+    zones = set()
+    for t in chosen:
+        for w in t["writes"]:
+            old = bytes.fromhex(w["old"])
+            if len(old) < 2 or old.count(0xFF) != len(old):
+                continue
+            lo, hi = w["off"], w["off"] + len(old)
+            while lo > 0 and main_os[lo - 1] == 0xFF:
+                lo -= 1
+            while hi < len(main_os) and main_os[hi] == 0xFF:
+                hi += 1
+            zones.add((lo, hi))
+    return sorted(zones)
+
+
+def refs_into(main_os, zones):
+    """References, dans le MAIN OS d'ORIGINE, vers les zones [(lo, hi)] (offsets).
+    Renvoie (sures, douteuses) : [(va de la reference, va visee, nature)].
+    Sures : constantes 32 bits (pointeurs, jmp/jsr abs.l, lea/move #imm).
+    Douteuses : adressages (d16,PC) de lea/pea/jmp/jsr/move et branchements Bcc/BRA/BSR,
+    qu'une donnee peut imiter."""
+    w = array.array("H", main_os[:len(main_os) & ~1])
+    if sys.byteorder == "little":
+        w.byteswap()
+    vz = [(lo + BASE, hi + BASE) for lo, hi in zones]
+    lo_all, hi_all = min(a for a, _ in vz), max(b for _, b in vz)
+
+    def inside(t):
+        return lo_all <= t < hi_all and any(a <= t < b for a, b in vz)
+
+    def s16(x):
+        return x - 0x10000 if x & 0x8000 else x
+
+    sure, doubt = [], []
+    n = len(w)
+    for i in range(n - 1):
+        x, va = w[i], BASE + 2 * i
+        v = (x << 16) | w[i + 1]
+        if inside(v):
+            sure.append((va, v, "constante 32 bits"))
+        t = None
+        if (x & 0x3F) == 0x3A and ((x & 0xF1FF) == 0x41FA or x in (0x487A, 0x4EFA, 0x4EBA)
+                                    or ((x & 0xC000) == 0 and (x & 0x3000))):
+            t, kind = va + 2 + s16(w[i + 1]), "adressage (d16,PC)"
+        elif (x & 0xF000) == 0x6000:
+            d8 = x & 0xFF
+            if d8 == 0:
+                t = va + 2 + s16(w[i + 1])
+            elif d8 == 0xFF:
+                t = va + 2 + ((((w[i + 1] << 16) | (w[i + 2] if i + 2 < n else 0)) ^ 0x80000000) - 0x80000000)
+            else:
+                t = va + 2 + (d8 - 0x100 if d8 & 0x80 else d8)
+            kind = "branchement"
+        if t is not None and inside(t):
+            doubt.append((va, t, kind))
+    return sure, doubt
+
+
+def check_caves(main_os, chosen, force):
+    """Refuse d'ecrire dans une zone 0xFF que l'image d'origine reference : elle ne serait pas libre."""
+    zones = cave_zones(main_os, chosen)
+    if not zones:
+        return
+    for lo, hi in zones:
+        print(f"  zone 0xFF utilisee : 0x{lo + BASE:08x}..0x{hi + BASE - 1:08x} ({hi - lo} o)")
+    sure, doubt = refs_into(main_os, zones)
+    starts = {lo + BASE for lo, _ in zones}
+
+    def show(hits):
+        for va, t, kind in hits:
+            z = max(s for s in starts if s <= t)
+            note = " (1er octet de la zone : peut aussi etre la fin de l'objet precedent)" if t == z else ""
+            print(f"     0x{va:08x} : {kind} -> 0x{t:08x} (zone +0x{t - z:x}){note}")
+
+    if doubt:
+        print("  a verifier au desassembleur (peut-etre des donnees qui ressemblent a du code) :")
+        show(doubt)
+    if not sure:
+        print("  references (constantes 32 bits) vers ces zones dans l'image d'origine : aucune")
+        return
+    print("!! l'image d'origine pointe dans une zone 0xFF ou un tweak veut ecrire :")
+    show(sure)
+    if not force:
+        raise SystemExit("   Cette zone n'est peut-etre pas libre : refus d'ecrire.\n"
+                         "   Verifie ces references a la main, puis relance avec --force-cave si elles sont sans danger.")
+    print("   --force-cave : on continue quand meme.")
 
 
 def apply_writes(main_os, tweaks_selected):
@@ -92,6 +196,8 @@ def main():
     ap.add_argument("-o", "--output", help="fichier de sortie (defaut: <in>_mod.syx)")
     ap.add_argument("--list", action="store_true", help="liste les tweaks disponibles")
     ap.add_argument("--expect-mainos", help="SHA-256 attendu du MAIN OS patche (verification)")
+    ap.add_argument("--force-cave", action="store_true",
+                    help="ecrit meme si l'image d'origine pointe dans une zone 0xFF utilisee (a verifier a la main)")
     args = ap.parse_args()
 
     cat = load_catalog()
@@ -129,10 +235,12 @@ def main():
             chosen.append(tweaks[tid])
     else:
         raise SystemExit("!! choisis --all ou -t <ids>")
+    check_conflicts(chosen)
     for t in chosen:
         print(f"  + {t['name']}")
 
     patched, dirty = apply_writes(main_os, chosen)
+    check_caves(main_os, chosen, args.force_cave)
     print(f"  {sum(dirty)} octets changes sur {len(patched)}")
     print(f"  MAIN OS patche SHA-256 : {sha(patched)}")
     if args.expect_mainos and sha(patched) != args.expect_mainos.lower():
