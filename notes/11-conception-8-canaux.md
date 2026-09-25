@@ -95,7 +95,7 @@ Le ring IN est à `0x80009800`. Le buffer suivant (`0x80009f00`) est utilisé pa
 
 **Voie A — plus de rétro-ingénierie maintenant** : désassembler entièrement `FUN_40002778` (IN start) et `FUN_400024f2` (OUT) pour cartographier sans ambiguïté les bases/profondeurs/bornes des deux rings et le rôle de `0x4000281f`. Faisable, mais laborieux et toujours non testable.
 
-**Voie B — itérer sur la machine (recommandée)** : une fois le Model:Cycles reçu et le **6 canaux validé** (jalon 1), assembler un candidat 8 canaux avec les valeurs de §6, le flasher, capturer, et lancer `analyse_dupes` + test de mute par canal. Ajuster depth/borne/pré-amorçage selon les doublons observés. Le brick est impossible (récupération DIN), l'itération est rapide.
+**Voie B — itérer sur la machine (recommandée)** : une fois le Model:Cycles reçu et le **6 canaux validé** (jalon 1), assembler un candidat 8 canaux avec les valeurs de §6, le flasher, capturer, et lancer `analyse_dupes` + test de mute par canal. Ajuster depth/borne/pré-amorçage selon les doublons observés. Le brick est impossible (récupération par le MIDI IN), l'itération est rapide.
 
 ## 8. Résumé de l'état
 

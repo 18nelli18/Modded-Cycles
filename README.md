@@ -20,7 +20,7 @@ python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-multiout
 ./flash.sh            # macOS / Linux
 flash.bat             # Windows (double-clic)
 ```
-⚠️ Le flash passe par **MIDI DIN** (interface → MIDI IN de l'appareil), jamais par l'USB. Lis [`FLASH.md`](FLASH.md) avant.
+⚠️ Le flash passe par le **MIDI IN** de l'appareil (sa prise jack TRS 3,5 mm : câble jack stéréo depuis une interface à sortie TRS, ou adaptateur DIN fourni), jamais par l'USB. Lis [`FLASH.md`](FLASH.md) avant.
 
 ## Contenu
 

@@ -44,7 +44,7 @@ site du hook (code d'origine)                 code cave (stub)
 | R7 | **Vérifier après empaquetage** : ré-extraire la section 3 du `.syx` produit et contrôler chaque patch (PRESENT / MISSING / UNKNOWN). | octa-bt-pt `master_patch.py verify` |
 | R8 | **Hash de sortie reproductible** : figer le commit d'`elektron-firmware-tool` et le niveau `-l`. | déduit de ms-multi-output et octa-bt-pt |
 | R9 | **Émuler** (Unicorn) le stub seul, **et** l'image composée : chaque détour vise exactement un symbole, et le contrôle atteint la reprise attendue. | octamax `emu_image.py` |
-| R10 | Sur matériel : **un seul changement à la fois**, interface DIN et OS officiel prêts, builds numérotés. | tous |
+| R10 | Sur matériel : **un seul changement à la fois**, interface MIDI reliée au MIDI IN et OS officiel prêts, builds numérotés. | tous |
 | R11 | **Géométrie USB** : ne jamais réduire la profondeur du ring sous la taille d'un bloc moteur (32 trames), garder le **masque mod 32**, toujours mettre à jour le **`MaxPacketLength` du dQH**. | ms-multi-output |
 | R12 | Stubs courts, **sans attente ni appel bloquant** : le feeder tourne probablement en contexte d'interruption. Sauver et restaurer tous les registres touchés (`lea -N(sp),sp ; movem.l …,(sp)`). | déduit de ms-multi-output |
 | R13 | **Aucune image Elektron** (originale ou modifiée) dans le dépôt : `.gitignore` sur `*.syx`, `*.zip`, `build/`, `vendor/`, `*.wav`. Distribuer uniquement des tables d'octets et des sources ASM. | les trois dépôts |

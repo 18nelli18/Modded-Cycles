@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Envoie un firmware .syx au Model:Cycles (ou Model:Samples) par MIDI DIN.
+"""Envoie un firmware .syx au Model:Cycles (ou Model:Samples) par son entrée MIDI IN.
 
 Par défaut : essai à blanc (rien n'est envoyé). Ajoute --send pour transmettre.
 L'appareil doit être dans le STARTUP MENU en mode OS UPGRADE :
     éteindre → maintenir [FUNC] → allumer → [TRIG 4] (OS UPGRADE)
 
-⚠️ L'upgrade par le STARTUP MENU ne fonctionne QUE par MIDI DIN (5 broches),
-pas par le port USB de l'appareil. Il faut une interface MIDI dont la sortie
-MIDI OUT est reliée au MIDI IN du Model:Cycles.
+⚠️ L'upgrade par le STARTUP MENU ne fonctionne QUE par l'entrée MIDI IN de
+l'appareil (jack TRS 3,5 mm), pas par son port USB. Il faut une interface MIDI
+dont la sortie est reliée à ce MIDI IN : sortie TRS + câble jack stéréo, ou
+sortie DIN + adaptateur TRS -> DIN fourni avec l'appareil.
 
 Vérifie le fichier avant l'envoi : identifiant fabricant/produit, chaque
 checksum de paquet SysEx (via mtlib). Refuse d'envoyer un fichier douteux.
@@ -148,7 +149,7 @@ def main():
     low = port.lower()
     if "model:cycles" in low or "model:samples" in low or "model cycles" in low:
         print("\n!! Ce port est le port USB de l'appareil lui-même.")
-        print("   Le STARTUP MENU n'accepte l'upgrade QUE par MIDI DIN.")
+        print("   Le STARTUP MENU n'accepte l'upgrade QUE par son entrée MIDI IN (jack TRS).")
         print("   Branche une interface MIDI (sa sortie -> MIDI IN de l'appareil) et choisis SON port.")
         if args.send:
             raise SystemExit("   Envoi refusé sur le port USB de l'appareil.")
