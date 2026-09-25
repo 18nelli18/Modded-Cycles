@@ -164,28 +164,31 @@ if (typeof window !== "undefined") {
   }
 
   // ---- Fichier ------------------------------------------------------------
+  function loadBytes(u8, name) {
+    state.filename = name;
+    state.raw = u8;
+    try {
+      state.info = verify(state.raw);
+      const i = state.info;
+      $("file-info").innerHTML =
+        `<b>${name}</b> — ${i.name} (0x${i.product.toString(16)}), ` +
+        `${i.bytes.toLocaleString("fr-FR")} o, ${i.count.toLocaleString("fr-FR")} paquets. ` +
+        `Tous les checksums OK. Duree minimale ~${i.wireMinutes.toFixed(1)} min.`;
+      $("file-info").className = "ok";
+      log(`Fichier verifie : ${name} — ${i.name}, ${i.count} paquets, checksums OK.`, "ok");
+    } catch (e) {
+      state.info = null;
+      $("file-info").textContent = "Fichier refuse : " + e.message;
+      $("file-info").className = "bad";
+      log("Fichier refuse : " + e.message, "bad");
+    }
+    refreshReady();
+  }
+  window.loadFlasherBytes = loadBytes; // utilise par le panneau de construction
+
   function loadFile(file) {
-    state.filename = file.name;
     const reader = new FileReader();
-    reader.onload = () => {
-      state.raw = new Uint8Array(reader.result);
-      try {
-        state.info = verify(state.raw);
-        const i = state.info;
-        $("file-info").innerHTML =
-          `<b>${file.name}</b> — ${i.name} (0x${i.product.toString(16)}), ` +
-          `${i.bytes.toLocaleString("fr-FR")} o, ${i.count.toLocaleString("fr-FR")} paquets. ` +
-          `Tous les checksums OK. Duree minimale ~${i.wireMinutes.toFixed(1)} min.`;
-        $("file-info").className = "ok";
-        log(`Fichier verifie : ${file.name} — ${i.name}, ${i.count} paquets, checksums OK.`, "ok");
-      } catch (e) {
-        state.info = null;
-        $("file-info").textContent = "Fichier refuse : " + e.message;
-        $("file-info").className = "bad";
-        log("Fichier refuse : " + e.message, "bad");
-      }
-      refreshReady();
-    };
+    reader.onload = () => loadBytes(new Uint8Array(reader.result), file.name);
     reader.readAsArrayBuffer(file);
   }
 

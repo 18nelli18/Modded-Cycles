@@ -147,7 +147,16 @@ elle vérifie ton `.syx` (identifiant, produit, **chaque checksum de paquet**) p
   `https://18nelli18.github.io/Modded-Cycles/flasher/`. En local : `python3 -m http.server` dans `docs/`, puis
   `http://localhost:8000/flasher/` (Web MIDI exige `https://` ou `localhost`).
 
-La logique de vérification de la page reproduit `tools/mtlib/syx.py` à l'octet près ; `tools/webflash_check.sh` le vérifie contre le Python.
+**Construire aussi dans le navigateur.** La page sait fabriquer l'image modifiée à partir de **ton** OS officiel
+(déplie « Construire le `.syx` dans le navigateur ») : dépose `model-cycles_OS1.13.syx`, choisis la variante
+(`6ch-multiout` ou `6ch-usbup`), et elle applique le patch, recompresse la section 3, recalcule les checksums
+et le HMAC, puis charge le résultat dans le flasher. C'est le port JS de `tools/build.py` + `tools/mtlib/`
+(`docs/flasher/builder.js`). Pour `6ch-multiout`, elle **exige** le MAIN OS de référence connu-bon, sinon elle refuse.
+
+Fidélité vérifiée sans matériel : `tools/webflash_check.sh` compare le **vérificateur** JS à `tools/mtlib/syx.py`,
+et `tools/webbuild_check.sh` compare le **constructeur** JS à `tools/build.py` (aPLib + conteneur + HMAC) à
+l'octet près, sur une image synthétique. Les tables de patchs de la page viennent de `docs/flasher/tweaks.js`,
+généré depuis `tweaks/` par `tools/gen_flasher_tweaks.py` (`--check` en CI).
 
 ## 8. Méthode manuelle (sans les scripts)
 

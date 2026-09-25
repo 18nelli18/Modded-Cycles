@@ -39,8 +39,10 @@
   select{max-width:100%;width:100%}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   .row>*{min-width:0}
-  #drop{border:2px dashed var(--line);border-radius:10px;padding:22px;text-align:center;cursor:pointer;color:var(--muted)}
-  #drop.over{border-color:var(--accent);color:var(--ink)}
+  #drop,#os-drop{border:2px dashed var(--line);border-radius:10px;padding:22px;text-align:center;cursor:pointer;color:var(--muted)}
+  #drop.over,#os-drop.over{border-color:var(--accent);color:var(--ink)}
+  details summary{color:var(--accent)}
+  #download{color:var(--accent)}
   .msg{margin-top:.6em;font-size:.92rem}
   .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)}
   .barwrap{height:12px;background:var(--code);border-radius:6px;overflow:hidden;margin:.7em 0 .3em}
@@ -86,10 +88,32 @@
   </div>
 
   <div class="card">
-    <h2><span class="step">2</span>Choisir le fichier <code>.syx</code></h2>
-    <div id="drop">Glisse ton <code>.syx</code> ici, ou clique pour le choisir.</div>
-    <input id="file" type="file" accept=".syx" hidden>
-    <div id="file-info" class="msg tiny">Construis-le avec <code>tools/build.py</code>, ou prends l'OS officiel pour un retour arriere.</div>
+    <h2><span class="step">2</span>Le fichier <code>.syx</code> a envoyer</h2>
+    <p class="tiny" style="margin-top:0">Deux options&nbsp;: <b>construire</b> l'image modifiee ici a partir de ton OS officiel, <b>ou</b> deposer un <code>.syx</code> deja pret (mod, ou OS officiel pour revenir en arriere).</p>
+
+    <details id="buildbox">
+      <summary style="cursor:pointer;font-weight:600;margin-bottom:.6em">Construire le <code>.syx</code> dans le navigateur</summary>
+      <p class="tiny">Depose ton OS officiel <code>model-cycles_OS1.13.syx</code> (dezippe depuis elektron.se). Rien n'est envoye a un serveur ; l'image se fabrique dans la page.</p>
+      <div id="os-drop">Glisse l'OS officiel <code>.syx</code> ici, ou clique.</div>
+      <input id="os-file" type="file" accept=".syx" hidden>
+      <div id="os-info" class="msg tiny">SHA-256 attendu du <code>.syx</code> officiel&nbsp;: <code>44fe5862…9800640c</code>.</div>
+      <div class="row" style="margin-top:10px">
+        <select id="variant"><option value="">— choisir la variante —</option></select>
+        <button id="build" disabled>Construire</button>
+        <a id="download" class="ghost" style="display:none;text-decoration:none;padding:.55em 1.1em;border:1px solid var(--line);border-radius:8px">Télécharger le .syx</a>
+      </div>
+      <label class="ack tiny" style="margin-top:8px">
+        <input id="force-cave" type="checkbox">
+        <span>Forcer même si une zone de code (cave) semble référencée — n'utilise ça qu'après vérification manuelle.</span>
+      </label>
+      <div id="build-info" class="msg tiny"></div>
+    </details>
+
+    <div style="margin-top:14px">
+      <div id="drop">Ou glisse un <code>.syx</code> deja pret ici, ou clique pour le choisir.</div>
+      <input id="file" type="file" accept=".syx" hidden>
+      <div id="file-info" class="msg tiny">Une construction reussie remplit ceci automatiquement.</div>
+    </div>
   </div>
 
   <div class="card">
@@ -120,6 +144,9 @@
   <p class="tiny">Code source&nbsp;: <a href="https://github.com/18nelli18/Modded-Cycles">18nelli18/Modded-Cycles</a>.
     Projet non affilie a Elektron. Web MIDI n'existe pas sur Firefox ni Safari.</p>
 </div>
+<script src="builder.js"></script>
+<script src="tweaks.js"></script>
 <script src="flasher.js"></script>
+<script src="build-ui.js"></script>
 </body>
 </html>

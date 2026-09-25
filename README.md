@@ -21,8 +21,10 @@ python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup      # garde l'up
 ./flash.sh            # macOS / Linux
 flash.bat             # Windows (double-clic)
 ```
-**Ou depuis Chrome, sans rien installer** : le [flasher Web MIDI](docs/flasher/) (`docs/flasher/`) envoie ton `.syx` par Web MIDI.
-Il tourne entièrement dans le navigateur (rien n'est envoyé à un serveur, aucune image firmware n'est fournie).
+**Ou depuis Chrome, sans rien installer** : le [flasher Web MIDI](docs/flasher/) (`docs/flasher/`) sait **construire**
+l'image modifiée à partir de ton OS officiel **et** l'envoyer par Web MIDI, entièrement dans le navigateur
+(rien n'est envoyé à un serveur, aucune image firmware n'est fournie). C'est le port JS de `build.py`/`mtlib`,
+vérifié à l'octet près contre le Python (`tools/webflash_check.sh`, `tools/webbuild_check.sh`).
 Une fois GitHub Pages activé, il sera en ligne sur `https://18nelli18.github.io/Modded-Cycles/flasher/`.
 ⚠️ Le flash passe par le **MIDI IN** de l'appareil (sa prise jack TRS 3,5 mm : câble jack stéréo depuis une interface à sortie TRS, ou adaptateur DIN fourni).
 Le menu de démarrage ignore l'USB, et `6ch-multiout` casse l'upgrade USB ; la variante `6ch-usbup` devrait le garder (à tester, [note 13](notes/13-6ch-upgrade-usb.md)).
