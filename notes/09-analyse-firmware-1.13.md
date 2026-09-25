@@ -57,6 +57,32 @@ La **table des modes USB à `0x4013e544` a 4 entrées de stride `0x28`**, ce qui
 Le patch redirige **les 4 entrées** vers la config audio+MIDI HS de 328 o (`0x4019b2b6`). Les blobs libérés (75 o et 101 o) hébergent les stubs.
 Mon décodage des blobs (interfaces Audio Control + MIDIStreaming pour les 101 o ; IAD classe 02/02/01 pour les 75 o) **reste exact en tant que données** ; c'est leur étiquette « mode » qui était à préciser.
 
+## 4bis. Caves de code libres (0xff) — ressource pour toutes les extensions
+
+- **`[FAIT]`** Le MAIN OS contient ~**6 Ko de zones remplies de `0xff`**, non référencées, réparties en 21 blocs. Les plus gros :
+
+| VA | Taille |
+|---|---|
+| `0x40154ae4` | 1040 o |
+| `0x4016cae8` | 1025 o |
+| `0x4018a788` | 1024 o |
+| `0x4015c044` | 720 o |
+| `0x40148662`, `0x401489fa` | 396 o chacun |
+| une dizaine d'autres | 120–182 o |
+
+- **`[FAIT]`** C'est **bien mieux que réutiliser les blobs de descripteurs** (§5) : ces caves ne sont pas réécrites à l'exécution, et les utiliser **ne casse pas l'upgrade USB**.
+- **`[FAIT]`** Les 3 tweaks de `drumkilla/elektron-model-tweaks` (ci-dessous) écrivent justement dans les caves autour de `0x40147xxx`–`0x40148xxx` : usage confirmé.
+- **`[À FAIRE]`** Avant d'utiliser une cave, confirmer qu'aucun pointeur (opérande ou table) ne la vise, et qu'elle n'est pas du BSS initialisé à l'exécution (méthode `scan_hole` / `mcfw.code_refs`).
+
+## 4ter. Tweaks QoL prêts à l'emploi (drumkilla, testés sur vrai matériel)
+
+`[FAIT]` Trois tweaks pour le M:C 1.13, **testés sur de vraies machines** par leur auteur, buildables avec notre chaîne :
+- **latching-mute** : verrouiller le mode mute (maintenir TRK + tap FUNC), corrige la gêne signalée dans le [dossier §7.2](../dossier-technique.md) ;
+- **trig-preview** : séquenceur à l'arrêt, maintenir un pas + PAGE pour l'écouter (note, longueur, p-locks) ;
+- **browser-scroll** : défilement des noms longs dans le navigateur.
+
+Ils sont indépendants et combinables. Bon terrain d'essai à faible risque pour valider la procédure de flash le jour de la réception, avant de tenter le multipiste. À porter dans `tweaks/` si tu les veux.
+
 ## 5. ⚠️ Découverte importante : les descripteurs sont réécrits à l'exécution
 
 - **`[FAIT]`** Une fonction du pilote (appelée à l'initialisation du mode USB) **réécrit les octets `bLength` de chaque descripteur** en RAM, à des offsets précis **dans les blobs** qui servent de code cave au mod.

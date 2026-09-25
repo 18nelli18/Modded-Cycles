@@ -8,25 +8,51 @@ au lieu du seul mix stéréo, puis explorer des extensions (mix + pistes, panora
 > Ce dépôt ne contient que de l'analyse, des tables de diff (octets), des sources assembleur et des outils.
 > Projet non affilié à Elektron, sans lien ni soutien de leur part. Flasher un OS modifié se fait **à ses risques** et peut annuler la garantie.
 
+## Construire
+
+Chaîne d'outils **Python pur**, sans dépendance ni image firmware : voir [`BUILD.md`](BUILD.md).
+```sh
+python3 tools/build.py --list
+python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-multiout
+```
+
 ## Contenu
 
 | Document | Sujet |
 |---|---|
-| [`dossier-technique.md`](dossier-technique.md) | Synthèse du fil Elektronauts « Model:Cycles Q&A with Ess », chaque info sourcée par une citation |
+| [`BUILD.md`](BUILD.md) | Comment construire une image modifiée (Python pur) |
+| [`dossier-technique.md`](dossier-technique.md) | Synthèse du fil Elektronauts « Model:Cycles Q&A with Ess », chaque info sourcée |
 | [`notes/README.md`](notes/README.md) | **Index des notes techniques** et chiffres clés |
-| [`notes/01`](notes/01-ms-multi-output.md) … [`09`](notes/09-analyse-firmware-1.13.md) | Le mod 6 canaux existant, le format des OS, la plateforme ColdFire, l'USB audio, la méthode de patch, le flash, des snippets, la feuille de route, et l'analyse de l'image 1.13 |
+| [`notes/10-faisabilite-fonctionnalites.md`](notes/10-faisabilite-fonctionnalites.md) | **Faisabilité, fonction par fonction** (à lire pour l'état des lieux) |
+| [`tools/`](tools/) · [`tweaks/`](tweaks/) | Build (mtlib) et tables de patchs (format JSON) |
+
+## Fonctionnalités visées (par priorité, cf. [note 10](notes/10-faisabilite-fonctionnalites.md))
+
+| Fonction | État |
+|---|---|
+| Sortie multipiste **6 canaux** | ✅ code prêt, buildable ici — **attend un test matériel** |
+| Sortie multipiste **12 canaux** (pan par piste) | 🟡 faisable, à développer (via un jalon **8 canaux**) |
+| Modifier les **algos d'effet** | 🔴 non (réglages de paramètres : 🟡) |
+| **Moteur Sample** (façon Model:Samples) | 🔴 hors de portée comme mod du M:C |
+| **2 LFO** synchronisables et assignables | 🟠 lourd (élargir les destinations du LFO actuel : 🟡) |
+| **Polyrythmie** (time signature par piste) | 🟡 en partie déjà présente en stock |
+| **Contrôle MIDI USB** (clock, start/stop) | ✅ déjà supporté en stock (réglage) |
+| **Arpégiateur** (mode chromatique) | 🟠 long terme |
+| **Scale** (mode chromatique) | 🟡 faisable, effort moyen |
+| **Polyphonie** du synthé | 🔴 très difficile |
 
 ## Où en est le projet
 
-- Le mod « 6 pistes en USB » **existe déjà** en amont ([scottmetoyer/ms-multi-output](https://github.com/scottmetoyer/ms-multi-output), MIT),
-  avec une cible Model:Cycles **vérifiée par code mais jamais flashée sur un vrai Model:Cycles**.
-- L'OS officiel **1.13** (la dernière version) a été analysé ; le build se reproduit à l'octet près.
-- **Prochain jalon** : valider ce build sur un vrai Model:Cycles. Rien n'a encore été flashé.
+- Le mod « 6 pistes en USB » **existe** ([scottmetoyer/ms-multi-output](https://github.com/scottmetoyer/ms-multi-output), MIT),
+  porté ici au format tweak ; notre build **reproduit le MAIN OS connu-bon à l'octet près**. Mais il n'a **jamais été flashé sur un vrai Model:Cycles**.
+- L'OS officiel **1.13** (dernière version) a été analysé en profondeur ([note 09](notes/09-analyse-firmware-1.13.md)).
+- **Jalon 1** : valider le 6 canaux sur un vrai Model:Cycles. Rien n'a encore été flashé.
 
 Détails et étapes : [`notes/08-feuille-de-route.md`](notes/08-feuille-de-route.md).
 
 ## Crédits (dépôts amont, tous MIT, sans firmware inclus)
 
 - [`scottmetoyer/ms-multi-output`](https://github.com/scottmetoyer/ms-multi-output) — le mod 6 canaux (Model:Samples et Model:Cycles)
-- [`mischa85/elektron-firmware-tool`](https://github.com/mischa85/elektron-firmware-tool) — dépaquetage / repaquetage / re-signature des `.syx`
+- [`drumkilla/elektron-model-tweaks`](https://github.com/drumkilla/elektron-model-tweaks) — `mtlib` (transport SysEx, aPLib, conteneur ELE3/HMAC en Python) et le format de tweak JSON, vendus dans `tools/mtlib/`
+- [`mischa85/elektron-firmware-tool`](https://github.com/mischa85/elektron-firmware-tool) — dépaquetage / repaquetage / re-signature des `.syx` (chaîne C alternative)
 - [`mxldyn/octamax`](https://github.com/mxldyn/octamax) — rétro-ingénierie de l'OS Octatrack (méthode, outils, pièges)

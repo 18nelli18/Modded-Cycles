@@ -42,6 +42,7 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
 | **Image officielle OS 1.13** | ✅ **téléchargée et analysée** le 25/09/2026 | 1.13 (dernière) | Voir [09](09-analyse-firmware-1.13.md). Fichiers dans `firmware/` (non versionné) |
 | [bryantysinger/octa-bt-pt](https://github.com/bryantysinger/octa-bt-pt) | ➕ bonus (seul dépôt public du même auteur) | `e970dd0` | Patch de valeurs du firmware Octatrack : méthode registre, vérification, hashs |
 | [mxldyn/octamax](https://github.com/mxldyn/octamax) | ➕ bonus (crédité par ms-multi-output) | `7d9debc` | Rétro-ingénierie complète de l'OS Octatrack : technique code cave + détour, Ghidra, émulateur, pièges |
+| [drumkilla/elektron-model-tweaks](https://github.com/drumkilla/elektron-model-tweaks) | ✅ lu et **adopté** (mtlib versé dans `tools/`) | `6e0b4df` (19/09/2026) | Outillage Python pur (SysEx/aPLib/ELE3/HMAC), format de tweak JSON, 3 tweaks QoL pour le M:C 1.13 |
 
 ## Plan des notes
 
@@ -56,6 +57,7 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
 | [07-snippets.md](07-snippets.md) | Code prêt à l'emploi : stubs ASM relogés Cycles, helpers Python, commandes shell |
 | [08-feuille-de-route.md](08-feuille-de-route.md) | Étapes du projet, extensions (8 / 12 / 14 canaux, FX), questions ouvertes, risques |
 | [09-analyse-firmware-1.13.md](09-analyse-firmware-1.13.md) | **Vérifié sur l'image officielle** : structure ELE3, menu de démarrage, réglages USB, réécriture des descripteurs, mixeur |
+| [10-faisabilite-fonctionnalites.md](10-faisabilite-fonctionnalites.md) | **Faisabilité des 10 fonctionnalités souhaitées**, par priorité, avec effort et inconnues matérielles |
 
 ## Chiffres clés (OS 1.13)
 
