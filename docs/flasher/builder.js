@@ -8,7 +8,11 @@
  * Fidelite : chaque couche reproduit le Python a l'octet pres.
  * tools/webbuild_check.sh le verifie contre tools/build.py sur des images
  * synthetiques (pipeline complet, HMAC compris).
+ *
+ * Enveloppe dans une IIFE : en <script> classique, les declarations de premier
+ * niveau sont globales et entreraient en collision avec flasher.js.
  */
+(function () {
 "use strict";
 
 // ===========================================================================
@@ -516,3 +520,4 @@ const API = { sha256, hmacSha256, unwrap, wrap, aplibDepack, aplibRepack, parseC
               build, hex, fromHex, PRODUCTS, BASE };
 if (typeof module !== "undefined" && module.exports) module.exports = API;
 if (typeof window !== "undefined") window.MCBuilder = API;
+})();
