@@ -133,7 +133,23 @@ python3 tools/flash.py model-cycles_OS1.13.syx --port "NOM DE TON INTERFACE" --s
 
 ---
 
-## 7. Méthode manuelle (sans les scripts)
+## 7. Depuis Chrome, sans rien installer (Web MIDI)
+
+Le dossier [`docs/flasher/`](docs/flasher/) est une page qui fait la même chose que `flash.py`, mais **dans le navigateur** :
+elle vérifie ton `.syx` (identifiant, produit, **chaque checksum de paquet**) puis l'envoie par **Web MIDI**.
+
+- Ça marche sur **Chrome, Edge ou Opera** sur ordinateur (Web MIDI n'existe pas sur Firefox ni Safari).
+- **Tout reste local** : le `.syx` n'est envoyé à aucun serveur, et aucune image firmware n'est fournie — tu déposes la tienne.
+- **Choix du port**, exactement comme avec les scripts :
+  - pour le **STARTUP MENU** (OS UPGRADE), choisis ton **interface MIDI** (sa sortie va au MIDI IN de l'appareil) ;
+  - pour **`CONFIG → UPGRADE`** (OS en marche), tu peux viser le port **« Model:Cycles »** directement en USB.
+- La page tourne une fois **GitHub Pages** activé (Settings → Pages → *Deploy from a branch*), sur
+  `https://18nelli18.github.io/Modded-Cycles/flasher/`. En local : `python3 -m http.server` dans `docs/`, puis
+  `http://localhost:8000/flasher/` (Web MIDI exige `https://` ou `localhost`).
+
+La logique de vérification de la page reproduit `tools/mtlib/syx.py` à l'octet près ; `tools/webflash_check.sh` le vérifie contre le Python.
+
+## 8. Méthode manuelle (sans les scripts)
 
 Tu peux aussi flasher avec n'importe quel logiciel SysEx (SysEx Librarian sur macOS, l'outil C6 d'Elektron, etc.) : mets l'appareil en OS UPGRADE et envoie le `.syx` sur le port de l'**interface reliée au MIDI IN**. Nos scripts font exactement ça, en ajoutant la vérification et la cadence adaptée.
 

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flasher Web MIDI — Model:Cycles</title>
+<meta name="description" content="Flasher un firmware .syx sur l'Elektron Model:Cycles depuis Chrome, par Web MIDI. Aucune image firmware n'est fournie ni transmise a un serveur.">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --ink:#1a1d21; --muted:#5b636c; --line:#dfe3e8;
+    --accent:#2f6df6; --ok:#0a7d38; --warn:#9a6700; --bad:#c62828; --code:#f0f2f5;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0f1216; --card:#171b21; --ink:#e8ebee; --muted:#9aa3ad; --line:#2a313a;
+      --accent:#5b8dff; --ok:#4cc977; --warn:#e0b341; --bad:#ff6b6b; --code:#0c0f13;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f1216; --card:#171b21; --ink:#e8ebee; --muted:#9aa3ad; --line:#2a313a;
+    --accent:#5b8dff; --ok:#4cc977; --warn:#e0b341; --bad:#ff6b6b; --code:#0c0f13;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:760px;margin:0 auto;padding:28px 16px 80px}
+  h1{font-size:1.5rem;margin:.2em 0 .1em}
+  .sub{color:var(--muted);margin:0 0 1.4em}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 18px;margin:14px 0}
+  .card h2{font-size:1.05rem;margin:0 0 .6em;display:flex;gap:.5em;align-items:center}
+  .step{width:1.6em;height:1.6em;flex:none;border-radius:50%;background:var(--accent);color:#fff;
+    display:grid;place-items:center;font-size:.85rem;font-weight:700}
+  a{color:var(--accent)}
+  button,select,input[type=number]{font:inherit;color:inherit}
+  button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:.55em 1.1em;cursor:pointer}
+  button.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  select,input[type=number]{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.5em .6em}
+  select{max-width:100%;width:100%}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .row>*{min-width:0}
+  #drop{border:2px dashed var(--line);border-radius:10px;padding:22px;text-align:center;cursor:pointer;color:var(--muted)}
+  #drop.over{border-color:var(--accent);color:var(--ink)}
+  .msg{margin-top:.6em;font-size:.92rem}
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+  .barwrap{height:12px;background:var(--code);border-radius:6px;overflow:hidden;margin:.7em 0 .3em}
+  #bar{height:100%;width:0;background:var(--accent);transition:width .15s}
+  #log{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:10px;
+    height:180px;overflow:auto;font:12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap}
+  code,kbd{background:var(--code);border:1px solid var(--line);border-radius:5px;padding:.05em .4em;font-size:.9em}
+  .warnbox{border-left:4px solid var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent);
+    padding:12px 14px;border-radius:0 8px 8px 0}
+  ul{margin:.4em 0;padding-left:1.3em} li{margin:.2em 0}
+  label.ack{display:flex;gap:.6em;align-items:flex-start;cursor:pointer}
+  label.ack input{margin-top:.28em}
+  .tiny{font-size:.85rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Flasher Web MIDI — Model:Cycles</h1>
+  <p class="sub">Envoie un firmware <code>.syx</code> a l'Elektron Model:Cycles (ou Model:Samples) depuis
+  <b>Chrome / Edge / Opera</b>, par Web MIDI. C'est le pendant navigateur de <code>tools/flash.py</code>.</p>
+
+  <div class="card warnbox">
+    <b>A lire avant.</b> Flasher un firmware modifie <b>met la garantie en jeu</b> et se fait a tes risques.
+    <ul>
+      <li>Tout se passe <b>dans ton navigateur</b> : le <code>.syx</code> n'est envoye a aucun serveur. Aucune image firmware n'est fournie ici — tu apportes la tienne.</li>
+      <li><b>STARTUP MENU (OS UPGRADE)</b> n'ecoute que le <b>MIDI IN</b> (jack TRS) de l'appareil : envoie vers ton
+        <b>interface MIDI</b> (dont la sortie va au MIDI IN). Le port USB de l'appareil <b>ne marche pas</b> dans ce menu.</li>
+      <li><b>CONFIG&nbsp;&gt;&nbsp;UPGRADE</b> (OS en marche) recoit par <b>USB</b> : la, tu peux viser le port
+        <b>« Model:Cycles »</b> directement. Ne marche que si l'USB de l'appareil transporte l'OS
+        (stock, ou variante <code>6ch-usbup</code>).</li>
+      <li>Garde une interface MIDI et l'OS officiel a portee : c'est ton seul secours si l'appareil ne redemarre plus.
+        Voir <a href="../../FLASH.md">FLASH.md</a> et <a href="../../notes/13-6ch-upgrade-usb.md">note 13</a>.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="step">1</span>Autoriser le MIDI</h2>
+    <div class="row">
+      <button id="enable">Activer le MIDI</button>
+      <button id="refresh" class="ghost">Rafraichir les ports</button>
+    </div>
+    <div id="midi-status" class="msg tiny">Clique « Activer le MIDI », puis accepte la demande d'autorisation (avec SysEx).</div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step">2</span>Choisir le fichier <code>.syx</code></h2>
+    <div id="drop">Glisse ton <code>.syx</code> ici, ou clique pour le choisir.</div>
+    <input id="file" type="file" accept=".syx" hidden>
+    <div id="file-info" class="msg tiny">Construis-le avec <code>tools/build.py</code>, ou prends l'OS officiel pour un retour arriere.</div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step">3</span>Choisir le port et flasher</h2>
+    <p class="tiny" style="margin-top:0">Mets d'abord l'appareil en reception&nbsp;: eteindre → maintenir <kbd>FUNC</kbd> → allumer → <kbd>TRIG 4</kbd> (OS UPGRADE).
+      L'ecran affiche <code>READY TO RECEIVE</code>. (Ou, pour l'USB direct&nbsp;: <code>CONFIG &gt; UPGRADE</code> depuis l'OS en marche.)</p>
+    <div class="row">
+      <select id="port"><option value="">— active d'abord le MIDI —</option></select>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <label class="tiny">Cadence <input id="pace" type="number" min="0" step="0.1" value="1.4" style="width:5em"></label>
+      <span class="tiny">augmente (2.0) si l'appareil se fige sur <code>RECEIVING…</code></span>
+    </div>
+    <label class="ack" style="margin-top:12px">
+      <input id="ack" type="checkbox">
+      <span>Je comprends les risques, j'ai une interface MIDI et l'OS officiel pour revenir en arriere, et l'appareil est en mode reception.</span>
+    </label>
+    <div class="row" style="margin-top:12px"><button id="send" disabled>Flasher</button></div>
+    <div class="barwrap"><div id="bar"></div></div>
+    <div id="count" class="tiny"></div>
+  </div>
+
+  <div class="card">
+    <h2>Journal</h2>
+    <div id="log" aria-live="polite"></div>
+  </div>
+
+  <p class="tiny">Code source&nbsp;: <a href="https://github.com/18nelli18/Modded-Cycles">18nelli18/Modded-Cycles</a>.
+    Projet non affilie a Elektron. Web MIDI n'existe pas sur Firefox ni Safari.</p>
+</div>
+<script src="flasher.js"></script>
+</body>
+</html>
