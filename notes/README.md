@@ -58,6 +58,7 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
 | [08-feuille-de-route.md](08-feuille-de-route.md) | Étapes du projet, extensions (8 / 12 / 14 canaux, FX), questions ouvertes, risques |
 | [09-analyse-firmware-1.13.md](09-analyse-firmware-1.13.md) | **Vérifié sur l'image officielle** : structure ELE3, menu de démarrage, réglages USB, réécriture des descripteurs, mixeur |
 | [10-faisabilite-fonctionnalites.md](10-faisabilite-fonctionnalites.md) | **Faisabilité des 10 fonctionnalités souhaitées**, par priorité, avec effort et inconnues matérielles |
+| [11-conception-8-canaux.md](11-conception-8-canaux.md) | **Conception du mode 8 canaux** (6 pistes + mix) : stubs `tracks8`/`prime8` vérifiés, éditions, rings à finaliser |
 
 ## Chiffres clés (OS 1.13)
 

@@ -35,6 +35,8 @@ Le projet commence donc par **valider**, puis **améliorer**.
 
 ### A. 8 canaux = 6 pistes + mix stéréo (recommandé comme jalon 2)
 
+> ▶️ **Conception détaillée et avancée dans [11-conception-8-canaux.md](11-conception-8-canaux.md)** : stubs `tracks8` et `prime8` assemblés et vérifiés, éditions inline confirmées, dimensionnement des rings à finaliser sur matériel.
+
 Pourquoi : cela corrige le plus gros défaut du mod actuel (**plus de mix ni de FX en USB**). Et la géométrie devient **presque entièrement « puissance de 2 »**.
 
 | Constante | 6 canaux (ms-multi-output) | **8 canaux** (F = 32 o) | Modifiable sur place ? |
