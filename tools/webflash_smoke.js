@@ -47,9 +47,13 @@ async function main() {
     const { w, doc, errors } = await load();
     check(errors.length === 0, "chargement sans erreur JS " + (errors.length ? JSON.stringify(errors) : ""));
     check(typeof w.MCBuilder === "object", "window.MCBuilder present");
-    check(!!w.MC_TWEAKS && w.MC_TWEAKS.tweaks.length === 2, "MC_TWEAKS charge (2 variantes)");
+    check(!!w.MC_TWEAKS && w.MC_TWEAKS.tweaks.length === 3, "MC_TWEAKS charge (3 tweaks)");
     check(typeof w.loadFlasherBytes === "function", "loadFlasherBytes expose");
-    check([...doc.getElementById("variant").options].length === 3, "menu variante peuple");
+    check([...doc.getElementById("variant").options].length === 3, "menu Sortie USB peuple (origine + 2 variantes)");
+    check(doc.getElementById("build").textContent === "Construire", "bouton Construire intact (estampille a part)");
+    check(/build \d{4}-/.test(doc.getElementById("build-stamp").textContent), "estampille de version affichee");
+    const extras = [...doc.querySelectorAll("#extras input[type=checkbox]")].map((c) => c.value);
+    check(extras.length === 1 && extras[0] === "sdvintage-snare", "case « machine ajoutee » : " + JSON.stringify(extras));
     doc.getElementById("enable").click();
     await wait(60);
     const st = doc.getElementById("midi-status").textContent;

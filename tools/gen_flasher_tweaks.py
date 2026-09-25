@@ -19,13 +19,18 @@ HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
 DEV_DIR = ROOT / "tweaks" / "model-cycles_OS1.13"
 OUT = ROOT / "docs" / "flasher" / "tweaks.js"
-# Tweaks proposes dans le flasher web (ceux qui produisent une image flashable).
-INCLUDE = ["10-6ch-multiout", "11-6ch-usbup"]
+# Tweaks proposes dans le flasher web (ceux qui produisent une image flashable) et leur
+# place dans l'interface : « variant » = menu Sortie USB (un seul), « option » = case a cocher.
+INCLUDE = {"10-6ch-multiout": "variant", "11-6ch-usbup": "variant", "20-sdvintage-snare": "option"}
 
 
 def render():
     device = json.loads((DEV_DIR / "device.json").read_text(encoding="utf-8"))
-    tweaks = [json.loads((DEV_DIR / f"{name}.json").read_text(encoding="utf-8")) for name in INCLUDE]
+    tweaks = []
+    for name, role in INCLUDE.items():
+        t = json.loads((DEV_DIR / f"{name}.json").read_text(encoding="utf-8"))
+        t["web"] = role
+        tweaks.append(t)
     payload = {
         "device": {k: device[k] for k in ("device", "os", "section_sha256", "stock_syx_sha256")},
         "tweaks": tweaks,

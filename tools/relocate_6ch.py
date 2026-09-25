@@ -12,9 +12,12 @@ Cette variante :
   - laisse d'origine les 4 descripteurs et les 4 entrées de la table des modes USB ;
   - garde tout le reste à l'identique : pilote, ring, config audio passée en 6 canaux.
 
+La cave est le masque 0xFF d'un sprite, libéré en faisant pointer ce sprite sur un
+masque identique (tools/sprites.py, notes/14 §5) : la redirection est ajoutée au tweak.
+
 Ce script lit tweaks/model-cycles_OS1.13/10-6ch-multiout.json et écrit 11-6ch-usbup.json.
 Il n'a pas besoin de l'image firmware. build.py vérifie ensuite, sur TON image, que
-les octets de la cave valent bien 0xFF et que rien ne pointe dedans.
+les octets de la cave valent bien 0xFF et que rien d'autre ne pointe dedans.
 
     python3 tools/relocate_6ch.py                          # (ré)écrit 11-6ch-usbup.json
     python3 tools/relocate_6ch.py --check                  # vérifie que le fichier versionné est à jour
@@ -24,6 +27,8 @@ import argparse
 import json
 import pathlib
 import sys
+
+import sprites
 
 HERE = pathlib.Path(__file__).resolve().parent
 DEV = HERE.parent / "tweaks" / "model-cycles_OS1.13"
@@ -46,7 +51,10 @@ STUBS = [
 ]
 DESCRIPTORS = (0x4019b132, 0x4019b2b6)  # CDC x2, MIDI seule x2 (+ 2 descripteurs de périphérique)
 MODE_TABLE = (0x4013e544, 0x4013e544 + 4 * 0x28)
-CAVE = (0x40154ae4, 1040)               # plus grande zone 0xFF non référencée (notes/09 §4bis)
+# Masque 0xFF du sprite 64x90, libéré par sprites.redirect_write (notes/14 §5). L'ancienne
+# cave 0x40154ae4 est le masque du sprite 32x260 : y écrire abîmait ce sprite, on la garde
+# désormais intacte comme masque partagé.
+CAVE = sprites.zone(0x4015c044)
 
 
 def load_stubs(src):
@@ -109,6 +117,8 @@ def derive(src, cave, at=None):
         raise SystemExit(f"!! dérivation inattendue : {hooks} crochets, {len(dropped)} écritures retirées (attendu 4 et 13)")
     for name, va, code, _, _ in stubs:
         writes.append({"off": va + delta - BASE, "old": "ff" * len(code), "new": code.hex()})
+    if lo in sprites.MASKS:
+        writes.append(sprites.redirect_write(lo))   # libère le masque : le sprite lit le masque partagé
     writes.sort(key=lambda w: w["off"])
 
     tweak = {
@@ -118,6 +128,8 @@ def derive(src, cave, at=None):
         "description": [                          # ASCII, comme 10-6ch-multiout.json
             "Meme sortie 6 canaux que 6ch-multiout : memes stubs, octet pour octet,",
             f"mais loges dans la cave 0x{lo:08x} au lieu des descripteurs USB CDC et MIDI seule.",
+            "Cette cave est le masque 0xFF d'un sprite : le sprite est redirige vers un masque",
+            "identique (meme rendu), voir tools/sprites.py et notes/14.",
             "Descripteurs et table des modes USB restent d'origine : CONFIG > UPGRADE par USB devrait refonctionner.",
             f"Genere par tools/relocate_6ch.py depuis 6ch-multiout (decalage des stubs : {delta:#x}).",
             "ATTENTION : jamais flashe. Variante experimentale, voir notes/13.",

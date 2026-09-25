@@ -6,6 +6,12 @@ Ce qui est fait correspond au point E de la feuille de route ([08 §E](08-feuill
 
 > ⚠️ Variante **expérimentale, jamais flashée**. Même statut que le 6 canaux d'origine : la récupération par le MIDI IN ([FLASH §5](../FLASH.md#5-récupération-revenir-à-loriginal)) doit être prête avant de flasher.
 
+> **Mise à jour (build sur l'image réelle, [14 §5](14-machine-sd-vintage.md#5-place-libre--les-caves-0xff-étaient-des-masques-de-sprites)).**
+> - La première cave, `0x40154ae4`, est en fait le **masque 0xFF d'un sprite** 32×260 : les stubs y auraient fait des trous à l'écran, et `build.py` exigeait `--force-cave`.
+> - Les stubs sont maintenant dans le masque `0x4015c044` (720 o, sprite 64×90). Ce sprite est redirigé vers un masque identique : même rendu.
+> - Le build passe sans `--force-cave`, et les stubs émulés à leur nouvelle adresse donnent les mêmes registres et la même mémoire.
+> - Les mesures du §3 datent de l'ancienne cave. Les stubs n'ont pas changé d'un octet et restent indépendants de leur position.
+
 ---
 
 ## En bref
@@ -13,7 +19,7 @@ Ce qui est fait correspond au point E de la feuille de route ([08 §E](08-feuill
 | | `6ch-multiout` (ms-multi-output) | **`6ch-usbup`** (cette note) |
 |---|---|---|
 | Sortie 6 canaux (pilote, ring, config audio) | oui | **identique** (mêmes octets) |
-| Où sont les 4 stubs | dans 4 descripteurs USB (2 CDC, 2 MIDI seule) | dans la cave `0xFF` à `0x40154ae4` (1040 o), **mêmes octets** |
+| Où sont les 4 stubs | dans 4 descripteurs USB (2 CDC, 2 MIDI seule) | dans le masque de sprite libéré `0x4015c044` (720 o), **mêmes octets** |
 | Descripteurs CDC et MIDI seule | écrasés par du code | **d'origine** |
 | Table des modes USB (`0x4013e544`) | 4 entrées redirigées vers la config audio | **d'origine** |
 | `CONFIG → UPGRADE` par USB | cassé (README de l'auteur) | **devrait marcher** `[À TESTER]` |
@@ -37,25 +43,25 @@ Build : `python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup`. Les de
 
 - **Les stubs ne changent pas d'un octet.**
   - Ils sont indépendants de leur position : leurs branchements internes sont relatifs, leurs sauts de retour absolus, et ils n'adressent que des registres, `TRACK_BASE` et `SLOT_BASE`.
-  - On les copie avec un **décalage constant de −0x464E0**, multiple de 16. Chacun garde l'alignement modulo 16 du build testé, et les écarts entre stubs restent les mêmes.
+  - On les copie avec un **décalage constant de −0x3F020**, multiple de 16. Chacun garde l'alignement modulo 16 du build testé, et les écarts entre stubs restent les mêmes.
 - **Les 4 crochets du pilote** ne changent que par l'adresse de leur `jmp`.
-- **La cave** `0x40154ae4` (1040 o) :
-  - c'est la plus grande zone `0xFF` non référencée relevée sur l'image ([09 §4bis](09-analyse-firmware-1.13.md#4bis-caves-de-code-libres-0xff--ressource-pour-toutes-les-extensions)) ;
-  - c'est aussi la grande zone la plus proche de celles que les tweaks de drumkilla utilisent déjà, avec succès, sur de vrais M:C (`0x40147f22`–`0x40148b86`) ;
-  - elle n'empiète pas sur ces tweaks, qui restent combinables ;
-  - le bloc de stubs (292 o d'une extrémité à l'autre) est centré : 370 o de marge avant, 378 o après.
+- **La cave** `0x4015c044` (720 o) :
+  - c'est le masque `0xFF` du sprite 64×90, libéré en faisant lire à ce sprite le masque identique `0x40154ae4` ([14 §5](14-machine-sd-vintage.md#5-place-libre--les-caves-0xff-étaient-des-masques-de-sprites), `tools/sprites.py`) ;
+  - elle n'empiète ni sur les caves des tweaks de drumkilla (`0x40147f22`–`0x40148b86`), ni sur celles de SD VINTAGE : tout reste combinable ;
+  - le bloc de stubs (292 o d'une extrémité à l'autre) est centré dans la cave.
 
 | Stub | Avant (descripteur) | Après (cave) | Taille | Crochet | Reprise |
 |---|---|---|---|---|---|
-| prime6 | `0x4019b136` (CDC n°1) | `0x40154c56` | 32 o | `0x400027e8` | `0x400027fe` |
-| token6 | `0x4019b182` (CDC n°2) | `0x40154ca2` | 26 o | `0x40002a42` | `0x40002a4c` |
-| tracks6 | `0x4019b1e0` (MIDI n°1) | `0x40154d00` | 74 o | `0x40002a06` | `0x40002a26` |
-| dstoff6 | `0x4019b244` (MIDI n°2) | `0x40154d64` | 22 o | `0x400029e4` | `0x400029ee` |
+| prime6 | `0x4019b136` (CDC n°1) | `0x4015c116` | 32 o | `0x400027e8` | `0x400027fe` |
+| token6 | `0x4019b182` (CDC n°2) | `0x4015c162` | 26 o | `0x40002a42` | `0x40002a4c` |
+| tracks6 | `0x4019b1e0` (MIDI n°1) | `0x4015c1c0` | 74 o | `0x40002a06` | `0x40002a26` |
+| dstoff6 | `0x4019b244` (MIDI n°2) | `0x4015c224` | 22 o | `0x400029e4` | `0x400029ee` |
 
 - **Ce qui reste identique à `6ch-multiout`** :
   - les 9 écritures du pilote (ring, masques, strides, `MaxPacketLength`) ;
   - les 3 écritures de la config audio (`bNrChannels` ×2, `wMaxPacketSize`).
-- **Ce qui disparaît** : les 5 écritures dans les descripteurs et les 8 écritures dans la table des modes. On passe de 29 à 20 écritures.
+- **Ce qui disparaît** : les 5 écritures dans les descripteurs et les 8 écritures dans la table des modes.
+- **Ce qui s'ajoute** : la redirection du sprite (4 o en `0x400b6434`). On passe de 29 à 21 écritures.
 - **Outillage** :
   - `tools/relocate_6ch.py` dérive `11-6ch-usbup.json` de `10-6ch-multiout.json`, mécaniquement, sans l'image ;
     - `--check` vérifie que le fichier versionné est à jour ;
@@ -84,7 +90,7 @@ Build : `python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup`. Les de
   - le flux imite une zone `0xFF` de 1040 o encodée en copie chevauchante, puis une copie lointaine qui lit l'intérieur de cette zone ;
   - après écriture des 4 stubs, le flux réencodé se décompresse exactement en l'image patchée, avec une somme d'en-tête cohérente ;
   - `repack` réencode en littéraux toute opération qui écrit **ou lit** un octet modifié.
-- **Désassemblage** : les branchements de tracks6 visent l'intérieur du stub déplacé (`ble.w` → `0x40154d3c`, `bne.w` → `0x40154d22`, `bgt.w` → `0x40154d16`), et les 4 `jmp` de retour visent les reprises d'origine.
+- **Désassemblage** : les branchements de tracks6 visent l'intérieur du stub déplacé (aujourd'hui `ble.w` → `0x4015c1fc`, `bne.w` → `0x4015c1e2`, `bgt.w` → `0x4015c1d6`, relu dans l'image construite), et les 4 `jmp` de retour visent les reprises d'origine.
 - **Contrôles de `build.py`**, testés sur des images synthétiques :
   - les deux variantes ensemble sont refusées ;
   - un pointeur injecté dans la cave bloque le build, sauf avec `--force-cave` ;
@@ -96,20 +102,22 @@ Build : `python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup`. Les de
 ## 4. Ce que `build.py` vérifie sur TON image
 
 1. **Octets « old »** (comme avant) : chaque octet de la cave doit valoir `0xFF`, sinon refus.
-2. **Zone entière** : le bloc `0xFF` qui contient chaque écriture est étendu à ses bornes et affiché.
-   Attendu : `zone 0xFF utilisee : 0x40154ae4..0x40154ef3 (1040 o)`. Une autre taille est à signaler.
+2. **Zone** : du début du bloc `0xFF` jusqu'à la fin des octets écrits, affichée.
+   Attendu : `zone 0xFF utilisee : 0x4015c044..0x4015c239 (502 o)`.
 3. **Références vers cette zone dans l'image d'origine** :
    - une constante 32 bits qui pointe dedans (pointeur, `jmp`/`jsr` absolu, adresse immédiate) **bloque le build**. La zone ne serait pas libre ; `--force-cave` passe outre après vérification à la main ;
+   - sauf si ses octets sont réécrits par le tweak lui-même : c'est le cas du pointeur de masque du sprite. Il est affiché comme « neutralisé » ;
    - un adressage `(d16,PC)` ou un branchement qui vise la zone est **affiché pour vérification**, sans bloquer. Une donnée peut ressembler à une instruction.
-   Attendu : `references (constantes 32 bits) vers ces zones dans l'image d'origine : aucune`.
+   Attendu : `reference reecrite par un tweak (neutralisee) : 0x400b6434 -> 0x4015c044 (constante 32 bits)`, puis `references (constantes 32 bits) vers ces zones dans l'image d'origine : aucune`.
 4. **Incompatibilités** : `6ch-multiout` et `6ch-usbup` ensemble sont refusés, y compris avec `--all`.
 
 ## 5. Risques restants
 
 - **`[HYP]` La cave pourrait ne pas être libre.** Une écriture à l'exécution via un pointeur de base + décalage ne se voit pas en analyse statique.
+  - Ici, c'est le masque d'un sprite statique : il n'est lu que par le dessin, et plus du tout une fois le sprite redirigé. Le risque est faible.
   - Symptômes : plantage, gel ou son corrompu, éventuellement longtemps après le démarrage.
   - Parade : le protocole du §6, et la récupération par le MIDI IN.
-  - Si ça arrive : essayer une autre cave, par exemple `python3 tools/relocate_6ch.py --cave 0x4015c044:720`, puis refaire le build.
+  - Si ça arrive : viser un autre masque libéré (`tools/sprites.py`), par exemple `python3 tools/relocate_6ch.py --cave 0x4018a788:1024` (pas combinable avec SD VINTAGE, qui l'occupe), puis refaire le build.
 - **`[HYP]` L'upgrade USB pourrait dépendre d'autre chose** que les descripteurs, par exemple des constantes du pilote que le mod change aussi.
   Le README de l'auteur n'invoque que les descripteurs, mais seul le test tranchera.
 - **Comportement changé par rapport à `6ch-multiout`** : `USB MODE = MID` redevient « MIDI seul », comme en stock. Avant, il servait la config 6 canaux.
