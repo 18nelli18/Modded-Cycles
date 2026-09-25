@@ -141,14 +141,22 @@ if (typeof window !== "undefined") {
       log("navigator.requestMIDIAccess absent.", "bad");
       return;
     }
+    let done = false;
+    const hint = setTimeout(() => {
+      if (!done) setStatus("En attente de ton autorisation. Chrome demande peut-etre l'acces MIDI "
+        + "(fenetre en haut, ou icone dans la barre d'adresse) : clique « Autoriser ». "
+        + "Si tu l'as deja bloque, ouvre l'icone a gauche de l'adresse et remets MIDI sur « Autoriser ».", "warn");
+    }, 2500);
     try {
       state.midi = await navigator.requestMIDIAccess({ sysex: true });
     } catch (e) {
-      setStatus("Acces MIDI refuse (" + (e && e.name ? e.name : e) + "). Recharge la page et accepte "
-        + "la demande d'autorisation MIDI, SysEx compris.", "bad");
+      done = true; clearTimeout(hint);
+      setStatus("Acces MIDI refuse (" + (e && e.name ? e.name : e) + "). Clique l'icone a gauche de l'adresse, "
+        + "remets MIDI sur « Autoriser », recharge la page et reessaie.", "bad");
       log("requestMIDIAccess a echoue : " + (e && e.message ? e.message : e), "bad");
       return;
     }
+    done = true; clearTimeout(hint);
     state.midi.onstatechange = fillPorts;
     fillPorts();
   }
