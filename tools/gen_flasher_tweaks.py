@@ -19,21 +19,51 @@ HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
 DEV_DIR = ROOT / "tweaks" / "model-cycles_OS1.13"
 OUT = ROOT / "docs" / "flasher" / "tweaks.js"
-# Tweaks proposes dans le flasher web (ceux qui produisent une image flashable) et leur
-# place dans l'interface : « variant » = menu Sortie USB (un seul), « option » = case a cocher.
-INCLUDE = {"10-6ch-multiout": "variant", "11-6ch-usbup": "variant", "20-sdvintage-snare": "option"}
+
+# Fonctionnalites proposees dans le flasher web, en cases a cocher. Une fonctionnalite peut
+# avoir plusieurs variantes mutuellement exclusives (ex. la sortie 6 canaux) : elles s'affichent
+# en sous-choix quand la case est cochee. Chaque variante pointe vers un tweak de tweaks/.
+# Pour ajouter une fonctionnalite : ecrire son tweak JSON, puis l'ajouter ici.
+FEATURES = [
+    {
+        "id": "usb6",
+        "label": "Sortie USB 6 canaux separes",
+        "desc": "Chaque piste sort sur son propre canal USB (48 kHz / 32 bits). Le mix stereo "
+                "n'est plus envoye en USB : tu melanges les 6 pistes dans ton logiciel.",
+        "variants": [
+            {"file": "11-6ch-usbup", "label": "Garder la mise a jour de l'OS par USB (recommande)"},
+            {"file": "10-6ch-multiout", "label": "Version de reference (la mise a jour par USB ne marche plus)"},
+        ],
+    },
+    {
+        "id": "sdvintage",
+        "label": "Machine SD VINTAGE (caisse claire vintage)",
+        "desc": "Ajoute un moteur de caisse claire facon Syntakt, a la place de la machine SNARE. "
+                "PITCH l'accord, DECAY la longueur, COLOR le cote claquant, SHAPE la brillance, "
+                "SWEEP le balayage, CONTOUR la duree du corps.",
+        "variants": [
+            {"file": "20-sdvintage-snare", "label": None},
+        ],
+    },
+]
 
 
 def render():
     device = json.loads((DEV_DIR / "device.json").read_text(encoding="utf-8"))
-    tweaks = []
-    for name, role in INCLUDE.items():
-        t = json.loads((DEV_DIR / f"{name}.json").read_text(encoding="utf-8"))
-        t["web"] = role
-        tweaks.append(t)
+    tweaks, seen, features = [], {}, []
+    for f in FEATURES:
+        variants = []
+        for v in f["variants"]:
+            t = json.loads((DEV_DIR / f"{v['file']}.json").read_text(encoding="utf-8"))
+            if t["id"] not in seen:
+                seen[t["id"]] = True
+                tweaks.append(t)
+            variants.append({"id": t["id"], "label": v["label"]})
+        features.append({"id": f["id"], "label": f["label"], "desc": f["desc"], "variants": variants})
     payload = {
         "device": {k: device[k] for k in ("device", "os", "section_sha256", "stock_syx_sha256")},
         "tweaks": tweaks,
+        "features": features,
     }
     body = json.dumps(payload, ensure_ascii=False, indent=1)
     return (
@@ -54,7 +84,7 @@ def main():
         print("docs/flasher/tweaks.js est a jour")
         return
     OUT.write_text(text, encoding="utf-8")
-    print(f"ecrit : {OUT.relative_to(ROOT)} ({len(text)} o, {len(INCLUDE)} tweaks)")
+    print(f"ecrit : {OUT.relative_to(ROOT)} ({len(text)} o, {len(FEATURES)} fonctionnalites)")
 
 
 if __name__ == "__main__":

@@ -48,12 +48,20 @@ async function main() {
     check(errors.length === 0, "chargement sans erreur JS " + (errors.length ? JSON.stringify(errors) : ""));
     check(typeof w.MCBuilder === "object", "window.MCBuilder present");
     check(!!w.MC_TWEAKS && w.MC_TWEAKS.tweaks.length === 3, "MC_TWEAKS charge (3 tweaks)");
+    check(!!w.MC_TWEAKS.features && w.MC_TWEAKS.features.length === 2, "MC_TWEAKS.features (2 fonctionnalites)");
     check(typeof w.loadFlasherBytes === "function", "loadFlasherBytes expose");
-    check([...doc.getElementById("variant").options].length === 3, "menu Sortie USB peuple (origine + 2 variantes)");
     check(doc.getElementById("build").textContent === "Construire", "bouton Construire intact (estampille a part)");
     check(/build \d{4}-/.test(doc.getElementById("build-stamp").textContent), "estampille de version affichee");
-    const extras = [...doc.querySelectorAll("#extras input[type=checkbox]")].map((c) => c.value);
-    check(extras.length === 1 && extras[0] === "sdvintage-snare", "case « machine ajoutee » : " + JSON.stringify(extras));
+    const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
+    check(feats.length === 2 && feats.includes("feat-usb6") && feats.includes("feat-sdvintage"),
+      "2 cases fonctionnalite : " + JSON.stringify(feats));
+    const usbVars = [...doc.querySelectorAll('input[name="var-usb6"]')];
+    check(usbVars.length === 2 && usbVars.every((r) => r.disabled), "usb6 : 2 variantes, desactivees tant que non coche");
+    doc.getElementById("feat-usb6").click();
+    await wait(20);
+    check([...doc.querySelectorAll('input[name="var-usb6"]')].every((r) => !r.disabled), "cocher usb6 active ses variantes");
+    doc.getElementById("feat-usb6").click();          // on decoche pour la suite
+    await wait(20);
     doc.getElementById("enable").click();
     await wait(60);
     const st = doc.getElementById("midi-status").textContent;

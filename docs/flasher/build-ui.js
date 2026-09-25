@@ -26,15 +26,79 @@
     el.scrollTop = el.scrollHeight;
   }
 
-  // tweaks choisis : la variante « Sortie USB » (au plus une) + les machines cochees
+  // tweaks choisis : pour chaque fonctionnalite cochee, la variante selectionnee (ordre stable
+  // = ordre des fonctionnalites, pour que la cle REF_MAINOS tombe juste)
   function chosen() {
     const tw = window.MC_TWEAKS;
-    if (!tw) return [];
-    const ids = [];
-    if ($("variant").value) ids.push($("variant").value);
-    for (const cb of document.querySelectorAll("#extras input[type=checkbox]"))
-      if (cb.checked) ids.push(cb.value);
-    return ids.map((id) => tw.tweaks.find((t) => t.id === id));
+    if (!tw || !tw.features) return [];
+    const out = [];
+    for (const f of tw.features) {
+      const cb = $("feat-" + f.id);
+      if (!cb || !cb.checked) continue;
+      let id = f.variants[0].id;
+      if (f.variants.length > 1) {
+        const sel = document.querySelector('input[name="var-' + f.id + '"]:checked');
+        if (sel) id = sel.value;
+      }
+      const t = tw.tweaks.find((x) => x.id === id);
+      if (t) out.push(t);
+    }
+    return out;
+  }
+
+  // une fonctionnalite = une case a cocher ; si elle a plusieurs variantes, des boutons radio
+  // apparaissent en sous-choix, actifs seulement quand la case est cochee.
+  function renderFeature(box, f) {
+    const wrap = document.createElement("div");
+    wrap.style.margin = "8px 0";
+    const lab = document.createElement("label");
+    lab.className = "ack";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.id = "feat-" + f.id;
+    const sp = document.createElement("span");
+    const strong = document.createElement("b");
+    strong.textContent = f.label;
+    sp.appendChild(strong);
+    if (f.desc) {
+      sp.appendChild(document.createElement("br"));
+      const d = document.createElement("span");
+      d.className = "tiny";
+      d.style.color = "var(--muted)";
+      d.textContent = f.desc;
+      sp.appendChild(d);
+    }
+    lab.append(cb, sp);
+    wrap.appendChild(lab);
+
+    const radios = [];
+    if (f.variants.length > 1) {
+      const sub = document.createElement("div");
+      sub.style.margin = "4px 0 0 1.9em";
+      f.variants.forEach((v, i) => {
+        const r = document.createElement("label");
+        r.className = "tiny";
+        r.style.display = "block";
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = "var-" + f.id;
+        radio.value = v.id;
+        radio.checked = i === 0;
+        radio.disabled = true;
+        radio.style.marginRight = ".45em";
+        radios.push(radio);
+        const t = document.createElement("span");
+        t.textContent = v.label || v.id;
+        r.append(radio, t);
+        sub.appendChild(r);
+      });
+      wrap.appendChild(sub);
+    }
+    cb.addEventListener("change", () => {
+      radios.forEach((r) => { r.disabled = !cb.checked; });
+      ready();
+    });
+    box.appendChild(wrap);
   }
 
   function ready() {
@@ -102,31 +166,10 @@
 
   window.addEventListener("DOMContentLoaded", () => {
     const tw = window.MC_TWEAKS;
-    const sel = $("variant");
-    const extras = $("extras");
-    if (tw && tw.tweaks) {
-      for (const t of tw.tweaks) {
-        if (t.web === "option") {
-          const lab = document.createElement("label");
-          lab.className = "ack tiny";
-          lab.title = (t.description || []).join("\n");
-          const cb = document.createElement("input");
-          cb.type = "checkbox";
-          cb.value = t.id;
-          cb.addEventListener("change", ready);
-          const sp = document.createElement("span");
-          sp.textContent = `${t.id} — ${t.name}`;
-          lab.append(cb, sp);
-          extras.appendChild(lab);
-        } else {
-          const o = document.createElement("option");
-          o.value = t.id;
-          o.textContent = `${t.id} — ${t.name}`;
-          sel.appendChild(o);
-        }
-      }
+    const box = $("features");
+    if (tw && tw.features && box) {
+      for (const f of tw.features) renderFeature(box, f);
     }
-    sel.addEventListener("change", ready);
     $("build").addEventListener("click", build);
 
     const drop = $("os-drop");

@@ -9,6 +9,133 @@ window.MC_TWEAKS = {
  },
  "tweaks": [
   {
+   "id": "6ch-usbup",
+   "order": 11,
+   "name": "Sortie multipiste 6 canaux, upgrade USB conserve",
+   "description": [
+    "Meme sortie 6 canaux que 6ch-multiout : memes stubs, octet pour octet,",
+    "mais loges dans la cave 0x4015c044 au lieu des descripteurs USB CDC et MIDI seule.",
+    "Cette cave est le masque 0xFF d'un sprite : le sprite est redirige vers un masque",
+    "identique (meme rendu), voir tools/sprites.py et notes/14.",
+    "Descripteurs et table des modes USB restent d'origine : CONFIG > UPGRADE par USB devrait refonctionner.",
+    "Genere par tools/relocate_6ch.py depuis 6ch-multiout (decalage des stubs : -0x3f020).",
+    "ATTENTION : jamais flashe. Variante experimentale, voir notes/13."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "conflicts": [
+    "6ch-multiout"
+   ],
+   "writes": [
+    {
+     "off": 8507,
+     "old": "0f20",
+     "new": "0320"
+    },
+    {
+     "off": 8548,
+     "old": "9b8021",
+     "new": "9e0021"
+    },
+    {
+     "off": 9139,
+     "old": "0f24",
+     "new": "0724"
+    },
+    {
+     "off": 9166,
+     "old": "e788",
+     "new": "ed88"
+    },
+    {
+     "off": 9171,
+     "old": "30ed8a9480",
+     "new": "90ef8ad480"
+    },
+    {
+     "off": 9192,
+     "old": "203c0030008072302540000424bcdead0001254100204a",
+     "new": "4ef94015c1164e714e714e714e714e714e714e714e714a"
+    },
+    {
+     "off": 9247,
+     "old": "0bb2",
+     "new": "06b2"
+    },
+    {
+     "off": 9657,
+     "old": "0f20",
+     "new": "0720"
+    },
+    {
+     "off": 9682,
+     "old": "e78ded899285",
+     "new": "ed8def89d285"
+    },
+    {
+     "off": 9700,
+     "old": "e7882239404a05e8d28020",
+     "new": "4ef94015c2244e714e7120"
+    },
+    {
+     "off": 9734,
+     "old": "206f002422414281d1c5b0816f122a18528102c522c560f22f",
+     "new": "4ef94015c1c04e714e714e714e714e714e714e714e714e712f"
+    },
+    {
+     "off": 9794,
+     "old": "721320402004e3ace78843",
+     "new": "4ef94015c1624e714e7143"
+    },
+    {
+     "off": 10475,
+     "old": "3800",
+     "new": "a800"
+    },
+    {
+     "off": 745524,
+     "old": "4015c044",
+     "new": "40154ae4"
+    },
+    {
+     "off": 1424662,
+     "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+     "new": "4e71203c009000802540000424bcdead00017212e789254100204ef9400027fe"
+    },
+    {
+     "off": 1424738,
+     "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffff",
+     "new": "4e71204020042200e988e789d0812800484442444ef940002a4c"
+    },
+    {
+     "off": 1424832,
+     "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+     "new": "4fefffd448d707ff2241781f2c03cc84e2886f000028247c8000185845f26c007e06241202c222c245ea008053876600fff25286cc8453806e00ffdc4cd707ff4fef002c4ef940002a26"
+    },
+    {
+     "off": 1424932,
+     "old": "ffffffffffffffffffffffffffffffffffffffffffff",
+     "new": "2200e988e789d0812239404a05e8d2804ef9400029ee"
+    },
+    {
+     "off": 1683194,
+     "old": "0200",
+     "new": "0600"
+    },
+    {
+     "off": 1683335,
+     "old": "0200",
+     "new": "0600"
+    },
+    {
+     "off": 1683351,
+     "old": "3800",
+     "new": "a800"
+    }
+   ]
+  },
+  {
    "id": "6ch-multiout",
    "order": 10,
    "name": "Sortie multipiste 6 canaux (pistes 1-6)",
@@ -170,136 +297,7 @@ window.MC_TWEAKS = {
      "old": "3800",
      "new": "a800"
     }
-   ],
-   "web": "variant"
-  },
-  {
-   "id": "6ch-usbup",
-   "order": 11,
-   "name": "Sortie multipiste 6 canaux, upgrade USB conserve",
-   "description": [
-    "Meme sortie 6 canaux que 6ch-multiout : memes stubs, octet pour octet,",
-    "mais loges dans la cave 0x4015c044 au lieu des descripteurs USB CDC et MIDI seule.",
-    "Cette cave est le masque 0xFF d'un sprite : le sprite est redirige vers un masque",
-    "identique (meme rendu), voir tools/sprites.py et notes/14.",
-    "Descripteurs et table des modes USB restent d'origine : CONFIG > UPGRADE par USB devrait refonctionner.",
-    "Genere par tools/relocate_6ch.py depuis 6ch-multiout (decalage des stubs : -0x3f020).",
-    "ATTENTION : jamais flashe. Variante experimentale, voir notes/13."
-   ],
-   "device": "Model:Cycles",
-   "os": "1.13",
-   "section": 3,
-   "conflicts": [
-    "6ch-multiout"
-   ],
-   "writes": [
-    {
-     "off": 8507,
-     "old": "0f20",
-     "new": "0320"
-    },
-    {
-     "off": 8548,
-     "old": "9b8021",
-     "new": "9e0021"
-    },
-    {
-     "off": 9139,
-     "old": "0f24",
-     "new": "0724"
-    },
-    {
-     "off": 9166,
-     "old": "e788",
-     "new": "ed88"
-    },
-    {
-     "off": 9171,
-     "old": "30ed8a9480",
-     "new": "90ef8ad480"
-    },
-    {
-     "off": 9192,
-     "old": "203c0030008072302540000424bcdead0001254100204a",
-     "new": "4ef94015c1164e714e714e714e714e714e714e714e714a"
-    },
-    {
-     "off": 9247,
-     "old": "0bb2",
-     "new": "06b2"
-    },
-    {
-     "off": 9657,
-     "old": "0f20",
-     "new": "0720"
-    },
-    {
-     "off": 9682,
-     "old": "e78ded899285",
-     "new": "ed8def89d285"
-    },
-    {
-     "off": 9700,
-     "old": "e7882239404a05e8d28020",
-     "new": "4ef94015c2244e714e7120"
-    },
-    {
-     "off": 9734,
-     "old": "206f002422414281d1c5b0816f122a18528102c522c560f22f",
-     "new": "4ef94015c1c04e714e714e714e714e714e714e714e714e712f"
-    },
-    {
-     "off": 9794,
-     "old": "721320402004e3ace78843",
-     "new": "4ef94015c1624e714e7143"
-    },
-    {
-     "off": 10475,
-     "old": "3800",
-     "new": "a800"
-    },
-    {
-     "off": 745524,
-     "old": "4015c044",
-     "new": "40154ae4"
-    },
-    {
-     "off": 1424662,
-     "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-     "new": "4e71203c009000802540000424bcdead00017212e789254100204ef9400027fe"
-    },
-    {
-     "off": 1424738,
-     "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffff",
-     "new": "4e71204020042200e988e789d0812800484442444ef940002a4c"
-    },
-    {
-     "off": 1424832,
-     "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-     "new": "4fefffd448d707ff2241781f2c03cc84e2886f000028247c8000185845f26c007e06241202c222c245ea008053876600fff25286cc8453806e00ffdc4cd707ff4fef002c4ef940002a26"
-    },
-    {
-     "off": 1424932,
-     "old": "ffffffffffffffffffffffffffffffffffffffffffff",
-     "new": "2200e988e789d0812239404a05e8d2804ef9400029ee"
-    },
-    {
-     "off": 1683194,
-     "old": "0200",
-     "new": "0600"
-    },
-    {
-     "off": 1683335,
-     "old": "0200",
-     "new": "0600"
-    },
-    {
-     "off": 1683351,
-     "old": "3800",
-     "new": "a800"
-    }
-   ],
-   "web": "variant"
+   ]
   },
   {
    "id": "sdvintage-snare",
@@ -368,8 +366,35 @@ window.MC_TWEAKS = {
      "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
      "new": "4fefffa4206f006448d77cfc226f0060246800782c2800802228007c928a202800849086ea81ea802e2800702a2800742628008c24280090286800942c6800982828009c2f48004c206800a02f4900542f410038223c600000002f4000402f4a00502f4700582f480044226f004c202900a4a2000800a1c7206900a82a6f0054224d2f47004843e900802e2f00582f49003c2f480030224ade89203c4f5c28f6a0090800a1c0721820402007e2a82207d1c9ef89da88e58802817fffff802040d1fc8000eee4246800042f50002c95ef002ca20a0800a1c0223c466666662f400034a2060800a1c1701824412205e0a92005ef88e58902807fffff802041d1fc8000eee422102068000491c1a0080800a1c0d280a4410800a1c1202f002ce281d0af0034e280d081ac000800a1c0222f0044a2000800a1c1203c0019660d4c0038002441200c207c7834793e06833c6ef35f2203e481d48128419480a4080800a1c22202928e202f0030a2000800a1c1ddc1220e9284a2000800a1c1202f0048d881a0040800a1c1e589d3ef0038dcaf0040d28a2ac1bbef003c6600fefc2c2f00382e3c000001d1202f0038206f0058dcaf00504c070800d1ef00502f2f004c2206eb89226f0050d088234500742343008c2369007c007823420090234c0094234e00989286d280234100702344009c45e9007c41e90084235000804eb9400a92522f2f00502f2f005c4eb9400a9430246f00602f4a006c4cef7cfc000c226f00582f4900704fef00684ef9400a967a"
     }
-   ],
-   "web": "option"
+   ]
+  }
+ ],
+ "features": [
+  {
+   "id": "usb6",
+   "label": "Sortie USB 6 canaux separes",
+   "desc": "Chaque piste sort sur son propre canal USB (48 kHz / 32 bits). Le mix stereo n'est plus envoye en USB : tu melanges les 6 pistes dans ton logiciel.",
+   "variants": [
+    {
+     "id": "6ch-usbup",
+     "label": "Garder la mise a jour de l'OS par USB (recommande)"
+    },
+    {
+     "id": "6ch-multiout",
+     "label": "Version de reference (la mise a jour par USB ne marche plus)"
+    }
+   ]
+  },
+  {
+   "id": "sdvintage",
+   "label": "Machine SD VINTAGE (caisse claire vintage)",
+   "desc": "Ajoute un moteur de caisse claire facon Syntakt, a la place de la machine SNARE. PITCH l'accord, DECAY la longueur, COLOR le cote claquant, SHAPE la brillance, SWEEP le balayage, CONTOUR la duree du corps.",
+   "variants": [
+    {
+     "id": "sdvintage-snare",
+     "label": null
+    }
+   ]
   }
  ]
 };

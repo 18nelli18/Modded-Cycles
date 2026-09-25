@@ -226,7 +226,7 @@ TOUT OK
 **Build** :
 - CLI : `python3 tools/build.py -i model-cycles_OS1.13.syx -t sdvintage-snare`.
   - On peut combiner : `-t 6ch-usbup,sdvintage-snare`.
-- Navigateur (flasher web) : cocher « sdvintage-snare » sous « Machines ajoutées ».
+- Navigateur (flasher web) : cocher la fonctionnalité « Machine SD VINTAGE » (combinable avec la sortie 6 canaux).
 
 **Test** (interface MIDI et OS officiel à portée, comme toujours) :
 1. Démarrage normal ; écrans et sprites habituels intacts (le partage de masques ne doit rien changer à l'affichage).

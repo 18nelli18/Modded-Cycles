@@ -148,9 +148,13 @@ elle vérifie ton `.syx` (identifiant, produit, **chaque checksum de paquet**) p
   `http://localhost:8000/flasher/` (Web MIDI exige `https://` ou `localhost`).
 
 **Construire aussi dans le navigateur.** La page sait fabriquer l'image modifiée à partir de **ton** OS officiel
-(déplie « Construire le `.syx` dans le navigateur ») : dépose `model-cycles_OS1.13.syx`, choisis la sortie USB
-(stéréo d'origine, `6ch-multiout` ou `6ch-usbup`) et, si tu veux, coche la machine **SD VINTAGE** (à la place de SNARE,
-[note 14](notes/14-machine-sd-vintage.md)). Elle applique les patchs, recompresse la section 3, recalcule les checksums
+(déplie « Construire le `.syx` dans le navigateur ») : dépose `model-cycles_OS1.13.syx`, puis **coche les fonctionnalités**
+à ajouter. Chaque fonctionnalité est une case :
+- **Sortie USB 6 canaux séparés** — quand tu la coches, un sous-choix apparaît : garder la mise à jour de l'OS par USB
+  (`6ch-usbup`, recommandé) ou la version de référence (`6ch-multiout`) ;
+- **Machine SD VINTAGE** (caisse claire vintage, à la place de SNARE, [note 14](notes/14-machine-sd-vintage.md)).
+
+Rien de coché = rien à construire. La page applique les patchs cochés, recompresse la section 3, recalcule les checksums
 et le HMAC, puis charge le résultat dans le flasher. C'est le port JS de `tools/build.py` + `tools/mtlib/`
 (`docs/flasher/builder.js`). Elle **exige** le MAIN OS de référence de chaque combinaison (voir [BUILD.md](BUILD.md)), sinon elle refuse.
 

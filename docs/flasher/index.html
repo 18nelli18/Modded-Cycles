@@ -64,7 +64,7 @@
 <script>
   // Estampille de version : si tu vois une ancienne date, ton navigateur sert une
   // copie en cache -> recharge en forcant (Ctrl+Shift+R / Cmd+Shift+R).
-  window.MC_BUILD = "2026-09-25-5";
+  window.MC_BUILD = "2026-09-25-6";
   // Filet de securite : rend visible toute erreur JS (script casse, etc.)
   window.addEventListener("error", function (e) {
     var b = document.getElementById("errbar");
@@ -115,11 +115,10 @@
       <div id="os-drop">Glisse l'OS officiel <code>.syx</code> ici, ou clique.</div>
       <input id="os-file" type="file" accept=".syx" hidden>
       <div id="os-info" class="msg tiny">SHA-256 attendu du <code>.syx</code> officiel&nbsp;: <code>44fe5862…9800640c</code>.</div>
-      <label class="tiny" for="variant" style="display:block;margin-top:10px">Sortie USB</label>
-      <select id="variant"><option value="">stéréo d'origine (pas de mod audio)</option></select>
-      <div class="tiny" style="margin-top:10px">Machines ajoutées</div>
-      <div id="extras"></div>
-      <div class="row" style="margin-top:10px">
+      <div class="tiny" style="margin-top:12px;font-weight:600">Fonctionnalités à ajouter — coche ce que tu veux :</div>
+      <div id="features"></div>
+      <div class="tiny" style="margin-top:4px;color:var(--muted)">Rien de coché = image d'origine (rien à construire). Pour revenir en arrière, flashe l'OS officiel.</div>
+      <div class="row" style="margin-top:12px">
         <button id="build" disabled>Construire</button>
         <a id="download" class="ghost" style="display:none;text-decoration:none;padding:.55em 1.1em;border:1px solid var(--line);border-radius:8px">Télécharger le .syx</a>
       </div>
