@@ -8,7 +8,11 @@
  *
  * La logique SysEx (split, unwrap, checksum) reproduit tools/mtlib/syx.py a
  * l'octet pres ; tools/webflash_check.js le verifie contre le Python.
+ *
+ * Enveloppe dans une IIFE : en <script> classique, les declarations de premier
+ * niveau sont globales et entreraient en collision avec builder.js.
  */
+(function () {
 "use strict";
 
 const ELEKTRON = [0x00, 0x20, 0x3c];
@@ -117,19 +121,32 @@ if (typeof window !== "undefined") {
   }
 
   // ---- MIDI ---------------------------------------------------------------
+  function setStatus(msg, cls) {
+    $("midi-status").textContent = msg;
+    $("midi-status").className = "msg tiny " + (cls || "");
+  }
+
   async function initMidi() {
+    setStatus("Demande d'autorisation MIDI…", "");     // retour immediat au clic
+    log("Activation du MIDI…");
+    if (typeof window.isSecureContext !== "undefined" && !window.isSecureContext) {
+      setStatus("Contexte non securise : Web MIDI exige https:// ou localhost. "
+        + "Ouvre la page en ligne (GitHub Pages) ou via « python3 -m http.server » — pas par double-clic (file://).", "bad");
+      log("Contexte non securise (file:// ?) : Web MIDI desactive par le navigateur.", "bad");
+      return;
+    }
     if (!navigator.requestMIDIAccess) {
-      $("midi-status").textContent =
-        "Web MIDI indisponible. Utilise Chrome, Edge ou Opera sur ordinateur (pas Firefox ni Safari).";
-      $("midi-status").className = "bad";
+      setStatus("Web MIDI indisponible dans ce navigateur. Utilise Chrome, Edge ou Opera sur ordinateur "
+        + "(Firefox et Safari ne gerent pas Web MIDI).", "bad");
+      log("navigator.requestMIDIAccess absent.", "bad");
       return;
     }
     try {
       state.midi = await navigator.requestMIDIAccess({ sysex: true });
     } catch (e) {
-      $("midi-status").textContent =
-        "Acces MIDI refuse. Recharge la page et accepte la demande d'autorisation MIDI (avec SysEx).";
-      $("midi-status").className = "bad";
+      setStatus("Acces MIDI refuse (" + (e && e.name ? e.name : e) + "). Recharge la page et accepte "
+        + "la demande d'autorisation MIDI, SysEx compris.", "bad");
+      log("requestMIDIAccess a echoue : " + (e && e.message ? e.message : e), "bad");
       return;
     }
     state.midi.onstatechange = fillPorts;
@@ -146,9 +163,7 @@ if (typeof window !== "undefined") {
       o.value = "";
       o.textContent = "— aucune sortie MIDI detectee —";
       sel.appendChild(o);
-      $("midi-status").textContent =
-        "Aucune sortie MIDI. Branche ton interface (ou le Model:Cycles en USB) puis clique Rafraichir.";
-      $("midi-status").className = "warn";
+      setStatus("Aucune sortie MIDI. Branche ton interface (ou le Model:Cycles en USB) puis clique Rafraichir.", "warn");
     } else {
       for (const out of outs) {
         const o = document.createElement("option");
@@ -157,8 +172,7 @@ if (typeof window !== "undefined") {
         sel.appendChild(o);
       }
       if ([...sel.options].some((o) => o.value === prev)) sel.value = prev;
-      $("midi-status").textContent = `${outs.length} sortie(s) MIDI detectee(s).`;
-      $("midi-status").className = "ok";
+      setStatus(`${outs.length} sortie(s) MIDI detectee(s). Choisis le bon port ci-dessous.`, "ok");
     }
     refreshReady();
   }
@@ -210,7 +224,8 @@ if (typeof window !== "undefined") {
         "warn"
       );
     }
-    const pace = Math.max(0, parseFloat($("pace").value) || DEFAULT_PACE);
+    const pv = parseFloat($("pace").value);           // 0 explicite honore (Number.isFinite, pas ||)
+    const pace = Number.isFinite(pv) && pv >= 0 ? pv : DEFAULT_PACE;
     const msgs = splitMessages(state.raw);
 
     state.sending = true;
@@ -272,3 +287,4 @@ if (typeof window !== "undefined") {
     drop.addEventListener("drop", (e) => e.dataTransfer.files[0] && loadFile(e.dataTransfer.files[0]));
   });
 }
+})();

@@ -59,6 +59,16 @@
 </style>
 </head>
 <body>
+<div id="errbar" style="display:none;background:#c62828;color:#fff;padding:10px 16px;font:13px/1.5 ui-monospace,monospace"></div>
+<script>
+  // Filet de securite : rend visible toute erreur JS (script casse, etc.)
+  window.addEventListener("error", function (e) {
+    var b = document.getElementById("errbar");
+    if (!b) return;
+    b.style.display = "block";
+    b.textContent = "Erreur : " + (e.message || e.error) + (e.filename ? "  [" + e.filename.split("/").pop() + ":" + e.lineno + "]" : "");
+  });
+</script>
 <div class="wrap">
   <h1>Flasher Web MIDI — Model:Cycles</h1>
   <p class="sub">Envoie un firmware <code>.syx</code> a l'Elektron Model:Cycles (ou Model:Samples) depuis
