@@ -8,19 +8,26 @@ au lieu du seul mix stéréo, puis explorer des extensions (mix + pistes, panora
 > Ce dépôt ne contient que de l'analyse, des tables de diff (octets), des sources assembleur et des outils.
 > Projet non affilié à Elektron, sans lien ni soutien de leur part. Flasher un OS modifié se fait **à ses risques** et peut annuler la garantie.
 
-## Construire
+## Construire et flasher
 
 Chaîne d'outils **Python pur**, sans dépendance ni image firmware : voir [`BUILD.md`](BUILD.md).
 ```sh
 python3 tools/build.py --list
 python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-multiout
 ```
+**Flasher** : scripts clés en main (installent les dépendances, vérifient, guident, flashent) — voir [`FLASH.md`](FLASH.md).
+```sh
+./flash.sh            # macOS / Linux
+flash.bat             # Windows (double-clic)
+```
+⚠️ Le flash passe par **MIDI DIN** (interface → MIDI IN de l'appareil), jamais par l'USB. Lis [`FLASH.md`](FLASH.md) avant.
 
 ## Contenu
 
 | Document | Sujet |
 |---|---|
 | [`BUILD.md`](BUILD.md) | Comment construire une image modifiée (Python pur) |
+| [`FLASH.md`](FLASH.md) | **Comment flasher son Model:Cycles** (guide détaillé + scripts) |
 | [`dossier-technique.md`](dossier-technique.md) | Synthèse du fil Elektronauts « Model:Cycles Q&A with Ess », chaque info sourcée |
 | [`notes/README.md`](notes/README.md) | **Index des notes techniques** et chiffres clés |
 | [`notes/10-faisabilite-fonctionnalites.md`](notes/10-faisabilite-fonctionnalites.md) | **Faisabilité, fonction par fonction** (à lire pour l'état des lieux) |

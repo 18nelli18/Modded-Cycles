@@ -6,5 +6,9 @@ firmware/
 vendor/
 build/
 *.wav
+# Environnement Python créé par flash.sh / flash.bat
+.venv/
+*_mod.syx
 __pycache__/
+*.pyc
 .DS_Store
