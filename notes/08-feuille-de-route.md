@@ -9,14 +9,14 @@ Le projet commence donc par **valider**, puis **améliorer**.
 
 - [x] ~~Retrouver le dépôt de teardown~~ : **supprimé par l'auteur** (confirmé). Rien n'en dépend.
 - [x] **Version d'OS** : la dernière = **1.13** (confirmé, [09 §1](09-analyse-firmware-1.13.md#1-version-provenance-empreintes)). Le patch s'applique tel quel.
-- [x] **Interface MIDI DIN** : l'utilisateur en a une.
+- [x] **Interface MIDI DIN** : l'utilisateur en a une (elle passe par l'adaptateur TRS fourni ; une interface à sortie TRS + câble jack stéréo évite l'adaptateur, cf. [12](12-flash-par-jack-trs.md)).
 - [x] **OS 1.13 téléchargé** (accord donné), SHA-256 du `.syx` vérifié, **build reproductible ✅** ([09 §1](09-analyse-firmware-1.13.md#1-version-provenance-empreintes)). Fichiers dans `firmware/` (non versionné).
 - [ ] Sauvegarder les projets et sons de l'utilisateur (Transfer) **avant tout flash**.
 
 ## Étape 1 (jalon 1) : 6 pistes USB sur un vrai Model:Cycles
 
 - [ ] Build `--target cycles` avec un hash ✅ ([06 §1](06-flash-et-recuperation.md#1-construire-limage---target-cycles)).
-- [ ] Flash par DIN, avec `--allow-any-device` ([06 §2](06-flash-et-recuperation.md#2-flasher)).
+- [ ] Flash par le MIDI IN, avec `--allow-any-device` ([06 §2](06-flash-et-recuperation.md#2-flasher)).
 - [ ] Dérouler le plan de test ([06 §3](06-flash-et-recuperation.md#3-vérifier-premier-vrai-modelcycles)) et **consigner les résultats** dans `tests/`.
 - [ ] Avec l'accord de l'utilisateur : ouvrir l'issue demandée par l'auteur de ms-multi-output.
 
@@ -106,13 +106,13 @@ Mises à jour après l'analyse de l'image 1.13 ([09](09-analyse-firmware-1.13.md
 | Q9 | Le M:C a-t-il un mode USB « MIDI seul » que le patch casserait ? | ✅ **résolu** : oui, `USB MODE = MID` (manuel §12.7.1). Le patch redirige aussi ce mode vers la config 6 canaux ([09 §4](09-analyse-firmware-1.13.md#4-réglages-usb-de-la-machine-manuel--image)). À tester. |
 | Q10 | Quel `-mcpu` de GAS accepte `byterev` ? | `m68k-elf-as --help` |
 | Q11 | Un OS Cycles plus récent que 1.13 existe-t-il ? | ✅ **résolu** : non, 1.13 est la dernière ([09 §1](09-analyse-firmware-1.13.md#1-version-provenance-empreintes)) |
-| Q12 | Le bootloader accepte-t-il un texte de version modifié (`-V`) ? | test prudent, DIN prêt |
+| Q12 | Le bootloader accepte-t-il un texte de version modifié (`-V`) ? | test prudent, MIDI IN prêt |
 | Q13 | Cause du blocage (« wedge ») sous Windows | repro + capture USB |
 | **Q14** | Le patch survit-il à un **changement de mode USB à chaud** (A+M ↔ MID) ? La fonction de « fixup » des descripteurs réécrit les blobs à l'init USB ([09 §5](09-analyse-firmware-1.13.md#5--découverte-importante--les-descripteurs-sont-réécrits-à-lexécution)). | test matériel |
 
 ## Risques
 
-- **Brick « mou »** : récupérable par le menu de démarrage en DIN, si et seulement si une interface DIN est disponible.
+- **Brick « mou »** : récupérable par le menu de démarrage via le MIDI IN, si et seulement si une interface MIDI peut l'atteindre (câble jack stéréo ou adaptateur DIN).
   Brick dur peu probable : le bootloader n'est jamais écrit par les mises à jour d'OS.
 - Garantie ; support Elektron impossible ; usage personnel uniquement.
 - **Ne jamais publier d'image firmware** (originale ou modifiée) : seulement des tables d'octets et des sources.

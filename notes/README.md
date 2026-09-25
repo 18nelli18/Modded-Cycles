@@ -22,8 +22,9 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
    on applique une table de patchs octet par octet, puis on reconditionne et re-signe (HMAC recalculé).
    Aucune signature cryptographique n'empêche le flash.
 3. **Filet de sécurité.** Le bootloader se trouve dans un secteur que les mises à jour d'OS n'écrivent jamais.
-   On revient toujours à l'OS officiel par **MIDI DIN** (le menu de démarrage ignore l'USB).
-   **Une interface MIDI DIN est obligatoire avant tout flash.**
+   On revient toujours à l'OS officiel par l'**entrée MIDI IN** de l'appareil, une prise jack TRS 3,5 mm (le menu de démarrage ignore l'USB).
+   **Une interface MIDI reliée à ce MIDI IN est obligatoire avant tout flash** : sortie TRS + simple câble jack stéréo,
+   ou sortie DIN + adaptateur fourni ([12](12-flash-par-jack-trs.md)).
 4. **Limites du mod actuel** :
    - pistes mono (pan non appliqué) ;
    - delay et reverb absents ;
@@ -59,6 +60,7 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
 | [09-analyse-firmware-1.13.md](09-analyse-firmware-1.13.md) | **Vérifié sur l'image officielle** : structure ELE3, menu de démarrage, réglages USB, réécriture des descripteurs, mixeur |
 | [10-faisabilite-fonctionnalites.md](10-faisabilite-fonctionnalites.md) | **Faisabilité des 10 fonctionnalités souhaitées**, par priorité, avec effort et inconnues matérielles |
 | [11-conception-8-canaux.md](11-conception-8-canaux.md) | **Conception du mode 8 canaux** (6 pistes + mix) : stubs `tracks8`/`prime8` vérifiés, éditions, rings à finaliser |
+| [12-flash-par-jack-trs.md](12-flash-par-jack-trs.md) | **Flasher avec un simple câble jack stéréo** : entrée MIDI TRS (types A et B), interfaces à sortie TRS, piste « sortie casque » simulée |
 
 ## Chiffres clés (OS 1.13)
 

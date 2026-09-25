@@ -13,7 +13,7 @@ de ton .syx, puis reconstruit et re-signe le conteneur (checksums + HMAC-SHA256)
 Sécurité : chaque octet « old » est vérifié avant écriture ; le SHA-256 de la section 3
 d'origine est vérifié ; après build, tous les checksums et le HMAC sont recontrôlés.
 Seule la section 3 est touchée : bootloader et updater sont conservés à l'identique,
-donc la récupération par le STARTUP MENU (DIN) reste disponible.
+donc la récupération par le STARTUP MENU (MIDI IN) reste disponible.
 
 Le moteur bas niveau (mtlib) vient de drumkilla/elektron-model-tweaks (MIT) ; voir tools/mtlib/LICENSE.
 """
@@ -161,7 +161,7 @@ def main():
     print(f"\n  ecrit : {out_path}  ({len(out_raw)} o)")
     print(f"  .syx SHA-256 : {sha(out_raw)}")
     print("  (le hash du .syx depend du packer ; c'est le MAIN OS patche ci-dessus qui fait foi)")
-    print("\n  Flash : STARTUP MENU (FUNC + power on, TRIG 4) puis envoi par MIDI DIN.")
+    print("\n  Flash : STARTUP MENU (FUNC + power on, TRIG 4) puis envoi sur le MIDI IN (jack TRS).")
 
 
 if __name__ == "__main__":

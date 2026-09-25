@@ -1,6 +1,6 @@
 # Flasher son Model:Cycles — guide détaillé
 
-> ⚠️ **À lire en entier avant de flasher.** Installer un firmware modifié **met la garantie en jeu** et peut, en cas d'erreur, rendre l'appareil temporairement inutilisable. Le risque de « brick » **définitif** est très faible car la récupération passe par un bootloader que la mise à jour n'écrit jamais — **à condition d'avoir une interface MIDI DIN** ([§5](#5-récupération-revenir-à-loriginal)). Tu fais ça à tes risques. Rien ici n'est affilié à Elektron.
+> ⚠️ **À lire en entier avant de flasher.** Installer un firmware modifié **met la garantie en jeu** et peut, en cas d'erreur, rendre l'appareil temporairement inutilisable. Le risque de « brick » **définitif** est très faible car la récupération passe par un bootloader que la mise à jour n'écrit jamais — **à condition de pouvoir envoyer du MIDI sur l'entrée MIDI IN de l'appareil** ([§5](#5-récupération-revenir-à-loriginal)). Tu fais ça à tes risques. Rien ici n'est affilié à Elektron.
 
 ---
 
@@ -10,19 +10,23 @@ Un firmware Elektron est un fichier `.syx` (SysEx MIDI). Flasher = **envoyer ce 
 
 Le point le plus important, et le plus souvent mal compris :
 
-> **La mise à jour par le menu de démarrage ne fonctionne QUE par MIDI DIN (les prises rondes à 5 broches), PAS par le port USB de l'appareil.**
+> **La mise à jour par le menu de démarrage ne fonctionne QUE par l'entrée MIDI IN de l'appareil (sa prise jack TRS 3,5 mm), PAS par son port USB.**
 
-C'est écrit noir sur blanc dans le manuel Elektron (§13.4). Il te faut donc :
-- une **interface MIDI USB** (n'importe laquelle : un petit boîtier USB↔MIDI DIN, ou une carte son avec MIDI DIN) ;
-- un **câble MIDI DIN** de la sortie **MIDI OUT de l'interface** vers le **MIDI IN du Model:Cycles**.
+C'est écrit noir sur blanc dans le manuel Elektron (§13.4). Il te faut donc une **interface MIDI USB** dont la sortie arrive sur le **MIDI IN du Model:Cycles**, par l'un de ces branchements :
+- **interface à sortie MIDI en jack TRS 3,5 mm** + **un simple câble jack stéréo 3,5 mm** mâle-mâle. C'est le plus simple. Prends un câble stéréo à 3 contacts (TRS) : ni mono, ni à 4 contacts (TRRS) ;
+- **interface MIDI DIN** (prises rondes à 5 broches) + **l'adaptateur TRS → DIN fourni** avec le Model:Cycles (kit CA-3) et un câble DIN. Un câble DIN mâle → jack TRS fait la même chose d'un seul tenant.
 
-Le port USB du Model:Cycles sert à l'audio et à la mise à jour « normale » via l'appli Transfer, mais **pas** à récupérer un appareil, et notre mod multipiste casse justement l'USB. Donc pour le modding : **tout passe par le DIN**.
+Le MIDI IN du Model:Cycles accepte les deux brochages TRS (type A et type B) : n'importe quelle sortie MIDI TRS convient.
+En revanche, la **sortie casque** de l'ordinateur ne suffit pas : elle sort de l'audio, pas du MIDI.
+Détails, liste d'interfaces et piste expérimentale « sortie casque » : [`notes/12-flash-par-jack-trs.md`](notes/12-flash-par-jack-trs.md).
+
+Le port USB du Model:Cycles sert à l'audio et à la mise à jour « normale » via l'appli Transfer, mais **pas** à récupérer un appareil, et notre mod multipiste casse justement l'USB. Donc pour le modding : **tout passe par le MIDI IN**.
 
 ---
 
 ## 2. Préparatifs (à faire une fois)
 
-- [ ] **Une interface MIDI DIN**, reliée : interface MIDI OUT → Model:Cycles MIDI IN.
+- [ ] **Une interface MIDI** dont la sortie est reliée au MIDI IN du Model:Cycles : sortie TRS + câble jack stéréo, ou sortie DIN + adaptateur fourni ([§1](#1-comprendre-ce-quon-fait)).
 - [ ] **Le firmware officiel `model-cycles_OS1.13.syx`** (dézippé depuis elektron.se). C'est **aussi ton image de secours** : garde-le à portée.
 - [ ] **Sauvegarde tes projets** avec Elektron Transfer (le flash peut affecter le contenu).
 - [ ] **Le fichier `.syx` à flasher** : soit l'officiel, soit un firmware modifié construit avec [`BUILD.md`](BUILD.md) :
@@ -74,14 +78,14 @@ flash.bat model-cycles_OS1.13_mod.syx
 
 ## 4. La séquence de flash, écran par écran
 
-1. **Branche** l'interface (OUT → MIDI IN de l'appareil) et l'interface à l'ordinateur.
+1. **Branche** l'interface (sa sortie MIDI → MIDI IN de l'appareil, [§1](#1-comprendre-ce-quon-fait)) et l'interface à l'ordinateur.
 2. **Mets l'appareil en réception** :
    > éteindre → **maintenir [FUNC]** → **allumer** → relâcher → **[TRIG 4]** (OS UPGRADE)
 
    L'écran affiche **`READY TO RECEIVE`**.
 3. **Lance le script** et laisse-le envoyer. Surveille l'écran de l'appareil :
    - il doit passer de `READY TO RECEIVE` à **`RECEIVING…`** en quelques secondes ;
-   - **s'il reste sur `READY TO RECEIVE`**, l'image est ignorée en silence → tu n'as pas choisi le bon port (prends celui de **l'interface**, pas « Model:Cycles »), ou le câble n'est pas OUT→IN.
+   - **s'il reste sur `READY TO RECEIVE`**, l'image est ignorée en silence → tu n'as pas choisi le bon port (prends celui de **l'interface**, pas « Model:Cycles »), ou le câble n'est pas OUT→IN, ou c'est un câble jack mono.
 4. La progression s'affiche (~5 à 7 min). **Ne coupe RIEN**, surtout quand l'écran indique **`UPDATING FLASH`** : c'est le seul moment vraiment délicat.
 5. L'appareil **redémarre tout seul** quand c'est fini. Il peut aussi mettre à jour son « bootstrap » au premier redémarrage — laisse-le faire.
 
@@ -104,7 +108,7 @@ Si l'appareil ne démarre plus, se bloque, ou que tu veux simplement revenir en 
    flash.bat model-cycles_OS1.13.syx           # Windows
    ```
 
-Ça marche **même si le firmware principal est cassé**, parce que le menu de démarrage vit dans une zone que la mise à jour n'écrit jamais. C'est pour cette raison que l'**interface DIN est obligatoire** : c'est le seul chemin de secours.
+Ça marche **même si le firmware principal est cassé**, parce que le menu de démarrage vit dans une zone que la mise à jour n'écrit jamais. C'est pour cette raison qu'une **interface MIDI reliée au MIDI IN** (par câble jack stéréo ou par l'adaptateur DIN) est obligatoire : c'est le seul chemin de secours.
 
 ---
 
@@ -112,7 +116,7 @@ Si l'appareil ne démarre plus, se bloque, ou que tu veux simplement revenir en 
 
 | Symptôme | Cause probable | Solution |
 |---|---|---|
-| L'écran reste sur `READY TO RECEIVE`, la progression monte quand même | mauvais port, ou câble pas OUT→IN, ou port USB de l'appareil choisi | choisis le port de **l'interface MIDI** ; vérifie le câble ; en STARTUP MENU l'USB ne marche pas |
+| L'écran reste sur `READY TO RECEIVE`, la progression monte quand même | mauvais port, câble pas OUT→IN, câble jack mono (TS) au lieu de stéréo (TRS), ou port USB de l'appareil choisi | choisis le port de **l'interface MIDI** ; vérifie le câble (jack stéréo à 3 contacts) ; en STARTUP MENU l'USB ne marche pas |
 | Bloqué sur `RECEIVING…` indéfiniment | un paquet a été perdu | sans danger : éteins/rallume, re-entre en OS UPGRADE, relance avec `--pace 2.0` |
 | `aucun port MIDI de sortie détecté` | interface non branchée / non reconnue | branche l'interface avant de lancer ; vérifie qu'elle apparaît dans le système |
 | `python-rtmidi` ne s'installe pas | compilateur ou en-têtes manquants | suis le message du script (Xcode sur macOS, ALSA sur Linux, C++ Build Tools sur Windows) |
@@ -127,6 +131,6 @@ python3 tools/flash.py model-cycles_OS1.13.syx --port "NOM DE TON INTERFACE" --s
 
 ## 7. Méthode manuelle (sans les scripts)
 
-Tu peux aussi flasher avec n'importe quel logiciel SysEx (SysEx Librarian sur macOS, l'outil C6 d'Elektron, etc.) : mets l'appareil en OS UPGRADE et envoie le `.syx` par le **port DIN**. Nos scripts font exactement ça, en ajoutant la vérification et la cadence adaptée.
+Tu peux aussi flasher avec n'importe quel logiciel SysEx (SysEx Librarian sur macOS, l'outil C6 d'Elektron, etc.) : mets l'appareil en OS UPGRADE et envoie le `.syx` sur le port de l'**interface reliée au MIDI IN**. Nos scripts font exactement ça, en ajoutant la vérification et la cadence adaptée.
 
 Détails techniques du transport et de la récupération : [`notes/06-flash-et-recuperation.md`](notes/06-flash-et-recuperation.md).

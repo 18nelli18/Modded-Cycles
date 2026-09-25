@@ -5,8 +5,9 @@ REM    flash.bat                   auto-detecte le .syx, installe, verifie, flas
 REM    flash.bat mon.syx           flashe ce fichier precis
 REM    flash.bat --verify mon.syx  verifie seulement (rien envoye)
 REM
-REM /!\ Le flash se fait par MIDI DIN (5 broches), interface -> MIDI IN de l'appareil.
-REM     Lis FLASH.md avant. Tu flashes a tes risques (garantie ; brick possible mais recuperable en DIN).
+REM /!\ Le flash se fait par l'entree MIDI IN de l'appareil (jack TRS 3,5 mm) : interface a sortie
+REM     TRS + cable jack stereo, ou interface DIN + adaptateur fourni. Jamais par l'USB.
+REM     Lis FLASH.md avant. Tu flashes a tes risques (garantie ; brick possible mais recuperable par le MIDI IN).
 setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
@@ -83,7 +84,8 @@ REM ---- 5. rappel de branchement + flash -------------------------------------
 echo.
 echo ----------------------------------------------------------------------------
 echo  AVANT DE CONTINUER
-echo  1. Relie la sortie MIDI OUT de ton interface au MIDI IN du Model:Cycles (DIN).
+echo  1. Relie la sortie MIDI de ton interface au MIDI IN du Model:Cycles (jack TRS) :
+echo     cable jack stereo si l'interface a une sortie TRS, sinon DIN + adaptateur fourni.
 echo  2. Sauvegarde tes projets (Elektron Transfer) - le flash peut les affecter.
 echo  3. Passe l'appareil en mode reception :
 echo         eteindre -^> maintenir [FUNC] -^> allumer -^> [TRIG 4] (OS UPGRADE)

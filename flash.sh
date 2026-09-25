@@ -7,8 +7,9 @@
 #   ./flash.sh mon.syx              # flashe ce fichier précis
 #   ./flash.sh --verify mon.syx     # vérifie seulement (rien envoyé)
 #
-# ⚠️ Le flash se fait par MIDI DIN (5 broches), interface -> MIDI IN de l'appareil.
-#    Lis FLASH.md avant. Tu flashes à tes risques (garantie, brick possible mais récupérable en DIN).
+# ⚠️ Le flash se fait par l'entrée MIDI IN de l'appareil (jack TRS 3,5 mm) : interface à sortie
+#    TRS + câble jack stéréo, ou interface DIN + adaptateur fourni. Jamais par l'USB.
+#    Lis FLASH.md avant. Tu flashes à tes risques (garantie, brick possible mais récupérable par le MIDI IN).
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -90,7 +91,8 @@ cat <<'EOF'
 
 ────────────────────────────────────────────────────────────────────────────
  AVANT DE CONTINUER
- 1. Relie la sortie MIDI OUT de ton interface au MIDI IN du Model:Cycles (DIN).
+ 1. Relie la sortie MIDI de ton interface au MIDI IN du Model:Cycles (jack TRS) :
+    câble jack stéréo si l'interface a une sortie TRS, sinon DIN + adaptateur fourni.
  2. Sauvegarde tes projets (Elektron Transfer) — le flash peut les affecter.
  3. Passe l'appareil en mode réception :
         éteindre → maintenir [FUNC] → allumer → [TRIG 4] (OS UPGRADE)

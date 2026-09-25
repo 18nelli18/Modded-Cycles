@@ -2,7 +2,8 @@
 
 > ⚠️ Aucune image firmware Elektron n'est fournie ici. Tu apportes **ta propre** copie de l'OS officiel,
 > téléchargée sur elektron.se. Flasher un firmware modifié se fait **à tes risques** (garantie, brick possible).
-> Une **interface MIDI DIN** est obligatoire pour pouvoir revenir en arrière (STARTUP MENU).
+> Une **interface MIDI reliée au MIDI IN** de l'appareil (jack TRS : câble jack stéréo depuis une sortie TRS,
+> ou adaptateur DIN fourni) est obligatoire pour pouvoir revenir en arrière (STARTUP MENU).
 
 ## Chaîne d'outils
 
@@ -43,8 +44,9 @@ Le hash du `.syx` lui-même varie selon le packer ; c'est le MAIN OS décompress
 ## Flasher (rappel)
 
 1. **STARTUP MENU** : éteindre, maintenir **[FUNC]**, allumer, **[TRIG 4]** (OS UPGRADE).
-2. Envoyer le `.syx` modifié par **MIDI DIN** (SysEx Librarian, C6, ou `elektron-firmware-tool`).
-   L'upgrade par le menu de démarrage **ne marche pas en USB MIDI** — DIN obligatoire.
+2. Envoyer le `.syx` modifié sur le **MIDI IN** de l'appareil (`flash.sh` / `flash.bat`, SysEx Librarian ou C6),
+   par câble jack stéréo depuis une interface à sortie TRS, ou par l'adaptateur DIN fourni.
+   L'upgrade par le menu de démarrage **ne marche pas en USB MIDI** — MIDI IN obligatoire.
 3. Détails, tests et récupération : [`notes/06-flash-et-recuperation.md`](notes/06-flash-et-recuperation.md).
 
 ## Autre chaîne d'outils

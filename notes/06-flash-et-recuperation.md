@@ -11,7 +11,8 @@ Procédures tirées de ms-multi-output (README, `build.py`, `tools/flash.py`), c
       `[À FAIRE]` Relever la version installée, et vérifier si Elektron a publié un OS plus récent que 1.13.
 - [ ] **`model-cycles_OS1.13.syx` officiel** (zip sur elektron.se), SHA-256 `44fe586269631a0ca7da25a3383fc6733c314809505fc3cc52f1e0ed9800640c`.
       C'est **aussi l'image de secours** : la garder à portée.
-- [ ] **Interface MIDI DIN** : sortie de l'interface → **MIDI IN** du M:C. **Le menu de démarrage ignore l'USB MIDI.** Sans DIN, pas de retour possible.
+- [ ] **Interface MIDI** : sa sortie → **MIDI IN** du M:C (jack TRS 3,5 mm, types A et B acceptés), par câble jack stéréo depuis une sortie TRS
+      ou par l'adaptateur DIN fourni ([12](12-flash-par-jack-trs.md)). **Le menu de démarrage ignore l'USB MIDI.** Sans MIDI IN, pas de retour possible.
 - [ ] **Sauvegarde** des projets et sons (Elektron Transfer).
 - [ ] Alimentation stable ; ne pas toucher à la machine pendant `UPDATING FLASH`.
 - [ ] Python ≥ 3.9, compilateur C, venv avec `mido`, `python-rtmidi` (et `numpy` pour l'analyse).
@@ -48,10 +49,10 @@ Sortie attendue (`mc-multi-output.syx`) :
    Pour le Cycles (`0x11`), **`--allow-any-device` est obligatoire**. Le README ne le signale pas.
 3. **Envoi** :
    ```sh
-   .venv/bin/python tools/flash.py mc-multi-output.syx --allow-any-device --port "NOM DU PORT DIN" --pace 1.4 --send
+   .venv/bin/python tools/flash.py mc-multi-output.syx --allow-any-device --port "NOM DE L'INTERFACE MIDI" --pace 1.4 --send
    ```
    ⚠️ **Piège n°2** : le garde-fou contre le port USB MIDI de l'appareil ne teste que la chaîne `model:samples`.
-   Il **ne reconnaît pas `Elektron Model:Cycles`**. Choisir le port de l'**interface DIN**, sinon rien n'est écrit et aucune erreur n'apparaît.
+   Il **ne reconnaît pas `Elektron Model:Cycles`**. Choisir le port de l'**interface MIDI** reliée au MIDI IN, sinon rien n'est écrit et aucune erreur n'apparaît.
 4. **Surveiller l'écran** : `READY TO RECEIVE` doit passer à **`RECEIVING...`** en quelques secondes.
    S'il reste sur `READY TO RECEIVE`, l'image est **ignorée sans erreur** (mauvais conteneur ou mauvais port), même si le compteur monte jusqu'à 100 %.
 5. Durée **~6 à 7 min** (≈ 890 ko à 3125 o/s × 1,4). **Ne rien couper pendant `UPDATING FLASH`.** L'appareil redémarre seul.
@@ -83,14 +84,14 @@ C'est une publication, donc **demander l'accord de l'utilisateur avant de poster
 ## 4. Récupération (revenir à l'OS officiel)
 
 1. Éteindre, maintenir **[FUNC]**, allumer, **[TRIG 4]** (OS UPGRADE).
-2. Envoyer l'**OS officiel** par **DIN** :
+2. Envoyer l'**OS officiel** par le **MIDI IN** :
    ```sh
-   .venv/bin/python tools/flash.py model-cycles_OS1.13.syx --allow-any-device --port "NOM DU PORT DIN" --pace 1.4 --send
+   .venv/bin/python tools/flash.py model-cycles_OS1.13.syx --allow-any-device --port "NOM DE L'INTERFACE MIDI" --pace 1.4 --send
    ```
 - Cela marche **même si le MAIN OS ne démarre plus** : le bootloader est dans un secteur que les mises à jour n'écrivent jamais.
   ms-multi-output l'a utilisé « de nombreuses fois » pendant le développement.
 - Tant que le mod est installé, **`CONFIG → UPGRADE` par USB ne fonctionne plus** (descripteurs du bootloader réutilisés comme code).
-  La voie DIN du menu de démarrage n'est pas affectée. Reflasher l'OS d'origine rétablit l'upgrade USB.
+  La voie MIDI IN du menu de démarrage n'est pas affectée. Reflasher l'OS d'origine rétablit l'upgrade USB.
 
 ## 5. Cross-flash (pour mémoire : M:S → Cycles 6 canaux)
 

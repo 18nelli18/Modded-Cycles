@@ -40,8 +40,8 @@ L'OS Cycles a **4 sections** (et non les hypothèses de [02](02-format-os-syx.md
 
 - **`[FAIT]`** **Menu de démarrage** (manuel §13) : maintenir **[FUNC]** à l'allumage, puis **[TRIG 1]** EXIT, **[TRIG 2]** EMPTY RESET, **[TRIG 3]** FACTORY RESET, **[TRIG 4]** OS UPGRADE.
   Ma note [06 §2](06-flash-et-recuperation.md#2-flasher) (« TRIG 4 ») est donc **confirmée**.
-- **`[FAIT]`** **« USB MIDI transfer is not possible when upgrading the OS from the STARTUP menu. »** (manuel §13.4) → la récupération n'est possible **que par DIN**. C'est bien la raison d'exiger une interface DIN.
-- **`[FAIT]`** L'upgrade normal (`CONFIG → UPGRADE`, §12.6) passe par USB avec Transfer, **mais** le mod casse l'USB-audio ; l'upgrade par le menu de démarrage (DIN) reste la voie sûre.
+- **`[FAIT]`** **« USB MIDI transfer is not possible when upgrading the OS from the STARTUP menu. »** (manuel §13.4) → la récupération n'est possible **que par l'entrée MIDI IN** (jack TRS du M:C, avec ou sans adaptateur DIN, cf. [12](12-flash-par-jack-trs.md)). C'est bien la raison d'exiger une interface MIDI.
+- **`[FAIT]`** L'upgrade normal (`CONFIG → UPGRADE`, §12.6) passe par USB avec Transfer, **mais** le mod casse l'USB-audio ; l'upgrade par le menu de démarrage (MIDI IN) reste la voie sûre.
 
 ## 4. Réglages USB de la machine (manuel + image)
 
@@ -105,7 +105,7 @@ Ils sont indépendants et combinables. Bon terrain d'essai à faible risque pour
 
 - ✅ **1.13 confirmée** : pas de portage de version à prévoir (question Q11 résolue).
 - ✅ **Build reproductible confirmé** avec l'outil figé `a5bce9a` (question de [05 §3](05-methode-patch.md#3-build-reproductible-modèle-à-suivre) résolue : c'est bien ce commit).
-- ✅ **Procédure de secours confirmée par le manuel** (DIN obligatoire).
+- ✅ **Procédure de secours confirmée par le manuel** (MIDI IN obligatoire).
 - ⚠️ **Nouveau garde-fou** pour les extensions : éviter les 4 premiers octets des blobs (§5).
 - ▶️ **Prochaine étape RE utile** : finir de qualifier le buffer de mix (§6) avant de tenter le mode 8 canaux.
 
