@@ -13,7 +13,8 @@ de ton .syx, puis reconstruit et re-signe le conteneur (checksums + HMAC-SHA256)
 Sécurité : chaque octet « old » est vérifié avant écriture ; le SHA-256 de la section 3
 d'origine est vérifié ; après build, tous les checksums et le HMAC sont recontrôlés.
 Deux tweaks déclarés incompatibles (champ « conflicts ») sont refusés ensemble. Un tweak
-qui écrit dans une zone 0xFF (cave) est refusé si l'image d'origine pointe dans cette zone.
+qui écrit dans une zone 0xFF (cave) est refusé si l'image d'origine pointe dans cette zone,
+sauf si cette référence est elle-même réécrite par un des tweaks choisis.
 Seule la section 3 est touchée : bootloader et updater sont conservés à l'identique,
 donc la récupération par le STARTUP MENU (MIDI IN) reste disponible.
 
@@ -79,8 +80,11 @@ def check_conflicts(chosen):
 
 
 def cave_zones(main_os, chosen):
-    """Blocs 0xFF de l'image d'origine ou un tweak ecrit (caves), etendus au bloc entier : [(lo, hi)] en offsets."""
-    zones = set()
+    """Zones 0xFF de l'image d'origine ou un tweak ecrit (caves) : [(lo, hi)] en offsets.
+    lo recule jusqu'au debut du bloc 0xFF (un objet qui commencerait avant l'ecriture
+    serait touche) ; hi s'arrete a la fin des octets ecrits (un objet qui commence
+    apres n'est pas touche, meme si ses premiers octets valent 0xFF)."""
+    zones = {}                                  # debut du bloc -> fin ecrite la plus haute
     for t in chosen:
         for w in t["writes"]:
             old = bytes.fromhex(w["old"])
@@ -89,10 +93,8 @@ def cave_zones(main_os, chosen):
             lo, hi = w["off"], w["off"] + len(old)
             while lo > 0 and main_os[lo - 1] == 0xFF:
                 lo -= 1
-            while hi < len(main_os) and main_os[hi] == 0xFF:
-                hi += 1
-            zones.add((lo, hi))
-    return sorted(zones)
+            zones[lo] = max(hi, zones.get(lo, hi))
+    return sorted(zones.items())
 
 
 def refs_into(main_os, zones):
@@ -138,14 +140,33 @@ def refs_into(main_os, zones):
     return sure, doubt
 
 
-def check_caves(main_os, chosen, force):
-    """Refuse d'ecrire dans une zone 0xFF que l'image d'origine reference : elle ne serait pas libre."""
+def check_caves(main_os, chosen, force, dirty=None, patched=None):
+    """Refuse d'ecrire dans une zone 0xFF que l'image d'origine reference : elle ne serait pas libre.
+    Une reference dont les octets sont eux-memes reecrits par les tweaks choisis (dirty) n'existe
+    plus dans l'image patchee (patched) : elle est listee a part et ne bloque pas (ex. : pointeur de
+    sprite redirige vers un autre masque identique pour liberer le sien, notes/14). Une constante
+    reecrite qui pointe encore dans la zone reste bloquante."""
     zones = cave_zones(main_os, chosen)
     if not zones:
         return
     for lo, hi in zones:
         print(f"  zone 0xFF utilisee : 0x{lo + BASE:08x}..0x{hi + BASE - 1:08x} ({hi - lo} o)")
     sure, doubt = refs_into(main_os, zones)
+    if dirty is not None:
+        def rewritten(hit):
+            o = hit[0] - BASE
+            if not any(dirty[o:o + 4]):
+                return False
+            if patched is not None and hit[2].startswith("constante"):
+                v = int.from_bytes(patched[o:o + 4], "big")
+                if any(lo + BASE <= v < hi + BASE for lo, hi in zones):
+                    return False                    # toujours une reference vers la zone
+            return True
+        gone = [h for h in sure + doubt if rewritten(h)]
+        sure = [h for h in sure if not rewritten(h)]
+        doubt = [h for h in doubt if not rewritten(h)]
+        for va, t, kind in gone:
+            print(f"  reference reecrite par un tweak (neutralisee) : 0x{va:08x} -> 0x{t:08x} ({kind})")
     starts = {lo + BASE for lo, _ in zones}
 
     def show(hits):
@@ -240,7 +261,7 @@ def main():
         print(f"  + {t['name']}")
 
     patched, dirty = apply_writes(main_os, chosen)
-    check_caves(main_os, chosen, args.force_cave)
+    check_caves(main_os, chosen, args.force_cave, dirty, patched)
     print(f"  {sum(dirty)} octets changes sur {len(patched)}")
     print(f"  MAIN OS patche SHA-256 : {sha(patched)}")
     if args.expect_mainos and sha(patched) != args.expect_mainos.lower():

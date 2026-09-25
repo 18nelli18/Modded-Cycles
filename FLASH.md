@@ -148,10 +148,15 @@ elle vérifie ton `.syx` (identifiant, produit, **chaque checksum de paquet**) p
   `http://localhost:8000/flasher/` (Web MIDI exige `https://` ou `localhost`).
 
 **Construire aussi dans le navigateur.** La page sait fabriquer l'image modifiée à partir de **ton** OS officiel
-(déplie « Construire le `.syx` dans le navigateur ») : dépose `model-cycles_OS1.13.syx`, choisis la variante
-(`6ch-multiout` ou `6ch-usbup`), et elle applique le patch, recompresse la section 3, recalcule les checksums
+(déplie « Construire le `.syx` dans le navigateur ») : dépose `model-cycles_OS1.13.syx`, puis **coche les fonctionnalités**
+à ajouter. Chaque fonctionnalité est une case :
+- **Sortie USB 6 canaux séparés** — quand tu la coches, un sous-choix apparaît : garder la mise à jour de l'OS par USB
+  (`6ch-usbup`, recommandé) ou la version de référence (`6ch-multiout`) ;
+- **Machine SD VINTAGE** (caisse claire vintage, à la place de SNARE, [note 14](notes/14-machine-sd-vintage.md)).
+
+Rien de coché = rien à construire. La page applique les patchs cochés, recompresse la section 3, recalcule les checksums
 et le HMAC, puis charge le résultat dans le flasher. C'est le port JS de `tools/build.py` + `tools/mtlib/`
-(`docs/flasher/builder.js`). Pour `6ch-multiout`, elle **exige** le MAIN OS de référence connu-bon, sinon elle refuse.
+(`docs/flasher/builder.js`). Elle **exige** le MAIN OS de référence de chaque combinaison (voir [BUILD.md](BUILD.md)), sinon elle refuse.
 
 Fidélité vérifiée sans matériel : `tools/webflash_check.sh` compare le **vérificateur** JS à `tools/mtlib/syx.py`,
 et `tools/webbuild_check.sh` compare le **constructeur** JS à `tools/build.py` (aPLib + conteneur + HMAC) à

@@ -16,7 +16,7 @@ Machine **pas encore reçue** : tout ce qui suit est du travail « sans matérie
 ## Ce qui est acquis sans matériel
 
 - **Chaîne d'outils autonome** (Python pur, sans dépendance C, sans image firmware versionnée) : `tools/build.py` + `tools/mtlib/`. Voir [BUILD.md](../BUILD.md).
-- **Caves de code** : ~6 Ko de zones `0xff` libres dans le MAIN OS, dont plusieurs blocs de ~1 Ko ([09 §4bis](09-analyse-firmware-1.13.md#4bis-caves-de-code-libres-0xff--ressource-pour-toutes-les-extensions)). De quoi loger les stubs de toutes les fonctions ci-dessous **sauf** le moteur Sample.
+- **Caves de code** : ~6 Ko de zones `0xff` dans le MAIN OS ([09 §4bis](09-analyse-firmware-1.13.md#4bis-caves-de-code-libres-0xff--ressource-pour-toutes-les-extensions)). Les 4 plus grandes sont des masques de sprites : 2,7 Ko s'en libèrent sans effet visible ([14 §5](14-machine-sd-vintage.md#5-place-libre--les-caves-0xff-étaient-des-masques-de-sprites)), dont 1,4 Ko pris par SD VINTAGE et 154 o par `6ch-usbup`. De quoi loger des stubs, pas de gros moteurs.
 - **Tweaks QoL prêts** (drumkilla, testés sur vrai matériel) : latching-mute, trig-preview, browser-scroll ([09 §4ter](09-analyse-firmware-1.13.md#4ter-tweaks-qol-prêts-à-lemploi-drumkilla-testés-sur-vrai-matériel)) — bon test de la procédure de flash à faible risque.
 - **Le mixeur est localisé** : blocs mono par piste → coefficients L/R (pan) par piste → somme stéréo ; envois FX dérivés de la somme ([09 §6](09-analyse-firmware-1.13.md#6-le-mixeur--où-sont-le-volume-le-pan-et-les-envois-fx-vérifié)).
 

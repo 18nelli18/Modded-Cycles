@@ -432,20 +432,22 @@ function checkConflicts(chosen) {
 }
 
 // Verifie que les zones 0xFF ou un tweak ecrit sont libres dans l'image d'origine.
-// Renvoie { zones, sure, doubt } ; leve une Error si une constante 32 bits pointe dedans (sauf force).
-function checkCaves(mainOs, chosen, force) {
-  const zones = [];
-  const seen = new Set();
+// Zone = [debut du bloc 0xFF, fin des octets ecrits). Une reference dont les octets sont
+// reecrits par les tweaks (dirty) n'existe plus : listee dans « gone », elle ne bloque pas,
+// sauf une constante qui, dans l'image patchee (patched), pointe encore dans la zone.
+// Renvoie { zones, sure, doubt, gone } ; leve une Error si une constante 32 bits pointe dedans (sauf force).
+function checkCaves(mainOs, chosen, force, dirty, patched) {
+  const top = new Map();                        // debut du bloc -> fin ecrite la plus haute
   for (const t of chosen) for (const w of t.writes) {
     const old = fromHex(w.old);
     if (old.length < 2 || !old.every((b) => b === 0xff)) continue;
-    let lo = w.off, hi = w.off + old.length;
+    let lo = w.off;
+    const hi = w.off + old.length;
     while (lo > 0 && mainOs[lo - 1] === 0xff) lo--;
-    while (hi < mainOs.length && mainOs[hi] === 0xff) hi++;
-    const key = lo + ":" + hi;
-    if (!seen.has(key)) { seen.add(key); zones.push([lo, hi]); }
+    top.set(lo, Math.max(hi, top.get(lo) || hi));
   }
-  if (!zones.length) return { zones: [], sure: [], doubt: [] };
+  const zones = [...top.entries()].sort((a, b) => a[0] - b[0]);
+  if (!zones.length) return { zones: [], sure: [], doubt: [], gone: [] };
   const vz = zones.map(([lo, hi]) => [lo + BASE, hi + BASE]);
   const loAll = Math.min(...vz.map((z) => z[0])), hiAll = Math.max(...vz.map((z) => z[1]));
   const inside = (t) => t >= loAll && t < hiAll && vz.some(([a, b]) => t >= a && t < b);
@@ -469,12 +471,27 @@ function checkCaves(mainOs, chosen, force) {
     }
     if (t !== null && inside(t)) doubt.push([va, t, kind]);
   }
+  const gone = [];
+  if (dirty) {
+    const rewritten = ([va, , kind]) => {
+      const o = va - BASE;
+      if (!(dirty[o] || dirty[o + 1] || dirty[o + 2] || dirty[o + 3])) return false;
+      if (patched && kind.startsWith("constante")) {
+        const v = ((patched[o] << 24) >>> 0) + (patched[o + 1] << 16) + (patched[o + 2] << 8) + patched[o + 3];
+        if (inside(v)) return false;                // toujours une reference vers la zone
+      }
+      return true;
+    };
+    for (const list of [sure, doubt])
+      for (let k = list.length - 1; k >= 0; k--)
+        if (rewritten(list[k])) gone.unshift(...list.splice(k, 1));
+  }
   if (sure.length && !force) {
     const lines = sure.map(([va, t]) => `  0x${va.toString(16)} -> 0x${t.toString(16)}`).join("\n");
     throw new Error("l'image d'origine pointe dans une zone 0xFF ou un tweak ecrit :\n" + lines
       + "\nZone peut-etre non libre : construction refusee.");
   }
-  return { zones, sure, doubt };
+  return { zones, sure, doubt, gone };
 }
 
 /* Construit le .syx modifie.
@@ -493,7 +510,7 @@ function build(raw, device, chosen, opts = {}) {
 
   checkConflicts(chosen);
   const { data: patched, dirty } = applyWrites(mainOs, chosen);
-  const caves = checkCaves(mainOs, chosen, opts.force);
+  const caves = checkCaves(mainOs, chosen, opts.force, dirty, patched);
   const patchedSha = hex(sha256(patched));
   if (opts.expectMainOsSha && patchedSha !== opts.expectMainOsSha)
     throw new Error(`MAIN OS patche ${patchedSha}, attendu ${opts.expectMainOsSha}`);

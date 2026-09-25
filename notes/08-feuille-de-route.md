@@ -20,6 +20,7 @@ Le projet commence donc par **valider**, puis **améliorer**.
 - [ ] Dérouler le plan de test ([06 §3](06-flash-et-recuperation.md#3-vérifier-premier-vrai-modelcycles)) et **consigner les résultats** dans `tests/`.
 - [ ] Avec l'accord de l'utilisateur : ouvrir l'issue demandée par l'auteur de ms-multi-output.
 - [ ] Puis tester la variante **`6ch-usbup`**, qui garde l'upgrade USB : protocole en [13 §6](13-6ch-upgrade-usb.md#6-protocole-de-test-matériel-à-faire).
+- [ ] Tester la machine **SD VINTAGE** (étape 1, à la place de SNARE) : protocole en [14 §7](14-machine-sd-vintage.md#7-étape-1--build-et-test-sur-le-matériel-à-faire). Puis l'étape 2, 7ᵉ machine ([14 §8](14-machine-sd-vintage.md#8-étape-2--en-faire-une-7ᵉ-machine-plan-à-faire)).
 
 ## Étape 2 : environnement de rétro-ingénierie sur l'OS Cycles 1.13
 
@@ -30,7 +31,9 @@ Le projet commence donc par **valider**, puis **améliorer**.
 - [ ] Trouver le **mixeur** (références à `0x80001858`, [07 §5](07-snippets.md#5-trouver-le-mixeur-pour-le-pan-les-fx-et-le-mode-8-canaux-à-tester)) : coefficients de pan, bus d'envoi FX, saturation du master.
 - [ ] Identifier le **contexte d'exécution du feeder USB** (interruption ? niveau ?) et sa marge temporelle.
 - [ ] Cartographier la **RAM libre** après le ring et les **caves de code** non référencées ([05 §1](05-methode-patch.md#1-technique-du-détour-et-de-la-code-cave)).
+  - ✅ Les grands blocs `0xFF` sont des masques de sprites ; 2,7 Ko libérables sans effet visible ([14 §5](14-machine-sd-vintage.md#5-place-libre--les-caves-0xff-étaient-des-masques-de-sprites)).
 - [ ] Option : harnais Unicorn pour rejouer le chemin du feeder (méthode d'octamax).
+  - ✅ Fait pour le **moteur de synthèse** (`tools/emu/`, EMAC corrigée) : [14 §4](14-machine-sd-vintage.md#4-banc-démulation-du-moteur-toolsemu).
 
 ## Étape 3 : extensions, de la plus simple à la plus lourde
 
@@ -114,7 +117,7 @@ Mises à jour après l'analyse de l'image 1.13 ([09](09-analyse-firmware-1.13.md
 | Q12 | Le bootloader accepte-t-il un texte de version modifié (`-V`) ? | test prudent, MIDI IN prêt |
 | Q13 | Cause du blocage (« wedge ») sous Windows | repro + capture USB |
 | **Q14** | Le patch survit-il à un **changement de mode USB à chaud** (A+M ↔ MID) ? La fonction de « fixup » des descripteurs réécrit les blobs à l'init USB ([09 §5](09-analyse-firmware-1.13.md#5--découverte-importante--les-descripteurs-sont-réécrits-à-lexécution)). | test matériel |
-| **Q15** | La cave `0x40154ae4` est-elle vraiment libre **à l'exécution** (aucune écriture via base + décalage) ? | `build.py` la contrôle statiquement sur l'image ; endurance sur matériel ([13 §6](13-6ch-upgrade-usb.md#6-protocole-de-test-matériel-à-faire)) |
+| **Q15** | La cave de `6ch-usbup` est-elle vraiment libre **à l'exécution** (aucune écriture via base + décalage) ? | 🟡 `0x40154ae4` était le masque d'un sprite : stubs déplacés dans le masque libéré `0x4015c044` ([14 §5](14-machine-sd-vintage.md#5-place-libre--les-caves-0xff-étaient-des-masques-de-sprites)) ; endurance sur matériel ([13 §6](13-6ch-upgrade-usb.md#6-protocole-de-test-matériel-à-faire)) |
 | **Q16** | Avec `6ch-usbup`, `CONFIG → UPGRADE` par USB refonctionne-t-il ? | test matériel : revenir à l'OS officiel par USB ([13 §6](13-6ch-upgrade-usb.md#6-protocole-de-test-matériel-à-faire), étape 7) |
 
 ## Risques

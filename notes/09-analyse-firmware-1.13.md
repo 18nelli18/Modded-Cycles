@@ -59,18 +59,23 @@ Mon décodage des blobs (interfaces Audio Control + MIDIStreaming pour les 101 o
 
 ## 4bis. Caves de code libres (0xff) — ressource pour toutes les extensions
 
-- **`[FAIT]`** Le MAIN OS contient ~**6 Ko de zones remplies de `0xff`**, non référencées, réparties en 21 blocs. Les plus gros :
+> ⚠️ **Correction** ([14 §5](14-machine-sd-vintage.md#5-place-libre--les-caves-0xff-étaient-des-masques-de-sprites)).
+> - Les 4 plus gros blocs ne sont **pas** libres : ce sont les **masques** (tout à `0xFF`) de 4 sprites, passés au constructeur `Bitmap` `0x40070172`.
+> - On en libère 3 en faisant lire à leur sprite le masque identique `0x40154ae4` (même rendu, `tools/sprites.py`) : `0x4015c044` (720 o), `0x4016cae8` et `0x4018a788` (1024 o chacun).
+> - Le « 1025ᵉ » octet de `0x4016cae8` est le 1er octet du plan image du sprite.
 
-| VA | Taille |
-|---|---|
-| `0x40154ae4` | 1040 o |
-| `0x4016cae8` | 1025 o |
-| `0x4018a788` | 1024 o |
-| `0x4015c044` | 720 o |
-| `0x40148662`, `0x401489fa` | 396 o chacun |
-| une dizaine d'autres | 120–182 o |
+- **`[FAIT]`** Le MAIN OS contient ~**6 Ko de zones remplies de `0xff`**, réparties en 21 blocs. Les plus gros :
 
-- **`[FAIT]`** C'est **bien mieux que réutiliser les blobs de descripteurs** (§5) : ces caves ne sont pas réécrites à l'exécution, et les utiliser **ne casse pas l'upgrade USB**.
+| VA | Taille | Nature |
+|---|---|---|
+| `0x40154ae4` | 1040 o | masque du sprite 32×260 — gardé intact, masque partagé |
+| `0x4016cae8` | 1024 o (+1) | masque du sprite 64×128 — libérable |
+| `0x4018a788` | 1024 o | masque du sprite 64×128 — libérable |
+| `0x4015c044` | 720 o | masque du sprite 64×90 — libérable |
+| `0x40148662`, `0x401489fa` | 396 o chacun | caves des tweaks de drumkilla |
+| une dizaine d'autres | 120–182 o | |
+
+- **`[FAIT]`** C'est **bien mieux que réutiliser les blobs de descripteurs** (§5) : ces zones ne sont pas réécrites à l'exécution (masques de sprites statiques), et les utiliser **ne casse pas l'upgrade USB**.
 - **`[FAIT]`** Les 3 tweaks de `drumkilla/elektron-model-tweaks` (ci-dessous) écrivent justement dans les caves autour de `0x40147xxx`–`0x40148xxx` : usage confirmé.
 - **`[À FAIRE]`** Avant d'utiliser une cave, confirmer qu'aucun pointeur (opérande ou table) ne la vise, et qu'elle n'est pas du BSS initialisé à l'exécution (méthode `scan_hole` / `mcfw.code_refs`).
 

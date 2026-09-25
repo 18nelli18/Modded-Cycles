@@ -12,17 +12,21 @@ BASE = 0x40000400
 SECT_LEN = 1744192
 DEV = json.loads(pathlib.Path("tweaks/model-cycles_OS1.13/device.json").read_text())
 TWEAKS = {}
-for f in ("10-6ch-multiout", "11-6ch-usbup"):
+for f in ("10-6ch-multiout", "11-6ch-usbup", "20-sdvintage-snare"):
     TWEAKS[f] = json.loads(pathlib.Path(f"tweaks/model-cycles_OS1.13/{f}.json").read_text())
+BY_ID = {t["id"]: t for t in TWEAKS.values()}
+COMBOS = [["6ch-multiout"], ["6ch-usbup"], ["sdvintage-snare"], ["6ch-usbup", "sdvintage-snare"]]
 
 # --- 1. MAIN OS synthetique -------------------------------------------------
 main = bytearray((i * 37 + 11) & 0xFF for i in range(SECT_LEN))   # remplissage deterministe
 
-# cave 0xFF (comme dans l'image reelle : 0x40154ae4, 1040 o), bordee de non-0xFF
-cave_off = 0x40154ae4 - BASE
-main[cave_off - 1] = 0x4E
-main[cave_off:cave_off + 1040] = b"\xff" * 1040
-main[cave_off + 1040] = 0x4E
+# masques 0xFF de sprites (comme dans l'image reelle, tools/sprites.py), bordes de non-0xFF
+import sprites                                   # noqa: E402
+for va, (size, _, _) in list(sprites.MASKS.items()) + [(sprites.SHARED_MASK, (1040, 0, ""))]:
+    o = va - BASE
+    main[o - 1] = 0x4E
+    main[o:o + size] = b"\xff" * size
+    main[o + size] = 0x4E
 
 # octets 'old' de chaque tweak, a leur offset
 for t in TWEAKS.values():
@@ -73,12 +77,14 @@ OUT.joinpath("synth.syx").write_bytes(raw)
 meta = {"section_sha256": hashlib.sha256(main).hexdigest(), "device": DEV["device"], "os": DEV["os"]}
 
 # --- 4. sorties attendues via le pipeline Python de reference ---------------
-def ref_build(raw, tweak):
+def ref_build(raw, tweaks):
     stream, info = unwrap(raw)
     c = container.parse(stream)
     sec3 = next(s for s in c["sections"] if s["id"] == 3)
     m, ops = aplib.depack(c["blob"][sec3["off"]:sec3["off"] + sec3["size"]])
-    patched, dirty = build.apply_writes(m, [tweak])
+    build.check_conflicts(tweaks)
+    patched, dirty = build.apply_writes(m, tweaks)
+    build.check_caves(m, tweaks, False, dirty)   # doit passer sans --force-cave
     new_s3 = aplib.repack(patched, ops, dirty)
     msg = c["blob"][:len(c["blob"]) - container.DIGEST_LEN]
     expect = c["blob"][len(c["blob"]) - container.DIGEST_LEN:]
@@ -93,11 +99,31 @@ def ref_build(raw, tweak):
     return out, hashlib.sha256(patched).hexdigest()
 
 meta["expect"] = {}
-for name, t in TWEAKS.items():
-    out, sha = ref_build(raw, t)
-    OUT.joinpath(f"expect_{t['id']}.syx").write_bytes(out)
-    meta["expect"][t["id"]] = {"sha_mainos": sha, "bytes": len(out)}
+for ids in COMBOS:
+    combo = "+".join(ids)
+    out, sha = ref_build(raw, [BY_ID[i] for i in ids])
+    OUT.joinpath(f"expect_{combo}.syx").write_bytes(out)
+    meta["expect"][combo] = {"ids": ids, "sha_mainos": sha, "bytes": len(out)}
+
+# --- 5. regle des caves, partagee avec builder.js -----------------------------
+# ecrire dans un masque encore reference -> refus ; avec la redirection du sprite -> accepte
+zone = 0x4016cae8
+refuse = {"id": "cave-refusee", "writes": [{"off": zone - BASE, "old": "ffff", "new": "4e71"}]}
+accept = {"id": "cave-acceptee", "writes": refuse["writes"] + [sprites.redirect_write(zone)]}
+same = dict(sprites.redirect_write(zone))
+same["new"] = same["old"]                        # « reecriture » qui garde le pointeur : doit rester bloquante
+noop = {"id": "cave-reecriture-vide", "writes": refuse["writes"] + [same]}
+for t, verdict in ((refuse, "refuse"), (noop, "refuse"), (accept, "accepte")):
+    patched, dirty = build.apply_writes(main, [t])
+    try:
+        build.check_caves(main, [t], False, dirty, patched)
+        got = "accepte"
+    except SystemExit:
+        got = "refuse"
+    if got != verdict:
+        raise SystemExit(f"!! check_caves : {t['id']} {got}, attendu {verdict}")
+meta["cave_rule"] = {"refuse": refuse, "noop": noop, "accept": accept}
 
 OUT.joinpath("meta.json").write_text(json.dumps(meta))
 print("synth.syx", len(raw), "o ; section3 sha", meta["section_sha256"][:16],
-      "; tweaks", list(meta["expect"]))
+      "; builds", list(meta["expect"]), "; regle des caves OK (Python)")

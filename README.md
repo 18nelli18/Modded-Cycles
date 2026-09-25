@@ -15,6 +15,7 @@ Chaîne d'outils **Python pur**, sans dépendance ni image firmware : voir [`BUI
 python3 tools/build.py --list
 python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-multiout   # référence (testée en cross-flash)
 python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup      # garde l'upgrade USB (jamais flashée)
+python3 tools/build.py -i model-cycles_OS1.13.syx -t sdvintage-snare  # machine SD VINTAGE à la place de SNARE (jamais flashée)
 ```
 **Flasher** : scripts clés en main (installent les dépendances, vérifient, guident, flashent) — voir [`FLASH.md`](FLASH.md).
 ```sh
@@ -47,6 +48,7 @@ Lis [`FLASH.md`](FLASH.md) avant.
 |---|---|
 | Sortie multipiste **6 canaux** | ✅ code prêt, buildable ici — **attend un test matériel** |
 | Garder l'**upgrade USB** avec le mod 6 canaux | 🟡 variante `6ch-usbup` prête et vérifiée en émulation — **attend un test matériel** ([note 13](notes/13-6ch-upgrade-usb.md)) |
+| Moteur de percussion en plus : **SD VINTAGE** (caisse claire vintage, d'après le Syntakt) | 🟡 étape 1 (à la place de SNARE) prête et validée dans le moteur émulé — **attend un test matériel** ; 7ᵉ machine : plan prêt ([note 14](notes/14-machine-sd-vintage.md)) |
 | Sortie multipiste **12 canaux** (pan par piste) | 🟡 faisable, à développer (via un jalon **8 canaux**) |
 | Modifier les **algos d'effet** | 🔴 non (réglages de paramètres : 🟡) |
 | **Moteur Sample** (façon Model:Samples) | 🔴 hors de portée comme mod du M:C |
@@ -62,6 +64,8 @@ Lis [`FLASH.md`](FLASH.md) avant.
 - Le mod « 6 pistes en USB » **existe** ([scottmetoyer/ms-multi-output](https://github.com/scottmetoyer/ms-multi-output), MIT),
   porté ici au format tweak ; notre build **reproduit le MAIN OS connu-bon à l'octet près**. Mais il n'a **jamais été flashé sur un vrai Model:Cycles**.
 - L'OS officiel **1.13** (dernière version) a été analysé en profondeur ([note 09](notes/09-analyse-firmware-1.13.md)).
+- Le moteur de synthèse (6 machines = 6 *mappings* d'un même moteur FM) est décodé et **émulé** (`tools/emu/`). Un moteur de plus,
+  **SD VINTAGE**, est écrit en C, compilé pour le ColdFire et validé dans le vrai moteur émulé ([note 14](notes/14-machine-sd-vintage.md)).
 - **Jalon 1** : valider le 6 canaux sur un vrai Model:Cycles. Rien n'a encore été flashé.
 
 Détails et étapes : [`notes/08-feuille-de-route.md`](notes/08-feuille-de-route.md).
