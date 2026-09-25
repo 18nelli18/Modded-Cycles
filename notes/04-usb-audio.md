@@ -58,6 +58,7 @@ Profondeur 4 (24 trames) : ❌ 25 % de doublons. Profondeur 8 (48 trames) : ✅.
   **`[À FAIRE]`** La dumper et la décoder entièrement depuis l'image (snippet dans [07](07-snippets.md#4-dumper-la-table-des-modes-usb-et-les-descripteurs-à-tester)).
 - **Conséquence du patch `[HYP]`** : les configurations Full Speed et CDC sont écrasées. **Un hôte (ou un hub) Full Speed seul n'est plus supporté** ;
   `CONFIG → UPGRADE` par USB est perdu (`[FAIT]` README).
+  La variante `6ch-usbup` loge les stubs dans une cave et laisse ces configurations d'origine ([13](13-6ch-upgrade-usb.md)).
 
 ## 4. Bande passante : l'USB n'est pas le facteur limitant
 

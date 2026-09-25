@@ -20,7 +20,10 @@ Le MIDI IN du Model:Cycles accepte les deux brochages TRS (type A et type B) : n
 En revanche, la **sortie casque** de l'ordinateur ne suffit pas : elle sort de l'audio, pas du MIDI.
 Détails, liste d'interfaces et piste expérimentale « sortie casque » : [`notes/12-flash-par-jack-trs.md`](notes/12-flash-par-jack-trs.md).
 
-Le port USB du Model:Cycles sert à l'audio et à la mise à jour « normale » via l'appli Transfer, mais **pas** à récupérer un appareil, et notre mod multipiste casse justement l'USB. Donc pour le modding : **tout passe par le MIDI IN**.
+Le port USB du Model:Cycles sert à l'audio et à la mise à jour « normale » via l'appli Transfer, mais **pas** à récupérer un appareil.
+Et le mod 6 canaux de référence (`6ch-multiout`) casse justement cette mise à jour par USB.
+La variante `6ch-usbup` devrait la garder, mais c'est à tester ([note 13](notes/13-6ch-upgrade-usb.md)).
+Donc pour le modding : **tout passe par le MIDI IN**, et le secours y passera toujours.
 
 ---
 
@@ -33,7 +36,8 @@ Le port USB du Model:Cycles sert à l'audio et à la mise à jour « normale » 
   ```
   python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-multiout
   ```
-  → produit `model-cycles_OS1.13_mod.syx`.
+  → produit `model-cycles_OS1.13_mod.syx`. Avec `-t 6ch-usbup`, tu obtiens la variante qui devrait garder la mise à jour par USB
+  (jamais flashée : suis le protocole de la [note 13](notes/13-6ch-upgrade-usb.md) §6).
 
 ---
 
@@ -129,7 +133,32 @@ python3 tools/flash.py model-cycles_OS1.13.syx --port "NOM DE TON INTERFACE" --s
 
 ---
 
-## 7. Méthode manuelle (sans les scripts)
+## 7. Depuis Chrome, sans rien installer (Web MIDI)
+
+Le dossier [`docs/flasher/`](docs/flasher/) est une page qui fait la même chose que `flash.py`, mais **dans le navigateur** :
+elle vérifie ton `.syx` (identifiant, produit, **chaque checksum de paquet**) puis l'envoie par **Web MIDI**.
+
+- Ça marche sur **Chrome, Edge ou Opera** sur ordinateur (Web MIDI n'existe pas sur Firefox ni Safari).
+- **Tout reste local** : le `.syx` n'est envoyé à aucun serveur, et aucune image firmware n'est fournie — tu déposes la tienne.
+- **Choix du port**, exactement comme avec les scripts :
+  - pour le **STARTUP MENU** (OS UPGRADE), choisis ton **interface MIDI** (sa sortie va au MIDI IN de l'appareil) ;
+  - pour **`CONFIG → UPGRADE`** (OS en marche), tu peux viser le port **« Model:Cycles »** directement en USB.
+- La page tourne une fois **GitHub Pages** activé (Settings → Pages → *Deploy from a branch*), sur
+  `https://18nelli18.github.io/Modded-Cycles/flasher/`. En local : `python3 -m http.server` dans `docs/`, puis
+  `http://localhost:8000/flasher/` (Web MIDI exige `https://` ou `localhost`).
+
+**Construire aussi dans le navigateur.** La page sait fabriquer l'image modifiée à partir de **ton** OS officiel
+(déplie « Construire le `.syx` dans le navigateur ») : dépose `model-cycles_OS1.13.syx`, choisis la variante
+(`6ch-multiout` ou `6ch-usbup`), et elle applique le patch, recompresse la section 3, recalcule les checksums
+et le HMAC, puis charge le résultat dans le flasher. C'est le port JS de `tools/build.py` + `tools/mtlib/`
+(`docs/flasher/builder.js`). Pour `6ch-multiout`, elle **exige** le MAIN OS de référence connu-bon, sinon elle refuse.
+
+Fidélité vérifiée sans matériel : `tools/webflash_check.sh` compare le **vérificateur** JS à `tools/mtlib/syx.py`,
+et `tools/webbuild_check.sh` compare le **constructeur** JS à `tools/build.py` (aPLib + conteneur + HMAC) à
+l'octet près, sur une image synthétique. Les tables de patchs de la page viennent de `docs/flasher/tweaks.js`,
+généré depuis `tweaks/` par `tools/gen_flasher_tweaks.py` (`--check` en CI).
+
+## 8. Méthode manuelle (sans les scripts)
 
 Tu peux aussi flasher avec n'importe quel logiciel SysEx (SysEx Librarian sur macOS, l'outil C6 d'Elektron, etc.) : mets l'appareil en OS UPGRADE et envoie le `.syx` sur le port de l'**interface reliée au MIDI IN**. Nos scripts font exactement ça, en ajoutant la vérification et la cadence adaptée.
 

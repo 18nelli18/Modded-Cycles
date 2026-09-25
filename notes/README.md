@@ -29,7 +29,7 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
    - pistes mono (pan non appliqué) ;
    - delay et reverb absents ;
    - plus de mix stéréo en USB ;
-   - `CONFIG → UPGRADE` par USB cassé tant que le mod est installé ;
+   - `CONFIG → UPGRADE` par USB cassé tant que le mod est installé. La variante `6ch-usbup` ([13](13-6ch-upgrade-usb.md)) devrait le garder, à tester ;
    - hôte USB High Speed obligatoire ;
    - le LEVEL de piste est-il appliqué avant le point de prélèvement ? Inconnu sur le Cycles.
 
@@ -61,6 +61,7 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
 | [10-faisabilite-fonctionnalites.md](10-faisabilite-fonctionnalites.md) | **Faisabilité des 10 fonctionnalités souhaitées**, par priorité, avec effort et inconnues matérielles |
 | [11-conception-8-canaux.md](11-conception-8-canaux.md) | **Conception du mode 8 canaux** (6 pistes + mix) : stubs `tracks8`/`prime8` vérifiés, éditions, rings à finaliser |
 | [12-flash-par-jack-trs.md](12-flash-par-jack-trs.md) | **Flasher avec un simple câble jack stéréo** : entrée MIDI TRS (types A et B), interfaces à sortie TRS, piste « sortie casque » simulée |
+| [13-6ch-upgrade-usb.md](13-6ch-upgrade-usb.md) | **Variante `6ch-usbup`** : stubs déplacés dans une cave, descripteurs et table des modes USB d'origine, pour garder l'upgrade USB. Vérifications (émulation) et protocole de test |
 
 ## Chiffres clés (OS 1.13)
 

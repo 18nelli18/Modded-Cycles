@@ -19,6 +19,7 @@ Le projet commence donc par **valider**, puis **améliorer**.
 - [ ] Flash par le MIDI IN, avec `--allow-any-device` ([06 §2](06-flash-et-recuperation.md#2-flasher)).
 - [ ] Dérouler le plan de test ([06 §3](06-flash-et-recuperation.md#3-vérifier-premier-vrai-modelcycles)) et **consigner les résultats** dans `tests/`.
 - [ ] Avec l'accord de l'utilisateur : ouvrir l'issue demandée par l'auteur de ms-multi-output.
+- [ ] Puis tester la variante **`6ch-usbup`**, qui garde l'upgrade USB : protocole en [13 §6](13-6ch-upgrade-usb.md#6-protocole-de-test-matériel-à-faire).
 
 ## Étape 2 : environnement de rétro-ingénierie sur l'OS Cycles 1.13
 
@@ -85,6 +86,10 @@ Points à confirmer d'abord :
 ### E. Récupérer l'upgrade USB et le Full Speed
 
 - Déplacer les stubs dans une vraie cave de code ([05 §1](05-methode-patch.md#1-technique-du-détour-et-de-la-code-cave)) et ne rediriger que les entrées nécessaires de la table des modes.
+- ▶️ **Fait, à tester sur matériel** : variante `6ch-usbup` ([13](13-6ch-upgrade-usb.md)).
+  Les stubs sont dans la cave `0x40154ae4` ; il s'avère qu'**aucune** entrée de la table n'a besoin d'être redirigée, car la config audio n'y figure pas.
+  Descripteurs et table restent d'origine.
+- Full Speed : non traité. La config audio Full Speed éventuelle n'est pas identifiée.
 
 ### F. Portage vers d'autres versions d'OS
 
@@ -103,12 +108,14 @@ Mises à jour après l'analyse de l'image 1.13 ([09](09-analyse-firmware-1.13.md
 | Q5 | Le buffer de mix : linéaire ? post-saturation ? avec FX ? | ▶️ **en cours** : mixeur localisé (`0x40056930`), reste à qualifier la source du feeder ([09 §6](09-analyse-firmware-1.13.md#6-le-mixeur--où-sont-le-volume-le-pan-et-les-envois-fx-vérifié)) |
 | Q6 | Contexte d'exécution du feeder (ISR, IPL) et marge CPU | Ghidra (vecteurs, `move #…,sr`) |
 | Q8 | Comportement sur un hôte ou un hub Full Speed après patch | test matériel |
-| Q9 | Le M:C a-t-il un mode USB « MIDI seul » que le patch casserait ? | ✅ **résolu** : oui, `USB MODE = MID` (manuel §12.7.1). Le patch redirige aussi ce mode vers la config 6 canaux ([09 §4](09-analyse-firmware-1.13.md#4-réglages-usb-de-la-machine-manuel--image)). À tester. |
+| Q9 | Le M:C a-t-il un mode USB « MIDI seul » que le patch casserait ? | ✅ **résolu** : oui, `USB MODE = MID` (manuel §12.7.1). Le patch redirige aussi ce mode vers la config 6 canaux ([09 §4](09-analyse-firmware-1.13.md#4-réglages-usb-de-la-machine-manuel--image)) ; pas la variante `6ch-usbup` ([13](13-6ch-upgrade-usb.md)). À tester. |
 | Q10 | Quel `-mcpu` de GAS accepte `byterev` ? | `m68k-elf-as --help` |
 | Q11 | Un OS Cycles plus récent que 1.13 existe-t-il ? | ✅ **résolu** : non, 1.13 est la dernière ([09 §1](09-analyse-firmware-1.13.md#1-version-provenance-empreintes)) |
 | Q12 | Le bootloader accepte-t-il un texte de version modifié (`-V`) ? | test prudent, MIDI IN prêt |
 | Q13 | Cause du blocage (« wedge ») sous Windows | repro + capture USB |
 | **Q14** | Le patch survit-il à un **changement de mode USB à chaud** (A+M ↔ MID) ? La fonction de « fixup » des descripteurs réécrit les blobs à l'init USB ([09 §5](09-analyse-firmware-1.13.md#5--découverte-importante--les-descripteurs-sont-réécrits-à-lexécution)). | test matériel |
+| **Q15** | La cave `0x40154ae4` est-elle vraiment libre **à l'exécution** (aucune écriture via base + décalage) ? | `build.py` la contrôle statiquement sur l'image ; endurance sur matériel ([13 §6](13-6ch-upgrade-usb.md#6-protocole-de-test-matériel-à-faire)) |
+| **Q16** | Avec `6ch-usbup`, `CONFIG → UPGRADE` par USB refonctionne-t-il ? | test matériel : revenir à l'OS officiel par USB ([13 §6](13-6ch-upgrade-usb.md#6-protocole-de-test-matériel-à-faire), étape 7) |
 
 ## Risques
 
