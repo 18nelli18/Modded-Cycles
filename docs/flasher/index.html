@@ -1,173 +1,310 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Flasher Web MIDI — Model:Cycles</title>
-<meta name="description" content="Flasher un firmware .syx sur l'Elektron Model:Cycles depuis Chrome, par Web MIDI. Aucune image firmware n'est fournie ni transmise a un serveur.">
-<link rel="icon" href="data:,">
+<title>Model:Cycles Flasher</title>
+<meta name="description" content="Install mods on the Elektron Model:Cycles from your browser, over Web MIDI. No firmware is provided or uploaded: you bring your own official OS file.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%232458e6'/%3E%3Cpath d='M5 8.5l2 2 4-5' stroke='white' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
   :root{
-    --bg:#f6f7f9; --card:#fff; --ink:#1a1d21; --muted:#5b636c; --line:#dfe3e8;
-    --accent:#2f6df6; --ok:#0a7d38; --warn:#9a6700; --bad:#c62828; --code:#f0f2f5;
+    --bg:#f4f5f7; --card:#fff; --ink:#15181c; --muted:#5d6670; --line:#e1e4e9; --soft:#f0f2f5;
+    --accent:#2458e6; --accent-ink:#fff; --accent-soft:#e8eefd;
+    --ok:#0b7a3d; --ok-soft:#e6f4ec; --warn:#8a5a00; --warn-soft:#fbf1dc; --bad:#be2530; --bad-soft:#fbe9ea;
+    --shadow:0 1px 2px rgba(20,24,30,.05),0 4px 16px rgba(20,24,30,.04);
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#0f1216; --card:#171b21; --ink:#e8ebee; --muted:#9aa3ad; --line:#2a313a;
-      --accent:#5b8dff; --ok:#4cc977; --warn:#e0b341; --bad:#ff6b6b; --code:#0c0f13;
+      --bg:#0d0f13; --card:#161a20; --ink:#e8ebef; --muted:#97a1ac; --line:#272d36; --soft:#1d2229;
+      --accent:#6e9bff; --accent-ink:#0b1020; --accent-soft:#1b2745;
+      --ok:#52cf88; --ok-soft:#14291e; --warn:#e7ba4c; --warn-soft:#2c2413; --bad:#ff6d73; --bad-soft:#321a1c;
+      --shadow:none;
     }
   }
   :root[data-theme="dark"]{
-    --bg:#0f1216; --card:#171b21; --ink:#e8ebee; --muted:#9aa3ad; --line:#2a313a;
-    --accent:#5b8dff; --ok:#4cc977; --warn:#e0b341; --bad:#ff6b6b; --code:#0c0f13;
+    --bg:#0d0f13; --card:#161a20; --ink:#e8ebef; --muted:#97a1ac; --line:#272d36; --soft:#1d2229;
+    --accent:#6e9bff; --accent-ink:#0b1020; --accent-soft:#1b2745;
+    --ok:#52cf88; --ok-soft:#14291e; --warn:#e7ba4c; --warn-soft:#2c2413; --bad:#ff6d73; --bad-soft:#321a1c;
+    --shadow:none;
   }
   *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
   body{margin:0;background:var(--bg);color:var(--ink);
-    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-  .wrap{max-width:760px;margin:0 auto;padding:28px 16px 80px}
-  h1{font-size:1.5rem;margin:.2em 0 .1em}
-  .sub{color:var(--muted);margin:0 0 1.4em}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 18px;margin:14px 0}
-  .card h2{font-size:1.05rem;margin:0 0 .6em;display:flex;gap:.5em;align-items:center}
-  .step{width:1.6em;height:1.6em;flex:none;border-radius:50%;background:var(--accent);color:#fff;
-    display:grid;place-items:center;font-size:.85rem;font-weight:700}
+    font:15.5px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
   a{color:var(--accent)}
-  button,select,input[type=number]{font:inherit;color:inherit}
-  button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:.55em 1.1em;cursor:pointer}
-  button.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}
-  button:disabled{opacity:.45;cursor:not-allowed}
-  select,input[type=number]{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.5em .6em}
-  select{max-width:100%;width:100%}
-  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  .row>*{min-width:0}
-  #drop,#os-drop{border:2px dashed var(--line);border-radius:10px;padding:22px;text-align:center;cursor:pointer;color:var(--muted)}
-  #drop.over,#os-drop.over{border-color:var(--accent);color:var(--ink)}
-  details summary{color:var(--accent)}
-  #download{color:var(--accent)}
-  .msg{margin-top:.6em;font-size:.92rem}
-  .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)}
-  .barwrap{height:12px;background:var(--code);border-radius:6px;overflow:hidden;margin:.7em 0 .3em}
-  #bar{height:100%;width:0;background:var(--accent);transition:width .15s}
-  #log{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:10px;
-    height:180px;overflow:auto;font:12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap}
-  code,kbd{background:var(--code);border:1px solid var(--line);border-radius:5px;padding:.05em .4em;font-size:.9em}
-  .warnbox{border-left:4px solid var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent);
-    padding:12px 14px;border-radius:0 8px 8px 0}
-  ul{margin:.4em 0;padding-left:1.3em} li{margin:.2em 0}
-  label.ack{display:flex;gap:.6em;align-items:flex-start;cursor:pointer}
-  label.ack input{margin-top:.28em}
-  .tiny{font-size:.85rem;color:var(--muted)}
+  code,kbd{font:.88em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--soft);
+    border:1px solid var(--line);border-radius:5px;padding:.08em .38em;white-space:nowrap}
+  kbd{border-bottom-width:2px}
+  .wrap{max-width:720px;margin:0 auto;padding:28px 16px 64px}
+
+  /* header */
+  .top{display:flex;gap:16px;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
+  .top h1{font-size:1.6rem;line-height:1.2;margin:0 0 .25em;letter-spacing:-.01em}
+  .top p{margin:0;color:var(--muted);max-width:52ch}
+  .lang{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:none}
+  .lang button{background:transparent;color:var(--muted);border:0;padding:.4em .7em;font-family:inherit;font-weight:600;font-size:.78rem;line-height:1;cursor:pointer}
+  .lang button[aria-pressed="true"]{background:var(--ink);color:var(--card)}
+
+  .alert{border-radius:10px;padding:12px 14px;margin:0 0 14px;font-size:.95rem}
+  .alert.bad{background:var(--bad-soft);color:var(--bad);border:1px solid color-mix(in srgb,var(--bad) 35%,transparent)}
+
+  /* steps */
+  .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin:0 0 14px;box-shadow:var(--shadow)}
+  .step>header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .step h2{font-size:1.08rem;margin:0}
+  .num{width:28px;height:28px;flex:none;border-radius:50%;display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:.9rem}
+  .step.done .num{background:var(--ok);color:#fff;font-size:0}
+  .step.done .num::after{content:"";width:11px;height:6px;border:2.5px solid #fff;border-top:0;border-right:0;
+    transform:translateY(-1px) rotate(-45deg)}
+  .hint{color:var(--muted);font-size:.9rem;margin:.6em 0 0}
+
+  /* segmented tabs */
+  .seg{display:inline-flex;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px;margin-bottom:14px}
+  .seg button{border:0;background:transparent;color:var(--muted);font-family:inherit;font-weight:600;font-size:.92rem;line-height:1;padding:.6em 1em;border-radius:7px;cursor:pointer}
+  .seg button[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+
+  /* feature cards */
+  .feat{display:block;border:1.5px solid var(--line);border-radius:12px;padding:14px 14px 14px 46px;margin:0 0 10px;
+    position:relative;cursor:pointer;transition:border-color .12s,background .12s}
+  .feat:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+  .feat.on{border-color:var(--accent);background:var(--accent-soft)}
+  .feat>input{position:absolute;left:15px;top:16px;width:18px;height:18px;margin:0;accent-color:var(--accent);cursor:pointer}
+  .feat .ttl{font-weight:650;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+  .feat .desc{color:var(--muted);font-size:.9rem;margin-top:3px}
+  .tag{font-family:inherit;font-weight:650;font-size:.66rem;line-height:1;letter-spacing:.04em;text-transform:uppercase;color:var(--warn);
+    background:var(--warn-soft);border-radius:99px;padding:.32em .55em}
+  .variants{margin-top:10px;display:grid;gap:6px}
+  .variants label{display:flex;gap:9px;align-items:flex-start;background:var(--card);border:1px solid var(--line);
+    border-radius:9px;padding:9px 11px;cursor:pointer;font-size:.92rem}
+  .variants input{margin-top:.25em;accent-color:var(--accent)}
+  .variants small{display:block;color:var(--muted)}
+  .note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--line);padding:2px 0 2px 10px;margin:12px 0 0}
+
+  /* drop zone */
+  .drop{display:flex;align-items:center;gap:14px;border:2px dashed var(--line);border-radius:12px;padding:18px 18px;
+    cursor:pointer;transition:border-color .12s,background .12s}
+  .drop:hover,.drop:focus-visible,.drop.over{border-color:var(--accent);background:var(--accent-soft);outline:none}
+  .drop svg{flex:none;color:var(--accent)}
+  .drop strong{display:block}
+  .drop span{color:var(--muted);font-size:.9rem}
+  .drop.loaded{border-style:solid;border-color:var(--ok);background:var(--ok-soft)}
+  .drop.loaded svg{color:var(--ok)}
+
+  /* status lines */
+  .status{margin-top:12px;font-size:.93rem}
+  .status:empty{display:none}
+  .status .row{display:flex;gap:9px;align-items:flex-start;margin:.25em 0}
+  .dot{width:8px;height:8px;border-radius:50%;margin-top:.5em;flex:none;background:var(--muted)}
+  .is-ok{color:var(--ok)} .is-ok .dot{background:var(--ok)}
+  .is-warn{color:var(--warn)} .is-warn .dot{background:var(--warn)}
+  .is-bad{color:var(--bad)} .is-bad .dot{background:var(--bad)}
+  .is-busy .dot{background:var(--accent);animation:pulse 1s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.25}}
+  .status a{font-weight:600}
+
+  /* methods */
+  .methods{display:grid;grid-template-columns:1fr 1fr;gap:10px;border:0;padding:0;margin:0 0 14px}
+  .methods legend{position:absolute;left:-9999px}
+  .method{border:1.5px solid var(--line);border-radius:12px;padding:12px 12px 12px 40px;position:relative;cursor:pointer}
+  .method input{position:absolute;left:13px;top:15px;margin:0;width:16px;height:16px;accent-color:var(--accent)}
+  .method.on{border-color:var(--accent);background:var(--accent-soft)}
+  .method b{display:block}
+  .method span{color:var(--muted);font-size:.86rem;line-height:1.4;display:block;margin-top:2px}
+  .howto{margin:0 0 14px;padding-left:1.35em}
+  .howto li{margin:.35em 0;padding-left:.2em}
+  .howto li::marker{color:var(--accent);font-weight:700}
+  .portrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  select{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:9px;padding:.55em .7em;
+    flex:1 1 260px;min-width:0}
+
+  /* buttons */
+  button.btn{font-family:inherit;font-weight:600;font-size:.95rem;line-height:1.1;border-radius:10px;padding:.75em 1.15em;cursor:pointer;border:1px solid transparent}
+  .btn.primary{background:var(--accent);color:var(--accent-ink)}
+  .btn.secondary{background:var(--card);color:var(--ink);border-color:var(--line)}
+  .btn.big{width:100%;padding:1em;font-size:1.02rem}
+  .btn:disabled{background:var(--soft);color:var(--muted);border-color:var(--line);cursor:not-allowed}
+  .btn:focus-visible,.seg button:focus-visible,.lang button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  /* flash step */
+  .summary{background:var(--soft);border-radius:10px;padding:11px 13px;margin:0 0 12px;font-size:.93rem}
+  .summary b{font-weight:650}
+  .check{display:flex;gap:10px;align-items:flex-start;margin:0 0 14px;cursor:pointer;font-size:.93rem}
+  .check input{margin-top:.25em;width:17px;height:17px;flex:none;accent-color:var(--accent)}
+  .actions{display:flex;gap:8px}
+  .actions .big{flex:1}
+  .missing{text-align:center;margin:.7em 0 0;color:var(--muted);font-size:.9rem}
+  .progress{margin-top:16px}
+  .bar{height:10px;background:var(--soft);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+  .bar>div{height:100%;width:0;background:var(--accent);transition:width .2s}
+  .meta{display:flex;justify-content:space-between;font-size:.88rem;color:var(--muted);margin-top:6px;font-variant-numeric:tabular-nums}
+  .callout{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 9px 9px 0;padding:10px 12px;margin-top:12px;font-size:.92rem}
+  .callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+  .result{margin-top:14px;border-radius:10px;padding:12px 14px;font-size:.94rem}
+  .result:empty{display:none}
+  .result.ok{background:var(--ok-soft);border:1px solid color-mix(in srgb,var(--ok) 35%,transparent)}
+  .result.warn{background:var(--warn-soft);border:1px solid color-mix(in srgb,var(--warn) 35%,transparent)}
+  .result.bad{background:var(--bad-soft);border:1px solid color-mix(in srgb,var(--bad) 35%,transparent)}
+  .result p{margin:.3em 0}
+
+  details{margin-top:14px}
+  details>summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:.93rem}
+  .trouble dl{margin:.6em 0 0;font-size:.92rem}
+  .trouble dt{font-weight:650;margin-top:.7em}
+  .trouble dd{margin:.15em 0 0;color:var(--muted)}
+  .adv{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 20px}
+  .adv[open]{padding-bottom:18px}
+  .adv .field{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0 0;font-size:.92rem}
+  .adv input[type=number]{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.4em .5em;width:5.5em}
+  #log{background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:10px;height:160px;overflow:auto;margin-top:12px;
+    font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap}
+  #log .is-ok{color:var(--ok)} #log .is-bad{color:var(--bad)} #log .is-warn{color:var(--warn)}
+
+  footer{margin-top:22px;color:var(--muted);font-size:.85rem;text-align:center}
+  footer p{margin:.3em 0}
+  [hidden]{display:none !important}
+
+  @media (max-width:560px){
+    .methods{grid-template-columns:1fr}
+    .top h1{font-size:1.35rem}
+    .step{padding:16px}
+  }
 </style>
 </head>
 <body>
-<div id="errbar" style="display:none;background:#c62828;color:#fff;padding:10px 16px;font:13px/1.5 ui-monospace,monospace"></div>
-<script>
-  // Estampille de version : si tu vois une ancienne date, ton navigateur sert une
-  // copie en cache -> recharge en forcant (Ctrl+Shift+R / Cmd+Shift+R).
-  window.MC_BUILD = "2026-09-25-6";
-  // Filet de securite : rend visible toute erreur JS (script casse, etc.)
-  window.addEventListener("error", function (e) {
-    var b = document.getElementById("errbar");
-    if (!b) return;
-    b.style.display = "block";
-    b.textContent = "Erreur : " + (e.message || e.error) + (e.filename ? "  [" + e.filename.split("/").pop() + ":" + e.lineno + "]" : "");
-  });
-  window.addEventListener("DOMContentLoaded", function () {
-    var b = document.getElementById("build-stamp");
-    if (b) b.textContent = "· build " + window.MC_BUILD;
-  });
-</script>
 <div class="wrap">
-  <h1>Flasher Web MIDI — Model:Cycles</h1>
-  <p class="sub">Envoie un firmware <code>.syx</code> a l'Elektron Model:Cycles (ou Model:Samples) depuis
-  <b>Chrome / Edge / Opera</b>, par Web MIDI. C'est le pendant navigateur de <code>tools/flash.py</code>.</p>
+  <div id="errbar" class="alert bad" hidden></div>
+  <script>
+    // Version stamp: an old date means the browser serves a cached copy -> hard reload.
+    window.MC_BUILD = "2026-09-26-1";
+    window.addEventListener("error", function (e) {
+      var b = document.getElementById("errbar");
+      if (!b) return;
+      b.hidden = false;
+      b.textContent = "Error: " + (e.message || e.error) +
+        (e.filename ? "  [" + e.filename.split("/").pop() + ":" + e.lineno + "]" : "");
+    });
+  </script>
 
-  <div class="card warnbox">
-    <b>A lire avant.</b> Flasher un firmware modifie <b>met la garantie en jeu</b> et se fait a tes risques.
-    <ul>
-      <li>Tout se passe <b>dans ton navigateur</b> : le <code>.syx</code> n'est envoye a aucun serveur. Aucune image firmware n'est fournie ici — tu apportes la tienne.</li>
-      <li><b>STARTUP MENU (OS UPGRADE)</b> n'ecoute que le <b>MIDI IN</b> (jack TRS) de l'appareil : envoie vers ton
-        <b>interface MIDI</b> (dont la sortie va au MIDI IN). Le port USB de l'appareil <b>ne marche pas</b> dans ce menu.</li>
-      <li><b>CONFIG&nbsp;&gt;&nbsp;UPGRADE</b> (OS en marche) recoit par <b>USB</b> : la, tu peux viser le port
-        <b>« Model:Cycles »</b> directement. Ne marche que si l'USB de l'appareil transporte l'OS
-        (stock, ou variante <code>6ch-usbup</code>).</li>
-      <li>Garde une interface MIDI et l'OS officiel a portee : c'est ton seul secours si l'appareil ne redemarre plus.
-        Voir <a href="../../FLASH.md">FLASH.md</a> et <a href="../../notes/13-6ch-upgrade-usb.md">note 13</a>.</li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <h2><span class="step">1</span>Autoriser le MIDI</h2>
-    <div class="row">
-      <button id="enable">Activer le MIDI</button>
-      <button id="refresh" class="ghost">Rafraichir les ports</button>
+  <header class="top">
+    <div>
+      <h1 data-i18n="title">Model:Cycles Flasher</h1>
+      <p data-i18n="tagline">Install mods on your Elektron Model:Cycles, right from your browser.</p>
     </div>
-    <div id="midi-status" class="msg tiny">Clique « Activer le MIDI », puis accepte la demande d'autorisation (avec SysEx).</div>
-  </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="fr" aria-pressed="false">FR</button>
+    </div>
+  </header>
 
-  <div class="card">
-    <h2><span class="step">2</span>Le fichier <code>.syx</code> a envoyer</h2>
-    <p class="tiny" style="margin-top:0">Deux options&nbsp;: <b>construire</b> l'image modifiee ici a partir de ton OS officiel, <b>ou</b> deposer un <code>.syx</code> deja pret (mod, ou OS officiel pour revenir en arriere).</p>
+  <div id="compat" class="alert bad" role="alert" hidden></div>
 
-    <details id="buildbox">
-      <summary style="cursor:pointer;font-weight:600;margin-bottom:.6em">Construire le <code>.syx</code> dans le navigateur</summary>
-      <p class="tiny">Depose ton OS officiel <code>model-cycles_OS1.13.syx</code> (dezippe depuis elektron.se). Rien n'est envoye a un serveur ; l'image se fabrique dans la page.</p>
-      <div id="os-drop">Glisse l'OS officiel <code>.syx</code> ici, ou clique.</div>
-      <input id="os-file" type="file" accept=".syx" hidden>
-      <div id="os-info" class="msg tiny">SHA-256 attendu du <code>.syx</code> officiel&nbsp;: <code>44fe5862…9800640c</code>.</div>
-      <div class="tiny" style="margin-top:12px;font-weight:600">Fonctionnalités à ajouter — coche ce que tu veux :</div>
+  <!-- 1. Choose -->
+  <section class="step" id="step-choose" aria-labelledby="h1s">
+    <header><span class="num">1</span><h2 id="h1s" data-i18n="s1">What do you want to install?</h2></header>
+    <div class="seg" role="tablist" aria-label="Mode">
+      <button type="button" role="tab" id="tab-mods" aria-selected="true" aria-controls="panel-mods" data-i18n="tab_mods">Mods</button>
+      <button type="button" role="tab" id="tab-restore" aria-selected="false" aria-controls="panel-restore" data-i18n="tab_restore">Official firmware</button>
+    </div>
+    <div id="panel-mods" role="tabpanel" aria-labelledby="tab-mods">
       <div id="features"></div>
-      <div class="tiny" style="margin-top:4px;color:var(--muted)">Rien de coché = image d'origine (rien à construire). Pour revenir en arrière, flashe l'OS officiel.</div>
-      <div class="row" style="margin-top:12px">
-        <button id="build" disabled>Construire</button>
-        <a id="download" class="ghost" style="display:none;text-decoration:none;padding:.55em 1.1em;border:1px solid var(--line);border-radius:8px">Télécharger le .syx</a>
-      </div>
-      <label class="ack tiny" style="margin-top:8px">
-        <input id="force-cave" type="checkbox">
-        <span>Forcer même si une zone de code (cave) semble référencée — n'utilise ça qu'après vérification manuelle.</span>
-      </label>
-      <div id="build-info" class="msg tiny"></div>
-    </details>
+      <p class="note" data-i18n="mods_note">None of these mods has been flashed on a real Model:Cycles yet. The MIDI IN route (step 3) always lets you go back to the official firmware.</p>
+    </div>
+    <div id="panel-restore" role="tabpanel" aria-labelledby="tab-restore" hidden>
+      <p style="margin:0" data-i18n-html="restore_text"></p>
+    </div>
+  </section>
 
-    <div style="margin-top:14px">
-      <div id="drop">Ou glisse un <code>.syx</code> deja pret ici, ou clique pour le choisir.</div>
+  <!-- 2. OS file -->
+  <section class="step" id="step-file" aria-labelledby="h2s">
+    <header><span class="num">2</span><h2 id="h2s" data-i18n="s2">Load your official OS file</h2></header>
+    <label class="drop" id="drop" tabindex="0">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 12v6M9.5 15.5 12 18l2.5-2.5"/></svg>
+      <div><strong id="drop-title" data-i18n="drop_title">Drop model-cycles_OS1.13.syx here</strong>
+        <span id="drop-sub" data-i18n="drop_sub">or click to choose it</span></div>
       <input id="file" type="file" accept=".syx" hidden>
-      <div id="file-info" class="msg tiny">Une construction reussie remplit ceci automatiquement.</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2><span class="step">3</span>Choisir le port et flasher</h2>
-    <p class="tiny" style="margin-top:0">Mets d'abord l'appareil en reception&nbsp;: eteindre → maintenir <kbd>FUNC</kbd> → allumer → <kbd>TRIG 4</kbd> (OS UPGRADE).
-      L'ecran affiche <code>READY TO RECEIVE</code>. (Ou, pour l'USB direct&nbsp;: <code>CONFIG &gt; UPGRADE</code> depuis l'OS en marche.)</p>
-    <div class="row">
-      <select id="port"><option value="">— active d'abord le MIDI —</option></select>
-    </div>
-    <div class="row" style="margin-top:10px">
-      <label class="tiny">Cadence <input id="pace" type="number" min="0" step="0.1" value="1.4" style="width:5em"></label>
-      <span class="tiny">augmente (2.0) si l'appareil se fige sur <code>RECEIVING…</code></span>
-    </div>
-    <label class="ack" style="margin-top:12px">
-      <input id="ack" type="checkbox">
-      <span>Je comprends les risques, j'ai une interface MIDI et l'OS officiel pour revenir en arriere, et l'appareil est en mode reception.</span>
     </label>
-    <div class="row" style="margin-top:12px"><button id="send" disabled>Flasher</button></div>
-    <div class="barwrap"><div id="bar"></div></div>
-    <div id="count" class="tiny"></div>
-  </div>
+    <p class="hint" data-i18n-html="get_os"></p>
+    <div id="file-status" class="status" aria-live="polite"></div>
+  </section>
 
-  <div class="card">
-    <h2>Journal</h2>
-    <div id="log" aria-live="polite"></div>
-  </div>
+  <!-- 3. Connect -->
+  <section class="step" id="step-connect" aria-labelledby="h3s">
+    <header><span class="num">3</span><h2 id="h3s" data-i18n="s3">Connect your Model:Cycles</h2></header>
+    <fieldset class="methods">
+      <legend data-i18n="method_legend">Connection</legend>
+      <label class="method on" id="m-midi"><input type="radio" name="method" value="midi" checked>
+        <b data-i18n="m_midi">MIDI interface → MIDI IN</b><span data-i18n="m_midi_sub">Recommended. Always works, and it is also how you recover.</span></label>
+      <label class="method" id="m-usb"><input type="radio" name="method" value="usb">
+        <b data-i18n="m_usb">USB cable only</b><span data-i18n="m_usb_sub">No interface needed, but only from the official OS or a USB-friendly mod.</span></label>
+    </fieldset>
+    <ol class="howto" id="howto-midi">
+      <li data-i18n-html="hm1"></li>
+      <li data-i18n-html="hm2"></li>
+      <li data-i18n-html="hm3"></li>
+    </ol>
+    <ol class="howto" id="howto-usb" hidden>
+      <li data-i18n-html="hu1"></li>
+      <li data-i18n-html="hu2"></li>
+      <li data-i18n-html="hu3"></li>
+    </ol>
+    <div class="portrow">
+      <button type="button" class="btn primary" id="allow" data-i18n="allow">Allow MIDI access</button>
+      <select id="port" aria-label="MIDI output" hidden></select>
+      <button type="button" class="btn secondary" id="refresh" data-i18n="refresh" hidden>Refresh</button>
+    </div>
+    <div id="midi-status" class="status" aria-live="polite"></div>
+  </section>
 
-  <p class="tiny">Code source&nbsp;: <a href="https://github.com/18nelli18/Modded-Cycles">18nelli18/Modded-Cycles</a>.
-    Projet non affilie a Elektron. Web MIDI n'existe pas sur Firefox ni Safari.
-    <span id="build-stamp" style="opacity:.7"></span></p>
+  <!-- 4. Flash -->
+  <section class="step" id="step-flash" aria-labelledby="h4s">
+    <header><span class="num">4</span><h2 id="h4s" data-i18n="s4">Flash</h2></header>
+    <div class="summary" id="summary" hidden></div>
+    <label class="check"><input id="ack" type="checkbox"><span data-i18n="ack">I've backed up my projects (Elektron Transfer) and I understand that flashing is at my own risk.</span></label>
+    <div class="actions">
+      <button type="button" class="btn primary big" id="flash" disabled data-i18n="flash_btn">Flash the Model:Cycles</button>
+      <button type="button" class="btn secondary" id="stop" hidden data-i18n="stop">Stop</button>
+    </div>
+    <p class="missing" id="missing" aria-live="polite"></p>
+    <div class="progress" id="progress" hidden>
+      <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="barwrap"><div id="bar"></div></div>
+      <div class="meta"><span id="pct">0 %</span><span id="eta"></span></div>
+      <div class="callout" id="watch"></div>
+    </div>
+    <div class="result" id="result" aria-live="polite"></div>
+    <details class="trouble">
+      <summary data-i18n="trouble">Something went wrong?</summary>
+      <dl>
+        <dt data-i18n="t1q">The screen stays on READY TO RECEIVE</dt><dd data-i18n-html="t1a"></dd>
+        <dt data-i18n="t2q">It stays on RECEIVING… forever</dt><dd data-i18n-html="t2a"></dd>
+        <dt data-i18n="t3q">No MIDI port in the list</dt><dd data-i18n-html="t3a"></dd>
+        <dt data-i18n="t4q">The Model:Cycles doesn't start any more</dt><dd data-i18n-html="t4a"></dd>
+      </dl>
+    </details>
+  </section>
+
+  <details class="adv" id="advanced">
+    <summary data-i18n="advanced">Advanced</summary>
+    <div class="field">
+      <label for="pace" data-i18n="pace">Send speed margin</label>
+      <input id="pace" type="number" min="0" step="0.1" value="1.4">
+      <span class="hint" style="margin:0" data-i18n="pace_hint">1.4 by default. Raise it to 2.0 if the transfer stalls.</span>
+    </div>
+    <div class="field">
+      <a id="download" hidden data-i18n="download">Download the prepared .syx</a>
+      <span class="hint" style="margin:0" id="download-hint" data-i18n-html="download_hint"></span>
+    </div>
+    <div id="log" aria-live="off"></div>
+  </details>
+
+  <footer>
+    <p data-i18n="privacy">Your firmware file never leaves your computer. Nothing is uploaded, no firmware is provided.</p>
+    <p><span data-i18n-html="links"></span> <span id="build-stamp"></span></p>
+  </footer>
 </div>
 <script src="builder.js"></script>
 <script src="tweaks.js"></script>
 <script src="flasher.js"></script>
-<script src="build-ui.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

@@ -12,3 +12,6 @@ build/
 __pycache__/
 *.pyc
 .DS_Store
+
+# Local Claude Code config
+.claude/
