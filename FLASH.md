@@ -135,33 +135,34 @@ python3 tools/flash.py model-cycles_OS1.13.syx --port "NOM DE TON INTERFACE" --s
 
 ## 7. Depuis Chrome, sans rien installer (Web MIDI)
 
-Le dossier [`docs/flasher/`](docs/flasher/) est une page qui fait la même chose que `flash.py`, mais **dans le navigateur** :
-elle vérifie ton `.syx` (identifiant, produit, **chaque checksum de paquet**) puis l'envoie par **Web MIDI**.
+Le **[flasher web](https://18nelli18.github.io/Modded-Cycles/flasher/)** fait tout dans le navigateur : il **construit**
+l'image modifiée à partir de **ton** OS officiel, puis l'**envoie** par Web MIDI. Il marche sur **Chrome, Edge ou Opera**
+sur ordinateur (Web MIDI n'existe pas sur Firefox ni Safari). **Tout reste local** : aucun fichier n'est envoyé à un serveur,
+aucune image firmware n'est fournie. La page est en anglais, avec un bouton **FR** (automatique si ton navigateur est en français).
 
-- Ça marche sur **Chrome, Edge ou Opera** sur ordinateur (Web MIDI n'existe pas sur Firefox ni Safari).
-- **Tout reste local** : le `.syx` n'est envoyé à aucun serveur, et aucune image firmware n'est fournie — tu déposes la tienne.
-- **Choix du port**, exactement comme avec les scripts :
-  - pour le **STARTUP MENU** (OS UPGRADE), choisis ton **interface MIDI** (sa sortie va au MIDI IN de l'appareil) ;
-  - pour **`CONFIG → UPGRADE`** (OS en marche), tu peux viser le port **« Model:Cycles »** directement en USB.
-- La page tourne une fois **GitHub Pages** activé (Settings → Pages → *Deploy from a branch*), sur
-  `https://18nelli18.github.io/Modded-Cycles/flasher/`. En local : `python3 -m http.server` dans `docs/`, puis
-  `http://localhost:8000/flasher/` (Web MIDI exige `https://` ou `localhost`).
+Quatre étapes, de haut en bas :
+1. **Choisir** : onglet *Mods* (coche les mods voulus) ou *Official firmware* (renvoie l'OS officiel tel quel, pour revenir
+   en arrière ou faire une répétition sans risque).
+   - **Audio USB 6 canaux** : une fois coché, deux variantes : garder la mise à jour de l'OS par USB (`6ch-usbup`, recommandé)
+     ou la version de référence (`6ch-multiout`) ;
+   - **Machine SD VINTAGE** (caisse claire vintage, à la place de SNARE, [note 14](notes/14-machine-sd-vintage.md)).
+2. **Déposer l'OS officiel** `model-cycles_OS1.13.syx` : il est reconnu à son empreinte, et le firmware est **construit
+   automatiquement** (pas de bouton). La page **exige** le MAIN OS de référence de chaque combinaison (voir [BUILD.md](BUILD.md)),
+   sinon elle refuse. Un `.syx` qui n'est pas l'OS officiel est accepté s'il est valide, mais envoyé **tel quel**.
+3. **Brancher** : *MIDI interface → MIDI IN* (recommandé, marche toujours, voie de secours : FUNC + allumage, TRIG 4) ou
+   *USB cable only* (`CONFIG › UPGRADE`, seulement depuis l'OS officiel ou `6ch-usbup`). La page présélectionne le bon port
+   et prévient si tu choisis le port USB du Model:Cycles pour le menu de démarrage.
+4. **Flasher** : le bouton indique ce qui manque encore ; pendant l'envoi, progression, temps restant et bouton **Stop** ;
+   l'écran reste allumé (garde l'onglet au premier plan). Les réglages rares (marge de vitesse, téléchargement du `.syx`,
+   journal) sont dans *Advanced*.
 
-**Construire aussi dans le navigateur.** La page sait fabriquer l'image modifiée à partir de **ton** OS officiel
-(déplie « Construire le `.syx` dans le navigateur ») : dépose `model-cycles_OS1.13.syx`, puis **coche les fonctionnalités**
-à ajouter. Chaque fonctionnalité est une case :
-- **Sortie USB 6 canaux séparés** — quand tu la coches, un sous-choix apparaît : garder la mise à jour de l'OS par USB
-  (`6ch-usbup`, recommandé) ou la version de référence (`6ch-multiout`) ;
-- **Machine SD VINTAGE** (caisse claire vintage, à la place de SNARE, [note 14](notes/14-machine-sd-vintage.md)).
-
-Rien de coché = rien à construire. La page applique les patchs cochés, recompresse la section 3, recalcule les checksums
-et le HMAC, puis charge le résultat dans le flasher. C'est le port JS de `tools/build.py` + `tools/mtlib/`
-(`docs/flasher/builder.js`). Elle **exige** le MAIN OS de référence de chaque combinaison (voir [BUILD.md](BUILD.md)), sinon elle refuse.
+En local : `python3 -m http.server` dans `docs/`, puis `http://localhost:8000/flasher/` (Web MIDI exige `https://` ou `localhost`).
 
 Fidélité vérifiée sans matériel : `tools/webflash_check.sh` compare le **vérificateur** JS à `tools/mtlib/syx.py`,
-et `tools/webbuild_check.sh` compare le **constructeur** JS à `tools/build.py` (aPLib + conteneur + HMAC) à
-l'octet près, sur une image synthétique. Les tables de patchs de la page viennent de `docs/flasher/tweaks.js`,
-généré depuis `tweaks/` par `tools/gen_flasher_tweaks.py` (`--check` en CI).
+et `tools/webbuild_check.sh` compare le **constructeur** JS (`docs/flasher/builder.js`) à `tools/build.py` (aPLib + conteneur + HMAC)
+à l'octet près, sur une image synthétique. `tools/webflash_smoke.sh` joue le parcours complet de la page dans jsdom
+(avec `tools/webflash_smoke.sh model-cycles_OS1.13.syx`, il vérifie aussi les 5 combinaisons sur le vrai OS).
+Les tables de patchs de la page viennent de `docs/flasher/tweaks.js`, généré depuis `tweaks/` par `tools/gen_flasher_tweaks.py` (`--check` en CI).
 
 ## 8. Méthode manuelle (sans les scripts)
 

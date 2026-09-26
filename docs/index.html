@@ -1,35 +1,40 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Modded-Cycles</title>
-<meta name="description" content="Outils pour le mod USB multipiste de l'Elektron Model:Cycles.">
+<meta name="description" content="Firmware mods for the Elektron Model:Cycles: 6-channel USB audio and more. Web flasher and tools.">
 <style>
-  :root{--bg:#f6f7f9;--card:#fff;--ink:#1a1d21;--muted:#5b636c;--line:#dfe3e8;--accent:#2f6df6}
-  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1216;--card:#171b21;--ink:#e8ebee;--muted:#9aa3ad;--line:#2a313a;--accent:#5b8dff}}
-  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-  .wrap{max-width:680px;margin:0 auto;padding:40px 16px}
+  :root{--bg:#f4f5f7;--card:#fff;--ink:#15181c;--muted:#5d6670;--line:#e1e4e9;--accent:#2458e6;--accent-ink:#fff}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d0f13;--card:#161a20;--ink:#e8ebef;--muted:#97a1ac;--line:#272d36;--accent:#6e9bff;--accent-ink:#0b1020}}
+  :root[data-theme="dark"]{--bg:#0d0f13;--card:#161a20;--ink:#e8ebef;--muted:#97a1ac;--line:#272d36;--accent:#6e9bff;--accent-ink:#0b1020}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:640px;margin:0 auto;padding:48px 16px}
+  h1{font-size:1.9rem;line-height:1.2;margin:0 0 .3em;letter-spacing:-.01em}
+  .lead{color:var(--muted);margin:0 0 24px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin:0 0 14px}
+  .card h2{font-size:1.1rem;margin:0 0 .4em}
+  .card p{margin:0 0 1em;color:var(--muted)}
+  .btn{display:inline-block;background:var(--accent);color:var(--accent-ink);text-decoration:none;font-weight:600;border-radius:10px;padding:.75em 1.3em}
   a{color:var(--accent)}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin:16px 0}
-  h1{margin:.2em 0}
-  .btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;border-radius:8px;padding:.6em 1.2em;margin-top:.4em}
-  .muted{color:var(--muted)}
+  .small{color:var(--muted);font-size:.88rem}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Modded-Cycles</h1>
-  <p class="muted">Mod USB multipiste (6 canaux) pour l'Elektron Model:Cycles.</p>
+  <p class="lead">Firmware mods for the Elektron Model:Cycles: record the 6 tracks as separate USB channels, add new machines, and more.</p>
   <div class="card">
-    <h2>Flasher en ligne</h2>
-    <p>Envoie un firmware <code>.syx</code> a ton Model:Cycles depuis Chrome, par Web MIDI.
-      Aucune image firmware n'est fournie ni transmise a un serveur : tu apportes ton propre fichier.</p>
-    <a class="btn" href="flasher/">Ouvrir le flasher</a>
+    <h2>Web flasher</h2>
+    <p>Pick your mods, drop your official OS file, flash. Everything runs in your browser (Chrome, Edge or Opera on a computer):
+      no firmware is provided, nothing is uploaded.</p>
+    <a class="btn" href="flasher/">Open the flasher</a>
   </div>
-  <p class="muted">Depot, code et documentation&nbsp;:
+  <p class="small">Source code, tools and documentation:
     <a href="https://github.com/18nelli18/Modded-Cycles">github.com/18nelli18/Modded-Cycles</a>.
-    Projet non affilie a Elektron.</p>
+    Flashing a modified firmware is at your own risk. Not affiliated with Elektron.</p>
 </div>
 </body>
 </html>

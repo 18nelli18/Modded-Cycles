@@ -1,78 +1,97 @@
 # Modded-Cycles
 
-Notes techniques pour un projet de **mod firmware de l'Elektron Model:Cycles** : faire sortir en USB les **6 pistes séparément**
-au lieu du seul mix stéréo, puis explorer des extensions (mix + pistes, panoramique, effets).
+Firmware mods for the **Elektron Model:Cycles**. The first goal: send the **6 tracks over USB as 6 separate channels**
+instead of the stereo mix only, so you can record real stems in your DAW. Then go further: new machines, more channels, more features.
 
-> ⚠️ **Aucune image firmware Elektron n'est incluse dans ce dépôt** — ni originale, ni modifiée.
-> On travaille sur sa **propre** copie de l'OS officiel, téléchargée légalement depuis elektron.se.
-> Ce dépôt ne contient que de l'analyse, des tables de diff (octets), des sources assembleur et des outils.
-> Projet non affilié à Elektron, sans lien ni soutien de leur part. Flasher un OS modifié se fait **à ses risques** et peut annuler la garantie.
+> ⚠️ **No Elektron firmware is included in this repository** — neither original nor modified.
+> You bring your own copy of the official OS, downloaded from elektron.se.
+> This repository only contains analysis, byte-level patch tables, assembly/C sources and tools.
+> Not affiliated with or endorsed by Elektron. Flashing a modified OS is **at your own risk** and may void your warranty.
 
-## Construire et flasher
+## Quick start: flash from your browser
 
-Chaîne d'outils **Python pur**, sans dépendance ni image firmware : voir [`BUILD.md`](BUILD.md).
+Open the **[web flasher](https://18nelli18.github.io/Modded-Cycles/flasher/)** in Chrome, Edge or Opera (desktop).
+It builds the modified firmware from your official OS file and sends it to your Model:Cycles over Web MIDI.
+Everything happens in your browser: nothing is uploaded anywhere.
+
+You need:
+- your official **`model-cycles_OS1.13.syx`** ([elektron.se](https://www.elektron.se/support-downloads/modelcycles), unzip the download);
+- a **MIDI interface** connected to the Model:Cycles **MIDI IN** (3.5 mm jack: use the DIN adapter supplied with the Model:Cycles,
+  or a stereo jack cable if your interface has a TRS MIDI out). It is also your way back if anything goes wrong.
+
+The startup menu (`FUNC` + power on, then `TRIG 4`) only listens to the MIDI IN, never to USB.
+A USB-only first flash is possible from the official OS (`CONFIG > UPGRADE`), but getting back to stock may then require the MIDI IN.
+
+## Command line
+
+A pure-Python toolchain: no compiler, no firmware in the repo. See [`BUILD.md`](BUILD.md) (in French).
+
 ```sh
 python3 tools/build.py --list
-python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-multiout   # référence (testée en cross-flash)
-python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup      # garde l'upgrade USB (jamais flashée)
-python3 tools/build.py -i model-cycles_OS1.13.syx -t sdvintage-snare  # machine SD VINTAGE à la place de SNARE (jamais flashée)
+python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup         # 6 channels, keeps OS updates over USB
+python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-multiout      # 6 channels, reference build
+python3 tools/build.py -i model-cycles_OS1.13.syx -t sdvintage-snare   # SD VINTAGE machine instead of SNARE
 ```
-**Flasher** : scripts clés en main (installent les dépendances, vérifient, guident, flashent) — voir [`FLASH.md`](FLASH.md).
+
+Then flash with the ready-made scripts. They install the dependencies, check the file, guide you and send it — see [`FLASH.md`](FLASH.md) (in French).
+
 ```sh
-./flash.sh            # macOS / Linux
-flash.bat             # Windows (double-clic)
+./flash.sh        # macOS / Linux
+flash.bat         # Windows (double-click)
 ```
-**Ou depuis Chrome, sans rien installer** : le [flasher Web MIDI](docs/flasher/) (`docs/flasher/`) sait **construire**
-l'image modifiée à partir de ton OS officiel **et** l'envoyer par Web MIDI, entièrement dans le navigateur
-(rien n'est envoyé à un serveur, aucune image firmware n'est fournie). C'est le port JS de `build.py`/`mtlib`,
-vérifié à l'octet près contre le Python (`tools/webflash_check.sh`, `tools/webbuild_check.sh`).
-Une fois GitHub Pages activé, il sera en ligne sur `https://18nelli18.github.io/Modded-Cycles/flasher/`.
-⚠️ Le flash passe par le **MIDI IN** de l'appareil (sa prise jack TRS 3,5 mm : câble jack stéréo depuis une interface à sortie TRS, ou adaptateur DIN fourni).
-Le menu de démarrage ignore l'USB, et `6ch-multiout` casse l'upgrade USB ; la variante `6ch-usbup` devrait le garder (à tester, [note 13](notes/13-6ch-upgrade-usb.md)).
-Lis [`FLASH.md`](FLASH.md) avant.
 
-## Contenu
+The web flasher is a JavaScript port of `build.py` and `mtlib`, checked byte for byte against the Python
+(`tools/webflash_check.sh`, `tools/webbuild_check.sh`, `tools/webflash_smoke.sh`).
 
-| Document | Sujet |
+## Features
+
+By priority. Feasibility is detailed in [note 10](notes/10-faisabilite-fonctionnalites.md) (in French).
+
+| Feature | Status |
 |---|---|
-| [`BUILD.md`](BUILD.md) | Comment construire une image modifiée (Python pur) |
-| [`FLASH.md`](FLASH.md) | **Comment flasher son Model:Cycles** (guide détaillé + scripts) |
-| [`dossier-technique.md`](dossier-technique.md) | Synthèse du fil Elektronauts « Model:Cycles Q&A with Ess », chaque info sourcée |
-| [`notes/README.md`](notes/README.md) | **Index des notes techniques** et chiffres clés |
-| [`notes/10-faisabilite-fonctionnalites.md`](notes/10-faisabilite-fonctionnalites.md) | **Faisabilité, fonction par fonction** (à lire pour l'état des lieux) |
-| [`tools/`](tools/) · [`tweaks/`](tweaks/) | Build (mtlib) et tables de patchs (format JSON) |
+| **6-channel** USB output | ✅ code ready, buildable here — **waiting for a hardware test** |
+| Keep **OS updates over USB** with the 6-channel mod | 🟡 `6ch-usbup` variant ready and checked in emulation — **waiting for a hardware test** ([note 13](notes/13-6ch-upgrade-usb.md)) |
+| Extra drum engine: **SD VINTAGE** (vintage snare, inspired by the Syntakt) | 🟡 step 1 (replaces SNARE) ready and validated in the emulated engine — **waiting for a hardware test**; 7th machine: plan ready ([note 14](notes/14-machine-sd-vintage.md)) |
+| **12-channel** USB output (per-track pan) | 🟡 feasible, to develop (through an **8-channel** milestone: 6 tracks + stereo mix, [note 11](notes/11-conception-8-canaux.md)) |
+| Change the **effect algorithms** | 🔴 no (tweaking parameters: 🟡) |
+| **Sample engine** (like the Model:Samples) | 🔴 out of reach as a Model:Cycles mod |
+| **2 LFOs**, syncable and assignable | 🟠 heavy (more destinations for the current LFO: 🟡) |
+| **Polyrhythm** (per-track time signature) | 🟡 partly there in stock firmware |
+| **MIDI control over USB** (clock, start/stop) | ✅ already supported in stock firmware (settings only) |
+| **Arpeggiator** (chromatic mode) | 🟠 long term |
+| **Scale** (chromatic mode) | 🟡 feasible, medium effort |
+| **Polyphony** for the synth engine | 🔴 very hard |
 
-## Fonctionnalités visées (par priorité, cf. [note 10](notes/10-faisabilite-fonctionnalites.md))
+## Project status
 
-| Fonction | État |
+- The 6-tracks-over-USB mod **exists** ([scottmetoyer/ms-multi-output](https://github.com/scottmetoyer/ms-multi-output), MIT)
+  and is ported here as a tweak. Our build **reproduces the known-good MAIN OS byte for byte**.
+  It has **never been flashed on a real Model:Cycles** yet (only on a Model:Samples running the Cycles OS).
+- The official OS **1.13** (latest version) has been analysed in depth ([note 09](notes/09-analyse-firmware-1.13.md)).
+- The synth engine (the 6 machines are 6 *mappings* of one FM engine) is decoded and **emulated** (`tools/emu/`).
+  One more engine, **SD VINTAGE**, is written in C, compiled for the ColdFire CPU and validated in the emulated engine ([note 14](notes/14-machine-sd-vintage.md)).
+- **Milestone 1**: validate the 6-channel mod on a real Model:Cycles. Nothing has been flashed yet.
+
+Roadmap: [`notes/08-feuille-de-route.md`](notes/08-feuille-de-route.md) (in French).
+
+## Documentation
+
+The technical documentation is written in French.
+
+| Document | Topic |
 |---|---|
-| Sortie multipiste **6 canaux** | ✅ code prêt, buildable ici — **attend un test matériel** |
-| Garder l'**upgrade USB** avec le mod 6 canaux | 🟡 variante `6ch-usbup` prête et vérifiée en émulation — **attend un test matériel** ([note 13](notes/13-6ch-upgrade-usb.md)) |
-| Moteur de percussion en plus : **SD VINTAGE** (caisse claire vintage, d'après le Syntakt) | 🟡 étape 1 (à la place de SNARE) prête et validée dans le moteur émulé — **attend un test matériel** ; 7ᵉ machine : plan prêt ([note 14](notes/14-machine-sd-vintage.md)) |
-| Sortie multipiste **12 canaux** (pan par piste) | 🟡 faisable, à développer (via un jalon **8 canaux**) |
-| Modifier les **algos d'effet** | 🔴 non (réglages de paramètres : 🟡) |
-| **Moteur Sample** (façon Model:Samples) | 🔴 hors de portée comme mod du M:C |
-| **2 LFO** synchronisables et assignables | 🟠 lourd (élargir les destinations du LFO actuel : 🟡) |
-| **Polyrythmie** (time signature par piste) | 🟡 en partie déjà présente en stock |
-| **Contrôle MIDI USB** (clock, start/stop) | ✅ déjà supporté en stock (réglage) |
-| **Arpégiateur** (mode chromatique) | 🟠 long terme |
-| **Scale** (mode chromatique) | 🟡 faisable, effort moyen |
-| **Polyphonie** du synthé | 🔴 très difficile |
+| [`BUILD.md`](BUILD.md) | Building a modified firmware image (pure Python) |
+| [`FLASH.md`](FLASH.md) | **Flashing your Model:Cycles**: detailed guide and scripts |
+| [`dossier-technique.md`](dossier-technique.md) | Summary of the Elektronauts thread "Model:Cycles Q&A with Ess", every fact quoted from its source |
+| [`notes/README.md`](notes/README.md) | **Index of the technical notes** and key figures |
+| [`notes/10-faisabilite-fonctionnalites.md`](notes/10-faisabilite-fonctionnalites.md) | **Feasibility, feature by feature** |
+| [`tools/`](tools/) · [`tweaks/`](tweaks/) · [`docs/flasher/`](docs/flasher/) | Build tools (mtlib), patch tables (JSON), web flasher |
 
-## Où en est le projet
+## Credits
 
-- Le mod « 6 pistes en USB » **existe** ([scottmetoyer/ms-multi-output](https://github.com/scottmetoyer/ms-multi-output), MIT),
-  porté ici au format tweak ; notre build **reproduit le MAIN OS connu-bon à l'octet près**. Mais il n'a **jamais été flashé sur un vrai Model:Cycles**.
-- L'OS officiel **1.13** (dernière version) a été analysé en profondeur ([note 09](notes/09-analyse-firmware-1.13.md)).
-- Le moteur de synthèse (6 machines = 6 *mappings* d'un même moteur FM) est décodé et **émulé** (`tools/emu/`). Un moteur de plus,
-  **SD VINTAGE**, est écrit en C, compilé pour le ColdFire et validé dans le vrai moteur émulé ([note 14](notes/14-machine-sd-vintage.md)).
-- **Jalon 1** : valider le 6 canaux sur un vrai Model:Cycles. Rien n'a encore été flashé.
+Upstream projects, all MIT licensed, none including firmware:
 
-Détails et étapes : [`notes/08-feuille-de-route.md`](notes/08-feuille-de-route.md).
-
-## Crédits (dépôts amont, tous MIT, sans firmware inclus)
-
-- [`scottmetoyer/ms-multi-output`](https://github.com/scottmetoyer/ms-multi-output) — le mod 6 canaux (Model:Samples et Model:Cycles)
-- [`drumkilla/elektron-model-tweaks`](https://github.com/drumkilla/elektron-model-tweaks) — `mtlib` (transport SysEx, aPLib, conteneur ELE3/HMAC en Python) et le format de tweak JSON, vendus dans `tools/mtlib/`
-- [`mischa85/elektron-firmware-tool`](https://github.com/mischa85/elektron-firmware-tool) — dépaquetage / repaquetage / re-signature des `.syx` (chaîne C alternative)
-- [`mxldyn/octamax`](https://github.com/mxldyn/octamax) — rétro-ingénierie de l'OS Octatrack (méthode, outils, pièges)
+- [`scottmetoyer/ms-multi-output`](https://github.com/scottmetoyer/ms-multi-output) — the 6-channel mod (Model:Samples and Model:Cycles)
+- [`drumkilla/elektron-model-tweaks`](https://github.com/drumkilla/elektron-model-tweaks) — `mtlib` (SysEx transport, aPLib, ELE3 container and HMAC in Python) and the JSON tweak format, vendored in `tools/mtlib/`
+- [`mischa85/elektron-firmware-tool`](https://github.com/mischa85/elektron-firmware-tool) — unpacking, repacking and re-signing `.syx` files (alternative C toolchain)
+- [`mxldyn/octamax`](https://github.com/mxldyn/octamax) — reverse engineering of the Octatrack OS (method, tools, pitfalls)
