@@ -32,7 +32,7 @@ import mcengine as E                  # noqa: E402
 
 TWEAK = TOOLS.parent / "tweaks" / "model-cycles_OS1.13" / "20-sdvintage-snare.json"
 SR = 48000
-DEF = dict(color=60, shape=64, sweep=40, contour=40, decay=40, punch=0)   # défauts SD VINTAGE
+DEF = dict(color=0, shape=110, sweep=74, contour=80, decay=33, punch=0)   # défauts SD VINTAGE v2 (= Syntakt)
 
 
 def main_os_from_syx(path):
@@ -81,6 +81,31 @@ def lowpass(x, fc=500.0):
         s = (1 - a) * v + a * s
         y[i] = s
     return y
+
+
+def highpass(x, fc=1500.0):
+    X = np.fft.rfft(np.asarray(x, float))
+    X[np.fft.rfftfreq(len(x), 1 / SR) < fc] = 0
+    return np.fft.irfft(X, len(x))
+
+
+def mode2_ratio(x):
+    """Rapport du 2e mode au fondamental (pics du spectre 1-25 ms, sous 1,5 kHz)."""
+    seg = np.asarray(x[ms(1):ms(25)], float)
+    X = np.abs(np.fft.rfft(seg * np.hanning(len(seg)), 1 << 16))
+    f = np.fft.rfftfreq(1 << 16, 1 / SR)
+    m1 = (f > 150) & (f < 400)
+    fund = f[m1][np.argmax(X[m1])]
+    m2 = (f > 1.6 * fund) & (f < 3.2 * fund)
+    return f[m2][np.argmax(X[m2])] / fund
+
+
+def mode2_level(x):
+    """Énergie autour du 2e mode (400-1100 Hz) sur 0-20 ms."""
+    seg = np.asarray(x[:ms(20)], float)
+    X = np.abs(np.fft.rfft(seg * np.hanning(len(seg)))) ** 2
+    f = np.fft.rfftfreq(len(seg), 1 / SR)
+    return float(np.sqrt(X[(f > 400) & (f < 1100)].sum()))
 
 
 def ms(t):
@@ -134,34 +159,28 @@ def main():
     b.check(0.3 < ratio < 3.0, f"crête SD VINTAGE / SNARE d'origine = {ratio:.2f}")
     b.check(c_sdv < c_ref, f"instructions par bloc (voix seule) : {c_sdv:.0f} contre {c_ref:.0f} pour SNARE")
 
-    print("[2] PITCH et note du trig (corps seul : COLOR 0)")
-    f_def = f0(b.run(color=0, name="pitch64")[ms(2):ms(60)])
-    f_up = f0(b.run(color=0, pitch=76)[ms(2):ms(60)])
-    f_note = f0(b.run(color=0, note=72)[ms(2):ms(60)])
-    b.check(abs(f_def / 196.0 - 1) < 0.03, f"PITCH 64, note 60 : {f_def:.1f} Hz (attendu ~196)")
+    print("[2] PITCH et note du trig (sans balayage)")
+    f_def = f0(b.run(sweep=0, name="pitch64")[ms(20):ms(90)])
+    f_up = f0(b.run(sweep=0, pitch=76)[ms(20):ms(90)])
+    f_note = f0(b.run(sweep=0, note=72)[ms(20):ms(90)])
+    b.check(abs(f_def / 261.6 - 1) < 0.03, f"PITCH 64, note 60 : {f_def:.1f} Hz (attendu ~261,6, comme le Syntakt)")
     b.check(abs(f_up / f_def - 2) < 0.06, f"PITCH +12 : x{f_up / f_def:.3f} (attendu x2)")
     b.check(abs(f_note / f_def - 2) < 0.06, f"note +12 : x{f_note / f_def:.3f} (attendu x2)")
 
-    print("[3] COLOR (snappy) et SHAPE (brillance du bruit)")
-    c0 = centroid(b.run(color=0)[:ms(80)])
-    c1 = centroid(b.run(color=127, name="color127")[:ms(80)])
-    b.check(c0 < 600 < 3000 < c1, f"centroïde COLOR 0 -> 127 : {c0:.0f} -> {c1:.0f} Hz")
-    s = [centroid(b.run(shape=v, name=f"shape{v}")[:ms(80)]) for v in (0, 64, 127)]
-    b.check(s[0] < s[1] < s[2], f"centroïde SHAPE 0/64/127 : {s[0]:.0f} / {s[1]:.0f} / {s[2]:.0f} Hz")
+    print("[3] SWEEP = SWEP (balayage de la hauteur)")
+    r = [f0(x[ms(0.5):ms(8)]) / f0(x[ms(60):ms(120)]) for x in (b.run(sweep=v, blocks=190) for v in (0, 74, 127))]
+    b.check(r[0] < 1.05 and 1.3 < r[1] < 1.5 and 1.55 < r[2] < 1.8,
+            f"f0 debut / fin, SWEEP 0/74/127 : x{r[0]:.2f} / x{r[1]:.2f} / x{r[2]:.2f} (Syntakt : x0,94 / x1,40 / x1,66)")
 
-    print("[4] CONTOUR (durée du corps) et SWEEP (balayage)")
-    lo_c = [rms(lowpass(b.run(contour=v, color=0, name=f"contour{v}"))[ms(60):ms(150)]) for v in (0, 127)]
-    b.check(lo_c[1] > 3 * lo_c[0] and lo_c[1] > 1e6,
-            f"corps (< 500 Hz) entre 60 et 150 ms, CONTOUR 0 -> 127 : {lo_c[0]:.3g} -> {lo_c[1]:.3g}")
+    print("[4] SHAPE = FCMP (amas aigu), COLOR = INHM et CONTOUR = MENV (2e mode)")
+    lv = [rms(highpass(b.run(shape=v))[:ms(50)]) for v in (0, 64, 110)]
+    b.check(lv[1] < lv[0] < lv[2], f"amas 0-50 ms, SHAPE 0/64/110 : {lv[0]:.3g} / {lv[1]:.3g} / {lv[2]:.3g} (non monotone, comme FCMP)")
+    k = [mode2_ratio(b.run(color=v, contour=0, sweep=0)) for v in (0, 127)]
+    b.check(abs(k[0] - 2.0) < 0.1 and abs(k[1] - 2.8) < 0.15, f"2e mode du corps, COLOR 0 -> 127 : x{k[0]:.2f} -> x{k[1]:.2f}")
+    m = [mode2_level(b.run(contour=v, sweep=0)) for v in (0, 127)]
+    b.check(1.5 < m[0] / m[1] < 3, f"2e mode 0-20 ms, CONTOUR 0 -> 127 : x{m[0] / m[1]:.2f} (Syntakt, MENV : x2,02)")
 
-    def zc_rate(x):
-        y = x[ms(0.7):ms(4)].astype(float)
-        return np.sum(np.abs(np.diff(np.sign(y))) > 0) / (2 * len(y) / SR)
-    z0 = zc_rate(b.run(sweep=0, color=0))
-    z1 = zc_rate(b.run(sweep=127, color=0, name="sweep127"))
-    b.check(z1 > 1.4 * z0, f"fréquence au début (0.7-4 ms), SWEEP 0 -> 127 : {z0:.0f} -> {z1:.0f} Hz")
-
-    print("[5] DECAY (enveloppe d'ampli d'origine)")
+    print("[5] DECAY = DEC (enveloppe d'ampli d'origine, recalee sur le Syntakt)")
     t = [rms(b.run(decay=v, blocks=460)[ms(150):ms(300)]) for v in (10, 40, 90)]
     b.check(t[0] < t[1] < t[2], f"queue 150-300 ms, DECAY 10/40/90 : {t[0]:.3g} / {t[1]:.3g} / {t[2]:.3g}")
 

@@ -11,7 +11,7 @@ d'abord ce qui existe déjà et se livre vite, ensuite ce qui demande de la rech
 | 1 | Un mode mute sans tenir FUNC | ✅ **livré** : tweak `latching-mute` de drumkilla, dans le flasher web | §1 |
 | 2 | Regrouper avec le tweak « trig preview » | ✅ **livré** : `trig-preview` (et `browser-scroll`), dans le flasher web | §2 |
 | 3 | Flasher l'OS Model:Samples, ou une machine « samples » dans l'OS Cycles | ✅ **l'OS Samples tourne sur un vrai Model:Cycles** (29/09/2026) : onglet *Samples OS* du flasher web, ou `tools/crossflash.py`. La machine « samples » dans l'OS Cycles vient après | §3 |
-| 4 | Porter les machines numériques du Syntakt | 🟠 **recherche** : même conteneur, même CPU, même table de sinus que le Cycles. Prochaine étape : faire tourner le vrai SD VINTAGE dans le banc | §4 |
+| 4 | Porter les machines numériques du Syntakt | 🟡 **le vrai SD VINTAGE tourne en émulation, et le nôtre est recalé dessus** ([16](16-moteur-syntakt.md)). Les machines FM du Syntakt sont celles du Cycles | §4 |
 
 Ordre suivi : **§3 d'abord** (fichier de 686 Ko, la comparaison des deux OS 1.13 a répondu vite à la question clé :
 le matériel est le même), **puis §4** (plus long, mais il s'appuie sur le banc d'émulation de SD VINTAGE).
@@ -148,6 +148,82 @@ Le retour depuis l'OS Samples n'est **garanti** que par le MIDI IN : le flasher 
 - **Double démarrage** (deux MAIN OS en flash, choisis au démarrage) : à écarter. Il faudrait modifier le bootstrap, c'est-à-dire le code même du menu de secours.
 - **Machine « sample » dans le moteur Cycles** : l'analyse la rend moins lointaine que ne le disait la [note 10 §4](10-faisabilite-fonctionnalites.md). Même RAM (hyp. forte), même stockage, même bibliothèque de fichiers. Mais il faudrait greffer le `SampleManager` (chargement, liste, UI) et une voix de lecture dans le moteur.
   Le test de la route 3.2 a réussi : le matériel du Cycles fait tourner le moteur de samples. La machine « sample » dans l'OS Cycles devient donc un vrai chantier possible, qu'il reste à planifier.
+
+### 3.4 Retour à l'OS Cycles **par USB**, sans interface MIDI — 🔴 impossible dans cet état (verrou à deux clés). MIDI requis
+
+> **Mise à jour du 30/09/2026** : l'utilisateur a retrouvé l'OS Cycles **sans interface MIDI**, par un factory reset depuis le menu de démarrage (power + trig).
+> La conclusion « impossible » ci-dessous vaut pour le chemin `CONFIG › UPGRADE` étudié ici, pas pour tout retour.
+> Le mécanisme exact (pourquoi la réinitialisation a suffi) n'est pas élucidé : à comprendre avant de le proposer dans le flasher.
+> Source : message de l'utilisateur du 30/09/2026.
+
+**Situation** (29/09/2026) : l'utilisateur a flashé l'OS Samples sur son Cycles par USB, puis s'est aperçu qu'il n'a pas d'interface MIDI.
+Le retour « officiel » passe par le menu de démarrage, donc par le MIDI IN ([§3.2](#32-la-route-de-flash--toolscrossflashpy-et-longlet-samples-os-fait-validée)).
+Question : y a-t-il un retour par `CONFIG > UPGRADE` (USB) depuis l'OS Samples ?
+
+> **Réponse (30/09/2026, après désassemblage du chemin d'écriture) : non, pas dans l'état où se trouve la machine.**
+> Un `.syx` de retour a été construit et envoyé par l'utilisateur : la mise à jour « a semblé marcher » (réception jusqu'au bout, redémarrage)
+> mais la machine est **restée sur l'OS Samples**. C'est le scénario « sans danger » — refus **avant** commit. La cause est structurelle (ci-dessous),
+> et **la variante « MAIN OS seul » n'y change rien**. Le retour passe obligatoirement par une **interface MIDI** (menu de démarrage, [FLASH §5](../FLASH.md)).
+
+**Le `.syx` officiel Cycles est ignoré tel quel par l'OS Samples.** Trois contrôles, tous propres au modèle, relevés en désassemblant les deux MAIN OS 1.13
+(sections 3 décompressées, `tools/mtlib`, capstone ColdFire) :
+
+| # | Contrôle de l'OS Samples | Valeur exigée | Cycles |
+|---|---|---|---|
+| 1 | **Routeur SysEx** : table indexée par l'octet produit du message (`0x40080356`, table `0x40144f58`) | entrées non vides : `0x04`, **`0x0F`**, `0x10`. Le gestionnaire d'OS upgrade (`0x4007fbb6`) n'est lié que dans la table `0x0F`, aux commandes `0x7E` (données) et `0x7F` (marqueurs) | `0x11` (routeur `0x40081348`, table `0x40148d08`) |
+| 2 | **Marqueur de début** : octet appareil `info[0]` (octet 8 du message), aussi base du checksum des paquets (`0x40080dd8`, `moveq #$a`) | `0x0A` | `0x0C` |
+| 3 | **HMAC-SHA256 du conteneur**, calculé par le MAIN OS lui-même (`0x40051728`, appelée par `0x40059104`, avant toute écriture, `0x40091488`) | clé dérivée de `"DELAY TIME"` + 32 octets en `0x4012a37e` : **la clé Samples** | clé `"REVERB SEND"` |
+
+> Source : MAIN OS de `model-samples_OS1.13.syx` et de `model-cycles_OS1.13.syx`, désassemblés le 29/09/2026.
+> La clé recalculée depuis le MAIN OS Samples est identique à celle que `mtlib` tire du bootstrap Samples (contrôle fait par `tools/crossflash.py --back`).
+
+Conséquence : un paquet `0x11` est ignoré sans message d'erreur (l'écran reste sur « Waiting for SysEx »), et même accepté par le routeur il échouerait sur le marqueur puis sur le HMAC.
+C'est cohérent avec l'aller : l'OS Cycles a accepté un conteneur Cycles (`0x11`, `0x0C`, clé Cycles) qui contenait le MAIN OS Samples.
+
+**Le fichier de retour.** `python3 tools/crossflash.py --cycles model-cycles_OS1.13.syx --samples model-samples_OS1.13.syx --back`
+produit `model-cycles_OS1.13_back-from-samples-os.syx`, qui garde **tout le contenu Cycles officiel** et ne change que ce que l'OS Samples inspecte :
+
+- transport Samples : produit `0x0F`, octet appareil `0x0A`, checksums recalculés (6 953 paquets, comme l'officiel) ;
+- 32 octets de HMAC recalculés avec la clé Samples, et le checksum de contenu du préambule qui les couvre.
+
+Vérifié le 29/09/2026 : les octets du conteneur ne diffèrent de l'officiel Cycles **que** dans ces 32 octets (sections 2, 3, 4, 5 et en-tête ELE3 identiques, dont l'octet `0x15`).
+Le script rejoue sur le fichier les contrôles ci-dessus (produit, marqueur, checksum de chaque paquet, checksum de contenu, HMAC valide avec la clé Samples et **invalide** avec la clé Cycles),
+et le vérificateur JS du flasher web l'accepte (`Model:Samples`, 6 953 paquets).
+
+Ce fichier passe **la première** vérification, mais pas la suite. Voici pourquoi.
+
+### 3.4bis Le vrai blocage : une mise à jour USB est vérifiée **deux fois**, avec **deux clés différentes**
+
+`[FAIT]` En désassemblant le chemin d'écriture de l'OS Samples (`0x40091488`, appelé par `0x4006bed6`) :
+- après la vérification (§3.4, contrôle 3), l'updater **n'écrit pas** section par section à leur adresse : il copie tout le conteneur reçu dans une **zone de staging** (base flash `0x20000`, `0x4008fc50` par blocs), affiche « Writing Flash », puis **réinitialise le CPU** (`move.l #0, 0x48000000` ; `move.b #0x80, 0xec090000`, `0x40091570`).
+- L'installation réelle se fait donc **au redémarrage, par le bootstrap**, qui lit le staging et le pose en flash.
+- `[FAIT]` Le bootstrap (section 2) **porte sa propre matière de clé HMAC** : l'ancre SHA-256 `be f9 a3 f7…` et la chaîne de dérivation (`"REVERB SEND"` dans le bootstrap Cycles, `"DELAY TIME"` dans le Samples, offset `0x6664` des deux). Il **re-vérifie** donc la signature à l'installation.
+
+Or l'état de la machine après l'aller est **hybride** ([§3.2](#32-la-route-de-flash--toolscrossflashpy-et-longlet-samples-os-fait-validée)) :
+
+| Ce qui est en flash | Provenance | Clé de vérification |
+|---|---|---|
+| **bootstrap** (menu de démarrage, installeur) | **Cycles** (le conteneur de l'aller était un conteneur Cycles) | **`"REVERB SEND"` (Cycles)** |
+| **MAIN OS** (ce qui tourne) | **Samples** | **`"DELAY TIME"` (Samples)** |
+
+Une mise à jour USB traverse donc **deux portes à clés opposées** :
+1. **l'OS Samples qui tourne** reçoit le SysEx et vérifie avec la **clé Samples**, puis met en staging ;
+2. **le bootstrap Cycles**, au redémarrage, installe depuis le staging et vérifie avec la **clé Cycles**.
+
+Un fichier ne porte **qu'un seul** trailer HMAC. Il ne peut pas satisfaire les deux clés à la fois :
+- signé Samples (notre `--back`) → passe la porte 1, **rejeté à la porte 2** → la machine réinstalle l'ancien OS Samples. **C'est exactement ce qu'a vu l'utilisateur.**
+- signé Cycles (le `.syx` officiel) → **rejeté dès la porte 1**, jamais mis en staging.
+
+`[FAIT]` **La variante « MAIN OS seul » ne débloque rien** : un conteneur partiel emprunte le même chemin staging → reboot → bootstrap, donc bute sur la même porte 2. Pire, un conteneur fabriqué à la main a plus de chances de déclencher les contrôles de longueur/CRC du bootstrap (`LENGTH ERROR`, `CRC CHECK`, section 2), c'est-à-dire d'aller **vers** la zone risquée, pas loin d'elle.
+
+**Pourquoi le MIDI, lui, marche.** Le menu de démarrage court-circuite l'OS : le SysEx arrive **directement au bootstrap** (récepteur du menu), une seule porte, une seule clé — la **clé Cycles**. Et le `.syx` officiel Cycles est signé Cycles. Correspondance parfaite, un seul étage, aucune ambiguïté. C'est pour ça que c'est la voie de secours fiable, et la seule dans cet état.
+
+> Source : chemins d'écriture et de vérification des MAIN OS et bootstraps 1.13, désassemblés le 30/09/2026 (`tools/mtlib`, capstone ColdFire).
+
+**Conclusion opérationnelle.** Depuis l'OS Samples installé sur un Cycles, **il n'y a pas de retour par USB**. Il faut une **interface USB-MIDI** (sortie DIN ou TRS, quelques euros ; le kit **CA-3** est déjà fourni avec la machine), reliée au **MIDI IN**, puis le menu de démarrage (FUNC + allumage, TRIG 4) et l'OS Cycles officiel ([FLASH §5](../FLASH.md#5-récupération-revenir-à-loriginal)). Détails et interfaces repérées : [12](12-flash-par-jack-trs.md).
+La piste « sortie casque » (§3 de la note 12) resterait à défaut, mais elle est expérimentale et son outil `syx2wav.py` n'est pas écrit.
+
+Le mode `tools/crossflash.py --back` **est conservé** (il documente le raisonnement et produit un fichier correct pour la porte 1), mais son aide dit clairement qu'il **ne suffit pas** au retour à cause de la porte 2.
 
 ## 4. Machines numériques du Syntakt — 🟠 recherche, premiers résultats encourageants
 

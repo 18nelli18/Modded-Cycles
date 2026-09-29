@@ -85,7 +85,7 @@
   .samples-head{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-weight:650;margin:0 0 .35em}
   .warn-list{margin:.7em 0 12px;padding-left:1.2em;font-size:.9rem;color:var(--muted)}
   .warn-list li{margin:.3em 0}
-  #drop2-wrap{margin-top:14px}
+  #drop2-wrap,#drop3-wrap{margin-top:14px}
   .note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--line);padding:2px 0 2px 10px;margin:12px 0 0}
 
   /* drop zone */
@@ -182,7 +182,7 @@
   <div id="errbar" class="alert bad" hidden></div>
   <script>
     // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-    window.MC_BUILD = "2026-09-29-2";
+    window.MC_BUILD = "2026-09-30-2";
     window.addEventListener("error", function (e) {
       var b = document.getElementById("errbar");
       if (!b) return;
@@ -253,6 +253,16 @@
       </label>
       <p class="hint" data-i18n-html="get_os_samples"></p>
       <div id="file2-status" class="status" aria-live="polite"></div>
+    </div>
+    <div id="drop3-wrap" hidden>
+      <label class="drop" id="drop3" tabindex="0">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 12v6M9.5 15.5 12 18l2.5-2.5"/></svg>
+        <div><strong id="drop3-title" data-i18n="drop3_title">Drop Syntakt_OS1.41.syx here</strong>
+          <span id="drop3-sub" data-i18n="drop3_sub">the official Syntakt OS, for the SD VINTAGE engine — or click to choose it</span></div>
+        <input id="file3" type="file" accept=".syx" hidden>
+      </label>
+      <p class="hint" data-i18n-html="get_os_syntakt"></p>
+      <div id="file3-status" class="status" aria-live="polite"></div>
     </div>
   </section>
 

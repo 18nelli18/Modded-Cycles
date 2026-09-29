@@ -1,10 +1,11 @@
 /* Browser smoke test (jsdom) of the web flasher: loads the real page and its scripts,
  * fakes Web MIDI, and walks through the 4 steps (choose, OS file, connect over USB, flash).
  * Run through tools/webflash_smoke.sh (installs jsdom in a temp folder).
- *   node tools/webflash_smoke.js <synth_dir> [official_os.syx [official_samples_os.syx]]
- * The optional official OS also checks every combination the page offers against its
- * reference hash (REF_MAINOS in app.js); with the official Model:Samples OS too, the
- * "Samples OS" tab is checked end to end (REF_SAMPLES_ON_CYCLES). */
+ *   node tools/webflash_smoke.js <synth_dir> [model-cycles_OS1.13.syx] [model-samples_OS1.13.syx] [Syntakt_OS1.41.syx]
+ * The optional official files are told apart by their names. The Model:Cycles OS checks every
+ * combination the page offers against its reference hash (REF_MAINOS in app.js; the SD VINTAGE
+ * ones need the Syntakt OS too); with the Model:Samples OS, the "Samples OS" tab is checked end
+ * to end (REF_SAMPLES_ON_CYCLES); with the Syntakt OS, the SD VINTAGE flow is. */
 const fs = require("fs");
 const path = require("path");
 const { pathToFileURL } = require("url");
@@ -12,11 +13,13 @@ const { JSDOM, VirtualConsole } = require("jsdom");
 
 const FLASH = path.join(__dirname, "..", "docs", "flasher");
 const SYNTH = process.argv[2];
-const REAL_OS = process.argv[3];
-const REAL_SMP = process.argv[4];
+const REAL = process.argv.slice(3);
+const REAL_ST = REAL.find((f) => /syntakt/i.test(path.basename(f)));
+const REAL_SMP = REAL.find((f) => /samples/i.test(path.basename(f)));
+const REAL_OS = REAL.find((f) => f !== REAL_ST && f !== REAL_SMP);
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function load({ midi = true, ports = true, secure = true, lang = "en" } = {}) {
+async function load({ midi = true, ports = true, secure = true, lang = "en", devName = "Elektron Model:Cycles" } = {}) {
   const errors = [];
   const vc = new VirtualConsole();
   vc.on("jsdomError", (e) => errors.push("jsdomError: " + ((e.detail && e.detail.message) || e.message || e)));
@@ -33,7 +36,7 @@ async function load({ midi = true, ports = true, secure = true, lang = "en" } = 
       if (midi) {
         const outputs = new Map();
         if (ports) {
-          outputs.set("dev", { id: "dev", name: "Elektron Model:Cycles", manufacturer: "Elektron", send: (d) => sent.push(d.length) });
+          outputs.set("dev", { id: "dev", name: devName, manufacturer: "Elektron", send: (d) => sent.push(d.length) });
           outputs.set("iface", { id: "iface", name: "USB MIDI Interface", manufacturer: "Acme", send: (d) => sent.push(d.length) });
         }
         window.navigator.requestMIDIAccess = () => Promise.resolve({ outputs, onstatechange: null });
@@ -62,13 +65,22 @@ async function main() {
     check(errors.length === 0, "loads without JS error " + (errors.length ? JSON.stringify(errors) : ""));
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
-    check(ids.join() === "6ch-usbup,latching-mute,trig-preview,browser-scroll" && w.MC_TWEAKS.features.length === 4,
-      "MC_TWEAKS: only USB-friendly tweaks (no 6ch-multiout, no sdvintage): " + ids.join());
+    check(ids.join() === "6ch-usbup,latching-mute,trig-preview,browser-scroll,sdvintage-exact" && w.MC_TWEAKS.features.length === 5,
+      "MC_TWEAKS: only USB-friendly tweaks (no 6ch-multiout, no clean-room sdvintage): " + ids.join());
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     check(doc.getElementById("compat").hidden, "no compatibility banner in a good browser");
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-usb6,feat-latching-mute,feat-trig-preview,feat-browser-scroll", "4 feature cards: " + JSON.stringify(feats));
-    check(doc.querySelectorAll("#features .tag.ok").length === 4 && /Tested/.test(text(doc, "features")), "every card is tagged Tested");
+    check(feats.join() === "feat-usb6,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-sdvintage", "5 feature cards: " + JSON.stringify(feats));
+    const tags = [...doc.querySelectorAll("#features .tag")].map((x) => x.textContent);
+    check(tags.join() === "Tested,Tested,Tested,Tested,Tested", "every card is tagged Tested: " + tags.join());
+    check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until SD VINTAGE is ticked");
+    doc.getElementById("feat-sdvintage").click();
+    await wait(30);
+    check(!doc.getElementById("drop3-wrap").hidden && /Drop Syntakt_OS1.41.syx/.test(text(doc, "drop3"))
+      && /elektron\.se\/support-downloads\/syntakt/.test(doc.getElementById("step-file").innerHTML),
+      "SD VINTAGE ticked -> Syntakt drop zone and download link");
+    doc.getElementById("feat-sdvintage").click();
+    await wait(30);
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
     check(credits.length === 4 && credits[0] === "https://github.com/scottmetoyer/ms-multi-output"
       && credits.slice(1).every((h) => h === "https://github.com/drumkilla/elektron-model-tweaks"), "each card credits its author: " + JSON.stringify(credits));
@@ -88,7 +100,8 @@ async function main() {
     await wait(20);
     check(/Qu'est-ce que tu veux installer/.test(text(doc, "h1s")) && doc.documentElement.lang === "fr", "FR switch translates the page");
     check(/Audio USB 6 canaux/.test(text(doc, "features")) && /Mode mute verrouillé/.test(text(doc, "features"))
-      && /par drumkilla/.test(text(doc, "features")), "FR switch translates the feature cards and credits");
+      && /par drumkilla/.test(text(doc, "features")) && /le vrai moteur du Syntakt/.test(text(doc, "features"))
+      && /Testé/.test(text(doc, "features")), "FR switch translates the feature cards and credits");
     check(/Crédits/.test(text(doc, "credits")) && /boîte à outils/.test(text(doc, "credits")), "FR switch translates the credits section");
     doc.querySelector('.lang button[data-lang="en"]').click();
     await wait(20);
@@ -106,6 +119,15 @@ async function main() {
     sel.dispatchEvent(new w.Event("change"));
     await wait(20);
     check(/pick the port named/i.test(text(doc, "midi-status")), "another port -> warning");
+  }
+
+  // 1b. A Model:Cycles running the Samples OS shows up as "Model:Samples": it refuses a Model:Cycles firmware
+  {
+    const { doc } = await load({ devName: "Elektron Model:Samples" });
+    doc.getElementById("allow").click();
+    await wait(80);
+    check(doc.getElementById("port").value === "dev" && /refuses a Model:Cycles firmware/.test(text(doc, "midi-status")),
+      "Model:Samples port -> warning about the way back");
   }
 
   // 2. No Web MIDI (Firefox / Safari) -> clear banner
@@ -150,6 +172,16 @@ async function main() {
     app.setMode("mods");
     await settle(w);
     check(app.state.fw && app.state.fw.kind === "built", "back to Mods -> built firmware again (cache)");
+    doc.getElementById("feat-sdvintage").click();
+    await settle(w);
+    check(!app.state.fw && app.state.fwError === "needs_syntakt" && /read from the official Syntakt OS/.test(text(doc, "file-status"))
+      && /Load the official Syntakt OS file/.test(text(doc, "missing")), "SD VINTAGE without the Syntakt file -> asks for it");
+    app.loadSyntakt(raw, "Syntakt_OS1.41.syx");
+    await settle(w);
+    check(!app.state.syntakt && /not the official Syntakt OS 1.41/.test(text(doc, "file3-status")), "a wrong file in the Syntakt zone is refused");
+    doc.getElementById("feat-sdvintage").click();
+    await settle(w);
+    check(app.state.fw && app.state.fw.kind === "built" && doc.getElementById("drop3-wrap").hidden, "SD VINTAGE unticked -> back to the 6-channel build");
 
     doc.getElementById("allow").click();
     await wait(80);
@@ -186,6 +218,8 @@ async function main() {
     const app = w.MCFlasherApp;
     app.loadOs(new Uint8Array(fs.readFileSync(REAL_OS)), "model-cycles_OS1.13.syx");
     await wait(20);
+    if (REAL_ST) app.loadSyntakt(new Uint8Array(fs.readFileSync(REAL_ST)), "Syntakt_OS1.41.syx");
+    await wait(20);
     const boxes = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
     const seen = new Set();
     for (let mask = 1; mask < 1 << boxes.length; mask++) {
@@ -195,10 +229,16 @@ async function main() {
       }
       await settle(w);
       const f = app.state.fw;
+      if (!REAL_ST && doc.getElementById("feat-sdvintage").checked) {
+        check(!f && app.state.fwError === "needs_syntakt", `real OS without the Syntakt OS: SD VINTAGE combination waits for it`);
+        continue;
+      }
       seen.add(app.state.buildKey);
       check(f && f.kind === "built" && f.ref, `real OS: ${app.state.buildKey} matches its reference hash`);
     }
-    check(seen.size === Object.keys(app.REF_MAINOS).length, `REF_MAINOS lists exactly the ${seen.size} combinations offered`);
+    const offered = Object.keys(app.REF_MAINOS).filter((k) => REAL_ST || !k.includes("sdvintage"));
+    check(seen.size === offered.length && offered.every((k) => seen.has(k)),
+      `REF_MAINOS lists exactly the ${seen.size} combinations offered` + (REAL_ST ? "" : " (without SD VINTAGE: no Syntakt OS given)"));
     check(errors.length === 0, "no JS error with the real OS");
   }
 
@@ -252,6 +292,42 @@ async function main() {
     check(/OS Samples/.test(text(doc, "tab-samples")) && doc.getElementById("drop2-title").textContent === "model-samples_OS1.13.syx",
       "FR: tab translated, loaded file name kept");
     check(errors.length === 0, "no JS error in the Samples OS flow " + (errors.length ? JSON.stringify(errors) : ""));
+  }
+
+  // 8. SD VINTAGE with the official Model:Cycles and Syntakt files, up to the transfer
+  if (REAL_OS && REAL_ST) {
+    const { w, doc, errors, sent } = await load();
+    const app = w.MCFlasherApp;
+    const cyc = new Uint8Array(fs.readFileSync(REAL_OS)), syn = new Uint8Array(fs.readFileSync(REAL_ST));
+    app.loadOs(cyc, "model-cycles_OS1.13.syx");
+    doc.getElementById("feat-sdvintage").click();
+    await settle(w);
+    app.loadSyntakt(cyc, "model-cycles_OS1.13.syx");               // wrong file in the Syntakt zone
+    await settle(w);
+    check(!app.state.syntakt && /not the official Syntakt/.test(text(doc, "file3-status")) && !app.state.fw, "a Cycles file in the Syntakt zone is refused");
+    app.loadSyntakt(syn, "Syntakt_OS1.41.syx");
+    await settle(w);
+    const f = app.state.fw;
+    check(f && f.kind === "built" && f.ref && f.sdv && /recognised/.test(text(doc, "file3-status"))
+      && /SD VINTAGE, the real Syntakt engine/.test(text(doc, "file-status")), "Syntakt file -> reference build " + (f ? f.name : ""));
+    doc.getElementById("allow").click();
+    await wait(80);
+    check(/Tick the box/.test(text(doc, "missing")) && doc.getElementById("flash").disabled, "asks for the confirmation box");
+    doc.getElementById("ack").click();
+    await wait(20);
+    check(!doc.getElementById("flash").disabled && doc.getElementById("step-choose").classList.contains("done"), "then ready: " + text(doc, "summary"));
+    doc.getElementById("pace").value = "0";
+    doc.getElementById("pace").dispatchEvent(new w.Event("input"));
+    const n0 = sent.length;
+    doc.getElementById("flash").click();
+    for (let i = 0; i < 200 && app.state.sending; i++) await wait(50);
+    check(sent.length - n0 === w.MCFlasher.splitMessages(app.state.fw.raw).length && /Syntakt's SD VINTAGE/.test(text(doc, "result")),
+      "full transfer + SD VINTAGE message");
+    doc.querySelector('.lang button[data-lang="fr"]').click();
+    await wait(20);
+    check(doc.getElementById("drop3-title").textContent === "Syntakt_OS1.41.syx" && /OS officiel Syntakt 1.41 reconnu/.test(text(doc, "file3-status")),
+      "FR: loaded Syntakt file name kept, status translated");
+    check(errors.length === 0, "no JS error in the SD VINTAGE flow " + (errors.length ? JSON.stringify(errors) : ""));
   }
 
   console.log(fail ? `\nFAILED (${fail})` : "\nALL OK");

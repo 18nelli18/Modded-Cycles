@@ -153,8 +153,13 @@ Quatre étapes, de haut en bas :
    Une case oblige à confirmer qu'on a une interface MIDI : le retour à l'OS Cycles passe par le menu de démarrage (§5).
 
    Chaque carte indique l'auteur du travail d'origine ; la section *Credits* en bas de page liste les projets sur lesquels
-   on s'appuie. `6ch-multiout` (qui casse la mise à jour par USB) et SD VINTAGE ne sont plus proposés dans la page :
-   ils restent disponibles avec `build.py` et les scripts de flash.
+   on s'appuie. `6ch-multiout` (qui casse la mise à jour par USB) et la SD VINTAGE « clean-room » (`sdvintage-snare`)
+   ne sont plus proposés dans la page : ils restent disponibles avec `build.py` et les scripts de flash.
+
+   La 5ᵉ case, **SD VINTAGE, le vrai moteur du Syntakt** (`sdvintage-exact`, [note 17](notes/17-portage-exact-syntakt.md)),
+   a été **testée sur un vrai Model:Cycles** le 30/09/2026 (flash par USB depuis le flasher web).
+   - Elle ajoute une 3ᵉ zone de dépôt à l'étape 2 pour ton `Syntakt_OS1.41.syx` officiel. La page y lit le moteur ; le fichier ne quitte pas l'ordinateur.
+   - Après le flash, la machine SNARE est la SD VINTAGE du Syntakt. Pour revenir en arrière : onglet *Official firmware*, par USB.
 2. **Déposer l'OS officiel** `model-cycles_OS1.13.syx` : il est reconnu à son empreinte, et le firmware est **construit
    automatiquement** (pas de bouton). La page **exige** le MAIN OS de référence de chaque combinaison (voir [BUILD.md](BUILD.md)),
    sinon elle refuse. Un `.syx` qui n'est pas l'OS officiel est accepté s'il est valide, mais envoyé **tel quel**.

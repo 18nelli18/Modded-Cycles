@@ -33,6 +33,10 @@ SLOT = {"machine": 0x09, "pitch": 0x0a, "color": 0x0b, "shape": 0x0c, "sweep": 0
 DEFAULTS = {0: (10, 16, 16, 24, 28), 1: (0, 127, 8, 0, 40), 2: (46, 48, 0, 20, 20),
             3: (38, 100, 64, 26, 26), 4: (40, 38, 52, 42, 42), 5: (3, 43, 24, 64, 64)}
 
+IMAGE_LEN = 0x1a9d40             # MAIN OS 1.13 d'origine ; au-delà : charge utile d'un tweak « append »
+PAYLOAD_DST = 0x43000000         # où le crochet de démarrage la recopie (notes/17)
+PAYLOAD_CODE = ((0x43000000, 0x4300603c), (0x43031000, 0x43032000))   # zones de code de la charge utile
+
 _EMAC_CACHE = {}
 
 
@@ -46,6 +50,23 @@ def _emac_instrs(main_os, ranges):
             instrs = {}
             for lo, hi in ranges:
                 instrs.update(emac.disasm(path, BASE, lo, hi))
+        finally:
+            os.unlink(path)
+        _EMAC_CACHE[key] = instrs
+    return _EMAC_CACHE[key]
+
+
+def _emac_payload(payload):
+    key = ("payload", hashlib.sha256(payload).hexdigest())
+    if key not in _EMAC_CACHE:
+        fd, path = tempfile.mkstemp(suffix=".bin")
+        try:
+            os.write(fd, payload)
+            os.close(fd)
+            instrs = {}
+            for lo, hi in PAYLOAD_CODE:
+                if lo - PAYLOAD_DST < len(payload):
+                    instrs.update(emac.disasm(path, PAYLOAD_DST, lo, min(hi, PAYLOAD_DST + len(payload))))
         finally:
             os.unlink(path)
         _EMAC_CACHE[key] = instrs
@@ -70,6 +91,11 @@ class Engine:
         self.emac = emac.EMAC(uc)
         ranges = [CODE_RANGE] + [(va, va + n) for va, n in extra_code]
         self.n_emac = self.emac.install(_emac_instrs(self.img, ranges))
+        payload = self.img[IMAGE_LEN:]
+        if payload:                              # ce que fait le crochet de démarrage 0x400004b2 (notes/17)
+            uc.mem_map(PAYLOAD_DST, (len(payload) + 0xfffff) & ~0xfffff)
+            uc.mem_write(PAYLOAD_DST, payload)
+            self.n_emac += self.emac.install(_emac_payload(payload))
         # boot : copie ROM -> SRAM (0x4000045c) puis init des voix (0x4005974c)
         uc.mem_write(0x80000000, self.img[0x4019b590 - BASE:0x401a2a50 - BASE])
         uc.mem_write(0x80008000, self.img[0x401a2a50 - BASE:0x401aa140 - BASE])

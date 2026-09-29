@@ -36,6 +36,11 @@ L'orchestration (`tools/build.py`) et les tables de patchs (`tweaks/`) sont prop
    ```sh
    python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup,latching-mute,trig-preview,browser-scroll
    ```
+   Et le **vrai moteur SD VINTAGE du Syntakt** ([note 17](notes/17-portage-exact-syntakt.md)), extrait au build de **ton** fichier Syntakt
+   (aucun octet Elektron dans le dépôt : le tweak ne contient qu'une recette de copie et une table de relocalisation) :
+   ```sh
+   python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup,sdvintage-exact --syntakt Syntakt_OS1.41.syx
+   ```
    → écrit `model-cycles_OS1.13_mod.syx` à côté. `-t a,b` combine plusieurs patchs compatibles.
    `--all` applique tout, mais refuse si deux patchs sont incompatibles (c'est le cas de ces deux variantes).
 
@@ -73,13 +78,19 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
 | `6ch-usbup` | `db3d26cc3a48d1155933240c7d1d5476c8f56d2b6a54be1ffe7f5327e54c0521` |
-| `sdvintage-snare` | `80b7b2bd003f2695488d629c0fab56c84e10213898c9820c321efa711f6957c7` |
-| `6ch-multiout,sdvintage-snare` | `4494fb764c7643b2a9acea8b4fa2cafe10ee7d9644e56d08e333ee019f4cbe72` |
-| `6ch-usbup,sdvintage-snare` | `38754937b06e3815ee1da9c93137d46283b612e1881772f4d034fb9f998b3335` |
+| `sdvintage-snare` (v2, recalée sur le Syntakt) | `11049726efa102028f7365b0a672c8a244b98edcef5e7c8b5e0aafba369f60d3` |
+| `6ch-multiout,sdvintage-snare` | `80d0d717c5054f9277c2ddadb588e3578968cc1427610c7367ee408fa8ffd2de` |
+| `6ch-usbup,sdvintage-snare` | `6cb642dc14fc3f9ec013da8481fc0545758e514c76e0c60611208d9f15ad71cc` |
 | `latching-mute,trig-preview,browser-scroll` | `71fef138b1ae16f3ad440ecaa6a6327c1a987ce2c8a86b74329f68159981a15c` (= `tweak.py` de drumkilla) |
 | `6ch-usbup,latching-mute,trig-preview,browser-scroll` | `fd57831c61926fb3b1902cadcb0f95e68db3bb637b4cd20860a0efc46db82cfa` |
 
-Les 15 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`).
+| `sdvintage-exact` (avec `--syntakt Syntakt_OS1.41.syx`) | `8e2290a79fb1406ce65b3af3c5d3d95faade666e98eb8ecce0c0fa25fe87b15d` |
+| `6ch-usbup,sdvintage-exact` (idem) | `ea57b3c52b77d4de3df073ee605f2fecde59878d06e3141c927ed3bd7f489904` |
+
+Les 31 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`) ;
+`tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.41.syx` les reconstruit toutes dans la page et les compare.
+SD VINTAGE v1 (clean-room d'origine, **testée sur le matériel** le 29/09/2026, compilée par GCC 13.3) donnait `80b7b2bd…` seule et `38754937…` avec `6ch-usbup` ;
+la v2 est compilée par `m68k-elf-gcc` 16.2 (Homebrew), voir [note 16 §6](notes/16-moteur-syntakt.md).
 
 ### Variante `6ch-usbup`
 
