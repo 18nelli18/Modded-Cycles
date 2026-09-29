@@ -4,7 +4,10 @@ Travail du 25/09/2026, **sans matériel et sans l'image firmware**. Les domaines
 Tout ce qui dépend de l'image est vérifié **par `build.py`, sur ta machine**, au moment du build.
 Ce qui est fait correspond au point E de la feuille de route ([08 §E](08-feuille-de-route.md#e-récupérer-lupgrade-usb-et-le-full-speed)).
 
-> ⚠️ Variante **expérimentale, jamais flashée**. Même statut que le 6 canaux d'origine : la récupération par le MIDI IN ([FLASH §5](../FLASH.md#5-récupération-revenir-à-loriginal)) doit être prête avant de flasher.
+> ✅ **Validée sur un vrai Model:Cycles le 29/09/2026.** L'utilisateur a flashé `6ch-usbup` par USB (`CONFIG > UPGRADE`) depuis l'OS officiel.
+> Les 6 canaux marchent. Il a ensuite reflashé par USB, **avec `6ch-usbup` installé**, une image `6ch-usbup` + SD VINTAGE, qui a pris.
+> La mise à jour par USB survit donc au mod : c'est la variante qu'installe le flasher web, qui n'envoie plus qu'en USB.
+> La récupération par le MIDI IN ([FLASH §5](../FLASH.md#5-récupération-revenir-à-loriginal)) reste la voie de secours.
 
 > **Mise à jour (build sur l'image réelle, [14 §5](14-machine-sd-vintage.md#5-place-libre--les-caves-0xff-étaient-des-masques-de-sprites)).**
 > - La première cave, `0x40154ae4`, est en fait le **masque 0xFF d'un sprite** 32×260 : les stubs y auraient fait des trous à l'écran, et `build.py` exigeait `--force-cave`.
@@ -22,9 +25,9 @@ Ce qui est fait correspond au point E de la feuille de route ([08 §E](08-feuill
 | Où sont les 4 stubs | dans 4 descripteurs USB (2 CDC, 2 MIDI seule) | dans le masque de sprite libéré `0x4015c044` (720 o), **mêmes octets** |
 | Descripteurs CDC et MIDI seule | écrasés par du code | **d'origine** |
 | Table des modes USB (`0x4013e544`) | 4 entrées redirigées vers la config audio | **d'origine** |
-| `CONFIG → UPGRADE` par USB | cassé (README de l'auteur) | **devrait marcher** `[À TESTER]` |
+| `CONFIG → UPGRADE` par USB | cassé (README de l'auteur) | **marche** (testé le 29/09/2026) |
 | `USB MODE = MID` | sert quand même la config audio 6 canaux | MIDI seul, **comme en stock** |
-| Testé sur matériel | oui, sur un M:S en cross-flash | **non** |
+| Testé sur matériel | oui, sur un M:S en cross-flash | **oui, sur un vrai Model:Cycles** (29/09/2026) |
 
 Build : `python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup`. Les deux variantes sont incompatibles : `build.py` refuse de les combiner.
 

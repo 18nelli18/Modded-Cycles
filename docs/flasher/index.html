@@ -74,11 +74,18 @@
   .feat .desc{color:var(--muted);font-size:.9rem;margin-top:3px}
   .tag{font-family:inherit;font-weight:650;font-size:.66rem;line-height:1;letter-spacing:.04em;text-transform:uppercase;color:var(--warn);
     background:var(--warn-soft);border-radius:99px;padding:.32em .55em}
+  .tag.ok{color:var(--ok);background:var(--ok-soft)}
+  .feat .credit{color:var(--muted);font-size:.82rem;margin-top:5px}
+  .feat .credit a{color:inherit;font-weight:600}
   .variants{margin-top:10px;display:grid;gap:6px}
   .variants label{display:flex;gap:9px;align-items:flex-start;background:var(--card);border:1px solid var(--line);
     border-radius:9px;padding:9px 11px;cursor:pointer;font-size:.92rem}
   .variants input{margin-top:.25em;accent-color:var(--accent)}
   .variants small{display:block;color:var(--muted)}
+  .samples-head{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-weight:650;margin:0 0 .35em}
+  .warn-list{margin:.7em 0 12px;padding-left:1.2em;font-size:.9rem;color:var(--muted)}
+  .warn-list li{margin:.3em 0}
+  #drop2-wrap{margin-top:14px}
   .note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--line);padding:2px 0 2px 10px;margin:12px 0 0}
 
   /* drop zone */
@@ -103,14 +110,7 @@
   @keyframes pulse{50%{opacity:.25}}
   .status a{font-weight:600}
 
-  /* methods */
-  .methods{display:grid;grid-template-columns:1fr 1fr;gap:10px;border:0;padding:0;margin:0 0 14px}
-  .methods legend{position:absolute;left:-9999px}
-  .method{border:1.5px solid var(--line);border-radius:12px;padding:12px 12px 12px 40px;position:relative;cursor:pointer}
-  .method input{position:absolute;left:13px;top:15px;margin:0;width:16px;height:16px;accent-color:var(--accent)}
-  .method.on{border-color:var(--accent);background:var(--accent-soft)}
-  .method b{display:block}
-  .method span{color:var(--muted);font-size:.86rem;line-height:1.4;display:block;margin-top:2px}
+  /* connection */
   .howto{margin:0 0 14px;padding-left:1.35em}
   .howto li{margin:.35em 0;padding-left:.2em}
   .howto li::marker{color:var(--accent);font-weight:700}
@@ -160,12 +160,18 @@
     font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap}
   #log .is-ok{color:var(--ok)} #log .is-bad{color:var(--bad)} #log .is-warn{color:var(--warn)}
 
+  .credits{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 20px;font-size:.9rem}
+  .credits h2{font-size:.98rem;margin:0 0 .4em}
+  .credits p{margin:0 0 .5em;color:var(--muted)}
+  .credits ul{margin:0;padding-left:1.2em}
+  .credits li{margin:.3em 0}
+  .credits li a{font-weight:600}
+
   footer{margin-top:22px;color:var(--muted);font-size:.85rem;text-align:center}
   footer p{margin:.3em 0}
   [hidden]{display:none !important}
 
   @media (max-width:560px){
-    .methods{grid-template-columns:1fr}
     .top h1{font-size:1.35rem}
     .step{padding:16px}
   }
@@ -176,7 +182,7 @@
   <div id="errbar" class="alert bad" hidden></div>
   <script>
     // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-    window.MC_BUILD = "2026-09-26-1";
+    window.MC_BUILD = "2026-09-29-2";
     window.addEventListener("error", function (e) {
       var b = document.getElementById("errbar");
       if (!b) return;
@@ -205,13 +211,25 @@
     <div class="seg" role="tablist" aria-label="Mode">
       <button type="button" role="tab" id="tab-mods" aria-selected="true" aria-controls="panel-mods" data-i18n="tab_mods">Mods</button>
       <button type="button" role="tab" id="tab-restore" aria-selected="false" aria-controls="panel-restore" data-i18n="tab_restore">Official firmware</button>
+      <button type="button" role="tab" id="tab-samples" aria-selected="false" aria-controls="panel-samples" data-i18n="tab_samples">Samples OS</button>
     </div>
     <div id="panel-mods" role="tabpanel" aria-labelledby="tab-mods">
       <div id="features"></div>
-      <p class="note" data-i18n="mods_note">None of these mods has been flashed on a real Model:Cycles yet. The MIDI IN route (step 3) always lets you go back to the official firmware.</p>
+      <p class="note" data-i18n="mods_note">All these mods have been tested on a real Model:Cycles. Tick several to combine them.</p>
     </div>
     <div id="panel-restore" role="tabpanel" aria-labelledby="tab-restore" hidden>
       <p style="margin:0" data-i18n-html="restore_text"></p>
+      <p class="note" data-i18n-html="restore_from_samples"></p>
+    </div>
+    <div id="panel-samples" role="tabpanel" aria-labelledby="tab-samples" hidden>
+      <p class="samples-head"><span data-i18n="samples_title">Turn your Model:Cycles into a Model:Samples</span><span class="tag ok" data-i18n="tested">Tested</span></p>
+      <p style="margin:0" data-i18n="samples_text"></p>
+      <ul class="warn-list">
+        <li data-i18n="samples_w1"></li>
+        <li data-i18n-html="samples_w2"></li>
+        <li data-i18n="samples_w3"></li>
+      </ul>
+      <label class="check" style="margin:0"><input id="samples-ack" type="checkbox"><span data-i18n="samples_ack">I have a MIDI interface for the way back (to the Model:Cycles MIDI IN).</span></label>
     </div>
   </section>
 
@@ -226,24 +244,22 @@
     </label>
     <p class="hint" data-i18n-html="get_os"></p>
     <div id="file-status" class="status" aria-live="polite"></div>
+    <div id="drop2-wrap" hidden>
+      <label class="drop" id="drop2" tabindex="0">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 12v6M9.5 15.5 12 18l2.5-2.5"/></svg>
+        <div><strong id="drop2-title" data-i18n="drop2_title">Drop model-samples_OS1.13.syx here</strong>
+          <span id="drop2-sub" data-i18n="drop2_sub">the official Model:Samples OS — or click to choose it</span></div>
+        <input id="file2" type="file" accept=".syx" hidden>
+      </label>
+      <p class="hint" data-i18n-html="get_os_samples"></p>
+      <div id="file2-status" class="status" aria-live="polite"></div>
+    </div>
   </section>
 
   <!-- 3. Connect -->
   <section class="step" id="step-connect" aria-labelledby="h3s">
-    <header><span class="num">3</span><h2 id="h3s" data-i18n="s3">Connect your Model:Cycles</h2></header>
-    <fieldset class="methods">
-      <legend data-i18n="method_legend">Connection</legend>
-      <label class="method on" id="m-midi"><input type="radio" name="method" value="midi" checked>
-        <b data-i18n="m_midi">MIDI interface → MIDI IN</b><span data-i18n="m_midi_sub">Recommended. Always works, and it is also how you recover.</span></label>
-      <label class="method" id="m-usb"><input type="radio" name="method" value="usb">
-        <b data-i18n="m_usb">USB cable only</b><span data-i18n="m_usb_sub">No interface needed, but only from the official OS or a USB-friendly mod.</span></label>
-    </fieldset>
-    <ol class="howto" id="howto-midi">
-      <li data-i18n-html="hm1"></li>
-      <li data-i18n-html="hm2"></li>
-      <li data-i18n-html="hm3"></li>
-    </ol>
-    <ol class="howto" id="howto-usb" hidden>
+    <header><span class="num">3</span><h2 id="h3s" data-i18n="s3">Connect your Model:Cycles over USB</h2></header>
+    <ol class="howto" id="howto-usb">
       <li data-i18n-html="hu1"></li>
       <li data-i18n-html="hu2"></li>
       <li data-i18n-html="hu3"></li>
@@ -275,10 +291,10 @@
     <details class="trouble">
       <summary data-i18n="trouble">Something went wrong?</summary>
       <dl>
-        <dt data-i18n="t1q">The screen stays on READY TO RECEIVE</dt><dd data-i18n-html="t1a"></dd>
-        <dt data-i18n="t2q">It stays on RECEIVING… forever</dt><dd data-i18n-html="t2a"></dd>
+        <dt data-i18n="t1q">Nothing happens on the Model:Cycles screen</dt><dd data-i18n-html="t1a"></dd>
+        <dt data-i18n="t2q">The transfer stops, or the Model:Cycles shows an error</dt><dd data-i18n-html="t2a"></dd>
         <dt data-i18n="t3q">No MIDI port in the list</dt><dd data-i18n-html="t3a"></dd>
-        <dt data-i18n="t4q">The Model:Cycles doesn't start any more</dt><dd data-i18n-html="t4a"></dd>
+        <dt data-i18n="t4q">The update over USB is refused, or the Model:Cycles doesn't start any more</dt><dd data-i18n-html="t4a"></dd>
       </dl>
     </details>
   </section>
@@ -296,6 +312,12 @@
     </div>
     <div id="log" aria-live="off"></div>
   </details>
+
+  <section class="credits" id="credits" aria-labelledby="hcr">
+    <h2 id="hcr" data-i18n="credits">Credits</h2>
+    <p data-i18n="credits_intro">This flasher stands on the shoulders of these open-source projects (MIT licence), none of which includes firmware:</p>
+    <ul id="credits-list"></ul>
+  </section>
 
   <footer>
     <p data-i18n="privacy">Your firmware file never leaves your computer. Nothing is uploaded, no firmware is provided.</p>

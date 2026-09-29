@@ -24,7 +24,7 @@ Machine **pas encore reçue** : tout ce qui suit est du travail « sans matérie
 
 ## Par fonctionnalité (dans ton ordre de priorité)
 
-### 1. Sortie multipiste 6 canaux — ✅ (code prêt, attend le matériel)
+### 1. Sortie multipiste 6 canaux — ✅ (validée sur un vrai Model:Cycles le 29/09/2026)
 - Le patch existe (ms-multi-output), porté dans notre dépôt au format tweak, et **notre build reproduit le MAIN OS connu-bon à l'octet près**.
 - Reste **le seul test qui manque au monde** : le flasher sur un vrai Model:Cycles. C'est le **jalon 1**.
 - Rien de plus à développer sans la machine.
@@ -47,6 +47,8 @@ Machine **pas encore reçue** : tout ce qui suit est du travail « sans matérie
 - Les 6 Ko de caves n'y suffisent pas de loin ; il faudrait de la RAM et du flash non prévus pour ça.
 - **Voie pragmatique existante** : le *cross-flash* fait déjà tourner l'OS Cycles sur un Model:Samples (et inversement) — mais ça veut dire « utiliser un M:S », pas « ajouter le sample au M:C ».
 - Verdict honnête : non, pas comme mod propre du M:C.
+- **Mise à jour du 29/09/2026** ([15 §3](15-demandes-reddit.md)) : l'**OS Model:Samples complet tourne sur un vrai Model:Cycles** (cross-flash, `tools/crossflash.py`, onglet *Samples OS* du flasher web).
+  Les deux OS 1.13 partagent bootstrap, init de la RAM et updater : le matériel est capable. Une machine « sample » dans l'OS Cycles reste un gros chantier, mais n'est plus hors de portée matérielle.
 
 ### 5. LFO améliorés (2 LFO complets, synchronisables, assignables partout, façon Syntakt) — 🟠
 - Le M:C n'a **qu'un LFO par piste**. Ajouter un 2ᵉ LFO complet touche : la modulation dans le moteur, l'UI (pages LFO), le stockage des paramètres, et les p-locks. Chantier lourd.

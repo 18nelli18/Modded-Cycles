@@ -1,7 +1,7 @@
 /* Model:Cycles web flasher — user interface.
  *
  * Four steps: 1) choose (mods or official firmware), 2) load the official OS file,
- * 3) connect the device and pick a MIDI port, 4) flash.
+ * 3) connect the device over USB (CONFIG > UPGRADE) and pick its MIDI port, 4) flash.
  * The firmware is built automatically as soon as the OS file and the mods are known.
  *
  * Uses window.MCBuilder (builder.js, JS port of tools/build.py), window.MC_TWEAKS
@@ -13,17 +13,48 @@
 const $ = (id) => document.getElementById(id);
 const REPO = "https://github.com/18nelli18/Modded-Cycles";
 const ELEKTRON_DL = "https://www.elektron.se/support-downloads/modelcycles";
+const ELEKTRON_SMP_DL = "https://www.elektron.se/support-downloads/modelsamples";
 
-// Patched MAIN OS reference hashes (BUILD.md): 6ch-multiout = known-good result of
-// ms-multi-output; the others = tools/build.py on the official OS 1.13. A build whose
-// bytes don't match is refused. Key = tweak ids joined with "+", in feature order.
+// Patched MAIN OS reference hashes, from tools/build.py on the official OS 1.13 (the drumkilla
+// tweaks alone also match drumkilla's own tweak.py byte for byte). A build whose bytes don't
+// match is refused. Key = tweak ids joined with "+", in feature order. Every combination the
+// page offers must be listed here (tools/webflash_smoke.js checks it).
 const REF_MAINOS = {
-  "6ch-multiout": "65e24b50dd457444e87daea79dd41b82f61098cb8ae5cd27cbe0d91742f29555",
   "6ch-usbup": "db3d26cc3a48d1155933240c7d1d5476c8f56d2b6a54be1ffe7f5327e54c0521",
-  "sdvintage-snare": "80b7b2bd003f2695488d629c0fab56c84e10213898c9820c321efa711f6957c7",
-  "6ch-multiout+sdvintage-snare": "4494fb764c7643b2a9acea8b4fa2cafe10ee7d9644e56d08e333ee019f4cbe72",
-  "6ch-usbup+sdvintage-snare": "38754937b06e3815ee1da9c93137d46283b612e1881772f4d034fb9f998b3335",
+  "latching-mute": "6903892ba3119ed161190dee315e41101634d588ce5aff47e4fa99a92b16c078",
+  "trig-preview": "87608a429e540b17d92f105135d29777817da92187bf5dfb6a714d8da0094107",
+  "browser-scroll": "4d7caf0d48b0deae53872400ffa98e3acf588f88b2b7684cf4971ead5f834d05",
+  "6ch-usbup+latching-mute": "641c2f9e43d38b0f73401c05e3bbee5a4454187e0d251982a1567671bc59dd6a",
+  "6ch-usbup+trig-preview": "03e2896b3685f113fa434de20dc73f3ded70266cf26bc1034d097f722cd05e08",
+  "6ch-usbup+browser-scroll": "c75c9fef8924b8f235adbcd621f37c976156f46d09a8451a28718dc40095d237",
+  "latching-mute+trig-preview": "694e7d8cbb6fc17c04cc8e0037013c2d1e5a46e415acc5a6c50a185281bd0fe1",
+  "latching-mute+browser-scroll": "2b52fec33202d5ba41ae50e1453efbb73f5de06b573de2d3ca8fce0b479aea60",
+  "trig-preview+browser-scroll": "777d6613c07d2e5b6dfe701c99f5f1c3b2cd3a8932a52185987f9125842e0794",
+  "6ch-usbup+latching-mute+trig-preview": "868bc96cfb7c9621533bd8c119fbdcccd7c55e560f5ec7808a0f2531f7c47d52",
+  "6ch-usbup+latching-mute+browser-scroll": "65d3aaffc219bd2b837ebde53d6b69e388a4b44f30391bafe23c0f8787f38960",
+  "6ch-usbup+trig-preview+browser-scroll": "74d1f467974c019a7120e8dce7c4c45a773d5d2854a2832eea64e34d327dc5ce",
+  "latching-mute+trig-preview+browser-scroll": "71fef138b1ae16f3ad440ecaa6a6327c1a987ce2c8a86b74329f68159981a15c",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll": "fd57831c61926fb3b1902cadcb0f95e68db3bb637b4cd20860a0efc46db82cfa",
 };
+
+// "Samples OS" tab: official Model:Samples OS 1.13 inside the official Model:Cycles container
+// (tools/crossflash.py --to cycles). SHA-256 of the resulting .syx; tested on a real Model:Cycles.
+const REF_SAMPLES_ON_CYCLES = "614d28cfe1100856aef7a67aa49003726e27e0e6eb3b6b05ecba6dc177e83911";
+
+// Open-source work this flasher builds on (shown in the Credits section).
+const CREDITS = [
+  { who: "scottmetoyer", repo: "scottmetoyer/ms-multi-output",
+    en: "the 6-channel USB audio mod", fr: "le mod audio USB 6 canaux" },
+  { who: "drumkilla", repo: "drumkilla/elektron-model-tweaks",
+    en: "latching mute, trig preview and name scrolling, and the firmware toolkit (mtlib) this page's builder is ported from",
+    fr: "le mute verrouillé, l'écoute d'un pas et le défilement des noms, et la boîte à outils firmware (mtlib) dont le builder de cette page est un portage" },
+  { who: "mischa85", repo: "mischa85/elektron-firmware-tool",
+    en: "the Elektron firmware container format and its re-signing", fr: "le format du conteneur firmware Elektron et sa re-signature" },
+  { who: "mxldyn", repo: "mxldyn/octamax",
+    en: "the reverse-engineering method for Elektron firmware", fr: "la méthode de rétro-ingénierie des firmwares Elektron" },
+];
+
+const FLASH_GUIDE = `${REPO}/blob/main/FLASH.md`;
 
 // ---------------------------------------------------------------------------
 // Texts
@@ -35,26 +66,33 @@ const T = {
     s1: "What do you want to install?",
     tab_mods: "Mods",
     tab_restore: "Official firmware",
-    mods_note: "None of these mods has been flashed on a real Model:Cycles yet. The MIDI IN route (step 3) always lets you go back to the official firmware.",
-    restore_text: "Sends your official OS file <b>unchanged</b>, to go back to the stock firmware. It is also the best first rehearsal: it checks your cable and your setup without changing anything.",
+    mods_note: "All these mods have been tested on a real Model:Cycles. Tick several to combine them.",
+    restore_text: "Sends your official OS file <b>unchanged</b>, to go back to the stock firmware. It is also a good first rehearsal: it checks your cable and your setup without changing anything.",
+    tab_samples: "Samples OS",
+    samples_title: "Turn your Model:Cycles into a Model:Samples",
+    samples_text: "Load and play your own samples, managed with Elektron Transfer. The page puts the official Model:Samples OS inside your Model:Cycles firmware: the startup menu, the updater and the signature of the Model:Cycles stay in place.",
+    samples_w1: "Back up your projects with Transfer first: the Model:Samples OS uses the same storage.",
+    samples_w2: `Coming back to the Model:Cycles OS goes through the startup menu, which only listens to the MIDI IN: it needs a MIDI interface (<a href="${FLASH_GUIDE}" target="_blank" rel="noopener">full guide</a>).`,
+    samples_w3: "From the Samples OS, never run CONFIG › UPGRADE with a Model:Samples file: it would also replace the startup menu of your Model:Cycles.",
+    samples_ack: "I have a MIDI interface for the way back (to the Model:Cycles MIDI IN).",
+    restore_from_samples: `Coming back from the Samples OS? Its way back is the startup menu through the MIDI IN: see the <a href="${FLASH_GUIDE}" target="_blank" rel="noopener">full guide</a>.`,
+    tested: "Tested",
     experimental: "Experimental",
+    credit_by: "by {who}",
+    credit_based: "based on {repo} by {who}",
     s2: "Load your official OS file",
     drop_title: "Drop model-cycles_OS1.13.syx here",
     drop_sub: "or click to choose it",
     drop_again: "Checked. Click or drop to use another file.",
-    get_os: `Don't have it? <a href="${ELEKTRON_DL}" target="_blank" rel="noopener">Download OS 1.13 from elektron.se</a>, then unzip it.`,
-    s3: "Connect your Model:Cycles",
-    method_legend: "Connection",
-    m_midi: "MIDI interface → MIDI IN",
-    m_midi_sub: "Recommended. Always works, and it is also how you recover.",
-    m_usb: "USB cable only",
-    m_usb_sub: "No interface needed, but only from the official OS or a USB-friendly mod.",
-    hm1: "Connect your MIDI interface's <b>MIDI OUT</b> to the Model:Cycles <b>MIDI IN</b> (3.5 mm jack): use the DIN adapter supplied with the Model:Cycles, or a stereo jack cable if your interface has a TRS MIDI out.",
-    hm2: "Turn the Model:Cycles off. Hold <kbd>FUNC</kbd>, turn it on, then press <kbd>TRIG 4</kbd> (OS UPGRADE).",
-    hm3: "The screen shows <code>READY TO RECEIVE</code>. Leave it like that.",
-    hu1: "Connect the Model:Cycles to the computer with its USB cable and turn it on normally.",
-    hu2: "On the Model:Cycles, open <b>CONFIG › UPGRADE</b> and confirm with <b>YES</b>.",
-    hu3: "If this transfer fails, you will need a MIDI interface on the MIDI IN to recover.",
+    get_os: `Don't have it? <a href="${ELEKTRON_DL}" target="_blank" rel="noopener">Download Model:Cycles OS 1.13 from elektron.se</a>, then unzip it.`,
+    s2_samples: "Load both official OS files",
+    drop2_title: "Drop model-samples_OS1.13.syx here",
+    drop2_sub: "the official Model:Samples OS — or click to choose it",
+    get_os_samples: `Don't have it? <a href="${ELEKTRON_SMP_DL}" target="_blank" rel="noopener">Download Model:Samples OS 1.13 from elektron.se</a>, then unzip it.`,
+    s3: "Connect your Model:Cycles over USB",
+    hu1: "Connect the Model:Cycles to the computer with a USB cable and turn it on normally.",
+    hu2: "On the Model:Cycles, open <b>CONFIG › UPGRADE</b> and confirm with <b>YES</b>. It now waits for the firmware.",
+    hu3: "Allow MIDI access below: the port named “Model:Cycles” is selected automatically.",
     allow: "Allow MIDI access",
     refresh: "Refresh",
     s4: "Flash",
@@ -63,21 +101,23 @@ const T = {
     flashing: "Flashing…",
     stop: "Stop",
     trouble: "Something went wrong?",
-    t1q: "The screen stays on READY TO RECEIVE",
-    t1a: "The data doesn't reach the MIDI IN. Pick your <b>MIDI interface</b> in step 3 (not “Model:Cycles”), and check that the cable goes from the interface's <b>OUT</b> to the Model:Cycles <b>IN</b>.",
-    t2q: "It stays on RECEIVING… forever",
-    t2a: "A packet was lost. It's harmless: turn the Model:Cycles off and on, enter OS UPGRADE again, set <b>Advanced › Send speed margin</b> to 2.0 and flash again.",
+    t1q: "Nothing happens on the Model:Cycles screen",
+    t1a: "Check that <b>CONFIG › UPGRADE</b> is open and waiting, and that the port named “Model:Cycles” is selected in step 3. Close Elektron Transfer, Overbridge and your music software (on Windows they lock the port), then try again.",
+    t2q: "The transfer stops, or the Model:Cycles shows an error",
+    t2a: "Turn the Model:Cycles off and on, open <b>CONFIG › UPGRADE</b> again, set <b>Advanced › Send speed margin</b> to 2.0 and flash again.",
     t3q: "No MIDI port in the list",
-    t3a: "Plug in your MIDI interface (or the Model:Cycles over USB), then click <b>Refresh</b>. Some interfaces only appear after the browser is restarted.",
-    t4q: "The Model:Cycles doesn't start any more",
-    t4a: "Hold <kbd>FUNC</kbd> while turning it on, press <kbd>TRIG 4</kbd>, then choose <b>Official firmware</b> in step 1 and flash through the MIDI IN. This always works: the startup menu is never overwritten.",
+    t3a: "Connect the Model:Cycles with a USB cable that carries data (some cables only charge), turn it on, then click <b>Refresh</b>. Some systems only show a new device after the browser is restarted.",
+    t4q: "The update over USB is refused, or the Model:Cycles doesn't start any more",
+    t4a: `Recovery goes through the startup menu, which only listens to the MIDI IN: follow the <a href="${FLASH_GUIDE}" target="_blank" rel="noopener">full guide</a> (it needs a MIDI interface). The same goes if you installed the old “6-channel reference version”, which disables updates over USB.`,
     advanced: "Advanced",
     pace: "Send speed margin",
     pace_hint: "1.4 by default. Raise it to 2.0 if the transfer stalls.",
     download: "Download the prepared .syx",
-    download_hint: `To flash with <code>flash.sh</code> / <code>flash.bat</code> instead (<a href="${REPO}/blob/main/FLASH.md" target="_blank" rel="noopener">guide</a>).`,
+    download_hint: `To flash with <code>flash.sh</code> / <code>flash.bat</code> instead (<a href="${FLASH_GUIDE}" target="_blank" rel="noopener">guide</a>).`,
+    credits: "Credits",
+    credits_intro: "This flasher stands on the shoulders of these open-source projects (MIT licence), none of which includes firmware:",
     privacy: "Your firmware file never leaves your computer. Nothing is uploaded, no firmware is provided.",
-    links: `<a href="${REPO}" target="_blank" rel="noopener">Source code</a> · <a href="${REPO}/blob/main/FLASH.md" target="_blank" rel="noopener">Full guide (French)</a> · Not affiliated with Elektron.`,
+    links: `<a href="${REPO}" target="_blank" rel="noopener">Source code</a> · <a href="${FLASH_GUIDE}" target="_blank" rel="noopener">Full guide (French)</a> · Not affiliated with Elektron.`,
     // dynamic
     no_webmidi: "This browser can't talk to MIDI devices. Open this page in <b>Chrome, Edge or Opera</b> on a computer (Firefox and Safari don't support Web MIDI). You can still prepare and download the firmware here.",
     insecure: "Web MIDI needs a secure page. Open the online version, or serve this folder with <code>python3 -m http.server</code> — not by double-clicking the file.",
@@ -92,18 +132,24 @@ const T = {
     built_ref: "Checked against the reference build.",
     build_failed: "The firmware couldn't be prepared: {err}",
     stock_ready: "Ready to send the official firmware, unchanged.",
+    smp_ok: "Official Model:Samples OS 1.13 recognised.",
+    smp_bad: "This is not the official Model:Samples OS 1.13 file: {err}",
+    smp_not_official: "its SHA-256 differs from the official file",
+    samples_needs_cycles: "For the Samples OS, the first file must be the official <code>model-cycles_OS1.13.syx</code>: it provides the startup menu, updater and signature that stay on your Model:Cycles.",
+    samples_ready: "Firmware ready: the Model:Samples OS for your Model:Cycles.",
+    mods_list_samples: "Model:Samples OS (for Model:Cycles)",
+    miss_samples_cycles: "The first file must be the official Model:Cycles OS (step 2).",
+    miss_samples_file: "Load the official Model:Samples OS file (step 2).",
+    miss_samples_ack: "Confirm you have a MIDI interface for the way back (step 1).",
+    done_samples: "It restarts as a <b>Model:Samples</b>: Elektron Transfer and your computer see a “Model:Samples”. Load your samples with Transfer.",
     pick_one: "Select at least one mod, or switch to “Official firmware”.",
     midi_asking: "Asking for MIDI access…",
     midi_wait: "Waiting for your permission: Chrome shows a prompt near the address bar. Click “Allow”. If you blocked it before, click the icon left of the address and allow MIDI.",
     midi_denied: "MIDI access was refused. Click the icon left of the address, allow MIDI, reload the page and try again.",
-    midi_none: "No MIDI output found. Plug in your MIDI interface, then click Refresh.",
-    midi_found: "{n} MIDI output(s) found.",
-    midi_pick_iface: "Pick your MIDI interface — the one connected to the Model:Cycles MIDI IN.",
-    midi_no_iface: "Only the Model:Cycles USB port is visible. For the MIDI IN route, plug in your MIDI interface and click Refresh.",
+    midi_none: "No MIDI output found. Connect the Model:Cycles over USB, turn it on, then click Refresh.",
     midi_pick_dev: "The Model:Cycles USB port is selected.",
     midi_no_dev: "The Model:Cycles doesn't appear over USB. Connect it, turn it on and click Refresh.",
-    warn_dev_on_midi: "This is the Model:Cycles' own USB port: the startup menu (OS UPGRADE) ignores USB. Pick your MIDI interface instead.",
-    warn_iface_on_usb: "For the USB route, pick the port named “Model:Cycles”.",
+    warn_not_dev: "This doesn't look like the Model:Cycles: pick the port named “Model:Cycles”.",
     choose_port: "— choose a MIDI output —",
     via: "via",
     minutes: "about {m} min",
@@ -116,16 +162,15 @@ const T = {
     miss_midi: "Allow MIDI access (step 3).",
     miss_port: "Choose a MIDI output (step 3).",
     miss_ack: "Tick the box above to confirm.",
-    miss_ready: "Put the Model:Cycles in receive mode (step 3), then flash.",
-    watch_midi: "Watch the Model:Cycles screen: <code>READY TO RECEIVE</code> should turn into <code>RECEIVING…</code> within a few seconds. If it doesn't, press <b>Stop</b>: wrong port or cable.",
-    watch_usb: "Watch the Model:Cycles screen: it should show that it is receiving. If nothing happens within a few seconds, press <b>Stop</b>.",
+    miss_ready: "Open CONFIG › UPGRADE on the Model:Cycles (step 3), then flash.",
+    watch: "Watch the Model:Cycles screen: it should show that it is receiving. If nothing happens within a few seconds, press <b>Stop</b>.",
     keep_visible: "Keep this tab in the foreground: browsers slow down background tabs.",
     remaining: "{t} left",
     done_title: "Transfer complete.",
     done_body: "The Model:Cycles now writes the firmware (<code>UPDATING FLASH</code>) and restarts by itself. <b>Don't turn it off</b> until it has restarted.",
     done_6ch: "With the 6-channel mod, your computer should then show a Model:Cycles audio device with <b>6 input channels</b>.",
-    stopped: "Stopped. The Model:Cycles is still waiting: turn it off and on, enter receive mode again, then flash again.",
-    send_error: "The transfer failed: {err}. Turn the Model:Cycles off and on, enter receive mode again and retry.",
+    stopped: "Stopped. Turn the Model:Cycles off and on, open CONFIG › UPGRADE again, then flash again.",
+    send_error: "The transfer failed: {err}. Turn the Model:Cycles off and on, open CONFIG › UPGRADE again and retry.",
     port_gone: "The MIDI output has disappeared. Check the connection and pick it again.",
     leave: "A firmware transfer is in progress. Leaving now will interrupt it.",
     log_start: "Sending {n} packets to “{port}”, margin {pace}.",
@@ -136,26 +181,33 @@ const T = {
     s1: "Qu'est-ce que tu veux installer ?",
     tab_mods: "Mods",
     tab_restore: "Firmware officiel",
-    mods_note: "Aucun de ces mods n'a encore été flashé sur un vrai Model:Cycles. Le MIDI IN (étape 3) permet toujours de revenir au firmware officiel.",
-    restore_text: "Envoie ton fichier d'OS officiel <b>sans le modifier</b>, pour revenir au firmware d'origine. C'est aussi la meilleure répétition avant un mod : elle vérifie ton câble et ton installation sans rien changer.",
+    mods_note: "Tous ces mods ont été testés sur un vrai Model:Cycles. Coche-en plusieurs pour les combiner.",
+    restore_text: "Envoie ton fichier d'OS officiel <b>sans le modifier</b>, pour revenir au firmware d'origine. C'est aussi une bonne répétition avant un mod : elle vérifie ton câble et ton installation sans rien changer.",
+    tab_samples: "OS Samples",
+    samples_title: "Transforme ton Model:Cycles en Model:Samples",
+    samples_text: "Charge et joue tes propres samples, gérés avec Elektron Transfer. La page place l'OS officiel du Model:Samples dans le firmware de ton Model:Cycles : le menu de démarrage, l'updater et la signature du Model:Cycles restent en place.",
+    samples_w1: "Sauvegarde d'abord tes projets avec Transfer : l'OS du Model:Samples utilise le même stockage.",
+    samples_w2: `Le retour à l'OS du Model:Cycles passe par le menu de démarrage, qui n'écoute que le MIDI IN : il faut une interface MIDI (<a href="${FLASH_GUIDE}" target="_blank" rel="noopener">guide complet</a>).`,
+    samples_w3: "Depuis l'OS Samples, ne lance jamais CONFIG › UPGRADE avec un fichier Model:Samples : il remplacerait aussi le menu de démarrage de ton Model:Cycles.",
+    samples_ack: "J'ai une interface MIDI pour le retour (vers le MIDI IN du Model:Cycles).",
+    restore_from_samples: `Tu reviens de l'OS Samples ? Le retour passe par le menu de démarrage et le MIDI IN : voir le <a href="${FLASH_GUIDE}" target="_blank" rel="noopener">guide complet</a>.`,
+    tested: "Testé",
     experimental: "Expérimental",
+    credit_by: "par {who}",
+    credit_based: "d'après {repo} de {who}",
     s2: "Dépose ton fichier d'OS officiel",
     drop_title: "Dépose model-cycles_OS1.13.syx ici",
     drop_sub: "ou clique pour le choisir",
     drop_again: "Vérifié. Clique ou dépose pour changer de fichier.",
-    get_os: `Tu ne l'as pas ? <a href="${ELEKTRON_DL}" target="_blank" rel="noopener">Télécharge l'OS 1.13 sur elektron.se</a>, puis dézippe-le.`,
-    s3: "Branche ton Model:Cycles",
-    method_legend: "Branchement",
-    m_midi: "Interface MIDI → MIDI IN",
-    m_midi_sub: "Recommandé. Marche toujours, et c'est aussi la voie de secours.",
-    m_usb: "Câble USB seul",
-    m_usb_sub: "Sans interface, mais seulement depuis l'OS officiel ou un mod qui garde l'USB.",
-    hm1: "Relie la <b>sortie MIDI</b> de ton interface au <b>MIDI IN</b> du Model:Cycles (jack 3,5 mm) : avec l'adaptateur DIN fourni avec le Model:Cycles, ou un câble jack stéréo si ton interface a une sortie MIDI en TRS.",
-    hm2: "Éteins le Model:Cycles. Maintiens <kbd>FUNC</kbd>, allume-le, puis appuie sur <kbd>TRIG 4</kbd> (OS UPGRADE).",
-    hm3: "L'écran affiche <code>READY TO RECEIVE</code>. Laisse-le ainsi.",
-    hu1: "Relie le Model:Cycles à l'ordinateur avec son câble USB et allume-le normalement.",
-    hu2: "Sur le Model:Cycles, ouvre <b>CONFIG › UPGRADE</b> et confirme avec <b>YES</b>.",
-    hu3: "Si ce transfert échoue, il faudra une interface MIDI sur le MIDI IN pour revenir en arrière.",
+    get_os: `Tu ne l'as pas ? <a href="${ELEKTRON_DL}" target="_blank" rel="noopener">Télécharge l'OS Model:Cycles 1.13 sur elektron.se</a>, puis dézippe-le.`,
+    s2_samples: "Dépose les deux fichiers d'OS officiels",
+    drop2_title: "Dépose model-samples_OS1.13.syx ici",
+    drop2_sub: "l'OS officiel du Model:Samples — ou clique pour le choisir",
+    get_os_samples: `Tu ne l'as pas ? <a href="${ELEKTRON_SMP_DL}" target="_blank" rel="noopener">Télécharge l'OS Model:Samples 1.13 sur elektron.se</a>, puis dézippe-le.`,
+    s3: "Branche ton Model:Cycles en USB",
+    hu1: "Relie le Model:Cycles à l'ordinateur avec un câble USB et allume-le normalement.",
+    hu2: "Sur le Model:Cycles, ouvre <b>CONFIG › UPGRADE</b> et confirme avec <b>YES</b>. Il attend alors le firmware.",
+    hu3: "Autorise le MIDI ci-dessous : le port nommé « Model:Cycles » est choisi automatiquement.",
     allow: "Autoriser le MIDI",
     refresh: "Rafraîchir",
     s4: "Flasher",
@@ -164,21 +216,23 @@ const T = {
     flashing: "Flash en cours…",
     stop: "Arrêter",
     trouble: "Un problème ?",
-    t1q: "L'écran reste sur READY TO RECEIVE",
-    t1a: "Les données n'arrivent pas au MIDI IN. Choisis ton <b>interface MIDI</b> à l'étape 3 (pas « Model:Cycles »), et vérifie que le câble va de la <b>sortie</b> de l'interface à l'<b>entrée</b> du Model:Cycles.",
-    t2q: "Il reste bloqué sur RECEIVING…",
-    t2a: "Un paquet a été perdu, sans danger : éteins et rallume le Model:Cycles, repasse en OS UPGRADE, règle <b>Options avancées › Marge de vitesse</b> sur 2.0 et relance.",
+    t1q: "Rien ne se passe sur l'écran du Model:Cycles",
+    t1a: "Vérifie que <b>CONFIG › UPGRADE</b> est ouvert et en attente, et que le port nommé « Model:Cycles » est choisi à l'étape 3. Ferme Elektron Transfer, Overbridge et ton logiciel de musique (sous Windows, ils bloquent le port), puis réessaie.",
+    t2q: "Le transfert s'arrête, ou le Model:Cycles affiche une erreur",
+    t2a: "Éteins et rallume le Model:Cycles, rouvre <b>CONFIG › UPGRADE</b>, règle <b>Options avancées › Marge de vitesse</b> sur 2.0 et relance.",
     t3q: "Aucun port MIDI dans la liste",
-    t3a: "Branche ton interface MIDI (ou le Model:Cycles en USB), puis clique <b>Rafraîchir</b>. Certaines interfaces n'apparaissent qu'après un redémarrage du navigateur.",
-    t4q: "Le Model:Cycles ne démarre plus",
-    t4a: "Maintiens <kbd>FUNC</kbd> en l'allumant, appuie sur <kbd>TRIG 4</kbd>, choisis <b>Firmware officiel</b> à l'étape 1 et flashe par le MIDI IN. Ça marche toujours : le menu de démarrage n'est jamais effacé.",
+    t3a: "Branche le Model:Cycles avec un câble USB qui transporte les données (certains câbles ne font que charger), allume-le, puis clique <b>Rafraîchir</b>. Certains systèmes n'affichent un nouvel appareil qu'après un redémarrage du navigateur.",
+    t4q: "La mise à jour par USB est refusée, ou le Model:Cycles ne démarre plus",
+    t4a: `La récupération passe par le menu de démarrage, qui n'écoute que le MIDI IN : suis le <a href="${FLASH_GUIDE}" target="_blank" rel="noopener">guide complet</a> (il faut une interface MIDI). C'est aussi le cas si tu avais installé l'ancienne « version de référence » du 6 canaux, qui désactive la mise à jour par USB.`,
     advanced: "Options avancées",
     pace: "Marge de vitesse d'envoi",
     pace_hint: "1.4 par défaut. Monte à 2.0 si le transfert se bloque.",
     download: "Télécharger le .syx préparé",
-    download_hint: `Pour flasher plutôt avec <code>flash.sh</code> / <code>flash.bat</code> (<a href="${REPO}/blob/main/FLASH.md" target="_blank" rel="noopener">guide</a>).`,
+    download_hint: `Pour flasher plutôt avec <code>flash.sh</code> / <code>flash.bat</code> (<a href="${FLASH_GUIDE}" target="_blank" rel="noopener">guide</a>).`,
+    credits: "Crédits",
+    credits_intro: "Ce flasher s'appuie sur ces projets open source (licence MIT), dont aucun ne contient de firmware :",
     privacy: "Ton fichier firmware ne quitte jamais ton ordinateur. Rien n'est envoyé en ligne, aucun firmware n'est fourni.",
-    links: `<a href="${REPO}" target="_blank" rel="noopener">Code source</a> · <a href="${REPO}/blob/main/FLASH.md" target="_blank" rel="noopener">Guide complet</a> · Projet non affilié à Elektron.`,
+    links: `<a href="${REPO}" target="_blank" rel="noopener">Code source</a> · <a href="${FLASH_GUIDE}" target="_blank" rel="noopener">Guide complet</a> · Projet non affilié à Elektron.`,
     no_webmidi: "Ce navigateur ne sait pas parler aux appareils MIDI. Ouvre cette page dans <b>Chrome, Edge ou Opera</b> sur ordinateur (Firefox et Safari ne gèrent pas le Web MIDI). Tu peux quand même préparer et télécharger le firmware ici.",
     insecure: "Le Web MIDI exige une page sécurisée. Ouvre la version en ligne, ou sers ce dossier avec <code>python3 -m http.server</code> — pas par double-clic sur le fichier.",
     reading: "Lecture de {name}…",
@@ -192,18 +246,24 @@ const T = {
     built_ref: "Conforme au build de référence.",
     build_failed: "Impossible de préparer le firmware : {err}",
     stock_ready: "Prêt à envoyer le firmware officiel, sans modification.",
+    smp_ok: "OS officiel Model:Samples 1.13 reconnu.",
+    smp_bad: "Ce n'est pas le fichier officiel de l'OS Model:Samples 1.13 : {err}",
+    smp_not_official: "son SHA-256 diffère du fichier officiel",
+    samples_needs_cycles: "Pour l'OS Samples, le premier fichier doit être le <code>model-cycles_OS1.13.syx</code> officiel : il fournit le menu de démarrage, l'updater et la signature qui restent sur ton Model:Cycles.",
+    samples_ready: "Firmware prêt : l'OS Model:Samples pour ton Model:Cycles.",
+    mods_list_samples: "OS Model:Samples (pour Model:Cycles)",
+    miss_samples_cycles: "Le premier fichier doit être l'OS officiel du Model:Cycles (étape 2).",
+    miss_samples_file: "Dépose le fichier officiel de l'OS Model:Samples (étape 2).",
+    miss_samples_ack: "Confirme que tu as une interface MIDI pour le retour (étape 1).",
+    done_samples: "Il redémarre en <b>Model:Samples</b> : Elektron Transfer et ton ordinateur voient un « Model:Samples ». Charge tes samples avec Transfer.",
     pick_one: "Coche au moins un mod, ou passe sur « Firmware officiel ».",
     midi_asking: "Demande d'accès MIDI…",
     midi_wait: "En attente de ton autorisation : Chrome affiche une demande près de la barre d'adresse. Clique « Autoriser ». Si tu l'as bloquée, clique l'icône à gauche de l'adresse et autorise le MIDI.",
     midi_denied: "Accès MIDI refusé. Clique l'icône à gauche de l'adresse, autorise le MIDI, recharge la page et réessaie.",
-    midi_none: "Aucune sortie MIDI. Branche ton interface MIDI, puis clique Rafraîchir.",
-    midi_found: "{n} sortie(s) MIDI trouvée(s).",
-    midi_pick_iface: "Choisis ton interface MIDI — celle reliée au MIDI IN du Model:Cycles.",
-    midi_no_iface: "Seul le port USB du Model:Cycles est visible. Pour passer par le MIDI IN, branche ton interface MIDI et clique Rafraîchir.",
+    midi_none: "Aucune sortie MIDI. Branche le Model:Cycles en USB, allume-le, puis clique Rafraîchir.",
     midi_pick_dev: "Le port USB du Model:Cycles est sélectionné.",
     midi_no_dev: "Le Model:Cycles n'apparaît pas en USB. Branche-le, allume-le et clique Rafraîchir.",
-    warn_dev_on_midi: "C'est le port USB du Model:Cycles lui-même : le menu de démarrage (OS UPGRADE) ignore l'USB. Choisis plutôt ton interface MIDI.",
-    warn_iface_on_usb: "Pour passer par l'USB, choisis le port nommé « Model:Cycles ».",
+    warn_not_dev: "Ce port ne semble pas être le Model:Cycles : choisis le port nommé « Model:Cycles ».",
     choose_port: "— choisis une sortie MIDI —",
     via: "via",
     minutes: "environ {m} min",
@@ -216,16 +276,15 @@ const T = {
     miss_midi: "Autorise le MIDI (étape 3).",
     miss_port: "Choisis une sortie MIDI (étape 3).",
     miss_ack: "Coche la case ci-dessus pour confirmer.",
-    miss_ready: "Mets le Model:Cycles en réception (étape 3), puis flashe.",
-    watch_midi: "Regarde l'écran du Model:Cycles : <code>READY TO RECEIVE</code> doit passer à <code>RECEIVING…</code> en quelques secondes. Sinon, clique <b>Arrêter</b> : mauvais port ou mauvais câble.",
-    watch_usb: "Regarde l'écran du Model:Cycles : il doit indiquer qu'il reçoit. S'il ne se passe rien en quelques secondes, clique <b>Arrêter</b>.",
+    miss_ready: "Ouvre CONFIG › UPGRADE sur le Model:Cycles (étape 3), puis flashe.",
+    watch: "Regarde l'écran du Model:Cycles : il doit indiquer qu'il reçoit. S'il ne se passe rien en quelques secondes, clique <b>Arrêter</b>.",
     keep_visible: "Garde cet onglet au premier plan : les navigateurs ralentissent les onglets en arrière-plan.",
     remaining: "encore {t}",
     done_title: "Transfert terminé.",
     done_body: "Le Model:Cycles écrit maintenant le firmware (<code>UPDATING FLASH</code>) puis redémarre tout seul. <b>Ne l'éteins pas</b> avant qu'il ait redémarré.",
     done_6ch: "Avec le mod 6 canaux, ton ordinateur doit ensuite voir un périphérique audio Model:Cycles avec <b>6 canaux d'entrée</b>.",
-    stopped: "Arrêté. Le Model:Cycles attend toujours : éteins-le et rallume-le, repasse en réception, puis relance.",
-    send_error: "Le transfert a échoué : {err}. Éteins et rallume le Model:Cycles, repasse en réception et réessaie.",
+    stopped: "Arrêté. Éteins et rallume le Model:Cycles, rouvre CONFIG › UPGRADE, puis relance.",
+    send_error: "Le transfert a échoué : {err}. Éteins et rallume le Model:Cycles, rouvre CONFIG › UPGRADE et réessaie.",
     port_gone: "La sortie MIDI a disparu. Vérifie le branchement et choisis-la de nouveau.",
     leave: "Un flash est en cours. Quitter maintenant l'interromprait.",
     log_start: "Envoi de {n} paquets vers « {port} », marge {pace}.",
@@ -236,19 +295,23 @@ const T = {
 const FEAT = {
   en: {
     usb6: { label: "6-channel USB audio",
-      desc: "Each track gets its own USB channel (48 kHz / 32-bit): record the 6 tracks separately in your DAW. The stereo mix is no longer sent over USB." },
-    "6ch-usbup": { label: "Keep OS updates over USB", note: "Recommended. Never flashed yet." },
-    "6ch-multiout": { label: "Reference version", note: "Code verified on a Model:Samples running the Cycles OS. OS updates over USB stop working." },
-    sdvintage: { label: "SD VINTAGE machine",
-      desc: "A vintage snare engine inspired by the Syntakt, in place of the SNARE machine. PITCH tunes it, DECAY sets the length, COLOR the snap, SHAPE the brightness, SWEEP the pitch sweep, CONTOUR the body." },
+      desc: "Each track gets its own USB channel (48 kHz / 32-bit): record the 6 tracks separately in your DAW. The stereo mix is no longer sent over USB. OS updates over USB keep working." },
+    "latching-mute": { label: "Latching mute mode",
+      desc: "Hold TRK and tap FUNC: mute mode stays on, so you mute tracks without holding FUNC. A short tap on FUNC leaves it." },
+    "trig-preview": { label: "Trig preview",
+      desc: "With the sequencer stopped, hold a step and press PAGE: the step plays with its own note, length and p-locks." },
+    "browser-scroll": { label: "Scroll long names",
+      desc: "In the sound browser, a name too long for the screen scrolls so you can read it." },
   },
   fr: {
     usb6: { label: "Audio USB 6 canaux",
-      desc: "Chaque piste a son propre canal USB (48 kHz / 32 bits) : enregistre les 6 pistes séparément dans ton logiciel. Le mix stéréo n'est plus envoyé en USB." },
-    "6ch-usbup": { label: "Garder les mises à jour de l'OS par USB", note: "Recommandé. Jamais encore flashé." },
-    "6ch-multiout": { label: "Version de référence", note: "Code vérifié sur un Model:Samples sous OS Cycles. La mise à jour de l'OS par USB ne marche plus." },
-    sdvintage: { label: "Machine SD VINTAGE",
-      desc: "Une caisse claire vintage inspirée du Syntakt, à la place de la machine SNARE. PITCH l'accorde, DECAY règle la longueur, COLOR le claquant, SHAPE la brillance, SWEEP le balayage, CONTOUR le corps." },
+      desc: "Chaque piste a son propre canal USB (48 kHz / 32 bits) : enregistre les 6 pistes séparément dans ton logiciel. Le mix stéréo n'est plus envoyé en USB. La mise à jour de l'OS par USB continue de marcher." },
+    "latching-mute": { label: "Mode mute verrouillé",
+      desc: "Maintiens TRK et tape FUNC : le mode mute reste actif, tu mutes les pistes sans tenir FUNC. Un appui court sur FUNC en sort." },
+    "trig-preview": { label: "Écoute d'un pas",
+      desc: "Séquenceur à l'arrêt, maintiens un pas et appuie sur PAGE : le pas joue avec sa note, sa longueur et ses p-locks." },
+    "browser-scroll": { label: "Défilement des noms longs",
+      desc: "Dans le navigateur de sons, un nom trop long pour l'écran défile pour que tu puisses le lire." },
   },
 };
 
@@ -257,7 +320,9 @@ const FEAT = {
 // ---------------------------------------------------------------------------
 const st = {
   lang: "en",
-  mode: "mods",            // "mods" | "restore"
+  mode: "mods",            // "mods" | "restore" | "samples"
+  samplesOs: null,         // official Model:Samples OS { raw, name, sha } ("samples" mode)
+  samplesError: null,
   os: null,                // { raw, name, info, sha, stock }
   osError: null,
   fw: null,                // { raw, name, kind: "built"|"stock"|"custom", mods:[labels], ref:bool, sixch:bool }
@@ -267,7 +332,6 @@ const st = {
   cache: {},               // build results per selection key, for the current OS file
   midi: null,
   midiState: "idle",       // idle | asking | ready | denied | unsupported
-  method: "midi",          // "midi" | "usb"
   portManual: false,
   sending: false,
   cancel: false,
@@ -317,9 +381,13 @@ function applyLang(lang) {
   try { localStorage.setItem("mc-lang", st.lang); } catch (e) { /* private mode */ }
   document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll("[data-i18n-html]").forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
+  // a loaded file keeps its name in its drop zone
+  if (st.os) { $("drop-title").textContent = st.os.name; $("drop-sub").textContent = t("drop_again"); }
+  if (st.samplesOs) { $("drop2-title").textContent = st.samplesOs.name; $("drop2-sub").textContent = t("drop_again"); }
   document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === st.lang)));
   document.title = t("title");
   renderFeatures();
+  renderCredits();
   if (st.os) describeOs();
   fillPorts();
   checkCompat();
@@ -350,11 +418,19 @@ function renderFeatures() {
 
     const ttl = document.createElement("div");
     ttl.className = "ttl";
-    ttl.innerHTML = `<span>${esc(featText(f.id, "label", f.label))}</span><span class="tag">${esc(t("experimental"))}</span>`;
+    const tested = f.status === "tested";
+    ttl.innerHTML = `<span>${esc(featText(f.id, "label", f.label))}</span>` +
+      `<span class="tag${tested ? " ok" : ""}">${esc(t(tested ? "tested" : "experimental"))}</span>`;
     const desc = document.createElement("div");
     desc.className = "desc";
     desc.textContent = featText(f.id, "desc", f.desc);
     card.append(cb, ttl, desc);
+    if (f.credit) {
+      const cr = document.createElement("div");
+      cr.className = "credit";
+      cr.innerHTML = creditHtml(f.credit);
+      card.appendChild(cr);
+    }
 
     if (f.variants.length > 1 && sel.on) {
       const vs = document.createElement("div");
@@ -377,6 +453,24 @@ function renderFeatures() {
     }
     box.appendChild(card);
   }
+}
+
+// "by drumkilla" / "based on ms-multi-output by scottmetoyer", linked to the repository.
+// A link inside the card's <label> doesn't toggle the checkbox (interactive content).
+function creditHtml(c) {
+  const url = "https://github.com/" + c.repo;
+  const link = (txt) => `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(txt)}</a>`;
+  return c.kind === "based"
+    ? t("credit_based", { repo: link(c.repo.split("/")[1]), who: esc(c.who) })
+    : t("credit_by", { who: link(c.who) });
+}
+
+function renderCredits() {
+  const box = $("credits-list");
+  if (!box) return;
+  box.innerHTML = CREDITS.map((c) =>
+    `<li><a href="https://github.com/${esc(c.repo)}" target="_blank" rel="noopener">${esc(c.repo)}</a> — ` +
+    `${esc(c[st.lang] || c.en)}</li>`).join("");
 }
 
 function chosenTweaks() {
@@ -405,10 +499,11 @@ function chosenLabels() {
 
 function setMode(mode) {
   st.mode = mode;
-  $("tab-mods").setAttribute("aria-selected", String(mode === "mods"));
-  $("tab-restore").setAttribute("aria-selected", String(mode === "restore"));
-  $("panel-mods").hidden = mode !== "mods";
-  $("panel-restore").hidden = mode !== "restore";
+  for (const m of ["mods", "restore", "samples"]) {
+    $("tab-" + m).setAttribute("aria-selected", String(mode === m));
+    $("panel-" + m).hidden = mode !== m;
+  }
+  $("drop2-wrap").hidden = mode !== "samples";
   if (st.os) describeOs();
   update();
 }
@@ -447,6 +542,34 @@ function loadOs(raw, name) {
   update();
 }
 
+// "Samples OS" tab: the second file, the official Model:Samples OS (recognised by its SHA-256).
+function readSamplesFile(file) {
+  const r = new FileReader();
+  r.onload = () => loadSamples(new Uint8Array(r.result), file.name);
+  r.onerror = () => { st.samplesOs = null; st.samplesError = String(r.error); update(); };
+  r.readAsArrayBuffer(file);
+}
+
+function loadSamples(raw, name) {
+  st.finished = null;
+  try {
+    const info = window.MCFlasher.verify(raw);
+    const sha = window.MCBuilder.hex(window.MCBuilder.sha256(raw));
+    if (sha !== window.MC_TWEAKS.samples.syx_sha256) throw new Error(t("smp_not_official") + ` (${info.name})`);
+    st.samplesOs = { raw, name, sha };
+    st.samplesError = null;
+    log(`${name}: official Model:Samples OS 1.13, ${info.count} packets, checksums OK.`, "is-ok");
+  } catch (e) {
+    st.samplesOs = null;
+    st.samplesError = e.message;
+    log(`${name}: refused — ${e.message}`, "is-bad");
+  }
+  $("drop2").classList.toggle("loaded", !!st.samplesOs);
+  $("drop2-title").textContent = st.samplesOs ? name : t("drop2_title");
+  $("drop2-sub").textContent = st.samplesOs ? t("drop_again") : t("drop2_sub");
+  update();
+}
+
 function describeOs() {
   if (!st.os) {
     if (st.osError) setStatus("file-status", [["is-bad", esc(t("os_bad", { err: st.osError }))]]);
@@ -463,7 +586,9 @@ function update() {
 function prepareFirmware() {
   const os = st.os;
   st.building = false;
+  st.buildKey = null;
   if (!os) { st.fw = null; st.fwError = null; return; }
+  if (st.mode === "samples") { prepareSamples(os); return; }
   if (!os.stock) {
     if (st.mode === "restore") { st.fw = null; st.fwError = "restore_needs"; return; }
     st.fw = { raw: os.raw, name: os.name, kind: "custom", mods: [], ref: false, sixch: false };
@@ -476,37 +601,53 @@ function prepareFirmware() {
     return;
   }
   const tweaks = chosenTweaks();
-  if (!tweaks.length) { st.fw = null; st.fwError = "pick_one"; st.building = false; return; }
+  if (!tweaks.length) { st.fw = null; st.fwError = "pick_one"; return; }
   const key = tweaks.map((x) => x.id).join("+");
-  st.buildKey = key;
-  // results are cached per selection, for this OS file
-  const cached = st.cache[key];
-  if (cached) {
-    st.building = false;
-    st.fw = cached.fw || null;
-    st.fwError = cached.error || null;
-    return;
-  }
-  st.fw = null; st.fwError = null; st.building = true;
   const labels = chosenLabels();
-  const osRef = os;
-  setTimeout(() => {                           // let the browser paint "Preparing…" first
+  buildCached(key, (raw) => {
+    const opts = {};
+    if (REF_MAINOS[key]) opts.expectMainOsSha = REF_MAINOS[key];
+    const r = window.MCBuilder.build(raw, window.MC_TWEAKS.device, tweaks, opts);
+    log(`Built ${key}: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.patchedBytes} bytes patched, ${r.raw.length} bytes.`, "is-ok");
+    return { raw: r.raw, name: `model-cycles_OS1.13_${key}.syx`, kind: "built", mods: labels,
+      ref: !!REF_MAINOS[key], sixch: tweaks.some((x) => x.id.startsWith("6ch")) };
+  });
+}
+
+// Model:Samples OS in the Model:Cycles container (MCBuilder.crossflash = tools/crossflash.py).
+function prepareSamples(os) {
+  if (!os.stock) { st.fw = null; st.fwError = "samples_needs_cycles"; return; }
+  const smp = st.samplesOs;
+  if (!smp) { st.fw = null; st.fwError = null; return; }
+  buildCached("samples-os:" + smp.sha, (raw) => {
+    const r = window.MCBuilder.crossflash(raw, smp.raw);
+    const sha = window.MCBuilder.hex(window.MCBuilder.sha256(r.raw));
+    if (sha !== REF_SAMPLES_ON_CYCLES) throw new Error(`result ${sha.slice(0, 16)}… is not the reference build`);
+    log(`Built the Model:Samples OS for Model:Cycles: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.raw.length} bytes.`, "is-ok");
+    return { raw: r.raw, name: "model-samples_OS1.13_for-model-cycles.syx", kind: "samples", mods: [], ref: true, sixch: false };
+  });
+}
+
+// Builds once per key and OS file (st.cache is reset when the Model:Cycles file changes), after
+// letting the browser paint "Preparing…". The result is applied only if it is still the current choice.
+function buildCached(key, make) {
+  st.buildKey = key;
+  const cached = st.cache[key];
+  if (cached) { st.fw = cached.fw || null; st.fwError = cached.error || null; return; }
+  st.fw = null; st.fwError = null; st.building = true;
+  const osRef = st.os;
+  setTimeout(() => {
     if (st.os !== osRef || st.cache[key]) return;
     let entry;
     try {
-      const opts = {};
-      if (REF_MAINOS[key]) opts.expectMainOsSha = REF_MAINOS[key];
-      const r = window.MCBuilder.build(osRef.raw, window.MC_TWEAKS.device, tweaks, opts);
-      entry = { fw: { raw: r.raw, name: `model-cycles_OS1.13_${key}.syx`, kind: "built", mods: labels,
-        ref: !!REF_MAINOS[key], sixch: tweaks.some((x) => x.id.startsWith("6ch")) } };
-      log(`Built ${key}: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.patchedBytes} bytes patched, ${r.raw.length} bytes.`, "is-ok");
+      entry = { fw: make(osRef.raw) };
     } catch (e) {
       entry = { error: e.message };
       log(`Build ${key} refused: ${e.message}`, "is-bad");
     }
     if (st.os !== osRef) return;              // another file was loaded meanwhile
     st.cache[key] = entry;
-    if (st.mode === "mods" && st.buildKey === key) {   // still the current selection
+    if (st.buildKey === key) {                 // still the current choice
       st.building = false;
       st.fw = entry.fw || null;
       st.fwError = entry.error || null;
@@ -577,7 +718,7 @@ function fillPorts() {
   if (st.portManual && outs.some((o) => o.id === prev)) sel.value = prev;
   else {
     st.portManual = false;
-    const want = outs.find((o) => (st.method === "usb" ? isDevicePort(o.name) : !isDevicePort(o.name)));
+    const want = outs.find((o) => isDevicePort(o.name));
     sel.value = want ? want.id : "";
   }
 }
@@ -600,33 +741,11 @@ function renderMidi() {
     const outs = outputs();
     const port = currentPort();
     if (!outs.length) rows.push(["is-warn", esc(t("midi_none"))]);
-    else {
-      const ifaces = outs.filter((o) => !isDevicePort(o.name));
-      const devs = outs.filter((o) => isDevicePort(o.name));
-      if (st.method === "midi") {
-        if (port && isDevicePort(port.name)) rows.push(["is-warn", esc(t("warn_dev_on_midi"))]);
-        else if (port) rows.push(["is-ok", esc(t("midi_found", { n: outs.length })) + " " + esc(t("midi_pick_iface"))]);
-        else if (!ifaces.length) rows.push(["is-warn", esc(t("midi_no_iface"))]);
-        else rows.push(["", esc(t("midi_pick_iface"))]);
-      } else {
-        if (port && !isDevicePort(port.name)) rows.push(["is-warn", esc(t("warn_iface_on_usb"))]);
-        else if (port) rows.push(["is-ok", esc(t("midi_pick_dev"))]);
-        else if (!devs.length) rows.push(["is-warn", esc(t("midi_no_dev"))]);
-      }
-    }
+    else if (port && !isDevicePort(port.name)) rows.push(["is-warn", esc(t("warn_not_dev"))]);
+    else if (port) rows.push(["is-ok", esc(t("midi_pick_dev"))]);
+    else if (!outs.some((o) => isDevicePort(o.name))) rows.push(["is-warn", esc(t("midi_no_dev"))]);
   }
   setStatus("midi-status", rows);
-}
-
-function setMethod(m) {
-  st.method = m;
-  $("m-midi").classList.toggle("on", m === "midi");
-  $("m-usb").classList.toggle("on", m === "usb");
-  $("howto-midi").hidden = m !== "midi";
-  $("howto-usb").hidden = m !== "usb";
-  st.portManual = false;
-  fillPorts();
-  render();
 }
 
 // ---------------------------------------------------------------------------
@@ -634,6 +753,11 @@ function setMethod(m) {
 // ---------------------------------------------------------------------------
 function missingReason() {
   if (!st.os) return st.osError ? "miss_fw" : "miss_file";
+  if (st.mode === "samples") {
+    if (st.fwError === "samples_needs_cycles") return "miss_samples_cycles";
+    if (!st.samplesOs) return "miss_samples_file";
+    if (!$("samples-ack").checked) return "miss_samples_ack";
+  }
   if (st.fwError === "pick_one") return "miss_mod";
   if (st.building) return "miss_build";
   if (!st.fw) return "miss_fw";
@@ -645,7 +769,9 @@ function missingReason() {
 
 function render() {
   // step 2 status
-  if (st.os) {
+  $("h2s").textContent = t(st.mode === "samples" ? "s2_samples" : "s2");
+  if (st.os && st.mode === "samples" && !st.os.stock) setStatus("file-status", [["is-bad", t("samples_needs_cycles")]]);
+  else if (st.os) {
     const rows = [];
     if (st.os.stock) rows.push(["is-ok", esc(t("os_ok"))]);
     else {
@@ -659,8 +785,11 @@ function render() {
     else if (st.fw && st.fw.kind === "built")
       rows.push(["is-ok", esc(t("built", { mods: st.fw.mods.join(" + ") })) + (st.fw.ref ? " " + esc(t("built_ref")) : "")]);
     else if (st.fw && st.fw.kind === "stock") rows.push(["is-ok", esc(t("stock_ready"))]);
+    else if (st.fw && st.fw.kind === "samples") rows.push(["is-ok", esc(t("samples_ready")) + " " + esc(t("built_ref"))]);
     setStatus("file-status", rows);
   }
+  setStatus("file2-status", st.samplesOs ? [["is-ok", esc(t("smp_ok"))]]
+    : st.samplesError ? [["is-bad", esc(t("smp_bad", { err: st.samplesError }))]] : []);
 
   renderMidi();
 
@@ -678,7 +807,7 @@ function render() {
   } else dl.hidden = true;
 
   // step badges
-  const choseOk = st.mode === "restore" || chosenTweaks().length > 0;
+  const choseOk = st.mode === "restore" || (st.mode === "samples" ? $("samples-ack").checked : chosenTweaks().length > 0);
   $("step-choose").classList.toggle("done", choseOk);
   $("step-file").classList.toggle("done", !!st.fw && !st.building);
   $("step-connect").classList.toggle("done", st.midiState === "ready" && !!currentPort());
@@ -688,7 +817,8 @@ function render() {
   const sum = $("summary");
   if (st.fw) {
     const what = st.fw.kind === "built" ? st.fw.mods.join(" + ")
-      : st.fw.kind === "stock" ? t("mods_list_restore") : t("mods_list_custom", { name: st.fw.name });
+      : st.fw.kind === "stock" ? t("mods_list_restore")
+      : st.fw.kind === "samples" ? t("mods_list_samples") : t("mods_list_custom", { name: st.fw.name });
     const port = currentPort();
     const mins = Math.max(1, Math.round(window.MCFlasher.transferSeconds(st.fw.raw, pace()) / 60));
     sum.innerHTML = `<b>${esc(what)}</b>` + (port ? ` ${esc(t("via"))} <b>${esc(port.name)}</b>` : "") +
@@ -731,7 +861,7 @@ async function flash() {
   $("eta").textContent = "";
   $("watch").className = "callout";
   $("watch").hidden = false;
-  $("watch").innerHTML = t(st.method === "usb" ? "watch_usb" : "watch_midi") + "<br>" + esc(t("keep_visible"));
+  $("watch").innerHTML = t("watch") + "<br>" + esc(t("keep_visible"));
   render();
   try { if (navigator.wakeLock) st.wakeLock = await navigator.wakeLock.request("screen"); } catch (e) { /* optional */ }
   const total = window.MCFlasher.transferSeconds(fw.raw, p);
@@ -778,7 +908,7 @@ async function flash() {
     $("eta").textContent = fmtTime(res.seconds);
     r.className = "result ok";
     r.innerHTML = `<p><b>${esc(t("done_title"))}</b></p><p>${t("done_body")}</p>` +
-      (fw.sixch ? `<p>${t("done_6ch")}</p>` : "");
+      (fw.sixch ? `<p>${t("done_6ch")}</p>` : "") + (fw.kind === "samples" ? `<p>${t("done_samples")}</p>` : "");
     log(`Transfer complete in ${Math.round(res.seconds)} s.`, "is-ok");
   }
   $("progress").hidden = st.finished !== "ok";
@@ -797,6 +927,8 @@ function init() {
   document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => applyLang(b.dataset.lang)));
   $("tab-mods").addEventListener("click", () => setMode("mods"));
   $("tab-restore").addEventListener("click", () => setMode("restore"));
+  $("tab-samples").addEventListener("click", () => setMode("samples"));
+  $("samples-ack").addEventListener("change", render);
 
   const drop = $("drop"), file = $("file");
   file.addEventListener("change", (e) => { if (e.target.files[0]) readFile(e.target.files[0]); e.target.value = ""; });
@@ -805,7 +937,13 @@ function init() {
   ["dragleave", "drop"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
   drop.addEventListener("drop", (e) => { if (e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]); });
 
-  document.querySelectorAll('input[name="method"]').forEach((r) => r.addEventListener("change", () => setMethod(r.value)));
+  const drop2 = $("drop2"), file2 = $("file2");
+  file2.addEventListener("change", (e) => { if (e.target.files[0]) readSamplesFile(e.target.files[0]); e.target.value = ""; });
+  drop2.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); file2.click(); } });
+  ["dragover", "dragenter"].forEach((ev) => drop2.addEventListener(ev, (e) => { e.preventDefault(); drop2.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((ev) => drop2.addEventListener(ev, (e) => { e.preventDefault(); drop2.classList.remove("over"); }));
+  drop2.addEventListener("drop", (e) => { if (e.dataTransfer.files[0]) readSamplesFile(e.dataTransfer.files[0]); });
+
   $("allow").addEventListener("click", () => initMidi(false));
   $("refresh").addEventListener("click", () => { fillPorts(); render(); });
   $("port").addEventListener("change", () => { st.portManual = true; render(); });
@@ -839,7 +977,7 @@ function init() {
 }
 
 // test hooks (tools/webflash_smoke.js)
-window.MCFlasherApp = { state: st, REF_MAINOS, loadOs, setMode, setMethod, applyLang, render };
+window.MCFlasherApp = { state: st, REF_MAINOS, REF_SAMPLES_ON_CYCLES, loadOs, loadSamples, setMode, applyLang, render };
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
 else init();

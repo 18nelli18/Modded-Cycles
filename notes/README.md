@@ -17,7 +17,7 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
    `--target cycles` qui envoie **les 6 pistes du Model:Cycles sur 6 canaux USB** (48 kHz, 32 bits, High Speed).
    Le mixage stéréo n'est alors plus envoyé en USB.
    - Le **code patché est vérifié sur du matériel**, mais sur un Model:Samples qui fait tourner l'OS Cycles (« cross-flash »).
-   - **Aucun vrai Model:Cycles n'a jamais été flashé** avec ce build. C'est la première chose à faire dans ce projet ([`06`](06-flash-et-recuperation.md)).
+   - **Validé sur un vrai Model:Cycles le 29/09/2026** (variante `6ch-usbup`, flashée par USB), avec SD VINTAGE ([14](14-machine-sd-vintage.md)).
 2. **La chaîne d'outils est connue et scriptable.** On extrait la section 3 (MAIN OS) avec `elektron-firmware-tool`,
    on applique une table de patchs octet par octet, puis on reconditionne et re-signe (HMAC recalculé).
    Aucune signature cryptographique n'empêche le flash.
@@ -29,7 +29,7 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
    - pistes mono (pan non appliqué) ;
    - delay et reverb absents ;
    - plus de mix stéréo en USB ;
-   - `CONFIG → UPGRADE` par USB cassé tant que le mod est installé. La variante `6ch-usbup` ([13](13-6ch-upgrade-usb.md)) devrait le garder, à tester ;
+   - `CONFIG → UPGRADE` par USB cassé avec `6ch-multiout`. La variante `6ch-usbup` ([13](13-6ch-upgrade-usb.md)) le garde : **testé sur un vrai Model:Cycles le 29/09/2026** ;
    - hôte USB High Speed obligatoire ;
    - le LEVEL de piste est-il appliqué avant le point de prélèvement ? Inconnu sur le Cycles.
 
@@ -62,7 +62,8 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
 | [11-conception-8-canaux.md](11-conception-8-canaux.md) | **Conception du mode 8 canaux** (6 pistes + mix) : stubs `tracks8`/`prime8` vérifiés, éditions, rings à finaliser |
 | [12-flash-par-jack-trs.md](12-flash-par-jack-trs.md) | **Flasher avec un simple câble jack stéréo** : entrée MIDI TRS (types A et B), interfaces à sortie TRS, piste « sortie casque » simulée |
 | [13-6ch-upgrade-usb.md](13-6ch-upgrade-usb.md) | **Variante `6ch-usbup`** : stubs déplacés dans une cave, descripteurs et table des modes USB d'origine, pour garder l'upgrade USB. Vérifications (émulation) et protocole de test |
-| [14-machine-sd-vintage.md](14-machine-sd-vintage.md) | **Machine SD VINTAGE** (caisse claire vintage, d'après le Syntakt) : architecture des machines du M:C décodée, moteur en C, banc d'émulation du moteur audio (EMAC corrigée), masques de sprites libérables, étape 1 validée en émulation, plan de la 7ᵉ machine |
+| [14-machine-sd-vintage.md](14-machine-sd-vintage.md) | **Machine SD VINTAGE** (caisse claire vintage, d'après le Syntakt) : architecture des machines du M:C décodée, moteur en C, banc d'émulation du moteur audio (EMAC corrigée), masques de sprites libérables, étape 1 **validée sur le matériel** (29/09/2026), plan de la 7ᵉ machine |
+| [15-demandes-reddit.md](15-demandes-reddit.md) | **Demandes de la communauté (Reddit)** : mute verrouillé et écoute d'un pas (tweaks drumkilla, livrés), OS Model:Samples / machine « samples » et machines du Syntakt (plans de recherche) |
 
 ## Chiffres clés (OS 1.13)
 

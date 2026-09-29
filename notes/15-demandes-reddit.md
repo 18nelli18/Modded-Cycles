@@ -1,0 +1,209 @@
+# 15 · Demandes de la communauté (Reddit) : réponses et plan
+
+Le 29/09/2026, après la validation du 6 canaux et de SD VINTAGE sur un vrai Model:Cycles, l'utilisateur a relayé quatre
+demandes d'utilisateurs de r/Elektron. Cette note les traite **une par une**, dans l'ordre le plus efficace :
+d'abord ce qui existe déjà et se livre vite, ensuite ce qui demande de la recherche.
+
+## 0. En bref
+
+| # | Demande | État | Où |
+|---|---|---|---|
+| 1 | Un mode mute sans tenir FUNC | ✅ **livré** : tweak `latching-mute` de drumkilla, dans le flasher web | §1 |
+| 2 | Regrouper avec le tweak « trig preview » | ✅ **livré** : `trig-preview` (et `browser-scroll`), dans le flasher web | §2 |
+| 3 | Flasher l'OS Model:Samples, ou une machine « samples » dans l'OS Cycles | ✅ **l'OS Samples tourne sur un vrai Model:Cycles** (29/09/2026) : onglet *Samples OS* du flasher web, ou `tools/crossflash.py`. La machine « samples » dans l'OS Cycles vient après | §3 |
+| 4 | Porter les machines numériques du Syntakt | 🟠 **recherche** : même conteneur, même CPU, même table de sinus que le Cycles. Prochaine étape : faire tourner le vrai SD VINTAGE dans le banc | §4 |
+
+Ordre suivi : **§3 d'abord** (fichier de 686 Ko, la comparaison des deux OS 1.13 a répondu vite à la question clé :
+le matériel est le même), **puis §4** (plus long, mais il s'appuie sur le banc d'émulation de SD VINTAGE).
+
+---
+
+## 1. Mode mute sans tenir FUNC — ✅ livré
+
+**Demande** : pouvoir muter sans appuyer sur FUNC, via un raccourci plutôt que par le menu.
+> Source : commentaire r/Elektron relayé par l'utilisateur le 29/09/2026.
+
+**Réponse** : le tweak `latching-mute` de [drumkilla/elektron-model-tweaks](https://github.com/drumkilla/elektron-model-tweaks)
+fait exactement ça.
+- Maintenir **TRK** et taper **FUNC** : le mode mute reste verrouillé, la touche FUNC s'allume. Les trigs mutent alors les pistes sans tenir FUNC.
+- Un appui court sur FUNC seul en sort. Les combinaisons avec FUNC (menus, encodeurs rapides) ne le font pas sortir.
+- Le comportement d'origine (tenir FUNC) est inchangé.
+> Source : README de drumkilla/elektron-model-tweaks, section *Latching track mute* (commit `6e0b4df`), et la description du tweak
+> `tweaks/model-cycles_OS1.13/01-latching-mute.json`.
+
+**Ce qui a été fait** :
+- Le fichier du tweak est repris **sans modification** dans `tweaks/model-cycles_OS1.13/` (licence MIT, auteur crédité).
+- Notre `build.py` produit **le même MAIN OS, octet pour octet**, que le `tweak.py` de drumkilla (vérifié le 29/09/2026).
+- Il est proposé dans le flasher web, combinable avec le 6 canaux, avec l'auteur affiché sur la carte.
+- Testé sur du vrai matériel **par son auteur** ; pas encore par nous.
+
+## 2. Trig preview — ✅ livré
+
+**Demande** : regrouper nos mods avec celui qui a ajouté le « trig preview » au Model:Cycles.
+> Source : commentaire r/Elektron relayé par l'utilisateur, qui l'identifie à drumkilla/elektron-model-tweaks.
+
+**Réponse** : c'est bien le tweak `trig-preview` du même dépôt.
+- Séquenceur à l'arrêt : maintenir un pas et appuyer sur PAGE fait jouer ce pas, avec sa note, sa longueur, ses p-locks et son sound-lock.
+- La page ne tourne pas. Il joue même si la condition de trig ou la probabilité l'excluraient, et même sur une piste mutée.
+> Source : README de drumkilla/elektron-model-tweaks, section *Trig preview*.
+
+Le troisième tweak du dépôt, `browser-scroll` (défilement des noms longs dans le navigateur), est livré avec.
+Même vérification octet pour octet, même crédit.
+
+### Point technique : une exception au contrôle des caves
+
+Notre `build.py` refusait `browser-scroll` : une constante de l'OS (`0x40148564`) pointe vers la zone `0xFF` où il écrit.
+Vérifié à la main :
+- La zone `0x401485ee` est la **table caractère → glyphe** d'une petite police de chiffres (0-9, `%`, `.`, `/`) : 256 entrées de 16 bits, `0xFFFF` = pas de glyphe.
+- Juste après, `0x401487ee` est la table des **largeurs**, qui vaut 0 pour tous les caractères sans glyphe.
+- `browser-scroll` n'écrit que les entrées des caractères de contrôle 1 à 8, jamais dessinés. drumkilla a volontairement laissé l'entrée 0 intacte.
+- Les caves de `latching-mute` (`0x40148662`, 396 o) sont les entrées 58 à 255 de la même table : même raisonnement, et aucune référence directe n'y pointe.
+
+Plutôt que `--force-cave`, cette référence est déclarée dans `device.json` (`cave_refs_ok`), avec la partie réellement libre (`0x401485f0`–`0x4014862e`, caractères 1 à 31).
+Le build l'accepte tant que les écritures restent dans cette partie, et refuse sinon. La règle est la même en Python et en JS, et elle est testée (`tools/webbuild_check.sh`).
+> Source : octets de l'OS 1.13 officiel, décodés le 29/09/2026 (table des glyphes et des largeurs).
+
+---
+
+## 3. OS Model:Samples sur un Model:Cycles, ou une machine « samples » — ✅ route validée sur le matériel
+
+**Demande** (deux idées liées) :
+- une voie pour flasher le logiciel du Model:Samples sur le Model:Cycles, et idéalement faire tourner « les deux en même temps » ;
+- un utilisateur de Reddit dit avoir ajouté une machine « samples » au firmware Cycles, sans jamais donner de détails.
+> Source : commentaire r/Elektron relayé par l'utilisateur, avec le lien vers le fil *Flashing Model:Cycles firmware into a Model:Samples*.
+> Le fil lui-même n'a pas pu être lu d'ici : Reddit bloque l'accès automatisé, et la page Gearspace sur le même sujet affiche une vérification anti-robot.
+
+### 3.1 Ce que dit la comparaison des deux OS 1.13 (29/09/2026)
+
+OS Model:Samples 1.13 téléchargé avec ton accord (`model-samples_OS1.13.zip`, 686 162 o, elektron.se), jamais versionné.
+Comparé section par section à l'OS Cycles 1.13 :
+
+| Section | Model:Cycles | Model:Samples | Verdict |
+|---|---|---|---|
+| 5 (horodatage) | `210525 16:37:28` | `210525 16:34:28` | **compilés le même jour, à 3 minutes d'écart** |
+| 2 (bootstrap : menu de démarrage, init DDR) | 26 602 o | 26 602 o | **même code** : 355 octets diffèrent, tous dans l'identifiant produit, le nom, la clé de signature et une somme de contrôle |
+| 3 (MAIN OS) | 1 744 192 o | 1 733 184 o | la seule vraie différence |
+| 4 (updater) | 31 752 o | 31 752 o | **identique octet pour octet** |
+
+> Source : conteneurs ELE3 des deux `.syx` officiels, dépaquetés avec `tools/mtlib` le 29/09/2026.
+
+Détail des différences du bootstrap :
+- l'identifiant produit (`0x11` contre `0x0F`), l'octet d'appareil (`0x0C` contre `0x0A`) et le nom `MODEL:CYCLES` / `MODEL:SAMPLES` ;
+- la chaîne de dérivation de la clé HMAC : `REVERB SEND` pour le Cycles, `DELAY TIME` pour le Samples ;
+- l'octet `0x04` de l'en-tête du conteneur : `0x15` contre `0x14`.
+
+Tout le reste est commun, y compris la liste des touches (`ENCODER A` à `H`, `FUNCTION`, `TRACK`, les 8 pads `KICK` … `CYMBAL`…) :
+**le panneau est câblé pareil**.
+
+`[FAIT]` Le bootstrap programme le **contrôleur de RAM DDR** (45 références aux registres `0xFC0B8xxx`), avec le même code sur les deux machines.
+`[HYP forte]` Le Model:Cycles a donc la même RAM que le Samples (64 Mo, dont la place des samples du projet).
+Ça concorde avec l'état des voix du moteur Cycles, rangé à `0x42308828`, à plus de 35 Mo du début de la RAM ([14 §2.4](14-machine-sd-vintage.md)).
+> Le Model:Samples a 1 Go de stockage et 64 Mo de RAM pour les samples. Source : test du Model:Samples par Attack Magazine.
+
+`[FAIT]` Le MAIN OS du Cycles contient déjà **toute la couche de stockage du Samples** : système de fichiers sur carte MMC (`SafeMmcStreamWriter`, `FileSystemDirectory`, `+DRIVE`), `"sample_references"`, `verify_samples_in_bgworker`, et même des classes nommées `ModelSamplesSysex`.
+Ce qui n'existe que dans l'OS Samples : `SampleManager`, `SamplePoolDirectory`, les paramètres *Sample Start/Length/Pitch/Slot*, les *Sample Locks*, « Memory full ».
+**Même base de code, le Cycles sans le moteur de samples.**
+
+### 3.2 La route de flash : `tools/crossflash.py` et l'onglet *Samples OS* `[FAIT]`, validée
+
+> ✅ **29/09/2026** : l'utilisateur a flashé ce fichier sur son Model:Cycles et confirme que « l'OS du Model:Samples a fonctionné ».
+> C'est, à notre connaissance, le premier test publié de ce sens-là. Le comportement avec les projets Cycles déjà présents
+> et le retour à l'OS Cycles n'ont pas encore été rapportés en détail.
+>
+> Depuis, le flasher web le propose dans un 3ᵉ onglet, *Samples OS*. Il faut y déposer les deux `.syx` officiels, reconnus à leur SHA-256.
+> La page construit l'image avec `MCBuilder.crossflash`, portage JS de `crossflash.py` qui donne le **même fichier, octet pour octet**.
+> Elle exige le SHA-256 de référence du résultat (`614d28cf…`). Une case oblige à confirmer qu'on a une interface MIDI pour le retour.
+> Le parcours complet est testé par `tools/webflash_smoke.sh model-cycles_OS1.13.syx model-samples_OS1.13.syx`.
+
+Principe, déjà prouvé dans l'autre sens :
+- le bootloader **ignore en silence** un conteneur d'un autre produit ;
+- on garde donc le conteneur de la machine hôte et on ne remplace que sa section 3 ;
+- le bootstrap de l'hôte n'est pas touché, donc son `.syx` officiel reste l'image de secours.
+> Source : `vendor/ms-multi-output/README.md`, section *You own a Model:Samples → --target cycles-crossflash*. La technique vient d'un utilisateur de r/Elektron, et scottmetoyer l'a testée sur un Model:Samples, retour compris.
+
+```sh
+python3 tools/crossflash.py --cycles model-cycles_OS1.13.syx --samples model-samples_OS1.13.syx --to cycles
+# -> model-samples_OS1.13_for-model-cycles.syx : OS Samples, conteneur/bootstrap/updater/clé du Cycles
+```
+
+- Les deux `.syx` et leurs MAIN OS doivent être les officiels (SHA-256).
+- La section 3 du Samples est reprise **telle quelle** : son flux aPLib d'origine, rien n'est recompressé.
+- Le fichier produit est relu en entier : paquets, sections 2/4/5 identiques à celles du Cycles, MAIN OS identique au Samples une fois décompressé, HMAC valide avec la clé du Cycles. Le vérificateur JS du flasher l'accepte aussi (6 637 paquets, environ 4,5 min sur un câble MIDI).
+- `--to samples` fait l'inverse (OS Cycles pour un Model:Samples), comme la cible `cycles-crossflash` de ms-multi-output.
+
+Protocole (celui qui a été suivi pour le premier test) :
+1. **Sauvegarder** les projets et le +Drive avec Elektron Transfer. L'OS Samples va trouver des données de projet Cycles : comportement inconnu, et ms-multi-output fait la même mise en garde dans l'autre sens.
+2. Garder l'**interface MIDI branchée sur le MIDI IN** : le retour passe par le menu de démarrage du Cycles, qui n'écoute que le MIDI IN.
+3. Flasher le fichier par le **menu de démarrage** (FUNC + allumage, TRIG 4) avec `flash.sh` / `flash.bat`. `CONFIG > UPGRADE` par USB devrait aussi l'accepter : c'est un conteneur Cycles valide.
+4. Observer le démarrage :
+   - s'il bloque sur le projet Cycles, `EMPTY RESET` (TRIG 2 du menu de démarrage) est à essayer, sinon le retour ;
+   - puis charger un sample avec Transfer (la machine s'annonce « Model:Samples »), le jouer, et vérifier le panneau.
+5. **Ne pas utiliser `CONFIG > UPGRADE` depuis l'OS Samples** : avec un `.syx` Samples officiel, il réécrirait aussi le bootstrap, et la machine deviendrait un Model:Samples complet côté logiciel.
+6. Retour : menu de démarrage du Cycles, puis `model-cycles_OS1.13.syx` officiel par le MIDI IN.
+
+Le retour depuis l'OS Samples n'est **garanti** que par le MIDI IN : le flasher web l'écrit en toutes lettres et exige la case « interface MIDI ».
+
+### 3.3 « Les deux en même temps » : une machine sample dans l'OS Cycles `[À FAIRE]`, plus tard
+
+- **Double démarrage** (deux MAIN OS en flash, choisis au démarrage) : à écarter. Il faudrait modifier le bootstrap, c'est-à-dire le code même du menu de secours.
+- **Machine « sample » dans le moteur Cycles** : l'analyse la rend moins lointaine que ne le disait la [note 10 §4](10-faisabilite-fonctionnalites.md). Même RAM (hyp. forte), même stockage, même bibliothèque de fichiers. Mais il faudrait greffer le `SampleManager` (chargement, liste, UI) et une voix de lecture dans le moteur.
+  Le test de la route 3.2 a réussi : le matériel du Cycles fait tourner le moteur de samples. La machine « sample » dans l'OS Cycles devient donc un vrai chantier possible, qu'il reste à planifier.
+
+## 4. Machines numériques du Syntakt — 🟠 recherche, premiers résultats encourageants
+
+**Demande** : porter les moteurs numériques supplémentaires du Syntakt, en partant de la ROM (l'OS) et d'un banc d'émulation pour la comprendre.
+> Source : commentaire r/Elektron relayé par l'utilisateur.
+
+**Ce qu'on savait** :
+- Les machines numériques du Syntakt sont à base de FM et dérivées de celles du Model:Cycles ([14 §1](14-machine-sd-vintage.md)).
+- SD VINTAGE ([14](14-machine-sd-vintage.md)) a été écrite en **clean-room** : l'OS du Syntakt n'était pas accessible depuis
+  l'environnement de travail d'alors. Elle marche sur le matériel (29/09/2026).
+- Le banc d'émulation du moteur du M:C (`tools/emu/`) tourne désormais aussi sur ton Mac.
+
+### 4.1 Premier examen de l'OS Syntakt 1.41 (29/09/2026)
+
+Téléchargé avec ton accord : `Syntakt-OS-1.41.zip`, 28 063 003 o, elektron.se. Jamais versionné.
+Le zip contient `Syntakt_OS1.41.syx` (2 571 424 o), un pack de sons et Transfer.
+> Source : page de téléchargements Syntakt d'elektron.se, consultée le 29/09/2026.
+
+`[FAIT]` **Même transport, même conteneur** que les Models :
+- SysEx Elektron, produit `0x16`, paquets de 128 octets.
+- Constantes de checksum : `V = 0x35`, `C0 = 0x2C`, à compléter pour mtlib. Trouvées par recherche exhaustive, elles valident les 20 089 paquets.
+- Particularité : **deux flux** de paquets (octet 7 = `0x00` puis `0x01`, le second avec `C0 - 1`). Mis bout à bout, ils forment **un seul conteneur ELE3** de 2 028 880 o.
+
+`[FAIT]` 8 sections :
+
+| id | Taille (décompressée) | Destination | Nature probable |
+|---|---|---|---|
+| 5 | 15 o | — | horodatage `260908 14:39:29` |
+| 2 | 30 782 o | `0x04000000` | bootstrap (même en-tête `[taille][0x80010000]` que les Models) |
+| 3 | **3 438 480 o** | `0x40000400` | **MAIN OS ColdFire**, même adresse et mêmes premiers octets que celui du Cycles |
+| 4 | 32 776 o | `0x80000400` | updater |
+| 1, 8 | 149 516 o, 159 948 o | — | données (commencent par des `0xFF`) `[À IDENTIFIER]` |
+| 6 | 1 744 o | — | `[À IDENTIFIER]` |
+| 7 | 383 760 o | — | **code et tables DSP** (voir ci-dessous) |
+
+`[FAIT]` Le MAIN OS contient la liste des machines, avec un espace de noms `Diddy` (`machineType_t`, `synthParams_t`) :
+`SD VINTAGE`, `CP VINTAGE`, `BD SHARP`, `BD SILKY`, `SD NATURAL`, `SY RAW`, `SY CHIP`, `SY DUAL VCO`, `CY RIDE`, `CB METALLIC`…
+`SD VINTAGE` est à `0x402535c2`.
+
+`[FAIT]` **Indice fort de parenté avec le moteur Cycles** :
+- La **table de sinus Q31 de 257 points** du moteur FM du Cycles (`0x8000eee4` en SRAM) se retrouve **à l'identique** dans la section 7 du Syntakt (offset `0x53e54`).
+- Les sections 3 et 7 règlent l'EMAC en mode fractionnaire `MACSR = 0xA0` (`move.l #0xa0,MACSR`), le mode de la boucle des voix du Cycles ([14 §2.3](14-machine-sd-vintage.md)).
+- En revanche, aucune fonction du moteur Cycles ne s'y retrouve octet pour octet. Le code a été recompilé ou réécrit.
+
+> Source : sections dépaquetées de `Syntakt_OS1.41.syx` le 29/09/2026 ; comparaison avec l'OS Cycles 1.13.
+
+`[À FAIRE]` La clé HMAC du Syntakt n'est pas retrouvée par la méthode des Models. C'est sans importance ici : on ne reconstruit pas de firmware Syntakt, on ne fait que le lire.
+
+### 4.2 Plan
+
+1. `[À FAIRE]` Identifier la section 7 (chargée en SRAM comme les tables du Cycles ?) et trouver les tables de dispatch des machines numériques : `update` / `render`, comme `0x40118628` / `0x40118610` sur le Cycles.
+2. `[À FAIRE]` Faire tourner la voix **SD VINTAGE** du Syntakt dans un banc d'émulation, sur le modèle de `tools/emu/mcengine.py` (même CPU, même EMAC, correctif EMAC déjà écrit). Mesurer son son : hauteur, balayage, bruit, enveloppes.
+3. Comparer à notre SD VINTAGE clean-room, puis **caler nos constantes** sur les mesures. C'est la voie la plus sûre (aucun code Elektron copié).
+4. Ensuite, les autres machines numériques une par une, en commençant par les plus demandées. Chacune d'abord à la place d'une machine existante, puis en 7ᵉ machine ([14 §8](14-machine-sd-vintage.md)).
+
+**Règle de publication** : aucun code Elektron dans le dépôt, comme pour le reste du projet. Deux façons de porter :
+- **Réécriture clean-room** (comme SD VINTAGE), réglée sur les mesures faites dans le banc : la plus sûre ;
+- **Extraction au moment du build** depuis le fichier Syntakt que l'utilisateur fournit lui-même : le dépôt ne contiendrait que des adresses et des tables de patch.
+  Techniquement plausible (même CPU, même EMAC, mêmes tables), mais la licence du firmware Syntakt n'autorise peut-être pas cet usage (non vérifié).

@@ -435,8 +435,9 @@ function checkConflicts(chosen) {
 // Zone = [debut du bloc 0xFF, fin des octets ecrits). Une reference dont les octets sont
 // reecrits par les tweaks (dirty) n'existe plus : listee dans « gone », elle ne bloque pas,
 // sauf une constante qui, dans l'image patchee (patched), pointe encore dans la zone.
-// Renvoie { zones, sure, doubt, gone } ; leve une Error si une constante 32 bits pointe dedans (sauf force).
-function checkCaves(mainOs, chosen, force, dirty, patched) {
+// known = device.cave_refs_ok (references verifiees a la main, voir plus bas).
+// Renvoie { zones, sure, doubt, gone, acked } ; leve une Error si une constante 32 bits pointe dedans (sauf force).
+function checkCaves(mainOs, chosen, force, dirty, patched, known) {
   const top = new Map();                        // debut du bloc -> fin ecrite la plus haute
   for (const t of chosen) for (const w of t.writes) {
     const old = fromHex(w.old);
@@ -447,7 +448,7 @@ function checkCaves(mainOs, chosen, force, dirty, patched) {
     top.set(lo, Math.max(hi, top.get(lo) || hi));
   }
   const zones = [...top.entries()].sort((a, b) => a[0] - b[0]);
-  if (!zones.length) return { zones: [], sure: [], doubt: [], gone: [] };
+  if (!zones.length) return { zones: [], sure: [], doubt: [], gone: [], acked: [] };
   const vz = zones.map(([lo, hi]) => [lo + BASE, hi + BASE]);
   const loAll = Math.min(...vz.map((z) => z[0])), hiAll = Math.max(...vz.map((z) => z[1]));
   const inside = (t) => t >= loAll && t < hiAll && vz.some(([a, b]) => t >= a && t < b);
@@ -486,12 +487,29 @@ function checkCaves(mainOs, chosen, force, dirty, patched) {
       for (let k = list.length - 1; k >= 0; k--)
         if (rewritten(list[k])) gone.unshift(...list.splice(k, 1));
   }
+  // References verifiees a la main (device.json « cave_refs_ok ») : ne bloquent pas tant que
+  // toutes les ecritures qui touchent leur zone restent dans la partie libre [lo, hi).
+  const acked = [];
+  if (known && known.length) {
+    const spans = [];
+    for (const t of chosen) for (const w of t.writes) spans.push([w.off, w.off + fromHex(w.old).length]);
+    const covers = ([va, tgt]) => {
+      const [zlo, zhi] = zones.find(([lo, hi]) => tgt >= lo + BASE && tgt < hi + BASE);
+      return known.some((k) => {
+        if (parseInt(k.ref, 16) !== va) return false;
+        const lo = parseInt(k.lo, 16) - BASE, hi = parseInt(k.hi, 16) - BASE;
+        return spans.every(([a, b]) => !(a < zhi && b > zlo) || (lo <= a && b <= hi));
+      });
+    };
+    for (let k = sure.length - 1; k >= 0; k--)
+      if (covers(sure[k])) acked.unshift(...sure.splice(k, 1));
+  }
   if (sure.length && !force) {
     const lines = sure.map(([va, t]) => `  0x${va.toString(16)} -> 0x${t.toString(16)}`).join("\n");
     throw new Error("l'image d'origine pointe dans une zone 0xFF ou un tweak ecrit :\n" + lines
       + "\nZone peut-etre non libre : construction refusee.");
   }
-  return { zones, sure, doubt, gone };
+  return { zones, sure, doubt, gone, acked };
 }
 
 /* Construit le .syx modifie.
@@ -510,7 +528,7 @@ function build(raw, device, chosen, opts = {}) {
 
   checkConflicts(chosen);
   const { data: patched, dirty } = applyWrites(mainOs, chosen);
-  const caves = checkCaves(mainOs, chosen, opts.force, dirty, patched);
+  const caves = checkCaves(mainOs, chosen, opts.force, dirty, patched, device.cave_refs_ok);
   const patchedSha = hex(sha256(patched));
   if (opts.expectMainOsSha && patchedSha !== opts.expectMainOsSha)
     throw new Error(`MAIN OS patche ${patchedSha}, attendu ${opts.expectMainOsSha}`);
@@ -531,10 +549,50 @@ function build(raw, device, chosen, opts = {}) {
            caves, product, name };
 }
 
+/* Cross-flash (tools/crossflash.py) : le MAIN OS de guestRaw dans le conteneur de hostRaw.
+ * Bootstrap, updater et cle de signature restent ceux de l'hote ; le flux aPLib de la section 3
+ * de l'invite est repris tel quel (rien n'est recompresse). Le resultat est relu en entier :
+ * paquets, sections, MAIN OS, HMAC. Renvoie { raw, product, name, guestName, mainOsSha }. */
+function crossflash(hostRaw, guestRaw) {
+  const host = unwrap(hostRaw), guest = unwrap(guestRaw);
+  const hc = parseContainer(host.stream), gc = parseContainer(guest.stream);
+  const g3 = gc.sections.find((s) => s.id === 3);
+  if (!g3 || !hc.sections.some((s) => s.id === 3)) throw new Error("section 3 (MAIN OS) absente");
+  const gStored = gc.blob.subarray(g3.off, g3.off + g3.size);
+  const depackAll = (c) => {
+    const out = [];
+    for (const s of c.sections) {
+      try { out.push(aplibDepack(c.blob.subarray(s.off, s.off + s.size)).data); } catch (e) { /* brute */ }
+    }
+    return out;
+  };
+  const tail = (blob) => [blob.subarray(0, blob.length - DIGEST_LEN), blob.subarray(blob.length - DIGEST_LEN)];
+  const [msg, expect] = tail(hc.blob);
+  const key = findKey(depackAll(hc), msg, expect);
+  if (!key) throw new Error("cle HMAC de l'hote introuvable");
+  const raw = wrap(buildStream(rebuildContainer(hc, { 3: gStored }, key), BYTES_PER_MSG), host.product, host.start_seq);
+
+  // relecture complete
+  const back = unwrap(raw), bc = parseContainer(back.stream);
+  if (back.product !== host.product) throw new Error("relecture : identifiant produit change");
+  for (const s of hc.sections) {
+    const b = bc.sections.find((x) => x.id === s.id);
+    const want = s.id === 3 ? gStored : hc.blob.subarray(s.off, s.off + s.size);
+    if (!b || !eq(bc.blob.subarray(b.off, b.off + b.size), want)) throw new Error(`relecture : section ${s.id} inattendue`);
+  }
+  const b3 = bc.sections.find((x) => x.id === 3);
+  const main = aplibDepack(bc.blob.subarray(b3.off, b3.off + b3.size)).data;
+  if (!eq(main, aplibDepack(gStored).data)) throw new Error("relecture : MAIN OS different");
+  const [bmsg, bexp] = tail(bc.blob);
+  const bkey = findKey(depackAll(bc), bmsg, bexp);
+  if (!bkey || !eq(bkey, key)) throw new Error("relecture : HMAC invalide");
+  return { raw, product: host.product, name: host.name, guestName: guest.name, mainOsSha: hex(sha256(main)) };
+}
+
 // ---- Export node / navigateur ---------------------------------------------
 const API = { sha256, hmacSha256, unwrap, wrap, aplibDepack, aplibRepack, parseContainer, findKey,
               rebuildContainer, buildStream, contentChecksum, applyWrites, checkConflicts, checkCaves,
-              build, hex, fromHex, PRODUCTS, BASE };
+              build, crossflash, hex, fromHex, PRODUCTS, BASE };
 if (typeof module !== "undefined" && module.exports) module.exports = API;
 if (typeof window !== "undefined") window.MCBuilder = API;
 })();

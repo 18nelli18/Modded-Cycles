@@ -12,7 +12,7 @@ Intégration **par étapes** :
 |---|---|
 | Architecture des machines du M:C (descripteurs, voix, tables, briques DSP) | `[FAIT]` décodée sur l'OS 1.13 (§2) |
 | Moteur SD VINTAGE (C, clean-room) | `[FAIT]` écrit, compilé pour le ColdFire, 828 + 560 octets (§3) |
-| **Étape 1** : tweak `sdvintage-snare` (SD VINTAGE à la place de SNARE) | `[FAIT]` build CLI et web, **validé dans le vrai moteur émulé** (§6). **Jamais flashé.** |
+| **Étape 1** : tweak `sdvintage-snare` (SD VINTAGE à la place de SNARE) | `[FAIT]` build CLI, validé dans le vrai moteur émulé (§6), puis **sur le matériel le 29/09/2026** (« elle marche parfait »). Retiré du flasher web pour l'instant, à la demande de l'utilisateur : reste disponible avec `build.py`. |
 | Banc d'émulation du moteur audio (Unicorn + EMAC exacte) | `[FAIT]` `tools/emu/` (§4) |
 | Place libre : les grosses « caves » 0xFF sont des masques de sprites | `[FAIT]` partage de masques ; `6ch-usbup` corrigé (§5) |
 | **Étape 2** : 7ᵉ machine (SNARE conservé) | `[À FAIRE]` plan et adresses en §8, après validation matérielle de l'étape 1 |
@@ -221,7 +221,10 @@ TOUT OK
 - **`6ch-usbup` déplacée** : les 4 stubs émulés à `0x4015c116..` donnent registres et mémoire identiques à l'origine (`emu_stubs`, modèle ANY).
 - **Non vérifiable ici** : le son réel sur la machine, l'UI (libellés, écran), la charge CPU réelle avec séquenceur et effets. D'où le test matériel ci-dessous.
 
-## 7. Étape 1 : build et test sur le matériel `[À FAIRE]`
+## 7. Étape 1 : build et test sur le matériel `[FAIT]`
+
+> **29/09/2026** : flashée sur un vrai Model:Cycles. Test d'écoute à COLOR 0 (plus de bruit, seulement la note du corps),
+> puis « elle marche parfait » selon l'utilisateur. Les points 3 et 4 ci-dessous (charge longue durée) n'ont pas été rapportés en détail.
 
 **Build** :
 - CLI : `python3 tools/build.py -i model-cycles_OS1.13.syx -t sdvintage-snare`.
