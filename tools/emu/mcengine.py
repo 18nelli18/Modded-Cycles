@@ -34,8 +34,8 @@ DEFAULTS = {0: (10, 16, 16, 24, 28), 1: (0, 127, 8, 0, 40), 2: (46, 48, 0, 20, 2
             3: (38, 100, 64, 26, 26), 4: (40, 38, 52, 42, 42), 5: (3, 43, 24, 64, 64)}
 
 IMAGE_LEN = 0x1a9d40             # MAIN OS 1.13 d'origine ; au-delà : charge utile d'un tweak « append »
-PAYLOAD_DST = 0x46000000         # où le crochet de démarrage la recopie (notes/17)
-PAYLOAD_CODE = ((0x46000000, 0x4604f2e0), (0x46061000, 0x46062000))   # zones de code de la charge utile
+PAYLOAD_DST = 0x43000000         # où le crochet de démarrage la recopie (notes/17)
+PAYLOAD_CODE = ((0x43000000, 0x4300603c), (0x43031000, 0x43032000))   # zones de code de la charge utile
 
 _EMAC_CACHE = {}
 

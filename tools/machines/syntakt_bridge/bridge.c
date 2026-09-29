@@ -3,14 +3,15 @@
  *
  * Le vrai moteur SD VINTAGE du Syntakt (fonctions update/render de son processeur audio, et tout ce
  * qu'elles appellent) est extrait AU BUILD du Syntakt_OS1.41.syx de l'utilisateur, relocalise et
- * charge en SDRAM a 0x46000000 (tools/gen_sdvintage_exact.py, tools/build.py --syntakt). Aucun octet
+ * charge en SDRAM a 0x43000000 (tools/gen_sdvintage_exact.py, tools/build.py --syntakt). Aucun octet
  * Elektron n'est dans ce depot : ce fichier est notre seul code.
  *
- * Disposition en memoire (au-dessus du BSS de l'OS Cycles, qui finit a 0x423380b0) :
- *   0x46000000  copie du programme audio du Syntakt (0x40000400..0x4004f6e0), decalage ST_DELTA
- *   0x46050000  replique de sa SRAM (0x80000000..0x8000ffff) : voix de 1 800 o, tables, tampons
- *   0x46060000  fenetre de son BSS (0x4404f000..0x4404ffff) : graine aleatoire 0x4404f954
- *   0x46061000  cette passerelle, puis ses donnees
+ * Disposition en memoire (au-dessus du BSS de l'OS Cycles, qui finit a 0x423380b0, et sous 64 Mo) :
+ *   0x43000000  ses 21 fonctions (copie de 0x40002544..0x40008580, meme disposition relative)
+ *   0x43006100  constantes (0x40014980..), 0x43006400 table DEC x MENV et tables de 512 o (0x40028438..)
+ *   0x43020000  replique de sa SRAM (0x80000000..0x8000ffff) : voix de 1 800 o, tables, tampons
+ *   0x43030000  fenetre de son BSS (0x4404f000..0x4404ffff) : graine aleatoire 0x4404f954
+ *   0x43031000  cette passerelle, puis ses donnees (0x43032000)
  *
  * La passerelle reproduit pour chaque voix la sequence de la boucle des voix du Syntakt
  * (0x40004324 : changement de machine -> remise a zero, GATE -> voix+0x3ec, 0x4000255e, update,
@@ -23,9 +24,8 @@ typedef short s16;
 typedef int s32;
 typedef unsigned int u32;
 
-#define ST_DELTA    0x05fffc00                       /* Syntakt 0x40000400 -> 0x46000000 */
-#define ST(a)       ((a) + ST_DELTA)
-#define ST_SRAM     0x46050000
+#define ST(a)       ((a) - 0x40002544 + 0x43000000)     /* code du Syntakt -> copie */
+#define ST_SRAM     0x43020000
 #define SRAM(a)     ((a) - 0x80000000 + ST_SRAM)
 #define ST_VSTRIDE  1800
 #define ENGINE      6                                /* SD VINTAGE dans les tables du Syntakt */
@@ -61,6 +61,7 @@ static int voice_index(const char *v)
 static void st_init(void)
 {
 	int i;
+	/* appelee au premier declenchement seulement (voir bridge_update) */
 	for (i = 0; i < 8; i++) {
 		char *sh = st_voice(i);
 		ST_VINIT();
@@ -78,11 +79,17 @@ void bridge_update(s32 pmod, char *v, const char *p)
 	char *sh, *pp = params[i];
 	s16 *ps = (s16 *)pp;
 
-	if (!ready)
-		st_init();
 	if (V32(v, MARK_OFF) != MARK) {                  /* machine (re)choisie sur le Cycles */
 		V32(v, MARK_OFF) = MARK;
 		need_reset[i] = 1;
+	}
+	/* Securite : aucun code du Syntakt ne tourne tant qu'une piste SNARE n'a pas ete declenchee.
+	 * Au demarrage (kit par defaut avec une piste SNARE), seule cette fonction s'execute : si le moteur
+	 * posait probleme, le Cycles demarre quand meme et CONFIG > UPGRADE reste accessible. */
+	if (!ready) {
+		if (!V32(v, 0x38))
+			return;
+		st_init();
 	}
 	sh = st_voice(i);
 	V32(sh, 0x34) = V32(v, 0x34);
@@ -117,7 +124,7 @@ void bridge_render(s32 *out, char *v)
 	int i = voice_index(v), k;
 	char *sh = st_voice(i);
 
-	if (need_reset[i]) {
+	if (!ready || need_reset[i]) {
 		for (k = 0; k < 32; k++)
 			out[k] = 0;
 		return;

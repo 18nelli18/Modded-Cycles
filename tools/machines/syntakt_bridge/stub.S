@@ -1,5 +1,5 @@
 /* Crochet de demarrage (notes/17) : au debut de 0x400004b2 (remise a zero du BSS de l'OS Cycles),
- * recopie la charge utile ajoutee a la fin de l'image (section 3 agrandie) vers 0x46000000, au-dessus
+ * recopie la charge utile ajoutee a la fin de l'image (section 3 agrandie) vers 0x43000000, au-dessus
  * du BSS, puis refait les deux instructions deplacees et reprend a 0x400004ba.
  * PAYLOAD_SRC, PAYLOAD_DST et PAYLOAD_LONGS sont fournis par tools/gen_sdvintage_exact.py (-D). */
 	.text

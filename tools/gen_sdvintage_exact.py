@@ -12,8 +12,8 @@ build.py --syntakt exécute la recette au moment du build, sur ton fichier.
 Fermeture calculée depuis update 0x40008074, render 0x4000847a, remise à zéro 0x40003ee0, 0x4000255e et
 0x40002544 (init des voix), en suivant appels directs, relatifs au PC et indirects (lea abs,aN ; jsr (aN)).
 Toute adresse absolue qu'elles contiennent est relocalisée :
-  image du Syntakt 0x40000400..0x4004f6e0 -> 0x46000000 + décalage ; SRAM 0x80000000..0x8000ffff -> 0x46050000 ;
-  BSS 0x4404f000..0x4404ffff -> 0x46060000.
+  voir SEGMENTS : code 0x40002544..0x40008580 -> 0x43000000, tables -> 0x43006100 / 0x43006400,
+  SRAM 0x80000000..0x8000ffff -> 0x43020000, BSS 0x4404f000..0x4404ffff -> 0x43030000.
 
     python3 tools/gen_sdvintage_exact.py --syntakt Syntakt_OS1.41.syx          # écrit 21-sdvintage-exact.json
     python3 tools/gen_sdvintage_exact.py --syntakt Syntakt_OS1.41.syx --check  # vérifie le JSON versionné
@@ -47,11 +47,28 @@ CFLAGS = ["-mcpu=54418", "-Os", "-ffreestanding", "-fno-builtin", "-nostdlib", "
 
 BASE = 0x40000400                        # VA du 1er octet des sections 3 (Cycles) et 7 (Syntakt)
 IMAGE_LEN = 0x1a9d40                     # MAIN OS Cycles 1.13 : la charge utile commence juste après
-ST_CODE = (0x40000400, 0x4004f6e0)       # code + données en lecture seule du programme audio du Syntakt
+ST_CODE = (0x40000400, 0x4004f6e0)       # code + données en lecture seule du programme audio du Syntakt (analyse)
 ST_SRAM_INIT = ((0x4004f6e0, 0x40057670, 0x80000000), (0x40057670, 0x4005df10, 0x80008000))
 ST_BSS = (0x4404f000, 0x44050000)        # fenêtre du BSS du Syntakt utilisée (graine 0x4404f954)
-DST_CODE, DST_SRAM, DST_BSS, DST_BRIDGE = 0x46000000, 0x46050000, 0x46060000, 0x46061000
-DELTA = DST_CODE - ST_CODE[0]
+# Charge utile COMPACTE en SDRAM à 0x43000000 : au-dessus du BSS Cycles (0x423380b0), sous 64 Mo (valable même
+# si la mémoire n'en faisait que 64), loin de la pile (0x48000000). Seules les plages utiles sont copiées :
+#   (source Syntakt, fin, destination)
+SEGMENTS = (
+    (0x40002544, 0x40008580, 0x43000000),   # les 21 fonctions (plage contiguë : le relatif au PC reste juste)
+    (0x40014980, 0x40014b80, 0x43006100),   # constantes lues par la remise à zéro (1ers mots de 0x40014980, 0x40014b7c)
+    (0x40028438, 0x4003a238, 0x43006400),   # table DEC x MENV (64 Ko) et 16 tables de 512 o
+    (0x80000000, 0x80010000, 0x43020000),   # réplique de sa SRAM (remplie comme son démarrage)
+    (0x4404f000, 0x44050000, 0x43030000),   # fenêtre de son BSS (graine aléatoire)
+)
+DST_CODE, DST_SRAM, DST_BRIDGE, DST_END = 0x43000000, 0x43020000, 0x43031000, 0x43033000
+
+
+def move(v):
+    """Nouvelle adresse d'une adresse du Syntakt, ou None si elle n'est pas dans une plage copiée."""
+    for lo, hi, dst in SEGMENTS:
+        if lo <= v < hi:
+            return v - lo + dst
+    return None
 ROOTS = (0x40008074, 0x4000847a, 0x40003ee0, 0x4000255e, 0x40002544)
 CAVE = 0x4016cae8                        # masque de sprite libéré (tools/sprites.py) : crochet de démarrage
 HOOK = 0x400004b2                        # remise à zéro du BSS du Cycles
@@ -142,6 +159,10 @@ def relocations(img, ins, insns):
         if BRANCH.match(mn):
             continue
         raw = img[a - BASE:a - BASE + size]
+        if "%pc@" in ops:
+            for v in values(ops, immediates=False):
+                if not SEGMENTS[0][0] <= v < SEGMENTS[0][1]:
+                    raise SystemExit(f"!! {a:#x} {mn} {ops} : relatif au PC hors de la plage de code copiée")
         absolute = set(values(ops, immediates=False))
         for v in set(values(ops)):
             if v not in absolute and v not in IMM_ADDR:
@@ -149,17 +170,10 @@ def relocations(img, ins, insns):
                         and v not in IMM_NUM:
                     AMBIGUOUS.append(f"{a:#x} {mn} {ops} : immédiat {v:#x}")
                 continue
-            if ST_CODE[0] <= v < ST_CODE[1]:
-                new = v + DELTA
-            elif 0x80000000 <= v < 0x80010000:
-                new = v - 0x80000000 + DST_SRAM
-            elif ST_BSS[0] <= v < ST_BSS[1]:
-                if v >= ST_BSS[0] + 0x1000:
-                    raise SystemExit(f"!! {a:#x} : BSS du Syntakt hors fenêtre ({v:#x})")
-                new = v - ST_BSS[0] + DST_BSS
-            elif 0x4004f6e0 <= v < 0x44100000 or 0xfc000000 <= v < 0xfd000000:
-                raise SystemExit(f"!! {a:#x} {mn} {ops} : adresse non prise en charge {v:#x}")
-            else:
+            new = move(v)
+            if new is None:
+                if ST_CODE[0] <= v < 0x44100000 or 0x80000000 <= v < 0x80010000 or 0xfc000000 <= v < 0xfd000000:
+                    raise SystemExit(f"!! {a:#x} {mn} {ops} : adresse {v:#x} hors des plages copiées")
                 continue
             pat = v.to_bytes(4, "big")
             k = raw.find(pat)
@@ -208,6 +222,8 @@ def build_tweak(img):
         funcs, insns = closure(ins)
         relocs = relocations(img, ins, insns)
         _, _, data_end = compile_bridge(tmp, 1)          # 1er passage : taille des données de la passerelle
+        if data_end > DST_END:
+            raise SystemExit("!! données de la passerelle trop grandes")
         size = (data_end - DST_CODE + 15) & ~15
         blobs, syms, _ = compile_bridge(tmp, size // 4)
     stub = blobs[".stub"]
@@ -222,9 +238,9 @@ def build_tweak(img):
         if new != old:
             writes.append({"off": va - BASE, "old": be32(old << 8), "new": be32(new << 8)})
     writes.sort(key=lambda w: w["off"])
-    parts = [{"dest": f"{DST_CODE:#x}", "syntakt": [f"{ST_CODE[0]:#x}", f"{ST_CODE[1]:#x}"]}]
+    parts = [{"dest": f"{dst:#x}", "syntakt": [f"{lo:#x}", f"{hi:#x}"]} for lo, hi, dst in SEGMENTS[:3]]
     for lo, hi, dst in ST_SRAM_INIT:
-        parts.append({"dest": f"{dst - 0x80000000 + DST_SRAM:#x}", "syntakt": [f"{lo:#x}", f"{hi:#x}"]})
+        parts.append({"dest": f"{move(dst):#x}", "syntakt": [f"{lo:#x}", f"{hi:#x}"]})
     parts.append({"dest": f"{DST_BRIDGE:#x}", "hex": blobs[".bridge"].hex()})
     code_bytes = sum(ins[a][0] for a in insns)
     return {
@@ -233,7 +249,7 @@ def build_tweak(img):
         "name": "Vrai moteur SD VINTAGE du Syntakt a la place de SNARE",
         "description": [
             "Le moteur SD VINTAGE du Syntakt (OS 1.41), extrait AU BUILD de TON Syntakt_OS1.41.syx",
-            f"({len(funcs)} fonctions, {code_bytes} o de code, avec ses tables), relocalise en SDRAM a 0x46000000",
+            f"({len(funcs)} fonctions, {code_bytes} o de code, avec ses tables), relocalise en SDRAM a 0x43000000",
             "au-dessus du BSS de l'OS Cycles, branche a la place de SNARE par une passerelle (notes/17).",
             "Potards au sens du Syntakt : PITCH=TUNE, COLOR=INHM, SHAPE=FCMP, SWEEP=SWEP, CONTOUR=MENV,",
             "PUNCH=PNCH, GATE, DECAY=DEC ; defauts du Syntakt. Demande : build.py --syntakt Syntakt_OS1.41.syx.",
@@ -250,7 +266,7 @@ def build_tweak(img):
             "size": size,
             "syntakt": {"os": "1.41", "syx_sha256": syntakt.SYX_SHA256, "section": 7, "section_sha256": syntakt.DSP_SHA256},
             "parts": parts,
-            "reloc": [[f"{va - ST_CODE[0] + DST_CODE:#x}", be32(old), be32(new)] for va, old, new in relocs],
+            "reloc": [[f"{move(va):#x}", be32(old), be32(new)] for va, old, new in relocs],
         },
     }, funcs, code_bytes
 

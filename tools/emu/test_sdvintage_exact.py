@@ -58,7 +58,7 @@ def render_cycles(os_img, blocks, note, kw):
 
 def boot_hook_ok(os_img, payload):
     """Exécute la vraie remise à zéro du BSS 0x400004b2 de l'OS patché : le crochet doit recopier la charge
-    utile vers 0x46000000, puis le BSS (qui la contenait) doit être remis à zéro et la fonction revenir."""
+    utile vers 0x43000000, puis le BSS (qui la contenait) doit être remis à zéro et la fonction revenir."""
     from unicorn import Uc, UC_ARCH_M68K, UC_MODE_BIG_ENDIAN
     from unicorn import m68k_const as mk
     import struct
@@ -83,6 +83,22 @@ def boot_hook_ok(os_img, payload):
     return ok
 
 
+def idle_is_safe(os_img):
+    """Tant qu'aucune piste SNARE n'est déclenchée (démarrage, séquenceur arrêté), aucune instruction du code
+    du Syntakt ne doit s'exécuter : si ce code posait problème, le Cycles démarrerait quand même."""
+    from unicorn import UC_HOOK_CODE
+    e = E.Engine(os_img)
+    e.solo(0)
+    e.set(0, machine="SNARE", note=60, pitch=64, finetune=64, color=0, shape=110, sweep=74, contour=80, decay=33)
+    ran = []
+    e.uc.hook_add(UC_HOOK_CODE, lambda uc, a, s, u: ran.append(a), begin=E.PAYLOAD_CODE[0][0], end=E.PAYLOAD_CODE[0][1])
+    x = e.render(50, trig_at=())
+    ok = not ran and not x.any() and not e.unmapped
+    print(f"  {'ok   ' if ok else 'ECHEC'} au repos (50 blocs sans déclenchement) : {len(ran)} instructions du Syntakt"
+          f" exécutées, sortie {'muette' if not x.any() else 'NON muette'}", flush=True)
+    return ok
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--cycles", required=True, help="model-cycles_OS1.13.syx officiel")
@@ -98,7 +114,7 @@ def main():
     os_img = patched + payload
     img = syntakt.dsp_image(args.syntakt)
 
-    fail = 0 if boot_hook_ok(os_img, payload) else 1
+    fail = (0 if boot_hook_ok(os_img, payload) else 1) + (0 if idle_is_safe(os_img) else 1)
     picks = [int(k) for k in args.cases.split(",")] if args.cases else range(len(CASES))
     for k in picks:
         name, over = CASES[k]
