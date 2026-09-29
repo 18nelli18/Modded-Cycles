@@ -12,10 +12,14 @@ BASE = 0x40000400
 SECT_LEN = 1744192
 DEV = json.loads(pathlib.Path("tweaks/model-cycles_OS1.13/device.json").read_text())
 TWEAKS = {}
-for f in ("10-6ch-multiout", "11-6ch-usbup", "20-sdvintage-snare"):
+for f in ("01-latching-mute", "02-trig-preview", "03-browser-scroll",
+          "10-6ch-multiout", "11-6ch-usbup", "20-sdvintage-snare"):
     TWEAKS[f] = json.loads(pathlib.Path(f"tweaks/model-cycles_OS1.13/{f}.json").read_text())
 BY_ID = {t["id"]: t for t in TWEAKS.values()}
-COMBOS = [["6ch-multiout"], ["6ch-usbup"], ["sdvintage-snare"], ["6ch-usbup", "sdvintage-snare"]]
+COMBOS = [["6ch-multiout"], ["6ch-usbup"], ["sdvintage-snare"], ["6ch-usbup", "sdvintage-snare"],
+          ["latching-mute", "trig-preview", "browser-scroll"],
+          ["6ch-usbup", "latching-mute", "trig-preview", "browser-scroll"]]
+KNOWN = DEV["cave_refs_ok"]
 
 # --- 1. MAIN OS synthetique -------------------------------------------------
 main = bytearray((i * 37 + 11) & 0xFF for i in range(SECT_LEN))   # remplissage deterministe
@@ -27,6 +31,14 @@ for va, (size, _, _) in list(sprites.MASKS.items()) + [(sprites.SHARED_MASK, (10
     main[o - 1] = 0x4E
     main[o:o + size] = b"\xff" * size
     main[o + size] = 0x4E
+
+# table caractere -> glyphe de la police de chiffres (comme dans l'image reelle) : 74 o a 0xFF
+# pointes par la constante 0x40148564 (reference verifiee a la main, device.json « cave_refs_ok »)
+FONT_MAP, FONT_REF = 0x401485ee, 0x40148564
+main[FONT_REF - BASE:FONT_REF - BASE + 4] = FONT_MAP.to_bytes(4, "big")
+main[FONT_MAP - BASE - 1] = 0x00
+main[FONT_MAP - BASE:FONT_MAP - BASE + 74] = b"\xff" * 74
+main[FONT_MAP - BASE + 74] = 0x00
 
 # octets 'old' de chaque tweak, a leur offset
 for t in TWEAKS.values():
@@ -84,7 +96,7 @@ def ref_build(raw, tweaks):
     m, ops = aplib.depack(c["blob"][sec3["off"]:sec3["off"] + sec3["size"]])
     build.check_conflicts(tweaks)
     patched, dirty = build.apply_writes(m, tweaks)
-    build.check_caves(m, tweaks, False, dirty)   # doit passer sans --force-cave
+    build.check_caves(m, tweaks, False, dirty, patched, KNOWN)   # doit passer sans --force-cave
     new_s3 = aplib.repack(patched, ops, dirty)
     msg = c["blob"][:len(c["blob"]) - container.DIGEST_LEN]
     expect = c["blob"][len(c["blob"]) - container.DIGEST_LEN:]
@@ -123,6 +135,22 @@ for t, verdict in ((refuse, "refuse"), (noop, "refuse"), (accept, "accepte")):
     if got != verdict:
         raise SystemExit(f"!! check_caves : {t['id']} {got}, attendu {verdict}")
 meta["cave_rule"] = {"refuse": refuse, "noop": noop, "accept": accept}
+
+# reference connue : ecrire dans sa partie libre [lo, hi) -> accepte ; deborder -> refuse ;
+# sans la liste des references connues -> refuse
+inside = {"id": "connue-dedans", "writes": [{"off": 0x401485f0 - BASE, "old": "ffff", "new": "4e71"}]}
+outside = {"id": "connue-dehors", "writes": [{"off": 0x40148630 - BASE, "old": "ffff", "new": "4e71"}]}
+for t, known, verdict in ((inside, KNOWN, "accepte"), (outside, KNOWN, "refuse"), (inside, None, "refuse")):
+    patched, dirty = build.apply_writes(main, [t])
+    try:
+        build.check_caves(main, [t], False, dirty, patched, known)
+        got = "accepte"
+    except SystemExit:
+        got = "refuse"
+    if got != verdict:
+        raise SystemExit(f"!! check_caves (reference connue) : {t['id']} {got}, attendu {verdict}")
+meta["known_rule"] = {"inside": inside, "outside": outside}
+meta["cave_refs_ok"] = KNOWN
 
 OUT.joinpath("meta.json").write_text(json.dumps(meta))
 print("synth.syx", len(raw), "o ; section3 sha", meta["section_sha256"][:16],

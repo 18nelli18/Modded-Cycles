@@ -62,7 +62,8 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
 | [11-conception-8-canaux.md](11-conception-8-canaux.md) | **Conception du mode 8 canaux** (6 pistes + mix) : stubs `tracks8`/`prime8` vérifiés, éditions, rings à finaliser |
 | [12-flash-par-jack-trs.md](12-flash-par-jack-trs.md) | **Flasher avec un simple câble jack stéréo** : entrée MIDI TRS (types A et B), interfaces à sortie TRS, piste « sortie casque » simulée |
 | [13-6ch-upgrade-usb.md](13-6ch-upgrade-usb.md) | **Variante `6ch-usbup`** : stubs déplacés dans une cave, descripteurs et table des modes USB d'origine, pour garder l'upgrade USB. Vérifications (émulation) et protocole de test |
-| [14-machine-sd-vintage.md](14-machine-sd-vintage.md) | **Machine SD VINTAGE** (caisse claire vintage, d'après le Syntakt) : architecture des machines du M:C décodée, moteur en C, banc d'émulation du moteur audio (EMAC corrigée), masques de sprites libérables, étape 1 validée en émulation, plan de la 7ᵉ machine |
+| [14-machine-sd-vintage.md](14-machine-sd-vintage.md) | **Machine SD VINTAGE** (caisse claire vintage, d'après le Syntakt) : architecture des machines du M:C décodée, moteur en C, banc d'émulation du moteur audio (EMAC corrigée), masques de sprites libérables, étape 1 **validée sur le matériel** (29/09/2026), plan de la 7ᵉ machine |
+| [15-demandes-reddit.md](15-demandes-reddit.md) | **Demandes de la communauté (Reddit)** : mute verrouillé et écoute d'un pas (tweaks drumkilla, livrés), OS Model:Samples / machine « samples » et machines du Syntakt (plans de recherche) |
 
 ## Chiffres clés (OS 1.13)
 

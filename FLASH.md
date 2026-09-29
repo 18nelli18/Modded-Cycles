@@ -136,22 +136,26 @@ python3 tools/flash.py model-cycles_OS1.13.syx --port "NOM DE TON INTERFACE" --s
 ## 7. Depuis Chrome, sans rien installer (Web MIDI)
 
 Le **[flasher web](https://18nelli18.github.io/Modded-Cycles/flasher/)** fait tout dans le navigateur : il **construit**
-l'image modifiée à partir de **ton** OS officiel, puis l'**envoie** par Web MIDI. Il marche sur **Chrome, Edge ou Opera**
+l'image modifiée à partir de **ton** OS officiel, puis l'**envoie par USB** (Web MIDI). Il marche sur **Chrome, Edge ou Opera**
 sur ordinateur (Web MIDI n'existe pas sur Firefox ni Safari). **Tout reste local** : aucun fichier n'est envoyé à un serveur,
 aucune image firmware n'est fournie. La page est en anglais, avec un bouton **FR** (automatique si ton navigateur est en français).
 
 Quatre étapes, de haut en bas :
 1. **Choisir** : onglet *Mods* (coche les mods voulus) ou *Official firmware* (renvoie l'OS officiel tel quel, pour revenir
    en arrière ou faire une répétition sans risque).
-   - **Audio USB 6 canaux** : une fois coché, deux variantes : garder la mise à jour de l'OS par USB (`6ch-usbup`, recommandé)
-     ou la version de référence (`6ch-multiout`) ;
-   - **Machine SD VINTAGE** (caisse claire vintage, à la place de SNARE, [note 14](notes/14-machine-sd-vintage.md)).
+   - **Audio USB 6 canaux** : la variante qui garde la mise à jour de l'OS par USB (`6ch-usbup`) ;
+   - **Mode mute verrouillé**, **Écoute d'un pas** et **Défilement des noms longs** : les tweaks de
+     [drumkilla](https://github.com/drumkilla/elektron-model-tweaks) (`latching-mute`, `trig-preview`, `browser-scroll`).
+
+   Chaque carte indique l'auteur du travail d'origine ; la section *Credits* en bas de page liste les projets sur lesquels
+   on s'appuie. `6ch-multiout` (qui casse la mise à jour par USB) et SD VINTAGE ne sont plus proposés dans la page :
+   ils restent disponibles avec `build.py` et les scripts de flash.
 2. **Déposer l'OS officiel** `model-cycles_OS1.13.syx` : il est reconnu à son empreinte, et le firmware est **construit
    automatiquement** (pas de bouton). La page **exige** le MAIN OS de référence de chaque combinaison (voir [BUILD.md](BUILD.md)),
    sinon elle refuse. Un `.syx` qui n'est pas l'OS officiel est accepté s'il est valide, mais envoyé **tel quel**.
-3. **Brancher** : *MIDI interface → MIDI IN* (recommandé, marche toujours, voie de secours : FUNC + allumage, TRIG 4) ou
-   *USB cable only* (`CONFIG › UPGRADE`, seulement depuis l'OS officiel ou `6ch-usbup`). La page présélectionne le bon port
-   et prévient si tu choisis le port USB du Model:Cycles pour le menu de démarrage.
+3. **Brancher en USB** : câble USB, Model:Cycles allumé normalement, `CONFIG › UPGRADE` puis *YES*. La page choisit
+   le port « Model:Cycles » et prévient si tu en prends un autre. Il n'y a plus de voie MIDI IN dans la page :
+   la récupération par le menu de démarrage (FUNC + allumage, TRIG 4) passe par les scripts des §3 à §5.
 4. **Flasher** : le bouton indique ce qui manque encore ; pendant l'envoi, progression, temps restant et bouton **Stop** ;
    l'écran reste allumé (garde l'onglet au premier plan). Les réglages rares (marge de vitesse, téléchargement du `.syx`,
    journal) sont dans *Advanced*.
@@ -161,7 +165,7 @@ En local : `python3 -m http.server` dans `docs/`, puis `http://localhost:8000/fl
 Fidélité vérifiée sans matériel : `tools/webflash_check.sh` compare le **vérificateur** JS à `tools/mtlib/syx.py`,
 et `tools/webbuild_check.sh` compare le **constructeur** JS (`docs/flasher/builder.js`) à `tools/build.py` (aPLib + conteneur + HMAC)
 à l'octet près, sur une image synthétique. `tools/webflash_smoke.sh` joue le parcours complet de la page dans jsdom
-(avec `tools/webflash_smoke.sh model-cycles_OS1.13.syx`, il vérifie aussi les 5 combinaisons sur le vrai OS).
+(avec `tools/webflash_smoke.sh model-cycles_OS1.13.syx`, il vérifie aussi les 15 combinaisons proposées sur le vrai OS).
 Les tables de patchs de la page viennent de `docs/flasher/tweaks.js`, généré depuis `tweaks/` par `tools/gen_flasher_tweaks.py` (`--check` en CI).
 
 ## 8. Méthode manuelle (sans les scripts)

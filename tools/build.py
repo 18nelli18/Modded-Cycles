@@ -140,12 +140,29 @@ def refs_into(main_os, zones):
     return sure, doubt
 
 
-def check_caves(main_os, chosen, force, dirty=None, patched=None):
+def known_ref(known, chosen, zones, hit):
+    """Entree de device.json « cave_refs_ok » qui couvre cette reference, ou None.
+    Une reference connue ne bloque plus si TOUTES les ecritures des tweaks choisis qui touchent sa
+    zone restent dans la partie verifiee a la main [lo, hi) (ex. : entrees jamais lues d'une table)."""
+    va, tgt, _ = hit
+    zlo, zhi = next((lo, hi) for lo, hi in zones if lo + BASE <= tgt < hi + BASE)
+    for k in known or ():
+        if int(k["ref"], 16) != va:
+            continue
+        lo, hi = int(k["lo"], 16) - BASE, int(k["hi"], 16) - BASE
+        spans = [(w["off"], w["off"] + len(bytes.fromhex(w["old"]))) for t in chosen for w in t["writes"]]
+        if all(lo <= a and b <= hi for a, b in spans if a < zhi and b > zlo):
+            return k
+    return None
+
+
+def check_caves(main_os, chosen, force, dirty=None, patched=None, known=None):
     """Refuse d'ecrire dans une zone 0xFF que l'image d'origine reference : elle ne serait pas libre.
     Une reference dont les octets sont eux-memes reecrits par les tweaks choisis (dirty) n'existe
     plus dans l'image patchee (patched) : elle est listee a part et ne bloque pas (ex. : pointeur de
     sprite redirige vers un autre masque identique pour liberer le sien, notes/14). Une constante
-    reecrite qui pointe encore dans la zone reste bloquante."""
+    reecrite qui pointe encore dans la zone reste bloquante. Une reference verifiee a la main
+    (known = device.json « cave_refs_ok ») ne bloque pas tant que les ecritures restent dans sa partie libre."""
     zones = cave_zones(main_os, chosen)
     if not zones:
         return
@@ -167,6 +184,12 @@ def check_caves(main_os, chosen, force, dirty=None, patched=None):
         doubt = [h for h in doubt if not rewritten(h)]
         for va, t, kind in gone:
             print(f"  reference reecrite par un tweak (neutralisee) : 0x{va:08x} -> 0x{t:08x} ({kind})")
+    if known:
+        acked = [(h, known_ref(known, chosen, zones, h)) for h in sure]
+        for (va, t, _), k in acked:
+            if k:
+                print(f"  reference connue, ecritures dans sa partie libre : 0x{va:08x} -> 0x{t:08x} ({k['why']})")
+        sure = [h for h, k in acked if not k]
     starts = {lo + BASE for lo, _ in zones}
 
     def show(hits):
@@ -261,7 +284,7 @@ def main():
         print(f"  + {t['name']}")
 
     patched, dirty = apply_writes(main_os, chosen)
-    check_caves(main_os, chosen, args.force_cave, dirty, patched)
+    check_caves(main_os, chosen, args.force_cave, dirty, patched, dev.get("cave_refs_ok"))
     print(f"  {sum(dirty)} octets changes sur {len(patched)}")
     print(f"  MAIN OS patche SHA-256 : {sha(patched)}")
     if args.expect_mainos and sha(patched) != args.expect_mainos.lower():
