@@ -115,8 +115,10 @@ def main():
     cyc, smp = load(args.cycles, "cycles"), load(args.samples, "samples")
     host, guest = (cyc, smp) if args.to == "cycles" else (smp, cyc)
     out = cross(host, guest)
-    name = args.output or ("model-samples_OS1.13_for-model-cycles.syx" if args.to == "cycles"
-                           else "model-cycles_OS1.13_for-model-samples.syx")
+    # par defaut, a cote du fichier de l'OS invite (comme build.py ecrit a cote de son entree)
+    guest_path = pathlib.Path(args.samples if args.to == "cycles" else args.cycles)
+    name = args.output or str(guest_path.with_name("model-samples_OS1.13_for-model-cycles.syx" if args.to == "cycles"
+                                                   else "model-cycles_OS1.13_for-model-samples.syx"))
     pathlib.Path(name).write_bytes(out)
     h, g = OFFICIAL[args.to], OFFICIAL["samples" if args.to == "cycles" else "cycles"]
     print(f"ecrit : {name} ({len(out)} o, SHA-256 {sha(out)[:16]}...)")
