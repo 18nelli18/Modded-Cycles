@@ -10,7 +10,7 @@ Ce script prend TES deux fichiers officiels (aucune image n'est fournie) et prod
     --to cycles   l'OS Model:Samples dans un conteneur Model:Cycles : a flasher sur un Model:Cycles.
                   Bootstrap, updater et cle de signature restent ceux du Cycles : le menu de demarrage
                   du Cycles (FUNC + allumage, TRIG 4, par le MIDI IN) reste la voie de retour.
-                  JAMAIS TESTE sur un vrai Model:Cycles.
+                  Teste avec succes sur un vrai Model:Cycles le 29/09/2026 (notes/15 §3).
     --to samples  l'inverse (OS Cycles pour un Model:Samples).
 
 Technique : garder le conteneur de la machine hote et ne remplacer que la section 3. Elle a ete trouvee par un
@@ -126,7 +126,7 @@ def main():
           f"bootstrap, updater et cle de signature du {h['name']}")
     print("  relu et verifie : paquets, sections, MAIN OS, HMAC")
     if args.to == "cycles":
-        print("\n  JAMAIS TESTE sur un vrai Model:Cycles. Avant de flasher, lis notes/15 §3 :")
+        print("\n  Teste sur un vrai Model:Cycles (29/09/2026). Avant de flasher, lis notes/15 §3 :")
         print("  sauvegarde tes projets (Transfer), garde ton interface MIDI branchee sur le MIDI IN,")
         print("  et n'utilise pas CONFIG > UPGRADE depuis l'OS Samples. Retour : menu de demarrage")
         print("  (FUNC + allumage, TRIG 4) et l'OS Cycles officiel par le MIDI IN (flash.sh / flash.bat).")

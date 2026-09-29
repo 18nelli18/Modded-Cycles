@@ -353,5 +353,10 @@ window.MC_TWEAKS = {
     }
    ]
   }
- ]
+ ],
+ "samples": {
+  "syx_sha256": "e11859b68deb7e5e3fe86ab32581212093849c4be5d3950add011eac398a2ce8",
+  "main_sha256": "a351392c62ec1c6c3324a807baf46934690d54edfc76029a4b4882541cad1ab2",
+  "download": "https://www.elektron.se/support-downloads/modelsamples"
+ }
 };

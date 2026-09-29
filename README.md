@@ -20,6 +20,7 @@ You need:
 - a **USB cable**. On the Model:Cycles, open `CONFIG > UPGRADE` and confirm: it waits for the firmware.
 
 The web flasher only sends over USB, and only offers mods that keep OS updates over USB working.
+Its **Samples OS** tab turns the Model:Cycles into a Model:Samples (drop both official OS files); coming back needs a MIDI interface.
 If a Model:Cycles ever stops starting, recovery goes through the startup menu (`FUNC` + power on, then `TRIG 4`),
 which only listens to the **MIDI IN**: that needs a MIDI interface and the command-line scripts below ([`FLASH.md`](FLASH.md)).
 
@@ -79,7 +80,7 @@ Requests from the community (Reddit) and how we handle them: [note 15](notes/15-
 |---|---|
 | Mute without holding `FUNC` | ✅ `latching-mute` (above) |
 | Bundle with trig preview | ✅ `trig-preview` (above) |
-| Run the **Model:Samples OS** on a Model:Cycles | 🟡 `tools/crossflash.py` builds it from both official files: same bootstrap, same updater, same RAM setup on both machines. **Never tested on a Model:Cycles**: read note 15 §3 first (recovery through the MIDI IN) |
+| Run the **Model:Samples OS** on a Model:Cycles | ✅ **tested on a real Model:Cycles** (2026-09-29) — *Samples OS* tab of the web flasher, or `tools/crossflash.py`. Built from both official files: same bootstrap, same updater, same RAM setup on both machines. The way back to the Cycles OS goes through the MIDI IN (note 15 §3) |
 | Port the **Syntakt digital machines** | 🟠 research: same container, same ColdFire CPU and the same FM sine table as the Model:Cycles; next step is running the real SD VINTAGE in our emulator |
 
 ## Project status

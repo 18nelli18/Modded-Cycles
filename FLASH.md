@@ -147,6 +147,11 @@ Quatre étapes, de haut en bas :
    - **Mode mute verrouillé**, **Écoute d'un pas** et **Défilement des noms longs** : les tweaks de
      [drumkilla](https://github.com/drumkilla/elektron-model-tweaks) (`latching-mute`, `trig-preview`, `browser-scroll`).
 
+   Troisième onglet, *Samples OS* : il transforme le Model:Cycles en Model:Samples ([note 15 §3](notes/15-demandes-reddit.md)).
+   Il faut alors déposer **deux** fichiers officiels à l'étape 2, `model-cycles_OS1.13.syx` puis `model-samples_OS1.13.syx`.
+   La page les reconnaît à leur empreinte, construit l'image et exige le résultat de référence.
+   Une case oblige à confirmer qu'on a une interface MIDI : le retour à l'OS Cycles passe par le menu de démarrage (§5).
+
    Chaque carte indique l'auteur du travail d'origine ; la section *Credits* en bas de page liste les projets sur lesquels
    on s'appuie. `6ch-multiout` (qui casse la mise à jour par USB) et SD VINTAGE ne sont plus proposés dans la page :
    ils restent disponibles avec `build.py` et les scripts de flash.

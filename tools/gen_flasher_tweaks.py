@@ -76,6 +76,7 @@ FEATURES = [
 
 
 def render():
+    from crossflash import OFFICIAL            # empreintes des OS officiels, source unique (tools/crossflash.py)
     device = json.loads((DEV_DIR / "device.json").read_text(encoding="utf-8"))
     tweaks, seen, features = [], {}, []
     for f in FEATURES:
@@ -93,6 +94,9 @@ def render():
                    if k in device},
         "tweaks": tweaks,
         "features": features,
+        # onglet « OS Samples » : l'OS Model:Samples officiel, mis dans le conteneur du Cycles (crossflash)
+        "samples": {"syx_sha256": OFFICIAL["samples"]["syx"], "main_sha256": OFFICIAL["samples"]["main"],
+                    "download": "https://www.elektron.se/support-downloads/modelsamples"},
     }
     body = json.dumps(payload, ensure_ascii=False, indent=1)
     return (

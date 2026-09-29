@@ -549,10 +549,50 @@ function build(raw, device, chosen, opts = {}) {
            caves, product, name };
 }
 
+/* Cross-flash (tools/crossflash.py) : le MAIN OS de guestRaw dans le conteneur de hostRaw.
+ * Bootstrap, updater et cle de signature restent ceux de l'hote ; le flux aPLib de la section 3
+ * de l'invite est repris tel quel (rien n'est recompresse). Le resultat est relu en entier :
+ * paquets, sections, MAIN OS, HMAC. Renvoie { raw, product, name, guestName, mainOsSha }. */
+function crossflash(hostRaw, guestRaw) {
+  const host = unwrap(hostRaw), guest = unwrap(guestRaw);
+  const hc = parseContainer(host.stream), gc = parseContainer(guest.stream);
+  const g3 = gc.sections.find((s) => s.id === 3);
+  if (!g3 || !hc.sections.some((s) => s.id === 3)) throw new Error("section 3 (MAIN OS) absente");
+  const gStored = gc.blob.subarray(g3.off, g3.off + g3.size);
+  const depackAll = (c) => {
+    const out = [];
+    for (const s of c.sections) {
+      try { out.push(aplibDepack(c.blob.subarray(s.off, s.off + s.size)).data); } catch (e) { /* brute */ }
+    }
+    return out;
+  };
+  const tail = (blob) => [blob.subarray(0, blob.length - DIGEST_LEN), blob.subarray(blob.length - DIGEST_LEN)];
+  const [msg, expect] = tail(hc.blob);
+  const key = findKey(depackAll(hc), msg, expect);
+  if (!key) throw new Error("cle HMAC de l'hote introuvable");
+  const raw = wrap(buildStream(rebuildContainer(hc, { 3: gStored }, key), BYTES_PER_MSG), host.product, host.start_seq);
+
+  // relecture complete
+  const back = unwrap(raw), bc = parseContainer(back.stream);
+  if (back.product !== host.product) throw new Error("relecture : identifiant produit change");
+  for (const s of hc.sections) {
+    const b = bc.sections.find((x) => x.id === s.id);
+    const want = s.id === 3 ? gStored : hc.blob.subarray(s.off, s.off + s.size);
+    if (!b || !eq(bc.blob.subarray(b.off, b.off + b.size), want)) throw new Error(`relecture : section ${s.id} inattendue`);
+  }
+  const b3 = bc.sections.find((x) => x.id === 3);
+  const main = aplibDepack(bc.blob.subarray(b3.off, b3.off + b3.size)).data;
+  if (!eq(main, aplibDepack(gStored).data)) throw new Error("relecture : MAIN OS different");
+  const [bmsg, bexp] = tail(bc.blob);
+  const bkey = findKey(depackAll(bc), bmsg, bexp);
+  if (!bkey || !eq(bkey, key)) throw new Error("relecture : HMAC invalide");
+  return { raw, product: host.product, name: host.name, guestName: guest.name, mainOsSha: hex(sha256(main)) };
+}
+
 // ---- Export node / navigateur ---------------------------------------------
 const API = { sha256, hmacSha256, unwrap, wrap, aplibDepack, aplibRepack, parseContainer, findKey,
               rebuildContainer, buildStream, contentChecksum, applyWrites, checkConflicts, checkCaves,
-              build, hex, fromHex, PRODUCTS, BASE };
+              build, crossflash, hex, fromHex, PRODUCTS, BASE };
 if (typeof module !== "undefined" && module.exports) module.exports = API;
 if (typeof window !== "undefined") window.MCBuilder = API;
 })();

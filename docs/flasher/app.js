@@ -13,6 +13,7 @@
 const $ = (id) => document.getElementById(id);
 const REPO = "https://github.com/18nelli18/Modded-Cycles";
 const ELEKTRON_DL = "https://www.elektron.se/support-downloads/modelcycles";
+const ELEKTRON_SMP_DL = "https://www.elektron.se/support-downloads/modelsamples";
 
 // Patched MAIN OS reference hashes, from tools/build.py on the official OS 1.13 (the drumkilla
 // tweaks alone also match drumkilla's own tweak.py byte for byte). A build whose bytes don't
@@ -35,6 +36,10 @@ const REF_MAINOS = {
   "latching-mute+trig-preview+browser-scroll": "71fef138b1ae16f3ad440ecaa6a6327c1a987ce2c8a86b74329f68159981a15c",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll": "fd57831c61926fb3b1902cadcb0f95e68db3bb637b4cd20860a0efc46db82cfa",
 };
+
+// "Samples OS" tab: official Model:Samples OS 1.13 inside the official Model:Cycles container
+// (tools/crossflash.py --to cycles). SHA-256 of the resulting .syx; tested on a real Model:Cycles.
+const REF_SAMPLES_ON_CYCLES = "614d28cfe1100856aef7a67aa49003726e27e0e6eb3b6b05ecba6dc177e83911";
 
 // Open-source work this flasher builds on (shown in the Credits section).
 const CREDITS = [
@@ -63,6 +68,14 @@ const T = {
     tab_restore: "Official firmware",
     mods_note: "All these mods have been tested on a real Model:Cycles. Tick several to combine them.",
     restore_text: "Sends your official OS file <b>unchanged</b>, to go back to the stock firmware. It is also a good first rehearsal: it checks your cable and your setup without changing anything.",
+    tab_samples: "Samples OS",
+    samples_title: "Turn your Model:Cycles into a Model:Samples",
+    samples_text: "Load and play your own samples, managed with Elektron Transfer. The page puts the official Model:Samples OS inside your Model:Cycles firmware: the startup menu, the updater and the signature of the Model:Cycles stay in place.",
+    samples_w1: "Back up your projects with Transfer first: the Model:Samples OS uses the same storage.",
+    samples_w2: `Coming back to the Model:Cycles OS goes through the startup menu, which only listens to the MIDI IN: it needs a MIDI interface (<a href="${FLASH_GUIDE}" target="_blank" rel="noopener">full guide</a>).`,
+    samples_w3: "From the Samples OS, never run CONFIG › UPGRADE with a Model:Samples file: it would also replace the startup menu of your Model:Cycles.",
+    samples_ack: "I have a MIDI interface for the way back (to the Model:Cycles MIDI IN).",
+    restore_from_samples: `Coming back from the Samples OS? Its way back is the startup menu through the MIDI IN: see the <a href="${FLASH_GUIDE}" target="_blank" rel="noopener">full guide</a>.`,
     tested: "Tested",
     experimental: "Experimental",
     credit_by: "by {who}",
@@ -71,7 +84,11 @@ const T = {
     drop_title: "Drop model-cycles_OS1.13.syx here",
     drop_sub: "or click to choose it",
     drop_again: "Checked. Click or drop to use another file.",
-    get_os: `Don't have it? <a href="${ELEKTRON_DL}" target="_blank" rel="noopener">Download OS 1.13 from elektron.se</a>, then unzip it.`,
+    get_os: `Don't have it? <a href="${ELEKTRON_DL}" target="_blank" rel="noopener">Download Model:Cycles OS 1.13 from elektron.se</a>, then unzip it.`,
+    s2_samples: "Load both official OS files",
+    drop2_title: "Drop model-samples_OS1.13.syx here",
+    drop2_sub: "the official Model:Samples OS — or click to choose it",
+    get_os_samples: `Don't have it? <a href="${ELEKTRON_SMP_DL}" target="_blank" rel="noopener">Download Model:Samples OS 1.13 from elektron.se</a>, then unzip it.`,
     s3: "Connect your Model:Cycles over USB",
     hu1: "Connect the Model:Cycles to the computer with a USB cable and turn it on normally.",
     hu2: "On the Model:Cycles, open <b>CONFIG › UPGRADE</b> and confirm with <b>YES</b>. It now waits for the firmware.",
@@ -115,6 +132,16 @@ const T = {
     built_ref: "Checked against the reference build.",
     build_failed: "The firmware couldn't be prepared: {err}",
     stock_ready: "Ready to send the official firmware, unchanged.",
+    smp_ok: "Official Model:Samples OS 1.13 recognised.",
+    smp_bad: "This is not the official Model:Samples OS 1.13 file: {err}",
+    smp_not_official: "its SHA-256 differs from the official file",
+    samples_needs_cycles: "For the Samples OS, the first file must be the official <code>model-cycles_OS1.13.syx</code>: it provides the startup menu, updater and signature that stay on your Model:Cycles.",
+    samples_ready: "Firmware ready: the Model:Samples OS for your Model:Cycles.",
+    mods_list_samples: "Model:Samples OS (for Model:Cycles)",
+    miss_samples_cycles: "The first file must be the official Model:Cycles OS (step 2).",
+    miss_samples_file: "Load the official Model:Samples OS file (step 2).",
+    miss_samples_ack: "Confirm you have a MIDI interface for the way back (step 1).",
+    done_samples: "It restarts as a <b>Model:Samples</b>: Elektron Transfer and your computer see a “Model:Samples”. Load your samples with Transfer.",
     pick_one: "Select at least one mod, or switch to “Official firmware”.",
     midi_asking: "Asking for MIDI access…",
     midi_wait: "Waiting for your permission: Chrome shows a prompt near the address bar. Click “Allow”. If you blocked it before, click the icon left of the address and allow MIDI.",
@@ -156,6 +183,14 @@ const T = {
     tab_restore: "Firmware officiel",
     mods_note: "Tous ces mods ont été testés sur un vrai Model:Cycles. Coche-en plusieurs pour les combiner.",
     restore_text: "Envoie ton fichier d'OS officiel <b>sans le modifier</b>, pour revenir au firmware d'origine. C'est aussi une bonne répétition avant un mod : elle vérifie ton câble et ton installation sans rien changer.",
+    tab_samples: "OS Samples",
+    samples_title: "Transforme ton Model:Cycles en Model:Samples",
+    samples_text: "Charge et joue tes propres samples, gérés avec Elektron Transfer. La page place l'OS officiel du Model:Samples dans le firmware de ton Model:Cycles : le menu de démarrage, l'updater et la signature du Model:Cycles restent en place.",
+    samples_w1: "Sauvegarde d'abord tes projets avec Transfer : l'OS du Model:Samples utilise le même stockage.",
+    samples_w2: `Le retour à l'OS du Model:Cycles passe par le menu de démarrage, qui n'écoute que le MIDI IN : il faut une interface MIDI (<a href="${FLASH_GUIDE}" target="_blank" rel="noopener">guide complet</a>).`,
+    samples_w3: "Depuis l'OS Samples, ne lance jamais CONFIG › UPGRADE avec un fichier Model:Samples : il remplacerait aussi le menu de démarrage de ton Model:Cycles.",
+    samples_ack: "J'ai une interface MIDI pour le retour (vers le MIDI IN du Model:Cycles).",
+    restore_from_samples: `Tu reviens de l'OS Samples ? Le retour passe par le menu de démarrage et le MIDI IN : voir le <a href="${FLASH_GUIDE}" target="_blank" rel="noopener">guide complet</a>.`,
     tested: "Testé",
     experimental: "Expérimental",
     credit_by: "par {who}",
@@ -164,7 +199,11 @@ const T = {
     drop_title: "Dépose model-cycles_OS1.13.syx ici",
     drop_sub: "ou clique pour le choisir",
     drop_again: "Vérifié. Clique ou dépose pour changer de fichier.",
-    get_os: `Tu ne l'as pas ? <a href="${ELEKTRON_DL}" target="_blank" rel="noopener">Télécharge l'OS 1.13 sur elektron.se</a>, puis dézippe-le.`,
+    get_os: `Tu ne l'as pas ? <a href="${ELEKTRON_DL}" target="_blank" rel="noopener">Télécharge l'OS Model:Cycles 1.13 sur elektron.se</a>, puis dézippe-le.`,
+    s2_samples: "Dépose les deux fichiers d'OS officiels",
+    drop2_title: "Dépose model-samples_OS1.13.syx ici",
+    drop2_sub: "l'OS officiel du Model:Samples — ou clique pour le choisir",
+    get_os_samples: `Tu ne l'as pas ? <a href="${ELEKTRON_SMP_DL}" target="_blank" rel="noopener">Télécharge l'OS Model:Samples 1.13 sur elektron.se</a>, puis dézippe-le.`,
     s3: "Branche ton Model:Cycles en USB",
     hu1: "Relie le Model:Cycles à l'ordinateur avec un câble USB et allume-le normalement.",
     hu2: "Sur le Model:Cycles, ouvre <b>CONFIG › UPGRADE</b> et confirme avec <b>YES</b>. Il attend alors le firmware.",
@@ -207,6 +246,16 @@ const T = {
     built_ref: "Conforme au build de référence.",
     build_failed: "Impossible de préparer le firmware : {err}",
     stock_ready: "Prêt à envoyer le firmware officiel, sans modification.",
+    smp_ok: "OS officiel Model:Samples 1.13 reconnu.",
+    smp_bad: "Ce n'est pas le fichier officiel de l'OS Model:Samples 1.13 : {err}",
+    smp_not_official: "son SHA-256 diffère du fichier officiel",
+    samples_needs_cycles: "Pour l'OS Samples, le premier fichier doit être le <code>model-cycles_OS1.13.syx</code> officiel : il fournit le menu de démarrage, l'updater et la signature qui restent sur ton Model:Cycles.",
+    samples_ready: "Firmware prêt : l'OS Model:Samples pour ton Model:Cycles.",
+    mods_list_samples: "OS Model:Samples (pour Model:Cycles)",
+    miss_samples_cycles: "Le premier fichier doit être l'OS officiel du Model:Cycles (étape 2).",
+    miss_samples_file: "Dépose le fichier officiel de l'OS Model:Samples (étape 2).",
+    miss_samples_ack: "Confirme que tu as une interface MIDI pour le retour (étape 1).",
+    done_samples: "Il redémarre en <b>Model:Samples</b> : Elektron Transfer et ton ordinateur voient un « Model:Samples ». Charge tes samples avec Transfer.",
     pick_one: "Coche au moins un mod, ou passe sur « Firmware officiel ».",
     midi_asking: "Demande d'accès MIDI…",
     midi_wait: "En attente de ton autorisation : Chrome affiche une demande près de la barre d'adresse. Clique « Autoriser ». Si tu l'as bloquée, clique l'icône à gauche de l'adresse et autorise le MIDI.",
@@ -271,7 +320,9 @@ const FEAT = {
 // ---------------------------------------------------------------------------
 const st = {
   lang: "en",
-  mode: "mods",            // "mods" | "restore"
+  mode: "mods",            // "mods" | "restore" | "samples"
+  samplesOs: null,         // official Model:Samples OS { raw, name, sha } ("samples" mode)
+  samplesError: null,
   os: null,                // { raw, name, info, sha, stock }
   osError: null,
   fw: null,                // { raw, name, kind: "built"|"stock"|"custom", mods:[labels], ref:bool, sixch:bool }
@@ -330,6 +381,9 @@ function applyLang(lang) {
   try { localStorage.setItem("mc-lang", st.lang); } catch (e) { /* private mode */ }
   document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll("[data-i18n-html]").forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
+  // a loaded file keeps its name in its drop zone
+  if (st.os) { $("drop-title").textContent = st.os.name; $("drop-sub").textContent = t("drop_again"); }
+  if (st.samplesOs) { $("drop2-title").textContent = st.samplesOs.name; $("drop2-sub").textContent = t("drop_again"); }
   document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === st.lang)));
   document.title = t("title");
   renderFeatures();
@@ -445,10 +499,11 @@ function chosenLabels() {
 
 function setMode(mode) {
   st.mode = mode;
-  $("tab-mods").setAttribute("aria-selected", String(mode === "mods"));
-  $("tab-restore").setAttribute("aria-selected", String(mode === "restore"));
-  $("panel-mods").hidden = mode !== "mods";
-  $("panel-restore").hidden = mode !== "restore";
+  for (const m of ["mods", "restore", "samples"]) {
+    $("tab-" + m).setAttribute("aria-selected", String(mode === m));
+    $("panel-" + m).hidden = mode !== m;
+  }
+  $("drop2-wrap").hidden = mode !== "samples";
   if (st.os) describeOs();
   update();
 }
@@ -487,6 +542,34 @@ function loadOs(raw, name) {
   update();
 }
 
+// "Samples OS" tab: the second file, the official Model:Samples OS (recognised by its SHA-256).
+function readSamplesFile(file) {
+  const r = new FileReader();
+  r.onload = () => loadSamples(new Uint8Array(r.result), file.name);
+  r.onerror = () => { st.samplesOs = null; st.samplesError = String(r.error); update(); };
+  r.readAsArrayBuffer(file);
+}
+
+function loadSamples(raw, name) {
+  st.finished = null;
+  try {
+    const info = window.MCFlasher.verify(raw);
+    const sha = window.MCBuilder.hex(window.MCBuilder.sha256(raw));
+    if (sha !== window.MC_TWEAKS.samples.syx_sha256) throw new Error(t("smp_not_official") + ` (${info.name})`);
+    st.samplesOs = { raw, name, sha };
+    st.samplesError = null;
+    log(`${name}: official Model:Samples OS 1.13, ${info.count} packets, checksums OK.`, "is-ok");
+  } catch (e) {
+    st.samplesOs = null;
+    st.samplesError = e.message;
+    log(`${name}: refused — ${e.message}`, "is-bad");
+  }
+  $("drop2").classList.toggle("loaded", !!st.samplesOs);
+  $("drop2-title").textContent = st.samplesOs ? name : t("drop2_title");
+  $("drop2-sub").textContent = st.samplesOs ? t("drop_again") : t("drop2_sub");
+  update();
+}
+
 function describeOs() {
   if (!st.os) {
     if (st.osError) setStatus("file-status", [["is-bad", esc(t("os_bad", { err: st.osError }))]]);
@@ -503,7 +586,9 @@ function update() {
 function prepareFirmware() {
   const os = st.os;
   st.building = false;
+  st.buildKey = null;
   if (!os) { st.fw = null; st.fwError = null; return; }
+  if (st.mode === "samples") { prepareSamples(os); return; }
   if (!os.stock) {
     if (st.mode === "restore") { st.fw = null; st.fwError = "restore_needs"; return; }
     st.fw = { raw: os.raw, name: os.name, kind: "custom", mods: [], ref: false, sixch: false };
@@ -516,37 +601,53 @@ function prepareFirmware() {
     return;
   }
   const tweaks = chosenTweaks();
-  if (!tweaks.length) { st.fw = null; st.fwError = "pick_one"; st.building = false; return; }
+  if (!tweaks.length) { st.fw = null; st.fwError = "pick_one"; return; }
   const key = tweaks.map((x) => x.id).join("+");
-  st.buildKey = key;
-  // results are cached per selection, for this OS file
-  const cached = st.cache[key];
-  if (cached) {
-    st.building = false;
-    st.fw = cached.fw || null;
-    st.fwError = cached.error || null;
-    return;
-  }
-  st.fw = null; st.fwError = null; st.building = true;
   const labels = chosenLabels();
-  const osRef = os;
-  setTimeout(() => {                           // let the browser paint "Preparing…" first
+  buildCached(key, (raw) => {
+    const opts = {};
+    if (REF_MAINOS[key]) opts.expectMainOsSha = REF_MAINOS[key];
+    const r = window.MCBuilder.build(raw, window.MC_TWEAKS.device, tweaks, opts);
+    log(`Built ${key}: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.patchedBytes} bytes patched, ${r.raw.length} bytes.`, "is-ok");
+    return { raw: r.raw, name: `model-cycles_OS1.13_${key}.syx`, kind: "built", mods: labels,
+      ref: !!REF_MAINOS[key], sixch: tweaks.some((x) => x.id.startsWith("6ch")) };
+  });
+}
+
+// Model:Samples OS in the Model:Cycles container (MCBuilder.crossflash = tools/crossflash.py).
+function prepareSamples(os) {
+  if (!os.stock) { st.fw = null; st.fwError = "samples_needs_cycles"; return; }
+  const smp = st.samplesOs;
+  if (!smp) { st.fw = null; st.fwError = null; return; }
+  buildCached("samples-os:" + smp.sha, (raw) => {
+    const r = window.MCBuilder.crossflash(raw, smp.raw);
+    const sha = window.MCBuilder.hex(window.MCBuilder.sha256(r.raw));
+    if (sha !== REF_SAMPLES_ON_CYCLES) throw new Error(`result ${sha.slice(0, 16)}… is not the reference build`);
+    log(`Built the Model:Samples OS for Model:Cycles: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.raw.length} bytes.`, "is-ok");
+    return { raw: r.raw, name: "model-samples_OS1.13_for-model-cycles.syx", kind: "samples", mods: [], ref: true, sixch: false };
+  });
+}
+
+// Builds once per key and OS file (st.cache is reset when the Model:Cycles file changes), after
+// letting the browser paint "Preparing…". The result is applied only if it is still the current choice.
+function buildCached(key, make) {
+  st.buildKey = key;
+  const cached = st.cache[key];
+  if (cached) { st.fw = cached.fw || null; st.fwError = cached.error || null; return; }
+  st.fw = null; st.fwError = null; st.building = true;
+  const osRef = st.os;
+  setTimeout(() => {
     if (st.os !== osRef || st.cache[key]) return;
     let entry;
     try {
-      const opts = {};
-      if (REF_MAINOS[key]) opts.expectMainOsSha = REF_MAINOS[key];
-      const r = window.MCBuilder.build(osRef.raw, window.MC_TWEAKS.device, tweaks, opts);
-      entry = { fw: { raw: r.raw, name: `model-cycles_OS1.13_${key}.syx`, kind: "built", mods: labels,
-        ref: !!REF_MAINOS[key], sixch: tweaks.some((x) => x.id.startsWith("6ch")) } };
-      log(`Built ${key}: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.patchedBytes} bytes patched, ${r.raw.length} bytes.`, "is-ok");
+      entry = { fw: make(osRef.raw) };
     } catch (e) {
       entry = { error: e.message };
       log(`Build ${key} refused: ${e.message}`, "is-bad");
     }
     if (st.os !== osRef) return;              // another file was loaded meanwhile
     st.cache[key] = entry;
-    if (st.mode === "mods" && st.buildKey === key) {   // still the current selection
+    if (st.buildKey === key) {                 // still the current choice
       st.building = false;
       st.fw = entry.fw || null;
       st.fwError = entry.error || null;
@@ -652,6 +753,11 @@ function renderMidi() {
 // ---------------------------------------------------------------------------
 function missingReason() {
   if (!st.os) return st.osError ? "miss_fw" : "miss_file";
+  if (st.mode === "samples") {
+    if (st.fwError === "samples_needs_cycles") return "miss_samples_cycles";
+    if (!st.samplesOs) return "miss_samples_file";
+    if (!$("samples-ack").checked) return "miss_samples_ack";
+  }
   if (st.fwError === "pick_one") return "miss_mod";
   if (st.building) return "miss_build";
   if (!st.fw) return "miss_fw";
@@ -663,7 +769,9 @@ function missingReason() {
 
 function render() {
   // step 2 status
-  if (st.os) {
+  $("h2s").textContent = t(st.mode === "samples" ? "s2_samples" : "s2");
+  if (st.os && st.mode === "samples" && !st.os.stock) setStatus("file-status", [["is-bad", t("samples_needs_cycles")]]);
+  else if (st.os) {
     const rows = [];
     if (st.os.stock) rows.push(["is-ok", esc(t("os_ok"))]);
     else {
@@ -677,8 +785,11 @@ function render() {
     else if (st.fw && st.fw.kind === "built")
       rows.push(["is-ok", esc(t("built", { mods: st.fw.mods.join(" + ") })) + (st.fw.ref ? " " + esc(t("built_ref")) : "")]);
     else if (st.fw && st.fw.kind === "stock") rows.push(["is-ok", esc(t("stock_ready"))]);
+    else if (st.fw && st.fw.kind === "samples") rows.push(["is-ok", esc(t("samples_ready")) + " " + esc(t("built_ref"))]);
     setStatus("file-status", rows);
   }
+  setStatus("file2-status", st.samplesOs ? [["is-ok", esc(t("smp_ok"))]]
+    : st.samplesError ? [["is-bad", esc(t("smp_bad", { err: st.samplesError }))]] : []);
 
   renderMidi();
 
@@ -696,7 +807,7 @@ function render() {
   } else dl.hidden = true;
 
   // step badges
-  const choseOk = st.mode === "restore" || chosenTweaks().length > 0;
+  const choseOk = st.mode === "restore" || (st.mode === "samples" ? $("samples-ack").checked : chosenTweaks().length > 0);
   $("step-choose").classList.toggle("done", choseOk);
   $("step-file").classList.toggle("done", !!st.fw && !st.building);
   $("step-connect").classList.toggle("done", st.midiState === "ready" && !!currentPort());
@@ -706,7 +817,8 @@ function render() {
   const sum = $("summary");
   if (st.fw) {
     const what = st.fw.kind === "built" ? st.fw.mods.join(" + ")
-      : st.fw.kind === "stock" ? t("mods_list_restore") : t("mods_list_custom", { name: st.fw.name });
+      : st.fw.kind === "stock" ? t("mods_list_restore")
+      : st.fw.kind === "samples" ? t("mods_list_samples") : t("mods_list_custom", { name: st.fw.name });
     const port = currentPort();
     const mins = Math.max(1, Math.round(window.MCFlasher.transferSeconds(st.fw.raw, pace()) / 60));
     sum.innerHTML = `<b>${esc(what)}</b>` + (port ? ` ${esc(t("via"))} <b>${esc(port.name)}</b>` : "") +
@@ -796,7 +908,7 @@ async function flash() {
     $("eta").textContent = fmtTime(res.seconds);
     r.className = "result ok";
     r.innerHTML = `<p><b>${esc(t("done_title"))}</b></p><p>${t("done_body")}</p>` +
-      (fw.sixch ? `<p>${t("done_6ch")}</p>` : "");
+      (fw.sixch ? `<p>${t("done_6ch")}</p>` : "") + (fw.kind === "samples" ? `<p>${t("done_samples")}</p>` : "");
     log(`Transfer complete in ${Math.round(res.seconds)} s.`, "is-ok");
   }
   $("progress").hidden = st.finished !== "ok";
@@ -815,6 +927,8 @@ function init() {
   document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => applyLang(b.dataset.lang)));
   $("tab-mods").addEventListener("click", () => setMode("mods"));
   $("tab-restore").addEventListener("click", () => setMode("restore"));
+  $("tab-samples").addEventListener("click", () => setMode("samples"));
+  $("samples-ack").addEventListener("change", render);
 
   const drop = $("drop"), file = $("file");
   file.addEventListener("change", (e) => { if (e.target.files[0]) readFile(e.target.files[0]); e.target.value = ""; });
@@ -822,6 +936,13 @@ function init() {
   ["dragover", "dragenter"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); }));
   ["dragleave", "drop"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
   drop.addEventListener("drop", (e) => { if (e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]); });
+
+  const drop2 = $("drop2"), file2 = $("file2");
+  file2.addEventListener("change", (e) => { if (e.target.files[0]) readSamplesFile(e.target.files[0]); e.target.value = ""; });
+  drop2.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); file2.click(); } });
+  ["dragover", "dragenter"].forEach((ev) => drop2.addEventListener(ev, (e) => { e.preventDefault(); drop2.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((ev) => drop2.addEventListener(ev, (e) => { e.preventDefault(); drop2.classList.remove("over"); }));
+  drop2.addEventListener("drop", (e) => { if (e.dataTransfer.files[0]) readSamplesFile(e.dataTransfer.files[0]); });
 
   $("allow").addEventListener("click", () => initMidi(false));
   $("refresh").addEventListener("click", () => { fillPorts(); render(); });
@@ -856,7 +977,7 @@ function init() {
 }
 
 // test hooks (tools/webflash_smoke.js)
-window.MCFlasherApp = { state: st, REF_MAINOS, loadOs, setMode, applyLang, render };
+window.MCFlasherApp = { state: st, REF_MAINOS, REF_SAMPLES_ON_CYCLES, loadOs, loadSamples, setMode, applyLang, render };
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
 else init();

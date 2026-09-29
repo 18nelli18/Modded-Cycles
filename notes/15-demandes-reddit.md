@@ -10,7 +10,7 @@ d'abord ce qui existe déjà et se livre vite, ensuite ce qui demande de la rech
 |---|---|---|---|
 | 1 | Un mode mute sans tenir FUNC | ✅ **livré** : tweak `latching-mute` de drumkilla, dans le flasher web | §1 |
 | 2 | Regrouper avec le tweak « trig preview » | ✅ **livré** : `trig-preview` (et `browser-scroll`), dans le flasher web | §2 |
-| 3 | Flasher l'OS Model:Samples, ou une machine « samples » dans l'OS Cycles | 🟡 **outil prêt, jamais testé** : `tools/crossflash.py` met l'OS Samples dans un conteneur Cycles. La machine « samples » vient après | §3 |
+| 3 | Flasher l'OS Model:Samples, ou une machine « samples » dans l'OS Cycles | ✅ **l'OS Samples tourne sur un vrai Model:Cycles** (29/09/2026) : onglet *Samples OS* du flasher web, ou `tools/crossflash.py`. La machine « samples » dans l'OS Cycles vient après | §3 |
 | 4 | Porter les machines numériques du Syntakt | 🟠 **recherche** : même conteneur, même CPU, même table de sinus que le Cycles. Prochaine étape : faire tourner le vrai SD VINTAGE dans le banc | §4 |
 
 Ordre suivi : **§3 d'abord** (fichier de 686 Ko, la comparaison des deux OS 1.13 a répondu vite à la question clé :
@@ -65,7 +65,7 @@ Le build l'accepte tant que les écritures restent dans cette partie, et refuse 
 
 ---
 
-## 3. OS Model:Samples sur un Model:Cycles, ou une machine « samples » — 🟡 outil prêt, jamais testé
+## 3. OS Model:Samples sur un Model:Cycles, ou une machine « samples » — ✅ route validée sur le matériel
 
 **Demande** (deux idées liées) :
 - une voie pour flasher le logiciel du Model:Samples sur le Model:Cycles, et idéalement faire tourner « les deux en même temps » ;
@@ -104,7 +104,16 @@ Tout le reste est commun, y compris la liste des touches (`ENCODER A` à `H`, `F
 Ce qui n'existe que dans l'OS Samples : `SampleManager`, `SamplePoolDirectory`, les paramètres *Sample Start/Length/Pitch/Slot*, les *Sample Locks*, « Memory full ».
 **Même base de code, le Cycles sans le moteur de samples.**
 
-### 3.2 La route de flash : `tools/crossflash.py` `[FAIT]`, jamais testée
+### 3.2 La route de flash : `tools/crossflash.py` et l'onglet *Samples OS* `[FAIT]`, validée
+
+> ✅ **29/09/2026** : l'utilisateur a flashé ce fichier sur son Model:Cycles et confirme que « l'OS du Model:Samples a fonctionné ».
+> C'est, à notre connaissance, le premier test publié de ce sens-là. Le comportement avec les projets Cycles déjà présents
+> et le retour à l'OS Cycles n'ont pas encore été rapportés en détail.
+>
+> Depuis, le flasher web le propose dans un 3ᵉ onglet, *Samples OS*. Il faut y déposer les deux `.syx` officiels, reconnus à leur SHA-256.
+> La page construit l'image avec `MCBuilder.crossflash`, portage JS de `crossflash.py` qui donne le **même fichier, octet pour octet**.
+> Elle exige le SHA-256 de référence du résultat (`614d28cf…`). Une case oblige à confirmer qu'on a une interface MIDI pour le retour.
+> Le parcours complet est testé par `tools/webflash_smoke.sh model-cycles_OS1.13.syx model-samples_OS1.13.syx`.
 
 Principe, déjà prouvé dans l'autre sens :
 - le bootloader **ignore en silence** un conteneur d'un autre produit ;
@@ -122,7 +131,7 @@ python3 tools/crossflash.py --cycles model-cycles_OS1.13.syx --samples model-sam
 - Le fichier produit est relu en entier : paquets, sections 2/4/5 identiques à celles du Cycles, MAIN OS identique au Samples une fois décompressé, HMAC valide avec la clé du Cycles. Le vérificateur JS du flasher l'accepte aussi (6 637 paquets, environ 4,5 min sur un câble MIDI).
 - `--to samples` fait l'inverse (OS Cycles pour un Model:Samples), comme la cible `cycles-crossflash` de ms-multi-output.
 
-**Personne n'a jamais publié de test de ce sens-là (OS Samples sur un vrai Model:Cycles).** Protocole proposé, si tu veux être le premier :
+Protocole (celui qui a été suivi pour le premier test) :
 1. **Sauvegarder** les projets et le +Drive avec Elektron Transfer. L'OS Samples va trouver des données de projet Cycles : comportement inconnu, et ms-multi-output fait la même mise en garde dans l'autre sens.
 2. Garder l'**interface MIDI branchée sur le MIDI IN** : le retour passe par le menu de démarrage du Cycles, qui n'écoute que le MIDI IN.
 3. Flasher le fichier par le **menu de démarrage** (FUNC + allumage, TRIG 4) avec `flash.sh` / `flash.bat`. `CONFIG > UPGRADE` par USB devrait aussi l'accepter : c'est un conteneur Cycles valide.
@@ -132,13 +141,13 @@ python3 tools/crossflash.py --cycles model-cycles_OS1.13.syx --samples model-sam
 5. **Ne pas utiliser `CONFIG > UPGRADE` depuis l'OS Samples** : avec un `.syx` Samples officiel, il réécrirait aussi le bootstrap, et la machine deviendrait un Model:Samples complet côté logiciel.
 6. Retour : menu de démarrage du Cycles, puis `model-cycles_OS1.13.syx` officiel par le MIDI IN.
 
-Le flasher web n'en propose rien pour l'instant : il n'envoie qu'en USB, et le retour depuis l'OS Samples n'est garanti que par le MIDI IN.
+Le retour depuis l'OS Samples n'est **garanti** que par le MIDI IN : le flasher web l'écrit en toutes lettres et exige la case « interface MIDI ».
 
 ### 3.3 « Les deux en même temps » : une machine sample dans l'OS Cycles `[À FAIRE]`, plus tard
 
 - **Double démarrage** (deux MAIN OS en flash, choisis au démarrage) : à écarter. Il faudrait modifier le bootstrap, c'est-à-dire le code même du menu de secours.
 - **Machine « sample » dans le moteur Cycles** : l'analyse la rend moins lointaine que ne le disait la [note 10 §4](10-faisabilite-fonctionnalites.md). Même RAM (hyp. forte), même stockage, même bibliothèque de fichiers. Mais il faudrait greffer le `SampleManager` (chargement, liste, UI) et une voix de lecture dans le moteur.
-  À reconsidérer **après** le test de la route 3.2 : si l'OS Samples tourne bien sur le Cycles, le matériel est prouvé capable, et on saura quoi viser.
+  Le test de la route 3.2 a réussi : le matériel du Cycles fait tourner le moteur de samples. La machine « sample » dans l'OS Cycles devient donc un vrai chantier possible, qu'il reste à planifier.
 
 ## 4. Machines numériques du Syntakt — 🟠 recherche, premiers résultats encourageants
 
