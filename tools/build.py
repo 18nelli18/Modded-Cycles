@@ -231,6 +231,45 @@ def apply_writes(main_os, tweaks_selected):
     return bytes(data), dirty
 
 
+def build_payload(chosen, main_os, syntakt_path):
+    """Charge utile d'un tweak « append » (notes/17) : recette exécutée sur TON fichier Syntakt.
+    Renvoie (octets à ajouter après l'image, tweak) ou (b"", None)."""
+    apps = [t for t in chosen if t.get("append")]
+    if not apps:
+        return b"", None
+    if len(apps) > 1:
+        raise SystemExit("!! un seul tweak peut agrandir l'OS : " + ", ".join(t["id"] for t in apps))
+    t = apps[0]
+    ap_ = t["append"]
+    if BASE + len(main_os) != int(ap_["at"], 16):
+        raise SystemExit(f"!! {t['id']} : l'image ne finit pas à {ap_['at']}")
+    if not syntakt_path:
+        raise SystemExit(f"!! {t['id']} a besoin de ton fichier Syntakt : --syntakt Syntakt_OS1.41.syx")
+    sys.path.insert(0, str(HERE / "emu"))
+    import syntakt                                      # noqa: E402  (tools/emu/syntakt.py)
+    if (syntakt.SYX_SHA256, syntakt.DSP_SHA256) != (ap_["syntakt"]["syx_sha256"], ap_["syntakt"]["section_sha256"]):
+        raise SystemExit("!! empreintes Syntakt du tweak et de tools/emu/syntakt.py différentes")
+    img = syntakt.dsp_image(syntakt_path)               # vérifie le .syx officiel et sa section 7
+    dest, size = int(ap_["dest"], 16), ap_["size"]
+    out = bytearray(size)
+    for part in ap_["parts"]:
+        at = int(part["dest"], 16) - dest
+        if "syntakt" in part:
+            lo, hi = (int(x, 16) for x in part["syntakt"])
+            chunk = img[lo - BASE:hi - BASE]
+        else:
+            chunk = bytes.fromhex(part["hex"])
+        out[at:at + len(chunk)] = chunk
+    for va, old, new in ap_["reloc"]:
+        at = int(va, 16) - dest
+        if out[at:at + 4] != bytes.fromhex(old):
+            raise SystemExit(f"!! relocalisation {va} : {old} attendu, {out[at:at + 4].hex()} trouvé")
+        out[at:at + 4] = bytes.fromhex(new)
+    print(f"  charge utile {t['id']} : {size} o depuis {pathlib.Path(syntakt_path).name}, "
+          f"{len(ap_['reloc'])} relocalisations, copiée à {ap_['dest']} au démarrage")
+    return bytes(out), t
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -240,6 +279,7 @@ def main():
     ap.add_argument("-o", "--output", help="fichier de sortie (defaut: <in>_mod.syx)")
     ap.add_argument("--list", action="store_true", help="liste les tweaks disponibles")
     ap.add_argument("--expect-mainos", help="SHA-256 attendu du MAIN OS patche (verification)")
+    ap.add_argument("--syntakt", help="ton Syntakt_OS1.41.syx officiel (tweaks qui en extraient un moteur)")
     ap.add_argument("--force-cave", action="store_true",
                     help="ecrit meme si l'image d'origine pointe dans une zone 0xFF utilisee (a verifier a la main)")
     args = ap.parse_args()
@@ -285,13 +325,24 @@ def main():
 
     patched, dirty = apply_writes(main_os, chosen)
     check_caves(main_os, chosen, args.force_cave, dirty, patched, dev.get("cave_refs_ok"))
+    payload, _ = build_payload(chosen, main_os, args.syntakt)
+    orig_len = len(patched)
+    if payload:
+        patched = patched + payload
+        dirty = dirty + bytearray(b"\x01") * len(payload)
     print(f"  {sum(dirty)} octets changes sur {len(patched)}")
     print(f"  MAIN OS patche SHA-256 : {sha(patched)}")
     if args.expect_mainos and sha(patched) != args.expect_mainos.lower():
         raise SystemExit("!! le MAIN OS patche ne correspond pas au SHA attendu")
 
     # reconstruction : re-emet le flux aPLib, recalcule checksums + HMAC
-    new_s3 = aplib.repack(patched, ops, dirty)
+    if payload:
+        import aplib_grow                               # noqa: E402
+        new_s3 = aplib_grow.repack_grow(patched, ops, dirty, orig_len)
+        if aplib.depack(new_s3)[0] != patched:
+            raise SystemExit("!! recompression de l'OS agrandi : relecture différente")
+    else:
+        new_s3 = aplib.repack(patched, ops, dirty)
     msg = c["blob"][:len(c["blob"]) - container.DIGEST_LEN]
     expect = c["blob"][len(c["blob"]) - container.DIGEST_LEN:]
     # cle HMAC re-derivee depuis les sections decompressees de l'image d'origine
