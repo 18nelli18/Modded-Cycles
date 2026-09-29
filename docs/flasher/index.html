@@ -86,7 +86,6 @@
   .warn-list{margin:.7em 0 12px;padding-left:1.2em;font-size:.9rem;color:var(--muted)}
   .warn-list li{margin:.3em 0}
   #drop2-wrap,#drop3-wrap{margin-top:14px}
-  .sdv-box{margin-top:12px}
   .note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--line);padding:2px 0 2px 10px;margin:12px 0 0}
 
   /* drop zone */
@@ -183,7 +182,7 @@
   <div id="errbar" class="alert bad" hidden></div>
   <script>
     // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-    window.MC_BUILD = "2026-09-30-1";
+    window.MC_BUILD = "2026-09-30-2";
     window.addEventListener("error", function (e) {
       var b = document.getElementById("errbar");
       if (!b) return;
@@ -216,15 +215,7 @@
     </div>
     <div id="panel-mods" role="tabpanel" aria-labelledby="tab-mods">
       <div id="features"></div>
-      <div id="sdv-box" class="sdv-box" hidden>
-        <ul class="warn-list">
-          <li data-i18n="sdv_w1"></li>
-          <li data-i18n="sdv_w2"></li>
-          <li data-i18n-html="sdv_w3"></li>
-        </ul>
-        <label class="check" style="margin:0"><input id="sdv-ack" type="checkbox"><span data-i18n="sdv_ack">I understand: this mod has not been tested on a Model:Cycles yet.</span></label>
-      </div>
-      <p class="note" data-i18n="mods_note">Mods tagged Tested have been tested on a real Model:Cycles. Tick several to combine them.</p>
+      <p class="note" data-i18n="mods_note">All these mods have been tested on a real Model:Cycles. Tick several to combine them.</p>
     </div>
     <div id="panel-restore" role="tabpanel" aria-labelledby="tab-restore" hidden>
       <p style="margin:0" data-i18n-html="restore_text"></p>

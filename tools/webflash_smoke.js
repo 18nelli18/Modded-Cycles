@@ -72,13 +72,13 @@ async function main() {
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
     check(feats.join() === "feat-usb6,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-sdvintage", "5 feature cards: " + JSON.stringify(feats));
     const tags = [...doc.querySelectorAll("#features .tag")].map((x) => x.textContent);
-    check(tags.join() === "Tested,Tested,Tested,Tested,Experimental", "tested mods tagged Tested, SD VINTAGE Experimental: " + tags.join());
-    check(doc.getElementById("sdv-box").hidden && doc.getElementById("drop3-wrap").hidden, "SD VINTAGE warning and Syntakt drop zone hidden until it is ticked");
+    check(tags.join() === "Tested,Tested,Tested,Tested,Tested", "every card is tagged Tested: " + tags.join());
+    check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until SD VINTAGE is ticked");
     doc.getElementById("feat-sdvintage").click();
     await wait(30);
-    check(!doc.getElementById("sdv-box").hidden && !doc.getElementById("drop3-wrap").hidden && /MIDI interface/.test(text(doc, "sdv-box"))
-      && /Drop Syntakt_OS1.41.syx/.test(text(doc, "drop3")) && /elektron\.se\/support-downloads\/syntakt/.test(doc.getElementById("step-file").innerHTML),
-      "SD VINTAGE ticked -> warning box, Syntakt drop zone and download link");
+    check(!doc.getElementById("drop3-wrap").hidden && /Drop Syntakt_OS1.41.syx/.test(text(doc, "drop3"))
+      && /elektron\.se\/support-downloads\/syntakt/.test(doc.getElementById("step-file").innerHTML),
+      "SD VINTAGE ticked -> Syntakt drop zone and download link");
     doc.getElementById("feat-sdvintage").click();
     await wait(30);
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
@@ -101,7 +101,7 @@ async function main() {
     check(/Qu'est-ce que tu veux installer/.test(text(doc, "h1s")) && doc.documentElement.lang === "fr", "FR switch translates the page");
     check(/Audio USB 6 canaux/.test(text(doc, "features")) && /Mode mute verrouillé/.test(text(doc, "features"))
       && /par drumkilla/.test(text(doc, "features")) && /le vrai moteur du Syntakt/.test(text(doc, "features"))
-      && /Expérimental/.test(text(doc, "features")), "FR switch translates the feature cards and credits");
+      && /Testé/.test(text(doc, "features")), "FR switch translates the feature cards and credits");
     check(/Crédits/.test(text(doc, "credits")) && /boîte à outils/.test(text(doc, "credits")), "FR switch translates the credits section");
     doc.querySelector('.lang button[data-lang="en"]').click();
     await wait(20);
@@ -312,13 +312,10 @@ async function main() {
       && /SD VINTAGE, the real Syntakt engine/.test(text(doc, "file-status")), "Syntakt file -> reference build " + (f ? f.name : ""));
     doc.getElementById("allow").click();
     await wait(80);
+    check(/Tick the box/.test(text(doc, "missing")) && doc.getElementById("flash").disabled, "asks for the confirmation box");
     doc.getElementById("ack").click();
     await wait(20);
-    check(/SD VINTAGE warning box/.test(text(doc, "missing")) && doc.getElementById("flash").disabled
-      && !doc.getElementById("step-choose").classList.contains("done"), "flash blocked until the SD VINTAGE warning is ticked");
-    doc.getElementById("sdv-ack").click();
-    await wait(20);
-    check(!doc.getElementById("flash").disabled, "then ready: " + text(doc, "summary"));
+    check(!doc.getElementById("flash").disabled && doc.getElementById("step-choose").classList.contains("done"), "then ready: " + text(doc, "summary"));
     doc.getElementById("pace").value = "0";
     doc.getElementById("pace").dispatchEvent(new w.Event("input"));
     const n0 = sent.length;
@@ -328,8 +325,8 @@ async function main() {
       "full transfer + SD VINTAGE message");
     doc.querySelector('.lang button[data-lang="fr"]').click();
     await wait(20);
-    check(doc.getElementById("drop3-title").textContent === "Syntakt_OS1.41.syx" && /Je comprends le risque/.test(text(doc, "sdv-box")),
-      "FR: loaded Syntakt file name kept, warning translated");
+    check(doc.getElementById("drop3-title").textContent === "Syntakt_OS1.41.syx" && /OS officiel Syntakt 1.41 reconnu/.test(text(doc, "file3-status")),
+      "FR: loaded Syntakt file name kept, status translated");
     check(errors.length === 0, "no JS error in the SD VINTAGE flow " + (errors.length ? JSON.stringify(errors) : ""));
   }
 

@@ -151,6 +151,11 @@ Le retour depuis l'OS Samples n'est **garanti** que par le MIDI IN : le flasher 
 
 ### 3.4 Retour à l'OS Cycles **par USB**, sans interface MIDI — 🔴 impossible dans cet état (verrou à deux clés). MIDI requis
 
+> **Mise à jour du 30/09/2026** : l'utilisateur a retrouvé l'OS Cycles **sans interface MIDI**, par un factory reset depuis le menu de démarrage (power + trig).
+> La conclusion « impossible » ci-dessous vaut pour le chemin `CONFIG › UPGRADE` étudié ici, pas pour tout retour.
+> Le mécanisme exact (pourquoi la réinitialisation a suffi) n'est pas élucidé : à comprendre avant de le proposer dans le flasher.
+> Source : message de l'utilisateur du 30/09/2026.
+
 **Situation** (29/09/2026) : l'utilisateur a flashé l'OS Samples sur son Cycles par USB, puis s'est aperçu qu'il n'a pas d'interface MIDI.
 Le retour « officiel » passe par le menu de démarrage, donc par le MIDI IN ([§3.2](#32-la-route-de-flash--toolscrossflashpy-et-longlet-samples-os-fait-validée)).
 Question : y a-t-il un retour par `CONFIG > UPGRADE` (USB) depuis l'OS Samples ?

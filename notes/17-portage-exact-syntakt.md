@@ -15,7 +15,7 @@ L'utilisateur fournit son propre `Syntakt_OS1.41.syx`. Le dépôt ne publie aucu
 | **Preuve : même sortie, échantillon par échantillon** | `[FAIT]` en émulation, `tools/emu/test_sdvintage_exact.py` (§6) |
 | Le vrai décompresseur du bootstrap relit l'OS agrandi à l'identique | `[FAIT]` en émulation (§6) |
 | Flasher web (USB, sans interface MIDI) | `[FAIT]` case « SD VINTAGE », 3ᵉ fichier déposé (§9) |
-| Test sur la vraie machine | `[À FAIRE]` (§7) |
+| Test sur la vraie machine | `[FAIT]` 30/09/2026, flash USB par le flasher web : « ça fonctionne nickel » (§7) |
 | Autres moteurs, 7ᵉ machine | `[À FAIRE]` (§8) |
 
 ## 1. Principe
@@ -151,16 +151,19 @@ Le test vérifie aussi le démarrage :
 
 Coût : **9 730 instructions par bloc** (voix seule, boucle comprise), contre 8 767 pour la SNARE d'origine (+11 %).
 
-## 7. Risques pour le premier flash `[À FAIRE]`
+## 7. Risques pour le premier flash `[FAIT]`
 
-Ce qui est vérifié en émulation, et ce qui ne l'est pas :
+**Test sur la machine, 30/09/2026** : l'utilisateur a flashé le mod par USB depuis le flasher web et confirme « ça fonctionne nickel » (source : son message du 30/09/2026). Le Cycles a donc accepté le conteneur agrandi et démarre avec la charge utile.
+Reste à mesurer : la charge du processeur avec plusieurs pistes en SD VINTAGE, pattern dense et effets.
+
+Analyse faite avant ce test (ce qui était vérifié en émulation, et ce qui ne l'était pas) :
 
 | Point | État |
 |---|---|
 | Décompression de l'OS agrandi par le bootstrap | vérifié avec son vrai code (§6) |
 | OS décompressé sous la zone de transit du bootstrap (`0x40200000`, soit 2 096 128 o au plus) | 1 949 392 o : marge de 143 Ko |
 | Limite de taille de l'OS dans le bootstrap | aucune trouvée : ses comparaisons de taille visent la mise à jour du bootstrap lui-même (61 440 o) et la taille de secteur de la flash (256 Ko) |
-| Conteneur plus gros en flash (816 Ko au lieu de 702 Ko) | **non vérifiable sans la machine** |
+| Conteneur plus gros en flash (816 Ko au lieu de 702 Ko) | non vérifiable sans la machine → **accepté** (test du 30/09) |
 | Charge utile écrasée par l'OS en marche | aucune référence au-dessus du BSS (§3) |
 | Temps processeur | +11 % d'instructions par voix ; SDRAM (cache) au lieu de SRAM pour les voix et les tables : **à mesurer** (six pistes en SD VINTAGE, pattern dense, effets) |
 | Pile | les fonctions du Syntakt utilisent environ 100 o de pile de plus que la SNARE |
@@ -180,9 +183,8 @@ Protocole : projets sauvegardés, flash par USB (`CONFIG › UPGRADE`), puis une
 
 ## 9. Flasher web `[FAIT]`
 
-Pour flasher sans interface MIDI (demande du 30/09), le flasher web propose une 5ᵉ case, « SD VINTAGE, le vrai moteur du Syntakt », marquée **Expérimental**.
+Pour flasher sans interface MIDI (demande du 30/09), le flasher web propose une 5ᵉ case, « SD VINTAGE, le vrai moteur du Syntakt ». D'abord marquée *Expérimental* avec un encadré de risques à cocher, elle est marquée **Testé** depuis le test sur la machine du 30/09.
 - Elle fait apparaître une 3ᵉ zone de dépôt pour `Syntakt_OS1.41.syx`. Le fichier est reconnu à son SHA-256 et ne quitte pas l'ordinateur.
-- Un encadré résume les risques du §7. Le flash reste bloqué tant que sa case n'est pas cochée.
 - `docs/flasher/builder.js` porte la recette en JavaScript : lecture des deux flux SysEx du Syntakt, section 7, copies, relocalisations vérifiées, OS agrandi, compresseur glouton. Le résultat est **identique à l'octet près** à `build.py --syntakt`.
 - Chacune des 16 combinaisons avec SD VINTAGE est comparée à son empreinte de référence (`REF_MAINOS`).
 - Vérification : `tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.41.syx` (31 combinaisons, parcours complet jusqu'à l'envoi).

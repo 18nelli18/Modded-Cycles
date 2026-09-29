@@ -746,8 +746,8 @@ window.MC_TWEAKS = {
   {
    "id": "sdvintage",
    "label": "Vrai moteur SD VINTAGE du Syntakt",
-   "desc": "Le moteur SD VINTAGE du Syntakt remplace la machine SNARE, extrait de TON fichier Syntakt_OS1.41.syx (a deposer a l'etape 2). Identique au Syntakt en emulation.",
-   "status": "experimental",
+   "desc": "Le moteur SD VINTAGE du Syntakt remplace la machine SNARE, extrait de TON fichier Syntakt_OS1.41.syx (a deposer a l'etape 2). Identique au Syntakt en emulation, teste sur un vrai Model:Cycles le 30/09/2026.",
+   "status": "tested",
    "credit": null,
    "variants": [
     {

@@ -84,11 +84,7 @@ const T = {
     s1: "What do you want to install?",
     tab_mods: "Mods",
     tab_restore: "Official firmware",
-    mods_note: "Mods tagged “Tested” have been tested on a real Model:Cycles. Tick several to combine them.",
-    sdv_w1: "Not tested on a Model:Cycles yet. In the emulator it sounds exactly like the Syntakt, and the Model:Cycles starts normally even if the engine misbehaved: the Syntakt code only runs once a SNARE track is played.",
-    sdv_w2: "If something goes wrong once it runs, flash the official firmware back from CONFIG › UPGRADE (“Official firmware” tab).",
-    sdv_w3: `If the Model:Cycles stopped starting, recovery would go through the startup menu and the MIDI IN: it needs a MIDI interface (<a href="${FLASH_GUIDE}" target="_blank" rel="noopener">full guide</a>).`,
-    sdv_ack: "I understand the risk: this mod has not been tested on a Model:Cycles yet.",
+    mods_note: "All these mods have been tested on a real Model:Cycles. Tick several to combine them.",
     restore_text: "Sends your official OS file <b>unchanged</b>, to go back to the stock firmware. It is also a good first rehearsal: it checks your cable and your setup without changing anything.",
     tab_samples: "Samples OS",
     samples_title: "Turn your Model:Cycles into a Model:Samples",
@@ -164,7 +160,6 @@ const T = {
     st_bad: "This is not the official Syntakt OS 1.41 file: {err}",
     needs_syntakt: "The SD VINTAGE engine is read from the official Syntakt OS file: drop it below.",
     miss_syntakt: "Load the official Syntakt OS file (step 2).",
-    miss_sdv_ack: "Tick the SD VINTAGE warning box (step 1).",
     done_sdv: "Then pick the SNARE machine on a track and play it: it is the Syntakt's SD VINTAGE. PITCH, COLOR, SHAPE, SWEEP and CONTOUR act as its TUNE, INHM, FCMP, SWEP and MENV.",
     warn_samples_port: "This port is a Model:Samples (a Model:Cycles running the Samples OS): it refuses a Model:Cycles firmware over USB. The way back goes through the startup menu and the MIDI IN (see the full guide).",
     samples_needs_cycles: "For the Samples OS, the first file must be the official <code>model-cycles_OS1.13.syx</code>: it provides the startup menu, updater and signature that stay on your Model:Cycles.",
@@ -213,11 +208,7 @@ const T = {
     s1: "Qu'est-ce que tu veux installer ?",
     tab_mods: "Mods",
     tab_restore: "Firmware officiel",
-    mods_note: "Les mods marqués « Testé » ont été testés sur un vrai Model:Cycles. Coche-en plusieurs pour les combiner.",
-    sdv_w1: "Pas encore testé sur un Model:Cycles. En émulation, le son est identique au Syntakt, et le Model:Cycles démarre normalement même si le moteur posait problème : le code du Syntakt ne tourne qu'une fois une piste SNARE jouée.",
-    sdv_w2: "Si quelque chose cloche une fois lancé, reflashe le firmware officiel depuis CONFIG › UPGRADE (onglet « Firmware officiel »).",
-    sdv_w3: `Si le Model:Cycles ne démarrait plus, la récupération passerait par le menu de démarrage et le MIDI IN : il faut une interface MIDI (<a href="${FLASH_GUIDE}" target="_blank" rel="noopener">guide complet</a>).`,
-    sdv_ack: "Je comprends le risque : ce mod n'a pas encore été testé sur un Model:Cycles.",
+    mods_note: "Tous ces mods ont été testés sur un vrai Model:Cycles. Coche-en plusieurs pour les combiner.",
     restore_text: "Envoie ton fichier d'OS officiel <b>sans le modifier</b>, pour revenir au firmware d'origine. C'est aussi une bonne répétition avant un mod : elle vérifie ton câble et ton installation sans rien changer.",
     tab_samples: "OS Samples",
     samples_title: "Transforme ton Model:Cycles en Model:Samples",
@@ -292,7 +283,6 @@ const T = {
     st_bad: "Ce n'est pas le fichier officiel de l'OS Syntakt 1.41 : {err}",
     needs_syntakt: "Le moteur SD VINTAGE se lit dans le fichier officiel de l'OS Syntakt : dépose-le ci-dessous.",
     miss_syntakt: "Dépose le fichier officiel de l'OS Syntakt (étape 2).",
-    miss_sdv_ack: "Coche la case d'avertissement SD VINTAGE (étape 1).",
     done_sdv: "Choisis ensuite la machine SNARE sur une piste et joue-la : c'est le SD VINTAGE du Syntakt. PITCH, COLOR, SHAPE, SWEEP et CONTOUR agissent comme ses TUNE, INHM, FCMP, SWEP et MENV.",
     warn_samples_port: "Ce port est un Model:Samples (un Model:Cycles sous l'OS Samples) : il refuse un firmware Model:Cycles par USB. Le retour passe par le menu de démarrage et le MIDI IN (voir le guide complet).",
     samples_needs_cycles: "Pour l'OS Samples, le premier fichier doit être le <code>model-cycles_OS1.13.syx</code> officiel : il fournit le menu de démarrage, l'updater et la signature qui restent sur ton Model:Cycles.",
@@ -850,10 +840,7 @@ function missingReason() {
     if (!$("samples-ack").checked) return "miss_samples_ack";
   }
   if (st.fwError === "pick_one") return "miss_mod";
-  if (needsSyntakt()) {
-    if (!st.syntakt) return "miss_syntakt";
-    if (!$("sdv-ack").checked) return "miss_sdv_ack";
-  }
+  if (needsSyntakt() && !st.syntakt) return "miss_syntakt";
   if (st.building) return "miss_build";
   if (!st.fw) return "miss_fw";
   if (st.midiState !== "ready") return "miss_midi";
@@ -888,7 +875,6 @@ function render() {
     : st.samplesError ? [["is-bad", esc(t("smp_bad", { err: st.samplesError }))]] : []);
   const sdv = needsSyntakt();
   $("drop3-wrap").hidden = !sdv;
-  $("sdv-box").hidden = !sdv;
   setStatus("file3-status", st.syntakt ? [["is-ok", esc(t("st_ok"))]]
     : st.syntaktError ? [["is-bad", esc(t("st_bad", { err: st.syntaktError }))]] : []);
 
@@ -908,8 +894,7 @@ function render() {
   } else dl.hidden = true;
 
   // step badges
-  const choseOk = st.mode === "restore" || (st.mode === "samples" ? $("samples-ack").checked
-    : chosenTweaks().length > 0 && (!sdv || $("sdv-ack").checked));
+  const choseOk = st.mode === "restore" || (st.mode === "samples" ? $("samples-ack").checked : chosenTweaks().length > 0);
   $("step-choose").classList.toggle("done", choseOk);
   $("step-file").classList.toggle("done", !!st.fw && !st.building);
   $("step-connect").classList.toggle("done", st.midiState === "ready" && !!currentPort());
@@ -1053,7 +1038,6 @@ function init() {
   ["dragover", "dragenter"].forEach((ev) => drop3.addEventListener(ev, (e) => { e.preventDefault(); drop3.classList.add("over"); }));
   ["dragleave", "drop"].forEach((ev) => drop3.addEventListener(ev, (e) => { e.preventDefault(); drop3.classList.remove("over"); }));
   drop3.addEventListener("drop", (e) => { if (e.dataTransfer.files[0]) readSyntaktFile(e.dataTransfer.files[0]); });
-  $("sdv-ack").addEventListener("change", render);
 
   $("allow").addEventListener("click", () => initMidi(false));
   $("refresh").addEventListener("click", () => { fillPorts(); render(); });
