@@ -17,7 +17,7 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
    `--target cycles` qui envoie **les 6 pistes du Model:Cycles sur 6 canaux USB** (48 kHz, 32 bits, High Speed).
    Le mixage stéréo n'est alors plus envoyé en USB.
    - Le **code patché est vérifié sur du matériel**, mais sur un Model:Samples qui fait tourner l'OS Cycles (« cross-flash »).
-   - **Aucun vrai Model:Cycles n'a jamais été flashé** avec ce build. C'est la première chose à faire dans ce projet ([`06`](06-flash-et-recuperation.md)).
+   - **Validé sur un vrai Model:Cycles le 29/09/2026** (variante `6ch-usbup`, flashée par USB), avec SD VINTAGE ([14](14-machine-sd-vintage.md)).
 2. **La chaîne d'outils est connue et scriptable.** On extrait la section 3 (MAIN OS) avec `elektron-firmware-tool`,
    on applique une table de patchs octet par octet, puis on reconditionne et re-signe (HMAC recalculé).
    Aucune signature cryptographique n'empêche le flash.
@@ -29,7 +29,7 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
    - pistes mono (pan non appliqué) ;
    - delay et reverb absents ;
    - plus de mix stéréo en USB ;
-   - `CONFIG → UPGRADE` par USB cassé tant que le mod est installé. La variante `6ch-usbup` ([13](13-6ch-upgrade-usb.md)) devrait le garder, à tester ;
+   - `CONFIG → UPGRADE` par USB cassé avec `6ch-multiout`. La variante `6ch-usbup` ([13](13-6ch-upgrade-usb.md)) le garde : **testé sur un vrai Model:Cycles le 29/09/2026** ;
    - hôte USB High Speed obligatoire ;
    - le LEVEL de piste est-il appliqué avant le point de prélèvement ? Inconnu sur le Cycles.
 

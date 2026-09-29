@@ -10,11 +10,11 @@ d'abord ce qui existe déjà et se livre vite, ensuite ce qui demande de la rech
 |---|---|---|---|
 | 1 | Un mode mute sans tenir FUNC | ✅ **livré** : tweak `latching-mute` de drumkilla, dans le flasher web | §1 |
 | 2 | Regrouper avec le tweak « trig preview » | ✅ **livré** : `trig-preview` (et `browser-scroll`), dans le flasher web | §2 |
-| 3 | Flasher l'OS Model:Samples, ou une machine « samples » dans l'OS Cycles | 🟠 **recherche** : il faut l'OS Model:Samples 1.13 pour l'analyser | §3 |
-| 4 | Porter les machines numériques du Syntakt | 🟠 **recherche** : il faut l'OS Syntakt pour l'analyser | §4 |
+| 3 | Flasher l'OS Model:Samples, ou une machine « samples » dans l'OS Cycles | 🟡 **outil prêt, jamais testé** : `tools/crossflash.py` met l'OS Samples dans un conteneur Cycles. La machine « samples » vient après | §3 |
+| 4 | Porter les machines numériques du Syntakt | 🟠 **recherche** : même conteneur, même CPU, même table de sinus que le Cycles. Prochaine étape : faire tourner le vrai SD VINTAGE dans le banc | §4 |
 
-Ordre proposé pour la suite : **§3 d'abord** (fichier de 686 Ko, une comparaison de deux OS 1.13 répond vite à la question
-clé : le matériel est-il le même ?), **puis §4** (plus long, mais il s'appuie sur le banc d'émulation de SD VINTAGE).
+Ordre suivi : **§3 d'abord** (fichier de 686 Ko, la comparaison des deux OS 1.13 a répondu vite à la question clé :
+le matériel est le même), **puis §4** (plus long, mais il s'appuie sur le banc d'émulation de SD VINTAGE).
 
 ---
 
@@ -65,7 +65,7 @@ Le build l'accepte tant que les écritures restent dans cette partie, et refuse 
 
 ---
 
-## 3. OS Model:Samples sur un Model:Cycles, ou une machine « samples » — 🟠 recherche
+## 3. OS Model:Samples sur un Model:Cycles, ou une machine « samples » — 🟡 outil prêt, jamais testé
 
 **Demande** (deux idées liées) :
 - une voie pour flasher le logiciel du Model:Samples sur le Model:Cycles, et idéalement faire tourner « les deux en même temps » ;
@@ -73,58 +73,128 @@ Le build l'accepte tant que les écritures restent dans cette partie, et refuse 
 > Source : commentaire r/Elektron relayé par l'utilisateur, avec le lien vers le fil *Flashing Model:Cycles firmware into a Model:Samples*.
 > Le fil lui-même n'a pas pu être lu d'ici : Reddit bloque l'accès automatisé, et la page Gearspace sur le même sujet affiche une vérification anti-robot.
 
-**Ce qu'on sait déjà** :
-- L'OS Cycles tourne sur un Model:Samples : c'est ainsi que le mod 6 canaux a été vérifié ([01](01-ms-multi-output.md)).
-- L'inverse (OS Samples sur un vrai Model:Cycles) **n'a jamais été testé publiquement** : le Samples échantillonne et pourrait
-  attendre une mémoire ou un stockage que le Cycles n'a pas.
-  > Source : résumé du dépôt `bryantysinger/elektron-models-teardown` dans l'index d'un moteur de recherche. Le dépôt est supprimé
-  > (vérifié le 29/09/2026 : `404`), on ne peut donc pas relire le texte d'origine.
-- Le Model:Samples a 1 Go de stockage et 64 Mo de RAM pour les samples du projet.
-  > Source : test du Model:Samples par Attack Magazine (attackmagazine.com), repris par les résultats de recherche.
-- `[HYP]` Le Model:Cycles a probablement la même RAM : son moteur range l'état des voix à `0x42308828`, soit à plus de 35 Mo
-  du début de la SDRAM (`0x40000000`), ce qui suppose au moins 64 Mo si la puce est standard ([14 §2.4](14-machine-sd-vintage.md)).
-  Le stockage (flash du +Drive) reste inconnu.
+### 3.1 Ce que dit la comparaison des deux OS 1.13 (29/09/2026)
 
-**Plan** (sans matériel au début) :
-1. `[À FAIRE]` Télécharger l'**OS Model:Samples 1.13** (`model-samples_OS1.13.zip`, 686 Ko, elektron.se), avec ton accord.
-   Comme pour le Cycles, il ne sera **jamais versionné** (`firmware/` est ignoré par git).
-2. `[À FAIRE]` Comparer les deux OS 1.13, section par section :
-   - bootloader et updater identiques ? (même carte, même boot) ;
-   - carte mémoire utilisée, pilotes du stockage (taille attendue, système de fichiers) ;
-   - lecture du panneau (touches, encodeurs, LED) : le Cycles et le Samples ont-ils la même matrice ?
-3. Décider selon le résultat :
-   - **Voie A, OS Samples complet sur le Cycles** : c'est la « route de flash » demandée, sans « les deux en même temps ».
-     Réalisable si le matériel est le même. Risques : le stockage des projets Cycles, et un panneau étiqueté Cycles.
-     La récupération par le MIDI IN reste possible, car le bootloader n'est jamais touché.
-   - **Voie B, une machine « sample » dans l'OS Cycles** : ce serait « les deux en même temps ». C'est de très loin le plus lourd :
-     lecture de samples dans le moteur, chargement depuis le stockage, choix du sample dans l'UI, gestion par Transfer.
-     La [note 10 §4](10-faisabilite-fonctionnalites.md) la jugeait hors de portée. La comparaison du point 2 dira si une version
-     réduite est possible (par exemple quelques samples fixes).
+OS Model:Samples 1.13 téléchargé avec ton accord (`model-samples_OS1.13.zip`, 686 162 o, elektron.se), jamais versionné.
+Comparé section par section à l'OS Cycles 1.13 :
 
-## 4. Machines numériques du Syntakt — 🟠 recherche
+| Section | Model:Cycles | Model:Samples | Verdict |
+|---|---|---|---|
+| 5 (horodatage) | `210525 16:37:28` | `210525 16:34:28` | **compilés le même jour, à 3 minutes d'écart** |
+| 2 (bootstrap : menu de démarrage, init DDR) | 26 602 o | 26 602 o | **même code** : 355 octets diffèrent, tous dans l'identifiant produit, le nom, la clé de signature et une somme de contrôle |
+| 3 (MAIN OS) | 1 744 192 o | 1 733 184 o | la seule vraie différence |
+| 4 (updater) | 31 752 o | 31 752 o | **identique octet pour octet** |
+
+> Source : conteneurs ELE3 des deux `.syx` officiels, dépaquetés avec `tools/mtlib` le 29/09/2026.
+
+Détail des différences du bootstrap :
+- l'identifiant produit (`0x11` contre `0x0F`), l'octet d'appareil (`0x0C` contre `0x0A`) et le nom `MODEL:CYCLES` / `MODEL:SAMPLES` ;
+- la chaîne de dérivation de la clé HMAC : `REVERB SEND` pour le Cycles, `DELAY TIME` pour le Samples ;
+- l'octet `0x04` de l'en-tête du conteneur : `0x15` contre `0x14`.
+
+Tout le reste est commun, y compris la liste des touches (`ENCODER A` à `H`, `FUNCTION`, `TRACK`, les 8 pads `KICK` … `CYMBAL`…) :
+**le panneau est câblé pareil**.
+
+`[FAIT]` Le bootstrap programme le **contrôleur de RAM DDR** (45 références aux registres `0xFC0B8xxx`), avec le même code sur les deux machines.
+`[HYP forte]` Le Model:Cycles a donc la même RAM que le Samples (64 Mo, dont la place des samples du projet).
+Ça concorde avec l'état des voix du moteur Cycles, rangé à `0x42308828`, à plus de 35 Mo du début de la RAM ([14 §2.4](14-machine-sd-vintage.md)).
+> Le Model:Samples a 1 Go de stockage et 64 Mo de RAM pour les samples. Source : test du Model:Samples par Attack Magazine.
+
+`[FAIT]` Le MAIN OS du Cycles contient déjà **toute la couche de stockage du Samples** : système de fichiers sur carte MMC (`SafeMmcStreamWriter`, `FileSystemDirectory`, `+DRIVE`), `"sample_references"`, `verify_samples_in_bgworker`, et même des classes nommées `ModelSamplesSysex`.
+Ce qui n'existe que dans l'OS Samples : `SampleManager`, `SamplePoolDirectory`, les paramètres *Sample Start/Length/Pitch/Slot*, les *Sample Locks*, « Memory full ».
+**Même base de code, le Cycles sans le moteur de samples.**
+
+### 3.2 La route de flash : `tools/crossflash.py` `[FAIT]`, jamais testée
+
+Principe, déjà prouvé dans l'autre sens :
+- le bootloader **ignore en silence** un conteneur d'un autre produit ;
+- on garde donc le conteneur de la machine hôte et on ne remplace que sa section 3 ;
+- le bootstrap de l'hôte n'est pas touché, donc son `.syx` officiel reste l'image de secours.
+> Source : `vendor/ms-multi-output/README.md`, section *You own a Model:Samples → --target cycles-crossflash*. La technique vient d'un utilisateur de r/Elektron, et scottmetoyer l'a testée sur un Model:Samples, retour compris.
+
+```sh
+python3 tools/crossflash.py --cycles model-cycles_OS1.13.syx --samples model-samples_OS1.13.syx --to cycles
+# -> model-samples_OS1.13_for-model-cycles.syx : OS Samples, conteneur/bootstrap/updater/clé du Cycles
+```
+
+- Les deux `.syx` et leurs MAIN OS doivent être les officiels (SHA-256).
+- La section 3 du Samples est reprise **telle quelle** : son flux aPLib d'origine, rien n'est recompressé.
+- Le fichier produit est relu en entier : paquets, sections 2/4/5 identiques à celles du Cycles, MAIN OS identique au Samples une fois décompressé, HMAC valide avec la clé du Cycles. Le vérificateur JS du flasher l'accepte aussi (6 637 paquets, environ 4,5 min sur un câble MIDI).
+- `--to samples` fait l'inverse (OS Cycles pour un Model:Samples), comme la cible `cycles-crossflash` de ms-multi-output.
+
+**Personne n'a jamais publié de test de ce sens-là (OS Samples sur un vrai Model:Cycles).** Protocole proposé, si tu veux être le premier :
+1. **Sauvegarder** les projets et le +Drive avec Elektron Transfer. L'OS Samples va trouver des données de projet Cycles : comportement inconnu, et ms-multi-output fait la même mise en garde dans l'autre sens.
+2. Garder l'**interface MIDI branchée sur le MIDI IN** : le retour passe par le menu de démarrage du Cycles, qui n'écoute que le MIDI IN.
+3. Flasher le fichier par le **menu de démarrage** (FUNC + allumage, TRIG 4) avec `flash.sh` / `flash.bat`. `CONFIG > UPGRADE` par USB devrait aussi l'accepter : c'est un conteneur Cycles valide.
+4. Observer le démarrage :
+   - s'il bloque sur le projet Cycles, `EMPTY RESET` (TRIG 2 du menu de démarrage) est à essayer, sinon le retour ;
+   - puis charger un sample avec Transfer (la machine s'annonce « Model:Samples »), le jouer, et vérifier le panneau.
+5. **Ne pas utiliser `CONFIG > UPGRADE` depuis l'OS Samples** : avec un `.syx` Samples officiel, il réécrirait aussi le bootstrap, et la machine deviendrait un Model:Samples complet côté logiciel.
+6. Retour : menu de démarrage du Cycles, puis `model-cycles_OS1.13.syx` officiel par le MIDI IN.
+
+Le flasher web n'en propose rien pour l'instant : il n'envoie qu'en USB, et le retour depuis l'OS Samples n'est garanti que par le MIDI IN.
+
+### 3.3 « Les deux en même temps » : une machine sample dans l'OS Cycles `[À FAIRE]`, plus tard
+
+- **Double démarrage** (deux MAIN OS en flash, choisis au démarrage) : à écarter. Il faudrait modifier le bootstrap, c'est-à-dire le code même du menu de secours.
+- **Machine « sample » dans le moteur Cycles** : l'analyse la rend moins lointaine que ne le disait la [note 10 §4](10-faisabilite-fonctionnalites.md). Même RAM (hyp. forte), même stockage, même bibliothèque de fichiers. Mais il faudrait greffer le `SampleManager` (chargement, liste, UI) et une voix de lecture dans le moteur.
+  À reconsidérer **après** le test de la route 3.2 : si l'OS Samples tourne bien sur le Cycles, le matériel est prouvé capable, et on saura quoi viser.
+
+## 4. Machines numériques du Syntakt — 🟠 recherche, premiers résultats encourageants
 
 **Demande** : porter les moteurs numériques supplémentaires du Syntakt, en partant de la ROM (l'OS) et d'un banc d'émulation pour la comprendre.
 > Source : commentaire r/Elektron relayé par l'utilisateur.
 
-**Ce qu'on sait déjà** :
+**Ce qu'on savait** :
 - Les machines numériques du Syntakt sont à base de FM et dérivées de celles du Model:Cycles ([14 §1](14-machine-sd-vintage.md)).
 - SD VINTAGE ([14](14-machine-sd-vintage.md)) a été écrite en **clean-room** : l'OS du Syntakt n'était pas accessible depuis
   l'environnement de travail d'alors. Elle marche sur le matériel (29/09/2026).
 - Le banc d'émulation du moteur du M:C (`tools/emu/`) tourne désormais aussi sur ton Mac.
-- L'OS actuel du Syntakt est la **1.41** (09/09/2026), 28 Mo.
-  > Source : page de téléchargements Syntakt d'elektron.se, consultée le 29/09/2026 (taille confirmée par l'en-tête HTTP : 28 063 003 o).
 
-**Plan** :
-1. `[À FAIRE]` Télécharger l'**OS Syntakt 1.41** (`Syntakt-OS-1.41.zip`, 28 Mo), avec ton accord. Jamais versionné.
-2. `[À FAIRE]` Identifier le format (conteneur, compression) et le **processeur**.
-   S'il s'agit aussi d'un ColdFire avec EMAC, le code des machines se relit avec nos outils.
-3. `[À FAIRE]` Localiser les machines numériques (tables de dispatch, descripteurs de paramètres, comme en [14 §2](14-machine-sd-vintage.md)).
-   Les rejouer dans un banc d'émulation et mesurer leur son.
-4. Porter une première machine en suivant le chemin déjà validé par SD VINTAGE : d'abord à la place d'une machine existante, puis en 7ᵉ machine.
-   Premier candidat naturel : le **vrai SD VINTAGE**, pour le comparer à notre version.
+### 4.1 Premier examen de l'OS Syntakt 1.41 (29/09/2026)
+
+Téléchargé avec ton accord : `Syntakt-OS-1.41.zip`, 28 063 003 o, elektron.se. Jamais versionné.
+Le zip contient `Syntakt_OS1.41.syx` (2 571 424 o), un pack de sons et Transfer.
+> Source : page de téléchargements Syntakt d'elektron.se, consultée le 29/09/2026.
+
+`[FAIT]` **Même transport, même conteneur** que les Models :
+- SysEx Elektron, produit `0x16`, paquets de 128 octets.
+- Constantes de checksum : `V = 0x35`, `C0 = 0x2C`, à compléter pour mtlib. Trouvées par recherche exhaustive, elles valident les 20 089 paquets.
+- Particularité : **deux flux** de paquets (octet 7 = `0x00` puis `0x01`, le second avec `C0 - 1`). Mis bout à bout, ils forment **un seul conteneur ELE3** de 2 028 880 o.
+
+`[FAIT]` 8 sections :
+
+| id | Taille (décompressée) | Destination | Nature probable |
+|---|---|---|---|
+| 5 | 15 o | — | horodatage `260908 14:39:29` |
+| 2 | 30 782 o | `0x04000000` | bootstrap (même en-tête `[taille][0x80010000]` que les Models) |
+| 3 | **3 438 480 o** | `0x40000400` | **MAIN OS ColdFire**, même adresse et mêmes premiers octets que celui du Cycles |
+| 4 | 32 776 o | `0x80000400` | updater |
+| 1, 8 | 149 516 o, 159 948 o | — | données (commencent par des `0xFF`) `[À IDENTIFIER]` |
+| 6 | 1 744 o | — | `[À IDENTIFIER]` |
+| 7 | 383 760 o | — | **code et tables DSP** (voir ci-dessous) |
+
+`[FAIT]` Le MAIN OS contient la liste des machines, avec un espace de noms `Diddy` (`machineType_t`, `synthParams_t`) :
+`SD VINTAGE`, `CP VINTAGE`, `BD SHARP`, `BD SILKY`, `SD NATURAL`, `SY RAW`, `SY CHIP`, `SY DUAL VCO`, `CY RIDE`, `CB METALLIC`…
+`SD VINTAGE` est à `0x402535c2`.
+
+`[FAIT]` **Indice fort de parenté avec le moteur Cycles** :
+- La **table de sinus Q31 de 257 points** du moteur FM du Cycles (`0x8000eee4` en SRAM) se retrouve **à l'identique** dans la section 7 du Syntakt (offset `0x53e54`).
+- Les sections 3 et 7 règlent l'EMAC en mode fractionnaire `MACSR = 0xA0` (`move.l #0xa0,MACSR`), le mode de la boucle des voix du Cycles ([14 §2.3](14-machine-sd-vintage.md)).
+- En revanche, aucune fonction du moteur Cycles ne s'y retrouve octet pour octet. Le code a été recompilé ou réécrit.
+
+> Source : sections dépaquetées de `Syntakt_OS1.41.syx` le 29/09/2026 ; comparaison avec l'OS Cycles 1.13.
+
+`[À FAIRE]` La clé HMAC du Syntakt n'est pas retrouvée par la méthode des Models. C'est sans importance ici : on ne reconstruit pas de firmware Syntakt, on ne fait que le lire.
+
+### 4.2 Plan
+
+1. `[À FAIRE]` Identifier la section 7 (chargée en SRAM comme les tables du Cycles ?) et trouver les tables de dispatch des machines numériques : `update` / `render`, comme `0x40118628` / `0x40118610` sur le Cycles.
+2. `[À FAIRE]` Faire tourner la voix **SD VINTAGE** du Syntakt dans un banc d'émulation, sur le modèle de `tools/emu/mcengine.py` (même CPU, même EMAC, correctif EMAC déjà écrit). Mesurer son son : hauteur, balayage, bruit, enveloppes.
+3. Comparer à notre SD VINTAGE clean-room, puis **caler nos constantes** sur les mesures. C'est la voie la plus sûre (aucun code Elektron copié).
+4. Ensuite, les autres machines numériques une par une, en commençant par les plus demandées. Chacune d'abord à la place d'une machine existante, puis en 7ᵉ machine ([14 §8](14-machine-sd-vintage.md)).
 
 **Règle de publication** : aucun code Elektron dans le dépôt, comme pour le reste du projet. Deux façons de porter :
 - **Réécriture clean-room** (comme SD VINTAGE), réglée sur les mesures faites dans le banc : la plus sûre ;
-- **Extraction au moment du build** depuis le fichier Syntakt que l'utilisateur fournit lui-même (le dépôt ne contiendrait que des adresses et des tables de patch).
-  À réserver au cas où le processeur est le même, et en gardant en tête que la licence du firmware Syntakt n'autorise
-  peut-être pas cet usage (non vérifié).
+- **Extraction au moment du build** depuis le fichier Syntakt que l'utilisateur fournit lui-même : le dépôt ne contiendrait que des adresses et des tables de patch.
+  Techniquement plausible (même CPU, même EMAC, mêmes tables), mais la licence du firmware Syntakt n'autorise peut-être pas cet usage (non vérifié).

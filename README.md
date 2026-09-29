@@ -75,6 +75,13 @@ our build matches their own tool byte for byte):
 
 Requests from the community (Reddit) and how we handle them: [note 15](notes/15-demandes-reddit.md) (in French).
 
+| Request | Status |
+|---|---|
+| Mute without holding `FUNC` | ✅ `latching-mute` (above) |
+| Bundle with trig preview | ✅ `trig-preview` (above) |
+| Run the **Model:Samples OS** on a Model:Cycles | 🟡 `tools/crossflash.py` builds it from both official files: same bootstrap, same updater, same RAM setup on both machines. **Never tested on a Model:Cycles**: read note 15 §3 first (recovery through the MIDI IN) |
+| Port the **Syntakt digital machines** | 🟠 research: same container, same ColdFire CPU and the same FM sine table as the Model:Cycles; next step is running the real SD VINTAGE in our emulator |
+
 ## Project status
 
 - The 6-tracks-over-USB mod **exists** ([scottmetoyer/ms-multi-output](https://github.com/scottmetoyer/ms-multi-output), MIT)
