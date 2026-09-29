@@ -286,11 +286,42 @@ function indexOfDirty(dirty, start, end) {         // premier 1 dans [start, end
   return -1;
 }
 
-function aplibRepack(data, ops, dirty) {
+// Partie AJOUTÉE à une section agrandie (tools/aplib_grow.py, même algorithme octet pour octet) :
+// correspondances gloutonnes de 4 octets et plus, dans la partie ajoutée seulement.
+const TAIL_MIN = 4, TAIL_MAX = 0xffff, TAIL_WINDOW = 1 << 20;
+function aplibTail(w, data, start, lastOff) {
+  const n = data.length, table = new Map();
+  const key = (i) => ((data[i] << 24) | (data[i + 1] << 16) | (data[i + 2] << 8) | data[i + 3]) >>> 0;
+  let i = start;
+  while (i < n) {
+    let bestLen = 0, bestOff = 0;
+    if (i + TAIL_MIN <= n) {
+      const k = key(i), cand = table.get(k);
+      if (cand !== undefined && i - cand <= TAIL_WINDOW) {
+        let length = TAIL_MIN;
+        const limit = Math.min(n - i, TAIL_MAX);
+        while (length < limit && data[cand + length] === data[i + length]) length++;
+        bestLen = length; bestOff = i - cand;
+      }
+      table.set(k, i);
+    }
+    if (bestLen >= TAIL_MIN) {
+      w.match(bestOff, bestLen, lastOff);
+      lastOff = bestOff;
+      const stop = Math.min(i + bestLen, n - TAIL_MIN + 1);
+      for (let k = i + 1; k < stop; k++) table.set(key(k), k);
+      i += bestLen;
+    } else { w.literal(data[i]); i++; }
+  }
+  return lastOff;
+}
+
+// origLen < data.length : section agrandie, la fin est compressée par aplibTail.
+function aplibRepack(data, ops, dirty, origLen = data.length) {
   const w = new _Writer();
   let lastOff = 1;
   let lo = -1, hi = -1;
-  for (let i = 0; i < dirty.length; i++) if (dirty[i]) { if (lo < 0) lo = i; hi = i; }
+  for (let i = 0; i < origLen; i++) if (dirty[i]) { if (lo < 0) lo = i; hi = i; }
   for (const [kind, pos, off, n] of ops) {
     if (kind === LITERAL) { w.literal(data[pos]); continue; }
     const end = pos + n, src = pos - off;
@@ -300,6 +331,7 @@ function aplibRepack(data, ops, dirty) {
     if (touched) { for (let k = pos; k < end; k++) w.literal(data[k]); }
     else { w.match(off, n, lastOff); lastOff = off; }
   }
+  if (origLen < data.length) aplibTail(w, data, origLen, lastOff);
   w.end();
   const body = w.o;
   const streamLen = body.length - SECT_HDR;
@@ -512,9 +544,61 @@ function checkCaves(mainOs, chosen, force, dirty, patched, known) {
   return { zones, sure, doubt, gone, acked };
 }
 
+// ===========================================================================
+// Moteur extrait d'un OS Syntakt (tweak « append », notes/17) : la recette s'exécute sur le fichier
+// Syntakt_OS1.41.syx de l'utilisateur ; aucun octet Elektron n'est fourni par cette page.
+// ===========================================================================
+/* Section d'un .syx Syntakt : produit 0x16, checksums V = 0x35 et C0 = 0x2c - numéro de flux (octet 7),
+ * deux flux de paquets qui forment un seul conteneur ELE3 (tools/emu/syntakt.py). */
+function syntaktSection(raw, id) {
+  const msgs = splitRaw(raw);
+  if (msgs.length < 3) throw new Error("pas un .syx Elektron");
+  const head = msgs[0];
+  for (let k = 0; k < 3; k++) if (head[1 + k] !== ELEKTRON[k]) throw new Error("pas un .syx Elektron");
+  if (head[4] !== 0x16) throw new Error("ce n'est pas un OS de Syntakt (produit 0x" + head[4].toString(16) + ")");
+  const streams = new Map();
+  for (let n = 1; n < msgs.length - 1; n++) {
+    const m = msgs[n];
+    if (m.length !== MSG_LEN || m[CS_OFF] !== msgChecksum(m, 0x35, 0x2c - m[7]))
+      throw new Error(`paquet ${n} du fichier Syntakt invalide`);
+    if (!streams.has(m[7])) streams.set(m[7], []);
+    streams.get(m[7]).push(m);
+  }
+  const body = [];
+  for (const sid of [...streams.keys()].sort((a, b) => a - b))
+    for (const m of streams.get(sid)) for (const x of unpack7(m.subarray(PAYLOAD_OFF, PAYLOAD_END))) body.push(x);
+  const c = parseContainer(Uint8Array.from(body));
+  const s = c.sections.find((x) => x.id === id);
+  if (!s) throw new Error(`section ${id} absente du fichier Syntakt`);
+  return c.blob.subarray(s.off, s.off + s.size);
+}
+
+/* Charge utile d'un tweak « append » : plages copiées du programme audio du Syntakt (section 7, chargée
+ * à 0x40000400), notre code, puis la table de relocalisation (ancienne valeur vérifiée à chaque fois). */
+function buildPayload(ap, syntaktRaw) {
+  if (hex(sha256(syntaktRaw)) !== ap.syntakt.syx_sha256)
+    throw new Error("ce n'est pas le fichier officiel Syntakt_OS1.41.syx");
+  const img = syntaktSection(syntaktRaw, ap.syntakt.section);
+  if (hex(sha256(img)) !== ap.syntakt.section_sha256) throw new Error("section 7 du Syntakt inattendue");
+  const dest = parseInt(ap.dest, 16), out = new Uint8Array(ap.size);
+  for (const part of ap.parts) {
+    const at = parseInt(part.dest, 16) - dest;
+    const chunk = part.syntakt
+      ? img.subarray(parseInt(part.syntakt[0], 16) - BASE, parseInt(part.syntakt[1], 16) - BASE)
+      : fromHex(part.hex);
+    out.set(chunk, at);
+  }
+  for (const [va, old, nw] of ap.reloc) {
+    const at = parseInt(va, 16) - dest;
+    if (hex(out.subarray(at, at + 4)) !== old) throw new Error(`relocalisation ${va} : ${old} attendu`);
+    out.set(fromHex(nw), at);
+  }
+  return out;
+}
+
 /* Construit le .syx modifie.
  * raw = Uint8Array du .syx officiel ; device = device.json ; chosen = [tweak] ;
- * opts = { expectMainOsSha, force }.
+ * opts = { expectMainOsSha, force, syntakt } ; syntakt = Uint8Array du Syntakt_OS1.41.syx, exigé par un tweak « append ».
  * Renvoie { raw, mainOsSha, patchedBytes, caves, product, name }. */
 function build(raw, device, chosen, opts = {}) {
   const { stream, product, name, start_seq } = unwrap(raw);
@@ -529,11 +613,23 @@ function build(raw, device, chosen, opts = {}) {
   checkConflicts(chosen);
   const { data: patched, dirty } = applyWrites(mainOs, chosen);
   const caves = checkCaves(mainOs, chosen, opts.force, dirty, patched, device.cave_refs_ok);
-  const patchedSha = hex(sha256(patched));
+  const apps = chosen.filter((t) => t.append);
+  if (apps.length > 1) throw new Error("un seul tweak peut agrandir l'OS");
+  let full = patched, fullDirty = dirty;
+  if (apps.length) {
+    const ap = apps[0].append;
+    if (BASE + mainOs.length !== parseInt(ap.at, 16)) throw new Error("l'image ne finit pas où le tweak l'attend");
+    if (!opts.syntakt) throw new Error("fichier Syntakt_OS1.41.syx requis");
+    const payload = buildPayload(ap, opts.syntakt);
+    full = concat(patched, payload);
+    fullDirty = concat(dirty, new Uint8Array(payload.length).fill(1));
+  }
+  const patchedSha = hex(sha256(full));
   if (opts.expectMainOsSha && patchedSha !== opts.expectMainOsSha)
     throw new Error(`MAIN OS patche ${patchedSha}, attendu ${opts.expectMainOsSha}`);
 
-  const newS3 = aplibRepack(patched, ops, dirty);
+  const newS3 = aplibRepack(full, ops, fullDirty, patched.length);
+  if (apps.length && !eq(aplibDepack(newS3).data, full)) throw new Error("recompression de l'OS agrandi : relecture différente");
   const blobNoDigest = c.blob.subarray(0, c.blob.length - DIGEST_LEN);
   const expect = c.blob.subarray(c.blob.length - DIGEST_LEN);
   const plain = [];
@@ -545,7 +641,7 @@ function build(raw, device, chosen, opts = {}) {
   const blob = rebuildContainer(c, { 3: newS3 }, key);
   const outStream = buildStream(blob, BYTES_PER_MSG);
   const outRaw = wrap(outStream, product, start_seq);
-  return { raw: outRaw, mainOsSha: patchedSha, patchedBytes: dirty.reduce((a, b) => a + b, 0),
+  return { raw: outRaw, mainOsSha: patchedSha, patchedBytes: fullDirty.reduce((a, b) => a + b, 0),
            caves, product, name };
 }
 
@@ -592,7 +688,7 @@ function crossflash(hostRaw, guestRaw) {
 // ---- Export node / navigateur ---------------------------------------------
 const API = { sha256, hmacSha256, unwrap, wrap, aplibDepack, aplibRepack, parseContainer, findKey,
               rebuildContainer, buildStream, contentChecksum, applyWrites, checkConflicts, checkCaves,
-              build, crossflash, hex, fromHex, PRODUCTS, BASE };
+              build, crossflash, syntaktSection, buildPayload, hex, fromHex, PRODUCTS, BASE };
 if (typeof module !== "undefined" && module.exports) module.exports = API;
 if (typeof window !== "undefined") window.MCBuilder = API;
 })();

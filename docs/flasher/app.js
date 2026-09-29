@@ -14,6 +14,7 @@ const $ = (id) => document.getElementById(id);
 const REPO = "https://github.com/18nelli18/Modded-Cycles";
 const ELEKTRON_DL = "https://www.elektron.se/support-downloads/modelcycles";
 const ELEKTRON_SMP_DL = "https://www.elektron.se/support-downloads/modelsamples";
+const ELEKTRON_ST_DL = "https://www.elektron.se/support-downloads/syntakt";
 
 // Patched MAIN OS reference hashes, from tools/build.py on the official OS 1.13 (the drumkilla
 // tweaks alone also match drumkilla's own tweak.py byte for byte). A build whose bytes don't
@@ -35,6 +36,23 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll": "74d1f467974c019a7120e8dce7c4c45a773d5d2854a2832eea64e34d327dc5ce",
   "latching-mute+trig-preview+browser-scroll": "71fef138b1ae16f3ad440ecaa6a6327c1a987ce2c8a86b74329f68159981a15c",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll": "fd57831c61926fb3b1902cadcb0f95e68db3bb637b4cd20860a0efc46db82cfa",
+  // + the real Syntakt SD VINTAGE engine, built with the official Syntakt_OS1.41.syx (build.py --syntakt)
+  "sdvintage-exact": "8e2290a79fb1406ce65b3af3c5d3d95faade666e98eb8ecce0c0fa25fe87b15d",
+  "6ch-usbup+sdvintage-exact": "ea57b3c52b77d4de3df073ee605f2fecde59878d06e3141c927ed3bd7f489904",
+  "latching-mute+sdvintage-exact": "8995df8f3f3781e73b86bedc2447a65ccbe718c14dad7e0e8bfd8dc6e905b39b",
+  "trig-preview+sdvintage-exact": "5b90c5f7a681914238a17aab7d1e0236a1ec132297c9f4eaaa47ee127daf0618",
+  "browser-scroll+sdvintage-exact": "b51e82a934787e128eb452da36b6f4f3355040b8bf9a5dbcc8f8e84dc4fee5cb",
+  "6ch-usbup+latching-mute+sdvintage-exact": "9843c5424b067ec21322ce3fcbd4468d73813ac03f5e5b5282747f1e4511ae4e",
+  "6ch-usbup+trig-preview+sdvintage-exact": "df09c1f9458dad0a0022ce234ed73d45952a0adad4b2df8779c285dffb787945",
+  "6ch-usbup+browser-scroll+sdvintage-exact": "6433f71e1d66dbdeb23c61814072892c33a301b5cf0d518a9cc9ad4bd04e2924",
+  "latching-mute+trig-preview+sdvintage-exact": "f92c11bdc3beba6ca859ac5b1bb3f731f9c40ecf06a96a7b69b5585d971aa5c0",
+  "latching-mute+browser-scroll+sdvintage-exact": "a087f95d842c7fef6c8aad690a53d27cd2aca20c992718744a95bdaf9bd5c001",
+  "trig-preview+browser-scroll+sdvintage-exact": "a08580c9929d1cc981f27adc6ae2cfb17dde4416a536a0246d5cdf227a7898f3",
+  "6ch-usbup+latching-mute+trig-preview+sdvintage-exact": "575990496b3f11cd44e19f5b129602ea9789624d848b161a0ac0e84da05982c7",
+  "6ch-usbup+latching-mute+browser-scroll+sdvintage-exact": "509552fbb9a7d6d948755b56ed69b851b508fb787f1571e886d899c9e23978c5",
+  "6ch-usbup+trig-preview+browser-scroll+sdvintage-exact": "04c924d6e289ea672a3df22dadd60eb52575ac34c52f1210f4580bbde31513be",
+  "latching-mute+trig-preview+browser-scroll+sdvintage-exact": "5f6505f757183bc5601d4f041dc4fda689e3e23b33c75ca62d4db12fdb30f48e",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+sdvintage-exact": "20d5c2d861796a849a45dfe5b5f11d6254dddc0037ff5594ff75d359a93d86a2",
 };
 
 // "Samples OS" tab: official Model:Samples OS 1.13 inside the official Model:Cycles container
@@ -66,7 +84,11 @@ const T = {
     s1: "What do you want to install?",
     tab_mods: "Mods",
     tab_restore: "Official firmware",
-    mods_note: "All these mods have been tested on a real Model:Cycles. Tick several to combine them.",
+    mods_note: "Mods tagged “Tested” have been tested on a real Model:Cycles. Tick several to combine them.",
+    sdv_w1: "Not tested on a Model:Cycles yet. In the emulator it sounds exactly like the Syntakt, and the Model:Cycles starts normally even if the engine misbehaved: the Syntakt code only runs once a SNARE track is played.",
+    sdv_w2: "If something goes wrong once it runs, flash the official firmware back from CONFIG › UPGRADE (“Official firmware” tab).",
+    sdv_w3: `If the Model:Cycles stopped starting, recovery would go through the startup menu and the MIDI IN: it needs a MIDI interface (<a href="${FLASH_GUIDE}" target="_blank" rel="noopener">full guide</a>).`,
+    sdv_ack: "I understand the risk: this mod has not been tested on a Model:Cycles yet.",
     restore_text: "Sends your official OS file <b>unchanged</b>, to go back to the stock firmware. It is also a good first rehearsal: it checks your cable and your setup without changing anything.",
     tab_samples: "Samples OS",
     samples_title: "Turn your Model:Cycles into a Model:Samples",
@@ -89,6 +111,9 @@ const T = {
     drop2_title: "Drop model-samples_OS1.13.syx here",
     drop2_sub: "the official Model:Samples OS — or click to choose it",
     get_os_samples: `Don't have it? <a href="${ELEKTRON_SMP_DL}" target="_blank" rel="noopener">Download Model:Samples OS 1.13 from elektron.se</a>, then unzip it.`,
+    drop3_title: "Drop Syntakt_OS1.41.syx here",
+    drop3_sub: "the official Syntakt OS, for the SD VINTAGE engine — or click to choose it",
+    get_os_syntakt: `Don't have it? <a href="${ELEKTRON_ST_DL}" target="_blank" rel="noopener">Download Syntakt OS 1.41 from elektron.se</a>, then unzip it. The page reads the SD VINTAGE engine from it, on your computer: no Syntakt needed.`,
     s3: "Connect your Model:Cycles over USB",
     hu1: "Connect the Model:Cycles to the computer with a USB cable and turn it on normally.",
     hu2: "On the Model:Cycles, open <b>CONFIG › UPGRADE</b> and confirm with <b>YES</b>. It now waits for the firmware.",
@@ -135,6 +160,13 @@ const T = {
     smp_ok: "Official Model:Samples OS 1.13 recognised.",
     smp_bad: "This is not the official Model:Samples OS 1.13 file: {err}",
     smp_not_official: "its SHA-256 differs from the official file",
+    st_ok: "Official Syntakt OS 1.41 recognised.",
+    st_bad: "This is not the official Syntakt OS 1.41 file: {err}",
+    needs_syntakt: "The SD VINTAGE engine is read from the official Syntakt OS file: drop it below.",
+    miss_syntakt: "Load the official Syntakt OS file (step 2).",
+    miss_sdv_ack: "Tick the SD VINTAGE warning box (step 1).",
+    done_sdv: "Then pick the SNARE machine on a track and play it: it is the Syntakt's SD VINTAGE. PITCH, COLOR, SHAPE, SWEEP and CONTOUR act as its TUNE, INHM, FCMP, SWEP and MENV.",
+    warn_samples_port: "This port is a Model:Samples (a Model:Cycles running the Samples OS): it refuses a Model:Cycles firmware over USB. The way back goes through the startup menu and the MIDI IN (see the full guide).",
     samples_needs_cycles: "For the Samples OS, the first file must be the official <code>model-cycles_OS1.13.syx</code>: it provides the startup menu, updater and signature that stay on your Model:Cycles.",
     samples_ready: "Firmware ready: the Model:Samples OS for your Model:Cycles.",
     mods_list_samples: "Model:Samples OS (for Model:Cycles)",
@@ -181,7 +213,11 @@ const T = {
     s1: "Qu'est-ce que tu veux installer ?",
     tab_mods: "Mods",
     tab_restore: "Firmware officiel",
-    mods_note: "Tous ces mods ont été testés sur un vrai Model:Cycles. Coche-en plusieurs pour les combiner.",
+    mods_note: "Les mods marqués « Testé » ont été testés sur un vrai Model:Cycles. Coche-en plusieurs pour les combiner.",
+    sdv_w1: "Pas encore testé sur un Model:Cycles. En émulation, le son est identique au Syntakt, et le Model:Cycles démarre normalement même si le moteur posait problème : le code du Syntakt ne tourne qu'une fois une piste SNARE jouée.",
+    sdv_w2: "Si quelque chose cloche une fois lancé, reflashe le firmware officiel depuis CONFIG › UPGRADE (onglet « Firmware officiel »).",
+    sdv_w3: `Si le Model:Cycles ne démarrait plus, la récupération passerait par le menu de démarrage et le MIDI IN : il faut une interface MIDI (<a href="${FLASH_GUIDE}" target="_blank" rel="noopener">guide complet</a>).`,
+    sdv_ack: "Je comprends le risque : ce mod n'a pas encore été testé sur un Model:Cycles.",
     restore_text: "Envoie ton fichier d'OS officiel <b>sans le modifier</b>, pour revenir au firmware d'origine. C'est aussi une bonne répétition avant un mod : elle vérifie ton câble et ton installation sans rien changer.",
     tab_samples: "OS Samples",
     samples_title: "Transforme ton Model:Cycles en Model:Samples",
@@ -204,6 +240,9 @@ const T = {
     drop2_title: "Dépose model-samples_OS1.13.syx ici",
     drop2_sub: "l'OS officiel du Model:Samples — ou clique pour le choisir",
     get_os_samples: `Tu ne l'as pas ? <a href="${ELEKTRON_SMP_DL}" target="_blank" rel="noopener">Télécharge l'OS Model:Samples 1.13 sur elektron.se</a>, puis dézippe-le.`,
+    drop3_title: "Dépose Syntakt_OS1.41.syx ici",
+    drop3_sub: "l'OS officiel du Syntakt, pour le moteur SD VINTAGE — ou clique pour le choisir",
+    get_os_syntakt: `Tu ne l'as pas ? <a href="${ELEKTRON_ST_DL}" target="_blank" rel="noopener">Télécharge l'OS Syntakt 1.41 sur elektron.se</a>, puis dézippe-le. La page y lit le moteur SD VINTAGE, sur ton ordinateur : pas besoin d'avoir un Syntakt.`,
     s3: "Branche ton Model:Cycles en USB",
     hu1: "Relie le Model:Cycles à l'ordinateur avec un câble USB et allume-le normalement.",
     hu2: "Sur le Model:Cycles, ouvre <b>CONFIG › UPGRADE</b> et confirme avec <b>YES</b>. Il attend alors le firmware.",
@@ -249,6 +288,13 @@ const T = {
     smp_ok: "OS officiel Model:Samples 1.13 reconnu.",
     smp_bad: "Ce n'est pas le fichier officiel de l'OS Model:Samples 1.13 : {err}",
     smp_not_official: "son SHA-256 diffère du fichier officiel",
+    st_ok: "OS officiel Syntakt 1.41 reconnu.",
+    st_bad: "Ce n'est pas le fichier officiel de l'OS Syntakt 1.41 : {err}",
+    needs_syntakt: "Le moteur SD VINTAGE se lit dans le fichier officiel de l'OS Syntakt : dépose-le ci-dessous.",
+    miss_syntakt: "Dépose le fichier officiel de l'OS Syntakt (étape 2).",
+    miss_sdv_ack: "Coche la case d'avertissement SD VINTAGE (étape 1).",
+    done_sdv: "Choisis ensuite la machine SNARE sur une piste et joue-la : c'est le SD VINTAGE du Syntakt. PITCH, COLOR, SHAPE, SWEEP et CONTOUR agissent comme ses TUNE, INHM, FCMP, SWEP et MENV.",
+    warn_samples_port: "Ce port est un Model:Samples (un Model:Cycles sous l'OS Samples) : il refuse un firmware Model:Cycles par USB. Le retour passe par le menu de démarrage et le MIDI IN (voir le guide complet).",
     samples_needs_cycles: "Pour l'OS Samples, le premier fichier doit être le <code>model-cycles_OS1.13.syx</code> officiel : il fournit le menu de démarrage, l'updater et la signature qui restent sur ton Model:Cycles.",
     samples_ready: "Firmware prêt : l'OS Model:Samples pour ton Model:Cycles.",
     mods_list_samples: "OS Model:Samples (pour Model:Cycles)",
@@ -302,6 +348,8 @@ const FEAT = {
       desc: "With the sequencer stopped, hold a step and press PAGE: the step plays with its own note, length and p-locks." },
     "browser-scroll": { label: "Scroll long names",
       desc: "In the sound browser, a name too long for the screen scrolls so you can read it." },
+    sdvintage: { label: "SD VINTAGE, the real Syntakt engine",
+      desc: "The SNARE machine becomes the Syntakt's SD VINTAGE: its own engine, copied from your Syntakt OS 1.41 file (step 2). In the emulator it is identical to the Syntakt, sample for sample. The other machines don't change." },
   },
   fr: {
     usb6: { label: "Audio USB 6 canaux",
@@ -312,6 +360,8 @@ const FEAT = {
       desc: "Séquenceur à l'arrêt, maintiens un pas et appuie sur PAGE : le pas joue avec sa note, sa longueur et ses p-locks." },
     "browser-scroll": { label: "Défilement des noms longs",
       desc: "Dans le navigateur de sons, un nom trop long pour l'écran défile pour que tu puisses le lire." },
+    sdvintage: { label: "SD VINTAGE, le vrai moteur du Syntakt",
+      desc: "La machine SNARE devient la SD VINTAGE du Syntakt : son propre moteur, copié depuis ton fichier d'OS Syntakt 1.41 (étape 2). En émulation, identique au Syntakt échantillon par échantillon. Les autres machines ne changent pas." },
   },
 };
 
@@ -323,6 +373,8 @@ const st = {
   mode: "mods",            // "mods" | "restore" | "samples"
   samplesOs: null,         // official Model:Samples OS { raw, name, sha } ("samples" mode)
   samplesError: null,
+  syntakt: null,           // official Syntakt OS { raw, name, sha } (SD VINTAGE engine source)
+  syntaktError: null,
   os: null,                // { raw, name, info, sha, stock }
   osError: null,
   fw: null,                // { raw, name, kind: "built"|"stock"|"custom", mods:[labels], ref:bool, sixch:bool }
@@ -384,6 +436,7 @@ function applyLang(lang) {
   // a loaded file keeps its name in its drop zone
   if (st.os) { $("drop-title").textContent = st.os.name; $("drop-sub").textContent = t("drop_again"); }
   if (st.samplesOs) { $("drop2-title").textContent = st.samplesOs.name; $("drop2-sub").textContent = t("drop_again"); }
+  if (st.syntakt) { $("drop3-title").textContent = st.syntakt.name; $("drop3-sub").textContent = t("drop_again"); }
   document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === st.lang)));
   document.title = t("title");
   renderFeatures();
@@ -497,6 +550,11 @@ function chosenLabels() {
   return out;
 }
 
+// A mod whose engine is copied from the Syntakt OS (tweak "append", notes/17).
+function needsSyntakt() {
+  return st.mode === "mods" && chosenTweaks().some((x) => x.append && x.append.syntakt);
+}
+
 function setMode(mode) {
   st.mode = mode;
   for (const m of ["mods", "restore", "samples"]) {
@@ -570,6 +628,34 @@ function loadSamples(raw, name) {
   update();
 }
 
+// Mods tab, SD VINTAGE: the official Syntakt OS (recognised by its SHA-256). Only read here, in the browser.
+function readSyntaktFile(file) {
+  const r = new FileReader();
+  r.onload = () => loadSyntakt(new Uint8Array(r.result), file.name);
+  r.onerror = () => { st.syntakt = null; st.syntaktError = String(r.error); update(); };
+  r.readAsArrayBuffer(file);
+}
+
+function loadSyntakt(raw, name) {
+  st.finished = null;
+  try {
+    const tk = window.MC_TWEAKS.tweaks.find((x) => x.append && x.append.syntakt);
+    const sha = window.MCBuilder.hex(window.MCBuilder.sha256(raw));
+    if (!tk || sha !== tk.append.syntakt.syx_sha256) throw new Error(t("smp_not_official"));
+    st.syntakt = { raw, name, sha };
+    st.syntaktError = null;
+    log(`${name}: official Syntakt OS 1.41.`, "is-ok");
+  } catch (e) {
+    st.syntakt = null;
+    st.syntaktError = e.message;
+    log(`${name}: refused — ${e.message}`, "is-bad");
+  }
+  $("drop3").classList.toggle("loaded", !!st.syntakt);
+  $("drop3-title").textContent = st.syntakt ? name : t("drop3_title");
+  $("drop3-sub").textContent = st.syntakt ? t("drop_again") : t("drop3_sub");
+  update();
+}
+
 function describeOs() {
   if (!st.os) {
     if (st.osError) setStatus("file-status", [["is-bad", esc(t("os_bad", { err: st.osError }))]]);
@@ -602,15 +688,19 @@ function prepareFirmware() {
   }
   const tweaks = chosenTweaks();
   if (!tweaks.length) { st.fw = null; st.fwError = "pick_one"; return; }
+  const sdv = needsSyntakt();
+  if (sdv && !st.syntakt) { st.fw = null; st.fwError = "needs_syntakt"; return; }
   const key = tweaks.map((x) => x.id).join("+");
   const labels = chosenLabels();
+  const syntakt = sdv ? st.syntakt.raw : null;     // only the official file is accepted: same bytes for every key
   buildCached(key, (raw) => {
     const opts = {};
     if (REF_MAINOS[key]) opts.expectMainOsSha = REF_MAINOS[key];
+    if (syntakt) opts.syntakt = syntakt;
     const r = window.MCBuilder.build(raw, window.MC_TWEAKS.device, tweaks, opts);
     log(`Built ${key}: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.patchedBytes} bytes patched, ${r.raw.length} bytes.`, "is-ok");
     return { raw: r.raw, name: `model-cycles_OS1.13_${key}.syx`, kind: "built", mods: labels,
-      ref: !!REF_MAINOS[key], sixch: tweaks.some((x) => x.id.startsWith("6ch")) };
+      ref: !!REF_MAINOS[key], sixch: tweaks.some((x) => x.id.startsWith("6ch")), sdv };
   });
 }
 
@@ -742,6 +832,7 @@ function renderMidi() {
     const port = currentPort();
     if (!outs.length) rows.push(["is-warn", esc(t("midi_none"))]);
     else if (port && !isDevicePort(port.name)) rows.push(["is-warn", esc(t("warn_not_dev"))]);
+    else if (port && /samples/i.test(port.name)) rows.push(["is-warn", esc(t("warn_samples_port"))]);
     else if (port) rows.push(["is-ok", esc(t("midi_pick_dev"))]);
     else if (!outs.some((o) => isDevicePort(o.name))) rows.push(["is-warn", esc(t("midi_no_dev"))]);
   }
@@ -759,6 +850,10 @@ function missingReason() {
     if (!$("samples-ack").checked) return "miss_samples_ack";
   }
   if (st.fwError === "pick_one") return "miss_mod";
+  if (needsSyntakt()) {
+    if (!st.syntakt) return "miss_syntakt";
+    if (!$("sdv-ack").checked) return "miss_sdv_ack";
+  }
   if (st.building) return "miss_build";
   if (!st.fw) return "miss_fw";
   if (st.midiState !== "ready") return "miss_midi";
@@ -780,6 +875,7 @@ function render() {
     }
     if (st.fwError === "restore_needs") rows.push(["is-bad", t("os_restore_needs")]);
     else if (st.fwError === "pick_one") rows.push(["", esc(t("pick_one"))]);
+    else if (st.fwError === "needs_syntakt") rows.push(["", esc(t("needs_syntakt"))]);
     else if (st.building) rows.push(["is-busy", esc(t("building"))]);
     else if (st.fwError) rows.push(["is-bad", esc(t("build_failed", { err: st.fwError }))]);
     else if (st.fw && st.fw.kind === "built")
@@ -790,6 +886,11 @@ function render() {
   }
   setStatus("file2-status", st.samplesOs ? [["is-ok", esc(t("smp_ok"))]]
     : st.samplesError ? [["is-bad", esc(t("smp_bad", { err: st.samplesError }))]] : []);
+  const sdv = needsSyntakt();
+  $("drop3-wrap").hidden = !sdv;
+  $("sdv-box").hidden = !sdv;
+  setStatus("file3-status", st.syntakt ? [["is-ok", esc(t("st_ok"))]]
+    : st.syntaktError ? [["is-bad", esc(t("st_bad", { err: st.syntaktError }))]] : []);
 
   renderMidi();
 
@@ -807,7 +908,8 @@ function render() {
   } else dl.hidden = true;
 
   // step badges
-  const choseOk = st.mode === "restore" || (st.mode === "samples" ? $("samples-ack").checked : chosenTweaks().length > 0);
+  const choseOk = st.mode === "restore" || (st.mode === "samples" ? $("samples-ack").checked
+    : chosenTweaks().length > 0 && (!sdv || $("sdv-ack").checked));
   $("step-choose").classList.toggle("done", choseOk);
   $("step-file").classList.toggle("done", !!st.fw && !st.building);
   $("step-connect").classList.toggle("done", st.midiState === "ready" && !!currentPort());
@@ -908,7 +1010,8 @@ async function flash() {
     $("eta").textContent = fmtTime(res.seconds);
     r.className = "result ok";
     r.innerHTML = `<p><b>${esc(t("done_title"))}</b></p><p>${t("done_body")}</p>` +
-      (fw.sixch ? `<p>${t("done_6ch")}</p>` : "") + (fw.kind === "samples" ? `<p>${t("done_samples")}</p>` : "");
+      (fw.sixch ? `<p>${t("done_6ch")}</p>` : "") + (fw.sdv ? `<p>${t("done_sdv")}</p>` : "") +
+      (fw.kind === "samples" ? `<p>${t("done_samples")}</p>` : "");
     log(`Transfer complete in ${Math.round(res.seconds)} s.`, "is-ok");
   }
   $("progress").hidden = st.finished !== "ok";
@@ -944,6 +1047,14 @@ function init() {
   ["dragleave", "drop"].forEach((ev) => drop2.addEventListener(ev, (e) => { e.preventDefault(); drop2.classList.remove("over"); }));
   drop2.addEventListener("drop", (e) => { if (e.dataTransfer.files[0]) readSamplesFile(e.dataTransfer.files[0]); });
 
+  const drop3 = $("drop3"), file3 = $("file3");
+  file3.addEventListener("change", (e) => { if (e.target.files[0]) readSyntaktFile(e.target.files[0]); e.target.value = ""; });
+  drop3.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); file3.click(); } });
+  ["dragover", "dragenter"].forEach((ev) => drop3.addEventListener(ev, (e) => { e.preventDefault(); drop3.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((ev) => drop3.addEventListener(ev, (e) => { e.preventDefault(); drop3.classList.remove("over"); }));
+  drop3.addEventListener("drop", (e) => { if (e.dataTransfer.files[0]) readSyntaktFile(e.dataTransfer.files[0]); });
+  $("sdv-ack").addEventListener("change", render);
+
   $("allow").addEventListener("click", () => initMidi(false));
   $("refresh").addEventListener("click", () => { fillPorts(); render(); });
   $("port").addEventListener("change", () => { st.portManual = true; render(); });
@@ -977,7 +1088,7 @@ function init() {
 }
 
 // test hooks (tools/webflash_smoke.js)
-window.MCFlasherApp = { state: st, REF_MAINOS, REF_SAMPLES_ON_CYCLES, loadOs, loadSamples, setMode, applyLang, render };
+window.MCFlasherApp = { state: st, REF_MAINOS, REF_SAMPLES_ON_CYCLES, loadOs, loadSamples, loadSyntakt, setMode, applyLang, render };
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
 else init();

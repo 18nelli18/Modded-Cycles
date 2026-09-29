@@ -8,21 +8,26 @@ L'utilisateur fournit son propre `Syntakt_OS1.41.syx`. Le dépôt ne publie aucu
 | | État |
 |---|---|
 | Inventaire de ce qu'utilise SD VINTAGE dans le programme audio du Syntakt | `[FAIT]` 21 fonctions, 5 200 o de code, tables, SRAM (§2) |
-| Place libre dans l'OS Cycles | `[FAIT]` SDRAM de 128 Mo, rien au-dessus du BSS (`0x423380b0`) (§3) |
+| Place libre dans l'OS Cycles | `[FAIT]` rien au-dessus du BSS (`0x423380b0`) ; charge utile compacte de 205 Ko à `0x43000000` (§3) |
 | Tweak `sdvintage-exact` : charge utile, crochet de démarrage, passerelle | `[FAIT]` `tools/gen_sdvintage_exact.py`, `tools/machines/syntakt_bridge/` (§4) |
+| Démarrage sûr : aucun code du Syntakt avant le 1ᵉʳ déclenchement d'une piste SNARE | `[FAIT]` (§4) |
 | `build.py --syntakt` : recette sur TON fichier, OS agrandi | `[FAIT]` (§5) |
 | **Preuve : même sortie, échantillon par échantillon** | `[FAIT]` en émulation, `tools/emu/test_sdvintage_exact.py` (§6) |
+| Le vrai décompresseur du bootstrap relit l'OS agrandi à l'identique | `[FAIT]` en émulation (§6) |
+| Flasher web (USB, sans interface MIDI) | `[FAIT]` case « SD VINTAGE », 3ᵉ fichier déposé (§9) |
 | Test sur la vraie machine | `[À FAIRE]` (§7) |
-| Autres moteurs, 7ᵉ machine, flasher web | `[À FAIRE]` (§8) |
+| Autres moteurs, 7ᵉ machine | `[À FAIRE]` (§8) |
 
 ## 1. Principe
 
-- On copie **tel quel** le programme audio du Syntakt (sa section 7, code et données : `0x40000400..0x4004f6e0`) en SDRAM du Cycles, à `0x46000000`.
-- On relocalise **uniquement** les adresses absolues contenues dans les fonctions dont SD VINTAGE a besoin. Les adresses relatives au PC restent justes, puisque tout le programme est déplacé d'un seul bloc.
-- Autour de lui, on recrée ce qu'il attend :
-  - une **réplique de sa SRAM** (`0x80000000..0x8000ffff` → `0x46050000`), remplie comme le fait son démarrage (`0x400004bc`) : ses 8 voix de 1 800 o, ses tables (dont le sinus) et ses tampons de travail y vivent ;
-  - une fenêtre de son **BSS** (`0x4404f000..` → `0x46060000`), dont la graine aléatoire `0x4404f954` ;
+- On copie **tels quels**, depuis le programme audio du Syntakt (sa section 7), uniquement les morceaux dont SD VINTAGE a besoin (§2), en SDRAM du Cycles à `0x43000000`.
+- Les 21 fonctions sont copiées **d'un seul bloc** (`0x40002544..0x40008580`) : les adresses relatives au PC entre elles restent justes. On relocalise les adresses absolues (54), chacune vérifiée.
+- Autour d'elles, on recrée ce qu'elles attendent :
+  - une **réplique de sa SRAM** (`0x80000000..0x8000ffff` → `0x43020000`), remplie comme le fait son démarrage (`0x400004bc`) : ses 8 voix de 1 800 o, ses tables (dont le sinus) et ses tampons de travail y vivent ;
+  - une fenêtre de son **BSS** (`0x4404f000..` → `0x43030000`), dont la graine aléatoire `0x4404f954` ;
   - une **passerelle** (notre code C) qui reproduit ce que fait sa boucle des voix `0x40004324` ([16 §3](16-moteur-syntakt.md)).
+
+*Première version (29/09) : tout le programme audio (324 Ko) à `0x46000000`, charge utile de 401 808 o. Compactée le 30/09 pour réduire la taille de l'OS et rester loin des limites du bootstrap (§7).*
 
 ## 2. Ce qu'utilise SD VINTAGE `[FAIT]`
 
@@ -48,27 +53,38 @@ Démarrage du MAIN OS Cycles (`0x400004e8`) :
 - `0x4000045c` copie `.data` en SRAM ;
 - `0x400004b2` remet le **BSS `0x4019b590..0x423380b0`** à zéro, soit 35 Mo, états des voix compris.
 
-**Aucun code de l'OS ne cite d'adresse entre `0x423380b0` et la pile.** Les seules valeurs de cette plage dans l'image sont des flottants ou du texte (vérifié en §3 des scripts du 29/09).
-La charge utile va donc à `0x46000000`, à 29 Mo sous la pile.
+**Aucun code de l'OS ne cite d'adresse entre `0x423380b0` et la pile.**
+- Les seules valeurs de cette plage dans l'image sont des flottants, du texte ou des motifs d'instructions.
+- La seule référence à la fin du BSS est la remise à zéro elle-même (`0x400004c2`) : pas de tas bâti au-dessus.
+- Source : balayage de l'image stock le 29/09, refait le 30/09 (immédiats de `lea`, `movea.l`, `move.l` et toute valeur alignée sur 4 Ko).
+- Conséquence : le tampon de réception de `CONFIG › UPGRADE` est dans le BSS, pas sur la charge utile. **Le retour par USB n'est pas menacé.**
 
-| Adresse | Contenu | Taille |
+La charge utile va à `0x43000000` : 12 Mo au-dessus du BSS. Cette adresse reste valable même si la SDRAM ne faisait que 64 Mo (`0x40000000..0x43ffffff`).
+
+| Adresse | Contenu | Source dans la section 7 du Syntakt |
 |---|---|---|
-| `0x46000000` | programme audio du Syntakt (copie de `0x40000400..0x4004f6e0`, décalage `0x05fffc00`) | 324 Ko |
-| `0x46050000` | réplique de sa SRAM | 64 Ko |
-| `0x46060000` | fenêtre de son BSS | 4 Ko |
-| `0x46061000` | passerelle (492 o), puis ses données | |
+| `0x43000000` | ses 21 fonctions (5 200 o de code SD VINTAGE et ce qu'il appelle) | `0x40002544..0x40008580` |
+| `0x43006100` | constantes lues par la remise à zéro | `0x40014980..0x40014b80` |
+| `0x43006400` | table DEC × MENV (64 Ko) et 16 tables de 512 o | `0x40028438..0x4003a238` |
+| `0x43020000` | réplique de sa SRAM (64 Ko), valeurs initiales comprises | ses `.data` `0x4004f6e0..0x4005df10` |
+| `0x43030000` | fenêtre de son BSS (4 Ko, à zéro) | — |
+| `0x43031000` | notre passerelle, puis ses données (`0x43032000`) | — (notre code) |
+
+Source : `SEGMENTS` dans `tools/gen_sdvintage_exact.py`, et `append.parts` dans `tweaks/model-cycles_OS1.13/21-sdvintage-exact.json`.
 
 **Chargement** :
-- la charge utile (401 808 o) est **ajoutée à la fin de la section 3**, qui passe de 1 744 192 à 2 146 000 o ;
+- la charge utile (205 200 o) est **ajoutée à la fin de la section 3**, qui passe de 1 744 192 à 1 949 392 o ;
 - le **crochet** remplace les 8 premiers octets de `0x400004b2` (`lea -16(sp),sp ; movem.l d4-d7,(sp)`) par `jmp` vers un petit code logé dans le masque de sprite libéré `0x4016cae8` ([14 §5](14-machine-sd-vintage.md)) ;
-- ce code recopie la charge utile de `0x401aa140` vers `0x46000000`, **avant** que le BSS (qui la contient) ne soit remis à zéro, puis refait les deux instructions et reprend à `0x400004ba`.
+- ce code recopie la charge utile de `0x401aa140` vers `0x43000000`, **avant** que le BSS (qui la contient) ne soit remis à zéro, puis refait les deux instructions et reprend à `0x400004ba`. C'est la seule instruction ajoutée qui s'exécute au démarrage : une copie de 51 300 mots longs.
 
 L'état du cache est le même que pour la remise à zéro du BSS elle-même : le `movec cacr` vient après.
 
 ## 4. La passerelle `[FAIT]`
 
 `tools/machines/syntakt_bridge/bridge.c`, branchée dans les tables de machines du Cycles à la place de SNARE (`0x40118614` / `0x4011862c`). Pour la voix `i` du Cycles, elle utilise la voix `i` du Syntakt (dans la réplique de SRAM) :
-1. **Première fois** : l'init du processeur audio du Syntakt, pour ses 8 voix (`0x40002544`, `voix+0x56c`, remise à zéro).
+1. **Première fois**, c'est-à-dire au **premier déclenchement** d'une piste SNARE, jamais avant : l'init du processeur audio du Syntakt pour ses 8 voix (`0x40002544`, `voix+0x56c`, remise à zéro).
+   - Au démarrage (kit par défaut avec une piste SNARE), seule la passerelle s'exécute et rend du silence.
+   - Si le moteur posait problème sur la machine, le Cycles démarrerait donc quand même, et `CONFIG › UPGRADE` resterait accessible pour revenir au firmware officiel.
 2. **Machine choisie** : une marque dans la voix du Cycles (`+0x2c`, effacée par sa remise à zéro `0x400a7ab8`) détecte le changement de machine. Au déclenchement suivant, remise à zéro de la voix Syntakt, comme sa boucle.
 3. **À chaque bloc** :
    - drapeaux `+0x34` / `+0x38` / `+0x3c` recopiés ;
@@ -100,8 +116,8 @@ python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup,sdvintage-exact -
 
 - `build.py` vérifie le `.syx` Syntakt officiel et sa section 7 (SHA-256), exécute la recette du tweak (plages à copier et relocalisations, **ancienne valeur vérifiée à chaque fois**), puis ajoute la charge utile à la section 3.
 - La recompression de l'OS agrandi (`tools/aplib_grow.py`) reprend le flux d'origine et compresse la partie ajoutée avec un compresseur glouton ; elle est **relue** avant écriture.
-- `.syx` : 1 245 216 o, contre 890 016 : environ 40 % de temps de transfert en plus.
-- MAIN OS patché (`sdvintage-exact` seul) : `43e9d15f…`.
+- `.syx` : 1 033 504 o, contre 890 016 : environ 16 % de temps de transfert en plus. Conteneur : 702 160 → 816 448 o.
+- MAIN OS patché (`sdvintage-exact` seul) : `8e2290a7…` ; avec `6ch-usbup` : `ea57b3c5…`. Les 16 combinaisons du flasher web sont dans `REF_MAINOS` (`docs/flasher/app.js`).
 - `tools/gen_sdvintage_exact.py --syntakt …` régénère le tweak. Il faut `m68k-elf-gcc` et `m68k-elf-objdump` pour la passerelle et l'analyse, seulement chez le développeur.
 
 ## 6. Preuve en émulation `[FAIT]`
@@ -128,23 +144,45 @@ Aucun échantillon différent, écart maximal 1 LSB, qui est l'arrondi de la div
 | DEC 90 / DEC 5 | 1,65 / 1,37·10⁹ | 0 / 0 |
 | PNCH | 1,53·10⁹ | 0 |
 
-Le test exécute aussi **la vraie remise à zéro du BSS `0x400004b2` de l'OS patché**. Le crochet recopie la charge utile intacte vers `0x46000000`, puis le BSS, qui la contenait, est bien remis à zéro, et la fonction revient normalement.
+Le test vérifie aussi le démarrage :
+- **Décompression par le bootstrap** : il exécute le vrai décompresseur aPLib du bootstrap du Cycles (section 2, `0x800006bc`, appelé par le chargeur `0x80000850` avec la section lue à `0x40200000`) sur la section 3 agrandie. L'OS relu est **identique** à l'octet près (767 989 → 1 949 392 o), rien n'est écrit au-delà, et il finit à `0x401dc2d0`, sous la zone de transit `0x40200000`. Même résultat avec les 5 mods cochés.
+- **Crochet** : la vraie remise à zéro du BSS `0x400004b2` de l'OS patché recopie la charge utile intacte vers `0x43000000`, puis le BSS, qui la contenait, est bien remis à zéro, et la fonction revient normalement.
+- **Repos** : 50 blocs avec une piste SNARE jamais déclenchée. Aucune instruction du Syntakt n'est exécutée et la sortie reste muette.
 
 Coût : **9 730 instructions par bloc** (voix seule, boucle comprise), contre 8 767 pour la SNARE d'origine (+11 %).
 
 ## 7. Risques pour le premier flash `[À FAIRE]`
 
-- **Taille de la section 3** : le bootstrap du Cycles accepte-t-il 2,1 Mo au lieu de 1,7 ? Inconnu. En cas de refus, le bootloader n'est pas touché : retour par le MIDI IN.
-- **Zone `0x46000000`** : aucune référence statique, mais un usage dynamique ne peut pas être exclu en émulation.
-- **Temps processeur** : SDRAM (cache) au lieu de SRAM pour les voix et les tables, et un processeur partagé avec l'interface. Tester six pistes en SD VINTAGE, pattern dense, effets.
-- **Pile** : les fonctions du Syntakt utilisent environ 100 o de pile de plus que la SNARE.
+Ce qui est vérifié en émulation, et ce qui ne l'est pas :
 
-Protocole : interface MIDI prête sur le MIDI IN, projets sauvegardés, flash par USB (`CONFIG › UPGRADE`) ou par le menu de démarrage.
-Écouter : une piste sur SNARE doit sonner exactement comme le SD VINTAGE d'un Syntakt, aux mêmes réglages.
+| Point | État |
+|---|---|
+| Décompression de l'OS agrandi par le bootstrap | vérifié avec son vrai code (§6) |
+| OS décompressé sous la zone de transit du bootstrap (`0x40200000`, soit 2 096 128 o au plus) | 1 949 392 o : marge de 143 Ko |
+| Limite de taille de l'OS dans le bootstrap | aucune trouvée : ses comparaisons de taille visent la mise à jour du bootstrap lui-même (61 440 o) et la taille de secteur de la flash (256 Ko) |
+| Conteneur plus gros en flash (816 Ko au lieu de 702 Ko) | **non vérifiable sans la machine** |
+| Charge utile écrasée par l'OS en marche | aucune référence au-dessus du BSS (§3) |
+| Temps processeur | +11 % d'instructions par voix ; SDRAM (cache) au lieu de SRAM pour les voix et les tables : **à mesurer** (six pistes en SD VINTAGE, pattern dense, effets) |
+| Pile | les fonctions du Syntakt utilisent environ 100 o de pile de plus que la SNARE |
+
+Si quelque chose ne va pas :
+- **L'OS refuse le fichier ou s'arrête pendant la réception** : l'ancien OS reste en flash, rien n'est perdu.
+- **Le moteur pose problème en jouant** : le Cycles redémarre sans exécuter de code du Syntakt (§4), et `CONFIG › UPGRADE` avec le firmware officiel fait revenir en arrière.
+- **Le Cycles ne démarre plus** (cas que les vérifications ci-dessus rendent peu probable) : seul le menu de démarrage permet de revenir, et il n'écoute que le MIDI IN. Il faut alors une interface MIDI.
+
+Protocole : projets sauvegardés, flash par USB (`CONFIG › UPGRADE`), puis une piste sur SNARE doit sonner exactement comme le SD VINTAGE d'un Syntakt aux mêmes réglages.
 
 ## 8. Suite `[À FAIRE]`
 
 - CP VINTAGE (moteur 7), SY TOY / SY BITS / SY SWARM (8–10) et SP TWINSHOT (11) : même méthode. Il faut élargir les racines, relocaliser, et une passerelle par machine.
 - Les autres machines numériques du Syntakt (SY RAW, SY CHIP, BD HARD…) ne passent pas par cette boucle : à localiser.
 - Ajouter plutôt que remplacer : 7ᵉ machine ([14 §8](14-machine-sd-vintage.md)).
-- Flasher web : porter en JavaScript la recette (lecture du `.syx` Syntakt, relocalisation, OS agrandi).
+
+## 9. Flasher web `[FAIT]`
+
+Pour flasher sans interface MIDI (demande du 30/09), le flasher web propose une 5ᵉ case, « SD VINTAGE, le vrai moteur du Syntakt », marquée **Expérimental**.
+- Elle fait apparaître une 3ᵉ zone de dépôt pour `Syntakt_OS1.41.syx`. Le fichier est reconnu à son SHA-256 et ne quitte pas l'ordinateur.
+- Un encadré résume les risques du §7. Le flash reste bloqué tant que sa case n'est pas cochée.
+- `docs/flasher/builder.js` porte la recette en JavaScript : lecture des deux flux SysEx du Syntakt, section 7, copies, relocalisations vérifiées, OS agrandi, compresseur glouton. Le résultat est **identique à l'octet près** à `build.py --syntakt`.
+- Chacune des 16 combinaisons avec SD VINTAGE est comparée à son empreinte de référence (`REF_MAINOS`).
+- Vérification : `tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.41.syx` (31 combinaisons, parcours complet jusqu'à l'envoi).

@@ -3,6 +3,9 @@
 et greffé dans TON OS Cycles par le tweak sdvintage-exact, doit sortir EXACTEMENT les mêmes échantillons
 que dans le moteur audio du Syntakt émulé (stengine.py).
 
+Vérifie aussi le démarrage : le vrai décompresseur du bootstrap relit l'OS agrandi, le crochet recopie la charge
+utile, et aucun code du Syntakt ne tourne tant qu'une piste SNARE n'est pas déclenchée.
+
 Même note, mêmes réglages, même instant de déclenchement. La boucle des voix du Cycles divise la sortie
 d'une piste par 2 : on compare Cycles x 2 et Syntakt, à 1 LSB près (arrondi du décalage).
 
@@ -83,6 +86,46 @@ def boot_hook_ok(os_img, payload):
     return ok
 
 
+def bootstrap_depack_ok(cycles_syx, tweak, syntakt_path):
+    """Au démarrage, c'est le décompresseur aPLib du BOOTSTRAP du Cycles (section 2, 0x800006bc, appelé par
+    le chargeur 0x80000850 avec la section lue en flash à 0x40200000) qui décompresse l'OS vers 0x40000400,
+    et non mtlib. On l'exécute pour de vrai sur la section 3 agrandie, recompressée comme build.py."""
+    import struct
+    import aplib_grow
+    from build import unwrap, container, aplib
+    from unicorn import Uc, UC_ARCH_M68K, UC_MODE_BIG_ENDIAN, UC_HOOK_MEM_UNMAPPED
+    from unicorn import m68k_const as mk
+    stream, _ = unwrap(pathlib.Path(cycles_syx).read_bytes())
+    c = container.parse(stream)
+    sec = {x["id"]: c["blob"][x["off"]:x["off"] + x["size"]] for x in c["sections"]}
+    boot = aplib.depack(sec[2])[0]                       # section 2 : bootstrap, exécuté à 0x800003fc
+    stock, ops = aplib.depack(sec[3])
+    patched, dirty = build.apply_writes(stock, [tweak])
+    payload, _ = build.build_payload([tweak], stock, syntakt_path)
+    want = bytes(patched) + payload
+    comp = aplib_grow.repack_grow(want, ops, dirty + bytearray(b"\x01") * len(payload), len(stock))
+    STAGE, DEST, STOP, SP = 0x40200000, 0x40000400, 0x8001f000, 0x8001e000
+    uc = Uc(UC_ARCH_M68K, UC_MODE_BIG_ENDIAN)
+    uc.ctl_set_cpu_model(mk.UC_CPU_M68K_ANY)
+    uc.mem_map(0x80000000, 0x20000)
+    uc.mem_write(0x800003fc, boot)
+    uc.mem_map(0x40000000, 0x00400000)
+    uc.mem_write(STAGE, comp)
+    uc.mem_write(STOP, b"\x4e\x71\x4e\x71")
+    uc.mem_write(SP, struct.pack(">III", STOP, STAGE, DEST))
+    uc.reg_write(mk.UC_M68K_REG_A7, SP)
+    bad = []
+    uc.hook_add(UC_HOOK_MEM_UNMAPPED, lambda u, a, addr, size, v, d: bad.append(addr) or False)
+    uc.emu_start(0x800006bc, STOP, count=400_000_000)
+    same = bytes(uc.mem_read(DEST, len(want))) == want
+    tail = not any(uc.mem_read(DEST + len(want), 64))
+    fits = DEST + len(want) <= STAGE                     # l'OS décompressé ne doit pas atteindre la zone de transit
+    ok = same and tail and fits and not bad and uc.reg_read(mk.UC_M68K_REG_D0) == len(want)
+    print(f"  {'ok   ' if ok else 'ECHEC'} décompresseur du bootstrap : OS agrandi relu {'à l' + chr(39) + 'identique' if same else 'DIFFÉREMMENT'}"
+          f" ({len(comp)} -> {len(want)} o, fin {DEST + len(want):#x} < {STAGE:#x} : {'oui' if fits else 'NON'})", flush=True)
+    return ok
+
+
 def idle_is_safe(os_img):
     """Tant qu'aucune piste SNARE n'est déclenchée (démarrage, séquenceur arrêté), aucune instruction du code
     du Syntakt ne doit s'exécuter : si ce code posait problème, le Cycles démarrerait quand même."""
@@ -114,7 +157,8 @@ def main():
     os_img = patched + payload
     img = syntakt.dsp_image(args.syntakt)
 
-    fail = (0 if boot_hook_ok(os_img, payload) else 1) + (0 if idle_is_safe(os_img) else 1)
+    fail = (0 if bootstrap_depack_ok(args.cycles, tweak, args.syntakt) else 1)
+    fail += (0 if boot_hook_ok(os_img, payload) else 1) + (0 if idle_is_safe(os_img) else 1)
     picks = [int(k) for k in args.cases.split(",")] if args.cases else range(len(CASES))
     for k in picks:
         name, over = CASES[k]

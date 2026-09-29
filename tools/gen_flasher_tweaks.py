@@ -72,6 +72,18 @@ FEATURES = [
             {"file": "03-browser-scroll", "label": None},
         ],
     },
+    {
+        "id": "sdvintage",
+        "label": "Vrai moteur SD VINTAGE du Syntakt",
+        "desc": "Le moteur SD VINTAGE du Syntakt remplace la machine SNARE, extrait de TON fichier "
+                "Syntakt_OS1.41.syx (a deposer a l'etape 2). Identique au Syntakt en emulation.",
+        "status": "experimental",
+        "credit": None,
+        "needs": "syntakt",
+        "variants": [
+            {"file": "21-sdvintage-exact", "label": None},
+        ],
+    },
 ]
 
 
@@ -87,8 +99,11 @@ def render():
                 seen[t["id"]] = True
                 tweaks.append(t)
             variants.append({"id": t["id"], "label": v["label"]})
-        features.append({"id": f["id"], "label": f["label"], "desc": f["desc"], "status": f["status"],
-                         "credit": f["credit"], "variants": variants})
+        feat = {"id": f["id"], "label": f["label"], "desc": f["desc"], "status": f["status"],
+                "credit": f["credit"], "variants": variants}
+        if f.get("needs"):
+            feat["needs"] = f["needs"]
+        features.append(feat)
     payload = {
         "device": {k: device[k] for k in ("device", "os", "section_sha256", "stock_syx_sha256", "cave_refs_ok")
                    if k in device},
@@ -97,6 +112,8 @@ def render():
         # onglet « OS Samples » : l'OS Model:Samples officiel, mis dans le conteneur du Cycles (crossflash)
         "samples": {"syx_sha256": OFFICIAL["samples"]["syx"], "main_sha256": OFFICIAL["samples"]["main"],
                     "download": "https://www.elektron.se/support-downloads/modelsamples"},
+        # fonctionnalités « needs: syntakt » : le fichier officiel Syntakt_OS1.41.syx de l'utilisateur
+        "syntakt": {"download": "https://www.elektron.se/support-downloads/syntakt"},
     }
     body = json.dumps(payload, ensure_ascii=False, indent=1)
     return (
