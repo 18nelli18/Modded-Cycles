@@ -54,7 +54,7 @@ By priority. Feasibility is detailed in [note 10](notes/10-faisabilite-fonctionn
 |---|---|
 | **6-channel** USB output | ✅ **tested on a real Model:Cycles** — in the web flasher |
 | Keep **OS updates over USB** with the 6-channel mod | ✅ `6ch-usbup`, the version the web flasher installs ([note 13](notes/13-6ch-upgrade-usb.md)) |
-| Extra drum engine: **SD VINTAGE** (vintage snare, inspired by the Syntakt) | ✅ step 1 (replaces SNARE) **tested on a real Model:Cycles** — command line only for now; 7th machine: plan ready ([note 14](notes/14-machine-sd-vintage.md)) |
+| Extra drum engine: **SD VINTAGE** (vintage snare from the Syntakt) | ✅ step 1 (replaces SNARE) **tested on a real Model:Cycles**; **v2 retuned on the real Syntakt SD VINTAGE** running in our emulator (same pitch, sweep, decay and noise spectrum, knobs mean what they mean on the Syntakt) — command line only for now ([note 16](notes/16-moteur-syntakt.md)) |
 | **12-channel** USB output (per-track pan) | 🟡 feasible, to develop (through an **8-channel** milestone: 6 tracks + stereo mix, [note 11](notes/11-conception-8-canaux.md)) |
 | Change the **effect algorithms** | 🔴 no (tweaking parameters: 🟡) |
 | **Sample engine** (like the Model:Samples) | 🔴 out of reach as a Model:Cycles mod |
@@ -81,7 +81,7 @@ Requests from the community (Reddit) and how we handle them: [note 15](notes/15-
 | Mute without holding `FUNC` | ✅ `latching-mute` (above) |
 | Bundle with trig preview | ✅ `trig-preview` (above) |
 | Run the **Model:Samples OS** on a Model:Cycles | ✅ **tested on a real Model:Cycles** (2026-09-29) — *Samples OS* tab of the web flasher, or `tools/crossflash.py`. Built from both official files: same bootstrap, same updater, same RAM setup on both machines. The way back to the Cycles OS goes through the MIDI IN (note 15 §3) |
-| Port the **Syntakt digital machines** | 🟠 research: same container, same ColdFire CPU and the same FM sine table as the Model:Cycles; next step is running the real SD VINTAGE in our emulator |
+| Port the **Syntakt digital machines** | 🟡 the Syntakt's audio engine (a second ColdFire) runs in our emulator; its FM machines turn out to be the Model:Cycles machines plus SD VINTAGE and CP VINTAGE. SD VINTAGE v2 is retuned on it ([note 16](notes/16-moteur-syntakt.md)) |
 
 ## Project status
 

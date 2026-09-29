@@ -73,13 +73,15 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
 | `6ch-usbup` | `db3d26cc3a48d1155933240c7d1d5476c8f56d2b6a54be1ffe7f5327e54c0521` |
-| `sdvintage-snare` | `80b7b2bd003f2695488d629c0fab56c84e10213898c9820c321efa711f6957c7` |
-| `6ch-multiout,sdvintage-snare` | `4494fb764c7643b2a9acea8b4fa2cafe10ee7d9644e56d08e333ee019f4cbe72` |
-| `6ch-usbup,sdvintage-snare` | `38754937b06e3815ee1da9c93137d46283b612e1881772f4d034fb9f998b3335` |
+| `sdvintage-snare` (v2, recalée sur le Syntakt) | `11049726efa102028f7365b0a672c8a244b98edcef5e7c8b5e0aafba369f60d3` |
+| `6ch-multiout,sdvintage-snare` | `80d0d717c5054f9277c2ddadb588e3578968cc1427610c7367ee408fa8ffd2de` |
+| `6ch-usbup,sdvintage-snare` | `6cb642dc14fc3f9ec013da8481fc0545758e514c76e0c60611208d9f15ad71cc` |
 | `latching-mute,trig-preview,browser-scroll` | `71fef138b1ae16f3ad440ecaa6a6327c1a987ce2c8a86b74329f68159981a15c` (= `tweak.py` de drumkilla) |
 | `6ch-usbup,latching-mute,trig-preview,browser-scroll` | `fd57831c61926fb3b1902cadcb0f95e68db3bb637b4cd20860a0efc46db82cfa` |
 
 Les 15 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`).
+SD VINTAGE v1 (clean-room d'origine, **testée sur le matériel** le 29/09/2026, compilée par GCC 13.3) donnait `80b7b2bd…` seule et `38754937…` avec `6ch-usbup` ;
+la v2 est compilée par `m68k-elf-gcc` 16.2 (Homebrew), voir [note 16 §6](notes/16-moteur-syntakt.md).
 
 ### Variante `6ch-usbup`
 

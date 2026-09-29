@@ -16,12 +16,15 @@ Il n'a pas besoin de l'image firmware : les octets « old » sont des constantes
     python3 tools/gen_sdvintage.py            # compile et (ré)écrit 20-sdvintage-snare.json
     python3 tools/gen_sdvintage.py --check    # vérifie que le JSON versionné correspond au source
 
-Toolchain : paquet Debian/Ubuntu gcc-m68k-linux-gnu (testé avec GCC 13.3). Un autre GCC peut
+Toolchain : paquet Debian/Ubuntu gcc-m68k-linux-gnu, ou m68k-elf-gcc de Homebrew sur macOS
+(pris automatiquement si le premier est absent ; M68K_CROSS=<préfixe> pour forcer). Un autre GCC peut
 produire d'autres octets : --check le signalera, le JSON versionné reste la référence testée.
 """
 import argparse
 import json
+import os
 import pathlib
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -32,7 +35,8 @@ HERE = pathlib.Path(__file__).resolve().parent
 SRC_DIR = HERE / "machines" / "sdvintage"
 DST = HERE.parent / "tweaks" / "model-cycles_OS1.13" / "20-sdvintage-snare.json"
 BASE = 0x40000400
-CROSS = "m68k-linux-gnu-"
+CROSS = os.environ.get("M68K_CROSS") or next(
+    (c for c in ("m68k-linux-gnu-", "m68k-elf-") if shutil.which(c + "gcc")), "m68k-linux-gnu-")
 CFLAGS = ["-mcpu=54418", "-O2", "-ffreestanding", "-fno-builtin", "-nostdlib", "-fno-pic", "-fno-common",
           "-ffunction-sections", "-fdata-sections", "-fomit-frame-pointer", "-Wall", "-Wextra", "-Werror"]
 
@@ -41,11 +45,14 @@ RENDER_TAB, UPDATE_TAB = 0x40118610, 0x40118628
 STOCK = {"render": 0x400ab6e8, "update": 0x400ab3b0}
 CAVES = {".cave_a": 0x4016cae8, ".cave_b": 0x4018a788}      # = link.ld
 # Descripteurs de paramètres SNARE : champ « défaut » (mot 32 bits, valeur 8.8), notes/14 §1
+# Défauts SD VINTAGE = ceux du vrai SD VINTAGE du Syntakt (INHM 0, FCMP 110, SWEP 74, MENV 80, DEC 33 ;
+# descripteurs de son interface, notes/16 §4).
 DEFAULTS = {  # nom: (va du champ, défaut d'origine, défaut SD VINTAGE)
-    "color":   (0x4010e818, 0, 60),
-    "shape":   (0x4010e850, 127, 64),
-    "sweep":   (0x4010e888, 8, 40),
-    "contour": (0x4010e8c0, 0, 40),
+    "color":   (0x4010e818, 0, 0),
+    "shape":   (0x4010e850, 127, 110),
+    "sweep":   (0x4010e888, 8, 74),
+    "contour": (0x4010e8c0, 0, 80),
+    "decay":   (0x4010e8f8, 40, 33),
 }
 
 
@@ -88,7 +95,8 @@ def derive(blobs, syms):
     writes.append({"off": RENDER_TAB + 4 - BASE, "old": be32(STOCK["render"]), "new": be32(syms["sdv_render"])})
     writes.append({"off": UPDATE_TAB + 4 - BASE, "old": be32(STOCK["update"]), "new": be32(syms["sdv_update"])})
     for va, old, new in DEFAULTS.values():
-        writes.append({"off": va - BASE, "old": be32(old << 8), "new": be32(new << 8)})
+        if new != old:
+            writes.append({"off": va - BASE, "old": be32(old << 8), "new": be32(new << 8)})
     writes.sort(key=lambda w: w["off"])
     sizes = ", ".join(f"{len(c)} o @ 0x{va:08x}" for va, c in blobs.items())
     return {
@@ -96,13 +104,13 @@ def derive(blobs, syms):
         "order": 20,
         "name": "Machine SD VINTAGE a la place de SNARE (etape 1)",
         "description": [                          # ASCII, comme les autres tweaks
-            "Remplace le moteur de la machine SNARE par SD VINTAGE : caisse claire vintage",
-            "(corps a 2 modes accordes + balayage de hauteur, bruit snappy filtre), clean-room.",
-            "PITCH accord | DECAY longueur | COLOR snappy (bruit) | SHAPE brillance du bruit |",
-            "SWEEP balayage du corps | CONTOUR duree du corps. PUNCH, GATE, LFO : comme d'origine.",
+            "Remplace le moteur de la machine SNARE par SD VINTAGE : caisse claire vintage (v2),",
+            "recalee sur le vrai SD VINTAGE du Syntakt mesure en emulation (notes/16), clean-room.",
+            "Potards au sens du Syntakt : PITCH = TUNE | COLOR = INHM (2e mode) | SHAPE = FCMP (amas aigu) |",
+            "SWEEP = SWEP (balayage) | CONTOUR = MENV (2e mode) | DECAY = DEC. PUNCH, GATE, LFO : d'origine.",
             f"Code compile depuis tools/machines/sdvintage ({sizes}), dans deux masques de",
-            "sprites liberes (tools/sprites.py). Defauts SNARE adaptes : COLOR 60, SHAPE 64, SWEEP 40, CONTOUR 40.",
-            "ATTENTION : jamais flashe. Etape 1 = validation sur materiel, voir notes/14.",
+            "sprites liberes (tools/sprites.py). Defauts du Syntakt : COLOR 0, SHAPE 110, SWEEP 74, CONTOUR 80, DECAY 33.",
+            "v1 validee sur materiel le 29/09/2026 ; v2 validee en emulation, a reecouter sur la machine.",
         ],
         "device": "Model:Cycles",
         "os": "1.13",

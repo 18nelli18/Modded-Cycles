@@ -11,7 +11,7 @@ d'abord ce qui existe déjà et se livre vite, ensuite ce qui demande de la rech
 | 1 | Un mode mute sans tenir FUNC | ✅ **livré** : tweak `latching-mute` de drumkilla, dans le flasher web | §1 |
 | 2 | Regrouper avec le tweak « trig preview » | ✅ **livré** : `trig-preview` (et `browser-scroll`), dans le flasher web | §2 |
 | 3 | Flasher l'OS Model:Samples, ou une machine « samples » dans l'OS Cycles | ✅ **l'OS Samples tourne sur un vrai Model:Cycles** (29/09/2026) : onglet *Samples OS* du flasher web, ou `tools/crossflash.py`. La machine « samples » dans l'OS Cycles vient après | §3 |
-| 4 | Porter les machines numériques du Syntakt | 🟠 **recherche** : même conteneur, même CPU, même table de sinus que le Cycles. Prochaine étape : faire tourner le vrai SD VINTAGE dans le banc | §4 |
+| 4 | Porter les machines numériques du Syntakt | 🟡 **le vrai SD VINTAGE tourne en émulation, et le nôtre est recalé dessus** ([16](16-moteur-syntakt.md)). Les machines FM du Syntakt sont celles du Cycles | §4 |
 
 Ordre suivi : **§3 d'abord** (fichier de 686 Ko, la comparaison des deux OS 1.13 a répondu vite à la question clé :
 le matériel est le même), **puis §4** (plus long, mais il s'appuie sur le banc d'émulation de SD VINTAGE).

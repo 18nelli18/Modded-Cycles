@@ -12,6 +12,7 @@ Intégration **par étapes** :
 |---|---|
 | Architecture des machines du M:C (descripteurs, voix, tables, briques DSP) | `[FAIT]` décodée sur l'OS 1.13 (§2) |
 | Moteur SD VINTAGE (C, clean-room) | `[FAIT]` écrit, compilé pour le ColdFire, 828 + 560 octets (§3) |
+| **v2** : moteur recalé sur le vrai SD VINTAGE du Syntakt, potards au sens du Syntakt | `[FAIT]` en émulation ([16 §6](16-moteur-syntakt.md)), à réécouter sur la machine |
 | **Étape 1** : tweak `sdvintage-snare` (SD VINTAGE à la place de SNARE) | `[FAIT]` build CLI, validé dans le vrai moteur émulé (§6), puis **sur le matériel le 29/09/2026** (« elle marche parfait »). Retiré du flasher web pour l'instant, à la demande de l'utilisateur : reste disponible avec `build.py`. |
 | Banc d'émulation du moteur audio (Unicorn + EMAC exacte) | `[FAIT]` `tools/emu/` (§4) |
 | Place libre : les grosses « caves » 0xFF sont des masques de sprites | `[FAIT]` partage de masques ; `6ch-usbup` corrigé (§5) |
