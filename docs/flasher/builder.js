@@ -574,8 +574,9 @@ function syntaktSection(raw, id) {
 }
 
 /* Charge utile d'un tweak « append » : plages copiées du programme audio du Syntakt (section 7, chargée
- * à 0x40000400), notre code, puis la table de relocalisation (ancienne valeur vérifiée à chaque fois). */
-function buildPayload(ap, syntaktRaw) {
+ * à 0x40000400) ou du MAIN OS Cycles d'origine (mainOs), notre code, puis la table de relocalisation
+ * (ancienne valeur vérifiée à chaque fois). */
+function buildPayload(ap, syntaktRaw, mainOs) {
   if (hex(sha256(syntaktRaw)) !== ap.syntakt.syx_sha256)
     throw new Error("ce n'est pas le fichier officiel Syntakt_OS1.41.syx");
   const img = syntaktSection(syntaktRaw, ap.syntakt.section);
@@ -583,8 +584,9 @@ function buildPayload(ap, syntaktRaw) {
   const dest = parseInt(ap.dest, 16), out = new Uint8Array(ap.size);
   for (const part of ap.parts) {
     const at = parseInt(part.dest, 16) - dest;
-    const chunk = part.syntakt
-      ? img.subarray(parseInt(part.syntakt[0], 16) - BASE, parseInt(part.syntakt[1], 16) - BASE)
+    const range = part.syntakt || part.cycles;
+    const chunk = range
+      ? (part.syntakt ? img : mainOs).subarray(parseInt(range[0], 16) - BASE, parseInt(range[1], 16) - BASE)
       : fromHex(part.hex);
     out.set(chunk, at);
   }
@@ -620,7 +622,7 @@ function build(raw, device, chosen, opts = {}) {
     const ap = apps[0].append;
     if (BASE + mainOs.length !== parseInt(ap.at, 16)) throw new Error("l'image ne finit pas où le tweak l'attend");
     if (!opts.syntakt) throw new Error("fichier Syntakt_OS1.41.syx requis");
-    const payload = buildPayload(ap, opts.syntakt);
+    const payload = buildPayload(ap, opts.syntakt, mainOs);
     full = concat(patched, payload);
     fullDirty = concat(dirty, new Uint8Array(payload.length).fill(1));
   }

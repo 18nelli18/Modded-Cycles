@@ -41,6 +41,10 @@ L'orchestration (`tools/build.py`) et les tables de patchs (`tweaks/`) sont prop
    ```sh
    python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup,sdvintage-exact --syntakt Syntakt_OS1.41.syx
    ```
+   Ou le même moteur en **7ᵉ machine « SDVtg »**, SNARE restant la SNARE d'origine ([note 18](notes/18-septieme-machine.md)) :
+   ```sh
+   python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup,sdvintage-7th --syntakt Syntakt_OS1.41.syx
+   ```
    → écrit `model-cycles_OS1.13_mod.syx` à côté. `-t a,b` combine plusieurs patchs compatibles.
    `--all` applique tout, mais refuse si deux patchs sont incompatibles (c'est le cas de ces deux variantes).
 
@@ -86,8 +90,9 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 
 | `sdvintage-exact` (avec `--syntakt Syntakt_OS1.41.syx`) | `8e2290a79fb1406ce65b3af3c5d3d95faade666e98eb8ecce0c0fa25fe87b15d` |
 | `6ch-usbup,sdvintage-exact` (idem) | `ea57b3c52b77d4de3df073ee605f2fecde59878d06e3141c927ed3bd7f489904` |
+| `sdvintage-7th` (idem) | `1d50820ae971f2ccc4b14f5c4255f6c43412e4c8cb629b185ab366e38d91f0c4` |
 
-Les 31 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`) ;
+Les 47 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`) ;
 `tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.41.syx` les reconstruit toutes dans la page et les compare.
 SD VINTAGE v1 (clean-room d'origine, **testée sur le matériel** le 29/09/2026, compilée par GCC 13.3) donnait `80b7b2bd…` seule et `38754937…` avec `6ch-usbup` ;
 la v2 est compilée par `m68k-elf-gcc` 16.2 (Homebrew), voir [note 16 §6](notes/16-moteur-syntakt.md).
@@ -109,6 +114,14 @@ La validation rejoue le vrai moteur de l'OS dans un émulateur (paquets Python `
 ```sh
 python3 tools/gen_sdvintage.py --check                               # le JSON versionné correspond-il au source ?
 python3 tools/emu/test_sdvintage.py -i model-cycles_OS1.13.syx       # ~2 min ; --wav dossier/ pour écouter les rendus
+```
+Le vrai moteur du Syntakt, à la place de SNARE ([note 17](notes/17-portage-exact-syntakt.md)) ou en 7ᵉ machine SDVtg
+([note 18](notes/18-septieme-machine.md)), a ses générateurs et ses preuves (`m68k-elf-gcc` / `m68k-elf-objdump`) :
+```sh
+python3 tools/gen_sdvintage_exact.py --syntakt Syntakt_OS1.41.syx --check
+python3 tools/gen_sdvintage_7th.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx --check
+python3 tools/emu/test_sdvintage_exact.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx
+python3 tools/emu/test_sdvintage_7th.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx
 ```
 
 ## Flasher (rappel)

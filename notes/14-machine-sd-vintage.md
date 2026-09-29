@@ -239,7 +239,9 @@ TOUT OK
 4. **Charge** : les 6 pistes en SNARE, pattern dense, effets à fond. Écouter les craquements, longue durée (≥ 30 min).
 5. Retour : reflasher l'OS officiel par le MIDI IN (ou `CONFIG > UPGRADE` par USB, hors variante `6ch-multiout`).
 
-## 8. Étape 2 : en faire une 7ᵉ machine (plan) `[À FAIRE]`
+## 8. Étape 2 : en faire une 7ᵉ machine (plan) `[FAIT → note 18]`
+
+> Fait avec le vrai moteur du Syntakt : voir [18-septieme-machine.md](18-septieme-machine.md) (inventaire complet, descripteurs propres, preuve en émulation). Le plan ci-dessous est la première version.
 
 **Moteur** (simple, adresses vérifiées) :
 - Bornes : `moveq #5` → `#6` en `0x400a7dba`, `0x400a7dc0` et `0x400a7df4`. Octet `0x40118646` = `06`.
