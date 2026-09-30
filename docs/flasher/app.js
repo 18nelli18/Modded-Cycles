@@ -70,6 +70,23 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+sdvintage-7th": "230559e489a78cb0aa55e801055f117683c7e23e43b4a8d8e2d84d2649927bce",
   "latching-mute+trig-preview+browser-scroll+sdvintage-7th": "8e3f31e813f14ec331e7456643befd4f5ebf1b3157bd8c4bef4e2f0805e8e49a",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+sdvintage-7th": "75d785df0386049a3a1779c326b7da8325bf8d728f63d135873ae9dce47cb43c",
+  // + SD VINTAGE and CP VINTAGE as 7th and 8th machines "SDVtg", "CPVtg" (tweak syntakt-vintage, notes/19)
+  "syntakt-vintage": "b4de3ec5f7eda7504bf03e7141f57bae6cf5bc137d39f6704da60881d56ed9b0",
+  "6ch-usbup+syntakt-vintage": "6ca76aa92650b39a8d90f8e7ee4b9e6afdda0020c6c8d5d77a241a42e8c1f464",
+  "latching-mute+syntakt-vintage": "6d93379ea348019aeaccf979b50d7e9717ea5d14df3a35ad3097e0b58f07866d",
+  "trig-preview+syntakt-vintage": "7c6ac536d62e311095eb6f936bd9e440882079d71f89628b862f975b0ea9a362",
+  "browser-scroll+syntakt-vintage": "08648ade8c648e544b927fefcf6ba64eed2a7495a8e80ac05ef1f4581bd4e93a",
+  "6ch-usbup+latching-mute+syntakt-vintage": "b07ca914644b6825f29c6cbfc3c9dc2891278fc3c0942b907f946600a488ad6a",
+  "6ch-usbup+trig-preview+syntakt-vintage": "ee60b8aaabe4df0ce40a496286c00b19052fbd1f119aab57f85c745767d3da10",
+  "6ch-usbup+browser-scroll+syntakt-vintage": "484c3ba421347c23c96dfad4a12dc1f87297003a6349cc55ac08528a0ca96739",
+  "latching-mute+trig-preview+syntakt-vintage": "b47806eb0947924b80defb2c5c33d867dbc737111520c2d6c54f9eb1cf7c7973",
+  "latching-mute+browser-scroll+syntakt-vintage": "fe643570084573fb8b09b9082341d250d65f2c8b8efe8b2b61dc037c85eace44",
+  "trig-preview+browser-scroll+syntakt-vintage": "d47493dd5029fa1c6fdee8125447e420cdb8c1e2c820c2641ebb15a26a1fae96",
+  "6ch-usbup+latching-mute+trig-preview+syntakt-vintage": "64e76a3487c9b148e0133aae3a76caf9d7dec159eb8731cab5ebf40dd0322506",
+  "6ch-usbup+latching-mute+browser-scroll+syntakt-vintage": "6cc39bc8384411ddf564566269e91795865008d71f5f580d7be205404c687974",
+  "6ch-usbup+trig-preview+browser-scroll+syntakt-vintage": "0760e7cad35f4fda046dd9f2ff7992b14a95ce7d3b715813e84e1023f3f7c62f",
+  "latching-mute+trig-preview+browser-scroll+syntakt-vintage": "1a1717f8f26d786599468771870472807aa0067cc6d651fef2b641ee5da382b5",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-vintage": "47cb625a8c604ccdb820683811ad024fb72c4028a0abaabe3f1856d40a06d6c0",
 };
 
 // "Samples OS" tab: official Model:Samples OS 1.13 inside the official Model:Cycles container
@@ -101,7 +118,7 @@ const T = {
     s1: "What do you want to install?",
     tab_mods: "Mods",
     tab_restore: "Official firmware",
-    mods_note: "All these mods have been tested on a real Model:Cycles. Tick several to combine them.",
+    mods_note: "All these mods have been tested on a real Model:Cycles, except the options marked “New”. Tick several to combine them.",
     restore_text: "Sends your official OS file <b>unchanged</b>, to go back to the stock firmware. It is also a good first rehearsal: it checks your cable and your setup without changing anything.",
     tab_samples: "Samples OS",
     samples_title: "Turn your Model:Cycles into a Model:Samples",
@@ -178,6 +195,7 @@ const T = {
     needs_syntakt: "The SD VINTAGE engine is read from the official Syntakt OS file: drop it below.",
     miss_syntakt: "Load the official Syntakt OS file (step 2).",
     done_sdv: "Then pick the SNARE machine on a track and play it: it is the Syntakt's SD VINTAGE. PITCH, COLOR, SHAPE, SWEEP and CONTOUR act as its TUNE, INHM, FCMP, SWEP and MENV.",
+    done_sv: "Then press MACHINES on a track: <b>SDVtg</b> (the Syntakt's SD VINTAGE) and <b>CPVtg</b> (its CP VINTAGE clap) come after Chord. CPVtg's knobs: Body Char, Balance, Spacing Crunch, Body Envelope. If something goes wrong, flash the official firmware back from CONFIG › UPGRADE.",
     done_sdv7: "Then press MACHINES on a track and pick <b>SDVtg</b>, the 7th machine: the Syntakt's SD VINTAGE. Its knobs show the Syntakt names (Inharm, Freq Complex, Pitch Sweep, Mod Envelope). SNARE is unchanged. If something goes wrong, flash the official firmware back from CONFIG › UPGRADE.",
     warn_samples_port: "This port is a Model:Samples (a Model:Cycles running the Samples OS): it refuses a Model:Cycles firmware over USB. The way back goes through the startup menu and the MIDI IN (see the full guide).",
     samples_needs_cycles: "For the Samples OS, the first file must be the official <code>model-cycles_OS1.13.syx</code>: it provides the startup menu, updater and signature that stay on your Model:Cycles.",
@@ -226,7 +244,7 @@ const T = {
     s1: "Qu'est-ce que tu veux installer ?",
     tab_mods: "Mods",
     tab_restore: "Firmware officiel",
-    mods_note: "Tous ces mods ont été testés sur un vrai Model:Cycles. Coche-en plusieurs pour les combiner.",
+    mods_note: "Tous ces mods ont été testés sur un vrai Model:Cycles, sauf les options marquées « Nouveau ». Coche-en plusieurs pour les combiner.",
     restore_text: "Envoie ton fichier d'OS officiel <b>sans le modifier</b>, pour revenir au firmware d'origine. C'est aussi une bonne répétition avant un mod : elle vérifie ton câble et ton installation sans rien changer.",
     tab_samples: "OS Samples",
     samples_title: "Transforme ton Model:Cycles en Model:Samples",
@@ -302,6 +320,7 @@ const T = {
     needs_syntakt: "Le moteur SD VINTAGE se lit dans le fichier officiel de l'OS Syntakt : dépose-le ci-dessous.",
     miss_syntakt: "Dépose le fichier officiel de l'OS Syntakt (étape 2).",
     done_sdv: "Choisis ensuite la machine SNARE sur une piste et joue-la : c'est le SD VINTAGE du Syntakt. PITCH, COLOR, SHAPE, SWEEP et CONTOUR agissent comme ses TUNE, INHM, FCMP, SWEP et MENV.",
+    done_sv: "Appuie ensuite sur MACHINES sur une piste : <b>SDVtg</b> (la SD VINTAGE du Syntakt) et <b>CPVtg</b> (son clap CP VINTAGE) viennent après Chord. Potards de CPVtg : Body Char, Balance, Spacing Crunch, Body Envelope. Si quelque chose cloche, reflashe le firmware officiel depuis CONFIG › UPGRADE.",
     done_sdv7: "Appuie ensuite sur MACHINES sur une piste et choisis <b>SDVtg</b>, la 7ᵉ machine : c'est le SD VINTAGE du Syntakt. Ses potards affichent les noms du Syntakt (Inharm, Freq Complex, Pitch Sweep, Mod Envelope). SNARE ne change pas. Si quelque chose cloche, reflashe le firmware officiel depuis CONFIG › UPGRADE.",
     warn_samples_port: "Ce port est un Model:Samples (un Model:Cycles sous l'OS Samples) : il refuse un firmware Model:Cycles par USB. Le retour passe par le menu de démarrage et le MIDI IN (voir le guide complet).",
     samples_needs_cycles: "Pour l'OS Samples, le premier fichier doit être le <code>model-cycles_OS1.13.syx</code> officiel : il fournit le menu de démarrage, l'updater et la signature qui restent sur ton Model:Cycles.",
@@ -357,10 +376,11 @@ const FEAT = {
       desc: "With the sequencer stopped, hold a step and press PAGE: the step plays with its own note, length and p-locks." },
     "browser-scroll": { label: "Scroll long names",
       desc: "In the sound browser, a name too long for the screen scrolls so you can read it." },
-    sdvintage: { label: "SD VINTAGE, the real Syntakt engine",
-      desc: "The Syntakt's own SD VINTAGE engine, copied from your Syntakt OS 1.41 file (step 2): in place of SNARE, or as a 7th machine “SDVtg” next to it, with the Syntakt's knob names and defaults. In the emulator it is identical to the Syntakt, sample for sample." },
-    "sdvintage-exact": { label: "In place of SNARE", note: "Tested on a real Model:Cycles." },
-    "sdvintage-7th": { label: "As a 7th machine, SDVtg", note: "SNARE stays. Tested on a real Model:Cycles." },
+    sdvintage: { label: "Real Syntakt engines",
+      desc: "The Syntakt's own SD VINTAGE and CP VINTAGE engines, copied from your Syntakt OS 1.41 file (step 2), as extra machines next to the 6 original ones, with the Syntakt's knob names and defaults. In the emulator they are identical to the Syntakt, sample for sample." },
+    "syntakt-vintage": { label: "SDVtg and CPVtg, 7th and 8th machines", note: "SD VINTAGE and CP VINTAGE. New: not tested on a Model:Cycles yet." },
+    "sdvintage-exact": { label: "SD VINTAGE in place of SNARE", note: "Tested on a real Model:Cycles." },
+    "sdvintage-7th": { label: "SDVtg, 7th machine", note: "SD VINTAGE only. Tested on a real Model:Cycles." },
   },
   fr: {
     usb6: { label: "Audio USB 6 canaux",
@@ -371,10 +391,11 @@ const FEAT = {
       desc: "Séquenceur à l'arrêt, maintiens un pas et appuie sur PAGE : le pas joue avec sa note, sa longueur et ses p-locks." },
     "browser-scroll": { label: "Défilement des noms longs",
       desc: "Dans le navigateur de sons, un nom trop long pour l'écran défile pour que tu puisses le lire." },
-    sdvintage: { label: "SD VINTAGE, le vrai moteur du Syntakt",
-      desc: "Le propre moteur SD VINTAGE du Syntakt, copié depuis ton fichier d'OS Syntakt 1.41 (étape 2) : à la place de SNARE, ou en 7ᵉ machine « SDVtg » à côté, avec les noms et défauts des potards du Syntakt. En émulation, identique au Syntakt échantillon par échantillon." },
-    "sdvintage-exact": { label: "À la place de SNARE", note: "Testé sur un vrai Model:Cycles." },
-    "sdvintage-7th": { label: "En 7ᵉ machine, SDVtg", note: "SNARE reste. Testé sur un vrai Model:Cycles." },
+    sdvintage: { label: "Vrais moteurs du Syntakt",
+      desc: "Les propres moteurs SD VINTAGE et CP VINTAGE du Syntakt, copiés depuis ton fichier d'OS Syntakt 1.41 (étape 2), en machines supplémentaires à côté des 6 d'origine, avec les noms et défauts des potards du Syntakt. En émulation, identiques au Syntakt échantillon par échantillon." },
+    "syntakt-vintage": { label: "SDVtg et CPVtg, 7ᵉ et 8ᵉ machines", note: "SD VINTAGE et CP VINTAGE. Nouveau : pas encore testé sur un Model:Cycles." },
+    "sdvintage-exact": { label: "SD VINTAGE à la place de SNARE", note: "Testé sur un vrai Model:Cycles." },
+    "sdvintage-7th": { label: "SDVtg, 7ᵉ machine", note: "SD VINTAGE seul. Testé sur un vrai Model:Cycles." },
   },
 };
 
@@ -1021,7 +1042,7 @@ async function flash() {
     r.className = "result ok";
     r.innerHTML = `<p><b>${esc(t("done_title"))}</b></p><p>${t("done_body")}</p>` +
       (fw.sixch ? `<p>${t("done_6ch")}</p>` : "") +
-      (fw.sdv ? `<p>${t(fw.sdv === "sdvintage-7th" ? "done_sdv7" : "done_sdv")}</p>` : "") +
+      (fw.sdv ? `<p>${t({ "sdvintage-7th": "done_sdv7", "syntakt-vintage": "done_sv" }[fw.sdv] || "done_sdv")}</p>` : "") +
       (fw.kind === "samples" ? `<p>${t("done_samples")}</p>` : "");
     log(`Transfer complete in ${Math.round(res.seconds)} s.`, "is-ok");
   }

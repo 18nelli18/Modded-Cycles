@@ -65,7 +65,7 @@ async function main() {
     check(errors.length === 0, "loads without JS error " + (errors.length ? JSON.stringify(errors) : ""));
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
-    check(ids.join() === "6ch-usbup,latching-mute,trig-preview,browser-scroll,sdvintage-7th,sdvintage-exact" && w.MC_TWEAKS.features.length === 5,
+    check(ids.join() === "6ch-usbup,latching-mute,trig-preview,browser-scroll,sdvintage-7th,syntakt-vintage,sdvintage-exact" && w.MC_TWEAKS.features.length === 5,
       "MC_TWEAKS: only USB-friendly tweaks (no 6ch-multiout, no clean-room sdvintage): " + ids.join());
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
@@ -82,9 +82,10 @@ async function main() {
       && /elektron\.se\/support-downloads\/syntakt/.test(doc.getElementById("step-file").innerHTML),
       "SD VINTAGE ticked -> Syntakt drop zone and download link");
     const radios = [...doc.querySelectorAll('input[name="var-sdvintage"]')];
-    check(radios.map((r) => r.value).join() === "sdvintage-7th,sdvintage-exact" && radios[0].checked
-      && /As a 7th machine, SDVtg/.test(text(doc, "features")) && /In place of SNARE/.test(text(doc, "features")),
-      "SD VINTAGE: two variants, 7th machine SDVtg (default) or in place of SNARE");
+    check(radios.map((r) => r.value).join() === "sdvintage-7th,syntakt-vintage,sdvintage-exact" && radios[0].checked
+      && /SDVtg, 7th machine/.test(text(doc, "features")) && /SDVtg and CPVtg, 7th and 8th machines/.test(text(doc, "features"))
+      && /SD VINTAGE in place of SNARE/.test(text(doc, "features")),
+      "Syntakt engines: three variants, SDVtg (default), SDVtg + CPVtg (new), SD VINTAGE in place of SNARE");
     doc.getElementById("feat-sdvintage").click();
     await wait(30);
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
@@ -106,7 +107,7 @@ async function main() {
     await wait(20);
     check(/Qu'est-ce que tu veux installer/.test(text(doc, "h1s")) && doc.documentElement.lang === "fr", "FR switch translates the page");
     check(/Audio USB 6 canaux/.test(text(doc, "features")) && /Mode mute verrouillé/.test(text(doc, "features"))
-      && /par drumkilla/.test(text(doc, "features")) && /le vrai moteur du Syntakt/.test(text(doc, "features"))
+      && /par drumkilla/.test(text(doc, "features")) && /Vrais moteurs du Syntakt/.test(text(doc, "features"))
       && /Testé/.test(text(doc, "features")), "FR switch translates the feature cards and credits");
     check(/Crédits/.test(text(doc, "credits")) && /boîte à outils/.test(text(doc, "credits")), "FR switch translates the credits section");
     doc.querySelector('.lang button[data-lang="en"]').click();
@@ -242,19 +243,19 @@ async function main() {
       seen.add(app.state.buildKey);
       check(f && f.kind === "built" && f.ref, `real OS: ${app.state.buildKey} matches its reference hash`);
     }
-    if (REAL_ST) {                                        // the other SD VINTAGE variant: in place of SNARE
+    for (const variant of REAL_ST ? ["syntakt-vintage", "sdvintage-exact"] : []) {   // the other variants
       for (let mask = 0; mask < 16; mask++) {
         for (let k = 0; k < boxes.length; k++) {
           const cb = doc.getElementById(boxes[k]);
           const want = boxes[k] === "feat-sdvintage" || !!(mask & (1 << k));
           if (cb.checked !== want) { cb.click(); await wait(5); }
         }
-        const rx = doc.querySelector('input[name="var-sdvintage"][value="sdvintage-exact"]');
+        const rx = doc.querySelector(`input[name="var-sdvintage"][value="${variant}"]`);
         if (!rx.checked) { rx.click(); await wait(5); }
         await settle(w);
         const f = app.state.fw;
         seen.add(app.state.buildKey);
-        check(f && f.kind === "built" && f.ref && app.state.buildKey.endsWith("sdvintage-exact"),
+        check(f && f.kind === "built" && f.ref && app.state.buildKey.endsWith(variant),
           `real OS: ${app.state.buildKey} matches its reference hash`);
       }
     }
@@ -331,7 +332,7 @@ async function main() {
     await settle(w);
     const f = app.state.fw;
     check(f && f.kind === "built" && f.ref && f.sdv && /recognised/.test(text(doc, "file3-status"))
-      && /SD VINTAGE, the real Syntakt engine/.test(text(doc, "file-status")), "Syntakt file -> reference build " + (f ? f.name : ""));
+      && /Real Syntakt engines/.test(text(doc, "file-status")), "Syntakt file -> reference build " + (f ? f.name : ""));
     doc.getElementById("allow").click();
     await wait(80);
     check(/Tick the box/.test(text(doc, "missing")) && doc.getElementById("flash").disabled, "asks for the confirmation box");
@@ -362,6 +363,15 @@ async function main() {
     for (let i = 0; i < 200 && app.state.sending; i++) await wait(50);
     check(sent.length - n1 === w.MCFlasher.splitMessages(f7.raw).length && /pick SDVtg, the 7th machine/.test(text(doc, "result")),
       "full transfer + SDVtg message");
+    doc.querySelector('input[name="var-sdvintage"][value="syntakt-vintage"]').click();
+    await settle(w);
+    const fv = app.state.fw;
+    check(fv && fv.ref && fv.sdv === "syntakt-vintage", "SDVtg + CPVtg variant -> reference build " + (fv ? fv.name : ""));
+    const n2 = sent.length;
+    doc.getElementById("flash").click();
+    for (let i = 0; i < 200 && app.state.sending; i++) await wait(50);
+    check(sent.length - n2 === w.MCFlasher.splitMessages(fv.raw).length && /CPVtg/.test(text(doc, "result")),
+      "full transfer + SDVtg/CPVtg message");
     check(errors.length === 0, "no JS error in the SD VINTAGE flow " + (errors.length ? JSON.stringify(errors) : ""));
   }
 
