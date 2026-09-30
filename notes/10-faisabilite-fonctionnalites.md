@@ -49,6 +49,7 @@ Machine **pas encore reçue** : tout ce qui suit est du travail « sans matérie
 - Verdict honnête : non, pas comme mod propre du M:C.
 - **Mise à jour du 29/09/2026** ([15 §3](15-demandes-reddit.md)) : l'**OS Model:Samples complet tourne sur un vrai Model:Cycles** (cross-flash, `tools/crossflash.py`, onglet *Samples OS* du flasher web).
   Les deux OS 1.13 partagent bootstrap, init de la RAM et updater : le matériel est capable. Une machine « sample » dans l'OS Cycles reste un gros chantier, mais n'est plus hors de portée matérielle.
+- **Mise à jour du 30/09/2026** ([21](21-architecture-materielle.md)) : vu sur le PCB du Model:Cycles, **128 Mo de DDR2 et une eMMC de 4 Go**. La RAM et le stockage nécessaires sont bien montés.
 
 ### 5. LFO améliorés (2 LFO complets, synchronisables, assignables partout, façon Syntakt) — 🟠
 - Le M:C n'a **qu'un LFO par piste**. Ajouter un 2ᵉ LFO complet touche : la modulation dans le moteur, l'UI (pages LFO), le stockage des paramètres, et les p-locks. Chantier lourd.

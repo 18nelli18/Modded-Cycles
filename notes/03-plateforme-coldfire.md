@@ -8,7 +8,7 @@ Sources : forum (dossier §2), ms-multi-output (adresses), elektron-firmware-too
 
 - **`[FAIT]`** (Ess, forum #122) « Coldfire MCF5441 », 385 MIPS Dhrystone @ **250 MHz**. C'est le même CPU que Digitakt, Digitone, AR, A4 et M:S ; l'Octatrack est l'exception.
   **`[HYP]`** Famille **NXP MCF5441x** (MCF54410 à 54418), cœur ColdFire V4 avec EMAC (MAC/MSAC/ACC0-3).
-  **`[À FAIRE]`** Lire le marquage de la puce et récupérer le *MCF5441x Reference Manual* (MCF54418RM) : carte des périphériques, contrôleur USB, SRAM.
+  **`[FAIT]`** (30/09/2026) Marquage lu sur la puce : **MCF54415CMJ250**. Le *MCF5441x Reference Manual* (MCF54418RM) s'applique : voir [21](21-architecture-materielle.md) pour le matériel et les périphériques utilisés.
 - **`[FAIT]`** Tout le DSP est écrit **en assembleur ColdFire** (Ess), sans puce DSP dédiée. L'Octatrack, lui, a un DSP56300 à part : **la partie DSP d'octamax et d'octa-bt-pt ne s'applique pas ici.**
 - **Big-endian.** Les échantillons en RAM sont des entiers 32 bits BE. L'USB audio veut du LE, d'où le `byterev` à chaque échantillon.
 

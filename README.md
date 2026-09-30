@@ -110,6 +110,7 @@ The technical documentation is written in French.
 | [`dossier-technique.md`](dossier-technique.md) | Summary of the Elektronauts thread "Model:Cycles Q&A with Ess", every fact quoted from its source |
 | [`notes/README.md`](notes/README.md) | **Index of the technical notes** and key figures |
 | [`notes/10-faisabilite-fonctionnalites.md`](notes/10-faisabilite-fonctionnalites.md) | **Feasibility, feature by feature** |
+| [`notes/21-architecture-materielle.md`](notes/21-architecture-materielle.md) | **Hardware architecture**, read from photos of the PCB: CPU, memories, USB PHY, audio output, MIDI input, key and LED latches |
 | [`tools/`](tools/) · [`tweaks/`](tweaks/) · [`docs/flasher/`](docs/flasher/) | Build tools (mtlib), patch tables (JSON), web flasher |
 
 ## Credits

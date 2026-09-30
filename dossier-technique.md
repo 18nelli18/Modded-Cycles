@@ -534,8 +534,8 @@ Des posts de ce fil ont été déplacés vers les sujets suivants, qui peuvent c
 
 Ces informations sont **absentes du fil** mais nécessaires au projet :
 
-- [ ] **Référence exacte du CPU** (marquage de la puce, famille MCF5441x) et fiche technique NXP (contrôleur USB, interfaces audio).
-- [ ] **Vitesse du port USB** (Full-Speed ou High-Speed) : elle conditionne directement le nombre de canaux transportables.
+- [x] **Référence exacte du CPU** (marquage de la puce, famille MCF5441x) et fiche technique NXP (contrôleur USB, interfaces audio). → **MCF54415CMJ250**, lu sur la puce le 30/09/2026 ([notes/21 §3.1](notes/21-architecture-materielle.md#31-processeur--u1)).
+- [x] **Vitesse du port USB** (Full-Speed ou High-Speed) : elle conditionne directement le nombre de canaux transportables. → **High Speed** : PHY USB3300 sur la carte ([notes/21 §4](notes/21-architecture-materielle.md#4-usb)), et mod 6 canaux validé en High Speed.
 - [ ] **Format audio USB actuel** : fréquence d'échantillonnage et résolution.
 - [ ] **Format, mode de mise à jour et éventuelle protection du firmware.**
 - [ ] **Architecture interne mono ou stéréo** de chaque machine, avant le Pan.
