@@ -50,30 +50,21 @@ Ce que ça change pour le projet : voir le [§11](#11-ce-que-ça-change-pour-le-
 
 ## 1. Synoptique
 
-Traits pleins : liaison imposée par la nature des puces. Pointillés : hypothèse.
+```text
+                       +--------------------+
+U3  DDR2 128 Mo =======|                    |==== ULPI ==== U14 USB3300 ==== J5 micro-USB
+    bus DDR2 8 bits    |                    |               (Y1 24,000 MHz)
+U25 flash SPI 2 Mo ====|                    |.... SSI ..... CNA (U17 ou U21 ?) ... U18 DRV632 ... MAIN OUT
+    SPI (DSPI0)        |  U1                |                                  ... ampli ? ... HEADPHONES
+U26 eMMC 4 Go =========|  MCF54415CMJ250    |.... UART9 ... U22 + U2 (H11L1) ... MIDI IN
+    eSDHC              |  ColdFire V4       |           ... MIDI OUT/THRU
+Y3  24,576 MHz ........|  250 MHz           |.... bus 8 bits ... 11 x 74HC373, 2 x 74HC238
+                       |                    |                ... LED, touches, encodeurs
+                       |                    |.... ADC ? ... 6 pads
+                       |                    |.... SPI ? ... écran LCD
+                       +--------------------+
 
-```mermaid
-flowchart LR
-    CPU["U1 · MCF54415CMJ250<br/>ColdFire V4, 250 MHz"]
-    Y3(["Y3 · 24,576 MHz"]) -.-> CPU
-    CPU ---|"DDR2, 8 bits"| DDR["U3 · Nanya NT5TU128M8HE<br/>DDR2 128 Mo"]
-    CPU ---|"SPI (DSPI0)"| NOR["U25 · cFeon QH16B<br/>flash SPI 2 Mo"]
-    CPU ---|"eSDHC"| EMMC["U26 · Samsung KLM4G1FETE<br/>eMMC 4 Go"]
-    CPU ---|"ULPI"| PHY["U14 · SMSC USB3300"]
-    Y1(["Y1 · 24,000 MHz"]) --> PHY
-    PHY --- USB["J5 · micro-USB"]
-    CPU -.->|"SSI (I2S)"| DAC["CNA : U17 ou U21 ?"]
-    DAC -.-> DRV["U18 · TI DRV632<br/>driver de ligne 2 Vrms"]
-    DRV -.-> MAIN["MAIN OUT L/R"]
-    DAC -.-> HP["HEADPHONES"]
-    MIN["MIDI IN"] -.-> OPTO["U22 + U2 · H11L1"]
-    OPTO -.->|"UART9"| CPU
-    CPU -.-> MOUT["MIDI OUT/THRU"]
-    CPU -.->|"bus 8 bits"| UI["11 × 74HC373<br/>2 × 74HC238"]
-    UI -.-> LED["53 LED"]
-    UI -.- KEYS["31 touches, 16 encodeurs"]
-    PADS["6 pads"] -.->|"ADC ?"| CPU
-    CPU -.->|"SPI ?"| LCD["LCD"]
+====  liaison imposée par la nature des puces          ....  hypothèse
 ```
 
 ## 2. La carte
