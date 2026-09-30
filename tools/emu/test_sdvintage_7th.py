@@ -279,6 +279,34 @@ def screens(stock, patched, payload):
 
 
 # --- 4b. réglage de la machine d'une piste (menu MACHINES, CC 70) -------------------------------------
+def fake_track(u, machine):
+    """Une piste factice pour 0x4001477e / 0x4001488a : ses méthodes sont interceptées, vt[40] rend son son."""
+    obj, vt, snd = 0x93800000, 0x93801000, 0x93802000
+    u.uc.mem_write(obj, struct.pack(">I", vt))
+    for k in range(16):
+        u.uc.mem_write(vt + 4 * k, struct.pack(">I", 0x93803000 + 16 * k))
+        u.hooks[0x93803000 + 16 * k] = (f"vt{4 * k}", snd if 4 * k == 40 else 0)
+    for fn in (0x400cf866, 0x4000eb90, 0x40013126, 0x40014072):
+        u.hooks[fn] = (f"{fn:#x}", 0)
+    u.uc.mem_write(snd + 38, struct.pack(">H", machine << 8))
+    return obj, snd
+
+
+def wheel(stock, patched, payload):
+    """Molette de l'écran MACHINES : 0x4001488a(piste, pas) = machine + pas, bornée, puis 0x4001477e."""
+    seq = {}
+    for name, img, pl in (("stock", stock, b""), ("modifié", patched, payload)):
+        u = UI(img, pl)
+        obj, snd = fake_track(u, 0)
+        out = []
+        for step in [1] * 8 + [-1] * 3:
+            u.call(0x4001488a, obj, step, 0, 0)
+            out.append(struct.unpack(">H", u.uc.mem_read(snd + 38, 2))[0] >> 8)
+        seq[name] = out
+    ok = seq["stock"] == [1, 2, 3, 4, 5, 5, 5, 5, 4, 3, 2] and seq["modifié"] == [1, 2, 3, 4, 5, 6, 6, 6, 5, 4, 3]
+    check(ok, f"molette (0x4001488a, +1 x8 puis -1 x3) : stock {seq['stock']}, modifié {seq['modifié']}")
+
+
 def machine_setter(stock, patched, payload):
     """0x4001477e(piste, machine, _, drapeau) : écrit la machine dans le son de la piste (+38) et, si elle
     change, appelle 0x40014072 (valeurs par défaut de la machine). L'OS stock refuse au-delà de 5."""
@@ -402,6 +430,7 @@ def main():
     print("écran MACHINES")
     screens(stock, patched, payload)
     machine_setter(stock, patched, payload)
+    wheel(stock, patched, payload)
     small_icon(patched, stock, payload)
     print("son")
     sound(stock, patched, syntakt.dsp_image(args.syntakt), args.blocks)

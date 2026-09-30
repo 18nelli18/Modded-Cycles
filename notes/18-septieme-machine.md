@@ -14,7 +14,7 @@ Toutes les adresses sont celles du MAIN OS 1.13 officiel. Source : désassemblag
 | Potards propres : noms et défauts du Syntakt | `[FAIT]` 5 descripteurs de plus (§6) |
 | **Preuve en émulation** : 20 vérifications sur le vrai code de l'OS | `[FAIT]` `tools/emu/test_sdvintage_7th.py` (§8) |
 | Flasher web : 2ᵉ variante de la case SD VINTAGE | `[FAIT]` (§7) |
-| Test sur la machine | 1ᵉʳ essai 30/09 : 7ᵉ repère visible, mais **molette bloquée à Chord** → borne oubliée, corrigée (§10) ; 2ᵉ essai `[À FAIRE]` |
+| Test sur la machine | essais 1 et 2 (30/09) : 7ᵉ repère visible, mais **molette bloquée à Chord** → deux bornes oubliées, corrigées (§10) ; 3ᵉ essai `[À FAIRE]` |
 
 **Choix de l'utilisateur** (30/09/2026, en regardant son Cycles) :
 - l'écran affiche le **nom long** du paramètre quand on tourne un potard (« Snare Color ») ;
@@ -106,7 +106,7 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 - `tools/machines/syntakt_bridge/machine7.S` : 5 détours (état par descripteur ×2, CC, images de l'écran MACHINES, petite icône) ;
 - `build.py` / `builder.js` : nouveau type de morceau de charge utile, `"cycles": [début, fin]`, copié depuis **ton** MAIN OS d'origine (comme les morceaux `"syntakt"`). Aucun octet Elektron dans le dépôt.
 
-**111 écritures dans l'OS** :
+**113 écritures dans l'OS** :
 
 | Groupe | Écritures |
 |---|---|
@@ -115,6 +115,7 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 | Tables du BSS | 7 références, taille effacée, champ machine ≤ 6 |
 | Recherches | 2 bornes, détour CC |
 | Réglage de la machine d'une piste (`0x4001477e`) | borne `0x400147a4` : accepte 6 |
+| Molette de l'écran MACHINES (`0x4001488a`) | machine + pas bornée à 6 (`0x400148aa`, `0x400148b2`) |
 | État par descripteur | 2 détours |
 | Moteur | bornes `0x400a7dba`, `0x400a7df4` ; octet `0x40118646` ; tables update/render à 7 entrées (entrée 6 = passerelle) |
 | Écran MACHINES | borne `0x400a25e0`, 7 noms (« SDVtg »), 7 repères (`0x400a26e8`), détour des images (celles de SNARE pour SDVtg) |
@@ -133,7 +134,7 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 **Tailles** :
 - MAIN OS décompressé : 1 962 304 o. Il finit à `0x401df540`, sous la zone de transit du bootstrap (`0x40200000`).
 - `.syx` : 1 037 344 o.
-- MAIN OS patché, SDVtg seul : `4c522c1c…`.
+- MAIN OS patché, SDVtg seul : `badc7748…`.
 
 **Flasher web** : la case SD VINTAGE a deux variantes, « À la place de SNARE » (par défaut, testée) et « En 7ᵉ machine, SDVtg » (nouvelle). 47 combinaisons sont comparées à leur empreinte de référence (`REF_MAINOS`).
 
@@ -154,6 +155,7 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 | État par descripteur | 0..75 inchangés ; 76..80 → objets de SNARE |
 | Écran MACHINES (dessin intercepté) | pour 0..5 : mêmes noms et mêmes images que le stock ; 7 repères ; pour 6 : « SDVtg », images de SNARE, 7ᵉ repère plein (stock : « Error ») |
 | Réglage de la machine d'une piste (`0x4001477e`, objets factices) | identique pour 0..5 ; 6 accepté et défauts de la machine chargés (stock : refusé) ; 7 refusé |
+| Molette (`0x4001488a`, +1 ×8 puis −1 ×3, vrai code) | stock : 1…5, 5, 5, 5 (bloqué à Chord, comme sur la machine) ; modifié : 1…5, 6, 6, 6, puis 5, 4, 3 |
 | Icône bornée | identique pour 0..5 ; SNARE au lieu de CHORD pour 6 |
 | Son | SDVtg identique au Syntakt (6 cas, 1 LSB) ; **SNARE identique échantillon par échantillon à l'OS stock** ; repos : 0 instruction du Syntakt ; machine lock SNARE → SDVtg sur une piste : les deux jouent |
 
@@ -176,7 +178,15 @@ Le portage « à la place de SNARE » ([17](17-portage-exact-syntakt.md)) reste 
 - Corrigé : borne 5 → 6. Le test d'émulation exécute maintenant ce réglage (objets factices) : l'OS stock refuse 6, la version corrigée l'accepte et charge les défauts de SDVtg.
 - Recherche systématique des autres cas : toutes les écritures du champ machine (+38), et toutes les sorties « `moveq #5` ; `cmp` ; `bcs`/`bhi` » dans une fonction qui touche ce champ. Seul ce site est concerné.
 
-**2ᵉ essai** `[À FAIRE]` :
+**2ᵉ essai (30/09/2026, avec cette correction)** : toujours bloqué à Chord.
+- Cause : la molette ne passe pas directement par `0x4001477e`. Le gestionnaire de l'écran MACHINES (`0x400a2712`) appelle `0x4001488a(piste, pas)`, qui calcule machine + pas et la **borne à 5** (`moveq #5` en `0x400148aa` pour comparer, en `0x400148b2` pour la valeur de repli), avant d'appeler `0x4001477e`.
+- Ma recherche du 1ᵉʳ essai ne visait que les sorties « `bcs`/`bhi` ». Celle-ci est un plafonnement (`bge`, puis `moveq #5`).
+- Corrigé : 5 → 6 aux deux endroits. Le test d'émulation fait tourner la molette avec le vrai code : l'OS stock reste bloqué à 5, exactement comme sur la machine ; la version corrigée atteint 6.
+- Recherche élargie : **toutes les fonctions** qui lisent ou écrivent la machine d'une piste (33 fonctions : getters `0x40014042` / `0x4000a650`, setters, défauts `0x40061870`, champ +38), et toutes leurs constantes 5 et 6, quelle que soit la forme de la borne.
+  - Hors les sites corrigés, ce ne sont que des bornes de piste (0..5) ou d'autres champs (conversions de format de son).
+  - Les verrous par pas (machine locks) passent par le setter générique, qui lit le max du paramètre dans la table déplacée (6).
+
+**3ᵉ essai** `[À FAIRE]` :
 
 1. Sauvegarder les projets (Transfer).
 2. Flasher par USB (`CONFIG › UPGRADE`) la variante « En 7ᵉ machine, SDVtg ».

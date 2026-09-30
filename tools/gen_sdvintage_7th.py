@@ -70,7 +70,8 @@ SMALL = (
     (0x4005a572, "7205", "7206"),              # « descripteur propre à une machine » : machine <= 6
     (0x4005a6a6, "7205", "7206"),              # recherche (slot, machine) -> descripteur : machine <= 6
     (0x400147a4, "7005", "7006"),              # réglage de la machine d'une piste (0x4001477e) : accepte 6
-                                               # (oubli de la 1re version : la molette s'arrêtait à Chord)
+    (0x400148aa, "7205", "7206"),              # molette de l'écran MACHINES (0x4001488a) : machine + pas,
+    (0x400148b2, "7005", "7006"),              # bornée à 6 au lieu de 5 (comparaison, puis valeur)
     (0x400a25e0, "7005", "7006"),              # écran MACHINES : nom et images jusqu'à 6
     (0x400a26e8, "7006", "7007"),              # écran MACHINES : 7 repères de position
     (0x4001b69c, "7005", "7001"),              # icônes bornées : SNARE (1) au lieu de CHORD (5) au-delà de 5
