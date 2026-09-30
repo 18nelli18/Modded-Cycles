@@ -358,6 +358,28 @@ def machine_change(stock, patched, payload):
               f" +{p_[2]} référence(s) (la 8e fiche) ; stock machine {s_[0]}")
 
 
+def knobs(stock, patched, payload):
+    """Écran principal, potard -> descripteur (méthode 0x4001e814) : machine -> enregistrement par le vecteur
+    [1..6] de l'écran, puis descripteur = enregistrement[potard]. Pour SDVtg, l'OS lisait après le vecteur."""
+    res = {}
+    for name, img, pl in (("stock", stock, b""), ("modifié", patched, payload)):
+        u = UI(img, pl)
+        fill_records(u)
+        this, vec = 0x93900000, 0x93910000
+        u.uc.mem_write(vec, struct.pack(">7i", 1, 2, 3, 4, 5, 6, 0))   # après le vecteur : 0 ici
+        u.uc.mem_write(this + 104, struct.pack(">III", vec, vec + 24, vec + 24))
+        out = {}
+        for m in range(7):
+            u.hooks = {0x4001e318: ("machine", m), 0x400cf9a8: ("app", 0x93a00000), 0x4006b736: ("verrou", 0)}
+            out[m] = [u.call(0x4001e814, this, k, 0, 0) for k in range(2, 16)]
+        res[name] = out
+    same = all(res["stock"][m] == res["modifié"][m] for m in range(6))
+    got = res["modifié"][6][:6]
+    ok = same and got == [42, 80, 76, 77, 78, 79] and res["modifié"][6][6:] == res["modifié"][1][6:]
+    check(ok, f"potards de l'écran principal (0x4001e814) : machines 0..5 identiques ; SDVtg -> {got}"
+              f" (PITCH, DEC, INHM, FCMP, SWEP, MENV) ; stock -> {res['stock'][6][:6]}")
+
+
 def wheel(stock, patched, payload):
     """Molette de l'écran MACHINES : 0x4001488a(piste, pas) = machine + pas, bornée, puis 0x4001477e."""
     seq = {}
@@ -518,6 +540,7 @@ def main():
     wheel(stock, patched, payload)
     records(stock, patched, payload)
     machine_change(stock, patched, payload)
+    knobs(stock, patched, payload)
     small_icon(patched, stock, payload)
     print("son")
     sound(stock, patched, syntakt.dsp_image(args.syntakt), args.blocks)

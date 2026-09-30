@@ -88,6 +88,10 @@ JUMPS = (
     (0x4004df5c, "7206202f0004", "record_at"),    # enregistrement par machine (index machine + 1)
     (0x4004df76, "7205202f0004", "record_of"),    # enregistrement par machine (index machine)
 )
+# (adresse, octets d'origine, symbole) : « jsr détour ; nop » à la place de deux instructions (8 o)
+CALLS = (
+    (0x4001e8da, "202f0020226a0068", "knob_vec"),  # potard -> descripteur : machine -> enregistrement
+)
 
 # --- SDVtg : noms et défauts du Syntakt (manuel Syntakt, section SD VINTAGE) ---------------------------
 NAME = "SDVtg"
@@ -99,7 +103,8 @@ DECAY_DEFAULT = 33
 
 # --- charge utile, après celle du moteur exact (0x43000000..0x43033000) --------------------------------
 STUBS = 0x43033000                             # machine7.S
-DATA = 0x43033800                              # noms, tables update/render, chaînes
+DATA = 0x43033800                              # noms, tables update/render, VEC7, chaînes
+VEC7 = DATA + 84                               # machine -> enregistrement, 7 entrées [1..7] (écran principal)
 DESC7 = 0x43034000                             # 81 descripteurs
 NDESC7 = NDESC + 5
 ROWS7 = 0x43035200                             # 7 x 32 o
@@ -132,7 +137,7 @@ def refs32(img, v):
 def compile_stubs(tmp):
     obj, elf, out = tmp / "m7.o", tmp / "m7.elf", tmp / "m7.bin"
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(gx.SRC / "machine7.S"), "-o", str(obj),
-            f"-DREC8={REC8:#x}", f"-DREC8_BUILT={REC8_BUILT:#x}"])
+            f"-DREC8={REC8:#x}", f"-DREC8_BUILT={REC8_BUILT:#x}", f"-DVEC7={VEC7:#x}"])
     gx.run([gx.CROSS + "ld", "-Ttext", f"{STUBS:#x}", "-o", str(elf), str(obj)])
     gx.run([gx.CROSS + "objcopy", "-O", "binary", "-j", ".text", str(elf), str(out)])
     syms = {p[-1]: int(p[0], 16) for p in (l.split() for l in gx.run([gx.CROSS + "nm", str(elf)]).splitlines())
@@ -166,7 +171,7 @@ def build_tweak(img, st_img):
         return s
     for s in [NAME] + [k[0] for k in KNOBS] + [k[1] for k in KNOBS]:
         string(s)
-    tables = 3 * 7 * 4
+    tables = 4 * 7 * 4
     at, addr = DATA + tables, {}
     for s in strings:
         addr[s] = at
@@ -174,8 +179,10 @@ def build_tweak(img, st_img):
     names7 = [u32(NAMES + 4 * i) for i in range(6)] + [addr[NAME]]
     upd7 = [u32(UPDATE_TAB + 4 * i) for i in range(6)] + [syms["bridge_update"]]
     rnd7 = [u32(RENDER_TAB + 4 * i) for i in range(6)] + [syms["bridge_render"]]
-    for t in (names7, upd7, rnd7):
+    for t in (names7, upd7, rnd7, range(1, 8)):
         data += b"".join(be32(x) for x in t)
+    if DATA + 84 != VEC7:
+        raise SystemExit("!! VEC7")
     for s in strings:
         data += s.encode("ascii") + b"\0"
     if DATA + len(data) > DESC7:
@@ -229,6 +236,8 @@ def build_tweak(img, st_img):
         w(va, bytes.fromhex(old), bytes.fromhex(new_))
     for va, old, sym in JUMPS:
         w(va, bytes.fromhex(old), bytes.fromhex("4ef9") + be32(ssyms[sym]))
+    for va, old, sym in CALLS:
+        w(va, bytes.fromhex(old), bytes.fromhex("4eb9") + be32(ssyms[sym]) + bytes.fromhex("4e71"))
     writes.sort(key=lambda x: x["off"])
     for a, b in zip(writes, writes[1:]):
         if a["off"] + len(a["new"]) // 2 > b["off"]:

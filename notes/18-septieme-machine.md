@@ -14,7 +14,7 @@ Toutes les adresses sont celles du MAIN OS 1.13 officiel. Source : désassemblag
 | Potards propres : noms et défauts du Syntakt | `[FAIT]` 5 descripteurs de plus (§6) |
 | **Preuve en émulation** : 20 vérifications sur le vrai code de l'OS | `[FAIT]` `tools/emu/test_sdvintage_7th.py` (§8) |
 | Flasher web : 2ᵉ variante de la case SD VINTAGE | `[FAIT]` (§7) |
-| Test sur la machine | essais 1 à 4 (30/09) : molette bloquée à Chord (2 bornes), puis **gel en choisissant SDVtg** (enregistrement par machine manquant) → corrigés (§10) ; 5ᵉ essai `[À FAIRE]` |
+| Test sur la machine | essais 1 à 5 (30/09) : molette bloquée (2 bornes), gel (enregistrement manquant), puis **SDVtg joue mais potards sans effet** (vecteur machine → enregistrement de l'écran) → corrigés (§10) ; 6ᵉ essai `[À FAIRE]` |
 
 **Choix de l'utilisateur** (30/09/2026, en regardant son Cycles) :
 - l'écran affiche le **nom long** du paramètre quand on tourne un potard (« Snare Color ») ;
@@ -106,7 +106,7 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 - `tools/machines/syntakt_bridge/machine7.S` : 5 détours (état par descripteur ×2, CC, images de l'écran MACHINES, petite icône) ;
 - `build.py` / `builder.js` : nouveau type de morceau de charge utile, `"cycles": [début, fin]`, copié depuis **ton** MAIN OS d'origine (comme les morceaux `"syntakt"`). Aucun octet Elektron dans le dépôt.
 
-**115 écritures dans l'OS** :
+**116 écritures dans l'OS** :
 
 | Groupe | Écritures |
 |---|---|
@@ -117,6 +117,7 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 | Réglage de la machine d'une piste (`0x4001477e`) | borne `0x400147a4` : accepte 6 |
 | Molette de l'écran MACHINES (`0x4001488a`) | machine + pas bornée à 6 (`0x400148aa`, `0x400148b2`) |
 | Enregistrements par machine (`0x4004df5c`, `0x4004df76`) | 2 détours : 8ᵉ enregistrement pour SDVtg, construit au 1ᵉʳ usage |
+| Écran principal, potard → descripteur (`0x4001e814`) | détour `knob_vec` en `0x4001e8da` : pour la machine 6, table [1..7] au lieu du vecteur [1..6] de l'écran |
 | État par descripteur | 2 détours |
 | Moteur | bornes `0x400a7dba`, `0x400a7df4` ; octet `0x40118646` ; tables update/render à 7 entrées (entrée 6 = passerelle) |
 | Écran MACHINES | borne `0x400a25e0`, 7 noms (« SDVtg »), 7 repères (`0x400a26e8`), détour des images (celles de SNARE pour SDVtg) |
@@ -136,7 +137,7 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 **Tailles** :
 - MAIN OS décompressé : 1 962 304 o. Il finit à `0x401df540`, sous la zone de transit du bootstrap (`0x40200000`).
 - `.syx` : 1 037 344 o.
-- MAIN OS patché, SDVtg seul : `ce94b7c8…`.
+- MAIN OS patché, SDVtg seul : `af9f6356…`.
 
 **Flasher web** : la case SD VINTAGE a deux variantes, « À la place de SNARE » (par défaut, testée) et « En 7ᵉ machine, SDVtg » (nouvelle). 47 combinaisons sont comparées à leur empreinte de référence (`REF_MAINOS`).
 
@@ -161,6 +162,7 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 | Gestionnaire de l'écran MACHINES (`0x400a2712`, vrai code, environnement intercepté) | stock : bloqué à 5 ; modifié : atteint 6 |
 | Enregistrements par machine | 0..6 identiques ; SDVtg → 8ᵉ enregistrement (descripteurs 42, 80, 76..79…, chaînes copiées avec leur compteur de références) |
 | Chord → SDVtg avec le **vrai** gestionnaire de changement de machine (`0x40014072`) | pas d'accès hors mémoire ; défauts du Syntakt écrits dans le son (0, 110, 74, 80, 33) |
+| Potards de l'écran principal (`0x4001e814`), machines 0..6 × potards 2..15 | 0..5 identiques ; SDVtg → PITCH 42, DEC 80, INHM 76, FCMP 77, SWEP 78, MENV 79 (stock : 0 partout, comme sur la machine) |
 | Icône bornée | identique pour 0..5 ; SNARE au lieu de CHORD pour 6 |
 | Son | SDVtg identique au Syntakt (6 cas, 1 LSB) ; **SNARE identique échantillon par échantillon à l'OS stock** ; repos : 0 instruction du Syntakt ; machine lock SNARE → SDVtg sur une piste : les deux jouent |
 
@@ -210,7 +212,15 @@ Le portage « à la place de SNARE » ([17](17-portage-exact-syntakt.md)) reste 
   - chercher, en plus des bornes, **tous les tableaux indexés par la machine** ;
   - exécuter en émulation les chemins réellement suivis au changement de machine, au lieu de les lire seulement.
 
-**5ᵉ essai** `[À FAIRE]` :
+**5ᵉ essai** (build `-7`) : SDVtg se choisit et **joue** au pad, mais tourner un potard n'affiche rien et ne change pas le son.
+- Cause : le gestionnaire des potards de l'écran principal (`0x4001f4f0`, entrée +0x44 de la vtable `0x4010052c`) demande le descripteur du potard à sa méthode `0x4001e814` ; s'il vaut 0, il ne fait rien.
+  - Cette méthode passe par un **vecteur** de l'écran : `enregistrement = vecteur[machine]`, puis `descripteur = enregistrement[potard]`.
+  - Le vecteur est construit au démarrage avec 6 entiers `[1..6]` (`0x400ffc7c`). Pour SDVtg, l'OS lisait après sa fin, obtenait 0 (enregistrement vide) et donc le descripteur 0.
+- Corrigé sans toucher à la construction de l'écran (qui tourne au démarrage) : un détour appelé au moment du potard. Pour la machine 6, il fournit une table `[1..7]` de la charge utile, et l'enregistrement 7 est celui de SDVtg.
+- Le test d'émulation exécute `0x4001e814` pour les machines 0..6 et les potards 2..15 : identique au stock pour 0..5 ; pour SDVtg, PITCH, DEC, INHM, FCMP, SWEP, MENV (stock : 0 partout, le symptôme observé).
+- Vérifié aussi : aucune des 37 fonctions appelées par le gestionnaire des potards ne lit la machine, les enregistrements ou un tel vecteur.
+
+**6ᵉ essai** `[À FAIRE]` :
 
 1. Sauvegarder les projets (Transfer).
 2. Flasher par USB (`CONFIG › UPGRADE`) la variante « En 7ᵉ machine, SDVtg ».

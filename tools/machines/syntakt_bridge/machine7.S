@@ -187,3 +187,17 @@ rec8:
 	move.l	(%sp)+, %d2
 9:	move.l	#REC8, %d0
 	rts
+
+/* en 0x4001e8da (ecran principal, potard -> descripteur, methode 0x4001e814) : appele par jsr a la place de
+ * « move.l 32(sp),d0 ; movea.l 104(a2),a1 ». L'ecran traduit machine -> numero d'enregistrement par un
+ * vecteur de 6 entiers [1..6] construit au demarrage : pour SDVtg (6), l'OS lisait apres sa fin (potards
+ * sans effet). Machine 6 : table VEC7 = [1..7] de la charge utile ; sinon le vecteur de l'ecran, inchange. */
+	.globl	knob_vec
+knob_vec:
+	move.l	36(%sp), %d0		/* 32(sp) de l'appelant (+4 : adresse de retour) */
+	movea.l	104(%a2), %a1
+	moveq	#6, %d1
+	cmp.l	%d1, %d0
+	bne.s	1f
+	lea	VEC7, %a1
+1:	rts
