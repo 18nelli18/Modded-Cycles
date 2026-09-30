@@ -75,14 +75,14 @@ FEATURES = [
     {
         "id": "sdvintage",
         "label": "Vrai moteur SD VINTAGE du Syntakt",
-        "desc": "Le moteur SD VINTAGE du Syntakt remplace la machine SNARE, extrait de TON fichier "
-                "Syntakt_OS1.41.syx (a deposer a l'etape 2). Identique au Syntakt en emulation, "
-                "teste sur un vrai Model:Cycles le 30/09/2026.",
+        "desc": "Le moteur SD VINTAGE du Syntakt, extrait de TON fichier Syntakt_OS1.41.syx (a deposer a "
+                "l'etape 2), a la place de SNARE ou en 7e machine SDVtg. Identique au Syntakt en emulation.",
         "status": "tested",
         "credit": None,
         "needs": "syntakt",
         "variants": [
-            {"file": "21-sdvintage-exact", "label": None},
+            {"file": "22-sdvintage-7th", "label": "En 7e machine SDVtg, a cote de SNARE (teste le 30/09/2026)"},
+            {"file": "21-sdvintage-exact", "label": "A la place de SNARE (teste le 30/09/2026)"},
         ],
     },
 ]

@@ -232,8 +232,9 @@ def apply_writes(main_os, tweaks_selected):
 
 
 def build_payload(chosen, main_os, syntakt_path):
-    """Charge utile d'un tweak « append » (notes/17) : recette exécutée sur TON fichier Syntakt.
-    Renvoie (octets à ajouter après l'image, tweak) ou (b"", None)."""
+    """Charge utile d'un tweak « append » (notes/17) : recette exécutée sur TON fichier Syntakt (et, pour les
+    morceaux « cycles », sur TON MAIN OS Cycles d'origine). Renvoie (octets à ajouter après l'image, tweak)
+    ou (b"", None)."""
     apps = [t for t in chosen if t.get("append")]
     if not apps:
         return b"", None
@@ -257,6 +258,9 @@ def build_payload(chosen, main_os, syntakt_path):
         if "syntakt" in part:
             lo, hi = (int(x, 16) for x in part["syntakt"])
             chunk = img[lo - BASE:hi - BASE]
+        elif "cycles" in part:                          # plage de l'OS Cycles d'origine (notes/18)
+            lo, hi = (int(x, 16) for x in part["cycles"])
+            chunk = main_os[lo - BASE:hi - BASE]
         else:
             chunk = bytes.fromhex(part["hex"])
         out[at:at + len(chunk)] = chunk
