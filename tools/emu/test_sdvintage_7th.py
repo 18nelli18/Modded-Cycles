@@ -305,6 +305,25 @@ def wheel(stock, patched, payload):
         seq[name] = out
     ok = seq["stock"] == [1, 2, 3, 4, 5, 5, 5, 5, 4, 3, 2] and seq["modifié"] == [1, 2, 3, 4, 5, 6, 6, 6, 5, 4, 3]
     check(ok, f"molette (0x4001488a, +1 x8 puis -1 x3) : stock {seq['stock']}, modifié {seq['modifié']}")
+    # tout le gestionnaire de l'écran MACHINES (0x400a2712, appelé par l'événement molette 0x400a28b4),
+    # son environnement intercepté : piste active 0, aucun pas tenu
+    seq = {}
+    for name, img, pl in (("stock", stock, b""), ("modifié", patched, payload)):
+        u = UI(img, pl)
+        obj, snd = fake_track(u, 0)
+        this = 0x93900000
+        for k in range(6):
+            u.uc.mem_write(this + 70 + 4 * k, struct.pack(">i", -1))
+        for a, v in {0x400cf866: 0x93a00000, 0x4000eb90: 0x93a00000, 0x40012412: 0, 0x400cf9a8: 0x93a00000,
+                     0x4006bdfe: 0, 0x4000eb9c: 0x93a00000, 0x40009c1a: obj, 0x400f44c6: 0, 0x4001416c: 0}.items():
+            u.hooks[a] = (f"{a:#x}", v)
+        out = []
+        for _ in range(8):
+            u.call(0x400a2712, this, 1, 0, 0)
+            out.append(struct.unpack(">H", u.uc.mem_read(snd + 38, 2))[0] >> 8)
+        seq[name] = out
+    check(seq["stock"] == [1, 2, 3, 4, 5, 5, 5, 5] and seq["modifié"] == [1, 2, 3, 4, 5, 6, 6, 6],
+          f"gestionnaire de l'écran MACHINES (0x400a2712), +1 x8 : stock {seq['stock']}, modifié {seq['modifié']}")
 
 
 def machine_setter(stock, patched, payload):
