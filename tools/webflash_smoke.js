@@ -68,6 +68,8 @@ async function main() {
     check(ids.join() === "6ch-usbup,latching-mute,trig-preview,browser-scroll,sdvintage-exact,sdvintage-7th" && w.MC_TWEAKS.features.length === 5,
       "MC_TWEAKS: only USB-friendly tweaks (no 6ch-multiout, no clean-room sdvintage): " + ids.join());
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
+    const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
+    check(srcs.length === 4 && srcs.every((x) => x.endsWith("?v=" + w.MC_BUILD)), "scripts loaded with ?v=<build> (no stale cache): " + srcs.join());
     check(doc.getElementById("compat").hidden, "no compatibility banner in a good browser");
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
     check(feats.join() === "feat-usb6,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-sdvintage", "5 feature cards: " + JSON.stringify(feats));
@@ -353,6 +355,8 @@ async function main() {
     await settle(w);
     const f7 = app.state.fw;
     check(f7 && f7.ref && f7.sdv === "sdvintage-7th" && /sdvintage-7th/.test(f7.name), "7th machine variant -> reference build " + (f7 ? f7.name : ""));
+    check(new RegExp("MAIN OS " + app.REF_MAINOS["sdvintage-7th"].slice(0, 8)).test(text(doc, "file-status")),
+      "status line shows the MAIN OS hash prefix: " + text(doc, "file-status").slice(-20));
     const n1 = sent.length;
     doc.getElementById("flash").click();
     for (let i = 0; i < 200 && app.state.sending; i++) await wait(50);

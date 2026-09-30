@@ -712,7 +712,7 @@ function prepareFirmware() {
     if (syntakt) opts.syntakt = syntakt;
     const r = window.MCBuilder.build(raw, window.MC_TWEAKS.device, tweaks, opts);
     log(`Built ${key}: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.patchedBytes} bytes patched, ${r.raw.length} bytes.`, "is-ok");
-    return { raw: r.raw, name: `model-cycles_OS1.13_${key}.syx`, kind: "built", mods: labels,
+    return { raw: r.raw, name: `model-cycles_OS1.13_${key}.syx`, kind: "built", mods: labels, sha: r.mainOsSha,
       ref: !!REF_MAINOS[key], sixch: tweaks.some((x) => x.id.startsWith("6ch")),
       sdv: sdv && (tweaks.find((x) => x.append) || {}).id };
   });
@@ -890,7 +890,8 @@ function render() {
     else if (st.building) rows.push(["is-busy", esc(t("building"))]);
     else if (st.fwError) rows.push(["is-bad", esc(t("build_failed", { err: st.fwError }))]);
     else if (st.fw && st.fw.kind === "built")
-      rows.push(["is-ok", esc(t("built", { mods: st.fw.mods.join(" + ") })) + (st.fw.ref ? " " + esc(t("built_ref")) : "")]);
+      rows.push(["is-ok", esc(t("built", { mods: st.fw.mods.join(" + ") })) + (st.fw.ref ? " " + esc(t("built_ref")) : "") +
+        ` <span class="hash">MAIN OS ${esc(st.fw.sha.slice(0, 8))}</span>`]);
     else if (st.fw && st.fw.kind === "stock") rows.push(["is-ok", esc(t("stock_ready"))]);
     else if (st.fw && st.fw.kind === "samples") rows.push(["is-ok", esc(t("samples_ready")) + " " + esc(t("built_ref"))]);
     setStatus("file-status", rows);

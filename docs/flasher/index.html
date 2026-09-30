@@ -86,6 +86,7 @@
   .warn-list{margin:.7em 0 12px;padding-left:1.2em;font-size:.9rem;color:var(--muted)}
   .warn-list li{margin:.3em 0}
   #drop2-wrap,#drop3-wrap{margin-top:14px}
+  .hash{font-family:ui-monospace,Menlo,monospace;font-size:.85em;opacity:.75;white-space:nowrap}
   .note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--line);padding:2px 0 2px 10px;margin:12px 0 0}
 
   /* drop zone */
@@ -182,7 +183,7 @@
   <div id="errbar" class="alert bad" hidden></div>
   <script>
     // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-    window.MC_BUILD = "2026-09-30-5";
+    window.MC_BUILD = "2026-09-30-6";
     window.addEventListener("error", function (e) {
       var b = document.getElementById("errbar");
       if (!b) return;
@@ -334,9 +335,10 @@
     <p><span data-i18n-html="links"></span> <span id="build-stamp"></span></p>
   </footer>
 </div>
-<script src="builder.js"></script>
-<script src="tweaks.js"></script>
-<script src="flasher.js"></script>
-<script src="app.js"></script>
+<!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
+<script src="builder.js?v=2026-09-30-6"></script>
+<script src="tweaks.js?v=2026-09-30-6"></script>
+<script src="flasher.js?v=2026-09-30-6"></script>
+<script src="app.js?v=2026-09-30-6"></script>
 </body>
 </html>
