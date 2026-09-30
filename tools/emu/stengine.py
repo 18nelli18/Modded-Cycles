@@ -41,7 +41,7 @@ STACK = 0x90010000
 N_VOICES = 8
 # types de machine (index de la table des noms de l'interface, section 3 à 0x4022aefc + 35*4)
 MACHINES = {"BD MODERN": 0, "SD BASIC": 1, "CY ALLOY": 2, "PC CARBON": 3, "SY TONE": 4,
-            "SY CHORD": 5, "SD VINTAGE": 6, "CP VINTAGE": 7}
+            "SY CHORD": 5, "SD VINTAGE": 6, "CP VINTAGE": 7, "SY TOY": 36, "SY BITS": 37, "SY SWARM": 38}
 
 # Paramètres de synthèse : mot 8.8 à params + 0x1c + 2*slot (même convention que le Cycles, p + 2*slot).
 # Famille FM (types 0..7) : même disposition que les machines du Model:Cycles, plus OVER (notes/16).

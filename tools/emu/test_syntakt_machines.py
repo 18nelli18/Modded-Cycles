@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Preuve du tweak syntakt-vintage (notes/19) : SD VINTAGE et CP VINTAGE en 7e et 8e machines « SDVtg » (6)
-et « CPVtg » (7), à côté des 6 machines d'origine.
+"""Preuve des tweaks « vrais moteurs du Syntakt en machines ajoutées » : syntakt-vintage (notes/19, SD VINTAGE
+et CP VINTAGE en 7e et 8e machines « SDVtg » (6) et « CPVtg » (7)) et ceux de tools/gen_syntakt_engines.py
+(notes/20, n'importe quel choix de moteurs du catalogue, machines 6, 7, 8…).
 
 Mêmes vérifications que test_sdvintage_7th.py (notes/18), sur le VRAI code de l'OS, étendues à 8 machines :
 démarrage (bootstrap, crochet, constructeur des tables), recherches, accesseurs, état par descripteur,
@@ -8,7 +9,7 @@ démarrage (bootstrap, crochet, constructeur des tables), recherches, accesseurs
 changement de machine réel (défauts écrits), potards de l'écran principal, icônes, et le son : SDVtg et CPVtg
 identiques au Syntakt, SNARE identique à l'OS stock.
 
-    python3 tools/emu/test_syntakt_machines.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx
+    python3 tools/emu/test_syntakt_machines.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx [--tweak …json]
 """
 import argparse
 import bisect
@@ -30,6 +31,7 @@ sys.path.insert(0, str(HERE.parent))
 
 import build                        # noqa: E402
 import gen_sdvintage_7th as g7      # noqa: E402
+import gen_syntakt_engines as gs   # noqa: E402
 import gen_syntakt_machines as g8   # noqa: E402
 import mcengine as E                # noqa: E402
 import stengine as S                # noqa: E402
@@ -40,9 +42,23 @@ from test_sdvintage_7th import UI, check, dis, fill_records, fake_track, refcoun
 
 TWEAK = HERE.parent.parent / "tweaks" / "model-cycles_OS1.13" / "23-syntakt-vintage.json"
 BASE = 0x40000400
-SD, CP = g8.MACHINES
-FIRST = {6: 76, 7: 81}                               # 1er descripteur de chaque machine ajoutée
-NAMES = ["Kick", "Snare", "Metal", "Perc", "Tone", "Chord", "SDVtg", "CPVtg"]
+# Machines ajoutées et disposition de la charge utile, fixées par configure() d'après le tweak testé.
+ADDED, FIRST, NAMES, REC, ROWS, CCROWS = [], {}, [], {}, 0, 0
+NM = TOP = N = 0                                    # nombre de machines, plus grand index, machines ajoutées
+
+
+def configure(tweak):
+    global ADDED, FIRST, NAMES, REC, ROWS, CCROWS, NM, TOP, N
+    if tweak["id"] == "syntakt-vintage":            # disposition de gen_syntakt_machines.py
+        codes, recs, ROWS, CCROWS = ["sd", "cp"], [g8.REC8, g8.REC9], g8.ROWS8, g8.CCROWS8
+    else:
+        codes = [c for c in tweak["id"].split("-")[1:]]
+        recs, ROWS, CCROWS = [gs.RECS + 0x60 * i for i in range(len(codes))], gs.ROWSN, gs.CCROWSN
+    ADDED = [dict(gs.CATALOG[c], code=c, index=6 + i) for i, c in enumerate(codes)]
+    N, NM, TOP = len(ADDED), 6 + len(ADDED), 5 + len(ADDED)
+    FIRST = {6 + i: 76 + 5 * i for i in range(N)}
+    REC = {6 + i: r for i, r in enumerate(recs)}
+    NAMES = ["Kick", "Snare", "Metal", "Perc", "Tone", "Chord"] + [m["name"] for m in ADDED]
 
 
 def snare_map(x, m):
@@ -60,62 +76,63 @@ def tables(stock, patched, payload):
     sa = bytes(a.uc.mem_read(lo, hi - lo))
     sb = bytearray(b.uc.mem_read(lo, hi - lo))
     rows_a, cc_a = sa[g7.ROWS - lo:][:6 * 32], sa[g7.CCROWS - lo:][:6 * 32]
-    rows_b, cc_b = bytes(b.uc.mem_read(g8.ROWS8, 8 * 32)), bytes(b.uc.mem_read(g8.CCROWS8, 8 * 32))
+    rows_b, cc_b = bytes(b.uc.mem_read(ROWS, NM * 32)), bytes(b.uc.mem_read(CCROWS, NM * 32))
     sb[g7.ROWS - lo:g7.ROWS - lo + 6 * 32] = rows_a
     sb[g7.CCROWS - lo:g7.CCROWS - lo + 6 * 32] = cc_a
     nrows = (a.u32(t7.ROW_COUNT), b.u32(t7.ROW_COUNT))
     sb[t7.ROW_COUNT - lo:t7.ROW_COUNT - lo + 4] = sa[t7.ROW_COUNT - lo:][:4]
-    check(nrows == (6, 8), f"rangées de machines construites : stock {nrows[0]}, modifié {nrows[1]}")
+    check(nrows == (6, NM), f"rangées de machines construites : stock {nrows[0]}, modifié {nrows[1]}")
     check(bytes(sb) == sa, "toutes les autres tables du BSS identiques au stock")
     check(rows_b[:6 * 32] == rows_a and cc_b[:6 * 32] == cc_a, "rangées des machines 0..5 identiques au stock")
     r1, c1 = struct.unpack(">8I", rows_a[32:64]), struct.unpack(">8I", cc_a[32:64])
     ok = True
-    for m in (6, 7):
+    for m in FIRST:
         r, c = struct.unpack(">8I", rows_b[32 * m:32 * m + 32]), struct.unpack(">8I", cc_b[32 * m:32 * m + 32])
         ok &= r == tuple(snare_map(x, m) for x in r1) and c == tuple(snare_map(x, m) if 51 <= x <= 54 else x for x in c1)
         print(f"        rangée {m} ({NAMES[m]}) : slots {r[:6]}, CC 16..19 {c[:4]}")
-    check(ok, "rangées 6 (SDVtg) et 7 (CPVtg) = celles de SNARE avec leurs propres descripteurs")
+    check(ok, f"rangées {list(FIRST)} ({', '.join(NAMES[6:])}) = celles de SNARE avec leurs propres descripteurs")
     return a, b
 
 
 # --- 2. recherches -----------------------------------------------------------------------------------------
 def lookups(a, b):
     diff = []
-    for m in range(8):
+    for m in range(NM):
         for slot in range(34):
             x, y = a.call(0x4005a692, slot, m), b.call(0x4005a692, slot, m)
             if x != y:
                 diff.append((m, slot, y))
-    want = {(m, s, FIRST[m] + s - 0xb) for m in (6, 7) for s in (0xb, 0xc, 0xd, 0xe)} | \
-           {(m, 0x12, FIRST[m] + 4) for m in (6, 7)}
-    check(set(diff) == want, f"(slot, machine) -> descripteur : identique sauf machines 6 et 7 ({len(diff)} écarts, les leurs)")
-    spec = [(i, a.call(0x4005a556, i), b.call(0x4005a556, i)) for i in range(95)]
-    bad = [i for i, x, y in spec if (x != y) != (76 <= i <= 79 or 81 <= i <= 84)]
-    check(not bad, "« descripteur propre à une machine » : identique, plus 76..79 et 81..84")
-    dm = [(a.call(0x4005a50a, i), b.call(0x4005a50a, i)) for i in range(95)]
-    ok = all(x == y for x, y in dm[:76]) and [y for x, y in dm[76:86]] == [6, 6, 6, 6, 7, 7, 7, 7, 7, 7] \
-        and all(y == dm[0][0] for x, y in dm[86:])
-    check(ok, f"machine d'un descripteur (0x4005a50a, test d'applicabilité) : 0..75 identiques, 76..85 -> {[y for x, y in dm[76:86]]}")
+    want = {(m, s, FIRST[m] + s - 0xb) for m in FIRST for s in (0xb, 0xc, 0xd, 0xe)} | \
+           {(m, 0x12, FIRST[m] + 4) for m in FIRST}
+    check(set(diff) == want, f"(slot, machine) -> descripteur : identique sauf machines {list(FIRST)} ({len(diff)} écarts, les leurs)")
+    last = 76 + 5 * N
+    spec = [(i, a.call(0x4005a556, i), b.call(0x4005a556, i)) for i in range(last + 9)]
+    bad = [i for i, x, y in spec if (x != y) != (76 <= i < last and (i - 76) % 5 != 4)]
+    check(not bad, f"« descripteur propre à une machine » : identique, plus les 4 potards de chaque machine ajoutée")
+    dm = [(a.call(0x4005a50a, i), b.call(0x4005a50a, i)) for i in range(last + 9)]
+    ok = all(x == y for x, y in dm[:76]) and [y for x, y in dm[76:last]] == [v for i in range(N) for v in [6 + i] * 4 + [7]] and all(y == dm[0][0] for x, y in dm[last:])
+    check(ok, f"machine d'un descripteur (0x4005a50a, test d'applicabilité) : 0..75 identiques, 76..{last - 1} -> {[y for x, y in dm[76:last]]}")
     diff = set()
     for t in range(8):
-        for m in range(8):
+        for m in range(NM):
             for cc in range(128):
                 x, y = a.call(0x4005a8ce, t, m, cc), b.call(0x4005a8ce, t, m, cc)
                 if x != y:
                     diff.add((t <= 5, m, cc, y))
-    want = {(True, m, cc, FIRST[m] + cc - 16) for m in (6, 7) for cc in (16, 17, 18, 19)}
-    check(diff == want, f"CC reçu -> descripteur : identique sauf pistes 0..5 en machines 6/7, CC 16..19 ({len(diff)} écarts)")
+    want = {(True, m, cc, FIRST[m] + cc - 16) for m in FIRST for cc in (16, 17, 18, 19)}
+    check(diff == want, f"CC reçu -> descripteur : identique sauf pistes 0..5 en machines {list(FIRST)}, CC 16..19 ({len(diff)} écarts)")
 
 
 # --- 3. accesseurs et état par descripteur -----------------------------------------------------------------
 def accessors(a, b, stock, patched):
+    last = 76 + 5 * N
     ok = all(dis(stock, va).startswith(("moveq #76,", "moveq #75,")) and
-             dis(patched, va) == dis(stock, va).replace("#76,", "#86,").replace("#75,", "#85,")
+             dis(patched, va) == dis(stock, va).replace("#76,", f"#{last},").replace("#75,", f"#{last - 1},")
              for va in g7.BOUNDS if va not in {j[0] for j in g8.JUMPS8})
     ok &= all(dis(patched, va, 6).startswith("jmp 0x4303") for va, _, _ in g7.JUMPS + g8.JUMPS8)
-    check(ok, "bornes 76/75 -> 86/85, détours = jmp vers la charge utile")
+    check(ok, f"bornes 76/75 -> {last}/{last - 1}, détours = jmp vers la charge utile")
     ok, rows = True, []
-    for m in g8.MACHINES:
+    for m in ADDED:
         base = FIRST[m["index"]]
         for i, (long_, short, default) in enumerate(m["knobs"]):
             idx = base + i
@@ -129,22 +146,22 @@ def accessors(a, b, stock, patched):
         b.call(0x4005a65a, base + 4)
         ok &= struct.unpack(">3i", b.uc.mem_read(SCRATCH, 12))[2] == m["decay"] << 8
     b.call(0x4005a65a, g7.ALG_DESC)
-    ok &= struct.unpack(">3i", b.uc.mem_read(SCRATCH, 12))[1] == 7 << 8
-    check(ok, f"descripteurs 76..85 : slots, noms {rows}, plages, défauts ; « Algorithm » va jusqu'à 7")
-    st = [(a.call(0x4004df40, i), b.call(0x4004df40, i)) for i in range(95)]
-    ok = all(y == x for x, y in st[:76]) and all(st[i][1] == st[51 + (i - 76) % 5][0] for i in range(76, 86)) \
-        and all(y == st[0][0] for x, y in st[86:])
-    check(ok, "état par descripteur : 0..75 inchangés ; 76..80 et 81..85 -> objets de SNARE 51..55")
+    ok &= struct.unpack(">3i", b.uc.mem_read(SCRATCH, 12))[1] == TOP << 8
+    check(ok, f"descripteurs 76..{last - 1} : slots, noms {rows}, plages, défauts ; « Algorithm » va jusqu'à {TOP}")
+    st = [(a.call(0x4004df40, i), b.call(0x4004df40, i)) for i in range(last + 9)]
+    ok = all(y == x for x, y in st[:76]) and all(st[i][1] == st[51 + (i - 76) % 5][0] for i in range(76, last)) \
+        and all(y == st[0][0] for x, y in st[last:])
+    check(ok, f"état par descripteur : 0..75 inchangés ; 76..{last - 1} -> objets de SNARE 51..55")
 
 
 # --- 4. écran MACHINES, réglage de la machine, molette -----------------------------------------------------
 def screens(stock, patched, payload):
     ok = True
-    for m in range(8):
+    for m in range(NM):
         ts, is_, ms, _ = t7.drum_select(stock, b"", m)
         tp, ip, mp, bp = t7.drum_select(patched, payload, m)
-        shown = {6: 1, 7: 3}.get(m, m)
-        full = ["repère"] * 8
+        shown = {x["index"]: x["image"] for x in ADDED}.get(m, m)
+        full = ["repère"] * NM
         full[m] = "repère plein"
         ok &= not bp and tp == [NAMES[m]] and ip == [0x92000000 + 28 * shown, 0x92100000 + 28 * shown] and mp == full
         if m < 6:
@@ -152,7 +169,7 @@ def screens(stock, patched, payload):
         else:
             ok &= ts == ["Error"] and is_ == []
         print(f"        machine {m} : stock {ts} | modifié {tp}, image de la machine {shown}, repère plein {mp.index('repère plein') + 1}/{len(mp)}")
-    # position des 8 repères : dans l'écran (128 px)
+    # position des repères : dans l'écran (128 px)
     u = UI(patched, payload)
     xs = []
     u.hooks = {0x40071a04: "texte", 0x40071da4: "image", 0x40070c4e: "repère", 0x40070efc: "repère plein",
@@ -164,36 +181,39 @@ def screens(stock, patched, payload):
     u.uc.mem_write(0x91001000 + 108, struct.pack(">I", 0x91002000))
     sp = t7.STACK - 0x800
     u.uc.mem_write(sp, struct.pack(">I", t7.STOP) * 64)
-    for r, v in {mk.UC_M68K_REG_D3: 7, mk.UC_M68K_REG_D2: 0x91000000, mk.UC_M68K_REG_A2: 0x91001000,
+    for r, v in {mk.UC_M68K_REG_D3: TOP, mk.UC_M68K_REG_D2: 0x91000000, mk.UC_M68K_REG_A2: 0x91001000,
                  mk.UC_M68K_REG_A5: 0x93000000, mk.UC_M68K_REG_A4: 0x93000010, mk.UC_M68K_REG_A7: sp}.items():
         u.uc.reg_write(r, v)
     u.uc.emu_start(0x400a25e0, t7.STOP, count=1_000_000)
     xs = [(args[1], args[3]) for k, args in u.calls if k.startswith("repère")]
-    ok &= len(xs) == 8 and min(x for x, _ in xs) >= 0 and max(x2 for _, x2 in xs) <= 127
-    check(ok, f"écran MACHINES : 8 noms, images (SDVtg -> SNARE, CPVtg -> PERC), 8 repères de x = {xs[0][0]} à {xs[-1][1]}")
+    ok &= len(xs) == NM and min(x for x, _ in xs) >= 0 and max(x2 for _, x2 in xs) <= 127
+    imgs = ", ".join(f"{m['name']} -> {NAMES[m['image']].upper()}" for m in ADDED)
+    check(ok, f"écran MACHINES : {NM} noms, images ({imgs}), {NM} repères de x = {xs[0][0]} à {xs[-1][1]}")
 
 
 def setter_and_wheel(stock, patched, payload):
     got = {}
     for name, img, pl in (("stock", stock, b""), ("modifié", patched, payload)):
-        for m in range(9):
+        for m in range(NM + 1):
             u = UI(img, pl)
             obj, snd = fake_track(u, 1)
             u.call(0x4001477e, obj, m, 0, 0)
             got[name, m] = struct.unpack(">H", u.uc.mem_read(snd + 38, 2))[0] >> 8
     ok = all(got["stock", m] == got["modifié", m] for m in range(6))
-    ok &= [got["stock", m] for m in (6, 7, 8)] == [1, 1, 1] and [got["modifié", m] for m in (6, 7, 8)] == [6, 7, 1]
-    check(ok, f"réglage de la machine (0x4001477e) : 6 et 7 acceptés, 8 refusé ; stock refuse 6 et 7")
+    added = list(range(6, NM + 1))
+    ok &= [got["stock", m] for m in added] == [1] * len(added) and [got["modifié", m] for m in added] == added[:-1] + [1]
+    check(ok, f"réglage de la machine (0x4001477e) : {added[:-1]} acceptés, {NM} refusé ; stock refuse {added[:-1]}")
     seq = {}
     for name, img, pl in (("stock", stock, b""), ("modifié", patched, payload)):
         u = UI(img, pl)
         obj, snd = fake_track(u, 0)
         out = []
-        for step in [1] * 9 + [-1] * 3:
+        for step in [1] * (NM + 1) + [-1] * 3:
             u.call(0x4001488a, obj, step, 0, 0)
             out.append(struct.unpack(">H", u.uc.mem_read(snd + 38, 2))[0] >> 8)
         seq[name] = out
-    check(seq["stock"] == [1, 2, 3, 4, 5, 5, 5, 5, 5, 4, 3, 2] and seq["modifié"] == [1, 2, 3, 4, 5, 6, 7, 7, 7, 6, 5, 4],
+    walk = lambda top: [min(k, top) for k in range(1, NM + 2)] + [top - 1, top - 2, top - 3]
+    check(seq["stock"] == walk(5) and seq["modifié"] == walk(TOP),
           f"molette (0x4001488a) : stock {seq['stock']}, modifié {seq['modifié']}")
 
 
@@ -202,19 +222,20 @@ def records_and_change(stock, patched, payload):
     a, b = UI(stock), UI(patched, payload)
     for u in (a, b):
         fill_records(u)
-    ok = all(a.call(0x4004df5c, i) == b.call(0x4004df5c, i) for i in list(range(7)) + [9, 100])
-    ok &= all(a.call(0x4004df76, m) == b.call(0x4004df76, m) for m in list(range(6)) + [8, 100])
+    ok = all(a.call(0x4004df5c, i) == b.call(0x4004df5c, i) for i in list(range(7)) + [NM + 1, 100])
+    ok &= all(a.call(0x4004df76, m) == b.call(0x4004df76, m) for m in list(range(6)) + [NM, 100])
     rc = refcount(b)
     got = {}
-    for m, rec in ((6, g8.REC8), (7, g8.REC9)):
+    for m, rec in REC.items():
         r1, r2 = b.call(0x4004df5c, m + 1), b.call(0x4004df76, m)
         ids = struct.unpack(">17i", bytes(b.uc.mem_read(r1, REC_LEN))[8:])
         ok &= r1 == r2 == rec and ids[:6] == (42, FIRST[m] + 4, FIRST[m], FIRST[m] + 1, FIRST[m] + 2, FIRST[m] + 3)
         got[m] = ids[:6]
-    ok &= refcount(b) == rc + 4
-    check(ok, f"enregistrements par machine : 0..6 identiques ; 7 -> SDVtg {got[6]}, 8 -> CPVtg {got[7]} ; chaînes +4 références")
+    ok &= refcount(b) == rc + 2 * N
+    recs = ", ".join(f"{m + 1} -> {NAMES[m]} {got[m]}" for m in REC)
+    check(ok, f"enregistrements par machine : 0..6 identiques ; {recs} ; chaînes +{2 * N} références")
     res = {}
-    for m_from, m_to in ((5, 6), (6, 7)):
+    for m_from, m_to in ((m - 1, m) for m in FIRST):
         u = UI(patched, payload)
         fill_records(u)
         obj, snd = fake_track(u, m_from)
@@ -229,8 +250,9 @@ def records_and_change(stock, patched, payload):
         mach = struct.unpack(">H", u.uc.mem_read(snd + 38, 2))[0] >> 8
         vals = [struct.unpack(">h", u.uc.mem_read(snd + 0x14 + 2 * sl, 2))[0] >> 8 for sl in (0xb, 0xc, 0xd, 0xe, 0x12)]
         res[m_to] = (mach, vals, bool(u.bad))
-    want = {m["index"]: (m["index"], [k[2] for k in m["knobs"]] + [m["decay"]], False) for m in g8.MACHINES}
-    check(res == want, f"changement de machine réel (0x40014072) : Chord -> SDVtg {res[6][1]}, SDVtg -> CPVtg {res[7][1]}")
+    want = {m["index"]: (m["index"], [k[2] for k in m["knobs"]] + [m["decay"]], False) for m in ADDED}
+    chain = ", ".join(f"{NAMES[m - 1]} -> {NAMES[m]} {res[m][1]}" for m in res)
+    check(res == want, f"changement de machine réel (0x40014072) : {chain}")
     out = {}
     for name, img, pl in (("stock", stock, b""), ("modifié", patched, payload)):
         u = UI(img, pl)
@@ -239,20 +261,21 @@ def records_and_change(stock, patched, payload):
         u.uc.mem_write(vec, struct.pack(">8i", 1, 2, 3, 4, 5, 6, 0, 0))
         u.uc.mem_write(this + 104, struct.pack(">III", vec, vec + 24, vec + 24))
         r = {}
-        for m in range(8):
+        for m in range(NM):
             u.hooks = {0x4001e318: ("machine", m), 0x400cf9a8: ("app", 0x93a00000), 0x4006b736: ("verrou", 0)}
             r[m] = [u.call(0x4001e814, this, k, 0, 0) for k in range(2, 16)]
         out[name] = r
     ok = all(out["stock"][m] == out["modifié"][m] for m in range(6))
-    for m in (6, 7):
+    for m in FIRST:
         ok &= out["modifié"][m][:6] == [42, FIRST[m] + 4] + [FIRST[m] + i for i in range(4)]
-    check(ok, f"potards de l'écran principal (0x4001e814) : 0..5 identiques ; SDVtg {out['modifié'][6][:6]}, CPVtg {out['modifié'][7][:6]}")
+    knobs = ", ".join(f"{NAMES[m]} {out['modifié'][m][:6]}" for m in FIRST)
+    check(ok, f"potards de l'écran principal (0x4001e814) : 0..5 identiques ; {knobs}")
 
 
 def small_icon(stock, patched, payload):
     got = {}
     for name, img, pl in (("stock", stock, b""), ("modifié", patched, payload)):
-        for m in (0, 3, 5, 6, 7, 8):
+        for m in [0, 3, 5] + list(FIRST) + [NM]:
             u = UI(img, pl)
             u.hooks = {0x40071da4: "image"}
             u.uc.mem_write(0x40fe37f0, struct.pack(">I", 0x92200000))
@@ -264,14 +287,19 @@ def small_icon(stock, patched, payload):
             u.uc.reg_write(mk.UC_M68K_REG_A0, 0x91000000)
             u.uc.emu_start(0x400a4dc4, t7.STOP, count=100_000)
             got[name, m] = [(args[1] - 0x92200000) // 28 for k, args in u.calls if k == "image"]
-    ok = all(got["stock", m] == got["modifié", m] for m in (0, 3, 5, 8))
-    ok &= got["modifié", 6] == [1] and got["modifié", 7] == [3]
-    check(ok, f"petite icône : 0..5 identiques, SDVtg -> SNARE {got['modifié', 6]}, CPVtg -> PERC {got['modifié', 7]}")
+    ok = all(got["stock", m] == got["modifié", m] for m in (0, 3, 5, NM))
+    ok &= all(got["modifié", m["index"]] == [m["image"]] for m in ADDED)
+    icons = ", ".join(f"{m['name']} -> {NAMES[m['image']].upper()} {got['modifié', m['index']]}" for m in ADDED)
+    check(ok, f"petite icône : 0..5 identiques, {icons}")
 
 
 # --- 6. son -------------------------------------------------------------------------------------------------
 CP_CASES = [("défauts", {}), ("note 48", {"note": 48}), ("BODY 100", {"p1": 100}), ("BAL 0", {"p2": 0}),
             ("BAL 127", {"p2": 127}), ("SPCR 90", {"p3": 90}), ("BENV 110", {"p4": 110}), ("DEC 90", {"dec": 90})]
+CASES = {"sd": [("défauts", {}), ("note 48", {"note": 48}), ("SWEP 127", {"p3": 127})], "cp": CP_CASES}
+GENERIC_CASES = [("défauts", {}), ("note 48", {"note": 48}), ("p1 0", {"p1": 0}), ("p1 127", {"p1": 127}),
+                 ("p2 0", {"p2": 0}), ("p2 127", {"p2": 127}), ("p3 0", {"p3": 0}), ("p3 127", {"p3": 127}),
+                 ("p4 0", {"p4": 0}), ("p4 127", {"p4": 127}), ("DEC 90", {"dec": 90})]
 
 
 def sound(stock, patched, st_img, blocks):
@@ -291,8 +319,8 @@ def sound(stock, patched, st_img, blocks):
         e.set(0, tune=kw["tune"], p1=kw["p1"], p2=kw["p2"], p3=kw["p3"], p4=kw["p4"], punch=kw.get("punch", 0),
               gate=0, decay=kw["dec"], over=0)
         return e.render(blocks, trig_at=(1,))
-    for m, name, cases in ((SD, "SD VINTAGE", [("défauts", {}), ("note 48", {"note": 48}), ("SWEP 127", {"p3": 127})]),
-                           (CP, "CP VINTAGE", CP_CASES)):
+    for m in ADDED:
+        name, cases = m["label"], CASES.get(m["code"], GENERIC_CASES)
         base = dict(tune=64, p1=m["knobs"][0][2], p2=m["knobs"][1][2], p3=m["knobs"][2][2], p4=m["knobs"][3][2],
                     dec=m["decay"])
         ok, worst = True, 0
@@ -313,7 +341,8 @@ def sound(stock, patched, st_img, blocks):
     e = E.Engine(patched)
     for t in range(1, 6):
         e.uc.mem_write(E.VOICE0 + t * E.VSTRIDE, struct.pack(">I", 9))
-    e.set(0, machine=7, note=60, pitch=64, finetune=64, color=24, shape=25, sweep=46, contour=37, decay=32)
+    last = ADDED[-1]
+    e.set(0, machine=last["index"], note=60, pitch=64, finetune=64, **knob_kw(last))
     ran = []
     e.uc.hook_add(UC_HOOK_CODE, lambda uc, a, s, u: ran.append(a), begin=E.PAYLOAD_CODE[0][0], end=E.PAYLOAD_CODE[0][1])
     x = e.render(50, trig_at=())
@@ -324,13 +353,17 @@ def sound(stock, patched, st_img, blocks):
     e.set(0, machine=1, note=60, pitch=64, finetune=64, color=0, shape=127, sweep=8, contour=0, decay=40)
 
     def locks(eng, blk):
-        if blk == 60:
-            eng.set(0, machine=6, color=0, shape=110, sweep=74, contour=80, decay=33)
-        if blk == 120:
-            eng.set(0, machine=7, color=24, shape=25, sweep=46, contour=37, decay=32)
-    x = e.render(180, trig_at=(1, 61, 121), on_block=locks)
-    parts = [np.max(np.abs(x[32 * a:32 * b])) for a, b in ((2, 60), (62, 120), (122, 180))]
-    check(all(p > 1e6 for p in parts) and not e.unmapped, "machine locks SNARE -> SDVtg -> CPVtg sur une piste : les trois jouent")
+        if blk % 60 == 0 and 1 <= blk // 60 <= N:
+            m = ADDED[blk // 60 - 1]
+            eng.set(0, machine=m["index"], **knob_kw(m))
+    x = e.render(60 * (N + 1), trig_at=tuple(60 * k + 1 for k in range(N + 1)), on_block=locks)
+    parts = [np.max(np.abs(x[32 * (60 * k + 2):32 * (60 * k + 60)])) for k in range(N + 1)]
+    check(all(p > 1e6 for p in parts) and not e.unmapped,
+          f"machine locks {' -> '.join(NAMES[m] for m in [1] + list(FIRST))} sur une piste : toutes jouent")
+
+
+def knob_kw(m):
+    return dict(zip(("color", "shape", "sweep", "contour"), (k[2] for k in m["knobs"])), decay=m["decay"])
 
 
 def main():
@@ -338,8 +371,11 @@ def main():
     ap.add_argument("--cycles", required=True)
     ap.add_argument("--syntakt", required=True)
     ap.add_argument("--blocks", type=int, default=100)
+    ap.add_argument("--tweak", default=str(TWEAK), help="tweak à vérifier (défaut : 23-syntakt-vintage.json)")
     args = ap.parse_args()
-    tweak = json.loads(TWEAK.read_text(encoding="utf-8"))
+    tweak = json.loads(pathlib.Path(args.tweak).read_text(encoding="utf-8"))
+    configure(tweak)
+    print(f"{tweak['id']} : machines ajoutées {', '.join(f'{m['index']} = {m['name']}' for m in ADDED)}")
     stock = T.main_os_from_syx(args.cycles)
     patched, _ = build.apply_writes(stock, [tweak])
     payload, _ = build.build_payload([tweak], stock, args.syntakt)

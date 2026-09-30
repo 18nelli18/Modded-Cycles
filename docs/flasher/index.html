@@ -82,6 +82,7 @@
     border-radius:9px;padding:9px 11px;cursor:pointer;font-size:.92rem}
   .variants input{margin-top:.25em;accent-color:var(--accent)}
   .variants small{display:block;color:var(--muted)}
+  .variants .combo{color:var(--muted);font-size:.85rem;margin:2px 2px 0}
   .samples-head{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-weight:650;margin:0 0 .35em}
   .warn-list{margin:.7em 0 12px;padding-left:1.2em;font-size:.9rem;color:var(--muted)}
   .warn-list li{margin:.3em 0}
@@ -183,7 +184,7 @@
   <div id="errbar" class="alert bad" hidden></div>
   <script>
     // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-    window.MC_BUILD = "2026-09-30-11";
+    window.MC_BUILD = "2026-09-30-12";
     window.addEventListener("error", function (e) {
       var b = document.getElementById("errbar");
       if (!b) return;
@@ -216,7 +217,7 @@
     </div>
     <div id="panel-mods" role="tabpanel" aria-labelledby="tab-mods">
       <div id="features"></div>
-      <p class="note" data-i18n="mods_note">All these mods have been tested on a real Model:Cycles, except the options marked “New”. Tick several to combine them.</p>
+      <p class="note" data-i18n="mods_note">All these mods have been tested on a real Model:Cycles, except the choices tagged “Experimental”. Tick several to combine them.</p>
     </div>
     <div id="panel-restore" role="tabpanel" aria-labelledby="tab-restore" hidden>
       <p style="margin:0" data-i18n-html="restore_text"></p>
@@ -259,7 +260,7 @@
       <label class="drop" id="drop3" tabindex="0">
         <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 12v6M9.5 15.5 12 18l2.5-2.5"/></svg>
         <div><strong id="drop3-title" data-i18n="drop3_title">Drop Syntakt_OS1.41.syx here</strong>
-          <span id="drop3-sub" data-i18n="drop3_sub">the official Syntakt OS, for the SD VINTAGE engine — or click to choose it</span></div>
+          <span id="drop3-sub" data-i18n="drop3_sub">the official Syntakt OS, for its engines — or click to choose it</span></div>
         <input id="file3" type="file" accept=".syx" hidden>
       </label>
       <p class="hint" data-i18n-html="get_os_syntakt"></p>
@@ -336,9 +337,9 @@
   </footer>
 </div>
 <!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
-<script src="builder.js?v=2026-09-30-11"></script>
-<script src="tweaks.js?v=2026-09-30-11"></script>
-<script src="flasher.js?v=2026-09-30-11"></script>
-<script src="app.js?v=2026-09-30-11"></script>
+<script src="builder.js?v=2026-09-30-12"></script>
+<script src="tweaks.js?v=2026-09-30-12"></script>
+<script src="flasher.js?v=2026-09-30-12"></script>
+<script src="app.js?v=2026-09-30-12"></script>
 </body>
 </html>
