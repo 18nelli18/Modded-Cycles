@@ -74,14 +74,16 @@ FEATURES = [
     },
     {
         "id": "sdvintage",
-        "label": "Vrai moteur SD VINTAGE du Syntakt",
-        "desc": "Le moteur SD VINTAGE du Syntakt, extrait de TON fichier Syntakt_OS1.41.syx (a deposer a "
-                "l'etape 2), a la place de SNARE ou en 7e machine SDVtg. Identique au Syntakt en emulation.",
+        "label": "Vrais moteurs du Syntakt (SD VINTAGE, CP VINTAGE)",
+        "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.41.syx (a deposer a l'etape 2) : "
+                "SD VINTAGE en 7e machine SDVtg (ou a la place de SNARE), et CP VINTAGE en 8e machine CPVtg. "
+                "Identiques au Syntakt en emulation.",
         "status": "tested",
         "credit": None,
         "needs": "syntakt",
         "variants": [
             {"file": "22-sdvintage-7th", "label": "En 7e machine SDVtg, a cote de SNARE (teste le 30/09/2026)"},
+            {"file": "23-syntakt-vintage", "label": "SDVtg et CPVtg en 7e et 8e machines (nouveau, pas encore teste)"},
             {"file": "21-sdvintage-exact", "label": "A la place de SNARE (teste le 30/09/2026)"},
         ],
     },
