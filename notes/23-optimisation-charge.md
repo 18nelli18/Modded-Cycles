@@ -14,8 +14,9 @@ Adresses : MAIN OS Cycles 1.13 et programme audio du Syntakt 1.41, comme dans le
 | Empreinte mémoire (cache) | `[FAIT]` nettement plus grande que les machines d'origine (§3) |
 | Cause probable | temps d'accès mémoire (cache) sur la vraie machine, que l'émulateur ne chronomètre pas (§4) |
 | Compteur de charge sur la vraie machine | `[FAIT]` firmware de diagnostic `syntakt-meter` : « pic/moyenne » à la place du nom de toutes les machines, vérifié en émulation (§5) |
-| Mesures sur la machine | `[À FAIRE]` (§6) |
-| Optimisations | après les mesures (§7) |
+| Mesures sur la machine | `[FAIT]` le Cycles d'origine prend déjà 77 % du temps pour l'audio, même à l'arrêt (§6) |
+| Arrêt des voix muettes | `[FAIT]` en émulation : −77 % d'instructions quand les 6 voix se taisent (§7) |
+| Test sur la machine de l'arrêt des voix muettes | `[À FAIRE]` (§8) |
 
 ## 1. Coût en instructions (émulation)
 
@@ -119,9 +120,65 @@ Protocole :
    Noter aussi si l'interface est lente.
 5. Revenir ensuite à un firmware normal (remettre d'abord les pistes sur des machines d'origine).
 
-## 7. Suite
+## 6 bis. Résultats (30/09/2026)
+
+Mesures de l'utilisateur avec le firmware de diagnostic (« pic/moyenne » de la fonction audio, en % d'un bloc) :
+
+| Cas | Pic | Moyenne |
+|---|---|---|
+| 6 machines d'origine, lecture à l'arrêt | 80 | 77 |
+| 6 machines d'origine, en lecture | 87 | 77 |
+| 5 d'origine + SDVtg | 94 | 84 |
+| 4 d'origine + SDVtg + CPVtg | 92 | 89, son dégradé, interface ralentie |
+
+Avec la 1ʳᵉ version du compteur (5 pistes d'origine, 1 sacrifiée) : M 92 %, A 83 %, V 47 %, S 11 %.
+
+Ce qu'on en tire :
+- **Le Cycles d'origine est déjà presque plein.** L'audio prend 77 % du temps, **même à l'arrêt** : les 6 voix sont calculées à chaque bloc, qu'elles jouent ou non. L'interface ne dispose que d'environ 20 % du processeur.
+- **La boucle des voix pèse environ 47 %**, soit environ 8 % par voix d'origine. Le reste (≈ 30 %) est le mixage et les effets.
+- **Une voix du Syntakt coûte environ deux fois une voix d'origine** en temps réel : +7 points de moyenne pour SDVtg, +12 pour SDVtg + CPVtg. En instructions, l'écart n'était que de +12 % et +16 % (§1) : la différence vient bien de la mémoire (§4).
+- Au-delà d'environ 85 % de moyenne, l'interface étouffe ; quand un bloc dépasse 100 %, le son casse.
+
+## 7. Arrêt des voix muettes `[FAIT]` en émulation
+
+Le levier le plus fort n'est pas de rendre les moteurs du Syntakt moins chers, mais de ne plus calculer les voix qui ne jouent pas, **pour les 6 machines d'origine comme pour les machines ajoutées**.
+
+**Principe** : dans la boucle des voix, l'appel update/render de chaque piste (`0x400a7dfe..0x400a7e24`) passe par un détour (`dispatch_asm()` de `gen_syntakt_engines.py`).
+- Après chaque render, on mesure la crête des 32 échantillons de la voix.
+- Une voix restée sous `IDLE_THR` = 2¹³ (−108 dB sous la pleine échelle) pendant `IDLE_BLOCKS` = 64 blocs (43 ms), et sans trig, n'est plus calculée : sa sortie est mise à zéro.
+- Au trig suivant (voix + 0x34 ou + 0x38), elle repart normalement. Les appels update/render sont faits exactement comme par l'OS (mêmes registres, même pile).
+- Tous les tweaks générés en profitent. SD seul et SD + CP passent maintenant eux aussi par le générateur (`syntakt-sd`, `syntakt-sd-cp`) ; les anciens `sdvintage-7th` et `syntakt-vintage` restent disponibles avec `build.py`.
+
+**Preuve en émulation** (`tools/emu/test_idle.py`, référence : le Cycles d'origine) :
+- Les 6 machines d'origine, DECAY 20 : son **identique** échantillon par échantillon tant que la voix est calculée.
+  - Elles s'arrêtent entre les blocs 146 (SNARE) et 547 (PERC). Ensuite, le Cycles d'origine ne produit plus que des valeurs sous le seuil.
+  - Au trig suivant, l'écart est d'au plus 1,7·10⁻⁶ de la crête (−115 dB).
+- **Coût, 6 voix d'origine muettes : 42 278 → 9 571 instructions par bloc (−77 %).** Quand les 6 jouent : 42 302 → 42 415 (+0,3 % pour la mesure de crête).
+- **SYToy, DECAY 10 : identique jusqu'à l'arrêt (bloc 200) ; coût −95 % ensuite.**
+  - Au trig suivant, le son diffère de 11 % de la crête : un moteur du Syntakt ne remet pas ses oscillateurs à zéro au trig, et la phase n'est plus la même. C'est la même variation qu'entre deux notes jouées à des moments différents.
+  - Le test vérifie que la note rejouée a le même niveau (à 1 dB près) que la référence et que la 1ʳᵉ note.
+- Les tests complets (`test_syntakt_machines.py`) passent sur SD, SD + CP, CP, SY TOY, SY BITS, SY SWARM, SD + CP + SY TOY et les 5 moteurs.
+
+**Limites**
+- Une voix qui joue coûte toujours autant ; une voix du Syntakt coûte toujours environ deux fois une voix d'origine.
+- Les moteurs du Syntakt ont des queues longues avec leurs réglages par défaut (plus d'une seconde pour SY BITS et SY SWARM) : ils ne s'arrêtent qu'une fois vraiment silencieux.
+- Le gain dépend donc du motif : maximal à l'arrêt et avec des sons courts ; nul si les 6 voix sonnent en permanence.
+
+## 8. Test sur la machine `[À FAIRE]`
+
+Firmware de diagnostic v2 (compteur + arrêt des voix muettes + 5 moteurs), construit localement :
+- `build/diag/model-cycles_OS1.13_diagnostic-charge_v2.syx` (MAIN OS `4bfe715c…`) ;
+- `…_v2_6ch.syx` (MAIN OS `80260796…`).
+
+À relever comme au §6 bis, pour comparer :
+- à l'arrêt ;
+- 6 machines d'origine en lecture ;
+- avec 1, 2, 3 et 5 moteurs du Syntakt.
+
+Écouter aussi : pas de son coupé trop tôt, pas de différence sur les notes rejouées.
+
+## 9. Suite
 
 Selon les mesures :
-- **Si la fonction audio approche ou dépasse 100 %** : le processeur manque de temps. Il faut réduire le coût réel des moteurs du Syntakt, par exemple en les faisant travailler dans la SRAM interne, ce qui demanderait d'y libérer de la place.
-- **Si la charge audio reste modérée alors que l'interface rame** : c'est la pollution du cache qui ralentit le reste de l'OS. Il faudra réduire l'empreinte mémoire des moteurs.
-- Dans les deux cas, le compteur permettra de vérifier chaque optimisation sur la machine.
+- Réduire le coût réel d'une voix du Syntakt qui joue (≈ 2 voix d'origine) : ses tampons de travail sont en SDRAM, là où les machines d'origine utilisent la SRAM interne. Piste : emprunter pendant son calcul des tampons de SRAM qui ne servent qu'au calcul d'une voix d'origine. À étudier.
+- Proposer l'arrêt des voix muettes aussi sans moteur du Syntakt : il allège le Cycles d'origine (77 % à l'arrêt).

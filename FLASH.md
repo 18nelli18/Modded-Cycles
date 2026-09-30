@@ -165,8 +165,9 @@ Quatre étapes, de haut en bas :
      - **SYToy** = SY TOY ([note 20](notes/20-moteurs-syntakt-a-cocher.md)) ;
      - **SYBit** = SY BITS ([note 21](notes/21-sy-bits.md)) : Detune va de 40 à 88, et PUNCH active Bit Redux ;
      - **SYSwm** = SY SWARM ([note 22](notes/22-sy-swarm.md)) : PUNCH ajoute la sous-octave.
-   - SDVtg seul, SDVtg + CPVtg, SYToy seul, SDVtg + CPVtg + SYToy et SYBit seul ont été **testés sur un vrai Model:Cycles** le
-     30/09/2026 ; les autres choix sont vérifiés en émulation et marqués « Expérimental ».
+   - Depuis l'arrêt des voix muettes ([note 23](notes/23-optimisation-charge.md)), qui allège fortement le processeur, tous
+     les choix sont marqués « Expérimental » jusqu'à un nouveau test sur la machine. Avant, SDVtg, SDVtg + CPVtg, SYToy,
+     SDVtg + CPVtg + SYToy, SYBit et SYSwm avaient été testés sur un vrai Model:Cycles (30/09/2026).
    - Les machines ajoutées sont numérotées dans l'ordre des moteurs cochés. Avant de changer de choix ou de revenir au firmware
      officiel, remets sur une machine d'origine les pistes qui utilisent une machine ajoutée ([note 20 §5](notes/20-moteurs-syntakt-a-cocher.md)).
    - « SD VINTAGE à la place de SNARE » (`sdvintage-exact`, [note 17](notes/17-portage-exact-syntakt.md)) n'est plus dans la page : il reste disponible avec `build.py`.

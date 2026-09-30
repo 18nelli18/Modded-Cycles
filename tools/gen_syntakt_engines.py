@@ -7,7 +7,8 @@ Même méthode que gen_syntakt_machines.py (notes/19, testé : SDVtg + CPVtg), g
   - passerelle bridge_engines.c (un moteur du Syntakt par machine) ; détours générés pour N machines ;
   - table machine -> moteur de l'OS (8 octets, 0x40118640) déplacée : plus de 2 machines ajoutées possibles ;
   - charge utile : moteurs du catalogue (réunion) et tables à adresses fixes, prévues pour 6 machines ajoutées.
-Les combinaisons déjà testées gardent leur tweak d'origine (LEGACY) : SD seul = sdvintage-7th, SD + CP = syntakt-vintage.
+Toutes les combinaisons sont générées ici, avec l'arrêt des voix muettes (notes/23) ; les anciens tweaks
+sdvintage-7th et syntakt-vintage restent disponibles avec build.py.
 
     python3 tools/gen_syntakt_engines.py --cycles … --syntakt … --engines cp [--check]
     python3 tools/gen_syntakt_engines.py --cycles … --syntakt … --all [--check]   # toutes les autres combinaisons
@@ -77,10 +78,13 @@ CATALOG = {
                   code_end=0x400097dc, tables_high=((0x4003ee38, 0x40040038),),
                   imm={0x80009c58, 0x80009cec, 0x80009d80, 0x80009e14}),
 }
-# Combinaisons qui gardent leur tweak d'origine, testé sur la machine (notes/18, notes/19).
-LEGACY = {("sd",): "sdvintage-7th", ("sd", "cp"): "syntakt-vintage"}
+# Combinaisons qui gardaient leur tweak d'origine (notes/18, notes/19). Depuis l'arrêt des voix muettes (notes/23),
+# toutes passent par ce générateur ; sdvintage-7th et syntakt-vintage restent disponibles avec build.py.
+LEGACY = {}
 # Combinaisons testées sur un vrai Model:Cycles (affiché dans le flasher). Ajouter ici après un test réussi.
-HW_TESTED = {("sd",), ("sd", "cp"), ("toy",), ("sd", "cp", "toy"), ("bits",), ("swarm",)}
+# Testés avant l'arrêt des voix muettes (30/09/2026) : SD, SD + CP, SY TOY, SD + CP + SY TOY, SY BITS, SY SWARM ;
+# à retester avec lui.
+HW_TESTED = set()
 MAX_EXTRA = 6
 
 # --- Syntakt : fermeture et plages copiées -----------------------------------------------------------------
@@ -135,6 +139,14 @@ def layout(gen):
 
 
 MAP = g7.ENGINE_MAP          # table machine -> entrée des tables update/render (8 octets, 0x40118640)
+
+# --- voix muettes (notes/23) : dans la boucle des voix, l'appel update/render de chaque piste (0x400a7dfe..0x400a7e24)
+# passe par un détour. Une voix dont la sortie est restée sous IDLE_THR (valeur absolue, échelle 32 bits de la sortie
+# de render) pendant IDLE_BLOCKS blocs, et qui n'a pas de trig, n'est plus calculée : sa sortie est mise à zéro.
+# Elle repart au trig suivant. Vaut pour les 6 machines d'origine comme pour les machines ajoutées.
+DISPATCH = (0x400a7dfe, 0x400a7e24)
+IDLE_BLOCKS = 64             # 43 ms
+IDLE_THR = 1 << 13           # -108 dB sous la pleine échelle
 
 
 def subset_id(codes, generic=False):
@@ -281,7 +293,69 @@ audio_probe:
 """
 
 
-def compile_code(tmp, machines, payload_longs, meter=None):
+def dispatch_asm(idle_at, rnd_at):
+    """Détour de l'appel update/render d'une piste dans la boucle des voix (0x400a7dfe). Registres de la boucle à
+    l'entrée : d0 = borne des machines, d4 = entrée des tables, d1 = modulation de note, d6 = table update,
+    d3 = sortie de la piste (32 x int32), d2 = numéro de piste, a2 = paramètres, fp = voix, a5 = voix + 0x34
+    (trig de ce bloc), a3 = voix + 0x38 (trig du bloc précédent). Seuls d0, d1, a0 et a1 sont modifiés, comme
+    par les appels d'origine."""
+    return f"""
+	.globl	dispatch
+dispatch:
+	cmp.l	%d4, %d0
+	bcs.w	9f			/* machine hors borne : rien, comme l'OS */
+	lea	{idle_at:#x}, %a0
+	move.l	(%a5), %d0
+	or.l	(%a3), %d0
+	beq.s	1f
+	clr.b	(%a0,%d2.l)		/* trig : la voix est active */
+	bra.s	3f
+1:	moveq	#0, %d0
+	move.b	(%a0,%d2.l), %d0
+	cmp.l	#{IDLE_BLOCKS}, %d0
+	bcs.s	3f
+	movea.l	%d3, %a0		/* muette depuis {IDLE_BLOCKS} blocs, sans trig : sortie à zéro */
+	moveq	#31, %d0
+2:	clr.l	(%a0)+
+	subq.l	#1, %d0
+	bpl.s	2b
+	bra.w	9f
+3:	movea.l	%d6, %a0		/* update puis render, exactement comme l'OS */
+	movea.l	(%a0,%d4.l*4), %a1
+	move.l	%a2, -(%sp)
+	move.l	%fp, -(%sp)
+	move.l	%d1, -(%sp)
+	jsr	(%a1)
+	move.l	%fp, -(%sp)
+	move.l	%d3, -(%sp)
+	lea	{rnd_at:#x}, %a0
+	movea.l	(%a0,%d4.l*4), %a1
+	jsr	(%a1)
+	lea	20(%sp), %sp
+	movea.l	%d3, %a0		/* sortie sous le seuil ? */
+	moveq	#31, %d1
+4:	move.l	(%a0)+, %d0
+	bpl.s	5f
+	neg.l	%d0
+5:	cmp.l	#{IDLE_THR}, %d0
+	bcc.s	6f
+	subq.l	#1, %d1
+	bpl.s	4b
+	lea	{idle_at:#x}, %a0		/* oui : un bloc muet de plus */
+	moveq	#0, %d0
+	move.b	(%a0,%d2.l), %d0
+	cmp.l	#{IDLE_BLOCKS}, %d0
+	bcc.s	9f
+	addq.l	#1, %d0
+	move.b	%d0, (%a0,%d2.l)
+	bra.s	9f
+6:	lea	{idle_at:#x}, %a0		/* non : compteur à zéro */
+	clr.b	(%a0,%d2.l)
+9:	jmp	{DISPATCH[1]:#x}
+"""
+
+
+def compile_code(tmp, machines, payload_longs, meter=None, dispatch=None):
     defs = []
     for m in machines:
         defs += [f"-DUPD_{m['engine']}={m['update']:#x}", f"-DRND_{m['engine']}={m['render']:#x}"]
@@ -311,7 +385,7 @@ def compile_code(tmp, machines, payload_longs, meter=None):
         raise SystemExit("!! passerelle trop grande")
     src, o, e, b = tmp / "det.S", tmp / "det.o", tmp / "det.elf", tmp / "det.bin"
     src.write_text(detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))])
-                   + (meter_asm(syms) if meter else ""))
+                   + (meter_asm(syms) if meter else "") + dispatch_asm(*dispatch))
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(src), "-o", str(o)])
     gx.run([gx.CROSS + "ld", "-Ttext", f"{STUBS:#x}", "-o", str(e), str(o)])
     gx.run([gx.CROSS + "objcopy", "-O", "binary", "-j", ".text", str(e), str(b)])
@@ -372,9 +446,10 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
     if meter:                                   # nom de toutes les machines : « pic/moyenne » (5 caractères au plus)
         addr["--/--"] = at
         at += 8
+    idle_at = at                                # compteurs de blocs muets, un octet par piste
     with tempfile.TemporaryDirectory() as d:
         blobs, syms, stubs, ssyms = compile_code(pathlib.Path(d), machines, size // 4,
-                                                 addr["--/--"] if meter else None)
+                                                 addr["--/--"] if meter else None, (idle_at, rnd_at))
 
     names = [u32(g7.NAMES + 4 * i) for i in range(6)] + [addr[m["name"]] for m in machines]
     if meter:
@@ -387,6 +462,9 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
     data += img[MAP - BASE:MAP - BASE + 6] + bytes(range(6, nm)) + bytes(((nm + 3) & ~3) - nm)   # machine -> entrée
     for s in addr:
         data += s.encode("ascii") + b"\0" * (3 if s == "--/--" else 1)
+    if DATA + len(data) != idle_at:
+        raise SystemExit("!! disposition des données")
+    data += bytes(8)                            # compteurs de blocs muets
     if DATA + len(data) > DESCN:
         raise SystemExit("!! données")
 
@@ -427,7 +505,10 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         if len(rs) != {g7.DESC: 34, g7.DESC + 8: 1, g7.DESC + 0x20: 2, g7.ROWS: 5, g7.CCROWS: 2, MAP: 1}.get(old, 1):
             raise SystemExit(f"!! références à {old:#x} : {len(rs)}")
         for va in rs:
+            if DISPATCH[0] <= va < DISPATCH[1]:
+                continue                        # dans le code remplacé par le détour des voix muettes
             w(va, g7.be32(old), g7.be32(new_))
+    w(DISPATCH[0], img[DISPATCH[0] - BASE:DISPATCH[0] - BASE + 6], bytes.fromhex("4ef9") + g7.be32(ssyms["dispatch"]))
     jumps = g7.JUMPS + g8.JUMPS8
     for va in g7.BOUNDS:
         if va in {j[0] for j in jumps}:
@@ -474,7 +555,8 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         raise SystemExit("!! max du paramètre Algorithm")
     reloc.append([f"{alg_max - g7.DESC + DESCN:#x}", gx.be32(5 << 8), gx.be32(top << 8)])
     tid = "syntakt-meter" if meter else subset_id(codes, generic)
-    others = sorted({"sdvintage-snare", "sdvintage-exact"} | {subset_id(c) for c in subsets()} - {tid})
+    others = sorted(({"sdvintage-snare", "sdvintage-exact", "sdvintage-7th", "syntakt-vintage", "syntakt-meter"}
+                     | {subset_id(c) for c in subsets()}) - {tid})
     return {
         "id": tid,
         "order": 90 if meter else 24,

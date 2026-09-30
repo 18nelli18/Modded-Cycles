@@ -80,8 +80,8 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 7).join() === "6ch-usbup,latching-mute,trig-preview,browser-scroll,sdvintage-7th,syntakt-cp,syntakt-toy"
-      && ids.length === 4 + (1 << nEng) - 1 && ids.includes("syntakt-vintage") && ids.includes("syntakt-sd-cp-toy-bits")
+    check(ids.slice(0, 7).join() === "6ch-usbup,latching-mute,trig-preview,browser-scroll,syntakt-sd,syntakt-cp,syntakt-toy"
+      && ids.length === 4 + (1 << nEng) - 1 && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-sd-cp-toy-bits")
       && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 5,
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement): ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
@@ -91,7 +91,8 @@ async function main() {
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
     check(feats.join() === "feat-usb6,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-syntakt", "5 feature cards: " + JSON.stringify(feats));
     const tags = [...doc.querySelectorAll("#features .tag")].map((x) => x.textContent);
-    check(tags.join() === "Tested,Tested,Tested,Tested,Tested", "every card is tagged Tested: " + tags.join());
+    const synTag = w.MC_TWEAKS.features.find((f) => f.engines).status === "tested" ? "Tested" : "Experimental";
+    check(tags.join() === "Tested,Tested,Tested,Tested," + synTag, "cards tagged as tested or not: " + tags.join());
     check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until the Syntakt engines are ticked");
     doc.getElementById("feat-syntakt").click();
     await wait(30);
@@ -104,7 +105,8 @@ async function main() {
       && /SYToy — SY TOY/.test(text(doc, "features")) && /SYBit — SY BITS/.test(text(doc, "features"))
       && /SYSwm — SY SWARM/.test(text(doc, "features"))
       && !/in place of SNARE/.test(text(doc, "features")) && doc.querySelectorAll('input[name="var-syntakt"]').length === 0
-      && /tested on a real Model:Cycles/.test(text(doc, "features")),
+      && (engineCombos(w) && w.MC_TWEAKS.features.find((f) => f.engines).combos[0].tested
+        ? /tested on a real Model:Cycles/ : /not tested on a Model:Cycles yet/).test(text(doc, "features")),
       "Syntakt engines: one checkbox per engine (SDVtg ticked by default, CPVtg, SYToy, SYBit, SYSwm), no SNARE replacement");
     await pickEngines(doc, ["cp"]);
     check(/not tested on a Model:Cycles yet/.test(text(doc, "features")) && /Experimental/.test(doc.querySelector("label[for=feat-syntakt] .tag").textContent),
@@ -356,9 +358,9 @@ async function main() {
     app.loadSyntakt(syn, "Syntakt_OS1.41.syx");
     await settle(w);
     const f = app.state.fw;
-    check(f && f.kind === "built" && f.ref && f.sdv === "sdvintage-7th" && /recognised/.test(text(doc, "file3-status"))
+    check(f && f.kind === "built" && f.ref && f.sdv === "syntakt-sd" && /recognised/.test(text(doc, "file3-status"))
       && /Real Syntakt engines — SDVtg/.test(text(doc, "file-status")), "Syntakt file -> reference build of SDVtg (default) " + (f ? f.name : ""));
-    check(new RegExp("MAIN OS " + app.REF_MAINOS["sdvintage-7th"].slice(0, 8)).test(text(doc, "file-status")),
+    check(new RegExp("MAIN OS " + app.REF_MAINOS["syntakt-sd"].slice(0, 8)).test(text(doc, "file-status")),
       "status line shows the MAIN OS hash prefix: " + text(doc, "file-status").slice(-20));
     doc.getElementById("allow").click();
     await wait(80);
@@ -380,7 +382,7 @@ async function main() {
     doc.querySelector('.lang button[data-lang="en"]').click();
     await wait(20);
     const combos = engineCombos(w);
-    for (const [variant, msg] of [["syntakt-vintage", /after Chord come SDVtg \(SD VINTAGE\), CPVtg \(CP VINTAGE\)\./],
+    for (const [variant, msg] of [["syntakt-sd-cp", /after Chord come SDVtg \(SD VINTAGE\), CPVtg \(CP VINTAGE\)\./],
                                   ["syntakt-sd-cp-toy-bits-swarm", /after Chord come SDVtg \(SD VINTAGE\), CPVtg \(CP VINTAGE\), SYToy \(SY TOY\), SYBit \(SY BITS\), SYSwm \(SY SWARM\)\./],
                                   ["syntakt-cp", /after Chord come CPVtg \(CP VINTAGE\)\./]]) {
       await pickEngines(doc, combos[variant]);

@@ -26,7 +26,8 @@ OUT = ROOT / "docs" / "flasher" / "tweaks.js"
 # Le flasher web n'envoie que par USB (CONFIG > UPGRADE) : il ne propose que des tweaks qui gardent
 # cette mise a jour par USB. 6ch-multiout (la casse) et sdvintage-snare restent dans build.py.
 # Vrais moteurs du Syntakt ("engines") : une case par moteur du catalogue de gen_syntakt_engines.py ;
-# chaque combinaison cochee pointe vers son tweak (sdvintage-7th, syntakt-vintage, syntakt-<moteurs>).
+# chaque combinaison cochee pointe vers son tweak syntakt-<moteurs> ; la carte est « testee » si au moins une
+# combinaison l'est (HW_TESTED de gen_syntakt_engines.py).
 # Les moteurs s'ajoutent en machines supplementaires : sdvintage-exact (a la place de SNARE) reste dans build.py.
 # status : "tested" (flashe sur un vrai Model:Cycles) ou "experimental".
 # credit : auteur du travail d'origine, affiche sur la carte (voir aussi les credits de la page).
@@ -121,6 +122,7 @@ def render():
         feat = {"id": f["id"], "label": f["label"], "desc": f["desc"], "status": f["status"], "credit": f["credit"]}
         if f.get("engines"):
             feat["engines"], feat["combos"] = engine_feature(f, load)
+            feat["status"] = "tested" if any(c["tested"] for c in feat["combos"]) else "experimental"
         else:
             by_file = {json.loads((DEV_DIR / f"{v['file']}.json").read_text(encoding="utf-8"))["id"]: v for v in f["variants"]}
             feat["variants"] = [{"id": load(tid)["id"], "label": v["label"]} for tid, v in by_file.items()]
