@@ -7,9 +7,10 @@ Travail du 01/10/2026. Retour de l'utilisateur sur le firmware de diagnostic v2 
 
 | | État |
 |---|---|
-| Régulateur de charge dans tous les tweaks générés | `[FAIT]` (§2) |
+| Régulateur de charge dans tous les tweaks générés | `[FAIT]` (§2), rendu plus réactif après le 1er essai (§5) |
 | Preuve en émulation | `[FAIT]` `tools/emu/test_governor.py` et les tests existants (§3) |
-| Test sur la machine | `[À FAIRE]` (§4) |
+| 1er essai sur la machine (v3) | `[FAIT]` beaucoup moins de bugs, encore quelques micro-gels (§5) |
+| Test sur la machine de la version réactive (v4) | `[À FAIRE]` (§6) |
 
 ## 1. Pourquoi il en faut un
 
@@ -77,3 +78,31 @@ Les tests existants passent toujours avec le régulateur : `test_syntakt_machine
    - que « pic/moyenne » reste sous environ 95/82 ;
    - si des fins de notes disparaissent de façon audible.
 4. Si des voix s'éteignent trop tôt, ou si le son accroche encore, les seuils (72 / 82 / 95 %) se règlent dans `bridge_engines.c`.
+
+## 5. 1er essai, et un régulateur plus réactif
+
+**Retour de l'utilisateur (01/10/2026)**, firmware de diagnostic v3 : « Avec 6 pistes custom engine, j'ai un ratio atteignant jusqu'à 99/67. Il y a beaucoup moins de bugs mais toujours quelques petits freezes audio. »
+- La moyenne (67 %) est bonne ; ce sont des **blocs isolés** qui débordent (99 est le maximum affiché).
+- Six voix du Syntakt qui sonnent ensemble demandent environ 30 % + 6 × 15 % = 120 % d'un bloc.
+
+**Pourquoi la v3 laissait passer des gels** : elle n'éteignait qu'une voix à la fois, avec un fondu de 8 blocs pendant lesquels la voix coûte encore, et attendait la fin du fondu pour en éteindre une autre. Il fallait donc environ 16 blocs (11 ms) pour libérer 2 voix : autant de blocs en surcharge.
+
+**Version réactive** (`bridge_engines.c`)
+- **Coût réel de chaque voix** : `voice_gate()` et `voice_after()` lisent le minuteur autour d'update/render. Moyenne glissante (1/4) en ticks, sur la machine, cache compris.
+- **Temps à libérer** : (charge − 78 %) × durée du bloc, moins le coût des voix déjà en cours d'extinction.
+- **Extinction** : on éteint, des plus faibles aux plus fortes (Syntakt compté pour moitié), autant de voix qu'il faut pour couvrir ce temps. Au plus 2 par bloc, puis on remesure.
+- **Déclenchement** : charge moyenne au-dessus de 82 %, ou un bloc au-dessus de 90 %.
+- **Surcharge sévère** (un bloc au-dessus de 92 %) : fondu de 2 blocs (1,3 ms), et une note de plus de 4 blocs (2,7 ms) peut être éteinte. Sinon, fondu de 8 blocs et notes de plus de 16 blocs.
+- Les voix pas encore arrêtées mais muettes (piste jamais jouée) sont les plus faibles : elles partent en premier. Elles coûtent pourtant environ 8 % chacune pour les machines d'origine.
+- Rien n'est pris sur les pistes déjà arrêtées.
+
+**Preuve en émulation** (`test_governor.py`, chaque voix calculée coûte un temps simulé) :
+- 50 % et 80 % : comme avant.
+- **90 %** : au bloc 18, extinction simultanée des 2 voix les plus faibles, SDVtg et SYSwm (les voix du Syntakt, comptées pour moitié), fondu de 8 blocs ; les autres suivent aux blocs suivants tant que la charge simulée reste haute ; plus rien quand elle retombe.
+- **95 %** : dès le bloc 3, les 2 voix muettes pas encore arrêtées (pistes 5, 6), fondu de 2 blocs ; puis les autres par 2 ; fondus linéaires ; voix non éteintes identiques ; retrig correct.
+
+**Limite physique** : quand 6 notes du Syntakt partent sur le même pas, le 1ᵉʳ bloc reste au-dessus de 100 % (une note déclenchée doit être calculée). Le régulateur ramène la charge en 3 ou 4 blocs (2 à 3 ms) au lieu de 11 ms, au prix de fins de notes coupées sur les voix les plus faibles.
+
+## 6. Test sur la machine de la version réactive `[À FAIRE]`
+
+Firmware de diagnostic v4 : `build/diag/model-cycles_OS1.13_diagnostic-charge_v4.syx` et `…_v4_6ch.syx`. Même protocole qu'au §4.

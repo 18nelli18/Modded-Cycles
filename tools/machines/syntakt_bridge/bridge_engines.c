@@ -197,25 +197,31 @@ static void render(int engine, s32 *out, char *v)
  * 135 168 pour des millisecondes) : un bloc de 32 echantillons dure 90 112 ticks. La sonde de la fonction audio
  * (0x4005979e, appelee par l'interruption, detours) appelle audio_end() a chaque bloc ; le detour de la boucle
  * des voix appelle voice_gate() avant update/render de chaque piste et voice_after() apres.
- *  - Une voix restee sous `thr` pendant `need` blocs, sans trig, n'est plus calculee (sortie a zero) : -108 dB
- *    et 64 blocs d'ordinaire ; -66 dB et 16 blocs quand la charge moyenne depasse PRESSURE.
- *  - Quand la charge moyenne depasse STEAL, ou qu'un bloc depasse PEAK, la voix calculee la plus faible (celles
- *    du Syntakt d'abord, jamais une note de moins de 16 blocs) s'eteint par un fondu de 8 blocs (5 ms), puis
- *    n'est plus calculee jusqu'a son prochain trig. Une seule a la fois.
- * Charges en 1/256 de la duree d'un bloc. */
+ *  - Une voix restee sous le seuil pendant `NEED` blocs, sans trig, n'est plus calculee (sortie a zero) :
+ *    -108 dB et 64 blocs d'ordinaire ; -66 dB et 16 blocs quand la charge moyenne depasse PRESSURE.
+ *  - Le cout de chaque voix (update + render) est mesure a chaque bloc ou elle est calculee.
+ *  - Surcharge (charge moyenne au-dessus de STEAL, ou un bloc au-dessus de PEAK) : on calcule le temps a liberer
+ *    pour revenir a TARGET, et on eteint par un fondu autant de voix calculees qu'il faut, des plus faibles aux
+ *    plus fortes (les voix du Syntakt, deux fois plus cheres, comptent pour moitie). Fondu de 8 blocs (5 ms) et
+ *    notes d'au moins 16 blocs ; en surcharge severe (un bloc au-dessus de SEVERE) : 2 blocs et 4 blocs.
+ *    Au plus 2 voix par bloc : la charge est remesuree au bloc suivant (les voix en cours de fondu comptent).
+ *    Une voix eteinte n'est plus calculee jusqu'a son prochain trig.
+ * Charges en 1/256 de la duree d'un bloc. Toutes les variables sont en BSS (a zero au demarrage) : la charge
+ * utile ne recopie pas de donnees initialisees. */
 #define TIMER (*(volatile u32 *)0xfc07000c)
 #define NT 6
-#define FADE 8
 #define PRESSURE (72 * 256 / 100)
 #define STEAL (82 * 256 / 100)
-#define PEAK (95 * 256 / 100)
-u32 gov_ret_audio, gov_t0_audio, gov_load, gov_avg;     /* charge du dernier bloc, moyenne glissante (1/8) */
-static u32 last_t0;
-unsigned char gov_quiet[NT], gov_fading[NT], gov_stolen[NT], gov_st[NT];
+#define PEAK (90 * 256 / 100)
+#define SEVERE (92 * 256 / 100)
+#define TARGET (78 * 256 / 100)
+u32 gov_ret_audio, gov_t0_audio, gov_load, gov_avg, gov_period;    /* dernier bloc, moyenne glissante (1/8) */
+static u32 last_t0, vt0;
+u32 gov_pressure;
+unsigned char gov_quiet[NT], gov_fading[NT], gov_flen[NT], gov_stolen[NT], gov_st[NT];
 unsigned short gov_age[NT];
 s32 gov_peak[NT];
-u32 gov_pressure;                /* 0 au demarrage : toutes les variables sont en BSS (la charge utile ne recopie
-				  * pas de .data initialisees) */
+u32 gov_cost[NT];                 /* cout mesure d'update + render, en ticks (moyenne glissante 1/4) */
 #define THR ((u32)(gov_pressure ? 1 << 20 : IDLE_THR))
 #define NEED (gov_pressure ? 16 : IDLE_BLOCKS)
 
@@ -226,23 +232,29 @@ int voice_gate(int t, int trig, int engine)
 	if (trig) {
 		gov_quiet[t] = gov_fading[t] = gov_stolen[t] = 0;
 		gov_age[t] = 0;
-		return 0;
+	} else {
+		if (gov_age[t] < 0xffff)
+			gov_age[t]++;
+		if (gov_stolen[t] || gov_quiet[t] >= NEED)
+			return 1;
 	}
-	if (gov_age[t] < 0xffff)
-		gov_age[t]++;
-	return gov_stolen[t] || gov_quiet[t] >= NEED;
+	vt0 = TIMER;
+	return 0;
 }
 
-/* apres render : crete, fondu eventuel, compteur de blocs faibles */
+/* apres render : cout, fondu eventuel, crete, compteur de blocs faibles */
 void voice_after(int t, s32 *out)
 {
 	s32 pk = 0, x;
 	int k;
 
+	gov_cost[t] += ((s32)(TIMER - vt0) - (s32)gov_cost[t]) >> 2;
 	if (gov_fading[t]) {
-		u32 p = (FADE - gov_fading[t]) * 32;            /* position dans le fondu, 0 .. 32 x FADE */
+		u32 n = 32 * gov_flen[t];                        /* echantillons du fondu : 64 ou 256 */
+		u32 p = (gov_flen[t] - gov_fading[t]) * 32;      /* position dans le fondu */
+		u32 step = 65536 / n;
 		for (k = 0; k < 32; k++, p++)
-			out[k] = (out[k] >> 16) * (s32)((32 * FADE - p) * (65536 / (32 * FADE)));
+			out[k] = (out[k] >> 16) * (s32)((n - p) * step);
 		if (--gov_fading[t] == 0)
 			gov_stolen[t] = 1;
 	}
@@ -261,27 +273,35 @@ void voice_after(int t, s32 *out)
 
 static void govern(void)
 {
-	int t, v = -1, busy = 0;
-	u32 best = 0xffffffff, key;
+	int t, v, severe, n = 0;
+	u32 over, excess, best, key;
 
 	gov_pressure = gov_avg >= PRESSURE;
 	if (gov_avg < STEAL && gov_load < PEAK)
 		return;
+	severe = gov_load >= SEVERE;
+	over = gov_load > gov_avg ? gov_load : gov_avg;
+	excess = (over - TARGET) * (gov_period >> 8);          /* ticks a liberer */
 	for (t = 0; t < NT; t++)
-		busy |= gov_fading[t];
-	if (busy)
-		return;                                          /* un fondu a la fois */
-	for (t = 0; t < NT; t++) {
-		if (gov_stolen[t] || gov_quiet[t] >= NEED || gov_age[t] < 16)
-			continue;                                /* deja arretee, ou note trop recente */
-		key = (u32)gov_peak[t] >> (gov_st[t] ? 1 : 0);    /* voix du Syntakt : deux fois plus cheres */
-		if (key < best) {
-			best = key;
-			v = t;
+		if (gov_fading[t])                               /* deja en cours d'extinction */
+			excess = excess > gov_cost[t] ? excess - gov_cost[t] : 0;
+	while (excess && n++ < 2) {                              /* 2 voix par bloc au plus, puis on remesure */
+		v = -1;
+		best = 0xffffffff;
+		for (t = 0; t < NT; t++) {
+			if (gov_stolen[t] || gov_fading[t] || gov_quiet[t] >= NEED || gov_age[t] < (severe ? 4 : 16))
+				continue;                        /* deja arretee, ou note trop recente */
+			key = (u32)gov_peak[t] >> (gov_st[t] ? 1 : 0);
+			if (key < best) {
+				best = key;
+				v = t;
+			}
 		}
+		if (v < 0)
+			break;
+		gov_flen[v] = gov_fading[v] = severe ? 2 : 8;
+		excess = excess > gov_cost[v] + 1 ? excess - gov_cost[v] - 1 : 0;
 	}
-	if (v >= 0)
-		gov_fading[v] = FADE;
 }
 
 #ifdef LOAD_METER
@@ -332,6 +352,7 @@ void audio_end(void)
 	}
 	gov_load = dur * 256 / period;
 	gov_avg += ((s32)gov_load - (s32)gov_avg) >> 3;
+	gov_period = period;
 #ifdef LOAD_METER
 	meter(dur, period);
 #endif

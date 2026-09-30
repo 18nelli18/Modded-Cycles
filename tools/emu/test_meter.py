@@ -74,7 +74,6 @@ def main():
 
     print("sonde de la fonction audio")
     e = E.Engine(img_m)
-    e.uc.mem_map(0xfc070000, 0x1000)
     clock = [5_000_000]
 
     def tick(uc, access, addr, size, value, ud):
@@ -104,7 +103,6 @@ def main():
 
     print("calcul de la charge (audio_end) et écran MACHINES")
     e = E.Engine(img_m)
-    e.uc.mem_map(0xfc070000, 0x1000)
     names = [struct.unpack(">I", e.uc.mem_read(0x43033800 + 4 * i, 4))[0] for i in range(11)]
     buf = names[0]
     before = bytes(e.uc.mem_read(buf, 8)).split(b"\0")[0].decode()

@@ -87,6 +87,7 @@ class Engine:
         uc.mem_map(0x42000000, 0x00400000)     # SDRAM (états des voix)
         uc.mem_map(0x80000000, 0x00020000)     # SRAM interne (buffers, tables)
         uc.mem_map(0x90000000, 0x00020000)     # pile
+        uc.mem_map(0xfc070000, 0x1000)         # minuteur DMA 0 (lu par le régulateur de charge, notes/25) : 0
         uc.mem_write(BASE, self.img)
         uc.mem_write(STOP, b"\x4e\x71\x4e\x71")
         self.unmapped = []

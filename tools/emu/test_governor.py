@@ -19,6 +19,7 @@ import struct
 import sys
 
 import numpy as np
+from unicorn import UC_HOOK_MEM_READ
 
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -62,26 +63,41 @@ def main():
         return dict(machine=m, note=60, pitch=64, color=64, shape=64, sweep=64, contour=64, punch=0, gate=0,
                     finetune=64, decay=dec)
 
-    def play(setup, blocks, trigs, load=None):
-        """load : None (pas de régulation) ou fonction bloc -> charge en % ; rend les sorties et l'état par bloc."""
+    def play(setup, blocks, trigs, load=None, cost=4000):
+        """load : None (pas de régulation) ou fonction bloc -> charge en % ; chaque voix calculée coûte `cost` ticks
+        (le minuteur avance à chaque lecture pendant la boucle des voix). Rend les sorties et l'état par bloc."""
         e = E.Engine(img)
-        e.uc.mem_map(0xfc070000, 0x1000)
+        clock = {"t": 10_000_000, "fixed": None}
+
+        def read(uc, access, addr, size, value, ud):
+            if clock["fixed"] is None:
+                clock["t"] += cost // 2                  # voice_gate puis voice_after : `cost` par voix calculée
+                v = clock["t"]
+            else:
+                v = clock["fixed"]
+            uc.mem_write(TIMER, struct.pack(">I", v & 0xffffffff))
+        e.uc.hook_add(UC_HOOK_MEM_READ, read, begin=TIMER, end=TIMER + 3)
         for t, kw in setup.items():
             e.set(t, **kw)
-        out, fading, stolen, peaks = [], [], [], []
+        out, fading, stolen, flen = [], [], [], []
+        peaks = []
         now = 10_000_000
         for b in range(blocks):
             out.append(e.block(trigs.get(b, 0)))
             if load is not None:
                 e.uc.mem_write(sy["gov_t0_audio"], struct.pack(">I", now & 0xffffffff))
-                e.uc.mem_write(TIMER, struct.pack(">I", (now + load(b) * BLOCK // 100) & 0xffffffff))
+                clock["fixed"] = now + load(b) * BLOCK // 100
                 e.call(sy["audio_end"])
+                clock["fixed"] = None
                 now += BLOCK
             fading.append(bytes(e.uc.mem_read(sy["gov_fading"], 6)))
+            flen.append(bytes(e.uc.mem_read(sy["gov_flen"], 6)))
             stolen.append(bytes(e.uc.mem_read(sy["gov_stolen"], 6)))
             peaks.append((struct.unpack(">6i", e.uc.mem_read(sy["gov_peak"], 24)), bytes(e.uc.mem_read(sy["gov_st"], 6)),
-                          bytes(e.uc.mem_read(sy["gov_quiet"], 6)), struct.unpack(">6H", e.uc.mem_read(sy["gov_age"], 12))))
-        play.peaks = peaks
+                          bytes(e.uc.mem_read(sy["gov_quiet"], 6)), struct.unpack(">6H", e.uc.mem_read(sy["gov_age"], 12)),
+                          struct.unpack(">6I", e.uc.mem_read(sy["gov_cost"], 24)),
+                          struct.unpack(">I", e.uc.mem_read(sy["gov_pressure"], 4))[0]))
+        play.peaks, play.flen = peaks, flen
         return np.stack(out), fading, stolen      # out : blocs x 6 pistes x 32
 
     print("charge normale")
@@ -103,42 +119,55 @@ def main():
     check(ok and not any(any(s) for s in st),
           f"80 % : les voix s'arrêtent sous -66 dB (blocs {stops}), identiques avant, aucune éteinte de force")
 
-    print("surcharge")
-    setup = {0: eng(0, 100), 1: stock_m(1, 100), 2: eng(4, 100), 3: stock_m(4, 100)}
-    trigs = {1: 0xf, 250: 0x1}
-    load = lambda b: 90 if b < 200 else 50
-    ref, _, _ = play(setup, 300, trigs)
-    mod, fading, stolen = play(setup, 300, trigs, load=load)
-    order = []
-    for b in range(300):
+    def overload(level, fade, min_age, label):
+        setup = {0: eng(0, 100), 1: stock_m(1, 100), 2: eng(4, 100), 3: stock_m(4, 100)}
+        trigs = {1: 0xf, 250: 0x1}
+        load = lambda b: level if b < 200 else 50
+        ref, _, _ = play(setup, 300, trigs)
+        mod, fading, stolen = play(setup, 300, trigs, load=load)
+        fb = next(b for b in range(300) if any(fading[b]))
+        pk, st_, qu, age, cost, pressure = play.peaks[fb]  # état vu par le régulateur à la fin du bloc fb
+        first = [t for t in range(6) if fading[fb][t]]
+        # les voix éteintes au 1er choix sont les plus faibles (clé = crête, /2 pour le Syntakt), juste assez pour
+        # libérer le temps manquant : (charge - 78 %) du bloc
+        need = 16 if pressure else 64
+        cand = sorted((t for t in range(6) if qu[t] < need and age[t] >= min_age), key=lambda t: pk[t] >> (1 if st_[t] else 0))
+        excess = ((level * BLOCK // 100) * 256 // BLOCK - 78 * 256 // 100) * (BLOCK >> 8)
+        want, acc = [], 0
+        for t in cand:
+            if acc >= excess or len(want) == 2:        # 2 voix par bloc au plus
+                break
+            want.append(t)
+            acc += cost[t] + 1
+        ok = sorted(first) == sorted(want) and all(age[t] >= min_age for t in first) and all(play.flen[fb][t] == fade for t in first)
+        # fondu linéaire de 1 à 0 sur `fade` blocs, puis silence
+        for t in first:
+            seg_r = ref[fb + 1:fb + 1 + fade, t, :].ravel().astype(float)
+            seg_x = mod[fb + 1:fb + 1 + fade, t, :].ravel().astype(float)
+            if not np.abs(ref[fb:fb + 2, t, :]).max():
+                continue                                  # voix muette (jamais jouée) : rien à fondre
+            strong = np.nonzero(np.abs(seg_r) > 1e8)[0]
+            n = 32 * fade
+            g = seg_x[strong] / seg_r[strong]
+            ok &= np.all(np.abs(g - (n - strong) / n) < 0.02)
+            ok &= not mod[fb + 1 + fade:250, t, :].any()
+        # les autres restent identiques jusqu'à leur propre extinction
         for t in range(6):
-            if stolen[b][t] and t not in order:
-                order.append(t)
-    one = all(sum(1 for x in f if x) <= 1 for f in fading)
-    first_fade = next(b for b in range(300) if any(fading[b]))
-    ok = one and first_fade >= 16 and len(order) >= 1
-    # la 1re voix éteinte est la plus faible des voix calculées au moment du choix (clé = crête, /2 pour le Syntakt)
-    t0 = order[0]
-    fb = next(b for b in range(300) if fading[b][t0])
-    pk, st_, qu, age = play.peaks[fb]
-    keys = {t: (pk[t] >> (1 if st_[t] else 0)) for t in range(4) if qu[t] < 64 and age[t] >= 16}
-    ok &= t0 == min(keys, key=keys.get)
-    # fondu : la voix éteinte suit la référence multipliée par une rampe linéaire de 1 à 0 sur 8 blocs, puis zéros
-    seg_r, seg_x = ref[fb + 1:fb + 1 + 8, t0, :].ravel().astype(float), mod[fb + 1:fb + 1 + 8, t0, :].ravel().astype(float)
-    strong = np.nonzero(np.abs(seg_r) > 1e8)[0]
-    g = seg_x[strong] / seg_r[strong]
-    ok &= len(strong) > 20 and np.all(np.abs(g - (256 - strong) / 256) < 0.01)
-    ok &= not mod[fb + 9:250, t0, :].any()
-    # les voix non éteintes restent identiques tant qu'elles le sont
-    for t in range(4):
-        if t not in order:
-            ok &= np.array_equal(ref[:250, t, :], mod[:250, t, :])
-    # après la surcharge, plus de nouvelle extinction ; la voix 0 repart à son trig (bloc 250)
-    later = [t for t in order if next(b for b in range(300) if stolen[b][t]) > 215]
-    ok &= not later and (0 not in order or np.abs(mod[251:260, 0, :]).max() > 1e6)
-    check(ok, f"90 % : 1er fondu au bloc {first_fade} (piste {t0 + 1}, clés {keys}), voix éteintes dans l'ordre "
-              f"{order} (une à la fois), fondu "
-              f"progressif puis silence, autres voix identiques ; plus rien après la surcharge ; retrig de la piste 1")
+            if t not in first:
+                end = next((b for b in range(300) if fading[b][t]), 250)
+                ok &= np.array_equal(ref[:min(end, 250) + 1, t, :], mod[:min(end, 250) + 1, t, :])
+        # plus de nouvelle extinction quand la charge est retombée ; la piste 1 repart à son trig (bloc 250)
+        late = [t for t in range(6) if any(stolen[b][t] for b in range(300))
+                and next(b for b in range(300) if stolen[b][t]) > 212]
+        ok &= not late and np.abs(mod[251:260, 0, :]).max() > 1e6 and len(first) <= 2
+        check(ok, f"{label} : au bloc {fb}, extinction simultanée des pistes {[t + 1 for t in first]} "
+                  f"(les plus faibles, {acc} ticks pour {excess} à libérer), fondu de {fade} blocs puis silence, autres "
+                  f"voix identiques ; plus rien après la surcharge ; retrig de la piste 1")
+
+    print("surcharge")
+    overload(90, 8, 16, "90 %")
+    print("surcharge sévère")
+    overload(95, 2, 4, "95 %")
     print("\nTOUT OK" if not FAIL else f"\n{len(FAIL)} ÉCHEC(S)")
     return 1 if FAIL else 0
 
