@@ -262,9 +262,9 @@ def detours_asm(n, images, firsts):
 
 
 def meter_asm(syms):
-    """Sondes du compteur de charge (firmware de diagnostic, notes/23) : autour de l'appel de la fonction audio
-    (0x40059382) et de celui de la boucle des voix (0x4005981e). L'adresse de retour est mise de côté, pour que
-    la fonction appelée voie la pile exactement comme avant (ses arguments ne sont pas recopiés)."""
+    """Sonde du compteur de charge (firmware de diagnostic, notes/23) : autour de l'appel de la fonction audio
+    par l'interruption (0x40059382). L'adresse de retour est mise de côté, pour que la fonction appelée voie la
+    pile exactement comme avant (ses arguments ne sont pas recopiés)."""
     g = lambda n: f"{syms[n]:#x}"
     return f"""
 	.globl	audio_probe
@@ -278,17 +278,6 @@ audio_probe:
 	move.l	(%sp)+, %d0
 	move.l	{g('meter_ret_audio')}, -(%sp)
 	rts
-	.globl	voice_probe
-voice_probe:
-	move.l	(%sp)+, {g('meter_ret_voice')}
-	move.l	0xfc07000c, %d1
-	move.l	%d1, {g('meter_t0_voice')}
-	jsr	0x400a7d4a
-	move.l	0xfc07000c, %d1
-	sub.l	{g('meter_t0_voice')}, %d1
-	add.l	%d1, {g('meter_voice_ticks')}
-	move.l	{g('meter_ret_voice')}, -(%sp)
-	rts
 """
 
 
@@ -300,8 +289,8 @@ def compile_code(tmp, machines, payload_longs, meter=None):
             defs.append(f"-DPUNCH_ON_{m['engine']}={m['punch_on']}")
         if "punch_off" in m:
             defs.append(f"-DPUNCH_OFF_{m['engine']}={m['punch_off']}")
-    if meter:                                   # adresses des noms des machines 7 à 10 (affichage)
-        defs += ["-DLOAD_METER"] + [f"-DMETER_N{i}={a:#x}" for i, a in enumerate(meter)]
+    if meter:                                   # le nom affiché pour toutes les machines (écran MACHINES)
+        defs += ["-DLOAD_METER", f"-DMETER_BUF={meter:#x}"]
     obj, stub, elf = tmp / "bridge.o", tmp / "stub.o", tmp / "bridge.elf"
     gx.run([gx.CROSS + "gcc", *gx.CFLAGS, *defs, "-c", str(gx.SRC / "bridge_engines.c"), "-o", str(obj)])
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(gx.SRC / "stub.S"), "-o", str(stub),
@@ -380,13 +369,16 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         if s not in addr:
             addr[s] = at
             at += len(s) + 1
-    if meter and (n < 4 or any(len(m["name"]) < 5 for m in machines[:4])):
-        raise SystemExit("!! compteur de charge : il faut 4 machines ajoutées aux noms de 5 lettres")
+    if meter:                                   # nom de toutes les machines : « pic/moyenne » (5 caractères au plus)
+        addr["--/--"] = at
+        at += 8
     with tempfile.TemporaryDirectory() as d:
         blobs, syms, stubs, ssyms = compile_code(pathlib.Path(d), machines, size // 4,
-                                                 [addr[m["name"]] for m in machines[:4]] if meter else None)
+                                                 addr["--/--"] if meter else None)
 
     names = [u32(g7.NAMES + 4 * i) for i in range(6)] + [addr[m["name"]] for m in machines]
+    if meter:
+        names = [addr["--/--"]] * nm
     upd = [u32(g7.UPDATE_TAB + 4 * i) for i in range(6)] + [syms[f"bridge_update_{m['engine']}"] for m in machines]
     rnd = [u32(g7.RENDER_TAB + 4 * i) for i in range(6)] + [syms[f"bridge_render_{m['engine']}"] for m in machines]
     data = bytearray()
@@ -394,7 +386,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         data += b"".join(g7.be32(x) for x in t)
     data += img[MAP - BASE:MAP - BASE + 6] + bytes(range(6, nm)) + bytes(((nm + 3) & ~3) - nm)   # machine -> entrée
     for s in addr:
-        data += s.encode("ascii") + b"\0"
+        data += s.encode("ascii") + b"\0" * (3 if s == "--/--" else 1)
     if DATA + len(data) > DESCN:
         raise SystemExit("!! données")
 
@@ -459,9 +451,8 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         w(va, bytes.fromhex(old), bytes.fromhex("4ef9") + g7.be32(ssyms[sym]))
     for va, old, sym in g7.CALLS:
         w(va, bytes.fromhex(old), bytes.fromhex("4eb9") + g7.be32(ssyms[sym]) + bytes.fromhex("4e71"))
-    if meter:                                   # sondes du compteur de charge autour de deux appels (jsr abs.l)
-        for va, callee, sym in ((0x40059382, 0x4005979e, "audio_probe"), (0x4005981e, 0x400a7d4a, "voice_probe")):
-            w(va, bytes.fromhex("4eb9") + g7.be32(callee), bytes.fromhex("4eb9") + g7.be32(ssyms[sym]))
+    if meter:                                   # sonde du compteur de charge autour de l'appel audio (jsr abs.l)
+        w(0x40059382, bytes.fromhex("4eb94005979e"), bytes.fromhex("4eb9") + g7.be32(ssyms["audio_probe"]))
     writes.sort(key=lambda x: x["off"])
     for a_, b_ in zip(writes, writes[1:]):
         if a_["off"] + len(a_["new"]) // 2 > b_["off"]:
@@ -490,9 +481,9 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         "name": ("DIAGNOSTIC, compteur de charge. " if meter else "") +
                 "Vrais moteurs du Syntakt en machines ajoutées : " + ", ".join(f"{m['name']} ({m['label']})" for m in machines),
         "description": ([
-            "FIRMWARE DE DIAGNOSTIC (notes/23) : les noms des machines 7 à 10 affichent la charge audio, mise à jour",
-            "toutes les 0,5 s : M = pic, A = moyenne de la fonction audio, V = boucle des voix, S = moteurs du Syntakt,",
-            "en % de la durée d'un bloc de 32 échantillons. À n'utiliser que pour mesurer.",
+            "FIRMWARE DE DIAGNOSTIC (notes/23) : l'écran MACHINES affiche, pour toutes les machines, la charge audio",
+            "« pic/moyenne » en % de la durée d'un bloc de 32 échantillons, mise à jour toutes les 0,5 s.",
+            "À n'utiliser que pour mesurer.",
         ] if meter else []) + [
             "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
             "les 6 d'origine (notes/20) : " + ", ".join(f"{m['name']} = {m['label']} (machine {m['index'] + 1})" for m in machines) + ".",

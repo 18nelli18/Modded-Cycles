@@ -13,7 +13,7 @@ Adresses : MAIN OS Cycles 1.13 et programme audio du Syntakt 1.41, comme dans le
 | Interférence EMAC, mode, calcul flottant, divisions | `[FAIT]` aucune (§2) |
 | Empreinte mémoire (cache) | `[FAIT]` nettement plus grande que les machines d'origine (§3) |
 | Cause probable | temps d'accès mémoire (cache) sur la vraie machine, que l'émulateur ne chronomètre pas (§4) |
-| Compteur de charge sur la vraie machine | `[FAIT]` firmware de diagnostic `syntakt-meter`, vérifié en émulation (§5) |
+| Compteur de charge sur la vraie machine | `[FAIT]` firmware de diagnostic `syntakt-meter` : « pic/moyenne » à la place du nom de toutes les machines, vérifié en émulation (§5) |
 | Mesures sur la machine | `[À FAIRE]` (§6) |
 | Optimisations | après les mesures (§7) |
 
@@ -82,36 +82,36 @@ Tweak `syntakt-meter` : les 5 moteurs, plus un compteur de charge (`gen_syntakt_
 - Le minuteur DMA 0 (`0xfc07000c`) compte à 135,168 MHz. L'OS divise ses ticks par 135 168 pour obtenir des millisecondes (`0x400532e0`).
 - Un bloc de 32 échantillons à 48 kHz dure donc 90 112 ticks.
 
-**Sondes**
-- L'appel de la fonction audio par l'interruption (`jsr 0x4005979e` en `0x40059382`) et celui de la boucle des voix (`jsr 0x400a7d4a` en `0x4005981e`) passent par deux sondes en assembleur.
-- Chacune met de côté l'adresse de retour, lit le minuteur, appelle la fonction avec la pile inchangée, puis compte le temps écoulé.
-- La passerelle compte aussi le temps passé dans les moteurs du Syntakt.
+**Sonde**
+- L'appel de la fonction audio par l'interruption (`jsr 0x4005979e` en `0x40059382`) passe par une sonde en assembleur.
+- La fonction audio couvre les voix, le mixage et les effets. L'interruption `0x40058c5e` sauvegarde et restaure MACSR.
+- La sonde met de côté l'adresse de retour, lit le minuteur, appelle la fonction avec la pile inchangée, puis compte la durée du bloc et l'écart avec le précédent.
 
 **Affichage**
-Toutes les 750 blocs (0,5 s), les noms des machines ajoutées 7 à 10 deviennent :
-- **M** : pic de la fonction audio (voix, mixage, effets), en % de la durée d'un bloc ;
-- **A** : moyenne de la fonction audio ;
-- **V** : moyenne de la boucle des voix ;
-- **S** : moyenne des moteurs du Syntakt.
+- Toutes les 750 blocs (0,5 s), le texte « pic/moyenne » de la charge audio, en % de la durée d'un bloc (99 au plus), est écrit dans un petit tampon.
+- **Toutes** les machines de l'écran MACHINES, d'origine et ajoutées, portent ce tampon comme nom (« --/-- » avant la 1ʳᵉ mesure).
+- Première version (retirée avant tout essai) : des valeurs M, A, V, S à la place des noms des machines 7 à 10. Il fallait changer la machine d'une piste pour les lire, impossible quand les 6 pistes jouent (remarque de l'utilisateur).
 
 **Preuve en émulation** (`tools/emu/test_meter.py`, minuteur simulé) :
 - les 5 moteurs donnent la même sortie avec et sans compteur ;
-- la sonde de la boucle des voix donne la même sortie et rend la pile intacte ;
-- sur un scénario connu, les noms deviennent `M90%`, `A50%`, `V30%`, `S10%`.
+- avec une fonction audio factice, la sonde lui présente les mêmes arguments et la même pile, rend `d0`, et compte le bloc ;
+- sur un scénario connu (blocs à 50 %, un bloc à 90 %), le nom devient `90/50` ;
+- l'écran MACHINES affiche ce nom pour les machines 1, 6, 7 et 11.
 
 Les tweaks normaux ne changent pas : le compteur n'est compilé que dans `syntakt-meter` (les 29 tweaks générés restent identiques à l'octet près).
 
 ## 6. Mesures sur la machine `[À FAIRE]`
 
 Fichiers construits localement (dossier `build/diag/`, ignoré par git) :
-- `model-cycles_OS1.13_diagnostic-charge.syx` (MAIN OS `c8cf386b…`) ;
-- `…_6ch.syx` avec l'audio USB 6 canaux (MAIN OS `4aa826e4…`).
+- `model-cycles_OS1.13_diagnostic-charge.syx` (MAIN OS `b139162e…`) ;
+- `…_6ch.syx` avec l'audio USB 6 canaux (MAIN OS `3bd5de11…`).
 
 Protocole :
-1. Sauvegarder les projets. Flasher le fichier de diagnostic par le flasher web, onglet *Mods*, étape 2 : un `.syx` non officiel est envoyé tel quel.
-2. Machines ajoutées : 7 = SDVtg (M), 8 = CPVtg (A), 9 = SYToy (V), 10 = SYBit (S), 11 = SYSwm.
-3. Pour lire une valeur : sur une piste **sans trig**, ouvrir MACHINES et tourner jusqu'à la machine 7, 8, 9 ou 10. Si le nombre ne bouge pas, repartir d'une machine et revenir.
-4. Relever M, A, V et S pour, dans l'idéal, le même motif joué :
+1. Sauvegarder les projets. Flasher le fichier de diagnostic par le flasher web, onglet *Mods*, étape 2.
+   - Un `.syx` non officiel est envoyé tel quel : pas de case à cocher, pas de fichier Syntakt.
+2. Machines ajoutées : 7 = SDVtg, 8 = CPVtg, 9 = SYToy, 10 = SYBit, 11 = SYSwm.
+3. Pour lire : pendant que le motif joue, ouvrir MACHINES sur n'importe quelle piste, **sans tourner la molette**, lire « pic/moyenne », refermer. Rouvrir pour une nouvelle lecture si l'écran ne se rafraîchit pas.
+4. Relever « pic/moyenne » pour, dans l'idéal, le même motif :
    - avec 6 machines d'origine ;
    - avec 1 moteur du Syntakt ;
    - avec 3 moteurs du Syntakt ;

@@ -196,25 +196,21 @@ static void render(int engine, s32 *out, char *v)
 #ifdef LOAD_METER
 /* Compteur de charge (firmware de diagnostic, notes/23) : le minuteur DMA 0 du Cycles compte a 135,168 MHz
  * (l'OS divise ses ticks par 135 168 pour des millisecondes) ; un bloc de 32 echantillons dure 90 112 ticks.
- * Les sondes de la fonction audio (0x4005979e) et de la boucle des voix (0x400a7d4a) sont dans les detours ;
- * toutes les 750 appels (0,5 s), les noms des machines ajoutees 7 a 10 deviennent : M = pic de la fonction
- * audio, A = sa moyenne, V = boucle des voix, S = moteurs du Syntakt, en % de la duree d'un bloc. */
+ * La sonde de la fonction audio (0x4005979e, appelee par l'interruption) est dans les detours ; toutes les
+ * 750 appels (0,5 s), METER_BUF (le nom de toutes les machines de l'ecran MACHINES) devient « pic/moyenne »
+ * de la fonction audio (voix, mixage, effets), en % de la duree d'un bloc, 99 au plus. */
 #define TIMER (*(volatile u32 *)0xfc07000c)
-u32 meter_ret_audio, meter_ret_voice, meter_t0_audio, meter_t0_voice, meter_voice_ticks, meter_st_ticks;
-static u32 last_t0, w_period, w_audio, w_voice, w_st, w_n, w_max;
+u32 meter_ret_audio, meter_t0_audio;
+static u32 last_t0, w_period, w_audio, w_n, w_max;
 
-static void put(char *s, char c, u32 v)
+static char *put2(char *s, u32 v)
 {
-	if (v > 999)
-		v = 999;
-	*s++ = c;
-	if (v >= 100)
-		*s++ = '0' + v / 100;
+	if (v > 99)
+		v = 99;
 	if (v >= 10)
-		*s++ = '0' + v / 10 % 10;
+		*s++ = '0' + v / 10;
 	*s++ = '0' + v % 10;
-	*s++ = '%';
-	*s = 0;
+	return s;
 }
 
 void meter_end(void)
@@ -223,37 +219,27 @@ void meter_end(void)
 
 	last_t0 = t0;
 	if (!period || period > 20 * 90112) {           /* premier appel, ou pause : on repart a zero */
-		w_n = w_period = w_audio = w_voice = w_st = w_max = 0;
-		meter_voice_ticks = meter_st_ticks = 0;
+		w_n = w_period = w_audio = w_max = 0;
 		return;
 	}
 	w_period += period;
 	w_audio += dur;
-	w_voice += meter_voice_ticks;
-	w_st += meter_st_ticks;
-	meter_voice_ticks = meter_st_ticks = 0;
 	q = dur * 100 / period;
 	if (q > w_max)
 		w_max = q;
 	if (++w_n >= 750) {
-		q = w_period / 100;
-		put((char *)METER_N0, 'M', w_max);
-		put((char *)METER_N1, 'A', w_audio / q);
-		put((char *)METER_N2, 'V', w_voice / q);
-		put((char *)METER_N3, 'S', w_st / q);
-		w_n = w_period = w_audio = w_voice = w_st = w_max = 0;
+		char *s = put2((char *)METER_BUF, w_max);
+		*s++ = '/';
+		s = put2(s, w_audio / (w_period / 100));
+		*s = 0;
+		w_n = w_period = w_audio = w_max = 0;
 	}
 }
-#define METER_BEGIN u32 t_ = TIMER;
-#define METER_END meter_st_ticks += TIMER - t_;
-#else
-#define METER_BEGIN
-#define METER_END
 #endif
 
 #define ENTRIES(E) \
-	void bridge_update_##E(s32 pmod, char *v, const char *p) { METER_BEGIN update(E, pmod, v, p); METER_END } \
-	void bridge_render_##E(s32 *out, char *v) { METER_BEGIN render(E, out, v); METER_END }
+	void bridge_update_##E(s32 pmod, char *v, const char *p) { update(E, pmod, v, p); } \
+	void bridge_render_##E(s32 *out, char *v) { render(E, out, v); }
 #ifdef UPD_6
 ENTRIES(6)
 #endif
