@@ -68,6 +68,7 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
 | [19-cp-vintage-8e-machine.md](19-cp-vintage-8e-machine.md) | **CP VINTAGE en 8ᵉ machine « CPVtg », avec SDVtg** : moteur 7 du Syntakt (30 fonctions, tables), OS à 8 machines, champ machine 7 = « toutes » contourné ; 26 vérifications en émulation, CPVtg identique à CP VINTAGE |
 | [16-moteur-syntakt.md](16-moteur-syntakt.md) | **Moteur audio du Syntakt** : 2e ColdFire, boucle des voix identique au Cycles, les 6 machines du Cycles dans le Syntakt, vrai SD VINTAGE émulé, **notre SD VINTAGE v2 recalé dessus** |
 | [15-demandes-reddit.md](15-demandes-reddit.md) | **Demandes de la communauté (Reddit)** : mute verrouillé et écoute d'un pas (tweaks drumkilla, livrés), OS Model:Samples / machine « samples » et machines du Syntakt (plans de recherche) |
+| [21-architecture-materielle.md](21-architecture-materielle.md) | **Architecture matérielle, d'après les photos du PCB** : CPU MCF54415CMJ250, DDR2 128 Mo, flash SPI 2 Mo, eMMC 4 Go, PHY USB3300, DRV632, optocoupleurs MIDI, verrous des touches et des LED ; recoupement avec les périphériques que le firmware adresse (`tools/hw_periph_refs.py`) ; grille de debug, code « BOM » |
 
 ## Chiffres clés (OS 1.13)
 

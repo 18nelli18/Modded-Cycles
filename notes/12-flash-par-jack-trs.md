@@ -28,6 +28,7 @@ Réponse établie par recherche documentaire et simulation numérique, **sans ma
   En TRS type A : pointe = broche 5 (retour du courant), bague = broche 4 (source), corps = broche 2 (blindage). Le type B inverse pointe et bague.
 - **`[HYP]`** Pour accepter A et B, l'entrée est forcément **bidirectionnelle** (pont de diodes devant la LED, ou deux LED tête-bêche).
   Un courant dans un sens **ou** dans l'autre est lu comme un 0.
+  **Mise à jour du 30/09/2026** : le PCB porte **deux optocoupleurs H11L1** derrière les jacks MIDI, ce qui va dans le sens des deux LED tête-bêche, sans pont ([21 §6](21-architecture-materielle.md#6-midi)).
 
 ## 2. Option A : sortie MIDI TRS + câble jack stéréo (recommandée)
 
