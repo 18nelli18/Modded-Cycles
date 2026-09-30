@@ -14,7 +14,7 @@ Toutes les adresses sont celles du MAIN OS 1.13 officiel. Source : désassemblag
 | Potards propres : noms et défauts du Syntakt | `[FAIT]` 5 descripteurs de plus (§6) |
 | **Preuve en émulation** : 20 vérifications sur le vrai code de l'OS | `[FAIT]` `tools/emu/test_sdvintage_7th.py` (§8) |
 | Flasher web : 2ᵉ variante de la case SD VINTAGE | `[FAIT]` (§7) |
-| Test sur la machine | essais 1 et 2 (30/09) : 7ᵉ repère visible, mais **molette bloquée à Chord** → deux bornes oubliées, corrigées (§10) ; 3ᵉ essai `[À FAIRE]` |
+| Test sur la machine | essais 1 à 4 (30/09) : molette bloquée à Chord (2 bornes), puis **gel en choisissant SDVtg** (enregistrement par machine manquant) → corrigés (§10) ; 5ᵉ essai `[À FAIRE]` |
 
 **Choix de l'utilisateur** (30/09/2026, en regardant son Cycles) :
 - l'écran affiche le **nom long** du paramètre quand on tourne un potard (« Snare Color ») ;
@@ -106,7 +106,7 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 - `tools/machines/syntakt_bridge/machine7.S` : 5 détours (état par descripteur ×2, CC, images de l'écran MACHINES, petite icône) ;
 - `build.py` / `builder.js` : nouveau type de morceau de charge utile, `"cycles": [début, fin]`, copié depuis **ton** MAIN OS d'origine (comme les morceaux `"syntakt"`). Aucun octet Elektron dans le dépôt.
 
-**113 écritures dans l'OS** :
+**115 écritures dans l'OS** :
 
 | Groupe | Écritures |
 |---|---|
@@ -116,6 +116,7 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 | Recherches | 2 bornes, détour CC |
 | Réglage de la machine d'une piste (`0x4001477e`) | borne `0x400147a4` : accepte 6 |
 | Molette de l'écran MACHINES (`0x4001488a`) | machine + pas bornée à 6 (`0x400148aa`, `0x400148b2`) |
+| Enregistrements par machine (`0x4004df5c`, `0x4004df76`) | 2 détours : 8ᵉ enregistrement pour SDVtg, construit au 1ᵉʳ usage |
 | État par descripteur | 2 détours |
 | Moteur | bornes `0x400a7dba`, `0x400a7df4` ; octet `0x40118646` ; tables update/render à 7 entrées (entrée 6 = passerelle) |
 | Écran MACHINES | borne `0x400a25e0`, 7 noms (« SDVtg »), 7 repères (`0x400a26e8`), détour des images (celles de SNARE pour SDVtg) |
@@ -130,11 +131,12 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 | `0x43033800` | 7 noms, tables update/render à 7 entrées, chaînes |
 | `0x43034000` | 81 descripteurs (76 copiés de ton OS + 5 de SDVtg) |
 | `0x43035200`, `0x43035300` | rangées par machine et rangées de CC (7 × 32 o chacune) |
+| `0x43035400` | 8ᵉ enregistrement par machine (SDVtg), 76 o, construit au 1ᵉʳ usage |
 
 **Tailles** :
 - MAIN OS décompressé : 1 962 304 o. Il finit à `0x401df540`, sous la zone de transit du bootstrap (`0x40200000`).
 - `.syx` : 1 037 344 o.
-- MAIN OS patché, SDVtg seul : `badc7748…`.
+- MAIN OS patché, SDVtg seul : `ce94b7c8…`.
 
 **Flasher web** : la case SD VINTAGE a deux variantes, « À la place de SNARE » (par défaut, testée) et « En 7ᵉ machine, SDVtg » (nouvelle). 47 combinaisons sont comparées à leur empreinte de référence (`REF_MAINOS`).
 
@@ -156,6 +158,9 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 | Écran MACHINES (dessin intercepté) | pour 0..5 : mêmes noms et mêmes images que le stock ; 7 repères ; pour 6 : « SDVtg », images de SNARE, 7ᵉ repère plein (stock : « Error ») |
 | Réglage de la machine d'une piste (`0x4001477e`, objets factices) | identique pour 0..5 ; 6 accepté et défauts de la machine chargés (stock : refusé) ; 7 refusé |
 | Molette (`0x4001488a`, +1 ×8 puis −1 ×3, vrai code) | stock : 1…5, 5, 5, 5 (bloqué à Chord, comme sur la machine) ; modifié : 1…5, 6, 6, 6, puis 5, 4, 3 |
+| Gestionnaire de l'écran MACHINES (`0x400a2712`, vrai code, environnement intercepté) | stock : bloqué à 5 ; modifié : atteint 6 |
+| Enregistrements par machine | 0..6 identiques ; SDVtg → 8ᵉ enregistrement (descripteurs 42, 80, 76..79…, chaînes copiées avec leur compteur de références) |
+| Chord → SDVtg avec le **vrai** gestionnaire de changement de machine (`0x40014072`) | pas d'accès hors mémoire ; défauts du Syntakt écrits dans le son (0, 110, 74, 80, 33) |
 | Icône bornée | identique pour 0..5 ; SNARE au lieu de CHORD pour 6 |
 | Son | SDVtg identique au Syntakt (6 cas, 1 LSB) ; **SNARE identique échantillon par échantillon à l'OS stock** ; repos : 0 instruction du Syntakt ; machine lock SNARE → SDVtg sur une piste : les deux jouent |
 
@@ -186,7 +191,26 @@ Le portage « à la place de SNARE » ([17](17-portage-exact-syntakt.md)) reste 
   - Hors les sites corrigés, ce ne sont que des bornes de piste (0..5) ou d'autres champs (conversions de format de son).
   - Les verrous par pas (machine locks) passent par le setter générique, qui lit le max du paramètre dans la table déplacée (6).
 
-**3ᵉ essai** `[À FAIRE]` :
+**3ᵉ essai** : toujours bloqué à Chord.
+- Le vrai gestionnaire de la molette (`0x400a2712`), exécuté en émulation, atteignait pourtant 6.
+- Hypothèse : cache du navigateur (anciens scripts du flasher, reconstruction de la 1ʳᵉ version).
+- Le flasher charge donc ses scripts avec `?v=<build>` et affiche le début de l'empreinte du MAIN OS (« Firmware prêt … MAIN OS xxxxxxxx »).
+
+**4ᵉ essai** (empreinte `badc7748` confirmée par l'utilisateur) : la molette dépasse Chord, et **le Cycles gèle** ; il faut l'éteindre.
+- Cause : au changement de machine, `0x40014072` prend l'**enregistrement par machine** `0x4004df5c(machine + 1)`.
+  - Ce sont 7 enregistrements de 76 o à `0x40a71540`, construits au démarrage (`0x400e0fc6..`) : deux chaînes C++ (copie sur écriture) puis les 17 descripteurs de la page de paramètres de la machine. Index 0 = aucune, 1..6 = machines 0..5.
+  - Pour SDVtg, l'index 7 sort du tableau. L'OS rendait l'adresse d'avant le tableau (`0x40a714f4`) et copiait ces « chaînes » en incrémentant un compteur de références au hasard → gel.
+  - `0x4004df76(machine)` (3 appelants dans l'interface) a le même défaut.
+- Corrigé : deux détours, `record_at` et `record_of`. Pour SDVtg, ils rendent un 8ᵉ enregistrement (`0x43035400`) :
+  - construit au premier usage depuis celui de SNARE ;
+  - chaînes copiées par le constructeur de copie de l'OS (`0x400f8f02`, compteur de références correct) ;
+  - descripteurs 51..55 → 76..80.
+- Le test d'émulation exécute maintenant le **vrai** changement de machine Chord → SDVtg, avec des enregistrements remplis comme au démarrage : pas d'accès hors mémoire, défauts du Syntakt écrits dans le son.
+- Enseignement :
+  - chercher, en plus des bornes, **tous les tableaux indexés par la machine** ;
+  - exécuter en émulation les chemins réellement suivis au changement de machine, au lieu de les lire seulement.
+
+**5ᵉ essai** `[À FAIRE]` :
 
 1. Sauvegarder les projets (Transfer).
 2. Flasher par USB (`CONFIG › UPGRADE`) la variante « En 7ᵉ machine, SDVtg ».

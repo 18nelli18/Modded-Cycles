@@ -292,6 +292,72 @@ def fake_track(u, machine):
     return obj, snd
 
 
+REC_BASE, REC_LEN = 0x40a71540, 76
+REP = 0x93b00000                                     # une chaîne C++ factice (copie sur écriture) : « GROO »
+
+
+def fill_records(u):
+    """Les 7 enregistrements par machine, comme les construit l'OS au démarrage (0x400e0fc6..) : deux chaînes,
+    puis les 17 descripteurs de la page (PITCH, DECAY, COLOR..CONTOUR de la machine, puis paramètres communs)."""
+    u.uc.mem_write(REP, struct.pack(">iii", 4, 4, 0) + b"GROO\0")
+    for i in range(7):
+        rec = bytearray(REC_LEN)
+        rec[0:8] = struct.pack(">II", REP + 12, REP + 12)
+        if i:
+            b = 46 + 5 * (i - 1)
+            ids = [42, b + 4, b, b + 1, b + 2, b + 3, 26, 27, 29, 25, 23, 22, 39, 37, 40, 38, 9]
+            rec[8:] = struct.pack(">17i", *ids)
+        u.uc.mem_write(REC_BASE + REC_LEN * i, bytes(rec))
+
+
+def refcount(u):
+    return struct.unpack(">i", u.uc.mem_read(REP + 8, 4))[0]
+
+
+def records(stock, patched, payload):
+    a, b = UI(stock), UI(patched, payload)
+    for u in (a, b):
+        fill_records(u)
+    ok = all(a.call(0x4004df5c, i) == b.call(0x4004df5c, i) for i in list(range(7)) + [8, 100])
+    ok &= all(a.call(0x4004df76, m) == b.call(0x4004df76, m) for m in list(range(6)) + [7, 100])
+    before = refcount(b)
+    r7, r6 = b.call(0x4004df5c, 7), b.call(0x4004df76, 6)
+    rec = bytes(b.uc.mem_read(r7, REC_LEN))
+    ids = struct.unpack(">17i", rec[8:])
+    ok &= r7 == r6 == g7.REC8 and rec[:8] == struct.pack(">II", REP + 12, REP + 12) and refcount(b) == before + 2
+    ok &= ids == (42, 80, 76, 77, 78, 79, 26, 27, 29, 25, 23, 22, 39, 37, 40, 38, 9)
+    stock7 = a.call(0x4004df5c, 7)
+    check(ok, f"enregistrements par machine : 0..6 identiques ; SDVtg -> 8e enregistrement {r7:#x} (descripteurs {ids[:6]},"
+              f" chaînes partagées avec la bonne référence) ; stock : {stock7:#x}, avant le tableau")
+
+
+def machine_change(stock, patched, payload):
+    """Molette de Chord vers SDVtg, avec le VRAI gestionnaire de changement de machine (0x40014072) : c'est lui
+    qui gelait (enregistrement lu avant le tableau). Il doit écrire les défauts de SDVtg dans le son."""
+    res = {}
+    for name, img, pl in (("stock", stock, b""), ("modifié", patched, payload)):
+        u = UI(img, pl)
+        fill_records(u)
+        obj, snd = fake_track(u, 5)
+        del u.hooks[0x40014072]
+        this = 0x93900000
+        for k in range(6):
+            u.uc.mem_write(this + 70 + 4 * k, struct.pack(">i", -1))
+        for a_, v in {0x400cf866: 0x93a00000, 0x4000eb90: 0x93a00000, 0x40012412: 0, 0x400cf9a8: 0x93a00000,
+                      0x4006bdfe: 0, 0x4000eb9c: 0x93a00000, 0x40009c1a: obj, 0x400f44c6: 0, 0x4001416c: 0}.items():
+            u.hooks[a_] = (f"{a_:#x}", v)
+        rc = refcount(u)
+        u.call(0x400a2712, this, 1, 0, 0)
+        m = struct.unpack(">H", u.uc.mem_read(snd + 38, 2))[0] >> 8
+        # le son range ses valeurs 8.8 à 0x14 + 2 x slot (la machine, slot 9, est à +38)
+        vals = [struct.unpack(">h", u.uc.mem_read(snd + 0x14 + 2 * sl, 2))[0] >> 8 for sl in (0xb, 0xc, 0xd, 0xe, 0x12)]
+        res[name] = (m, vals, refcount(u) - rc, bool(u.bad))
+    s_, p_ = res["stock"], res["modifié"]
+    ok = s_[0] == 5 and p_[0] == 6 and p_[1] == [0, 110, 74, 80, 33] and not p_[3]
+    check(ok, f"Chord -> SDVtg avec le vrai changement de machine (0x40014072) : modifié machine {p_[0]}, défauts {p_[1]},"
+              f" +{p_[2]} référence(s) (la 8e fiche) ; stock machine {s_[0]}")
+
+
 def wheel(stock, patched, payload):
     """Molette de l'écran MACHINES : 0x4001488a(piste, pas) = machine + pas, bornée, puis 0x4001477e."""
     seq = {}
@@ -450,6 +516,8 @@ def main():
     screens(stock, patched, payload)
     machine_setter(stock, patched, payload)
     wheel(stock, patched, payload)
+    records(stock, patched, payload)
+    machine_change(stock, patched, payload)
     small_icon(patched, stock, payload)
     print("son")
     sound(stock, patched, syntakt.dsp_image(args.syntakt), args.blocks)

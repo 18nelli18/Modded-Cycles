@@ -108,3 +108,82 @@ small_icon:
 	bge.s	2f
 	moveq	#1, %d0
 2:	jmp	0x400a4dde
+
+/* Enregistrements par machine (7 x 76 o a 0x40a71540, construits au demarrage) : deux chaines C++ puis
+ * les 17 descripteurs de la page de parametres. Index 0 = aucune, 1..6 = machines 0..5. Il n'y en a pas
+ * pour SDVtg : l'OS lisait avant le tableau et copiait des pointeurs au hasard (gel au choix de SDVtg).
+ * Le 8e (REC8, dans la charge utile) est construit au premier usage, depuis celui de SNARE (index 2),
+ * avec les descripteurs de SDVtg (51..55 -> 76..80) ; les chaines passent par le constructeur de copie
+ * de l'OS (0x400f8f02), qui compte les references. */
+#define REC_BASE	0x40a71540
+#define REC_SNARE	(REC_BASE + 2 * 76)
+
+/* remplace 0x4004df5c : enregistrement n (0..6), 7 = SDVtg */
+	.globl	record_at
+record_at:
+	move.l	4(%sp), %d0
+	moveq	#7, %d1
+	cmp.l	%d1, %d0
+	beq.s	rec8
+	moveq	#6, %d1
+	cmp.l	%d0, %d1
+	bcc.s	1f
+	moveq	#-1, %d0
+1:	moveq	#76, %d1
+	muls.l	%d1, %d0
+	add.l	#REC_BASE, %d0
+	rts
+
+/* remplace 0x4004df76 : enregistrement de la machine m (0..5 par la table 0x401091b4), 6 = SDVtg */
+	.globl	record_of
+record_of:
+	move.l	4(%sp), %d0
+	moveq	#6, %d1
+	cmp.l	%d1, %d0
+	beq.s	rec8
+	moveq	#5, %d1
+	cmp.l	%d0, %d1
+	bcs.s	2f
+	lea	0x401091b4, %a0
+	mvs.b	(%a0,%d0.l), %d0
+	moveq	#6, %d1
+	cmp.l	%d0, %d1
+	bcc.s	3f
+2:	moveq	#-1, %d0
+3:	moveq	#76, %d1
+	muls.l	%d1, %d0
+	add.l	#REC_BASE, %d0
+	rts
+
+rec8:
+	tst.b	REC8_BUILT
+	bne.s	9f
+	move.l	%d2, -(%sp)
+	pea	REC_SNARE
+	pea	REC8
+	jsr	0x400f8f02		/* chaine +0 */
+	addq.l	#8, %sp
+	pea	REC_SNARE + 4
+	pea	REC8 + 4
+	jsr	0x400f8f02		/* chaine +4 */
+	addq.l	#8, %sp
+	lea	REC_SNARE + 8, %a0
+	lea	REC8 + 8, %a1
+	moveq	#16, %d2
+1:	move.l	(%a0)+, %d0
+	moveq	#51, %d1
+	cmp.l	%d1, %d0
+	blt.s	2f
+	moveq	#55, %d1
+	cmp.l	%d0, %d1
+	blt.s	2f
+	moveq	#25, %d1
+	add.l	%d1, %d0		/* 51..55 (SNARE) -> 76..80 (SDVtg) */
+2:	move.l	%d0, (%a1)+
+	subq.l	#1, %d2
+	bpl.s	1b
+	moveq	#1, %d0
+	move.b	%d0, REC8_BUILT
+	move.l	(%sp)+, %d2
+9:	move.l	#REC8, %d0
+	rts

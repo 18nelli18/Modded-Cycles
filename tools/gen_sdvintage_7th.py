@@ -85,6 +85,8 @@ JUMPS = (
     (0x4005a8f0, "7405b4816532", "cc_bounds"),
     (0x400a2638, "eb8c48780001", "drum_icons"),
     (0x400a4dc4, "700541e8000a", "small_icon"),
+    (0x4004df5c, "7206202f0004", "record_at"),    # enregistrement par machine (index machine + 1)
+    (0x4004df76, "7205202f0004", "record_of"),    # enregistrement par machine (index machine)
 )
 
 # --- SDVtg : noms et défauts du Syntakt (manuel Syntakt, section SD VINTAGE) ---------------------------
@@ -102,7 +104,9 @@ DESC7 = 0x43034000                             # 81 descripteurs
 NDESC7 = NDESC + 5
 ROWS7 = 0x43035200                             # 7 x 32 o
 CCROWS7 = 0x43035300                           # 7 x 32 o
-END = 0x43035400
+REC8 = 0x43035400                              # 8e enregistrement par machine (SDVtg), 76 o, construit au 1er usage
+REC8_BUILT = REC8 + 76
+END = 0x43035460
 
 
 def be32(x):
@@ -127,7 +131,8 @@ def refs32(img, v):
 
 def compile_stubs(tmp):
     obj, elf, out = tmp / "m7.o", tmp / "m7.elf", tmp / "m7.bin"
-    gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(gx.SRC / "machine7.S"), "-o", str(obj)])
+    gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(gx.SRC / "machine7.S"), "-o", str(obj),
+            f"-DREC8={REC8:#x}", f"-DREC8_BUILT={REC8_BUILT:#x}"])
     gx.run([gx.CROSS + "ld", "-Ttext", f"{STUBS:#x}", "-o", str(elf), str(obj)])
     gx.run([gx.CROSS + "objcopy", "-O", "binary", "-j", ".text", str(elf), str(out)])
     syms = {p[-1]: int(p[0], 16) for p in (l.split() for l in gx.run([gx.CROSS + "nm", str(elf)]).splitlines())
