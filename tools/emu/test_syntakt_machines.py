@@ -361,6 +361,11 @@ CASES["bits"] = [("défauts", {}), ("note 48", {"note": 48}), ("DET 40", {"p1": 
                  ("SRR 127", {"p3": 127}), ("WAVE 0", {"p4": 0}), ("WAVE 64", {"p4": 64}), ("WAVE 127", {"p4": 127}),
                  ("DEC 90", {"dec": 90}), ("PUNCH -> Bit Redux", {"punch": 1}, {"punch": "punch_on"}),
                  ("COLOR 0 borné à 40", {"p1": 0}, {"p1": 40}), ("COLOR 127 borné à 88", {"p1": 127}, {"p1": 88})]
+# SY SWARM : PUNCH inactif = Fundamental Sub 2 (défaut du Syntakt), actif = 1 (une octave plus bas).
+CASES["swarm"] = [("défauts", {}), ("note 48", {"note": 48}), ("NMOD 0", {"p1": 0}), ("NMOD 127", {"p1": 127}),
+                  ("ANIM 0", {"p2": 0}), ("ANIM 127", {"p2": 127}), ("DET 0", {"p3": 0}), ("DET 127", {"p3": 127}),
+                  ("MIX 0", {"p4": 0}), ("MIX 64", {"p4": 64}), ("DEC 90", {"dec": 90}),
+                  ("PUNCH -> Sub -1 octave", {"punch": 1}), ("PUNCH, note 36", {"punch": 1, "note": 36})]
 GENERIC_CASES = [("défauts", {}), ("note 48", {"note": 48}), ("p1 0", {"p1": 0}), ("p1 127", {"p1": 127}),
                  ("p2 0", {"p2": 0}), ("p2 127", {"p2": 127}), ("p3 0", {"p3": 0}), ("p3 127", {"p3": 127}),
                  ("p4 0", {"p4": 0}), ("p4 127", {"p4": 127}), ("DEC 90", {"dec": 90})]
@@ -393,6 +398,8 @@ def sound(stock, patched, st_img, blocks):
             kw.update(over)
             note = kw.pop("note", 60)
             skw = dict(kw)                              # ce que doit recevoir le moteur du Syntakt
+            if "punch_on" in m:                         # emplacement 23 sans potard : PUNCH le commande
+                skw["punch"] = m["punch_on"] if kw.get("punch") else m.get("punch_off", 0)
             skw.update({k: m[v] if isinstance(v, str) else v for k, v in (st[0] if st else {}).items()})
             a = syn(name, skw, note)
             b, e = cycles(patched, m["index"], kw, note)

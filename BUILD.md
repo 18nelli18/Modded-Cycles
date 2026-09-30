@@ -47,10 +47,10 @@ L'orchestration (`tools/build.py`) et les tables de patchs (`tweaks/`) sont prop
    ```
    Ou n'importe quel choix de moteurs du Syntakt en machines ajoutées ([note 20](notes/20-moteurs-syntakt-a-cocher.md)) :
    `sdvintage-7th` (SD), `syntakt-vintage` (SD + CP), et `syntakt-<moteurs>` pour les autres choix parmi `sd`, `cp`, `toy`,
-   `bits` (dans cet ordre : `syntakt-toy`, `syntakt-sd-cp-toy`, `syntakt-bits`, `syntakt-sd-cp-toy-bits`…
-   [note 21](notes/21-sy-bits.md)). Un seul à la fois :
+   `bits`, `swarm` (dans cet ordre : `syntakt-toy`, `syntakt-bits`, `syntakt-swarm`, `syntakt-sd-cp-toy-bits-swarm`…
+   [notes 21](notes/21-sy-bits.md) et [22](notes/22-sy-swarm.md)). Un seul à la fois :
    ```sh
-   python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup,syntakt-sd-cp-toy-bits --syntakt Syntakt_OS1.41.syx
+   python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup,syntakt-sd-cp-toy-bits-swarm --syntakt Syntakt_OS1.41.syx
    ```
    → écrit `model-cycles_OS1.13_mod.syx` à côté. `-t a,b` combine plusieurs patchs compatibles.
    `--all` applique tout, mais refuse si deux patchs sont incompatibles (c'est le cas de ces deux variantes).
@@ -104,8 +104,10 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 | `syntakt-sd-cp-toy` (idem) | `8586b2301ef92801ca5529d43ae2036fa8b1bf921172ae703560616531e61bd1` |
 | `syntakt-bits` (idem) | `7ace58bdf609b7ea735b434c7b9bddd8388282fbe0117f3badd174d61bcec58f` |
 | `syntakt-sd-cp-toy-bits` (idem) | `9fa6a7dec71e777adb4651f118ca4ffa7f39aedc9f311b2c3f2600cbb3e11262` |
+| `syntakt-swarm` (idem) | `2738b0550b62544d055368922d059cdf2a26c2960f4f3057894f1be4a408a088` |
+| `syntakt-sd-cp-toy-bits-swarm` (idem) | `cbd55ecaec935f441e578f76a34a06de97fda985963ac4658423cbd44de94d7e` |
 
-Les 255 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
+Les 511 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
 `tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;
 `tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.41.syx` les reconstruit toutes dans la page et les compare.
 SD VINTAGE v1 (clean-room d'origine, **testée sur le matériel** le 29/09/2026, compilée par GCC 13.3) donnait `80b7b2bd…` seule et `38754937…` avec `6ch-usbup` ;

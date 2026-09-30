@@ -40,7 +40,8 @@ BASE = gx.BASE
 # son interface. Ce que le moteur ajoute à la copie : code_end (fin de la plage de code), tables_high (tables
 # placées à TABLES_AT), imm (immédiats « move.l #adr » qui sont des adresses, vérifiés à la main), roots
 # (fonctions appelées par pointeur que la fermeture ne suit pas d'elle-même).
-# punch_on : valeur de l'emplacement 23 du Syntakt quand PUNCH est actif (défaut : celle du Cycles, PNCH 0..1).
+# punch_on / punch_off : valeur de l'emplacement 23 du Syntakt quand PUNCH est actif / inactif (défaut : celle
+# du Cycles, PNCH 0..1 ; punch_off vaut 0 si absent).
 CATALOG = {
     "sd": dict(label="SD VINTAGE", name="SDVtg", engine=6, update=0x40008074, render=0x4000847a, image=1, decay=33,
                knobs=(("Inharm", "INHM", 0), ("Freq Complex", "FCMP", 110), ("Pitch Sweep", "SWEP", 74),
@@ -66,11 +67,20 @@ CATALOG = {
                  code_end=0x400092ec, tables_high=((0x4003de38, 0x4003ee38),),
                  imm={0x80004f74, 0x80005778, 0x80005f7c, 0x80006780, 0x80006f84, 0x80007788, 0x8000c888,
                       0x8000d08c, 0x8000d890, 0x8000e094, 0x8000a064}),
+    # type 38, descripteurs « SSAW » 0x40230628.. : Noise Modulation, Detune Animation, Detune, Oscillator Mix.
+    # L'emplacement 23 est Fundamental Sub (0..2, défaut 2 = note jouée ; 1 et 0 : une et deux octaves plus bas),
+    # sans potard sur le Cycles : PUNCH inactif = 2, actif = 1.
+    # imm : 4 tampons SRAM (0x80009c58.., pas de 0x94) rangés dans la voix (+288, +416, +668).
+    "swarm": dict(label="SY SWARM", name="SYSwm", engine=10, update=0x400092ec, render=0x400096e8, image=5, decay=75,
+                  knobs=(("Noise Mod", "NMOD", 20), ("Detune Anim", "ANIM", 15), ("Detune", "DET", 70),
+                         ("Osc Mix", "MIX", 127)), punch_off=2, punch_on=1,
+                  code_end=0x400097dc, tables_high=((0x4003ee38, 0x40040038),),
+                  imm={0x80009c58, 0x80009cec, 0x80009d80, 0x80009e14}),
 }
 # Combinaisons qui gardent leur tweak d'origine, testé sur la machine (notes/18, notes/19).
 LEGACY = {("sd",): "sdvintage-7th", ("sd", "cp"): "syntakt-vintage"}
 # Combinaisons testées sur un vrai Model:Cycles (affiché dans le flasher). Ajouter ici après un test réussi.
-HW_TESTED = {("sd",), ("sd", "cp"), ("toy",), ("sd", "cp", "toy")}
+HW_TESTED = {("sd",), ("sd", "cp"), ("toy",), ("sd", "cp", "toy"), ("bits",)}
 MAX_EXTRA = 6
 
 # --- Syntakt : fermeture et plages copiées -----------------------------------------------------------------
@@ -257,6 +267,8 @@ def compile_code(tmp, machines, payload_longs):
         defs += [f"-DUPD_{m['engine']}={m['update']:#x}", f"-DRND_{m['engine']}={m['render']:#x}"]
         if "punch_on" in m:
             defs.append(f"-DPUNCH_ON_{m['engine']}={m['punch_on']}")
+        if "punch_off" in m:
+            defs.append(f"-DPUNCH_OFF_{m['engine']}={m['punch_off']}")
     obj, stub, elf = tmp / "bridge.o", tmp / "stub.o", tmp / "bridge.elf"
     gx.run([gx.CROSS + "gcc", *gx.CFLAGS, *defs, "-c", str(gx.SRC / "bridge_engines.c"), "-o", str(obj)])
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(gx.SRC / "stub.S"), "-o", str(stub),

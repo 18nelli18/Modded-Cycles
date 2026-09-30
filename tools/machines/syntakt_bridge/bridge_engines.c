@@ -170,6 +170,10 @@ static void update(int engine, s32 pmod, char *v, const char *p)
 		ps[23] = ps[23] ? PUNCH_ON_9 << 8 : 0;   /* emplacement 23 = Bit Redux (0..127), sans potard : PUNCH */
 	}
 #endif
+#ifdef UPD_10
+	if (engine == 10)                                /* SY SWARM : emplacement 23 = Fundamental Sub (0..2) */
+		ps[23] = (ps[23] ? PUNCH_ON_10 : PUNCH_OFF_10) << 8;
+#endif
 	V32(sh, 0x3ec) = ps[24];                         /* la boucle du Syntakt recopie l'emplacement 24 */
 	ST_PREP(sh);
 	st_update(engine)(pmod + (((s32)P16(0x22) - 0x4000) << 3), sh, pp);

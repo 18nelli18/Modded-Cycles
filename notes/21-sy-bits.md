@@ -14,7 +14,7 @@ Adresses : MAIN OS Cycles 1.13 et programme audio du Syntakt 1.41 (section 7), c
 | Les firmwares déjà testés restent identiques à l'octet près | `[FAIT]` 127 empreintes inchangées (§3) |
 | **Preuve en émulation** | `[FAIT]` SYBit identique au Syntakt sur 16 cas ; 8 combinaisons, 26 à 29 vérifications (§4) |
 | Flasher : 4ᵉ case, 255 empreintes | `[FAIT]` build `2026-09-30-15` (§5) |
-| Test sur la machine | `[À FAIRE]` (§6) |
+| Test sur la machine | `[FAIT]` SYBit seul, le 30/09/2026 : « SYBit seul marche nickel » (§6) |
 
 ## 1. SY BITS dans le Syntakt
 
@@ -87,7 +87,9 @@ Adresses : MAIN OS Cycles 1.13 et programme audio du Syntakt 1.41 (section 7), c
 - `tools/webflash_smoke.sh` reconstruit les 255 combinaisons dans la page et les compare à `REF_MAINOS`.
 - Build `2026-09-30-15`.
 
-## 6. Test sur la machine `[À FAIRE]`
+## 6. Test sur la machine `[FAIT]` (SYBit seul)
+
+**SYBit seul : testé le 30/09/2026** (`MAIN OS 7ace58bd`) ; retour de l'utilisateur : « SYBit seul marche nickel ». Les quatre moteurs ensemble n'ont pas été testés à part.
 
 1. Sauvegarder les projets (Transfer). Remettre sur une machine d'origine les pistes qui utilisent une machine ajoutée : les numéros changent avec le choix de moteurs ([20 §5](20-moteurs-syntakt-a-cocher.md)).
 2. Cocher **SYBit seul** : code `MAIN OS 7ace58bd`. Menu MACHINES : 7 machines, SYBit en dernier (image de TONE).

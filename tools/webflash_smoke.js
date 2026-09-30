@@ -99,12 +99,13 @@ async function main() {
       && /elektron\.se\/support-downloads\/syntakt/.test(doc.getElementById("step-file").innerHTML),
       "Syntakt engines ticked -> Syntakt drop zone and download link");
     const engs = [...doc.querySelectorAll('input[name="eng-syntakt"]')];
-    check(engs.map((r) => r.value + ":" + r.checked).join() === "sd:true,cp:false,toy:false,bits:false" && engs.every((r) => r.type === "checkbox")
+    check(engs.map((r) => r.value + ":" + r.checked).join() === "sd:true,cp:false,toy:false,bits:false,swarm:false" && engs.every((r) => r.type === "checkbox")
       && /SDVtg — SD VINTAGE/.test(text(doc, "features")) && /CPVtg — CP VINTAGE/.test(text(doc, "features"))
       && /SYToy — SY TOY/.test(text(doc, "features")) && /SYBit — SY BITS/.test(text(doc, "features"))
+      && /SYSwm — SY SWARM/.test(text(doc, "features"))
       && !/in place of SNARE/.test(text(doc, "features")) && doc.querySelectorAll('input[name="var-syntakt"]').length === 0
       && /tested on a real Model:Cycles/.test(text(doc, "features")),
-      "Syntakt engines: one checkbox per engine (SDVtg ticked by default, CPVtg, SYToy, SYBit), no SNARE replacement");
+      "Syntakt engines: one checkbox per engine (SDVtg ticked by default, CPVtg, SYToy, SYBit, SYSwm), no SNARE replacement");
     await pickEngines(doc, ["cp"]);
     check(/not tested on a Model:Cycles yet/.test(text(doc, "features")) && /Experimental/.test(doc.querySelector("label[for=feat-syntakt] .tag").textContent),
       "CPVtg alone: a new choice, tagged Experimental");
@@ -380,7 +381,7 @@ async function main() {
     await wait(20);
     const combos = engineCombos(w);
     for (const [variant, msg] of [["syntakt-vintage", /after Chord come SDVtg \(SD VINTAGE\), CPVtg \(CP VINTAGE\)\./],
-                                  ["syntakt-sd-cp-toy-bits", /after Chord come SDVtg \(SD VINTAGE\), CPVtg \(CP VINTAGE\), SYToy \(SY TOY\), SYBit \(SY BITS\)\./],
+                                  ["syntakt-sd-cp-toy-bits-swarm", /after Chord come SDVtg \(SD VINTAGE\), CPVtg \(CP VINTAGE\), SYToy \(SY TOY\), SYBit \(SY BITS\), SYSwm \(SY SWARM\)\./],
                                   ["syntakt-cp", /after Chord come CPVtg \(CP VINTAGE\)\./]]) {
       await pickEngines(doc, combos[variant]);
       await settle(w);
