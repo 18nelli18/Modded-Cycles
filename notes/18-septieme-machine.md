@@ -14,7 +14,7 @@ Toutes les adresses sont celles du MAIN OS 1.13 officiel. Source : désassemblag
 | Potards propres : noms et défauts du Syntakt | `[FAIT]` 5 descripteurs de plus (§6) |
 | **Preuve en émulation** : 20 vérifications sur le vrai code de l'OS | `[FAIT]` `tools/emu/test_sdvintage_7th.py` (§8) |
 | Flasher web : 2ᵉ variante de la case SD VINTAGE | `[FAIT]` (§7) |
-| Test sur la machine | `[À FAIRE]` (§10) |
+| Test sur la machine | 1ᵉʳ essai 30/09 : 7ᵉ repère visible, mais **molette bloquée à Chord** → borne oubliée, corrigée (§10) ; 2ᵉ essai `[À FAIRE]` |
 
 **Choix de l'utilisateur** (30/09/2026, en regardant son Cycles) :
 - l'écran affiche le **nom long** du paramètre quand on tourne un potard (« Snare Color ») ;
@@ -100,12 +100,13 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 
 ## 7. Implémentation `[FAIT]`
 
+
 **Fichiers** :
 - `tools/gen_sdvintage_7th.py` génère `tweaks/model-cycles_OS1.13/22-sdvintage-7th.json`. Il réutilise l'analyse du Syntakt de `gen_sdvintage_exact.py` (même moteur, même passerelle), lit ton OS Cycles pour **vérifier les octets d'origine de chaque écriture**, et refuse toute écriture qui en chevauche une autre ;
 - `tools/machines/syntakt_bridge/machine7.S` : 5 détours (état par descripteur ×2, CC, images de l'écran MACHINES, petite icône) ;
 - `build.py` / `builder.js` : nouveau type de morceau de charge utile, `"cycles": [début, fin]`, copié depuis **ton** MAIN OS d'origine (comme les morceaux `"syntakt"`). Aucun octet Elektron dans le dépôt.
 
-**110 écritures dans l'OS** :
+**111 écritures dans l'OS** :
 
 | Groupe | Écritures |
 |---|---|
@@ -113,6 +114,7 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 | Descripteurs | 37 références, 43 bornes |
 | Tables du BSS | 7 références, taille effacée, champ machine ≤ 6 |
 | Recherches | 2 bornes, détour CC |
+| Réglage de la machine d'une piste (`0x4001477e`) | borne `0x400147a4` : accepte 6 |
 | État par descripteur | 2 détours |
 | Moteur | bornes `0x400a7dba`, `0x400a7df4` ; octet `0x40118646` ; tables update/render à 7 entrées (entrée 6 = passerelle) |
 | Écran MACHINES | borne `0x400a25e0`, 7 noms (« SDVtg »), 7 repères (`0x400a26e8`), détour des images (celles de SNARE pour SDVtg) |
@@ -131,7 +133,7 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 **Tailles** :
 - MAIN OS décompressé : 1 962 304 o. Il finit à `0x401df540`, sous la zone de transit du bootstrap (`0x40200000`).
 - `.syx` : 1 037 344 o.
-- MAIN OS patché, SDVtg seul : `1d50820a…`.
+- MAIN OS patché, SDVtg seul : `4c522c1c…`.
 
 **Flasher web** : la case SD VINTAGE a deux variantes, « À la place de SNARE » (par défaut, testée) et « En 7ᵉ machine, SDVtg » (nouvelle). 47 combinaisons sont comparées à leur empreinte de référence (`REF_MAINOS`).
 
@@ -151,6 +153,7 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 | Descripteurs 76..80 | machine 6, slots, noms, plages, défauts 0/110/74/80/33 ; « Algorithm » va jusqu'à 6 |
 | État par descripteur | 0..75 inchangés ; 76..80 → objets de SNARE |
 | Écran MACHINES (dessin intercepté) | pour 0..5 : mêmes noms et mêmes images que le stock ; 7 repères ; pour 6 : « SDVtg », images de SNARE, 7ᵉ repère plein (stock : « Error ») |
+| Réglage de la machine d'une piste (`0x4001477e`, objets factices) | identique pour 0..5 ; 6 accepté et défauts de la machine chargés (stock : refusé) ; 7 refusé |
 | Icône bornée | identique pour 0..5 ; SNARE au lieu de CHORD pour 6 |
 | Son | SDVtg identique au Syntakt (6 cas, 1 LSB) ; **SNARE identique échantillon par échantillon à l'OS stock** ; repos : 0 instruction du Syntakt ; machine lock SNARE → SDVtg sur une piste : les deux jouent |
 
@@ -163,7 +166,17 @@ Le portage « à la place de SNARE » ([17](17-portage-exact-syntakt.md)) reste 
 - **Démarrage** : au démarrage, seuls le crochet de recopie et le constructeur des tables changent, et tous deux sont vérifiés en émulation. Le reste ne diffère qu'avec une piste en SDVtg. Aucune instruction du Syntakt ne s'exécute avant qu'une piste SDVtg soit jouée.
 - **Secours sans interface MIDI** : si un projet avec SDVtg faisait planter l'interface à chaque démarrage, EMPTY RESET (TRIG 2) ou FACTORY RESET (TRIG 3) dans le menu de démarrage ([FUNC] à l'allumage) réinitialise le projet actif (manuel §13). Le Cycles redémarre alors, et `CONFIG › UPGRADE` reste possible. Les projets doivent être sauvegardés avant (Transfer).
 
-## 10. Test sur la machine `[À FAIRE]`
+## 10. Test sur la machine
+
+**1ᵉʳ essai (30/09/2026, 1ʳᵉ version)** : l'OS démarre, l'écran MACHINES dessine bien 7 repères, mais la molette s'arrête à Chord.
+- Cause : le réglage de la machine d'une piste, `0x4001477e`, refuse toute valeur au-delà de 5 (`moveq #5 ; cmp ; bcs.w` → sortie, en `0x400147a4`) avant d'écrire la machine dans le son (+38) et d'appeler le chargement des défauts (`0x40014072`).
+- Pourquoi il avait échappé à l'inventaire :
+  - la borne est placée **avant** la lecture de +38, que j'avais relevée ;
+  - et une borne « ≤ 5 » ressemble à celle des 6 pistes.
+- Corrigé : borne 5 → 6. Le test d'émulation exécute maintenant ce réglage (objets factices) : l'OS stock refuse 6, la version corrigée l'accepte et charge les défauts de SDVtg.
+- Recherche systématique des autres cas : toutes les écritures du champ machine (+38), et toutes les sorties « `moveq #5` ; `cmp` ; `bcs`/`bhi` » dans une fonction qui touche ce champ. Seul ce site est concerné.
+
+**2ᵉ essai** `[À FAIRE]` :
 
 1. Sauvegarder les projets (Transfer).
 2. Flasher par USB (`CONFIG › UPGRADE`) la variante « En 7ᵉ machine, SDVtg ».

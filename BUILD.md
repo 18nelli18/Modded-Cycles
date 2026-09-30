@@ -90,7 +90,7 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 
 | `sdvintage-exact` (avec `--syntakt Syntakt_OS1.41.syx`) | `8e2290a79fb1406ce65b3af3c5d3d95faade666e98eb8ecce0c0fa25fe87b15d` |
 | `6ch-usbup,sdvintage-exact` (idem) | `ea57b3c52b77d4de3df073ee605f2fecde59878d06e3141c927ed3bd7f489904` |
-| `sdvintage-7th` (idem) | `1d50820ae971f2ccc4b14f5c4255f6c43412e4c8cb629b185ab366e38d91f0c4` |
+| `sdvintage-7th` (idem) | `4c522c1c8edb3bcbf231add8c3d125b6ee65eb2da189f98e60d8a6c5829bbb8b` |
 
 Les 47 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`) ;
 `tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.41.syx` les reconstruit toutes dans la page et les compare.

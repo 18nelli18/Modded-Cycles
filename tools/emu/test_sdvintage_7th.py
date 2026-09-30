@@ -71,8 +71,9 @@ class UI:
         if addr in self.hooks:                        # fonction interceptée : on note ses arguments, rts
             sp = uc.reg_read(mk.UC_M68K_REG_A7)
             args = struct.unpack(">8I", uc.mem_read(sp + 4, 32))
-            self.calls.append((self.hooks[addr], args))
-            uc.reg_write(mk.UC_M68K_REG_D0, 0)
+            name, ret = self.hooks[addr] if isinstance(self.hooks[addr], tuple) else (self.hooks[addr], 0)
+            self.calls.append((name, args))
+            uc.reg_write(mk.UC_M68K_REG_D0, ret)
             uc.reg_write(mk.UC_M68K_REG_PC, struct.unpack(">I", uc.mem_read(sp, 4))[0])
             uc.reg_write(mk.UC_M68K_REG_A7, sp + 4)
 
@@ -277,6 +278,31 @@ def screens(stock, patched, payload):
     check(ok, "écran MACHINES : 7 noms, 7 repères, images identiques pour 0..5, images de SNARE pour SDVtg")
 
 
+# --- 4b. réglage de la machine d'une piste (menu MACHINES, CC 70) -------------------------------------
+def machine_setter(stock, patched, payload):
+    """0x4001477e(piste, machine, _, drapeau) : écrit la machine dans le son de la piste (+38) et, si elle
+    change, appelle 0x40014072 (valeurs par défaut de la machine). L'OS stock refuse au-delà de 5."""
+    got = {}
+    for name, img, pl in (("stock", stock, b""), ("modifié", patched, payload)):
+        for m in range(8):
+            u = UI(img, pl)
+            obj, vt, snd = 0x93800000, 0x93801000, 0x93802000
+            u.uc.mem_write(obj, struct.pack(">I", vt))
+            for k in range(16):                          # méthodes de la piste : interceptées
+                u.uc.mem_write(vt + 4 * k, struct.pack(">I", 0x93803000 + 16 * k))
+                u.hooks[0x93803000 + 16 * k] = (f"vt{4 * k}", snd if 4 * k == 40 else 0)
+            for fn in (0x400cf866, 0x4000eb90, 0x40013126, 0x40014072):
+                u.hooks[fn] = (f"{fn:#x}", 0)
+            u.uc.mem_write(snd + 38, struct.pack(">H", 1 << 8))   # la piste est en SNARE
+            u.call(0x4001477e, obj, m, 0, 0)
+            changed = any(c[0] == "0x40014072" for c in u.calls)
+            got[name, m] = (struct.unpack(">H", u.uc.mem_read(snd + 38, 2))[0] >> 8, changed)
+    ok = all(got["stock", m] == got["modifié", m] for m in range(6))
+    ok &= got["stock", 6] == (1, False) and got["modifié", 6] == (6, True) and got["modifié", 7] == (1, False)
+    check(ok, f"réglage de la machine (0x4001477e) : SDVtg (6) accepté et défauts chargés ; stock {got['stock', 6]},"
+              f" modifié {got['modifié', 6]}, 7 refusé {got['modifié', 7]}")
+
+
 # --- 5. icône bornée ---------------------------------------------------------------------------------
 def small_icon(patched, stock, payload):
     ok = True
@@ -375,6 +401,7 @@ def main():
     accessors(a, b, stock, patched)
     print("écran MACHINES")
     screens(stock, patched, payload)
+    machine_setter(stock, patched, payload)
     small_icon(patched, stock, payload)
     print("son")
     sound(stock, patched, syntakt.dsp_image(args.syntakt), args.blocks)
