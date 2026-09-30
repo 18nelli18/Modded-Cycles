@@ -14,7 +14,7 @@ Adresses : MAIN OS Cycles 1.13 et programme audio du Syntakt 1.41 (section 7), c
 | Les firmwares déjà testés restent identiques à l'octet près | `[FAIT]` 255 empreintes inchangées (§3) |
 | **Preuve en émulation** | `[FAIT]` SYSwm identique au Syntakt sur 13 cas ; 16 combinaisons, 26 à 30 vérifications (§4) |
 | Flasher : 5ᵉ case, 511 empreintes | `[FAIT]` build `2026-09-30-16` (§5) |
-| Test sur la machine | `[À FAIRE]` (§6) |
+| Test sur la machine | `[FAIT]` SYSwm seul, le 30/09/2026 : « SYSwm seul marche nickel » (§6) |
 
 ## 1. SY SWARM dans le Syntakt
 
@@ -77,7 +77,10 @@ Résultats :
 - `docs/flasher/tweaks.js` fait maintenant 1 Mo (un tweak complet par choix de moteurs). Il reste servi en une fois ; on pourra partager les parties communes si le chargement devient lent.
 - Build `2026-09-30-16`.
 
-## 6. Test sur la machine `[À FAIRE]`
+## 6. Test sur la machine `[FAIT]` (SYSwm seul)
+
+**SYSwm seul : testé le 30/09/2026** (`MAIN OS 2738b055`) ; retour de l'utilisateur : « SYSwm seul marche nickel ».
+Plusieurs moteurs joués ensemble ralentissent la machine : voir [23](23-optimisation-charge.md).
 
 1. Sauvegarder les projets. Remettre sur une machine d'origine les pistes qui utilisent une machine ajoutée ([20 §5](20-moteurs-syntakt-a-cocher.md)).
 2. Cocher **SYSwm seul** : code `MAIN OS 2738b055`. Menu MACHINES : 7 machines, SYSwm en dernier (image de CHORD).

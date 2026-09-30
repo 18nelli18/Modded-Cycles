@@ -80,7 +80,7 @@ CATALOG = {
 # Combinaisons qui gardent leur tweak d'origine, testé sur la machine (notes/18, notes/19).
 LEGACY = {("sd",): "sdvintage-7th", ("sd", "cp"): "syntakt-vintage"}
 # Combinaisons testées sur un vrai Model:Cycles (affiché dans le flasher). Ajouter ici après un test réussi.
-HW_TESTED = {("sd",), ("sd", "cp"), ("toy",), ("sd", "cp", "toy"), ("bits",)}
+HW_TESTED = {("sd",), ("sd", "cp"), ("toy",), ("sd", "cp", "toy"), ("bits",), ("swarm",)}
 MAX_EXTRA = 6
 
 # --- Syntakt : fermeture et plages copiées -----------------------------------------------------------------
@@ -261,7 +261,38 @@ def detours_asm(n, images, firsts):
     return "\n".join(a) + "\n"
 
 
-def compile_code(tmp, machines, payload_longs):
+def meter_asm(syms):
+    """Sondes du compteur de charge (firmware de diagnostic, notes/23) : autour de l'appel de la fonction audio
+    (0x40059382) et de celui de la boucle des voix (0x4005981e). L'adresse de retour est mise de côté, pour que
+    la fonction appelée voie la pile exactement comme avant (ses arguments ne sont pas recopiés)."""
+    g = lambda n: f"{syms[n]:#x}"
+    return f"""
+	.globl	audio_probe
+audio_probe:
+	move.l	(%sp)+, {g('meter_ret_audio')}
+	move.l	0xfc07000c, %d1
+	move.l	%d1, {g('meter_t0_audio')}
+	jsr	0x4005979e
+	move.l	%d0, -(%sp)
+	jsr	{g('meter_end')}
+	move.l	(%sp)+, %d0
+	move.l	{g('meter_ret_audio')}, -(%sp)
+	rts
+	.globl	voice_probe
+voice_probe:
+	move.l	(%sp)+, {g('meter_ret_voice')}
+	move.l	0xfc07000c, %d1
+	move.l	%d1, {g('meter_t0_voice')}
+	jsr	0x400a7d4a
+	move.l	0xfc07000c, %d1
+	sub.l	{g('meter_t0_voice')}, %d1
+	add.l	%d1, {g('meter_voice_ticks')}
+	move.l	{g('meter_ret_voice')}, -(%sp)
+	rts
+"""
+
+
+def compile_code(tmp, machines, payload_longs, meter=None):
     defs = []
     for m in machines:
         defs += [f"-DUPD_{m['engine']}={m['update']:#x}", f"-DRND_{m['engine']}={m['render']:#x}"]
@@ -269,6 +300,8 @@ def compile_code(tmp, machines, payload_longs):
             defs.append(f"-DPUNCH_ON_{m['engine']}={m['punch_on']}")
         if "punch_off" in m:
             defs.append(f"-DPUNCH_OFF_{m['engine']}={m['punch_off']}")
+    if meter:                                   # adresses des noms des machines 7 à 10 (affichage)
+        defs += ["-DLOAD_METER"] + [f"-DMETER_N{i}={a:#x}" for i, a in enumerate(meter)]
     obj, stub, elf = tmp / "bridge.o", tmp / "stub.o", tmp / "bridge.elf"
     gx.run([gx.CROSS + "gcc", *gx.CFLAGS, *defs, "-c", str(gx.SRC / "bridge_engines.c"), "-o", str(obj)])
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(gx.SRC / "stub.S"), "-o", str(stub),
@@ -288,7 +321,8 @@ def compile_code(tmp, machines, payload_longs):
     if len(blobs[".bridge"]) > 0x1000 or data_end > gx.DST_END:
         raise SystemExit("!! passerelle trop grande")
     src, o, e, b = tmp / "det.S", tmp / "det.o", tmp / "det.elf", tmp / "det.bin"
-    src.write_text(detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))]))
+    src.write_text(detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))])
+                   + (meter_asm(syms) if meter else ""))
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(src), "-o", str(o)])
     gx.run([gx.CROSS + "ld", "-Ttext", f"{STUBS:#x}", "-o", str(e), str(o)])
     gx.run([gx.CROSS + "objcopy", "-O", "binary", "-j", ".text", str(e), str(b)])
@@ -329,7 +363,7 @@ def analyse(st_img, gen):
     return _ANALYSIS[gen]
 
 
-def build_tweak(img, st_img, codes, generic=False):
+def build_tweak(img, st_img, codes, generic=False, meter=False):
     machines = [dict(CATALOG[c], code=c, index=6 + i) for i, c in enumerate(codes)]
     n = len(machines)
     if not 1 <= n <= MAX_EXTRA:
@@ -338,9 +372,6 @@ def build_tweak(img, st_img, codes, generic=False):
     an = analyse(st_img, generation(codes))
     relocs, COPIES, END = an["relocs"], an["copies"], an["end"]
     size = END - gx.DST_CODE
-    with tempfile.TemporaryDirectory() as d:
-        blobs, syms, stubs, ssyms = compile_code(pathlib.Path(d), machines, size // 4)
-
     nm = 6 + n
     names_at, upd_at, rnd_at, vec_at, map_at = DATA, DATA + 4 * nm, DATA + 8 * nm, DATA + 12 * nm, DATA + 16 * nm
     strings = [m["name"] for m in machines] + [k[i] for m in machines for k in m["knobs"] for i in (0, 1)]
@@ -349,6 +380,12 @@ def build_tweak(img, st_img, codes, generic=False):
         if s not in addr:
             addr[s] = at
             at += len(s) + 1
+    if meter and (n < 4 or any(len(m["name"]) < 5 for m in machines[:4])):
+        raise SystemExit("!! compteur de charge : il faut 4 machines ajoutées aux noms de 5 lettres")
+    with tempfile.TemporaryDirectory() as d:
+        blobs, syms, stubs, ssyms = compile_code(pathlib.Path(d), machines, size // 4,
+                                                 [addr[m["name"]] for m in machines[:4]] if meter else None)
+
     names = [u32(g7.NAMES + 4 * i) for i in range(6)] + [addr[m["name"]] for m in machines]
     upd = [u32(g7.UPDATE_TAB + 4 * i) for i in range(6)] + [syms[f"bridge_update_{m['engine']}"] for m in machines]
     rnd = [u32(g7.RENDER_TAB + 4 * i) for i in range(6)] + [syms[f"bridge_render_{m['engine']}"] for m in machines]
@@ -422,6 +459,9 @@ def build_tweak(img, st_img, codes, generic=False):
         w(va, bytes.fromhex(old), bytes.fromhex("4ef9") + g7.be32(ssyms[sym]))
     for va, old, sym in g7.CALLS:
         w(va, bytes.fromhex(old), bytes.fromhex("4eb9") + g7.be32(ssyms[sym]) + bytes.fromhex("4e71"))
+    if meter:                                   # sondes du compteur de charge autour de deux appels (jsr abs.l)
+        for va, callee, sym in ((0x40059382, 0x4005979e, "audio_probe"), (0x4005981e, 0x400a7d4a, "voice_probe")):
+            w(va, bytes.fromhex("4eb9") + g7.be32(callee), bytes.fromhex("4eb9") + g7.be32(ssyms[sym]))
     writes.sort(key=lambda x: x["off"])
     for a_, b_ in zip(writes, writes[1:]):
         if a_["off"] + len(a_["new"]) // 2 > b_["off"]:
@@ -442,18 +482,24 @@ def build_tweak(img, st_img, codes, generic=False):
     if u32(alg_max) != 5 << 8:
         raise SystemExit("!! max du paramètre Algorithm")
     reloc.append([f"{alg_max - g7.DESC + DESCN:#x}", gx.be32(5 << 8), gx.be32(top << 8)])
-    tid = subset_id(codes, generic)
+    tid = "syntakt-meter" if meter else subset_id(codes, generic)
     others = sorted({"sdvintage-snare", "sdvintage-exact"} | {subset_id(c) for c in subsets()} - {tid})
     return {
         "id": tid,
-        "order": 24,
-        "name": "Vrais moteurs du Syntakt en machines ajoutées : " + ", ".join(f"{m['name']} ({m['label']})" for m in machines),
-        "description": [
+        "order": 90 if meter else 24,
+        "name": ("DIAGNOSTIC, compteur de charge. " if meter else "") +
+                "Vrais moteurs du Syntakt en machines ajoutées : " + ", ".join(f"{m['name']} ({m['label']})" for m in machines),
+        "description": ([
+            "FIRMWARE DE DIAGNOSTIC (notes/23) : les noms des machines 7 à 10 affichent la charge audio, mise à jour",
+            "toutes les 0,5 s : M = pic, A = moyenne de la fonction audio, V = boucle des voix, S = moteurs du Syntakt,",
+            "en % de la durée d'un bloc de 32 échantillons. À n'utiliser que pour mesurer.",
+        ] if meter else []) + [
             "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
             "les 6 d'origine (notes/20) : " + ", ".join(f"{m['name']} = {m['label']} (machine {m['index'] + 1})" for m in machines) + ".",
             "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
             "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier.",
         ],
+        **({"meter": {k: f"{syms[k]:#x}" for k in sorted(syms) if k.startswith("meter_")}} if meter else {}),
         "device": "Model:Cycles",
         "os": "1.13",
         "section": 3,
@@ -479,6 +525,7 @@ def main():
     ap.add_argument("--generic", action="store_true", help="même pour une combinaison de LEGACY (vérification), avec --out")
     ap.add_argument("--out", help="fichier de sortie (sinon tweaks/…/24-<id>.json)")
     ap.add_argument("--check", action="store_true", help="vérifie que les JSON versionnés correspondent")
+    ap.add_argument("--meter", action="store_true", help="firmware de diagnostic : compteur de charge (notes/23)")
     args = ap.parse_args()
     img = g7.cycles_main(args.cycles)
     if len(img) != gx.IMAGE_LEN:
@@ -493,15 +540,15 @@ def main():
     st_img = syntakt.dsp_image(args.syntakt)
     bad = 0
     for codes in todo:
-        if tuple(codes) in LEGACY and not args.generic:
+        if tuple(codes) in LEGACY and not args.generic and not args.meter:
             raise SystemExit(f"!! {codes} : tweak d'origine {LEGACY[tuple(codes)]} (ou --generic)")
         gen = generation(codes)
         if gen not in _ANALYSIS:
             an = analyse(st_img, gen)
             print(f"  Syntakt jusqu'à {CATALOG[gen[-1]]['label']} : {an['funcs']} fonctions, {an['code_bytes']} o de code,"
                   f" {len(an['relocs'])} relocalisations")
-        tweak, ndesc = build_tweak(img, st_img, codes, args.generic)
-        path = pathlib.Path(args.out) if args.out else DEV / f"24-{tweak['id']}.json"
+        tweak, ndesc = build_tweak(img, st_img, codes, args.generic, args.meter)
+        path = pathlib.Path(args.out) if args.out else DEV / f"{tweak['order']}-{tweak['id']}.json"
         text = json.dumps(tweak, indent=1) + "\n"
         print(f"  {tweak['id']} : {len(tweak['writes'])} écritures, {ndesc} descripteurs, charge utile {tweak['append']['size']} o")
         if args.check:
