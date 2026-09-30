@@ -35,10 +35,10 @@ DEFAULTS = {0: (10, 16, 16, 24, 28), 1: (0, 127, 8, 0, 40), 2: (46, 48, 0, 20, 2
 
 IMAGE_LEN = 0x1a9d40             # MAIN OS 1.13 d'origine ; au-delà : charge utile d'un tweak « append »
 PAYLOAD_DST = 0x43000000         # où le crochet de démarrage la recopie (notes/17)
-PAYLOAD_CODE = ((0x43000000, 0x430068c8), (0x43031000, 0x43032000))   # zones de code de la charge utile
+PAYLOAD_CODE = ((0x43000000, 0x43006da8), (0x43031000, 0x43032000))   # zones de code de la charge utile
 # (SD VINTAGE seul s'arrête à 0x4300603c ; SD + CP VINTAGE à 0x430065a4, notes/19 ; jusqu'à SY TOY à
-#  0x430068c8, notes/20. Décoder un peu de données comme du code ne fait que poser des crochets EMAC à des
-#  adresses jamais exécutées.)
+#  0x430068c8, notes/20 ; jusqu'à SY BITS à 0x43006da8, notes/21. Décoder un peu de données comme du code ne
+#  fait que poser des crochets EMAC à des adresses jamais exécutées.)
 
 _EMAC_CACHE = {}
 

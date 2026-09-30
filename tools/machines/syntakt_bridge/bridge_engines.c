@@ -161,6 +161,15 @@ static void update(int engine, s32 pmod, char *v, const char *p)
 	ps[24] = P16(0x20);                              /* GATE  <- GATE    */
 	ps[25] = P16(0x24);                              /* DEC   <- DECAY   */
 	ps[26] = 0;                                      /* OVER             */
+#ifdef UPD_9
+	if (engine == 9) {                               /* SY BITS */
+		if (ps[19] < 0x2800)                     /* DET va de 40 a 88 (valeur d'un autre moteur : bornee) */
+			ps[19] = 0x2800;
+		if (ps[19] > 0x5800)
+			ps[19] = 0x5800;
+		ps[23] = ps[23] ? PUNCH_ON_9 << 8 : 0;   /* emplacement 23 = Bit Redux (0..127), sans potard : PUNCH */
+	}
+#endif
 	V32(sh, 0x3ec) = ps[24];                         /* la boucle du Syntakt recopie l'emplacement 24 */
 	ST_PREP(sh);
 	st_update(engine)(pmod + (((s32)P16(0x22) - 0x4000) << 3), sh, pp);

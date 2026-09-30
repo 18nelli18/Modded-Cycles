@@ -17,7 +17,8 @@ Adresses : MAIN OS Cycles 1.13 et programme audio du Syntakt 1.41 (section 7), c
 | Flasher : une case par moteur, plus d'option « à la place de SNARE » | `[FAIT]` 7 combinaisons, 127 empreintes (§3) |
 | 1ᵉʳ essai de SYToy seul : gel à l'appui sur MACHINES | `[CORRIGÉ]` piste restée sur une machine qui n'existe plus (§5) |
 | Test sur la machine de SYToy seul | `[FAIT]` le 30/09/2026 : « ça marche nickel » (§4) |
-| Test sur la machine des autres combinaisons (dont les trois moteurs) | `[À FAIRE]` (§4) |
+| Test sur la machine des trois moteurs ensemble | `[FAIT]` le 30/09/2026 : « J'ai testé l'ajout des 3 moteurs et ça marche » (§4) |
+| Moteur suivant : SY BITS | voir [21](21-sy-bits.md) |
 
 ## 1. Générateur de combinaisons
 
@@ -105,7 +106,7 @@ Adresses : MAIN OS Cycles 1.13 et programme audio du Syntakt 1.41 (section 7), c
 
 - La carte « Vrais moteurs du Syntakt » a une **case par moteur** : SDVtg (cochée par défaut), CPVtg, SYToy.
   - Décocher le dernier moteur décoche la carte.
-  - Une ligne indique si le choix a été testé sur un vrai Model:Cycles. Les choix testés sont listés dans `HW_TESTED` de `gen_syntakt_engines.py` : aujourd'hui SD seul, SD + CP et SY TOY seul.
+  - Une ligne indique si le choix a été testé sur un vrai Model:Cycles. Les choix testés sont listés dans `HW_TESTED` de `gen_syntakt_engines.py` : aujourd'hui SD seul, SD + CP, SY TOY seul et SD + CP + SY TOY.
   - Sinon, l'étiquette passe à « Expérimental ».
 - L'option **« SD VINTAGE à la place de SNARE »** (`sdvintage-exact`) n'est plus proposée dans la page. Elle reste disponible avec `build.py`.
 - `tools/gen_flasher_tweaks.py` construit la carte depuis le catalogue : moteurs, combinaisons, tweak de chaque combinaison.
@@ -119,7 +120,8 @@ Adresses : MAIN OS Cycles 1.13 et programme audio du Syntakt 1.41 (section 7), c
 
 **SYToy seul : testé le 30/09/2026.** Flashé par l'utilisateur depuis le flasher web (build `2026-09-30-13`, avec la correction du §5) ; son retour : « ça marche nickel ».
 C'est aussi le premier firmware produit par `gen_syntakt_engines.py` à tourner sur la machine : le générateur, sa disposition de la charge utile et la correction du §5 sont donc validés sur le matériel.
-Reste à tester : les trois moteurs ensemble (étape 6), et les autres combinaisons.
+**Les trois moteurs ensemble : testés le 30/09/2026** (`MAIN OS 8586b230`) ; retour de l'utilisateur : « J'ai testé l'ajout des 3 moteurs et ça marche ».
+Les autres combinaisons (CP seul, SD + SY TOY, CP + SY TOY) ne sont vérifiées qu'en émulation.
 
 1. Sauvegarder les projets (Transfer).
 2. Dans le flasher, cocher « Vrais moteurs du Syntakt », puis **SYToy seul**. Vérifier le code `MAIN OS 247c8b46` (build `2026-09-30-13`, avec la correction du §5).

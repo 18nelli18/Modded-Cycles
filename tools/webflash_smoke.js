@@ -79,9 +79,11 @@ async function main() {
     check(errors.length === 0, "loads without JS error " + (errors.length ? JSON.stringify(errors) : ""));
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
-    check(ids.join() === "6ch-usbup,latching-mute,trig-preview,browser-scroll,sdvintage-7th,syntakt-cp,syntakt-toy,syntakt-vintage,"
-      + "syntakt-sd-toy,syntakt-cp-toy,syntakt-sd-cp-toy" && w.MC_TWEAKS.features.length === 5,
-      "MC_TWEAKS: only USB-friendly tweaks, Syntakt engines as extra machines only (no SNARE replacement): " + ids.join());
+    const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
+    check(ids.slice(0, 7).join() === "6ch-usbup,latching-mute,trig-preview,browser-scroll,sdvintage-7th,syntakt-cp,syntakt-toy"
+      && ids.length === 4 + (1 << nEng) - 1 && ids.includes("syntakt-vintage") && ids.includes("syntakt-sd-cp-toy-bits")
+      && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 5,
+      `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement): ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
     check(srcs.length === 4 && srcs.every((x) => x.endsWith("?v=" + w.MC_BUILD)), "scripts loaded with ?v=<build> (no stale cache): " + srcs.join());
@@ -97,12 +99,12 @@ async function main() {
       && /elektron\.se\/support-downloads\/syntakt/.test(doc.getElementById("step-file").innerHTML),
       "Syntakt engines ticked -> Syntakt drop zone and download link");
     const engs = [...doc.querySelectorAll('input[name="eng-syntakt"]')];
-    check(engs.map((r) => r.value + ":" + r.checked).join() === "sd:true,cp:false,toy:false" && engs.every((r) => r.type === "checkbox")
+    check(engs.map((r) => r.value + ":" + r.checked).join() === "sd:true,cp:false,toy:false,bits:false" && engs.every((r) => r.type === "checkbox")
       && /SDVtg — SD VINTAGE/.test(text(doc, "features")) && /CPVtg — CP VINTAGE/.test(text(doc, "features"))
-      && /SYToy — SY TOY/.test(text(doc, "features"))
+      && /SYToy — SY TOY/.test(text(doc, "features")) && /SYBit — SY BITS/.test(text(doc, "features"))
       && !/in place of SNARE/.test(text(doc, "features")) && doc.querySelectorAll('input[name="var-syntakt"]').length === 0
       && /tested on a real Model:Cycles/.test(text(doc, "features")),
-      "Syntakt engines: one checkbox per engine (SDVtg ticked by default, CPVtg, SYToy), no SNARE replacement");
+      "Syntakt engines: one checkbox per engine (SDVtg ticked by default, CPVtg, SYToy, SYBit), no SNARE replacement");
     await pickEngines(doc, ["cp"]);
     check(/not tested on a Model:Cycles yet/.test(text(doc, "features")) && /Experimental/.test(doc.querySelector("label[for=feat-syntakt] .tag").textContent),
       "CPVtg alone: a new choice, tagged Experimental");
@@ -378,7 +380,7 @@ async function main() {
     await wait(20);
     const combos = engineCombos(w);
     for (const [variant, msg] of [["syntakt-vintage", /after Chord come SDVtg \(SD VINTAGE\), CPVtg \(CP VINTAGE\)\./],
-                                  ["syntakt-sd-cp-toy", /after Chord come SDVtg \(SD VINTAGE\), CPVtg \(CP VINTAGE\), SYToy \(SY TOY\)\./],
+                                  ["syntakt-sd-cp-toy-bits", /after Chord come SDVtg \(SD VINTAGE\), CPVtg \(CP VINTAGE\), SYToy \(SY TOY\), SYBit \(SY BITS\)\./],
                                   ["syntakt-cp", /after Chord come CPVtg \(CP VINTAGE\)\./]]) {
       await pickEngines(doc, combos[variant]);
       await settle(w);

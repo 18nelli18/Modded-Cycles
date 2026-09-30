@@ -36,7 +36,11 @@ BASE = gx.BASE
 # --- catalogue : moteurs de la boucle des voix du Syntakt, dans l'ordre des machines ajoutées ------------
 # name : nom dans le menu MACHINES (5 lettres) ; engine : moteur du Syntakt (tables 0x40014920 / 0x400148f0) ;
 # image : image de machine du Cycles montrée (l'OS n'en a que 6) ; knobs : COLOR, SHAPE, SWEEP, CONTOUR = p1..p4
-# du Syntakt (nom long en mots de 8 lettres au plus, nom court, défaut), d'après les descripteurs de son interface.
+# du Syntakt (nom long en mots de 8 lettres au plus, nom court, défaut[, min, max]), d'après les descripteurs de
+# son interface. Ce que le moteur ajoute à la copie : code_end (fin de la plage de code), tables_high (tables
+# placées à TABLES_AT), imm (immédiats « move.l #adr » qui sont des adresses, vérifiés à la main), roots
+# (fonctions appelées par pointeur que la fermeture ne suit pas d'elle-même).
+# punch_on : valeur de l'emplacement 23 du Syntakt quand PUNCH est actif (défaut : celle du Cycles, PNCH 0..1).
 CATALOG = {
     "sd": dict(label="SD VINTAGE", name="SDVtg", engine=6, update=0x40008074, render=0x4000847a, image=1, decay=33,
                knobs=(("Inharm", "INHM", 0), ("Freq Complex", "FCMP", 110), ("Pitch Sweep", "SWEP", 74),
@@ -45,30 +49,42 @@ CATALOG = {
                knobs=(("Body Char", "BODY", 24), ("Balance", "BAL", 25), ("Spacing Crunch", "SPCR", 46),
                       ("Body Envelope", "BENV", 37))),
     # type 36, descripteurs « TOY » 0x402302e8.. : Form, Impact, Brightness, Partial Decay (PNCH 0..1 : PUNCH)
+    # imm : 0x800098ec = tampon SRAM rangé dans la voix (+412), suite de la série 0x8000945c, 0x80009580,
+    # 0x800096a4, 0x800097c8 (pas de 0x124) déjà classée en adresses (gen_sdvintage_exact.py).
     "toy": dict(label="SY TOY", name="SYToy", engine=8, update=0x40008ae8, render=0x40008d58, image=4, decay=60,
                 knobs=(("Form", "FORM", 24), ("Impact", "IMP", 60), ("Bright", "BRIG", 110),
-                       ("Partial Decay", "PART", 64))),
+                       ("Partial Decay", "PART", 64)),
+                code_end=0x40008e0c, tables_high=((0x4003be38, 0x4003de38),), imm={0x800098ec}),
+    # type 37, descripteurs « BITS » 0x40230488.. : Detune (40..88), Balance, Sample Rate Redux, Waveform.
+    # L'emplacement 23 est Bit Redux (0..127), sans potard sur le Cycles : PUNCH actif = punch_on.
+    # imm : 10 tables d'ondes de 0x804 o en SRAM (0x80004f74.. et 0x8000c888..), rangées dans la voix (+176,
+    # +180) par 0x40006588 et l'update ; 0x8000a064 : tampon SRAM pris dans a4 (0x40006276).
+    "bits": dict(label="SY BITS", name="SYBit", engine=9, update=0x40008e0c, render=0x400091e0, image=4, decay=60,
+                 knobs=(("Detune", "DET", 52, 40, 88), ("Balance", "BAL", 102), ("Rate Redux", "SRR", 0),
+                        ("Waveform", "WAVE", 21)), punch_on=80,
+                 roots=(0x40006646,),           # appelée par pointeur (« lea 0x40006646,%fp » en 0x40008fd8)
+                 code_end=0x400092ec, tables_high=((0x4003de38, 0x4003ee38),),
+                 imm={0x80004f74, 0x80005778, 0x80005f7c, 0x80006780, 0x80006f84, 0x80007788, 0x8000c888,
+                      0x8000d08c, 0x8000d890, 0x8000e094, 0x8000a064}),
 }
 # Combinaisons qui gardent leur tweak d'origine, testé sur la machine (notes/18, notes/19).
 LEGACY = {("sd",): "sdvintage-7th", ("sd", "cp"): "syntakt-vintage"}
 # Combinaisons testées sur un vrai Model:Cycles (affiché dans le flasher). Ajouter ici après un test réussi.
-HW_TESTED = {("sd",), ("sd", "cp"), ("toy",)}
+HW_TESTED = {("sd",), ("sd", "cp"), ("toy",), ("sd", "cp", "toy")}
 MAX_EXTRA = 6
 
-# --- Syntakt : fermeture et plages copiées (réunion des moteurs du catalogue) ----------------------------
-ROOTS = gx.ROOTS + tuple(x for m in CATALOG.values() for x in (m["update"], m["render"]))
-CODE = (0x40002544, 0x40008e0c)                  # les fonctions (plage contiguë : le relatif au PC reste juste)
+# --- Syntakt : fermeture et plages copiées -----------------------------------------------------------------
+# La copie dépend du DERNIER moteur coché (ordre du catalogue) : elle contient tout ce qu'il faut aux moteurs du
+# catalogue jusqu'à lui, et au moins jusqu'à SY TOY. Ajouter un moteur au catalogue ne change donc pas, à
+# l'octet près, les firmwares déjà testés sur la machine.
+BASE_GEN = "toy"
+CODE_START = 0x40002544                         # les fonctions (plage contiguë : le relatif au PC reste juste)
 TABLES_LOW = (                                  # à la suite du code, sous la réplique de sa SRAM (0x43020000)
     (0x4000e488, 0x40010490),                   # table centrée sur 0x4000f48c (8 Ko), CP VINTAGE
     (0x40014980, 0x40016b90),                   # constantes + 2 tables de 4 Ko (0x40014b80, 0x40015b80)
     (0x40028438, 0x4003be38),                   # DEC x MENV, tables de 512 o de SD et CP VINTAGE
 )
-TABLES_HIGH = (                                 # au-dessus des enregistrements par machine (TABLES_AT)
-    (0x4003be38, 0x4003de38),                   # tables de 512 o de SY TOY
-)
-# « move.l #adr » : 0x800098ec = tampon SRAM que SY TOY range dans la voix (+412), suite de la série de tables
-# 0x8000945c, 0x80009580, 0x800096a4, 0x800097c8 (pas de 0x124) déjà classées adresses (gen_sdvintage_exact.py).
-IMM_ADDR = g8.IMM_ADDR | {0x800098ec}
+GX_IMM_ADDR = frozenset(gx.IMM_ADDR)             # immédiats-adresses de SD VINTAGE (gen_sdvintage_exact.py)
 
 # --- charge utile (adresses fixes, jusqu'à 6 machines ajoutées) --------------------------------------------
 DST_BRIDGE = 0x43031000
@@ -78,14 +94,23 @@ DESCN = 0x43034000           # 76 + 5 x N descripteurs (au plus 106 x 0x38 = 0x1
 ROWSN = 0x43035800           # (6 + N) x 32 o
 CCROWSN = 0x43035a00         # (6 + N) x 32 o
 RECS = 0x43035c00            # enregistrement par machine ajoutée : 0x60 o chacun (76 o + drapeau)
-TABLES_AT = 0x43036000       # TABLES_HIGH
+TABLES_AT = 0x43036000       # tables_high des moteurs
 
 
-def layout():
+def generation(codes):
+    """Moteurs du catalogue dont la copie contient le code et les tables : jusqu'au dernier coché, au moins
+    jusqu'à BASE_GEN."""
+    order = list(CATALOG)
+    return tuple(order[:max(order.index(BASE_GEN), max(order.index(c) for c in codes)) + 1])
+
+
+def layout(gen):
     """(source Syntakt, fin, destination) des plages copiées, et fin de la charge utile. Chaque table garde
     l'alignement de sa source modulo 8 ; celles du bas doivent tenir sous la réplique de la SRAM."""
-    segs, at = [(*CODE, gx.DST_CODE)], gx.DST_CODE + CODE[1] - CODE[0]
-    for group, limit in ((TABLES_LOW, gx.DST_SRAM), (TABLES_HIGH, None)):
+    code = (CODE_START, max(CATALOG[c].get("code_end", 0) for c in gen))
+    high = tuple(t for c in gen for t in CATALOG[c].get("tables_high", ()))
+    segs, at = [(*code, gx.DST_CODE)], gx.DST_CODE + code[1] - code[0]
+    for group, limit in ((TABLES_LOW, gx.DST_SRAM), (high, None)):
         if limit is None:
             at = TABLES_AT
         for lo, hi in group:
@@ -99,7 +124,6 @@ def layout():
     return tuple(segs), copies, (at + 0xff) & ~0xff
 
 
-SEGMENTS, COPIES, END = layout()
 MAP = g7.ENGINE_MAP          # table machine -> entrée des tables update/render (8 octets, 0x40118640)
 
 
@@ -231,6 +255,8 @@ def compile_code(tmp, machines, payload_longs):
     defs = []
     for m in machines:
         defs += [f"-DUPD_{m['engine']}={m['update']:#x}", f"-DRND_{m['engine']}={m['render']:#x}"]
+        if "punch_on" in m:
+            defs.append(f"-DPUNCH_ON_{m['engine']}={m['punch_on']}")
     obj, stub, elf = tmp / "bridge.o", tmp / "stub.o", tmp / "bridge.elf"
     gx.run([gx.CROSS + "gcc", *gx.CFLAGS, *defs, "-c", str(gx.SRC / "bridge_engines.c"), "-o", str(obj)])
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(gx.SRC / "stub.S"), "-o", str(stub),
@@ -261,24 +287,44 @@ def compile_code(tmp, machines, payload_longs):
     return blobs, syms, stubs, ssyms
 
 
-def analyse(st_img):
-    """Fermeture et relocalisations du code du Syntakt copié (réunion des moteurs du catalogue)."""
-    gx.ROOTS, gx.SEGMENTS = ROOTS, SEGMENTS
-    gx.IMM_ADDR = gx.IMM_ADDR | IMM_ADDR
-    with tempfile.TemporaryDirectory() as d:
-        ins = gx.disasm(st_img, pathlib.Path(d))
-        funcs, insns = gx.closure(ins)
-        if not all(CODE[0] <= a < CODE[1] for a in insns):
-            raise SystemExit(f"!! code hors de {CODE} : {[hex(a) for a in sorted(insns) if not CODE[0] <= a < CODE[1]][:4]}")
-        return gx.relocations(st_img, ins, insns), len(funcs), sum(ins[a][0] for a in insns)
+GX_ROOTS = tuple(gx.ROOTS)
+_ANALYSIS = {}
 
 
-def build_tweak(img, relocs, codes, generic=False):
+def analyse(st_img, gen):
+    """Pour une génération (moteurs dont la copie contient le code) : disposition, fermeture et relocalisations
+    du code du Syntakt copié. Laisse gx.SEGMENTS sur cette disposition (gx.move)."""
+    segs, copies, end = layout(gen)
+    gx.ROOTS = GX_ROOTS + tuple(x for c in gen for x in (CATALOG[c]["update"], CATALOG[c]["render"],
+                                                        *CATALOG[c].get("roots", ())))
+    gx.SEGMENTS = segs
+    gx.IMM_ADDR = set(GX_IMM_ADDR) | g8.IMM_ADDR | {a for c in gen for a in CATALOG[c].get("imm", ())}
+    if gen not in _ANALYSIS:
+        with tempfile.TemporaryDirectory() as d:
+            ins = gx.disasm(st_img, pathlib.Path(d))
+            funcs, insns = gx.closure(ins)
+            code = segs[0]
+            if not all(code[0] <= a < code[1] for a in insns):
+                raise SystemExit(f"!! code hors de la plage copiée : {[hex(a) for a in sorted(insns) if not code[0] <= a < code[1]][:4]}")
+            # Garde-fou : une adresse de code prise par « lea » (pointeur de fonction) doit être dans la fermeture,
+            # sinon ses adresses ne sont pas relocalisées (SY BITS : « lea 0x40006646,%fp », notes/21).
+            missed = sorted({v for a in insns if ins[a][1] == "lea" for v in gx.values(ins[a][2], immediates=False)
+                             if gx.ST_CODE[0] <= v < code[1] and v in ins and v not in insns})
+            if missed:
+                raise SystemExit(f"!! pointeurs de fonction non suivis (à ajouter à roots) : {[hex(v) for v in missed]}")
+            _ANALYSIS[gen] = dict(relocs=gx.relocations(st_img, ins, insns), copies=copies, end=end,
+                                  funcs=len(funcs), code_bytes=sum(ins[a][0] for a in insns))
+    return _ANALYSIS[gen]
+
+
+def build_tweak(img, st_img, codes, generic=False):
     machines = [dict(CATALOG[c], code=c, index=6 + i) for i, c in enumerate(codes)]
     n = len(machines)
     if not 1 <= n <= MAX_EXTRA:
         raise SystemExit("!! nombre de moteurs")
     u32 = lambda va: struct.unpack_from(">I", img, va - BASE)[0]
+    an = analyse(st_img, generation(codes))
+    relocs, COPIES, END = an["relocs"], an["copies"], an["end"]
     size = END - gx.DST_CODE
     with tempfile.TemporaryDirectory() as d:
         blobs, syms, stubs, ssyms = compile_code(pathlib.Path(d), machines, size // 4)
@@ -305,9 +351,11 @@ def build_tweak(img, relocs, codes, generic=False):
 
     new = bytearray()
     for m in machines:
-        for k, (long_, short, default) in enumerate(m["knobs"]):
+        for k, (long_, short, default, *rng) in enumerate(m["knobs"]):
             e = bytearray(img[g7.DESC + (g7.SNARE_DESC + k) * g7.DSTRIDE - BASE:][:g7.DSTRIDE])
             e[0x00:0x04] = g7.be32(6)                 # « propre à une machine » ; rattaché à la sienne par les détours
+            if rng:                                    # plage propre (sinon 0..127, comme SNARE)
+                e[0x08:0x0c], e[0x0c:0x10] = g7.be32(rng[0] << 8), g7.be32(rng[1] << 8)
             e[0x10:0x14] = g7.be32(default << 8)
             e[0x2c:0x30] = g7.be32(addr[long_])
             e[0x34:0x38] = g7.be32(addr[short])
@@ -430,13 +478,17 @@ def main():
         if set(want) - set(CATALOG):
             raise SystemExit(f"!! moteurs inconnus : {set(want) - set(CATALOG)}")
         todo = [[c for c in CATALOG if c in want]]
-    relocs, nfuncs, code_bytes = analyse(syntakt.dsp_image(args.syntakt))
-    print(f"  Syntakt : {nfuncs} fonctions, {code_bytes} o de code, {len(relocs)} relocalisations")
+    st_img = syntakt.dsp_image(args.syntakt)
     bad = 0
     for codes in todo:
         if tuple(codes) in LEGACY and not args.generic:
             raise SystemExit(f"!! {codes} : tweak d'origine {LEGACY[tuple(codes)]} (ou --generic)")
-        tweak, ndesc = build_tweak(img, relocs, codes, args.generic)
+        gen = generation(codes)
+        if gen not in _ANALYSIS:
+            an = analyse(st_img, gen)
+            print(f"  Syntakt jusqu'à {CATALOG[gen[-1]]['label']} : {an['funcs']} fonctions, {an['code_bytes']} o de code,"
+                  f" {len(an['relocs'])} relocalisations")
+        tweak, ndesc = build_tweak(img, st_img, codes, args.generic)
         path = pathlib.Path(args.out) if args.out else DEV / f"24-{tweak['id']}.json"
         text = json.dumps(tweak, indent=1) + "\n"
         print(f"  {tweak['id']} : {len(tweak['writes'])} écritures, {ndesc} descripteurs, charge utile {tweak['append']['size']} o")

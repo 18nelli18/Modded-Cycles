@@ -15,10 +15,18 @@
   "sdvintage-7th",
   "sdvintage-exact",
   "sdvintage-snare",
+  "syntakt-bits",
   "syntakt-cp",
+  "syntakt-cp-bits",
   "syntakt-cp-toy",
+  "syntakt-cp-toy-bits",
+  "syntakt-sd-bits",
+  "syntakt-sd-cp-bits",
+  "syntakt-sd-cp-toy-bits",
   "syntakt-sd-toy",
+  "syntakt-sd-toy-bits",
   "syntakt-toy",
+  "syntakt-toy-bits",
   "syntakt-vintage"
  ],
  "writes": [

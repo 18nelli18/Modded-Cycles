@@ -136,14 +136,15 @@ def accessors(a, b, stock, patched):
     ok, rows = True, []
     for m in ADDED:
         base = FIRST[m["index"]]
-        for i, (long_, short, default) in enumerate(m["knobs"]):
+        for i, (long_, short, default, *rng) in enumerate(m["knobs"]):
+            lo, hi = rng or (0, 127)
             idx = base + i
             ok &= b.call(0x4005a4e8, idx) == 0xb + i
             name = bytes(b.uc.mem_read(b.call(0x4000b22a, 0, idx), 16)).split(b"\0")[0].decode()
             short_ = bytes(b.uc.mem_read(b.call(0x4000b208, 0, idx), 8)).split(b"\0")[0].decode()
             ok &= (name, short_) == (long_, short)
             b.call(0x4005a65a, idx)
-            ok &= struct.unpack(">3i", b.uc.mem_read(SCRATCH, 12)) == (0, 127 << 8, default << 8)
+            ok &= struct.unpack(">3i", b.uc.mem_read(SCRATCH, 12)) == (lo << 8, hi << 8, default << 8)
             rows.append(name)
         b.call(0x4005a65a, base + 4)
         ok &= struct.unpack(">3i", b.uc.mem_read(SCRATCH, 12))[2] == m["decay"] << 8
@@ -353,6 +354,13 @@ def small_icon(stock, patched, payload):
 CP_CASES = [("défauts", {}), ("note 48", {"note": 48}), ("BODY 100", {"p1": 100}), ("BAL 0", {"p2": 0}),
             ("BAL 127", {"p2": 127}), ("SPCR 90", {"p3": 90}), ("BENV 110", {"p4": 110}), ("DEC 90", {"dec": 90})]
 CASES = {"sd": [("défauts", {}), ("note 48", {"note": 48}), ("SWEP 127", {"p3": 127})], "cp": CP_CASES}
+# SY BITS : Detune va de 40 à 88 (une valeur hors plage, venue d'un autre moteur, est bornée par la passerelle) ;
+# PUNCH actif = Bit Redux à punch_on. 3e élément : ce que reçoit le Syntakt quand ça diffère du Cycles.
+CASES["bits"] = [("défauts", {}), ("note 48", {"note": 48}), ("DET 40", {"p1": 40}), ("DET 64", {"p1": 64}),
+                 ("DET 88", {"p1": 88}), ("BAL 0", {"p2": 0}), ("BAL 127", {"p2": 127}), ("SRR 64", {"p3": 64}),
+                 ("SRR 127", {"p3": 127}), ("WAVE 0", {"p4": 0}), ("WAVE 64", {"p4": 64}), ("WAVE 127", {"p4": 127}),
+                 ("DEC 90", {"dec": 90}), ("PUNCH -> Bit Redux", {"punch": 1}, {"punch": "punch_on"}),
+                 ("COLOR 0 borné à 40", {"p1": 0}, {"p1": 40}), ("COLOR 127 borné à 88", {"p1": 127}, {"p1": 88})]
 GENERIC_CASES = [("défauts", {}), ("note 48", {"note": 48}), ("p1 0", {"p1": 0}), ("p1 127", {"p1": 127}),
                  ("p2 0", {"p2": 0}), ("p2 127", {"p2": 127}), ("p3 0", {"p3": 0}), ("p3 127", {"p3": 127}),
                  ("p4 0", {"p4": 0}), ("p4 127", {"p4": 127}), ("DEC 90", {"dec": 90})]
@@ -380,11 +388,13 @@ def sound(stock, patched, st_img, blocks):
         base = dict(tune=64, p1=m["knobs"][0][2], p2=m["knobs"][1][2], p3=m["knobs"][2][2], p4=m["knobs"][3][2],
                     dec=m["decay"])
         ok, worst = True, 0
-        for cname, over in cases:
+        for cname, over, *st in cases:
             kw = dict(base)
             kw.update(over)
             note = kw.pop("note", 60)
-            a = syn(name, kw, note)
+            skw = dict(kw)                              # ce que doit recevoir le moteur du Syntakt
+            skw.update({k: m[v] if isinstance(v, str) else v for k, v in (st[0] if st else {}).items()})
+            a = syn(name, skw, note)
             b, e = cycles(patched, m["index"], kw, note)
             d = np.abs(a - 2 * b)
             worst = max(worst, int(d.max()))
