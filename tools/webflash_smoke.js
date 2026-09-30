@@ -65,7 +65,7 @@ async function main() {
     check(errors.length === 0, "loads without JS error " + (errors.length ? JSON.stringify(errors) : ""));
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
-    check(ids.join() === "6ch-usbup,latching-mute,trig-preview,browser-scroll,sdvintage-exact,sdvintage-7th" && w.MC_TWEAKS.features.length === 5,
+    check(ids.join() === "6ch-usbup,latching-mute,trig-preview,browser-scroll,sdvintage-7th,sdvintage-exact" && w.MC_TWEAKS.features.length === 5,
       "MC_TWEAKS: only USB-friendly tweaks (no 6ch-multiout, no clean-room sdvintage): " + ids.join());
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
@@ -82,9 +82,9 @@ async function main() {
       && /elektron\.se\/support-downloads\/syntakt/.test(doc.getElementById("step-file").innerHTML),
       "SD VINTAGE ticked -> Syntakt drop zone and download link");
     const radios = [...doc.querySelectorAll('input[name="var-sdvintage"]')];
-    check(radios.map((r) => r.value).join() === "sdvintage-exact,sdvintage-7th" && radios[0].checked
-      && /As a 7th machine, SDVtg/.test(text(doc, "features")) && /not tested on a Model:Cycles yet/.test(text(doc, "features")),
-      "SD VINTAGE: two variants, in place of SNARE (default, tested) or 7th machine SDVtg (new)");
+    check(radios.map((r) => r.value).join() === "sdvintage-7th,sdvintage-exact" && radios[0].checked
+      && /As a 7th machine, SDVtg/.test(text(doc, "features")) && /In place of SNARE/.test(text(doc, "features")),
+      "SD VINTAGE: two variants, 7th machine SDVtg (default) or in place of SNARE");
     doc.getElementById("feat-sdvintage").click();
     await wait(30);
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
@@ -242,19 +242,19 @@ async function main() {
       seen.add(app.state.buildKey);
       check(f && f.kind === "built" && f.ref, `real OS: ${app.state.buildKey} matches its reference hash`);
     }
-    if (REAL_ST) {                                        // the other SD VINTAGE variant: 7th machine SDVtg
+    if (REAL_ST) {                                        // the other SD VINTAGE variant: in place of SNARE
       for (let mask = 0; mask < 16; mask++) {
         for (let k = 0; k < boxes.length; k++) {
           const cb = doc.getElementById(boxes[k]);
           const want = boxes[k] === "feat-sdvintage" || !!(mask & (1 << k));
           if (cb.checked !== want) { cb.click(); await wait(5); }
         }
-        const r7 = doc.querySelector('input[name="var-sdvintage"][value="sdvintage-7th"]');
-        if (!r7.checked) { r7.click(); await wait(5); }
+        const rx = doc.querySelector('input[name="var-sdvintage"][value="sdvintage-exact"]');
+        if (!rx.checked) { rx.click(); await wait(5); }
         await settle(w);
         const f = app.state.fw;
         seen.add(app.state.buildKey);
-        check(f && f.kind === "built" && f.ref && app.state.buildKey.endsWith("sdvintage-7th"),
+        check(f && f.kind === "built" && f.ref && app.state.buildKey.endsWith("sdvintage-exact"),
           `real OS: ${app.state.buildKey} matches its reference hash`);
       }
     }

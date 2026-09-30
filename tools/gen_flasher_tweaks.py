@@ -81,8 +81,8 @@ FEATURES = [
         "credit": None,
         "needs": "syntakt",
         "variants": [
-            {"file": "21-sdvintage-exact", "label": "A la place de SNARE (teste sur un Model:Cycles le 30/09/2026)"},
-            {"file": "22-sdvintage-7th", "label": "En 7e machine SDVtg, a cote de SNARE (nouveau, pas encore teste)"},
+            {"file": "22-sdvintage-7th", "label": "En 7e machine SDVtg, a cote de SNARE (teste le 30/09/2026)"},
+            {"file": "21-sdvintage-exact", "label": "A la place de SNARE (teste le 30/09/2026)"},
         ],
     },
 ]

@@ -21,7 +21,7 @@ You need:
 
 The web flasher only sends over USB, and only offers mods that keep OS updates over USB working.
 Its **Samples OS** tab turns the Model:Cycles into a Model:Samples (drop both official OS files); coming back needs a MIDI interface.
-The **SD VINTAGE** box puts the real Syntakt SD VINTAGE engine in place of SNARE (tested on a real Model:Cycles) or, new, as a 7th machine **SDVtg** next to SNARE: drop your official `Syntakt_OS1.41.syx` ([elektron.se](https://www.elektron.se/support-downloads/syntakt)) as well, the engine is read from it in your browser.
+The **SD VINTAGE** box adds the real Syntakt SD VINTAGE engine as a 7th machine **SDVtg** next to SNARE (default), or puts it in place of SNARE; both tested on a real Model:Cycles: drop your official `Syntakt_OS1.41.syx` ([elektron.se](https://www.elektron.se/support-downloads/syntakt)) as well, the engine is read from it in your browser.
 If a Model:Cycles ever stops starting, recovery goes through the startup menu (`FUNC` + power on, then `TRIG 4`),
 which only listens to the **MIDI IN**: that needs a MIDI interface and the command-line scripts below ([`FLASH.md`](FLASH.md)).
 
@@ -56,7 +56,7 @@ By priority. Feasibility is detailed in [note 10](notes/10-faisabilite-fonctionn
 | **6-channel** USB output | ✅ **tested on a real Model:Cycles** — in the web flasher |
 | Keep **OS updates over USB** with the 6-channel mod | ✅ `6ch-usbup`, the version the web flasher installs ([note 13](notes/13-6ch-upgrade-usb.md)) |
 | **The real Syntakt SD VINTAGE engine**, extracted at build time from *your* Syntakt OS file | ✅ `sdvintage-exact`: the Syntakt's own code and tables, relocated into the Model:Cycles, replace SNARE — **sample-identical** to the Syntakt in emulation, and the bootstrap's own decompressor reads the bigger OS back exactly; **tested on a real Model:Cycles** (2026-09-30, flashed over USB from the web flasher); also `build.py --syntakt` ([note 17](notes/17-portage-exact-syntakt.md)) |
-| The real SD VINTAGE as a **7th machine** (SDVtg), next to SNARE | ✅ `sdvintage-7th`: 7 machines in the MACHINES menu, its own knob names and defaults from the Syntakt (Inharmonicity, Freq Complex, Pitch Sweep, Mod Envelope), SNARE unchanged; 20 checks on the OS's own code in emulation; in the web flasher, **not hardware-tested yet** ([note 18](notes/18-septieme-machine.md)) |
+| The real SD VINTAGE as a **7th machine** (SDVtg), next to SNARE | ✅ `sdvintage-7th`: 7 machines in the MACHINES menu, its own knob names and defaults from the Syntakt (Inharmonic, Freq Complex, Pitch Sweep, Mod Envelope), SNARE unchanged; **tested on a real Model:Cycles** (2026-09-30, web flasher); 26 checks on the OS's own code in emulation ([note 18](notes/18-septieme-machine.md)) |
 | Extra drum engine: **SD VINTAGE** (vintage snare from the Syntakt) | ✅ step 1 (replaces SNARE) **tested on a real Model:Cycles**; **v2 retuned on the real Syntakt SD VINTAGE** running in our emulator (same pitch, sweep, decay and noise spectrum, knobs mean what they mean on the Syntakt) — command line only for now ([note 16](notes/16-moteur-syntakt.md)) |
 | **12-channel** USB output (per-track pan) | 🟡 feasible, to develop (through an **8-channel** milestone: 6 tracks + stereo mix, [note 11](notes/11-conception-8-canaux.md)) |
 | Change the **effect algorithms** | 🔴 no (tweaking parameters: 🟡) |

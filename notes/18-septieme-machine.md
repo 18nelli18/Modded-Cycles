@@ -14,7 +14,7 @@ Toutes les adresses sont celles du MAIN OS 1.13 officiel. Source : désassemblag
 | Potards propres : noms et défauts du Syntakt | `[FAIT]` 5 descripteurs de plus (§6) |
 | **Preuve en émulation** : 20 vérifications sur le vrai code de l'OS | `[FAIT]` `tools/emu/test_sdvintage_7th.py` (§8) |
 | Flasher web : 2ᵉ variante de la case SD VINTAGE | `[FAIT]` (§7) |
-| Test sur la machine | essais 1 à 5 (30/09) : molette bloquée (2 bornes), gel (enregistrement manquant), puis **SDVtg joue mais potards sans effet** (vecteur machine → enregistrement de l'écran) → corrigés (§10) ; 6ᵉ essai `[À FAIRE]` |
+| Test sur la machine | `[FAIT]` 6ᵉ essai (30/09) : **SDVtg se choisit, joue et répond aux potards**. Seul « Inharmonicity » dépassait de l'écran → raccourci en « Inharmonic » (§10). Les essais 1 à 5 ont révélé 4 oublis, tous corrigés. |
 
 **Choix de l'utilisateur** (30/09/2026, en regardant son Cycles) :
 - l'écran affiche le **nom long** du paramètre quand on tourne un potard (« Snare Color ») ;
@@ -87,7 +87,7 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 ## 6. Descripteurs propres à SDVtg (option B retenue)
 
 - **Table recopiée et agrandie.** La table ne peut pas grandir sur place : `0x4010ed80` porte une autre table utilisée. Elle est donc recopiée **depuis ton OS** dans la charge utile (`0x43034000`), avec 5 entrées de plus : 76..79 = COLOR/SHAPE/SWEEP/CONTOUR de SDVtg (champ machine 6), 80 = son « Amp Decay » (défaut 33).
-  - Elles reprennent tout de SNARE (slot, plage, CC 16..19, drapeaux, groupe « Drum »), sauf les noms et les défauts. Noms tirés du manuel du Syntakt (section SD VINTAGE) : Inharmonicity / INHM, Freq Complex / FCMP, Pitch Sweep / SWEP, Mod Envelope / MENV ; défauts 0 / 110 / 74 / 80 / 33.
+  - Elles reprennent tout de SNARE (slot, plage, CC 16..19, drapeaux, groupe « Drum »), sauf les noms et les défauts. Noms tirés du manuel du Syntakt (section SD VINTAGE), raccourcis pour tenir à l'écran : Inharmonic / INHM (« Inharmonicity » dépassait, essai 6), Freq Complex / FCMP, Pitch Sweep / SWEP, Mod Envelope / MENV ; défauts 0 / 110 / 74 / 80 / 33.
   - Le max du paramètre « Algorithm » passe à 6 **dans la copie**.
 - **37 références** à la table (33 `lea`, un `move.l #`, 2 `addi.l` et un `move.l` vers `+8` / `+0x20`) pointent sur la copie. **43 bornes** d'accesseurs passent de 76/75 à 81/80.
   - Les bornes sont toutes celles des fonctions qui lisent la table, relevées automatiquement. Aucune autre borne 75/76 de l'OS n'est proche d'un appel à ces fonctions.
@@ -137,7 +137,7 @@ Les fonctions qui lisent ces tables sont toutes bornées à la machine 5 :
 **Tailles** :
 - MAIN OS décompressé : 1 962 304 o. Il finit à `0x401df540`, sous la zone de transit du bootstrap (`0x40200000`).
 - `.syx` : 1 037 344 o.
-- MAIN OS patché, SDVtg seul : `af9f6356…`.
+- MAIN OS patché, SDVtg seul : `3aa00c05…`.
 
 **Flasher web** : la case SD VINTAGE a deux variantes, « À la place de SNARE » (par défaut, testée) et « En 7ᵉ machine, SDVtg » (nouvelle). 47 combinaisons sont comparées à leur empreinte de référence (`REF_MAINOS`).
 
@@ -220,11 +220,16 @@ Le portage « à la place de SNARE » ([17](17-portage-exact-syntakt.md)) reste 
 - Le test d'émulation exécute `0x4001e814` pour les machines 0..6 et les potards 2..15 : identique au stock pour 0..5 ; pour SDVtg, PITCH, DEC, INHM, FCMP, SWEP, MENV (stock : 0 partout, le symptôme observé).
 - Vérifié aussi : aucune des 37 fonctions appelées par le gestionnaire des potards ne lit la machine, les enregistrements ou un tel vecteur.
 
-**6ᵉ essai** `[À FAIRE]` :
+**6ᵉ essai** (build `-8`, empreinte `af9f6356`) : **ça marche**.
+- SDVtg se choisit dans MACHINES, joue au pad, et les potards changent le son et s'affichent.
+- Seul défaut : le nom long « Inharmonicity » dépasse de l'écran. Il devient **« Inharmonic »** (10 caractères, plus étroit que « Freq Complex », qui s'affiche bien).
+- Le flasher propose désormais SDVtg par défaut.
+
+**Contrôle du nom raccourci** (build `-9`) — à vérifier aussi, si ce n'est pas déjà fait :
 
 1. Sauvegarder les projets (Transfer).
 2. Flasher par USB (`CONFIG › UPGRADE`) la variante « En 7ᵉ machine, SDVtg ».
 3. Menu MACHINES : 7 machines, « SDVtg » en dernier avec l'icône de SNARE, 7ᵉ repère allumé.
-4. Choisir SDVtg sur une piste : les potards affichent Inharmonicity, Freq Complex, Pitch Sweep, Mod Envelope ; les valeurs passent aux défauts du Syntakt (0, 110, 74, 80, DECAY 33).
+4. Choisir SDVtg sur une piste : les potards affichent Inharmonic, Freq Complex, Pitch Sweep, Mod Envelope ; les valeurs passent aux défauts du Syntakt (0, 110, 74, 80, DECAY 33).
 5. Jouer : son du Syntakt. Repasser une piste en SNARE : la SNARE d'origine, défauts d'origine (0, 127, 8, 0, 40).
 6. À vérifier aussi : un machine lock vers SDVtg, le CC 70 à la valeur 6, les CC 16..19 sur une piste SDVtg, un projet sauvegardé puis rechargé.

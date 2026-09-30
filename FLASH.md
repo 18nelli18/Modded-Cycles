@@ -159,9 +159,10 @@ Quatre étapes, de haut en bas :
    La 5ᵉ case, **SD VINTAGE, le vrai moteur du Syntakt** (`sdvintage-exact`, [note 17](notes/17-portage-exact-syntakt.md)),
    a été **testée sur un vrai Model:Cycles** le 30/09/2026 (flash par USB depuis le flasher web).
    - Elle ajoute une 3ᵉ zone de dépôt à l'étape 2 pour ton `Syntakt_OS1.41.syx` officiel. La page y lit le moteur ; le fichier ne quitte pas l'ordinateur.
-   - Deux variantes : **À la place de SNARE** (par défaut, testée), ou **En 7ᵉ machine, SDVtg** (nouvelle, pas encore
-     testée sur la machine, [note 18](notes/18-septieme-machine.md)) : SNARE reste, et SDVtg s'ajoute au menu MACHINES avec
-     les noms et les défauts de potards du Syntakt.
+   - Deux variantes, testées sur la machine le 30/09/2026 :
+     - **En 7ᵉ machine, SDVtg** (par défaut, [note 18](notes/18-septieme-machine.md)) : SNARE reste, et SDVtg s'ajoute au
+       menu MACHINES avec les noms et les défauts de potards du Syntakt ;
+     - **À la place de SNARE**.
    - Pour revenir en arrière : onglet *Official firmware*, par USB.
 2. **Déposer l'OS officiel** `model-cycles_OS1.13.syx` : il est reconnu à son empreinte, et le firmware est **construit
    automatiquement** (pas de bouton). La page **exige** le MAIN OS de référence de chaque combinaison (voir [BUILD.md](BUILD.md)),
