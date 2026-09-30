@@ -4,8 +4,8 @@
 Le minuteur DMA 0 du Cycles (0xfc07000c, 135,168 MHz) est simulé. On vérifie, sur le vrai code du tweak :
   - le son : les 5 moteurs du Syntakt donnent la même sortie qu'avec le tweak normal ;
   - la sonde de la fonction audio (0x40059382 -> audio_probe) : la fonction appelée (remplacée ici par une
-    fonction factice) voit la même pile, d0 revient intact, et meter_end compte le bloc ;
-  - meter_end : après 750 blocs, le nom affiché est « pic/moyenne » en % de la durée d'un bloc ;
+    fonction factice) voit la même pile, d0 revient intact, et audio_end mesure le bloc ;
+  - audio_end : après 750 blocs, le nom affiché est « pic/moyenne » en % de la durée d'un bloc ;
   - l'écran MACHINES : les 11 machines portent ce nom (« --/-- » avant la 1re mesure).
 
     python3 tools/emu/test_meter.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx
@@ -58,8 +58,8 @@ def main():
     img_r, _, _ = firmware(stock, "24-syntakt-sd-cp-toy-bits-swarm.json", args.syntakt)
     w = {x["off"] + 0x40000400: x for x in tw_m["writes"]}
     audio_probe = int(w[0x40059382]["new"][4:], 16)
-    sy = {k: int(v, 16) for k, v in tw_m["meter"].items()}
-    print(f"sonde de la fonction audio : {audio_probe:#x} ; variables {', '.join(f'{k} {v:#x}' for k, v in sy.items())}")
+    sy = {k: int(v, 16) for k, v in tw_m["gov"].items()}
+    print(f"sonde de la fonction audio : {audio_probe:#x}")
 
     print("son")
     outs = {}
@@ -97,12 +97,12 @@ def main():
         ok &= seen[:4] == struct.unpack(">4I", frame[4:]) and seen[4] == sp        # même pile qu'un jsr direct
         ok &= e.uc.reg_read(mk.UC_M68K_REG_D0) == 0x1234 and e.uc.reg_read(mk.UC_M68K_REG_A7) == sp + 4
         ok &= bytes(e.uc.mem_read(sp + 4, 16)) == frame[4:]
-    last_t0 = struct.unpack(">I", e.uc.mem_read(sy["meter_t0_audio"], 4))[0]
+    last_t0 = struct.unpack(">I", e.uc.mem_read(sy["gov_t0_audio"], 4))[0]
     e.uc.mem_write(0x4005979e, saved)
     check(ok and last_t0 == (clock[0] - 45056) & 0xffffffff,
-          "audio_probe : la fonction appelée voit les mêmes arguments et la même pile, d0 revient, le bloc est compté")
+          "audio_probe : la fonction appelée voit les mêmes arguments et la même pile, d0 revient, le bloc est mesuré")
 
-    print("calcul de la charge (meter_end) et écran MACHINES")
+    print("calcul de la charge (audio_end) et écran MACHINES")
     e = E.Engine(img_m)
     e.uc.mem_map(0xfc070000, 0x1000)
     names = [struct.unpack(">I", e.uc.mem_read(0x43033800 + 4 * i, 4))[0] for i in range(11)]
@@ -111,9 +111,9 @@ def main():
     t = 10_000_000                                    # 1er appel : écart > 20 blocs -> remise à zéro
     for b in range(752):
         dur = 81101 if b == 400 else 45056            # 50 % ; un bloc à 90 %
-        e.uc.mem_write(sy["meter_t0_audio"], struct.pack(">I", t & 0xffffffff))
+        e.uc.mem_write(sy["gov_t0_audio"], struct.pack(">I", t & 0xffffffff))
         e.uc.mem_write(TIMER, struct.pack(">I", (t + dur) & 0xffffffff))
-        e.call(sy["meter_end"])
+        e.call(sy["audio_end"])
         t += 90112
     after = bytes(e.uc.mem_read(buf, 8)).split(b"\0")[0].decode()
     check(len(set(names)) == 1 and before == "--/--" and after == "90/50",

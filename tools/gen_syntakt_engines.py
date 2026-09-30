@@ -140,11 +140,14 @@ def layout(gen):
 
 MAP = g7.ENGINE_MAP          # table machine -> entrée des tables update/render (8 octets, 0x40118640)
 
-# --- voix muettes (notes/23) : dans la boucle des voix, l'appel update/render de chaque piste (0x400a7dfe..0x400a7e24)
-# passe par un détour. Une voix dont la sortie est restée sous IDLE_THR (valeur absolue, échelle 32 bits de la sortie
-# de render) pendant IDLE_BLOCKS blocs, et qui n'a pas de trig, n'est plus calculée : sa sortie est mise à zéro.
-# Elle repart au trig suivant. Vaut pour les 6 machines d'origine comme pour les machines ajoutées.
+# --- régulateur de charge (notes/23, notes/25) : dans la boucle des voix, l'appel update/render de chaque piste
+# (0x400a7dfe..0x400a7e24) passe par un détour qui demande à la passerelle (voice_gate, voice_after) s'il faut la
+# calculer ; la sonde de l'appel de la fonction audio (0x40059382) mesure la charge de chaque bloc (audio_end).
+# D'ordinaire, une voix restée sous IDLE_THR (valeur absolue, échelle 32 bits de la sortie de render) pendant
+# IDLE_BLOCKS blocs, sans trig, n'est plus calculée ; sous forte charge, le seuil monte et la voix la plus faible
+# s'éteint par un fondu (bridge_engines.c). Vaut pour les 6 machines d'origine comme pour les machines ajoutées.
 DISPATCH = (0x400a7dfe, 0x400a7e24)
+AUDIO_CALL = 0x40059382      # jsr 0x4005979e : fonction audio, appelée par l'interruption à chaque bloc
 IDLE_BLOCKS = 64             # 43 ms
 IDLE_THR = 1 << 13           # -108 dB sous la pleine échelle
 
@@ -273,48 +276,50 @@ def detours_asm(n, images, firsts):
     return "\n".join(a) + "\n"
 
 
-def meter_asm(syms):
-    """Sonde du compteur de charge (firmware de diagnostic, notes/23) : autour de l'appel de la fonction audio
-    par l'interruption (0x40059382). L'adresse de retour est mise de côté, pour que la fonction appelée voie la
-    pile exactement comme avant (ses arguments ne sont pas recopiés)."""
+def probe_asm(syms):
+    """Sonde de l'appel de la fonction audio par l'interruption (0x40059382) : met de côté l'adresse de retour
+    (la fonction appelée voit la pile exactement comme avant), note l'heure, appelle la fonction, puis
+    audio_end() (régulateur de charge, compteur du firmware de diagnostic)."""
     g = lambda n: f"{syms[n]:#x}"
     return f"""
 	.globl	audio_probe
 audio_probe:
-	move.l	(%sp)+, {g('meter_ret_audio')}
+	move.l	(%sp)+, {g('gov_ret_audio')}
 	move.l	0xfc07000c, %d1
-	move.l	%d1, {g('meter_t0_audio')}
+	move.l	%d1, {g('gov_t0_audio')}
 	jsr	0x4005979e
 	move.l	%d0, -(%sp)
-	jsr	{g('meter_end')}
+	jsr	{g('audio_end')}
 	move.l	(%sp)+, %d0
-	move.l	{g('meter_ret_audio')}, -(%sp)
+	move.l	{g('gov_ret_audio')}, -(%sp)
 	rts
 """
 
 
-def dispatch_asm(idle_at, rnd_at):
+def dispatch_asm(syms, rnd_at):
     """Détour de l'appel update/render d'une piste dans la boucle des voix (0x400a7dfe). Registres de la boucle à
     l'entrée : d0 = borne des machines, d4 = entrée des tables, d1 = modulation de note, d6 = table update,
     d3 = sortie de la piste (32 x int32), d2 = numéro de piste, a2 = paramètres, fp = voix, a5 = voix + 0x34
     (trig de ce bloc), a3 = voix + 0x38 (trig du bloc précédent). Seuls d0, d1, a0 et a1 sont modifiés, comme
-    par les appels d'origine."""
+    par les appels d'origine ; voice_gate et voice_after (C) préservent les autres."""
+    g = lambda n: f"{syms[n]:#x}"
     return f"""
 	.globl	dispatch
 dispatch:
 	cmp.l	%d4, %d0
 	bcs.w	9f			/* machine hors borne : rien, comme l'OS */
-	lea	{idle_at:#x}, %a0
+	move.l	%d1, -(%sp)		/* modulation de note, pour update */
+	move.l	%d4, -(%sp)		/* voice_gate(piste, trig, moteur) */
 	move.l	(%a5), %d0
 	or.l	(%a3), %d0
-	beq.s	1f
-	clr.b	(%a0,%d2.l)		/* trig : la voix est active */
-	bra.s	3f
-1:	moveq	#0, %d0
-	move.b	(%a0,%d2.l), %d0
-	cmp.l	#{IDLE_BLOCKS}, %d0
-	bcs.s	3f
-	movea.l	%d3, %a0		/* muette depuis {IDLE_BLOCKS} blocs, sans trig : sortie à zéro */
+	move.l	%d0, -(%sp)
+	move.l	%d2, -(%sp)
+	jsr	{g('voice_gate')}
+	lea	12(%sp), %sp
+	move.l	(%sp)+, %d1
+	tst.l	%d0
+	beq.s	3f
+	movea.l	%d3, %a0		/* pas calculée : sortie à zéro */
 	moveq	#31, %d0
 2:	clr.l	(%a0)+
 	subq.l	#1, %d0
@@ -332,30 +337,15 @@ dispatch:
 	movea.l	(%a0,%d4.l*4), %a1
 	jsr	(%a1)
 	lea	20(%sp), %sp
-	movea.l	%d3, %a0		/* sortie sous le seuil ? */
-	moveq	#31, %d1
-4:	move.l	(%a0)+, %d0
-	bpl.s	5f
-	neg.l	%d0
-5:	cmp.l	#{IDLE_THR}, %d0
-	bcc.s	6f
-	subq.l	#1, %d1
-	bpl.s	4b
-	lea	{idle_at:#x}, %a0		/* oui : un bloc muet de plus */
-	moveq	#0, %d0
-	move.b	(%a0,%d2.l), %d0
-	cmp.l	#{IDLE_BLOCKS}, %d0
-	bcc.s	9f
-	addq.l	#1, %d0
-	move.b	%d0, (%a0,%d2.l)
-	bra.s	9f
-6:	lea	{idle_at:#x}, %a0		/* non : compteur à zéro */
-	clr.b	(%a0,%d2.l)
+	move.l	%d3, -(%sp)		/* voice_after(piste, sortie) */
+	move.l	%d2, -(%sp)
+	jsr	{g('voice_after')}
+	addq.l	#8, %sp
 9:	jmp	{DISPATCH[1]:#x}
 """
 
 
-def compile_code(tmp, machines, payload_longs, meter=None, dispatch=None):
+def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None):
     defs = []
     for m in machines:
         defs += [f"-DUPD_{m['engine']}={m['update']:#x}", f"-DRND_{m['engine']}={m['render']:#x}"]
@@ -363,6 +353,7 @@ def compile_code(tmp, machines, payload_longs, meter=None, dispatch=None):
             defs.append(f"-DPUNCH_ON_{m['engine']}={m['punch_on']}")
         if "punch_off" in m:
             defs.append(f"-DPUNCH_OFF_{m['engine']}={m['punch_off']}")
+    defs += [f"-DIDLE_THR={IDLE_THR}", f"-DIDLE_BLOCKS={IDLE_BLOCKS}"]
     if meter:                                   # le nom affiché pour toutes les machines (écran MACHINES)
         defs += ["-DLOAD_METER", f"-DMETER_BUF={meter:#x}"]
     obj, stub, elf = tmp / "bridge.o", tmp / "stub.o", tmp / "bridge.elf"
@@ -383,9 +374,15 @@ def compile_code(tmp, machines, payload_longs, meter=None, dispatch=None):
             data_end = max(data_end, int(parts[0], 16) + int(parts[1], 16))
     if len(blobs[".bridge"]) > 0x1000 or data_end > gx.DST_END:
         raise SystemExit("!! passerelle trop grande")
+    # la charge utile ne recopie que le code (et les constantes) de la passerelle : ses variables doivent être en
+    # BSS, donc à zéro au démarrage ; une section .data non vide y serait perdue
+    for line in gx.run([gx.CROSS + "objdump", "-h", str(obj)]).splitlines():
+        f = line.split()
+        if len(f) > 2 and f[1].startswith(".data") and int(f[2], 16):
+            raise SystemExit(f"!! passerelle : données initialisées ({f[1]}), non recopiées dans la charge utile")
     src, o, e, b = tmp / "det.S", tmp / "det.o", tmp / "det.elf", tmp / "det.bin"
     src.write_text(detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))])
-                   + (meter_asm(syms) if meter else "") + dispatch_asm(*dispatch))
+                   + probe_asm(syms) + dispatch_asm(syms, rnd_at))
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(src), "-o", str(o)])
     gx.run([gx.CROSS + "ld", "-Ttext", f"{STUBS:#x}", "-o", str(e), str(o)])
     gx.run([gx.CROSS + "objcopy", "-O", "binary", "-j", ".text", str(e), str(b)])
@@ -446,10 +443,9 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
     if meter:                                   # nom de toutes les machines : « pic/moyenne » (5 caractères au plus)
         addr["--/--"] = at
         at += 8
-    idle_at = at                                # compteurs de blocs muets, un octet par piste
     with tempfile.TemporaryDirectory() as d:
         blobs, syms, stubs, ssyms = compile_code(pathlib.Path(d), machines, size // 4,
-                                                 addr["--/--"] if meter else None, (idle_at, rnd_at))
+                                                 addr["--/--"] if meter else None, rnd_at)
 
     names = [u32(g7.NAMES + 4 * i) for i in range(6)] + [addr[m["name"]] for m in machines]
     if meter:
@@ -462,9 +458,6 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
     data += img[MAP - BASE:MAP - BASE + 6] + bytes(range(6, nm)) + bytes(((nm + 3) & ~3) - nm)   # machine -> entrée
     for s in addr:
         data += s.encode("ascii") + b"\0" * (3 if s == "--/--" else 1)
-    if DATA + len(data) != idle_at:
-        raise SystemExit("!! disposition des données")
-    data += bytes(8)                            # compteurs de blocs muets
     if DATA + len(data) > DESCN:
         raise SystemExit("!! données")
 
@@ -532,8 +525,8 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         w(va, bytes.fromhex(old), bytes.fromhex("4ef9") + g7.be32(ssyms[sym]))
     for va, old, sym in g7.CALLS:
         w(va, bytes.fromhex(old), bytes.fromhex("4eb9") + g7.be32(ssyms[sym]) + bytes.fromhex("4e71"))
-    if meter:                                   # sonde du compteur de charge autour de l'appel audio (jsr abs.l)
-        w(0x40059382, bytes.fromhex("4eb94005979e"), bytes.fromhex("4eb9") + g7.be32(ssyms["audio_probe"]))
+    # sonde du régulateur de charge autour de l'appel de la fonction audio (jsr abs.l)
+    w(AUDIO_CALL, bytes.fromhex("4eb94005979e"), bytes.fromhex("4eb9") + g7.be32(ssyms["audio_probe"]))
     writes.sort(key=lambda x: x["off"])
     for a_, b_ in zip(writes, writes[1:]):
         if a_["off"] + len(a_["new"]) // 2 > b_["off"]:
@@ -572,7 +565,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
             "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
             "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier.",
         ],
-        **({"meter": {k: f"{syms[k]:#x}" for k in sorted(syms) if k.startswith("meter_")}} if meter else {}),
+        "gov": {k: f"{syms[k]:#x}" for k in sorted(syms) if k.startswith("gov_") or k in ("audio_end", "voice_gate", "voice_after")},
         "device": "Model:Cycles",
         "os": "1.13",
         "section": 3,

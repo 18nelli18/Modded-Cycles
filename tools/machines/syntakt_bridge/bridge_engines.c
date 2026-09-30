@@ -193,15 +193,101 @@ static void render(int engine, s32 *out, char *v)
 	V32(sh, 0x38) = V32(sh, 0x34);
 }
 
-#ifdef LOAD_METER
-/* Compteur de charge (firmware de diagnostic, notes/23) : le minuteur DMA 0 du Cycles compte a 135,168 MHz
- * (l'OS divise ses ticks par 135 168 pour des millisecondes) ; un bloc de 32 echantillons dure 90 112 ticks.
- * La sonde de la fonction audio (0x4005979e, appelee par l'interruption) est dans les detours ; toutes les
- * 750 appels (0,5 s), METER_BUF (le nom de toutes les machines de l'ecran MACHINES) devient « pic/moyenne »
- * de la fonction audio (voix, mixage, effets), en % de la duree d'un bloc, 99 au plus. */
+/* Regulateur de charge (notes/25). Le minuteur DMA 0 du Cycles compte a 135,168 MHz (l'OS divise ses ticks par
+ * 135 168 pour des millisecondes) : un bloc de 32 echantillons dure 90 112 ticks. La sonde de la fonction audio
+ * (0x4005979e, appelee par l'interruption, detours) appelle audio_end() a chaque bloc ; le detour de la boucle
+ * des voix appelle voice_gate() avant update/render de chaque piste et voice_after() apres.
+ *  - Une voix restee sous `thr` pendant `need` blocs, sans trig, n'est plus calculee (sortie a zero) : -108 dB
+ *    et 64 blocs d'ordinaire ; -66 dB et 16 blocs quand la charge moyenne depasse PRESSURE.
+ *  - Quand la charge moyenne depasse STEAL, ou qu'un bloc depasse PEAK, la voix calculee la plus faible (celles
+ *    du Syntakt d'abord, jamais une note de moins de 16 blocs) s'eteint par un fondu de 8 blocs (5 ms), puis
+ *    n'est plus calculee jusqu'a son prochain trig. Une seule a la fois.
+ * Charges en 1/256 de la duree d'un bloc. */
 #define TIMER (*(volatile u32 *)0xfc07000c)
-u32 meter_ret_audio, meter_t0_audio;
-static u32 last_t0, w_period, w_audio, w_n, w_max;
+#define NT 6
+#define FADE 8
+#define PRESSURE (72 * 256 / 100)
+#define STEAL (82 * 256 / 100)
+#define PEAK (95 * 256 / 100)
+u32 gov_ret_audio, gov_t0_audio, gov_load, gov_avg;     /* charge du dernier bloc, moyenne glissante (1/8) */
+static u32 last_t0;
+unsigned char gov_quiet[NT], gov_fading[NT], gov_stolen[NT], gov_st[NT];
+unsigned short gov_age[NT];
+s32 gov_peak[NT];
+u32 gov_pressure;                /* 0 au demarrage : toutes les variables sont en BSS (la charge utile ne recopie
+				  * pas de .data initialisees) */
+#define THR ((u32)(gov_pressure ? 1 << 20 : IDLE_THR))
+#define NEED (gov_pressure ? 16 : IDLE_BLOCKS)
+
+/* avant update/render d'une piste : 1 = ne pas la calculer (sortie a zero) */
+int voice_gate(int t, int trig, int engine)
+{
+	gov_st[t] = engine >= 6;
+	if (trig) {
+		gov_quiet[t] = gov_fading[t] = gov_stolen[t] = 0;
+		gov_age[t] = 0;
+		return 0;
+	}
+	if (gov_age[t] < 0xffff)
+		gov_age[t]++;
+	return gov_stolen[t] || gov_quiet[t] >= NEED;
+}
+
+/* apres render : crete, fondu eventuel, compteur de blocs faibles */
+void voice_after(int t, s32 *out)
+{
+	s32 pk = 0, x;
+	int k;
+
+	if (gov_fading[t]) {
+		u32 p = (FADE - gov_fading[t]) * 32;            /* position dans le fondu, 0 .. 32 x FADE */
+		for (k = 0; k < 32; k++, p++)
+			out[k] = (out[k] >> 16) * (s32)((32 * FADE - p) * (65536 / (32 * FADE)));
+		if (--gov_fading[t] == 0)
+			gov_stolen[t] = 1;
+	}
+	for (k = 0; k < 32; k++) {
+		x = out[k] < 0 ? -out[k] : out[k];
+		if (x > pk)
+			pk = x;
+	}
+	gov_peak[t] = pk;
+	if ((u32)pk < THR) {
+		if (gov_quiet[t] < 255)
+			gov_quiet[t]++;
+	} else
+		gov_quiet[t] = 0;
+}
+
+static void govern(void)
+{
+	int t, v = -1, busy = 0;
+	u32 best = 0xffffffff, key;
+
+	gov_pressure = gov_avg >= PRESSURE;
+	if (gov_avg < STEAL && gov_load < PEAK)
+		return;
+	for (t = 0; t < NT; t++)
+		busy |= gov_fading[t];
+	if (busy)
+		return;                                          /* un fondu a la fois */
+	for (t = 0; t < NT; t++) {
+		if (gov_stolen[t] || gov_quiet[t] >= NEED || gov_age[t] < 16)
+			continue;                                /* deja arretee, ou note trop recente */
+		key = (u32)gov_peak[t] >> (gov_st[t] ? 1 : 0);    /* voix du Syntakt : deux fois plus cheres */
+		if (key < best) {
+			best = key;
+			v = t;
+		}
+	}
+	if (v >= 0)
+		gov_fading[v] = FADE;
+}
+
+#ifdef LOAD_METER
+/* Compteur de charge (firmware de diagnostic, notes/23) : toutes les 750 blocs (0,5 s), METER_BUF (le nom de
+ * toutes les machines de l'ecran MACHINES) devient « pic/moyenne » de la fonction audio, en % d'un bloc. */
+static u32 w_period, w_audio, w_n, w_max;
 
 static char *put2(char *s, u32 v)
 {
@@ -213,15 +299,10 @@ static char *put2(char *s, u32 v)
 	return s;
 }
 
-void meter_end(void)
+static void meter(u32 dur, u32 period)
 {
-	u32 now = TIMER, t0 = meter_t0_audio, dur = now - t0, period = t0 - last_t0, q;
+	u32 q;
 
-	last_t0 = t0;
-	if (!period || period > 20 * 90112) {           /* premier appel, ou pause : on repart a zero */
-		w_n = w_period = w_audio = w_max = 0;
-		return;
-	}
 	w_period += period;
 	w_audio += dur;
 	q = dur * 100 / period;
@@ -236,6 +317,26 @@ void meter_end(void)
 	}
 }
 #endif
+
+/* apres chaque bloc audio (sonde de 0x4005979e) */
+void audio_end(void)
+{
+	u32 now = TIMER, t0 = gov_t0_audio, dur = now - t0, period = t0 - last_t0;
+
+	last_t0 = t0;
+	if (!period || period > 20 * 90112) {                   /* premier bloc, ou pause */
+#ifdef LOAD_METER
+		w_n = w_period = w_audio = w_max = 0;
+#endif
+		return;
+	}
+	gov_load = dur * 256 / period;
+	gov_avg += ((s32)gov_load - (s32)gov_avg) >> 3;
+#ifdef LOAD_METER
+	meter(dur, period);
+#endif
+	govern();
+}
 
 #define ENTRIES(E) \
 	void bridge_update_##E(s32 pmod, char *v, const char *p) { update(E, pmod, v, p); } \
