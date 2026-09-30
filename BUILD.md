@@ -98,9 +98,9 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 | `6ch-usbup,sdvintage-exact` (idem) | `ea57b3c52b77d4de3df073ee605f2fecde59878d06e3141c927ed3bd7f489904` |
 | `syntakt-vintage` (idem) | `b4de3ec5f7eda7504bf03e7141f57bae6cf5bc137d39f6704da60881d56ed9b0` |
 | `sdvintage-7th` (idem) | `c73ad4c796b94ab39d106d0798091eb39b5e3e31f66d7fe78e2db30db44daad3` |
-| `syntakt-cp` (idem) | `5b85f5a96ce1814c5f92f3036b51d7fcc5cd7a129b010fda325894f5c8f90628` |
-| `syntakt-toy` (idem) | `f0013b7371116936d74d1de4687ffaa6aaf016efb7b177b3711877eec799f287` |
-| `syntakt-sd-cp-toy` (idem) | `7292f849b89e473396f225257a08dbecc3dfde3239c22c93c3850897cca3e9b6` |
+| `syntakt-cp` (idem) | `912e4dcef0d54c3d87e80d580d608ba0fedbbb34e1547364c314c7fa2e8cb2aa` |
+| `syntakt-toy` (idem) | `247c8b46fb40d9e28d2a3f348d39a0d39dc41241087cf0f4fee0a2088dc5a09d` |
+| `syntakt-sd-cp-toy` (idem) | `8586b2301ef92801ca5529d43ae2036fa8b1bf921172ae703560616531e61bd1` |
 
 Les 127 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
 `tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;

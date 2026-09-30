@@ -15,6 +15,7 @@ Adresses : MAIN OS Cycles 1.13 et programme audio du Syntakt 1.41 (section 7), c
 | Même comportement que le tweak testé SD + CP | `[FAIT]` 26 vérifications en émulation sur sa version générée (§1) |
 | SY TOY en machine « SYToy » | `[FAIT]` identique au Syntakt en émulation, 11 cas (§2) |
 | Flasher : une case par moteur, plus d'option « à la place de SNARE » | `[FAIT]` 7 combinaisons, 127 empreintes (§3) |
+| 1ᵉʳ essai de SYToy seul : gel à l'appui sur MACHINES | `[CORRIGÉ]` piste restée sur une machine qui n'existe plus (§5) |
 | Test sur la machine de SYToy et des nouvelles combinaisons | `[À FAIRE]` (§4) |
 
 ## 1. Générateur de combinaisons
@@ -111,16 +112,38 @@ Adresses : MAIN OS Cycles 1.13 et programme audio du Syntakt 1.41 (section 7), c
   - 127 combinaisons : 16 sans moteur du Syntakt, puis 16 par choix de moteurs.
   - Les 47 empreintes déjà présentes avant ce travail sont retrouvées à l'identique.
   - Source : `tools/ref_mainos.py` ; `tools/webflash_smoke.sh` reconstruit les 127 dans la page et les compare (ALL OK).
-- Build `2026-09-30-12`.
+- Build `2026-09-30-13` (après la correction du §5).
 
 ## 4. Test sur la machine `[À FAIRE]`
 
 1. Sauvegarder les projets (Transfer).
-2. Dans le flasher, cocher « Vrais moteurs du Syntakt », puis **SYToy seul**. Vérifier le code `MAIN OS f0013b73`.
+2. Dans le flasher, cocher « Vrais moteurs du Syntakt », puis **SYToy seul**. Vérifier le code `MAIN OS 247c8b46` (build `2026-09-30-13`, avec la correction du §5).
 3. Menu MACHINES : 7 machines, SYToy en dernier (image de TONE).
 4. Choisir SYToy : valeurs 24 / 60 / 110 / 64, DECAY 60. Potards : « Form », « Impact », « Bright », « Partial Decay ».
 5. Jouer, et vérifier que le son rappelle le SY TOY du Syntakt.
-6. Ensuite, **les trois moteurs** (`MAIN OS 7292f849`) : 9 machines, 9 repères, tous visibles sur l'écran.
+6. Ensuite, **les trois moteurs** (`MAIN OS 8586b230`) : 9 machines, 9 repères, tous visibles sur l'écran.
 7. Si tout va bien, ajouter les choix testés à `HW_TESTED` (ils passeront à « Testé » dans la page).
 
-Retour en arrière : onglet *Official firmware*, par USB (CONFIG › UPGRADE).
+Retour en arrière : onglet *Official firmware*, par USB (CONFIG › UPGRADE). Remettre **d'abord** sur une machine d'origine les pistes qui utilisent une machine ajoutée (§5).
+
+## 5. Gel à l'appui sur MACHINES avec SYToy seul `[CORRIGÉ]`
+
+**Symptôme** (message de l'utilisateur, 30/09/2026) : SYToy seul flashé (`MAIN OS f0013b73`), « la machine freeze immédiatement dès que j'appuie sur le bouton pour changer de moteur ».
+
+**Cause** : une piste du projet restée sur une machine que ce firmware n'a pas.
+- Avec SD + CP (flashé et joué juste avant), CPVtg est la machine 7. Avec SYToy seul, les machines vont de 0 à 6 : une piste sur CPVtg garde le numéro 7, qui n'existe plus.
+- Pour une machine au-delà de la dernière, l'accesseur des enregistrements par machine (`0x4004df76`) renvoie `0x40a714f4`, soit 76 o **avant** le tableau `0x40a71540` : d'autres données, lues comme deux chaînes C++ et 17 numéros de descripteurs. C'est la cause du gel de SDVtg à son 4ᵉ essai ([18 §10](18-septieme-machine.md)).
+  - Source : `record_of` dans le tweak `syntakt-toy` d'avant la correction, exécuté en émulation avec une piste sur la machine 7 ; le tweak `syntakt-vintage` renvoie son vrai enregistrement pour 7.
+- Même chose pour la table machine → enregistrement des potards de l'écran principal (lue au-delà de ses 7 entrées).
+  - Source : en émulation, avec les 76 o avant le tableau remplis de pointeurs vers une zone non mappée, les potards de la machine 7 rendent ces pointeurs (`0xa0000020…`) au lieu de numéros de descripteurs.
+
+**Correction** (`detours_asm()` de `tools/gen_syntakt_engines.py`) : une machine ou un index d'enregistrement hors limites donne celui de **KICK**.
+- Concerne `record_of`, `record_at` et `knob_vec`. Pour les numéros valides, rien ne change.
+- Source : vérification « machine hors limites » de `test_syntakt_machines.py`. Elle échoue sur l'ancien tweak et passe sur les 5 tweaks générés et sur SD + CP généré. Pour une piste sur 7, 8 ou 100 : enregistrement et potards de KICK, la molette ramène sur la dernière machine, aucun accès hors mémoire.
+
+**Ce qui n'est pas protégé**
+- Les tweaks d'origine `sdvintage-7th` et `syntakt-vintage` (testés, laissés tels quels).
+- Le **firmware officiel** : son accesseur fait la même lecture avant le tableau pour toute machine au-delà de CHORD.
+- Source : `records` de `test_sdvintage_7th.py` (stock : enregistrement « avant le tableau » pour la machine 7).
+- Donc, avant de changer de choix de moteurs ou de revenir au firmware officiel, il faut remettre sur une machine d'origine les pistes qui utilisent une machine ajoutée. Le flasher l'indique dans la carte et après le flash.
+- Les machines ajoutées sont numérotées dans l'ordre des moteurs cochés : une piste sur la machine 7 joue CPVtg avec SD + CP, mais SYToy avec SD + SYToy.

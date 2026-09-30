@@ -168,14 +168,15 @@ def detours_asm(n, images, firsts):
     lab("1"); ins("moveq #5, %d1"); ins("cmp.l %d0, %d1"); ins("bge.s 3f"); ins("bsr.w shown")
     ins("moveq #5, %d1"); ins("cmp.l %d0, %d1"); ins("bge.s 3f"); ins("moveq #5, %d0")
     lab("3"); ins("jmp 0x400a4dde")
-    # enregistrements par machine
+    # enregistrements par machine. Une machine ou un index hors limites (piste réglée sur une machine ajoutée
+    # par un autre choix de moteurs, notes/20 §5) donne celui de KICK : l'OS lirait sinon 76 o avant le tableau.
     a.append("#define REC_BASE 0x40a71540")
     a.append("#define REC_SNARE (REC_BASE + 2 * 76)")
     a.append("\t.globl\trecord_at"); lab("record_at")
     ins("move.l 4(%sp), %d0")
     for i in range(n):
         ins(f"moveq #{7 + i}, %d1"); ins("cmp.l %d1, %d0"); ins(f"beq.w rec_{i}")
-    ins("moveq #6, %d1"); ins("cmp.l %d0, %d1"); ins("bcc.s 1f"); ins("moveq #-1, %d0")
+    ins("moveq #6, %d1"); ins("cmp.l %d0, %d1"); ins("bcc.s 1f"); ins("moveq #1, %d0")
     lab("1"); ins("moveq #76, %d1"); ins("muls.l %d1, %d0"); ins("add.l #REC_BASE, %d0"); ins("rts")
     a.append("\t.globl\trecord_of"); lab("record_of")
     ins("move.l 4(%sp), %d0")
@@ -183,7 +184,7 @@ def detours_asm(n, images, firsts):
         ins(f"moveq #{6 + i}, %d1"); ins("cmp.l %d1, %d0"); ins(f"beq.w rec_{i}")
     ins("moveq #5, %d1"); ins("cmp.l %d0, %d1"); ins("bcs.s 2f"); ins("lea 0x401091b4, %a0")
     ins("mvs.b (%a0,%d0.l), %d0"); ins("moveq #6, %d1"); ins("cmp.l %d0, %d1"); ins("bcc.s 3f")
-    lab("2"); ins("moveq #-1, %d0")
+    lab("2"); ins("moveq #1, %d0")
     lab("3"); ins("moveq #76, %d1"); ins("muls.l %d1, %d0"); ins("add.l #REC_BASE, %d0"); ins("rts")
     for i in range(n):
         lab(f"rec_{i}"); ins(f"lea {RECS + 0x60 * i:#x}, %a0"); ins(f"moveq #{firsts[i] - 51}, %d0"); ins("bra.w rec_build")
@@ -200,9 +201,11 @@ def detours_asm(n, images, firsts):
     lab("9"); ins("move.l %a0, %d0"); ins("rts")
     # potard -> descripteur : table machine -> enregistrement [1..6+n]
     a.append("\t.globl\tknob_vec"); lab("knob_vec")
-    ins("move.l 36(%sp), %d0"); ins("movea.l 104(%a2), %a1"); ins("moveq #6, %d1"); ins("cmp.l %d1, %d0")
-    ins("blt.s 1f"); ins(f"lea {DATA + 12 * (6 + n):#x}, %a1")
-    lab("1"); ins("rts")
+    ins("move.l 36(%sp), %d0"); ins("movea.l 104(%a2), %a1"); ins(f"moveq #{5 + n}, %d1"); ins("cmp.l %d0, %d1")
+    ins("bcc.s 1f"); ins("moveq #0, %d0"); ins("rts")                    # hors limites : les potards de KICK
+    lab("1"); ins("moveq #6, %d1"); ins("cmp.l %d1, %d0")
+    ins("blt.s 2f"); ins(f"lea {DATA + 12 * (6 + n):#x}, %a1")
+    lab("2"); ins("rts")
     # machine d'un descripteur (applicabilité) et rangée du constructeur : descripteurs ajoutés -> leur machine
     a.append("\t.globl\tdesc_machine"); lab("desc_machine")
     ins("move.l 4(%sp), %d0")

@@ -45,10 +45,12 @@ BASE = 0x40000400
 # Machines ajoutées et disposition de la charge utile, fixées par configure() d'après le tweak testé.
 ADDED, FIRST, NAMES, REC, ROWS, CCROWS = [], {}, [], {}, 0, 0
 NM = TOP = N = 0                                    # nombre de machines, plus grand index, machines ajoutées
+SAFE = False                                        # machines hors limites protégées (gen_syntakt_engines.py)
 
 
 def configure(tweak):
-    global ADDED, FIRST, NAMES, REC, ROWS, CCROWS, NM, TOP, N
+    global ADDED, FIRST, NAMES, REC, ROWS, CCROWS, NM, TOP, N, SAFE
+    SAFE = tweak["id"] != "syntakt-vintage"
     if tweak["id"] == "syntakt-vintage":            # disposition de gen_syntakt_machines.py
         codes, recs, ROWS, CCROWS = ["sd", "cp"], [g8.REC8, g8.REC9], g8.ROWS8, g8.CCROWS8
     else:
@@ -222,8 +224,11 @@ def records_and_change(stock, patched, payload):
     a, b = UI(stock), UI(patched, payload)
     for u in (a, b):
         fill_records(u)
-    ok = all(a.call(0x4004df5c, i) == b.call(0x4004df5c, i) for i in list(range(7)) + [NM + 1, 100])
-    ok &= all(a.call(0x4004df76, m) == b.call(0x4004df76, m) for m in list(range(6)) + [NM, 100])
+    ok = all(a.call(0x4004df5c, i) == b.call(0x4004df5c, i) for i in range(7))
+    ok &= all(a.call(0x4004df76, m) == b.call(0x4004df76, m) for m in range(6))
+    if not SAFE:                                   # tweak d'origine : hors limites comme l'OS (avant le tableau)
+        ok &= all(a.call(0x4004df5c, i) == b.call(0x4004df5c, i) for i in (NM + 1, 100))
+        ok &= all(a.call(0x4004df76, m) == b.call(0x4004df76, m) for m in (NM, 100))
     rc = refcount(b)
     got = {}
     for m, rec in REC.items():
@@ -270,6 +275,57 @@ def records_and_change(stock, patched, payload):
         ok &= out["modifié"][m][:6] == [42, FIRST[m] + 4] + [FIRST[m] + i for i in range(4)]
     knobs = ", ".join(f"{NAMES[m]} {out['modifié'][m][:6]}" for m in FIRST)
     check(ok, f"potards de l'écran principal (0x4001e814) : 0..5 identiques ; {knobs}")
+
+
+POISON = 0xa0000000                                 # zone non mappée : toute lecture par ces pointeurs est signalée
+
+
+def poison(u):
+    """Les 76 o avant le tableau des enregistrements (ce que l'OS lit pour une machine hors limites) : sur la
+    machine, d'autres données ; ici des pointeurs vers une zone non mappée, pour que leur usage se voie."""
+    u.uc.mem_write(REC_BASE - REC_LEN, struct.pack(">19I", *[POISON + 16 * k for k in range(19)]))
+
+
+def out_of_range(stock, patched, payload):
+    """Une piste réglée sur une machine qui n'existe pas dans CE firmware (projet fait avec un autre choix de
+    moteurs : CPVtg était la machine 7 avec SD + CP, elle n'existe plus avec SYToy seul). Sur la machine,
+    l'appui sur MACHINES gelait (notes/20 §5) : l'enregistrement lu était 76 o avant le tableau."""
+    if not SAFE:
+        print("        (tweak d'origine, non protégé : une machine au-delà de", TOP, "lit avant le tableau)")
+        return
+    u = UI(patched, payload)
+    fill_records(u)
+    poison(u)
+    kick = u.call(0x4004df76, 0)
+    ok = all(u.call(0x4004df76, m) == kick for m in (NM, NM + 1, 100, -1))
+    ok &= all(u.call(0x4004df5c, i) == REC_BASE + REC_LEN for i in (NM + 1, NM + 2, 100, -1))
+    this, vec = 0x93900000, 0x93910000
+    u.uc.mem_write(vec, struct.pack(">8i", 1, 2, 3, 4, 5, 6, 0, 0))
+    u.uc.mem_write(this + 104, struct.pack(">III", vec, vec + 24, vec + 24))
+    knobs = {}
+    for m in (0, NM, NM + 1, 100):
+        u.hooks = {0x4001e318: ("machine", m), 0x400cf9a8: ("app", 0x93a00000), 0x4006b736: ("verrou", 0)}
+        knobs[m] = [u.call(0x4001e814, this, k, 0, 0) for k in range(2, 8)]
+        ok &= not u.bad
+    ok &= all(knobs[m] == knobs[0] for m in knobs)
+    wheel = {}
+    for step in (-1, 1):
+        u = UI(patched, payload)
+        fill_records(u)
+        poison(u)
+        obj, snd = fake_track(u, NM)
+        del u.hooks[0x40014072]
+        this = 0x93900000
+        for k in range(6):
+            u.uc.mem_write(this + 70 + 4 * k, struct.pack(">i", -1))
+        for a_, v in {0x400cf866: 0x93a00000, 0x4000eb90: 0x93a00000, 0x40012412: 0, 0x400cf9a8: 0x93a00000,
+                      0x4006bdfe: 0, 0x4000eb9c: 0x93a00000, 0x40009c1a: obj, 0x400f44c6: 0, 0x4001416c: 0}.items():
+            u.hooks[a_] = (f"{a_:#x}", v)
+        u.call(0x400a2712, this, step, 0, 0)
+        wheel[step] = (struct.unpack(">H", u.uc.mem_read(snd + 38, 2))[0] >> 8, bool(u.bad))
+    ok &= wheel == {-1: (TOP, False), 1: (TOP, False)}
+    check(ok, f"machine hors limites ({NM}, {NM + 1}, 100) : enregistrement et potards de KICK {knobs[NM]},"
+              f" molette -> {wheel[-1][0]} / {wheel[1][0]}, aucun accès hors mémoire")
 
 
 def small_icon(stock, patched, payload):
@@ -393,6 +449,7 @@ def main():
     setter_and_wheel(stock, patched, payload)
     print("enregistrements par machine, changement de machine, potards")
     records_and_change(stock, patched, payload)
+    out_of_range(stock, patched, payload)
     small_icon(stock, patched, payload)
     print("son")
     sound(stock, patched, syntakt.dsp_image(args.syntakt), args.blocks)
