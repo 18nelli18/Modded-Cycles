@@ -52,7 +52,7 @@ CATALOG = {
 # Combinaisons qui gardent leur tweak d'origine, testé sur la machine (notes/18, notes/19).
 LEGACY = {("sd",): "sdvintage-7th", ("sd", "cp"): "syntakt-vintage"}
 # Combinaisons testées sur un vrai Model:Cycles (affiché dans le flasher). Ajouter ici après un test réussi.
-HW_TESTED = {("sd",), ("sd", "cp")}
+HW_TESTED = {("sd",), ("sd", "cp"), ("toy",)}
 MAX_EXTRA = 6
 
 # --- Syntakt : fermeture et plages copiées (réunion des moteurs du catalogue) ----------------------------

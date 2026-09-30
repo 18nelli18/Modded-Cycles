@@ -163,8 +163,10 @@ Quatre étapes, de haut en bas :
      - **SDVtg** = SD VINTAGE (cochée par défaut, [note 18](notes/18-septieme-machine.md)) ;
      - **CPVtg** = CP VINTAGE ([note 19](notes/19-cp-vintage-8e-machine.md)) ;
      - **SYToy** = SY TOY ([note 20](notes/20-moteurs-syntakt-a-cocher.md)).
-   - SDVtg seul et SDVtg + CPVtg ont été **testés sur un vrai Model:Cycles** le 30/09/2026 ; les autres choix sont vérifiés en
-     émulation et marqués « Expérimental ».
+   - SDVtg seul, SDVtg + CPVtg et SYToy seul ont été **testés sur un vrai Model:Cycles** le 30/09/2026 ; les autres choix sont
+     vérifiés en émulation et marqués « Expérimental ».
+   - Les machines ajoutées sont numérotées dans l'ordre des moteurs cochés. Avant de changer de choix ou de revenir au firmware
+     officiel, remets sur une machine d'origine les pistes qui utilisent une machine ajoutée ([note 20 §5](notes/20-moteurs-syntakt-a-cocher.md)).
    - « SD VINTAGE à la place de SNARE » (`sdvintage-exact`, [note 17](notes/17-portage-exact-syntakt.md)) n'est plus dans la page : il reste disponible avec `build.py`.
    - Pour revenir en arrière : onglet *Official firmware*, par USB.
 2. **Déposer l'OS officiel** `model-cycles_OS1.13.syx` : il est reconnu à son empreinte, et le firmware est **construit

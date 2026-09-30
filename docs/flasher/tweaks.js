@@ -9747,7 +9747,7 @@ window.MC_TWEAKS = {
      "engines": [
       "toy"
      ],
-     "tested": false,
+     "tested": true,
      "label": "SYToy"
     },
     {
