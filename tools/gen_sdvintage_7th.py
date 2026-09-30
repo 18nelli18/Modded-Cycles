@@ -95,10 +95,11 @@ CALLS = (
 
 # --- SDVtg : noms et défauts du Syntakt (manuel Syntakt, section SD VINTAGE) ---------------------------
 NAME = "SDVtg"
-# Noms longs : ceux du Syntakt, raccourcis pour tenir à l'écran (« Inharmonicity » dépassait, essai du 30/09 ;
-# les noms d'origine vont jusqu'à « Snare Contour »).
+# Noms longs : ceux du Syntakt, raccourcis pour tenir à l'écran. La fenêtre des potards coupe le nom aux
+# espaces (0x40096320) et centre chaque mot sur ~32 pixels : un mot ne doit pas dépasser la largeur de ceux de
+# l'OS (« Velocity », « Envelope », 8 lettres). « Inharmonicity » puis « Inharmonic » dépassaient (essais du 30/09).
 KNOBS = (  # (nom long, nom court, défaut) pour COLOR, SHAPE, SWEEP, CONTOUR
-    ("Inharmonic", "INHM", 0), ("Freq Complex", "FCMP", 110), ("Pitch Sweep", "SWEP", 74),
+    ("Inharm", "INHM", 0), ("Freq Complex", "FCMP", 110), ("Pitch Sweep", "SWEP", 74),
     ("Mod Envelope", "MENV", 80),
 )
 DECAY_DEFAULT = 33
@@ -270,7 +271,7 @@ def build_tweak(img, st_img):
             "Le moteur SD VINTAGE du Syntakt (OS 1.41), extrait AU BUILD de TON Syntakt_OS1.41.syx",
             f"({len(funcs)} fonctions, {code_bytes} o de code, avec ses tables), en 7e machine « {NAME} » :",
             "SNARE reste la SNARE d'origine. Potards propres, noms et defauts du Syntakt :",
-            "COLOR=INHM (Inharmonic), SHAPE=FCMP, SWEEP=SWEP (Pitch Sweep), CONTOUR=MENV (Mod Envelope),",
+            "COLOR=INHM (Inharm), SHAPE=FCMP, SWEEP=SWEP (Pitch Sweep), CONTOUR=MENV (Mod Envelope),",
             "DECAY=DEC ; defauts 0 / 110 / 74 / 80 / 33. Menu MACHINES, machine locks et CC 70 (valeur 6).",
             "Table des descripteurs recopiee en SDRAM avec 5 entrees de plus (notes/18).",
             "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier.",

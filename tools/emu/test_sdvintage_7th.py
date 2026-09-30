@@ -217,7 +217,7 @@ def accessors(a, b, stock, patched):
     ok &= struct.unpack(">3i", b.uc.mem_read(SCRATCH, 12))[2] == g7.DECAY_DEFAULT << 8
     b.call(0x4005a65a, g7.ALG_DESC)
     ok &= struct.unpack(">3i", b.uc.mem_read(SCRATCH, 12))[1] == 6 << 8
-    check(ok, "descripteurs 76..80 : machine 6, slots, noms (Inharmonic/INHM…), plages, défauts 0/110/74/80/33 ;"
+    check(ok, "descripteurs 76..80 : machine 6, slots, noms (Inharm/INHM…), plages, défauts 0/110/74/80/33 ;"
               " « Algorithm » va jusqu'à 6")
     # état par descripteur : 76..80 partagent celui de SNARE (51..55)
     st = [(a.call(0x4004df40, i), b.call(0x4004df40, i)) for i in range(90)]
