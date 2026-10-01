@@ -5,8 +5,9 @@ Le minuteur DMA 0 du Cycles (0xfc07000c, 135,168 MHz) est simulé. On vérifie, 
   - le son : les 5 moteurs du Syntakt donnent la même sortie qu'avec le tweak normal ;
   - la sonde de la fonction audio (0x40059382 -> audio_probe) : la fonction appelée (remplacée ici par une
     fonction factice) voit la même pile, d0 revient intact, et audio_end mesure le bloc ;
-  - audio_end : après 750 blocs, le nom de chaque machine est « moyenne/voix » : charge moyenne et coût de la voix
-    qui la joue (la plus chère si plusieurs pistes), en % de la durée d'un bloc ; « -- » si aucune piste ne la joue ;
+  - audio_end : après 750 blocs, le nom de chaque machine est « pic/moyenne » de la charge, ou, avec METER_VOICE,
+    « moyenne/voix » : charge moyenne et coût de la voix qui la joue (la plus chère si plusieurs pistes), en % de la
+    durée d'un bloc ; « -- » si aucune piste ne la joue ;
   - l'écran MACHINES : les 11 machines portent leur propre nom (« --/-- » avant la 1re mesure).
 
     python3 tools/emu/test_meter.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx
@@ -119,9 +120,13 @@ def main():
         e.call(sy["audio_end"])
         t += 90112
     after = [text(a) for a in names]
-    want = ["50/7", "50/8", "50/--", "50/--", "50/--", "50/--", "50/11", "50/--", "50/9", "50/--", "50/15"]
+    if gs.METER_VOICE:
+        want, what = ["50/7", "50/8", "50/--", "50/--", "50/--", "50/--", "50/11", "50/--", "50/9", "50/--", "50/15"], \
+            "« moyenne/voix »"
+    else:
+        want, what = ["90/50"] * 11, "« pic/moyenne »"
     check(len(set(names)) == 11 and before == ["--/--"] * 11 and after == want,
-          f"nom de chaque machine : « --/-- » avant la 1re mesure, puis « moyenne/voix » après 750 blocs à 50 % : {after}")
+          f"nom de chaque machine : « --/-- » avant la 1re mesure, puis {what} après 750 blocs à 50 % (un à 90 %) : {after}")
     txt = [t7.drum_select(img_m, pl_m, m)[0] for m in (0, 5, 6, 10)]
     check(all(x == ["--/--"] for x in txt), f"écran MACHINES avant la 1re mesure (machines 1, 6, 7, 11) : {txt}")
     print("\nTOUT OK" if not FAIL else f"\n{len(FAIL)} ÉCHEC(S)")

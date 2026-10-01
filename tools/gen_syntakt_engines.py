@@ -183,12 +183,14 @@ def generation(codes):
 # lues ; le crochet de démarrage (stub.S) les y recopie depuis la charge utile, après l'initialisation de la SRAM.
 CHORD_PTRS = 0x40118594      # 31 pointeurs (le 1er des 32, 0x40118590, vise une table de l'OS en SDRAM)
 CHORD_BANKS = ((0x80001c5c, 0x800074b4), (0x8000cac0, 0x8000eae0))     # 22 + 8 tables de 1 028 o
-SRAM_RUN = CHORD_BANKS[0]    # où s'exécute le code du Syntakt
+SRAM_RUN = CHORD_BANKS[0]    # où s'exécute le code du Syntakt ; la 2e zone reçoit des états de voix (notes/29)
 SRAM_TABLES = (                                  # tables de la SRAM du Syntakt, lues à chaque bloc, en lecture seule
     (0x8000a080, 0x8000a888),                   # SD VINTAGE : 2 tables (0x8000a080, 0x8000a484)
     (0x80006f84, 0x80007788),                   # SY SWARM (forme d'onde, aussi l'une des 10 de SY BITS)
 )
 GUARD = 16                   # octets voisins recopiés de part et d'autre (lectures juste avant ou après une table)
+VOICES = 6                   # états des voix du Syntakt en SRAM (1 par piste ; ses voix 6 et 7 restent dans la réplique)
+ST_VSTRIDE = 1800            # taille de l'état d'une voix du Syntakt (bridge_engines.c)
 
 
 def code_blocks(ins, insns):
@@ -211,12 +213,19 @@ def st_sram_src(a):
 
 
 def layout(gen, blocks):
-    """Disposition de la charge utile pour une génération. Zone de transit (DST_CODE..) : les blocs de code puis
-    les SRAM_TABLES (avec leurs gardes), recopiés tels quels en SRAM_RUN ; puis les tables du bas (sous la réplique
-    de la SRAM), les tables du haut (TABLES_AT) et les tables de CHORD. Rend copies (source Syntakt, fin,
-    destination), move (plages pour gx.move : adresses d'EXÉCUTION), stage (code : source, fin, transit),
-    run(transit) -> exécution, et la fin de la charge utile. Chaque morceau garde l'alignement de sa source modulo
-    4 (code, tables en SRAM) ou 8 (tables en SDRAM)."""
+    """Disposition de la charge utile pour une génération. Zone de transit (DST_CODE..) : l'image des deux zones
+    de SRAM libérées, que le crochet de démarrage y recopie (SRAM_BANKS) ; la 1re reçoit les blocs de code, les
+    SRAM_TABLES (avec leurs gardes) puis des voix du Syntakt ; la 2e, les autres voix (VOICES en tout, contenu
+    initial de leur SRAM). Puis les tables du bas (sous la réplique de la SRAM), les tables du haut (TABLES_AT) et
+    les tables de CHORD. Rend copies (source Syntakt, fin, destination), move (plages pour gx.move : adresses
+    d'EXÉCUTION), stage (code : source, fin, transit), run(transit) -> exécution, voices (adresses d'exécution
+    des voix 0..VOICES-1), et la fin de la charge utile. Le code et les tables gardent l'alignement de leur source
+    modulo 4 (en SRAM) ou 8 (en SDRAM) ; les voix sont alignées sur 8, comme dans la SRAM du Syntakt."""
+    banks, at = [], gx.DST_CODE
+    for lo, hi in CHORD_BANKS:
+        banks.append((at, lo, hi - lo))
+        at += hi - lo
+    stage_end = at
     stage, pads, at = [], [], gx.DST_CODE
     for lo, hi in blocks:
         if (lo - at) % 4:                          # 2 o (code aligné sur 2) : un nop, pour un désassemblage suivi
@@ -229,15 +238,28 @@ def layout(gen, blocks):
         at += (lo - GUARD - at) % 4
         tabs.append((lo, hi, at + GUARD))
         at += hi - lo + 2 * GUARD
-    if at - gx.DST_CODE > SRAM_RUN[1] - SRAM_RUN[0]:
-        raise SystemExit(f"!! code et tables pour la SRAM : {at - gx.DST_CODE} o, plus de place")
-    stage_end = at
+    voices = []
+    for b0, _, n in banks:
+        at = max(at, b0)
+        while len(voices) < VOICES and (at + 7) // 8 * 8 + ST_VSTRIDE <= b0 + n:
+            at = (at + 7) // 8 * 8
+            voices.append(at)
+            at += ST_VSTRIDE
+        if at > b0 + n:
+            raise SystemExit(f"!! code et tables pour la SRAM : {at - b0} o, plus de place")
+    if len(voices) < VOICES:
+        raise SystemExit(f"!! {len(voices)} voix du Syntakt seulement en SRAM")
 
     def run(x):
-        return x - gx.DST_CODE + SRAM_RUN[0] if gx.DST_CODE <= x < stage_end else x
-    copies = list(stage) + [(st_sram_src(lo - GUARD), st_sram_src(hi + GUARD), dst - GUARD) for lo, hi, dst in tabs]
+        for b0, r0, n in banks:
+            if b0 <= x < b0 + n:
+                return x - b0 + r0
+        return x
+    copies = (list(stage) + [(st_sram_src(lo - GUARD), st_sram_src(hi + GUARD), dst - GUARD) for lo, hi, dst in tabs]
+              + [(st_sram_src(0x80000000 + ST_VSTRIDE * i), st_sram_src(0x80000000 + ST_VSTRIDE * (i + 1)), v)
+                 for i, v in enumerate(voices)])
     high = tuple(t for c in gen for t in CATALOG[c].get("tables_high", ()))
-    sdram = []
+    sdram, at = [], stage_end
     for group, limit in ((TABLES_LOW, gx.DST_SRAM), (high, None)):
         if limit is None:
             at = TABLES_AT
@@ -254,8 +276,8 @@ def layout(gen, blocks):
     # SRAM du Syntakt (tampons et table de sinus dans la SRAM du Cycles, SRAM_MAP ; le reste dans sa réplique)
     move = ([(lo, hi, run(dst)) for lo, hi, dst in stage] + [(lo, hi, run(dst)) for lo, hi, dst in tabs] + sdram
             + [*SRAM_MAP, (0x80000000, 0x80010000, gx.DST_SRAM), (*gx.ST_BSS, 0x43030000)])
-    return dict(copies=copies, move=tuple(move), stage=stage, pads=pads, stage_end=stage_end, run=run, chord_at=chord_at,
-                end=(end + 0xff) & ~0xff)
+    return dict(copies=copies, move=tuple(move), stage=stage, pads=pads, stage_end=stage_end, run=run, banks=banks,
+                voices=[run(v) for v in voices], chord_at=chord_at, end=(end + 0xff) & ~0xff)
 
 
 def code_patches(st_img, ins, insns, lay, relocs):
@@ -341,6 +363,9 @@ DISPATCH = (0x400a7dfe, 0x400a7e24)
 AUDIO_CALL = 0x40059382      # jsr 0x4005979e : fonction audio, appelée par l'interruption à chaque bloc
 IDLE_BLOCKS = 64             # 43 ms
 IDLE_THR = 1 << 13           # -108 dB sous la pleine échelle
+# Firmware de diagnostic (--meter) : noms des machines « pic/moyenne » (False, notes/23, notes/29) ou
+# « moyenne/voix » (True : coût de la voix de chaque machine, diagnostics v6 et v7, notes/27)
+METER_VOICE = False
 
 
 def subset_id(codes, generic=False):
@@ -536,11 +561,11 @@ dispatch:
 """
 
 
-def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, run=None, sram=None):
-    """run : adresse d'exécution d'une fonction du Syntakt ; sram : (transit, exécution, mots) de ce que le crochet
-    de démarrage recopie en SRAM (stub.S)."""
+def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, run=None, lay=None):
+    """run : adresse d'exécution d'une fonction du Syntakt ; lay : disposition (layout()) : zones de SRAM que le
+    crochet de démarrage remplit (stub.S), adresses des états de voix."""
     defs = [f"-DST_VINIT_AT={run(0x40002544):#x}", f"-DST_RESET_AT={run(0x40003ee0):#x}",
-            f"-DST_PREP_AT={run(0x4000255e):#x}"]
+            f"-DST_PREP_AT={run(0x4000255e):#x}"] + [f"-DST_VOICE_{i}={v:#x}" for i, v in enumerate(lay["voices"])]
     for m in machines:
         defs += [f"-DUPD_{m['engine']}={run(m['update']):#x}", f"-DRND_{m['engine']}={run(m['render']):#x}"]
         if "punch_on" in m:
@@ -549,14 +574,15 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, ru
             defs.append(f"-DPUNCH_OFF_{m['engine']}={m['punch_off']}")
     defs += [f"-DIDLE_THR={IDLE_THR}", f"-DIDLE_BLOCKS={IDLE_BLOCKS}"]
     if meter:                                   # noms des machines (écran MACHINES) : « moyenne/voix »
-        defs += ["-DLOAD_METER", f"-DMETER_BUF={meter:#x}", f"-DMETER_N={nm}"]
+        defs += ["-DLOAD_METER", f"-DMETER_BUF={meter:#x}", f"-DMETER_N={nm}"] + (["-DMETER_VOICE"] if METER_VOICE else [])
     obj, stub, elf = tmp / "bridge.o", tmp / "stub.o", tmp / "bridge.elf"
     gx.run([gx.CROSS + "gcc", *gx.CFLAGS, *defs, "-c", str(gx.SRC / "bridge_engines.c"), "-o", str(obj)])
-    if sram[0] != gx.DST_CODE:
-        raise SystemExit("!! le transit du code en SRAM doit être au début de la charge utile")
+    (s0, r0, n0), (s1, r1, n1) = lay["banks"]
+    if s0 != gx.DST_CODE or s1 != s0 + n0 or n0 % 4 or n1 % 4:
+        raise SystemExit("!! zones de SRAM : transit au début de la charge utile, à la suite, en mots")
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(gx.SRC / "stub.S"), "-o", str(stub),
             f"-DPAYLOAD_SRC={BASE + gx.IMAGE_LEN:#x}", f"-DPAYLOAD_DST={gx.DST_CODE:#x}", f"-DPAYLOAD_LONGS={payload_longs}",
-            f"-DSRAM_RUN_AT={sram[1]:#x}", f"-DSRAM_LONGS={sram[2]}"])
+            f"-DSRAM_RUN_AT={r0:#x}", f"-DSRAM_LONGS={n0 // 4}", f"-DSRAM2_RUN_AT={r1:#x}", f"-DSRAM2_LONGS={n1 // 4}"])
     gx.run([gx.CROSS + "ld", "-T", str(gx.SRC / "link.ld"), "-o", str(elf), str(stub), str(obj)])
     blobs = {}
     for sec in (".stub", ".bridge"):
@@ -635,7 +661,6 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
     an = analyse(st_img, generation(codes))
     lay = an["lay"]
     size = lay["end"] - gx.DST_CODE
-    sram = (gx.DST_CODE, SRAM_RUN[0], (SRAM_RUN[1] - SRAM_RUN[0]) // 4)   # toute la zone (mcengine fait de même)
     nm = 6 + n
     names_at, upd_at, rnd_at, vec_at, map_at = DATA, DATA + 4 * nm, DATA + 8 * nm, DATA + 12 * nm, DATA + 16 * nm
     strings = [m["name"] for m in machines] + [k[i] for m in machines for k in m["knobs"] for i in (0, 1)]
@@ -649,7 +674,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         at += 8 * nm
     with tempfile.TemporaryDirectory() as d:
         blobs, syms, stubs, ssyms = compile_code(pathlib.Path(d), machines, size // 4,
-                                                 meter_at if meter else None, rnd_at, nm, gx.move, sram)
+                                                 meter_at if meter else None, rnd_at, nm, gx.move, lay)
 
     names = [u32(g7.NAMES + 4 * i) for i in range(6)] + [addr[m["name"]] for m in machines]
     if meter:
@@ -769,9 +794,9 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         "name": ("DIAGNOSTIC, compteur de charge. " if meter else "") +
                 "Vrais moteurs du Syntakt en machines ajoutées : " + ", ".join(f"{m['name']} ({m['label']})" for m in machines),
         "description": ([
-            "FIRMWARE DE DIAGNOSTIC (notes/27) : l'écran MACHINES affiche, pour chaque machine, « moyenne/voix » :",
-            "charge audio moyenne et coût de la voix qui joue cette machine, en % de la durée d'un bloc de 32",
-            "échantillons, mis à jour toutes les 0,5 s.",
+            "FIRMWARE DE DIAGNOSTIC (notes/23, notes/27) : l'écran MACHINES affiche, pour chaque machine,",
+            "« moyenne/voix » (charge moyenne, coût de la voix qui joue cette machine) ou « pic/moyenne » de la",
+            "charge audio, en % de la durée d'un bloc de 32 échantillons, mis à jour toutes les 0,5 s.",
             "À n'utiliser que pour mesurer.",
         ] if meter else []) + [
             "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",

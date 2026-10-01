@@ -22,6 +22,14 @@ boot_stub:
 	subq.l	#1, %d0
 	bne.s	2b
 #endif
+#ifdef SRAM2_RUN_AT
+	/* puis, a la suite dans la charge utile, la 2e zone (etats des voix du Syntakt, notes/29) */
+	lea	SRAM2_RUN_AT, %a1
+	move.l	#SRAM2_LONGS, %d0
+3:	move.l	(%a0)+, (%a1)+
+	subq.l	#1, %d0
+	bne.s	3b
+#endif
 	lea	-16(%sp), %sp		/* instructions deplacees de 0x400004b2 */
 	movem.l	%d4-%d7, (%sp)
 	jmp	0x400004ba

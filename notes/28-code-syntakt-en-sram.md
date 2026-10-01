@@ -12,7 +12,7 @@ Travail du 01/10/2026, piste 3.3 de [27](27-cinq-et-six-voix.md), après les rel
 | Régulateur : coupures au-dessus de 86 % de moyenne (au lieu de 82 %) | `[FAIT]` dans tous les firmwares (§2) |
 | Preuve en émulation | `[FAIT]` (§3) |
 | Gain estimé | boucle des voix d'environ 63,5 à 52 % du bloc avec 5 moteurs différents (§4) |
-| Mesure sur la machine | `[À FAIRE]` firmware de diagnostic v7 (§5) |
+| Mesure sur la machine | `[FAIT]` diagnostic v7 : chaque voix du Syntakt coûte autant qu'une voix d'origine ([29 §1](29-voix-syntakt-en-sram.md)) |
 
 ## 1. Relevés du diagnostic v6 (01/10/2026)
 
@@ -56,7 +56,7 @@ Retour de l'utilisateur, « moyenne/voix » lu sur l'écran MACHINES, en % de la
   - les adresses absolues du code visent les adresses d'exécution en SRAM (relocalisation, comme avant) ;
   - les sauts relatifs au PC sont recalculés s'ils changent de bloc. Aucun ne change : le Syntakt appelle ses fonctions par adresse absolue (`jsr`) ;
   - toutes les corrections sont des remplacements de 4 o vérifiés : le flasher web n'a pas eu besoin de changer.
-- La 2ᵉ zone libérée (`0x8000cac0..0x8000eae0`, 8 224 o) reste libre pour l'instant : place pour 4 des 10 tables de SY BITS.
+- La 2ᵉ zone libérée (`0x8000cac0..0x8000eae0`, 8 224 o) restait libre ; elle reçoit ensuite des états de voix ([29](29-voix-syntakt-en-sram.md)).
 
 **Régulateur** :
 - Coupures au-dessus de **86 %** de charge moyenne, jusqu'à revenir à 82 % (82 / 78 avant), dans tous les firmwares.
@@ -107,7 +107,7 @@ Simulation de cache de [27 §2](27-cinq-et-six-voix.md) : lignes de SDRAM par bl
 - **Inconnue** : la SRAM sert à la fois le code et les données des voix du Syntakt (tampons, tables). Le modèle compte ces accès comme gratuits, mais la machine pourrait faire attendre l'un pour l'autre. Seule la mesure le dira.
 - **Prix** : environ +0,6 point par voix CHORD (ses 2 tables lues en SDRAM).
 
-## 5. Firmware de diagnostic v7 `[À FAIRE]`
+## 5. Firmware de diagnostic v7 `[FAIT]`
 
 Construit localement :
 - `build/diag/model-cycles_OS1.13_diagnostic-charge_v7.syx` (MAIN OS `2574e1ec…`) ;
@@ -119,3 +119,5 @@ C'est la v6 (affichage « moyenne/voix », seuil de 86 %), plus le code du Synta
 - la suite SDVtg → + CPVtg → + 3ᵉ → + SYToy → + SYBit, puis une 6ᵉ voix ;
 - y a-t-il encore des coupures, à partir de combien de voix ;
 - un motif avec CHORD (son inchangé ? coût ?).
+
+Relevés v7 et suite : [29](29-voix-syntakt-en-sram.md).

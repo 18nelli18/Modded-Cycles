@@ -6,8 +6,9 @@ Syntakt, recopiés au démarrage par le crochet (stub.S, vérifié par test_synt
      ces tables ; dans le tweak, ses 31 pointeurs SRAM visent des copies identiques au contenu de démarrage ;
   2. CHORD : réglages aléatoires (dont SHAPE, qui choisit les tables), sortie identique à l'OS d'origine, avant et
      après le 1er déclenchement d'une machine ajoutée ; plus aucune lecture de ses anciennes tables en SRAM ;
-  3. machines du Syntakt : tout leur code s'exécute en SRAM, rien dans la zone de transit ; aucune machine
-     d'origine ne touche la zone reprise.
+  3. machines du Syntakt : tout leur code s'exécute en SRAM, rien dans la zone de transit ; les états de leurs voix
+     sont en SRAM (rien à leur ancienne place dans la réplique, notes/29) ; aucune machine d'origine ne touche les
+     zones reprises.
 
     python3 tools/emu/test_sram_code.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx --tweak ….json
 """
@@ -95,7 +96,7 @@ def main():
         for k, t in enumerate((1, 3, 5)):        # machines ajoutées 6.. dans l'ordre du tweak ; SNARE sur l'OS d'origine
             e.set(t, machine=6 + (seed + k) % len(cat) if image is img else 1, note=60, pitch=64, color=64, shape=64,
                   sweep=64, contour=64, punch=0, gate=0, finetune=64, decay=60)
-        stats = dict(stage=0, sram=0, stock=0)
+        stats = dict(stage=0, sram=0, stock=0, old_voice=0)
         cur = [None]
 
         def at_voice(uc, a, size, ud):
@@ -110,6 +111,11 @@ def main():
         def touch(uc, access, addr, size, value, ud):
             if image is img and cur[0] is not None and cur[0] < 6:
                 stats["stock"] += 1              # une machine d'origine (CHORD...) lit l'ancienne place des tables
+        def old_voice(uc, access, addr, size, value, ud):
+            if cur[0] is not None and cur[0] >= 6:
+                stats["old_voice"] += 1          # état d'une voix du Syntakt lu à son ancienne place (réplique)
+        e.uc.hook_add(UC_HOOK_MEM_READ | UC_HOOK_MEM_WRITE, old_voice, begin=0x43020000,
+                      end=0x43020000 + gs.ST_VSTRIDE * gs.VOICES - 1)
         e.uc.hook_add(UC_HOOK_CODE, at_voice, begin=gs.DISPATCH[0], end=gs.DISPATCH[0])
         e.uc.hook_add(UC_HOOK_CODE, at_voice, begin=gs.DISPATCH[1], end=gs.DISPATCH[1])
         e.uc.hook_add(UC_HOOK_CODE, fetch, begin=E.PAYLOAD_DST, end=0x4301ffff)
@@ -132,10 +138,12 @@ def main():
         ref, _ = run(seed, stock, 30)
         mod, st = run(seed, img, 30)
         loud = float(np.abs(ref).max())
-        check(np.array_equal(ref, mod) and loud > 1e6 and st["sram"] > 0 and st["stage"] == 0 and st["stock"] == 0,
+        check(np.array_equal(ref, mod) and loud > 1e6 and st["sram"] > 0 and st["stage"] == 0 and st["stock"] == 0
+              and st["old_voice"] == 0,
               f"essai {seed}: 3 pistes CHORD identiques à l'OS d'origine (crête {loud:.2e}), avant et après le 1er "
               f"trig du Syntakt (bloc 30) ; code du Syntakt : {st['sram']} instructions en SRAM, {st['stage']} en "
-              f"transit ; accès des machines d'origine à l'ancienne place des tables : {st['stock']}")
+              f"transit ; accès des machines d'origine aux zones reprises : {st['stock']} ; états de voix du Syntakt lus "
+              f"en SDRAM : {st['old_voice']}")
     print("\nTOUT OK" if not FAIL else f"\n{len(FAIL)} ÉCHEC(S)")
     return 1 if FAIL else 0
 

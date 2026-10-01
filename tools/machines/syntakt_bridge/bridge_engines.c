@@ -99,8 +99,19 @@ static unsigned char need_reset[6];
 static unsigned char engine_of[6];                   /* moteur du Syntakt de la voix */
 static int ready;
 
+/* etat de la voix i du Syntakt : en SRAM interne pour les 6 voix des pistes (ST_VOICE_i, recopiees au demarrage
+ * avec le contenu initial de sa SRAM, notes/29) ; ses voix 6 et 7, initialisees comme sur le Syntakt mais jamais
+ * jouees, restent dans la replique */
 static char *st_voice(int i)
 {
+	switch (i) {
+	case 0: return (char *)ST_VOICE_0;
+	case 1: return (char *)ST_VOICE_1;
+	case 2: return (char *)ST_VOICE_2;
+	case 3: return (char *)ST_VOICE_3;
+	case 4: return (char *)ST_VOICE_4;
+	case 5: return (char *)ST_VOICE_5;
+	}
 	return (char *)SRAM(0x80000000) + ST_VSTRIDE * i;
 }
 
@@ -317,11 +328,12 @@ static void govern(void)
 }
 
 #ifdef LOAD_METER
-/* Compteur de charge (firmware de diagnostic, notes/23, notes/27) : toutes les 750 blocs (0,5 s), le nom de la
- * machine m (METER_BUF + 8 m, METER_N machines) devient « moyenne/voix » : charge moyenne de la fonction audio et
- * cout mesure de la voix qui joue cette machine (la plus chere si plusieurs pistes), en % d'un bloc ; « -- » si
- * aucune piste ne la joue. */
-static u32 w_period, w_audio, w_n;
+/* Compteur de charge (firmware de diagnostic, notes/23, notes/27, notes/29) : toutes les 750 blocs (0,5 s), le nom
+ * de la machine m (METER_BUF + 8 m, METER_N machines) devient, en % de la duree d'un bloc :
+ *  - « pic/moyenne » de la fonction audio (par defaut) ;
+ *  - avec METER_VOICE, « moyenne/voix » : charge moyenne et cout mesure de la voix qui joue cette machine (la plus
+ *    chere si plusieurs pistes) ; « -- » si aucune piste ne la joue. */
+static u32 w_period, w_audio, w_n, w_max;
 
 static char *put2(char *s, u32 v)
 {
@@ -337,11 +349,18 @@ static void meter(u32 dur, u32 period)
 {
 	w_period += period;
 	w_audio += dur;
+	if (dur * 100 / period > w_max)
+		w_max = dur * 100 / period;
 	if (++w_n >= 750) {
-		u32 avg = w_audio / (w_period / 100), per = w_period / w_n, c;
-		int m, t, any;
+		u32 avg = w_audio / (w_period / 100);
+		int m;
+#ifdef METER_VOICE
+		u32 per = w_period / w_n, c;
+		int t, any;
+#endif
 
 		for (m = 0; m < METER_N; m++) {
+#ifdef METER_VOICE
 			char *s = put2((char *)METER_BUF + 8 * m, avg);
 			*s++ = '/';
 			for (t = any = 0, c = 0; t < NT; t++)
@@ -356,9 +375,14 @@ static void meter(u32 dur, u32 period)
 				*s++ = '-';
 				*s++ = '-';
 			}
+#else
+			char *s = put2((char *)METER_BUF + 8 * m, w_max);
+			*s++ = '/';
+			s = put2(s, avg);
+#endif
 			*s = 0;
 		}
-		w_n = w_period = w_audio = 0;
+		w_n = w_period = w_audio = w_max = 0;
 	}
 }
 #endif
@@ -371,7 +395,7 @@ void audio_end(void)
 	last_t0 = t0;
 	if (!period || period > 20 * 90112) {                   /* premier bloc, ou pause */
 #ifdef LOAD_METER
-		w_n = w_period = w_audio = 0;
+		w_n = w_period = w_audio = w_max = 0;
 #endif
 		return;
 	}
