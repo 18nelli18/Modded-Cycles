@@ -83,7 +83,7 @@ Construit localement, affichage « pic/moyenne » comme la v8 :
 
 ## 6. Résultat sur la machine (01/10/2026)
 
-Retour de l'utilisateur, firmware de diagnostic v9 (version 6 canaux ou non : non précisé) :
+Retour de l'utilisateur, firmware de diagnostic v9, **version 6 canaux** (`…_v9_6ch.syx`) :
 - « Ça marche bien. »
 - 6 pistes, avec les effets : **89/78** (pic/moyenne) ;
 - **pas de craquement** remarqué.
@@ -91,5 +91,6 @@ Retour de l'utilisateur, firmware de diagnostic v9 (version 6 canaux ou non : no
 Ce qu'on en tire :
 - La charge moyenne (78 %) laisse le temps à l'interface.
 - Les pics à 89 %, sous le nouveau seuil de 93 %, ne font plus couper et ne craquent pas.
+- C'est avec le mod 6 canaux, le cas le plus chargé (§1) : la version sans 6 canaux a donc au moins autant de marge.
 
 Décision : fusionner (PR #20, avec #17 à #19) et mettre le flasher web à jour.
