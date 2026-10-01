@@ -82,9 +82,9 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 7).join() === "6ch-usbup,latching-mute,trig-preview,browser-scroll,syntakt-sd,syntakt-cp,syntakt-toy"
-      && ids.length === 4 + (1 << nEng) - 1 && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-sd-cp-toy-bits")
-      && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 5,
+    check(ids.slice(0, 8).join() === "6ch-usbup,model-tg,latching-mute,trig-preview,browser-scroll,syntakt-sd,syntakt-cp,syntakt-toy"
+      && ids.length === 5 + (1 << nEng) - 1 && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-sd-cp-toy-bits")
+      && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 6,
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement): ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
@@ -92,10 +92,11 @@ async function main() {
       && srcs.every((x) => x.endsWith("?v=" + w.MC_BUILD)), "scripts loaded with ?v=<build> (no stale cache): " + srcs.join());
     check(doc.getElementById("compat").hidden, "no compatibility banner in a good browser");
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-usb6,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-syntakt", "5 feature cards: " + JSON.stringify(feats));
+    check(feats.join() === "feat-usb6,feat-model-tg,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-syntakt", "6 feature cards: " + JSON.stringify(feats));
     const tags = [...doc.querySelectorAll("#features .tag")].map((x) => x.textContent);
     const synTag = w.MC_TWEAKS.features.find((f) => f.engines).status === "tested" ? "Tested" : "Experimental";
-    check(tags.join() === "Tested,Tested,Tested,Tested," + synTag, "cards tagged as tested or not: " + tags.join());
+    check(tags.join() === "Tested,Experimental,Tested,Tested,Tested," + synTag,
+      "cards tagged as tested or not (Model-TG experimental until tested here): " + tags.join());
     check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until the Syntakt engines are ticked");
     doc.getElementById("feat-syntakt").click();
     await wait(30);
@@ -119,11 +120,23 @@ async function main() {
     check(!doc.getElementById("feat-syntakt").checked && doc.querySelectorAll('input[name="eng-syntakt"]').length === 0
       && doc.getElementById("drop3-wrap").hidden, "last engine unticked -> the card turns off");
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
-    check(credits.length === 4 && credits[0] === "https://github.com/scottmetoyer/ms-multi-output"
-      && credits.slice(1).every((h) => h === "https://github.com/drumkilla/elektron-model-tweaks"), "each card credits its author: " + JSON.stringify(credits));
+    check(credits.length === 6 && credits[0] === "https://github.com/scottmetoyer/ms-multi-output"
+      && credits[1] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(credits[2])
+      && credits.slice(3).every((h) => h === "https://github.com/drumkilla/elektron-model-tweaks"),
+      "each card credits its author, Model-TG with its MIT license: " + JSON.stringify(credits));
     const list = [...doc.querySelectorAll("#credits-list a")].map((a) => a.textContent);
-    check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,mischa85/elektron-firmware-tool,mxldyn/octamax",
-      "credits section lists the 4 upstream repositories");
+    check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",
+      "credits section lists the 5 upstream repositories");
+    // Model-TG holds drumkilla's tweaks and doesn't go with the Syntakt engines: ticking one unticks the other
+    doc.getElementById("feat-latching-mute").click(); await wait(5);
+    doc.getElementById("feat-syntakt").click(); await wait(5);
+    doc.getElementById("feat-model-tg").click(); await wait(5);
+    const off = ["feat-latching-mute", "feat-syntakt"].every((x) => !doc.getElementById(x).checked);
+    const noteOn = /set to CYC/.test(text(doc, "features"));
+    doc.getElementById("feat-trig-preview").click(); await wait(5);
+    check(off && noteOn && !doc.getElementById("feat-model-tg").checked && doc.getElementById("feat-trig-preview").checked,
+      "Model-TG unticks drumkilla's tweaks and the Syntakt engines (and the other way round), and shows its install note");
+    doc.getElementById("feat-trig-preview").click(); await wait(5);
     doc.getElementById("feat-usb6").click();
     await wait(30);
     check(doc.querySelectorAll('input[name="var-usb6"]').length === 0, "6 channels: a single variant, no sub-choice");
@@ -274,11 +287,12 @@ async function main() {
       check(f && f.kind === "built" && f.ref, `real OS: ${app.state.buildKey} matches its reference hash`);
     }
     const combos = engineCombos(w);
+    const plain = boxes.filter((b) => b !== "feat-syntakt" && b !== "feat-model-tg");   // what goes with the engines
     for (const variant of REAL_ST ? Object.keys(combos).slice(1) : []) {   // the other engine combinations
-      for (let mask = 0; mask < 16; mask++) {
-        for (let k = 0; k < boxes.length; k++) {
-          const cb = doc.getElementById(boxes[k]);
-          const want = boxes[k] === "feat-syntakt" || !!(mask & (1 << k));
+      for (let mask = 0; mask < 1 << plain.length; mask++) {
+        for (const b of boxes) {
+          const cb = doc.getElementById(b);
+          const want = b === "feat-syntakt" || (plain.includes(b) && !!(mask & (1 << plain.indexOf(b))));
           if (cb.checked !== want) { cb.click(); await wait(5); }
         }
         await pickEngines(doc, combos[variant]);

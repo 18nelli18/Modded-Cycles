@@ -45,6 +45,19 @@ FEATURES = [
         ],
     },
     {
+        "id": "model-tg",
+        "label": "Model-TG",
+        "desc": "Machine Sampler, reechantillonnage, retrig et effets master, et plus. Exclusif.",
+        "status": "experimental",
+        "credit": {"kind": "by", "who": "TinyGregAudio", "repo": "TinyGregAudio/Model-TG"},
+        # Model-TG contient deja les tweaks de drumkilla, et ne se combine pas (encore) avec les moteurs du Syntakt
+        "excludes": ["latching-mute", "trig-preview", "browser-scroll", "syntakt"],
+        "license": "LICENSE-Model-TG",
+        "variants": [
+            {"file": "30-model-tg", "label": None},
+        ],
+    },
+    {
         "id": "latching-mute",
         "label": "Mode mute verrouille",
         "desc": "Maintiens TRK et tape FUNC : le mode mute reste actif, tu mutes les pistes sans tenir FUNC. "
@@ -128,6 +141,10 @@ def render():
             feat["variants"] = [{"id": load(tid)["id"], "label": v["label"]} for tid, v in by_file.items()]
         if f.get("needs"):
             feat["needs"] = f["needs"]
+        if f.get("excludes"):
+            feat["excludes"] = f["excludes"]
+        if f.get("license"):                    # texte de la licence, servi a cote de la page (licenses())
+            feat["license"] = f["license"] + ".txt"
         features.append(feat)
     payload = {
         "device": {k: device[k] for k in ("device", "os", "section_sha256", "stock_syx_sha256", "cave_refs_ok")
@@ -148,16 +165,25 @@ def render():
     )
 
 
+def licenses():
+    """Licences a publier avec la page (code tiers embarque dans tweaks.js) : {fichier servi : texte}."""
+    return {OUT.parent / (f["license"] + ".txt"): (DEV_DIR / f["license"]).read_text(encoding="utf-8")
+            for f in FEATURES if f.get("license")}
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--check", action="store_true", help="verifie sans ecrire")
     args = ap.parse_args()
     text = render()
     if args.check:
-        if not OUT.exists() or OUT.read_text(encoding="utf-8") != text:
-            sys.exit("!! docs/flasher/tweaks.js n'est pas a jour : relance tools/gen_flasher_tweaks.py")
+        stale = [p.name for p, t in licenses().items() if not p.exists() or p.read_text(encoding="utf-8") != t]
+        if not OUT.exists() or OUT.read_text(encoding="utf-8") != text or stale:
+            sys.exit("!! docs/flasher/tweaks.js (ou une licence) n'est pas a jour : relance tools/gen_flasher_tweaks.py")
         print("docs/flasher/tweaks.js est a jour")
         return
+    for p, t in licenses().items():
+        p.write_text(t, encoding="utf-8")
     OUT.write_text(text, encoding="utf-8")
     print(f"ecrit : {OUT.relative_to(ROOT)} ({len(text)} o, {len(FEATURES)} fonctionnalites)")
 

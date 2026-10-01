@@ -244,13 +244,15 @@ def build_payload(chosen, main_os, syntakt_path):
     ap_ = t["append"]
     if BASE + len(main_os) != int(ap_["at"], 16):
         raise SystemExit(f"!! {t['id']} : l'image ne finit pas à {ap_['at']}")
-    if not syntakt_path:
-        raise SystemExit(f"!! {t['id']} a besoin de ton fichier Syntakt : --syntakt Syntakt_OS1.41.syx")
-    sys.path.insert(0, str(HERE / "emu"))
-    import syntakt                                      # noqa: E402  (tools/emu/syntakt.py)
-    if (syntakt.SYX_SHA256, syntakt.DSP_SHA256) != (ap_["syntakt"]["syx_sha256"], ap_["syntakt"]["section_sha256"]):
-        raise SystemExit("!! empreintes Syntakt du tweak et de tools/emu/syntakt.py différentes")
-    img = syntakt.dsp_image(syntakt_path)               # vérifie le .syx officiel et sa section 7
+    img = None
+    if "syntakt" in ap_:                                # morceaux copiés du programme audio du Syntakt
+        if not syntakt_path:
+            raise SystemExit(f"!! {t['id']} a besoin de ton fichier Syntakt : --syntakt Syntakt_OS1.41.syx")
+        sys.path.insert(0, str(HERE / "emu"))
+        import syntakt                                  # noqa: E402  (tools/emu/syntakt.py)
+        if (syntakt.SYX_SHA256, syntakt.DSP_SHA256) != (ap_["syntakt"]["syx_sha256"], ap_["syntakt"]["section_sha256"]):
+            raise SystemExit("!! empreintes Syntakt du tweak et de tools/emu/syntakt.py différentes")
+        img = syntakt.dsp_image(syntakt_path)           # vérifie le .syx officiel et sa section 7
     dest, size = int(ap_["dest"], 16), ap_["size"]
     out = bytearray(size)
     for part in ap_["parts"]:
@@ -269,8 +271,9 @@ def build_payload(chosen, main_os, syntakt_path):
         if out[at:at + 4] != bytes.fromhex(old):
             raise SystemExit(f"!! relocalisation {va} : {old} attendu, {out[at:at + 4].hex()} trouvé")
         out[at:at + 4] = bytes.fromhex(new)
-    print(f"  charge utile {t['id']} : {size} o depuis {pathlib.Path(syntakt_path).name}, "
-          f"{len(ap_['reloc'])} relocalisations, copiée à {ap_['dest']} au démarrage")
+    src = pathlib.Path(syntakt_path).name if img is not None else "le tweak seul"
+    where = "en place" if ap_["dest"] == ap_["at"] else f"copiée à {ap_['dest']} au démarrage"
+    print(f"  charge utile {t['id']} : {size} o depuis {src}, {len(ap_['reloc'])} relocalisations, {where}")
     return bytes(out), t
 
 

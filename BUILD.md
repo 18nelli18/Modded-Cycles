@@ -107,7 +107,22 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 | `syntakt-swarm` (idem) | `5892a9122daabd2ae0d14b6d35ea94d4b32484137eb9f82cf1da52356cc71f90` |
 | `syntakt-sd-cp-toy-bits-swarm` (idem) | `a1871d60392caef0b66b6ca700dc5da53d320950b8910aa88edd6d9a7b7a7c8b` |
 
-Les 511 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
+### Model-TG
+
+`tweaks/model-cycles_OS1.13/30-model-tg.json` vient du build de [Model-TG](https://github.com/TinyGregAudio/Model-TG) lui-même (licence MIT),
+au commit épinglé dans `tools/gen_model_tg.py`, avec les binutils m68k (voir [note 31](notes/31-model-tg.md)) :
+```sh
+git clone https://github.com/TinyGregAudio/Model-TG vendor/Model-TG
+git -C vendor/Model-TG checkout 454963b78c329e3c4df2f2f3c972abb3db0ce289
+python3 tools/gen_model_tg.py --cycles model-cycles_OS1.13.syx --model-tg vendor/Model-TG [--check]
+```
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `model-tg` | `fb985a1660f946cc0fd0133300c7e6248b7b23a7f3ffede339fc2e368563fae6` (celle annoncée par le build de Model-TG) |
+| `6ch-usbup,model-tg` | `1511f84cda930f42973938beeb6ffa9517e615e79eaf849448e6f269e7a0b35a` |
+
+Les 513 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
 `tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;
 `tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.41.syx` les reconstruit toutes dans la page et les compare.
 SD VINTAGE v1 (clean-room d'origine, **testée sur le matériel** le 29/09/2026, compilée par GCC 13.3) donnait `80b7b2bd…` seule et `38754937…` avec `6ch-usbup` ;

@@ -790,7 +790,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         raise SystemExit("!! max du paramètre Algorithm")
     reloc.append([f"{alg_max - g7.DESC + DESCN:#x}", gx.be32(5 << 8), gx.be32(top << 8)])
     tid = "syntakt-meter" if meter else subset_id(codes, generic)
-    others = sorted(({"sdvintage-snare", "sdvintage-exact", "sdvintage-7th", "syntakt-vintage", "syntakt-meter"}
+    others = sorted(({"sdvintage-snare", "sdvintage-exact", "sdvintage-7th", "syntakt-vintage", "syntakt-meter", "model-tg"}
                      | {subset_id(c) for c in subsets()}) - {tid})
     return {
         "id": tid,
