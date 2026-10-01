@@ -13,7 +13,7 @@ Décisions de l'utilisateur, après l'analyse du §3 :
 | Model-TG seul dans le flasher web | `[FAIT]` tel que son propre build l'exporte, même empreinte (§2) |
 | Model-TG avec l'audio USB 6 canaux | `[FAIT]` aucune écriture commune ; pas encore testé sur la machine (§2) |
 | Conflits avec les moteurs du Syntakt | `[FAIT]` analysés (§3) |
-| Version combinée Model-TG + moteurs du Syntakt | `[FAIT]` démarre et joue sur la machine (firmware de diagnostic, §6) ; charge à optimiser (§7) |
+| Version combinée Model-TG + moteurs du Syntakt | `[FAIT]` en ligne (1.6), démarre et joue sur la machine (firmware de diagnostic, §6) ; charge à optimiser (§7) |
 
 ## 1. Ce qu'est Model-TG
 
@@ -217,7 +217,39 @@ Retour de l'utilisateur le 01/10/2026, firmware de diagnostic sans l'audio 6 can
 - La page System commence à l'entrée de l'interruption (`0x40058c5e`, `isr_prof` de Model-TG). Notre compteur ne mesure que la fonction audio, appelée plus tard dans cette interruption : il lit environ **11 points de moins**.
 - Le seuil de pic de notre régulateur (93 %) correspond donc à environ 104 % du vrai temps : un bloc peut déborder avant qu'il réagisse. C'est la cause probable des craquements.
 
-## 7. Ce qui reste `[À FAIRE]`
+## 7. Optimisation `[EN COURS]`
+
+Demande de l'utilisateur, le 01/10/2026 : « J'aimerais quand même avoir un peu de marge pour éviter les dépassements du processeur […] on va essayer d'optimiser sans perdre de fonctions. »
+
+**Notre intégration n'est pas la cause.** Modèle de cache des notes 27–28 (8 Ko d'instructions et 8 Ko de données, 1,54 cycle par instruction et 15 cycles par ligne lue ou écrite en SDRAM), boucle des voix émulée, 6 pistes qui jouent (SD, SY Toy, SD, PERC, TONE, KICK) :
+
+| Firmware | Instructions par bloc | Lignes d'instructions lues | Coût estimé (% d'un bloc à 250 MHz) |
+|---|---|---|---|
+| Nos moteurs seuls | 45 484 | 112 | 43,6 |
+| Avec Model-TG | 45 656 | 278 | 45,3 |
+
+Model-TG autour de nos moteurs ajoute environ 1,7 point, surtout en défauts de cache d'instructions (son code des voix s'ajoute au nôtre). Le reste du temps est ailleurs : début de l'interruption, mixage, effets d'envoi.
+- Model-TG estime le delay et la reverb à environ 12 % du processeur, même sans rien à traiter (commentaire de `fx_early` dans `src/model_tg.s`).
+
+**Firmware de profilage** (`92-syntakt-tg-profile.json`, `gen_syntakt_engines.py --tg --meter --profile`) :
+- Ce qu'il mesure, au minuteur de la page System de Model-TG (`0xfc07800c`), depuis l'entrée de l'interruption (son `prof_t0`) :
+  - le début de la fonction audio ;
+  - la boucle des voix, par une sonde autour du `jsr` de `0x4005981e` ;
+  - l'étage de sortie (mix, effets d'envoi et master), par une sonde autour de `0x40059872`.
+- Ce que montre l'écran MACHINES, en « pic/moyenne » :
+  1. tout ;
+  2. début de l'interruption ;
+  3. fonction audio avant les voix ;
+  4. boucle des voix ;
+  5. entre les voix et la sortie ;
+  6. sortie ;
+  7. notre compteur habituel.
+- Les sondes sont vérifiées en émulation :
+  - retour, pile et registres intacts ;
+  - parts calculées sur des blocs simulés ;
+  - le reste du firmware passe `test_model_tg_syntakt.py`.
+
+## 8. Ce qui reste `[À FAIRE]`
 
 - **Optimiser sans perdre de fonctions** (demande de l'utilisateur) : mesurer d'abord où passent les ~50 % hors des voix (début de l'interruption, mixage et effets), puis viser les plus gros postes.
 - **Régulateur** : mesurer depuis l'entrée de l'interruption, comme la page System, pour qu'il réagisse avant un débordement.

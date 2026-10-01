@@ -23,6 +23,7 @@ moteurs seuls (24-syntakt-….json).
 import argparse
 import json
 import pathlib
+import re
 import struct
 import sys
 
@@ -234,7 +235,7 @@ def interface(ref, fw, codes, tg):
     names = bytes(b.uc.mem_read(gs.DATA, 4 * nm))
     strs = [bytes(b.uc.mem_read(struct.unpack_from(">I", names, 4 * m)[0], 6)).split(b"\0")[0].decode()
             for m in range(first, nm)]
-    if "meter" in fw.tweaks[-1]["id"]:                   # diagnostic : chaque nom est le compteur de sa machine
+    if re.search("meter|profile", fw.tweaks[-1]["id"]):     # diagnostic : chaque nom est un compteur
         check(len(set(struct.unpack(f">{nm}I", names))) == nm, "noms : un compteur par machine (diagnostic)")
     else:
         check(names[:28] == blob and strs == [gs.CATALOG[c]["name"] for c in codes],

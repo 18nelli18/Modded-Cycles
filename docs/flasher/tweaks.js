@@ -1617,6 +1617,7 @@ window.MC_TWEAKS = {
     "sampler_name_table": "0x401bee76",
     "apply_names": "0x401b1ddc",
     "mod_held": "0x401b1daa",
+    "prof_t0": "0x401b7a58",
     "prof_ta": "0x401b7a70",
     "prof_trk": "0x401b7a74",
     "rs_state": "0x401b931c",

@@ -424,6 +424,10 @@ static void meter(u32 dur, u32 period)
 #endif
 
 		for (m = 0; m < METER_N; m++) {
+#ifdef PROFILE
+			if (m != PROF_GOV)                   /* les autres noms : profile() */
+				continue;
+#endif
 #ifdef METER_VOICE
 			char *s = put2((char *)METER_BUF + 8 * m, avg);
 			*s++ = '/';
@@ -451,10 +455,66 @@ static void meter(u32 dur, u32 period)
 }
 #endif
 
+#ifdef PROFILE
+/* Firmware de profilage (notes/31 §7), avec Model-TG : ou passe le temps de l'interruption audio. Minuteur DMA 2
+ * (0xfc07800c, celui de la page System de Model-TG, qui note l'entree de l'interruption dans prof_t0) ; les sondes
+ * notent le debut de la fonction audio (audio_probe), la boucle des voix (vl_probe, autour de 0x4005981e) et
+ * l'etage de sortie (out_probe, autour de 0x40059872 : mix, effets d'envoi et master). Toutes les 750 blocs, le
+ * nom de la machine k (0..5) devient « pic/moyenne » de la part k, en % de la duree d'un bloc :
+ *   0 tout (de l'entree de l'interruption a la fin de la fonction audio, comme la page System)
+ *   1 debut de l'interruption, avant la fonction audio   2 fonction audio avant les voix
+ *   3 boucle des voix (et la preparation des effets)       4 entre les voix et la sortie   5 sortie
+ * et celui de la machine PROF_GOV, notre compteur habituel (la fonction audio seule). */
+#define DTIM2 (*(volatile u32 *)0xfc07800c)
+u32 prof_ret_vl, prof_ret_out, prof_t_fn, prof_t_v0, prof_t_v1, prof_t_o0, prof_t_o1;
+static u32 p_last, p_n, p_per, p_sum[6], p_max[6];
+
+static void profile(u32 end)
+{
+	u32 t0 = U32AT(TG_PROF_T0), last = p_last, per = t0 - last, d[6], k;
+
+	p_last = t0;
+	if (!last || !per || (p_n && per > 8 * (p_per / p_n))) {  /* premier bloc, ou pause */
+		p_n = p_per = 0;
+		for (k = 0; k < 6; k++)
+			p_sum[k] = p_max[k] = 0;
+		return;
+	}
+	d[0] = end - t0;
+	d[1] = prof_t_fn - t0;
+	d[2] = prof_t_v0 - prof_t_fn;
+	d[3] = prof_t_v1 - prof_t_v0;
+	d[4] = prof_t_o0 - prof_t_v1;
+	d[5] = prof_t_o1 - prof_t_o0;
+	p_per += per;
+	for (k = 0; k < 6; k++) {
+		p_sum[k] += d[k];
+		if (d[k] * 100 / per > p_max[k])
+			p_max[k] = d[k] * 100 / per;
+	}
+	if (++p_n >= 750) {
+		for (k = 0; k < 6; k++) {
+			char *s = put2((char *)METER_BUF + 8 * k, p_max[k]);
+			*s++ = '/';
+			s = put2(s, p_sum[k] / (p_per / 100));
+			*s = 0;
+			p_sum[k] = p_max[k] = 0;
+		}
+		p_n = p_per = 0;
+	}
+}
+#endif
+
 /* apres chaque bloc audio (sonde de 0x4005979e) */
 void audio_end(void)
 {
+#ifdef PROFILE
+	u32 end2 = DTIM2;
+#endif
 	u32 now = TIMER, t0 = gov_t0_audio, dur = now - t0, period = t0 - last_t0;
+#ifdef PROFILE
+	profile(end2);
+#endif
 
 	last_t0 = t0;
 	if (!period || period > 20 * 90112) {                   /* premier bloc, ou pause */
