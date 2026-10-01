@@ -82,10 +82,10 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 8).join() === "6ch-usbup,model-tg,latching-mute,trig-preview,browser-scroll,syntakt-sd,syntakt-cp,syntakt-toy"
-      && ids.length === 5 + (1 << nEng) - 1 && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-sd-cp-toy-bits")
+    check(ids.slice(0, 9).join() === "6ch-usbup,model-tg,model-tg-st,latching-mute,trig-preview,browser-scroll,syntakt-sd,syntakt-tg-sd,syntakt-cp"
+      && ids.length === 6 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
       && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 6,
-      `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement): ${ids.length} tweaks`);
+      `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG: ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
     check(["builder.js", "tweaks.js", "flasher.js", "app.js"].every((f) => srcs.some((x) => x.startsWith(f + "?")))
@@ -127,16 +127,20 @@ async function main() {
     const list = [...doc.querySelectorAll("#credits-list a")].map((a) => a.textContent);
     check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",
       "credits section lists the 5 upstream repositories");
-    // Model-TG holds drumkilla's tweaks and doesn't go with the Syntakt engines: ticking one unticks the other
+    // Model-TG holds drumkilla's tweaks: ticking one unticks the other. With the Syntakt engines it makes the
+    // combined version (notes/31): its base, then the engines' tweak built on top of it
     doc.getElementById("feat-latching-mute").click(); await wait(5);
     doc.getElementById("feat-syntakt").click(); await wait(5);
     doc.getElementById("feat-model-tg").click(); await wait(5);
-    const off = ["feat-latching-mute", "feat-syntakt"].every((x) => !doc.getElementById(x).checked);
-    const noteOn = /set to CYC/.test(text(doc, "features"));
+    const off = !doc.getElementById("feat-latching-mute").checked && doc.getElementById("feat-syntakt").checked;
+    const noteOn = /set to CYC/.test(text(doc, "features")) && /its Sampler is the 7th machine/.test(text(doc, "features"));
+    const both = w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
     doc.getElementById("feat-trig-preview").click(); await wait(5);
-    check(off && noteOn && !doc.getElementById("feat-model-tg").checked && doc.getElementById("feat-trig-preview").checked,
-      "Model-TG unticks drumkilla's tweaks and the Syntakt engines (and the other way round), and shows its install note");
+    check(off && noteOn && both === "model-tg-st,syntakt-tg-sd" && !doc.getElementById("feat-model-tg").checked
+      && doc.getElementById("feat-trig-preview").checked && w.MCFlasherApp.chosenTweaks().map((x) => x.id).join() === "trig-preview,syntakt-sd",
+      "Model-TG unticks drumkilla's tweaks (and the other way round), shows its install note; with the Syntakt engines: " + both);
     doc.getElementById("feat-trig-preview").click(); await wait(5);
+    doc.getElementById("feat-syntakt").click(); await wait(5);
     doc.getElementById("feat-usb6").click();
     await wait(30);
     check(doc.querySelectorAll('input[name="var-usb6"]').length === 0, "6 channels: a single variant, no sub-choice");
@@ -288,18 +292,22 @@ async function main() {
     }
     const combos = engineCombos(w);
     const plain = boxes.filter((b) => b !== "feat-syntakt" && b !== "feat-model-tg");   // what goes with the engines
+    const sets = [];                                  // with the engines: any of these, or Model-TG (with or without USB)
+    for (let mask = 0; mask < 1 << plain.length; mask++) sets.push(plain.filter((b, k) => mask & (1 << k)));
+    sets.push(["feat-model-tg"], ["feat-model-tg", "feat-usb6"]);
+    const tgOf = Object.fromEntries(w.MC_TWEAKS.features.find((f) => f.engines).combos.map((c) => [c.id, c.tg]));
     for (const variant of REAL_ST ? Object.keys(combos).slice(1) : []) {   // the other engine combinations
-      for (let mask = 0; mask < 1 << plain.length; mask++) {
+      for (const on of sets) {
         for (const b of boxes) {
           const cb = doc.getElementById(b);
-          const want = b === "feat-syntakt" || (plain.includes(b) && !!(mask & (1 << plain.indexOf(b))));
+          const want = b === "feat-syntakt" || on.includes(b);
           if (cb.checked !== want) { cb.click(); await wait(5); }
         }
         await pickEngines(doc, combos[variant]);
         await settle(w);
         const f = app.state.fw;
         seen.add(app.state.buildKey);
-        check(f && f.kind === "built" && f.ref && app.state.buildKey.endsWith(variant),
+        check(f && f.kind === "built" && f.ref && app.state.buildKey.endsWith(on.includes("feat-model-tg") ? tgOf[variant] : variant),
           `real OS: ${app.state.buildKey} matches its reference hash`);
       }
     }

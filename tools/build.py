@@ -77,6 +77,9 @@ def check_conflicts(chosen):
             if other in ids:
                 raise SystemExit(f"!! {t['id']} et {other} sont incompatibles (ils modifient les memes octets) : "
                                  "choisis l'un ou l'autre avec -t")
+        for need in t.get("requires", []):               # s'applique par-dessus un autre tweak (notes/31)
+            if need not in ids:
+                raise SystemExit(f"!! {t['id']} demande aussi {need} (-t {need},{t['id']})")
 
 
 def cave_zones(main_os, chosen):
@@ -231,35 +234,21 @@ def apply_writes(main_os, tweaks_selected):
     return bytes(data), dirty
 
 
-def build_payload(chosen, main_os, syntakt_path):
-    """Charge utile d'un tweak « append » (notes/17) : recette exécutée sur TON fichier Syntakt (et, pour les
-    morceaux « cycles », sur TON MAIN OS Cycles d'origine). Renvoie (octets à ajouter après l'image, tweak)
-    ou (b"", None)."""
-    apps = [t for t in chosen if t.get("append")]
-    if not apps:
-        return b"", None
-    if len(apps) > 1:
-        raise SystemExit("!! un seul tweak peut agrandir l'OS : " + ", ".join(t["id"] for t in apps))
-    t = apps[0]
+END_LIMIT = 0x40200000       # l'image décompressée doit finir sous la zone de travail du bootstrap (notes/17)
+
+
+def payload_runtime(t, main_os, st_img):
+    """Charge utile d'un tweak « append » telle qu'en mémoire à l'exécution (à partir de append.dest) : recette
+    exécutée sur TON fichier Syntakt (st_img, section 7 vérifiée) et, pour les morceaux « cycles », sur TON MAIN OS
+    Cycles d'origine."""
     ap_ = t["append"]
-    if BASE + len(main_os) != int(ap_["at"], 16):
-        raise SystemExit(f"!! {t['id']} : l'image ne finit pas à {ap_['at']}")
-    img = None
-    if "syntakt" in ap_:                                # morceaux copiés du programme audio du Syntakt
-        if not syntakt_path:
-            raise SystemExit(f"!! {t['id']} a besoin de ton fichier Syntakt : --syntakt Syntakt_OS1.41.syx")
-        sys.path.insert(0, str(HERE / "emu"))
-        import syntakt                                  # noqa: E402  (tools/emu/syntakt.py)
-        if (syntakt.SYX_SHA256, syntakt.DSP_SHA256) != (ap_["syntakt"]["syx_sha256"], ap_["syntakt"]["section_sha256"]):
-            raise SystemExit("!! empreintes Syntakt du tweak et de tools/emu/syntakt.py différentes")
-        img = syntakt.dsp_image(syntakt_path)           # vérifie le .syx officiel et sa section 7
     dest, size = int(ap_["dest"], 16), ap_["size"]
     out = bytearray(size)
     for part in ap_["parts"]:
         at = int(part["dest"], 16) - dest
         if "syntakt" in part:
             lo, hi = (int(x, 16) for x in part["syntakt"])
-            chunk = img[lo - BASE:hi - BASE]
+            chunk = st_img[lo - BASE:hi - BASE]
         elif "cycles" in part:                          # plage de l'OS Cycles d'origine (notes/18)
             lo, hi = (int(x, 16) for x in part["cycles"])
             chunk = main_os[lo - BASE:hi - BASE]
@@ -271,10 +260,59 @@ def build_payload(chosen, main_os, syntakt_path):
         if out[at:at + 4] != bytes.fromhex(old):
             raise SystemExit(f"!! relocalisation {va} : {old} attendu, {out[at:at + 4].hex()} trouvé")
         out[at:at + 4] = bytes.fromhex(new)
-    src = pathlib.Path(syntakt_path).name if img is not None else "le tweak seul"
-    where = "en place" if ap_["dest"] == ap_["at"] else f"copiée à {ap_['dest']} au démarrage"
-    print(f"  charge utile {t['id']} : {size} o depuis {src}, {len(ap_['reloc'])} relocalisations, {where}")
-    return bytes(out), t
+    return bytes(out)
+
+
+def payload_image(t, runtime):
+    """Ce qui va dans l'image : la charge utile entière, ou rangée en morceaux (append.pack : [adresse, taille]) ;
+    hors des morceaux, tout doit être à zéro (le crochet de démarrage remet à zéro, puis recopie les morceaux)."""
+    ap_ = t["append"]
+    if "pack" not in ap_:
+        return runtime
+    dest, out, kept = int(ap_["dest"], 16), bytearray(), bytearray(runtime)
+    for a, n in ap_["pack"]:
+        at = int(a, 16) - dest
+        out += runtime[at:at + n]
+        kept[at:at + n] = bytes(n)
+    if any(kept):
+        raise SystemExit(f"!! {t['id']} : octets non nuls hors des morceaux rangés")
+    return bytes(out)
+
+
+def build_payload(chosen, main_os, syntakt_path):
+    """Charges utiles des tweaks « append » (notes/17), l'une après l'autre dans l'ordre des tweaks (Model-TG, puis
+    les moteurs du Syntakt de la version combinée, notes/31). Renvoie (octets à ajouter après l'image, dernier
+    tweak) ou (b"", None)."""
+    apps = sorted((t for t in chosen if t.get("append")), key=lambda t: t["order"])
+    if not apps:
+        return b"", None
+    img = None
+    if any("syntakt" in t["append"] for t in apps):     # morceaux copiés du programme audio du Syntakt
+        t = next(t for t in apps if "syntakt" in t["append"])
+        if not syntakt_path:
+            raise SystemExit(f"!! {t['id']} a besoin de ton fichier Syntakt : --syntakt Syntakt_OS1.41.syx")
+        sys.path.insert(0, str(HERE / "emu"))
+        import syntakt                                  # noqa: E402  (tools/emu/syntakt.py)
+        for t in apps:
+            st = t["append"].get("syntakt")
+            if st and (syntakt.SYX_SHA256, syntakt.DSP_SHA256) != (st["syx_sha256"], st["section_sha256"]):
+                raise SystemExit("!! empreintes Syntakt du tweak et de tools/emu/syntakt.py différentes")
+        img = syntakt.dsp_image(syntakt_path)           # vérifie le .syx officiel et sa section 7
+    out = bytearray()
+    for t in apps:
+        ap_ = t["append"]
+        if BASE + len(main_os) + len(out) != int(ap_["at"], 16):
+            raise SystemExit(f"!! {t['id']} : l'image ne finit pas à {ap_['at']}")
+        rt = payload_runtime(t, main_os, img)
+        chunk = payload_image(t, rt)
+        out += chunk
+        src = pathlib.Path(syntakt_path).name if "syntakt" in ap_ else "le tweak seul"
+        where = "en place" if ap_["dest"] == ap_["at"] else f"copiée à {ap_['dest']} au démarrage"
+        packed = f", rangée en {len(chunk)} o" if "pack" in ap_ else ""
+        print(f"  charge utile {t['id']} : {ap_['size']} o depuis {src}, {len(ap_['reloc'])} relocalisations, {where}{packed}")
+    if BASE + len(main_os) + len(out) > END_LIMIT:
+        raise SystemExit(f"!! l'OS agrandi dépasserait {END_LIMIT:#x}")
+    return bytes(out), apps[-1]
 
 
 def main():
@@ -327,6 +365,7 @@ def main():
     else:
         raise SystemExit("!! choisis --all ou -t <ids>")
     check_conflicts(chosen)
+    chosen.sort(key=lambda t: t["order"])            # dans l'ordre des tweaks : l'un peut s'appliquer sur l'autre
     for t in chosen:
         print(f"  + {t['name']}")
 

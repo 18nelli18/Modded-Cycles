@@ -13,7 +13,7 @@ Décisions de l'utilisateur, après l'analyse du §3 :
 | Model-TG seul dans le flasher web | `[FAIT]` tel que son propre build l'exporte, même empreinte (§2) |
 | Model-TG avec l'audio USB 6 canaux | `[FAIT]` aucune écriture commune ; pas encore testé sur la machine (§2) |
 | Conflits avec les moteurs du Syntakt | `[FAIT]` analysés (§3) |
-| Version combinée Model-TG + moteurs du Syntakt | `[À FAIRE]` plan au §4 |
+| Version combinée Model-TG + moteurs du Syntakt | `[FAIT]` démarre et joue sur la machine (firmware de diagnostic, §6) ; charge à optimiser (§7) |
 
 ## 1. Ce qu'est Model-TG
 
@@ -97,23 +97,130 @@ Source : comparaison des écritures (`30-model-tg.json` et nos tweaks `24-syntak
 - Sa sonde de charge (vecteur de l'interruption audio, `0x4005966a`) et ses crochets de l'étage de sortie (`0x40059872`, `0x4005981e`) ne recouvrent pas les nôtres (`0x40059382`).
 - Ses optimisations (effets au repos, KICK, CHORD) s'ajoutent aux nôtres.
 
-## 4. Plan de la phase 2 : Model-TG + moteurs du Syntakt `[À FAIRE]`
+## 4. Phase 2 : Model-TG + moteurs du Syntakt `[FAIT en émulation]`
 
-1. **Banc d'émulation de Model-TG** : rejouer sa boucle des voix avec l'état qu'il attend, pour avoir une référence (machines d'origine, Sampler) avant de toucher à quoi que ce soit.
-2. **Mémoire** : poser notre charge utile au-dessus de sa zone d'échantillons, vers `0x46800000` (sous la pile, en `0x48000000`).
-3. **Taille** :
-   - ne plus stocker les zones à zéro de notre charge utile : morceaux séparés au lieu d'un seul bloc ;
-   - gain de quelques dizaines de Ko, pour tenir dans les 265 696 o disponibles.
-4. **Démarrage** : un seul crochet, qui recopie notre charge utile (posée après son bloc) puis passe la main à son `boot_extra_hook`. Il sera vérifié en émulation comme aujourd'hui, car un OS qui ne démarre plus ne se rattrape pas sans interface MIDI.
-5. **Machines** :
-   - Sampler en index 6, moteurs du Syntakt à partir de 7 ;
-   - nos détours (noms, descripteurs, enregistrements, potards) laissent la machine 6 aux siens ;
-   - bornes à 6 + n.
-6. **Boucle des voix** : un seul dispatch.
-   - Le Sampler et les machines d'origine passent par le sien.
-   - Nos moteurs (index ≥ 7) passent par notre passerelle, avec la table de render agrandie.
-   - Notre régulateur encadre toutes les voix, Sampler compris.
-   - Sa mesure par piste (page System) est gardée.
-7. **Preuve en émulation**, puis firmware de diagnostic et essai sur la machine.
+Le plan du 01/10 (banc, mémoire, taille, démarrage, machines, boucle des voix, preuve) est suivi point par point. Rien n'est réécrit dans le code de Model-TG : nos détours passent devant les siens et lui rendent la main.
 
-Il faudra adapter quelques endroits du code source de Model-TG (licence MIT). Les modifications seront appliquées au build et listées, pour pouvoir suivre ses nouvelles versions.
+### 4.1 Deux tweaks, l'un sur l'autre
+
+Source : `tools/gen_model_tg.py`, `tools/gen_syntakt_engines.py` (`--tg`), `tools/build.py`, `docs/flasher/builder.js`.
+
+- **`30-model-tg-st.json`** : Model-TG construit par **son propre build**, depuis une copie de sa source avec **une seule retouche** (`ST_PATCHES`) :
+  - `REGION_END = 0x4e800000` devient `0x4e700000` (`src/model_tg.s`) ;
+  - sa zone d'échantillons perd 1 Mo (63 Mo au lieu de 64) ;
+  - tout ce qu'il range au sommet de la zone (cordes de Pluck, noms des emplacements, historiques de retrig, tranches) est défini depuis `REGION_END` et descend avec : 52 octets de son bloc changent, ses 131 écritures non.
+  - Le tweak garde aussi les adresses de 21 de ses symboles (`symbols`), lues dans son ELF, dont nos détours ont besoin.
+- **`31-syntakt-tg-<moteurs>.json`** (31 combinaisons) : nos moteurs, appliqués **par-dessus** (`requires: model-tg-st`).
+  - Leurs écritures sont vérifiées sur l'image après celles de Model-TG.
+  - Leur ajout suit le sien dans l'image.
+- **Constructeur** (Python et JS) :
+  - tweaks appliqués dans l'ordre de leur champ `order` ;
+  - plusieurs ajouts à la suite ;
+  - `requires` vérifié ;
+  - ajout **rangé en morceaux** (`pack`, ci-dessous) ;
+  - refus d'une image qui finirait au-delà de `0x40200000`.
+- Model-TG seul reste **exactement** son build officiel (`30-model-tg.json`, MAIN OS `fb985a16…`). Nos tweaks seuls ne changent pas d'un octet (`gen_syntakt_engines.py --all --check`).
+
+### 4.2 Mémoire et taille
+
+Source : `LAYOUT`/`set_base` et `segments` de `tools/gen_syntakt_engines.py` ; `machines/syntakt_bridge/stub.S`.
+
+- **Adresse d'exécution** : `0x46700000` au lieu de `0x43000000` (`PAY_TG`). C'est le dernier Mo de la zone de Model-TG, vu par l'alias avec cache (`0x4e700000` sans cache), et Model-TG l'a vérifié intact sur la machine (§3).
+  - Toutes nos adresses sont à un décalage fixe de cette base (`LAYOUT`).
+  - Les 13 bits de poids faible ne changent pas : nos données tombent sur les mêmes lignes du cache de 8 Ko que dans la version seule.
+- **Taille** : l'image n'enregistre que les morceaux non nuls de la charge utile (`pack`, réunion des `parts`) ; le reste est remis à zéro au démarrage.
+  - 5 moteurs : 269 056 o en mémoire, **242 852 o** dans l'image.
+  - L'image se termine en `0x401fa6d8`, sous `0x40200000`. Il reste environ 22 Ko.
+
+### 4.3 Démarrage
+
+Source : `stub.S` (`PACK`, `CHAIN_TO`) ; `phase1.s` de Model-TG (`boot_extra_hook`).
+
+- Le `jsr` de `0x40000530`, où Model-TG appelle son `boot_extra_hook`, appelle **notre crochet**. Celui-ci :
+  1. remet la zone `0x46700000..` à zéro ;
+  2. y recopie les morceaux depuis l'image ;
+  3. remplit les deux zones de SRAM (code et voix du Syntakt, [28](28-code-syntakt-en-sram.md), [29](29-voix-syntakt-en-sram.md)) ;
+  4. saute à `boot_extra_hook`, qui règle `ACR1` et remet le BSS à zéro sauf son bloc.
+- Il n'utilise que d0, d1, a0 et a1, et laisse la pile telle que le `jsr` l'a faite.
+
+### 4.4 Machines et interface
+
+Sources : `detours_asm`, `tg_records` et `build_tweak` de `tools/gen_syntakt_engines.py` ; dans `src/model_tg.s` de Model-TG : `descr_hook`, `descr_b_hook`, `sampler_lfo_gate`, `sampler_amp_gate`, `apply_names`, `mod_held`.
+
+- **Numérotation** : le Sampler reste l'index 6 (7e machine), nos moteurs vont de 7 à 6 + n. Les bornes passent à 6 + n, y compris celles que Model-TG avait mises à 6.
+- **Noms** : les 7 de Model-TG (son Sampler affiche le nom de l'échantillon, `mach_nbuf`), puis les nôtres.
+- **Enregistrements par machine** (`0x4004df5c`, `0x4004df76`) :
+  - nos machines ont les leurs ;
+  - les autres passent par `descr_hook` et `descr_b_hook` ;
+  - comme Model-TG, nos détours gardent a0 et a1.
+- **Touche Attack** : tant que Model-TG la voit tenue (`mod_held`), les potards DECAY, SWEEP et CONTOUR de nos machines prennent Attack, Filtre et Résonance, comme sur les machines d'origine.
+- **Libellés** : `apply_names` (Model-TG) renomme 4 paramètres sur la page du Sampler, dans la table d'origine `0x4010dce0`. L'OS lit notre copie agrandie (DESCN), donc nos détours recopient ces libellés à chaque recherche d'enregistrement.
+- **Paramètres** (`paramIdFor`, `0x4005a692`) : nos détours `lfo_gate` et `amp_gate` passent devant ceux du Sampler. Nos machines suivent le chemin d'origine, avec nos rangées.
+- **Constructeur des rangées** (`0x4005a274`) : il range les Amp Decay propres à chaque machine avec un compteur, dans l'ordre des descripteurs. Le détour `amp_row` saute la rangée 6 du Sampler, qui n'en a pas.
+  - Trouvé par le test : sans lui, l'Amp Decay de chaque moteur tombait sur la machine précédente.
+- **Icônes** :
+  - écran MACHINES : l'icône du Sampler (index 6) pour la 7e machine, l'image choisie pour chacun des nôtres ;
+  - les petites icônes bornées : celle de CHORD au-delà de 5, comme Model-TG (la version seule montre SNARE).
+
+### 4.5 Boucle des voix et régulateur
+
+Sources : `dispatch_tg_asm` de `tools/gen_syntakt_engines.py`, `voice_gate`/`voice_done` de `bridge_engines.c` ; `sampler_dispatch`, `amp_hook` (`ah_noenv`), `voice_quiet`, `prof_trk` de Model-TG.
+
+- **Un seul détour** en `0x400a7dfe` :
+  1. borne ;
+  2. régulateur (`voice_gate`) ;
+  3. puis selon la machine :
+     - machines d'origine et Sampler : le dispatch de Model-TG, avec ses pistes muettes et sa mesure par piste ;
+     - nos moteurs : la passerelle, puis la fin de son étage d'amplitude (`ah_noenv`). Ils reçoivent ainsi **Attack, Filtre/Résonance et le rééchantillonnage de la piste** de Model-TG, et leur temps s'affiche sur sa **page System**.
+- **Fin commune** : toutes les pistes finissent en `0x400a7e24`. `tg_after` y appelle le régulateur (`voice_done`), puis refait les trois instructions remplacées.
+- **Régulateur** :
+  - notre arrêt des voix muettes ne vaut que pour nos moteurs : Model-TG a déjà le sien pour les machines d'origine et le Sampler ;
+  - en surcharge, il éteint une voix d'origine ou un moteur du Syntakt ;
+  - il n'éteint jamais le Sampler, ni la piste que Model-TG enregistre (`rs_src`) ou dont il édite les tranches (`sle_trk`), qui doivent garder le temps.
+
+## 5. Preuve en émulation `[FAIT]`
+
+Source : `tools/emu/test_model_tg_syntakt.py` (5 moteurs, SD + SWARM, et le firmware de diagnostic), avec `tools/emu/test_model_tg.py` (banc de Model-TG).
+
+| Vérification | Résultat |
+|---|---|
+| Démarrage : notre crochet puis `boot_extra_hook`, pile et registres d2..d7/a2..a6 intacts | OK |
+| Charge utile reconstituée octet par octet à `0x46700000`, SRAM remplie, le reste intact | OK |
+| Rangées, recherches (slot, machine) et CC, machine d'un descripteur : 0..6 identiques à Model-TG seul | OK |
+| Enregistrements (Sampler compris), touche Attack, libellés, noms, potards, changement de machine réel | OK |
+| Son : 6 machines d'origine identiques à Model-TG seul (son build officiel) | identiques |
+| Son : Sampler sans échantillon | muet, le reste identique |
+| Son : chacun des 5 moteurs du Syntakt, en 8e à 12e machine | identique, échantillon par échantillon, à nos moteurs seuls |
+| Son : 6 pistes ensemble (KICK, SD, Sampler, CHORD, SWARM, CP) | chaque piste identique à sa référence |
+| Régulateur en surcharge (97 %) | voix éteintes, jamais le Sampler ni la piste dont Model-TG édite les tranches (même règle que pour la piste qu'il enregistre, dont la capture n'est pas émulée) |
+
+Les tests de la version seule (moteurs, régulateur, compteur, SRAM, démarrage) et de Model-TG seul passent toujours.
+
+## 6. Essai sur la machine `[FAIT]`
+
+Retour de l'utilisateur le 01/10/2026, firmware de diagnostic sans l'audio 6 canaux (`91-syntakt-tg-meter.json`, construit par `build.py`, pas encore par le flasher) :
+
+- **Démarrage et machines** : l'OS démarre ; le Sampler et les moteurs du Syntakt apparaissent après Chord.
+- **Sampler** : un échantillon envoyé par Elektron Transfer (identité SMP) se charge par le navigateur de presets (FUNC + MACHINE) et joue.
+- **Touche Attack** : le « PRESET » du guide de Model-TG est la touche **MACHINE**, tenue sans FUNC. Source : `src/model_tg.s`, codes de touches mesurés par son auteur (`KEY_PRESET = 5`). Elle donne Attack, Filtre et Résonance sur toutes les machines, moteurs du Syntakt compris.
+- **Motif de 6 pistes** (SD Vintage x 2, SY Toy, Perc/Metal d'origine, Sampler, Tone d'origine) :
+
+| Mesure | Valeur |
+|---|---|
+| Notre compteur (fonction audio `0x4005979e`), pic/moyenne | 93 / 79 % |
+| Page System de Model-TG (de l'entrée de l'interruption audio à la fin du mix), maintenant / au pire | 90 / 101 % |
+| Part de chaque piste (System) | SD 8, SY Toy 6, SD 3, Perc 6, Sampler 8, Tone 6 % |
+| À l'oreille | coupures ou craquements, très occasionnels |
+
+**Lecture** :
+- Les moteurs du Syntakt coûtent autant que les machines d'origine et que le Sampler. Les 6 voix font environ 37 % ; le reste de la fonction audio (mixage, effets d'envoi, effets master) en fait environ 40 %.
+- La page System commence à l'entrée de l'interruption (`0x40058c5e`, `isr_prof` de Model-TG). Notre compteur ne mesure que la fonction audio, appelée plus tard dans cette interruption : il lit environ **11 points de moins**.
+- Le seuil de pic de notre régulateur (93 %) correspond donc à environ 104 % du vrai temps : un bloc peut déborder avant qu'il réagisse. C'est la cause probable des craquements.
+
+## 7. Ce qui reste `[À FAIRE]`
+
+- **Optimiser sans perdre de fonctions** (demande de l'utilisateur) : mesurer d'abord où passent les ~50 % hors des voix (début de l'interruption, mixage et effets), puis viser les plus gros postes.
+- **Régulateur** : mesurer depuis l'entrée de l'interruption, comme la page System, pour qu'il réagisse avant un débordement.
+- Les combinaisons construites par le flasher restent « expérimentales » tant qu'aucune n'a été essayée sur la machine.
+- **Projets** : une piste réglée sur une machine ajoutée n'a pas le même numéro dans les deux versions (8e machine = SDVtg avec Model-TG, 7e sans). Un projet fait avec l'une joue une autre machine sur l'autre. Le flasher le dit.
+- Non essayé : le rééchantillonnage d'une piste d'un moteur du Syntakt.

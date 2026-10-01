@@ -122,7 +122,22 @@ python3 tools/gen_model_tg.py --cycles model-cycles_OS1.13.syx --model-tg vendor
 | `model-tg` | `fb985a1660f946cc0fd0133300c7e6248b7b23a7f3ffede339fc2e368563fae6` (celle annoncée par le build de Model-TG) |
 | `6ch-usbup,model-tg` | `1511f84cda930f42973938beeb6ffa9517e615e79eaf849448e6f269e7a0b35a` |
 
-Les 513 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
+Le même script écrit `30-model-tg-st.json`, la base de la **version combinée avec les moteurs du Syntakt** : Model-TG construit par son
+build depuis une copie de sa source, avec une retouche (sa zone d'échantillons s'arrête 1 Mo plus bas). Les moteurs s'appliquent
+par-dessus (`31-syntakt-tg-<moteurs>.json`, `requires`), voir [note 31 §4](notes/31-model-tg.md) :
+```sh
+python3 tools/gen_syntakt_engines.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx --all --tg [--check]
+python3 tools/build.py -i model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx -t model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm
+python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx
+```
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `model-tg-st,syntakt-tg-sd` | `bf6d23d8c639dd70f73dd666528698c6f8ab5e6a9cc42a19d01a49a5620a04b8` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `530ec80cbf1618f0f512cdd0fb9e2fd795dba5feddd106c681985e3981456bc7` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `b48a3dae0d6df6248b065db513fc9c6a0ed8462938a8ef1f34798bf71762dea6` |
+
+Les 575 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
 `tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;
 `tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.41.syx` les reconstruit toutes dans la page et les compare.
 SD VINTAGE v1 (clean-room d'origine, **testée sur le matériel** le 29/09/2026, compilée par GCC 13.3) donnait `80b7b2bd…` seule et `38754937…` avec `6ch-usbup` ;
@@ -162,10 +177,12 @@ python3 tools/emu/test_sram_scratch.py --cycles model-cycles_OS1.13.syx --syntak
     --tweak tweaks/model-cycles_OS1.13/24-syntakt-sd-cp-toy-bits-swarm.json   # SRAM empruntée (notes/26)
 python3 tools/emu/test_sram_code.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx \
     --tweak tweaks/model-cycles_OS1.13/24-syntakt-sd-cp-toy-bits-swarm.json   # code du Syntakt en SRAM (notes/28)
+python3 tools/emu/test_model_tg.py --cycles model-cycles_OS1.13.syx                                  # Model-TG seul (notes/31)
+python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx   # version combinée
 python3 tools/ref_mainos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx --check
 ```
 Pour ajouter un moteur : l'ajouter à `CATALOG` de `tools/gen_syntakt_engines.py` (et ses plages copiées), puis relancer
-`gen_syntakt_engines.py --all`, `gen_flasher_tweaks.py` et `ref_mainos.py`, et tester chaque nouveau tweak en émulation.
+`gen_syntakt_engines.py --all` et `--all --tg`, `gen_flasher_tweaks.py` et `ref_mainos.py`, et tester chaque nouveau tweak en émulation.
 
 ## Flasher (rappel)
 

@@ -33,7 +33,9 @@ typedef unsigned int u32;
 
 /* UPD_E, RND_E, ST_*_AT : adresses d'EXECUTION des fonctions du Syntakt (en SRAM, donnees par le generateur) */
 #define ST(a)       (a)
+#ifndef ST_SRAM                                      /* replique de sa SRAM (gen_syntakt_engines.py, LAYOUT) */
 #define ST_SRAM     0x43020000
+#endif
 #define SRAM(a)     ((a) - 0x80000000 + ST_SRAM)
 #define ST_VSTRIDE  1800
 typedef void (*update_fn)(s32, char *, const char *);
@@ -251,6 +253,44 @@ u32 gov_cost[NT];                 /* cout mesure d'update + render, en ticks (mo
 #define THR ((u32)(gov_pressure ? 1 << 20 : IDLE_THR))
 #define NEED (gov_pressure ? 16 : IDLE_BLOCKS)
 
+#ifdef TG_FIRST
+/* Avec Model-TG (notes/31) : son Sampler (entree 6) et ses machines d'origine passent par son dispatch, qui a sa
+ * propre logique des voix muettes ; l'arret des voix muettes ne vaut donc que pour nos moteurs (entree >= TG_FIRST).
+ * Le regulateur peut eteindre toute piste, sauf le Sampler et la piste qu'il enregistre (reechantillonnage, rs_src)
+ * ou dont il edite les tranches (sle_trk) : leur capture et leur lecture doivent garder le temps. Toutes les pistes
+ * finissent en 0x400a7e24 (tg_after) : voice_done n'y mesure que celles que voice_gate a laisse calculer. */
+#define U32AT(a) (*(volatile u32 *)(a))
+unsigned char gov_free[NT];
+u32 gov_ran;
+
+static int tg_keep(int t)
+{
+	return (U32AT(TG_RS_STATE) && U32AT(TG_RS_SRC) == (u32)t) || (U32AT(TG_SLE_RUN) && U32AT(TG_SLE_TRK) == (u32)t);
+}
+
+int voice_gate(int t, int trig, int engine)
+{
+	gov_st[t] = engine >= TG_FIRST;
+#ifdef LOAD_METER
+	gov_eng[t] = engine;
+#endif
+	gov_free[t] = engine == 6 || tg_keep(t);
+	if (gov_free[t])
+		gov_fading[t] = gov_stolen[t] = 0;
+	if (trig) {
+		gov_quiet[t] = gov_fading[t] = gov_stolen[t] = 0;
+		gov_age[t] = 0;
+	} else {
+		if (gov_age[t] < 0xffff)
+			gov_age[t]++;
+		if (!gov_free[t] && (gov_stolen[t] || (engine >= TG_FIRST && gov_quiet[t] >= NEED)))
+			return 1;
+	}
+	gov_ran = 1;
+	vt0 = TIMER;
+	return 0;
+}
+#else
 /* avant update/render d'une piste : 1 = ne pas la calculer (sortie a zero) */
 int voice_gate(int t, int trig, int engine)
 {
@@ -270,6 +310,7 @@ int voice_gate(int t, int trig, int engine)
 	vt0 = TIMER;
 	return 0;
 }
+#endif
 
 /* apres render : cout, fondu eventuel, crete, compteur de blocs faibles */
 void voice_after(int t, s32 *out)
@@ -300,6 +341,16 @@ void voice_after(int t, s32 *out)
 		gov_quiet[t] = 0;
 }
 
+#ifdef TG_FIRST
+void voice_done(int t, s32 *out)
+{
+	if (gov_ran) {
+		gov_ran = 0;
+		voice_after(t, out);
+	}
+}
+#endif
+
 static void govern(void)
 {
 	int t, v, severe, n = 0;
@@ -323,6 +374,10 @@ static void govern(void)
 		for (t = 0; t < NT; t++) {
 			if (gov_stolen[t] || gov_fading[t] || gov_quiet[t] >= NEED || gov_age[t] < (severe ? 4 : 16))
 				continue;                        /* deja arretee, ou note trop recente */
+#ifdef TG_FIRST
+			if (gov_free[t])
+				continue;
+#endif
 			key = (u32)gov_peak[t];
 			if (key < best) {
 				best = key;
