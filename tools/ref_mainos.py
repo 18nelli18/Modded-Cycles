@@ -54,12 +54,17 @@ def block(cycles, syntakt):
     stock = main_os(cycles)
     subsets = [c for r in range(len(base) + 1) for c in itertools.combinations([options(f)[0] for f in base], r)]
     payloads = {}
+    # avec les moteurs du Syntakt, une carte « with » (Model-TG) prend un autre tweak, et les moteurs le leur (tg)
+    alt = {options(f)[0]: f["with"][extra[0]["id"]] for f in base if extra and extra[0]["id"] in f.get("with", {})}
+    tg_of = {c["id"]: c["tg"] for c in extra[0]["combos"]} if extra else {}
 
-    def payload(t):
-        """Charge utile du seul tweak « append » choisi (moteurs du Syntakt, ou Model-TG sans fichier Syntakt)."""
-        if t["id"] not in payloads:
-            payloads[t["id"]] = build.build_payload([t], stock, syntakt if t["append"].get("syntakt") else None)[0]
-        return payloads[t["id"]]
+    def payload(apps):
+        """Charges utiles des tweaks « append » choisis, l'une après l'autre (comme tools/build.py)."""
+        key = tuple(t["id"] for t in apps)
+        if key not in payloads:
+            st = syntakt if any(t["append"].get("syntakt") for t in apps) else None
+            payloads[key] = build.build_payload(apps, stock, st)[0]
+        return payloads[key]
     lines = []
     for last in [None] + (options(extra[0]) if extra else []):
         if last:
@@ -67,12 +72,15 @@ def block(cycles, syntakt):
             lines.append(f"  // + real Syntakt engines {names} (tweak {last}), with the official Syntakt_OS1.41.syx")
         for sub in subsets:
             ids = list(sub) + ([last] if last else [])
+            if last and any(i in alt for i in sub):       # version combinée (notes/31)
+                ids = [alt.get(i, i) for i in sub] + [tg_of[last]]
             chosen = [by_id[i] for i in ids]
             if not ids or any(o in ids for t in chosen for o in t.get("conflicts", [])):
-                continue                                  # cases incompatibles (Model-TG) : la page ne les propose pas
+                continue                                  # cases incompatibles : la page ne les propose pas
+            chosen.sort(key=lambda t: t["order"])
             apps = [t for t in chosen if t.get("append")]
             patched, _ = build.apply_writes(stock, chosen)
-            lines.append(f'  "{"+".join(ids)}": "{build.sha(bytes(patched) + (payload(apps[0]) if apps else b""))}",')
+            lines.append(f'  "{"+".join(ids)}": "{build.sha(bytes(patched) + (payload(apps) if apps else b""))}",')
     return "\n".join(lines), len([x for x in lines if not x.lstrip().startswith("//")])
 
 

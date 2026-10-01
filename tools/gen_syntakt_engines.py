@@ -156,14 +156,36 @@ def sram_init(image, init, a, n):
     return None
 
 # --- charge utile (adresses fixes, jusqu'à 6 machines ajoutées) --------------------------------------------
-DST_BRIDGE = 0x43031000
-STUBS = 0x43033000
-DATA = 0x43033800            # noms, update/render, VEC, table machine -> moteur, chaînes
-DESCN = 0x43034000           # 76 + 5 x N descripteurs (au plus 106 x 0x38 = 0x1730)
-ROWSN = 0x43035800           # (6 + N) x 32 o
-CCROWSN = 0x43035a00         # (6 + N) x 32 o
-RECS = 0x43035c00            # enregistrement par machine ajoutée : 0x60 o chacun (76 o + drapeau)
-TABLES_AT = 0x43036000       # tables_high des moteurs
+# Adresse d'exécution PAY : seule, au-dessus du BSS du Cycles (notes/17) ; avec Model-TG, le haut de sa zone
+# d'échantillons, qu'il nous laisse (notes/31). Tout le reste est à un décalage fixe de PAY.
+PAY_ALONE = 0x43000000
+PAY_TG = 0x46700000
+LAYOUT = dict(
+    DST_SRAM=0x20000,        # réplique de la SRAM du Syntakt
+    ST_BSS_AT=0x30000,       # fenêtre de son BSS
+    DST_BRIDGE=0x31000,      # passerelle, puis ses données (+0x1000)
+    DST_END=0x33000,
+    STUBS=0x33000,
+    DATA=0x33800,            # noms, update/render, VEC, table machine -> moteur, chaînes
+    DESCN=0x34000,           # 76 + 5 x N descripteurs (au plus 106 x 0x38 = 0x1730)
+    ROWSN=0x35800,           # (6 + N) x 32 o, (7 + N) avec Model-TG
+    CCROWSN=0x35a00,         # idem
+    RECS=0x35c00,            # enregistrement par machine ajoutée : 0x60 o chacun (76 o + drapeau)
+    REC_ATK=0x35f00,         # avec Model-TG : copie d'un enregistrement, Attack sur le potard DECAY (76 o)
+    TABLES_AT=0x36000,       # tables_high des moteurs
+)
+
+
+def set_base(pay):
+    """Place la charge utile à pay (constantes de ce module et de gen_sdvintage_exact.py)."""
+    global PAY
+    PAY = pay
+    for k, off in LAYOUT.items():
+        globals()[k] = pay + off
+    gx.DST_CODE, gx.DST_SRAM, gx.DST_BRIDGE, gx.DST_END = pay, DST_SRAM, DST_BRIDGE, DST_END
+
+
+set_base(PAY_ALONE)
 
 
 def generation(codes):
@@ -275,7 +297,7 @@ def layout(gen, blocks):
     # gx.move prend la 1re plage qui contient l'adresse : code et tables en SRAM du Cycles, tables en SDRAM, puis la
     # SRAM du Syntakt (tampons et table de sinus dans la SRAM du Cycles, SRAM_MAP ; le reste dans sa réplique)
     move = ([(lo, hi, run(dst)) for lo, hi, dst in stage] + [(lo, hi, run(dst)) for lo, hi, dst in tabs] + sdram
-            + [*SRAM_MAP, (0x80000000, 0x80010000, gx.DST_SRAM), (*gx.ST_BSS, 0x43030000)])
+            + [*SRAM_MAP, (0x80000000, 0x80010000, gx.DST_SRAM), (*gx.ST_BSS, ST_BSS_AT)])
     return dict(copies=copies, move=tuple(move), stage=stage, pads=pads, stage_end=stage_end, run=run, banks=banks,
                 voices=[run(v) for v in voices], chord_at=chord_at, end=(end + 0xff) & ~0xff)
 
@@ -360,6 +382,9 @@ MAP = g7.ENGINE_MAP          # table machine -> entrée des tables update/render
 # IDLE_BLOCKS blocs, sans trig, n'est plus calculée ; sous forte charge, le seuil monte et la voix la plus faible
 # s'éteint par un fondu (bridge_engines.c). Vaut pour les 6 machines d'origine comme pour les machines ajoutées.
 DISPATCH = (0x400a7dfe, 0x400a7e24)
+TG_AFTER = (0x400a7e24, 0x400a7e2a)    # avec Model-TG : fin commune de la piste (3 instructions, 6 o)
+TG_FIRST = 7                 # avec Model-TG : index de la 1re machine ajoutée (6 est son Sampler)
+AMP_ROW = 0x4005a31a         # avec Model-TG : rangée d'un Amp Decay propre à une machine (constructeur 0x4005a274)
 AUDIO_CALL = 0x40059382      # jsr 0x4005979e : fonction audio, appelée par l'interruption à chaque bloc
 IDLE_BLOCKS = 64             # 43 ms
 IDLE_THR = 1 << 13           # -108 dB sous la pleine échelle
@@ -382,9 +407,13 @@ def subsets():
         yield from (list(c) for c in itertools.combinations(CATALOG, r))
 
 
-def detours_asm(n, images, firsts):
-    """Détours pour n machines ajoutées (index 6..5+n), descripteurs firsts[i]..firsts[i]+4 (5 par machine)."""
+def detours_asm(n, images, firsts, tg=None):
+    """Détours pour n machines ajoutées (index 6..5+n), descripteurs firsts[i]..firsts[i]+4 (5 par machine).
+    Avec Model-TG (tg : ses symboles), les machines ajoutées vont de 7 à 6+n (6 est son Sampler) et nos détours
+    passent la main aux siens pour le reste (notes/31)."""
     last = 76 + 5 * n                                    # 1er descripteur après ceux des machines ajoutées
+    first = TG_FIRST if tg else 6                        # index de la 1re machine ajoutée
+    top = first + n - 1                                  # plus grand index de machine
     a = [".text"]
 
     def lab(s):
@@ -415,13 +444,15 @@ def detours_asm(n, images, firsts):
     # CC reçu -> descripteur
     a.append("\t.globl\tcc_bounds"); lab("cc_bounds")
     ins("moveq #5, %d2"); ins("cmp.l %d1, %d2"); ins("bcs.s 1f")
-    ins(f"moveq #{5 + n}, %d2"); ins("cmp.l %d0, %d2"); ins("bcs.s 2f"); ins("jmp 0x4005a8fa")
+    if tg:                                               # le Sampler : comme Model-TG (paramètres communs)
+        ins("moveq #6, %d2"); ins("cmp.l %d0, %d2"); ins("beq.s 2f")
+    ins(f"moveq #{top}, %d2"); ins("cmp.l %d0, %d2"); ins("bcs.s 2f"); ins("jmp 0x4005a8fa")
     lab("1"); ins("jmp 0x4005a928")
     lab("2"); ins("jmp 0x4005a91c")
     # image montrée pour une machine
     lab("shown")
     for i in range(n):
-        ins(f"moveq #{6 + i}, %d1"); ins("cmp.l %d1, %d0"); ins(f"bne.s 8{i}f"); ins(f"moveq #{images[i]}, %d0"); ins("rts")
+        ins(f"moveq #{first + i}, %d1"); ins("cmp.l %d1, %d0"); ins(f"bne.s 8{i}f"); ins(f"moveq #{images[i]}, %d0"); ins("rts")
         lab(f"8{i}")
     ins("rts")
     a.append("\t.globl\tdrum_icons"); lab("drum_icons")
@@ -441,22 +472,25 @@ def detours_asm(n, images, firsts):
     # par un autre choix de moteurs, notes/20 §5) donne celui de KICK : l'OS lirait sinon 76 o avant le tableau.
     a.append("#define REC_BASE 0x40a71540")
     a.append("#define REC_SNARE (REC_BASE + 2 * 76)")
-    a.append("\t.globl\trecord_at"); lab("record_at")
-    ins("move.l 4(%sp), %d0")
-    for i in range(n):
-        ins(f"moveq #{7 + i}, %d1"); ins("cmp.l %d1, %d0"); ins(f"beq.w rec_{i}")
-    ins("moveq #6, %d1"); ins("cmp.l %d0, %d1"); ins("bcc.s 1f"); ins("moveq #1, %d0")
-    lab("1"); ins("moveq #76, %d1"); ins("muls.l %d1, %d0"); ins("add.l #REC_BASE, %d0"); ins("rts")
-    a.append("\t.globl\trecord_of"); lab("record_of")
-    ins("move.l 4(%sp), %d0")
-    for i in range(n):
-        ins(f"moveq #{6 + i}, %d1"); ins("cmp.l %d1, %d0"); ins(f"beq.w rec_{i}")
-    ins("moveq #5, %d1"); ins("cmp.l %d0, %d1"); ins("bcs.s 2f"); ins("lea 0x401091b4, %a0")
-    ins("mvs.b (%a0,%d0.l), %d0"); ins("moveq #6, %d1"); ins("cmp.l %d0, %d1"); ins("bcc.s 3f")
-    lab("2"); ins("moveq #1, %d0")
-    lab("3"); ins("moveq #76, %d1"); ins("muls.l %d1, %d0"); ins("add.l #REC_BASE, %d0"); ins("rts")
-    for i in range(n):
-        lab(f"rec_{i}"); ins(f"lea {RECS + 0x60 * i:#x}, %a0"); ins(f"moveq #{firsts[i] - 51}, %d0"); ins("bra.w rec_build")
+    if tg:
+        tg_records(a, ins, lab, n, firsts, first, top, tg)
+    else:
+        a.append("\t.globl\trecord_at"); lab("record_at")
+        ins("move.l 4(%sp), %d0")
+        for i in range(n):
+            ins(f"moveq #{7 + i}, %d1"); ins("cmp.l %d1, %d0"); ins(f"beq.w rec_{i}")
+        ins("moveq #6, %d1"); ins("cmp.l %d0, %d1"); ins("bcc.s 1f"); ins("moveq #1, %d0")
+        lab("1"); ins("moveq #76, %d1"); ins("muls.l %d1, %d0"); ins("add.l #REC_BASE, %d0"); ins("rts")
+        a.append("\t.globl\trecord_of"); lab("record_of")
+        ins("move.l 4(%sp), %d0")
+        for i in range(n):
+            ins(f"moveq #{6 + i}, %d1"); ins("cmp.l %d1, %d0"); ins(f"beq.w rec_{i}")
+        ins("moveq #5, %d1"); ins("cmp.l %d0, %d1"); ins("bcs.s 2f"); ins("lea 0x401091b4, %a0")
+        ins("mvs.b (%a0,%d0.l), %d0"); ins("moveq #6, %d1"); ins("cmp.l %d0, %d1"); ins("bcc.s 3f")
+        lab("2"); ins("moveq #1, %d0")
+        lab("3"); ins("moveq #76, %d1"); ins("muls.l %d1, %d0"); ins("add.l #REC_BASE, %d0"); ins("rts")
+        for i in range(n):
+            lab(f"rec_{i}"); ins(f"lea {RECS + 0x60 * i:#x}, %a0"); ins(f"moveq #{firsts[i] - 51}, %d0"); ins("bra.w rec_build")
     lab("rec_build")
     ins("tst.b 76(%a0)"); ins("bne.w 9f"); ins("move.l %d2, -(%sp)"); ins("move.l %a2, -(%sp)"); ins("movea.l %a0, %a2")
     ins("move.l %d0, %d2"); ins("pea REC_SNARE"); ins("move.l %a2, -(%sp)"); ins("jsr 0x400f8f02"); ins("addq.l #8, %sp")
@@ -470,17 +504,17 @@ def detours_asm(n, images, firsts):
     lab("9"); ins("move.l %a0, %d0"); ins("rts")
     # potard -> descripteur : table machine -> enregistrement [1..6+n]
     a.append("\t.globl\tknob_vec"); lab("knob_vec")
-    ins("move.l 36(%sp), %d0"); ins("movea.l 104(%a2), %a1"); ins(f"moveq #{5 + n}, %d1"); ins("cmp.l %d0, %d1")
+    ins("move.l 36(%sp), %d0"); ins("movea.l 104(%a2), %a1"); ins(f"moveq #{top}, %d1"); ins("cmp.l %d0, %d1")
     ins("bcc.s 1f"); ins("moveq #0, %d0"); ins("rts")                    # hors limites : les potards de KICK
-    lab("1"); ins("moveq #6, %d1"); ins("cmp.l %d1, %d0")
-    ins("blt.s 2f"); ins(f"lea {DATA + 12 * (6 + n):#x}, %a1")
+    lab("1"); ins(f"moveq #{first}, %d1"); ins("cmp.l %d1, %d0")
+    ins("blt.s 2f"); ins(f"lea {DATA + 12 * (first + n):#x}, %a1")
     lab("2"); ins("rts")
     # machine d'un descripteur (applicabilité) et rangée du constructeur : descripteurs ajoutés -> leur machine
     a.append("\t.globl\tdesc_machine"); lab("desc_machine")
     ins("move.l 4(%sp), %d0")
     for i in range(n):
         ins(f"cmp.l #{firsts[i]}, %d0"); ins(f"bcs.s 7{i}f"); ins(f"cmp.l #{firsts[i] + 3}, %d0"); ins(f"bhi.s 7{i}f")
-        ins(f"moveq #{6 + i}, %d0"); ins("rts")
+        ins(f"moveq #{first + i}, %d0"); ins("rts")
         lab(f"7{i}")
     ins(f"cmp.l #{last}, %d0"); ins("bcs.s 2f"); ins("moveq #0, %d0")
     lab("2"); ins("move.l %d0, %d1"); ins("lsl.l #3, %d1"); ins("lsl.l #6, %d0"); ins("sub.l %d1, %d0")
@@ -489,11 +523,65 @@ def detours_asm(n, images, firsts):
     ins("moveq #6, %d0"); ins("cmp.l %d5, %d0"); ins("bcs.w 1f")
     for i in range(n):
         ins(f"cmp.l #{firsts[i]}, %d2"); ins(f"bcs.s 6{i}f"); ins(f"cmp.l #{firsts[i] + 3}, %d2"); ins(f"bhi.s 6{i}f")
-        ins(f"moveq #{6 + i}, %d5"); ins("bra.w 2f")
+        ins(f"moveq #{first + i}, %d5"); ins("bra.w 2f")
         lab(f"6{i}")
     lab("2"); ins("jmp 0x4005a384")
     lab("1"); ins("jmp 0x4005a346")
+    if tg:
+        # paramIdFor (0x4005a692) : Model-TG remplace la borne de machine (0x4005a6a6) et la branche d'Amp Decay
+        # (0x4005a6b6) par ses détours pour le Sampler ; les machines ajoutées passent par le chemin d'origine,
+        # avec les rangées ROWSN.
+        a.append("\t.globl\tlfo_gate"); lab("lfo_gate")
+        ins(f"cmpi.l #{first}, %d2"); ins("bcs.s 1f"); ins(f"cmpi.l #{top}, %d2"); ins("bhi.s 1f"); ins("jmp 0x4005a6dc")
+        lab("1"); ins(f"jmp {tg['sampler_lfo_gate']:#x}")
+        # constructeur des rangées (0x4005a274) : les Amp Decay propres à une machine (long[1] = 18) remplissent
+        # la colonne 0 des rangées dans l'ordre des descripteurs, avec un compteur (d6) ; le Sampler n'en a pas, sa
+        # rangée (6) est sautée pour que les nôtres tombent sur leurs machines (7..)
+        a.append("\t.globl\tamp_row"); lab("amp_row")
+        ins("moveq #6, %d0"); ins("cmp.l %d0, %d6"); ins("bne.s 1f"); ins("addq.l #1, %d6")
+        lab("1"); ins("move.l %d6, %d0"); ins("addq.l #1, %d6"); ins("lsl.l #5, %d0"); ins("jmp 0x4005a320")
+        a.append("\t.globl\tamp_gate"); lab("amp_gate")
+        ins("cmpi.l #6, %d2"); ins("beq.s 1f")
+        ins("lsl.l #5, %d2"); ins(f"lea {ROWSN:#x}, %a0"); ins("move.l (%a0,%d2.l), %d0"); ins("jmp 0x4005a6fc")
+        lab("1"); ins(f"jmp {tg['sampler_amp_gate']:#x}")
     return "\n".join(a) + "\n"
+
+
+def tg_records(a, ins, lab, n, firsts, first, top, tg):
+    """Avec Model-TG : enregistrements par machine (0x4004df5c : index machine + 1 ; 0x4004df76 : index machine).
+    Les machines ajoutées ont les leurs (construits comme seuls, rec_build) ; les autres passent par les détours de
+    Model-TG (descr_hook, descr_b_hook : le Sampler, et Attack sur le potard DECAY tant que la touche est tenue).
+    Comme lui, a0 et a1 sont gardés ; et comme lui, Attack, Filtre et Résonance prennent les potards DECAY, SWEEP et
+    CONTOUR des machines ajoutées tant que la touche est tenue (mod_held). Ses libellés propres au Sampler sont
+    écrits par apply_names dans la table d'origine (param_table) : recopiés ensuite dans DESCN, que l'OS lit."""
+    for name, hook, base, oob in (("record_at", "descr_hook", first + 1, (top + 1, 1)),
+                                  ("record_of", "descr_b_hook", first, (top, 0))):
+        a.append(f"\t.globl\t{name}"); lab(name)
+        ins("move.l 4(%sp), %d0")
+        for i in range(n):
+            ins(f"moveq #{base + i}, %d1"); ins("cmp.l %d1, %d0"); ins(f"beq.w tg_rec_{i}")
+        ins(f"moveq #{oob[0]}, %d1"); ins("cmp.l %d0, %d1"); ins("bcc.s 1f")
+        ins(f"moveq #{oob[1]}, %d0"); ins("move.l %d0, 4(%sp)")              # hors limites : KICK
+        lab("1"); ins("move.l %a0, -(%sp)"); ins("move.l %a1, -(%sp)"); ins("move.l 12(%sp), -(%sp)")
+        ins(f"jsr {tg[hook]:#x}"); ins("addq.l #4, %sp"); ins("bra.w tg_sync")
+    for i in range(n):
+        lab(f"tg_rec_{i}"); ins("move.l %a0, -(%sp)"); ins("move.l %a1, -(%sp)")
+        ins(f"lea {RECS + 0x60 * i:#x}, %a0"); ins(f"moveq #{firsts[i] - 51}, %d0"); ins("bra.w tg_ours")
+    lab("tg_ours")
+    ins("move.l %a0, -(%sp)"); ins("move.l %d0, -(%sp)")
+    ins("moveq #0, %d1"); ins(f"jsr {tg['apply_names']:#x}")              # libellés d'origine
+    ins("move.l (%sp)+, %d0"); ins("movea.l (%sp)+, %a0"); ins("bsr.w rec_build")
+    ins(f"tst.l {tg['mod_held']:#x}"); ins("beq.s tg_sync")
+    ins("movea.l %d0, %a0"); ins(f"lea {REC_ATK:#x}, %a1"); ins("moveq #18, %d1")
+    lab("1"); ins("move.l (%a0)+, (%a1)+"); ins("subq.l #1, %d1"); ins("bpl.s 1b")
+    ins(f"lea {REC_ATK:#x}, %a0"); ins("moveq #0x0d, %d1"); ins("move.l %d1, 12(%a0)")      # Attack
+    ins("moveq #0x0c, %d1"); ins("move.l %d1, 24(%a0)"); ins("moveq #0x0b, %d1"); ins("move.l %d1, 28(%a0)")
+    ins("move.l %a0, %d0")
+    lab("tg_sync")
+    ins(f"lea {tg['param_table'] + 44:#x}, %a0"); ins(f"lea {DESCN + 44:#x}, %a1"); ins(f"moveq #{g7.NDESC - 1}, %d1")
+    lab("2"); ins("move.l (%a0), (%a1)"); ins("move.l 4(%a0), 4(%a1)"); ins("move.l 8(%a0), 8(%a1)")
+    ins(f"lea {g7.DSTRIDE}(%a0), %a0"); ins(f"lea {g7.DSTRIDE}(%a1), %a1"); ins("subq.l #1, %d1"); ins("bpl.s 2b")
+    ins("movea.l (%sp)+, %a1"); ins("movea.l (%sp)+, %a0"); ins("rts")
 
 
 def probe_asm(syms):
@@ -565,7 +653,106 @@ dispatch:
 """
 
 
-def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, run=None, lay=None):
+# comme machines/syntakt_bridge/link.ld, à l'adresse de la charge utile
+LINK = """SECTIONS
+{{
+  .stub {stub:#x} : {{ *(.text) }}
+  .bridge {bridge:#x} : {{ *(.text.bridge_update) *(.text.bridge_render) *(.text*) . = ALIGN(4); *(.rodata*) }}
+  .bridge_data {data:#x} : {{ *(.data*) *(.bss*) *(COMMON) }}
+  /DISCARD/ : {{ *(.comment) *(.note*) *(.eh_frame*) }}
+}}
+"""
+
+
+def dispatch_tg_asm(syms, rnd_at, tg):
+    """Avec Model-TG : le même détour (0x400a7dfe), mais les machines d'origine et le Sampler (index < 7) passent
+    par le dispatch de Model-TG (sampler_dispatch : ses voix muettes, sa mesure par piste, son Sampler), qui finit
+    en 0x400a7e24 ; nos moteurs passent par la passerelle, puis par la fin de son étage d'amplitude (ah_noenv :
+    Attack, Filtre/Résonance, rééchantillonnage de la piste), et leur temps va sur sa page System (prof_trk).
+    Toutes les pistes finissent en 0x400a7e24, où tg_after appelle voice_done (régulateur) puis refait les trois
+    instructions remplacées."""
+    g = lambda n: f"{syms[n]:#x}"
+    return f"""
+	.globl	dispatch
+dispatch:
+	cmp.l	%d4, %d0
+	bcs.w	9f			/* machine hors borne : rien, comme l'OS */
+	move.l	%d1, -(%sp)		/* modulation de note, pour update */
+	move.l	%d4, -(%sp)		/* voice_gate(piste, trig, entrée) */
+	move.l	(%a5), %d0
+	or.l	(%a3), %d0
+	move.l	%d0, -(%sp)
+	move.l	%d2, -(%sp)
+	jsr	{g('voice_gate')}
+	lea	12(%sp), %sp
+	move.l	(%sp)+, %d1
+	tst.l	%d0
+	beq.s	3f
+	movea.l	%d3, %a0		/* pas calculée : sortie à zéro */
+	moveq	#31, %d0
+2:	clr.l	(%a0)+
+	subq.l	#1, %d0
+	bpl.s	2b
+	bra.w	9f
+3:	moveq	#{TG_FIRST}, %d0
+	cmp.l	%d0, %d4
+	bcc.s	4f
+	jmp	{tg['sampler_dispatch']:#x}	/* machines d'origine, Sampler */
+4:	move.l	0xfc07800c, %d0		/* minuteur de la page System de Model-TG */
+	move.l	%d0, {tg['prof_ta']:#x}
+	movea.l	%d6, %a0		/* update puis render, comme l'OS */
+	movea.l	(%a0,%d4.l*4), %a1
+	move.l	%a2, -(%sp)
+	move.l	%fp, -(%sp)
+	move.l	%d1, -(%sp)
+	jsr	(%a1)
+	move.l	%fp, -(%sp)
+	move.l	%d3, -(%sp)
+	lea	{rnd_at:#x}, %a0
+	movea.l	(%a0,%d4.l*4), %a1
+	jsr	(%a1)
+	jsr	{tg['ah_noenv']:#x}		/* (sortie, voix) */
+	lea	20(%sp), %sp
+	move.l	0xfc07800c, %d0
+	sub.l	{tg['prof_ta']:#x}, %d0
+	bmi.s	9f
+	lea	{tg['prof_trk']:#x}, %a0
+	add.l	%d0, (%a0,%d2.l*4)
+9:	jmp	{DISPATCH[1]:#x}
+
+	.globl	tg_after
+tg_after:
+	move.l	%d3, -(%sp)		/* voice_done(piste, sortie) */
+	move.l	%d2, -(%sp)
+	jsr	{g('voice_done')}
+	addq.l	#8, %sp
+	move.l	(%a5), (%a3)		/* instructions remplacées en 0x400a7e24 */
+	movea.l	%d3, %a1
+	clr.l	%d0
+	jmp	{TG_AFTER[1]:#x}
+"""
+
+
+def segments(parts, size):
+    """Morceaux de la charge utile à ranger dans l'image (pack) : réunion des parts (adresses d'exécution), à 64 o
+    près, alignée sur 4. Le reste est à zéro : le crochet de démarrage met tout à zéro puis recopie les morceaux."""
+    rs = []
+    for p_ in parts:
+        a = int(p_["dest"], 16)
+        n = len(p_["hex"]) // 2 if "hex" in p_ else (lambda r: int(r[1], 16) - int(r[0], 16))(p_.get("syntakt") or p_["cycles"])
+        rs.append((a & ~3, (a + n + 3) & ~3))
+    out = []
+    for lo, hi in sorted(rs):
+        if out and lo <= out[-1][1] + 64:
+            out[-1][1] = max(out[-1][1], hi)
+        else:
+            out.append([lo, hi])
+    if out[0][0] < PAY or out[-1][1] > PAY + size:
+        raise SystemExit("!! morceaux hors de la charge utile")
+    return [(lo, hi - lo) for lo, hi in out]
+
+
+def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, run=None, lay=None, tg=None, segs=None):
     """run : adresse d'exécution d'une fonction du Syntakt ; lay : disposition (layout()) : zones de SRAM que le
     crochet de démarrage remplit (stub.S), adresses des états de voix."""
     defs = [f"-DST_VINIT_AT={run(0x40002544):#x}", f"-DST_RESET_AT={run(0x40003ee0):#x}",
@@ -579,15 +766,25 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, ru
     defs += [f"-DIDLE_THR={IDLE_THR}", f"-DIDLE_BLOCKS={IDLE_BLOCKS}"] + [f"-DGOV_{k.upper()}={v}" for k, v in GOV.items()]
     if meter:                                   # noms des machines (écran MACHINES) : « moyenne/voix »
         defs += ["-DLOAD_METER", f"-DMETER_BUF={meter:#x}", f"-DMETER_N={nm}"] + (["-DMETER_VOICE"] if METER_VOICE else [])
-    obj, stub, elf = tmp / "bridge.o", tmp / "stub.o", tmp / "bridge.elf"
+    defs.append(f"-DST_SRAM={gx.DST_SRAM:#x}")
+    if tg:                                      # avec Model-TG (notes/31) : voir voice_gate
+        defs += [f"-DTG_FIRST={TG_FIRST}"] + [f"-DTG_{k.upper()}={tg[k]:#x}" for k in ("rs_state", "rs_src", "sle_run", "sle_trk")]
+    obj, stub, elf, ld = tmp / "bridge.o", tmp / "stub.o", tmp / "bridge.elf", tmp / "link.ld"
     gx.run([gx.CROSS + "gcc", *gx.CFLAGS, *defs, "-c", str(gx.SRC / "bridge_engines.c"), "-o", str(obj)])
     (s0, r0, n0), (s1, r1, n1) = lay["banks"]
     if s0 != gx.DST_CODE or s1 != s0 + n0 or n0 % 4 or n1 % 4:
         raise SystemExit("!! zones de SRAM : transit au début de la charge utile, à la suite, en mots")
+    sdefs = []
+    if tg:                                      # ajout rangé en morceaux après celui de Model-TG ; puis son crochet
+        (tmp / "segs.inc").write_text("".join(f"\t.long\t{a:#x}, {n // 4}\n" for a, n in segs or [(PAY, 4)]))
+        sdefs = ["-DPACK", f"-I{tmp}", f"-DCHAIN_TO={tg['boot_extra_hook']:#x}"]
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(gx.SRC / "stub.S"), "-o", str(stub),
-            f"-DPAYLOAD_SRC={BASE + gx.IMAGE_LEN:#x}", f"-DPAYLOAD_DST={gx.DST_CODE:#x}", f"-DPAYLOAD_LONGS={payload_longs}",
-            f"-DSRAM_RUN_AT={r0:#x}", f"-DSRAM_LONGS={n0 // 4}", f"-DSRAM2_RUN_AT={r1:#x}", f"-DSRAM2_LONGS={n1 // 4}"])
-    gx.run([gx.CROSS + "ld", "-T", str(gx.SRC / "link.ld"), "-o", str(elf), str(stub), str(obj)])
+            f"-DPAYLOAD_SRC={(tg['at'] if tg else BASE + gx.IMAGE_LEN):#x}", f"-DPAYLOAD_DST={gx.DST_CODE:#x}",
+            f"-DPAYLOAD_LONGS={payload_longs}",
+            f"-DSRAM_RUN_AT={r0:#x}", f"-DSRAM_LONGS={n0 // 4}", f"-DSRAM2_RUN_AT={r1:#x}", f"-DSRAM2_LONGS={n1 // 4}",
+            *sdefs])
+    ld.write_text(LINK.format(stub=gx.CAVE, bridge=DST_BRIDGE, data=DST_BRIDGE + 0x1000))
+    gx.run([gx.CROSS + "ld", "-T", str(ld), "-o", str(elf), str(stub), str(obj)])
     blobs = {}
     for sec in (".stub", ".bridge"):
         out = tmp / (sec.strip(".") + ".bin")
@@ -608,8 +805,8 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, ru
         if len(f) > 2 and f[1].startswith(".data") and int(f[2], 16):
             raise SystemExit(f"!! passerelle : données initialisées ({f[1]}), non recopiées dans la charge utile")
     src, o, e, b = tmp / "det.S", tmp / "det.o", tmp / "det.elf", tmp / "det.bin"
-    src.write_text(detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))])
-                   + probe_asm(syms) + dispatch_asm(syms, rnd_at))
+    src.write_text(detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))], tg)
+                   + probe_asm(syms) + (dispatch_tg_asm(syms, rnd_at, tg) if tg else dispatch_asm(syms, rnd_at)))
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(src), "-o", str(o)])
     gx.run([gx.CROSS + "ld", "-Ttext", f"{STUBS:#x}", "-o", str(e), str(o)])
     gx.run([gx.CROSS + "objcopy", "-O", "binary", "-j", ".text", str(e), str(b)])
@@ -630,7 +827,8 @@ def analyse(st_img, gen):
     gx.ROOTS = GX_ROOTS + tuple(x for c in gen for x in (CATALOG[c]["update"], CATALOG[c]["render"],
                                                         *CATALOG[c].get("roots", ())))
     gx.IMM_ADDR = set(GX_IMM_ADDR) | g8.IMM_ADDR | {a for c in gen for a in CATALOG[c].get("imm", ())}
-    if gen not in _ANALYSIS:
+    key = (gen, PAY)
+    if key not in _ANALYSIS:
         with tempfile.TemporaryDirectory() as d:
             ins = gx.disasm(st_img, pathlib.Path(d))
         funcs, insns = gx.closure(ins)
@@ -648,49 +846,89 @@ def analyse(st_img, gen):
         gx.SEGMENTS, gx.PC_OK = lay["move"], blocks
         relocs = gx.relocations(st_img, ins, insns)
         patches, moved = code_patches(st_img, ins, insns, lay, relocs)
-        _ANALYSIS[gen] = dict(lay=lay, blocks=blocks, patches=patches, moved=moved, relocs=len(relocs),
+        _ANALYSIS[key] = dict(lay=lay, blocks=blocks, patches=patches, moved=moved, relocs=len(relocs),
                               funcs=len(funcs), code_bytes=sum(ins[a][0] for a in insns))
-    an = _ANALYSIS[gen]
+    an = _ANALYSIS[key]
     gx.SEGMENTS, gx.PC_OK = an["lay"]["move"], an["blocks"]
     return an
 
 
-def build_tweak(img, st_img, codes, generic=False, meter=False):
-    machines = [dict(CATALOG[c], code=c, index=6 + i) for i, c in enumerate(codes)]
+# --- version combinée avec Model-TG (notes/31) -------------------------------------------------------------------
+TG_TWEAK = DEV / "30-model-tg-st.json"   # Model-TG pour la combinaison (tools/gen_model_tg.py) : appliqué avant nous
+BOOT_CALL = 0x40000530       # jsr 0x400004b2 (remise à zéro du BSS) ; Model-TG en fait « jsr boot_extra_hook »
+END_LIMIT = 0x40200000       # l'image décompressée doit finir sous la zone de travail du bootstrap
+
+
+def tg_context(img):
+    """Model-TG pour la combinaison : son tweak, l'image après ses écritures, son bloc de code et ses symboles."""
+    import build                                 # tools/build.py
+    tw = json.loads(TG_TWEAK.read_text(encoding="utf-8"))
+    ap_ = tw["append"]
+    if len(ap_["parts"]) != 1 or ap_["dest"] != ap_["at"] or int(ap_["at"], 16) != BASE + len(img):
+        raise SystemExit("!! ajout de Model-TG inattendu (un seul morceau, en place, juste après l'OS)")
+    cur, _ = build.apply_writes(img, [tw])
+    tg = {k: int(v, 16) for k, v in tw["symbols"].items()}
+    tg.update(img=bytes(cur), blob=bytes.fromhex(ap_["parts"][0]["hex"]), blob_at=int(ap_["at"], 16),
+              at=int(ap_["at"], 16) + ap_["size"], id=tw["id"])
+    if tg["at"] != tg["reserved_end"] or tg["REGION_END"] - 0x08000000 > PAY_TG:
+        raise SystemExit("!! Model-TG : fin de son bloc ou de sa zone d'échantillons inattendue")
+    return tg
+
+
+def tweak_id(codes, generic=False, meter=False, tg=False):
+    if tg:
+        return "syntakt-tg-meter" if meter else "syntakt-tg-" + "-".join(codes)
+    return "syntakt-meter" if meter else subset_id(codes, generic)
+
+
+def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None):
+    """Tweak pour ces moteurs. tg : Model-TG (tg_context) pour la version combinée, à construire avec set_base(PAY_TG)."""
+    first = TG_FIRST if tg else 6
+    machines = [dict(CATALOG[c], code=c, index=first + i) for i, c in enumerate(codes)]
     n = len(machines)
     if not 1 <= n <= MAX_EXTRA:
         raise SystemExit("!! nombre de moteurs")
-    u32 = lambda va: struct.unpack_from(">I", img, va - BASE)[0]
+    cur = tg["img"] if tg else img              # l'image telle que nos écritures la trouvent
+    u32 = lambda va: struct.unpack_from(">I", cur, va - BASE)[0]
     check_sram_map(img, st_img)
     an = analyse(st_img, generation(codes))
     lay = an["lay"]
     size = lay["end"] - gx.DST_CODE
-    nm = 6 + n
+    nm = first + n                              # machines : 6 d'origine, le Sampler avec Model-TG, puis les nôtres
+    top = nm - 1                                # plus grand index de machine
     names_at, upd_at, rnd_at, vec_at, map_at = DATA, DATA + 4 * nm, DATA + 8 * nm, DATA + 12 * nm, DATA + 16 * nm
     strings = [m["name"] for m in machines] + [k[i] for m in machines for k in m["knobs"] for i in (0, 1)]
     at, addr = map_at + ((nm + 3) & ~3), {}
-    for s in strings:
-        if s not in addr:
-            addr[s] = at
-            at += len(s) + 1
+    for s_ in strings:
+        if s_ not in addr:
+            addr[s_] = at
+            at += len(s_) + 1
     meter_at = at                               # compteur : un nom de 8 o par machine (5 caractères au plus)
     if meter:
         at += 8 * nm
-    with tempfile.TemporaryDirectory() as d:
-        blobs, syms, stubs, ssyms = compile_code(pathlib.Path(d), machines, size // 4,
-                                                 meter_at if meter else None, rnd_at, nm, gx.move, lay)
 
-    names = [u32(g7.NAMES + 4 * i) for i in range(6)] + [addr[m["name"]] for m in machines]
+    def compile_(d, segs=None):
+        return compile_code(pathlib.Path(d), machines, size // 4, meter_at if meter else None, rnd_at, nm, gx.move,
+                            lay, tg, segs)
+    with tempfile.TemporaryDirectory() as d:
+        blobs, syms, stubs, ssyms = compile_(d)
+
+    if tg:                                      # noms : ceux de Model-TG (le Sampler montre son échantillon)
+        blob_u32 = lambda va: struct.unpack_from(">I", tg["blob"], va - tg["blob_at"])[0]
+        names = [blob_u32(tg["sampler_name_table"] + 4 * i) for i in range(7)] + [addr[m["name"]] for m in machines]
+    else:
+        names = [u32(g7.NAMES + 4 * i) for i in range(6)] + [addr[m["name"]] for m in machines]
     if meter:
         names = [meter_at + 8 * m for m in range(nm)]
-    upd = [u32(g7.UPDATE_TAB + 4 * i) for i in range(6)] + [syms[f"bridge_update_{m['engine']}"] for m in machines]
-    rnd = [u32(g7.RENDER_TAB + 4 * i) for i in range(6)] + [syms[f"bridge_render_{m['engine']}"] for m in machines]
+    pad = [u32(g7.UPDATE_TAB)] * (first - 6), [u32(g7.RENDER_TAB)] * (first - 6)   # entrée 6 du Sampler : jamais lue
+    upd = [u32(g7.UPDATE_TAB + 4 * i) for i in range(6)] + pad[0] + [syms[f"bridge_update_{m['engine']}"] for m in machines]
+    rnd = [u32(g7.RENDER_TAB + 4 * i) for i in range(6)] + pad[1] + [syms[f"bridge_render_{m['engine']}"] for m in machines]
     data = bytearray()
     for t in (names, upd, rnd, range(1, nm + 1)):
         data += b"".join(g7.be32(x) for x in t)
-    data += img[MAP - BASE:MAP - BASE + 6] + bytes(range(6, nm)) + bytes(((nm + 3) & ~3) - nm)   # machine -> entrée
-    for s in addr:
-        data += s.encode("ascii") + b"\0"
+    data += cur[MAP - BASE:MAP - BASE + 6] + bytes(range(6, nm)) + bytes(((nm + 3) & ~3) - nm)   # machine -> entrée
+    for s_ in addr:
+        data += s_.encode("ascii") + b"\0"
     if meter:
         data += b"--/--\0\0\0" * nm
     if DATA + len(data) > DESCN:
@@ -715,49 +953,76 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
     writes = []
 
     def w(va, old, new_):
-        if img[va - BASE:va - BASE + len(old)] != old:
-            raise SystemExit(f"!! {va:#x} : {old.hex()} attendu, {img[va - BASE:va - BASE + len(old)].hex()} trouvé")
+        if cur[va - BASE:va - BASE + len(old)] != old:
+            raise SystemExit(f"!! {va:#x} : {old.hex()} attendu, {cur[va - BASE:va - BASE + len(old)].hex()} trouvé")
         writes.append({"off": va - BASE, "old": old.hex(), "new": new_.hex()})
 
     def moveq(va, old, new_, reg_byte):
         w(va, bytes([reg_byte, old]), bytes([reg_byte, new_]))
 
-    stub = blobs[".stub"]
+    def jmp(va):
+        return bytes.fromhex("4ef9") + g7.be32(va)
+
+    stub = blobs[".stub"]                       # (avec Model-TG, recompilé plus bas avec la liste des morceaux)
     w(gx.CAVE, b"\xff" * len(stub), stub)
-    writes.append(sprites.redirect_write(gx.CAVE))
-    w(gx.HOOK, bytes.fromhex(gx.HOOK_OLD), bytes.fromhex("4ef9") + g7.be32(gx.CAVE) + bytes.fromhex("4e71"))
+    red = sprites.redirect_write(gx.CAVE)
+    w(BASE + red["off"], bytes.fromhex(red["old"]), bytes.fromhex(red["new"]))
+    if tg:                                      # notre crochet, puis le sien (stub.S, CHAIN_TO)
+        w(BOOT_CALL + 2, g7.be32(tg["boot_extra_hook"]), g7.be32(gx.CAVE))
+    else:
+        w(gx.HOOK, bytes.fromhex(gx.HOOK_OLD), bytes.fromhex("4ef9") + g7.be32(gx.CAVE) + bytes.fromhex("4e71"))
+    # Avec Model-TG, la table des noms est la sienne (0x400a2614) ; la table render d'origine n'est plus lue que par
+    # son dispatch (ses 6 entrées), et sa branche d'Amp Decay (0x4005a6b6) remplace l'une des 5 lectures de ROWS.
+    names_src = tg["sampler_name_table"] if tg else g7.NAMES
     moved = {g7.DESC: DESCN, g7.DESC + 8: DESCN + 8, g7.DESC + 0x20: DESCN + 0x20, g7.ROWS: ROWSN, g7.CCROWS: CCROWSN,
-             g7.NAMES: names_at, g7.UPDATE_TAB: upd_at, g7.RENDER_TAB: rnd_at, MAP: map_at}
+             names_src: names_at, g7.UPDATE_TAB: upd_at, g7.RENDER_TAB: rnd_at, MAP: map_at}
+    want = {g7.DESC: 34, g7.DESC + 8: 1, g7.DESC + 0x20: 2, g7.ROWS: 4 if tg else 5, g7.CCROWS: 2, MAP: 1,
+            g7.RENDER_TAB: 0 if tg else 1}
     for old, new_ in moved.items():
-        rs = g7.refs32(img, old)
-        if len(rs) != {g7.DESC: 34, g7.DESC + 8: 1, g7.DESC + 0x20: 2, g7.ROWS: 5, g7.CCROWS: 2, MAP: 1}.get(old, 1):
+        rs = g7.refs32(cur, old)
+        if len(rs) != want.get(old, 1):
             raise SystemExit(f"!! références à {old:#x} : {len(rs)}")
         for va in rs:
             if DISPATCH[0] <= va < DISPATCH[1]:
                 continue                        # dans le code remplacé par le détour des voix muettes
             w(va, g7.be32(old), g7.be32(new_))
-    w(DISPATCH[0], img[DISPATCH[0] - BASE:DISPATCH[0] - BASE + 6], bytes.fromhex("4ef9") + g7.be32(ssyms["dispatch"]))
+    w(DISPATCH[0], cur[DISPATCH[0] - BASE:DISPATCH[0] - BASE + 6], jmp(ssyms["dispatch"]))
+    if tg:
+        w(TG_AFTER[0], bytes.fromhex("269522434280"), jmp(ssyms["tg_after"]))
     jumps = g7.JUMPS + g8.JUMPS8
     for va in g7.BOUNDS:
         if va in {j[0] for j in jumps}:
             continue
-        b0, b1 = img[va - BASE], img[va - BASE + 1]
+        b0, b1 = cur[va - BASE], cur[va - BASE + 1]
         if b0 & 0xf1 != 0x70 or b1 not in (75, 76):
             raise SystemExit(f"!! {va:#x}")
         moveq(va, b1, b1 + 5 * n, b0)
-    top = 5 + n                                             # plus grand index de machine
+    # bornes « machine <= 5 » (Model-TG en a déjà mis certaines à 6)
     for va, reg in ((0x400a7dba, 0x72), (0x400a7df4, 0x70), (0x4005a6a6, 0x72), (0x400147a4, 0x70),
                     (0x400148aa, 0x72), (0x400148b2, 0x70), (0x400a25e0, 0x70)):
-        moveq(va, 5, top, reg)
+        if tg and va == 0x4005a6a6:
+            continue                            # son détour sampler_lfo_gate : chaîné par lfo_gate (plus bas)
+        if cur[va - BASE] != reg or cur[va - BASE + 1] not in (5, 6):
+            raise SystemExit(f"!! borne {va:#x}")
+        moveq(va, cur[va - BASE + 1], top, reg)
     moveq(0x4005a572, 5, 6, 0x72)                           # champ machine « propre à une machine » : <= 6
     w(0x4005a2b8, bytes.fromhex("487800c0"), bytes.fromhex("4878") + (32 * nm).to_bytes(2, "big"))
-    if n > 1:
-        moveq(0x400a26a2, 80, 80 - 7 * (n - 1), 0x78)       # 1er repère plus à gauche : les 6 + n repères tiennent
-    moveq(0x400a26e8, 6, nm, 0x70)
-    for va in (0x4001b69c, 0x400a40a6, 0x400a4fb0):
-        moveq(va, 5, 1, 0x70)
+    if nm > 7:
+        moveq(0x400a26a2, 80, 80 - 7 * (nm - 7), 0x78)      # 1er repère plus à gauche : les nm repères tiennent
+    moveq(0x400a26e8, cur[0x400a26e8 - BASE + 1], nm, 0x70)
+    if not tg:                                  # icônes bornées : SNARE au-delà de 5 (avec Model-TG, CHORD, comme lui)
+        for va in (0x4001b69c, 0x400a40a6, 0x400a4fb0):
+            moveq(va, 5, 1, 0x70)
+    chained = {0x4004df5c: "descr_hook", 0x4004df76: "descr_b_hook"}
     for va, old, sym in jumps:
-        w(va, bytes.fromhex(old), bytes.fromhex("4ef9") + g7.be32(ssyms[sym]))
+        old = bytes.fromhex(old)
+        if tg and va in chained:                # ses détours, appelés par les nôtres
+            old = jmp(tg[chained[va]])
+        w(va, old, jmp(ssyms[sym]))
+    if tg:
+        w(AMP_ROW, bytes.fromhex("20065286eb88"), jmp(ssyms["amp_row"]))     # move.l d6,d0 ; addq #1,d6 ; lsl #5,d0
+        w(0x4005a6a6, jmp(tg["sampler_lfo_gate"]), jmp(ssyms["lfo_gate"]))
+        w(0x4005a6b6, jmp(tg["sampler_amp_gate"]), jmp(ssyms["amp_gate"]))
     for va, old, sym in g7.CALLS:
         w(va, bytes.fromhex(old), bytes.fromhex("4eb9") + g7.be32(ssyms[sym]) + bytes.fromhex("4e71"))
     # sonde du régulateur de charge autour de l'appel de la fonction audio (jsr abs.l)
@@ -765,10 +1030,6 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
     # tables d'ondes de CHORD : lues dans la charge utile, leur place en SRAM reçoit le code du Syntakt
     ptrs = [u32(CHORD_PTRS + 4 * i) for i in range(31)]
     w(CHORD_PTRS, b"".join(g7.be32(x) for x in ptrs), b"".join(g7.be32(chord_moved(x, lay)) for x in ptrs))
-    writes.sort(key=lambda x: x["off"])
-    for a_, b_ in zip(writes, writes[1:]):
-        if a_["off"] + len(a_["new"]) // 2 > b_["off"]:
-            raise SystemExit(f"!! écritures qui se chevauchent en {BASE + b_['off']:#x}")
 
     parts = [{"dest": f"{dst:#x}", "syntakt": [f"{lo:#x}", f"{hi:#x}"]} for lo, hi, dst in lay["copies"]]
     for lo, hi, dst in gx.ST_SRAM_INIT:
@@ -784,45 +1045,78 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         {"dest": f"{DESCN:#x}", "cycles": [f"{g7.DESC:#x}", f"{g7.DESC + g7.NDESC * g7.DSTRIDE:#x}"]},
         {"dest": f"{DESCN + g7.NDESC * g7.DSTRIDE:#x}", "hex": bytes(new).hex()},
     ]
-    reloc = [[f"{at:#x}", old.hex(), new_.hex()] for at, old, new_ in an["patches"]]
-    alg_max = g7.DESC + g7.ALG_DESC * g7.DSTRIDE + 0x0c
-    if u32(alg_max) != 5 << 8:
+    reloc = [[f"{at_:#x}", old.hex(), new_.hex()] for at_, old, new_ in an["patches"]]
+    # descripteurs : copie de ceux de TON MAIN OS, puis ce qui change (mots de 4 o) : le max d'Algorithm (choix de la
+    # machine) et, avec Model-TG, ses retouches (Attack, Filtre, Résonance sur toutes les machines)
+    lo_, hi_ = g7.DESC - BASE, g7.DESC - BASE + g7.NDESC * g7.DSTRIDE
+    final, orig = bytearray(cur[lo_:hi_]), img[lo_:hi_]
+    alg = g7.ALG_DESC * g7.DSTRIDE + 0x0c
+    if struct.unpack_from(">I", final, alg)[0] != (first - 1) << 8:
         raise SystemExit("!! max du paramètre Algorithm")
-    reloc.append([f"{alg_max - g7.DESC + DESCN:#x}", gx.be32(5 << 8), gx.be32(top << 8)])
-    tid = "syntakt-meter" if meter else subset_id(codes, generic)
-    others = sorted(({"sdvintage-snare", "sdvintage-exact", "sdvintage-7th", "syntakt-vintage", "syntakt-meter", "model-tg"}
-                     | {subset_id(c) for c in subsets()}) - {tid})
-    return {
+    struct.pack_into(">I", final, alg, top << 8)
+    reloc += [[f"{DESCN + k:#x}", orig[k:k + 4].hex(), final[k:k + 4].hex()]
+              for k in range(0, len(final), 4) if final[k:k + 4] != orig[k:k + 4]]
+    append = {
+        "at": f"{(tg['at'] if tg else BASE + gx.IMAGE_LEN):#x}",
+        "dest": f"{gx.DST_CODE:#x}",
+        "size": size,
+        "syntakt": {"os": "1.41", "syx_sha256": syntakt.SYX_SHA256, "section": 7, "section_sha256": syntakt.DSP_SHA256},
+        "parts": parts,
+        "reloc": reloc,
+    }
+    if tg:                                      # rangé en morceaux (stub.S, PACK) : recompilé avec leur liste
+        segs = segments(parts, size)
+        append["pack"] = [[f"{a_:#x}", n_] for a_, n_ in segs]
+        if tg["at"] + sum(n_ for _, n_ in segs) > END_LIMIT:
+            raise SystemExit(f"!! ajout de {sum(n_ for _, n_ in segs)} o : l'image dépasserait {END_LIMIT:#x}")
+        with tempfile.TemporaryDirectory() as d:
+            blobs2, _, stubs2, _ = compile_(d, segs)
+        if blobs2[".bridge"] != blobs[".bridge"] or stubs2 != stubs:
+            raise SystemExit("!! recompilation avec les morceaux : passerelle différente")
+        stub = blobs2[".stub"]
+        writes[0] = {"off": gx.CAVE - BASE, "old": (b"\xff" * len(stub)).hex(), "new": stub.hex()}
+    if len(stub) > sprites.zone(gx.CAVE)[1]:
+        raise SystemExit("!! crochet de démarrage trop grand pour sa place")
+    writes.sort(key=lambda x: x["off"])
+    for a_, b_ in zip(writes, writes[1:]):
+        if a_["off"] + len(a_["new"]) // 2 > b_["off"]:
+            raise SystemExit(f"!! écritures qui se chevauchent en {BASE + b_['off']:#x}")
+
+    tid = tweak_id(codes, generic, meter, bool(tg))
+    ids = ({"sdvintage-snare", "sdvintage-exact", "sdvintage-7th", "syntakt-vintage", "syntakt-meter", "model-tg"}
+           | {subset_id(c) for c in subsets()})
+    if tg:
+        ids |= {"syntakt-tg-meter"} | {tweak_id(c, tg=True) for c in subsets()}
+    which = ", ".join(f"{m['name']} = {m['label']} (machine {m['index'] + 1})" for m in machines)
+    out = {
         "id": tid,
-        "order": 90 if meter else 24,
-        "name": ("DIAGNOSTIC, compteur de charge. " if meter else "") +
+        "order": (91 if meter else 31) if tg else (90 if meter else 24),
+        "name": ("DIAGNOSTIC, compteur de charge. " if meter else "") + ("Model-TG + " if tg else "") +
                 "Vrais moteurs du Syntakt en machines ajoutées : " + ", ".join(f"{m['name']} ({m['label']})" for m in machines),
         "description": ([
             "FIRMWARE DE DIAGNOSTIC (notes/23, notes/27) : l'écran MACHINES affiche, pour chaque machine,",
             "« moyenne/voix » (charge moyenne, coût de la voix qui joue cette machine) ou « pic/moyenne » de la",
             "charge audio, en % de la durée d'un bloc de 32 échantillons, mis à jour toutes les 0,5 s.",
             "À n'utiliser que pour mesurer.",
-        ] if meter else []) + [
+        ] if meter else []) + ([
+            "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
+            "les moteurs du Syntakt suivent : " + which + ".",
+        ] if tg else [
             "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
-            "les 6 d'origine (notes/20) : " + ", ".join(f"{m['name']} = {m['label']} (machine {m['index'] + 1})" for m in machines) + ".",
-            "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
+            "les 6 d'origine (notes/20) : " + which + ".",
+        ]) + [
+            "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py" + (" --tg." if tg else "."),
             "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier.",
         ],
         "gov": {k: f"{syms[k]:#x}" for k in sorted(syms) if k.startswith("gov_") or k in ("audio_end", "voice_gate", "voice_after")},
         "device": "Model:Cycles",
         "os": "1.13",
         "section": 3,
-        "conflicts": others,
-        "writes": writes,
-        "append": {
-            "at": f"{BASE + gx.IMAGE_LEN:#x}",
-            "dest": f"{gx.DST_CODE:#x}",
-            "size": size,
-            "syntakt": {"os": "1.41", "syx_sha256": syntakt.SYX_SHA256, "section": 7, "section_sha256": syntakt.DSP_SHA256},
-            "parts": parts,
-            "reloc": reloc,
-        },
-    }, ndesc
+    }
+    if tg:
+        out["requires"] = [tg["id"]]
+    out.update({"conflicts": sorted(ids - {tid}), "writes": writes, "append": append})
+    return out, ndesc
 
 
 def main():
@@ -835,6 +1129,7 @@ def main():
     ap.add_argument("--out", help="fichier de sortie (sinon tweaks/…/24-<id>.json)")
     ap.add_argument("--check", action="store_true", help="vérifie que les JSON versionnés correspondent")
     ap.add_argument("--meter", action="store_true", help="firmware de diagnostic : compteur de charge (notes/23)")
+    ap.add_argument("--tg", action="store_true", help="version combinée avec Model-TG (notes/31) : 31-syntakt-tg-….json")
     args = ap.parse_args()
     img = g7.cycles_main(args.cycles)
     if len(img) != gx.IMAGE_LEN:
@@ -847,19 +1142,25 @@ def main():
             raise SystemExit(f"!! moteurs inconnus : {set(want) - set(CATALOG)}")
         todo = [[c for c in CATALOG if c in want]]
     st_img = syntakt.dsp_image(args.syntakt)
+    tg = None
+    if args.tg:
+        tg = tg_context(img)
+        set_base(PAY_TG)
     bad = 0
     for codes in todo:
         if tuple(codes) in LEGACY and not args.generic and not args.meter:
             raise SystemExit(f"!! {codes} : tweak d'origine {LEGACY[tuple(codes)]} (ou --generic)")
         gen = generation(codes)
-        if gen not in _ANALYSIS:
+        if (gen, PAY) not in _ANALYSIS:
             an = analyse(st_img, gen)
             print(f"  Syntakt jusqu'à {CATALOG[gen[-1]]['label']} : {an['funcs']} fonctions, {an['code_bytes']} o de code,"
                   f" {len(an['blocks'])} blocs, {an['relocs']} relocalisations, {an['moved']} sauts recalculés")
-        tweak, ndesc = build_tweak(img, st_img, codes, args.generic, args.meter)
+        tweak, ndesc = build_tweak(img, st_img, codes, args.generic, args.meter, tg)
         path = pathlib.Path(args.out) if args.out else DEV / f"{tweak['order']}-{tweak['id']}.json"
         text = json.dumps(tweak, indent=1) + "\n"
-        print(f"  {tweak['id']} : {len(tweak['writes'])} écritures, {ndesc} descripteurs, charge utile {tweak['append']['size']} o")
+        packed = f", rangée en {sum(n for _, n in tweak['append']['pack'])} o" if "pack" in tweak["append"] else ""
+        print(f"  {tweak['id']} : {len(tweak['writes'])} écritures, {ndesc} descripteurs, charge utile "
+              f"{tweak['append']['size']} o{packed}")
         if args.check:
             ok = path.exists() and path.read_text(encoding="utf-8") == text
             print(f"    {path.name} {'est à jour' if ok else 'NE CORRESPOND PAS (autre GCC ?)'}")

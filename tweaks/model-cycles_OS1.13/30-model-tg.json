@@ -8,7 +8,7 @@
   "Machine Sampler (7e machine), r\u00e9\u00e9chantillonnage, retrig et effets master, Attack / Filtre / R\u00e9sonance sur",
   "les machines d'origine, Scale Lock, envoi d'\u00e9chantillons par Elektron Transfer, page System, et moins de",
   "charge processeur. Contient d\u00e9j\u00e0 les tweaks de drumkilla (mute verrouill\u00e9 modifi\u00e9, \u00e9coute d'un pas,",
-  "d\u00e9filement des noms). Exclusif : pas avec les moteurs du Syntakt pour l'instant (notes/31).",
+  "d\u00e9filement des noms). Avec les moteurs du Syntakt, le flasher prend model-tg-st (notes/31).",
   "G\u00e9n\u00e9r\u00e9 par tools/gen_model_tg.py. Aucun octet Elektron dans le code de Model-TG."
  ],
  "version": "454963b",
@@ -20,6 +20,7 @@
  "conflicts": [
   "browser-scroll",
   "latching-mute",
+  "model-tg-st",
   "sdvintage-7th",
   "sdvintage-exact",
   "sdvintage-snare",

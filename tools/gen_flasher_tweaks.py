@@ -47,15 +47,18 @@ FEATURES = [
     {
         "id": "model-tg",
         "label": "Model-TG",
-        "desc": "Machine Sampler, reechantillonnage, retrig et effets master, et plus. Exclusif.",
+        "desc": "Machine Sampler, reechantillonnage, retrig et effets master, et plus.",
         "status": "experimental",
         "credit": {"kind": "by", "who": "TinyGregAudio", "repo": "TinyGregAudio/Model-TG"},
-        # Model-TG contient deja les tweaks de drumkilla, et ne se combine pas (encore) avec les moteurs du Syntakt
-        "excludes": ["latching-mute", "trig-preview", "browser-scroll", "syntakt"],
+        # Model-TG contient deja les tweaks de drumkilla
+        "excludes": ["latching-mute", "trig-preview", "browser-scroll"],
         "license": "LICENSE-Model-TG",
         "variants": [
             {"file": "30-model-tg", "label": None},
         ],
+        # avec les moteurs du Syntakt : la base de la version combinee (notes/31), et pour chaque combinaison de
+        # moteurs son tweak syntakt-tg-<moteurs> (« tg » des combinaisons de la carte des moteurs)
+        "with": {"syntakt": "30-model-tg-st"},
     },
     {
         "id": "latching-mute",
@@ -111,7 +114,8 @@ def engine_feature(f, load):
     for codes in gs.subsets():
         t = load(gs.subset_id(codes))
         combos.append({"id": t["id"], "engines": codes, "tested": tuple(codes) in gs.HW_TESTED,
-                       "label": ", ".join(gs.CATALOG[c]["name"] for c in codes)})
+                       "label": ", ".join(gs.CATALOG[c]["name"] for c in codes),
+                       "tg": load(gs.tweak_id(codes, tg=True))["id"]})      # avec Model-TG (notes/31)
     return engines, combos
 
 
@@ -143,6 +147,9 @@ def render():
             feat["needs"] = f["needs"]
         if f.get("excludes"):
             feat["excludes"] = f["excludes"]
+        if f.get("with"):                       # autre tweak quand une autre carte est cochee aussi
+            feat["with"] = {g: load(json.loads((DEV_DIR / f"{v}.json").read_text(encoding="utf-8"))["id"])["id"]
+                            for g, v in f["with"].items()}
         if f.get("license"):                    # texte de la licence, servi a cote de la page (licenses())
             feat["license"] = f["license"] + ".txt"
         features.append(feat)

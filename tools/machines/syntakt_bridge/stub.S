@@ -6,12 +6,36 @@
 	.text
 	.globl	boot_stub
 boot_stub:
+#ifdef PACK
+	/* avec Model-TG (notes/31) : la charge utile est rangee en morceaux apres son bloc (segs.inc : adresse, mots) ;
+	 * tout a zero, puis chaque morceau a sa place. Seuls d0, d1, a0 et a1 servent : appele par le jsr de 0x40000530,
+	 * a la place de boot_extra_hook de Model-TG, ou l'on finit (CHAIN_TO). */
+	lea	PAYLOAD_DST, %a1
+	move.l	#PAYLOAD_LONGS, %d0
+0:	clr.l	(%a1)+
+	subq.l	#1, %d0
+	bne.s	0b
+	lea	PAYLOAD_SRC, %a0
+	lea	segs, %a1
+	move.l	%a1, %d1
+4:	movea.l	%d1, %a1
+	move.l	4(%a1), %d0
+	beq.s	6f
+	movea.l	(%a1), %a1
+	addq.l	#8, %d1
+5:	move.l	(%a0)+, (%a1)+
+	subq.l	#1, %d0
+	bne.s	5b
+	bra.s	4b
+6:
+#else
 	lea	PAYLOAD_SRC, %a0
 	lea	PAYLOAD_DST, %a1
 	move.l	#PAYLOAD_LONGS, %d0
 1:	move.l	(%a0)+, (%a1)+
 	subq.l	#1, %d0
 	bne.s	1b
+#endif
 #ifdef SRAM_RUN_AT
 	/* gen_syntakt_engines.py (notes/28) : le debut de la charge utile (code et tables du Syntakt) passe en SRAM
 	 * interne, a la place des tables d'ondes de CHORD, apres l'initialisation de la SRAM par l'OS (0x4000045c) */
@@ -30,6 +54,14 @@ boot_stub:
 	subq.l	#1, %d0
 	bne.s	3b
 #endif
+#ifdef CHAIN_TO
+	jmp	CHAIN_TO		/* boot_extra_hook de Model-TG (ACR1, remise a zero du BSS sauf son bloc) */
+	.align	2
+segs:
+#include "segs.inc"
+	.long	0, 0
+#else
 	lea	-16(%sp), %sp		/* instructions deplacees de 0x400004b2 */
 	movem.l	%d4-%d7, (%sp)
 	jmp	0x400004ba
+#endif

@@ -5,8 +5,13 @@ propre build l'exporte pour ce flasher (docs/PAYLOAD.md de Model-TG), depuis un 
 
 Model-TG est un tweak « append » sans Syntakt : ses écritures sur le MAIN OS d'origine, et un seul morceau
 ajouté après l'image (l'espace vide jusqu'à 0x401ab750 et son code, qui s'exécute en place, dans des blocs du
-cache du système de fichiers). Il est exclusif : il ne se combine pas avec les moteurs du Syntakt (pour
-l'instant), ni avec les tweaks de drumkilla, qu'il contient déjà.
+cache du système de fichiers). Il ne se combine pas avec les tweaks de drumkilla, qu'il contient déjà.
+
+Deux tweaks :
+  - 30-model-tg.json : Model-TG tel quel (même empreinte que son build) ;
+  - 30-model-tg-st.json : la base de la version combinée avec les moteurs du Syntakt (notes/31), construite par son
+    build depuis une copie de sa source avec les retouches de ST_PATCHES, et les adresses de ses symboles dont nos
+    détours ont besoin (gen_syntakt_engines.py --tg). Le flasher ne la prend qu'avec un tweak syntakt-tg-….
 
     git clone https://github.com/TinyGregAudio/Model-TG vendor/Model-TG
     git -C vendor/Model-TG checkout <MODEL_TG_COMMIT>
@@ -23,6 +28,7 @@ import pathlib
 import shutil
 import subprocess
 import sys
+import tempfile
 
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -35,6 +41,7 @@ import test_sdvintage as T         # noqa: E402
 
 DEV = HERE.parent / "tweaks" / "model-cycles_OS1.13"
 OUT = DEV / "30-model-tg.json"
+OUT_ST = DEV / "30-model-tg-st.json"
 LICENSE_OUT = DEV / "LICENSE-Model-TG"
 MODEL_TG_REPO = "TinyGregAudio/Model-TG"
 MODEL_TG_COMMIT = "454963b78c329e3c4df2f2f3c972abb3db0ce289"     # 01/10/2026, « Export Model-TG as a Modded-Cycles tweak »
@@ -45,13 +52,45 @@ def git(repo, *args):
     return subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True, text=True).stdout.strip()
 
 
-def export(cycles, repo):
-    """Tweak exporté par le build de Model-TG (dictionnaire)."""
+# --- version combinée (notes/31 §4) : retouches de sa source, (fichier, texte d'origine, nouveau texte, pourquoi) ---
+# Une seule : sa zone d'échantillons (0x4a800000..0x4e800000, vue sans cache des 64 Mo 0x42800000..0x46800000)
+# s'arrête 1 Mo plus bas, pour nos moteurs du Syntakt (gen_syntakt_engines.PAY_TG = 0x46700000). Tout ce qu'il y
+# range au sommet (cordes de Pluck, noms, historiques de retrig...) est défini depuis REGION_END et descend avec.
+ST_PATCHES = (
+    ("src/model_tg.s", "    REGION_END  = 0x4e800000\n", "    REGION_END  = 0x4e700000\n",
+     "zone d'échantillons : 1 Mo de moins, laissé aux moteurs du Syntakt (0x46700000..0x46800000)"),
+)
+# Ses symboles dont nos détours ont besoin (gen_syntakt_engines.py --tg) : chaînage, page System, rééchantillonnage
+ST_SYMBOLS = ("blob_start", "reserved_end", "REGION_END", "param_table", "boot_extra_hook", "sampler_dispatch",
+              "descr_hook", "descr_b_hook", "sampler_lfo_gate", "sampler_amp_gate", "sampler_name_table",
+              "apply_names", "mod_held", "prof_ta", "prof_trk", "rs_state", "rs_src", "sle_run", "sle_trk",
+              "ah_noenv", "voice_ptr")
+
+
+def export(cycles, repo, patches=()):
+    """Tweak exporté par le build de Model-TG (dictionnaire), et ses symboles. Avec des retouches, le build se fait
+    sur une copie de sa source (le clone reste propre)."""
     head = git(repo, "rev-parse", "HEAD")
     if head != MODEL_TG_COMMIT:
         raise SystemExit(f"!! {repo} est au commit {head[:7]}, attendu {MODEL_TG_COMMIT[:7]} (git checkout {MODEL_TG_COMMIT})")
     if git(repo, "status", "--porcelain"):
         raise SystemExit(f"!! {repo} a des modifications locales : il faut un clone propre")
+    if patches:
+        with tempfile.TemporaryDirectory() as d:
+            work = pathlib.Path(d) / "Model-TG"
+            shutil.copytree(repo, work, ignore=shutil.ignore_patterns(".git", "build"))
+            for f, old, new, _ in patches:
+                text = (work / f).read_text(encoding="utf-8")
+                if text.count(old) != 1:
+                    raise SystemExit(f"!! retouche introuvable dans {f} : {old.strip()}")
+                (work / f).write_text(text.replace(old, new), encoding="utf-8")
+            tw, stock, log, syms = export_build(cycles, work)
+        tw["version"] = git(repo, "describe", "--tags", "--always")
+        return tw, stock, log, syms
+    return export_build(cycles, repo)
+
+
+def export_build(cycles, repo):
     stock = T.main_os_from_syx(cycles)
     if build.sha(stock) != STOCK_SHA256:
         raise SystemExit("!! ce n'est pas le MAIN OS 1.13 officiel")
@@ -68,7 +107,38 @@ def export(cycles, repo):
     if r.returncode:
         raise SystemExit("!! build de Model-TG :\n" + r.stdout[-2000:] + r.stderr[-2000:])
     tw = json.loads(out.read_text(encoding="utf-8"))
-    return tw, stock, r.stdout
+    syms = {}
+    for line in gx.run([gx.CROSS + "nm", str(work / "_b.elf")]).splitlines():
+        p_ = line.split()
+        if len(p_) == 3:
+            syms[p_[2]] = int(p_[0], 16)
+    return tw, stock, r.stdout, syms
+
+
+def adapt_st(tw, stock, syms):
+    """La base de la version combinée (30-model-tg-st.json)."""
+    out = adapt(tw, stock)
+    others = sorted(set(out["conflicts"]) - {"model-tg-st"} | {"model-tg"})
+    missing = [n for n in ST_SYMBOLS if n not in syms]
+    if missing:
+        raise SystemExit(f"!! symboles absents du build de Model-TG : {missing}")
+    if syms["REGION_END"] != gs.PAY_TG + 0x08000000 or syms["reserved_end"] != BASE + len(stock) + tw["append"]["size"]:
+        raise SystemExit("!! zone d'échantillons ou fin du bloc de Model-TG inattendues")
+    out.update({
+        "id": "model-tg-st",
+        "name": "Model-TG (TinyGregAudio), base de la version avec les moteurs du Syntakt",
+        "description": [
+            f"Model-TG de TinyGregAudio, https://github.com/{MODEL_TG_REPO} (licence MIT, texte dans",
+            "LICENSE-Model-TG), commit " + MODEL_TG_COMMIT[:7] + ", construit par son propre build depuis une copie de",
+            "sa source avec ces retouches (tools/gen_model_tg.py, ST_PATCHES) :",
+            *[f"  - {f} : {why}" for f, _, _, why in ST_PATCHES],
+            "Base de la version combinée Model-TG + moteurs du Syntakt (notes/31) : ne s'installe qu'avec un tweak",
+            "syntakt-tg-…, qui s'ajoute après lui et chaîne ses détours.",
+        ],
+        "conflicts": others,
+        "symbols": {n: f"{syms[n]:#x}" for n in ST_SYMBOLS},
+    })
+    return out
 
 
 def adapt(tw, stock):
@@ -80,7 +150,7 @@ def adapt(tw, stock):
     if BASE + len(stock) + tw["append"]["size"] > 0x40200000:
         raise SystemExit("!! OS agrandi au-delà de la zone de travail du bootstrap (0x40200000)")
     others = sorted(set(tw["conflicts"]) | {gs.subset_id(c) for c in gs.subsets()}
-                    | {"sdvintage-snare", "sdvintage-exact", "sdvintage-7th", "syntakt-vintage", "syntakt-meter"})
+                    | {"sdvintage-snare", "sdvintage-exact", "sdvintage-7th", "syntakt-vintage", "syntakt-meter", "model-tg-st"})
     return {
         "id": "model-tg",
         "order": 30,
@@ -91,7 +161,7 @@ def adapt(tw, stock):
             "Machine Sampler (7e machine), rééchantillonnage, retrig et effets master, Attack / Filtre / Résonance sur",
             "les machines d'origine, Scale Lock, envoi d'échantillons par Elektron Transfer, page System, et moins de",
             "charge processeur. Contient déjà les tweaks de drumkilla (mute verrouillé modifié, écoute d'un pas,",
-            "défilement des noms). Exclusif : pas avec les moteurs du Syntakt pour l'instant (notes/31).",
+            "défilement des noms). Avec les moteurs du Syntakt, le flasher prend model-tg-st (notes/31).",
             "Généré par tools/gen_model_tg.py. Aucun octet Elektron dans le code de Model-TG.",
         ],
         "version": tw["version"],
@@ -116,20 +186,29 @@ def main():
     ap.add_argument("--check", action="store_true", help="vérifie que le JSON versionné correspond")
     args = ap.parse_args()
     repo = pathlib.Path(args.model_tg).resolve()
-    tw, stock, log = export(pathlib.Path(args.cycles).resolve(), repo)
-    print("\n".join("  " + x.strip() for x in log.splitlines() if "MAIN OS sha256" in x or "one blob" in x
-                    or "Modded-Cycles tweak" in x))
-    out = adapt(tw, stock)
-    text = json.dumps(out, indent=1) + "\n"
+    cycles = pathlib.Path(args.cycles).resolve()
     lic = (repo / "LICENSE").read_text(encoding="utf-8")
+    bad = 0
+    for path, patches in ((OUT, ()), (OUT_ST, ST_PATCHES)):
+        tw, stock, log, syms = export(cycles, repo, patches)
+        print("\n".join("  " + x.strip() for x in log.splitlines() if "MAIN OS sha256" in x or "one blob" in x
+                        or "Modded-Cycles tweak" in x))
+        out = adapt_st(tw, stock, syms) if patches else adapt(tw, stock)
+        text = json.dumps(out, indent=1) + "\n"
+        if args.check:
+            ok = path.exists() and path.read_text(encoding="utf-8") == text
+            print(f"  {path.name} {'est à jour' if ok else 'NE CORRESPOND PAS (autre version des binutils ?)'}")
+            bad += not ok
+            continue
+        path.write_text(text, encoding="utf-8")
+        print(f"  écrit : {path.relative_to(HERE.parent)} ({len(out['writes'])} écritures, {out['append']['size']} o "
+              f"ajoutés, MAIN OS {out['result_sha256'][:8]}…)")
     if args.check:
-        ok = OUT.exists() and OUT.read_text(encoding="utf-8") == text and LICENSE_OUT.read_text(encoding="utf-8") == lic
-        print(f"  {OUT.name} {'est à jour' if ok else 'NE CORRESPOND PAS (autre version des binutils ?)'}")
-        raise SystemExit(0 if ok else 1)
-    OUT.write_text(text, encoding="utf-8")
+        ok = LICENSE_OUT.read_text(encoding="utf-8") == lic
+        print(f"  {LICENSE_OUT.name} {'est à jour' if ok else 'NE CORRESPOND PAS'}")
+        raise SystemExit(0 if ok and not bad else 1)
     LICENSE_OUT.write_text(lic, encoding="utf-8")
-    print(f"  écrit : {OUT.relative_to(HERE.parent)} ({len(out['writes'])} écritures, {out['append']['size']} o ajoutés, "
-          f"MAIN OS {out['result_sha256'][:8]}…) et {LICENSE_OUT.name}")
+    print(f"  écrit : {LICENSE_OUT.name}")
 
 
 if __name__ == "__main__":

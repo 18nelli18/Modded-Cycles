@@ -64,8 +64,10 @@ def _emac_instrs(main_os, ranges):
     return _EMAC_CACHE[key]
 
 
-def _emac_payload(payload):
-    key = ("payload", hashlib.sha256(payload).hexdigest())
+def _emac_payload(payload, dst=PAYLOAD_DST):
+    """Instructions EMAC de la charge utile copiée à dst (mêmes décalages que PAYLOAD_CODE et SRAM_CODE depuis
+    PAYLOAD_DST : gen_syntakt_engines.LAYOUT)."""
+    key = ("payload", dst, hashlib.sha256(payload).hexdigest())
     if key not in _EMAC_CACHE:
         fd, path = tempfile.mkstemp(suffix=".bin")
         try:
@@ -73,8 +75,9 @@ def _emac_payload(payload):
             os.close(fd)
             instrs = {}
             for lo, hi in PAYLOAD_CODE:
-                if lo - PAYLOAD_DST < len(payload):
-                    instrs.update(emac.disasm(path, PAYLOAD_DST, lo, min(hi, PAYLOAD_DST + len(payload))))
+                lo, hi = lo - PAYLOAD_DST + dst, hi - PAYLOAD_DST + dst
+                if lo - dst < len(payload):
+                    instrs.update(emac.disasm(path, dst, lo, min(hi, dst + len(payload))))
             stage, run, n = SRAM_CODE                # mêmes octets, aux adresses d'exécution en SRAM
             if stage - PAYLOAD_DST < len(payload):
                 base = run - (stage - PAYLOAD_DST)
@@ -86,9 +89,11 @@ def _emac_payload(payload):
 
 
 class Engine:
-    """extra_code : [(va, taille)] de code ajouté hors de CODE_RANGE (caves), pour l'EMAC."""
+    """extra_code : [(va, taille)] de code ajouté hors de CODE_RANGE (caves), pour l'EMAC.
+    payload : (adresse, octets) de la charge utile telle qu'en mémoire, si elle n'est pas simplement la fin de
+    l'image (version combinée avec Model-TG : rangée en morceaux, recopiée à 0x46700000, notes/31)."""
 
-    def __init__(self, main_os, extra_code=()):
+    def __init__(self, main_os, extra_code=(), payload=None):
         self.img = bytes(main_os)
         uc = self.uc = Uc(UC_ARCH_M68K, UC_MODE_BIG_ENDIAN)
         uc.ctl_set_cpu_model(mk.UC_CPU_M68K_ANY)
@@ -104,11 +109,11 @@ class Engine:
         self.emac = emac.EMAC(uc)
         ranges = [CODE_RANGE] + [(va, va + n) for va, n in extra_code]
         self.n_emac = self.emac.install(_emac_instrs(self.img, ranges))
-        payload = self.img[IMAGE_LEN:]
+        dst, payload = payload or (PAYLOAD_DST, self.img[IMAGE_LEN:])
         if payload:                              # ce que fait le crochet de démarrage 0x400004b2 (notes/17)
-            uc.mem_map(PAYLOAD_DST, (len(payload) + 0xfffff) & ~0xfffff)
-            uc.mem_write(PAYLOAD_DST, payload)
-            self.n_emac += self.emac.install(_emac_payload(payload))
+            uc.mem_map(dst, (len(payload) + 0xfffff) & ~0xfffff)
+            uc.mem_write(dst, payload)
+            self.n_emac += self.emac.install(_emac_payload(payload, dst))
         # boot : copie ROM -> SRAM (0x4000045c) puis init des voix (0x4005974c)
         uc.mem_write(0x80000000, self.img[0x4019b590 - BASE:0x401a2a50 - BASE])
         uc.mem_write(0x80008000, self.img[0x401a2a50 - BASE:0x401aa140 - BASE])

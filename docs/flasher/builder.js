@@ -438,6 +438,7 @@ function buildStream(blob, padTo) {
 // Orchestration (tools/build.py)
 // ===========================================================================
 const BASE = 0x40000400;
+const END_LIMIT = 0x40200000;     // l'image décompressée doit finir sous la zone de travail du bootstrap
 
 function applyWrites(mainOs, tweaks) {
   const data = Uint8Array.from(mainOs);
@@ -458,9 +459,12 @@ function applyWrites(mainOs, tweaks) {
 
 function checkConflicts(chosen) {
   const ids = new Set(chosen.map((t) => t.id));
-  for (const t of chosen)
+  for (const t of chosen) {
     for (const other of t.conflicts || [])
       if (ids.has(other)) throw new Error(`${t.id} et ${other} sont incompatibles`);
+    for (const need of t.requires || [])            // s'applique par-dessus un autre tweak (notes/31)
+      if (!ids.has(need)) throw new Error(`${t.id} demande aussi ${need}`);
+  }
 }
 
 // Verifie que les zones 0xFF ou un tweak ecrit sont libres dans l'image d'origine.
@@ -575,7 +579,8 @@ function syntaktSection(raw, id) {
 
 /* Charge utile d'un tweak « append » : plages copiées du programme audio du Syntakt (section 7, chargée
  * à 0x40000400) ou du MAIN OS Cycles d'origine (mainOs), notre code, puis la table de relocalisation
- * (ancienne valeur vérifiée à chaque fois). */
+ * (ancienne valeur vérifiée à chaque fois). Rend ce qui va dans l'image : la charge utile entière, ou rangée en
+ * morceaux (ap.pack : [adresse, taille], tools/build.py payload_image ; hors des morceaux, tout doit être à zéro). */
 function buildPayload(ap, syntaktRaw, mainOs) {
   let img = null;                               // section 7 du Syntakt, si le tweak en copie des morceaux
   if (ap.syntakt) {
@@ -585,6 +590,19 @@ function buildPayload(ap, syntaktRaw, mainOs) {
     img = syntaktSection(syntaktRaw, ap.syntakt.section);
     if (hex(sha256(img)) !== ap.syntakt.section_sha256) throw new Error("section 7 du Syntakt inattendue");
   }
+  const out = payloadRuntime(ap, img, mainOs);
+  if (!ap.pack) return out;
+  const dest = parseInt(ap.dest, 16), kept = Uint8Array.from(out), parts = [];
+  for (const [a, n] of ap.pack) {
+    const at = parseInt(a, 16) - dest;
+    parts.push(out.subarray(at, at + n));
+    kept.fill(0, at, at + n);
+  }
+  if (kept.some((x) => x)) throw new Error("octets non nuls hors des morceaux rangés");
+  return concat(...parts);
+}
+
+function payloadRuntime(ap, img, mainOs) {
   const dest = parseInt(ap.dest, 16), out = new Uint8Array(ap.size);
   for (const part of ap.parts) {
     const at = parseInt(part.dest, 16) - dest;
@@ -618,18 +636,19 @@ function build(raw, device, chosen, opts = {}) {
     throw new Error("la section 3 ne correspond pas a l'image de reference (OS 1.13 attendu)");
 
   checkConflicts(chosen);
+  chosen = [...chosen].sort((a, b) => a.order - b.order);   // l'un peut s'appliquer sur l'autre (notes/31)
   const { data: patched, dirty } = applyWrites(mainOs, chosen);
   const caves = checkCaves(mainOs, chosen, opts.force, dirty, patched, device.cave_refs_ok);
-  const apps = chosen.filter((t) => t.append);
-  if (apps.length > 1) throw new Error("un seul tweak peut agrandir l'OS");
+  const apps = chosen.filter((t) => t.append);       // l'un après l'autre : Model-TG, puis nos moteurs
   let full = patched, fullDirty = dirty;
-  if (apps.length) {
-    const ap = apps[0].append;
-    if (BASE + mainOs.length !== parseInt(ap.at, 16)) throw new Error("l'image ne finit pas où le tweak l'attend");
+  for (const t of apps) {
+    const ap = t.append;
+    if (BASE + full.length !== parseInt(ap.at, 16)) throw new Error("l'image ne finit pas où le tweak l'attend");
     const payload = buildPayload(ap, opts.syntakt, mainOs);
-    full = concat(patched, payload);
-    fullDirty = concat(dirty, new Uint8Array(payload.length).fill(1));
+    full = concat(full, payload);
+    fullDirty = concat(fullDirty, new Uint8Array(payload.length).fill(1));
   }
+  if (BASE + full.length > END_LIMIT) throw new Error("OS agrandi au-delà de 0x40200000");
   const patchedSha = hex(sha256(full));
   if (opts.expectMainOsSha && patchedSha !== opts.expectMainOsSha)
     throw new Error(`MAIN OS patche ${patchedSha}, attendu ${opts.expectMainOsSha}`);
