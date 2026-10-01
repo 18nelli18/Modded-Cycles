@@ -255,7 +255,8 @@ u32 gov_cost[NT];                 /* cout mesure d'update + render, en ticks (mo
 
 #ifdef TG_FIRST
 /* Avec Model-TG (notes/31) : son Sampler (entree 6) et ses machines d'origine passent par son dispatch, qui a sa
- * propre logique des voix muettes ; l'arret des voix muettes ne vaut donc que pour nos moteurs (entree >= TG_FIRST).
+ * propre logique des voix muettes (-90 dB pendant 0,25 s). La notre vaut aussi, comme sans Model-TG, pour toutes les
+ * voix sauf le Sampler : sous forte charge, elle arrete bien plus tot une fin de note inaudible (notes/31 §7).
  * Le regulateur peut eteindre toute piste, sauf le Sampler et la piste qu'il enregistre (reechantillonnage, rs_src)
  * ou dont il edite les tranches (sle_trk) : leur capture et leur lecture doivent garder le temps. Toutes les pistes
  * finissent en 0x400a7e24 (tg_after) : voice_done n'y mesure que celles que voice_gate a laisse calculer. */
@@ -283,7 +284,7 @@ int voice_gate(int t, int trig, int engine)
 	} else {
 		if (gov_age[t] < 0xffff)
 			gov_age[t]++;
-		if (!gov_free[t] && (gov_stolen[t] || (engine >= TG_FIRST && gov_quiet[t] >= NEED)))
+		if (!gov_free[t] && (gov_stolen[t] || gov_quiet[t] >= NEED))
 			return 1;
 	}
 	gov_ran = 1;
@@ -328,11 +329,30 @@ void voice_after(int t, s32 *out)
 		if (--gov_fading[t] == 0)
 			gov_stolen[t] = 1;
 	}
+#ifdef TG_FIRST
+	/* Avec Model-TG (notes/31 §7) : le Sampler et les pistes protegees ne sont jamais eteints, leur crete ne sert
+	 * pas. Pour les autres, la crete est le OU des valeurs absolues (a un bit pres) : sans branchement, 4 fois
+	 * moins cher que le maximum, et exacte pour le test du seuil, qui est une puissance de 2 (IDLE_THR, 1 << 20) ;
+	 * elle ne sert sinon qu'a classer les voix (la plus faible s'eteint d'abord). */
+	if (gov_free[t])
+		return;
+	{
+		const s32 *o = out;
+		u32 acc = 0;
+
+		for (k = 0; k < 32; k += 4, o += 4)
+			acc |= (u32)(o[0] ^ (o[0] >> 31)) | (u32)(o[1] ^ (o[1] >> 31))
+			     | (u32)(o[2] ^ (o[2] >> 31)) | (u32)(o[3] ^ (o[3] >> 31));
+		pk = (s32)acc;
+		(void)x;
+	}
+#else
 	for (k = 0; k < 32; k++) {
 		x = out[k] < 0 ? -out[k] : out[k];
 		if (x > pk)
 			pk = x;
 	}
+#endif
 	gov_peak[t] = pk;
 	if ((u32)pk < THR) {
 		if (gov_quiet[t] < 255)
@@ -424,6 +444,10 @@ static void meter(u32 dur, u32 period)
 #endif
 
 		for (m = 0; m < METER_N; m++) {
+#ifdef PROFILE
+			if (m != PROF_GOV)                   /* les autres noms : profile() */
+				continue;
+#endif
 #ifdef METER_VOICE
 			char *s = put2((char *)METER_BUF + 8 * m, avg);
 			*s++ = '/';
@@ -451,10 +475,66 @@ static void meter(u32 dur, u32 period)
 }
 #endif
 
+#ifdef PROFILE
+/* Firmware de profilage (notes/31 §7), avec Model-TG : ou passe le temps de l'interruption audio. Minuteur DMA 2
+ * (0xfc07800c, celui de la page System de Model-TG, qui note l'entree de l'interruption dans prof_t0) ; les sondes
+ * notent le debut de la fonction audio (audio_probe), la boucle des voix (vl_probe, autour de 0x4005981e) et
+ * l'etage de sortie (out_probe, autour de 0x40059872 : mix, effets d'envoi et master). Toutes les 750 blocs, le
+ * nom de la machine k (0..5) devient « pic/moyenne » de la part k, en % de la duree d'un bloc :
+ *   0 tout (de l'entree de l'interruption a la fin de la fonction audio, comme la page System)
+ *   1 debut de l'interruption, avant la fonction audio   2 fonction audio avant les voix
+ *   3 boucle des voix (et la preparation des effets)       4 entre les voix et la sortie   5 sortie
+ * et celui de la machine PROF_GOV, notre compteur habituel (la fonction audio seule). */
+#define DTIM2 (*(volatile u32 *)0xfc07800c)
+u32 prof_ret_vl, prof_ret_out, prof_t_fn, prof_t_v0, prof_t_v1, prof_t_o0, prof_t_o1;
+static u32 p_last, p_n, p_per, p_sum[6], p_max[6];
+
+static void profile(u32 end)
+{
+	u32 t0 = U32AT(TG_PROF_T0), last = p_last, per = t0 - last, d[6], k;
+
+	p_last = t0;
+	if (!last || !per || (p_n && per > 8 * (p_per / p_n))) {  /* premier bloc, ou pause */
+		p_n = p_per = 0;
+		for (k = 0; k < 6; k++)
+			p_sum[k] = p_max[k] = 0;
+		return;
+	}
+	d[0] = end - t0;
+	d[1] = prof_t_fn - t0;
+	d[2] = prof_t_v0 - prof_t_fn;
+	d[3] = prof_t_v1 - prof_t_v0;
+	d[4] = prof_t_o0 - prof_t_v1;
+	d[5] = prof_t_o1 - prof_t_o0;
+	p_per += per;
+	for (k = 0; k < 6; k++) {
+		p_sum[k] += d[k];
+		if (d[k] * 100 / per > p_max[k])
+			p_max[k] = d[k] * 100 / per;
+	}
+	if (++p_n >= 750) {
+		for (k = 0; k < 6; k++) {
+			char *s = put2((char *)METER_BUF + 8 * k, p_max[k]);
+			*s++ = '/';
+			s = put2(s, p_sum[k] / (p_per / 100));
+			*s = 0;
+			p_sum[k] = p_max[k] = 0;
+		}
+		p_n = p_per = 0;
+	}
+}
+#endif
+
 /* apres chaque bloc audio (sonde de 0x4005979e) */
 void audio_end(void)
 {
+#ifdef PROFILE
+	u32 end2 = DTIM2;
+#endif
 	u32 now = TIMER, t0 = gov_t0_audio, dur = now - t0, period = t0 - last_t0;
+#ifdef PROFILE
+	profile(end2);
+#endif
 
 	last_t0 = t0;
 	if (!period || period > 20 * 90112) {                   /* premier bloc, ou pause */

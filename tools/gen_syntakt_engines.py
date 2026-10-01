@@ -298,8 +298,16 @@ def layout(gen, blocks):
     # SRAM du Syntakt (tampons et table de sinus dans la SRAM du Cycles, SRAM_MAP ; le reste dans sa réplique)
     move = ([(lo, hi, run(dst)) for lo, hi, dst in stage] + [(lo, hi, run(dst)) for lo, hi, dst in tabs] + sdram
             + [*SRAM_MAP, (0x80000000, 0x80010000, gx.DST_SRAM), (*gx.ST_BSS, ST_BSS_AT)])
+    # fin libre de chaque zone (transit, exécution, taille) : avec Model-TG, le code le plus appelé de la passerelle
+    used = [(dst, dst + hi - lo) for lo, hi, dst in stage] + [(dst - GUARD, dst + hi - lo + GUARD) for lo, hi, dst in tabs] \
+        + [(v, v + ST_VSTRIDE) for v in voices]
+    tails = []
+    for b0, r0, n in banks:
+        top = max([e for a, e in used if b0 <= a < b0 + n] + [b0])
+        top = (top + 3) & ~3
+        tails.append((top, top - b0 + r0, b0 + n - top))
     return dict(copies=copies, move=tuple(move), stage=stage, pads=pads, stage_end=stage_end, run=run, banks=banks,
-                voices=[run(v) for v in voices], chord_at=chord_at, end=(end + 0xff) & ~0xff)
+                voices=[run(v) for v in voices], chord_at=chord_at, end=(end + 0xff) & ~0xff, tails=tails)
 
 
 def code_patches(st_img, ins, insns, lay, relocs):
@@ -392,6 +400,17 @@ IDLE_THR = 1 << 13           # -108 dB sous la pleine échelle
 # 1/2^slow par bloc, environ 170 ms) dépasse steal, jusqu'à revenir à target ; ou quand un bloc dépasse peak, jusqu'à
 # revenir sous peak - margin ; fondus courts au-dessus de severe.
 GOV = dict(steal=86, target=82, peak=93, margin=4, severe=96, slow=8)
+# Firmware de profilage (--profile, avec --tg) : où passe le temps de l'interruption audio (notes/31 §7). Sondes
+# autour de la boucle des voix et de l'étage de sortie : (site du jsr, sonde, retour, heure avant, heure après).
+PROFILE = False
+PROF_SITES = ((0x4005981e, "vl_probe", "prof_ret_vl", "prof_t_v0", "prof_t_v1"),
+              (0x40059872, "out_probe", "prof_ret_out", "prof_t_o0", "prof_t_o1"))
+
+
+def prof_sites(tg):
+    """{sonde : (fonction appelée à son site dans l'image avec Model-TG, retour, heure avant, heure après)}"""
+    return {name: (struct.unpack_from(">I", tg["img"], va + 2 - BASE)[0], ret, t0, t1)
+            for va, name, ret, t0, t1 in PROF_SITES}
 # Firmware de diagnostic (--meter) : noms des machines « pic/moyenne » (False, notes/23, notes/29) ou
 # « moyenne/voix » (True : coût de la voix de chaque machine, diagnostics v6 et v7, notes/27)
 METER_VOICE = False
@@ -584,24 +603,45 @@ def tg_records(a, ins, lab, n, firsts, first, top, tg):
     ins("movea.l (%sp)+, %a1"); ins("movea.l (%sp)+, %a0"); ins("rts")
 
 
-def probe_asm(syms):
+def probe_asm(syms, prof=None):
     """Sonde de l'appel de la fonction audio par l'interruption (0x40059382) : met de côté l'adresse de retour
     (la fonction appelée voit la pile exactement comme avant), note l'heure, appelle la fonction, puis
-    audio_end() (régulateur de charge, compteur du firmware de diagnostic)."""
+    audio_end() (régulateur de charge, compteur du firmware de diagnostic). prof : firmware de profilage
+    (PROFILE) : {site : fonction appelée} de la boucle des voix et de l'étage de sortie, entourées de la même façon."""
     g = lambda n: f"{syms[n]:#x}"
-    return f"""
+    extra = ""
+    if prof:
+        stamp = "\tmove.l\t0xfc07800c, %d1\n\tmove.l\t%d1, {}\n"
+        extra = stamp.format(g("prof_t_fn"))
+    out = f"""
 	.globl	audio_probe
 audio_probe:
 	move.l	(%sp)+, {g('gov_ret_audio')}
 	move.l	0xfc07000c, %d1
 	move.l	%d1, {g('gov_t0_audio')}
-	jsr	0x4005979e
+{extra}	jsr	0x4005979e
 	move.l	%d0, -(%sp)
 	jsr	{g('audio_end')}
 	move.l	(%sp)+, %d0
 	move.l	{g('gov_ret_audio')}, -(%sp)
 	rts
 """
+    for name, (target, ret, t0, t1) in (prof or {}).items():
+        out += f"""
+	.globl	{name}
+{name}:
+	move.l	(%sp)+, {g(ret)}
+	move.l	0xfc07800c, %d1
+	move.l	%d1, {g(t0)}
+	jsr	{target:#x}
+	move.l	%d0, -(%sp)
+	move.l	0xfc07800c, %d0
+	move.l	%d0, {g(t1)}
+	move.l	(%sp)+, %d0
+	move.l	{g(ret)}, -(%sp)
+	rts
+"""
+    return out
 
 
 def dispatch_asm(syms, rnd_at):
@@ -657,7 +697,7 @@ dispatch:
 LINK = """SECTIONS
 {{
   .stub {stub:#x} : {{ *(.text) }}
-  .bridge {bridge:#x} : {{ *(.text.bridge_update) *(.text.bridge_render) *(.text*) . = ALIGN(4); *(.rodata*) }}
+{sram}  .bridge {bridge:#x} : {{ *(.text.bridge_update) *(.text.bridge_render) *(.text*) . = ALIGN(4); *(.rodata*) }}
   .bridge_data {data:#x} : {{ *(.data*) *(.bss*) *(COMMON) }}
   /DISCARD/ : {{ *(.comment) *(.note*) *(.eh_frame*) }}
 }}
@@ -752,6 +792,29 @@ def segments(parts, size):
     return [(lo, hi - lo) for lo, hi in out]
 
 
+# Avec Model-TG (notes/31 §7) : fonctions de la passerelle appelées à chaque bloc pour chaque piste, placées dans la
+# fin libre des zones de SRAM (lay["tails"]), que le crochet de démarrage y recopie avec le reste : hors du cache
+# d'instructions, qui ne les recharge plus à chaque bloc. Les plus grandes d'abord, tant qu'elles tiennent.
+SRAM_HOT = ("update", "voice_after", "voice_gate", "audio_end", "govern", "render", "st_voice", "tg_keep", "voice_done")
+
+
+def sram_sections(elf, tails):
+    """[(transit, exécution, [fonctions])] : SRAM_HOT réparties dans les fins de zones, d'après leurs tailles."""
+    size = {}
+    for line in gx.run([gx.CROSS + "nm", "-S", str(elf)]).splitlines():
+        p_ = line.split()
+        if len(p_) == 4 and p_[3] in SRAM_HOT and p_[2] in "tT":
+            size[p_[3]] = (int(p_[1], 16) + 3) & ~3
+    free = [list(t) for t in tails]
+    out = [[t[0], t[1], []] for t in tails]
+    for f in sorted(size, key=lambda f: (-size[f], f)):
+        k = next((k for k, t in enumerate(free) if t[2] >= size[f]), None)
+        if k is not None:
+            out[k][2].append(f)
+            free[k][2] -= size[f]
+    return [tuple(o) for o in out if o[2]]
+
+
 def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, run=None, lay=None, tg=None, segs=None):
     """run : adresse d'exécution d'une fonction du Syntakt ; lay : disposition (layout()) : zones de SRAM que le
     crochet de démarrage remplit (stub.S), adresses des états de voix."""
@@ -766,6 +829,8 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, ru
     defs += [f"-DIDLE_THR={IDLE_THR}", f"-DIDLE_BLOCKS={IDLE_BLOCKS}"] + [f"-DGOV_{k.upper()}={v}" for k, v in GOV.items()]
     if meter:                                   # noms des machines (écran MACHINES) : « moyenne/voix »
         defs += ["-DLOAD_METER", f"-DMETER_BUF={meter:#x}", f"-DMETER_N={nm}"] + (["-DMETER_VOICE"] if METER_VOICE else [])
+        if PROFILE and tg:                      # firmware de profilage (notes/31 §7)
+            defs += ["-DPROFILE", f"-DTG_PROF_T0={tg['prof_t0']:#x}", "-DPROF_GOV=6"]
     defs.append(f"-DST_SRAM={gx.DST_SRAM:#x}")
     if tg:                                      # avec Model-TG (notes/31) : voir voice_gate
         defs += [f"-DTG_FIRST={TG_FIRST}"] + [f"-DTG_{k.upper()}={tg[k]:#x}" for k in ("rs_state", "rs_src", "sle_run", "sle_trk")]
@@ -783,10 +848,17 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, ru
             f"-DPAYLOAD_LONGS={payload_longs}",
             f"-DSRAM_RUN_AT={r0:#x}", f"-DSRAM_LONGS={n0 // 4}", f"-DSRAM2_RUN_AT={r1:#x}", f"-DSRAM2_LONGS={n1 // 4}",
             *sdefs])
-    ld.write_text(LINK.format(stub=gx.CAVE, bridge=DST_BRIDGE, data=DST_BRIDGE + 0x1000))
+    ld.write_text(LINK.format(stub=gx.CAVE, bridge=DST_BRIDGE, data=DST_BRIDGE + 0x1000, sram=""))
     gx.run([gx.CROSS + "ld", "-T", str(ld), "-o", str(elf), str(stub), str(obj)])
+    hot = []
+    if tg:                                      # le code le plus appelé dans la fin libre des zones de SRAM (notes/31 §7)
+        hot = sram_sections(elf, lay["tails"])
+        ld.write_text(LINK.format(stub=gx.CAVE, bridge=DST_BRIDGE, data=DST_BRIDGE + 0x1000, sram="".join(
+            f"  .sram{k} {run_:#x} : AT({stage:#x}) {{ {' '.join(f'*(.text.{f})' for f in fns)} }}\n"
+            for k, (stage, run_, fns) in enumerate(hot))))
+        gx.run([gx.CROSS + "ld", "-T", str(ld), "-o", str(elf), str(stub), str(obj)])
     blobs = {}
-    for sec in (".stub", ".bridge"):
+    for sec in (".stub", ".bridge") + tuple(f".sram{k}" for k in range(len(hot))):
         out = tmp / (sec.strip(".") + ".bin")
         gx.run([gx.CROSS + "objcopy", "-O", "binary", "-j", sec, str(elf), str(out)])
         blobs[sec] = out.read_bytes()
@@ -794,7 +866,7 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, ru
     for line in gx.run([gx.CROSS + "nm", "-S", str(elf)]).splitlines():
         parts = line.split()
         syms[parts[-1]] = int(parts[0], 16)
-        if len(parts) == 4 and int(parts[0], 16) >= DST_BRIDGE + 0x1000:
+        if len(parts) == 4 and DST_BRIDGE + 0x1000 <= int(parts[0], 16) < 0x80000000:      # pas la SRAM
             data_end = max(data_end, int(parts[0], 16) + int(parts[1], 16))
     if len(blobs[".bridge"]) > 0x1000 or data_end > gx.DST_END:
         raise SystemExit("!! passerelle trop grande")
@@ -806,7 +878,8 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, ru
             raise SystemExit(f"!! passerelle : données initialisées ({f[1]}), non recopiées dans la charge utile")
     src, o, e, b = tmp / "det.S", tmp / "det.o", tmp / "det.elf", tmp / "det.bin"
     src.write_text(detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))], tg)
-                   + probe_asm(syms) + (dispatch_tg_asm(syms, rnd_at, tg) if tg else dispatch_asm(syms, rnd_at)))
+                   + probe_asm(syms, prof_sites(tg) if PROFILE and tg and meter else None)
+                   + (dispatch_tg_asm(syms, rnd_at, tg) if tg else dispatch_asm(syms, rnd_at)))
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(src), "-o", str(o)])
     gx.run([gx.CROSS + "ld", "-Ttext", f"{STUBS:#x}", "-o", str(e), str(o)])
     gx.run([gx.CROSS + "objcopy", "-O", "binary", "-j", ".text", str(e), str(b)])
@@ -814,6 +887,7 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, ru
     stubs = b.read_bytes()
     if STUBS + len(stubs) > DATA:
         raise SystemExit("!! détours trop grands")
+    blobs["hot"] = [(stage, blobs[f".sram{k}"], fns) for k, (stage, _, fns) in enumerate(hot)]
     return blobs, syms, stubs, ssyms
 
 
@@ -877,7 +951,9 @@ def tg_context(img):
 
 def tweak_id(codes, generic=False, meter=False, tg=False):
     if tg:
-        return "syntakt-tg-meter" if meter else "syntakt-tg-" + "-".join(codes)
+        if meter:
+            return "syntakt-tg-profile" if PROFILE else "syntakt-tg-meter"
+        return "syntakt-tg-" + "-".join(codes)
     return "syntakt-meter" if meter else subset_id(codes, generic)
 
 
@@ -1027,6 +1103,9 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None):
         w(va, bytes.fromhex(old), bytes.fromhex("4eb9") + g7.be32(ssyms[sym]) + bytes.fromhex("4e71"))
     # sonde du régulateur de charge autour de l'appel de la fonction audio (jsr abs.l)
     w(AUDIO_CALL, bytes.fromhex("4eb94005979e"), bytes.fromhex("4eb9") + g7.be32(ssyms["audio_probe"]))
+    if PROFILE and tg and meter:                # firmware de profilage : sondes de la boucle des voix et de la sortie
+        for va, name, *_ in PROF_SITES:
+            w(va, cur[va - BASE:va - BASE + 6], bytes.fromhex("4eb9") + g7.be32(ssyms[name]))
     # tables d'ondes de CHORD : lues dans la charge utile, leur place en SRAM reçoit le code du Syntakt
     ptrs = [u32(CHORD_PTRS + 4 * i) for i in range(31)]
     w(CHORD_PTRS, b"".join(g7.be32(x) for x in ptrs), b"".join(g7.be32(chord_moved(x, lay)) for x in ptrs))
@@ -1038,6 +1117,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None):
     for lo, hi in CHORD_BANKS:                  # tables d'ondes de CHORD, depuis le MAIN OS de l'utilisateur
         src = next(s_ + lo - d_ for s_, e_, d_ in CY_SRAM_INIT if d_ <= lo and hi <= d_ + e_ - s_)
         parts.append({"dest": f"{chord_moved(lo, lay):#x}", "cycles": [f"{src:#x}", f"{src + hi - lo:#x}"]})
+    parts += [{"dest": f"{stage:#x}", "hex": code.hex()} for stage, code, _ in blobs["hot"]]   # avec Model-TG
     parts += [
         {"dest": f"{DST_BRIDGE:#x}", "hex": blobs[".bridge"].hex()},
         {"dest": f"{STUBS:#x}", "hex": stubs.hex()},
@@ -1071,7 +1151,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None):
             raise SystemExit(f"!! ajout de {sum(n_ for _, n_ in segs)} o : l'image dépasserait {END_LIMIT:#x}")
         with tempfile.TemporaryDirectory() as d:
             blobs2, _, stubs2, _ = compile_(d, segs)
-        if blobs2[".bridge"] != blobs[".bridge"] or stubs2 != stubs:
+        if blobs2[".bridge"] != blobs[".bridge"] or stubs2 != stubs or blobs2["hot"] != blobs["hot"]:
             raise SystemExit("!! recompilation avec les morceaux : passerelle différente")
         stub = blobs2[".stub"]
         writes[0] = {"off": gx.CAVE - BASE, "old": (b"\xff" * len(stub)).hex(), "new": stub.hex()}
@@ -1090,10 +1170,16 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None):
     which = ", ".join(f"{m['name']} = {m['label']} (machine {m['index'] + 1})" for m in machines)
     out = {
         "id": tid,
-        "order": (91 if meter else 31) if tg else (90 if meter else 24),
-        "name": ("DIAGNOSTIC, compteur de charge. " if meter else "") + ("Model-TG + " if tg else "") +
+        "order": ((92 if PROFILE else 91) if meter else 31) if tg else (90 if meter else 24),
+        "name": (("DIAGNOSTIC, profil de l'interruption audio. " if PROFILE and tg else "DIAGNOSTIC, compteur de charge. ")
+                 if meter else "") + ("Model-TG + " if tg else "") +
                 "Vrais moteurs du Syntakt en machines ajoutées : " + ", ".join(f"{m['name']} ({m['label']})" for m in machines),
         "description": ([
+            "FIRMWARE DE PROFILAGE (notes/31 §7) : l'écran MACHINES affiche « pic/moyenne », en % de la durée d'un",
+            "bloc, mis à jour toutes les 0,5 s : machine 1 tout (comme la page System de Model-TG), 2 début de",
+            "l'interruption, 3 fonction audio avant les voix, 4 boucle des voix, 5 entre les voix et la sortie,",
+            "6 sortie (mix, effets d'envoi et master), 7 notre compteur habituel. À n'utiliser que pour mesurer.",
+        ] if meter and PROFILE and tg else [
             "FIRMWARE DE DIAGNOSTIC (notes/23, notes/27) : l'écran MACHINES affiche, pour chaque machine,",
             "« moyenne/voix » (charge moyenne, coût de la voix qui joue cette machine) ou « pic/moyenne » de la",
             "charge audio, en % de la durée d'un bloc de 32 échantillons, mis à jour toutes les 0,5 s.",
@@ -1108,7 +1194,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None):
             "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py" + (" --tg." if tg else "."),
             "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier.",
         ],
-        "gov": {k: f"{syms[k]:#x}" for k in sorted(syms) if k.startswith("gov_") or k in ("audio_end", "voice_gate", "voice_after")},
+        "gov": {k: f"{syms[k]:#x}" for k in sorted(syms) if k.startswith(("gov_", "prof_")) or k in ("audio_end", "voice_gate", "voice_after")},
         "device": "Model:Cycles",
         "os": "1.13",
         "section": 3,
@@ -1130,7 +1216,10 @@ def main():
     ap.add_argument("--check", action="store_true", help="vérifie que les JSON versionnés correspondent")
     ap.add_argument("--meter", action="store_true", help="firmware de diagnostic : compteur de charge (notes/23)")
     ap.add_argument("--tg", action="store_true", help="version combinée avec Model-TG (notes/31) : 31-syntakt-tg-….json")
+    ap.add_argument("--profile", action="store_true", help="avec --tg --meter : profil de l'interruption audio (notes/31 §7)")
     args = ap.parse_args()
+    global PROFILE
+    PROFILE = args.profile
     img = g7.cycles_main(args.cycles)
     if len(img) != gx.IMAGE_LEN:
         raise SystemExit("!! ce n'est pas le MAIN OS 1.13 officiel")

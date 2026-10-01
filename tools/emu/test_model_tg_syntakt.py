@@ -23,6 +23,7 @@ moteurs seuls (24-syntakt-….json).
 import argparse
 import json
 import pathlib
+import re
 import struct
 import sys
 
@@ -234,7 +235,7 @@ def interface(ref, fw, codes, tg):
     names = bytes(b.uc.mem_read(gs.DATA, 4 * nm))
     strs = [bytes(b.uc.mem_read(struct.unpack_from(">I", names, 4 * m)[0], 6)).split(b"\0")[0].decode()
             for m in range(first, nm)]
-    if "meter" in fw.tweaks[-1]["id"]:                   # diagnostic : chaque nom est le compteur de sa machine
+    if re.search("meter|profile", fw.tweaks[-1]["id"]):     # diagnostic : chaque nom est un compteur
         check(len(set(struct.unpack(f">{nm}I", names))) == nm, "noms : un compteur par machine (diagnostic)")
     else:
         check(names[:28] == blob and strs == [gs.CATALOG[c]["name"] for c in codes],
@@ -265,18 +266,43 @@ def play(fw, setup, blocks, trigs):
     return out, e.unmapped
 
 
+def same_or_idle(r, x, retrig):
+    """Une piste d'une machine d'origine face à Model-TG seul : identique jusqu'à l'arrêt de la voix muette (notre
+    régulateur, comme sans Model-TG : sous IDLE_THR pendant IDLE_BLOCKS blocs), la référence restant ensuite sous le
+    seuil jusqu'au trig suivant ; après lui, à 1e-3 de la crête près (la voix reprend où elle s'était arrêtée)."""
+    diff = np.nonzero(np.any(r != x, axis=1))[0]
+    if not len(diff):
+        return True, None
+    f = int(diff[0])
+    if f >= retrig:
+        return np.abs(r[f:] - x[f:]).max() <= 1e-3 * np.abs(r).max(), f
+    quiet = np.abs(r[f:retrig]).max() < gs.IDLE_THR and not x[f:retrig].any()
+    return quiet and np.abs(r[retrig:] - x[retrig:]).max() <= 1e-3 * np.abs(r).max(), f
+
+
 def sound(off, alone, fw, codes):
     base = dict(note=60, pitch=64, color=64, shape=64, sweep=64, contour=64, punch=0, gate=0, finetune=64, decay=60)
     trigs = {1: 0x3f, 150: 0x3f}
     setup = {t: dict(base, machine=t) for t in range(6)}
     r, _ = play(off, setup, 300, trigs)
     x, unm = play(fw, setup, 300, trigs)
-    check(np.array_equal(r, x) and not unm, "6 machines d'origine : identiques à Model-TG seul (son build officiel)")
+    res = [same_or_idle(r[:, t], x[:, t], 150) for t in range(6)]
+    check(all(ok for ok, _ in res) and not unm,
+          "6 machines d'origine : identiques à Model-TG seul (son build officiel), jusqu'à l'arrêt des voix muettes "
+          f"(blocs {[f for _, f in res]}), puis sous le seuil jusqu'au trig suivant")
+    short = {t: dict(base, machine=t, decay=20) for t in range(6)}
+    r, _ = play(off, short, 900, {1: 0x3f, 700: 0x3f})
+    x, unm = play(fw, short, 900, {1: 0x3f, 700: 0x3f})
+    res = [same_or_idle(r[:, t], x[:, t], 700) for t in range(6)]
+    check(all(ok for ok, _ in res) and sum(f is not None for _, f in res) >= 4 and not unm,
+          f"DECAY 20 : les voix d'origine s'arrêtent une fois muettes (blocs {[f for _, f in res]} ; aucun : KICK, que "
+          "Model-TG éteint lui-même), la référence reste sous le seuil, et le trig du bloc 700 repart comme Model-TG seul")
     setup[2] = dict(base, machine=6)
     r, _ = play(off, setup, 300, trigs)
     x, unm = play(fw, setup, 300, trigs)
-    check(np.array_equal(r, x) and not x[:, 2].any() and not unm,
-          "Sampler (machine 6) sans échantillon sur la piste 3 : muet, et le reste identique à Model-TG seul")
+    ok = all(same_or_idle(r[:, t], x[:, t], 150)[0] for t in range(6) if t != 2)
+    check(ok and np.array_equal(r[:, 2], x[:, 2]) and not x[:, 2].any() and not unm,
+          "Sampler (machine 6) sans échantillon sur la piste 3 : muet, et le reste comme Model-TG seul")
     for i, c in enumerate(codes):
         m = gs.CATALOG[c]
         kw = dict(base, color=m["knobs"][0][2], shape=m["knobs"][1][2], sweep=m["knobs"][2][2],
@@ -294,7 +320,8 @@ def sound(off, alone, fw, codes):
     x, unm = play(fw, setup, 300, trigs)
     r_off, _ = play(off, {t: dict(base, machine=mm if mm < 7 else 0) for t, mm in enumerate(mach_tg)}, 300, trigs)
     r_al, _ = play(alone, {t: dict(base, machine=mm - 1 if mm >= 7 else 1) for t, mm in enumerate(mach_tg)}, 300, trigs)
-    ok = all(np.array_equal(x[:, t], (r_al if mm >= 7 else r_off)[:, t]) for t, mm in enumerate(mach_tg))
+    ok = all(np.array_equal(x[:, t], r_al[:, t]) if mm >= 7 else same_or_idle(r_off[:, t], x[:, t], 150)[0]
+             for t, mm in enumerate(mach_tg))
     check(ok and not unm, f"6 pistes ensemble (machines {[mm + 1 for mm in mach_tg]}) : chacune identique à sa référence")
 
 

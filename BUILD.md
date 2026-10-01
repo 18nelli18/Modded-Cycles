@@ -133,9 +133,9 @@ python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --sy
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `model-tg-st,syntakt-tg-sd` | `bf6d23d8c639dd70f73dd666528698c6f8ab5e6a9cc42a19d01a49a5620a04b8` |
-| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `530ec80cbf1618f0f512cdd0fb9e2fd795dba5feddd106c681985e3981456bc7` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `b48a3dae0d6df6248b065db513fc9c6a0ed8462938a8ef1f34798bf71762dea6` |
+| `model-tg-st,syntakt-tg-sd` | `63f6f63cde332e5daff1d6e6095497606eab1f8183c44bcd860f80a5849cc532` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `495d248029e044a18bcfef54e77fbe743c06802ad7e83b098fde63533503d3f9` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `316c4c852b8c4f2fca0cb7754ee0cd3f1d0a38092e0d17ac15a004ecf43abc39` |
 
 Les 575 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
 `tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;

@@ -63,7 +63,7 @@ ST_PATCHES = (
 # Ses symboles dont nos détours ont besoin (gen_syntakt_engines.py --tg) : chaînage, page System, rééchantillonnage
 ST_SYMBOLS = ("blob_start", "reserved_end", "REGION_END", "param_table", "boot_extra_hook", "sampler_dispatch",
               "descr_hook", "descr_b_hook", "sampler_lfo_gate", "sampler_amp_gate", "sampler_name_table",
-              "apply_names", "mod_held", "prof_ta", "prof_trk", "rs_state", "rs_src", "sle_run", "sle_trk",
+              "apply_names", "mod_held", "prof_t0", "prof_ta", "prof_trk", "rs_state", "rs_src", "sle_run", "sle_trk",
               "ah_noenv", "voice_ptr")
 
 
