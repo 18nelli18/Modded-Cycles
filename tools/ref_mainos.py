@@ -53,19 +53,26 @@ def block(cycles, syntakt):
         raise SystemExit("!! disposition des cartes inattendue : adapter ref_mainos.py")
     stock = main_os(cycles)
     subsets = [c for r in range(len(base) + 1) for c in itertools.combinations([options(f)[0] for f in base], r)]
+    payloads = {}
+
+    def payload(t):
+        """Charge utile du seul tweak « append » choisi (moteurs du Syntakt, ou Model-TG sans fichier Syntakt)."""
+        if t["id"] not in payloads:
+            payloads[t["id"]] = build.build_payload([t], stock, syntakt if t["append"].get("syntakt") else None)[0]
+        return payloads[t["id"]]
     lines = []
     for last in [None] + (options(extra[0]) if extra else []):
-        payload = b""
         if last:
-            payload, _ = build.build_payload([by_id[last]], stock, syntakt)
             names = ", ".join(c["label"] for c in extra[0]["combos"] if c["id"] == last)
             lines.append(f"  // + real Syntakt engines {names} (tweak {last}), with the official Syntakt_OS1.41.syx")
         for sub in subsets:
             ids = list(sub) + ([last] if last else [])
-            if not ids:
-                continue
-            patched, _ = build.apply_writes(stock, [by_id[i] for i in ids])
-            lines.append(f'  "{"+".join(ids)}": "{build.sha(bytes(patched) + payload)}",')
+            chosen = [by_id[i] for i in ids]
+            if not ids or any(o in ids for t in chosen for o in t.get("conflicts", [])):
+                continue                                  # cases incompatibles (Model-TG) : la page ne les propose pas
+            apps = [t for t in chosen if t.get("append")]
+            patched, _ = build.apply_writes(stock, chosen)
+            lines.append(f'  "{"+".join(ids)}": "{build.sha(bytes(patched) + (payload(apps[0]) if apps else b""))}",')
     return "\n".join(lines), len([x for x in lines if not x.lstrip().startswith("//")])
 
 

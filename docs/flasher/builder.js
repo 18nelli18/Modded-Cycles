@@ -577,10 +577,14 @@ function syntaktSection(raw, id) {
  * à 0x40000400) ou du MAIN OS Cycles d'origine (mainOs), notre code, puis la table de relocalisation
  * (ancienne valeur vérifiée à chaque fois). */
 function buildPayload(ap, syntaktRaw, mainOs) {
-  if (hex(sha256(syntaktRaw)) !== ap.syntakt.syx_sha256)
-    throw new Error("ce n'est pas le fichier officiel Syntakt_OS1.41.syx");
-  const img = syntaktSection(syntaktRaw, ap.syntakt.section);
-  if (hex(sha256(img)) !== ap.syntakt.section_sha256) throw new Error("section 7 du Syntakt inattendue");
+  let img = null;                               // section 7 du Syntakt, si le tweak en copie des morceaux
+  if (ap.syntakt) {
+    if (!syntaktRaw) throw new Error("fichier Syntakt_OS1.41.syx requis");
+    if (hex(sha256(syntaktRaw)) !== ap.syntakt.syx_sha256)
+      throw new Error("ce n'est pas le fichier officiel Syntakt_OS1.41.syx");
+    img = syntaktSection(syntaktRaw, ap.syntakt.section);
+    if (hex(sha256(img)) !== ap.syntakt.section_sha256) throw new Error("section 7 du Syntakt inattendue");
+  }
   const dest = parseInt(ap.dest, 16), out = new Uint8Array(ap.size);
   for (const part of ap.parts) {
     const at = parseInt(part.dest, 16) - dest;
@@ -600,7 +604,8 @@ function buildPayload(ap, syntaktRaw, mainOs) {
 
 /* Construit le .syx modifie.
  * raw = Uint8Array du .syx officiel ; device = device.json ; chosen = [tweak] ;
- * opts = { expectMainOsSha, force, syntakt } ; syntakt = Uint8Array du Syntakt_OS1.41.syx, exigé par un tweak « append ».
+ * opts = { expectMainOsSha, force, syntakt } ; syntakt = Uint8Array du Syntakt_OS1.41.syx, exigé par un tweak « append »
+ * qui en copie des morceaux (ap.syntakt) ; Model-TG n'en a pas besoin.
  * Renvoie { raw, mainOsSha, patchedBytes, caves, product, name }. */
 function build(raw, device, chosen, opts = {}) {
   const { stream, product, name, start_seq } = unwrap(raw);
@@ -621,7 +626,6 @@ function build(raw, device, chosen, opts = {}) {
   if (apps.length) {
     const ap = apps[0].append;
     if (BASE + mainOs.length !== parseInt(ap.at, 16)) throw new Error("l'image ne finit pas où le tweak l'attend");
-    if (!opts.syntakt) throw new Error("fichier Syntakt_OS1.41.syx requis");
     const payload = buildPayload(ap, opts.syntakt, mainOs);
     full = concat(patched, payload);
     fullDirty = concat(dirty, new Uint8Array(payload.length).fill(1));

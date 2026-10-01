@@ -37,6 +37,7 @@
  "os": "1.13",
  "section": 3,
  "conflicts": [
+  "model-tg",
   "sdvintage-7th",
   "sdvintage-exact",
   "sdvintage-snare",
