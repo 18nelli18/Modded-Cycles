@@ -28,6 +28,29 @@ if (page !== "flasher") {
 }
 
 // ---------------------------------------------------------------------------
+// Theme: follows the system until the moon/sun button is used, then remembers the choice
+// (all pages, flasher included)
+// ---------------------------------------------------------------------------
+const darkMQ = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+const theme = () => root.getAttribute("data-theme") || (darkMQ && darkMQ.matches ? "dark" : "light");
+function paintTheme() {
+  const fr = root.lang === "fr", dark = theme() === "dark";
+  $$(".theme-btn").forEach((b) => {
+    b.setAttribute("aria-label", dark ? (fr ? "Mode clair" : "Light mode") : (fr ? "Mode sombre" : "Dark mode"));
+    b.title = b.getAttribute("aria-label");
+  });
+}
+$$(".theme-btn").forEach((b) => b.addEventListener("click", () => {
+  const next = theme() === "dark" ? "light" : "dark";
+  root.setAttribute("data-theme", next);
+  try { localStorage.setItem("mc-theme", next); } catch (e) { /* private mode */ }
+  paintTheme();
+}));
+if (darkMQ && darkMQ.addEventListener) darkMQ.addEventListener("change", paintTheme);
+new MutationObserver(paintTheme).observe(root, { attributes: true, attributeFilter: ["lang"] });
+paintTheme();
+
+// ---------------------------------------------------------------------------
 // Version (assets/release.js)
 // ---------------------------------------------------------------------------
 function fmtDate(iso) {

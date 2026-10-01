@@ -40,9 +40,9 @@
 .switch button[aria-pressed="true"]{color:var(--ink);text-decoration:underline;text-decoration-color:var(--red);text-decoration-thickness:2px;text-underline-offset:.2em}
 
 /* key-shaped checkboxes and labels, as on the unit */
-.k{display:inline-grid;place-items:center;min-width:40px;height:30px;padding:0 9px;border-radius:5px;background:var(--key);color:var(--key-ink);
-  font-size:12px;font-weight:700;letter-spacing:.04em;box-shadow:0 2px 0 #2e2f32}
-.tick{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin:0;border-radius:5px;background:var(--key);box-shadow:0 2px 0 #2e2f32;cursor:pointer;flex:none}
+.k{display:inline-grid;place-items:center;min-width:40px;height:30px;padding:0 9px;border-radius:5px;background:var(--ctl);color:var(--ctl-ink);
+  font-size:12px;font-weight:700;letter-spacing:.04em;box-shadow:0 2px 0 var(--ctl-edge)}
+.tick{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin:0;border-radius:5px;background:var(--ctl);box-shadow:0 2px 0 var(--ctl-edge);cursor:pointer;flex:none}
 .tick:checked{background:var(--red)}
 
 /* LCD, 128 × 64 */
@@ -105,7 +105,7 @@
 .bar{position:relative;height:18px;background:var(--casing);border:1px solid var(--line-2)}
 .bar .fill{position:absolute;inset:0;display:flex}
 .bar .fill i{height:100%;border-right:1px solid var(--casing)}
-.s-fx{background:#9b9a95}.s-orig{background:#55565a}.s-syn{background:var(--red)}
+.s-fx{background:var(--line-2)}.s-orig{background:var(--ink-2)}.s-syn{background:var(--red)}
 .bar .t{position:absolute;top:-6px;bottom:-6px;width:1px;background:var(--ink)}
 .scale{position:relative;height:20px;margin-top:6px;font-size:13px;color:var(--muted)}
 .scale span{position:absolute;transform:translateX(-50%);white-space:nowrap}

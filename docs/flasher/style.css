@@ -12,8 +12,8 @@
 .step{padding:22px 0 44px;border-top:1px solid var(--ink)}
 .step>header{display:flex;align-items:center;gap:14px;margin:0 0 20px}
 .step h2{font-size:24px}
-.num{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:6px;background:var(--key);color:var(--key-ink);
-  font-weight:700;font-size:15px;box-shadow:0 2px 0 #2e2f32}
+.num{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:6px;background:var(--ctl);color:var(--ctl-ink);
+  font-weight:700;font-size:15px;box-shadow:0 2px 0 var(--ctl-edge)}
 .step.done .num{background:var(--red);color:#2b1710}
 .hint{margin:.8em 0 0;font-size:15px;color:var(--muted)}
 .hint:empty{display:none}
@@ -29,7 +29,7 @@ code{font-size:.82em}
 
 /* key-shaped checkboxes: charcoal, red when on */
 .feat>input,.variants input,.check input{appearance:none;-webkit-appearance:none;flex:none;margin:0;width:22px;height:22px;border-radius:5px;
-  background:var(--key);box-shadow:0 2px 0 #2e2f32;cursor:pointer}
+  background:var(--ctl);box-shadow:0 2px 0 var(--ctl-edge);cursor:pointer}
 .feat>input:checked,.variants input:checked,.check input:checked{background:var(--red)}
 .variants input[type=radio]{border-radius:50%}
 
@@ -87,8 +87,8 @@ code{font-size:.82em}
 .portrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 select{flex:1 1 260px;min-width:0;padding:12px 36px 12px 12px;border:1px solid var(--line-2);border-radius:var(--r);background:var(--paper);color:var(--ink);
   font:16px/1.2 var(--f);appearance:none;-webkit-appearance:none;cursor:pointer;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%231c1c1b' stroke-width='1.5'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 12px center}
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-size:5px 5px,5px 5px;background-position:calc(100% - 19px) 52%,calc(100% - 14px) 52%;background-repeat:no-repeat}
 
 /* buttons */
 button.btn{border:0}
@@ -109,7 +109,7 @@ button.btn{border:0}
 .progress{margin-top:24px}
 .bar{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:6px}
 #bar{display:none}
-.bar i{aspect-ratio:1;max-height:40px;border-radius:5px;background:var(--key);box-shadow:0 2px 0 #2e2f32}
+.bar i{aspect-ratio:1;max-height:40px;border-radius:5px;background:var(--ctl);box-shadow:0 2px 0 var(--ctl-edge)}
 .bar i.on{background:var(--red)}
 .bar i.cur{animation:cur .5s steps(1) infinite}
 @keyframes cur{50%{background:var(--red)}}
