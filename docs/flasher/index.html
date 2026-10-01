@@ -5,310 +5,161 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Model:Cycles Flasher</title>
 <meta name="description" content="Install mods on the Elektron Model:Cycles from your browser, over Web MIDI. No firmware is provided or uploaded: you bring your own official OS file.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%232458e6'/%3E%3Cpath d='M5 8.5l2 2 4-5' stroke='white' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<style>
-  :root{
-    --bg:#f4f5f7; --card:#fff; --ink:#15181c; --muted:#5d6670; --line:#e1e4e9; --soft:#f0f2f5;
-    --accent:#2458e6; --accent-ink:#fff; --accent-soft:#e8eefd;
-    --ok:#0b7a3d; --ok-soft:#e6f4ec; --warn:#8a5a00; --warn-soft:#fbf1dc; --bad:#be2530; --bad-soft:#fbe9ea;
-    --shadow:0 1px 2px rgba(20,24,30,.05),0 4px 16px rgba(20,24,30,.04);
-  }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --bg:#0d0f13; --card:#161a20; --ink:#e8ebef; --muted:#97a1ac; --line:#272d36; --soft:#1d2229;
-      --accent:#6e9bff; --accent-ink:#0b1020; --accent-soft:#1b2745;
-      --ok:#52cf88; --ok-soft:#14291e; --warn:#e7ba4c; --warn-soft:#2c2413; --bad:#ff6d73; --bad-soft:#321a1c;
-      --shadow:none;
-    }
-  }
-  :root[data-theme="dark"]{
-    --bg:#0d0f13; --card:#161a20; --ink:#e8ebef; --muted:#97a1ac; --line:#272d36; --soft:#1d2229;
-    --accent:#6e9bff; --accent-ink:#0b1020; --accent-soft:#1b2745;
-    --ok:#52cf88; --ok-soft:#14291e; --warn:#e7ba4c; --warn-soft:#2c2413; --bad:#ff6d73; --bad-soft:#321a1c;
-    --shadow:none;
-  }
-  *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
-  body{margin:0;background:var(--bg);color:var(--ink);
-    font:15.5px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-  a{color:var(--accent)}
-  code,kbd{font:.88em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--soft);
-    border:1px solid var(--line);border-radius:5px;padding:.08em .38em;white-space:nowrap}
-  kbd{border-bottom-width:2px}
-  .wrap{max-width:720px;margin:0 auto;padding:28px 16px 64px}
-
-  /* header */
-  .top{display:flex;gap:16px;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
-  .top h1{font-size:1.6rem;line-height:1.2;margin:0 0 .25em;letter-spacing:-.01em}
-  .top p{margin:0;color:var(--muted);max-width:52ch}
-  .lang{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:none}
-  .lang button{background:transparent;color:var(--muted);border:0;padding:.4em .7em;font-family:inherit;font-weight:600;font-size:.78rem;line-height:1;cursor:pointer}
-  .lang button[aria-pressed="true"]{background:var(--ink);color:var(--card)}
-
-  .alert{border-radius:10px;padding:12px 14px;margin:0 0 14px;font-size:.95rem}
-  .alert.bad{background:var(--bad-soft);color:var(--bad);border:1px solid color-mix(in srgb,var(--bad) 35%,transparent)}
-
-  /* steps */
-  .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin:0 0 14px;box-shadow:var(--shadow)}
-  .step>header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-  .step h2{font-size:1.08rem;margin:0}
-  .num{width:28px;height:28px;flex:none;border-radius:50%;display:grid;place-items:center;
-    background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:.9rem}
-  .step.done .num{background:var(--ok);color:#fff;font-size:0}
-  .step.done .num::after{content:"";width:11px;height:6px;border:2.5px solid #fff;border-top:0;border-right:0;
-    transform:translateY(-1px) rotate(-45deg)}
-  .hint{color:var(--muted);font-size:.9rem;margin:.6em 0 0}
-
-  /* segmented tabs */
-  .seg{display:inline-flex;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px;margin-bottom:14px}
-  .seg button{border:0;background:transparent;color:var(--muted);font-family:inherit;font-weight:600;font-size:.92rem;line-height:1;padding:.6em 1em;border-radius:7px;cursor:pointer}
-  .seg button[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
-
-  /* feature cards */
-  .feat{display:block;border:1.5px solid var(--line);border-radius:12px;padding:14px 14px 14px 46px;margin:0 0 10px;
-    position:relative;cursor:pointer;transition:border-color .12s,background .12s}
-  .feat:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
-  .feat.on{border-color:var(--accent);background:var(--accent-soft)}
-  .feat>input{position:absolute;left:15px;top:16px;width:18px;height:18px;margin:0;accent-color:var(--accent);cursor:pointer}
-  .feat .ttl{font-weight:650;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
-  .feat .desc{color:var(--muted);font-size:.9rem;margin-top:3px}
-  .tag{font-family:inherit;font-weight:650;font-size:.66rem;line-height:1;letter-spacing:.04em;text-transform:uppercase;color:var(--warn);
-    background:var(--warn-soft);border-radius:99px;padding:.32em .55em}
-  .tag.ok{color:var(--ok);background:var(--ok-soft)}
-  .feat .credit{color:var(--muted);font-size:.82rem;margin-top:5px}
-  .feat .credit a{color:inherit;font-weight:600}
-  .variants{margin-top:10px;display:grid;gap:6px}
-  .variants label{display:flex;gap:9px;align-items:flex-start;background:var(--card);border:1px solid var(--line);
-    border-radius:9px;padding:9px 11px;cursor:pointer;font-size:.92rem}
-  .variants input{margin-top:.25em;accent-color:var(--accent)}
-  .variants small{display:block;color:var(--muted)}
-  .variants .combo{color:var(--muted);font-size:.85rem;margin:2px 2px 0}
-  .samples-head{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-weight:650;margin:0 0 .35em}
-  .warn-list{margin:.7em 0 12px;padding-left:1.2em;font-size:.9rem;color:var(--muted)}
-  .warn-list li{margin:.3em 0}
-  #drop2-wrap,#drop3-wrap{margin-top:14px}
-  .hash{font-family:ui-monospace,Menlo,monospace;font-size:.85em;opacity:.75;white-space:nowrap}
-  .note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--line);padding:2px 0 2px 10px;margin:12px 0 0}
-
-  /* drop zone */
-  .drop{display:flex;align-items:center;gap:14px;border:2px dashed var(--line);border-radius:12px;padding:18px 18px;
-    cursor:pointer;transition:border-color .12s,background .12s}
-  .drop:hover,.drop:focus-visible,.drop.over{border-color:var(--accent);background:var(--accent-soft);outline:none}
-  .drop svg{flex:none;color:var(--accent)}
-  .drop strong{display:block}
-  .drop span{color:var(--muted);font-size:.9rem}
-  .drop.loaded{border-style:solid;border-color:var(--ok);background:var(--ok-soft)}
-  .drop.loaded svg{color:var(--ok)}
-
-  /* status lines */
-  .status{margin-top:12px;font-size:.93rem}
-  .status:empty{display:none}
-  .status .row{display:flex;gap:9px;align-items:flex-start;margin:.25em 0}
-  .dot{width:8px;height:8px;border-radius:50%;margin-top:.5em;flex:none;background:var(--muted)}
-  .is-ok{color:var(--ok)} .is-ok .dot{background:var(--ok)}
-  .is-warn{color:var(--warn)} .is-warn .dot{background:var(--warn)}
-  .is-bad{color:var(--bad)} .is-bad .dot{background:var(--bad)}
-  .is-busy .dot{background:var(--accent);animation:pulse 1s ease-in-out infinite}
-  @keyframes pulse{50%{opacity:.25}}
-  .status a{font-weight:600}
-
-  /* connection */
-  .howto{margin:0 0 14px;padding-left:1.35em}
-  .howto li{margin:.35em 0;padding-left:.2em}
-  .howto li::marker{color:var(--accent);font-weight:700}
-  .portrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  select{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:9px;padding:.55em .7em;
-    flex:1 1 260px;min-width:0}
-
-  /* buttons */
-  button.btn{font-family:inherit;font-weight:600;font-size:.95rem;line-height:1.1;border-radius:10px;padding:.75em 1.15em;cursor:pointer;border:1px solid transparent}
-  .btn.primary{background:var(--accent);color:var(--accent-ink)}
-  .btn.secondary{background:var(--card);color:var(--ink);border-color:var(--line)}
-  .btn.big{width:100%;padding:1em;font-size:1.02rem}
-  .btn:disabled{background:var(--soft);color:var(--muted);border-color:var(--line);cursor:not-allowed}
-  .btn:focus-visible,.seg button:focus-visible,.lang button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-
-  /* flash step */
-  .summary{background:var(--soft);border-radius:10px;padding:11px 13px;margin:0 0 12px;font-size:.93rem}
-  .summary b{font-weight:650}
-  .check{display:flex;gap:10px;align-items:flex-start;margin:0 0 14px;cursor:pointer;font-size:.93rem}
-  .check input{margin-top:.25em;width:17px;height:17px;flex:none;accent-color:var(--accent)}
-  .actions{display:flex;gap:8px}
-  .actions .big{flex:1}
-  .missing{text-align:center;margin:.7em 0 0;color:var(--muted);font-size:.9rem}
-  .progress{margin-top:16px}
-  .bar{height:10px;background:var(--soft);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
-  .bar>div{height:100%;width:0;background:var(--accent);transition:width .2s}
-  .meta{display:flex;justify-content:space-between;font-size:.88rem;color:var(--muted);margin-top:6px;font-variant-numeric:tabular-nums}
-  .callout{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 9px 9px 0;padding:10px 12px;margin-top:12px;font-size:.92rem}
-  .callout.warn{border-color:var(--warn);background:var(--warn-soft)}
-  .result{margin-top:14px;border-radius:10px;padding:12px 14px;font-size:.94rem}
-  .result:empty{display:none}
-  .result.ok{background:var(--ok-soft);border:1px solid color-mix(in srgb,var(--ok) 35%,transparent)}
-  .result.warn{background:var(--warn-soft);border:1px solid color-mix(in srgb,var(--warn) 35%,transparent)}
-  .result.bad{background:var(--bad-soft);border:1px solid color-mix(in srgb,var(--bad) 35%,transparent)}
-  .result p{margin:.3em 0}
-
-  details{margin-top:14px}
-  details>summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:.93rem}
-  .trouble dl{margin:.6em 0 0;font-size:.92rem}
-  .trouble dt{font-weight:650;margin-top:.7em}
-  .trouble dd{margin:.15em 0 0;color:var(--muted)}
-  .adv{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 20px}
-  .adv[open]{padding-bottom:18px}
-  .adv .field{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0 0;font-size:.92rem}
-  .adv input[type=number]{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.4em .5em;width:5.5em}
-  #log{background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:10px;height:160px;overflow:auto;margin-top:12px;
-    font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap}
-  #log .is-ok{color:var(--ok)} #log .is-bad{color:var(--bad)} #log .is-warn{color:var(--warn)}
-
-  .credits{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 20px;font-size:.9rem}
-  .credits h2{font-size:.98rem;margin:0 0 .4em}
-  .credits p{margin:0 0 .5em;color:var(--muted)}
-  .credits ul{margin:0;padding-left:1.2em}
-  .credits li{margin:.3em 0}
-  .credits li a{font-weight:600}
-
-  footer{margin-top:22px;color:var(--muted);font-size:.85rem;text-align:center}
-  footer p{margin:.3em 0}
-  [hidden]{display:none !important}
-
-  @media (max-width:560px){
-    .top h1{font-size:1.35rem}
-    .step{padding:16px}
-  }
-</style>
+<meta name="theme-color" content="#e3e2de">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-01-5">
+<link rel="stylesheet" href="style.css?v=2026-10-01-5">
+<script>try{var l=localStorage.getItem("mc-lang")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en")</script>
 </head>
-<body>
-<div class="wrap">
-  <div id="errbar" class="alert bad" hidden></div>
-  <script>
-    // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-    window.MC_BUILD = "2026-10-01-2";
-    window.addEventListener("error", function (e) {
-      var b = document.getElementById("errbar");
-      if (!b) return;
-      b.hidden = false;
-      b.textContent = "Error: " + (e.message || e.error) +
-        (e.filename ? "  [" + e.filename.split("/").pop() + ":" + e.lineno + "]" : "");
-    });
-  </script>
+<body data-page="flasher">
+<script>
+  // Version stamp: an old date means the browser serves a cached copy -> hard reload.
+  window.MC_BUILD = "2026-10-01-5";
+  window.addEventListener("error", function (e) {
+    var b = document.getElementById("errbar");
+    if (!b) return;
+    b.hidden = false;
+    b.textContent = "Error: " + (e.message || e.error) +
+      (e.filename ? "  [" + e.filename.split("/").pop() + ":" + e.lineno + "]" : "");
+  });
+</script>
 
-  <header class="top">
+<header class="wrap top">
+  <a class="brand" href="../">Modded Cycles</a>
+  <nav aria-label="Site">
+    <a href="./" aria-current="page">Flasher</a>
+    <a href="../guide/">Guide</a>
+    <a href="https://github.com/18nelli18/Modded-Cycles" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://ko-fi.com/18nelli" target="_blank" rel="noopener">Ko-fi</a>
+  </nav>
+  <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="true">EN</button>/<button type="button" data-lang="fr" aria-pressed="false">FR</button></div>
+</header>
+
+<main class="wrap fl">
+  <div class="fl-head">
+    <h1 data-i18n="title">Model:Cycles Flasher</h1>
     <div>
-      <h1 data-i18n="title">Model:Cycles Flasher</h1>
       <p data-i18n="tagline">Install mods on your Elektron Model:Cycles, right from your browser.</p>
+      <p class="ver"><span data-l="en">Version</span><span data-l="fr">Version</span> <span data-rel="version">1.0</span> · <a href="../#version"><span data-l="en">what's new</span><span data-l="fr">nouveautés</span></a> · <a href="../guide/"><span data-l="en">guide</span><span data-l="fr">guide</span></a></p>
     </div>
-    <div class="lang" role="group" aria-label="Language">
-      <button type="button" data-lang="en" aria-pressed="true">EN</button>
-      <button type="button" data-lang="fr" aria-pressed="false">FR</button>
-    </div>
-  </header>
+  </div>
 
+  <div id="errbar" class="alert bad" hidden></div>
   <div id="compat" class="alert bad" role="alert" hidden></div>
 
   <!-- 1. Choose -->
   <section class="step" id="step-choose" aria-labelledby="h1s">
     <header><span class="num">1</span><h2 id="h1s" data-i18n="s1">What do you want to install?</h2></header>
-    <div class="seg" role="tablist" aria-label="Mode">
-      <button type="button" role="tab" id="tab-mods" aria-selected="true" aria-controls="panel-mods" data-i18n="tab_mods">Mods</button>
-      <button type="button" role="tab" id="tab-restore" aria-selected="false" aria-controls="panel-restore" data-i18n="tab_restore">Official firmware</button>
-      <button type="button" role="tab" id="tab-samples" aria-selected="false" aria-controls="panel-samples" data-i18n="tab_samples">Samples OS</button>
-    </div>
-    <div id="panel-mods" role="tabpanel" aria-labelledby="tab-mods">
-      <div id="features"></div>
-      <p class="note" data-i18n="mods_note">All these mods have been tested on a real Model:Cycles, except the choices tagged “Experimental”. Tick several to combine them.</p>
-    </div>
-    <div id="panel-restore" role="tabpanel" aria-labelledby="tab-restore" hidden>
-      <p style="margin:0" data-i18n-html="restore_text"></p>
-      <p class="note" data-i18n-html="restore_from_samples"></p>
-    </div>
-    <div id="panel-samples" role="tabpanel" aria-labelledby="tab-samples" hidden>
-      <p class="samples-head"><span data-i18n="samples_title">Turn your Model:Cycles into a Model:Samples</span><span class="tag ok" data-i18n="tested">Tested</span></p>
-      <p style="margin:0" data-i18n="samples_text"></p>
-      <ul class="warn-list">
-        <li data-i18n="samples_w1"></li>
-        <li data-i18n-html="samples_w2"></li>
-        <li data-i18n="samples_w3"></li>
-      </ul>
-      <label class="check" style="margin:0"><input id="samples-ack" type="checkbox"><span data-i18n="samples_ack">I have a MIDI interface for the way back (to the Model:Cycles MIDI IN).</span></label>
+    <div class="step-body">
+      <div class="seg" role="tablist" aria-label="Mode">
+        <button type="button" role="tab" id="tab-mods" aria-selected="true" aria-controls="panel-mods" data-i18n="tab_mods">Mods</button>
+        <button type="button" role="tab" id="tab-restore" aria-selected="false" aria-controls="panel-restore" data-i18n="tab_restore">Official firmware</button>
+        <button type="button" role="tab" id="tab-samples" aria-selected="false" aria-controls="panel-samples" data-i18n="tab_samples">Samples OS</button>
+      </div>
+      <div id="panel-mods" role="tabpanel" aria-labelledby="tab-mods">
+        <div id="features"></div>
+        <p class="note" data-i18n="mods_note">All these mods have been tested on a real Model:Cycles, except the choices tagged “Experimental”. Tick several to combine them.</p>
+      </div>
+      <div id="panel-restore" role="tabpanel" aria-labelledby="tab-restore" hidden>
+        <p class="panel-text" data-i18n-html="restore_text"></p>
+        <p class="note" data-i18n-html="restore_from_samples"></p>
+      </div>
+      <div id="panel-samples" role="tabpanel" aria-labelledby="tab-samples" hidden>
+        <p class="samples-head"><span data-i18n="samples_title">Turn your Model:Cycles into a Model:Samples</span><span class="tag ok" data-i18n="tested">Tested</span></p>
+        <p class="panel-text" data-i18n="samples_text"></p>
+        <ul class="warn-list">
+          <li data-i18n="samples_w1"></li>
+          <li data-i18n-html="samples_w2"></li>
+          <li data-i18n="samples_w3"></li>
+        </ul>
+        <label class="check"><input id="samples-ack" type="checkbox"><span data-i18n="samples_ack">I have a MIDI interface for the way back (to the Model:Cycles MIDI IN).</span></label>
+      </div>
     </div>
   </section>
 
   <!-- 2. OS file -->
   <section class="step" id="step-file" aria-labelledby="h2s">
     <header><span class="num">2</span><h2 id="h2s" data-i18n="s2">Load your official OS file</h2></header>
-    <label class="drop" id="drop" tabindex="0">
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 12v6M9.5 15.5 12 18l2.5-2.5"/></svg>
-      <div><strong id="drop-title" data-i18n="drop_title">Drop model-cycles_OS1.13.syx here</strong>
-        <span id="drop-sub" data-i18n="drop_sub">or click to choose it</span></div>
-      <input id="file" type="file" accept=".syx" hidden>
-    </label>
-    <p class="hint" data-i18n-html="get_os"></p>
-    <div id="file-status" class="status" aria-live="polite"></div>
-    <div id="drop2-wrap" hidden>
-      <label class="drop" id="drop2" tabindex="0">
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 12v6M9.5 15.5 12 18l2.5-2.5"/></svg>
-        <div><strong id="drop2-title" data-i18n="drop2_title">Drop model-samples_OS1.13.syx here</strong>
-          <span id="drop2-sub" data-i18n="drop2_sub">the official Model:Samples OS — or click to choose it</span></div>
-        <input id="file2" type="file" accept=".syx" hidden>
+    <div class="step-body">
+      <label class="drop" id="drop" tabindex="0">
+        <span class="drop-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path class="arrow" d="M12 11v6M9.5 14.5 12 17l2.5-2.5"/></svg></span>
+        <span class="drop-t"><strong id="drop-title" data-i18n="drop_title">Drop model-cycles_OS1.13.syx here</strong>
+          <span id="drop-sub" data-i18n="drop_sub">or click to choose it</span></span>
+        <input id="file" type="file" accept=".syx" hidden>
       </label>
-      <p class="hint" data-i18n-html="get_os_samples"></p>
-      <div id="file2-status" class="status" aria-live="polite"></div>
-    </div>
-    <div id="drop3-wrap" hidden>
-      <label class="drop" id="drop3" tabindex="0">
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 12v6M9.5 15.5 12 18l2.5-2.5"/></svg>
-        <div><strong id="drop3-title" data-i18n="drop3_title">Drop Syntakt_OS1.41.syx here</strong>
-          <span id="drop3-sub" data-i18n="drop3_sub">the official Syntakt OS, for its engines — or click to choose it</span></div>
-        <input id="file3" type="file" accept=".syx" hidden>
-      </label>
-      <p class="hint" data-i18n-html="get_os_syntakt"></p>
-      <div id="file3-status" class="status" aria-live="polite"></div>
+      <p class="hint" data-i18n-html="get_os"></p>
+      <div id="file-status" class="status" aria-live="polite"></div>
+      <div id="drop2-wrap" hidden>
+        <label class="drop" id="drop2" tabindex="0">
+          <span class="drop-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path class="arrow" d="M12 11v6M9.5 14.5 12 17l2.5-2.5"/></svg></span>
+          <span class="drop-t"><strong id="drop2-title" data-i18n="drop2_title">Drop model-samples_OS1.13.syx here</strong>
+            <span id="drop2-sub" data-i18n="drop2_sub">the official Model:Samples OS — or click to choose it</span></span>
+          <input id="file2" type="file" accept=".syx" hidden>
+        </label>
+        <p class="hint" data-i18n-html="get_os_samples"></p>
+        <div id="file2-status" class="status" aria-live="polite"></div>
+      </div>
+      <div id="drop3-wrap" hidden>
+        <label class="drop" id="drop3" tabindex="0">
+          <span class="drop-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path class="arrow" d="M12 11v6M9.5 14.5 12 17l2.5-2.5"/></svg></span>
+          <span class="drop-t"><strong id="drop3-title" data-i18n="drop3_title">Drop Syntakt_OS1.41.syx here</strong>
+            <span id="drop3-sub" data-i18n="drop3_sub">the official Syntakt OS, for its engines — or click to choose it</span></span>
+          <input id="file3" type="file" accept=".syx" hidden>
+        </label>
+        <p class="hint" data-i18n-html="get_os_syntakt"></p>
+        <div id="file3-status" class="status" aria-live="polite"></div>
+      </div>
     </div>
   </section>
 
   <!-- 3. Connect -->
   <section class="step" id="step-connect" aria-labelledby="h3s">
     <header><span class="num">3</span><h2 id="h3s" data-i18n="s3">Connect your Model:Cycles over USB</h2></header>
-    <ol class="howto" id="howto-usb">
-      <li data-i18n-html="hu1"></li>
-      <li data-i18n-html="hu2"></li>
-      <li data-i18n-html="hu3"></li>
-    </ol>
-    <div class="portrow">
-      <button type="button" class="btn primary" id="allow" data-i18n="allow">Allow MIDI access</button>
-      <select id="port" aria-label="MIDI output" hidden></select>
-      <button type="button" class="btn secondary" id="refresh" data-i18n="refresh" hidden>Refresh</button>
+    <div class="step-body">
+      <ol class="howto" id="howto-usb">
+        <li data-i18n-html="hu1"></li>
+        <li data-i18n-html="hu2"></li>
+        <li data-i18n-html="hu3"></li>
+      </ol>
+      <div class="portrow">
+        <button type="button" class="btn primary" id="allow" data-i18n="allow">Allow MIDI access</button>
+        <select id="port" aria-label="MIDI output" hidden></select>
+        <button type="button" class="btn secondary" id="refresh" data-i18n="refresh" hidden>Refresh</button>
+      </div>
+      <div id="midi-status" class="status" aria-live="polite"></div>
     </div>
-    <div id="midi-status" class="status" aria-live="polite"></div>
   </section>
 
   <!-- 4. Flash -->
   <section class="step" id="step-flash" aria-labelledby="h4s">
     <header><span class="num">4</span><h2 id="h4s" data-i18n="s4">Flash</h2></header>
-    <div class="summary" id="summary" hidden></div>
-    <label class="check"><input id="ack" type="checkbox"><span data-i18n="ack">I've backed up my projects (Elektron Transfer) and I understand that flashing is at my own risk.</span></label>
-    <div class="actions">
-      <button type="button" class="btn primary big" id="flash" disabled data-i18n="flash_btn">Flash the Model:Cycles</button>
-      <button type="button" class="btn secondary" id="stop" hidden data-i18n="stop">Stop</button>
+    <div class="step-body">
+      <div class="summary" id="summary" hidden></div>
+      <label class="check"><input id="ack" type="checkbox"><span data-i18n="ack">I've backed up my projects (Elektron Transfer) and I understand that flashing is at my own risk.</span></label>
+      <div class="actions">
+        <button type="button" class="btn primary big" id="flash" disabled data-i18n="flash_btn">Flash the Model:Cycles</button>
+        <button type="button" class="btn secondary" id="stop" hidden data-i18n="stop">Stop</button>
+      </div>
+      <p class="missing" id="missing" aria-live="polite"></p>
+      <div class="progress" id="progress" hidden>
+        <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="barwrap"><div id="bar"></div><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="meta"><span id="pct">0 %</span><span id="eta"></span></div>
+        <div class="callout" id="watch"></div>
+      </div>
+      <div class="result" id="result" aria-live="polite"></div>
+      <details class="trouble">
+        <summary data-i18n="trouble">Something went wrong?</summary>
+        <dl>
+          <dt data-i18n="t1q">Nothing happens on the Model:Cycles screen</dt><dd data-i18n-html="t1a"></dd>
+          <dt data-i18n="t2q">The transfer stops, or the Model:Cycles shows an error</dt><dd data-i18n-html="t2a"></dd>
+          <dt data-i18n="t3q">No MIDI port in the list</dt><dd data-i18n-html="t3a"></dd>
+          <dt data-i18n="t4q">The update over USB is refused, or the Model:Cycles doesn't start any more</dt><dd data-i18n-html="t4a"></dd>
+        </dl>
+      </details>
     </div>
-    <p class="missing" id="missing" aria-live="polite"></p>
-    <div class="progress" id="progress" hidden>
-      <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="barwrap"><div id="bar"></div></div>
-      <div class="meta"><span id="pct">0 %</span><span id="eta"></span></div>
-      <div class="callout" id="watch"></div>
-    </div>
-    <div class="result" id="result" aria-live="polite"></div>
-    <details class="trouble">
-      <summary data-i18n="trouble">Something went wrong?</summary>
-      <dl>
-        <dt data-i18n="t1q">Nothing happens on the Model:Cycles screen</dt><dd data-i18n-html="t1a"></dd>
-        <dt data-i18n="t2q">The transfer stops, or the Model:Cycles shows an error</dt><dd data-i18n-html="t2a"></dd>
-        <dt data-i18n="t3q">No MIDI port in the list</dt><dd data-i18n-html="t3a"></dd>
-        <dt data-i18n="t4q">The update over USB is refused, or the Model:Cycles doesn't start any more</dt><dd data-i18n-html="t4a"></dd>
-      </dl>
-    </details>
   </section>
 
   <details class="adv" id="advanced">
@@ -316,11 +167,11 @@
     <div class="field">
       <label for="pace" data-i18n="pace">Send speed margin</label>
       <input id="pace" type="number" min="0" step="0.1" value="1.4">
-      <span class="hint" style="margin:0" data-i18n="pace_hint">1.4 by default. Raise it to 2.0 if the transfer stalls.</span>
+      <span class="hint" data-i18n="pace_hint">1.4 by default. Raise it to 2.0 if the transfer stalls.</span>
     </div>
     <div class="field">
       <a id="download" hidden data-i18n="download">Download the prepared .syx</a>
-      <span class="hint" style="margin:0" id="download-hint" data-i18n-html="download_hint"></span>
+      <span class="hint" id="download-hint" data-i18n-html="download_hint"></span>
     </div>
     <div id="log" aria-live="off"></div>
   </details>
@@ -330,16 +181,22 @@
     <p data-i18n="credits_intro">This flasher stands on the shoulders of these open-source projects (MIT licence), none of which includes firmware:</p>
     <ul id="credits-list"></ul>
   </section>
+</main>
 
-  <footer>
-    <p data-i18n="privacy">Your firmware file never leaves your computer. Nothing is uploaded, no firmware is provided.</p>
-    <p><span data-i18n-html="links"></span> <span id="build-stamp"></span></p>
-  </footer>
-</div>
+<footer class="foot">
+  <div class="wrap">
+    <p><span data-i18n="privacy">Your firmware file never leaves your computer. Nothing is uploaded, no firmware is provided.</span>
+      <span data-i18n-html="links"></span></p>
+    <p>Flasher <span data-rel="version">1.0</span> <span id="build-stamp"></span></p>
+  </div>
+</footer>
+
 <!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
-<script src="builder.js?v=2026-10-01-2"></script>
-<script src="tweaks.js?v=2026-10-01-2"></script>
-<script src="flasher.js?v=2026-10-01-2"></script>
-<script src="app.js?v=2026-10-01-2"></script>
+<script src="../assets/release.js?v=2026-10-01-5"></script>
+<script src="../assets/site.js?v=2026-10-01-5"></script>
+<script src="builder.js?v=2026-10-01-5"></script>
+<script src="tweaks.js?v=2026-10-01-5"></script>
+<script src="flasher.js?v=2026-10-01-5"></script>
+<script src="app.js?v=2026-10-01-5"></script>
 </body>
 </html>

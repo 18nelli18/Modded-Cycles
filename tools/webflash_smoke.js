@@ -86,7 +86,8 @@ async function main() {
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement): ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
-    check(srcs.length === 4 && srcs.every((x) => x.endsWith("?v=" + w.MC_BUILD)), "scripts loaded with ?v=<build> (no stale cache): " + srcs.join());
+    check(["builder.js", "tweaks.js", "flasher.js", "app.js"].every((f) => srcs.some((x) => x.startsWith(f + "?")))
+      && srcs.every((x) => x.endsWith("?v=" + w.MC_BUILD)), "scripts loaded with ?v=<build> (no stale cache): " + srcs.join());
     check(doc.getElementById("compat").hidden, "no compatibility banner in a good browser");
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
     check(feats.join() === "feat-usb6,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-syntakt", "5 feature cards: " + JSON.stringify(feats));
@@ -132,7 +133,7 @@ async function main() {
     // language switch
     doc.querySelector('.lang button[data-lang="fr"]').click();
     await wait(20);
-    check(/Qu'est-ce que tu veux installer/.test(text(doc, "h1s")) && doc.documentElement.lang === "fr", "FR switch translates the page");
+    check(/Que voulez-vous installer/.test(text(doc, "h1s")) && doc.documentElement.lang === "fr", "FR switch translates the page");
     check(/Audio USB 6 canaux/.test(text(doc, "features")) && /Mode mute verrouillé/.test(text(doc, "features"))
       && /par drumkilla/.test(text(doc, "features")) && /Vrais moteurs du Syntakt/.test(text(doc, "features"))
       && /Testé/.test(text(doc, "features")), "FR switch translates the feature cards and credits");

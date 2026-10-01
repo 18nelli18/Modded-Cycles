@@ -583,6 +583,8 @@ const CREDITS = [
 ];
 
 const FLASH_GUIDE = `${REPO}/blob/main/FLASH.md`;
+const GUIDE = "../guide/";                      // the site's guide (docs/guide/)
+const GUIDE_OF = { usb6: "usb6", "latching-mute": "mute", "trig-preview": "preview", "browser-scroll": "scroll", syntakt: "syntakt" };
 
 // ---------------------------------------------------------------------------
 // Texts
@@ -594,16 +596,16 @@ const T = {
     s1: "What do you want to install?",
     tab_mods: "Mods",
     tab_restore: "Official firmware",
-    mods_note: "All these mods have been tested on a real Model:Cycles, except the choices tagged “Experimental”. Tick several to combine them.",
+    mods_note: "Tick several to combine them. Choices tagged “Experimental” are not tested on a real Model:Cycles yet.",
     restore_text: "Sends your official OS file <b>unchanged</b>, to go back to the stock firmware. It is also a good first rehearsal: it checks your cable and your setup without changing anything.",
     tab_samples: "Samples OS",
     samples_title: "Turn your Model:Cycles into a Model:Samples",
     samples_text: "Load and play your own samples, managed with Elektron Transfer. The page puts the official Model:Samples OS inside your Model:Cycles firmware: the startup menu, the updater and the signature of the Model:Cycles stay in place.",
     samples_w1: "Back up your projects with Transfer first: the Model:Samples OS uses the same storage.",
-    samples_w2: `Coming back to the Model:Cycles OS goes through the startup menu, which only listens to the MIDI IN: it needs a MIDI interface (<a href="${FLASH_GUIDE}" target="_blank" rel="noopener">full guide</a>).`,
+    samples_w2: `Coming back to the Model:Cycles OS goes through the startup menu, which only listens to the MIDI IN: it needs a MIDI interface (<a href="${GUIDE}#samples">guide</a>).`,
     samples_w3: "From the Samples OS, never run CONFIG › UPGRADE with a Model:Samples file: it would also replace the startup menu of your Model:Cycles.",
     samples_ack: "I have a MIDI interface for the way back (to the Model:Cycles MIDI IN).",
-    restore_from_samples: `Coming back from the Samples OS? Its way back is the startup menu through the MIDI IN: see the <a href="${FLASH_GUIDE}" target="_blank" rel="noopener">full guide</a>.`,
+    restore_from_samples: `Coming back from the Samples OS? Its way back is the startup menu through the MIDI IN: see the <a href="${GUIDE}#recovery">guide</a>.`,
     tested: "Tested",
     experimental: "Experimental",
     credit_by: "by {who}",
@@ -615,14 +617,14 @@ const T = {
     get_os: `Don't have it? <a href="${ELEKTRON_DL}" target="_blank" rel="noopener">Download Model:Cycles OS 1.13 from elektron.se</a>, then unzip it.`,
     s2_samples: "Load both official OS files",
     drop2_title: "Drop model-samples_OS1.13.syx here",
-    drop2_sub: "the official Model:Samples OS — or click to choose it",
+    drop2_sub: "the official Model:Samples OS, or click to choose it",
     get_os_samples: `Don't have it? <a href="${ELEKTRON_SMP_DL}" target="_blank" rel="noopener">Download Model:Samples OS 1.13 from elektron.se</a>, then unzip it.`,
     drop3_title: "Drop Syntakt_OS1.41.syx here",
-    drop3_sub: "the official Syntakt OS, for its engines — or click to choose it",
+    drop3_sub: "the official Syntakt OS, for its engines, or click to choose it",
     get_os_syntakt: `Don't have it? <a href="${ELEKTRON_ST_DL}" target="_blank" rel="noopener">Download Syntakt OS 1.41 from elektron.se</a>, then unzip it. The page reads the engines from it, on your computer: no Syntakt needed.`,
     s3: "Connect your Model:Cycles over USB",
     hu1: "Connect the Model:Cycles to the computer with a USB cable and turn it on normally.",
-    hu2: "On the Model:Cycles, open <b>CONFIG › UPGRADE</b> and confirm with <b>YES</b>. It now waits for the firmware.",
+    hu2: "On the Model:Cycles, press <b>SETTINGS</b>, open <b>CONFIG › UPGRADE</b> and confirm with <b>YES</b>. It now waits for the firmware.",
     hu3: "Allow MIDI access below: the port named “Model:Cycles” is selected automatically.",
     allow: "Allow MIDI access",
     refresh: "Refresh",
@@ -639,19 +641,19 @@ const T = {
     t3q: "No MIDI port in the list",
     t3a: "Connect the Model:Cycles with a USB cable that carries data (some cables only charge), turn it on, then click <b>Refresh</b>. Some systems only show a new device after the browser is restarted.",
     t4q: "The update over USB is refused, or the Model:Cycles doesn't start any more",
-    t4a: `Recovery goes through the startup menu, which only listens to the MIDI IN: follow the <a href="${FLASH_GUIDE}" target="_blank" rel="noopener">full guide</a> (it needs a MIDI interface). The same goes if you installed the old “6-channel reference version”, which disables updates over USB.`,
+    t4a: `Recovery goes through the startup menu, which only listens to the MIDI IN: follow the <a href="${GUIDE}#recovery">guide</a> (it needs a MIDI interface). The same goes if you installed the old “6-channel reference version”, which disables updates over USB.`,
     advanced: "Advanced",
     pace: "Send speed margin",
     pace_hint: "1.4 by default. Raise it to 2.0 if the transfer stalls.",
     download: "Download the prepared .syx",
-    download_hint: `To flash with <code>flash.sh</code> / <code>flash.bat</code> instead (<a href="${FLASH_GUIDE}" target="_blank" rel="noopener">guide</a>).`,
+    download_hint: "",
     credits: "Credits",
     credits_intro: "This flasher stands on the shoulders of these open-source projects (MIT licence), none of which includes firmware:",
     privacy: "Your firmware file never leaves your computer. Nothing is uploaded, no firmware is provided.",
-    links: `<a href="${REPO}" target="_blank" rel="noopener">Source code</a> · <a href="${FLASH_GUIDE}" target="_blank" rel="noopener">Full guide (French)</a> · Not affiliated with Elektron.`,
+    links: "Not affiliated with Elektron. Model:Cycles, Model:Samples and Syntakt are Elektron products.",
     // dynamic
-    no_webmidi: "This browser can't talk to MIDI devices. Open this page in <b>Chrome, Edge or Opera</b> on a computer (Firefox and Safari don't support Web MIDI). You can still prepare and download the firmware here.",
-    insecure: "Web MIDI needs a secure page. Open the online version, or serve this folder with <code>python3 -m http.server</code> — not by double-clicking the file.",
+    no_webmidi: "This browser can't talk to MIDI devices. Open this page in <b>Chrome, Edge or Opera</b> on a computer (Firefox and Safari don't support Web MIDI). You can still prepare the firmware here.",
+    insecure: "Web MIDI needs a secure page. Open the online version, or serve this folder with <code>python3 -m http.server</code>, not by double-clicking the file.",
     reading: "Reading {name}…",
     os_ok: "Official Model:Cycles OS 1.13 recognised.",
     os_custom: "{name}: {device} firmware, but not the official OS 1.13 file. It will be sent <b>exactly as it is</b>.",
@@ -672,7 +674,7 @@ const T = {
     miss_syntakt: "Load the official Syntakt OS file (step 2).",
     combo_tested: "This choice was tested on a real Model:Cycles.",
     combo_new: "New choice: checked in the emulator, not tested on a Model:Cycles yet.",
-    renumber: "The added machines are numbered in the order of the ticked engines. Before changing your choice or going back to the official firmware, set the tracks that use an added machine back to an original machine (Kick…Chord): otherwise the official firmware and the tested choices can freeze when you press MACHINES on such a track.",
+    renumber: "Before changing this choice or going back to the official firmware, set the tracks that use an added machine back to an original one (Kick…Chord): their numbers depend on the ticked engines, and MACHINES can freeze on such a track.",
     done_syn: "Then press MACHINES on a track: after Chord come {list}. Their knobs show the Syntakt's names. The 6 original machines are unchanged. If something goes wrong, flash the official firmware back from CONFIG › UPGRADE (first set the tracks that use an added machine back to an original machine).",
     warn_samples_port: "This port is a Model:Samples (a Model:Cycles running the Samples OS): it refuses a Model:Cycles firmware over USB. The way back goes through the startup menu and the MIDI IN (see the full guide).",
     samples_needs_cycles: "For the Samples OS, the first file must be the official <code>model-cycles_OS1.13.syx</code>: it provides the startup menu, updater and signature that stay on your Model:Cycles.",
@@ -690,7 +692,7 @@ const T = {
     midi_pick_dev: "The Model:Cycles USB port is selected.",
     midi_no_dev: "The Model:Cycles doesn't appear over USB. Connect it, turn it on and click Refresh.",
     warn_not_dev: "This doesn't look like the Model:Cycles: pick the port named “Model:Cycles”.",
-    choose_port: "— choose a MIDI output —",
+    choose_port: "Choose a MIDI output",
     via: "via",
     minutes: "about {m} min",
     mods_list_restore: "Official firmware (unchanged)",
@@ -717,40 +719,40 @@ const T = {
   },
   fr: {
     title: "Flasher Model:Cycles",
-    tagline: "Installe des mods sur ton Elektron Model:Cycles, directement depuis ton navigateur.",
-    s1: "Qu'est-ce que tu veux installer ?",
+    tagline: "Installez des mods sur votre Elektron Model:Cycles, depuis votre navigateur.",
+    s1: "Que voulez-vous installer ?",
     tab_mods: "Mods",
     tab_restore: "Firmware officiel",
-    mods_note: "Tous ces mods ont été testés sur un vrai Model:Cycles, sauf les choix marqués « Expérimental ». Coche-en plusieurs pour les combiner.",
-    restore_text: "Envoie ton fichier d'OS officiel <b>sans le modifier</b>, pour revenir au firmware d'origine. C'est aussi une bonne répétition avant un mod : elle vérifie ton câble et ton installation sans rien changer.",
+    mods_note: "Cochez-en plusieurs pour les combiner. Les choix marqués « Expérimental » ne sont pas encore testés sur un vrai Model:Cycles.",
+    restore_text: "Envoie votre fichier d'OS officiel <b>sans le modifier</b>, pour revenir au firmware d'origine. C'est aussi une bonne répétition avant un mod : elle vérifie le câble et l'installation sans rien changer.",
     tab_samples: "OS Samples",
-    samples_title: "Transforme ton Model:Cycles en Model:Samples",
-    samples_text: "Charge et joue tes propres samples, gérés avec Elektron Transfer. La page place l'OS officiel du Model:Samples dans le firmware de ton Model:Cycles : le menu de démarrage, l'updater et la signature du Model:Cycles restent en place.",
-    samples_w1: "Sauvegarde d'abord tes projets avec Transfer : l'OS du Model:Samples utilise le même stockage.",
-    samples_w2: `Le retour à l'OS du Model:Cycles passe par le menu de démarrage, qui n'écoute que le MIDI IN : il faut une interface MIDI (<a href="${FLASH_GUIDE}" target="_blank" rel="noopener">guide complet</a>).`,
-    samples_w3: "Depuis l'OS Samples, ne lance jamais CONFIG › UPGRADE avec un fichier Model:Samples : il remplacerait aussi le menu de démarrage de ton Model:Cycles.",
+    samples_title: "Transformer le Model:Cycles en Model:Samples",
+    samples_text: "Chargez et jouez vos propres samples, gérés avec Elektron Transfer. La page place l'OS officiel du Model:Samples dans le firmware de votre Model:Cycles : le menu de démarrage, l'updater et la signature du Model:Cycles restent en place.",
+    samples_w1: "Sauvegardez d'abord vos projets avec Transfer : l'OS du Model:Samples utilise le même stockage.",
+    samples_w2: `Le retour à l'OS du Model:Cycles passe par le menu de démarrage, qui n'écoute que le MIDI IN : il faut une interface MIDI (<a href="${GUIDE}#samples">guide</a>).`,
+    samples_w3: "Depuis l'OS Samples, ne lancez jamais CONFIG › UPGRADE avec un fichier Model:Samples : il remplacerait aussi le menu de démarrage de votre Model:Cycles.",
     samples_ack: "J'ai une interface MIDI pour le retour (vers le MIDI IN du Model:Cycles).",
-    restore_from_samples: `Tu reviens de l'OS Samples ? Le retour passe par le menu de démarrage et le MIDI IN : voir le <a href="${FLASH_GUIDE}" target="_blank" rel="noopener">guide complet</a>.`,
+    restore_from_samples: `Vous revenez de l'OS Samples ? Le retour passe par le menu de démarrage et le MIDI IN : voir le <a href="${GUIDE}#recovery">guide</a>.`,
     tested: "Testé",
     experimental: "Expérimental",
     credit_by: "par {who}",
     credit_based: "d'après {repo} de {who}",
-    s2: "Dépose ton fichier d'OS officiel",
-    drop_title: "Dépose model-cycles_OS1.13.syx ici",
-    drop_sub: "ou clique pour le choisir",
-    drop_again: "Vérifié. Clique ou dépose pour changer de fichier.",
-    get_os: `Tu ne l'as pas ? <a href="${ELEKTRON_DL}" target="_blank" rel="noopener">Télécharge l'OS Model:Cycles 1.13 sur elektron.se</a>, puis dézippe-le.`,
-    s2_samples: "Dépose les deux fichiers d'OS officiels",
-    drop2_title: "Dépose model-samples_OS1.13.syx ici",
-    drop2_sub: "l'OS officiel du Model:Samples — ou clique pour le choisir",
-    get_os_samples: `Tu ne l'as pas ? <a href="${ELEKTRON_SMP_DL}" target="_blank" rel="noopener">Télécharge l'OS Model:Samples 1.13 sur elektron.se</a>, puis dézippe-le.`,
-    drop3_title: "Dépose Syntakt_OS1.41.syx ici",
-    drop3_sub: "l'OS officiel du Syntakt, pour ses moteurs — ou clique pour le choisir",
-    get_os_syntakt: `Tu ne l'as pas ? <a href="${ELEKTRON_ST_DL}" target="_blank" rel="noopener">Télécharge l'OS Syntakt 1.41 sur elektron.se</a>, puis dézippe-le. La page y lit les moteurs, sur ton ordinateur : pas besoin d'avoir un Syntakt.`,
-    s3: "Branche ton Model:Cycles en USB",
-    hu1: "Relie le Model:Cycles à l'ordinateur avec un câble USB et allume-le normalement.",
-    hu2: "Sur le Model:Cycles, ouvre <b>CONFIG › UPGRADE</b> et confirme avec <b>YES</b>. Il attend alors le firmware.",
-    hu3: "Autorise le MIDI ci-dessous : le port nommé « Model:Cycles » est choisi automatiquement.",
+    s2: "Déposez votre fichier d'OS officiel",
+    drop_title: "Déposez model-cycles_OS1.13.syx ici",
+    drop_sub: "ou cliquez pour le choisir",
+    drop_again: "Vérifié. Cliquez ou déposez un autre fichier pour le remplacer.",
+    get_os: `Vous ne l'avez pas ? <a href="${ELEKTRON_DL}" target="_blank" rel="noopener">Téléchargez l'OS Model:Cycles 1.13 sur elektron.se</a>, puis dézippez-le.`,
+    s2_samples: "Déposez les deux fichiers d'OS officiels",
+    drop2_title: "Déposez model-samples_OS1.13.syx ici",
+    drop2_sub: "l'OS officiel du Model:Samples, ou cliquez pour le choisir",
+    get_os_samples: `Vous ne l'avez pas ? <a href="${ELEKTRON_SMP_DL}" target="_blank" rel="noopener">Téléchargez l'OS Model:Samples 1.13 sur elektron.se</a>, puis dézippez-le.`,
+    drop3_title: "Déposez Syntakt_OS1.41.syx ici",
+    drop3_sub: "l'OS officiel du Syntakt, pour ses moteurs, ou cliquez pour le choisir",
+    get_os_syntakt: `Vous ne l'avez pas ? <a href="${ELEKTRON_ST_DL}" target="_blank" rel="noopener">Téléchargez l'OS Syntakt 1.41 sur elektron.se</a>, puis dézippez-le. La page y lit les moteurs, sur votre ordinateur : pas besoin d'avoir un Syntakt.`,
+    s3: "Branchez le Model:Cycles en USB",
+    hu1: "Reliez le Model:Cycles à l'ordinateur avec un câble USB et allumez-le normalement.",
+    hu2: "Sur le Model:Cycles, appuyez sur <b>SETTINGS</b>, ouvrez <b>CONFIG › UPGRADE</b> et confirmez avec <b>YES</b>. Il attend alors le firmware.",
+    hu3: "Autorisez le MIDI ci-dessous : le port nommé « Model:Cycles » est choisi automatiquement.",
     allow: "Autoriser le MIDI",
     refresh: "Rafraîchir",
     s4: "Flasher",
@@ -760,29 +762,29 @@ const T = {
     stop: "Arrêter",
     trouble: "Un problème ?",
     t1q: "Rien ne se passe sur l'écran du Model:Cycles",
-    t1a: "Vérifie que <b>CONFIG › UPGRADE</b> est ouvert et en attente, et que le port nommé « Model:Cycles » est choisi à l'étape 3. Ferme Elektron Transfer, Overbridge et ton logiciel de musique (sous Windows, ils bloquent le port), puis réessaie.",
+    t1a: "Vérifiez que <b>CONFIG › UPGRADE</b> est ouvert et en attente, et que le port nommé « Model:Cycles » est choisi à l'étape 3. Fermez Elektron Transfer, Overbridge et votre logiciel de musique (sous Windows, ils bloquent le port), puis réessayez.",
     t2q: "Le transfert s'arrête, ou le Model:Cycles affiche une erreur",
-    t2a: "Éteins et rallume le Model:Cycles, rouvre <b>CONFIG › UPGRADE</b>, règle <b>Options avancées › Marge de vitesse</b> sur 2.0 et relance.",
+    t2a: "Éteignez puis rallumez le Model:Cycles, rouvrez <b>CONFIG › UPGRADE</b>, réglez <b>Options avancées › Marge de vitesse</b> sur 2.0 et relancez.",
     t3q: "Aucun port MIDI dans la liste",
-    t3a: "Branche le Model:Cycles avec un câble USB qui transporte les données (certains câbles ne font que charger), allume-le, puis clique <b>Rafraîchir</b>. Certains systèmes n'affichent un nouvel appareil qu'après un redémarrage du navigateur.",
+    t3a: "Branchez le Model:Cycles avec un câble USB qui transporte les données (certains câbles ne font que charger), allumez-le, puis cliquez sur <b>Rafraîchir</b>. Certains systèmes n'affichent un nouvel appareil qu'après un redémarrage du navigateur.",
     t4q: "La mise à jour par USB est refusée, ou le Model:Cycles ne démarre plus",
-    t4a: `La récupération passe par le menu de démarrage, qui n'écoute que le MIDI IN : suis le <a href="${FLASH_GUIDE}" target="_blank" rel="noopener">guide complet</a> (il faut une interface MIDI). C'est aussi le cas si tu avais installé l'ancienne « version de référence » du 6 canaux, qui désactive la mise à jour par USB.`,
+    t4a: `La récupération passe par le menu de démarrage, qui n'écoute que le MIDI IN : suivez le <a href="${GUIDE}#recovery">guide</a> (il faut une interface MIDI). C'est aussi le cas si vous aviez installé l'ancienne « version de référence » du 6 canaux, qui désactive la mise à jour par USB.`,
     advanced: "Options avancées",
     pace: "Marge de vitesse d'envoi",
-    pace_hint: "1.4 par défaut. Monte à 2.0 si le transfert se bloque.",
+    pace_hint: "1.4 par défaut. Montez à 2.0 si le transfert se bloque.",
     download: "Télécharger le .syx préparé",
-    download_hint: `Pour flasher plutôt avec <code>flash.sh</code> / <code>flash.bat</code> (<a href="${FLASH_GUIDE}" target="_blank" rel="noopener">guide</a>).`,
+    download_hint: "",
     credits: "Crédits",
     credits_intro: "Ce flasher s'appuie sur ces projets open source (licence MIT), dont aucun ne contient de firmware :",
-    privacy: "Ton fichier firmware ne quitte jamais ton ordinateur. Rien n'est envoyé en ligne, aucun firmware n'est fourni.",
-    links: `<a href="${REPO}" target="_blank" rel="noopener">Code source</a> · <a href="${FLASH_GUIDE}" target="_blank" rel="noopener">Guide complet</a> · Projet non affilié à Elektron.`,
-    no_webmidi: "Ce navigateur ne sait pas parler aux appareils MIDI. Ouvre cette page dans <b>Chrome, Edge ou Opera</b> sur ordinateur (Firefox et Safari ne gèrent pas le Web MIDI). Tu peux quand même préparer et télécharger le firmware ici.",
-    insecure: "Le Web MIDI exige une page sécurisée. Ouvre la version en ligne, ou sers ce dossier avec <code>python3 -m http.server</code> — pas par double-clic sur le fichier.",
+    privacy: "Votre fichier firmware ne quitte jamais votre ordinateur. Rien n'est envoyé en ligne, aucun firmware n'est fourni.",
+    links: "Projet non affilié à Elektron. Model:Cycles, Model:Samples et Syntakt sont des produits Elektron.",
+    no_webmidi: "Ce navigateur ne sait pas parler aux appareils MIDI. Ouvrez cette page dans <b>Chrome, Edge ou Opera</b> sur ordinateur (Firefox et Safari ne gèrent pas le Web MIDI). Vous pouvez quand même préparer le firmware ici.",
+    insecure: "Le Web MIDI exige une page sécurisée. Ouvrez la version en ligne, ou servez ce dossier avec <code>python3 -m http.server</code>, pas par double-clic sur le fichier.",
     reading: "Lecture de {name}…",
     os_ok: "OS officiel Model:Cycles 1.13 reconnu.",
     os_custom: "{name} : firmware {device}, mais pas le fichier d'OS 1.13 officiel. Il sera envoyé <b>tel quel</b>.",
-    os_custom_mods: "Ta sélection de mods est ignorée pour ce fichier.",
-    os_restore_needs: "Pour restaurer le firmware officiel, dépose le fichier officiel <code>model-cycles_OS1.13.syx</code>.",
+    os_custom_mods: "Votre sélection de mods est ignorée pour ce fichier.",
+    os_restore_needs: "Pour restaurer le firmware officiel, déposez le fichier officiel <code>model-cycles_OS1.13.syx</code>.",
     os_bad: "Fichier inutilisable : {err}",
     building: "Préparation du firmware…",
     built: "Firmware prêt : {mods}.",
@@ -794,50 +796,50 @@ const T = {
     smp_not_official: "son SHA-256 diffère du fichier officiel",
     st_ok: "OS officiel Syntakt 1.41 reconnu.",
     st_bad: "Ce n'est pas le fichier officiel de l'OS Syntakt 1.41 : {err}",
-    needs_syntakt: "Les moteurs du Syntakt se lisent dans le fichier officiel de l'OS Syntakt : dépose-le ci-dessous.",
-    miss_syntakt: "Dépose le fichier officiel de l'OS Syntakt (étape 2).",
+    needs_syntakt: "Les moteurs du Syntakt se lisent dans le fichier officiel de l'OS Syntakt : déposez-le ci-dessous.",
+    miss_syntakt: "Déposez le fichier officiel de l'OS Syntakt (étape 2).",
     combo_tested: "Ce choix a été testé sur un vrai Model:Cycles.",
     combo_new: "Nouveau choix : vérifié en émulation, pas encore testé sur un Model:Cycles.",
-    renumber: "Les machines ajoutées sont numérotées dans l'ordre des moteurs cochés. Avant de changer de choix ou de revenir au firmware officiel, remets sur une machine d'origine (Kick…Chord) les pistes qui utilisent une machine ajoutée : sinon le firmware officiel et les choix testés peuvent geler quand tu appuies sur MACHINES sur une telle piste.",
-    done_syn: "Appuie ensuite sur MACHINES sur une piste : après Chord viennent {list}. Leurs potards affichent les noms du Syntakt. Les 6 machines d'origine ne changent pas. Si quelque chose cloche, reflashe le firmware officiel depuis CONFIG › UPGRADE (remets d'abord sur une machine d'origine les pistes qui utilisent une machine ajoutée).",
-    warn_samples_port: "Ce port est un Model:Samples (un Model:Cycles sous l'OS Samples) : il refuse un firmware Model:Cycles par USB. Le retour passe par le menu de démarrage et le MIDI IN (voir le guide complet).",
-    samples_needs_cycles: "Pour l'OS Samples, le premier fichier doit être le <code>model-cycles_OS1.13.syx</code> officiel : il fournit le menu de démarrage, l'updater et la signature qui restent sur ton Model:Cycles.",
-    samples_ready: "Firmware prêt : l'OS Model:Samples pour ton Model:Cycles.",
+    renumber: "Avant de changer de choix ou de revenir au firmware officiel, remettez sur une machine d'origine (de Kick à Chord) les pistes qui utilisent une machine ajoutée : leurs numéros dépendent des moteurs cochés, et MACHINES peut geler sur une telle piste.",
+    done_syn: "Appuyez ensuite sur MACHINES sur une piste : après Chord viennent {list}. Leurs potards affichent les noms du Syntakt. Les 6 machines d'origine ne changent pas. En cas de problème, reflashez le firmware officiel depuis CONFIG › UPGRADE (remettez d'abord sur une machine d'origine les pistes qui utilisent une machine ajoutée).",
+    warn_samples_port: "Ce port est un Model:Samples (un Model:Cycles sous l'OS Samples) : il refuse un firmware Model:Cycles par USB. Le retour passe par le menu de démarrage et le MIDI IN (voir le guide).",
+    samples_needs_cycles: "Pour l'OS Samples, le premier fichier doit être le <code>model-cycles_OS1.13.syx</code> officiel : il fournit le menu de démarrage, l'updater et la signature qui restent sur votre Model:Cycles.",
+    samples_ready: "Firmware prêt : l'OS Model:Samples pour votre Model:Cycles.",
     mods_list_samples: "OS Model:Samples (pour Model:Cycles)",
     miss_samples_cycles: "Le premier fichier doit être l'OS officiel du Model:Cycles (étape 2).",
-    miss_samples_file: "Dépose le fichier officiel de l'OS Model:Samples (étape 2).",
-    miss_samples_ack: "Confirme que tu as une interface MIDI pour le retour (étape 1).",
-    done_samples: "Il redémarre en <b>Model:Samples</b> : Elektron Transfer et ton ordinateur voient un « Model:Samples ». Charge tes samples avec Transfer.",
-    pick_one: "Coche au moins un mod, ou passe sur « Firmware officiel ».",
+    miss_samples_file: "Déposez le fichier officiel de l'OS Model:Samples (étape 2).",
+    miss_samples_ack: "Confirmez que vous avez une interface MIDI pour le retour (étape 1).",
+    done_samples: "Il redémarre en <b>Model:Samples</b> : Elektron Transfer et votre ordinateur voient un « Model:Samples ». Chargez vos samples avec Transfer.",
+    pick_one: "Cochez au moins un mod, ou passez sur « Firmware officiel ».",
     midi_asking: "Demande d'accès MIDI…",
-    midi_wait: "En attente de ton autorisation : Chrome affiche une demande près de la barre d'adresse. Clique « Autoriser ». Si tu l'as bloquée, clique l'icône à gauche de l'adresse et autorise le MIDI.",
-    midi_denied: "Accès MIDI refusé. Clique l'icône à gauche de l'adresse, autorise le MIDI, recharge la page et réessaie.",
-    midi_none: "Aucune sortie MIDI. Branche le Model:Cycles en USB, allume-le, puis clique Rafraîchir.",
+    midi_wait: "En attente de votre autorisation : Chrome affiche une demande près de la barre d'adresse. Cliquez sur « Autoriser ». Si vous l'avez bloquée, cliquez sur l'icône à gauche de l'adresse et autorisez le MIDI.",
+    midi_denied: "Accès MIDI refusé. Cliquez sur l'icône à gauche de l'adresse, autorisez le MIDI, rechargez la page et réessayez.",
+    midi_none: "Aucune sortie MIDI. Branchez le Model:Cycles en USB, allumez-le, puis cliquez sur Rafraîchir.",
     midi_pick_dev: "Le port USB du Model:Cycles est sélectionné.",
-    midi_no_dev: "Le Model:Cycles n'apparaît pas en USB. Branche-le, allume-le et clique Rafraîchir.",
-    warn_not_dev: "Ce port ne semble pas être le Model:Cycles : choisis le port nommé « Model:Cycles ».",
-    choose_port: "— choisis une sortie MIDI —",
+    midi_no_dev: "Le Model:Cycles n'apparaît pas en USB. Branchez-le, allumez-le et cliquez sur Rafraîchir.",
+    warn_not_dev: "Ce port ne semble pas être le Model:Cycles : choisissez le port nommé « Model:Cycles ».",
+    choose_port: "Choisissez une sortie MIDI",
     via: "via",
     minutes: "environ {m} min",
     mods_list_restore: "Firmware officiel (sans modification)",
     mods_list_custom: "Fichier {name} (envoyé tel quel)",
-    miss_file: "Dépose ton fichier d'OS officiel (étape 2).",
-    miss_mod: "Coche un mod (étape 1), ou passe sur « Firmware officiel ».",
+    miss_file: "Déposez votre fichier d'OS officiel (étape 2).",
+    miss_mod: "Cochez un mod (étape 1), ou passez sur « Firmware officiel ».",
     miss_build: "Préparation du firmware…",
     miss_fw: "Le firmware n'est pas prêt (étape 2).",
-    miss_midi: "Autorise le MIDI (étape 3).",
-    miss_port: "Choisis une sortie MIDI (étape 3).",
-    miss_ack: "Coche la case ci-dessus pour confirmer.",
-    miss_ready: "Ouvre CONFIG › UPGRADE sur le Model:Cycles (étape 3), puis flashe.",
-    watch: "Regarde l'écran du Model:Cycles : il doit indiquer qu'il reçoit. S'il ne se passe rien en quelques secondes, clique <b>Arrêter</b>.",
-    keep_visible: "Garde cet onglet au premier plan : les navigateurs ralentissent les onglets en arrière-plan.",
+    miss_midi: "Autorisez le MIDI (étape 3).",
+    miss_port: "Choisissez une sortie MIDI (étape 3).",
+    miss_ack: "Cochez la case ci-dessus pour confirmer.",
+    miss_ready: "Ouvrez CONFIG › UPGRADE sur le Model:Cycles (étape 3), puis flashez.",
+    watch: "Regardez l'écran du Model:Cycles : il doit indiquer qu'il reçoit. S'il ne se passe rien en quelques secondes, cliquez sur <b>Arrêter</b>.",
+    keep_visible: "Gardez cet onglet au premier plan : les navigateurs ralentissent les onglets en arrière-plan.",
     remaining: "encore {t}",
     done_title: "Transfert terminé.",
-    done_body: "Le Model:Cycles écrit maintenant le firmware (<code>UPDATING FLASH</code>) puis redémarre tout seul. <b>Ne l'éteins pas</b> avant qu'il ait redémarré.",
-    done_6ch: "Avec le mod 6 canaux, ton ordinateur doit ensuite voir un périphérique audio Model:Cycles avec <b>6 canaux d'entrée</b>.",
-    stopped: "Arrêté. Éteins et rallume le Model:Cycles, rouvre CONFIG › UPGRADE, puis relance.",
-    send_error: "Le transfert a échoué : {err}. Éteins et rallume le Model:Cycles, rouvre CONFIG › UPGRADE et réessaie.",
-    port_gone: "La sortie MIDI a disparu. Vérifie le branchement et choisis-la de nouveau.",
+    done_body: "Le Model:Cycles écrit maintenant le firmware (<code>UPDATING FLASH</code>) puis redémarre tout seul. <b>Ne l'éteignez pas</b> avant qu'il ait redémarré.",
+    done_6ch: "Avec le mod 6 canaux, votre ordinateur doit ensuite voir un périphérique audio Model:Cycles avec <b>6 canaux d'entrée</b>.",
+    stopped: "Arrêté. Éteignez puis rallumez le Model:Cycles, rouvrez CONFIG › UPGRADE, puis relancez.",
+    send_error: "Le transfert a échoué : {err}. Éteignez puis rallumez le Model:Cycles, rouvrez CONFIG › UPGRADE et réessayez.",
+    port_gone: "La sortie MIDI a disparu. Vérifiez le branchement et choisissez-la de nouveau.",
     leave: "Un flash est en cours. Quitter maintenant l'interromprait.",
     log_start: "Envoi de {n} paquets vers « {port} », marge {pace}.",
   },
@@ -849,35 +851,35 @@ const FEAT = {
     usb6: { label: "6-channel USB audio",
       desc: "Each track gets its own USB channel (48 kHz / 32-bit): record the 6 tracks separately in your DAW. The stereo mix is no longer sent over USB. OS updates over USB keep working." },
     "latching-mute": { label: "Latching mute mode",
-      desc: "Hold TRK and tap FUNC: mute mode stays on, so you mute tracks without holding FUNC. A short tap on FUNC leaves it." },
+      desc: "Hold TRACK and tap FUNC: mute mode stays on, so you mute tracks without holding FUNC. A short tap on FUNC leaves it." },
     "trig-preview": { label: "Trig preview",
       desc: "With the sequencer stopped, hold a step and press PAGE: the step plays with its own note, length and p-locks." },
     "browser-scroll": { label: "Scroll long names",
       desc: "In the sound browser, a name too long for the screen scrolls so you can read it." },
     syntakt: { label: "Real Syntakt engines",
-      desc: "The Syntakt's own engines, copied from your Syntakt OS 1.41 file (step 2), added as extra machines after the 6 original ones, with the Syntakt's knob names and defaults. Tick the ones you want: they come after Chord, in this order. In the emulator they are identical to the Syntakt, sample for sample." },
-    "eng-sd": { note: "Vintage snare. Knobs: Inharm, Freq Complex, Pitch Sweep, Mod Envelope." },
-    "eng-cp": { note: "Vintage clap. Knobs: Body Char, Balance, Spacing Crunch, Body Envelope." },
-    "eng-toy": { note: "Toy-like tuned percussion. Knobs: Form, Impact, Bright (Brightness), Partial Decay." },
-    "eng-bits": { note: "Two digital oscillators with sample-rate and bit reduction. Knobs: Detune (40 to 88), Balance, Rate Redux, Waveform. PUNCH switches Bit Redux on (the Syntakt has a knob for it, the Model:Cycles does not)." },
-    "eng-swarm": { note: "A swarm of detuned saws (supersaw). Knobs: Noise Mod, Detune Anim, Detune, Osc Mix. PUNCH adds the sub-octave (Fundamental Sub)." },
+      desc: "The Syntakt's own engines, read from your Syntakt OS 1.41 file (step 2) and added after Chord, in this order, with the Syntakt's knob names and defaults. Tick the ones you want." },
+    "eng-sd": { note: "Vintage snare." },
+    "eng-cp": { note: "Vintage clap." },
+    "eng-toy": { note: "Toy-like tuned percussion." },
+    "eng-bits": { note: "Two digital oscillators with rate and bit reduction. PUNCH switches Bit Redux on." },
+    "eng-swarm": { note: "A swarm of detuned saws (supersaw). PUNCH adds the sub-octave." },
   },
   fr: {
     usb6: { label: "Audio USB 6 canaux",
-      desc: "Chaque piste a son propre canal USB (48 kHz / 32 bits) : enregistre les 6 pistes séparément dans ton logiciel. Le mix stéréo n'est plus envoyé en USB. La mise à jour de l'OS par USB continue de marcher." },
+      desc: "Chaque piste a son propre canal USB (48 kHz / 32 bits) : enregistrez les 6 pistes séparément dans votre logiciel. Le mix stéréo n'est plus envoyé en USB. La mise à jour de l'OS par USB continue de fonctionner." },
     "latching-mute": { label: "Mode mute verrouillé",
-      desc: "Maintiens TRK et tape FUNC : le mode mute reste actif, tu mutes les pistes sans tenir FUNC. Un appui court sur FUNC en sort." },
+      desc: "Maintenez TRACK et tapez FUNC : le mode mute reste actif, vous mutez les pistes sans tenir FUNC. Un appui court sur FUNC en sort." },
     "trig-preview": { label: "Écoute d'un pas",
-      desc: "Séquenceur à l'arrêt, maintiens un pas et appuie sur PAGE : le pas joue avec sa note, sa longueur et ses p-locks." },
+      desc: "Séquenceur à l'arrêt, maintenez un pas et appuyez sur PAGE : le pas joue avec sa note, sa longueur et ses p-locks." },
     "browser-scroll": { label: "Défilement des noms longs",
-      desc: "Dans le navigateur de sons, un nom trop long pour l'écran défile pour que tu puisses le lire." },
+      desc: "Dans le navigateur de sons, un nom trop long pour l'écran défile pour rester lisible." },
     syntakt: { label: "Vrais moteurs du Syntakt",
-      desc: "Les propres moteurs du Syntakt, copiés depuis ton fichier d'OS Syntakt 1.41 (étape 2), ajoutés en machines supplémentaires après les 6 d'origine, avec les noms et défauts des potards du Syntakt. Coche ceux que tu veux : ils viennent après Chord, dans cet ordre. En émulation, identiques au Syntakt échantillon par échantillon." },
-    "eng-sd": { note: "Caisse claire vintage. Potards : Inharm, Freq Complex, Pitch Sweep, Mod Envelope." },
-    "eng-cp": { note: "Clap vintage. Potards : Body Char, Balance, Spacing Crunch, Body Envelope." },
-    "eng-toy": { note: "Percussion accordée façon jouet. Potards : Form, Impact, Bright (Brightness), Partial Decay." },
-    "eng-bits": { note: "Deux oscillateurs numériques avec réduction d'échantillonnage et de bits. Potards : Detune (40 à 88), Balance, Rate Redux, Waveform. PUNCH active Bit Redux (le Syntakt a un potard pour ça, pas le Model:Cycles)." },
-    "eng-swarm": { note: "Un essaim de dents de scie désaccordées (supersaw). Potards : Noise Mod, Detune Anim, Detune, Osc Mix. PUNCH ajoute l'octave inférieure (Fundamental Sub)." },
+      desc: "Les moteurs du Syntakt, lus dans votre fichier d'OS Syntakt 1.41 (étape 2) et ajoutés après Chord, dans cet ordre, avec les noms et réglages des potards du Syntakt. Cochez ceux que vous voulez." },
+    "eng-sd": { note: "Caisse claire vintage." },
+    "eng-cp": { note: "Clap vintage." },
+    "eng-toy": { note: "Percussion accordée façon jouet." },
+    "eng-bits": { note: "Deux oscillateurs numériques avec réduction d'échantillonnage et de bits. PUNCH active Bit Redux." },
+    "eng-swarm": { note: "Un essaim de dents de scie désaccordées (supersaw). PUNCH ajoute l'octave inférieure." },
   },
 };
 
@@ -1002,7 +1004,8 @@ function renderFeatures() {
     const combo = f.engines && sel.on ? comboOf(f, sel) : null;
     const tested = combo ? combo.tested : f.status === "tested";
     ttl.innerHTML = `<span>${esc(featText(f.id, "label", f.label))}</span>` +
-      `<span class="tag${tested ? " ok" : ""}">${esc(t(tested ? "tested" : "experimental"))}</span>`;
+      `<span class="tag${tested ? " ok" : ""}">${esc(t(tested ? "tested" : "experimental"))}</span>` +
+      (GUIDE_OF[f.id] ? `<a class="feat-guide" href="${GUIDE}#${GUIDE_OF[f.id]}">Guide <span aria-hidden="true">→</span></a>` : "");
     const desc = document.createElement("div");
     desc.className = "desc";
     desc.textContent = featText(f.id, "desc", f.desc);
@@ -1089,7 +1092,7 @@ function renderCredits() {
   const box = $("credits-list");
   if (!box) return;
   box.innerHTML = CREDITS.map((c) =>
-    `<li><a href="https://github.com/${esc(c.repo)}" target="_blank" rel="noopener">${esc(c.repo)}</a> — ` +
+    `<li><a href="https://github.com/${esc(c.repo)}" target="_blank" rel="noopener">${esc(c.repo)}</a>, ` +
     `${esc(c[st.lang] || c.en)}</li>`).join("");
 }
 
@@ -1517,6 +1520,13 @@ function pace() {
 // ---------------------------------------------------------------------------
 // Step 4 — flash
 // ---------------------------------------------------------------------------
+// Progress as 16 trig LEDs: the done steps lit, the current one blinking.
+function leds(pct) {
+  const cells = $("barwrap").querySelectorAll("i");
+  const lit = Math.floor((pct / 100) * cells.length + 1e-9);
+  cells.forEach((c, k) => { c.className = k < lit ? "on" : k === lit && pct < 100 ? "cur" : ""; });
+}
+
 function fmtTime(s) {
   s = Math.max(0, Math.round(s));
   const m = Math.floor(s / 60), r = s % 60;
@@ -1532,6 +1542,7 @@ async function flash() {
   $("result").innerHTML = ""; $("result").className = "result";
   $("progress").hidden = false;
   $("bar").style.width = "0%";
+  leds(0);
   $("pct").textContent = "0 %";
   $("eta").textContent = "";
   $("watch").className = "callout";
@@ -1550,6 +1561,7 @@ async function flash() {
       onProgress: (n, tot) => {
         const pct = (100 * n) / tot;
         $("bar").style.width = pct.toFixed(1) + "%";
+        leds(pct);
         $("barwrap").setAttribute("aria-valuenow", pct.toFixed(0));
         $("pct").textContent = `${pct.toFixed(0)} %`;
         const el = (Date.now() - t0) / 1000;
@@ -1579,6 +1591,7 @@ async function flash() {
     st.finished = "ok";
     $("watch").hidden = true;
     $("bar").style.width = "100%";
+    leds(100);
     $("pct").textContent = "100 %";
     $("eta").textContent = fmtTime(res.seconds);
     r.className = "result ok";
