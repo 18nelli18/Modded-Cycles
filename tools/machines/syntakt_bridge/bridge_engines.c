@@ -255,7 +255,8 @@ u32 gov_cost[NT];                 /* cout mesure d'update + render, en ticks (mo
 
 #ifdef TG_FIRST
 /* Avec Model-TG (notes/31) : son Sampler (entree 6) et ses machines d'origine passent par son dispatch, qui a sa
- * propre logique des voix muettes ; l'arret des voix muettes ne vaut donc que pour nos moteurs (entree >= TG_FIRST).
+ * propre logique des voix muettes (-90 dB pendant 0,25 s). La notre vaut aussi, comme sans Model-TG, pour toutes les
+ * voix sauf le Sampler : sous forte charge, elle arrete bien plus tot une fin de note inaudible (notes/31 §7).
  * Le regulateur peut eteindre toute piste, sauf le Sampler et la piste qu'il enregistre (reechantillonnage, rs_src)
  * ou dont il edite les tranches (sle_trk) : leur capture et leur lecture doivent garder le temps. Toutes les pistes
  * finissent en 0x400a7e24 (tg_after) : voice_done n'y mesure que celles que voice_gate a laisse calculer. */
@@ -283,7 +284,7 @@ int voice_gate(int t, int trig, int engine)
 	} else {
 		if (gov_age[t] < 0xffff)
 			gov_age[t]++;
-		if (!gov_free[t] && (gov_stolen[t] || (engine >= TG_FIRST && gov_quiet[t] >= NEED)))
+		if (!gov_free[t] && (gov_stolen[t] || gov_quiet[t] >= NEED))
 			return 1;
 	}
 	gov_ran = 1;
@@ -328,11 +329,30 @@ void voice_after(int t, s32 *out)
 		if (--gov_fading[t] == 0)
 			gov_stolen[t] = 1;
 	}
+#ifdef TG_FIRST
+	/* Avec Model-TG (notes/31 §7) : le Sampler et les pistes protegees ne sont jamais eteints, leur crete ne sert
+	 * pas. Pour les autres, la crete est le OU des valeurs absolues (a un bit pres) : sans branchement, 4 fois
+	 * moins cher que le maximum, et exacte pour le test du seuil, qui est une puissance de 2 (IDLE_THR, 1 << 20) ;
+	 * elle ne sert sinon qu'a classer les voix (la plus faible s'eteint d'abord). */
+	if (gov_free[t])
+		return;
+	{
+		const s32 *o = out;
+		u32 acc = 0;
+
+		for (k = 0; k < 32; k += 4, o += 4)
+			acc |= (u32)(o[0] ^ (o[0] >> 31)) | (u32)(o[1] ^ (o[1] >> 31))
+			     | (u32)(o[2] ^ (o[2] >> 31)) | (u32)(o[3] ^ (o[3] >> 31));
+		pk = (s32)acc;
+		(void)x;
+	}
+#else
 	for (k = 0; k < 32; k++) {
 		x = out[k] < 0 ? -out[k] : out[k];
 		if (x > pk)
 			pk = x;
 	}
+#endif
 	gov_peak[t] = pk;
 	if ((u32)pk < THR) {
 		if (gov_quiet[t] < 255)

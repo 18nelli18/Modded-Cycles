@@ -249,6 +249,38 @@ Model-TG autour de nos moteurs ajoute environ 1,7 point, surtout en défauts de 
   - parts calculées sur des blocs simulés ;
   - le reste du firmware passe `test_model_tg_syntakt.py`.
 
+**Mesure sur la machine** : retour de l'utilisateur, firmware de profilage, même motif de 6 pistes, avec delay et reverb, « pic/moyenne » :
+
+| Partie | % d'un bloc |
+|---|---|
+| Tout (depuis l'entrée de l'interruption) | 91 / 80 |
+| Début de l'interruption, avant la fonction audio | 7 / 1 |
+| Fonction audio avant les voix | 3 / 3 |
+| Boucle des voix | 56 / 58 (lecture douteuse : une moyenne ne peut pas dépasser son pic ; la somme des parts donne plutôt environ 52) |
+| Entre les voix et la sortie | 6 / 5 |
+| Sortie (mix, delay, reverb, effets master) | 20 / 19 |
+| Notre compteur habituel | 90 / 80 |
+
+**Lecture** :
+- Notre compteur voit presque tout : le début de l'interruption ne fait que 1 % en moyenne. L'écart avec la page System (90 %) vient de sa façon de compter, pas d'un temps qui nous échapperait.
+- Le temps est dans le calcul du son : les voix (environ 52 %, dont 37 % pour les 6 voix elles-mêmes selon la page System) et la sortie (environ 20 %, dont environ 12 % pour le delay et la reverb).
+- **Pics** : en émulation, la boucle des voix est la même à chaque bloc, trigs compris (44,7 %). Avec les caches vidés, elle passe de 45,5 à 50,1 %. Entre deux blocs, l'interface et le séquenceur prennent les 8 Ko de chaque cache. Le bloc suivant relit alors le code des machines d'origine (348 lignes), leurs états de voix (130 lignes) et notre passerelle (78 lignes). Le reste des pics vient du séquenceur (7 % au pire, 1 % en moyenne).
+
+**Optimisations de la version combinée** (la version seule ne change pas d'un octet) :
+- **Notre code le plus appelé en SRAM** : `update`, `voice_after`, `voice_gate`, `audio_end`, `govern`, `render` et les plus petites, environ 1,8 Ko. Elles vont dans la fin libre des deux zones de SRAM reprises à CHORD, que le crochet de démarrage remplit déjà (`SRAM_HOT`, `sram_sections`).
+  - Résultat (modèle de cache) : la boucle des voix passe de 45,3 à 44,4 % d'un bloc, et de 50,1 à 49,2 % caches vidés. Sortie identique.
+- **Crête du régulateur** : le OU des valeurs absolues, sans branchement, au lieu du maximum. Exacte pour le test du seuil, qui est une puissance de 2. Les pistes jamais éteintes (Sampler, pistes protégées) ne sont plus parcourues. Gain faible : GCC compilait déjà bien la boucle.
+- **Arrêt des voix muettes** de nouveau pour les machines d'origine, comme sans Model-TG. Sous forte charge, une fin de note sous -66 dB s'arrête après 16 blocs, au lieu de -90 dB et 0,25 s avec Model-TG. Le Sampler reste exclu.
+  - Vérifié en émulation (DECAY 20) : chaque voix est identique à Model-TG seul jusqu'à son arrêt, et repart comme lui au trig suivant.
+
+**Ce qu'on ne peut pas gagner sans rien perdre** : le reste est le vrai calcul du son.
+- Chaque moteur du Syntakt coûte environ 7 % d'un bloc par voix. Son code est celui du Syntakt et s'exécute déjà en SRAM.
+- Une machine d'origine coûte environ 6 %, le Sampler 8 %, le delay et la reverb environ 12 %.
+- Notre propre code ne pèse plus qu'environ 1,5 % de la boucle des voix.
+- Pour plus de marge, il faudrait choisir :
+  - couper plus tôt (régulateur plus strict) ;
+  - ou jouer moins de voix lourdes à la fois.
+
 ## 8. Ce qui reste `[À FAIRE]`
 
 - **Optimiser sans perdre de fonctions** (demande de l'utilisateur) : mesurer d'abord où passent les ~50 % hors des voix (début de l'interruption, mixage et effets), puis viser les plus gros postes.

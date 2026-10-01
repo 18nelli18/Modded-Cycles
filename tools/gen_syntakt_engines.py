@@ -298,8 +298,16 @@ def layout(gen, blocks):
     # SRAM du Syntakt (tampons et table de sinus dans la SRAM du Cycles, SRAM_MAP ; le reste dans sa réplique)
     move = ([(lo, hi, run(dst)) for lo, hi, dst in stage] + [(lo, hi, run(dst)) for lo, hi, dst in tabs] + sdram
             + [*SRAM_MAP, (0x80000000, 0x80010000, gx.DST_SRAM), (*gx.ST_BSS, ST_BSS_AT)])
+    # fin libre de chaque zone (transit, exécution, taille) : avec Model-TG, le code le plus appelé de la passerelle
+    used = [(dst, dst + hi - lo) for lo, hi, dst in stage] + [(dst - GUARD, dst + hi - lo + GUARD) for lo, hi, dst in tabs] \
+        + [(v, v + ST_VSTRIDE) for v in voices]
+    tails = []
+    for b0, r0, n in banks:
+        top = max([e for a, e in used if b0 <= a < b0 + n] + [b0])
+        top = (top + 3) & ~3
+        tails.append((top, top - b0 + r0, b0 + n - top))
     return dict(copies=copies, move=tuple(move), stage=stage, pads=pads, stage_end=stage_end, run=run, banks=banks,
-                voices=[run(v) for v in voices], chord_at=chord_at, end=(end + 0xff) & ~0xff)
+                voices=[run(v) for v in voices], chord_at=chord_at, end=(end + 0xff) & ~0xff, tails=tails)
 
 
 def code_patches(st_img, ins, insns, lay, relocs):
@@ -689,7 +697,7 @@ dispatch:
 LINK = """SECTIONS
 {{
   .stub {stub:#x} : {{ *(.text) }}
-  .bridge {bridge:#x} : {{ *(.text.bridge_update) *(.text.bridge_render) *(.text*) . = ALIGN(4); *(.rodata*) }}
+{sram}  .bridge {bridge:#x} : {{ *(.text.bridge_update) *(.text.bridge_render) *(.text*) . = ALIGN(4); *(.rodata*) }}
   .bridge_data {data:#x} : {{ *(.data*) *(.bss*) *(COMMON) }}
   /DISCARD/ : {{ *(.comment) *(.note*) *(.eh_frame*) }}
 }}
@@ -784,6 +792,29 @@ def segments(parts, size):
     return [(lo, hi - lo) for lo, hi in out]
 
 
+# Avec Model-TG (notes/31 §7) : fonctions de la passerelle appelées à chaque bloc pour chaque piste, placées dans la
+# fin libre des zones de SRAM (lay["tails"]), que le crochet de démarrage y recopie avec le reste : hors du cache
+# d'instructions, qui ne les recharge plus à chaque bloc. Les plus grandes d'abord, tant qu'elles tiennent.
+SRAM_HOT = ("update", "voice_after", "voice_gate", "audio_end", "govern", "render", "st_voice", "tg_keep", "voice_done")
+
+
+def sram_sections(elf, tails):
+    """[(transit, exécution, [fonctions])] : SRAM_HOT réparties dans les fins de zones, d'après leurs tailles."""
+    size = {}
+    for line in gx.run([gx.CROSS + "nm", "-S", str(elf)]).splitlines():
+        p_ = line.split()
+        if len(p_) == 4 and p_[3] in SRAM_HOT and p_[2] in "tT":
+            size[p_[3]] = (int(p_[1], 16) + 3) & ~3
+    free = [list(t) for t in tails]
+    out = [[t[0], t[1], []] for t in tails]
+    for f in sorted(size, key=lambda f: (-size[f], f)):
+        k = next((k for k, t in enumerate(free) if t[2] >= size[f]), None)
+        if k is not None:
+            out[k][2].append(f)
+            free[k][2] -= size[f]
+    return [tuple(o) for o in out if o[2]]
+
+
 def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, run=None, lay=None, tg=None, segs=None):
     """run : adresse d'exécution d'une fonction du Syntakt ; lay : disposition (layout()) : zones de SRAM que le
     crochet de démarrage remplit (stub.S), adresses des états de voix."""
@@ -817,10 +848,17 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, ru
             f"-DPAYLOAD_LONGS={payload_longs}",
             f"-DSRAM_RUN_AT={r0:#x}", f"-DSRAM_LONGS={n0 // 4}", f"-DSRAM2_RUN_AT={r1:#x}", f"-DSRAM2_LONGS={n1 // 4}",
             *sdefs])
-    ld.write_text(LINK.format(stub=gx.CAVE, bridge=DST_BRIDGE, data=DST_BRIDGE + 0x1000))
+    ld.write_text(LINK.format(stub=gx.CAVE, bridge=DST_BRIDGE, data=DST_BRIDGE + 0x1000, sram=""))
     gx.run([gx.CROSS + "ld", "-T", str(ld), "-o", str(elf), str(stub), str(obj)])
+    hot = []
+    if tg:                                      # le code le plus appelé dans la fin libre des zones de SRAM (notes/31 §7)
+        hot = sram_sections(elf, lay["tails"])
+        ld.write_text(LINK.format(stub=gx.CAVE, bridge=DST_BRIDGE, data=DST_BRIDGE + 0x1000, sram="".join(
+            f"  .sram{k} {run_:#x} : AT({stage:#x}) {{ {' '.join(f'*(.text.{f})' for f in fns)} }}\n"
+            for k, (stage, run_, fns) in enumerate(hot))))
+        gx.run([gx.CROSS + "ld", "-T", str(ld), "-o", str(elf), str(stub), str(obj)])
     blobs = {}
-    for sec in (".stub", ".bridge"):
+    for sec in (".stub", ".bridge") + tuple(f".sram{k}" for k in range(len(hot))):
         out = tmp / (sec.strip(".") + ".bin")
         gx.run([gx.CROSS + "objcopy", "-O", "binary", "-j", sec, str(elf), str(out)])
         blobs[sec] = out.read_bytes()
@@ -828,7 +866,7 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, ru
     for line in gx.run([gx.CROSS + "nm", "-S", str(elf)]).splitlines():
         parts = line.split()
         syms[parts[-1]] = int(parts[0], 16)
-        if len(parts) == 4 and int(parts[0], 16) >= DST_BRIDGE + 0x1000:
+        if len(parts) == 4 and DST_BRIDGE + 0x1000 <= int(parts[0], 16) < 0x80000000:      # pas la SRAM
             data_end = max(data_end, int(parts[0], 16) + int(parts[1], 16))
     if len(blobs[".bridge"]) > 0x1000 or data_end > gx.DST_END:
         raise SystemExit("!! passerelle trop grande")
@@ -849,6 +887,7 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, ru
     stubs = b.read_bytes()
     if STUBS + len(stubs) > DATA:
         raise SystemExit("!! détours trop grands")
+    blobs["hot"] = [(stage, blobs[f".sram{k}"], fns) for k, (stage, _, fns) in enumerate(hot)]
     return blobs, syms, stubs, ssyms
 
 
@@ -1078,6 +1117,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None):
     for lo, hi in CHORD_BANKS:                  # tables d'ondes de CHORD, depuis le MAIN OS de l'utilisateur
         src = next(s_ + lo - d_ for s_, e_, d_ in CY_SRAM_INIT if d_ <= lo and hi <= d_ + e_ - s_)
         parts.append({"dest": f"{chord_moved(lo, lay):#x}", "cycles": [f"{src:#x}", f"{src + hi - lo:#x}"]})
+    parts += [{"dest": f"{stage:#x}", "hex": code.hex()} for stage, code, _ in blobs["hot"]]   # avec Model-TG
     parts += [
         {"dest": f"{DST_BRIDGE:#x}", "hex": blobs[".bridge"].hex()},
         {"dest": f"{STUBS:#x}", "hex": stubs.hex()},
@@ -1111,7 +1151,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None):
             raise SystemExit(f"!! ajout de {sum(n_ for _, n_ in segs)} o : l'image dépasserait {END_LIMIT:#x}")
         with tempfile.TemporaryDirectory() as d:
             blobs2, _, stubs2, _ = compile_(d, segs)
-        if blobs2[".bridge"] != blobs[".bridge"] or stubs2 != stubs:
+        if blobs2[".bridge"] != blobs[".bridge"] or stubs2 != stubs or blobs2["hot"] != blobs["hot"]:
             raise SystemExit("!! recompilation avec les morceaux : passerelle différente")
         stub = blobs2[".stub"]
         writes[0] = {"off": gx.CAVE - BASE, "old": (b"\xff" * len(stub)).hex(), "new": stub.hex()}
