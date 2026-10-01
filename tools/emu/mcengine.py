@@ -35,9 +35,10 @@ DEFAULTS = {0: (10, 16, 16, 24, 28), 1: (0, 127, 8, 0, 40), 2: (46, 48, 0, 20, 2
 
 IMAGE_LEN = 0x1a9d40             # MAIN OS 1.13 d'origine ; au-delà : charge utile d'un tweak « append »
 PAYLOAD_DST = 0x43000000         # où le crochet de démarrage la recopie (notes/17)
-PAYLOAD_CODE = ((0x43000000, 0x430065a4), (0x43031000, 0x43032000))   # zones de code de la charge utile
-# (SD VINTAGE seul s'arrête à 0x4300603c ; SD + CP VINTAGE à 0x430065a4, notes/19. Décoder un peu de
-#  données comme du code ne fait que poser des crochets EMAC à des adresses jamais exécutées.)
+PAYLOAD_CODE = ((0x43000000, 0x43007298), (0x43031000, 0x43032000))   # zones de code de la charge utile
+# (SD VINTAGE seul s'arrête à 0x4300603c ; SD + CP VINTAGE à 0x430065a4, notes/19 ; jusqu'à SY TOY à
+#  0x430068c8, notes/20 ; jusqu'à SY BITS à 0x43006da8, notes/21 ; jusqu'à SY SWARM à 0x43007298, notes/22.
+#  Décoder un peu de données comme du code ne fait que poser des crochets EMAC à des adresses jamais exécutées.)
 
 _EMAC_CACHE = {}
 
@@ -86,6 +87,7 @@ class Engine:
         uc.mem_map(0x42000000, 0x00400000)     # SDRAM (états des voix)
         uc.mem_map(0x80000000, 0x00020000)     # SRAM interne (buffers, tables)
         uc.mem_map(0x90000000, 0x00020000)     # pile
+        uc.mem_map(0xfc070000, 0x1000)         # minuteur DMA 0 (lu par le régulateur de charge, notes/25) : 0
         uc.mem_write(BASE, self.img)
         uc.mem_write(STOP, b"\x4e\x71\x4e\x71")
         self.unmapped = []

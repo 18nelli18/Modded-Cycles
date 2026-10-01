@@ -3,9 +3,9 @@
  * Run through tools/webflash_smoke.sh (installs jsdom in a temp folder).
  *   node tools/webflash_smoke.js <synth_dir> [model-cycles_OS1.13.syx] [model-samples_OS1.13.syx] [Syntakt_OS1.41.syx]
  * The optional official files are told apart by their names. The Model:Cycles OS checks every
- * combination the page offers against its reference hash (REF_MAINOS in app.js; the SD VINTAGE
- * ones need the Syntakt OS too); with the Model:Samples OS, the "Samples OS" tab is checked end
- * to end (REF_SAMPLES_ON_CYCLES); with the Syntakt OS, the SD VINTAGE flow is. */
+ * combination the page offers against its reference hash (REF_MAINOS in app.js; the real Syntakt
+ * engines need the Syntakt OS too); with the Model:Samples OS, the "Samples OS" tab is checked end
+ * to end (REF_SAMPLES_ON_CYCLES); with the Syntakt OS, the Syntakt engines flow is. */
 const fs = require("fs");
 const path = require("path");
 const { pathToFileURL } = require("url");
@@ -18,6 +18,20 @@ const REAL_ST = REAL.find((f) => /syntakt/i.test(path.basename(f)));
 const REAL_SMP = REAL.find((f) => /samples/i.test(path.basename(f)));
 const REAL_OS = REAL.find((f) => f !== REAL_ST && f !== REAL_SMP);
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+// Syntakt engine combinations offered by the page: tweak id -> engine codes (tweaks.js)
+const engineCombos = (w) => Object.fromEntries(w.MC_TWEAKS.features.find((f) => f.engines).combos.map((c) => [c.id, c.engines]));
+
+// Tick exactly the given Syntakt engines (the card is turned on first; ticking before unticking
+// never empties the list, which would turn the card off).
+async function pickEngines(doc, codes) {
+  if (!doc.getElementById("feat-syntakt").checked) { doc.getElementById("feat-syntakt").click(); await wait(5); }
+  for (const want of [true, false]) {
+    for (const cb of [...doc.querySelectorAll('input[name="eng-syntakt"]')].map((x) => x.value)) {
+      const box = doc.getElementById("eng-" + cb);                 // re-query: the cards are re-rendered
+      if (codes.includes(cb) === want && box.checked !== want) { box.click(); await wait(5); }
+    }
+  }
+}
 
 async function load({ midi = true, ports = true, secure = true, lang = "en", devName = "Elektron Model:Cycles" } = {}) {
   const errors = [];
@@ -65,29 +79,42 @@ async function main() {
     check(errors.length === 0, "loads without JS error " + (errors.length ? JSON.stringify(errors) : ""));
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
-    check(ids.join() === "6ch-usbup,latching-mute,trig-preview,browser-scroll,sdvintage-7th,syntakt-vintage,sdvintage-exact" && w.MC_TWEAKS.features.length === 5,
-      "MC_TWEAKS: only USB-friendly tweaks (no 6ch-multiout, no clean-room sdvintage): " + ids.join());
+    const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
+    check(ids.slice(0, 7).join() === "6ch-usbup,latching-mute,trig-preview,browser-scroll,syntakt-sd,syntakt-cp,syntakt-toy"
+      && ids.length === 4 + (1 << nEng) - 1 && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-sd-cp-toy-bits")
+      && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 5,
+      `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement): ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
     check(srcs.length === 4 && srcs.every((x) => x.endsWith("?v=" + w.MC_BUILD)), "scripts loaded with ?v=<build> (no stale cache): " + srcs.join());
     check(doc.getElementById("compat").hidden, "no compatibility banner in a good browser");
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-usb6,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-sdvintage", "5 feature cards: " + JSON.stringify(feats));
+    check(feats.join() === "feat-usb6,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-syntakt", "5 feature cards: " + JSON.stringify(feats));
     const tags = [...doc.querySelectorAll("#features .tag")].map((x) => x.textContent);
-    check(tags.join() === "Tested,Tested,Tested,Tested,Tested", "every card is tagged Tested: " + tags.join());
-    check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until SD VINTAGE is ticked");
-    doc.getElementById("feat-sdvintage").click();
+    const synTag = w.MC_TWEAKS.features.find((f) => f.engines).status === "tested" ? "Tested" : "Experimental";
+    check(tags.join() === "Tested,Tested,Tested,Tested," + synTag, "cards tagged as tested or not: " + tags.join());
+    check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until the Syntakt engines are ticked");
+    doc.getElementById("feat-syntakt").click();
     await wait(30);
     check(!doc.getElementById("drop3-wrap").hidden && /Drop Syntakt_OS1.41.syx/.test(text(doc, "drop3"))
       && /elektron\.se\/support-downloads\/syntakt/.test(doc.getElementById("step-file").innerHTML),
-      "SD VINTAGE ticked -> Syntakt drop zone and download link");
-    const radios = [...doc.querySelectorAll('input[name="var-sdvintage"]')];
-    check(radios.map((r) => r.value).join() === "sdvintage-7th,syntakt-vintage,sdvintage-exact" && radios[0].checked
-      && /SDVtg, 7th machine/.test(text(doc, "features")) && /SDVtg and CPVtg, 7th and 8th machines/.test(text(doc, "features"))
-      && /SD VINTAGE in place of SNARE/.test(text(doc, "features")),
-      "Syntakt engines: three variants, SDVtg (default), SDVtg + CPVtg (new), SD VINTAGE in place of SNARE");
-    doc.getElementById("feat-sdvintage").click();
+      "Syntakt engines ticked -> Syntakt drop zone and download link");
+    const engs = [...doc.querySelectorAll('input[name="eng-syntakt"]')];
+    check(engs.map((r) => r.value + ":" + r.checked).join() === "sd:true,cp:false,toy:false,bits:false,swarm:false" && engs.every((r) => r.type === "checkbox")
+      && /SDVtg — SD VINTAGE/.test(text(doc, "features")) && /CPVtg — CP VINTAGE/.test(text(doc, "features"))
+      && /SYToy — SY TOY/.test(text(doc, "features")) && /SYBit — SY BITS/.test(text(doc, "features"))
+      && /SYSwm — SY SWARM/.test(text(doc, "features"))
+      && !/in place of SNARE/.test(text(doc, "features")) && doc.querySelectorAll('input[name="var-syntakt"]').length === 0
+      && (engineCombos(w) && w.MC_TWEAKS.features.find((f) => f.engines).combos[0].tested
+        ? /tested on a real Model:Cycles/ : /not tested on a Model:Cycles yet/).test(text(doc, "features")),
+      "Syntakt engines: one checkbox per engine (SDVtg ticked by default, CPVtg, SYToy, SYBit, SYSwm), no SNARE replacement");
+    await pickEngines(doc, ["cp"]);
+    check(/not tested on a Model:Cycles yet/.test(text(doc, "features")) && /Experimental/.test(doc.querySelector("label[for=feat-syntakt] .tag").textContent),
+      "CPVtg alone: a new choice, tagged Experimental");
+    doc.getElementById("eng-cp").click();
     await wait(30);
+    check(!doc.getElementById("feat-syntakt").checked && doc.querySelectorAll('input[name="eng-syntakt"]').length === 0
+      && doc.getElementById("drop3-wrap").hidden, "last engine unticked -> the card turns off");
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
     check(credits.length === 4 && credits[0] === "https://github.com/scottmetoyer/ms-multi-output"
       && credits.slice(1).every((h) => h === "https://github.com/drumkilla/elektron-model-tweaks"), "each card credits its author: " + JSON.stringify(credits));
@@ -179,16 +206,16 @@ async function main() {
     app.setMode("mods");
     await settle(w);
     check(app.state.fw && app.state.fw.kind === "built", "back to Mods -> built firmware again (cache)");
-    doc.getElementById("feat-sdvintage").click();
+    doc.getElementById("feat-syntakt").click();
     await settle(w);
     check(!app.state.fw && app.state.fwError === "needs_syntakt" && /read from the official Syntakt OS/.test(text(doc, "file-status"))
-      && /Load the official Syntakt OS file/.test(text(doc, "missing")), "SD VINTAGE without the Syntakt file -> asks for it");
+      && /Load the official Syntakt OS file/.test(text(doc, "missing")), "Syntakt engines without the Syntakt file -> asks for it");
     app.loadSyntakt(raw, "Syntakt_OS1.41.syx");
     await settle(w);
     check(!app.state.syntakt && /not the official Syntakt OS 1.41/.test(text(doc, "file3-status")), "a wrong file in the Syntakt zone is refused");
-    doc.getElementById("feat-sdvintage").click();
+    doc.getElementById("feat-syntakt").click();
     await settle(w);
-    check(app.state.fw && app.state.fw.kind === "built" && doc.getElementById("drop3-wrap").hidden, "SD VINTAGE unticked -> back to the 6-channel build");
+    check(app.state.fw && app.state.fw.kind === "built" && doc.getElementById("drop3-wrap").hidden, "Syntakt engines unticked -> back to the 6-channel build");
 
     doc.getElementById("allow").click();
     await wait(80);
@@ -236,22 +263,22 @@ async function main() {
       }
       await settle(w);
       const f = app.state.fw;
-      if (!REAL_ST && doc.getElementById("feat-sdvintage").checked) {
-        check(!f && app.state.fwError === "needs_syntakt", `real OS without the Syntakt OS: SD VINTAGE combination waits for it`);
+      if (!REAL_ST && doc.getElementById("feat-syntakt").checked) {
+        check(!f && app.state.fwError === "needs_syntakt", `real OS without the Syntakt OS: Syntakt engines combination waits for it`);
         continue;
       }
       seen.add(app.state.buildKey);
       check(f && f.kind === "built" && f.ref, `real OS: ${app.state.buildKey} matches its reference hash`);
     }
-    for (const variant of REAL_ST ? ["syntakt-vintage", "sdvintage-exact"] : []) {   // the other variants
+    const combos = engineCombos(w);
+    for (const variant of REAL_ST ? Object.keys(combos).slice(1) : []) {   // the other engine combinations
       for (let mask = 0; mask < 16; mask++) {
         for (let k = 0; k < boxes.length; k++) {
           const cb = doc.getElementById(boxes[k]);
-          const want = boxes[k] === "feat-sdvintage" || !!(mask & (1 << k));
+          const want = boxes[k] === "feat-syntakt" || !!(mask & (1 << k));
           if (cb.checked !== want) { cb.click(); await wait(5); }
         }
-        const rx = doc.querySelector(`input[name="var-sdvintage"][value="${variant}"]`);
-        if (!rx.checked) { rx.click(); await wait(5); }
+        await pickEngines(doc, combos[variant]);
         await settle(w);
         const f = app.state.fw;
         seen.add(app.state.buildKey);
@@ -259,9 +286,9 @@ async function main() {
           `real OS: ${app.state.buildKey} matches its reference hash`);
       }
     }
-    const offered = Object.keys(app.REF_MAINOS).filter((k) => REAL_ST || !k.includes("sdvintage"));
+    const offered = Object.keys(app.REF_MAINOS).filter((k) => REAL_ST || !/sdvintage|syntakt/.test(k));
     check(seen.size === offered.length && offered.every((k) => seen.has(k)),
-      `REF_MAINOS lists exactly the ${seen.size} combinations offered` + (REAL_ST ? "" : " (without SD VINTAGE: no Syntakt OS given)"));
+      `REF_MAINOS lists exactly the ${seen.size} combinations offered` + (REAL_ST ? "" : " (without the Syntakt engines: no Syntakt OS given)"));
     check(errors.length === 0, "no JS error with the real OS");
   }
 
@@ -317,13 +344,13 @@ async function main() {
     check(errors.length === 0, "no JS error in the Samples OS flow " + (errors.length ? JSON.stringify(errors) : ""));
   }
 
-  // 8. SD VINTAGE with the official Model:Cycles and Syntakt files, up to the transfer
+  // 8. Syntakt engines with the official Model:Cycles and Syntakt files, up to the transfer
   if (REAL_OS && REAL_ST) {
     const { w, doc, errors, sent } = await load();
     const app = w.MCFlasherApp;
     const cyc = new Uint8Array(fs.readFileSync(REAL_OS)), syn = new Uint8Array(fs.readFileSync(REAL_ST));
     app.loadOs(cyc, "model-cycles_OS1.13.syx");
-    doc.getElementById("feat-sdvintage").click();
+    doc.getElementById("feat-syntakt").click();
     await settle(w);
     app.loadSyntakt(cyc, "model-cycles_OS1.13.syx");               // wrong file in the Syntakt zone
     await settle(w);
@@ -331,8 +358,10 @@ async function main() {
     app.loadSyntakt(syn, "Syntakt_OS1.41.syx");
     await settle(w);
     const f = app.state.fw;
-    check(f && f.kind === "built" && f.ref && f.sdv && /recognised/.test(text(doc, "file3-status"))
-      && /Real Syntakt engines/.test(text(doc, "file-status")), "Syntakt file -> reference build " + (f ? f.name : ""));
+    check(f && f.kind === "built" && f.ref && f.sdv === "syntakt-sd" && /recognised/.test(text(doc, "file3-status"))
+      && /Real Syntakt engines — SDVtg/.test(text(doc, "file-status")), "Syntakt file -> reference build of SDVtg (default) " + (f ? f.name : ""));
+    check(new RegExp("MAIN OS " + app.REF_MAINOS["syntakt-sd"].slice(0, 8)).test(text(doc, "file-status")),
+      "status line shows the MAIN OS hash prefix: " + text(doc, "file-status").slice(-20));
     doc.getElementById("allow").click();
     await wait(80);
     check(/Tick the box/.test(text(doc, "missing")) && doc.getElementById("flash").disabled, "asks for the confirmation box");
@@ -344,35 +373,34 @@ async function main() {
     const n0 = sent.length;
     doc.getElementById("flash").click();
     for (let i = 0; i < 200 && app.state.sending; i++) await wait(50);
-    check(sent.length - n0 === w.MCFlasher.splitMessages(app.state.fw.raw).length && /Syntakt's SD VINTAGE/.test(text(doc, "result")),
-      "full transfer + SD VINTAGE message");
+    check(sent.length - n0 === w.MCFlasher.splitMessages(app.state.fw.raw).length
+      && /after Chord come SDVtg \(SD VINTAGE\)\./.test(text(doc, "result")), "full transfer + SDVtg message: " + text(doc, "result").slice(0, 90));
     doc.querySelector('.lang button[data-lang="fr"]').click();
     await wait(20);
     check(doc.getElementById("drop3-title").textContent === "Syntakt_OS1.41.syx" && /OS officiel Syntakt 1.41 reconnu/.test(text(doc, "file3-status")),
       "FR: loaded Syntakt file name kept, status translated");
     doc.querySelector('.lang button[data-lang="en"]').click();
     await wait(20);
-    doc.querySelector('input[name="var-sdvintage"][value="sdvintage-7th"]').click();
+    const combos = engineCombos(w);
+    for (const [variant, msg] of [["syntakt-sd-cp", /after Chord come SDVtg \(SD VINTAGE\), CPVtg \(CP VINTAGE\)\./],
+                                  ["syntakt-sd-cp-toy-bits-swarm", /after Chord come SDVtg \(SD VINTAGE\), CPVtg \(CP VINTAGE\), SYToy \(SY TOY\), SYBit \(SY BITS\), SYSwm \(SY SWARM\)\./],
+                                  ["syntakt-cp", /after Chord come CPVtg \(CP VINTAGE\)\./]]) {
+      await pickEngines(doc, combos[variant]);
+      await settle(w);
+      const fv = app.state.fw;
+      check(fv && fv.ref && fv.sdv === variant && fv.name.endsWith(variant + ".syx"),
+        `engines ${combos[variant].join(" + ")} -> reference build ${fv ? fv.name : ""}`);
+      const n1 = sent.length;
+      doc.getElementById("flash").click();
+      for (let i = 0; i < 200 && app.state.sending; i++) await wait(50);
+      check(sent.length - n1 === w.MCFlasher.splitMessages(fv.raw).length && msg.test(text(doc, "result")),
+        `full transfer + message for ${combos[variant].join(" + ")}`);
+    }
+    doc.getElementById("eng-cp").click();
     await settle(w);
-    const f7 = app.state.fw;
-    check(f7 && f7.ref && f7.sdv === "sdvintage-7th" && /sdvintage-7th/.test(f7.name), "7th machine variant -> reference build " + (f7 ? f7.name : ""));
-    check(new RegExp("MAIN OS " + app.REF_MAINOS["sdvintage-7th"].slice(0, 8)).test(text(doc, "file-status")),
-      "status line shows the MAIN OS hash prefix: " + text(doc, "file-status").slice(-20));
-    const n1 = sent.length;
-    doc.getElementById("flash").click();
-    for (let i = 0; i < 200 && app.state.sending; i++) await wait(50);
-    check(sent.length - n1 === w.MCFlasher.splitMessages(f7.raw).length && /pick SDVtg, the 7th machine/.test(text(doc, "result")),
-      "full transfer + SDVtg message");
-    doc.querySelector('input[name="var-sdvintage"][value="syntakt-vintage"]').click();
-    await settle(w);
-    const fv = app.state.fw;
-    check(fv && fv.ref && fv.sdv === "syntakt-vintage", "SDVtg + CPVtg variant -> reference build " + (fv ? fv.name : ""));
-    const n2 = sent.length;
-    doc.getElementById("flash").click();
-    for (let i = 0; i < 200 && app.state.sending; i++) await wait(50);
-    check(sent.length - n2 === w.MCFlasher.splitMessages(fv.raw).length && /CPVtg/.test(text(doc, "result")),
-      "full transfer + SDVtg/CPVtg message");
-    check(errors.length === 0, "no JS error in the SD VINTAGE flow " + (errors.length ? JSON.stringify(errors) : ""));
+    check(!app.state.fw && app.state.fwError === "pick_one" && !doc.getElementById("feat-syntakt").checked,
+      "every engine unticked -> no mod left to build");
+    check(errors.length === 0, "no JS error in the Syntakt engines flow " + (errors.length ? JSON.stringify(errors) : ""));
   }
 
   console.log(fail ? `\nFAILED (${fail})` : "\nALL OK");

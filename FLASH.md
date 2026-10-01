@@ -156,15 +156,21 @@ Quatre étapes, de haut en bas :
    on s'appuie. `6ch-multiout` (qui casse la mise à jour par USB) et la SD VINTAGE « clean-room » (`sdvintage-snare`)
    ne sont plus proposés dans la page : ils restent disponibles avec `build.py` et les scripts de flash.
 
-   La 5ᵉ case, **SD VINTAGE, le vrai moteur du Syntakt** (`sdvintage-exact`, [note 17](notes/17-portage-exact-syntakt.md)),
-   a été **testée sur un vrai Model:Cycles** le 30/09/2026 (flash par USB depuis le flasher web).
-   - Elle ajoute une 3ᵉ zone de dépôt à l'étape 2 pour ton `Syntakt_OS1.41.syx` officiel. La page y lit le moteur ; le fichier ne quitte pas l'ordinateur.
-   - Trois variantes :
-     - **SDVtg, 7ᵉ machine** (par défaut, testée le 30/09/2026, [note 18](notes/18-septieme-machine.md)) : SNARE reste, et
-       SDVtg s'ajoute au menu MACHINES avec les noms et les défauts de potards du Syntakt ;
-     - **SDVtg et CPVtg, 7ᵉ et 8ᵉ machines** (nouvelle, pas encore testée, [note 19](notes/19-cp-vintage-8e-machine.md)) :
-       en plus, le clap CP VINTAGE du Syntakt ;
-     - **SD VINTAGE à la place de SNARE** (testée).
+   La 5ᵉ case, **Vrais moteurs du Syntakt** ([note 20](notes/20-moteurs-syntakt-a-cocher.md)), ajoute des moteurs du Syntakt
+   en machines supplémentaires, après les 6 d'origine (qui ne changent pas).
+   - Elle ajoute une 3ᵉ zone de dépôt à l'étape 2 pour ton `Syntakt_OS1.41.syx` officiel. La page y lit les moteurs ; le fichier ne quitte pas l'ordinateur.
+   - Une case par moteur ; les moteurs cochés viennent après Chord, dans cet ordre :
+     - **SDVtg** = SD VINTAGE (cochée par défaut, [note 18](notes/18-septieme-machine.md)) ;
+     - **CPVtg** = CP VINTAGE ([note 19](notes/19-cp-vintage-8e-machine.md)) ;
+     - **SYToy** = SY TOY ([note 20](notes/20-moteurs-syntakt-a-cocher.md)) ;
+     - **SYBit** = SY BITS ([note 21](notes/21-sy-bits.md)) : Detune va de 40 à 88, et PUNCH active Bit Redux ;
+     - **SYSwm** = SY SWARM ([note 22](notes/22-sy-swarm.md)) : PUNCH ajoute la sous-octave.
+   - Depuis l'arrêt des voix muettes ([note 23](notes/23-optimisation-charge.md)), qui allège fortement le processeur, tous
+     les choix sont marqués « Expérimental » jusqu'à un nouveau test sur la machine. Avant, SDVtg, SDVtg + CPVtg, SYToy,
+     SDVtg + CPVtg + SYToy, SYBit et SYSwm avaient été testés sur un vrai Model:Cycles (30/09/2026).
+   - Les machines ajoutées sont numérotées dans l'ordre des moteurs cochés. Avant de changer de choix ou de revenir au firmware
+     officiel, remets sur une machine d'origine les pistes qui utilisent une machine ajoutée ([note 20 §5](notes/20-moteurs-syntakt-a-cocher.md)).
+   - « SD VINTAGE à la place de SNARE » (`sdvintage-exact`, [note 17](notes/17-portage-exact-syntakt.md)) n'est plus dans la page : il reste disponible avec `build.py`.
    - Pour revenir en arrière : onglet *Official firmware*, par USB.
 2. **Déposer l'OS officiel** `model-cycles_OS1.13.syx` : il est reconnu à son empreinte, et le firmware est **construit
    automatiquement** (pas de bouton). La page **exige** le MAIN OS de référence de chaque combinaison (voir [BUILD.md](BUILD.md)),

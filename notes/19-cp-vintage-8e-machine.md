@@ -15,8 +15,8 @@ Adresses : MAIN OS Cycles 1.13 et programme audio du Syntakt 1.41 (section 7), c
 | Copie et relocalisation des deux moteurs | `[FAIT]` 30 fonctions, 8 258 o, 116 relocalisations vérifiées (§2) |
 | OS Cycles à 8 machines | `[FAIT]` 117 écritures (§3) |
 | **Preuve en émulation** : 26 vérifications sur le vrai code de l'OS | `[FAIT]` `tools/emu/test_syntakt_machines.py` (§4) |
-| Flasher web : 3ᵉ variante de la case « Vrais moteurs du Syntakt » | `[FAIT]` 63 combinaisons comparées à leur empreinte (§5) |
-| Test sur la machine | `[À FAIRE]` (§6) |
+| Flasher web : 3ᵉ variante de la case « Vrais moteurs du Syntakt » | `[FAIT]` 63 combinaisons comparées à leur empreinte (§5) ; depuis, une case par moteur ([20](20-moteurs-syntakt-a-cocher.md)) |
+| Test sur la machine | `[FAIT]` le 30/09/2026 : « Parfait ça fonctionne nickel » (§6) |
 
 ## 1. CP VINTAGE dans le Syntakt
 
@@ -102,7 +102,10 @@ La case « Vrais moteurs du Syntakt » a trois variantes :
 
 Empreintes du MAIN OS : `b4de3ec5…` (seul), `6ca76aa9…` (avec 6 canaux), `47cb625a…` (5 mods). Build `2026-09-30-11`.
 
-## 6. Test sur la machine `[À FAIRE]`
+## 6. Test sur la machine `[FAIT]`
+
+Flashé par l'utilisateur le 30/09/2026 depuis le flasher web ; son retour : « Parfait ça fonctionne nickel ». PR #10 fusionnée.
+Protocole suivi :
 
 1. Sauvegarder les projets (Transfer).
 2. Flasher par USB la variante « SDVtg et CPVtg ». Vérifier le code `MAIN OS b4de3ec5` (seul).

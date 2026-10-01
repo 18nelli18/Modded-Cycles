@@ -25,6 +25,10 @@ OUT = ROOT / "docs" / "flasher" / "tweaks.js"
 # case est cochee. Chaque variante pointe vers un tweak de tweaks/.
 # Le flasher web n'envoie que par USB (CONFIG > UPGRADE) : il ne propose que des tweaks qui gardent
 # cette mise a jour par USB. 6ch-multiout (la casse) et sdvintage-snare restent dans build.py.
+# Vrais moteurs du Syntakt ("engines") : une case par moteur du catalogue de gen_syntakt_engines.py ;
+# chaque combinaison cochee pointe vers son tweak syntakt-<moteurs> ; la carte est « testee » si au moins une
+# combinaison l'est (HW_TESTED de gen_syntakt_engines.py).
+# Les moteurs s'ajoutent en machines supplementaires : sdvintage-exact (a la place de SNARE) reste dans build.py.
 # status : "tested" (flashe sur un vrai Model:Cycles) ou "experimental".
 # credit : auteur du travail d'origine, affiche sur la carte (voir aussi les credits de la page).
 # Pour ajouter une fonctionnalite : ecrire son tweak JSON, puis l'ajouter ici.
@@ -73,37 +77,55 @@ FEATURES = [
         ],
     },
     {
-        "id": "sdvintage",
-        "label": "Vrais moteurs du Syntakt (SD VINTAGE, CP VINTAGE)",
-        "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.41.syx (a deposer a l'etape 2) : "
-                "SD VINTAGE en 7e machine SDVtg (ou a la place de SNARE), et CP VINTAGE en 8e machine CPVtg. "
+        "id": "syntakt",
+        "label": "Vrais moteurs du Syntakt",
+        "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.41.syx (a deposer a l'etape 2), "
+                "en machines supplementaires apres les 6 d'origine : coche ceux que tu veux. "
                 "Identiques au Syntakt en emulation.",
         "status": "tested",
         "credit": None,
         "needs": "syntakt",
-        "variants": [
-            {"file": "22-sdvintage-7th", "label": "En 7e machine SDVtg, a cote de SNARE (teste le 30/09/2026)"},
-            {"file": "23-syntakt-vintage", "label": "SDVtg et CPVtg en 7e et 8e machines (nouveau, pas encore teste)"},
-            {"file": "21-sdvintage-exact", "label": "A la place de SNARE (teste le 30/09/2026)"},
-        ],
+        "engines": True,
     },
 ]
+
+
+def engine_feature(f, load):
+    """Carte des vrais moteurs du Syntakt : les moteurs du catalogue et le tweak de chaque combinaison."""
+    import gen_syntakt_engines as gs
+    engines = [{"code": c, "name": m["name"], "label": m["label"]} for c, m in gs.CATALOG.items()]
+    combos = []
+    for codes in gs.subsets():
+        t = load(gs.subset_id(codes))
+        combos.append({"id": t["id"], "engines": codes, "tested": tuple(codes) in gs.HW_TESTED,
+                       "label": ", ".join(gs.CATALOG[c]["name"] for c in codes)})
+    return engines, combos
 
 
 def render():
     from crossflash import OFFICIAL            # empreintes des OS officiels, source unique (tools/crossflash.py)
     device = json.loads((DEV_DIR / "device.json").read_text(encoding="utf-8"))
     tweaks, seen, features = [], {}, []
+    by_id = {}
+    for p in sorted(DEV_DIR.glob("*.json")):
+        if p.name != "device.json":
+            t = json.loads(p.read_text(encoding="utf-8"))
+            by_id[t["id"]] = t
+
+    def load(tid):
+        t = by_id[tid]
+        if tid not in seen:
+            seen[tid] = True
+            tweaks.append(t)
+        return t
     for f in FEATURES:
-        variants = []
-        for v in f["variants"]:
-            t = json.loads((DEV_DIR / f"{v['file']}.json").read_text(encoding="utf-8"))
-            if t["id"] not in seen:
-                seen[t["id"]] = True
-                tweaks.append(t)
-            variants.append({"id": t["id"], "label": v["label"]})
-        feat = {"id": f["id"], "label": f["label"], "desc": f["desc"], "status": f["status"],
-                "credit": f["credit"], "variants": variants}
+        feat = {"id": f["id"], "label": f["label"], "desc": f["desc"], "status": f["status"], "credit": f["credit"]}
+        if f.get("engines"):
+            feat["engines"], feat["combos"] = engine_feature(f, load)
+            feat["status"] = "tested" if any(c["tested"] for c in feat["combos"]) else "experimental"
+        else:
+            by_file = {json.loads((DEV_DIR / f"{v['file']}.json").read_text(encoding="utf-8"))["id"]: v for v in f["variants"]}
+            feat["variants"] = [{"id": load(tid)["id"], "label": v["label"]} for tid, v in by_file.items()]
         if f.get("needs"):
             feat["needs"] = f["needs"]
         features.append(feat)

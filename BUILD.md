@@ -45,6 +45,13 @@ L'orchestration (`tools/build.py`) et les tables de patchs (`tweaks/`) sont prop
    ```sh
    python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup,sdvintage-7th --syntakt Syntakt_OS1.41.syx
    ```
+   Ou n'importe quel choix de moteurs du Syntakt en machines ajoutées ([note 20](notes/20-moteurs-syntakt-a-cocher.md)) :
+   `sdvintage-7th` (SD), `syntakt-vintage` (SD + CP), et `syntakt-<moteurs>` pour les autres choix parmi `sd`, `cp`, `toy`,
+   `bits`, `swarm` (dans cet ordre : `syntakt-toy`, `syntakt-bits`, `syntakt-swarm`, `syntakt-sd-cp-toy-bits-swarm`…
+   [notes 21](notes/21-sy-bits.md) et [22](notes/22-sy-swarm.md)). Un seul à la fois :
+   ```sh
+   python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup,syntakt-sd-cp-toy-bits-swarm --syntakt Syntakt_OS1.41.syx
+   ```
    → écrit `model-cycles_OS1.13_mod.syx` à côté. `-t a,b` combine plusieurs patchs compatibles.
    `--all` applique tout, mais refuse si deux patchs sont incompatibles (c'est le cas de ces deux variantes).
 
@@ -92,8 +99,16 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 | `6ch-usbup,sdvintage-exact` (idem) | `ea57b3c52b77d4de3df073ee605f2fecde59878d06e3141c927ed3bd7f489904` |
 | `syntakt-vintage` (idem) | `b4de3ec5f7eda7504bf03e7141f57bae6cf5bc137d39f6704da60881d56ed9b0` |
 | `sdvintage-7th` (idem) | `c73ad4c796b94ab39d106d0798091eb39b5e3e31f66d7fe78e2db30db44daad3` |
+| `syntakt-cp` (idem) | `912e4dcef0d54c3d87e80d580d608ba0fedbbb34e1547364c314c7fa2e8cb2aa` |
+| `syntakt-toy` (idem) | `247c8b46fb40d9e28d2a3f348d39a0d39dc41241087cf0f4fee0a2088dc5a09d` |
+| `syntakt-sd-cp-toy` (idem) | `8586b2301ef92801ca5529d43ae2036fa8b1bf921172ae703560616531e61bd1` |
+| `syntakt-bits` (idem) | `7ace58bdf609b7ea735b434c7b9bddd8388282fbe0117f3badd174d61bcec58f` |
+| `syntakt-sd-cp-toy-bits` (idem) | `9fa6a7dec71e777adb4651f118ca4ffa7f39aedc9f311b2c3f2600cbb3e11262` |
+| `syntakt-swarm` (idem) | `2738b0550b62544d055368922d059cdf2a26c2960f4f3057894f1be4a408a088` |
+| `syntakt-sd-cp-toy-bits-swarm` (idem) | `cbd55ecaec935f441e578f76a34a06de97fda985963ac4658423cbd44de94d7e` |
 
-Les 63 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`) ;
+Les 511 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
+`tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;
 `tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.41.syx` les reconstruit toutes dans la page et les compare.
 SD VINTAGE v1 (clean-room d'origine, **testée sur le matériel** le 29/09/2026, compilée par GCC 13.3) donnait `80b7b2bd…` seule et `38754937…` avec `6ch-usbup` ;
 la v2 est compilée par `m68k-elf-gcc` 16.2 (Homebrew), voir [note 16 §6](notes/16-moteur-syntakt.md).
@@ -125,7 +140,13 @@ python3 tools/emu/test_sdvintage_exact.py --cycles model-cycles_OS1.13.syx --syn
 python3 tools/emu/test_sdvintage_7th.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx
 python3 tools/gen_syntakt_machines.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx --check
 python3 tools/emu/test_syntakt_machines.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx
+python3 tools/gen_syntakt_engines.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx --all --check
+python3 tools/emu/test_syntakt_machines.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx \
+    --tweak tweaks/model-cycles_OS1.13/24-syntakt-sd-cp-toy.json
+python3 tools/ref_mainos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx --check
 ```
+Pour ajouter un moteur : l'ajouter à `CATALOG` de `tools/gen_syntakt_engines.py` (et ses plages copiées), puis relancer
+`gen_syntakt_engines.py --all`, `gen_flasher_tweaks.py` et `ref_mainos.py`, et tester chaque nouveau tweak en émulation.
 
 ## Flasher (rappel)
 
