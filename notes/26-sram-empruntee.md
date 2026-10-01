@@ -162,6 +162,6 @@ Retour de l'utilisateur, firmware de diagnostic v5 :
 - **4 voix du Syntakt**, actives en même temps sur tous les pas de la mesure : **aucune note coupée** ;
 - **à partir de la 5ᵉ voix du Syntakt** : des notes coupées (le régulateur intervient).
 
-Décision : fusionner (PR #16), puis chercher comment tenir 5 et 6 voix du Syntakt.
+Décision : fusionner (PR #16), puis chercher comment tenir 5 et 6 voix du Syntakt ([27](27-cinq-et-six-voix.md)).
 
 [DS-MCF]: https://www.nxp.com/docs/en/data-sheet/MCF54418.pdf

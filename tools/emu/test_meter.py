@@ -5,8 +5,9 @@ Le minuteur DMA 0 du Cycles (0xfc07000c, 135,168 MHz) est simulé. On vérifie, 
   - le son : les 5 moteurs du Syntakt donnent la même sortie qu'avec le tweak normal ;
   - la sonde de la fonction audio (0x40059382 -> audio_probe) : la fonction appelée (remplacée ici par une
     fonction factice) voit la même pile, d0 revient intact, et audio_end mesure le bloc ;
-  - audio_end : après 750 blocs, le nom affiché est « pic/moyenne » en % de la durée d'un bloc ;
-  - l'écran MACHINES : les 11 machines portent ce nom (« --/-- » avant la 1re mesure).
+  - audio_end : après 750 blocs, le nom de chaque machine est « moyenne/voix » : charge moyenne et coût de la voix
+    qui la joue (la plus chère si plusieurs pistes), en % de la durée d'un bloc ; « -- » si aucune piste ne la joue ;
+  - l'écran MACHINES : les 11 machines portent leur propre nom (« --/-- » avant la 1re mesure).
 
     python3 tools/emu/test_meter.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx
 """
@@ -104,8 +105,12 @@ def main():
     print("calcul de la charge (audio_end) et écran MACHINES")
     e = E.Engine(img_m)
     names = [struct.unpack(">I", e.uc.mem_read(0x43033800 + 4 * i, 4))[0] for i in range(11)]
-    buf = names[0]
-    before = bytes(e.uc.mem_read(buf, 8)).split(b"\0")[0].decode()
+    text = lambda a: bytes(e.uc.mem_read(a, 8)).split(b"\0")[0].decode()
+    before = [text(a) for a in names]
+    # moteur et coût mesuré (en % d'un bloc) de chaque piste, comme les laisse voice_gate / voice_after
+    eng, pct = [0, 1, 6, 8, 10, 10], [7, 8, 11, 9, 13, 15]
+    e.uc.mem_write(sy["gov_eng"], bytes(eng))
+    e.uc.mem_write(sy["gov_cost"], struct.pack(">6I", *[p_ * 90112 // 100 + 1 for p_ in pct]))
     t = 10_000_000                                    # 1er appel : écart > 20 blocs -> remise à zéro
     for b in range(752):
         dur = 81101 if b == 400 else 45056            # 50 % ; un bloc à 90 %
@@ -113,11 +118,12 @@ def main():
         e.uc.mem_write(TIMER, struct.pack(">I", (t + dur) & 0xffffffff))
         e.call(sy["audio_end"])
         t += 90112
-    after = bytes(e.uc.mem_read(buf, 8)).split(b"\0")[0].decode()
-    check(len(set(names)) == 1 and before == "--/--" and after == "90/50",
-          f"nom de toutes les machines : « {before} » avant la 1re mesure, « {after} » après 750 blocs (pic 90 %, moyenne 50 %)")
+    after = [text(a) for a in names]
+    want = ["50/7", "50/8", "50/--", "50/--", "50/--", "50/--", "50/11", "50/--", "50/9", "50/--", "50/15"]
+    check(len(set(names)) == 11 and before == ["--/--"] * 11 and after == want,
+          f"nom de chaque machine : « --/-- » avant la 1re mesure, puis « moyenne/voix » après 750 blocs à 50 % : {after}")
     txt = [t7.drum_select(img_m, pl_m, m)[0] for m in (0, 5, 6, 10)]
-    check(all(x == ["--/--"] for x in txt), f"écran MACHINES (machines 1, 6, 7, 11) : {txt}")
+    check(all(x == ["--/--"] for x in txt), f"écran MACHINES avant la 1re mesure (machines 1, 6, 7, 11) : {txt}")
     print("\nTOUT OK" if not FAIL else f"\n{len(FAIL)} ÉCHEC(S)")
     return 1 if FAIL else 0
 

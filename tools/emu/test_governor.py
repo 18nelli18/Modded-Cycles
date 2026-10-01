@@ -45,6 +45,7 @@ def main():
     ap.add_argument("--cycles", required=True)
     ap.add_argument("--syntakt", required=True)
     ap.add_argument("--tweak", required=True, help="tweak généré avec au moins SD, CP (machines 6, 7) : les 5 moteurs")
+    ap.add_argument("--target", type=int, default=78, help="TARGET du régulateur, en %% (82 pour le firmware de diagnostic)")
     args = ap.parse_args()
     stock = T.main_os_from_syx(args.cycles)
     tw = json.loads(pathlib.Path(args.tweak).read_text(encoding="utf-8"))
@@ -132,7 +133,7 @@ def main():
         # libérer le temps manquant : (charge - 78 %) du bloc
         need = 16 if pressure else 64
         cand = sorted((t for t in range(6) if qu[t] < need and age[t] >= min_age), key=lambda t: pk[t] >> (1 if st_[t] else 0))
-        excess = ((level * BLOCK // 100) * 256 // BLOCK - 78 * 256 // 100) * (BLOCK >> 8)
+        excess = ((level * BLOCK // 100) * 256 // BLOCK - args.target * 256 // 100) * (BLOCK >> 8)
         want, acc = [], 0
         for t in cand:
             if acc >= excess or len(want) == 2:        # 2 voix par bloc au plus

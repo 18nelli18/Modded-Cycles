@@ -214,14 +214,23 @@ static void render(int engine, s32 *out, char *v)
 #define TIMER (*(volatile u32 *)0xfc07000c)
 #define NT 6
 #define PRESSURE (72 * 256 / 100)
-#define STEAL (82 * 256 / 100)
+#ifndef STEAL_PCT                  /* le firmware de diagnostic en essaie d'autres (gen_syntakt_engines.py) */
+#define STEAL_PCT 82
+#endif
+#ifndef TARGET_PCT
+#define TARGET_PCT 78
+#endif
+#define STEAL (STEAL_PCT * 256 / 100)
 #define PEAK (90 * 256 / 100)
 #define SEVERE (92 * 256 / 100)
-#define TARGET (78 * 256 / 100)
+#define TARGET (TARGET_PCT * 256 / 100)
 u32 gov_ret_audio, gov_t0_audio, gov_load, gov_avg, gov_period;    /* dernier bloc, moyenne glissante (1/8) */
 static u32 last_t0, vt0;
 u32 gov_pressure;
 unsigned char gov_quiet[NT], gov_fading[NT], gov_flen[NT], gov_stolen[NT], gov_st[NT];
+#ifdef LOAD_METER
+unsigned char gov_eng[NT];          /* moteur de chaque piste, pour le compteur */
+#endif
 unsigned short gov_age[NT];
 s32 gov_peak[NT];
 u32 gov_cost[NT];                 /* cout mesure d'update + render, en ticks (moyenne glissante 1/4) */
@@ -232,6 +241,9 @@ u32 gov_cost[NT];                 /* cout mesure d'update + render, en ticks (mo
 int voice_gate(int t, int trig, int engine)
 {
 	gov_st[t] = engine >= 6;
+#ifdef LOAD_METER
+	gov_eng[t] = engine;
+#endif
 	if (trig) {
 		gov_quiet[t] = gov_fading[t] = gov_stolen[t] = 0;
 		gov_age[t] = 0;
@@ -308,9 +320,11 @@ static void govern(void)
 }
 
 #ifdef LOAD_METER
-/* Compteur de charge (firmware de diagnostic, notes/23) : toutes les 750 blocs (0,5 s), METER_BUF (le nom de
- * toutes les machines de l'ecran MACHINES) devient « pic/moyenne » de la fonction audio, en % d'un bloc. */
-static u32 w_period, w_audio, w_n, w_max;
+/* Compteur de charge (firmware de diagnostic, notes/23, notes/27) : toutes les 750 blocs (0,5 s), le nom de la
+ * machine m (METER_BUF + 8 m, METER_N machines) devient « moyenne/voix » : charge moyenne de la fonction audio et
+ * cout mesure de la voix qui joue cette machine (la plus chere si plusieurs pistes), en % d'un bloc ; « -- » si
+ * aucune piste ne la joue. */
+static u32 w_period, w_audio, w_n;
 
 static char *put2(char *s, u32 v)
 {
@@ -324,19 +338,30 @@ static char *put2(char *s, u32 v)
 
 static void meter(u32 dur, u32 period)
 {
-	u32 q;
-
 	w_period += period;
 	w_audio += dur;
-	q = dur * 100 / period;
-	if (q > w_max)
-		w_max = q;
 	if (++w_n >= 750) {
-		char *s = put2((char *)METER_BUF, w_max);
-		*s++ = '/';
-		s = put2(s, w_audio / (w_period / 100));
-		*s = 0;
-		w_n = w_period = w_audio = w_max = 0;
+		u32 avg = w_audio / (w_period / 100), per = w_period / w_n, c;
+		int m, t, any;
+
+		for (m = 0; m < METER_N; m++) {
+			char *s = put2((char *)METER_BUF + 8 * m, avg);
+			*s++ = '/';
+			for (t = any = 0, c = 0; t < NT; t++)
+				if (gov_eng[t] == m) {
+					any = 1;
+					if (gov_cost[t] * 100 / per > c)
+						c = gov_cost[t] * 100 / per;
+				}
+			if (any)
+				s = put2(s, c);
+			else {
+				*s++ = '-';
+				*s++ = '-';
+			}
+			*s = 0;
+		}
+		w_n = w_period = w_audio = 0;
 	}
 }
 #endif
@@ -349,7 +374,7 @@ void audio_end(void)
 	last_t0 = t0;
 	if (!period || period > 20 * 90112) {                   /* premier bloc, ou pause */
 #ifdef LOAD_METER
-		w_n = w_period = w_audio = w_max = 0;
+		w_n = w_period = w_audio = 0;
 #endif
 		return;
 	}

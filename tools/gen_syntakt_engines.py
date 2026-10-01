@@ -208,6 +208,9 @@ DISPATCH = (0x400a7dfe, 0x400a7e24)
 AUDIO_CALL = 0x40059382      # jsr 0x4005979e : fonction audio, appelée par l'interruption à chaque bloc
 IDLE_BLOCKS = 64             # 43 ms
 IDLE_THR = 1 << 13           # -108 dB sous la pleine échelle
+# Firmware de diagnostic (--meter, notes/27) : seuils du régulateur sur la charge moyenne (STEAL, TARGET, en %),
+# moins pressés que ceux des tweaks normaux (82, 78) : coupe-t-il encore des notes, l'interface suit-elle ?
+METER_STEAL = (86, 82)
 
 
 def subset_id(codes, generic=False):
@@ -403,7 +406,7 @@ dispatch:
 """
 
 
-def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None):
+def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0):
     defs = []
     for m in machines:
         defs += [f"-DUPD_{m['engine']}={m['update']:#x}", f"-DRND_{m['engine']}={m['render']:#x}"]
@@ -412,8 +415,9 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None):
         if "punch_off" in m:
             defs.append(f"-DPUNCH_OFF_{m['engine']}={m['punch_off']}")
     defs += [f"-DIDLE_THR={IDLE_THR}", f"-DIDLE_BLOCKS={IDLE_BLOCKS}"]
-    if meter:                                   # le nom affiché pour toutes les machines (écran MACHINES)
-        defs += ["-DLOAD_METER", f"-DMETER_BUF={meter:#x}"]
+    if meter:                                   # noms des machines (écran MACHINES) : « moyenne/voix »
+        defs += ["-DLOAD_METER", f"-DMETER_BUF={meter:#x}", f"-DMETER_N={nm}", f"-DSTEAL_PCT={METER_STEAL[0]}",
+                 f"-DTARGET_PCT={METER_STEAL[1]}"]
     obj, stub, elf = tmp / "bridge.o", tmp / "stub.o", tmp / "bridge.elf"
     gx.run([gx.CROSS + "gcc", *gx.CFLAGS, *defs, "-c", str(gx.SRC / "bridge_engines.c"), "-o", str(obj)])
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(gx.SRC / "stub.S"), "-o", str(stub),
@@ -499,16 +503,16 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         if s not in addr:
             addr[s] = at
             at += len(s) + 1
-    if meter:                                   # nom de toutes les machines : « pic/moyenne » (5 caractères au plus)
-        addr["--/--"] = at
-        at += 8
+    meter_at = at                               # compteur : un nom de 8 o par machine (5 caractères au plus)
+    if meter:
+        at += 8 * nm
     with tempfile.TemporaryDirectory() as d:
         blobs, syms, stubs, ssyms = compile_code(pathlib.Path(d), machines, size // 4,
-                                                 addr["--/--"] if meter else None, rnd_at)
+                                                 meter_at if meter else None, rnd_at, nm)
 
     names = [u32(g7.NAMES + 4 * i) for i in range(6)] + [addr[m["name"]] for m in machines]
     if meter:
-        names = [addr["--/--"]] * nm
+        names = [meter_at + 8 * m for m in range(nm)]
     upd = [u32(g7.UPDATE_TAB + 4 * i) for i in range(6)] + [syms[f"bridge_update_{m['engine']}"] for m in machines]
     rnd = [u32(g7.RENDER_TAB + 4 * i) for i in range(6)] + [syms[f"bridge_render_{m['engine']}"] for m in machines]
     data = bytearray()
@@ -516,7 +520,9 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         data += b"".join(g7.be32(x) for x in t)
     data += img[MAP - BASE:MAP - BASE + 6] + bytes(range(6, nm)) + bytes(((nm + 3) & ~3) - nm)   # machine -> entrée
     for s in addr:
-        data += s.encode("ascii") + b"\0" * (3 if s == "--/--" else 1)
+        data += s.encode("ascii") + b"\0"
+    if meter:
+        data += b"--/--\0\0\0" * nm
     if DATA + len(data) > DESCN:
         raise SystemExit("!! données")
 
@@ -615,8 +621,9 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         "name": ("DIAGNOSTIC, compteur de charge. " if meter else "") +
                 "Vrais moteurs du Syntakt en machines ajoutées : " + ", ".join(f"{m['name']} ({m['label']})" for m in machines),
         "description": ([
-            "FIRMWARE DE DIAGNOSTIC (notes/23) : l'écran MACHINES affiche, pour toutes les machines, la charge audio",
-            "« pic/moyenne » en % de la durée d'un bloc de 32 échantillons, mise à jour toutes les 0,5 s.",
+            "FIRMWARE DE DIAGNOSTIC (notes/27) : l'écran MACHINES affiche, pour chaque machine, « moyenne/voix » :",
+            "charge audio moyenne et coût de la voix qui joue cette machine, en % de la durée d'un bloc de 32",
+            "échantillons, mis à jour toutes les 0,5 s. Régulateur moins pressé sur la charge moyenne (STEAL 86 %).",
             "À n'utiliser que pour mesurer.",
         ] if meter else []) + [
             "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
