@@ -363,6 +363,10 @@ DISPATCH = (0x400a7dfe, 0x400a7e24)
 AUDIO_CALL = 0x40059382      # jsr 0x4005979e : fonction audio, appelée par l'interruption à chaque bloc
 IDLE_BLOCKS = 64             # 43 ms
 IDLE_THR = 1 << 13           # -108 dB sous la pleine échelle
+# Régulateur (notes/25, notes/30), en % de la durée d'un bloc : coupures quand la charge SOUTENUE (moyenne lente,
+# 1/2^slow par bloc, environ 170 ms) dépasse steal, jusqu'à revenir à target ; ou quand un bloc dépasse peak, jusqu'à
+# revenir sous peak - margin ; fondus courts au-dessus de severe.
+GOV = dict(steal=86, target=82, peak=93, margin=4, severe=96, slow=8)
 # Firmware de diagnostic (--meter) : noms des machines « pic/moyenne » (False, notes/23, notes/29) ou
 # « moyenne/voix » (True : coût de la voix de chaque machine, diagnostics v6 et v7, notes/27)
 METER_VOICE = False
@@ -572,7 +576,7 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, ru
             defs.append(f"-DPUNCH_ON_{m['engine']}={m['punch_on']}")
         if "punch_off" in m:
             defs.append(f"-DPUNCH_OFF_{m['engine']}={m['punch_off']}")
-    defs += [f"-DIDLE_THR={IDLE_THR}", f"-DIDLE_BLOCKS={IDLE_BLOCKS}"]
+    defs += [f"-DIDLE_THR={IDLE_THR}", f"-DIDLE_BLOCKS={IDLE_BLOCKS}"] + [f"-DGOV_{k.upper()}={v}" for k, v in GOV.items()]
     if meter:                                   # noms des machines (écran MACHINES) : « moyenne/voix »
         defs += ["-DLOAD_METER", f"-DMETER_BUF={meter:#x}", f"-DMETER_N={nm}"] + (["-DMETER_VOICE"] if METER_VOICE else [])
     obj, stub, elf = tmp / "bridge.o", tmp / "stub.o", tmp / "bridge.elf"

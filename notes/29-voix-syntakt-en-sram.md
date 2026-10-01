@@ -10,7 +10,7 @@ Travail du 01/10/2026, après les relevés de l'utilisateur avec le firmware de 
 | États des 6 voix du Syntakt en SRAM | `[FAIT]` (§2) |
 | Preuve en émulation | `[FAIT]` (§3) |
 | Gain estimé | environ −3 points de bloc avec 5 ou 6 voix du Syntakt (§4) |
-| Mesure sur la machine | `[À FAIRE]` firmware de diagnostic v8, affichage « pic/moyenne » (§5) |
+| Mesure sur la machine | `[FAIT]` v8 en 6 canaux : 91/71, dernière piste toujours coupée ([30](30-regulateur-charge-soutenue.md)) |
 
 ## 1. Relevés du diagnostic v7 (01/10/2026)
 
@@ -66,7 +66,7 @@ Simulation de cache de [27 §2](27-cinq-et-six-voix.md), boucle des voix seule :
 - Sur le motif à 6 pistes du §1, la demande passerait d'environ 88 à 85 %, juste sous le seuil de coupure (86 %).
 - Il resterait des coupures quand les 6 notes partent sur le même pas : un bloc isolé au-dessus de 90 % déclenche aussi le régulateur (`PEAK`). D'où l'affichage du pic dans le diagnostic v8.
 
-## 5. Firmware de diagnostic v8 `[À FAIRE]`
+## 5. Firmware de diagnostic v8 `[FAIT]`
 
 Construit localement :
 - `build/diag/model-cycles_OS1.13_diagnostic-charge_v8.syx` (MAIN OS `19f43218…`) ;
@@ -78,3 +78,5 @@ Le nom de toutes les machines redevient **« pic/moyenne »**, comme en v5 (`MET
 1. Le motif à 6 pistes de la v7 : pic/moyenne, et y a-t-il encore des coupures ? Le son craque-t-il ?
 2. Si possible, 6 voix du Syntakt (par exemple SDVtg sur la 6ᵉ piste à la place de KICK).
 3. L'interface reste-t-elle fluide ?
+
+Relevé v8 et suite : [30](30-regulateur-charge-soutenue.md).

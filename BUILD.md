@@ -99,13 +99,13 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 | `6ch-usbup,sdvintage-exact` (idem) | `ea57b3c52b77d4de3df073ee605f2fecde59878d06e3141c927ed3bd7f489904` |
 | `syntakt-vintage` (idem) | `b4de3ec5f7eda7504bf03e7141f57bae6cf5bc137d39f6704da60881d56ed9b0` |
 | `sdvintage-7th` (idem) | `c73ad4c796b94ab39d106d0798091eb39b5e3e31f66d7fe78e2db30db44daad3` |
-| `syntakt-cp` (idem) | `be163e65954588dd463a7d3d2bc317d06eeb3b9bf982eb386dd7d64cdcff5013` |
-| `syntakt-toy` (idem) | `37d1b4417bd5425e28c9b07166c3caf3abe2242810ebc9340dd64f1158577483` |
-| `syntakt-sd-cp-toy` (idem) | `1ec07632d884bb2dd73b5bb4e4cca342a073003145b5cc82ddbe0a19ebff9ddd` |
-| `syntakt-bits` (idem) | `d0305a5b2912248029e31988e309d33af249d3f8d18069ee69e2e1f2b3dc8de3` |
-| `syntakt-sd-cp-toy-bits` (idem) | `bd335496667c3dfcf44ff5c29204d4d4569d9a5df7fb57b6e993024c2292c20a` |
-| `syntakt-swarm` (idem) | `898b09939f32277fa1e5e089a640a25b89804b31270c0256a79d98cc330a832b` |
-| `syntakt-sd-cp-toy-bits-swarm` (idem) | `1c0f23d3f538af3765e9655f5ac3b23abdc86cfd9e3a4bcf823e63cac4b89f01` |
+| `syntakt-cp` (idem) | `08471a7add515a9c22ab252dde18cb905473a9a40d794c0cddddf8563cc4fdbf` |
+| `syntakt-toy` (idem) | `33d138abbf714acc08968733b91d3df2b2dbb50b320a3761c8df7e825270b68e` |
+| `syntakt-sd-cp-toy` (idem) | `634d2a44eaece2489f1c20ff1f813b31ce2e59a28a17dd999c75dfc31c50a157` |
+| `syntakt-bits` (idem) | `7d8a27208fcdd127249e5a2c8d837c9a13d655ea77dc0f96ba28bd0ef36b66bc` |
+| `syntakt-sd-cp-toy-bits` (idem) | `80fe816a88a49273bbc21b4e05263a993a44ad0a6b65dc1aa13442c524094a20` |
+| `syntakt-swarm` (idem) | `5892a9122daabd2ae0d14b6d35ea94d4b32484137eb9f82cf1da52356cc71f90` |
+| `syntakt-sd-cp-toy-bits-swarm` (idem) | `a1871d60392caef0b66b6ca700dc5da53d320950b8910aa88edd6d9a7b7a7c8b` |
 
 Les 511 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
 `tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;

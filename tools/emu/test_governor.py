@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
-"""Preuve du régulateur de charge (notes/25), sur le vrai code d'un tweak généré par gen_syntakt_engines.py.
+"""Preuve du régulateur de charge (notes/25, notes/30), sur le vrai code d'un tweak généré par gen_syntakt_engines.py.
 
 La sonde de la fonction audio n'est pas émulée (il faudrait toute l'interruption) : après chaque bloc de la boucle
 des voix, le test appelle le vrai audio_end() avec un minuteur simulé réglé sur la charge voulue. Référence : le
-même firmware sans appel à audio_end() (charge nulle, arrêt des seules voix muettes).
+même firmware sans appel à audio_end() (charge nulle, arrêt des seules voix muettes). Seuils : gs.GOV.
   - charge normale (50 %) : sortie identique à la référence ;
   - forte charge (80 %) : une voix s'arrête dès qu'elle reste sous -66 dB (16 blocs), identique jusque-là ;
-  - surcharge (90 %) : la voix calculée la plus faible (celles du Syntakt comptent double) s'éteint par un fondu
-    de 8 blocs, une à la fois, jamais une note de moins de 16 blocs ; les autres restent identiques ; la voix
-    éteinte repart à son trig suivant.
+  - blocs chargés mais sous le pic, charge soutenue encore basse (91 %) : aucune voix éteinte de force ;
+  - charge soutenue au-dessus de steal (moyenne lente déjà à 88 %) : les voix les plus faibles s'éteignent par
+    un fondu de 8 blocs, juste assez pour revenir à target, jamais une note de moins de 16 blocs ;
+  - un bloc au-dessus de peak (95 %), puis au-dessus de severe (97 %) : idem pour revenir sous peak - margin,
+    fondus de 8 puis 2 blocs ; les autres voix restent identiques ; la voix éteinte repart à son trig suivant.
 
     python3 tools/emu/test_governor.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx --tweak ….json
 """
@@ -45,7 +47,6 @@ def main():
     ap.add_argument("--cycles", required=True)
     ap.add_argument("--syntakt", required=True)
     ap.add_argument("--tweak", required=True, help="tweak généré avec au moins SD, CP (machines 6, 7) : les 5 moteurs")
-    ap.add_argument("--target", type=int, default=82, help="TARGET du régulateur, en %% (78 jusqu'au diagnostic v6)")
     args = ap.parse_args()
     stock = T.main_os_from_syx(args.cycles)
     tw = json.loads(pathlib.Path(args.tweak).read_text(encoding="utf-8"))
@@ -64,7 +65,7 @@ def main():
         return dict(machine=m, note=60, pitch=64, color=64, shape=64, sweep=64, contour=64, punch=0, gate=0,
                     finetune=64, decay=dec)
 
-    def play(setup, blocks, trigs, load=None, cost=4000):
+    def play(setup, blocks, trigs, load=None, cost=4000, slow0=0):
         """load : None (pas de régulation) ou fonction bloc -> charge en % ; chaque voix calculée coûte `cost` ticks
         (le minuteur avance à chaque lecture pendant la boucle des voix). Rend les sorties et l'état par bloc."""
         e = E.Engine(img)
@@ -80,6 +81,7 @@ def main():
         e.uc.hook_add(UC_HOOK_MEM_READ, read, begin=TIMER, end=TIMER + 3)
         for t, kw in setup.items():
             e.set(t, **kw)
+        e.uc.mem_write(sy["gov_slow"], struct.pack(">I", slow0 * 256 // 100))   # charge soutenue déjà là
         out, fading, stolen, flen = [], [], [], []
         peaks = []
         now = 10_000_000
@@ -97,7 +99,8 @@ def main():
             peaks.append((struct.unpack(">6i", e.uc.mem_read(sy["gov_peak"], 24)), bytes(e.uc.mem_read(sy["gov_st"], 6)),
                           bytes(e.uc.mem_read(sy["gov_quiet"], 6)), struct.unpack(">6H", e.uc.mem_read(sy["gov_age"], 12)),
                           struct.unpack(">6I", e.uc.mem_read(sy["gov_cost"], 24)),
-                          struct.unpack(">I", e.uc.mem_read(sy["gov_pressure"], 4))[0]))
+                          struct.unpack(">I", e.uc.mem_read(sy["gov_pressure"], 4))[0],
+                          struct.unpack(">I", e.uc.mem_read(sy["gov_slow"], 4))[0]))
         play.peaks, play.flen = peaks, flen
         return np.stack(out), fading, stolen      # out : blocs x 6 pistes x 32
 
@@ -107,33 +110,45 @@ def main():
     mod, _, st = play(setup, 300, {1: 0xf}, load=lambda b: 50)
     check(np.array_equal(ref, mod) and not any(any(s) for s in st), "50 % : sortie identique, aucune voix éteinte")
 
-    print("forte charge")
-    mod, _, st = play(setup, 300, {1: 0xf}, load=lambda b: 80)
-    ok, stops = True, {}
-    for t in range(4):
-        r, x = ref[:, t, :], mod[:, t, :]
-        diff = np.nonzero(np.any(r != x, axis=1))[0]
-        if len(diff):
-            f = int(diff[0])
-            stops[t] = f
-            ok &= np.abs(r[f:]).max() < (1 << 20) and not x[f:].any()
-    check(ok and not any(any(s) for s in st),
-          f"80 % : les voix s'arrêtent sous -66 dB (blocs {stops}), identiques avant, aucune éteinte de force")
+    G = gs.GOV
+    Q = lambda pct: pct * 256 // 100                # seuils, comme PCT() de bridge_engines.c
 
-    def overload(level, fade, min_age, label):
+    def no_forced(level, label):
+        """Pas d'extinction de force : seules les voix restées sous -66 dB (16 blocs) s'arrêtent."""
+        mod, _, st = play(setup, 300, {1: 0xf}, load=lambda b: level)
+        ok, stops = True, {}
+        for t in range(4):
+            r, x = ref[:, t, :], mod[:, t, :]
+            diff = np.nonzero(np.any(r != x, axis=1))[0]
+            if len(diff):
+                f = int(diff[0])
+                stops[t] = f
+                ok &= np.abs(r[f:]).max() < (1 << 20) and not x[f:].any()
+        check(ok and not any(any(s) for s in st),
+              f"{label} : les voix s'arrêtent sous -66 dB (blocs {stops}), identiques avant, aucune éteinte de force")
+
+    print("forte charge")
+    no_forced(80, "80 %")
+    print("blocs chargés sous le pic, charge soutenue basse")
+    no_forced(91, f"91 % pendant 300 blocs (pic {G['peak']} %, moyenne lente partie de 0)")
+
+    def overload(level, slow0, fade, min_age, label):
         setup = {0: eng(0, 100), 1: stock_m(1, 100), 2: eng(4, 100), 3: stock_m(4, 100)}
         trigs = {1: 0xf, 250: 0x1}
         load = lambda b: level if b < 200 else 50
         ref, _, _ = play(setup, 300, trigs)
-        mod, fading, stolen = play(setup, 300, trigs, load=load)
+        mod, fading, stolen = play(setup, 300, trigs, load=load, slow0=slow0)
         fb = next(b for b in range(300) if any(fading[b]))
-        pk, st_, qu, age, cost, pressure = play.peaks[fb]  # état vu par le régulateur à la fin du bloc fb
+        pk, st_, qu, age, cost, pressure, slow = play.peaks[fb]  # état vu par le régulateur à la fin du bloc fb
         first = [t for t in range(6) if fading[fb][t]]
-        # les voix éteintes au 1er choix sont les plus faibles (clé = crête, /2 pour le Syntakt), juste assez pour
-        # libérer le temps manquant : (charge - TARGET) du bloc
+        # les voix éteintes au 1er choix sont les plus faibles (clé = crête), juste assez pour libérer le temps
+        # manquant : charge soutenue - target, ou charge du bloc - (peak - margin)
         need = 16 if pressure else 64
-        cand = sorted((t for t in range(6) if qu[t] < need and age[t] >= min_age), key=lambda t: pk[t] >> (1 if st_[t] else 0))
-        excess = ((level * BLOCK // 100) * 256 // BLOCK - args.target * 256 // 100) * (BLOCK >> 8)
+        cand = sorted((t for t in range(6) if qu[t] < need and age[t] >= min_age), key=lambda t: pk[t])
+        load_q = (level * BLOCK // 100) * 256 // BLOCK
+        excess = (slow - Q(G["target"])) * (BLOCK >> 8) if slow >= Q(G["steal"]) else 0
+        if load_q >= Q(G["peak"]):
+            excess = max(excess, (load_q - Q(G["peak"] - G["margin"])) * (BLOCK >> 8))
         want, acc = [], 0
         for t in cand:
             if acc >= excess or len(want) == 2:        # 2 voix par bloc au plus
@@ -157,18 +172,21 @@ def main():
             if t not in first:
                 end = next((b for b in range(300) if fading[b][t]), 250)
                 ok &= np.array_equal(ref[:min(end, 250) + 1, t, :], mod[:min(end, 250) + 1, t, :])
-        # plus de nouvelle extinction quand la charge est retombée ; la piste 1 repart à son trig (bloc 250)
+        # plus de nouvelle extinction quand la charge est retombée (la moyenne lente redescend en une quinzaine de
+        # blocs) ; la piste 1 repart à son trig (bloc 250)
         late = [t for t in range(6) if any(stolen[b][t] for b in range(300))
-                and next(b for b in range(300) if stolen[b][t]) > 212]
+                and next(b for b in range(300) if stolen[b][t]) > 230]
         ok &= not late and np.abs(mod[251:260, 0, :]).max() > 1e6 and len(first) <= 2
         check(ok, f"{label} : au bloc {fb}, extinction simultanée des pistes {[t + 1 for t in first]} "
                   f"(les plus faibles, {acc} ticks pour {excess} à libérer), fondu de {fade} blocs puis silence, autres "
                   f"voix identiques ; plus rien après la surcharge ; retrig de la piste 1")
 
-    print("surcharge")
-    overload(90, 8, 16, "90 %")
-    print("surcharge sévère")
-    overload(95, 2, 4, "95 %")
+    print("charge soutenue")
+    overload(G["steal"] + 2, G["steal"] + 2, 8, 16, f"{G['steal'] + 2} %, moyenne lente déjà à {G['steal'] + 2} %")
+    print("bloc au-dessus du pic")
+    overload(G["peak"] + 2, 0, 8, 16, f"{G['peak'] + 2} %, moyenne lente partie de 0")
+    print("bloc au-dessus du seuil sévère")
+    overload(G["severe"] + 1, 0, 2, 4, f"{G['severe'] + 1} %, moyenne lente partie de 0")
     print("\nTOUT OK" if not FAIL else f"\n{len(FAIL)} ÉCHEC(S)")
     return 1 if FAIL else 0
 
