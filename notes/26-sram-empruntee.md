@@ -14,7 +14,7 @@ Adresses : MAIN OS Cycles 1.13 et programme audio du Syntakt 1.41, comme dans le
 | Table de sinus du Syntakt lue dans celle du Cycles | `[FAIT]` identique à l'octet près (§4) |
 | Preuve en émulation | `[FAIT]` son identique au Syntakt, zone vérifiée comme simple brouillon (§5) |
 | Gain estimé | `[FAIT]` −35 à −63 % de lignes de données en SDRAM par voix du Syntakt (§6) |
-| Mesure sur la machine | `[À FAIRE]` firmware de diagnostic v5 (§7) |
+| Essai sur la machine | `[FAIT]` « beaucoup mieux » : 4 voix du Syntakt sur tous les pas sans note coupée ; des coupures dès la 5ᵉ (§8) |
 
 ## 1. Pourquoi une voix du Syntakt coûte deux voix d'origine
 
@@ -141,7 +141,7 @@ Résultat : **tout passe** (14 vérifications), par exemple :
 - Le trafic de **données** des voix du Syntakt baisse de 40 à 60 %. Celui du **code** ne change pas : il pèse autant, mais il n'y a pas de place en SRAM pour le code.
 - La simulation ignore le mixage, les effets et l'interface, et le vrai temps d'une ligne en SDRAM n'est pas connu : **seule la mesure sur la machine dira le gain en temps.**
 
-## 7. Mesure sur la machine `[À FAIRE]`
+## 7. Mesure sur la machine `[FAIT]`
 
 Firmware de diagnostic v5 (compteur « pic/moyenne » + régulateur + 5 moteurs + SRAM empruntée), construit localement :
 - `build/diag/model-cycles_OS1.13_diagnostic-charge_v5.syx` (MAIN OS `7b7a357e…`) ;
@@ -154,5 +154,14 @@ Machines ajoutées : 7 = SDVtg, 8 = CPVtg, 9 = SYToy, 10 = SYBit, 11 = SYSwm. Le
 - 5 d'origine + SDVtg : 94/84 avec la v2 ([23 §6 bis](23-optimisation-charge.md)).
 
 Écouter aussi s'il reste des coupures de notes, et si le son des moteurs du Syntakt est inchangé.
+
+## 8. Résultat sur la machine (01/10/2026)
+
+Retour de l'utilisateur, firmware de diagnostic v5 :
+- « elle marche beaucoup mieux » ;
+- **4 voix du Syntakt**, actives en même temps sur tous les pas de la mesure : **aucune note coupée** ;
+- **à partir de la 5ᵉ voix du Syntakt** : des notes coupées (le régulateur intervient).
+
+Décision : fusionner (PR #16), puis chercher comment tenir 5 et 6 voix du Syntakt.
 
 [DS-MCF]: https://www.nxp.com/docs/en/data-sheet/MCF54418.pdf
