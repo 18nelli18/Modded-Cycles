@@ -100,6 +100,61 @@ TABLES_LOW = (                                  # à la suite du code, sous la r
 )
 GX_IMM_ADDR = frozenset(gx.IMM_ADDR)             # immédiats-adresses de SD VINTAGE (gen_sdvintage_exact.py)
 
+# --- SRAM interne du Cycles empruntée (notes/26) -------------------------------------------------------------
+# Le cache de données du MCF54415 ne fait que 8 Ko : ce que les moteurs du Syntakt lisent et écrivent dans la
+# réplique de leur SRAM (en SDRAM) passe par lui, à chaque bloc. Deux choses vont donc en SRAM interne :
+#  - leurs tampons de travail, partagés par toutes les voix et écrits avant d'être lus à chaque calcul (comme sur le
+#    Syntakt) : tableaux A et B de 7 éléments de 292 o (remise à zéro 0x40003f6c..0x4000402c : A + 292 k, B + 292 k)
+#    et 4 tampons C de 148 o (SY SWARM). Seuls les 128 premiers octets de chaque élément servent (32 échantillons).
+#    Ils prennent la zone de travail commune des machines d'origine, réécrite par chaque voix d'origine
+#    (SCRATCH_POOL : leurs tableaux de 4 éléments de 292 o, 0x400a7b3e..0x400a7bd6, plus KICK et TONE), A et B
+#    entrelacés pour garder le pas de 292 o (la somme des 7 voix de SY SWARM, 0x4000978a, lit B + 292 k) ;
+#  - leur table de sinus (257 mots), identique à l'octet près à celle du Cycles (0x8000eee4, mêmes pointeurs dans
+#    la remise à zéro des voix) : vérifié au build sur les deux fichiers.
+SCRATCH_POOL = (0x8000beb8, 0x8000c8e8)
+SRAM_MAP = (
+    (0x80008c60, 0x8000945c, SCRATCH_POOL[0]),           # A_k -> zone + 292 k
+    (0x8000945c, 0x80009c58, SCRATCH_POOL[0] + 128),     # B_k -> zone + 128 + 292 k
+    (0x80009c58, 0x80009ea8, SCRATCH_POOL[0] + 2008),    # C_j -> zone + 2008 + 148 j
+    (0x80004b70, 0x80004f74, 0x8000eee4),                # table de sinus
+)
+SCRATCH_HEADS = ((0x80008c60, 292, 7), (0x8000945c, 292, 7), (0x80009c58, 148, 4))   # (début, pas, éléments)
+SINE = SRAM_MAP[3]
+
+
+def sram_moved(a):
+    """Adresse en SRAM du Cycles d'une adresse de la SRAM du Syntakt déplacée (SRAM_MAP), ou None."""
+    for lo, hi, dst in SRAM_MAP:
+        if lo <= a < hi:
+            return a - lo + dst
+    return None
+
+
+def check_sram_map(img, st_img):
+    """Les 128 premiers octets de chaque tampon tombent dans la zone empruntée, sans se chevaucher ; la table de
+    sinus du Syntakt est celle du Cycles."""
+    heads = sorted((sram_moved(s + k * step), s + k * step) for s, step, n in SCRATCH_HEADS for k in range(n))
+    for (a, sa), (b, sb) in zip(heads, heads[1:]):
+        if a + 128 > b:
+            raise SystemExit(f"!! tampons {sa:#x} et {sb:#x} : chevauchement en SRAM")
+    if heads[0][0] < SCRATCH_POOL[0] or heads[-1][0] + 128 > SCRATCH_POOL[1]:
+        raise SystemExit("!! tampons hors de la zone de travail des machines d'origine")
+    lo, hi, dst = SINE
+    if sram_init(st_img, gx.ST_SRAM_INIT, lo, hi - lo) != sram_init(img, CY_SRAM_INIT, dst, hi - lo):
+        raise SystemExit("!! table de sinus du Syntakt différente de celle du Cycles")
+
+
+# contenu initial de la SRAM du Cycles, recopié au démarrage (0x4000045c) : (source, fin, destination)
+CY_SRAM_INIT = ((0x4019b590, 0x401a2a50, 0x80000000), (0x401a2a50, 0x401aa140, 0x80008000))
+
+
+def sram_init(image, init, a, n):
+    """n octets de la SRAM à l'adresse a, tels que le démarrage les y recopie depuis l'image."""
+    for lo, hi, dst in init:
+        if dst <= a and a + n <= dst + hi - lo:
+            return bytes(image[lo - BASE + a - dst:][:n])
+    return None
+
 # --- charge utile (adresses fixes, jusqu'à 6 machines ajoutées) --------------------------------------------
 DST_BRIDGE = 0x43031000
 STUBS = 0x43033000
@@ -134,7 +189,10 @@ def layout(gen):
         if limit is not None and at > limit:
             raise SystemExit(f"!! tables du bas jusqu'à {at:#x} : plus de place sous {limit:#x}")
     copies = segs[:]
-    segs[1 + len(TABLES_LOW):1 + len(TABLES_LOW)] = [(0x80000000, 0x80010000, gx.DST_SRAM), (*gx.ST_BSS, 0x43030000)]
+    # SRAM du Syntakt : tampons et table de sinus en SRAM interne du Cycles (avant la réplique : gx.move prend la
+    # 1re plage qui contient l'adresse), le reste dans la réplique
+    segs[1 + len(TABLES_LOW):1 + len(TABLES_LOW)] = [*SRAM_MAP, (0x80000000, 0x80010000, gx.DST_SRAM),
+                                                     (*gx.ST_BSS, 0x43030000)]
     return tuple(segs), copies, (at + 0xff) & ~0xff
 
 
@@ -429,6 +487,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
     if not 1 <= n <= MAX_EXTRA:
         raise SystemExit("!! nombre de moteurs")
     u32 = lambda va: struct.unpack_from(">I", img, va - BASE)[0]
+    check_sram_map(img, st_img)
     an = analyse(st_img, generation(codes))
     relocs, COPIES, END = an["relocs"], an["copies"], an["end"]
     size = END - gx.DST_CODE
