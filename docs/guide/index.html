@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide · Modded Cycles</title>
+<meta name="description" content="What each Modded Cycles mod does and how to install it: 6-channel USB audio, latching mute, trig preview, scrolling names, Syntakt engines, Samples OS, recovery.">
+<meta name="theme-color" content="#e3e2de">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-01-5">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-01-5">
+<script>try{var l=localStorage.getItem("mc-lang")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en")</script>
+</head>
+<body data-page="guide">
+
+<header class="wrap top">
+  <a class="brand" href="../">Modded Cycles</a>
+  <nav aria-label="Site">
+    <a href="../flasher/">Flasher</a>
+    <a href="./" aria-current="page">Guide</a>
+    <a href="https://github.com/18nelli18/Modded-Cycles" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://ko-fi.com/18nelli" target="_blank" rel="noopener">Ko-fi</a>
+  </nav>
+  <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="true">EN</button>/<button type="button" data-lang="fr" aria-pressed="false">FR</button></div>
+</header>
+
+<main class="wrap">
+  <div class="g-head">
+    <h1>Guide</h1>
+    <p><span data-l="en">What each mod does, how to install it, and how to go back.</span><span data-l="fr">Ce que fait chaque mod, comment l'installer et comment revenir en arrière.</span></p>
+  </div>
+
+  <div class="g-grid">
+    <nav class="toc" aria-label="Contents">
+      <ol>
+        <li><a href="#start"><span data-l="en">Before you start</span><span data-l="fr">Avant de commencer</span></a></li>
+        <li><a href="#flash"><span data-l="en">Flashing</span><span data-l="fr">Flasher</span></a></li>
+        <li><a href="#usb6"><span data-l="en">6-channel USB audio</span><span data-l="fr">Audio USB 6 canaux</span></a></li>
+        <li><a href="#mute"><span data-l="en">Latching mute</span><span data-l="fr">Mute verrouillé</span></a></li>
+        <li><a href="#preview"><span data-l="en">Trig preview</span><span data-l="fr">Écoute d'un pas</span></a></li>
+        <li><a href="#scroll"><span data-l="en">Scrolling names</span><span data-l="fr">Noms qui défilent</span></a></li>
+        <li><a href="#syntakt"><span data-l="en">Syntakt engines</span><span data-l="fr">Moteurs du Syntakt</span></a></li>
+        <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
+        <li><a href="#stock"><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></a></li>
+        <li><a href="#recovery"><span data-l="en">Recovery</span><span data-l="fr">Secours</span></a></li>
+        <li><a href="#trouble"><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></a></li>
+      </ol>
+    </nav>
+
+    <article class="doc">
+
+      <section id="start">
+        <h2><span class="n">1</span><span data-l="en">Before you start</span><span data-l="fr">Avant de commencer</span></h2>
+        <ul>
+          <li><span data-l="en">A Model:Cycles and a USB cable that carries data (some cables only charge).</span><span data-l="fr">Un Model:Cycles et un câble USB qui transporte les données (certains câbles ne font que charger).</span></li>
+          <li><span data-l="en">Chrome, Edge or Opera on a computer. Firefox and Safari have no Web MIDI.</span><span data-l="fr">Chrome, Edge ou Opera sur un ordinateur. Firefox et Safari n'ont pas le Web MIDI.</span></li>
+          <li><span data-l="en">The official OS file <code>model-cycles_OS1.13.syx</code>, from <a href="https://www.elektron.se/support-downloads/modelcycles" target="_blank" rel="noopener">elektron.se</a>, unzipped.</span><span data-l="fr">Le fichier d'OS officiel <code>model-cycles_OS1.13.syx</code>, sur <a href="https://www.elektron.se/support-downloads/modelcycles" target="_blank" rel="noopener">elektron.se</a>, dézippé.</span></li>
+          <li><span data-l="en">Your projects backed up with Elektron Transfer.</span><span data-l="fr">Vos projets sauvegardés avec Elektron Transfer.</span></li>
+        </ul>
+        <p><span data-l="en">Some mods need one more file: the Syntakt engines read <a href="https://www.elektron.se/support-downloads/syntakt" target="_blank" rel="noopener"><code>Syntakt_OS1.41.syx</code></a> (no Syntakt needed), the Samples OS uses <a href="https://www.elektron.se/support-downloads/modelsamples" target="_blank" rel="noopener"><code>model-samples_OS1.13.syx</code></a>.</span>
+          <span data-l="fr">Certains mods demandent un fichier de plus : les moteurs du Syntakt lisent <a href="https://www.elektron.se/support-downloads/syntakt" target="_blank" rel="noopener"><code>Syntakt_OS1.41.syx</code></a> (pas besoin d'avoir un Syntakt), l'OS Samples utilise <a href="https://www.elektron.se/support-downloads/modelsamples" target="_blank" rel="noopener"><code>model-samples_OS1.13.syx</code></a>.</span></p>
+        <p><span data-l="en">No firmware is provided here. The page modifies your own file on your computer and checks the result against a reference build before sending it.</span>
+          <span data-l="fr">Aucun firmware n'est fourni ici. La page modifie votre propre fichier sur votre ordinateur, et vérifie le résultat contre un build de référence avant de l'envoyer.</span></p>
+      </section>
+
+      <section id="flash">
+        <h2><span class="n">2</span><span data-l="en">Flashing</span><span data-l="fr">Flasher</span></h2>
+        <ol>
+          <li><span data-l="en">In the <a href="../flasher/">flasher</a>, tick the mods you want. They combine.</span><span data-l="fr">Dans le <a href="../flasher/">flasher</a>, cochez les mods voulus. Ils se combinent.</span></li>
+          <li><span data-l="en">Drop your OS file. The firmware is built and checked in the page.</span><span data-l="fr">Déposez votre fichier d'OS. Le firmware est construit et vérifié dans la page.</span></li>
+          <li><span data-l="en">Connect the Model:Cycles over USB, press <b>SETTINGS</b>, open <b>CONFIG › UPGRADE</b> and confirm. Allow MIDI in the browser.</span><span data-l="fr">Branchez le Model:Cycles en USB, appuyez sur <b>SETTINGS</b>, ouvrez <b>CONFIG › UPGRADE</b> et confirmez. Autorisez le MIDI dans le navigateur.</span></li>
+          <li><span data-l="en">Flash. The Model:Cycles writes the firmware (<b>UPDATING FLASH</b>) then restarts by itself. Don't turn it off before.</span><span data-l="fr">Flashez. Le Model:Cycles écrit le firmware (<b>UPDATING FLASH</b>) puis redémarre tout seul. Ne l'éteignez pas avant.</span></li>
+        </ol>
+        <figure class="fig">
+          <div data-device data-lit="settings" data-lcd="CONFIG/>UPGRADE"></div>
+          <figcaption><span data-l="en">CONFIG › UPGRADE is under the SETTINGS key.</span><span data-l="fr">CONFIG › UPGRADE se trouve sous la touche SETTINGS.</span></figcaption>
+        </figure>
+        <p class="note"><span data-l="en">Keep the flasher tab in the foreground during the transfer: browsers slow down background tabs.</span><span data-l="fr">Gardez l'onglet du flasher au premier plan pendant le transfert : les navigateurs ralentissent les onglets en arrière-plan.</span></p>
+      </section>
+
+      <section id="usb6">
+        <h2><span class="n">3</span><span data-l="en">6-channel USB audio</span><span data-l="fr">Audio USB 6 canaux</span></h2>
+        <p class="by"><span data-l="en">Based on</span><span data-l="fr">D'après</span> <a href="https://github.com/scottmetoyer/ms-multi-output" target="_blank" rel="noopener">ms-multi-output</a> <span data-l="en">by</span><span data-l="fr">de</span> scottmetoyer</p>
+        <p class="lede"><span data-l="en">Each track leaves on its own USB channel. You record six stems instead of a stereo mix.</span><span data-l="fr">Chaque piste sort sur son propre canal USB. Vous enregistrez six pistes séparées au lieu d'un mix stéréo.</span></p>
+        <figure class="fig" data-usb="mod">
+          <div class="switch" role="group" aria-label="Firmware">
+            <button type="button" data-usb-mode="stock" aria-pressed="false"><span data-l="en">Stock</span><span data-l="fr">Origine</span></button>
+            <button type="button" data-usb-mode="mod" aria-pressed="true"><span data-l="en">6-channel mod</span><span data-l="fr">Mod 6 canaux</span></button>
+          </div>
+          <div class="usb">
+            <div>
+              <div class="hd">Model:Cycles</div>
+              <div class="col"><span class="k">T1</span><span class="k">T2</span><span class="k">T3</span><span class="k">T4</span><span class="k">T5</span><span class="k">T6</span></div>
+            </div>
+            <svg viewBox="0 0 200 240" preserveAspectRatio="none" aria-hidden="true">
+              <g class="w-mod"><path d="M8 20H192"/><path d="M8 60H192"/><path d="M8 100H192"/><path d="M8 140H192"/><path d="M8 180H192"/><path d="M8 220H192"/></g>
+              <g class="w-stock">
+                <path d="M8 20C60 20 60 120 100 120"/><path d="M8 60C60 60 60 120 100 120"/><path d="M8 100C60 100 60 120 100 120"/>
+                <path d="M8 140C60 140 60 120 100 120"/><path d="M8 180C60 180 60 120 100 120"/><path d="M8 220C60 220 60 120 100 120"/>
+                <path d="M100 120C150 120 150 100 192 100"/><path d="M100 120C150 120 150 140 192 140"/>
+              </g>
+            </svg>
+            <div>
+              <div class="hd"><span class="mm"><span data-l="en">Computer, 6 inputs</span><span data-l="fr">Ordinateur, 6 entrées</span></span><span class="s"><span data-l="en">Computer, 2 inputs</span><span data-l="fr">Ordinateur, 2 entrées</span></span></div>
+              <div class="col">
+                <div class="ch off"><span class="lbl"><span class="mm">In 1</span><span class="s">–</span></span><span class="m"><i></i></span></div>
+                <div class="ch off"><span class="lbl"><span class="mm">In 2</span><span class="s">–</span></span><span class="m"><i></i></span></div>
+                <div class="ch"><span class="lbl"><span class="mm">In 3</span><span class="s">L</span></span><span class="m"><i></i></span></div>
+                <div class="ch"><span class="lbl"><span class="mm">In 4</span><span class="s">R</span></span><span class="m"><i></i></span></div>
+                <div class="ch off"><span class="lbl"><span class="mm">In 5</span><span class="s">–</span></span><span class="m"><i></i></span></div>
+                <div class="ch off"><span class="lbl"><span class="mm">In 6</span><span class="s">–</span></span><span class="m"><i></i></span></div>
+              </div>
+            </div>
+          </div>
+          <figcaption><span data-l="en">Stock: the stereo mix only. Mod: channel 1 = track 1 … channel 6 = track 6.</span><span data-l="fr">Origine : le mix stéréo seul. Mod : canal 1 = piste 1 … canal 6 = piste 6.</span></figcaption>
+        </figure>
+        <dl class="facts">
+          <div><dt>Format</dt><dd><span data-l="en">48 kHz, 32-bit, 6 input channels.</span><span data-l="fr">48 kHz, 32 bits, 6 canaux d'entrée.</span></dd></div>
+          <div><dt><span data-l="en">Stems</span><span data-l="fr">Pistes</span></dt><dd><span data-l="en">Mono, taken before the pan. Delay and reverb are applied to the mix, so they are not in the stems.</span><span data-l="fr">En mono, prises avant le panoramique. Le delay et la reverb s'appliquent au mix : ils ne sont pas dans les pistes.</span></dd></div>
+          <div><dt>Mix</dt><dd><span data-l="en">No longer sent over USB: mix the six tracks in your DAW.</span><span data-l="fr">N'est plus envoyé en USB : les six pistes se mixent dans votre logiciel.</span></dd></div>
+          <div><dt><span data-l="en">Updates</span><span data-l="fr">Mises à jour</span></dt><dd><span data-l="en">OS updates over USB keep working.</span><span data-l="fr">La mise à jour de l'OS par USB continue de fonctionner.</span></dd></div>
+          <div><dt>macOS</dt><dd><span data-l="en">Nothing to install: the Model:Cycles shows up with 6 inputs.</span><span data-l="fr">Rien à installer : le Model:Cycles apparaît avec 6 entrées.</span></dd></div>
+          <div><dt>Windows</dt><dd><span data-l="en">Through <a href="https://github.com/dechamps/FlexASIO" target="_blank" rel="noopener">FlexASIO</a> (shared WASAPI, MME or DirectSound), <code>channels = 6</code>, project at 48 kHz. If the stream doesn't start, turn the Model:Cycles off and on.</span><span data-l="fr">Avec <a href="https://github.com/dechamps/FlexASIO" target="_blank" rel="noopener">FlexASIO</a> (WASAPI partagé, MME ou DirectSound), <code>channels = 6</code>, projet à 48 kHz. Si le flux ne démarre pas, éteignez puis rallumez le Model:Cycles.</span></dd></div>
+          <div><dt>Linux</dt><dd><span data-l="en">Not tested yet.</span><span data-l="fr">Pas encore testé.</span></dd></div>
+        </dl>
+      </section>
+
+      <section id="mute">
+        <h2><span class="n">4</span><span data-l="en">Latching mute</span><span data-l="fr">Mute verrouillé</span></h2>
+        <p class="by"><span data-l="en">By</span><span data-l="fr">Par</span> <a href="https://github.com/drumkilla/elektron-model-tweaks" target="_blank" rel="noopener">drumkilla</a></p>
+        <p class="lede"><span data-l="en">The mute mode stays on: you mute tracks with one finger, without holding FUNC.</span><span data-l="fr">Le mode mute reste actif : vous mutez les pistes d'un doigt, sans tenir FUNC.</span></p>
+        <figure class="fig">
+          <div data-device data-scenes="track @logo | track,func @MUTE/>LOCKED | func | func,t2 | func | func,t5 | func" data-ms="900"></div>
+        </figure>
+        <ol>
+          <li><span data-l="en">Hold <b>TRACK</b> and tap <b>FUNC</b>: the mode locks and FUNC stays lit.</span><span data-l="fr">Maintenez <b>TRACK</b> et tapez <b>FUNC</b> : le mode se verrouille et FUNC reste allumé.</span></li>
+          <li><span data-l="en">Tap <b>T1</b>–<b>T6</b> to mute or unmute the tracks.</span><span data-l="fr">Tapez <b>T1</b> à <b>T6</b> pour muter ou rétablir les pistes.</span></li>
+          <li><span data-l="en">A short tap on <b>FUNC</b> alone leaves the mode.</span><span data-l="fr">Un appui court sur <b>FUNC</b> seul quitte le mode.</span></li>
+        </ol>
+        <p><span data-l="en">TRACK, RETRIG and the pattern bank keys keep working meanwhile.</span><span data-l="fr">TRACK, RETRIG et le choix de banque de patterns restent utilisables pendant ce temps.</span></p>
+      </section>
+
+      <section id="preview">
+        <h2><span class="n">5</span><span data-l="en">Trig preview</span><span data-l="fr">Écoute d'un pas</span></h2>
+        <p class="by"><span data-l="en">By</span><span data-l="fr">Par</span> <a href="https://github.com/drumkilla/elektron-model-tweaks" target="_blank" rel="noopener">drumkilla</a></p>
+        <p class="lede"><span data-l="en">Hear one step without starting the sequencer.</span><span data-l="fr">Entendez un pas sans lancer le séquenceur.</span></p>
+        <figure class="fig">
+          <div data-device data-scenes="stop @logo | s5 | s5,page @TRIG 5/>PREVIEW | s5" data-ms="1000"></div>
+        </figure>
+        <ol>
+          <li><span data-l="en">With the sequencer stopped, hold a trig key.</span><span data-l="fr">Séquenceur à l'arrêt, maintenez une touche de pas.</span></li>
+          <li><span data-l="en">Press <b>PAGE</b>: the step plays with its note, length, p-locks and sound lock.</span><span data-l="fr">Appuyez sur <b>PAGE</b> : le pas joue avec sa note, sa longueur, ses p-locks et son sound lock.</span></li>
+        </ol>
+        <p><span data-l="en">The page doesn't turn and the trig isn't erased. It sounds whatever its condition or probability, even on a muted track.</span><span data-l="fr">La page ne tourne pas et le pas n'est pas effacé. Il joue quelles que soient sa condition et sa probabilité, même sur une piste mutée.</span></p>
+      </section>
+
+      <section id="scroll">
+        <h2><span class="n">6</span><span data-l="en">Scrolling names</span><span data-l="fr">Noms qui défilent</span></h2>
+        <p class="by"><span data-l="en">By</span><span data-l="fr">Par</span> <a href="https://github.com/drumkilla/elektron-model-tweaks" target="_blank" rel="noopener">drumkilla</a></p>
+        <p class="lede"><span data-l="en">In the sound browser, a selected name too long for the screen scrolls to the left.</span><span data-l="fr">Dans le navigateur de sons, un nom sélectionné trop long pour l'écran défile vers la gauche.</span></p>
+        <div class="scroll fig">
+          <div class="lcd-box" aria-hidden="true">
+            <ol>
+              <li><span>02</span>Rim Tick</li>
+              <li class="sel"><span>03</span><em style="font-style:normal" data-marquee="Deep Ocean Pad Wash 02" data-chars="14">Deep Ocean Pad</em></li>
+              <li><span>04</span>Zap Lo</li>
+            </ol>
+          </div>
+          <dl class="facts" style="margin:0">
+            <div><dt><span data-l="en">Speed</span><span data-l="fr">Vitesse</span></dt><dd><span data-l="en">one character every 0.17 s</span><span data-l="fr">un caractère toutes les 0,17 s</span></dd></div>
+            <div><dt><span data-l="en">Ends</span><span data-l="fr">Extrémités</span></dt><dd><span data-l="en">0.5 s pause</span><span data-l="fr">pause de 0,5 s</span></dd></div>
+            <div><dt><span data-l="en">Short name</span><span data-l="fr">Nom court</span></dt><dd><span data-l="en">stays put</span><span data-l="fr">ne bouge pas</span></dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section id="syntakt">
+        <h2><span class="n">7</span><span data-l="en">Syntakt engines</span><span data-l="fr">Moteurs du Syntakt</span></h2>
+        <p class="lede"><span data-l="en">The Syntakt's digital engines, added as extra machines. Their code is copied from your Syntakt OS file, in your browser. In the emulator they sound like the Syntakt, sample for sample.</span><span data-l="fr">Les moteurs numériques du Syntakt, ajoutés en machines supplémentaires. Leur code est copié depuis votre fichier d'OS Syntakt, dans votre navigateur. En émulation, ils sonnent comme sur le Syntakt, échantillon par échantillon.</span></p>
+
+        <h3><span data-l="en">Order in the MACHINES menu</span><span data-l="fr">Ordre dans le menu MACHINES</span></h3>
+        <p><span data-l="en">The added machines come after Chord, always in this order, numbered from 7 according to the engines you tick. Try it:</span><span data-l="fr">Les machines ajoutées viennent après Chord, toujours dans cet ordre, numérotées à partir de 7 selon les moteurs cochés. Essayez :</span></p>
+        <div class="eng fig" data-engines>
+          <div>
+            <label><input class="tick" type="checkbox" value="SDVtg"><span><b>SDVtg</b> SD VINTAGE, <span data-l="en">vintage snare</span><span data-l="fr">caisse claire vintage</span></span></label>
+            <label><input class="tick" type="checkbox" value="CPVtg" checked><span><b>CPVtg</b> CP VINTAGE, <span data-l="en">vintage clap</span><span data-l="fr">clap vintage</span></span></label>
+            <label><input class="tick" type="checkbox" value="SYToy"><span><b>SYToy</b> SY TOY, <span data-l="en">tuned toy-like percussion</span><span data-l="fr">percussion accordée façon jouet</span></span></label>
+            <label><input class="tick" type="checkbox" value="SYBit"><span><b>SYBit</b> SY BITS, <span data-l="en">two digital oscillators, rate and bit reduction</span><span data-l="fr">deux oscillateurs numériques, réduction d'échantillonnage et de bits</span></span></label>
+            <label><input class="tick" type="checkbox" value="SYSwm" checked><span><b>SYSwm</b> SY SWARM, <span data-l="en">a swarm of detuned saws</span><span data-l="fr">un essaim de dents de scie désaccordées</span></span></label>
+          </div>
+          <div class="lcd-box" aria-live="polite"><ol data-engines-out></ol></div>
+        </div>
+
+        <h3><span data-l="en">Knobs</span><span data-l="fr">Potards</span></h3>
+        <p><span data-l="en">The four machine knobs and PUNCH take the Syntakt's parameters. The screen shows their Syntakt names, and changing machine applies the Syntakt's defaults.</span><span data-l="fr">Les quatre potards de machine et PUNCH prennent les paramètres du Syntakt. L'écran affiche leurs noms du Syntakt, et changer de machine applique les réglages par défaut du Syntakt.</span></p>
+        <figure class="fig"><div data-device data-lit="synth,punch,machines" data-lcd="menu"></div></figure>
+        <div class="tbl">
+          <table>
+            <thead><tr><th></th><th>COLOR</th><th>SHAPE</th><th>SWEEP</th><th>CONTOUR</th><th>PUNCH</th></tr></thead>
+            <tbody>
+              <tr><th>SDVtg</th><td>Inharm</td><td>Freq Complex</td><td>Pitch Sweep</td><td>Mod Envelope</td><td>Punch</td></tr>
+              <tr><th>CPVtg</th><td>Body Char</td><td>Balance</td><td>Spacing Crunch</td><td>Body Envelope</td><td>Punch</td></tr>
+              <tr><th>SYToy</th><td>Form</td><td>Impact</td><td>Bright</td><td>Partial Decay</td><td>Punch</td></tr>
+              <tr><th>SYBit</th><td>Detune (40–88)</td><td>Balance</td><td>Rate Redux</td><td>Waveform</td><td>Bit Redux</td></tr>
+              <tr><th>SYSwm</th><td>Noise Mod</td><td>Detune Anim</td><td>Detune</td><td>Osc Mix</td><td><span data-l="en">Sub-octave</span><span data-l="fr">Octave inférieure</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3><span data-l="en">Processor load</span><span data-l="fr">Charge du processeur</span></h3>
+        <p><span data-l="en">A Syntakt voice needs about twice the computing of an original voice. When too many voices sound at once, a governor fades out the quietest one so the sound never stutters. Click the pads to try.</span><span data-l="fr">Une voix du Syntakt demande environ deux fois plus de calcul qu'une voix d'origine. Quand trop de voix sonnent en même temps, un régulateur éteint en fondu la plus discrète pour que le son n'accroche jamais. Cliquez sur les pads pour essayer.</span></p>
+        <div class="load fig" data-load>
+          <div class="slots">
+            <button type="button" class="slot" data-slot="orig"><span class="k">T1</span><em class="e-off"><span data-l="en">silent</span><span data-l="fr">muette</span></em><em class="e-orig"><span data-l="en">original</span><span data-l="fr">d'origine</span></em><em class="e-syn">Syntakt</em></button>
+            <button type="button" class="slot" data-slot="orig"><span class="k">T2</span><em class="e-off"><span data-l="en">silent</span><span data-l="fr">muette</span></em><em class="e-orig"><span data-l="en">original</span><span data-l="fr">d'origine</span></em><em class="e-syn">Syntakt</em></button>
+            <button type="button" class="slot" data-slot="syn"><span class="k">T3</span><em class="e-off"><span data-l="en">silent</span><span data-l="fr">muette</span></em><em class="e-orig"><span data-l="en">original</span><span data-l="fr">d'origine</span></em><em class="e-syn">Syntakt</em></button>
+            <button type="button" class="slot" data-slot="syn"><span class="k">T4</span><em class="e-off"><span data-l="en">silent</span><span data-l="fr">muette</span></em><em class="e-orig"><span data-l="en">original</span><span data-l="fr">d'origine</span></em><em class="e-syn">Syntakt</em></button>
+            <button type="button" class="slot" data-slot="off"><span class="k">T5</span><em class="e-off"><span data-l="en">silent</span><span data-l="fr">muette</span></em><em class="e-orig"><span data-l="en">original</span><span data-l="fr">d'origine</span></em><em class="e-syn">Syntakt</em></button>
+            <button type="button" class="slot" data-slot="off"><span class="k">T6</span><em class="e-off"><span data-l="en">silent</span><span data-l="fr">muette</span></em><em class="e-orig"><span data-l="en">original</span><span data-l="fr">d'origine</span></em><em class="e-syn">Syntakt</em></button>
+          </div>
+          <div class="bar"><div class="fill" data-load-fill></div><i class="t" style="left:60%"></i><i class="t" style="left:68.333%"></i><i class="t" style="left:83.333%"></i></div>
+          <div class="scale"><span style="left:0">0</span><span style="left:60%">72</span><span style="left:68.333%">82</span><span style="left:83.333%">100</span><span style="left:100%">120 %</span></div>
+          <div class="readout">
+            <span class="p" data-load-pct>76 %</span>
+            <p data-load-state="ok"><span data-l="en">Everything is computed as usual.</span><span data-l="fr">Tout est calculé normalement.</span></p>
+            <p data-load-state="early" hidden><span data-l="en">Voices that are dying out are stopped earlier, to keep some headroom.</span><span data-l="fr">Les voix qui s'éteignent sont arrêtées plus tôt, pour garder de la marge.</span></p>
+            <p data-load-state="cut" hidden><span data-l="en">The governor fades out the quietest voice; a Syntakt voice, costlier, is picked more readily.</span><span data-l="fr">Le régulateur éteint en fondu la voix la plus faible ; une voix du Syntakt, plus coûteuse, est choisie plus volontiers.</span></p>
+            <p data-load-state="over" hidden><span data-l="en">More than the processor can compute: notes will be cut.</span><span data-l="fr">Plus que ce que le processeur peut calculer : des notes seront coupées.</span></p>
+          </div>
+          <ul class="legend">
+            <li><i class="s-fx"></i><span data-l="en">mix and effects ≈ 30 %</span><span data-l="fr">mix et effets ≈ 30 %</span></li>
+            <li><i class="s-orig"></i><span data-l="en">original voice ≈ 8 %</span><span data-l="fr">voix d'origine ≈ 8 %</span></li>
+            <li><i class="s-syn"></i><span data-l="en">Syntakt voice ≈ 15 %</span><span data-l="fr">voix du Syntakt ≈ 15 %</span></li>
+          </ul>
+          <p class="muted" style="font-size:15px;margin-top:12px"><span data-l="en">Measured on the hardware, as a share of one audio block. A silent voice costs nothing; shorter decays free the voices sooner.</span><span data-l="fr">Mesuré sur la machine, en part d'un bloc audio. Une voix muette ne coûte rien ; des decays plus courts libèrent les voix plus tôt.</span></p>
+        </div>
+
+        <p class="note"><span data-l="en"><b>Before flashing another choice or the official firmware,</b> set the tracks that use an added machine back to an original one (Kick to Chord). The numbers of the added machines depend on the engines ticked: otherwise MACHINES can freeze on those tracks.</span><span data-l="fr"><b>Avant de flasher un autre choix ou le firmware officiel,</b> remettez sur une machine d'origine (de Kick à Chord) les pistes qui utilisent une machine ajoutée. Les numéros des machines ajoutées dépendent des moteurs cochés : sinon MACHINES peut geler sur ces pistes.</span></p>
+      </section>
+
+      <section id="samples">
+        <h2><span class="n">8</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
+        <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
+        <dl class="layers fig">
+          <div><dt><span data-l="en">Startup menu</span><span data-l="fr">Menu de démarrage</span></dt><dd>Model:Cycles</dd></div>
+          <div><dt>Updater</dt><dd>Model:Cycles</dd></div>
+          <div><dt>Signature</dt><dd>Model:Cycles</dd></div>
+          <div class="swap"><dt><span data-l="en">Main OS</span><span data-l="fr">OS principal</span></dt><dd>Model:Samples</dd></div>
+        </dl>
+        <h3><span data-l="en">Coming back</span><span data-l="fr">Revenir</span></h3>
+        <p><span data-l="en">The way back to the Model:Cycles OS goes through the startup menu, which only listens to the MIDI IN (see <a href="#recovery">Recovery</a>). <b>Without a MIDI interface, there is no way back.</b></span><span data-l="fr">Le retour à l'OS du Model:Cycles passe par le menu de démarrage, qui n'écoute que le MIDI IN (voir <a href="#recovery">Secours</a>). <b>Sans interface MIDI, pas de retour possible.</b></span></p>
+        <p class="note"><span data-l="en">From the Samples OS, never run CONFIG › UPGRADE with a Model:Samples file: it would also replace the startup menu of your Model:Cycles. Back up your projects first: both OSes use the same storage.</span><span data-l="fr">Depuis l'OS Samples, ne lancez jamais CONFIG › UPGRADE avec un fichier Model:Samples : il remplacerait aussi le menu de démarrage de votre Model:Cycles. Sauvegardez d'abord vos projets : les deux OS utilisent le même stockage.</span></p>
+      </section>
+
+      <section id="stock">
+        <h2><span class="n">9</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
+        <p><span data-l="en">With Syntakt engines, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt, remettez d'abord vos pistes sur une machine d'origine.</span></p>
+      </section>
+
+      <section id="recovery">
+        <h2><span class="n">10</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
+        <figure class="fig">
+          <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
+        </figure>
+        <ol>
+          <li><span data-l="en">With the Model:Cycles off, hold <b>FUNC</b> and turn it on (press and hold <b>MAIN VOLUME</b>).</span><span data-l="fr">Model:Cycles éteint, maintenez <b>FUNC</b> et allumez-le (appui long sur <b>MAIN VOLUME</b>).</span></li>
+          <li><span data-l="en">Press <b>TRIG 4</b> (OS UPGRADE): the screen shows <b>READY TO RECEIVE</b>.</span><span data-l="fr">Appuyez sur <b>TRIG 4</b> (OS UPGRADE) : l'écran affiche <b>READY TO RECEIVE</b>.</span></li>
+          <li><span data-l="en">Send the official OS file through a USB-MIDI interface connected to the MIDI IN.</span><span data-l="fr">Envoyez le fichier d'OS officiel par une interface USB-MIDI reliée au MIDI IN.</span></li>
+        </ol>
+        <p><span data-l="en">The startup menu doesn't listen to the USB port, only to the MIDI IN (3.5 mm jack, or DIN through the adapter supplied with the Model:Cycles). The full procedure is on <a href="https://github.com/18nelli18/Modded-Cycles/blob/main/FLASH.md" target="_blank" rel="noopener">GitHub</a>.</span><span data-l="fr">Le menu de démarrage n'écoute pas le port USB, seulement le MIDI IN (jack 3,5 mm, ou DIN avec l'adaptateur fourni avec le Model:Cycles). La marche à suivre complète est sur <a href="https://github.com/18nelli18/Modded-Cycles/blob/main/FLASH.md" target="_blank" rel="noopener">GitHub</a>.</span></p>
+      </section>
+
+      <section id="trouble">
+        <h2><span class="n">11</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <div class="faq">
+          <details>
+            <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
+            <p><span data-l="en">Check that CONFIG › UPGRADE is open and waiting, and that the port named “Model:Cycles” is selected. Close Elektron Transfer, Overbridge and your music software (on Windows they lock the port), then try again.</span><span data-l="fr">Vérifiez que CONFIG › UPGRADE est ouvert et en attente, et que le port nommé « Model:Cycles » est choisi. Fermez Elektron Transfer, Overbridge et votre logiciel de musique (sous Windows, ils bloquent le port), puis réessayez.</span></p>
+          </details>
+          <details>
+            <summary><span data-l="en">The transfer stops, or the Model:Cycles shows an error</span><span data-l="fr">Le transfert s'arrête, ou le Model:Cycles affiche une erreur</span></summary>
+            <p><span data-l="en">Turn it off and on, open CONFIG › UPGRADE again, set Advanced › Send speed margin to 2.0 in the flasher and flash again.</span><span data-l="fr">Éteignez-le puis rallumez-le, rouvrez CONFIG › UPGRADE, réglez Options avancées › Marge de vitesse sur 2.0 dans le flasher et relancez.</span></p>
+          </details>
+          <details>
+            <summary><span data-l="en">No MIDI port in the list</span><span data-l="fr">Aucun port MIDI dans la liste</span></summary>
+            <p><span data-l="en">Use a USB cable that carries data, turn the Model:Cycles on, then click Refresh. Some systems only show a new device after the browser is restarted.</span><span data-l="fr">Utilisez un câble USB qui transporte les données, allumez le Model:Cycles, puis cliquez sur Rafraîchir. Certains systèmes n'affichent un nouvel appareil qu'après un redémarrage du navigateur.</span></p>
+          </details>
+          <details>
+            <summary><span data-l="en">MACHINES freezes on a track</span><span data-l="fr">MACHINES gèle sur une piste</span></summary>
+            <p><span data-l="en">The track uses an added machine that this firmware doesn't have. Flash back the previous choice, set the track to an original machine, then flash the one you want.</span><span data-l="fr">La piste utilise une machine ajoutée que ce firmware n'a pas. Reflashez le choix précédent, remettez la piste sur une machine d'origine, puis flashez celui que vous voulez.</span></p>
+          </details>
+          <details>
+            <summary><span data-l="en">Notes get cut with the Syntakt engines</span><span data-l="fr">Des notes sont coupées avec les moteurs du Syntakt</span></summary>
+            <p><span data-l="en">That's the governor keeping the sound from stuttering (see <a href="#syntakt">Processor load</a>). Play fewer Syntakt voices at once, or shorten their decay.</span><span data-l="fr">C'est le régulateur qui évite que le son accroche (voir <a href="#syntakt">Charge du processeur</a>). Jouez moins de voix du Syntakt en même temps, ou raccourcissez leur decay.</span></p>
+          </details>
+          <details>
+            <summary><span data-l="en">The update over USB is refused, or the Model:Cycles doesn't start</span><span data-l="fr">La mise à jour par USB est refusée, ou le Model:Cycles ne démarre plus</span></summary>
+            <p><span data-l="en">Go through the startup menu and the MIDI IN: see <a href="#recovery">Recovery</a>.</span><span data-l="fr">Passez par le menu de démarrage et le MIDI IN : voir <a href="#recovery">Secours</a>.</span></p>
+          </details>
+        </div>
+
+        <h3><span data-l="en">Credits</span><span data-l="fr">Crédits</span></h3>
+        <ul class="credits">
+          <li><a href="https://github.com/scottmetoyer/ms-multi-output" target="_blank" rel="noopener">scottmetoyer/ms-multi-output</a>, <span data-l="en">the 6-channel USB audio mod</span><span data-l="fr">le mod audio USB 6 canaux</span></li>
+          <li><a href="https://github.com/drumkilla/elektron-model-tweaks" target="_blank" rel="noopener">drumkilla/elektron-model-tweaks</a>, <span data-l="en">latching mute, trig preview, scrolling names, and the firmware toolkit the flasher is ported from</span><span data-l="fr">mute verrouillé, écoute d'un pas, noms qui défilent, et la boîte à outils firmware dont le flasher est un portage</span></li>
+          <li><a href="https://github.com/mischa85/elektron-firmware-tool" target="_blank" rel="noopener">mischa85/elektron-firmware-tool</a>, <span data-l="en">the Elektron firmware container and its signature</span><span data-l="fr">le conteneur firmware Elektron et sa signature</span></li>
+          <li><a href="https://github.com/mxldyn/octamax" target="_blank" rel="noopener">mxldyn/octamax</a>, <span data-l="en">the reverse-engineering method</span><span data-l="fr">la méthode de rétro-ingénierie</span></li>
+        </ul>
+      </section>
+    </article>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>
+      <span data-l="en">Independent project, not affiliated with Elektron. Flashing a modified firmware is at your own risk. If the mods are useful to you, you can support the project on <a href="https://ko-fi.com/18nelli" target="_blank" rel="noopener">Ko-fi</a>.</span>
+      <span data-l="fr">Projet indépendant, non affilié à Elektron. Flasher un firmware modifié se fait à vos risques. Si ces mods vous servent, vous pouvez soutenir le projet sur <a href="https://ko-fi.com/18nelli" target="_blank" rel="noopener">Ko-fi</a>.</span>
+    </p>
+    <nav aria-label="Footer"><a href="https://github.com/18nelli18/Modded-Cycles" target="_blank" rel="noopener">GitHub</a><a href="https://ko-fi.com/18nelli" target="_blank" rel="noopener">Ko-fi</a></nav>
+  </div>
+</footer>
+
+<script src="../assets/release.js?v=2026-10-01-5"></script>
+<script src="../assets/cycles.js?v=2026-10-01-5"></script>
+<script src="../assets/site.js?v=2026-10-01-5"></script>
+</body>
+</html>

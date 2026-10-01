@@ -11,6 +11,7 @@ instead of the stereo mix only, so you can record real stems in your DAW. Then g
 ## Quick start: flash from your browser
 
 Open the **[web flasher](https://18nelli18.github.io/Modded-Cycles/flasher/)** in Chrome, Edge or Opera (desktop).
+What each mod does, step by step: the **[guide](https://18nelli18.github.io/Modded-Cycles/guide/)**.
 Tick the mods you want, drop your official OS file, connect the Model:Cycles over USB and flash.
 The page builds the modified firmware from your file and sends it over Web MIDI.
 Everything happens in your browser: nothing is uploaded anywhere.
