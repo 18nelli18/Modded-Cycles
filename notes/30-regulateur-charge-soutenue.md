@@ -10,7 +10,7 @@ Travail du 01/10/2026, après le relevé de l'utilisateur avec le firmware de di
 | Cause des coupures | `[FAIT]` le régulateur réagissait aux moments denses (moyenne sur 5 ms, blocs au-dessus de 90 %), pas à la charge soutenue (§1) |
 | Nouvelle règle | `[FAIT]` charge soutenue sur environ 170 ms, pic à 93 %, voix du Syntakt plus comptées pour moitié (§2) |
 | Preuve en émulation | `[FAIT]` (§3) |
-| Essai sur la machine | `[À FAIRE]` firmware de diagnostic v9 (§5) |
+| Essai sur la machine | `[FAIT]` « ça marche bien » : 6 pistes avec effets, 89/78, pas de craquement (§6) |
 
 ## 1. Relevé du diagnostic v8 (01/10/2026)
 
@@ -71,7 +71,7 @@ Retour de l'utilisateur : la **version 6 canaux** de la v8 (`…_v8_6ch.syx`), l
 - La charge soutenue peut maintenant dépasser 86 % pendant quelques dizaines de millisecondes : l'interface devrait le supporter (moyenne lente).
 - Le coût du mod 6 canaux reste inconnu (§1).
 
-## 5. Firmware de diagnostic v9 `[À FAIRE]`
+## 5. Firmware de diagnostic v9 `[FAIT]`
 
 Construit localement, affichage « pic/moyenne » comme la v8 :
 - `build/diag/model-cycles_OS1.13_diagnostic-charge_v9.syx` (MAIN OS `7e6dcf23…`) ;
@@ -80,3 +80,16 @@ Construit localement, affichage « pic/moyenne » comme la v8 :
 À relever, sur le motif à 6 pistes :
 1. Avec la version 6 canaux : y a-t-il encore des coupures ? Le son craque-t-il ? Valeur pic/moyenne ? L'interface reste-t-elle fluide ?
 2. Si possible, la même chose avec la version sans 6 canaux : l'écart des deux moyennes donne le coût du mod 6 canaux.
+
+## 6. Résultat sur la machine (01/10/2026)
+
+Retour de l'utilisateur, firmware de diagnostic v9 (version 6 canaux ou non : non précisé) :
+- « Ça marche bien. »
+- 6 pistes, avec les effets : **89/78** (pic/moyenne) ;
+- **pas de craquement** remarqué.
+
+Ce qu'on en tire :
+- La charge moyenne (78 %) laisse le temps à l'interface.
+- Les pics à 89 %, sous le nouveau seuil de 93 %, ne font plus couper et ne craquent pas.
+
+Décision : fusionner (PR #20, avec #17 à #19) et mettre le flasher web à jour.
