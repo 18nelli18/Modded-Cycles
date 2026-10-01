@@ -99,13 +99,13 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 | `6ch-usbup,sdvintage-exact` (idem) | `ea57b3c52b77d4de3df073ee605f2fecde59878d06e3141c927ed3bd7f489904` |
 | `syntakt-vintage` (idem) | `b4de3ec5f7eda7504bf03e7141f57bae6cf5bc137d39f6704da60881d56ed9b0` |
 | `sdvintage-7th` (idem) | `c73ad4c796b94ab39d106d0798091eb39b5e3e31f66d7fe78e2db30db44daad3` |
-| `syntakt-cp` (idem) | `013cdfdbabce99541dad0a4b3e53dbd294affd44a0e7ac40b4d0dbd4426cae04` |
-| `syntakt-toy` (idem) | `cab159bbb60ea72a63be6203c2db0a0bd2d7514c8f94355f10070ed84da0d1d5` |
-| `syntakt-sd-cp-toy` (idem) | `00e31d56cee3f52d62a4c70239687e95939f169a74ef8f9b0b3b61662bb769ea` |
-| `syntakt-bits` (idem) | `a711156a5d9e944c0199b7ae02db35fa7d2c5176c5844234a0537026f539a633` |
-| `syntakt-sd-cp-toy-bits` (idem) | `1936ae50dd47bbc506155f0adb9f951339c897d668c6dd213fb442200c9a3dee` |
-| `syntakt-swarm` (idem) | `e832bb4e76aff8de70134e4922732243a4c31c244368fc803506e71c8f479453` |
-| `syntakt-sd-cp-toy-bits-swarm` (idem) | `f78e4c8c9c1bb89260631ea720361aa68ab0df9952d750eff7747a2837d4a6f0` |
+| `syntakt-cp` (idem) | `08471a7add515a9c22ab252dde18cb905473a9a40d794c0cddddf8563cc4fdbf` |
+| `syntakt-toy` (idem) | `33d138abbf714acc08968733b91d3df2b2dbb50b320a3761c8df7e825270b68e` |
+| `syntakt-sd-cp-toy` (idem) | `634d2a44eaece2489f1c20ff1f813b31ce2e59a28a17dd999c75dfc31c50a157` |
+| `syntakt-bits` (idem) | `7d8a27208fcdd127249e5a2c8d837c9a13d655ea77dc0f96ba28bd0ef36b66bc` |
+| `syntakt-sd-cp-toy-bits` (idem) | `80fe816a88a49273bbc21b4e05263a993a44ad0a6b65dc1aa13442c524094a20` |
+| `syntakt-swarm` (idem) | `5892a9122daabd2ae0d14b6d35ea94d4b32484137eb9f82cf1da52356cc71f90` |
+| `syntakt-sd-cp-toy-bits-swarm` (idem) | `a1871d60392caef0b66b6ca700dc5da53d320950b8910aa88edd6d9a7b7a7c8b` |
 
 Les 511 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
 `tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;
@@ -145,6 +145,8 @@ python3 tools/emu/test_syntakt_machines.py --cycles model-cycles_OS1.13.syx --sy
     --tweak tweaks/model-cycles_OS1.13/24-syntakt-sd-cp-toy.json
 python3 tools/emu/test_sram_scratch.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx \
     --tweak tweaks/model-cycles_OS1.13/24-syntakt-sd-cp-toy-bits-swarm.json   # SRAM empruntée (notes/26)
+python3 tools/emu/test_sram_code.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx \
+    --tweak tweaks/model-cycles_OS1.13/24-syntakt-sd-cp-toy-bits-swarm.json   # code du Syntakt en SRAM (notes/28)
 python3 tools/ref_mainos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx --check
 ```
 Pour ajouter un moteur : l'ajouter à `CATALOG` de `tools/gen_syntakt_engines.py` (et ses plages copiées), puis relancer

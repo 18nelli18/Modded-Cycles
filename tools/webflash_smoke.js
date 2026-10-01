@@ -60,6 +60,8 @@ async function load({ midi = true, ports = true, secure = true, lang = "en", dev
     },
   });
   await wait(300);
+  // tweaks.js fait plus d'1 Mo : sur une machine occupée, les scripts peuvent mettre plus de 300 ms à se charger
+  for (let i = 0; i < 200 && !(dom.window.MCFlasherApp && dom.window.MC_TWEAKS && dom.window.MCBuilder); i++) await wait(50);
   return { dom, w: dom.window, doc: dom.window.document, errors, sent };
 }
 

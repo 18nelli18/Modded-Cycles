@@ -10,7 +10,9 @@
  * dans ce depot : ce fichier est notre seul code.
  *
  * Disposition en memoire (layout() de tools/gen_syntakt_engines.py) :
- *   0x43000000  les fonctions (copie de 0x40002544.., meme disposition relative), puis leurs tables
+ *   0x43000000  zone de transit : les fonctions atteintes du Syntakt (blocs tasses) et ses tables les plus lues,
+ *               recopiees au demarrage (stub.S) en SRAM interne (0x80001c5c, a la place des tables d'ondes de
+ *               CHORD, qui passent dans la charge utile, notes/28), ou elles s'executent ; puis les autres tables
  *   0x43020000  replique de sa SRAM (0x80000000..0x8000ffff) : voix de 1 800 o, tables, tampons ; sauf
  *               ses tampons de travail (0x80008c60..0x80009ea8), dans la zone de travail des machines
  *               d'origine en SRAM interne (0x8000beb8..0x8000c8e8), et sa table de sinus, identique a celle
@@ -29,7 +31,8 @@ typedef short s16;
 typedef int s32;
 typedef unsigned int u32;
 
-#define ST(a)       ((a) - 0x40002544 + 0x43000000)     /* code du Syntakt -> copie */
+/* UPD_E, RND_E, ST_*_AT : adresses d'EXECUTION des fonctions du Syntakt (en SRAM, donnees par le generateur) */
+#define ST(a)       (a)
 #define ST_SRAM     0x43020000
 #define SRAM(a)     ((a) - 0x80000000 + ST_SRAM)
 #define ST_VSTRIDE  1800
@@ -79,9 +82,9 @@ static render_fn st_render(int e)
 	}
 	return 0;
 }
-#define ST_RESET    ((void (*)(char *))ST(0x40003ee0))
-#define ST_PREP     ((void (*)(char *))ST(0x4000255e))
-#define ST_VINIT    ((void (*)(void))ST(0x40002544))
+#define ST_RESET    ((void (*)(char *))ST_RESET_AT)
+#define ST_PREP     ((void (*)(char *))ST_PREP_AT)
+#define ST_VINIT    ((void (*)(void))ST_VINIT_AT)
 
 #define CYC_VOICE0  0x42308828
 #define CYC_VSTRIDE 0x31c
@@ -96,8 +99,19 @@ static unsigned char need_reset[6];
 static unsigned char engine_of[6];                   /* moteur du Syntakt de la voix */
 static int ready;
 
+/* etat de la voix i du Syntakt : en SRAM interne pour les 6 voix des pistes (ST_VOICE_i, recopiees au demarrage
+ * avec le contenu initial de sa SRAM, notes/29) ; ses voix 6 et 7, initialisees comme sur le Syntakt mais jamais
+ * jouees, restent dans la replique */
 static char *st_voice(int i)
 {
+	switch (i) {
+	case 0: return (char *)ST_VOICE_0;
+	case 1: return (char *)ST_VOICE_1;
+	case 2: return (char *)ST_VOICE_2;
+	case 3: return (char *)ST_VOICE_3;
+	case 4: return (char *)ST_VOICE_4;
+	case 5: return (char *)ST_VOICE_5;
+	}
 	return (char *)SRAM(0x80000000) + ST_VSTRIDE * i;
 }
 
@@ -203,9 +217,11 @@ static void render(int engine, s32 *out, char *v)
  *  - Une voix restee sous le seuil pendant `NEED` blocs, sans trig, n'est plus calculee (sortie a zero) :
  *    -108 dB et 64 blocs d'ordinaire ; -66 dB et 16 blocs quand la charge moyenne depasse PRESSURE.
  *  - Le cout de chaque voix (update + render) est mesure a chaque bloc ou elle est calculee.
- *  - Surcharge (charge moyenne au-dessus de STEAL, ou un bloc au-dessus de PEAK) : on calcule le temps a liberer
- *    pour revenir a TARGET, et on eteint par un fondu autant de voix calculees qu'il faut, des plus faibles aux
- *    plus fortes (les voix du Syntakt, deux fois plus cheres, comptent pour moitie). Fondu de 8 blocs (5 ms) et
+ *  - Surcharge : charge soutenue (moyenne lente, environ 170 ms) au-dessus de STEAL, qui priverait l'interface de
+ *    temps (on revient a TARGET) ; ou un bloc au-dessus de PEAK, qui pourrait faire craquer le son (on revient a
+ *    PEAK - GOV_MARGIN). On eteint par un fondu autant de voix calculees qu'il faut, des plus faibles aux
+ *    plus fortes (depuis notes/30, les voix du Syntakt ne comptent plus pour moitie : elles coutent autant qu'une
+ *    voix d'origine). Fondu de 8 blocs (5 ms) et
  *    notes d'au moins 16 blocs ; en surcharge severe (un bloc au-dessus de SEVERE) : 2 blocs et 4 blocs.
  *    Au plus 2 voix par bloc : la charge est remesuree au bloc suivant (les voix en cours de fondu comptent).
  *    Une voix eteinte n'est plus calculee jusqu'a son prochain trig.
@@ -213,15 +229,22 @@ static void render(int engine, s32 *out, char *v)
  * utile ne recopie pas de donnees initialisees. */
 #define TIMER (*(volatile u32 *)0xfc07000c)
 #define NT 6
-#define PRESSURE (72 * 256 / 100)
-#define STEAL (82 * 256 / 100)
-#define PEAK (90 * 256 / 100)
-#define SEVERE (92 * 256 / 100)
-#define TARGET (78 * 256 / 100)
+/* seuils en % (GOV_* : gen_syntakt_engines.py, notes/30) */
+#define PCT(x) ((x) * 256 / 100)
+#define PRESSURE PCT(72)
+#define STEAL PCT(GOV_STEAL)       /* charge soutenue (gov_slow) : l'interface manquerait de temps */
+#define TARGET PCT(GOV_TARGET)
+#define PEAK PCT(GOV_PEAK)         /* un bloc trop long : le son pourrait craquer */
+#define PEAK_TO PCT(GOV_PEAK - GOV_MARGIN)
+#define SEVERE PCT(GOV_SEVERE)
 u32 gov_ret_audio, gov_t0_audio, gov_load, gov_avg, gov_period;    /* dernier bloc, moyenne glissante (1/8) */
+u32 gov_slow;                      /* moyenne glissante lente (1/2^GOV_SLOW, environ 170 ms) */
 static u32 last_t0, vt0;
 u32 gov_pressure;
 unsigned char gov_quiet[NT], gov_fading[NT], gov_flen[NT], gov_stolen[NT], gov_st[NT];
+#ifdef LOAD_METER
+unsigned char gov_eng[NT];          /* moteur de chaque piste, pour le compteur */
+#endif
 unsigned short gov_age[NT];
 s32 gov_peak[NT];
 u32 gov_cost[NT];                 /* cout mesure d'update + render, en ticks (moyenne glissante 1/4) */
@@ -232,6 +255,9 @@ u32 gov_cost[NT];                 /* cout mesure d'update + render, en ticks (mo
 int voice_gate(int t, int trig, int engine)
 {
 	gov_st[t] = engine >= 6;
+#ifdef LOAD_METER
+	gov_eng[t] = engine;
+#endif
 	if (trig) {
 		gov_quiet[t] = gov_fading[t] = gov_stolen[t] = 0;
 		gov_age[t] = 0;
@@ -277,14 +303,17 @@ void voice_after(int t, s32 *out)
 static void govern(void)
 {
 	int t, v, severe, n = 0;
-	u32 over, excess, best, key;
+	u32 excess, best, key;
 
 	gov_pressure = gov_avg >= PRESSURE;
-	if (gov_avg < STEAL && gov_load < PEAK)
+	excess = 0;                                              /* ticks a liberer */
+	if (gov_slow >= STEAL)                                   /* charge soutenue : revenir a TARGET */
+		excess = (gov_slow - TARGET) * (gov_period >> 8);
+	if (gov_load >= PEAK && (gov_load - PEAK_TO) * (gov_period >> 8) > excess)
+		excess = (gov_load - PEAK_TO) * (gov_period >> 8);   /* bloc trop long : revenir sous PEAK - GOV_MARGIN */
+	if (!excess)
 		return;
 	severe = gov_load >= SEVERE;
-	over = gov_load > gov_avg ? gov_load : gov_avg;
-	excess = (over - TARGET) * (gov_period >> 8);          /* ticks a liberer */
 	for (t = 0; t < NT; t++)
 		if (gov_fading[t])                               /* deja en cours d'extinction */
 			excess = excess > gov_cost[t] ? excess - gov_cost[t] : 0;
@@ -294,7 +323,7 @@ static void govern(void)
 		for (t = 0; t < NT; t++) {
 			if (gov_stolen[t] || gov_fading[t] || gov_quiet[t] >= NEED || gov_age[t] < (severe ? 4 : 16))
 				continue;                        /* deja arretee, ou note trop recente */
-			key = (u32)gov_peak[t] >> (gov_st[t] ? 1 : 0);
+			key = (u32)gov_peak[t];
 			if (key < best) {
 				best = key;
 				v = t;
@@ -308,8 +337,11 @@ static void govern(void)
 }
 
 #ifdef LOAD_METER
-/* Compteur de charge (firmware de diagnostic, notes/23) : toutes les 750 blocs (0,5 s), METER_BUF (le nom de
- * toutes les machines de l'ecran MACHINES) devient « pic/moyenne » de la fonction audio, en % d'un bloc. */
+/* Compteur de charge (firmware de diagnostic, notes/23, notes/27, notes/29) : toutes les 750 blocs (0,5 s), le nom
+ * de la machine m (METER_BUF + 8 m, METER_N machines) devient, en % de la duree d'un bloc :
+ *  - « pic/moyenne » de la fonction audio (par defaut) ;
+ *  - avec METER_VOICE, « moyenne/voix » : charge moyenne et cout mesure de la voix qui joue cette machine (la plus
+ *    chere si plusieurs pistes) ; « -- » si aucune piste ne la joue. */
 static u32 w_period, w_audio, w_n, w_max;
 
 static char *put2(char *s, u32 v)
@@ -324,18 +356,41 @@ static char *put2(char *s, u32 v)
 
 static void meter(u32 dur, u32 period)
 {
-	u32 q;
-
 	w_period += period;
 	w_audio += dur;
-	q = dur * 100 / period;
-	if (q > w_max)
-		w_max = q;
+	if (dur * 100 / period > w_max)
+		w_max = dur * 100 / period;
 	if (++w_n >= 750) {
-		char *s = put2((char *)METER_BUF, w_max);
-		*s++ = '/';
-		s = put2(s, w_audio / (w_period / 100));
-		*s = 0;
+		u32 avg = w_audio / (w_period / 100);
+		int m;
+#ifdef METER_VOICE
+		u32 per = w_period / w_n, c;
+		int t, any;
+#endif
+
+		for (m = 0; m < METER_N; m++) {
+#ifdef METER_VOICE
+			char *s = put2((char *)METER_BUF + 8 * m, avg);
+			*s++ = '/';
+			for (t = any = 0, c = 0; t < NT; t++)
+				if (gov_eng[t] == m) {
+					any = 1;
+					if (gov_cost[t] * 100 / per > c)
+						c = gov_cost[t] * 100 / per;
+				}
+			if (any)
+				s = put2(s, c);
+			else {
+				*s++ = '-';
+				*s++ = '-';
+			}
+#else
+			char *s = put2((char *)METER_BUF + 8 * m, w_max);
+			*s++ = '/';
+			s = put2(s, avg);
+#endif
+			*s = 0;
+		}
 		w_n = w_period = w_audio = w_max = 0;
 	}
 }
@@ -355,6 +410,7 @@ void audio_end(void)
 	}
 	gov_load = dur * 256 / period;
 	gov_avg += ((s32)gov_load - (s32)gov_avg) >> 3;
+	gov_slow += ((s32)gov_load - (s32)gov_slow) >> GOV_SLOW;
 	gov_period = period;
 #ifdef LOAD_METER
 	meter(dur, period);

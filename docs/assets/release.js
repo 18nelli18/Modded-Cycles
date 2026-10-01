@@ -3,6 +3,18 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.4", date: "2026-10-01", changes: [
+    { en: "Fewer cut notes when Syntakt voices play together: only sustained load or a really long block cuts a voice",
+      fr: "Moins de notes coupées quand les voix du Syntakt jouent ensemble : seule une charge soutenue ou un bloc vraiment trop long coupe une voix" },
+  ] },
+  { version: "1.3", date: "2026-10-01", changes: [
+    { en: "Syntakt voices keep their state in the fast internal memory too",
+      fr: "Les voix du Syntakt gardent aussi leur état en mémoire interne rapide" },
+  ] },
+  { version: "1.2", date: "2026-10-01", changes: [
+    { en: "Syntakt engines even lighter: their code now runs from the fast internal memory",
+      fr: "Moteurs du Syntakt encore plus légers : leur code s'exécute en mémoire interne rapide" },
+  ] },
   { version: "1.1", date: "2026-10-01", changes: [
     { en: "Syntakt engines lighter on the CPU: their work buffers now use the fast internal memory",
       fr: "Moteurs du Syntakt plus légers pour le processeur : leurs tampons de calcul passent en mémoire interne rapide" },

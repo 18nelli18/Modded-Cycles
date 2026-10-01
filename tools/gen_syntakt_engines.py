@@ -173,27 +173,182 @@ def generation(codes):
     return tuple(order[:max(order.index(BASE_GEN), max(order.index(c) for c in codes)) + 1])
 
 
-def layout(gen):
-    """(source Syntakt, fin, destination) des plages copiées, et fin de la charge utile. Chaque table garde
-    l'alignement de sa source modulo 8 ; celles du bas doivent tenir sous la réplique de la SRAM."""
-    code = (CODE_START, max(CATALOG[c].get("code_end", 0) for c in gen))
+# --- code du Syntakt en SRAM interne (notes/28) --------------------------------------------------------------
+# Avec plusieurs moteurs différents, leur code ne tient pas dans le cache d'instructions (8 Ko) : il est relu en
+# SDRAM à chaque bloc (notes/27). Environ 30 Ko de la SRAM ne servent qu'aux 30 tables d'ondes de CHORD, que seule
+# son update lit, par la table de 32 pointeurs 0x40118590 (0x400a8060). Ces tables passent dans la charge utile
+# (copiées au build depuis le MAIN OS de l'utilisateur ; l'OS réutilise leur copie de démarrage comme BSS) et
+# CHORD_PTRS pointe dessus. La 1re zone libérée reçoit les fonctions atteintes du Syntakt (blocs tassés dans
+# l'ordre : les sauts relatifs entre blocs sont recalculés, ils ne peuvent que raccourcir) et ses tables les plus
+# lues ; le crochet de démarrage (stub.S) les y recopie depuis la charge utile, après l'initialisation de la SRAM.
+CHORD_PTRS = 0x40118594      # 31 pointeurs (le 1er des 32, 0x40118590, vise une table de l'OS en SDRAM)
+CHORD_BANKS = ((0x80001c5c, 0x800074b4), (0x8000cac0, 0x8000eae0))     # 22 + 8 tables de 1 028 o
+SRAM_RUN = CHORD_BANKS[0]    # où s'exécute le code du Syntakt ; la 2e zone reçoit des états de voix (notes/29)
+SRAM_TABLES = (                                  # tables de la SRAM du Syntakt, lues à chaque bloc, en lecture seule
+    (0x8000a080, 0x8000a888),                   # SD VINTAGE : 2 tables (0x8000a080, 0x8000a484)
+    (0x80006f84, 0x80007788),                   # SY SWARM (forme d'onde, aussi l'une des 10 de SY BITS)
+)
+GUARD = 16                   # octets voisins recopiés de part et d'autre (lectures juste avant ou après une table)
+VOICES = 6                   # états des voix du Syntakt en SRAM (1 par piste ; ses voix 6 et 7 restent dans la réplique)
+ST_VSTRIDE = 1800            # taille de l'état d'une voix du Syntakt (bridge_engines.c)
+
+
+def code_blocks(ins, insns):
+    """Plages contiguës du code atteint (écarts de remplissage de 2 o au plus compris)."""
+    runs = []
+    for a in sorted(insns):
+        if runs and a - runs[-1][1] <= 2:
+            runs[-1][1] = a + ins[a][0]
+        else:
+            runs.append([a, a + ins[a][0]])
+    return [tuple(r) for r in runs]
+
+
+def st_sram_src(a):
+    """Adresse, dans l'image du Syntakt, du contenu initial de l'adresse a de sa SRAM."""
+    for lo, hi, dst in gx.ST_SRAM_INIT:
+        if dst <= a < dst + hi - lo:
+            return lo + a - dst
+    raise SystemExit(f"!! {a:#x} hors de la SRAM initialisée du Syntakt")
+
+
+def layout(gen, blocks):
+    """Disposition de la charge utile pour une génération. Zone de transit (DST_CODE..) : l'image des deux zones
+    de SRAM libérées, que le crochet de démarrage y recopie (SRAM_BANKS) ; la 1re reçoit les blocs de code, les
+    SRAM_TABLES (avec leurs gardes) puis des voix du Syntakt ; la 2e, les autres voix (VOICES en tout, contenu
+    initial de leur SRAM). Puis les tables du bas (sous la réplique de la SRAM), les tables du haut (TABLES_AT) et
+    les tables de CHORD. Rend copies (source Syntakt, fin, destination), move (plages pour gx.move : adresses
+    d'EXÉCUTION), stage (code : source, fin, transit), run(transit) -> exécution, voices (adresses d'exécution
+    des voix 0..VOICES-1), et la fin de la charge utile. Le code et les tables gardent l'alignement de leur source
+    modulo 4 (en SRAM) ou 8 (en SDRAM) ; les voix sont alignées sur 8, comme dans la SRAM du Syntakt."""
+    banks, at = [], gx.DST_CODE
+    for lo, hi in CHORD_BANKS:
+        banks.append((at, lo, hi - lo))
+        at += hi - lo
+    stage_end = at
+    stage, pads, at = [], [], gx.DST_CODE
+    for lo, hi in blocks:
+        if (lo - at) % 4:                          # 2 o (code aligné sur 2) : un nop, pour un désassemblage suivi
+            pads.append(at)
+            at += 2
+        stage.append((lo, hi, at))
+        at += hi - lo
+    tabs = []
+    for lo, hi in SRAM_TABLES:
+        at += (lo - GUARD - at) % 4
+        tabs.append((lo, hi, at + GUARD))
+        at += hi - lo + 2 * GUARD
+    voices = []
+    for b0, _, n in banks:
+        at = max(at, b0)
+        while len(voices) < VOICES and (at + 7) // 8 * 8 + ST_VSTRIDE <= b0 + n:
+            at = (at + 7) // 8 * 8
+            voices.append(at)
+            at += ST_VSTRIDE
+        if at > b0 + n:
+            raise SystemExit(f"!! code et tables pour la SRAM : {at - b0} o, plus de place")
+    if len(voices) < VOICES:
+        raise SystemExit(f"!! {len(voices)} voix du Syntakt seulement en SRAM")
+
+    def run(x):
+        for b0, r0, n in banks:
+            if b0 <= x < b0 + n:
+                return x - b0 + r0
+        return x
+    copies = (list(stage) + [(st_sram_src(lo - GUARD), st_sram_src(hi + GUARD), dst - GUARD) for lo, hi, dst in tabs]
+              + [(st_sram_src(0x80000000 + ST_VSTRIDE * i), st_sram_src(0x80000000 + ST_VSTRIDE * (i + 1)), v)
+                 for i, v in enumerate(voices)])
     high = tuple(t for c in gen for t in CATALOG[c].get("tables_high", ()))
-    segs, at = [(*code, gx.DST_CODE)], gx.DST_CODE + code[1] - code[0]
+    sdram, at = [], stage_end
     for group, limit in ((TABLES_LOW, gx.DST_SRAM), (high, None)):
         if limit is None:
             at = TABLES_AT
         for lo, hi in group:
             at += (lo - at) % 8
-            segs.append((lo, hi, at))
+            sdram.append((lo, hi, at))
             at += hi - lo
         if limit is not None and at > limit:
             raise SystemExit(f"!! tables du bas jusqu'à {at:#x} : plus de place sous {limit:#x}")
-    copies = segs[:]
-    # SRAM du Syntakt : tampons et table de sinus en SRAM interne du Cycles (avant la réplique : gx.move prend la
-    # 1re plage qui contient l'adresse), le reste dans la réplique
-    segs[1 + len(TABLES_LOW):1 + len(TABLES_LOW)] = [*SRAM_MAP, (0x80000000, 0x80010000, gx.DST_SRAM),
-                                                     (*gx.ST_BSS, 0x43030000)]
-    return tuple(segs), copies, (at + 0xff) & ~0xff
+    copies += sdram
+    chord_at = (at + 0xff) & ~0xff
+    end = chord_at + sum(hi - lo for lo, hi in CHORD_BANKS)
+    # gx.move prend la 1re plage qui contient l'adresse : code et tables en SRAM du Cycles, tables en SDRAM, puis la
+    # SRAM du Syntakt (tampons et table de sinus dans la SRAM du Cycles, SRAM_MAP ; le reste dans sa réplique)
+    move = ([(lo, hi, run(dst)) for lo, hi, dst in stage] + [(lo, hi, run(dst)) for lo, hi, dst in tabs] + sdram
+            + [*SRAM_MAP, (0x80000000, 0x80010000, gx.DST_SRAM), (*gx.ST_BSS, 0x43030000)])
+    return dict(copies=copies, move=tuple(move), stage=stage, pads=pads, stage_end=stage_end, run=run, banks=banks,
+                voices=[run(v) for v in voices], chord_at=chord_at, end=(end + 0xff) & ~0xff)
+
+
+def code_patches(st_img, ins, insns, lay, relocs):
+    """Zone de transit corrigée : relocalisations des adresses absolues, et déplacements relatifs au PC recalculés
+    pour les blocs tassés. Rend [(adresse dans la charge utile, 4 octets d'origine, 4 octets corrigés)] sans
+    chevauchement, et le nombre de déplacements changés."""
+    lo0, hi0 = gx.DST_CODE, lay["stage_end"]
+    orig = bytearray(hi0 - lo0)
+    for lo, hi, dst in lay["copies"]:
+        if lo0 <= dst < hi0:
+            orig[dst - lo0:dst - lo0 + hi - lo] = st_img[lo - BASE:hi - BASE]
+    for a in lay["pads"]:
+        orig[a - lo0:a - lo0 + 2] = b"\x4e\x71"
+    new = bytearray(orig)
+
+    def stage_of(va):
+        return next(dst + va - lo for lo, hi, dst in lay["stage"] if lo <= va < hi)
+
+    def run_of(va):
+        return lay["run"](stage_of(va))
+    for va, old, nv in relocs:
+        at = stage_of(va) - lo0
+        if new[at:at + 4] != old.to_bytes(4, "big"):
+            raise SystemExit(f"!! relocalisation {va:#x}")
+        new[at:at + 4] = nv.to_bytes(4, "big")
+    moved = 0
+    for a in sorted(insns):
+        size, mn, ops = ins[a]
+        branch = bool(gx.BRANCH.match(mn))
+        if not branch and "%pc@" not in ops:
+            continue
+        t = gx.values(ops, immediates=False)[0]
+        raw = st_img[a - BASE:a - BASE + size]
+        if branch:                                   # déplacement 8 bits dans l'opcode, ou 16 / 32 bits ensuite
+            k, n = (1, 1) if size == 2 else (2, 2) if size == 4 else (2, 4)
+            base = 2
+        else:                                        # (d16,PC) : mot d'extension, base = son adresse
+            k = next((k for k in range(2, size - 1, 2)
+                      if int.from_bytes(raw[k:k + 2], "big", signed=True) == t - (a + k)), None)
+            if k is None:
+                raise SystemExit(f"!! {a:#x} {mn} {ops} : déplacement relatif au PC introuvable")
+            n, base = 2, k
+        if int.from_bytes(raw[k:k + n], "big", signed=True) != t - (a + base):
+            raise SystemExit(f"!! {a:#x} {mn} {ops} : déplacement inattendu")
+        d = run_of(t) - (run_of(a) + base)
+        if not -(1 << (8 * n - 1)) <= d < 1 << (8 * n - 1) or (n == 1 and d in (0, -1)):
+            raise SystemExit(f"!! {a:#x} {mn} {ops} : nouveau déplacement {d} hors du champ")
+        if d != t - (a + base):
+            moved += 1
+            at = stage_of(a) + k - lo0
+            new[at:at + n] = d.to_bytes(n, "big", signed=True)
+    patches, p = [], 0
+    while p < len(new):
+        if new[p] != orig[p]:
+            if p + 4 > len(new):
+                raise SystemExit("!! correction en fin de zone de transit")
+            patches.append((lo0 + p, bytes(orig[p:p + 4]), bytes(new[p:p + 4])))
+            p += 4
+        else:
+            p += 1
+    return patches, moved
+
+
+def chord_moved(a, lay):
+    """Nouvelle adresse (charge utile) d'une adresse des tables d'ondes de CHORD en SRAM."""
+    at = lay["chord_at"]
+    for lo, hi in CHORD_BANKS:
+        if lo <= a < hi:
+            return at + a - lo
+        at += hi - lo
+    raise SystemExit(f"!! {a:#x} : pas une table d'ondes de CHORD")
 
 
 MAP = g7.ENGINE_MAP          # table machine -> entrée des tables update/render (8 octets, 0x40118640)
@@ -208,6 +363,13 @@ DISPATCH = (0x400a7dfe, 0x400a7e24)
 AUDIO_CALL = 0x40059382      # jsr 0x4005979e : fonction audio, appelée par l'interruption à chaque bloc
 IDLE_BLOCKS = 64             # 43 ms
 IDLE_THR = 1 << 13           # -108 dB sous la pleine échelle
+# Régulateur (notes/25, notes/30), en % de la durée d'un bloc : coupures quand la charge SOUTENUE (moyenne lente,
+# 1/2^slow par bloc, environ 170 ms) dépasse steal, jusqu'à revenir à target ; ou quand un bloc dépasse peak, jusqu'à
+# revenir sous peak - margin ; fondus courts au-dessus de severe.
+GOV = dict(steal=86, target=82, peak=93, margin=4, severe=96, slow=8)
+# Firmware de diagnostic (--meter) : noms des machines « pic/moyenne » (False, notes/23, notes/29) ou
+# « moyenne/voix » (True : coût de la voix de chaque machine, diagnostics v6 et v7, notes/27)
+METER_VOICE = False
 
 
 def subset_id(codes, generic=False):
@@ -403,21 +565,28 @@ dispatch:
 """
 
 
-def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None):
-    defs = []
+def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, run=None, lay=None):
+    """run : adresse d'exécution d'une fonction du Syntakt ; lay : disposition (layout()) : zones de SRAM que le
+    crochet de démarrage remplit (stub.S), adresses des états de voix."""
+    defs = [f"-DST_VINIT_AT={run(0x40002544):#x}", f"-DST_RESET_AT={run(0x40003ee0):#x}",
+            f"-DST_PREP_AT={run(0x4000255e):#x}"] + [f"-DST_VOICE_{i}={v:#x}" for i, v in enumerate(lay["voices"])]
     for m in machines:
-        defs += [f"-DUPD_{m['engine']}={m['update']:#x}", f"-DRND_{m['engine']}={m['render']:#x}"]
+        defs += [f"-DUPD_{m['engine']}={run(m['update']):#x}", f"-DRND_{m['engine']}={run(m['render']):#x}"]
         if "punch_on" in m:
             defs.append(f"-DPUNCH_ON_{m['engine']}={m['punch_on']}")
         if "punch_off" in m:
             defs.append(f"-DPUNCH_OFF_{m['engine']}={m['punch_off']}")
-    defs += [f"-DIDLE_THR={IDLE_THR}", f"-DIDLE_BLOCKS={IDLE_BLOCKS}"]
-    if meter:                                   # le nom affiché pour toutes les machines (écran MACHINES)
-        defs += ["-DLOAD_METER", f"-DMETER_BUF={meter:#x}"]
+    defs += [f"-DIDLE_THR={IDLE_THR}", f"-DIDLE_BLOCKS={IDLE_BLOCKS}"] + [f"-DGOV_{k.upper()}={v}" for k, v in GOV.items()]
+    if meter:                                   # noms des machines (écran MACHINES) : « moyenne/voix »
+        defs += ["-DLOAD_METER", f"-DMETER_BUF={meter:#x}", f"-DMETER_N={nm}"] + (["-DMETER_VOICE"] if METER_VOICE else [])
     obj, stub, elf = tmp / "bridge.o", tmp / "stub.o", tmp / "bridge.elf"
     gx.run([gx.CROSS + "gcc", *gx.CFLAGS, *defs, "-c", str(gx.SRC / "bridge_engines.c"), "-o", str(obj)])
+    (s0, r0, n0), (s1, r1, n1) = lay["banks"]
+    if s0 != gx.DST_CODE or s1 != s0 + n0 or n0 % 4 or n1 % 4:
+        raise SystemExit("!! zones de SRAM : transit au début de la charge utile, à la suite, en mots")
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(gx.SRC / "stub.S"), "-o", str(stub),
-            f"-DPAYLOAD_SRC={BASE + gx.IMAGE_LEN:#x}", f"-DPAYLOAD_DST={gx.DST_CODE:#x}", f"-DPAYLOAD_LONGS={payload_longs}"])
+            f"-DPAYLOAD_SRC={BASE + gx.IMAGE_LEN:#x}", f"-DPAYLOAD_DST={gx.DST_CODE:#x}", f"-DPAYLOAD_LONGS={payload_longs}",
+            f"-DSRAM_RUN_AT={r0:#x}", f"-DSRAM_LONGS={n0 // 4}", f"-DSRAM2_RUN_AT={r1:#x}", f"-DSRAM2_LONGS={n1 // 4}"])
     gx.run([gx.CROSS + "ld", "-T", str(gx.SRC / "link.ld"), "-o", str(elf), str(stub), str(obj)])
     blobs = {}
     for sec in (".stub", ".bridge"):
@@ -456,29 +625,34 @@ _ANALYSIS = {}
 
 
 def analyse(st_img, gen):
-    """Pour une génération (moteurs dont la copie contient le code) : disposition, fermeture et relocalisations
-    du code du Syntakt copié. Laisse gx.SEGMENTS sur cette disposition (gx.move)."""
-    segs, copies, end = layout(gen)
+    """Pour une génération (moteurs dont la copie contient le code) : fermeture, blocs, disposition et corrections
+    du code du Syntakt copié. Laisse gx.SEGMENTS sur cette disposition (gx.move : adresses d'exécution)."""
     gx.ROOTS = GX_ROOTS + tuple(x for c in gen for x in (CATALOG[c]["update"], CATALOG[c]["render"],
                                                         *CATALOG[c].get("roots", ())))
-    gx.SEGMENTS = segs
     gx.IMM_ADDR = set(GX_IMM_ADDR) | g8.IMM_ADDR | {a for c in gen for a in CATALOG[c].get("imm", ())}
     if gen not in _ANALYSIS:
         with tempfile.TemporaryDirectory() as d:
             ins = gx.disasm(st_img, pathlib.Path(d))
-            funcs, insns = gx.closure(ins)
-            code = segs[0]
-            if not all(code[0] <= a < code[1] for a in insns):
-                raise SystemExit(f"!! code hors de la plage copiée : {[hex(a) for a in sorted(insns) if not code[0] <= a < code[1]][:4]}")
-            # Garde-fou : une adresse de code prise par « lea » (pointeur de fonction) doit être dans la fermeture,
-            # sinon ses adresses ne sont pas relocalisées (SY BITS : « lea 0x40006646,%fp », notes/21).
-            missed = sorted({v for a in insns if ins[a][1] == "lea" for v in gx.values(ins[a][2], immediates=False)
-                             if gx.ST_CODE[0] <= v < code[1] and v in ins and v not in insns})
-            if missed:
-                raise SystemExit(f"!! pointeurs de fonction non suivis (à ajouter à roots) : {[hex(v) for v in missed]}")
-            _ANALYSIS[gen] = dict(relocs=gx.relocations(st_img, ins, insns), copies=copies, end=end,
-                                  funcs=len(funcs), code_bytes=sum(ins[a][0] for a in insns))
-    return _ANALYSIS[gen]
+        funcs, insns = gx.closure(ins)
+        code = (CODE_START, max(CATALOG[c].get("code_end", 0) for c in gen))
+        if not all(code[0] <= a < code[1] for a in insns):
+            raise SystemExit(f"!! code hors de la plage prévue : {[hex(a) for a in sorted(insns) if not code[0] <= a < code[1]][:4]}")
+        # Garde-fou : une adresse de code prise par « lea » (pointeur de fonction) doit être dans la fermeture,
+        # sinon ses adresses ne sont pas relocalisées (SY BITS : « lea 0x40006646,%fp », notes/21).
+        missed = sorted({v for a in insns if ins[a][1] == "lea" for v in gx.values(ins[a][2], immediates=False)
+                         if gx.ST_CODE[0] <= v < code[1] and v in ins and v not in insns})
+        if missed:
+            raise SystemExit(f"!! pointeurs de fonction non suivis (à ajouter à roots) : {[hex(v) for v in missed]}")
+        blocks = code_blocks(ins, insns)
+        lay = layout(gen, blocks)
+        gx.SEGMENTS, gx.PC_OK = lay["move"], blocks
+        relocs = gx.relocations(st_img, ins, insns)
+        patches, moved = code_patches(st_img, ins, insns, lay, relocs)
+        _ANALYSIS[gen] = dict(lay=lay, blocks=blocks, patches=patches, moved=moved, relocs=len(relocs),
+                              funcs=len(funcs), code_bytes=sum(ins[a][0] for a in insns))
+    an = _ANALYSIS[gen]
+    gx.SEGMENTS, gx.PC_OK = an["lay"]["move"], an["blocks"]
+    return an
 
 
 def build_tweak(img, st_img, codes, generic=False, meter=False):
@@ -489,8 +663,8 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
     u32 = lambda va: struct.unpack_from(">I", img, va - BASE)[0]
     check_sram_map(img, st_img)
     an = analyse(st_img, generation(codes))
-    relocs, COPIES, END = an["relocs"], an["copies"], an["end"]
-    size = END - gx.DST_CODE
+    lay = an["lay"]
+    size = lay["end"] - gx.DST_CODE
     nm = 6 + n
     names_at, upd_at, rnd_at, vec_at, map_at = DATA, DATA + 4 * nm, DATA + 8 * nm, DATA + 12 * nm, DATA + 16 * nm
     strings = [m["name"] for m in machines] + [k[i] for m in machines for k in m["knobs"] for i in (0, 1)]
@@ -499,16 +673,16 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         if s not in addr:
             addr[s] = at
             at += len(s) + 1
-    if meter:                                   # nom de toutes les machines : « pic/moyenne » (5 caractères au plus)
-        addr["--/--"] = at
-        at += 8
+    meter_at = at                               # compteur : un nom de 8 o par machine (5 caractères au plus)
+    if meter:
+        at += 8 * nm
     with tempfile.TemporaryDirectory() as d:
         blobs, syms, stubs, ssyms = compile_code(pathlib.Path(d), machines, size // 4,
-                                                 addr["--/--"] if meter else None, rnd_at)
+                                                 meter_at if meter else None, rnd_at, nm, gx.move, lay)
 
     names = [u32(g7.NAMES + 4 * i) for i in range(6)] + [addr[m["name"]] for m in machines]
     if meter:
-        names = [addr["--/--"]] * nm
+        names = [meter_at + 8 * m for m in range(nm)]
     upd = [u32(g7.UPDATE_TAB + 4 * i) for i in range(6)] + [syms[f"bridge_update_{m['engine']}"] for m in machines]
     rnd = [u32(g7.RENDER_TAB + 4 * i) for i in range(6)] + [syms[f"bridge_render_{m['engine']}"] for m in machines]
     data = bytearray()
@@ -516,7 +690,9 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         data += b"".join(g7.be32(x) for x in t)
     data += img[MAP - BASE:MAP - BASE + 6] + bytes(range(6, nm)) + bytes(((nm + 3) & ~3) - nm)   # machine -> entrée
     for s in addr:
-        data += s.encode("ascii") + b"\0" * (3 if s == "--/--" else 1)
+        data += s.encode("ascii") + b"\0"
+    if meter:
+        data += b"--/--\0\0\0" * nm
     if DATA + len(data) > DESCN:
         raise SystemExit("!! données")
 
@@ -586,14 +762,21 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         w(va, bytes.fromhex(old), bytes.fromhex("4eb9") + g7.be32(ssyms[sym]) + bytes.fromhex("4e71"))
     # sonde du régulateur de charge autour de l'appel de la fonction audio (jsr abs.l)
     w(AUDIO_CALL, bytes.fromhex("4eb94005979e"), bytes.fromhex("4eb9") + g7.be32(ssyms["audio_probe"]))
+    # tables d'ondes de CHORD : lues dans la charge utile, leur place en SRAM reçoit le code du Syntakt
+    ptrs = [u32(CHORD_PTRS + 4 * i) for i in range(31)]
+    w(CHORD_PTRS, b"".join(g7.be32(x) for x in ptrs), b"".join(g7.be32(chord_moved(x, lay)) for x in ptrs))
     writes.sort(key=lambda x: x["off"])
     for a_, b_ in zip(writes, writes[1:]):
         if a_["off"] + len(a_["new"]) // 2 > b_["off"]:
             raise SystemExit(f"!! écritures qui se chevauchent en {BASE + b_['off']:#x}")
 
-    parts = [{"dest": f"{dst:#x}", "syntakt": [f"{lo:#x}", f"{hi:#x}"]} for lo, hi, dst in COPIES]
+    parts = [{"dest": f"{dst:#x}", "syntakt": [f"{lo:#x}", f"{hi:#x}"]} for lo, hi, dst in lay["copies"]]
     for lo, hi, dst in gx.ST_SRAM_INIT:
         parts.append({"dest": f"{gx.move(dst):#x}", "syntakt": [f"{lo:#x}", f"{hi:#x}"]})
+    parts += [{"dest": f"{a:#x}", "hex": "4e71"} for a in lay["pads"]]
+    for lo, hi in CHORD_BANKS:                  # tables d'ondes de CHORD, depuis le MAIN OS de l'utilisateur
+        src = next(s_ + lo - d_ for s_, e_, d_ in CY_SRAM_INIT if d_ <= lo and hi <= d_ + e_ - s_)
+        parts.append({"dest": f"{chord_moved(lo, lay):#x}", "cycles": [f"{src:#x}", f"{src + hi - lo:#x}"]})
     parts += [
         {"dest": f"{DST_BRIDGE:#x}", "hex": blobs[".bridge"].hex()},
         {"dest": f"{STUBS:#x}", "hex": stubs.hex()},
@@ -601,7 +784,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         {"dest": f"{DESCN:#x}", "cycles": [f"{g7.DESC:#x}", f"{g7.DESC + g7.NDESC * g7.DSTRIDE:#x}"]},
         {"dest": f"{DESCN + g7.NDESC * g7.DSTRIDE:#x}", "hex": bytes(new).hex()},
     ]
-    reloc = [[f"{gx.move(va):#x}", gx.be32(old), gx.be32(new_)] for va, old, new_ in relocs]
+    reloc = [[f"{at:#x}", old.hex(), new_.hex()] for at, old, new_ in an["patches"]]
     alg_max = g7.DESC + g7.ALG_DESC * g7.DSTRIDE + 0x0c
     if u32(alg_max) != 5 << 8:
         raise SystemExit("!! max du paramètre Algorithm")
@@ -615,8 +798,9 @@ def build_tweak(img, st_img, codes, generic=False, meter=False):
         "name": ("DIAGNOSTIC, compteur de charge. " if meter else "") +
                 "Vrais moteurs du Syntakt en machines ajoutées : " + ", ".join(f"{m['name']} ({m['label']})" for m in machines),
         "description": ([
-            "FIRMWARE DE DIAGNOSTIC (notes/23) : l'écran MACHINES affiche, pour toutes les machines, la charge audio",
-            "« pic/moyenne » en % de la durée d'un bloc de 32 échantillons, mise à jour toutes les 0,5 s.",
+            "FIRMWARE DE DIAGNOSTIC (notes/23, notes/27) : l'écran MACHINES affiche, pour chaque machine,",
+            "« moyenne/voix » (charge moyenne, coût de la voix qui joue cette machine) ou « pic/moyenne » de la",
+            "charge audio, en % de la durée d'un bloc de 32 échantillons, mis à jour toutes les 0,5 s.",
             "À n'utiliser que pour mesurer.",
         ] if meter else []) + [
             "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
@@ -671,7 +855,7 @@ def main():
         if gen not in _ANALYSIS:
             an = analyse(st_img, gen)
             print(f"  Syntakt jusqu'à {CATALOG[gen[-1]]['label']} : {an['funcs']} fonctions, {an['code_bytes']} o de code,"
-                  f" {len(an['relocs'])} relocalisations")
+                  f" {len(an['blocks'])} blocs, {an['relocs']} relocalisations, {an['moved']} sauts recalculés")
         tweak, ndesc = build_tweak(img, st_img, codes, args.generic, args.meter)
         path = pathlib.Path(args.out) if args.out else DEV / f"{tweak['order']}-{tweak['id']}.json"
         text = json.dumps(tweak, indent=1) + "\n"
