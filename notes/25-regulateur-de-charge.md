@@ -10,7 +10,7 @@ Travail du 01/10/2026. Retour de l'utilisateur sur le firmware de diagnostic v2 
 | Régulateur de charge dans tous les tweaks générés | `[FAIT]` (§2), rendu plus réactif après le 1er essai (§5) |
 | Preuve en émulation | `[FAIT]` `tools/emu/test_governor.py` et les tests existants (§3) |
 | 1er essai sur la machine (v3) | `[FAIT]` beaucoup moins de bugs, encore quelques micro-gels (§5) |
-| Test sur la machine de la version réactive (v4) | `[À FAIRE]` (§6) |
+| Test sur la machine de la version réactive (v4) | `[FAIT]` plus de micro-gels ; les coupures de notes restent un peu gênantes (§6) |
 
 ## 1. Pourquoi il en faut un
 
@@ -103,6 +103,15 @@ Les tests existants passent toujours avec le régulateur : `test_syntakt_machine
 
 **Limite physique** : quand 6 notes du Syntakt partent sur le même pas, le 1ᵉʳ bloc reste au-dessus de 100 % (une note déclenchée doit être calculée). Le régulateur ramène la charge en 3 ou 4 blocs (2 à 3 ms) au lieu de 11 ms, au prix de fins de notes coupées sur les voix les plus faibles.
 
-## 6. Test sur la machine de la version réactive `[À FAIRE]`
+## 6. Test sur la machine de la version réactive `[FAIT]`
 
-Firmware de diagnostic v4 : `build/diag/model-cycles_OS1.13_diagnostic-charge_v4.syx` et `…_v4_6ch.syx`. Même protocole qu'au §4.
+Firmware de diagnostic v4 (`build/diag/model-cycles_OS1.13_diagnostic-charge_v4.syx`), 01/10/2026.
+- Retour de l'utilisateur : plus de micro-gels.
+- Mais « les coupures des notes sont un petit peu gênantes, même si c'est déjà beaucoup mieux ».
+- Décision : publier le flasher web (PR #11), puis retravailler la gestion de la charge.
+
+## 7. Pistes pour couper moins de notes
+
+- **Rendre les voix du Syntakt moins chères** : chacune coûte environ 2 voix d'origine, à cause de la mémoire (SDRAM au lieu de la SRAM interne, [23 §4](23-optimisation-charge.md)). Piste : emprunter, pendant le calcul d'une voix du Syntakt, la zone de travail commune des machines d'origine en SRAM (environ 2 Ko, réécrite à chaque bloc par chaque voix d'origine).
+- **Mieux choisir et mieux fondre** : préférer les voix les plus anciennes ; allonger le fondu quand la surcharge est modérée ; réserver le fondu court aux vrais débordements.
+- **Seuils** : partir plus près de 100 % (le Cycles d'origine tient 87 % en pic) en surveillant les débordements avec le compteur.
