@@ -13,7 +13,7 @@ Décisions de l'utilisateur, après l'analyse du §3 :
 | Model-TG seul dans le flasher web | `[FAIT]` tel que son propre build l'exporte, même empreinte (§2) |
 | Model-TG avec l'audio USB 6 canaux | `[FAIT]` aucune écriture commune ; pas encore testé sur la machine (§2) |
 | Conflits avec les moteurs du Syntakt | `[FAIT]` analysés (§3) |
-| Version combinée Model-TG + moteurs du Syntakt | `[FAIT en émulation]` pas encore testée sur la machine (§4, §5) |
+| Version combinée Model-TG + moteurs du Syntakt | `[FAIT]` démarre et joue sur la machine (firmware de diagnostic, §6) ; charge à optimiser (§7) |
 
 ## 1. Ce qu'est Model-TG
 
@@ -196,11 +196,31 @@ Source : `tools/emu/test_model_tg_syntakt.py` (5 moteurs, SD + SWARM, et le firm
 
 Les tests de la version seule (moteurs, régulateur, compteur, SRAM, démarrage) et de Model-TG seul passent toujours.
 
-## 6. Ce qui reste `[À FAIRE]`
+## 6. Essai sur la machine `[FAIT]`
 
-- **Essai sur la machine** :
-  - le firmware de diagnostic `91-syntakt-tg-meter.json` (5 moteurs, compteur de charge sur l'écran MACHINES) ;
-  - puis les combinaisons du flasher.
-  - Rien n'est marqué « testé » avant.
+Retour de l'utilisateur le 01/10/2026, firmware de diagnostic sans l'audio 6 canaux (`91-syntakt-tg-meter.json`, construit par `build.py`, pas encore par le flasher) :
+
+- **Démarrage et machines** : l'OS démarre ; le Sampler et les moteurs du Syntakt apparaissent après Chord.
+- **Sampler** : un échantillon envoyé par Elektron Transfer (identité SMP) se charge par le navigateur de presets (FUNC + MACHINE) et joue.
+- **Touche Attack** : le « PRESET » du guide de Model-TG est la touche **MACHINE**, tenue sans FUNC. Source : `src/model_tg.s`, codes de touches mesurés par son auteur (`KEY_PRESET = 5`). Elle donne Attack, Filtre et Résonance sur toutes les machines, moteurs du Syntakt compris.
+- **Motif de 6 pistes** (SD Vintage x 2, SY Toy, Perc/Metal d'origine, Sampler, Tone d'origine) :
+
+| Mesure | Valeur |
+|---|---|
+| Notre compteur (fonction audio `0x4005979e`), pic/moyenne | 93 / 79 % |
+| Page System de Model-TG (de l'entrée de l'interruption audio à la fin du mix), maintenant / au pire | 90 / 101 % |
+| Part de chaque piste (System) | SD 8, SY Toy 6, SD 3, Perc 6, Sampler 8, Tone 6 % |
+| À l'oreille | coupures ou craquements, très occasionnels |
+
+**Lecture** :
+- Les moteurs du Syntakt coûtent autant que les machines d'origine et que le Sampler. Les 6 voix font environ 37 % ; le reste de la fonction audio (mixage, effets d'envoi, effets master) en fait environ 40 %.
+- La page System commence à l'entrée de l'interruption (`0x40058c5e`, `isr_prof` de Model-TG). Notre compteur ne mesure que la fonction audio, appelée plus tard dans cette interruption : il lit environ **11 points de moins**.
+- Le seuil de pic de notre régulateur (93 %) correspond donc à environ 104 % du vrai temps : un bloc peut déborder avant qu'il réagisse. C'est la cause probable des craquements.
+
+## 7. Ce qui reste `[À FAIRE]`
+
+- **Optimiser sans perdre de fonctions** (demande de l'utilisateur) : mesurer d'abord où passent les ~50 % hors des voix (début de l'interruption, mixage et effets), puis viser les plus gros postes.
+- **Régulateur** : mesurer depuis l'entrée de l'interruption, comme la page System, pour qu'il réagisse avant un débordement.
+- Les combinaisons construites par le flasher restent « expérimentales » tant qu'aucune n'a été essayée sur la machine.
 - **Projets** : une piste réglée sur une machine ajoutée n'a pas le même numéro dans les deux versions (8e machine = SDVtg avec Model-TG, 7e sans). Un projet fait avec l'une joue une autre machine sur l'autre. Le flasher le dit.
-- Non essayé : le rééchantillonnage d'une piste d'un moteur du Syntakt, et la page System avec nos moteurs. Ces deux fonctions passent par le code de Model-TG appelé tel quel.
+- Non essayé : le rééchantillonnage d'une piste d'un moteur du Syntakt.
