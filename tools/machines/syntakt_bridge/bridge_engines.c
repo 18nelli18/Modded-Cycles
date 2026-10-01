@@ -11,7 +11,10 @@
  *
  * Disposition en memoire (layout() de tools/gen_syntakt_engines.py) :
  *   0x43000000  les fonctions (copie de 0x40002544.., meme disposition relative), puis leurs tables
- *   0x43020000  replique de sa SRAM (0x80000000..0x8000ffff) : voix de 1 800 o, tables, tampons
+ *   0x43020000  replique de sa SRAM (0x80000000..0x8000ffff) : voix de 1 800 o, tables, tampons ; sauf
+ *               ses tampons de travail (0x80008c60..0x80009ea8), dans la zone de travail des machines
+ *               d'origine en SRAM interne (0x8000beb8..0x8000c8e8), et sa table de sinus, identique a celle
+ *               du Cycles (0x8000eee4) : SRAM_MAP de gen_syntakt_engines.py (notes/26)
  *   0x43030000  fenetre de son BSS (0x4404f000..0x4404ffff) : graine aleatoire 0x4404f954
  *   0x43031000  cette passerelle, puis ses donnees (0x43032000)
  *

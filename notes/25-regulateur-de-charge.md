@@ -112,6 +112,6 @@ Firmware de diagnostic v4 (`build/diag/model-cycles_OS1.13_diagnostic-charge_v4.
 
 ## 7. Pistes pour couper moins de notes
 
-- **Rendre les voix du Syntakt moins chères** : chacune coûte environ 2 voix d'origine, à cause de la mémoire (SDRAM au lieu de la SRAM interne, [23 §4](23-optimisation-charge.md)). Piste : emprunter, pendant le calcul d'une voix du Syntakt, la zone de travail commune des machines d'origine en SRAM (environ 2 Ko, réécrite à chaque bloc par chaque voix d'origine).
+- **Rendre les voix du Syntakt moins chères** (`[FAIT]` en émulation, [26](26-sram-empruntee.md)) : chacune coûte environ 2 voix d'origine, à cause de la mémoire (SDRAM au lieu de la SRAM interne, [23 §4](23-optimisation-charge.md)). Piste : emprunter, pendant le calcul d'une voix du Syntakt, la zone de travail commune des machines d'origine en SRAM (environ 2 Ko, réécrite à chaque bloc par chaque voix d'origine).
 - **Mieux choisir et mieux fondre** : préférer les voix les plus anciennes ; allonger le fondu quand la surcharge est modérée ; réserver le fondu court aux vrais débordements.
 - **Seuils** : partir plus près de 100 % (le Cycles d'origine tient 87 % en pic) en surveillant les débordements avec le compteur.
