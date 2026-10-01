@@ -61,7 +61,10 @@ def render_cycles(os_img, blocks, note, kw):
 
 def boot_hook_ok(os_img, payload):
     """Exécute la vraie remise à zéro du BSS 0x400004b2 de l'OS patché : le crochet doit recopier la charge
-    utile vers 0x43000000, puis le BSS (qui la contenait) doit être remis à zéro et la fonction revenir."""
+    utile vers 0x43000000, puis le BSS (qui la contenait) doit être remis à zéro et la fonction revenir. La SRAM
+    est déjà initialisée par l'OS (0x4000045c, appelée juste avant) : le crochet n'y touche pas, sauf si le tweak
+    sort de la SRAM les tables d'ondes de CHORD (notes/28) ; il y recopie alors le début de la charge utile
+    (E.SRAM_CODE), et rien d'autre."""
     from unicorn import Uc, UC_ARCH_M68K, UC_MODE_BIG_ENDIAN
     from unicorn import m68k_const as mk
     import struct
@@ -69,8 +72,13 @@ def boot_hook_ok(os_img, payload):
     uc.ctl_set_cpu_model(mk.UC_CPU_M68K_ANY)
     uc.mem_map(0x40000000, 0x02400000)                 # image + BSS jusqu'à 0x423380b0
     uc.mem_map(E.PAYLOAD_DST, 0x00100000)
+    uc.mem_map(0x80000000, 0x00010000)                 # SRAM, telle que 0x4000045c la laisse
     uc.mem_map(0x90000000, 0x00020000)
     uc.mem_write(E.BASE, os_img)
+    sram = bytearray(0x10000)
+    sram[0:0x74c0] = os_img[0x4019b590 - E.BASE:0x401a2a50 - E.BASE]
+    sram[0x8000:0x8000 + 0x76f0] = os_img[0x401a2a50 - E.BASE:0x401aa140 - E.BASE]
+    uc.mem_write(0x80000000, bytes(sram))
     uc.mem_write(E.STOP, b"\x4e\x71\x4e\x71")
     sp = 0x90010000
     uc.mem_write(sp, struct.pack(">I", E.STOP))
@@ -80,9 +88,17 @@ def boot_hook_ok(os_img, payload):
     src = E.BASE + E.IMAGE_LEN
     cleared = not any(uc.mem_read(src, len(payload))) and not any(uc.mem_read(0x42338000, 0xb0))
     back = uc.reg_read(mk.UC_M68K_REG_A7) == sp + 4
-    ok = copied and cleared and back
+    want = bytearray(sram)
+    stage, run, n = E.SRAM_CODE
+    in_sram = not 0x80000000 <= struct.unpack_from(">I", os_img, 0x40118594 - E.BASE)[0] < 0x80010000
+    if in_sram:
+        want[run - 0x80000000:run - 0x80000000 + n] = payload[stage - E.PAYLOAD_DST:stage - E.PAYLOAD_DST + n]
+    sram_ok = bytes(uc.mem_read(0x80000000, 0x10000)) == bytes(want)
+    ok = copied and cleared and back and sram_ok
     print(f"  {'ok   ' if ok else 'ECHEC'} crochet de démarrage : charge utile recopiée {'intacte' if copied else 'FAUSSE'},"
-          f" BSS remis à zéro {'oui' if cleared else 'NON'}, retour {'normal' if back else 'ANORMAL'}", flush=True)
+          f" BSS remis à zéro {'oui' if cleared else 'NON'}, retour {'normal' if back else 'ANORMAL'}, SRAM "
+          + (f"{'avec' if sram_ok else 'SANS'} le code du Syntakt en {run:#x} ({n} o) et intacte ailleurs" if in_sram
+             else f"{'intacte' if sram_ok else 'MODIFIÉE'}"), flush=True)
     return ok
 
 

@@ -116,6 +116,9 @@ IMM_ADDR = {0x4404f954, 0x80004b70, 0x80008c60, 0x8000945c, 0x80009580, 0x800096
 # Immédiats de la forme d'une adresse mais NUMÉRIQUES (vérifiés à la main) : Q31 -1,0 = 0x80000000.
 IMM_NUM = {0x80000000}
 AMBIGUOUS = []
+# Plages où une référence relative au PC peut viser (défaut : la plage de code SEGMENTS[0]). Un générateur qui
+# déplace le code par blocs (gen_syntakt_engines.py) y met ses blocs et recalcule lui-même les déplacements.
+PC_OK = None
 
 
 def closure(ins):
@@ -161,7 +164,7 @@ def relocations(img, ins, insns):
         raw = img[a - BASE:a - BASE + size]
         if "%pc@" in ops:
             for v in values(ops, immediates=False):
-                if not SEGMENTS[0][0] <= v < SEGMENTS[0][1]:
+                if not any(lo <= v < hi for lo, hi in (PC_OK or [SEGMENTS[0][:2]])):
                     raise SystemExit(f"!! {a:#x} {mn} {ops} : relatif au PC hors de la plage de code copiée")
         absolute = set(values(ops, immediates=False))
         for v in set(values(ops)):

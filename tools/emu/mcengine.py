@@ -36,6 +36,9 @@ DEFAULTS = {0: (10, 16, 16, 24, 28), 1: (0, 127, 8, 0, 40), 2: (46, 48, 0, 20, 2
 IMAGE_LEN = 0x1a9d40             # MAIN OS 1.13 d'origine ; au-delà : charge utile d'un tweak « append »
 PAYLOAD_DST = 0x43000000         # où le crochet de démarrage la recopie (notes/17)
 PAYLOAD_CODE = ((0x43000000, 0x43007298), (0x43031000, 0x43032000))   # zones de code de la charge utile
+# Tweaks de gen_syntakt_engines.py (notes/28) : le code du Syntakt, en transit au début de la charge utile, est
+# recopié au démarrage (stub.S) en SRAM (0x80001c5c, 22 616 o), où il s'exécute.
+SRAM_CODE = (0x43000000, 0x80001c5c, 0x5858)
 # (SD VINTAGE seul s'arrête à 0x4300603c ; SD + CP VINTAGE à 0x430065a4, notes/19 ; jusqu'à SY TOY à
 #  0x430068c8, notes/20 ; jusqu'à SY BITS à 0x43006da8, notes/21 ; jusqu'à SY SWARM à 0x43007298, notes/22.
 #  Décoder un peu de données comme du code ne fait que poser des crochets EMAC à des adresses jamais exécutées.)
@@ -70,6 +73,10 @@ def _emac_payload(payload):
             for lo, hi in PAYLOAD_CODE:
                 if lo - PAYLOAD_DST < len(payload):
                     instrs.update(emac.disasm(path, PAYLOAD_DST, lo, min(hi, PAYLOAD_DST + len(payload))))
+            stage, run, n = SRAM_CODE                # mêmes octets, aux adresses d'exécution en SRAM
+            if stage - PAYLOAD_DST < len(payload):
+                base = run - (stage - PAYLOAD_DST)
+                instrs.update(emac.disasm(path, base, run, run + min(n, len(payload) - (stage - PAYLOAD_DST))))
         finally:
             os.unlink(path)
         _EMAC_CACHE[key] = instrs
@@ -103,6 +110,12 @@ class Engine:
         # boot : copie ROM -> SRAM (0x4000045c) puis init des voix (0x4005974c)
         uc.mem_write(0x80000000, self.img[0x4019b590 - BASE:0x401a2a50 - BASE])
         uc.mem_write(0x80008000, self.img[0x401a2a50 - BASE:0x401aa140 - BASE])
+        stage, run, n = SRAM_CODE
+        chord = struct.unpack_from(">I", self.img, 0x40118594 - BASE)[0]
+        if payload and not 0x80000000 <= chord < 0x80010000:
+            # tables d'ondes de CHORD sorties de la SRAM (notes/28) : le crochet de démarrage (stub.S) y recopie
+            # le début de la charge utile, code du Syntakt compris
+            uc.mem_write(run, payload[stage - PAYLOAD_DST:stage - PAYLOAD_DST + n])
         for t in range(6):
             v = VOICE0 + t * VSTRIDE
             uc.mem_write(v + 0x318, struct.pack(">I", 0x8000bd98 + t * 0x30))

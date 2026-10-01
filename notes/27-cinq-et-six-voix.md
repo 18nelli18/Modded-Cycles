@@ -8,9 +8,9 @@ Travail du 01/10/2026. Retour de l'utilisateur sur le firmware de diagnostic v5 
 |---|---|
 | Pourquoi les notes sont coupées | `[FAIT]` le régulateur coupe dès que la charge moyenne dépasse 82 % ; avec des notes sur chaque pas, la plus faible est coupée à chaque pas (§1) |
 | Où passe le temps d'une voix du Syntakt | `[FAIT]` en émulation : le **code** (cache d'instructions de 8 Ko) est maintenant le premier poste (§2) |
-| Coût réel de chaque voix sur la machine | `[À FAIRE]` firmware de diagnostic v6 (§4) |
-| Régulateur moins pressé sur la charge moyenne | `[À FAIRE]` essai dans le diagnostic v6 (§4) |
-| Code du Syntakt en SRAM, à la place des tables d'ondes de CHORD | `[HYP]` piste principale (§3.3) |
+| Coût réel de chaque voix sur la machine | `[FAIT]` relevés du diagnostic v6 ([28 §1](28-code-syntakt-en-sram.md)) |
+| Régulateur moins pressé sur la charge moyenne | `[FAIT]` interface fluide à 86 % : adopté ([28 §2](28-code-syntakt-en-sram.md)) |
+| Code du Syntakt en SRAM, à la place des tables d'ondes de CHORD | `[FAIT]` en émulation ([28](28-code-syntakt-en-sram.md)) |
 
 ## 1. Pourquoi les notes sont coupées à partir de 5 voix
 
@@ -118,7 +118,7 @@ Travail du 01/10/2026. Retour de l'utilisateur sur le firmware de diagnostic v5 
 - **Fréquence du processeur** : le minuteur DMA 0 compte à 135,168 MHz ([23 §5](23-optimisation-charge.md)). Le cœur tourne déjà à sa vitesse nominale, ou au-dessus ; reprogrammer la PLL toucherait la DDR2, l'audio et l'USB. Trop risqué sans interface MIDI de secours.
 - **Alléger les moteurs eux-mêmes** (moins d'oscillateurs pour SY SWARM, etc.) : le son ne serait plus celui du Syntakt.
 
-## 4. Firmware de diagnostic v6 `[À FAIRE]`
+## 4. Firmware de diagnostic v6 `[FAIT]`
 
 Construit localement :
 - `build/diag/model-cycles_OS1.13_diagnostic-charge_v6.syx` (MAIN OS `c9b60d1c…`) ;
@@ -141,3 +141,5 @@ Construit localement :
 1. Le motif à 5 voix du Syntakt qui coupait : y a-t-il encore des coupures ? L'interface est-elle utilisable ?
 2. Sur chaque piste : ouvrir MACHINES sans tourner la molette, noter « moyenne/voix ».
 3. Si possible, les mêmes relevés avec 6 voix du Syntakt, et avec 5 fois le même moteur sur des pistes voisines (§3.2).
+
+Relevés de l'utilisateur et suite : [28](28-code-syntakt-en-sram.md).

@@ -10,7 +10,9 @@
  * dans ce depot : ce fichier est notre seul code.
  *
  * Disposition en memoire (layout() de tools/gen_syntakt_engines.py) :
- *   0x43000000  les fonctions (copie de 0x40002544.., meme disposition relative), puis leurs tables
+ *   0x43000000  zone de transit : les fonctions atteintes du Syntakt (blocs tasses) et ses tables les plus lues,
+ *               recopiees au demarrage (stub.S) en SRAM interne (0x80001c5c, a la place des tables d'ondes de
+ *               CHORD, qui passent dans la charge utile, notes/28), ou elles s'executent ; puis les autres tables
  *   0x43020000  replique de sa SRAM (0x80000000..0x8000ffff) : voix de 1 800 o, tables, tampons ; sauf
  *               ses tampons de travail (0x80008c60..0x80009ea8), dans la zone de travail des machines
  *               d'origine en SRAM interne (0x8000beb8..0x8000c8e8), et sa table de sinus, identique a celle
@@ -29,7 +31,8 @@ typedef short s16;
 typedef int s32;
 typedef unsigned int u32;
 
-#define ST(a)       ((a) - 0x40002544 + 0x43000000)     /* code du Syntakt -> copie */
+/* UPD_E, RND_E, ST_*_AT : adresses d'EXECUTION des fonctions du Syntakt (en SRAM, donnees par le generateur) */
+#define ST(a)       (a)
 #define ST_SRAM     0x43020000
 #define SRAM(a)     ((a) - 0x80000000 + ST_SRAM)
 #define ST_VSTRIDE  1800
@@ -79,9 +82,9 @@ static render_fn st_render(int e)
 	}
 	return 0;
 }
-#define ST_RESET    ((void (*)(char *))ST(0x40003ee0))
-#define ST_PREP     ((void (*)(char *))ST(0x4000255e))
-#define ST_VINIT    ((void (*)(void))ST(0x40002544))
+#define ST_RESET    ((void (*)(char *))ST_RESET_AT)
+#define ST_PREP     ((void (*)(char *))ST_PREP_AT)
+#define ST_VINIT    ((void (*)(void))ST_VINIT_AT)
 
 #define CYC_VOICE0  0x42308828
 #define CYC_VSTRIDE 0x31c
@@ -214,16 +217,10 @@ static void render(int engine, s32 *out, char *v)
 #define TIMER (*(volatile u32 *)0xfc07000c)
 #define NT 6
 #define PRESSURE (72 * 256 / 100)
-#ifndef STEAL_PCT                  /* le firmware de diagnostic en essaie d'autres (gen_syntakt_engines.py) */
-#define STEAL_PCT 82
-#endif
-#ifndef TARGET_PCT
-#define TARGET_PCT 78
-#endif
-#define STEAL (STEAL_PCT * 256 / 100)
+#define STEAL (86 * 256 / 100)     /* 82 / 78 jusqu'au diagnostic v6 : interface encore fluide a 86 % (notes/27) */
 #define PEAK (90 * 256 / 100)
 #define SEVERE (92 * 256 / 100)
-#define TARGET (TARGET_PCT * 256 / 100)
+#define TARGET (82 * 256 / 100)
 u32 gov_ret_audio, gov_t0_audio, gov_load, gov_avg, gov_period;    /* dernier bloc, moyenne glissante (1/8) */
 static u32 last_t0, vt0;
 u32 gov_pressure;
