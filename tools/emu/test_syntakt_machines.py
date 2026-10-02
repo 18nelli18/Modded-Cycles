@@ -194,10 +194,10 @@ def screens(stock, patched, payload):
     # au-delà de 7 machines, 2 lignes dans la moitié droite (gs.marks_asm) : rien sur l'image et le nom, à gauche
     rows = sorted(set(ys))
     if NM > gs.MARKS_ROW:
-        ok &= min(x for x, _ in xs) >= 64 and rows == list(gs.MARKS["y"]) and ys.count(rows[0]) == gs.MARKS_ROW
+        ok &= min(x for x, _ in xs) >= 64 and rows == sorted(gs.MARKS["y"]) and ys[:gs.MARKS_ROW] == [gs.MARKS["y"][0]] * gs.MARKS_ROW
     imgs = ", ".join(f"{m['name']} -> {NAMES[m['image']].upper()}" for m in ADDED)
     check(ok, f"écran MACHINES : {NM} noms, images ({imgs}), {NM} repères de x = {min(x for x, _ in xs)} à "
-              f"{max(x2 for _, x2 in xs)}, sur {len(rows)} ligne(s) (y = {rows})")
+              f"{max(x2 for _, x2 in xs)}, sur {len(rows)} ligne(s) (les 7 premiers à y = {ys[0]}, en haut ; y monte)")
 
 
 def setter_and_wheel(stock, patched, payload):

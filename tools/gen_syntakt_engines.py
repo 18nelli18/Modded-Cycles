@@ -429,9 +429,11 @@ def subsets():
 # Écran MACHINES : un repère (carré de 4 px) par machine, tous les 7 px, sur une ligne en haut de la moitié droite
 # (0x400a26a2..0x400a26f2 : le dernier à x = 80 + 7 k, y = 8..12). Au-delà de 7 machines, la ligne débordait sur la
 # moitié gauche (image et nom de la machine). Les repères passent alors sur 2 lignes de MARKS_ROW au plus, aux mêmes
-# x que les 7 d'origine, à y = 4..8 et 11..15 : au-dessus de la petite image (et de son cadre, à partir de y = 17).
+# x que les 7 d'origine, à y = 11..15 puis 4..8, entre le bord et la petite image (et son cadre, y = 17..50).
+# L'axe y de cet écran monte (essai de l'utilisateur, 02/10/2026 : la 1re version, 4..8 puis 11..15, montrait les
+# machines 8 et suivantes au-dessus des 7 premières) : la 1re ligne est celle du plus grand y.
 MARKS_ROW = 7
-MARKS = dict(x=80, dx=7, y=(4, 11), w=4, h=4)
+MARKS = dict(x=80, dx=7, y=(11, 4), w=4, h=4)
 
 
 def marks_asm(a, ins, lab, nm):

@@ -239,9 +239,10 @@ def interface(ref, fw, codes, tg):
         filled = [i for i, (k, _, _) in enumerate(marks) if k == "repère plein"]
         ys = [y for _, _, y in marks]
         rows_ok &= len(marks) == nm and filled == [m] and min(x for _, x, _ in marks) >= 64 \
-            and sorted(set(ys)) == list(gs.MARKS["y"]) and ys.count(gs.MARKS["y"][0]) == gs.MARKS_ROW
+            and sorted(set(ys)) == sorted(gs.MARKS["y"]) and ys[:gs.MARKS_ROW] == [gs.MARKS["y"][0]] * gs.MARKS_ROW
         where.append(marks[m][1:])
-    check(rows_ok, f"écran MACHINES : {nm} repères sur 2 lignes dans la moitié droite (x >= 64), le plein sur la "
+    check(rows_ok, f"écran MACHINES : {nm} repères sur 2 lignes dans la moitié droite (x >= 64), les 7 premiers en "
+                   f"haut (y = {gs.MARKS['y'][0]}, l'axe y monte), le plein sur la "
                    f"machine choisie (1, 7, {first + 1}, {top + 1} : {where})")
 
     blob = bytes(b.uc.mem_read(tg["sampler_name_table"], 28))
