@@ -12,7 +12,7 @@ même firmware sans appel à audio_end() (charge nulle, arrêt des seules voix m
   - un bloc au-dessus de peak (95 %), puis au-dessus de severe (97 %) : idem pour revenir sous peak - margin,
     fondus de 8 puis 2 blocs ; les autres voix restent identiques ; la voix éteinte repart à son trig suivant.
 
-    python3 tools/emu/test_governor.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx --tweak ….json
+    python3 tools/emu/test_governor.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx --tweak ….json
 """
 import argparse
 import json

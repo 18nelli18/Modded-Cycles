@@ -1773,10 +1773,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x4303118a",
@@ -2436,8 +2436,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 260352,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -3475,7 +3477,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SDVtg = SD VINTAGE (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000d1c8",
@@ -4172,8 +4174,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 260352,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -5410,10 +5414,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : CPVtg (CP VINTAGE)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : CPVtg = CP VINTAGE (machine 7).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x4303118a",
@@ -6073,8 +6077,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 260352,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -7112,7 +7118,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : CPVtg = CP VINTAGE (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000d1c8",
@@ -7809,8 +7815,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 260352,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -9047,10 +9055,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SYToy (SY TOY)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SYToy = SY TOY (machine 7).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x4303118a",
@@ -9710,8 +9718,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 260352,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -10749,7 +10759,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SYToy = SY TOY (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000d1c8",
@@ -11446,8 +11456,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 260352,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -12684,10 +12696,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SYBit (SY BITS)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SYBit = SY BITS (machine 7).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x4303118a",
@@ -13347,8 +13359,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 264448,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -14677,7 +14691,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SYBit = SY BITS (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x800070ec",
@@ -15374,8 +15388,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 264448,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -16911,10 +16927,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SYSwm (SY SWARM)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SYSwm = SY SWARM (machine 7).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x4303118a",
@@ -17574,8 +17590,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -19148,7 +19166,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SYSwm = SY SWARM (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x800070c4",
@@ -19845,8 +19863,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -21626,10 +21646,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE), CPVtg (CP VINTAGE)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), CPVtg = CP VINTAGE (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031426",
@@ -22294,8 +22314,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 260352,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -23333,7 +23355,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SDVtg = SD VINTAGE (machine 8), CPVtg = CP VINTAGE (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000d3ba",
@@ -24030,8 +24052,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 260352,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -25268,10 +25292,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE), SYToy (SY TOY)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), SYToy = SY TOY (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031426",
@@ -25936,8 +25960,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 260352,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -26975,7 +27001,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SDVtg = SD VINTAGE (machine 8), SYToy = SY TOY (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000d3ba",
@@ -27672,8 +27698,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 260352,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -28910,10 +28938,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE), SYBit (SY BITS)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), SYBit = SY BITS (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031466",
@@ -29578,8 +29606,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 264448,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -30908,7 +30938,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SDVtg = SD VINTAGE (machine 8), SYBit = SY BITS (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000dfd8",
@@ -31605,8 +31635,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 264448,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -33138,10 +33170,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE), SYSwm (SY SWARM)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), SYSwm = SY SWARM (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031440",
@@ -33806,8 +33838,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -35380,7 +35414,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SDVtg = SD VINTAGE (machine 8), SYSwm = SY SWARM (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x800072d0",
@@ -36077,8 +36111,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -37854,10 +37890,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : CPVtg (CP VINTAGE), SYToy (SY TOY)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : CPVtg = CP VINTAGE (machine 7), SYToy = SY TOY (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031426",
@@ -38522,8 +38558,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 260352,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -39561,7 +39599,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : CPVtg = CP VINTAGE (machine 8), SYToy = SY TOY (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000d3ba",
@@ -40258,8 +40296,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 260352,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -41496,10 +41536,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : CPVtg (CP VINTAGE), SYBit (SY BITS)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : CPVtg = CP VINTAGE (machine 7), SYBit = SY BITS (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031466",
@@ -42164,8 +42204,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 264448,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -43494,7 +43536,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : CPVtg = CP VINTAGE (machine 8), SYBit = SY BITS (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000dfd8",
@@ -44191,8 +44233,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 264448,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -45724,10 +45768,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : CPVtg (CP VINTAGE), SYSwm (SY SWARM)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : CPVtg = CP VINTAGE (machine 7), SYSwm = SY SWARM (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031440",
@@ -46392,8 +46436,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -47966,7 +48012,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : CPVtg = CP VINTAGE (machine 8), SYSwm = SY SWARM (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x800072d0",
@@ -48663,8 +48709,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -50440,10 +50488,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SYToy (SY TOY), SYBit (SY BITS)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SYToy = SY TOY (machine 7), SYBit = SY BITS (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031466",
@@ -51108,8 +51156,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 264448,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -52438,7 +52488,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SYToy = SY TOY (machine 8), SYBit = SY BITS (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000dfd8",
@@ -53135,8 +53185,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 264448,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -54668,10 +54720,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SYToy (SY TOY), SYSwm (SY SWARM)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SYToy = SY TOY (machine 7), SYSwm = SY SWARM (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031440",
@@ -55336,8 +55388,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -56910,7 +56964,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SYToy = SY TOY (machine 8), SYSwm = SY SWARM (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x800072d0",
@@ -57607,8 +57661,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -59384,10 +59440,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SYBit (SY BITS), SYSwm (SY SWARM)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SYBit = SY BITS (machine 7), SYSwm = SY SWARM (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x4303147e",
@@ -60052,8 +60108,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -61626,7 +61684,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SYBit = SY BITS (machine 8), SYSwm = SY SWARM (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000e6e0",
@@ -62323,8 +62381,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -64104,10 +64164,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE), CPVtg (CP VINTAGE), SYToy (SY TOY)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), CPVtg = CP VINTAGE (machine 8), SYToy = SY TOY (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031412",
@@ -64772,8 +64832,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 260352,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -65811,7 +65873,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SDVtg = SD VINTAGE (machine 8), CPVtg = CP VINTAGE (machine 9), SYToy = SY TOY (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000d3b0",
@@ -66508,8 +66570,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 260352,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -67746,10 +67810,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE), CPVtg (CP VINTAGE), SYBit (SY BITS)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), CPVtg = CP VINTAGE (machine 8), SYBit = SY BITS (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031452",
@@ -68414,8 +68478,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 264448,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -69744,7 +69810,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SDVtg = SD VINTAGE (machine 8), CPVtg = CP VINTAGE (machine 9), SYBit = SY BITS (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000dfd8",
@@ -70441,8 +70507,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 264448,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -71974,10 +72042,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE), CPVtg (CP VINTAGE), SYSwm (SY SWARM)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), CPVtg = CP VINTAGE (machine 8), SYSwm = SY SWARM (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x4303142c",
@@ -72642,8 +72710,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -74216,7 +74286,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SDVtg = SD VINTAGE (machine 8), CPVtg = CP VINTAGE (machine 9), SYSwm = SY SWARM (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x800072c6",
@@ -74913,8 +74983,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -76690,10 +76762,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE), SYToy (SY TOY), SYBit (SY BITS)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), SYToy = SY TOY (machine 8), SYBit = SY BITS (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031452",
@@ -77358,8 +77430,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 264448,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -78688,7 +78762,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SDVtg = SD VINTAGE (machine 8), SYToy = SY TOY (machine 9), SYBit = SY BITS (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000dfd8",
@@ -79385,8 +79459,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 264448,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -80918,10 +80994,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE), SYToy (SY TOY), SYSwm (SY SWARM)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), SYToy = SY TOY (machine 8), SYSwm = SY SWARM (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x4303142c",
@@ -81586,8 +81662,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -83160,7 +83238,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SDVtg = SD VINTAGE (machine 8), SYToy = SY TOY (machine 9), SYSwm = SY SWARM (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x800072c6",
@@ -83857,8 +83935,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -85634,10 +85714,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE), SYBit (SY BITS), SYSwm (SY SWARM)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), SYBit = SY BITS (machine 8), SYSwm = SY SWARM (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031470",
@@ -86302,8 +86382,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -87876,7 +87958,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SDVtg = SD VINTAGE (machine 8), SYBit = SY BITS (machine 9), SYSwm = SY SWARM (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000e6e0",
@@ -88573,8 +88655,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -90354,10 +90438,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : CPVtg (CP VINTAGE), SYToy (SY TOY), SYBit (SY BITS)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : CPVtg = CP VINTAGE (machine 7), SYToy = SY TOY (machine 8), SYBit = SY BITS (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031452",
@@ -91022,8 +91106,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 264448,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -92352,7 +92438,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : CPVtg = CP VINTAGE (machine 8), SYToy = SY TOY (machine 9), SYBit = SY BITS (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000dfd8",
@@ -93049,8 +93135,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 264448,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -94582,10 +94670,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : CPVtg (CP VINTAGE), SYToy (SY TOY), SYSwm (SY SWARM)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : CPVtg = CP VINTAGE (machine 7), SYToy = SY TOY (machine 8), SYSwm = SY SWARM (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x4303142c",
@@ -95250,8 +95338,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -96824,7 +96914,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : CPVtg = CP VINTAGE (machine 8), SYToy = SY TOY (machine 9), SYSwm = SY SWARM (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x800072c6",
@@ -97521,8 +97611,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -99298,10 +99390,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : CPVtg (CP VINTAGE), SYBit (SY BITS), SYSwm (SY SWARM)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : CPVtg = CP VINTAGE (machine 7), SYBit = SY BITS (machine 8), SYSwm = SY SWARM (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031470",
@@ -99966,8 +100058,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -101540,7 +101634,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : CPVtg = CP VINTAGE (machine 8), SYBit = SY BITS (machine 9), SYSwm = SY SWARM (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000e6e0",
@@ -102237,8 +102331,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -104018,10 +104114,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SYToy (SY TOY), SYBit (SY BITS), SYSwm (SY SWARM)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SYToy = SY TOY (machine 7), SYBit = SY BITS (machine 8), SYSwm = SY SWARM (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031470",
@@ -104686,8 +104782,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -106260,7 +106358,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SYToy = SY TOY (machine 8), SYBit = SY BITS (machine 9), SYSwm = SY SWARM (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000e6e0",
@@ -106957,8 +107055,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -108738,10 +108838,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE), CPVtg (CP VINTAGE), SYToy (SY TOY), SYBit (SY BITS)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), CPVtg = CP VINTAGE (machine 8), SYToy = SY TOY (machine 9), SYBit = SY BITS (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031452",
@@ -109406,8 +109506,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 264448,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -110736,7 +110838,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SDVtg = SD VINTAGE (machine 8), CPVtg = CP VINTAGE (machine 9), SYToy = SY TOY (machine 10), SYBit = SY BITS (machine 11).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000dfd8",
@@ -111433,8 +111535,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 264448,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -112966,10 +113070,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE), CPVtg (CP VINTAGE), SYToy (SY TOY), SYSwm (SY SWARM)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), CPVtg = CP VINTAGE (machine 8), SYToy = SY TOY (machine 9), SYSwm = SY SWARM (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x4303142c",
@@ -113634,8 +113738,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -115208,7 +115314,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SDVtg = SD VINTAGE (machine 8), CPVtg = CP VINTAGE (machine 9), SYToy = SY TOY (machine 10), SYSwm = SY SWARM (machine 11).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x800072c6",
@@ -115905,8 +116011,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -117682,10 +117790,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE), CPVtg (CP VINTAGE), SYBit (SY BITS), SYSwm (SY SWARM)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), CPVtg = CP VINTAGE (machine 8), SYBit = SY BITS (machine 9), SYSwm = SY SWARM (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031470",
@@ -118350,8 +118458,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -119924,7 +120034,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SDVtg = SD VINTAGE (machine 8), CPVtg = CP VINTAGE (machine 9), SYBit = SY BITS (machine 10), SYSwm = SY SWARM (machine 11).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000e6e0",
@@ -120621,8 +120731,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -122402,10 +122514,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE), SYToy (SY TOY), SYBit (SY BITS), SYSwm (SY SWARM)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), SYToy = SY TOY (machine 8), SYBit = SY BITS (machine 9), SYSwm = SY SWARM (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031470",
@@ -123070,8 +123182,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -124644,7 +124758,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SDVtg = SD VINTAGE (machine 8), SYToy = SY TOY (machine 9), SYBit = SY BITS (machine 10), SYSwm = SY SWARM (machine 11).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000e6e0",
@@ -125341,8 +125455,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -127122,10 +127238,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : CPVtg (CP VINTAGE), SYToy (SY TOY), SYBit (SY BITS), SYSwm (SY SWARM)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : CPVtg = CP VINTAGE (machine 7), SYToy = SY TOY (machine 8), SYBit = SY BITS (machine 9), SYSwm = SY SWARM (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031470",
@@ -127790,8 +127906,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -129364,7 +129482,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : CPVtg = CP VINTAGE (machine 8), SYToy = SY TOY (machine 9), SYBit = SY BITS (machine 10), SYSwm = SY SWARM (machine 11).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000e6e0",
@@ -130061,8 +130179,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -131842,10 +131962,10 @@ window.MC_TWEAKS = {
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE), CPVtg (CP VINTAGE), SYToy (SY TOY), SYBit (SY BITS), SYSwm (SY SWARM)",
    "description": [
-    "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), CPVtg = CP VINTAGE (machine 8), SYToy = SY TOY (machine 9), SYBit = SY BITS (machine 10), SYSwm = SY SWARM (machine 11).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x43031470",
@@ -132510,8 +132630,10 @@ window.MC_TWEAKS = {
     "dest": "0x43000000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -134084,7 +134206,7 @@ window.MC_TWEAKS = {
     "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
     "les moteurs du Syntakt suivent : SDVtg = SD VINTAGE (machine 8), CPVtg = CP VINTAGE (machine 9), SYToy = SY TOY (machine 10), SYBit = SY BITS (machine 11), SYSwm = SY SWARM (machine 12).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
    ],
    "gov": {
     "audio_end": "0x8000e6e0",
@@ -134781,8 +134903,10 @@ window.MC_TWEAKS = {
     "dest": "0x46700000",
     "size": 269056,
     "syntakt": {
-     "os": "1.41",
-     "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
      "section": 7,
      "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
     },
@@ -136656,7 +136780,7 @@ window.MC_TWEAKS = {
   {
    "id": "syntakt",
    "label": "Vrais moteurs du Syntakt",
-   "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.41.syx (a deposer a l'etape 2), en machines supplementaires apres les 6 d'origine : coche ceux que tu veux. Identiques au Syntakt en emulation.",
+   "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.42.syx (a deposer a l'etape 2), en machines supplementaires apres les 6 d'origine : coche ceux que tu veux. Identiques au Syntakt en emulation.",
    "status": "experimental",
    "credit": null,
    "engines": [

@@ -550,7 +550,7 @@ function checkCaves(mainOs, chosen, force, dirty, patched, known) {
 
 // ===========================================================================
 // Moteur extrait d'un OS Syntakt (tweak « append », notes/17) : la recette s'exécute sur le fichier
-// Syntakt_OS1.41.syx de l'utilisateur ; aucun octet Elektron n'est fourni par cette page.
+// Syntakt_OS1.42.syx (ou 1.41, même section 7) de l'utilisateur ; aucun octet Elektron n'est fourni par cette page.
 // ===========================================================================
 /* Section d'un .syx Syntakt : produit 0x16, checksums V = 0x35 et C0 = 0x2c - numéro de flux (octet 7),
  * deux flux de paquets qui forment un seul conteneur ELE3 (tools/emu/syntakt.py). */
@@ -577,6 +577,12 @@ function syntaktSection(raw, id) {
   return c.blob.subarray(s.off, s.off + s.size);
 }
 
+/* Version de l'OS Syntakt officiel de ce fichier ("1.42", "1.41"…), ou null : ap = l'« append » d'un tweak. */
+function syntaktVersion(ap, syntaktRaw) {
+  const sha = hex(sha256(syntaktRaw));
+  return Object.keys(ap.syntakt.os).find((v) => ap.syntakt.os[v] === sha) || null;
+}
+
 /* Charge utile d'un tweak « append » : plages copiées du programme audio du Syntakt (section 7, chargée
  * à 0x40000400) ou du MAIN OS Cycles d'origine (mainOs), notre code, puis la table de relocalisation
  * (ancienne valeur vérifiée à chaque fois). Rend ce qui va dans l'image : la charge utile entière, ou rangée en
@@ -584,9 +590,9 @@ function syntaktSection(raw, id) {
 function buildPayload(ap, syntaktRaw, mainOs) {
   let img = null;                               // section 7 du Syntakt, si le tweak en copie des morceaux
   if (ap.syntakt) {
-    if (!syntaktRaw) throw new Error("fichier Syntakt_OS1.41.syx requis");
-    if (hex(sha256(syntaktRaw)) !== ap.syntakt.syx_sha256)
-      throw new Error("ce n'est pas le fichier officiel Syntakt_OS1.41.syx");
+    if (!syntaktRaw) throw new Error("fichier Syntakt_OS1.42.syx requis");
+    if (!syntaktVersion(ap, syntaktRaw))         // ap.syntakt.os : version -> SHA-256 des fichiers officiels acceptés
+      throw new Error(`ce n'est pas un fichier officiel de l'OS Syntakt (${Object.keys(ap.syntakt.os).join(" ou ")})`);
     img = syntaktSection(syntaktRaw, ap.syntakt.section);
     if (hex(sha256(img)) !== ap.syntakt.section_sha256) throw new Error("section 7 du Syntakt inattendue");
   }
@@ -622,7 +628,7 @@ function payloadRuntime(ap, img, mainOs) {
 
 /* Construit le .syx modifie.
  * raw = Uint8Array du .syx officiel ; device = device.json ; chosen = [tweak] ;
- * opts = { expectMainOsSha, force, syntakt } ; syntakt = Uint8Array du Syntakt_OS1.41.syx, exigé par un tweak « append »
+ * opts = { expectMainOsSha, force, syntakt } ; syntakt = Uint8Array du Syntakt_OS1.42.syx, exigé par un tweak « append »
  * qui en copie des morceaux (ap.syntakt) ; Model-TG n'en a pas besoin.
  * Renvoie { raw, mainOsSha, patchedBytes, caves, product, name }. */
 function build(raw, device, chosen, opts = {}) {
@@ -713,7 +719,7 @@ function crossflash(hostRaw, guestRaw) {
 // ---- Export node / navigateur ---------------------------------------------
 const API = { sha256, hmacSha256, unwrap, wrap, aplibDepack, aplibRepack, parseContainer, findKey,
               rebuildContainer, buildStream, contentChecksum, applyWrites, checkConflicts, checkCaves,
-              build, crossflash, syntaktSection, buildPayload, hex, fromHex, PRODUCTS, BASE };
+              build, crossflash, syntaktSection, syntaktVersion, buildPayload, hex, fromHex, PRODUCTS, BASE };
 if (typeof module !== "undefined" && module.exports) module.exports = API;
 if (typeof window !== "undefined") window.MCBuilder = API;
 })();

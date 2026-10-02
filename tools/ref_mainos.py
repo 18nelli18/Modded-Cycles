@@ -6,7 +6,7 @@ pour les vrais moteurs du Syntakt, chaque combinaison de moteurs cochés), calcu
 modifié, exactement comme tools/build.py, puis réécrit le bloc REF_MAINOS de app.js (ou le vérifie).
 Le flasher refuse tout firmware construit dont le MAIN OS ne correspond pas.
 
-    python3 tools/ref_mainos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx [--check]
+    python3 tools/ref_mainos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx [--check]
 """
 import argparse
 import itertools
@@ -69,7 +69,7 @@ def block(cycles, syntakt):
     for last in [None] + (options(extra[0]) if extra else []):
         if last:
             names = ", ".join(c["label"] for c in extra[0]["combos"] if c["id"] == last)
-            lines.append(f"  // + real Syntakt engines {names} (tweak {last}), with the official Syntakt_OS1.41.syx")
+            lines.append(f"  // + real Syntakt engines {names} (tweak {last}), with the official Syntakt OS 1.42 or 1.41")
         for sub in subsets:
             ids = list(sub) + ([last] if last else [])
             if last and any(i in alt for i in sub):       # version combinée (notes/31)
@@ -87,7 +87,7 @@ def block(cycles, syntakt):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--cycles", required=True, help="model-cycles_OS1.13.syx officiel")
-    ap.add_argument("--syntakt", required=True, help="Syntakt_OS1.41.syx officiel")
+    ap.add_argument("--syntakt", required=True, help="Syntakt_OS1.42.syx (ou 1.41) officiel")
     ap.add_argument("--check", action="store_true", help="vérifie que app.js est à jour")
     args = ap.parse_args()
     body, n = block(args.cycles, args.syntakt)

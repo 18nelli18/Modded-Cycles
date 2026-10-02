@@ -17,7 +17,7 @@ moteurs seuls (24-syntakt-….json).
   4. Régulateur de charge : en surcharge, il éteint des voix, jamais le Sampler ni la piste dont Model-TG édite les
      tranches (même règle que pour la piste qu'il enregistre).
 
-    python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx \\
+    python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \\
         [--engines sd,cp,toy,bits,swarm]
 """
 import argparse

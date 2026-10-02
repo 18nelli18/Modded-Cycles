@@ -10,7 +10,7 @@ sinus du Cycles).
   3. les voix du Syntakt ne touchent, dans la zone, que les 128 premiers octets de chaque tampon déplacé ; elles
      n'écrivent jamais dans la table de sinus ; plus rien ne passe par l'ancienne place de ces données en SDRAM.
 
-    python3 tools/emu/test_sram_scratch.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx --tweak ….json
+    python3 tools/emu/test_sram_scratch.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx --tweak ….json
 """
 import argparse
 import bisect

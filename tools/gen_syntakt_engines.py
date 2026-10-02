@@ -1140,7 +1140,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None):
         "at": f"{(tg['at'] if tg else BASE + gx.IMAGE_LEN):#x}",
         "dest": f"{gx.DST_CODE:#x}",
         "size": size,
-        "syntakt": {"os": "1.41", "syx_sha256": syntakt.SYX_SHA256, "section": 7, "section_sha256": syntakt.DSP_SHA256},
+        "syntakt": {"os": dict(syntakt.OFFICIAL), "section": 7, "section_sha256": syntakt.DSP_SHA256},
         "parts": parts,
         "reloc": reloc,
     }
@@ -1188,11 +1188,11 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None):
             "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
             "les moteurs du Syntakt suivent : " + which + ".",
         ] if tg else [
-            "Moteurs du Syntakt (OS 1.41) extraits AU BUILD de TON Syntakt_OS1.41.syx, en machines ajoutées après",
+            "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
             "les 6 d'origine (notes/20) : " + which + ".",
         ]) + [
             "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py" + (" --tg." if tg else "."),
-            "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier.",
+            "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
         ],
         "gov": {k: f"{syms[k]:#x}" for k in sorted(syms) if k.startswith(("gov_", "prof_")) or k in ("audio_end", "voice_gate", "voice_after")},
         "device": "Model:Cycles",
@@ -1208,7 +1208,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--cycles", required=True, help="model-cycles_OS1.13.syx officiel")
-    ap.add_argument("--syntakt", required=True, help="Syntakt_OS1.41.syx officiel")
+    ap.add_argument("--syntakt", required=True, help="Syntakt_OS1.42.syx (ou 1.41) officiel")
     ap.add_argument("--engines", help="moteurs du catalogue, séparés par des virgules : " + ",".join(CATALOG))
     ap.add_argument("--all", action="store_true", help="toutes les combinaisons qui n'ont pas leur tweak d'origine")
     ap.add_argument("--generic", action="store_true", help="même pour une combinaison de LEGACY (vérification), avec --out")

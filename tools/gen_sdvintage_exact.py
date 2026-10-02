@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Génère le tweak « sdvintage-exact » : le VRAI moteur SD VINTAGE du Syntakt dans le Model:Cycles (notes/17).
 
-Outil de développeur (comme gen_sdvintage.py). Il lit TON Syntakt_OS1.41.syx pour ANALYSER son programme
+Outil de développeur (comme gen_sdvintage.py). Il lit TON Syntakt_OS1.42.syx pour ANALYSER son programme
 audio (section 7), mais le tweak produit ne contient aucun octet Elektron. Il contient seulement :
   - nos écritures dans l'OS Cycles : crochet de démarrage, code de la passerelle (tools/machines/syntakt_bridge),
     pointeurs de la machine SNARE, défauts des potards ;
@@ -15,8 +15,8 @@ Toute adresse absolue qu'elles contiennent est relocalisée :
   voir SEGMENTS : code 0x40002544..0x40008580 -> 0x43000000, tables -> 0x43006100 / 0x43006400,
   SRAM 0x80000000..0x8000ffff -> 0x43020000, BSS 0x4404f000..0x4404ffff -> 0x43030000.
 
-    python3 tools/gen_sdvintage_exact.py --syntakt Syntakt_OS1.41.syx          # écrit 21-sdvintage-exact.json
-    python3 tools/gen_sdvintage_exact.py --syntakt Syntakt_OS1.41.syx --check  # vérifie le JSON versionné
+    python3 tools/gen_sdvintage_exact.py --syntakt Syntakt_OS1.42.syx          # écrit 21-sdvintage-exact.json
+    python3 tools/gen_sdvintage_exact.py --syntakt Syntakt_OS1.42.syx --check  # vérifie le JSON versionné
 
 Toolchain : m68k-elf-gcc / m68k-elf-objdump (Homebrew) ou m68k-linux-gnu-* (Debian) ; M68K_CROSS pour forcer.
 """
@@ -251,11 +251,11 @@ def build_tweak(img):
         "order": 21,
         "name": "Vrai moteur SD VINTAGE du Syntakt a la place de SNARE",
         "description": [
-            "Le moteur SD VINTAGE du Syntakt (OS 1.41), extrait AU BUILD de TON Syntakt_OS1.41.syx",
+            "Le moteur SD VINTAGE du Syntakt (OS 1.42 ou 1.41), extrait AU BUILD de TON Syntakt_OS1.42.syx",
             f"({len(funcs)} fonctions, {code_bytes} o de code, avec ses tables), relocalise en SDRAM a 0x43000000",
             "au-dessus du BSS de l'OS Cycles, branche a la place de SNARE par une passerelle (notes/17).",
             "Potards au sens du Syntakt : PITCH=TUNE, COLOR=INHM, SHAPE=FCMP, SWEEP=SWEP, CONTOUR=MENV,",
-            "PUNCH=PNCH, GATE, DECAY=DEC ; defauts du Syntakt. Demande : build.py --syntakt Syntakt_OS1.41.syx.",
+            "PUNCH=PNCH, GATE, DECAY=DEC ; defauts du Syntakt. Demande : build.py --syntakt Syntakt_OS1.42.syx.",
             "Aucun octet Elektron dans ce fichier : recette de copie et table de relocalisation seulement.",
         ],
         "device": "Model:Cycles",
@@ -267,7 +267,7 @@ def build_tweak(img):
             "at": f"{BASE + IMAGE_LEN:#x}",
             "dest": f"{DST_CODE:#x}",
             "size": size,
-            "syntakt": {"os": "1.41", "syx_sha256": syntakt.SYX_SHA256, "section": 7, "section_sha256": syntakt.DSP_SHA256},
+            "syntakt": {"os": dict(syntakt.OFFICIAL), "section": 7, "section_sha256": syntakt.DSP_SHA256},
             "parts": parts,
             "reloc": [[f"{move(va):#x}", be32(old), be32(new)] for va, old, new in relocs],
         },
@@ -276,7 +276,7 @@ def build_tweak(img):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--syntakt", required=True, help="Syntakt_OS1.41.syx officiel")
+    ap.add_argument("--syntakt", required=True, help="Syntakt_OS1.42.syx (ou 1.41) officiel")
     ap.add_argument("--check", action="store_true", help="vérifie que le JSON versionné correspond")
     args = ap.parse_args()
     tweak, funcs, code_bytes = build_tweak(syntakt.dsp_image(args.syntakt))

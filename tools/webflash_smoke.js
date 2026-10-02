@@ -1,7 +1,7 @@
 /* Browser smoke test (jsdom) of the web flasher: loads the real page and its scripts,
  * fakes Web MIDI, and walks through the 4 steps (choose, OS file, connect over USB, flash).
  * Run through tools/webflash_smoke.sh (installs jsdom in a temp folder).
- *   node tools/webflash_smoke.js <synth_dir> [model-cycles_OS1.13.syx] [model-samples_OS1.13.syx] [Syntakt_OS1.41.syx]
+ *   node tools/webflash_smoke.js <synth_dir> [model-cycles_OS1.13.syx] [model-samples_OS1.13.syx] [Syntakt_OS1.42.syx or 1.41]
  * The optional official files are told apart by their names. The Model:Cycles OS checks every
  * combination the page offers against its reference hash (REF_MAINOS in app.js; the real Syntakt
  * engines need the Syntakt OS too); with the Model:Samples OS, the "Samples OS" tab is checked end
@@ -15,6 +15,8 @@ const FLASH = path.join(__dirname, "..", "docs", "flasher");
 const SYNTH = process.argv[2];
 const REAL = process.argv.slice(3);
 const REAL_ST = REAL.find((f) => /syntakt/i.test(path.basename(f)));
+const ST_NAME = REAL_ST ? path.basename(REAL_ST) : "Syntakt_OS1.42.syx";
+const ST_VERSION = (/OS(\d+\.\d+)/.exec(ST_NAME) || [])[1];   // "1.42" or "1.41": both official, same engines
 const REAL_SMP = REAL.find((f) => /samples/i.test(path.basename(f)));
 const REAL_OS = REAL.find((f) => f !== REAL_ST && f !== REAL_SMP);
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -100,7 +102,7 @@ async function main() {
     check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until the Syntakt engines are ticked");
     doc.getElementById("feat-syntakt").click();
     await wait(30);
-    check(!doc.getElementById("drop3-wrap").hidden && /Drop Syntakt_OS1.41.syx/.test(text(doc, "drop3"))
+    check(!doc.getElementById("drop3-wrap").hidden && /Drop Syntakt_OS1.42.syx/.test(text(doc, "drop3"))
       && /elektron\.se\/support-downloads\/syntakt/.test(doc.getElementById("step-file").innerHTML),
       "Syntakt engines ticked -> Syntakt drop zone and download link");
     const engs = [...doc.querySelectorAll('input[name="eng-syntakt"]')];
@@ -230,9 +232,9 @@ async function main() {
     await settle(w);
     check(!app.state.fw && app.state.fwError === "needs_syntakt" && /read from the official Syntakt OS/.test(text(doc, "file-status"))
       && /Load the official Syntakt OS file/.test(text(doc, "missing")), "Syntakt engines without the Syntakt file -> asks for it");
-    app.loadSyntakt(raw, "Syntakt_OS1.41.syx");
+    app.loadSyntakt(raw, "Syntakt_OS1.42.syx");
     await settle(w);
-    check(!app.state.syntakt && /not the official Syntakt OS 1.41/.test(text(doc, "file3-status")), "a wrong file in the Syntakt zone is refused");
+    check(!app.state.syntakt && /not the official Syntakt OS 1.42/.test(text(doc, "file3-status")), "a wrong file in the Syntakt zone is refused");
     doc.getElementById("feat-syntakt").click();
     await settle(w);
     check(app.state.fw && app.state.fw.kind === "built" && doc.getElementById("drop3-wrap").hidden, "Syntakt engines unticked -> back to the 6-channel build");
@@ -272,7 +274,7 @@ async function main() {
     const app = w.MCFlasherApp;
     app.loadOs(new Uint8Array(fs.readFileSync(REAL_OS)), "model-cycles_OS1.13.syx");
     await wait(20);
-    if (REAL_ST) app.loadSyntakt(new Uint8Array(fs.readFileSync(REAL_ST)), "Syntakt_OS1.41.syx");
+    if (REAL_ST) app.loadSyntakt(new Uint8Array(fs.readFileSync(REAL_ST)), ST_NAME);
     await wait(20);
     const boxes = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
     const seen = new Set();
@@ -380,10 +382,11 @@ async function main() {
     app.loadSyntakt(cyc, "model-cycles_OS1.13.syx");               // wrong file in the Syntakt zone
     await settle(w);
     check(!app.state.syntakt && /not the official Syntakt/.test(text(doc, "file3-status")) && !app.state.fw, "a Cycles file in the Syntakt zone is refused");
-    app.loadSyntakt(syn, "Syntakt_OS1.41.syx");
+    app.loadSyntakt(syn, ST_NAME);
     await settle(w);
     const f = app.state.fw;
-    check(f && f.kind === "built" && f.ref && f.sdv === "syntakt-sd" && /recognised/.test(text(doc, "file3-status"))
+    check(f && f.kind === "built" && f.ref && f.sdv === "syntakt-sd"
+      && text(doc, "file3-status").includes(`Official Syntakt OS ${ST_VERSION} recognised`)
       && /Real Syntakt engines — SDVtg/.test(text(doc, "file-status")), "Syntakt file -> reference build of SDVtg (default) " + (f ? f.name : ""));
     check(new RegExp("MAIN OS " + app.REF_MAINOS["syntakt-sd"].slice(0, 8)).test(text(doc, "file-status")),
       "status line shows the MAIN OS hash prefix: " + text(doc, "file-status").slice(-20));
@@ -402,7 +405,7 @@ async function main() {
       && /after Chord come SDVtg \(SD VINTAGE\)\./.test(text(doc, "result")), "full transfer + SDVtg message: " + text(doc, "result").slice(0, 90));
     doc.querySelector('.lang button[data-lang="fr"]').click();
     await wait(20);
-    check(doc.getElementById("drop3-title").textContent === "Syntakt_OS1.41.syx" && /OS officiel Syntakt 1.41 reconnu/.test(text(doc, "file3-status")),
+    check(doc.getElementById("drop3-title").textContent === ST_NAME && text(doc, "file3-status").includes(`OS officiel Syntakt ${ST_VERSION} reconnu`),
       "FR: loaded Syntakt file name kept, status translated");
     doc.querySelector('.lang button[data-lang="en"]').click();
     await wait(20);
