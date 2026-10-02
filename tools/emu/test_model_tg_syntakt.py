@@ -231,6 +231,19 @@ def interface(ref, fw, codes, tg):
     check(res == want, "changement de machine réel (0x400a2712, avec les détours de Model-TG) : "
                        + ", ".join(f"{m - 1}->{m} {res[m][1]}" for m in res))
 
+    # écran MACHINES : les nm repères sur 2 lignes dans la moitié droite, le plein sur la machine choisie
+    rows_ok, where = True, []
+    for m in (0, 6, first, top):
+        calls = machines_screen(fw, m)
+        marks = [(k, a[1], a[2]) for k, a in calls if k.startswith("repère")]
+        filled = [i for i, (k, _, _) in enumerate(marks) if k == "repère plein"]
+        ys = [y for _, _, y in marks]
+        rows_ok &= len(marks) == nm and filled == [m] and min(x for _, x, _ in marks) >= 64 \
+            and sorted(set(ys)) == list(gs.MARKS["y"]) and ys.count(gs.MARKS["y"][0]) == gs.MARKS_ROW
+        where.append(marks[m][1:])
+    check(rows_ok, f"écran MACHINES : {nm} repères sur 2 lignes dans la moitié droite (x >= 64), le plein sur la "
+                   f"machine choisie (1, 7, {first + 1}, {top + 1} : {where})")
+
     blob = bytes(b.uc.mem_read(tg["sampler_name_table"], 28))
     names = bytes(b.uc.mem_read(gs.DATA, 4 * nm))
     strs = [bytes(b.uc.mem_read(struct.unpack_from(">I", names, 4 * m)[0], 6)).split(b"\0")[0].decode()
@@ -250,6 +263,25 @@ def interface(ref, fw, codes, tg):
     vec = gs.DATA + 12 * nm
     check(res == [0x5a5a0000] * 7 + [vec] * n + [None, None],
           "potards (knob_vec) : machines 0..6 par la table de l'OS, les nôtres par la leur, au-delà KICK")
+
+
+def machines_screen(fw, m):
+    """Appels de dessin de l'écran MACHINES (0x400a25e0..) pour la machine m (comme test_sdvintage_7th.drum_select)."""
+    u = UI(fw)
+    u.hooks = {0x40071a04: "texte", 0x40071da4: "image", 0x40070c4e: "repère", 0x40070efc: "repère plein",
+               0x93000000: "a5", 0x93000010: "a4"}
+    for a_ in (0x93000000, 0x93000010):
+        u.uc.mem_write(a_, b"\x4e\x75")
+    u.uc.mem_write(0x40fe32cc, struct.pack(">I", 0x92000000))
+    u.uc.mem_write(0x40fe384c, struct.pack(">I", 0x92100000))
+    u.uc.mem_write(0x91001000 + 108, struct.pack(">I", 0x91002000))
+    sp = t7.STACK - 0x800
+    u.uc.mem_write(sp, struct.pack(">I", t7.STOP) * 64)
+    for r, v in {mk.UC_M68K_REG_D3: m, mk.UC_M68K_REG_D2: 0x91000000, mk.UC_M68K_REG_A2: 0x91001000,
+                 mk.UC_M68K_REG_A5: 0x93000000, mk.UC_M68K_REG_A4: 0x93000010, mk.UC_M68K_REG_A7: sp}.items():
+        u.uc.reg_write(r, v)
+    u.uc.emu_start(0x400a25e0, t7.STOP, count=1_000_000)
+    return u.calls
 
 
 # --- 3. son ------------------------------------------------------------------------------------------------------

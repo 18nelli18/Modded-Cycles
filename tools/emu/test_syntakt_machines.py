@@ -189,9 +189,15 @@ def screens(stock, patched, payload):
         u.uc.reg_write(r, v)
     u.uc.emu_start(0x400a25e0, t7.STOP, count=1_000_000)
     xs = [(args[1], args[3]) for k, args in u.calls if k.startswith("repère")]
-    ok &= len(xs) == NM and min(x for x, _ in xs) >= 0 and max(x2 for _, x2 in xs) <= 127
+    ys = [args[2] for k, args in u.calls if k.startswith("repère")]
+    ok &= len(xs) == NM and max(x2 for _, x2 in xs) <= 127
+    # au-delà de 7 machines, 2 lignes dans la moitié droite (gs.marks_asm) : rien sur l'image et le nom, à gauche
+    rows = sorted(set(ys))
+    if NM > gs.MARKS_ROW:
+        ok &= min(x for x, _ in xs) >= 64 and rows == list(gs.MARKS["y"]) and ys.count(rows[0]) == gs.MARKS_ROW
     imgs = ", ".join(f"{m['name']} -> {NAMES[m['image']].upper()}" for m in ADDED)
-    check(ok, f"écran MACHINES : {NM} noms, images ({imgs}), {NM} repères de x = {xs[0][0]} à {xs[-1][1]}")
+    check(ok, f"écran MACHINES : {NM} noms, images ({imgs}), {NM} repères de x = {min(x for x, _ in xs)} à "
+              f"{max(x2 for _, x2 in xs)}, sur {len(rows)} ligne(s) (y = {rows})")
 
 
 def setter_and_wheel(stock, patched, payload):

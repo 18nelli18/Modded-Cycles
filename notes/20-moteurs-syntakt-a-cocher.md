@@ -41,6 +41,11 @@ Adresses : MAIN OS Cycles 1.13 et programme audio du Syntakt 1.41 (section 7), c
   - Source : `MAP` dans `tools/gen_syntakt_engines.py` ; 1 seule référence dans l'OS (vérifiée par le générateur).
 - **Écran MACHINES** : avec N machines ajoutées, le 1ᵉʳ repère part de x = 80 − 7·(N − 1), pour que les 6 + N repères tiennent dans l'écran.
   - Avec 3 moteurs : 9 repères de x = 62 à 122.
+  - **Depuis le 02/10/2026 : sur 2 lignes au-delà de 7 machines** (demande de l'utilisateur : la ligne débordait sur la moitié gauche de l'écran et se superposait à l'image et au nom de la machine).
+    - L'écran : moitié gauche (x 0..63) pour la grande image et le nom ; moitié droite pour les repères (y 8..12) et la petite image, à partir de y = 17. Relevé en émulation, par les appels de dessin de `0x400a25e0`.
+    - Le détour `marks` (`marks_asm` de `tools/gen_syntakt_engines.py`) remplace la boucle `0x400a26a2..0x400a26f2`. Il dessine 7 repères au plus par ligne, aux mêmes x que les 7 d'origine (76 à 122), à y = 4..8 puis 11..15, au-dessus de la petite image.
+    - Jusqu'à 7 machines, rien ne change (une ligne en y = 8..12).
+    - Vérifié en émulation (`test_syntakt_machines.py`, `test_model_tg_syntakt.py`) : tous les repères dans la moitié droite, 2 lignes, le repère plein sur la machine choisie.
   - Source : sortie de `tools/emu/test_syntakt_machines.py` (tweak `syntakt-sd-cp-toy`).
 - **Vérification** : la version générée de SD + CP (`--engines sd,cp --generic`) passe les 26 vérifications de `test_syntakt_machines.py`, comme le tweak testé sur la machine.
   - Source : `tools/emu/test_syntakt_machines.py --tweak …`, généralisé à n'importe quel tweak de moteurs.

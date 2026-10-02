@@ -102,11 +102,11 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 | `sdvintage-7th` (idem) | `c73ad4c796b94ab39d106d0798091eb39b5e3e31f66d7fe78e2db30db44daad3` |
 | `syntakt-cp` (idem) | `08471a7add515a9c22ab252dde18cb905473a9a40d794c0cddddf8563cc4fdbf` |
 | `syntakt-toy` (idem) | `33d138abbf714acc08968733b91d3df2b2dbb50b320a3761c8df7e825270b68e` |
-| `syntakt-sd-cp-toy` (idem) | `634d2a44eaece2489f1c20ff1f813b31ce2e59a28a17dd999c75dfc31c50a157` |
+| `syntakt-sd-cp-toy` (idem) | `ad842806ed420da711d835cec9552071c715474f35d85097dd77b609a93de0a2` |
 | `syntakt-bits` (idem) | `7d8a27208fcdd127249e5a2c8d837c9a13d655ea77dc0f96ba28bd0ef36b66bc` |
-| `syntakt-sd-cp-toy-bits` (idem) | `80fe816a88a49273bbc21b4e05263a993a44ad0a6b65dc1aa13442c524094a20` |
+| `syntakt-sd-cp-toy-bits` (idem) | `6615b269cb175c8f09cdbd4836f94d227efd69bb9936375087c9fbc87b3a04d8` |
 | `syntakt-swarm` (idem) | `5892a9122daabd2ae0d14b6d35ea94d4b32484137eb9f82cf1da52356cc71f90` |
-| `syntakt-sd-cp-toy-bits-swarm` (idem) | `a1871d60392caef0b66b6ca700dc5da53d320950b8910aa88edd6d9a7b7a7c8b` |
+| `syntakt-sd-cp-toy-bits-swarm` (idem) | `4f3b3ba935167c92b95c657c7c0df7cd3cb82e959daea1632b8132ed8d67874b` |
 
 ### Model-TG
 
@@ -134,9 +134,9 @@ python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --sy
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `model-tg-st,syntakt-tg-sd` | `63f6f63cde332e5daff1d6e6095497606eab1f8183c44bcd860f80a5849cc532` |
-| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `495d248029e044a18bcfef54e77fbe743c06802ad7e83b098fde63533503d3f9` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `316c4c852b8c4f2fca0cb7754ee0cd3f1d0a38092e0d17ac15a004ecf43abc39` |
+| `model-tg-st,syntakt-tg-sd` | `9a6aab9bb9255b04cff295b4216bcd23de23a208a8e288d224810cdbfe99dc88` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `ec2fd150be27abc8c4d8dd7a653b2b4d2ecd045c77a092a116bb62afc7156802` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `25e1e7a86b92ee3720bda218abf9f232d550e42a8e84605557db2a9b7e197f66` |
 
 Les 575 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
 `tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;

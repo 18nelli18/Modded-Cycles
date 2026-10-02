@@ -426,6 +426,33 @@ def subsets():
         yield from (list(c) for c in itertools.combinations(CATALOG, r))
 
 
+# Écran MACHINES : un repère (carré de 4 px) par machine, tous les 7 px, sur une ligne en haut de la moitié droite
+# (0x400a26a2..0x400a26f2 : le dernier à x = 80 + 7 k, y = 8..12). Au-delà de 7 machines, la ligne débordait sur la
+# moitié gauche (image et nom de la machine). Les repères passent alors sur 2 lignes de MARKS_ROW au plus, aux mêmes
+# x que les 7 d'origine, à y = 4..8 et 11..15 : au-dessus de la petite image (et de son cadre, à partir de y = 17).
+MARKS_ROW = 7
+MARKS = dict(x=80, dx=7, y=(4, 11), w=4, h=4)
+
+
+def marks_asm(a, ins, lab, nm):
+    """Repères de l'écran MACHINES sur 2 lignes (à la place de la boucle 0x400a26a2..0x400a26f2). Registres de la
+    fonction : d2 = contexte de dessin, d3 = machine choisie ; d4, d5, a2, a3 sont rendus par sa fin (moveml)."""
+    a.append("\t.globl\tmarks"); lab("marks")
+    ins("lea 0x40070c4e, %a2"); ins("lea 0x40070efc, %a3"); ins("clr.l %d5")                 # creux, plein
+    lab("1"); ins("move.l %d5, %d4"); ins(f"moveq #{MARKS['y'][0]}, %d1")
+    ins(f"moveq #{MARKS_ROW}, %d0"); ins("cmp.l %d0, %d4"); ins("blt.s 2f")
+    ins("sub.l %d0, %d4"); ins(f"moveq #{MARKS['y'][1]}, %d1")
+    lab("2"); ins("move.l %d4, %d0"); ins("lsl.l #3, %d0"); ins("sub.l %d4, %d0")             # 7 x colonne
+    ins(f"add.l #{MARKS['x']}, %d0")
+    ins("move.l %d1, %d4"); ins(f"addq.l #{MARKS['h']}, %d4")
+    ins("pea 0x1"); ins("move.l %d4, -(%sp)"); ins("move.l %d0, -(%sp)"); ins("move.l %d1, -(%sp)")
+    ins(f"subq.l #{MARKS['w']}, %d0"); ins("move.l %d0, -(%sp)"); ins("move.l %d2, -(%sp)")
+    ins("cmp.l %d5, %d3"); ins("bne.s 3f"); ins("jsr (%a3)"); ins("bra.s 4f")
+    lab("3"); ins("jsr (%a2)")
+    lab("4"); ins("lea 24(%sp), %sp"); ins("addq.l #1, %d5"); ins(f"moveq #{nm}, %d0"); ins("cmp.l %d5, %d0")
+    ins("bne.s 1b"); ins("jmp 0x400a26f2")
+
+
 def detours_asm(n, images, firsts, tg=None):
     """Détours pour n machines ajoutées (index 6..5+n), descripteurs firsts[i]..firsts[i]+4 (5 par machine).
     Avec Model-TG (tg : ses symboles), les machines ajoutées vont de 7 à 6+n (6 est son Sampler) et nos détours
@@ -522,6 +549,8 @@ def detours_asm(n, images, firsts, tg=None):
     ins("move.l (%sp)+, %d2")
     lab("9"); ins("move.l %a0, %d0"); ins("rts")
     # potard -> descripteur : table machine -> enregistrement [1..6+n]
+    if first + n > MARKS_ROW:
+        marks_asm(a, ins, lab, first + n)
     a.append("\t.globl\tknob_vec"); lab("knob_vec")
     ins("move.l 36(%sp), %d0"); ins("movea.l 104(%a2), %a1"); ins(f"moveq #{top}, %d1"); ins("cmp.l %d0, %d1")
     ins("bcc.s 1f"); ins("moveq #0, %d0"); ins("rts")                    # hors limites : les potards de KICK
@@ -1083,9 +1112,10 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None):
         moveq(va, cur[va - BASE + 1], top, reg)
     moveq(0x4005a572, 5, 6, 0x72)                           # champ machine « propre à une machine » : <= 6
     w(0x4005a2b8, bytes.fromhex("487800c0"), bytes.fromhex("4878") + (32 * nm).to_bytes(2, "big"))
-    if nm > 7:
-        moveq(0x400a26a2, 80, 80 - 7 * (nm - 7), 0x78)      # 1er repère plus à gauche : les nm repères tiennent
-    moveq(0x400a26e8, cur[0x400a26e8 - BASE + 1], nm, 0x70)
+    if nm > MARKS_ROW:                                      # repères sur 2 lignes (marks_asm)
+        w(0x400a26a2, bytes.fromhex("7850428545f9"), jmp(ssyms["marks"]))
+    else:
+        moveq(0x400a26e8, cur[0x400a26e8 - BASE + 1], nm, 0x70)
     if not tg:                                  # icônes bornées : SNARE au-delà de 5 (avec Model-TG, CHORD, comme lui)
         for va in (0x4001b69c, 0x400a40a6, 0x400a4fb0):
             moveq(va, 5, 1, 0x70)
