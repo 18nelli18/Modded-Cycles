@@ -1,8 +1,8 @@
-"""Émulation (Unicorn, m68k « ANY » = ColdFire + EMAC corrigée) du moteur audio du Syntakt OS 1.41 :
+"""Émulation (Unicorn, m68k « ANY » = ColdFire + EMAC corrigée) du moteur audio du Syntakt OS 1.42 (même section 7 que 1.41) :
 le programme du processeur DSP (section 7 du .syx), et sa vraie boucle des 8 voix numériques,
 bloc par bloc (32 trames, 48 kHz). Pendant de mcengine.py pour le Model:Cycles.
 
-Aucune image n'est fournie : on passe la section 7 extraite de TON Syntakt_OS1.41.syx
+Aucune image n'est fournie : on passe la section 7 extraite de TON Syntakt_OS1.42.syx
 (tools/emu/syntakt.py). Contrat décodé le 29/09/2026, voir notes/16 :
 - section 7 chargée à 0x40000400 ; au démarrage, 0x4004f6e0..0x40057670 est copié en SRAM
   0x80000000 et 0x40057670..0x4005df10 en 0x80008000 (le reste de la SRAM est mis à zéro) ;

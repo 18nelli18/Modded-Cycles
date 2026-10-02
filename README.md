@@ -22,7 +22,7 @@ You need:
 
 The web flasher only sends over USB, and only offers mods that keep OS updates over USB working.
 Its **Samples OS** tab turns the Model:Cycles into a Model:Samples (drop both official OS files); coming back needs a MIDI interface.
-The **SD VINTAGE** box adds the real Syntakt SD VINTAGE engine as a 7th machine **SDVtg** next to SNARE (default), or puts it in place of SNARE; both tested on a real Model:Cycles: drop your official `Syntakt_OS1.41.syx` ([elektron.se](https://www.elektron.se/support-downloads/syntakt)) as well, the engine is read from it in your browser.
+The **SD VINTAGE** box adds the real Syntakt SD VINTAGE engine as a 7th machine **SDVtg** next to SNARE (default), or puts it in place of SNARE; both tested on a real Model:Cycles: drop your official `Syntakt_OS1.42.syx` ([elektron.se](https://www.elektron.se/support-downloads/syntakt); 1.41 works too, same engines) as well, the engine is read from it in your browser.
 If a Model:Cycles ever stops starting, recovery goes through the startup menu (`FUNC` + power on, then `TRIG 4`),
 which only listens to the **MIDI IN**: that needs a MIDI interface and the command-line scripts below ([`FLASH.md`](FLASH.md)).
 

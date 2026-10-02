@@ -10,7 +10,7 @@ Le minuteur DMA 0 du Cycles (0xfc07000c, 135,168 MHz) est simulé. On vérifie, 
     durée d'un bloc ; « -- » si aucune piste ne la joue ;
   - l'écran MACHINES : les 11 machines portent leur propre nom (« --/-- » avant la 1re mesure).
 
-    python3 tools/emu/test_meter.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx
+    python3 tools/emu/test_meter.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx
 """
 import argparse
 import json

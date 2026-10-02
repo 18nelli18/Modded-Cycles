@@ -1,5 +1,8 @@
-"""Lecture de l'OS du Syntakt (Syntakt_OS1.41.syx officiel, jamais fourni ici) : conteneur ELE3 et
-programme du processeur DSP (section 7), pour le banc d'émulation stengine.py (notes/16).
+"""Lecture de l'OS du Syntakt (Syntakt_OS1.42.syx ou Syntakt_OS1.41.syx officiel, jamais fourni ici) : conteneur
+ELE3 et programme du processeur DSP (section 7), pour le banc d'émulation stengine.py (notes/16).
+
+Les OS 1.41 et 1.42 ont la même section 7, octet pour octet (1.42 ne change que le MAIN OS, section 3, et la
+chaîne de version, section 5) : les moteurs extraits sont identiques quel que soit le fichier.
 
 Particularités par rapport aux Models (tools/mtlib) :
 - produit SysEx 0x16, constantes de checksum V = 0x35 et C0 = 0x2C ;
@@ -7,7 +10,7 @@ Particularités par rapport aux Models (tools/mtlib) :
   un seul conteneur ELE3 de 8 sections ;
 - la section 7 (383 760 o, brute) est le programme du 2e ColdFire, chargé à 0x40000400.
 
-    python3 tools/emu/syntakt.py Syntakt_OS1.41.syx      # vérifie et affiche les sections
+    python3 tools/emu/syntakt.py Syntakt_OS1.42.syx      # vérifie et affiche les sections
 """
 import collections
 import hashlib
@@ -19,16 +22,26 @@ sys.path.insert(0, str(HERE.parent))
 
 from mtlib import aplib, container, syx   # noqa: E402
 
-SYX_SHA256 = "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"   # Syntakt_OS1.41.syx (zip 1.41)
-DSP_SHA256 = "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"   # sa section 7
+# Fichiers officiels acceptés, du plus récent au plus ancien : version -> SHA-256 du .syx (celui du zip d'Elektron)
+OFFICIAL = {
+    "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+    "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+}
+DSP_SHA256 = "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"   # leur section 7 (la même)
 PRODUCT, V, C0 = 0x16, 0x35, 0x2C
 
 
+def version(path):
+    """Version de l'OS Syntakt officiel de ce fichier, ou None."""
+    sha = hashlib.sha256(pathlib.Path(path).read_bytes()).hexdigest()
+    return next((v for v, h in OFFICIAL.items() if h == sha), None)
+
+
 def load(path):
-    """Syntakt_OS1.41.syx officiel -> {id de section: octets décompressés}. Vérifie tout."""
+    """Syntakt_OS1.42.syx ou 1.41 officiel -> {id de section: octets décompressés}. Vérifie tout."""
     raw = pathlib.Path(path).read_bytes()
-    if hashlib.sha256(raw).hexdigest() != SYX_SHA256:
-        raise SystemExit(f"!! {path} n'est pas le Syntakt_OS1.41.syx officiel")
+    if hashlib.sha256(raw).hexdigest() not in OFFICIAL.values():
+        raise SystemExit(f"!! {path} n'est pas un OS Syntakt officiel ({' ou '.join(OFFICIAL)})")
     msgs = syx._split(raw)
     head, data = msgs[0], msgs[1:-1]
     if head[1:4] != syx.ELEKTRON or head[4] != PRODUCT:

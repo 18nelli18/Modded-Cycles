@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preuve du portage exact (notes/17) : le vrai SD VINTAGE du Syntakt, extrait de TON Syntakt_OS1.41.syx
+"""Preuve du portage exact (notes/17) : le vrai SD VINTAGE du Syntakt, extrait de TON Syntakt_OS1.42.syx
 et greffé dans TON OS Cycles par le tweak sdvintage-exact, doit sortir EXACTEMENT les mêmes échantillons
 que dans le moteur audio du Syntakt émulé (stengine.py).
 
@@ -9,7 +9,7 @@ utile, et aucun code du Syntakt ne tourne tant qu'une piste SNARE n'est pas déc
 Même note, mêmes réglages, même instant de déclenchement. La boucle des voix du Cycles divise la sortie
 d'une piste par 2 : on compare Cycles x 2 et Syntakt, à 1 LSB près (arrondi du décalage).
 
-    python3 tools/emu/test_sdvintage_exact.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx
+    python3 tools/emu/test_sdvintage_exact.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx
 """
 import argparse
 import json
@@ -162,7 +162,7 @@ def idle_is_safe(os_img):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--cycles", required=True, help="model-cycles_OS1.13.syx officiel")
-    ap.add_argument("--syntakt", required=True, help="Syntakt_OS1.41.syx officiel")
+    ap.add_argument("--syntakt", required=True, help="Syntakt_OS1.42.syx (ou 1.41) officiel")
     ap.add_argument("--blocks", type=int, default=200, help="blocs de 32 trames par cas")
     ap.add_argument("--cases", help="numéros des cas à jouer (défaut : tous)")
     args = ap.parse_args()

@@ -9,7 +9,7 @@ démarrage (bootstrap, crochet, constructeur des tables), recherches, accesseurs
 changement de machine réel (défauts écrits), potards de l'écran principal, icônes, et le son : SDVtg et CPVtg
 identiques au Syntakt, SNARE identique à l'OS stock.
 
-    python3 tools/emu/test_syntakt_machines.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx [--tweak …json]
+    python3 tools/emu/test_syntakt_machines.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx [--tweak …json]
 """
 import argparse
 import bisect

@@ -3,12 +3,12 @@
  "order": 23,
  "name": "Vrais moteurs SD VINTAGE et CP VINTAGE du Syntakt en 7e et 8e machines (SDVtg, CPVtg)",
  "description": [
-  "Les moteurs SD VINTAGE et CP VINTAGE du Syntakt (OS 1.41), extraits AU BUILD de TON Syntakt_OS1.41.syx",
+  "Les moteurs SD VINTAGE et CP VINTAGE du Syntakt (OS 1.42 ou 1.41), extraits AU BUILD de TON Syntakt_OS1.42.syx",
   "(30 fonctions, 8258 o de code, avec leurs tables), en 7e et 8e machines",
   "\u00ab SDVtg \u00bb et \u00ab CPVtg \u00bb : les 6 machines d'origine ne changent pas. Potards propres, noms et",
   "d\u00e9fauts du Syntakt. SDVtg : Inharm, Freq Complex, Pitch Sweep, Mod Envelope (0/110/74/80, DEC 33).",
   "CPVtg : Body Char, Balance, Spacing Crunch, Body Envelope (24/25/46/37, DEC 32). Notes/19.",
-  "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier."
+  "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier."
  ],
  "device": "Model:Cycles",
  "os": "1.13",
@@ -610,8 +610,10 @@
   "dest": "0x43000000",
   "size": 218560,
   "syntakt": {
-   "os": "1.41",
-   "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+   "os": {
+    "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+    "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+   },
    "section": 7,
    "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
   },

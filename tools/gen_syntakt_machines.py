@@ -7,10 +7,10 @@ Même méthode que gen_sdvintage_7th.py (notes/18, testé sur la machine), éten
     tables de CP VINTAGE ; passerelle bridge_multi.c (un moteur du Syntakt par machine ajoutée) ;
   - OS Cycles : bornes des machines 5 -> 7, tables à 8 entrées, 86 descripteurs (76 d'origine + 5 + 5),
     enregistrements par machine 7 et 8, écran MACHINES à 8 noms et 8 repères.
-Il lit TON Syntakt_OS1.41.syx et TON model-cycles_OS1.13.syx pour analyser et vérifier ; le tweak ne
+Il lit TON Syntakt_OS1.42.syx et TON model-cycles_OS1.13.syx pour analyser et vérifier ; le tweak ne
 contient aucun firmware Elektron (écritures avec octets d'origine vérifiés, notre code, recette de copie).
 
-    python3 tools/gen_syntakt_machines.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx [--check]
+    python3 tools/gen_syntakt_machines.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx [--check]
 """
 import argparse
 import json
@@ -238,12 +238,12 @@ def build_tweak(img, st_img):
         "order": 23,
         "name": "Vrais moteurs SD VINTAGE et CP VINTAGE du Syntakt en 7e et 8e machines (SDVtg, CPVtg)",
         "description": [
-            "Les moteurs SD VINTAGE et CP VINTAGE du Syntakt (OS 1.41), extraits AU BUILD de TON Syntakt_OS1.41.syx",
+            "Les moteurs SD VINTAGE et CP VINTAGE du Syntakt (OS 1.42 ou 1.41), extraits AU BUILD de TON Syntakt_OS1.42.syx",
             f"({len(funcs)} fonctions, {code_bytes} o de code, avec leurs tables), en 7e et 8e machines",
             "« SDVtg » et « CPVtg » : les 6 machines d'origine ne changent pas. Potards propres, noms et",
             "défauts du Syntakt. SDVtg : Inharm, Freq Complex, Pitch Sweep, Mod Envelope (0/110/74/80, DEC 33).",
             "CPVtg : Body Char, Balance, Spacing Crunch, Body Envelope (24/25/46/37, DEC 32). Notes/19.",
-            "Demande build.py --syntakt Syntakt_OS1.41.syx. Aucun octet Elektron dans ce fichier.",
+            "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
         ],
         "device": "Model:Cycles",
         "os": "1.13",
@@ -254,7 +254,7 @@ def build_tweak(img, st_img):
             "at": f"{BASE + gx.IMAGE_LEN:#x}",
             "dest": f"{gx.DST_CODE:#x}",
             "size": size,
-            "syntakt": {"os": "1.41", "syx_sha256": syntakt.SYX_SHA256, "section": 7, "section_sha256": syntakt.DSP_SHA256},
+            "syntakt": {"os": dict(syntakt.OFFICIAL), "section": 7, "section_sha256": syntakt.DSP_SHA256},
             "parts": parts,
             "reloc": reloc,
         },
@@ -264,7 +264,7 @@ def build_tweak(img, st_img):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--cycles", required=True, help="model-cycles_OS1.13.syx officiel")
-    ap.add_argument("--syntakt", required=True, help="Syntakt_OS1.41.syx officiel")
+    ap.add_argument("--syntakt", required=True, help="Syntakt_OS1.42.syx (ou 1.41) officiel")
     ap.add_argument("--check", action="store_true", help="vérifie que le JSON versionné correspond")
     args = ap.parse_args()
     img = g7.cycles_main(args.cycles)

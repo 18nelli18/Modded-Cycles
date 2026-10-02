@@ -158,7 +158,7 @@ Quatre étapes, de haut en bas :
 
    La 5ᵉ case, **Vrais moteurs du Syntakt** ([note 20](notes/20-moteurs-syntakt-a-cocher.md)), ajoute des moteurs du Syntakt
    en machines supplémentaires, après les 6 d'origine (qui ne changent pas).
-   - Elle ajoute une 3ᵉ zone de dépôt à l'étape 2 pour ton `Syntakt_OS1.41.syx` officiel. La page y lit les moteurs ; le fichier ne quitte pas l'ordinateur.
+   - Elle ajoute une 3ᵉ zone de dépôt à l'étape 2 pour ton `Syntakt_OS1.42.syx` officiel (ou 1.41 : mêmes moteurs). La page y lit les moteurs ; le fichier ne quitte pas l'ordinateur.
    - Une case par moteur ; les moteurs cochés viennent après Chord, dans cet ordre :
      - **SDVtg** = SD VINTAGE (cochée par défaut, [note 18](notes/18-septieme-machine.md)) ;
      - **CPVtg** = CP VINTAGE ([note 19](notes/19-cp-vintage-8e-machine.md)) ;

@@ -2,7 +2,7 @@
 """Compare notre SD VINTAGE (Model:Cycles, tweak sdvintage-snare) au vrai SD VINTAGE du Syntakt (notes/16).
 
 Les deux moteurs tournent en émulation, chacun dans SA vraie boucle des voix :
-  - le Syntakt : programme du processeur audio (section 7 de TON Syntakt_OS1.41.syx), stengine.py ;
+  - le Syntakt : programme du processeur audio (section 7 de TON Syntakt_OS1.42.syx), stengine.py ;
   - le Cycles  : TON model-cycles_OS1.13.syx patché par le tweak, mcengine.py.
 Mêmes réglages des deux côtés (les potards du Cycles ont le sens de ceux du Syntakt), mêmes mesures
 (hauteur et balayage du corps, durées, niveau et centre de l'amas aigu), et un WAV A/B par cas :
@@ -10,7 +10,7 @@ Syntakt, 0,3 s de silence, notre version (normalisation commune).
 
     pip install unicorn numpy        (+ objdump m68k : binutils-m68k-linux-gnu, ou binutils de Homebrew)
     python3 tools/emu/compare_sdvintage.py --cycles model-cycles_OS1.13.syx \\
-        --syntakt Syntakt_OS1.41.syx [--wav dossier/] [--cases defaut,swep127,...]
+        --syntakt Syntakt_OS1.42.syx [--wav dossier/] [--cases defaut,swep127,...]
 """
 import argparse
 import json
@@ -115,7 +115,7 @@ def write_ab(path, a, b):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--cycles", required=True, help="model-cycles_OS1.13.syx officiel")
-    ap.add_argument("--syntakt", required=True, help="Syntakt_OS1.41.syx officiel")
+    ap.add_argument("--syntakt", required=True, help="Syntakt_OS1.42.syx (ou 1.41) officiel")
     ap.add_argument("--wav", help="dossier des WAV A/B (Syntakt puis Cycles)")
     ap.add_argument("--cases", default="defaut", help="cas, séparés par des virgules ('all' = tous) : " + ",".join(CASES))
     ap.add_argument("--ms", type=int, default=400, help="durée rendue par cas (ms)")

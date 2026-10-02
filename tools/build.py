@@ -290,12 +290,12 @@ def build_payload(chosen, main_os, syntakt_path):
     if any("syntakt" in t["append"] for t in apps):     # morceaux copiés du programme audio du Syntakt
         t = next(t for t in apps if "syntakt" in t["append"])
         if not syntakt_path:
-            raise SystemExit(f"!! {t['id']} a besoin de ton fichier Syntakt : --syntakt Syntakt_OS1.41.syx")
+            raise SystemExit(f"!! {t['id']} a besoin de ton fichier Syntakt : --syntakt Syntakt_OS1.42.syx")
         sys.path.insert(0, str(HERE / "emu"))
         import syntakt                                  # noqa: E402  (tools/emu/syntakt.py)
         for t in apps:
             st = t["append"].get("syntakt")
-            if st and (syntakt.SYX_SHA256, syntakt.DSP_SHA256) != (st["syx_sha256"], st["section_sha256"]):
+            if st and (syntakt.OFFICIAL, syntakt.DSP_SHA256) != (st["os"], st["section_sha256"]):
                 raise SystemExit("!! empreintes Syntakt du tweak et de tools/emu/syntakt.py différentes")
         img = syntakt.dsp_image(syntakt_path)           # vérifie le .syx officiel et sa section 7
     out = bytearray()
@@ -324,7 +324,7 @@ def main():
     ap.add_argument("-o", "--output", help="fichier de sortie (defaut: <in>_mod.syx)")
     ap.add_argument("--list", action="store_true", help="liste les tweaks disponibles")
     ap.add_argument("--expect-mainos", help="SHA-256 attendu du MAIN OS patche (verification)")
-    ap.add_argument("--syntakt", help="ton Syntakt_OS1.41.syx officiel (tweaks qui en extraient un moteur)")
+    ap.add_argument("--syntakt", help="ton Syntakt_OS1.42.syx officiel (tweaks qui en extraient un moteur)")
     ap.add_argument("--force-cave", action="store_true",
                     help="ecrit meme si l'image d'origine pointe dans une zone 0xFF utilisee (a verifier a la main)")
     args = ap.parse_args()

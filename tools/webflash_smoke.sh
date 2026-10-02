@@ -7,7 +7,7 @@
 #   tools/webflash_smoke.sh                               # synthetic OS only
 #   tools/webflash_smoke.sh model-cycles_OS1.13.syx       # + every real build vs its reference hash
 #   tools/webflash_smoke.sh model-cycles_OS1.13.syx model-samples_OS1.13.syx   # + the "Samples OS" tab
-#   tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.41.syx         # + SD VINTAGE (Syntakt engine)
+#   tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.42.syx         # + the Syntakt engines (1.41 too)
 # (official files are told apart by their names; any order)
 #
 # jsdom is installed in a temporary folder (npm): nothing is added to the repository.

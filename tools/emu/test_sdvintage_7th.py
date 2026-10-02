@@ -11,7 +11,7 @@ On exécute le VRAI code de l'OS Cycles (stock et modifié) en émulation, fonct
   5. icône de machine bornée : SNARE pour SDVtg ;
   6. son : SDVtg identique au Syntakt, SNARE identique à la SNARE d'origine, rien du Syntakt au repos.
 
-    python3 tools/emu/test_sdvintage_7th.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx
+    python3 tools/emu/test_sdvintage_7th.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx
 """
 import argparse
 import bisect

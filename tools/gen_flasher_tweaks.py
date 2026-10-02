@@ -95,7 +95,7 @@ FEATURES = [
     {
         "id": "syntakt",
         "label": "Vrais moteurs du Syntakt",
-        "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.41.syx (a deposer a l'etape 2), "
+        "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.42.syx (a deposer a l'etape 2), "
                 "en machines supplementaires apres les 6 d'origine : coche ceux que tu veux. "
                 "Identiques au Syntakt en emulation.",
         "status": "tested",
@@ -161,7 +161,7 @@ def render():
         # onglet « OS Samples » : l'OS Model:Samples officiel, mis dans le conteneur du Cycles (crossflash)
         "samples": {"syx_sha256": OFFICIAL["samples"]["syx"], "main_sha256": OFFICIAL["samples"]["main"],
                     "download": "https://www.elektron.se/support-downloads/modelsamples"},
-        # fonctionnalités « needs: syntakt » : le fichier officiel Syntakt_OS1.41.syx de l'utilisateur
+        # fonctionnalités « needs: syntakt » : le fichier officiel Syntakt_OS1.42.syx de l'utilisateur
         "syntakt": {"download": "https://www.elektron.se/support-downloads/syntakt"},
     }
     body = json.dumps(payload, ensure_ascii=False, indent=1)

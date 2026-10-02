@@ -8,7 +8,7 @@ au Cycles d'origine (ou au tweak sans l'arrêt des voix muettes, pour les moteur
   - coût : instructions par bloc de la boucle des voix, une fois les 6 voix muettes ;
   - redéclenchement après l'arrêt : écart avec la référence (rapporté à la crête du son).
 
-    python3 tools/emu/test_idle.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx --tweak ….json
+    python3 tools/emu/test_idle.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx --tweak ….json
 """
 import argparse
 import json

@@ -38,7 +38,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll": "74d1f467974c019a7120e8dce7c4c45a773d5d2854a2832eea64e34d327dc5ce",
   "latching-mute+trig-preview+browser-scroll": "71fef138b1ae16f3ad440ecaa6a6327c1a987ce2c8a86b74329f68159981a15c",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll": "fd57831c61926fb3b1902cadcb0f95e68db3bb637b4cd20860a0efc46db82cfa",
-  // + real Syntakt engines SDVtg (tweak syntakt-sd), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SDVtg (tweak syntakt-sd), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd": "3d7f246d993fbf76558a393fb1c377cc14be14d4c8dc736fc1e9e2b837180b47",
   "6ch-usbup+syntakt-sd": "c3ff9b0447f8dcff630883c41c5ad7400c015631b8d3cabd8516dc7e63018f92",
   "model-tg-st+syntakt-tg-sd": "63f6f63cde332e5daff1d6e6095497606eab1f8183c44bcd860f80a5849cc532",
@@ -57,7 +57,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-sd": "e1cfd54f90ebf1c8345f0b50eb2de9aed09d17de93fb777606b03e30e6dd2ce1",
   "latching-mute+trig-preview+browser-scroll+syntakt-sd": "73ad024e800fd9d350686a9b76abf1a1681aba44da2f3be6fe9b9862c8c073cd",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-sd": "7d0ffc1ccaf4b7d0639f7c9aebe3c42999d4ddf79fba433c112a14d1b8165fc0",
-  // + real Syntakt engines CPVtg (tweak syntakt-cp), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines CPVtg (tweak syntakt-cp), with the official Syntakt OS 1.42 or 1.41
   "syntakt-cp": "08471a7add515a9c22ab252dde18cb905473a9a40d794c0cddddf8563cc4fdbf",
   "6ch-usbup+syntakt-cp": "4abf626913f73e09c1f6911acb8fe0a15af7f83275a49c4d8acda783459bb6a7",
   "model-tg-st+syntakt-tg-cp": "27ba1f72180efed46e0b31cd3d8462d5c9c4e396cc20d2828c352f9f97f169a5",
@@ -76,7 +76,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-cp": "4fc59abb8f289c474a183ab7c45e623565f086552e35d8dc5c068a3ee89fcdda",
   "latching-mute+trig-preview+browser-scroll+syntakt-cp": "63f5ca0100e4bd9064ee82eab1b39259e58d2da6147fde951ff2f034e863ff63",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-cp": "4ea9640ffc38edee214444fbdcfc256b939c1d731c29f4b5a74f93193e672c46",
-  // + real Syntakt engines SYToy (tweak syntakt-toy), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SYToy (tweak syntakt-toy), with the official Syntakt OS 1.42 or 1.41
   "syntakt-toy": "33d138abbf714acc08968733b91d3df2b2dbb50b320a3761c8df7e825270b68e",
   "6ch-usbup+syntakt-toy": "aa0078a874c89d197676e4b9bfb3e7482955ab05a5b3874fbea60c186fb3f3e1",
   "model-tg-st+syntakt-tg-toy": "2de8a5ec925de7baaaad65de9d008f70d993c14b6223c0f7375ab52330c6fea4",
@@ -95,7 +95,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-toy": "3f71746235069f225559a146cc1d9e30c5c072bf24c9710d34b8fd1269a92e90",
   "latching-mute+trig-preview+browser-scroll+syntakt-toy": "dfe575c0e62744bd709ea1fb86d7200689725703d6ba82de3231def159ceec43",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-toy": "10b5502687fc754f9a4820b8ed633971ce757349818292243b1126f31abe329c",
-  // + real Syntakt engines SYBit (tweak syntakt-bits), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SYBit (tweak syntakt-bits), with the official Syntakt OS 1.42 or 1.41
   "syntakt-bits": "7d8a27208fcdd127249e5a2c8d837c9a13d655ea77dc0f96ba28bd0ef36b66bc",
   "6ch-usbup+syntakt-bits": "af246b8e8ee2442aebffb6c0aea55a1d3dc1bc2df480d80e5c07fe2145fca12e",
   "model-tg-st+syntakt-tg-bits": "0d98d6c2451e455c38ba8f536cac726c32069cd43486aacb2b1c115d12de3143",
@@ -114,7 +114,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-bits": "f4a318eb623ba27a724ac23dc23481e9dd46f2514e774381738e3403f1e6ac0c",
   "latching-mute+trig-preview+browser-scroll+syntakt-bits": "b547bf4d731c462d00acc1f954bd359ae49790464e002897104334306a9a7e4e",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-bits": "f83d7e4efdeacce15b75ce69fd3473846f0d227713f351b763061205c611ade1",
-  // + real Syntakt engines SYSwm (tweak syntakt-swarm), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SYSwm (tweak syntakt-swarm), with the official Syntakt OS 1.42 or 1.41
   "syntakt-swarm": "5892a9122daabd2ae0d14b6d35ea94d4b32484137eb9f82cf1da52356cc71f90",
   "6ch-usbup+syntakt-swarm": "a98b4a3fdd755975bccc3734a087d69dadc87ae224341dab709f9628ab8d2a04",
   "model-tg-st+syntakt-tg-swarm": "3fbebfd958a1df35d0287208ee537f4d994bf8c75f4b81d78d9fe35c6d09c561",
@@ -133,7 +133,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-swarm": "5ba7b4721161c18ddada43e0539e3b4a254d511493b024b5e4f8aec86835d11c",
   "latching-mute+trig-preview+browser-scroll+syntakt-swarm": "758d0bc78bc96da857c459b056fd876ede0dc45f5e9738589d92d0b15379e3a5",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-swarm": "4326478693f62274d74f67e2d3803e950317855e5afbde5abf4023a44f54749c",
-  // + real Syntakt engines SDVtg, CPVtg (tweak syntakt-sd-cp), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SDVtg, CPVtg (tweak syntakt-sd-cp), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd-cp": "fbf61587df3025fb7210e6b5d8070ee1f898ba8e93f63c3f6c74890fdd66ca74",
   "6ch-usbup+syntakt-sd-cp": "2b6ffbb1a716e189f23a8c1c86d7e6ded304b0272470ae81101c103905f9a77d",
   "model-tg-st+syntakt-tg-sd-cp": "718081877869d40b4cce77b55f1506a3be7535450f1ea8c308ad254b2345baad",
@@ -152,7 +152,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-sd-cp": "3df12e1c40a207afac8ad5949ad002077623482fea0d4b0eedc4273520343319",
   "latching-mute+trig-preview+browser-scroll+syntakt-sd-cp": "d24e5edb8c079a497f7b5f4d66a2a1351240850db960911872524e67ed935fd3",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-sd-cp": "c04e2ef4f040cf3e94b742402d70d7701cf5b9cde825bdd7251a62068a81d58d",
-  // + real Syntakt engines SDVtg, SYToy (tweak syntakt-sd-toy), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SDVtg, SYToy (tweak syntakt-sd-toy), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd-toy": "3d5154f4ee8e73f3f8dc3974f87d27af4e3971b9c0705e788becc02447dd8aaf",
   "6ch-usbup+syntakt-sd-toy": "045332551f8cf8255462f35985f1a27ea1096e2d20f37e05753d797ac63af333",
   "model-tg-st+syntakt-tg-sd-toy": "c67667293a15bb9b9875aa2acb9d905c1dab6cc6096944fb03dca14bc49ed9dd",
@@ -171,7 +171,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-sd-toy": "8c28433085b8224ccbd7500940b22fa4067361ea52387c533554749d8079c24c",
   "latching-mute+trig-preview+browser-scroll+syntakt-sd-toy": "501386d100a940048904858854f515d7e667674807baea4311f31968e441e47d",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-sd-toy": "fac5aeea2cb36ceca250f1aef2aedf143a6bc22ccc4481abe021eba232240d83",
-  // + real Syntakt engines SDVtg, SYBit (tweak syntakt-sd-bits), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SDVtg, SYBit (tweak syntakt-sd-bits), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd-bits": "68fddb9c13a8761d7731b193fc9868d81ec78227938e57e47b8a2409d1614ef9",
   "6ch-usbup+syntakt-sd-bits": "0793da84695a347bed574406411245c6a9b77dd70bf1818f872e3228fce64794",
   "model-tg-st+syntakt-tg-sd-bits": "93d2c87a326fd5bb0a6e0c032b999fd73fa924409582f579b676a4cc185e7ada",
@@ -190,7 +190,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-sd-bits": "6413ca40fe8a8e3b6cd17d6351c12c8cd21e71a6e3dec969f58dda487a0ba319",
   "latching-mute+trig-preview+browser-scroll+syntakt-sd-bits": "8a5a8df85bbbb67edc852b1d6be9d6d3a8396e4b0851002609642149c48f117f",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-sd-bits": "391c5113f64627d93a674e8a355d3c2cbc715aa6420a4c604223097d7c60e0d7",
-  // + real Syntakt engines SDVtg, SYSwm (tweak syntakt-sd-swarm), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SDVtg, SYSwm (tweak syntakt-sd-swarm), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd-swarm": "c139d6f212a0dd3ee52da64585acb3d0c8bd57a232162888b58ccb2c485abd51",
   "6ch-usbup+syntakt-sd-swarm": "4cd5b9a0b13b5a392980f6f6aef1e4daca36f59e0913f879777f2cb67024a51b",
   "model-tg-st+syntakt-tg-sd-swarm": "ec8a65ca6d071e0c008f581955ec86dbd7827ecebe58a539709c07485d13a1c2",
@@ -209,7 +209,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-sd-swarm": "55ae794177dbb74f82aadfba82bc67cc699af1b5f70fa3f4c510477767897f7e",
   "latching-mute+trig-preview+browser-scroll+syntakt-sd-swarm": "05f47c69d5c298827afc59fddafe2fa8e2863a5b0ad911943a67d88ee8d9fd2c",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-sd-swarm": "fe95fc1c6c4a09dfe700cc9301a13c09f2390b7f87adbae8cf30f15fb288efcb",
-  // + real Syntakt engines CPVtg, SYToy (tweak syntakt-cp-toy), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines CPVtg, SYToy (tweak syntakt-cp-toy), with the official Syntakt OS 1.42 or 1.41
   "syntakt-cp-toy": "604eef70cd01961129816d6a9a74d60c1f5cfdc2e58d989828f98684df0c25c6",
   "6ch-usbup+syntakt-cp-toy": "fffb9a4c8e68e2876d6a1f57471641bd04ef537ae744b3c144f00df845d043d7",
   "model-tg-st+syntakt-tg-cp-toy": "8077e1ab4c5ec76403dacef3a10dfc7af632326ce6c47fd14d8439c81192da1a",
@@ -228,7 +228,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-cp-toy": "bde02d0a1bc6fca1084fa3e470ab555e7876fa0299982dd3eca607c2b3e97e55",
   "latching-mute+trig-preview+browser-scroll+syntakt-cp-toy": "c0f33f6a9f47f9a09ceee113f74fe11b25ed252a3dcf7fb9aa4737826e2f1b11",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-cp-toy": "fa873705fcea6d5daad44f52488a497e4b9b96028cc6e4e4578945651ee04ed2",
-  // + real Syntakt engines CPVtg, SYBit (tweak syntakt-cp-bits), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines CPVtg, SYBit (tweak syntakt-cp-bits), with the official Syntakt OS 1.42 or 1.41
   "syntakt-cp-bits": "460606f83cb4005e494e00d438baf8ae1b211d0a426bff3913debf09443ba388",
   "6ch-usbup+syntakt-cp-bits": "899181498142cd1e9c8c063b220b908bcdbf15a79b789323478930df6cd97898",
   "model-tg-st+syntakt-tg-cp-bits": "4e26e7451ebc4b3c05171356de8080f571229b909ced0be2f255f632c048f01d",
@@ -247,7 +247,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-cp-bits": "05287069b452c2b7bb84f2973b6b06705e3fdd1255392a07885233d3db9ed3c1",
   "latching-mute+trig-preview+browser-scroll+syntakt-cp-bits": "e596483baa67e0d641a818ccb3bf20cc5d7e9aa22eeab55ac5716ddb4029d5bd",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-cp-bits": "143e71e527879be5e731b103372bfd06201fb1f4e8f39dfda0f2bf76d4288bce",
-  // + real Syntakt engines CPVtg, SYSwm (tweak syntakt-cp-swarm), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines CPVtg, SYSwm (tweak syntakt-cp-swarm), with the official Syntakt OS 1.42 or 1.41
   "syntakt-cp-swarm": "b1ab5e26be56138f70e6cf7c275f59002694fc10e8940588bc4b304bfc46b957",
   "6ch-usbup+syntakt-cp-swarm": "a56dff56edc718abc7ceaa91e0cde765f47798c9693a6ada1559876c58266755",
   "model-tg-st+syntakt-tg-cp-swarm": "f7387e140fc7209f77aceb063e8842363fc9e95fe75ad16df8980fec12ddb80d",
@@ -266,7 +266,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-cp-swarm": "87e7c04302aed5286b46fa2c810141897d072cc582cbd762a3c3f43c10203f2b",
   "latching-mute+trig-preview+browser-scroll+syntakt-cp-swarm": "26d80aaa6ad3cdf18166be9fde9e251972e2ebc82016393bc5de311a38eb6f47",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-cp-swarm": "b85c6c02bd84f44b1ca0f52fdb5772e4eaf5e46aab6f438edf50edb049306283",
-  // + real Syntakt engines SYToy, SYBit (tweak syntakt-toy-bits), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SYToy, SYBit (tweak syntakt-toy-bits), with the official Syntakt OS 1.42 or 1.41
   "syntakt-toy-bits": "1211d6964c8e685bf6e6863f61ebb8b0b344ee6a53ab098add0cb514175d5b99",
   "6ch-usbup+syntakt-toy-bits": "97328f732a3bbd22ee6edebd94d5fbe58e00b1fa9af42877ab3533890f119fea",
   "model-tg-st+syntakt-tg-toy-bits": "cd1385822a59355839255fbe6326f16d935b7388a19df2c131b2d65f8bb56250",
@@ -285,7 +285,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-toy-bits": "355e7085daa3d15c7417e384042dd1cf132377809bc8a0fb03821f6ed076cec9",
   "latching-mute+trig-preview+browser-scroll+syntakt-toy-bits": "a9afc8a820b5cca822a6c9d91f5055aa3804808fdbcc2c9edb4479c877fd7624",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-toy-bits": "52f091b434c1d2abe1a117acbb4cd0b5cd5868b3a63b169cdfaa6e908f85fe72",
-  // + real Syntakt engines SYToy, SYSwm (tweak syntakt-toy-swarm), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SYToy, SYSwm (tweak syntakt-toy-swarm), with the official Syntakt OS 1.42 or 1.41
   "syntakt-toy-swarm": "64b4cb16a46f4b313f38891ed44d6a0af50a056164f5a10b8182928a74095011",
   "6ch-usbup+syntakt-toy-swarm": "313d27019b36f3de98561ef221961d90dd62e76f5e287664d48a06509716e824",
   "model-tg-st+syntakt-tg-toy-swarm": "c101c8572f211990a87d870823c73af651929dd7ddcd8b59d619c2ff0e8a6543",
@@ -304,7 +304,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-toy-swarm": "11515ca4fca2a449a29699ac0b5d50e43d3ba2f0d5d47e2bc585fb638f290bd2",
   "latching-mute+trig-preview+browser-scroll+syntakt-toy-swarm": "2269f6d41efdb6f858ec0f0206b60ac6d52cc902f90743841c7ff329c6803fdb",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-toy-swarm": "3405568d3b553f980a9635590e0d50fee115144bf61b449117fd7c30b34135f1",
-  // + real Syntakt engines SYBit, SYSwm (tweak syntakt-bits-swarm), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SYBit, SYSwm (tweak syntakt-bits-swarm), with the official Syntakt OS 1.42 or 1.41
   "syntakt-bits-swarm": "7bd6ed31f793fc953e1f7e852832e4b538024876f44903d16f8641d62e98521e",
   "6ch-usbup+syntakt-bits-swarm": "e0c493bfc7256d9d194884abaa66a4f0612ae02374076c5841569ef0321f3d3b",
   "model-tg-st+syntakt-tg-bits-swarm": "bd0a57581cc0956c98e1cc0b6b829bdfcb892da09d4c068d26b695e3206497d0",
@@ -323,7 +323,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-bits-swarm": "6275a4a0dc5f577d5acfe9cac70e0c3feb952247a77380a9c5fb689469c4821b",
   "latching-mute+trig-preview+browser-scroll+syntakt-bits-swarm": "384840c274346c4259fa61d3b381598c94c0f7cabc16998fa35dd5e93b619036",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-bits-swarm": "31c2c6e4fdd898dcc3e0a19fc0beb019e1a964a53f055aaf2432f2fb00ebb2ef",
-  // + real Syntakt engines SDVtg, CPVtg, SYToy (tweak syntakt-sd-cp-toy), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SDVtg, CPVtg, SYToy (tweak syntakt-sd-cp-toy), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd-cp-toy": "634d2a44eaece2489f1c20ff1f813b31ce2e59a28a17dd999c75dfc31c50a157",
   "6ch-usbup+syntakt-sd-cp-toy": "9ee24174cf20db13e6483f066910861d9aa0e406e51fa0c5e7e507ba8186ddcd",
   "model-tg-st+syntakt-tg-sd-cp-toy": "4385dba5852b7ffd59ff372637a700e47bdd2b0df85e6c031ec1b110a8e40911",
@@ -342,7 +342,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-sd-cp-toy": "8f3356cf044908a0957efea5b8f94f95823755465b34e3784d01c0538e92d534",
   "latching-mute+trig-preview+browser-scroll+syntakt-sd-cp-toy": "f9562597b786760ed7846e7f894a69b670e3c2c5cdbbeccaddf1ebf3b0f9d45f",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-sd-cp-toy": "caaad1770a1aef403f98f56888975af7cfdaba3f5198b54b5287ce6d66ac2021",
-  // + real Syntakt engines SDVtg, CPVtg, SYBit (tweak syntakt-sd-cp-bits), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SDVtg, CPVtg, SYBit (tweak syntakt-sd-cp-bits), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd-cp-bits": "6596a746da11b83df1391d92f7abc827d6fa4833e858d19b0d763100589e6ccd",
   "6ch-usbup+syntakt-sd-cp-bits": "c91b9e1ebb1c5621b9b17588c209b9ea08af3d6ea851b76392007843e1cbc773",
   "model-tg-st+syntakt-tg-sd-cp-bits": "31a5ecb81414ab775910c2391cc6f18ff64011a17fa994b8ef5e787c2e1679a0",
@@ -361,7 +361,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-sd-cp-bits": "115dfce01fd3214ea7f6f36712d344709f184ce9f409590327c65d174ce88d7d",
   "latching-mute+trig-preview+browser-scroll+syntakt-sd-cp-bits": "ef390584988bf680a72a722e2aa7ad3508ee005cb1b5087bd1c9b9030f08274c",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-sd-cp-bits": "3983036bddd218c0140f6f2be95076ba0ac746e1d3c5ad45b40a20bd5b5de52c",
-  // + real Syntakt engines SDVtg, CPVtg, SYSwm (tweak syntakt-sd-cp-swarm), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SDVtg, CPVtg, SYSwm (tweak syntakt-sd-cp-swarm), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd-cp-swarm": "3e37972d1b5e61054bc07cf8d3b58fd13fee0dcaf9a737a6265b8098b2c40603",
   "6ch-usbup+syntakt-sd-cp-swarm": "ca8403f1d4deb67f591e6d81d1965b3c65ce2b8e22eaa088ad12a8c62ac1c89a",
   "model-tg-st+syntakt-tg-sd-cp-swarm": "fb2261a6f9c6b90f9e1b1753614ee082866584408fb3c26ec6323e9b6d0dd82b",
@@ -380,7 +380,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-sd-cp-swarm": "35df824287c32047d047a67f27ccd1ae0449681c8f4bb000fabdc59218a9ecde",
   "latching-mute+trig-preview+browser-scroll+syntakt-sd-cp-swarm": "77028f1355d2d2f7cabe94d66ed6b95118eacfae305f8ff9f3d9bafe4b5e9247",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-sd-cp-swarm": "9ec1f2c154563a177aa449eb108cc8e781eaa8af934a5f3d719c662b9a6ceedd",
-  // + real Syntakt engines SDVtg, SYToy, SYBit (tweak syntakt-sd-toy-bits), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SDVtg, SYToy, SYBit (tweak syntakt-sd-toy-bits), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd-toy-bits": "531e32d9c52e60c0e1222c41bf1bf3eda488ffc00c0738fa6c1969fa415d7feb",
   "6ch-usbup+syntakt-sd-toy-bits": "a071bcba3053309cd5b80234cefe6abca1dab61c10495e0f3a5f988ccb766d50",
   "model-tg-st+syntakt-tg-sd-toy-bits": "61070623f75a8400694dc0c3158fcad990960d643ed26716124c21a503b1b101",
@@ -399,7 +399,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-sd-toy-bits": "0cfde6a82941c6ae3f7a55a415c73e5baf2a896d7581219789c042ffef60acd0",
   "latching-mute+trig-preview+browser-scroll+syntakt-sd-toy-bits": "5aa118411220d5920da0d91ba681a3dc80f7b69cc5c0b5d58c78c3ec39eb98f4",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-sd-toy-bits": "d157c22c422fc5a2ec22428f370eb4a85c456ab5315237c30a5398cfa8afcc8b",
-  // + real Syntakt engines SDVtg, SYToy, SYSwm (tweak syntakt-sd-toy-swarm), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SDVtg, SYToy, SYSwm (tweak syntakt-sd-toy-swarm), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd-toy-swarm": "05e58f777f6bf7a1f5061b9dbaf693f910ed5590319f6dd9ea90a56c54ab8550",
   "6ch-usbup+syntakt-sd-toy-swarm": "4a55332851e360bf42bb68a107f1b485d0b3096500cb9a67b84cf955c2611bb6",
   "model-tg-st+syntakt-tg-sd-toy-swarm": "6213a633dce9dda1ffb2d0cbc209118eae6b5d6a091bd2a2431109f6d8c76e28",
@@ -418,7 +418,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-sd-toy-swarm": "45c75792e8ce7bff4db57f47b95c0ce077f53e107ab4a9b673841c717eaf9457",
   "latching-mute+trig-preview+browser-scroll+syntakt-sd-toy-swarm": "6a8473da0f43250decdfa8d3354108695ca9d5144d43e29213e22489f5233234",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-sd-toy-swarm": "5abb1f40d22e7bb2b0a882fe877527b86524c8fdd622aa3d4a7c1e232e9e0e06",
-  // + real Syntakt engines SDVtg, SYBit, SYSwm (tweak syntakt-sd-bits-swarm), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SDVtg, SYBit, SYSwm (tweak syntakt-sd-bits-swarm), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd-bits-swarm": "848be273372ac441b00b73131ba99d2967ac291af7eb913c94a95b19fc81ae1c",
   "6ch-usbup+syntakt-sd-bits-swarm": "1dd0c54765d7c1457b14e5533468c7143f7fa73c5f80d55ca84625e0074416b0",
   "model-tg-st+syntakt-tg-sd-bits-swarm": "ef648f833e2355e71f94a9221d28e4fea920551b736cab1137a776881a072164",
@@ -437,7 +437,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-sd-bits-swarm": "f6eec156fcd7acd4f17a6c9de2d42e018d7e675a3efdd3c3f57444879f4d06aa",
   "latching-mute+trig-preview+browser-scroll+syntakt-sd-bits-swarm": "b6ec355c141231c3c444c186227811a4080bef265c07e42955c2ff4bb5194f14",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-sd-bits-swarm": "4b411ef00132dfa35e4feea3f588cbd737f261a148d668d2efdf0acc98e4befa",
-  // + real Syntakt engines CPVtg, SYToy, SYBit (tweak syntakt-cp-toy-bits), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines CPVtg, SYToy, SYBit (tweak syntakt-cp-toy-bits), with the official Syntakt OS 1.42 or 1.41
   "syntakt-cp-toy-bits": "f2546c3737b639443fd9c8c3a7c313363055637b39061d007974651089ab600c",
   "6ch-usbup+syntakt-cp-toy-bits": "08d9c5ebe23c8aa1dc6e98ced6b5ceed63cbe64be4c87fb74f0d9c565b53823c",
   "model-tg-st+syntakt-tg-cp-toy-bits": "ef509f65fbb241cb8915c3df3796d0819c48d981b39bbd38ae5bf667178ebce0",
@@ -456,7 +456,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-cp-toy-bits": "cad90962a78183e0ac076e84f4070383372b4d26a777ebbaeca7f0ac0d0c07a4",
   "latching-mute+trig-preview+browser-scroll+syntakt-cp-toy-bits": "3e8834bfdfd6d387bfffa3ad4d5fddcd00c97deff12b4273b713270447e1e901",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-cp-toy-bits": "15ad4b7fd87116d675015cef975c18b726b7848fca9024c3dbc7f4f56221795e",
-  // + real Syntakt engines CPVtg, SYToy, SYSwm (tweak syntakt-cp-toy-swarm), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines CPVtg, SYToy, SYSwm (tweak syntakt-cp-toy-swarm), with the official Syntakt OS 1.42 or 1.41
   "syntakt-cp-toy-swarm": "f029a6853dfdbfdc7e2b3ea06f2e0dd6debdbc65cdf302b0206f6e00ff84bd8d",
   "6ch-usbup+syntakt-cp-toy-swarm": "6e573cc25f4861dea8ae4cdac521caa13a67a9b0342a9e7b1dce9d344ad9683d",
   "model-tg-st+syntakt-tg-cp-toy-swarm": "7052ca26e43a2e7ea314dee74d339c0930bad4a5dbec649025e0664339c5063c",
@@ -475,7 +475,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-cp-toy-swarm": "504feb2cfd8944773099ed06d754722c6c6b48af3fbaf1281d8081497eda870f",
   "latching-mute+trig-preview+browser-scroll+syntakt-cp-toy-swarm": "2dbf823739ce4245bdbbf2121f6299a6e35ebe250974326a7e93375118976f28",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-cp-toy-swarm": "090463026662b08b7f40b573853b2a9f7b6d8c9207b61a2b5a3db4e3bd43b765",
-  // + real Syntakt engines CPVtg, SYBit, SYSwm (tweak syntakt-cp-bits-swarm), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines CPVtg, SYBit, SYSwm (tweak syntakt-cp-bits-swarm), with the official Syntakt OS 1.42 or 1.41
   "syntakt-cp-bits-swarm": "52a813e85c65a5e5989f0bb80cce94d52ce022d22f62f857f358fb80f592fe63",
   "6ch-usbup+syntakt-cp-bits-swarm": "0582a622ec5acdf656445afda8b5e1317b2e99394375734a70dd031f25f14b8c",
   "model-tg-st+syntakt-tg-cp-bits-swarm": "802899e901fa6d7f081facdedafa3febf20b210a3d963b0ea1f072feaa04f6cf",
@@ -494,7 +494,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-cp-bits-swarm": "279123379a3daaa025be92335ed785698f541f7216d5260301ba623632dc8df7",
   "latching-mute+trig-preview+browser-scroll+syntakt-cp-bits-swarm": "f8a652b5ca0e0868c87732e25fdea1bd590e478e76dd69a48b547c5478846f15",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-cp-bits-swarm": "a87559a871c10b0afcf2a9e625923227e31089edfb4ffc77437e078035d18922",
-  // + real Syntakt engines SYToy, SYBit, SYSwm (tweak syntakt-toy-bits-swarm), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SYToy, SYBit, SYSwm (tweak syntakt-toy-bits-swarm), with the official Syntakt OS 1.42 or 1.41
   "syntakt-toy-bits-swarm": "8598f71480d53d72af29ae8f8dcab1240fbd7023c9de01e86b7d36a5b8921e41",
   "6ch-usbup+syntakt-toy-bits-swarm": "0259b8b9abfb350e30a2e88cb0c4bdf5d836560f8f64d47bb2fe7aa415510651",
   "model-tg-st+syntakt-tg-toy-bits-swarm": "8c4f5717a571bc95695c37e8a4e274b15d0599ce376a4bc0056558ce9868c530",
@@ -513,7 +513,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-toy-bits-swarm": "fe4368fba79e383879e370df2d4d338d678c3f5b9b66bcc2bb5a9b2a9e2466dd",
   "latching-mute+trig-preview+browser-scroll+syntakt-toy-bits-swarm": "a875880aaefc5c2ac20d9fd5b85f5e62ecb94589d4ed2ab8373ed094f5c16676",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-toy-bits-swarm": "8530484a27b7c8d63250a14594f3415b732cf1311e3bb1d11513d59eeea8b0de",
-  // + real Syntakt engines SDVtg, CPVtg, SYToy, SYBit (tweak syntakt-sd-cp-toy-bits), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SDVtg, CPVtg, SYToy, SYBit (tweak syntakt-sd-cp-toy-bits), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd-cp-toy-bits": "80fe816a88a49273bbc21b4e05263a993a44ad0a6b65dc1aa13442c524094a20",
   "6ch-usbup+syntakt-sd-cp-toy-bits": "458fed1c89542fbbda0fecb5297589e603194b23bdc63d4581eec69832431c34",
   "model-tg-st+syntakt-tg-sd-cp-toy-bits": "9dce1983a90e4107caba789d3774e75b6abc83c259c3bc9481e87ef7621dfcec",
@@ -532,7 +532,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-sd-cp-toy-bits": "7b5f6da0706b6860f5c1e3babb6bb6b7f26bb04eb29bedf391206c2ef2578643",
   "latching-mute+trig-preview+browser-scroll+syntakt-sd-cp-toy-bits": "f8e820290c687b98a61a1ab97066329bf31c2e5dfcca6b7965b66efda22b0591",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-sd-cp-toy-bits": "9f31af0f3d9ce4f7783a5800157bd7c4a98321c326a61ecb84641651a00e34e8",
-  // + real Syntakt engines SDVtg, CPVtg, SYToy, SYSwm (tweak syntakt-sd-cp-toy-swarm), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SDVtg, CPVtg, SYToy, SYSwm (tweak syntakt-sd-cp-toy-swarm), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd-cp-toy-swarm": "8b45c7816b11277f94782ad26b1ce4d768b110dc97f7272886fb1432b94e2bec",
   "6ch-usbup+syntakt-sd-cp-toy-swarm": "83a5f5aa9b6354de32fb177e141a622f79dc1db093d30b7c6543bd50053f4ec2",
   "model-tg-st+syntakt-tg-sd-cp-toy-swarm": "c6e8d592acd6467fc0c817f2228f45a8343132ba3f332015950d2636ea3ffc7b",
@@ -551,7 +551,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-sd-cp-toy-swarm": "5dfaceaa1c898e9be5e5c3065b219df062f6986217f6b8120b4b767479dc70c4",
   "latching-mute+trig-preview+browser-scroll+syntakt-sd-cp-toy-swarm": "81c56c7f9aba3beda64f4a846af9d728b76085b7e85de5fd1dc0567e42836c58",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-sd-cp-toy-swarm": "15fde1e46c9b24e165e45edeec4e6cad0d33dd908be2baab23301cf52b899700",
-  // + real Syntakt engines SDVtg, CPVtg, SYBit, SYSwm (tweak syntakt-sd-cp-bits-swarm), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SDVtg, CPVtg, SYBit, SYSwm (tweak syntakt-sd-cp-bits-swarm), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd-cp-bits-swarm": "1bc3e5ceb48f0a4d2591827f32e3f56427cab0d8c497d8ed36449ed0f1a249d0",
   "6ch-usbup+syntakt-sd-cp-bits-swarm": "46a7291f5666a6e731b7bdac79e4eb8e47d0766da035e91fd758792265236f91",
   "model-tg-st+syntakt-tg-sd-cp-bits-swarm": "abd0db6a18f0636c8d576ef3d852071380ea10d8beb8f834a7674e24d17aab08",
@@ -570,7 +570,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-sd-cp-bits-swarm": "913aff25f7a2172b3b0895ea7f6fbeb59f5940562ad0e8a1e2789c64c1ebcc8a",
   "latching-mute+trig-preview+browser-scroll+syntakt-sd-cp-bits-swarm": "6ad5e0ff9631b3f78e0962fa18bd763c94aebd8ae15d5f813d412250334064db",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-sd-cp-bits-swarm": "c71fe4db33f31d0c485564a297e2c32f7655e86b1eb7b5935d05d2a258455205",
-  // + real Syntakt engines SDVtg, SYToy, SYBit, SYSwm (tweak syntakt-sd-toy-bits-swarm), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SDVtg, SYToy, SYBit, SYSwm (tweak syntakt-sd-toy-bits-swarm), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd-toy-bits-swarm": "01f373195e99240fb928083586a57a392b7ab172c59117b9e35e983d24798dea",
   "6ch-usbup+syntakt-sd-toy-bits-swarm": "fac530b1eae3661494285a32cefacf019d4fb755ddd2291f7bda31ca9883902f",
   "model-tg-st+syntakt-tg-sd-toy-bits-swarm": "d0df1a5d639f0602d52e714b8465b78282487d833a33e921f39f80779f6f1651",
@@ -589,7 +589,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-sd-toy-bits-swarm": "1d0f092d834b9ed3f45aceda4ad25c25a81125c62a6f75a18049ffd1014b37ef",
   "latching-mute+trig-preview+browser-scroll+syntakt-sd-toy-bits-swarm": "942c08598233f0573255f5cc36389cef9a4aec4675847f991e91fff63b04e8ec",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-sd-toy-bits-swarm": "b5beaef32aa7110343fe9b4066bd379c401e4272e003e47bceb86529258c1bf8",
-  // + real Syntakt engines CPVtg, SYToy, SYBit, SYSwm (tweak syntakt-cp-toy-bits-swarm), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines CPVtg, SYToy, SYBit, SYSwm (tweak syntakt-cp-toy-bits-swarm), with the official Syntakt OS 1.42 or 1.41
   "syntakt-cp-toy-bits-swarm": "83604026515c589f7b967d68ab330ed57a309a20c6adb5f99e4cdfbc21f633df",
   "6ch-usbup+syntakt-cp-toy-bits-swarm": "91c03ca623ac2018cd6596c886bbfc776d0a56a026168886800f61a6e61d9ab4",
   "model-tg-st+syntakt-tg-cp-toy-bits-swarm": "0c370c6f07771cad2c63408c0427999101371d6abe17c0243906aa0466ace585",
@@ -608,7 +608,7 @@ const REF_MAINOS = {
   "6ch-usbup+trig-preview+browser-scroll+syntakt-cp-toy-bits-swarm": "0da74c2b48a7c333aa75832a9f427d0c83ae6abcbe7e75917c39aaa9f9200144",
   "latching-mute+trig-preview+browser-scroll+syntakt-cp-toy-bits-swarm": "d906806eb0f87208e8c1c2a9400aa8d29096320d44e4f186137e94afa0c5ac9d",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+syntakt-cp-toy-bits-swarm": "569d353f86858d1ed755ed77f136c54e7ca3fe823aa1ab0105228ee2f6f6b9fb",
-  // + real Syntakt engines SDVtg, CPVtg, SYToy, SYBit, SYSwm (tweak syntakt-sd-cp-toy-bits-swarm), with the official Syntakt_OS1.41.syx
+  // + real Syntakt engines SDVtg, CPVtg, SYToy, SYBit, SYSwm (tweak syntakt-sd-cp-toy-bits-swarm), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd-cp-toy-bits-swarm": "a1871d60392caef0b66b6ca700dc5da53d320950b8910aa88edd6d9a7b7a7c8b",
   "6ch-usbup+syntakt-sd-cp-toy-bits-swarm": "bece745e8f46c95253896a23995a7fb198c549f6ec6dff440c5660eac3094f51",
   "model-tg-st+syntakt-tg-sd-cp-toy-bits-swarm": "495d248029e044a18bcfef54e77fbe743c06802ad7e83b098fde63533503d3f9",
@@ -686,9 +686,9 @@ const T = {
     drop2_title: "Drop model-samples_OS1.13.syx here",
     drop2_sub: "the official Model:Samples OS, or click to choose it",
     get_os_samples: `Don't have it? <a href="${ELEKTRON_SMP_DL}" target="_blank" rel="noopener">Download Model:Samples OS 1.13 from elektron.se</a>, then unzip it.`,
-    drop3_title: "Drop Syntakt_OS1.41.syx here",
+    drop3_title: "Drop Syntakt_OS1.42.syx here",
     drop3_sub: "the official Syntakt OS, for its engines, or click to choose it",
-    get_os_syntakt: `Don't have it? <a href="${ELEKTRON_ST_DL}" target="_blank" rel="noopener">Download Syntakt OS 1.41 from elektron.se</a>, then unzip it. The page reads the engines from it, on your computer: no Syntakt needed.`,
+    get_os_syntakt: `Don't have it? <a href="${ELEKTRON_ST_DL}" target="_blank" rel="noopener">Download Syntakt OS 1.42 from elektron.se</a>, then unzip it. The page reads the engines from it, on your computer: no Syntakt needed.`,
     s3: "Connect your Model:Cycles over USB",
     hu1: "Connect the Model:Cycles to the computer with a USB cable and turn it on normally.",
     hu2: "On the Model:Cycles, press <b>SETTINGS</b>, open <b>CONFIG › UPGRADE</b> and confirm with <b>YES</b>. It now waits for the firmware.",
@@ -735,8 +735,8 @@ const T = {
     smp_ok: "Official Model:Samples OS 1.13 recognised.",
     smp_bad: "This is not the official Model:Samples OS 1.13 file: {err}",
     smp_not_official: "its SHA-256 differs from the official file",
-    st_ok: "Official Syntakt OS 1.41 recognised.",
-    st_bad: "This is not the official Syntakt OS 1.41 file: {err}",
+    st_ok: "Official Syntakt OS {v} recognised.",
+    st_bad: "This is not the official Syntakt OS 1.42 file: {err}",
     needs_syntakt: "The Syntakt engines are read from the official Syntakt OS file: drop it below.",
     license_mit: "MIT license",
     miss_syntakt: "Load the official Syntakt OS file (step 2).",
@@ -816,9 +816,9 @@ const T = {
     drop2_title: "Déposez model-samples_OS1.13.syx ici",
     drop2_sub: "l'OS officiel du Model:Samples, ou cliquez pour le choisir",
     get_os_samples: `Vous ne l'avez pas ? <a href="${ELEKTRON_SMP_DL}" target="_blank" rel="noopener">Téléchargez l'OS Model:Samples 1.13 sur elektron.se</a>, puis dézippez-le.`,
-    drop3_title: "Déposez Syntakt_OS1.41.syx ici",
+    drop3_title: "Déposez Syntakt_OS1.42.syx ici",
     drop3_sub: "l'OS officiel du Syntakt, pour ses moteurs, ou cliquez pour le choisir",
-    get_os_syntakt: `Vous ne l'avez pas ? <a href="${ELEKTRON_ST_DL}" target="_blank" rel="noopener">Téléchargez l'OS Syntakt 1.41 sur elektron.se</a>, puis dézippez-le. La page y lit les moteurs, sur votre ordinateur : pas besoin d'avoir un Syntakt.`,
+    get_os_syntakt: `Vous ne l'avez pas ? <a href="${ELEKTRON_ST_DL}" target="_blank" rel="noopener">Téléchargez l'OS Syntakt 1.42 sur elektron.se</a>, puis dézippez-le. La page y lit les moteurs, sur votre ordinateur : pas besoin d'avoir un Syntakt.`,
     s3: "Branchez le Model:Cycles en USB",
     hu1: "Reliez le Model:Cycles à l'ordinateur avec un câble USB et allumez-le normalement.",
     hu2: "Sur le Model:Cycles, appuyez sur <b>SETTINGS</b>, ouvrez <b>CONFIG › UPGRADE</b> et confirmez avec <b>YES</b>. Il attend alors le firmware.",
@@ -864,8 +864,8 @@ const T = {
     smp_ok: "OS officiel Model:Samples 1.13 reconnu.",
     smp_bad: "Ce n'est pas le fichier officiel de l'OS Model:Samples 1.13 : {err}",
     smp_not_official: "son SHA-256 diffère du fichier officiel",
-    st_ok: "OS officiel Syntakt 1.41 reconnu.",
-    st_bad: "Ce n'est pas le fichier officiel de l'OS Syntakt 1.41 : {err}",
+    st_ok: "OS officiel Syntakt {v} reconnu.",
+    st_bad: "Ce n'est pas le fichier officiel de l'OS Syntakt 1.42 : {err}",
     needs_syntakt: "Les moteurs du Syntakt se lisent dans le fichier officiel de l'OS Syntakt : déposez-le ci-dessous.",
     license_mit: "licence MIT",
     miss_syntakt: "Déposez le fichier officiel de l'OS Syntakt (étape 2).",
@@ -933,7 +933,7 @@ const FEAT = {
     "browser-scroll": { label: "Scroll long names",
       desc: "In the sound browser, a name too long for the screen scrolls so you can read it." },
     syntakt: { label: "Real Syntakt engines",
-      desc: "The Syntakt's own engines, read from your Syntakt OS 1.41 file (step 2) and added after Chord, in this order, with the Syntakt's knob names and defaults. Tick the ones you want." },
+      desc: "The Syntakt's own engines, read from your Syntakt OS file (step 2) and added after Chord, in this order, with the Syntakt's knob names and defaults. Tick the ones you want." },
     "eng-sd": { note: "Vintage snare." },
     "eng-cp": { note: "Vintage clap." },
     "eng-toy": { note: "Toy-like tuned percussion." },
@@ -953,7 +953,7 @@ const FEAT = {
     "browser-scroll": { label: "Défilement des noms longs",
       desc: "Dans le navigateur de sons, un nom trop long pour l'écran défile pour rester lisible." },
     syntakt: { label: "Vrais moteurs du Syntakt",
-      desc: "Les moteurs du Syntakt, lus dans votre fichier d'OS Syntakt 1.41 (étape 2) et ajoutés après Chord, dans cet ordre, avec les noms et réglages des potards du Syntakt. Cochez ceux que vous voulez." },
+      desc: "Les moteurs du Syntakt, lus dans votre fichier d'OS Syntakt (étape 2) et ajoutés après Chord, dans cet ordre, avec les noms et réglages des potards du Syntakt. Cochez ceux que vous voulez." },
     "eng-sd": { note: "Caisse claire vintage." },
     "eng-cp": { note: "Clap vintage." },
     "eng-toy": { note: "Percussion accordée façon jouet." },
@@ -1326,12 +1326,13 @@ function readSyntaktFile(file) {
 function loadSyntakt(raw, name) {
   st.finished = null;
   try {
+    // OS 1.42 or 1.41: same audio program (section 7), so the same engines and the same firmware
     const tk = window.MC_TWEAKS.tweaks.find((x) => x.append && x.append.syntakt);
-    const sha = window.MCBuilder.hex(window.MCBuilder.sha256(raw));
-    if (!tk || sha !== tk.append.syntakt.syx_sha256) throw new Error(t("smp_not_official"));
-    st.syntakt = { raw, name, sha };
+    const version = tk && window.MCBuilder.syntaktVersion(tk.append, raw);
+    if (!version) throw new Error(t("smp_not_official"));
+    st.syntakt = { raw, name, version };
     st.syntaktError = null;
-    log(`${name}: official Syntakt OS 1.41.`, "is-ok");
+    log(`${name}: official Syntakt OS ${version}.`, "is-ok");
   } catch (e) {
     st.syntakt = null;
     st.syntaktError = e.message;
@@ -1379,7 +1380,7 @@ function prepareFirmware() {
   if (sdv && !st.syntakt) { st.fw = null; st.fwError = "needs_syntakt"; return; }
   const key = tweaks.map((x) => x.id).join("+");
   const labels = chosenLabels();
-  const syntakt = sdv ? st.syntakt.raw : null;     // only the official file is accepted: same bytes for every key
+  const syntakt = sdv ? st.syntakt.raw : null;     // only official files, all with the same section 7: same bytes for every key
   buildCached(key, (raw) => {
     const opts = {};
     if (REF_MAINOS[key]) opts.expectMainOsSha = REF_MAINOS[key];
@@ -1574,7 +1575,7 @@ function render() {
     : st.samplesError ? [["is-bad", esc(t("smp_bad", { err: st.samplesError }))]] : []);
   const sdv = needsSyntakt();
   $("drop3-wrap").hidden = !sdv;
-  setStatus("file3-status", st.syntakt ? [["is-ok", esc(t("st_ok"))]]
+  setStatus("file3-status", st.syntakt ? [["is-ok", esc(t("st_ok", { v: st.syntakt.version }))]]
     : st.syntaktError ? [["is-bad", esc(t("st_bad", { err: st.syntaktError }))]] : []);
 
   renderMidi();

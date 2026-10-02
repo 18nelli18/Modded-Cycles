@@ -24,6 +24,31 @@ Suite de la [note 15 §4](15-demandes-reddit.md) : faire tourner le vrai SD VINT
 
 > Source : dépaquetage de `Syntakt_OS1.41.syx` le 29/09/2026.
 
+### OS 1.42 : même programme audio
+
+L'OS Syntakt 1.42 (02/10/2026 : c'est la version proposée sur elektron.se) n'apporte que des réglages de l'Outbox 8 :
+routage des sorties Main par l'Outbox 8, navigation **[FUNC]** + **[UP/DOWN]** entre ses canaux.
+
+> Source : `Syntakt_OS1.42_readme.html` (zip d'elektron.se), « List of changes from OS 1.41 to 1.42 ».
+
+Le programme audio n'a pas bougé :
+
+| Section | De 1.41 à 1.42 |
+|---|---|
+| 1, 2, 4, 6, 8 | identiques |
+| 3 (MAIN OS du 1er ColdFire) | modifiée, 3 438 480 → 3 442 576 o |
+| 5 (chaîne de version) | modifiée |
+| **7 (programme du 2e ColdFire, les moteurs)** | **identique**, SHA-256 `daf6451c…` |
+
+Les moteurs extraits, donc les firmwares construits, sont les mêmes à l'octet près avec l'un ou l'autre fichier.
+`tools/emu/syntakt.py` accepte les deux (`OFFICIAL` : 1.42 `ded3c59f…`, 1.41 `8e2488f4…`). Chaque tweak du Syntakt liste
+ces empreintes (`append.syntakt.os`) et garde celle de la section 7, que `build.py` et le flasher vérifient toujours.
+Aucun outil ne lit la section 3 du Syntakt.
+
+> Source : comparaison des sections décompressées de `Syntakt_OS1.41.syx` et `Syntakt_OS1.42.syx` (SHA-256 `ded3c59f…`) le 02/10/2026 ;
+> les générateurs (`gen_sdvintage_exact.py`, `gen_sdvintage_7th.py`, `gen_syntakt_machines.py`, `gen_syntakt_engines.py`, `--check`)
+> redonnent avec le fichier 1.42 les mêmes JSON que les tweaks versionnés.
+
 ## 2. Deux processeurs
 
 | Section | Taille | Chargée à | Rôle |

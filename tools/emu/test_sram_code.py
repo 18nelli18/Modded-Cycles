@@ -10,7 +10,7 @@ Syntakt, recopiés au démarrage par le crochet (stub.S, vérifié par test_synt
      sont en SRAM (rien à leur ancienne place dans la réplique, notes/29) ; aucune machine d'origine ne touche les
      zones reprises.
 
-    python3 tools/emu/test_sram_code.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.41.syx --tweak ….json
+    python3 tools/emu/test_sram_code.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx --tweak ….json
 """
 import argparse
 import json

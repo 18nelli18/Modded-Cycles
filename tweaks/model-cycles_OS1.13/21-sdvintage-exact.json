@@ -3,11 +3,11 @@
  "order": 21,
  "name": "Vrai moteur SD VINTAGE du Syntakt a la place de SNARE",
  "description": [
-  "Le moteur SD VINTAGE du Syntakt (OS 1.41), extrait AU BUILD de TON Syntakt_OS1.41.syx",
+  "Le moteur SD VINTAGE du Syntakt (OS 1.42 ou 1.41), extrait AU BUILD de TON Syntakt_OS1.42.syx",
   "(21 fonctions, 5200 o de code, avec ses tables), relocalise en SDRAM a 0x43000000",
   "au-dessus du BSS de l'OS Cycles, branche a la place de SNARE par une passerelle (notes/17).",
   "Potards au sens du Syntakt : PITCH=TUNE, COLOR=INHM, SHAPE=FCMP, SWEEP=SWEP, CONTOUR=MENV,",
-  "PUNCH=PNCH, GATE, DECAY=DEC ; defauts du Syntakt. Demande : build.py --syntakt Syntakt_OS1.41.syx.",
+  "PUNCH=PNCH, GATE, DECAY=DEC ; defauts du Syntakt. Demande : build.py --syntakt Syntakt_OS1.42.syx.",
   "Aucun octet Elektron dans ce fichier : recette de copie et table de relocalisation seulement."
  ],
  "device": "Model:Cycles",
@@ -68,8 +68,10 @@
   "dest": "0x43000000",
   "size": 205200,
   "syntakt": {
-   "os": "1.41",
-   "syx_sha256": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e",
+   "os": {
+    "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+    "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+   },
    "section": 7,
    "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
   },
