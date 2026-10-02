@@ -4,6 +4,10 @@
  */
 window.MC_RELEASES = [
   { version: "1.8", date: "2026-10-02", changes: [
+    { en: "MACHINES screen: with more than 7 machines, the position dots go on two rows instead of running over the machine picture",
+      fr: "Écran MACHINES : au-delà de 7 machines, les points de position passent sur deux lignes au lieu de déborder sur l'image de la machine" },
+  ] },
+  { version: "1.8", date: "2026-10-02", changes: [
     { en: "Syntakt engines: the flasher takes Syntakt OS 1.42, the version now on elektron.se (1.41 still works: same engines, same firmware)",
       fr: "Moteurs du Syntakt : le flasher accepte l'OS Syntakt 1.42, la version désormais sur elektron.se (la 1.41 marche toujours : mêmes moteurs, même firmware)" },
   ] },
