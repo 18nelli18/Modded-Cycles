@@ -217,7 +217,9 @@ Retour de l'utilisateur le 01/10/2026, firmware de diagnostic sans l'audio 6 can
 - La page System commence à l'entrée de l'interruption (`0x40058c5e`, `isr_prof` de Model-TG). Notre compteur ne mesure que la fonction audio, appelée plus tard dans cette interruption : il lit environ **11 points de moins**.
 - Le seuil de pic de notre régulateur (93 %) correspond donc à environ 104 % du vrai temps : un bloc peut déborder avant qu'il réagisse. C'est la cause probable des craquements.
 
-## 7. Optimisation `[EN COURS]`
+**Essai d'un firmware construit par le flasher** (02/10/2026, version 1.8) : Model-TG + les 5 moteurs, avec l'audio USB 6 canaux, « tout marche » (retour de l'utilisateur). Cette combinaison est marquée « testée » dans le flasher (`HW_TESTED_TG` de `tools/gen_syntakt_engines.py`) ; les autres combinaisons avec Model-TG restent « expérimentales ».
+
+## 7. Optimisation `[FAIT]`
 
 Demande de l'utilisateur, le 01/10/2026 : « J'aimerais quand même avoir un peu de marge pour éviter les dépassements du processeur […] on va essayer d'optimiser sans perdre de fonctions. »
 
@@ -285,6 +287,6 @@ Model-TG autour de nos moteurs ajoute environ 1,7 point, surtout en défauts de 
 
 - **Optimiser sans perdre de fonctions** (demande de l'utilisateur) : mesurer d'abord où passent les ~50 % hors des voix (début de l'interruption, mixage et effets), puis viser les plus gros postes.
 - **Régulateur** : mesurer depuis l'entrée de l'interruption, comme la page System, pour qu'il réagisse avant un débordement.
-- Les combinaisons construites par le flasher restent « expérimentales » tant qu'aucune n'a été essayée sur la machine.
+- Les autres combinaisons avec Model-TG restent « expérimentales » tant qu'elles n'ont pas été essayées sur la machine.
 - **Projets** : une piste réglée sur une machine ajoutée n'a pas le même numéro dans les deux versions (8e machine = SDVtg avec Model-TG, 7e sans). Un projet fait avec l'une joue une autre machine sur l'autre. Le flasher le dit.
 - Non essayé : le rééchantillonnage d'une piste d'un moteur du Syntakt.
