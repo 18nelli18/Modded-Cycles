@@ -2,6 +2,8 @@
 """Preuve de l'arpégiateur (notes/32, tweaks/model-cycles_OS1.13/40-arp.json) : le code du tweak et celui de l'OS,
 exécutés fonction par fonction sur le MAIN OS modifié.
 
+  0. Accroches des notes jouées (0x4001a1c4, piste en d3 ; 0x4001d25e, piste en d2), à la place de la lecture de Rte :
+     rendent Rte comme 0x40016086 et transmettent le réglage de l'arpège de la piste (son objet, octet +512).
   1. Filtre du jeu en direct (accroche 0x40058e28) : instructions rejouées (d0, d1, d2), première note (le retrig
      d'origine démarre), notes ajoutées (ignorées par l'OS, entrées dans l'arpège), fins de note (ignorées tant qu'il
      reste des notes, la dernière devient la fin de la note en cours), sens OFF (retrig d'origine), liste remise à zéro
@@ -10,7 +12,8 @@ exécutés fonction par fonction sur le MAIN OS modifié.
      le reste de l'événement copié tel quel ; sens OFF : la note gardée.
   3. Menu FUNC + RETRIG (vrai constructeur 0x4002d138) : cinq lignes, les deux dernières avec nos fonctions ; libellés
      « Arp » et « Oct » (vraie std::string) ; affichage (UP… et 1 à 4) ; changements bornés de l'octet +512, signalés
-     comme ceux de Len.
+     comme ceux de Len, et transmis tout de suite pour la piste sélectionnée.
+  Le réglage arrive au côté audio par les accroches de 0 (l'objet de la piste, comme pour Rte), dans tous les tests.
   4. Sans le tweak, le menu garde ses trois lignes et les accroches leurs octets d'origine.
 
     python3 tools/emu/test_arp.py --cycles model-cycles_OS1.13.syx \\
@@ -37,8 +40,7 @@ import test_sdvintage_7th as t7     # noqa: E402
 TWEAK = HERE.parent.parent / "tweaks" / "model-cycles_OS1.13" / "40-arp.json"
 FAIL = []
 EV, EV2 = 0x93100000, 0x93100100                  # événements de test
-SEQ = 0x93200000                                  # objet séquenceur factice : +30706 = pattern en cours
-PAT = 5
+UI_CFG = 0                                         # adresse de ui_cfg (symbols du tweak)
 RTG = 0x40a78d58
 CUR = 0x40fe4cb4
 MODES = ["UP", "DOWN", "UPDN", "RAND", "PLAY", "OFF"]
@@ -57,8 +59,9 @@ class Emu(t7.UI):
         self.heap = 0x92000000
         self.uc.hook_add(UC_HOOK_CODE, self._new, begin=0x400802e0, end=0x400802e0)
         self.uc.hook_add(UC_HOOK_CODE, self._ret, begin=0x400802ec, end=0x400802ec)
-        self.uc.mem_write(0x40a7887c, struct.pack(">I", SEQ))
-        self.uc.mem_write(SEQ + 30706, struct.pack(">I", PAT))
+        self.img_ = img
+        self.fn = self.call
+        self.track = Track(self, 0x93400000)
 
     def _pop(self, uc, d0=None):
         sp = uc.reg_read(mk.UC_M68K_REG_A7)
@@ -83,7 +86,7 @@ class Emu(t7.UI):
         return struct.unpack(">i" if signed else ">I", self.uc.mem_read(a, 4))[0]
 
     def cfg(self, t, byte):
-        self.uc.mem_write(0x406f3a40 + PAT * 30710 + t * 722 + 512, bytes([byte]))
+        return play_cfg(self, t, byte)
 
     def retrig(self, t, running):
         self.w32(RTG + 28 * t + 4, 0xffffffff if running else 0)
@@ -113,6 +116,58 @@ class Emu(t7.UI):
 def target(img, va):
     """Cible du jsr/jmp abs.l écrit en va."""
     return struct.unpack(">I", img[va - build.BASE + 2:va - build.BASE + 6])[0]
+
+
+class Track:
+    """Objet « piste du pattern » factice, comme ceux de 0x4000cfcc : vtable[10] rend ses données (+512 : arpège,
+    +514 : Rte), vtable[4] est le signal de modification."""
+
+    def __init__(self, emu, base, data=True):
+        self.obj, self.vt, self.f10, self.f4, self.data = base, base + 0x100, base + 0x200, base + 0x210, base + 0x1000
+        emu.w32(self.obj, self.vt)
+        emu.w32(self.vt + 40, self.f10)
+        emu.w32(self.vt + 16, self.f4)
+        emu.uc.mem_write(self.f10, b"\x20\x3c" + struct.pack(">I", self.data if data else 0) + b"\x4e\x75")
+        emu.uc.mem_write(self.f4, b"\x4e\x75")
+        emu.uc.mem_write(self.data, bytes(722))
+
+
+def play_cfg(emu, t, byte, rate=9):
+    """Le réglage de la piste t, tel qu'une note jouée le lit : par l'accroche de 0x4001a1c4 (piste en d3) ou de
+    0x4001d25e (piste en d2), selon t ; renvoie ce qu'elle rend (Rte)."""
+    tr = emu.track
+    emu.uc.mem_write(tr.data + 512, bytes([byte]))
+    emu.uc.mem_write(tr.data + 514, bytes([rate]))
+    site, reg = (0x4001a1c4, mk.UC_M68K_REG_D3) if t % 2 else (0x4001d25e, mk.UC_M68K_REG_D2)
+    emu.uc.reg_write(reg, t)
+    return emu.fn(target(emu.img_, site), tr.obj) & 0xff
+
+
+# --- 0. accroches des notes jouées --------------------------------------------------------------------------------
+def rate_tests(img):
+    e = Emu(img)
+    keep = (mk.UC_M68K_REG_D4, mk.UC_M68K_REG_D5, mk.UC_M68K_REG_D6, mk.UC_M68K_REG_A2, mk.UC_M68K_REG_A3)
+    for site, reg, t, name in ((0x4001a1c4, mk.UC_M68K_REG_D3, 3, "d3"), (0x4001d25e, mk.UC_M68K_REG_D2, 4, "d2")):
+        e.uc.mem_write(e.track.data + 512, bytes([0x1a]))
+        e.uc.mem_write(e.track.data + 514, bytes([7]))
+        e.uc.reg_write(reg, t)
+        for r in keep:
+            e.uc.reg_write(r, 0x5a5a5a5a)
+        r = e.call(target(img, site), e.track.obj)
+        got = e.uc.mem_read(UI_CFG, 6)[t]
+        kept = all(e.uc.reg_read(r_) == 0x5a5a5a5a for r_ in keep) and e.uc.reg_read(reg) == t
+        check(r & 0xff == 7 and got == 0x1a and kept,
+              f"note jouée, accroche de {site:#x} (piste en {name}) : rend Rte (7) comme 0x40016086, transmet le "
+              f"réglage de la piste {t} (0x1a), registres gardés")
+    empty = Track(e, 0x93480000, data=False)
+    before = bytes(e.uc.mem_read(UI_CFG, 6))
+    e.uc.reg_write(mk.UC_M68K_REG_D3, 1)
+    r = e.call(target(img, 0x4001a1c4), empty.obj)
+    check(r & 0xff == 0 and bytes(e.uc.mem_read(UI_CFG, 6)) == before,
+          "objet sans données : rend 0 comme 0x40016086, rien de transmis")
+    e.uc.reg_write(mk.UC_M68K_REG_D3, 6)
+    e.call(target(img, 0x4001a1c4), e.track.obj)
+    check(bytes(e.uc.mem_read(UI_CFG, 6)) == before, "piste hors 0..5 : rien de transmis")
 
 
 # --- 1. filtre ----------------------------------------------------------------------------------------------------
@@ -233,19 +288,16 @@ def repeat_tests(img):
     }
     for (c, notes), exp in want.items():
         e = Emu(img)
-        e.img_ = img
         held(e, t, notes, c)
         got, same = repeats(e, t, len(exp))
         check(got == exp and same, f"{MODES[c & 7]:4s} {(c >> 3) + 1} oct., notes {notes} : {got}"
               + (" ; le reste de l'événement copié tel quel" if same else " ; COPIE ALTÉRÉE"))
     e = Emu(img)
-    e.img_ = img
     held(e, t, (60, 64, 67, 71), 3)
     got, _ = repeats(e, t, 40)
     check(set(got) <= {60, 64, 67, 71} and len(set(got)) == 4 and all(a != b for a, b in zip(got, got[1:])),
           f"RAND : 40 répétitions dans les notes tenues, toutes jouées, jamais deux fois de suite ({got[:10]}…)")
     e = Emu(img)
-    e.img_ = img
     held(e, t, (60, 64), 0)
     e.cfg(t, 5)                                   # passé à OFF pendant l'arpège
     got, _ = repeats(e, t, 3)
@@ -253,21 +305,14 @@ def repeat_tests(img):
 
 
 # --- 3. menu ------------------------------------------------------------------------------------------------------
-class TrackObj:
-    """Objet « piste du pattern » factice rendu par 0x4000f23e : vtable[10] = ses données, vtable[4] = signal."""
-    OBJ, VT, DATA, F10, F4 = 0x93400000, 0x93400100, 0x93401000, 0x93400200, 0x93400210
+SEL = 3                                           # piste sélectionnée pendant les changements du menu
 
 
 def menu(img):
     e = Emu(img)
+    e.sel = None
     items, drawn, notes = [], [], []
-    o = TrackObj
-    e.w32(o.OBJ, o.VT)
-    e.w32(o.VT + 40, o.F10)
-    e.w32(o.VT + 16, o.F4)
-    e.uc.mem_write(o.F10, b"\x20\x3c" + struct.pack(">I", o.DATA) + b"\x4e\x75")   # move.l #DATA,d0 ; rts
-    e.uc.mem_write(o.F4, b"\x4e\x75")
-    e.uc.mem_write(o.DATA, bytes(722))
+    o = e.track
 
     def hook(uc, addr, size, ud):
         sp = uc.reg_read(mk.UC_M68K_REG_A7)
@@ -279,15 +324,17 @@ def menu(img):
                 fns.append((mgr, inv, struct.unpack(">I", uc.mem_read(st0, 4))[0]))
             items.append(fns)
         elif addr == 0x4000f23e:                     # la piste du pattern sélectionné : la nôtre
-            e._pop(uc, o.OBJ)
+            e._pop(uc, o.obj)
+        elif addr == 0x40012412 and e.sel is not None:   # numéro de la piste sélectionnée
+            e._pop(uc, e.sel)
         elif addr == 0x40071a04:
             drawn.append(a[:7])
             e._pop(uc)
         elif addr in (0x40072260, 0x40072080):
             e._pop(uc)
-        elif addr == o.F4:
+        elif addr == o.f4:
             notes.append(struct.unpack(">I", uc.mem_read(a[1], 4))[0])
-    for va in (0x400734b0, 0x4000f23e, 0x40071a04, 0x40072260, 0x40072080, o.F4):
+    for va in (0x400734b0, 0x4000f23e, 0x40012412, 0x40071a04, 0x40072260, 0x40072080, o.f4):
         e.uc.hook_add(UC_HOOK_CODE, hook, begin=va, end=va)
     view = 0x93000000
     e.uc.mem_write(view, bytes(0x400))
@@ -322,7 +369,7 @@ def menu_tests(img, stock):
         check(ok and s == name and got == name,
               f"ligne {name} : gestionnaire 0x4002cf00, appui d'origine 0x4002ccd0, libellé « {got} » (std::string)")
     # affichage et changements, sur la piste factice
-    data = TrackObj.DATA + 512
+    data = e.track.data + 512
     fa, fo = make_fn(e, items[3][2]), make_fn(e, items[4][2])
     ca, co = make_fn(e, items[3][3]), make_fn(e, items[4][3])
 
@@ -341,15 +388,18 @@ def menu_tests(img, stock):
         check(fa_ == ("%s", mode, True) and fo_ == ("%d", octs, True),
               f"affichage, octet +512 = 0x{byte:02x} : Arp {fa_[1]}, Oct {fo_[1]} (formats « %s » et « %d », place de Len)")
     e.uc.mem_write(data, bytes([0x80 | 1 << 3 | 1]))   # bit 7 étranger : gardé
+    e.sel = SEL
     seq = []
     for fn, item, delta in ((ca, 3, 1), (ca, 3, 1), (ca, 3, 9), (ca, 3, -20), (co, 4, 1), (co, 4, 5), (co, 4, -1)):
         notes.clear()
         e.call(items[item][3][1], fn, 0, delta & 0xffffffff)
-        seq.append((bytes(e.uc.mem_read(data, 1))[0], notes[:]))
+        seq.append((bytes(e.uc.mem_read(data, 1))[0], notes[:], e.uc.mem_read(UI_CFG, 6)[SEL]))
     want = [0x8a, 0x8b, 0x8d, 0x88, 0x90, 0x98, 0x90]
-    check([b for b, _ in seq] == want and all(n == [0x400ff5ac] for _, n in seq),
-          f"changements bornés (Arp 0..5, Oct 1..4), autres bits gardés : {[hex(b) for b, _ in seq]} ; "
+    check([b for b, _, _ in seq] == want and all(n == [0x400ff5ac] for _, n, _ in seq),
+          f"changements bornés (Arp 0..5, Oct 1..4), autres bits gardés : {[hex(b) for b, _, _ in seq]} ; "
           "chacun signalé (0x400ff5ac, comme Len)")
+    check(all(b == u for b, _, u in seq),
+          f"chaque changement est transmis tout de suite au côté audio pour la piste sélectionnée ({SEL + 1})")
     # sans le tweak : trois lignes
     _, items0, _, _, _ = menu(stock)
     check(len(items0) == 3, "OS d'origine : le menu garde ses trois lignes")
@@ -382,7 +432,6 @@ def std_string(e, a):
 # --- 5. de bout en bout : la vraie boucle d'événements de l'interruption audio --------------------------------------
 KIT = 0x4f000000                                  # sons du kit factices (à zéro)
 POOL3 = 0x4f100000                                # 3e réserve d'objets de la file (allouée par malloc sur la machine)
-SEQ2 = 0x4e200000                                 # objet séquenceur factice (pattern en cours en +30706)
 MSG = 0x4e300000
 FRAME = 0x9000f000                                # cadre de l'interruption (fp) ; ses variables en dessous
 
@@ -398,8 +447,9 @@ class Audio:
         w = self.w32
         w(0x40fde8f8, POOL3)
         self.e.call(0x40091d94, 0x42)
-        w(0x40a7887c, SEQ2)
-        w(SEQ2 + 30706, PAT)
+        self.img_ = img
+        self.fn = self.e.call
+        self.track = Track(self, 0x4e400000)
         w(0x800017e4, KIT)                         # sons du kit : déjà chargés (pas de recopie)
         w(0x800017e8, KIT + 628)
         for t in range(6):
@@ -415,7 +465,7 @@ class Audio:
         return struct.unpack(">i" if signed else ">I", self.uc.mem_read(a, 4))[0]
 
     def cfg(self, t, byte):
-        self.uc.mem_write(0x406f3a40 + PAT * 30710 + t * 722 + 512, bytes([byte]))
+        return play_cfg(self, t, byte)
 
     def send(self, onoff, t, note, rate=9):
         """Un message de note comme ceux de 0x4008171e (retrig, durée 127 : tant que la note est tenue)."""
@@ -510,6 +560,31 @@ def e2e_tests(img, end=None, payload=None):
     left = [a.tick(t) for _ in range(60)]
     check(not any(n not in (None, False) for n in left) and False in left,
           "plus aucune répétition ensuite, la file se vide")
+    # DOWN sur 2 octaves, puis passage à UP pendant que les notes sont tenues (comme un changement dans le menu)
+    c = Audio(img, end, payload)
+    c.cfg(t, 1 | 1 << 3)
+    c.send(1, t, 60)
+    c.run()
+    c.send(1, t, 64)
+    c.run()
+
+    def take(a_, n):
+        out = []
+        for _ in range(3000):
+            r = a_.tick(t)
+            if r is False or len(out) >= n:
+                break
+            if r is not None:
+                out.append(r)
+        return out
+    down = take(c, 6)
+    check(down == [76, 72, 64, 60, 76, 72], f"DOWN sur 2 octaves (60 et 64), vraie boucle : {down}")
+    c.cfg(t, 1 << 3)
+    up = take(c, 4)
+    check(up == [76, 60, 64, 72], f"passé à UP (2 octaves) pendant que les notes sont tenues : {up}")
+    c.cfg(t, 0)
+    one = take(c, 3)
+    check(one == [60, 64, 60], f"puis 1 octave : {one}")
     # sens OFF : le retrig d'origine, une seule note répétée, la dernière pressée
     b = Audio(img, end, payload)
     b.cfg(t, 5)
@@ -550,7 +625,11 @@ def main():
         import syntakt
         payload = (int(syn[0]["append"]["dest"], 16),
                    build.payload_runtime(syn[0], stock, syntakt.dsp_image(args.syntakt)))
+    global UI_CFG
+    UI_CFG = int(tweaks[-1]["symbols"]["ui_cfg"], 16)
     print(f"firmware : {', '.join(t['id'] for t in tweaks)}")
+    print("accroches des notes jouées")
+    rate_tests(img)
     print("filtre du jeu en direct")
     filter_tests(img)
     print("répétitions")

@@ -6,9 +6,10 @@
 SECTIONS
 {
   .cave_audio 0x4018a788 : {
-    *(.text.audio_hook) *(.text.arp_filter) *(.text.arp_copy) *(.text.beyond) *(.text.cfg_audio) *(.text.mode_of)
+    *(.text.audio_hook) *(.text.arp_filter) *(.text.arp_copy) *(.text.beyond) *(.text.mode_of) *(.text.arp_rate)
+    *(.text.track_data)
     . = ALIGN(4);
-    *(.data.seed) *(.bss.st) *(.data.st)
+    *(.data.seed) *(.bss.st) *(.data.st) *(.bss.ui_cfg) *(.data.ui_cfg)
   }
   .cave_menu 0x4016cba8 : {
     *(.text.menu_hook) *(.text*) . = ALIGN(4); *(.rodata*) *(.data*) *(.bss*) *(COMMON)

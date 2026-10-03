@@ -40,7 +40,12 @@ HOOKS = (
      "répétition du retrig : jsr 0x40091f20 (copie de l'événement gardé) -> jsr arp_copy"),
     (0x4002d480, "4cef7c7c0018", "arp_menu_tail", 0x4ef9,
      "fin du constructeur du menu Retrig Setup : movem.l 24(sp),d2-d6/a2-a6 -> jmp arp_menu_tail"),
+    (0x4001a1c4, "4eb940016086", "arp_rate_d3", 0x4eb9,
+     "note jouée (touches, piste en d3) : jsr 0x40016086 (Rte de la piste) -> jsr arp_rate_d3"),
+    (0x4001d25e, "4eb940016086", "arp_rate_d2", 0x4eb9,
+     "note jouée (0x4001d1xx, piste en d2) : jsr 0x40016086 (Rte de la piste) -> jsr arp_rate_d2"),
 )
+SYMBOLS = ("ui_cfg", "st")                             # pour tools/emu/test_arp.py
 CONFLICTS = ["sdvintage-snare"]                        # il occupe les deux mêmes masques
 
 
@@ -96,8 +101,9 @@ def build_tweak(stock):
         "description": [
             "Avec RETRIG tenu (ou A.On), les notes tenues sur une piste sont jouées en arpège au rythme du retrig.",
             "Menu FUNC + RETRIG : deux lignes de plus, Arp (UP, DOWN, UPDN, RAND, PLAY, OFF) et Oct (1 à 4).",
-            "Réglages enregistrés avec le pattern (octet +512 de la piste, inutilisé par l'OS). Une note ajoutée",
-            "entre dans l'arpège sans couper le rythme ; avec une seule note et 1 octave, c'est le retrig d'origine.",
+            "Réglages enregistrés avec le pattern (octet +512 de la piste, inutilisé par l'OS), transmis au côté audio",
+            "à chaque note jouée et à chaque changement dans le menu. Une note ajoutée entre dans l'arpège sans couper",
+            "le rythme ; avec une seule note et 1 octave, c'est le retrig d'origine.",
             f"Code dans deux masques de sprites libérés (tools/sprites.py) : {used['.cave_audio']} o en 0x4018a788,",
             f"{used['.cave_menu']} o en 0x4016cba8. Généré par tools/gen_arp.py, notes/32.",
         ],
@@ -105,6 +111,7 @@ def build_tweak(stock):
         "os": "1.13",
         "section": 3,
         "conflicts": CONFLICTS,
+        "symbols": {n: f"{syms[n]:#x}" for n in SYMBOLS},
         "writes": writes,
     }
     return tweak, syms

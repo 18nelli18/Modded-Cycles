@@ -6,8 +6,8 @@ window.MC_RELEASES = [
   { version: "1.12", date: "2026-10-03", changes: [
     { en: "New: an arpeggiator in place of the retrig. Hold several notes with RETRIG (or A.On) and they play one after another; FUNC + RETRIG gains Arp (direction) and Oct (1 to 4 octaves), saved with the pattern",
       fr: "Nouveau : un arpégiateur à la place du retrig. Tenez plusieurs notes avec RETRIG (ou A.On) et elles se jouent l'une après l'autre ; FUNC + RETRIG gagne Arp (le sens) et Oct (1 à 4 octaves), enregistrés avec le pattern" },
-    { en: "The arpeggiator is checked in the emulator but not yet on a real Model:Cycles: marked experimental until then",
-      fr: "L'arpégiateur est vérifié dans l'émulateur, pas encore sur un vrai Model:Cycles : marqué expérimental d'ici là" },
+    { en: "The arpeggiator works on a real Model:Cycles; it stays marked experimental until a firmware built by this page is tried",
+      fr: "L'arpégiateur fonctionne sur un vrai Model:Cycles ; il reste marqué expérimental jusqu'à l'essai d'un firmware construit par cette page" },
     { en: "Guide: an Arpeggiator section",
       fr: "Guide : une section Arpégiateur" },
   ] },

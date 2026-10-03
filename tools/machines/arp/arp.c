@@ -9,7 +9,10 @@
  * Côté interface (menu FUNC + RETRIG, RetrigPadsMenuView) :
  *   - arp_menu_add : deux lignes de plus en fin de constructeur, « Arp » (sens) et « Oct » (octaves).
  * Réglages : octet +512 de la piste du pattern (inutilisé par l'OS, recopié tel quel à l'enregistrement),
- * bits 0-2 = sens, bits 3-4 = octaves - 1. 0 = montant, 1 octave.
+ * bits 0-2 = sens, bits 3-4 = octaves - 1. 0 = montant, 1 octave. L'interface les lit sur l'objet de la piste, celui
+ * des réglages Rte et Len : à chaque note jouée (arp_rate, à la place de la lecture de Rte, 0x4001a1c4 et
+ * 0x4001d25e) et à chaque changement dans le menu. Le côté audio les reçoit dans ui_cfg (le pattern qu'il joue est une
+ * autre copie, essai du 03/10/2026 sur la machine).
  */
 typedef unsigned char u8;
 typedef signed char s8;
@@ -40,19 +43,26 @@ struct trk {
 };
 static struct trk st[6];
 static u32 seed = 0x2545f491;
+static volatile u8 ui_cfg[6];                     /* octet +512 de chaque piste, tel que l'interface l'a lu */
 
-/* Octet +512 de la piste t du pattern en cours (0x40054828 : *(0x40a7887c) + 30706), lu côté audio. */
-static int cfg_audio(int t)
+/* L'octet +512 des données de la piste, par l'objet de la piste (vtable[10], comme 0x40016086 pour Rte) */
+static u8 *track_data(void *obj)
 {
-	u8 *seq = *(u8 **)0x40a7887c;
-	u32 pat;
+	return obj ? ((u8 *(*)(void *))(*(void ***)obj)[10])(obj) : 0;
+}
 
-	if (!seq)
+/* À la place de jsr 0x40016086 (Rte de la piste) quand une note est jouée : le même résultat (l'octet +514 des
+ * données, 0 sans données), et le réglage de l'arpège de cette piste pour le côté audio (arp_hooks.S passe le numéro
+ * de piste, d3 ou d2 selon l'endroit). */
+u32 arp_rate(void *obj, u32 track)
+{
+	u8 *d = track_data(obj);
+
+	if (!d)
 		return 0;
-	pat = I32(seq, 30706);
-	if (pat > 95)
-		return 0;
-	return ((u8 *)0x406f3a40)[pat * 30710 + t * 722 + 512];
+	if (track < 6)
+		ui_cfg[track] = d[512];
+	return d[514];
 }
 
 static int mode_of(int c)
@@ -75,7 +85,7 @@ void arp_filter(u8 *ev)
 	if (I32(ev, EV_ONOFF) == 1) {
 		if ((I32(ev, EV_FLAGS) & (F_RETRIG | F_REPEAT)) != F_RETRIG || n > 127)
 			return;
-		if (mode_of(cfg_audio(t)) == M_OFF) {     /* sens OFF : le retrig d'origine */
+		if (mode_of(ui_cfg[t]) == M_OFF) {        /* sens OFF : le retrig d'origine */
 			s->n = 0;
 			return;
 		}
@@ -130,7 +140,7 @@ void arp_copy(u8 *dst, u8 *src)
 	if (t > 5 || !st[t].n)
 		return;
 	s = &st[t];
-	c = cfg_audio(t);
+	c = ui_cfg[t];
 	mode = mode_of(c);
 	octs = ((c >> 3) & 3) + 1;
 	len = s->n * octs;
@@ -188,7 +198,7 @@ static u8 *ui_track(void **objp)
 	void *obj = TRACK_OBJ();
 
 	*objp = obj;
-	return obj ? ((u8 *(*)(void *))(*(void ***)obj)[10])(obj) : 0;
+	return track_data(obj);
 }
 
 /* L'affichage de la valeur, comme 0x4002d768 */
@@ -228,8 +238,11 @@ void item_change(u32 **functor, u32 a, s32 delta)
 		v = 0;
 	if (v > max)
 		v = max;
-	d[512] = (c & ~(7 << shift)) | (v << shift);
+	d[512] = c = (c & ~(7 << shift)) | (v << shift);
 	((void (*)(void *, u32 *))(*(void ***)obj)[4])(obj, &tag);
+	v = ((u32 (*)(void *))0x40012412)(((void *(*)(void *))0x4000eb90)(((void *(*)(void))0x400cf866)()));
+	if ((u32)v < 6)                               /* la piste sélectionnée, comme 0x4002d48c pour Rte : entendu */
+		ui_cfg[v] = c;                            /* tout de suite, même pendant que les notes sont tenues */
 }
 
 /* Fin du constructeur de RetrigPadsMenuView (0x4002d138) : les deux lignes, construites comme Len, ajoutées au menu */

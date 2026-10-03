@@ -19,7 +19,7 @@ Source de tout ce qui suit : désassemblage du MAIN OS 1.13 officiel (`m68k-elf-
 | Code de l'arpégiateur et lignes du menu | `[FAIT]` `tweaks/model-cycles_OS1.13/40-arp.json` (§9) |
 | Preuve en émulation | `[FAIT]` jusqu'à la vraie boucle d'événements de l'OS, sur 4 firmwares (§9) |
 | Flasher web, guide | `[FAIT]` carte « Arpégiateur », section 9 du guide, version 1.12 |
-| Essai sur la machine | `[À FAIRE]` |
+| Essai sur la machine | `[FAIT]` 2e essai, après correction : « ça marche nickel ! » (§10) ; étiquette « testé » après un essai depuis le flasher |
 
 ## 1. Le menu « Retrig Setup » (FUNC + RETRIG)
 
@@ -132,3 +132,24 @@ Source de tout ce qui suit : désassemblage du MAIN OS 1.13 officiel (`m68k-elf-
 **Flasher web** : carte « Arpégiateur » (expérimentale), placée avant celle des moteurs du Syntakt (les clés des combinaisons mettent les moteurs en dernier). `webflash_smoke.sh` ALL OK (1 275 vérifications), les 1 151 combinaisons reconstruites dans la page identiques à `tools/build.py` ; `webbuild_check.sh` OK (parité Python/JS, règles des caves).
 
 **Coût** (instructions, émulation) : filtre 19 par note du séquenceur, 89 par note jouée en direct ; une répétition 236 avec une note (copie d'origine comprise), au pire environ 1 400 (UP ou UPDN, 12 notes sur 4 octaves), soit environ 1,3 % d'un bloc, seulement au bloc où elle tombe.
+
+## 10. Essai sur la machine et correction (03/10/2026)
+
+**1er essai** (firmware de `build.py`, 6 canaux + Model-TG + 5 moteurs + arpégiateur, MAIN OS `5bc0135e…`). Retour de l'utilisateur : « L'arpégiateur marche, par contre uniquement en montant. Les paramètres de l'arp (down, random, off, etc.) ne changent rien, et le paramètre d'octave non plus. »
+
+**Cause** : le côté audio lisait le réglage dans la banque de patterns du séquenceur (`0x406f3a40 + pattern × 30710`). Le menu, lui, écrit dans les données de l'objet « piste » de l'interface (`0x4000cfcc(0x4000f208(…), piste)`, `vtable[10]` = le pointeur en +16, `0x400d639e`). C'est une autre copie : l'interface envoie au séquenceur des adresses dans sa banque (`0x400083c8`, `0x4002018a`, `0x400203b4`), qu'elle remplit elle-même. Le côté audio lisait donc toujours 0 (montant, 1 octave).
+- Les tests ne l'avaient pas vu : celui du menu utilisait un objet factice, et celui de bout en bout écrivait l'octet directement dans la banque du séquenceur. Le lien entre les deux n'était pas vérifié.
+
+**Correction** : l'interface transmet le réglage au côté audio (`ui_cfg`, un octet par piste dans la zone audio).
+- À chaque note jouée : les deux seuls endroits qui lisent `Rte` pour une note (`0x4001a1c4`, piste en `d3`, et `0x4001d25e`, piste en `d2`) passent par `arp_rate_d3` / `arp_rate_d2`. `arp_rate` lit les données de l'objet de la piste, rend `Rte` comme `0x40016086` (octet +514, 0 sans données), et note l'octet +512 de cette piste. C'est le même objet que celui du menu, pour la même piste (`0x4000f23e` = `0x4000cfcc(0x4000f208(…), 0x40012412(…))`).
+- À chaque changement dans le menu : la piste sélectionnée (`0x40012412(0x4000eb90(0x400cf866()))`, comme la fonction de changement de `Rte` en `0x4002d48c`) reçoit le nouvel octet tout de suite, même pendant que les notes sont tenues.
+- Le filtre et les répétitions lisent `ui_cfg` au lieu de la banque.
+- Place : 1 010 o dans la zone audio, 824 o dans celle du menu. 9 écritures sur l'OS (2 de plus). Le tweak exporte l'adresse de `ui_cfg` (`symbols`, pour les tests).
+
+**Tests** (`tools/emu/test_arp.py`, TOUT OK sur les 4 firmwares) : le réglage arrive maintenant au côté audio par les vraies accroches, dans tous les tests.
+- Nouveau : les deux accroches rendent `Rte` comme `0x40016086` et transmettent le réglage, avec les registres gardés ; rien sans données ni hors des pistes 0 à 5.
+- Nouveau : chaque changement dans le menu est transmis tout de suite pour la piste sélectionnée.
+- Nouveau, de bout en bout : `DOWN` sur 2 octaves (76, 72, 64, 60…), puis passage à `UP` pendant que les notes sont tenues, puis à 1 octave.
+- Firmware d'essai suivant : `build/model-cycles_OS1.13_model-tg-1.1_syntakt-5-moteurs_6ch_arp2.syx`, MAIN OS `ae96a31d…`.
+
+**2e essai** (ce firmware, construit par `build.py`, même MAIN OS que le flasher pour cette combinaison). Il était demandé de changer Arp et Oct en jouant plusieurs notes avec RETRIG, puis de vérifier les réglages après enregistrement et redémarrage. Retour de l'utilisateur : « ça marche nickel ! » (la tenue des réglages après redémarrage n'est pas confirmée explicitement). L'étiquette « testé » attend l'essai d'un firmware construit par le flasher.

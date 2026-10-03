@@ -157,9 +157,9 @@ python3 tools/emu/test_arp.py --cycles model-cycles_OS1.13.syx \
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `arp` | `63027ab189bb3050aa07c76828c72eed151697d5f4a2bd58b0c0204ebd4bc3db` |
-| `model-tg,arp` | `68afb2ff5cc902bb65dd3f25a2a5147a5dfbb7dfdea93a4a9370e435b175ad71` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp` | `5bc0135eb6a06b8dc62b95d9e8d71c6720d0e760bedd9e2f1ae003b359a23a3a` |
+| `arp` | `f3b2e3b5d1c1879e7b7962651e285acce2d8bf80c914bffa4b378177f3606945` |
+| `model-tg,arp` | `c2c53c877fd791f2e8d489b980bade5136be6f3c1633ba5fddc689e90e8c41b9` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp` | `ae96a31dbdd011bd78184e3ac96f328eba0569b7b6d5096bb3349783c9f7635c` |
 
 L'arpégiateur et les moteurs du Syntakt libèrent le même masque (`0x4016cae8`) : les deux constructeurs (`tools/build.py`,
 `docs/flasher/builder.js`) acceptent une écriture déjà faite à l'identique par un autre tweak.

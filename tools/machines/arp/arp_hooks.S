@@ -1,6 +1,6 @@
 /* Accroches de l'arpégiateur (notes/32), liées avec arp.c dans deux masques de sprites libérés (arp.ld).
  * Les écritures sur l'OS sont dans tools/gen_arp.py (HOOKS). */
-	.globl	arp_filter_hook, arp_menu_tail, item_label
+	.globl	arp_filter_hook, arp_rate_d3, arp_rate_d2, arp_menu_tail, item_label
 
 	.section .text.audio_hook, "ax"
 
@@ -13,6 +13,19 @@ arp_filter_hook:
 	moveq	#-1, %d1
 	move.l	8(%a2), %d2
 	move.l	12(%a2), %d0
+	rts
+
+/* 0x4001a1c4 et 0x4001d25e (6 o chacun) : jsr arp_rate_d3 / arp_rate_d2 à la place de jsr 0x40016086 (Rte de la
+ * piste) quand une note est jouée. L'objet de la piste est en 4(sp) ; son numéro dans d3 (0x4001a0xx) ou d2
+ * (0x4001d1xx). arp_rate (C) rend Rte et note le réglage de l'arpège de cette piste. */
+arp_rate_d3:
+	move.l	%d3, -(%sp)
+	bra.s	1f
+arp_rate_d2:
+	move.l	%d2, -(%sp)
+1:	move.l	8(%sp), -(%sp)
+	jsr	arp_rate
+	addq.l	#8, %sp
 	rts
 
 	.section .text.menu_hook, "ax"
