@@ -97,7 +97,7 @@ FEATURES = [
         "label": "Arpegiateur",
         "desc": "Le retrig devient un arpegiateur : plusieurs notes tenues avec RETRIG (ou A.On) se jouent l'une "
                 "apres l'autre. FUNC + RETRIG : sens (Arp) et octaves (Oct), enregistres avec le pattern.",
-        "status": "experimental",
+        "status": "tested",
         "credit": None,
         "variants": [
             {"file": "40-arp", "label": None},

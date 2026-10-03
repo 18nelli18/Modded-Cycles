@@ -6,8 +6,8 @@ window.MC_RELEASES = [
   { version: "1.12", date: "2026-10-03", changes: [
     { en: "New: an arpeggiator in place of the retrig. Hold several notes with RETRIG (or A.On) and they play one after another; FUNC + RETRIG gains Arp (direction) and Oct (1 to 4 octaves), saved with the pattern",
       fr: "Nouveau : un arpégiateur à la place du retrig. Tenez plusieurs notes avec RETRIG (ou A.On) et elles se jouent l'une après l'autre ; FUNC + RETRIG gagne Arp (le sens) et Oct (1 à 4 octaves), enregistrés avec le pattern" },
-    { en: "The arpeggiator works on a real Model:Cycles; it stays marked experimental until a firmware built by this page is tried",
-      fr: "L'arpégiateur fonctionne sur un vrai Model:Cycles ; il reste marqué expérimental jusqu'à l'essai d'un firmware construit par cette page" },
+    { en: "Tested on a real Model:Cycles: the arpeggiator, and Model-TG 1.1 with the 5 Syntakt engines and 6-channel audio",
+      fr: "Testés sur un vrai Model:Cycles : l'arpégiateur, et Model-TG 1.1 avec les 5 moteurs du Syntakt et l'audio 6 canaux" },
     { en: "Model-TG: in mute mode (held or latched), each track key mutes at once, as with the latching mute alone; Model-TG queued them until you left the mode",
       fr: "Model-TG : en mode mute (tenu ou verrouillé), chaque touche de piste mute tout de suite, comme avec le mute verrouillé seul ; Model-TG les mettait en attente jusqu'à la sortie du mode" },
     { en: "Guide: an Arpeggiator section",

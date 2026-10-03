@@ -136626,7 +136626,7 @@ window.MC_TWEAKS = {
    "id": "arp",
    "label": "Arpegiateur",
    "desc": "Le retrig devient un arpegiateur : plusieurs notes tenues avec RETRIG (ou A.On) se jouent l'une apres l'autre. FUNC + RETRIG : sens (Arp) et octaves (Oct), enregistres avec le pattern.",
-   "status": "experimental",
+   "status": "tested",
    "credit": null,
    "variants": [
     {
@@ -136639,7 +136639,7 @@ window.MC_TWEAKS = {
    "id": "syntakt",
    "label": "Vrais moteurs du Syntakt",
    "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.42.syx (a deposer a l'etape 2), en machines supplementaires apres les 6 d'origine : coche ceux que tu veux. Identiques au Syntakt en emulation.",
-   "status": "experimental",
+   "status": "tested",
    "credit": null,
    "engines": [
     {
@@ -137026,7 +137026,7 @@ window.MC_TWEAKS = {
      "tested": false,
      "label": "SDVtg, CPVtg, SYToy, SYBit, SYSwm",
      "tg": "syntakt-tg-sd-cp-toy-bits-swarm",
-     "tg_tested": false
+     "tg_tested": true
     }
    ],
    "needs": "syntakt"

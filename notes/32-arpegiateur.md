@@ -19,7 +19,7 @@ Source de tout ce qui suit : désassemblage du MAIN OS 1.13 officiel (`m68k-elf-
 | Code de l'arpégiateur et lignes du menu | `[FAIT]` `tweaks/model-cycles_OS1.13/40-arp.json` (§9) |
 | Preuve en émulation | `[FAIT]` jusqu'à la vraie boucle d'événements de l'OS, sur 4 firmwares (§9) |
 | Flasher web, guide | `[FAIT]` carte « Arpégiateur », section 9 du guide, version 1.12 |
-| Essai sur la machine | `[FAIT]` 2e essai, après correction : « ça marche nickel ! » (§10) ; étiquette « testé » après un essai depuis le flasher |
+| Essai sur la machine | `[FAIT]` 2e et 3e essais, après correction : « ça marche nickel ! » (§10) ; carte marquée « testée » à la demande de l'utilisateur |
 
 ## 1. Le menu « Retrig Setup » (FUNC + RETRIG)
 
@@ -155,3 +155,5 @@ Source de tout ce qui suit : désassemblage du MAIN OS 1.13 officiel (`m68k-elf-
 **2e essai** (ce firmware, construit par `build.py`, même MAIN OS que le flasher pour cette combinaison). Il était demandé de changer Arp et Oct en jouant plusieurs notes avec RETRIG, puis de vérifier les réglages après enregistrement et redémarrage. Retour de l'utilisateur : « ça marche nickel ! » (la tenue des réglages après redémarrage n'est pas confirmée explicitement). L'étiquette « testé » attend l'essai d'un firmware construit par le flasher.
 
 **3e essai** (même jour, `…_arp3.syx`, MAIN OS `d2e1aeb9…`, avec aussi les mutes immédiats de Model-TG, notes/31 §10) : il était demandé de vérifier les mutes, l'arpégiateur, et si possible la tenue des réglages après enregistrement et redémarrage. Retour de l'utilisateur : « c bon ça fonctionne nickel ».
+
+**Étiquette « testé »** (03/10/2026) : à la demande de l'utilisateur (« met directement l'étiquette sur testé »), la carte Arpégiateur passe à « tested » (`tools/gen_flasher_tweaks.py`) sans attendre un essai depuis le flasher. Le firmware essayé a le même MAIN OS que celui que construit le flasher (`REF_MAINOS`, `d2e1aeb9…`).

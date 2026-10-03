@@ -377,3 +377,5 @@ Question relayée par l'utilisateur le 03/10/2026 : « I'll go in Latch Mute mod
 **Site** : le guide (section Model-TG : son chapeau et « Inclus »), le crédit de Model-TG dans le flasher, les notes de version 1.12, le README et `PROVENANCE.md` disent la retouche.
 
 **Essai sur la machine** (03/10/2026, `build/model-cycles_OS1.13_model-tg-1.1_syntakt-5-moteurs_6ch_arp3.syx`, construit par `build.py`, MAIN OS `d2e1aeb9…`, la même empreinte que le flasher : 6 canaux + Model-TG + 5 moteurs + arpégiateur) : il était demandé de taper T1 à T6 en mute verrouillé (chaque piste coupée ou rétablie tout de suite) et de vérifier l'arpégiateur. Retour de l'utilisateur : « c bon ça fonctionne nickel ».
+
+**Étiquette « testé »** (03/10/2026) : à la demande de l'utilisateur, Model-TG + les 5 moteurs repasse à « testé » (`HW_TESTED_TG` de `tools/gen_syntakt_engines.py`), sur la foi de cet essai (firmware de `build.py`, même MAIN OS que le flasher), sans attendre un essai depuis le flasher.
