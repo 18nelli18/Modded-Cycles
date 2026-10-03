@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Guide · Modded Cycles</title>
-<meta name="description" content="What each Modded Cycles mod does and how to install it: 6-channel USB audio, latching mute, trig preview, scrolling names, Syntakt engines, Model-TG, Samples OS, recovery.">
+<meta name="description" content="What each Modded Cycles mod does and how to install it: 6-channel USB audio, latching mute, trig preview, scrolling names, Syntakt engines, Model-TG, arpeggiator, Samples OS, recovery.">
 <meta name="theme-color" content="#e3e2de" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b1b1b" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-03-02">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-03-02">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-03-03">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-03-03">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -46,6 +46,7 @@
         <li><a href="#scroll"><span data-l="en">Scrolling names</span><span data-l="fr">Noms qui défilent</span></a></li>
         <li><a href="#syntakt"><span data-l="en">Syntakt engines</span><span data-l="fr">Moteurs du Syntakt</span></a></li>
         <li><a href="#model-tg">Model-TG</a></li>
+        <li><a href="#arp"><span data-l="en">Arpeggiator</span><span data-l="fr">Arpégiateur</span></a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
         <li><a href="#stock"><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></a></li>
         <li><a href="#recovery"><span data-l="en">Recovery</span><span data-l="fr">Secours</span></a></li>
@@ -247,7 +248,7 @@
       <section id="model-tg">
         <h2><span class="n">8</span>Model-TG</h2>
         <p class="by"><span data-l="en">By</span><span data-l="fr">Par</span> <a href="https://github.com/TinyGregAudio/Model-TG" target="_blank" rel="noopener">TinyGregAudio</a> · <span data-l="en">MIT license</span><span data-l="fr">licence MIT</span> · <a href="https://github.com/TinyGregAudio/Model-TG/blob/70b39dd6787770ebefc7a2d78dea1678ec012679/docs/USER_GUIDE.md" target="_blank" rel="noopener"><span data-l="en">full guide</span><span data-l="fr">guide complet (en anglais)</span></a></p>
-        <p class="lede"><span data-l="en">A Sampler machine, resampling, a retrig page with master effects, slide trigs, and Attack, Filter and Resonance on every machine. Installed exactly as its author publishes it (version 1.1).</span><span data-l="fr">Une machine Sampler, le rééchantillonnage, une page de retrig avec des effets master, des slide trigs, et Attack, Filtre et Résonance sur toutes les machines. Le mod est installé tel que son auteur le publie (version 1.1).</span></p>
+        <p class="lede"><span data-l="en">A Sampler machine, resampling, a retrig page with master effects, slide trigs, and Attack, Filter and Resonance on every machine. Built by its author's own build (version 1.1), with one change: in mute mode, each track key mutes at once.</span><span data-l="fr">Une machine Sampler, le rééchantillonnage, une page de retrig avec des effets master, des slide trigs, et Attack, Filtre et Résonance sur toutes les machines. Il est construit par le build de son auteur (version 1.1), avec une retouche : en mode mute, chaque touche de piste mute tout de suite.</span></p>
 
         <h3><span data-l="en">Loading a sample</span><span data-l="fr">Charger un échantillon</span></h3>
         <figure class="fig">
@@ -312,7 +313,7 @@
         <p><span data-l="en">A short press on SETTINGS still opens its usual menu. Held, it no longer brings up the pattern save: it serves the shortcuts above.</span><span data-l="fr">Un appui court sur SETTINGS ouvre toujours son menu habituel. Maintenu, il ne propose plus la sauvegarde du pattern : il sert aux raccourcis ci-dessus.</span></p>
 
         <dl class="facts">
-          <div><dt><span data-l="en">Included</span><span data-l="fr">Inclus</span></dt><dd><span data-l="en">drumkilla's three tweaks (latching mute, trig preview, scrolling names): the flasher unticks them.</span><span data-l="fr">les trois tweaks de drumkilla (mute verrouillé, écoute d'un pas, noms qui défilent) : le flasher les décoche.</span></dd></div>
+          <div><dt><span data-l="en">Included</span><span data-l="fr">Inclus</span></dt><dd><span data-l="en">drumkilla's three tweaks (latching mute, trig preview, scrolling names): the flasher unticks them. Mutes take effect at once, as with the latching mute alone (Model-TG itself queues them until you leave mute mode).</span><span data-l="fr">les trois tweaks de drumkilla (mute verrouillé, écoute d'un pas, noms qui défilent) : le flasher les décoche. Les mutes s'appliquent tout de suite, comme avec le mute verrouillé seul (Model-TG, lui, les met en attente jusqu'à la sortie du mode mute).</span></dd></div>
           <div><dt><span data-l="en">Processor</span><span data-l="fr">Processeur</span></dt><dd><span data-l="en"><b>Device Config › System</b> shows the load, now and at its worst; turn DATA right for each track's share. Silent tracks cost almost nothing.</span><span data-l="fr"><b>Device Config › System</b> affiche la charge, maintenant et au pire ; tournez DATA vers la droite pour la part de chaque piste. Les pistes silencieuses ne coûtent presque rien.</span></dd></div>
           <div><dt><span data-l="en">Files</span><span data-l="fr">Fichiers</span></dt><dd><span data-l="en">saved takes in <code>/Resampled</code>, slice markers in <code>/Slices</code>, on the Model:Cycles' storage.</span><span data-l="fr">les prises sauvegardées dans <code>/Resampled</code>, les marqueurs de tranches dans <code>/Slices</code>, dans le stockage du Model:Cycles.</span></dd></div>
           <div><dt><span data-l="en">Projects</span><span data-l="fr">Projets</span></dt><dd><span data-l="en">tracks set to the Sampler don't play on another firmware.</span><span data-l="fr">les pistes réglées sur le Sampler ne jouent pas sur un autre firmware.</span></dd></div>
@@ -331,14 +332,47 @@
           <p style="margin:0"><span data-l="en">Tick both cards in the flasher. The Sampler stays the 7th machine and the engines follow from the 8th. They get Attack, Filter and Resonance and slide trigs too, and their time shows on the System page.</span><span data-l="fr">Cochez les deux cartes dans le flasher. Le Sampler reste la 7<sup>e</sup> machine et les moteurs le suivent à partir de la 8<sup>e</sup>. Ils ont aussi l'Attack, le filtre, la résonance et les slide trigs, et leur temps s'affiche sur la page System.</span></p>
         </div>
         <dl class="facts">
-          <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">Model-TG with the 5 engines and 6-channel audio works on a Model:Cycles, in version 1.0 as in 1.1. Every choice with Model-TG stays marked experimental until a firmware of version 1.1 built by the flasher is tried.</span><span data-l="fr">Model-TG avec les 5 moteurs et l'audio 6 canaux fonctionne sur un Model:Cycles, en version 1.0 comme en 1.1. Tous les choix avec Model-TG restent marqués expérimentaux jusqu'à l'essai d'un firmware de la version 1.1 construit par le flasher.</span></dd></div>
+          <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">Model-TG 1.1 with the 5 engines and 6-channel audio, on a Model:Cycles. Other choices are still marked experimental.</span><span data-l="fr">Model-TG 1.1 avec les 5 moteurs et l'audio 6 canaux, sur un Model:Cycles. Les autres choix restent marqués expérimentaux.</span></dd></div>
           <div><dt><span data-l="en">Samples</span><span data-l="fr">Échantillons</span></dt><dd><span data-l="en">63 MB of memory instead of 64: the last one runs the engines.</span><span data-l="fr">63 Mo de mémoire au lieu de 64 : le dernier fait tourner les moteurs.</span></dd></div>
           <div><dt><span data-l="en">Projects</span><span data-l="fr">Projets</span></dt><dd><span data-l="en">an added machine doesn't have the same number with and without Model-TG. Before switching, set those tracks back to an original machine.</span><span data-l="fr">une machine ajoutée n'a pas le même numéro avec et sans Model-TG. Avant de changer, remettez ces pistes sur une machine d'origine.</span></dd></div>
         </dl>
       </section>
 
+      <section id="arp">
+        <h2><span class="n">9</span><span data-l="en">Arpeggiator</span><span data-l="fr">Arpégiateur</span></h2>
+        <p class="lede"><span data-l="en">The retrig becomes an arpeggiator: hold several notes on a track and they play one after another, at the retrig rate. With a single note, it is the retrig you know.</span><span data-l="fr">Le retrig devient un arpégiateur : tenez plusieurs notes sur une piste et elles se jouent l'une après l'autre, au rythme du retrig. Avec une seule note, c'est le retrig habituel.</span></p>
+        <figure class="fig">
+          <div data-device data-scenes="func,retrig @>Arp     UP/Oct      1 | retrig,s1 @logo | retrig,s1,s5 @logo | retrig,s1,s5,s8 @logo" data-ms="1200"></div>
+        </figure>
+        <ol>
+          <li><span data-l="en">Press <b>FUNC</b> + <b>RETRIG</b>: below Rte, Len and A.On come two new lines, <b>Arp</b> (the direction) and <b>Oct</b> (how many octaves). They are saved with the pattern, for each track.</span><span data-l="fr">Appuyez sur <b>FUNC</b> + <b>RETRIG</b> : sous Rte, Len et A.On viennent deux nouvelles lignes, <b>Arp</b> (le sens) et <b>Oct</b> (le nombre d'octaves). Elles sont enregistrées avec le pattern, pour chaque piste.</span></li>
+          <li><span data-l="en">Hold <b>RETRIG</b> (or turn <b>A.On</b> on) and hold several notes on the track: they play one after another at the <b>Rte</b> rate.</span><span data-l="fr">Tenez <b>RETRIG</b> (ou activez <b>A.On</b>) et tenez plusieurs notes sur la piste : elles se jouent l'une après l'autre, au rythme de <b>Rte</b>.</span></li>
+          <li><span data-l="en">Add or release notes while it plays: the rhythm goes on and a new note takes its place in the arpeggio. It stops when you release the last note.</span><span data-l="fr">Ajoutez ou relâchez des notes pendant qu'il joue : le rythme continue et une nouvelle note prend sa place dans l'arpège. Il s'arrête quand vous relâchez la dernière note.</span></li>
+        </ol>
+        <div class="tbl fluid">
+          <table>
+            <thead><tr><th>Arp</th><th><span data-l="en">Order of the notes</span><span data-l="fr">Ordre des notes</span></th></tr></thead>
+            <tbody>
+              <tr><th>UP</th><td><span data-l="en">lowest to highest, then again (default)</span><span data-l="fr">de la plus grave à la plus aiguë, puis on recommence (par défaut)</span></td></tr>
+              <tr><th>DOWN</th><td><span data-l="en">highest to lowest</span><span data-l="fr">de la plus aiguë à la plus grave</span></td></tr>
+              <tr><th>UPDN</th><td><span data-l="en">up then down, without repeating the notes at the ends</span><span data-l="fr">monte puis redescend, sans rejouer les notes du bout</span></td></tr>
+              <tr><th>RAND</th><td><span data-l="en">a held note at random, never the same twice in a row</span><span data-l="fr">une note tenue au hasard, jamais deux fois de suite la même</span></td></tr>
+              <tr><th>PLAY</th><td><span data-l="en">in the order you pressed them</span><span data-l="fr">dans l'ordre où vous les avez jouées</span></td></tr>
+              <tr><th>OFF</th><td><span data-l="en">the original retrig: the last note pressed is repeated</span><span data-l="fr">le retrig d'origine : la dernière note jouée est répétée</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><span data-l="en"><b>Oct</b> 2 to 4 adds the same notes one, two or three octaves higher, after the first octave, up to the highest note.</span><span data-l="fr"><b>Oct</b> 2 à 4 ajoute les mêmes notes une, deux ou trois octaves plus haut, après la première octave, jusqu'à la note la plus haute.</span></p>
+        <dl class="facts">
+          <div><dt><span data-l="en">Default</span><span data-l="fr">Par défaut</span></dt><dd><span data-l="en">UP, 1 octave: existing projects get the arpeggiator, which is the usual retrig as long as one note is held.</span><span data-l="fr">UP, 1 octave : les projets existants passent à l'arpégiateur, qui revient au retrig habituel tant qu'une seule note est tenue.</span></dd></div>
+          <div><dt><span data-l="en">Projects</span><span data-l="fr">Projets</span></dt><dd><span data-l="en">the settings use a pattern byte the original OS ignores: your projects open everywhere as before.</span><span data-l="fr">les réglages occupent un octet du pattern que l'OS d'origine ignore : vos projets s'ouvrent partout comme avant.</span></dd></div>
+          <div><dt><span data-l="en">Machines</span><span data-l="fr">Machines</span></dt><dd><span data-l="en">all of them, the Syntakt engines and the Model-TG Sampler included. Goes with every other mod.</span><span data-l="fr">toutes, moteurs du Syntakt et Sampler de Model-TG compris. Se combine avec tous les autres mods.</span></dd></div>
+          <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">on a Model:Cycles, with Model-TG, the 5 Syntakt engines and 6-channel audio.</span><span data-l="fr">sur un Model:Cycles, avec Model-TG, les 5 moteurs du Syntakt et l'audio 6 canaux.</span></dd></div>
+        </dl>
+      </section>
+
       <section id="samples">
-        <h2><span class="n">9</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">10</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -353,13 +387,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">10</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">11</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">With Syntakt engines or Model-TG's Sampler, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt ou le Sampler de Model-TG, remettez d'abord vos pistes sur une machine d'origine.</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">11</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">12</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -373,7 +407,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">12</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">13</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -428,8 +462,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-03-02"></script>
-<script src="../assets/cycles.js?v=2026-10-03-02"></script>
-<script src="../assets/site.js?v=2026-10-03-02"></script>
+<script src="../assets/release.js?v=2026-10-03-03"></script>
+<script src="../assets/cycles.js?v=2026-10-03-03"></script>
+<script src="../assets/site.js?v=2026-10-03-03"></script>
 </body>
 </html>

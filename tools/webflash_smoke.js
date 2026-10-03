@@ -84,9 +84,9 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 9).join() === "6ch-usbup,model-tg,model-tg-st,latching-mute,trig-preview,browser-scroll,syntakt-sd,syntakt-tg-sd,syntakt-cp"
-      && ids.length === 6 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
-      && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 6,
+    check(ids.slice(0, 10).join() === "6ch-usbup,model-tg,model-tg-st,latching-mute,trig-preview,browser-scroll,arp,syntakt-sd,syntakt-tg-sd,syntakt-cp"
+      && ids.length === 7 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 7,
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG: ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
@@ -94,10 +94,12 @@ async function main() {
       && srcs.every((x) => x.endsWith("?v=" + w.MC_BUILD)), "scripts loaded with ?v=<build> (no stale cache): " + srcs.join());
     check(doc.getElementById("compat").hidden, "no compatibility banner in a good browser");
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-usb6,feat-model-tg,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-syntakt", "6 feature cards: " + JSON.stringify(feats));
+    check(feats.join() === "feat-usb6,feat-model-tg,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-arp,feat-syntakt", "7 feature cards: " + JSON.stringify(feats));
     const tags = [...doc.querySelectorAll("#features .tag")].map((x) => x.textContent);
-    const synTag = w.MC_TWEAKS.features.find((f) => f.engines).status === "tested" ? "Tested" : "Experimental";
-    check(tags.join() === "Tested,Experimental,Tested,Tested,Tested," + synTag,
+    const tagOfFeat = (f) => (f.status === "tested" ? "Tested" : "Experimental");
+    const synTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.engines));
+    const arpTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "arp"));
+    check(tags.join() === "Tested,Experimental,Tested,Tested,Tested," + arpTag + "," + synTag,
       "cards tagged as tested or not (Model-TG experimental until tested here): " + tags.join());
     check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until the Syntakt engines are ticked");
     doc.getElementById("feat-syntakt").click();
@@ -313,7 +315,9 @@ async function main() {
     const plain = boxes.filter((b) => b !== "feat-syntakt" && b !== "feat-model-tg");   // what goes with the engines
     const sets = [];                                  // with the engines: any of these, or Model-TG (with or without USB)
     for (let mask = 0; mask < 1 << plain.length; mask++) sets.push(plain.filter((b, k) => mask & (1 << k)));
-    sets.push(["feat-model-tg"], ["feat-model-tg", "feat-usb6"]);
+    const tgEx = w.MC_TWEAKS.features.find((f) => f.id === "model-tg").excludes.map((x) => "feat-" + x);
+    const withTg = plain.filter((b) => !tgEx.includes(b));    // Model-TG and what it goes with (USB, arpeggiator)
+    for (let mask = 0; mask < 1 << withTg.length; mask++) sets.push(["feat-model-tg", ...withTg.filter((b, k) => mask & (1 << k))]);
     const tgOf = Object.fromEntries(w.MC_TWEAKS.features.find((f) => f.engines).combos.map((c) => [c.id, c.tg]));
     for (const variant of REAL_ST ? Object.keys(combos).slice(1) : []) {   // the other engine combinations
       for (const on of sets) {

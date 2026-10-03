@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """Génère tweaks/model-cycles_OS1.13/30-model-tg.json : Model-TG de TinyGregAudio (licence MIT), tel que son
 propre build l'exporte pour ce flasher (docs/PAYLOAD.md de Model-TG), depuis un clone de son dépôt au commit
-épinglé (MODEL_TG_COMMIT). Notes : notes/31.
+épinglé (MODEL_TG_COMMIT), avec une retouche de sa source (MC_PATCHES : les mutes tout de suite). Notes : notes/31.
 
 Model-TG est un tweak « append » sans Syntakt : ses écritures sur le MAIN OS d'origine, et un seul morceau
 ajouté après l'image (l'espace vide jusqu'à 0x401ab750 et son code, qui s'exécute en place, dans des blocs du
 cache du système de fichiers). Il ne se combine pas avec les tweaks de drumkilla, qu'il contient déjà.
 
 Deux tweaks :
-  - 30-model-tg.json : Model-TG tel quel (même empreinte que son build) ;
+  - 30-model-tg.json : Model-TG, construit par son build depuis une copie de sa source avec MC_PATCHES ;
   - 30-model-tg-st.json : la base de la version combinée avec les moteurs du Syntakt (notes/31), construite par son
-    build depuis une copie de sa source avec les retouches de ST_PATCHES, et les adresses de ses symboles dont nos
+    build depuis une copie de sa source avec MC_PATCHES et ST_PATCHES, et les adresses de ses symboles dont nos
     détours ont besoin (gen_syntakt_engines.py --tg). Le flasher ne la prend qu'avec un tweak syntakt-tg-….
 
     git clone https://github.com/TinyGregAudio/Model-TG vendor/Model-TG
@@ -52,7 +52,18 @@ def git(repo, *args):
     return subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True, text=True).stdout.strip()
 
 
-# --- version combinée (notes/31 §4) : retouches de sa source, (fichier, texte d'origine, nouveau texte, pourquoi) ---
+# --- retouches de sa source, (fichier, texte d'origine, nouveau texte, pourquoi) ---
+# Dans les deux tweaks (demande de l'utilisateur, 03/10/2026, notes/31 §10) : en mode mute, tenu ou verrouillé, chaque
+# touche de piste mute tout de suite, comme le tweak latching-mute de drumkilla seul. Model-TG met ces appuis en attente
+# et les applique tous en quittant le mode : son mq_toggle, appelé à la place de 0x40013904 (kit, piste, 1) en
+# 0x40023550, rejoint maintenant ce 0x40013904 d'origine. La file reste vide (mq_muted et mq_apply ne changent plus
+# rien), et la retouche a la même taille (10 o) : aucune adresse de Model-TG ne bouge.
+MC_PATCHES = (
+    ("src/model_tg.s", "mq_toggle:\n    movel   %sp@(8),%d0\n    cmpil   #MAX_TRK,%d0\n",
+     "mq_toggle:\n    jmp     0x40013904            | Modded-Cycles: the stock toggle, at once\n    nop\n    nop\n",
+     "mode mute : chaque touche de piste mute tout de suite (mq_toggle -> 0x40013904 d'origine), sans file d'attente"),
+)
+# --- version combinée (notes/31 §4) ---
 # Une seule : sa zone d'échantillons (0x4a800000..0x4e800000, vue sans cache des 64 Mo 0x42800000..0x46800000)
 # s'arrête 1 Mo plus bas, pour nos moteurs du Syntakt (gen_syntakt_engines.PAY_TG = 0x46700000). Tout ce qu'il y
 # range au sommet (cordes de Pluck, noms, historiques de retrig...) est défini depuis REGION_END et descend avec.
@@ -61,11 +72,12 @@ ST_PATCHES = (
      "zone d'échantillons : 1 Mo de moins, laissé aux moteurs du Syntakt (0x46700000..0x46800000)"),
 )
 # Ses symboles dont nos détours ont besoin (gen_syntakt_engines.py --tg) : chaînage, page System, rééchantillonnage ;
-# et l'état de ses slide trigs (v1.1.0), que tools/emu/test_model_tg_syntakt.py arme comme le fait son séquenceur
+# l'état de ses slide trigs (v1.1.0), que tools/emu/test_model_tg_syntakt.py arme comme le fait son séquenceur ; et sa
+# file de mutes (MC_PATCHES), que ce test vérifie
 ST_SYMBOLS = ("blob_start", "reserved_end", "REGION_END", "param_table", "boot_extra_hook", "sampler_dispatch",
               "descr_hook", "descr_b_hook", "sampler_lfo_gate", "sampler_amp_gate", "sampler_name_table",
               "apply_names", "mod_held", "prof_t0", "prof_ta", "prof_trk", "rs_state", "rs_src", "sle_run", "sle_trk",
-              "ah_noenv", "voice_ptr", "SLD_BASE", "sld_init", "blk_clk")
+              "ah_noenv", "voice_ptr", "SLD_BASE", "sld_init", "blk_clk", "mq_toggle", "mq_pending", "mq_apply")
 
 
 def export(cycles, repo, patches=()):
@@ -131,8 +143,8 @@ def adapt_st(tw, stock, syms):
         "description": [
             f"Model-TG de TinyGregAudio, https://github.com/{MODEL_TG_REPO} (licence MIT, texte dans",
             "LICENSE-Model-TG), commit " + MODEL_TG_COMMIT[:7] + ", construit par son propre build depuis une copie de",
-            "sa source avec ces retouches (tools/gen_model_tg.py, ST_PATCHES) :",
-            *[f"  - {f} : {why}" for f, _, _, why in ST_PATCHES],
+            "sa source avec ces retouches (tools/gen_model_tg.py, MC_PATCHES et ST_PATCHES) :",
+            *[f"  - {f} : {why}" for f, _, _, why in MC_PATCHES + ST_PATCHES],
             "Base de la version combinée Model-TG + moteurs du Syntakt (notes/31) : ne s'installe qu'avec un tweak",
             "syntakt-tg-…, qui s'ajoute après lui et chaîne ses détours.",
         ],
@@ -158,7 +170,9 @@ def adapt(tw, stock):
         "name": "Model-TG (TinyGregAudio) : machine Sampler, rééchantillonnage, retrig et effets master",
         "description": [
             f"Model-TG de TinyGregAudio, https://github.com/{MODEL_TG_REPO} (licence MIT, texte dans",
-            "LICENSE-Model-TG), commit " + MODEL_TG_COMMIT[:7] + ", exporté par son propre build pour ce flasher.",
+            "LICENSE-Model-TG), commit " + MODEL_TG_COMMIT[:7] + ", construit par son propre build pour ce flasher, depuis",
+            "une copie de sa source avec cette retouche (tools/gen_model_tg.py, MC_PATCHES) :",
+            *[f"  - {f} : {why}" for f, _, _, why in MC_PATCHES],
             "Machine Sampler (7e machine), rééchantillonnage, retrig et effets master, Attack / Filtre / Résonance sur",
             "les machines d'origine, slide trigs (v1.1.0), Scale Lock, envoi d'échantillons par Elektron Transfer, page",
             "System, et moins de charge processeur. Contient déjà les tweaks de drumkilla (mute verrouillé modifié,",
@@ -190,11 +204,11 @@ def main():
     cycles = pathlib.Path(args.cycles).resolve()
     lic = (repo / "LICENSE").read_text(encoding="utf-8")
     bad = 0
-    for path, patches in ((OUT, ()), (OUT_ST, ST_PATCHES)):
+    for path, patches in ((OUT, MC_PATCHES), (OUT_ST, MC_PATCHES + ST_PATCHES)):
         tw, stock, log, syms = export(cycles, repo, patches)
         print("\n".join("  " + x.strip() for x in log.splitlines() if "MAIN OS sha256" in x or "one blob" in x
                         or "Modded-Cycles tweak" in x))
-        out = adapt_st(tw, stock, syms) if patches else adapt(tw, stock)
+        out = adapt_st(tw, stock, syms) if path == OUT_ST else adapt(tw, stock)
         text = json.dumps(out, indent=1) + "\n"
         if args.check:
             ok = path.exists() and path.read_text(encoding="utf-8") == text

@@ -87,9 +87,10 @@ LEGACY = {}
 HW_TESTED = set()
 # Idem pour la version combinée avec Model-TG (notes/31) : firmware construit par le flasher et essayé sur la machine.
 # 02/10/2026, Model-TG v1.0.0 : Model-TG + les 5 moteurs, avec l'audio USB 6 canaux, « tout marche » (retour de
-# l'utilisateur). Depuis Model-TG v1.1.0 (03/10/2026, notes/31 §9), le firmware construit n'est plus celui-là : à
-# retester.
-HW_TESTED_TG = set()
+# l'utilisateur). 03/10/2026, Model-TG v1.1.0 avec la retouche des mutes (notes/31 §10) : la même combinaison, avec
+# l'arpégiateur, construite par build.py (même MAIN OS que le flasher), « c bon ça fonctionne nickel » ; l'utilisateur
+# a demandé l'étiquette sans attendre un essai depuis le flasher.
+HW_TESTED_TG = {("sd", "cp", "toy", "bits", "swarm")}
 MAX_EXTRA = 6
 
 # --- Syntakt : fermeture et plages copiées -----------------------------------------------------------------

@@ -93,6 +93,17 @@ FEATURES = [
         ],
     },
     {
+        "id": "arp",
+        "label": "Arpegiateur",
+        "desc": "Le retrig devient un arpegiateur : plusieurs notes tenues avec RETRIG (ou A.On) se jouent l'une "
+                "apres l'autre. FUNC + RETRIG : sens (Arp) et octaves (Oct), enregistres avec le pattern.",
+        "status": "tested",
+        "credit": None,
+        "variants": [
+            {"file": "40-arp", "label": None},
+        ],
+    },
+    {
         "id": "syntakt",
         "label": "Vrais moteurs du Syntakt",
         "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.42.syx (a deposer a l'etape 2), "

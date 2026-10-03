@@ -446,6 +446,9 @@ function applyWrites(mainOs, tweaks) {
   for (const t of tweaks) {
     for (const w of t.writes) {
       const off = w.off, old = fromHex(w.old), nw = fromHex(w.new);
+      // the same write, already made by another tweak (a sprite mask both free, notes/32): nothing to do
+      if (nw.length === old.length && nw.every((b, k) => data[off + k] === b) && !old.every((b, k) => data[off + k] === b))
+        continue;
       for (let k = 0; k < old.length; k++)
         if (data[off + k] !== old[k])
           throw new Error(`${t.id} @ 0x${(off + BASE).toString(16)} : octet 'old' ${hex(old)} attendu, trouve `

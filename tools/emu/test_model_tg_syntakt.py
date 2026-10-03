@@ -18,6 +18,8 @@ moteurs seuls (24-syntakt-….json).
      tranches (même règle que pour la piste qu'il enregistre).
   5. Slide trigs (Model-TG v1.1.0) : un glissement armé comme le fait son séquenceur arrive à la machine comme un
      paramètre qui bouge, sur une machine d'origine (Model-TG seul et version combinée) et sur chacun de nos moteurs.
+  6. Mode mute (retouche MC_PATCHES de tools/gen_model_tg.py) : une touche de piste mute tout de suite, par le
+     0x40013904 d'origine avec les mêmes arguments ; rien en attente, rien à appliquer en quittant le mode.
 
     python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \\
         [--engines sd,cp,toy,bits,swarm]
@@ -484,6 +486,25 @@ def slides(ref, fw, codes, tg):
               f"rampe écrite par le banc (audible dès le bloc {moved[0] if len(moved) else '—'})")
 
 
+# --- 6. mode mute ------------------------------------------------------------------------------------------------
+def quick_mute(fw, tg):
+    """mq_toggle(kit, piste, 1), à la place de 0x40013904 en 0x40023550 : rejoint 0x40013904 tout de suite."""
+    u = UI(fw)
+    u.hooks = {0x40013904: "toggle"}
+    calls = []
+    for track in (0, 3, 5):
+        u.calls.clear()
+        u.call(tg["mq_toggle"], 0x93000000, track, 1)
+        calls.append((list(u.calls), u.u32(tg["mq_pending"])))
+    ok = all(c == [("toggle", (0x93000000, t_, 1) + c[0][1][3:])] and pend == 0
+             for (c, pend), t_ in zip(calls, (0, 3, 5)))
+    check(ok and not u.bad, "touche de piste en mode mute : le mute d'origine (0x40013904) tout de suite, mêmes "
+                            "arguments (kit, piste, 1) ; rien en attente")
+    u.calls.clear()
+    u.call(tg["mq_apply"])
+    check(not u.calls and not u.bad, "en quittant le mode : rien à appliquer")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--cycles", required=True)
@@ -514,6 +535,8 @@ def main():
     governor(fw, ours, codes, tg)
     print("slide trigs")
     slides(ref, fw, codes, tg)
+    print("mode mute")
+    quick_mute(fw, tg)
     print("\nTOUT OK" if not FAIL else f"\n{len(FAIL)} ÉCHEC(S)")
     return 1 if FAIL else 0
 
