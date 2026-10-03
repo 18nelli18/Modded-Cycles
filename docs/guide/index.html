@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Guide · Modded Cycles</title>
-<meta name="description" content="What each Modded Cycles mod does and how to install it: 6-channel USB audio, latching mute, trig preview, scrolling names, Syntakt engines, Model-TG, arpeggiator, Samples OS, recovery.">
+<meta name="description" content="What each Modded Cycles mod does and how to install it: 6-channel USB audio, latching mute, trig preview, scrolling names, easier trig removal, Syntakt engines, Model-TG, arpeggiator, Samples OS, recovery.">
 <meta name="theme-color" content="#e3e2de" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b1b1b" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-03-03">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-03-03">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-03-04">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-03-04">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -44,6 +44,7 @@
         <li><a href="#mute"><span data-l="en">Latching mute</span><span data-l="fr">Mute verrouillé</span></a></li>
         <li><a href="#preview"><span data-l="en">Trig preview</span><span data-l="fr">Écoute d'un pas</span></a></li>
         <li><a href="#scroll"><span data-l="en">Scrolling names</span><span data-l="fr">Noms qui défilent</span></a></li>
+        <li><a href="#trig-hold"><span data-l="en">Removing trigs</span><span data-l="fr">Effacer un trig</span></a></li>
         <li><a href="#syntakt"><span data-l="en">Syntakt engines</span><span data-l="fr">Moteurs du Syntakt</span></a></li>
         <li><a href="#model-tg">Model-TG</a></li>
         <li><a href="#arp"><span data-l="en">Arpeggiator</span><span data-l="fr">Arpégiateur</span></a></li>
@@ -181,8 +182,43 @@
         </div>
       </section>
 
+      <section id="trig-hold">
+        <h2><span class="n">7</span><span data-l="en">Removing trigs</span><span data-l="fr">Effacer un trig</span></h2>
+        <p class="lede"><span data-l="en">On the stock OS, a press on a trig that lasts more than 0.2 s counts as a hold, and the trig stays. The soft keys of the Model:Cycles often go past that, so you press again. With this mod, you have half a second.</span><span data-l="fr">Avec l'OS d'origine, un appui sur un trig qui dure plus de 0,2 s compte comme un maintien, et le trig reste. Les touches souples du Model:Cycles dépassent souvent ce délai, et il faut appuyer de nouveau. Avec ce mod, vous avez une demi-seconde.</span></p>
+        <div class="hold fig" data-hold>
+          <div class="hold-top">
+            <button type="button" class="hold-key" data-hold-key aria-pressed="true"><span class="k" aria-hidden="true">5</span><span class="sr" data-l="en">Trig key 5</span><span class="sr" data-l="fr">Touche de pas 5</span></button>
+            <p><span data-l="en">Press the key, then let go, quickly or slowly. Red: the step has a trig.</span><span data-l="fr">Appuyez sur la touche, puis relâchez, vite ou lentement. Rouge : le pas a un trig.</span></p>
+          </div>
+          <div class="bar"><div class="fill"><i data-hold-fill></i></div><i class="t" style="left:20%"></i><i class="t" style="left:50%"></i></div>
+          <div class="scale" data-l="en"><span style="left:0">0</span><span style="left:20%">0.2 s stock</span><span style="left:50%">0.5 s mod</span><span style="left:100%">1 s</span></div>
+          <div class="scale" data-l="fr"><span style="left:0">0</span><span style="left:20%">0,2 s origine</span><span style="left:50%">0,5 s mod</span><span style="left:100%">1 s</span></div>
+          <div class="readout" aria-live="polite">
+            <span class="p" data-hold-ms>–</span>
+            <p data-hold-state="idle"><span data-l="en">Press the key.</span><span data-l="fr">Appuyez sur la touche.</span></p>
+            <p data-hold-state="held" hidden><span data-l="en">Let go now and the mod removes the trig.</span><span data-l="fr">Relâchez maintenant et le mod efface le trig.</span></p>
+            <p data-hold-state="shown" hidden><span data-l="en">Its settings show on the screen: the trig stays.</span><span data-l="fr">Ses réglages s'affichent à l'écran : le trig reste.</span></p>
+            <p data-hold-state="both" hidden><span data-l="en">Removed, as on the stock OS.</span><span data-l="fr">Effacé, comme avec l'OS d'origine.</span></p>
+            <p data-hold-state="mod" hidden><span data-l="en">Removed. The stock OS would have kept it: held over 0.2 s.</span><span data-l="fr">Effacé. L'OS d'origine l'aurait gardé : tenu plus de 0,2 s.</span></p>
+            <p data-hold-state="kept" hidden><span data-l="en">Kept: held over half a second.</span><span data-l="fr">Gardé : tenu plus d'une demi-seconde.</span></p>
+            <p data-hold-state="placed" hidden><span data-l="en">Empty step: a trig is placed at once, as on the stock OS.</span><span data-l="fr">Pas vide : un trig est posé tout de suite, comme avec l'OS d'origine.</span></p>
+          </div>
+        </div>
+        <ul>
+          <li><span data-l="en">Press a trig key whose step already has a trig and let go within half a second: the trig is removed.</span><span data-l="fr">Appuyez sur une touche de pas qui porte déjà un trig et relâchez en moins d'une demi-seconde : le trig est effacé.</span></li>
+          <li><span data-l="en">Hold it longer: the trig stays and its settings show on the screen, as when you hold a trig on the stock OS.</span><span data-l="fr">Tenez plus longtemps : le trig reste et ses réglages s'affichent à l'écran, comme quand vous tenez un trig avec l'OS d'origine.</span></li>
+          <li><span data-l="en">Turn a knob while you hold: the trig stays and gets the parameter lock, however short the press.</span><span data-l="fr">Tournez un potard pendant l'appui : le trig reste et reçoit le p-lock, même si l'appui est court.</span></li>
+        </ul>
+        <dl class="facts">
+          <div><dt><span data-l="en">Delay</span><span data-l="fr">Délai</span></dt><dd><span data-l="en">0.5 s instead of 0.2 s, only on steps that already have a trig. On an empty step, the trig is placed at once, as before.</span><span data-l="fr">0,5 s au lieu de 0,2 s, seulement sur les pas qui ont déjà un trig. Sur un pas vide, le trig est posé tout de suite, comme avant.</span></dd></div>
+          <div><dt><span data-l="en">Also</span><span data-l="fr">Aussi</span></dt><dd><span data-l="en">the other changes the OS makes when you let go (FUNC + trig key, lock trigs) follow the same half second.</span><span data-l="fr">les autres changements que l'OS fait au relâchement (FUNC + touche de pas, trigs de lock) suivent la même demi-seconde.</span></dd></div>
+          <div><dt><span data-l="en">Mods</span><span data-l="fr">Mods</span></dt><dd><span data-l="en">goes with every other mod, Model-TG included.</span><span data-l="fr">se combine avec tous les autres mods, Model-TG compris.</span></dd></div>
+          <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">on a Model:Cycles, with Model-TG, the 5 Syntakt engines, 6-channel audio and the arpeggiator; and in the emulator, with the original OS code, from the keys to the sequencer.</span><span data-l="fr">sur un Model:Cycles, avec Model-TG, les 5 moteurs du Syntakt, l'audio 6 canaux et l'arpégiateur ; et dans l'émulateur, avec le code de l'OS d'origine, des touches jusqu'au séquenceur.</span></dd></div>
+        </dl>
+      </section>
+
       <section id="syntakt">
-        <h2><span class="n">7</span><span data-l="en">Syntakt engines</span><span data-l="fr">Moteurs du Syntakt</span></h2>
+        <h2><span class="n">8</span><span data-l="en">Syntakt engines</span><span data-l="fr">Moteurs du Syntakt</span></h2>
         <p class="lede"><span data-l="en">The Syntakt's digital engines, added as extra machines. Their code is copied from your Syntakt OS file, in your browser. In the emulator they sound like the Syntakt, sample for sample.</span><span data-l="fr">Les moteurs numériques du Syntakt, ajoutés en machines supplémentaires. Leur code est copié depuis votre fichier d'OS Syntakt, dans votre navigateur. En émulation, ils sonnent comme sur le Syntakt, échantillon par échantillon.</span></p>
 
         <h3><span data-l="en">Order in the MACHINES menu</span><span data-l="fr">Ordre dans le menu MACHINES</span></h3>
@@ -246,7 +282,7 @@
       </section>
 
       <section id="model-tg">
-        <h2><span class="n">8</span>Model-TG</h2>
+        <h2><span class="n">9</span>Model-TG</h2>
         <p class="by"><span data-l="en">By</span><span data-l="fr">Par</span> <a href="https://github.com/TinyGregAudio/Model-TG" target="_blank" rel="noopener">TinyGregAudio</a> · <span data-l="en">MIT license</span><span data-l="fr">licence MIT</span> · <a href="https://github.com/TinyGregAudio/Model-TG/blob/70b39dd6787770ebefc7a2d78dea1678ec012679/docs/USER_GUIDE.md" target="_blank" rel="noopener"><span data-l="en">full guide</span><span data-l="fr">guide complet (en anglais)</span></a></p>
         <p class="lede"><span data-l="en">A Sampler machine, resampling, a retrig page with master effects, slide trigs, and Attack, Filter and Resonance on every machine. Built by its author's own build (version 1.1), with one change: in mute mode, each track key mutes at once.</span><span data-l="fr">Une machine Sampler, le rééchantillonnage, une page de retrig avec des effets master, des slide trigs, et Attack, Filtre et Résonance sur toutes les machines. Il est construit par le build de son auteur (version 1.1), avec une retouche : en mode mute, chaque touche de piste mute tout de suite.</span></p>
 
@@ -339,7 +375,7 @@
       </section>
 
       <section id="arp">
-        <h2><span class="n">9</span><span data-l="en">Arpeggiator</span><span data-l="fr">Arpégiateur</span></h2>
+        <h2><span class="n">10</span><span data-l="en">Arpeggiator</span><span data-l="fr">Arpégiateur</span></h2>
         <p class="lede"><span data-l="en">The retrig becomes an arpeggiator: hold several notes on a track and they play one after another, at the retrig rate. With a single note, it is the retrig you know.</span><span data-l="fr">Le retrig devient un arpégiateur : tenez plusieurs notes sur une piste et elles se jouent l'une après l'autre, au rythme du retrig. Avec une seule note, c'est le retrig habituel.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func,retrig @>Arp     UP/Oct      1 | retrig,s1 @logo | retrig,s1,s5 @logo | retrig,s1,s5,s8 @logo" data-ms="1200"></div>
@@ -372,7 +408,7 @@
       </section>
 
       <section id="samples">
-        <h2><span class="n">10</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">11</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -387,13 +423,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">11</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">12</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">With Syntakt engines or Model-TG's Sampler, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt ou le Sampler de Model-TG, remettez d'abord vos pistes sur une machine d'origine.</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">12</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">13</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -407,7 +443,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">13</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">14</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -462,8 +498,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-03-03"></script>
-<script src="../assets/cycles.js?v=2026-10-03-03"></script>
-<script src="../assets/site.js?v=2026-10-03-03"></script>
+<script src="../assets/release.js?v=2026-10-03-04"></script>
+<script src="../assets/cycles.js?v=2026-10-03-04"></script>
+<script src="../assets/site.js?v=2026-10-03-04"></script>
 </body>
 </html>

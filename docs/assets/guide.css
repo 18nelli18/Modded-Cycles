@@ -128,6 +128,18 @@
 .legend li{display:flex;align-items:center;gap:8px;margin:0}
 .legend i{width:14px;height:10px}
 
+/* removing a trig: how long the key is held */
+.hold-top{display:flex;gap:18px;align-items:center;margin:0 0 20px}
+.hold-top p{margin:0;font-size:15px;color:var(--muted)}
+.hold-key{flex:none;padding:0;background:none;border:0;cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.hold-key .k{width:58px;height:46px;font-size:14px}
+.hold-key[aria-pressed="false"] .k{background:var(--casing);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line-2)}
+.hold-key[aria-pressed="true"] .k{background:var(--red);color:#2b1710}
+.hold-key.down .k{transform:translateY(2px);box-shadow:none}
+.hold .bar .fill i{width:0;border:0;background:var(--ink-2)}
+[data-hold-st="shown"] .bar .fill i,[data-hold-st="kept"] .bar .fill i{background:var(--red)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
 /* Samples OS: what is sent */
 .layers{border-top:1px solid var(--ink);margin:0}
 .layers div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;padding:11px 0;border-bottom:1px solid var(--line)}
