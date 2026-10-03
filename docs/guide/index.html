@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Guide · Modded Cycles</title>
-<meta name="description" content="What each Modded Cycles mod does and how to install it: 6-channel USB audio, latching mute, trig preview, scrolling names, Syntakt engines, Samples OS, recovery.">
+<meta name="description" content="What each Modded Cycles mod does and how to install it: 6-channel USB audio, latching mute, trig preview, scrolling names, Syntakt engines, Model-TG, Samples OS, recovery.">
 <meta name="theme-color" content="#e3e2de" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b1b1b" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-02-03">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-02-03">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-03-01">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-03-01">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -45,6 +45,7 @@
         <li><a href="#preview"><span data-l="en">Trig preview</span><span data-l="fr">Écoute d'un pas</span></a></li>
         <li><a href="#scroll"><span data-l="en">Scrolling names</span><span data-l="fr">Noms qui défilent</span></a></li>
         <li><a href="#syntakt"><span data-l="en">Syntakt engines</span><span data-l="fr">Moteurs du Syntakt</span></a></li>
+        <li><a href="#model-tg">Model-TG</a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
         <li><a href="#stock"><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></a></li>
         <li><a href="#recovery"><span data-l="en">Recovery</span><span data-l="fr">Secours</span></a></li>
@@ -184,7 +185,7 @@
         <p class="lede"><span data-l="en">The Syntakt's digital engines, added as extra machines. Their code is copied from your Syntakt OS file, in your browser. In the emulator they sound like the Syntakt, sample for sample.</span><span data-l="fr">Les moteurs numériques du Syntakt, ajoutés en machines supplémentaires. Leur code est copié depuis votre fichier d'OS Syntakt, dans votre navigateur. En émulation, ils sonnent comme sur le Syntakt, échantillon par échantillon.</span></p>
 
         <h3><span data-l="en">Order in the MACHINES menu</span><span data-l="fr">Ordre dans le menu MACHINES</span></h3>
-        <p><span data-l="en">The added machines come after Chord, always in this order, numbered from 7 according to the engines you tick. Try it:</span><span data-l="fr">Les machines ajoutées viennent après Chord, toujours dans cet ordre, numérotées à partir de 7 selon les moteurs cochés. Essayez :</span></p>
+        <p><span data-l="en">The added machines come after Chord, always in this order, numbered from 7 according to the engines you tick (from 8 with <a href="#model-tg">Model-TG</a>, whose Sampler is the 7th). Try it:</span><span data-l="fr">Les machines ajoutées viennent après Chord, toujours dans cet ordre, numérotées à partir de 7 selon les moteurs cochés (à partir de 8 avec <a href="#model-tg">Model-TG</a>, dont le Sampler est la 7<sup>e</sup>). Essayez :</span></p>
         <div class="eng fig" data-engines>
           <div>
             <label><input class="tick" type="checkbox" value="SDVtg"><span><b>SDVtg</b> SD VINTAGE, <span data-l="en">vintage snare</span><span data-l="fr">caisse claire vintage</span></span></label>
@@ -243,8 +244,92 @@
         <p class="note"><span data-l="en"><b>Before flashing another choice or the official firmware,</b> set the tracks that use an added machine back to an original one (Kick to Chord). The numbers of the added machines depend on the engines ticked: otherwise MACHINES can freeze on those tracks.</span><span data-l="fr"><b>Avant de flasher un autre choix ou le firmware officiel,</b> remettez sur une machine d'origine (de Kick à Chord) les pistes qui utilisent une machine ajoutée. Les numéros des machines ajoutées dépendent des moteurs cochés : sinon MACHINES peut geler sur ces pistes.</span></p>
       </section>
 
+      <section id="model-tg">
+        <h2><span class="n">8</span>Model-TG</h2>
+        <p class="by"><span data-l="en">By</span><span data-l="fr">Par</span> <a href="https://github.com/TinyGregAudio/Model-TG" target="_blank" rel="noopener">TinyGregAudio</a> · <span data-l="en">MIT license</span><span data-l="fr">licence MIT</span> · <a href="https://github.com/TinyGregAudio/Model-TG/blob/454963b78c329e3c4df2f2f3c972abb3db0ce289/docs/USER_GUIDE.md" target="_blank" rel="noopener"><span data-l="en">full guide</span><span data-l="fr">guide complet (en anglais)</span></a></p>
+        <p class="lede"><span data-l="en">A Sampler machine, resampling, a retrig page with master effects, and Attack, Filter and Resonance on every machine. Installed exactly as its author publishes it.</span><span data-l="fr">Une machine Sampler, le rééchantillonnage, une page de retrig avec des effets master, et Attack, Filtre et Résonance sur toutes les machines. Le mod est installé tel que son auteur le publie.</span></p>
+
+        <h3><span data-l="en">Loading a sample</span><span data-l="fr">Charger un échantillon</span></h3>
+        <figure class="fig">
+          <div data-device data-scenes="func,machines @>kick_01.wav/loop_96.wav/pad_C3.wav | @Sample loaded/to Sampler" data-ms="1400"></div>
+        </figure>
+        <ol>
+          <li><span data-l="en">On the Model:Cycles, set <b>Device Config › Transfer</b> from CYC to SMP: Elektron Transfer now sees a Model:Samples. Send your WAV files (48 kHz, mono or stereo).</span><span data-l="fr">Sur le Model:Cycles, passez <b>Device Config › Transfer</b> de CYC à SMP : Elektron Transfer voit alors un Model:Samples. Envoyez vos fichiers WAV (48 kHz, mono ou stéréo).</span></li>
+          <li><span data-l="en">Set a track to the <b>Sampler</b> machine, the 7th, right after Chord.</span><span data-l="fr">Mettez une piste sur la machine <b>Sampler</b>, la 7<sup>e</sup>, juste après Chord.</span></li>
+          <li><span data-l="en">Press <b>FUNC</b> + <b>MACHINES</b> (preset menu) and pick a file: the screen shows <b>Sample loaded to Sampler</b>.</span><span data-l="fr">Appuyez sur <b>FUNC</b> + <b>MACHINES</b> (menu des presets) et choisissez un fichier : l'écran affiche <b>Sample loaded to Sampler</b>.</span></li>
+        </ol>
+        <p><span data-l="en">To give one step its own sample, hold the step, press <b>FUNC</b> + <b>MACHINES</b> and pick a file. Up to 64 samples stay in memory, shared by every track and pattern that uses them.</span><span data-l="fr">Pour donner à un pas son propre échantillon, maintenez le pas, appuyez sur <b>FUNC</b> + <b>MACHINES</b> et choisissez un fichier. Jusqu'à 64 échantillons restent en mémoire, partagés par toutes les pistes et tous les patterns qui les utilisent.</span></p>
+        <p class="note"><span data-l="en">In SMP, use Transfer for samples only and never accept an OS update from it. Install an OS only while Transfer is on CYC; every power-on starts on CYC.</span><span data-l="fr">En SMP, ne servez-vous de Transfer que pour les échantillons et n'acceptez jamais de mise à jour d'OS de sa part. N'installez un OS que lorsque Transfer est sur CYC ; chaque démarrage repart sur CYC.</span></p>
+
+        <h3><span data-l="en">Playback modes</span><span data-l="fr">Modes de lecture</span></h3>
+        <p><span data-l="en">Hold <b>SETTINGS</b> and press <b>MACHINES</b>, then turn any knob to choose the mode. <b>SETTINGS</b> + <b>PUNCH</b> opens its options: effect, stereo, stutter, loop type… Everything is saved with the track.</span><span data-l="fr">Maintenez <b>SETTINGS</b> et appuyez sur <b>MACHINES</b>, puis tournez un potard pour choisir le mode. <b>SETTINGS</b> + <b>PUNCH</b> ouvre ses options : effet, stéréo, stutter, type de boucle… Tout est sauvegardé avec la piste.</span></p>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>Mode</th><th><span data-l="en">What it does</span><span data-l="fr">Ce qu'il fait</span></th><th><span data-l="en">The four knobs</span><span data-l="fr">Les quatre potards</span></th></tr></thead>
+            <tbody>
+              <tr><th>One shot</th><td><span data-l="en">plays Start → End once (default)</span><span data-l="fr">joue une fois de Start à End (par défaut)</span></td><td>Start, End, Filter, Res</td></tr>
+              <tr><th>Loop</th><td><span data-l="en">loops Start → End</span><span data-l="fr">boucle de Start à End</span></td><td>Start, End, Filter, Res</td></tr>
+              <tr><th>Slice</th><td><span data-l="en">cuts the sample into slices, the note picks one</span><span data-l="fr">découpe en tranches, la note en choisit une</span></td><td>Start, End, Filter, Res</td></tr>
+              <tr><th>Granular</th><td><span data-l="en">up to 6 grains at the note's pitch</span><span data-l="fr">jusqu'à 6 grains, à la hauteur de la note</span></td><td>Position, Grain Size, Density, Spray</td></tr>
+              <tr><th>Stretch</th><td><span data-l="en">granular with a moving playhead: time and pitch apart</span><span data-l="fr">granulaire qui avance : durée et hauteur séparées</span></td><td>Speed, Grain Size, Density, Spray</td></tr>
+              <tr><th>Pluck</th><td><span data-l="en">a plucked string, struck by a burst of the sample</span><span data-l="fr">une corde pincée, frappée par un bout de l'échantillon</span></td><td>Strike Pos, Strike Len, Tone, Feedback</td></tr>
+              <tr><th>Wave</th><td><span data-l="en">the sample as a wavetable</span><span data-l="fr">l'échantillon comme table d'ondes</span></td><td>Wave Pos, Frame Size, Smooth, Detune</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><span data-l="en">Start above End plays backwards. Stereo (option <b>CHN</b>) costs about twice the processor.</span><span data-l="fr">Start au-dessus de End joue à l'envers. La stéréo (option <b>CHN</b>) demande environ deux fois plus de processeur.</span></p>
+
+        <h3><span data-l="en">Attack, Filter and Resonance</span><span data-l="fr">Attack, Filtre et Résonance</span></h3>
+        <figure class="fig">
+          <div data-device data-scenes="machines @logo | machines,decay @ATTACK | machines,sweep @FILTER | machines,contour @RESONANCE" data-ms="1100"></div>
+        </figure>
+        <p><span data-l="en">Hold <b>MACHINES</b> and turn <b>DECAY</b> for Attack (up to about 2 s), <b>SWEEP</b> for the filter, <b>CONTOUR</b> for its resonance. On every machine, the Syntakt engines included. They are real parameters: p-locks, LFO destinations, saved with the project.</span><span data-l="fr">Maintenez <b>MACHINES</b> et tournez <b>DECAY</b> pour l'Attack (jusqu'à 2 s environ), <b>SWEEP</b> pour le filtre, <b>CONTOUR</b> pour sa résonance. Sur toutes les machines, moteurs du Syntakt compris. Ce sont de vrais paramètres : p-locks, destinations du LFO, sauvegardés avec le projet.</span></p>
+
+        <h3><span data-l="en">Shortcuts</span><span data-l="fr">Raccourcis</span></h3>
+        <div class="tbl fluid">
+          <table>
+            <thead><tr><th><span data-l="en">Keys</span><span data-l="fr">Touches</span></th><th></th></tr></thead>
+            <tbody>
+              <tr><th>SETTINGS + MACHINES</th><td><span data-l="en">playback mode (Sampler track)</span><span data-l="fr">mode de lecture (piste Sampler)</span></td></tr>
+              <tr><th>SETTINGS + PUNCH</th><td><span data-l="en">the mode's options</span><span data-l="fr">options du mode</span></td></tr>
+              <tr><th>SETTINGS + REC</th><td><span data-l="en">resampling: a track, the whole output or the computer's USB audio</span><span data-l="fr">rééchantillonnage : une piste, toute la sortie ou l'audio USB de l'ordinateur</span></td></tr>
+              <tr><th>SETTINGS + RETRIG</th><td><span data-l="en">retrig page: repeats on the trig keys, 12 master effects on the knobs</span><span data-l="fr">page de retrig : répétitions sur les touches de pas, 12 effets master sur les potards</span></td></tr>
+              <tr><th>SETTINGS + BACK</th><td><span data-l="en">master effects off</span><span data-l="fr">coupe les effets master</span></td></tr>
+              <tr><th>MACHINES + DECAY · SWEEP · CONTOUR</th><td>Attack · <span data-l="en">Filter · Resonance</span><span data-l="fr">Filtre · Résonance</span></td></tr>
+              <tr><th>FUNC + PAGE</th><td><span data-l="en">Scale Lock: <b>Scl</b> and <b>Key</b> in the Scale menu</span><span data-l="fr">Scale Lock : <b>Scl</b> et <b>Key</b> dans le menu Scale</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><span data-l="en">A short press on SETTINGS still opens its usual menu. Held, it no longer brings up the pattern save: it serves the shortcuts above.</span><span data-l="fr">Un appui court sur SETTINGS ouvre toujours son menu habituel. Maintenu, il ne propose plus la sauvegarde du pattern : il sert aux raccourcis ci-dessus.</span></p>
+
+        <dl class="facts">
+          <div><dt><span data-l="en">Included</span><span data-l="fr">Inclus</span></dt><dd><span data-l="en">drumkilla's three tweaks (latching mute, trig preview, scrolling names): the flasher unticks them.</span><span data-l="fr">les trois tweaks de drumkilla (mute verrouillé, écoute d'un pas, noms qui défilent) : le flasher les décoche.</span></dd></div>
+          <div><dt><span data-l="en">Processor</span><span data-l="fr">Processeur</span></dt><dd><span data-l="en"><b>Device Config › System</b> shows the load, now and at its worst; turn DATA right for each track's share. Silent tracks cost almost nothing.</span><span data-l="fr"><b>Device Config › System</b> affiche la charge, maintenant et au pire ; tournez DATA vers la droite pour la part de chaque piste. Les pistes silencieuses ne coûtent presque rien.</span></dd></div>
+          <div><dt><span data-l="en">Files</span><span data-l="fr">Fichiers</span></dt><dd><span data-l="en">saved takes in <code>/Resampled</code>, slice markers in <code>/Slices</code>, on the Model:Cycles' storage.</span><span data-l="fr">les prises sauvegardées dans <code>/Resampled</code>, les marqueurs de tranches dans <code>/Slices</code>, dans le stockage du Model:Cycles.</span></dd></div>
+          <div><dt><span data-l="en">Projects</span><span data-l="fr">Projets</span></dt><dd><span data-l="en">tracks set to the Sampler don't play on another firmware.</span><span data-l="fr">les pistes réglées sur le Sampler ne jouent pas sur un autre firmware.</span></dd></div>
+        </dl>
+
+        <h3><span data-l="en">With the Syntakt engines</span><span data-l="fr">Avec les moteurs du Syntakt</span></h3>
+        <div class="side fig">
+          <div class="lcd-box" aria-hidden="true">
+            <ol>
+              <li><span>06</span>Chord</li>
+              <li class="sel"><span>07</span>Sampler</li>
+              <li><span>08</span>SDVtg</li>
+              <li><span>09</span>CPVtg</li>
+            </ol>
+          </div>
+          <p style="margin:0"><span data-l="en">Tick both cards in the flasher. The Sampler stays the 7th machine and the engines follow from the 8th. They get Attack, Filter and Resonance too, and their time shows on the System page.</span><span data-l="fr">Cochez les deux cartes dans le flasher. Le Sampler reste la 7<sup>e</sup> machine et les moteurs le suivent à partir de la 8<sup>e</sup>. Ils ont aussi l'Attack, le filtre et la résonance, et leur temps s'affiche sur la page System.</span></p>
+        </div>
+        <dl class="facts">
+          <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">Model-TG with the 5 engines and 6-channel audio, built by the flasher. Other choices are still marked experimental.</span><span data-l="fr">Model-TG avec les 5 moteurs et l'audio 6 canaux, construit par le flasher. Les autres choix restent marqués expérimentaux.</span></dd></div>
+          <div><dt><span data-l="en">Samples</span><span data-l="fr">Échantillons</span></dt><dd><span data-l="en">63 MB of memory instead of 64: the last one runs the engines.</span><span data-l="fr">63 Mo de mémoire au lieu de 64 : le dernier fait tourner les moteurs.</span></dd></div>
+          <div><dt><span data-l="en">Projects</span><span data-l="fr">Projets</span></dt><dd><span data-l="en">an added machine doesn't have the same number with and without Model-TG. Before switching, set those tracks back to an original machine.</span><span data-l="fr">une machine ajoutée n'a pas le même numéro avec et sans Model-TG. Avant de changer, remettez ces pistes sur une machine d'origine.</span></dd></div>
+        </dl>
+      </section>
+
       <section id="samples">
-        <h2><span class="n">8</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">9</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -259,13 +344,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">9</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">10</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
-        <p><span data-l="en">With Syntakt engines, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt, remettez d'abord vos pistes sur une machine d'origine.</span></p>
+        <p><span data-l="en">With Syntakt engines or Model-TG's Sampler, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt ou le Sampler de Model-TG, remettez d'abord vos pistes sur une machine d'origine.</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">10</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">11</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -279,7 +364,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">11</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">12</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -302,6 +387,10 @@
             <p><span data-l="en">That's the governor keeping the sound from stuttering (see <a href="#syntakt">Processor load</a>). Play fewer Syntakt voices at once, or shorten their decay.</span><span data-l="fr">C'est le régulateur qui évite que le son accroche (voir <a href="#syntakt">Charge du processeur</a>). Jouez moins de voix du Syntakt en même temps, ou raccourcissez leur decay.</span></p>
           </details>
           <details>
+            <summary><span data-l="en">Elektron Transfer won't take samples (Model-TG)</span><span data-l="fr">Elektron Transfer refuse les échantillons (Model-TG)</span></summary>
+            <p><span data-l="en">Set Device Config › Transfer to SMP: Transfer then sees a Model:Samples. Every power-on starts again on CYC. See <a href="#model-tg">Model-TG</a>.</span><span data-l="fr">Passez Device Config › Transfer sur SMP : Transfer voit alors un Model:Samples. Chaque démarrage repart sur CYC. Voir <a href="#model-tg">Model-TG</a>.</span></p>
+          </details>
+          <details>
             <summary><span data-l="en">The update over USB is refused, or the Model:Cycles doesn't start</span><span data-l="fr">La mise à jour par USB est refusée, ou le Model:Cycles ne démarre plus</span></summary>
             <p><span data-l="en">Go through the startup menu and the MIDI IN: see <a href="#recovery">Recovery</a>.</span><span data-l="fr">Passez par le menu de démarrage et le MIDI IN : voir <a href="#recovery">Secours</a>.</span></p>
           </details>
@@ -310,6 +399,7 @@
         <h3><span data-l="en">Credits</span><span data-l="fr">Crédits</span></h3>
         <ul class="credits">
           <li><a href="https://github.com/scottmetoyer/ms-multi-output" target="_blank" rel="noopener">scottmetoyer/ms-multi-output</a>, <span data-l="en">the 6-channel USB audio mod</span><span data-l="fr">le mod audio USB 6 canaux</span></li>
+          <li><a href="https://github.com/TinyGregAudio/Model-TG" target="_blank" rel="noopener">TinyGregAudio/Model-TG</a>, <span data-l="en">the Sampler machine, resampling, retrig and master effects (MIT license)</span><span data-l="fr">la machine Sampler, le rééchantillonnage, le retrig et les effets master (licence MIT)</span></li>
           <li><a href="https://github.com/drumkilla/elektron-model-tweaks" target="_blank" rel="noopener">drumkilla/elektron-model-tweaks</a>, <span data-l="en">latching mute, trig preview, scrolling names, and the firmware toolkit the flasher is ported from</span><span data-l="fr">mute verrouillé, écoute d'un pas, noms qui défilent, et la boîte à outils firmware dont le flasher est un portage</span></li>
           <li><a href="https://github.com/mischa85/elektron-firmware-tool" target="_blank" rel="noopener">mischa85/elektron-firmware-tool</a>, <span data-l="en">the Elektron firmware container and its signature</span><span data-l="fr">le conteneur firmware Elektron et sa signature</span></li>
           <li><a href="https://github.com/mxldyn/octamax" target="_blank" rel="noopener">mxldyn/octamax</a>, <span data-l="en">the reverse-engineering method</span><span data-l="fr">la méthode de rétro-ingénierie</span></li>
@@ -329,8 +419,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-02-03"></script>
-<script src="../assets/cycles.js?v=2026-10-02-03"></script>
-<script src="../assets/site.js?v=2026-10-02-03"></script>
+<script src="../assets/release.js?v=2026-10-03-01"></script>
+<script src="../assets/cycles.js?v=2026-10-03-01"></script>
+<script src="../assets/site.js?v=2026-10-03-01"></script>
 </body>
 </html>
