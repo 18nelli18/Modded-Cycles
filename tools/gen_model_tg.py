@@ -44,7 +44,7 @@ OUT = DEV / "30-model-tg.json"
 OUT_ST = DEV / "30-model-tg-st.json"
 LICENSE_OUT = DEV / "LICENSE-Model-TG"
 MODEL_TG_REPO = "TinyGregAudio/Model-TG"
-MODEL_TG_COMMIT = "454963b78c329e3c4df2f2f3c972abb3db0ce289"     # 01/10/2026, « Export Model-TG as a Modded-Cycles tweak »
+MODEL_TG_COMMIT = "70b39dd6787770ebefc7a2d78dea1678ec012679"     # 02/10/2026, v1.1.0 (slide trigs)
 STOCK_SHA256 = "cc99d4f0175d34d1e91d046e6ec85a5e8ab58ab9edbb3c24406acd48cb99ee98"
 
 
@@ -60,11 +60,12 @@ ST_PATCHES = (
     ("src/model_tg.s", "    REGION_END  = 0x4e800000\n", "    REGION_END  = 0x4e700000\n",
      "zone d'échantillons : 1 Mo de moins, laissé aux moteurs du Syntakt (0x46700000..0x46800000)"),
 )
-# Ses symboles dont nos détours ont besoin (gen_syntakt_engines.py --tg) : chaînage, page System, rééchantillonnage
+# Ses symboles dont nos détours ont besoin (gen_syntakt_engines.py --tg) : chaînage, page System, rééchantillonnage ;
+# et l'état de ses slide trigs (v1.1.0), que tools/emu/test_model_tg_syntakt.py arme comme le fait son séquenceur
 ST_SYMBOLS = ("blob_start", "reserved_end", "REGION_END", "param_table", "boot_extra_hook", "sampler_dispatch",
               "descr_hook", "descr_b_hook", "sampler_lfo_gate", "sampler_amp_gate", "sampler_name_table",
               "apply_names", "mod_held", "prof_t0", "prof_ta", "prof_trk", "rs_state", "rs_src", "sle_run", "sle_trk",
-              "ah_noenv", "voice_ptr")
+              "ah_noenv", "voice_ptr", "SLD_BASE", "sld_init", "blk_clk")
 
 
 def export(cycles, repo, patches=()):
@@ -159,9 +160,9 @@ def adapt(tw, stock):
             f"Model-TG de TinyGregAudio, https://github.com/{MODEL_TG_REPO} (licence MIT, texte dans",
             "LICENSE-Model-TG), commit " + MODEL_TG_COMMIT[:7] + ", exporté par son propre build pour ce flasher.",
             "Machine Sampler (7e machine), rééchantillonnage, retrig et effets master, Attack / Filtre / Résonance sur",
-            "les machines d'origine, Scale Lock, envoi d'échantillons par Elektron Transfer, page System, et moins de",
-            "charge processeur. Contient déjà les tweaks de drumkilla (mute verrouillé modifié, écoute d'un pas,",
-            "défilement des noms). Avec les moteurs du Syntakt, le flasher prend model-tg-st (notes/31).",
+            "les machines d'origine, slide trigs (v1.1.0), Scale Lock, envoi d'échantillons par Elektron Transfer, page",
+            "System, et moins de charge processeur. Contient déjà les tweaks de drumkilla (mute verrouillé modifié,",
+            "écoute d'un pas, défilement des noms). Avec les moteurs du Syntakt, le flasher prend model-tg-st (notes/31).",
             "Généré par tools/gen_model_tg.py. Aucun octet Elektron dans le code de Model-TG.",
         ],
         "version": tw["version"],

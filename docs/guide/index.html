@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-03-01">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-03-01">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-03-02">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-03-02">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -246,8 +246,8 @@
 
       <section id="model-tg">
         <h2><span class="n">8</span>Model-TG</h2>
-        <p class="by"><span data-l="en">By</span><span data-l="fr">Par</span> <a href="https://github.com/TinyGregAudio/Model-TG" target="_blank" rel="noopener">TinyGregAudio</a> · <span data-l="en">MIT license</span><span data-l="fr">licence MIT</span> · <a href="https://github.com/TinyGregAudio/Model-TG/blob/454963b78c329e3c4df2f2f3c972abb3db0ce289/docs/USER_GUIDE.md" target="_blank" rel="noopener"><span data-l="en">full guide</span><span data-l="fr">guide complet (en anglais)</span></a></p>
-        <p class="lede"><span data-l="en">A Sampler machine, resampling, a retrig page with master effects, and Attack, Filter and Resonance on every machine. Installed exactly as its author publishes it.</span><span data-l="fr">Une machine Sampler, le rééchantillonnage, une page de retrig avec des effets master, et Attack, Filtre et Résonance sur toutes les machines. Le mod est installé tel que son auteur le publie.</span></p>
+        <p class="by"><span data-l="en">By</span><span data-l="fr">Par</span> <a href="https://github.com/TinyGregAudio/Model-TG" target="_blank" rel="noopener">TinyGregAudio</a> · <span data-l="en">MIT license</span><span data-l="fr">licence MIT</span> · <a href="https://github.com/TinyGregAudio/Model-TG/blob/70b39dd6787770ebefc7a2d78dea1678ec012679/docs/USER_GUIDE.md" target="_blank" rel="noopener"><span data-l="en">full guide</span><span data-l="fr">guide complet (en anglais)</span></a></p>
+        <p class="lede"><span data-l="en">A Sampler machine, resampling, a retrig page with master effects, slide trigs, and Attack, Filter and Resonance on every machine. Installed exactly as its author publishes it (version 1.1).</span><span data-l="fr">Une machine Sampler, le rééchantillonnage, une page de retrig avec des effets master, des slide trigs, et Attack, Filtre et Résonance sur toutes les machines. Le mod est installé tel que son auteur le publie (version 1.1).</span></p>
 
         <h3><span data-l="en">Loading a sample</span><span data-l="fr">Charger un échantillon</span></h3>
         <figure class="fig">
@@ -285,6 +285,14 @@
         </figure>
         <p><span data-l="en">Hold <b>MACHINES</b> and turn <b>DECAY</b> for Attack (up to about 2 s), <b>SWEEP</b> for the filter, <b>CONTOUR</b> for its resonance. On every machine, the Syntakt engines included. They are real parameters: p-locks, LFO destinations, saved with the project.</span><span data-l="fr">Maintenez <b>MACHINES</b> et tournez <b>DECAY</b> pour l'Attack (jusqu'à 2 s environ), <b>SWEEP</b> pour le filtre, <b>CONTOUR</b> pour sa résonance. Sur toutes les machines, moteurs du Syntakt compris. Ce sont de vrais paramètres : p-locks, destinations du LFO, sauvegardés avec le projet.</span></p>
 
+        <h3><span data-l="en">Slide trigs</span><span data-l="fr">Slide trigs</span></h3>
+        <figure class="fig">
+          <div data-device data-scenes="settings @logo | settings,s5 @Slide on | s1,s5 @logo" data-ms="1300"></div>
+        </figure>
+        <p><span data-l="en">Hold <b>SETTINGS</b> and press a trig key: that step becomes a slide trig (<b>Slide on</b>), or an ordinary trig again (<b>Slide off</b>). On an empty step, it places a trig that is already a slide trig. Slide trigs double-blink on the trig keys.</span><span data-l="fr">Maintenez <b>SETTINGS</b> et appuyez sur une touche de pas : ce pas devient un slide trig (<b>Slide on</b>), ou redevient un trig normal (<b>Slide off</b>). Sur un pas vide, la combinaison pose directement un slide trig. Les slide trigs clignotent deux fois sur les touches de pas.</span></p>
+        <p><span data-l="en">Every parameter that differs between the trig before and the slide trig glides from one value to the other over the whole gap, and gets there as the slide trig plays. A value is the step's p-lock, or the sound's own. What glides: the machine's parameters, fine tune, Amp Decay, volume, pan, the delay and reverb sends, the LFO's speed, fade, phase and depth, and Attack, Filter and Resonance. The machine, Gate and the LFO's other settings jump as usual.</span><span data-l="fr">Chaque paramètre qui diffère entre le trig précédent et le slide trig glisse d'une valeur à l'autre pendant tout l'intervalle, et l'atteint quand le slide trig joue. La valeur est celle du p-lock du pas, ou celle du son. Ce qui glisse : les paramètres de la machine, le fine tune, l'Amp Decay, le volume, le pan, les envois vers le delay et la reverb, la vitesse, le fade, la phase et la profondeur du LFO, et Attack, Filtre et Résonance. La machine, le Gate et les autres réglages du LFO sautent comme avant.</span></p>
+        <p><span data-l="en">It works on every machine, the Syntakt engines included, and the trig before can be a trigless trig. The glide follows the tempo and the track's speed. The mark is saved with the pattern and copied with its step; removing the trig removes it.</span><span data-l="fr">Ça marche sur toutes les machines, moteurs du Syntakt compris, et le trig précédent peut être un trigless trig. Le glissement suit le tempo et la vitesse de la piste. La marque est sauvegardée avec le pattern et copiée avec son pas ; effacer le trig l'efface aussi.</span></p>
+
         <h3><span data-l="en">Shortcuts</span><span data-l="fr">Raccourcis</span></h3>
         <div class="tbl fluid">
           <table>
@@ -295,6 +303,7 @@
               <tr><th>SETTINGS + REC</th><td><span data-l="en">resampling: a track, the whole output or the computer's USB audio</span><span data-l="fr">rééchantillonnage : une piste, toute la sortie ou l'audio USB de l'ordinateur</span></td></tr>
               <tr><th>SETTINGS + RETRIG</th><td><span data-l="en">retrig page: repeats on the trig keys, 12 master effects on the knobs</span><span data-l="fr">page de retrig : répétitions sur les touches de pas, 12 effets master sur les potards</span></td></tr>
               <tr><th>SETTINGS + BACK</th><td><span data-l="en">master effects off</span><span data-l="fr">coupe les effets master</span></td></tr>
+              <tr><th><span data-l="en">SETTINGS + trig key</span><span data-l="fr">SETTINGS + touche de pas</span></th><td><span data-l="en">slide trig on or off</span><span data-l="fr">slide trig ou trig normal</span></td></tr>
               <tr><th>MACHINES + DECAY · SWEEP · CONTOUR</th><td>Attack · <span data-l="en">Filter · Resonance</span><span data-l="fr">Filtre · Résonance</span></td></tr>
               <tr><th>FUNC + PAGE</th><td><span data-l="en">Scale Lock: <b>Scl</b> and <b>Key</b> in the Scale menu</span><span data-l="fr">Scale Lock : <b>Scl</b> et <b>Key</b> dans le menu Scale</span></td></tr>
             </tbody>
@@ -319,10 +328,10 @@
               <li><span>09</span>CPVtg</li>
             </ol>
           </div>
-          <p style="margin:0"><span data-l="en">Tick both cards in the flasher. The Sampler stays the 7th machine and the engines follow from the 8th. They get Attack, Filter and Resonance too, and their time shows on the System page.</span><span data-l="fr">Cochez les deux cartes dans le flasher. Le Sampler reste la 7<sup>e</sup> machine et les moteurs le suivent à partir de la 8<sup>e</sup>. Ils ont aussi l'Attack, le filtre et la résonance, et leur temps s'affiche sur la page System.</span></p>
+          <p style="margin:0"><span data-l="en">Tick both cards in the flasher. The Sampler stays the 7th machine and the engines follow from the 8th. They get Attack, Filter and Resonance and slide trigs too, and their time shows on the System page.</span><span data-l="fr">Cochez les deux cartes dans le flasher. Le Sampler reste la 7<sup>e</sup> machine et les moteurs le suivent à partir de la 8<sup>e</sup>. Ils ont aussi l'Attack, le filtre, la résonance et les slide trigs, et leur temps s'affiche sur la page System.</span></p>
         </div>
         <dl class="facts">
-          <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">Model-TG with the 5 engines and 6-channel audio, built by the flasher. Other choices are still marked experimental.</span><span data-l="fr">Model-TG avec les 5 moteurs et l'audio 6 canaux, construit par le flasher. Les autres choix restent marqués expérimentaux.</span></dd></div>
+          <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">Model-TG with the 5 engines and 6-channel audio works on a Model:Cycles, in version 1.0 as in 1.1. Every choice with Model-TG stays marked experimental until a firmware of version 1.1 built by the flasher is tried.</span><span data-l="fr">Model-TG avec les 5 moteurs et l'audio 6 canaux fonctionne sur un Model:Cycles, en version 1.0 comme en 1.1. Tous les choix avec Model-TG restent marqués expérimentaux jusqu'à l'essai d'un firmware de la version 1.1 construit par le flasher.</span></dd></div>
           <div><dt><span data-l="en">Samples</span><span data-l="fr">Échantillons</span></dt><dd><span data-l="en">63 MB of memory instead of 64: the last one runs the engines.</span><span data-l="fr">63 Mo de mémoire au lieu de 64 : le dernier fait tourner les moteurs.</span></dd></div>
           <div><dt><span data-l="en">Projects</span><span data-l="fr">Projets</span></dt><dd><span data-l="en">an added machine doesn't have the same number with and without Model-TG. Before switching, set those tracks back to an original machine.</span><span data-l="fr">une machine ajoutée n'a pas le même numéro avec et sans Model-TG. Avant de changer, remettez ces pistes sur une machine d'origine.</span></dd></div>
         </dl>
@@ -399,7 +408,7 @@
         <h3><span data-l="en">Credits</span><span data-l="fr">Crédits</span></h3>
         <ul class="credits">
           <li><a href="https://github.com/scottmetoyer/ms-multi-output" target="_blank" rel="noopener">scottmetoyer/ms-multi-output</a>, <span data-l="en">the 6-channel USB audio mod</span><span data-l="fr">le mod audio USB 6 canaux</span></li>
-          <li><a href="https://github.com/TinyGregAudio/Model-TG" target="_blank" rel="noopener">TinyGregAudio/Model-TG</a>, <span data-l="en">the Sampler machine, resampling, retrig and master effects (MIT license)</span><span data-l="fr">la machine Sampler, le rééchantillonnage, le retrig et les effets master (licence MIT)</span></li>
+          <li><a href="https://github.com/TinyGregAudio/Model-TG" target="_blank" rel="noopener">TinyGregAudio/Model-TG</a>, <span data-l="en">the Sampler machine, resampling, retrig and master effects, slide trigs (MIT license)</span><span data-l="fr">la machine Sampler, le rééchantillonnage, le retrig et les effets master, les slide trigs (licence MIT)</span></li>
           <li><a href="https://github.com/drumkilla/elektron-model-tweaks" target="_blank" rel="noopener">drumkilla/elektron-model-tweaks</a>, <span data-l="en">latching mute, trig preview, scrolling names, and the firmware toolkit the flasher is ported from</span><span data-l="fr">mute verrouillé, écoute d'un pas, noms qui défilent, et la boîte à outils firmware dont le flasher est un portage</span></li>
           <li><a href="https://github.com/mischa85/elektron-firmware-tool" target="_blank" rel="noopener">mischa85/elektron-firmware-tool</a>, <span data-l="en">the Elektron firmware container and its signature</span><span data-l="fr">le conteneur firmware Elektron et sa signature</span></li>
           <li><a href="https://github.com/mxldyn/octamax" target="_blank" rel="noopener">mxldyn/octamax</a>, <span data-l="en">the reverse-engineering method</span><span data-l="fr">la méthode de rétro-ingénierie</span></li>
@@ -419,8 +428,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-03-01"></script>
-<script src="../assets/cycles.js?v=2026-10-03-01"></script>
-<script src="../assets/site.js?v=2026-10-03-01"></script>
+<script src="../assets/release.js?v=2026-10-03-02"></script>
+<script src="../assets/cycles.js?v=2026-10-03-02"></script>
+<script src="../assets/site.js?v=2026-10-03-02"></script>
 </body>
 </html>
