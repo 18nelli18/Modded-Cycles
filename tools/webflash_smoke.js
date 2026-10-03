@@ -142,15 +142,22 @@ async function main() {
       && doc.getElementById("feat-trig-preview").checked && w.MCFlasherApp.chosenTweaks().map((x) => x.id).join() === "trig-preview,syntakt-sd",
       "Model-TG unticks drumkilla's tweaks (and the other way round), shows its install note; with the Syntakt engines: " + both);
     doc.getElementById("feat-trig-preview").click(); await wait(5);
-    // the combined version tested on the hardware (gen_syntakt_engines.HW_TESTED_TG): Model-TG + the 5 engines
+    // the combined version's badges follow its tests on the hardware (gen_syntakt_engines.HW_TESTED_TG, the
+    // combos' tg_tested in tweaks.js): Model-TG + the 5 engines, then Model-TG + SDVtg alone
     doc.getElementById("feat-model-tg").click(); await wait(5);
-    await pickEngines(doc, ["sd", "cp", "toy", "bits", "swarm"]);
+    const tgCombos = w.MC_TWEAKS.features.find((f) => f.id === "syntakt").combos;
+    const tgTested = (codes) => !!tgCombos.find((c) => c.engines.join() === codes.join()).tg_tested;
     const tagOf = (id) => doc.querySelector(`label[for=${id}] .tag`).textContent;
-    const tgOk = /tested on a real Model:Cycles/.test(text(doc, "features")) && tagOf("feat-syntakt") === "Tested"
-      && tagOf("feat-model-tg") === "Tested";
-    await pickEngines(doc, ["sd"]);
-    check(tgOk && /not tested on a Model:Cycles yet/.test(text(doc, "features")) && tagOf("feat-model-tg") === "Experimental",
-      "Model-TG + the 5 engines: tested (both cards); Model-TG + SDVtg alone: still experimental");
+    const badges = async (codes) => {
+      await pickEngines(doc, codes);
+      const want = tgTested(codes) ? "Tested" : "Experimental";
+      const note = tgTested(codes) ? /tested on a real Model:Cycles/ : /not tested on a Model:Cycles yet/;
+      return note.test(text(doc, "features")) && tagOf("feat-syntakt") === want && tagOf("feat-model-tg") === want;
+    };
+    const all5 = ["sd", "cp", "toy", "bits", "swarm"];
+    const badgesOk = await badges(all5) && await badges(["sd"]);
+    const word = (codes) => (tgTested(codes) ? "tested" : "experimental");
+    check(badgesOk, `Model-TG + the 5 engines: ${word(all5)} (both cards); Model-TG + SDVtg alone: ${word(["sd"])}`);
     doc.getElementById("feat-model-tg").click(); await wait(5);
     doc.getElementById("feat-syntakt").click(); await wait(5);
     doc.getElementById("feat-usb6").click();

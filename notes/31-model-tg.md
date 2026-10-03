@@ -14,10 +14,11 @@ Décisions de l'utilisateur, après l'analyse du §3 :
 | Model-TG avec l'audio USB 6 canaux | `[FAIT]` aucune écriture commune ; pas encore testé sur la machine (§2) |
 | Conflits avec les moteurs du Syntakt | `[FAIT]` analysés (§3) |
 | Version combinée Model-TG + moteurs du Syntakt | `[FAIT]` en ligne (1.6), démarre et joue sur la machine (firmware de diagnostic, §6) ; charge à optimiser (§7) |
+| Passage à Model-TG v1.1.0 (slide trigs) | `[FAIT en émulation]` slides prouvés aussi sur nos moteurs (§9) ; à essayer sur la machine |
 
 ## 1. Ce qu'est Model-TG
 
-Source : dépôt [TinyGregAudio/Model-TG](https://github.com/TinyGregAudio/Model-TG), commit `454963b` (01/10/2026), `README.md`, `docs/INTERNALS.md`, `docs/PAYLOAD.md` et `build.py`.
+Source : dépôt [TinyGregAudio/Model-TG](https://github.com/TinyGregAudio/Model-TG), commit `454963b` (01/10/2026, sa `v1.0.0`), `README.md`, `docs/INTERNALS.md`, `docs/PAYLOAD.md` et `build.py`. Passage à sa `v1.1.0` : §9.
 
 - **Ce qu'il ajoute** :
   - une machine **Sampler** (index 6, la 7ᵉ) à sept modes de lecture ;
@@ -217,7 +218,7 @@ Retour de l'utilisateur le 01/10/2026, firmware de diagnostic sans l'audio 6 can
 - La page System commence à l'entrée de l'interruption (`0x40058c5e`, `isr_prof` de Model-TG). Notre compteur ne mesure que la fonction audio, appelée plus tard dans cette interruption : il lit environ **11 points de moins**.
 - Le seuil de pic de notre régulateur (93 %) correspond donc à environ 104 % du vrai temps : un bloc peut déborder avant qu'il réagisse. C'est la cause probable des craquements.
 
-**Essai d'un firmware construit par le flasher** (02/10/2026, version 1.8) : Model-TG + les 5 moteurs, avec l'audio USB 6 canaux, « tout marche » (retour de l'utilisateur). Cette combinaison est marquée « testée » dans le flasher (`HW_TESTED_TG` de `tools/gen_syntakt_engines.py`) ; les autres combinaisons avec Model-TG restent « expérimentales ».
+**Essai d'un firmware construit par le flasher** (02/10/2026, version 1.8) : Model-TG + les 5 moteurs, avec l'audio USB 6 canaux, « tout marche » (retour de l'utilisateur). Cette combinaison a été marquée « testée » dans le flasher (`HW_TESTED_TG` de `tools/gen_syntakt_engines.py`) ; les autres combinaisons avec Model-TG restaient « expérimentales ». Depuis le passage à Model-TG v1.1.0 (§9), le flasher ne construit plus ce firmware-là : l'étiquette est retirée en attendant un nouvel essai.
 
 ## 7. Optimisation `[FAIT]`
 
@@ -285,8 +286,65 @@ Model-TG autour de nos moteurs ajoute environ 1,7 point, surtout en défauts de 
 
 ## 8. Ce qui reste `[À FAIRE]`
 
+- **Essayer Model-TG v1.1.0 sur la machine** (§9) : la version combinée avec les 5 moteurs et l'audio 6 canaux, puis les slide trigs sur nos moteurs. L'étiquette « testé » revient après un essai réussi d'un firmware construit par le flasher.
+
 - **Optimiser sans perdre de fonctions** (demande de l'utilisateur) : mesurer d'abord où passent les ~50 % hors des voix (début de l'interruption, mixage et effets), puis viser les plus gros postes.
 - **Régulateur** : mesurer depuis l'entrée de l'interruption, comme la page System, pour qu'il réagisse avant un débordement.
 - Les autres combinaisons avec Model-TG restent « expérimentales » tant qu'elles n'ont pas été essayées sur la machine.
 - **Projets** : une piste réglée sur une machine ajoutée n'a pas le même numéro dans les deux versions (8e machine = SDVtg avec Model-TG, 7e sans). Un projet fait avec l'une joue une autre machine sur l'autre. Le flasher le dit.
 - Non essayé : le rééchantillonnage d'une piste d'un moteur du Syntakt.
+
+## 9. Passage à Model-TG v1.1.0 `[FAIT en émulation]`
+
+Demande de l'utilisateur, le 03/10/2026 : « TinyGregAudio a mis à jour son projet […] Quels sont les changements par rapport à la version que j'avais intégrée ? », puis « vas-y ».
+
+Source : dépôt [TinyGregAudio/Model-TG](https://github.com/TinyGregAudio/Model-TG), étiquette `v1.1.0` (commit `70b39dd`, 02/10/2026). Il y a 9 commits depuis `454963b`, qui est sa `v1.0.0`, la version que nous avions intégrée. Fichiers lus : `README.md`, `docs/USER_GUIDE.md`, `docs/INTERNALS.md`, `docs/FLASHER.md`, `build.py` et `src/model_tg.s`.
+
+**Ce qui change chez lui** :
+- **Les slide trigs**, seule nouveauté musicale (`docs/USER_GUIDE.md`, « Slide trigs ») :
+  - SETTINGS maintenu + une touche de pas fait du pas un slide trig, ou le remet en trig normal. Sur un pas vide, la combinaison pose directement un slide trig. Les slide trigs clignotent deux fois sur les touches de pas.
+  - Chaque paramètre continu qui diffère entre le trig précédent et le slide trig glisse pendant tout l'intervalle. La valeur est celle du p-lock, ou celle du son.
+  - Ne glissent pas : la machine, le Gate, ni le multiplicateur, la destination, la forme et le mode de trig du LFO.
+  - La marque est le bit 12 des drapeaux du pas, que l'OS n'utilise pas : elle est sauvée avec le pattern et copiée avec le pas.
+- **Son propre flasher web** (https://tinygregaudio.github.io/Model-TG/), qui construit Model-TG seul. Son `docs/BUILD.md` cite toujours le nôtre comme autre possibilité.
+- **Build** :
+  - même image quelle que soit la version des binutils : ses lectures de symboles `.globl` sont écrites en relatif au PC ;
+  - bloc de code de 82 282 o, sur 6 blocs du cache au lieu de 5 ; `reserved_end` passe de `0x401bf220` à `0x401bf8c0` ;
+  - zone d'échantillons réduite de 2 Ko (`PCM_TOP = SLD_BASE`).
+- **4 nouveaux points d'accroche dans l'OS** (`build.py`) :
+  - remise à zéro d'un pas, `0x400169f0` → `sld_reset` ;
+  - dessin des lumières des pas, `0x40021f56` → `sld_led` ;
+  - les deux appels du constructeur de trigs, `0x400551a6` et `0x40055bfa` → `sld_seq`, qui arme le glissement ;
+  - en plus, `sld_apply`, appelé en tête de `sampler_pre` (accroché en `0x400a7da8` comme avant), réécrit à chaque bloc les paramètres lissés de la piste.
+
+**Effet sur notre intégration** :
+- Aucun de nos tweaks n'écrit sur ces 4 adresses (vérifié sur tous les fichiers de `tweaks/model-cycles_OS1.13/`).
+- Le format d'export n'a pas changé (`docs/PAYLOAD.md`). `MODEL_TG_COMMIT` passe à `70b39dd`, puis tout est régénéré :
+  - `30-model-tg.json` : 136 écritures, 87 936 o ajoutés. **MAIN OS `a049d724…`**, l'empreinte que son auteur annonce pour la v1.1.0 (commit `a140e7e`, `flasher/model-tg.json`).
+  - `30-model-tg-st.json` : notre seule retouche (`REGION_END`) s'applique toujours. L'état des slides (`SLD_BASE`) est défini depuis `REGION_END` et descend avec lui. Ses symboles exportés comprennent maintenant `SLD_BASE`, `sld_init` et `blk_clk`, pour nos tests.
+  - Les 31 fichiers `31-syntakt-tg-….json` et les firmwares de diagnostic 91 et 92 : seules changent les adresses de Model-TG (ses symboles, la fin de son bloc). Notre charge utile ne bouge pas, et l'image se termine toujours sous `0x40200000`.
+- **Nos moteurs du Syntakt glissent aussi.** Leur passerelle lit les mêmes paramètres lissés que les machines d'origine (le `a2` de la boucle des voix, `update` de `bridge_engines.c`). `sld_apply` les réécrit avant notre aiguillage (`0x400a7dfe`).
+
+**Preuve en émulation** :
+- `test_model_tg.py` (Model-TG seul) passe, ainsi que `test_model_tg_syntakt.py` : 5 moteurs (34 vérifications), SD + SWARM (28) et le firmware de diagnostic 91 (34).
+- Nouvelle partie 5 de `test_model_tg_syntakt.py` : un glissement armé comme le fait `sld_seq`, sur Pitch, Color et Amp Decay, pendant 200 blocs.
+  - Les mots écrits suivent la formule de `sld_apply`.
+  - Le rendu est identique, échantillon par échantillon, à celui où le banc écrit lui-même la même rampe, et différent sans glissement.
+  - Vérifié sur TONE (Model-TG seul, puis version combinée) et sur chacun des 5 moteurs du Syntakt.
+  - Le séquenceur (`sld_seq`) n'est pas émulé.
+- Flasher web : `webflash_smoke.sh` ALL OK (671 vérifications), avec les nouvelles empreintes des 575 combinaisons. Sa vérification des étiquettes suit maintenant `tg_tested`.
+- Firmware d'essai (`build.py -t 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm`) : MAIN OS `0a3c035e…`, la même empreinte que dans le flasher.
+
+**Charge** : boucle des voix émulée, motif de 6 pistes du §6 (SD Vintage x 2, SY Toy, PERC, Sampler sans échantillon, TONE), instructions par bloc. Conversion : 1,54 cycle par instruction, 166 667 cycles par bloc.
+
+| Firmware | Instructions par bloc | Écart | Environ, en % d'un bloc |
+|---|---|---|---|
+| v1.0.0 | 43 558 | | |
+| v1.1.0, avant le premier Play (`sld_init` à 0) | 43 582 | +24 | +0,02 |
+| v1.1.0, en lecture, sans slide | 43 726 | +168 | +0,16 |
+| v1.1.0, les 6 pistes qui glissent sur leurs 19 paramètres | 45 526 | +1 968 | +1,8 |
+
+- Au repos : environ 28 instructions par voix et par bloc.
+- Côté séquenceur (non émulé, lecture du code) : à chaque trig qui part, `sld_seq` cherche le trig suivant de la piste, à environ 9 instructions par pas parcouru (63 pas au pire). Si c'est un slide trig, il lit les 26 paramètres des deux pas. Pire cas estimé : environ 1 300 instructions (environ 1,2 % d'un bloc) par piste, au seul pas qui arme le glissement.
+
+**Étiquette « testé »** : retirée de la version combinée (`HW_TESTED_TG` vide). Le firmware que construit le flasher n'est plus celui essayé le 02/10/2026. Elle reviendra après un essai de l'utilisateur.

@@ -114,14 +114,14 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 au commit épinglé dans `tools/gen_model_tg.py`, avec les binutils m68k (voir [note 31](notes/31-model-tg.md)) :
 ```sh
 git clone https://github.com/TinyGregAudio/Model-TG vendor/Model-TG
-git -C vendor/Model-TG checkout 454963b78c329e3c4df2f2f3c972abb3db0ce289
+git -C vendor/Model-TG checkout 70b39dd6787770ebefc7a2d78dea1678ec012679   # v1.1.0
 python3 tools/gen_model_tg.py --cycles model-cycles_OS1.13.syx --model-tg vendor/Model-TG [--check]
 ```
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `model-tg` | `fb985a1660f946cc0fd0133300c7e6248b7b23a7f3ffede339fc2e368563fae6` (celle annoncée par le build de Model-TG) |
-| `6ch-usbup,model-tg` | `1511f84cda930f42973938beeb6ffa9517e615e79eaf849448e6f269e7a0b35a` |
+| `model-tg` | `a049d7246a0a55d56b574a807802d81258c7affc29a739252a08f25be29e99f8` (celle annoncée par Model-TG pour sa v1.1.0) |
+| `6ch-usbup,model-tg` | `26ae0c49f68e22712c031afd3fd2cf890ca22c35b161aed4ed83f1966faeb079` |
 
 Le même script écrit `30-model-tg-st.json`, la base de la **version combinée avec les moteurs du Syntakt** : Model-TG construit par son
 build depuis une copie de sa source, avec une retouche (sa zone d'échantillons s'arrête 1 Mo plus bas). Les moteurs s'appliquent
@@ -134,9 +134,9 @@ python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --sy
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `model-tg-st,syntakt-tg-sd` | `38c4430ccc5ef4e4c1722c729b47f1c4293f5c87cc8a36236a3ec049976741e2` |
-| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `28a0a318b951c4cad09a7ead49b732e47b1fce8d8e91e0789c0ce63a3dbbbb09` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `1dc0948d56b4da3f3fc400c20c9c8d04fe0e1b71dfe9778692b8d1a9a3a4ff2a` |
+| `model-tg-st,syntakt-tg-sd` | `f4b2ed7add3b0161d68c0daf766578b037c2ab360b0ca3af7ccb62e560628a0b` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `0fc30dde08398e99bc96f563532cde01bff2879aaa0215af93127d1b40c83b84` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `0a3c035e8b0ebe87d9b72615a55cec14f25d15419545b15c30c0e426721e6a10` |
 
 Les 575 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
 `tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;

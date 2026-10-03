@@ -16,6 +16,8 @@ moteurs seuls (24-syntakt-….json).
      ensemble sur les 6 pistes.
   4. Régulateur de charge : en surcharge, il éteint des voix, jamais le Sampler ni la piste dont Model-TG édite les
      tranches (même règle que pour la piste qu'il enregistre).
+  5. Slide trigs (Model-TG v1.1.0) : un glissement armé comme le fait son séquenceur arrive à la machine comme un
+     paramètre qui bouge, sur une machine d'origine (Model-TG seul et version combinée) et sur chacun de nos moteurs.
 
     python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \\
         [--engines sd,cp,toy,bits,swarm]
@@ -418,6 +420,70 @@ def governor(fw, ours_tw, codes, tg):
               + ", identiques à la référence")
 
 
+# --- 5. slide trigs (Model-TG v1.1.0) ---------------------------------------------------------------------------
+# Leur état (src/model_tg.s de Model-TG) : un long par piste à SLD_BASE + 4 t, 26 mots par piste à SLD_BASE + 64 t.
+SL_PND, SL_PDUR, SL_PMSK, SL_PCLK, SL_PFRE, SL_PST, SL_PEN = 0, 24, 48, 72, 216, 256, 640
+GLIDE = {10: ("pitch", 100), 11: ("color", 20), 18: ("decay", 90)}     # mot -> (réglage du banc, valeur d'arrivée)
+
+
+def ramp(frm, to, dur, b):
+    """Le mot que sld_apply écrit au bloc b d'un glissement (sap_fr), et la valeur d'origine une fois lâché."""
+    if b >= dur + dur // 4 + 16:
+        return frm
+    return frm + (((to - frm) * ((min(b, dur) << 14) // dur)) >> 14)
+
+
+def slides(ref, fw, codes, tg):
+    """Un glissement armé comme le fait sld_seq après un trigless trig (SL_PND = 2 : il part au bloc suivant), sur
+    Pitch, Color et Amp Decay. sld_apply, en tête de sampler_pre, réécrit à chaque bloc les paramètres lissés que lit
+    la machine, avant notre aiguillage. Preuve : les mots écrits suivent la formule de sap_fr, et le rendu est
+    identique, échantillon par échantillon, à celui où le banc écrit lui-même la même rampe (et différent sans)."""
+    dur, n, clk = 200, 280, 5000
+    w32 = lambda e, a, v: e.uc.mem_write(a, struct.pack(">I", v & 0xffffffff))
+
+    def run(fw_, t, kw, mode):
+        e = engine(fw_)
+        e.set(t, **kw)
+        sb = tg["SLD_BASE"]                                     # ref et fw : tous deux construits sur model-tg-st
+        frm = {k: int(round(kw[s] * 256)) for k, (s, _) in GLIDE.items()}
+        w32(e, tg["blk_clk"], clk)
+        w32(e, tg["sld_init"], 1)
+        if mode == "slide":
+            for off, v in ((SL_PND, 2), (SL_PDUR, dur), (SL_PCLK, clk), (SL_PFRE, 0),
+                           (SL_PMSK, sum(1 << k for k in GLIDE))):
+                w32(e, sb + 4 * t + off, v)
+            for k, (_, to) in GLIDE.items():
+                e.uc.mem_write(sb + 64 * t + SL_PST + 2 * k, struct.pack(">h", frm[k]))
+                e.uc.mem_write(sb + 64 * t + SL_PEN + 2 * k, struct.pack(">h", to << 8))
+        out, words, p = [], [], E.PARAMS + 0xe + t * 0x42
+        for b in range(n):
+            if mode == "ramp":
+                for k, (s, to) in GLIDE.items():
+                    e.trk[t][s] = ramp(frm[k], to << 8, dur, b) / 256
+            out.append(e.block(1 << t if b == 1 else 0))
+            words.append([struct.unpack(">h", e.uc.mem_read(p + 2 * k, 2))[0] for k in GLIDE])
+            w32(e, tg["blk_clk"], clk + b + 1)                  # rs_out, à la fin de chaque bloc
+        want = [[ramp(frm[k], to << 8, dur, b) for k, (_, to) in GLIDE.items()] for b in range(n)]
+        return np.stack(out), words == want, e.unmapped
+
+    base = dict(note=60, pitch=64, color=64, shape=64, sweep=64, contour=64, punch=0, gate=0, finetune=64, decay=60)
+    cases = [(ref, 4, dict(base, machine=4), "TONE sous Model-TG seul"),
+             (fw, 4, dict(base, machine=4), "TONE dans la version combinée")]
+    for i, c in enumerate(codes):
+        m = gs.CATALOG[c]
+        cases.append((fw, i % 6, dict(base, machine=gs.TG_FIRST + i, color=m["knobs"][0][2], shape=m["knobs"][1][2],
+                                      sweep=m["knobs"][2][2], contour=m["knobs"][3][2]),
+                      f"{m['name']} (machine {gs.TG_FIRST + i + 1})"))
+    for fw_, t, kw, what in cases:
+        s, s_ok, s_unm = run(fw_, t, kw, "slide")
+        r, r_ok, r_unm = run(fw_, t, kw, "ramp")
+        f, _, _ = run(fw_, t, kw, "fixed")
+        moved = np.nonzero(np.any(s[:, t] != f[:, t], axis=1))[0]
+        check(s_ok and r_ok and np.array_equal(s, r) and len(moved) and not s_unm and not r_unm,
+              f"{what}, piste {t + 1} : glissement de Pitch, Color et Amp Decay sur {dur} blocs, identique à la même "
+              f"rampe écrite par le banc (audible dès le bloc {moved[0] if len(moved) else '—'})")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--cycles", required=True)
@@ -446,6 +512,8 @@ def main():
     sound(off, alone, fw, codes)
     print("régulateur de charge")
     governor(fw, ours, codes, tg)
+    print("slide trigs")
+    slides(ref, fw, codes, tg)
     print("\nTOUT OK" if not FAIL else f"\n{len(FAIL)} ÉCHEC(S)")
     return 1 if FAIL else 0
 
