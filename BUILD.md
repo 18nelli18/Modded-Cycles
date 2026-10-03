@@ -111,7 +111,8 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 ### Model-TG
 
 `tweaks/model-cycles_OS1.13/30-model-tg.json` vient du build de [Model-TG](https://github.com/TinyGregAudio/Model-TG) lui-même (licence MIT),
-au commit épinglé dans `tools/gen_model_tg.py`, avec les binutils m68k (voir [note 31](notes/31-model-tg.md)) :
+au commit épinglé dans `tools/gen_model_tg.py`, avec les binutils m68k, depuis une copie de sa source avec une retouche (`MC_PATCHES` : en
+mode mute, chaque touche de piste mute tout de suite), voir [note 31 §10](notes/31-model-tg.md) :
 ```sh
 git clone https://github.com/TinyGregAudio/Model-TG vendor/Model-TG
 git -C vendor/Model-TG checkout 70b39dd6787770ebefc7a2d78dea1678ec012679   # v1.1.0
@@ -120,11 +121,11 @@ python3 tools/gen_model_tg.py --cycles model-cycles_OS1.13.syx --model-tg vendor
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `model-tg` | `a049d7246a0a55d56b574a807802d81258c7affc29a739252a08f25be29e99f8` (celle annoncée par Model-TG pour sa v1.1.0) |
-| `6ch-usbup,model-tg` | `26ae0c49f68e22712c031afd3fd2cf890ca22c35b161aed4ed83f1966faeb079` |
+| `model-tg` | `08d9f07540cf487ba65bd94f8d60aaf7f5c92f7bbb5115f9c8fb953535321241` (sans la retouche : `a049d724…`, celle annoncée par Model-TG pour sa v1.1.0) |
+| `6ch-usbup,model-tg` | `464f742e036831110d76a6bd6411b704ab7160bee28fce5c52b39a275f4d59da` |
 
 Le même script écrit `30-model-tg-st.json`, la base de la **version combinée avec les moteurs du Syntakt** : Model-TG construit par son
-build depuis une copie de sa source, avec une retouche (sa zone d'échantillons s'arrête 1 Mo plus bas). Les moteurs s'appliquent
+build depuis une copie de sa source, avec la même retouche et une autre (sa zone d'échantillons s'arrête 1 Mo plus bas). Les moteurs s'appliquent
 par-dessus (`31-syntakt-tg-<moteurs>.json`, `requires`), voir [note 31 §4](notes/31-model-tg.md) :
 ```sh
 python3 tools/gen_syntakt_engines.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx --all --tg [--check]
@@ -134,9 +135,9 @@ python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --sy
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `model-tg-st,syntakt-tg-sd` | `f4b2ed7add3b0161d68c0daf766578b037c2ab360b0ca3af7ccb62e560628a0b` |
-| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `0fc30dde08398e99bc96f563532cde01bff2879aaa0215af93127d1b40c83b84` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `0a3c035e8b0ebe87d9b72615a55cec14f25d15419545b15c30c0e426721e6a10` |
+| `model-tg-st,syntakt-tg-sd` | `a0868c7216e19dd5dd5fca1314daa5ffce2e6f09d1b06330dc080d12bda6521e` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `94d610447ca437162258d09c766f0752ed84aa17034bcc8d50a98d51f692c549` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `26435535da0aadcbcf2e15cfaaa822bf1007917a8ec2e67db17cffef2cbd84fd` |
 
 Les 1 151 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
 `tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;
@@ -158,8 +159,8 @@ python3 tools/emu/test_arp.py --cycles model-cycles_OS1.13.syx \
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
 | `arp` | `f3b2e3b5d1c1879e7b7962651e285acce2d8bf80c914bffa4b378177f3606945` |
-| `model-tg,arp` | `c2c53c877fd791f2e8d489b980bade5136be6f3c1633ba5fddc689e90e8c41b9` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp` | `ae96a31dbdd011bd78184e3ac96f328eba0569b7b6d5096bb3349783c9f7635c` |
+| `model-tg,arp` | `8be6aac3cd483b0a65ee7c2f0491ef714c2d0fd7760e24a5d5909227d52f4fc7` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp` | `d2e1aeb90df99b2484fc41d5e70f0ec30dd9db84d3dc1017da792150c421bef8` |
 
 L'arpégiateur et les moteurs du Syntakt libèrent le même masque (`0x4016cae8`) : les deux constructeurs (`tools/build.py`,
 `docs/flasher/builder.js`) acceptent une écriture déjà faite à l'identique par un autre tweak.

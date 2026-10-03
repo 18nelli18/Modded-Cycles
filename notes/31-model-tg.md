@@ -10,11 +10,12 @@ Décisions de l'utilisateur, après l'analyse du §3 :
 
 | | État |
 |---|---|
-| Model-TG seul dans le flasher web | `[FAIT]` tel que son propre build l'exporte, même empreinte (§2) |
+| Model-TG seul dans le flasher web | `[FAIT]` construit par son propre build ; depuis le 03/10/2026, avec une retouche (mutes tout de suite, §10), donc une autre empreinte que la sienne |
 | Model-TG avec l'audio USB 6 canaux | `[FAIT]` aucune écriture commune ; pas encore testé sur la machine (§2) |
 | Conflits avec les moteurs du Syntakt | `[FAIT]` analysés (§3) |
 | Version combinée Model-TG + moteurs du Syntakt | `[FAIT]` en ligne (1.6), démarre et joue sur la machine (firmware de diagnostic, §6) ; charge à optimiser (§7) |
 | Passage à Model-TG v1.1.0 (slide trigs) | `[FAIT]` slides prouvés aussi sur nos moteurs en émulation ; fonctionne sur la machine (§9) |
+| Mutes tout de suite en mode mute | `[FAIT en émulation]` retouche de sa source (§10) ; à essayer sur la machine |
 
 ## 1. Ce qu'est Model-TG
 
@@ -350,3 +351,27 @@ Source : dépôt [TinyGregAudio/Model-TG](https://github.com/TinyGregAudio/Model
 **Essai sur la machine** (03/10/2026) : firmware d'essai Model-TG v1.1.0 + les 5 moteurs + l'audio 6 canaux, construit par `build.py` (MAIN OS `0a3c035e…`, la même empreinte que le flasher). Il était demandé de vérifier le démarrage, les moteurs et le Sampler, et un slide trig sur une piste d'un moteur du Syntakt. Retour de l'utilisateur : « c bon ça marche ».
 
 **Étiquette « testé »** : retirée de la version combinée (`HW_TESTED_TG` vide), car le firmware que construit le flasher n'est plus celui essayé le 02/10/2026. L'essai du 03/10/2026 a été fait sur un firmware construit par `build.py` (même MAIN OS). L'étiquette revient après l'essai d'un firmware construit par le flasher.
+
+## 10. Mutes tout de suite en mode mute `[FAIT en émulation]`
+
+Question relayée par l'utilisateur le 03/10/2026 : « I'll go in Latch Mute mode, mute tracks, but they still play until I hit Func again to leave the mode & then it'll finally mute. Is this normal? ». L'utilisateur a vérifié : c'est bien le cas.
+
+**Cause : un choix de Model-TG**, pas un défaut du tweak de drumkilla.
+- Avec le tweak `latching-mute` seul, chaque touche de piste du mode mute (`QuickMuteMenuView`) mute sa piste tout de suite : `0x40013904(kit, piste, 1)` en `0x40023550`.
+- Model-TG remplace cet appel par son `mq_toggle`, qui ne fait qu'inverser un mute en attente (`mq_pending`). Les voyants montrent l'état à venir (`mq_muted`). Tout s'applique en quittant le mode : dans la fermeture du tweak de drumkilla (`0x40148696` → `mq_apply`), et dans les destructeurs de la vue.
+- C'est documenté dans son guide (`docs/USER_GUIDE.md`, v1.1.0) : « Pad presses are queued and all take effect when you leave mute mode. »
+- Notre guide décrivait le comportement du tweak de drumkilla seul.
+
+**Choix de l'utilisateur** (question du 03/10/2026) : des mutes tout de suite, aussi avec Model-TG, même si Model-TG n'est alors plus exactement le build de son auteur.
+
+**Retouche** (`MC_PATCHES` de `tools/gen_model_tg.py`, dans les deux tweaks, `30-model-tg.json` et `30-model-tg-st.json`) :
+- le début de `mq_toggle` (`move.l 8(sp),d0 ; cmpi.l #MAX_TRK,d0`, 10 o) devient `jmp 0x40013904 ; nop ; nop`, la même taille ;
+- l'appel de `0x40023550` rejoint donc le `0x40013904` d'origine, avec les mêmes arguments (kit, piste, 1) ;
+- la file reste vide : `mq_muted` montre l'état réel, et `mq_apply` n'a rien à appliquer ;
+- aucune adresse de Model-TG ne bouge : les 31 tweaks `31-syntakt-tg-…` restent valables tels quels.
+
+**Empreintes** : Model-TG seul `08d9f075…` (sans la retouche : `a049d724…`, celle annoncée par son auteur), toutes les combinaisons avec Model-TG changent (`REF_MAINOS`, `BUILD.md`).
+
+**Preuve** : nouvelle partie 6 de `tools/emu/test_model_tg_syntakt.py`. `mq_toggle(kit, piste, 1)` rejoint `0x40013904` tout de suite, avec les mêmes arguments, et rien ne reste en attente. `mq_apply` n'a rien à faire.
+
+**Site** : le guide (section Model-TG : son chapeau et « Inclus »), le crédit de Model-TG dans le flasher, les notes de version 1.12, le README et `PROVENANCE.md` disent la retouche.
