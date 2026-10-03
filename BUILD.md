@@ -138,11 +138,31 @@ python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --sy
 | `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `0fc30dde08398e99bc96f563532cde01bff2879aaa0215af93127d1b40c83b84` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `0a3c035e8b0ebe87d9b72615a55cec14f25d15419545b15c30c0e426721e6a10` |
 
-Les 575 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
+Les 1 151 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
 `tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;
 `tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.42.syx` les reconstruit toutes dans la page et les compare.
 SD VINTAGE v1 (clean-room d'origine, **testée sur le matériel** le 29/09/2026, compilée par GCC 13.3) donnait `80b7b2bd…` seule et `38754937…` avec `6ch-usbup` ;
 la v2 est compilée par `m68k-elf-gcc` 16.2 (Homebrew), voir [note 16 §6](notes/16-moteur-syntakt.md).
+
+### Arpégiateur
+
+`tweaks/model-cycles_OS1.13/40-arp.json` est produit par `tools/gen_arp.py`, qui compile `tools/machines/arp/` (`m68k-elf-gcc`)
+et le lie dans deux masques de sprites libérés ([note 32](notes/32-arpegiateur.md)). La preuve fait tourner le code du tweak
+et celui de l'OS, jusqu'à la vraie boucle d'événements de l'interruption audio :
+```sh
+python3 tools/gen_arp.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/emu/test_arp.py --cycles model-cycles_OS1.13.syx \
+    [--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm --syntakt Syntakt_OS1.42.syx]
+```
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `arp` | `63027ab189bb3050aa07c76828c72eed151697d5f4a2bd58b0c0204ebd4bc3db` |
+| `model-tg,arp` | `68afb2ff5cc902bb65dd3f25a2a5147a5dfbb7dfdea93a4a9370e435b175ad71` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp` | `5bc0135eb6a06b8dc62b95d9e8d71c6720d0e760bedd9e2f1ae003b359a23a3a` |
+
+L'arpégiateur et les moteurs du Syntakt libèrent le même masque (`0x4016cae8`) : les deux constructeurs (`tools/build.py`,
+`docs/flasher/builder.js`) acceptent une écriture déjà faite à l'identique par un autre tweak.
 
 ### Variante `6ch-usbup`
 

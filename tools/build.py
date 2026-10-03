@@ -224,6 +224,8 @@ def apply_writes(main_os, tweaks_selected):
             old = bytes.fromhex(w["old"])
             new = bytes.fromhex(w["new"])
             cur = bytes(data[off:off + len(old)])
+            if cur == new and cur != old:
+                continue                         # la meme ecriture, deja faite par un autre tweak (masque partage)
             if cur != old:
                 raise SystemExit(
                     f"!! {t['id']} @ {off}: octets 'old' attendus {old.hex()} "
