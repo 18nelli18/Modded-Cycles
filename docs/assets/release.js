@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.13", date: "2026-10-03", changes: [
+    { en: "New: easier trig removal. On the stock OS, a press on a trig longer than 0.2 s counts as a hold and the trig stays, so the soft keys often needed a second press; with this mod, letting go within half a second removes it",
+      fr: "Nouveau : effacer un trig plus facilement. Avec l'OS d'origine, un appui sur un trig de plus de 0,2 s compte comme un maintien et le trig reste, si bien que les touches souples demandaient souvent un second appui ; avec ce mod, relâcher en moins d'une demi-seconde l'efface" },
+    { en: "Tested on a real Model:Cycles, with Model-TG, the 5 Syntakt engines, 6-channel audio and the arpeggiator",
+      fr: "Testé sur un vrai Model:Cycles, avec Model-TG, les 5 moteurs du Syntakt, l'audio 6 canaux et l'arpégiateur" },
+    { en: "Guide: a Removing trigs section, with a key to try the delay",
+      fr: "Guide : une section Effacer un trig, avec une touche pour essayer le délai" },
+  ] },
   { version: "1.12", date: "2026-10-03", changes: [
     { en: "New: an arpeggiator in place of the retrig. Hold several notes with RETRIG (or A.On) and they play one after another; FUNC + RETRIG gains Arp (direction) and Oct (1 to 4 octaves), saved with the pattern",
       fr: "Nouveau : un arpégiateur à la place du retrig. Tenez plusieurs notes avec RETRIG (ou A.On) et elles se jouent l'une après l'autre ; FUNC + RETRIG gagne Arp (le sens) et Oct (1 à 4 octaves), enregistrés avec le pattern" },

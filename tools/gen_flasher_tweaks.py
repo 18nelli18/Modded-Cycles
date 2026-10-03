@@ -93,6 +93,17 @@ FEATURES = [
         ],
     },
     {
+        "id": "trig-hold",
+        "label": "Effacer un trig plus facilement",
+        "desc": "Un appui sur une touche de pas qui porte deja un trig l'efface si tu relaches en moins d'une "
+                "demi-seconde (0,2 s avec l'OS d'origine). Tenu plus longtemps, le trig reste et ses reglages s'affichent.",
+        "status": "tested",
+        "credit": None,
+        "variants": [
+            {"file": "41-trig-hold", "label": None},
+        ],
+    },
+    {
         "id": "arp",
         "label": "Arpegiateur",
         "desc": "Le retrig devient un arpegiateur : plusieurs notes tenues avec RETRIG (ou A.On) se jouent l'une "

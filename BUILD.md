@@ -139,7 +139,7 @@ python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --sy
 | `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `94d610447ca437162258d09c766f0752ed84aa17034bcc8d50a98d51f692c549` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `26435535da0aadcbcf2e15cfaaa822bf1007917a8ec2e67db17cffef2cbd84fd` |
 
-Les 1 151 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
+Les 2 303 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
 `tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;
 `tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.42.syx` les reconstruit toutes dans la page et les compare.
 SD VINTAGE v1 (clean-room d'origine, **testée sur le matériel** le 29/09/2026, compilée par GCC 13.3) donnait `80b7b2bd…` seule et `38754937…` avec `6ch-usbup` ;
@@ -164,6 +164,27 @@ python3 tools/emu/test_arp.py --cycles model-cycles_OS1.13.syx \
 
 L'arpégiateur et les moteurs du Syntakt libèrent le même masque (`0x4016cae8`) : les deux constructeurs (`tools/build.py`,
 `docs/flasher/builder.js`) acceptent une écriture déjà faite à l'identique par un autre tweak.
+
+### Effacer un trig
+
+`tweaks/model-cycles_OS1.13/41-trig-hold.json` est produit par `tools/gen_trig_hold.py`, qui assemble
+`tools/machines/trig_hold/trig_hold.S` (166 o avec l'heure d'appui des 16 touches de pas) au début du masque de sprite libéré
+`0x4015c044`, devant les stubs de `6ch-usbup` ([note 33](notes/33-effacer-un-trig.md)). La preuve fait tourner la vraie chaîne de
+l'OS, de la lecture des touches (anti-rebond, horloge de maintien à 120 Hz) au mode grille, à la milliseconde :
+```sh
+python3 tools/gen_trig_hold.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/emu/test_trig_hold.py --cycles model-cycles_OS1.13.syx \
+    [--with 6ch-usbup,model-tg-st,arp,syntakt-tg-sd-cp-toy-bits-swarm --syntakt Syntakt_OS1.42.syx]
+```
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `trig-hold` | `bbb8a4217a888c46a60cfb17ae444bec9cf21d6ff2d2d36bf8d1f1cdb81d1ef4` |
+| `6ch-usbup,trig-hold` | `b965e349e099312d944d66765c90e5c77490dcddc35276c7dd9e67ea1071e71d` |
+| `model-tg,trig-hold` | `48462793361abce89c9a8ca59848238c37ae214cc41f98424448de305d495f6f` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp` | `6cf5d63634b0e423dfdbd5990c95dff0a7185f1b3f77eb04a91ef22c6027328b` |
+
+Avec `6ch-usbup`, les deux tweaks réécrivent de la même façon le pointeur du sprite dont le masque est libéré.
 
 ### Variante `6ch-usbup`
 
