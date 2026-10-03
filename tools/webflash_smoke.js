@@ -142,6 +142,16 @@ async function main() {
       && doc.getElementById("feat-trig-preview").checked && w.MCFlasherApp.chosenTweaks().map((x) => x.id).join() === "trig-preview,syntakt-sd",
       "Model-TG unticks drumkilla's tweaks (and the other way round), shows its install note; with the Syntakt engines: " + both);
     doc.getElementById("feat-trig-preview").click(); await wait(5);
+    // the combined version tested on the hardware (gen_syntakt_engines.HW_TESTED_TG): Model-TG + the 5 engines
+    doc.getElementById("feat-model-tg").click(); await wait(5);
+    await pickEngines(doc, ["sd", "cp", "toy", "bits", "swarm"]);
+    const tagOf = (id) => doc.querySelector(`label[for=${id}] .tag`).textContent;
+    const tgOk = /tested on a real Model:Cycles/.test(text(doc, "features")) && tagOf("feat-syntakt") === "Tested"
+      && tagOf("feat-model-tg") === "Tested";
+    await pickEngines(doc, ["sd"]);
+    check(tgOk && /not tested on a Model:Cycles yet/.test(text(doc, "features")) && tagOf("feat-model-tg") === "Experimental",
+      "Model-TG + the 5 engines: tested (both cards); Model-TG + SDVtg alone: still experimental");
+    doc.getElementById("feat-model-tg").click(); await wait(5);
     doc.getElementById("feat-syntakt").click(); await wait(5);
     doc.getElementById("feat-usb6").click();
     await wait(30);

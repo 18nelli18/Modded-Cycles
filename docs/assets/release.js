@@ -3,6 +3,10 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.9", date: "2026-10-02", changes: [
+    { en: "Model-TG with the 5 Syntakt engines is now tested on a real Model:Cycles",
+      fr: "Model-TG avec les 5 moteurs du Syntakt est maintenant testé sur un vrai Model:Cycles" },
+  ] },
   { version: "1.8", date: "2026-10-02", changes: [
     { en: "MACHINES screen: with more than 7 machines, the position dots go on two rows instead of running over the machine picture",
       fr: "Écran MACHINES : au-delà de 7 machines, les points de position passent sur deux lignes au lieu de déborder sur l'image de la machine" },

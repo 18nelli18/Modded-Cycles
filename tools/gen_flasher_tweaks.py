@@ -115,7 +115,8 @@ def engine_feature(f, load):
         t = load(gs.subset_id(codes))
         combos.append({"id": t["id"], "engines": codes, "tested": tuple(codes) in gs.HW_TESTED,
                        "label": ", ".join(gs.CATALOG[c]["name"] for c in codes),
-                       "tg": load(gs.tweak_id(codes, tg=True))["id"]})      # avec Model-TG (notes/31)
+                       "tg": load(gs.tweak_id(codes, tg=True))["id"],      # avec Model-TG (notes/31)
+                       "tg_tested": tuple(codes) in gs.HW_TESTED_TG})
     return engines, combos
 
 
@@ -139,7 +140,7 @@ def render():
         feat = {"id": f["id"], "label": f["label"], "desc": f["desc"], "status": f["status"], "credit": f["credit"]}
         if f.get("engines"):
             feat["engines"], feat["combos"] = engine_feature(f, load)
-            feat["status"] = "tested" if any(c["tested"] for c in feat["combos"]) else "experimental"
+            feat["status"] = "tested" if any(c["tested"] or c["tg_tested"] for c in feat["combos"]) else "experimental"
         else:
             by_file = {json.loads((DEV_DIR / f"{v['file']}.json").read_text(encoding="utf-8"))["id"]: v for v in f["variants"]}
             feat["variants"] = [{"id": load(tid)["id"], "label": v["label"]} for tid, v in by_file.items()]

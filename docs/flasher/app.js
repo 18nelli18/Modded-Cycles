@@ -1060,6 +1060,12 @@ function comboOf(f, sel) {
   return f.combos.find((c) => c.engines.join() === sel.engines.join());
 }
 
+// The ticked engines' combination of a feature card with engines, if it is on.
+function comboOfFeature(id) {
+  const f = ((window.MC_TWEAKS && window.MC_TWEAKS.features) || []).find((x) => x.id === id && x.engines);
+  return f && isOn(id) ? comboOf(f, selection[id]) : null;
+}
+
 function renderFeatures() {
   const box = $("features");
   const tw = window.MC_TWEAKS;
@@ -1089,7 +1095,11 @@ function renderFeatures() {
     const ttl = document.createElement("div");
     ttl.className = "ttl";
     const combo = f.engines && sel.on ? comboOf(f, sel) : null;
-    const tested = combo ? combo.tested && !isOn("model-tg") : f.status === "tested";
+    // with Model-TG, the combined version's own tests (combo.tg_tested); Model-TG's card follows the engines' choice
+    const withId = sel.on && f.with ? Object.keys(f.with).find(isOn) : null;
+    const tgCombo = withId ? comboOfFeature(withId) : null;
+    const tested = combo ? (isOn("model-tg") ? combo.tg_tested : combo.tested)
+      : tgCombo ? !!tgCombo.tg_tested : f.status === "tested";
     ttl.innerHTML = `<span>${esc(featText(f.id, "label", f.label))}</span>` +
       `<span class="tag${tested ? " ok" : ""}">${esc(t(tested ? "tested" : "experimental"))}</span>` +
       (GUIDE_OF[f.id] ? `<a class="feat-guide" href="${GUIDE}#${GUIDE_OF[f.id]}">Guide <span aria-hidden="true">→</span></a>` : "");

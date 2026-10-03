@@ -85,6 +85,9 @@ LEGACY = {}
 # Testés avant l'arrêt des voix muettes (30/09/2026) : SD, SD + CP, SY TOY, SD + CP + SY TOY, SY BITS, SY SWARM ;
 # à retester avec lui.
 HW_TESTED = set()
+# Idem pour la version combinée avec Model-TG (notes/31) : firmware construit par le flasher et essayé sur la machine.
+# 02/10/2026 : Model-TG + les 5 moteurs, avec l'audio USB 6 canaux, « tout marche » (retour de l'utilisateur).
+HW_TESTED_TG = {("sd", "cp", "toy", "bits", "swarm")}
 MAX_EXTRA = 6
 
 # --- Syntakt : fermeture et plages copiées -----------------------------------------------------------------

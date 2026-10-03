@@ -136496,7 +136496,7 @@ window.MC_TWEAKS = {
    "id": "syntakt",
    "label": "Vrais moteurs du Syntakt",
    "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.42.syx (a deposer a l'etape 2), en machines supplementaires apres les 6 d'origine : coche ceux que tu veux. Identiques au Syntakt en emulation.",
-   "status": "experimental",
+   "status": "tested",
    "credit": null,
    "engines": [
     {
@@ -136533,7 +136533,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SDVtg",
-     "tg": "syntakt-tg-sd"
+     "tg": "syntakt-tg-sd",
+     "tg_tested": false
     },
     {
      "id": "syntakt-cp",
@@ -136542,7 +136543,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "CPVtg",
-     "tg": "syntakt-tg-cp"
+     "tg": "syntakt-tg-cp",
+     "tg_tested": false
     },
     {
      "id": "syntakt-toy",
@@ -136551,7 +136553,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SYToy",
-     "tg": "syntakt-tg-toy"
+     "tg": "syntakt-tg-toy",
+     "tg_tested": false
     },
     {
      "id": "syntakt-bits",
@@ -136560,7 +136563,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SYBit",
-     "tg": "syntakt-tg-bits"
+     "tg": "syntakt-tg-bits",
+     "tg_tested": false
     },
     {
      "id": "syntakt-swarm",
@@ -136569,7 +136573,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SYSwm",
-     "tg": "syntakt-tg-swarm"
+     "tg": "syntakt-tg-swarm",
+     "tg_tested": false
     },
     {
      "id": "syntakt-sd-cp",
@@ -136579,7 +136584,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SDVtg, CPVtg",
-     "tg": "syntakt-tg-sd-cp"
+     "tg": "syntakt-tg-sd-cp",
+     "tg_tested": false
     },
     {
      "id": "syntakt-sd-toy",
@@ -136589,7 +136595,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SDVtg, SYToy",
-     "tg": "syntakt-tg-sd-toy"
+     "tg": "syntakt-tg-sd-toy",
+     "tg_tested": false
     },
     {
      "id": "syntakt-sd-bits",
@@ -136599,7 +136606,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SDVtg, SYBit",
-     "tg": "syntakt-tg-sd-bits"
+     "tg": "syntakt-tg-sd-bits",
+     "tg_tested": false
     },
     {
      "id": "syntakt-sd-swarm",
@@ -136609,7 +136617,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SDVtg, SYSwm",
-     "tg": "syntakt-tg-sd-swarm"
+     "tg": "syntakt-tg-sd-swarm",
+     "tg_tested": false
     },
     {
      "id": "syntakt-cp-toy",
@@ -136619,7 +136628,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "CPVtg, SYToy",
-     "tg": "syntakt-tg-cp-toy"
+     "tg": "syntakt-tg-cp-toy",
+     "tg_tested": false
     },
     {
      "id": "syntakt-cp-bits",
@@ -136629,7 +136639,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "CPVtg, SYBit",
-     "tg": "syntakt-tg-cp-bits"
+     "tg": "syntakt-tg-cp-bits",
+     "tg_tested": false
     },
     {
      "id": "syntakt-cp-swarm",
@@ -136639,7 +136650,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "CPVtg, SYSwm",
-     "tg": "syntakt-tg-cp-swarm"
+     "tg": "syntakt-tg-cp-swarm",
+     "tg_tested": false
     },
     {
      "id": "syntakt-toy-bits",
@@ -136649,7 +136661,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SYToy, SYBit",
-     "tg": "syntakt-tg-toy-bits"
+     "tg": "syntakt-tg-toy-bits",
+     "tg_tested": false
     },
     {
      "id": "syntakt-toy-swarm",
@@ -136659,7 +136672,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SYToy, SYSwm",
-     "tg": "syntakt-tg-toy-swarm"
+     "tg": "syntakt-tg-toy-swarm",
+     "tg_tested": false
     },
     {
      "id": "syntakt-bits-swarm",
@@ -136669,7 +136683,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SYBit, SYSwm",
-     "tg": "syntakt-tg-bits-swarm"
+     "tg": "syntakt-tg-bits-swarm",
+     "tg_tested": false
     },
     {
      "id": "syntakt-sd-cp-toy",
@@ -136680,7 +136695,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SDVtg, CPVtg, SYToy",
-     "tg": "syntakt-tg-sd-cp-toy"
+     "tg": "syntakt-tg-sd-cp-toy",
+     "tg_tested": false
     },
     {
      "id": "syntakt-sd-cp-bits",
@@ -136691,7 +136707,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SDVtg, CPVtg, SYBit",
-     "tg": "syntakt-tg-sd-cp-bits"
+     "tg": "syntakt-tg-sd-cp-bits",
+     "tg_tested": false
     },
     {
      "id": "syntakt-sd-cp-swarm",
@@ -136702,7 +136719,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SDVtg, CPVtg, SYSwm",
-     "tg": "syntakt-tg-sd-cp-swarm"
+     "tg": "syntakt-tg-sd-cp-swarm",
+     "tg_tested": false
     },
     {
      "id": "syntakt-sd-toy-bits",
@@ -136713,7 +136731,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SDVtg, SYToy, SYBit",
-     "tg": "syntakt-tg-sd-toy-bits"
+     "tg": "syntakt-tg-sd-toy-bits",
+     "tg_tested": false
     },
     {
      "id": "syntakt-sd-toy-swarm",
@@ -136724,7 +136743,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SDVtg, SYToy, SYSwm",
-     "tg": "syntakt-tg-sd-toy-swarm"
+     "tg": "syntakt-tg-sd-toy-swarm",
+     "tg_tested": false
     },
     {
      "id": "syntakt-sd-bits-swarm",
@@ -136735,7 +136755,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SDVtg, SYBit, SYSwm",
-     "tg": "syntakt-tg-sd-bits-swarm"
+     "tg": "syntakt-tg-sd-bits-swarm",
+     "tg_tested": false
     },
     {
      "id": "syntakt-cp-toy-bits",
@@ -136746,7 +136767,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "CPVtg, SYToy, SYBit",
-     "tg": "syntakt-tg-cp-toy-bits"
+     "tg": "syntakt-tg-cp-toy-bits",
+     "tg_tested": false
     },
     {
      "id": "syntakt-cp-toy-swarm",
@@ -136757,7 +136779,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "CPVtg, SYToy, SYSwm",
-     "tg": "syntakt-tg-cp-toy-swarm"
+     "tg": "syntakt-tg-cp-toy-swarm",
+     "tg_tested": false
     },
     {
      "id": "syntakt-cp-bits-swarm",
@@ -136768,7 +136791,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "CPVtg, SYBit, SYSwm",
-     "tg": "syntakt-tg-cp-bits-swarm"
+     "tg": "syntakt-tg-cp-bits-swarm",
+     "tg_tested": false
     },
     {
      "id": "syntakt-toy-bits-swarm",
@@ -136779,7 +136803,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SYToy, SYBit, SYSwm",
-     "tg": "syntakt-tg-toy-bits-swarm"
+     "tg": "syntakt-tg-toy-bits-swarm",
+     "tg_tested": false
     },
     {
      "id": "syntakt-sd-cp-toy-bits",
@@ -136791,7 +136816,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SDVtg, CPVtg, SYToy, SYBit",
-     "tg": "syntakt-tg-sd-cp-toy-bits"
+     "tg": "syntakt-tg-sd-cp-toy-bits",
+     "tg_tested": false
     },
     {
      "id": "syntakt-sd-cp-toy-swarm",
@@ -136803,7 +136829,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SDVtg, CPVtg, SYToy, SYSwm",
-     "tg": "syntakt-tg-sd-cp-toy-swarm"
+     "tg": "syntakt-tg-sd-cp-toy-swarm",
+     "tg_tested": false
     },
     {
      "id": "syntakt-sd-cp-bits-swarm",
@@ -136815,7 +136842,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SDVtg, CPVtg, SYBit, SYSwm",
-     "tg": "syntakt-tg-sd-cp-bits-swarm"
+     "tg": "syntakt-tg-sd-cp-bits-swarm",
+     "tg_tested": false
     },
     {
      "id": "syntakt-sd-toy-bits-swarm",
@@ -136827,7 +136855,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SDVtg, SYToy, SYBit, SYSwm",
-     "tg": "syntakt-tg-sd-toy-bits-swarm"
+     "tg": "syntakt-tg-sd-toy-bits-swarm",
+     "tg_tested": false
     },
     {
      "id": "syntakt-cp-toy-bits-swarm",
@@ -136839,7 +136868,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "CPVtg, SYToy, SYBit, SYSwm",
-     "tg": "syntakt-tg-cp-toy-bits-swarm"
+     "tg": "syntakt-tg-cp-toy-bits-swarm",
+     "tg_tested": false
     },
     {
      "id": "syntakt-sd-cp-toy-bits-swarm",
@@ -136852,7 +136882,8 @@ window.MC_TWEAKS = {
      ],
      "tested": false,
      "label": "SDVtg, CPVtg, SYToy, SYBit, SYSwm",
-     "tg": "syntakt-tg-sd-cp-toy-bits-swarm"
+     "tg": "syntakt-tg-sd-cp-toy-bits-swarm",
+     "tg_tested": true
     }
    ],
    "needs": "syntakt"
