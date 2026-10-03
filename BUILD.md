@@ -148,8 +148,9 @@ la v2 est compilée par `m68k-elf-gcc` 16.2 (Homebrew), voir [note 16 §6](notes
 ### Arpégiateur
 
 `tweaks/model-cycles_OS1.13/40-arp.json` est produit par `tools/gen_arp.py`, qui compile `tools/machines/arp/` (`m68k-elf-gcc`)
-et le lie dans deux masques de sprites libérés ([note 32](notes/32-arpegiateur.md)). La preuve fait tourner le code du tweak
-et celui de l'OS, jusqu'à la vraie boucle d'événements de l'interruption audio :
+et le lie dans quatre masques de sprites libérés ([note 32](notes/32-arpegiateur.md)). La preuve fait tourner le code du tweak
+et celui de l'OS, jusqu'à la vraie boucle d'événements de l'interruption audio, et le live rec par les vraies fonctions
+d'envoi de note de l'OS :
 ```sh
 python3 tools/gen_arp.py --cycles model-cycles_OS1.13.syx [--check]
 python3 tools/emu/test_arp.py --cycles model-cycles_OS1.13.syx \
@@ -158,9 +159,9 @@ python3 tools/emu/test_arp.py --cycles model-cycles_OS1.13.syx \
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `arp` | `f3b2e3b5d1c1879e7b7962651e285acce2d8bf80c914bffa4b378177f3606945` |
-| `model-tg,arp` | `8be6aac3cd483b0a65ee7c2f0491ef714c2d0fd7760e24a5d5909227d52f4fc7` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp` | `d2e1aeb90df99b2484fc41d5e70f0ec30dd9db84d3dc1017da792150c421bef8` |
+| `arp` | `e445bf895123d3fc94762a65739558b579ec8df3000c9bdf5747a3d73287e6a6` |
+| `model-tg,arp` | `863ef1c72b90b51a982ca2573f09416238f2b33eed4e50d33ae5d15f8e4d1b44` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp` | `a6573cbea238f7a74552f6d4f8e695c608c0f366f4b84a0a8199dea9da55c011` |
 
 L'arpégiateur et les moteurs du Syntakt libèrent le même masque (`0x4016cae8`) : les deux constructeurs (`tools/build.py`,
 `docs/flasher/builder.js`) acceptent une écriture déjà faite à l'identique par un autre tweak.

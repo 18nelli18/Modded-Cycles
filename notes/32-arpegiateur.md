@@ -19,6 +19,7 @@ Source de tout ce qui suit : désassemblage du MAIN OS 1.13 officiel (`m68k-elf-
 | Code de l'arpégiateur et lignes du menu | `[FAIT]` `tweaks/model-cycles_OS1.13/40-arp.json` (§9) |
 | Preuve en émulation | `[FAIT]` jusqu'à la vraie boucle d'événements de l'OS, sur 4 firmwares (§9) |
 | Flasher web, guide | `[FAIT]` carte « Arpégiateur », section 9 du guide, version 1.12 |
+| Live rec : l'arpège enregistre ses notes | `[FAIT en émulation]` §11, essai sur la machine en attente |
 | Essai sur la machine | `[FAIT]` 2e et 3e essais, après correction : « ça marche nickel ! » (§10) ; carte marquée « testée » à la demande de l'utilisateur |
 
 ## 1. Le menu « Retrig Setup » (FUNC + RETRIG)
@@ -57,7 +58,7 @@ Source de tout ce qui suit : désassemblage du MAIN OS 1.13 officiel (`m68k-elf-
 
 ## 4. Où ranger le sens et les octaves : l'octet +512 de la piste
 
-- La piste d'un pattern existe sous deux formes de 722 o : en mémoire (`B`, `0x406f3a40 + pattern × 30710 + piste × 722`, pattern en cours : `0x40054828`) et dans le fichier (`A`). `0x4005b4ec` (`A` → `B`, au chargement) et `0x4005b642` (`B` → `A`, à l'enregistrement) recopient les champs un par un.
+- La piste d'un pattern existe sous deux formes de 722 o : en mémoire (`B`, `0x406fa040 + pattern × 30710 + piste × 722`, pattern en cours : `0x40054828`) et dans le fichier (`A`). `0x4005b4ec` (`A` → `B`, au chargement) et `0x4005b642` (`B` → `A`, à l'enregistrement) recopient les champs un par un.
 - `B[512]` ↔ `A[704]` est recopié tel quel dans les deux sens, sans borne. Aucune fonction de l'OS 1.13 ne le lit ni ne l'écrit en dehors de ces conversions (et des conversions d'anciennes versions de fichier, `0x4005c040`, `0x4005c1cc`). Les accesseurs des champs de piste (`0x40015800..0x40017200`) couvrent 513–515, 516, 580, 644, 708–721, mais pas 512.
 - Model-TG ne l'utilise pas (son `src/model_tg.s`, v1.1.0).
 - Codage retenu : bits 0–2 = sens (0 montant, 1 descendant, 2 aller-retour, 3 aléatoire, 4 ordre de jeu, 5 Off ; 6 et 7 lus comme montant), bits 3–4 = octaves − 1. **0 = montant, 1 octave** : les projets existants passent en arpégiateur, ce qui revient au retrig d'origine tant qu'on ne tient qu'une note.
@@ -95,7 +96,7 @@ Source de tout ce qui suit : désassemblage du MAIN OS 1.13 officiel (`m68k-elf-
   - `0x40058e28` (10 o : `moveq #-1,d1 ; move.l 8(a2),d2 ; move.l 12(a2),d0`) → `jsr` filtre + 2 `nop`, le filtre rejoue ces trois instructions ; `a0`/`a1` sont libres à cet endroit (la suite, `0x40058e3e` et `0x400591a4`, ne les lit pas avant de les écrire) ;
   - `0x400587f6` (`jsr 0x40091f20`, copie de 80 o) → `jsr` copie + note de l'arpège ;
   - `0x4002d480` (`movem.l 24(sp),d2-d6/a2-a6`) → `jmp` vers nos lignes, puis épilogue rejoué (`lea 128(sp),sp ; rts`).
-- Côté audio, pattern en cours : `*(0x40a7887c) + 30706` (0 à 95), piste `0x406f3a40 + pattern × 30710 + piste × 722`.
+- Côté audio, pattern en cours : `*(0x40a7887c) + 30706` (0 à 95), piste `0x406fa040 + pattern × 30710 + piste × 722`.
 
 ## 8. Reste à faire
 
@@ -137,7 +138,7 @@ Source de tout ce qui suit : désassemblage du MAIN OS 1.13 officiel (`m68k-elf-
 
 **1er essai** (firmware de `build.py`, 6 canaux + Model-TG + 5 moteurs + arpégiateur, MAIN OS `5bc0135e…`). Retour de l'utilisateur : « L'arpégiateur marche, par contre uniquement en montant. Les paramètres de l'arp (down, random, off, etc.) ne changent rien, et le paramètre d'octave non plus. »
 
-**Cause** : le côté audio lisait le réglage dans la banque de patterns du séquenceur (`0x406f3a40 + pattern × 30710`). Le menu, lui, écrit dans les données de l'objet « piste » de l'interface (`0x4000cfcc(0x4000f208(…), piste)`, `vtable[10]` = le pointeur en +16, `0x400d639e`). C'est une autre copie : l'interface envoie au séquenceur des adresses dans sa banque (`0x400083c8`, `0x4002018a`, `0x400203b4`), qu'elle remplit elle-même. Le côté audio lisait donc toujours 0 (montant, 1 octave).
+**Cause** : le côté audio lisait le réglage dans la banque de patterns du séquenceur (`0x406fa040 + pattern × 30710`). Le menu, lui, écrit dans les données de l'objet « piste » de l'interface (`0x4000cfcc(0x4000f208(…), piste)`, `vtable[10]` = le pointeur en +16, `0x400d639e`). C'est une autre copie : l'interface envoie au séquenceur des adresses dans sa banque (`0x400083c8`, `0x4002018a`, `0x400203b4`), qu'elle remplit elle-même. Le côté audio lisait donc toujours 0 (montant, 1 octave).
 - Les tests ne l'avaient pas vu : celui du menu utilisait un objet factice, et celui de bout en bout écrivait l'octet directement dans la banque du séquenceur. Le lien entre les deux n'était pas vérifié.
 
 **Correction** : l'interface transmet le réglage au côté audio (`ui_cfg`, un octet par piste dans la zone audio).
@@ -157,3 +158,51 @@ Source de tout ce qui suit : désassemblage du MAIN OS 1.13 officiel (`m68k-elf-
 **3e essai** (même jour, `…_arp3.syx`, MAIN OS `d2e1aeb9…`, avec aussi les mutes immédiats de Model-TG, notes/31 §10) : il était demandé de vérifier les mutes, l'arpégiateur, et si possible la tenue des réglages après enregistrement et redémarrage. Retour de l'utilisateur : « c bon ça fonctionne nickel ».
 
 **Étiquette « testé »** (03/10/2026) : à la demande de l'utilisateur (« met directement l'étiquette sur testé »), la carte Arpégiateur passe à « tested » (`tools/gen_flasher_tweaks.py`) sans attendre un essai depuis le flasher. Le firmware essayé a le même MAIN OS que celui que construit le flasher (`REF_MAINOS`, `d2e1aeb9…`).
+
+## 11. Live rec : l'arpège enregistre ses notes (03/10/2026)
+
+Retour de l'utilisateur : « Il fonctionne bien quand je le joue, mais par contre il ne marche pas quand je lance le live rec. À la place j'ai juste une seule des notes de l'arpège, répétée seule. »
+
+Source de ce qui suit : désassemblage du MAIN OS 1.13 officiel, puis émulation (`tools/emu/test_arp.py` §6).
+
+### 11.1 Ce que fait l'OS en live rec
+
+- Une touche jouée part deux fois depuis `0x4008171e` (côté interface) :
+  - vers le côté audio (`0x4005894a`, l'événement que l'arpège filtre) ;
+  - vers la boucle de l'interface, en message de type 12 (`0x40080bf6` en `0x40081908`, file `*0x40149250`). Format : +0 = 12, +4 = 0 (note) ou 1 (fin, `0x4008145e`), +8 piste, +12 = 0x40 (les touches), +16 note, +17 vélocité, +18 = 1re note tenue, +19 = -1, +20 vitesse du retrig (octet, -1 sans) ou durée (fin : mot long, en moitiés de `0x8000184c`), +24 = dernière note relâchée (fin), +28 pas et +30 micro-décalage (mots, par `0x40056178`).
+- Live rec en cours : `0x4006ba76` = séquenceur en lecture (`0x4005481a` = 1, soit `0x40a78874 | 0x40a7883c`) et octet +359 de l'état de l'interface (`0x400cf9a8`, pointeur en `0x40fe4218`, écrit par `0x4006ba90`).
+- Message de note en live rec (`0x40007000` → `0x40012158`) : un trig sur le pas, la note, la vélocité, le micro-décalage ; **avec une vitesse de retrig, le drapeau retrig du pas (0x8000) et sa vitesse** (`0x400179ce`, `0x40016850`). Une fiche « en attente » attend la fin de note.
+- Fin de note (`0x40011c84`) : la fiche de la même note donne la durée (`+20`) → longueur du trig (`0x40016742`) et, si le pas a le retrig, sa longueur de retrig (`0x400168da`).
+- **Conséquence** : un arpège tenu s'enregistre en un ou plusieurs pas avec retrig, chacun avec la note d'une touche. Des touches pressées ensemble tombent sur le même pas : la dernière reste. À la relecture, le séquenceur rejoue ce pas : une seule note répétée. Le symptôme rapporté.
+- Pendant l'enregistrement, l'arpège joué en direct n'est pas gêné : une note du séquenceur (+12 = 1) ne passe pas tant qu'une note en direct (+12 = 2) tient la piste (`0x40058e3e`, `0x40fe4c9c`).
+
+### 11.2 Correction
+
+- Sur une piste dont l'arpège n'est pas OFF, en live rec, le message d'une touche avec retrig **ne part plus** vers l'interface (`arp_ui_post`, accroche `0x40081908`). Restent envoyés : pas tenus (5e argument de `0x4008171e` : la note va à ces pas et n'est pas jouée), sens OFF, notes sans retrig. Les relâchements partent toujours (sans fiche en attente, l'interface les ignore).
+- L'arpège envoie lui-même à l'interface les notes qu'il joue, comme des touches (`rec`, `post`) :
+  - à chaque note jouée (1re note, puis chaque répétition) : la fin de la note précédente (sa durée), puis la nouvelle note, sans vitesse de retrig ;
+  - au relâchement de la dernière touche : la fin de la note en cours ;
+  - **une suite d'une seule note** (une note tenue, 1 octave) : un seul message, avec la vitesse du retrig, comme d'origine (un pas avec retrig, roulements à 1/32 et plus compris). Si une 2e note arrive, la fin de la 1re donne la longueur de son retrig, puis les notes suivent une à une ;
+  - live rec arrêté pendant l'arpège : la note en cours se termine, plus rien ensuite.
+- Messages : 8 tampons de 32 o à nous (alloués par `arp_rate`, côté interface, au 1er appui), postés par `0x40001fba` (masque les interruptions ; l'OS l'appelle déjà depuis la boucle audio, pour le MIDI). Pas l'anneau de l'OS (`0x40fb5a0c`) : l'interface y écrit sans protection.
+- Pas et micro-décalage : `0x40056178`, comme l'OS (lecture seule de l'état du séquenceur). L'interface applique ensuite la quantification du live rec.
+- Limite : un pas ne garde qu'une note. Au-delà d'une note par pas (Rte au-delà de 1/16 sur une piste à 1×), seule la dernière note de chaque pas reste.
+
+### 11.3 Place
+
+Le code passe de 1 834 o à 2 553 o. Il faut deux zones de plus :
+- 11 sprites 47×47 (constructeurs `0x400ac784`..`0x400b0580`) ont des masques de 376 o **identiques** (un carré opaque de 47 colonnes : `ff ff ff ff ff fe 00 00` par ligne). Chacun n'est désigné que par la constante du constructeur. On garde `0x40172220` ; `0x40189930` (constante `0x400ad328`) et `0x4018a220` (`0x400ad202`) pointent dessus et sont libres (`tools/sprites.py`, même principe que notes/14 §5). Huit autres restent libérables.
+- Répartition : audio 1 016/1 024 o (`0x4018a788`), menu 824/832 o (`0x4016cba8`), `post`, `live_rec`, `arp_ui_post` 354/376 o (`0x40189930`), `rec` et l'état 359/376 o (`0x4018a220`).
+- Ces masques ne sont pas à 0xFF : le contrôle des caves de `build.py` ne les voit pas. `gen_arp.py` vérifie que chaque masque libéré est identique au masque gardé ; les octets « old » des écritures, que l'OS d'origine est le bon. Aucun autre tweak n'écrit dans ces zones ni en `0x40081908` (Model-TG accroche l'entrée de `0x4008171e`, pas cet appel).
+- 14 écritures (5 de plus : deux zones de code, deux pointeurs de sprite, l'accroche `0x40081908`).
+
+### 11.4 Preuves (`tools/emu/test_arp.py` §6, TOUT OK sur les 4 firmwares de §9)
+
+- Côté audio (vrai filtre, vraie copie) : UP 60 puis 64 ajoutée → `ON 60 (vitesse 9)`, puis `OFF 60, ON 64, OFF 64, ON 60…`, durées exactes ; une note sur 1 octave : un seul message avec la vitesse, terminé au relâchement ; une note sur 2 octaves : chaque note ; rien hors du live rec, séquenceur arrêté ou sens OFF ; live rec arrêté en cours ; 13 messages à la suite dans les 8 tampons.
+- Par les **vraies fonctions de l'OS** `0x4008171e` et `0x4008145e`, puis la vraie boucle audio : hors live rec, l'OS envoie ses deux messages et l'arpège rien ; en live rec, le message de la touche ne part plus, et ceux de l'arpège sont **identiques octet pour octet** à ceux de l'OS (note et fin, durée comprise). Pas tenus, sens OFF, sans retrig : le message de la touche part. Arpège 60 + 64 : `ON 60, OFF 60, ON 64, OFF 64, ON 60…`, durées = écarts entre les notes jouées.
+- Non émulé : l'interface elle-même (`0x40007000`, `0x40012158`, `0x40011c84`). Elle reçoit des messages identiques à ceux de touches réelles.
+- Correction au passage : la banque de patterns du séquenceur est en `0x406fa040` (immédiat de `0x4008178e`), pas `0x406f3a40` comme écrit plus haut avant ce jour. La conclusion de §10 (transmettre le réglage depuis l'interface) ne change pas.
+
+### 11.5 Essai sur la machine
+
+Firmware d'essai : `build/model-cycles_OS1.13_model-tg-1.1_syntakt-5-moteurs_6ch_arp4.syx` (`build.py`, même combinaison que le 3e essai), MAIN OS `a6573cbe…` = `REF_MAINOS` du flasher pour cette combinaison. Flasher web : version 1.13, build `2026-10-03-04`. À vérifier : live rec avec un arpège de 2 ou 3 notes (relecture : les notes une par une), une seule note tenue (relecture : le retrig d'origine), sens OFF.

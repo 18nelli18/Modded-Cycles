@@ -2,7 +2,7 @@
 """Génère tweaks/model-cycles_OS1.13/40-arp.json : l'arpégiateur à la place du retrig (notes/32).
 
 tools/machines/arp/ : arp.c (l'arpège, côté audio, et les deux lignes du menu FUNC + RETRIG) et arp_hooks.S (les
-accroches), liés par arp.ld dans deux masques de sprites libérés (tools/sprites.py). Les accroches sur l'OS sont les
+accroches), liés par arp.ld dans quatre masques de sprites libérés (tools/sprites.py). Les accroches sur l'OS sont les
 HOOKS ci-dessous ; chaque écriture porte ses octets d'origine, vérifiés sur le MAIN OS officiel.
 
     python3 tools/gen_arp.py --cycles model-cycles_OS1.13.syx [--check]
@@ -31,6 +31,8 @@ BASE = gx.BASE
 CAVES = {
     ".cave_audio": (0x4018a788, 0x4018a788, 1024),
     ".cave_menu": (0x4016cae8, 0x4016cba8, 832),       # le début garde le crochet des moteurs du Syntakt (188 o au plus)
+    ".cave_rec1": (0x40189930, 0x40189930, 376),       # masques de deux sprites 47x47 : live rec (notes/32 §11)
+    ".cave_rec2": (0x4018a220, 0x4018a220, 376),
 }
 # (adresse, octets d'origine, symbole, instruction, rôle)
 HOOKS = (
@@ -44,8 +46,10 @@ HOOKS = (
      "note jouée (touches, piste en d3) : jsr 0x40016086 (Rte de la piste) -> jsr arp_rate_d3"),
     (0x4001d25e, "4eb940016086", "arp_rate_d2", 0x4eb9,
      "note jouée (0x4001d1xx, piste en d2) : jsr 0x40016086 (Rte de la piste) -> jsr arp_rate_d2"),
+    (0x40081908, "4ebaf2ec588f", "arp_post_on", 0x4eb9,
+     "message d'une note jouée pour l'interface (0x4008171e) : jsr 0x40080bf6 ; addq.l #4,sp -> jsr arp_post_on"),
 )
-SYMBOLS = ("ui_cfg", "st")                             # pour tools/emu/test_arp.py
+SYMBOLS = ("ui_cfg", "st", "ring")                     # pour tools/emu/test_arp.py
 CONFLICTS = ["sdvintage-snare"]                        # il occupe les deux mêmes masques
 
 
@@ -81,8 +85,11 @@ def build_tweak(stock):
         if addr != lo or len(code) > room:
             raise SystemExit(f"!! {name} : {len(code)} o à {addr:#x}, place {room} o à {lo:#x}")
         old = stock[addr - BASE:addr - BASE + len(code)]
-        if old != b"\xff" * len(code):
+        size, shared = sprites.MASKS[mask][0], (sprites.MASKS[mask][3:] or (None,))[0]
+        if shared is None and old != b"\xff" * len(code):
             raise SystemExit(f"!! {name} : la zone {addr:#x} n'est pas libre dans l'OS d'origine")
+        if shared is not None and stock[mask - BASE:mask - BASE + size] != stock[shared - BASE:shared - BASE + size]:
+            raise SystemExit(f"!! {name} : le masque {mask:#x} n'est pas identique au masque gardé {shared:#x}")
         writes.append({"off": addr - BASE, "old": old.hex(), "new": code.hex()})
         writes.append(sprites.redirect_write(mask))
     for va, old_hex, sym, op, _ in HOOKS:
@@ -104,8 +111,11 @@ def build_tweak(stock):
             "Réglages enregistrés avec le pattern (octet +512 de la piste, inutilisé par l'OS), transmis au côté audio",
             "à chaque note jouée et à chaque changement dans le menu. Une note ajoutée entre dans l'arpège sans couper",
             "le rythme ; avec une seule note et 1 octave, c'est le retrig d'origine.",
-            f"Code dans deux masques de sprites libérés (tools/sprites.py) : {used['.cave_audio']} o en 0x4018a788,",
-            f"{used['.cave_menu']} o en 0x4016cba8. Généré par tools/gen_arp.py, notes/32.",
+            "En live rec, l'arpège enregistre les notes qu'il joue, une par une, avec leur durée (l'OS n'enregistrait",
+            "qu'un pas avec retrig : une seule note répétée) ; une seule note tenue reste un pas avec retrig.",
+            f"Code dans quatre masques de sprites libérés (tools/sprites.py) : {used['.cave_audio']} o en 0x4018a788,",
+            f"{used['.cave_menu']} o en 0x4016cba8, {used['.cave_rec1']} o en 0x40189930, {used['.cave_rec2']} o",
+            "en 0x4018a220. Généré par tools/gen_arp.py, notes/32.",
         ],
         "device": "Model:Cycles",
         "os": "1.13",

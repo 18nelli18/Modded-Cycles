@@ -67,7 +67,7 @@ By priority. Feasibility is detailed in [note 10](notes/10-faisabilite-fonctionn
 | **2 LFOs**, syncable and assignable | 🟠 heavy (more destinations for the current LFO: 🟡) |
 | **Polyrhythm** (per-track time signature) | 🟡 partly there in stock firmware |
 | **MIDI control over USB** (clock, start/stop) | ✅ already supported in stock firmware (settings only) |
-| **Arpeggiator** (in place of the retrig) | ✅ in the web flasher: hold several notes with RETRIG (or A.On) and they play as an arpeggio at the retrig rate; FUNC + RETRIG gains **Arp** (UP, DOWN, UPDN, RAND, PLAY, OFF) and **Oct** (1 to 4), saved with the pattern. Checked in the emulator against the OS's own event loop, and **tested on the hardware** with Model-TG, the 5 engines and 6-channel audio ([note 32](notes/32-arpegiateur.md), in French) |
+| **Arpeggiator** (in place of the retrig) | ✅ in the web flasher: hold several notes with RETRIG (or A.On) and they play as an arpeggio at the retrig rate; FUNC + RETRIG gains **Arp** (UP, DOWN, UPDN, RAND, PLAY, OFF) and **Oct** (1 to 4), saved with the pattern. In live recording, the notes it plays are recorded one by one (version 1.13, checked in the emulator, waiting for a hardware test). Checked in the emulator against the OS's own event loop, and **tested on the hardware** with Model-TG, the 5 engines and 6-channel audio ([note 32](notes/32-arpegiateur.md), in French) |
 | **Scale** (chromatic mode) | 🟡 feasible, medium effort |
 | **Polyphony** for the synth engine | 🔴 very hard |
 
