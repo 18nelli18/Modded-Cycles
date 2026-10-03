@@ -14,7 +14,7 @@ Décisions de l'utilisateur, après l'analyse du §3 :
 | Model-TG avec l'audio USB 6 canaux | `[FAIT]` aucune écriture commune ; pas encore testé sur la machine (§2) |
 | Conflits avec les moteurs du Syntakt | `[FAIT]` analysés (§3) |
 | Version combinée Model-TG + moteurs du Syntakt | `[FAIT]` en ligne (1.6), démarre et joue sur la machine (firmware de diagnostic, §6) ; charge à optimiser (§7) |
-| Passage à Model-TG v1.1.0 (slide trigs) | `[FAIT en émulation]` slides prouvés aussi sur nos moteurs (§9) ; à essayer sur la machine |
+| Passage à Model-TG v1.1.0 (slide trigs) | `[FAIT]` slides prouvés aussi sur nos moteurs en émulation ; fonctionne sur la machine (§9) |
 
 ## 1. Ce qu'est Model-TG
 
@@ -286,7 +286,7 @@ Model-TG autour de nos moteurs ajoute environ 1,7 point, surtout en défauts de 
 
 ## 8. Ce qui reste `[À FAIRE]`
 
-- **Essayer Model-TG v1.1.0 sur la machine** (§9) : la version combinée avec les 5 moteurs et l'audio 6 canaux, puis les slide trigs sur nos moteurs. L'étiquette « testé » revient après un essai réussi d'un firmware construit par le flasher.
+- **Étiquette « testé » de Model-TG v1.1.0** (§9) : la version combinée fonctionne sur la machine (firmware de `build.py`, même MAIN OS). L'étiquette revient après l'essai d'un firmware construit par le flasher.
 
 - **Optimiser sans perdre de fonctions** (demande de l'utilisateur) : mesurer d'abord où passent les ~50 % hors des voix (début de l'interruption, mixage et effets), puis viser les plus gros postes.
 - **Régulateur** : mesurer depuis l'entrée de l'interruption, comme la page System, pour qu'il réagisse avant un débordement.
@@ -294,7 +294,7 @@ Model-TG autour de nos moteurs ajoute environ 1,7 point, surtout en défauts de 
 - **Projets** : une piste réglée sur une machine ajoutée n'a pas le même numéro dans les deux versions (8e machine = SDVtg avec Model-TG, 7e sans). Un projet fait avec l'une joue une autre machine sur l'autre. Le flasher le dit.
 - Non essayé : le rééchantillonnage d'une piste d'un moteur du Syntakt.
 
-## 9. Passage à Model-TG v1.1.0 `[FAIT en émulation]`
+## 9. Passage à Model-TG v1.1.0 `[FAIT]`
 
 Demande de l'utilisateur, le 03/10/2026 : « TinyGregAudio a mis à jour son projet […] Quels sont les changements par rapport à la version que j'avais intégrée ? », puis « vas-y ».
 
@@ -347,4 +347,6 @@ Source : dépôt [TinyGregAudio/Model-TG](https://github.com/TinyGregAudio/Model
 - Au repos : environ 28 instructions par voix et par bloc.
 - Côté séquenceur (non émulé, lecture du code) : à chaque trig qui part, `sld_seq` cherche le trig suivant de la piste, à environ 9 instructions par pas parcouru (63 pas au pire). Si c'est un slide trig, il lit les 26 paramètres des deux pas. Pire cas estimé : environ 1 300 instructions (environ 1,2 % d'un bloc) par piste, au seul pas qui arme le glissement.
 
-**Étiquette « testé »** : retirée de la version combinée (`HW_TESTED_TG` vide). Le firmware que construit le flasher n'est plus celui essayé le 02/10/2026. Elle reviendra après un essai de l'utilisateur.
+**Essai sur la machine** (03/10/2026) : firmware d'essai Model-TG v1.1.0 + les 5 moteurs + l'audio 6 canaux, construit par `build.py` (MAIN OS `0a3c035e…`, la même empreinte que le flasher). Il était demandé de vérifier le démarrage, les moteurs et le Sampler, et un slide trig sur une piste d'un moteur du Syntakt. Retour de l'utilisateur : « c bon ça marche ».
+
+**Étiquette « testé »** : retirée de la version combinée (`HW_TESTED_TG` vide), car le firmware que construit le flasher n'est plus celui essayé le 02/10/2026. L'essai du 03/10/2026 a été fait sur un firmware construit par `build.py` (même MAIN OS). L'étiquette revient après l'essai d'un firmware construit par le flasher.

@@ -6,8 +6,8 @@ window.MC_RELEASES = [
   { version: "1.11", date: "2026-10-03", changes: [
     { en: "Model-TG updated to its version 1.1: slide trigs (hold SETTINGS and press a trig key) glide the parameters from one trig to the next, on every machine, the Syntakt engines included",
       fr: "Model-TG passe à sa version 1.1 : les slide trigs (maintenir SETTINGS et appuyer sur une touche de pas) font glisser les paramètres d'un trig au suivant, sur toutes les machines, moteurs du Syntakt compris" },
-    { en: "Model-TG 1.1 is checked in the emulator but not yet on a real Model:Cycles: its choices are marked experimental until then",
-      fr: "Model-TG 1.1 est vérifié dans l'émulateur mais pas encore sur un vrai Model:Cycles : ses choix sont marqués expérimentaux d'ici là" },
+    { en: "Model-TG 1.1 with the 5 Syntakt engines worked on a real Model:Cycles; its choices stay marked experimental until a firmware built by this page is tried",
+      fr: "Model-TG 1.1 avec les 5 moteurs du Syntakt a fonctionné sur un vrai Model:Cycles ; ses choix restent marqués expérimentaux jusqu'à l'essai d'un firmware construit par cette page" },
     { en: "Guide: how to use slide trigs, in the Model-TG section",
       fr: "Guide : l'utilisation des slide trigs, dans la section Model-TG" },
   ] },
