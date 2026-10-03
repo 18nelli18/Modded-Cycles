@@ -3,6 +3,10 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.10", date: "2026-10-03", changes: [
+    { en: "Guide: a Model-TG section (loading samples, playback modes, Attack and Filter, shortcuts)",
+      fr: "Guide : une section Model-TG (charger des échantillons, modes de lecture, Attack et filtre, raccourcis)" },
+  ] },
   { version: "1.9", date: "2026-10-02", changes: [
     { en: "Model-TG with the 5 Syntakt engines is now tested on a real Model:Cycles",
       fr: "Model-TG avec les 5 moteurs du Syntakt est maintenant testé sur un vrai Model:Cycles" },

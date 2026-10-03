@@ -81,6 +81,10 @@
 .scroll dl{margin:0}
 .scroll .lcd-box{width:fit-content}
 
+/* a small LCD next to its explanation (Model-TG) */
+.side{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:center}
+.side .lcd-box{width:fit-content}
+
 /* Syntakt engines */
 .eng{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,260px);gap:28px;align-items:start}
 .eng label{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer;font-size:15.5px;color:var(--ink-2)}
@@ -92,6 +96,10 @@
 .tbl thead th{font-size:13px;color:var(--muted);font-weight:600}
 .tbl tbody th{font-weight:700}
 .tbl td{color:var(--ink-2)}
+.tbl.fluid table{min-width:0}
+.tbl.fluid th,.tbl.fluid td{white-space:normal}
+.tbl.fluid tbody th{width:42%}
+.tbl + p{margin-top:16px}
 
 /* load budget */
 .load .slots{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 20px}
@@ -140,7 +148,7 @@
   .g-head{grid-template-columns:1fr;padding:56px 0 36px}
   .g-grid{grid-template-columns:1fr;gap:28px}
   .toc{position:static;columns:2;column-gap:28px}
-  .eng,.scroll{grid-template-columns:1fr}
+  .eng,.scroll,.side{grid-template-columns:1fr}
 }
 @media (max-width:620px){
   .toc{columns:1}

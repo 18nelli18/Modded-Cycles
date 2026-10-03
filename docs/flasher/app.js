@@ -651,7 +651,8 @@ const CREDITS = [
 
 const FLASH_GUIDE = `${REPO}/blob/main/FLASH.md`;
 const GUIDE = "../guide/";                      // the site's guide (docs/guide/)
-const GUIDE_OF = { usb6: "usb6", "latching-mute": "mute", "trig-preview": "preview", "browser-scroll": "scroll", syntakt: "syntakt" };
+const GUIDE_OF = { usb6: "usb6", "model-tg": "model-tg", "latching-mute": "mute", "trig-preview": "preview",
+  "browser-scroll": "scroll", syntakt: "syntakt" };
 
 // ---------------------------------------------------------------------------
 // Texts
