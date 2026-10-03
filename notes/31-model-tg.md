@@ -15,7 +15,7 @@ Décisions de l'utilisateur, après l'analyse du §3 :
 | Conflits avec les moteurs du Syntakt | `[FAIT]` analysés (§3) |
 | Version combinée Model-TG + moteurs du Syntakt | `[FAIT]` en ligne (1.6), démarre et joue sur la machine (firmware de diagnostic, §6) ; charge à optimiser (§7) |
 | Passage à Model-TG v1.1.0 (slide trigs) | `[FAIT]` slides prouvés aussi sur nos moteurs en émulation ; fonctionne sur la machine (§9) |
-| Mutes tout de suite en mode mute | `[FAIT en émulation]` retouche de sa source (§10) ; à essayer sur la machine |
+| Mutes tout de suite en mode mute | `[FAIT]` retouche de sa source (§10) ; fonctionne sur la machine |
 
 ## 1. Ce qu'est Model-TG
 
@@ -352,7 +352,7 @@ Source : dépôt [TinyGregAudio/Model-TG](https://github.com/TinyGregAudio/Model
 
 **Étiquette « testé »** : retirée de la version combinée (`HW_TESTED_TG` vide), car le firmware que construit le flasher n'est plus celui essayé le 02/10/2026. L'essai du 03/10/2026 a été fait sur un firmware construit par `build.py` (même MAIN OS). L'étiquette revient après l'essai d'un firmware construit par le flasher.
 
-## 10. Mutes tout de suite en mode mute `[FAIT en émulation]`
+## 10. Mutes tout de suite en mode mute `[FAIT]`
 
 Question relayée par l'utilisateur le 03/10/2026 : « I'll go in Latch Mute mode, mute tracks, but they still play until I hit Func again to leave the mode & then it'll finally mute. Is this normal? ». L'utilisateur a vérifié : c'est bien le cas.
 
@@ -375,3 +375,5 @@ Question relayée par l'utilisateur le 03/10/2026 : « I'll go in Latch Mute mod
 **Preuve** : nouvelle partie 6 de `tools/emu/test_model_tg_syntakt.py`. `mq_toggle(kit, piste, 1)` rejoint `0x40013904` tout de suite, avec les mêmes arguments, et rien ne reste en attente. `mq_apply` n'a rien à faire.
 
 **Site** : le guide (section Model-TG : son chapeau et « Inclus »), le crédit de Model-TG dans le flasher, les notes de version 1.12, le README et `PROVENANCE.md` disent la retouche.
+
+**Essai sur la machine** (03/10/2026, `build/model-cycles_OS1.13_model-tg-1.1_syntakt-5-moteurs_6ch_arp3.syx`, construit par `build.py`, MAIN OS `d2e1aeb9…`, la même empreinte que le flasher : 6 canaux + Model-TG + 5 moteurs + arpégiateur) : il était demandé de taper T1 à T6 en mute verrouillé (chaque piste coupée ou rétablie tout de suite) et de vérifier l'arpégiateur. Retour de l'utilisateur : « c bon ça fonctionne nickel ».

@@ -153,3 +153,5 @@ Source de tout ce qui suit : désassemblage du MAIN OS 1.13 officiel (`m68k-elf-
 - Firmware d'essai suivant : `build/model-cycles_OS1.13_model-tg-1.1_syntakt-5-moteurs_6ch_arp2.syx`, MAIN OS `ae96a31d…`.
 
 **2e essai** (ce firmware, construit par `build.py`, même MAIN OS que le flasher pour cette combinaison). Il était demandé de changer Arp et Oct en jouant plusieurs notes avec RETRIG, puis de vérifier les réglages après enregistrement et redémarrage. Retour de l'utilisateur : « ça marche nickel ! » (la tenue des réglages après redémarrage n'est pas confirmée explicitement). L'étiquette « testé » attend l'essai d'un firmware construit par le flasher.
+
+**3e essai** (même jour, `…_arp3.syx`, MAIN OS `d2e1aeb9…`, avec aussi les mutes immédiats de Model-TG, notes/31 §10) : il était demandé de vérifier les mutes, l'arpégiateur, et si possible la tenue des réglages après enregistrement et redémarrage. Retour de l'utilisateur : « c bon ça fonctionne nickel ».
