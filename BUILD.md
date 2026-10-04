@@ -190,6 +190,25 @@ python3 tools/emu/test_trig_hold.py --cycles model-cycles_OS1.13.syx \
 
 Avec `6ch-usbup`, les deux tweaks réécrivent de la même façon le pointeur du sprite dont le masque est libéré.
 
+### Tempo jusqu'à 546 BPM
+
+`tweaks/model-cycles_OS1.13/42-tempo-max.json` est produit par `tools/gen_tempo_max.py` : les six bornes à 300 BPM (moteur,
+horloge MIDI reçue, projet, pattern, menu Tempo) passent à 546,0 BPM, plafond du champ 16 bits du projet, ainsi que les deux
+contrôles au chargement ; la remise dans le cycle de la phase du LFO devient une boucle (au-delà de 351,6 BPM, le pas peut
+dépasser un cycle). 12 écritures, aucune place libre ([note 38](notes/38-tempo-546-bpm.md)). La preuve fait tourner le vrai
+code de l'OS, d'origine et modifié, jusqu'aux 6 LFO (EMAC exacte) :
+```sh
+python3 tools/gen_tempo_max.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/emu/test_tempo_max.py --cycles model-cycles_OS1.13.syx
+```
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `tempo-max` | `5d6417b175e89b68c76743bbcad45306ba210969ad049fc1bfa6da46e432eaef` |
+| `6ch-usbup,tempo-max` | `0f7a47738be9a70aa3c8e586d28636c535d787693ddf6cc756c92b5824717d42` |
+| `model-tg,tempo-max` | `97cc13b34d3f4b3440d42bdb1c692e64bf0aa8b2de54b806b14320914936ef4f` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max` | `c8214dc5fe88a5ff346d8554f05753bb25acec448cb0eb23140236b10a9404d4` |
+
 ### Écoute d'un pas en pause
 
 `trig-preview` (et sa copie dans Model-TG) accepte le séquenceur en pause, où le met un Stop MIDI reçu même à l'arrêt : 3 octets

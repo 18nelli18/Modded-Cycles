@@ -2068,6 +2068,82 @@ window.MC_TWEAKS = {
    ]
   },
   {
+   "id": "tempo-max",
+   "order": 42,
+   "name": "Tempo jusqu'à 546.0 BPM",
+   "description": [
+    "Tempo de 30.0 à 546.0 BPM au lieu de 300.0 : molette du menu Tempo, tap tempo, horloge MIDI reçue, chargement d'un projet.",
+    "546.0 BPM est le plafond du format des projets (tempo en 1/120 de BPM sur 16 bits) ; un projet enregistré au-dessus de 300 BPM se rouvre à 120 BPM sur l'OS d'origine (son contrôle au chargement).",
+    "Le LFO synchronisé au tempo reste juste au-delà de 351,6 BPM (sa phase est remise dans le cycle en boucle au lieu d'une seule fois).",
+    "Aucune place libre utilisée : 11 constantes et 18 octets du LFO. Généré par tools/gen_tempo_max.py, notes/38."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "writes": [
+    {
+     "off": 50286,
+     "old": "223c00008ca0",
+     "new": "223c0000fff0"
+    },
+    {
+     "off": 73676,
+     "old": "223c00008ca0",
+     "new": "223c0000fff0"
+    },
+    {
+     "off": 250044,
+     "old": "243c00008ca0",
+     "new": "243c0000fff0"
+    },
+    {
+     "off": 362388,
+     "old": "0c8000008ca0",
+     "new": "0c800000fff0"
+    },
+    {
+     "off": 362396,
+     "old": "203c00008ca0",
+     "new": "203c0000fff0"
+    },
+    {
+     "off": 362438,
+     "old": "0c8000008ca0",
+     "new": "0c800000fff0"
+    },
+    {
+     "off": 362446,
+     "old": "203c00008ca0",
+     "new": "203c0000fff0"
+    },
+    {
+     "off": 524876,
+     "old": "0c8000008ca0",
+     "new": "0c800000fff0"
+    },
+    {
+     "off": 524884,
+     "old": "203c00008ca0",
+     "new": "203c0000fff0"
+    },
+    {
+     "off": 370368,
+     "old": "0c8100007e90",
+     "new": "0c810000f1e0"
+    },
+    {
+     "off": 372726,
+     "old": "0c8100007e90",
+     "new": "0c810000f1e0"
+    },
+    {
+     "off": 595928,
+     "old": "4a876d080682ad9a4000600606825265c000",
+     "new": "223c5265c0004a876c024481948160bc4e71"
+    }
+   ]
+  },
+  {
    "id": "syntakt-sd",
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE)",
@@ -137991,6 +138067,19 @@ window.MC_TWEAKS = {
    "variants": [
     {
      "id": "arp",
+     "label": null
+    }
+   ]
+  },
+  {
+   "id": "tempo-max",
+   "label": "Tempo jusqu'a 546 BPM",
+   "desc": "Le tempo monte jusqu'a 546 BPM au lieu de 300 (molette, tap tempo, horloge MIDI recue). 546 est le plafond du format des projets.",
+   "status": "experimental",
+   "credit": null,
+   "variants": [
+    {
+     "id": "tempo-max",
      "label": null
     }
    ]

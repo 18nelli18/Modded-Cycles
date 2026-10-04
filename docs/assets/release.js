@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.19", date: "2026-10-04", changes: [
+    { en: "New mod, Tempo up to 546 BPM: the TEMPO knob, tap tempo, incoming MIDI clock and saved projects go beyond 300, up to 546.0 BPM. 546 is the ceiling of the project format (the tempo is saved in 1/120 of a BPM on 16 bits); the sequencer itself would keep up far beyond",
+      fr: "Nouveau mod, Tempo jusqu'à 546 BPM : le potard TEMPO, le tap tempo, l'horloge MIDI reçue et les projets enregistrés dépassent 300, jusqu'à 546,0 BPM. 546 est le plafond du format des projets (le tempo y est enregistré en 1/120 de BPM sur 16 bits) ; le séquenceur, lui, suivrait bien au-delà" },
+    { en: "It also fixes the original OS's tempo-synced LFO, which left its cycle above 351.6 BPM at its highest speed and multiplier. A project saved above 300 BPM reopens at 120 BPM on the original OS",
+      fr: "Il corrige aussi le LFO synchronisé de l'OS d'origine, qui sortait de son cycle au-delà de 351,6 BPM à sa vitesse et à son multiplicateur les plus hauts. Un projet enregistré au-dessus de 300 BPM se rouvre à 120 BPM sur l'OS d'origine" },
+    { en: "Checked in the emulator on the OS's own code (knob, tap tempo, MIDI clock, project loading, LFOs); experimental until tested on a Model:Cycles. It goes with every other mod",
+      fr: "Vérifié en émulation sur le code même de l'OS (potard, tap tempo, horloge MIDI, chargement des projets, LFO) ; expérimental jusqu'à un test sur un Model:Cycles. Il se combine avec tous les autres mods" },
+  ] },
   { version: "1.18", date: "2026-10-04", changes: [
     { en: "Fast flashing over USB: about 30 seconds instead of 5 to 10 minutes. The flasher now speaks the update protocol of Elektron Transfer (worked out by Elektroid): the Model:Cycles stays on its usual screen, checks every block as it arrives, then asks you to confirm the update",
       fr: "Flash rapide en USB : une trentaine de secondes au lieu de 5 à 10 minutes. Le flasher parle maintenant le protocole de mise à jour d'Elektron Transfer (décrypté par Elektroid) : le Model:Cycles reste sur son écran habituel, vérifie chaque bloc à son arrivée, puis demande de confirmer la mise à jour" },
