@@ -1,6 +1,6 @@
 /* Accroches de l'arpégiateur (notes/32), liées avec arp.c dans deux masques de sprites libérés (arp.ld).
  * Les écritures sur l'OS sont dans tools/gen_arp.py (HOOKS). */
-	.globl	arp_filter_hook, arp_rate_d3, arp_rate_d2, arp_menu_tail, item_label
+	.globl	arp_filter_hook, arp_rate_d3, arp_rate_d2, arp_menu_tail, item_label, arp_post_on
 
 	.section .text.audio_hook, "ax"
 
@@ -27,6 +27,20 @@ arp_rate_d2:
 	jsr	arp_rate
 	addq.l	#8, %sp
 	rts
+
+	.section .text.post_hook, "ax"
+/* 0x40081908 (6 o), dans 0x4008171e : jsr arp_post_on à la place de jsr 0x40080bf6 ; addq.l #4,sp (envoi à
+ * l'interface du message de la note, empilé par l'appelant). arp_ui_post (C) l'envoie ou non ; puis on dépile ce
+ * message comme l'addq remplacé. 24(fp) : 5e argument de 0x4008171e (pas tenus). d0-d1/a0-a1 sont libres ensuite
+ * (0x4008190e restaure d2-d7/a2-a5 et revient). */
+arp_post_on:
+	move.l	24(%fp), -(%sp)
+	move.l	8(%sp), -(%sp)
+	jsr	arp_ui_post
+	addq.l	#8, %sp
+	movea.l	(%sp)+, %a0
+	addq.l	#4, %sp
+	jmp	(%a0)
 
 	.section .text.menu_hook, "ax"
 /* 0x4002d480 (6 o) : jmp arp_menu_tail, à la place de movem.l 24(sp),d2-d6/a2-a6, en fin du constructeur de

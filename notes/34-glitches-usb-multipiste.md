@@ -179,7 +179,7 @@ redonne son empreinte) ; `relocate_6ch.py --check`, `gen_model_tg.py --check`, `
 | `model-tg` | `2a939b7f…` |
 | `6ch-usbup,model-tg` | `de845665…` |
 | `syntakt-sd-cp-toy-bits-swarm` (`--syntakt`) | `c4616b24…` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp` (`--syntakt`) | `2562fb2d…` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp` (`--syntakt`) | `7588d23b…` (avec l'enregistrement live de l'arpégiateur, [32 §11](32-arpegiateur.md)) |
 
 Valeurs complètes : [`BUILD.md`](../BUILD.md) et `REF_MAINOS` de `docs/flasher/app.js`.
 
@@ -187,7 +187,8 @@ Valeurs complètes : [`BUILD.md`](../BUILD.md) et `REF_MAINOS` de `docs/flasher/
 
 Retour de l'utilisateur le 04/10/2026, après essai des firmwares d'essai qui lui ont été envoyés, construits par `build.py`
 depuis ses OS officiels (6ch-usbup + Model-TG, MAIN OS `de845665…` ; 6ch-usbup + Model-TG + 5 moteurs + trig-hold +
-arpégiateur, MAIN OS `2562fb2d…`, les mêmes empreintes que le flasher) : « ça marche », « le test fonctionne ».
+arpégiateur, MAIN OS `2562fb2d…`, les mêmes empreintes que le flasher à ce moment, avant l'enregistrement live de
+l'arpégiateur) : « ça marche », « le test fonctionne ».
 
 Le protocole proposé :
 
