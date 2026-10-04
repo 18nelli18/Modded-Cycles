@@ -18,7 +18,12 @@ Everything happens in your browser: nothing is uploaded anywhere.
 
 You need:
 - your official **`model-cycles_OS1.13.syx`** ([elektron.se](https://www.elektron.se/support-downloads/modelcycles), unzip the download);
-- a **USB cable**. On the Model:Cycles, open `CONFIG > UPGRADE` and confirm: it waits for the firmware.
+- a **USB cable**, the Model:Cycles on its usual screen and Elektron Transfer closed.
+
+The page flashes in **about a minute** with the update protocol of Elektron Transfer (worked out by
+[Elektroid](https://github.com/dagargo/elektroid)): the Model:Cycles acknowledges every block, then asks you to confirm.
+The classic way (`CONFIG > UPGRADE`, 5 to 10 minutes) stays available as a fallback.
+You can also download the prepared `.syx` and drop it onto Elektron Transfer yourself.
 
 The web flasher only sends over USB, and only offers mods that keep OS updates over USB working.
 Its **Samples OS** tab turns the Model:Cycles into a Model:Samples (drop both official OS files); coming back needs a MIDI interface.
@@ -46,7 +51,8 @@ flash.bat         # Windows (double-click)
 ```
 
 The web flasher is a JavaScript port of `build.py` and `mtlib`, checked byte for byte against the Python
-(`tools/webflash_check.sh`, `tools/webbuild_check.sh`, `tools/webflash_smoke.sh`).
+(`tools/webflash_check.sh`, `tools/webbuild_check.sh`, `tools/webflash_smoke.sh`); its fast USB method is checked
+against Elektroid's C (`tools/webxfer_check.py`, [note 37](notes/37-flash-rapide-usb.md)).
 
 ## Features
 

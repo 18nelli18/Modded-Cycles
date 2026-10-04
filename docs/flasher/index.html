@@ -4,21 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Model:Cycles Flasher</title>
-<meta name="description" content="Install mods on the Elektron Model:Cycles from your browser, over Web MIDI. No firmware is provided or uploaded: you bring your own official OS file.">
+<meta name="description" content="Install mods on the Elektron Model:Cycles from your browser, over USB in about a minute (Web MIDI). No firmware is provided or uploaded: you bring your own official OS file.">
 <meta name="theme-color" content="#e3e2de" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b1b1b" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-04-04">
-<link rel="stylesheet" href="style.css?v=2026-10-04-04">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-04-05">
+<link rel="stylesheet" href="style.css?v=2026-10-04-05">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="flasher">
 <script>
   // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-  window.MC_BUILD = "2026-10-04-04";
+  window.MC_BUILD = "2026-10-04-05";
   window.addEventListener("error", function (e) {
     var b = document.getElementById("errbar");
     if (!b) return;
@@ -121,7 +121,17 @@
   <section class="step" id="step-connect" aria-labelledby="h3s">
     <header><span class="num">3</span><h2 id="h3s" data-i18n="s3">Connect your Model:Cycles over USB</h2></header>
     <div class="step-body">
-      <ol class="howto" id="howto-usb">
+      <div class="seg" role="radiogroup" aria-label="Method">
+        <button type="button" role="radio" id="m-fast" aria-checked="true" data-i18n="m_fast">Fast (USB)</button>
+        <button type="button" role="radio" id="m-slow" aria-checked="false" data-i18n="m_slow">Classic (CONFIG › UPGRADE)</button>
+      </div>
+      <p class="panel-text method-note" id="method-note"></p>
+      <ol class="howto" id="howto-fast">
+        <li data-i18n-html="hf1"></li>
+        <li data-i18n-html="hf2"></li>
+        <li data-i18n-html="hf3"></li>
+      </ol>
+      <ol class="howto" id="howto-usb" hidden>
         <li data-i18n-html="hu1"></li>
         <li data-i18n-html="hu2"></li>
         <li data-i18n-html="hu3"></li>
@@ -146,6 +156,8 @@
         <button type="button" class="btn secondary" id="stop" hidden data-i18n="stop">Stop</button>
       </div>
       <p class="missing" id="missing" aria-live="polite"></p>
+      <p class="alt" id="alt" hidden><a class="btn secondary" id="download" data-i18n="download">Download the .syx</a>
+        <span data-i18n-html="download_hint"></span></p>
       <div class="progress" id="progress" hidden>
         <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="barwrap"><div id="bar"></div><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
         <div class="meta"><span id="pct">0 %</span><span id="eta"></span></div>
@@ -158,6 +170,7 @@
           <dt data-i18n="t1q">Nothing happens on the Model:Cycles screen</dt><dd data-i18n-html="t1a"></dd>
           <dt data-i18n="t2q">The transfer stops, or the Model:Cycles shows an error</dt><dd data-i18n-html="t2a"></dd>
           <dt data-i18n="t3q">No MIDI port in the list</dt><dd data-i18n-html="t3a"></dd>
+          <dt data-i18n="t5q">The fast method doesn't find the Model:Cycles, or stops</dt><dd data-i18n-html="t5a"></dd>
           <dt data-i18n="t4q">The update over USB is refused, or the Model:Cycles doesn't start any more</dt><dd data-i18n-html="t4a"></dd>
         </dl>
       </details>
@@ -169,11 +182,7 @@
     <div class="field">
       <label for="pace" data-i18n="pace">Send speed margin</label>
       <input id="pace" type="number" min="0" step="0.1" value="1.4">
-      <span class="hint" data-i18n="pace_hint">1.4 by default. Raise it to 2.0 if the transfer stalls.</span>
-    </div>
-    <div class="field">
-      <a id="download" hidden data-i18n="download">Download the prepared .syx</a>
-      <span class="hint" id="download-hint" data-i18n-html="download_hint"></span>
+      <span class="hint" data-i18n="pace_hint">Classic method only. 1.4 by default: raise it to 2.0 if the transfer stalls.</span>
     </div>
     <div id="log" aria-live="off"></div>
   </details>
@@ -194,11 +203,11 @@
 </footer>
 
 <!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
-<script src="../assets/release.js?v=2026-10-04-04"></script>
-<script src="../assets/site.js?v=2026-10-04-04"></script>
-<script src="builder.js?v=2026-10-04-04"></script>
-<script src="tweaks.js?v=2026-10-04-04"></script>
-<script src="flasher.js?v=2026-10-04-04"></script>
-<script src="app.js?v=2026-10-04-04"></script>
+<script src="../assets/release.js?v=2026-10-04-05"></script>
+<script src="../assets/site.js?v=2026-10-04-05"></script>
+<script src="builder.js?v=2026-10-04-05"></script>
+<script src="tweaks.js?v=2026-10-04-05"></script>
+<script src="flasher.js?v=2026-10-04-05"></script>
+<script src="app.js?v=2026-10-04-05"></script>
 </body>
 </html>

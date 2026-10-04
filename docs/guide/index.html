@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-04-04">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-04-04">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-04-05">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-04-05">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -76,12 +76,16 @@
         <ol>
           <li><span data-l="en">In the <a href="../flasher/">flasher</a>, tick the mods you want. They combine.</span><span data-l="fr">Dans le <a href="../flasher/">flasher</a>, cochez les mods voulus. Ils se combinent.</span></li>
           <li><span data-l="en">Drop your OS file. The firmware is built and checked in the page.</span><span data-l="fr">Déposez votre fichier d'OS. Le firmware est construit et vérifié dans la page.</span></li>
-          <li><span data-l="en">Connect the Model:Cycles over USB, press <b>SETTINGS</b>, open <b>CONFIG › UPGRADE</b> and confirm. Allow MIDI in the browser.</span><span data-l="fr">Branchez le Model:Cycles en USB, appuyez sur <b>SETTINGS</b>, ouvrez <b>CONFIG › UPGRADE</b> et confirmez. Autorisez le MIDI dans le navigateur.</span></li>
-          <li><span data-l="en">Flash. The Model:Cycles writes the firmware (<b>UPDATING FLASH</b>) then restarts by itself. Don't turn it off before.</span><span data-l="fr">Flashez. Le Model:Cycles écrit le firmware (<b>UPDATING FLASH</b>) puis redémarre tout seul. Ne l'éteignez pas avant.</span></li>
+          <li><span data-l="en">Close Elektron Transfer, connect the Model:Cycles over USB and turn it on normally: no menu to open. Allow MIDI in the browser: the page finds the Model:Cycles and shows its OS version.</span><span data-l="fr">Fermez Elektron Transfer, branchez le Model:Cycles en USB et allumez-le normalement : aucun menu à ouvrir. Autorisez le MIDI dans le navigateur : la page trouve le Model:Cycles et affiche sa version d'OS.</span></li>
+          <li><span data-l="en">Flash: about a minute. Then confirm the update on the Model:Cycles screen. It writes the firmware and restarts by itself: don't turn it off before.</span><span data-l="fr">Flashez : environ une minute. Confirmez ensuite la mise à jour sur l'écran du Model:Cycles. Il écrit le firmware et redémarre tout seul : ne l'éteignez pas avant.</span></li>
         </ol>
+        <p><span data-l="en">The page uses the update protocol of Elektron Transfer, worked out by <a href="https://github.com/dagargo/elektroid" target="_blank" rel="noopener">Elektroid</a>: the Model:Cycles checks every block as it arrives. You can also download the prepared <code>.syx</code> in step 4 and drop it onto Elektron Transfer's window.</span>
+          <span data-l="fr">La page utilise le protocole de mise à jour d'Elektron Transfer, décrypté par <a href="https://github.com/dagargo/elektroid" target="_blank" rel="noopener">Elektroid</a> : le Model:Cycles vérifie chaque bloc à son arrivée. Vous pouvez aussi télécharger le <code>.syx</code> préparé à l'étape 4 et le déposer sur la fenêtre d'Elektron Transfer.</span></p>
+        <p><span data-l="en">If the fast method doesn't find the Model:Cycles, choose <b>Classic</b> in step 3: press <b>SETTINGS</b>, open <b>CONFIG › UPGRADE</b> and confirm. The firmware then travels at MIDI speed (5 to 10 minutes) and the Model:Cycles shows <b>UPDATING FLASH</b> before restarting.</span>
+          <span data-l="fr">Si la méthode rapide ne trouve pas le Model:Cycles, choisissez <b>Classique</b> à l'étape 3 : appuyez sur <b>SETTINGS</b>, ouvrez <b>CONFIG › UPGRADE</b> et confirmez. Le firmware passe alors à la vitesse du MIDI (5 à 10 minutes) et le Model:Cycles affiche <b>UPDATING FLASH</b> avant de redémarrer.</span></p>
         <figure class="fig">
           <div data-device data-lit="settings" data-lcd="CONFIG/>UPGRADE"></div>
-          <figcaption><span data-l="en">CONFIG › UPGRADE is under the SETTINGS key.</span><span data-l="fr">CONFIG › UPGRADE se trouve sous la touche SETTINGS.</span></figcaption>
+          <figcaption><span data-l="en">Classic method: CONFIG › UPGRADE is under the SETTINGS key.</span><span data-l="fr">Méthode classique : CONFIG › UPGRADE se trouve sous la touche SETTINGS.</span></figcaption>
         </figure>
         <p class="note"><span data-l="en">Keep the flasher tab in the foreground during the transfer: browsers slow down background tabs.</span><span data-l="fr">Gardez l'onglet du flasher au premier plan pendant le transfert : les navigateurs ralentissent les onglets en arrière-plan.</span></p>
       </section>
@@ -423,7 +427,7 @@
         </dl>
         <h3><span data-l="en">Coming back</span><span data-l="fr">Revenir</span></h3>
         <p><span data-l="en">The way back to the Model:Cycles OS goes through the startup menu, which only listens to the MIDI IN (see <a href="#recovery">Recovery</a>). <b>Without a MIDI interface, there is no way back.</b></span><span data-l="fr">Le retour à l'OS du Model:Cycles passe par le menu de démarrage, qui n'écoute que le MIDI IN (voir <a href="#recovery">Secours</a>). <b>Sans interface MIDI, pas de retour possible.</b></span></p>
-        <p class="note"><span data-l="en">From the Samples OS, never run CONFIG › UPGRADE with a Model:Samples file: it would also replace the startup menu of your Model:Cycles. Back up your projects first: both OSes use the same storage.</span><span data-l="fr">Depuis l'OS Samples, ne lancez jamais CONFIG › UPGRADE avec un fichier Model:Samples : il remplacerait aussi le menu de démarrage de votre Model:Cycles. Sauvegardez d'abord vos projets : les deux OS utilisent le même stockage.</span></p>
+        <p class="note"><span data-l="en">From the Samples OS, never install a Model:Samples OS file, neither with CONFIG › UPGRADE nor when Elektron Transfer offers an update: it would also replace the startup menu of your Model:Cycles. Back up your projects first: both OSes use the same storage.</span><span data-l="fr">Depuis l'OS Samples, n'installez jamais un fichier d'OS Model:Samples, ni par CONFIG › UPGRADE ni quand Elektron Transfer propose une mise à jour : il remplacerait aussi le menu de démarrage de votre Model:Cycles. Sauvegardez d'abord vos projets : les deux OS utilisent le même stockage.</span></p>
       </section>
 
       <section id="stock">
@@ -451,11 +455,15 @@
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
-            <p><span data-l="en">Check that CONFIG › UPGRADE is open and waiting, and that the port named “Model:Cycles” is selected. Close Elektron Transfer, Overbridge and your music software (on Windows they lock the port), then try again.</span><span data-l="fr">Vérifiez que CONFIG › UPGRADE est ouvert et en attente, et que le port nommé « Model:Cycles » est choisi. Fermez Elektron Transfer, Overbridge et votre logiciel de musique (sous Windows, ils bloquent le port), puis réessayez.</span></p>
+            <p><span data-l="en">Fast method: step 3 must say that the Model:Cycles was found. Classic method: check that CONFIG › UPGRADE is open and waiting. Either way, pick the port named “Model:Cycles” and close Elektron Transfer, Overbridge and your music software (on Windows they lock the port), then try again.</span><span data-l="fr">Méthode rapide : l'étape 3 doit indiquer que le Model:Cycles a été trouvé. Méthode classique : vérifiez que CONFIG › UPGRADE est ouvert et en attente. Dans les deux cas, choisissez le port nommé « Model:Cycles » et fermez Elektron Transfer, Overbridge et votre logiciel de musique (sous Windows, ils bloquent le port), puis réessayez.</span></p>
+          </details>
+          <details>
+            <summary><span data-l="en">The fast method doesn't find the Model:Cycles, or stops</span><span data-l="fr">La méthode rapide ne trouve pas le Model:Cycles, ou s'arrête</span></summary>
+            <p><span data-l="en">Turn the Model:Cycles on normally (not in CONFIG › UPGRADE), close Elektron Transfer and click Refresh. With Model-TG, Device Config › Transfer must be on CYC. If it still fails, choose Classic in step 3: slower, but it needs no answer from the machine.</span><span data-l="fr">Allumez le Model:Cycles normalement (pas dans CONFIG › UPGRADE), fermez Elektron Transfer et cliquez sur Rafraîchir. Avec Model-TG, Device Config › Transfer doit être sur CYC. Si ça échoue encore, choisissez Classique à l'étape 3 : plus lent, mais sans besoin de réponse de la machine.</span></p>
           </details>
           <details>
             <summary><span data-l="en">The transfer stops, or the Model:Cycles shows an error</span><span data-l="fr">Le transfert s'arrête, ou le Model:Cycles affiche une erreur</span></summary>
-            <p><span data-l="en">Turn it off and on, open CONFIG › UPGRADE again, set Advanced › Send speed margin to 2.0 in the flasher and flash again.</span><span data-l="fr">Éteignez-le puis rallumez-le, rouvrez CONFIG › UPGRADE, réglez Options avancées › Marge de vitesse sur 2.0 dans le flasher et relancez.</span></p>
+            <p><span data-l="en">Turn it off and on and flash again. With the classic method, open CONFIG › UPGRADE again and first set Advanced › Send speed margin to 2.0 in the flasher.</span><span data-l="fr">Éteignez-le puis rallumez-le et relancez. Avec la méthode classique, rouvrez CONFIG › UPGRADE et réglez d'abord Options avancées › Marge de vitesse sur 2.0 dans le flasher.</span></p>
           </details>
           <details>
             <summary><span data-l="en">No MIDI port in the list</span><span data-l="fr">Aucun port MIDI dans la liste</span></summary>
@@ -502,8 +510,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-04-04"></script>
-<script src="../assets/cycles.js?v=2026-10-04-04"></script>
-<script src="../assets/site.js?v=2026-10-04-04"></script>
+<script src="../assets/release.js?v=2026-10-04-05"></script>
+<script src="../assets/cycles.js?v=2026-10-04-05"></script>
+<script src="../assets/site.js?v=2026-10-04-05"></script>
 </body>
 </html>

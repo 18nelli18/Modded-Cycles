@@ -1,7 +1,9 @@
 /* Model:Cycles web flasher — user interface.
  *
  * Four steps: 1) choose (mods or official firmware), 2) load the official OS file,
- * 3) connect the device over USB (CONFIG > UPGRADE) and pick its MIDI port, 4) flash.
+ * 3) connect the device over USB and pick its MIDI port, 4) flash. Two ways to send it: fast (the
+ * update protocol of Elektron Transfer, the machine answers every block) or classic (the raw .syx
+ * to CONFIG > UPGRADE, paced for the MIDI wire).
  * The firmware is built automatically as soon as the OS file and the mods are known.
  *
  * Uses window.MCBuilder (builder.js, JS port of tools/build.py), window.MC_TWEAKS
@@ -2399,7 +2401,7 @@ const T = {
     samples_text: "Load and play your own samples, managed with Elektron Transfer. The page puts the official Model:Samples OS inside your Model:Cycles firmware: the startup menu, the updater and the signature of the Model:Cycles stay in place.",
     samples_w1: "Back up your projects with Transfer first: the Model:Samples OS uses the same storage.",
     samples_w2: `Coming back to the Model:Cycles OS goes through the startup menu, which only listens to the MIDI IN: it needs a MIDI interface (<a href="${GUIDE}#samples">guide</a>).`,
-    samples_w3: "From the Samples OS, never run CONFIG › UPGRADE with a Model:Samples file: it would also replace the startup menu of your Model:Cycles.",
+    samples_w3: "From the Samples OS, never install a Model:Samples OS file, neither with CONFIG › UPGRADE nor when Elektron Transfer offers an update: it would also replace the startup menu of your Model:Cycles.",
     samples_ack: "I have a MIDI interface for the way back (to the Model:Cycles MIDI IN).",
     restore_from_samples: `Coming back from the Samples OS? Its way back is the startup menu through the MIDI IN: see the <a href="${GUIDE}#recovery">guide</a>.`,
     tested: "Tested",
@@ -2422,6 +2424,13 @@ const T = {
     hu1: "Connect the Model:Cycles to the computer with a USB cable and turn it on normally.",
     hu2: "On the Model:Cycles, press <b>SETTINGS</b>, open <b>CONFIG › UPGRADE</b> and confirm with <b>YES</b>. It now waits for the firmware.",
     hu3: "Allow MIDI access below: the port named “Model:Cycles” is selected automatically.",
+    m_fast: "Fast (USB)",
+    m_slow: "Classic (CONFIG › UPGRADE)",
+    method_fast: "The update protocol of Elektron Transfer, straight from this page: about a minute. The Model:Cycles asks you to confirm at the end.",
+    method_slow: "The firmware is sent at MIDI speed while CONFIG › UPGRADE waits for it: 5 to 10 minutes. The fallback if the fast method doesn't work.",
+    hf1: "Connect the Model:Cycles to the computer with a USB cable and turn it on normally. Stay on its usual screen: no menu to open.",
+    hf2: "Close <b>Elektron Transfer</b> and any music software that uses the Model:Cycles: they hold its USB port.",
+    hf3: "Allow MIDI access below: the page finds the Model:Cycles and shows its OS version.",
     allow: "Allow MIDI access",
     refresh: "Refresh",
     s4: "Flash",
@@ -2431,18 +2440,20 @@ const T = {
     stop: "Stop",
     trouble: "Something went wrong?",
     t1q: "Nothing happens on the Model:Cycles screen",
-    t1a: "Check that <b>CONFIG › UPGRADE</b> is open and waiting, and that the port named “Model:Cycles” is selected in step 3. Close Elektron Transfer, Overbridge and your music software (on Windows they lock the port), then try again.",
+    t1a: "Fast method: step 3 must say that the Model:Cycles was found. Classic method: check that <b>CONFIG › UPGRADE</b> is open and waiting. Either way, pick the port named “Model:Cycles” in step 3 and close Elektron Transfer, Overbridge and your music software (on Windows they lock the port), then try again.",
     t2q: "The transfer stops, or the Model:Cycles shows an error",
-    t2a: "Turn the Model:Cycles off and on, open <b>CONFIG › UPGRADE</b> again, set <b>Advanced › Send speed margin</b> to 2.0 and flash again.",
+    t2a: "Turn the Model:Cycles off and on and flash again. With the classic method, open <b>CONFIG › UPGRADE</b> again and set <b>Advanced › Send speed margin</b> to 2.0 first.",
     t3q: "No MIDI port in the list",
     t3a: "Connect the Model:Cycles with a USB cable that carries data (some cables only charge), turn it on, then click <b>Refresh</b>. Some systems only show a new device after the browser is restarted.",
+    t5q: "The fast method doesn't find the Model:Cycles, or stops",
+    t5a: "Turn the Model:Cycles on normally (not in CONFIG › UPGRADE), close Elektron Transfer, then click <b>Refresh</b> in step 3. If it still fails, choose <b>Classic</b> in step 3: slower, but it doesn't need answers from the machine. Elektron Transfer works too: download the .syx (step 4) and drop it onto Transfer's window.",
     t4q: "The update over USB is refused, or the Model:Cycles doesn't start any more",
     t4a: `Recovery goes through the startup menu, which only listens to the MIDI IN: follow the <a href="${GUIDE}#recovery">guide</a> (it needs a MIDI interface). The same goes if you installed the old “6-channel reference version”, which disables updates over USB.`,
     advanced: "Advanced",
     pace: "Send speed margin",
-    pace_hint: "1.4 by default. Raise it to 2.0 if the transfer stalls.",
-    download: "Download the prepared .syx",
-    download_hint: "",
+    pace_hint: "Classic method only. 1.4 by default: raise it to 2.0 if the transfer stalls.",
+    download: "Download the .syx",
+    download_hint: "to drop onto <b>Elektron Transfer</b> (just as fast), or to keep.",
     credits: "Credits",
     credits_intro: "This flasher stands on the shoulders of these open-source projects (MIT licence), none of which includes firmware:",
     privacy: "Your firmware file never leaves your computer. Nothing is uploaded, no firmware is provided.",
@@ -2473,8 +2484,8 @@ const T = {
     combo_new: "New choice: checked in the emulator, not tested on a Model:Cycles yet.",
     with_tg: "With Model-TG: its Sampler is the 7th machine and these engines come after it, from the 8th. A track set to an added machine plays another one on the version without Model-TG, and the other way round.",
     renumber: "Before changing this choice or going back to the official firmware, set the tracks that use an added machine back to an original one (Kick…Chord): their numbers depend on the ticked engines, and MACHINES can freeze on such a track.",
-    done_syn_tg: "Then press MACHINES on a track: after Chord comes the Sampler, then {list}. Their knobs show the Syntakt's names. Model-TG's Attack, Filter and Resonance work on them too: hold MACHINE and turn DECAY, SWEEP or CONTOUR. If something goes wrong, flash the official firmware back from CONFIG › UPGRADE (first set the tracks that use an added machine back to an original machine).",
-    done_syn: "Then press MACHINES on a track: after Chord come {list}. Their knobs show the Syntakt's names. The 6 original machines are unchanged. If something goes wrong, flash the official firmware back from CONFIG › UPGRADE (first set the tracks that use an added machine back to an original machine).",
+    done_syn_tg: "Then press MACHINES on a track: after Chord comes the Sampler, then {list}. Their knobs show the Syntakt's names. Model-TG's Attack, Filter and Resonance work on them too: hold MACHINE and turn DECAY, SWEEP or CONTOUR. If something goes wrong, flash the official firmware back with this page (first set the tracks that use an added machine back to an original machine).",
+    done_syn: "Then press MACHINES on a track: after Chord come {list}. Their knobs show the Syntakt's names. The 6 original machines are unchanged. If something goes wrong, flash the official firmware back with this page (first set the tracks that use an added machine back to an original machine).",
     warn_samples_port: "This port is a Model:Samples (a Model:Cycles running the Samples OS): it refuses a Model:Cycles firmware over USB. The way back goes through the startup menu and the MIDI IN (see the full guide).",
     samples_needs_cycles: "For the Samples OS, the first file must be the official <code>model-cycles_OS1.13.syx</code>: it provides the startup menu, updater and signature that stay on your Model:Cycles.",
     samples_ready: "Firmware ready: the Model:Samples OS for your Model:Cycles.",
@@ -2504,6 +2515,29 @@ const T = {
     miss_port: "Choose a MIDI output (step 3).",
     miss_ack: "Tick the box above to confirm.",
     miss_ready: "Open CONFIG › UPGRADE on the Model:Cycles (step 3), then flash.",
+    miss_ready_fast: "Ready. At the end, the Model:Cycles asks you to confirm on its screen.",
+    miss_probe: "Waiting for the Model:Cycles to answer (step 3).",
+    miss_dev: "The Model:Cycles must answer first (step 3).",
+    miss_dev_mismatch: "This machine can't take this firmware (step 3).",
+    dev_probing: "Looking for the Model:Cycles…",
+    dev_ok: "{device} found: OS {v}.",
+    dev_none: "The Model:Cycles doesn't answer. If CONFIG › UPGRADE is open, leave it (NO); close Elektron Transfer, then click Refresh. Or choose the classic method.",
+    dev_busy: "Its USB port is in use by another program: close Elektron Transfer, Overbridge and your music software, then click Refresh.",
+    dev_noinput: "The page sees no MIDI input from the Model:Cycles, and the fast method needs both directions. Click Refresh, or choose the classic method.",
+    dev_samples: `This machine answers as a Model:Samples, so it would refuse this firmware. With Model-TG, set Device Config › Transfer back to CYC (or turn it off and on). Under the Samples OS, the way back is in the <a href="${GUIDE}#recovery">guide</a>.`,
+    dev_other: "This Elektron machine ({name}) is not a Model:Cycles: nothing will be sent.",
+    dev_wrong_file: "This firmware is for a Model:Samples, and this machine is a Model:Cycles: nothing will be sent.",
+    watch_fast: "The Model:Cycles checks every block as it arrives. At the end it asks you to confirm the update on its screen.",
+    done_title_fast: "Firmware sent.",
+    after_confirm: "Now confirm the update on the Model:Cycles screen (<b>YES</b>). It then writes the firmware and restarts by itself: <b>don't turn it off</b> until it has restarted.",
+    after_gone: "The Model:Cycles is writing the firmware and restarting. <b>Don't turn it off.</b>",
+    after_back: "The Model:Cycles is back: {device} OS {v}.",
+    after_back_plain: "The Model:Cycles is back.",
+    fast_timeout: "The Model:Cycles stopped answering. Turn it off and on, then flash again. If it happens again, choose the classic method in step 3.",
+    fast_refused: "The Model:Cycles refused the update{why}. Turn it off and on and try again, or choose the classic method in step 3.",
+    fast_write: "The Model:Cycles reported an error while receiving{why}. Turn it off and on and try again, or choose the classic method in step 3.",
+    stopped_fast: "Stopped before the end: the Model:Cycles hasn't received the whole firmware. Turn it off and on, then flash again.",
+    log_start_fast: "Fast upgrade: {kb} KB in {n} blocks to “{port}” ({device} OS {v}).",
     watch: "Watch the Model:Cycles screen: it should show that it is receiving. If nothing happens within a few seconds, press <b>Stop</b>.",
     keep_visible: "Keep this tab in the foreground: browsers slow down background tabs.",
     remaining: "{t} left",
@@ -2529,7 +2563,7 @@ const T = {
     samples_text: "Chargez et jouez vos propres samples, gérés avec Elektron Transfer. La page place l'OS officiel du Model:Samples dans le firmware de votre Model:Cycles : le menu de démarrage, l'updater et la signature du Model:Cycles restent en place.",
     samples_w1: "Sauvegardez d'abord vos projets avec Transfer : l'OS du Model:Samples utilise le même stockage.",
     samples_w2: `Le retour à l'OS du Model:Cycles passe par le menu de démarrage, qui n'écoute que le MIDI IN : il faut une interface MIDI (<a href="${GUIDE}#samples">guide</a>).`,
-    samples_w3: "Depuis l'OS Samples, ne lancez jamais CONFIG › UPGRADE avec un fichier Model:Samples : il remplacerait aussi le menu de démarrage de votre Model:Cycles.",
+    samples_w3: "Depuis l'OS Samples, n'installez jamais un fichier d'OS Model:Samples, ni par CONFIG › UPGRADE ni quand Elektron Transfer propose une mise à jour : il remplacerait aussi le menu de démarrage de votre Model:Cycles.",
     samples_ack: "J'ai une interface MIDI pour le retour (vers le MIDI IN du Model:Cycles).",
     restore_from_samples: `Vous revenez de l'OS Samples ? Le retour passe par le menu de démarrage et le MIDI IN : voir le <a href="${GUIDE}#recovery">guide</a>.`,
     tested: "Testé",
@@ -2552,6 +2586,13 @@ const T = {
     hu1: "Reliez le Model:Cycles à l'ordinateur avec un câble USB et allumez-le normalement.",
     hu2: "Sur le Model:Cycles, appuyez sur <b>SETTINGS</b>, ouvrez <b>CONFIG › UPGRADE</b> et confirmez avec <b>YES</b>. Il attend alors le firmware.",
     hu3: "Autorisez le MIDI ci-dessous : le port nommé « Model:Cycles » est choisi automatiquement.",
+    m_fast: "Rapide (USB)",
+    m_slow: "Classique (CONFIG › UPGRADE)",
+    method_fast: "Le protocole de mise à jour d'Elektron Transfer, directement depuis cette page : environ une minute. Le Model:Cycles demande de confirmer à la fin.",
+    method_slow: "Le firmware est envoyé à la vitesse du MIDI pendant que CONFIG › UPGRADE l'attend : 5 à 10 minutes. La solution de secours si la méthode rapide ne marche pas.",
+    hf1: "Reliez le Model:Cycles à l'ordinateur avec un câble USB et allumez-le normalement. Restez sur son écran habituel : aucun menu à ouvrir.",
+    hf2: "Fermez <b>Elektron Transfer</b> et tout logiciel de musique qui utilise le Model:Cycles : ils occupent son port USB.",
+    hf3: "Autorisez le MIDI ci-dessous : la page trouve le Model:Cycles et affiche sa version d'OS.",
     allow: "Autoriser le MIDI",
     refresh: "Rafraîchir",
     s4: "Flasher",
@@ -2561,18 +2602,20 @@ const T = {
     stop: "Arrêter",
     trouble: "Un problème ?",
     t1q: "Rien ne se passe sur l'écran du Model:Cycles",
-    t1a: "Vérifiez que <b>CONFIG › UPGRADE</b> est ouvert et en attente, et que le port nommé « Model:Cycles » est choisi à l'étape 3. Fermez Elektron Transfer, Overbridge et votre logiciel de musique (sous Windows, ils bloquent le port), puis réessayez.",
+    t1a: "Méthode rapide : l'étape 3 doit indiquer que le Model:Cycles a été trouvé. Méthode classique : vérifiez que <b>CONFIG › UPGRADE</b> est ouvert et en attente. Dans les deux cas, choisissez le port nommé « Model:Cycles » à l'étape 3 et fermez Elektron Transfer, Overbridge et votre logiciel de musique (sous Windows, ils bloquent le port), puis réessayez.",
     t2q: "Le transfert s'arrête, ou le Model:Cycles affiche une erreur",
-    t2a: "Éteignez puis rallumez le Model:Cycles, rouvrez <b>CONFIG › UPGRADE</b>, réglez <b>Options avancées › Marge de vitesse</b> sur 2.0 et relancez.",
+    t2a: "Éteignez puis rallumez le Model:Cycles et relancez. Avec la méthode classique, rouvrez d'abord <b>CONFIG › UPGRADE</b> et réglez <b>Options avancées › Marge de vitesse</b> sur 2.0.",
     t3q: "Aucun port MIDI dans la liste",
     t3a: "Branchez le Model:Cycles avec un câble USB qui transporte les données (certains câbles ne font que charger), allumez-le, puis cliquez sur <b>Rafraîchir</b>. Certains systèmes n'affichent un nouvel appareil qu'après un redémarrage du navigateur.",
+    t5q: "La méthode rapide ne trouve pas le Model:Cycles, ou s'arrête",
+    t5a: "Allumez le Model:Cycles normalement (pas dans CONFIG › UPGRADE), fermez Elektron Transfer, puis cliquez sur <b>Rafraîchir</b> à l'étape 3. Si ça échoue encore, choisissez <b>Classique</b> à l'étape 3 : plus lent, mais sans besoin de réponse de la machine. Elektron Transfer marche aussi : téléchargez le .syx (étape 4) et déposez-le sur la fenêtre de Transfer.",
     t4q: "La mise à jour par USB est refusée, ou le Model:Cycles ne démarre plus",
     t4a: `La récupération passe par le menu de démarrage, qui n'écoute que le MIDI IN : suivez le <a href="${GUIDE}#recovery">guide</a> (il faut une interface MIDI). C'est aussi le cas si vous aviez installé l'ancienne « version de référence » du 6 canaux, qui désactive la mise à jour par USB.`,
     advanced: "Options avancées",
     pace: "Marge de vitesse d'envoi",
-    pace_hint: "1.4 par défaut. Montez à 2.0 si le transfert se bloque.",
-    download: "Télécharger le .syx préparé",
-    download_hint: "",
+    pace_hint: "Méthode classique seulement. 1.4 par défaut : montez à 2.0 si le transfert se bloque.",
+    download: "Télécharger le .syx",
+    download_hint: "à déposer sur <b>Elektron Transfer</b> (aussi rapide), ou à garder.",
     credits: "Crédits",
     credits_intro: "Ce flasher s'appuie sur ces projets open source (licence MIT), dont aucun ne contient de firmware :",
     privacy: "Votre fichier firmware ne quitte jamais votre ordinateur. Rien n'est envoyé en ligne, aucun firmware n'est fourni.",
@@ -2602,8 +2645,8 @@ const T = {
     combo_new: "Nouveau choix : vérifié en émulation, pas encore testé sur un Model:Cycles.",
     with_tg: "Avec Model-TG : son Sampler est la 7e machine et ces moteurs viennent après lui, à partir de la 8e. Une piste réglée sur une machine ajoutée en joue une autre sur la version sans Model-TG, et inversement.",
     renumber: "Avant de changer de choix ou de revenir au firmware officiel, remettez sur une machine d'origine (de Kick à Chord) les pistes qui utilisent une machine ajoutée : leurs numéros dépendent des moteurs cochés, et MACHINES peut geler sur une telle piste.",
-    done_syn_tg: "Appuyez ensuite sur MACHINES sur une piste : après Chord vient le Sampler, puis {list}. Leurs potards affichent les noms du Syntakt. Attack, Filtre et Résonance de Model-TG y fonctionnent aussi : maintenez MACHINE et tournez DECAY, SWEEP ou CONTOUR. En cas de problème, reflashez le firmware officiel depuis CONFIG › UPGRADE (remettez d'abord sur une machine d'origine les pistes qui utilisent une machine ajoutée).",
-    done_syn: "Appuyez ensuite sur MACHINES sur une piste : après Chord viennent {list}. Leurs potards affichent les noms du Syntakt. Les 6 machines d'origine ne changent pas. En cas de problème, reflashez le firmware officiel depuis CONFIG › UPGRADE (remettez d'abord sur une machine d'origine les pistes qui utilisent une machine ajoutée).",
+    done_syn_tg: "Appuyez ensuite sur MACHINES sur une piste : après Chord vient le Sampler, puis {list}. Leurs potards affichent les noms du Syntakt. Attack, Filtre et Résonance de Model-TG y fonctionnent aussi : maintenez MACHINE et tournez DECAY, SWEEP ou CONTOUR. En cas de problème, reflashez le firmware officiel avec cette page (remettez d'abord sur une machine d'origine les pistes qui utilisent une machine ajoutée).",
+    done_syn: "Appuyez ensuite sur MACHINES sur une piste : après Chord viennent {list}. Leurs potards affichent les noms du Syntakt. Les 6 machines d'origine ne changent pas. En cas de problème, reflashez le firmware officiel avec cette page (remettez d'abord sur une machine d'origine les pistes qui utilisent une machine ajoutée).",
     warn_samples_port: "Ce port est un Model:Samples (un Model:Cycles sous l'OS Samples) : il refuse un firmware Model:Cycles par USB. Le retour passe par le menu de démarrage et le MIDI IN (voir le guide).",
     samples_needs_cycles: "Pour l'OS Samples, le premier fichier doit être le <code>model-cycles_OS1.13.syx</code> officiel : il fournit le menu de démarrage, l'updater et la signature qui restent sur votre Model:Cycles.",
     samples_ready: "Firmware prêt : l'OS Model:Samples pour votre Model:Cycles.",
@@ -2633,6 +2676,29 @@ const T = {
     miss_port: "Choisissez une sortie MIDI (étape 3).",
     miss_ack: "Cochez la case ci-dessus pour confirmer.",
     miss_ready: "Ouvrez CONFIG › UPGRADE sur le Model:Cycles (étape 3), puis flashez.",
+    miss_ready_fast: "Prêt. À la fin, le Model:Cycles demande de confirmer sur son écran.",
+    miss_probe: "En attente d'une réponse du Model:Cycles (étape 3).",
+    miss_dev: "Le Model:Cycles doit d'abord répondre (étape 3).",
+    miss_dev_mismatch: "Cette machine ne peut pas recevoir ce firmware (étape 3).",
+    dev_probing: "Recherche du Model:Cycles…",
+    dev_ok: "{device} trouvé : OS {v}.",
+    dev_none: "Le Model:Cycles ne répond pas. Si CONFIG › UPGRADE est ouvert, quittez-le (NO) ; fermez Elektron Transfer, puis cliquez sur Rafraîchir. Ou choisissez la méthode classique.",
+    dev_busy: "Son port USB est occupé par un autre programme : fermez Elektron Transfer, Overbridge et votre logiciel de musique, puis cliquez sur Rafraîchir.",
+    dev_noinput: "La page ne voit pas d'entrée MIDI venant du Model:Cycles, or la méthode rapide a besoin des deux sens. Cliquez sur Rafraîchir, ou choisissez la méthode classique.",
+    dev_samples: `Cette machine répond comme un Model:Samples : elle refuserait ce firmware. Avec Model-TG, remettez Device Config › Transfer sur CYC (ou éteignez-la et rallumez-la). Sous l'OS Samples, le retour est expliqué dans le <a href="${GUIDE}#recovery">guide</a>.`,
+    dev_other: "Cette machine Elektron ({name}) n'est pas un Model:Cycles : rien ne sera envoyé.",
+    dev_wrong_file: "Ce firmware est pour un Model:Samples, et cette machine est un Model:Cycles : rien ne sera envoyé.",
+    watch_fast: "Le Model:Cycles vérifie chaque bloc à son arrivée. À la fin, il demande de confirmer la mise à jour sur son écran.",
+    done_title_fast: "Firmware envoyé.",
+    after_confirm: "Confirmez maintenant la mise à jour sur l'écran du Model:Cycles (<b>YES</b>). Il écrit alors le firmware et redémarre tout seul : <b>ne l'éteignez pas</b> avant qu'il ait redémarré.",
+    after_gone: "Le Model:Cycles écrit le firmware et redémarre. <b>Ne l'éteignez pas.</b>",
+    after_back: "Le Model:Cycles est de retour : {device} OS {v}.",
+    after_back_plain: "Le Model:Cycles est de retour.",
+    fast_timeout: "Le Model:Cycles ne répond plus. Éteignez-le puis rallumez-le, et relancez. Si ça recommence, choisissez la méthode classique à l'étape 3.",
+    fast_refused: "Le Model:Cycles a refusé la mise à jour{why}. Éteignez-le puis rallumez-le et réessayez, ou choisissez la méthode classique à l'étape 3.",
+    fast_write: "Le Model:Cycles a signalé une erreur pendant la réception{why}. Éteignez-le puis rallumez-le et réessayez, ou choisissez la méthode classique à l'étape 3.",
+    stopped_fast: "Arrêté avant la fin : le Model:Cycles n'a pas reçu tout le firmware. Éteignez-le puis rallumez-le, et relancez.",
+    log_start_fast: "Mise à jour rapide : {kb} Ko en {n} blocs vers « {port} » ({device} OS {v}).",
     watch: "Regardez l'écran du Model:Cycles : il doit indiquer qu'il reçoit. S'il ne se passe rien en quelques secondes, cliquez sur <b>Arrêter</b>.",
     keep_visible: "Gardez cet onglet au premier plan : les navigateurs ralentissent les onglets en arrière-plan.",
     remaining: "encore {t}",
@@ -2719,6 +2785,12 @@ const st = {
   midi: null,
   midiState: "idle",       // idle | asking | ready | denied | unsupported
   portManual: false,
+  method: "fast",          // "fast" (Transfer protocol) | "slow" (CONFIG > UPGRADE)
+  dev: null,               // fast: who answers on the chosen port { state: probing|ok|none|busy|noinput, outId, inId, id, device, product, name, version }
+  probing: null,           // the running probe (a promise)
+  reprobe: false,
+  after: null,             // fast, once the firmware is sent: "confirm" -> "gone" (restarting) -> "back"
+  booting: false,          // the machine has just come back: wait before asking it
   sending: false,
   cancel: false,
   finished: null,          // "ok" | "stopped" | "error"
@@ -3215,14 +3287,102 @@ async function initMidi(silent) {
   }
   done = true; clearTimeout(hint); st.midiHint = false;
   st.midiState = "ready";
-  st.midi.onstatechange = () => { fillPorts(); render(); };
+  st.midi.onstatechange = onPortChange;
   log("MIDI access granted.", "is-ok");
   fillPorts();
   render();
+  probeIfNeeded();
 }
 
+// A port appeared or vanished (opening one also lands here, with nothing to do).
+function onPortChange(e) {
+  const port = e && e.port;
+  if (port && port.state === "disconnected" && st.dev && (port.id === st.dev.outId || port.id === st.dev.inId)) {
+    st.dev = null;
+    if (st.after === "confirm") st.after = "gone";
+  }
+  if (port && port.state === "connected" && st.after === "gone" && isDevicePort(port.name)) {
+    st.after = "back";
+    st.booting = true;                      // let it finish starting before asking who it is
+    setTimeout(() => { st.booting = false; fillPorts(); render(); probeIfNeeded(true, 4); }, 2500);
+  }
+  fillPorts();
+  render();
+  if (!st.booting) probeIfNeeded();
+}
+
+const present = (p) => p && p.state !== "disconnected";   // Chrome keeps unplugged ports in its maps
+
 function outputs() {
-  return st.midi ? [...st.midi.outputs.values()] : [];
+  return st.midi ? [...st.midi.outputs.values()].filter(present) : [];
+}
+
+function inputs() {
+  return st.midi && st.midi.inputs ? [...st.midi.inputs.values()].filter(present) : [];
+}
+
+// The input that goes with an output: same name, else a name that contains the other, else the
+// only Model:Cycles / Model:Samples input.
+function inputFor(out) {
+  const ins = inputs();
+  const name = (out.name || "").trim();
+  const dev = ins.filter((i) => isDevicePort(i.name));
+  return ins.find((i) => (i.name || "").trim() === name)
+    || ins.find((i) => i.name && name && (i.name.includes(name) || name.includes(i.name)))
+    || (isDevicePort(name) && dev.length === 1 ? dev[0] : null);
+}
+
+// Fast method: ask the machine on the chosen port who it is, once per port (Refresh asks again).
+function probeIfNeeded(force, tries) {
+  if (st.method !== "fast" || st.midiState !== "ready" || st.sending) return;
+  const out = currentPort();
+  if (!out) { st.dev = null; return; }
+  if (!force && st.dev && st.dev.outId === out.id) return;
+  if (st.probing) { st.reprobe = true; return; }
+  st.probing = probe(out, tries || 1).finally(() => {
+    st.probing = null;
+    if (st.reprobe) { st.reprobe = false; probeIfNeeded(true); }
+  });
+}
+
+async function probe(out, tries) {
+  const inp = inputFor(out);
+  if (!inp) { st.dev = { state: "noinput", outId: out.id }; render(); return; }
+  st.dev = { state: "probing", outId: out.id, inId: inp.id };
+  render();
+  const F = window.MCFlasher;
+  for (let k = 1; k <= tries; k++) {
+    let session = null;
+    try {
+      session = await F.xferOpen(inp, out);
+      const info = await F.xferIdentify(session);
+      st.dev = Object.assign({ state: "ok", outId: out.id, inId: inp.id }, info);
+      log(`“${out.name}” answers: ${info.device || "Elektron device " + info.id} “${info.name}”, OS ${info.version}.`, "is-ok");
+      break;
+    } catch (e) {
+      const last = e.code === "busy" || k === tries;
+      log(`No answer from “${out.name}” (${e.message || e}).`, last ? "is-warn" : "");
+      if (last) { st.dev = { state: e.code === "busy" ? "busy" : "none", outId: out.id, inId: inp.id }; break; }
+    } finally {
+      if (session) session.close();
+    }
+    await new Promise((r) => setTimeout(r, 2000));    // a retry: the machine is still starting
+  }
+  render();
+}
+
+// What blocks the fast method on the answering machine, as a text key (null: good to go).
+function devProblem() {
+  const d = st.dev;
+  if (!d || d.state === "probing") return "probing";
+  if (d.state !== "ok") return "dev_" + d.state;
+  if (st.fw && st.fw.raw[4] !== d.product) {
+    if (d.id === 25) return "dev_samples";
+    if (d.id === 27) return "dev_wrong_file";
+    return "dev_other";
+  }
+  if (!d.product) return "dev_other";
+  return null;
 }
 
 function fillPorts() {
@@ -3251,11 +3411,19 @@ function fillPorts() {
 
 function currentPort() {
   const id = $("port").value;
-  return id && st.midi ? st.midi.outputs.get(id) : null;
+  const out = id && st.midi ? st.midi.outputs.get(id) : null;
+  return present(out) ? out : null;
 }
 
 function renderMidi() {
   const ready = st.midiState === "ready";
+  const fast = st.method === "fast";
+  $("m-fast").setAttribute("aria-checked", String(fast));
+  $("m-slow").setAttribute("aria-checked", String(!fast));
+  $("m-fast").disabled = $("m-slow").disabled = st.sending;
+  $("method-note").textContent = t(fast ? "method_fast" : "method_slow");
+  $("howto-fast").hidden = !fast;
+  $("howto-usb").hidden = fast;
   $("allow").hidden = ready;
   $("allow").disabled = st.midiState === "unsupported";
   $("port").hidden = !ready;
@@ -3267,12 +3435,25 @@ function renderMidi() {
     const outs = outputs();
     const port = currentPort();
     if (!outs.length) rows.push(["is-warn", esc(t("midi_none"))]);
-    else if (port && !isDevicePort(port.name)) rows.push(["is-warn", esc(t("warn_not_dev"))]);
+    else if (port && !isDevicePort(port.name) && !(fast && st.dev && st.dev.state === "ok")) rows.push(["is-warn", esc(t("warn_not_dev"))]);
+    else if (port && fast) rows.push(devRow());
     else if (port && /samples/i.test(port.name)) rows.push(["is-warn", esc(t("warn_samples_port"))]);
     else if (port) rows.push(["is-ok", esc(t("midi_pick_dev"))]);
     else if (!outs.some((o) => isDevicePort(o.name))) rows.push(["is-warn", esc(t("midi_no_dev"))]);
   }
   setStatus("midi-status", rows);
+}
+
+// Fast method: what the machine answered.
+function devRow() {
+  const d = st.dev;
+  const why = devProblem();
+  if (why === "probing") return ["is-busy", esc(t("dev_probing"))];
+  if (d.state !== "ok") return [d.state === "busy" ? "is-bad" : "is-warn", esc(t(why))];
+  const found = esc(t("dev_ok", { device: d.device || d.name, v: d.version || "?" }));
+  if (why === "dev_samples") return ["is-warn", found + " " + t("dev_samples")];
+  if (why) return ["is-warn", found + " " + esc(t(why, { name: d.name || d.id }))];
+  return ["is-ok", found];
 }
 
 // ---------------------------------------------------------------------------
@@ -3291,6 +3472,12 @@ function missingReason() {
   if (!st.fw) return "miss_fw";
   if (st.midiState !== "ready") return "miss_midi";
   if (!currentPort()) return "miss_port";
+  if (st.method === "fast") {
+    const why = devProblem();
+    if (why === "probing") return "miss_probe";
+    if (why === "dev_samples" || why === "dev_wrong_file" || why === "dev_other") return "miss_dev_mismatch";
+    if (why) return "miss_dev";
+  }
   if (!$("ack").checked) return "miss_ack";
   return null;
 }
@@ -3327,8 +3514,9 @@ function render() {
 
   renderMidi();
 
-  // download link
+  // download button (for Elektron Transfer)
   const dl = $("download");
+  $("alt").hidden = !st.fw || st.sending;
   if (st.fw) {
     if (st.urlFor !== st.fw.raw) {
       if (st.url) URL.revokeObjectURL(st.url);
@@ -3337,14 +3525,13 @@ function render() {
     }
     dl.href = st.url;
     dl.download = st.fw.name;
-    dl.hidden = false;
-  } else dl.hidden = true;
+  }
 
   // step badges
   const choseOk = st.mode === "restore" || (st.mode === "samples" ? $("samples-ack").checked : chosenTweaks().length > 0);
   $("step-choose").classList.toggle("done", choseOk);
   $("step-file").classList.toggle("done", !!st.fw && !st.building);
-  $("step-connect").classList.toggle("done", st.midiState === "ready" && !!currentPort());
+  $("step-connect").classList.toggle("done", st.midiState === "ready" && !!currentPort() && (st.method !== "fast" || !devProblem()));
   $("step-flash").classList.toggle("done", st.finished === "ok");
 
   // summary
@@ -3354,7 +3541,8 @@ function render() {
       : st.fw.kind === "stock" ? t("mods_list_restore")
       : st.fw.kind === "samples" ? t("mods_list_samples") : t("mods_list_custom", { name: st.fw.name });
     const port = currentPort();
-    const mins = Math.max(1, Math.round(window.MCFlasher.transferSeconds(st.fw.raw, pace()) / 60));
+    const secs = st.method === "fast" ? window.MCFlasher.fastSeconds(st.fw.raw) : window.MCFlasher.transferSeconds(st.fw.raw, pace());
+    const mins = Math.max(1, Math.round(secs / 60));
     sum.innerHTML = `<b>${esc(what)}</b>` + (port ? ` ${esc(t("via"))} <b>${esc(port.name)}</b>` : "") +
       ` · ${esc(t("minutes", { m: mins }))}`;
     sum.hidden = false;
@@ -3364,8 +3552,24 @@ function render() {
   const miss = st.sending ? null : missingReason();
   $("flash").disabled = st.sending || !!miss;
   $("flash").textContent = st.sending ? t("flashing") : t("flash_btn");
-  $("missing").textContent = st.sending ? "" : miss ? t(miss) : st.finished === "ok" ? "" : t("miss_ready");
+  $("missing").textContent = st.sending ? "" : miss ? t(miss) : st.finished === "ok" ? "" : t(st.method === "fast" ? "miss_ready_fast" : "miss_ready");
   $("stop").hidden = !st.sending;
+  renderAfter();
+}
+
+// Fast method, once the firmware is sent: confirm on the machine, then it restarts.
+function renderAfter() {
+  const el = $("after");
+  if (!el) return;
+  const d = st.dev;
+  const rows = [];
+  if (st.after === "confirm") rows.push(["is-busy", t("after_confirm")]);
+  else if (st.after === "gone") rows.push(["is-busy", t("after_gone")]);
+  else if (st.after === "back") {
+    if (d && d.state === "ok") rows.push(["is-ok", esc(t("after_back", { device: d.device || d.name, v: d.version || "?" }))]);
+    else rows.push(["is-ok", esc(t("after_back_plain"))]);
+  }
+  setStatus("after", rows);
 }
 
 function pace() {
@@ -3393,8 +3597,9 @@ async function flash() {
   if (missingReason() || st.sending) return;
   const out = currentPort();
   const fw = st.fw;
+  const fast = st.method === "fast";
   const p = pace();
-  st.sending = true; st.cancel = false; st.finished = null;
+  st.sending = true; st.cancel = false; st.finished = null; st.after = null;
   $("result").innerHTML = ""; $("result").className = "result";
   $("progress").hidden = false;
   $("bar").style.width = "0%";
@@ -3403,28 +3608,30 @@ async function flash() {
   $("eta").textContent = "";
   $("watch").className = "callout";
   $("watch").hidden = false;
-  $("watch").innerHTML = t("watch") + "<br>" + esc(t("keep_visible"));
+  $("watch").innerHTML = t(fast ? "watch_fast" : "watch") + "<br>" + esc(t("keep_visible"));
   render();
   try { if (navigator.wakeLock) st.wakeLock = await navigator.wakeLock.request("screen"); } catch (e) { /* optional */ }
-  const total = window.MCFlasher.transferSeconds(fw.raw, p);
+  const F = window.MCFlasher;
+  const total = fast ? F.fastSeconds(fw.raw) : F.transferSeconds(fw.raw, p);
   const t0 = Date.now();
-  log(t("log_start", { n: window.MCFlasher.splitMessages(fw.raw).length, port: out.name, pace: p }));
+  const gone = () => !st.midi || !present(st.midi.outputs.get(out.id));
+  const onProgress = (n, tot) => {
+    const pct = (100 * n) / tot;
+    $("bar").style.width = pct.toFixed(1) + "%";
+    leds(pct);
+    $("barwrap").setAttribute("aria-valuenow", pct.toFixed(0));
+    $("pct").textContent = `${pct.toFixed(0)} %`;
+    const el = (Date.now() - t0) / 1000;
+    const left = n <= 0 ? total : fast ? (el / n) * (tot - n) : Math.max(total - el, (el / n) * (tot - n));
+    $("eta").textContent = t("remaining", { t: fmtTime(left) });
+  };
   let res = null, err = null;
   try {
-    res = await window.MCFlasher.sendSysex(out, fw.raw, {
-      pace: p,
-      isCancelled: () => st.cancel || !st.midi || !st.midi.outputs.get(out.id),
-      onProgress: (n, tot) => {
-        const pct = (100 * n) / tot;
-        $("bar").style.width = pct.toFixed(1) + "%";
-        leds(pct);
-        $("barwrap").setAttribute("aria-valuenow", pct.toFixed(0));
-        $("pct").textContent = `${pct.toFixed(0)} %`;
-        const el = (Date.now() - t0) / 1000;
-        const left = n > 0 ? Math.max(total - el, (el / n) * (tot - n)) : total;
-        $("eta").textContent = t("remaining", { t: fmtTime(left) });
-      },
-    });
+    if (fast) res = await flashFast(out, fw, onProgress, gone);
+    else {
+      log(t("log_start", { n: F.splitMessages(fw.raw).length, port: out.name, pace: p }));
+      res = await F.sendSysex(out, fw.raw, { pace: p, isCancelled: () => st.cancel || gone(), onProgress });
+    }
   } catch (e) {
     err = e;
   }
@@ -3435,30 +3642,74 @@ async function flash() {
   if (err) {
     st.finished = "error";
     r.className = "result bad";
-    r.innerHTML = `<p>${esc(t("send_error", { err: err.message || err }))}</p>`;
+    r.innerHTML = `<p>${fast ? fastError(err) : esc(t("send_error", { err: err.message || err }))}</p>`;
     log("Transfer error: " + (err.message || err), "is-bad");
   } else if (res.cancelled) {
     st.finished = "stopped";
     r.className = "result warn";
-    const gone = !st.cancel;
-    r.innerHTML = `<p>${esc(t(gone ? "port_gone" : "stopped"))}</p>` + (gone ? `<p>${esc(t("stopped"))}</p>` : "");
-    log(`Stopped after ${res.sent}/${res.total} packets.`, "is-warn");
+    const lost = !st.cancel;
+    const again = t(fast ? "stopped_fast" : "stopped");
+    r.innerHTML = (lost ? `<p>${esc(t("port_gone"))}</p>` : "") + `<p>${esc(again)}</p>`;
+    log(`Stopped after ${res.sent}/${res.total} ${fast ? "bytes" : "packets"}.`, "is-warn");
   } else {
     st.finished = "ok";
+    st.after = fast ? "confirm" : null;
     $("watch").hidden = true;
     $("bar").style.width = "100%";
     leds(100);
     $("pct").textContent = "100 %";
     $("eta").textContent = fmtTime(res.seconds);
     r.className = "result ok";
-    r.innerHTML = `<p><b>${esc(t("done_title"))}</b></p><p>${t("done_body")}</p>` +
+    r.innerHTML = `<p><b>${esc(t(fast ? "done_title_fast" : "done_title"))}</b></p>` +
+      (fast ? `<div class="status" id="after" aria-live="polite"></div>` : `<p>${t("done_body")}</p>`) +
       (fw.sixch ? `<p>${t("done_6ch")}</p>` : "") +
       (fw.sdv ? `<p>${t(/^syntakt-tg-/.test(fw.sdv) ? "done_syn_tg" : "done_syn", { list: fw.engines.map((e) => `<b>${esc(e.name)}</b> (${esc(e.label)})`).join(", ") })}</p>` : "") +
       (fw.kind === "samples" ? `<p>${t("done_samples")}</p>` : "");
-    log(`Transfer complete in ${Math.round(res.seconds)} s.`, "is-ok");
+    log(fast ? `Firmware sent in ${Math.round(res.seconds)} s (${res.blocks} blocks): waiting for the confirmation on the machine.`
+      : `Transfer complete in ${Math.round(res.seconds)} s.`, "is-ok");
   }
   $("progress").hidden = st.finished !== "ok";
   render();
+}
+
+// Fast method: check again who answers, then send the .syx as an OS upgrade.
+async function flashFast(out, fw, onProgress, gone) {
+  const F = window.MCFlasher;
+  const inp = inputFor(out);
+  if (!inp) throw new F.XferError("gone");
+  const session = await F.xferOpen(inp, out);
+  try {
+    const info = await F.xferIdentify(session);
+    st.dev = Object.assign({ state: "ok", outId: out.id, inId: inp.id }, info);
+    if (devProblem()) throw new F.XferError("mismatch", info.name);
+    log(t("log_start_fast", { kb: Math.round(fw.raw.length / 1024), n: Math.ceil(fw.raw.length / F.OS_BLOCK),
+      port: out.name, device: info.device, v: info.version }));
+    return await F.upgradeFast(session, fw.raw, { onProgress, isCancelled: () => st.cancel || gone() });
+  } finally {
+    session.close();
+  }
+}
+
+function fastError(err) {
+  const q = st.lang === "fr" ? ["« ", " »"] : ["“", "”"];
+  const why = err.detail ? ` (${q[0]}${esc(err.detail)}${q[1]})` : "";
+  switch (err.code) {
+    case "timeout": return esc(t("fast_timeout"));
+    case "refused": return t("fast_refused", { why });
+    case "write": return t("fast_write", { why });
+    case "busy": return esc(t("dev_busy"));
+    case "gone": return esc(t("port_gone"));
+    case "mismatch": { const k = devProblem() || "dev_other"; return k === "dev_samples" ? t(k) : esc(t(k, { name: err.detail })); }
+    default: return t("fast_write", { why: ` (${esc(err.message || err)})` });
+  }
+}
+
+function setMethod(m) {
+  if (st.sending || (m !== "fast" && m !== "slow")) return;
+  st.method = m;
+  try { localStorage.setItem("mc-method", m); } catch (e) { /* private mode */ }
+  render();
+  probeIfNeeded();
 }
 
 // ---------------------------------------------------------------------------
@@ -3469,6 +3720,7 @@ function init() {
   try { lang = localStorage.getItem("mc-lang") || ""; } catch (e) { lang = ""; }
   if (!lang) lang = /^fr\b/i.test(navigator.language || "") ? "fr" : "en";
   st.lang = lang;
+  try { st.method = localStorage.getItem("mc-method") === "slow" ? "slow" : "fast"; } catch (e) { /* private mode */ }
 
   document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => applyLang(b.dataset.lang)));
   $("tab-mods").addEventListener("click", () => setMode("mods"));
@@ -3498,8 +3750,10 @@ function init() {
   drop3.addEventListener("drop", (e) => { if (e.dataTransfer.files[0]) readSyntaktFile(e.dataTransfer.files[0]); });
 
   $("allow").addEventListener("click", () => initMidi(false));
-  $("refresh").addEventListener("click", () => { fillPorts(); render(); });
-  $("port").addEventListener("change", () => { st.portManual = true; render(); });
+  $("refresh").addEventListener("click", () => { fillPorts(); render(); probeIfNeeded(true); });
+  $("port").addEventListener("change", () => { st.portManual = true; render(); probeIfNeeded(); });
+  $("m-fast").addEventListener("click", () => setMethod("fast"));
+  $("m-slow").addEventListener("click", () => setMethod("slow"));
   $("ack").addEventListener("change", render);
   $("pace").addEventListener("input", render);
   $("flash").addEventListener("click", flash);
@@ -3530,7 +3784,7 @@ function init() {
 }
 
 // test hooks (tools/webflash_smoke.js)
-window.MCFlasherApp = { state: st, REF_MAINOS, REF_SAMPLES_ON_CYCLES, loadOs, loadSamples, loadSyntakt, setMode, applyLang, render,
+window.MCFlasherApp = { state: st, REF_MAINOS, REF_SAMPLES_ON_CYCLES, loadOs, loadSamples, loadSyntakt, setMode, setMethod, applyLang, render,
   chosenTweaks };
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

@@ -25,7 +25,7 @@ code{font-size:.82em}
 .seg{display:flex;flex-wrap:wrap;gap:6px 22px;margin:0 0 20px}
 .seg button{font:inherit;font-size:16px;background:none;border:0;padding:0;color:var(--muted);cursor:pointer}
 .seg button:hover{color:var(--ink)}
-.seg button[aria-selected="true"]{color:var(--ink);font-weight:700;text-decoration:underline;text-decoration-color:var(--red);text-decoration-thickness:2px;text-underline-offset:.25em}
+.seg button[aria-selected="true"],.seg button[aria-checked="true"]{color:var(--ink);font-weight:700;text-decoration:underline;text-decoration-color:var(--red);text-decoration-thickness:2px;text-underline-offset:.25em}
 
 /* key-shaped checkboxes: charcoal, red when on */
 .feat>input,.variants input,.check input{appearance:none;-webkit-appearance:none;flex:none;margin:0;width:22px;height:22px;border-radius:5px;
@@ -106,6 +106,11 @@ button.btn{border:0}
 .actions .big{flex:1}
 .missing{margin:12px 0 0;text-align:center;font-size:15px;color:var(--muted)}
 .missing:empty{display:none}
+.alt{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:18px 0 0;font-size:15px;color:var(--muted)}
+.alt .btn{padding:10px 16px;font-size:15px}
+.method-note{margin:0 0 16px;color:var(--ink-2)}
+.method-note:empty{display:none}
+.seg button:disabled{cursor:not-allowed;opacity:.5}
 .progress{margin-top:24px}
 .bar{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:6px}
 #bar{display:none}

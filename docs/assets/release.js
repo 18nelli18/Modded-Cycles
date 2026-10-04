@@ -3,6 +3,16 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.18", date: "2026-10-04", changes: [
+    { en: "Fast flashing over USB: about a minute instead of 5 to 10. The flasher now speaks the update protocol of Elektron Transfer (worked out by Elektroid): the Model:Cycles stays on its usual screen, checks every block as it arrives, then asks you to confirm the update",
+      fr: "Flash rapide en USB : environ une minute au lieu de 5 à 10. Le flasher parle maintenant le protocole de mise à jour d'Elektron Transfer (décrypté par Elektroid) : le Model:Cycles reste sur son écran habituel, vérifie chaque bloc à son arrivée, puis demande de confirmer la mise à jour" },
+    { en: "Before sending, the page asks the machine who it is and shows its OS version; it refuses to send a Model:Cycles firmware to a machine that answers as a Model:Samples (Samples OS, or Model-TG with Transfer on SMP). After the update, it follows the restart and reads the new version",
+      fr: "Avant l'envoi, la page demande à la machine qui elle est et affiche sa version d'OS ; elle refuse d'envoyer un firmware Model:Cycles à une machine qui répond comme un Model:Samples (OS Samples, ou Model-TG avec Transfer sur SMP). Après la mise à jour, elle suit le redémarrage et relit la nouvelle version" },
+    { en: "The classic method (CONFIG › UPGRADE) stays one click away, as the fallback. A Download button in step 4 gives the prepared .syx, to drop onto Elektron Transfer if you prefer",
+      fr: "La méthode classique (CONFIG › UPGRADE) reste à un clic, en secours. Un bouton Télécharger à l'étape 4 donne le .syx préparé, à déposer sur Elektron Transfer si vous préférez" },
+    { en: "Checked without hardware: every byte the page sends matches Elektroid's code, and a simulated Model:Cycles receives the whole firmware with every block's CRC right. Not yet tried on a real Model:Cycles from the page (Elektron Transfer itself works with these files)",
+      fr: "Vérifié sans matériel : chaque octet envoyé par la page correspond au code d'Elektroid, et un Model:Cycles simulé reçoit tout le firmware avec le bon CRC à chaque bloc. Pas encore essayé sur un vrai Model:Cycles depuis la page (Elektron Transfer lui-même marche avec ces fichiers)" },
+  ] },
   { version: "1.17", date: "2026-10-04", changes: [
     { en: "Syntakt engines, fewer cut notes: the load governor no longer reacts to a single heavy block (a busy step, or the screen redrawing), which is already over when it is measured; only load that lasts two blocks, or a sustained load, fades a voice out",
       fr: "Moteurs du Syntakt, moins de notes coupées : le régulateur de charge ne réagit plus à un bloc lourd isolé (un pas chargé, l'écran qui se redessine), déjà passé quand il est mesuré ; seule une charge qui dure deux blocs, ou une charge soutenue, éteint une voix en fondu" },
