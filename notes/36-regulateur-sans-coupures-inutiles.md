@@ -165,8 +165,10 @@ effet : la moyenne rapide reste à 0). La moyenne lente et la période ne sont p
 - `test_model_tg_syntakt.py` (Model-TG + 5 moteurs : démarrage, interface, son, régulateur, slide trigs, mode mute) :
   TOUT OK ;
 - `test_model_tg.py` (Model-TG seul et avec 6ch-usbup, division des pistes par 2 réécrite) : TOUT OK ;
-- `test_idle.py`, `test_sram_code.py`, `test_sram_scratch.py` (5 moteurs), `test_meter.py` (firmware de diagnostic,
-  régulateur compilé gardé) : TOUT OK ;
+- `test_syntakt_machines.py` (5 moteurs, identiques au Syntakt à 1 LSB près, comme avant), `test_idle.py`,
+  `test_sram_code.py`, `test_sram_scratch.py`, `test_meter.py` et `test_model_tg_syntakt.py --tweak
+  91-syntakt-tg-meter.json` (firmwares de diagnostic, régulateur compilé gardé) : TOUT OK. (`test_syntakt_machines.py`
+  : une f-string réécrite pour Python 3.11 ; il appelle `m68k-elf-objdump`, ici l'équivalent `m68k-linux-gnu-objdump`) ;
 - `test_arp.py`, `test_trig_hold.py`, `test_trig_preview.py` sur 6ch-usbup + Model-TG + 5 moteurs (+ arpégiateur,
   trig-hold) : TOUT OK ; `test_usb_in.py` : tout est bon ;
 - `ref_mainos.py` : 2 303 combinaisons ; `webflash_smoke.sh` avec les deux OS : ALL OK (2 483 vérifications, chaque
