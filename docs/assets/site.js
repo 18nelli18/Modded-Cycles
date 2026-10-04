@@ -242,22 +242,23 @@ $$("[data-engines]").forEach((box) => {
 });
 
 // ---------------------------------------------------------------------------
-// Guide: CPU time of one audio block, measured on the hardware (notes/25):
-// mix and effects ≈ 30 %, an original voice ≈ 8 %, a Syntakt voice ≈ 15 %.
+// Guide: CPU time of one audio block, measured on the hardware (notes/31 §7, notes/36):
+// mix, effects and the rest ≈ 40 %, an original voice ≈ 6 %, a Syntakt voice ≈ 7 %. The governor stops dying
+// voices earlier above 72 % and fades a voice out when the load stays above 86 %.
 // ---------------------------------------------------------------------------
 $$("[data-load]").forEach((box) => {
-  const COST = { off: 0, orig: 8, syn: 15 };
+  const COST = { off: 0, orig: 6, syn: 7 };
   const NEXT = { off: "orig", orig: "syn", syn: "off" };
   const slots = $$("[data-slot]", box);
   const fill = box.querySelector("[data-load-fill]");
   const pct = box.querySelector("[data-load-pct]");
   const states = $$("[data-load-state]", box);
   function render() {
-    const segs = [["fx", 30]].concat(slots.map((s) => s.dataset.slot).filter((s) => s !== "off").map((s) => [s, COST[s]]));
+    const segs = [["fx", 40]].concat(slots.map((s) => s.dataset.slot).filter((s) => s !== "off").map((s) => [s, COST[s]]));
     const total = segs.reduce((a, s) => a + s[1], 0);
     fill.innerHTML = segs.map(([k, v]) => `<i class="s-${k}" style="width:${(v * 100 / 120).toFixed(3)}%"></i>`).join("");
     pct.textContent = total + " %";
-    const regime = total > 100 ? "over" : total > 82 ? "cut" : total >= 72 ? "early" : "ok";
+    const regime = total > 100 ? "over" : total >= 86 ? "cut" : total >= 72 ? "early" : "ok";
     box.setAttribute("data-regime", regime);
     states.forEach((el) => { el.hidden = el.dataset.loadState !== regime; });
   }

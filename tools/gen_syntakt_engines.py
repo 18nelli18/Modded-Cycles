@@ -30,6 +30,8 @@ import gen_sdvintage_7th as g7     # noqa: E402
 import gen_syntakt_machines as g8  # noqa: E402
 import sprites                     # noqa: E402
 import usb_steady                  # noqa: E402
+import voice_loop                  # noqa: E402
+import gov_asm                     # noqa: E402
 import syntakt                     # noqa: E402
 
 DEV = HERE.parent / "tweaks" / "model-cycles_OS1.13"
@@ -981,7 +983,7 @@ def tg_context(img):
     cur, _ = build.apply_writes(img, [tw])
     tg = {k: int(v, 16) for k, v in tw["symbols"].items()}
     tg.update(img=bytes(cur), blob=bytes.fromhex(ap_["parts"][0]["hex"]), blob_at=int(ap_["at"], 16),
-              at=int(ap_["at"], 16) + ap_["size"], id=tw["id"])
+              at=int(ap_["at"], 16) + ap_["size"], id=tw["id"], symbols_hex=tw["symbols"])
     if tg["at"] != tg["reserved_end"] or tg["REGION_END"] - 0x08000000 > PAY_TG:
         raise SystemExit("!! Model-TG : fin de son bloc ou de sa zone d'échantillons inattendue")
     return tg
@@ -1241,8 +1243,11 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None):
     if tg:
         out["requires"] = [tg["id"]]
     out.update({"conflicts": sorted(ids - {tid}), "writes": writes, "append": append})
-    if not tg:                    # envoi à l'USB à heure fixe (notes/35) ; la version combinée l'a par model-tg-st
-        out = usb_steady.add_to(out)
+    if not tg:                    # envoi à l'USB à heure fixe (notes/35), boucle des voix (notes/36) ; la version
+        out = usb_steady.add_to(out)          # combinée les a par model-tg-st
+        out = voice_loop.add_to(out)
+    if not meter:                 # régulateur en assembleur (notes/36) ; le compteur de diagnostic est dans audio_end
+        out = gov_asm.add_to(out, tg and tg["symbols_hex"])
     return out, ndesc
 
 

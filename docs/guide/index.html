@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-04-03">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-04-03">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-04-04">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-04-04">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -254,7 +254,7 @@
         </div>
 
         <h3><span data-l="en">Processor load</span><span data-l="fr">Charge du processeur</span></h3>
-        <p><span data-l="en">A Syntakt voice needs about twice the computing of an original voice. When too many voices sound at once, a governor fades out the quietest one so the sound never stutters. Click the pads to try.</span><span data-l="fr">Une voix du Syntakt demande environ deux fois plus de calcul qu'une voix d'origine. Quand trop de voix sonnent en même temps, un régulateur éteint en fondu la plus discrète pour que le son n'accroche jamais. Cliquez sur les pads pour essayer.</span></p>
+        <p><span data-l="en">A Syntakt voice needs a little more computing than an original voice. When the load stays too high, a governor fades out the voice heard least in the mix so the sound never stutters; a single heavy moment (a busy step, the screen redrawing) doesn't trigger it. Click the pads to try.</span><span data-l="fr">Une voix du Syntakt demande un peu plus de calcul qu'une voix d'origine. Quand la charge reste trop haute, un régulateur éteint en fondu la voix qu'on entend le moins dans le mix pour que le son n'accroche jamais ; un moment lourd isolé (un pas chargé, l'écran qui se redessine) ne le déclenche pas. Cliquez sur les pads pour essayer.</span></p>
         <div class="load fig" data-load>
           <div class="slots">
             <button type="button" class="slot" data-slot="orig"><span class="k">T1</span><em class="e-off"><span data-l="en">silent</span><span data-l="fr">muette</span></em><em class="e-orig"><span data-l="en">original</span><span data-l="fr">d'origine</span></em><em class="e-syn">Syntakt</em></button>
@@ -264,19 +264,19 @@
             <button type="button" class="slot" data-slot="off"><span class="k">T5</span><em class="e-off"><span data-l="en">silent</span><span data-l="fr">muette</span></em><em class="e-orig"><span data-l="en">original</span><span data-l="fr">d'origine</span></em><em class="e-syn">Syntakt</em></button>
             <button type="button" class="slot" data-slot="off"><span class="k">T6</span><em class="e-off"><span data-l="en">silent</span><span data-l="fr">muette</span></em><em class="e-orig"><span data-l="en">original</span><span data-l="fr">d'origine</span></em><em class="e-syn">Syntakt</em></button>
           </div>
-          <div class="bar"><div class="fill" data-load-fill></div><i class="t" style="left:60%"></i><i class="t" style="left:68.333%"></i><i class="t" style="left:83.333%"></i></div>
-          <div class="scale"><span style="left:0">0</span><span style="left:60%">72</span><span style="left:68.333%">82</span><span style="left:83.333%">100</span><span style="left:100%">120 %</span></div>
+          <div class="bar"><div class="fill" data-load-fill></div><i class="t" style="left:60%"></i><i class="t" style="left:71.667%"></i><i class="t" style="left:83.333%"></i></div>
+          <div class="scale"><span style="left:0">0</span><span style="left:60%">72</span><span style="left:71.667%">86</span><span style="left:83.333%">100</span><span style="left:100%">120 %</span></div>
           <div class="readout">
-            <span class="p" data-load-pct>76 %</span>
+            <span class="p" data-load-pct>66 %</span>
             <p data-load-state="ok"><span data-l="en">Everything is computed as usual.</span><span data-l="fr">Tout est calculé normalement.</span></p>
             <p data-load-state="early" hidden><span data-l="en">Voices that are dying out are stopped earlier, to keep some headroom.</span><span data-l="fr">Les voix qui s'éteignent sont arrêtées plus tôt, pour garder de la marge.</span></p>
-            <p data-load-state="cut" hidden><span data-l="en">The governor fades out the quietest voice; a Syntakt voice, costlier, is picked more readily.</span><span data-l="fr">Le régulateur éteint en fondu la voix la plus faible ; une voix du Syntakt, plus coûteuse, est choisie plus volontiers.</span></p>
+            <p data-load-state="cut" hidden><span data-l="en">If the load stays this high, the governor fades out the voice heard least in the mix (a muted track first, then the quietest one).</span><span data-l="fr">Si la charge reste aussi haute, le régulateur éteint en fondu la voix qu'on entend le moins dans le mix (une piste mutée d'abord, puis la plus discrète).</span></p>
             <p data-load-state="over" hidden><span data-l="en">More than the processor can compute: notes will be cut.</span><span data-l="fr">Plus que ce que le processeur peut calculer : des notes seront coupées.</span></p>
           </div>
           <ul class="legend">
-            <li><i class="s-fx"></i><span data-l="en">mix and effects ≈ 30 %</span><span data-l="fr">mix et effets ≈ 30 %</span></li>
-            <li><i class="s-orig"></i><span data-l="en">original voice ≈ 8 %</span><span data-l="fr">voix d'origine ≈ 8 %</span></li>
-            <li><i class="s-syn"></i><span data-l="en">Syntakt voice ≈ 15 %</span><span data-l="fr">voix du Syntakt ≈ 15 %</span></li>
+            <li><i class="s-fx"></i><span data-l="en">mix, effects and the rest ≈ 40 %</span><span data-l="fr">mix, effets et le reste ≈ 40 %</span></li>
+            <li><i class="s-orig"></i><span data-l="en">original voice ≈ 6 %</span><span data-l="fr">voix d'origine ≈ 6 %</span></li>
+            <li><i class="s-syn"></i><span data-l="en">Syntakt voice ≈ 7 %</span><span data-l="fr">voix du Syntakt ≈ 7 %</span></li>
           </ul>
           <p class="muted" style="font-size:15px;margin-top:12px"><span data-l="en">Measured on the hardware, as a share of one audio block. A silent voice costs nothing; shorter decays free the voices sooner.</span><span data-l="fr">Mesuré sur la machine, en part d'un bloc audio. Une voix muette ne coûte rien ; des decays plus courts libèrent les voix plus tôt.</span></p>
         </div>
@@ -467,7 +467,7 @@
           </details>
           <details>
             <summary><span data-l="en">Notes get cut with the Syntakt engines</span><span data-l="fr">Des notes sont coupées avec les moteurs du Syntakt</span></summary>
-            <p><span data-l="en">That's the governor keeping the sound from stuttering (see <a href="#syntakt">Processor load</a>). Play fewer Syntakt voices at once, or shorten their decay.</span><span data-l="fr">C'est le régulateur qui évite que le son accroche (voir <a href="#syntakt">Charge du processeur</a>). Jouez moins de voix du Syntakt en même temps, ou raccourcissez leur decay.</span></p>
+            <p><span data-l="en">That's the governor keeping the sound from stuttering when the load stays too high (see <a href="#syntakt">Processor load</a>). It takes the voice heard least in the mix: lower the volume of the track you can spare most, mute what you don't hear, shorten long decays, or use the delay and reverb a little less (about 12 % of the processor).</span><span data-l="fr">C'est le régulateur qui évite que le son accroche quand la charge reste trop haute (voir <a href="#syntakt">Charge du processeur</a>). Il prend la voix qu'on entend le moins dans le mix : baissez le volume de la piste dont vous pouvez le plus vous passer, mutez ce que vous n'entendez pas, raccourcissez les decays longs, ou servez-vous un peu moins du delay et de la reverb (environ 12 % du processeur).</span></p>
           </details>
           <details>
             <summary><span data-l="en">Elektron Transfer won't take samples (Model-TG)</span><span data-l="fr">Elektron Transfer refuse les échantillons (Model-TG)</span></summary>
@@ -502,8 +502,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-04-03"></script>
-<script src="../assets/cycles.js?v=2026-10-04-03"></script>
-<script src="../assets/site.js?v=2026-10-04-03"></script>
+<script src="../assets/release.js?v=2026-10-04-04"></script>
+<script src="../assets/cycles.js?v=2026-10-04-04"></script>
+<script src="../assets/site.js?v=2026-10-04-04"></script>
 </body>
 </html>

@@ -39,6 +39,7 @@ import sys
 
 import sprites
 import usb_steady
+import voice_loop
 
 HERE = pathlib.Path(__file__).resolve().parent
 DEV = HERE.parent / "tweaks" / "model-cycles_OS1.13"
@@ -165,6 +166,7 @@ def derive(src, cave, at=None):
     if end > usb_steady.FEED_AT or lo != usb_steady.MASK:
         raise SystemExit(f"!! les stubs finissent en 0x{end:08x}, au-delà de feed.S (0x{usb_steady.FEED_AT:08x})")
     writes += usb_steady.writes()                 # envoi à heure fixe (et la redirection du masque)
+    writes += voice_loop.writes()                 # division des pistes par 2 plus courte (notes/36)
     writes.sort(key=lambda w: w["off"])
     tweak = {
         "id": "6ch-usbup",
@@ -179,6 +181,7 @@ def derive(src, cave, at=None):
             "Flux USB robuste (notes/35) : chaque bloc part au debut de l'interruption suivante, a heure fixe,",
             "au lieu de juste apres son calcul ; file alignee au demarrage ; ring de 9 cases au lieu de 8 ;",
             "copie des 6 pistes deroulee (memes octets). Preuve : tools/emu/test_usb_in.py.",
+            "Boucle des voix : division des pistes par 2 plus courte (tools/voice_loop.py, notes/36), memes valeurs.",
             f"Genere par tools/relocate_6ch.py depuis 6ch-multiout (decalage des stubs : {delta:#x}).",
         ],
         "device": src["device"],

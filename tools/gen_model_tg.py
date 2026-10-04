@@ -38,6 +38,7 @@ import build                       # noqa: E402
 import gen_sdvintage_exact as gx   # noqa: E402
 import gen_syntakt_engines as gs   # noqa: E402
 import usb_steady                  # noqa: E402
+import voice_loop                  # noqa: E402
 import test_sdvintage as T         # noqa: E402
 
 DEV = HERE.parent / "tweaks" / "model-cycles_OS1.13"
@@ -209,7 +210,8 @@ def adapt_st(tw, stock, syms):
             "LICENSE-Model-TG), commit " + MODEL_TG_COMMIT[:7] + ", construit par son propre build depuis une copie de",
             "sa source avec ces retouches (tools/gen_model_tg.py, MC_PATCHES et ST_PATCHES) :",
             *[f"  - {f} : {why}" for f, _, _, why in MC_PATCHES + ST_PATCHES],
-            "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup.",
+            "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup,",
+            "et la division des pistes par 2 plus courte de la boucle des voix (tools/voice_loop.py, notes/36).",
             "Base de la version combinée Model-TG + moteurs du Syntakt (notes/31) : ne s'installe qu'avec un tweak",
             "syntakt-tg-…, qui s'ajoute après lui et chaîne ses détours.",
         ],
@@ -231,12 +233,13 @@ def adapt(tw, stock):
                     | {"sdvintage-snare", "sdvintage-exact", "sdvintage-7th", "syntakt-vintage", "syntakt-meter", "model-tg-st"})
     # Envoi à l'USB à heure fixe (notes/35) : la charge de Model-TG varie beaucoup (pistes au repos, mutes, effets
     # éteints) et l'OS envoie chaque bloc à l'USB juste après l'avoir calculé. Mêmes écritures que 6ch-usbup.
-    steady = usb_steady.writes()
+    # Et la division des pistes par 2 plus courte de la boucle des voix (notes/36), comme 6ch-usbup.
+    steady = usb_steady.writes() + voice_loop.writes()
     taken = [(w["off"], w["off"] + len(w["new"]) // 2) for w in tw["writes"]]
     for w in steady:
         a, b = w["off"], w["off"] + len(w["new"]) // 2
         if any(a < y and x < b for x, y in taken):
-            raise SystemExit(f"!! envoi à heure fixe : 0x{a + BASE:08x} déjà écrit par Model-TG")
+            raise SystemExit(f"!! envoi à heure fixe, boucle des voix : 0x{a + BASE:08x} déjà écrit par Model-TG")
     writes = sorted(tw["writes"] + steady, key=lambda w: w["off"])
     return {
         "id": "model-tg",
@@ -251,7 +254,8 @@ def adapt(tw, stock):
             "les machines d'origine, slide trigs (v1.1.0), Scale Lock, envoi d'échantillons par Elektron Transfer, page",
             "System, et moins de charge processeur. Contient déjà les tweaks de drumkilla (mute verrouillé modifié,",
             "écoute d'un pas, défilement des noms). Avec les moteurs du Syntakt, le flasher prend model-tg-st (notes/31).",
-            "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup.",
+            "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup,",
+            "et la division des pistes par 2 plus courte de la boucle des voix (tools/voice_loop.py, notes/36).",
             "Généré par tools/gen_model_tg.py. Aucun octet Elektron dans le code de Model-TG.",
         ],
         "version": tw["version"],

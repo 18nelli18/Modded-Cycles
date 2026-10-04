@@ -11,7 +11,7 @@ Travail du 01/10/2026. Retour de l'utilisateur sur le firmware de diagnostic v2 
 | Preuve en émulation | `[FAIT]` `tools/emu/test_governor.py` et les tests existants (§3) |
 | 1er essai sur la machine (v3) | `[FAIT]` beaucoup moins de bugs, encore quelques micro-gels (§5) |
 | Test sur la machine de la version réactive (v4) | `[FAIT]` plus de micro-gels ; les coupures de notes restent un peu gênantes (§6) |
-| Règle revue | seuils 86 / 82 % ([28](28-code-syntakt-en-sram.md)), puis charge soutenue sur 170 ms et pic à 93 % ([30](30-regulateur-charge-soutenue.md)) |
+| Règle revue | seuils 86 / 82 % ([28](28-code-syntakt-en-sram.md)), puis charge soutenue sur 170 ms et pic à 93 % ([30](30-regulateur-charge-soutenue.md)), puis pic qui dure, voix la moins audible dans le mix, en assembleur ([36](36-regulateur-sans-coupures-inutiles.md)) |
 
 ## 1. Pourquoi il en faut un
 

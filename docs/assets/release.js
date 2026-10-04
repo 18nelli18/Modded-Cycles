@@ -3,6 +3,18 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.17", date: "2026-10-04", changes: [
+    { en: "Syntakt engines, fewer cut notes: the load governor no longer reacts to a single heavy block (a busy step, or the screen redrawing), which is already over when it is measured; only load that lasts two blocks, or a sustained load, fades a voice out",
+      fr: "Moteurs du Syntakt, moins de notes coupées : le régulateur de charge ne réagit plus à un bloc lourd isolé (un pas chargé, l'écran qui se redessine), déjà passé quand il est mesuré ; seule une charge qui dure deux blocs, ou une charge soutenue, éteint une voix en fondu" },
+    { en: "When a voice must go, it is the one heard least in the mix (its level times its mixer volume and sends; a muted track goes first), the oldest note on a tie; it used to be the quietest voice before the mixer, so often the same track",
+      fr: "Quand une voix doit partir, c'est celle qu'on entend le moins dans le mix (son niveau multiplié par son volume et ses envois au mixeur ; une piste mutée part la première), la note la plus ancienne à égalité ; c'était la voix la plus faible avant le mixeur, donc souvent la même piste" },
+    { en: "The sustained-load rule (fade a voice out when the load stays above 86 % for a fraction of a second, so the screen and knobs keep enough time) never actually ran: its slow average could not rise, a rounding issue. It now works, without a chain of cuts: it also looks at the recent load and counts the voices it has just stopped",
+      fr: "La règle de charge soutenue (éteindre une voix quand la charge reste au-dessus de 86 % une fraction de seconde, pour que l'écran et les potards gardent assez de temps) n'agissait en fait jamais : sa moyenne lente ne pouvait pas monter, un problème d'arrondi. Elle marche maintenant, sans coupures en chaîne : elle regarde aussi la charge récente et compte les voix qu'elle vient d'arrêter" },
+    { en: "Lighter on the processor, same sound: the per-voice bookkeeping of the governor with Model-TG, and the original OS's scaling of each track (6-channel audio, Model-TG and the Syntakt engines)",
+      fr: "Plus léger pour le processeur, même son : le suivi de chaque voix par le régulateur avec Model-TG, et la mise à l'échelle de chaque piste par l'OS d'origine (audio 6 canaux, Model-TG et moteurs du Syntakt)" },
+    { en: "Checked in the emulator: same sound and same voice stops as before at normal load, then the new rules under overload",
+      fr: "Vérifié en émulation : même son et mêmes arrêts de voix qu'avant en charge normale, puis les nouvelles règles en surcharge" },
+  ] },
   { version: "1.16", date: "2026-10-04", changes: [
     { en: "USB audio: no more dropouts when the processor load changes (Model-TG, muted tracks, effects turning off). The stock OS sends each block to the computer right after computing it, so the moment moved with the load, and the 6-channel mod's buffer only tolerated 0.2 ms of it; each block now leaves at the start of the next one, always at the same moment (0.67 ms more latency), and the 6-channel buffer gains a slot",
       fr: "Audio USB : plus de trous quand la charge du processeur change (Model-TG, pistes mutées, effets qui s'éteignent). L'OS d'origine envoie chaque bloc à l'ordinateur juste après l'avoir calculé, donc à un instant qui bougeait avec la charge, et le tampon du mod 6 canaux n'en tolérait que 0,2 ms ; chaque bloc part maintenant au début du suivant, toujours au même instant (0,67 ms de latence en plus), et le tampon du 6 canaux gagne une case" },
