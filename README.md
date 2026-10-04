@@ -78,7 +78,7 @@ our build matches their own tool byte for byte):
 | Tweak | What it does |
 |---|---|
 | `latching-mute` | Hold `TRK` and tap `FUNC`: mute mode stays on, so you mute tracks without holding `FUNC` |
-| `trig-preview` | Sequencer stopped: hold a step and press `PAGE` to hear it (note, length, p-locks) |
+| `trig-preview` | Sequencer stopped or paused: hold a step and press `PAGE` to hear it (note, length, p-locks) |
 | `browser-scroll` | Long names scroll in the sound browser |
 
 Requests from the community (Reddit) and how we handle them: [note 15](notes/15-demandes-reddit.md) (in French).
@@ -121,7 +121,7 @@ The technical documentation is written in French.
 Upstream projects, all MIT licensed, none including firmware:
 
 - [`scottmetoyer/ms-multi-output`](https://github.com/scottmetoyer/ms-multi-output) — the 6-channel mod (Model:Samples and Model:Cycles)
-- [`drumkilla/elektron-model-tweaks`](https://github.com/drumkilla/elektron-model-tweaks) — the latching-mute, trig-preview and browser-scroll tweaks (in `tweaks/`, unchanged), `mtlib` (SysEx transport, aPLib, ELE3 container and HMAC in Python) and the JSON tweak format, vendored in `tools/mtlib/`
-- [`TinyGregAudio/Model-TG`](https://github.com/TinyGregAudio/Model-TG) — the Sampler machine, resampling, retrig and master FX, slide trigs, and more; generated from a pinned commit (v1.1.0) by `tools/gen_model_tg.py` with its own build, from a copy of its source with one listed change (mutes at once; `tweaks/model-cycles_OS1.13/30-model-tg.json`, license in `LICENSE-Model-TG`); `30-model-tg-st.json`, the base of the combined version, is built the same way with one more listed change
+- [`drumkilla/elektron-model-tweaks`](https://github.com/drumkilla/elektron-model-tweaks) — the latching-mute, trig-preview and browser-scroll tweaks (in `tweaks/`, unchanged except a 3-byte fix to trig-preview so it also works while paused, note 34), `mtlib` (SysEx transport, aPLib, ELE3 container and HMAC in Python) and the JSON tweak format, vendored in `tools/mtlib/`
+- [`TinyGregAudio/Model-TG`](https://github.com/TinyGregAudio/Model-TG) — the Sampler machine, resampling, retrig and master FX, slide trigs, and more; generated from a pinned commit (v1.1.0) by `tools/gen_model_tg.py` with its own build, from a copy of its source with two listed changes (mutes at once, and the same trig-preview fix; `tweaks/model-cycles_OS1.13/30-model-tg.json`, license in `LICENSE-Model-TG`); `30-model-tg-st.json`, the base of the combined version, is built the same way with one more listed change
 - [`mischa85/elektron-firmware-tool`](https://github.com/mischa85/elektron-firmware-tool) — unpacking, repacking and re-signing `.syx` files (alternative C toolchain)
 - [`mxldyn/octamax`](https://github.com/mxldyn/octamax) — reverse engineering of the Octatrack OS (method, tools, pitfalls)

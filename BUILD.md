@@ -31,8 +31,9 @@ L'orchestration (`tools/build.py`) et les tables de patchs (`tweaks/`) sont prop
    python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup,sdvintage-snare
    ```
    Et les trois tweaks de [drumkilla](https://github.com/drumkilla/elektron-model-tweaks) (fichiers `01`–`03` de `tweaks/`,
-   repris sans modification, MIT) : `latching-mute`, `trig-preview`, `browser-scroll`. Notre build donne le **même MAIN OS,
-   octet pour octet**, que leur propre `tweak.py` (vérifié pour chacun et pour les trois ensemble).
+   MIT) : `latching-mute`, `trig-preview`, `browser-scroll`. Notre build donne le **même MAIN OS, octet pour octet**, que leur
+   propre `tweak.py` (vérifié pour chacun et pour les trois ensemble), à une retouche près : depuis le 04/10/2026, `trig-preview`
+   accepte aussi le séquenceur en pause (3 octets, [note 34](notes/34-ecoute-en-pause.md)).
    ```sh
    python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup,latching-mute,trig-preview,browser-scroll
    ```
@@ -93,8 +94,8 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 | `sdvintage-snare` (v2, recalée sur le Syntakt) | `11049726efa102028f7365b0a672c8a244b98edcef5e7c8b5e0aafba369f60d3` |
 | `6ch-multiout,sdvintage-snare` | `80d0d717c5054f9277c2ddadb588e3578968cc1427610c7367ee408fa8ffd2de` |
 | `6ch-usbup,sdvintage-snare` | `6cb642dc14fc3f9ec013da8481fc0545758e514c76e0c60611208d9f15ad71cc` |
-| `latching-mute,trig-preview,browser-scroll` | `71fef138b1ae16f3ad440ecaa6a6327c1a987ce2c8a86b74329f68159981a15c` (= `tweak.py` de drumkilla) |
-| `6ch-usbup,latching-mute,trig-preview,browser-scroll` | `fd57831c61926fb3b1902cadcb0f95e68db3bb637b4cd20860a0efc46db82cfa` |
+| `latching-mute,trig-preview,browser-scroll` | `c6aea7e51d1caf3e9be4553f3a0c5b033592d804cb25226ef9df3fd19add8c08` (`tweak.py` de drumkilla, sans la retouche de note 34 : `71fef138…`) |
+| `6ch-usbup,latching-mute,trig-preview,browser-scroll` | `a21e57ebd9938964c7b6dde45e9d923e7cd05a145fa9f60fc971ea4a595c962c` |
 
 | `sdvintage-exact` (avec `--syntakt Syntakt_OS1.42.syx`) | `8e2290a79fb1406ce65b3af3c5d3d95faade666e98eb8ecce0c0fa25fe87b15d` |
 | `6ch-usbup,sdvintage-exact` (idem) | `ea57b3c52b77d4de3df073ee605f2fecde59878d06e3141c927ed3bd7f489904` |
@@ -111,8 +112,9 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 ### Model-TG
 
 `tweaks/model-cycles_OS1.13/30-model-tg.json` vient du build de [Model-TG](https://github.com/TinyGregAudio/Model-TG) lui-même (licence MIT),
-au commit épinglé dans `tools/gen_model_tg.py`, avec les binutils m68k, depuis une copie de sa source avec une retouche (`MC_PATCHES` : en
-mode mute, chaque touche de piste mute tout de suite), voir [note 31 §10](notes/31-model-tg.md) :
+au commit épinglé dans `tools/gen_model_tg.py`, avec les binutils m68k, depuis une copie de sa source avec deux retouches (`MC_PATCHES` : en
+mode mute, chaque touche de piste mute tout de suite, [note 31 §10](notes/31-model-tg.md) ; sa copie de l'écoute d'un pas accepte le
+séquenceur en pause, [note 34](notes/34-ecoute-en-pause.md)) :
 ```sh
 git clone https://github.com/TinyGregAudio/Model-TG vendor/Model-TG
 git -C vendor/Model-TG checkout 70b39dd6787770ebefc7a2d78dea1678ec012679   # v1.1.0
@@ -121,11 +123,11 @@ python3 tools/gen_model_tg.py --cycles model-cycles_OS1.13.syx --model-tg vendor
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `model-tg` | `08d9f07540cf487ba65bd94f8d60aaf7f5c92f7bbb5115f9c8fb953535321241` (sans la retouche : `a049d724…`, celle annoncée par Model-TG pour sa v1.1.0) |
-| `6ch-usbup,model-tg` | `464f742e036831110d76a6bd6411b704ab7160bee28fce5c52b39a275f4d59da` |
+| `model-tg` | `eae3e84831ffe09298e5d3f7556cc0b3e4ec11b92034f162c51bc2649c8aa8b8` (sans les retouches : `a049d724…`, celle annoncée par Model-TG pour sa v1.1.0) |
+| `6ch-usbup,model-tg` | `6d729bf3caa10888adea65b070a8a631fcae2ee4895c1e251d3ae01adc9f4224` |
 
 Le même script écrit `30-model-tg-st.json`, la base de la **version combinée avec les moteurs du Syntakt** : Model-TG construit par son
-build depuis une copie de sa source, avec la même retouche et une autre (sa zone d'échantillons s'arrête 1 Mo plus bas). Les moteurs s'appliquent
+build depuis une copie de sa source, avec les mêmes retouches et une autre (sa zone d'échantillons s'arrête 1 Mo plus bas). Les moteurs s'appliquent
 par-dessus (`31-syntakt-tg-<moteurs>.json`, `requires`), voir [note 31 §4](notes/31-model-tg.md) :
 ```sh
 python3 tools/gen_syntakt_engines.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx --all --tg [--check]
@@ -135,9 +137,9 @@ python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --sy
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `model-tg-st,syntakt-tg-sd` | `a0868c7216e19dd5dd5fca1314daa5ffce2e6f09d1b06330dc080d12bda6521e` |
-| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `94d610447ca437162258d09c766f0752ed84aa17034bcc8d50a98d51f692c549` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `26435535da0aadcbcf2e15cfaaa822bf1007917a8ec2e67db17cffef2cbd84fd` |
+| `model-tg-st,syntakt-tg-sd` | `5fb68f987abbeff4d93e22aa04eea36ab37727339848b93e5dfa2e420ae6f7a7` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `dff9abd5f8844499aa1491a6e583b59be2a7b4742611da744a7c9bc000985d71` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `6495b47528c4b3f85dd3cceb95b6b54b11bbd65e31b53ee50f5d7aff32db21f2` |
 
 Les 2 303 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
 `tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;
@@ -159,8 +161,8 @@ python3 tools/emu/test_arp.py --cycles model-cycles_OS1.13.syx \
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
 | `arp` | `f3b2e3b5d1c1879e7b7962651e285acce2d8bf80c914bffa4b378177f3606945` |
-| `model-tg,arp` | `8be6aac3cd483b0a65ee7c2f0491ef714c2d0fd7760e24a5d5909227d52f4fc7` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp` | `d2e1aeb90df99b2484fc41d5e70f0ec30dd9db84d3dc1017da792150c421bef8` |
+| `model-tg,arp` | `078932f3161c15dc313c2de0ef5352a4446340922d18514a0a6cf6343ab2e162` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp` | `0ba3c53e6e2216fc73717cecfc8d98a5e0e22e97839c0dcfcab29252ac7949d4` |
 
 L'arpégiateur et les moteurs du Syntakt libèrent le même masque (`0x4016cae8`) : les deux constructeurs (`tools/build.py`,
 `docs/flasher/builder.js`) acceptent une écriture déjà faite à l'identique par un autre tweak.
@@ -181,10 +183,20 @@ python3 tools/emu/test_trig_hold.py --cycles model-cycles_OS1.13.syx \
 |---|---|
 | `trig-hold` | `bbb8a4217a888c46a60cfb17ae444bec9cf21d6ff2d2d36bf8d1f1cdb81d1ef4` |
 | `6ch-usbup,trig-hold` | `b965e349e099312d944d66765c90e5c77490dcddc35276c7dd9e67ea1071e71d` |
-| `model-tg,trig-hold` | `48462793361abce89c9a8ca59848238c37ae214cc41f98424448de305d495f6f` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp` | `6cf5d63634b0e423dfdbd5990c95dff0a7185f1b3f77eb04a91ef22c6027328b` |
+| `model-tg,trig-hold` | `7eb72db099e842ce3b7a0564f1761a8bf9be19008026144472c0c9928aa7da4b` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp` | `2f1276ac02508ecd65c152297224d96ec2f521834ec47813f8efb52ed1cfe742` |
 
 Avec `6ch-usbup`, les deux tweaks réécrivent de la même façon le pointeur du sprite dont le masque est libéré.
+
+### Écoute d'un pas en pause
+
+`trig-preview` (et sa copie dans Model-TG) accepte le séquenceur en pause, où le met un Stop MIDI reçu même à l'arrêt : 3 octets
+retouchés en `0x40148a30` ([note 34](notes/34-ecoute-en-pause.md)). La preuve passe par le vrai gestionnaire du Stop MIDI de l'OS,
+puis par le mode grille :
+```sh
+python3 tools/emu/test_trig_preview.py --cycles model-cycles_OS1.13.syx \
+    [--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold --syntakt Syntakt_OS1.42.syx]
+```
 
 ### Variante `6ch-usbup`
 
