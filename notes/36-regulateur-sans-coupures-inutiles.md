@@ -141,8 +141,8 @@ faibles, âge, voix éteintes, fondus, coût mesuré, moyenne rapide du code C, 
 
 | Firmware | Sans régulateur | 50 % | 80 % | Charge variable 30..85 % |
 |---|---|---|---|---|
-| Model-TG + 5 moteurs (`voice_gate`, `voice_after`, `audio_end` en assembleur) | identique | identique | identique | (résultat ci-dessous) |
-| 5 moteurs seuls (`audio_end` en assembleur) | (résultat ci-dessous) | | | |
+| Model-TG + 5 moteurs (`voice_gate`, `voice_after`, `audio_end` en assembleur) | identique | identique | identique | identique |
+| 5 moteurs seuls (`audio_end` en assembleur) | identique | identique | identique | identique |
 
 Seul écart voulu : au tout premier bloc, le code C ignorait la mesure (période démesurée), l'assembleur la calcule (sans
 effet : la moyenne rapide reste à 0). La moyenne lente et la période ne sont plus comparées : elles changent exprès (§3).
