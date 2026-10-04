@@ -162,6 +162,70 @@ $$("[data-marquee]").forEach((el) => {
 });
 
 // ---------------------------------------------------------------------------
+// Guide: removing a trig. A step that has a trig loses it when the key is let go before the hold:
+// 0.2 s on the stock OS, 0.5 s with the mod (notes/33). An empty step gets a trig at once.
+// ---------------------------------------------------------------------------
+$$("[data-hold]").forEach((box) => {
+  const key = box.querySelector("[data-hold-key]");
+  const fill = box.querySelector("[data-hold-fill]");
+  const out = box.querySelector("[data-hold-ms]");
+  const states = $$("[data-hold-state]", box);
+  const STOCK = 200, MOD = 500, FULL = 1000;
+  let trig = true, had = true, down = false, t0 = 0, raf = 0;
+  const state = (s) => {
+    box.setAttribute("data-hold-st", s);
+    states.forEach((el) => { el.hidden = el.dataset.holdState !== s; });
+  };
+  const paint = (d) => {
+    fill.style.width = (Math.min(d, FULL) * 100 / FULL).toFixed(2) + "%";
+    out.textContent = (d / 1000).toFixed(2).replace(".", lang() === "fr" ? "," : ".") + " s";
+  };
+  function press(e) {
+    if (down) return;
+    if (e) e.preventDefault();
+    down = true;
+    had = trig;
+    trig = true;
+    t0 = performance.now();
+    key.classList.add("down");
+    key.setAttribute("aria-pressed", "true");
+    state(had ? "held" : "placed");
+    const step = () => {
+      const d = performance.now() - t0;
+      paint(d);
+      if (had && d >= MOD && box.getAttribute("data-hold-st") === "held") state("shown");
+      raf = down && d < FULL ? requestAnimationFrame(step) : 0;
+    };
+    step();
+  }
+  function release() {
+    if (!down) return;
+    down = false;
+    cancelAnimationFrame(raf);
+    key.classList.remove("down");
+    const d = performance.now() - t0;
+    paint(d);
+    if (!had) return;
+    if (d < MOD) trig = false;
+    state(d < STOCK ? "both" : d < MOD ? "mod" : "kept");
+    key.setAttribute("aria-pressed", String(trig));
+  }
+  key.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    try { key.setPointerCapture(e.pointerId); } catch (err) { /* pointer already gone */ }
+    press(e);
+  });
+  key.addEventListener("pointerup", release);
+  key.addEventListener("pointercancel", release);
+  key.addEventListener("lostpointercapture", release);
+  key.addEventListener("keydown", (e) => { if ((e.key === " " || e.key === "Enter") && !e.repeat) press(e); });
+  key.addEventListener("keyup", (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); release(); } });
+  key.addEventListener("click", (e) => e.preventDefault());
+  key.addEventListener("contextmenu", (e) => e.preventDefault());
+  state("idle");
+});
+
+// ---------------------------------------------------------------------------
 // Guide: which engines, in which order, in the MACHINES menu
 // ---------------------------------------------------------------------------
 $$("[data-engines]").forEach((box) => {

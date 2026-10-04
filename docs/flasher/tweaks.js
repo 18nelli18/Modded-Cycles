@@ -1828,6 +1828,53 @@ window.MC_TWEAKS = {
    ]
   },
   {
+   "id": "trig-hold",
+   "order": 41,
+   "name": "Plus de temps pour effacer un trig",
+   "description": [
+    "Mode grille : un appui sur un pas qui a déjà un trig l'efface au relâchement s'il a duré moins de 500 ms (200 ms à l'origine).",
+    "Au-delà, le trig est maintenu (sa note et sa vélocité s'affichent) et reste. Pas vide : comme à l'origine.",
+    "Un tour de potard pendant l'appui garde le trig, comme à l'origine. Même délai pour les changements de trig au relâchement (FUNC + pas, trig de lock).",
+    "Code et heures d'appui dans le masque de sprite libéré 0x4015c044 (tools/sprites.py) : 166 o. Généré par tools/gen_trig_hold.py, notes/33."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "symbols": {
+    "th_t": "0x4015c0ca",
+    "th_press": "0x4015c06c",
+    "th_hold": "0x4015c07e",
+    "th_release": "0x4015c0b0"
+   },
+   "writes": [
+    {
+     "off": 139420,
+     "old": "4eb940072490",
+     "new": "4eb94015c06c"
+    },
+    {
+     "off": 141636,
+     "old": "4eb940072460",
+     "new": "4eb94015c07e"
+    },
+    {
+     "off": 141734,
+     "old": "4eb94006b736",
+     "new": "4eb94015c0b0"
+    },
+    {
+     "off": 745524,
+     "old": "4015c044",
+     "new": "40154ae4"
+    },
+    {
+     "off": 1424452,
+     "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+     "new": "720fc2a8000c43f94015c0cad3c1d3c120280008424048404e7561e473d1908102800000ffff4e75206f000461d232807002c0a80010e2884e75206f00047008c0a80010672461d20c800000040764184eb9400cf9a82040200b723fc0814ab00c5c670470004e7570014e75206f000410280164660e206e000c619e0c800000040754c04e750000000000000000000000000000000000000000000000000000000000000000"
+    }
+   ]
+  },
+  {
    "id": "arp",
    "order": 40,
    "name": "Arpégiateur à la place du retrig",
@@ -136647,6 +136694,19 @@ window.MC_TWEAKS = {
    "variants": [
     {
      "id": "browser-scroll",
+     "label": null
+    }
+   ]
+  },
+  {
+   "id": "trig-hold",
+   "label": "Effacer un trig plus facilement",
+   "desc": "Un appui sur une touche de pas qui porte deja un trig l'efface si tu relaches en moins d'une demi-seconde (0,2 s avec l'OS d'origine). Tenu plus longtemps, le trig reste et ses reglages s'affichent.",
+   "status": "tested",
+   "credit": null,
+   "variants": [
+    {
+     "id": "trig-hold",
      "label": null
     }
    ]

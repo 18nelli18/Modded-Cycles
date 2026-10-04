@@ -205,4 +205,4 @@ Le code passe de 1 834 o à 2 553 o. Il faut deux zones de plus :
 
 ### 11.5 Essai sur la machine
 
-Firmware d'essai : `build/model-cycles_OS1.13_model-tg-1.1_syntakt-5-moteurs_6ch_arp4.syx` (`build.py`, même combinaison que le 3e essai), MAIN OS `a6573cbe…` = `REF_MAINOS` du flasher pour cette combinaison. Flasher web : version 1.13, build `2026-10-03-04`. À vérifier : live rec avec un arpège de 2 ou 3 notes (relecture : les notes une par une), une seule note tenue (relecture : le retrig d'origine), sens OFF.
+Firmware d'essai : `build/model-cycles_OS1.13_model-tg-1.1_syntakt-5-moteurs_6ch_trig-hold_arp4.syx` (`build.py`, combinaison du 3e essai plus `trig-hold`, notes/33), MAIN OS `03e9ed55…` = `REF_MAINOS` du flasher pour cette combinaison. Sans `trig-hold` : `…_6ch_arp4.syx`, MAIN OS `a6573cbe…`, idem. Flasher web : version 1.14, build `2026-10-04-01`. À vérifier : live rec avec un arpège de 2 ou 3 notes (relecture : les notes une par une), une seule note tenue (relecture : le retrig d'origine), sens OFF.

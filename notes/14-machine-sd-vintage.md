@@ -189,7 +189,7 @@ Source : [`tools/machines/sdvintage/sdvintage.c`](../tools/machines/sdvintage/sd
 
 | Masque libéré | Taille | Sprite | Constante réécrite | Utilisé par |
 |---|---|---|---|---|
-| `0x4015c044` | 720 o | 64×90 (cadre) | `0x400b6434` | `6ch-usbup` (stubs, 154 o) |
+| `0x4015c044` | 720 o | 64×90 (cadre) | `0x400b6434` | `6ch-usbup` (stubs, 154 o) ; `trig-hold` (le début, 166 o, [note 33](33-effacer-un-trig.md)) |
 | `0x4016cae8` | 1024 o | 64×128 (damier) | `0x400b1106` | `sdvintage-snare` (`update`, 828 o) |
 | `0x4018a788` | 1024 o | 64×128 (damier inverse) | `0x400ad1aa` | `sdvintage-snare` (`render`, 560 o) |
 
