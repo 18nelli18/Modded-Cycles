@@ -6,8 +6,8 @@ window.MC_RELEASES = [
   { version: "1.14", date: "2026-10-04", changes: [
     { en: "Arpeggiator, fix: in live recording, the notes the arpeggiator plays are recorded one by one, each on its step with its length; the pattern only kept one of the notes, repeated (the retrig of the last key pressed)",
       fr: "Arpégiateur, correction : en live rec, les notes que joue l'arpégiateur sont enregistrées une à une, chacune sur son pas avec sa durée ; le pattern ne gardait qu'une des notes, répétée (le retrig de la dernière touche)" },
-    { en: "A single held note on 1 octave is still recorded as one trig with retrig, as with the original retrig. Proven in emulation, waiting for a test on the machine",
-      fr: "Une seule note tenue sur 1 octave s'enregistre toujours en un trig avec retrig, comme le retrig d'origine. Prouvé en émulation, en attente d'un essai sur la machine" },
+    { en: "A single held note on 1 octave is still recorded as one trig with retrig, as with the original retrig. Tested on a real Model:Cycles",
+      fr: "Une seule note tenue sur 1 octave s'enregistre toujours en un trig avec retrig, comme le retrig d'origine. Testé sur un vrai Model:Cycles" },
     { en: "Guide: live recording, in the Arpeggiator section",
       fr: "Guide : l'enregistrement en live, dans la section Arpégiateur" },
   ] },

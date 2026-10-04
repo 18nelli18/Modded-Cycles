@@ -19,7 +19,7 @@ Source de tout ce qui suit : désassemblage du MAIN OS 1.13 officiel (`m68k-elf-
 | Code de l'arpégiateur et lignes du menu | `[FAIT]` `tweaks/model-cycles_OS1.13/40-arp.json` (§9) |
 | Preuve en émulation | `[FAIT]` jusqu'à la vraie boucle d'événements de l'OS, sur 4 firmwares (§9) |
 | Flasher web, guide | `[FAIT]` carte « Arpégiateur », section 9 du guide, version 1.12 |
-| Live rec : l'arpège enregistre ses notes | `[FAIT en émulation]` §11, essai sur la machine en attente |
+| Live rec : l'arpège enregistre ses notes | `[FAIT]` §11, testé sur la machine (« ça marche nickel ») |
 | Essai sur la machine | `[FAIT]` 2e et 3e essais, après correction : « ça marche nickel ! » (§10) ; carte marquée « testée » à la demande de l'utilisateur |
 
 ## 1. Le menu « Retrig Setup » (FUNC + RETRIG)
@@ -206,3 +206,5 @@ Le code passe de 1 834 o à 2 553 o. Il faut deux zones de plus :
 ### 11.5 Essai sur la machine
 
 Firmware d'essai : `build/model-cycles_OS1.13_model-tg-1.1_syntakt-5-moteurs_6ch_trig-hold_arp4.syx` (`build.py`, combinaison du 3e essai plus `trig-hold`, notes/33), MAIN OS `03e9ed55…` = `REF_MAINOS` du flasher pour cette combinaison. Sans `trig-hold` : `…_6ch_arp4.syx`, MAIN OS `a6573cbe…`, idem. Flasher web : version 1.14, build `2026-10-04-01`. À vérifier : live rec avec un arpège de 2 ou 3 notes (relecture : les notes une par une), une seule note tenue (relecture : le retrig d'origine), sens OFF.
+
+**Essai** (04/10/2026, ce firmware) : retour de l'utilisateur : « ça marche nickel ».
