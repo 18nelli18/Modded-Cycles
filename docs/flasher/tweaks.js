@@ -152,6 +152,7 @@ window.MC_TWEAKS = {
     "LICENSE-Model-TG), commit 70b39dd, construit par son propre build pour ce flasher, depuis",
     "une copie de sa source avec cette retouche (tools/gen_model_tg.py, MC_PATCHES) :",
     "  - src/model_tg.s : mode mute : chaque touche de piste mute tout de suite (mq_toggle -> 0x40013904 d'origine), sans file d'attente",
+    "  - tweaks/model-cycles_OS1.13/02-trig-preview.json : écoute d'un pas : aussi séquenceur en pause (un Stop MIDI le met en pause ; PAGE tournait la page), notes/34",
     "Machine Sampler (7e machine), rééchantillonnage, retrig et effets master, Attack / Filtre / Résonance sur",
     "les machines d'origine, slide trigs (v1.1.0), Scale Lock, envoi d'échantillons par Elektron Transfer, page",
     "System, et moins de charge processeur. Contient déjà les tweaks de drumkilla (mute verrouillé modifié,",
@@ -160,7 +161,7 @@ window.MC_TWEAKS = {
    ],
    "version": "v1.1.0",
    "source": "https://github.com/TinyGregAudio/Model-TG/tree/70b39dd6787770ebefc7a2d78dea1678ec012679",
-   "result_sha256": "08d9f07540cf487ba65bd94f8d60aaf7f5c92f7bbb5115f9c8fb953535321241",
+   "result_sha256": "eae3e84831ffe09298e5d3f7556cc0b3e4ec11b92034f162c51bc2649c8aa8b8",
    "device": "Model:Cycles",
    "os": "1.13",
    "section": 3,
@@ -870,7 +871,7 @@ window.MC_TWEAKS = {
     {
      "off": 1345021,
      "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-     "new": "d448d77cfc202e000c2f004eb9400724a0588f4a0067000158202e000c2f004eb940072490588f4a00660001444eb94005481a4a80660001384eb9400cf9a826402f0b4eb94006b978588f4a00670001202f0b4eb94006bb18588f4a00660001102f0b4eb94006bdfe588f4a00670001004eb9400cf8662f004eb94000eb90588f2f004eb940012412588f2400203940a7887c4a80670000d82840203940a788884a80670000ca2002e3882200e789d081e589d081e389d081e589d0812a4cdbc01c2d02cf70641b4002cf487800012f0b4eb94006b740508f282b01607a0076000704670000542e03de85204dd1c7122802042f0170"
+     "new": "d448d77cfc202e000c2f004eb9400724a0588f4a0067000158202e000c2f004eb940072490588f4a00660001444eb94005481ae288650001384eb9400cf9a826402f0b4eb94006b978588f4a00670001202f0b4eb94006bb18588f4a00660001102f0b4eb94006bdfe588f4a00670001004eb9400cf8662f004eb94000eb90588f2f004eb940012412588f2400203940a7887c4a80670000d82840203940a788884a80670000ca2002e3882200e789d081e589d081e389d081e589d0812a4cdbc01c2d02cf70641b4002cf487800012f0b4eb94006b740508f282b01607a0076000704670000542e03de85204dd1c7122802042f0170"
     },
     {
      "off": 1345268,
@@ -910,13 +911,14 @@ window.MC_TWEAKS = {
     "LICENSE-Model-TG), commit 70b39dd, construit par son propre build depuis une copie de",
     "sa source avec ces retouches (tools/gen_model_tg.py, MC_PATCHES et ST_PATCHES) :",
     "  - src/model_tg.s : mode mute : chaque touche de piste mute tout de suite (mq_toggle -> 0x40013904 d'origine), sans file d'attente",
+    "  - tweaks/model-cycles_OS1.13/02-trig-preview.json : écoute d'un pas : aussi séquenceur en pause (un Stop MIDI le met en pause ; PAGE tournait la page), notes/34",
     "  - src/model_tg.s : zone d'échantillons : 1 Mo de moins, laissé aux moteurs du Syntakt (0x46700000..0x46800000)",
     "Base de la version combinée Model-TG + moteurs du Syntakt (notes/31) : ne s'installe qu'avec un tweak",
     "syntakt-tg-…, qui s'ajoute après lui et chaîne ses détours."
    ],
    "version": "v1.1.0",
    "source": "https://github.com/TinyGregAudio/Model-TG/tree/70b39dd6787770ebefc7a2d78dea1678ec012679",
-   "result_sha256": "704d5f5c8e5fcc4d29477907780e28aad756dc3fc4a0ca9ab0375aae61e34ddb",
+   "result_sha256": "f2f59a694119926e01c8e295151b195fc1b36ddffda296da692261b6a8dec0f0",
    "device": "Model:Cycles",
    "os": "1.13",
    "section": 3,
@@ -1626,7 +1628,7 @@ window.MC_TWEAKS = {
     {
      "off": 1345021,
      "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-     "new": "d448d77cfc202e000c2f004eb9400724a0588f4a0067000158202e000c2f004eb940072490588f4a00660001444eb94005481a4a80660001384eb9400cf9a826402f0b4eb94006b978588f4a00670001202f0b4eb94006bb18588f4a00660001102f0b4eb94006bdfe588f4a00670001004eb9400cf8662f004eb94000eb90588f2f004eb940012412588f2400203940a7887c4a80670000d82840203940a788884a80670000ca2002e3882200e789d081e589d081e389d081e589d0812a4cdbc01c2d02cf70641b4002cf487800012f0b4eb94006b740508f282b01607a0076000704670000542e03de85204dd1c7122802042f0170"
+     "new": "d448d77cfc202e000c2f004eb9400724a0588f4a0067000158202e000c2f004eb940072490588f4a00660001444eb94005481ae288650001384eb9400cf9a826402f0b4eb94006b978588f4a00670001202f0b4eb94006bb18588f4a00660001102f0b4eb94006bdfe588f4a00670001004eb9400cf8662f004eb94000eb90588f2f004eb940012412588f2400203940a7887c4a80670000d82840203940a788884a80670000ca2002e3882200e789d081e589d081e389d081e589d0812a4cdbc01c2d02cf70641b4002cf487800012f0b4eb94006b740508f282b01607a0076000704670000542e03de85204dd1c7122802042f0170"
     },
     {
      "off": 1345268,
@@ -1748,9 +1750,10 @@ window.MC_TWEAKS = {
    "order": 2,
    "name": "Trig preview (TRIG + PAGE)",
    "description": [
-    "With the sequencer stopped, hold a step and press PAGE: the step sounds with its own note, length, p-locks and sound-lock.",
+    "With the sequencer stopped or paused, hold a step and press PAGE: the step sounds with its own note, length, p-locks and sound-lock.",
     "The page does not turn.",
-    "It sounds regardless of the trig condition and probability, and through a muted track. The trig is not erased."
+    "It sounds regardless of the trig condition and probability, and through a muted track. The trig is not erased.",
+    "Modded-Cycles change: paused counts as stopped (a MIDI Stop pauses the sequencer, which turned the page instead), notes/34."
    ],
    "device": "Model:Cycles",
    "os": "1.13",
@@ -1769,7 +1772,7 @@ window.MC_TWEAKS = {
     {
      "off": 1345021,
      "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-     "new": "d448d77cfc202e000c2f004eb9400724a0588f4a0067000158202e000c2f004eb940072490588f4a00660001444eb94005481a4a80660001384eb9400cf9a826402f0b4eb94006b978588f4a00670001202f0b4eb94006bb18588f4a00660001102f0b4eb94006bdfe588f4a00670001004eb9400cf8662f004eb94000eb90588f2f004eb940012412588f2400203940a7887c4a80670000d82840203940a788884a80670000ca2002e3882200e789d081e589d081e389d081e589d0812a4cdbc01c2d02cf70641b4002cf487800012f0b4eb94006b740508f282b01607a0076000704670000542e03de85204dd1c7122802042f0170"
+     "new": "d448d77cfc202e000c2f004eb9400724a0588f4a0067000158202e000c2f004eb940072490588f4a00660001444eb94005481ae288650001384eb9400cf9a826402f0b4eb94006b978588f4a00670001202f0b4eb94006bb18588f4a00660001102f0b4eb94006bdfe588f4a00670001004eb9400cf8662f004eb94000eb90588f2f004eb940012412588f2400203940a7887c4a80670000d82840203940a788884a80670000ca2002e3882200e789d081e589d081e389d081e589d0812a4cdbc01c2d02cf70641b4002cf487800012f0b4eb94006b740508f282b01607a0076000704670000542e03de85204dd1c7122802042f0170"
     },
     {
      "off": 1345268,
@@ -136667,7 +136670,7 @@ window.MC_TWEAKS = {
   {
    "id": "trig-preview",
    "label": "Ecoute d'un pas (TRIG + PAGE)",
-   "desc": "Sequenceur a l'arret, maintiens un pas et appuie sur PAGE : le pas joue avec sa note, sa longueur et ses p-locks.",
+   "desc": "Sequenceur a l'arret (ou en pause), maintiens un pas et appuie sur PAGE : le pas joue avec sa note, sa longueur et ses p-locks.",
    "status": "tested",
    "credit": {
     "kind": "by",

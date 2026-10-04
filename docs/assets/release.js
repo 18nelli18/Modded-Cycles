@@ -3,6 +3,12 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.15", date: "2026-10-04", changes: [
+    { en: "Trig preview, fix: it also works with the sequencer paused. A MIDI Stop (from the computer on USB, for instance when the DAW stops) pauses the sequencer even when stopped, and PAGE then turned the page instead of playing the step, until a restart",
+      fr: "Écoute d'un pas, correction : elle marche aussi séquenceur en pause. Un Stop MIDI (de l'ordinateur en USB, par exemple quand le logiciel de musique s'arrête) met le séquenceur en pause même à l'arrêt, et PAGE tournait alors la page au lieu de faire sonner le pas, jusqu'au redémarrage" },
+    { en: "The same fix inside Model-TG, which includes the trig preview. Tested on a real Model:Cycles",
+      fr: "La même correction dans Model-TG, qui contient l'écoute d'un pas. Testé sur un vrai Model:Cycles" },
+  ] },
   { version: "1.14", date: "2026-10-04", changes: [
     { en: "Arpeggiator, fix: in live recording, the notes the arpeggiator plays are recorded one by one, each on its step with its length; the pattern only kept one of the notes, repeated (the retrig of the last key pressed)",
       fr: "Arpégiateur, correction : en live rec, les notes que joue l'arpégiateur sont enregistrées une à une, chacune sur son pas avec sa durée ; le pattern ne gardait qu'une des notes, répétée (le retrig de la dernière touche)" },

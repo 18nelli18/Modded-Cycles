@@ -58,10 +58,16 @@ def git(repo, *args):
 # et les applique tous en quittant le mode : son mq_toggle, appelé à la place de 0x40013904 (kit, piste, 1) en
 # 0x40023550, rejoint maintenant ce 0x40013904 d'origine. La file reste vide (mq_muted et mq_apply ne changent plus
 # rien), et la retouche a la même taille (10 o) : aucune adresse de Model-TG ne bouge.
+# Dans les deux aussi (04/10/2026, notes/34) : sa copie du tweak trig-preview de drumkilla (tweaks/, appliquée par son
+# build) reçoit la même retouche que notre 02-trig-preview.json. L'écoute refusait le séquenceur en pause (0x4005481a
+# vaut 2), où le met un Stop MIDI reçu, même à l'arrêt : PAGE tournait la page jusqu'au redémarrage. Elle ne refuse plus
+# que la lecture (bit 0) : « tst.l d0 ; bne » devient « lsr.l #1,d0 ; bcs », même taille.
 MC_PATCHES = (
     ("src/model_tg.s", "mq_toggle:\n    movel   %sp@(8),%d0\n    cmpil   #MAX_TRK,%d0\n",
      "mq_toggle:\n    jmp     0x40013904            | Modded-Cycles: the stock toggle, at once\n    nop\n    nop\n",
      "mode mute : chaque touche de piste mute tout de suite (mq_toggle -> 0x40013904 d'origine), sans file d'attente"),
+    ("tweaks/model-cycles_OS1.13/02-trig-preview.json", "4eb94005481a4a8066000138", "4eb94005481ae28865000138",
+     "écoute d'un pas : aussi séquenceur en pause (un Stop MIDI le met en pause ; PAGE tournait la page), notes/34"),
 )
 # --- version combinée (notes/31 §4) ---
 # Une seule : sa zone d'échantillons (0x4a800000..0x4e800000, vue sans cache des 64 Mo 0x42800000..0x46800000)

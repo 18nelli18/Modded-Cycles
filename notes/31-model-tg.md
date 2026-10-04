@@ -371,6 +371,7 @@ Question relayée par l'utilisateur le 03/10/2026 : « I'll go in Latch Mute mod
 - aucune adresse de Model-TG ne bouge : les 31 tweaks `31-syntakt-tg-…` restent valables tels quels.
 
 **Empreintes** : Model-TG seul `08d9f075…` (sans la retouche : `a049d724…`, celle annoncée par son auteur), toutes les combinaisons avec Model-TG changent (`REF_MAINOS`, `BUILD.md`).
+Mise à jour du 04/10/2026 : une seconde retouche, sur sa copie de l'écoute d'un pas ([note 34](34-ecoute-en-pause.md)) ; Model-TG seul passe à `eae3e848…`.
 
 **Preuve** : nouvelle partie 6 de `tools/emu/test_model_tg_syntakt.py`. `mq_toggle(kit, piste, 1)` rejoint `0x40013904` tout de suite, avec les mêmes arguments, et rien ne reste en attente. `mq_apply` n'a rien à faire.
 
