@@ -14,8 +14,8 @@ moteurs seuls (24-syntakt-….json).
   3. Son (la boucle des voix de l'OS) : machines d'origine identiques à Model-TG seul ; Sampler sans échantillon
      muet ; chaque moteur du Syntakt identique, échantillon par échantillon, à nos moteurs seuls ; et tout cela
      ensemble sur les 6 pistes.
-  4. Régulateur de charge : en surcharge, il éteint des voix, jamais le Sampler ni la piste dont Model-TG édite les
-     tranches (même règle que pour la piste qu'il enregistre).
+  4. Régulateur de charge (en assembleur, notes/36) : en surcharge, il éteint des voix, jamais le Sampler ni la piste
+     dont Model-TG édite les tranches (même règle que pour la piste qu'il enregistre).
   5. Slide trigs (Model-TG v1.1.0) : un glissement armé comme le fait son séquenceur arrive à la machine comme un
      paramètre qui bouge, sur une machine d'origine (Model-TG seul et version combinée) et sur chacun de nos moteurs.
   6. Mode mute (retouche MC_PATCHES de tools/gen_model_tg.py) : une touche de piste mute tout de suite, par le
@@ -42,6 +42,7 @@ sys.path.insert(0, str(HERE.parent))
 import build                        # noqa: E402
 import gen_sdvintage_7th as g7      # noqa: E402
 import gen_syntakt_engines as gs    # noqa: E402
+from gov_asm import x_var as gs_x   # noqa: E402
 import mcengine as E                # noqa: E402
 import syntakt                      # noqa: E402
 import test_model_tg as TM          # noqa: E402
@@ -367,8 +368,9 @@ TIMER, BLOCK = 0xfc07000c, 90112
 
 
 def governor(fw, ours_tw, codes, tg):
-    """Surcharge (comme test_governor.py) : le régulateur éteint des voix, jamais le Sampler ni la piste que
-    Model-TG enregistre ou dont il édite les tranches ; les voix épargnées restent identiques à la référence."""
+    """Surcharge (comme test_governor.py) : le régulateur (en assembleur, notes/36 : voice_gate et voice_after aussi
+    avec Model-TG) éteint des voix, jamais le Sampler ni la piste que Model-TG enregistre ou dont il édite les tranches ;
+    les voix épargnées restent identiques à la référence."""
     from unicorn import UC_HOOK_MEM_READ
     sy = {k: int(v, 16) for k, v in ours_tw["gov"].items()}
     cat = [gs.CATALOG[c] for c in codes]
@@ -399,7 +401,7 @@ def governor(fw, ours_tw, codes, tg):
         if rec is not None:          # Model-TG édite les tranches de cette piste (même règle que la piste enregistrée,
             e.uc.mem_write(tg["sle_run"], struct.pack(">I", 1))         # rs_src, dont la capture n'est pas émulée)
             e.uc.mem_write(tg["sle_trk"], struct.pack(">I", rec))
-        e.uc.mem_write(sy["gov_slow"], struct.pack(">I", 88 * 256 // 100))
+        e.uc.mem_write(gs_x(ours_tw, "X_SLOW"), struct.pack(">I", 88 * 65536 // 100))   # charge soutenue déjà là
         out, stolen, now = [], set(), 10_000_000
         for b in range(300):
             out.append(e.block(trigs.get(b, 0)))

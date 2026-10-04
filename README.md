@@ -18,7 +18,12 @@ Everything happens in your browser: nothing is uploaded anywhere.
 
 You need:
 - your official **`model-cycles_OS1.13.syx`** ([elektron.se](https://www.elektron.se/support-downloads/modelcycles), unzip the download);
-- a **USB cable**. On the Model:Cycles, open `CONFIG > UPGRADE` and confirm: it waits for the firmware.
+- a **USB cable**, the Model:Cycles on its usual screen and Elektron Transfer closed.
+
+The page flashes in **about 30 seconds** with the update protocol of Elektron Transfer (worked out by
+[Elektroid](https://github.com/dagargo/elektroid)): the Model:Cycles acknowledges every block, then asks you to confirm.
+The classic way (`CONFIG > UPGRADE`, 5 to 10 minutes) stays available as a fallback.
+You can also download the prepared `.syx` and drop it onto Elektron Transfer yourself.
 
 The web flasher only sends over USB, and only offers mods that keep OS updates over USB working.
 Its **Samples OS** tab turns the Model:Cycles into a Model:Samples (drop both official OS files); coming back needs a MIDI interface.
@@ -46,7 +51,8 @@ flash.bat         # Windows (double-click)
 ```
 
 The web flasher is a JavaScript port of `build.py` and `mtlib`, checked byte for byte against the Python
-(`tools/webflash_check.sh`, `tools/webbuild_check.sh`, `tools/webflash_smoke.sh`).
+(`tools/webflash_check.sh`, `tools/webbuild_check.sh`, `tools/webflash_smoke.sh`); its fast USB method is checked
+against Elektroid's C (`tools/webxfer_check.py`, [note 37](notes/37-flash-rapide-usb.md)).
 
 ## Features
 
@@ -57,6 +63,7 @@ By priority. Feasibility is detailed in [note 10](notes/10-faisabilite-fonctionn
 | **6-channel** USB output | ✅ **tested on a real Model:Cycles** — in the web flasher |
 | Keep **OS updates over USB** with the 6-channel mod | ✅ `6ch-usbup`, the version the web flasher installs ([note 13](notes/13-6ch-upgrade-usb.md)) |
 | **Steady USB stream** (a Reddit report: glitches with 6-channel audio and Model-TG, worse when muting tracks) | ✅ found in the stock OS's USB driver: each block went to the computer right after being computed, so at a moment that moved with the processor load, and the 6-channel mod's buffer only tolerated 0.2 ms of it; Model-TG and the Syntakt engines make the load swing (idle and muted tracks, effects off). Now each block leaves at the start of the next one, at a fixed moment (0.67 ms more latency), the queue is lined up when the stream starts, the 6-channel buffer gains a slot, and with Model-TG a muted track's stem is no longer cut off. A simulator running the OS's own USB driver goes from thousands of damaged frames to none ([note 35](notes/35-glitches-usb-multipiste.md), in French); **tested on the hardware** |
+| **Fewer cut notes under load** (with 6 busy tracks, the last track was often cut) | ✅ the load governor of the Syntakt engines reacted to single heavy blocks (a busy step, the screen redrawing), already over when measured, and picked the quietest voice *before* the mixer; its sustained-load rule never actually ran (its slow average could not rise, a rounding issue). It now needs the load to last two blocks, or to stay high (a working sustained-load rule that counts the voices it has just stopped, so no chain of cuts), and fades out the voice heard least in the mix (level × mixer volume and sends, a muted track first, the oldest note on a tie). Rewritten in assembly in place of the compiled code, with lighter per-voice bookkeeping, plus a shorter track-scaling loop in the original OS: same sound and same voice stops at normal load in the emulator ([note 36](notes/36-regulateur-sans-coupures-inutiles.md), in French); to be tried on the hardware |
 | **The real Syntakt SD VINTAGE engine**, extracted at build time from *your* Syntakt OS file | ✅ `sdvintage-exact`: the Syntakt's own code and tables, relocated into the Model:Cycles, replace SNARE — **sample-identical** to the Syntakt in emulation, and the bootstrap's own decompressor reads the bigger OS back exactly; **tested on a real Model:Cycles** (2026-09-30, flashed over USB from the web flasher); now command line only (`build.py --syntakt`): the web flasher only adds engines ([note 17](notes/17-portage-exact-syntakt.md)) |
 | The real SD VINTAGE as a **7th machine** (SDVtg), next to SNARE | ✅ `sdvintage-7th`: 7 machines in the MACHINES menu, its own knob names and defaults from the Syntakt (Inharm, Freq Complex, Pitch Sweep, Mod Envelope), SNARE unchanged; **tested on a real Model:Cycles** (2026-09-30, web flasher); 26 checks on the OS's own code in emulation ([note 18](notes/18-septieme-machine.md)) |
 | The real **CP VINTAGE** clap as an **8th machine** (CPVtg), with SDVtg | ✅ `syntakt-vintage`: 8 machines in the MACHINES menu, CPVtg with the Syntakt's knob names and defaults (Body Char, Balance, Spacing Crunch, Body Envelope); sample-identical to the Syntakt in emulation (26 checks); **tested on a real Model:Cycles** (2026-09-30, web flasher) ([note 19](notes/19-cp-vintage-8e-machine.md)) |

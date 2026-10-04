@@ -11,6 +11,7 @@
   "Flux USB robuste (notes/35) : chaque bloc part au debut de l'interruption suivante, a heure fixe,",
   "au lieu de juste apres son calcul ; file alignee au demarrage ; ring de 9 cases au lieu de 8 ;",
   "copie des 6 pistes deroulee (memes octets). Preuve : tools/emu/test_usb_in.py.",
+  "Boucle des voix : division des pistes par 2 plus courte (tools/voice_loop.py, notes/36), memes valeurs.",
   "Genere par tools/relocate_6ch.py depuis 6ch-multiout (decalage des stubs : -0x3f020)."
  ],
  "device": "Model:Cycles",
@@ -94,6 +95,11 @@
    "off": 364494,
    "old": "4eb940002912",
    "new": "4eb94015c2d6"
+  },
+  {
+   "off": 686634,
+   "old": "2211e281528022c17220b28066f2",
+   "new": "41e900802211e28122c1b3c866f6"
   },
   {
    "off": 745524,

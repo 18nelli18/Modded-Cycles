@@ -13,7 +13,8 @@
   "les machines d'origine, slide trigs (v1.1.0), Scale Lock, envoi d'\u00e9chantillons par Elektron Transfer, page",
   "System, et moins de charge processeur. Contient d\u00e9j\u00e0 les tweaks de drumkilla (mute verrouill\u00e9 modifi\u00e9,",
   "\u00e9coute d'un pas, d\u00e9filement des noms). Avec les moteurs du Syntakt, le flasher prend model-tg-st (notes/31).",
-  "Plus l'envoi \u00e0 l'USB \u00e0 heure fixe de ce d\u00e9p\u00f4t (tools/usb_steady.py, notes/35), comme 6ch-usbup.",
+  "Plus l'envoi \u00e0 l'USB \u00e0 heure fixe de ce d\u00e9p\u00f4t (tools/usb_steady.py, notes/35), comme 6ch-usbup,",
+  "et la division des pistes par 2 plus courte de la boucle des voix (tools/voice_loop.py, notes/36).",
   "G\u00e9n\u00e9r\u00e9 par tools/gen_model_tg.py. Aucun octet Elektron dans le code de Model-TG."
  ],
  "version": "v1.1.0",
@@ -444,6 +445,11 @@
    "off": 686623,
    "old": "91",
    "new": "71"
+  },
+  {
+   "off": 686634,
+   "old": "2211e281528022c17220b28066f2",
+   "new": "41e900802211e28122c1b3c866f6"
   },
   {
    "off": 689414,

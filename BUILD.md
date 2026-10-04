@@ -90,24 +90,24 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `6ch-usbup` | `a7086beef0aa10427248e0b191ee97ddc249b2460804422df7b17100febf1158` |
+| `6ch-usbup` | `57fa258f209c10359f6888af79087f656e994930ff86ffcc1e2e2e48512d9530` |
 | `sdvintage-snare` (v2, recalée sur le Syntakt) | `11049726efa102028f7365b0a672c8a244b98edcef5e7c8b5e0aafba369f60d3` |
 | `6ch-multiout,sdvintage-snare` | `80d0d717c5054f9277c2ddadb588e3578968cc1427610c7367ee408fa8ffd2de` |
-| `6ch-usbup,sdvintage-snare` | `caac2918d7b7ce85849ff9814a75549b03091199de202ae05b648f2fbef0fcb9` |
+| `6ch-usbup,sdvintage-snare` | `9416ac0b7f0bffda6b91490aacf1b00f831196466f5f64dc87b3a3b63cbc9ccb` |
 | `latching-mute,trig-preview,browser-scroll` | `c6aea7e51d1caf3e9be4553f3a0c5b033592d804cb25226ef9df3fd19add8c08` (`tweak.py` de drumkilla, sans la retouche de note 34 : `71fef138…`) |
-| `6ch-usbup,latching-mute,trig-preview,browser-scroll` | `19aafcf8250d9e21b604bb5b1088ac8db7f832395c48575b635135b845dea36b` |
+| `6ch-usbup,latching-mute,trig-preview,browser-scroll` | `b8911cb1692476c266fdad6fae7bdabd824bd8976149cc5a2baae4dfb9252176` |
 
 | `sdvintage-exact` (avec `--syntakt Syntakt_OS1.42.syx`) | `8e2290a79fb1406ce65b3af3c5d3d95faade666e98eb8ecce0c0fa25fe87b15d` |
-| `6ch-usbup,sdvintage-exact` (idem) | `97dadf3884a2703c4f7b230c9a046ae735292d57ac6576ff2e6d5bf72a12c670` |
+| `6ch-usbup,sdvintage-exact` (idem) | `bd729d526c992fb5d678a1a2793d012fdcec47f6584631fc01afa896483fc061` |
 | `syntakt-vintage` (idem) | `b4de3ec5f7eda7504bf03e7141f57bae6cf5bc137d39f6704da60881d56ed9b0` |
 | `sdvintage-7th` (idem) | `c73ad4c796b94ab39d106d0798091eb39b5e3e31f66d7fe78e2db30db44daad3` |
-| `syntakt-cp` (idem) | `baf05027e0644df679269672d939b83d67c100de069bc3ec2397d1ad39580de5` |
-| `syntakt-toy` (idem) | `667c2655ad79692d895d18463660e43bc46f03c421ad03de6fc0116e05881a51` |
-| `syntakt-sd-cp-toy` (idem) | `859fc46cc8e794430e8c9553a92bb6fe42a315a423b75f96134644534a2002c5` |
-| `syntakt-bits` (idem) | `901205ed00b3e5652130f10b2f5b3e5ad9a48574392b9591b1ccd3d1cbdf8e8a` |
-| `syntakt-sd-cp-toy-bits` (idem) | `d37c343583fe6b6f19dcf90fb2243b43301fee9d6a7ce78c4253823eb55c7e3f` |
-| `syntakt-swarm` (idem) | `872c6ee8e4af779cc7b6184979174ee6a2f8eb7b9372044b41c0e5bd39b0888f` |
-| `syntakt-sd-cp-toy-bits-swarm` (idem) | `c4616b24e394383986f1f31c6c5bf3bc78322593c6997bd0a199c55fd26f9b3c` |
+| `syntakt-cp` (idem) | `e9e3a8c7aa438a00cc028574b78dac33a6b7a44cdf98623eaa1edcf4668ac1ee` |
+| `syntakt-toy` (idem) | `a3d8fad221ed0920ec15ea0e791e3be3e869b04b147affefcda4108d0248796c` |
+| `syntakt-sd-cp-toy` (idem) | `ea04669bbe10d83505cd9c2b4654f46c53dd1fc55d4d5229d2cad33c6e5f0a0e` |
+| `syntakt-bits` (idem) | `0e73d4f76bb947db6392b7e1e1547f2951ec8fe1924668bec532ee9b531f93bd` |
+| `syntakt-sd-cp-toy-bits` (idem) | `c6add70bea5a1f6d0d4bf6aa26ae454dc6f873c6ab55937edbd7d9ad7d96c86c` |
+| `syntakt-swarm` (idem) | `b47c9d7d2fb8d9568503033a3d0f318396c4b52b8df34c081564005c92b69517` |
+| `syntakt-sd-cp-toy-bits-swarm` (idem) | `c6cdfe22fe5a280c1e42ae1f11ae25156d86b36da1e9d0e83f1d6c3227117b7c` |
 
 ### Model-TG
 
@@ -124,8 +124,8 @@ python3 tools/gen_model_tg.py --cycles model-cycles_OS1.13.syx --model-tg vendor
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `model-tg` | `5c3a3006059d14fa3276b79278675776a63b891bd0d9df1517de524a5e4bf528` (sans nos ajouts : `a049d724…`, celle annoncée par Model-TG pour sa v1.1.0) |
-| `6ch-usbup,model-tg` | `8366b198cc5696bfec14e8606438abc8603fc0bfd0823d5137e7e19c39996f84` |
+| `model-tg` | `aa0740d714d502d440ec003cca8ca389c1ac9190de28395aef748ec9bf5c4c3a` (sans nos ajouts : `a049d724…`, celle annoncée par Model-TG pour sa v1.1.0) |
+| `6ch-usbup,model-tg` | `96b6aec20df7c66f4a8d84c3ab4358a92b01d754c319923927d272aed0d34322` |
 
 Le même script écrit `30-model-tg-st.json`, la base de la **version combinée avec les moteurs du Syntakt** : Model-TG construit par son
 build depuis une copie de sa source, avec les mêmes ajouts et une retouche de plus (sa zone d'échantillons s'arrête 1 Mo plus bas). Les moteurs s'appliquent
@@ -138,9 +138,9 @@ python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --sy
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `model-tg-st,syntakt-tg-sd` | `266480c584e5d16f652d9b96164cedb766b0cfcd2be2b54c125a6946b9c52645` |
-| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `b4e074fe486843363acb9bdd51d25a944483e557020eb8dedda4b4a31fb8c235` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `3d5109dd23c4963bab6d17c94e71c07029d2e58b18ff9bb891dc4be9a15b654e` |
+| `model-tg-st,syntakt-tg-sd` | `f09ab68d48b7cfb58604ce6dc31f0998def25390e0a02aa83ecd304754ef8321` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `d5e73e10a07042a85e9022e87e488b6ca4960ecef69f49652d5c3dc706a1f6fc` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `70354db7660a9ffc60956d523d2976299be4fa4813e483c1222abe26edae2b3c` |
 
 Les 2 303 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
 `tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;
@@ -163,8 +163,8 @@ python3 tools/emu/test_arp.py --cycles model-cycles_OS1.13.syx \
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
 | `arp` | `e445bf895123d3fc94762a65739558b579ec8df3000c9bdf5747a3d73287e6a6` |
-| `model-tg,arp` | `311601ec1bc16fc14ba2541a8257606fef856f15a16d985364639d1514d97f55` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp` | `a89b22c31e6ad5759dfbb1968c3d725d9c13d2d8f6de42db9fcda55e69c3fcf1` |
+| `model-tg,arp` | `062f16db10bae6d9d3c6fda89aff382bf2896b531a6b511c236bb07c632247be` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp` | `f933b2b99cf4d525e9529c0c6c445f2f45b94b5f479d3157a0821f566a3ac592` |
 
 L'arpégiateur et les moteurs du Syntakt libèrent le même masque (`0x4016cae8`) : les deux constructeurs (`tools/build.py`,
 `docs/flasher/builder.js`) acceptent une écriture déjà faite à l'identique par un autre tweak.
@@ -184,9 +184,9 @@ python3 tools/emu/test_trig_hold.py --cycles model-cycles_OS1.13.syx \
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
 | `trig-hold` | `bbb8a4217a888c46a60cfb17ae444bec9cf21d6ff2d2d36bf8d1f1cdb81d1ef4` |
-| `6ch-usbup,trig-hold` | `304c2f9a1656d35abacd5d6d2161d181fbc763fa6ac4c432b2226332554ccb1b` |
-| `model-tg,trig-hold` | `82ca4c9789fac1399f8e085bfcb5b666c7375089ee898db6b4b97afec8b77622` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp` | `9c8c272f24fb7e3c0d26663e110f6dfed8c8098d669869c7ba91be25fa08a7ef` |
+| `6ch-usbup,trig-hold` | `5be28240875818efd2b912680bb589300cd51a2c0aa4a86ae289b3241fbf7f44` |
+| `model-tg,trig-hold` | `f71e6ea6d7bc530e3ad255b161babbfa388a93595d74c671a4ed9793bde5c87c` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp` | `ea715e19eec998366c2c8e4ef40c354060dd3550fc42a89b46e77b71256f4ba2` |
 
 Avec `6ch-usbup`, les deux tweaks réécrivent de la même façon le pointeur du sprite dont le masque est libéré.
 

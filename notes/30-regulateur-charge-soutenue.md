@@ -11,6 +11,7 @@ Travail du 01/10/2026, après le relevé de l'utilisateur avec le firmware de di
 | Nouvelle règle | `[FAIT]` charge soutenue sur environ 170 ms, pic à 93 %, voix du Syntakt plus comptées pour moitié (§2) |
 | Preuve en émulation | `[FAIT]` (§3) |
 | Essai sur la machine | `[FAIT]` « ça marche bien » : 6 pistes avec effets, 89/78, pas de craquement (§6) |
+| Suite | règle revue et réécrite en assembleur, [36](36-regulateur-sans-coupures-inutiles.md) : pic qui dure deux blocs, plus de coupures en chaîne, voix la moins audible dans le mix |
 
 ## 1. Relevé du diagnostic v8 (01/10/2026)
 

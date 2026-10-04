@@ -175,19 +175,31 @@ Quatre étapes, de haut en bas :
 2. **Déposer l'OS officiel** `model-cycles_OS1.13.syx` : il est reconnu à son empreinte, et le firmware est **construit
    automatiquement** (pas de bouton). La page **exige** le MAIN OS de référence de chaque combinaison (voir [BUILD.md](BUILD.md)),
    sinon elle refuse. Un `.syx` qui n'est pas l'OS officiel est accepté s'il est valide, mais envoyé **tel quel**.
-3. **Brancher en USB** : câble USB, Model:Cycles allumé normalement, `CONFIG › UPGRADE` puis *YES*. La page choisit
-   le port « Model:Cycles » et prévient si tu en prends un autre. Il n'y a plus de voie MIDI IN dans la page :
+3. **Brancher en USB** : câble USB, Model:Cycles allumé normalement. Deux méthodes :
+   - **Rapide** (par défaut, [note 37](notes/37-flash-rapide-usb.md)) : le protocole de mise à jour d'Elektron Transfer,
+     tel que documenté par [Elektroid](https://github.com/dagargo/elektroid). Le Model:Cycles reste sur son écran habituel
+     (aucun menu), Elektron Transfer doit être **fermé** (il occupe le port). La page demande à la machine qui elle est
+     (modèle, version d'OS) et refuse d'envoyer un firmware Model:Cycles à une machine qui répond « Model:Samples »
+     (OS Samples, ou Model-TG avec *Device Config › Transfer* sur SMP). Une trentaine de secondes (33 s mesurées) ; à la fin,
+     **confirmer sur la machine** (YES). Testé sur un vrai Model:Cycles le 04/10/2026.
+   - **Classique** : `CONFIG › UPGRADE` puis *YES*, le `.syx` est envoyé à la vitesse du fil MIDI (5 à 10 minutes).
+     La solution de secours si la méthode rapide ne trouve pas la machine.
+   La page choisit le port « Model:Cycles » et prévient si tu en prends un autre. Il n'y a plus de voie MIDI IN dans la page :
    la récupération par le menu de démarrage (FUNC + allumage, TRIG 4) passe par les scripts des §3 à §5.
 4. **Flasher** : le bouton indique ce qui manque encore ; pendant l'envoi, progression, temps restant et bouton **Stop** ;
-   l'écran reste allumé (garde l'onglet au premier plan). Les réglages rares (marge de vitesse, téléchargement du `.syx`,
-   journal) sont dans *Advanced*.
+   l'écran reste allumé (garde l'onglet au premier plan). En méthode rapide, la page suit ensuite le redémarrage
+   et relit la version d'OS. Le bouton **Télécharger le .syx** donne le fichier préparé, à glisser sur la fenêtre
+   d'**Elektron Transfer** (même protocole rapide, même confirmation sur la machine). La marge de vitesse (méthode
+   classique) et le journal sont dans *Advanced*.
 
 En local : `python3 -m http.server` dans `docs/`, puis `http://localhost:8000/flasher/` (Web MIDI exige `https://` ou `localhost`).
 
-Fidélité vérifiée sans matériel : `tools/webflash_check.sh` compare le **vérificateur** JS à `tools/mtlib/syx.py`,
+Fidélité vérifiée sans matériel : `tools/webxfer_check.py` compare la **méthode rapide** (empaquetage 7 bits, CRC,
+octets de chaque message) à une transcription ligne à ligne du C d'Elektroid ; `tools/webflash_check.sh` compare le **vérificateur** JS à `tools/mtlib/syx.py`,
 et `tools/webbuild_check.sh` compare le **constructeur** JS (`docs/flasher/builder.js`) à `tools/build.py` (aPLib + conteneur + HMAC)
 à l'octet près, sur une image synthétique. `tools/webflash_smoke.sh` joue le parcours complet de la page dans jsdom
-(avec `tools/webflash_smoke.sh model-cycles_OS1.13.syx`, il vérifie aussi les 15 combinaisons proposées sur le vrai OS).
+face à un faux Model:Cycles qui parle le protocole de Transfer (il garde chaque octet reçu et vérifie chaque CRC)
+(avec `tools/webflash_smoke.sh model-cycles_OS1.13.syx`, il vérifie aussi toutes les combinaisons proposées sur le vrai OS).
 Les tables de patchs de la page viennent de `docs/flasher/tweaks.js`, généré depuis `tweaks/` par `tools/gen_flasher_tweaks.py` (`--check` en CI).
 
 ## 8. Méthode manuelle (sans les scripts)

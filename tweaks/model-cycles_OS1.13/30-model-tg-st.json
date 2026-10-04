@@ -10,7 +10,8 @@
   "  - tweaks/model-cycles_OS1.13/02-trig-preview.json : \u00e9coute d'un pas : aussi s\u00e9quenceur en pause (un Stop MIDI le met en pause ; PAGE tournait la page), notes/34",
   "  - src/model_tg.s : audio USB multipiste : une piste mut\u00e9e ou au volume 0 n'est plus coup\u00e9e net sur sa piste USB (voice_quiet)",
   "  - src/model_tg.s : zone d'\u00e9chantillons : 1 Mo de moins, laiss\u00e9 aux moteurs du Syntakt (0x46700000..0x46800000)",
-  "Plus l'envoi \u00e0 l'USB \u00e0 heure fixe de ce d\u00e9p\u00f4t (tools/usb_steady.py, notes/35), comme 6ch-usbup.",
+  "Plus l'envoi \u00e0 l'USB \u00e0 heure fixe de ce d\u00e9p\u00f4t (tools/usb_steady.py, notes/35), comme 6ch-usbup,",
+  "et la division des pistes par 2 plus courte de la boucle des voix (tools/voice_loop.py, notes/36).",
   "Base de la version combin\u00e9e Model-TG + moteurs du Syntakt (notes/31) : ne s'installe qu'avec un tweak",
   "syntakt-tg-\u2026, qui s'ajoute apr\u00e8s lui et cha\u00eene ses d\u00e9tours."
  ],
@@ -442,6 +443,11 @@
    "off": 686623,
    "old": "91",
    "new": "71"
+  },
+  {
+   "off": 686634,
+   "old": "2211e281528022c17220b28066f2",
+   "new": "41e900802211e28122c1b3c866f6"
   },
   {
    "off": 689414,

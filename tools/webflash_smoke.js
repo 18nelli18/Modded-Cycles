@@ -1,5 +1,7 @@
 /* Browser smoke test (jsdom) of the web flasher: loads the real page and its scripts,
  * fakes Web MIDI, and walks through the 4 steps (choose, OS file, connect over USB, flash).
+ * The fake Model:Cycles answers the Elektron Transfer protocol (fast method) with its own
+ * decoder and zlib's CRC, and keeps every byte it is sent, to compare with the firmware.
  * Run through tools/webflash_smoke.sh (installs jsdom in a temp folder).
  *   node tools/webflash_smoke.js <synth_dir> [model-cycles_OS1.13.syx] [model-samples_OS1.13.syx] [Syntakt_OS1.42.syx or 1.41]
  * The optional official files are told apart by their names. The Model:Cycles OS checks every
@@ -8,6 +10,7 @@
  * to end (REF_SAMPLES_ON_CYCLES); with the Syntakt OS, the Syntakt engines flow is. */
 const fs = require("fs");
 const path = require("path");
+const zlib = require("zlib");
 const { pathToFileURL } = require("url");
 const { JSDOM, VirtualConsole } = require("jsdom");
 
@@ -35,11 +38,67 @@ async function pickEngines(doc, codes) {
   }
 }
 
-async function load({ midi = true, ports = true, secure = true, lang = "en", devName = "Elektron Model:Cycles" } = {}) {
+// Elektron Transfer protocol, written apart from flasher.js (Elektroid's packing: a byte with the
+// high bits of the next 7, first one in bit 6).
+const XHEAD = [0xf0, 0x00, 0x20, 0x3c, 0x10, 0x00];
+function unpack(src) {
+  const out = [];
+  for (let i = 0; i < src.length; i += 8)
+    for (let k = 1; k < 8 && i + k < src.length; k++) out.push(src[i + k] | ((src[i] << k) & 0x80));
+  return Uint8Array.from(out);
+}
+function pack(src) {
+  const out = [];
+  for (let j = 0; j < src.length; j += 7) {
+    const grp = Array.from(src.slice(j, j + 7));
+    out.push(grp.reduce((hi, b, k) => hi | ((b >> 7) << (6 - k)), 0), ...grp.map((b) => b & 0x7f));
+  }
+  return Uint8Array.from([...XHEAD, ...out, 0xf7]);
+}
+const be = (m, o) => ((m[o] << 24) | (m[o + 1] << 16) | (m[o + 2] << 8) | m[o + 3]) >>> 0;
+const cstr = (str) => [...Buffer.from(str, "latin1"), 0];
+
+// A Model:Cycles on USB: answers ping, version, OS upgrade start and blocks like the real one
+// (src/connectors/elektron.c), and records what it receives.
+function fakeDevice(opts, reply) {
+  const dev = Object.assign({ id: 27, name: "Model Cycles", version: "1.13", startStatus: 0, writeError: -1, silent: false,
+    pings: 0, starts: 0, blocks: 0, received: null, size: 0, next: 0, bad: [] }, opts);
+  dev.handle = (d) => {
+    if (d.length < 8 || XHEAD.some((b, k) => d[k] !== b)) return;           // not for the Transfer protocol
+    const m = unpack(d.subarray(6, d.length - 1));
+    const head = [0, 0, m[0], m[1], m[4] | 0x80];
+    let r = null;
+    if (m[4] === 0x01) { dev.pings++; r = [...head, dev.id, 1, 0, ...cstr(dev.name)]; }
+    else if (m[4] === 0x02) r = [...head, 0, 0, 0, 0, 0, ...cstr(dev.version)];
+    else if (m[4] === 0x50) {
+      dev.starts++;
+      dev.size = m[5] | (m[6] << 8) | (m[7] << 16) | (m[8] << 24);      // little-endian, as Elektroid's memcpy
+      if (Buffer.from(m.subarray(9, 16)).toString("latin1") !== "sysex\0\x01") dev.bad.push("start tail");
+      dev.received = new Uint8Array(dev.size); dev.next = 0; dev.blocks = 0;
+      r = [...head, dev.startStatus, ...(dev.startStatus ? cstr("No space") : [0])];
+    } else if (m[4] === 0x51) {
+      const crc = be(m, 5), len = be(m, 9), off = be(m, 13), data = m.subarray(17);
+      if (data.length !== len || off !== dev.next || len > 0x800 || crc !== zlib.crc32(data, 0xffffffff) >>> 0)
+        dev.bad.push(`block ${dev.blocks}: len ${len}/${data.length}, offset ${off}/${dev.next}`);
+      dev.received.set(data, off);
+      dev.next = off + len;
+      const op = dev.blocks === dev.writeError ? 2 : dev.next >= dev.size ? 1 : 0;
+      dev.blocks++;
+      r = [...head, 0, 0, 0, 0, op];
+    }
+    if (r && !dev.silent) setTimeout(() => reply(pack(r)), 1);
+  };
+  return dev;
+}
+
+async function load({ midi = true, ports = true, inputs = true, busy = false, secure = true, lang = "en", devName = "Elektron Model:Cycles", device = {} } = {}) {
   const errors = [];
   const vc = new VirtualConsole();
   vc.on("jsdomError", (e) => errors.push("jsdomError: " + ((e.detail && e.detail.message) || e.message || e)));
   const sent = [];
+  const listeners = new Set();
+  const dev = fakeDevice(device, (data) => listeners.forEach((f) => f({ data })));
+  let access = null, devOut = null, devIn = null;
   const html = fs.readFileSync(path.join(FLASH, "index.html"), "utf8");
   const dom = new JSDOM(html, {
     url: pathToFileURL(path.join(FLASH, "index.html")).href,
@@ -50,12 +109,19 @@ async function load({ midi = true, ports = true, secure = true, lang = "en", dev
       window.addEventListener("error", (e) => errors.push("window.onerror: " + ((e.error && e.error.message) || e.message)));
       window.addEventListener("unhandledrejection", (e) => errors.push("unhandled: " + ((e.reason && e.reason.message) || e.reason)));
       if (midi) {
-        const outputs = new Map();
+        const outputs = new Map(), ins = new Map();
         if (ports) {
-          outputs.set("dev", { id: "dev", name: devName, manufacturer: "Elektron", send: (d) => sent.push(d.length) });
+          devOut = { id: "dev", name: devName, manufacturer: "Elektron", state: "connected",
+            send: (d) => { sent.push(d.length); dev.handle(d); }, open: () => Promise.resolve(), close: () => Promise.resolve() };
+          outputs.set("dev", devOut);
           outputs.set("iface", { id: "iface", name: "USB MIDI Interface", manufacturer: "Acme", send: (d) => sent.push(d.length) });
+          devIn = { id: "dev-in", name: devName, manufacturer: "Elektron", state: "connected",
+            open: () => (busy ? Promise.reject(new Error("InvalidAccessError: port in use")) : Promise.resolve()),
+            close: () => Promise.resolve(), addEventListener: (t, f) => listeners.add(f), removeEventListener: (t, f) => listeners.delete(f) };
+          if (inputs) ins.set("dev-in", devIn);
         }
-        window.navigator.requestMIDIAccess = () => Promise.resolve({ outputs, onstatechange: null });
+        access = { outputs, inputs: ins, onstatechange: null };
+        window.navigator.requestMIDIAccess = () => Promise.resolve(access);
       }
       window.URL.createObjectURL = () => "blob:x";
       window.URL.revokeObjectURL = () => {};
@@ -64,7 +130,18 @@ async function load({ midi = true, ports = true, secure = true, lang = "en", dev
   await wait(300);
   // tweaks.js fait plus d'1 Mo : sur une machine occupée, les scripts peuvent mettre plus de 300 ms à se charger
   for (let i = 0; i < 200 && !(dom.window.MCFlasherApp && dom.window.MC_TWEAKS && dom.window.MCBuilder); i++) await wait(50);
-  return { dom, w: dom.window, doc: dom.window.document, errors, sent };
+  return { dom, w: dom.window, doc: dom.window.document, errors, sent, dev, listeners,
+    access: () => access, devOut: () => devOut, devIn: () => devIn };
+}
+
+// No pause between blocks (50 ms on the real machine): a 2.5 MB file goes through in a few seconds.
+function noRest(w) {
+  const orig = w.MCFlasher.upgradeFast;
+  w.MCFlasher.upgradeFast = (session, raw, opts) => orig(session, raw, Object.assign({}, opts, { restMs: 0 }));
+}
+const same = (a, b) => !!a && !!b && a.length === b.length && Buffer.compare(Buffer.from(a), Buffer.from(b)) === 0;
+async function untilSent(w, ms = 60000) {
+  for (let i = 0; i < ms / 50 && w.MCFlasherApp.state.sending; i++) await wait(50);
 }
 
 const text = (doc, id) => doc.getElementById(id).textContent;
@@ -182,28 +259,72 @@ async function main() {
     doc.querySelector('.lang button[data-lang="en"]').click();
     await wait(20);
 
-    // Connection: USB only
+    // Connection: USB only, fast method by default, classic as the fallback
     check(doc.querySelectorAll('input[name="method"]').length === 0 && !doc.getElementById("howto-midi")
       && !/MIDI IN|READY TO RECEIVE|TRIG 4/.test(text(doc, "step-connect")), "no MIDI IN route in step 3");
-    check(/CONFIG › UPGRADE/.test(text(doc, "howto-usb")) && !doc.getElementById("howto-usb").hidden, "USB steps shown");
+    check(doc.getElementById("m-fast").getAttribute("aria-checked") === "true" && !doc.getElementById("howto-fast").hidden
+      && doc.getElementById("howto-usb").hidden && /Close Elektron Transfer/.test(text(doc, "howto-fast"))
+      && !/CONFIG › UPGRADE/.test(text(doc, "howto-fast")) && /about 30 seconds/.test(text(doc, "method-note")),
+      "fast method by default: its steps (close Transfer, no menu to open)");
     doc.getElementById("allow").click();
-    await wait(80);
+    await wait(150);
     const sel = doc.getElementById("port");
     check(!sel.hidden && sel.value === "dev", "Allow MIDI -> Model:Cycles port preselected (" + sel.value + ")");
-    check(/USB port is selected/.test(text(doc, "midi-status")), "status: " + text(doc, "midi-status").slice(0, 50));
+    check(/Model:Cycles found: OS 1\.13/.test(text(doc, "midi-status")) && doc.getElementById("step-connect").classList.contains("done"),
+      "fast: the machine is asked who it is: " + text(doc, "midi-status").slice(0, 50));
+    doc.getElementById("m-slow").click();
+    await wait(20);
+    check(/CONFIG › UPGRADE/.test(text(doc, "howto-usb")) && !doc.getElementById("howto-usb").hidden && doc.getElementById("howto-fast").hidden
+      && /USB port is selected/.test(text(doc, "midi-status")) && /5 to 10 minutes/.test(text(doc, "method-note")),
+      "classic method: CONFIG › UPGRADE steps, status: " + text(doc, "midi-status").slice(0, 50));
     sel.value = "iface";
     sel.dispatchEvent(new w.Event("change"));
     await wait(20);
     check(/pick the port named/i.test(text(doc, "midi-status")), "another port -> warning");
+    doc.getElementById("m-fast").click();
+    await wait(20);
+    check(/pick the port named/i.test(text(doc, "midi-status")) && w.MCFlasherApp.state.dev.state === "noinput", "fast, another port (output only) -> warning");
+    doc.querySelector('.lang button[data-lang="fr"]').click();
+    await wait(20);
+    check(/Rapide \(USB\)/.test(text(doc, "m-fast")) && /Fermez Elektron Transfer/.test(text(doc, "howto-fast")), "FR: method and steps translated");
+    doc.querySelector('.lang button[data-lang="en"]').click();
+    await wait(20);
+  }
+
+  // 1c. Fast method: a machine that doesn't answer (CONFIG > UPGRADE open, Transfer running), no MIDI input
+  {
+    const { doc, dev } = await load({ device: { silent: true } });
+    doc.getElementById("allow").click();
+    await wait(1300);
+    check(/doesn't answer/.test(text(doc, "midi-status")) && dev.pings === 1, "silent machine -> 'doesn't answer' after the 1 s handshake");
+    dev.silent = false;
+    doc.getElementById("refresh").click();
+    await wait(150);
+    check(/Model:Cycles found/.test(text(doc, "midi-status")) && dev.pings === 2, "Refresh asks again -> found");
+  }
+  {
+    const { doc } = await load({ busy: true });
+    doc.getElementById("allow").click();
+    await wait(100);
+    check(/in use by another program: close Elektron Transfer/.test(text(doc, "midi-status")), "port held by another program -> says so");
+  }
+  {
+    const { doc } = await load({ inputs: false });
+    doc.getElementById("allow").click();
+    await wait(100);
+    check(/no MIDI input from the Model:Cycles/.test(text(doc, "midi-status")), "no MIDI input -> says the fast method needs both directions");
   }
 
   // 1b. A Model:Cycles running the Samples OS shows up as "Model:Samples": it refuses a Model:Cycles firmware
   {
-    const { doc } = await load({ devName: "Elektron Model:Samples" });
+    const { doc } = await load({ devName: "Elektron Model:Samples", device: { id: 25, name: "Model Samples" } });
     doc.getElementById("allow").click();
-    await wait(80);
-    check(doc.getElementById("port").value === "dev" && /refuses a Model:Cycles firmware/.test(text(doc, "midi-status")),
-      "Model:Samples port -> warning about the way back");
+    await wait(150);
+    check(doc.getElementById("port").value === "dev" && /Model:Samples found/.test(text(doc, "midi-status")),
+      "fast: Model:Samples port -> identified: " + text(doc, "midi-status").slice(0, 60));
+    doc.getElementById("m-slow").click();
+    await wait(20);
+    check(/refuses a Model:Cycles firmware/.test(text(doc, "midi-status")), "classic: Model:Samples port -> warning about the way back");
   }
 
   // 2. No Web MIDI (Firefox / Safari) -> clear banner
@@ -227,7 +348,8 @@ async function main() {
 
   // 5. Build from a synthetic OS, then flash, then stop
   if (SYNTH) {
-    const { w, doc, errors, sent } = await load();
+    const env5 = await load();
+    const { w, doc, errors, sent } = env5;
     const raw = new Uint8Array(fs.readFileSync(path.join(SYNTH, "synth.syx")));
     const meta = JSON.parse(fs.readFileSync(path.join(SYNTH, "meta.json")));
     const app = w.MCFlasherApp;
@@ -260,12 +382,74 @@ async function main() {
     check(app.state.fw && app.state.fw.kind === "built" && doc.getElementById("drop3-wrap").hidden, "Syntakt engines unticked -> back to the 6-channel build");
 
     doc.getElementById("allow").click();
-    await wait(80);
+    await wait(150);
     check(/Tick the box/.test(text(doc, "missing")), "asks for the confirmation box");
     doc.getElementById("ack").click();
     await wait(20);
     check(!doc.getElementById("flash").disabled, "flash button enabled when everything is ready");
-    check(/via Elektron Model:Cycles/.test(text(doc, "summary")), "summary: " + text(doc, "summary"));
+    const fastMin = Math.max(1, Math.round(w.MCFlasher.fastSeconds(app.state.fw.raw) / 60));   // 2.5 MB synthetic file: 2 min
+    check(text(doc, "summary").endsWith(`via Elektron Model:Cycles · about ${fastMin} min`) && fastMin <= 2 && /confirm on its screen/.test(text(doc, "missing")),
+      "fast summary: " + text(doc, "summary"));
+    const dl = doc.getElementById("download");
+    check(!doc.getElementById("alt").hidden && dl.getAttribute("download") === app.state.fw.name && /Elektron Transfer/.test(text(doc, "alt")),
+      "step 4 offers the .syx for Elektron Transfer: " + dl.getAttribute("download"));
+
+    // fast: stop during the transfer (real 50 ms pause between blocks)
+    const { dev } = env5;
+    doc.getElementById("flash").click();
+    await wait(400);
+    check(!doc.getElementById("stop").hidden && /Flashing/.test(text(doc, "flash")) && dev.starts === 1 && dev.blocks > 1
+      && doc.getElementById("m-slow").disabled, `fast transfer running: ${dev.blocks} blocks acknowledged, method locked`);
+    doc.getElementById("stop").click();
+    await untilSent(w);
+    check(app.state.finished === "stopped" && /Stopped before the end/.test(text(doc, "result")) && dev.next < dev.size,
+      "fast: Stop -> clear message, the machine didn't get the whole file");
+
+    // fast: full transfer, byte for byte, then the machine restarts
+    noRest(w);
+    const fw5 = app.state.fw.raw;
+    doc.getElementById("flash").click();
+    await untilSent(w);
+    check(app.state.finished === "ok" && same(dev.received, fw5) && dev.bad.length === 0 && dev.starts === 2
+      && dev.blocks === Math.ceil(fw5.length / 0x800),
+      `fast: the machine received the whole .syx, byte for byte, CRC checked (${dev.blocks} blocks) ` + dev.bad.slice(0, 2).join("; "));
+    check(/Firmware sent/.test(text(doc, "result")) && /confirm the update on the Model:Cycles screen/.test(text(doc, "after"))
+      && /6 input channels/.test(text(doc, "result")), "fast: success -> confirm on the machine, 6-channel hint");
+    const out5 = env5.devOut(), in5 = env5.devIn();
+    out5.state = in5.state = "disconnected";
+    env5.access().onstatechange({ port: out5 });
+    await wait(20);
+    check(/writing the firmware and restarting/.test(text(doc, "after")), "machine gone -> 'writing and restarting'");
+    out5.state = in5.state = "connected";
+    dev.version = "1.13B";
+    env5.access().onstatechange({ port: out5 });
+    await wait(2800);
+    check(/is back: Model:Cycles OS 1\.13B/.test(text(doc, "after")), "machine back -> asked again: " + text(doc, "after"));
+
+    // fast: refusals
+    dev.startStatus = 1;
+    doc.getElementById("flash").click();
+    await untilSent(w);
+    check(app.state.finished === "error" && /refused the update \(“No space”\)/.test(text(doc, "result")), "start refused -> " + text(doc, "result").slice(0, 60));
+    dev.startStatus = 0; dev.writeError = 3;
+    doc.getElementById("flash").click();
+    await untilSent(w);
+    check(app.state.finished === "error" && /error while receiving/.test(text(doc, "result")) && dev.blocks === 4, "block refused -> stops there");
+    dev.writeError = -1; dev.id = 25;
+    doc.getElementById("refresh").click();
+    await wait(150);
+    check(doc.getElementById("flash").disabled && /can't take this firmware/.test(text(doc, "missing"))
+      && /answers as a Model:Samples/.test(text(doc, "midi-status")), "machine answering as a Model:Samples (Model-TG on SMP) -> nothing sent");
+    dev.id = 27;
+    doc.getElementById("refresh").click();
+    await wait(150);
+    check(!doc.getElementById("flash").disabled, "back to a Model:Cycles -> ready");
+
+    // classic method
+    doc.getElementById("m-slow").click();
+    await wait(20);
+    check(/via Elektron Model:Cycles · about \d+ min/.test(text(doc, "summary")) && /Open CONFIG › UPGRADE/.test(text(doc, "missing")),
+      "classic summary: " + text(doc, "summary"));
 
     // stop during a paced transfer
     doc.getElementById("flash").click();
@@ -283,7 +467,8 @@ async function main() {
     for (let i = 0; i < 200 && app.state.sending; i++) await wait(50);
     const total = w.MCFlasher.splitMessages(app.state.fw.raw).length;
     check(sent.length - n0 === total, `every packet sent (${sent.length - n0}/${total})`);
-    check(app.state.finished === "ok" && /Transfer complete/.test(text(doc, "result")), "success message shown");
+    check(app.state.finished === "ok" && /Transfer complete/.test(text(doc, "result")) && /UPDATING FLASH/.test(text(doc, "result")),
+      "success message shown");
     check(/6 input channels/.test(text(doc, "result")), "6-channel hint after success");
     check(errors.length === 0, "no JS error during the flow " + (errors.length ? JSON.stringify(errors) : ""));
   }
@@ -343,7 +528,8 @@ async function main() {
 
   // 7. "Samples OS" tab with both official files
   if (REAL_OS && REAL_SMP) {
-    const { w, doc, errors, sent } = await load();
+    const env7 = await load();
+    const { w, doc, errors, sent } = env7;
     const app = w.MCFlasherApp;
     const cyc = new Uint8Array(fs.readFileSync(REAL_OS)), smp = new Uint8Array(fs.readFileSync(REAL_SMP));
     doc.getElementById("tab-samples").click();
@@ -365,6 +551,7 @@ async function main() {
     check(f && f.kind === "samples" && sha === app.REF_SAMPLES_ON_CYCLES, "both files -> reference build (" + (sha || "").slice(0, 16) + ")");
     check(/Model:Samples OS for your Model:Cycles/.test(text(doc, "file-status")) && /recognised/.test(text(doc, "file2-status")),
       "status lines for both files");
+    doc.getElementById("m-slow").click();
     doc.getElementById("allow").click();
     await wait(80);
     doc.getElementById("ack").click();
@@ -386,6 +573,13 @@ async function main() {
     for (let i = 0; i < 200 && app.state.sending; i++) await wait(50);
     check(sent.length - n0 === w.MCFlasher.splitMessages(app.state.fw.raw).length && /restarts as a Model:Samples/.test(text(doc, "result")),
       "full transfer + Samples message");
+    noRest(w);
+    doc.getElementById("m-fast").click();
+    await wait(150);
+    doc.getElementById("flash").click();
+    await untilSent(w);
+    check(app.state.finished === "ok" && same(env7.dev.received, app.state.fw.raw) && env7.dev.bad.length === 0
+      && /restarts as a Model:Samples/.test(text(doc, "result")), "fast: the Samples OS build reaches the Model:Cycles byte for byte");
     doc.querySelector('.lang button[data-lang="fr"]').click();
     await wait(20);
     check(/OS Samples/.test(text(doc, "tab-samples")) && doc.getElementById("drop2-title").textContent === "model-samples_OS1.13.syx",
@@ -412,6 +606,7 @@ async function main() {
       && /Real Syntakt engines — SDVtg/.test(text(doc, "file-status")), "Syntakt file -> reference build of SDVtg (default) " + (f ? f.name : ""));
     check(new RegExp("MAIN OS " + app.REF_MAINOS["syntakt-sd"].slice(0, 8)).test(text(doc, "file-status")),
       "status line shows the MAIN OS hash prefix: " + text(doc, "file-status").slice(-20));
+    doc.getElementById("m-slow").click();
     doc.getElementById("allow").click();
     await wait(80);
     check(/Tick the box/.test(text(doc, "missing")) && doc.getElementById("flash").disabled, "asks for the confirmation box");
