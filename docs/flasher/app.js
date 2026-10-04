@@ -5044,7 +5044,7 @@ const FEAT = {
       desc: "The retrig becomes an arpeggiator: hold several notes on a track with RETRIG held (or A.On) and they play one after another at the retrig rate. FUNC + RETRIG adds Arp (direction: UP, DOWN, UPDN, RAND, PLAY or OFF) and Oct (1 to 4 octaves), saved with the pattern." },
     "tempo-max": { label: "Tempo up to 546 BPM",
       desc: "The tempo goes up to 546.0 BPM instead of 300: TEMPO knob, tap tempo, incoming MIDI clock and saved projects. 546 is the ceiling of the project format. Tempo-synced LFOs stay right at these speeds.",
-      note: "A project saved above 300 BPM reopens at 120 BPM on the original OS." },
+      note: "Above 300 BPM, the processor may struggle to keep up with busy patterns: push it knowingly. A project saved above 300 BPM reopens at 120 BPM on the original OS." },
   },
   fr: {
     usb6: { label: "Audio USB 6 canaux",
@@ -5071,7 +5071,7 @@ const FEAT = {
       desc: "Le retrig devient un arpégiateur : tenez plusieurs notes sur une piste avec RETRIG tenu (ou A.On) et elles se jouent l'une après l'autre au rythme du retrig. FUNC + RETRIG ajoute Arp (sens : UP, DOWN, UPDN, RAND, PLAY ou OFF) et Oct (1 à 4 octaves), enregistrés avec le pattern." },
     "tempo-max": { label: "Tempo jusqu'à 546 BPM",
       desc: "Le tempo monte jusqu'à 546,0 BPM au lieu de 300 : potard TEMPO, tap tempo, horloge MIDI reçue et projets enregistrés. 546 est le plafond du format des projets. Les LFO synchronisés au tempo restent justes à ces vitesses.",
-      note: "Un projet enregistré au-dessus de 300 BPM se rouvre à 120 BPM sur l'OS d'origine." },
+      note: "Au-delà de 300 BPM, le processeur peut avoir plus de mal à suivre la cadence sur des patterns chargés : à utiliser en connaissance de cause. Un projet enregistré au-dessus de 300 BPM se rouvre à 120 BPM sur l'OS d'origine." },
   },
 };
 

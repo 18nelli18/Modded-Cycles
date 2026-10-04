@@ -23,6 +23,10 @@ const ST_VERSION = (/OS(\d+\.\d+)/.exec(ST_NAME) || [])[1];   // "1.42" or "1.41
 const REAL_SMP = REAL.find((f) => /samples/i.test(path.basename(f)));
 const REAL_OS = REAL.find((f) => f !== REAL_ST && f !== REAL_SMP);
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+// SMOKE_SHARD=k/n (tools/webflash_smoke.sh with SMOKE_JOBS=n): part k of the combinations of section 6; the other
+// sections run in part 0 only; each part writes what it built to SMOKE_SEEN and the script checks the coverage
+const [SHARD_K, SHARD_N] = (process.env.SMOKE_SHARD || "0/1").split("/").map(Number);
+const MAIN = SHARD_K === 0;
 // Syntakt engine combinations offered by the page: tweak id -> engine codes (tweaks.js)
 const engineCombos = (w) => Object.fromEntries(w.MC_TWEAKS.features.find((f) => f.engines).combos.map((c) => [c.id, c.engines]));
 
@@ -155,7 +159,7 @@ async function main() {
   const check = (cond, msg) => { console.log((cond ? "  ok  " : "  FAIL ") + msg); if (!cond) fail++; };
 
   // 1. Page loads cleanly, everything is wired
-  {
+  if (MAIN) {
     const { w, doc, errors } = await load();
     check(errors.length === 0, "loads without JS error " + (errors.length ? JSON.stringify(errors) : ""));
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
@@ -295,7 +299,7 @@ async function main() {
   }
 
   // 1c. Fast method: a machine that doesn't answer (CONFIG > UPGRADE open, Transfer running), no MIDI input
-  {
+  if (MAIN) {
     const { doc, dev } = await load({ device: { silent: true } });
     doc.getElementById("allow").click();
     await wait(1300);
@@ -305,13 +309,13 @@ async function main() {
     await wait(150);
     check(/Model:Cycles found/.test(text(doc, "midi-status")) && dev.pings === 2, "Refresh asks again -> found");
   }
-  {
+  if (MAIN) {
     const { doc } = await load({ busy: true });
     doc.getElementById("allow").click();
     await wait(100);
     check(/in use by another program: close Elektron Transfer/.test(text(doc, "midi-status")), "port held by another program -> says so");
   }
-  {
+  if (MAIN) {
     const { doc } = await load({ inputs: false });
     doc.getElementById("allow").click();
     await wait(100);
@@ -319,7 +323,7 @@ async function main() {
   }
 
   // 1b. A Model:Cycles running the Samples OS shows up as "Model:Samples": it refuses a Model:Cycles firmware
-  {
+  if (MAIN) {
     const { doc } = await load({ devName: "Elektron Model:Samples", device: { id: 25, name: "Model Samples" } });
     doc.getElementById("allow").click();
     await wait(150);
@@ -331,26 +335,26 @@ async function main() {
   }
 
   // 2. No Web MIDI (Firefox / Safari) -> clear banner
-  {
+  if (MAIN) {
     const { doc } = await load({ midi: false });
     check(!doc.getElementById("compat").hidden && /Chrome, Edge or Opera/.test(text(doc, "compat")), "no Web MIDI -> banner");
     check(doc.getElementById("allow").disabled, "no Web MIDI -> Allow button disabled");
   }
 
   // 3. Insecure context (file://) -> clear banner
-  {
+  if (MAIN) {
     const { doc } = await load({ secure: false });
     check(/secure page/i.test(text(doc, "compat")), "file:// -> banner: " + text(doc, "compat").slice(0, 40));
   }
 
   // 4. French browser -> French page
-  {
+  if (MAIN) {
     const { doc } = await load({ lang: "fr-FR" });
     check(doc.documentElement.lang === "fr" && /Flasher Model:Cycles/.test(text(doc, "step-flash") + doc.title), "fr-FR browser -> French page");
   }
 
   // 5. Build from a synthetic OS, then flash, then stop
-  if (SYNTH) {
+  if (SYNTH && MAIN) {
     const env5 = await load();
     const { w, doc, errors, sent } = env5;
     const raw = new Uint8Array(fs.readFileSync(path.join(SYNTH, "synth.syx")));
@@ -486,7 +490,10 @@ async function main() {
     await wait(20);
     const boxes = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
     const seen = new Set();
+    let idx = -1;
+    const mine = () => ++idx % SHARD_N === SHARD_K;   // this part's share of the combinations
     for (let mask = 1; mask < 1 << boxes.length; mask++) {
+      if (!mine()) continue;
       for (let k = 0; k < boxes.length; k++) {
         const cb = doc.getElementById(boxes[k]);           // re-query: the cards are re-rendered
         if (cb.checked !== !!(mask & (1 << k))) { cb.click(); await wait(5); }
@@ -510,6 +517,7 @@ async function main() {
     const tgOf = Object.fromEntries(w.MC_TWEAKS.features.find((f) => f.engines).combos.map((c) => [c.id, c.tg]));
     for (const variant of REAL_ST ? Object.keys(combos).slice(1) : []) {   // the other engine combinations
       for (const on of sets) {
+        if (!mine()) continue;
         for (const b of boxes) {
           const cb = doc.getElementById(b);
           const want = b === "feat-syntakt" || on.includes(b);
@@ -524,13 +532,18 @@ async function main() {
       }
     }
     const offered = Object.keys(app.REF_MAINOS).filter((k) => REAL_ST || !/sdvintage|syntakt/.test(k));
-    check(seen.size === offered.length && offered.every((k) => seen.has(k)),
-      `REF_MAINOS lists exactly the ${seen.size} combinations offered` + (REAL_ST ? "" : " (without the Syntakt engines: no Syntakt OS given)"));
+    if (SHARD_N === 1)
+      check(seen.size === offered.length && offered.every((k) => seen.has(k)),
+        `REF_MAINOS lists exactly the ${seen.size} combinations offered` + (REAL_ST ? "" : " (without the Syntakt engines: no Syntakt OS given)"));
+    else {
+      fs.writeFileSync(process.env.SMOKE_SEEN, JSON.stringify({ seen: [...seen], offered }));
+      console.log(`  (part ${SHARD_K + 1}/${SHARD_N}: ${seen.size} combinations built; coverage checked over all parts)`);
+    }
     check(errors.length === 0, "no JS error with the real OS");
   }
 
   // 7. "Samples OS" tab with both official files
-  if (REAL_OS && REAL_SMP) {
+  if (REAL_OS && REAL_SMP && MAIN) {
     const env7 = await load();
     const { w, doc, errors, sent } = env7;
     const app = w.MCFlasherApp;
@@ -591,7 +604,7 @@ async function main() {
   }
 
   // 8. Syntakt engines with the official Model:Cycles and Syntakt files, up to the transfer
-  if (REAL_OS && REAL_ST) {
+  if (REAL_OS && REAL_ST && MAIN) {
     const { w, doc, errors, sent } = await load();
     const app = w.MCFlasherApp;
     const cyc = new Uint8Array(fs.readFileSync(REAL_OS)), syn = new Uint8Array(fs.readFileSync(REAL_ST));
