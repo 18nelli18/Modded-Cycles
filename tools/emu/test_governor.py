@@ -235,7 +235,8 @@ def main():
                                         f"au bloc {fb}, extinction des plus anciennes, pistes {[t + 1 for t in first]}")
 
     print("charge soutenue qui suit les voix")
-    mod, fading, stolen = play(six, 400, {1: 0x3f}, load=lambda b, n: 46 + 7 * n, slow0=88, cost=7 * BLOCK // 100)
+    mod, fading, stolen = play(six, 400, {1: 0x3f}, load=lambda b, n: 46 + 7 * n, slow0=88,
+                               cost=2 * 7 * BLOCK // 100)   # mesurés : la moitié (entre voice_gate et voice_after)
     cut = sorted({t for b in range(400) for t in range(6) if fading[b][t]})
     slow_end = play.state[-1][4] * 100 / 256
     check(len(cut) == 1 and slow_end < G["steal"],

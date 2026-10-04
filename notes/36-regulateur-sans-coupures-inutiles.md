@@ -109,7 +109,9 @@ instructions par échantillon avec un compteur ; réécrite dans les mêmes 14 o
 Model-TG (les deux tweaks) et les moteurs du Syntakt sans Model-TG (mêmes octets, acceptés deux fois par les
 constructeurs).
 
-**Mesure** (même boucle des voix qu'au §2) : voir §6.
+**Mesure** (même boucle des voix qu'au §2, 6 pistes qui sonnent, Model-TG + 5 moteurs) : **47 507 → 46 385
+instructions par bloc** (−1 122, −2,4 % de la boucle des voix, environ 1 % d'un bloc à 1,54 cycle par instruction). Le
+reste de la boucle des voix est le calcul du son lui-même (§2).
 
 ## 5. Sans recompiler le C `[FAIT]`
 
@@ -129,12 +131,41 @@ tweaks. Le régulateur est donc remplacé **après** la compilation (`tools/gov_
 
 `gen_syntakt_engines.py` applique la même étape à la fin de `build_tweak` (sauf aux firmwares de diagnostic 90 à 92,
 dont le compteur est dans `audio_end`) : avec GCC 16.2, le générateur redonne les fichiers versionnés. Vérifié avec GCC
-13.3 sur 4 combinaisons (avec et sans Model-TG) : la sortie du générateur est exactement sa sortie sans les étapes de
-cette note, puis ces étapes.
+13.3 (§6).
 
 ## 6. Preuves `[FAIT]`
 
-(à compléter)
+**Différentiel** (script de travail, non versionné) : le régulateur compilé (tweaks d'avant cette note) contre
+l'assembleur, même firmware et mêmes pistes, 400 blocs, bloc par bloc : sorties des 6 pistes, et état du régulateur (blocs
+faibles, âge, voix éteintes, fondus, coût mesuré, moyenne rapide du code C, arrêt anticipé, charge du bloc).
+
+| Firmware | Sans régulateur | 50 % | 80 % | Charge variable 30..85 % |
+|---|---|---|---|---|
+| Model-TG + 5 moteurs (`voice_gate`, `voice_after`, `audio_end` en assembleur) | identique | identique | identique | (résultat ci-dessous) |
+| 5 moteurs seuls (`audio_end` en assembleur) | (résultat ci-dessous) | | | |
+
+Seul écart voulu : au tout premier bloc, le code C ignorait la mesure (période démesurée), l'assembleur la calcule (sans
+effet : la moyenne rapide reste à 0). La moyenne lente et la période ne sont plus comparées : elles changent exprès (§3).
+
+**`tools/emu/test_governor.py`** (réécrit, 5 moteurs) :
+
+| Vérification | Résultat |
+|---|---|
+| 50 % | sortie identique, aucune voix éteinte |
+| 80 %, puis 91 % pendant 300 blocs | seules les fins de notes sous -66 dB s'arrêtent, aucune extinction de force |
+| Un bloc à 99 % tous les 10 blocs (75 % sinon) | **aucune voix éteinte** (le code C en éteignait une à chacun de ces blocs) |
+| Deux blocs de suite à 99 % | extinction au 2e bloc |
+| 95 % (puis 97 %) pendant 200 blocs | les moins audibles dans le mix, juste assez pour repasser sous 89 %, fondus de 8 (puis 2) blocs, autres voix identiques, plus rien après, retrig |
+| Une des pistes les plus fortes mutée (gains nuls), ou à -30 dB au mixeur | c'est elle qui part |
+| Toutes les pistes mutées (clés nulles), jouées dans un ordre donné | les plus anciennes d'abord |
+| Charge qui suit les voix (7 % par voix, 6 voix : 88 %), moyenne lente déjà à 88 % | **une seule voix éteinte**, puis la charge soutenue retombe ; le code C, dans le même scénario (moyenne lente posée à 88 %), en éteignait deux |
+| Moyenne lente partie de 0 sous une charge de 88 % | elle monte (le code C restait à 0) |
+
+**Non-régression** : voir la fin de cette section (bancs complets sur le firmware de l'essai).
+
+**Reproductibilité** : avec GCC 13.3, le générateur sort exactement « sa sortie sans les étapes de cette note, puis ces
+étapes » sans Model-TG (5 moteurs ; SD seul ; SY TOY + SY SWARM) ; avec Model-TG, le code compilé par GCC 13.3 n'a pas les mêmes tailles et la
+décision n'y trouve plus sa place (ce n'est pas le compilateur de référence ; avec GCC 16.2, les fichiers versionnés).
 
 ## 7. Empreintes
 
