@@ -23,6 +23,10 @@ const ST_VERSION = (/OS(\d+\.\d+)/.exec(ST_NAME) || [])[1];   // "1.42" or "1.41
 const REAL_SMP = REAL.find((f) => /samples/i.test(path.basename(f)));
 const REAL_OS = REAL.find((f) => f !== REAL_ST && f !== REAL_SMP);
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+// SMOKE_SHARD=k/n (tools/webflash_smoke.sh with SMOKE_JOBS=n): part k of the combinations of section 6; the other
+// sections run in part 0 only; each part writes what it built to SMOKE_SEEN and the script checks the coverage
+const [SHARD_K, SHARD_N] = (process.env.SMOKE_SHARD || "0/1").split("/").map(Number);
+const MAIN = SHARD_K === 0;
 // Syntakt engine combinations offered by the page: tweak id -> engine codes (tweaks.js)
 const engineCombos = (w) => Object.fromEntries(w.MC_TWEAKS.features.find((f) => f.engines).combos.map((c) => [c.id, c.engines]));
 
@@ -155,15 +159,15 @@ async function main() {
   const check = (cond, msg) => { console.log((cond ? "  ok  " : "  FAIL ") + msg); if (!cond) fail++; };
 
   // 1. Page loads cleanly, everything is wired
-  {
+  if (MAIN) {
     const { w, doc, errors } = await load();
     check(errors.length === 0, "loads without JS error " + (errors.length ? JSON.stringify(errors) : ""));
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 10).join() === "6ch-usbup,model-tg,model-tg-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,syntakt-sd,syntakt-tg-sd"
-      && ids.length === 8 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
-      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 8,
+    check(ids.slice(0, 11).join() === "6ch-usbup,model-tg,model-tg-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,syntakt-sd,syntakt-tg-sd"
+      && ids.length === 9 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 9,
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG: ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
@@ -171,13 +175,14 @@ async function main() {
       && srcs.every((x) => x.endsWith("?v=" + w.MC_BUILD)), "scripts loaded with ?v=<build> (no stale cache): " + srcs.join());
     check(doc.getElementById("compat").hidden, "no compatibility banner in a good browser");
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-usb6,feat-model-tg,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-trig-hold,feat-arp,feat-syntakt", "8 feature cards: " + JSON.stringify(feats));
+    check(feats.join() === "feat-usb6,feat-model-tg,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-trig-hold,feat-arp,feat-tempo-max,feat-syntakt", "9 feature cards: " + JSON.stringify(feats));
     const tags = [...doc.querySelectorAll("#features .tag")].map((x) => x.textContent);
     const tagOfFeat = (f) => (f.status === "tested" ? "Tested" : "Experimental");
     const synTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.engines));
     const arpTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "arp"));
     const holdTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "trig-hold"));
-    check(tags.join() === "Tested,Experimental,Tested,Tested,Tested," + holdTag + "," + arpTag + "," + synTag,
+    const tempoTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "tempo-max"));
+    check(tags.join() === "Tested,Experimental,Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + synTag,
       "cards tagged as tested or not (Model-TG experimental until tested here): " + tags.join());
     check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until the Syntakt engines are ticked");
     doc.getElementById("feat-syntakt").click();
@@ -256,6 +261,8 @@ async function main() {
       && /par drumkilla/.test(text(doc, "features")) && /Vrais moteurs du Syntakt/.test(text(doc, "features"))
       && /Testé/.test(text(doc, "features")), "FR switch translates the feature cards and credits");
     check(/Crédits/.test(text(doc, "credits")) && /boîte à outils/.test(text(doc, "credits")), "FR switch translates the credits section");
+    check(/Tempo jusqu'à 546 BPM/.test(text(doc, "features")) && doc.querySelector('label[for=feat-tempo-max] a.feat-guide, #features a[href$="#tempo"]'),
+      "FR: tempo card translated, with its guide link");
     doc.querySelector('.lang button[data-lang="en"]').click();
     await wait(20);
 
@@ -292,7 +299,7 @@ async function main() {
   }
 
   // 1c. Fast method: a machine that doesn't answer (CONFIG > UPGRADE open, Transfer running), no MIDI input
-  {
+  if (MAIN) {
     const { doc, dev } = await load({ device: { silent: true } });
     doc.getElementById("allow").click();
     await wait(1300);
@@ -302,13 +309,13 @@ async function main() {
     await wait(150);
     check(/Model:Cycles found/.test(text(doc, "midi-status")) && dev.pings === 2, "Refresh asks again -> found");
   }
-  {
+  if (MAIN) {
     const { doc } = await load({ busy: true });
     doc.getElementById("allow").click();
     await wait(100);
     check(/in use by another program: close Elektron Transfer/.test(text(doc, "midi-status")), "port held by another program -> says so");
   }
-  {
+  if (MAIN) {
     const { doc } = await load({ inputs: false });
     doc.getElementById("allow").click();
     await wait(100);
@@ -316,7 +323,7 @@ async function main() {
   }
 
   // 1b. A Model:Cycles running the Samples OS shows up as "Model:Samples": it refuses a Model:Cycles firmware
-  {
+  if (MAIN) {
     const { doc } = await load({ devName: "Elektron Model:Samples", device: { id: 25, name: "Model Samples" } });
     doc.getElementById("allow").click();
     await wait(150);
@@ -328,26 +335,26 @@ async function main() {
   }
 
   // 2. No Web MIDI (Firefox / Safari) -> clear banner
-  {
+  if (MAIN) {
     const { doc } = await load({ midi: false });
     check(!doc.getElementById("compat").hidden && /Chrome, Edge or Opera/.test(text(doc, "compat")), "no Web MIDI -> banner");
     check(doc.getElementById("allow").disabled, "no Web MIDI -> Allow button disabled");
   }
 
   // 3. Insecure context (file://) -> clear banner
-  {
+  if (MAIN) {
     const { doc } = await load({ secure: false });
     check(/secure page/i.test(text(doc, "compat")), "file:// -> banner: " + text(doc, "compat").slice(0, 40));
   }
 
   // 4. French browser -> French page
-  {
+  if (MAIN) {
     const { doc } = await load({ lang: "fr-FR" });
     check(doc.documentElement.lang === "fr" && /Flasher Model:Cycles/.test(text(doc, "step-flash") + doc.title), "fr-FR browser -> French page");
   }
 
   // 5. Build from a synthetic OS, then flash, then stop
-  if (SYNTH) {
+  if (SYNTH && MAIN) {
     const env5 = await load();
     const { w, doc, errors, sent } = env5;
     const raw = new Uint8Array(fs.readFileSync(path.join(SYNTH, "synth.syx")));
@@ -483,7 +490,10 @@ async function main() {
     await wait(20);
     const boxes = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
     const seen = new Set();
+    let idx = -1;
+    const mine = () => ++idx % SHARD_N === SHARD_K;   // this part's share of the combinations
     for (let mask = 1; mask < 1 << boxes.length; mask++) {
+      if (!mine()) continue;
       for (let k = 0; k < boxes.length; k++) {
         const cb = doc.getElementById(boxes[k]);           // re-query: the cards are re-rendered
         if (cb.checked !== !!(mask & (1 << k))) { cb.click(); await wait(5); }
@@ -507,6 +517,7 @@ async function main() {
     const tgOf = Object.fromEntries(w.MC_TWEAKS.features.find((f) => f.engines).combos.map((c) => [c.id, c.tg]));
     for (const variant of REAL_ST ? Object.keys(combos).slice(1) : []) {   // the other engine combinations
       for (const on of sets) {
+        if (!mine()) continue;
         for (const b of boxes) {
           const cb = doc.getElementById(b);
           const want = b === "feat-syntakt" || on.includes(b);
@@ -521,13 +532,18 @@ async function main() {
       }
     }
     const offered = Object.keys(app.REF_MAINOS).filter((k) => REAL_ST || !/sdvintage|syntakt/.test(k));
-    check(seen.size === offered.length && offered.every((k) => seen.has(k)),
-      `REF_MAINOS lists exactly the ${seen.size} combinations offered` + (REAL_ST ? "" : " (without the Syntakt engines: no Syntakt OS given)"));
+    if (SHARD_N === 1)
+      check(seen.size === offered.length && offered.every((k) => seen.has(k)),
+        `REF_MAINOS lists exactly the ${seen.size} combinations offered` + (REAL_ST ? "" : " (without the Syntakt engines: no Syntakt OS given)"));
+    else {
+      fs.writeFileSync(process.env.SMOKE_SEEN, JSON.stringify({ seen: [...seen], offered }));
+      console.log(`  (part ${SHARD_K + 1}/${SHARD_N}: ${seen.size} combinations built; coverage checked over all parts)`);
+    }
     check(errors.length === 0, "no JS error with the real OS");
   }
 
   // 7. "Samples OS" tab with both official files
-  if (REAL_OS && REAL_SMP) {
+  if (REAL_OS && REAL_SMP && MAIN) {
     const env7 = await load();
     const { w, doc, errors, sent } = env7;
     const app = w.MCFlasherApp;
@@ -588,7 +604,7 @@ async function main() {
   }
 
   // 8. Syntakt engines with the official Model:Cycles and Syntakt files, up to the transfer
-  if (REAL_OS && REAL_ST) {
+  if (REAL_OS && REAL_ST && MAIN) {
     const { w, doc, errors, sent } = await load();
     const app = w.MCFlasherApp;
     const cyc = new Uint8Array(fs.readFileSync(REAL_OS)), syn = new Uint8Array(fs.readFileSync(REAL_ST));

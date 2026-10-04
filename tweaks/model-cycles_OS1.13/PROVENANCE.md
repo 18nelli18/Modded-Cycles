@@ -10,6 +10,7 @@
 | `20-sdvintage-snare.json` | ce projet | Compilé depuis `tools/machines/sdvintage/` par `tools/gen_sdvintage.py` ([note 14](../../notes/14-machine-sd-vintage.md)). |
 | `40-arp.json` | ce projet | Arpégiateur à la place du retrig : compilé depuis `tools/machines/arp/` (`arp.c`, `arp_hooks.S`, `arp.ld`) par `tools/gen_arp.py`, dans quatre masques de sprites libérés (`0x4018a788`, `0x4016cba8`, et les masques 47×47 `0x40189930`, `0x4018a220`, `tools/sprites.py`). Réglages dans l'octet +512 de la piste du pattern, inutilisé par l'OS ([note 32](../../notes/32-arpegiateur.md)). |
 | `41-trig-hold.json` | ce projet | Plus de temps pour effacer un trig (défaut de l'OS d'origine) : assemblé depuis `tools/machines/trig_hold/` (`trig_hold.S`, `trig_hold.ld`) par `tools/gen_trig_hold.py`, au début du masque de sprite libéré `0x4015c044` (`tools/sprites.py`), devant les stubs de `6ch-usbup` ([note 33](../../notes/33-effacer-un-trig.md)). |
+| `42-tempo-max.json` | ce projet | Tempo jusqu'à 546 BPM au lieu de 300 : onze constantes (bornes du tempo et contrôles au chargement) et la remise dans le cycle du LFO en boucle, écrites par `tools/gen_tempo_max.py` d'après le MAIN OS officiel ([note 38](../../notes/38-tempo-546-bpm.md)). |
 
 SHA-256 des fichiers de drumkilla, identiques à ceux du dépôt d'origine (sauf `02-trig-preview.json`, retouché) :
 

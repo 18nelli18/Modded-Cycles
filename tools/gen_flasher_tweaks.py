@@ -116,6 +116,17 @@ FEATURES = [
         ],
     },
     {
+        "id": "tempo-max",
+        "label": "Tempo jusqu'a 546 BPM",
+        "desc": "Le tempo monte jusqu'a 546 BPM au lieu de 300 (molette, tap tempo, horloge MIDI recue). "
+                "546 est le plafond du format des projets.",
+        "status": "tested",
+        "credit": None,
+        "variants": [
+            {"file": "42-tempo-max", "label": None},
+        ],
+    },
+    {
         "id": "syntakt",
         "label": "Vrais moteurs du Syntakt",
         "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.42.syx (a deposer a l'etape 2), "

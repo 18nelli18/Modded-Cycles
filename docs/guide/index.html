@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-04-06">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-04-06">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-04-09">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-04-09">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -48,6 +48,7 @@
         <li><a href="#syntakt"><span data-l="en">Syntakt engines</span><span data-l="fr">Moteurs du Syntakt</span></a></li>
         <li><a href="#model-tg">Model-TG</a></li>
         <li><a href="#arp"><span data-l="en">Arpeggiator</span><span data-l="fr">Arpégiateur</span></a></li>
+        <li><a href="#tempo"><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
         <li><a href="#stock"><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></a></li>
         <li><a href="#recovery"><span data-l="en">Recovery</span><span data-l="fr">Secours</span></a></li>
@@ -415,8 +416,24 @@
         </dl>
       </section>
 
+      <section id="tempo">
+        <h2><span class="n">11</span><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></h2>
+        <p class="lede"><span data-l="en">The tempo goes up to 546.0 BPM instead of 300.0, for drum and bass at double time, gabber, speedcore or very fast retrigs.</span><span data-l="fr">Le tempo monte jusqu'à 546,0 BPM au lieu de 300,0 : drum and bass en double temps, gabber, speedcore ou retrigs très rapides.</span></p>
+        <ol>
+          <li><span data-l="en">Press <b>TEMPO</b> and turn the knob as usual: above 300.0 it carries on, up to 546.0.</span><span data-l="fr">Appuyez sur <b>TEMPO</b> et tournez le potard comme d'habitude : au-delà de 300,0, il continue, jusqu'à 546,0.</span></li>
+          <li><span data-l="en">Tap tempo and an incoming MIDI clock follow too, up to 546 BPM. The project saves it.</span><span data-l="fr">Le tap tempo et une horloge MIDI reçue suivent aussi, jusqu'à 546 BPM. Le projet l'enregistre.</span></li>
+        </ol>
+        <dl class="facts">
+          <div><dt><span data-l="en">Why 546</span><span data-l="fr">Pourquoi 546</span></dt><dd><span data-l="en">the project stores the tempo in 1/120 of a BPM on 16 bits: 65,535 / 120 = 546.1. Going higher would change the project format. The sequencer itself would keep up far beyond.</span><span data-l="fr">le projet enregistre le tempo en 1/120 de BPM sur 16 bits : 65 535 / 120 = 546,1. Aller plus haut changerait le format des projets. Le séquenceur, lui, suivrait bien au-delà.</span></dd></div>
+          <div><dt>LFO</dt><dd><span data-l="en">tempo-synced LFOs stay right at these speeds. On the original OS, from 351.6 BPM, an LFO at its highest speed and multiplier left its cycle: the mod fixes it.</span><span data-l="fr">les LFO synchronisés au tempo restent justes à ces vitesses. Sur l'OS d'origine, à partir de 351,6 BPM, un LFO à sa vitesse et à son multiplicateur les plus hauts sortait de son cycle : le mod le corrige.</span></dd></div>
+          <div><dt><span data-l="en">Projects</span><span data-l="fr">Projets</span></dt><dd><span data-l="en">a project saved above 300 BPM reopens at 120 BPM on the original OS (its check when loading). Below 300, nothing changes.</span><span data-l="fr">un projet enregistré au-dessus de 300 BPM se rouvre à 120 BPM sur l'OS d'origine (son contrôle au chargement). En dessous de 300, rien ne change.</span></dd></div>
+          <div><dt><span data-l="en">Processor</span><span data-l="fr">Processeur</span></dt><dd><span data-l="en">more notes per second means more work, as with faster retrigs: with heavy machines the load governor may have to fade a voice out.</span><span data-l="fr">plus de notes par seconde, c'est plus de travail, comme des retrigs plus rapides : avec des machines lourdes, le régulateur de charge peut devoir éteindre une voix.</span></dd></div>
+          <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">on a Model:Cycles, and in the emulator on the OS's own code: the knob, tap tempo, MIDI clock, project loading and the LFOs. Goes with every other mod.</span><span data-l="fr">sur un Model:Cycles, et en émulation sur le code même de l'OS : potard, tap tempo, horloge MIDI, chargement des projets et LFO. Se combine avec tous les autres mods.</span></dd></div>
+        </dl>
+      </section>
+
       <section id="samples">
-        <h2><span class="n">11</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">12</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -431,13 +448,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">12</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">13</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">With Syntakt engines or Model-TG's Sampler, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt ou le Sampler de Model-TG, remettez d'abord vos pistes sur une machine d'origine.</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">13</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">14</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -451,7 +468,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">14</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">15</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -510,8 +527,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-04-06"></script>
-<script src="../assets/cycles.js?v=2026-10-04-06"></script>
-<script src="../assets/site.js?v=2026-10-04-06"></script>
+<script src="../assets/release.js?v=2026-10-04-09"></script>
+<script src="../assets/cycles.js?v=2026-10-04-09"></script>
+<script src="../assets/site.js?v=2026-10-04-09"></script>
 </body>
 </html>
