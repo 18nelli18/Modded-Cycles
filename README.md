@@ -1,136 +1,135 @@
-# Modded-Cycles
+<div align="center">
 
-Firmware mods for the **Elektron Model:Cycles**. The first goal: send the **6 tracks over USB as 6 separate channels**
-instead of the stereo mix only, so you can record real stems in your DAW. Then go further: new machines, more channels, more features.
+# Modded Cycles
 
-> ⚠️ **No Elektron firmware is included in this repository** — neither original nor modified.
-> You bring your own copy of the official OS, downloaded from elektron.se.
-> This repository only contains analysis, byte-level patch tables, assembly/C sources and tools.
-> Not affiliated with or endorsed by Elektron. Flashing a modified OS is **at your own risk** and may void your warranty.
+**Custom firmware mods for the Elektron Model:Cycles, installed from your browser in about 30 seconds.**
 
-## Quick start: flash from your browser
+6-channel USB audio · Syntakt engines · Model-TG sampler · arpeggiator · up to 546 BPM · and more
 
-Open the **[web flasher](https://18nelli18.github.io/Modded-Cycles/flasher/)** in Chrome, Edge or Opera (desktop).
-What each mod does, step by step: the **[guide](https://18nelli18.github.io/Modded-Cycles/guide/)**.
-Tick the mods you want, drop your official OS file, connect the Model:Cycles over USB and flash.
-The page builds the modified firmware from your file and sends it over Web MIDI.
-Everything happens in your browser: nothing is uploaded anywhere.
+[**Open the web flasher**](https://18nelli18.github.io/Modded-Cycles/flasher/) &nbsp;·&nbsp;
+[Read the guide](https://18nelli18.github.io/Modded-Cycles/guide/) &nbsp;·&nbsp;
+[Website](https://18nelli18.github.io/Modded-Cycles/) &nbsp;·&nbsp;
+[Support on Ko-fi](https://ko-fi.com/18nelli)
 
-You need:
-- your official **`model-cycles_OS1.13.syx`** ([elektron.se](https://www.elektron.se/support-downloads/modelcycles), unzip the download);
-- a **USB cable**, the Model:Cycles on its usual screen and Elektron Transfer closed.
+<img src="docs/images/readme/device.png" alt="Drawing of a Model:Cycles with the six track pads lit and the screen showing USB AUDIO, 6 CHANNELS" width="720">
 
-The page flashes in **about 30 seconds** with the update protocol of Elektron Transfer (worked out by
-[Elektroid](https://github.com/dagargo/elektroid)): the Model:Cycles acknowledges every block, then asks you to confirm.
-The classic way (`CONFIG > UPGRADE`, 5 to 10 minutes) stays available as a fallback.
-You can also download the prepared `.syx` and drop it onto Elektron Transfer yourself.
+</div>
 
-The web flasher only sends over USB, and only offers mods that keep OS updates over USB working.
-Its **Samples OS** tab turns the Model:Cycles into a Model:Samples (drop both official OS files); coming back needs a MIDI interface.
-The **SD VINTAGE** box adds the real Syntakt SD VINTAGE engine as a 7th machine **SDVtg** next to SNARE (default), or puts it in place of SNARE; both tested on a real Model:Cycles: drop your official `Syntakt_OS1.42.syx` ([elektron.se](https://www.elektron.se/support-downloads/syntakt); 1.41 works too, same engines) as well, the engine is read from it in your browser.
-If a Model:Cycles ever stops starting, recovery goes through the startup menu (`FUNC` + power on, then `TRIG 4`),
-which only listens to the **MIDI IN**: that needs a MIDI interface and the command-line scripts below ([`FLASH.md`](FLASH.md)).
+---
+
+## Why
+
+The Model:Cycles is a great little groovebox, but its firmware leaves some obvious things on the table:
+the USB output only carries the stereo mix, there are just six machines, the tempo stops at 300 BPM,
+and a few everyday gestures (muting, removing trigs) take more presses than they should.
+
+Modded Cycles patches **your own copy** of the official OS to fix that. You pick the mods you want,
+the page builds the firmware in your browser, and sends it to the Model:Cycles over USB.
+Going back to the official firmware is one click away.
+
+> [!IMPORTANT]
+> **No Elektron firmware is included in this repository**, original or modified. You bring the official OS
+> file from [elektron.se](https://www.elektron.se/support-downloads/modelcycles); the mods are applied to it on your computer.
+> This is an independent project, not affiliated with or endorsed by Elektron. Flashing a modified OS is
+> **at your own risk** and may void your warranty.
+
+## The mods
+
+| Mod | What you get | Status |
+|---|---|---|
+| **6-channel USB audio** | Each track gets its own USB channel (48 kHz / 32-bit): record six separate stems in your DAW. OS updates over USB keep working. | ✅ Tested |
+| **Syntakt engines** | Up to five real Syntakt machines added next to the original six: **SD VINTAGE**, **CP VINTAGE**, **SY TOY**, **SY BITS** and **SY SWARM**, with the Syntakt's knob names and defaults. They are read from your own Syntakt OS file. | ✅ Tested |
+| **Model-TG** | A full Sampler machine with seven playback modes, resampling, a beat-repeat page with master FX, slide trigs, Scale Lock and more, by [TinyGregAudio](https://github.com/TinyGregAudio/Model-TG). Works with the 6-channel mod and the Syntakt engines. | 🧪 Experimental |
+| **Arpeggiator** | Hold several notes with RETRIG and they play as an arpeggio. `FUNC` + `RETRIG` adds direction (up, down, up/down, random, or in the order played) and range (1 to 4 octaves), saved with the pattern. | ✅ Tested |
+| **Tempo up to 546 BPM** | The TEMPO knob, tap tempo, MIDI clock and saved projects go past 300 BPM. Tempo-synced LFOs stay in time. | ✅ Tested |
+| **Easier trig removal** | A quick press on a step that holds a trig removes it, instead of opening it as a hold. | ✅ Tested |
+| **Latching mute** | Hold `TRACK` and tap `FUNC`: mute mode stays on, no more holding `FUNC`. By [drumkilla](https://github.com/drumkilla/elektron-model-tweaks). | ✅ Tested |
+| **Trig preview** | Sequencer stopped or paused: hold a step and press `PAGE` to hear it, with its note, length and p-locks. By drumkilla. | ✅ Tested |
+| **Scrolling names** | Sound names too long for the screen scroll in the sound browser. By drumkilla. | ✅ Tested |
+| **Samples OS** | Turns the Model:Cycles into a Model:Samples, built from both official OS files. Coming back needs a MIDI interface. | ✅ Tested |
+
+The mods can be combined freely (Samples OS is a separate install). Each one is explained step by step, with the buttons to press, in the
+**[guide](https://18nelli18.github.io/Modded-Cycles/guide/)**.
+
+<p align="center">
+  <img src="docs/images/readme/device-syntakt.png" alt="The MACHINES menu on the Model:Cycles screen, listing 05 Tone, 06 Chord, 07 SDVtg and 08 CPVtg" width="560"><br>
+  <sub>The Syntakt engines show up as extra machines in the MACHINES menu.</sub>
+</p>
+
+## Install in four steps
+
+<img src="docs/images/readme/flasher.png" alt="The web flasher, step 1: a list of mods with checkboxes, 6-channel USB audio ticked" width="100%">
+
+1. **Open the [web flasher](https://18nelli18.github.io/Modded-Cycles/flasher/)** in Chrome, Edge or Opera on a desktop computer (it needs Web MIDI).
+2. **Tick the mods you want.**
+3. **Drop your official OS file**, `model-cycles_OS1.13.syx`, from the [Elektron download](https://www.elektron.se/support-downloads/modelcycles) (unzip it first).
+   For the Syntakt engines, also drop `Syntakt_OS1.42.syx` ([download](https://www.elektron.se/support-downloads/syntakt); 1.41 works too).
+4. **Connect the Model:Cycles over USB and press Flash.** Close Elektron Transfer first and leave the machine on its usual screen.
+   The transfer takes about 30 seconds, then the Model:Cycles asks you to confirm with **YES**.
+
+Everything runs in your browser: your files are never uploaded anywhere.
+
+**Before you flash**, back up your projects and samples with Elektron Transfer.
+
+<details>
+<summary><b>Other ways to flash</b></summary>
+
+- **Classic method.** If the fast method does not work on your setup, the flasher can also send the firmware the
+  way Elektron Transfer does through `CONFIG › UPGRADE` (5 to 10 minutes).
+- **Elektron Transfer.** The flasher has a *Download the .syx* button: drop that file onto Elektron Transfer yourself.
+- **Command line.** See [Command line](#command-line) below.
+
+</details>
+
+<details>
+<summary><b>Going back to the official firmware</b></summary>
+
+Open the flasher, choose the **Official firmware** tab, drop your official OS file and flash. Before that,
+set any track that uses an added machine (Syntakt engine or Sampler) back to one of the six original machines.
+
+</details>
+
+<details>
+<summary><b>If something goes wrong</b></summary>
+
+If a Model:Cycles ever stops starting, it can always be recovered from its startup menu (`FUNC` + power on, then `TRIG 4`).
+That menu only listens to the **MIDI IN** port, so you need a USB-MIDI interface and the scripts described in
+[`FLASH.md`](FLASH.md) (in French). The guide has a [troubleshooting section](https://18nelli18.github.io/Modded-Cycles/guide/#trouble).
+
+</details>
 
 ## Command line
 
-A pure-Python toolchain: no compiler, no firmware in the repo. See [`BUILD.md`](BUILD.md) (in French).
+The web flasher is a port of a pure-Python toolchain that lives in this repository: no compiler and no firmware needed.
 
 ```sh
-python3 tools/build.py --list
-python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup         # 6 channels, keeps OS updates over USB
-python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-multiout      # 6 channels, reference build (no USB updates)
-python3 tools/build.py -i model-cycles_OS1.13.syx -t sdvintage-snare   # SD VINTAGE machine instead of SNARE
+python3 tools/build.py --list                       # every available mod
 python3 tools/build.py -i model-cycles_OS1.13.syx -t 6ch-usbup,latching-mute,trig-preview,browser-scroll
+./flash.sh                                           # macOS / Linux  (flash.bat on Windows)
 ```
 
-Then flash with the ready-made scripts. They install the dependencies, check the file, guide you and send it — see [`FLASH.md`](FLASH.md) (in French).
+Details in [`BUILD.md`](BUILD.md) and [`FLASH.md`](FLASH.md) (both in French). The web flasher is checked byte for byte
+against the Python build (`tools/webflash_check.sh`, `tools/webbuild_check.sh`).
 
-```sh
-./flash.sh        # macOS / Linux
-flash.bat         # Windows (double-click)
-```
+## How it is made
 
-The web flasher is a JavaScript port of `build.py` and `mtlib`, checked byte for byte against the Python
-(`tools/webflash_check.sh`, `tools/webbuild_check.sh`, `tools/webflash_smoke.sh`); its fast USB method is checked
-against Elektroid's C (`tools/webxfer_check.py`, [note 37](notes/37-flash-rapide-usb.md)).
+Every mod is checked in an emulator that runs the Model:Cycles' own code, and then on a real Model:Cycles before it is
+marked *Tested*. The Syntakt engines are not imitations: their code and tables are taken from your Syntakt OS file and
+relocated into the Model:Cycles firmware, and they produce the same samples as the Syntakt in emulation.
 
-## Features
-
-By priority. Feasibility is detailed in [note 10](notes/10-faisabilite-fonctionnalites.md) (in French).
-
-| Feature | Status |
-|---|---|
-| **6-channel** USB output | ✅ **tested on a real Model:Cycles** — in the web flasher |
-| Keep **OS updates over USB** with the 6-channel mod | ✅ `6ch-usbup`, the version the web flasher installs ([note 13](notes/13-6ch-upgrade-usb.md)) |
-| **Steady USB stream** (a Reddit report: glitches with 6-channel audio and Model-TG, worse when muting tracks) | ✅ found in the stock OS's USB driver: each block went to the computer right after being computed, so at a moment that moved with the processor load, and the 6-channel mod's buffer only tolerated 0.2 ms of it; Model-TG and the Syntakt engines make the load swing (idle and muted tracks, effects off). Now each block leaves at the start of the next one, at a fixed moment (0.67 ms more latency), the queue is lined up when the stream starts, the 6-channel buffer gains a slot, and with Model-TG a muted track's stem is no longer cut off. A simulator running the OS's own USB driver goes from thousands of damaged frames to none ([note 35](notes/35-glitches-usb-multipiste.md), in French); **tested on the hardware** |
-| **Fewer cut notes under load** (with 6 busy tracks, the last track was often cut) | ✅ the load governor of the Syntakt engines reacted to single heavy blocks (a busy step, the screen redrawing), already over when measured, and picked the quietest voice *before* the mixer; its sustained-load rule never actually ran (its slow average could not rise, a rounding issue). It now needs the load to last two blocks, or to stay high (a working sustained-load rule that counts the voices it has just stopped, so no chain of cuts), and fades out the voice heard least in the mix (level × mixer volume and sends, a muted track first, the oldest note on a tie). Rewritten in assembly in place of the compiled code, with lighter per-voice bookkeeping, plus a shorter track-scaling loop in the original OS: same sound and same voice stops at normal load in the emulator ([note 36](notes/36-regulateur-sans-coupures-inutiles.md), in French); to be tried on the hardware |
-| **The real Syntakt SD VINTAGE engine**, extracted at build time from *your* Syntakt OS file | ✅ `sdvintage-exact`: the Syntakt's own code and tables, relocated into the Model:Cycles, replace SNARE — **sample-identical** to the Syntakt in emulation, and the bootstrap's own decompressor reads the bigger OS back exactly; **tested on a real Model:Cycles** (2026-09-30, flashed over USB from the web flasher); now command line only (`build.py --syntakt`): the web flasher only adds engines ([note 17](notes/17-portage-exact-syntakt.md)) |
-| The real SD VINTAGE as a **7th machine** (SDVtg), next to SNARE | ✅ `sdvintage-7th`: 7 machines in the MACHINES menu, its own knob names and defaults from the Syntakt (Inharm, Freq Complex, Pitch Sweep, Mod Envelope), SNARE unchanged; **tested on a real Model:Cycles** (2026-09-30, web flasher); 26 checks on the OS's own code in emulation ([note 18](notes/18-septieme-machine.md)) |
-| The real **CP VINTAGE** clap as an **8th machine** (CPVtg), with SDVtg | ✅ `syntakt-vintage`: 8 machines in the MACHINES menu, CPVtg with the Syntakt's knob names and defaults (Body Char, Balance, Spacing Crunch, Body Envelope); sample-identical to the Syntakt in emulation (26 checks); **tested on a real Model:Cycles** (2026-09-30, web flasher) ([note 19](notes/19-cp-vintage-8e-machine.md)) |
-| **Pick the Syntakt engines you want** (SD VINTAGE, CP VINTAGE, **SY TOY**, **SY BITS**, **SY SWARM**) | ✅ one checkbox per engine in the web flasher, any combination, added after the 6 original machines; **SYToy** (SY TOY: Form, Impact, Bright, Partial Decay) is sample-identical to the Syntakt in emulation and **tested on a real Model:Cycles**, alone and with SDVtg + CPVtg (2026-09-30); **SYBit** (SY BITS: Detune, Balance, Rate Redux, Waveform, PUNCH = Bit Redux) is sample-identical in emulation and **tested on a real Model:Cycles** on its own ([note 21](notes/21-sy-bits.md)); the new **SYSwm** (SY SWARM supersaw: Noise Mod, Detune Anim, Detune, Osc Mix, PUNCH = sub-octave) is sample-identical in emulation and **not hardware-tested yet** ([note 22](notes/22-sy-swarm.md)). Set tracks that use an added machine back to an original machine before changing the choice or going back to the official firmware ([note 20](notes/20-moteurs-syntakt-a-cocher.md)) |
-| Extra drum engine: **SD VINTAGE** (vintage snare from the Syntakt) | ✅ step 1 (replaces SNARE) **tested on a real Model:Cycles**; **v2 retuned on the real Syntakt SD VINTAGE** running in our emulator (same pitch, sweep, decay and noise spectrum, knobs mean what they mean on the Syntakt) — command line only for now ([note 16](notes/16-moteur-syntakt.md)) |
-| **12-channel** USB output (per-track pan) | 🟡 feasible, to develop (through an **8-channel** milestone: 6 tracks + stereo mix, [note 11](notes/11-conception-8-canaux.md)) |
-| Change the **effect algorithms** | 🔴 no (tweaking parameters: 🟡) |
-| **Sample engine** (like the Model:Samples) | ✅ through **[Model-TG](https://github.com/TinyGregAudio/Model-TG)** by TinyGregAudio (MIT): a Sampler machine with seven playback modes, resampling, a retrig page with master FX, slide trigs and more. Offered in the web flasher at its version 1.1, built by its own build with two changes from this project: in mute mode, each track key mutes at once, as with the latching mute alone (Model-TG queues them until you leave the mode); with 6-channel audio, a muted track's stem rings out instead of being cut off ([note 35](notes/35-glitches-usb-multipiste.md)); plus this project's steady USB stream; on its own or with the 6-channel mod. With the Syntakt engines: a combined version (the Sampler stays the 7th machine, the engines follow), where slide trigs work on the engines too. Model-TG 1.1 with the 5 engines and 6-channel audio is **tested on the hardware** ([note 31](notes/31-model-tg.md), in French) |
-| **2 LFOs**, syncable and assignable | 🟠 heavy (more destinations for the current LFO: 🟡) |
-| **Polyrhythm** (per-track time signature) | 🟡 partly there in stock firmware |
-| **MIDI control over USB** (clock, start/stop) | ✅ already supported in stock firmware (settings only) |
-| **Arpeggiator** (in place of the retrig) | ✅ in the web flasher: hold several notes with RETRIG (or A.On) and they play as an arpeggio at the retrig rate; FUNC + RETRIG gains **Arp** (UP, DOWN, UPDN, RAND, PLAY, OFF) and **Oct** (1 to 4), saved with the pattern. In live recording, the notes it plays are recorded one by one (version 1.14, tested on the hardware). Checked in the emulator against the OS's own event loop, and **tested on the hardware** with Model-TG, the 5 engines and 6-channel audio ([note 32](notes/32-arpegiateur.md), in French) |
-| **Tempo up to 546 BPM** (instead of 300) | ✅ in the web flasher: the TEMPO knob, tap tempo, incoming MIDI clock and saved projects go up to 546.0 BPM, the ceiling of the project format (a 16-bit tempo in 1/120 BPM). Fixes the OS's tempo-synced LFO, which left its cycle above 351.6 BPM. Checked in the emulator on the OS's own code, and **tested on the hardware** ([note 38](notes/38-tempo-546-bpm.md), in French) |
-| **Easier trig removal** (a stock OS flaw) | ✅ in the web flasher: on the stock OS, a press on a trig longer than 0.2 s counts as a hold and the trig stays, so the soft keys often need a second press; with this mod, letting go within half a second removes it (empty steps, knob turns while holding: unchanged). Checked in the emulator on the OS's own code, from the key scan to the sequencer, and **tested on the hardware** with Model-TG, the 5 engines, 6-channel audio and the arpeggiator ([note 33](notes/33-effacer-un-trig.md), in French) |
-| **Scale** (chromatic mode) | 🟡 feasible, medium effort |
-| **Polyphony** for the synth engine | 🔴 very hard |
-
-Also in the web flasher, by [drumkilla](https://github.com/drumkilla/elektron-model-tweaks) (tested on real hardware by their author,
-our build matches their own tool byte for byte):
-
-| Tweak | What it does |
-|---|---|
-| `latching-mute` | Hold `TRK` and tap `FUNC`: mute mode stays on, so you mute tracks without holding `FUNC` |
-| `trig-preview` | Sequencer stopped or paused: hold a step and press `PAGE` to hear it (note, length, p-locks) |
-| `browser-scroll` | Long names scroll in the sound browser |
-
-Requests from the community (Reddit) and how we handle them: [note 15](notes/15-demandes-reddit.md) (in French).
-
-| Request | Status |
-|---|---|
-| Mute without holding `FUNC` | ✅ `latching-mute` (above) |
-| Bundle with trig preview | ✅ `trig-preview` (above) |
-| Run the **Model:Samples OS** on a Model:Cycles | ✅ **tested on a real Model:Cycles** (2026-09-29) — *Samples OS* tab of the web flasher, or `tools/crossflash.py`. Built from both official files: same bootstrap, same updater, same RAM setup on both machines. The way back to the Cycles OS goes through the MIDI IN (note 15 §3) |
-| Port the **Syntakt digital machines** | 🟡 the Syntakt's audio engine (a second ColdFire) runs in our emulator; its FM machines turn out to be the Model:Cycles machines plus SD VINTAGE and CP VINTAGE. SD VINTAGE v2 is retuned on it ([note 16](notes/16-moteur-syntakt.md)) |
-
-## Project status
-
-- The 6-tracks-over-USB mod **exists** ([scottmetoyer/ms-multi-output](https://github.com/scottmetoyer/ms-multi-output), MIT)
-  and is ported here as a tweak. Our build **reproduces the known-good MAIN OS byte for byte**.
-  It now **works on a real Model:Cycles** (before, it had only run on a Model:Samples running the Cycles OS).
-- The official OS **1.13** (latest version) has been analysed in depth ([note 09](notes/09-analyse-firmware-1.13.md)).
-- The synth engine (the 6 machines are 6 *mappings* of one FM engine) is decoded and **emulated** (`tools/emu/`).
-  One more engine, **SD VINTAGE**, is written in C, compiled for the ColdFire CPU and validated in the emulated engine ([note 14](notes/14-machine-sd-vintage.md)).
-- **Milestone 1 reached (2026-09-29)**: the 6-channel mod and SD VINTAGE work on a real Model:Cycles.
-
-Roadmap: [`notes/08-feuille-de-route.md`](notes/08-feuille-de-route.md) (in French).
-
-## Documentation
-
-The technical documentation is written in French.
-
-| Document | Topic |
-|---|---|
-| [`BUILD.md`](BUILD.md) | Building a modified firmware image (pure Python) |
-| [`FLASH.md`](FLASH.md) | **Flashing your Model:Cycles**: detailed guide and scripts |
-| [`dossier-technique.md`](dossier-technique.md) | Summary of the Elektronauts thread "Model:Cycles Q&A with Ess", every fact quoted from its source |
-| [`notes/README.md`](notes/README.md) | **Index of the technical notes** and key figures |
-| [`notes/10-faisabilite-fonctionnalites.md`](notes/10-faisabilite-fonctionnalites.md) | **Feasibility, feature by feature** |
-| [`notes/21-architecture-materielle.md`](notes/21-architecture-materielle.md) | **Hardware architecture**, read from photos of the PCB: CPU, memories, USB PHY, audio output, MIDI input, key and LED latches |
-| [`tools/`](tools/) · [`tweaks/`](tweaks/) · [`docs/flasher/`](docs/flasher/) | Build tools (mtlib), patch tables (JSON), web flasher |
+The research behind it (firmware analysis, hardware architecture, engine ports, measurements) is written up in the
+[technical notes](notes/README.md), in French. Release notes for each flasher version are on the
+[website](https://18nelli18.github.io/Modded-Cycles/#version).
 
 ## Credits
 
-Upstream projects, all MIT licensed, none including firmware:
+This project stands on the work of others, all MIT licensed:
 
-- [`scottmetoyer/ms-multi-output`](https://github.com/scottmetoyer/ms-multi-output) — the 6-channel mod (Model:Samples and Model:Cycles)
-- [`drumkilla/elektron-model-tweaks`](https://github.com/drumkilla/elektron-model-tweaks) — the latching-mute, trig-preview and browser-scroll tweaks (in `tweaks/`, unchanged except a 3-byte fix to trig-preview so it also works while paused, note 34), `mtlib` (SysEx transport, aPLib, ELE3 container and HMAC in Python) and the JSON tweak format, vendored in `tools/mtlib/`
-- [`TinyGregAudio/Model-TG`](https://github.com/TinyGregAudio/Model-TG) — the Sampler machine, resampling, retrig and master FX, slide trigs, and more; generated from a pinned commit (v1.1.0) by `tools/gen_model_tg.py` with its own build, from a copy of its source with three listed changes (mutes at once, the same trig-preview fix, stems of muted tracks; `tweaks/model-cycles_OS1.13/30-model-tg.json`, license in `LICENSE-Model-TG`); `30-model-tg-st.json`, the base of the combined version, is built the same way with one more listed change
-- [`mischa85/elektron-firmware-tool`](https://github.com/mischa85/elektron-firmware-tool) — unpacking, repacking and re-signing `.syx` files (alternative C toolchain)
-- [`mxldyn/octamax`](https://github.com/mxldyn/octamax) — reverse engineering of the Octatrack OS (method, tools, pitfalls)
+- **[scottmetoyer/ms-multi-output](https://github.com/scottmetoyer/ms-multi-output)**: the original 6-channel USB mod.
+- **[drumkilla/elektron-model-tweaks](https://github.com/drumkilla/elektron-model-tweaks)**: latching mute, trig preview, scrolling names, and the `mtlib` toolkit and tweak format used by the build.
+- **[TinyGregAudio/Model-TG](https://github.com/TinyGregAudio/Model-TG)**: the Sampler machine and everything that comes with it ([license](tweaks/model-cycles_OS1.13/LICENSE-Model-TG)).
+- **[dagargo/elektroid](https://github.com/dagargo/elektroid)**: the Elektron Transfer update protocol behind fast USB flashing.
+- **[mischa85/elektron-firmware-tool](https://github.com/mischa85/elektron-firmware-tool)** and **[mxldyn/octamax](https://github.com/mxldyn/octamax)**: firmware tooling and reverse-engineering methods.
+
+If these mods are useful to you, you can support the project on **[Ko-fi](https://ko-fi.com/18nelli)**.
+Feature requests and bug reports are welcome in the [issues](https://github.com/18nelli18/Modded-Cycles/issues).
