@@ -180,7 +180,8 @@ Quatre étapes, de haut en bas :
      tel que documenté par [Elektroid](https://github.com/dagargo/elektroid). Le Model:Cycles reste sur son écran habituel
      (aucun menu), Elektron Transfer doit être **fermé** (il occupe le port). La page demande à la machine qui elle est
      (modèle, version d'OS) et refuse d'envoyer un firmware Model:Cycles à une machine qui répond « Model:Samples »
-     (OS Samples, ou Model-TG avec *Device Config › Transfer* sur SMP). Environ une minute ; à la fin, **confirmer sur la machine**.
+     (OS Samples, ou Model-TG avec *Device Config › Transfer* sur SMP). Une trentaine de secondes (33 s mesurées) ; à la fin,
+     **confirmer sur la machine** (YES). Testé sur un vrai Model:Cycles le 04/10/2026.
    - **Classique** : `CONFIG › UPGRADE` puis *YES*, le `.syx` est envoyé à la vitesse du fil MIDI (5 à 10 minutes).
      La solution de secours si la méthode rapide ne trouve pas la machine.
    La page choisit le port « Model:Cycles » et prévient si tu en prends un autre. Il n'y a plus de voie MIDI IN dans la page :

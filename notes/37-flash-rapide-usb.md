@@ -54,7 +54,7 @@ Deux écarts, sans effet sur ce qui part sur le câble :
   *Device Config › Transfer* sur SMP (sa doc interdit d'y accepter un OS). Avant l'envoi, elle redemande, pour le cas
   où la machine a changé entre-temps.
 - **Pendant l'envoi** : progression bloc par bloc, temps restant mesuré, bouton Stop. Estimation affichée avant :
-  blocs × (50 ms + 30 ms supposés pour le message et la réponse), soit environ 47 s pour 1,2 Mo (587 blocs).
+  blocs × (50 ms + 15 ms pour le message et la réponse), soit environ 38 s pour 1,2 Mo (587 blocs) ; mesuré : 33 s (§5).
 - **Après** : « confirmez sur l'écran du Model:Cycles » ; quand le port disparaît, « écrit le firmware et redémarre » ;
   quand il revient, la page attend 2,5 s, redemande la version (4 essais, 2 s d'écart) et l'affiche.
 - **Étape 4** : bouton *Télécharger le .syx*, à glisser sur Elektron Transfer (le même protocole, la même confirmation).
@@ -73,18 +73,22 @@ Deux écarts, sans effet sur ce qui part sur le câble :
   Stop, redémarrage suivi jusqu'à la nouvelle version ; puis la méthode classique comme avant.
 - Rendu vérifié dans Chromium (étapes 3 et 4, envoi, fin).
 
-## 5. Pas encore vérifié
+## 5. Testé sur la machine (04/10/2026)
 
-- La page elle-même sur un vrai Model:Cycles : Elektron Transfer marche avec ces fichiers (essai de l'utilisateur),
-  et la page envoie les mêmes octets qu'Elektroid, mais le temps réel par bloc (estimé à 80 ms) et le texte exact de la
-  demande de confirmation restent à relever.
-- Le firmware `6ch-usbup` et Model-TG gardent l'USB MIDI et le gestionnaire de Transfer de l'OS ; Model-TG ne touche à
-  ce gestionnaire qu'en mode SMP (`vendor/Model-TG/docs/INTERNALS.md`). Rien ne devrait changer, à confirmer.
+- La page sur un vrai Model:Cycles, depuis un firmware modifié (régulateur v2 de la [note 36](36-regulateur-sans-coupures-inutiles.md)) :
+  machine trouvée, **33 s** pour la barre de progression, puis la machine demande de confirmer avec **YES** ou **NO** ;
+  après YES, elle installe le firmware et redémarre, et tout fonctionne. L'estimation affichée avant l'envoi passe à
+  65 ms par bloc (50 ms de pause + 15 ms) au lieu de 80.
+- Le gestionnaire de Transfer de l'OS répond donc aussi sous nos mods ; Model-TG n'y touche qu'en mode SMP
+  (`vendor/Model-TG/docs/INTERNALS.md`).
+
+## 6. Pas encore vérifié
+
 - **Le retour depuis l'OS Samples** reste au MIDI IN. Le message Reddit suggérait un fichier « croisé » glissé dans
   Transfer ; mais un conteneur Model:Samples remplace aussi le menu de démarrage du Model:Cycles (§ avertissements de
   l'onglet OS Samples), donc pas proposé tant que ce n'est pas étudié.
 
-## 6. Rappel
+## 7. Rappel
 
 Aucun firmware n'est fourni : la page envoie le fichier construit sur l'ordinateur à partir de l'OS officiel de
 l'utilisateur. La récupération d'une machine qui ne démarre plus passe toujours par le menu de démarrage et le MIDI IN

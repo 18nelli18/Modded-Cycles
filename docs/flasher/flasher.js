@@ -309,10 +309,11 @@ async function upgradeFast(session, raw, opts = {}) {
   return { sent: offset, total: raw.length, cancelled: false, seconds: (Date.now() - t0) / 1000, blocks };
 }
 
-/* Rough fast transfer time in seconds: per block, the pause plus an estimated 30 ms for the
- * message and the machine's answer over USB. The page shows the measured pace once it runs. */
+/* Rough fast transfer time in seconds: per block, the pause plus about 15 ms for the message and
+ * the machine's answer over USB (a real Model:Cycles took 33 s for a whole modded firmware, notes/37).
+ * The page shows the measured pace once it runs. */
 function fastSeconds(raw) {
-  return Math.ceil(raw.length / OS_BLOCK) * (REST_MS + 30) / 1000;
+  return Math.ceil(raw.length / OS_BLOCK) * (REST_MS + 15) / 1000;
 }
 
 function sleep(ms) {

@@ -20,7 +20,7 @@ You need:
 - your official **`model-cycles_OS1.13.syx`** ([elektron.se](https://www.elektron.se/support-downloads/modelcycles), unzip the download);
 - a **USB cable**, the Model:Cycles on its usual screen and Elektron Transfer closed.
 
-The page flashes in **about a minute** with the update protocol of Elektron Transfer (worked out by
+The page flashes in **about 30 seconds** with the update protocol of Elektron Transfer (worked out by
 [Elektroid](https://github.com/dagargo/elektroid)): the Model:Cycles acknowledges every block, then asks you to confirm.
 The classic way (`CONFIG > UPGRADE`, 5 to 10 minutes) stays available as a fallback.
 You can also download the prepared `.syx` and drop it onto Elektron Transfer yourself.

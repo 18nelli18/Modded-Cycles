@@ -264,7 +264,7 @@ async function main() {
       && !/MIDI IN|READY TO RECEIVE|TRIG 4/.test(text(doc, "step-connect")), "no MIDI IN route in step 3");
     check(doc.getElementById("m-fast").getAttribute("aria-checked") === "true" && !doc.getElementById("howto-fast").hidden
       && doc.getElementById("howto-usb").hidden && /Close Elektron Transfer/.test(text(doc, "howto-fast"))
-      && !/CONFIG › UPGRADE/.test(text(doc, "howto-fast")) && /about a minute/.test(text(doc, "method-note")),
+      && !/CONFIG › UPGRADE/.test(text(doc, "howto-fast")) && /about 30 seconds/.test(text(doc, "method-note")),
       "fast method by default: its steps (close Transfer, no menu to open)");
     doc.getElementById("allow").click();
     await wait(150);
