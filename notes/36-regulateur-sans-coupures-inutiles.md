@@ -16,7 +16,7 @@ Adresses : VA de l'OS 1.13. Firmware visé : 6ch-usbup + Model-TG + les 5 moteur
 | Où passe le temps de la boucle des voix (émulation, par fonction) | `[FAIT]` (§2) |
 | Nouvelle règle, écrite en assembleur à la place du code compilé (sans GCC 16.2) | `[FAIT]` (§3, §5) |
 | Plus léger : suivi des voix par le régulateur avec Model-TG, division des pistes par 2 dans la boucle des voix de l'OS | `[FAIT]` (§4) |
-| Preuves en émulation | `[FAIT]` (§6) |
+| Preuves en émulation : différentiel avec le code compilé, nouveau test du régulateur, tous les bancs, flasher web | `[FAIT]` (§6) |
 | Essai sur la machine | `[À FAIRE]` (§8) |
 
 ## 1. Pourquoi la dernière piste est coupée `[FAIT]`
@@ -161,7 +161,16 @@ effet : la moyenne rapide reste à 0). La moyenne lente et la période ne sont p
 | Charge qui suit les voix (7 % par voix, 6 voix : 88 %), moyenne lente déjà à 88 % | **une seule voix éteinte**, puis la charge soutenue retombe ; le code C, dans le même scénario (moyenne lente posée à 88 %), en éteignait deux |
 | Moyenne lente partie de 0 sous une charge de 88 % | elle monte (le code C restait à 0) |
 
-**Non-régression** : voir la fin de cette section (bancs complets sur le firmware de l'essai).
+**Non-régression** (tweaks régénérés de cette note) :
+- `test_model_tg_syntakt.py` (Model-TG + 5 moteurs : démarrage, interface, son, régulateur, slide trigs, mode mute) :
+  TOUT OK ;
+- `test_model_tg.py` (Model-TG seul et avec 6ch-usbup, division des pistes par 2 réécrite) : TOUT OK ;
+- `test_idle.py`, `test_sram_code.py`, `test_sram_scratch.py` (5 moteurs), `test_meter.py` (firmware de diagnostic,
+  régulateur compilé gardé) : TOUT OK ;
+- `test_arp.py`, `test_trig_hold.py`, `test_trig_preview.py` sur 6ch-usbup + Model-TG + 5 moteurs (+ arpégiateur,
+  trig-hold) : TOUT OK ; `test_usb_in.py` : tout est bon ;
+- `ref_mainos.py` : 2 303 combinaisons ; `webflash_smoke.sh` avec les deux OS : ALL OK (2 483 vérifications, chaque
+  combinaison reconstruite dans la page redonne son empreinte).
 
 **Reproductibilité** : avec GCC 13.3, le générateur sort exactement « sa sortie sans les étapes de cette note, puis ces
 étapes » sans Model-TG (5 moteurs ; SD seul ; SY TOY + SY SWARM) ; avec Model-TG, le code compilé par GCC 13.3 n'a pas les mêmes tailles et la
