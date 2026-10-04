@@ -15,6 +15,11 @@ Ce qui est fait correspond au point E de la feuille de route ([08 §E](08-feuill
 > - Le build passe sans `--force-cave`, et les stubs émulés à leur nouvelle adresse donnent les mêmes registres et la même mémoire.
 > - Les mesures du §3 datent de l'ancienne cave. Les stubs n'ont pas changé d'un octet et restent indépendants de leur position.
 
+> **Mise à jour ([34](34-glitches-usb-multipiste.md), 04/10/2026).** `6ch-usbup` n'a plus les mêmes octets que `6ch-multiout` pour le flux :
+> - chaque bloc part vers l'ordinateur au début de l'interruption suivante, à heure fixe, au lieu de juste après son calcul ;
+> - la file est alignée au démarrage du flux, le ring passe de 8 cases de 192 o à 9 cases de 168 o (même SRAM), 8 cases amorcées ;
+> - la copie des 6 pistes (`tracks6`) est déroulée, mêmes octets écrits. Le tableau ci-dessous décrit la variante d'avant.
+
 ---
 
 ## En bref

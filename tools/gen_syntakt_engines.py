@@ -29,6 +29,7 @@ import gen_sdvintage_exact as gx   # noqa: E402
 import gen_sdvintage_7th as g7     # noqa: E402
 import gen_syntakt_machines as g8  # noqa: E402
 import sprites                     # noqa: E402
+import usb_steady                  # noqa: E402
 import syntakt                     # noqa: E402
 
 DEV = HERE.parent / "tweaks" / "model-cycles_OS1.13"
@@ -1240,6 +1241,8 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None):
     if tg:
         out["requires"] = [tg["id"]]
     out.update({"conflicts": sorted(ids - {tid}), "writes": writes, "append": append})
+    if not tg:                    # envoi à l'USB à heure fixe (notes/34) ; la version combinée l'a par model-tg-st
+        out = usb_steady.add_to(out)
     return out, ndesc
 
 

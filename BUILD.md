@@ -89,30 +89,31 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `6ch-usbup` | `db3d26cc3a48d1155933240c7d1d5476c8f56d2b6a54be1ffe7f5327e54c0521` |
+| `6ch-usbup` | `a7086beef0aa10427248e0b191ee97ddc249b2460804422df7b17100febf1158` |
 | `sdvintage-snare` (v2, recalée sur le Syntakt) | `11049726efa102028f7365b0a672c8a244b98edcef5e7c8b5e0aafba369f60d3` |
 | `6ch-multiout,sdvintage-snare` | `80d0d717c5054f9277c2ddadb588e3578968cc1427610c7367ee408fa8ffd2de` |
-| `6ch-usbup,sdvintage-snare` | `6cb642dc14fc3f9ec013da8481fc0545758e514c76e0c60611208d9f15ad71cc` |
+| `6ch-usbup,sdvintage-snare` | `caac2918d7b7ce85849ff9814a75549b03091199de202ae05b648f2fbef0fcb9` |
 | `latching-mute,trig-preview,browser-scroll` | `71fef138b1ae16f3ad440ecaa6a6327c1a987ce2c8a86b74329f68159981a15c` (= `tweak.py` de drumkilla) |
-| `6ch-usbup,latching-mute,trig-preview,browser-scroll` | `fd57831c61926fb3b1902cadcb0f95e68db3bb637b4cd20860a0efc46db82cfa` |
+| `6ch-usbup,latching-mute,trig-preview,browser-scroll` | `771211068fee2aa673ed1df1afe4b7daf864500ce061ea0e88d9a11185819b37` |
 
 | `sdvintage-exact` (avec `--syntakt Syntakt_OS1.42.syx`) | `8e2290a79fb1406ce65b3af3c5d3d95faade666e98eb8ecce0c0fa25fe87b15d` |
-| `6ch-usbup,sdvintage-exact` (idem) | `ea57b3c52b77d4de3df073ee605f2fecde59878d06e3141c927ed3bd7f489904` |
+| `6ch-usbup,sdvintage-exact` (idem) | `97dadf3884a2703c4f7b230c9a046ae735292d57ac6576ff2e6d5bf72a12c670` |
 | `syntakt-vintage` (idem) | `b4de3ec5f7eda7504bf03e7141f57bae6cf5bc137d39f6704da60881d56ed9b0` |
 | `sdvintage-7th` (idem) | `c73ad4c796b94ab39d106d0798091eb39b5e3e31f66d7fe78e2db30db44daad3` |
-| `syntakt-cp` (idem) | `08471a7add515a9c22ab252dde18cb905473a9a40d794c0cddddf8563cc4fdbf` |
-| `syntakt-toy` (idem) | `33d138abbf714acc08968733b91d3df2b2dbb50b320a3761c8df7e825270b68e` |
-| `syntakt-sd-cp-toy` (idem) | `52fcf812927b5624c5644a7af21a22ec0e8d5982276035d862080d605f2a08e0` |
-| `syntakt-bits` (idem) | `7d8a27208fcdd127249e5a2c8d837c9a13d655ea77dc0f96ba28bd0ef36b66bc` |
-| `syntakt-sd-cp-toy-bits` (idem) | `ef14b4de648bdb0b9782f31126afa6ccc64b043b707e1937533a9697b1fcb8aa` |
-| `syntakt-swarm` (idem) | `5892a9122daabd2ae0d14b6d35ea94d4b32484137eb9f82cf1da52356cc71f90` |
-| `syntakt-sd-cp-toy-bits-swarm` (idem) | `5388bb709be6feeb63caca9bf830f3c2e7eb5a84ff35bdd99d47c59d1e2b3790` |
+| `syntakt-cp` (idem) | `baf05027e0644df679269672d939b83d67c100de069bc3ec2397d1ad39580de5` |
+| `syntakt-toy` (idem) | `667c2655ad79692d895d18463660e43bc46f03c421ad03de6fc0116e05881a51` |
+| `syntakt-sd-cp-toy` (idem) | `859fc46cc8e794430e8c9553a92bb6fe42a315a423b75f96134644534a2002c5` |
+| `syntakt-bits` (idem) | `901205ed00b3e5652130f10b2f5b3e5ad9a48574392b9591b1ccd3d1cbdf8e8a` |
+| `syntakt-sd-cp-toy-bits` (idem) | `d37c343583fe6b6f19dcf90fb2243b43301fee9d6a7ce78c4253823eb55c7e3f` |
+| `syntakt-swarm` (idem) | `872c6ee8e4af779cc7b6184979174ee6a2f8eb7b9372044b41c0e5bd39b0888f` |
+| `syntakt-sd-cp-toy-bits-swarm` (idem) | `c4616b24e394383986f1f31c6c5bf3bc78322593c6997bd0a199c55fd26f9b3c` |
 
 ### Model-TG
 
 `tweaks/model-cycles_OS1.13/30-model-tg.json` vient du build de [Model-TG](https://github.com/TinyGregAudio/Model-TG) lui-même (licence MIT),
-au commit épinglé dans `tools/gen_model_tg.py`, avec les binutils m68k, depuis une copie de sa source avec une retouche (`MC_PATCHES` : en
-mode mute, chaque touche de piste mute tout de suite), voir [note 31 §10](notes/31-model-tg.md) :
+au commit épinglé dans `tools/gen_model_tg.py`, avec les binutils m68k, depuis une copie de sa source avec deux retouches (`MC_PATCHES` : en
+mode mute, chaque touche de piste mute tout de suite, [note 31 §10](notes/31-model-tg.md) ; avec l'audio USB multipiste, une piste mutée n'est
+plus coupée net sur sa piste USB, [note 34 §3](notes/34-glitches-usb-multipiste.md)), plus l'envoi à l'USB à heure fixe (`tools/usb_steady.py`) :
 ```sh
 git clone https://github.com/TinyGregAudio/Model-TG vendor/Model-TG
 git -C vendor/Model-TG checkout 70b39dd6787770ebefc7a2d78dea1678ec012679   # v1.1.0
@@ -121,11 +122,11 @@ python3 tools/gen_model_tg.py --cycles model-cycles_OS1.13.syx --model-tg vendor
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `model-tg` | `08d9f07540cf487ba65bd94f8d60aaf7f5c92f7bbb5115f9c8fb953535321241` (sans la retouche : `a049d724…`, celle annoncée par Model-TG pour sa v1.1.0) |
-| `6ch-usbup,model-tg` | `464f742e036831110d76a6bd6411b704ab7160bee28fce5c52b39a275f4d59da` |
+| `model-tg` | `2a939b7f00b6868644e2570759ff9f15b955fce3da261b5924e430bdb19202a6` (sans nos ajouts : `a049d724…`, celle annoncée par Model-TG pour sa v1.1.0) |
+| `6ch-usbup,model-tg` | `de84566595e7d7fc840fe1f6c7af8d468c444b49ec7a4a573ffb7838bcce8fa5` |
 
 Le même script écrit `30-model-tg-st.json`, la base de la **version combinée avec les moteurs du Syntakt** : Model-TG construit par son
-build depuis une copie de sa source, avec la même retouche et une autre (sa zone d'échantillons s'arrête 1 Mo plus bas). Les moteurs s'appliquent
+build depuis une copie de sa source, avec les mêmes ajouts et une retouche de plus (sa zone d'échantillons s'arrête 1 Mo plus bas). Les moteurs s'appliquent
 par-dessus (`31-syntakt-tg-<moteurs>.json`, `requires`), voir [note 31 §4](notes/31-model-tg.md) :
 ```sh
 python3 tools/gen_syntakt_engines.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx --all --tg [--check]
@@ -135,9 +136,9 @@ python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --sy
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `model-tg-st,syntakt-tg-sd` | `a0868c7216e19dd5dd5fca1314daa5ffce2e6f09d1b06330dc080d12bda6521e` |
-| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `94d610447ca437162258d09c766f0752ed84aa17034bcc8d50a98d51f692c549` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `26435535da0aadcbcf2e15cfaaa822bf1007917a8ec2e67db17cffef2cbd84fd` |
+| `model-tg-st,syntakt-tg-sd` | `67c8c4504d6f1614887bd888ce6ee9f51096a2a5556dde1c77295311b600d57b` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `4b59a9a75dcb80034410e8ed68356bb80c05c4a67335ec2b487e44d07a1732a1` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `516f1dcaa136abd8ad99157e214b6137f59b5a1ad958d196b5bc074d7d888d0f` |
 
 Les 2 303 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
 `tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;
@@ -159,8 +160,8 @@ python3 tools/emu/test_arp.py --cycles model-cycles_OS1.13.syx \
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
 | `arp` | `f3b2e3b5d1c1879e7b7962651e285acce2d8bf80c914bffa4b378177f3606945` |
-| `model-tg,arp` | `8be6aac3cd483b0a65ee7c2f0491ef714c2d0fd7760e24a5d5909227d52f4fc7` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp` | `d2e1aeb90df99b2484fc41d5e70f0ec30dd9db84d3dc1017da792150c421bef8` |
+| `model-tg,arp` | `549d139743527d2de5296db095f4eb39e4a000a0be04bf2fd3946a62c0d1ceef` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp` | `d8d99003df1687ea2c6781138f680565925ad9339ee8e207d24b488980cba5ab` |
 
 L'arpégiateur et les moteurs du Syntakt libèrent le même masque (`0x4016cae8`) : les deux constructeurs (`tools/build.py`,
 `docs/flasher/builder.js`) acceptent une écriture déjà faite à l'identique par un autre tweak.
@@ -180,19 +181,23 @@ python3 tools/emu/test_trig_hold.py --cycles model-cycles_OS1.13.syx \
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
 | `trig-hold` | `bbb8a4217a888c46a60cfb17ae444bec9cf21d6ff2d2d36bf8d1f1cdb81d1ef4` |
-| `6ch-usbup,trig-hold` | `b965e349e099312d944d66765c90e5c77490dcddc35276c7dd9e67ea1071e71d` |
-| `model-tg,trig-hold` | `48462793361abce89c9a8ca59848238c37ae214cc41f98424448de305d495f6f` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp` | `6cf5d63634b0e423dfdbd5990c95dff0a7185f1b3f77eb04a91ef22c6027328b` |
+| `6ch-usbup,trig-hold` | `304c2f9a1656d35abacd5d6d2161d181fbc763fa6ac4c432b2226332554ccb1b` |
+| `model-tg,trig-hold` | `89d8b86d3b6eaf7b5288dc33c390103fbd2a27154839e55e4702b625b29df738` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp` | `2562fb2d32030719828a1f1942ea50ebb21e6424d05502e677b5471951bf0507` |
 
 Avec `6ch-usbup`, les deux tweaks réécrivent de la même façon le pointeur du sprite dont le masque est libéré.
 
 ### Variante `6ch-usbup`
 
 `tweaks/model-cycles_OS1.13/11-6ch-usbup.json` n'est pas écrit à la main : `tools/relocate_6ch.py` le dérive du patch 6 canaux
-(mêmes stubs, déplacés dans une cave ; descripteurs et table des modes USB laissés d'origine).
+(stubs déplacés dans une cave ; descripteurs et table des modes USB laissés d'origine), sans l'image firmware, avec les binutils m68k.
+Depuis la [note 34](notes/34-glitches-usb-multipiste.md), il rend aussi le flux USB robuste : envoi de chaque bloc au début de
+l'interruption suivante (`tools/machines/usb6/feed.S`, écritures dans `tools/usb_steady.py`, les mêmes que dans Model-TG et les moteurs
+du Syntakt), file alignée au démarrage, ring de 9 cases de 168 o au lieu de 8 de 192 o, copie des 6 pistes déroulée
+(`tools/machines/usb6/tracks6.S`). La preuve fait tourner le vrai pilote USB de l'OS avec un contrôleur modélisé :
 ```sh
 python3 tools/relocate_6ch.py --check                  # le fichier versionné est-il à jour ?
-python3 tools/relocate_6ch.py --cave 0x4018a788:1024   # viser un autre masque libéré (VA:taille), puis rebuild
+python3 tools/emu/test_usb_in.py --cycles model-cycles_OS1.13.syx [--seconds 2] [--long 60]   # ~15 min
 ```
 
 ### Machine SD VINTAGE
@@ -220,7 +225,7 @@ python3 tools/emu/test_sram_scratch.py --cycles model-cycles_OS1.13.syx --syntak
     --tweak tweaks/model-cycles_OS1.13/24-syntakt-sd-cp-toy-bits-swarm.json   # SRAM empruntée (notes/26)
 python3 tools/emu/test_sram_code.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \
     --tweak tweaks/model-cycles_OS1.13/24-syntakt-sd-cp-toy-bits-swarm.json   # code du Syntakt en SRAM (notes/28)
-python3 tools/emu/test_model_tg.py --cycles model-cycles_OS1.13.syx                                  # Model-TG seul (notes/31)
+python3 tools/emu/test_model_tg.py --cycles model-cycles_OS1.13.syx                                  # Model-TG seul (notes/31, notes/34 §3)
 python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx   # version combinée
 python3 tools/ref_mainos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx --check
 ```

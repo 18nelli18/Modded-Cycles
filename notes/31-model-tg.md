@@ -16,6 +16,7 @@ Décisions de l'utilisateur, après l'analyse du §3 :
 | Version combinée Model-TG + moteurs du Syntakt | `[FAIT]` en ligne (1.6), démarre et joue sur la machine (firmware de diagnostic, §6) ; charge à optimiser (§7) |
 | Passage à Model-TG v1.1.0 (slide trigs) | `[FAIT]` slides prouvés aussi sur nos moteurs en émulation ; fonctionne sur la machine (§9) |
 | Mutes tout de suite en mode mute | `[FAIT]` retouche de sa source (§10) ; fonctionne sur la machine |
+| Pistes USB coupées au mute, flux USB qui craque quand la charge varie | `[FAIT]` seconde retouche (`voice_quiet`) et envoi à l'USB à heure fixe, [34](34-glitches-usb-multipiste.md) |
 
 ## 1. Ce qu'est Model-TG
 

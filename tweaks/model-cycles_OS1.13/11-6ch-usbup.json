@@ -3,13 +3,15 @@
  "order": 11,
  "name": "Sortie multipiste 6 canaux, upgrade USB conserve",
  "description": [
-  "Meme sortie 6 canaux que 6ch-multiout : memes stubs, octet pour octet,",
-  "mais loges dans la cave 0x4015c044 au lieu des descripteurs USB CDC et MIDI seule.",
+  "Meme sortie 6 canaux que 6ch-multiout, stubs loges dans la cave",
+  "0x4015c044 au lieu des descripteurs USB CDC et MIDI seule (notes/13).",
   "Cette cave est le masque 0xFF d'un sprite : le sprite est redirige vers un masque",
   "identique (meme rendu), voir tools/sprites.py et notes/14.",
-  "Descripteurs et table des modes USB restent d'origine : CONFIG > UPGRADE par USB devrait refonctionner.",
-  "Genere par tools/relocate_6ch.py depuis 6ch-multiout (decalage des stubs : -0x3f020).",
-  "ATTENTION : jamais flashe. Variante experimentale, voir notes/13."
+  "Descripteurs et table des modes USB restent d'origine : CONFIG > UPGRADE par USB fonctionne.",
+  "Flux USB robuste (notes/34) : chaque bloc part au debut de l'interruption suivante, a heure fixe,",
+  "au lieu de juste apres son calcul ; file alignee au demarrage ; ring de 9 cases au lieu de 8 ;",
+  "copie des 6 pistes deroulee (memes octets). Preuve : tools/emu/test_usb_in.py.",
+  "Genere par tools/relocate_6ch.py depuis 6ch-multiout (decalage des stubs : -0x3f020)."
  ],
  "device": "Model:Cycles",
  "os": "1.13",
@@ -21,27 +23,22 @@
   {
    "off": 8507,
    "old": "0f20",
-   "new": "0320"
+   "new": "0420"
   },
   {
    "off": 8548,
    "old": "9b8021",
-   "new": "9e0021"
+   "new": "9de821"
   },
   {
    "off": 9139,
    "old": "0f24",
-   "new": "0724"
-  },
-  {
-   "off": 9166,
-   "old": "e788",
-   "new": "ed88"
+   "new": "0824"
   },
   {
    "off": 9171,
    "old": "30ed8a9480",
-   "new": "90ef8ad480"
+   "new": "90c4fc00a8"
   },
   {
    "off": 9192,
@@ -51,17 +48,17 @@
   {
    "off": 9247,
    "old": "0bb2",
-   "new": "06b2"
+   "new": "08b2"
   },
   {
    "off": 9657,
    "old": "0f20",
-   "new": "0720"
+   "new": "0820"
   },
   {
    "off": 9682,
    "old": "e78ded899285",
-   "new": "ed8def89d285"
+   "new": "c2fc00a84e71"
   },
   {
    "off": 9700,
@@ -84,6 +81,21 @@
    "new": "a800"
   },
   {
+   "off": 362656,
+   "old": "a93c00000020",
+   "new": "4eb94015c23c"
+  },
+  {
+   "off": 364434,
+   "old": "4eb940002912",
+   "new": "4eb94015c2d6"
+  },
+  {
+   "off": 364494,
+   "old": "4eb940002912",
+   "new": "4eb94015c2d6"
+  },
+  {
    "off": 745524,
    "old": "4015c044",
    "new": "40154ae4"
@@ -100,13 +112,18 @@
   },
   {
    "off": 1424832,
-   "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-   "new": "4fefffd448d707ff2241781f2c03cc84e2886f000028247c8000185845f26c007e06241202c222c245ea008053876600fff25286cc8453806e00ffdc4cd707ff4fef002c4ef940002a26"
+   "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "new": "4fefffe448d707552241e2886f44781f2c0341f980001858cc8445f06c00241202c222c2242a008002c222c2242a010002c222c2242a018002c222c2242a020002c222c2242a028002c222c2528653806ec64cd707554fef001c4ef940002a26"
   },
   {
    "off": 1424932,
    "old": "ffffffffffffffffffffffffffffffffffffffffffff",
    "new": "2200e988e789d0812239404a05e8d2804ef9400029ee"
+  },
+  {
+   "off": 1424956,
+   "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "new": "a93c000000202f0a45f94015c2fc4aaa000467404ab9404a062c670c4ab9404a06446704610000322f2a00042f1242aa00044eb940002912508f4aaa000c67142f2a000c2f2a000842aa000c4eb940002912508f245f4e7541f980008007721f70000810000767025c8041e8004053816af073b9400029b95281c2fc000304810000001090816a027000721fb0816f02200123c0404a06204e7541f94015c2fc4aa80004670850884aa80004660c20af0004216f000800044e754ef94000291200000000000000000000000000000000"
   },
   {
    "off": 1683194,
