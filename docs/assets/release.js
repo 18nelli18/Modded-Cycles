@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.14", date: "2026-10-04", changes: [
+    { en: "Arpeggiator, fix: in live recording, the notes the arpeggiator plays are recorded one by one, each on its step with its length; the pattern only kept one of the notes, repeated (the retrig of the last key pressed)",
+      fr: "Arpégiateur, correction : en live rec, les notes que joue l'arpégiateur sont enregistrées une à une, chacune sur son pas avec sa durée ; le pattern ne gardait qu'une des notes, répétée (le retrig de la dernière touche)" },
+    { en: "A single held note on 1 octave is still recorded as one trig with retrig, as with the original retrig. Tested on a real Model:Cycles",
+      fr: "Une seule note tenue sur 1 octave s'enregistre toujours en un trig avec retrig, comme le retrig d'origine. Testé sur un vrai Model:Cycles" },
+    { en: "Guide: live recording, in the Arpeggiator section",
+      fr: "Guide : l'enregistrement en live, dans la section Arpégiateur" },
+  ] },
   { version: "1.13", date: "2026-10-03", changes: [
     { en: "New: easier trig removal. On the stock OS, a press on a trig longer than 0.2 s counts as a hold and the trig stays, so the soft keys often needed a second press; with this mod, letting go within half a second removes it",
       fr: "Nouveau : effacer un trig plus facilement. Avec l'OS d'origine, un appui sur un trig de plus de 0,2 s compte comme un maintien et le trig reste, si bien que les touches souples demandaient souvent un second appui ; avec ce mod, relâcher en moins d'une demi-seconde l'efface" },

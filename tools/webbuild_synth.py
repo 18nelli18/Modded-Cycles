@@ -26,7 +26,9 @@ main = bytearray((i * 37 + 11) & 0xFF for i in range(SECT_LEN))   # remplissage 
 
 # masques 0xFF de sprites (comme dans l'image reelle, tools/sprites.py), bordes de non-0xFF
 import sprites                                   # noqa: E402
-for va, (size, _, _) in list(sprites.MASKS.items()) + [(sprites.SHARED_MASK, (1040, 0, ""))]:
+for va, (size, *more) in list(sprites.MASKS.items()) + [(sprites.SHARED_MASK, (1040, 0, ""))]:
+    if len(more) > 2:                            # masques 47x47 partagés : pas à 0xFF
+        continue
     o = va - BASE
     main[o - 1] = 0x4E
     main[o:o + size] = b"\xff" * size
