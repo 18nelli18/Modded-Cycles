@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-04-02">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-04-02">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-04-03">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-04-03">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -126,6 +126,9 @@
           <div><dt>Format</dt><dd><span data-l="en">48 kHz, 32-bit, 6 input channels.</span><span data-l="fr">48 kHz, 32 bits, 6 canaux d'entrée.</span></dd></div>
           <div><dt><span data-l="en">Stems</span><span data-l="fr">Pistes</span></dt><dd><span data-l="en">Mono, taken before the pan. Delay and reverb are applied to the mix, so they are not in the stems.</span><span data-l="fr">En mono, prises avant le panoramique. Le delay et la reverb s'appliquent au mix : ils ne sont pas dans les pistes.</span></dd></div>
           <div><dt>Mix</dt><dd><span data-l="en">No longer sent over USB: mix the six tracks in your DAW.</span><span data-l="fr">N'est plus envoyé en USB : les six pistes se mixent dans votre logiciel.</span></dd></div>
+          <div><dt>Mute</dt><dd><span data-l="en">A muted track plays no new trigs; on its stem, the note it was playing rings out to its end (the mute itself applies to the mix). With Model-TG too; its Sampler fades out.</span><span data-l="fr">Une piste mutée ne joue plus de trigs ; sur sa piste USB, la note en cours sonne jusqu'à sa fin (le mute lui-même s'applique au mix). Avec Model-TG aussi ; son Sampler s'éteint en fondu.</span></dd></div>
+          <div><dt><span data-l="en">Stream</span><span data-l="fr">Flux</span></dt><dd><span data-l="en">Each block leaves for the computer at the same moment, whatever the processor load (Model-TG, muted tracks, effects off): no dropouts when the load changes. Latency: one block (0.67 ms) more than the stock OS.</span><span data-l="fr">Chaque bloc part vers l'ordinateur au même instant, quelle que soit la charge du processeur (Model-TG, pistes mutées, effets éteints) : pas de trous quand la charge change. Latence : un bloc (0,67 ms) de plus que l'OS d'origine.</span></dd></div>
+          <div><dt><span data-l="en">Computer audio</span><span data-l="fr">Audio de l'ordinateur</span></dt><dd><span data-l="en">Playing the computer's audio through the Model:Cycles is not reliable in 6-channel mode: use another output.</span><span data-l="fr">Faire jouer l'audio de l'ordinateur par le Model:Cycles n'est pas fiable en mode 6 canaux : utilisez une autre sortie.</span></dd></div>
           <div><dt><span data-l="en">Updates</span><span data-l="fr">Mises à jour</span></dt><dd><span data-l="en">OS updates over USB keep working.</span><span data-l="fr">La mise à jour de l'OS par USB continue de fonctionner.</span></dd></div>
           <div><dt>macOS</dt><dd><span data-l="en">Nothing to install: the Model:Cycles shows up with 6 inputs.</span><span data-l="fr">Rien à installer : le Model:Cycles apparaît avec 6 entrées.</span></dd></div>
           <div><dt>Windows</dt><dd><span data-l="en">Through <a href="https://github.com/dechamps/FlexASIO" target="_blank" rel="noopener">FlexASIO</a> (shared WASAPI, MME or DirectSound), <code>channels = 6</code>, project at 48 kHz. If the stream doesn't start, turn the Model:Cycles off and on.</span><span data-l="fr">Avec <a href="https://github.com/dechamps/FlexASIO" target="_blank" rel="noopener">FlexASIO</a> (WASAPI partagé, MME ou DirectSound), <code>channels = 6</code>, projet à 48 kHz. Si le flux ne démarre pas, éteignez puis rallumez le Model:Cycles.</span></dd></div>
@@ -499,8 +502,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-04-02"></script>
-<script src="../assets/cycles.js?v=2026-10-04-02"></script>
-<script src="../assets/site.js?v=2026-10-04-02"></script>
+<script src="../assets/release.js?v=2026-10-04-03"></script>
+<script src="../assets/cycles.js?v=2026-10-04-03"></script>
+<script src="../assets/site.js?v=2026-10-04-03"></script>
 </body>
 </html>

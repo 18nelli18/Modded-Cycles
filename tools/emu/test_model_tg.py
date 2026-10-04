@@ -13,7 +13,10 @@ Vérifications :
   - SNARE, METAL, PERC, TONE et CHORD identiques à l'OS d'origine, échantillon par échantillon (CHORD passe par son
     oscillateur réécrit, chord_osc) ;
   - KICK identique jusqu'à la fin de la rampe de son « click », puis à moins de -90 dB de l'OS d'origine : Model-TG
-    arrête volontairement les filtres du click une fois retombés sous le silence (kick_click, docs/INTERNALS.md).
+    arrête volontairement les filtres du click une fois retombés sous le silence (kick_click, docs/INTERNALS.md) ;
+  - une note mutée (les gains du mixeur à zéro) puis démutée (notes/35 §3) : sans audio USB multipiste, Model-TG
+    cesse de la calculer (inaudible dans le mix) ; avec 6ch-usbup, la piste USB, prise avant le mixeur, reste
+    identique à la note jamais mutée : ni coupure nette, ni note figée qui repart au démute.
 
     python3 tools/emu/test_model_tg.py --cycles model-cycles_OS1.13.syx [--tweak ….json]
 """
@@ -71,6 +74,43 @@ def play(img, blocks, trigs):
     return out, e.unmapped
 
 
+def muted(img, mute_at, unmute_at, blocks=260, track=4):
+    """La piste track (TONE, Decay long) jouée au bloc 1 ; ses gains de mixeur à zéro de mute_at à unmute_at,
+    comme un mute d'origine (FUNC + piste). Rend la sortie de la piste (ce que prend l'audio USB multipiste)."""
+    e = engine(img)
+    for t in range(6):
+        e.set(t, machine=t, note=60, pitch=64, color=64, shape=64, sweep=64, contour=64, punch=0, gate=0, finetune=64,
+              decay=110 if t == track else 60)
+    out = []
+    for b in range(blocks):
+        if b == mute_at:
+            e.uc.mem_write(MIX_GAIN + 4 * track, bytes(4))
+        if b == unmute_at:
+            e.uc.mem_write(MIX_GAIN + 4 * track, struct.pack(">I", 0x20000000))
+        out.append(e.block(1 << track if b == 1 else 0)[track])
+    return np.stack(out).astype(np.int64), e.unmapped
+
+
+def mute_test(stock, tw, usb):
+    print("note mutée puis démutée (notes/35 §3), TONE")
+    img = bytes(build.apply_writes(stock, [tw])[0]) + build.build_payload([tw], stock, None)[0]
+    img6 = bytes(build.apply_writes(stock, [usb, tw])[0]) + build.build_payload([usb, tw], stock, None)[0]
+    for name, im in (("Model-TG seul", img), ("Model-TG + 6ch-usbup", img6)):
+        ref, _ = muted(im, None, None)
+        mut, unm = muted(im, 40, 120)
+        loud = np.abs(ref[40:120]).max(axis=1)
+        cut = [b for b in range(41, 120) if not mut[b].any() and loud[b - 40] > 0]
+        same = not np.any(mut != ref)
+        if im is img:
+            check(cut and not same and loud.min() > 1e6,
+                  f"{name} : la note, encore forte (crête {loud.min():.1e} au plus bas), n'est plus calculée dès le bloc "
+                  f"{cut[0] if cut else '—'} (sa piste à zéro), puis repart figée au démute (différente de la note "
+                  f"jamais mutée) : inaudible dans le mix, mais c'est ce que recevait la piste USB")
+        else:
+            check(same and not unm, f"{name} : la piste reste identique, échantillon par échantillon, à la note jamais "
+                                    f"mutée (260 blocs, mute aux blocs 40 à 120)")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--cycles", required=True)
@@ -97,6 +137,8 @@ def main():
         else:
             check(not len(diff) and loud > 1e8, f"{NAMES[t]:5s} identique à l'OS d'origine (crête {loud:.2e})")
     check(not unm, "aucun accès hors de la mémoire émulée")
+    usb = json.loads((TWEAK.parent / "11-6ch-usbup.json").read_text(encoding="utf-8"))
+    mute_test(stock, tw, usb)
     print("\nTOUT OK" if not FAIL else f"\n{len(FAIL)} ÉCHEC(S)")
     return 1 if FAIL else 0
 

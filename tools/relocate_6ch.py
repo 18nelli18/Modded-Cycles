@@ -1,27 +1,36 @@
 #!/usr/bin/env python3
-"""Dérive la variante « 6ch-usbup » du patch 6 canaux, pour garder l'upgrade USB.
+"""Dérive la variante « 6ch-usbup » du patch 6 canaux, pour garder l'upgrade USB, et la rend robuste (notes/35).
 
 Le patch 6 canaux d'origine (ms-multi-output, tweak 6ch-multiout) loge ses 4 stubs dans
 4 descripteurs USB : 2 configs CDC et 2 configs MIDI seule. Il redirige donc la table
 des modes USB vers la config audio, et c'est ce qui casse CONFIG -> UPGRADE par USB.
 
 Cette variante :
-  - copie les 4 stubs, octet pour octet, dans une cave 0xFF du MAIN OS, avec un décalage
-    constant multiple de 16 (même alignement, mêmes écarts entre stubs) ;
+  - copie 3 des 4 stubs, octet pour octet, dans une cave 0xFF du MAIN OS, avec un décalage
+    constant multiple de 16 (même alignement, mêmes écarts entre stubs) ; le 4e (tracks6, la copie des
+    6 pistes) est remplacé par une version déroulée qui écrit les mêmes octets (machines/usb6/tracks6.S) ;
   - fait pointer les 4 crochets du pilote vers ces nouvelles adresses ;
   - laisse d'origine les 4 descripteurs et les 4 entrées de la table des modes USB ;
-  - garde tout le reste à l'identique : pilote, ring, config audio passée en 6 canaux.
+  - garde la config audio passée en 6 canaux ;
+  - rend le flux USB vers l'ordinateur indépendant du temps de calcul (notes/35) : l'OS envoie chaque bloc
+    juste après l'avoir calculé, donc à un instant qui varie avec la charge, alors que la file du ring
+    6 canaux ne tolère que 0,2 ms d'écart. Les envois sont notés et faits au début de l'interruption suivante
+    (machines/usb6/feed.S), la file est alignée au démarrage du flux, et le ring passe de 8 à 9 cases
+    (pas de 192 à 168 o, la taille maximale d'un paquet) dans la même SRAM ; le ring de réception
+    (ordinateur -> Cycles) reprend la place libérée : 5 cases au lieu de 4.
 
 La cave est le masque 0xFF d'un sprite, libéré en faisant pointer ce sprite sur un
 masque identique (tools/sprites.py, notes/14 §5) : la redirection est ajoutée au tweak.
 
 Ce script lit tweaks/model-cycles_OS1.13/10-6ch-multiout.json et écrit 11-6ch-usbup.json.
-Il n'a pas besoin de l'image firmware. build.py vérifie ensuite, sur TON image, que
-les octets de la cave valent bien 0xFF et que rien d'autre ne pointe dedans.
+Il n'a pas besoin de l'image firmware, seulement des binutils m68k (as, ld, objcopy, nm). build.py vérifie
+ensuite, sur TON image, que les octets de la cave valent bien 0xFF et que rien d'autre ne pointe dedans.
+La preuve : tools/emu/test_usb_in.py (le vrai pilote USB de l'OS, avec un contrôleur modélisé).
 
     python3 tools/relocate_6ch.py                          # (ré)écrit 11-6ch-usbup.json
     python3 tools/relocate_6ch.py --check                  # vérifie que le fichier versionné est à jour
-    python3 tools/relocate_6ch.py --cave 0x4015c044:720    # autre cave (VA:taille), stubs centrés
+L'envoi à heure fixe (tools/usb_steady.py) est à une adresse fixe du masque 0x4015c044, partagée avec Model-TG et les
+moteurs du Syntakt : la cave reste ce masque (--cave ne sert plus qu'à vérifier la place).
 """
 import argparse
 import json
@@ -29,6 +38,7 @@ import pathlib
 import sys
 
 import sprites
+import usb_steady
 
 HERE = pathlib.Path(__file__).resolve().parent
 DEV = HERE.parent / "tweaks" / "model-cycles_OS1.13"
@@ -55,6 +65,19 @@ MODE_TABLE = (0x4013e544, 0x4013e544 + 4 * 0x28)
 # cave 0x40154ae4 est le masque du sprite 32x260 : y écrire abîmait ce sprite, on la garde
 # désormais intacte comme masque partagé.
 CAVE = sprites.zone(0x4015c044)
+# Rings USB (notes/35 §4), dans la SRAM qu'ils ont à l'origine (0x80009800..0x80009f00, 1 792 o ; 0x80009f00 sert
+# au pilote) : envoi 9 x 168 o (au lieu de 8 x 192), réception 5 x 56 o (au lieu de 4) juste derrière.
+# VA d'une écriture de 6ch-multiout -> ses nouveaux octets.
+RINGS = {
+    0x4000253b: "0420",            # réception : moveq #4 (cases 0..4) au lieu de #3
+    0x40002564: "9de821",          # ... à 0x80009de8 au lieu de 0x80009e00
+    0x400027b3: "0824",            # envoi : moveq #8 (cases 0..8) au lieu de #7, à l'amorçage
+    0x400029b9: "0820",            # ... et à l'envoi
+    0x400027d3: "90c4fc00a8",      # amorçage : 144 o de silence, case = indice x 168 (mulu.w #168,d2)
+    0x400029d2: "c2fc00a84e71",    # envoi : case = indice x 168 (mulu.w #168,d1 ; nop)
+    0x4000281f: "08b2",            # 8 cases de silence amorcées au lieu de 6 (11 à l'origine, sur 16)
+}
+DROPPED = (0x400027ce,)            # lsl.l #3 -> #6 de d0 à l'amorçage : d0 n'y sert plus (mulu.w), laissé d'origine
 
 
 def load_stubs(src):
@@ -115,24 +138,48 @@ def derive(src, cave, at=None):
         writes.append({"off": w["off"], "old": w["old"], "new": new.hex()})
     if hooks != 4 or len(dropped) != 13:
         raise SystemExit(f"!! dérivation inattendue : {hooks} crochets, {len(dropped)} écritures retirées (attendu 4 et 13)")
+    fixed = set()
+    for w in writes:                              # rings (notes/35 §4)
+        va = w["off"] + BASE
+        if va in RINGS:
+            new = RINGS[va]
+            if len(new) != len(w["new"]):
+                raise SystemExit(f"!! 0x{va:08x} : {len(new) // 2} o au lieu de {len(w['new']) // 2}")
+            w["new"] = new
+            fixed.add(va)
+    if fixed != set(RINGS):
+        raise SystemExit(f"!! écritures des rings introuvables : {sorted(map(hex, set(RINGS) - fixed))}")
+    n0 = len(writes)
+    writes = [w for w in writes if w["off"] + BASE not in DROPPED]
+    if len(writes) != n0 - len(DROPPED):
+        raise SystemExit("!! écriture retirée introuvable")
+    end = lo
     for name, va, code, _, _ in stubs:
+        if name == "tracks6":                     # version déroulée, même place (jusqu'au stub suivant)
+            room = min(v for _, v, _, _, _ in stubs if v > va) - va
+            code, _ = usb_steady.assemble("tracks6.S", va + delta)
+            if len(code) > room:
+                raise SystemExit(f"!! tracks6.S : {len(code)} o, place {room} o")
         writes.append({"off": va + delta - BASE, "old": "ff" * len(code), "new": code.hex()})
-    if lo in sprites.MASKS:
-        writes.append(sprites.redirect_write(lo))   # libère le masque : le sprite lit le masque partagé
+        end = max(end, va + delta + len(code))
+    if end > usb_steady.FEED_AT or lo != usb_steady.MASK:
+        raise SystemExit(f"!! les stubs finissent en 0x{end:08x}, au-delà de feed.S (0x{usb_steady.FEED_AT:08x})")
+    writes += usb_steady.writes()                 # envoi à heure fixe (et la redirection du masque)
     writes.sort(key=lambda w: w["off"])
-
     tweak = {
         "id": "6ch-usbup",
         "order": 11,
         "name": "Sortie multipiste 6 canaux, upgrade USB conserve",
         "description": [                          # ASCII, comme 10-6ch-multiout.json
-            "Meme sortie 6 canaux que 6ch-multiout : memes stubs, octet pour octet,",
-            f"mais loges dans la cave 0x{lo:08x} au lieu des descripteurs USB CDC et MIDI seule.",
+            "Meme sortie 6 canaux que 6ch-multiout, stubs loges dans la cave",
+            f"0x{lo:08x} au lieu des descripteurs USB CDC et MIDI seule (notes/13).",
             "Cette cave est le masque 0xFF d'un sprite : le sprite est redirige vers un masque",
             "identique (meme rendu), voir tools/sprites.py et notes/14.",
-            "Descripteurs et table des modes USB restent d'origine : CONFIG > UPGRADE par USB devrait refonctionner.",
+            "Descripteurs et table des modes USB restent d'origine : CONFIG > UPGRADE par USB fonctionne.",
+            "Flux USB robuste (notes/35) : chaque bloc part au debut de l'interruption suivante, a heure fixe,",
+            "au lieu de juste apres son calcul ; file alignee au demarrage ; ring de 9 cases au lieu de 8 ;",
+            "copie des 6 pistes deroulee (memes octets). Preuve : tools/emu/test_usb_in.py.",
             f"Genere par tools/relocate_6ch.py depuis 6ch-multiout (decalage des stubs : {delta:#x}).",
-            "ATTENTION : jamais flashe. Variante experimentale, voir notes/13.",
         ],
         "device": src["device"],
         "os": src["os"],
@@ -158,6 +205,8 @@ def main():
     text = json.dumps(tweak, indent=1) + "\n"
     for name, va, code, hook, uncovered in stubs:
         note = f" (octets égaux au descripteur d'origine : {', '.join(f'0x{a:08x}' for a in uncovered)})" if uncovered else ""
+        if name == "tracks6":
+            note += ", remplacé par machines/usb6/tracks6.S"
         print(f"  {name:8s} 0x{va:08x} -> 0x{va + delta:08x}  {len(code):2d} o, crochet 0x{hook:08x}{note}")
     print(f"  {len(dropped)} écritures retirées (descripteurs USB + table des modes), {len(tweak['writes'])} écritures au total")
     if args.check:

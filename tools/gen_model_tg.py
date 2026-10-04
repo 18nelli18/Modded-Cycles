@@ -37,6 +37,7 @@ sys.path.insert(0, str(HERE / "emu"))
 import build                       # noqa: E402
 import gen_sdvintage_exact as gx   # noqa: E402
 import gen_syntakt_engines as gs   # noqa: E402
+import usb_steady                  # noqa: E402
 import test_sdvintage as T         # noqa: E402
 
 DEV = HERE.parent / "tweaks" / "model-cycles_OS1.13"
@@ -62,12 +63,68 @@ def git(repo, *args):
 # build) reçoit la même retouche que notre 02-trig-preview.json. L'écoute refusait le séquenceur en pause (0x4005481a
 # vaut 2), où le met un Stop MIDI reçu, même à l'arrêt : PAGE tournait la page jusqu'au redémarrage. Elle ne refuse plus
 # que la lecture (bit 0) : « tst.l d0 ; bne » devient « lsr.l #1,d0 ; bcs », même taille.
+# Dans les deux tweaks (notes/35 §3) : avec l'audio USB multipiste, une piste mutée ou au volume 0 n'est plus coupée
+# net sur sa piste USB. voice_quiet ne calculait plus une machine d'origine dès que les 6 gains du mixeur passaient sous
+# -90 dB : inaudible dans le mix, mais les pistes USB sont prises avant le mixeur, donc coupées net, et la note figée
+# repartait d'un coup au démute. Avec un mod multipiste (l'octet 0x40002ceb, MaxPacketLength du point d'accès IN, n'est
+# plus le 0x38 d'origine), le test des gains est sauté : la piste s'arrête quand sa propre sortie se tait, comme sans
+# mute. Sans mod multipiste, rien ne change. Même taille (5 branchements raccourcis compensent les 10 octets du test) :
+# seul le label local vq_nop bouge, aucune autre adresse de Model-TG.
+VQ_OLD = '''vq_env:
+    tstl    %a0@(0x34)
+    bnew    vq_trig
+    tstl    %a0@(0x38)
+    bnew    vq_trig
+    tstl    %a0@(0x3c)
+    beqs    vq_nop
+    tstl    SND_KILL              | the other pulse, from All Sound Off (a
+    beqw    vq_trig               | double stop, CC 120, a load) - every track
+    lea.l   trig_seen,%a1         | gets it: an idle voice stays idle, a
+    tstb    %a1@(0,%d1:l)         | sounding one renders it (not a new note)
+    beqw    vq_yes
+    bsr     vq_over
+    tstl    %d0
+    bnew    vq_yes
+    braw    vq_no
+vq_nop:
+    lea.l   trig_seen,%a1         | never played since power-on: silent
+    tstb    %a1@(0,%d1:l)
+    beqw    vq_yes
+    movel   %d2,%sp@-             | the mixer's gains for this track
+'''
+VQ_NEW = '''vq_env:
+    tstl    %a0@(0x34)
+    bnes    vq_trig
+    tstl    %a0@(0x38)
+    bnes    vq_trig
+    tstl    %a0@(0x3c)
+    beqs    vq_nop
+    tstl    SND_KILL              | the other pulse, from All Sound Off (a
+    beqs    vq_trig               | double stop, CC 120, a load) - every track
+    lea.l   trig_seen,%a1         | gets it: an idle voice stays idle, a
+    tstb    %a1@(0,%d1:l)         | sounding one renders it (not a new note)
+    beqw    vq_yes
+    bsr     vq_over
+    tstl    %d0
+    bnes    vq_yes
+    bras    vq_no
+vq_nop:
+    lea.l   trig_seen,%a1         | never played since power-on: silent
+    tstb    %a1@(0,%d1:l)
+    beqw    vq_yes
+    moveq   #0x38,%d0             | Modded-Cycles: with a multichannel USB mod (the IN
+    cmpb    0x40002ceb,%d0        | dQH MaxPacketLength is no longer the stock 0x38) the
+    bnes    vq_envf               | stems are taken before the mixer: never its gains
+    movel   %d2,%sp@-             | the mixer's gains for this track
+'''
 MC_PATCHES = (
     ("src/model_tg.s", "mq_toggle:\n    movel   %sp@(8),%d0\n    cmpil   #MAX_TRK,%d0\n",
      "mq_toggle:\n    jmp     0x40013904            | Modded-Cycles: the stock toggle, at once\n    nop\n    nop\n",
      "mode mute : chaque touche de piste mute tout de suite (mq_toggle -> 0x40013904 d'origine), sans file d'attente"),
     ("tweaks/model-cycles_OS1.13/02-trig-preview.json", "4eb94005481a4a8066000138", "4eb94005481ae28865000138",
      "écoute d'un pas : aussi séquenceur en pause (un Stop MIDI le met en pause ; PAGE tournait la page), notes/34"),
+    ("src/model_tg.s", VQ_OLD, VQ_NEW,
+     "audio USB multipiste : une piste mutée ou au volume 0 n'est plus coupée net sur sa piste USB (voice_quiet)"),
 )
 # --- version combinée (notes/31 §4) ---
 # Une seule : sa zone d'échantillons (0x4a800000..0x4e800000, vue sans cache des 64 Mo 0x42800000..0x46800000)
@@ -79,11 +136,12 @@ ST_PATCHES = (
 )
 # Ses symboles dont nos détours ont besoin (gen_syntakt_engines.py --tg) : chaînage, page System, rééchantillonnage ;
 # l'état de ses slide trigs (v1.1.0), que tools/emu/test_model_tg_syntakt.py arme comme le fait son séquenceur ; et sa
-# file de mutes (MC_PATCHES), que ce test vérifie
+# file de mutes et son test des voix muettes (MC_PATCHES), que ce test vérifie
 ST_SYMBOLS = ("blob_start", "reserved_end", "REGION_END", "param_table", "boot_extra_hook", "sampler_dispatch",
               "descr_hook", "descr_b_hook", "sampler_lfo_gate", "sampler_amp_gate", "sampler_name_table",
               "apply_names", "mod_held", "prof_t0", "prof_ta", "prof_trk", "rs_state", "rs_src", "sle_run", "sle_trk",
-              "ah_noenv", "voice_ptr", "SLD_BASE", "sld_init", "blk_clk", "mq_toggle", "mq_pending", "mq_apply")
+              "ah_noenv", "voice_ptr", "SLD_BASE", "sld_init", "blk_clk", "mq_toggle", "mq_pending", "mq_apply",
+              "voice_quiet")
 
 
 def export(cycles, repo, patches=()):
@@ -151,6 +209,7 @@ def adapt_st(tw, stock, syms):
             "LICENSE-Model-TG), commit " + MODEL_TG_COMMIT[:7] + ", construit par son propre build depuis une copie de",
             "sa source avec ces retouches (tools/gen_model_tg.py, MC_PATCHES et ST_PATCHES) :",
             *[f"  - {f} : {why}" for f, _, _, why in MC_PATCHES + ST_PATCHES],
+            "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup.",
             "Base de la version combinée Model-TG + moteurs du Syntakt (notes/31) : ne s'installe qu'avec un tweak",
             "syntakt-tg-…, qui s'ajoute après lui et chaîne ses détours.",
         ],
@@ -170,6 +229,15 @@ def adapt(tw, stock):
         raise SystemExit("!! OS agrandi au-delà de la zone de travail du bootstrap (0x40200000)")
     others = sorted(set(tw["conflicts"]) | {gs.subset_id(c) for c in gs.subsets()}
                     | {"sdvintage-snare", "sdvintage-exact", "sdvintage-7th", "syntakt-vintage", "syntakt-meter", "model-tg-st"})
+    # Envoi à l'USB à heure fixe (notes/35) : la charge de Model-TG varie beaucoup (pistes au repos, mutes, effets
+    # éteints) et l'OS envoie chaque bloc à l'USB juste après l'avoir calculé. Mêmes écritures que 6ch-usbup.
+    steady = usb_steady.writes()
+    taken = [(w["off"], w["off"] + len(w["new"]) // 2) for w in tw["writes"]]
+    for w in steady:
+        a, b = w["off"], w["off"] + len(w["new"]) // 2
+        if any(a < y and x < b for x, y in taken):
+            raise SystemExit(f"!! envoi à heure fixe : 0x{a + BASE:08x} déjà écrit par Model-TG")
+    writes = sorted(tw["writes"] + steady, key=lambda w: w["off"])
     return {
         "id": "model-tg",
         "order": 30,
@@ -183,6 +251,7 @@ def adapt(tw, stock):
             "les machines d'origine, slide trigs (v1.1.0), Scale Lock, envoi d'échantillons par Elektron Transfer, page",
             "System, et moins de charge processeur. Contient déjà les tweaks de drumkilla (mute verrouillé modifié,",
             "écoute d'un pas, défilement des noms). Avec les moteurs du Syntakt, le flasher prend model-tg-st (notes/31).",
+            "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup.",
             "Généré par tools/gen_model_tg.py. Aucun octet Elektron dans le code de Model-TG.",
         ],
         "version": tw["version"],
@@ -192,7 +261,7 @@ def adapt(tw, stock):
         "os": tw["os"],
         "section": tw["section"],
         "conflicts": others,
-        "writes": tw["writes"],
+        "writes": writes,
         "append": tw["append"],
     }
 
