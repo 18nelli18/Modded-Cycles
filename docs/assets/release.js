@@ -10,8 +10,8 @@ window.MC_RELEASES = [
       fr: "Audio 6 canaux avec Model-TG : la piste USB d'une piste mutée n'est plus coupée net (sa note sonne jusqu'au bout, comme sans Model-TG) et ne repart plus figée au démute" },
     { en: "6-channel audio: the copy of the six tracks to USB is lighter on the processor (same bytes)",
       fr: "Audio 6 canaux : la copie des six pistes vers l'USB est plus légère pour le processeur (mêmes octets)" },
-    { en: "Checked in the emulator, with the original OS's USB driver; to be confirmed on the hardware",
-      fr: "Vérifié en émulation, avec le pilote USB de l'OS d'origine ; à confirmer sur la machine" },
+    { en: "Checked in the emulator, with the original OS's USB driver, and tested on a real Model:Cycles",
+      fr: "Vérifié en émulation, avec le pilote USB de l'OS d'origine, et testé sur un vrai Model:Cycles" },
   ] },
   { version: "1.13", date: "2026-10-03", changes: [
     { en: "New: easier trig removal. On the stock OS, a press on a trig longer than 0.2 s counts as a hold and the trig stays, so the soft keys often needed a second press; with this mod, letting go within half a second removes it",

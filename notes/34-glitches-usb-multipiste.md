@@ -18,7 +18,7 @@ Adresses : VA de l'OS 1.13. Code de l'OS lu sur l'image officielle ; tout ce qui
 | Correctif : envoi au début de l'interruption suivante, à heure fixe ; file alignée au démarrage ; ring de 9 cases au lieu de 8 | `[FAIT]` dans 6ch-usbup, Model-TG et les moteurs du Syntakt ; simulé : 0 défaut (§4, §5) |
 | Correctif des pistes USB coupées au mute | `[FAIT]` retouche de Model-TG de même taille (§3) |
 | Copie des 6 pistes déroulée : environ 640 instructions de moins par bloc, mêmes octets | `[FAIT]` prouvé sur 594 cas (§4) |
-| Essai sur la machine | `[À FAIRE]` protocole au §7 |
+| Essai sur la machine | `[FAIT]` le 04/10/2026, « ça marche » (§7) |
 
 ## 1. Le chemin USB vers l'ordinateur `[FAIT]`
 
@@ -183,7 +183,13 @@ redonne son empreinte) ; `relocate_6ch.py --check`, `gen_model_tg.py --check`, `
 
 Valeurs complètes : [`BUILD.md`](../BUILD.md) et `REF_MAINOS` de `docs/flasher/app.js`.
 
-## 7. Essai sur la machine `[À FAIRE]`
+## 7. Essai sur la machine `[FAIT]`
+
+Retour de l'utilisateur le 04/10/2026, après essai des firmwares d'essai qui lui ont été envoyés, construits par `build.py`
+depuis ses OS officiels (6ch-usbup + Model-TG, MAIN OS `de845665…` ; 6ch-usbup + Model-TG + 5 moteurs + trig-hold +
+arpégiateur, MAIN OS `2562fb2d…`, les mêmes empreintes que le flasher) : « ça marche », « le test fonctionne ».
+
+Le protocole proposé :
 
 1. Flasher 6ch-usbup + Model-TG (par le flasher web), enregistrer les 6 pistes dans le DAW pendant 30 minutes avec un motif
    chargé, en mutant et démutant des pistes souvent (FUNC + piste, et le mute verrouillé).
