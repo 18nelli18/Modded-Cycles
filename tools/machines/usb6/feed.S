@@ -1,4 +1,4 @@
-| Envoi à l'USB à heure fixe (notes/34).
+| Envoi à l'USB à heure fixe (notes/35).
 | L'OS envoie chaque bloc à l'USB (0x40002912(source, trames)) juste après l'avoir calculé : l'instant dépend du
 | temps de calcul, qui varie avec Model-TG ou les moteurs du Syntakt (pistes au repos, mutes, effets éteints), alors
 | que la file USB ne tolère qu'un écart limité (0,2 ms avec le ring du mod 6 canaux d'origine). Ici, les deux envois
@@ -41,7 +41,7 @@ feed_isr:
 9:      movel   %sp@+,%a2
         rts
 | align : trames à sauter pour que la file compte 16 + 3 x (cases du ring) trames juste après cet envoi de 32 (64 en
-| stéréo, 43 avec le ring de 9 cases ; notes/34 §4). L'OS les tire de l'heure de départ de la 1re case, qui suppose
+| stéréo, 43 avec le ring de 9 cases ; notes/35 §4). L'OS les tire de l'heure de départ de la 1re case, qui suppose
 | l'envoi après le calcul du bloc ; ici l'envoi est au début du bloc suivant, et un départ tout près du début d'un
 | bloc décale d'un bloc entier. On compte donc les cases encore en file (bit Active du dTD, effacé par le contrôleur
 | quand elle part), 6 trames chacune (silence d'amorçage).

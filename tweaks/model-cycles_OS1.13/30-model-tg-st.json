@@ -7,15 +7,16 @@
   "LICENSE-Model-TG), commit 70b39dd, construit par son propre build depuis une copie de",
   "sa source avec ces retouches (tools/gen_model_tg.py, MC_PATCHES et ST_PATCHES) :",
   "  - src/model_tg.s : mode mute : chaque touche de piste mute tout de suite (mq_toggle -> 0x40013904 d'origine), sans file d'attente",
+  "  - tweaks/model-cycles_OS1.13/02-trig-preview.json : \u00e9coute d'un pas : aussi s\u00e9quenceur en pause (un Stop MIDI le met en pause ; PAGE tournait la page), notes/34",
   "  - src/model_tg.s : audio USB multipiste : une piste mut\u00e9e ou au volume 0 n'est plus coup\u00e9e net sur sa piste USB (voice_quiet)",
   "  - src/model_tg.s : zone d'\u00e9chantillons : 1 Mo de moins, laiss\u00e9 aux moteurs du Syntakt (0x46700000..0x46800000)",
-  "Plus l'envoi \u00e0 l'USB \u00e0 heure fixe de ce d\u00e9p\u00f4t (tools/usb_steady.py, notes/34), comme 6ch-usbup.",
+  "Plus l'envoi \u00e0 l'USB \u00e0 heure fixe de ce d\u00e9p\u00f4t (tools/usb_steady.py, notes/35), comme 6ch-usbup.",
   "Base de la version combin\u00e9e Model-TG + moteurs du Syntakt (notes/31) : ne s'installe qu'avec un tweak",
   "syntakt-tg-\u2026, qui s'ajoute apr\u00e8s lui et cha\u00eene ses d\u00e9tours."
  ],
  "version": "v1.1.0",
  "source": "https://github.com/TinyGregAudio/Model-TG/tree/70b39dd6787770ebefc7a2d78dea1678ec012679",
- "result_sha256": "aff651443151d7aff3b052b4bdb010af1f01f24efe08d7802ab9cb413e0cc928",
+ "result_sha256": "e690110a7b947b9c910ef6f9b2d37a9b154815c9751ad793ae6bdd2e3109bb4a",
  "device": "Model:Cycles",
  "os": "1.13",
  "section": 3,
@@ -745,7 +746,7 @@
   {
    "off": 1345021,
    "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-   "new": "d448d77cfc202e000c2f004eb9400724a0588f4a0067000158202e000c2f004eb940072490588f4a00660001444eb94005481a4a80660001384eb9400cf9a826402f0b4eb94006b978588f4a00670001202f0b4eb94006bb18588f4a00660001102f0b4eb94006bdfe588f4a00670001004eb9400cf8662f004eb94000eb90588f2f004eb940012412588f2400203940a7887c4a80670000d82840203940a788884a80670000ca2002e3882200e789d081e589d081e389d081e589d0812a4cdbc01c2d02cf70641b4002cf487800012f0b4eb94006b740508f282b01607a0076000704670000542e03de85204dd1c7122802042f0170"
+   "new": "d448d77cfc202e000c2f004eb9400724a0588f4a0067000158202e000c2f004eb940072490588f4a00660001444eb94005481ae288650001384eb9400cf9a826402f0b4eb94006b978588f4a00670001202f0b4eb94006bb18588f4a00660001102f0b4eb94006bdfe588f4a00670001004eb9400cf8662f004eb94000eb90588f2f004eb940012412588f2400203940a7887c4a80670000d82840203940a788884a80670000ca2002e3882200e789d081e589d081e389d081e589d0812a4cdbc01c2d02cf70641b4002cf487800012f0b4eb94006b740508f282b01607a0076000704670000542e03de85204dd1c7122802042f0170"
   },
   {
    "off": 1345268,

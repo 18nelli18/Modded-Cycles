@@ -47,6 +47,8 @@ fait exactement ça.
 - La page ne tourne pas. Il joue même si la condition de trig ou la probabilité l'excluraient, et même sur une piste mutée.
 > Source : README de drumkilla/elektron-model-tweaks, section *Trig preview*.
 
+Retouché le 04/10/2026 : l'écoute marche aussi séquenceur en pause, où le met un Stop MIDI reçu ([note 34](34-ecoute-en-pause.md)).
+
 Le troisième tweak du dépôt, `browser-scroll` (défilement des noms longs dans le navigateur), est livré avec.
 Même vérification octet pour octet, même crédit.
 

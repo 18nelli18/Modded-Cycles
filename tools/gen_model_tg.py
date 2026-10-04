@@ -59,7 +59,11 @@ def git(repo, *args):
 # et les applique tous en quittant le mode : son mq_toggle, appelé à la place de 0x40013904 (kit, piste, 1) en
 # 0x40023550, rejoint maintenant ce 0x40013904 d'origine. La file reste vide (mq_muted et mq_apply ne changent plus
 # rien), et la retouche a la même taille (10 o) : aucune adresse de Model-TG ne bouge.
-# Dans les deux tweaks (notes/34 §3) : avec l'audio USB multipiste, une piste mutée ou au volume 0 n'est plus coupée
+# Dans les deux aussi (04/10/2026, notes/34) : sa copie du tweak trig-preview de drumkilla (tweaks/, appliquée par son
+# build) reçoit la même retouche que notre 02-trig-preview.json. L'écoute refusait le séquenceur en pause (0x4005481a
+# vaut 2), où le met un Stop MIDI reçu, même à l'arrêt : PAGE tournait la page jusqu'au redémarrage. Elle ne refuse plus
+# que la lecture (bit 0) : « tst.l d0 ; bne » devient « lsr.l #1,d0 ; bcs », même taille.
+# Dans les deux tweaks (notes/35 §3) : avec l'audio USB multipiste, une piste mutée ou au volume 0 n'est plus coupée
 # net sur sa piste USB. voice_quiet ne calculait plus une machine d'origine dès que les 6 gains du mixeur passaient sous
 # -90 dB : inaudible dans le mix, mais les pistes USB sont prises avant le mixeur, donc coupées net, et la note figée
 # repartait d'un coup au démute. Avec un mod multipiste (l'octet 0x40002ceb, MaxPacketLength du point d'accès IN, n'est
@@ -117,6 +121,8 @@ MC_PATCHES = (
     ("src/model_tg.s", "mq_toggle:\n    movel   %sp@(8),%d0\n    cmpil   #MAX_TRK,%d0\n",
      "mq_toggle:\n    jmp     0x40013904            | Modded-Cycles: the stock toggle, at once\n    nop\n    nop\n",
      "mode mute : chaque touche de piste mute tout de suite (mq_toggle -> 0x40013904 d'origine), sans file d'attente"),
+    ("tweaks/model-cycles_OS1.13/02-trig-preview.json", "4eb94005481a4a8066000138", "4eb94005481ae28865000138",
+     "écoute d'un pas : aussi séquenceur en pause (un Stop MIDI le met en pause ; PAGE tournait la page), notes/34"),
     ("src/model_tg.s", VQ_OLD, VQ_NEW,
      "audio USB multipiste : une piste mutée ou au volume 0 n'est plus coupée net sur sa piste USB (voice_quiet)"),
 )
@@ -203,7 +209,7 @@ def adapt_st(tw, stock, syms):
             "LICENSE-Model-TG), commit " + MODEL_TG_COMMIT[:7] + ", construit par son propre build depuis une copie de",
             "sa source avec ces retouches (tools/gen_model_tg.py, MC_PATCHES et ST_PATCHES) :",
             *[f"  - {f} : {why}" for f, _, _, why in MC_PATCHES + ST_PATCHES],
-            "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/34), comme 6ch-usbup.",
+            "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup.",
             "Base de la version combinée Model-TG + moteurs du Syntakt (notes/31) : ne s'installe qu'avec un tweak",
             "syntakt-tg-…, qui s'ajoute après lui et chaîne ses détours.",
         ],
@@ -223,7 +229,7 @@ def adapt(tw, stock):
         raise SystemExit("!! OS agrandi au-delà de la zone de travail du bootstrap (0x40200000)")
     others = sorted(set(tw["conflicts"]) | {gs.subset_id(c) for c in gs.subsets()}
                     | {"sdvintage-snare", "sdvintage-exact", "sdvintage-7th", "syntakt-vintage", "syntakt-meter", "model-tg-st"})
-    # Envoi à l'USB à heure fixe (notes/34) : la charge de Model-TG varie beaucoup (pistes au repos, mutes, effets
+    # Envoi à l'USB à heure fixe (notes/35) : la charge de Model-TG varie beaucoup (pistes au repos, mutes, effets
     # éteints) et l'OS envoie chaque bloc à l'USB juste après l'avoir calculé. Mêmes écritures que 6ch-usbup.
     steady = usb_steady.writes()
     taken = [(w["off"], w["off"] + len(w["new"]) // 2) for w in tw["writes"]]
@@ -245,7 +251,7 @@ def adapt(tw, stock):
             "les machines d'origine, slide trigs (v1.1.0), Scale Lock, envoi d'échantillons par Elektron Transfer, page",
             "System, et moins de charge processeur. Contient déjà les tweaks de drumkilla (mute verrouillé modifié,",
             "écoute d'un pas, défilement des noms). Avec les moteurs du Syntakt, le flasher prend model-tg-st (notes/31).",
-            "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/34), comme 6ch-usbup.",
+            "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup.",
             "Généré par tools/gen_model_tg.py. Aucun octet Elektron dans le code de Model-TG.",
         ],
         "version": tw["version"],

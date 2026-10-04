@@ -1,4 +1,4 @@
-"""Envoi à l'USB à heure fixe (notes/34) : les écritures communes au mod 6 canaux et à Model-TG.
+"""Envoi à l'USB à heure fixe (notes/35) : les écritures communes au mod 6 canaux et à Model-TG.
 
 L'OS envoie chaque bloc audio à l'ordinateur juste après l'avoir calculé (0x40002912 en 0x40059392) : l'instant
 varie avec le temps de calcul. Avec une charge qui varie beaucoup (Model-TG et les moteurs du Syntakt sautent les
@@ -61,7 +61,7 @@ def writes():
     return sorted(out, key=lambda w: w["off"])
 
 
-NOTE = "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+NOTE = "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
 
 
 def add_to(tweak):

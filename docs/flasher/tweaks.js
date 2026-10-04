@@ -26,7 +26,7 @@ window.MC_TWEAKS = {
     "Cette cave est le masque 0xFF d'un sprite : le sprite est redirige vers un masque",
     "identique (meme rendu), voir tools/sprites.py et notes/14.",
     "Descripteurs et table des modes USB restent d'origine : CONFIG > UPGRADE par USB fonctionne.",
-    "Flux USB robuste (notes/34) : chaque bloc part au debut de l'interruption suivante, a heure fixe,",
+    "Flux USB robuste (notes/35) : chaque bloc part au debut de l'interruption suivante, a heure fixe,",
     "au lieu de juste apres son calcul ; file alignee au demarrage ; ring de 9 cases au lieu de 8 ;",
     "copie des 6 pistes deroulee (memes octets). Preuve : tools/emu/test_usb_in.py.",
     "Genere par tools/relocate_6ch.py depuis 6ch-multiout (decalage des stubs : -0x3f020)."
@@ -169,17 +169,18 @@ window.MC_TWEAKS = {
     "LICENSE-Model-TG), commit 70b39dd, construit par son propre build pour ce flasher, depuis",
     "une copie de sa source avec cette retouche (tools/gen_model_tg.py, MC_PATCHES) :",
     "  - src/model_tg.s : mode mute : chaque touche de piste mute tout de suite (mq_toggle -> 0x40013904 d'origine), sans file d'attente",
+    "  - tweaks/model-cycles_OS1.13/02-trig-preview.json : écoute d'un pas : aussi séquenceur en pause (un Stop MIDI le met en pause ; PAGE tournait la page), notes/34",
     "  - src/model_tg.s : audio USB multipiste : une piste mutée ou au volume 0 n'est plus coupée net sur sa piste USB (voice_quiet)",
     "Machine Sampler (7e machine), rééchantillonnage, retrig et effets master, Attack / Filtre / Résonance sur",
     "les machines d'origine, slide trigs (v1.1.0), Scale Lock, envoi d'échantillons par Elektron Transfer, page",
     "System, et moins de charge processeur. Contient déjà les tweaks de drumkilla (mute verrouillé modifié,",
     "écoute d'un pas, défilement des noms). Avec les moteurs du Syntakt, le flasher prend model-tg-st (notes/31).",
-    "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/34), comme 6ch-usbup.",
+    "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup.",
     "Généré par tools/gen_model_tg.py. Aucun octet Elektron dans le code de Model-TG."
    ],
    "version": "v1.1.0",
    "source": "https://github.com/TinyGregAudio/Model-TG/tree/70b39dd6787770ebefc7a2d78dea1678ec012679",
-   "result_sha256": "854db169a28f580898f8351cff1b9c0c54b38ede14dba722911ef8e5d69e2022",
+   "result_sha256": "821ca1545ff094c58971f29518c28d9f740e713d781998404ddb6740b306c7c8",
    "device": "Model:Cycles",
    "os": "1.13",
    "section": 3,
@@ -909,7 +910,7 @@ window.MC_TWEAKS = {
     {
      "off": 1345021,
      "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-     "new": "d448d77cfc202e000c2f004eb9400724a0588f4a0067000158202e000c2f004eb940072490588f4a00660001444eb94005481a4a80660001384eb9400cf9a826402f0b4eb94006b978588f4a00670001202f0b4eb94006bb18588f4a00660001102f0b4eb94006bdfe588f4a00670001004eb9400cf8662f004eb94000eb90588f2f004eb940012412588f2400203940a7887c4a80670000d82840203940a788884a80670000ca2002e3882200e789d081e589d081e389d081e589d0812a4cdbc01c2d02cf70641b4002cf487800012f0b4eb94006b740508f282b01607a0076000704670000542e03de85204dd1c7122802042f0170"
+     "new": "d448d77cfc202e000c2f004eb9400724a0588f4a0067000158202e000c2f004eb940072490588f4a00660001444eb94005481ae288650001384eb9400cf9a826402f0b4eb94006b978588f4a00670001202f0b4eb94006bb18588f4a00660001102f0b4eb94006bdfe588f4a00670001004eb9400cf8662f004eb94000eb90588f2f004eb940012412588f2400203940a7887c4a80670000d82840203940a788884a80670000ca2002e3882200e789d081e589d081e389d081e589d0812a4cdbc01c2d02cf70641b4002cf487800012f0b4eb94006b740508f282b01607a0076000704670000542e03de85204dd1c7122802042f0170"
     },
     {
      "off": 1345268,
@@ -954,15 +955,16 @@ window.MC_TWEAKS = {
     "LICENSE-Model-TG), commit 70b39dd, construit par son propre build depuis une copie de",
     "sa source avec ces retouches (tools/gen_model_tg.py, MC_PATCHES et ST_PATCHES) :",
     "  - src/model_tg.s : mode mute : chaque touche de piste mute tout de suite (mq_toggle -> 0x40013904 d'origine), sans file d'attente",
+    "  - tweaks/model-cycles_OS1.13/02-trig-preview.json : écoute d'un pas : aussi séquenceur en pause (un Stop MIDI le met en pause ; PAGE tournait la page), notes/34",
     "  - src/model_tg.s : audio USB multipiste : une piste mutée ou au volume 0 n'est plus coupée net sur sa piste USB (voice_quiet)",
     "  - src/model_tg.s : zone d'échantillons : 1 Mo de moins, laissé aux moteurs du Syntakt (0x46700000..0x46800000)",
-    "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/34), comme 6ch-usbup.",
+    "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup.",
     "Base de la version combinée Model-TG + moteurs du Syntakt (notes/31) : ne s'installe qu'avec un tweak",
     "syntakt-tg-…, qui s'ajoute après lui et chaîne ses détours."
    ],
    "version": "v1.1.0",
    "source": "https://github.com/TinyGregAudio/Model-TG/tree/70b39dd6787770ebefc7a2d78dea1678ec012679",
-   "result_sha256": "aff651443151d7aff3b052b4bdb010af1f01f24efe08d7802ab9cb413e0cc928",
+   "result_sha256": "e690110a7b947b9c910ef6f9b2d37a9b154815c9751ad793ae6bdd2e3109bb4a",
    "device": "Model:Cycles",
    "os": "1.13",
    "section": 3,
@@ -1692,7 +1694,7 @@ window.MC_TWEAKS = {
     {
      "off": 1345021,
      "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-     "new": "d448d77cfc202e000c2f004eb9400724a0588f4a0067000158202e000c2f004eb940072490588f4a00660001444eb94005481a4a80660001384eb9400cf9a826402f0b4eb94006b978588f4a00670001202f0b4eb94006bb18588f4a00660001102f0b4eb94006bdfe588f4a00670001004eb9400cf8662f004eb94000eb90588f2f004eb940012412588f2400203940a7887c4a80670000d82840203940a788884a80670000ca2002e3882200e789d081e589d081e389d081e589d0812a4cdbc01c2d02cf70641b4002cf487800012f0b4eb94006b740508f282b01607a0076000704670000542e03de85204dd1c7122802042f0170"
+     "new": "d448d77cfc202e000c2f004eb9400724a0588f4a0067000158202e000c2f004eb940072490588f4a00660001444eb94005481ae288650001384eb9400cf9a826402f0b4eb94006b978588f4a00670001202f0b4eb94006bb18588f4a00660001102f0b4eb94006bdfe588f4a00670001004eb9400cf8662f004eb94000eb90588f2f004eb940012412588f2400203940a7887c4a80670000d82840203940a788884a80670000ca2002e3882200e789d081e589d081e389d081e589d0812a4cdbc01c2d02cf70641b4002cf487800012f0b4eb94006b740508f282b01607a0076000704670000542e03de85204dd1c7122802042f0170"
     },
     {
      "off": 1345268,
@@ -1820,9 +1822,10 @@ window.MC_TWEAKS = {
    "order": 2,
    "name": "Trig preview (TRIG + PAGE)",
    "description": [
-    "With the sequencer stopped, hold a step and press PAGE: the step sounds with its own note, length, p-locks and sound-lock.",
+    "With the sequencer stopped or paused, hold a step and press PAGE: the step sounds with its own note, length, p-locks and sound-lock.",
     "The page does not turn.",
-    "It sounds regardless of the trig condition and probability, and through a muted track. The trig is not erased."
+    "It sounds regardless of the trig condition and probability, and through a muted track. The trig is not erased.",
+    "Modded-Cycles change: paused counts as stopped (a MIDI Stop pauses the sequencer, which turned the page instead), notes/34."
    ],
    "device": "Model:Cycles",
    "os": "1.13",
@@ -1841,7 +1844,7 @@ window.MC_TWEAKS = {
     {
      "off": 1345021,
      "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-     "new": "d448d77cfc202e000c2f004eb9400724a0588f4a0067000158202e000c2f004eb940072490588f4a00660001444eb94005481a4a80660001384eb9400cf9a826402f0b4eb94006b978588f4a00670001202f0b4eb94006bb18588f4a00660001102f0b4eb94006bdfe588f4a00670001004eb9400cf8662f004eb94000eb90588f2f004eb940012412588f2400203940a7887c4a80670000d82840203940a788884a80670000ca2002e3882200e789d081e589d081e389d081e589d0812a4cdbc01c2d02cf70641b4002cf487800012f0b4eb94006b740508f282b01607a0076000704670000542e03de85204dd1c7122802042f0170"
+     "new": "d448d77cfc202e000c2f004eb9400724a0588f4a0067000158202e000c2f004eb940072490588f4a00660001444eb94005481ae288650001384eb9400cf9a826402f0b4eb94006b978588f4a00670001202f0b4eb94006bb18588f4a00660001102f0b4eb94006bdfe588f4a00670001004eb9400cf8662f004eb94000eb90588f2f004eb940012412588f2400203940a7887c4a80670000d82840203940a788884a80670000ca2002e3882200e789d081e589d081e389d081e589d0812a4cdbc01c2d02cf70641b4002cf487800012f0b4eb94006b740508f282b01607a0076000704670000542e03de85204dd1c7122802042f0170"
     },
     {
      "off": 1345268,
@@ -2055,7 +2058,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x4303118a",
@@ -5717,7 +5720,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : CPVtg = CP VINTAGE (machine 7).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x4303118a",
@@ -9379,7 +9382,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SYToy = SY TOY (machine 7).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x4303118a",
@@ -13041,7 +13044,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SYBit = SY BITS (machine 7).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x4303118a",
@@ -17293,7 +17296,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SYSwm = SY SWARM (machine 7).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x4303118a",
@@ -22033,7 +22036,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), CPVtg = CP VINTAGE (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031426",
@@ -25695,7 +25698,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), SYToy = SY TOY (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031426",
@@ -29357,7 +29360,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), SYBit = SY BITS (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031466",
@@ -33605,7 +33608,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), SYSwm = SY SWARM (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031440",
@@ -38341,7 +38344,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : CPVtg = CP VINTAGE (machine 7), SYToy = SY TOY (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031426",
@@ -42003,7 +42006,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : CPVtg = CP VINTAGE (machine 7), SYBit = SY BITS (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031466",
@@ -46251,7 +46254,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : CPVtg = CP VINTAGE (machine 7), SYSwm = SY SWARM (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031440",
@@ -50987,7 +50990,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SYToy = SY TOY (machine 7), SYBit = SY BITS (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031466",
@@ -55235,7 +55238,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SYToy = SY TOY (machine 7), SYSwm = SY SWARM (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031440",
@@ -59971,7 +59974,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SYBit = SY BITS (machine 7), SYSwm = SY SWARM (machine 8).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x4303147e",
@@ -64711,7 +64714,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), CPVtg = CP VINTAGE (machine 8), SYToy = SY TOY (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031412",
@@ -68373,7 +68376,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), CPVtg = CP VINTAGE (machine 8), SYBit = SY BITS (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031452",
@@ -72621,7 +72624,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), CPVtg = CP VINTAGE (machine 8), SYSwm = SY SWARM (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x4303142c",
@@ -77357,7 +77360,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), SYToy = SY TOY (machine 8), SYBit = SY BITS (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031452",
@@ -81605,7 +81608,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), SYToy = SY TOY (machine 8), SYSwm = SY SWARM (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x4303142c",
@@ -86341,7 +86344,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), SYBit = SY BITS (machine 8), SYSwm = SY SWARM (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031470",
@@ -91081,7 +91084,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : CPVtg = CP VINTAGE (machine 7), SYToy = SY TOY (machine 8), SYBit = SY BITS (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031452",
@@ -95329,7 +95332,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : CPVtg = CP VINTAGE (machine 7), SYToy = SY TOY (machine 8), SYSwm = SY SWARM (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x4303142c",
@@ -100065,7 +100068,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : CPVtg = CP VINTAGE (machine 7), SYBit = SY BITS (machine 8), SYSwm = SY SWARM (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031470",
@@ -104805,7 +104808,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SYToy = SY TOY (machine 7), SYBit = SY BITS (machine 8), SYSwm = SY SWARM (machine 9).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031470",
@@ -109545,7 +109548,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), CPVtg = CP VINTAGE (machine 8), SYToy = SY TOY (machine 9), SYBit = SY BITS (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031452",
@@ -113793,7 +113796,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), CPVtg = CP VINTAGE (machine 8), SYToy = SY TOY (machine 9), SYSwm = SY SWARM (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x4303142c",
@@ -118529,7 +118532,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), CPVtg = CP VINTAGE (machine 8), SYBit = SY BITS (machine 9), SYSwm = SY SWARM (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031470",
@@ -123269,7 +123272,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), SYToy = SY TOY (machine 8), SYBit = SY BITS (machine 9), SYSwm = SY SWARM (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031470",
@@ -128009,7 +128012,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : CPVtg = CP VINTAGE (machine 7), SYToy = SY TOY (machine 8), SYBit = SY BITS (machine 9), SYSwm = SY SWARM (machine 10).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031470",
@@ -132749,7 +132752,7 @@ window.MC_TWEAKS = {
     "les 6 d'origine (notes/20) : SDVtg = SD VINTAGE (machine 7), CPVtg = CP VINTAGE (machine 8), SYToy = SY TOY (machine 9), SYBit = SY BITS (machine 10), SYSwm = SY SWARM (machine 11).",
     "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
     "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/34) : la charge varie avec l'arrêt des voix muettes."
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes."
    ],
    "gov": {
     "audio_end": "0x43031470",
@@ -137545,7 +137548,7 @@ window.MC_TWEAKS = {
   {
    "id": "trig-preview",
    "label": "Ecoute d'un pas (TRIG + PAGE)",
-   "desc": "Sequenceur a l'arret, maintiens un pas et appuie sur PAGE : le pas joue avec sa note, sa longueur et ses p-locks.",
+   "desc": "Sequenceur a l'arret (ou en pause), maintiens un pas et appuie sur PAGE : le pas joue avec sa note, sa longueur et ses p-locks.",
    "status": "tested",
    "credit": {
     "kind": "by",

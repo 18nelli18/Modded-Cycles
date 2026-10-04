@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dérive la variante « 6ch-usbup » du patch 6 canaux, pour garder l'upgrade USB, et la rend robuste (notes/34).
+"""Dérive la variante « 6ch-usbup » du patch 6 canaux, pour garder l'upgrade USB, et la rend robuste (notes/35).
 
 Le patch 6 canaux d'origine (ms-multi-output, tweak 6ch-multiout) loge ses 4 stubs dans
 4 descripteurs USB : 2 configs CDC et 2 configs MIDI seule. Il redirige donc la table
@@ -12,7 +12,7 @@ Cette variante :
   - fait pointer les 4 crochets du pilote vers ces nouvelles adresses ;
   - laisse d'origine les 4 descripteurs et les 4 entrées de la table des modes USB ;
   - garde la config audio passée en 6 canaux ;
-  - rend le flux USB vers l'ordinateur indépendant du temps de calcul (notes/34) : l'OS envoie chaque bloc
+  - rend le flux USB vers l'ordinateur indépendant du temps de calcul (notes/35) : l'OS envoie chaque bloc
     juste après l'avoir calculé, donc à un instant qui varie avec la charge, alors que la file du ring
     6 canaux ne tolère que 0,2 ms d'écart. Les envois sont notés et faits au début de l'interruption suivante
     (machines/usb6/feed.S), la file est alignée au démarrage du flux, et le ring passe de 8 à 9 cases
@@ -65,7 +65,7 @@ MODE_TABLE = (0x4013e544, 0x4013e544 + 4 * 0x28)
 # cave 0x40154ae4 est le masque du sprite 32x260 : y écrire abîmait ce sprite, on la garde
 # désormais intacte comme masque partagé.
 CAVE = sprites.zone(0x4015c044)
-# Rings USB (notes/34 §4), dans la SRAM qu'ils ont à l'origine (0x80009800..0x80009f00, 1 792 o ; 0x80009f00 sert
+# Rings USB (notes/35 §4), dans la SRAM qu'ils ont à l'origine (0x80009800..0x80009f00, 1 792 o ; 0x80009f00 sert
 # au pilote) : envoi 9 x 168 o (au lieu de 8 x 192), réception 5 x 56 o (au lieu de 4) juste derrière.
 # VA d'une écriture de 6ch-multiout -> ses nouveaux octets.
 RINGS = {
@@ -139,7 +139,7 @@ def derive(src, cave, at=None):
     if hooks != 4 or len(dropped) != 13:
         raise SystemExit(f"!! dérivation inattendue : {hooks} crochets, {len(dropped)} écritures retirées (attendu 4 et 13)")
     fixed = set()
-    for w in writes:                              # rings (notes/34 §4)
+    for w in writes:                              # rings (notes/35 §4)
         va = w["off"] + BASE
         if va in RINGS:
             new = RINGS[va]
@@ -176,7 +176,7 @@ def derive(src, cave, at=None):
             "Cette cave est le masque 0xFF d'un sprite : le sprite est redirige vers un masque",
             "identique (meme rendu), voir tools/sprites.py et notes/14.",
             "Descripteurs et table des modes USB restent d'origine : CONFIG > UPGRADE par USB fonctionne.",
-            "Flux USB robuste (notes/34) : chaque bloc part au debut de l'interruption suivante, a heure fixe,",
+            "Flux USB robuste (notes/35) : chaque bloc part au debut de l'interruption suivante, a heure fixe,",
             "au lieu de juste apres son calcul ; file alignee au demarrage ; ring de 9 cases au lieu de 8 ;",
             "copie des 6 pistes deroulee (memes octets). Preuve : tools/emu/test_usb_in.py.",
             f"Genere par tools/relocate_6ch.py depuis 6ch-multiout (decalage des stubs : {delta:#x}).",

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Banc du flux audio USB vers l'ordinateur (entrée USB de l'hôte, « IN »), notes/34.
+"""Banc du flux audio USB vers l'ordinateur (entrée USB de l'hôte, « IN »), notes/35.
 
 Le vrai code du pilote de l'OS 1.13 (et des stubs du mod 6 canaux) tourne dans Unicorn ; le contrôleur USB, les
 horloges et l'interruption audio sont modélisés en Python, à la micro-trame près :
@@ -31,7 +31,7 @@ Parties :
   2. la copie des 6 pistes déroulée (machines/usb6/tracks6.S) contre le stub d'origine de ms-multi-output :
      mêmes octets écrits, mêmes registres et mêmes indicateurs, pour toutes les longueurs et positions de départ ;
   3. le flux, par scénario de charge, phase de démarrage et écart d'horloge, sur l'OS d'origine (stéréo),
-     6ch-multiout (le ring et l'envoi du mod 6 canaux d'avant notes/34), 6ch-usbup, 6ch-usbup avec Model-TG et
+     6ch-multiout (le ring et l'envoi du mod 6 canaux d'avant notes/35), 6ch-usbup, 6ch-usbup avec Model-TG et
      Model-TG seul (stéréo, ring d'origine) : les deux derniers portent le même envoi à heure fixe ;
   4. un long passage de 6ch-usbup (charge de Model-TG, vraie mesure du débit) : la file reste dans ses bornes.
 

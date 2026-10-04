@@ -16,7 +16,7 @@ Décisions de l'utilisateur, après l'analyse du §3 :
 | Version combinée Model-TG + moteurs du Syntakt | `[FAIT]` en ligne (1.6), démarre et joue sur la machine (firmware de diagnostic, §6) ; charge à optimiser (§7) |
 | Passage à Model-TG v1.1.0 (slide trigs) | `[FAIT]` slides prouvés aussi sur nos moteurs en émulation ; fonctionne sur la machine (§9) |
 | Mutes tout de suite en mode mute | `[FAIT]` retouche de sa source (§10) ; fonctionne sur la machine |
-| Pistes USB coupées au mute, flux USB qui craque quand la charge varie | `[FAIT]` seconde retouche (`voice_quiet`) et envoi à l'USB à heure fixe, [34](34-glitches-usb-multipiste.md) |
+| Pistes USB coupées au mute, flux USB qui craque quand la charge varie | `[FAIT]` seconde retouche (`voice_quiet`) et envoi à l'USB à heure fixe, [35](35-glitches-usb-multipiste.md) |
 
 ## 1. Ce qu'est Model-TG
 
@@ -372,6 +372,7 @@ Question relayée par l'utilisateur le 03/10/2026 : « I'll go in Latch Mute mod
 - aucune adresse de Model-TG ne bouge : les 31 tweaks `31-syntakt-tg-…` restent valables tels quels.
 
 **Empreintes** : Model-TG seul `08d9f075…` (sans la retouche : `a049d724…`, celle annoncée par son auteur), toutes les combinaisons avec Model-TG changent (`REF_MAINOS`, `BUILD.md`).
+Mise à jour du 04/10/2026 : une seconde retouche, sur sa copie de l'écoute d'un pas ([note 34](34-ecoute-en-pause.md)) ; Model-TG seul passe à `eae3e848…`.
 
 **Preuve** : nouvelle partie 6 de `tools/emu/test_model_tg_syntakt.py`. `mq_toggle(kit, piste, 1)` rejoint `0x40013904` tout de suite, avec les mêmes arguments, et rien ne reste en attente. `mq_apply` n'a rien à faire.
 

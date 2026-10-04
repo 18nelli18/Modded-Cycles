@@ -8,7 +8,7 @@
   "Cette cave est le masque 0xFF d'un sprite : le sprite est redirige vers un masque",
   "identique (meme rendu), voir tools/sprites.py et notes/14.",
   "Descripteurs et table des modes USB restent d'origine : CONFIG > UPGRADE par USB fonctionne.",
-  "Flux USB robuste (notes/34) : chaque bloc part au debut de l'interruption suivante, a heure fixe,",
+  "Flux USB robuste (notes/35) : chaque bloc part au debut de l'interruption suivante, a heure fixe,",
   "au lieu de juste apres son calcul ; file alignee au demarrage ; ring de 9 cases au lieu de 8 ;",
   "copie des 6 pistes deroulee (memes octets). Preuve : tools/emu/test_usb_in.py.",
   "Genere par tools/relocate_6ch.py depuis 6ch-multiout (decalage des stubs : -0x3f020)."

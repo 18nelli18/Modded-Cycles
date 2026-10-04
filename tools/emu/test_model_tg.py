@@ -14,7 +14,7 @@ Vérifications :
     oscillateur réécrit, chord_osc) ;
   - KICK identique jusqu'à la fin de la rampe de son « click », puis à moins de -90 dB de l'OS d'origine : Model-TG
     arrête volontairement les filtres du click une fois retombés sous le silence (kick_click, docs/INTERNALS.md) ;
-  - une note mutée (les gains du mixeur à zéro) puis démutée (notes/34 §3) : sans audio USB multipiste, Model-TG
+  - une note mutée (les gains du mixeur à zéro) puis démutée (notes/35 §3) : sans audio USB multipiste, Model-TG
     cesse de la calculer (inaudible dans le mix) ; avec 6ch-usbup, la piste USB, prise avant le mixeur, reste
     identique à la note jamais mutée : ni coupure nette, ni note figée qui repart au démute.
 
@@ -92,7 +92,7 @@ def muted(img, mute_at, unmute_at, blocks=260, track=4):
 
 
 def mute_test(stock, tw, usb):
-    print("note mutée puis démutée (notes/34 §3), TONE")
+    print("note mutée puis démutée (notes/35 §3), TONE")
     img = bytes(build.apply_writes(stock, [tw])[0]) + build.build_payload([tw], stock, None)[0]
     img6 = bytes(build.apply_writes(stock, [usb, tw])[0]) + build.build_payload([usb, tw], stock, None)[0]
     for name, im in (("Model-TG seul", img), ("Model-TG + 6ch-usbup", img6)):

@@ -1,4 +1,4 @@
-# 34 — Glitches de l'audio USB avec Model-TG : diagnostic et correctifs
+# 35 — Glitches de l'audio USB avec Model-TG : diagnostic et correctifs
 
 Travail du 03-04/10/2026, à la demande de l'utilisateur : « quelqu'un a dit ça sur Reddit : *Usb multitrack + TG Cycles
 makes glitches after 15-20 mins usage, specially when make some tracks muted.* Ça révèle quand même que le projet pousse un
@@ -176,10 +176,10 @@ redonne son empreinte) ; `relocate_6ch.py --check`, `gen_model_tg.py --check`, `
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
 | `6ch-usbup` | `a7086bee…` |
-| `model-tg` | `2a939b7f…` |
-| `6ch-usbup,model-tg` | `de845665…` |
+| `model-tg` | `5c3a3006…` |
+| `6ch-usbup,model-tg` | `8366b198…` |
 | `syntakt-sd-cp-toy-bits-swarm` (`--syntakt`) | `c4616b24…` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp` (`--syntakt`) | `7588d23b…` (avec l'enregistrement live de l'arpégiateur, [32 §11](32-arpegiateur.md)) |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp` (`--syntakt`) | `9c8c272f…` (avec l'enregistrement live de l'arpégiateur, [32 §11](32-arpegiateur.md)) |
 
 Valeurs complètes : [`BUILD.md`](../BUILD.md) et `REF_MAINOS` de `docs/flasher/app.js`.
 
@@ -188,7 +188,7 @@ Valeurs complètes : [`BUILD.md`](../BUILD.md) et `REF_MAINOS` de `docs/flasher/
 Retour de l'utilisateur le 04/10/2026, après essai des firmwares d'essai qui lui ont été envoyés, construits par `build.py`
 depuis ses OS officiels (6ch-usbup + Model-TG, MAIN OS `de845665…` ; 6ch-usbup + Model-TG + 5 moteurs + trig-hold +
 arpégiateur, MAIN OS `2562fb2d…`, les mêmes empreintes que le flasher à ce moment, avant l'enregistrement live de
-l'arpégiateur) : « ça marche », « le test fonctionne ».
+l'arpégiateur, [32 §11](32-arpegiateur.md), et l'écoute d'un pas en pause, [34](34-ecoute-en-pause.md)) : « ça marche », « le test fonctionne ».
 
 Le protocole proposé :
 

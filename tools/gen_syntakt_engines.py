@@ -1241,7 +1241,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None):
     if tg:
         out["requires"] = [tg["id"]]
     out.update({"conflicts": sorted(ids - {tid}), "writes": writes, "append": append})
-    if not tg:                    # envoi à l'USB à heure fixe (notes/34) ; la version combinée l'a par model-tg-st
+    if not tg:                    # envoi à l'USB à heure fixe (notes/35) ; la version combinée l'a par model-tg-st
         out = usb_steady.add_to(out)
     return out, ndesc
 
