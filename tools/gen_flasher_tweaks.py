@@ -120,7 +120,7 @@ FEATURES = [
         "label": "Tempo jusqu'a 546 BPM",
         "desc": "Le tempo monte jusqu'a 546 BPM au lieu de 300 (molette, tap tempo, horloge MIDI recue). "
                 "546 est le plafond du format des projets.",
-        "status": "experimental",
+        "status": "tested",
         "credit": None,
         "variants": [
             {"file": "42-tempo-max", "label": None},

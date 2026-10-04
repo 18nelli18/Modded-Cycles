@@ -8,8 +8,8 @@ window.MC_RELEASES = [
       fr: "Nouveau mod, Tempo jusqu'à 546 BPM : le potard TEMPO, le tap tempo, l'horloge MIDI reçue et les projets enregistrés dépassent 300, jusqu'à 546,0 BPM. 546 est le plafond du format des projets (le tempo y est enregistré en 1/120 de BPM sur 16 bits) ; le séquenceur, lui, suivrait bien au-delà" },
     { en: "It also fixes the original OS's tempo-synced LFO, which left its cycle above 351.6 BPM at its highest speed and multiplier. A project saved above 300 BPM reopens at 120 BPM on the original OS",
       fr: "Il corrige aussi le LFO synchronisé de l'OS d'origine, qui sortait de son cycle au-delà de 351,6 BPM à sa vitesse et à son multiplicateur les plus hauts. Un projet enregistré au-dessus de 300 BPM se rouvre à 120 BPM sur l'OS d'origine" },
-    { en: "Checked in the emulator on the OS's own code (knob, tap tempo, MIDI clock, project loading, LFOs); experimental until tested on a Model:Cycles. It goes with every other mod",
-      fr: "Vérifié en émulation sur le code même de l'OS (potard, tap tempo, horloge MIDI, chargement des projets, LFO) ; expérimental jusqu'à un test sur un Model:Cycles. Il se combine avec tous les autres mods" },
+    { en: "Tested on a Model:Cycles, and checked in the emulator on the OS's own code (knob, tap tempo, MIDI clock, project loading, LFOs). It goes with every other mod",
+      fr: "Testé sur un Model:Cycles, et vérifié en émulation sur le code même de l'OS (potard, tap tempo, horloge MIDI, chargement des projets, LFO). Il se combine avec tous les autres mods" },
   ] },
   { version: "1.18", date: "2026-10-04", changes: [
     { en: "Fast flashing over USB: about 30 seconds instead of 5 to 10 minutes. The flasher now speaks the update protocol of Elektron Transfer (worked out by Elektroid): the Model:Cycles stays on its usual screen, checks every block as it arrives, then asks you to confirm the update",

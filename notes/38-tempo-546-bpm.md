@@ -83,7 +83,7 @@ En dessous de 351,6 BPM, elle ne fait qu'un tour : rien ne change.
 - La boucle du LFO (§3).
 - 12 écritures, **aucune place libre** ; aucune adresse commune avec les autres tweaks (6ch, Model-TG et sa version
   combinée, moteurs du Syntakt, arpégiateur, effacement des trigs).
-- Dans le flasher web : carte « Tempo jusqu'à 546 BPM », expérimentale ; 4 607 combinaisons de référence (le double).
+- Dans le flasher web : carte « Tempo jusqu'à 546 BPM » ; 4 607 combinaisons de référence (le double).
 
 ## 5. Preuve en émulation (`tools/emu/test_tempo_max.py`)
 
@@ -98,7 +98,7 @@ Sur le MAIN OS d'origine et sur le MAIN OS modifié, le vrai code :
 | affichage | — | 30.0, 120.0, 300.0, 400.1, 546.0 |
 | les 6 LFO (vraie fonction, EMAC exacte), 300 mises à jour, 120 à 546 BPM | juste jusqu'à 351,5 ; hors cycle à 400 et 546 | phase = (ancienne + pas) mod cycle, toujours |
 
-## 6. Pas encore vérifié
+## 6. Testé sur la machine (04/10/2026)
 
-Sur un vrai Model:Cycles : la molette au-delà de 300, un projet à 546 BPM rechargé, l'horloge MIDI envoyée et reçue
-à ces tempos, la charge du processeur avec beaucoup de trigs par seconde (le régulateur de charge est là pour ça).
+L'utilisateur a flashé le tweak par le flasher web (méthode USB rapide) et confirme : « ça marche nickel ». La carte
+passe de « Expérimental » à « Testé ».

@@ -138075,7 +138075,7 @@ window.MC_TWEAKS = {
    "id": "tempo-max",
    "label": "Tempo jusqu'a 546 BPM",
    "desc": "Le tempo monte jusqu'a 546 BPM au lieu de 300 (molette, tap tempo, horloge MIDI recue). 546 est le plafond du format des projets.",
-   "status": "experimental",
+   "status": "tested",
    "credit": null,
    "variants": [
     {
