@@ -13,6 +13,11 @@
  * des réglages Rte et Len : à chaque note jouée (arp_rate, à la place de la lecture de Rte, 0x4001a1c4 et
  * 0x4001d25e) et à chaque changement dans le menu. Le côté audio les reçoit dans ui_cfg (le pattern qu'il joue est une
  * autre copie, essai du 03/10/2026 sur la machine).
+ * Live rec (notes/32 §11) : l'OS enregistre une touche avec retrig comme UN pas avec retrig (sa note, répétée) ; les
+ * notes d'un accord tombent sur le même pas et la dernière reste. Sur une piste dont l'arpège n'est pas OFF, l'interface
+ * ne reçoit donc plus ces touches (arp_ui_post) : l'arpège lui envoie les notes qu'il joue, une à une, comme des
+ * touches (rec), et le live rec de l'OS les enregistre avec leur durée. Une suite d'une seule note (une note tenue,
+ * 1 octave) reste enregistrée comme d'origine : un pas avec retrig.
  */
 typedef unsigned char u8;
 typedef signed char s8;
@@ -40,10 +45,18 @@ struct trk {
 	u8 held[MAXN];                                /* notes tenues, dans l'ordre de jeu */
 	u8 n, last, pos;                              /* nombre ; dernière note jouée ; position (ordre de jeu, hasard) */
 	s8 dir;                                       /* aller-retour : +1 monte, -1 descend */
+	u8 rnote, rmode;                              /* live rec : note envoyée à l'interface ; 0 aucune, 1 avec retrig,
+						         2 sans */
+	u32 t0;                                       /* heure de son envoi (0x8000184c) */
 };
 static struct trk st[6];
 static u32 seed = 0x2545f491;
 static volatile u8 ui_cfg[6];                     /* octet +512 de chaque piste, tel que l'interface l'a lu */
+static u8 *ring;                                  /* live rec : 8 messages de 32 o pour l'interface (alloués par
+						     arp_rate, côté interface) */
+static u8 ring_i;
+
+#define NEW(n)       ((void *(*)(u32))0x400802e0)(n)
 
 /* L'octet +512 des données de la piste, par l'objet de la piste (vtable[10], comme 0x40016086 pour Rte) */
 static u8 *track_data(void *obj)
@@ -58,6 +71,8 @@ u32 arp_rate(void *obj, u32 track)
 {
 	u8 *d = track_data(obj);
 
+	if (!ring)                                    /* côté interface : new est permis ici, pas sous l'interruption */
+		ring = NEW(8 * 32);
 	if (!d)
 		return 0;
 	if (track < 6)
@@ -71,9 +86,75 @@ static int mode_of(int c)
 	return c < M_COUNT ? c : M_UP;
 }
 
+/* Live rec en cours, comme 0x4006ba76 : séquenceur en lecture (0x4005481a) et octet +359 de l'état de l'interface
+ * (0x400cf9a8, déjà construit : son pointeur en 0x40fe4218). */
+static int live_rec(void)
+{
+	u8 *ui = *(u8 **)0x40fe4218;
+
+	return ui && ui[359] && (*(s32 *)0x40a78874 | *(s32 *)0x40a7883c) == 1;
+}
+
+/* Un message de note pour l'interface, comme ceux de 0x4008171e (kind 0, val = vitesse du retrig ou -1) et de
+ * 0x4008145e (kind 1, fin de note, val = durée en moitiés de 0x8000184c) : la file de l'interface le reçoit comme une
+ * touche, et le live rec de l'OS l'enregistre (0x40012158, 0x40011c84). Pas et micro-décalage par 0x40056178, comme
+ * eux. Sous l'interruption audio : nos propres 8 tampons (ring), la file 0x40001fba masque les interruptions. */
+static void post(u32 t, u32 kind, u32 note, s32 val, u32 vel)
+{
+	u8 *m = ring, pos[4];
+	u32 i;
+
+	if (!m)
+		return;
+	m += 32 * (ring_i++ & 7);
+	for (i = 0; i < 32; i += 4)
+		I32(m, i) = 0;
+	((void (*)(u32, s32, u8 *))0x40056178)(*(u32 *)0x8000184c, t, pos);
+	m[0] = 12;
+	m[7] = kind;
+	m[8] = t;
+	m[15] = 0x40;                                 /* source : les touches (0x400813e2) */
+	m[16] = note;
+	if (kind) {
+		I32(m, 20) = val;
+		m[24] = 1;
+	} else {
+		m[17] = vel;
+		m[18] = 1;
+		m[19] = 0xff;
+		m[20] = val;
+	}
+	*(short *)(m + 28) = (s8)pos[0];
+	*(short *)(m + 30) = (s8)pos[1];
+	((void (*)(u32, u8 *))0x40001fba)(*(u32 *)0x40149250, m);
+}
+
+/* Live rec : l'arpège joue la note v sur la piste t (-1 : il s'arrête) ; len = notes de sa suite (tenues x octaves).
+ * La note envoyée avant se termine (sa durée) ; une suite d'une seule note est envoyée une fois, avec la vitesse du
+ * retrig (ev +56) : un pas avec retrig, comme d'origine. */
+static void rec(u32 t, int v, int len, u8 *ev)
+{
+	struct trk *s = &st[t];
+	u32 now = *(u32 *)0x8000184c;
+
+	if (s->rmode) {
+		if (s->rmode == 1 && v == s->rnote)
+			return;
+		post(t, 1, s->rnote, (now >> 1) - (s->t0 >> 1), 0);
+		s->rmode = 0;
+	}
+	if (v < 0 || !live_rec())
+		return;
+	s->rmode = len == 1 ? 1 : 2;
+	s->rnote = v;
+	s->t0 = now;
+	post(t, 0, v, len == 1 ? I32(ev, 56) : -1, ev[22]);
+}
+
 void arp_filter(u8 *ev)
 {
 	u32 t = I32(ev, EV_TRACK), n, i;
+	int c;
 	struct trk *s;
 
 	if (I32(ev, EV_TYPE) != 0 || I32(ev, EV_SRC) != 2 || t > 5)
@@ -81,11 +162,14 @@ void arp_filter(u8 *ev)
 	s = &st[t];
 	if (!RTG(t, 4) || !RTG(t, 20))                /* plus de retrig sur la piste : liste périmée */
 		s->n = 0;
+	if (!s->n)
+		rec(t, -1, 0, ev);                        /* plus d'arpège : sa dernière note enregistrée se termine */
+	c = ui_cfg[t];
 	n = I32(ev, EV_NOTE);
 	if (I32(ev, EV_ONOFF) == 1) {
 		if ((I32(ev, EV_FLAGS) & (F_RETRIG | F_REPEAT)) != F_RETRIG || n > 127)
 			return;
-		if (mode_of(ui_cfg[t]) == M_OFF) {        /* sens OFF : le retrig d'origine */
+		if (mode_of(c) == M_OFF) {                /* sens OFF : le retrig d'origine */
 			s->n = 0;
 			return;
 		}
@@ -93,8 +177,12 @@ void arp_filter(u8 *ev)
 			s->last = n;
 			s->dir = 1;
 			s->pos = 0;
-		} else
-			I32(ev, EV_SRC) = -1;                 /* l'arpège tourne : la note y entre, le rythme continue */
+			s->held[0] = n;
+			s->n = 1;
+			rec(t, n, ((c >> 3) & 3) + 1, ev);
+			return;
+		}
+		I32(ev, EV_SRC) = -1;                     /* l'arpège tourne : la note y entre, le rythme continue */
 		for (i = 0; i < s->n; i++)
 			if (s->held[i] == n)
 				return;
@@ -108,10 +196,24 @@ void arp_filter(u8 *ev)
 				s->held[i] = s->held[i + 1];
 			if (s->n)
 				I32(ev, EV_SRC) = -1;             /* d'autres notes restent tenues : on continue */
-			else
+			else {
 				I32(ev, EV_NOTE) = CUR_NOTE(t);   /* la dernière : fin de la note en cours, l'OS arrête tout */
+				rec(t, -1, 0, ev);
+			}
 			return;
 		}
+}
+
+/* À la place de l'envoi à l'interface du message d'une note jouée (0x40081908, dans 0x4008171e ; arp_hooks.S). En
+ * live rec, une note avec retrig (vitesse en +20) sur une piste dont l'arpège n'est pas OFF n'est pas envoyée :
+ * l'arpège enregistre lui-même les notes qu'il joue (rec). held : 5e argument de 0x4008171e, pas tenus (la note va à
+ * ces pas et n'est pas jouée) : envoyée telle quelle. */
+void arp_ui_post(u8 *m, u32 held)
+{
+	u32 t = m[8];
+
+	if (held || (s8)m[20] < 0 || t > 5 || mode_of(ui_cfg[t]) == M_OFF || !live_rec())
+		((void (*)(u8 *))0x40080bf6)(m);
 }
 
 /* Plus petite (up) ou plus grande (!up) valeur de la liste (notes tenues + 12 x octave) strictement au-delà de
@@ -173,6 +275,7 @@ void arp_copy(u8 *dst, u8 *src)
 	}
 	s->last = v;
 	I32(dst, EV_NOTE) = v;
+	rec(t, v, len, dst);
 }
 
 /* ---------------------------------------------------------------------------------------------------------------
@@ -186,7 +289,6 @@ typedef struct {
 	void *inv;
 } fn_t;
 
-#define NEW(n)       ((void *(*)(u32))0x400802e0)(n)
 #define TRACK_OBJ()  ((void *(*)(void *))0x4000f23e)(((void *(*)(void))0x400cf866)())
 
 extern char item_label[];                         /* arp_hooks.S */

@@ -150,8 +150,9 @@ la v2 est compilée par `m68k-elf-gcc` 16.2 (Homebrew), voir [note 16 §6](notes
 ### Arpégiateur
 
 `tweaks/model-cycles_OS1.13/40-arp.json` est produit par `tools/gen_arp.py`, qui compile `tools/machines/arp/` (`m68k-elf-gcc`)
-et le lie dans deux masques de sprites libérés ([note 32](notes/32-arpegiateur.md)). La preuve fait tourner le code du tweak
-et celui de l'OS, jusqu'à la vraie boucle d'événements de l'interruption audio :
+et le lie dans quatre masques de sprites libérés ([note 32](notes/32-arpegiateur.md)). La preuve fait tourner le code du tweak
+et celui de l'OS, jusqu'à la vraie boucle d'événements de l'interruption audio, et le live rec par les vraies fonctions
+d'envoi de note de l'OS :
 ```sh
 python3 tools/gen_arp.py --cycles model-cycles_OS1.13.syx [--check]
 python3 tools/emu/test_arp.py --cycles model-cycles_OS1.13.syx \
@@ -160,9 +161,9 @@ python3 tools/emu/test_arp.py --cycles model-cycles_OS1.13.syx \
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `arp` | `f3b2e3b5d1c1879e7b7962651e285acce2d8bf80c914bffa4b378177f3606945` |
-| `model-tg,arp` | `078932f3161c15dc313c2de0ef5352a4446340922d18514a0a6cf6343ab2e162` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp` | `0ba3c53e6e2216fc73717cecfc8d98a5e0e22e97839c0dcfcab29252ac7949d4` |
+| `arp` | `e445bf895123d3fc94762a65739558b579ec8df3000c9bdf5747a3d73287e6a6` |
+| `model-tg,arp` | `27a997a2c78cff8e4244215f35e3d1f7c79319049fe962848e46ddfaf184cd1d` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp` | `2bfce78692a892f5cc4912053a51b025b6d39dca9c68e1807c44223523d3ba38` |
 
 L'arpégiateur et les moteurs du Syntakt libèrent le même masque (`0x4016cae8`) : les deux constructeurs (`tools/build.py`,
 `docs/flasher/builder.js`) acceptent une écriture déjà faite à l'identique par un autre tweak.
@@ -184,7 +185,7 @@ python3 tools/emu/test_trig_hold.py --cycles model-cycles_OS1.13.syx \
 | `trig-hold` | `bbb8a4217a888c46a60cfb17ae444bec9cf21d6ff2d2d36bf8d1f1cdb81d1ef4` |
 | `6ch-usbup,trig-hold` | `b965e349e099312d944d66765c90e5c77490dcddc35276c7dd9e67ea1071e71d` |
 | `model-tg,trig-hold` | `7eb72db099e842ce3b7a0564f1761a8bf9be19008026144472c0c9928aa7da4b` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp` | `2f1276ac02508ecd65c152297224d96ec2f521834ec47813f8efb52ed1cfe742` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp` | `6d942c7a077d9c30205872610970a9f75c15d39763ed7d8c1ad9661197f175c3` |
 
 Avec `6ch-usbup`, les deux tweaks réécrivent de la même façon le pointeur du sprite dont le masque est libéré.
 

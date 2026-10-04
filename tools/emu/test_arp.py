@@ -15,6 +15,12 @@ exécutés fonction par fonction sur le MAIN OS modifié.
      comme ceux de Len, et transmis tout de suite pour la piste sélectionnée.
   Le réglage arrive au côté audio par les accroches de 0 (l'objet de la piste, comme pour Rte), dans tous les tests.
   4. Sans le tweak, le menu garde ses trois lignes et les accroches leurs octets d'origine.
+  5. De bout en bout, par la vraie boucle d'événements de l'interruption audio.
+  6. Live rec (notes/32 §11) : l'arpège envoie à l'interface, comme des touches, les notes qu'il joue (note puis fin de
+     note avec sa durée) ; une seule note sur 1 octave : un seul message, avec la vitesse du retrig (un pas avec retrig,
+     comme d'origine) ; rien hors du live rec. Par les vraies fonctions de l'OS (0x4008171e, 0x4008145e) : ses messages
+     de touche avec retrig ne partent plus (sauf pas tenus, sens OFF, sans retrig) et ceux de l'arpège leur sont
+     identiques octet pour octet.
 
     python3 tools/emu/test_arp.py --cycles model-cycles_OS1.13.syx \\
         [--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm --syntakt Syntakt_OS1.42.syx]
@@ -41,6 +47,7 @@ TWEAK = HERE.parent.parent / "tweaks" / "model-cycles_OS1.13" / "40-arp.json"
 FAIL = []
 EV, EV2 = 0x93100000, 0x93100100                  # événements de test
 UI_CFG = 0                                         # adresse de ui_cfg (symbols du tweak)
+RING = 0                                           # adresse de ring (tampons des messages du live rec)
 RTG = 0x40a78d58
 CUR = 0x40fe4cb4
 MODES = ["UP", "DOWN", "UPDN", "RAND", "PLAY", "OFF"]
@@ -56,6 +63,7 @@ class Emu(t7.UI):
     def __init__(self, img):
         super().__init__(img)
         self.uc.reg_write(mk.UC_M68K_REG_SR, 0x2700)
+        self.uc.mem_map(0x80000000, 0x20000)      # SRAM interne : l'heure audio (0x8000184c), lue par le live rec
         self.heap = 0x92000000
         self.uc.hook_add(UC_HOOK_CODE, self._new, begin=0x400802e0, end=0x400802e0)
         self.uc.hook_add(UC_HOOK_CODE, self._ret, begin=0x400802ec, end=0x400802ec)
@@ -434,6 +442,10 @@ KIT = 0x4f000000                                  # sons du kit factices (à zé
 POOL3 = 0x4f100000                                # 3e réserve d'objets de la file (allouée par malloc sur la machine)
 MSG = 0x4e300000
 FRAME = 0x9000f000                                # cadre de l'interruption (fp) ; ses variables en dessous
+UIQ = 0x423f0000                                  # file de l'interface (*0x40149250) : une valeur, jamais lue
+UIST = 0x423f1000                                 # état de l'interface (*0x40fe4218) : octet +359 = live rec
+HEAP = 0x423f2000                                 # tas factice (au-dessus de la BSS de l'OS, 0x423380b0)
+BANK = 0x406fa040                                 # banque de patterns du séquenceur (30 710 o par pattern, 0x4008178e)
 
 
 class Audio:
@@ -457,6 +469,16 @@ class Audio:
             w(0x800015a0 + (147 + t) * 4, KIT + 0x1c + 100 * t)
         w(0x40149310, 120 * 120)
         self.now = 1_000_000
+        self.heap = HEAP                           # operator new (arp_rate alloue les tampons du live rec)
+        self.uc.hook_add(UC_HOOK_CODE, self._new, begin=0x400802e0, end=0x400802e0)
+
+    def _new(self, uc, addr, size, ud):
+        sp = uc.reg_read(mk.UC_M68K_REG_A7)
+        n = struct.unpack(">I", uc.mem_read(sp + 4, 4))[0]
+        a, self.heap = self.heap, (self.heap + n + 15) & ~15
+        uc.reg_write(mk.UC_M68K_REG_D0, a)
+        uc.reg_write(mk.UC_M68K_REG_PC, struct.unpack(">I", uc.mem_read(sp, 4))[0])
+        uc.reg_write(mk.UC_M68K_REG_A7, sp + 4)
 
     def w32(self, a, v):
         self.uc.mem_write(a, struct.pack(">I", v & 0xffffffff))
@@ -602,6 +624,244 @@ def e2e_tests(img, end=None, payload=None):
     check(rep == [64, 64, 64], f"sens OFF : la nouvelle note remplace l'autre, comme d'origine : {rep}")
 
 
+# --- 6. live rec : l'arpège envoie à l'interface les notes qu'il joue (notes/32 §11) -------------------------------
+def live(x, on=True, playing=True):
+    """Live rec (octet +359 de l'état de l'interface, 0x400cf9a8 déjà construit) et séquenceur en lecture
+    (0x4005481a == 1), comme les lit 0x4006ba76."""
+    x.w32(0x40fe4218, UIST)
+    x.uc.mem_write(UIST + 359, bytes([int(on)]))
+    x.w32(0x40a78874, int(playing))
+    x.w32(0x40a7883c, 0)
+
+
+class Ui:
+    """L'interface vue de l'arpège : la file 0x40149250 (0x40001fba intercepté, messages gardés), le calcul du pas
+    0x40056178 (remplacé : pas = heure / 1000 % 64, micro-décalage = piste + 1), et les messages que l'OS envoie lui-même
+    par 0x40080bf6 (intercepté, gardés)."""
+
+    def __init__(self, x):
+        self.posted, self.ptrs, self.os = [], [], []
+        x.w32(0x40149250, UIQ)
+        for va, f in ((0x40001fba, self._post), (0x40056178, self._pos), (0x40080bf6, self._os)):
+            x.uc.hook_add(UC_HOOK_CODE, f, begin=va, end=va)
+
+    @staticmethod
+    def _args(uc, n):
+        return struct.unpack(f">{n}I", uc.mem_read(uc.reg_read(mk.UC_M68K_REG_A7) + 4, 4 * n))
+
+    @staticmethod
+    def _ret(uc):
+        sp = uc.reg_read(mk.UC_M68K_REG_A7)
+        uc.reg_write(mk.UC_M68K_REG_PC, struct.unpack(">I", uc.mem_read(sp, 4))[0])
+        uc.reg_write(mk.UC_M68K_REG_A7, sp + 4)
+
+    def _post(self, uc, addr, size, ud):
+        q, m = self._args(uc, 2)
+        if q == UIQ:
+            self.posted.append(bytes(uc.mem_read(m, 32)))
+            self.ptrs.append(m)
+        self._ret(uc)
+
+    def _pos(self, uc, addr, size, ud):
+        now, t, buf = self._args(uc, 3)
+        uc.mem_write(buf, bytes([now // 1000 % 64, t + 1, 0]))
+        self._ret(uc)
+
+    def _os(self, uc, addr, size, ud):
+        self.os.append(bytes(uc.mem_read(self._args(uc, 1)[0], 32)))
+        self._ret(uc)
+
+
+def msg(m):
+    """Message de note pour l'interface : (ON/OFF, piste, note, vélocité, vitesse du retrig ou durée, pas, micro)."""
+    on = struct.unpack_from(">I", m, 4)[0] == 0
+    val = struct.unpack_from(">b" if on else ">i", m, 20)[0]
+    return ("ON" if on else "OFF", m[8], m[16], m[17], val) + struct.unpack_from(">hh", m, 28)
+
+
+def live_tests(img):
+    t = 2
+    hook, copy = target(img, 0x40058e28), target(img, 0x400587f6)
+
+    def scene(cfg, notes, on=True, playing=True):
+        e = Emu(img)
+        ui = Ui(e)
+        live(e, on, playing)
+        e.cfg(t, cfg)                             # une note jouée : arp_rate, côté interface
+        e.retrig(t, False)
+        e.ring = e.r32(RING)
+        e.ui = ui
+        e.notes = notes
+        return e
+
+    def at(e, now):
+        e.w32(0x8000184c, now)
+
+    def key(e, n, now, onoff=1):
+        at(e, now)
+        e.event(EV, onoff, t, n)
+        e.w32(EV + 56, 9)
+        e.filt(hook)
+        e.retrig(t, True)
+
+    def rep(e, now):
+        at(e, now)
+        e.event(EV2, 1, t, e.notes[0])
+        e.w32(EV2 + 56, 9)
+        e.uc.mem_write(EV, b"\xee" * 80)
+        e.call(copy, EV, EV2)
+        return e.r32(EV + 28, True)
+
+    def on_(n, rate, now):
+        return ("ON", t, n, 100, rate, now // 1000, t + 1)
+
+    def off(n, t0, now):
+        return ("OFF", t, n, 0, (now >> 1) - (t0 >> 1), now // 1000, t + 1)
+
+    # UP : 60 seul (un pas avec retrig), puis 64 ajoutée : chaque note jouée part, la précédente se termine
+    e = scene(0, (60, 64))
+    check(e.ring != 0, "1re note jouée (arp_rate, côté interface) : les 8 tampons des messages sont alloués")
+    key(e, 60, 2000)
+    r1 = rep(e, 3000)
+    key(e, 64, 3500)
+    played = [rep(e, 4000), rep(e, 5000), rep(e, 6000)]
+    key(e, 60, 6500, 2)
+    key(e, 64, 7000, 2)
+    got = [msg(m) for m in e.ui.posted]
+    want = [on_(60, 9, 2000), off(60, 2000, 4000), on_(64, -1, 4000), off(64, 4000, 5000), on_(60, -1, 5000),
+            off(60, 5000, 6000), on_(64, -1, 6000), off(64, 6000, 7000)]
+    check(r1 == 60 and played == [64, 60, 64] and got == want,
+          f"UP, 60 puis 64 ajoutée : notes jouées {[r1] + played} ; messages {[g[:3] + g[4:5] for g in got]} "
+          "(60 seule : une fois, avec la vitesse 9 ; ensuite chaque note jouée, la précédente terminée avec sa durée)")
+    check(not e.ui.os, "aucun message de l'OS lui-même (rien ne passe par 0x40080bf6 côté audio)")
+    # une seule note, 1 octave : le retrig d'origine, un seul message
+    e = scene(0, (60,))
+    key(e, 60, 2000)
+    played = [rep(e, n) for n in (3000, 4000, 5000)]
+    key(e, 60, 5500, 2)
+    got = [msg(m) for m in e.ui.posted]
+    check(played == [60, 60, 60] and got == [on_(60, 9, 2000), off(60, 2000, 5500)],
+          f"une seule note, 1 octave : un pas avec retrig (vitesse 9), terminé au relâchement : {got}")
+    # une seule note, 2 octaves : chaque note jouée
+    e = scene(1 << 3, (60,))
+    key(e, 60, 2000)
+    played = [rep(e, n) for n in (3000, 4000)]
+    key(e, 60, 4500, 2)
+    got = [msg(m) for m in e.ui.posted]
+    check(played == [72, 60] and got == [on_(60, -1, 2000), off(60, 2000, 3000), on_(72, -1, 3000),
+                                         off(72, 3000, 4000), on_(60, -1, 4000), off(60, 4000, 4500)],
+          f"une note, 2 octaves : chaque note jouée, sans retrig : {[g[:3] for g in got]}")
+    # hors du live rec, séquenceur arrêté, sens OFF : rien
+    for desc, cfg, on, playing in (("live rec arrêté", 0, False, True), ("séquenceur arrêté", 0, True, False),
+                                   ("sens OFF (l'OS enregistre lui-même)", 5, True, True)):
+        e = scene(cfg, (60, 64), on, playing)
+        key(e, 60, 2000)
+        key(e, 64, 2500)
+        played = [rep(e, n) for n in (3000, 4000)]
+        key(e, 60, 4500, 2)
+        key(e, 64, 5000, 2)
+        check(not e.ui.posted, f"{desc} : aucun message ({played})")
+    # le live rec s'arrête pendant l'arpège : la note en cours se termine, plus rien ensuite
+    e = scene(0, (60, 64))
+    key(e, 60, 2000)
+    key(e, 64, 2500)
+    rep(e, 3000)
+    live(e, False)
+    rep(e, 4000)
+    rep(e, 5000)
+    key(e, 60, 5500, 2)
+    key(e, 64, 6000, 2)
+    got = [msg(m) for m in e.ui.posted]
+    check(got == [on_(60, 9, 2000), off(60, 2000, 3000), on_(64, -1, 3000), off(64, 3000, 4000)],
+          f"live rec arrêté pendant l'arpège : la note en cours se termine, plus rien ensuite : {[g[:3] for g in got]}")
+    # plus de 8 messages : les tampons tournent (8 x 32 o)
+    e = scene(0, (60, 64))
+    key(e, 60, 2000)
+    key(e, 64, 2500)
+    for k in range(6):
+        rep(e, 3000 + 1000 * k)
+    want = [e.ring + 32 * (k % 8) for k in range(13)]
+    check(len(e.ui.posted) == 13 and all(m[0] == 12 for m in e.ui.posted) and e.ui.ptrs == want,
+          f"{len(e.ui.posted)} messages à la suite, tous complets (type 12) : les 8 tampons de 32 o tournent")
+
+
+def live_e2e(img, end=None, payload=None):
+    """Par les vraies fonctions de l'OS : 0x4008171e (touche) et 0x4008145e (relâchement), puis la vraie boucle."""
+    t = 1
+
+    def setup(on, cfg=0):
+        a = Audio(img, end, payload)
+        ui = Ui(a)
+        a.w32(0x40a7887c, BANK)                    # pattern en cours (0x40054828) : le 1er de la banque
+        a.uc.mem_write(BANK + 722 * t + 710, struct.pack(">H", 0x680))   # drapeaux de la piste : défaut (0x40061438)
+        a.uc.mem_write(0x40fb680c, b"\xff" * 4 * 128 * 6)   # heures d'appui des notes : aucune (-1, comme au boot)
+        live(a, on)
+        a.cfg(t, cfg)
+        return a, ui
+
+    def press(a, n, held=0, rate=9):
+        a.w32(0x8000184c, a.now)
+        a.e.call(0x4008171e, t, n, 100, 0x40, held, 0xffffffff, rate)
+        return a.run()
+
+    def release(a, n):
+        a.w32(0x8000184c, a.now)
+        a.e.call(0x4008145e, t, n, 0x40)
+        return a.run()
+
+    # hors du live rec, puis en live rec : mêmes appuis, mêmes heures
+    a, ui = setup(False)
+    press(a, 60)
+    a.now += 40_000
+    release(a, 60)
+    os_on, os_off = (ui.os + [None, None])[:2]
+    check(len(ui.os) == 2 and not ui.posted and msg(os_on)[:3] == ("ON", t, 60) and msg(os_off)[:3] == ("OFF", t, 60),
+          "hors du live rec : l'OS envoie lui-même le message de la touche et celui du relâchement ; l'arpège rien")
+    b, ui = setup(True)
+    press(b, 60)
+    b.now += 40_000
+    release(b, 60)
+    ours = ui.posted + [b"", b""]
+    check([msg(m)[0] for m in ui.os] == ["OFF"],
+          "live rec : le message de la touche (retrig, arpège UP) ne part plus ; celui du relâchement, si")
+    check(len(ui.posted) == 2 and ours[0] == os_on and ours[1] == os_off,
+          f"live rec : l'arpège envoie la note puis sa fin, identiques octet pour octet à ceux de l'OS "
+          f"({msg(os_on)} ; {msg(os_off)})")
+    # les autres messages de touche partent comme d'origine
+    for desc, cfg, held, rate in (("pas tenus (la note va à ces pas)", 0, 1, 9), ("sens OFF", 5, 0, 9),
+                                  ("sans retrig", 0, 0, 0xffffffff)):
+        c, ui = setup(True, cfg)
+        press(c, 60, held, rate)
+        check([msg(m)[:3] for m in ui.os] == [("ON", t, 60)] and not ui.posted,
+              f"live rec, {desc} : le message de la touche part, comme d'origine")
+    # un arpège en live rec, par la vraie boucle
+    d, ui = setup(True)
+    press(d, 60)
+    t0 = d.now
+    press(d, 64)
+    played = []
+    for _ in range(3000):
+        n = d.tick(t)
+        if n is False or len(played) >= 4:
+            break
+        if n is not None:
+            played.append((n, d.now))
+    release(d, 60)
+    d.now += 1000
+    release(d, 64)
+    want, prev, pt = [("ON", t, 60, 100, 9)], 60, t0
+    for n, now in played:
+        want += [("OFF", t, prev, 0, (now >> 1) - (pt >> 1)), ("ON", t, n, 100, -1)]
+        prev, pt = n, now
+    want.append(("OFF", t, prev, 0, (d.now >> 1) - (pt >> 1)))
+    got = [msg(m)[:5] for m in ui.posted]
+    check([n for n, _ in played] == [64, 60, 64, 60] and got == want and all(m[0] == 12 for m in ui.posted),
+          f"arpège UP 60 + 64 en live rec, vraie boucle : {[n for n, _ in played]} ; à l'interface : "
+          f"{[g[0] + ' ' + str(g[2]) for g in got]}, durées = écarts entre les notes jouées")
+    check([msg(m)[0] for m in ui.os] == ["OFF", "OFF"],
+          "les deux touches : pas de message de note, seulement leurs relâchements")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--cycles", required=True)
@@ -625,8 +885,9 @@ def main():
         import syntakt
         payload = (int(syn[0]["append"]["dest"], 16),
                    build.payload_runtime(syn[0], stock, syntakt.dsp_image(args.syntakt)))
-    global UI_CFG
+    global UI_CFG, RING
     UI_CFG = int(tweaks[-1]["symbols"]["ui_cfg"], 16)
+    RING = int(tweaks[-1]["symbols"]["ring"], 16)
     print(f"firmware : {', '.join(t['id'] for t in tweaks)}")
     print("accroches des notes jouées")
     rate_tests(img)
@@ -638,6 +899,10 @@ def main():
     menu_tests(img, stock)
     print("de bout en bout (vraie boucle d'événements de l'interruption audio)")
     e2e_tests(img, end, payload)
+    print("live rec : l'arpège envoie à l'interface les notes qu'il joue")
+    live_tests(img)
+    print("live rec, par les vraies fonctions de l'OS et la vraie boucle")
+    live_e2e(img, end, payload)
     print("\nTOUT OK" if not FAIL else f"\n{len(FAIL)} ÉCHEC(S)")
     return 1 if FAIL else 0
 
