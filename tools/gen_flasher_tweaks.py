@@ -131,6 +131,17 @@ FEATURES = [
         ],
     },
     {
+        "id": "boot-anim",
+        "label": "Animation de demarrage modded-cycles",
+        "desc": "Au demarrage, les quatre carres du logo apparaissent un par un puis modded-cycles s'ecrit "
+                "dessous, a la place des carreaux qui clignotent. Meme duree qu'a l'origine.",
+        "status": "experimental",
+        "credit": None,
+        "variants": [
+            {"file": "43-boot-anim", "label": None},
+        ],
+    },
+    {
         "id": "syntakt",
         "label": "Vrais moteurs du Syntakt",
         "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.42.syx (a deposer a l'etape 2), "

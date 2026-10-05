@@ -209,6 +209,26 @@ python3 tools/emu/test_tempo_max.py --cycles model-cycles_OS1.13.syx
 | `model-tg,tempo-max` | `97cc13b34d3f4b3440d42bdb1c692e64bf0aa8b2de54b806b14320914936ef4f` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max` | `c8214dc5fe88a5ff346d8554f05753bb25acec448cb0eb23140236b10a9404d4` |
 
+### Animation de démarrage modded-cycles
+
+`tweaks/model-cycles_OS1.13/43-boot-anim.json` est produit par `tools/gen_boot_anim.py` : le corps de la tâche d'animation de
+démarrage de l'OS (`0x40053a6c`) est réécrit à sa place, assemblé depuis `tools/machines/boot_anim/` (698 o sur 1 032, aucune
+place libre). Mêmes 80 images de 20 ms, même fin ; les carrés du logo puis « modded-cycles » ([note 39](notes/39-animation-demarrage.md)).
+La preuve fait tourner la tâche d'origine et la nouvelle avec le vrai code de l'écran de l'OS, jusqu'au registre du DSPI1, et
+compare chaque image reçue par l'écran au modèle du générateur ; `--gif` écrit l'animation reçue :
+```sh
+python3 tools/gen_boot_anim.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim.gif] \
+    [--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max]
+```
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `boot-anim` | `a847f83bf4c03526916560ff6e3464d59af8f3b5af25d8fe9c4366201d261c2c` |
+| `6ch-usbup,boot-anim` | `cc30f68d6b8a77e5282e0ad8f8633d1902159a6035fcf13dba98bb5a97391689` |
+| `model-tg,boot-anim` | `89d601eef4f29a056ed78543bec98c0f1b3deb327995ba860abf0f0d9d21f80b` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim` | `e721ca65ba95eb71c611d68698784d3930bd21384e7e6ef37dac4d4af0a19c5b` |
+
 ### Écoute d'un pas en pause
 
 `trig-preview` (et sa copie dans Model-TG) accepte le séquenceur en pause, où le met un Stop MIDI reçu même à l'arrêt : 3 octets

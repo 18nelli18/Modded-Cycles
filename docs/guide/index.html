@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-05-01">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-05-01">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-05-02">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-05-02">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -49,6 +49,7 @@
         <li><a href="#model-tg">Model-TG</a></li>
         <li><a href="#arp"><span data-l="en">Arpeggiator</span><span data-l="fr">Arpégiateur</span></a></li>
         <li><a href="#tempo"><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></a></li>
+        <li><a href="#boot-anim"><span data-l="en">Startup animation</span><span data-l="fr">Animation de démarrage</span></a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
         <li><a href="#stock"><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></a></li>
         <li><a href="#recovery"><span data-l="en">Recovery</span><span data-l="fr">Secours</span></a></li>
@@ -432,8 +433,23 @@
         </dl>
       </section>
 
+      <section id="boot-anim">
+        <h2><span class="n">12</span><span data-l="en">Startup animation</span><span data-l="fr">Animation de démarrage</span></h2>
+        <p class="lede"><span data-l="en">When you switch the Model:Cycles on, the screen shows the modded-cycles logo instead of the original tile animation.</span><span data-l="fr">Quand vous allumez le Model:Cycles, l'écran montre le logo modded-cycles à la place de l'animation de carreaux d'origine.</span></p>
+        <figure class="fig"><img src="../assets/boot-anim.gif" width="512" height="256" style="max-width:100%;height:auto;image-rendering:pixelated;border-radius:6px" alt="" loading="lazy"></figure>
+        <ol>
+          <li><span data-l="en">Hold <b>MAIN VOLUME</b> to switch on, as usual.</span><span data-l="fr">Maintenez <b>MAIN VOLUME</b> pour allumer, comme d'habitude.</span></li>
+          <li><span data-l="en">The four rounded squares of the logo pop in one by one, the top right one (orange on the site) hollows out, then “modded-cycles” types itself underneath.</span><span data-l="fr">Les quatre carrés arrondis du logo apparaissent un par un, celui en haut à droite (orange sur le site) se creuse, puis « modded-cycles » s'écrit dessous.</span></li>
+        </ol>
+        <dl class="facts">
+          <div><dt><span data-l="en">Duration</span><span data-l="fr">Durée</span></dt><dd><span data-l="en">the same as the original animation (about 1.8 s): startup is not slower. The usual screen comes once your project is loaded, as before.</span><span data-l="fr">la même que l'animation d'origine (1,8 s environ) : le démarrage n'est pas plus long. L'écran habituel arrive une fois le projet chargé, comme avant.</span></dd></div>
+          <div><dt><span data-l="en">Startup menu</span><span data-l="fr">Menu de démarrage</span></dt><dd><span data-l="en">unchanged: FUNC held at power-on still opens it (see <a href="#recovery">Recovery</a>).</span><span data-l="fr">inchangé : FUNC tenu à l'allumage l'ouvre toujours (voir <a href="#recovery">Secours</a>).</span></dd></div>
+          <div><dt><span data-l="en">Status</span><span data-l="fr">Statut</span></dt><dd><span data-l="en">checked in the emulator on the OS's own screen code: every image sent to the screen matches, pixel for pixel. Experimental until tested on a Model:Cycles. Goes with every other mod.</span><span data-l="fr">vérifié en émulation sur le code d'écran de l'OS : chaque image envoyée à l'écran correspond, pixel pour pixel. Expérimental jusqu'à un test sur un Model:Cycles. Se combine avec tous les autres mods.</span></dd></div>
+        </dl>
+      </section>
+
       <section id="samples">
-        <h2><span class="n">12</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">13</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -448,13 +464,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">13</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">14</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">With Syntakt engines or Model-TG's Sampler, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt ou le Sampler de Model-TG, remettez d'abord vos pistes sur une machine d'origine.</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">14</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">15</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -468,7 +484,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">15</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">16</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -527,8 +543,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-05-01"></script>
-<script src="../assets/cycles.js?v=2026-10-05-01"></script>
-<script src="../assets/site.js?v=2026-10-05-01"></script>
+<script src="../assets/release.js?v=2026-10-05-02"></script>
+<script src="../assets/cycles.js?v=2026-10-05-02"></script>
+<script src="../assets/site.js?v=2026-10-05-02"></script>
 </body>
 </html>
