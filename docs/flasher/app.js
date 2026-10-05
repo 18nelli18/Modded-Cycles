@@ -4666,6 +4666,11 @@ const REF_MAINOS = {
 // "Samples OS" tab: official Model:Samples OS 1.13 inside the official Model:Cycles container
 // (tools/crossflash.py --to cycles). SHA-256 of the resulting .syx; tested on a real Model:Cycles.
 const REF_SAMPLES_ON_CYCLES = "614d28cfe1100856aef7a67aa49003726e27e0e6eb3b6b05ecba6dc177e83911";
+// Same tab, for a Model:Samples (notes/39): the official Model:Cycles OS inside the official Model:Samples container,
+// its update check switched to the Model:Samples key (tools/crossflash.py --to samples); and the way back, the
+// official Model:Samples OS in the Model:Cycles SysEx packing (--back-samples). SHA-256 of the resulting .syx.
+const REF_CYCLES_ON_SAMPLES = "@REF_CYCLES_ON_SAMPLES@";
+const REF_SAMPLES_BACK = "@REF_SAMPLES_BACK@";
 
 // Open-source work this flasher builds on (shown in the Credits section).
 const CREDITS = [
@@ -4798,6 +4803,30 @@ const T = {
     miss_samples_cycles: "The first file must be the official Model:Cycles OS (step 2).",
     miss_samples_file: "Load the official Model:Samples OS file (step 2).",
     miss_samples_ack: "Confirm you have a MIDI interface for the way back (step 1).",
+    smp_dir_cyc: "Model:Cycles → Samples OS",
+    smp_dir_smp: "Model:Samples → Cycles OS",
+    smp_dir_back: "Model:Samples: back to its OS",
+    cos_title: "Turn your Model:Samples into a Model:Cycles",
+    cos_text: "Play the Model:Cycles synth engines on your Model:Samples. The page puts the official Model:Cycles OS inside your Model:Samples firmware: the startup menu, the updater and the signature of the Model:Samples stay in place. One small change in the Model:Cycles OS lets it accept the official Model:Samples OS again over USB, so the way back is in this tab too (“Model:Samples: back to its OS”).",
+    cos_w1: "Experimental: not yet tried on a real Model:Samples.",
+    cos_w2: "Back up your samples and projects with Elektron Transfer first: the Model:Cycles OS uses the same storage, and what it does with Model:Samples data is not known yet.",
+    cos_w3: "Under the Cycles OS, your Model:Samples refuses Model:Cycles firmwares (official or with mods), including an update offered by Elektron Transfer: that is expected, nothing is written. To leave, use “Model:Samples: back to its OS”.",
+    cos_w4: `If the way back over USB ever failed, the startup menu of the Model:Samples still takes its official OS through the MIDI IN, with a MIDI interface (<a href="${GUIDE}#cycles-on-samples">guide</a>).`,
+    cos_ack: "I have backed up my samples and projects with Elektron Transfer, and I keep the official Model:Samples OS file for the way back.",
+    sback_title: "Give your Model:Samples its own OS back",
+    sback_text: "For a Model:Samples running the Model:Cycles OS installed from this page. The page sends the official Model:Samples OS, unchanged, packed so that the Model:Cycles OS accepts it. The machine restarts as a Model:Samples, as before.",
+    sback_w1: "A Model:Cycles OS installed another way (another tool) refuses this file: then the way back is the startup menu and the MIDI IN.",
+    sback_w2: `Sent to a real Model:Cycles, it is refused and nothing changes (<a href="${GUIDE}#cycles-on-samples">guide</a>).`,
+    cos_needs_cycles: "For this choice, the first file must be the official <code>model-cycles_OS1.13.syx</code>, and the second the official Model:Samples OS.",
+    cos_ready: "Firmware ready: the Model:Cycles OS for your Model:Samples.",
+    sback_ready: "Firmware ready: the official Model:Samples OS, for the way back over USB.",
+    mods_list_cos: "Model:Cycles OS (for Model:Samples)",
+    mods_list_sback: "Official Model:Samples OS (way back)",
+    miss_cos_ack: "Confirm your backup and the official Model:Samples file (step 1).",
+    done_cos: "It restarts as a <b>Model:Cycles</b>: Elektron Transfer and your computer see a “Model:Cycles”. To go back, choose “Model:Samples: back to its OS” in the Samples OS tab.",
+    done_sback: "It restarts as a <b>Model:Samples</b>, with its own OS.",
+    dev_fwd_on_cycles: "This machine answers as a Model:Cycles: it would refuse this firmware. If it is a Model:Samples already running the Cycles OS, there is nothing to install; to go back, choose “Model:Samples: back to its OS”.",
+    dev_back_on_samples: "This machine already runs the Model:Samples OS: there is nothing to bring back.",
     done_samples: "It restarts as a <b>Model:Samples</b>: Elektron Transfer and your computer see a “Model:Samples”. Load your samples with Transfer.",
     pick_one: "Select at least one mod, or switch to “Official firmware”.",
     midi_asking: "Asking for MIDI access…",
@@ -4834,10 +4863,10 @@ const T = {
     dev_wrong_file: "This firmware is for a Model:Samples, and this machine is a Model:Cycles: nothing will be sent.",
     watch_fast: "The Model:Cycles checks every block as it arrives. At the end it asks you to confirm the update on its screen.",
     done_title_fast: "Firmware sent.",
-    after_confirm: "Now confirm the update on the Model:Cycles screen (<b>YES</b>). It then writes the firmware and restarts by itself: <b>don't turn it off</b> until it has restarted.",
-    after_gone: "The Model:Cycles is writing the firmware and restarting. <b>Don't turn it off.</b>",
-    after_back: "The Model:Cycles is back: {device} OS {v}.",
-    after_back_plain: "The Model:Cycles is back.",
+    after_confirm: "Now confirm the update on the {m} screen (<b>YES</b>). It then writes the firmware and restarts by itself: <b>don't turn it off</b> until it has restarted.",
+    after_gone: "The {m} is writing the firmware and restarting. <b>Don't turn it off.</b>",
+    after_back: "The {m} is back: {device} OS {v}.",
+    after_back_plain: "The {m} is back.",
     fast_timeout: "The Model:Cycles stopped answering. Turn it off and on, then flash again. If it happens again, choose the classic method in step 3.",
     fast_refused: "The Model:Cycles refused the update{why}. Turn it off and on and try again, or choose the classic method in step 3.",
     fast_write: "The Model:Cycles reported an error while receiving{why}. Turn it off and on and try again, or choose the classic method in step 3.",
@@ -4960,6 +4989,30 @@ const T = {
     miss_samples_cycles: "Le premier fichier doit être l'OS officiel du Model:Cycles (étape 2).",
     miss_samples_file: "Déposez le fichier officiel de l'OS Model:Samples (étape 2).",
     miss_samples_ack: "Confirmez que vous avez une interface MIDI pour le retour (étape 1).",
+    smp_dir_cyc: "Model:Cycles → OS Samples",
+    smp_dir_smp: "Model:Samples → OS Cycles",
+    smp_dir_back: "Model:Samples : retour à son OS",
+    cos_title: "Transformer le Model:Samples en Model:Cycles",
+    cos_text: "Jouez les moteurs de synthèse du Model:Cycles sur votre Model:Samples. La page place l'OS officiel du Model:Cycles dans le firmware de votre Model:Samples : le menu de démarrage, l'updater et la signature du Model:Samples restent en place. Une petite modification de l'OS du Model:Cycles lui fait accepter à nouveau l'OS officiel du Model:Samples par USB : le retour se fait aussi depuis cet onglet (« Model:Samples : retour à son OS »).",
+    cos_w1: "Expérimental : pas encore essayé sur un vrai Model:Samples.",
+    cos_w2: "Sauvegardez d'abord vos samples et vos projets avec Elektron Transfer : l'OS du Model:Cycles utilise le même stockage, et on ne sait pas encore ce qu'il fait des données du Model:Samples.",
+    cos_w3: "Sous l'OS Cycles, votre Model:Samples refuse les firmwares Model:Cycles (officiels ou avec mods), y compris une mise à jour proposée par Elektron Transfer : c'est voulu, rien n'est écrit. Pour revenir, utilisez « Model:Samples : retour à son OS ».",
+    cos_w4: `Si le retour par USB échouait un jour, le menu de démarrage du Model:Samples accepte toujours son OS officiel par le MIDI IN, avec une interface MIDI (<a href="${GUIDE}#cycles-on-samples">guide</a>).`,
+    cos_ack: "J'ai sauvegardé mes samples et mes projets avec Elektron Transfer, et je garde le fichier officiel de l'OS Model:Samples pour le retour.",
+    sback_title: "Rendre au Model:Samples son propre OS",
+    sback_text: "Pour un Model:Samples sous l'OS du Model:Cycles installé depuis cette page. La page envoie l'OS officiel du Model:Samples, sans le modifier, emballé pour que l'OS du Model:Cycles l'accepte. La machine redémarre en Model:Samples, comme avant.",
+    sback_w1: "Un OS Model:Cycles installé autrement (avec un autre outil) refuse ce fichier : le retour passe alors par le menu de démarrage et le MIDI IN.",
+    sback_w2: `Envoyé à un vrai Model:Cycles, il est refusé et rien ne change (<a href="${GUIDE}#cycles-on-samples">guide</a>).`,
+    cos_needs_cycles: "Pour ce choix, le premier fichier doit être le <code>model-cycles_OS1.13.syx</code> officiel, et le second l'OS officiel du Model:Samples.",
+    cos_ready: "Firmware prêt : l'OS du Model:Cycles pour votre Model:Samples.",
+    sback_ready: "Firmware prêt : l'OS officiel du Model:Samples, pour le retour par USB.",
+    mods_list_cos: "OS Model:Cycles (pour Model:Samples)",
+    mods_list_sback: "OS Model:Samples officiel (retour)",
+    miss_cos_ack: "Confirmez votre sauvegarde et le fichier officiel du Model:Samples (étape 1).",
+    done_cos: "Il redémarre en <b>Model:Cycles</b> : Elektron Transfer et votre ordinateur voient un « Model:Cycles ». Pour revenir, choisissez « Model:Samples : retour à son OS » dans l'onglet OS Samples.",
+    done_sback: "Il redémarre en <b>Model:Samples</b>, avec son propre OS.",
+    dev_fwd_on_cycles: "Cette machine répond comme un Model:Cycles : elle refuserait ce firmware. Si c'est un Model:Samples déjà sous l'OS Cycles, il n'y a rien à installer ; pour revenir, choisissez « Model:Samples : retour à son OS ».",
+    dev_back_on_samples: "Cette machine est déjà sous l'OS du Model:Samples : il n'y a rien à rendre.",
     done_samples: "Il redémarre en <b>Model:Samples</b> : Elektron Transfer et votre ordinateur voient un « Model:Samples ». Chargez vos samples avec Transfer.",
     pick_one: "Cochez au moins un mod, ou passez sur « Firmware officiel ».",
     midi_asking: "Demande d'accès MIDI…",
@@ -4996,10 +5049,10 @@ const T = {
     dev_wrong_file: "Ce firmware est pour un Model:Samples, et cette machine est un Model:Cycles : rien ne sera envoyé.",
     watch_fast: "Le Model:Cycles vérifie chaque bloc à son arrivée. À la fin, il demande de confirmer la mise à jour sur son écran.",
     done_title_fast: "Firmware envoyé.",
-    after_confirm: "Confirmez maintenant la mise à jour sur l'écran du Model:Cycles (<b>YES</b>). Il écrit alors le firmware et redémarre tout seul : <b>ne l'éteignez pas</b> avant qu'il ait redémarré.",
-    after_gone: "Le Model:Cycles écrit le firmware et redémarre. <b>Ne l'éteignez pas.</b>",
-    after_back: "Le Model:Cycles est de retour : {device} OS {v}.",
-    after_back_plain: "Le Model:Cycles est de retour.",
+    after_confirm: "Confirmez maintenant la mise à jour sur l'écran du {m} (<b>YES</b>). Il écrit alors le firmware et redémarre tout seul : <b>ne l'éteignez pas</b> avant qu'il ait redémarré.",
+    after_gone: "Le {m} écrit le firmware et redémarre. <b>Ne l'éteignez pas.</b>",
+    after_back: "Le {m} est de retour : {device} OS {v}.",
+    after_back_plain: "Le {m} est de retour.",
     fast_timeout: "Le Model:Cycles ne répond plus. Éteignez-le puis rallumez-le, et relancez. Si ça recommence, choisissez la méthode classique à l'étape 3.",
     fast_refused: "Le Model:Cycles a refusé la mise à jour{why}. Éteignez-le puis rallumez-le et réessayez, ou choisissez la méthode classique à l'étape 3.",
     fast_write: "Le Model:Cycles a signalé une erreur pendant la réception{why}. Éteignez-le puis rallumez-le et réessayez, ou choisissez la méthode classique à l'étape 3.",
@@ -5084,6 +5137,7 @@ const st = {
   lang: "en",
   mode: "mods",            // "mods" | "restore" | "samples"
   samplesOs: null,         // official Model:Samples OS { raw, name, sha } ("samples" mode)
+  smpDir: "cyc",           // "samples" mode: "cyc" Samples OS for a Model:Cycles | "smp" Cycles OS for a Model:Samples | "back" its way back
   samplesError: null,
   syntakt: null,           // official Syntakt OS { raw, name, sha } (source of the Syntakt engines)
   syntaktError: null,
@@ -5395,6 +5449,22 @@ function setMode(mode) {
   update();
 }
 
+// "Samples OS" tab: which machine, which way.
+function setSmpDir(dir) {
+  st.smpDir = dir;
+  for (const d of ["cyc", "smp", "back"]) {
+    $("smp-dir-" + d).setAttribute("aria-checked", String(dir === d));
+    $("smp-pane-" + d).hidden = dir !== d;
+  }
+  st.finished = null;
+  update();
+}
+
+// The tick box the chosen way asks for (none for the way back).
+function samplesAcked() {
+  return st.smpDir === "back" ? true : $(st.smpDir === "smp" ? "cos-ack" : "samples-ack").checked;
+}
+
 // ---------------------------------------------------------------------------
 // Step 2 — OS file and automatic build
 // ---------------------------------------------------------------------------
@@ -5535,11 +5605,32 @@ function prepareFirmware() {
   });
 }
 
-// Model:Samples OS in the Model:Cycles container (MCBuilder.crossflash = tools/crossflash.py).
+// Model:Samples OS in the Model:Cycles container (MCBuilder.crossflash = tools/crossflash.py), or, for a Model:Samples,
+// the Model:Cycles OS (MCBuilder.cyclesForSamples = --to samples) and its way back (MCBuilder.samplesBack = --back-samples).
 function prepareSamples(os) {
   if (!os.stock) { st.fw = null; st.fwError = "samples_needs_cycles"; return; }
   const smp = st.samplesOs;
   if (!smp) { st.fw = null; st.fwError = null; return; }
+  if (st.smpDir === "smp") {
+    buildCached("cycles-os:" + smp.sha, (raw) => {
+      const r = window.MCBuilder.cyclesForSamples(raw, smp.raw);
+      const sha = window.MCBuilder.hex(window.MCBuilder.sha256(r.raw));
+      if (sha !== REF_CYCLES_ON_SAMPLES) throw new Error(`result ${sha.slice(0, 16)}… is not the reference build`);
+      log(`Built the Model:Cycles OS for Model:Samples: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.raw.length} bytes.`, "is-ok");
+      return { raw: r.raw, name: "model-cycles_OS1.13_for-model-samples.syx", kind: "cos", mods: [], ref: true, sixch: false };
+    });
+    return;
+  }
+  if (st.smpDir === "back") {
+    buildCached("samples-back:" + smp.sha, (raw) => {
+      const r = window.MCBuilder.samplesBack(raw, smp.raw);
+      const sha = window.MCBuilder.hex(window.MCBuilder.sha256(r.raw));
+      if (sha !== REF_SAMPLES_BACK) throw new Error(`result ${sha.slice(0, 16)}… is not the reference build`);
+      log(`Packed the official Model:Samples OS for the way back: ${r.raw.length} bytes.`, "is-ok");
+      return { raw: r.raw, name: "model-samples_OS1.13_back-from-cycles-os.syx", kind: "sback", mods: [], ref: true, sixch: false };
+    });
+    return;
+  }
   buildCached("samples-os:" + smp.sha, (raw) => {
     const r = window.MCBuilder.crossflash(raw, smp.raw);
     const sha = window.MCBuilder.hex(window.MCBuilder.sha256(r.raw));
@@ -5700,6 +5791,8 @@ function devProblem() {
   if (!d || d.state === "probing") return "probing";
   if (d.state !== "ok") return "dev_" + d.state;
   if (st.fw && st.fw.raw[4] !== d.product) {
+    if (st.fw.kind === "sback" && d.id === 25) return "dev_back_on_samples";
+    if (st.fw.kind === "cos" && d.id === 27) return "dev_fwd_on_cycles";
     if (d.id === 25) return "dev_samples";
     if (d.id === 27) return "dev_wrong_file";
     return "dev_other";
@@ -5787,7 +5880,7 @@ function missingReason() {
   if (st.mode === "samples") {
     if (st.fwError === "samples_needs_cycles") return "miss_samples_cycles";
     if (!st.samplesOs) return "miss_samples_file";
-    if (!$("samples-ack").checked) return "miss_samples_ack";
+    if (!samplesAcked()) return st.smpDir === "smp" ? "miss_cos_ack" : "miss_samples_ack";
   }
   if (st.fwError === "pick_one") return "miss_mod";
   if (needsSyntakt() && !st.syntakt) return "miss_syntakt";
@@ -5798,7 +5891,8 @@ function missingReason() {
   if (st.method === "fast") {
     const why = devProblem();
     if (why === "probing") return "miss_probe";
-    if (why === "dev_samples" || why === "dev_wrong_file" || why === "dev_other") return "miss_dev_mismatch";
+    if (["dev_samples", "dev_wrong_file", "dev_other", "dev_back_on_samples", "dev_fwd_on_cycles"].includes(why))
+      return "miss_dev_mismatch";
     if (why) return "miss_dev";
   }
   if (!$("ack").checked) return "miss_ack";
@@ -5808,7 +5902,8 @@ function missingReason() {
 function render() {
   // step 2 status
   $("h2s").textContent = t(st.mode === "samples" ? "s2_samples" : "s2");
-  if (st.os && st.mode === "samples" && !st.os.stock) setStatus("file-status", [["is-bad", t("samples_needs_cycles")]]);
+  if (st.os && st.mode === "samples" && !st.os.stock)
+    setStatus("file-status", [["is-bad", t(st.smpDir === "cyc" ? "samples_needs_cycles" : "cos_needs_cycles")]]);
   else if (st.os) {
     const rows = [];
     if (st.os.stock) rows.push(["is-ok", esc(t("os_ok"))]);
@@ -5826,6 +5921,8 @@ function render() {
         ` <span class="hash">MAIN OS ${esc(st.fw.sha.slice(0, 8))}</span>`]);
     else if (st.fw && st.fw.kind === "stock") rows.push(["is-ok", esc(t("stock_ready"))]);
     else if (st.fw && st.fw.kind === "samples") rows.push(["is-ok", esc(t("samples_ready")) + " " + esc(t("built_ref"))]);
+    else if (st.fw && st.fw.kind === "cos") rows.push(["is-ok", esc(t("cos_ready")) + " " + esc(t("built_ref"))]);
+    else if (st.fw && st.fw.kind === "sback") rows.push(["is-ok", esc(t("sback_ready")) + " " + esc(t("built_ref"))]);
     setStatus("file-status", rows);
   }
   setStatus("file2-status", st.samplesOs ? [["is-ok", esc(t("smp_ok"))]]
@@ -5851,7 +5948,7 @@ function render() {
   }
 
   // step badges
-  const choseOk = st.mode === "restore" || (st.mode === "samples" ? $("samples-ack").checked : chosenTweaks().length > 0);
+  const choseOk = st.mode === "restore" || (st.mode === "samples" ? samplesAcked() : chosenTweaks().length > 0);
   $("step-choose").classList.toggle("done", choseOk);
   $("step-file").classList.toggle("done", !!st.fw && !st.building);
   $("step-connect").classList.toggle("done", st.midiState === "ready" && !!currentPort() && (st.method !== "fast" || !devProblem()));
@@ -5862,7 +5959,9 @@ function render() {
   if (st.fw) {
     const what = st.fw.kind === "built" ? st.fw.mods.join(" + ")
       : st.fw.kind === "stock" ? t("mods_list_restore")
-      : st.fw.kind === "samples" ? t("mods_list_samples") : t("mods_list_custom", { name: st.fw.name });
+      : st.fw.kind === "samples" ? t("mods_list_samples")
+      : st.fw.kind === "cos" ? t("mods_list_cos")
+      : st.fw.kind === "sback" ? t("mods_list_sback") : t("mods_list_custom", { name: st.fw.name });
     const port = currentPort();
     const secs = st.method === "fast" ? window.MCFlasher.fastSeconds(st.fw.raw) : window.MCFlasher.transferSeconds(st.fw.raw, pace());
     const mins = Math.max(1, Math.round(secs / 60));
@@ -5886,11 +5985,12 @@ function renderAfter() {
   if (!el) return;
   const d = st.dev;
   const rows = [];
-  if (st.after === "confirm") rows.push(["is-busy", t("after_confirm")]);
-  else if (st.after === "gone") rows.push(["is-busy", t("after_gone")]);
+  const m = st.fw && (st.fw.kind === "cos" || st.fw.kind === "sback") ? "Model:Samples" : "Model:Cycles";   // the hardware
+  if (st.after === "confirm") rows.push(["is-busy", t("after_confirm", { m })]);
+  else if (st.after === "gone") rows.push(["is-busy", t("after_gone", { m })]);
   else if (st.after === "back") {
-    if (d && d.state === "ok") rows.push(["is-ok", esc(t("after_back", { device: d.device || d.name, v: d.version || "?" }))]);
-    else rows.push(["is-ok", esc(t("after_back_plain"))]);
+    if (d && d.state === "ok") rows.push(["is-ok", esc(t("after_back", { m, device: d.device || d.name, v: d.version || "?" }))]);
+    else rows.push(["is-ok", esc(t("after_back_plain", { m }))]);
   }
   setStatus("after", rows);
 }
@@ -5987,7 +6087,9 @@ async function flash() {
       (fast ? `<div class="status" id="after" aria-live="polite"></div>` : `<p>${t("done_body")}</p>`) +
       (fw.sixch ? `<p>${t("done_6ch")}</p>` : "") +
       (fw.sdv ? `<p>${t(/^syntakt-tg-/.test(fw.sdv) ? "done_syn_tg" : "done_syn", { list: fw.engines.map((e) => `<b>${esc(e.name)}</b> (${esc(e.label)})`).join(", ") })}</p>` : "") +
-      (fw.kind === "samples" ? `<p>${t("done_samples")}</p>` : "");
+      (fw.kind === "samples" ? `<p>${t("done_samples")}</p>` : "") +
+      (fw.kind === "cos" ? `<p>${t("done_cos")}</p>` : "") +
+      (fw.kind === "sback" ? `<p>${t("done_sback")}</p>` : "");
     log(fast ? `Firmware sent in ${Math.round(res.seconds)} s (${res.blocks} blocks): waiting for the confirmation on the machine.`
       : `Transfer complete in ${Math.round(res.seconds)} s.`, "is-ok");
   }
@@ -6050,6 +6152,8 @@ function init() {
   $("tab-restore").addEventListener("click", () => setMode("restore"));
   $("tab-samples").addEventListener("click", () => setMode("samples"));
   $("samples-ack").addEventListener("change", render);
+  $("cos-ack").addEventListener("change", render);
+  for (const d of ["cyc", "smp", "back"]) $("smp-dir-" + d).addEventListener("click", () => setSmpDir(d));
 
   const drop = $("drop"), file = $("file");
   file.addEventListener("change", (e) => { if (e.target.files[0]) readFile(e.target.files[0]); e.target.value = ""; });
@@ -6107,7 +6211,8 @@ function init() {
 }
 
 // test hooks (tools/webflash_smoke.js)
-window.MCFlasherApp = { state: st, REF_MAINOS, REF_SAMPLES_ON_CYCLES, loadOs, loadSamples, loadSyntakt, setMode, setMethod, applyLang, render,
+window.MCFlasherApp = { state: st, REF_MAINOS, REF_SAMPLES_ON_CYCLES, REF_CYCLES_ON_SAMPLES, REF_SAMPLES_BACK, loadOs,
+  loadSamples, loadSyntakt, setMode, setSmpDir, setMethod, applyLang, render,
   chosenTweaks };
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

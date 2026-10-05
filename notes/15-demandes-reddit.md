@@ -227,6 +227,9 @@ La piste « sortie casque » (§3 de la note 12) resterait à défaut, mais elle
 
 Le mode `tools/crossflash.py --back` **est conservé** (il documente le raisonnement et produit un fichier correct pour la porte 1), mais son aide dit clairement qu'il **ne suffit pas** au retour à cause de la porte 2.
 
+> **Suite (05/10/2026)** : dans l'autre sens (OS Cycles sur un Model:Samples), le même verrou se lève en changeant
+> 32 octets de l'OS Cycles, qui vérifie alors avec la clé du Samples : retour par USB possible. Voir [39](39-os-cycles-sur-samples.md).
+
 ## 4. Machines numériques du Syntakt — 🟠 recherche, premiers résultats encourageants
 
 **Demande** : porter les moteurs numériques supplémentaires du Syntakt, en partant de la ROM (l'OS) et d'un banc d'émulation pour la comprendre.

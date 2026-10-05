@@ -11,14 +11,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-05-01">
-<link rel="stylesheet" href="style.css?v=2026-10-05-01">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-05-02">
+<link rel="stylesheet" href="style.css?v=2026-10-05-02">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="flasher">
 <script>
   // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-  window.MC_BUILD = "2026-10-05-01";
+  window.MC_BUILD = "2026-10-05-02";
   window.addEventListener("error", function (e) {
     var b = document.getElementById("errbar");
     if (!b) return;
@@ -70,14 +70,40 @@
         <p class="note" data-i18n-html="restore_from_samples"></p>
       </div>
       <div id="panel-samples" role="tabpanel" aria-labelledby="tab-samples" hidden>
-        <p class="samples-head"><span data-i18n="samples_title">Turn your Model:Cycles into a Model:Samples</span><span class="tag ok" data-i18n="tested">Tested</span></p>
-        <p class="panel-text" data-i18n="samples_text"></p>
-        <ul class="warn-list">
-          <li data-i18n="samples_w1"></li>
-          <li data-i18n-html="samples_w2"></li>
-          <li data-i18n="samples_w3"></li>
-        </ul>
-        <label class="check"><input id="samples-ack" type="checkbox"><span data-i18n="samples_ack">I have a MIDI interface for the way back (to the Model:Cycles MIDI IN).</span></label>
+        <div class="seg sub" role="radiogroup" aria-label="Machine">
+          <button type="button" role="radio" id="smp-dir-cyc" aria-checked="true" data-i18n="smp_dir_cyc">Model:Cycles → Samples OS</button>
+          <button type="button" role="radio" id="smp-dir-smp" aria-checked="false" data-i18n="smp_dir_smp">Model:Samples → Cycles OS</button>
+          <button type="button" role="radio" id="smp-dir-back" aria-checked="false" data-i18n="smp_dir_back">Model:Samples: back to its OS</button>
+        </div>
+        <div id="smp-pane-cyc">
+          <p class="samples-head"><span data-i18n="samples_title">Turn your Model:Cycles into a Model:Samples</span><span class="tag ok" data-i18n="tested">Tested</span></p>
+          <p class="panel-text" data-i18n="samples_text"></p>
+          <ul class="warn-list">
+            <li data-i18n="samples_w1"></li>
+            <li data-i18n-html="samples_w2"></li>
+            <li data-i18n="samples_w3"></li>
+          </ul>
+          <label class="check"><input id="samples-ack" type="checkbox"><span data-i18n="samples_ack">I have a MIDI interface for the way back (to the Model:Cycles MIDI IN).</span></label>
+        </div>
+        <div id="smp-pane-smp" hidden>
+          <p class="samples-head"><span data-i18n="cos_title">Turn your Model:Samples into a Model:Cycles</span><span class="tag" data-i18n="experimental">Experimental</span></p>
+          <p class="panel-text" data-i18n="cos_text"></p>
+          <ul class="warn-list">
+            <li data-i18n="cos_w1"></li>
+            <li data-i18n-html="cos_w2"></li>
+            <li data-i18n="cos_w3"></li>
+            <li data-i18n-html="cos_w4"></li>
+          </ul>
+          <label class="check"><input id="cos-ack" type="checkbox"><span data-i18n="cos_ack">I have backed up my samples and projects with Elektron Transfer, and I keep the official Model:Samples OS file for the way back.</span></label>
+        </div>
+        <div id="smp-pane-back" hidden>
+          <p class="samples-head"><span data-i18n="sback_title">Give your Model:Samples its own OS back</span><span class="tag" data-i18n="experimental">Experimental</span></p>
+          <p class="panel-text" data-i18n="sback_text"></p>
+          <ul class="warn-list">
+            <li data-i18n="sback_w1"></li>
+            <li data-i18n-html="sback_w2"></li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
@@ -203,11 +229,11 @@
 </footer>
 
 <!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
-<script src="../assets/release.js?v=2026-10-05-01"></script>
-<script src="../assets/site.js?v=2026-10-05-01"></script>
-<script src="builder.js?v=2026-10-05-01"></script>
-<script src="tweaks.js?v=2026-10-05-01"></script>
-<script src="flasher.js?v=2026-10-05-01"></script>
-<script src="app.js?v=2026-10-05-01"></script>
+<script src="../assets/release.js?v=2026-10-05-02"></script>
+<script src="../assets/site.js?v=2026-10-05-02"></script>
+<script src="builder.js?v=2026-10-05-02"></script>
+<script src="tweaks.js?v=2026-10-05-02"></script>
+<script src="flasher.js?v=2026-10-05-02"></script>
+<script src="app.js?v=2026-10-05-02"></script>
 </body>
 </html>

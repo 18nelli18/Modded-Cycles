@@ -209,6 +209,25 @@ python3 tools/emu/test_tempo_max.py --cycles model-cycles_OS1.13.syx
 | `model-tg,tempo-max` | `97cc13b34d3f4b3440d42bdb1c692e64bf0aa8b2de54b806b14320914936ef4f` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max` | `c8214dc5fe88a5ff346d8554f05753bb25acec448cb0eb23140236b10a9404d4` |
 
+### OS Cycles pour Model:Samples (et retour par USB)
+
+Pas un tweak : `tools/crossflash.py` met l'OS Cycles officiel dans le conteneur officiel du Model:Samples, en changeant les
+32 octets de la constante de sa clé de vérification (`0x401296b2`) pour qu'il accepte la signature du Samples ; le retour
+est l'OS Samples officiel, inchangé, dans le transport SysEx du Cycles ([note 39](notes/39-os-cycles-sur-samples.md)).
+La clé vient du `.syx` officiel du Samples, jamais du dépôt. La preuve fait tourner les vérifications de mise à jour des
+deux OS sur les deux fichiers :
+```sh
+python3 tools/crossflash.py --cycles model-cycles_OS1.13.syx --samples model-samples_OS1.13.syx --to samples
+python3 tools/crossflash.py --cycles model-cycles_OS1.13.syx --samples model-samples_OS1.13.syx --back-samples
+python3 tools/emu/test_crossflash_samples.py --cycles model-cycles_OS1.13.syx --samples model-samples_OS1.13.syx
+```
+
+| Fichier | SHA-256 |
+|---|---|
+| `model-cycles_OS1.13_for-model-samples.syx` | `@SHA_FWD@` |
+| son MAIN OS | `@SHA_FWD_MAIN@` |
+| `model-samples_OS1.13_back-from-cycles-os.syx` | `@SHA_BACK@` |
+
 ### Écoute d'un pas en pause
 
 `trig-preview` (et sa copie dans Model-TG) accepte le séquenceur en pause, où le met un Stop MIDI reçu même à l'arrêt : 3 octets

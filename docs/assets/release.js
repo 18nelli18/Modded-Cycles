@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.21", date: "2026-10-05", changes: [
+    { en: "Samples OS tab, the other way round (experimental): a Model:Samples can now start as a Model:Cycles. Choose “Model:Samples → Cycles OS”: the page puts the official Model:Cycles OS inside your Model:Samples firmware, whose startup menu, updater and signature stay in place, and sends it over USB",
+      fr: "Onglet OS Samples, dans l'autre sens (expérimental) : un Model:Samples peut maintenant démarrer en Model:Cycles. Choisissez « Model:Samples → OS Cycles » : la page place l'OS officiel du Model:Cycles dans le firmware de votre Model:Samples, dont le menu de démarrage, l'updater et la signature restent en place, et l'envoie par USB" },
+    { en: "The way back works over USB too, no MIDI interface needed: “Model:Samples: back to its OS” sends the official Model:Samples OS, unchanged. The Model:Cycles OS put on by the page checks updates with the Model:Samples signature (a 32-byte change); an unmodified one would refuse it, which is why going back used to need the MIDI IN",
+      fr: "Le retour marche aussi par USB, sans interface MIDI : « Model:Samples : retour à son OS » envoie l'OS officiel du Model:Samples, sans le modifier. L'OS Cycles installé par la page vérifie les mises à jour avec la signature du Model:Samples (une modification de 32 octets) ; un OS Cycles non modifié le refuserait, d'où le passage obligé par le MIDI IN jusqu'ici" },
+    { en: "Checked in the emulator on the update checks of both OSes (way there, way back, and the firmwares they must refuse); not yet tried on a real Model:Samples. The existing choice, the Samples OS on a Model:Cycles, is unchanged",
+      fr: "Vérifié en émulation sur les contrôles de mise à jour des deux OS (aller, retour, et les firmwares qu'ils doivent refuser) ; pas encore essayé sur un vrai Model:Samples. Le choix existant, l'OS Samples sur un Model:Cycles, ne change pas" },
+  ] },
   { version: "1.20", date: "2026-10-05", changes: [
     { en: "Clearer Model-TG card: Model-TG already holds drumkilla's three tweaks (latching mute, trig preview, scrolling names), so ticking it now shows them ticked and locked, “included with Model-TG”, instead of unticking them. Unticking Model-TG frees them again",
       fr: "Carte Model-TG plus claire : Model-TG contient déjà les trois tweaks de drumkilla (mute verrouillé, écoute d'un pas, noms qui défilent), donc le cocher les affiche maintenant cochés et verrouillés, « inclus avec Model-TG », au lieu de les décocher. Décocher Model-TG les libère" },
