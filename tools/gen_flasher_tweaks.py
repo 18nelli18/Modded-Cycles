@@ -135,7 +135,7 @@ FEATURES = [
         "label": "Animation de demarrage modded-cycles",
         "desc": "Au demarrage, les quatre carres du logo apparaissent un par un puis modded-cycles s'ecrit "
                 "dessous, a la place des carreaux qui clignotent. Meme duree qu'a l'origine.",
-        "status": "experimental",
+        "status": "tested",
         "credit": None,
         "variants": [
             {"file": "43-boot-anim", "label": None},

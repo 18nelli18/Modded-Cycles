@@ -154,14 +154,16 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx --gif anim.
     --with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max
 ```
 
-## 7. Ce qui reste à vérifier sur la machine `[À FAIRE]`
+## 7. Ce qui restait à vérifier sur la machine `[FAIT]`
+
+Liste envoyée à Maxime avec la version corrigée ; sa réponse : « Parfait ça marche » (§9).
 
 - L'animation à l'allumage : les carrés, l'accent, le texte lisible et à l'endroit, sans reste de l'écran précédent.
 - Le passage à l'écran normal comme avant (même délai), les LED de trig éteintes ensuite.
-- FUNC à l'allumage ouvre toujours le menu de démarrage (rien n'a changé là, à confirmer quand même).
-- L'orientation : à l'envers au 1ᵉʳ essai, corrigée (§8) ; à revoir à l'endroit.
+- FUNC à l'allumage ouvre toujours le menu de démarrage (rien n'a changé là).
+- L'orientation : à l'envers au 1ᵉʳ essai (§8), à l'endroit au 2ᵉ (§9).
 
-## 8. 1ᵉʳ essai sur la machine (05/10/2026) : l'image à l'envers `[CORRIGÉ en émulation]`
+## 8. 1ᵉʳ essai sur la machine (05/10/2026) : l'image à l'envers `[CORRIGÉ]`
 
 Maxime a testé le firmware de test joint au fil du projet, avec la seule animation (MAIN OS `a847f83b…`, 1ʳᵉ version).
 Retour : « ça marche mais c'est à l'envers, le haut est en bas et le bas est en haut ». La durée, le passage à l'écran
@@ -180,3 +182,9 @@ normal et le menu de démarrage restent à vérifier (§7).
   modèle, logo en bas. La nouvelle passe tous les points, seule et avec les autres mods.
 - Nouvelles empreintes du MAIN OS : `boot-anim` seul `388ed6c6…`, les autres dans [BUILD.md](../BUILD.md) ; `REF_MAINOS`
   régénéré.
+
+## 9. Testé sur la machine (05/10/2026)
+
+Maxime a testé le 2ᵉ firmware de test joint au fil du projet, avec la seule animation corrigée (MAIN OS `388ed6c6…`),
+après la liste du §7 (logo en haut, texte dessous et lisible, écran normal comme avant, FUNC à l'allumage). Retour :
+« Parfait ça marche ». La carte passe de « Expérimental » à « Testé ».

@@ -138111,7 +138111,7 @@ window.MC_TWEAKS = {
    "id": "boot-anim",
    "label": "Animation de demarrage modded-cycles",
    "desc": "Au demarrage, les quatre carres du logo apparaissent un par un puis modded-cycles s'ecrit dessous, a la place des carreaux qui clignotent. Meme duree qu'a l'origine.",
-   "status": "experimental",
+   "status": "tested",
    "credit": null,
    "variants": [
     {
