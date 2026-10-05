@@ -137984,7 +137984,7 @@ window.MC_TWEAKS = {
      "label": null
     }
    ],
-   "excludes": [
+   "includes": [
     "latching-mute",
     "trig-preview",
     "browser-scroll"
