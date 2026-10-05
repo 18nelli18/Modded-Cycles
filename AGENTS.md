@@ -67,6 +67,7 @@ tools/web*_check.*, webflash_smoke.*   checks of the web flasher against the Pyt
 docs/                         GitHub Pages site: index.html, flasher/, guide/, assets/release.js
 notes/                        numbered technical notes (French), index in notes/README.md
 BUILD.md, FLASH.md            command-line build and flashing (French)
+.github/                      discord.yml + scripts/discord.mjs: new versions, mod status changes and merged PRs -> Discord
 README.md                     English overview for Model:Cycles owners (mod table)
 ```
 

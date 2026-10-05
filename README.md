@@ -9,6 +9,7 @@
 [**Open the web flasher**](https://18nelli18.github.io/Modded-Cycles/flasher/) &nbsp;·&nbsp;
 [Read the guide](https://18nelli18.github.io/Modded-Cycles/guide/) &nbsp;·&nbsp;
 [Website](https://18nelli18.github.io/Modded-Cycles/) &nbsp;·&nbsp;
+[Join the Discord](https://discord.gg/hWegtJZcmm) &nbsp;·&nbsp;
 [Support on Ko-fi](https://ko-fi.com/18nelli)
 
 <img src="docs/images/readme/device.png" alt="Drawing of a Model:Cycles with the six track pads lit and the screen showing USB AUDIO, 6 CHANNELS" width="720">
@@ -133,4 +134,4 @@ This project stands on the work of others, all MIT licensed:
 - **[mischa85/elektron-firmware-tool](https://github.com/mischa85/elektron-firmware-tool)** and **[mxldyn/octamax](https://github.com/mxldyn/octamax)**: firmware tooling and reverse-engineering methods.
 
 If these mods are useful to you, you can support the project on **[Ko-fi](https://ko-fi.com/18nelli)**.
-Feature requests and bug reports are welcome in the [issues](https://github.com/18nelli18/Modded-Cycles/issues).
+Questions, feedback and feature requests are welcome on the **[Discord](https://discord.gg/hWegtJZcmm)**; bug reports also fit in the [issues](https://github.com/18nelli18/Modded-Cycles/issues).
