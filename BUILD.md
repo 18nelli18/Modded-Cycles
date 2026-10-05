@@ -212,10 +212,11 @@ python3 tools/emu/test_tempo_max.py --cycles model-cycles_OS1.13.syx
 ### Animation de démarrage modded-cycles
 
 `tweaks/model-cycles_OS1.13/43-boot-anim.json` est produit par `tools/gen_boot_anim.py` : le corps de la tâche d'animation de
-démarrage de l'OS (`0x40053a6c`) est réécrit à sa place, assemblé depuis `tools/machines/boot_anim/` (698 o sur 1 032, aucune
+démarrage de l'OS (`0x40053a6c`) est réécrit à sa place, assemblé depuis `tools/machines/boot_anim/` (690 o sur 1 032, aucune
 place libre). Mêmes 80 images de 20 ms, même fin ; les carrés du logo puis « modded-cycles » ([note 39](notes/39-animation-demarrage.md)).
 La preuve fait tourner la tâche d'origine et la nouvelle avec le vrai code de l'écran de l'OS, jusqu'au registre du DSPI1, et
-compare chaque image reçue par l'écran au modèle du générateur ; `--gif` écrit l'animation reçue :
+compare chaque image vue sur l'écran au modèle du générateur ; le modèle de l'écran est d'abord validé par un « 7 » écrit par le
+code de texte de l'OS (l'OS compte les lignes depuis le bas, note 39 §2) ; `--gif` écrit l'animation vue :
 ```sh
 python3 tools/gen_boot_anim.py --cycles model-cycles_OS1.13.syx [--check]
 python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim.gif] \
@@ -224,10 +225,10 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `boot-anim` | `a847f83bf4c03526916560ff6e3464d59af8f3b5af25d8fe9c4366201d261c2c` |
-| `6ch-usbup,boot-anim` | `cc30f68d6b8a77e5282e0ad8f8633d1902159a6035fcf13dba98bb5a97391689` |
-| `model-tg,boot-anim` | `89d601eef4f29a056ed78543bec98c0f1b3deb327995ba860abf0f0d9d21f80b` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim` | `e721ca65ba95eb71c611d68698784d3930bd21384e7e6ef37dac4d4af0a19c5b` |
+| `boot-anim` | `388ed6c6ee65529e2dc2d2c93aadb37c6878324acf90ad931d5ca3f7c6b68b27` |
+| `6ch-usbup,boot-anim` | `76b1a532c8119ce222a3545b8a21b4cf0b2e12887e40c32f9a80b0d70975533e` |
+| `model-tg,boot-anim` | `cbec181684805bf37dd07c62dc47f7daf35e6abab530a3f3b06ec5db590278ec` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim` | `d468a729f32780870dbd591e52e8c782a5cdd347459ac1c61ef35473e26c9323` |
 
 ### Écoute d'un pas en pause
 

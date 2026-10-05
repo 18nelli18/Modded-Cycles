@@ -4,16 +4,21 @@
 On exécute la tâche d'animation (0x40053a6c) de l'OS d'origine et de l'OS modifié avec le vrai code de l'écran :
 0x4008e728 (tampon de dessin), 0x4008e622 (envoi des blocs changés, échange des tampons), 0x4008e6ba (effacement),
 0x4008e580 / 0x40053f64 / 0x40053fb0 / 0x40053e74 (position, données, registres du DSPI1). Chaque mot écrit dans
-le registre d'envoi du DSPI1 (0xfc03c034, bit 8 = donnée / commande) est rejoué sur un modèle de l'écran
-(commandes de page 0xb0..0xb7 et de colonne 0x0X / 0x1X, page de l'OS = 7 - page de l'écran, bit 7 = ligne du haut,
-comme Bitmap::setPixel 0x400701b8) ; sa mémoire part de valeurs quelconques.
+le registre d'envoi du DSPI1 (0xfc03c034, bit 8 = donnée / commande) est rejoué sur un modèle de l'écran tel qu'on
+le voit : commandes de page 0xb0..0xb7 et de colonne 0x0X / 0x1X, page 0 en haut, bit 0 de l'octet = la ligne du haut
+de la page, colonne 0 à gauche ; sa mémoire part de valeurs quelconques. L'OS, lui, compte les lignes depuis le bas
+(il envoie sa page p en page 7 - p, sa ligne y & 7 au bit 7 - (y & 7)) : le pixel (x, y) de Bitmap::setPixel
+(0x400701b8) est vu en (x, 63 - y). C'est ce qu'a montré la machine (notes/20 §1, essai du 02/10/2026 ; notes/39 §8,
+1er essai de l'animation le 05/10/2026, à l'envers), et ce que vérifie le point 2 avec le texte de l'OS lui-même.
 Interceptés : le minuteur (0x40002144, 0x40002200), les sémaphores (0x40001aca : une image ; 0x40001c80 ; 0x40001b3e :
 fin de la tâche), et pour l'animation d'origine, l'allocation (0x400802e0, 0x400802e6, 0x400802ec), le verrou des LED
 (0x40001cc4, 0x40001df6) et ses carreaux (descripteurs chargés au démarrage, *0x40fe3840 : de faux carreaux pleins).
 
   1. Écriture : octets d'origine, dans le corps de la tâche seulement, aucun autre tweak n'y écrit, la création de la
      tâche pointe toujours dessus.
-  2. Repère de l'écran : un pixel posé par le vrai Bitmap::setPixel arrive au bon endroit après le vrai envoi.
+  2. Repère de l'écran : un « 7 » écrit par le vrai code de texte de l'OS (0x400716c0, sa police de chiffres
+     0x40148558) dans un vrai Bitmap (0x40070172) puis envoyé arrive à l'endroit (barre en haut, pied à gauche) ;
+     un pixel posé par le vrai Bitmap::setPixel en (x, y) arrive en (x, 63 - y).
   3. Même contrat que l'original : minuteur (0x400539b8, 2 ticks) posé au début et retiré à la fin, 10 ticks d'attente
      après la dernière image, signal 0x40a78620 (attendu par la tâche principale), puis attente sans fin.
   4. Chaque image envoyée à l'écran est celle du modèle (tools/gen_boot_anim.py, frames()), pixel pour pixel.
@@ -50,7 +55,14 @@ TIMER_ADD, TIMER_DEL = 0x40002144, 0x40002200
 SEM_WAIT, SEM_POST1, SEM_TAKE = 0x40001aca, 0x40001c80, 0x40001b3e
 TICK_CB, SEM_TICK, SEM_DONE = 0x400539b8, 0x40a78618, 0x40a78620
 BUF_PTRS = 0x401492f0                # tampon de dessin, tampon affiché
-SET_PIXEL, FLUSH = 0x400701b8, 0x4008e622
+SET_PIXEL, FLUSH, BLANK = 0x400701b8, 0x4008e622, 0x4008e6ba
+BITMAP, DRAW_TEXT = 0x40070172, 0x400716c0  # Bitmap(bmp, l, h, données, 0) ; (bmp, police, x, y, 0, n, texte)
+DIGITS = 0x40148558                  # police de chiffres de l'OS, dans l'image (notes/15 §2)
+SEVEN = ("##########",               # son « 7 » à l'endroit : 5 lignes, colonnes doublées
+         "##########",
+         "........##",
+         "........##",
+         "......##..")
 PUSHR = 0xfc03c034
 TILES = 0x40fe3840                   # *TILES : 10 descripteurs Bitmap de 28 o (animation d'origine)
 MALLOC = (0x400802e0, 0x400802e6)
@@ -89,13 +101,13 @@ class Panel:
             self.col = self.col & 0x0f | (b & 0x0f) << 4
 
     def image(self):
-        """Lignes de pixels, dans le repère de l'OS (page de l'OS = 7 - page de l'écran, bit 7 en haut)."""
+        """Lignes de pixels telles qu'on les voit, de haut en bas : page 0 en haut, bit 0 = sa ligne du haut."""
         img = [[0] * G.W for _ in range(G.H)]
         for pp in range(8):
             for x in range(128):
                 b = self.ram[pp][x]
                 for k in range(8):
-                    img[(7 - pp) * 8 + k][x] = b >> (7 - k) & 1
+                    img[pp * 8 + k][x] = b >> k & 1
         return img
 
 
@@ -254,18 +266,31 @@ def main():
     va, old = G.TASK_PEA
     check(patched[va - BASE:va - BASE + 4].hex() == old, "la création de la tâche (0x40053a2e) pointe toujours dessus")
 
-    print("2. repère de l'écran (vrai Bitmap::setPixel, vrai envoi)")
+    print("2. repère de l'écran (vrai code de texte de l'OS, vrai Bitmap::setPixel, vrai envoi)")
     r = Rig(patched)
-    bmp = 0x91000000
-    draw = r.r32(BUF_PTRS)
-    r.uc.mem_write(bmp, struct.pack(">IiiiIIB3x", 0x401117c8, 128, 64, 2, draw, 0, 0))
+    bmp, txt = 0x91000000, 0x91001000
+    r.call(BLANK)
+    r.call(BITMAP, bmp, 128, 64, r.r32(BUF_PTRS), 0)
+    r.uc.mem_write(txt, b"7\0")
+    x0, y0 = 10, 30
+    r.call(DRAW_TEXT, bmp, DIGITS, x0, y0, 0, -1, txt)
+    r.call(FLUSH)
+    img = r.panel.image()
+    lit = [(x, y) for y in range(G.H) for x in range(G.W) if img[y][x]]
+    seen = [show([row[x0:x0 + 10]]) for row in img[63 - y0 - 4:64 - y0]]
+    print("        " + "\n        ".join(seen))
+    check(seen == list(SEVEN) and len(lit) == sum(r.count("#") for r in SEVEN),
+          f"le « 7 » de l'OS (x = {x0}, y = {y0}) est à l'endroit : barre en haut, pied à gauche, lignes "
+          f"{63 - y0 - 4}..{63 - y0} de l'écran")
     pts = ((3, 10), (127, 0), (64, 63), (0, 33))
+    r.call(BITMAP, bmp, 128, 64, r.r32(BUF_PTRS), 0)  # l'envoi a échangé les tampons : celui de dessin est vide
     for x, y in pts:
         r.call(SET_PIXEL, bmp, x, y, 1)
     r.call(FLUSH)
     img = r.panel.image()
-    check(all(img[y][x] for x, y in pts), f"pixels {pts} à leur place")
-    check(sum(map(sum, img)) > len(pts), "(les autres blocs gardent la mémoire quelconque de l'écran)")
+    lit = {(x, y) for y in range(G.H) for x in range(G.W) if img[y][x]}
+    check(lit == {(x, 63 - y) for x, y in pts}, f"Bitmap::setPixel (x, y) -> (x, 63 - y) à l'écran, pour {pts}")
+    check(not r.bad, "aucun accès hors mémoire")
 
     print("3. même contrat que l'original")
     rs = Rig(stock, stock_tiles=True)

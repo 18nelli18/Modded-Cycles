@@ -57,7 +57,21 @@ DMA 0 de [33](33-effacer-un-trig.md)).
 
 Format des tampons, celui de `Bitmap` (`0x400701b8`, setPixel) pour une image de 128 × 64 : **colonne par colonne**,
 8 o par colonne (deux mots de 32 bits), le pixel (x, y) est le bit `7 - (y & 7)` de l'octet `x × 8 + y / 8`. L'animation
-d'origine dessine dans un `Bitmap` de 128 × 64 puis le recopie tel quel dans le tampon de dessin (`0x4008f1f0`).
+d'origine dessine dans un `Bitmap` de 128 × 64 puis le recopie tel quel dans le tampon de dessin (`0x4008f1f0`, une
+copie de mémoire).
+
+**Dans ce repère, y monte : y = 0 est la ligne du bas de l'écran**, x = 0 la colonne de gauche. Le pixel vu à la ligne r
+(comptée depuis le haut) est le pixel (x, 63 − r) de l'OS. `[FAIT]` La 1ʳᵉ version de l'animation supposait l'inverse et
+s'est affichée à l'envers sur la machine (§8). Trois indices concordent :
+
+- l'envoi : la page p de l'OS part en page `7 - p` du contrôleur, sa ligne `y & 7` au bit `7 - (y & 7)`, ce qui retourne
+  tout l'écran sur un contrôleur réglé de façon standard (page 0 en haut, bit 0 = sa ligne du haut) ;
+- le texte de l'OS : sa police de chiffres (`0x40148558`, glyphes de 5 lignes rangés colonne par colonne, table des
+  glyphes `0x401485ee` de [15 §2](15-demandes-reddit.md)) n'est à l'endroit que si y monte. Écrit par `0x400716c0` en
+  émulation, son « 7 » a la barre en haut et le pied à gauche seulement ainsi. D'un caractère au suivant, x avance
+  (`0x40071786` : x + largeur + 1), donc pas de miroir gauche / droite ;
+- la machine : l'écran MACHINES ([20 §1](20-moteurs-syntakt-a-cocher.md), essai du 02/10/2026) et le 1ᵉʳ essai de
+  l'animation (05/10/2026).
 
 ## 3. La nouvelle animation
 
@@ -85,8 +99,12 @@ Aperçu (ce que reçoit l'écran en émulation) : `docs/assets/boot-anim.gif`, m
 
 `tools/machines/boot_anim/boot_anim.S` (assembleur, pas de compilateur : `--check` ne dépend que des binutils), lié en
 `0x40053a6c` par `boot_anim.ld`. Le générateur écrit à côté `anim.inc` (géométrie, horaire) et `anim_data.inc`
-(carrés, rebond, colonnes du texte : 98 mots de 16 bits). **698 o sur les 1 032 du corps d'origine** ; le reste du corps
+(carrés, rebond, colonnes du texte : 98 mots de 16 bits). **690 o sur les 1 032 du corps d'origine** ; le reste du corps
 d'origine reste en place, sans plus rien pour y mener. **Aucune place libre utilisée.**
+
+Le code et le modèle Python comptent y depuis le haut, comme on regarde l'écran ; seules les deux routines qui posent les
+pixels (`pset`, `centered`) passent au repère de l'OS : ligne `63 - y`, soit le bit `y & 7` de l'octet `7 - y / 8` de la
+colonne (§2).
 
 Contrat, le même que l'original :
 
@@ -110,17 +128,19 @@ s'accrochent au démarrage ailleurs (`0x400004b2`, notes/17 et 31) : la tâche d
 ## 6. Preuve en émulation `[FAIT en émulation]`
 
 `tools/emu/test_boot_anim.py` fait tourner la tâche, d'origine puis modifiée, avec le **vrai code de l'écran** jusqu'au
-registre du DSPI1 ; chaque mot envoyé est rejoué sur un modèle de l'écran (commandes de page et de colonne, pages à
-l'envers). Interceptés : minuteur, sémaphores, et pour l'original l'allocation, le verrou des LED et ses carreaux
-(de faux carreaux pleins, les vrais sont chargés au démarrage).
+registre du DSPI1 ; chaque mot envoyé est rejoué sur un modèle de l'écran **tel qu'on le voit** (commandes de page et de
+colonne, page 0 en haut, bit 0 = sa ligne du haut, colonne 0 à gauche), que le « 7 » de l'OS valide d'abord (§2).
+Interceptés : minuteur, sémaphores, et pour l'original l'allocation, le verrou des LED et ses carreaux (de faux carreaux
+pleins, les vrais sont chargés au démarrage).
 
 | Vérification | Origine | Modifiée |
 |---|---|---|
-| Un pixel posé par le vrai `Bitmap::setPixel` arrive au bon endroit de l'écran | — | oui (4 points, dont les coins) |
+| Un « 7 » écrit par le vrai code de texte de l'OS (`0x400716c0`, police `0x40148558`, vrai `Bitmap` `0x40070172`) apparaît à l'endroit : barre en haut, pied à gauche | — | oui |
+| Le pixel (x, y) du vrai `Bitmap::setPixel` est vu en (x, 63 − y), et lui seul | — | oui (4 points, dont les coins) |
 | Minuteur `0x400539b8`, 2 ticks | oui | oui |
 | Images avant la fin | 80 | 80 |
 | Puis 10 ticks, signal `0x40a78620`, retrait du minuteur, attente sans fin | oui | oui, mêmes appels dans le même ordre |
-| Images reçues par l'écran = modèle Python du générateur (`frames()`) | — | 80 sur 80, pixel pour pixel |
+| Images vues sur l'écran = modèle Python du générateur (`frames()`) | — | 80 sur 80, pixel pour pixel (la 1ʳᵉ version : 4 à 79 différentes, à l'envers) |
 | Écran vidé avant la 1ʳᵉ image (sa mémoire part de valeurs quelconques) | — | oui |
 | Écritures hors des tampons de l'écran, de leurs pointeurs, de la pile et du DSPI1 | — | aucune |
 | Avec `6ch-usbup, model-tg-st, syntakt-tg-sd-cp-toy-bits-swarm, arp, trig-hold, tempo-max` | — | mêmes appels, mêmes images |
@@ -136,4 +156,22 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx --gif anim.
 - L'animation à l'allumage : les carrés, l'accent, le texte lisible et à l'endroit, sans reste de l'écran précédent.
 - Le passage à l'écran normal comme avant (même délai), les LED de trig éteintes ensuite.
 - FUNC à l'allumage ouvre toujours le menu de démarrage (rien n'a changé là, à confirmer quand même).
-- L'orientation : déduite du code (`Bitmap` et envoi de l'OS, pages à l'envers), pas d'un écran réel.
+- L'orientation : à l'envers au 1ᵉʳ essai, corrigée (§8) ; à revoir à l'endroit.
+
+## 8. 1ᵉʳ essai sur la machine (05/10/2026) : l'image à l'envers `[CORRIGÉ en émulation]`
+
+Maxime a flashé, par le flasher du site, un firmware de test avec la seule animation (MAIN OS `a847f83b…`, 1ʳᵉ version).
+Retour : « ça marche mais c'est à l'envers, le haut est en bas et le bas est en haut ». L'animation tourne donc, avec sa
+durée et son passage à l'écran normal.
+
+- **Cause** : §2 supposait que la ligne 0 d'un `Bitmap` était en haut de l'écran ; l'OS la met en bas. La preuve ne
+  pouvait pas le voir : son modèle de l'écran était écrit dans le repère de l'OS, sans rien qui le relie à ce qu'on voit.
+  [20 §1](20-moteurs-syntakt-a-cocher.md) l'avait pourtant établi sur la machine le 02/10/2026.
+- **Haut / bas seulement** : le texte de l'OS s'écrit de gauche à droite à x croissant (§2), et le retour ne parle pas
+  de texte en miroir.
+- **Correction** : `pset` et `centered` écrivent la ligne `63 - y` (§4), 690 o au lieu de 698. Le modèle Python et
+  l'aperçu (`docs/assets/boot-anim.gif`, identique octet pour octet) ne changent pas : ils montraient déjà l'image voulue.
+- **Preuve** : le modèle de l'écran montre ce qu'on voit, et le point 2 le valide avec le texte de l'OS (§6). La 1ʳᵉ
+  version y échoue (images 4 à 79 différentes du modèle), la nouvelle passe tous les points, seule et avec les autres mods.
+- Nouvelles empreintes du MAIN OS : `boot-anim` seul `388ed6c6…`, les autres dans [BUILD.md](../BUILD.md) ; `REF_MAINOS`
+  régénéré.

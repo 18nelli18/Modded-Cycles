@@ -7,8 +7,10 @@
  *   - une image par tick du minuteur 0x400539b8 (2 ticks de 10 ms = 20 ms : 50 images par seconde), qui
  *     incrémente le sémaphore 0x40a78618 ;
  *   - chaque image est dessinée dans le tampon de dessin de l'écran (0x4008e728 : *0x401492f0, 1 024 o, colonnes
- *     de 64 pixels, 8 o par colonne, bit 7 de l'octet = la ligne du haut), puis 0x4008e622 envoie à l'écran les
- *     blocs de 8x8 qui ont changé et échange les deux tampons ;
+ *     de 64 pixels, 8 o par colonne), puis 0x4008e622 envoie à l'écran les blocs de 8x8 qui ont changé et échange
+ *     les deux tampons. L'OS compte les lignes depuis le BAS de l'écran (notes/39 §2) : ici y = 0 est la ligne du
+ *     haut, comme dans tools/gen_boot_anim.py, et pset / centered écrivent la ligne 63 - y du tampon, soit le bit
+ *     y & 7 de l'octet 7 - y / 8 de la colonne ;
  *   - au début, l'écran entier est effacé (0x4008e6ba, ce que fait l'OS quand il démarre sans animation) : les
  *     carreaux d'origine finissaient par couvrir tout l'écran, ici une bonne partie de l'écran reste vide ;
  *   - à la fin, comme l'original (0x40053e34) : 10 ticks d'attente, signal 0x40a78620 (la tâche principale l'attend
@@ -154,20 +156,19 @@ frame:
 	addq.l	#4, %sp
 	bra.s	11b
 
-/* pset : allume le pixel (d1 = x, d0 = y) du tampon a3. Détruit a0, d4 ; garde les autres. */
+/* pset : allume le pixel (d1 = x, d0 = y, 0 = la ligne du haut) du tampon a3. Détruit a0, d4 ; garde les autres. */
 pset:
 	move.l	%d1, %d4
 	lsl.l	#3, %d4
-	lea	0(%a3, %d4.l), %a0		/* la colonne : 8 o */
+	lea	7(%a3, %d4.l), %a0		/* le dernier des 8 o de la colonne : le bas de l'écran */
 	move.l	%d0, %d4
 	lsr.l	#3, %d4
-	adda.l	%d4, %a0
-	move.l	%d0, %d4
-	not.l	%d4				/* bit 7 - (y & 7) : bset le prend modulo 8 */
-	bset	%d4, (%a0)
+	suba.l	%d4, %a0			/* octet 7 - y / 8 */
+	bset	%d0, (%a0)			/* bit y & 7 : bset le prend modulo 8 */
 	rts
 
-/* centered : carré arrondi plein de côté d3 (pair), centré sur (d1, d2) ; d4 = 1 allume, 0 éteint.
+/* centered : carré arrondi plein de côté d3 (pair), centré sur (d1, d2) (y = 0 en haut, comme pset) ; d4 = 1
+ * allume, 0 éteint.
  * Coins : 2 puis 1 pixel retirés à partir de 12 de côté, 1 pixel à partir de 5, aucun en dessous.
  * Détruit d0-d5, a0-a1 ; garde d6, d7. */
 centered:
@@ -204,7 +205,7 @@ centered:
 24:	move.l	%d1, %d0
 	add.l	%d5, %d0
 	lsl.l	#3, %d0
-	lea	0(%a3, %d0.l), %a0		/* la colonne */
+	lea	7(%a3, %d0.l), %a0		/* la colonne, par son dernier octet (le bas de l'écran) */
 	move.l	%d2, %d0
 	add.l	%d6, %d0			/* y = y0 + retrait */
 	neg.l	%d6
@@ -214,14 +215,13 @@ centered:
 	bge.s	27f
 	move.l	%d0, %d7
 	lsr.l	#3, %d7
-	lea	0(%a0, %d7.l), %a1
-	move.l	%d0, %d7
-	not.l	%d7
+	movea.l	%a0, %a1
+	suba.l	%d7, %a1			/* octet 7 - y / 8, bit y & 7, comme pset */
 	tst.l	%d4
 	beq.s	26f
-	bset	%d7, (%a1)
+	bset	%d0, (%a1)
 	bra.s	261f
-26:	bclr	%d7, (%a1)
+26:	bclr	%d0, (%a1)
 261:	addq.l	#1, %d0
 	bra.s	25b
 27:	addq.l	#1, %d5
