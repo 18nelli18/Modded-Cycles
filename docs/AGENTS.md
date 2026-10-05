@@ -24,8 +24,8 @@ Write for musicians: what changes on the machine, which buttons to press, the li
 
 ## Adding a mod to the flasher
 
-1. Add it to `FEATURES` in `tools/gen_flasher_tweaks.py` (`"status": "experimental"`, `credit`, `excludes` or
-   `needs` if any), then `python3 tools/gen_flasher_tweaks.py` to regenerate `flasher/tweaks.js`.
+1. Add it to `FEATURES` in `tools/gen_flasher_tweaks.py` (`"status": "experimental"`, `credit`, `excludes`,
+   `includes` or `needs` if any), then `python3 tools/gen_flasher_tweaks.py` to regenerate `flasher/tweaks.js`.
 2. `python3 tools/ref_mainos.py --cycles … --syntakt …` rewrites `REF_MAINOS` in `flasher/app.js`: the flasher refuses
    to send a build whose MAIN OS hash is not listed, so every offered combination must be there.
 3. In `flasher/app.js`: the card texts in `FEAT.en` and `FEAT.fr` (`label`, `desc`, optional `note` shown once
@@ -35,7 +35,7 @@ Write for musicians: what changes on the machine, which buttons to press, the li
 5. A guide section in `guide/index.html` (next number, before *Samples OS*; renumber the ones after): a lede, the
    steps (`<ol>`) with the buttons in `<b>`, then `<dl class="facts">` with the limits and a *Tested* / *Experimental*
    line saying how it was checked. Copy the `#tempo` or `#trig-hold` section.
-6. A new entry at the top of `assets/release.js`: next version (`1.19` is the last), today's date, 2 to 4 changes
+6. A new entry at the top of `assets/release.js`: next version (`1.20` is the last), today's date, 2 to 4 changes
    (what the user gets, the limits, how it was checked, which mods it goes with).
 7. Bump the version stamp: the same `YYYY-MM-DD-NN` string in `window.MC_BUILD` (`flasher/index.html`) and every
    `?v=` of the three pages (`index.html`, `flasher/index.html`, `guide/index.html`). A stale stamp makes browsers mix a

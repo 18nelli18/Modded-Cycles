@@ -28,6 +28,9 @@ OUT = ROOT / "docs" / "flasher" / "tweaks.js"
 # Vrais moteurs du Syntakt ("engines") : une case par moteur du catalogue de gen_syntakt_engines.py ;
 # chaque combinaison cochee pointe vers son tweak syntakt-<moteurs> ; la carte est « testee » si au moins une
 # combinaison l'est (HW_TESTED de gen_syntakt_engines.py).
+# excludes : cartes qu'on ne peut pas cocher ensemble (cocher l'une decoche l'autre).
+# includes : tweaks deja contenus dans cette fonctionnalite ; ils s'en excluent comme avec excludes, et le flasher
+# les affiche coches et verrouilles, « inclus avec … », tant qu'elle est cochee.
 # Les moteurs s'ajoutent en machines supplementaires : sdvintage-exact (a la place de SNARE) reste dans build.py.
 # status : "tested" (flashe sur un vrai Model:Cycles) ou "experimental".
 # credit : auteur du travail d'origine, affiche sur la carte (voir aussi les credits de la page).
@@ -50,8 +53,9 @@ FEATURES = [
         "desc": "Machine Sampler, reechantillonnage, retrig et effets master, et plus.",
         "status": "experimental",
         "credit": {"kind": "by", "who": "TinyGregAudio", "repo": "TinyGregAudio/Model-TG"},
-        # Model-TG contient deja les tweaks de drumkilla
-        "excludes": ["latching-mute", "trig-preview", "browser-scroll"],
+        # Model-TG contient deja les tweaks de drumkilla : le flasher les affiche coches et verrouilles
+        # (« inclus avec Model-TG ») tant que Model-TG est coche, sans les ajouter au build
+        "includes": ["latching-mute", "trig-preview", "browser-scroll"],
         "license": "LICENSE-Model-TG",
         "variants": [
             {"file": "30-model-tg", "label": None},
@@ -182,6 +186,8 @@ def render():
             feat["needs"] = f["needs"]
         if f.get("excludes"):
             feat["excludes"] = f["excludes"]
+        if f.get("includes"):
+            feat["includes"] = f["includes"]
         if f.get("with"):                       # autre tweak quand une autre carte est cochee aussi
             feat["with"] = {g: load(json.loads((DEV_DIR / f"{v}.json").read_text(encoding="utf-8"))["id"])["id"]
                             for g, v in f["with"].items()}
