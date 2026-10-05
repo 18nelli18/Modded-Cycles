@@ -214,19 +214,33 @@ async function main() {
     const list = [...doc.querySelectorAll("#credits-list a")].map((a) => a.textContent);
     check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",
       "credits section lists the 5 upstream repositories");
-    // Model-TG holds drumkilla's tweaks: ticking one unticks the other. With the Syntakt engines it makes the
-    // combined version (notes/31): its base, then the engines' tweak built on top of it
-    doc.getElementById("feat-latching-mute").click(); await wait(5);
-    doc.getElementById("feat-syntakt").click(); await wait(5);
-    doc.getElementById("feat-model-tg").click(); await wait(5);
-    const off = !doc.getElementById("feat-latching-mute").checked && doc.getElementById("feat-syntakt").checked;
+    // Model-TG holds drumkilla's tweaks: ticked, it shows them ticked and locked, "(included with Model-TG)", and
+    // builds without them; unticked, they are free again. With the Syntakt engines it makes the combined version
+    // (notes/31): its base, then the engines' tweak built on top of it
+    const drum = ["feat-latching-mute", "feat-trig-preview", "feat-browser-scroll"];
+    const box = (id) => doc.getElementById(id);
+    box("feat-latching-mute").click(); await wait(5);
+    box("feat-syntakt").click(); await wait(5);
+    box("feat-model-tg").click(); await wait(5);
+    const locked = drum.every((id) => box(id).checked && box(id).disabled
+      && /\(included with Model-TG\)/.test(doc.querySelector(`label[for=${id}] .ttl`).textContent)) && box("feat-syntakt").checked;
     const noteOn = /set to CYC/.test(text(doc, "features")) && /its Sampler is the 7th machine/.test(text(doc, "features"));
     const both = w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
-    doc.getElementById("feat-trig-preview").click(); await wait(5);
-    check(off && noteOn && both === "model-tg-st,syntakt-tg-sd" && !doc.getElementById("feat-model-tg").checked
-      && doc.getElementById("feat-trig-preview").checked && w.MCFlasherApp.chosenTweaks().map((x) => x.id).join() === "trig-preview,syntakt-sd",
-      "Model-TG unticks drumkilla's tweaks (and the other way round), shows its install note; with the Syntakt engines: " + both);
-    doc.getElementById("feat-trig-preview").click(); await wait(5);
+    box("feat-trig-preview").click(); await wait(5);                 // locked: nothing changes
+    const still = box("feat-model-tg").checked && box("feat-trig-preview").checked
+      && w.MCFlasherApp.chosenTweaks().map((x) => x.id).join() === both;
+    box("feat-model-tg").click(); await wait(5);
+    const freed = drum.every((id) => !box(id).checked && !box(id).disabled) && !/included with/.test(text(doc, "features"));
+    box("feat-trig-preview").click(); await wait(5);
+    check(locked && noteOn && both === "model-tg-st,syntakt-tg-sd" && still && freed
+      && box("feat-trig-preview").checked && w.MCFlasherApp.chosenTweaks().map((x) => x.id).join() === "trig-preview,syntakt-sd",
+      "Model-TG shows drumkilla's tweaks ticked, locked and included (not built), frees them when unticked, shows its install note; with the Syntakt engines: " + both);
+    box("feat-model-tg").click(); await wait(5);                     // ticked over trig-preview: it becomes included
+    const over = box("feat-trig-preview").checked && box("feat-trig-preview").disabled
+      && w.MCFlasherApp.chosenTweaks().map((x) => x.id).join() === "model-tg-st,syntakt-tg-sd";
+    box("feat-model-tg").click(); await wait(5);
+    check(over && !box("feat-trig-preview").checked && !box("feat-trig-preview").disabled,
+      "Model-TG ticked over trig-preview: shown included, built without it; unticked: all free and unticked");
     // the combined version's badges follow its tests on the hardware (gen_syntakt_engines.HW_TESTED_TG, the
     // combos' tg_tested in tweaks.js): Model-TG + the 5 engines, then Model-TG + SDVtg alone
     doc.getElementById("feat-model-tg").click(); await wait(5);
@@ -263,6 +277,10 @@ async function main() {
     check(/Crédits/.test(text(doc, "credits")) && /boîte à outils/.test(text(doc, "credits")), "FR switch translates the credits section");
     check(/Tempo jusqu'à 546 BPM/.test(text(doc, "features")) && doc.querySelector('label[for=feat-tempo-max] a.feat-guide, #features a[href$="#tempo"]'),
       "FR: tempo card translated, with its guide link");
+    doc.getElementById("feat-model-tg").click(); await wait(5);
+    check(/\(inclus avec Model-TG\)/.test(doc.querySelector("label[for=feat-browser-scroll] .ttl").textContent),
+      "FR: the tweaks Model-TG holds say « (inclus avec Model-TG) »");
+    doc.getElementById("feat-model-tg").click(); await wait(5);
     doc.querySelector('.lang button[data-lang="en"]').click();
     await wait(20);
 
@@ -511,7 +529,7 @@ async function main() {
     const plain = boxes.filter((b) => b !== "feat-syntakt" && b !== "feat-model-tg");   // what goes with the engines
     const sets = [];                                  // with the engines: any of these, or Model-TG (with or without USB)
     for (let mask = 0; mask < 1 << plain.length; mask++) sets.push(plain.filter((b, k) => mask & (1 << k)));
-    const tgEx = w.MC_TWEAKS.features.find((f) => f.id === "model-tg").excludes.map((x) => "feat-" + x);
+    const tgEx = w.MC_TWEAKS.features.find((f) => f.id === "model-tg").includes.map((x) => "feat-" + x);
     const withTg = plain.filter((b) => !tgEx.includes(b));    // Model-TG and what it goes with (USB, trig removal, arpeggiator)
     for (let mask = 0; mask < 1 << withTg.length; mask++) sets.push(["feat-model-tg", ...withTg.filter((b, k) => mask & (1 << k))]);
     const tgOf = Object.fromEntries(w.MC_TWEAKS.features.find((f) => f.engines).combos.map((c) => [c.id, c.tg]));

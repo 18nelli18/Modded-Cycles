@@ -4786,6 +4786,7 @@ const T = {
     miss_syntakt: "Load the official Syntakt OS file (step 2).",
     combo_tested: "This choice was tested on a real Model:Cycles.",
     combo_new: "New choice: checked in the emulator, not tested on a Model:Cycles yet.",
+    included: "(included with {name})",
     with_tg: "With Model-TG: its Sampler is the 7th machine and these engines come after it, from the 8th. A track set to an added machine plays another one on the version without Model-TG, and the other way round.",
     renumber: "Before changing this choice or going back to the official firmware, set the tracks that use an added machine back to an original one (Kick…Chord): their numbers depend on the ticked engines, and MACHINES can freeze on such a track.",
     done_syn_tg: "Then press MACHINES on a track: after Chord comes the Sampler, then {list}. Their knobs show the Syntakt's names. Model-TG's Attack, Filter and Resonance work on them too: hold MACHINE and turn DECAY, SWEEP or CONTOUR. If something goes wrong, flash the official firmware back with this page (first set the tracks that use an added machine back to an original machine).",
@@ -4947,6 +4948,7 @@ const T = {
     miss_syntakt: "Déposez le fichier officiel de l'OS Syntakt (étape 2).",
     combo_tested: "Ce choix a été testé sur un vrai Model:Cycles.",
     combo_new: "Nouveau choix : vérifié en émulation, pas encore testé sur un Model:Cycles.",
+    included: "(inclus avec {name})",
     with_tg: "Avec Model-TG : son Sampler est la 7e machine et ces moteurs viennent après lui, à partir de la 8e. Une piste réglée sur une machine ajoutée en joue une autre sur la version sans Model-TG, et inversement.",
     renumber: "Avant de changer de choix ou de revenir au firmware officiel, remettez sur une machine d'origine (de Kick à Chord) les pistes qui utilisent une machine ajoutée : leurs numéros dépendent des moteurs cochés, et MACHINES peut geler sur une telle piste.",
     done_syn_tg: "Appuyez ensuite sur MACHINES sur une piste : après Chord vient le Sampler, puis {list}. Leurs potards affichent les noms du Syntakt. Attack, Filtre et Résonance de Model-TG y fonctionnent aussi : maintenez MACHINE et tournez DECAY, SWEEP ou CONTOUR. En cas de problème, reflashez le firmware officiel avec cette page (remettez d'abord sur une machine d'origine les pistes qui utilisent une machine ajoutée).",
@@ -5172,7 +5174,14 @@ const selection = {};
 // Engine card: the combination of ticked engines (kept in catalog order) and its tweak.
 // Two cards that can't be ticked together (Model-TG and the tweaks it already holds, or the Syntakt engines).
 function excludes(f, g) {
-  return (f.excludes || []).includes(g.id) || (g.excludes || []).includes(f.id);
+  const no = (a, b) => (a.excludes || []).includes(b.id) || (a.includes || []).includes(b.id);
+  return no(f, g) || no(g, f);
+}
+
+// The ticked card that already holds this one (Model-TG holds drumkilla's tweaks): the card shows ticked and
+// locked, "included with Model-TG", but adds nothing to the build (it is not on in the selection).
+function includedBy(f) {
+  return ((window.MC_TWEAKS && window.MC_TWEAKS.features) || []).find((g) => (g.includes || []).includes(f.id) && isOn(g.id));
 }
 
 function comboOf(f, sel) {
@@ -5193,15 +5202,18 @@ function renderFeatures() {
   for (const f of tw.features) {
     const sel = selection[f.id] ||
       (selection[f.id] = f.engines ? { on: false, engines: [] } : { on: false, variant: f.variants[0].id });
+    const holder = includedBy(f);
     const card = document.createElement("label");
-    card.className = "feat" + (sel.on ? " on" : "");
+    card.className = "feat" + (sel.on || holder ? " on" : "") + (holder ? " included" : "");
     card.htmlFor = "feat-" + f.id;
 
     const cb = document.createElement("input");
     cb.type = "checkbox";
     cb.id = "feat-" + f.id;
-    cb.checked = sel.on;
+    cb.checked = sel.on || !!holder;
+    cb.disabled = !!holder;
     cb.addEventListener("change", () => {
+      if (includedBy(f)) { renderFeatures(); return; }   // locked while the card holding it is ticked
       sel.on = cb.checked;
       if (sel.on)                                         // cards that can't go together: the other one goes off
         for (const g of tw.features)
@@ -5220,6 +5232,7 @@ function renderFeatures() {
     const tested = combo ? (isOn("model-tg") ? combo.tg_tested : combo.tested)
       : tgCombo ? !!tgCombo.tg_tested : f.status === "tested";
     ttl.innerHTML = `<span>${esc(featText(f.id, "label", f.label))}</span>` +
+      (holder ? `<span class="incl">${esc(t("included", { name: featText(holder.id, "label", holder.label) }))}</span>` : "") +
       `<span class="tag${tested ? " ok" : ""}">${esc(t(tested ? "tested" : "experimental"))}</span>` +
       (GUIDE_OF[f.id] ? `<a class="feat-guide" href="${GUIDE}#${GUIDE_OF[f.id]}">Guide <span aria-hidden="true">→</span></a>` : "");
     const desc = document.createElement("div");
