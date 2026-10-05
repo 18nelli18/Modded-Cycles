@@ -3,6 +3,12 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.20", date: "2026-10-05", changes: [
+    { en: "Clearer Model-TG card: Model-TG already holds drumkilla's three tweaks (latching mute, trig preview, scrolling names), so ticking it now shows them ticked and locked, “included with Model-TG”, instead of unticking them. Unticking Model-TG frees them again",
+      fr: "Carte Model-TG plus claire : Model-TG contient déjà les trois tweaks de drumkilla (mute verrouillé, écoute d'un pas, noms qui défilent), donc le cocher les affiche maintenant cochés et verrouillés, « inclus avec Model-TG », au lieu de les décocher. Décocher Model-TG les libère" },
+    { en: "Display only: for the same choice of mods, the firmware built and sent is exactly the same as before",
+      fr: "Affichage seulement : pour un même choix de mods, le firmware construit et envoyé est exactement le même qu'avant" },
+  ] },
   { version: "1.19", date: "2026-10-04", changes: [
     { en: "New mod, Tempo up to 546 BPM: the TEMPO knob, tap tempo, incoming MIDI clock and saved projects go beyond 300, up to 546.0 BPM. 546 is the ceiling of the project format (the tempo is saved in 1/120 of a BPM on 16 bits); the sequencer itself would keep up far beyond",
       fr: "Nouveau mod, Tempo jusqu'à 546 BPM : le potard TEMPO, le tap tempo, l'horloge MIDI reçue et les projets enregistrés dépassent 300, jusqu'à 546,0 BPM. 546 est le plafond du format des projets (le tempo y est enregistré en 1/120 de BPM sur 16 bits) ; le séquenceur, lui, suivrait bien au-delà" },

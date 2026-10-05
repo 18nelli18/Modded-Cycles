@@ -39,6 +39,9 @@ code{font-size:.82em}
 .feat>input{position:absolute;left:0;top:16px}
 .feat .ttl{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;font-weight:700;font-size:18px;letter-spacing:-.01em}
 .feat .desc{margin-top:3px;color:var(--ink-2);font-size:16px;max-width:62ch}
+.feat.included{cursor:default}
+.feat>input:disabled{opacity:.55;cursor:default}
+.feat .incl{font-weight:400;font-size:15px;color:var(--muted)}
 .feat .credit{margin-top:6px;font-size:14px;color:var(--muted)}
 .feat .credit a{color:var(--ink-2)}
 .feat-guide{margin-left:auto;font-weight:400;font-size:15px;color:var(--muted)}
