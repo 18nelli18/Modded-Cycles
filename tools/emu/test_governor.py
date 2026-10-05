@@ -92,7 +92,12 @@ def main():
 
         def read(uc, access, addr, size, value, ud):
             if clock["fixed"] is None:
-                clock["t"] += cost // 2                  # voice_gate puis voice_after : `cost` par voix calculée
+                clock["t"] += cost                       # un seul increment par lecture : `vt0 = TIMER` de voice_gate
+                                                         # est lu apres celui-ci, et voice_after mesure TIMER - vt0.
+                                                         # L'intervalle mesure d'une voix doit valoir sa part de la
+                                                         # charge (7 % = cost) : l'increment vaut cost, pas cost / 2
+                                                         # (sinon le regulateur croit liberer deux fois moins et
+                                                         # eteint deux voix la ou une suffit)
                 clock["reads"] += 1
                 v = clock["t"]
             else:
@@ -131,6 +136,14 @@ def main():
     mod, _, st = play(setup, 300, {1: 0xf}, load=lambda b, n: 50)
     check(np.array_equal(ref, mod) and not any(any(s) for s in st) and not check.unmapped,
           "50 % : sortie identique, aucune voix éteinte, aucun accès hors de la mémoire émulée")
+
+    # Garde du banc : la durée mesurée d'une voix (TIMER - vt0, ce que lit le régulateur dans gov_cost) doit valoir le
+    # pas du minuteur simulé (`cost`, ici 4000). Un pas de cost / 2 ferait croire au régulateur qu'une voix libère deux
+    # fois moins de temps qu'elle n'en libère, et il éteindrait deux voix là où une suffit (notes/36, charge soutenue).
+    _, _, cost_v, _, _, _ = play.state[-1]
+    check(all(abs(c - 4000) < 400 for c in cost_v[:4]),
+          f"banc : coût mesuré d'une voix = {list(cost_v[:4])} pour un pas simulé de 4000 (un pas de cost / 2 "
+          f"donnerait environ 2000)")
 
     G = gs.GOV
     Q = lambda pct: pct * 256 // 100                # seuils, comme PCT() de bridge_engines.c

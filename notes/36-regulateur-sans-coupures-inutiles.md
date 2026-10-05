@@ -134,7 +134,35 @@ cette note, puis ces étapes.
 
 ## 6. Preuves `[FAIT]`
 
-(à compléter)
+`tools/emu/test_governor.py` rejoue la vraie boucle des voix de l'OS et appelle le vrai `audio_end()` du tweak avec un
+minuteur simulé : 13 vérifications, `TOUT OK` (04/10/2026).
+
+| Vérification | Résultat |
+|---|---|
+| 50 % : sortie identique à la référence, aucune voix éteinte, aucun accès hors mémoire | ok |
+| **banc** : coût mesuré d'une voix = pas du minuteur simulé (`[3997, 3997, 3997, 3997]` pour 4000) | ok |
+| 80 % : seules les voix restées sous -66 dB s'arrêtent, aucune éteinte de force | ok |
+| 91 % pendant 300 blocs (pic 93 %, moyenne lente partie de 0) : aucune extinction forcée | ok |
+| un bloc à 99 % tous les 10 blocs (75 % sinon) : sortie identique, aucune extinction | ok |
+| deux blocs de suite à 99 % (40, 41) : extinction au bloc 41, pistes [2, 4] | ok |
+| 95 % pendant 200 blocs : au bloc 18, la moins audible part, fondu de 8 blocs, les autres identiques | ok |
+| 97 % : fondu de 2 blocs, les autres identiques | ok |
+| piste mutée (gains nuls, parmi les plus fortes) : elle part la première | ok |
+| piste à -30 dB dans le mix (parmi les plus fortes) : elle part la première | ok |
+| toutes les pistes mutées : les plus anciennes partent | ok |
+| 6 voix à 88 %, moyenne lente partie de 88 % : **une seule** voix éteinte (piste 5), moyenne lente à 82,4 % | ok |
+| moyenne lente partie de 0 sous 88 % : 79,3 % au bloc 600 (le code C restait à 0) | ok |
+
+Les autres preuves de la branche restent vertes : `test_model_tg_syntakt.py` (`TOUT OK`), `test_model_tg.py`,
+`test_arp.py`, `test_trig_hold.py`, `test_trig_preview.py`, `test_usb_in.py` (code de sortie 0).
+
+**Le banc doit être cohérent avec lui-même.** `gov_cost` — ce que `gov_cut.S` retranche au temps à libérer — est mesuré
+par `voice_after` entre `vt0 = TIMER` de `voice_gate` et la fin du render
+([`bridge_engines.c`](../tools/machines/syntakt_bridge/bridge_engines.c), lignes 291/311 et 322). Le pas du minuteur
+simulé doit donc valoir la part d'une voix dans la charge (`cost`), **pas `cost / 2`** : `vt0` est lu après le premier
+incrément, donc l'intervalle mesuré ne vaut qu'un incrément. Avec `cost / 2`, le régulateur croit libérer deux fois
+moins de temps qu'il n'en libère et éteint deux voix là où une suffit — c'est ce que le banc faisait avant le
+04/10/2026, et le firmware, lui, était juste. La vérification « banc » ci-dessus l'empêche de recommencer.
 
 ## 7. Empreintes
 
