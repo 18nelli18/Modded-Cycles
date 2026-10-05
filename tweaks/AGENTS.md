@@ -1,0 +1,56 @@
+# AGENTS.md — tweaks/
+
+One folder per device and OS (`model-cycles_OS1.13/` is the only one). Read the root [`AGENTS.md`](../AGENTS.md) first.
+
+## Do not edit the JSON files by hand
+
+Every tweak is written by a script and checked by its `--check`: `gen_<mod>.py`, `relocate_6ch.py` (6ch-usbup),
+`gen_model_tg.py` (Model-TG), `gen_syntakt_engines.py` (the `24-syntakt-*`, `31-syntakt-tg-*` combinations and the
+`90`–`92` diagnostics), `gen_sdvintage*.py` and `gen_syntakt_machines.py` (`20`–`23`). A new tweak names its generator
+and its note in the last line of its `description`. Change the generator or its sources, rerun it, commit both.
+The exceptions are drumkilla's `01`–`03` (copied as-is, SHA-256 listed in `PROVENANCE.md`; `02` carries our 3-byte fix)
+and `10-6ch-multiout.json` (ms-multi-output's table).
+
+`device.json` holds the stock hashes (`.syx` and section 3) and `cave_refs_ok`, the hand-checked exceptions to the
+cave check; add to it only with the reasoning in `why` and in a note.
+
+## File name and `order`
+
+`NN-<id>.json`, where `NN` is also the `order` field (application order in both builders):
+
+| Range | What |
+|---|---|
+| `01`–`09` | small UI tweaks by drumkilla |
+| `10`–`19` | USB audio (6 channels) |
+| `20`–`29` | machines: SD VINTAGE, Syntakt engines (`24-syntakt-*`) |
+| `30`–`39` | Model-TG and its combination with the Syntakt engines |
+| `40`–`49` | sequencer and interface features: `40` arp, `41` trig-hold, `42` tempo-max; **next one is `43`** |
+| `90`–`99` | diagnostics (load meters, profile), not offered to users |
+
+## Fields
+
+```jsonc
+{
+ "id": "tempo-max",                 // kebab-case, used by build.py -t and the flasher
+ "order": 42,
+ "name": "Tempo jusqu'à 546.0 BPM",  // French, short
+ "description": ["…", "…"],         // French lines: what it does, limits, free space used, generator and note
+ "device": "Model:Cycles", "os": "1.13", "section": 3,
+ "conflicts": ["…"],                // ids it cannot be combined with (both builders refuse)
+ "requires": ["…"],                 // ids it applies on top of (e.g. syntakt-tg-* on model-tg-st)
+ "writes": [{"off": 50286, "old": "223c00008ca0", "new": "223c0000fff0"}]   // section 3 offset, hex bytes
+}
+```
+
+Optional fields used by existing tweaks: `append` (payload copied at boot, notes/17, 31), `gov` (load governor
+settings), `symbols` (addresses of the mod's state, for the proofs), `version`, `source`, `result_sha256`. Look at how
+`build.py` and `docs/flasher/builder.js` read a field before adding a new one: **both builders must handle it the
+same way**, which `tools/webbuild_check.sh` and `tools/webflash_smoke.sh` verify.
+
+A write into a `0xFF` zone (cave) is refused when the stock image points into it, unless one of the chosen tweaks
+rewrites that pointer (`sprites.redirect_write`) or `device.json` lists the reference in `cave_refs_ok`.
+
+## `PROVENANCE.md`
+
+One row per tweak (or family): author, origin (repo + commit for outside work), license, what this project changed,
+the generator and the note. Add the row in the same commit as the tweak.
