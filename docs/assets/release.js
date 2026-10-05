@@ -3,6 +3,12 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.21", date: "2026-10-05", changes: [
+    { en: "New mod, Startup animation: when the Model:Cycles starts, the four rounded squares of the modded-cycles logo pop in one by one, the top right one hollows out, then “modded-cycles” types itself underneath, instead of the original tile animation",
+      fr: "Nouveau mod, Animation de démarrage : au démarrage du Model:Cycles, les quatre carrés arrondis du logo modded-cycles apparaissent un par un, celui en haut à droite se creuse, puis « modded-cycles » s'écrit dessous, à la place de l'animation de carreaux d'origine" },
+    { en: "It lasts as long as the original animation, so startup is not slower. Tested on a Model:Cycles, and checked in the emulator on the OS's own screen code, image by image. It goes with every other mod",
+      fr: "Elle dure autant que l'animation d'origine : le démarrage n'est pas plus long. Testée sur un Model:Cycles, et vérifiée en émulation sur le code d'écran de l'OS, image par image. Elle se combine avec tous les autres mods" },
+  ] },
   { version: "1.20", date: "2026-10-05", changes: [
     { en: "Clearer Model-TG card: Model-TG already holds drumkilla's three tweaks (latching mute, trig preview, scrolling names), so ticking it now shows them ticked and locked, “included with Model-TG”, instead of unticking them. Unticking Model-TG frees them again",
       fr: "Carte Model-TG plus claire : Model-TG contient déjà les trois tweaks de drumkilla (mute verrouillé, écoute d'un pas, noms qui défilent), donc le cocher les affiche maintenant cochés et verrouillés, « inclus avec Model-TG », au lieu de les décocher. Décocher Model-TG les libère" },
