@@ -16,12 +16,14 @@ fin de la tâche), et pour l'animation d'origine, l'allocation (0x400802e0, 0x40
 
   1. Écriture : octets d'origine, dans le corps de la tâche seulement, aucun autre tweak n'y écrit, la création de la
      tâche pointe toujours dessus.
-  2. Repère de l'écran : un « 7 » écrit par le vrai code de texte de l'OS (0x400716c0, sa police de chiffres
-     0x40148558) dans un vrai Bitmap (0x40070172) puis envoyé arrive à l'endroit (barre en haut, pied à gauche) ;
-     un pixel posé par le vrai Bitmap::setPixel en (x, y) arrive en (x, 63 - y).
+  2. Repère de l'écran : un « 7 » des grands chiffres de l'OS (deux polices de 5 lignes, la moitié haute 0x40148558
+     et la moitié basse 0x401488f0), écrit par le vrai code de texte de l'OS (0x400716c0) dans un vrai Bitmap
+     (0x40070172) puis envoyé, arrive à l'endroit (barre en haut, pied en bas à gauche) ; un pixel posé par le vrai
+     Bitmap::setPixel en (x, y) arrive en (x, 63 - y), et lui seul.
   3. Même contrat que l'original : minuteur (0x400539b8, 2 ticks) posé au début et retiré à la fin, 10 ticks d'attente
      après la dernière image, signal 0x40a78620 (attendu par la tâche principale), puis attente sans fin.
-  4. Chaque image envoyée à l'écran est celle du modèle (tools/gen_boot_anim.py, frames()), pixel pour pixel.
+  4. Chaque image envoyée à l'écran est celle du modèle (tools/gen_boot_anim.py, frames()), pixel pour pixel ; et,
+     sans le modèle, la dernière montre le logo en haut, son carré creux en haut à droite, le texte dessous.
   5. Aucune écriture hors des deux tampons de l'écran, des pointeurs qui les échangent, de la pile et du DSPI1.
 
   6. Avec les autres mods (--with) : mêmes images.
@@ -57,12 +59,17 @@ TICK_CB, SEM_TICK, SEM_DONE = 0x400539b8, 0x40a78618, 0x40a78620
 BUF_PTRS = 0x401492f0                # tampon de dessin, tampon affiché
 SET_PIXEL, FLUSH, BLANK = 0x400701b8, 0x4008e622, 0x4008e6ba
 BITMAP, DRAW_TEXT = 0x40070172, 0x400716c0  # Bitmap(bmp, l, h, données, 0) ; (bmp, police, x, y, 0, n, texte)
-DIGITS = 0x40148558                  # police de chiffres de l'OS, dans l'image (notes/15 §2)
-SEVEN = ("##########",               # son « 7 » à l'endroit : 5 lignes, colonnes doublées
+DIGITS = (0x40148558, 0x401488f0)    # grands chiffres de l'OS : moitié haute, moitié basse (notes/39 §2)
+SEVEN = ("##########",               # leur « 7 » à l'endroit : 2 x 5 lignes, traits de 2 pixels
          "##########",
          "........##",
          "........##",
-         "......##..")
+         "......##..",
+         "......##..",
+         "....##....",
+         "....##....",
+         "..##......",
+         "..##......")
 PUSHR = 0xfc03c034
 TILES = 0x40fe3840                   # *TILES : 10 descripteurs Bitmap de 28 o (animation d'origine)
 MALLOC = (0x400802e0, 0x400802e6)
@@ -272,16 +279,18 @@ def main():
     r.call(BLANK)
     r.call(BITMAP, bmp, 128, 64, r.r32(BUF_PTRS), 0)
     r.uc.mem_write(txt, b"7\0")
-    x0, y0 = 10, 30
-    r.call(DRAW_TEXT, bmp, DIGITS, x0, y0, 0, -1, txt)
+    x0, y0 = 10, 30                                   # moitié haute en y0..y0+4, moitié basse 5 lignes plus bas
+    r.call(DRAW_TEXT, bmp, DIGITS[0], x0, y0, 0, -1, txt)
+    r.call(DRAW_TEXT, bmp, DIGITS[1], x0, y0 - 5, 0, -1, txt)
     r.call(FLUSH)
     img = r.panel.image()
     lit = [(x, y) for y in range(G.H) for x in range(G.W) if img[y][x]]
-    seen = [show([row[x0:x0 + 10]]) for row in img[63 - y0 - 4:64 - y0]]
+    top = 63 - (y0 + 4)
+    seen = [show([row[x0:x0 + 10]]) for row in img[top:top + len(SEVEN)]]
     print("        " + "\n        ".join(seen))
     check(seen == list(SEVEN) and len(lit) == sum(r.count("#") for r in SEVEN),
-          f"le « 7 » de l'OS (x = {x0}, y = {y0}) est à l'endroit : barre en haut, pied à gauche, lignes "
-          f"{63 - y0 - 4}..{63 - y0} de l'écran")
+          f"le « 7 » de l'OS (x = {x0}, y = {y0 - 5}..{y0 + 4}) est à l'endroit : barre en haut, pied en bas à "
+          f"gauche, lignes {top}..{top + len(SEVEN) - 1} de l'écran")
     pts = ((3, 10), (127, 0), (64, 63), (0, 33))
     r.call(BITMAP, bmp, 128, 64, r.r32(BUF_PTRS), 0)  # l'envoi a échangé les tampons : celui de dessin est vide
     for x, y in pts:
@@ -320,6 +329,15 @@ def main():
     check(rp.frames[0] == [[0] * G.W for _ in range(G.H)], "l'écran est entièrement effacé avant la 1re image")
     lit = sum(map(sum, want[-1]))
     check(lit > 1000, f"dernière image : logo et texte ({lit} pixels allumés)")
+    last = rp.frames[G.NF]                              # ce que montre l'écran, sans passer par le modèle
+    rows = [y for y in range(G.H) if any(last[y])]
+    between = range(G.LY + 2 * G.SIDE + G.GAP, G.TY0)  # entre le logo et le texte
+    plain, hollow = (G.CX[0], G.CY[0]), (G.ACX, G.ACY)  # haut gauche ; l'accent, haut droite
+    check(rows[0] == G.LY and rows[-1] == G.TY0 + G.TROWS - 1 and not any(any(last[y]) for y in between)
+          and all(last[y][x] for x, y in (plain, (plain[0] + 4, plain[1]), hollow, (hollow[0] + 6, hollow[1])))
+          and not last[hollow[1]][hollow[0] + 4],
+          f"dernière image, vue sur l'écran : le logo en haut (ligne {G.LY}), son carré creux en haut à droite, "
+          f"le texte dessous (jusqu'à la ligne {G.TY0 + G.TROWS - 1})")
     if bad:
         print(show(sent[bad[0]]))
         print()

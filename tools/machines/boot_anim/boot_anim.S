@@ -160,7 +160,7 @@ frame:
 pset:
 	move.l	%d1, %d4
 	lsl.l	#3, %d4
-	lea	7(%a3, %d4.l), %a0		/* le dernier des 8 o de la colonne : le bas de l'écran */
+	lea	7(%a3, %d4.l), %a0		/* le dernier des 8 o de la colonne : le haut de l'écran */
 	move.l	%d0, %d4
 	lsr.l	#3, %d4
 	suba.l	%d4, %a0			/* octet 7 - y / 8 */
@@ -205,7 +205,7 @@ centered:
 24:	move.l	%d1, %d0
 	add.l	%d5, %d0
 	lsl.l	#3, %d0
-	lea	7(%a3, %d0.l), %a0		/* la colonne, par son dernier octet (le bas de l'écran) */
+	lea	7(%a3, %d0.l), %a0		/* la colonne, par son dernier octet (le haut de l'écran) */
 	move.l	%d2, %d0
 	add.l	%d6, %d0			/* y = y0 + retrait */
 	neg.l	%d6

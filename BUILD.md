@@ -215,8 +215,8 @@ python3 tools/emu/test_tempo_max.py --cycles model-cycles_OS1.13.syx
 démarrage de l'OS (`0x40053a6c`) est réécrit à sa place, assemblé depuis `tools/machines/boot_anim/` (690 o sur 1 032, aucune
 place libre). Mêmes 80 images de 20 ms, même fin ; les carrés du logo puis « modded-cycles » ([note 39](notes/39-animation-demarrage.md)).
 La preuve fait tourner la tâche d'origine et la nouvelle avec le vrai code de l'écran de l'OS, jusqu'au registre du DSPI1, et
-compare chaque image vue sur l'écran au modèle du générateur ; le modèle de l'écran est d'abord validé par un « 7 » écrit par le
-code de texte de l'OS (l'OS compte les lignes depuis le bas, note 39 §2) ; `--gif` écrit l'animation vue :
+compare chaque image vue sur l'écran au modèle du générateur ; le modèle de l'écran est d'abord validé par un « 7 » des grands
+chiffres de l'OS, écrit par son code de texte (l'OS compte les lignes depuis le bas, note 39 §2) ; `--gif` écrit l'animation vue :
 ```sh
 python3 tools/gen_boot_anim.py --cycles model-cycles_OS1.13.syx [--check]
 python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim.gif] \
