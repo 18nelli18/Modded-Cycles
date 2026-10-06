@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.22", date: "2026-10-05", changes: [
+    { en: "New experimental mod, Chord keys: choose a scale and play its chords with T1–T6 on the selected CHORD track. Hold RETRIG for degree VII, then I to V an octave higher; PAGE keeps its usual functions",
+      fr: "Nouveau mod expérimental, Clavier d'accords : choisissez une gamme et jouez ses accords avec T1–T6 sur la piste CHORD sélectionnée. Maintenez RETRIG pour le degré VII, puis I à V une octave plus haut ; PAGE garde ses fonctions habituelles" },
+    { en: "FUNC + RETRIG gains Keys, Root, Scale and seven extension settings: triad, 7th, 9th, 11th or 13th, all within the scale. They are saved per track and pattern and also shape sequenced notes. Four voices maximum; 9ths, 11ths and 13ths omit the fifth",
+      fr: "FUNC + RETRIG gagne Keys, Root, Scale et sept réglages d'extension : triade, 7e, 9e, 11e ou 13e, toujours dans la gamme. Ils sont enregistrés par piste et par pattern et s'appliquent aussi aux notes séquencées. Quatre voix au maximum ; les 9es, 11es et 13es omettent la quinte" },
+    { en: "Checked in emulation with the OS's own pad, menu, storage and CHORD code; not yet tested on hardware. The arpeggiator can be installed alongside it, but Chord keys uses RETRIG as its bank switch. Model-TG cannot be combined with this first version",
+      fr: "Vérifié en émulation avec le code même de l'OS pour les pads, le menu, le stockage et CHORD ; pas encore testé sur la machine. L'arpégiateur peut être installé avec lui, mais le clavier d'accords utilise RETRIG pour changer de banque. Model-TG ne se combine pas avec cette première version" },
+  ] },
   { version: "1.21", date: "2026-10-05", changes: [
     { en: "New mod, Startup animation: when the Model:Cycles starts, the four rounded squares of the modded-cycles logo pop in one by one, the top right one hollows out, then “modded-cycles” types itself underneath, instead of the original tile animation",
       fr: "Nouveau mod, Animation de démarrage : au démarrage du Model:Cycles, les quatre carrés arrondis du logo modded-cycles apparaissent un par un, celui en haut à droite se creuse, puis « modded-cycles » s'écrit dessous, à la place de l'animation de carreaux d'origine" },

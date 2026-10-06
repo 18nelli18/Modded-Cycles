@@ -142,6 +142,16 @@ FEATURES = [
         ],
     },
     {
+        "id": "chord-keys",
+        "label": "Accords de gamme sur les six pads",
+        "desc": "Une piste CHORD, sept modes et une extension par degré. T1–T6 jouent I–VI ; "
+                "RETRIG tenu donne VII puis I–V à l'octave. Réglages dans FUNC + RETRIG, sauvés avec le pattern.",
+        "status": "experimental",
+        "credit": {"kind": "by", "who": "Modded Cycles", "repo": "18nelli18/Modded-Cycles"},
+        "excludes": ["model-tg"],
+        "variants": [{"file": "44-chord-keys", "label": None}],
+    },
+    {
         "id": "syntakt",
         "label": "Vrais moteurs du Syntakt",
         "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.42.syx (a deposer a l'etape 2), "

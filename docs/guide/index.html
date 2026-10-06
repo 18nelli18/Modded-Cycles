@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-05-03">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-05-03">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-05-04">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-05-04">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -51,6 +51,7 @@
         <li><a href="#arp"><span data-l="en">Arpeggiator</span><span data-l="fr">Arpégiateur</span></a></li>
         <li><a href="#tempo"><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></a></li>
         <li><a href="#boot-anim"><span data-l="en">Startup animation</span><span data-l="fr">Animation de démarrage</span></a></li>
+        <li><a href="#chord-keys"><span data-l="en">Chord keys</span><span data-l="fr">Clavier d'accords</span></a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
         <li><a href="#stock"><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></a></li>
         <li><a href="#recovery"><span data-l="en">Recovery</span><span data-l="fr">Secours</span></a></li>
@@ -483,8 +484,37 @@
         </dl>
       </section>
 
+      <section id="chord-keys">
+        <h2><span class="n">13</span><span data-l="en">Chord keys</span><span data-l="fr">Clavier d'accords</span></h2>
+        <p class="lede"><span data-l="en">Turn the six track pads into a chord keyboard for the selected CHORD track. Each pad plays a degree of your scale, with the extension you chose for that degree.</span><span data-l="fr">Transformez les six pads de piste en clavier d'accords pour la piste CHORD sélectionnée. Chaque pad joue un degré de votre gamme, avec l'extension choisie pour ce degré.</span></p>
+        <ol>
+          <li><span data-l="en">Select a track with <b>TRACK + T1–T6</b> and choose the <b>CHORD</b> machine. Press <b>FUNC + RETRIG</b> and scroll past Rte, Len and A.On (and Arp / Oct if installed) to the ten new rows.</span><span data-l="fr">Sélectionnez une piste avec <b>TRACK + T1–T6</b> et choisissez la machine <b>CHORD</b>. Appuyez sur <b>FUNC + RETRIG</b> et descendez après Rte, Len et A.On (et Arp / Oct s'ils sont installés) jusqu'aux dix nouvelles lignes.</span></li>
+          <li><span data-l="en">Set <b>Keys</b> to <b>ON</b>, choose <b>Root</b> (C1–C3, in semitones) and <b>Scale</b>: MAJOR, DOR, PHR, LYD, MIX, MINOR or LOC. Patterns without saved Chord keys settings start with Keys OFF, Root C3 and MAJOR.</span><span data-l="fr">Mettez <b>Keys</b> sur <b>ON</b>, choisissez <b>Root</b> (C1–C3, par demi-tons) et <b>Scale</b> : MAJOR, DOR, PHR, LYD, MIX, MINOR ou LOC. Les patterns sans réglages de clavier d'accords enregistrés commencent avec Keys OFF, Root C3 et MAJOR.</span></li>
+          <li><span data-l="en">Set <b>I Ext</b> through <b>VII Ext</b> independently: TRI, 7, 9, 11 or 13. The same setting follows that degree in the upper octave. Major, minor and diminished intervals follow the scale automatically.</span><span data-l="fr">Réglez <b>I Ext</b> à <b>VII Ext</b> indépendamment : TRI, 7, 9, 11 ou 13. Le même réglage suit ce degré à l'octave supérieure. Les intervalles majeurs, mineurs et diminués suivent automatiquement la gamme.</span></li>
+          <li><span data-l="en">Close the menu and play <b>T1–T6</b>. Hold <b>RETRIG</b> for the second bank. A new pad replaces the previous chord on that track; releasing an older pad does not cut the latest chord. Select another track with <b>TRACK + pad</b>.</span><span data-l="fr">Fermez le menu et jouez <b>T1–T6</b>. Maintenez <b>RETRIG</b> pour la seconde banque. Un nouveau pad remplace l'accord précédent de cette piste ; relâcher un ancien pad ne coupe pas le dernier accord. Sélectionnez une autre piste avec <b>TRACK + pad</b>.</span></li>
+        </ol>
+        <div class="tbl fluid">
+          <table>
+            <thead><tr><th><span data-l="en">Pads</span><span data-l="fr">Pads</span></th><th>T1</th><th>T2</th><th>T3</th><th>T4</th><th>T5</th><th>T6</th></tr></thead>
+            <tbody>
+              <tr><th><span data-l="en">Normal</span><span data-l="fr">Normal</span></th><td>I</td><td>II</td><td>III</td><td>IV</td><td>V</td><td>VI</td></tr>
+              <tr><th>RETRIG</th><td>VII</td><td>I ↑</td><td>II ↑</td><td>III ↑</td><td>IV ↑</td><td>V ↑</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><span data-l="en">For example, Root C3 and MAJOR give C, Dm, Em, F, G and Am; the second bank starts with B diminished, then C, Dm, Em, F and G an octave higher. ↑ means one octave higher.</span><span data-l="fr">Par exemple, Root C3 et MAJOR donnent Do, Rém, Mim, Fa, Sol et Lam ; la seconde banque commence par Si diminué, puis Do, Rém, Mim, Fa et Sol une octave plus haut. ↑ signifie une octave plus haut.</span></p>
+        <dl class="facts">
+          <div><dt><span data-l="en">Four voices</span><span data-l="fr">Quatre voix</span></dt><dd><span data-l="en">TRI = root, third, fifth; 7 = root, third, fifth, seventh. The 9, 11 and 13 choices use root, third, seventh and the chosen extension, omitting the fifth. You hear one chord at a time per track.</span><span data-l="fr">TRI = fondamentale, tierce, quinte ; 7 = fondamentale, tierce, quinte, septième. Les choix 9, 11 et 13 utilisent fondamentale, tierce, septième et extension choisie, en omettant la quinte. Vous entendez un accord à la fois par piste.</span></dd></div>
+          <div><dt><span data-l="en">Sound</span><span data-l="fr">Son</span></dt><dd><span data-l="en">Keys ON supplies the chord intervals instead of SHAPE for notes in the scale. COLOR still changes the voicing and mix. PITCH and FINE transpose the whole chord. Start with COLOR 32 and PITCH and FINE at their neutral positions; very high transposition can silence upper notes, as in the original CHORD engine.</span><span data-l="fr">Keys ON fournit les intervalles de l'accord à la place de SHAPE pour les notes de la gamme. COLOR agit toujours sur la disposition des voix et leur mélange. PITCH et FINE transposent l'accord entier. Commencez avec COLOR 32 et PITCH et FINE en position neutre ; une transposition très aiguë peut rendre les notes supérieures muettes, comme dans le moteur CHORD d'origine.</span></dd></div>
+          <div><dt><span data-l="en">Patterns</span><span data-l="fr">Patterns</span></dt><dd><span data-l="en">the sequencer keeps each chord's root note. The current scale and extension settings determine its harmony during playback too: changing an extension changes existing notes of that degree. Notes outside the scale retain their normal SHAPE chord. Save the project to keep each track's settings in each pattern; the original OS ignores these settings and plays its normal chords.</span><span data-l="fr">le séquenceur garde la fondamentale de chaque accord. La gamme et les extensions courantes déterminent aussi son harmonie à la lecture : modifier une extension change les notes existantes de ce degré. Les notes hors gamme gardent leur accord SHAPE habituel. Enregistrez le projet pour conserver les réglages de chaque piste dans chaque pattern ; l'OS d'origine ignore ces réglages et joue ses accords habituels.</span></dd></div>
+          <div><dt><span data-l="en">Controls</span><span data-l="fr">Commandes</span></dt><dd><span data-l="en">PAGE keeps Fill and its other functions. TRACK selection and mute mode keep their usual actions. RETRIG switches banks while playing Chord keys, so those pad chords do not retrigger or arpeggiate. Set Keys OFF to restore the ordinary pads and retrig.</span><span data-l="fr">PAGE garde Fill et ses autres fonctions. La sélection avec TRACK et le mode mute gardent leur action habituelle. RETRIG change de banque pendant le jeu du clavier d'accords : les accords de ces pads ne sont donc ni répétés ni arpégés. Remettez Keys sur OFF pour retrouver les pads et le retrig ordinaires.</span></dd></div>
+          <div><dt><span data-l="en">Compatibility</span><span data-l="fr">Compatibilité</span></dt><dd><span data-l="en">CHORD only. The arpeggiator can be installed alongside it. This first version cannot be combined with Model-TG or Model-TG with Syntakt engines.</span><span data-l="fr">CHORD uniquement. L'arpégiateur peut être installé avec lui. Cette première version ne se combine pas avec Model-TG, seul ou avec les moteurs du Syntakt.</span></dd></div>
+          <div><dt><span data-l="en">Experimental</span><span data-l="fr">Expérimental</span></dt><dd><span data-l="en">checked in emulation on the OS's own pad, menu, storage and CHORD code, including note releases and both banks. No hardware test yet.</span><span data-l="fr">vérifié en émulation sur le code même de l'OS pour les pads, le menu, le stockage et CHORD, y compris les relâchements et les deux banques. Aucun essai sur la machine pour l'instant.</span></dd></div>
+        </dl>
+      </section>
+
       <section id="samples">
-        <h2><span class="n">13</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">14</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -499,13 +529,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">14</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">15</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">With Syntakt engines or Model-TG's Sampler, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt ou le Sampler de Model-TG, remettez d'abord vos pistes sur une machine d'origine.</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">15</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">16</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -519,7 +549,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">16</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">17</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -582,8 +612,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-05-03"></script>
-<script src="../assets/cycles.js?v=2026-10-05-03"></script>
-<script src="../assets/site.js?v=2026-10-05-03"></script>
+<script src="../assets/release.js?v=2026-10-05-04"></script>
+<script src="../assets/cycles.js?v=2026-10-05-04"></script>
+<script src="../assets/site.js?v=2026-10-05-04"></script>
 </body>
 </html>
