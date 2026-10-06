@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.24", date: "2026-10-06", changes: [
+    { en: "Chord keys gives SHAPE a dedicated role: choose BASE, four close positions (CLS0–3) or four open positions (OPN0–3). The screen shows Chord Voicing and the selected position. The I–VII menu rows remain the only extension settings",
+      fr: "Le clavier d'accords donne un rôle dédié à SHAPE : choisissez BASE, quatre positions resserrées (CLS0–3) ou quatre positions ouvertes (OPN0–3). L'écran affiche Chord Voicing et la position choisie. Les lignes I–VII du menu restent les seuls réglages d'extension" },
+    { en: "COLOR blends the voices without moving their octaves. Existing Keys ON patterns can sound different because their saved SHAPE value now selects a voicing; start with SHAPE at BASE and COLOR at 32",
+      fr: "COLOR mélange les voix sans déplacer leurs octaves. Les anciens patterns Keys ON peuvent sonner différemment car leur valeur SHAPE enregistrée choisit désormais une disposition ; commencez avec SHAPE sur BASE et COLOR à 32" },
+    { en: "Voicings and COLOR separation checked in emulation on the OS's own CHORD code. Still experimental and awaiting a hardware test; four voices maximum, with the original high-register limits",
+      fr: "Dispositions et séparation de COLOR vérifiées en émulation sur le code CHORD de l'OS. Toujours expérimental et en attente d'un essai sur la machine ; quatre voix au maximum, avec les limites du moteur d'origine dans l'aigu" },
+  ] },
   { version: "1.23", date: "2026-10-06", changes: [
     { en: "Chord keys moves to the sixteen lower TRIG buttons: 1–7 play I–VII, 8–14 repeat them one octave higher, and 15–16 play I–II two octaves higher. Each degree keeps its chosen extension across the octaves. The large T1–T6 pads keep their usual controls, and RETRIG is no longer an octave bank switch",
       fr: "Le clavier d'accords passe sur les seize boutons TRIG du bas : 1–7 jouent I–VII, 8–14 les reprennent une octave plus haut, et 15–16 jouent I–II deux octaves plus haut. Chaque degré garde l'extension choisie à toutes les octaves. Les grands pads T1–T6 gardent leurs commandes habituelles, et RETRIG ne change plus de banque d'octave" },

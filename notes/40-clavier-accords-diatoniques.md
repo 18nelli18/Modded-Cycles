@@ -6,7 +6,7 @@ extensions choisies par degré **en restant dans la gamme** ; il accepte de remp
 Le **06/10/2026**, il remplace cette demande par les boutons inférieurs **TRIG 1–16**, en conservant les
 commandes habituelles des grands pads ; il demande aussi **MAJ** et les degrés sans suffixe **Ext** dans le menu.
 Source : conversation locale, sans lien public. Adresses : VA de l'OS **1.13**. Les constats sur les pads du
-05/10 sont conservés comme historique en §2 et §9 ; la révision actuelle est détaillée en §11.
+05/10 sont conservés comme historique en §2 et §9 ; les révisions du clavier et du son sont détaillées en §11 et §12.
 
 Tweak : [`44-chord-keys.json`](../tweaks/model-cycles_OS1.13/44-chord-keys.json), générateur
 [`tools/gen_chord_keys.py`](../tools/gen_chord_keys.py), sources
@@ -25,9 +25,9 @@ séquencées ou MIDI, une note jouée par un grand pad peut donc recevoir les in
 la gamme. PAGE garde ses fonctions.
 
 Les sept modes diatoniques et cinq choix d'extension sont implémentés, avec trois ou quatre voix. La tonique de
-l'interface est limitée aux notes MIDI **24–48**, soit **C1–C3** selon la notation du menu. COLOR garde les gains
-et déplacements d'octave stock ; commencer à **32** pour entendre le voicing de référence. SHAPE est remplacé
-pour les notes de la gamme lorsque Keys est actif. Les notes hors gamme gardent l'accord SHAPE stock.
+l'interface est limitée aux notes MIDI **24–48**, soit **C1–C3** selon la notation du menu. SHAPE choisit **BASE**,
+**CLS0–3** ou **OPN0–3** pour les notes de la gamme lorsque Keys est actif. **I–VII** seuls choisissent les
+extensions ; **COLOR** garde les gains natifs sans déplacer les octaves. Commencer avec **BASE** et **COLOR 32**. Les notes hors gamme gardent l'accord SHAPE stock.
 
 Cette fonction était absente du dépôt. Le [Scale Lock de Model-TG](https://github.com/TinyGregAudio/Model-TG/blob/main/docs/USER_GUIDE.md#scale-lock)
 transforme les notes du clavier suivant une gamme ; il ne choisit pas un accord par degré. **Model-TG est déclaré
@@ -56,7 +56,7 @@ pentatoniques et les mineures harmonique/mélodique ne sont pas implémentées.
 
 Ces nombres sont des positions **dans la gamme**, pas des intervalles chromatiques fixes. En do majeur, III9
 produit **mi–sol–ré–fa**, VII9 **si–ré–la–do**. Les extensions de cinq notes ou plus sont donc des voicings à
-quatre voix, pas des accords complets. Les déplacements d'octave de COLOR restent disponibles.
+quatre voix, pas des accords complets. SHAPE règle leur disposition ; COLOR règle leurs niveaux.
 
 Le noyau portable accepte abstraitement MIDI 0–127 et refuse un accord dépassant 127 en entier, sans écrêtage.
 La plage plus étroite du menu tient compte du moteur réel : son entrée borne la fondamentale à 96 et coupe des
@@ -115,6 +115,9 @@ PAGE (touche 15) commande FILL lorsqu'elle est maintenue et change de page au re
 Le mod n'accroche aucune de ces adresses : le choix de RETRIG répond à la préférence de Nico sans détourner PAGE.
 
 ## 3. Véritable moteur CHORD
+
+Les mesures et le chemin COLOR ci-dessous décrivent la première version ; la séparation SHAPE/COLOR et les
+mesures actualisées figurent en §12.
 
 | Adresse / champ | Rôle |
 |---|---|
@@ -222,7 +225,7 @@ la copie stock complète est vérifiée après son retour, sans simuler une inte
 
 ## 6. Code, état et génération
 
-`[FAIT]` Le JSON actuel contient **30 écritures**, dont six accroches et douze paires code/redirection de masque.
+`[FAIT : version clavier TRIG, avant la révision SHAPE/COLOR du §12]` Le JSON contenait **30 écritures**, dont six accroches et douze paires code/redirection de masque.
 **4 122 octets** de code, constantes et état sont placés dans douze masques 47×47 de 376 octets. Leurs sprites
 sont redirigés vers le masque identique conservé à `0x40172220` :
 
@@ -389,7 +392,7 @@ machine ou réglages. Un événement de répétition de maintien est consommé s
 clavier passent toujours `retrig=-1` : RETRIG ne change ni leur octave ni leur répétition ; l'arpège reste
 utilisable via les commandes stock des grands pads.
 
-`[FAIT]` La génération actuelle produit les **30 écritures, 12 caves et 4 122 octets** détaillés en §6, sans
+`[FAIT : version antérieure à la révision SHAPE/COLOR du §12]` Cette génération produit les **30 écritures, 12 caves et 4 122 octets** détaillés en §6, sans
 chevauchement avec les tweaks déclarés compatibles. L'alignement minimal de deux octets s'applique également
 aux constantes et tables de saut, pas seulement aux instructions. Le nouveau hook remplace les deux anciens
 hooks de pads ; aucun octet du bootloader ou de l'updater ne change.
@@ -410,3 +413,194 @@ exacte des choix proposés. Les générateurs, la compilation Python, la syntaxe
 des builders/flashers passent également. Le fichier construit pour Chord Keys seul conserve à l’octet près
 les sections 2, 4 et 5 de l’image officielle ; seule la section 3 change.
 Essais matériels attendus : §10 ; statut toujours **expérimental**.
+
+## 12. SHAPE pour la disposition, COLOR pour le mélange (06/10/2026)
+
+Demande de Nico, dans cette conversation : conserver I–VII pour les extensions,
+supprimer la proposition de palettes et séparer les inversions de SHAPE du mélange
+de COLOR. Il valide explicitement cette organisation (« hagamos esto »).
+
+`[FAIT : désassemblage]` L'update CHORD appelle le calcul des gains
+`0x400aada4` en `0x400ab0c4`, avant de charger les rapports en `0x400ab0e4`.
+Les changements d'octave de COLOR sont isolés en `0x400ab102..0x400ab154` ;
+la suite commune est `0x400ab158`. Le hook des rapports peut donc charger les
+quatre rapports, y compris celui du premier opérateur, puis rejoindre cette
+suite en gardant les gains natifs. Le chemin inactif reprend en `0x400ab0ea`.
+Les registres vivants sont d2 (hauteur), a2 (voix), a3 (paramètres) et SP.
+
+`[FAIT en émulation]` SHAPE garde son domaine natif 0..37 et son CC17 :
+0..3 = BASE ; 4..7, 8..11, 12..15, 16..19 = CLS0..CLS3 ;
+20..23, 24..27, 28..31, 32..37 = OPN0..OPN3.
+BASE conserve les intervalles du degré. CLS ramène les notes dans une octave,
+les trie puis déplace la plus grave d'une octave vers le haut zéro à trois fois.
+Avec une triade, CLS3 est donc la triade une octave plus haut. OPN applique la
+même inversion puis relève d'une octave les positions impaires (indices 1 et 3)
+et trie de nouveau. L'identité des notes et le nombre de voix ne changent pas.
+Une valeur modulée négative est bornée sur BASE ; au-delà de 32, OPN3.
+
+Le format des réglages I–VII reste identique. Les anciens patterns Keys ON
+contiennent toutefois déjà une valeur SHAPE, précédemment ignorée : cette
+révision lui donne un effet audible. Pour retrouver la disposition de référence,
+mettre SHAPE sur BASE et COLOR à 32. Keys OFF et notes hors gamme restent stock.
+Aucun résultat matériel n'est revendiqué.
+
+
+### 12.1. Plafond aigu du premier opérateur
+
+`[FAIT : désassemblage et émulation]` En `0x400ab1f2`, l'OS compare la fréquence
+intermédiaire à `0x454800`. Au-delà, `0x400ab208..0x400ab20c` annule le gain des
+opérateurs 1–3, mais conserve l'ancien incrément du premier. Les inversions
+rendent ce chemin accessible : avec fondamentale MIDI 74, TRI et CLS3/OPN3,
+PITCH 74 / FINE 95 reste en plage, tandis que FINE 96 dépasse le seuil. Une
+frappe aiguë pourrait donc conserver la fréquence de la frappe précédente.
+
+Le wrapper prépare uniquement en mode actif l'incrément du premier opérateur
+(`voice+0x70`) au plafond déterministe `0x000bd2f1` (774 897). C'est la conversion
+native du seuil : `((0x454800 * 0x57619f10) >> 31) >> 2`. Dans la plage normale,
+l'update stock le réécrit avec la bonne fréquence. Dans l'extrême aigu, il reste
+au plafond ; les autres voix conservent leurs coupures natives. Aucun hook ni
+état partagé supplémentaire n'est nécessaire. Keys OFF conserve son chemin stock.
+
+La régression persistante prépare deux incréments antérieurs différents, sur
+les pistes 1 et 6, neuf dispositions, TRI et 9, et trois cas fondamentale/PITCH.
+Elle contrôle l'indépendance de l'historique et le retour correct dans le grave.
+Huit frontières PITCH/FINE vérifient le plafond exact, après reset et après une
+note grave. La sonde indépendante d'investigation a comparé 1 152 combinaisons :
+en plage, l'état complet des six voix reste identique ; hors plage, seul
+l'incrément du premier opérateur change.
+
+### 12.2. Preuve musicale et coût
+
+`[FAIT en émulation]` Les 14 000 accords BASE restent conformes à la table
+historique, avec un écart maximal de 0,877 cent face aux notes stock. Les
+2 205 cas supplémentaires (7 modes × 5 extensions × 7 degrés × 9 dispositions)
+conservent les classes de notes et le nombre de voix, avec un écart maximal de
+0,811 cent. Les exemples indépendants de Do, Do maj7 et Do maj9 fixent les notes
+attendues dans les neuf positions. Le balayage de COLOR couvre ses 128 valeurs
+pour chaque disposition, sur TRI et 9 : mêmes gains natifs, aucun changement
+d'octave. La triade garde le quatrième opérateur muet.
+
+Les frontières signées Q8, PITCH/FINE, les six pistes et les changements
+BASE → CLS1 → OPN3 → BASE sont contrôlés. Les paramètres d'origine et les
+extensions persistantes restent intacts. Les tests fournissent les paramètres
+effectifs au moteur ; ils ne prouvent pas la capture/relecture complète d'un
+parameter lock ni le routage CC/LFO sur la machine.
+
+Mesure du JSON final avec le vrai getter, six pistes CHORD, par bloc :
+
+| État | Instructions stock | Instructions modifiées | Supplément |
+|---|---:|---:|---:|
+| Keys OFF | 51 368 | 54 254 | 2 886 |
+| BASE | 51 488 | 55 475 | 3 987 (7,74 %) |
+| OPN3 | 51 536 | 58 091 | 6 555 (12,72 %) |
+
+Ces pourcentages comparent des **instructions émulées dans ce scénario**, pas
+la charge CPU réelle. Le calcul utilise au plus quatre notes, des boucles
+bornées et des entiers, sans allocation ni oscillateur ajouté. La pile observée
+reste à 224 octets contre 104 pour l'OS (120 octets supplémentaires). La charge
+réelle avec six accords ouverts, effets et USB doit être mesurée sur la machine.
+
+### 12.3. Essai matériel complémentaire attendu
+
+`[À FAIRE : Maxime]` Comparer BASE, CLS0–3 et OPN0–3 sur TRI, 7 et 9 ; vérifier
+que changer COLOR ne déplace aucune octave et que modifier I–VII reste la seule
+façon de choisir l'extension. Contrôler le nom Chord Voicing et les neuf valeurs
+sans texte coupé. Passer de piste en piste avec Keys ON/OFF, vérifier les
+parameter locks, CC17 et la modulation de SHAPE, puis sauvegarder/recharger.
+Sur les anciens patterns Keys ON, remettre SHAPE sur BASE et COLOR à 32 avant
+comparaison. Essayer les transitions grave/aigu/grave avec PITCH/FINE et six
+pistes en OPN3 sous effets et USB. Les contrôles de §10 restent requis.
+
+
+### 12.4. Affichage et implantation
+
+`[FAIT : désassemblage et émulation]` Le descripteur SHAPE reste à
+`0x4010eca0` (0..37, défaut 3, CC17), COLOR à `0x4010ec68` (0..127, défaut 32,
+CC16). Les mots de paramètres, le format du projet et les dix lignes du menu
+restent inchangés. L'objet de paramètres est identifié dans le tableau de six
+objets de huit octets à `banque+504+8*piste`, obtenu par `0x4000eb9c` ; les
+réglages d'une autre piste sélectionnée n'affectent donc pas son affichage.
+
+| Accroche | Avant | Avec Keys ON sur CHORD, descripteur 72 |
+|---|---|---|
+| `0x400fd170` | formatter `0x4000a70e` | `ck_shape_format` fournit BASE / CLS0–3 / OPN0–3 |
+| `0x400fd174` | dessin spécial `0x4000a66a` | `ck_shape_draw` affiche la valeur avec la police moyenne |
+| `0x4001e4ca` | appel du nom `0x4000b22a` | `ck_shape_name` fournit Chord Voicing |
+
+Le repli numérique stock utilise une police de 16 pixels : quatre caractères
+occuperaient 67 pixels dans un panneau de 64. Le dessin contextuel utilise la
+police stock `0x4014120c`, sept pixels par glyphe : **31 pixels** pour ces neuf
+libellés. Les vraies métriques et routines de dessin sont exécutées dans la
+preuve ; les neuf bitmaps sont différents et restent dans `x=81..111`,
+`y=40..48` pour le popup testé. L'affichage physique reste à vérifier. Les autres
+machines, paramètres, objets et pistes avec Keys OFF délèguent aux routines
+natives. Le libellé dépend de la piste, pas de la dernière note : une note MIDI
+hors gamme conserve le SHAPE stock sonore même si ce popup affiche le voicing.
+
+Le JSON final contient **37 écritures**, neuf accroches et quatorze paires
+code/redirection. **5 035 octets** de code, constantes et état occupent les
+masques suivants ; leur exemplaire graphique conservé est `0x40172220`.
+
+| Cave | Octets écrits |
+|---|---:|
+| `0x4016b6f8` | 376 |
+| `0x4016b9e8` | 374 |
+| `0x40171f30` | 376 |
+| `0x40172608` | 362 |
+| `0x40179730` | 373 |
+| `0x40182b38` | 376 |
+| `0x40182e28` | 376 |
+| `0x40183118` | 374 |
+| `0x40185018` | 372 |
+| `0x40185968` | 376 |
+| `0x40185c58` | 372 |
+| `0x4018cd48` | 376 |
+| `0x4018d1b8` | 372 |
+| `0x4018d4a8` | 180 |
+
+Les deux nouvelles caves `0x4018d1b8` et `0x4018d4a8` ont seulement leurs
+pointeurs de constructeur en `0x400acd76` et `0x400acd56`, tous deux redirigés.
+Le scan des **376 octets complets des 19 réserves** ne révèle aucune nouvelle
+entrée exécutable ; seuls les trois faux positifs déjà expliqués en §6
+persistent. Les cinq réserves restantes gardent aussi une référence unique.
+Le tableau mutable des seize captures reste en `0x40182e28` ; le calcul sonore
+reste entièrement local à chaque appel. Aucun nouveau payload ni accès aux
+sections autres que MAIN OS n'est ajouté.
+
+
+### 12.5. Validation de la révision
+
+`[FAIT en émulation]` Le JSON final passe **211 contrôles seul**, **215 avec
+6ch-usbup, latching-mute, trig-preview, browser-scroll, trig-hold, arp, tempo-max,
+boot-anim et les cinq moteurs Syntakt**. Dans la combinaison, les comptes avec
+getter sont 52 987 → 55 873 en OFF, 53 100 → 57 089 en BASE et
+53 141 → 59 685 en OPN3. Le régulateur garde le PCM à 50 % simulés, ignore le
+pic isolé à 99 %, déclenche le fondu au bloc 41 en surcharge répétée et laisse
+rejouer les accords après retrig. Il s'agit de durées injectées, pas d'une mesure
+physique du calcul audio.
+
+Le banc UI combiné mappe la charge Syntakt à `0x43000000`, comme le boot et le
+banc audio, afin d'exécuter ses véritables accesseurs de descripteurs lors des
+replis stock. Sans ce mapping de fixture, la preuve tentait un fetch non mappé
+en `0x43033028` ; aucune correction de firmware n'était nécessaire.
+
+Les générateurs `--check`, `relocate_6ch.py --check` avec le wrapper binutils
+`-S` documenté en §9, la compilation Python, la syntaxe JavaScript, les
+comparaisons builders/flashers et le parcours UI synthétique passent.
+`REF_MAINOS --check` confirme les **17 407 références** régénérées. Le build
+Chord Keys seul conserve à l'octet près les sections **2, 4 et 5** de l'image
+officielle ; seule la section **3** change. Les fichiers firmware restent ignorés.
+
+Le banc indépendant `tools/emu/test_governor.py` passe aussi ses **12 contrôles**
+sur les cinq moteurs Syntakt, avec minuteur et gains de mixeur simulés : charge
+normale, surcharge, choix des voix à éteindre, reprise et moyenne lente.
+
+Le parcours réel du flasher valide exactement les **17 407 combinaisons**
+proposées, avec concordance des références et aucune erreur JavaScript
+(`SMOKE_JOBS=4 tools/webflash_smoke.sh …` : `ALL PARTS OK`). Les 8 192 références
+contenant Chord Keys changent ; les 9 215 autres restent identiques.
+
+Limite pratique : les positions ouvertes peuvent pousser des voix supérieures
+hors plage sur les TRIG aigus, même avec PITCH/FINE neutres. Baisser Root, par
+exemple à C2, laisse davantage de marge. La disposition BASE reste le point de
+départ de référence. **Statut toujours expérimental, sans essai matériel.**

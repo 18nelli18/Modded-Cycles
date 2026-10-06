@@ -454,6 +454,132 @@ def _live(image, symbols, check):
     check(not audio.e.unmapped, "live rec : aucun accès mémoire hors du banc")
 
 
+def _shape_ui(stock, image, symbols, check):
+    """Vrais formatters, mesures et dessin des glyphes dans un écran de 128×64."""
+    bank, output, sprite = 0x93130000, 0x93131000, 0x93132000
+    canvas, pixels, string, label_buffer = 0x93133000, 0x93134010, 0x93135000, 0x93135100
+
+    def prepare(firmware, exported=None):
+        rig, config, selected, machine, _ = _ui_rig(firmware, exported)
+        # Les accesseurs de descripteurs du Syntakt résident dans sa charge
+        # utile, recopiée au boot. Ce banc n'exécute pas le démarrage complet.
+        payload = firmware[t7.E.IMAGE_LEN:]
+        if payload:
+            rig.uc.mem_map(t7.E.PAYLOAD_DST, (len(payload) + 0xFFFFF) & ~0xFFFFF)
+            rig.uc.mem_write(t7.E.PAYLOAD_DST, bytes(payload))
+        drawn = []
+        _install(rig, 0x4000EB9C, lambda a: bank)
+        _install(rig, 0x4000C0A6, lambda a: 1)  # valeur du son acceptée
+        _install(rig, 0x40072058, lambda a: sprite)
+        _install(rig, 0x40071DA4, lambda a: drawn.append(a[:6]) or 0)
+        heap = [0x93200000]
+
+        def allocate(args):
+            pointer = heap[0]
+            heap[0] += (args[0] + 15) & ~15
+            rig.uc.mem_write(pointer, bytes(args[0]))
+            return pointer
+
+        _install(rig, 0x400802E0, allocate)
+        _install(rig, 0x400802EC, lambda a: 0)
+        # Canvas stock : largeur, hauteur, deux mots verticaux par colonne.
+        rig.uc.mem_write(canvas, struct.pack(">5I", 0, 128, 64, 2, pixels))
+        for track in range(6):
+            rig.w32(bank + 504 + 8 * track, 0x400FD134)
+        # Enregistrements de formatage que le boot construit pour les paramètres.
+        # Le formatter CHORD ajoute un à l'index brut, puis appelle l'entier stock.
+        rig.w32(0x40A70710, 1)
+        rig.w32(0x40A70714, 0x400456C8)
+        for descriptor in (51, 72):
+            record = 0x40A71754 + 100 * descriptor
+            rig.w32(record + 28, 1)
+            rig.w32(record + 32, 0x4004DFDA if descriptor == 72 else 0x400456C8)
+            rig.w32(record + 44, 1)
+            rig.w32(record + 48, 0x4004611E)
+        return rig, config, selected, machine, drawn
+
+    reference, _, _, _, stock_drawn = prepare(stock)
+    altered, config, selected, machine, drawn = prepare(image, symbols)
+    format_fn, draw_fn = altered.r32(0x400FD170), altered.r32(0x400FD174)
+    name_fn = altered.r32(0x4001E4CC)
+    check((format_fn, draw_fn, name_fn) ==
+          tuple(symbols[name] for name in ("ck_shape_format", "ck_shape_draw", "ck_shape_name")),
+          "SHAPE UI : pointeurs du formatter, du pictogramme et du nom de popup raccordés")
+
+    def text(rig, function, obj, descriptor, value):
+        rig.uc.mem_write(output, bytes(64))
+        rig.call(function, obj, descriptor, value & 0xFFFFFFFF, output)
+        return bytes(rig.uc.mem_read(output, 64)).split(b"\0", 1)[0].decode("ascii")
+
+    def cstr(rig, pointer):
+        return bytes(rig.uc.mem_read(pointer, 32)).split(b"\0", 1)[0].decode("ascii")
+
+    labels = ("BASE", "CLS0", "CLS1", "CLS2", "CLS3", "OPN0", "OPN1", "OPN2", "OPN3")
+    before = bytes(altered.uc.mem_read(HEADER, 64))
+    valid = True
+    for track in range(6):
+        obj = bank + 504 + 8 * track
+        selected[0] = (track + 1) % 6
+        for value in (-32768, -1, *range(0, 38 << 8, 127), 32767):
+            label = labels[min(8, max(0, min(value, 37 << 8)) >> 10)]
+            valid &= text(altered, format_fn, obj, 72, value) == label
+        valid &= cstr(altered, altered.call(name_fn, obj, 72)) == "Chord Voicing"
+        drawn.clear()
+        valid &= altered.call(draw_fn, obj, 72, 7 << 8, 1, canvas, 96, 34) == 1 and not drawn
+    check(valid and bytes(altered.uc.mem_read(HEADER, 64)) == before,
+          "SHAPE UI : neuf noms, frontières 8.8 signées et six pistes, configuration inchangée")
+
+    # Exécuter sprintf, std::string, les métriques, le centrage et les glyphes
+    # stock : un simple retour zéro utilisait 67 px et débordait du panneau.
+    valid, pictures = True, set()
+    for index, label in enumerate(labels):
+        altered.uc.mem_write(label_buffer, label.encode("ascii") + b"\0")
+        altered.call(0x400F980C, string, label_buffer, output)
+        valid &= altered.call(0x40072102, 0x401429EC, 0xFFFFFFFF, string) == 67
+        valid &= altered.call(0x40072102, 0x4014120C, 0xFFFFFFFF, string) == 31
+        altered.call(0x400F7D5C, string)
+        altered.uc.mem_write(pixels - 16, b"\xa5" * 16 + bytes(1024) + b"\xa5" * 16)
+        altered.call(draw_fn, bank + 504, 72, index << 10, 1, canvas, 96, 34)
+        picture = bytes(altered.uc.mem_read(pixels, 1024))
+        pictures.add(picture)
+        lit = [(x, y) for x in range(128) for y in range(64)
+               if struct.unpack_from(">I", picture, 8 * x + 4 * (y // 32))[0] & (1 << (31 - y % 32))]
+        valid &= bool(lit) and all(81 <= x <= 111 and 40 <= y <= 48 for x, y in lit)
+        valid &= bytes(altered.uc.mem_read(pixels - 16, 16)) == b"\xa5" * 16
+        valid &= bytes(altered.uc.mem_read(pixels + 1024, 16)) == b"\xa5" * 16
+    check(valid and len(pictures) == len(labels),
+          "SHAPE UI : neuf dessins distincts, vrais glyphes de 31 px centrés et contenus dans le panneau droit")
+
+    # Rejouer réellement les formatters et le dessinateur stock dans les replis.
+    # Une sélection Keys ON ne doit pas contaminer l'objet d'une autre piste OFF.
+    valid = True
+    for why, track, descriptor, chord, enabled, offset in (
+            ("Keys OFF", 2, 72, True, False, 0),
+            ("autre piste OFF", 4, 72, True, False, 0),
+            ("autre machine", 2, 72, False, True, 0),
+            ("autre paramètre", 2, 51, True, True, 0),
+            ("objet extérieur", 2, 72, True, True, 2)):
+        selected[0] = 0
+        config[track] = (48 << 21) | (0x80000000 if enabled else 0)
+        machine[0] = 5 if chord else 0
+        obj = bank + 504 + 8 * track + offset
+        if offset:
+            altered.w32(obj, 0x400FD134)
+            reference.w32(obj, 0x400FD134)
+        for value in (0, 3 << 8, 37 << 8):
+            valid &= text(altered, format_fn, obj, descriptor, value) == \
+                text(reference, 0x4000A70E, obj, descriptor, value)
+            drawn.clear()
+            stock_drawn.clear()
+            args = (obj, descriptor, value, 1, output, 96, 34)
+            valid &= altered.call(draw_fn, *args) == reference.call(0x4000A66A, *args)
+            valid &= drawn == stock_drawn
+        valid &= cstr(altered, altered.call(name_fn, obj, descriptor)) == \
+            cstr(reference, reference.call(0x4000B22A, obj, descriptor))
+        config[track] = (48 << 21) | 0x80000000
+    check(valid, "SHAPE UI : Keys OFF, autre piste, machine, paramètre ou objet restent stock")
+
+
 def run(stock, patched, symbols, check):
     """Exécute les contrôles ; check(bool, texte) appartient à la preuve principale."""
     symbols = {name: int(value, 16) if isinstance(value, str) else value for name, value in symbols.items()}
@@ -461,4 +587,5 @@ def run(stock, patched, symbols, check):
     _pads(stock, patched, symbols, check)
     _dispatch(stock, patched, symbols, check)
     _menu(patched, symbols, check)
+    _shape_ui(stock, patched, symbols, check)
     _live(patched, symbols, check)
