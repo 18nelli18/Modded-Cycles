@@ -1,0 +1,1621 @@
+{
+  "source_pin": "68438b1a417390f1f60f50f925acdeea1ddba6ce",
+  "upstream_pin": "afed481dc35f4cfc24013508afebc300efcc15b3",
+  "source_files": [
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_bank_detour_join.S",
+      "source_sha256": "e560b56cbb19f31df2ea4efdae016aef61f523d6f488648ed6d8012b034ad1c6",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_bank_detour_join.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 124,
+          "sha256": "504c0ffa0b9c490b41d415e28de77a2c22f652cb16e1366b567c17fe4ca8fbb1"
+        },
+        {
+          "start": 131,
+          "end": 154,
+          "sha256": "b4cf8ef6d7ce90c70c6c3f2416acaa031230ff872ad46101758a6ad4b49fda2a"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_incoming_finish.S",
+      "source_sha256": "221d6edbc135de7ee0c01ccabb0566af42ecac46a246f7667b20a03151495015",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_incoming_finish.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 160,
+          "sha256": "221d6edbc135de7ee0c01ccabb0566af42ecac46a246f7667b20a03151495015"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_menu_lifetime_join.S",
+      "source_sha256": "ad936a43e771e09f621302af0fad3f8caa2da12c6bbf8c15d92eb4e4f539859c",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_menu_lifetime_join.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 346,
+          "sha256": "ad936a43e771e09f621302af0fad3f8caa2da12c6bbf8c15d92eb4e4f539859c"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_menu_lifetime_join.py",
+      "source_sha256": "57784145474804e4052719081a3c5232f31f8812c4b63a74201686d57c61be8a",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_menu_lifetime_join.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/lfo2_installation_components.py",
+        "re/tools/coldfire_emu/lfo_four_menu_lifetime_join.S",
+        "re/tools/coldfire_emu/lfo_four_owned_candidate.py",
+        "re/tools/coldfire_emu/lfo_four_reader_join.py",
+        "re/tools/coldfire_emu/lfo_owned_lifecycle.py",
+        "re/tools/coldfire_emu/parameter_encoder_native.py"
+      ],
+      "external_imports": [
+        "dataclasses",
+        "pathlib"
+      ],
+      "ranges": [
+        {
+          "start": 30,
+          "end": 51,
+          "sha256": "d908db8a1009e9c4b90d4728ef0cc7cce5cf63844a2168a13a7e89c3e72e2378"
+        },
+        {
+          "start": 80,
+          "end": 98,
+          "sha256": "e76a84135f9eefe6601106a5501712161ac595efc47ee9141778503e3f17b40c"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_menu_transaction_join.S",
+      "source_sha256": "cd22fae3c61045063489641c13da2dec31c6e8216767c579a21bedd974af6fdb",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_menu_transaction_join.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 45,
+          "sha256": "d13251aaddf572af396bf8697a0693e37a71d7e4cf51bff9ca6331f46ec60798"
+        },
+        {
+          "start": 62,
+          "end": 145,
+          "sha256": "a5caec218255bbca2d9c2c093fc32a8e3ca741426957824f10ab9771baa29e8c"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_native_bank_join.S",
+      "source_sha256": "88f94f26370a1513b88ed3ba4f0bccb18b8199df0bff7e0765623506b1c6c668",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_native_bank_join.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 65,
+          "sha256": "88f94f26370a1513b88ed3ba4f0bccb18b8199df0bff7e0765623506b1c6c668"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_native_candidate.S",
+      "source_sha256": "f3275cdb8887e9b4a5d731080a38cc215f6a4922dc61e5b2e86a4711b2bc375d",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_native_candidate.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 165,
+          "sha256": "f3275cdb8887e9b4a5d731080a38cc215f6a4922dc61e5b2e86a4711b2bc375d"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_native_engine.S",
+      "source_sha256": "f06098e8577eb6ef3fb63fb6a1e4ea98c7aac26d7cee9cd6b6a1ab3a699fe929",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_native_engine.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 97,
+          "sha256": "f06098e8577eb6ef3fb63fb6a1e4ea98c7aac26d7cee9cd6b6a1ab3a699fe929"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_owned_candidate.py",
+      "source_sha256": "2d78da5f89b5e44ec51104156ee77ce39a2f9fc7b25e73e1e38eaaab25c3ffc8",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_owned_candidate.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/backend.py",
+        "re/tools/coldfire_emu/kick_a_path.py",
+        "re/tools/coldfire_emu/lfo_indexed_native.S",
+        "re/tools/coldfire_emu/lfo_indexed_native.py",
+        "re/tools/coldfire_emu/lfo_indexed_render.S",
+        "re/tools/coldfire_emu/lfo_indexed_render.py",
+        "re/tools/coldfire_emu/lfo_owned_lifecycle.py",
+        "re/tools/coldfire_emu/lfo_owned_safe_setup.py",
+        "re/tools/coldfire_emu/lfo_sync_producer_join.py",
+        "re/tools/coldfire_emu/parameter_encoder_native.py",
+        "re/tools/coldfire_emu/pitch_path.py",
+        "re/tools/coldfire_emu/run.py",
+        "re/tools/coldfire_emu/run_lfo2_output_cpu.py",
+        "re/tools/coldfire_emu/scale_native_keyboard.py",
+        "re/tools/coldfire_emu/selected_lock_columns.py",
+        "re/tools/coldfire_emu/shared_conditioning_chain.py",
+        "re/tools/coldfire_emu/test_lfo2_owned_heap_setup.py",
+        "re/tools/lfo_bank_reference.py"
+      ],
+      "external_imports": [
+        "argparse",
+        "json",
+        "pathlib",
+        "re",
+        "struct",
+        "time"
+      ],
+      "ranges": [
+        {
+          "start": 37,
+          "end": 40,
+          "sha256": "97ae236bf9fab2bff01ebbf275c8c5d209443de47899f0362f4ac95a37e42378"
+        },
+        {
+          "start": 43,
+          "end": 77,
+          "sha256": "3648f43b6d6b40c6092dce53bb11af4a251d04d1f9a3906f6343d01a55f7aba3"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_owned_incoming_join.S",
+      "source_sha256": "e8221f4236b9438d4aee469e6fdd6266ed08aa56edc04f35d9414f3b4f09d249",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_owned_incoming_join.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 271,
+          "sha256": "e8221f4236b9438d4aee469e6fdd6266ed08aa56edc04f35d9414f3b4f09d249"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_owned_save_join.S",
+      "source_sha256": "f34918c03174d722a1280bfb18120ce184bf05e80f634ad890d6b83049f2bc3e",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_owned_save_join.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 112,
+          "sha256": "f34918c03174d722a1280bfb18120ce184bf05e80f634ad890d6b83049f2bc3e"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_persistence_speed_join.S",
+      "source_sha256": "15f441634995650026a0c79129409c15026f43e0765e09d9ba26a9ff63429ce4",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_persistence_speed_join.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 182,
+          "sha256": "15f441634995650026a0c79129409c15026f43e0765e09d9ba26a9ff63429ce4"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_project_load_continuation.S",
+      "source_sha256": "8374cfe4e42a315c30c3c9038cfde49c7b0e01bbc1edbc44d013efae93adc45c",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_project_load_continuation.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 39,
+          "sha256": "8374cfe4e42a315c30c3c9038cfde49c7b0e01bbc1edbc44d013efae93adc45c"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_publication_contract.py",
+      "source_sha256": "adb9e88d4174f365656a5b29a2e5fd8c55f47e1731171bf8f394f6ee4d8d8516",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_publication_contract.py",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 44,
+          "sha256": "adb9e88d4174f365656a5b29a2e5fd8c55f47e1731171bf8f394f6ee4d8d8516"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_reader_join.S",
+      "source_sha256": "c95932ef1faed284ef37773f415661e30155173bf1c76c05b115a8523078eaf7",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_reader_join.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 368,
+          "sha256": "c95932ef1faed284ef37773f415661e30155173bf1c76c05b115a8523078eaf7"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_selector_append.S",
+      "source_sha256": "964c6b4cc385f3e1ebf7f7333c8547f24e1c33b0b67b4b9c989317d15b1fbbab",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_selector_append.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 109,
+          "sha256": "964c6b4cc385f3e1ebf7f7333c8547f24e1c33b0b67b4b9c989317d15b1fbbab"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_selector_oom_join.py",
+      "source_sha256": "200045ca38b1b9dd946508d8a2a928a7f67ad6d65330b8df1bf17b3206db3143",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_selector_oom_join.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/lfo2_installation_components.py",
+        "re/tools/coldfire_emu/lfo_four_menu_transaction_join.py",
+        "re/tools/coldfire_emu/lfo_four_selector_append.S"
+      ],
+      "external_imports": [
+        "dataclasses",
+        "pathlib"
+      ],
+      "ranges": [
+        {
+          "start": 17,
+          "end": 31,
+          "sha256": "84df5b3f23693117173876aaebdc0f15db625bf168590cee175407a5caf13d2e"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_sound_extension.S",
+      "source_sha256": "a589e20a677ca161ba6ce732636ad1864d2d6020d9716be0c96506bf202f67df",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_sound_extension.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 64,
+          "sha256": "a589e20a677ca161ba6ce732636ad1864d2d6020d9716be0c96506bf202f67df"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_sound_extension_guest.S",
+      "source_sha256": "c6623c71ac1600e1424d256e8cde1016a8306a654dbf4c345c9496897fa9dc1e",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_sound_extension_guest.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 1004,
+          "sha256": "e66896d6ee79af3de1734ed61c4ee67def3ac4e32876acf3f877bd86580ca7bf"
+        },
+        {
+          "start": 1009,
+          "end": 1012,
+          "sha256": "30ec1b8609db8523f31aba7540287f36b53d89b7010ba93d592c44acab586be6"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_sound_extension_guest_full.S",
+      "source_sha256": "87d0392a331d9b5f7debcb4e0dc08987df73e327851c8d3d14d6e2d7ea3a9111",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_sound_extension_guest_full.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 121,
+          "sha256": "87d0392a331d9b5f7debcb4e0dc08987df73e327851c8d3d14d6e2d7ea3a9111"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_indexed_codec.S",
+      "source_sha256": "6e9cd344a8dd076bfdfef183d1eb30b39ffdff574f6074f020864bfc8ecc01ee",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_indexed_codec.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 270,
+          "sha256": "32cf5e24aa098e4b34951c63eae13901f985162b172915150c5211e2f6e6dc87"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_indexed_native.S",
+      "source_sha256": "5b4f874cc7816c3a7257cf250d0643a751f2bd07517b65a1349d5e762908487a",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_indexed_native.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 63,
+          "end": 420,
+          "sha256": "abbf778ac43757f4fbeb104c760bea74c000ef71f66559669539ff87ddedd8bf"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_owned_lifecycle.S",
+      "source_sha256": "cd58982b9b385b8b511ec1a8f0e806594db8f1d253cbdb5af55f397e880cdb91",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_owned_lifecycle.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 283,
+          "sha256": "9d6ec467152daa4f4b2b3cd52dc9e81b68128f9d24fb680b2e005ad5620955f4"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_owned_safe_setup.S",
+      "source_sha256": "4f9503519864b4cd65ad6950d1fd6cf3c776b07a70cfb6b6d636dc1ec4790245",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_owned_safe_setup.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 370,
+          "sha256": "ff63e0c23a9f83f475cb60f59be81b46643584e7c73efa01f18e844ac296d561"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/contract.py",
+      "source_sha256": "8f7116a1190b5754bc6e73cded060afddb96c777a93fda7037f0e17696130b1c",
+      "target": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/contract.py",
+      "local_import_dependencies": [],
+      "external_imports": [
+        "__future__",
+        "dataclasses",
+        "enum",
+        "typing"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 112,
+          "sha256": "bb6128fd0304f4236e8d79e9cbcc5aa87f36b86300cac87a5be95f59294a5174"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/lookup.S",
+      "source_sha256": "8b561c7c75a4776f63c4e0d0795ddb68fe66a553841db4d6bf7037c6c0fb2efe",
+      "target": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/lookup.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 212,
+          "sha256": "8b561c7c75a4776f63c4e0d0795ddb68fe66a553841db4d6bf7037c6c0fb2efe"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/adapter.S",
+      "source_sha256": "50b169442e14e47f1cb9eec9e94aa970d95d5292a87a670575437f108a63c89d",
+      "target": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/adapter.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 259,
+          "sha256": "50b169442e14e47f1cb9eec9e94aa970d95d5292a87a670575437f108a63c89d"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/dst_consumer/consumer.S",
+      "source_sha256": "3522ce8b9d53e0be3f0fdbdad35156d8d679fd1eacb00954b1b8f8d879c49655",
+      "target": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/dst_consumer/consumer.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 403,
+          "sha256": "3522ce8b9d53e0be3f0fdbdad35156d8d679fd1eacb00954b1b8f8d879c49655"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/oracle.py",
+      "source_sha256": "49fc9fe65d20970225a1a7b1a8388e0cc556d7abdf1c1615b381e1db6d0593bf",
+      "target": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/oracle.py",
+      "local_import_dependencies": [],
+      "external_imports": [
+        "dataclasses",
+        "typing"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 129,
+          "sha256": "49fc9fe65d20970225a1a7b1a8388e0cc556d7abdf1c1615b381e1db6d0593bf"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/enumerate.S",
+      "source_sha256": "e910ace43f8f59540c941d8b21d3a0c361d9128043e0d42794a99009f2483c78",
+      "target": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/enumerate.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 156,
+          "sha256": "e910ace43f8f59540c941d8b21d3a0c361d9128043e0d42794a99009f2483c78"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/model.py",
+      "source_sha256": "a83f2ec8deac3349b5bd2cabd5c1fe545324a5c0db72e0dedb995b3a55d5c411",
+      "target": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/model.py",
+      "local_import_dependencies": [],
+      "external_imports": [
+        "dataclasses"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 30,
+          "sha256": "a83f2ec8deac3349b5bd2cabd5c1fe545324a5c0db72e0dedb995b3a55d5c411"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/test_lfo_four_publication_contract.py",
+      "source_sha256": "37a21c7a91c26f7108df073f9a0ba68e2f294ac4c1081598208fa3cf20e91c8f",
+      "target": "tools/machines/lfo4/source/coldfire_emu/test_lfo_four_publication_contract.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/lfo_four_publication_contract.py"
+      ],
+      "external_imports": [
+        "unittest"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 86,
+          "sha256": "37a21c7a91c26f7108df073f9a0ba68e2f294ac4c1081598208fa3cf20e91c8f"
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_full_native_bank_join.S",
+      "source_sha256": "a76d320457e887f58c95c1136982b9219ea780fb8c136caaf71db060cae89088",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_full_native_bank_join.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_native_startup_join.S",
+      "source_sha256": "2520d9f97b2174b1096eb443991ddef2df99eb0393352f59dd02f98348704247",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_native_startup_join.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 26
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_persistence_startup_transaction.S",
+      "source_sha256": "89db310d9832f1b1390f4dfda3855aa3ca4592f5c8be3aee4067a1f2a0a9383f",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_persistence_startup_transaction.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 26
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_production_backing.S",
+      "source_sha256": "6a0e831b866a8f177c95c8bb138d0282daa79f4d914b4c8d0f3d184d7e0289b6",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_production_backing.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_menu_retirement_join.S",
+      "source_sha256": "f0b16b7ceca6c8cff5ed577a778606f55e10bcd33269a77cda5d4a7d882a6186",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_menu_retirement_join.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 10
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/bridge.S",
+      "source_sha256": "f5fd8307e35e1537ec29ba9f145de9ba7ea5014e68b1a7548c0b80c46455a558",
+      "target": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/bridge.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 57
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_runtime_binding_core.py",
+      "source_sha256": "3179ca4cfc5823e4fbede7bad7debce23f1ba9e81180d5b3527ae6f05412e0d9",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_runtime_binding_core.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/lfo_four_owned_candidate.py",
+        "re/tools/coldfire_emu/test_lfo2_owned_heap_setup.py"
+      ],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 93
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_persistence_speed_join.py",
+      "source_sha256": "869b412a9975851d331755a956edef36c3e3a054f1f83b1b49c5345dc254dd78",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_persistence_speed_join.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/lfo_four_persistence_speed_join.S",
+        "re/tools/coldfire_emu/lfo_four_persistence_ui_join.py"
+      ],
+      "external_imports": [
+        "dataclasses"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 100
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_persistence_ui_join.py",
+      "source_sha256": "4faa923187e01a8fdfcd5688f27d173f49a6a2ac01d723671148e5235b479bb1",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_persistence_ui_join.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/lfo_four_persistence_composition.py"
+      ],
+      "external_imports": [
+        "dataclasses"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 85
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_owned_sector_padded_save.py",
+      "source_sha256": "da451cd05683249a3852ba991831295c74d1b9fc3a8fa08518b7645f16797747",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_owned_sector_padded_save.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/lfo_four_named_read_length_gate.py",
+        "re/tools/coldfire_emu/lfo_four_named_write_length_gate.py",
+        "re/tools/coldfire_emu/lfo_four_owned_cache_save.py"
+      ],
+      "external_imports": [
+        "dataclasses",
+        "hashlib"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 96
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_owned_temporary_incoming.py",
+      "source_sha256": "2da06597488a850ca654b693d54834380a76de1500dafb55a55093e268ae5976",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_owned_temporary_incoming.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/lfo_four_named_read_length_gate.py",
+        "re/tools/coldfire_emu/lfo_four_owned_incoming_lean.py"
+      ],
+      "external_imports": [
+        "dataclasses",
+        "hashlib",
+        "pathlib",
+        "re"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 109
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_pending_state_contract.py",
+      "source_sha256": "fe55cd9ffbf078109f49767e22cc999aebc0acc1dd0673876f4b3878d7f2fadf",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_pending_state_contract.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/test_lfo2_owned_heap_setup.py"
+      ],
+      "external_imports": [
+        "hashlib",
+        "json"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 118
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_pending_cache_contract.py",
+      "source_sha256": "5c2a7f61ed1f3f55c87d0d382077a833eefd84747ece415b6286bef84f6ee126",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_pending_cache_contract.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/backend.py",
+        "re/tools/coldfire_emu/lfo_four_native_media_join.py"
+      ],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 89
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_clear_shim.S",
+      "source_sha256": "5433d554d59441f4aeb072a935c39cfcd42b8d614c71087d3cab2f5d15c5abbb",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_clear_shim.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 32
+        },
+        {
+          "start": 34,
+          "end": 36
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_private_rng.S",
+      "source_sha256": "d878f83bf27465ce1b8e0544472f2a6cf3cce4f3d80a7def456654484ff25fdf",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_private_rng.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 91
+        },
+        {
+          "start": 98,
+          "end": 103
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo_four_random_join.S",
+      "source_sha256": "d2c32fd5f62131d450faaba7ccc3ab9d21e3ec433d312c77ca2eac139e15bda9",
+      "target": "tools/machines/lfo4/source/coldfire_emu/lfo_four_random_join.S",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 421
+        },
+        {
+          "start": 427,
+          "end": 431
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo2_extended_controls.py",
+      "source_sha256": "c756fba0ef69838a933ff6cbcd33f734526dcc05e8dbe453e6104ef84a675ed2",
+      "target": "tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_extended_controls.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/lfo2_ui_config_bank.py",
+        "re/tools/lfo_bank_reference.py"
+      ],
+      "external_imports": [
+        "__future__",
+        "dataclasses",
+        "enum",
+        "threading"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 390
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo2_project_edit_adapter.py",
+      "source_sha256": "423a2d2d9cb4f77e87674749e03e570119997731a8c158cd78b73266367a6958",
+      "target": "tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_project_edit_adapter.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/lfo2_extended_controls.py",
+        "re/tools/coldfire_emu/lfo2_ui_config_bank.py"
+      ],
+      "external_imports": [
+        "__future__",
+        "dataclasses",
+        "threading",
+        "typing"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 438
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo2_project_editor_session.py",
+      "source_sha256": "43c0f2cc5ea490083ef52a2411498270a85756f33ceeb3b540257a24cde9624b",
+      "target": "tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_project_editor_session.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/lfo2_project_edit_adapter.py",
+        "re/tools/coldfire_emu/lfo2_ui_config_bank.py",
+        "re/tools/coldfire_emu/lfo2_ui_gesture.py"
+      ],
+      "external_imports": [
+        "__future__",
+        "dataclasses",
+        "typing"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 151
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo2_ui_config_bank.py",
+      "source_sha256": "d42d8c3e388128a65f2339687bec3283d7baea603da960cfcf561f54b0d92d7e",
+      "target": "tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_ui_config_bank.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/lfo35_native_rate_cpu.py",
+        "re/tools/coldfire_emu/pre_b_fixture.py"
+      ],
+      "external_imports": [
+        "__future__",
+        "dataclasses",
+        "threading",
+        "typing"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 593
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo2_ui_gesture.py",
+      "source_sha256": "eba0d5b7e6e2fb41107d771026c1037f7961b5b5a5bb1f61c10a6c7997c258d3",
+      "target": "tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_ui_gesture.py",
+      "local_import_dependencies": [],
+      "external_imports": [
+        "__future__",
+        "dataclasses",
+        "enum",
+        "typing"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 527
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/lfo2_ui_session.py",
+      "source_sha256": "9dd434894093a76b27353b02ec664c214bca4730d493cc614cba29e964ec56cc",
+      "target": "tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_ui_session.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/lfo2_ui_config_bank.py",
+        "re/tools/coldfire_emu/lfo2_ui_gesture.py"
+      ],
+      "external_imports": [
+        "__future__",
+        "dataclasses"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 152
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/test_lfo2_project_edit_adapter.py",
+      "source_sha256": "ed45a9407cfd6d9cf13f45f498de53cf4fa48e7dbafe1946ac2886b1a2085bc2",
+      "target": "tools/machines/lfo4/source/legacy_models/coldfire_emu/test_lfo2_project_edit_adapter.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/lfo2_extended_controls.py",
+        "re/tools/coldfire_emu/lfo2_project_edit_adapter.py",
+        "re/tools/coldfire_emu/lfo2_ui_config_bank.py"
+      ],
+      "external_imports": [
+        "__future__",
+        "unittest"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 251
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/test_lfo2_project_editor_session.py",
+      "source_sha256": "ca0373f40b581cd19f4b43ee64be8abc633fea640af1a630f33f07bce038d879",
+      "target": "tools/machines/lfo4/source/legacy_models/coldfire_emu/test_lfo2_project_editor_session.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/lfo2_extended_controls.py",
+        "re/tools/coldfire_emu/lfo2_project_edit_adapter.py",
+        "re/tools/coldfire_emu/lfo2_project_editor_session.py",
+        "re/tools/coldfire_emu/lfo2_ui_config_bank.py",
+        "re/tools/coldfire_emu/lfo2_ui_gesture.py"
+      ],
+      "external_imports": [
+        "__future__",
+        "unittest"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 178
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/lfo_bank_reference.py",
+      "source_sha256": "16cdd67f1380566f56a40f20a338ba8e12ee32e71f930f7c6dc69b7225c88084",
+      "target": "tools/machines/lfo4/source/legacy_models/lfo_bank_reference.py",
+      "local_import_dependencies": [
+        "re/tools/dsp_reference/coordinate_abi.py"
+      ],
+      "external_imports": [
+        "__future__",
+        "dataclasses",
+        "fractions",
+        "struct"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 194
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/lfo_conditioned_bridge_20260922.py",
+      "source_sha256": "cca0d5c8520d9d5e6c35d368fd95e5f031cb360d64fd1309359499d218028664",
+      "target": "tools/machines/lfo4/source/legacy_models/lfo_conditioned_bridge_20260922.py",
+      "local_import_dependencies": [
+        "re/tools/dsp_reference/compact_preprocess_20260918.py",
+        "re/tools/dsp_reference/coordinate_abi.py",
+        "re/tools/lfo_bank_reference.py"
+      ],
+      "external_imports": [
+        "__future__",
+        "dataclasses",
+        "struct"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 100
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/lfo_interposition_reference_20260918.py",
+      "source_sha256": "afe057e82ca2ddc90f0251f4579fac8231d2018c4041aeb08159b1be8d4c08ae",
+      "target": "tools/machines/lfo4/source/legacy_models/lfo_interposition_reference_20260918.py",
+      "local_import_dependencies": [],
+      "external_imports": [
+        "__future__",
+        "dataclasses",
+        "typing"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 74
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/lfo_reference.py",
+      "source_sha256": "9802ed7456c09ac68adb5aaa8add3b1e8a92babab3f69076530988ec27c4fa1e",
+      "target": "tools/machines/lfo4/source/legacy_models/lfo_reference.py",
+      "local_import_dependencies": [],
+      "external_imports": [
+        "__future__",
+        "dataclasses"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 52
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/lfo_runtime_experiment_20260918.py",
+      "source_sha256": "951ad9ad2582adb64004238a177688747bffa576c5109dec3e6c4a87286d043b",
+      "target": "tools/machines/lfo4/source/legacy_models/lfo_runtime_experiment_20260918.py",
+      "local_import_dependencies": [],
+      "external_imports": [
+        "__future__",
+        "dataclasses",
+        "typing"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 108
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/test_lfo_conditioned_bridge_20260922.py",
+      "source_sha256": "b1516e926e404acd3617078da53c5189499ea15e9a735b21431eab9e5d8c3700",
+      "target": "tools/machines/lfo4/source/legacy_models/test_lfo_conditioned_bridge_20260922.py",
+      "local_import_dependencies": [
+        "re/tools/lfo_bank_reference.py",
+        "re/tools/lfo_conditioned_bridge_20260922.py"
+      ],
+      "external_imports": [
+        "dataclasses",
+        "pathlib",
+        "struct",
+        "unittest"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 121
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/test_lfo_interposition_reference_20260918.py",
+      "source_sha256": "e855e28f6a18299686d7b4735b994918f794727b23f51e570dc6224d548829b6",
+      "target": "tools/machines/lfo4/source/legacy_models/test_lfo_interposition_reference_20260918.py",
+      "local_import_dependencies": [
+        "re/tools/lfo_interposition_reference_20260918.py"
+      ],
+      "external_imports": [
+        "__future__",
+        "pathlib",
+        "sys",
+        "unittest"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 116
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/test_lfo_reference.py",
+      "source_sha256": "ae56a56f58bb4a1313d5f012442b4f1ffd16d522f3a4aafb6041f2f2fafd97ef",
+      "target": "tools/machines/lfo4/source/legacy_models/test_lfo_reference.py",
+      "local_import_dependencies": [
+        "re/tools/lfo_reference.py"
+      ],
+      "external_imports": [
+        "unittest"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 44
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/test_lfo_runtime_experiment_20260918.py",
+      "source_sha256": "6effe57d8342eae505caad55b8832c49a00b9d2247dc2f99266bafaba2c712ba",
+      "target": "tools/machines/lfo4/source/legacy_models/test_lfo_runtime_experiment_20260918.py",
+      "local_import_dependencies": [
+        "re/tools/lfo_runtime_experiment_20260918.py"
+      ],
+      "external_imports": [
+        "unittest"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 52
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/__init__.py",
+      "source_sha256": "aab57345d7e020e72d1da1912284b1d115472a413a9b45931c5ad85c7bbb971e",
+      "target": "tools/machines/lfo4/source/coldfire_emu/__init__.py",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 1
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/__init__.py",
+      "source_sha256": "717b0891ecfba8a40b2cb5761d1b3631186b52be2f7d3eb2d800ee21e93ff87b",
+      "target": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/__init__.py",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 1
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/__init__.py",
+      "source_sha256": "5db499549fe5f3c959a1ced333c0f5bd79eed2b89caca3439b117019403ee3e5",
+      "target": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/__init__.py",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 1
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/__init__.py",
+      "source_sha256": "5b836cde910bea0cb6416f1f53b150f3dd7312b9183cf4428cbd05c401453329",
+      "target": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/__init__.py",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 1
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/dst_consumer/__init__.py",
+      "source_sha256": "cb5e8a6cec83f154fa484ea876878d42183fe9df891a45ab312b000562091701",
+      "target": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/dst_consumer/__init__.py",
+      "local_import_dependencies": [],
+      "external_imports": [],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 1
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/test_candidate.py",
+      "source_sha256": "3210f76614c20cd28d63903397bbcde54c6b6638e7b06ac8677585386b21322b",
+      "target": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/test_contract_host.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/live_profile_candidate/bridge.S",
+        "re/tools/coldfire_emu/live_profile_candidate/contract.py",
+        "re/tools/coldfire_emu/live_profile_candidate/lookup.S",
+        "re/tools/coldfire_emu/live_profile_candidate/offline.py"
+      ],
+      "external_imports": [
+        "dataclasses",
+        "hashlib",
+        "re",
+        "unittest"
+      ],
+      "ranges": [
+        {
+          "start": 11,
+          "end": 23
+        },
+        {
+          "start": 27,
+          "end": 39
+        },
+        {
+          "start": 41,
+          "end": 52
+        },
+        {
+          "start": 54,
+          "end": 60
+        },
+        {
+          "start": 62,
+          "end": 66
+        },
+        {
+          "start": 68,
+          "end": 77
+        },
+        {
+          "start": 80,
+          "end": 90
+        },
+        {
+          "start": 92,
+          "end": 94
+        },
+        {
+          "start": 98,
+          "end": 102
+        },
+        {
+          "start": 104,
+          "end": 115
+        },
+        {
+          "start": 117,
+          "end": 127
+        },
+        {
+          "start": 129,
+          "end": 135
+        },
+        {
+          "start": 137,
+          "end": 140
+        },
+        {
+          "start": 142,
+          "end": 148
+        },
+        {
+          "start": 150,
+          "end": 153
+        },
+        {
+          "start": 155,
+          "end": 161
+        },
+        {
+          "start": 163,
+          "end": 166
+        },
+        {
+          "start": 168,
+          "end": 174
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/test_adapter.py",
+      "source_sha256": "3753242fd9924df1d7cc20f734232255b6226f7fcf86f446c8d33290c1f4a1f5",
+      "target": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/test_oracle_host.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/live_profile_candidate/contract.py",
+        "re/tools/coldfire_emu/live_profile_candidate/native_adapter/offline.py",
+        "re/tools/coldfire_emu/live_profile_candidate/native_adapter/oracle.py"
+      ],
+      "external_imports": [
+        "dataclasses",
+        "hashlib",
+        "re",
+        "subprocess",
+        "sys",
+        "unittest"
+      ],
+      "ranges": [
+        {
+          "start": 18,
+          "end": 47
+        },
+        {
+          "start": 51,
+          "end": 74
+        },
+        {
+          "start": 76,
+          "end": 78
+        },
+        {
+          "start": 80,
+          "end": 92
+        },
+        {
+          "start": 94,
+          "end": 100
+        },
+        {
+          "start": 102,
+          "end": 109
+        },
+        {
+          "start": 111,
+          "end": 115
+        },
+        {
+          "start": 117,
+          "end": 126
+        },
+        {
+          "start": 128,
+          "end": 136
+        },
+        {
+          "start": 138,
+          "end": 143
+        },
+        {
+          "start": 145,
+          "end": 149
+        },
+        {
+          "start": 151,
+          "end": 161
+        },
+        {
+          "start": 163,
+          "end": 169
+        },
+        {
+          "start": 171,
+          "end": 177
+        },
+        {
+          "start": 179,
+          "end": 187
+        },
+        {
+          "start": 189,
+          "end": 194
+        },
+        {
+          "start": 196,
+          "end": 201
+        },
+        {
+          "start": 203,
+          "end": 213
+        },
+        {
+          "start": 215,
+          "end": 224
+        },
+        {
+          "start": 226,
+          "end": 239
+        },
+        {
+          "start": 242,
+          "end": 247
+        },
+        {
+          "start": 249,
+          "end": 253
+        },
+        {
+          "start": 255,
+          "end": 258
+        },
+        {
+          "start": 260,
+          "end": 267
+        },
+        {
+          "start": 269,
+          "end": 277
+        },
+        {
+          "start": 279,
+          "end": 281
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/test_enum.py",
+      "source_sha256": "7032760150bcce37af6615bbf5ba29cd93dd125cdce87dfd0398515c2579ad5b",
+      "target": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/test_model_host.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/live_profile_candidate/contract.py",
+        "re/tools/coldfire_emu/live_profile_candidate/native_adapter/oracle.py",
+        "re/tools/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/model.py",
+        "re/tools/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/offline.py",
+        "re/tools/coldfire_emu/live_profile_candidate/native_adapter/test_adapter.py",
+        "re/tools/coldfire_emu/live_profile_candidate/offline.py"
+      ],
+      "external_imports": [
+        "unittest"
+      ],
+      "ranges": [
+        {
+          "start": 15,
+          "end": 21
+        },
+        {
+          "start": 45,
+          "end": 48
+        },
+        {
+          "start": 67,
+          "end": 75
+        },
+        {
+          "start": 77,
+          "end": 83
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/test_lfo_four_menu_transaction_join.py",
+      "source_sha256": "4ea770d133b0318268376009025c4bd2179acf91e7354f254227e3bed89105ff",
+      "target": "tools/machines/lfo4/source/coldfire_emu/menu_rows.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/backend.py",
+        "re/tools/coldfire_emu/lfo_four_menu_transaction_join.py",
+        "re/tools/coldfire_emu/lfo_four_random_join.py",
+        "re/tools/coldfire_emu/lfo_indexed_native.py",
+        "re/tools/coldfire_emu/test_lfo_four_menu_lifetime_join.py"
+      ],
+      "external_imports": [
+        "argparse",
+        "json",
+        "os",
+        "pathlib",
+        "time",
+        "unittest"
+      ],
+      "ranges": [
+        {
+          "start": 18,
+          "end": 22
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/scale_native_keyboard.py",
+      "source_sha256": "5d997564bed5d586b5dd816dddd756480c4424d239abe0a9c7a9d21d687cf2a2",
+      "target": "tools/machines/lfo4/source/coldfire_emu/word_io.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/backend.py",
+        "re/tools/coldfire_emu/chord_strum_feature_seam.py",
+        "re/tools/coldfire_emu/event_trigger_mask_20260926.py",
+        "re/tools/coldfire_emu/kick_a_path.py",
+        "re/tools/coldfire_emu/lfo2_installation_components.py",
+        "re/tools/coldfire_emu/lfo2_native_selected_edit.py",
+        "re/tools/coldfire_emu/scale_held_lifecycle.py",
+        "re/tools/coldfire_emu/scale_keyboard_bridge.S",
+        "re/tools/coldfire_emu/scale_keyboard_map.S",
+        "re/tools/scale_reference.py"
+      ],
+      "external_imports": [
+        "argparse",
+        "collections",
+        "json",
+        "pathlib",
+        "struct"
+      ],
+      "ranges": [
+        {
+          "start": 33,
+          "end": 34
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    },
+    {
+      "original_path": "re/tools/coldfire_emu/test_lfo_four_menu_transaction_rows.py",
+      "source_sha256": "4553a261917713547e091ef0518b07cee6d41dbc6b4853d408d7d1c1d50b5cbe",
+      "target": "tools/machines/lfo4/source/coldfire_emu/test_menu_rows_host.py",
+      "local_import_dependencies": [
+        "re/tools/coldfire_emu/test_lfo_four_menu_transaction_join.py"
+      ],
+      "external_imports": [
+        "struct",
+        "unittest"
+      ],
+      "ranges": [
+        {
+          "start": 1,
+          "end": 20
+        }
+      ],
+      "limits": "No target recipe is executed or installed; original ABI/lease/context/default/stub or historical import dependencies remain."
+    }
+  ],
+  "unresolved_interfaces": {
+    "native_ui": [
+      "META/BASE/resolve offsets in the historical template; original stock resolver/stubs; owned/menus globals in source transforms; caller-held lease and current native M"
+    ],
+    "ownership": [
+      "external defaults label; constructor/allocator/vtable/entry/child bindings; boot-retained owner; native observer/task serialization"
+    ],
+    "random": [
+      "stock_fallback/auth_fault tail and matching .endif omitted; original firmware fallback must be official-input derived; authenticated recovery/caller bounds"
+    ],
+    "persistence": [
+      "external default rows; full guest macros/payload validator; original BANK trampoline; prepared immutable input/context/root and native load attestation; physical media/cache/DMA"
+    ],
+    "safe_destination": [
+      "OWNER_SLOT/RUNTIME_SLOT/BOOT_STATUS/CONTEXT_SLOT and current Project bindings; original native lookup/flags/sort/canonical stores; generated publication continuation"
+    ],
+    "source_recipe_fragments": [
+      "External original HERE/UI/owned/menus/helper constants and supplied symbol maps; private runner/import/build closure deliberately not copied"
+    ],
+    "untracked_speed": [
+      "working-file hash only; original authorship confirmed by the repository owner on 2026-10-06; no tracked commit antecedent; original stock_owner/stock_consume stubs absent"
+    ]
+  },
+  "tests": "Only explicitly separated synthetic host tests are runnable. No assembly/build/media/device test is implied.",
+  "no_target_builder": true,
+  "no_flasher_or_release_registration": true,
+  "provenance_confirmations": [
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_persistence_speed_join.S",
+      "source_path": "re/tools/coldfire_emu/lfo_four_persistence_speed_join.S",
+      "source_sha256": "15f441634995650026a0c79129409c15026f43e0765e09d9ba26a9ff63429ce4",
+      "contribution_sha256": "32e732e1b5fc0ab13e253512a55585f0070cb061c1dd261161a06065f8389095",
+      "confirmed_by": "repository owner",
+      "confirmed_on": "2026-10-06",
+      "scope": "Original contributed file only; no vendor or third-party material grant."
+    }
+  ]
+}
