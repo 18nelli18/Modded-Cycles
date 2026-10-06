@@ -635,3 +635,12 @@ scénarios ; les combinaisons nécessitent encore des essais sur un Cycles réel
 Le [flasher du fork de Nico](https://bynicoheuser.github.io/Modded-Cycles/flasher/) publie les patchs et construit
 le firmware dans le navigateur à partir de l'OS officiel fourni par chaque utilisateur. Aucune image officielle
 ou modifiée n'est distribuée. Ce site est distinct du flasher amont de Maxime.
+
+
+## Présentation du flasher (06/10/2026)
+
+À la demande de Nico dans ses annotations du site, la carte porte le nom **Chord Keys** et apparaît
+avant les autres mods. Sa ligne de crédit et sa note détaillée sont retirées de la carte ; la rubrique
+« Anciens patterns » est retirée du guide, dans les deux langues. La provenance reste conservée dans
+les métadonnées. Seul l’ordre d’affichage change : l’ordre de construction, les patchs, les empreintes
+et les statuts des essais restent identiques.
