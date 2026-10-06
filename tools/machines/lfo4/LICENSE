@@ -1,0 +1,110 @@
+MIT License
+
+Copyright (c) 2026 Lachlan Fysh
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Scope: only the original additions in this explicit allowlist:
+- notes/42-prototype-lfo4.md
+- tools/machines/lfo4/DEPENDENCIES.json
+- tools/machines/lfo4/EXCLUSIONS.json
+- tools/machines/lfo4/LICENSE
+- tools/machines/lfo4/README.md
+- tools/machines/lfo4/SOURCE-MANIFEST.json
+- tools/machines/lfo4/source/coldfire_emu/__init__.py
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_bank_detour_join.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_clear_shim.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_full_native_bank_join.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_incoming_finish.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_menu_lifetime_join.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_menu_lifetime_join.py
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_menu_retirement_join.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_menu_transaction_join.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_native_bank_join.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_native_candidate.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_native_engine.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_native_startup_join.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_owned_candidate.py
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_owned_incoming_join.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_owned_save_join.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_owned_sector_padded_save.py
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_owned_temporary_incoming.py
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_pending_cache_contract.py
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_pending_state_contract.py
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_persistence_speed_join.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_persistence_speed_join.py
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_persistence_startup_transaction.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_persistence_ui_join.py
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_private_rng.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_production_backing.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_project_load_continuation.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_publication_contract.py
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_random_join.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_reader_join.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_runtime_binding_core.py
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_selector_append.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_selector_oom_join.py
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_sound_extension.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_sound_extension_guest.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_four_sound_extension_guest_full.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_indexed_codec.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_indexed_native.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_owned_lifecycle.S
+- tools/machines/lfo4/source/coldfire_emu/lfo_owned_safe_setup.S
+- tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/__init__.py
+- tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/bridge.S
+- tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/contract.py
+- tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/lookup.S
+- tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/__init__.py
+- tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/adapter.S
+- tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/dst_consumer/__init__.py
+- tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/dst_consumer/consumer.S
+- tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/oracle.py
+- tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/__init__.py
+- tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/enumerate.S
+- tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/model.py
+- tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/test_model_host.py
+- tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/test_oracle_host.py
+- tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/test_contract_host.py
+- tools/machines/lfo4/source/coldfire_emu/menu_rows.py
+- tools/machines/lfo4/source/coldfire_emu/test_lfo_four_publication_contract.py
+- tools/machines/lfo4/source/coldfire_emu/test_menu_rows_host.py
+- tools/machines/lfo4/source/coldfire_emu/word_io.py
+- tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_extended_controls.py
+- tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_project_edit_adapter.py
+- tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_project_editor_session.py
+- tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_ui_config_bank.py
+- tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_ui_gesture.py
+- tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_ui_session.py
+- tools/machines/lfo4/source/legacy_models/coldfire_emu/test_lfo2_project_edit_adapter.py
+- tools/machines/lfo4/source/legacy_models/coldfire_emu/test_lfo2_project_editor_session.py
+- tools/machines/lfo4/source/legacy_models/lfo_bank_reference.py
+- tools/machines/lfo4/source/legacy_models/lfo_conditioned_bridge_20260922.py
+- tools/machines/lfo4/source/legacy_models/lfo_interposition_reference_20260918.py
+- tools/machines/lfo4/source/legacy_models/lfo_reference.py
+- tools/machines/lfo4/source/legacy_models/lfo_runtime_experiment_20260918.py
+- tools/machines/lfo4/source/legacy_models/test_lfo_conditioned_bridge_20260922.py
+- tools/machines/lfo4/source/legacy_models/test_lfo_interposition_reference_20260918.py
+- tools/machines/lfo4/source/legacy_models/test_lfo_reference.py
+- tools/machines/lfo4/source/legacy_models/test_lfo_runtime_experiment_20260918.py
+
+In notes/README.md only the newly added row referring to note 42 is covered
+here. The separate foundation license covers its files/note 41/index row.
+No repository-wide grant covers existing upstream/private content, firmware,
+stock instruction/data/default records, third-party dependencies or exclusions.

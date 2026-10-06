@@ -1,0 +1,1536 @@
+{
+  "source_pin": "68438b1a417390f1f60f50f925acdeea1ddba6ce",
+  "upstream": {
+    "commit": "afed481dc35f4cfc24013508afebc300efcc15b3",
+    "tree": "a463041e49bc9b049a3f2ce13d5479d2ec59863a",
+    "full_tree_metadata_entries": 276,
+    "touched_baseline_blobs": [
+      "notes/README.md"
+    ],
+    "parent_history_imported": false,
+    "unrelated_blob_contents_imported": false
+  },
+  "files": [
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_bank_detour_join.S",
+      "sha256": "a44758e736969b0265f1c99d3ff737bb281fe578bd783939ab38fb7ff35b3a8e",
+      "kind": "partial authored source file",
+      "changes": "Original code unchanged; added scoped license/origin comments. Stock/default/private portions omitted; unresolved symbols remain.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_bank_detour_join.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 124,
+          "sha256": "504c0ffa0b9c490b41d415e28de77a2c22f652cb16e1366b567c17fe4ca8fbb1"
+        },
+        {
+          "start": 131,
+          "end": 154,
+          "sha256": "b4cf8ef6d7ce90c70c6c3f2416acaa031230ff872ad46101758a6ad4b49fda2a"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "e560b56cbb19f31df2ea4efdae016aef61f523d6f488648ed6d8012b034ad1c6"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_incoming_finish.S",
+      "sha256": "2a10cf5e75c6ad2cff4705d6cc4d5cfe726cbbb6cea849567ab45fadb418bbf8",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/lfo_four_incoming_finish.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 160,
+          "sha256": "221d6edbc135de7ee0c01ccabb0566af42ecac46a246f7667b20a03151495015"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "221d6edbc135de7ee0c01ccabb0566af42ecac46a246f7667b20a03151495015"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_menu_lifetime_join.S",
+      "sha256": "08d93674b53786624e13f43472a0077dc71835ee85826fdd8385a502cc3bc041",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/lfo_four_menu_lifetime_join.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 346,
+          "sha256": "ad936a43e771e09f621302af0fad3f8caa2da12c6bbf8c15d92eb4e4f539859c"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "ad936a43e771e09f621302af0fad3f8caa2da12c6bbf8c15d92eb4e4f539859c"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_menu_lifetime_join.py",
+      "sha256": "9c6a038a0cbd1ab126e65285cfe556c891b3f874e0a3c39ec365df98601031cc",
+      "kind": "partial authored source file",
+      "changes": "Original code unchanged; added scoped license/origin comments. Stock/default/private portions omitted; unresolved symbols remain.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_menu_lifetime_join.py",
+      "original_ranges": [
+        {
+          "start": 30,
+          "end": 51,
+          "sha256": "d908db8a1009e9c4b90d4728ef0cc7cce5cf63844a2168a13a7e89c3e72e2378"
+        },
+        {
+          "start": 80,
+          "end": 98,
+          "sha256": "e76a84135f9eefe6601106a5501712161ac595efc47ee9141778503e3f17b40c"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "57784145474804e4052719081a3c5232f31f8812c4b63a74201686d57c61be8a"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_menu_transaction_join.S",
+      "sha256": "bbb457dc2c05f8cbd757133759dbb08465f1afea8ad85ed1392957793a486035",
+      "kind": "partial authored source file",
+      "changes": "Original code unchanged; added scoped license/origin comments. Stock/default/private portions omitted; unresolved symbols remain.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_menu_transaction_join.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 45,
+          "sha256": "d13251aaddf572af396bf8697a0693e37a71d7e4cf51bff9ca6331f46ec60798"
+        },
+        {
+          "start": 62,
+          "end": 145,
+          "sha256": "a5caec218255bbca2d9c2c093fc32a8e3ca741426957824f10ab9771baa29e8c"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "cd22fae3c61045063489641c13da2dec31c6e8216767c579a21bedd974af6fdb"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_native_bank_join.S",
+      "sha256": "c60b8c5b8b866e6dd944f647a04b589862afae9dd7c36c08704489fc382a135e",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/lfo_four_native_bank_join.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 65,
+          "sha256": "88f94f26370a1513b88ed3ba4f0bccb18b8199df0bff7e0765623506b1c6c668"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "88f94f26370a1513b88ed3ba4f0bccb18b8199df0bff7e0765623506b1c6c668"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_native_candidate.S",
+      "sha256": "5bec070fe2d099309bc00b44f58386613bc279f1b6b3fc9336fd13b18a763fa7",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/lfo_four_native_candidate.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 165,
+          "sha256": "f3275cdb8887e9b4a5d731080a38cc215f6a4922dc61e5b2e86a4711b2bc375d"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "f3275cdb8887e9b4a5d731080a38cc215f6a4922dc61e5b2e86a4711b2bc375d"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_native_engine.S",
+      "sha256": "0f0d29c37f5934b81bd34bc5d9d93dc6bafcfefd1d7aa12733648d1fc8f4a539",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/lfo_four_native_engine.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 97,
+          "sha256": "f06098e8577eb6ef3fb63fb6a1e4ea98c7aac26d7cee9cd6b6a1ab3a699fe929"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "f06098e8577eb6ef3fb63fb6a1e4ea98c7aac26d7cee9cd6b6a1ab3a699fe929"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_owned_candidate.py",
+      "sha256": "eaa4763e931b7516051cceef244a3350de02240611c1592da5ca6d67e38b81ca",
+      "kind": "partial authored source file",
+      "changes": "Original code unchanged; added scoped license/origin comments. Stock/default/private portions omitted; unresolved symbols remain.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_owned_candidate.py",
+      "original_ranges": [
+        {
+          "start": 37,
+          "end": 40,
+          "sha256": "97ae236bf9fab2bff01ebbf275c8c5d209443de47899f0362f4ac95a37e42378"
+        },
+        {
+          "start": 43,
+          "end": 77,
+          "sha256": "3648f43b6d6b40c6092dce53bb11af4a251d04d1f9a3906f6343d01a55f7aba3"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "2d78da5f89b5e44ec51104156ee77ce39a2f9fc7b25e73e1e38eaaab25c3ffc8"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_owned_incoming_join.S",
+      "sha256": "fe0b344888a804f64859a13f26f92608228338a7a195d7f255129904cddcf92a",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/lfo_four_owned_incoming_join.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 271,
+          "sha256": "e8221f4236b9438d4aee469e6fdd6266ed08aa56edc04f35d9414f3b4f09d249"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "e8221f4236b9438d4aee469e6fdd6266ed08aa56edc04f35d9414f3b4f09d249"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_owned_save_join.S",
+      "sha256": "dfd82b7f74f8a18d17028f0bd81bc655009f21bfada8bd8e9d62a62edead8e25",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/lfo_four_owned_save_join.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 112,
+          "sha256": "f34918c03174d722a1280bfb18120ce184bf05e80f634ad890d6b83049f2bc3e"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "f34918c03174d722a1280bfb18120ce184bf05e80f634ad890d6b83049f2bc3e"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_persistence_speed_join.S",
+      "sha256": "32e732e1b5fc0ab13e253512a55585f0070cb061c1dd261161a06065f8389095",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/lfo_four_persistence_speed_join.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 182,
+          "sha256": "15f441634995650026a0c79129409c15026f43e0765e09d9ba26a9ff63429ce4"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "15f441634995650026a0c79129409c15026f43e0765e09d9ba26a9ff63429ce4"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_project_load_continuation.S",
+      "sha256": "e3a96ec2c95fbf5e63c046581e24b8142afe48fa38f73164901f70abf3d17b3c",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/lfo_four_project_load_continuation.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 39,
+          "sha256": "8374cfe4e42a315c30c3c9038cfde49c7b0e01bbc1edbc44d013efae93adc45c"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "8374cfe4e42a315c30c3c9038cfde49c7b0e01bbc1edbc44d013efae93adc45c"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_publication_contract.py",
+      "sha256": "b1c225d3e064d3936c4cda2159f8a61a08e6bd9e097a86217efd0c0994648713",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/lfo_four_publication_contract.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 44,
+          "sha256": "adb9e88d4174f365656a5b29a2e5fd8c55f47e1731171bf8f394f6ee4d8d8516"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "adb9e88d4174f365656a5b29a2e5fd8c55f47e1731171bf8f394f6ee4d8d8516"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_reader_join.S",
+      "sha256": "b47d4b4d8b58ccf8776340fc218258e6fd88bee34257f0e355720fed27fd2d84",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/lfo_four_reader_join.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 368,
+          "sha256": "c95932ef1faed284ef37773f415661e30155173bf1c76c05b115a8523078eaf7"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "c95932ef1faed284ef37773f415661e30155173bf1c76c05b115a8523078eaf7"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_selector_append.S",
+      "sha256": "6a1e053ecbd2c240ad502d4cc2a7f2ca1fedcb0891e5ed7d8ef25c96ce2554bd",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/lfo_four_selector_append.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 109,
+          "sha256": "964c6b4cc385f3e1ebf7f7333c8547f24e1c33b0b67b4b9c989317d15b1fbbab"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "964c6b4cc385f3e1ebf7f7333c8547f24e1c33b0b67b4b9c989317d15b1fbbab"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_selector_oom_join.py",
+      "sha256": "198740c3be3ec9a8ac84e1dc8fef3479b855eaf5c20e96e388f77d1f8bf65697",
+      "kind": "partial authored source file",
+      "changes": "Original code unchanged; added scoped license/origin comments. Stock/default/private portions omitted; unresolved symbols remain.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_selector_oom_join.py",
+      "original_ranges": [
+        {
+          "start": 17,
+          "end": 31,
+          "sha256": "84df5b3f23693117173876aaebdc0f15db625bf168590cee175407a5caf13d2e"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "200045ca38b1b9dd946508d8a2a928a7f67ad6d65330b8df1bf17b3206db3143"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_sound_extension.S",
+      "sha256": "03ce4cd39c91b26c9a10ee5e83ad228a1afb15c634b529ae638692b1f03d151a",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/lfo_four_sound_extension.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 64,
+          "sha256": "a589e20a677ca161ba6ce732636ad1864d2d6020d9716be0c96506bf202f67df"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "a589e20a677ca161ba6ce732636ad1864d2d6020d9716be0c96506bf202f67df"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_sound_extension_guest.S",
+      "sha256": "8997bea2cd4f3c800517bdc597cbea2448a5bf4eee99c38fa359a54ec80ece79",
+      "kind": "partial authored source file",
+      "changes": "Original code unchanged; added scoped license/origin comments. Stock/default/private portions omitted; unresolved symbols remain.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_sound_extension_guest.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 1004,
+          "sha256": "e66896d6ee79af3de1734ed61c4ee67def3ac4e32876acf3f877bd86580ca7bf"
+        },
+        {
+          "start": 1009,
+          "end": 1012,
+          "sha256": "30ec1b8609db8523f31aba7540287f36b53d89b7010ba93d592c44acab586be6"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "c6623c71ac1600e1424d256e8cde1016a8306a654dbf4c345c9496897fa9dc1e"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_sound_extension_guest_full.S",
+      "sha256": "187ff35cd877fc730fe3ecc2b1dcf8d595207b7d6d45d9b164874256ad9f738f",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/lfo_four_sound_extension_guest_full.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 121,
+          "sha256": "87d0392a331d9b5f7debcb4e0dc08987df73e327851c8d3d14d6e2d7ea3a9111"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "87d0392a331d9b5f7debcb4e0dc08987df73e327851c8d3d14d6e2d7ea3a9111"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_indexed_codec.S",
+      "sha256": "9c15c4aa343e9bb7f2e3914af1b989539ea577ebcb9d32b57ab7da7df453a6f1",
+      "kind": "partial authored source file",
+      "changes": "Original code unchanged; added scoped license/origin comments. Stock/default/private portions omitted; unresolved symbols remain.",
+      "original_path": "re/tools/coldfire_emu/lfo_indexed_codec.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 270,
+          "sha256": "32cf5e24aa098e4b34951c63eae13901f985162b172915150c5211e2f6e6dc87"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "6e9cd344a8dd076bfdfef183d1eb30b39ffdff574f6074f020864bfc8ecc01ee"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_indexed_native.S",
+      "sha256": "aa47989276f5b65740e9d1f8b3e637ef43271871a90eb69e04fa4bb350ff9a71",
+      "kind": "partial authored source file",
+      "changes": "Original code unchanged; added scoped license/origin comments. Stock/default/private portions omitted; unresolved symbols remain.",
+      "original_path": "re/tools/coldfire_emu/lfo_indexed_native.S",
+      "original_ranges": [
+        {
+          "start": 63,
+          "end": 420,
+          "sha256": "abbf778ac43757f4fbeb104c760bea74c000ef71f66559669539ff87ddedd8bf"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "5b4f874cc7816c3a7257cf250d0643a751f2bd07517b65a1349d5e762908487a"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_owned_lifecycle.S",
+      "sha256": "5eebd1662b6435bd877f076be7255786068c43680a6a533cb996a7953a6132d6",
+      "kind": "partial authored source file",
+      "changes": "Original code unchanged; added scoped license/origin comments. Stock/default/private portions omitted; unresolved symbols remain.",
+      "original_path": "re/tools/coldfire_emu/lfo_owned_lifecycle.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 283,
+          "sha256": "9d6ec467152daa4f4b2b3cd52dc9e81b68128f9d24fb680b2e005ad5620955f4"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "cd58982b9b385b8b511ec1a8f0e806594db8f1d253cbdb5af55f397e880cdb91"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_owned_safe_setup.S",
+      "sha256": "de56ee1b34c5460b1113a7261302fa5b74f7724549cd21a4b4005ea69abe23f9",
+      "kind": "partial authored source file",
+      "changes": "Original code unchanged; added scoped license/origin comments. Stock/default/private portions omitted; unresolved symbols remain.",
+      "original_path": "re/tools/coldfire_emu/lfo_owned_safe_setup.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 370,
+          "sha256": "ff63e0c23a9f83f475cb60f59be81b46643584e7c73efa01f18e844ac296d561"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "4f9503519864b4cd65ad6950d1fd6cf3c776b07a70cfb6b6d636dc1ec4790245"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/contract.py",
+      "sha256": "ca29fceebc634631a1bbf0d49e2a6c2424e0f97598e9dcb24f7ee3d5802bdb2c",
+      "kind": "partial authored source file",
+      "changes": "Original code unchanged; added scoped license/origin comments. Stock/default/private portions omitted; unresolved symbols remain.",
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/contract.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 112,
+          "sha256": "bb6128fd0304f4236e8d79e9cbcc5aa87f36b86300cac87a5be95f59294a5174"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "8f7116a1190b5754bc6e73cded060afddb96c777a93fda7037f0e17696130b1c"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/lookup.S",
+      "sha256": "85bd12fad3d41750b835ced9cde70e35c34a205dfe4e222e3fde55f49f2b19db",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/lookup.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 212,
+          "sha256": "8b561c7c75a4776f63c4e0d0795ddb68fe66a553841db4d6bf7037c6c0fb2efe"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "8b561c7c75a4776f63c4e0d0795ddb68fe66a553841db4d6bf7037c6c0fb2efe"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/adapter.S",
+      "sha256": "08b0637025329c049c80214b14fff24c0c54ac43110d2c9ca9bf269ed2e22793",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/adapter.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 259,
+          "sha256": "50b169442e14e47f1cb9eec9e94aa970d95d5292a87a670575437f108a63c89d"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "50b169442e14e47f1cb9eec9e94aa970d95d5292a87a670575437f108a63c89d"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/dst_consumer/consumer.S",
+      "sha256": "8d4c84410834159586cd234ba206c5d54c793df633804576ec997a27751d719e",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/dst_consumer/consumer.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 403,
+          "sha256": "3522ce8b9d53e0be3f0fdbdad35156d8d679fd1eacb00954b1b8f8d879c49655"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "3522ce8b9d53e0be3f0fdbdad35156d8d679fd1eacb00954b1b8f8d879c49655"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/oracle.py",
+      "sha256": "ec8d3e6be7d88a6c1f2f8b9a3784f925269fa367d9a23d528d3b6908c08efc16",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/oracle.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 129,
+          "sha256": "49fc9fe65d20970225a1a7b1a8388e0cc556d7abdf1c1615b381e1db6d0593bf"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "49fc9fe65d20970225a1a7b1a8388e0cc556d7abdf1c1615b381e1db6d0593bf"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/enumerate.S",
+      "sha256": "da994b516ab575480e100a8862eac29c8d0a2a8a262872c200e2a3c50e8d67a4",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/enumerate.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 156,
+          "sha256": "e910ace43f8f59540c941d8b21d3a0c361d9128043e0d42794a99009f2483c78"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "e910ace43f8f59540c941d8b21d3a0c361d9128043e0d42794a99009f2483c78"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/model.py",
+      "sha256": "2bbb27c6b0e9b75ed8801dedb27bb217986006ea843a9e79ac0557a665686d0b",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/model.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 30,
+          "sha256": "a83f2ec8deac3349b5bd2cabd5c1fe545324a5c0db72e0dedb995b3a55d5c411"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "a83f2ec8deac3349b5bd2cabd5c1fe545324a5c0db72e0dedb995b3a55d5c411"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/test_lfo_four_publication_contract.py",
+      "sha256": "e5f288aade4d886e2b99380845ef466191c614883f35737237e859168aed6f71",
+      "kind": "complete authored source body",
+      "changes": "Original code unchanged; added scoped license/origin comments. ",
+      "original_path": "re/tools/coldfire_emu/test_lfo_four_publication_contract.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 86,
+          "sha256": "37a21c7a91c26f7108df073f9a0ba68e2f294ac4c1081598208fa3cf20e91c8f"
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "37a21c7a91c26f7108df073f9a0ba68e2f294ac4c1081598208fa3cf20e91c8f"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_full_native_bank_join.S",
+      "sha256": "d0e9dfd6154a2b219f44e786f1b9a9f4e3339f960ed9c54496054391530b1aa3",
+      "kind": "complete authored adjunct source",
+      "changes": "Original body unchanged; unresolved external composition/fixture imports remain declared, not replaced.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_full_native_bank_join.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "a76d320457e887f58c95c1136982b9219ea780fb8c136caaf71db060cae89088"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_native_startup_join.S",
+      "sha256": "1eda8d8a224e3d9461ef12ff3110f586f5df1f8581cb98f36679a54b6279a761",
+      "kind": "complete authored adjunct source",
+      "changes": "Original body unchanged; unresolved external composition/fixture imports remain declared, not replaced.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_native_startup_join.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 26
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "2520d9f97b2174b1096eb443991ddef2df99eb0393352f59dd02f98348704247"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_persistence_startup_transaction.S",
+      "sha256": "38ceae1c03506566716e5aab87d397ced68cc24ff880db4b6e1911843478f0c2",
+      "kind": "complete authored adjunct source",
+      "changes": "Original body unchanged; unresolved external composition/fixture imports remain declared, not replaced.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_persistence_startup_transaction.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 26
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "89db310d9832f1b1390f4dfda3855aa3ca4592f5c8be3aee4067a1f2a0a9383f"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_production_backing.S",
+      "sha256": "5f3a8bf354e827562de59160b6bed10b783c3dfd489bc8ae118ab70ac7c178af",
+      "kind": "complete authored adjunct source",
+      "changes": "Original body unchanged; unresolved external composition/fixture imports remain declared, not replaced.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_production_backing.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 14
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "6a0e831b866a8f177c95c8bb138d0282daa79f4d914b4c8d0f3d184d7e0289b6"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_menu_retirement_join.S",
+      "sha256": "e68759cd088ed695cbd70d1e98f9b5665555f21f30974a6607ede97243bebc12",
+      "kind": "complete authored adjunct source",
+      "changes": "Original body unchanged; unresolved external composition/fixture imports remain declared, not replaced.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_menu_retirement_join.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 10
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "f0b16b7ceca6c8cff5ed577a778606f55e10bcd33269a77cda5d4a7d882a6186"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/bridge.S",
+      "sha256": "924c85c784b95c9b9e63201cc3ddf2065ecf538a1431a67bfbb5a0be62293ffa",
+      "kind": "complete authored adjunct source",
+      "changes": "Original body unchanged; unresolved external composition/fixture imports remain declared, not replaced.",
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/bridge.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 57
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "f5fd8307e35e1537ec29ba9f145de9ba7ea5014e68b1a7548c0b80c46455a558"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_runtime_binding_core.py",
+      "sha256": "57e74849f24528468960df4724d39ae0f4ae049fc80865a9dc58dc51a19d6f28",
+      "kind": "complete authored adjunct source",
+      "changes": "Original body unchanged; unresolved external composition/fixture imports remain declared, not replaced.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_runtime_binding_core.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 93
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "3179ca4cfc5823e4fbede7bad7debce23f1ba9e81180d5b3527ae6f05412e0d9"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_persistence_speed_join.py",
+      "sha256": "019fe1eea45485af42426c31de288c1127669644e34580b12ef2b246b833d05b",
+      "kind": "complete authored adjunct source",
+      "changes": "Original body unchanged; unresolved external composition/fixture imports remain declared, not replaced.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_persistence_speed_join.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 100
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "869b412a9975851d331755a956edef36c3e3a054f1f83b1b49c5345dc254dd78"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_persistence_ui_join.py",
+      "sha256": "d312c742e132d0f8184ae5972e14d451b9bcd47280e9ac8501354e285de16d1b",
+      "kind": "complete authored adjunct source",
+      "changes": "Original body unchanged; unresolved external composition/fixture imports remain declared, not replaced.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_persistence_ui_join.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 85
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "4faa923187e01a8fdfcd5688f27d173f49a6a2ac01d723671148e5235b479bb1"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_owned_sector_padded_save.py",
+      "sha256": "7073dba68db3d6822affd5c8e0050463b373f0d40d9e0dd1e9c5fad9a70fa2c6",
+      "kind": "complete authored adjunct source",
+      "changes": "Original body unchanged; unresolved external composition/fixture imports remain declared, not replaced.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_owned_sector_padded_save.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 96
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "da451cd05683249a3852ba991831295c74d1b9fc3a8fa08518b7645f16797747"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_owned_temporary_incoming.py",
+      "sha256": "e19cd35396ccf771dc4cb327051f9582ee9e733081068d50f23275c00a42d271",
+      "kind": "complete authored adjunct source",
+      "changes": "Original body unchanged; unresolved external composition/fixture imports remain declared, not replaced.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_owned_temporary_incoming.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 109
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "2da06597488a850ca654b693d54834380a76de1500dafb55a55093e268ae5976"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_pending_state_contract.py",
+      "sha256": "fa54e62c8544c112384689fe2bcf260a422b32d06d31e8f581f8048450643625",
+      "kind": "complete authored adjunct source",
+      "changes": "Original body unchanged; unresolved external composition/fixture imports remain declared, not replaced.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_pending_state_contract.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 118
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "fe55cd9ffbf078109f49767e22cc999aebc0acc1dd0673876f4b3878d7f2fadf"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_pending_cache_contract.py",
+      "sha256": "219c10cce251389de153a7e08ac2563c5731676e3f0c3decbcef0cf31f668d46",
+      "kind": "complete authored adjunct source",
+      "changes": "Original body unchanged; unresolved external composition/fixture imports remain declared, not replaced.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_pending_cache_contract.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 89
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "5c2a7f61ed1f3f55c87d0d382077a833eefd84747ece415b6286bef84f6ee126"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_clear_shim.S",
+      "sha256": "d64f971bc19a0ba1a80bb7a98a120c2b34afb48e3e279d8107e2f006bfdfd7e6",
+      "kind": "partial authored adjunct source",
+      "changes": "Exact stock LEA replay at line33 omitted; resume/A0 ingress requires official-input adaptation. No replacement target logic.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_clear_shim.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 32
+        },
+        {
+          "start": 34,
+          "end": 36
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "5433d554d59441f4aeb072a935c39cfcd42b8d614c71087d3cab2f5d15c5abbb"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_private_rng.S",
+      "sha256": "3509639b4a6691a0cbc01f32137cc11eeb36a9ebe63f920aa4d74046b41ef11c",
+      "kind": "partial authored adjunct source",
+      "changes": "Entire stock fallback92\u201397 including the displaced load/continuation omitted; standalone reject_fault is historical, not production recovery. No replacement target logic.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_private_rng.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 91
+        },
+        {
+          "start": 98,
+          "end": 103
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "d878f83bf27465ce1b8e0544472f2a6cf3cce4f3d80a7def456654484ff25fdf"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/lfo_four_random_join.S",
+      "sha256": "cd1c71e18eb7c7cddee2005275b303542c16b3c99abe051643b593e80b808df1",
+      "kind": "partial authored adjunct source",
+      "changes": "Only stock-fallback replay422\u2013426 omitted; original containment tail retained. No replacement target logic.",
+      "original_path": "re/tools/coldfire_emu/lfo_four_random_join.S",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 421
+        },
+        {
+          "start": 427,
+          "end": 431
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "d2c32fd5f62131d450faaba7ccc3ab9d21e3ec433d312c77ca2eac139e15bda9"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_extended_controls.py",
+      "sha256": "e811930344de3f5ff152af3ef192575e97b47068cd84bac77316741c101ae71d",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/coldfire_emu/lfo2_extended_controls.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 390
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "c756fba0ef69838a933ff6cbcd33f734526dcc05e8dbe453e6104ef84a675ed2"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_project_edit_adapter.py",
+      "sha256": "2e1bfd51c1d9280a5fcc93ee068578c60d7938b4b33af5ba883b423a83e69c5a",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/coldfire_emu/lfo2_project_edit_adapter.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 438
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "423a2d2d9cb4f77e87674749e03e570119997731a8c158cd78b73266367a6958"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_project_editor_session.py",
+      "sha256": "221ee212db499d33b204b95a28b319ef960f267073272d50fd757f1fc82d1eee",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/coldfire_emu/lfo2_project_editor_session.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 151
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "43c0f2cc5ea490083ef52a2411498270a85756f33ceeb3b540257a24cde9624b"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_ui_config_bank.py",
+      "sha256": "2cee2f70e1a304743c2c35522c3884a5550e5fcf6686326df28a6e62339944bc",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/coldfire_emu/lfo2_ui_config_bank.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 593
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "d42d8c3e388128a65f2339687bec3283d7baea603da960cfcf561f54b0d92d7e"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_ui_gesture.py",
+      "sha256": "5b09a9cebf81184b6e25ee78765913c488678160d0ef4a4e45fb1eb55aee1d10",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/coldfire_emu/lfo2_ui_gesture.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 527
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "eba0d5b7e6e2fb41107d771026c1037f7961b5b5a5bb1f61c10a6c7997c258d3"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/coldfire_emu/lfo2_ui_session.py",
+      "sha256": "fae3bce9db4683bf98d9a939676ea045d190a197f2cbe5b3792d4b94fffc8076",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/coldfire_emu/lfo2_ui_session.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 152
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "9dd434894093a76b27353b02ec664c214bca4730d493cc614cba29e964ec56cc"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/coldfire_emu/test_lfo2_project_edit_adapter.py",
+      "sha256": "9685f22612709d3277dfe21cf634df58b39af4e4fea75f352153edf5fe1d0f40",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/coldfire_emu/test_lfo2_project_edit_adapter.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 251
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "ed45a9407cfd6d9cf13f45f498de53cf4fa48e7dbafe1946ac2886b1a2085bc2"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/coldfire_emu/test_lfo2_project_editor_session.py",
+      "sha256": "d2d30b63faecaa38603c13b13a6080b0a97979057d6aeb48dfa3efcd4fda9778",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/coldfire_emu/test_lfo2_project_editor_session.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 178
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "ca0373f40b581cd19f4b43ee64be8abc633fea640af1a630f33f07bce038d879"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/lfo_bank_reference.py",
+      "sha256": "7ffc1e598c7d9dbc60917239f8792c126590326e2201bec129e31b4754f3705e",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/lfo_bank_reference.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 194
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "16cdd67f1380566f56a40f20a338ba8e12ee32e71f930f7c6dc69b7225c88084"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/lfo_conditioned_bridge_20260922.py",
+      "sha256": "1c1e391ad2e83ca1662c65608fc1ac50c4b2df44c35c51b6ad2b567c05b4dd93",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/lfo_conditioned_bridge_20260922.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 100
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "cca0d5c8520d9d5e6c35d368fd95e5f031cb360d64fd1309359499d218028664"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/lfo_interposition_reference_20260918.py",
+      "sha256": "fda16dd220aae1b1bcd05f940b8c39136027b0e3dbfba4a06df1cff486ecd14b",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/lfo_interposition_reference_20260918.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 74
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "afe057e82ca2ddc90f0251f4579fac8231d2018c4041aeb08159b1be8d4c08ae"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/lfo_reference.py",
+      "sha256": "fd03124e7d25f0d2331eb1f695d55b6424b0472138d47d6bf1393551d5cb9e7d",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/lfo_reference.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 52
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "9802ed7456c09ac68adb5aaa8add3b1e8a92babab3f69076530988ec27c4fa1e"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/lfo_runtime_experiment_20260918.py",
+      "sha256": "a7418ff54bccfb1334ce92241855a004f9a7bfd093b8d940aadcc1269934befb",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/lfo_runtime_experiment_20260918.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 108
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "951ad9ad2582adb64004238a177688747bffa576c5109dec3e6c4a87286d043b"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/test_lfo_conditioned_bridge_20260922.py",
+      "sha256": "d06c8d5669ca861b1e00c6bc249cc27f5db7b95458652642357cfbd1bcb3418c",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/test_lfo_conditioned_bridge_20260922.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 121
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "b1516e926e404acd3617078da53c5189499ea15e9a735b21431eab9e5d8c3700"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/test_lfo_interposition_reference_20260918.py",
+      "sha256": "f21ccbef046bfed8ea81e309bcee503d9d1b119d8c1ba02fec8567f32c9a2d00",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/test_lfo_interposition_reference_20260918.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 116
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "e855e28f6a18299686d7b4735b994918f794727b23f51e570dc6224d548829b6"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/test_lfo_reference.py",
+      "sha256": "612a2eb99f763c0a551c74b2d33e623b08b67b64a564a2402a8d616acf6800e7",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/test_lfo_reference.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 44
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "ae56a56f58bb4a1313d5f012442b4f1ffd16d522f3a4aafb6041f2f2fafd97ef"
+    },
+    {
+      "path": "tools/machines/lfo4/source/legacy_models/test_lfo_runtime_experiment_20260918.py",
+      "sha256": "612ffa7966aa9c5414631c7e12b4581ff0ea1bba9a93c9386ef7a260146affdc",
+      "kind": "original historical contract/model/test source",
+      "changes": "Historical pitch/free/square-triangle models are explicitly outside final acceptance; dependencies stay explicit and these tests are not run.",
+      "original_path": "re/tools/test_lfo_runtime_experiment_20260918.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 52
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "6effe57d8342eae505caad55b8832c49a00b9d2247dc2f99266bafaba2c712ba"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/__init__.py",
+      "sha256": "aa15cc3b33768670d631ce3f8e86d8020fd42063131de0f9f3ba781003a52f0e",
+      "kind": "original package docstring",
+      "changes": "License/origin comments only.",
+      "original_path": "re/tools/coldfire_emu/__init__.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 1
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "aab57345d7e020e72d1da1912284b1d115472a413a9b45931c5ad85c7bbb971e"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/__init__.py",
+      "sha256": "c89f40a0feeaae77a5a623502ec34560ff3a02d2f14ef7db3135f2fc08e0f53e",
+      "kind": "original package docstring",
+      "changes": "License/origin comments only.",
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/__init__.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 1
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "717b0891ecfba8a40b2cb5761d1b3631186b52be2f7d3eb2d800ee21e93ff87b"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/__init__.py",
+      "sha256": "2d2da9628586090c529a2bdcfdd0113eb8183e1b3a9c627a4759feef66d84b61",
+      "kind": "original package docstring",
+      "changes": "License/origin comments only.",
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/__init__.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 1
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "5db499549fe5f3c959a1ced333c0f5bd79eed2b89caca3439b117019403ee3e5"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/__init__.py",
+      "sha256": "6ccbe08dbeb101d780f87e0b27d7e0190987acf42d07e4e2a0f02f97ecd346b1",
+      "kind": "original package docstring",
+      "changes": "License/origin comments only.",
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/__init__.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 1
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "5b836cde910bea0cb6416f1f53b150f3dd7312b9183cf4428cbd05c401453329"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/dst_consumer/__init__.py",
+      "sha256": "e4e93fe0557b5cde91d675ad4c5de4b94ed2b22b45afa45645c4ba2c1b66c34c",
+      "kind": "original package docstring",
+      "changes": "License/origin comments only.",
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/dst_consumer/__init__.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 1
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "cb5e8a6cec83f154fa484ea876878d42183fe9df891a45ab312b000562091701"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/test_contract_host.py",
+      "sha256": "a9a4e43d182a2ff98a5b7200df9cc2523b3efe4ab7e9e7710762e1c99a876461",
+      "kind": "unchanged original synthetic test subset",
+      "changes": "Original selected methods unchanged; private assembler/firmware classes and imports omitted.",
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/test_candidate.py",
+      "original_ranges": [
+        {
+          "start": 11,
+          "end": 23
+        },
+        {
+          "start": 27,
+          "end": 39
+        },
+        {
+          "start": 41,
+          "end": 52
+        },
+        {
+          "start": 54,
+          "end": 60
+        },
+        {
+          "start": 62,
+          "end": 66
+        },
+        {
+          "start": 68,
+          "end": 77
+        },
+        {
+          "start": 80,
+          "end": 90
+        },
+        {
+          "start": 92,
+          "end": 94
+        },
+        {
+          "start": 98,
+          "end": 102
+        },
+        {
+          "start": 104,
+          "end": 115
+        },
+        {
+          "start": 117,
+          "end": 127
+        },
+        {
+          "start": 129,
+          "end": 135
+        },
+        {
+          "start": 137,
+          "end": 140
+        },
+        {
+          "start": 142,
+          "end": 148
+        },
+        {
+          "start": 150,
+          "end": 153
+        },
+        {
+          "start": 155,
+          "end": 161
+        },
+        {
+          "start": 163,
+          "end": 166
+        },
+        {
+          "start": 168,
+          "end": 174
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "3210f76614c20cd28d63903397bbcde54c6b6638e7b06ac8677585386b21322b"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/test_oracle_host.py",
+      "sha256": "b732f8d405a3fbd1ce60054ba921f6af5db96cfa5a263d29ef7d5f5bf37fe865",
+      "kind": "unchanged original synthetic test subset",
+      "changes": "Original selected methods unchanged; private assembler/firmware classes and imports omitted.",
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/test_adapter.py",
+      "original_ranges": [
+        {
+          "start": 18,
+          "end": 47
+        },
+        {
+          "start": 51,
+          "end": 74
+        },
+        {
+          "start": 76,
+          "end": 78
+        },
+        {
+          "start": 80,
+          "end": 92
+        },
+        {
+          "start": 94,
+          "end": 100
+        },
+        {
+          "start": 102,
+          "end": 109
+        },
+        {
+          "start": 111,
+          "end": 115
+        },
+        {
+          "start": 117,
+          "end": 126
+        },
+        {
+          "start": 128,
+          "end": 136
+        },
+        {
+          "start": 138,
+          "end": 143
+        },
+        {
+          "start": 145,
+          "end": 149
+        },
+        {
+          "start": 151,
+          "end": 161
+        },
+        {
+          "start": 163,
+          "end": 169
+        },
+        {
+          "start": 171,
+          "end": 177
+        },
+        {
+          "start": 179,
+          "end": 187
+        },
+        {
+          "start": 189,
+          "end": 194
+        },
+        {
+          "start": 196,
+          "end": 201
+        },
+        {
+          "start": 203,
+          "end": 213
+        },
+        {
+          "start": 215,
+          "end": 224
+        },
+        {
+          "start": 226,
+          "end": 239
+        },
+        {
+          "start": 242,
+          "end": 247
+        },
+        {
+          "start": 249,
+          "end": 253
+        },
+        {
+          "start": 255,
+          "end": 258
+        },
+        {
+          "start": 260,
+          "end": 267
+        },
+        {
+          "start": 269,
+          "end": 277
+        },
+        {
+          "start": 279,
+          "end": 281
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "3753242fd9924df1d7cc20f734232255b6226f7fcf86f446c8d33290c1f4a1f5"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/test_model_host.py",
+      "sha256": "c84248937af214fbc1e8d0b950a96cb847c25144fa4a5c6ed7b93a8a1d4084f3",
+      "kind": "unchanged original synthetic test subset",
+      "changes": "Original selected methods unchanged; private assembler/firmware classes and imports omitted.",
+      "original_path": "re/tools/coldfire_emu/live_profile_candidate/native_adapter/safe_enum/test_enum.py",
+      "original_ranges": [
+        {
+          "start": 15,
+          "end": 21
+        },
+        {
+          "start": 45,
+          "end": 48
+        },
+        {
+          "start": 67,
+          "end": 75
+        },
+        {
+          "start": 77,
+          "end": 83
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "7032760150bcce37af6615bbf5ba29cd93dd125cdce87dfd0398515c2579ad5b"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/menu_rows.py",
+      "sha256": "8e34020468768e5251ac6ef87def3c0ab11f95cd09ea8cbebad93651307b9a15",
+      "kind": "original host menu-row helper",
+      "changes": "Original function unchanged; exact extracted word-reader replaces heavy fixture import.",
+      "original_path": "re/tools/coldfire_emu/test_lfo_four_menu_transaction_join.py",
+      "original_ranges": [
+        {
+          "start": 18,
+          "end": 22
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "4ea770d133b0318268376009025c4bd2179acf91e7354f254227e3bed89105ff"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/word_io.py",
+      "sha256": "dff2005d254c1c0007457371899ef5a2762e9a894c5a1fae9604a4d1bcbb7cfa",
+      "kind": "original pure word-reader helper",
+      "changes": "Exact original memory-reader function; backend and stock code omitted.",
+      "original_path": "re/tools/coldfire_emu/scale_native_keyboard.py",
+      "original_ranges": [
+        {
+          "start": 33,
+          "end": 34
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "5d997564bed5d586b5dd816dddd756480c4424d239abe0a9c7a9d21d687cf2a2"
+    },
+    {
+      "path": "tools/machines/lfo4/source/coldfire_emu/test_menu_rows_host.py",
+      "sha256": "bb46cd0f5cc1081b04c2819ee737a5d4674bf4b6abb99d6f6c2d0aee6d6d6ab6",
+      "kind": "original synthetic menu-row tests",
+      "changes": "One import redirects to the exact extracted original helper.",
+      "original_path": "re/tools/coldfire_emu/test_lfo_four_menu_transaction_rows.py",
+      "original_ranges": [
+        {
+          "start": 1,
+          "end": 20
+        }
+      ],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "4553a261917713547e091ef0518b07cee6d41dbc6b4853d408d7d1c1d50b5cbe"
+    },
+    {
+      "path": "tools/lfo_foundation/LICENSE",
+      "sha256": "812dad0c214444d1ca68fa49930d25f227b94537a146e8ce3bb75c334c3f877f",
+      "kind": "previously prepared original host foundation",
+      "changes": "Byte-identical to the unpublished scoped-MIT host draft.",
+      "original_path": "cycles-lfo-foundation-draft/tools/lfo_foundation/LICENSE",
+      "original_ranges": [],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "812dad0c214444d1ca68fa49930d25f227b94537a146e8ce3bb75c334c3f877f"
+    },
+    {
+      "path": "tools/lfo_foundation/__init__.py",
+      "sha256": "e9a75802fde3965614e6a77597620c3185fa4cfc9af699ac7c79fc69f9e56795",
+      "kind": "previously prepared original host foundation",
+      "changes": "Byte-identical to the unpublished scoped-MIT host draft.",
+      "original_path": "cycles-lfo-foundation-draft/tools/lfo_foundation/__init__.py",
+      "original_ranges": [],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "e9a75802fde3965614e6a77597620c3185fa4cfc9af699ac7c79fc69f9e56795"
+    },
+    {
+      "path": "tools/lfo_foundation/publication.py",
+      "sha256": "f61bfecda24a0aac0ff96b5424a20698363ca750a48e260e11595ba88b4aa020",
+      "kind": "previously prepared original host foundation",
+      "changes": "Byte-identical to the unpublished scoped-MIT host draft.",
+      "original_path": "cycles-lfo-foundation-draft/tools/lfo_foundation/publication.py",
+      "original_ranges": [],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "f61bfecda24a0aac0ff96b5424a20698363ca750a48e260e11595ba88b4aa020"
+    },
+    {
+      "path": "tools/lfo_foundation/settings.c",
+      "sha256": "dffad2eb723b1449938db9b4451a9c5ed6d619565214b503849ba3137167b594",
+      "kind": "previously prepared original host foundation",
+      "changes": "Byte-identical to the unpublished scoped-MIT host draft.",
+      "original_path": "cycles-lfo-foundation-draft/tools/lfo_foundation/settings.c",
+      "original_ranges": [],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "dffad2eb723b1449938db9b4451a9c5ed6d619565214b503849ba3137167b594"
+    },
+    {
+      "path": "tools/lfo_foundation/settings.h",
+      "sha256": "4451af5f0be26d8a7b38fec566349bd73b905e1674cdaf922aab0760377f30a7",
+      "kind": "previously prepared original host foundation",
+      "changes": "Byte-identical to the unpublished scoped-MIT host draft.",
+      "original_path": "cycles-lfo-foundation-draft/tools/lfo_foundation/settings.h",
+      "original_ranges": [],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "4451af5f0be26d8a7b38fec566349bd73b905e1674cdaf922aab0760377f30a7"
+    },
+    {
+      "path": "tools/test_lfo_foundation.py",
+      "sha256": "ab4eda8e36dc68568809a9f0d0b99e410efb662b30642f5962a628cf2b94fc5b",
+      "kind": "previously prepared original host foundation",
+      "changes": "Byte-identical to the unpublished scoped-MIT host draft.",
+      "original_path": "cycles-lfo-foundation-draft/tools/test_lfo_foundation.py",
+      "original_ranges": [],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "ab4eda8e36dc68568809a9f0d0b99e410efb662b30642f5962a628cf2b94fc5b"
+    },
+    {
+      "path": "notes/41-fondations-lfo.md",
+      "sha256": "38c53990913097ddaa4bab4589311111afb2c6a7c5a7164f1504d26b7dfde127",
+      "kind": "previously prepared original host foundation",
+      "changes": "Byte-identical to the unpublished scoped-MIT host draft.",
+      "original_path": "cycles-lfo-foundation-draft/notes/41-fondations-lfo.md",
+      "original_ranges": [],
+      "license": "MIT \u2014 this explicit contributed original path only",
+      "original_sha256": "38c53990913097ddaa4bab4589311111afb2c6a7c5a7164f1504d26b7dfde127"
+    },
+    {
+      "path": "notes/42-prototype-lfo4.md",
+      "sha256": "8cd4e8b6c7233cf6b9d36cf2f06f7ab08512509b239c87fff2ec2165f3572aec",
+      "kind": "new review documentation",
+      "changes": "",
+      "original_path": null,
+      "original_ranges": [],
+      "license": "MIT \u2014 this explicit contributed original path only"
+    },
+    {
+      "path": "notes/README.md",
+      "sha256": "f0442ecd8ce7f23e9a0a36ccd7abd3241842850596d129f31800551b6814f27f",
+      "kind": "two added original note-index rows",
+      "changes": "Only the two appended rows are contributed/licensed; public baseline text is unchanged.",
+      "original_path": null,
+      "original_ranges": [],
+      "license": "MIT \u2014 this explicit contributed original path only"
+    },
+    {
+      "path": "tools/machines/lfo4/DEPENDENCIES.json",
+      "sha256": "5700c3270e1c487875f7126ba698bf5708373c39efea61e101ecb7e1db1b50b9",
+      "kind": "new review documentation",
+      "changes": "Publication documentation only: narrow owner provenance confirmation and removal of private workflow authorization wording; all technical qualification caveats retained.",
+      "original_path": null,
+      "original_ranges": [],
+      "license": "MIT \u2014 this explicit contributed original path only"
+    },
+    {
+      "path": "tools/machines/lfo4/EXCLUSIONS.json",
+      "sha256": "f5b5161f04dc67a152769e9a3b1eb0226f8e95beda3ec4a5fc81303b2382b841",
+      "kind": "new review documentation",
+      "changes": "",
+      "original_path": null,
+      "original_ranges": [],
+      "license": "MIT \u2014 this explicit contributed original path only"
+    },
+    {
+      "path": "tools/machines/lfo4/README.md",
+      "sha256": "6fa42f266cc27d7f7dff5ddfdd38dccfa3f116fc26186bd6f69592b082bb0f40",
+      "kind": "new review documentation",
+      "changes": "Publication documentation only: narrow owner provenance confirmation and removal of private workflow authorization wording; all technical qualification caveats retained.",
+      "original_path": null,
+      "original_ranges": [],
+      "license": "MIT \u2014 this explicit contributed original path only"
+    },
+    {
+      "path": "tools/machines/lfo4/LICENSE",
+      "sha256": "0bbceb1285f10142ea033584b8e3ec26cd01065f5bf69d690f9421ff867fc55e",
+      "kind": "new review documentation",
+      "changes": "",
+      "original_path": null,
+      "original_ranges": [],
+      "license": "MIT \u2014 this explicit contributed original path only"
+    }
+  ],
+  "exclusions_file": "EXCLUSIONS.json",
+  "dependency_file": "DEPENDENCIES.json",
+  "original_code_retained": true,
+  "new_firmware_implementation": false,
+  "target_executed": false,
+  "public_write": false,
+  "full_feature_qualification": false,
+  "license_scope": "Only explicit original contributed paths/addition ranges; no root license."
+}
