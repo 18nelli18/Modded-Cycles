@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-05-03">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-05-03">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-06-01">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-06-01">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -51,6 +51,7 @@
         <li><a href="#arp"><span data-l="en">Arpeggiator</span><span data-l="fr">Arpégiateur</span></a></li>
         <li><a href="#tempo"><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></a></li>
         <li><a href="#boot-anim"><span data-l="en">Startup animation</span><span data-l="fr">Animation de démarrage</span></a></li>
+        <li><a href="#multiline"><span data-l="en">Multi-line browser</span><span data-l="fr">Navigateur sur plusieurs lignes</span></a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
         <li><a href="#stock"><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></a></li>
         <li><a href="#recovery"><span data-l="en">Recovery</span><span data-l="fr">Secours</span></a></li>
@@ -483,8 +484,38 @@
         </dl>
       </section>
 
+      <section id="multiline">
+        <h2><span class="n">13</span><span data-l="en">Multi-line browser</span><span data-l="fr">Navigateur sur plusieurs lignes</span></h2>
+        <p class="by"><span data-l="en">From an idea and a script by a community member</span><span data-l="fr">D'après une idée et un script d'un membre de la communauté</span></p>
+        <p class="lede"><span data-l="en">The browser shows three names at once in a small font, instead of one in big letters: you see what comes before and after while you look for a sound.</span><span data-l="fr">Le navigateur affiche trois noms à la fois en petite police, au lieu d'un seul en gros caractères : vous voyez ce qui précède et ce qui suit pendant que vous cherchez un son.</span></p>
+        <div class="scroll fig">
+          <div class="lcd-box" aria-hidden="true">
+            <ol>
+              <li><span>&nbsp;</span>&#9632; Kicks</li>
+              <li class="a"><span>&nbsp;</span>BD Classic</li>
+              <li><span>&gt;</span>SD Vintage Brushed</li>
+            </ol>
+          </div>
+          <dl class="facts" style="margin:0">
+            <div><dt>&gt;</dt><dd><span data-l="en">the name under the cursor</span><span data-l="fr">le nom sous le curseur</span></dd></div>
+            <div><dt><span data-l="en">Highlighted</span><span data-l="fr">En surbrillance</span></dt><dd><span data-l="en">the sound loaded on the track</span><span data-l="fr">le son chargé sur la piste</span></dd></div>
+            <div><dt>&#9632;</dt><dd><span data-l="en">a folder</span><span data-l="fr">un dossier</span></dd></div>
+          </dl>
+        </div>
+        <ol>
+          <li><span data-l="en">Open the preset menu as usual: <b>FUNC</b> + <b>MACHINES</b>.</span><span data-l="fr">Ouvrez le menu des presets comme d'habitude : <b>FUNC</b> + <b>MACHINES</b>.</span></li>
+          <li><span data-l="en">Move through the list as before: the &gt; follows the cursor, and the list scrolls when you go past the first or the last line. The arrows on the right show, as before, whether you can still go up or down the list.</span><span data-l="fr">Parcourez la liste comme avant : le &gt; suit le curseur, et la liste défile quand vous dépassez la première ou la dernière ligne. Les flèches à droite indiquent, comme avant, si vous pouvez encore monter ou descendre dans la liste.</span></li>
+        </ol>
+        <dl class="facts">
+          <div><dt><span data-l="en">Where</span><span data-l="fr">Où</span></dt><dd><span data-l="en">the browser of sounds and folders, and of the Model-TG Sampler's samples. The rest of the screen (title, position, Fn=Menu) does not change.</span><span data-l="fr">le navigateur des sons et des dossiers, et des échantillons du Sampler de Model-TG. Le reste de l'écran (titre, position, Fn=Menu) ne change pas.</span></dd></div>
+          <div><dt><span data-l="en">Long names</span><span data-l="fr">Noms longs</span></dt><dd><span data-l="en">cut at the edge of the screen. With <a href="#scroll">Scrolling names</a> or Model-TG, the one under the cursor scrolls; the others stay put.</span><span data-l="fr">coupés au bord de l'écran. Avec <a href="#scroll">Noms qui défilent</a> ou Model-TG, celui sous le curseur défile ; les autres ne bougent pas.</span></dd></div>
+          <div><dt><span data-l="en">Mods</span><span data-l="fr">Mods</span></dt><dd><span data-l="en">goes with every other mod, Model-TG and the Syntakt engines included.</span><span data-l="fr">se combine avec tous les autres mods, Model-TG et moteurs du Syntakt compris.</span></dd></div>
+          <div><dt><span data-l="en">Status</span><span data-l="fr">Statut</span></dt><dd><span data-l="en">checked in the emulator on the OS's own drawing code and fonts, alone and with the other mods. Experimental until tested on a Model:Cycles.</span><span data-l="fr">vérifié en émulation sur le code de dessin et les polices de l'OS, seul et avec les autres mods. Expérimental jusqu'à un test sur un Model:Cycles.</span></dd></div>
+        </dl>
+      </section>
+
       <section id="samples">
-        <h2><span class="n">13</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">14</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -499,13 +530,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">14</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">15</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">With Syntakt engines or Model-TG's Sampler, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt ou le Sampler de Model-TG, remettez d'abord vos pistes sur une machine d'origine.</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">15</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">16</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -519,7 +550,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">16</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">17</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -582,8 +613,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-05-03"></script>
-<script src="../assets/cycles.js?v=2026-10-05-03"></script>
-<script src="../assets/site.js?v=2026-10-05-03"></script>
+<script src="../assets/release.js?v=2026-10-06-01"></script>
+<script src="../assets/cycles.js?v=2026-10-06-01"></script>
+<script src="../assets/site.js?v=2026-10-06-01"></script>
 </body>
 </html>

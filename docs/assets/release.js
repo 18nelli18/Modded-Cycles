@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.22", date: "2026-10-06", changes: [
+    { en: "New mod, Multi-line browser: the preset browser shows three names at once in a small font, instead of one in big letters. A > marks the name under the cursor, the sound loaded on the track stays highlighted, and folders get a small mark before their name. From an idea and a script by a community member",
+      fr: "Nouveau mod, Navigateur sur plusieurs lignes : le navigateur de presets affiche trois noms à la fois en petite police, au lieu d'un seul en gros caractères. Un > signale le nom sous le curseur, le son chargé sur la piste reste en surbrillance, et les dossiers ont un petit repère devant leur nom. D'après une idée et un script d'un membre de la communauté" },
+    { en: "It works for sounds, folders and the Model-TG Sampler's samples. With Scrolling names or Model-TG, only the name under the cursor scrolls; the others stay put",
+      fr: "Il marche pour les sons, les dossiers et les échantillons du Sampler de Model-TG. Avec Noms qui défilent ou Model-TG, seul le nom sous le curseur défile ; les autres ne bougent pas" },
+    { en: "Checked in the emulator on the OS's own drawing code and fonts; experimental until tested on a Model:Cycles. It goes with every other mod, Model-TG and the Syntakt engines included",
+      fr: "Vérifié en émulation sur le code de dessin et les polices de l'OS ; expérimental jusqu'à un test sur un Model:Cycles. Il se combine avec tous les autres mods, Model-TG et moteurs du Syntakt compris" },
+  ] },
   { version: "1.21", date: "2026-10-05", changes: [
     { en: "New mod, Startup animation: when the Model:Cycles starts, the four rounded squares of the modded-cycles logo pop in one by one, the top right one hollows out, then “modded-cycles” types itself underneath, instead of the original tile animation",
       fr: "Nouveau mod, Animation de démarrage : au démarrage du Model:Cycles, les quatre carrés arrondis du logo modded-cycles apparaissent un par un, celui en haut à droite se creuse, puis « modded-cycles » s'écrit dessous, à la place de l'animation de carreaux d'origine" },

@@ -230,6 +230,31 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim
 | `model-tg,boot-anim` | `cbec181684805bf37dd07c62dc47f7daf35e6abab530a3f3b06ec5db590278ec` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim` | `d468a729f32780870dbd591e52e8c782a5cdd347459ac1c61ef35473e26c9323` |
 
+### Navigateur sur plusieurs lignes
+
+`tweaks/model-cycles_OS1.13/44-multiline-browser.json` est produit par `tools/gen_multiline_browser.py`, qui assemble
+`tools/machines/multiline_browser/multiline_browser.S` (370 o) dans le masque de sprite 47×47 libéré `0x401904b4`
+(`tools/sprites.py`) : le navigateur de presets (sons, dossiers, échantillons de Model-TG) montre 3 lignes en petite police au
+lieu d'une, « > » devant la ligne du curseur, le son chargé inversé, un repère de 7 px pour les dossiers. Quatre accroches dans
+le dessin `0x400a539c`, huit constantes, et deux retouches de la liste dans un sous-dossier de +Drive (`0x4003f622`,
+`0x400406a8`) pour que le curseur y descende sur les 3 lignes au lieu de rester sur la 1ʳᵉ ; l'accroche du défilement des noms longs (`0x400a55a1`, browser-scroll et Model-TG)
+n'est pas touchée et ne sert qu'à la ligne du curseur ([note 40](notes/40-navigateur-multiligne.md)). La preuve fait tourner le
+vrai dessin, avec les vraies polices, dans un vrai écran de l'OS ; `--png` écrit l'écran d'origine et le modifié :
+```sh
+python3 tools/gen_multiline_browser.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/emu/test_multiline_browser.py --cycles model-cycles_OS1.13.syx [--png dossier] \
+    [--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max --syntakt Syntakt_OS1.42.syx]
+```
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `multiline-browser` | `75a5054403de65968e07bed84f3fcb183719b965626fd0c042b29bc963f8af31` |
+| `6ch-usbup,multiline-browser` | `ce1681cd208f4ca812f25b9386ad64fd0c4aa5957314cde5ba6f77a302d2c49f` |
+| `browser-scroll,multiline-browser` | `32e4a6b8e3897a1faa8ab12b33cd8e82b5a214cd3e91b80824ab17bc9d6042c1` |
+| `model-tg,multiline-browser` | `428e7bc4f18fde071a201544266d97012dd41556220867b60b59df193d861221` |
+| `boot-anim,multiline-browser` | `120860e74d59d207951128ed926d8e0196d9d16142c6a67b004d64510bed339e` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,multiline-browser` | `0787cf23a48549870bb9580b3b99e284c72056c677986671659e7f949d67d1e2` |
+
 ### Écoute d'un pas en pause
 
 `trig-preview` (et sa copie dans Model-TG) accepte le séquenceur en pause, où le met un Stop MIDI reçu même à l'arrêt : 3 octets
