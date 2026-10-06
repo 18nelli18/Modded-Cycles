@@ -160,3 +160,10 @@ details.trouble{margin-top:24px}
   .feat-guide{margin-left:0}
   .bar{gap:4px}
 }
+.test-scope{margin:0 0 28px;padding:20px;border:1px solid var(--line);border-left:3px solid var(--warn);font-size:16px;line-height:1.5}
+.test-scope h2{font-size:21px;margin:0 0 12px}
+.test-scope p{margin:0 0 12px}
+.test-scope .test-limit{color:var(--warn)}
+.test-scope summary{cursor:pointer;font-weight:600}
+.test-scope details[open] summary{margin-bottom:12px}
+.test-scope details p:last-child{margin-bottom:0}

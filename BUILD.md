@@ -230,6 +230,48 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim
 | `model-tg,boot-anim` | `cbec181684805bf37dd07c62dc47f7daf35e6abab530a3f3b06ec5db590278ec` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim` | `d468a729f32780870dbd591e52e8c782a5cdd347459ac1c61ef35473e26c9323` |
 
+### Accords de gamme sur TRIG 1–16
+
+`44-chord-keys.json` est généré depuis `tools/machines/chord_keys/` par `tools/gen_chord_keys.py`
+(GCC m68k-elf 16.2.0, binutils 2.47). **Fonctionnement rapporté par Nico sur son Model:Cycles le 06/10/2026,
+avec Chord Keys seul, sans aucun autre mod. Les combinaisons sont vérifiées uniquement en logiciel,
+sans essai sur un Cycles réel.** Sélectionnez une piste CHORD,
+puis activez **Keys** dans **FUNC + RETRIG**. Root, Scale et I–VII choisissent la tonique, le mode
+et les extensions diatoniques ; le majeur s’affiche **MAJ**. Hors édition des pas, TRIG 1–7 jouent I–VII,
+8–14 les mêmes degrés une octave plus haut, 15–16 I–II deux octaves plus haut. Les grands pads T1–T6
+conservent leur sélection et leur jeu stock ; les accords des TRIG ne déclenchent pas le retrig/arpège.
+Réglages par piste, enregistrés avec le pattern. **I–VII** seuls choisissent les extensions ; **SHAPE** règle
+la disposition (**BASE**, **CLS0–3**, **OPN0–3**) et **COLOR** les niveaux, sans changement d’octave. Sur un ancien
+pattern Keys ON, commencer sur BASE et COLOR 32 car SHAPE avait auparavant été ignoré. Model-TG est explicitement incompatible.
+
+Quatorze masques identiques sont redirigés avant d'y placer les 5 035 octets de code, constantes et état ; seule la section 3 change. Aucun firmware
+n'est distribué dans le dépôt. Génération, preuve autonome, puis preuve avec tous les mods compatibles :
+
+```sh
+python3 tools/test_chord_keys.py
+python3 tools/gen_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx --check
+python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx
+python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx \
+  --with 6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,syntakt-sd-cp-toy-bits-swarm \
+  --syntakt firmware/Syntakt_OS1.42.syx
+python3 tools/build.py -i firmware/model-cycles_OS1.13.syx -t chord-keys \
+  -o build/model-cycles_OS1.13_chord-keys-experimental.syx
+```
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `chord-keys` | `47e399fbe52dfdac44a96ff08cef3bd40beeed1b38e3fb64764af96ddda4e4cf` |
+| `6ch-usbup,chord-keys` | `fc0476aef34218fb4904d9994c06f3a35853e213a125237c5b4a5b4022f431de` |
+| `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,chord-keys` | `1416a46ee7e7168dee5aa4409c9ba0797e280ddbc6b4aadeaa616923e910fc5b` |
+| `6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-sd-cp-toy-bits-swarm` | `39f8455e01389dde13578a3509b43f2f0140b7fe324bb6f790efa9ac0f11701c` |
+
+La preuve exécute les touches, pads, menus, sauvegardes et calculs CHORD du véritable OS ; 14 000 accords
+BASE, 2 205 combinaisons SHAPE et les chemins inactifs sont comparés à la référence. COLOR, les frontières de
+SHAPE, les libellés et le plafond aigu du premier opérateur sont contrôlés. Les frontières simulées, le coût en instructions et
+les vérifications restantes sur la machine sont détaillés dans [la note 40](notes/40-clavier-accords-diatoniques.md).
+Les accords étendus restent limités à quatre notes ; l'enregistrement conserve la fondamentale et le réglage
+du degré s'applique à la relecture, sans enregistrer une extension différente par trig.
+
 ### Écoute d'un pas en pause
 
 `trig-preview` (et sa copie dans Model-TG) accepte le séquenceur en pause, où le met un Stop MIDI reçu même à l'arrêt : 3 octets

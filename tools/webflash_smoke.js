@@ -165,9 +165,9 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 12).join() === "6ch-usbup,model-tg,model-tg-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,syntakt-sd,syntakt-tg-sd"
-      && ids.length === 10 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
-      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 10,
+    check(ids.slice(0, 13).join() === "6ch-usbup,model-tg,model-tg-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-sd,syntakt-tg-sd"
+      && ids.length === 11 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 11,
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG: ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
@@ -175,7 +175,7 @@ async function main() {
       && srcs.every((x) => x.endsWith("?v=" + w.MC_BUILD)), "scripts loaded with ?v=<build> (no stale cache): " + srcs.join());
     check(doc.getElementById("compat").hidden, "no compatibility banner in a good browser");
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-usb6,feat-model-tg,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-trig-hold,feat-arp,feat-tempo-max,feat-boot-anim,feat-syntakt", "10 feature cards: " + JSON.stringify(feats));
+    check(feats.join() === "feat-chord-keys,feat-usb6,feat-model-tg,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-trig-hold,feat-arp,feat-tempo-max,feat-boot-anim,feat-syntakt", "11 feature cards: " + JSON.stringify(feats));
     const tags = [...doc.querySelectorAll("#features .tag")].map((x) => x.textContent);
     const tagOfFeat = (f) => (f.status === "tested" ? "Tested" : "Experimental");
     const synTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.engines));
@@ -183,7 +183,7 @@ async function main() {
     const holdTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "trig-hold"));
     const tempoTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "tempo-max"));
     const bootTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "boot-anim"));
-    check(tags.join() === "Tested,Experimental,Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + "," + synTag,
+    check(tags.join() === "Tested alone,Tested,Experimental,Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + "," + synTag,
       "cards tagged as tested or not (Model-TG experimental until tested here): " + tags.join());
     check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until the Syntakt engines are ticked");
     doc.getElementById("feat-syntakt").click();
@@ -210,8 +210,8 @@ async function main() {
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
     check(credits.length === 6 && credits[0] === "https://github.com/scottmetoyer/ms-multi-output"
       && credits[1] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(credits[2])
-      && credits.slice(3).every((h) => h === "https://github.com/drumkilla/elektron-model-tweaks"),
-      "each card credits its author, Model-TG with its MIT license: " + JSON.stringify(credits));
+      && credits.slice(3, 6).every((h) => h === "https://github.com/drumkilla/elektron-model-tweaks"),
+      "upstream cards credit their authors, Model-TG with its MIT license: " + JSON.stringify(credits));
     const list = [...doc.querySelectorAll("#credits-list a")].map((a) => a.textContent);
     check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",
       "credits section lists the 5 upstream repositories");
@@ -280,12 +280,43 @@ async function main() {
       "FR: tempo card translated, with its guide link");
     check(/Animation de démarrage modded-cycles/.test(text(doc, "features")) && doc.querySelector('#features a[href$="#boot-anim"]'),
       "FR: startup animation card translated, with its guide link");
+    check(/Chord Keys/.test(text(doc, "features"))
+      && doc.querySelector('#features a[href$="#chord-keys"]'),
+      "FR: chord keyboard translated, with its guide link");
+    doc.getElementById("feat-chord-keys").click(); await wait(5);
+    check(doc.getElementById("feat-chord-keys").checked && !doc.getElementById("feat-model-tg").checked,
+      "Chord Keys selection excludes Model-TG");
     doc.getElementById("feat-model-tg").click(); await wait(5);
+    check(!doc.getElementById("feat-chord-keys").checked,
+      "Model-TG selection excludes Chord Keys in the other direction");
     check(/\(inclus avec Model-TG\)/.test(doc.querySelector("label[for=feat-browser-scroll] .ttl").textContent),
       "FR: the tweaks Model-TG holds say « (inclus avec Model-TG) »");
     doc.getElementById("feat-model-tg").click(); await wait(5);
     doc.querySelector('.lang button[data-lang="en"]').click();
     await wait(20);
+
+    // Le retour matériel de Nico ne couvre que Chord Keys seul.
+    for (const f of w.MC_TWEAKS.features) {
+      const cb = doc.getElementById("feat-" + f.id);
+      if (cb.checked && !cb.disabled) cb.click();
+    }
+    box("feat-chord-keys").click(); await wait(5);
+    check(tagOf("feat-chord-keys") === "Tested alone"
+      && /without any other mods/.test(text(doc, "chord-test-scope"))
+      && /No combination with Chord Keys has been tested on a real Model:Cycles/.test(text(doc, "chord-test-scope")),
+      "Chord Keys alone: scoped hardware badge and explicit untested-combinations notice");
+    box("feat-usb6").click(); await wait(5);
+    check(tagOf("feat-chord-keys") === "Combination: software only"
+      && !doc.querySelector("label[for=feat-chord-keys] .tag").classList.contains("ok"),
+      "Chord Keys + USB audio: hardware badge replaced by software-only combination warning");
+    doc.querySelector('.lang button[data-lang="fr"]').click(); await wait(5);
+    check(tagOf("feat-chord-keys") === "Combinaison : logiciel uniquement",
+      "FR: combined Chord Keys badge reports software checks only");
+    box("feat-usb6").click(); await wait(5);
+    check(tagOf("feat-chord-keys") === "Testé seul",
+      "FR: removing the other mod restores standalone test scope");
+    box("feat-chord-keys").click();
+    doc.querySelector('.lang button[data-lang="en"]').click(); await wait(5);
 
     // Connection: USB only, fast method by default, classic as the fallback
     check(doc.querySelectorAll('input[name="method"]').length === 0 && !doc.getElementById("howto-midi")
@@ -510,46 +541,85 @@ async function main() {
     if (REAL_ST) app.loadSyntakt(new Uint8Array(fs.readFileSync(REAL_ST)), ST_NAME);
     await wait(20);
     const boxes = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
+    const features = w.MC_TWEAKS.features;
+    const incompatible = (a, b) => (a.excludes || []).includes(b.id) || (a.includes || []).includes(b.id)
+      || (b.excludes || []).includes(a.id) || (b.includes || []).includes(a.id);
+    // Gray : une case change entre voisins. Placer Model-TG au bit de poids
+    // fort regroupe ses exclusions ; leur filtrage conserve ce voisinage.
+    const traversal = [...features.filter((f) => f.id !== "model-tg"), features.find((f) => f.id === "model-tg")];
+    const initial = [];
+    for (let step = 1; step < 1 << boxes.length; step++) {
+      const mask = step ^ (step >> 1);
+      const on = traversal.filter((f, k) => mask & (1 << k));
+      // Les cartes incluses ne sont pas des choix supplémentaires : le porteur
+      // les coche et les verrouille. Écarter aussi les exclusions explicites.
+      if (!on.some((a, k) => on.slice(k + 1).some((b) => incompatible(a, b))))
+        initial.push(on.map((f) => "feat-" + f.id));
+    }
+    check(initial.length === 1087 && initial.filter((on) => on.includes("feat-syntakt")).length === 544,
+      "compatible feature selections: 543 without engines, 544 with the first engine combination");
+    async function pickCards(on) {
+      // Retirer d'abord les choix précédents ; une case incluse et verrouillée
+      // suit son porteur, sans clic artificiel ni changement direct de l'état.
+      for (const want of [false, true]) {
+        for (const id of boxes) {
+          const cb = doc.getElementById(id);
+          if (on.includes(id) === want && !cb.disabled && cb.checked !== want) {
+            cb.click();
+            await wait(5);
+          }
+        }
+      }
+    }
+    function trimCache() {
+      // Garder au plus 32 images, dont le choix courant, pour réutiliser les
+      // étapes intermédiaires sans accumuler les 17 407 firmwares vérifiés.
+      const keys = Object.keys(app.state.cache);
+      let excess = keys.length - 32;
+      for (const key of keys) {
+        if (excess > 0 && key !== app.state.buildKey) {
+          delete app.state.cache[key];
+          excess--;
+        }
+      }
+    }
+    const combos = engineCombos(w);
+    const sets = initial.filter((on) => on.includes("feat-syntakt"));
+    const variants = REAL_ST ? Object.keys(combos).slice(1) : [];
+    const total = initial.length + variants.length * sets.length;
+    // Des tranches contiguës gardent les voisins dans le même processus.
+    // Tous les indices appartiennent à un et un seul shard, même aux bornes.
+    const first = Math.floor(total * SHARD_K / SHARD_N);
+    const last = Math.floor(total * (SHARD_K + 1) / SHARD_N);
     const seen = new Set();
     let idx = -1;
-    const mine = () => ++idx % SHARD_N === SHARD_K;   // this part's share of the combinations
-    for (let mask = 1; mask < 1 << boxes.length; mask++) {
+    const mine = () => { idx++; return idx >= first && idx < last; };
+    for (const on of initial) {
       if (!mine()) continue;
-      for (let k = 0; k < boxes.length; k++) {
-        const cb = doc.getElementById(boxes[k]);           // re-query: the cards are re-rendered
-        if (cb.checked !== !!(mask & (1 << k))) { cb.click(); await wait(5); }
-      }
+      await pickCards(on);
       await settle(w);
       const f = app.state.fw;
       if (!REAL_ST && doc.getElementById("feat-syntakt").checked) {
         check(!f && app.state.fwError === "needs_syntakt", `real OS without the Syntakt OS: Syntakt engines combination waits for it`);
+        trimCache();
         continue;
       }
       seen.add(app.state.buildKey);
       check(f && f.kind === "built" && f.ref, `real OS: ${app.state.buildKey} matches its reference hash`);
+      trimCache();
     }
-    const combos = engineCombos(w);
-    const plain = boxes.filter((b) => b !== "feat-syntakt" && b !== "feat-model-tg");   // what goes with the engines
-    const sets = [];                                  // with the engines: any of these, or Model-TG (with or without USB)
-    for (let mask = 0; mask < 1 << plain.length; mask++) sets.push(plain.filter((b, k) => mask & (1 << k)));
-    const tgEx = w.MC_TWEAKS.features.find((f) => f.id === "model-tg").includes.map((x) => "feat-" + x);
-    const withTg = plain.filter((b) => !tgEx.includes(b));    // Model-TG and what it goes with (USB, trig removal, arpeggiator)
-    for (let mask = 0; mask < 1 << withTg.length; mask++) sets.push(["feat-model-tg", ...withTg.filter((b, k) => mask & (1 << k))]);
     const tgOf = Object.fromEntries(w.MC_TWEAKS.features.find((f) => f.engines).combos.map((c) => [c.id, c.tg]));
-    for (const variant of REAL_ST ? Object.keys(combos).slice(1) : []) {   // the other engine combinations
+    for (const variant of variants) {   // the other engine combinations
       for (const on of sets) {
         if (!mine()) continue;
-        for (const b of boxes) {
-          const cb = doc.getElementById(b);
-          const want = b === "feat-syntakt" || on.includes(b);
-          if (cb.checked !== want) { cb.click(); await wait(5); }
-        }
+        await pickCards(on);
         await pickEngines(doc, combos[variant]);
         await settle(w);
         const f = app.state.fw;
         seen.add(app.state.buildKey);
         check(f && f.kind === "built" && f.ref && app.state.buildKey.endsWith(on.includes("feat-model-tg") ? tgOf[variant] : variant),
           `real OS: ${app.state.buildKey} matches its reference hash`);
+        trimCache();
       }
     }
     const offered = Object.keys(app.REF_MAINOS).filter((k) => REAL_ST || !/sdvintage|syntakt/.test(k));

@@ -3,6 +3,44 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.26", date: "2026-10-06", changes: [
+    { en: "Chord Keys appears first in the flasher, under its own name",
+      fr: "Chord Keys apparaît en premier dans le flasher, sous son propre nom" },
+    { en: "Simplified Chord Keys card and guide: removed the card’s credit line and expanded note, and the guide’s Existing patterns entry",
+      fr: "Carte et guide Chord Keys simplifiés : retrait de la ligne de crédit et de la note détaillée de la carte, ainsi que de l’entrée Anciens patterns du guide" },
+  ] },
+  { version: "1.25", date: "2026-10-06", changes: [
+    { en: "Chord Keys hardware report: Nico confirms it works on his Model:Cycles when installed alone, with no other mods. No combination with Chord Keys has been tested on a real Model:Cycles",
+      fr: "Retour matériel Chord Keys : Nico confirme son bon fonctionnement sur son Model:Cycles installé seul, sans aucun autre mod. Aucune combinaison avec Chord Keys n’a été testée sur un vrai Model:Cycles" },
+    { en: "Software compatibility checked with 6-channel USB audio, Arpeggiator, Tempo up to 546 BPM, startup animation, latching mute, trig preview, scrolling names, easier trig removal and all five Syntakt engines, installed together. Model-TG remains incompatible",
+      fr: "Compatibilité logicielle vérifiée avec audio USB 6 canaux, arpégiateur, tempo jusqu’à 546 BPM, animation de démarrage, mute verrouillé, écoute d’un pas, noms qui défilent, effacement facilité des trigs et les cinq moteurs Syntakt, installés ensemble. Model-TG reste incompatible" },
+    { en: "Nico’s flasher preview now separates the standalone hardware report from software-only combinations. The Chord Keys badge changes when another mod is selected. Every offered combination passes build and checksum checks; firmware bytes are unchanged from version 1.24",
+      fr: "Le flasher de Nico distingue désormais le retour matériel du mod seul et les combinaisons vérifiées uniquement par logiciel. Le badge Chord Keys change à la sélection d’un autre mod. Toutes les combinaisons proposées passent les contrôles de construction et d’intégrité ; le firmware est inchangé depuis la version 1.24" },
+  ] },
+  { version: "1.24", date: "2026-10-06", changes: [
+    { en: "Chord keys gives SHAPE a dedicated role: choose BASE, four close positions (CLS0–3) or four open positions (OPN0–3). The screen shows Chord Voicing and the selected position. The I–VII menu rows remain the only extension settings",
+      fr: "Le clavier d'accords donne un rôle dédié à SHAPE : choisissez BASE, quatre positions resserrées (CLS0–3) ou quatre positions ouvertes (OPN0–3). L'écran affiche Chord Voicing et la position choisie. Les lignes I–VII du menu restent les seuls réglages d'extension" },
+    { en: "COLOR blends the voices without moving their octaves. Existing Keys ON patterns can sound different because their saved SHAPE value now selects a voicing; start with SHAPE at BASE and COLOR at 32",
+      fr: "COLOR mélange les voix sans déplacer leurs octaves. Les anciens patterns Keys ON peuvent sonner différemment car leur valeur SHAPE enregistrée choisit désormais une disposition ; commencez avec SHAPE sur BASE et COLOR à 32" },
+    { en: "Voicings and COLOR separation checked in emulation on the OS's own CHORD code. Still experimental and awaiting a hardware test; four voices maximum, with the original high-register limits",
+      fr: "Dispositions et séparation de COLOR vérifiées en émulation sur le code CHORD de l'OS. Toujours expérimental et en attente d'un essai sur la machine ; quatre voix au maximum, avec les limites du moteur d'origine dans l'aigu" },
+  ] },
+  { version: "1.23", date: "2026-10-06", changes: [
+    { en: "Chord keys moves to the sixteen lower TRIG buttons: 1–7 play I–VII, 8–14 repeat them one octave higher, and 15–16 play I–II two octaves higher. Each degree keeps its chosen extension across the octaves. The large T1–T6 pads keep their usual controls, and RETRIG is no longer an octave bank switch",
+      fr: "Le clavier d'accords passe sur les seize boutons TRIG du bas : 1–7 jouent I–VII, 8–14 les reprennent une octave plus haut, et 15–16 jouent I–II deux octaves plus haut. Chaque degré garde l'extension choisie à toutes les octaves. Les grands pads T1–T6 gardent leurs commandes habituelles, et RETRIG ne change plus de banque d'octave" },
+    { en: "Clearer Retrig Setup labels: the major scale reads MAJ, and extension rows show I through VII beside TRI, 7, 9, 11 or 13, without the Ext suffix",
+      fr: "Libellés plus lisibles dans Retrig Setup : la gamme majeure s'affiche MAJ, et les lignes d'extension affichent I à VII à côté de TRI, 7, 9, 11 ou 13, sans le suffixe Ext" },
+    { en: "Grid recording, menus and ordinary track-pad controls stay available. Checked in emulation on the OS's own code; still experimental, pending a hardware test. Model-TG remains incompatible",
+      fr: "L'enregistrement en grille, les menus et les commandes habituelles des pads de piste restent disponibles. Vérifié en émulation sur le code même de l'OS ; toujours expérimental, en attente d'un essai sur la machine. Model-TG reste incompatible" },
+  ] },
+  { version: "1.22", date: "2026-10-05", changes: [
+    { en: "New experimental mod, Chord keys: choose a scale and play its chords with T1–T6 on the selected CHORD track. Hold RETRIG for degree VII, then I to V an octave higher; PAGE keeps its usual functions",
+      fr: "Nouveau mod expérimental, Clavier d'accords : choisissez une gamme et jouez ses accords avec T1–T6 sur la piste CHORD sélectionnée. Maintenez RETRIG pour le degré VII, puis I à V une octave plus haut ; PAGE garde ses fonctions habituelles" },
+    { en: "FUNC + RETRIG gains Keys, Root, Scale and seven extension settings: triad, 7th, 9th, 11th or 13th, all within the scale. They are saved per track and pattern and also shape sequenced notes. Four voices maximum; 9ths, 11ths and 13ths omit the fifth",
+      fr: "FUNC + RETRIG gagne Keys, Root, Scale et sept réglages d'extension : triade, 7e, 9e, 11e ou 13e, toujours dans la gamme. Ils sont enregistrés par piste et par pattern et s'appliquent aussi aux notes séquencées. Quatre voix au maximum ; les 9es, 11es et 13es omettent la quinte" },
+    { en: "Checked in emulation with the OS's own pad, menu, storage and CHORD code; not yet tested on hardware. The arpeggiator can be installed alongside it, but Chord keys uses RETRIG as its bank switch. Model-TG cannot be combined with this first version",
+      fr: "Vérifié en émulation avec le code même de l'OS pour les pads, le menu, le stockage et CHORD ; pas encore testé sur la machine. L'arpégiateur peut être installé avec lui, mais le clavier d'accords utilise RETRIG pour changer de banque. Model-TG ne se combine pas avec cette première version" },
+  ] },
   { version: "1.21", date: "2026-10-05", changes: [
     { en: "New mod, Startup animation: when the Model:Cycles starts, the four rounded squares of the modded-cycles logo pop in one by one, the top right one hollows out, then “modded-cycles” types itself underneath, instead of the original tile animation",
       fr: "Nouveau mod, Animation de démarrage : au démarrage du Model:Cycles, les quatre carrés arrondis du logo modded-cycles apparaissent un par un, celui en haut à droite se creuse, puis « modded-cycles » s'écrit dessous, à la place de l'animation de carreaux d'origine" },

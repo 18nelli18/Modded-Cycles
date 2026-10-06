@@ -30,6 +30,27 @@ MASKS = {
     0x4018a788: (1024, 0x400ad1aa, "sprite 64x128 (damier inverse), constructeur 0x400ad1a8"),
     0x40189930: (376, 0x400ad328, "sprite 47x47, constructeur 0x400ad326", SHARED_47),
     0x4018a220: (376, 0x400ad202, "sprite 47x47, constructeur 0x400ad200", SHARED_47),
+    # Autres masques 47x47 identiques, vérifiés sur l'image officielle (notes/40).
+    # Chaque référence pousse le masque, l'image, 47 et 47 vers Bitmap.
+    0x4016b6f8: (376, 0x400b133e, "sprite 47x47", SHARED_47),
+    0x4016b9e8: (376, 0x400b131c, "sprite 47x47", SHARED_47),
+    0x40171f30: (376, 0x400b05a0, "sprite 47x47", SHARED_47),
+    0x40172608: (376, 0x400b0544, "sprite 47x47", SHARED_47),
+    0x40179730: (376, 0x400af64a, "sprite 47x47", SHARED_47),
+    0x40182b38: (376, 0x400adfda, "sprite 47x47", SHARED_47),
+    0x40182e28: (376, 0x400adfba, "sprite 47x47", SHARED_47),
+    0x40183118: (376, 0x400adf9e, "sprite 47x47", SHARED_47),
+    0x40185018: (376, 0x400adba8, "sprite 47x47", SHARED_47),
+    0x40185968: (376, 0x400ada00, "sprite 47x47", SHARED_47),
+    0x40185c58: (376, 0x400ad9e0, "sprite 47x47", SHARED_47),
+    0x4018cd48: (376, 0x400acdb2, "sprite 47x47", SHARED_47),
+    0x4018d1b8: (376, 0x400acd76, "sprite 47x47", SHARED_47),
+    0x4018d4a8: (376, 0x400acd56, "sprite 47x47", SHARED_47),
+    0x4018dba8: (376, 0x400accfe, "sprite 47x47", SHARED_47),
+    0x4018f4b4: (376, 0x400ac8d0, "sprite 47x47", SHARED_47),
+    0x4018fc74: (376, 0x400ac81c, "sprite 47x47", SHARED_47),
+    0x401904b4: (376, 0x400ac784, "sprite 47x47", SHARED_47),
+    0x40192734: (376, 0x400ac2b2, "sprite 47x47", SHARED_47),
 }
 
 
