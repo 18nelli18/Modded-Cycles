@@ -175,7 +175,7 @@ async function main() {
       && srcs.every((x) => x.endsWith("?v=" + w.MC_BUILD)), "scripts loaded with ?v=<build> (no stale cache): " + srcs.join());
     check(doc.getElementById("compat").hidden, "no compatibility banner in a good browser");
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-usb6,feat-model-tg,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-trig-hold,feat-arp,feat-tempo-max,feat-boot-anim,feat-chord-keys,feat-syntakt", "11 feature cards: " + JSON.stringify(feats));
+    check(feats.join() === "feat-chord-keys,feat-usb6,feat-model-tg,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-trig-hold,feat-arp,feat-tempo-max,feat-boot-anim,feat-syntakt", "11 feature cards: " + JSON.stringify(feats));
     const tags = [...doc.querySelectorAll("#features .tag")].map((x) => x.textContent);
     const tagOfFeat = (f) => (f.status === "tested" ? "Tested" : "Experimental");
     const synTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.engines));
@@ -183,7 +183,7 @@ async function main() {
     const holdTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "trig-hold"));
     const tempoTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "tempo-max"));
     const bootTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "boot-anim"));
-    check(tags.join() === "Tested,Experimental,Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + ",Tested alone," + synTag,
+    check(tags.join() === "Tested alone,Tested,Experimental,Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + "," + synTag,
       "cards tagged as tested or not (Model-TG experimental until tested here): " + tags.join());
     check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until the Syntakt engines are ticked");
     doc.getElementById("feat-syntakt").click();
@@ -208,11 +208,10 @@ async function main() {
     check(!doc.getElementById("feat-syntakt").checked && doc.querySelectorAll('input[name="eng-syntakt"]').length === 0
       && doc.getElementById("drop3-wrap").hidden, "last engine unticked -> the card turns off");
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
-    check(credits.length === 7 && credits[0] === "https://github.com/scottmetoyer/ms-multi-output"
+    check(credits.length === 6 && credits[0] === "https://github.com/scottmetoyer/ms-multi-output"
       && credits[1] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(credits[2])
-      && credits.slice(3, 6).every((h) => h === "https://github.com/drumkilla/elektron-model-tweaks")
-      && credits[6] === "https://github.com/18nelli18/Modded-Cycles",
-      "each card credits its author, Model-TG with its MIT license: " + JSON.stringify(credits));
+      && credits.slice(3, 6).every((h) => h === "https://github.com/drumkilla/elektron-model-tweaks"),
+      "upstream cards credit their authors, Model-TG with its MIT license: " + JSON.stringify(credits));
     const list = [...doc.querySelectorAll("#credits-list a")].map((a) => a.textContent);
     check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",
       "credits section lists the 5 upstream repositories");
@@ -281,7 +280,7 @@ async function main() {
       "FR: tempo card translated, with its guide link");
     check(/Animation de démarrage modded-cycles/.test(text(doc, "features")) && doc.querySelector('#features a[href$="#boot-anim"]'),
       "FR: startup animation card translated, with its guide link");
-    check(/Accords de gamme sur TRIG 1–16/.test(text(doc, "features"))
+    check(/Chord Keys/.test(text(doc, "features"))
       && doc.querySelector('#features a[href$="#chord-keys"]'),
       "FR: chord keyboard translated, with its guide link");
     doc.getElementById("feat-chord-keys").click(); await wait(5);

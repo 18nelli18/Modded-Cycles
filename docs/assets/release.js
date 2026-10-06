@@ -3,6 +3,12 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.26", date: "2026-10-06", changes: [
+    { en: "Chord Keys appears first in the flasher, under its own name",
+      fr: "Chord Keys apparaît en premier dans le flasher, sous son propre nom" },
+    { en: "Simplified Chord Keys card and guide: removed the card’s credit line and expanded note, and the guide’s Existing patterns entry",
+      fr: "Carte et guide Chord Keys simplifiés : retrait de la ligne de crédit et de la note détaillée de la carte, ainsi que de l’entrée Anciens patterns du guide" },
+  ] },
   { version: "1.25", date: "2026-10-06", changes: [
     { en: "Chord Keys hardware report: Nico confirms it works on his Model:Cycles when installed alone, with no other mods. No combination with Chord Keys has been tested on a real Model:Cycles",
       fr: "Retour matériel Chord Keys : Nico confirme son bon fonctionnement sur son Model:Cycles installé seul, sans aucun autre mod. Aucune combinaison avec Chord Keys n’a été testée sur un vrai Model:Cycles" },

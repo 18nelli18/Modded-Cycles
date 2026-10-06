@@ -17827,9 +17827,8 @@ const T = {
 // Feature texts shown in the UI (fallback: labels from tweaks.js).
 const FEAT = {
   en: {
-    "chord-keys": { label: "Scale chords on TRIG 1–16",
-      desc: "Play one CHORD track with the lower TRIG buttons: I–VII on 1–7, one octave higher on 8–14, then I–II two octaves higher on 15–16. T1–T6 keep their usual controls. FUNC + RETRIG adds Keys, Root, Scale and a triad/7/9/11/13 choice per degree, shared across octaves and saved with the pattern.",
-      note: "Nico reports Chord Keys working on his Model:Cycles on 6 October 2026, installed alone with no other mods. Combinations passed software checks only and have not been tested on a real Model:Cycles. Four notes at most: 9/11/13 omit the fifth and 11/13 omit the intermediate extensions. SHAPE chooses BASE, close or open voicings; COLOR blends their levels without octave shifts. I–VII alone choose extensions. For existing Keys ON patterns, start at BASE and COLOR 32. Last chord key wins. Retrig/arp is bypassed for these chord keys; the large pads keep it. Cannot be combined with Model-TG." },
+    "chord-keys": { label: "Chord Keys",
+      desc: "Play one CHORD track with the lower TRIG buttons: I–VII on 1–7, one octave higher on 8–14, then I–II two octaves higher on 15–16. T1–T6 keep their usual controls. FUNC + RETRIG adds Keys, Root, Scale and a triad/7/9/11/13 choice per degree, shared across octaves and saved with the pattern." },
     usb6: { label: "6-channel USB audio",
       desc: "Each track gets its own USB channel (48 kHz / 32-bit): record the 6 tracks separately in your DAW. The stereo mix is no longer sent over USB. OS updates over USB keep working." },
     "model-tg": { label: "Model-TG",
@@ -17859,9 +17858,8 @@ const FEAT = {
       desc: "When the Model:Cycles starts, the four rounded squares of the modded-cycles logo pop in one by one and “modded-cycles” types itself underneath, instead of the original tile animation. It lasts as long as the original: startup is not slower." },
   },
   fr: {
-    "chord-keys": { label: "Accords de gamme sur TRIG 1–16",
-      desc: "Jouez une piste CHORD avec les boutons TRIG du bas : I–VII sur 1–7, une octave plus haut sur 8–14, puis I–II deux octaves plus haut sur 15–16. T1–T6 gardent leurs commandes habituelles. FUNC + RETRIG ajoute Keys, Root, Scale et le choix triade/7/9/11/13 par degré, commun aux octaves et enregistré avec le pattern.",
-      note: "Nico rapporte le bon fonctionnement de Chord Keys sur son Model:Cycles le 6 octobre 2026, installé seul sans aucun autre mod. Les combinaisons ont seulement passé les contrôles logiciels et n’ont pas été testées sur un vrai Model:Cycles. Quatre notes au plus : 9/11/13 omettent la quinte et 11/13 les extensions intermédiaires. SHAPE choisit BASE, les dispositions resserrées ou ouvertes ; COLOR mélange leurs niveaux sans déplacer les octaves. I–VII seuls choisissent les extensions. Pour les anciens patterns Keys ON, commencez sur BASE et COLOR 32. La dernière touche d'accord est prioritaire. Retrig/arp est ignoré pour ces touches d'accord ; les grands pads le conservent. Incompatible avec Model-TG." },
+    "chord-keys": { label: "Chord Keys",
+      desc: "Jouez une piste CHORD avec les boutons TRIG du bas : I–VII sur 1–7, une octave plus haut sur 8–14, puis I–II deux octaves plus haut sur 15–16. T1–T6 gardent leurs commandes habituelles. FUNC + RETRIG ajoute Keys, Root, Scale et le choix triade/7/9/11/13 par degré, commun aux octaves et enregistré avec le pattern." },
     usb6: { label: "Audio USB 6 canaux",
       desc: "Chaque piste a son propre canal USB (48 kHz / 32 bits) : enregistrez les 6 pistes séparément dans votre logiciel. Le mix stéréo n'est plus envoyé en USB. La mise à jour de l'OS par USB continue de fonctionner." },
     "model-tg": { label: "Model-TG",
@@ -18014,7 +18012,8 @@ function renderFeatures() {
   const tw = window.MC_TWEAKS;
   if (!box || !tw || !tw.features) return;
   box.innerHTML = "";
-  for (const f of tw.features) {
+  const cards = [...tw.features].sort((a, b) => Number(b.id === "chord-keys") - Number(a.id === "chord-keys"));
+  for (const f of cards) {
     const sel = selection[f.id] ||
       (selection[f.id] = f.engines ? { on: false, engines: [] } : { on: false, variant: f.variants[0].id });
     const holder = includedBy(f);
@@ -18057,7 +18056,7 @@ function renderFeatures() {
     desc.className = "desc";
     desc.textContent = featText(f.id, "desc", f.desc);
     card.append(cb, ttl, desc);
-    if (f.credit) {
+    if (f.credit && f.id !== "chord-keys") {
       const cr = document.createElement("div");
       cr.className = "credit";
       cr.innerHTML = creditHtml(f.credit) +
