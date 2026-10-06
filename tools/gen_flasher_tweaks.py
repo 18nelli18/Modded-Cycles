@@ -147,9 +147,9 @@ FEATURES = [
         "desc": "Une piste CHORD, sept modes et une extension par degré. T1–T6 jouent I–VI ; "
                 "RETRIG tenu donne VII puis I–V à l'octave. Réglages dans FUNC + RETRIG, sauvés avec le pattern.",
         "status": "experimental",
-        "credit": {"kind": "by", "who": "Modded Cycles", "repo": "18nelli18/Modded-Cycles"},
+        "credit": {"kind": "by", "who": "Nico Heuser", "repo": "byNicoHeuser"},
         "excludes": ["model-tg"],
-        "variants": [{"file": "44-chord-keys", "label": None}],
+        "variants": [{"file": "45-chord-keys", "label": None}],
     },
     {
         "id": "syntakt",

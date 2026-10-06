@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sonde de recherche des pads de l'OS 1.13, pour le clavier d'accords (notes/40).
+"""Sonde de recherche des pads de l'OS 1.13, pour le clavier d'accords (notes/42).
 
 Exécute le vrai constructeur de PadEvent, PadsView::consumePadEvent et ses deux
 relais de note. Vérifie T1 à T6, les notes mémorisées jusqu'au relâchement, TRACK

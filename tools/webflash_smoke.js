@@ -183,7 +183,8 @@ async function main() {
     const holdTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "trig-hold"));
     const tempoTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "tempo-max"));
     const bootTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "boot-anim"));
-    check(tags.join() === "Tested,Experimental,Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + ",Experimental," + synTag,
+    const chordTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "chord-keys"));
+    check(tags.join() === "Tested,Experimental,Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + "," + chordTag + "," + synTag,
       "cards tagged as tested or not (Model-TG experimental until tested here): " + tags.join());
     check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until the Syntakt engines are ticked");
     doc.getElementById("feat-syntakt").click();
@@ -211,7 +212,7 @@ async function main() {
     check(credits.length === 7 && credits[0] === "https://github.com/scottmetoyer/ms-multi-output"
       && credits[1] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(credits[2])
       && credits.slice(3, 6).every((h) => h === "https://github.com/drumkilla/elektron-model-tweaks")
-      && credits[6] === "https://github.com/18nelli18/Modded-Cycles",
+      && credits[6] === "https://github.com/byNicoHeuser",
       "each card credits its author, Model-TG with its MIT license: " + JSON.stringify(credits));
     const list = [...doc.querySelectorAll("#credits-list a")].map((a) => a.textContent);
     check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",

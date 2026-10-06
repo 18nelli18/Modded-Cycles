@@ -1,6 +1,6 @@
 {
  "id": "chord-keys",
- "order": 44,
+ "order": 45,
  "name": "Accords de gamme sur les six pads",
  "description": [
   "Mode Keys dans FUNC + RETRIG : une piste CHORD, gamme et tonique, extensions par degré.",
@@ -10,7 +10,7 @@
   "Réglages par piste sauvegardés avec le pattern. Dernier pad prioritaire, sans retour au pad précédent.",
   "Model-TG incompatible : son Scale Lock transforme les notes avant le moteur. Aucun essai matériel.",
   "Code et état dans 11 masques 47×47 redirigés, 3916 octets.",
-  "Généré par tools/gen_chord_keys.py ; sources tools/machines/chord_keys/ ; notes/40."
+  "Généré par tools/gen_chord_keys.py ; sources tools/machines/chord_keys/ ; notes/42."
  ],
  "device": "Model:Cycles",
  "os": "1.13",

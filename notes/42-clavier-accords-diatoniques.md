@@ -1,11 +1,13 @@
-# 40 — Jouer les accords d'une gamme avec les six pads
+# 42 — Jouer les accords d'une gamme avec les six pads
 
-Demande de Nico dans cette conversation, le **05/10/2026** : choisir une gamme pour CHORD, jouer ses accords avec
-T1–T6, puis six positions supplémentaires avec un bouton maintenu. Il confirme **une seule piste CHORD** et des
-extensions choisies par degré **en restant dans la gamme** ; il accepte de remplacer PAGE si cela gêne le jeu.
-Source : conversation locale, sans lien public. Adresses : VA de l'OS **1.13**.
+Contribution de **Nico Heuser** ([byNicoHeuser](https://github.com/byNicoHeuser)),
+[PR #46](https://github.com/18nelli18/Modded-Cycles/pull/46) du **06/10/2026**, intégrée au flasher par ce projet
+(relecture et renumérotation au §11). Sa demande, dans sa propre conversation du **05/10/2026** : choisir une gamme
+pour CHORD, jouer ses accords avec T1–T6, puis six positions supplémentaires avec un bouton maintenu. Il confirme
+**une seule piste CHORD** et des extensions choisies par degré **en restant dans la gamme** ; il accepte de remplacer
+PAGE si cela gêne le jeu. Source : conversation locale, sans lien public. Adresses : VA de l'OS **1.13**.
 
-Tweak : [`44-chord-keys.json`](../tweaks/model-cycles_OS1.13/44-chord-keys.json), générateur
+Tweak : [`45-chord-keys.json`](../tweaks/model-cycles_OS1.13/45-chord-keys.json), générateur
 [`tools/gen_chord_keys.py`](../tools/gen_chord_keys.py), sources
 [`tools/machines/chord_keys/`](../tools/machines/chord_keys/), preuves sous `tools/emu/` et test natif
 [`tools/test_chord_keys.py`](../tools/test_chord_keys.py). **Statut : expérimental, aucun essai matériel rapporté.**
@@ -126,7 +128,7 @@ puis le hook fournit les rapports diatoniques **avant** les opérations COLOR st
 quatrième voix est ensuite mis à zéro. Enveloppes, rendu, gains COLOR, PITCH et FINE restent traités par l'OS.
 
 `[FAIT en émulation]` 10 500 accords (25 toniques × 7 modes × 5 extensions × 12 pads) ont les rapports attendus,
-les gains attendus à COLOR 32 et un écart de phase inférieur à **1 cent** par rapport aux mêmes notes jouées comme
+des gains non nuls sur les voix attendues à COLOR 32 (les valeurs exactes ne sont comparées au SHAPE 7 stock que dans le balayage de COLOR) et un écart de phase inférieur à **1 cent** par rapport aux mêmes notes jouées comme
 fondamentales stock. Les 128 valeurs de COLOR conservent les gains et déplacements d'octave du moteur.
 En mode OFF, 570 updates sur les six voix restent identiques octet par octet ; les rendus PCM comparés restent
 identiques. L'activation produit un PCM non nul différent du SHAPE stock.
@@ -180,8 +182,9 @@ masquent brièvement les interruptions, puis rétablissent le SR précédent. Le
 écritures de configuration n'est visible avec IPL inférieur à 7.
 
 `[FAIT en émulation]` Le chargeur stock ne lit ni n'écrit ces réserves. Les accesseurs d'en-tête testés ne les
-lisent pas et leurs setters les préservent. La sauvegarde réelle B→A, le chargement A→B avec les hooks et la
-copie complète des 30 710 octets conservent les six configurations. Les autres champs d'en-tête restent égaux
+lisent pas et leurs setters les préservent. La sauvegarde réelle B→A et le chargement A→B avec les hooks
+conservent les six configurations ; la copie des 30 710 octets passe par le `memcpy` de l'OS (`0x4008f1f0`), ce
+qui ne prouve pas le copier-coller de pattern de l'interface (à vérifier sur la machine). Les autres champs d'en-tête restent égaux
 au résultat stock. L'initialisation avec conservation garde les réglages ; l'initialisation normale les désactive.
 
 ## 5. Lecture UI/audio : suivre le bon pattern
@@ -252,6 +255,18 @@ référence exécutable vers une cave ; leur désassemblage explique pourquoi il
 Compilation de référence : **GCC m68k-elf 16.2.0**, binutils **2.47**, `-mcpu=54418 -Os`, sections par fonction et
 par donnée. Le `--check` doit utiliser une toolchain produisant les mêmes octets. Bootloader et updater restent
 hors des écritures : seul le MAIN OS, section 3, est modifié.
+
+`[FAIT, relecture du 06/10/2026]` **Pas de `m68k-linux-gnu-gcc`** : avec l'ABI SVR4 de la cible Linux, GCC lit dans
+`a0` le pointeur rendu par une fonction appelée par pointeur, alors que l'OS le rend dans `d0` (`0x4000eb90` :
+`move.l 4(sp),d0 ; addi.l #48,d0 ; rts`). Compilés ainsi, `selected_track` et `ui_header_object` passeraient un
+registre au hasard à l'OS à chaque appui de pad. Le JSON (m68k-elf) lit bien `d0` (`2f00` en `0x40185174` et
+`0x401850fa`). Le générateur n'accepte donc que `m68k-elf-` (ou `M68K_CROSS`, hors cible Linux).
+`[FAIT]` Le refus « symbole de code non aligné » obtenu avec GCC 13 vient des tables d'octets (`scales`,
+`voicings`…) : chaque section `.ckN` mélange code et données, donc `nm` les marque `t`, et seules les sections
+`.text` reçoivent un alignement de 2. Avec GCC 16.2, elles tombent sur des adresses paires par hasard ; le code ne
+lit ces tables qu'octet par octet. Aligner toutes les sections sur 2 lèverait ce faux refus (une simulation avec
+les tailles de GCC 16.2 donne le même placement), mais n'a pas été appliqué faute de pouvoir le vérifier avec
+GCC 16.2 ici.
 
 ## 7. Compatibilités
 

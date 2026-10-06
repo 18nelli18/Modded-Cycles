@@ -1,4 +1,4 @@
-/* Noyau harmonique proposé pour chord-keys. Ce fichier ne contient ni hook,
+/* Noyau harmonique de chord-keys, lié dans le firmware. Ce fichier ne contient ni hook,
  * ni octet du firmware, ni conversion vers les paramètres SHAPE/COLOR.
  * Il calcule uniquement un voicing diatonique de trois ou quatre notes.
  */

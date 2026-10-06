@@ -1,4 +1,4 @@
-"""Contrôles du code ColdFire du clavier d'accords (notes/40).
+"""Contrôles du code ColdFire du clavier d'accords (notes/42).
 
 Appelé par la preuve principale avec le MAIN OS modifié et les symboles du
 générateur. Le stockage lit et écrit un vrai en-tête de pattern en RAM émulée ;

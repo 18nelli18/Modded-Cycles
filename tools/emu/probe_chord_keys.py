@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sonde de recherche du moteur CHORD de l'OS officiel 1.13 (notes/40).
+"""Sonde de recherche du moteur CHORD de l'OS officiel 1.13 (notes/42).
 
 Exécute son vrai update dans Unicorn : catalogue SHAPE, rapports de fréquence,
 gains des opérateurs. L'option --inject-intervals remplace uniquement des valeurs

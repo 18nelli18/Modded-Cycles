@@ -1,4 +1,4 @@
-/* Réglages du clavier d'accords dans l'en-tête du pattern (notes/40).
+/* Réglages du clavier d'accords dans l'en-tête du pattern (notes/42).
  * L'OS sauve ses 64 octets, mais ne charge que 0..28 et 38 : signature 32..35,
  * six mots 40..63, sans toucher les champs musicaux stock ni l'octet de l'arp.
  * Les hooks de chargement et d'initialisation rétablissent ces champs réservés.

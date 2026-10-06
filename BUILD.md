@@ -232,8 +232,11 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim
 
 ### Accords de gamme sur les six pads
 
-`44-chord-keys.json` est généré depuis `tools/machines/chord_keys/` par `tools/gen_chord_keys.py`
-(GCC m68k-elf 16.2.0, binutils 2.47). **Expérimental, sans essai matériel.** Sélectionnez une piste CHORD,
+Contribution de Nico Heuser ([PR #46](https://github.com/18nelli18/Modded-Cycles/pull/46)).
+`45-chord-keys.json` est généré depuis `tools/machines/chord_keys/` par `tools/gen_chord_keys.py`
+(GCC m68k-elf 16.2.0, binutils 2.47, par exemple ceux de Homebrew). Le générateur refuse `m68k-linux-gnu-gcc` : son ABI lit
+dans `a0` les pointeurs que l'OS rend dans `d0`, ce qui fausserait les appels à l'OS ([note 42 §6](notes/42-clavier-accords-diatoniques.md)).
+**Expérimental, sans essai matériel.** Sélectionnez une piste CHORD,
 puis activez **Keys** dans **FUNC + RETRIG**. Root, Scale et I Ext–VII Ext choisissent la tonique, le mode
 et les extensions diatoniques. T1–T6 jouent I–VI ; RETRIG tenu donne VII puis I–V à l'octave supérieure.
 Réglages par piste, enregistrés avec le pattern. Model-TG est explicitement incompatible.
@@ -261,7 +264,7 @@ python3 tools/build.py -i firmware/model-cycles_OS1.13.syx -t chord-keys \
 
 La preuve exécute les pads, menus, sauvegardes et calculs CHORD du véritable OS ; 10 500 accords diatoniques
 et les chemins inactifs sont comparés à la référence. Les frontières simulées, le coût en instructions et
-les vérifications restantes sur la machine sont détaillés dans [la note 40](notes/40-clavier-accords-diatoniques.md).
+les vérifications restantes sur la machine sont détaillés dans [la note 42](notes/42-clavier-accords-diatoniques.md).
 Les accords étendus restent limités à quatre notes ; l'enregistrement conserve la fondamentale et le réglage
 du degré s'applique à la relecture, sans enregistrer une extension différente par trig.
 

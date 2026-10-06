@@ -1,8 +1,8 @@
 #ifndef CHORD_KEYS_H
 #define CHORD_KEYS_H
 
-/* Prototype harmonique autonome (notes/40), sans raccordement au firmware ni à son DSP.
- * Les modes, extensions et voicings ci-dessous sont une proposition de conception.
+/* Noyau harmonique du clavier d'accords (notes/42) : appelé par le gestionnaire des pads
+ * (chord_ui.c) pour choisir la fondamentale ; l'audio (chord_audio.c) refait le même calcul.
  * Aucun bouton, état de piste, stockage ou envoi MIDI n'est modifié ici.
  */
 
@@ -33,7 +33,7 @@ enum chord_keys_status {
 };
 
 struct chord_keys_config {
-    int root; /* Tonique MIDI 0..127 ; tessiture réellement jouable de CHORD à établir. */
+    int root; /* Tonique MIDI 0..127 ; le menu et le stockage la limitent à 24..48 (C1–C3). */
     enum chord_keys_mode mode;
     enum chord_keys_extension extensions[7]; /* Un réglage par degré I..VII. */
 };

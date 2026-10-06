@@ -24,7 +24,7 @@ cave check; add to it only with the reasoning in `why` and in a note.
 | `10`–`19` | USB audio (6 channels) |
 | `20`–`29` | machines: SD VINTAGE, Syntakt engines (`24-syntakt-*`) |
 | `30`–`39` | Model-TG and its combination with the Syntakt engines |
-| `40`–`49` | sequencer and interface features: `40` arp, `41` trig-hold, `42` tempo-max, `43` boot-anim; **next one is `44`** |
+| `40`–`49` | sequencer and interface features: `40` arp, `41` trig-hold, `42` tempo-max, `43` boot-anim, `45` chord-keys (`44` reserved for the multiline browser in progress); **next one is `46`** |
 | `90`–`99` | diagnostics (load meters, profile), not offered to users |
 
 ## Fields

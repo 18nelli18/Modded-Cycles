@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preuve du clavier CHORD diatonique, sur le JSON final (notes/40).
+"""Preuve du clavier CHORD diatonique, sur le JSON final (notes/42).
 
 Exécute le code ColdFire dans ses masques définitifs et les vraies routines OS
 pour les événements de pads, les menus, les patterns et le DSP. Les helpers

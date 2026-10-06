@@ -1,4 +1,4 @@
-/* Stockage du clavier d'accords, OS 1.13, notes/40.
+/* Stockage du clavier d'accords, OS 1.13, notes/42.
  * Les stubs ne modifient que les octets réservés via le noyau C.
  * Chargement : a2=en-tête destination, a3=source ; replay exact de 8 octets.
  * Initialisation : a0=en-tête, d0=0 ; replay exact de 8 octets, dont un pea.

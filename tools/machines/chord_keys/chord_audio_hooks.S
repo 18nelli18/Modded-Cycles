@@ -1,4 +1,4 @@
-/* Crochet de la sélection des intervalles CHORD (notes/40).
+/* Crochet de la sélection des intervalles CHORD (notes/42).
  * Remplace à 0x400ab0e4 : addal #0x4012142c,%a0 (six octets).
  * Entrée : a3 = copie locale de chord_audio_update ; a0 = SHAPE * 16.
  * Sortie : a0 = table stock ou quatre rapports locaux. Aucun autre registre

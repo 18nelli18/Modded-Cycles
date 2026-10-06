@@ -1,7 +1,7 @@
 #ifndef CHORD_UI_H
 #define CHORD_UI_H
 
-/* Interface du mode accords (notes/40). Ces deux adaptateurs appartiennent au
+/* Interface du mode accords (notes/42). Ces deux adaptateurs appartiennent au
  * stockage : get rend un mot valide, ou OFF / do3 / majeur / triades par défaut ;
  * set sauvegarde, signale le changement et publie le mot pour le moteur audio.
  * Mot : actif31, mode28..30, tonique21..27, extensions I..VII sur trois bits.

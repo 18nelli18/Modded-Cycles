@@ -1,4 +1,4 @@
-/* Pads et menu du clavier d'accords, OS 1.13 (notes/40).
+/* Pads et menu du clavier d'accords, OS 1.13 (notes/42).
  * Les notes passent par les helpers stock ; le moteur interprète leur degré
  * avec la configuration publiée. Aucun état sonore n'est modifié directement.
  * RETRIG donne la seconde banque dans ce mode. Les modificateurs de sélection

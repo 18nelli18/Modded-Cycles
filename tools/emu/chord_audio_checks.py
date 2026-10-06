@@ -1,4 +1,4 @@
-"""Vérifications audio réutilisables du mod chord-keys (notes/40).
+"""Vérifications audio réutilisables du mod chord-keys (notes/42).
 
 Appelé par test_chord_keys.py avec les images de référence et modifiée. Le getter
 de configuration est seul instrumenté pour isoler le DSP du stockage/menu : les
@@ -74,7 +74,7 @@ class AudioRunner:
 class NativeAudioConfig:
     """Objets de projet minimaux pour le vrai ck_audio_config, sans callback UI.
 
-    Le getter lit les pointeurs et buffers aux offsets établis dans notes/40.
+    Le getter lit les pointeurs et buffers aux offsets établis dans notes/42.
     Cette fixture ne remplace ni leur sérialisation ni leurs notifications.
     """
     ROOT, ACTIVE, HEADERS = 0x42010000, 0x42050000, 0x42070000

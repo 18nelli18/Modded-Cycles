@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Génère 44-chord-keys.json : accords diatoniques sur les pads (notes/40).
+"""Génère 45-chord-keys.json : accords diatoniques sur les pads (notes/42).
 
 Compile les sources ColdFire, les répartit dans des masques 47x47 identiques
 redirigés vers leur exemplaire conservé, puis vérifie chaque écriture sur l'OS
@@ -27,17 +27,18 @@ from mtlib.syx import unwrap
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 SRC = HERE / "machines/chord_keys"
-OUT = ROOT / "tweaks/model-cycles_OS1.13/44-chord-keys.json"
+OUT = ROOT / "tweaks/model-cycles_OS1.13/45-chord-keys.json"
 BASE = 0x40000400
-CROSS = os.environ.get("M68K_CROSS") or next(
-    (p for p in ("m68k-linux-gnu-", "m68k-elf-") if shutil.which(p + "gcc")), "m68k-linux-gnu-")
+# m68k-elf uniquement : m68k-linux-gnu-gcc (ABI SVR4) lit dans a0 le pointeur rendu par une fonction, alors que
+# l'OS le rend dans d0 (0x4000eb90 par exemple) ; ses appels à l'OS seraient faux (notes/42 §6).
+CROSS = os.environ.get("M68K_CROSS") or "m68k-elf-"
 CFLAGS = ["-mcpu=54418", "-Os", "-ffreestanding", "-fno-builtin", "-nostdlib", "-fno-pic", "-fno-common",
           "-ffunction-sections", "-fdata-sections", "-fomit-frame-pointer", "-fno-stack-protector",
           "-Wall", "-Wextra", "-Werror"]
 MASKS = (0x4016b6f8, 0x4016b9e8, 0x40171f30, 0x40172608, 0x40179730,
          0x40182b38, 0x40182e28, 0x40183118, 0x40185018, 0x40185968,
          0x40185c58, 0x4018cd48, 0x4018d1b8, 0x4018d4a8, 0x4018dba8,
-         0x4018f4b4, 0x4018fc74, 0x401904b4, 0x40192734)
+         0x4018f4b4, 0x4018fc74, 0x40192734)  # 0x401904b4 : réservé au navigateur multiligne
 # Adresse, contrat attendu, symbole, opcode (None = pointeur de vtable).
 HOOKS = (
     (0x400aae88, "4fefffe448d71c3c", "chord_audio_update", 0x4ef9),
@@ -81,6 +82,9 @@ def sections(path):
 
 def compile_code():
     """Placement déterministe par section, sans casser une fonction entre deux masques."""
+    if "linux" in CROSS or not shutil.which(CROSS + "gcc"):
+        raise ValueError(f"{CROSS}gcc refusé ou introuvable : il faut m68k-elf-gcc (16.2.0 et binutils 2.47 pour "
+                         "reproduire le JSON) ; m68k-linux-gnu-gcc lit dans a0 les pointeurs que l'OS rend dans d0")
     with tempfile.TemporaryDirectory(prefix="chord-keys-build-") as directory:
         tmp = Path(directory)
         objects, inputs = [], []
@@ -166,7 +170,7 @@ def build_tweak(stock):
         new += b"\x4e\x71" * ((len(old) - len(new)) // 2)
         writes.append({"off": address - BASE, "old": old.hex(), "new": new.hex()})
     tweak = {
-        "id": "chord-keys", "order": 44, "name": "Accords de gamme sur les six pads",
+        "id": "chord-keys", "order": 45, "name": "Accords de gamme sur les six pads",
         "description": [
             "Mode Keys dans FUNC + RETRIG : une piste CHORD, gamme et tonique, extensions par degré.",
             "T1–T6 jouent I–VI ; RETRIG tenu donne VII, puis I–V à l'octave supérieure.",
@@ -175,7 +179,7 @@ def build_tweak(stock):
             "Réglages par piste sauvegardés avec le pattern. Dernier pad prioritaire, sans retour au pad précédent.",
             "Model-TG incompatible : son Scale Lock transforme les notes avant le moteur. Aucun essai matériel.",
             f"Code et état dans {len(compiled)} masques 47×47 redirigés, {sum(len(c) for _, c in compiled)} octets.",
-            "Généré par tools/gen_chord_keys.py ; sources tools/machines/chord_keys/ ; notes/40.",
+            "Généré par tools/gen_chord_keys.py ; sources tools/machines/chord_keys/ ; notes/42.",
         ],
         "device": "Model:Cycles", "os": "1.13", "section": 3,
         "conflicts": ["model-tg", "model-tg-st"],
@@ -206,7 +210,7 @@ def main():
         if args.check:
             if not OUT.exists() or OUT.read_text() != text:
                 raise ValueError("Le JSON ne correspond pas aux sources / à cette version du compilateur")
-            print("ok 44-chord-keys.json est à jour")
+            print("ok 45-chord-keys.json est à jour")
         else:
             OUT.write_text(text)
             print(f"ok {OUT.name} : {len(tweak['writes'])} écritures vérifiées")

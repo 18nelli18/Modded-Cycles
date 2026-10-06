@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preuve du stockage des accords : routines stock et hooks ColdFire (notes/40).
+"""Preuve du stockage des accords : routines stock et hooks ColdFire (notes/42).
 
 Applique le JSON généré, puis exécute le vrai chargement, la sauvegarde et la
 copie des patterns OS 1.13 avec Unicorn, avec le code dans ses caves finales. Les
@@ -325,7 +325,7 @@ def run_storage_checks(stock, patched, symbols):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cycles", type=Path, required=True)
-    parser.add_argument("--tweak", type=Path, default=ROOT / "tweaks/model-cycles_OS1.13/44-chord-keys.json")
+    parser.add_argument("--tweak", type=Path, default=ROOT / "tweaks/model-cycles_OS1.13/45-chord-keys.json")
     args = parser.parse_args()
     stock = official_image(args.cycles)
     tweak = json.loads(args.tweak.read_text())

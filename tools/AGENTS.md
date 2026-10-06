@@ -37,8 +37,10 @@ and check the writes of **every** other tweak for overlaps.
 - **Freed sprite masks** (`sprites.py`, notes/14 §5, notes/32 §11): a sprite is redirected to an identical mask
   (`sprites.redirect_write`), freeing its own. Already used: `0x4015c044` (6ch-usbup stubs, trig-hold in front),
   `0x4016cae8` (Syntakt engines' boot hook at the start, arpeggiator menu after it), `0x4018a788`, `0x40189930`,
-  `0x4018a220` (arpeggiator). Eight more 47×47 masks (376 bytes each, constructors `0x400ac784`..`0x400b0580`) are
-  identical to the kept `0x40172220` and can be freed the same way (notes/32 §11).
+  `0x4018a220` (arpeggiator), eleven 47×47 masks from `0x4016b6f8` to `0x40185c58` (chord-keys, notes/42 §6).
+  Eight more 47×47 masks (376 bytes each, identical to the kept `0x40172220`, listed in `sprites.py`) can be freed
+  the same way: `0x4018cd48`, `0x4018d1b8`, `0x4018d4a8`, `0x4018dba8`, `0x4018f4b4`, `0x4018fc74`, `0x40192734`, and
+  `0x401904b4`, reserved for the multiline browser in progress (notes/32 §11).
 - **Payload appended to the image** and copied at boot to SDRAM (`0x43000000`, notes/17; Model-TG uses
   `0x46700000`, notes/31): for large code, at the cost of a boot hook shared with the Syntakt engines.
 - **In place**: rewrite the function you change when the new code fits (tempo-max's LFO loop, trig-preview's 3 bytes).
