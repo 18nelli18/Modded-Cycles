@@ -233,7 +233,9 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim
 ### Accords de gamme sur TRIG 1–16
 
 `44-chord-keys.json` est généré depuis `tools/machines/chord_keys/` par `tools/gen_chord_keys.py`
-(GCC m68k-elf 16.2.0, binutils 2.47). **Expérimental, sans essai matériel.** Sélectionnez une piste CHORD,
+(GCC m68k-elf 16.2.0, binutils 2.47). **Fonctionnement rapporté par Nico sur son Model:Cycles le 06/10/2026,
+avec Chord Keys seul, sans aucun autre mod. Les combinaisons sont vérifiées uniquement en logiciel,
+sans essai sur un Cycles réel.** Sélectionnez une piste CHORD,
 puis activez **Keys** dans **FUNC + RETRIG**. Root, Scale et I–VII choisissent la tonique, le mode
 et les extensions diatoniques ; le majeur s’affiche **MAJ**. Hors édition des pas, TRIG 1–7 jouent I–VII,
 8–14 les mêmes degrés une octave plus haut, 15–16 I–II deux octaves plus haut. Les grands pads T1–T6

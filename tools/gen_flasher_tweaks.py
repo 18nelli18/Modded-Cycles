@@ -148,6 +148,7 @@ FEATURES = [
                 "8–14 une octave plus haut, 15–16 I–II deux octaves plus haut. T1–T6 gardent leurs fonctions. "
                 "Réglages dans FUNC + RETRIG, sauvés avec le pattern.",
         "status": "experimental",
+        "hardware_scope": "standalone",  # Nico, 06/10/2026 : seul, aucune combinaison testée sur machine.
         "credit": {"kind": "by", "who": "Modded Cycles", "repo": "18nelli18/Modded-Cycles"},
         "excludes": ["model-tg"],
         "variants": [{"file": "44-chord-keys", "label": None}],
@@ -198,6 +199,8 @@ def render():
         return t
     for f in FEATURES:
         feat = {"id": f["id"], "label": f["label"], "desc": f["desc"], "status": f["status"], "credit": f["credit"]}
+        if f.get("hardware_scope"):
+            feat["hardware_scope"] = f["hardware_scope"]
         if f.get("engines"):
             feat["engines"], feat["combos"] = engine_feature(f, load)
             feat["status"] = "tested" if any(c["tested"] or c["tg_tested"] for c in feat["combos"]) else "experimental"

@@ -11,14 +11,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-06-02">
-<link rel="stylesheet" href="style.css?v=2026-10-06-02">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-06-03">
+<link rel="stylesheet" href="style.css?v=2026-10-06-03">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="flasher">
 <script>
   // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-  window.MC_BUILD = "2026-10-06-02";
+  window.MC_BUILD = "2026-10-06-03";
   window.addEventListener("error", function (e) {
     var b = document.getElementById("errbar");
     if (!b) return;
@@ -42,6 +42,11 @@
 </header>
 
 <main class="wrap fl">
+  <aside class="fork-note">
+    <span data-l="en"><b>Chord Keys · Nico’s flasher.</b> This preview is maintained in <a href="https://github.com/byNicoHeuser/Modded-Cycles/tree/codex/chord-keys">Nico’s fork</a>, based on <a href="https://github.com/18nelli18/Modded-Cycles">Modded Cycles by 18nelli18 and contributors</a>.</span>
+    <span data-l="fr"><b>Chord Keys · flasher de Nico.</b> Cette version est maintenue dans <a href="https://github.com/byNicoHeuser/Modded-Cycles/tree/codex/chord-keys">le fork de Nico</a>, basé sur <a href="https://github.com/18nelli18/Modded-Cycles">Modded Cycles par 18nelli18 et ses contributeurs</a>.</span>
+  </aside>
+
   <div class="fl-head">
     <h1 data-i18n="title">Model:Cycles Flasher</h1>
     <div>
@@ -52,6 +57,23 @@
 
   <div id="errbar" class="alert bad" hidden></div>
   <div id="compat" class="alert bad" role="alert" hidden></div>
+
+  <section class="test-scope" id="chord-test-scope" aria-labelledby="test-scope-title">
+    <h2 id="test-scope-title"><span data-l="en">Chord Keys: what has been tested</span><span data-l="fr">Chord Keys : ce qui a été testé</span></h2>
+    <p><span data-l="en"><b>Real Model:Cycles: Chord Keys alone, without any other mods.</b> Nico reported it working perfectly on 6 October 2026.</span><span data-l="fr"><b>Vrai Model:Cycles : Chord Keys seul, sans aucun autre mod.</b> Nico a confirmé son bon fonctionnement le 6 octobre 2026.</span></p>
+    <p class="test-limit"><span data-l="en"><b>No combination with Chord Keys has been tested on a real Model:Cycles.</b> The compatible combinations below have software checks only.</span><span data-l="fr"><b>Aucune combinaison avec Chord Keys n’a été testée sur un vrai Model:Cycles.</b> Les combinaisons compatibles ci-dessous ont seulement passé les contrôles logiciels.</span></p>
+    <details>
+      <summary><span data-l="en">Software compatibility and limits</span><span data-l="fr">Compatibilité logicielle et limites</span></summary>
+      <p><span data-l="en">The Chord Keys emulation suite passed with all of these installed together:</span><span data-l="fr">La suite d’émulation de Chord Keys passe avec tous ces mods installés ensemble :</span></p>
+      <ul>
+        <li><span data-l="en">6-channel USB audio; Arpeggiator; Tempo up to 546 BPM; startup animation.</span><span data-l="fr">Audio USB 6 canaux ; arpégiateur ; tempo jusqu’à 546 BPM ; animation de démarrage.</span></li>
+        <li><span data-l="en">Latching mute; Trig preview; scrolling names; easier trig removal.</span><span data-l="fr">Mute verrouillé ; écoute d’un pas ; noms qui défilent ; effacement facilité des trigs.</span></li>
+        <li><span data-l="en">All five Syntakt engines:</span><span data-l="fr">Les cinq moteurs Syntakt :</span> SD VINTAGE, CP VINTAGE, SY TOY, SY BITS, SY SWARM.</li>
+      </ul>
+      <p><span data-l="en">Every offered Chord Keys combination also passed firmware build and checksum checks. This does not mean each combination received a full functional emulation test, or that processor load and USB timing were measured on hardware.</span><span data-l="fr">Toutes les combinaisons proposées avec Chord Keys passent aussi les contrôles de construction et d’intégrité du firmware. Cela ne signifie pas que chacune a reçu un essai fonctionnel complet en émulation, ni que la charge processeur et les délais USB ont été mesurés sur machine.</span></p>
+      <p><span data-l="en"><b>Incompatible with Model-TG.</b> Samples OS is a separate installation. With Arpeggiator installed, the lower chord keys still bypass retrig/arp; the large pads retain it. <a href="../guide/#chord-keys">Read the Chord Keys guide</a>.</span><span data-l="fr"><b>Incompatible avec Model-TG.</b> L’OS Samples s’installe séparément. Avec l’arpégiateur installé, les touches d’accord du bas ignorent toujours retrig/arp ; les grands pads le conservent. <a href="../guide/#chord-keys">Lire le guide Chord Keys</a>.</span></p>
+    </details>
+  </section>
 
   <!-- 1. Choose -->
   <section class="step" id="step-choose" aria-labelledby="h1s">
@@ -64,7 +86,7 @@
       </div>
       <div id="panel-mods" role="tabpanel" aria-labelledby="tab-mods">
         <div id="features"></div>
-        <p class="note" data-i18n="mods_note">All these mods have been tested on a real Model:Cycles, except the choices tagged “Experimental”. Tick several to combine them.</p>
+        <p class="note" data-i18n="mods_note">Tick several to combine them. Test badges apply to each mod or engine choice, not every combination. Chord Keys has only been tested on hardware alone; its combinations have software checks only.</p>
       </div>
       <div id="panel-restore" role="tabpanel" aria-labelledby="tab-restore" hidden>
         <p class="panel-text" data-i18n-html="restore_text"></p>
@@ -204,11 +226,11 @@
 </footer>
 
 <!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
-<script src="../assets/release.js?v=2026-10-06-02"></script>
-<script src="../assets/site.js?v=2026-10-06-02"></script>
-<script src="builder.js?v=2026-10-06-02"></script>
-<script src="tweaks.js?v=2026-10-06-02"></script>
-<script src="flasher.js?v=2026-10-06-02"></script>
-<script src="app.js?v=2026-10-06-02"></script>
+<script src="../assets/release.js?v=2026-10-06-03"></script>
+<script src="../assets/site.js?v=2026-10-06-03"></script>
+<script src="builder.js?v=2026-10-06-03"></script>
+<script src="tweaks.js?v=2026-10-06-03"></script>
+<script src="flasher.js?v=2026-10-06-03"></script>
+<script src="app.js?v=2026-10-06-03"></script>
 </body>
 </html>

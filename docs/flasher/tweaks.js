@@ -138394,6 +138394,7 @@ window.MC_TWEAKS = {
     "who": "Modded Cycles",
     "repo": "18nelli18/Modded-Cycles"
    },
+   "hardware_scope": "standalone",
    "variants": [
     {
      "id": "chord-keys",

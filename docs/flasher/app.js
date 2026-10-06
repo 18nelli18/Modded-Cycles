@@ -17499,7 +17499,7 @@ const T = {
     s1: "What do you want to install?",
     tab_mods: "Mods",
     tab_restore: "Official firmware",
-    mods_note: "Tick several to combine them. Choices tagged “Experimental” are not tested on a real Model:Cycles yet.",
+    mods_note: "Tick several to combine them. Test badges apply to each mod or engine choice, not every combination. Chord Keys has only been tested on hardware alone; its combinations have software checks only.",
     restore_text: "Sends your official OS file <b>unchanged</b>, to go back to the stock firmware. It is also a good first rehearsal: it checks your cable and your setup without changing anything.",
     tab_samples: "Samples OS",
     samples_title: "Turn your Model:Cycles into a Model:Samples",
@@ -17510,6 +17510,8 @@ const T = {
     samples_ack: "I have a MIDI interface for the way back (to the Model:Cycles MIDI IN).",
     restore_from_samples: `Coming back from the Samples OS? Its way back is the startup menu through the MIDI IN: see the <a href="${GUIDE}#recovery">guide</a>.`,
     tested: "Tested",
+    tested_alone: "Tested alone",
+    software_only: "Combination: software only",
     experimental: "Experimental",
     credit_by: "by {who}",
     credit_based: "based on {repo} by {who}",
@@ -17662,7 +17664,7 @@ const T = {
     s1: "Que voulez-vous installer ?",
     tab_mods: "Mods",
     tab_restore: "Firmware officiel",
-    mods_note: "Cochez-en plusieurs pour les combiner. Les choix marqués « Expérimental » ne sont pas encore testés sur un vrai Model:Cycles.",
+    mods_note: "Cochez-en plusieurs pour les combiner. Les badges concernent chaque mod ou choix de moteurs, pas toutes les combinaisons. Chord Keys n'a été testé sur machine que seul ; ses combinaisons ont seulement passé les contrôles logiciels.",
     restore_text: "Envoie votre fichier d'OS officiel <b>sans le modifier</b>, pour revenir au firmware d'origine. C'est aussi une bonne répétition avant un mod : elle vérifie le câble et l'installation sans rien changer.",
     tab_samples: "OS Samples",
     samples_title: "Transformer le Model:Cycles en Model:Samples",
@@ -17673,6 +17675,8 @@ const T = {
     samples_ack: "J'ai une interface MIDI pour le retour (vers le MIDI IN du Model:Cycles).",
     restore_from_samples: `Vous revenez de l'OS Samples ? Le retour passe par le menu de démarrage et le MIDI IN : voir le <a href="${GUIDE}#recovery">guide</a>.`,
     tested: "Testé",
+    tested_alone: "Testé seul",
+    software_only: "Combinaison : logiciel uniquement",
     experimental: "Expérimental",
     credit_by: "par {who}",
     credit_based: "d'après {repo} de {who}",
@@ -17825,7 +17829,7 @@ const FEAT = {
   en: {
     "chord-keys": { label: "Scale chords on TRIG 1–16",
       desc: "Play one CHORD track with the lower TRIG buttons: I–VII on 1–7, one octave higher on 8–14, then I–II two octaves higher on 15–16. T1–T6 keep their usual controls. FUNC + RETRIG adds Keys, Root, Scale and a triad/7/9/11/13 choice per degree, shared across octaves and saved with the pattern.",
-      note: "Experimental, verified in emulation. Four notes at most: 9/11/13 omit the fifth and 11/13 omit the intermediate extensions. SHAPE chooses BASE, close or open voicings; COLOR blends their levels without octave shifts. I–VII alone choose extensions. For existing Keys ON patterns, start at BASE and COLOR 32. Last chord key wins. Retrig/arp is bypassed for these chord keys; the large pads keep it. Cannot be combined with Model-TG." },
+      note: "Nico reports Chord Keys working on his Model:Cycles on 6 October 2026, installed alone with no other mods. Combinations passed software checks only and have not been tested on a real Model:Cycles. Four notes at most: 9/11/13 omit the fifth and 11/13 omit the intermediate extensions. SHAPE chooses BASE, close or open voicings; COLOR blends their levels without octave shifts. I–VII alone choose extensions. For existing Keys ON patterns, start at BASE and COLOR 32. Last chord key wins. Retrig/arp is bypassed for these chord keys; the large pads keep it. Cannot be combined with Model-TG." },
     usb6: { label: "6-channel USB audio",
       desc: "Each track gets its own USB channel (48 kHz / 32-bit): record the 6 tracks separately in your DAW. The stereo mix is no longer sent over USB. OS updates over USB keep working." },
     "model-tg": { label: "Model-TG",
@@ -17857,7 +17861,7 @@ const FEAT = {
   fr: {
     "chord-keys": { label: "Accords de gamme sur TRIG 1–16",
       desc: "Jouez une piste CHORD avec les boutons TRIG du bas : I–VII sur 1–7, une octave plus haut sur 8–14, puis I–II deux octaves plus haut sur 15–16. T1–T6 gardent leurs commandes habituelles. FUNC + RETRIG ajoute Keys, Root, Scale et le choix triade/7/9/11/13 par degré, commun aux octaves et enregistré avec le pattern.",
-      note: "Expérimental, vérifié en émulation. Quatre notes au plus : 9/11/13 omettent la quinte et 11/13 les extensions intermédiaires. SHAPE choisit BASE, les dispositions resserrées ou ouvertes ; COLOR mélange leurs niveaux sans déplacer les octaves. I–VII seuls choisissent les extensions. Pour les anciens patterns Keys ON, commencez sur BASE et COLOR 32. La dernière touche d'accord est prioritaire. Retrig/arp est ignoré pour ces touches d'accord ; les grands pads le conservent. Incompatible avec Model-TG." },
+      note: "Nico rapporte le bon fonctionnement de Chord Keys sur son Model:Cycles le 6 octobre 2026, installé seul sans aucun autre mod. Les combinaisons ont seulement passé les contrôles logiciels et n’ont pas été testées sur un vrai Model:Cycles. Quatre notes au plus : 9/11/13 omettent la quinte et 11/13 les extensions intermédiaires. SHAPE choisit BASE, les dispositions resserrées ou ouvertes ; COLOR mélange leurs niveaux sans déplacer les octaves. I–VII seuls choisissent les extensions. Pour les anciens patterns Keys ON, commencez sur BASE et COLOR 32. La dernière touche d'accord est prioritaire. Retrig/arp est ignoré pour ces touches d'accord ; les grands pads le conservent. Incompatible avec Model-TG." },
     usb6: { label: "Audio USB 6 canaux",
       desc: "Chaque piste a son propre canal USB (48 kHz / 32 bits) : enregistrez les 6 pistes séparément dans votre logiciel. Le mix stéréo n'est plus envoyé en USB. La mise à jour de l'OS par USB continue de fonctionner." },
     "model-tg": { label: "Model-TG",
@@ -18040,11 +18044,14 @@ function renderFeatures() {
     // with Model-TG, the combined version's own tests (combo.tg_tested); Model-TG's card follows the engines' choice
     const withId = sel.on && f.with ? Object.keys(f.with).find(isOn) : null;
     const tgCombo = withId ? comboOfFeature(withId) : null;
-    const tested = combo ? (isOn("model-tg") ? combo.tg_tested : combo.tested)
+    const standalone = f.hardware_scope === "standalone";
+    const mixed = standalone && sel.on && tw.features.some((g) => g.id !== f.id && isOn(g.id));
+    const tested = standalone ? !mixed : combo ? (isOn("model-tg") ? combo.tg_tested : combo.tested)
       : tgCombo ? !!tgCombo.tg_tested : f.status === "tested";
+    const testLabel = standalone ? (mixed ? "software_only" : "tested_alone") : (tested ? "tested" : "experimental");
     ttl.innerHTML = `<span>${esc(featText(f.id, "label", f.label))}</span>` +
       (holder ? `<span class="incl">${esc(t("included", { name: featText(holder.id, "label", holder.label) }))}</span>` : "") +
-      `<span class="tag${tested ? " ok" : ""}">${esc(t(tested ? "tested" : "experimental"))}</span>` +
+      `<span class="tag${tested ? " ok" : ""}">${esc(t(testLabel))}</span>` +
       (GUIDE_OF[f.id] ? `<a class="feat-guide" href="${GUIDE}#${GUIDE_OF[f.id]}">Guide <span aria-hidden="true">→</span></a>` : "");
     const desc = document.createElement("div");
     desc.className = "desc";

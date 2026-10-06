@@ -183,7 +183,7 @@ async function main() {
     const holdTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "trig-hold"));
     const tempoTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "tempo-max"));
     const bootTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "boot-anim"));
-    check(tags.join() === "Tested,Experimental,Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + ",Experimental," + synTag,
+    check(tags.join() === "Tested,Experimental,Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + ",Tested alone," + synTag,
       "cards tagged as tested or not (Model-TG experimental until tested here): " + tags.join());
     check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until the Syntakt engines are ticked");
     doc.getElementById("feat-syntakt").click();
@@ -295,6 +295,29 @@ async function main() {
     doc.getElementById("feat-model-tg").click(); await wait(5);
     doc.querySelector('.lang button[data-lang="en"]').click();
     await wait(20);
+
+    // Le retour matériel de Nico ne couvre que Chord Keys seul.
+    for (const f of w.MC_TWEAKS.features) {
+      const cb = doc.getElementById("feat-" + f.id);
+      if (cb.checked && !cb.disabled) cb.click();
+    }
+    box("feat-chord-keys").click(); await wait(5);
+    check(tagOf("feat-chord-keys") === "Tested alone"
+      && /without any other mods/.test(text(doc, "chord-test-scope"))
+      && /No combination with Chord Keys has been tested on a real Model:Cycles/.test(text(doc, "chord-test-scope")),
+      "Chord Keys alone: scoped hardware badge and explicit untested-combinations notice");
+    box("feat-usb6").click(); await wait(5);
+    check(tagOf("feat-chord-keys") === "Combination: software only"
+      && !doc.querySelector("label[for=feat-chord-keys] .tag").classList.contains("ok"),
+      "Chord Keys + USB audio: hardware badge replaced by software-only combination warning");
+    doc.querySelector('.lang button[data-lang="fr"]').click(); await wait(5);
+    check(tagOf("feat-chord-keys") === "Combinaison : logiciel uniquement",
+      "FR: combined Chord Keys badge reports software checks only");
+    box("feat-usb6").click(); await wait(5);
+    check(tagOf("feat-chord-keys") === "Testé seul",
+      "FR: removing the other mod restores standalone test scope");
+    box("feat-chord-keys").click();
+    doc.querySelector('.lang button[data-lang="en"]').click(); await wait(5);
 
     // Connection: USB only, fast method by default, classic as the fallback
     check(doc.querySelectorAll('input[name="method"]').length === 0 && !doc.getElementById("howto-midi")

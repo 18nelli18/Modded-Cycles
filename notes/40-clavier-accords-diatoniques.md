@@ -11,7 +11,8 @@ Source : conversation locale, sans lien public. Adresses : VA de l'OS **1.13**. 
 Tweak : [`44-chord-keys.json`](../tweaks/model-cycles_OS1.13/44-chord-keys.json), générateur
 [`tools/gen_chord_keys.py`](../tools/gen_chord_keys.py), sources
 [`tools/machines/chord_keys/`](../tools/machines/chord_keys/), preuves sous `tools/emu/` et test natif
-[`tools/test_chord_keys.py`](../tools/test_chord_keys.py). **Statut : expérimental, aucun essai matériel rapporté.**
+[`tools/test_chord_keys.py`](../tools/test_chord_keys.py). **État au 06/10/2026 : fonctionnement de Chord Keys seul
+rapporté par Nico sur son Model:Cycles, sans autre mod ; combinaisons vérifiées uniquement en logiciel** (§13).
 
 ## Réponse courte
 
@@ -279,13 +280,15 @@ hors des écritures : seul le MAIN OS, section 3, est modifié.
 | Arp | Stockage distinct ; menu stock conservé avant les dix nouvelles lignes ; accords TRIG sans répétition (`retrig=-1`), grands pads traités par l'OS et l'arpège |
 | Trig-preview / trig-hold | PAGE et le consommateur de grille restent stock ; le hook KeyboardView laisse passer l'édition des pas et les modificateurs |
 | 6ch-usbup / moteurs Syntakt | Pas de cave partagée ni modification du transport USB ; preuves combinées dans la suite |
+| Samples OS | Installation d'un autre OS, pas une combinaison avec ce mod pour Cycles OS 1.13 |
 | Autres machines | Grands pads toujours stock ; clavier TRIG stock si Keys est OFF ou la piste sélectionnée n'est pas CHORD ; wrapper audio uniquement sur l'update CHORD |
 
 `[FAIT en émulation, révision du 06/10/2026]` La suite complète passe seule et avec **6ch-usbup, latching-mute, trig-preview,
 browser-scroll, trig-hold, arp, tempo-max, boot-anim et les cinq moteurs Syntakt SD/CP/TOY/BITS/SWARM**.
 L'absence de chevauchement d'octets ne prouve pas à elle seule une compatibilité fonctionnelle ; la suite exécute
-les mêmes contrôles avec cette image combinée. Les résultats détaillés de cette révision sont suivis en §11.
-Le test matériel doit encore couvrir une session dense avec effets et USB.
+les mêmes contrôles avec cette image combinée. Les résultats de la dernière révision sont suivis en §12.5.
+**Le seul retour matériel reçu concerne Chord Keys sans autre mod** (§13). Toutes les combinaisons ci-dessus
+restent sans essai matériel rapporté, y compris une session dense avec effets et USB.
 
 Le banc du gouverneur, intégré à la commande combinée lorsqu'un mod expose ses symboles, exécute six accords
 CHORD avec le vrai getter : à **50 % de charge simulée**, le PCM reste identique et aucune voix n'est volée ; un
@@ -344,7 +347,7 @@ relatif au PC. L'option assembleur **`-S`** désactive cette optimisation et rep
 `relocate_6ch.py --check` passe avec cette option, sans modifier le JSON existant. Le poste utilise un wrapper
 local ignoré sous `build/binutils-repro/` pour fournir ce drapeau au contrôle historique.
 
-## 10. À vérifier sur la machine
+## 10. Protocole matériel prévu avant le retour du 06/10/2026
 
 `[À FAIRE : Maxime]` Ouvrir FUNC + RETRIG, vérifier que MAJ et les lignes I–VII tiennent à l'écran, activer Keys sur
 CHORD, quitter l'édition en grille et parcourir TRIG 1–16. Comparer 1/8/15 et 2/9/16, changer chaque extension,
@@ -353,8 +356,9 @@ TRACK/FUNC/PATTERN/QuickMute, l'édition des pas et le clavier chromatique avec 
 l'enregistrement/relecture des fondamentales, la sauvegarde/recharge/copie des patterns
 et du projet, puis une session avec les autres mods compatibles, effets, USB et charge audio élevée.
 
-**Aucun essai matériel rapporté. Le statut reste `experimental` jusqu'au retour de Maxime ; aucune affirmation
-sur l'écran physique, le temps réel ou le fonctionnement complet du matériel ne découle de ces seuls bancs.**
+**État lors de la rédaction de ce protocole : aucun essai matériel rapporté, statut `experimental`.**
+Aucune affirmation sur l'écran physique, le temps réel ou le fonctionnement complet du matériel ne découle
+de ces seuls bancs. Le retour ultérieur de Nico est consigné en §13 ; il ne détaille pas ces contrôles un par un.
 
 ## 11. Révision du 06/10/2026 : seize boutons TRIG, pads d'origine et menu raccourci
 
@@ -412,7 +416,8 @@ Le parcours exhaustif du flasher valide ces **17 407 combinaisons**, sans erreur
 exacte des choix proposés. Les générateurs, la compilation Python, la syntaxe JavaScript et les comparaisons
 des builders/flashers passent également. Le fichier construit pour Chord Keys seul conserve à l’octet près
 les sections 2, 4 et 5 de l’image officielle ; seule la section 3 change.
-Essais matériels attendus : §10 ; statut toujours **expérimental**.
+À la validation de cette révision, avant le retour matériel du §13 : essais attendus selon §10,
+statut **expérimental**.
 
 ## 12. SHAPE pour la disposition, COLOR pour le mélange (06/10/2026)
 
@@ -532,7 +537,7 @@ occuperaient 67 pixels dans un panneau de 64. Le dessin contextuel utilise la
 police stock `0x4014120c`, sept pixels par glyphe : **31 pixels** pour ces neuf
 libellés. Les vraies métriques et routines de dessin sont exécutées dans la
 preuve ; les neuf bitmaps sont différents et restent dans `x=81..111`,
-`y=40..48` pour le popup testé. L'affichage physique reste à vérifier. Les autres
+`y=40..48` pour le popup testé. Le retour général du §13 ne détaille pas une vérification physique de chaque libellé. Les autres
 machines, paramètres, objets et pistes avec Keys OFF délèguent aux routines
 natives. Le libellé dépend de la piste, pas de la dernière note : une note MIDI
 hors gamme conserve le SHAPE stock sonore même si ce popup affiche le voicing.
@@ -603,4 +608,30 @@ contenant Chord Keys changent ; les 9 215 autres restent identiques.
 Limite pratique : les positions ouvertes peuvent pousser des voix supérieures
 hors plage sur les TRIG aigus, même avec PITCH/FINE neutres. Baisser Root, par
 exemple à C2, laisse davantage de marge. La disposition BASE reste le point de
-départ de référence. **Statut toujours expérimental, sans essai matériel.**
+départ de référence. **À la clôture de cette validation logicielle, avant le retour du §13 : statut expérimental,
+sans essai matériel rapporté.**
+
+## 13. Chord Keys seul testé sur la machine par Nico (06/10/2026)
+
+**Source : retour de Nico dans cette conversation, sans lien public.** Après la révision SHAPE/COLOR du §12,
+Nico indique : « en mi maquina ya funciono perfectamente » et précise que le test a été fait **sans aucun
+autre mod sur un vrai Model:Cycles**. Il demande de publier un flasher propre au fork et de distinguer ce
+retour matériel des vérifications logicielles de compatibilité. Il s'agit du retour de **Nico, pas de Maxime**.
+La méthode de transfert, la durée de la session et une liste détaillée de gestes testés n'ont pas été rapportées.
+
+| Portée | Résultat et limite |
+|---|---|
+| Chord Keys seul, révision SHAPE/COLOR | Fonctionnement rapporté par Nico sur son Model:Cycles le 06/10/2026, sans autre mod ; ce retour ne vaut pas validation détaillée de tous les points des §10 et §12.3 |
+| Chord Keys avec les mods compatibles | **Logiciel uniquement, aucun essai matériel rapporté** : 215 contrôles en émulation pour l'image combinant `6ch-usbup`, `latching-mute`, `trig-preview`, `browser-scroll`, `trig-hold`, `arp`, `tempo-max`, `boot-anim` et `syntakt-sd-cp-toy-bits-swarm` (les cinq moteurs) ; 211 contrôles avec Chord Keys seul |
+| Toutes les sélections proposées avec Chord Keys | 8 192 combinaisons vérifiées par construction et empreintes au sein des 17 407 combinaisons du flasher ; cela ne signifie pas que chaque combinaison a reçu une émulation fonctionnelle complète |
+| Model-TG / Model-TG-ST | Incompatibilité déclarée, non proposés avec Chord Keys |
+| Samples OS | Autre OS, installation distincte de Chord Keys |
+
+Les cinq moteurs de la preuve combinée sont **SD VINTAGE, CP VINTAGE, SY TOY, SY BITS et SY SWARM**.
+Avec l'arpégiateur, les grands pads T1–T6 gardent son comportement ; les touches d'accords TRIG inférieures
+ne déclenchent pas d'arpège. La compatibilité annoncée reste limitée à ces preuves logicielles et à leurs
+scénarios ; les combinaisons nécessitent encore des essais sur un Cycles réel.
+
+Le [flasher du fork de Nico](https://bynicoheuser.github.io/Modded-Cycles/flasher/) publie les patchs et construit
+le firmware dans le navigateur à partir de l'OS officiel fourni par chaque utilisateur. Aucune image officielle
+ou modifiée n'est distribuée. Ce site est distinct du flasher amont de Maxime.

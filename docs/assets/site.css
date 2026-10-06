@@ -183,3 +183,5 @@ h3{font-size:20px;letter-spacing:-.01em}
 @media (prefers-reduced-motion:reduce){
   *{transition:none !important;animation:none !important}
 }
+/* Fork identity, shared by the preview's three pages. */
+.fork-note{margin:20px 0;padding:14px 18px;border:1px solid var(--line);font-size:15px;line-height:1.5;color:var(--ink-2)}

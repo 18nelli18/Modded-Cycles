@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.25", date: "2026-10-06", changes: [
+    { en: "Chord Keys hardware report: Nico confirms it works on his Model:Cycles when installed alone, with no other mods. No combination with Chord Keys has been tested on a real Model:Cycles",
+      fr: "Retour matériel Chord Keys : Nico confirme son bon fonctionnement sur son Model:Cycles installé seul, sans aucun autre mod. Aucune combinaison avec Chord Keys n’a été testée sur un vrai Model:Cycles" },
+    { en: "Software compatibility checked with 6-channel USB audio, Arpeggiator, Tempo up to 546 BPM, startup animation, latching mute, trig preview, scrolling names, easier trig removal and all five Syntakt engines, installed together. Model-TG remains incompatible",
+      fr: "Compatibilité logicielle vérifiée avec audio USB 6 canaux, arpégiateur, tempo jusqu’à 546 BPM, animation de démarrage, mute verrouillé, écoute d’un pas, noms qui défilent, effacement facilité des trigs et les cinq moteurs Syntakt, installés ensemble. Model-TG reste incompatible" },
+    { en: "Nico’s flasher preview now separates the standalone hardware report from software-only combinations. The Chord Keys badge changes when another mod is selected. Every offered combination passes build and checksum checks; firmware bytes are unchanged from version 1.24",
+      fr: "Le flasher de Nico distingue désormais le retour matériel du mod seul et les combinaisons vérifiées uniquement par logiciel. Le badge Chord Keys change à la sélection d’un autre mod. Toutes les combinaisons proposées passent les contrôles de construction et d’intégrité ; le firmware est inchangé depuis la version 1.24" },
+  ] },
   { version: "1.24", date: "2026-10-06", changes: [
     { en: "Chord keys gives SHAPE a dedicated role: choose BASE, four close positions (CLS0–3) or four open positions (OPN0–3). The screen shows Chord Voicing and the selected position. The I–VII menu rows remain the only extension settings",
       fr: "Le clavier d'accords donne un rôle dédié à SHAPE : choisissez BASE, quatre positions resserrées (CLS0–3) ou quatre positions ouvertes (OPN0–3). L'écran affiche Chord Voicing et la position choisie. Les lignes I–VII du menu restent les seuls réglages d'extension" },

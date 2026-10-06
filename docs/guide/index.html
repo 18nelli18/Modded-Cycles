@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-06-02">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-06-02">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-06-03">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-06-03">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -31,6 +31,11 @@
 </header>
 
 <main class="wrap">
+  <aside class="fork-note">
+    <span data-l="en"><b>Chord Keys · Nico’s flasher.</b> This preview is maintained in <a href="https://github.com/byNicoHeuser/Modded-Cycles/tree/codex/chord-keys">Nico’s fork</a>, based on <a href="https://github.com/18nelli18/Modded-Cycles">Modded Cycles by 18nelli18 and contributors</a>.</span>
+    <span data-l="fr"><b>Chord Keys · flasher de Nico.</b> Cette version est maintenue dans <a href="https://github.com/byNicoHeuser/Modded-Cycles/tree/codex/chord-keys">le fork de Nico</a>, basé sur <a href="https://github.com/18nelli18/Modded-Cycles">Modded Cycles par 18nelli18 et ses contributeurs</a>.</span>
+  </aside>
+
   <div class="g-head">
     <h1>Guide</h1>
     <p><span data-l="en">What each mod does, how to install it, and how to go back.</span><span data-l="fr">Ce que fait chaque mod, comment l'installer et comment revenir en arrière.</span></p>
@@ -521,8 +526,9 @@
           <div><dt><span data-l="en">Existing patterns</span><span data-l="fr">Anciens patterns</span></dt><dd><span data-l="en">SHAPE was ignored in earlier Chord keys versions. Its saved value now chooses a voicing: return it to BASE when opening an old Keys ON pattern. COLOR no longer applies octave shifts, so older patterns may sound different. BASE with COLOR 32 is the reference starting point.</span><span data-l="fr">Les versions précédentes du clavier d'accords ignoraient SHAPE. Sa valeur enregistrée choisit désormais une disposition : remettez-la sur BASE à l'ouverture d'un ancien pattern Keys ON. COLOR ne déplace plus les octaves, ce qui peut changer le son des anciens patterns. BASE avec COLOR 32 est le point de départ de référence.</span></dd></div>
           <div><dt><span data-l="en">Patterns</span><span data-l="fr">Patterns</span></dt><dd><span data-l="en">the sequencer keeps each chord's root note. The current scale and extension settings determine its harmony during playback too: changing an extension changes existing notes of that degree. Notes outside the scale retain their original SHAPE chord, although the screen keeps the Chord Voicing labels until Keys is OFF. Save the project to keep each track's settings in each pattern; the original OS ignores these settings and plays its normal chords.</span><span data-l="fr">le séquenceur garde la fondamentale de chaque accord. La gamme et les extensions courantes déterminent aussi son harmonie à la lecture : modifier une extension change les notes existantes de ce degré. Les notes hors gamme gardent leur accord SHAPE d’origine, même si l’écran conserve les libellés Chord Voicing tant que Keys est ON. Enregistrez le projet pour conserver les réglages de chaque piste dans chaque pattern ; l'OS d'origine ignore ces réglages et joue ses accords habituels.</span></dd></div>
           <div><dt><span data-l="en">Controls</span><span data-l="fr">Commandes</span></dt><dd><span data-l="en">T1–T6 keep their normal playing, track selection and mute controls. Grid recording, menus and shortcuts with FUNC, TRACK or PATTERN keep their usual actions. PAGE keeps Fill and its other functions; RETRIG no longer selects an octave bank. Chords played on TRIG 1–16 do not retrigger or arpeggiate; retrig and arp remain available on the large pads. Set Keys OFF to restore the ordinary chromatic TRIG keyboard.</span><span data-l="fr">T1–T6 gardent leurs commandes habituelles de jeu, de sélection de piste et de mute. L'enregistrement en grille, les menus et les raccourcis avec FUNC, TRACK ou PATTERN gardent leurs actions habituelles. PAGE garde Fill et ses autres fonctions ; RETRIG ne sélectionne plus de banque d'octave. Les accords joués sur TRIG 1–16 ne sont ni répétés ni arpégés ; retrig et arp restent disponibles sur les grands pads. Remettez Keys sur OFF pour retrouver le clavier chromatique TRIG ordinaire.</span></dd></div>
-          <div><dt><span data-l="en">Compatibility</span><span data-l="fr">Compatibilité</span></dt><dd><span data-l="en">CHORD only. The arpeggiator can be installed alongside it. This version cannot be combined with Model-TG or Model-TG with Syntakt engines.</span><span data-l="fr">CHORD uniquement. L'arpégiateur peut être installé avec lui. Cette version ne se combine pas avec Model-TG, seul ou avec les moteurs du Syntakt.</span></dd></div>
-          <div><dt><span data-l="en">Experimental</span><span data-l="fr">Expérimental</span></dt><dd><span data-l="en">checked in emulation on the OS's own keyboard, pad, menu, storage and CHORD code, including note releases and all sixteen keys. No hardware test yet.</span><span data-l="fr">vérifié en émulation sur le code même de l'OS pour le clavier, les pads, le menu, le stockage et CHORD, y compris les relâchements et les seize touches. Aucun essai sur la machine pour l'instant.</span></dd></div>
+          <div><dt><span data-l="en">Compatibility</span><span data-l="fr">Compatibilité</span></dt><dd><span data-l="en">CHORD only. Software compatibility checked with 6-channel USB audio, Arpeggiator, Tempo up to 546 BPM, startup animation, latching mute, trig preview, scrolling names, easier trig removal and the five Syntakt engines (SD VINTAGE, CP VINTAGE, SY TOY, SY BITS, SY SWARM), all installed together. Model-TG remains incompatible. Samples OS is a separate installation.</span><span data-l="fr">CHORD uniquement. Compatibilité logicielle vérifiée avec audio USB 6 canaux, arpégiateur, tempo jusqu’à 546 BPM, animation de démarrage, mute verrouillé, écoute d’un pas, noms qui défilent, effacement facilité des trigs et les cinq moteurs Syntakt (SD VINTAGE, CP VINTAGE, SY TOY, SY BITS, SY SWARM), tous installés ensemble. Model-TG reste incompatible. L’OS Samples s’installe séparément.</span></dd></div>
+          <div><dt><span data-l="en">Hardware test</span><span data-l="fr">Essai matériel</span></dt><dd><span data-l="en"><b>Chord Keys alone, with no other mods:</b> Nico reported it working perfectly on his Model:Cycles on 6 October 2026. <b>No combination with other mods has been tested on a real Model:Cycles.</b></span><span data-l="fr"><b>Chord Keys seul, sans aucun autre mod :</b> Nico a confirmé son bon fonctionnement sur son Model:Cycles le 6 octobre 2026. <b>Aucune combinaison avec d’autres mods n’a été testée sur un vrai Model:Cycles.</b></span></dd></div>
+          <div><dt><span data-l="en">Software checks</span><span data-l="fr">Contrôles logiciels</span></dt><dd><span data-l="en">The Chord Keys suite passed alone and with all the compatible mods above installed together, on the OS’s own keyboard, pad, menu, storage and CHORD code. All offered combinations also pass firmware build and checksum checks; this is not a full functional test of each combination or a hardware load measurement.</span><span data-l="fr">La suite Chord Keys passe seule et avec tous les mods compatibles ci-dessus installés ensemble, sur le code de l’OS pour le clavier, les pads, le menu, le stockage et CHORD. Toutes les combinaisons proposées passent aussi les contrôles de construction et d’intégrité du firmware ; ce n’est ni un essai fonctionnel complet de chaque combinaison ni une mesure de charge sur machine.</span></dd></div>
         </dl>
       </section>
 
@@ -625,8 +631,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-06-02"></script>
-<script src="../assets/cycles.js?v=2026-10-06-02"></script>
-<script src="../assets/site.js?v=2026-10-06-02"></script>
+<script src="../assets/release.js?v=2026-10-06-03"></script>
+<script src="../assets/cycles.js?v=2026-10-06-03"></script>
+<script src="../assets/site.js?v=2026-10-06-03"></script>
 </body>
 </html>
