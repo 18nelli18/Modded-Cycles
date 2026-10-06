@@ -1,9 +1,9 @@
-/* Pads et menu du clavier d'accords, OS 1.13 (notes/40).
+/* Touches TRIG et menu du clavier d'accords, OS 1.13 (notes/40).
  * Les notes passent par les helpers stock ; le moteur interprète leur degré
  * avec la configuration publiée. Aucun état sonore n'est modifié directement.
- * RETRIG donne la seconde banque dans ce mode. Les modificateurs de sélection
- * et FUNC gardent le consommateur d'origine ; les vues prioritaires restent
- * prises en charge par le contrôleur avant l'appel de PadsView.
+ * Les seize touches parcourent les degrés, puis les octaves. Les modificateurs
+ * de sélection, FUNC et l'édition de grille gardent le consommateur d'origine ;
+ * les vues prioritaires sont traitées par le contrôleur avant KeyboardView.
  */
 #include "chord_keys.h"
 #include "chord_ui.h"
@@ -19,14 +19,14 @@ typedef int s32;
 #define ROOT_MIN 24u
 #define ROOT_MAX 48u
 
-struct held_pad {
+struct held_key {
     void *view;
     u32 track, note;
     u8 valid, active;
 };
 
 /* Zéro dans l'image, y compris sans remise à zéro des caves au démarrage. */
-static struct held_pad held[6];
+static struct held_key held[16];
 
 static u32 selected_track(void)
 {
@@ -41,49 +41,48 @@ static int is_chord(u32 track)
     return ((s32 (*)(void *, u32))0x4001e318)(0, track) == 5;
 }
 
-static void release_pad(struct held_pad *pad)
+static void release_key(struct held_key *key)
 {
-    if (pad->active) {
-        ((void (*)(void *, u32, u32))0x4001d0fc)(pad->view, pad->track, pad->note);
-        pad->active = 0;
+    if (key->active) {
+        ((void (*)(void *, u32, u32))0x40019c84)(key->view, key->track, key->note);
+        key->active = 0;
     }
 }
 
 void ck_ui_cancel_track(u32 track)
 {
     u32 i;
-    for (i = 0; i < 6; ++i)
+    for (i = 0; i < 16; ++i)
         if (held[i].valid && held[i].track == track)
-            release_pad(&held[i]);
+            release_key(&held[i]);
 }
 
-static __attribute__((noinline)) u32 pad_velocity(const u8 *event)
+static __attribute__((noinline)) u32 key_velocity(u32 track)
 {
     void *root = ((void *(*)(void))0x400cf866)();
-    void *state = ((void *(*)(void *))0x4000eb90)(root);
-    u32 velocity = WORD(event, 24);
-    /* Même priorité que PadsView stock : le réglage fixe remplace la frappe. */
-    if (((u8 (*)(void *))0x40013464)(state))
-        velocity = ((u32 (*)(void *))0x4001351e)(state);
+    void *pattern = ((void *(*)(void *))0x4000f208)(root);
+    void *data = ((void *(*)(void *, u32))0x4000cfcc)(pattern, track);
+    /* Les boutons TRIG, sans capteur de force, utilisent la vélocité de piste. */
+    u32 velocity = ((u8 (*)(void *))0x40015ac4)(data);
     return velocity > 127 ? 127 : velocity;
 }
 
 /* La dernière frappe remplace la précédente sur sa piste. Le relâchement de
- * l'ancien pad sera consommé, sans couper le nouveau même si les notes égalaient.
+ * l'ancienne touche sera consommé, sans couper la nouvelle même à note égale.
  */
-static void play_pad(void *view, u32 pad, u32 track, u32 note, u32 velocity)
+static void play_key(void *view, u32 key, u32 track, u32 note, u32 velocity)
 {
-    struct held_pad *h = &held[pad];
-    release_pad(h);
+    struct held_key *h = &held[key];
+    release_key(h);
     ck_ui_cancel_track(track);
     h->view = view;
     h->track = track;
     h->note = note;
     h->valid = h->active = 1;
-    ((void (*)(void *, u32, u32, u32, s32))0x4001d05e)(view, track, note, velocity, -1);
+    ((void (*)(void *, u32, u32, u32, s32))0x40019e7a)(view, track, note, velocity, -1);
 }
 
-static int chord_for(u32 word, u32 pad, u32 bank, struct chord_keys_result *result)
+static __attribute__((noinline)) int chord_for(u32 word, u32 key, struct chord_keys_result *result)
 {
     struct chord_keys_config config;
     u32 i;
@@ -91,14 +90,19 @@ static int chord_for(u32 word, u32 pad, u32 bank, struct chord_keys_result *resu
     config.mode = (word >> 28) & 7;
     for (i = 0; i < 7; ++i)
         config.extensions[i] = (word >> (3 * i)) & 7;
-    return chord_keys_build(&config, pad, bank, result) == CHORD_KEYS_OK;
+    return chord_keys_build(&config, key, result) == CHORD_KEYS_OK;
 }
 
-static __attribute__((noinline)) int handle_press(void *view, u8 *event, u32 pad)
+static __attribute__((noinline)) int handle_press(void *view, u8 *event, u32 key)
 {
     struct chord_keys_result chord;
+    void *state;
     u32 track, word;
-    if (event[28] || KEY(1) || KEY(2) || KEY(3))
+    if ((WORD(event, 16) & 2) || KEY(1) || KEY(2) || KEY(3))
+        return 0;
+    state = ((void *(*)(void))0x400cf9a8)();
+    /* Contrat stock de KeyboardView : l'édition des pas reste à PatternGridView. */
+    if (((u8 (*)(void *))0x4006b978)(state) || ((u8 (*)(void *))0x4006bb18)(state))
         return 0;
     track = selected_track();
     if (track >= 6 || !is_chord(track))
@@ -106,26 +110,29 @@ static __attribute__((noinline)) int handle_press(void *view, u8 *event, u32 pad
     word = ck_ui_config_get(track);
     if (!(word & ENABLED))
         return 0;
-    if (!chord_for(word, pad, KEY(4) != 0, &chord))
+    if (!chord_for(word, key, &chord))
         return 1; /* réglage invalide : ne pas déclencher une autre piste */
-    play_pad(view, pad, track, chord.notes[0], pad_velocity(event));
+    play_key(view, key, track, chord.notes[0], key_velocity(track));
     return 1;
 }
 
-u32 ck_ui_pad(void *view, u8 *event)
+u32 ck_ui_key(void *view, u8 *event)
 {
-    u32 pad = WORD(event, 20), state = WORD(event, 16);
-    if (WORD(event, 12) == 1 && pad >= 1 && pad <= 6) {
-        --pad;
-        if (!state && held[pad].valid) {
-            release_pad(&held[pad]);
-            held[pad].valid = 0;
+    u32 code = WORD(event, 12), flags = WORD(event, 16);
+    if (code >= 16 && code <= 31) {
+        u32 key = code - 16;
+        if (!(flags & 1) && held[key].valid) {
+            release_key(&held[key]);
+            held[key].valid = 0;
             return 1;
         }
-        if (state == 1 && handle_press(view, event, pad))
+        /* Les répétitions de maintien ne doivent jamais redéclencher un accord. */
+        if ((flags & 8) && held[key].valid)
+            return 1;
+        if ((flags & 9) == 1 && handle_press(view, event, key))
             return 1;
     }
-    return ((u32 (*)(void *, u8 *))0x4001d180)(view, event);
+    return ((u32 (*)(void *, u8 *))0x4001a0d2)(view, event);
 }
 
 /* Menu FUNC + RETRIG : conventions de MenuItem déjà éprouvées par l'arpège.
@@ -139,9 +146,9 @@ typedef struct {
 
 extern char ck_ui_item_label[];
 static const char *const labels[] = {
-    "Keys", "Root", "Scale", "I Ext", "II Ext", "III Ext", "IV Ext", "V Ext", "VI Ext", "VII Ext"
+    "Keys", "Root", "Scale", "I", "II", "III", "IV", "V", "VI", "VII"
 };
-static const char *const modes[] = { "MAJOR", "DOR", "PHR", "LYD", "MIX", "MINOR", "LOC" };
+static const char *const modes[] = { "MAJ", "DOR", "PHR", "LYD", "MIX", "MINOR", "LOC" };
 static const char *const extensions[] = { "TRI", "7", "9", "11", "13" };
 static const char *const notes[] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 

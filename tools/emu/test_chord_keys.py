@@ -2,9 +2,9 @@
 """Preuve du clavier CHORD diatonique, sur le JSON final (notes/40).
 
 Exécute le code ColdFire dans ses masques définitifs et les vraies routines OS
-pour les événements de pads, les menus, les patterns et le DSP. Les helpers
+pour les événements de touches et pads, les menus, les patterns et le DSP. Les helpers
 précisent leurs limites d'instrumentation ; ce n'est pas un démarrage complet
-ni un test matériel. Durée : quelques minutes, surtout les 10 500 accords DSP.
+ni un test matériel. Durée : quelques minutes, surtout les 14 000 accords DSP.
 
     python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx
     python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx \\

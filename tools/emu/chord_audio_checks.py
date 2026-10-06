@@ -3,7 +3,7 @@
 Appelé par test_chord_keys.py avec les images de référence et modifiée. Le getter
 de configuration est seul instrumenté pour isoler le DSP du stockage/menu : les
 deux crochets ColdFire, le trampoline et l'update stock s'exécutent réellement.
-Les preuves de stockage et de pads doivent compléter ces vérifications.
+Les preuves de stockage et de touches doivent compléter ces vérifications.
 run_audio_storage_checks ajoute le vrai getter, des changements de pattern et
 le coût complet de la boucle native ; aucun getter n'y est instrumenté.
 """
@@ -328,7 +328,7 @@ def run_audio_checks(stock, patched, config_address, extra_code=(), setup=None):
             first_error = None
             for tonic in range(24, 49):
                 b.configs[0] = config_word(tonic, mode, (extension,) * 7)
-                for slot in range(12):
+                for slot in range(16):
                     notes = tuple(tonic + 12 * ((slot + pos) // 7)
                                   + scale[(slot + pos) % 7] for pos in positions)
                     intervals = tuple(n - notes[0] for n in notes)
@@ -346,15 +346,15 @@ def run_audio_checks(stock, patched, config_address, extra_code=(), setup=None):
                     if not ok and first_error is None:
                         first_error = (tonic, slot, ratios, expected, gains, cents)
                     count += 1
-            check(valid, f"audio mode {mode}, extension {extension} : 25 toniques × 12 pads"
+            check(valid, f"audio mode {mode}, extension {extension} : 25 toniques × 16 touches TRIG"
                   + (f" ; premier écart {first_error}" if first_error else ""))
-    check(count == 10500, f"audio : {count} accords, paramètres inchangés, écart maximal {worst:.3f} cent")
+    check(count == 14000, f"audio : {count} accords, paramètres inchangés, écart maximal {worst:.3f} cent")
 
     degree_settings = True
     mixed = (0, 1, 2, 3, 4, 0, 1)
     for mode, scale in enumerate(SCALES):
         b.configs[0] = config_word(mode=mode, extensions=mixed)
-        for slot in range(12):
+        for slot in range(16):
             positions = POSITIONS[mixed[slot % 7]]
             notes = tuple(48 + 12 * ((slot + pos) // 7) + scale[(slot + pos) % 7]
                           for pos in positions)

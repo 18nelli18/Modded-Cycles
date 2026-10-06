@@ -1,4 +1,4 @@
-/* Noyau harmonique proposé pour chord-keys. Ce fichier ne contient ni hook,
+/* Noyau harmonique de chord-keys. Ce fichier ne contient ni hook,
  * ni octet du firmware, ni conversion vers les paramètres SHAPE/COLOR.
  * Il calcule uniquement un voicing diatonique de trois ou quatre notes.
  */
@@ -26,13 +26,13 @@ static const unsigned char voicings[CHORD_KEYS_EXTENSION_COUNT][4] = {
 };
 
 enum chord_keys_status chord_keys_build(const struct chord_keys_config *config,
-                                       int pad, int bank,
+                                       int key,
                                        struct chord_keys_result *result)
 {
     int i, slot, degree, extension, count;
     int notes[4];
 
-    if (!config || !result || pad < 0 || pad > 5 || bank < 0 || bank > 1)
+    if (!config || !result || key < 0 || key > 15)
         return CHORD_KEYS_INVALID_ARGUMENT;
     if (config->root < 0 || config->root > 127 ||
         (unsigned int)config->mode >= CHORD_KEYS_MODE_COUNT)
@@ -41,7 +41,7 @@ enum chord_keys_status chord_keys_build(const struct chord_keys_config *config,
         if ((unsigned int)config->extensions[i] >= CHORD_KEYS_EXTENSION_COUNT)
             return CHORD_KEYS_INVALID_ARGUMENT;
 
-    slot = 6 * bank + pad;
+    slot = key;
     degree = slot % 7;
     extension = config->extensions[degree];
     count = extension == CHORD_KEYS_TRIAD ? 3 : 4;

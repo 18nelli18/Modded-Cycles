@@ -18,8 +18,8 @@ import tempfile
 
 OK, INVALID_ARGUMENT, NOTE_RANGE = range(3)
 TRIAD, SEVENTH, NINTH, ELEVENTH, THIRTEENTH = range(5)
-DEGREES = (0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4)
-OCTAVES = (0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1)
+DEGREES = (0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6, 0, 1)
+OCTAVES = (0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2)
 
 
 class Config(ct.Structure):
@@ -51,7 +51,7 @@ def poisoned_result():
 def call(build, settings, slot):
     result = poisoned_result()
     before = bytes(result)
-    status = build(ct.byref(settings), slot % 6, slot // 6, ct.byref(result))
+    status = build(ct.byref(settings), slot, ct.byref(result))
     if status != OK:
         require(bytes(result) == before, "Résultat modifié malgré un refus")
     return status, result
@@ -68,19 +68,22 @@ def concrete_chords(build):
         [60, 64, 67], [62, 65, 69], [64, 67, 71], [65, 69, 72],
         [67, 71, 74], [69, 72, 76], [71, 74, 77], [72, 76, 79],
         [74, 77, 81], [76, 79, 83], [77, 81, 84], [79, 83, 86],
+        [81, 84, 88], [83, 86, 89], [84, 88, 91], [86, 89, 93],
     ]
     sevenths = [
         [60, 64, 67, 71], [62, 65, 69, 72], [64, 67, 71, 74],
         [65, 69, 72, 76], [67, 71, 74, 77], [69, 72, 76, 79],
         [71, 74, 77, 81], [72, 76, 79, 83], [74, 77, 81, 84],
         [76, 79, 83, 86], [77, 81, 84, 88], [79, 83, 86, 89],
+        [81, 84, 88, 91], [83, 86, 89, 93], [84, 88, 91, 95],
+        [86, 89, 93, 96],
     ]
     for extension, expected in ((TRIAD, triads), (SEVENTH, sevenths)):
         settings = config(extension=extension)
         for slot, chord in enumerate(expected):
             require(notes_of(build, settings, slot) == chord,
                     f"Do majeur : extension {extension}, slot {slot}")
-    # Le deuxième T1 reste sur VII ; seul T2 reprend I une octave plus haut.
+    # TRIG 7 atteint VII ; TRIG 8 reprend I une octave plus haut.
     require(notes_of(build, config(), 6)[0] == 71
             and notes_of(build, config(), 7)[0] == 72, "Frontière VII/I")
 
@@ -100,18 +103,18 @@ def diatonic_extensions(build):
 
 
 def independent_settings(build):
-    baseline = [notes_of(build, config(), slot) for slot in range(12)]
+    baseline = [notes_of(build, config(), slot) for slot in range(16)]
     for degree in range(7):
         settings = config()
         settings.extensions[degree] = THIRTEENTH
-        for slot in range(12):
+        for slot in range(16):
             actual = notes_of(build, settings, slot)
             require((actual != baseline[slot]) == (DEGREES[slot] == degree),
-                    f"Le réglage du degré {degree} affecte le mauvais pad {slot}")
+                    f"Le réglage du degré {degree} affecte la mauvaise touche {slot}")
     settings = config()
     settings.extensions[:] = [TRIAD, SEVENTH, NINTH, ELEVENTH,
                               THIRTEENTH, NINTH, SEVENTH]
-    for degree in range(5):
+    for degree in range(9):
         lower = notes_of(build, settings, degree)
         upper = notes_of(build, settings, degree + 7)
         require(upper == [note + 12 for note in lower],
@@ -119,18 +122,16 @@ def independent_settings(build):
 
 
 def invalid_arguments(build):
-    def refused(settings, pad=0, bank=0):
+    def refused(settings, key=0):
         result = poisoned_result()
         before = bytes(result)
         source = None if settings is None else ct.byref(settings)
-        status = build(source, pad, bank, ct.byref(result))
+        status = build(source, key, ct.byref(result))
         require(status == INVALID_ARGUMENT, "Argument invalide accepté")
         require(bytes(result) == before, "Refus d'argument avec résultat modifié")
 
-    for value in (-2147483648, -1, 6, 2147483647):
-        refused(config(), pad=value)
-    for value in (-2147483648, -1, 2, 2147483647):
-        refused(config(), bank=value)
+    for value in (-2147483648, -1, 16, 2147483647):
+        refused(config(), key=value)
     for value in (-2147483648, -1, 7, 2147483647):
         refused(config(mode=value))
     for value in (-2147483648, -1, 128, 2147483647):
@@ -139,14 +140,14 @@ def invalid_arguments(build):
         for value in (-2147483648, -1, 5, 2147483647):
             settings = config()
             settings.extensions[degree] = value
-            refused(settings)  # Valide aussi les degrés que le pad n'utilise pas.
+            refused(settings)  # Valide aussi les degrés que la touche n'utilise pas.
     refused(None)
     settings = config()
     before = bytes(settings)
-    require(build(ct.byref(settings), 0, 0, None) == INVALID_ARGUMENT,
+    require(build(ct.byref(settings), 0, None) == INVALID_ARGUMENT,
             "Pointeur de sortie nul accepté")
     require(bytes(settings) == before, "Configuration modifiée")
-    require(build(None, 0, 0, None) == INVALID_ARGUMENT, "Deux pointeurs nuls")
+    require(build(None, 0, None) == INVALID_ARGUMENT, "Deux pointeurs nuls")
 
 
 def modal_walk(mode):
@@ -154,13 +155,13 @@ def modal_walk(mode):
     major_steps = (2, 2, 1, 2, 2, 2, 1)
     steps = major_steps[mode:] + major_steps[:mode]
     walk = [0]
-    for step in itertools.islice(itertools.cycle(steps), 11):
+    for step in itertools.islice(itertools.cycle(steps), 15):
         walk.append(walk[-1] + step)
     return walk, set(walk[:7])
 
 
 def midi_boundaries(build):
-    for mode, extension, slot in itertools.product(range(7), range(5), range(12)):
+    for mode, extension, slot in itertools.product(range(7), range(5), range(16)):
         base = notes_of(build, config(root=0, mode=mode, extension=extension), slot)
         # Propriété de transposition : dernière voix exactement à 127, puis 128.
         last_root = 127 - base[-1]
@@ -178,11 +179,11 @@ def exhaustive_properties(build):
         walk, pitch_classes = modal_walk(mode)
         for extension in range(5):
             settings = config(root=0, mode=mode, extension=extension)
-            baseline = [notes_of(build, settings, slot) for slot in range(12)]
+            baseline = [notes_of(build, settings, slot) for slot in range(16)]
             for root in range(128):
                 settings.root = root
                 before_config = bytes(settings)
-                for slot in range(12):
+                for slot in range(16):
                     cases += 1
                     status, result = call(build, settings, slot)
                     expected = [note + root for note in baseline[slot]]
@@ -212,18 +213,18 @@ def exhaustive_properties(build):
                         lower = notes_of(build, settings, slot - 7)
                         require(notes == [note + 12 for note in lower],
                                 "Degré non conservé à l'octave")
-    require(cases == 53760, f"Balayage incomplet : {cases} cas")
+    require(cases == 71680, f"Balayage incomplet : {cases} cas")
 
 
 def main():
     source = Path(__file__).resolve().parent / "machines/chord_keys/chord_keys.c"
     families = [
-        ("triades et septièmes en do majeur, 12 pads", concrete_chords),
+        ("triades et septièmes en do majeur, 16 touches TRIG", concrete_chords),
         ("extensions diatoniques, dont les neuvièmes mineures", diatonic_extensions),
         ("réglages indépendants et partagés à l'octave", independent_settings),
         ("arguments invalides, pointeurs nuls, sortie intacte", invalid_arguments),
-        ("420 frontières MIDI 127/128, aucun écrêtage", midi_boundaries),
-        ("53 760 cas : modes, transpositions, voix et octaves", exhaustive_properties),
+        ("560 frontières MIDI 127/128, aucun écrêtage", midi_boundaries),
+        ("71 680 cas : modes, transpositions, voix et octaves", exhaustive_properties),
     ]
     with tempfile.TemporaryDirectory(prefix="chord-keys-test-") as temporary:
         library_path = Path(temporary) / "chord_keys.so"
@@ -241,7 +242,7 @@ def main():
                 print(error.stderr, end="")
             return 1
         build = library.chord_keys_build
-        build.argtypes = [ct.POINTER(Config), ct.c_int, ct.c_int, ct.POINTER(Result)]
+        build.argtypes = [ct.POINTER(Config), ct.c_int, ct.POINTER(Result)]
         build.restype = ct.c_int
         failures = 0
         for label, test in families:

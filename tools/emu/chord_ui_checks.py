@@ -2,8 +2,8 @@
 
 Appelé par la preuve principale avec le MAIN OS modifié et les symboles du
 générateur. Le stockage lit et écrit un vrai en-tête de pattern en RAM émulée ;
-ses propres preuves vérifient les formats de projet. PadsView, PadEvent, les
-relais de notes, le contrôleur de vues, QuickMute et le constructeur du menu sont
+ses propres preuves vérifient les formats de projet. PadsView, PadEvent, KeyEvent,
+le clavier stock, les relais de notes, le contrôleur de vues et le menu sont
 réellement exécutés. La sélection du pattern et la notification sont simulées.
 Les sélections, envois audio/MIDI et opérations de mute sont observés à leur
 entrée ; la synthèse et le séquenceur sont vérifiés par les autres contrôles.
@@ -18,6 +18,8 @@ import test_arp as arp
 import test_sdvintage_7th as t7
 
 PROJECT, PATTERN, HEADER = 0x93100000, 0x93102000, 0x93108000
+UIST, KEY_NOTES = 0x93110000, 0x93120000
+KEY_CTOR, KEY_CONSUMER, KEY_VTABLE = 0x4007238C, 0x4001A0D2, 0x400FF9CC
 
 
 class _HeaderWords:
@@ -45,173 +47,231 @@ def _install(rig, address, handler):
     rig.uc.hook_add(UC_HOOK_CODE, rig._stub(handler), begin=address, end=address)
 
 
-def _pad_rig(image, symbols):
+def _ui_rig(image, symbols=None):
     rig = pads.Rig(image)
     config = _header(rig)
-    selected, machine = [2], [5]
-    _install(rig, 0x40012412, lambda a: selected[0])
-    _install(rig, 0x4001E318, lambda a: machine[0])
-    _install(rig, 0x400D0F6C, lambda a: 0)
-    for track in range(6):
-        rig.call(symbols["ck_ui_config_set"], track, (48 << 21) | 0x80000000)
-    rate_reader = rig.r32(0x4001D260)
-    if rate_reader != 0x40016086:
-        # L'arpège remplace le lecteur Rte. Ce réglage périphérique reste simulé,
-        # comme la lecture stock dans pads.Rig ; ses autres preuves testent l'arp.
-        _install(rig, rate_reader, lambda a: rig.rate)
-    return rig, config, selected, machine
+    selected, machine, velocity = [2], [5], [97]
+    for address, handler in {
+            0x40012412: lambda a: selected[0],
+            0x40012442: lambda a: selected[0],
+            0x4001E318: lambda a: machine[0],
+            0x40015AC4: lambda a: velocity[0],
+            0x4000F23E: lambda a: pads.TRACK_DATA + 512,
+            0x40016DA6: lambda a: 0,
+            0x4006BDFE: lambda a: 0,  # FILL inactif, distinct des gardes réelles.
+            0x40075F3C: lambda a: 0,
+            0x400D0F6C: lambda a: 0,
+    }.items():
+        _install(rig, address, handler)
+    rig.w32(0x40FE4218, UIST)
+    rig.w32(pads.VIEW + 148, KEY_NOTES)
+    rig.w32(pads.VIEW + 152, KEY_NOTES)
+    rig.w32(pads.VIEW + 156, KEY_NOTES + 0xA00)
+    if symbols:
+        for track in range(6):
+            rig.call(symbols["ck_ui_config_set"], track, (48 << 21) | 0x80000000)
+    for operand in (0x4001D260, 0x4001A1C6):
+        rate_reader = rig.r32(operand)
+        if rate_reader != 0x40016086:
+            # Les lecteurs Rte pads/clavier de l'arpège restent périphériques
+            # à cette preuve ; les autres contrôles exécutent son audio réel.
+            _install(rig, rate_reader, lambda a: rig.rate)
+    return rig, config, selected, machine, velocity
 
 
-def _event(rig, symbols, pad, down, velocity=100, func=0):
+def _key(rig, key, down, flags=0, velocity=127):
     rig.calls.clear()
-    rig.call(pads.PAD_CTOR, pads.EVENT, pad, int(down), velocity, 123, func)
-    return rig.call(symbols["ck_ui_pad"], pads.VIEW, pads.EVENT)
+    rig.call(KEY_CTOR, pads.EVENT, 15 + key, int(down) | flags, 123, velocity)
+    return rig.call(rig.r32(KEY_VTABLE), pads.VIEW, pads.EVENT) & 255
 
 
-def _pads(image, symbols, check):
-    rig, config, selected, machine = _pad_rig(image, symbols)
-    check(all(rig.call(symbols["ck_ui_config_get"], track) == config[track] for track in range(6)),
-          "pads : six configurations lues par la vraie API persistante")
-    check(rig.r32(0x4010025C) == symbols["ck_ui_pad"] and
-          rig.r32(0x401002B0) == symbols["ck_ui_pad_thunk"],
-          "pads : pointeurs principal et secondaire redirigés")
-    for bank in range(2):
-        for pad in range(1, 7):
-            rig.pressed = {4} if bank else set()
-            slot = 6 * bank + pad - 1
-            note = 48 + 12 * (slot // 7) + (0, 2, 4, 5, 7, 9, 11)[slot % 7]
-            _event(rig, symbols, pad, True, 80 + pad)
-            check(rig.calls == [("on", (2, note, 80 + pad, 64, 0, 0xFFFFFFFF, 0xFFFFFFFF))],
-                  f"pads : T{pad}, banque {bank + 1}, note {note} sur la piste sélectionnée, sans retrig")
-            rig.pressed.clear()
-            selected[0] = 5
-            _event(rig, symbols, pad, False)
-            check(rig.calls == [("off", (2, note, 64))],
-                  f"pads : T{pad}, relâchement fidèle malgré banque et sélection changées")
-            selected[0] = 2
+def _on(track, note, velocity=97, rate=0xFFFFFFFF):
+    return ("on", (track, note, velocity, 64, 0, 0xFFFFFFFF, rate))
 
+
+def _keys(stock, image, symbols, check):
+    rig, config, selected, machine, velocity = _ui_rig(image, symbols)
+    check(all(rig.call(symbols["ck_ui_config_get"], t) == config[t] for t in range(6)),
+          "touches : six configurations lues par la vraie API persistante")
+    check(rig.r32(KEY_VTABLE) == symbols["ck_ui_key"],
+          "touches : seul le consommateur KeyEvent du clavier est redirigé")
+    for key in range(1, 17):
+        slot = key - 1
+        note = 48 + 12 * (slot // 7) + (0, 2, 4, 5, 7, 9, 11)[slot % 7]
+        _key(rig, key, True, velocity=30)
+        check(rig.calls == [_on(2, note)],
+              f"TRIG {key} : degré {slot % 7 + 1}, octave +{slot // 7}, note {note}, vélocité de piste")
+        selected[0] = 5
+        rig.pressed = {1, 2, 3, 4}
+        _key(rig, key, False)
+        check(rig.calls == [("off", (2, note, 64))],
+              f"TRIG {key} : relâchement fidèle malgré sélection et modificateurs changés")
+        selected[0] = 2
+        rig.pressed.clear()
+
+    velocity[0] = 43
     rig.fixed_velocity = 111
-    _event(rig, symbols, 1, True, velocity=30)
-    check(rig.calls == [("on", (2, 48, 111, 64, 0, 0xFFFFFFFF, 0xFFFFFFFF))],
-          "pads : vélocité fixe active, valeur globale prioritaire sur la frappe")
-    _event(rig, symbols, 1, False)
-    rig.fixed_velocity = None
-    _event(rig, symbols, 1, True, velocity=37)
-    check(rig.calls == [("on", (2, 48, 37, 64, 0, 0xFFFFFFFF, 0xFFFFFFFF))],
-          "pads : vélocité fixe désactivée, vélocité de la frappe conservée")
-    _event(rig, symbols, 1, False)
-
-    _event(rig, symbols, 1, True)
-    _event(rig, symbols, 2, True)
-    check(rig.calls == [("off", (2, 48, 64)), ("on", (2, 50, 100, 64, 0, 0xFFFFFFFF, 0xFFFFFFFF))],
-          "pads : la dernière frappe remplace l'accord précédent")
-    _event(rig, symbols, 1, False)
-    check(not rig.calls, "pads : relâcher l'ancien pad ne coupe pas le nouveau")
-    _event(rig, symbols, 2, False)
-    check(rig.calls == [("off", (2, 50, 64))], "pads : relâcher le dernier pad termine son accord")
-    _event(rig, symbols, 2, False)
-    check(not rig.calls, "pads : double relâchement ignoré")
-
-    config[2] &= 0x7FFFFFFF
-    _event(rig, symbols, 4, True)
-    check(rig.calls == [("select", (3,)), ("on", (3, 63, 100, 64, 0, 0xFFFFFFFF, 0xFFFFFFFF))],
-          "pads : mode OFF, consommateur stock et piste physique")
-    _event(rig, symbols, 4, False)
-    config[2] |= 0x80000000
-    machine[0] = 0
-    _event(rig, symbols, 5, True)
-    check(rig.calls == [("select", (4,)), ("on", (4, 64, 100, 64, 0, 0xFFFFFFFF, 0xFFFFFFFF))],
-          "pads : autre machine, consommateur stock")
-    _event(rig, symbols, 5, False)
-    machine[0] = 5
-
-    rig.pressed = {2}
-    _event(rig, symbols, 3, True)
-    check(rig.calls == [("select", (2,))], "pads : TRACK garde la sélection sans note")
-    _event(rig, symbols, 3, False)
+    _key(rig, 8, True, velocity=12)
+    check(rig.calls == [_on(2, 60, 43)],
+          "touches : vélocité de piste conservée, indépendante du réglage fixe des grands pads")
+    _key(rig, 8, False)
+    velocity[0], rig.fixed_velocity = 97, None
+    rig.pressed = {4}
+    _key(rig, 8, True)
+    check(rig.calls == [_on(2, 60)],
+          "touches : RETRIG ne change plus l’octave et ne répète pas l’accord")
+    _key(rig, 8, False)
     rig.pressed.clear()
-    for key, name in ((1, "FUNC"), (3, "PATTERN")):
-        # Comparaison au consommateur stock seul : le dispatch des vues modales
-        # est contrôlé séparément ; ne pas confondre ce repli avec leur action.
-        rig.pressed = {key}
-        _event(rig, symbols, 4, True, func=int(key == 1))
-        got = rig.calls[:]
-        _event(rig, symbols, 4, False, func=int(key == 1))
-        rig.calls.clear()
-        rig.call(pads.PAD_CTOR, pads.EVENT, 4, 1, 100, 123, int(key == 1))
-        rig.call(pads.PAD_CONSUMER, pads.VIEW, pads.EVENT)
-        check(rig.calls == got, f"pads : {name}, repli identique au consommateur stock")
-        _event(rig, symbols, 4, False, func=int(key == 1))
-    rig.pressed.clear()
+    _key(rig, 1, True)
+    _key(rig, 2, True)
+    check(rig.calls == [("off", (2, 48, 64)), _on(2, 50)],
+          "touches : la dernière frappe remplace l'accord précédent")
+    _key(rig, 1, False)
+    check(not rig.calls, "touches : relâcher l'ancienne touche ne coupe pas la nouvelle")
+    _key(rig, 2, True, flags=8)
+    check(not rig.calls, "touches : l'événement de maintien ne redéclenche pas l'accord")
+    _key(rig, 2, False)
+    check(rig.calls == [("off", (2, 50, 64))], "touches : relâcher la dernière touche termine son accord")
+    _key(rig, 2, False)
+    check(not rig.calls, "touches : double relâchement sans fin de note supplémentaire")
 
-    _event(rig, symbols, 1, True)
+    # Comparer les vraies branches stock, sans remplacer le consommateur.
+    for label, modifier, flags, enabled, chord, grid, secondary in (
+            ("Keys OFF", 0, 0, False, True, False, False),
+            ("autre machine", 0, 0, True, False, False, False),
+            ("FUNC", 1, 2, True, True, False, False),
+            ("TRACK", 2, 0, True, True, False, False),
+            ("PATTERN", 3, 0, True, True, False, False),
+            ("grille d'enregistrement", 0, 0, True, True, True, False),
+            ("mode secondaire", 0, 0, True, True, False, True)):
+        reference, _, _, _, _ = _ui_rig(stock)
+        altered, cfg, _, mch, _ = _ui_rig(image, symbols)
+        cfg[2] = (48 << 21) | (0x80000000 if enabled else 0)
+        mch[0] = 5 if chord else 0
+        snapshots = []
+        for candidate in (reference, altered):
+            candidate.pressed = {modifier} if modifier else set()
+            candidate.uc.mem_write(UIST + 357, bytes([int(grid), int(grid)]))
+            candidate.uc.mem_write(UIST + 389, bytes([int(secondary)]))
+            events = []
+            for down in (True, False):
+                consumed = _key(candidate, 9, down, flags)
+                events.append((consumed, candidate.calls[:]))
+            snapshots.append(events)
+        check(snapshots[0] == snapshots[1], f"touches : {label}, appui et relâchement identiques à l'OS stock")
+
+    _key(rig, 16, True)
     config[2] &= 0x7FFFFFFF
     machine[0] = 0
-    _event(rig, symbols, 1, False)
-    check(rig.calls == [("off", (2, 48, 64))],
-          "pads : désactivation et changement de machine ne perdent pas la fin de note")
+    rig.uc.mem_write(UIST + 357, b"\1\1")
+    _key(rig, 16, False)
+    check(rig.calls == [("off", (2, 74, 64))],
+          "touches : désactivation, autre machine et entrée en grille ne perdent pas la fin de note")
     config[2] |= 0x80000000
     machine[0] = 5
+    rig.uc.mem_write(UIST + 357, b"\0\0")
     selected[0] = 0
-    _event(rig, symbols, 1, True)
+    _key(rig, 1, True)
     selected[0] = 1
-    _event(rig, symbols, 2, True)
+    _key(rig, 16, True)
     rig.calls.clear()
     rig.call(symbols["ck_ui_cancel_track"], 1)
-    check(rig.calls == [("off", (1, 50, 64))], "pads : annulation ciblée, autre piste conservée")
-    _event(rig, symbols, 2, False)
-    check(not rig.calls, "pads : le pad annulé garde son identité jusqu'au relâchement")
-    _event(rig, symbols, 1, False)
-    check(rig.calls == [("off", (0, 48, 64))], "pads : l'autre piste se relâche normalement")
-    check(not rig.bad, "pads : aucun accès mémoire hors du banc")
+    check(rig.calls == [("off", (1, 74, 64))], "touches : annulation ciblée, autre piste conservée")
+    _key(rig, 16, False)
+    check(not rig.calls, "touches : l'accord annulé garde son identité jusqu'au relâchement")
+    _key(rig, 1, False)
+    check(rig.calls == [("off", (0, 48, 64))], "touches : l'autre piste se relâche normalement")
+    check(not rig.bad, "touches : aucun accès mémoire hors du banc")
 
 
-def _dispatch(image, symbols, check):
-    rig, _, _, _ = _pad_rig(image, symbols)
-    # Les deux sous-objets dont le dispatch réel se sert. Liste de vues avec
-    # QuickMute avant PadsView, comme une vue prioritaire affichée au premier plan.
-    rig.w32(pads.VIEW, 0x40100218)
-    rig.w32(pads.VIEW + 16, 0x401002A8)
-    heap = [0x93200000]
+def _pads(stock, image, symbols, check):
+    reference, _, _, _, _ = _ui_rig(stock)
+    altered, _, _, _, _ = _ui_rig(image, symbols)
+    check(altered.r32(0x4010025C) == reference.r32(0x4010025C) == pads.PAD_CONSUMER and
+          altered.r32(0x401002B0) == reference.r32(0x401002B0),
+          "pads : les deux pointeurs de PadsView restent d'origine")
+    for key, name in ((0, "normal"), (2, "TRACK"), (4, "RETRIG")):
+        for pad in range(1, 7):
+            snapshots = []
+            for candidate in (reference, altered):
+                candidate.pressed = {key} if key else set()
+                events = []
+                for down in (True, False):
+                    consumed = candidate.event(pad, down, velocity=80 + pad)
+                    events.append((consumed & 255, candidate.calls[:], candidate.held(pad)))
+                snapshots.append(events)
+            check(snapshots[0] == snapshots[1],
+                  f"T{pad} {name} : sélection, note, vélocité, retrig et relâchement identiques au stock")
+    check(not altered.bad and not reference.bad, "pads : aucun accès mémoire hors du banc")
 
-    def allocate(args):
-        pointer = heap[0]
-        heap[0] += (args[0] + 15) & ~15
-        rig.uc.mem_write(pointer, bytes(args[0]))
-        return pointer
 
-    for address, handler in (
-            (0x400802E0, allocate), (0x400802EC, lambda a: 0),
-            (0x400E8684, lambda a: 0), (0x400D08CE, lambda a: 0),
-            (0x40013904, rig._capture("mute", 3))):
-        _install(rig, address, handler)
-    mute_node, pads_node, mute_view = 0x93010000, 0x93010100, 0x93011000
-    rig.w32(pads_node + 8, pads.VIEW)
-    rig.w32(pads_node + 4, pads.CONTROLLER + 20)
-    rig.w32(pads.CONTROLLER + 20, pads_node)
-    rig.w32(pads.CONTROLLER + 24, pads_node)
+def _dispatch(stock, image, symbols, check):
+    snapshots, edits = [], []
+    for source, config_symbols in ((stock, None), (image, symbols)):
+        rig, _, _, _, _ = _ui_rig(source, config_symbols)
+        rig.w32(pads.VIEW, 0x400FF9C4)
+        heap = [0x93200000]
 
-    def dispatch(pad, down):
+        def allocate(args):
+            pointer = heap[0]
+            heap[0] += (args[0] + 15) & ~15
+            rig.uc.mem_write(pointer, bytes(args[0]))
+            return pointer
+
+        for address, handler in (
+                (0x400802E0, allocate), (0x400802EC, lambda a: 0),
+                (0x400E8684, lambda a: 0), (0x400D08CE, lambda a: 0)):
+            _install(rig, address, handler)
+        node = 0x93010100
+        rig.w32(node + 8, pads.VIEW)
+        rig.w32(node + 4, pads.CONTROLLER + 20)
+        rig.w32(pads.CONTROLLER + 20, node)
+        rig.w32(pads.CONTROLLER + 24, node)
+        events = []
+        for down in (True, False):
+            rig.calls.clear()
+            rig.call(KEY_CTOR, pads.EVENT, 23, int(down), 123, 127)  # TRIG 8
+            rig.call(0x40077720, pads.CONTROLLER, pads.EVENT)
+            events.append(rig.calls[:])
+        snapshots.append(events)
+        # KeyboardView reste devant PatternGridView : son garde doit laisser
+        # la vraie grille enregistrer le pas, sans envoyer de note au moteur.
+        trigs = {}
+
+        def set_trig(args, value):
+            trigs[args[1]] = value
+            rig.calls.append(("trig", (args[1], value)))
+            return 0
+
+        for address, handler in {
+                0x4000EE90: lambda a: 0x93101000,
+                0x400124B8: lambda a: 0,
+                0x40015C20: lambda a: int(trigs.get(a[1]) == "note"),
+                0x40015C7C: lambda a: int(trigs.get(a[1]) == "lock"),
+                0x40017B48: lambda a: set_trig(a, "note"),
+                0x40017BB0: lambda a: set_trig(a, "lock"),
+                0x40017C4E: lambda a: set_trig(a, None),
+                0x400760BA: lambda a: 0,
+                0x40069B84: lambda a: 0,
+        }.items():
+            _install(rig, address, handler)
+        grid, grid_node = 0x93300000, 0x93010200
+        rig.w32(grid, 0x40100AE8)
+        rig.w32(node + 4, grid_node)
+        rig.w32(grid_node + 8, grid)
+        rig.w32(grid_node + 4, pads.CONTROLLER + 20)
+        rig.w32(pads.CONTROLLER + 20, grid_node)
+        rig.uc.mem_write(UIST + 357, b"\1\1")
         rig.calls.clear()
-        rig.call(pads.PAD_CTOR, pads.EVENT, pad, int(down), 100, 123, 0)
-        rig.call(0x4007746C, pads.CONTROLLER, pads.EVENT)
-
-    dispatch(1, True)
-    check(rig.calls == [("on", (2, 48, 100, 64, 0, 0xFFFFFFFF, 0xFFFFFFFF))],
-          "dispatch réel : l'interface secondaire rejoint le clavier d'accords")
-    dispatch(1, False)
-    check(rig.calls == [("off", (2, 48, 64))], "dispatch réel : fin de l'accord")
-    rig.w32(mute_node + 8, mute_view)
-    rig.w32(mute_node + 4, pads_node)
-    rig.w32(pads.CONTROLLER + 24, mute_node)
-    rig.w32(mute_view, 0x40100C40)
-    rig.w32(mute_view + 16, 0x40100CCC)
-    dispatch(2, True)
-    check(rig.calls == [("mute", (0x93101000, 1, 1))],
-          "dispatch réel : QuickMute consomme l'appui avant PadsView, sans accord")
-    dispatch(2, False)
-    check(not rig.calls, "dispatch réel : QuickMute consomme son relâchement")
-    check(not rig.bad, "dispatch réel : aucun accès mémoire hors du banc")
+        rig.call(KEY_CTOR, pads.EVENT, 24, 1, 123, 127)  # TRIG 9
+        rig.call(0x40077720, pads.CONTROLLER, pads.EVENT)
+        edits.append((trigs, rig.calls[:]))
+        check(not rig.bad, "dispatch KeyEvent réel : aucun accès mémoire hors du banc")
+    check(snapshots == [[[_on(2, 59)], [("off", (2, 59, 64))]],
+                        [[_on(2, 60)], [("off", (2, 60, 64))]]],
+          "dispatch KeyEvent réel : TRIG 8 passe du chromatique stock à I +12, puis relâche la bonne note")
+    check(edits == [({8: "note"}, [("trig", (8, "note"))])] * 2,
+          "dispatch KeyEvent réel : la grille stock et modifiée pose le pas 9, sans jouer d'accord")
 
 
 def _menu_rig(image, symbols):
@@ -267,7 +327,7 @@ def _menu(image, symbols, check):
         return
     _header(emulator)
     emulator.call(symbols["ck_storage_reset"], HEADER)
-    expected = ("Keys", "Root", "Scale", "I Ext", "II Ext", "III Ext", "IV Ext", "V Ext", "VI Ext", "VII Ext")
+    expected = ("Keys", "Root", "Scale", "I", "II", "III", "IV", "V", "VI", "VII")
     for field, name in enumerate(expected):
         label, press, draw, change = items[original_count + field]
         valid = all(func[0] == 0x4002CF00 for func in items[original_count + field])
@@ -307,6 +367,19 @@ def _menu(image, symbols, check):
         check(good and args[2:5] == (0x93710000 + 24, 7, 4), f"menu : affichage {name} et placement stock")
 
     config[2] = 48 << 21
+    draw = items[original_count + 2][2]
+    emulator.call(draw[1], arp.make_fn(emulator, draw), 0, 0x93700000, 0x93710000, 7)
+    check(arp.cstr(emulator, drawn[-1][6]) == "MAJ",
+          "menu : le mode majeur affiche MAJ dans Scale")
+    for extension, text in enumerate(("TRI", "7", "9", "11", "13")):
+        config[2] = (48 << 21) | sum(extension << (3 * degree) for degree in range(7))
+        values = []
+        for field in range(3, 10):
+            draw = items[original_count + field][2]
+            emulator.call(draw[1], arp.make_fn(emulator, draw), 0, 0x93700000, 0x93710000, 7)
+            values.append(arp.cstr(emulator, drawn[-1][6]))
+        check(values == [text] * 7, f"menu : I à VII affichent directement {text}, sans Ext")
+    config[2] = 48 << 21
     machine[0] = 0
     change = items[original_count][3]
     emulator.call(change[1], arp.make_fn(emulator, change), 0, 1)
@@ -315,7 +388,7 @@ def _menu(image, symbols, check):
 
 
 def _live(image, symbols, check):
-    """Pad -> relais stock -> vraie file audio, et messages stock de live rec.
+    """TRIG -> relais stock -> vraie file audio, et messages stock de live rec.
 
     Le projet, les touches, les verrous et la position temporelle sont simulés.
     Ui observe la file de l'interface : cette preuve s'arrête avant l'écriture
@@ -343,6 +416,8 @@ def _live(image, symbols, check):
             0x40012412: lambda a: track,
             0x4001E318: lambda a: 5,
             0x40013464: lambda a: 0,
+            0x40015AC4: lambda a: 97,
+            0x4006BDFE: lambda a: 0,
             0x4007FAF4: lambda a: int(a[0] in pressed),
             0x40001D2C: lambda a: 0,
             0x40001E4E: lambda a: 0,
@@ -361,30 +436,29 @@ def _live(image, symbols, check):
 
     def event(down):
         audio.w32(0x8000184C, audio.now)
-        audio.e.call(pads.PAD_CTOR, pads.EVENT, 1, int(down), 100, 123, 0)
-        audio.e.call(symbols["ck_ui_pad"], pads.VIEW, pads.EVENT)
+        audio.e.call(KEY_CTOR, pads.EVENT, 30, int(down), 123, 127)
+        audio.e.call(symbols["ck_ui_key"], pads.VIEW, pads.EVENT)
         return audio.run()
 
-    pressed.add(4)
     mask = event(True)
-    check(mask is not None and mask & (1 << track) and audio.state(track)[:2] == (59, 59),
-          "live rec : RETRIG + T1 atteint la vraie file audio, degré VII = note 59")
-    check([arp.msg(m)[:5] for m in ui.os] == [("ON", track, 59, 100, -1)] and not ui.posted,
+    check(mask is not None and mask & (1 << track) and audio.state(track)[:2] == (72, 72),
+          "live rec : TRIG 15 atteint la vraie file audio, degré I +24 = note 72")
+    check([arp.msg(m)[:5] for m in ui.os] == [("ON", track, 72, 97, -1)] and not ui.posted,
           "live rec : le message stock garde la fondamentale, la vélocité et aucun retrig")
     pressed.clear()
     audio.now += 40000
     event(False)
-    check([arp.msg(m)[:5] for m in ui.os] == [("ON", track, 59, 100, -1),
-                                           ("OFF", track, 59, 0, 20000)],
-          "live rec : le relâchement stock garde la note et sa durée après changement de banque")
+    check([arp.msg(m)[:5] for m in ui.os] == [("ON", track, 72, 97, -1),
+                                           ("OFF", track, 72, 0, 20000)],
+          "live rec : le relâchement stock garde la note et sa durée sur la touche de la troisième octave")
     check(not audio.e.unmapped, "live rec : aucun accès mémoire hors du banc")
 
 
 def run(stock, patched, symbols, check):
     """Exécute les contrôles ; check(bool, texte) appartient à la preuve principale."""
-    del stock  # Les chemins stock appelés en repli sont dans l'image modifiée.
     symbols = {name: int(value, 16) if isinstance(value, str) else value for name, value in symbols.items()}
-    _pads(patched, symbols, check)
-    _dispatch(patched, symbols, check)
+    _keys(stock, patched, symbols, check)
+    _pads(stock, patched, symbols, check)
+    _dispatch(stock, patched, symbols, check)
     _menu(patched, symbols, check)
     _live(patched, symbols, check)

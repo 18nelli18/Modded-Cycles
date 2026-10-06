@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.23", date: "2026-10-06", changes: [
+    { en: "Chord keys moves to the sixteen lower TRIG buttons: 1–7 play I–VII, 8–14 repeat them one octave higher, and 15–16 play I–II two octaves higher. Each degree keeps its chosen extension across the octaves. The large T1–T6 pads keep their usual controls, and RETRIG is no longer an octave bank switch",
+      fr: "Le clavier d'accords passe sur les seize boutons TRIG du bas : 1–7 jouent I–VII, 8–14 les reprennent une octave plus haut, et 15–16 jouent I–II deux octaves plus haut. Chaque degré garde l'extension choisie à toutes les octaves. Les grands pads T1–T6 gardent leurs commandes habituelles, et RETRIG ne change plus de banque d'octave" },
+    { en: "Clearer Retrig Setup labels: the major scale reads MAJ, and extension rows show I through VII beside TRI, 7, 9, 11 or 13, without the Ext suffix",
+      fr: "Libellés plus lisibles dans Retrig Setup : la gamme majeure s'affiche MAJ, et les lignes d'extension affichent I à VII à côté de TRI, 7, 9, 11 ou 13, sans le suffixe Ext" },
+    { en: "Grid recording, menus and ordinary track-pad controls stay available. Checked in emulation on the OS's own code; still experimental, pending a hardware test. Model-TG remains incompatible",
+      fr: "L'enregistrement en grille, les menus et les commandes habituelles des pads de piste restent disponibles. Vérifié en émulation sur le code même de l'OS ; toujours expérimental, en attente d'un essai sur la machine. Model-TG reste incompatible" },
+  ] },
   { version: "1.22", date: "2026-10-05", changes: [
     { en: "New experimental mod, Chord keys: choose a scale and play its chords with T1–T6 on the selected CHORD track. Hold RETRIG for degree VII, then I to V an octave higher; PAGE keeps its usual functions",
       fr: "Nouveau mod expérimental, Clavier d'accords : choisissez une gamme et jouez ses accords avec T1–T6 sur la piste CHORD sélectionnée. Maintenez RETRIG pour le degré VII, puis I à V une octave plus haut ; PAGE garde ses fonctions habituelles" },

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Génère 44-chord-keys.json : accords diatoniques sur les pads (notes/40).
+"""Génère 44-chord-keys.json : accords diatoniques sur TRIG 1–16 (notes/40).
 
 Compile les sources ColdFire, les répartit dans des masques 47x47 identiques
 redirigés vers leur exemplaire conservé, puis vérifie chaque écriture sur l'OS
@@ -42,8 +42,7 @@ MASKS = (0x4016b6f8, 0x4016b9e8, 0x40171f30, 0x40172608, 0x40179730,
 HOOKS = (
     (0x400aae88, "4fefffe448d71c3c", "chord_audio_update", 0x4ef9),
     (0x400ab0e4, "d1fc4012142c", "chord_audio_ratios", 0x4eb9),
-    (0x4010025c, "4001d180", "ck_ui_pad", None),
-    (0x401002b0, "4001d3d4", "ck_ui_pad_thunk", None),
+    (0x400ff9cc, "4001a0d2", "ck_ui_key", None),
     (0x4001cb3e, "4eb94002d138", "ck_ui_menu_ctor", 0x4eb9),
     (0x4005b4a8, "7001156b001c001c", "ck_storage_load_hook", 0x4ef9),
     (0x40061564, "1140001b48780010", "ck_storage_init_hook", 0x4ef9),
@@ -90,9 +89,10 @@ def compile_code():
             objects.append(obj)
             for name, size, _, align in sections(obj):
                 if name.startswith((".text", ".rodata", ".data", ".bss")):
-                    # L'assembleur accepte des sections de code alignées sur un octet ;
-                    # le ColdFire exige pourtant une adresse paire à chaque entrée.
-                    align = max(align, 2) if name.startswith(".text") else align
+                    # Le ColdFire exige une adresse paire à chaque entrée. Les tables
+                    # locales prennent aussi le type T dans le masque mixte final ;
+                    # les aligner évite de confondre leurs symboles avec du code impair.
+                    align = max(align, 2)
                     inputs.append((obj, name, size, align))
         bins = [{"at": va, "size": 0, "parts": []} for va in MASKS]
         for obj, name, size, align in sorted(inputs, key=lambda s: (-s[2], s[0].name, s[1])):
@@ -166,13 +166,14 @@ def build_tweak(stock):
         new += b"\x4e\x71" * ((len(old) - len(new)) // 2)
         writes.append({"off": address - BASE, "old": old.hex(), "new": new.hex()})
     tweak = {
-        "id": "chord-keys", "order": 44, "name": "Accords de gamme sur les six pads",
+        "id": "chord-keys", "order": 44, "name": "Accords de gamme sur TRIG 1–16",
         "description": [
             "Mode Keys dans FUNC + RETRIG : une piste CHORD, gamme et tonique, extensions par degré.",
-            "T1–T6 jouent I–VI ; RETRIG tenu donne VII, puis I–V à l'octave supérieure.",
+            "TRIG 1–7 jouent I–VII, 8–14 les mêmes degrés une octave plus haut, 15–16 I–II deux octaves plus haut.",
+            "Les grands pads T1–T6 gardent leur sélection et leur jeu stock. L'édition des pas reste disponible.",
             "Sept modes ; triades, septièmes, neuvièmes, onzièmes ou treizièmes diatoniques, quatre voix au plus.",
             "Les accords 9/11/13 omettent la quinte (et les extensions intermédiaires pour 11/13). COLOR reste actif.",
-            "Réglages par piste sauvegardés avec le pattern. Dernier pad prioritaire, sans retour au pad précédent.",
+            "Réglages par piste sauvegardés avec le pattern. Dernière touche prioritaire, sans retour à la précédente.",
             "Model-TG incompatible : son Scale Lock transforme les notes avant le moteur. Aucun essai matériel.",
             f"Code et état dans {len(compiled)} masques 47×47 redirigés, {sum(len(c) for _, c in compiled)} octets.",
             "Généré par tools/gen_chord_keys.py ; sources tools/machines/chord_keys/ ; notes/40.",
