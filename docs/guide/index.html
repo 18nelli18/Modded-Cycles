@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-05-03">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-05-03">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-06-03">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-06-03">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -51,6 +51,8 @@
         <li><a href="#arp"><span data-l="en">Arpeggiator</span><span data-l="fr">Arpégiateur</span></a></li>
         <li><a href="#tempo"><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></a></li>
         <li><a href="#boot-anim"><span data-l="en">Startup animation</span><span data-l="fr">Animation de démarrage</span></a></li>
+        <li><a href="#level-pan"><span data-l="en">Volume and pan as numbers</span><span data-l="fr">Volume et pan en chiffres</span></a></li>
+        <li><a href="#trigless"><span data-l="en">Dimmed trigless trigs</span><span data-l="fr">Trigless trigs atténués</span></a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
         <li><a href="#stock"><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></a></li>
         <li><a href="#recovery"><span data-l="en">Recovery</span><span data-l="fr">Secours</span></a></li>
@@ -483,8 +485,39 @@
         </dl>
       </section>
 
+      <section id="level-pan">
+        <h2><span class="n">13</span><span data-l="en">Volume and pan as numbers</span><span data-l="fr">Volume et pan en chiffres</span></h2>
+        <p class="lede"><span data-l="en">On the main screen, the volume and the pan of the selected track show as numbers while you turn LEVEL/DATA.</span><span data-l="fr">Sur l'écran principal, le volume et le pan de la piste sélectionnée s'affichent en chiffres pendant que vous tournez LEVEL/DATA.</span></p>
+        <ol>
+          <li><span data-l="en">On the main screen, turn <b>LEVEL/DATA</b>: the track's volume (0 to 127) shows in small digits in place of the loudspeaker, left of the volume bar.</span><span data-l="fr">Sur l'écran principal, tournez <b>LEVEL/DATA</b> : le volume de la piste (0 à 127) s'affiche en petits chiffres à la place du haut-parleur, à gauche de la barre de volume.</span></li>
+          <li><span data-l="en">Hold <b>FUNC</b> and turn <b>LEVEL/DATA</b>: its pan (-64 to 63) shows in place of the “R” at the right end of the pan bar.</span><span data-l="fr">Tenez <b>FUNC</b> et tournez <b>LEVEL/DATA</b> : son pan (-64 à 63) s'affiche à la place du « R », au bout droit de la barre de pan.</span></li>
+          <li><span data-l="en">Stop turning: the number goes away 3 to 4 seconds later and the icon comes back.</span><span data-l="fr">Arrêtez de tourner : le chiffre disparaît 3 à 4 secondes plus tard et l'icône revient.</span></li>
+        </ol>
+        <dl class="facts">
+          <div><dt><span data-l="en">Knob</span><span data-l="fr">Molette</span></dt><dd><span data-l="en">on the main screen, LEVEL/DATA now moves in steps of 1 instead of 2, so the number goes through every value: turn twice as far for the same change. Its fast mode doesn't change.</span><span data-l="fr">sur l'écran principal, LEVEL/DATA avance maintenant de 1 au lieu de 2, pour que le chiffre passe par toutes les valeurs : tournez deux fois plus pour le même changement. Son mode rapide ne change pas.</span></dd></div>
+          <div><dt><span data-l="en">When</span><span data-l="fr">Quand</span></dt><dd><span data-l="en">only when you turn the knob, for the selected track. A change by MIDI or by loading a project shows nothing. Menus, the file browser and a parameter's value window don't change.</span><span data-l="fr">seulement quand vous tournez la molette, pour la piste sélectionnée. Un changement par MIDI ou au chargement d'un projet n'affiche rien. Les menus, le navigateur de fichiers et la fenêtre de valeur d'un paramètre ne changent pas.</span></dd></div>
+          <div><dt><span data-l="en">Credit</span><span data-l="fr">Crédit</span></dt><dd><span data-l="en">a mod by djd_oz, rewritten for the flasher so that it goes with every other mod, Model-TG included.</span><span data-l="fr">un mod de djd_oz, réécrit pour le flasher afin qu'il se combine avec tous les autres mods, Model-TG compris.</span></dd></div>
+          <div><dt><span data-l="en">Experimental</span><span data-l="fr">Expérimental</span></dt><dd><span data-l="en">not tested on a Model:Cycles yet. In the emulator, on the OS's own code: every volume and pan value is drawn pixel for pixel like djd_oz's own version.</span><span data-l="fr">pas encore testé sur un Model:Cycles. Dans l'émulateur, sur le code même de l'OS : chaque valeur de volume et de pan est dessinée pixel pour pixel comme dans la version de djd_oz.</span></dd></div>
+        </dl>
+      </section>
+
+      <section id="trigless">
+        <h2><span class="n">14</span><span data-l="en">Dimmed trigless trigs</span><span data-l="fr">Trigless trigs atténués</span></h2>
+        <p class="lede"><span data-l="en">A trig key that holds a trigless trig lights dimmed, so you can tell it from a note trig at a glance.</span><span data-l="fr">Une touche de pas qui porte un trigless trig s'allume atténuée : on la distingue d'un trig de note d'un coup d'œil.</span></p>
+        <ol>
+          <li><span data-l="en">Place a trigless trig as usual: hold <b>FUNC</b> and press a trig key on an empty step.</span><span data-l="fr">Posez un trigless trig comme d'habitude : tenez <b>FUNC</b> et appuyez sur une touche de pas, sur un pas vide.</span></li>
+          <li><span data-l="en">The key lights dimmed; note trigs stay at full brightness. As on the stock OS, the trigless trig goes dark briefly every 2 seconds.</span><span data-l="fr">La touche s'allume atténuée ; les trigs de note restent en pleine lumière. Comme avec l'OS d'origine, le trigless trig s'éteint brièvement toutes les 2 secondes.</span></li>
+        </ol>
+        <dl class="facts">
+          <div><dt><span data-l="en">Unchanged</span><span data-l="fr">Inchangé</span></dt><dd><span data-l="en">note trigs, trigs with parameter locks, the playing light, the pads and the other lights.</span><span data-l="fr">les trigs de note, les trigs avec p-locks, la lumière de lecture, les pads et les autres voyants.</span></dd></div>
+          <div><dt><span data-l="en">Flicker</span><span data-l="fr">Scintillement</span></dt><dd><span data-l="en">the key is dimmed by switching it on and off very quickly (on 9 times out of 25, 120 times a second): some people may notice a slight flicker, mostly out of the corner of the eye.</span><span data-l="fr">la touche est atténuée en l'allumant et l'éteignant très vite (allumée 9 fois sur 25, 120 fois par seconde) : certains remarqueront un léger scintillement, surtout du coin de l'œil.</span></dd></div>
+          <div><dt><span data-l="en">Credit</span><span data-l="fr">Crédit</span></dt><dd><span data-l="en">a mod by djd_oz, rewritten for the flasher so that it goes with every other mod, Model-TG included.</span><span data-l="fr">un mod de djd_oz, réécrit pour le flasher afin qu'il se combine avec tous les autres mods, Model-TG compris.</span></dd></div>
+          <div><dt><span data-l="en">Experimental</span><span data-l="fr">Expérimental</span></dt><dd><span data-l="en">not tested on a Model:Cycles yet. In the emulator, on the OS's own light code: the lights match djd_oz's own version, tick by tick, and the dimmed keys no longer flash to full brightness for an instant.</span><span data-l="fr">pas encore testé sur un Model:Cycles. Dans l'émulateur, sur le code même des voyants de l'OS : les voyants correspondent à la version de djd_oz, tick par tick, et les touches atténuées ne se rallument plus à fond un instant.</span></dd></div>
+        </dl>
+      </section>
+
       <section id="samples">
-        <h2><span class="n">13</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">15</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -499,13 +532,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">14</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">16</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">With Syntakt engines or Model-TG's Sampler, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt ou le Sampler de Model-TG, remettez d'abord vos pistes sur une machine d'origine.</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">15</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">17</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -519,7 +552,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">16</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">18</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -582,8 +615,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-05-03"></script>
-<script src="../assets/cycles.js?v=2026-10-05-03"></script>
-<script src="../assets/site.js?v=2026-10-05-03"></script>
+<script src="../assets/release.js?v=2026-10-06-03"></script>
+<script src="../assets/cycles.js?v=2026-10-06-03"></script>
+<script src="../assets/site.js?v=2026-10-06-03"></script>
 </body>
 </html>

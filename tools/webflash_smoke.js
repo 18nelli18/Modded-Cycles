@@ -165,9 +165,9 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 12).join() === "6ch-usbup,model-tg,model-tg-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,syntakt-sd,syntakt-tg-sd"
-      && ids.length === 10 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
-      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 10,
+    check(ids.slice(0, 14).join() === "6ch-usbup,model-tg,model-tg-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,level-pan-values,trigless-dim,syntakt-sd,syntakt-tg-sd"
+      && ids.length === 12 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 12,
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG: ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
@@ -175,7 +175,7 @@ async function main() {
       && srcs.every((x) => x.endsWith("?v=" + w.MC_BUILD)), "scripts loaded with ?v=<build> (no stale cache): " + srcs.join());
     check(doc.getElementById("compat").hidden, "no compatibility banner in a good browser");
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-usb6,feat-model-tg,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-trig-hold,feat-arp,feat-tempo-max,feat-boot-anim,feat-syntakt", "10 feature cards: " + JSON.stringify(feats));
+    check(feats.join() === "feat-usb6,feat-model-tg,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-trig-hold,feat-arp,feat-tempo-max,feat-boot-anim,feat-level-pan-values,feat-trigless-dim,feat-syntakt", "12 feature cards: " + JSON.stringify(feats));
     const tags = [...doc.querySelectorAll("#features .tag")].map((x) => x.textContent);
     const tagOfFeat = (f) => (f.status === "tested" ? "Tested" : "Experimental");
     const synTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.engines));
@@ -183,7 +183,9 @@ async function main() {
     const holdTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "trig-hold"));
     const tempoTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "tempo-max"));
     const bootTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "boot-anim"));
-    check(tags.join() === "Tested,Experimental,Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + "," + synTag,
+    const lpTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "level-pan-values"));
+    const tdTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "trigless-dim"));
+    check(tags.join() === "Tested,Experimental,Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + "," + lpTag + "," + tdTag + "," + synTag,
       "cards tagged as tested or not (Model-TG experimental until tested here): " + tags.join());
     check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until the Syntakt engines are ticked");
     doc.getElementById("feat-syntakt").click();
@@ -212,6 +214,9 @@ async function main() {
       && credits[1] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(credits[2])
       && credits.slice(3).every((h) => h === "https://github.com/drumkilla/elektron-model-tweaks"),
       "each card credits its author, Model-TG with its MIT license: " + JSON.stringify(credits));
+    const djd = ["level-pan-values", "trigless-dim"].map((id) => doc.querySelector(`label[for=feat-${id}] .credit`));
+    check(djd.every((c) => c && c.textContent === "based on a mod by djd_oz" && !c.querySelector("a")),
+      "djd_oz's two mods: “based on a mod by djd_oz”, no link (no public repository)");
     const list = [...doc.querySelectorAll("#credits-list a")].map((a) => a.textContent);
     check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",
       "credits section lists the 5 upstream repositories");
@@ -280,6 +285,10 @@ async function main() {
       "FR: tempo card translated, with its guide link");
     check(/Animation de démarrage modded-cycles/.test(text(doc, "features")) && doc.querySelector('#features a[href$="#boot-anim"]'),
       "FR: startup animation card translated, with its guide link");
+    check(/Volume et pan en chiffres/.test(text(doc, "features")) && doc.querySelector('#features a[href$="#level-pan"]')
+      && /Trigless trigs atténués/.test(text(doc, "features")) && doc.querySelector('#features a[href$="#trigless"]')
+      && /d'après un mod de djd_oz/.test(text(doc, "features")),
+      "FR: djd_oz's two cards translated, with their guide links and credit");
     doc.getElementById("feat-model-tg").click(); await wait(5);
     check(/\(inclus avec Model-TG\)/.test(doc.querySelector("label[for=feat-browser-scroll] .ttl").textContent),
       "FR: the tweaks Model-TG holds say « (inclus avec Model-TG) »");

@@ -33,7 +33,8 @@ OUT = ROOT / "docs" / "flasher" / "tweaks.js"
 # les affiche coches et verrouilles, « inclus avec … », tant qu'elle est cochee.
 # Les moteurs s'ajoutent en machines supplementaires : sdvintage-exact (a la place de SNARE) reste dans build.py.
 # status : "tested" (flashe sur un vrai Model:Cycles) ou "experimental".
-# credit : auteur du travail d'origine, affiche sur la carte (voir aussi les credits de la page).
+# credit : auteur du travail d'origine, affiche sur la carte (voir aussi les credits de la page) ; sans « repo »
+# (un mod recu sans depot public), la carte dit « d'apres un mod de … », sans lien.
 # Pour ajouter une fonctionnalite : ecrire son tweak JSON, puis l'ajouter ici.
 FEATURES = [
     {
@@ -139,6 +140,28 @@ FEATURES = [
         "credit": None,
         "variants": [
             {"file": "43-boot-anim", "label": None},
+        ],
+    },
+    {
+        "id": "level-pan-values",
+        "label": "Volume et pan en chiffres",
+        "desc": "Sur l'ecran principal, LEVEL/DATA affiche le volume de la piste (0 a 127) en chiffres, FUNC + "
+                "LEVEL/DATA son pan (-64 a 63), pendant 3 s. LEVEL/DATA y avance de 1 par cran au lieu de 2.",
+        "status": "experimental",
+        "credit": {"kind": "based", "who": "djd_oz"},
+        "variants": [
+            {"file": "46-level-pan-values", "label": None},
+        ],
+    },
+    {
+        "id": "trigless-dim",
+        "label": "Trigless trigs attenues",
+        "desc": "Une touche de pas qui porte un trigless trig (FUNC + touche) s'allume attenuee au lieu de pleine "
+                "lumiere : on la distingue d'un trig de note. Elle garde son clignotement habituel.",
+        "status": "experimental",
+        "credit": {"kind": "based", "who": "djd_oz"},
+        "variants": [
+            {"file": "47-trigless-dim", "label": None},
         ],
     },
     {

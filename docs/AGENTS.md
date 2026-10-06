@@ -35,10 +35,10 @@ Write for musicians: what changes on the machine, which buttons to press, the li
 5. A guide section in `guide/index.html` (next number, before *Samples OS*; renumber the ones after): a lede, the
    steps (`<ol>`) with the buttons in `<b>`, then `<dl class="facts">` with the limits and a *Tested* / *Experimental*
    line saying how it was checked. Copy the `#tempo` or `#trig-hold` section.
-6. A new entry at the top of `assets/release.js`: next version (`1.21` is the last), today's date, 2 to 4 changes
-   (what the user gets, the limits, how it was checked, which mods it goes with). Once merged into `main`, the
-   English text is posted as is to the Discord server's #announcements (`.github/workflows/discord.yml`), so write it
-   for musicians.
+6. A new entry at the top of `assets/release.js`: next version (`1.25` is the last; `1.22` to `1.24` are taken by other
+   branches), today's date, 2 to 4 changes (what the user gets, the limits, how it was checked, which mods it goes
+   with). Once merged into `main`, the English text is posted as is to the Discord server's #announcements
+   (`.github/workflows/discord.yml`), so write it for musicians.
 7. Bump the version stamp: the same `YYYY-MM-DD-NN` string in `window.MC_BUILD` (`flasher/index.html`) and every
    `?v=` of the three pages (`index.html`, `flasher/index.html`, `guide/index.html`). A stale stamp makes browsers mix a
    new page with cached old scripts.
