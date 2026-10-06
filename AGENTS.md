@@ -67,6 +67,7 @@ tools/web*_check.*, webflash_smoke.*   checks of the web flasher against the Pyt
 docs/                         GitHub Pages site: index.html, flasher/, guide/, assets/release.js
 notes/                        numbered technical notes (French), index in notes/README.md
 BUILD.md, FLASH.md            command-line build and flashing (French)
+.github/                      discord.yml + scripts/discord.mjs: new versions, mod status changes and merged PRs -> Discord
 README.md                     English overview for Model:Cycles owners (mod table)
 ```
 
@@ -74,7 +75,7 @@ README.md                     English overview for Model:Cycles owners (mod tabl
 
 Follow the shape of the last ones (tempo-max: commits `5997b4a`, `14fb9fa`, `6e592bc`; trig-hold, arp). In order:
 
-1. **Investigate and write the note.** New file `notes/NN-<slug>.md` (next free number; 39 is the last) with the
+1. **Investigate and write the note.** New file `notes/NN-<slug>.md` (next free number; 41 is the last) with the
    user's request and its source, the OS code involved (addresses, `[FAIT]`/`[HYP]`), the design, free space used and
    conflicts with other tweaks. Add a row to `notes/README.md`. See `notes/AGENTS.md`.
 2. **Write the generator** `tools/gen_<mod>.py` (and sources under `tools/machines/<mod>/` if it has code). It reads

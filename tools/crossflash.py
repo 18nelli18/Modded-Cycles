@@ -14,7 +14,7 @@ Ce script prend TES deux fichiers officiels (aucune image n'est fournie) et prod
     --to samples  l'inverse : l'OS Cycles pour un Model:Samples, dans le conteneur du Samples (bootstrap,
                   updater, cle Samples). Son MAIN OS porte UNE modification : les 32 octets de la constante
                   de sa cle de verification (0x401296b2) sont recalcules pour que l'OS Cycles verifie les
-                  mises a jour avec la cle du Samples (notes/39). Sans elle, le retour par USB serait
+                  mises a jour avec la cle du Samples (notes/41). Sans elle, le retour par USB serait
                   impossible (verrou a deux cles, notes/15 §3.4bis) ; avec elle, l'OS Cycles et le bootstrap
                   Samples exigent la meme cle, et l'OS Samples officiel repasse par USB (--back-samples).
     --back-samples  l'OS Samples officiel, octet pour octet (conteneur, signature Samples), dans le
@@ -74,7 +74,7 @@ MAIN_BASE = 0x40000400
 # MAIN OS Cycles 1.13 : sa propre verification des mises a jour (fonction 0x40052750, appelee par 0x4005a0e4,
 # elle-meme appelee par les trois chemins de mise a jour : SysEx 0x400860a0, Transfer 0x4006ce92, ecriture
 # 0x40092314). Cle = sha256(s) ^ sha256(s inverse) ^ C, s = "REVERB SEND" (11 octets, 0x40129650, aussi nom de
-# parametre a l'ecran : on n'y touche pas), C = 32 octets en 0x401296b2, lus par cette seule fonction (notes/39).
+# parametre a l'ecran : on n'y touche pas), C = 32 octets en 0x401296b2, lus par cette seule fonction (notes/41).
 CYC_KEY_STR_VA = 0x40129650
 CYC_KEY_CONST_VA = 0x401296b2
 CYC_KEY_CODE = ((0x4005275c, "48794012 9650"), (0x400527c0, "43f94012 96b2"))   # pea "REVERB SEND" ; lea C

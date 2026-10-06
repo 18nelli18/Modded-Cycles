@@ -719,7 +719,7 @@ function crossflash(hostRaw, guestRaw) {
   return { raw, product: host.product, name: host.name, guestName: guest.name, mainOsSha: hex(sha256(main)) };
 }
 
-/* OS Cycles pour Model:Samples (tools/crossflash.py --to samples, notes/39) : le MAIN OS officiel du Cycles, dont
+/* OS Cycles pour Model:Samples (tools/crossflash.py --to samples, notes/41) : le MAIN OS officiel du Cycles, dont
  * la constante de sa cle de verification (32 octets en 0x401296b2) est recalculee pour donner la cle du Samples,
  * dans le conteneur officiel du Samples (bootstrap, updater, signature Samples). Ainsi l'OS Cycles accepte ensuite
  * l'OS Samples officiel par USB (samplesBack). Relu en entier. Renvoie { raw, mainOsSha }. */

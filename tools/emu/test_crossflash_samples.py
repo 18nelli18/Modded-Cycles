@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preuve de l'OS Cycles pour Model:Samples et de son retour par USB (notes/39, tools/crossflash.py).
+"""Preuve de l'OS Cycles pour Model:Samples et de son retour par USB (notes/41, tools/crossflash.py).
 
 Une mise a jour USB passe deux portes (notes/15 §3.4bis) : 1) l'OS qui tourne verifie le conteneur recu
 (checksum de contenu, HMAC) avant de le mettre en staging ; 2) au redemarrage, le bootstrap le re-verifie avec SA cle

@@ -1,4 +1,4 @@
-# 39 — L'OS Cycles sur un Model:Samples, avec retour par USB
+# 41 — L'OS Cycles sur un Model:Samples, avec retour par USB
 
 Demande de Maxime (05/10/2026, fil du projet) : « dans le même fonctionnement que pour flasher son Cycles avec le
 webflasher, une section qui permet de flasher son Model:Samples avec l'OS du Cycles, en USB, retour en arrière en USB
@@ -135,9 +135,9 @@ Empreintes (SHA-256) :
 
 | Fichier | SHA-256 |
 |---|---|
-| `model-cycles_OS1.13_for-model-samples.syx` (`--to samples`) | `@SHA_FWD@` |
-| son MAIN OS | `@SHA_FWD_MAIN@` |
-| `model-samples_OS1.13_back-from-cycles-os.syx` (`--back-samples`) | `@SHA_BACK@` |
+| `model-cycles_OS1.13_for-model-samples.syx` (`--to samples`) | `c06c23f31e50fac6ad40cd0f633acd4a7da4f63c929dff563dae887b93105dd4` |
+| son MAIN OS | `b6fbc48f7d7d07cecae3859e07270fa2298f393e8afa2643144bdb4efc317aad` |
+| `model-samples_OS1.13_back-from-cycles-os.syx` (`--back-samples`) | `d63ce13dd1a5039d11b60d3f69d4e88e9d0f56fb2e7350c105ec641d32083680` |
 
 ## 6. Dans le flasher
 
