@@ -230,6 +230,47 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim
 | `model-tg,boot-anim` | `cbec181684805bf37dd07c62dc47f7daf35e6abab530a3f3b06ec5db590278ec` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim` | `d468a729f32780870dbd591e52e8c782a5cdd347459ac1c61ef35473e26c9323` |
 
+### Volume et pan en chiffres sur l'écran principal
+
+`tweaks/model-cycles_OS1.13/46-level-pan-values.json` est produit par `tools/gen_level_pan.py` : d'après le mod de djd_oz,
+LEVEL/DATA affiche le volume de la piste sélectionnée (0 à 127) à la place du haut-parleur, FUNC + LEVEL/DATA son pan (-64 à
+63) à la place du « R », 3 s après le dernier mouvement ; LEVEL/DATA avance de 1 au lieu de 2 sur l'écran principal. Assemblé
+depuis `tools/machines/level_pan/` dans deux masques de sprites libérés ([note 44](notes/44-volume-pan-en-chiffres.md)). La
+preuve passe par le vrai tick de la tâche de l'interface, le pas de LEVEL/DATA, le gestionnaire des encodeurs et le dessin de
+l'écran principal, compare chaque pixel au modèle pour les 256 valeurs, et, avec `--djd`, au fichier de djd_oz ; `--show`
+dessine l'écran avec les barres de l'OS :
+```sh
+python3 tools/gen_level_pan.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/emu/test_level_pan.py --cycles model-cycles_OS1.13.syx [--show] \
+    [--djd model-cycles_OS1.13_PAN-Level-values-3s-turn-only.syx] \
+    [--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max,boot-anim,trigless-dim \
+     --syntakt Syntakt_OS1.42.syx]
+```
+
+### Trigless trigs atténués
+
+`tweaks/model-cycles_OS1.13/47-trigless-dim.json` est produit par `tools/gen_trigless_dim.py` : d'après le mod de djd_oz, en
+mode grille, une touche qui porte un trigless trig prend l'état de LED 260 (traité comme 4 par l'OS) et l'horloge des LED
+(120 Hz) l'éteint 16 ticks sur 25 ; les touches à atténuer sont relevées à la fin de chaque image de l'interface. Assemblé depuis
+`tools/machines/trigless_dim/` dans un masque de sprite libéré ([note 45](notes/45-trigless-trigs-attenues.md)). La preuve
+passe par le vrai code des LED de l'OS (image de l'interface, clignotement, tick, envoi des rangées) et, avec `--djd`, compare
+les LED au fichier de djd_oz, tick par tick :
+```sh
+python3 tools/gen_trigless_dim.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/emu/test_trigless_dim.py --cycles model-cycles_OS1.13.syx \
+    [--djd model-cycles_OS1.13_Trigless-Trigs-LED-36pct-v4-experimental.syx] \
+    [--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max,boot-anim,level-pan-values \
+     --syntakt Syntakt_OS1.42.syx]
+```
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `level-pan-values` | `407e5310a7f12bc0382994dfd314b0124ecca710b386b62e56456090004a0a28` |
+| `trigless-dim` | `49adf97c6e9b0530fac06585412056858beaa0a7ef9ea1259c2a9c5c117836c6` |
+| `level-pan-values,trigless-dim` | `bfd3a83f41a406d0c04a97d065e413d16b651a1168e473b1c62736d98f6e0a30` |
+| `model-tg,level-pan-values,trigless-dim` | `268568e505c8850ee28257c5548081e09f3e57e222b6c7b751b43df1e69f3ca8` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,level-pan-values,trigless-dim` | `6ad10d24c07e2286d2225f4e73b703b8b61372bb580084aa1eab1e6e4b89b19b` |
+
 ### Écoute d'un pas en pause
 
 `trig-preview` (et sa copie dans Model-TG) accepte le séquenceur en pause, où le met un Stop MIDI reçu même à l'arrêt : 3 octets

@@ -75,9 +75,9 @@ README.md                     English overview for Model:Cycles owners (mod tabl
 
 Follow the shape of the last ones (tempo-max: commits `5997b4a`, `14fb9fa`, `6e592bc`; trig-hold, arp). In order:
 
-1. **Investigate and write the note.** New file `notes/NN-<slug>.md` (next free number; 39 is the last) with the
-   user's request and its source, the OS code involved (addresses, `[FAIT]`/`[HYP]`), the design, free space used and
-   conflicts with other tweaks. Add a row to `notes/README.md`. See `notes/AGENTS.md`.
+1. **Investigate and write the note.** New file `notes/NN-<slug>.md` (next free number; 45 is the last, 40 to 43 are
+   taken by other branches) with the user's request and its source, the OS code involved (addresses, `[FAIT]`/`[HYP]`),
+   the design, free space used and conflicts with other tweaks. Add a row to `notes/README.md`. See `notes/AGENTS.md`.
 2. **Write the generator** `tools/gen_<mod>.py` (and sources under `tools/machines/<mod>/` if it has code). It reads
    the official `.syx`, checks the stock bytes, and writes `tweaks/model-cycles_OS1.13/NN-<id>.json`; `--check`
    compares with the committed file. See `tools/AGENTS.md` and `tweaks/AGENTS.md`.
