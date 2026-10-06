@@ -9,31 +9,55 @@ Preuve : `tools/emu/test_crossflash_samples.py`. Adresses : VA de l'OS 1.13.
 
 ## En bref
 
+- **Une mise à jour USB n'est vérifiée qu'une fois, par l'OS qui tourne**, avec sa propre clé : il écrit ensuite le
+  conteneur tel quel en flash `0x20000`, à la place de celui en service, et le bootstrap le démarre sans rien vérifier
+  (§1). La « porte 2 » de [15 §3.4bis](15-demandes-reddit.md) n'existe pas (relecture du 06/10/2026).
 - **L'aller par USB marche tel quel** : le conteneur officiel du Samples (bootstrap, updater, signature Samples) avec
-  le MAIN OS du Cycles passe les deux portes d'une mise à jour USB du Samples, qui ne vérifient que le conteneur et sa
-  signature ([15 §3.4bis](15-demandes-reddit.md)).
-- **Le retour par USB était impossible** avec l'OS Cycles d'origine : verrou à deux clés, le miroir exact de
-  [15 §3.4bis](15-demandes-reddit.md). L'OS Cycles qui tourne n'accepte qu'un fichier signé Cycles, le bootstrap
-  Samples n'installe qu'un fichier signé Samples, et un fichier ne porte qu'une signature.
+  le MAIN OS du Cycles passe la vérification de l'OS Samples.
+- **Le retour par USB est impossible** avec l'OS Cycles d'origine : il n'accepte qu'un fichier signé Cycles, et
+  l'OS Samples officiel est signé Samples.
 - **Correctif : 32 octets dans le MAIN OS Cycles.** Sa clé de vérification vient d'une constante de 32 octets
-  (`0x401296b2`) lue par une seule fonction. On la recalcule pour qu'elle donne la **clé du Samples**. Les deux portes
-  exigent alors la même clé, et l'OS Samples officiel, inchangé, repasse par USB.
+  (`0x401296b2`) lue par une seule fonction. On la recalcule pour qu'elle donne la **clé du Samples** : l'OS Samples
+  officiel, inchangé, repasse par USB, et les firmwares Model:Cycles sont refusés (§3).
 - La clé n'est jamais dans le dépôt : la page et le script la dérivent du `.syx` officiel du Samples de l'utilisateur,
   comme `mtlib` le fait pour toute signature.
-- `[FAIT en émulation]` sur le vrai code de vérification des deux OS ; **pas encore essayé sur un vrai Model:Samples**.
+- `[FAIT en émulation]` sur le vrai code de vérification des deux OS et sur le chargeur du bootstrap Samples ;
+  **pas encore essayé sur un vrai Model:Samples**.
   Le menu de démarrage du Samples n'est jamais touché : par le MIDI IN, il reste la voie de secours.
 
-## 1. Les deux portes d'une mise à jour USB, sur un Model:Samples
+## 1. Une mise à jour USB : une seule vérification, par l'OS qui tourne `[FAIT]`
 
-Rappel de [15 §3.4bis](15-demandes-reddit.md) : l'OS qui tourne reçoit le `.syx` (SysEx de `CONFIG › UPGRADE` ou
-protocole de Transfer, [37](37-flash-rapide-usb.md)), vérifie le conteneur, le copie en staging (flash `0x20000`) et
-redémarre ; le **bootstrap** re-vérifie alors le staging avec **sa** clé et l'installe.
+L'OS qui tourne reçoit le `.syx` (SysEx de `CONFIG › UPGRADE` ou protocole de Transfer, [37](37-flash-rapide-usb.md)),
+vérifie le conteneur avec **sa** clé (§2), puis l'écrit tel quel en flash `0x20000` et redémarre. `0x20000` n'est pas
+une zone d'attente : c'est le conteneur que le bootstrap démarre.
 
-| Situation | Porte 1 : l'OS qui tourne | Porte 2 : le bootstrap | Fichier qui passe les deux |
-|---|---|---|---|
-| Samples d'origine, aller | OS Samples, clé Samples | Samples, clé Samples | conteneur Samples + MAIN OS Cycles (`--to samples`) |
-| Samples sous OS Cycles **d'origine**, retour | OS Cycles, **clé Cycles** | Samples, **clé Samples** | **aucun** |
-| Samples sous OS Cycles **de la page**, retour | OS Cycles, **clé Samples** (32 octets changés) | Samples, clé Samples | l'OS Samples officiel, transport Cycles (`--back-samples`) |
+- Écriture : `0x40092304` dans l'OS Cycles (appelée par `0x4006cf28`, seule commande qui écrit, pour les deux
+  transports), `0x40091488` dans l'OS Samples (`movea.l #0x20000,a3` en `0x400914b2`). Effacement puis écriture à
+  partir de `0x20000`, longueur = celle du conteneur reçu, puis `move.l #0,0x48000000` et
+  `move.b #0x80,0xec090000` (redémarrage).
+- Démarrage normal (bootstrap, section 2, code identique sur les deux machines à 3 octets près : produit et octet
+  appareil) : `0x80000820` lit l'en-tête du conteneur en `0x20000` (`0x80004a12`), sa table de sections en
+  `0x20020` (`0x80004a5a`), copie la section 3 en `0x40200000` (`0x8000f010`, lecture de la flash SPI), la
+  décompresse en `0x40000400` (`0x800006bc`) et saute à son point d'entrée. **Ni checksum, ni HMAC, ni limite de
+  taille.**
+- La vérification du bootstrap (`0x80003b36` : checksum de contenu, puis HMAC `0x800059fa` avec sa clé, appelé en
+  `0x80003b76`) n'a qu'un appelant, `0x80003ed8`, dans `0x80003d18` : l'installation par le **menu de démarrage**
+  (TRIG 4, MIDI IN), qui vérifie une copie en RAM avant d'écrire.
+- EMPTY RESET et FACTORY RESET ne font que poser des bits dans l'argument de démarrage (`0x800071d8`, en
+  `0x8000208e` et `0x800020b0`) : ils n'écrivent pas la flash, c'est l'OS démarré qui réinitialise le projet.
+- La mise à jour du bootstrap lui-même (`0x8000214c`) n'a lieu que si la version de la section 2 reçue dépasse celle
+  en place : `0x0400` partout en 1.13, donc jamais ici.
+
+> Source : bootstraps et MAIN OS 1.13 désassemblés, relecture contradictoire du 06/10/2026 (8 relectures et une
+> synthèse) ; chargeur `0x80000820` exécuté dans Unicorn sur les trois conteneurs (§5, groupe 6).
+> Conséquence pour [15 §3.4bis](15-demandes-reddit.md) : le `--back` du 29/09 a bien été écrit (voir la correction
+> en tête de 15 §3.4bis).
+
+| Situation | Vérification (l'OS qui tourne) | Fichier qui passe |
+|---|---|---|
+| Samples d'origine, aller | OS Samples, clé Samples | conteneur Samples + MAIN OS Cycles (`--to samples`) |
+| Samples sous OS Cycles **d'origine**, retour | OS Cycles, **clé Cycles** | aucun fichier Samples officiel |
+| Samples sous OS Cycles **de la page**, retour | OS Cycles, **clé Samples** (32 octets changés) | l'OS Samples officiel, transport Cycles (`--back-samples`) |
 
 ## 2. La vérification dans l'OS Cycles `[FAIT]`
 
@@ -43,7 +67,7 @@ redémarre ; le **bootstrap** re-vérifie alors le staging avec **sa** clé et l
 |---|---|
 | `0x400860a0` | réception SysEx (`CONFIG › UPGRADE`) |
 | `0x4006ce92` | protocole d'Elektron Transfer (le `.syx` reçu en mémoire, extrait par `0x400813c2`) |
-| `0x40092314` | écriture en staging (`0x40092304` : re-vérifie, efface et écrit à partir de `0x20000`) |
+| `0x40092314` | écriture en flash (`0x40092304` : re-vérifie, efface et écrit à partir de `0x20000`) |
 
 Elle renvoie 1 si tout va bien, sinon :
 
@@ -92,8 +116,9 @@ Samples (son bootstrap) ; elle est aussi celle que dérive le MAIN OS Samples ([
 
 Effets de bord, voulus :
 - l'OS Cycles de la page **refuse** l'OS Cycles officiel et tout firmware Model:Cycles avec mods (signés Cycles),
-  y compris une mise à jour proposée par Elektron Transfer. Sans le correctif, la porte 1 l'accepterait et la porte 2
-  le rejetterait : même résultat, rien d'écrit, mais après un redémarrage trompeur ;
+  y compris une mise à jour proposée par Elektron Transfer : rien n'est écrit. C'est une protection : un firmware
+  Model:Cycles accepté serait démarré tel quel, et l'OS Cycles d'origine qu'il contient fermerait le retour par USB
+  (`[HYP]` une future version dont la section 2 serait plus récente remplacerait même le bootstrap du Samples) ;
 - il **accepte** `--to samples` (signé Samples) : une future version se met à jour par USB, à condition de l'emballer
   dans le transport Cycles (§4) ; la page ne le propose pas encore.
 
@@ -105,13 +130,13 @@ le flux décodé de l'OS Samples officiel **tel quel** (préambule, conteneur, s
 `syx.wrap(…, 0x11, séquence de départ du Cycles)` : le même emballage que tous les firmwares Model:Cycles que la page
 envoie déjà.
 
-Une fois reçu, c'est octet pour octet le conteneur officiel du Samples : la porte 2 est celle d'une mise à jour
-officielle du Model:Samples.
+Une fois reçu, c'est octet pour octet le conteneur officiel du Samples : la flash se retrouve dans l'état d'une
+mise à jour officielle du Model:Samples.
 
 ## 5. Preuve en émulation `[FAIT en émulation]`
 
-`tools/emu/test_crossflash_samples.py` fait tourner `0x4005a0e4` (Cycles) et son équivalent dans l'OS Samples (trouvé
-par son appel au HMAC `0x40051728`), vérification d'alimentation court-circuitée :
+`tools/emu/test_crossflash_samples.py` (18 contrôles) fait tourner `0x4005a0e4` (Cycles) et son équivalent dans l'OS
+Samples (trouvé par son appel au HMAC `0x40051728`), vérification d'alimentation court-circuitée :
 
 | Fichier | OS Samples d'origine | OS Cycles d'origine | OS Cycles de la page |
 |---|---|---|---|
@@ -123,13 +148,18 @@ par son appel au HMAC `0x40051728`), vérification d'alimentation court-circuit�
 
 Et en plus :
 - `--to samples` : sections 2, 4, 5 et en-tête du conteneur identiques à l'officiel Samples, HMAC valide avec la clé
-  du bootstrap Samples (porte 2) ;
+  du Samples (celle que vérifie aussi le menu de démarrage) ;
 - son MAIN OS ne diffère de l'OS Cycles officiel que dans les 32 octets de `0x401296b2` ;
-- `--back-samples` décodé = flux de l'OS Samples officiel, en-tête SysEx `F0 00 20 3C 11 00 7F 01 0C`.
+- `--back-samples` décodé = flux de l'OS Samples officiel, en-tête SysEx `F0 00 20 3C 11 00 7F 01 0C` ;
+- groupe 6, démarrage : le chargeur du bootstrap Samples (`0x80000820`), avec chaque conteneur écrit en `0x20000`,
+  pose en `0x40000400` le MAIN OS attendu (OS Cycles de la page, fin `0x401aa140` ; OS Samples officiel pour le
+  retour et le témoin, fin `0x401a7640`), sans passer par `0x80003b36` ni `0x800059fa`. Le flux compressé est lu en
+  `0x40200000`, au-delà de la fin du MAIN OS décompressé.
 
 Ce qui n'est **pas** émulé : la réception SysEx/Transfer elle-même (même transport que les firmwares Cycles déjà
-envoyés par la page, testés sur la machine) et le bootstrap Samples (la porte 2 voit des conteneurs signés avec sa
-propre clé, comme une mise à jour officielle).
+envoyés par la page, testés sur la machine ; relue sans trouver de contrôle du modèle ni de taille), l'écriture en
+flash, la vérification d'alimentation (registre `0xec094018`) et le démarrage de l'OS Cycles sur le matériel du
+Samples.
 
 Empreintes (SHA-256) :
 
@@ -147,17 +177,24 @@ fichiers officiels sont demandés (Cycles puis Samples). La page refuse un résu
 référence (`REF_CYCLES_ON_SAMPLES`, `REF_SAMPLES_BACK`).
 
 Avec la méthode rapide, la page demande qui répond : l'aller ne part que vers une machine qui répond Model:Samples, le
-retour que vers une machine qui répond Model:Cycles. Cas sans danger qu'elle ne peut pas distinguer :
-- l'aller envoyé à un **Model:Cycles sous OS Samples** (il répond Model:Samples) : porte 1 acceptée, porte 2
-  (bootstrap Cycles) refusée, l'OS Samples reste ([15 §3.4bis](15-demandes-reddit.md), vu sur la machine le 29/09) ;
-- le retour envoyé à un **vrai Model:Cycles** : refusé à la porte 1 (signature).
+retour que vers une machine qui répond Model:Cycles. Cas qu'elle ne peut pas distinguer :
+- le retour envoyé à un **vrai Model:Cycles** : refusé (signature), rien n'est écrit ;
+- l'aller envoyé à un **Model:Cycles sous OS Samples** (il répond Model:Samples) : l'OS Samples l'accepte (clé
+  Samples) et l'écrit ; le bootstrap Cycles démarre alors l'OS Cycles de la page. Sans danger, mais ce Cycles
+  refuse ensuite les firmwares Model:Cycles par USB : retour par le menu de démarrage et le MIDI IN. La carte et le
+  guide disent donc « seulement sur un vrai Model:Samples ».
+
+Après l'envoi, la carte et le guide disent aussi quoi faire si la machine démarre mal (OS précédent toujours là,
+écran figé, cf. le 29/09 en [15 §3.4bis](15-demandes-reddit.md)) : l'éteindre et la rallumer ; sinon, [FUNC] à
+l'allumage puis [TRIG 2] EMPTY RESET, qui vide le projet actif (d'où la sauvegarde avec Transfer).
 
 ## 7. Ce qui reste à vérifier sur la machine `[À FAIRE]`
 
 Sur un vrai Model:Samples (Maxime) :
 1. sauvegarde des samples et projets avec Transfer ;
 2. *Model:Samples → OS Cycles*, méthode rapide : la machine redémarre en Model:Cycles (Transfer la voit Model:Cycles),
-   les machines du Cycles jouent, le panneau répond ;
+   les machines du Cycles jouent, le panneau répond. Noter ce qu'elle fait juste après le redémarrage : nouvel OS
+   tout de suite, ou ancien OS jusqu'à un arrêt, ou écran figé jusqu'à EMPTY RESET (le 29/09 reste inexpliqué) ;
 3. ce que l'OS Cycles fait des données du Samples (projets, +Drive) ;
 4. *Model:Samples : retour à son OS*, méthode rapide : retour au Model:Samples, samples et projets présents ;
 5. en secours si 4 échoue : menu de démarrage du Samples et l'OS Samples officiel par le MIDI IN.

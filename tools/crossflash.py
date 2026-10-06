@@ -14,20 +14,19 @@ Ce script prend TES deux fichiers officiels (aucune image n'est fournie) et prod
     --to samples  l'inverse : l'OS Cycles pour un Model:Samples, dans le conteneur du Samples (bootstrap,
                   updater, cle Samples). Son MAIN OS porte UNE modification : les 32 octets de la constante
                   de sa cle de verification (0x401296b2) sont recalcules pour que l'OS Cycles verifie les
-                  mises a jour avec la cle du Samples (notes/41). Sans elle, le retour par USB serait
-                  impossible (verrou a deux cles, notes/15 §3.4bis) ; avec elle, l'OS Cycles et le bootstrap
-                  Samples exigent la meme cle, et l'OS Samples officiel repasse par USB (--back-samples).
+                  mises a jour avec la cle du Samples (notes/41). Sans elle, l'OS Cycles refuserait l'OS
+                  Samples officiel (signe Samples) : pas de retour par USB. Avec elle, l'OS Samples officiel
+                  repasse par USB (--back-samples), et les firmwares Model:Cycles sont refuses.
     --back-samples  l'OS Samples officiel, octet pour octet (conteneur, signature Samples), dans le
                   transport SysEx du Cycles (produit 0x11, octet appareil 0x0C) : c'est le seul emballage
                   que l'OS Cycles route vers sa mise a jour. Ne passe QUE sur l'OS Cycles produit par
                   --to samples (cle Samples) ; un Model:Cycles le refuse (signature).
-    --back        Emballe l'OS Cycles officiel pour qu'il passe la 1re verification de l'OS Samples
-                  (produit 0x0F, marqueur 0x0A, HMAC clef Samples). /!\\ NE SUFFIT PAS au retour :
-                  une MAJ USB est verifiee DEUX fois, avec deux clefs. Depuis l'OS Samples installe sur
-                  un Cycles, le bootstrap present est celui du Cycles (clef "REVERB SEND") et re-verifie
-                  a l'installation au redemarrage ; ce fichier, signe clef Samples, est alors rejete et
-                  l'ancien OS revient. Il n'y a PAS de retour par USB dans cet etat : il faut une
-                  interface MIDI (menu de demarrage). Conserve pour la 1re porte et la doc (notes/15 §3.4bis).
+    --back        Emballe l'OS Cycles officiel pour que l'OS Samples (installe sur un Cycles) l'accepte
+                  (produit 0x0F, marqueur 0x0A, HMAC clef Samples). Une MAJ USB n'est verifiee que par
+                  l'OS qui tourne : le bootstrap demarre ensuite le conteneur ecrit en 0x20000 sans le
+                  verifier (notes/41 §1, correction de notes/15 §3.4bis du 06/10/2026). Essaye le 29/09 :
+                  l'OS Cycles est revenu apres un FACTORY RESET. Pas encore propose par le flasher ;
+                  la voie sure reste le menu de demarrage et le MIDI IN.
 
 Technique : garder le conteneur de la machine hote et ne remplacer que la section 3. Elle a ete trouvee par un
 utilisateur de r/Elektron et verifiee sur un Model:Samples par scottmetoyer/ms-multi-output (cible
@@ -304,13 +303,10 @@ def main():
         pathlib.Path(name).write_bytes(out)
         print(f"ecrit : {name} ({len(out)} o, SHA-256 {sha(out)[:16]}...)")
         print("  OS Cycles officiel 1.13 (sections 2, 3, 4, 5 inchangees), signe avec la cle Samples.")
-        print("  Passe la 1re verification de l'OS Samples (produit, marqueur, checksums, HMAC).")
-        print("\n  /!\\ CE FICHIER NE SUFFIT PAS au retour a l'OS Cycles.")
-        print("  Une MAJ USB est verifiee 2 fois : (1) l'OS Samples qui tourne, cle Samples ; puis")
-        print("  (2) au redemarrage le bootstrap Cycles present sur la machine, cle Cycles. Un fichier")
-        print("  ne porte qu'un HMAC : signe Samples il passe (1) et est rejete a (2). Teste par")
-        print("  l'utilisateur le 29/09/2026 : la MAJ 'a semblé marcher' mais l'OS Samples est reste.")
-        print("  => Retour uniquement par une interface MIDI (menu de demarrage). Voir notes/15 §3.4bis.")
+        print("  Passe la verification de l'OS Samples (produit, marqueur, checksums, HMAC), la seule d'une MAJ USB.")
+        print("\n  /!\\ Pas encore confirme sur la machine : le 29/09/2026, l'OS Samples semblait rester apres l'envoi,")
+        print("  et l'OS Cycles est revenu apres un FACTORY RESET (menu de demarrage). Sauvegarder avec Transfer avant.")
+        print("  La voie sure reste le menu de demarrage et le MIDI IN. Voir notes/15 §3.4bis (correction du 06/10).")
         return
     if args.back_samples:
         out = samples_back(cyc, smp)
