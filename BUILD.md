@@ -230,6 +230,26 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim
 | `model-tg,boot-anim` | `cbec181684805bf37dd07c62dc47f7daf35e6abab530a3f3b06ec5db590278ec` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim` | `d468a729f32780870dbd591e52e8c782a5cdd347459ac1c61ef35473e26c9323` |
 
+### Filtre par piste
+
+`tweaks/model-cycles_OS1.13/48-track-filter.json` est produit par `tools/gen_track_filter.py` : le filtre (`track_filter.S`), les
+potards, l'affichage et la sauvegarde (`tf_ui.S`) sont assemblés depuis `tools/machines/track_filter/` et liés par
+`track_filter.ld` dans quinze masques de sprites 35×35 libérés (3 001 o) ; les tables sont calculées par le générateur. Quatre
+paramètres de toutes les machines sur les descripteurs « Error » 1 à 4, accroche après Volume + Dist ([note 47](notes/47-filtre-piste.md)).
+Incompatible avec Model-TG pour l'instant. La preuve fait tourner la vraie boucle des voix et le vrai site de l'accroche, l'OS sans
+le filtre à côté, puis l'interface et la sauvegarde fonction par fonction :
+```sh
+python3 tools/gen_track_filter.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/emu/test_track_filter.py --cycles model-cycles_OS1.13.syx [--quick] \
+    [--with 6ch-usbup,syntakt-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max,boot-anim --syntakt Syntakt_OS1.42.syx]
+```
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `track-filter` | `bf1f9fb311e81fd18f985c249d5e19971277a79f4b1a9d9fdcbaa78305056294` |
+| `6ch-usbup,track-filter` | `823e2130a5476f625e47401516093b333eee52c764789a031e5f156bbdd09412` |
+| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,track-filter` | `e324417c835e55e34e7928b95d47ee1db30c310eca06db3651423c3ff5310372` |
+
 ### Écoute d'un pas en pause
 
 `trig-preview` (et sa copie dans Model-TG) accepte le séquenceur en pause, où le met un Stop MIDI reçu même à l'arrêt : 3 octets

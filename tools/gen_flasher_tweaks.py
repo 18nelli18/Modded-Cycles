@@ -142,6 +142,19 @@ FEATURES = [
         ],
     },
     {
+        "id": "track-filter",
+        "label": "Filtre par piste (LP / OFF / HP)",
+        "desc": "MACHINES tenu + SWEEP : un filtre par piste, passe-bas a gauche, rien au centre, passe-haut a droite. "
+                "CONTOUR : resonance ; COLOR et SHAPE : enveloppe du filtre (quantite, decay). P-locks, LFO, CC 74 / 71.",
+        "status": "experimental",
+        "credit": None,
+        # meme geste que le filtre de Model-TG (MACHINES + SWEEP / CONTOUR) : pas ensemble pour l'instant (notes/47 §7, §11)
+        "excludes": ["model-tg"],
+        "variants": [
+            {"file": "48-track-filter", "label": None},
+        ],
+    },
+    {
         "id": "syntakt",
         "label": "Vrais moteurs du Syntakt",
         "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.42.syx (a deposer a l'etape 2), "
