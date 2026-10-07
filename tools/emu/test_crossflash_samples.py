@@ -19,6 +19,9 @@ demarrage, par le MIDI IN, verifie la signature). Ce test fait tourner dans Unic
   6. Demarrage : le chargeur du bootstrap Samples (0x80000820), sur chaque conteneur ecrit en 0x20000, pose en RAM
      le MAIN OS attendu (OS Cycles de `--to samples`, OS Samples officiel pour le retour) sans appeler de
      verification.
+  7. OS Cycles installe autrement (cle Cycles d'origine, avec ou sans mods : aucun tweak ne touche la verification) :
+     il refuse le retour (groupe 3) mais accepte `--to cycles` (choix « Model:Cycles -> OS Samples » de la page),
+     dont le bootstrap Samples tire l'OS Samples officiel ; ce que dit la carte du retour (sback_w1).
 
     python3 tools/emu/test_crossflash_samples.py --cycles model-cycles_OS1.13.syx --samples model-samples_OS1.13.syx
 
@@ -159,6 +162,7 @@ def main():
     cyc, smp = X.load(args.cycles, "cycles"), X.load(args.samples, "samples")
     cyc_raw, smp_raw = cyc[0]["raw"], smp[0]["raw"]
     fwd, fwd_main_sha = X.cycles_for_samples(cyc, smp)
+    s4c = X.cross(cyc, smp)                                 # --to cycles : OS Samples, conteneur et cle du Cycles
     back = X.samples_back(cyc, smp)
     c_key, s_key = X.host_key(cyc), X.host_key(smp)
     cyc_main, smp_main, smp_boot = cyc[3][3], smp[3][3], smp[3][2]
@@ -213,6 +217,13 @@ def main():
         check(entry == 0x40000400 and ram[:len(want)] == want and not seen,
               f"{name} : le bootstrap pose le MAIN OS attendu ({len(want)} o, fin 0x{0x40000400 + len(want):08x}), "
               "sans verification")
+
+    print("7. OS Cycles installe autrement (cle Cycles), sur un Model:Samples")
+    b_s4c = blob_of(s4c)[0]
+    check(verify(cyc_main, c_fn, c_power, b_s4c) == 1, "il accepte --to cycles (« Model:Cycles -> OS Samples »)")
+    entry, ram, seen = boot(smp_boot, b_s4c)
+    check(entry == 0x40000400 and ram[:len(smp_main)] == smp_main and not seen,
+          "le bootstrap Samples en tire l'OS Samples officiel, sans verification")
     print(f"\nMAIN OS de --to samples : {fwd_main_sha}")
     print(f"--to samples   : {hashlib.sha256(fwd).hexdigest()}")
     print(f"--back-samples : {hashlib.sha256(back).hexdigest()}")

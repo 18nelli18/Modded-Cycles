@@ -135,7 +135,7 @@ mise à jour officielle du Model:Samples.
 
 ## 5. Preuve en émulation `[FAIT en émulation]`
 
-`tools/emu/test_crossflash_samples.py` (18 contrôles) fait tourner `0x4005a0e4` (Cycles) et son équivalent dans l'OS
+`tools/emu/test_crossflash_samples.py` (20 contrôles) fait tourner `0x4005a0e4` (Cycles) et son équivalent dans l'OS
 Samples (trouvé par son appel au HMAC `0x40051728`), vérification d'alimentation court-circuitée :
 
 | Fichier | OS Samples d'origine | OS Cycles d'origine | OS Cycles de la page |
@@ -184,6 +184,13 @@ retour que vers une machine qui répond Model:Cycles. Cas qu'elle ne peut pas di
   refuse ensuite les firmwares Model:Cycles par USB : retour par le menu de démarrage et le MIDI IN. La carte et le
   guide disent donc « seulement sur un vrai Model:Samples ».
 
+- le retour envoyé à un **Model:Samples sous un OS Cycles installé autrement** (autre outil, ou un build Model:Cycles
+  avec mods, clé Cycles d'origine : aucun tweak ne touche la vérification) : refusé (HMAC, « Upgrade Failed »), rien
+  n'est écrit. Un tel OS accepte en revanche `--to cycles` (choix *Model:Cycles → OS Samples*, signé Cycles), dont le
+  bootstrap Samples tire l'OS Samples officiel (groupe 7 de la preuve) ; c'est ce que disent `sback_w1`,
+  `dev_fwd_on_cycles` et le guide. Avec Model-TG en identité Transfer SMP, la machine répond Model:Samples (25) :
+  `dev_back_on_samples` le signale.
+
 Après l'envoi, la carte et le guide disent aussi quoi faire si la machine démarre mal (OS précédent toujours là,
 écran figé, cf. le 29/09 en [15 §3.4bis](15-demandes-reddit.md)) : l'éteindre et la rallumer ; sinon, [FUNC] à
 l'allumage puis [TRIG 2] EMPTY RESET, qui vide le projet actif (d'où la sauvegarde avec Transfer).
@@ -198,3 +205,29 @@ Sur un vrai Model:Samples (Maxime) :
 3. ce que l'OS Cycles fait des données du Samples (projets, +Drive) ;
 4. *Model:Samples : retour à son OS*, méthode rapide : retour au Model:Samples, samples et projets présents ;
 5. en secours si 4 échoue : menu de démarrage du Samples et l'OS Samples officiel par le MIDI IN.
+
+## 8. Premier rapport sur un vrai Model:Samples (akrism, Discord, 06/10/2026)
+
+> Source : message d'akrism dans le forum *feature-requests* du Discord (fil « Web Flasher: Model:Samples → Model:Cycles
+> conversion »), relayé par Maxime le 06/10/2026. Rapport d'un tiers, non reproduit par nous ; son script
+> (`wrap_for_samples.py`) n'a pas pu être lu (CDN de Discord bloqué ici).
+
+Ce qu'il a fait : `build.py -t model-tg,6ch-usbup`, puis sa section 3 dans le conteneur officiel du Samples, signé
+avec la clé Samples (comme `--to samples`, mais **sans** le correctif de 32 octets), envoyé par l'onglet Mods de la
+page (méthode rapide). Résultat rapporté : la machine démarre en Cycles, le Sampler de Model-TG marche, Transfer
+charge des samples en identité SMP.
+
+- `[FAIT, matériel, rapporté]` L'OS Cycles (avec mods) démarre et tourne sur un Model:Samples installé par USB dans
+  le conteneur Samples : c'est le chemin de l'aller de cette note, et cela confirme sur la machine qu'il n'y a qu'une
+  vérification (§1).
+- Ce que ça ne prouve pas : le correctif de 32 octets et le retour par USB.
+- `[FAIT en émulation]` Dans son état (OS Cycles avec mods, clé Cycles) : l'OS Samples officiel, le retour et l'aller
+  de cette note sont refusés (4), une build Mods normale est acceptée (1), et `--to cycles` est accepté puis démarré
+  en OS Samples officiel, qui accepte ensuite l'OS Samples officiel (1). Son retour par USB passe donc par le premier
+  choix de l'onglet ; refaire son propre emballage depuis cet état est refusé (sans danger).
+- Piste, PR séparée après le test de Maxime : *OS Cycles avec mods pour Model:Samples*. Vérifié en émulation sur les
+  plus grosses combinaisons : aucun tweak, recette Syntakt ou cave ne touche la vérification ni `0x401296b2` ;
+  restaurer les 32 octets redonne l'entrée de `REF_MAINOS` ; `C'` est le même pour toutes les combinaisons (une seule
+  référence) ; la plus grosse finit en `0x401fae10` (< `0x40200000`) et son conteneur (948 928 o) s'arrête en
+  `0x107ac0`, loin de `0x1e0000`. `cyclesForSamples` accepte déjà un `.syx` modifié. À prévoir : changer de mods plus
+  tard demande un nouveau type de fichier (conteneur signé Samples dans le transport Cycles), et créditer akrism.
