@@ -15,8 +15,10 @@ tools/build.py (conflits, zones 0xFF, charges utiles enchaînées) :
 La page compare le MAIN OS de ces combinaisons à leur empreinte et refuse s'il diffère. Avec tools/check_overlaps.py
 (deux mods qu'on peut cocher ensemble n'écrivent jamais aux mêmes octets), cet échantillon suffit : il grandit d'une
 quarantaine d'entrées par nouvelle carte, au lieu de doubler. Les cartes suivent les règles de app.js : « excludes »
-et « includes » (jamais cochées ensemble), « requires » (une carte qui demande une autre carte), « with » (un autre
-tweak quand une autre carte est cochée), et Model-TG avec les moteurs du Syntakt (leur version « tg »).
+et « includes » (jamais cochées ensemble), « with » (un autre tweak quand une autre carte est cochée), et Model-TG avec
+les moteurs du Syntakt (leur version « tg »). Le « requires » d'une carte n'est qu'affiché par la page (« avec … ») :
+ici il sert à cocher l'autre carte avec elle dans l'échantillon ; une sélection dont un tweak n'a pas le tweak qu'il
+demande (« requires » du tweak) est laissée de côté, car les deux builds la refusent.
 
     python3 tools/ref_mainos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx [--check]
 """
@@ -68,9 +70,10 @@ def writes_bytes(t):
 
 # --- les cartes de la page (docs/flasher/app.js : excludes(), includedBy(), chosenTweaks()) ---------------------
 class Cards:
-    def __init__(self, features):
+    def __init__(self, features, tweaks):
         self.features = features
         self.by_id = {f["id"]: f for f in features}
+        self.tweaks = {t["id"]: t for t in tweaks}
 
     def options(self, f):
         """Choix d'une carte : ses variantes (ids de tweaks), ou ses combinaisons de moteurs."""
@@ -86,15 +89,17 @@ class Cards:
         return no(f, g) or no(g, f)
 
     def needs(self, f):
-        """Cartes qu'une carte demande (« requires » d'une carte : la page coche l'autre avec elle)."""
+        """Cartes qu'une carte demande (son « requires », affiché par la page) : cochées avec elle dans l'échantillon."""
         r = f.get("requires") or []
         return [r] if isinstance(r, str) else list(r)
 
     def valid(self, sel):
+        """Une sélection que la page laisse cocher et que les deux builds acceptent."""
         on = [self.by_id[i] for i in sel]
         if any(self.excludes(f, g) for f, g in itertools.combinations(on, 2)):
             return False
-        return all(n in sel for f in on for n in self.needs(f))
+        ids = self.ids(sel)
+        return all(n in ids for i in ids for n in self.tweaks[i].get("requires") or [])
 
     def close(self, sel):
         """La sélection et les cartes qu'elle demande (au choix par défaut)."""
@@ -172,7 +177,7 @@ def blocks(cycles, syntakt):
             ref["p"] = hashlib.sha256(build.payload_image(t, build.payload_runtime(t, stock, st_img))).hexdigest()
         mods.append(f'  "{t["id"]}": {json.dumps(ref, separators=(", ", ": "))},')
 
-    cards = Cards(tw["features"])
+    cards = Cards(tw["features"], tw["tweaks"])
     lines, seen, payloads = [], set(), {}
     last_group = None
     for group, sel in cards.sample():

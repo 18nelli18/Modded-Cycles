@@ -547,9 +547,35 @@ const CREDITS = [
 
 const FLASH_GUIDE = `${REPO}/blob/main/FLASH.md`;
 const GUIDE = "../guide/";                      // the site's guide (docs/guide/)
-const GUIDE_OF = { usb6: "usb6", "model-tg": "model-tg", "latching-mute": "mute", "trig-preview": "preview",
-  "browser-scroll": "scroll", "trig-hold": "trig-hold", syntakt: "syntakt", arp: "arp", "tempo-max": "tempo",
-  "boot-anim": "boot-anim" };
+// mod id -> anchor of its section in the guide (one line per mod)
+const GUIDE_OF = {
+  usb6: "usb6",
+  "model-tg": "model-tg",
+  "latching-mute": "mute",
+  "trig-preview": "preview",
+  "browser-scroll": "scroll",
+  "trig-hold": "trig-hold",
+  syntakt: "syntakt",
+  arp: "arp",
+  "tempo-max": "tempo",
+  "boot-anim": "boot-anim",
+};
+
+// Step 1's sections, in display order: the `cat` of each feature (tools/gen_flasher_tweaks.py, same list there
+// without "other"). A feature without a known cat goes to "other", at the end.
+const CATS = ["pack", "sound", "seq", "live", "screen", "io", "other"];
+const CAT_ICON = {
+  pack: '<rect x="3" y="7" width="12" height="12" rx="2.5"/><path d="M7 7V5.5A2.5 2.5 0 0 1 9.5 3H18.5A2.5 2.5 0 0 1 21 5.5v9a2.5 2.5 0 0 1-2.5 2.5H15"/>',
+  sound: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 7.5v3"/>',
+  seq: '<rect x="2.5" y="8" width="4" height="8" rx="1.2"/><rect x="10" y="8" width="4" height="8" rx="1.2" fill="currentColor"/><rect x="17.5" y="8" width="4" height="8" rx="1.2"/>',
+  live: '<path d="M7 3v18M17 3v18"/><rect x="4.5" y="13" width="5" height="4" rx="1" fill="var(--paper)"/><rect x="14.5" y="6" width="5" height="4" rx="1" fill="var(--paper)"/>',
+  screen: '<rect x="2.5" y="5" width="19" height="12" rx="2"/><path d="M6 9.5h8M6 12.5h5M9 21h6"/>',
+  io: '<path d="M9 2.5v5M15 2.5v5"/><rect x="6" y="7.5" width="12" height="6" rx="1.5"/><path d="M12 13.5v4a3 3 0 0 0 3 3h3"/>',
+  other: '<circle cx="6" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18" cy="12" r="1.4"/>',
+};
+const SEARCH_FROM = 20;         // the search field shows from this many mods
+const PARTLY = false;           // true: an unticked engine card tested with some engines only says "Partly tested"
+const DISCORD = "https://discord.gg/hWegtJZcmm";
 
 // ---------------------------------------------------------------------------
 // Texts
@@ -561,7 +587,62 @@ const T = {
     s1: "What do you want to install?",
     tab_mods: "Mods",
     tab_restore: "Official firmware",
-    mods_note: "Tick several to combine them. Choices tagged “Experimental” are not tested on a real Model:Cycles yet.",
+    mods_note: 'Tick what you want: mods combine, unless a line says otherwise. <span class="tag ok">Tested</span>: tried on a real Model:Cycles. <span class="tag exp">Experimental</span>: checked in the emulator, not on the machine yet.',
+    cats_label: "Sections",
+    cat_lit: ", with ticked mods",
+    cat_pack: "Packs", cat_pack_sub: "several mods in one",
+    cat_sound: "Sounds & machines", cat_sound_sub: "new machines, filters",
+    cat_seq: "Sequencer", cat_seq_sub: "trigs, tempo, arpeggios",
+    cat_live: "Live playing", cat_live_sub: "mutes, chords, mixing",
+    cat_screen: "Screen & browsing", cat_screen_sub: "browser, display, startup",
+    cat_io: "USB & MIDI", cat_io_sub: "audio and MIDI in and out",
+    cat_other: "Other mods", cat_other_sub: "",
+    grp_n: "{n} mods", grp_n1: "1 mod",
+    grp_on: "<b>{k}</b> ticked of {n}", grp_on1: "<b>1</b> ticked of {n}",
+    details: "Details",
+    details_of: "Details: {name}",
+    also: "Also contains {n} mods of this list: {names}.",
+    need_syntakt: "+ Syntakt OS in step 2",
+    with_mod: "with {name}",
+    part_tested: "Partly tested",
+    good_to_know: "Good to know:",
+    clash_row: "<b>Doesn't go with {name}</b> (ticked): {why}. Ticking this one unticks {name}.",
+    clash_generic: "both change the same part of the firmware",
+    swapped: "{off} unticked: it doesn't go with {on}.",
+    swapped_n: "{off} unticked: they don't go with {on}.",
+    undo: "Undo",
+    eng_group: "Engines",
+    combo_known: "Already tried on the machine: {list}.",
+    combo_all: "the {n} engines",
+    take: "Use this choice",
+    d_status: "Status",
+    d_tested: "Tested on a real Model:Cycles.",
+    d_exp: "Checked in the emulator, not tested on a Model:Cycles yet.",
+    d_combos: "Tried on the machine: {list}. The other choices are checked in the emulator.",
+    d_with_tested: "With {name}: tried on the machine with {list}.",
+    d_contains: "Contains", d_contains_v: "{names}: nothing more to tick.",
+    d_clash: "Doesn't go with", d_clash_v: "{name}: {why}.",
+    d_file: "Extra file", d_file_syntakt: "your Syntakt OS file, asked for in step 2.",
+    d_requires: "Works with", d_requires_v: "{name} only: tick it too.",
+    d_engines: "Engines",
+    d_note: "Before installing",
+    d_guide: "How to use it", read_guide: "Read the guide",
+    sel_title: "Your selection",
+    sel_n: "{n} mods", sel_n1: "1 mod",
+    sel_incl: "+ {n} included",
+    sel_exp: "{n} experimental", sel_exp1: "1 experimental",
+    sel_none: "No mod ticked yet: tick the ones to install.",
+    sel_show: "Show", sel_hide: "Hide",
+    sel_clear: "Untick all",
+    sel_remove: "Untick {name}",
+    sel_next: "Step 2",
+    sel_syntakt: "+ your Syntakt OS file, to load in step 2.",
+    search_label: "Search the mods",
+    search_ph: "Search: tempo, filter, mute…",
+    search_clear: "Clear the search",
+    found: "<b>{n}</b> of {total} mods for “{q}” · ",
+    show_all: "show all",
+    found_none: `No mod for “{q}”. An idea for a mod? <a href="${DISCORD}" target="_blank" rel="noopener">Suggest it on Discord</a>. · `,
     restore_text: "Sends your official OS file <b>unchanged</b>, to go back to the stock firmware. It is also a good first rehearsal: it checks your cable and your setup without changing anything.",
     tab_samples: "Samples OS",
     samples_title: "Turn your Model:Cycles into a Model:Samples",
@@ -751,7 +832,62 @@ const T = {
     s1: "Que voulez-vous installer ?",
     tab_mods: "Mods",
     tab_restore: "Firmware officiel",
-    mods_note: "Cochez-en plusieurs pour les combiner. Les choix marqués « Expérimental » ne sont pas encore testés sur un vrai Model:Cycles.",
+    mods_note: 'Cochez ce que vous voulez : les mods se combinent, sauf mention contraire. <span class="tag ok">Testé</span> : essayé sur un vrai Model:Cycles. <span class="tag exp">Expérimental</span> : vérifié en émulation, pas encore sur la machine.',
+    cats_label: "Rubriques",
+    cat_lit: ", avec des mods cochés",
+    cat_pack: "Packs", cat_pack_sub: "plusieurs mods en un",
+    cat_sound: "Sons et machines", cat_sound_sub: "nouvelles machines, filtres",
+    cat_seq: "Séquenceur", cat_seq_sub: "trigs, tempo, arpèges",
+    cat_live: "Jeu en live", cat_live_sub: "mutes, accords, mixage",
+    cat_screen: "Écran et navigation", cat_screen_sub: "navigateur, affichage, démarrage",
+    cat_io: "USB et MIDI", cat_io_sub: "audio et MIDI vers l'extérieur",
+    cat_other: "Autres mods", cat_other_sub: "",
+    grp_n: "{n} mods", grp_n1: "1 mod",
+    grp_on: "<b>{k}</b> cochés sur {n}", grp_on1: "<b>1</b> coché sur {n}",
+    details: "Détails",
+    details_of: "Détails : {name}",
+    also: "Contient aussi {n} mods de la liste : {names}.",
+    need_syntakt: "+ OS Syntakt à l'étape 2",
+    with_mod: "avec {name}",
+    part_tested: "Testé en partie",
+    good_to_know: "À savoir :",
+    clash_row: "<b>Ne va pas avec {name}</b> (coché) : {why}. Cocher celui-ci décochera {name}.",
+    clash_generic: "les deux modifient le même endroit du firmware",
+    swapped: "{off} décoché : il ne va pas avec {on}.",
+    swapped_n: "{off} décochés : ils ne vont pas avec {on}.",
+    undo: "Annuler",
+    eng_group: "Moteurs",
+    combo_known: "Déjà essayé sur la machine : {list}.",
+    combo_all: "les {n} moteurs",
+    take: "Prendre ce choix",
+    d_status: "État",
+    d_tested: "Testé sur un vrai Model:Cycles.",
+    d_exp: "Vérifié en émulation, pas encore testé sur un Model:Cycles.",
+    d_combos: "Essayé sur la machine : {list}. Les autres choix sont vérifiés en émulation.",
+    d_with_tested: "Avec {name} : essayé sur la machine avec {list}.",
+    d_contains: "Contient", d_contains_v: "{names} : rien à cocher en plus.",
+    d_clash: "Ne va pas avec", d_clash_v: "{name} : {why}.",
+    d_file: "Fichier en plus", d_file_syntakt: "votre fichier d'OS Syntakt, demandé à l'étape 2.",
+    d_requires: "Marche avec", d_requires_v: "{name} seulement : cochez-le aussi.",
+    d_engines: "Moteurs",
+    d_note: "Avant d'installer",
+    d_guide: "Mode d'emploi", read_guide: "Lire le guide",
+    sel_title: "Votre sélection",
+    sel_n: "{n} mods", sel_n1: "1 mod",
+    sel_incl: "+ {n} inclus",
+    sel_exp: "{n} expérimentaux", sel_exp1: "1 expérimental",
+    sel_none: "Aucun mod coché : cochez ceux à installer.",
+    sel_show: "Voir", sel_hide: "Masquer",
+    sel_clear: "Tout décocher",
+    sel_remove: "Décocher {name}",
+    sel_next: "Étape 2",
+    sel_syntakt: "+ votre fichier d'OS Syntakt, à charger à l'étape 2.",
+    search_label: "Chercher un mod",
+    search_ph: "Chercher : tempo, filtre, mute…",
+    search_clear: "Effacer la recherche",
+    found: "<b>{n}</b> mods sur {total} pour « {q} » · ",
+    show_all: "tout afficher",
+    found_none: `Aucun mod pour « {q} ». Une idée de mod ? <a href="${DISCORD}" target="_blank" rel="noopener">Proposez-la sur Discord</a>. · `,
     restore_text: "Envoie votre fichier d'OS officiel <b>sans le modifier</b>, pour revenir au firmware d'origine. C'est aussi une bonne répétition avant un mod : elle vérifie le câble et l'installation sans rien changer.",
     tab_samples: "OS Samples",
     samples_title: "Transformer le Model:Cycles en Model:Samples",
@@ -940,60 +1076,82 @@ const T = {
 const FEAT = {
   en: {
     usb6: { label: "6-channel USB audio",
+      short: "Each track on its own USB channel. No stereo mix over USB any more.",
       desc: "Each track gets its own USB channel (48 kHz / 32-bit): record the 6 tracks separately in your DAW. The stereo mix is no longer sent over USB. OS updates over USB keep working." },
     "model-tg": { label: "Model-TG",
+      short: "TinyGregAudio's big pack: a 7th Sampler machine and many additions.",
+      parts: ["Sampler (7th machine)", "resampling", "retrig and master FX", "filter and resonance on the stock machines", "slide trigs", "Scale Lock", "samples through Elektron Transfer"],
       desc: "A Sampler machine (7th machine) with seven playback modes, resampling, a beat-repeat page with master FX, Attack, Filter and Resonance on the stock machines, slide trigs that glide the parameters from one trig to the next, Scale Lock, sample upload through Elektron Transfer, and lower CPU use. It already includes drumkilla's three tweaks. With the Syntakt engines, the Sampler stays the 7th machine and the engines follow it.",
       note: "Only install an OS while Device Config > Transfer is set to CYC (every power-on starts at CYC). Projects using the Sampler won't play those tracks on another firmware." },
     "latching-mute": { label: "Latching mute mode",
+      short: "TRACK + FUNC: mute mode stays on, no need to hold FUNC.",
       desc: "Hold TRACK and tap FUNC: mute mode stays on, so you mute tracks without holding FUNC. A short tap on FUNC leaves it." },
     "trig-preview": { label: "Trig preview",
+      short: "Sequencer stopped, hold a step and press PAGE to hear it.",
       desc: "With the sequencer stopped or paused, hold a step and press PAGE: the step plays with its own note, length and p-locks." },
     "browser-scroll": { label: "Scroll long names",
+      short: "In the sound browser, names too long for the screen scroll.",
       desc: "In the sound browser, a name too long for the screen scrolls so you can read it." },
     syntakt: { label: "Real Syntakt engines",
+      short: "Syntakt engines as extra machines, read from your own Syntakt OS file.",
       desc: "The Syntakt's own engines, read from your Syntakt OS file (step 2) and added after Chord, in this order, with the Syntakt's knob names and defaults. Tick the ones you want." },
-    "eng-sd": { note: "Vintage snare." },
-    "eng-cp": { note: "Vintage clap." },
-    "eng-toy": { note: "Toy-like tuned percussion." },
-    "eng-bits": { note: "Two digital oscillators with rate and bit reduction. PUNCH switches Bit Redux on." },
-    "eng-swarm": { note: "A swarm of detuned saws (supersaw). PUNCH adds the sub-octave." },
+    "eng-sd": { short: "vintage snare", note: "Vintage snare." },
+    "eng-cp": { short: "vintage clap", note: "Vintage clap." },
+    "eng-toy": { short: "toy-like percussion", note: "Toy-like tuned percussion." },
+    "eng-bits": { short: "digital, bit crush", note: "Two digital oscillators with rate and bit reduction. PUNCH switches Bit Redux on." },
+    "eng-swarm": { short: "supersaw", note: "A swarm of detuned saws (supersaw). PUNCH adds the sub-octave." },
     "trig-hold": { label: "Easier trig removal",
+      short: "A short press removes the trig; a long one keeps it and shows its settings.",
       desc: "Pressing a trig key whose step already holds a trig removes it if you let go within half a second (0.2 s on the stock OS). Hold it longer and the trig stays, as before: its settings show up. Turning a knob while you hold keeps the trig too." },
     arp: { label: "Arpeggiator",
+      short: "The retrig becomes an arpeggiator: held notes play one after another.",
       desc: "The retrig becomes an arpeggiator: hold several notes on a track with RETRIG held (or A.On) and they play one after another at the retrig rate. FUNC + RETRIG adds Arp (direction: UP, DOWN, UPDN, RAND, PLAY or OFF) and Oct (1 to 4 octaves), saved with the pattern." },
     "tempo-max": { label: "Tempo up to 546 BPM",
+      short: "Tempo goes up to 546 BPM instead of 300, MIDI clock included.",
       desc: "The tempo goes up to 546.0 BPM instead of 300: TEMPO knob, tap tempo, incoming MIDI clock and saved projects. 546 is the ceiling of the project format. Tempo-synced LFOs stay right at these speeds.",
       note: "Above 300 BPM, the processor may struggle to keep up with busy patterns: push it knowingly. A project saved above 300 BPM reopens at 120 BPM on the original OS." },
     "boot-anim": { label: "modded-cycles startup animation",
+      short: "At startup the modded-cycles logo animates, without making startup longer.",
       desc: "When the Model:Cycles starts, the four rounded squares of the modded-cycles logo pop in one by one and “modded-cycles” types itself underneath, instead of the original tile animation. It lasts as long as the original: startup is not slower." },
   },
   fr: {
     usb6: { label: "Audio USB 6 canaux",
+      short: "Chaque piste sur son propre canal USB. Plus de mix stéréo en USB.",
       desc: "Chaque piste a son propre canal USB (48 kHz / 32 bits) : enregistrez les 6 pistes séparément dans votre logiciel. Le mix stéréo n'est plus envoyé en USB. La mise à jour de l'OS par USB continue de fonctionner." },
     "model-tg": { label: "Model-TG",
+      short: "Le grand pack de TinyGregAudio : une 7e machine Sampler et de nombreux ajouts.",
+      parts: ["Sampler (7e machine)", "rééchantillonnage", "retrig et effets master", "filtre et résonance sur les machines d'origine", "slide trigs", "Scale Lock", "samples par Elektron Transfer"],
       desc: "Une machine Sampler (7e machine) à sept modes de lecture, le rééchantillonnage, une page de retrig avec effets master, Attack, Filtre et Résonance sur les machines d'origine, des slide trigs qui font glisser les paramètres d'un trig au suivant, Scale Lock, l'envoi d'échantillons par Elektron Transfer, et moins de charge processeur. Contient déjà les trois tweaks de drumkilla. Avec les moteurs du Syntakt, le Sampler reste la 7e machine et les moteurs le suivent.",
       note: "N'installez un OS que lorsque Device Config > Transfer est sur CYC (chaque démarrage repart sur CYC). Les projets qui utilisent le Sampler ne joueront pas ces pistes sur un autre firmware." },
     "latching-mute": { label: "Mode mute verrouillé",
+      short: "TRACK + FUNC : le mode mute reste actif, plus besoin de tenir FUNC.",
       desc: "Maintenez TRACK et tapez FUNC : le mode mute reste actif, vous mutez les pistes sans tenir FUNC. Un appui court sur FUNC en sort." },
     "trig-preview": { label: "Écoute d'un pas",
+      short: "Séquenceur arrêté, maintenez un pas et appuyez sur PAGE pour l'entendre.",
       desc: "Séquenceur à l'arrêt ou en pause, maintenez un pas et appuyez sur PAGE : le pas joue avec sa note, sa longueur et ses p-locks." },
     "browser-scroll": { label: "Défilement des noms longs",
+      short: "Dans le navigateur de sons, les noms trop longs pour l'écran défilent.",
       desc: "Dans le navigateur de sons, un nom trop long pour l'écran défile pour rester lisible." },
     syntakt: { label: "Vrais moteurs du Syntakt",
+      short: "Des moteurs du Syntakt en machines en plus, lus dans votre propre OS Syntakt.",
       desc: "Les moteurs du Syntakt, lus dans votre fichier d'OS Syntakt (étape 2) et ajoutés après Chord, dans cet ordre, avec les noms et réglages des potards du Syntakt. Cochez ceux que vous voulez." },
-    "eng-sd": { note: "Caisse claire vintage." },
-    "eng-cp": { note: "Clap vintage." },
-    "eng-toy": { note: "Percussion accordée façon jouet." },
-    "eng-bits": { note: "Deux oscillateurs numériques avec réduction d'échantillonnage et de bits. PUNCH active Bit Redux." },
-    "eng-swarm": { note: "Un essaim de dents de scie désaccordées (supersaw). PUNCH ajoute l'octave inférieure." },
+    "eng-sd": { short: "caisse claire vintage", note: "Caisse claire vintage." },
+    "eng-cp": { short: "clap vintage", note: "Clap vintage." },
+    "eng-toy": { short: "percu façon jouet", note: "Percussion accordée façon jouet." },
+    "eng-bits": { short: "numérique, bit crush", note: "Deux oscillateurs numériques avec réduction d'échantillonnage et de bits. PUNCH active Bit Redux." },
+    "eng-swarm": { short: "supersaw", note: "Un essaim de dents de scie désaccordées (supersaw). PUNCH ajoute l'octave inférieure." },
     "trig-hold": { label: "Effacer un trig plus facilement",
+      short: "Un appui bref efface le trig ; un appui long le garde et montre ses réglages.",
       desc: "Un appui sur une touche de pas qui porte déjà un trig l'efface si vous relâchez en moins d'une demi-seconde (0,2 s avec l'OS d'origine). Tenez plus longtemps et le trig reste, comme avant : ses réglages s'affichent. Tourner un potard pendant l'appui garde aussi le trig." },
     arp: { label: "Arpégiateur",
+      short: "Le retrig devient un arpégiateur : les notes tenues se jouent l'une après l'autre.",
       desc: "Le retrig devient un arpégiateur : tenez plusieurs notes sur une piste avec RETRIG tenu (ou A.On) et elles se jouent l'une après l'autre au rythme du retrig. FUNC + RETRIG ajoute Arp (sens : UP, DOWN, UPDN, RAND, PLAY ou OFF) et Oct (1 à 4 octaves), enregistrés avec le pattern." },
     "tempo-max": { label: "Tempo jusqu'à 546 BPM",
+      short: "Le tempo monte jusqu'à 546 BPM au lieu de 300, horloge MIDI comprise.",
       desc: "Le tempo monte jusqu'à 546,0 BPM au lieu de 300 : potard TEMPO, tap tempo, horloge MIDI reçue et projets enregistrés. 546 est le plafond du format des projets. Les LFO synchronisés au tempo restent justes à ces vitesses.",
       note: "Au-delà de 300 BPM, le processeur peut avoir plus de mal à suivre la cadence sur des patterns chargés : à utiliser en connaissance de cause. Un projet enregistré au-dessus de 300 BPM se rouvre à 120 BPM sur l'OS d'origine." },
     "boot-anim": { label: "Animation de démarrage modded-cycles",
+      short: "Au démarrage, le logo modded-cycles s'anime, sans rallonger le démarrage.",
       desc: "Au démarrage du Model:Cycles, les quatre carrés arrondis du logo modded-cycles apparaissent un par un et « modded-cycles » s'écrit dessous, à la place de l'animation de carreaux d'origine. Elle dure autant que l'originale : le démarrage n'est pas plus long." },
   },
 };
@@ -1092,6 +1250,8 @@ function applyLang(lang) {
 // ---------------------------------------------------------------------------
 // feature id -> { on: bool, variant: id } ; engine cards (real Syntakt engines): { on: bool, engines: [codes] }
 const selection = {};
+// display-only state of the picker (never saved): open Details drawers, folded sections, search, last swap (Undo)
+const pick = { open: new Set(), folded: new Set(), q: "", swap: null, selOpen: false };
 
 // Engine card: the combination of ticked engines (kept in catalog order) and its tweak.
 // Two cards that can't be ticked together (Model-TG and the tweaks it already holds, or the Syntakt engines).
@@ -1116,129 +1276,401 @@ function comboOfFeature(id) {
   return f && isOn(id) ? comboOf(f, selection[id]) : null;
 }
 
+// The mods, shown by section (cat), in FEATURES order inside a section. The build keeps FEATURES order whatever the
+// display order (chosenTweaks, REF_MAINOS keys).
+const features = () => (window.MC_TWEAKS && window.MC_TWEAKS.features) || [];
+const featById = (id) => features().find((f) => f.id === id);
+function selOf(f) {
+  return selection[f.id] ||
+    (selection[f.id] = f.engines ? { on: false, engines: [] } : { on: false, variant: f.variants[0].id });
+}
+const label = (f) => featText(f.id, "label", f.label);
+// a mod without a short text shows the first sentence of its description (cut to 2 lines by the CSS)
+function shortOf(f) {
+  const d = featText(f.id, "desc", f.desc);
+  return featText(f.id, "short", "") || (d.match(/^.*?[.!?](?=\s|$)/) || [d])[0];
+}
+const catOf = (f) => (f.cat && CATS.includes(f.cat) ? f.cat : "other");
+const order = () => CATS.flatMap((c) => features().filter((f) => catOf(f) === c));    // display order
+// the real "excludes" (explained to the user); excludes() above also counts what a pack includes
+const clashOnly = (f, g) => (f.excludes || []).includes(g.id) || (g.excludes || []).includes(f.id);
+const clashWhy = (f, g) => featText(f.id, "clash", "") || featText(g.id, "clash", "") || t("clash_generic");
+
+// Tested or experimental, down to the exact engine combination (with Model-TG, the combined version's own tests).
+// "part": an unticked engine card that is tested with some engines only (PARTLY).
+function statusOf(f) {
+  const sel = selOf(f);
+  if (f.engines) {
+    if (!sel.on) return PARTLY && f.status === "tested" && f.combos.some((c) => !c.tested && !c.tg_tested) ? "part" : f.status;
+    const c = comboOf(f, sel);
+    return c && (isOn("model-tg") ? c.tg_tested : c.tested) ? "tested" : "experimental";
+  }
+  // Model-TG's card follows the engines' choice
+  const withId = sel.on && f.with ? Object.keys(f.with).find(isOn) : null;
+  const tgCombo = withId ? comboOfFeature(withId) : null;
+  if (tgCombo) return tgCombo.tg_tested ? "tested" : "experimental";
+  return f.status === "tested" ? "tested" : "experimental";
+}
+const tagHtml = (s) => s === "tested" ? `<span class="tag ok">${esc(t("tested"))}</span>`
+  : s === "part" ? `<span class="tag ok">${esc(t("part_tested"))}</span>` : `<span class="tag exp">${esc(t("experimental"))}</span>`;
+
+// Tick or untick a card: cards that can't go together turn the other one off, as before; a real clash (excludes) is
+// said on the row just ticked and in the selection bar, with Undo.
+function setOn(f, on) {
+  if (includedBy(f)) return;                           // locked while the card holding it is ticked
+  const before = JSON.parse(JSON.stringify(selection));
+  const sel = selOf(f);
+  pick.swap = null;
+  sel.on = on;
+  if (on) {
+    const off = [];
+    for (const g of features())
+      if (g !== f && isOn(g.id) && excludes(f, g)) { selection[g.id].on = false; if (clashOnly(f, g)) off.push(g.id); }
+    if (f.engines && !sel.engines.length) sel.engines = [f.engines[0].code];
+    if (off.length) pick.swap = { by: f.id, off, before };
+  }
+}
+// One engine pad: the ticked engines stay in catalog order; no engine left turns the card off.
+function setEngine(f, code, on) {
+  const sel = selOf(f), keep = new Set(sel.engines);
+  if (on) keep.add(code); else keep.delete(code);
+  sel.engines = f.engines.map((e) => e.code).filter((c) => keep.has(c));
+  if (!sel.engines.length) sel.on = false;
+  pick.swap = null;
+}
+function undo() {
+  if (!pick.swap) return null;
+  const by = pick.swap.by, before = pick.swap.before;
+  for (const id in before) selection[id] = before[id];
+  pick.swap = null;
+  return by;
+}
+
+// Search (shown from SEARCH_FROM mods): accent- and case-insensitive, in both languages, every word must match.
+const fold = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const hay = {};
+function haystack(f) {
+  if (hay[f.id]) return hay[f.id];
+  const parts = [f.label, f.desc];
+  for (const L of ["en", "fr"]) {
+    const x = FEAT[L][f.id] || {};
+    parts.push(x.label, x.short, x.desc, x.clash, (x.parts || []).join(" "), T[L]["cat_" + catOf(f)]);
+    for (const e of f.engines || []) parts.push(e.name, e.label, (FEAT[L]["eng-" + e.code] || {}).short);
+  }
+  if (f.credit) parts.push(f.credit.who);
+  return (hay[f.id] = fold(parts.filter(Boolean).join(" ")));
+}
+const searching = () => features().length >= SEARCH_FROM && pick.q.trim() !== "";
+const matches = (f) => !searching() || fold(pick.q).split(/\s+/).filter(Boolean).every((w) => haystack(f).includes(w));
+
 function renderFeatures() {
   const box = $("features");
-  const tw = window.MC_TWEAKS;
-  if (!box || !tw || !tw.features) return;
+  if (!box || !window.MC_TWEAKS || !window.MC_TWEAKS.features) return;
+  const focusId = document.activeElement && document.activeElement.id;
+  features().forEach(selOf);
   box.innerHTML = "";
-  for (const f of tw.features) {
-    const sel = selection[f.id] ||
-      (selection[f.id] = f.engines ? { on: false, engines: [] } : { on: false, variant: f.variants[0].id });
-    const holder = includedBy(f);
-    const card = document.createElement("label");
-    card.className = "feat" + (sel.on || holder ? " on" : "") + (holder ? " included" : "");
-    card.htmlFor = "feat-" + f.id;
+  for (const c of CATS) {
+    const mods = features().filter((f) => catOf(f) === c);
+    if (!mods.length) continue;
+    const lit = mods.filter((f) => isOn(f.id) || includedBy(f));
+    const folded = pick.folded.has(c) && !searching();
+    const g = document.createElement("section");
+    g.className = "grp";
+    g.id = "cat-" + c;
+    g.hidden = !mods.some(matches);
+    const n = lit.length ? t(lit.length > 1 ? "grp_on" : "grp_on1", { k: lit.length, n: mods.length })
+      : esc(t(mods.length > 1 ? "grp_n" : "grp_n1", { n: mods.length }));
+    const sub = t("cat_" + c + "_sub");
+    g.innerHTML = `<h3><button type="button" class="grp-h" id="grp-h-${c}" aria-expanded="${!folded}" aria-controls="grp-${c}">` +
+      `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CAT_ICON[c]}</svg>` +
+      `<span class="gt">${esc(t("cat_" + c))}</span>${sub ? `<span class="gs">${esc(sub)}</span>` : ""}<span class="gn">${n}</span>` +
+      `<svg class="chev" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5l4 4 4-4"/></svg>` +
+      `</button></h3>` +
+      (folded && lit.length ? `<p class="grp-sel">${lit.map((f) => `<span class="${includedBy(f) ? "inc" : ""}">${esc(label(f))}</span>`).join("")}</p>` : "");
+    const body = document.createElement("div");
+    body.className = "grp-body";
+    body.id = "grp-" + c;
+    body.hidden = folded;
+    for (const f of mods) body.appendChild(renderRow(f));
+    g.appendChild(body);
+    box.appendChild(g);
+  }
+  renderFind();
+  renderCats();
+  renderSelection();
+  // keyboard users keep their place: the element that had the focus gets it back after the rebuild
+  if (focusId && (!document.activeElement || document.activeElement.id !== focusId) && $(focusId)) $(focusId).focus({ preventScroll: true });
+}
 
-    const cb = document.createElement("input");
-    cb.type = "checkbox";
-    cb.id = "feat-" + f.id;
-    cb.checked = sel.on || !!holder;
-    cb.disabled = !!holder;
-    cb.addEventListener("change", () => {
-      if (includedBy(f)) { renderFeatures(); return; }   // locked while the card holding it is ticked
-      sel.on = cb.checked;
-      if (sel.on)                                         // cards that can't go together: the other one goes off
-        for (const g of tw.features)
-          if (g !== f && selection[g.id] && excludes(f, g)) selection[g.id].on = false;
-      if (f.engines && sel.on && !sel.engines.length) sel.engines = [f.engines[0].code];
+function renderRow(f) {
+  const sel = selOf(f), holder = includedBy(f), status = statusOf(f), on = sel.on || !!holder;
+  const d = document.createElement("div");
+  d.className = "mod" + (on ? " on" : "") + (holder ? " incl" : "");
+  d.id = "mod-" + f.id;
+  d.hidden = !matches(f);
+  const side = [];
+  // "by drumkilla" / "based on ms-multi-output by scottmetoyer"; a link inside the <label> doesn't toggle the checkbox
+  if (f.credit) side.push(`<span class="credit">${creditHtml(f.credit)}` +
+    (f.license ? ` · <a href="${esc(f.license)}" target="_blank" rel="noopener">${esc(t("license_mit"))}</a>` : "") + `</span>`);
+  if (f.needs === "syntakt") side.push(`<span class="need">${esc(t("need_syntakt"))}</span>`);
+  const req = f.requires && featById(f.requires);
+  if (req) side.push(`<span class="need">${esc(t("with_mod", { name: label(req) }))}</span>`);
+  const open = pick.open.has(f.id);
+  d.innerHTML = `<label class="mod-row" for="feat-${f.id}">` +
+      `<input type="checkbox" id="feat-${f.id}"${on ? " checked" : ""}${holder ? " disabled" : ""}>` +
+      `<span class="ttl"><span class="nm">${esc(label(f))}</span>${holder ? `<span class="incl">${esc(t("included", { name: label(holder) }))}</span>` : ""}</span>` +
+      `<span class="by">${side.join("")}</span>` +
+      `<span class="st">${tagHtml(status)}</span>` +
+      `<span class="short">${esc(shortOf(f))}</span>` +
+    `</label>` +
+    `<button type="button" class="more" id="more-${f.id}" aria-expanded="${open}" aria-controls="det-${f.id}" aria-label="${esc(t("details_of", { name: label(f) }))}">` +
+      `<span class="lbl">${esc(t("details"))}</span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5l4 4 4-4"/></svg></button>` +
+    `<div class="ext"></div>`;
+  const ext = d.querySelector(".ext");
+  const add = (html) => ext.insertAdjacentHTML("beforeend", html);
+
+  // a pack: what it brings, and the mods of this list it already holds
+  const parts = featText(f.id, "parts", null);
+  if (parts) add(`<ul class="parts">${parts.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>`);
+  const held = (f.includes || []).map(featById).filter(Boolean);
+  if (held.length) add(`<p class="also">${t("also", { n: held.length, names: held.map((g) => `<b>${esc(label(g))}</b>`).join(", ") })}</p>`);
+  // just unticked: said on the row just ticked, where the eyes are, with Undo
+  if (pick.swap && pick.swap.by === f.id) add(`<p class="say swap">${esc(swapText(pick.swap))} <button type="button" class="lnk" data-undo>${esc(t("undo"))}</button></p>`);
+  // before ticking: why this mod doesn't go with a ticked one
+  if (!on) for (const g of features())
+    if (g !== f && isOn(g.id) && clashOnly(f, g)) add(`<p class="say clash">${t("clash_row", { name: esc(label(g)), why: esc(clashWhy(f, g)) })}</p>`);
+  // several variants of one mod (none today): a sub-choice once ticked
+  if (!f.engines && f.variants.length > 1 && sel.on) add(renderVariants(f, sel));
+  if (f.engines && sel.on) add(renderEngines(f, sel, status));
+  if (sel.on && featText(f.id, "note", "")) add(`<p class="say"><b>${esc(t("good_to_know"))}</b> ${esc(featText(f.id, "note", ""))}</p>`);
+  add(renderDetails(f, sel, open));
+  return d;
+}
+
+function swapText(sw) {
+  return t(sw.off.length > 1 ? "swapped_n" : "swapped",
+    { off: sw.off.map((id) => label(featById(id))).join(", "), on: label(featById(sw.by)) });
+}
+
+function renderVariants(f, sel) {
+  return `<div class="variants">` + f.variants.map((v) =>
+    `<label><input type="radio" name="var-${f.id}" value="${esc(v.id)}"${sel.variant === v.id ? " checked" : ""}>` +
+    `<span>${esc(featText(v.id, "label", v.label || v.id))}<small>${esc(featText(v.id, "note", ""))}</small></span></label>`).join("") + `</div>`;
+}
+
+// An engine card (real Syntakt engines): one pad per engine, the state of the ticked combination, and the warnings in
+// full. The pads sit outside the row's label: no nested labels.
+function renderEngines(f, sel, status) {
+  const pads = f.engines.map((e) => `<label class="pad"><input type="checkbox" id="eng-${e.code}" name="eng-${f.id}" value="${e.code}"` +
+    `${sel.engines.includes(e.code) ? " checked" : ""}><b>${esc(e.name)}</b><span class="vh"> — </span><small class="pl">${esc(e.label)}</small>` +
+    `<small>${esc(featText("eng-" + e.code, "short", ""))}</small></label>`).join("");
+  let html = `<div class="pads" role="group" aria-label="${esc(t("eng_group"))}">${pads}</div>`;
+  const combo = comboOf(f, sel);
+  const tg = isOn("model-tg"), tgName = label(featById("model-tg") || { id: "model-tg", label: "Model-TG" });
+  const list = (c, withTg) => (c.engines.length === f.engines.length ? t("combo_all", { n: c.engines.length })
+    : c.engines.map((k) => f.engines.find((e) => e.code === k).name).join(" + ")) + (withTg ? " " + t("with_mod", { name: tgName }) : "");
+  if (combo) {
+    // the ticked engines by name, even when they are all ticked
+    const names = sel.engines.map((k) => f.engines.find((e) => e.code === k).name).join(" + ") +
+      (tg ? " " + t("with_mod", { name: tgName }) : "");
+    html += `<p class="combo">${tagHtml(status)}<b>${esc(names)}.</b> ` +
+      `${esc(t(status === "tested" ? "combo_tested" : "combo_new"))}</p>`;
+    if (status !== "tested") {
+      // the choices already tried on the machine; "Use this choice" only changes this card's engines
+      const here = f.combos.filter((c) => (tg ? c.tg_tested : c.tested));
+      const there = f.combos.filter((c) => (tg ? c.tested : c.tg_tested));
+      if (here.length) {
+        const best = here.slice().sort((a, b) => dist(a, sel) - dist(b, sel))[0];
+        html += `<p class="combo">${esc(t("combo_known", { list: list(best, tg) }))} ` +
+          `<button type="button" class="lnk" data-take="${f.id}" data-codes="${best.engines.join()}">${esc(t("take"))}</button></p>`;
+      } else if (there.length) html += `<p class="combo">${esc(t("combo_known", { list: there.map((c) => list(c, !tg)).join(" ; ") }))}</p>`;
+    }
+  }
+  if (tg) html += `<p class="combo quiet">${esc(t("with_tg"))}</p>`;
+  html += `<p class="say"><b>${esc(t("good_to_know"))}</b> ${esc(t("renumber"))}</p>`;
+  return html;
+}
+const dist = (c, sel) => c.engines.filter((x) => !sel.engines.includes(x)).length + sel.engines.filter((x) => !c.engines.includes(x)).length;
+
+// The Details drawer: the full description and the facts. Always in the page, hidden while closed.
+function renderDetails(f, sel, open) {
+  const rows = [];
+  const row = (k, v) => rows.push(`<dt>${esc(t(k))}</dt><dd>${v}</dd>`);
+  const tgName = label(featById("model-tg") || { id: "model-tg", label: "Model-TG" });
+  const comboName = (g, c) => (c.engines.length === g.engines.length ? t("combo_all", { n: c.engines.length }) : c.label);
+  let status = esc(t(f.status === "tested" ? "d_tested" : "d_exp"));
+  if (f.combos) {
+    const tried = f.combos.filter((c) => c.tested).map((c) => comboName(f, c))
+      .concat(f.combos.filter((c) => c.tg_tested).map((c) => comboName(f, c) + " " + t("with_mod", { name: tgName })));
+    status = esc(tried.length ? t("d_combos", { list: tried.join(" ; ") }) : t("d_exp"));
+  }
+  for (const gid of Object.keys(f.with || {})) {            // Model-TG: its combined versions already tried
+    const g = featById(gid), ok = ((g && g.combos) || []).filter((c) => c.tg_tested);
+    if (ok.length) status += " " + esc(t("d_with_tested", { name: label(g), list: ok.map((c) => comboName(g, c)).join(" ; ") }));
+  }
+  row("d_status", status);
+  const held = (f.includes || []).map(featById).filter(Boolean);
+  if (held.length) row("d_contains", t("d_contains_v", { names: held.map((g) => `<b>${esc(label(g))}</b>`).join(", ") }));
+  const clash = features().filter((g) => g !== f && clashOnly(f, g));
+  if (clash.length) row("d_clash", clash.map((g) => t("d_clash_v", { name: `<b>${esc(label(g))}</b>`, why: esc(clashWhy(f, g)) })).join(" "));
+  if (f.needs === "syntakt") row("d_file", esc(t("d_file_syntakt")));
+  const req = f.requires && featById(f.requires);
+  if (req) row("d_requires", t("d_requires_v", { name: `<b>${esc(label(req))}</b>` }));
+  if (f.engines) row("d_engines", f.engines.map((e) =>
+    `<b>${esc(e.name)}</b> (${esc(e.label)})${featText("eng-" + e.code, "note", "") ? " : " + esc(featText("eng-" + e.code, "note", "")) : ""}`).join("<br>"));
+  if (!sel.on && featText(f.id, "note", "")) row("d_note", esc(featText(f.id, "note", "")));
+  if (GUIDE_OF[f.id]) row("d_guide", `<a class="feat-guide" href="${GUIDE}#${GUIDE_OF[f.id]}">${esc(t("read_guide"))} <span aria-hidden="true">→</span></a>`);
+  return `<div class="det" id="det-${f.id}"${open ? "" : " hidden"}><p>${esc(featText(f.id, "desc", f.desc))}</p><dl class="facts">${rows.join("")}</dl></div>`;
+}
+
+// Section chips: they jump to a section (never filter); the LED lights when the section holds a ticked mod.
+function renderCats() {
+  const box = $("cats");
+  if (!box) return;
+  box.setAttribute("aria-label", t("cats_label"));
+  box.innerHTML = CATS.map((c) => {
+    const mods = features().filter((f) => catOf(f) === c);
+    if (!mods.length) return "";
+    const lit = mods.some((f) => isOn(f.id) || includedBy(f));
+    const n = mods.filter(matches).length;
+    return `<li class="${n ? "" : "zero"}"><a href="#cat-${c}" data-cat="${c}"><span class="led${lit ? " on" : ""}" aria-hidden="true"></span>` +
+      `${esc(t("cat_" + c))} <span class="n">${n}</span>${lit ? `<span class="vh">${esc(t("cat_lit"))}</span>` : ""}</a></li>`;
+  }).join("");
+}
+
+function renderFind() {
+  if (!$("mod-find")) return;
+  $("mod-find").hidden = features().length < SEARCH_FROM;
+  const q = $("mod-q");
+  q.placeholder = t("search_ph");
+  $("mod-q-clr").setAttribute("aria-label", t("search_clear"));
+  $("mod-q-clr").hidden = !pick.q;
+  if (q.value !== pick.q) q.value = pick.q;
+  const found = $("mod-found");
+  found.hidden = !searching();
+  if (searching()) {
+    const n = features().filter(matches).length;
+    found.innerHTML = (n ? t("found", { n, total: features().length, q: esc(pick.q.trim()) }) : t("found_none", { q: esc(pick.q.trim()) })) +
+      `<button type="button" class="lnk soft" data-showall>${esc(t("show_all"))}</button>`;
+  }
+}
+
+// "Your selection": what will be installed, in display order, with × to untick; stuck to the bottom of the screen
+// while the list scrolls (where IntersectionObserver exists).
+function renderSelection() {
+  const box = $("mod-sel");
+  if (!box) return;
+  const on = order().filter((f) => isOn(f.id));
+  const inc = features().filter((f) => includedBy(f));
+  const exp = on.filter((f) => statusOf(f) === "experimental");
+  if (!on.length) {
+    box.innerHTML = `<div class="sel-h"><div class="sel-sum"><span class="sel-t" id="sel-title" tabindex="-1">${esc(t("sel_title"))}</span></div></div>` +
+      `<p class="sel-none">${esc(t("sel_none"))}</p>`;
+    box.classList.remove("open");
+    live(t("sel_none"));
+    return;
+  }
+  const counts = `<span class="sel-n">${esc(t(on.length > 1 ? "sel_n" : "sel_n1", { n: on.length })) + (inc.length ? " " + esc(t("sel_incl", { n: inc.length })) : "")}</span>` +
+    (exp.length ? `<span class="dotsep"> · </span><span class="fx">${esc(t(exp.length > 1 ? "sel_exp" : "sel_exp1", { n: exp.length }))}</span>` : "");
+  const chip = (f) => {
+    const sel = selOf(f);
+    const mine = inc.filter((g) => (f.includes || []).includes(g.id));
+    const extra = f.engines ? sel.engines.map((c) => f.engines.find((e) => e.code === c).name).join(", ")
+      : mine.length ? t("sel_incl", { n: mine.length }) : "";
+    return `<li class="chip"><span>${esc(label(f))}${extra ? ` <span class="ci">${esc(extra)}</span>` : ""}</span>` +
+      (statusOf(f) === "experimental" ? `<span class="cx" role="img" aria-label="${esc(t("experimental"))}" title="${esc(t("experimental"))}"></span>` : "") +
+      `<button type="button" class="x" data-off="${f.id}" aria-label="${esc(t("sel_remove", { name: label(f) }))}">×</button></li>`;
+  };
+  const sw = pick.swap;
+  box.innerHTML = `<div class="sel-h">` +
+      `<div class="sel-sum"><span class="sel-t" id="sel-title" tabindex="-1">${esc(t("sel_title"))}</span><span class="sel-c">${counts}</span></div>` +
+      `<div class="sel-x">` +
+        `<button type="button" class="lnk soft clear" data-clear>${esc(t("sel_clear"))}</button>` +
+        `<button type="button" class="lnk soft sel-more" aria-expanded="${pick.selOpen}" aria-controls="sel-body">${esc(t(pick.selOpen ? "sel_hide" : "sel_show"))}</button>` +
+        `<a class="btn sel-next" href="#step-file">${esc(t("sel_next"))} <span aria-hidden="true">↓</span></a>` +
+      `</div>` +
+    `</div>` +
+    `<div class="sel-body" id="sel-body">` +
+      `<ul class="chips">${on.map(chip).join("")}${choiceNeedsSyntakt() ? `<li class="sel-need">${esc(t("sel_syntakt"))}</li>` : ""}</ul>` +
+      (sw ? `<p class="sel-msg">${esc(swapText(sw))} <button type="button" class="lnk" data-undo>${esc(t("undo"))}</button></p>` : "") +
+      `<p class="sel-foot"><button type="button" class="lnk soft" data-clear>${esc(t("sel_clear"))}</button></p>` +
+    `</div>`;
+  box.classList.toggle("open", pick.selOpen);
+  // short announcement for screen readers: the live region stays in place, only its text changes
+  live(box.querySelector(".sel-c").textContent + (sw ? ". " + swapText(sw) : ""));
+}
+function live(text) {
+  const el = $("mod-live");
+  if (el && el.textContent !== text) el.textContent = text;
+}
+
+// One listener per zone (delegation): they survive the rebuild that follows every change.
+function wirePicker() {
+  const changed = () => { renderFeatures(); update(); };
+  $("features").addEventListener("change", (e) => {
+    const el = e.target, f = (id) => featById(id);
+    if (el.id && el.id.startsWith("feat-") && f(el.id.slice(5))) setOn(f(el.id.slice(5)), el.checked);
+    else if (el.name && el.name.startsWith("eng-") && f(el.name.slice(4))) setEngine(f(el.name.slice(4)), el.value, el.checked);
+    else if (el.name && el.name.startsWith("var-") && f(el.name.slice(4))) { selOf(f(el.name.slice(4))).variant = el.value; pick.swap = null; }
+    else return;
+    changed();
+  });
+  $("features").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    if (b.classList.contains("more")) {
+      const id = b.id.slice(5);
+      if (pick.open.has(id)) pick.open.delete(id); else pick.open.add(id);
       renderFeatures();
-      update();
-    });
-
-    const ttl = document.createElement("div");
-    ttl.className = "ttl";
-    const combo = f.engines && sel.on ? comboOf(f, sel) : null;
-    // with Model-TG, the combined version's own tests (combo.tg_tested); Model-TG's card follows the engines' choice
-    const withId = sel.on && f.with ? Object.keys(f.with).find(isOn) : null;
-    const tgCombo = withId ? comboOfFeature(withId) : null;
-    const tested = combo ? (isOn("model-tg") ? combo.tg_tested : combo.tested)
-      : tgCombo ? !!tgCombo.tg_tested : f.status === "tested";
-    ttl.innerHTML = `<span>${esc(featText(f.id, "label", f.label))}</span>` +
-      (holder ? `<span class="incl">${esc(t("included", { name: featText(holder.id, "label", holder.label) }))}</span>` : "") +
-      `<span class="tag${tested ? " ok" : ""}">${esc(t(tested ? "tested" : "experimental"))}</span>` +
-      (GUIDE_OF[f.id] ? `<a class="feat-guide" href="${GUIDE}#${GUIDE_OF[f.id]}">Guide <span aria-hidden="true">→</span></a>` : "");
-    const desc = document.createElement("div");
-    desc.className = "desc";
-    desc.textContent = featText(f.id, "desc", f.desc);
-    card.append(cb, ttl, desc);
-    if (f.credit) {
-      const cr = document.createElement("div");
-      cr.className = "credit";
-      cr.innerHTML = creditHtml(f.credit) +
-        (f.license ? ` · <a href="${esc(f.license)}" target="_blank" rel="noopener">${esc(t("license_mit"))}</a>` : "");
-      card.appendChild(cr);
+    } else if (b.classList.contains("grp-h")) {
+      const c = b.id.slice(6);
+      if (pick.folded.has(c)) pick.folded.delete(c); else pick.folded.add(c);
+      renderFeatures();
+    } else if (b.hasAttribute("data-undo")) {
+      const by = undo();
+      changed();
+      if (by && $("feat-" + by)) $("feat-" + by).focus({ preventScroll: true });
+    } else if (b.dataset.take && featById(b.dataset.take)) {
+      selOf(featById(b.dataset.take)).engines = b.dataset.codes.split(",");
+      pick.swap = null;
+      changed();
     }
-    if (sel.on && featText(f.id, "note", "")) {
-      const n = document.createElement("div");
-      n.className = "combo";
-      n.textContent = featText(f.id, "note", "");
-      card.appendChild(n);
+  });
+  $("cats").addEventListener("click", (e) => {               // a jump to a folded section unfolds it first
+    const a = e.target.closest("a[data-cat]");
+    if (a && pick.folded.delete(a.dataset.cat)) renderFeatures();
+  });
+  $("mod-sel").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    if (b.dataset.off && featById(b.dataset.off)) {
+      const xs = [...$("mod-sel").querySelectorAll("[data-off]")], k = xs.indexOf(b);
+      setOn(featById(b.dataset.off), false);
+      changed();
+      const next = $("mod-sel").querySelectorAll("[data-off]")[k] || $("sel-title");   // focus: the next ×, else the title
+      if (next) next.focus({ preventScroll: true });
+      return;
     }
-
-    if (!f.engines && f.variants.length > 1 && sel.on) {
-      const vs = document.createElement("div");
-      vs.className = "variants";
-      for (const v of f.variants) {
-        const l = document.createElement("label");
-        const r = document.createElement("input");
-        r.type = "radio";
-        r.name = "var-" + f.id;
-        r.value = v.id;
-        r.checked = sel.variant === v.id;
-        r.addEventListener("change", () => { sel.variant = v.id; update(); });
-        const s = document.createElement("span");
-        s.innerHTML = `${esc(featText(v.id, "label", v.label || v.id))}<small>${esc(featText(v.id, "note", ""))}</small>`;
-        l.append(r, s);
-        l.addEventListener("click", (e) => e.stopPropagation());   // don't toggle the card
-        vs.appendChild(l);
-      }
-      card.appendChild(vs);
-    }
-
-    if (f.engines && sel.on) {
-      const vs = document.createElement("div");
-      vs.className = "variants";
-      for (const e of f.engines) {
-        const l = document.createElement("label");
-        const r = document.createElement("input");
-        r.type = "checkbox";
-        r.id = "eng-" + e.code;
-        r.name = "eng-" + f.id;
-        r.value = e.code;
-        r.checked = sel.engines.includes(e.code);
-        r.addEventListener("change", () => {
-          const on = new Set(sel.engines);
-          if (r.checked) on.add(e.code); else on.delete(e.code);
-          sel.engines = f.engines.map((x) => x.code).filter((c) => on.has(c));
-          if (!sel.engines.length) sel.on = false;       // no engine left: the card is off
-          renderFeatures();
-          update();
-        });
-        const s = document.createElement("span");
-        s.innerHTML = `<b>${esc(e.name)}</b> — ${esc(e.label)}<small>${esc(featText("eng-" + e.code, "note", ""))}</small>`;
-        l.append(r, s);
-        l.addEventListener("click", (ev) => ev.stopPropagation());   // don't toggle the card
-        vs.appendChild(l);
-      }
-      if (combo) {
-        const n = document.createElement("div");
-        n.className = "combo";
-        n.textContent = t(tested ? "combo_tested" : "combo_new");
-        vs.appendChild(n);
-      }
-      if (isOn("model-tg")) {
-        const n = document.createElement("div");
-        n.className = "combo";
-        n.textContent = t("with_tg");
-        vs.appendChild(n);
-      }
-      const w = document.createElement("div");
-      w.className = "combo";
-      w.textContent = t("renumber");
-      vs.appendChild(w);
-      card.appendChild(vs);
-    }
-    box.appendChild(card);
+    if (b.hasAttribute("data-clear")) { for (const id in selection) selection[id].on = false; pick.swap = null; }
+    else if (b.hasAttribute("data-undo")) {
+      const by = undo();
+      changed();
+      if (by && $("feat-" + by)) $("feat-" + by).focus({ preventScroll: true });
+      return;
+    } else if (b.classList.contains("sel-more")) { pick.selOpen = !pick.selOpen; renderFeatures(); return; }
+    else return;
+    changed();
+  });
+  $("mod-q").addEventListener("input", (e) => { pick.q = e.target.value; renderFeatures(); });
+  $("mod-q").addEventListener("keydown", (e) => { if (e.key === "Escape") { pick.q = ""; renderFeatures(); } });
+  $("mod-q-clr").addEventListener("click", () => { pick.q = ""; renderFeatures(); $("mod-q").focus(); });
+  $("mod-found").addEventListener("click", (e) => { if (e.target.closest("[data-showall]")) { pick.q = ""; renderFeatures(); } });
+  // the selection bar floats only where IntersectionObserver exists (not in jsdom); its shadow only while it floats
+  if ("IntersectionObserver" in window) {
+    $("panel-mods").classList.add("js-sticky");
+    new IntersectionObserver(([en]) => {
+      $("mod-sel").classList.toggle("stuck", !en.isIntersecting && en.boundingClientRect.top > 0);
+    }).observe($("mod-sel-end"));
   }
 }
 
@@ -1302,8 +1734,12 @@ function chosenEngines() {
   return sel && sel.on ? f.engines.filter((e) => sel.engines.includes(e.code)) : [];
 }
 
+// The ticked mods need the Syntakt OS file (the selection bar says so in any tab); step 2 asks for it in the Mods tab.
+function choiceNeedsSyntakt() {
+  return chosenTweaks().some((x) => x.append && x.append.syntakt);
+}
 function needsSyntakt() {
-  return st.mode === "mods" && chosenTweaks().some((x) => x.append && x.append.syntakt);
+  return st.mode === "mods" && choiceNeedsSyntakt();
 }
 
 function setMode(mode) {
@@ -2074,6 +2510,7 @@ function init() {
   });
 
   $("build-stamp").textContent = "· build " + (window.MC_BUILD || "?");
+  wirePicker();
   applyLang(st.lang);
   update();
 
@@ -2088,7 +2525,7 @@ function init() {
 // test hooks (tools/webflash_smoke.js)
 window.MCFlasherApp = { state: st, REF_MAINOS, REF_MODS, REF_SAMPLES_ON_CYCLES, REF_CYCLES_ON_SAMPLES, REF_SAMPLES_BACK, loadOs,
   loadSamples, loadSyntakt, setMode, setSmpDir, setMethod, applyLang, render,
-  chosenTweaks };
+  chosenTweaks, chosenLabels, CATS };
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
 else init();

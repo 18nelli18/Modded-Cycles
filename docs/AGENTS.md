@@ -24,22 +24,29 @@ Write for musicians: what changes on the machine, which buttons to press, the li
 
 ## Adding a mod to the flasher
 
-1. Add it to `FEATURES` in `tools/gen_flasher_tweaks.py` (`"status": "experimental"`, `credit`, `excludes`,
-   `includes` or `needs` if any), then `python3 tools/gen_flasher_tweaks.py` to regenerate `flasher/tweaks.js`.
+1. Add it to `FEATURES` in `tools/gen_flasher_tweaks.py` (`"status": "experimental"`, `cat`, `credit`, `excludes`,
+   `includes`, `needs` or `requires` if any), then `python3 tools/gen_flasher_tweaks.py` to regenerate
+   `flasher/tweaks.js`. `cat` is the flasher section the mod shows in, one of `CATS` (`pack`, `sound`, `seq`, `live`,
+   `screen`, `io`); without it the mod lands at the end, in « Other mods ». `requires` names a mod it only works with
+   (shown as "with …", not enforced). The order of `FEATURES` is the build order (the `REF_MAINOS` keys); the page
+   shows the mods by section, in `FEATURES` order inside a section.
 2. `python3 tools/check_overlaps.py`, then `python3 tools/ref_mainos.py --cycles … --syntakt …`: it rewrites `REF_MODS`
    (the hash of each tweak's writes and payload, checked by the page on every build) and `REF_MAINOS` (the whole MAIN
-   OS of a sample: each card alone, every pair, the largest combinations) in `flasher/app.js` (notes/49). A build whose
+   OS of a sample: each mod alone, every pair, the largest combinations) in `flasher/app.js` (notes/49). A build whose
    mod or listed MAIN OS differs is refused; a combination outside the sample is built and checked mod by mod. The
-   card rules (`excludes`, `includes`, a card's `requires`, `with`) are read by `ref_mainos.py` as `app.js` reads them:
-   a new kind of rule goes into both.
-3. In `flasher/app.js`: the card texts in `FEAT.en` and `FEAT.fr` (`label`, `desc`, optional `note` shown once
-   ticked), and the guide anchor in `GUIDE_OF`.
-4. In `tools/webflash_smoke.js`: the expected order of tweaks and cards, their tags, and a check that the French card
-   and its guide link render.
+   rules between mods (`excludes`, `includes`, `with`, the Syntakt engines' `tg` version) are read by `ref_mainos.py`
+   as `app.js` reads them: a new kind of rule goes into both.
+3. In `flasher/app.js`: the row texts in `FEAT.en` and `FEAT.fr`: `label`; `short`, the one sentence shown on the
+   row (about 80 characters, what it does on the machine, with any deal-breaker; without it the row shows the first
+   sentence of `desc`); `desc`, the full text in the Details drawer; optional `note` (shown once ticked), `clash` if it
+   has `excludes` (why it doesn't go with the other mod), `parts` for a pack (what it brings), a `short` per engine
+   (`"eng-<code>"`) for an engine card. And the guide anchor in `GUIDE_OF` (one line per mod).
+4. In `tools/webflash_smoke.js`: the expected order of tweaks, the expected **display** order of the rows (by
+   section), and a check that the French row and its guide link render.
 5. A guide section in `guide/index.html` (next number, before *Samples OS*; renumber the ones after): a lede, the
    steps (`<ol>`) with the buttons in `<b>`, then `<dl class="facts">` with the limits and a *Tested* / *Experimental*
    line saying how it was checked. Copy the `#tempo` or `#trig-hold` section.
-6. A new entry at the top of `assets/release.js`: next version (`1.30` is the last), today's date, 2 to 4 changes
+6. A new entry at the top of `assets/release.js`: next version (the top entry is the last), today's date, 2 to 4 changes
    (what the user gets, the limits, how it was checked, which mods it goes with). Once merged into `main`, the
    English text is posted as is to the Discord server's #announcements (`.github/workflows/discord.yml`), so write it
    for musicians.
