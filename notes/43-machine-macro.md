@@ -16,9 +16,9 @@ MACRO avec les modèles de Braids, les moteurs de Plaits plus tard, un par un, s
 - **Une seule machine ajoutée, MACRO, dont SHAPE choisit le modèle** (0 à 46, verrouillable par pas), plutôt que 47
   machines : la mécanique des machines ajoutées en accepte 6 (§2), et un modèle par pas reste un simple p-lock.
 - **Le son est celui du code de Braids, à l'échantillon près** `[FAIT en émulation]` : Braids rend à 96 kHz comme sur
-  le module, un filtre demi-bande ramène à 48 kHz (passe-bande 0..19 kHz à 0,05 dB près, −46 dB dès 29 kHz). DECAY,
+  le module, un filtre demi-bande ramène à 48 kHz (passe-bande 0..19 kHz à 0,04 dB près, −46 dB dès 29 kHz). DECAY,
   GATE et PUNCH sont la chaîne d'ampli d'origine, réglée comme TONE.
-- **Charge** : une voix MACRO coûte environ 2 fois une voix TONE en instructions, de 0,8 fois (CLOCKED NOISE) à 3,4 fois
+- **Charge** : une voix MACRO coûte environ 2 fois une voix TONE en instructions, de 0,8 fois (CLOCKED NOISE) à 3,5 fois
   (WAVE MAP) selon le modèle (§8). Pas de régulateur de charge : quelques pistes MACRO lourdes jouées ensemble peuvent
   dépasser le temps d'un bloc (son qui craque, écran ralenti, comme les moteurs du Syntakt avant leur régulateur,
   [25](25-regulateur-de-charge.md)). À écouter sur la machine.
@@ -163,88 +163,93 @@ filtre demi-bande en Python.
 
 | Vérification | Seule (`macro`) | Avec Model-TG (`macro-tg`) |
 |---|---|---|
-| Démarrage : le décompresseur du bootstrap relit l'OS agrandi ; le crochet reconstitue la charge utile (0xa5 partout avant), garde la SRAM, la pile et d2..d7/a2..a6 | ok, fin de l'image `0x401c3530` | ok, chaîné à `boot_extra_hook`, fin `0x401d8e4c` |
+| Démarrage : le décompresseur du bootstrap relit l'OS agrandi ; le crochet reconstitue la charge utile (0xa5 partout avant), garde la SRAM, la pile et d2..d7/a2..a6 | ok, fin de l'image `0x401c35c0` | ok, chaîné à `boot_extra_hook`, fin `0x401d8edc` |
 | Interface (vérifications de `test_syntakt_machines.py` / `test_model_tg_syntakt.py`) : tables, rangées, descripteurs (Model 0..46), écran MACHINES, molette, enregistrements, vrai changement de machine, potards, icône, machine hors limites | ok, 7 machines | ok, 8 machines sur 2 lignes, libellés et touche Attack de Model-TG |
-| Son avant la chaîne d'ampli = Braids compilé pour l'ordinateur + filtre, échantillon par échantillon | **105 cas** : les 47 modèles et 58 variantes (COLOR, SWEEP aux bouts, CONTOUR, notes extrêmes, bornes de hauteur, PUNCH, GATE, voix qui se tait puis repart, modèle et potards qui bougent pendant la note, Model au-delà de 46) | **50 cas** : les 47 modèles, la voix qui se tait puis repart, le modèle qui change |
-| Voix muette : sortie nulle, aucune instruction de Braids | 113 blocs | 113 blocs |
+| Son avant la chaîne d'ampli = Braids compilé pour l'ordinateur + filtre, échantillon par échantillon | **107 cas** : les 47 modèles et 60 variantes (COLOR, SWEEP aux bouts, CONTOUR, notes extrêmes, bornes de hauteur, PUNCH, GATE, DECAY court, voix qui se tait puis repart, modèle et potards qui bougent pendant la note, Model au-delà de 46) | **52 cas** : les 47 modèles, DECAY court, la voix qui se tait puis repart, le modèle qui change |
+| Voix calculée exactement quand l'OS l'impose (trig de ce bloc ou du précédent, ou enveloppe d'ampli ≥ 2^14), bloc par bloc ; sinon sortie nulle et aucun appel de Braids | 11 576 blocs, dont 339 muets | 7 506 blocs, dont 339 muets |
+| Blocs de 24 comme sur le module : 3, 3 puis 2 appels de `Render` par bloc calculé (compte remis à zéro à l'initialisation), aucun pour une voix muette | ok | ok |
 | Chaîne d'ampli : mêmes lectures de la voix que TONE (24 champs ; DECAY, PUNCH, GATE) | ok | même passerelle |
 | Machines d'origine identiques, aucune instruction de Braids | à l'OS d'origine | à Model-TG seul |
 | Sortie finale de la piste MACRO identique à MACRO seule (5 modèles) | — | ok |
 | Machine locks SNARE → MACRO (FM) → TONE → MACRO (WAVETABLES) → KICK sur une piste | ok | ok |
 | 6 pistes MACRO ensemble = chacune jouée seule | ok | ok |
+| Pistes mêlées KICK, MACRO, METAL, CHORD, MACRO, TONE : machines d'origine identiques sans MACRO, chaque piste MACRO = la même jouée seule | ok | ok, le Sampler sans échantillon (muet) à la place de METAL |
 | Filtre demi-bande : gain 1 en continu, 0,04 dB de 0 à 19 kHz, −46,2 dB au-delà de 29 kHz | ok | ok |
-| `--with 6ch-usbup,trig-hold,arp,tempo-max,boot-anim` (et `model-tg-st`) : démarrage, machines d'origine identiques aux mêmes mods sans MACRO, sortie de MACRO identique, machine locks | ok | ok |
+| `--with 6ch-usbup,trig-hold,arp,tempo-max,boot-anim` (et `model-tg-st`) : démarrage, machines d'origine identiques aux mêmes mods sans MACRO, sortie de MACRO identique, machine locks, pistes mêlées | ok | ok |
 
-Durée : 42 min pour la preuve complète, ~25 min avec `--quick`. Et le flasher : les 9 503 combinaisons proposées par la
-page, construites par la page sur le vrai OS (`tools/webflash_smoke.js`, en 8 parts), donnent toutes le MAIN OS de
-`REF_MAINOS`, lui-même calculé comme `tools/build.py`.
+Durée : ~45 min pour la preuve complète (59 min avec `--with` et le test du flasher en même temps, sur 4 cœurs), ~25 min
+avec `--quick`. Et le flasher : les 9 503 combinaisons proposées par la page, construites par la page sur le vrai OS
+(`tools/webflash_smoke.js`, en 8 parts), donnent toutes le MAIN OS de `REF_MAINOS`, lui-même calculé comme
+`tools/build.py`.
 
 ## 8. Charge
 
 Instructions par bloc de 32 trames d'une voix (la boucle des voix entière, moins la même boucle sans voix), mesurées
-dans la vraie boucle des voix : 1er bloc (avec l'initialisation), typique, maximum.
+dans la vraie boucle des voix : 1er bloc (avec l'initialisation), puis moyenne et maximum sur les 21 blocs suivants
+(7 tours de 3, 3 puis 2 rendus de 24 ; le maximum est un bloc à 3 rendus).
 
-| Modèle | 1er bloc | typique | maximum | typique / TONE |
+| Modèle | 1er bloc | moyenne | maximum | moyenne / TONE |
 |---|---|---|---|---|
-| 0 CSAW | 7 652 | 7 079 | 7 112 | 1,3 |
-| 1 MORPH | 12 352 | 11 842 | 11 899 | 2,2 |
-| 2 SAW SQUARE | 12 577 | 12 058 | 12 105 | 2,3 |
-| 3 SINE TRIANGLE | 16 474 | 15 850 | 15 850 | 3,0 |
-| 4 BUZZ | 10 583 | 9 959 | 9 959 | 1,9 |
-| 5 SQUARE SUB | 12 873 | 12 404 | 12 488 | 2,3 |
-| 6 SAW SUB | 12 899 | 12 352 | 12 413 | 2,3 |
-| 7 SQUARE SYNC | 12 579 | 12 110 | 12 191 | 2,3 |
-| 8 SAW SYNC | 9 235 | 8 645 | 8 712 | 1,6 |
-| 9 TRIPLE SAW | 12 050 | 11 442 | 11 496 | 2,2 |
-| 10 TRIPLE SQUARE | 16 901 | 16 561 | 16 704 | 3,1 |
-| 11 TRIPLE TRIANGLE | 12 560 | 11 928 | 11 928 | 2,3 |
-| 12 TRIPLE SINE | 11 024 | 10 392 | 10 392 | 2,0 |
-| 13 TRIPLE RING MOD | 9 549 | 8 941 | 8 941 | 1,7 |
-| 14 SAW SWARM | 12 734 | 11 909 | 11 909 | 2,3 |
-| 15 SAW COMB | 9 235 | 8 408 | 8 438 | 1,6 |
-| 16 TOY | 8 056 | 7 274 | 7 274 | 1,4 |
-| 17 DIGITAL FILTER LP | 12 056 | 11 320 | 11 344 | 2,1 |
-| 18 DIGITAL FILTER PK | 12 120 | 11 383 | 11 406 | 2,2 |
-| 19 DIGITAL FILTER BP | 11 608 | 10 872 | 10 896 | 2,1 |
-| 20 DIGITAL FILTER HP | 11 608 | 10 871 | 10 894 | 2,1 |
-| 21 VOSIM | 9 943 | 9 161 | 9 161 | 1,7 |
-| 22 VOWEL | 8 996 | 8 174 | 8 174 | 1,5 |
-| 23 VOWEL FOF | 12 634 | 11 891 | 11 981 | 2,2 |
-| 24 HARMONICS | 17 325 | 16 543 | 16 543 | 3,1 |
-| 25 FM | 7 073 | 6 291 | 6 291 | 1,2 |
-| 26 FEEDBACK FM | 7 627 | 6 845 | 6 845 | 1,3 |
-| 27 CHAOTIC FEEDBACK FM | 8 054 | 7 272 | 7 272 | 1,4 |
-| 28 PLUCKED | 8 050 | 9 123 | 9 224 | 1,7 |
-| 29 BOWED | 10 743 | 7 516 | 7 516 | 1,4 |
-| 30 BLOWN | 10 683 | 8 066 | 8 076 | 1,5 |
-| 31 FLUTED | 14 903 | 11 796 | 11 796 | 2,2 |
-| 32 STRUCK BELL | 14 607 | 13 320 | 13 385 | 2,5 |
-| 33 STRUCK DRUM | 13 679 | 12 933 | 12 947 | 2,4 |
-| 34 KICK | 11 704 | 10 275 | 10 634 | 1,9 |
-| 35 CYMBAL | 16 532 | 15 664 | 15 667 | 3,0 |
-| 36 SNARE | 12 752 | 11 601 | 11 609 | 2,2 |
-| 37 WAVETABLES | 10 743 | 9 965 | 9 965 | 1,9 |
-| 38 WAVE MAP | 18 981 | 18 199 | 18 199 | 3,4 |
-| 39 WAVE LINE | 14 711 | 13 929 | 13 929 | 2,6 |
-| 40 WAVE PARAPHONIC | 18 414 | 17 600 | 17 600 | 3,3 |
-| 41 FILTERED NOISE | 8 179 | 7 397 | 7 397 | 1,4 |
-| 42 TWIN PEAKS NOISE | 6 887 | 6 097 | 6 117 | 1,2 |
-| 43 CLOCKED NOISE | 4 789 | 4 007 | 4 024 | 0,8 |
-| 44 GRANULAR CLOUD | 13 726 | 12 850 | 12 936 | 2,4 |
-| 45 PARTICLE NOISE | 7 309 | 6 481 | 6 617 | 1,2 |
-| 46 DIGITAL MODULATION | 7 826 | 7 040 | 7 040 | 1,3 |
+| 0 CSAW | 8 349 | 7 221 | 7 870 | 1,4 |
+| 1 MORPH | 13 577 | 11 897 | 13 182 | 2,2 |
+| 2 SAW SQUARE | 13 842 | 12 140 | 13 428 | 2,3 |
+| 3 SINE TRIANGLE | 18 211 | 15 926 | 17 635 | 3,0 |
+| 4 BUZZ | 11 608 | 10 057 | 11 032 | 1,9 |
+| 5 SQUARE SUB | 14 170 | 12 499 | 13 861 | 2,4 |
+| 6 SAW SUB | 14 196 | 12 401 | 13 741 | 2,3 |
+| 7 SQUARE SYNC | 13 860 | 12 204 | 13 509 | 2,3 |
+| 8 SAW SYNC | 10 110 | 8 755 | 9 617 | 1,7 |
+| 9 TRIPLE SAW | 13 170 | 11 470 | 12 664 | 2,2 |
+| 10 TRIPLE SQUARE | 18 621 | 16 522 | 18 502 | 3,1 |
+| 11 TRIPLE TRIANGLE | 13 752 | 11 955 | 13 168 | 2,3 |
+| 12 TRIPLE SINE | 12 024 | 10 419 | 11 440 | 2,0 |
+| 13 TRIPLE RING MOD | 10 446 | 9 038 | 9 886 | 1,7 |
+| 14 SAW SWARM | 13 759 | 11 790 | 12 982 | 2,2 |
+| 15 SAW COMB | 10 020 | 8 468 | 9 253 | 1,6 |
+| 16 TOY | 8 777 | 7 401 | 8 043 | 1,4 |
+| 17 DIGITAL FILTER LP | 13 257 | 11 421 | 12 602 | 2,2 |
+| 18 DIGITAL FILTER PK | 13 329 | 11 484 | 12 674 | 2,2 |
+| 19 DIGITAL FILTER BP | 12 753 | 10 973 | 12 098 | 2,1 |
+| 20 DIGITAL FILTER HP | 12 753 | 10 972 | 12 098 | 2,1 |
+| 21 VOSIM | 10 872 | 9 255 | 10 138 | 1,7 |
+| 22 VOWEL | 9 829 | 8 297 | 9 055 | 1,6 |
+| 23 VOWEL FOF | 13 623 | 11 763 | 13 046 | 2,2 |
+| 24 HARMONICS | 19 038 | 16 521 | 18 304 | 3,1 |
+| 25 FM | 7 650 | 6 398 | 6 916 | 1,2 |
+| 26 FEEDBACK FM | 8 268 | 6 947 | 7 534 | 1,3 |
+| 27 CHAOTIC FEEDBACK FM | 8 751 | 7 377 | 8 017 | 1,4 |
+| 28 PLUCKED | 8 755 | 9 100 | 10 171 | 1,7 |
+| 29 BOWED | 11 472 | 7 622 | 8 293 | 1,4 |
+| 30 BLOWN | 11 481 | 8 172 | 8 916 | 1,5 |
+| 31 FLUTED | 16 164 | 11 899 | 13 105 | 2,2 |
+| 32 STRUCK BELL | 15 972 | 13 354 | 14 798 | 2,5 |
+| 33 STRUCK DRUM | 14 946 | 12 915 | 14 258 | 2,4 |
+| 34 KICK | 12 860 | 10 412 | 11 695 | 2,0 |
+| 35 CYMBAL | 18 266 | 15 758 | 17 449 | 3,0 |
+| 36 SNARE | 14 009 | 11 705 | 12 890 | 2,2 |
+| 37 WAVETABLES | 11 792 | 10 083 | 11 062 | 1,9 |
+| 38 WAVE MAP | 21 054 | 18 313 | 20 320 | 3,5 |
+| 39 WAVE LINE | 16 248 | 14 041 | 15 514 | 2,7 |
+| 40 WAVE PARAPHONIC | 20 351 | 17 659 | 19 585 | 3,3 |
+| 41 FILTERED NOISE | 8 892 | 7 502 | 8 158 | 1,4 |
+| 42 TWIN PEAKS NOISE | 7 416 | 6 189 | 6 706 | 1,2 |
+| 43 CLOCKED NOISE | 5 062 | 4 106 | 4 344 | 0,8 |
+| 44 GRANULAR CLOUD | 15 127 | 12 963 | 14 369 | 2,5 |
+| 45 PARTICLE NOISE | 7 926 | 6 613 | 7 290 | 1,2 |
+| 46 DIGITAL MODULATION | 8 491 | 7 142 | 7 753 | 1,3 |
 
 - Boucle des voix sans voix : 1 232 instructions par bloc ; **TONE : 5 291** (une voix d'origine).
-- **MACRO : 4 007 à 18 199, médiane 10 872** (2,1 fois TONE). Les plus lourds : les cartes d'ondes (WAVE MAP, WAVE
-  PARAPHONIC, WAVE LINE), HARMONICS, TRIPLE SQUARE, SINE TRIANGLE, CYMBAL ; les plus légers : les bruits et la FM.
-- Voix muette : 246 ; changement de modèle FM → BOWED (lignes à retard effacées) : 10 137 ; pile : 356 o sous la boucle
+- **MACRO : 4 106 à 18 313 en moyenne, médiane 10 973** (2,1 fois TONE) ; au pire 20 320 (WAVE MAP, bloc à 3 rendus).
+  Les plus lourds : les cartes d'ondes (WAVE MAP, WAVE PARAPHONIC, WAVE LINE), TRIPLE SQUARE, HARMONICS, SINE
+  TRIANGLE, CYMBAL ; les plus légers : les bruits et la FM.
+- Voix muette : 245 ; changement de modèle FM → BOWED (lignes à retard effacées) : 10 914 ; pile : 344 o sous la boucle
   des voix.
-- Avec Model-TG (CSAW, VOWEL FOF, WAVETABLES) : 7 138, 11 950 et 10 024, TONE 5 669 (son étage d'amplitude), voix
-  muette 305.
+- Avec Model-TG (CSAW, VOWEL FOF, WAVETABLES) : 7 280, 11 822 et 10 142 en moyenne, TONE 5 669 (son étage
+  d'amplitude), voix muette 304.
 
-Braids rend ici 64 échantillons par bloc (96 kHz), deux fois plus que les mesures de faisabilité du 06/10 (blocs de 32
-échantillons : 959 à 8 031 instructions selon le modèle), plus le filtre demi-bande et la chaîne
-d'ampli d'origine.
+Braids rend ici 64 échantillons par bloc en moyenne (96 kHz ; 72 aux blocs à 3 rendus, 48 à ceux à 2), deux fois plus
+que les mesures de faisabilité du 06/10 (blocs de 32 échantillons : 959 à 8 031 instructions selon le modèle), plus le
+filtre demi-bande et la chaîne d'ampli d'origine.
 
 Ce sont des instructions, pas des cycles : le ColdFire n'a que 8 Ko de cache d'instructions et 8 Ko de cache de
 données, et la SDRAM (DDR2 sur un bus de 8 bits) coûte cher à chaque défaut. Le code de Braids atteint par un modèle

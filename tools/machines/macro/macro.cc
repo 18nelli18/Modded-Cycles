@@ -13,7 +13,7 @@
  * lissages avancent d'un pas par bloc. Il rend donc ici exactement comme sur le module, des blocs de 24 : 3, 3 puis 2
  * par bloc de 32 trames du Cycles (8 x 24 = 3 x 64), ce qui depasse attend le bloc suivant (16 echantillons au plus,
  * 0,17 ms). Les 64 echantillons du bloc sont ramenes a 48 kHz par un filtre demi-bande de 23 coefficients
- * (passe-bande 0..19 kHz a 0,05 dB pres, -46 dB des 29 kHz, ce qui se replierait sous 19 kHz). Son propre code
+ * (passe-bande 0..19 kHz a 0,04 dB pres, -46 dB des 29 kHz, ce qui se replierait sous 19 kHz). Son propre code
  * donne donc exactement le son de Braids, a 96 kHz, avant ce filtre.
  *
  * Potards : PITCH et FINE = la note, comme les machines d'origine ; COLOR = TIMBRE de Braids ; SHAPE = le
