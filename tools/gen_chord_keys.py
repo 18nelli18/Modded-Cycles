@@ -14,7 +14,6 @@ import json
 import os
 from pathlib import Path
 import re
-import shutil
 import struct
 import subprocess
 import tempfile
@@ -29,8 +28,9 @@ ROOT = HERE.parent
 SRC = HERE / "machines/chord_keys"
 OUT = ROOT / "tweaks/model-cycles_OS1.13/44-chord-keys.json"
 BASE = 0x40000400
-CROSS = os.environ.get("M68K_CROSS") or next(
-    (p for p in ("m68k-linux-gnu-", "m68k-elf-") if shutil.which(p + "gcc")), "m68k-linux-gnu-")
+# L'ABI Linux attend les retours de pointeur dans a0, l'OS dans d0.
+# Ne jamais choisir silencieusement un compilateur Linux pour ces appels C.
+CROSS = os.environ.get("M68K_CROSS") or "m68k-elf-"
 CFLAGS = ["-mcpu=54418", "-Os", "-ffreestanding", "-fno-builtin", "-nostdlib", "-fno-pic", "-fno-common",
           "-ffunction-sections", "-fdata-sections", "-fomit-frame-pointer", "-fno-stack-protector",
           "-Wall", "-Wextra", "-Werror"]
@@ -58,7 +58,14 @@ HOOKS = (
     (0x4001cb3e, "4eb94002d138", "ck_ui_menu_ctor", 0x4eb9),
     (0x4005b4a8, "7001156b001c001c", "ck_storage_load_hook", 0x4ef9),
     (0x40061564, "1140001b48780010", "ck_storage_init_hook", 0x4ef9),
+    (0x4005b9c6, "16b5480317420001", "ck_plock_save_hook", 0x4ef9),
+    (0x4005bad2, "28713c0070ff", "ck_plock_partial_hook", 0x4ef9),
+    (0x4005aa1a, "2f027406222f0008", "ck_plock_decode_hook", 0x4ef9),
+    (0x40012274, "4eb9400cfd0e", "ck_plock_note_hook", 0x4ef9),
 )
+# Le chargeur stock ignore les identifiants >32 : HARMONY utilise 33 pour
+# qu'un retour au firmware officiel ignore ce lock au lieu de modifier LEVEL.
+PATCHES = ((0x4005b816, "7a20", "7a21"),)
 
 
 def run(args):
@@ -92,6 +99,16 @@ def sections(path):
 
 def compile_code():
     """Placement déterministe par section, sans casser une fonction entre deux masques."""
+    target = run([CROSS + "gcc", "-dumpmachine"]).strip()
+    if target != "m68k-elf":
+        raise ValueError(
+            f"Chord Keys exige la cible m68k-elf (trouvé {target}) : "
+            "l'OS renvoie les pointeurs dans d0, voir notes/40 et M68K_CROSS")
+    version = run([CROSS + "gcc", "-dumpfullversion"]).strip()
+    if version != "16.2.0":
+        raise ValueError(
+            f"Chord Keys exige m68k-elf-gcc 16.2.0 (trouvé {target} {version}) : "
+            "ABI de retour des pointeurs dans d0 et génération reproductible, voir notes/40")
     with tempfile.TemporaryDirectory(prefix="chord-keys-build-") as directory:
         tmp = Path(directory)
         objects, inputs = [], []
@@ -184,6 +201,11 @@ def build_tweak(stock):
         new = struct.pack(">I", symbols[symbol]) if opcode is None else struct.pack(">HI", opcode, symbols[symbol])
         new += b"\x4e\x71" * ((len(old) - len(new)) // 2)
         writes.append({"off": address - BASE, "old": old.hex(), "new": new.hex()})
+    for address, expected, replacement in PATCHES:
+        old = stock[address - BASE:address - BASE + len(bytes.fromhex(expected))]
+        if old.hex() != expected:
+            raise ValueError(f"Instruction stock inattendue à {address:#x}")
+        writes.append({"off": address - BASE, "old": old.hex(), "new": replacement})
     tweak = {
         "id": "chord-keys", "order": 44, "name": "Accords de gamme sur TRIG 1–16",
         "description": [
@@ -198,7 +220,8 @@ def build_tweak(stock):
             "SHAPE : BASE, CLS0–3, OPN0–3. Les options Controls et Pads sont supprimées.",
             "Anciens et nouveaux patterns utilisent les mêmes contrôles ; gamme et extensions sauvegardées conservées.",
             "L'écran nomme l'accord tenu selon les intervalles audio, les transformations et la basse du voicing.",
-            "Les gestes des pads restent live ; le séquenceur conserve seulement la fondamentale, pas ces transformations.",
+            "Les gestes HARMONY s'enregistrent en P-locks natifs : live rec ou pas tenus en grille, puis sauvegarde du pattern.",
+            "COLOR et SHAPE restent indépendants. Le relâchement en live rec enregistre le retour au geste précédent ou à EXT.",
             "Réglages par piste sauvegardés avec le pattern. Dernière touche prioritaire, sans retour à la précédente.",
             "Model-TG incompatible : son Scale Lock transforme les notes avant le moteur. Aucun essai matériel.",
             f"Code et état dans {len(compiled)} masques de sprites redirigés, {sum(len(c) for _, c in compiled)} octets.",

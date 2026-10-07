@@ -22,12 +22,17 @@ sys.path.insert(0, str(HERE.parent))
 
 import build
 from gen_chord_keys import HOOKS, load_stock
-from chord_audio_checks import run_audio_checks, run_audio_storage_checks, run_audio_governor_checks
+from chord_audio_checks import (run_audio_checks, run_audio_storage_checks,
+                                run_audio_governor_checks, run_audio_midi_checks)
 import chord_ui_checks
+import chord_routing_checks
 import chord_harmony_checks
 import chord_palette_ui_checks
 import chord_pad_audio_checks
 import chord_display_checks
+from chord_slot_checks import run_slot_checks
+from chord_plock_checks import run_plock_checks
+from chord_lock_audio_checks import run_lock_audio_checks
 from probe_chord_storage import run_storage_checks
 
 DIRECTORY = HERE.parents[1] / "tweaks/model-cycles_OS1.13"
@@ -91,14 +96,24 @@ def main():
         run_storage_checks(reference, patched, symbols)
     except AssertionError as error:
         check(False, f"stockage : {error}")
+    try:
+        run_plock_checks(reference, patched, symbols)
+    except AssertionError as error:
+        check(False, f"P-locks HARMONY : {error}")
     chord_ui_checks.run(reference, patched, symbols, check)
+    chord_routing_checks.run(reference, patched, symbols, check)
+    run_slot_checks(reference, check)
     chord_palette_ui_checks.run(reference, patched, symbols, check)
     chord_display_checks.run(reference, patched, symbols, check)
     extra_code = [(build.BASE + w["off"], len(w["new"])//2) for w in tweak["writes"]
                   if len(w["new"])//2 > 32]
+    run_lock_audio_checks(reference, patched, symbols, extra_code, check)
     audio_failures = run_audio_checks(reference, patched, symbols["ck_audio_config"], extra_code)
     if audio_failures:
         failures.extend(["audio"] * audio_failures)
+    midi_failures = run_audio_midi_checks(reference, patched, symbols, extra_code)
+    if midi_failures:
+        failures.extend(["notes MIDI aiguës"] * midi_failures)
     storage_audio_failures = run_audio_storage_checks(reference, patched, extra_code)
     if storage_audio_failures:
         failures.extend(["stockage audio"] * storage_audio_failures)

@@ -7,6 +7,7 @@
  */
 #include "chord_keys.h"
 #include "chord_ui.h"
+#include "chord_plocks.h"
 
 typedef unsigned char u8;
 typedef unsigned u32;
@@ -91,21 +92,33 @@ static __attribute__((noinline)) int pad_press(u32 pad, u8 *event)
     u32 track, i, rank = 0, sr;
     const void *header;
     void *state;
-    if (WORD(event, 28))
+    /* PadEvent::function est un booléen d'un octet. Son constructeur laisse
+     * +29..31 intacts : lire un mot confond les restes de pile avec FUNC.
+     */
+    if (event[28])
         return 0;
     for (i = 1; i <= 4; ++i)
         if (KEY(i))
             return 0;
     state = ((void *(*)(void))0x400cf9a8)();
-    /* Les pads restent disponibles pour l'édition de grille et les modes
-     * réservés, comme les TRIG ; le live rec n'active pas ces gardes.
-     */
-    if (((u8 (*)(void *))0x4006b978)(state) || ((u8 (*)(void *))0x4006bb18)(state))
-        return 0;
     track = selected_track();
     if (track >= 6 || !is_chord(track) || !(ck_ui_config_get(track) & ENABLED))
         return 0;
     header = ck_ui_header();
+    if (ck_plock_grid(track, pad + 1)) {
+        /* Un pas tenu reçoit le verrou, sans transformer un accord live.
+         * Garder l'identité physique consomme aussi la fin de ce geste.
+         */
+        sr = ck_storage_irq_save();
+        held_pads[pad].header = header;
+        held_pads[pad].track = track;
+        held_pads[pad].rank = 0;
+        ck_storage_irq_restore(sr);
+        return 1;
+    }
+    /* Sans pas tenu, l'édition de grille et les modes réservés restent stock. */
+    if (((u8 (*)(void *))0x4006b978)(state) || ((u8 (*)(void *))0x4006bb18)(state))
+        return 0;
     /* Rangs 1..6 sans compteur susceptible de reboucler. */
     sr = ck_storage_irq_save();
     for (i = 0; i < 6; ++i)
@@ -115,18 +128,25 @@ static __attribute__((noinline)) int pad_press(u32 pad, u8 *event)
     held_pads[pad].track = track;
     held_pads[pad].rank = rank + 1;
     ck_storage_irq_restore(sr);
+    ck_plock_gesture(track, pad + 1);
     return 1;
 }
 
 u32 ck_ui_pad_finish(u8 *event)
 {
-    u32 sr, pad = WORD(event, 20) - 1;
+    u32 sr, track, rank, pad = WORD(event, 20) - 1;
+    const void *header;
     if (WORD(event, 12) != 1 || pad >= 6 || WORD(event, 16) || !held_pads[pad].header)
         return 0;
     sr = ck_storage_irq_save();
+    track = held_pads[pad].track;
+    rank = held_pads[pad].rank;
+    header = held_pads[pad].header;
     pad_release_rank(pad);
     held_pads[pad].header = 0;
     ck_storage_irq_restore(sr);
+    if (rank && header == ck_ui_header())
+        ck_plock_gesture(track, ck_ui_modifier_get(track, header));
     return 1;
 }
 
@@ -262,8 +282,16 @@ u32 ck_ui_key(void *view, u8 *event)
         /* Les répétitions de maintien ne doivent jamais redéclencher un accord. */
         if ((flags & 8) && held[key].valid)
             return 1;
-        if ((flags & 9) == 1 && handle_press(view, event, key))
-            return 1;
+        if ((flags & 9) == 1) {
+            /* Une vue prioritaire ou le masque des touches a pu consommer le
+             * relâchement précédent. La nouvelle frappe termine cette capture
+             * avant tout repli, sinon son futur note-off stock serait volé.
+             */
+            release_key(&held[key]);
+            held[key].valid = 0;
+            if (handle_press(view, event, key))
+                return 1;
+        }
     }
     return ((u32 (*)(void *, u8 *))0x4001a0d2)(view, event);
 }

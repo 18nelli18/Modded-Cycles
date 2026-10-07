@@ -230,10 +230,13 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim
 | `model-tg,boot-anim` | `cbec181684805bf37dd07c62dc47f7daf35e6abab530a3f3b06ec5db590278ec` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim` | `d468a729f32780870dbd591e52e8c782a5cdd347459ac1c61ef35473e26c9323` |
 
-### Chord Keys : pads harmoniques permanents et nom de l'accord
+### Chord Keys : pads harmoniques, P-locks et nom de l'accord
 
 `44-chord-keys.json` est généré depuis `tools/machines/chord_keys/` par `tools/gen_chord_keys.py`
 (GCC m68k-elf 16.2.0, binutils 2.47). **Révision expérimentale du 07/10/2026, sans essai matériel rapporté.**
+Le générateur exige cette cible et cette version de GCC : les appels directs à l'OS renvoient
+leurs pointeurs dans `d0`, contrairement à l'ABI Linux. `M68K_CROSS` accepte un chemin vers
+le préfixe `m68k-elf-` si la chaîne n'est pas dans `PATH`.
 Le retour positif de Nico, seul sans autres mods, concerne la révision antérieure décrite en note 40 §13.
 
 Sur une piste CHORD, **FUNC + RETRIG** donne Keys, Root, Scale et I–VII.
@@ -255,8 +258,10 @@ s'appliquent aussi aux anciens patterns : leurs valeurs SHAPE/COLOR et locks son
 réinterprétés avec les palettes et balances actuelles. Les nouveaux patterns commencent Keys OFF.
 Keys OFF retrouve le clavier chromatique, les pads et retrig/arp habituels.
 Les extensions m7♭5 gardent fondamentale, quinte diminuée, septième et tension en omettant la tierce ;
-PARALLEL/V7 y sont indisponibles. Quatre voix maximum. Les gestes de pads restent live et ne sont pas
-sauvegardés ni enregistrés dans le séquenceur. Model-TG reste incompatible.
+PARALLEL/V7 y sont indisponibles. Quatre voix maximum. Les gestes de pads s'enregistrent en
+P-locks HARMONY dans le séquenceur, indépendamment de COLOR et SHAPE. Le relâchement en live rec
+enregistre le retour au pad précédent ou à EXT. Les locks sont sauvegardés avec le pattern.
+Model-TG reste incompatible.
 
 Le générateur vérifie les masques identiques, leurs redirections et les chevauchements ; sa réserve totalise
 10 888 octets, avec seuls les masques occupés écrits. Aucune nouvelle charge utile n'est requise ; seule
@@ -277,14 +282,14 @@ python3 tools/build.py -i firmware/model-cycles_OS1.13.syx -t chord-keys \
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `chord-keys` | `957d7b995cacfe8206ad3d9065c92ec887b3a3d028fa34eec7810640c1f81acb` |
-| `6ch-usbup,chord-keys` | `8f35bf121651033b309bb00756a174aad0da3feef96d84efeec0bb1961ef5f89` |
-| `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,chord-keys` | `bdb322e062ada9616454a473ddcbae8cc1627934b25aecb41adcb610688c84a6` |
-| `6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-sd-cp-toy-bits-swarm` | `7f5d1a14357ae32871209b64ec730d4da1ea70ffff26c18a04ad57deb9890ea6` |
+| `chord-keys` | `7ad0ce047b936e8a6c1b42e06917eee8af71e0a86d90fb75d99d74ed841b8e5e` |
+| `6ch-usbup,chord-keys` | `efe16eee5696f151df00e67e888189aa2e03cbd5d8d4fe95055f826e6e1bb788` |
+| `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,chord-keys` | `7cdf5afb1f87130f63090b3f9ba00a5c47e8ae81b532453e6f4ddc459eeedb55` |
+| `6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-sd-cp-toy-bits-swarm` | `cd760adf4a041002ca1f63f108bcec51dc087afb14d9a2ee4cc845aca6bf1c5f` |
 
 Le banc portable vérifie les choix harmoniques et la balance. Les preuves ColdFire exécutent les routines
 OS de clavier, pads, menu, stockage et CHORD ; le coût en instructions ne mesure pas la charge matérielle.
-Les résultats de cette révision et le protocole d'écoute sont suivis dans [la note 40 §16](notes/40-clavier-accords-diatoniques.md).
+Les résultats de cette révision et le protocole d'écoute sont suivis dans [la note 40 §17](notes/40-clavier-accords-diatoniques.md).
 
 ### Écoute d'un pas en pause
 

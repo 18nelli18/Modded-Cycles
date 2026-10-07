@@ -114,6 +114,90 @@ class NativeAudioConfig:
             self.write(header + 40 + track * 4, word)
 
 
+def run_audio_midi_checks(stock, patched, symbols, extra_code=()):
+    """Notes MIDI aiguës : même racine bornée pour le DSP et son instantané.
+
+    Exécute les deux updates OS et les vrais getters depuis le JSON final.
+    L'entrée est celle du DSP après réception de la note ; ce banc ne prétend
+    pas exercer le transport MIDI USB/DIN ni afficher un bandeau pour le MIDI.
+    """
+    a = AudioRunner(stock)
+    b = AudioRunner(patched, extra_code=extra_code)
+    config = NativeAudioConfig(b.engine)
+    failures = 0
+
+    def check(ok, label):
+        nonlocal failures
+        failures += not ok
+        print(("ok    " if ok else "FAIL  ") + label, flush=True)
+
+    def snapshot(track):
+        return int.from_bytes(b.engine.uc.mem_read(
+            symbols["ck_chord_live"] + track * 4, 4), "big")
+
+    # Conserver explicitement le comportement stock qui impose la correction.
+    # PITCH 32 remet les quatre opérateurs dans une plage audible : un mauvais
+    # degré ne doit pas être masqué par les coupures de protection dans l'aigu.
+    stock_clamps = inactive = True
+    config.configure([config_word(enabled=False)] * 6)
+    for track in range(6):
+        for pitch in (32, 64):
+            reference = a.update(track=track, root=96, shape=24, pitch=pitch)
+            for note in range(96, 128):
+                observed = a.update(track=track, root=note, shape=24, pitch=pitch)
+                stock_clamps &= observed == reference
+                inactive &= b.update(track=track, root=note, shape=24,
+                                     pitch=pitch) == observed and snapshot(track) == 0
+    check(stock_clamps, "MIDI stock : notes 96..127 ramenées à 96, PITCH 32/64 sur six pistes")
+    check(inactive, "MIDI Keys OFF : notes 96..127 identiques au stock, aucun instantané d'accord")
+
+    active, outside, count, first = True, True, 0, None
+    extensions = (0, 1, 2, 3, 4, 0, 1)
+    for mode, scale in enumerate(SCALES):
+        for tonic in range(24, 36):
+            track = (mode + tonic) % 6
+            shape = (3, 8, 32)[(mode + tonic) % 3]
+            word = config_word(root=tonic, mode=mode, extensions=extensions)
+            config.configure([word] * 6)
+            relative = (96 - tonic) % 12
+            for pitch in (32, 64):
+                reference = b.update(track=track, root=96, shape=shape, pitch=pitch)
+                packet = snapshot(track)
+                if relative in scale:
+                    degree = scale.index(relative)
+                    notes = diatonic_notes(mode, degree, extensions[degree])
+                    # SHAPE peut déplacer la basse, mais le packet doit garder
+                    # le degré de do réellement joué et ses intervalles bruts.
+                    harmonic = 0x80000000 | 96 | sum(
+                        interval << (7 + 5 * index)
+                        for index, interval in enumerate(notes))
+                    active &= (packet & ~0x78000400) == harmonic
+                    for note in range(96, 128):
+                        observed = b.update(track=track, root=note, shape=shape, pitch=pitch)
+                        ok = observed == reference and snapshot(track) == packet
+                        active &= ok
+                        count += 1
+                        if not ok and first is None:
+                            first = (mode, tonic, track, note, shape, pitch)
+                else:
+                    # Même si la note reçue est dans la gamme, son do borné
+                    # peut en sortir : SHAPE stock et instantané vide exigés.
+                    stock_reference = a.update(track=track, root=96,
+                                               shape=shape, pitch=pitch)
+                    outside &= reference == stock_reference and packet == 0
+                    for note in range(96, 128):
+                        outside &= b.update(track=track, root=note, shape=shape,
+                                            pitch=pitch) == stock_reference
+                        outside &= snapshot(track) == 0
+                        count += 1
+    check(active, "MIDI Keys ON : 97..127 utilisent le degré, l'extension et l'instantané de 96"
+          + (f" ; premier écart {first}" if first else ""))
+    check(outside, "MIDI Keys ON : racine bornée hors gamme, SHAPE stock même si la note reçue était diatonique")
+    check(count == 5376 and not a.engine.unmapped and not b.engine.unmapped,
+          f"MIDI aigu : {count} updates, 7 modes × 12 toniques × 32 notes × 2 PITCH, sans accès hors mémoire")
+    return failures
+
+
 def run_audio_storage_checks(stock, patched, extra_code=(), setup=None):
     """Vrai getter + DSP : patterns, isolation, cas invalides et coût complet."""
     a = AudioRunner(stock)

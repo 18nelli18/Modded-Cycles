@@ -190,3 +190,17 @@ u32 ck_audio_controls(u32 track)
         return 1;
     return 1 | (ck_ui_modifier_get(track, header) << 8);
 }
+
+u32 ck_audio_locked_controls(u32 track, u32 locked)
+{
+    u32 controls = ck_audio_controls(track);
+    /* Un pad tenu ou une touche jouée à la main conserve la priorité directe.
+     * Sans geste, le séquenceur fournit son lock natif, rétabli à zéro par son
+     * chemin de retour au son de base. Aucun cache par piste ni par pattern.
+     */
+    if (!controls || controls > 1 || ck_ui_active_key(track) < 16)
+        return controls;
+    if (!(*(volatile u32 *)(0x423087f8u + track * 8u) & (1u << 23)))
+        locked = 0;
+    return controls | ((locked <= 6 ? locked : 0) << 8);
+}

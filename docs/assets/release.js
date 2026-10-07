@@ -3,6 +3,16 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.29", date: "2026-10-07", changes: [
+    { en: "Chord Keys: fixed the remaining track changes when pressing T1–T6 while holding a chord. TRACK + pad still selects a track",
+      fr: "Chord Keys : correction des changements de piste encore possibles en appuyant sur T1–T6 pendant un accord tenu. TRACK + pad sélectionne toujours une piste" },
+    { en: "HARMONY pad changes can now be recorded as parameter locks and replayed with the pattern, while keeping COLOR and SHAPE independent",
+      fr: "Les changements des pads HARMONY peuvent désormais être enregistrés en P-locks et rejoués avec le pattern, en gardant COLOR et SHAPE indépendants" },
+    { en: "Fixed a lost note release after using PATTERN or switching out of Chord Keys. High MIDI notes now use the chord degree of the root actually played by the engine",
+      fr: "Correction d’un relâchement de note perdu après PATTERN ou la sortie de Chord Keys. Les notes MIDI aiguës utilisent désormais le degré de la fondamentale effectivement jouée par le moteur" },
+    { en: "Experimental revision awaiting hardware testing, alone and with other mods. Four voices maximum; Model-TG remains incompatible",
+      fr: "Révision expérimentale en attente d’un essai matériel, seule et avec les autres mods. Quatre voix au maximum ; Model-TG reste incompatible" },
+  ] },
   { version: "1.28", date: "2026-10-07", changes: [
     { en: "Chord Keys: hold a chord, then press T1–T6 to change its harmony while keeping the selected track. TRACK + T1–T6 still selects tracks",
       fr: "Chord Keys : tenez un accord, puis appuyez sur T1–T6 pour modifier son harmonie en gardant la piste sélectionnée. TRACK + T1–T6 sélectionne toujours les pistes" },

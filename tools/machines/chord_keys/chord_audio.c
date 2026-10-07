@@ -158,8 +158,14 @@ void chord_audio_update(int pitch_q16, void *voice, const unsigned short *params
     }
     if (track < 6 && voice_offset == 0 && note >= 0 && note <= 127) {
         unsigned int cfg = ck_audio_config(track);
+        /* L'update natif borne la fondamentale MIDI à 96. Choisir le degré
+         * et publier le nom depuis cette même note, y compris pour 97..127.
+         * Le pitch Q16 original reste confié à l'accordage natif de l'OS.
+         */
+        if (note > 96)
+            note = 96;
         if (cfg & 0x80000000u)
-            frame.controls = ck_audio_controls(track);
+            frame.controls = ck_audio_locked_controls(track, params[23]);
         chord_audio_prepare(&frame, cfg, (unsigned int)note);
         if (!frame.active)
             ck_chord_live[track] = 0;

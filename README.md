@@ -46,7 +46,7 @@ Going back to the official firmware is one click away.
 | **Syntakt engines** | Up to five real Syntakt machines added next to the original six: **SD VINTAGE**, **CP VINTAGE**, **SY TOY**, **SY BITS** and **SY SWARM**, with the Syntakt's knob names and defaults. They are read from your own Syntakt OS file. | ✅ Tested |
 | **Model-TG** | A full Sampler machine with seven playback modes, resampling, a beat-repeat page with master FX, slide trigs, Scale Lock and more, by [TinyGregAudio](https://github.com/TinyGregAudio/Model-TG). Works with the 6-channel mod and the Syntakt engines. | 🧪 Experimental |
 | **Arpeggiator** | Hold several notes with RETRIG and they play as an arpeggio. `FUNC` + `RETRIG` adds direction (up, down, up/down, random, or in the order played) and range (1 to 4 octaves), saved with the pattern. | ✅ Tested |
-| **Chord Keys** | Play the selected CHORD track with `TRIG 1–16` and see the played chord's name on screen. Choose each degree's TRI/7/9/11/13 in `FUNC` + `RETRIG`. COLOR selects DIATONIC, JAZZ or TENSION; SHAPE arranges and balances the notes. With Keys ON, T1–T6 always make temporary 9/11/13/SUS7/PARALLEL/V7 changes without selecting another track. Improved controls also apply to existing patterns. Model-TG is incompatible. | 🧪 Experimental revision |
+| **Chord Keys** | Play the selected CHORD track with `TRIG 1–16` and see the played chord's name on screen. Choose each degree's TRI/7/9/11/13 in `FUNC` + `RETRIG`. COLOR selects DIATONIC, JAZZ or TENSION; SHAPE arranges and balances the notes. With Keys ON, T1–T6 always make temporary 9/11/13/SUS7/PARALLEL/V7 changes without selecting another track. Record pad changes as HARMONY parameter locks. Improved controls also apply to existing patterns. Model-TG is incompatible. | 🧪 Experimental revision |
 | **Tempo up to 546 BPM** | The TEMPO knob, tap tempo, MIDI clock and saved projects go past 300 BPM. Tempo-synced LFOs stay in time. | ✅ Tested |
 | **Startup animation** | When the Model:Cycles starts, the four squares of the modded-cycles logo pop in and “modded-cycles” types itself underneath, instead of the original tile animation. Same duration. | ✅ Tested |
 | **Easier trig removal** | A quick press on a step that holds a trig removes it, instead of opening it as a hold. | ✅ Tested |
@@ -66,7 +66,7 @@ are preserved but interpreted with the improved behavior. Freshly initialized pa
 each position. The last pad pressed wins; release it to restore an earlier held pad, then the saved
 extension. While a TRIG is held, the screen names the chord being played, including the current palette and temporary pad change,
 for example Cmaj7 or Em9. HIGH LIMIT warns when the engine limits the root or removes voices in the high register;
-the displayed harmonic name stays the same. Pad gestures are live only and are not recorded as automation. Four voices maximum: extended m7♭5
+the displayed harmonic name stays the same. HARMONY pad changes can be recorded as parameter locks and saved with the pattern; COLOR and SHAPE remain independent. Four voices maximum: extended m7♭5
 keeps its diminished fifth and omits the third; PARALLEL and V7 are unavailable for diminished targets.
 
 Compatible combinations are checked in software with USB audio, latching mute, trig preview, scrolling names,

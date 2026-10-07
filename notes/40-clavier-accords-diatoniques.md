@@ -1499,3 +1499,192 @@ ne constituent pas une preuve fonctionnelle complète de chaque combinaison.
 
 Cette révision reste **experimental**, seule ou combinée. Aucun résultat matériel de cette
 correction n'est revendiqué ; les essais des versions précédentes gardent leur portée initiale.
+
+## 17. Pads tenus, P-locks et retours de review (07/10/2026)
+
+Nico signale que le changement de piste persiste lorsqu'il tient une touche TRIG puis appuie
+sur un pad T pour modifier l'accord. Il demande aussi que ces transformations s'enregistrent
+en P-locks. Ce retour invalide la conclusion matérielle attendue au §16 : ses preuves ne
+couvraient pas encore le chemin responsable du défaut observé sur sa machine.
+
+La [review de Maxime du PR #46](https://github.com/18nelli18/Modded-Cycles/pull/46#issuecomment-6037081914)
+porte sur `696276b`, avant les pads HARMONY. Elle relève deux autres régressions à traiter :
+
+- un relâchement TRIG consommé par PATTERN ou par le masque de suppression laisse une identité
+  de touche périmée. La prochaine frappe normale peut alors perdre son note-off ;
+- au-dessus de la note MIDI 96, le moteur borne la fondamentale mais le mod choisissait encore
+  le degré depuis la note non bornée.
+
+`[FAIT : génération]` Chord Keys appelle directement des fonctions C++ de l'OS dont les
+retours de pointeur passent dans `d0`. Le générateur exige désormais **m68k-elf-gcc 16.2.0**
+et refuse la cible Linux (retours dans `a0`) avant toute compilation. `M68K_CROSS` peut
+désigner un autre chemin vers cette même chaîne. La version est figée pour reproduire les
+octets du JSON ; ce garde ne remplace pas les preuves d'ABI sur l'image finale.
+
+### 17.1. Pourquoi les pads pouvaient encore sélectionner une piste
+
+`[FAIT : désassemblage]` Le constructeur `PadEvent` en `0x40074092` écrit le drapeau
+de fonction avec `move.b d2,28(a2)`. Son accesseur `0x400740fc` lit également un octet.
+`pad_press` le lisait avec `WORD(event, 28)`, donc sur quatre octets : les trois octets
+de remplissage suivants, non initialisés par ce constructeur, pouvaient faire croire
+qu'un raccourci était actif. Le mod rendait alors l'événement à `PadsView`, qui sélectionnait
+la piste du pad. Les bancs précédents utilisaient une mémoire initialement nulle et masquaient
+ce défaut. La lecture devient `event[28]` ; les octets 29..31 n'ont aucun sens fonctionnel.
+
+### 17.2. Identité périmée après un relâchement intercepté
+
+`[FAIT : code]` Une première frappe `flags & 9 == 1` signifie que la touche physique
+est revenue à l'état relâché entre deux appuis. `ck_ui_key` termine donc toute ancienne
+capture de cette même touche puis remet `valid` à zéro avant `handle_press`, conformément
+à la review. Si le nouvel appui revient au clavier stock ou à la grille, son relâchement
+ne sera plus avalé par l'ancienne capture. Les répétitions de maintien ne passent pas
+dans cette branche. `active` est remis à zéro au premier note-off, ce qui évite les doublons.
+Les identités des quinze autres touches restent intactes.
+
+`[FAIT en émulation : régressions ciblées]` Le banc `chord_routing_checks.py` ajoute
+29 contrôles. Le constructeur réel préserve délibérément des valeurs non nulles dans chacun
+des trois octets de remplissage ; les deux dispatchers exécutent ensuite les vtables réelles.
+La vue `PatternAndBankSelectView` consomme effectivement un relâchement ; le masque natif
+est posé par `0x4007fb32` puis exercé par le scanner `0x4007fbde`, qui supprime le message
+de fin avant la file. Les nouvelles frappes sont alors rejouées dans le dispatcher réel.
+Sont aussi couverts : annulation de note avant Keys OFF, autre piste, nouvel accord Keys ON,
+répétitions de maintien, autre touche indépendante et retour à `PatternGridView`.
+Ces preuves restent des chemins ciblés avec services du banc ; aucun démarrage complet
+de l'appareil ni capteur physique de pad n'est simulé.
+
+### 17.3. Même fondamentale au-dessus de MIDI 96
+
+`[FAIT : code]` Le wrapper borne la note à 96 avant de déterminer son degré et son extension.
+Il transmet toujours le pitch Q16 original à l'update natif, qui conserve ses propres règles
+d'accordage. L'instantané harmonique utilise lui aussi la note bornée. Si cette note 96 est
+hors de la gamme choisie, le moteur garde SHAPE stock, même si la note MIDI reçue était diatonique.
+Keys OFF suit le chemin d'origine. Le nouveau banc teste l'entrée du DSP après réception de
+la note : il ne simule pas le transport MIDI USB/DIN complet.
+
+### 17.4. Une voie HARMONY dans les P-locks natifs
+
+`[FAIT : désassemblage et émulation]` Les buffers de paramètres et les locks natifs
+contiennent 33 slots par piste. Les six moteurs stock n'utilisent que les slots 0..22.
+Les recherches de descripteur sur 23..32 rendent l'identifiant d'erreur ; une preuve
+exécute les six moteurs avec des sentinelles dans ces mots, sans aucune lecture DSP
+et avec le même PCM pendant 32 blocs. HARMONY utilise le slot 23 : entier 0 pour EXT,
+1..6 pour T1..T6. Aucun encodage dans les fractions de COLOR ou de SHAPE.
+
+| Chemin | Routine ou accroche | Modification |
+|---|---|---|
+| Écriture d'un pas | `0x4001646a` | Setter de lock natif, présence et notification de la piste |
+| Pas vide | `0x40017bb0` | Lock-only natif, sans nouveau note-on |
+| Sauvegarde complète | `0x4005b9c6` | Slot 23 sérialisé sous l'identifiant 33 |
+| Sauvegarde partielle | `0x4005bad2` | Même identifiant pour la mise à jour d'une lane |
+| Chargement | `0x4005b816`, `0x4005aa1a` | Borne 33 puis décodage 33 → 23 pour les pistes audio |
+| Enregistrement d'une note | `0x40012274` | Capturer le pad déjà tenu sur le pas choisi par le recorder natif |
+| Relecture | `0x4005487c`, `0x400583da`, `0x40058474` | Extraction, application et lissage natifs jusqu'à CHORD |
+| Retour au son de base | `0x40058308` | Remise à zéro native du slot et de son bit de présence |
+
+L'identifiant disque 33 est volontairement au-dessus de la borne du chargeur officiel :
+en revenant à l'OS stock, les locks HARMONY sont ignorés au lieu d'être interprétés comme
+LEVEL. Les autres paramètres conservent leur représentation. Une sauvegarde ultérieure
+par l'OS officiel peut donc supprimer ces nouveaux locks.
+
+En live rec, chaque appui et relâchement écrit le nouvel état sur le pas courant ; une
+nouvelle note reçoit aussi son état HARMONY, même si le pad était déjà tenu. Un retour
+explicite à zéro évite de prolonger une transformation sur une note tenue. Comme les
+P-locks natifs, un seul état tient dans un pas : le dernier geste enregistré sur ce pas
+prévaut. Ce ne sont pas des événements à résolution audio.
+
+En grille, tenir un ou plusieurs pas puis appuyer sur T1–T6 écrit leur transformation.
+Un second appui sur le même pad remet les pas ayant cette valeur à EXT, sans effacer
+leurs autres locks. Relâcher le pad ne remplace pas le choix de grille par zéro.
+Sans pas tenu, les pads de grille gardent le chemin stock ; les raccourcis réservés
+et Keys OFF aussi. La capacité de locks reste celle du pool natif, partagée avec les
+autres paramètres.
+
+Dans le DSP, le pad tenu et le jeu direct des TRIG gardent la priorité. Sinon le slot 23
+n'est accepté qu'avec son bit de lock natif (`0x423087f8 + 8 × piste`) et une valeur 0..6.
+Une valeur parasite ou une écriture générique du LFO sans ce bit ne crée pas de geste.
+Le wrapper ne modifie pas les paramètres partagés et n'alloue rien dans l'interruption.
+
+`[FAIT : génération finale]` Cette révision contient **81 écritures** ; code, constantes
+et état occupent **10 461 octets dans 31 masques**, parmi les **10 888 octets** de la réserve
+existante. Aucun nouveau masque ni payload externe n'est ajouté. Les empreintes du MAIN OS
+figurent dans BUILD.md. La cible du générateur est m68k-elf-gcc 16.2.0, binutils 2.47.
+
+### 17.5. Preuves ciblées et essai matériel restant
+
+`[FAIT en émulation]` Les nouveaux bancs vérifient :
+
+- les 29 régressions de routage et de relâchement détaillées au §17.2 ;
+- 5 376 updates de notes aiguës (7 modes, 12 toniques, 96..127 et deux valeurs PITCH),
+  ainsi que l'identité stock sur les six pistes avec Keys OFF ;
+- le mapping de chargement audio/FX, la sauvegarde des anciens patterns identique octet
+  pour octet, les nouveaux locks sur six pistes et les frontières de pages 0/7/31/32/63,
+  la copie, le writer partiel et les effacements natifs ;
+- le retour au chargeur officiel, qui ignore HARMONY et préserve exactement les autres locks ;
+- les véritables événements PadEvent, le recorder de notes, le retour à EXT en live rec,
+  les masques de pas tenus en grille et le second appui qui remet EXT ;
+- 180 opérations via les notifications natives et leur miroir de sauvegarde partielle,
+  ainsi que la saturation du pool, sans écrasement des autres données ;
+- 162 relectures sur six pistes et trois palettes : extraction de l'événement, application,
+  bitmap, lissage natif, update CHORD et instantané ; retour natif à EXT et rejet des
+  valeurs sans bit de présence ou hors domaine.
+
+Le banc contrôle certains services de projet, l'horloge et les observateurs. Il ne simule
+ni un démarrage complet, ni le transport MIDI, ni toutes les vues de l'écran, ni les délais
+de l'appareil. Les contrôles de syntaxe et de build ne remplacent pas un essai sur machine.
+
+`[À FAIRE sur la machine]` Tester d'abord **Chord Keys seul**, CHORD, Keys ON, Root C2, MAJ :
+
+1. Tenir TRIG 1 puis T1–T6 successivement et plusieurs pads superposés : aucune sélection
+   involontaire, retour au précédent puis à EXT ; vérifier TRACK + pad séparément.
+2. En LIVE RECORDING, tenir une note sur plusieurs pas et changer les pads ; relâcher chaque
+   pad sur un pas différent. Rejouer sans toucher les pads, puis sauvegarder/recharger.
+   Une prise sans pad sur un pas déjà enregistré doit rétablir EXT.
+3. En GRID RECORDING, tenir un pas puis choisir T1, T4 ou T6 ; appuyer à nouveau sur le même
+   pad pour EXT. Répéter avec plusieurs pas, sur d'autres pages et pistes. Vérifier que les
+   locks COLOR/SHAPE existants restent audibles et que l'effacement fonctionne.
+4. Tenir un TRIG, ouvrir PATTERN, relâcher le TRIG, fermer PATTERN puis jouer une note sur
+   une autre piste ou avec Keys OFF : les notes suivantes doivent recevoir leur note-off.
+5. Envoyer des notes MIDI 96..127 : la fondamentale bornée conserve le même degré. Essayer
+   les renversements, PITCH/FINE et les transitions vers les notes basses.
+6. Après validation seule, répéter avec les autres mods souhaités et six pistes actives,
+   puis vérifier USB audio et CONFIG › UPGRADE. Cette révision reste **experimental**.
+
+### 17.6. Validation finale de cette révision
+
+`[FAIT en émulation : JSON final]` La suite standalone complète termine **TOUT OK**,
+avec **376 contrôles réussis**, sans erreur ni interruption. La suite combinée termine
+elle aussi **TOUT OK**, avec **384 contrôles réussis**, pour 6ch-usbup, latching-mute,
+trig-preview, browser-scroll, trig-hold, arp, tempo-max, boot-anim et les cinq moteurs
+Syntakt. Les deux scénarios CHORD du régulateur (DIATONIC/CLS0 et TENSION/OPN3) passent ;
+le banc indépendant du régulateur, avec les mêmes écritures Chord Keys, passe ses
+**12 contrôles**. Ces preuves exécutent les nouveaux chemins P-lock et les régressions précédentes sur les routines OS : événements, menu,
+stockage, DSP et écran. Le JSON vérifié contient 81 écritures, SHA-256
+`ea5a96f27cbe201c1cd742ed4316f94d01c77f782c8f628058cc785f181ef2b0`.
+
+Le getter natif inclus, les six pistes CHORD demandent **54 512 instructions par bloc**
+avec Keys OFF (référence 51 368), **61 490** en BASE (référence 51 488) et **64 214**
+en OPN3 (référence 51 536). Sous l'entrée de l'update, la pile observée passe de
+**104 à 348 octets**, soit 244 octets supplémentaires. Ce sont des instructions
+émulées et une profondeur observée dans ce banc, pas des cycles CPU ni une garantie
+de marge de pile ou de charge sur l'appareil.
+
+`[FAIT : génération et build]` Les contrôles du générateur Chord Keys, de
+`gen_flasher_tweaks.py` et de la relocalisation USB passent, ainsi que les contrôles de
+syntaxe Python/JavaScript et les comparaisons des builders et validateurs SysEx.
+Le parcours synthétique du flasher termine **ALL OK**. Le MAIN OS du fichier produit
+est réextrait et conforme ; les sections **2, 4 et 5 restent identiques octet pour octet**
+à l'image officielle, avec checksums et HMAC valides. Le fichier reste local, ignoré
+par Git. `REF_MAINOS --check` valide les **17 407 références** générées ; les quatre
+empreintes de construction usuelles figurent dans BUILD.md.
+
+`[FAIT : contrôle navigateur final]` Le parcours du flasher avec les deux fichiers
+OS officiels termine **ALL PARTS OK**, code retour 0 : **17 407 combinaisons** construites
+et conformes aux empreintes attendues, couverture exacte des choix proposés, aucune
+erreur JavaScript. Ces comparaisons de construction ne remplacent pas une émulation
+fonctionnelle de chaque combinaison ; cette dernière porte sur le mod seul et la
+combinaison groupée ci-dessus. Aucun résultat matériel n'est revendiqué.
+
+Le banc indépendant du régulateur utilise temporairement le tweak
+`24-syntakt-sd-cp-toy-bits-swarm.json`, avec les 81 écritures de `44-chord-keys.json`
+ajoutées à sa liste `writes`, sans changer son payload ni ses symboles `gov`.
+`test_governor.py --cycles … --syntakt … --tweak …` exerce alors cette image combinée.
