@@ -14,8 +14,8 @@ Tweak : [`45-chord-keys.json`](../tweaks/model-cycles_OS1.13/45-chord-keys.json)
 [`tools/gen_chord_keys.py`](../tools/gen_chord_keys.py), sources
 [`tools/machines/chord_keys/`](../tools/machines/chord_keys/), preuves sous `tools/emu/` et test natif
 [`tools/test_chord_keys.py`](../tools/test_chord_keys.py). **État au 07/10/2026 : expérimental.** Nico rapporte que
-Chord Keys seul fonctionne sur son Model:Cycles (§13) ; pas encore d'essai de Maxime, et les combinaisons ne sont
-vérifiées qu'en logiciel. Relecture de l'intégration et défauts connus au §14.
+Chord Keys seul fonctionne sur son Model:Cycles (§13). Maxime l'a essayé le 07/10/2026, seul et avec six autres mods :
+tout marche, sauf le cas de note bloquée attendu (§15). Relecture de l'intégration et défauts connus au §14.
 
 ## Réponse courte
 
@@ -704,3 +704,19 @@ Défauts connus, aucun ne bloque l'essai sur la machine :
   sont passés sur `0x4018dba8`, `0x4018f4b4`, `0x4018fc74` et `0x40192734`, hors des quatorze masques de Chord
   Keys. L'écoute des samples (`33-sample-preview`) partage `0x40183118`, `0x40185018`, `0x40185968` et
   `0x40185c58` avec Chord Keys : permis, car elle exige Model-TG, que Chord Keys exclut, et elle déclare le conflit.
+
+## 15. Essai de Maxime sur la machine (07/10/2026)
+
+`[FAIT, Maxime, 07/10/2026]` Fichiers de la fiche `clavier-accords/tester.md` du projet, construits depuis l'OS
+officiel avec le `build.py` du dépôt :
+
+- `chord-keys-trig_model-cycles_OS1.13.syx`, Chord Keys seul (MAIN OS `47e399fb…ddda4e4cf`) ;
+- `chord-keys-trig-avec-mods_model-cycles_OS1.13.syx`, avec `6ch-usbup`, `arp`, `trig-hold`, `tempo-max`,
+  `boot-anim` et `syntakt-sd-cp-toy-bits-swarm` (MAIN OS `6a9a68bc…1843dabf`).
+
+Retour : « tout marche sauf le point 9 comme prévu ». Les vingt points de la fiche passent, sauf le point 9, qui
+reproduit le **relâchement avalé** du §14 (PATTERN tenu pendant le relâchement d'un TRIG, puis note bloquée sur une
+autre piste). Le défaut est donc confirmé sur la machine ; sa correction attend une recompilation avec GCC 16.2.
+
+Les mods de djd_oz (`46-level-pan-values`, `47-trigless-dim`, PR #53) ne sont pas dans ces fichiers. Chaque `.syx`
+remplace tout l'OS : en flasher un retire les mods installés avant.
