@@ -168,9 +168,10 @@ async function main() {
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
     check(ids.slice(0, 14).join() === "6ch-usbup,model-tg,model-tg-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,macro,macro-tg,syntakt-sd,syntakt-tg-sd"
-      && ids.length === 12 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+      && ids.length === 12 + 4 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+      && ids.includes("syntakt-sd-macro") && ids.includes("syntakt-tg-sd-cp-toy-bits-swarm-macro")
       && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 11,
-      `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG: ${ids.length} tweaks`);
+      `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG, with and without MACRO: ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
     check(["builder.js", "tweaks.js", "flasher.js", "app.js"].every((f) => srcs.some((x) => x.startsWith(f + "?")))
@@ -221,22 +222,27 @@ async function main() {
     check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,pichenettes/eurorack,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",
       "credits section lists the 6 upstream repositories");
     const box = (id) => doc.getElementById(id);
-    // MACRO (notes/43): with Model-TG, Model-TG takes its base and MACRO the version built on it; never with the
-    // Syntakt engines (same block after the image): ticking one unticks the other
+    // MACRO (notes/43): with Model-TG, Model-TG takes its base and MACRO the version built on it. With the Syntakt
+    // engines (notes/50) both stay ticked: MACRO adds nothing itself, the engines take their version with MACRO
+    const chosen = () => w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
     box("feat-macro").click(); await wait(5);
-    const macroAlone = w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
+    const macroAlone = chosen();
     box("feat-model-tg").click(); await wait(5);
-    const macroTg = w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
+    const macroTg = chosen();
     const macroNote = /needs a firmware with MACRO at the same place/.test(text(doc, "features"));
-    box("feat-model-tg").click(); await wait(5);
     box("feat-syntakt").click(); await wait(5);
-    const swapped = !box("feat-macro").checked && box("feat-syntakt").checked;
+    const allThree = chosen();
+    const saidTg = /SDVtg \+ MACRO with Model-TG\./.test(textOf(doc, "#mod-syntakt .combo"))
+      && /With the MACRO machine: it comes last/.test(textOf(doc, "#mod-syntakt"));
+    box("feat-model-tg").click(); await wait(5);
+    const withEng = chosen();
+    const bothOn = box("feat-macro").checked && box("feat-syntakt").checked && /SDVtg \+ MACRO\./.test(textOf(doc, "#mod-syntakt .combo"))
+      && /With Real Syntakt engines: (checked in the emulator|tried on the machine)/.test(textOf(doc, "#det-macro"));
+    box("feat-syntakt").click(); await wait(5);
     box("feat-macro").click(); await wait(5);
-    const back = box("feat-macro").checked && !box("feat-syntakt").checked;
-    box("feat-macro").click(); await wait(5);
-    check(macroAlone === "macro" && macroTg === "model-tg-st,macro-tg" && macroNote && swapped && back
-      && !w.MCFlasherApp.chosenTweaks().length && doc.querySelector('#features a[href$="#macro"]'),
-      `MACRO: alone ${macroAlone}, with Model-TG ${macroTg}, its note shown, and never with the Syntakt engines`);
+    check(macroAlone === "macro" && macroTg === "model-tg-st,macro-tg" && macroNote && allThree === "model-tg-st,syntakt-tg-sd-macro"
+      && saidTg && withEng === "syntakt-sd-macro" && bothOn && !chosen().length && doc.querySelector('#features a[href$="#macro"]'),
+      `MACRO: alone ${macroAlone}, with Model-TG ${macroTg}, its note shown; with the Syntakt engines ${withEng}, and with Model-TG too ${allThree}`);
     // Model-TG holds drumkilla's tweaks: ticked, it shows them ticked and locked, "(included with Model-TG)", and
     // builds without them; unticked, they are free again. With the Syntakt engines it makes the combined version
     // (notes/31): its base, then the engines' tweak built on top of it
@@ -399,8 +405,8 @@ async function main() {
       "× on a chip unticks the mod, the focus goes to the next ×");
     await clearAll();
     check(ids() === "" && /No mod ticked yet/.test(text(doc, "mod-sel")), "« Untick all » empties the selection");
-    // a conflict injected between two mods that do go together (MACRO / Syntakt is checked above), said before
-    // ticking, then Undo
+    // a conflict injected between two mods that do go together (no two mods clash today), said before ticking, then
+    // Undo
     const tempo = feats.find((f) => f.id === "tempo-max");
     tempo.excludes = ["arp"];
     await click(box("feat-arp"));
@@ -685,13 +691,14 @@ async function main() {
     }
     const combos = engineCombos(w);
     const synEx = w.MC_TWEAKS.features.filter((f) => (f.excludes || []).includes("syntakt")).map((f) => "feat-" + f.id);
+    const joins = w.MC_TWEAKS.features.filter((f) => f.joins === "syntakt").map((f) => f.id);   // MACRO (notes/50)
     const plain = boxes.filter((b) => b !== "feat-syntakt" && b !== "feat-model-tg" && !synEx.includes(b));   // what goes with the engines
     const sets = [];                                  // with the engines: any of these, or Model-TG (with or without USB)
     for (let mask = 0; mask < 1 << plain.length; mask++) sets.push(plain.filter((b, k) => mask & (1 << k)));
     const tgEx = w.MC_TWEAKS.features.find((f) => f.id === "model-tg").includes.map((x) => "feat-" + x);
     const withTg = plain.filter((b) => !tgEx.includes(b));    // Model-TG and what it goes with (USB, trig removal, arpeggiator)
     for (let mask = 0; mask < 1 << withTg.length; mask++) sets.push(["feat-model-tg", ...withTg.filter((b, k) => mask & (1 << k))]);
-    const tgOf = Object.fromEntries(w.MC_TWEAKS.features.find((f) => f.engines).combos.map((c) => [c.id, c.tg]));
+    const comboById = Object.fromEntries(w.MC_TWEAKS.features.find((f) => f.engines).combos.map((c) => [c.id, c]));
     for (const variant of REAL_ST ? Object.keys(combos).slice(1) : []) {   // the other engine combinations
       for (const on of sets) {
         if (!mine()) continue;
@@ -704,7 +711,8 @@ async function main() {
         await settle(w);
         const f = app.state.fw;
         seen.add(app.state.buildKey);
-        check(f && f.kind === "built" && f.ref && app.state.buildKey.endsWith(on.includes("feat-model-tg") ? tgOf[variant] : variant),
+        const j = joins.find((x) => on.includes("feat-" + x)), v = j ? comboById[variant][j] : comboById[variant];
+        check(f && f.kind === "built" && f.ref && app.state.buildKey.endsWith(on.includes("feat-model-tg") ? v.tg : v.id),
           `real OS: ${app.state.buildKey} matches its reference hash`);
       }
     }
@@ -892,6 +900,20 @@ async function main() {
       check(sent.length - n1 === w.MCFlasher.splitMessages(fv.raw).length && msg.test(text(doc, "result")),
         `full transfer + message for ${combos[variant].join(" + ")}`);
     }
+    // MACRO ticked too (notes/50): the engines' version with MACRO, and MACRO named last after the transfer
+    doc.getElementById("feat-macro").click();
+    await settle(w);
+    const fm = app.state.fw;
+    check(fm && fm.ref && fm.sdv === "syntakt-cp-macro" && fm.name.endsWith("syntakt-cp-macro.syx"),
+      `CPVtg + MACRO -> reference build ${fm ? fm.name : ""}`);
+    const n2 = sent.length;
+    doc.getElementById("flash").click();
+    for (let i = 0; i < 200 && app.state.sending; i++) await wait(50);
+    check(sent.length - n2 === w.MCFlasher.splitMessages(fm.raw).length
+      && /after Chord come CPVtg \(CP VINTAGE\), MACRO \(47 models from Braids\)\./.test(text(doc, "result")),
+      "full transfer + message for CPVtg + MACRO: " + text(doc, "result").slice(0, 110));
+    doc.getElementById("feat-macro").click();
+    await settle(w);
     doc.getElementById("eng-cp").click();
     await settle(w);
     check(!app.state.fw && app.state.fwError === "pick_one" && !doc.getElementById("feat-syntakt").checked,

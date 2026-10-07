@@ -10,7 +10,6 @@ Le flasher refuse tout firmware construit dont le MAIN OS ne correspond pas.
 """
 import argparse
 import itertools
-import json
 import pathlib
 import re
 import sys
@@ -20,6 +19,7 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE / "emu"))
 
 import build                       # noqa: E402
+import gen_flasher_tweaks          # noqa: E402
 
 ROOT = HERE.parent
 TWEAKS_JS = ROOT / "docs" / "flasher" / "tweaks.js"
@@ -28,8 +28,7 @@ BLOCK = re.compile(r"(const REF_MAINOS = \{\n)(.*?)(\n\};\n)", re.S)
 
 
 def mc_tweaks():
-    text = TWEAKS_JS.read_text(encoding="utf-8")
-    return json.loads(text[text.index("window.MC_TWEAKS = ") + len("window.MC_TWEAKS = "):text.rindex(";")])
+    return gen_flasher_tweaks.read_js(TWEAKS_JS.read_text(encoding="utf-8"))
 
 
 def main_os(cycles):
@@ -57,7 +56,10 @@ def block(cycles, syntakt):
     # une carte « with » prend un autre tweak quand une autre carte est cochée aussi (Model-TG avec les moteurs du
     # Syntakt ou MACRO : sa base model-tg-st ; MACRO avec Model-TG : macro-tg), comme chosenTweaks() de app.js ; et
     # les moteurs du Syntakt, avec Model-TG, le leur (tg)
-    tg_of = {c["id"]: c["tg"] for c in extra[0]["combos"]} if extra else {}
+    combo_of = {c["id"]: c for c in extra[0]["combos"]} if extra else {}
+    # une carte « joins » (MACRO) cochée avec les moteurs n'ajoute rien : la combinaison de moteurs prend sa version
+    # avec elle (notes/50), comme chosenTweaks() de app.js
+    joins = [f["id"] for f in base if extra and f.get("joins") == extra[0]["id"]]
 
     def payload(apps):
         """Charges utiles des tweaks « append » choisis, l'une après l'autre (comme tools/build.py)."""
@@ -74,9 +76,10 @@ def block(cycles, syntakt):
         for sub in subsets:
             on = {f["id"] for f in sub} | ({extra[0]["id"]} if last else set())
             ids = [next((a for g, a in reversed(list(f.get("with", {}).items())) if g in on), options(f)[0])
-                   for f in sub]
+                   for f in sub if not (last and f["id"] in joins)]
             if last:                                      # avec Model-TG : la version combinée (notes/31)
-                ids.append(tg_of[last] if "model-tg" in on else last)
+                c = next((combo_of[last][j] for j in joins if j in on), combo_of[last])
+                ids.append(c["tg"] if "model-tg" in on else c["id"])
             chosen = [by_id[i] for i in ids]
             if not ids or any(o in ids for t in chosen for o in t.get("conflicts", [])):
                 continue                                  # cases incompatibles : la page ne les propose pas

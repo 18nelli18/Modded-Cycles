@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.33", date: "2026-10-07", changes: [
+    { en: "MACRO and the Syntakt engines together: the flasher now lets you tick both cards. MACRO comes last, right after the engines you tick (after the Sampler and the engines with Model-TG: with all five engines, MACRO is the 13th machine)",
+      fr: "MACRO et les moteurs du Syntakt ensemble : le flasher permet maintenant de cocher les deux cartes. MACRO vient en dernier, juste après les moteurs cochés (après le Sampler et les moteurs avec Model-TG : avec les cinq moteurs, MACRO est la 13e machine)" },
+    { en: "In this combination, the engines' load governor looks after MACRO tracks too. To fit in the firmware, the added code is stored compressed and unpacked when the machine starts",
+      fr: "Dans cette combinaison, le régulateur de charge des moteurs veille aussi sur les pistes MACRO. Pour tenir dans le firmware, le code ajouté est rangé compressé et décompressé au démarrage de la machine" },
+    { en: "Experimental: checked in the emulator (the engines and MACRO play exactly as each one alone, alone and with Model-TG), not yet tested on a Model:Cycles. MACRO alone and the engines alone are unchanged",
+      fr: "Expérimental : vérifié en émulation (les moteurs et MACRO jouent exactement comme chacun seul, avec ou sans Model-TG), pas encore testé sur un Model:Cycles. MACRO seule et les moteurs seuls ne changent pas" },
+  ] },
   { version: "1.31", date: "2026-10-07", changes: [
     { en: "New mod, MACRO machine: one extra machine with the 47 synthesis models of Braids, Émilie Gillet's open-source macro-oscillator, compiled from her own code (MIT license). SHAPE picks the model (0 to 46), COLOR and SWEEP shape it, CONTOUR lets the amp envelope open the timbre; DECAY, GATE and PUNCH work as on Tone",
       fr: "Nouveau mod, Machine MACRO : une machine ajoutée avec les 47 modèles de synthèse de Braids, le macro-oscillateur libre d'Émilie Gillet, compilés depuis son propre code (licence MIT). SHAPE choisit le modèle (0 à 46), COLOR et SWEEP le façonnent, CONTOUR laisse l'enveloppe d'ampli ouvrir le timbre ; DECAY, GATE et PUNCH marchent comme sur Tone" },

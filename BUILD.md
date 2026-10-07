@@ -266,7 +266,8 @@ python3 tools/gen_macro.py --cycles model-cycles_OS1.13.syx --eurorack vendor/eu
 python3 tools/emu/test_macro.py --cycles model-cycles_OS1.13.syx --eurorack vendor/eurorack [--quick] \
     [--with 6ch-usbup,model-tg-st,trig-hold,arp,tempo-max,boot-anim]
 ```
-Incompatible avec les moteurs du Syntakt et SD VINTAGE (même mécanique, même place).
+Avec les moteurs du Syntakt : les tweaks combinés de la section suivante. Incompatible avec SD VINTAGE (même mécanique,
+même place).
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
@@ -274,6 +275,28 @@ Incompatible avec les moteurs du Syntakt et SD VINTAGE (même mécanique, même 
 | `6ch-usbup,macro` | `32932ae6eca06406f1c954368dc3465cf83e1026128b39ebfc7e746e9e01023f` |
 | `model-tg-st,macro-tg` | `d738fafaa86bbac86e328e6f0b70dd9688c1d9c3b05a423c957751c74abbd8d8` |
 | `6ch-usbup,model-tg-st,macro-tg,trig-hold,arp,tempo-max,boot-anim` | `f584f099bd2a26abfcccf3d954dd3b86ab1880c07a0b110bce88d569eed1daeb` |
+
+### MACRO avec les moteurs du Syntakt
+
+`tweaks/model-cycles_OS1.13/24-syntakt-<moteurs>-macro.json` et `31-syntakt-tg-<moteurs>-macro.json` (avec Model-TG,
+par-dessus `model-tg-st`) sont produits par `tools/gen_macro_syntakt.py` : les moteurs exactement comme dans leur tweak
+(passerelle reprise octet pour octet, pas recompilée), MACRO en dernière machine, après eux ; la charge utile commune
+(471 792 o) est rangée compressée et décompressée au démarrage ([note 50](notes/50-macro-avec-moteurs-syntakt.md)).
+Mêmes besoins que les deux mods (fichier Syntakt, clone d'eurorack, `m68k-linux-gnu-g++` 13.3) :
+```sh
+python3 tools/gen_macro_syntakt.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \
+    --eurorack vendor/eurorack [--engines sd,cp] [--tg] [--check]
+python3 tools/emu/test_macro_syntakt.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \
+    --eurorack vendor/eurorack [--engines sd,cp] [--only alone|tg] [--with 6ch-usbup,trig-hold,arp,tempo-max,boot-anim]
+```
+
+| `-t` (avec `--syntakt Syntakt_OS1.42.syx`) | MAIN OS patché (SHA-256) |
+|---|---|
+| `syntakt-sd-macro` | `94c5ff0d120912d5a2d36e452dea735860b650ab13e46b4136ec94acc4921dbf` |
+| `syntakt-sd-cp-toy-bits-swarm-macro` | `a47f326a03fdd1618e07bdc569763486c2f79bdc020bd01b4295826855ec7ddb` |
+| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `44285490d2f7166818f21fb4f73cb624218afcf45f4152620ab1f9cbd0690921` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro` | `b6c2bf8d3627faed85e9f9ee8b405d8fc56737246989de0f52de5b659634d1d9` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `3ad56cde759754e0844dbc30d3228520750ba4a520f5159edf142d48315e145f` |
 
 ### Écoute d'un pas en pause
 
