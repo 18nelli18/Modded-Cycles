@@ -61,8 +61,9 @@ FEATURES = [
             {"file": "30-model-tg", "label": None},
         ],
         # avec les moteurs du Syntakt : la base de la version combinee (notes/31), et pour chaque combinaison de
-        # moteurs son tweak syntakt-tg-<moteurs> (« tg » des combinaisons de la carte des moteurs)
-        "with": {"syntakt": "30-model-tg-st"},
+        # moteurs son tweak syntakt-tg-<moteurs> (« tg » des combinaisons de la carte des moteurs) ; de meme avec
+        # la machine MACRO (notes/43), qui prend alors macro-tg
+        "with": {"syntakt": "30-model-tg-st", "macro": "30-model-tg-st"},
     },
     {
         "id": "latching-mute",
@@ -140,6 +141,23 @@ FEATURES = [
         "variants": [
             {"file": "43-boot-anim", "label": None},
         ],
+    },
+    {
+        "id": "macro",
+        "label": "Machine MACRO : 47 modeles de synthese",
+        "desc": "Une machine ajoutee apres Chord (apres le Sampler avec Model-TG) : les 47 modeles du code libre "
+                "de Braids d'Emilie Gillet. SHAPE choisit le modele, COLOR et SWEEP le reglent, CONTOUR ouvre le "
+                "timbre avec l'enveloppe.",
+        "status": "experimental",
+        "credit": {"kind": "based", "who": "Émilie Gillet", "repo": "pichenettes/eurorack"},
+        "license": "LICENSE-Braids",
+        # meme bloc apres l'image que les moteurs du Syntakt (notes/43) : jamais ensemble
+        "excludes": ["syntakt"],
+        "variants": [
+            {"file": "25-macro", "label": None},
+        ],
+        # avec Model-TG : la version qui s'ajoute apres model-tg-st (Model-TG prend cette base, « with » ci-dessus)
+        "with": {"model-tg": "32-macro-tg"},
     },
     {
         "id": "syntakt",
