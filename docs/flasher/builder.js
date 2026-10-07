@@ -719,10 +719,77 @@ function crossflash(hostRaw, guestRaw) {
   return { raw, product: host.product, name: host.name, guestName: guest.name, mainOsSha: hex(sha256(main)) };
 }
 
+/* OS Cycles pour Model:Samples (tools/crossflash.py --to samples, notes/41) : le MAIN OS officiel du Cycles, dont
+ * la constante de sa cle de verification (32 octets en 0x401296b2) est recalculee pour donner la cle du Samples,
+ * dans le conteneur officiel du Samples (bootstrap, updater, signature Samples). Ainsi l'OS Cycles accepte ensuite
+ * l'OS Samples officiel par USB (samplesBack). Relu en entier. Renvoie { raw, mainOsSha }. */
+const CYC_KEY_STR = 0x40129650, CYC_KEY_CONST = 0x401296b2;
+const CYC_KEY_CODE = [[0x4005275c, "487940129650"], [0x400527c0, "43f9401296b2"]];
+
+function keyOf(c) {
+  const plain = [];
+  for (const s of c.sections) {
+    try { plain.push(aplibDepack(c.blob.subarray(s.off, s.off + s.size)).data); } catch (e) { /* brute */ }
+  }
+  const key = findKey(plain, c.blob.subarray(0, c.blob.length - DIGEST_LEN), c.blob.subarray(c.blob.length - DIGEST_LEN));
+  if (!key) throw new Error("cle HMAC introuvable");
+  return key;
+}
+
+function cyclesForSamples(cycRaw, smpRaw) {
+  const cy = unwrap(cycRaw), sm = unwrap(smpRaw);
+  if (cy.product !== 0x11 || sm.product !== 0x0f) throw new Error("il faut l'OS Model:Cycles puis l'OS Model:Samples");
+  const cc = parseContainer(cy.stream), sc = parseContainer(sm.stream);
+  const cKey = keyOf(cc), sKey = keyOf(sc);
+  const c3 = cc.sections.find((s) => s.id === 3);
+  const { data: main, ops } = aplibDepack(cc.blob.subarray(c3.off, c3.off + c3.size));
+  for (const [va, want] of CYC_KEY_CODE)
+    if (hex(main.subarray(va - BASE, va - BASE + 6)) !== want) throw new Error("code de verification inattendu");
+  const text = main.subarray(CYC_KEY_STR - BASE, CYC_KEY_STR - BASE + 12);
+  if (hex(text) !== "5245564552422053454e4400") throw new Error("chaine de derivation inattendue");
+  const s = text.subarray(0, 11), h = sha256(s), hr = sha256(Uint8Array.from(s).reverse());
+  const co = CYC_KEY_CONST - BASE, old = main.subarray(co, co + 32);
+  if (!eq(old.map((b, i) => b ^ h[i] ^ hr[i]), cKey)) throw new Error("la cle du MAIN OS Cycles differe de celle du bootstrap");
+  const patched = Uint8Array.from(main), dirty = new Uint8Array(main.length);
+  for (let i = 0; i < 32; i++) { patched[co + i] = sKey[i] ^ h[i] ^ hr[i]; dirty[co + i] = 1; }
+  const newS3 = aplibRepack(patched, ops, dirty);
+  if (!eq(aplibDepack(newS3).data, patched)) throw new Error("recompression du MAIN OS : relecture differente");
+  const blob = rebuildContainer(sc, { 3: newS3 }, sKey);
+  const raw = wrap(buildStream(blob, BYTES_PER_MSG), sm.product, sm.start_seq);
+
+  // relecture complete
+  const back = unwrap(raw), bc = parseContainer(back.stream);
+  if (back.product !== 0x0f || !eq(bc.blob.subarray(0, 0x20), sc.blob.subarray(0, 0x20))) throw new Error("relecture : en-tete");
+  for (const x of sc.sections) {
+    const b = bc.sections.find((y) => y.id === x.id);
+    if (!b) throw new Error(`relecture : section ${x.id} absente`);
+    if (x.id !== 3 && !eq(bc.blob.subarray(b.off, b.off + b.size), sc.blob.subarray(x.off, x.off + x.size)))
+      throw new Error(`relecture : section ${x.id} differente de celle du Samples`);
+  }
+  const b3 = bc.sections.find((y) => y.id === 3);
+  const m = aplibDepack(bc.blob.subarray(b3.off, b3.off + b3.size)).data;
+  if (!eq(m, patched)) throw new Error("relecture : MAIN OS different");
+  if (!eq(hmacSha256(sKey, bc.blob.subarray(0, bc.blob.length - DIGEST_LEN)), bc.blob.subarray(bc.blob.length - DIGEST_LEN)))
+    throw new Error("relecture : HMAC invalide avec la cle Samples");
+  return { raw, mainOsSha: hex(sha256(m)) };
+}
+
+/* Retour (tools/crossflash.py --back-samples) : l'OS Samples officiel, meme contenu et meme signature, dans le
+ * transport SysEx du Cycles (produit 0x11, octet appareil 0x0C), le seul que l'OS Cycles route vers sa mise a jour. */
+function samplesBack(cycRaw, smpRaw) {
+  const cy = unwrap(cycRaw), sm = unwrap(smpRaw);
+  if (cy.product !== 0x11 || sm.product !== 0x0f) throw new Error("il faut l'OS Model:Cycles puis l'OS Model:Samples");
+  const raw = wrap(sm.stream, cy.product, cy.start_seq);
+  const back = unwrap(raw);
+  if (back.product !== 0x11 || raw[8] !== 0x0c || !eq(back.stream, sm.stream)) throw new Error("relecture : transport ou contenu");
+  return { raw };
+}
+
 // ---- Export node / navigateur ---------------------------------------------
 const API = { sha256, hmacSha256, unwrap, wrap, aplibDepack, aplibRepack, parseContainer, findKey,
               rebuildContainer, buildStream, contentChecksum, applyWrites, checkConflicts, checkCaves,
-              build, crossflash, syntaktSection, syntaktVersion, buildPayload, hex, fromHex, PRODUCTS, BASE };
+              build, crossflash, cyclesForSamples, samplesBack, syntaktSection, syntaktVersion, buildPayload,
+              hex, fromHex, PRODUCTS, BASE };
 if (typeof module !== "undefined" && module.exports) module.exports = API;
 if (typeof window !== "undefined") window.MCBuilder = API;
 })();

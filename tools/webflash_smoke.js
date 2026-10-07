@@ -149,6 +149,8 @@ async function untilSent(w, ms = 60000) {
 }
 
 const text = (doc, id) => doc.getElementById(id).textContent;
+// text of the elements a selector picks (the Details drawers are always in the page: scope what a check reads)
+const textOf = (doc, sel) => [...doc.querySelectorAll(sel)].map((e) => e.textContent).join(" ");
 async function settle(w) {
   for (let i = 0; i < 200 && w.MCFlasherApp.state.building; i++) await wait(50);
   await wait(60);
@@ -174,18 +176,18 @@ async function main() {
     check(["builder.js", "tweaks.js", "flasher.js", "app.js"].every((f) => srcs.some((x) => x.startsWith(f + "?")))
       && srcs.every((x) => x.endsWith("?v=" + w.MC_BUILD)), "scripts loaded with ?v=<build> (no stale cache): " + srcs.join());
     check(doc.getElementById("compat").hidden, "no compatibility banner in a good browser");
+    // display order: by section (Packs, Sounds & machines, Sequencer, Live playing, Screen & browsing, USB & MIDI),
+    // FEATURES order inside a section; the build keeps FEATURES order (checked in 1b)
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-usb6,feat-model-tg,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-trig-hold,feat-arp,feat-tempo-max,feat-boot-anim,feat-macro,feat-syntakt", "11 feature cards: " + JSON.stringify(feats));
-    const tags = [...doc.querySelectorAll("#features .tag")].map((x) => x.textContent);
+    check(feats.join() === "feat-model-tg,feat-macro,feat-syntakt,feat-trig-preview,feat-trig-hold,feat-arp,feat-tempo-max,feat-latching-mute,feat-browser-scroll,feat-boot-anim,feat-usb6",
+      "11 feature rows, by section: " + JSON.stringify(feats));
+    check(w.MC_TWEAKS.features.every((f) => doc.querySelector(`#cat-${f.cat || "other"} #mod-${f.id} #feat-${f.id}`)),
+      "every feature has a row in its section (cat)");
     const tagOfFeat = (f) => (f.status === "tested" ? "Tested" : "Experimental");
-    const synTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.engines));
-    const arpTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "arp"));
-    const holdTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "trig-hold"));
-    const tempoTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "tempo-max"));
-    const bootTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "boot-anim"));
-    const macroTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "macro"));
-    check(tags.join() === "Tested,Experimental,Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + "," + macroTag + "," + synTag,
-      "cards tagged as tested or not (Model-TG experimental until tested here): " + tags.join());
+    const tags = w.MC_TWEAKS.features.map((f) => f.id + ":" + doc.querySelector(`label[for=feat-${f.id}] .tag`).textContent);
+    check(tags.join() === w.MC_TWEAKS.features.map((f) => f.id + ":" + tagOfFeat(f)).join()
+      && /Experimental/.test(tags.find((x) => x.startsWith("model-tg:"))),
+      "rows tagged as tested or not (Model-TG experimental until tested here): " + tags.join());
     check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until the Syntakt engines are ticked");
     doc.getElementById("feat-syntakt").click();
     await wait(30);
@@ -194,26 +196,27 @@ async function main() {
       "Syntakt engines ticked -> Syntakt drop zone and download link");
     const engs = [...doc.querySelectorAll('input[name="eng-syntakt"]')];
     check(engs.map((r) => r.value + ":" + r.checked).join() === "sd:true,cp:false,toy:false,bits:false,swarm:false" && engs.every((r) => r.type === "checkbox")
-      && /SDVtg — SD VINTAGE/.test(text(doc, "features")) && /CPVtg — CP VINTAGE/.test(text(doc, "features"))
-      && /SYToy — SY TOY/.test(text(doc, "features")) && /SYBit — SY BITS/.test(text(doc, "features"))
-      && /SYSwm — SY SWARM/.test(text(doc, "features"))
+      && /SDVtg — SD VINTAGE/.test(textOf(doc, "#mod-syntakt .pads")) && /CPVtg — CP VINTAGE/.test(textOf(doc, "#mod-syntakt .pads"))
+      && /SYToy — SY TOY/.test(textOf(doc, "#mod-syntakt .pads")) && /SYBit — SY BITS/.test(textOf(doc, "#mod-syntakt .pads"))
+      && /SYSwm — SY SWARM/.test(textOf(doc, "#mod-syntakt .pads"))
       && !/in place of SNARE/.test(text(doc, "features")) && doc.querySelectorAll('input[name="var-syntakt"]').length === 0
       && (engineCombos(w) && w.MC_TWEAKS.features.find((f) => f.engines).combos[0].tested
-        ? /tested on a real Model:Cycles/ : /not tested on a Model:Cycles yet/).test(text(doc, "features")),
+        ? /tested on a real Model:Cycles/ : /not tested on a Model:Cycles yet/).test(textOf(doc, "#mod-syntakt .combo")),
       "Syntakt engines: one checkbox per engine (SDVtg ticked by default, CPVtg, SYToy, SYBit, SYSwm), no SNARE replacement");
     await pickEngines(doc, ["cp"]);
-    check(/not tested on a Model:Cycles yet/.test(text(doc, "features")) && /Experimental/.test(doc.querySelector("label[for=feat-syntakt] .tag").textContent),
+    check(/not tested on a Model:Cycles yet/.test(textOf(doc, "#mod-syntakt .combo")) && /Experimental/.test(doc.querySelector("label[for=feat-syntakt] .tag").textContent),
       "CPVtg alone: a new choice, tagged Experimental");
     doc.getElementById("eng-cp").click();
     await wait(30);
     check(!doc.getElementById("feat-syntakt").checked && doc.querySelectorAll('input[name="eng-syntakt"]').length === 0
       && doc.getElementById("drop3-wrap").hidden, "last engine unticked -> the card turns off");
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
-    check(credits.length === 8 && credits[0] === "https://github.com/scottmetoyer/ms-multi-output"
-      && credits[1] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(credits[2])
-      && credits.slice(3, 6).every((h) => h === "https://github.com/drumkilla/elektron-model-tweaks")
-      && credits[6] === "https://github.com/pichenettes/eurorack" && /\/LICENSE-Braids\.txt$/.test(credits[7]),
-      "each card credits its author, Model-TG and MACRO with their MIT license: " + JSON.stringify(credits));
+    const creditOf = (id) => [...doc.querySelectorAll(`label[for=feat-${id}] .credit a`)].map((a) => a.href);
+    check(credits.length === 8 && creditOf("usb6").join() === "https://github.com/scottmetoyer/ms-multi-output"
+      && creditOf("model-tg")[0] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(creditOf("model-tg")[1])
+      && ["latching-mute", "trig-preview", "browser-scroll"].every((id) => creditOf(id).join() === "https://github.com/drumkilla/elektron-model-tweaks")
+      && creditOf("macro")[0] === "https://github.com/pichenettes/eurorack" && /\/LICENSE-Braids\.txt$/.test(creditOf("macro")[1]),
+      "each row credits its author, Model-TG and MACRO with their MIT license: " + JSON.stringify(credits));
     const list = [...doc.querySelectorAll("#credits-list a")].map((a) => a.textContent);
     check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,pichenettes/eurorack,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",
       "credits section lists the 6 upstream repositories");
@@ -243,7 +246,7 @@ async function main() {
     box("feat-model-tg").click(); await wait(5);
     const locked = drum.every((id) => box(id).checked && box(id).disabled
       && /\(included with Model-TG\)/.test(doc.querySelector(`label[for=${id}] .ttl`).textContent)) && box("feat-syntakt").checked;
-    const noteOn = /set to CYC/.test(text(doc, "features")) && /its Sampler is the 7th machine/.test(text(doc, "features"));
+    const noteOn = /set to CYC/.test(textOf(doc, "#mod-model-tg .say")) && /its Sampler is the 7th machine/.test(textOf(doc, "#mod-syntakt .combo"));
     const both = w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
     box("feat-trig-preview").click(); await wait(5);                 // locked: nothing changes
     const still = box("feat-model-tg").checked && box("feat-trig-preview").checked
@@ -270,7 +273,7 @@ async function main() {
       await pickEngines(doc, codes);
       const want = tgTested(codes) ? "Tested" : "Experimental";
       const note = tgTested(codes) ? /tested on a real Model:Cycles/ : /not tested on a Model:Cycles yet/;
-      return note.test(text(doc, "features")) && tagOf("feat-syntakt") === want && tagOf("feat-model-tg") === want;
+      return note.test(textOf(doc, "#mod-syntakt .combo")) && tagOf("feat-syntakt") === want && tagOf("feat-model-tg") === want;
     };
     const all5 = ["sd", "cp", "toy", "bits", "swarm"];
     const badgesOk = await badges(all5) && await badges(["sd"]);
@@ -337,6 +340,137 @@ async function main() {
     check(/Rapide \(USB\)/.test(text(doc, "m-fast")) && /Fermez Elektron Transfer/.test(text(doc, "howto-fast")), "FR: method and steps translated");
     doc.querySelector('.lang button[data-lang="en"]').click();
     await wait(20);
+  }
+
+  // 1b. The mod picker: sections, build order, Details, folding, the selection bar, conflicts with Undo,
+  // "Use this choice", focus, search, French
+  if (MAIN) {
+    const { w, doc, errors } = await load();
+    const app = w.MCFlasherApp;
+    const feats = w.MC_TWEAKS.features;
+    const box = (id) => doc.getElementById(id);
+    const click = async (el) => { el.click(); await wait(5); };
+    const ids = () => app.chosenTweaks().map((x) => x.id).join();
+    const clearAll = async () => { const b = doc.querySelector("#mod-sel [data-clear]"); if (b) await click(b); };
+    const sections = [...doc.querySelectorAll("#features section.grp")].map((g) => g.id.slice(4));
+    check(sections.join() === app.CATS.filter((c) => feats.some((f) => (f.cat || "other") === c)).join() && !box("cat-other"),
+      "sections in CATS order, no « Other mods » while every mod has a cat: " + sections.join());
+    check([...doc.querySelectorAll("#cats a[data-cat]")].map((a) => a.dataset.cat).join() === sections.join()
+      && doc.querySelector('#cats a[data-cat="seq"]').getAttribute("href") === "#cat-seq", "one chip per section, linking to it");
+    // the build keeps FEATURES order whatever the display order
+    await click(box("feat-arp"));
+    await click(box("feat-usb6"));
+    check(ids() === "6ch-usbup,arp", "build order unchanged (USB ticked after the arpeggiator): " + ids());
+    check(/2 mods/.test(text(doc, "mod-live")) && doc.querySelector('#cats a[data-cat="seq"] .led.on')
+      && !doc.querySelector('#cats a[data-cat="screen"] .led.on'), "screen readers hear the count; the LED of a section with a ticked mod lights");
+    await clearAll();
+    // a mod without a cat lands in « Other mods », at the end
+    const boot = feats.find((f) => f.id === "boot-anim"), bootCat = boot.cat;
+    delete boot.cat;
+    app.applyLang("en");
+    check(!!doc.querySelector("#cat-other #feat-boot-anim") && /Other mods/.test(textOf(doc, "#cat-other .grp-h"))
+      && [...doc.querySelectorAll("#features section.grp")].pop().id === "cat-other", "a mod without cat goes to « Other mods », last");
+    boot.cat = bootCat;
+    app.applyLang("en");
+    // Details: opens and closes, doesn't tick, holds the guide link
+    await click(box("more-arp"));
+    const opened = !box("det-arp").hidden && box("more-arp").getAttribute("aria-expanded") === "true" && !box("feat-arp").checked
+      && !!doc.querySelector('#det-arp a[href$="#arp"]') && /Status/.test(text(doc, "det-arp"));
+    await click(box("more-arp"));
+    check(opened && box("det-arp").hidden && box("more-arp").getAttribute("aria-expanded") === "false",
+      "Details opens the drawer (description, status, guide link) without ticking, and closes it");
+    // folding a section; a folded section still names its ticked mods; its chip unfolds it
+    await click(box("feat-arp"));
+    await click(box("grp-h-seq"));
+    const folded = box("grp-seq").hidden && box("grp-h-seq").getAttribute("aria-expanded") === "false"
+      && /Arpeggiator/.test(textOf(doc, "#cat-seq .grp-sel"));
+    await click(doc.querySelector('#cats a[data-cat="seq"]'));
+    check(folded && !box("grp-seq").hidden, "a folded section names its ticked mods, its chip unfolds it");
+    await clearAll();
+    // the selection bar
+    check(/No mod ticked yet/.test(text(doc, "mod-sel")) && !doc.querySelector("#mod-sel .sel-next"), "selection bar, empty");
+    await click(box("feat-usb6"));
+    await click(box("feat-model-tg"));
+    const counts = textOf(doc, "#mod-sel .sel-c");
+    check(/2 mods \+ 3 included/.test(counts) && doc.querySelectorAll("#mod-sel .chip").length === 2
+      && doc.querySelector("#mod-sel a.sel-next").getAttribute("href") === "#step-file", "selection bar: " + counts);
+    await click(doc.querySelector('#mod-sel [data-off="model-tg"]'));
+    check(ids() === "6ch-usbup" && !box("feat-model-tg").checked && doc.activeElement && doc.activeElement.dataset.off === "usb6",
+      "× on a chip unticks the mod, the focus goes to the next ×");
+    await clearAll();
+    check(ids() === "" && /No mod ticked yet/.test(text(doc, "mod-sel")), "« Untick all » empties the selection");
+    // a conflict (injected here: no mod has excludes yet), said before ticking, then Undo
+    const tempo = feats.find((f) => f.id === "tempo-max");
+    tempo.excludes = ["arp"];
+    await click(box("feat-arp"));
+    const said = /Doesn't go with Arpeggiator/.test(textOf(doc, "#mod-tempo-max .say.clash"))
+      && /Doesn't go with/.test(textOf(doc, "#det-tempo-max")) && !doc.querySelector("#mod-arp .say.clash");
+    await click(box("feat-tempo-max"));
+    const swapped = ids() === "tempo-max" && /Arpeggiator unticked/.test(textOf(doc, "#mod-tempo-max .say.swap"))
+      && /Arpeggiator unticked/.test(textOf(doc, "#mod-sel .sel-msg"));
+    await click(doc.querySelector("#mod-tempo-max [data-undo]"));
+    check(said && swapped && ids() === "arp" && !box("feat-tempo-max").checked && !doc.querySelector(".say.swap")
+      && doc.activeElement && doc.activeElement.id === "feat-tempo-max",
+      "conflict: said on the row before ticking; ticking unticks the other one, with Undo");
+    delete tempo.excludes;
+    await clearAll();
+    // "Use this choice": the engines already tried on the machine (with Model-TG: the combined version's own tests)
+    const syn = feats.find((f) => f.engines);
+    const triedTg = syn.combos.filter((c) => c.tg_tested);
+    await click(box("feat-model-tg"));
+    await pickEngines(doc, ["sd"]);
+    const take = doc.querySelector("#mod-syntakt [data-take]");
+    if (triedTg.length && !triedTg.some((c) => c.engines.join() === "sd")) {
+      const codes = take && take.dataset.codes;
+      if (take) await click(take);
+      const now = [...doc.querySelectorAll('input[name="eng-syntakt"]')].filter((x) => x.checked).map((x) => x.value).join();
+      check(!!take && now === codes && doc.querySelector("label[for=feat-syntakt] .tag").textContent === "Tested"
+        && doc.querySelector("label[for=feat-model-tg] .tag").textContent === "Tested",
+        "« Use this choice » ticks the engines tried on the machine with Model-TG (" + codes + "): both rows Tested");
+    } else console.log("  skip « Use this choice »: Model-TG + SDVtg is tried on the machine, or nothing is");
+    // the selection bar's "+ Syntakt OS file" line survives a language switch made in another tab
+    const need = () => !!doc.querySelector("#mod-sel .sel-need");
+    const needHere = box("feat-syntakt").checked && need();
+    app.setMode("samples"); app.applyLang("fr"); app.setMode("mods"); await wait(5);
+    check(needHere && need() && /Syntakt/.test(textOf(doc, "#mod-sel .sel-need")),
+      "selection bar keeps « + Syntakt OS file » after a language switch in the Samples OS tab");
+    app.applyLang("en");
+    await clearAll();
+    // focus stays on the checkbox just ticked, although the rows are rebuilt
+    const arp = box("feat-arp");
+    arp.focus();
+    await click(arp);
+    check(box("feat-arp") !== arp && doc.activeElement && doc.activeElement.id === "feat-arp", "focus kept on the ticked box after the rebuild");
+    await clearAll();
+    // search: hidden under 20 mods; from 20, by words in both languages, accents ignored
+    check(box("mod-find").hidden, `no search field with ${feats.length} mods`);
+    const usb = feats.find((f) => f.id === "usb6");
+    for (let k = 0, n = 21 - feats.length; k < n; k++) feats.push(Object.assign({}, usb, { id: "usb6-copy-" + k, credit: null }));
+    app.applyLang("en");
+    const q = box("mod-q");
+    q.value = "ÉCOUTE";
+    q.dispatchEvent(new w.Event("input"));
+    await wait(5);
+    const found = !box("mod-find").hidden && !box("mod-trig-preview").hidden && box("mod-usb6").hidden && box("cat-io").hidden
+      && /1 of 21 mods/.test(text(doc, "mod-found"));
+    box("mod-q").dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape" }));
+    await wait(5);
+    check(found && !box("mod-usb6").hidden && box("mod-found").hidden && box("mod-q").value === "",
+      "search from 20 mods: « ÉCOUTE » finds Trig preview (French name, any case or accent); Esc shows all again");
+    feats.splice(feats.findIndex((f) => f.id === "usb6-copy-0"));
+    app.applyLang("en");
+    check(box("mod-find").hidden && !box("mod-usb6-copy-0"), "back to 10 mods");
+    // French
+    app.applyLang("fr");
+    await click(box("feat-model-tg"));
+    check(/Séquenceur/.test(textOf(doc, "#cat-seq .grp-h")) && /Votre sélection/.test(text(doc, "mod-sel"))
+      && /Détails/.test(textOf(doc, "#more-arp")) && /1 mod \+ 3 inclus/.test(textOf(doc, "#mod-sel .sel-c"))
+      && ["latching-mute", "trig-preview", "browser-scroll"].every((id) => /\(inclus avec Model-TG\)/.test(textOf(doc, `#mod-${id} .ttl`)))
+      && /Rubriques/.test(box("cats").getAttribute("aria-label")),
+      "FR: sections, selection bar, Details, « inclus avec Model-TG »");
+    await clearAll();
+    app.applyLang("en");
+    check(errors.length === 0, "no JS error in the mod picker " + (errors.length ? JSON.stringify(errors) : ""));
   }
 
   // 1c. Fast method: a machine that doesn't answer (CONFIG > UPGRADE open, Transfer running), no MIDI input
@@ -643,6 +777,64 @@ async function main() {
     check(/OS Samples/.test(text(doc, "tab-samples")) && doc.getElementById("drop2-title").textContent === "model-samples_OS1.13.syx",
       "FR: tab translated, loaded file name kept");
     check(errors.length === 0, "no JS error in the Samples OS flow " + (errors.length ? JSON.stringify(errors) : ""));
+  }
+
+  // 7b. "Samples OS" tab, for a Model:Samples: the Cycles OS (notes/41), then its way back, over USB
+  if (REAL_OS && REAL_SMP && MAIN) {
+    const env = await load({ devName: "Elektron Model:Samples", device: { id: 25, name: "Model Samples" } });
+    const { w, doc, errors } = env;
+    const app = w.MCFlasherApp;
+    const cyc = new Uint8Array(fs.readFileSync(REAL_OS)), smp = new Uint8Array(fs.readFileSync(REAL_SMP));
+    doc.getElementById("tab-samples").click();
+    doc.getElementById("smp-dir-smp").click();
+    await wait(20);
+    check(!doc.getElementById("smp-pane-smp").hidden && doc.getElementById("smp-pane-cyc").hidden
+      && /Experimental/.test(text(doc, "smp-pane-smp")), "Model:Samples → Cycles OS: its own pane, tagged experimental");
+    app.loadOs(cyc, "model-cycles_OS1.13.syx");
+    app.loadSamples(smp, "model-samples_OS1.13.syx");
+    await settle(w);
+    let f = app.state.fw, sha = f && w.MCBuilder.hex(w.MCBuilder.sha256(f.raw));
+    check(f && f.kind === "cos" && f.raw[4] === 0x0f && sha === app.REF_CYCLES_ON_SAMPLES,
+      "both files -> Cycles OS for Model:Samples, reference build (" + (sha || "").slice(0, 16) + ")");
+    doc.getElementById("allow").click();
+    await wait(150);
+    doc.getElementById("ack").click();
+    await wait(20);
+    check(/backup/.test(text(doc, "missing")) && doc.getElementById("flash").disabled, "flash blocked until the backup box is ticked");
+    doc.getElementById("cos-ack").click();
+    await wait(20);
+    check(!doc.getElementById("flash").disabled && /Model:Cycles OS \(for Model:Samples\)/.test(text(doc, "summary")),
+      "then ready: " + text(doc, "summary"));
+    doc.getElementById("flash").click();
+    await untilSent(w);
+    check(app.state.finished === "ok" && same(env.dev.received, f.raw) && /restarts as a <b>Model:Cycles<\/b>|restarts as a Model:Cycles/.test(text(doc, "result")),
+      "fast: the Cycles OS reaches the Model:Samples byte for byte");
+    check(/Model:Samples screen/.test(text(doc, "result")), "after sending: confirm on the Model:Samples screen");
+
+    // the machine now answers as a Model:Cycles: the way-there file is refused, the way back is accepted
+    env.dev.id = 27;
+    doc.getElementById("refresh").click();
+    await wait(150);
+    check(/nothing to install/.test(text(doc, "midi-status")) && doc.getElementById("flash").disabled,
+      "way-there file vs a machine answering Model:Cycles: nothing sent");
+    doc.getElementById("smp-dir-back").click();
+    await settle(w);
+    f = app.state.fw; sha = f && w.MCBuilder.hex(w.MCBuilder.sha256(f.raw));
+    check(f && f.kind === "sback" && f.raw[4] === 0x11 && sha === app.REF_SAMPLES_BACK,
+      "way back: official Samples OS in the Cycles packing, reference build (" + (sha || "").slice(0, 16) + ")");
+    check(same(w.MCBuilder.unwrap(f.raw).stream, w.MCBuilder.unwrap(smp).stream), "way back: same content as the official Samples OS");
+    await wait(150);
+    check(!doc.getElementById("flash").disabled && /Model:Samples asks/.test(text(doc, "missing")),
+      "way back: ready without an extra box: " + text(doc, "missing"));
+    doc.getElementById("flash").click();
+    await untilSent(w);
+    check(app.state.finished === "ok" && same(env.dev.received, f.raw) && /own OS/.test(text(doc, "result")),
+      "fast: the way back reaches the machine byte for byte");
+    env.dev.id = 25;
+    doc.getElementById("refresh").click();
+    await wait(150);
+    check(/nothing to bring back/.test(text(doc, "midi-status")), "way back vs a machine already on the Samples OS: nothing sent");
+    check(errors.length === 0, "no JS error in the Model:Samples flow " + (errors.length ? JSON.stringify(errors) : ""));
   }
 
   // 8. Syntakt engines with the official Model:Cycles and Syntakt files, up to the transfer
