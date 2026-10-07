@@ -296,6 +296,7 @@ SHAPE/COLOR), ce qui lève ce refus ; le reste des octets diffère toujours avec
 | Arp | Stockage distinct ; menu stock conservé avant les dix nouvelles lignes ; accords TRIG sans répétition (`retrig=-1`), grands pads traités par l'OS et l'arpège |
 | Trig-preview / trig-hold | PAGE et le consommateur de grille restent stock ; le hook KeyboardView laisse passer l'édition des pas et les modificateurs |
 | 6ch-usbup / moteurs Syntakt | Pas de cave partagée ni modification du transport USB ; preuves combinées dans la suite |
+| Machine MACRO (notes/43) | Aucun octet commun ; MACRO ajoute une 7e machine, Chord Keys ne vise que CHORD. Preuves au §17 |
 | Samples OS | Installation d'un autre OS, pas une combinaison avec ce mod pour Cycles OS 1.13 |
 | Autres machines | Grands pads toujours stock ; clavier TRIG stock si Keys est OFF ou la piste sélectionnée n'est pas CHORD ; wrapper audio uniquement sur l'update CHORD |
 
@@ -792,3 +793,33 @@ boot-anim,syntakt-sd-cp-toy-bits-swarm`), `f0c2fa05…1bdf076` (avec les deux mo
 
 **À refaire sur la machine** : le point 9 de la fiche, et un accord joué normalement pour s'assurer que rien d'autre
 n'a bougé.
+
+## 17. Fusion de `main` : machine MACRO, version 1.35 (07/10/2026)
+
+`main` a avancé pendant l'essai : sélecteur de mods par rubriques (1.28), OS Cycles pour Model:Samples (1.22) et
+machine MACRO (1.31, notes/43). La fusion (commit de fusion, sans réécriture) apporte :
+
+- **Numéros** : version **1.35** et tampon **2026-10-07-13** (1.23 et 2026-10-07-02 étaient pris trop tôt : la liste
+  des versions va de la plus récente à la plus ancienne, 1.31 est déjà publiée). Note 42 et tweak 45 inchangés.
+- **Flasher** : Chord Keys a sa rubrique `live` (Jeu en live, après le mute verrouillé), une ligne courte et le motif
+  du conflit avec Model-TG, affiché avant de cocher (`short`, `clash` en anglais et en français).
+- **Guide** : MACRO garde la section 13, Chord Keys passe en 14 ; les suivantes sont renumérotées.
+- **Empreintes** : `ref_mainos.py` donne **17 951** combinaisons (17 407 avant MACRO). Celles de Chord Keys sans
+  MACRO ne changent pas (`901675f5…c334321f` seul). Avec MACRO : `80a12bae…e805133` (`macro,chord-keys`).
+
+`[FAIT]` Chord Keys et MACRO n'ont **aucun octet commun** (37 écritures contre 122, plus la charge utile de MACRO
+rangée après l'image). Preuves en émulation :
+
+- `test_chord_keys_release.py --with 6ch-usbup,arp,trig-hold,tempo-max,boot-anim,macro` : 41/41.
+- La section 5 de `tools/emu/test_macro.py` (MACRO avec d'autres mods), lancée avec
+  `chord-keys,6ch-usbup,trig-hold,arp,tempo-max,boot-anim` : démarrage et charge utile reconstituée, les six machines
+  d'origine identiques au même firmware sans MACRO, MACRO identique à MACRO seule (5 modèles), machine locks, pistes
+  mêlées : tout passe. Deux adaptations du banc, hors du dépôt : la référence de Braids compilée avec `g++` n'a pas
+  été construite ici (le mode automatique a refusé de compiler le clone d'eurorack ; ces contrôles n'en ont pas
+  besoin), et la RAM au-delà de `0x40800000` est mappée à zéro, car `chord_audio_update` lit le pointeur
+  d'interface `*0x40fe4228` que `mcengine` ne fournit pas. Pointeur nul : `CK_DEFAULT`, donc **Keys OFF** sur ces
+  pistes. Le son d'une piste CHORD en Keys ON à côté de MACRO n'est pas comparé ici ; la routine audio de Chord Keys
+  n'enveloppe que la mise à jour de CHORD, que MACRO ne touche pas.
+
+`[HYP]` Sur la machine, Chord Keys et MACRO ensemble n'ont pas été essayés.
+

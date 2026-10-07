@@ -34,10 +34,17 @@ OUT = ROOT / "docs" / "flasher" / "tweaks.js"
 # Les moteurs s'ajoutent en machines supplementaires : sdvintage-exact (a la place de SNARE) reste dans build.py.
 # status : "tested" (flashe sur un vrai Model:Cycles) ou "experimental".
 # credit : auteur du travail d'origine, affiche sur la carte (voir aussi les credits de la page).
+# cat : rubrique du flasher, une de CATS (meme liste que CATS dans docs/flasher/app.js, plus « other »). Sans cat,
+# la carte s'affiche a la fin, dans « Autres mods » (avertissement ici). L'ordre de FEATURES reste l'ordre du build
+# (cles de REF_MAINOS), quel que soit l'ordre d'affichage par rubriques.
+# requires : id d'une autre fonctionnalite sans laquelle celle-ci ne marche pas ; seulement affiche (« avec Model-TG »)
+# tant que le flasher ne l'impose pas.
 # Pour ajouter une fonctionnalite : ecrire son tweak JSON, puis l'ajouter ici.
+CATS = ("pack", "sound", "seq", "live", "screen", "io")
 FEATURES = [
     {
         "id": "usb6",
+        "cat": "io",
         "label": "Sortie USB 6 canaux separes",
         "desc": "Chaque piste sort sur son propre canal USB (48 kHz / 32 bits). Le mix stereo "
                 "n'est plus envoye en USB : tu melanges les 6 pistes dans ton logiciel.",
@@ -49,6 +56,7 @@ FEATURES = [
     },
     {
         "id": "model-tg",
+        "cat": "pack",
         "label": "Model-TG",
         "desc": "Machine Sampler, reechantillonnage, retrig et effets master, et plus.",
         "status": "experimental",
@@ -61,11 +69,13 @@ FEATURES = [
             {"file": "30-model-tg", "label": None},
         ],
         # avec les moteurs du Syntakt : la base de la version combinee (notes/31), et pour chaque combinaison de
-        # moteurs son tweak syntakt-tg-<moteurs> (« tg » des combinaisons de la carte des moteurs)
-        "with": {"syntakt": "30-model-tg-st"},
+        # moteurs son tweak syntakt-tg-<moteurs> (« tg » des combinaisons de la carte des moteurs) ; de meme avec
+        # la machine MACRO (notes/43), qui prend alors macro-tg
+        "with": {"syntakt": "30-model-tg-st", "macro": "30-model-tg-st"},
     },
     {
         "id": "latching-mute",
+        "cat": "live",
         "label": "Mode mute verrouille",
         "desc": "Maintiens TRK et tape FUNC : le mode mute reste actif, tu mutes les pistes sans tenir FUNC. "
                 "Un appui court sur FUNC en sort.",
@@ -77,6 +87,7 @@ FEATURES = [
     },
     {
         "id": "trig-preview",
+        "cat": "seq",
         "label": "Ecoute d'un pas (TRIG + PAGE)",
         "desc": "Sequenceur a l'arret (ou en pause), maintiens un pas et appuie sur PAGE : le pas joue avec sa note, "
                 "sa longueur et ses p-locks.",
@@ -88,6 +99,7 @@ FEATURES = [
     },
     {
         "id": "browser-scroll",
+        "cat": "screen",
         "label": "Defilement des noms longs",
         "desc": "Dans le navigateur de sons, un nom trop long pour l'ecran defile.",
         "status": "tested",
@@ -98,6 +110,7 @@ FEATURES = [
     },
     {
         "id": "trig-hold",
+        "cat": "seq",
         "label": "Effacer un trig plus facilement",
         "desc": "Un appui sur une touche de pas qui porte deja un trig l'efface si tu relaches en moins d'une "
                 "demi-seconde (0,2 s avec l'OS d'origine). Tenu plus longtemps, le trig reste et ses reglages s'affichent.",
@@ -109,6 +122,7 @@ FEATURES = [
     },
     {
         "id": "arp",
+        "cat": "seq",
         "label": "Arpegiateur",
         "desc": "Le retrig devient un arpegiateur : plusieurs notes tenues avec RETRIG (ou A.On) se jouent l'une "
                 "apres l'autre. FUNC + RETRIG : sens (Arp) et octaves (Oct), enregistres avec le pattern. "
@@ -121,6 +135,7 @@ FEATURES = [
     },
     {
         "id": "tempo-max",
+        "cat": "seq",
         "label": "Tempo jusqu'a 546 BPM",
         "desc": "Le tempo monte jusqu'a 546 BPM au lieu de 300 (molette, tap tempo, horloge MIDI recue). "
                 "546 est le plafond du format des projets.",
@@ -132,6 +147,7 @@ FEATURES = [
     },
     {
         "id": "boot-anim",
+        "cat": "screen",
         "label": "Animation de demarrage modded-cycles",
         "desc": "Au demarrage, les quatre carres du logo apparaissent un par un puis modded-cycles s'ecrit "
                 "dessous, a la place des carreaux qui clignotent. Meme duree qu'a l'origine.",
@@ -142,7 +158,26 @@ FEATURES = [
         ],
     },
     {
+        "id": "macro",
+        "cat": "sound",
+        "label": "Machine MACRO",
+        "desc": "Une machine ajoutee apres Chord (apres le Sampler avec Model-TG) : les 47 modeles du code libre "
+                "de Braids d'Emilie Gillet. SHAPE choisit le modele, COLOR et SWEEP le reglent, CONTOUR ouvre le "
+                "timbre avec l'enveloppe.",
+        "status": "tested",
+        "credit": {"kind": "based", "who": "Émilie Gillet", "repo": "pichenettes/eurorack"},
+        "license": "LICENSE-Braids",
+        # meme bloc apres l'image que les moteurs du Syntakt (notes/43) : jamais ensemble
+        "excludes": ["syntakt"],
+        "variants": [
+            {"file": "25-macro", "label": None},
+        ],
+        # avec Model-TG : la version qui s'ajoute apres model-tg-st (Model-TG prend cette base, « with » ci-dessus)
+        "with": {"model-tg": "32-macro-tg"},
+    },
+    {
         "id": "chord-keys",
+        "cat": "live",
         "label": "Accords de gamme sur TRIG 1–16",
         "desc": "Une piste CHORD, sept modes et une extension par degré. TRIG 1–7 jouent I–VII, "
                 "8–14 une octave plus haut, 15–16 I–II deux octaves plus haut. T1–T6 gardent leurs fonctions. "
@@ -154,6 +189,7 @@ FEATURES = [
     },
     {
         "id": "syntakt",
+        "cat": "sound",
         "label": "Vrais moteurs du Syntakt",
         "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.42.syx (a deposer a l'etape 2), "
                 "en machines supplementaires apres les 6 d'origine : coche ceux que tu veux. "
@@ -198,6 +234,16 @@ def render():
         return t
     for f in FEATURES:
         feat = {"id": f["id"], "label": f["label"], "desc": f["desc"], "status": f["status"], "credit": f["credit"]}
+        if f.get("cat"):                        # rubrique de la carte dans le flasher
+            if f["cat"] not in CATS:
+                sys.exit(f"!! {f['id']} : cat {f['cat']!r} inconnue (une de {', '.join(CATS)})")
+            feat["cat"] = f["cat"]
+        else:
+            print(f"attention : {f['id']} n'a pas de cat, il ira dans « Autres mods »", file=sys.stderr)
+        if f.get("requires"):                   # affiche seulement (« avec … »)
+            if f["requires"] not in {g["id"] for g in FEATURES}:
+                sys.exit(f"!! {f['id']} : requires {f['requires']!r} inconnu")
+            feat["requires"] = f["requires"]
         if f.get("engines"):
             feat["engines"], feat["combos"] = engine_feature(f, load)
             feat["status"] = "tested" if any(c["tested"] or c["tg_tested"] for c in feat["combos"]) else "experimental"
