@@ -15,7 +15,8 @@ Tweak : [`45-chord-keys.json`](../tweaks/model-cycles_OS1.13/45-chord-keys.json)
 [`tools/machines/chord_keys/`](../tools/machines/chord_keys/), preuves sous `tools/emu/` et test natif
 [`tools/test_chord_keys.py`](../tools/test_chord_keys.py). **État au 07/10/2026 : expérimental.** Nico rapporte que
 Chord Keys seul fonctionne sur son Model:Cycles (§13). Maxime l'a essayé le 07/10/2026, seul et avec six autres mods :
-tout marche, sauf le cas de note bloquée attendu (§15). Relecture de l'intégration et défauts connus au §14.
+tout marche, sauf le cas de note bloquée attendu (§15). Ce cas est corrigé au §16 ; la version corrigée attend son
+dernier essai. Relecture de l'intégration et défauts connus au §14.
 
 ## Réponse courte
 
@@ -678,7 +679,7 @@ instructions d'origine ou revient à la fonction d'origine ; les quatorze masque
 désignés une seule fois et jamais dépassés ; seul `0x400ff9cc` est partagé, avec Model-TG, déclaré en conflit.
 Défauts connus, aucun ne bloque l'essai sur la machine :
 
-- **Relâchement avalé** (moyen, `[FAIT]` sur le code désassemblé, effet audible `[HYP]`) : si une vue placée avant
+- **Relâchement avalé** (moyen, `[FAIT]` sur le code désassemblé et sur la machine §15 ; **corrigé au §16**) : si une vue placée avant
   le clavier consomme le relâchement d'une touche d'accord, `held[touche].valid` reste levé. Le relâchement suivant
   de cette touche est alors consommé par le mod, même quand l'appui est allé au clavier d'origine (Keys OFF, autre
   piste, mode grille) : la note d'origine et son note-off MIDI ne partent jamais.
@@ -708,8 +709,8 @@ Défauts connus, aucun ne bloque l'essai sur la machine :
   commun entre 45, 46 et 47, aucun pointeur de l'un dans les masques de l'autre. `test_level_pan.py`,
   `test_trigless_dim.py`, `test_trig_hold.py`, `test_arp.py` et `test_boot_anim.py` donnent les mêmes lignes avec et
   sans `chord-keys` dans `--with`, seuls et avec `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,
-  syntakt-sd-cp-toy-bits-swarm`. MAIN OS : `7a7102e4…5af9fe` pour 45+46+47, `d48803f0…eee08d` avec les six autres.
-  Ces preuves n'exécutent pas le code de Chord Keys lui-même.
+  syntakt-sd-cp-toy-bits-swarm`. MAIN OS : `7a7102e4…5af9fe` pour 45+46+47, `d48803f0…eee08d` avec les six autres
+  (version d'avant le §16 ; refaites au §16). Ces preuves n'exécutent pas le code de Chord Keys lui-même.
 
 ## 15. Essai de Maxime sur la machine (07/10/2026)
 
@@ -722,7 +723,72 @@ officiel avec le `build.py` du dépôt :
 
 Retour : « tout marche sauf le point 9 comme prévu ». Les vingt points de la fiche passent, sauf le point 9, qui
 reproduit le **relâchement avalé** du §14 (PATTERN tenu pendant le relâchement d'un TRIG, puis note bloquée sur une
-autre piste). Le défaut est donc confirmé sur la machine ; sa correction attend une recompilation avec GCC 16.2.
+autre piste). Le défaut est donc confirmé sur la machine ; il est corrigé au §16.
 
 Les mods de djd_oz (`46-level-pan-values`, `47-trigless-dim`, PR #53) ne sont pas dans ces fichiers. Chaque `.syx`
 remplace tout l'OS : en flasher un retire les mods installés avant.
+
+## 16. Correction du relâchement avalé (07/10/2026)
+
+**Compilateur.** Maxime a choisi de le compiler ici. Homebrew est injoignable depuis la session (ses paquets sont
+servis par un hôte refusé), mais l'archive d'Ubuntu fournit les sources officielles :
+`gcc-16_16.2.0.orig.tar.gz` (qui contient `gcc-16.2.0.tar.xz`) et `binutils_2.47.orig.tar.xz`, SHA-256 contrôlés
+contre leurs `.dsc`. Construction dans `/opt/m68k-elf-16.2` :
+
+```sh
+../binutils-2.47/configure --target=m68k-elf --prefix=/opt/m68k-elf-16.2 --disable-nls --disable-werror \
+    --disable-gdb --disable-gdbserver --disable-sim --disable-gprofng
+../gcc-16.2.0/configure --target=m68k-elf --prefix=/opt/m68k-elf-16.2 --disable-nls --without-isl \
+    --without-headers --with-as=/opt/m68k-elf-16.2/bin/m68k-elf-as --with-ld=/opt/m68k-elf-16.2/bin/m68k-elf-ld \
+    --enable-languages=c
+make all-gcc install-gcc all-target-libgcc install-target-libgcc
+```
+
+`[FAIT]` Ce compilateur refait les 37 écritures de Nico à l'octet près. Seul le tableau `symbols` différait :
+deux tableaux statiques s'appellent `scales`, et l'ordre de `nm` entre noms égaux dépend du tri de la libc de
+l'hôte. Le générateur garde désormais la plus basse adresse, ce qui redonne le JSON de Nico ; `--check` passe. Il
+refait aussi `20-sdvintage-snare.json`, `21-sdvintage-exact.json` et `22-sdvintage-7th.json` (`--check`).
+
+**Correction** (`chord_ui.c`, `ck_ui_key`) : sur un premier appui (`(flags & 9) == 1`), `release_key(&held[touche])`
+puis `valid = 0`, avant `handle_press`. `release_key` ne fait rien quand l'entrée n'est pas active, et une
+répétition de maintien porte le bit 3 : elle n'entre pas dans cette branche. `[FAIT]` Code compilé à `0x40185018` :
+`jsr 0x4018ce96` (`release_key`), `clr.b` de `valid`, puis `jsr 0x4016b6f8` (`handle_press`), et saut vers
+`0x4001a0d2` si elle rend 0.
+
+**Placement.** Le code grandit de 28 octets (5 063 octets dans les masques, 5 173 écrits en tout). Le placement par
+taille décroissante déplace quelques sections dans les mêmes quatorze masques : `ck_ui_key` passe à `0x40185018`,
+`chord_audio_update` à `0x40185968`, `ck_shape_draw` à `0x40185a22`. Les accroches suivent, et aucun masque ne
+dépasse 376 octets :
+
+| Cave | Octets | Cave | Octets |
+|---|---:|---|---:|
+| `0x4016b6f8` | 376 | `0x40183118` | 374 |
+| `0x4016b9e8` | 374 | `0x40185018` | 372 |
+| `0x40171f30` | 376 | `0x40185968` | 372 |
+| `0x40172608` | 362 | `0x40185c58` | 374 |
+| `0x40179730` | 373 | `0x4018cd48` | 376 |
+| `0x40182b38` | 376 | `0x4018d1b8` | 372 |
+| `0x40182e28` | 376 | `0x4018d4a8` | 210 |
+
+**Preuve** `tools/emu/test_chord_keys_release.py` (41 contrôles, écrite pour ce dépôt, sans le code de test de Nico).
+Elle appelle l'emplacement `0x400ff9cc` de chaque image avec de vrais `KeyEvent` (constructeur `0x4007238c`). Elle
+exécute `ck_ui_key`, `handle_press`, `release_key`, `play_key`, le menu Keys et `0x4001a0d2`/`0x40019d00` de l'OS ;
+seuls les points d'entrée du moteur et du MIDI (`0x4008171e`, `0x4008145e`, `0x4008273c`, `0x400827a8`) sont
+remplacés par des enregistreurs. Le relâchement mangé par PATTERN est modélisé en ne le livrant pas.
+
+- `[FAIT]` Sur l'OS d'origine, S1 et S2 finissent en silence.
+- `[FAIT]` Avec le JSON d'avant, S1 et S2 échouent comme sur la machine : `0x40019d00` n'est jamais atteinte, la note
+  de la piste 2 et son MIDI restent tenus. Les autres contrôles passent (accord normal, répétitions, touches qui se
+  chevauchent, codes non TRIG, Keys OFF, mode grille).
+- `[FAIT]` Avec le JSON corrigé : 41/41, seul et avec `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,
+  syntakt-sd-cp-toy-bits-swarm`. À l'appui sur la piste 2, l'accord resté tenu reçoit sa fin, puis la note d'origine
+  part ; au relâchement, `0x40019d00` la termine.
+- `[FAIT]` `test_arp.py`, `test_trig_hold.py`, `test_level_pan.py` et `test_trigless_dim.py` passent avec le JSON
+  corrigé, avec les mods de djd_oz et les six autres.
+
+MAIN OS : `901675f5…c334321f` (Chord Keys seul), `db9ea486…959db364` (avec `6ch-usbup,arp,trig-hold,tempo-max,
+boot-anim,syntakt-sd-cp-toy-bits-swarm`), `f0c2fa05…1bdf076` (avec les deux mods de djd_oz), `7910aaca…9da1d0f3`
+(les neuf). `ref_mainos.py` : les 8 192 empreintes avec Chord Keys changent, les autres non.
+
+**À refaire sur la machine** : le point 9 de la fiche, et un accord joué normalement pour s'assurer que rien d'autre
+n'a bougé.

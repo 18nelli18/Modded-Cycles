@@ -234,10 +234,11 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim
 
 Contribution de Nico Heuser ([PR #46](https://github.com/18nelli18/Modded-Cycles/pull/46)).
 `45-chord-keys.json` est généré depuis `tools/machines/chord_keys/` par `tools/gen_chord_keys.py`
-(GCC m68k-elf 16.2.0, binutils 2.47, par exemple ceux de Homebrew). Le générateur refuse `m68k-linux-gnu-gcc` : son ABI lit
+(GCC m68k-elf 16.2.0, binutils 2.47 : ceux de Homebrew, ou compilés depuis les sources d'Ubuntu comme au
+[§16 de la note 42](notes/42-clavier-accords-diatoniques.md)). Le générateur refuse `m68k-linux-gnu-gcc` : son ABI lit
 dans `a0` les pointeurs que l'OS rend dans `d0`, ce qui fausserait les appels à l'OS ([note 42 §6](notes/42-clavier-accords-diatoniques.md)).
-**Expérimental** : Nico l'a essayé seul sur son Model:Cycles (06/10/2026) ; pas encore d'essai par Maxime ni en
-combinaison. Sélectionnez une piste CHORD,
+**Expérimental** : Maxime l'a essayé le 07/10/2026, seul et avec six autres mods ; la correction de la note bloquée
+(note 42 §16) attend son dernier essai. Sélectionnez une piste CHORD,
 puis activez **Keys** dans **FUNC + RETRIG**. Root, Scale et I–VII choisissent la tonique, le mode
 et les extensions diatoniques ; le majeur s'affiche **MAJ**. Hors édition des pas, TRIG 1–7 jouent I–VII,
 8–14 les mêmes degrés une octave plus haut, 15–16 I–II deux octaves plus haut. Les grands pads T1–T6
@@ -246,7 +247,7 @@ Réglages par piste, enregistrés avec le pattern. **I–VII** seuls choisissent
 la disposition (**BASE**, **CLS0–3**, **OPN0–3**) et **COLOR** les niveaux, sans changement d'octave.
 Model-TG est explicitement incompatible.
 
-Quatorze masques identiques sont redirigés avant d'y placer les 5 035 octets de code, constantes et état ; seule la section 3 change. Aucun firmware
+Quatorze masques identiques sont redirigés avant d'y placer les 5 063 octets de code, constantes et état ; seule la section 3 change. Aucun firmware
 n'est distribué dans le dépôt. Génération, preuve autonome, puis preuve avec tous les mods compatibles :
 
 ```sh
@@ -256,16 +257,17 @@ python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx
 python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx \
   --with 6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,syntakt-sd-cp-toy-bits-swarm \
   --syntakt firmware/Syntakt_OS1.42.syx
+python3 tools/emu/test_chord_keys_release.py --cycles firmware/model-cycles_OS1.13.syx
 python3 tools/build.py -i firmware/model-cycles_OS1.13.syx -t chord-keys \
   -o build/model-cycles_OS1.13_chord-keys-experimental.syx
 ```
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `chord-keys` | `47e399fbe52dfdac44a96ff08cef3bd40beeed1b38e3fb64764af96ddda4e4cf` |
-| `6ch-usbup,chord-keys` | `fc0476aef34218fb4904d9994c06f3a35853e213a125237c5b4a5b4022f431de` |
-| `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,chord-keys` | `1416a46ee7e7168dee5aa4409c9ba0797e280ddbc6b4aadeaa616923e910fc5b` |
-| `6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-sd-cp-toy-bits-swarm` | `39f8455e01389dde13578a3509b43f2f0140b7fe324bb6f790efa9ac0f11701c` |
+| `chord-keys` | `901675f5b8291f3b91d134208236e83431d6a079c73c2d5f1e4e54ebc334321f` |
+| `6ch-usbup,chord-keys` | `d6e43f0ca6a8df953df7a12da7458c70552f1b3a8de1bb39213f0c52168f0352` |
+| `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,chord-keys` | `0922d3967c6d29ea86c14ffe41a5555cfb5346ecffb6298fe84c8ba3e3c51c43` |
+| `6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-sd-cp-toy-bits-swarm` | `569e6bb39b628ebbd8a8f1ef64e43f0097f4c3d4bb8430974f01dab6d82ca110` |
 
 La preuve exécute les touches, pads, menus, sauvegardes et calculs CHORD du véritable OS ; 14 000 accords
 BASE, 2 205 combinaisons SHAPE et les chemins inactifs sont comparés à la référence. COLOR, les frontières de

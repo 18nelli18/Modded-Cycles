@@ -129,8 +129,16 @@ u32 ck_ui_key(void *view, u8 *event)
         /* Les répétitions de maintien ne doivent jamais redéclencher un accord. */
         if ((flags & 8) && held[key].valid)
             return 1;
-        if ((flags & 9) == 1 && handle_press(view, event, key))
-            return 1;
+        if ((flags & 9) == 1) {
+            /* Une nouvelle frappe implique un relâchement physique : s'il a été
+             * consommé ailleurs (vue PATTERN...), solder l'accord resté tenu
+             * et laisser le relâchement suivant au clavier d'origine.
+             */
+            release_key(&held[key]);
+            held[key].valid = 0;
+            if (handle_press(view, event, key))
+                return 1;
+        }
     }
     return ((u32 (*)(void *, u8 *))0x4001a0d2)(view, event);
 }
