@@ -118,7 +118,8 @@ Ce qui n'existe que dans l'OS Samples : `SampleManager`, `SamplePoolDirectory`, 
 > Le parcours complet est testé par `tools/webflash_smoke.sh model-cycles_OS1.13.syx model-samples_OS1.13.syx`.
 
 Principe, déjà prouvé dans l'autre sens :
-- le bootloader **ignore en silence** un conteneur d'un autre produit ;
+- le menu de démarrage (MIDI IN) **ignore en silence** un `.syx` d'un autre produit (octets produit et appareil du
+  transport : `0x0F`/`0x0A` pour le Samples) ;
 - on garde donc le conteneur de la machine hôte et on ne remplace que sa section 3 ;
 - le bootstrap de l'hôte n'est pas touché, donc son `.syx` officiel reste l'image de secours.
 > Source : `vendor/ms-multi-output/README.md`, section *You own a Model:Samples → --target cycles-crossflash*. La technique vient d'un utilisateur de r/Elektron, et scottmetoyer l'a testée sur un Model:Samples, retour compris.
@@ -140,7 +141,16 @@ Protocole (celui qui a été suivi pour le premier test) :
 4. Observer le démarrage :
    - s'il bloque sur le projet Cycles, `EMPTY RESET` (TRIG 2 du menu de démarrage) est à essayer, sinon le retour ;
    - puis charger un sample avec Transfer (la machine s'annonce « Model:Samples »), le jouer, et vérifier le panneau.
-5. **Ne pas utiliser `CONFIG > UPGRADE` depuis l'OS Samples** : avec un `.syx` Samples officiel, il réécrirait aussi le bootstrap, et la machine deviendrait un Model:Samples complet côté logiciel.
+5. **Depuis l'OS Samples, ne pas installer d'OS Samples plus récent** (mise à jour proposée par Transfer, par exemple).
+   > **Corrigé le 07/10/2026** : on écrivait ici qu'un `.syx` Samples officiel installé par `CONFIG > UPGRADE` réécrirait
+   > aussi le bootstrap. C'est faux en 1.13. L'OS Samples l'accepte et l'écrit en `0x20000`, comme toute mise à jour
+   > ([41 §1](41-os-cycles-sur-samples.md)) ; au démarrage suivant, `0x8000214c` (appelée en `0x80000e9c`) ne remplace
+   > le bootstrap (flash `0x10000`) que si le mot haut de l'attribut de la section 2 reçue dépasse la version du
+   > bootstrap en place (`0x80000408`) : `cmp.l d3,d0` / `bcc` en `0x8000216e`. C'est `0x0400` des deux côtés en
+   > 1.13 : le menu de démarrage reste celui du Cycles, et le secours reste le `.syx` Cycles officiel par le MIDI IN.
+   > Ce chemin n'a aucun contrôle de modèle ni de clé : un OS Samples **futur** dont le bootstrap serait plus récent
+   > remplacerait, lui, le menu de démarrage du Cycles par celui du Samples, d'où la consigne. `[FAIT en émulation]`,
+   > `tools/emu/test_crossflash_samples.py` groupe 8 ; question d'akrism (Discord), relayée par Maxime le 07/10/2026.
 6. Retour : menu de démarrage du Cycles, puis `model-cycles_OS1.13.syx` officiel par le MIDI IN.
 
 Le retour depuis l'OS Samples n'est **garanti** que par le MIDI IN : le flasher web l'écrit en toutes lettres et exige la case « interface MIDI ».

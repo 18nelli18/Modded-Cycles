@@ -45,8 +45,16 @@ une zone d'attente : c'est le conteneur que le bootstrap démarre.
   (TRIG 4, MIDI IN), qui vérifie une copie en RAM avant d'écrire.
 - EMPTY RESET et FACTORY RESET ne font que poser des bits dans l'argument de démarrage (`0x800071d8`, en
   `0x8000208e` et `0x800020b0`) : ils n'écrivent pas la flash, c'est l'OS démarré qui réinitialise le projet.
-- La mise à jour du bootstrap lui-même (`0x8000214c`) n'a lieu que si la version de la section 2 reçue dépasse celle
-  en place : `0x0400` partout en 1.13, donc jamais ici.
+- La mise à jour du bootstrap lui-même (`0x8000214c`, appelée en `0x80000e9c` à chaque démarrage, avant le menu de
+  démarrage) n'a lieu que si la version de la section 2 reçue dépasse celle en place : `0x80004a40` lit l'entrée de
+  la section 2 du conteneur en `0x20000`, le mot haut de son attribut est comparé au mot `0x80000408` du bootstrap
+  (`cmp.l d3,d0` / `bcc` en `0x8000216e`). C'est `0x0400` partout en 1.13 (attribut `0x04000000` dans les deux
+  conteneurs, et dans toute build : seule la section 3 change), donc jamais ici. Au-delà, elle ne contrôle que le
+  CRC, la version et la taille de l'image, **ni modèle ni clé**, puis efface et réécrit la flash `0x10000`, où vit le
+  bootstrap (`0x80002bd2`, `0x80002de0`). C'est le seul chemin de mise à jour qui écrit sous `0x20000` ; l'OS qui
+  tourne et l'installation du menu de démarrage écrivent à partir de `0x20000`. `[FAIT en émulation]` (§5,
+  groupe 8) : aucun fichier de cette note, ni l'OS officiel de l'autre modèle, ne remplace le bootstrap ; un
+  bootstrap Cycles de version `0x0401` remplace celui du Samples.
 
 > Source : bootstraps et MAIN OS 1.13 désassemblés, relecture contradictoire du 06/10/2026 (8 relectures et une
 > synthèse) ; chargeur `0x80000820` exécuté dans Unicorn sur les trois conteneurs (§5, groupe 6).
@@ -118,7 +126,8 @@ Effets de bord, voulus :
 - l'OS Cycles de la page **refuse** l'OS Cycles officiel et tout firmware Model:Cycles avec mods (signés Cycles),
   y compris une mise à jour proposée par Elektron Transfer : rien n'est écrit. C'est une protection : un firmware
   Model:Cycles accepté serait démarré tel quel, et l'OS Cycles d'origine qu'il contient fermerait le retour par USB
-  (`[HYP]` une future version dont la section 2 serait plus récente remplacerait même le bootstrap du Samples) ;
+  (`[FAIT en émulation]`, §1 : une future version dont la section 2 serait plus récente remplacerait même le
+  bootstrap du Samples) ;
 - il **accepte** `--to samples` (signé Samples) : une future version se met à jour par USB, à condition de l'emballer
   dans le transport Cycles (§4) ; la page ne le propose pas encore.
 
@@ -135,7 +144,7 @@ mise à jour officielle du Model:Samples.
 
 ## 5. Preuve en émulation `[FAIT en émulation]`
 
-`tools/emu/test_crossflash_samples.py` (20 contrôles) fait tourner `0x4005a0e4` (Cycles) et son équivalent dans l'OS
+`tools/emu/test_crossflash_samples.py` (29 contrôles) fait tourner `0x4005a0e4` (Cycles) et son équivalent dans l'OS
 Samples (trouvé par son appel au HMAC `0x40051728`), vérification d'alimentation court-circuitée :
 
 | Fichier | OS Samples d'origine | OS Cycles d'origine | OS Cycles de la page |
@@ -155,6 +164,11 @@ Et en plus :
   pose en `0x40000400` le MAIN OS attendu (OS Cycles de la page, fin `0x401aa140` ; OS Samples officiel pour le
   retour et le témoin, fin `0x401a7640`), sans passer par `0x80003b36` ni `0x800059fa`. Le flux compressé est lu en
   `0x40200000`, au-delà de la fin du MAIN OS décompressé.
+- groupe 8, menu de démarrage : l'auto-mise à jour du bootstrap (`0x8000214c`), avec chaque conteneur en `0x20000`
+  (OS Samples officiel, OS Cycles officiel, qui porte la même section 2 que toute build Mods, `--to cycles`,
+  `--to samples`, `--back-samples`), compare `0x0400` à `0x0400` et n'écrit rien, sur le bootstrap du Samples comme
+  sur celui du Cycles. Témoin : un bootstrap Cycles de version `0x0401` (mot de version et CRC refaits) efface et
+  réécrit `0x10000` depuis le bootstrap du Samples.
 
 Ce qui n'est **pas** émulé : la réception SysEx/Transfer elle-même (même transport que les firmwares Cycles déjà
 envoyés par la page, testés sur la machine ; relue sans trouver de contrôle du modèle ni de taille), l'écriture en
@@ -189,7 +203,9 @@ retour que vers une machine qui répond Model:Cycles. Cas qu'elle ne peut pas di
   n'est écrit. Un tel OS accepte en revanche `--to cycles` (choix *Model:Cycles → OS Samples*, signé Cycles), dont le
   bootstrap Samples tire l'OS Samples officiel (groupe 7 de la preuve) ; c'est ce que disent `sback_w1`,
   `dev_fwd_on_cycles` et le guide. Avec Model-TG en identité Transfer SMP, la machine répond Model:Samples (25) :
-  `dev_back_on_samples` le signale.
+  `dev_back_on_samples` le signale. Un tel OS accepte aussi un OS Cycles officiel **futur** : si son bootstrap
+  était plus récent, il remplacerait le menu de démarrage du Samples (§1). Le guide dit donc de ne pas le laisser
+  installer un OS Model:Cycles plus récent.
 
 Après l'envoi, la carte et le guide disent aussi quoi faire si la machine démarre mal (OS précédent toujours là,
 écran figé, cf. le 29/09 en [15 §3.4bis](15-demandes-reddit.md)) : l'éteindre et la rallumer ; sinon, [FUNC] à
@@ -231,3 +247,10 @@ charge des samples en identité SMP.
   référence) ; la plus grosse finit en `0x401fae10` (< `0x40200000`) et son conteneur (948 928 o) s'arrête en
   `0x107ac0`, loin de `0x1e0000`. `cyclesForSamples` accepte déjà un `.syx` modifié. À prévoir : changer de mods plus
   tard demande un nouveau type de fichier (conteneur signé Samples dans le transport Cycles), et créditer akrism.
+- Question d'akrism (07/10/2026, relayée par Maxime) : envoyer depuis son état un conteneur Cycles (build Mods ou
+  `--to cycles`) mettrait-il le menu de démarrage du Cycles sur son Samples, son secours devenant le `.syx` Cycles ?
+  Non en 1.13 (§1, groupe 8) : la version du bootstrap est `0x0400` partout, son menu de démarrage reste celui du
+  Samples, et son secours reste l'OS Samples officiel par le MIDI IN, avec l'alimentation branchée (le menu l'exige,
+  `0x80003d2c`). Le menu de démarrage du Samples n'écoute que le transport Samples (`0x0F`/`0x0A`) et vérifie avec la
+  clé du Samples : il ignore les `.syx` Cycles. Seul risque : un OS Cycles officiel futur au bootstrap plus récent,
+  que son OS Cycles (clé d'origine) accepterait.
