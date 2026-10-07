@@ -3,7 +3,7 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
-  { version: "1.26", date: "2026-10-07", changes: [
+  { version: "1.28", date: "2026-10-07", changes: [
     { en: "A tidier list of mods in the flasher: they are sorted into sections (Packs, Sounds & machines, Sequencer, Live playing, Screen & browsing, USB & MIDI), with one short line each. The buttons at the top jump to a section and light up when it holds a ticked mod; a section folds away with a click on its title",
       fr: "Une liste de mods plus claire dans le flasher : ils sont rangés par rubriques (Packs, Sons et machines, Séquenceur, Jeu en live, Écran et navigation, USB et MIDI), avec une ligne courte chacun. Les boutons du haut mènent à une rubrique et s'allument quand elle contient un mod coché ; un clic sur le titre d'une rubrique la replie" },
     { en: "Details opens the full description of a mod, how it was tested and its guide link. A Your selection bar stays at the bottom of the screen with the ticked mods, the experimental ones, an × to untick each and a button to step 2. When two mods can't go together, the row says so before you tick, and Undo puts things back",
