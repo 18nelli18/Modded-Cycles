@@ -1,4 +1,4 @@
-/* Écoute des samples dans le navigateur de presets, avec le Sampler de Model-TG (notes/45). Lié par
+/* Écoute des samples dans le navigateur de presets, avec le Sampler de Model-TG (notes/46). Lié par
  * sample_preview.ld dans quatre masques de sprites 47x47 libérés (tools/sprites.py) ; les écritures sur l'OS sont
  * dans tools/gen_sample_preview.py (HOOKS).
  *

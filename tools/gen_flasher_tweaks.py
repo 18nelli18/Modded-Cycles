@@ -77,10 +77,10 @@ FEATURES = [
         "credit": {"kind": "based", "who": "TinyGregAudio", "repo": "TinyGregAudio/Model-TG"},
         "requires": "model-tg",
         "variants": [
-            {"file": "32-sample-preview", "label": None},
+            {"file": "33-sample-preview", "label": None},
         ],
         # avec les moteurs du Syntakt, Model-TG devient model-tg-st : l'ecoute prend la version faite pour lui
-        "with": {"syntakt": "32-sample-preview-st"},
+        "with": {"syntakt": "33-sample-preview-st"},
     },
     {
         "id": "latching-mute",

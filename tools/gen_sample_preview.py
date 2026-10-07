@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Génère tweaks/model-cycles_OS1.13/32-sample-preview.json et 32-sample-preview-st.json : écouter les samples dans
-le navigateur, avec le Sampler de Model-TG (notes/45).
+"""Génère tweaks/model-cycles_OS1.13/33-sample-preview.json et 33-sample-preview-st.json : écouter les samples dans
+le navigateur, avec le Sampler de Model-TG (notes/46).
 
 L'OS d'origine écoute les presets du navigateur : le preset sous le curseur est désigné, et la note suivante jouée
 sur le pad de la piste active le joue à la place du son de la piste. Un fichier de sample n'est pas un preset : rien
@@ -35,10 +35,11 @@ SRC = HERE / "machines" / "sample_preview"
 TW = HERE.parent / "tweaks" / "model-cycles_OS1.13"
 BASE = gx.BASE
 # version de Model-TG -> fichier de ce tweak
-OUTS = {"model-tg": TW / "32-sample-preview.json", "model-tg-st": TW / "32-sample-preview-st.json"}
+OUTS = {"model-tg": TW / "33-sample-preview.json", "model-tg-st": TW / "33-sample-preview-st.json"}
 TG_FILES = {"model-tg": TW / "30-model-tg.json", "model-tg-st": TW / "30-model-tg-st.json"}
 # sections liées -> masque 47x47 libéré qui les reçoit (sample_preview.ld)
-CAVES = ((".cave1", 0x4018cd48), (".cave2", 0x4018d1b8), (".cave3", 0x4018d4a8), (".cave4", 0x4018dba8))
+# (ceux aussi de chord-keys, qui exclut Model-TG : déclaré dans « conflicts »)
+CAVES = ((".cave1", 0x40183118), (".cave2", 0x40185018), (".cave3", 0x40185968), (".cave4", 0x40185c58))
 # -D de sample_preview.S -> symbole de Model-TG
 TG_DEFS = {"TG_TOK_OF": "tok_of", "TG_SOUND_OBJ": "sound_obj", "TG_ENSURE_LOADED": "ensure_loaded",
            "TG_SLOT_HASH": "slot_hash", "TG_PD_MODE": "pd_mode", "TG_LD_BUSY": "ld_busy"}
@@ -86,7 +87,7 @@ def check_contract(stock, syms, tgs):
         for n, head in TG_HEADS.items():
             h = bytes.fromhex(head)
             if rt[syms[n] - dest:syms[n] - dest + len(h)] != h:
-                raise SystemExit(f"!! {tid} : {n} ({syms[n]:#x}) n'est plus le code attendu ; relire notes/45 §3")
+                raise SystemExit(f"!! {tid} : {n} ({syms[n]:#x}) n'est plus le code attendu ; relire notes/46 §4")
         for n, size in TG_ZERO.items():
             if any(rt[syms[n] - dest:syms[n] - dest + size]):
                 raise SystemExit(f"!! {tid} : {n} ({syms[n]:#x}) n'est pas à zéro au départ")
@@ -156,7 +157,7 @@ def make_tweak(tg, writes, pv, used):
     st = tg == "model-tg-st"
     return {
         "id": "sample-preview-st" if st else "sample-preview",
-        "order": 32,
+        "order": 33,
         "name": "Écoute des samples (Model-TG)" + (", avec les moteurs du Syntakt" if st else ""),
         "description": [
             "Navigateur de presets d'une piste Sampler de Model-TG : le pad de la piste (ou ses touches en mode "
@@ -167,12 +168,13 @@ def make_tweak(tg, writes, pv, used):
             "piste.",
             f"Pour {'la version de Model-TG combinée avec les moteurs du Syntakt (model-tg-st)' if st else 'Model-TG (model-tg)'} ; "
             f"appelle ses fonctions aux adresses de ses symboles. Code dans quatre masques de sprites 47x47 libérés "
-            f"(tools/sprites.py) : {' + '.join(map(str, used))} o. Généré par tools/gen_sample_preview.py, notes/45.",
+            f"(tools/sprites.py) : {' + '.join(map(str, used))} o. Généré par tools/gen_sample_preview.py, notes/46.",
         ],
         "device": "Model:Cycles",
         "os": "1.13",
         "section": 3,
         "requires": [tg],
+        "conflicts": ["chord-keys"],                   # mêmes masques ; chord-keys exclut déjà Model-TG
         "symbols": {n: f"{pv[n]:#x}" for n in SYMBOLS},
         "writes": writes,
     }

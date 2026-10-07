@@ -143,7 +143,7 @@ ST_SYMBOLS = ("blob_start", "reserved_end", "REGION_END", "param_table", "boot_e
               "apply_names", "mod_held", "prof_t0", "prof_ta", "prof_trk", "rs_state", "rs_src", "sle_run", "sle_trk",
               "ah_noenv", "voice_ptr", "SLD_BASE", "sld_init", "blk_clk", "mq_toggle", "mq_pending", "mq_apply",
               "voice_quiet")
-# Symboles dont l'écoute des samples a besoin (tools/gen_sample_preview.py, notes/45), dans les deux tweaks : son code
+# Symboles dont l'écoute des samples a besoin (tools/gen_sample_preview.py, notes/46), dans les deux tweaks : son code
 # appelle ces fonctions et lit ces variables de Model-TG, aux mêmes adresses dans les deux builds.
 PV_SYMBOLS = ("tok_of", "sound_obj", "ensure_loaded", "slot_hash", "pd_mode", "ld_busy", "pad_load_hook")
 

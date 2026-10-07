@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Preuve de l'écoute des samples (notes/45 ; tweaks/model-cycles_OS1.13/32-sample-preview.json pour Model-TG,
-32-sample-preview-st.json pour sa version avec les moteurs du Syntakt).
+"""Preuve de l'écoute des samples (notes/46 ; tweaks/model-cycles_OS1.13/33-sample-preview.json pour Model-TG,
+33-sample-preview-st.json pour sa version avec les moteurs du Syntakt).
 
 Le vrai code de l'OS et de Model-TG, exécuté (Unicorn) sur deux images construites depuis le .syx officiel :
 l'« origine » = les mêmes tweaks sans l'écoute des samples (Model-TG seul par défaut), l'image modifiée = avec.
