@@ -624,6 +624,64 @@ async function main() {
     check(errors.length === 0, "no JS error in the Samples OS flow " + (errors.length ? JSON.stringify(errors) : ""));
   }
 
+  // 7b. "Samples OS" tab, for a Model:Samples: the Cycles OS (notes/41), then its way back, over USB
+  if (REAL_OS && REAL_SMP && MAIN) {
+    const env = await load({ devName: "Elektron Model:Samples", device: { id: 25, name: "Model Samples" } });
+    const { w, doc, errors } = env;
+    const app = w.MCFlasherApp;
+    const cyc = new Uint8Array(fs.readFileSync(REAL_OS)), smp = new Uint8Array(fs.readFileSync(REAL_SMP));
+    doc.getElementById("tab-samples").click();
+    doc.getElementById("smp-dir-smp").click();
+    await wait(20);
+    check(!doc.getElementById("smp-pane-smp").hidden && doc.getElementById("smp-pane-cyc").hidden
+      && /Experimental/.test(text(doc, "smp-pane-smp")), "Model:Samples → Cycles OS: its own pane, tagged experimental");
+    app.loadOs(cyc, "model-cycles_OS1.13.syx");
+    app.loadSamples(smp, "model-samples_OS1.13.syx");
+    await settle(w);
+    let f = app.state.fw, sha = f && w.MCBuilder.hex(w.MCBuilder.sha256(f.raw));
+    check(f && f.kind === "cos" && f.raw[4] === 0x0f && sha === app.REF_CYCLES_ON_SAMPLES,
+      "both files -> Cycles OS for Model:Samples, reference build (" + (sha || "").slice(0, 16) + ")");
+    doc.getElementById("allow").click();
+    await wait(150);
+    doc.getElementById("ack").click();
+    await wait(20);
+    check(/backup/.test(text(doc, "missing")) && doc.getElementById("flash").disabled, "flash blocked until the backup box is ticked");
+    doc.getElementById("cos-ack").click();
+    await wait(20);
+    check(!doc.getElementById("flash").disabled && /Model:Cycles OS \(for Model:Samples\)/.test(text(doc, "summary")),
+      "then ready: " + text(doc, "summary"));
+    doc.getElementById("flash").click();
+    await untilSent(w);
+    check(app.state.finished === "ok" && same(env.dev.received, f.raw) && /restarts as a <b>Model:Cycles<\/b>|restarts as a Model:Cycles/.test(text(doc, "result")),
+      "fast: the Cycles OS reaches the Model:Samples byte for byte");
+    check(/Model:Samples screen/.test(text(doc, "result")), "after sending: confirm on the Model:Samples screen");
+
+    // the machine now answers as a Model:Cycles: the way-there file is refused, the way back is accepted
+    env.dev.id = 27;
+    doc.getElementById("refresh").click();
+    await wait(150);
+    check(/nothing to install/.test(text(doc, "midi-status")) && doc.getElementById("flash").disabled,
+      "way-there file vs a machine answering Model:Cycles: nothing sent");
+    doc.getElementById("smp-dir-back").click();
+    await settle(w);
+    f = app.state.fw; sha = f && w.MCBuilder.hex(w.MCBuilder.sha256(f.raw));
+    check(f && f.kind === "sback" && f.raw[4] === 0x11 && sha === app.REF_SAMPLES_BACK,
+      "way back: official Samples OS in the Cycles packing, reference build (" + (sha || "").slice(0, 16) + ")");
+    check(same(w.MCBuilder.unwrap(f.raw).stream, w.MCBuilder.unwrap(smp).stream), "way back: same content as the official Samples OS");
+    await wait(150);
+    check(!doc.getElementById("flash").disabled && /Model:Samples asks/.test(text(doc, "missing")),
+      "way back: ready without an extra box: " + text(doc, "missing"));
+    doc.getElementById("flash").click();
+    await untilSent(w);
+    check(app.state.finished === "ok" && same(env.dev.received, f.raw) && /own OS/.test(text(doc, "result")),
+      "fast: the way back reaches the machine byte for byte");
+    env.dev.id = 25;
+    doc.getElementById("refresh").click();
+    await wait(150);
+    check(/nothing to bring back/.test(text(doc, "midi-status")), "way back vs a machine already on the Samples OS: nothing sent");
+    check(errors.length === 0, "no JS error in the Model:Samples flow " + (errors.length ? JSON.stringify(errors) : ""));
+  }
+
   // 8. Syntakt engines with the official Model:Cycles and Syntakt files, up to the transfer
   if (REAL_OS && REAL_ST && MAIN) {
     const { w, doc, errors, sent } = await load();

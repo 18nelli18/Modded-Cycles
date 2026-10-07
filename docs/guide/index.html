@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-05-03">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-05-03">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-07-01">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-07-01">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -496,6 +496,25 @@
         <h3><span data-l="en">Coming back</span><span data-l="fr">Revenir</span></h3>
         <p><span data-l="en">The way back to the Model:Cycles OS goes through the startup menu, which only listens to the MIDI IN (see <a href="#recovery">Recovery</a>). <b>Without a MIDI interface, there is no way back.</b></span><span data-l="fr">Le retour à l'OS du Model:Cycles passe par le menu de démarrage, qui n'écoute que le MIDI IN (voir <a href="#recovery">Secours</a>). <b>Sans interface MIDI, pas de retour possible.</b></span></p>
         <p class="note"><span data-l="en">From the Samples OS, never install a Model:Samples OS file, neither with CONFIG › UPGRADE nor when Elektron Transfer offers an update: it would also replace the startup menu of your Model:Cycles. Back up your projects first: both OSes use the same storage.</span><span data-l="fr">Depuis l'OS Samples, n'installez jamais un fichier d'OS Model:Samples, ni par CONFIG › UPGRADE ni quand Elektron Transfer propose une mise à jour : il remplacerait aussi le menu de démarrage de votre Model:Cycles. Sauvegardez d'abord vos projets : les deux OS utilisent le même stockage.</span></p>
+
+        <h3 id="cycles-on-samples"><span data-l="en">The other way: the Cycles OS on a Model:Samples</span><span data-l="fr">Dans l'autre sens : l'OS Cycles sur un Model:Samples</span></h3>
+        <p><span data-l="en">A Model:Samples can start as a Model:Cycles and play its synth engines. In the flasher, open the <b>Samples OS</b> tab and choose <b>Model:Samples → Cycles OS</b>. The page needs both official OS files, Model:Cycles then Model:Samples, and sends over USB like any update: the Model:Samples on as usual, Elektron Transfer closed, then YES on its screen.</span><span data-l="fr">Un Model:Samples peut démarrer en Model:Cycles et jouer ses moteurs de synthèse. Dans le flasher, ouvrez l'onglet <b>OS Samples</b> et choisissez <b>Model:Samples → OS Cycles</b>. La page a besoin des deux fichiers d'OS officiels, Model:Cycles puis Model:Samples, et envoie par USB comme pour une mise à jour : le Model:Samples allumé normalement, Elektron Transfer fermé, puis YES sur son écran.</span></p>
+        <dl class="layers fig">
+          <div><dt><span data-l="en">Startup menu</span><span data-l="fr">Menu de démarrage</span></dt><dd>Model:Samples</dd></div>
+          <div><dt>Updater</dt><dd>Model:Samples</dd></div>
+          <div><dt>Signature</dt><dd>Model:Samples</dd></div>
+          <div class="swap"><dt><span data-l="en">Main OS</span><span data-l="fr">OS principal</span></dt><dd><span data-l="en">Model:Cycles, which accepts the Model:Samples signature</span><span data-l="fr">Model:Cycles, qui accepte la signature du Model:Samples</span></dd></div>
+        </dl>
+        <p><span data-l="en"><b>Coming back over USB:</b> same tab, <b>Model:Samples: back to its OS</b>. The page sends the official Model:Samples OS, unchanged. This works because the Model:Cycles OS put on by the page checks updates with the Model:Samples signature. An unmodified Model:Cycles OS would refuse it.</span><span data-l="fr"><b>Revenir par USB :</b> même onglet, <b>Model:Samples : retour à son OS</b>. La page envoie l'OS officiel du Model:Samples, sans le modifier. Ça marche parce que l'OS Cycles installé par la page vérifie les mises à jour avec la signature du Model:Samples. Un OS Cycles non modifié le refuserait.</span></p>
+        <ul>
+          <li><span data-l="en">Back up your samples and projects with Elektron Transfer first: both OSes use the same storage.</span><span data-l="fr">Sauvegardez d'abord vos samples et vos projets avec Elektron Transfer : les deux OS utilisent le même stockage.</span></li>
+          <li><span data-l="en">Only on a real Model:Samples. A Model:Cycles running the Samples OS answers as a Model:Samples too: it would take this firmware, then refuse Model:Cycles firmwares over USB until its startup menu reinstalls its OS through the MIDI IN.</span><span data-l="fr">Seulement sur un vrai Model:Samples. Un Model:Cycles sous l'OS Samples répond lui aussi Model:Samples : il prendrait ce firmware, puis refuserait les firmwares Model:Cycles par USB jusqu'à ce que son menu de démarrage réinstalle son OS par le MIDI IN.</span></li>
+          <li><span data-l="en">If the machine does not start properly after the update, either way, switch it off and on again. If it still hangs, hold <b>FUNC</b> while switching it on, then press <b>TRIG 2</b> (EMPTY RESET): it clears the active project, hence the backup.</span><span data-l="fr">Si la machine démarre mal après la mise à jour, dans un sens ou dans l'autre, éteignez-la et rallumez-la. Si elle bloque encore, maintenez <b>FUNC</b> à l'allumage puis appuyez sur <b>TRIG 2</b> (EMPTY RESET) : il vide le projet actif, d'où la sauvegarde.</span></li>
+          <li><span data-l="en">Under the Cycles OS, the machine refuses Model:Cycles firmwares (official or with mods), even when Elektron Transfer offers one: nothing is written. Leave through “back to its OS”.</span><span data-l="fr">Sous l'OS Cycles, la machine refuse les firmwares Model:Cycles (officiels ou avec mods), même quand Elektron Transfer en propose un : rien n'est écrit. Revenez par « retour à son OS ».</span></li>
+          <li><span data-l="en">A Model:Cycles OS installed another way (another tool, or a Model:Cycles build with mods) refuses “back to its OS”: the machine says the update failed and nothing changes. Such an OS accepts the first choice of the tab, <b>Model:Cycles → Samples OS</b>, which brings the Model:Samples OS back.</span><span data-l="fr">Un OS Model:Cycles installé autrement (avec un autre outil, ou un build Model:Cycles avec mods) refuse « retour à son OS » : la machine dit que la mise à jour a échoué et rien ne change. Un tel OS accepte le premier choix de l'onglet, <b>Model:Cycles → OS Samples</b>, qui rend l'OS du Model:Samples.</span></li>
+          <li><span data-l="en">Safety net: the startup menu of the Model:Samples is never touched. If anything went wrong, it takes the official Model:Samples OS through the MIDI IN, as in <a href="#recovery">Recovery</a>.</span><span data-l="fr">Filet de sécurité : le menu de démarrage du Model:Samples n'est jamais touché. En cas de problème, il accepte l'OS officiel du Model:Samples par le MIDI IN, comme dans <a href="#recovery">Secours</a>.</span></li>
+          <li><span data-l="en">Experimental: checked in the emulator on both OSes' own update checks and on the Model:Samples startup code that loads the new OS, not yet tried on a real Model:Samples.</span><span data-l="fr">Expérimental : vérifié en émulation sur les contrôles de mise à jour des deux OS et sur le code de démarrage du Model:Samples qui charge le nouvel OS, pas encore essayé sur un vrai Model:Samples.</span></li>
+        </ul>
       </section>
 
       <section id="stock">
@@ -582,8 +601,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-05-03"></script>
-<script src="../assets/cycles.js?v=2026-10-05-03"></script>
-<script src="../assets/site.js?v=2026-10-05-03"></script>
+<script src="../assets/release.js?v=2026-10-07-01"></script>
+<script src="../assets/cycles.js?v=2026-10-07-01"></script>
+<script src="../assets/site.js?v=2026-10-07-01"></script>
 </body>
 </html>
