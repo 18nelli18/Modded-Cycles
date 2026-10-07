@@ -248,6 +248,33 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim
 | `model-tg,boot-anim` | `cbec181684805bf37dd07c62dc47f7daf35e6abab530a3f3b06ec5db590278ec` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim` | `d468a729f32780870dbd591e52e8c782a5cdd347459ac1c61ef35473e26c9323` |
 
+### Motifs génératifs (Random, Undo, page GEN)
+
+`tweaks/model-cycles_OS1.13/49-generative.json` est produit par `tools/gen_generative.py`, qui compile
+`tools/machines/generative/` (C et assembleur) et l'ajoute en place juste après le bloc de Model-TG (`0x401bf8c0`), dans
+le cache du système de fichiers dont il retire un 7e bloc ; quatre crochets (démarrage, touches, pads, LED), dont trois
+réorientent ceux de Model-TG. Il requiert donc `model-tg` et vérifie dans `30-model-tg.json` chaque octet de Model-TG dont
+il dépend ([note 50](notes/50-motifs-generatifs.md)). Les octets du code dépendent du compilateur (`m68k-linux-gnu-gcc`
+13.3 d'Ubuntu pour les empreintes ci-dessous). La preuve fait tourner le vrai code de l'OS et de Model-TG : démarrage,
+SETTINGS + PATTERN / TEMPO / PAGE, Random et Undo par les vrais setters de l'OS sur la banque de patterns (retour à
+l'octet près, p-locks compris), la page GEN (potards, pads, LED, écran dessiné dans un tampon), et compare ce qui est
+écrit à des vecteurs de référence du générateur :
+```sh
+python3 tools/gen_generative.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/emu/test_generative.py --cycles model-cycles_OS1.13.syx \
+    [--with arp,trig-hold,tempo-max,boot-anim,6ch-usbup]
+python3 tools/build.py -i model-cycles_OS1.13.syx -t model-tg,generative
+```
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `model-tg,generative` | `41f44b960a588059e1631e0f9dabce9589dd356ce996d81555b861055addb78e` |
+| `model-tg,generative,arp,trig-hold` | `76b2db0e9480bd7653124a23b52f3d8633dda2a75fde89a61fb7c54bfd5f14eb` |
+| `6ch-usbup,model-tg,generative` | `91925af19ab33fdeabdcc3648456682ae78e3e94056765127d81015a23e02387` |
+
+Incompatible avec `model-tg-st` et les `syntakt-tg-*`, qui prennent le même crochet de démarrage et la même adresse
+d'ajout (`0x401bf8c0`).
+
 ### Écoute d'un pas en pause
 
 `trig-preview` (et sa copie dans Model-TG) accepte le séquenceur en pause, où le met un Stop MIDI reçu même à l'arrêt : 3 octets

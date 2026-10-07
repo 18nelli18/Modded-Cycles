@@ -45,6 +45,7 @@ Going back to the official firmware is one click away.
 | **Tempo up to 546 BPM** | The TEMPO knob, tap tempo, MIDI clock and saved projects go past 300 BPM. Tempo-synced LFOs stay in time. | ✅ Tested |
 | **Startup animation** | When the Model:Cycles starts, the four squares of the modded-cycles logo pop in and “modded-cycles” types itself underneath, instead of the original tile animation. Same duration. | ✅ Tested |
 | **Easier trig removal** | A quick press on a step that holds a trig removes it, instead of opening it as a hold. | ✅ Tested |
+| **Generative patterns** | `SETTINGS` + `PATTERN` writes a fresh pattern into the sequencer, even while it plays: Euclidean rhythms or a drum style map that scrolls from four-on-the-floor through house, 2-step, electro, boom bap and breaks to jungle (with fills, accents and ghost notes), melodies on the Tone track and chord progressions in key on the Chord track. `SETTINGS` + `TEMPO` undoes it. `SETTINGS` + `PAGE` opens a GEN page to shape each track with the knobs, set the key, and lock the tracks you want to keep. Needs Model-TG. By Combust. | 🧪 Experimental |
 | **Latching mute** | Hold `TRACK` and tap `FUNC`: mute mode stays on, no more holding `FUNC`. By [drumkilla](https://github.com/drumkilla/elektron-model-tweaks). | ✅ Tested |
 | **Trig preview** | Sequencer stopped or paused: hold a step and press `PAGE` to hear it, with its note, length and p-locks. By drumkilla. | ✅ Tested |
 | **Scrolling names** | Sound names too long for the screen scroll in the sound browser. By drumkilla. | ✅ Tested |
