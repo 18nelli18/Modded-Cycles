@@ -31,6 +31,9 @@ OUT = ROOT / "docs" / "flasher" / "tweaks.js"
 # excludes : cartes qu'on ne peut pas cocher ensemble (cocher l'une decoche l'autre).
 # includes : tweaks deja contenus dans cette fonctionnalite ; ils s'en excluent comme avec excludes, et le flasher
 # les affiche coches et verrouilles, « inclus avec … », tant qu'elle est cochee.
+# requires : carte sans laquelle celle-ci ne marche pas (un ajout a Model-TG). La cocher coche aussi l'autre (avec
+# les exclusions de l'autre, comme si on l'avait cochee) ; decocher l'autre la decoche. ref_mainos.py ne compte que
+# les combinaisons ou l'autre carte est cochee.
 # Les moteurs s'ajoutent en machines supplementaires : sdvintage-exact (a la place de SNARE) reste dans build.py.
 # status : "tested" (flashe sur un vrai Model:Cycles) ou "experimental".
 # credit : auteur du travail d'origine, affiche sur la carte (voir aussi les credits de la page).
@@ -63,6 +66,21 @@ FEATURES = [
         # avec les moteurs du Syntakt : la base de la version combinee (notes/31), et pour chaque combinaison de
         # moteurs son tweak syntakt-tg-<moteurs> (« tg » des combinaisons de la carte des moteurs)
         "with": {"syntakt": "30-model-tg-st"},
+    },
+    {
+        "id": "sample-preview",
+        "label": "Ecoute des samples (Model-TG)",
+        "desc": "Sur une piste Sampler, dans le navigateur de samples, le pad de la piste (ou ses touches en mode "
+                "clavier) joue le sample sous le curseur, comme pour les presets. Un sample pas encore en memoire "
+                "se charge au premier appui. Demande Model-TG.",
+        "status": "experimental",
+        "credit": {"kind": "based", "who": "TinyGregAudio", "repo": "TinyGregAudio/Model-TG"},
+        "requires": "model-tg",
+        "variants": [
+            {"file": "32-sample-preview", "label": None},
+        ],
+        # avec les moteurs du Syntakt, Model-TG devient model-tg-st : l'ecoute prend la version faite pour lui
+        "with": {"syntakt": "32-sample-preview-st"},
     },
     {
         "id": "latching-mute",
@@ -199,6 +217,8 @@ def render():
             feat["excludes"] = f["excludes"]
         if f.get("includes"):
             feat["includes"] = f["includes"]
+        if f.get("requires"):                   # carte qui doit etre cochee aussi
+            feat["requires"] = f["requires"]
         if f.get("with"):                       # autre tweak quand une autre carte est cochee aussi
             feat["with"] = {g: load(json.loads((DEV_DIR / f"{v}.json").read_text(encoding="utf-8"))["id"])["id"]
                             for g, v in f["with"].items()}

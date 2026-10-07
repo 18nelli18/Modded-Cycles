@@ -165,9 +165,9 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 12).join() === "6ch-usbup,model-tg,model-tg-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,syntakt-sd,syntakt-tg-sd"
-      && ids.length === 10 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
-      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 10,
+    check(ids.slice(0, 14).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,syntakt-sd,syntakt-tg-sd"
+      && ids.length === 12 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 11,
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG: ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
@@ -175,7 +175,7 @@ async function main() {
       && srcs.every((x) => x.endsWith("?v=" + w.MC_BUILD)), "scripts loaded with ?v=<build> (no stale cache): " + srcs.join());
     check(doc.getElementById("compat").hidden, "no compatibility banner in a good browser");
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-usb6,feat-model-tg,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-trig-hold,feat-arp,feat-tempo-max,feat-boot-anim,feat-syntakt", "10 feature cards: " + JSON.stringify(feats));
+    check(feats.join() === "feat-usb6,feat-model-tg,feat-sample-preview,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-trig-hold,feat-arp,feat-tempo-max,feat-boot-anim,feat-syntakt", "11 feature cards: " + JSON.stringify(feats));
     const tags = [...doc.querySelectorAll("#features .tag")].map((x) => x.textContent);
     const tagOfFeat = (f) => (f.status === "tested" ? "Tested" : "Experimental");
     const synTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.engines));
@@ -183,7 +183,8 @@ async function main() {
     const holdTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "trig-hold"));
     const tempoTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "tempo-max"));
     const bootTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "boot-anim"));
-    check(tags.join() === "Tested,Experimental,Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + "," + synTag,
+    const previewTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "sample-preview"));
+    check(tags.join() === "Tested,Experimental," + previewTag + ",Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + "," + synTag,
       "cards tagged as tested or not (Model-TG experimental until tested here): " + tags.join());
     check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until the Syntakt engines are ticked");
     doc.getElementById("feat-syntakt").click();
@@ -208,10 +209,11 @@ async function main() {
     check(!doc.getElementById("feat-syntakt").checked && doc.querySelectorAll('input[name="eng-syntakt"]').length === 0
       && doc.getElementById("drop3-wrap").hidden, "last engine unticked -> the card turns off");
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
-    check(credits.length === 6 && credits[0] === "https://github.com/scottmetoyer/ms-multi-output"
+    check(credits.length === 7 && credits[0] === "https://github.com/scottmetoyer/ms-multi-output"
       && credits[1] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(credits[2])
-      && credits.slice(3).every((h) => h === "https://github.com/drumkilla/elektron-model-tweaks"),
-      "each card credits its author, Model-TG with its MIT license: " + JSON.stringify(credits));
+      && credits[3] === "https://github.com/TinyGregAudio/Model-TG"
+      && credits.slice(4).every((h) => h === "https://github.com/drumkilla/elektron-model-tweaks"),
+      "each card credits its author, Model-TG with its MIT license, sample preview based on Model-TG: " + JSON.stringify(credits));
     const list = [...doc.querySelectorAll("#credits-list a")].map((a) => a.textContent);
     check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",
       "credits section lists the 5 upstream repositories");
@@ -242,6 +244,40 @@ async function main() {
     box("feat-model-tg").click(); await wait(5);
     check(over && !box("feat-trig-preview").checked && !box("feat-trig-preview").disabled,
       "Model-TG ticked over trig-preview: shown included, built without it; unticked: all free and unticked");
+    // Sample preview needs Model-TG (card field "requires"): ticking it ticks Model-TG too, as if the user had (its
+    // exclusions apply); unticking Model-TG unticks it; with the Syntakt engines (still ticked here, SDVtg) both
+    // take their combined version, and the card keeps its own badge (not the combined version's tests)
+    const ids1 = () => w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
+    const spCard = () => doc.querySelector("label[for=feat-sample-preview]");
+    const spTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "sample-preview"));
+    box("feat-sample-preview").click(); await wait(5);
+    const reqSt = box("feat-sample-preview").checked && box("feat-model-tg").checked && box("feat-syntakt").checked
+      && ids1() === "model-tg-st,sample-preview-st,syntakt-tg-sd" && spCard().querySelector(".tag").textContent === spTag;
+    const five = ["sd", "cp", "toy", "bits", "swarm"];    // Model-TG + the 5 engines: the combined version's badge
+    await pickEngines(doc, five);
+    const tg5 = !!w.MC_TWEAKS.features.find((f) => f.id === "syntakt").combos.find((c) => c.engines.join() === five.join()).tg_tested;
+    const reqSt5 = ids1() === "model-tg-st,sample-preview-st,syntakt-tg-sd-cp-toy-bits-swarm"
+      && spCard().querySelector(".tag").textContent === spTag
+      && doc.querySelector("label[for=feat-model-tg] .tag").textContent === (tg5 ? "Tested" : "Experimental");
+    await pickEngines(doc, ["sd"]);
+    box("feat-syntakt").click(); await wait(5);
+    const reqPlain = ids1() === "model-tg,sample-preview";
+    box("feat-sample-preview").click(); await wait(5);
+    const keepTg = box("feat-model-tg").checked && !box("feat-sample-preview").checked && ids1() === "model-tg";
+    box("feat-model-tg").click(); await wait(5);
+    box("feat-latching-mute").click(); await wait(5);
+    box("feat-sample-preview").click(); await wait(5);
+    const reqOn = box("feat-model-tg").checked && box("feat-sample-preview").checked
+      && box("feat-latching-mute").checked && box("feat-latching-mute").disabled && ids1() === "model-tg,sample-preview"
+      && /\(needs Model-TG\)/.test(spCard().querySelector(".ttl").textContent)
+      && !!spCard().querySelector('a.feat-guide[href$="#sample-preview"]');
+    box("feat-model-tg").click(); await wait(5);
+    const reqOff = !box("feat-model-tg").checked && !box("feat-sample-preview").checked
+      && !box("feat-latching-mute").checked && !box("feat-latching-mute").disabled && ids1() === "";
+    check(reqSt && reqSt5 && reqPlain && keepTg && reqOn && reqOff,
+      "sample preview: says it needs Model-TG, ticking it ticks Model-TG (latching mute then included), unticking Model-TG "
+      + "unticks it, unticking it keeps Model-TG; with the Syntakt engines: model-tg-st,sample-preview-st,syntakt-tg-…, "
+      + `its own badge (${spTag}, Model-TG + the 5 engines: ${tg5 ? "Tested" : "Experimental"}); guide link`);
     // the combined version's badges follow its tests on the hardware (gen_syntakt_engines.HW_TESTED_TG, the
     // combos' tg_tested in tweaks.js): Model-TG + the 5 engines, then Model-TG + SDVtg alone
     doc.getElementById("feat-model-tg").click(); await wait(5);
@@ -280,6 +316,10 @@ async function main() {
       "FR: tempo card translated, with its guide link");
     check(/Animation de démarrage modded-cycles/.test(text(doc, "features")) && doc.querySelector('#features a[href$="#boot-anim"]'),
       "FR: startup animation card translated, with its guide link");
+    check(/Écoute des samples \(Model-TG\)/.test(text(doc, "features"))
+      && /\(avec Model-TG\)/.test(doc.querySelector("label[for=feat-sample-preview] .ttl").textContent)
+      && doc.querySelector('#features a[href$="#sample-preview"]'),
+      "FR: sample preview card translated, says « (avec Model-TG) », with its guide link");
     doc.getElementById("feat-model-tg").click(); await wait(5);
     check(/\(inclus avec Model-TG\)/.test(doc.querySelector("label[for=feat-browser-scroll] .ttl").textContent),
       "FR: the tweaks Model-TG holds say « (inclus avec Model-TG) »");
@@ -510,10 +550,14 @@ async function main() {
     if (REAL_ST) app.loadSyntakt(new Uint8Array(fs.readFileSync(REAL_ST)), ST_NAME);
     await wait(20);
     const boxes = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
+    // card -> the card it requires (sample preview -> Model-TG): ticking it ticks that one too
+    const reqOf = Object.fromEntries(w.MC_TWEAKS.features.filter((f) => f.requires).map((f) => ["feat-" + f.id, "feat-" + f.requires]));
     const seen = new Set();
     let idx = -1;
     const mine = () => ++idx % SHARD_N === SHARD_K;   // this part's share of the combinations
     for (let mask = 1; mask < 1 << boxes.length; mask++) {
+      // a card wanted without the card it requires: the page would tick that one too, a state built elsewhere
+      if (boxes.some((b, k) => mask & (1 << k) && reqOf[b] && !(mask & (1 << boxes.indexOf(reqOf[b]))))) continue;
       if (!mine()) continue;
       for (let k = 0; k < boxes.length; k++) {
         const cb = doc.getElementById(boxes[k]);           // re-query: the cards are re-rendered
@@ -529,11 +573,13 @@ async function main() {
       check(f && f.kind === "built" && f.ref, `real OS: ${app.state.buildKey} matches its reference hash`);
     }
     const combos = engineCombos(w);
-    const plain = boxes.filter((b) => b !== "feat-syntakt" && b !== "feat-model-tg");   // what goes with the engines
+    // what goes with the engines (not the cards that require Model-TG: they go in the Model-TG group below)
+    const plain = boxes.filter((b) => b !== "feat-syntakt" && b !== "feat-model-tg" && !reqOf[b]);
     const sets = [];                                  // with the engines: any of these, or Model-TG (with or without USB)
     for (let mask = 0; mask < 1 << plain.length; mask++) sets.push(plain.filter((b, k) => mask & (1 << k)));
     const tgEx = w.MC_TWEAKS.features.find((f) => f.id === "model-tg").includes.map((x) => "feat-" + x);
-    const withTg = plain.filter((b) => !tgEx.includes(b));    // Model-TG and what it goes with (USB, trig removal, arpeggiator)
+    // Model-TG and what it goes with (USB, sample preview, trig removal, arpeggiator…), in card order
+    const withTg = boxes.filter((b) => (plain.includes(b) && !tgEx.includes(b)) || reqOf[b] === "feat-model-tg");
     for (let mask = 0; mask < 1 << withTg.length; mask++) sets.push(["feat-model-tg", ...withTg.filter((b, k) => mask & (1 << k))]);
     const tgOf = Object.fromEntries(w.MC_TWEAKS.features.find((f) => f.engines).combos.map((c) => [c.id, c.tg]));
     for (const variant of REAL_ST ? Object.keys(combos).slice(1) : []) {   // the other engine combinations

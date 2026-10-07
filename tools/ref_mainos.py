@@ -4,6 +4,8 @@
 Pour chaque combinaison que la page propose (cases de docs/flasher/tweaks.js, dans l'ordre des cartes ;
 pour les vrais moteurs du Syntakt, chaque combinaison de moteurs cochés), calcule le SHA-256 du MAIN OS
 modifié, exactement comme tools/build.py, puis réécrit le bloc REF_MAINOS de app.js (ou le vérifie).
+Une carte « requires » (l'écoute des samples, un ajout à Model-TG) ne compte qu'avec la carte qu'elle demande :
+la page coche l'autre avec elle.
 Le flasher refuse tout firmware construit dont le MAIN OS ne correspond pas.
 
     python3 tools/ref_mainos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx [--check]
@@ -52,9 +54,13 @@ def block(cycles, syntakt):
     if len(extra) > 1 or any(len(options(f)) != 1 for f in base):
         raise SystemExit("!! disposition des cartes inattendue : adapter ref_mainos.py")
     stock = main_os(cycles)
-    subsets = [c for r in range(len(base) + 1) for c in itertools.combinations([options(f)[0] for f in base], r)]
+    # carte « requires » : la page ne la laisse cochée qu'avec la carte qu'elle demande (tweak de cette carte)
+    need = {options(f)[0]: options(next(g for g in base if g["id"] == f["requires"]))[0] for f in base if f.get("requires")}
+    subsets = [c for r in range(len(base) + 1) for c in itertools.combinations([options(f)[0] for f in base], r)
+               if all(need[i] in c for i in c if i in need)]
     payloads = {}
-    # avec les moteurs du Syntakt, une carte « with » (Model-TG) prend un autre tweak, et les moteurs le leur (tg)
+    # avec les moteurs du Syntakt, une carte « with » (Model-TG) prend un autre tweak, et les moteurs le leur (tg) ;
+    # une carte « requires » de Model-TG (l'écoute des samples) prend la sienne en même temps que Model-TG
     alt = {options(f)[0]: f["with"][extra[0]["id"]] for f in base if extra and extra[0]["id"] in f.get("with", {})}
     tg_of = {c["id"]: c["tg"] for c in extra[0]["combos"]} if extra else {}
 
@@ -72,11 +78,14 @@ def block(cycles, syntakt):
             lines.append(f"  // + real Syntakt engines {names} (tweak {last}), with the official Syntakt OS 1.42 or 1.41")
         for sub in subsets:
             ids = list(sub) + ([last] if last else [])
-            if last and any(i in alt for i in sub):       # version combinée (notes/31)
+            if last and any(i in alt for i in sub if i not in need):   # version combinée (notes/31)
                 ids = [alt.get(i, i) for i in sub] + [tg_of[last]]
             chosen = [by_id[i] for i in ids]
             if not ids or any(o in ids for t in chosen for o in t.get("conflicts", [])):
                 continue                                  # cases incompatibles : la page ne les propose pas
+            missing = [(t["id"], r) for t in chosen for r in t.get("requires", []) if r not in ids]
+            if missing:                                   # comme build.check_conflicts : ne doit jamais arriver
+                raise SystemExit(f"!! {missing[0][0]} demande {missing[0][1]} dans {'+'.join(ids)} : adapter ref_mainos.py")
             chosen.sort(key=lambda t: t["order"])
             apps = [t for t in chosen if t.get("append")]
             patched, _ = build.apply_writes(stock, chosen)

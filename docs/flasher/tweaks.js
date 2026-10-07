@@ -956,6 +956,15 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": []
+   },
+   "symbols": {
+    "tok_of": "0x401b2d96",
+    "sound_obj": "0x401b32a2",
+    "ensure_loaded": "0x401b27d0",
+    "slot_hash": "0x401be4a0",
+    "pd_mode": "0x401befc8",
+    "ld_busy": "0x401beff4",
+    "pad_load_hook": "0x401b3210"
    }
   },
   {
@@ -1776,8 +1785,179 @@ window.MC_TWEAKS = {
     "mq_toggle": "0x401b7978",
     "mq_pending": "0x401b7a68",
     "mq_apply": "0x401b79fe",
-    "voice_quiet": "0x401adae0"
+    "voice_quiet": "0x401adae0",
+    "tok_of": "0x401b2d96",
+    "sound_obj": "0x401b32a2",
+    "ensure_loaded": "0x401b27d0",
+    "slot_hash": "0x401be4a0",
+    "pd_mode": "0x401befc8",
+    "ld_busy": "0x401beff4",
+    "pad_load_hook": "0x401b3210"
    }
+  },
+  {
+   "id": "sample-preview",
+   "order": 32,
+   "name": "Écoute des samples (Model-TG)",
+   "description": [
+    "Navigateur de presets d'une piste Sampler de Model-TG : le pad de la piste (ou ses touches en mode clavier) joue le sample sous le curseur, comme l'OS d'origine joue le preset sous le curseur.",
+    "Un sample qui n'est pas en mémoire est chargé au premier appui, seulement dans la place libre ou à la place de samples que le projet n'utilise pas. S'il ne se charge pas, l'appui ne joue rien.",
+    "Les presets du Sampler et les sample locks du pool font entendre leur propre sample, plus celui de la piste.",
+    "Pour Model-TG (model-tg) ; appelle ses fonctions aux adresses de ses symboles. Code dans quatre masques de sprites 47x47 libérés (tools/sprites.py) : 288 + 300 + 304 + 312 o. Généré par tools/gen_sample_preview.py, notes/45."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "requires": [
+    "model-tg"
+   ],
+   "symbols": {
+    "pv_parse": "0x4018dba8",
+    "pv_note": "0x4018d4a8",
+    "pv_copy": "0x4018cd48",
+    "pv_tab": "0x4018cd84",
+    "pv_src": "0x4018dc7c",
+    "pv_fail": "0x4018cd9c"
+   },
+   "writes": [
+    {
+     "off": 363790,
+     "old": "4aaa0030670c2002",
+     "new": "4eb94018cd48600a"
+    },
+    {
+     "off": 529182,
+     "old": "4ef9401b3210",
+     "new": "4ef94018d4a8"
+    },
+    {
+     "off": 679974,
+     "old": "4eb9400a3052",
+     "new": "4eb94018dba8"
+    },
+    {
+     "off": 706814,
+     "old": "4018dba8",
+     "new": "40172220"
+    },
+    {
+     "off": 706902,
+     "old": "4018d4a8",
+     "new": "40172220"
+    },
+    {
+     "off": 706934,
+     "old": "4018d1b8",
+     "new": "40172220"
+    },
+    {
+     "off": 706994,
+     "old": "4018cd48",
+     "new": "40172220"
+    },
+    {
+     "off": 1624392,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000",
+     "new": "202a003067342240200206800000009373a900265d81661e7206b481641841f94018cd8420702c0029880c00701820d953806afa4e7542b40c004e754018cda04018ce044018d1b84018d21c4018d2804018d574000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+     "off": 1625528,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffffffff",
+     "new": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+     "off": 1626280,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000",
+     "new": "203940fb5a04670000b67240b2af0010660000ac4aaf0014660000a4222f0004b2b940a700c46600009620404eb9401b2d964a806700008841f9401be4a0723fb098677a53816af8b0b94018cd9c675e4fefffd448d77cfc240040c372003203028100000700663e46fc27004ab9401beff46630700123c0401beff446c323c0401befc820024eb9401b27d042b9401befc842b9401beff44a806a1a23c24018cd9c600246c34cd77cfc4fef002c70012f40001460084cd77cfc4fef002c4e56ff98707f4ef940081724000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+     "off": 1628072,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000",
+     "new": "4feffff048d70c0c2448226f00142429000826290004203940a700c44eb9401b32a24a806700008c264071ab00267206b081667e20020480000000300c80000000706206617c4a92666a7042b480655a4a83675641f94018dc7c224b701820d953806afa41f94018dc8010fc005310fc004d10fc0050721c2003e2a802800000000f0680000000300c800000003a65025e8010c059816ae042b94018cd9c24bc4018dc7c42aa0004600a429242aa00046002610e200a204a4cd70c0c4fef00104e752f2f0018204a4eb9400a3052588f4e75000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    }
+   ]
+  },
+  {
+   "id": "sample-preview-st",
+   "order": 32,
+   "name": "Écoute des samples (Model-TG), avec les moteurs du Syntakt",
+   "description": [
+    "Navigateur de presets d'une piste Sampler de Model-TG : le pad de la piste (ou ses touches en mode clavier) joue le sample sous le curseur, comme l'OS d'origine joue le preset sous le curseur.",
+    "Un sample qui n'est pas en mémoire est chargé au premier appui, seulement dans la place libre ou à la place de samples que le projet n'utilise pas. S'il ne se charge pas, l'appui ne joue rien.",
+    "Les presets du Sampler et les sample locks du pool font entendre leur propre sample, plus celui de la piste.",
+    "Pour la version de Model-TG combinée avec les moteurs du Syntakt (model-tg-st) ; appelle ses fonctions aux adresses de ses symboles. Code dans quatre masques de sprites 47x47 libérés (tools/sprites.py) : 288 + 300 + 304 + 312 o. Généré par tools/gen_sample_preview.py, notes/45."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "requires": [
+    "model-tg-st"
+   ],
+   "symbols": {
+    "pv_parse": "0x4018dba8",
+    "pv_note": "0x4018d4a8",
+    "pv_copy": "0x4018cd48",
+    "pv_tab": "0x4018cd84",
+    "pv_src": "0x4018dc7c",
+    "pv_fail": "0x4018cd9c"
+   },
+   "writes": [
+    {
+     "off": 363790,
+     "old": "4aaa0030670c2002",
+     "new": "4eb94018cd48600a"
+    },
+    {
+     "off": 529182,
+     "old": "4ef9401b3210",
+     "new": "4ef94018d4a8"
+    },
+    {
+     "off": 679974,
+     "old": "4eb9400a3052",
+     "new": "4eb94018dba8"
+    },
+    {
+     "off": 706814,
+     "old": "4018dba8",
+     "new": "40172220"
+    },
+    {
+     "off": 706902,
+     "old": "4018d4a8",
+     "new": "40172220"
+    },
+    {
+     "off": 706934,
+     "old": "4018d1b8",
+     "new": "40172220"
+    },
+    {
+     "off": 706994,
+     "old": "4018cd48",
+     "new": "40172220"
+    },
+    {
+     "off": 1624392,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000",
+     "new": "202a003067342240200206800000009373a900265d81661e7206b481641841f94018cd8420702c0029880c00701820d953806afa4e7542b40c004e754018cda04018ce044018d1b84018d21c4018d2804018d574000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+     "off": 1625528,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffffffff",
+     "new": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+     "off": 1626280,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000",
+     "new": "203940fb5a04670000b67240b2af0010660000ac4aaf0014660000a4222f0004b2b940a700c46600009620404eb9401b2d964a806700008841f9401be4a0723fb098677a53816af8b0b94018cd9c675e4fefffd448d77cfc240040c372003203028100000700663e46fc27004ab9401beff46630700123c0401beff446c323c0401befc820024eb9401b27d042b9401befc842b9401beff44a806a1a23c24018cd9c600246c34cd77cfc4fef002c70012f40001460084cd77cfc4fef002c4e56ff98707f4ef940081724000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+     "off": 1628072,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000",
+     "new": "4feffff048d70c0c2448226f00142429000826290004203940a700c44eb9401b32a24a806700008c264071ab00267206b081667e20020480000000300c80000000706206617c4a92666a7042b480655a4a83675641f94018dc7c224b701820d953806afa41f94018dc8010fc005310fc004d10fc0050721c2003e2a802800000000f0680000000300c800000003a65025e8010c059816ae042b94018cd9c24bc4018dc7c42aa0004600a429242aa00046002610e200a204a4cd70c0c4fef00104e752f2f0018204a4eb9400a3052588f4e75000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    }
+   ]
   },
   {
    "id": "latching-mute",
@@ -138016,6 +138196,27 @@ window.MC_TWEAKS = {
     "syntakt": "model-tg-st"
    },
    "license": "LICENSE-Model-TG.txt"
+  },
+  {
+   "id": "sample-preview",
+   "label": "Ecoute des samples (Model-TG)",
+   "desc": "Sur une piste Sampler, dans le navigateur de samples, le pad de la piste (ou ses touches en mode clavier) joue le sample sous le curseur, comme pour les presets. Un sample pas encore en memoire se charge au premier appui. Demande Model-TG.",
+   "status": "experimental",
+   "credit": {
+    "kind": "based",
+    "who": "TinyGregAudio",
+    "repo": "TinyGregAudio/Model-TG"
+   },
+   "variants": [
+    {
+     "id": "sample-preview",
+     "label": null
+    }
+   ],
+   "requires": "model-tg",
+   "with": {
+    "syntakt": "sample-preview-st"
+   }
   },
   {
    "id": "latching-mute",
