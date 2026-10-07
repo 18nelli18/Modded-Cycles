@@ -678,18 +678,29 @@ instructions d'origine ou revient à la fonction d'origine ; les quatorze masque
 désignés une seule fois et jamais dépassés ; seul `0x400ff9cc` est partagé, avec Model-TG, déclaré en conflit.
 Défauts connus, aucun ne bloque l'essai sur la machine :
 
-- **Relâchement avalé** (moyen, `[FAIT]` sur le code, effet audible `[HYP]`) : si une vue placée avant le clavier
-  consomme le relâchement d'une touche d'accord (PATTERN tenu, par exemple), `held[touche].valid` reste levé. Le
-  relâchement suivant de cette touche est alors consommé par le mod, même quand l'appui est allé au clavier
-  d'origine (Keys OFF, autre piste, mode grille) : la note d'origine et son note-off MIDI restent tenus jusqu'au
-  prochain appui-relâchement. Essai : piste CHORD Keys ON, tenir TRIG 1, tenir PATTERN, lâcher TRIG 1, lâcher
-  PATTERN ; passer sur une piste non CHORD, appuyer puis lâcher TRIG 1. Correction : dans `ck_ui_key`, sur un premier
-  appui dont `held[touche].valid` est levé, appeler `release_key` et remettre `valid` à zéro avant `handle_press`
-  (recompilation avec GCC 16.2).
+- **Relâchement avalé** (moyen, `[FAIT]` sur le code désassemblé, effet audible `[HYP]`) : si une vue placée avant
+  le clavier consomme le relâchement d'une touche d'accord, `held[touche].valid` reste levé. Le relâchement suivant
+  de cette touche est alors consommé par le mod, même quand l'appui est allé au clavier d'origine (Keys OFF, autre
+  piste, mode grille) : la note d'origine et son note-off MIDI ne partent jamais.
+  - Déclencheur : PATTERN tenu. `0x40077720` → `0x4007739e` parcourt les vues enfants à rebours
+    (PatternAndBankSelectView `0x40020a7a`, PadsView `0x4001d506`, puis KeyboardView, emplacement `0x400ff9cc`) et
+    s'arrête au premier qui rend vrai. Avec UIStates+389 (`0x4006bb18`) levé, la vue des patterns rend 1 sur tout
+    relâchement de TRIG, même sans avoir vu l'appui (`0x40020d3c` → `0x40020df0` → `0x40020e16` → `0x40020d5e`). Un
+    relâchement supprimé par `KeyEvent::consume` (masque `0x40f95724`) n'est jamais posté : même effet.
+  - Régression : sur l'OS d'origine, le prochain appui-relâchement de la touche, sur n'importe quelle piste, libère
+    toutes ses notes (`0x40019d00`, seul chemin de note-off, sans minuterie). Avec le mod, seul un relâchement sur
+    une piste non CHORD ou en Keys OFF la libère.
+  - Essai : piste CHORD Keys ON, tenir TRIG 1, tenir PATTERN, lâcher TRIG 1, lâcher PATTERN ; passer sur une piste
+    non CHORD, appuyer puis lâcher TRIG 1.
+  - Correction : dans `ck_ui_key`, sur un premier appui (`(flags & 9) == 1`), appeler `release_key(&held[touche])`
+    et remettre `valid` à zéro avant `handle_press`. L'OS ne poste un premier appui que sur un front montant : une
+    entrée encore valide est donc forcément périmée. Recompilation avec GCC 16.2. Signalé à Nico sur la PR #46 le
+    07/10/2026, avec ce correctif.
 - **Notes au-dessus de 96** (faible) : le degré est tiré de la note avant que le moteur la borne à 96 ; une note MIDI
   97–127 reçoit l'accord de son propre degré sur une fondamentale 96. Les touches TRIG n'y arrivent pas (74 au plus).
 - **Affichage** (cosmétique) : seul l'emplacement SoundParameterSet de SHAPE est accroché ; un p-lock de SHAPE affiché
   depuis un trig peut rester numérique. L'écran suit le pattern affiché, l'audio le pattern joué.
-- **Partage de place libre** : la branche en cours des mods de djd_oz (`46-level-pan-values`, `47-trigless-dim`)
-  utilise aussi `0x4018cd48`, `0x4018d1b8` et `0x4018d4a8`. Chord Keys ne peut être déplacé qu'avec GCC 16.2 :
-  celle qui fusionne en second doit changer de masques.
+- **Partage de place libre** : réglé le 07/10/2026. Les mods de djd_oz (`46-level-pan-values`, `47-trigless-dim`)
+  sont passés sur `0x4018dba8`, `0x4018f4b4`, `0x4018fc74` et `0x40192734`, hors des quatorze masques de Chord
+  Keys. L'écoute des samples (`33-sample-preview`) partage `0x40183118`, `0x40185018`, `0x40185968` et
+  `0x40185c58` avec Chord Keys : permis, car elle exige Model-TG, que Chord Keys exclut, et elle déclare le conflit.
