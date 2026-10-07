@@ -245,7 +245,7 @@ TONE CHORD, trois séries de notes aux blocs 1, 100 et 180) :
 | Tables construites au démarrage | descripteurs 1 à 4, k 28..31 sur les 6 machines, CC 74/71 sur les pistes 1 à 6, NRPN 1:20 et 1:21, rien d'autre ; un son neuf : Cutoff OFF, Reso 0, Env OFF, Decay 64, le reste comme sans le filtre |
 | Sauvegarde du son, versions 2 et 1 | même enregistrement plus 7 octets (emplacements 18, 27, 30, 31) ; relu : valeurs, LFO → Filter Reso, vélocité → Filter Env ; un son d'avant le filtre se charge filtre OFF |
 | P-locks du pattern | aller-retour complet et mise à jour d'un seul p-lock : tout revient (sur l'OS d'origine, 7 pistes de p-locks k ≥ 23 se perdaient ou changeaient de paramètre) ; p-locks d'origine : fichier identique octet pour octet |
-| Avec les autres mods et le Syntakt | centre bit pour bit, contrat de l'appel et filtre : mêmes résultats que seul (écarts au modèle identiques) |
+| Avec les autres mods et le Syntakt | tous les essais ci-dessus refaits : mêmes résultats que seul (écarts au modèle identiques) ; descripteurs trouvés dans la table déplacée par les moteurs du Syntakt (`0x43034000`), k 28..31 et son initialisé sur les 11 machines |
 
 ## 9. Coût
 
