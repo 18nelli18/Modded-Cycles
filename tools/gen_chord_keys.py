@@ -130,7 +130,10 @@ def compile_code():
             if len(fields) == 3 and fields[1].upper() in ("T", "D", "B", "R"):
                 if fields[1].upper() == "T" and int(fields[0], 16) & 1:
                     raise ValueError(f"Symbole de code non aligné : {fields[2]}")
-                symbols[fields[2]] = int(fields[0], 16)
+                # Deux tableaux statiques portent le même nom (scales) : garder la plus basse adresse, car l'ordre
+                # de nm entre noms égaux dépend du tri de la libc de l'hôte (macOS et Linux diffèrent).
+                address = int(fields[0], 16)
+                symbols[fields[2]] = min(address, symbols.get(fields[2], address))
         result = []
         for name, size, address, _ in sections(elf):
             if not name.startswith(".ck"):
