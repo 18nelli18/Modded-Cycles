@@ -62,7 +62,8 @@ tools/gen_*.py                one generator per mod: writes its tweak JSON, --ch
 tools/machines/<mod>/         C and assembly sources compiled into the firmware
 tools/emu/                    Unicorn emulation of the OS: test_<mod>.py proofs, mcengine.py, emac.py, syntakt.py
 tools/gen_flasher_tweaks.py   FEATURES list -> docs/flasher/tweaks.js (generated)
-tools/check_overlaps.py       no firmware needed: mods that can be ticked together never write the same bytes (notes/49)
+tools/check_overlaps.py       no firmware needed: mods that can be ticked together never write the same bytes, except
+                              the same whole write or a mod applied on top of another (`requires`) (notes/49)
 tools/ref_mainos.py           reference hashes in docs/flasher/app.js: each mod (REF_MODS) and a sample of combinations
                               (REF_MAINOS: each card alone, every pair, the largest ones)
 tools/web*_check.*, webflash_smoke.*   checks of the web flasher against the Python build (node, jsdom)
@@ -110,7 +111,8 @@ Without firmware (always possible, run them all):
 
 ```sh
 python3 tools/gen_flasher_tweaks.py --check      # tweaks.js matches tweaks/
-python3 tools/check_overlaps.py                  # mods ticked together never write the same bytes (notes/49)
+python3 tools/check_overlaps.py                  # mods ticked together never write the same bytes (notes/49), except the
+                                                 # same whole write or a mod on top of another (`requires`)
 python3 tools/relocate_6ch.py --check            # needs m68k binutils (below)
 tools/webbuild_check.sh                          # builder.js == build.py, byte for byte (node)
 tools/webflash_check.sh                          # flasher.js validates .syx like mtlib (node)

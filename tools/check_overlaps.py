@@ -8,20 +8,24 @@ Deux tweaks qu'on peut installer ensemble (aucun conflit déclaré entre eux ni 
     Syntakt de la version combinée sur model-tg-st (notes/31).
 Vérifie aussi :
   - chaque écriture : hexadécimal sans espace, « old » et « new » non vides et de même longueur, dans la section 3 ;
-  - les ids : uniques, et chaque « requires » / « conflicts » nomme un tweak qui existe ;
+  - les ids : uniques, et chaque « requires » nomme un tweak qui existe (un « conflicts » vers un tweak absent, d'une
+    autre branche, est seulement signalé) ;
   - les charges utiles ajoutées après l'OS (« append ») de chaque ensemble installable : chacune commence là où finit
     la précédente (« at »), l'ensemble finit sous END_LIMIT, et la mémoire où elles tournent (« dest ») ne se
     chevauche pas.
 
 C'est ce qui permet de vérifier le flasher mod par mod au lieu de chaque combinaison (tools/ref_mainos.py) : si deux
-mods qu'on peut cocher ensemble n'écrivent jamais aux mêmes octets, le firmware d'une combinaison est celui de ses
-mods, posés l'un à côté de l'autre.
+mods qu'on peut cocher ensemble n'écrivent jamais aux mêmes octets (hors des deux cas prévus), le firmware d'une
+combinaison est celui de ses mods, posés l'un à côté de l'autre.
 
     python3 tools/check_overlaps.py                          # tweaks/ du dépôt
     python3 tools/check_overlaps.py --git origin/main --git origin/claude/xyz   # tweaks de branches, réunis (git show)
 
 Avec plusieurs --git, les tweaks des branches sont réunis : un même id dans deux versions différentes devient deux
-tweaks incompatibles entre eux (on n'installe jamais les deux versions d'un même mod).
+tweaks incompatibles entre eux (on n'installe jamais les deux versions d'un même mod). Un « conflicts » vers cet id
+vaut pour toutes ses versions ; un « requires » vise la version de sa propre source : un mod d'une branche posé sur la
+version d'un autre mod changée par une autre branche n'est donc pas vérifié ici, mais par ce script et
+tools/ref_mainos.py une fois l'une des deux branches fusionnée dans l'autre.
 """
 import argparse
 import itertools
@@ -61,7 +65,8 @@ def merge(sources):
     """Réunit les tweaks de plusieurs sources [(nom, tweaks)]. Deux versions d'un même id aux mêmes écritures et à la
     même charge utile n'en font qu'une (leurs « conflicts » et « requires » sont réunis : une branche ajoute souvent
     un conflit ou un symbole à un tweak existant). Sinon chaque version devient « id@source », incompatible avec les
-    autres, et un « requires » vers cet id vise la version de sa propre source (sinon la première)."""
+    autres ; un « conflicts » vers cet id vaut pour toutes ses versions (un conflit n'est souvent déclaré que d'un
+    côté), un « requires » vise la version de sa propre source (sinon la première)."""
     versions = {}                                  # id -> [[noms des sources], tweak]
     for name, tweaks in sources:
         for t in tweaks:
@@ -85,10 +90,12 @@ def merge(sources):
         for names, t in vs:
             src = names[0]
             t = dict(t, id=alias[(tid, src)])
-            for k in ("requires", "conflicts"):
-                if t.get(k):
-                    t[k] = sorted({alias.get((x, src), alias.get((x, versions[x][0][0][0])) if x in versions else x)
-                                   for x in t[k]})
+            if t.get("requires"):
+                t["requires"] = sorted({alias.get((x, src), alias.get((x, versions[x][0][0][0]))) if x in versions
+                                        else x for x in t["requires"]})
+            if t.get("conflicts"):
+                t["conflicts"] = sorted({a for x in t["conflicts"]
+                                         for a in ({alias[(x, n[0])] for n, _ in versions[x]} if x in versions else {x})})
             if len(vs) > 1:                        # deux versions d'un même mod ne s'installent pas ensemble
                 t["conflicts"] = sorted(set(t.get("conflicts", [])) |
                                         {alias[(tid, n[0])] for n, _ in vs if n[0] != src})
@@ -101,7 +108,7 @@ def check_writes(tweaks, section_len):
     errs, seen = [], set()
     for t in tweaks:
         if t["id"] in seen:
-            errs.append(f"{t['id']} : id en double (build.py garderait le dernier, la page le premier)")
+            errs.append(f"{t['id']} : id en double (build.py et la page garderaient le dernier)")
         seen.add(t["id"])
         for i, w in enumerate(t.get("writes", [])):
             where = f"{t['id']} écriture {i}"
@@ -213,9 +220,13 @@ def check_appends(tweaks, g, section_len):
     """Chaque ensemble installable de charges utiles s'enchaîne dans l'image et en mémoire : [violations], nombre."""
     errs, sets = [], append_sets(tweaks, g)
     for s in sorted(sets, key=lambda s: sorted(s)):
-        chain = sorted((g.by_id[i] for i in s), key=lambda t: t["order"])
+        chain = sorted((g.by_id[i] for i in s), key=lambda t: (t["order"], t["id"]))
         end = BASE + section_len
         names = "+".join(t["id"] for t in chain)
+        if len({t["order"] for t in chain}) < len(chain):   # les builders trient par « order » seulement
+            errs.append(f"{names} : deux charges utiles au même « order » : leur place dans l'image dépendrait de "
+                        "l'ordre où on les coche")
+            continue
         for t in chain:
             ap = t["append"]
             if int(ap["at"], 16) != end:
@@ -256,7 +267,7 @@ def main():
     ap.add_argument("--git", action="append", metavar="REF", help="tweaks d'une branche ou d'un commit (répétable)")
     args = ap.parse_args()
     if args.git:
-        loaded = [(ref.split("/")[-1], *load_git(ref)) for ref in args.git]
+        loaded = [(ref, *load_git(ref)) for ref in args.git]         # la ref entière : deux refs, deux noms
         section_len = loaded[0][1]["section_len"]
         tweaks = merge([(name, tw) for name, _, tw in loaded])
     else:

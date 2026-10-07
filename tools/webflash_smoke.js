@@ -4,10 +4,11 @@
  * decoder and zlib's CRC, and keeps every byte it is sent, to compare with the firmware.
  * Run through tools/webflash_smoke.sh (installs jsdom in a temp folder).
  *   node tools/webflash_smoke.js <synth_dir> [model-cycles_OS1.13.syx] [model-samples_OS1.13.syx] [Syntakt_OS1.42.syx or 1.41]
- * The optional official files are told apart by their names. The Model:Cycles OS checks every
- * combination the page offers against its reference hash (REF_MAINOS in app.js; the real Syntakt
- * engines need the Syntakt OS too); with the Model:Samples OS, the "Samples OS" tab is checked end
- * to end (REF_SAMPLES_ON_CYCLES); with the Syntakt OS, the Syntakt engines flow is. */
+ * The optional official files are told apart by their names. The Model:Cycles OS checks each
+ * combination of the REF_MAINOS sample against its reference hash, and each mod against REF_MODS
+ * (app.js, notes/49; the real Syntakt engines need the Syntakt OS too); with the Model:Samples OS,
+ * the "Samples OS" tab is checked end to end (REF_SAMPLES_ON_CYCLES); with the Syntakt OS, the
+ * Syntakt engines flow is. */
 const fs = require("fs");
 const path = require("path");
 const zlib = require("zlib");
@@ -669,6 +670,54 @@ async function main() {
       "success message shown");
     check(/6 input channels/.test(text(doc, "result")), "6-channel hint after success");
     check(errors.length === 0, "no JS error during the flow " + (errors.length ? JSON.stringify(errors) : ""));
+  }
+
+  // 5b. The page's own rules against the sample (notes/49): each card alone and every pair of cards the page lets you
+  // tick together, whatever it does with them (a card held by another, a swap), is a combination of REF_MAINOS.
+  // No OS needed: the build key is chosenTweaks().
+  if (MAIN) {
+    const { w, doc, errors } = await load();
+    const app = w.MCFlasherApp, feats = w.MC_TWEAKS.features;
+    const keyNow = () => app.chosenTweaks().map((x) => x.id).join("+");
+    const choices = (f) => (f.engines ? f.combos.map((c) => ({ engines: c.engines })) : f.variants.map((v) => ({ variant: v.id })));
+    const clear = async () => {
+      for (let round = 0; round < 3; round++)
+        for (const f of feats) {
+          const cb = doc.getElementById("feat-" + f.id);
+          if (cb.checked && !cb.disabled) { cb.click(); await wait(5); }
+        }
+    };
+    const pick = async (f, o) => {                   // false if the page holds the card (included by another one)
+      if (o.engines) { await pickEngines(doc, o.engines); return true; }
+      const cb = doc.getElementById("feat-" + f.id);
+      if (cb.disabled) return false;
+      if (!cb.checked) { cb.click(); await wait(5); }
+      const r = doc.querySelector(`input[name="var-${f.id}"][value="${o.variant}"]`);
+      if (r && !r.checked) { r.click(); await wait(5); }
+      return true;
+    };
+    const reached = new Set(), missing = [];
+    for (const [i, f] of feats.entries())
+      for (const o of choices(f)) {
+        await clear();
+        await pick(f, o);
+        const one = keyNow();
+        reached.add(one);
+        if (!app.REF_MAINOS[one]) missing.push(one);
+        for (const g of feats.slice(i + 1))
+          for (const p of choices(g)) {
+            await clear();
+            await pick(f, o);
+            if (!(await pick(g, p))) continue;
+            const k = keyNow();
+            reached.add(k);
+            if (!app.REF_MAINOS[k]) missing.push(k);
+          }
+      }
+    check(missing.length === 0 && !reached.has(""),
+      `the page's singles and pairs are all in the REF_MAINOS sample (${reached.size} combinations)` +
+      (missing.length ? `; missing: ${[...new Set(missing)].slice(0, 5).join(", ")}` : ""));
+    check(errors.length === 0, "no JS error while ticking every single and pair");
   }
 
   // 6. Real official OS (notes/49): every combination of REF_MAINOS (each card alone, every pair, the largest ones) is

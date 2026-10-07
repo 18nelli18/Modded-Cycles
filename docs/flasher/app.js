@@ -23,7 +23,8 @@ const ELEKTRON_ST_DL = "https://www.elektron.se/support-downloads/syntakt";
 // tweaks alone also match drumkilla's own tweak.py byte for byte. Key = tweak ids joined with "+", in feature order.
 // A listed combination whose MAIN OS differs is refused. REF_MODS: for every tweak, the hash of its writes (w) and of
 // its appended payload (p), checked on every build: each ticked mod must be byte for byte the Python one, whatever
-// the combination (tools/check_overlaps.py proves that mods ticked together never write the same bytes).
+// the combination (tools/check_overlaps.py proves that mods ticked together never write the same bytes, except the
+// same whole write or a mod applied on top of another through "requires").
 const REF_MAINOS = {
   // each card alone: each variant, each combination of real Syntakt engines
   "6ch-usbup": "57fa258f209c10359f6888af79087f656e994930ff86ffcc1e2e2e48512d9530",

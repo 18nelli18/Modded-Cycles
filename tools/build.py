@@ -234,7 +234,7 @@ def apply_writes(main_os, tweaks_selected):
             off = w["off"]
             old = unhex(w["old"])
             new = unhex(w["new"])
-            if not isinstance(off, int) or off < 0 or off + len(old) > len(data):
+            if not isinstance(off, int) or isinstance(off, bool) or off < 0 or off + len(old) > len(data):
                 raise SystemExit(f"!! {t['id']} : ecriture hors de la section 3 (off {off})")
             cur = bytes(data[off:off + len(old)])
             if cur == new and cur != old:
@@ -272,9 +272,12 @@ def payload_runtime(t, main_os, st_img):
         out[at:at + len(chunk)] = chunk
     for va, old, new in ap_["reloc"]:
         at = int(va, 16) - dest
-        if out[at:at + 4] != bytes.fromhex(old):
+        o, n = unhex(old), unhex(new)
+        if len(o) != 4 or len(n) != 4 or not 0 <= at <= len(out) - 4:
+            raise SystemExit(f"!! relocalisation {va} : 4 octets attendus dans la charge utile")
+        if out[at:at + 4] != o:
             raise SystemExit(f"!! relocalisation {va} : {old} attendu, {out[at:at + 4].hex()} trouvé")
-        out[at:at + 4] = bytes.fromhex(new)
+        out[at:at + 4] = n
     return bytes(out)
 
 

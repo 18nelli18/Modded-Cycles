@@ -13,12 +13,13 @@ tools/build.py (conflits, zones 0xFF, charges utiles enchaînées) :
   - les plus grandes combinaisons : toutes les cartes compatibles cochées, à partir de chaque carte, dans l'ordre des
     cartes puis dans l'ordre inverse, avec et sans les cartes qui demandent un autre fichier (les moteurs du Syntakt).
 La page compare le MAIN OS de ces combinaisons à leur empreinte et refuse s'il diffère. Avec tools/check_overlaps.py
-(deux mods qu'on peut cocher ensemble n'écrivent jamais aux mêmes octets), cet échantillon suffit : il grandit d'une
-quarantaine d'entrées par nouvelle carte, au lieu de doubler. Les cartes suivent les règles de app.js : « excludes »
-et « includes » (jamais cochées ensemble), « with » (un autre tweak quand une autre carte est cochée), et Model-TG avec
-les moteurs du Syntakt (leur version « tg »). Le « requires » d'une carte n'est qu'affiché par la page (« avec … ») :
-ici il sert à cocher l'autre carte avec elle dans l'échantillon ; une sélection dont un tweak n'a pas le tweak qu'il
-demande (« requires » du tweak) est laissée de côté, car les deux builds la refusent.
+(deux mods qu'on peut cocher ensemble n'écrivent jamais aux mêmes octets, sauf écriture identique ou mod posé par-dessus
+l'autre), cet échantillon suffit : il grandit d'une quarantaine d'entrées par nouvelle carte, au lieu de doubler. Les
+cartes suivent les règles de app.js : « excludes » et « includes » (jamais cochées ensemble), « with » (un autre tweak
+quand une autre carte est cochée), et Model-TG avec les moteurs du Syntakt (leur version « tg »). Le « requires »
+d'une carte n'est qu'affiché par la page (« avec … ») : ici il sert à cocher l'autre carte avec elle dans
+l'échantillon ; une sélection dont un tweak n'a pas le tweak qu'il demande (« requires » du tweak) est laissée de côté,
+car les deux builds la refusent.
 
     python3 tools/ref_mainos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx [--check]
 """
@@ -163,6 +164,9 @@ def blocks(cycles, syntakt):
     tw = mc_tweaks()
     by_id = {t["id"]: t for t in tw["tweaks"]}
     stock = main_os(cycles)
+    if build.sha(stock) != tw["device"]["section_sha256"]:      # jamais depuis un build déjà modifié (règle 2)
+        raise SystemExit("!! --cycles : ce n'est pas le MAIN OS officiel 1.13 : il faut model-cycles_OS1.13.syx "
+                         "d'elektron.se")
     st_img = None
     if any("syntakt" in (t.get("append") or {}) for t in tw["tweaks"]):
         import syntakt as st                                # tools/emu/syntakt.py : vérifie le .syx et sa section 7

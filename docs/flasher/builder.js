@@ -639,9 +639,11 @@ function payloadRuntime(ap, img, mainOs) {
     out.set(chunk, at);
   }
   for (const [va, old, nw] of ap.reloc) {
-    const at = parseInt(va, 16) - dest;
-    if (hex(out.subarray(at, at + 4)) !== old) throw new Error(`relocalisation ${va} : ${old} attendu`);
-    out.set(fromHex(nw), at);
+    const at = parseInt(va, 16) - dest, o = fromHex(old), n = fromHex(nw);
+    if (o.length !== 4 || n.length !== 4 || !(at >= 0 && at <= out.length - 4))
+      throw new Error(`relocalisation ${va} : 4 octets attendus dans la charge utile`);
+    if (hex(out.subarray(at, at + 4)) !== hex(o)) throw new Error(`relocalisation ${va} : ${old} attendu`);
+    out.set(n, at);
   }
   return out;
 }

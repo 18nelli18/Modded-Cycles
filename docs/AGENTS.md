@@ -35,7 +35,8 @@ Write for musicians: what changes on the machine, which buttons to press, the li
    OS of a sample: each mod alone, every pair, the largest combinations) in `flasher/app.js` (notes/49). A build whose
    mod or listed MAIN OS differs is refused; a combination outside the sample is built and checked mod by mod. The
    rules between mods (`excludes`, `includes`, `with`, the Syntakt engines' `tg` version) are read by `ref_mainos.py`
-   as `app.js` reads them: a new kind of rule goes into both.
+   as `app.js` reads them: a new kind of rule goes into both (`tools/webflash_smoke.js` ticks each card alone and every
+   pair in the page and checks that each one is in the sample).
 3. In `flasher/app.js`: the row texts in `FEAT.en` and `FEAT.fr`: `label`; `short`, the one sentence shown on the
    row (about 80 characters, what it does on the machine, with any deal-breaker; without it the row shows the first
    sentence of `desc`); `desc`, the full text in the Details drawer; optional `note` (shown once ticked), `clash` if it

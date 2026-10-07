@@ -87,10 +87,17 @@ Lit les JSON de `tweaks/` (ou de branches, `--git REF`, réunies), sans firmware
 - les chevauchements : pour chaque paire de tweaks installables ensemble (aucun conflit entre eux ni entre ce qu'ils
   demandent par `requires`), toute écriture commune doit être la même écriture entière ou une chaîne `requires` ;
 - les charges utiles (`append`) de chaque ensemble installable : chacune commence là où finit la précédente (`at`),
-  l'ensemble finit sous `0x40200000`, et leurs zones d'exécution (`dest`) ne se chevauchent pas.
+  l'ensemble finit sous `0x40200000`, leurs zones d'exécution (`dest`) ne se chevauchent pas, et deux d'entre elles
+  n'ont jamais le même `order` (les builders les rangent par `order` seulement : leur place dépendrait de l'ordre où on
+  les coche).
 
-Avec plusieurs `--git`, un même id aux mêmes écritures sur deux branches n'en fait qu'un (leurs `conflicts` et
-`requires` réunis) ; deux versions différentes deviennent deux tweaks incompatibles.
+Avec plusieurs `--git` (chaque source nommée par sa ref entière), un même id aux mêmes écritures sur deux branches n'en
+fait qu'un (leurs `conflicts` et `requires` réunis) ; deux versions différentes deviennent deux tweaks incompatibles.
+Un `conflicts` vers cet id vaut pour toutes ses versions (un conflit n'est souvent déclaré que d'un côté : sans cela,
+une branche qui corrige un mod existant aurait des milliers de faux chevauchements) ; un `requires` vise la version de
+sa propre source. Limite : un mod d'une branche posé (`requires`) sur un mod qu'une autre branche modifie n'est pas
+vérifié contre la nouvelle version ; il l'est par ce script et `ref_mainos.py` dès que l'une des deux branches a
+fusionné `main` contenant l'autre.
 
 Résultats du 07/10/2026 [FAIT] :
 
@@ -131,17 +138,19 @@ La dernière ligne rejoue le conflit de pochoirs trouvé à la main le 07/10/202
   de la référence »). `modsChecked` dit que chaque tweak avait son empreinte et qu'elle correspond.
 - `app.js` : une combinaison de l'échantillon affiche « Conforme au build de référence » (MAIN OS entier, comme
   avant) ; les autres « Chaque mod est conforme à son build de référence ». Version 1.30, tampon `2026-10-07-06`.
-- Les deux builders refusent maintenant de la même façon un hexadécimal mal formé (`fromHex` lisait un caractère
-  invalide comme 0x00, `bytes.fromhex` acceptait des espaces) et une écriture hors de la section 3 (Python lisait un
-  `off` négatif depuis la fin). Aucun tweak du dépôt n'était concerné ; c'est en vue des mods perso (étape 3).
+- Les deux builders refusent maintenant de la même façon un hexadécimal mal formé, dans les écritures, les morceaux
+  `hex` et les relocalisations (`fromHex` lisait un caractère invalide comme 0x00, `bytes.fromhex` acceptait des
+  espaces et des majuscules différentes de la page), une relocalisation qui n'est pas de 4 octets dans la charge utile,
+  et une écriture hors de la section 3 (Python lisait un `off` négatif depuis la fin, et un booléen comme 0 ou 1). Aucun tweak du dépôt n'était concerné ; c'est en vue des mods perso (étape 3).
 
 ## 6. Preuves
 
 | Vérification | Résultat |
 |---|---|
 | les 416 clés de l'échantillon dans l'ancienne liste, même empreinte | 416 / 416 [FAIT] |
-| les 9 215 combinaisons de l'ancienne liste, reconstruites dans la page (jsdom) avec le nouveau `builder.js`/`app.js` : même MAIN OS qu'avant, chaque mod vérifié | ÉQUIV [FAIT] |
-| `tools/webflash_smoke.sh` avec les fichiers officiels : les 416 combinaisons, une combinaison de trois cartes hors échantillon (construite, chaque mod vérifié), un mod falsifié (écritures, puis charge utile) refusé | SMOKE [FAIT] |
+| les 9 215 combinaisons de l'ancienne liste, reconstruites dans la page (jsdom) avec le nouveau `builder.js`/`app.js` : même MAIN OS qu'avant, chaque mod vérifié | EN COURS : 4 parties sur 12 (3 115 combinaisons), aucun écart |
+| `tools/webflash_smoke.sh` avec les fichiers officiels : les 416 combinaisons, une combinaison de trois cartes hors échantillon (construite, chaque mod vérifié), un mod falsifié (écritures, puis charge utile) refusé | ALL OK, 534 vérifications, 19 min (après fusion de `main` 1.28) [FAIT] |
+| la page elle-même, sans OS : chaque carte seule et chaque paire qu'elle laisse cocher (ce qu'elle en fait : carte incluse, échange) donne une clé de l'échantillon | 352 / 352 [FAIT] |
 | `gen_flasher_tweaks.py --check`, `webbuild_check.sh`, `webflash_check.sh`, `py_compile` | OK [FAIT] |
 
 ## 7. Pour la suite
