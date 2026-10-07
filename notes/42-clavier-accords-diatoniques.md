@@ -704,6 +704,12 @@ Défauts connus, aucun ne bloque l'essai sur la machine :
   sont passés sur `0x4018dba8`, `0x4018f4b4`, `0x4018fc74` et `0x40192734`, hors des quatorze masques de Chord
   Keys. L'écoute des samples (`33-sample-preview`) partage `0x40183118`, `0x40185018`, `0x40185968` et
   `0x40185c58` avec Chord Keys : permis, car elle exige Model-TG, que Chord Keys exclut, et elle déclare le conflit.
+  `[FAIT, 07/10/2026]` Combinaison avec la PR #53 (`c05a435`), dans une fusion locale non poussée : aucun octet
+  commun entre 45, 46 et 47, aucun pointeur de l'un dans les masques de l'autre. `test_level_pan.py`,
+  `test_trigless_dim.py`, `test_trig_hold.py`, `test_arp.py` et `test_boot_anim.py` donnent les mêmes lignes avec et
+  sans `chord-keys` dans `--with`, seuls et avec `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,
+  syntakt-sd-cp-toy-bits-swarm`. MAIN OS : `7a7102e4…5af9fe` pour 45+46+47, `d48803f0…eee08d` avec les six autres.
+  Ces preuves n'exécutent pas le code de Chord Keys lui-même.
 
 ## 15. Essai de Maxime sur la machine (07/10/2026)
 
