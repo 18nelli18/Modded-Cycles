@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Génère 44-chord-keys.json : accords diatoniques sur TRIG 1–16 (notes/40).
 
-Compile les sources ColdFire, les répartit dans des masques 47x47 identiques
+Compile les sources ColdFire, les répartit dans des masques de sprites identiques
 redirigés vers leur exemplaire conservé, puis vérifie chaque écriture sur l'OS
 officiel. Aucun code Elektron n'est incorporé hors des octets attendus des
 écritures. Aucun firmware n'est exporté par ce générateur.
@@ -38,11 +38,18 @@ MASKS = (0x4016b6f8, 0x4016b9e8, 0x40171f30, 0x40172608, 0x40179730,
          0x40182b38, 0x40182e28, 0x40183118, 0x40185018, 0x40185968,
          0x40185c58, 0x4018cd48, 0x4018d1b8, 0x4018d4a8, 0x4018dba8,
          0x4018f4b4, 0x4018fc74, 0x401904b4, 0x40192734)
+EXTRA_MASKS = (0x40158744, 0x4016aa28, 0x401699a8, 0x401696a0, 0x40166760,
+               0x4016616c, 0x40163fb8, 0x401625bc, 0x40160e6c, 0x40160b6c,
+               0x40160864, 0x401601fc, 0x4015f50c)
+MASKS += EXTRA_MASKS
 # Adresse, contrat attendu, symbole, opcode (None = pointeur de vtable).
 HOOKS = (
+    (0x4007746c, "4fefffc048d70c04", "ck_ui_pad_dispatch_hook", 0x4ef9),
     (0x400aae88, "4fefffe448d71c3c", "chord_audio_update", 0x4ef9),
     (0x400ab0e4, "d1fc4012142c", "chord_audio_ratios", 0x4ef9),
     (0x400ff9cc, "4001a0d2", "ck_ui_key", None),
+    (0x4010025c, "4001d180", "ck_ui_pad", None),
+    (0x401002b0, "4001d3d4", "ck_ui_pad_thunk", None),
     (0x400fd170, "4000a70e", "ck_shape_format", None),
     (0x400fd174, "4000a66a", "ck_shape_draw", None),
     (0x4001e4ca, "4eb94000b22a", "ck_shape_name", 0x4eb9),
@@ -97,11 +104,12 @@ def compile_code():
                     # les aligner évite de confondre leurs symboles avec du code impair.
                     align = max(align, 2)
                     inputs.append((obj, name, size, align))
-        bins = [{"at": va, "size": 0, "parts": []} for va in MASKS]
+        bins = [{"at": va, "size": 0, "capacity": sprites.MASKS[va][0], "parts": []}
+                for va in MASKS]
         for obj, name, size, align in sorted(inputs, key=lambda s: (-s[2], s[0].name, s[1])):
             for block in bins:
                 offset = (block["size"] + align - 1) & -align
-                if offset + size <= 376:
+                if offset + size <= block["capacity"]:
                     block["parts"].append((obj, name, align))
                     block["size"] = offset + size
                     break
@@ -130,7 +138,7 @@ def compile_code():
         for name, size, address, _ in sections(elf):
             if not name.startswith(".ck"):
                 raise ValueError(f"Section imprévue : {name}")
-            if address not in MASKS or size > 376:
+            if address not in MASKS or size > sprites.MASKS[address][0]:
                 raise ValueError(f"Section hors masque : {name}, {address:#x}, {size} o")
             binary = tmp / (name + ".bin")
             run([CROSS + "objcopy", "-O", "binary", "-j", name, str(elf), str(binary)])
@@ -146,19 +154,25 @@ def build_tweak(stock):
     compiled, symbols = compile_code()
     writes = []
     for address, code in compiled:
-        _, pointer, _, shared = sprites.MASKS[address]
-        old = stock[address - BASE:address - BASE + 376]
-        if old != stock[shared - BASE:shared - BASE + 376]:
+        capacity, pointer, _, shared = sprites.MASKS[address]
+        old = stock[address - BASE:address - BASE + capacity]
+        if old != stock[shared - BASE:shared - BASE + capacity]:
             raise ValueError(f"Masque {address:#x} différent de l'exemplaire conservé")
         encoded = struct.pack(">I", address)
         locations = [m.start() for m in re.finditer(re.escape(encoded), stock)]
         if locations != [pointer - BASE]:
             raise ValueError(f"Références imprévues vers le masque {address:#x}")
         at = pointer - BASE
+        width, height = {376: (47, 47), 280: (35, 35), 384: (33, 48)}[capacity]
+        dimensions = struct.pack(">HHHH", 0x4878, width, 0x4878, height)
         if (stock[at - 2:at] not in (b"\x48\x79", b"\x2e\xbc") or
                 stock[at + 4:at + 6] != b"\x48\x79" or
-                stock[at + 10:at + 18] != bytes.fromhex("4878002f4878002f")):
+                stock[at + 10:at + 18] != dimensions):
             raise ValueError(f"Le constructeur du sprite {address:#x} a changé")
+        if address in EXTRA_MASKS:
+            sure, branches = build.refs_into(stock, [(address - BASE, address - BASE + capacity)])
+            if sure != [(pointer, address, "constante 32 bits")] or branches:
+                raise ValueError(f"Entrée imprévue dans la nouvelle cave {address:#x}")
         writes.extend(({"off": address - BASE, "old": old[:len(code)].hex(), "new": code.hex()},
                        sprites.redirect_write(address)))
     for address, expected, symbol, opcode in HOOKS:
@@ -173,14 +187,18 @@ def build_tweak(stock):
         "description": [
             "Mode Keys dans FUNC + RETRIG : une piste CHORD, gamme et tonique, extensions par degré.",
             "TRIG 1–7 jouent I–VII, 8–14 les mêmes degrés une octave plus haut, 15–16 I–II deux octaves plus haut.",
-            "Les grands pads T1–T6 gardent leur sélection et leur jeu stock. L'édition des pas reste disponible.",
-            "Sept modes ; triades, septièmes, neuvièmes, onzièmes ou treizièmes diatoniques, quatre voix au plus.",
-            "Les accords 9/11/13 omettent la quinte (et les extensions intermédiaires pour 11/13).",
-            "SHAPE choisit BASE, CLS0–3 ou OPN0–3 ; COLOR règle le mélange sans déplacer les octaves.",
-            "I–VII restent seuls responsables des extensions. Sur un ancien pattern Keys ON, remettre SHAPE sur BASE.",
+            "Controls NEW : COLOR choisit DIATONIC, JAZZ ou TENSION ; SHAPE dispose et équilibre les voix.",
+            "Pads TRACK conserve le jeu stock ; HARMONY transforme temporairement l'accord avec T1–T6.",
+            "T1/T2/T3 : 9/11/13 ; T4 : 7sus4 ; T5 : parallèle majeur/mineur ; T6 : dominante V7 de la cible.",
+            "Dernier pad prioritaire ; son relâchement restaure le précédent encore tenu puis EXT, sans retrigger.",
+            "Sept modes et quatre voix au plus : 9/11/13 omettent la quinte et les tensions intermédiaires.",
+            "Exception m7♭5 étendu : fondamentale, quinte diminuée, septième, tension ; sans tierce. T5/T6 indisponibles.",
+            "SHAPE : BASE, CLS0–3, OPN0–3. Les nouveaux patterns utilisent NEW/DIATONIC et Pads TRACK.",
+            "Les anciens patterns conservent LEGACY, leurs sons et leurs locks ; Controls NEW est un choix explicite par pattern.",
+            "Les gestes des pads restent live ; le séquenceur conserve seulement la fondamentale, pas ces transformations.",
             "Réglages par piste sauvegardés avec le pattern. Dernière touche prioritaire, sans retour à la précédente.",
             "Model-TG incompatible : son Scale Lock transforme les notes avant le moteur. Aucun essai matériel.",
-            f"Code et état dans {len(compiled)} masques 47×47 redirigés, {sum(len(c) for _, c in compiled)} octets.",
+            f"Code et état dans {len(compiled)} masques de sprites redirigés, {sum(len(c) for _, c in compiled)} octets.",
             "Généré par tools/gen_chord_keys.py ; sources tools/machines/chord_keys/ ; notes/40.",
         ],
         "device": "Model:Cycles", "os": "1.13", "section": 3,

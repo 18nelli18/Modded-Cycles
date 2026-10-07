@@ -30,6 +30,7 @@ H1, H2, H3 = 0x92000000, 0x92001000, 0x92002000
 B1, B2, SERIAL = 0x92010000, 0x92020000, 0x92030000
 PROJECT = 0x92100000
 TAG, DEFAULT = 0x434B01A7, 48 << 21
+TAG_NEW = 0x434B0200
 RESERVED = set(range(32, 36)) | set(range(40, 64))
 HOOKS = ((0x4005B4A8, "ck_storage_load_hook"), (0x40061564, "ck_storage_init_hook"))
 
@@ -188,9 +189,10 @@ def patched_headers(rig, stock_result):
     rig.call(0x40061526, H2, 1)
     require(rig.bytes(H2) == before, "Init avec conservation perd les réglages")
     rig.call(0x40061526, H2, 0)
+    require(rig.word(H2 + 32) == TAG_NEW, "Nouveau pattern hors schéma v2/Pads TRACK")
     require(all(rig.call("ck_storage_read", H2, track) == DEFAULT for track in range(6)),
             "Init ne désactive pas les accords")
-    for signature in (0, 0xFFFFFFFF, TAG ^ 1):
+    for signature in (0, 0xFFFFFFFF, TAG ^ 1, TAG_NEW | 64):
         rig.word(H1 + 32, signature)
         rig.call(0x4005B3B4, H2, H1)
         require(all(rig.call("ck_storage_read", H2, track) == DEFAULT for track in range(6)),
@@ -200,6 +202,42 @@ def patched_headers(rig, stock_result):
     rig.call(0x4005B3B4, H2, H1)
     require(all(rig.call("ck_storage_read", H2, track) == DEFAULT for track in range(6)),
             "Configuration corrompue acceptée")
+
+
+def revisions(rig):
+    """Deux schémas complets, opt-in explicite, réglages et locks intacts."""
+    words = [configuration(track) for track in range(6)]
+    for tag in (TAG, TAG_NEW, TAG_NEW | 0x15, TAG_NEW | 0x3f):
+        rig.header(H1, words)
+        rig.word(H1 + 32, tag)
+        rig.call(0x4005B3B4, H2, H1)
+        require(rig.word(H2 + 32) == tag, "Le chargeur migre un schéma implicitement")
+        require([rig.call("ck_storage_read", H2, t) for t in range(6)] == words,
+                "Schéma v1/v2 : configuration perdue au chargement")
+    rig.selected = 0
+    install_config_fixture(rig.uc, words)
+    before = rig.bytes(H1)
+    require(rig.call("ck_ui_revision_get") == 0, "Ancien pattern réinterprété")
+    require(all(rig.call("ck_audio_controls", t) == 0 for t in range(6)),
+            "Ancien pattern active nouvelle macro")
+    rig.call("ck_ui_revision_set", 1)
+    require(rig.word(H1 + 32) == TAG_NEW, "Opt-in v2 absent")
+    for track in range(6):
+        rig.call("ck_ui_pad_mode_set", track, track % 2)
+        require(bool(rig.call("ck_ui_pad_mode_get", track)) == bool(track % 2),
+                "Mode de pad par piste perdu")
+        require(rig.call("ck_audio_controls", track) == 1,
+                "Mode HARMONY sans geste invente une transformation")
+    require(rig.word(H1 + 32) == TAG_NEW | 0x2a, "Masque six pistes incorrect")
+    rig.call("ck_ui_revision_set", 1)
+    rig.call("ck_ui_pad_mode_set", 5, 1)
+    require(rig.word(H1 + 32) == TAG_NEW | 0x2a, "Valeur répétée efface le masque des pads")
+    require(all(before[i] == rig.bytes(H1)[i] for i in range(64) if not 32 <= i < 36),
+            "Changement de contrôles réécrit les valeurs du pattern")
+    rig.call("ck_ui_revision_set", 0)
+    require(rig.bytes(H1) == before, "Retour LEGACY change les anciens réglages")
+    require(all(rig.call("ck_audio_controls", t) == 0 for t in range(6)),
+            "Retour LEGACY conserve macro active")
 
 
 def stock_accessors(rig):
@@ -311,6 +349,8 @@ def run_storage_checks(stock, patched, symbols):
     print("ok stock : réserves non lues au chargement, 64 octets conservés à la copie", flush=True)
     patched_headers(rig, baseline)
     print("ok hooks ColdFire : stock intact, réglages chargés, initialisation et fichiers anciens désactivés", flush=True)
+    revisions(rig)
+    print("ok schémas v1/v2 : chargement fidèle, opt-in explicite, Pads par piste et ancien son conservé", flush=True)
     stock_accessors(rig)
     print("ok accesseurs stock : aucun champ réservé lu, réglages conservés par les setters", flush=True)
     full_roundtrip(rig)

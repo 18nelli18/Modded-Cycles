@@ -13,6 +13,9 @@
  */
 unsigned int ck_audio_config(unsigned int track);
 
+/* bit 0 : nouveaux contrôles ; bits 8.. : pad harmonique temporaire. */
+unsigned int ck_audio_controls(unsigned int track);
+
 /* ABI identique à l'update CHORD stock, appelé par sa table de dispatch. */
 void chord_audio_update(int pitch_q16, void *voice, const unsigned short *params);
 #endif

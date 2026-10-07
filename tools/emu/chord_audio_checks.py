@@ -38,6 +38,9 @@ class AudioRunner:
             setup(self.engine)
         self.configs = [0] * 6
         if config_address is not None:
+            # Le getter musical est instrumenté ; les nouveaux contrôles voient
+            # un boot sans projet et renvoient LEGACY, sauf hook dédié du banc.
+            self.engine.uc.mem_map(0x40800000, 0x00800000)
             self.engine.uc.hook_add(UC_HOOK_CODE, self._config,
                                     begin=config_address, end=config_address)
 
@@ -242,7 +245,7 @@ def run_audio_storage_checks(stock, patched, extra_code=(), setup=None):
     return failures
 
 
-def run_audio_governor_checks(image, governor_tweak, extra_code=()):
+def run_audio_governor_checks(image, governor_tweak, extra_code=(), new_controls=False):
     """CHORD actif + vrai régulateur Syntakt ; minuteur de charge simulé.
 
     image inclut la charge utile construite à partir du Syntakt officiel.
@@ -267,9 +270,12 @@ def run_audio_governor_checks(image, governor_tweak, extra_code=()):
         engine = E.Engine(image, extra_code=extra_code)
         config = NativeAudioConfig(engine)
         config.configure([config_word(extensions=(2,) * 7)] * 6)
+        if new_controls:
+            config.write(config.HEADERS + 32, 0x434b0200)
         for track, note in enumerate((48, 50, 52, 53, 55, 57)):
             engine.machine_defaults(track, "CHORD")
-            engine.set(track, note=note, shape=7, color=32, decay=100)
+            engine.set(track, note=note, shape=32 if new_controls else 7,
+                       color=110 if new_controls else 32, decay=100)
             for address in GAINS:
                 engine.uc.mem_write(address + 4 * track, struct.pack(">I", FULL))
         clock = {"now": 10_000_000, "fixed": None}
@@ -295,6 +301,7 @@ def run_audio_governor_checks(image, governor_tweak, extra_code=()):
         return np.stack(output), fading, stolen, engine.unmapped
 
     reference, _, _, unmapped = play(None)
+    print('info  régulateur : ' + ('NEW / TENSION / OPN3' if new_controls else 'LEGACY'), flush=True)
     check(not unmapped and reference.any(), "régulateur + CHORD : six accords natifs audibles dans le dispatch Syntakt")
     normal, _, stolen, unmapped = play(lambda block: 50)
     check(np.array_equal(reference, normal) and not any(map(any, stolen)) and not unmapped,

@@ -1,7 +1,7 @@
 /* Accord diatonique dans le véritable update CHORD de l'OS 1.13 (notes/40).
  * Le réglage SHAPE est remplacé dans une copie locale des paramètres ; l'OS
- * conserve enveloppes, timbre, Pitch/Fine et gains de COLOR. SHAPE choisit
- * la disposition des notes ; les déplacements d'octave de COLOR sont sautés.
+ * conserve enveloppes, timbre et Pitch/Fine. Le mode historique conserve les
+ * gains COLOR ; les nouveaux contrôles choisissent palette et macro SHAPE.
  * Aucun état de calcul partagé : chaque appel possède sa propre pile.
  */
 #include "chord_audio.h"
@@ -15,6 +15,8 @@ struct chord_audio_frame {
     unsigned int ratios[4];
     unsigned int active;
     unsigned int count;
+    unsigned int controls;
+    unsigned int voicing;
 };
 
 _Static_assert(__builtin_offsetof(struct chord_audio_frame, ratios) == CK_AUDIO_RATIOS_OFFSET,
@@ -23,7 +25,7 @@ _Static_assert(__builtin_offsetof(struct chord_audio_frame, active) == CK_AUDIO_
                "offset du marqueur");
 _Static_assert(__builtin_offsetof(struct chord_audio_frame, count) == CK_AUDIO_COUNT_OFFSET,
                "offset du nombre de voix");
-_Static_assert(sizeof(struct chord_audio_frame) == 92, "taille de la copie locale");
+_Static_assert(sizeof(struct chord_audio_frame) == 100, "taille de la copie locale");
 
 /* Mêmes modes et voicings que le noyau portable chord_keys.c, vérifiés par les
  * preuves du noyau et de l'audio ; aucun calcul flottant dans l'interruption.
@@ -54,10 +56,53 @@ static const unsigned int semitone_ratios[24] = {
 
 /* Fonction séparée pour tenir dans les masques libérés de 376 octets. */
 static void __attribute__((noinline))
+legacy_intervals(unsigned int mode, unsigned int degree, unsigned int extension,
+                 unsigned int intervals[4])
+{
+    unsigned int i;
+    for (i = 0; i < 4; ++i) {
+        unsigned int position = degree + positions[extension][i];
+        intervals[i] = 12u * (position / 7u)
+                     + scales[mode][position % 7u] - scales[mode][degree];
+    }
+}
+
+static void __attribute__((noinline))
+prepare_intervals(struct chord_audio_frame *frame, unsigned int mode,
+                  unsigned int degree, unsigned int extension)
+{
+    unsigned int i, intervals[4];
+    frame->count = extension == 0 ? 3 : 4;
+    legacy_intervals(mode, degree, extension, intervals);
+    if (frame->controls & 1u) {
+        unsigned int palette = ck_palette_index((short)frame->params[11]);
+        unsigned int count = ck_harmony_intervals(mode, degree, extension, palette,
+                                                 frame->controls >> 8, intervals);
+        /* Une transformation indisponible conserve l'accord de repos. */
+        if (!count)
+            count = ck_harmony_intervals(mode, degree, extension, palette, 0, intervals);
+        frame->count = count;
+        frame->params[11] = 32u << 8;
+    }
+    frame->voicing = ck_voicing_index((short)frame->params[12]);
+    ck_voicing_apply(intervals, frame->count, frame->voicing);
+    for (i = 0; i < 4; ++i) {
+        unsigned int interval = intervals[i];
+        /* BASE conserve les rapports historiques ; les dispositions ouvertes
+         * et V7 peuvent dépasser deux octaves. Division entière bornée.
+         */
+        frame->ratios[i] = interval < 24 ? semitone_ratios[interval]
+            : semitone_ratios[12u + interval % 12u] << (interval / 12u - 1u);
+    }
+    frame->params[12] = 7u << 8;
+    frame->active = 1;
+}
+
+static void __attribute__((noinline))
 chord_audio_prepare(struct chord_audio_frame *frame, unsigned int cfg, unsigned int note)
 {
-    unsigned int i, mode = (cfg >> 28) & 7u;
-    unsigned int tonic, relative, degree, extension, intervals[4];
+    unsigned int mode = (cfg >> 28) & 7u;
+    unsigned int tonic, relative, degree, extension;
     if (!(cfg & 0x80000000u) || mode >= 7)
         return;
     tonic = ((cfg >> 21) & 127u) % 12u;
@@ -71,25 +116,22 @@ chord_audio_prepare(struct chord_audio_frame *frame, unsigned int cfg, unsigned 
     extension = (cfg >> (3 * degree)) & 7u;
     if (extension >= 5)
         return;
-    frame->count = extension == 0 ? 3 : 4;
-    for (i = 0; i < 4; ++i) {
-        unsigned int position = degree + positions[extension][i];
-        unsigned int interval = 12u * (position / 7u)
-                             + scales[mode][position % 7u] - relative;
-        intervals[i] = interval;
-    }
-    ck_voicing_apply(intervals, frame->count,
-                     ck_voicing_index((short)frame->params[12]));
-    for (i = 0; i < 4; ++i) {
-        unsigned int interval = intervals[i];
-        /* BASE conserve exactement les rapports arrondis historiques. Les
-         * dispositions ouvertes peuvent dépasser 23 demi-tons, au plus 35.
+    prepare_intervals(frame, mode, degree, extension);
+}
+
+static void __attribute__((noinline))
+apply_balance(void *voice, const struct chord_audio_frame *frame)
+{
+    unsigned int i;
+    for (i = 1; i < 4; ++i) {
+        unsigned int *gain = (unsigned int *)voice + 2 + i;
+        unsigned int weight = ck_voicing_gain(frame->voicing, i, frame->count);
+        /* Ne jamais réactiver une voix coupée par la protection aiguë stock.
+         * La multiplication tient sur 32 bits ; BASE garde le gain exact.
          */
-        frame->ratios[i] = interval < 24 ? semitone_ratios[interval]
-                                       : semitone_ratios[interval - 12] << 1;
+        if (weight != 32768u)
+            *gain = (*gain >> 15) * weight;
     }
-    frame->params[12] = 7u << 8; /* m7 : gain des quatre opérateurs disponible. */
-    frame->active = 1;
 }
 
 void chord_audio_update(int pitch_q16, void *voice, const unsigned short *params)
@@ -105,14 +147,19 @@ void chord_audio_update(int pitch_q16, void *voice, const unsigned short *params
     for (i = 0; i < 33; ++i)
         frame.params[i] = params[i];
     frame.active = 0;
+    frame.controls = 0;
 
     /* Six soustractions au plus, sans division ou appel à une bibliothèque. */
     while (voice_offset >= 0x31cu && track < 6) {
         voice_offset -= 0x31cu;
         ++track;
     }
-    if (track < 6 && voice_offset == 0 && note >= 0 && note <= 127)
-        chord_audio_prepare(&frame, ck_audio_config(track), (unsigned int)note);
+    if (track < 6 && voice_offset == 0 && note >= 0 && note <= 127) {
+        unsigned int cfg = ck_audio_config(track);
+        if (cfg & 0x80000000u)
+            frame.controls = ck_audio_controls(track);
+        chord_audio_prepare(&frame, cfg, (unsigned int)note);
+    }
 
     /* Au-delà du seuil aigu, l'OS garde l'ancien incrément de l'opérateur 0,
      * contrairement aux autres voix qu'il rend muettes. Préparer son plafond
@@ -122,6 +169,8 @@ void chord_audio_update(int pitch_q16, void *voice, const unsigned short *params
     if (frame.active)
         ((unsigned int *)voice)[0x70 / 4] = 0x000bd2f1u;
     chord_audio_original(pitch_q16, voice, frame.params);
+    if (frame.active && (frame.controls & 1u))
+        apply_balance(voice, &frame);
     if (frame.active && frame.count == 3)
         ((unsigned int *)voice)[5] = 0; /* Triade : quatrième opérateur inaudible. */
 }

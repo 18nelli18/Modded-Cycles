@@ -22,6 +22,8 @@ le contrôle des caves de build.py ne les voit pas, les octets « old » des éc
 BASE = 0x40000400
 SHARED_MASK = 0x40154ae4        # masque du sprite 32x260 (1040 o), gardé intact
 SHARED_47 = 0x40172220          # masque d'un sprite 47x47 (376 o), gardé intact
+SHARED_35 = 0x4014a660          # masque d'un sprite 35x35 (280 o), gardé intact
+SHARED_33_48 = 0x4016ac78       # masque d'un sprite 33x48 (384 o), gardé intact
 
 # va du masque : (taille, va de la constante 32 bits qui le désigne, description[, masque partagé])
 MASKS = {
@@ -51,6 +53,21 @@ MASKS = {
     0x4018fc74: (376, 0x400ac81c, "sprite 47x47", SHARED_47),
     0x401904b4: (376, 0x400ac784, "sprite 47x47", SHARED_47),
     0x40192734: (376, 0x400ac2b2, "sprite 47x47", SHARED_47),
+    # Réserves de Chord Keys Harmony (notes/40) : chaque masque a une seule
+    # référence de constructeur, aucune entrée intérieure et aucun branchement.
+    0x4016aa28: (280, 0x400b1480, "sprite 35x35", SHARED_35),
+    0x401699a8: (280, 0x400b1500, "sprite 35x35", SHARED_35),
+    0x401696a0: (280, 0x400b1540, "sprite 35x35", SHARED_35),
+    0x40166760: (280, 0x400b272e, "sprite 35x35", SHARED_35),
+    0x4016616c: (280, 0x400b2898, "sprite 35x35", SHARED_35),
+    0x40163fb8: (280, 0x400b34c8, "sprite 35x35", SHARED_35),
+    0x401625bc: (280, 0x400b3e2a, "sprite 35x35", SHARED_35),
+    0x40160e6c: (280, 0x400b482e, "sprite 35x35", SHARED_35),
+    0x40160b6c: (280, 0x400b4870, "sprite 35x35", SHARED_35),
+    0x40160864: (280, 0x400b48ac, "sprite 35x35", SHARED_35),
+    0x401601fc: (280, 0x400b4b4a, "sprite 35x35", SHARED_35),
+    0x4015f50c: (280, 0x400b5028, "sprite 35x35", SHARED_35),
+    0x40158744: (384, 0x400b7a5a, "sprite 33x48", SHARED_33_48),
 }
 
 

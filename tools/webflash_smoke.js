@@ -183,7 +183,7 @@ async function main() {
     const holdTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "trig-hold"));
     const tempoTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "tempo-max"));
     const bootTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "boot-anim"));
-    check(tags.join() === "Tested alone,Tested,Experimental,Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + "," + synTag,
+    check(tags.join() === "Experimental,Tested,Experimental,Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + "," + synTag,
       "cards tagged as tested or not (Model-TG experimental until tested here): " + tags.join());
     check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until the Syntakt engines are ticked");
     doc.getElementById("feat-syntakt").click();
@@ -295,26 +295,29 @@ async function main() {
     doc.querySelector('.lang button[data-lang="en"]').click();
     await wait(20);
 
-    // Le retour matériel de Nico ne couvre que Chord Keys seul.
+    // Le retour matériel ancien ne valide pas la nouvelle révision Harmony.
     for (const f of w.MC_TWEAKS.features) {
       const cb = doc.getElementById("feat-" + f.id);
       if (cb.checked && !cb.disabled) cb.click();
     }
     box("feat-chord-keys").click(); await wait(5);
-    check(tagOf("feat-chord-keys") === "Tested alone"
-      && /without any other mods/.test(text(doc, "chord-test-scope"))
-      && /No combination with Chord Keys has been tested on a real Model:Cycles/.test(text(doc, "chord-test-scope")),
-      "Chord Keys alone: scoped hardware badge and explicit untested-combinations notice");
+    check(tagOf("feat-chord-keys") === "Experimental"
+      && /no reported hardware test, alone or combined/.test(text(doc, "chord-test-scope"))
+      && /previous revision/.test(text(doc, "chord-test-scope"))
+      && /DIATONIC, JAZZ or TENSION/.test(text(doc, "features"))
+      && /LEGACY/.test(text(doc, "features")),
+      "Chord Keys alone: new revision stays experimental; previous hardware report is scoped");
     box("feat-usb6").click(); await wait(5);
-    check(tagOf("feat-chord-keys") === "Combination: software only"
+    check(tagOf("feat-chord-keys") === "Experimental"
       && !doc.querySelector("label[for=feat-chord-keys] .tag").classList.contains("ok"),
-      "Chord Keys + USB audio: hardware badge replaced by software-only combination warning");
+      "Chord Keys + USB audio: new revision stays experimental");
     doc.querySelector('.lang button[data-lang="fr"]').click(); await wait(5);
-    check(tagOf("feat-chord-keys") === "Combinaison : logiciel uniquement",
-      "FR: combined Chord Keys badge reports software checks only");
+    check(tagOf("feat-chord-keys") === "Expérimental"
+      && /DIATONIC, JAZZ ou TENSION/.test(text(doc, "features")),
+      "FR: palette names and experimental revision translated");
     box("feat-usb6").click(); await wait(5);
-    check(tagOf("feat-chord-keys") === "Testé seul",
-      "FR: removing the other mod restores standalone test scope");
+    check(tagOf("feat-chord-keys") === "Expérimental",
+      "FR: removing another mod does not restore the previous hardware badge");
     box("feat-chord-keys").click();
     doc.querySelector('.lang button[data-lang="en"]').click(); await wait(5);
 

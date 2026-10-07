@@ -3,6 +3,16 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.27", date: "2026-10-06", changes: [
+    { en: "Chord Keys: COLOR selects DIATONIC, JAZZ or TENSION; SHAPE combines nine voicings with voice balance. I–VII keeps each degree’s usual TRI/7/9/11/13 setting",
+      fr: "Chord Keys : COLOR choisit DIATONIC, JAZZ ou TENSION ; SHAPE combine neuf dispositions et la balance des voix. I–VII conserve le réglage habituel TRI/7/9/11/13 de chaque degré" },
+    { en: "Set Pads to HARMONY for temporary 9, 11, 13, SUS7, PARALLEL and V7 changes on T1–T6. The last held pad wins; releasing it restores an earlier held pad, then the saved chord. Gestures are live only",
+      fr: "Mettez Pads sur HARMONY pour les changements temporaires 9, 11, 13, SUS7, PARALLEL et V7 sur T1–T6. Le dernier pad tenu prévaut ; son relâchement restaure un pad précédent encore tenu, puis l’accord enregistré. Ces gestes restent live" },
+    { en: "Controls LEGACY preserves existing patterns until you explicitly select NEW for the whole pattern. Newly initialized patterns use NEW with Pads TRACK; existing SHAPE/COLOR values and locks are never rewritten",
+      fr: "Controls LEGACY préserve les anciens patterns jusqu’au choix explicite NEW pour tout le pattern. Les nouveaux patterns initialisés utilisent NEW avec Pads TRACK ; les valeurs et locks SHAPE/COLOR existants ne sont jamais réécrits" },
+    { en: "Experimental revision, awaiting its own hardware test. Nico’s earlier standalone success applies to the previous revision. Four voices maximum; extended half-diminished chords keep their diminished fifth and omit the third; PARALLEL/V7 is unavailable on diminished targets",
+      fr: "Révision expérimentale, en attente de son propre essai matériel. Le précédent retour positif de Nico seul concerne l’ancienne révision. Quatre voix maximum ; les semi-diminués étendus gardent leur quinte diminuée et omettent la tierce ; PARALLEL/V7 est indisponible sur les cibles diminuées" },
+  ] },
   { version: "1.26", date: "2026-10-06", changes: [
     { en: "Chord Keys appears first in the flasher, under its own name",
       fr: "Chord Keys apparaît en premier dans le flasher, sous son propre nom" },

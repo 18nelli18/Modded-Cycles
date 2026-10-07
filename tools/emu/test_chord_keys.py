@@ -24,6 +24,9 @@ import build
 from gen_chord_keys import HOOKS, load_stock
 from chord_audio_checks import run_audio_checks, run_audio_storage_checks, run_audio_governor_checks
 import chord_ui_checks
+import chord_harmony_checks
+import chord_palette_ui_checks
+import chord_pad_audio_checks
 from probe_chord_storage import run_storage_checks
 
 DIRECTORY = HERE.parents[1] / "tweaks/model-cycles_OS1.13"
@@ -88,6 +91,7 @@ def main():
     except AssertionError as error:
         check(False, f"stockage : {error}")
     chord_ui_checks.run(reference, patched, symbols, check)
+    chord_palette_ui_checks.run(reference, patched, symbols, check)
     extra_code = [(build.BASE + w["off"], len(w["new"])//2) for w in tweak["writes"]
                   if len(w["new"])//2 > 32]
     audio_failures = run_audio_checks(reference, patched, symbols["ck_audio_config"], extra_code)
@@ -96,10 +100,13 @@ def main():
     storage_audio_failures = run_audio_storage_checks(reference, patched, extra_code)
     if storage_audio_failures:
         failures.extend(["stockage audio"] * storage_audio_failures)
+    chord_harmony_checks.run(reference, patched, symbols, extra_code, check)
+    chord_pad_audio_checks.run(reference, patched, symbols, extra_code, check)
     for governor in (item for item in chosen if item.get("gov")):
-        governor_failures = run_audio_governor_checks(patched, governor, extra_code)
-        if governor_failures:
-            failures.extend(["régulateur audio"] * governor_failures)
+        for new_controls in (False, True):
+            governor_failures = run_audio_governor_checks(patched, governor, extra_code, new_controls)
+            if governor_failures:
+                failures.extend(["régulateur audio"] * governor_failures)
     print("TOUT OK" if not failures else f"FAIL : {len(failures)} échecs", flush=True)
     return int(bool(failures))
 

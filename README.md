@@ -19,8 +19,7 @@
 ---
 
 **Chord Keys on Nico's fork:** [open this fork's flasher](https://bynicoheuser.github.io/Modded-Cycles/flasher/).
-Nico reported it working on his real Model:Cycles on **6 October 2026, with Chord Keys alone and no other mods**.
-Combinations have passed software checks only; none has been reported tested on hardware with Chord Keys.
+This revision adds temporary harmony pads, three COLOR palettes and a SHAPE voicing/balance macro. **Experimental: no hardware test of this revision has been reported.** Nico's successful standalone test on 6 October 2026 concerns the previous revision only.
 The upstream links above belong to the original project; this fork's flasher includes the Chord Keys revision described here.
 
 ## Why
@@ -47,7 +46,7 @@ Going back to the official firmware is one click away.
 | **Syntakt engines** | Up to five real Syntakt machines added next to the original six: **SD VINTAGE**, **CP VINTAGE**, **SY TOY**, **SY BITS** and **SY SWARM**, with the Syntakt's knob names and defaults. They are read from your own Syntakt OS file. | ✅ Tested |
 | **Model-TG** | A full Sampler machine with seven playback modes, resampling, a beat-repeat page with master FX, slide trigs, Scale Lock and more, by [TinyGregAudio](https://github.com/TinyGregAudio/Model-TG). Works with the 6-channel mod and the Syntakt engines. | 🧪 Experimental |
 | **Arpeggiator** | Hold several notes with RETRIG and they play as an arpeggio. `FUNC` + `RETRIG` adds direction (up, down, up/down, random, or in the order played) and range (1 to 4 octaves), saved with the pattern. | ✅ Tested |
-| **Chord keys** | Play the selected CHORD track with the lower `TRIG 1–16` buttons: I–VII on 1–7, the same degrees one octave higher on 8–14, then I–II two octaves higher on 15–16. T1–T6 keep their normal controls. Choose a triad, 7th, 9th, 11th or 13th for each degree in `FUNC` + `RETRIG`, saved per track and pattern. SHAPE arranges the notes (BASE, closed or open voicings); COLOR blends their levels. Does not combine with Model-TG. | Hardware tested alone; combinations software-only |
+| **Chord Keys** | Play the selected CHORD track with `TRIG 1–16`. Choose each degree's TRI/7/9/11/13 in `FUNC` + `RETRIG`. With Controls NEW, COLOR selects DIATONIC, JAZZ or TENSION; SHAPE arranges and balances the notes. Set Pads HARMONY for temporary 9/11/13/SUS7/PARALLEL/V7 changes on T1–T6, or TRACK for their usual actions. Old patterns retain LEGACY controls until you opt in. Model-TG is incompatible. | 🧪 Experimental revision |
 | **Tempo up to 546 BPM** | The TEMPO knob, tap tempo, MIDI clock and saved projects go past 300 BPM. Tempo-synced LFOs stay in time. | ✅ Tested |
 | **Startup animation** | When the Model:Cycles starts, the four squares of the modded-cycles logo pop in and “modded-cycles” types itself underneath, instead of the original tile animation. Same duration. | ✅ Tested |
 | **Easier trig removal** | A quick press on a step that holds a trig removes it, instead of opening it as a hold. | ✅ Tested |
@@ -59,13 +58,19 @@ Going back to the official firmware is one click away.
 Most mods can be combined. Chord keys and Model-TG are alternatives; Samples OS is a separate install. Each mod is explained step by step, with the buttons to press, in the
 **[guide](https://18nelli18.github.io/Modded-Cycles/guide/)**.
 
-**Chord Keys compatibility checked in software:** 6-channel USB audio, latching mute, trig preview, scrolling names,
-easier trig removal, arpeggiator, tempo up to 546 BPM, startup animation, and all five Syntakt engines
-(SD VINTAGE, CP VINTAGE, SY TOY, SY BITS and SY SWARM). The full combined image passed 215 emulation checks
-(211 with Chord Keys alone); 8,192 Chord Keys combinations passed build/hash checks within the 17,407-combination
-flasher suite. Those build checks do not functionally emulate every combination. **Only Chord Keys alone has a
-reported real-device test.** Model-TG is incompatible, and Samples OS is a separate OS installation. With the
-arpeggiator enabled, the large T1–T6 pads retain its behavior; the lower TRIG chord keys do not arpeggiate.
+**Chord Keys:** Root, Scale and the I–VII extension rows remain per-track settings saved with the pattern.
+Controls LEGACY/NEW applies to the entire pattern; existing patterns keep their saved SHAPE/COLOR behavior until
+Controls is changed to NEW. Freshly initialized patterns use NEW with Pads TRACK and Keys OFF. COLOR ranges
+0–42 / 43–85 / 86–127 select DIATONIC / JAZZ / TENSION. SHAPE offers BASE, CLS0–3 and OPN0–3 with a balance for
+each position. In HARMONY, the last pad pressed wins; release it to restore an earlier held pad, then the saved
+extension. Pad gestures are live only and are not recorded as automation. Four voices maximum: extended m7♭5
+keeps its diminished fifth and omits the third; PARALLEL and V7 are unavailable for diminished targets.
+
+Compatible combinations are checked in software with USB audio, latching mute, trig preview, scrolling names,
+easier trig removal, arpeggiator, tempo, startup animation and the five Syntakt engines. Software tests do not
+establish real-device timing or load. **This revision remains experimental alone and in every combination.**
+Model-TG is incompatible; Samples OS is a separate installation. Retrig/arp stays available on T1–T6 in TRACK
+mode; the lower TRIG chord keys do not arpeggiate.
 
 <p align="center">
   <img src="docs/images/readme/device-syntakt.png" alt="The MACHINES menu on the Model:Cycles screen, listing 05 Tone, 06 Chord, 07 SDVtg and 08 CPVtg" width="560"><br>

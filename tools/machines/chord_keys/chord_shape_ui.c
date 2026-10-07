@@ -1,4 +1,4 @@
-/* Affichage contextuel de SHAPE dans CHORD Keys, OS 1.13 (notes/40).
+/* Affichage contextuel de SHAPE et COLOR dans CHORD Keys, OS 1.13 (notes/40).
  * Les descripteurs et leurs bornes restent stock. L'objet de paramètres
  * identifie sa propre piste : les réglages d'une autre piste ne doivent
  * jamais changer le nom ou la valeur affichés ici.
@@ -12,7 +12,9 @@ static int shape_enabled(void *object, u32 descriptor)
 {
     void *root, *bank;
     u32 offset, track;
-    if (descriptor != 72u)
+    if (descriptor != 72u && descriptor != 71u)
+        return 0;
+    if (descriptor == 71u && !ck_ui_revision_get())
         return 0;
     root = ((void *(*)(void))0x400cf866)();
     bank = ((void *(*)(void *))0x4000eb9c)(root);
@@ -26,11 +28,14 @@ static int shape_enabled(void *object, u32 descriptor)
     return (ck_ui_config_get(track) & 0x80000000u) != 0;
 }
 
-static const char *shape_text(int value)
+static const char *shape_text(u32 descriptor, int value)
 {
     static const char *const labels[] = {
         "BASE", "CLS0", "CLS1", "CLS2", "CLS3", "OPN0", "OPN1", "OPN2", "OPN3"
     };
+    static const char *const palettes[] = { "DIATONIC", "JAZZ", "TENSION" };
+    if (descriptor == 71u)
+        return palettes[ck_palette_index(value)];
     /* Même conversion signée 8.8 que le calcul sonore. */
     return labels[ck_voicing_index(value)];
 }
@@ -38,7 +43,7 @@ static const char *shape_text(int value)
 const char *ck_shape_name(void *object, u32 descriptor)
 {
     if (shape_enabled(object, descriptor))
-        return "Chord Voicing";
+        return descriptor == 71u ? "Chord Palette" : "Chord Voicing";
     return ((const char *(*)(void *, u32))0x4000b22a)(object, descriptor);
 }
 
@@ -46,7 +51,7 @@ void ck_shape_format(void *object, u32 descriptor, int value, char *output)
 {
     if (shape_enabled(object, descriptor)) {
         ((int (*)(char *, const char *, const char *))0x40000e6e)
-            (output, "%s", shape_text(value));
+            (output, "%s", shape_text(descriptor, value));
         return;
     }
     ((void (*)(void *, u32, int, char *))0x4000a70e)
@@ -58,14 +63,13 @@ u32 ck_shape_draw(void *object, u32 descriptor, int value, u32 flags,
 {
     if (shape_enabled(object, descriptor)) {
         u32 font[2];
-        /* Quatre lettres mesurent 31 px ici, contre 67 px dans le repli
-         * numérique stock. Le panneau ne fait que 64 px de large ; +6 garde
-         * le centre vertical de son ancienne police haute de 22 px.
+        /* Quatre lettres mesurent 31 px, DIATONIC 63 px. Le panneau fait
+         * 64 px ; +6 garde le centre vertical de l'ancienne police de 22 px.
          */
         ((void (*)(void *, const void *))0x40072260)
             (font, (const void *)0x4014120c);
         ((int (*)(void *, void *, int, int, u32, const char *, const char *))0x40071a04)
-            (canvas, font, x, y + 6, 2, "%s", shape_text(value));
+            (canvas, font, x, y + 6, 2, "%s", shape_text(descriptor, value));
         ((void (*)(void *))0x40072080)(font);
         return 1;
     }

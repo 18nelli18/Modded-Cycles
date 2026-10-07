@@ -11,29 +11,29 @@ Source : conversation locale, sans lien public. Adresses : VA de l'OS **1.13**. 
 Tweak : [`44-chord-keys.json`](../tweaks/model-cycles_OS1.13/44-chord-keys.json), générateur
 [`tools/gen_chord_keys.py`](../tools/gen_chord_keys.py), sources
 [`tools/machines/chord_keys/`](../tools/machines/chord_keys/), preuves sous `tools/emu/` et test natif
-[`tools/test_chord_keys.py`](../tools/test_chord_keys.py). **État au 06/10/2026 : fonctionnement de Chord Keys seul
-rapporté par Nico sur son Model:Cycles, sans autre mod ; combinaisons vérifiées uniquement en logiciel** (§13).
+[`tools/test_chord_keys.py`](../tools/test_chord_keys.py) et
+[`tools/test_chord_harmony.py`](../tools/test_chord_harmony.py). **État de la nouvelle révision au 06/10/2026 :
+expérimentale, sans essai matériel rapporté** (§15). Le retour de Nico seul sur Model:Cycles concerne
+la version précédente (§13). Les §1–12 décrivent cette version historique, conservée par Controls LEGACY.
 
 ## Réponse courte
 
-`[FAIT en émulation]` Le mod raccorde les boutons **TRIG 1–16**, un menu de réglage, le stockage des patterns et
-le véritable moteur CHORD. Dans **FUNC + RETRIG**, activer **Keys** sur une piste CHORD, régler **Root**, **Scale**
-et **I** à **VII**. Hors édition en grille, 1–7 jouent I–VII, 8–14 les mêmes degrés une octave plus haut, puis
-15–16 I–II deux octaves plus haut. **RETRIG ne change plus de banque.** Le menu affiche **MAJ** pour majeur.
-Les réglages restent propres à chaque piste du pattern ; les seize touches pilotent la piste CHORD sélectionnée.
-T1–T6 retrouvent intégralement leur routage d'événements stock. Le DSP reste réglé par piste : comme les notes
-séquencées ou MIDI, une note jouée par un grand pad peut donc recevoir les intervalles de Keys si elle est dans
-la gamme. PAGE garde ses fonctions.
+`[FAIT dans les sources de la révision §15]` TRIG 1–16 jouent les degrés de la piste CHORD sélectionnée,
+avec Root, Scale et le niveau TRI/7/9/11/13 propre à chaque degré. En **Controls NEW**, **COLOR** choisit
+DIATONIC, JAZZ ou TENSION ; **SHAPE** combine les neuf dispositions BASE/CLS0–3/OPN0–3 avec leur balance.
+**Pads HARMONY** donne à T1–T6 des changements temporaires 9/11/13/SUS7/PARALLEL/V7. Le dernier pad
+pressé prévaut ; au relâchement, retour au pad précédent encore tenu puis au réglage du degré.
 
-Les sept modes diatoniques et cinq choix d'extension sont implémentés, avec trois ou quatre voix. La tonique de
-l'interface est limitée aux notes MIDI **24–48**, soit **C1–C3** selon la notation du menu. SHAPE choisit **BASE**,
-**CLS0–3** ou **OPN0–3** pour les notes de la gamme lorsque Keys est actif. **I–VII** seuls choisissent les
-extensions ; **COLOR** garde les gains natifs sans déplacer les octaves. Commencer avec **BASE** et **COLOR 32**. Les notes hors gamme gardent l'accord SHAPE stock.
+**Controls LEGACY/NEW s'applique au pattern entier.** Les anciens patterns restent LEGACY jusqu'au choix
+explicite NEW : leurs valeurs et locks ne sont pas réécrits. Les nouveaux patterns initialisés commencent
+NEW, Pads TRACK et Keys OFF. Les réglages de pads sont par piste ; les gestes restent live et ne sont
+pas enregistrés. Quatre voix maximum ; les extensions m7♭5 préservent la quinte diminuée en omettant
+la tierce, et PARALLEL/V7 sont indisponibles sur les cibles diminuées.
 
-Cette fonction était absente du dépôt. Le [Scale Lock de Model-TG](https://github.com/TinyGregAudio/Model-TG/blob/main/docs/USER_GUIDE.md#scale-lock)
-transforme les notes du clavier suivant une gamme ; il ne choisit pas un accord par degré. **Model-TG est déclaré
-incompatible** dans cette version : sa transformation des notes et son CHORD optimisé demanderaient une
-intégration spécifique. La recherche ne démontre pas l'absence d'un autre mod dans tous les projets externes.
+Model-TG reste incompatible. Les notes reçues hors gamme gardent le son CHORD stock. Les détails,
+la migration, les choix de balance, les nouvelles caves et l'état des preuves figurent en **§15**.
+**Aucun résultat matériel de cette révision n'est revendiqué.** Les §13–14 conservent le retour matériel
+antérieur et la discussion qui a mené à ces choix.
 
 ## 1. Comportement musical et limites
 
@@ -644,3 +644,674 @@ avant les autres mods. Sa ligne de crédit et sa note détaillée sont retirées
 « Anciens patterns » est retirée du guide, dans les deux langues. La provenance reste conservée dans
 les métadonnées. Seul l’ordre d’affichage change : l’ordre de construction, les patchs, les empreintes
 et les statuts des essais restent identiques.
+
+## 14. Projet de jeu harmonique et d'extensions par famille (06/10/2026)
+
+**Source : discussion avec Nico, sans lien public.** Nico accepte le principe des pads de
+modification harmonique et demande de reporter l'implémentation à une autre conversation.
+Il demande ensuite de préciser les extensions musicales, communes aux réglages et aux pads,
+avec leurs variantes et les références HiChord, Orchid et Nopia.
+
+**Statut : conception uniquement.** Cette section ne décrit pas le firmware livré ; aucune
+nouvelle preuve en émulation ni aucun essai matériel ne couvre ce projet. Le comportement
+diatonique documenté plus haut reste celui de la version actuelle.
+
+Les propositions ont évolué pendant la discussion : lire **§14.8 en priorité** pour
+la décision de fusionner disposition et mélange sur SHAPE, et **§14.7** pour la matrice
+simplifiée et les corrections de superposition. Les tableaux précédents conservent
+l'historique du raisonnement et ne constituent pas des exigences cumulatives.
+
+### 14.1. Principe accepté pour les pads
+
+Dans un mode de pads HARMONY, les TRIG continuent à choisir les degrés. Les six pads sont
+assignables ; leur affectation initiale proposée dans la discussion est la suivante :
+
+| Pad | Action | Exemple |
+|---|---|---|
+| T1 | Extension 9 | Em7 → Em9 |
+| T2 | Extension 11 ou ♯11 selon la famille | Dm7 → Dm11 ; Cmaj7 → Cmaj7(♯11) |
+| T3 | Extension 13 | G7 → G13 |
+| T4 | SUS, remplacer la tierce par la quarte | G9 → G9sus4 |
+| T5 | Parallèle majeur/mineur, en conservant le niveau d'extension | Fmaj9 → Fm9 |
+| T6 | Dominante de la cible, fixée à la septième | TRIG Am9 → E7 pendant l'appui, puis Am9 au relâchement |
+
+Sans pad, le réglage enregistré du degré s'applique. Un pad d'extension **remplace
+temporairement** ce choix ; il ne cumule pas les extensions et ne réécrit pas le pattern.
+Ainsi, EXT 9 + pad 13 donne le voicing de 13 ; au relâchement, retour au voicing de 9.
+EXT 9 + pad 9 ne change rien. L'assignation permettrait de choisir TRI ou 7 à la place.
+Une seule modification harmonique est active à la fois dans la première version envisagée.
+
+Objectif de jeu : pouvoir maintenir le pad avant le TRIG, ou modifier un accord déjà tenu,
+puis revenir au réglage enregistré **sans redéclencher l'enveloppe**. Ce dernier point est un
+objectif à prouver, pas une capacité déjà démontrée. Un mode TRACK conserve le jeu natif des
+pads. Le routage exact des touches, la sélection des pistes et les combinaisons FUNC/mute
+devront être spécifiés et prouvés avant toute modification.
+
+### 14.2. Politique musicale recommandée, soumise à la discussion
+
+**[PROPOSITION, pas encore une décision de Nico]** La fondamentale, la tierce, la quinte et
+la septième de départ viennent du degré dans le mode choisi. L'extension vient ensuite
+d'une table de familles, commune au menu et aux pads. Une triade majeure ne suffit donc
+pas à décider de la septième : en do majeur, I et IV donnent maj7, V donne 7 dominante.
+En la mineur naturel, le V reste Em ; le passage à E7 demande une transformation explicite.
+
+Les intervalles se calculent depuis la fondamentale de l'accord : 9 = 14 demi-tons,
+11 = 17, ♯11 = 18, 13 = 21. « Naturelle » ne veut pas dire « dans la tonalité globale » :
+Em9 utilise F♯, Em11 utilise A, Em13 utilise C♯, même dans une progression en do majeur.
+
+| Famille | EXT 7 | EXT 9 | EXT 11 | EXT 13 |
+|---|---|---|---|---|
+| Majeure avec septième majeure | maj7 | maj9 | maj7(♯11) | maj13 |
+| Mineure avec septième mineure | m7 | m9 | m11 | m13 |
+| Dominante | 7 | 9 | 7(♯11) | 13 |
+| Semi-diminuée | m7♭5 | Repli m7♭5 proposé pour la première version | Même repli | Même repli |
+
+Ce choix forme une palette ; il ne prétend pas déterminer la meilleure tension pour toute
+mélodie ou toute progression. Le menu peut conserver les niveaux 9/11/13, mais le nom de
+l'accord résultant doit indiquer la véritable altération, notamment ♯11.
+
+**Variantes à distinguer explicitement :**
+
+- Sur maj7, ♯11 est un choix lydien fréquent. La 11 naturelle est également possible,
+  avec un frottement marqué contre la tierce majeure ; SUS remplace cette tierce au lieu
+  de conserver ce frottement.
+- Sur m7, 9 et 11 naturelles sont les choix de départ. La 13 naturelle donne une couleur
+  dorienne ; ♭13 donne une autre couleur, notamment éolienne, et doit être nommée m7(♭13).
+  Une ♭9 peut servir une couleur phrygienne volontaire. Le choix m(maj7) est aussi distinct
+  de m7 ; il n'est pas déduit automatiquement de toute triade mineure.
+- Sur dominante, 9 et 13 naturelles sont les valeurs de départ. ♭9, ♯9 et ♭13 sont de
+  véritables tensions usuelles, à choisir explicitement. Pour la quarte, les solutions
+  7sus4/9sus4 et 7(♯11) sont différentes : la première retire la tierce, la seconde la
+  conserve. La recommandation ci-dessus choisit ♯11 pour EXT 11, puisque T4 donne SUS.
+- Sur m7♭5, la 11 naturelle est une extension usuelle ; 9 naturelle ou ♭9 dépendent de
+  la couleur recherchée, et ♭13 est une autre possibilité. Il n'existe pas de règle
+  universelle imposant une 13 naturelle. Le repli proposé est une limitation volontaire
+  de notre première version à quatre voix, pas une impossibilité musicale.
+- add9 et 9 sont différents : add9 n'exige pas de septième, 9 en comporte une dans les
+  voicings proposés. De même, 6/9 est un autre choix que 13.
+
+### 14.3. Quatre voix : résultat sonore proposé
+
+**[FAIT dans le code actuel]** `chord_keys.c` et `chord_audio.c` utilisent quatre voix au
+maximum. Les niveaux 9/11/13 retiennent fondamentale, tierce, septième et tension, sans
+quinte ; ils n'empilent pas toutes les tensions inférieures. La nouvelle politique
+conserverait ce principe, avec des intervalles choisis par famille :
+
+| Accord | Notes, avant disposition SHAPE |
+|---|---|
+| Cmaj9 | C–E–B–D |
+| Cmaj7(♯11) | C–E–B–F♯ |
+| Cmaj13 | C–E–B–A |
+| Em9 | E–G–D–F♯ |
+| Em11 | E–G–D–A |
+| Em13 | E–G–D–C♯ |
+| G9 | G–B–F–A |
+| G7(♯11) | G–B–F–C♯ |
+| G13 | G–B–F–E |
+| G9sus4 | G–C–F–A |
+
+Pour Bm7♭5, B–D–F–A utilise déjà les quatre voix. Omettre F supprimerait précisément
+la quinte diminuée. Des voicings étendus restent possibles en omettant une autre note,
+par exemple la fondamentale si un bassiste la joue, mais cela change les hypothèses du
+jeu autonome. **Recommandation conservatrice pour la première version :** conserver
+m7♭5 pour les demandes 9/11/13 sur cette famille, afficher le véritable résultat et
+signaler cette limite dans le guide. Ne pas afficher une extension qui ne sonne pas.
+Nico peut préférer une autre politique de voicing ; cette exception reste à valider
+avec lui avant l'implémentation. m7♭5 ne doit pas être confondu avec dim7.
+
+### 14.4. Références et limites de la comparaison
+
+- [Open Music Theory, symboles](https://viva.pressbooks.pub/openmusictheory/chapter/chord-symbols/)
+  distingue qualité de l'accord, intervalles des extensions et altérations explicites.
+  Son chapitre [voicings](https://viva.pressbooks.pub/openmusictheory/chapter/jazz-voicings/)
+  traite des omissions ; celui sur les [accords et modes](https://viva.pressbooks.pub/openmusictheory/chapter/chord-scale-theory/)
+  explique pourquoi le contexte compte au-delà de la seule famille.
+- [Wayne Naus, Berklee](https://college.berklee.edu/berklee-today-55) propose notamment
+  9/♯11/13 sur maj7 et 9/11 sur m7 dans un exercice de réharmonisation. Il précise que
+  les règles de cet exercice s'affranchissent de la fonction dans la tonalité ; ce
+  tableau n'est pas une loi universelle, et l'absence de m13 n'en interdit pas l'usage.
+- [HiChord, manuel bêta Rev 3.0](https://hichord.github.io/hichord-beta-updater/manual/#joystick),
+  consulté le 06/10/2026 : le joystick applique des transformations momentanées et
+  revient au départ au relâchement. Le mode Default produit notamment maj9 ou m9 ;
+  sur l'accord diminué, son geste 9 donne m7♭5. Extended distingue add9, add11, min11,
+  dom9 et dom7♯9 ; Chromatic propose d'autres couleurs. Ce sont des choix explicites
+  de familles et de voicings. Notre règle ♯11 sur les accords majeurs et dominants
+  n'est pas présentée comme l'algorithme de HiChord.
+- [Orchid, documentation officielle](https://support.telepathicinstruments.com/hc/en-us/articles/16576229505167-Chord-Extensions-Explained) :
+  les boutons d'extension ajoutent des notes et peuvent se combiner. Ce fonctionnement
+  diffère de nos pads exclusifs. La page ne fournit pas une table complète de tensions
+  automatiques pour chaque degré.
+- [Nopia, entretien avec les créateurs](https://www.musicradar.com/music-tech/this-is-just-the-beginning-nopia-launches-on-kickstarter-and-hits-usd1-4m-in-24-hours) :
+  les créateurs décrivent le centre tonal, le contrôle des extensions, les dominantes
+  secondaires et l'emprunt modal. Aucune table publique exhaustive de leurs choix
+  d'intervalles par degré n'a été trouvée ; ne pas leur attribuer notre matrice.
+
+### 14.5. Reprise dans une autre conversation
+
+**[À FAIRE]** Arrêter avec Nico les recommandations du §14.2, surtout ♯11 sur dominante,
+13 naturelle sur mineur et le repli des semi-diminués. Définir le résultat de SUS et
+PARALLÈLE pour chaque famille/niveau, la priorité de pads simultanés et la portée de
+leur assignation. Les exemples simples ci-dessus ne constituent pas encore une table
+complète de ces deux transformations.
+
+La représentation actuelle réserve trois bits par degré ; des variantes supplémentaires
+nécessiteraient un choix de stockage et de migration explicite. Préserver les anciens
+patterns demande également de décider comment ils choisissent l'ancienne ou la nouvelle
+politique harmonique. Le séquenceur ne stocke actuellement que la note fondamentale :
+ne pas promettre l'enregistrement des gestes de pads avant d'en définir la représentation.
+L'audio et l'UI devront partager les mêmes règles harmoniques, puis recevoir les preuves
+requises par le dépôt, notamment pour le changement sans retrigger et le retour stock.
+
+### 14.6. Palettes harmoniques proposées par Nico (06/10/2026)
+
+**Source : suite de la même discussion.** Nico propose plusieurs palettes, par exemple
+Jazz, Soul, Spanish et Tango, qui changeraient les choix d'extensions. Cette orientation
+remplace l'idée d'imposer la matrice du §14.2 à tous les usages. Le contenu exact des
+palettes ci-dessous reste une **proposition de conception**, sans implémentation.
+
+La palette choisit les intervalles et le voicing réduit à partir du mode, du degré, de
+la famille et du niveau d'extension demandé. La même règle sert aux settings et aux
+pads. Des palettes peuvent partager certains accords : leur différence ne doit pas
+être inventée pour remplir une table. Les noms de genres désignent des palettes
+inspirées de ces pratiques, pas une statistique exhaustive ni une définition du genre.
+
+| Palette envisagée | Orientation proposée |
+|---|---|
+| DIATONIC | Conserver exactement le calcul diatonique existant, y compris ses voicings et ses tensions parfois altérées |
+| JAZZ | Départ sur la matrice §14.2 : 9 naturelles, 11 mineure/♯11 majeure et dominante, 13 naturelles ; une variante plus fonctionnelle ou altérée pourra être distincte |
+| SOUL | Départ maj9, m9, m11 ; favoriser les dominantes suspendues pour 11 et 13, par exemple 9sus4 et 13sus4 |
+| SPANISH | Explorer ♭9 et ♭13 sur les accords dominants appropriés, en distinguant dominante d'une tonalité mineure et accord de repos du flamenco phrygien |
+| TANGO | Explorer les tensions de dominante selon la résolution, notamment ♭9 vers une cible mineure ; ajouter les choix explicites 6/m6 pour les accords de repos |
+
+Exemple concret de différence à définir dans les tables : sur G7, EXT 11 donnerait
+G7(♯11) en JAZZ et G9sus4 en SOUL ; EXT 13 donnerait G13 en JAZZ et G13sus4 en SOUL.
+Voicings autonomes possibles à quatre voix : G–B–F–C♯, G–C–F–A, G–B–F–E et
+G–C–F–E respectivement. Le dernier omet la 9. Sur Em, EXT 9 peut donner Em9 dans
+les deux palettes. Ce recouvrement est voulu.
+
+**Règles d'interface proposées :**
+
+- Un sélecteur PALETTE s'applique à l'ensemble du clavier Chord Keys configuré et se
+  sauvegarde avec ses réglages. Il ne faut pas devoir choisir une palette pour chaque degré.
+- Les gestes restent prévisibles : T1 demande 9, T2 demande 11, T3 demande 13 ; la
+  palette précise les altérations ou la suspension. T4/T5/T6 gardent leur rôle annoncé.
+  T6 reste la dominante de la cible à la septième simple, conformément au §14.1 ;
+  une variante qui l'enrichit serait un choix explicite supplémentaire.
+- Le pad remplace le niveau enregistré pendant l'appui ; au relâchement, le degré
+  revient au niveau enregistré, interprété dans la même palette. EXT 9 + pad 9
+  continue donc à ne rien changer.
+- Le nom affiché doit refléter les notes : ♭9, ♯11, sus, etc. TRI reste une triade.
+  Les choix 6/m6, add9 ou 6/9, s'ils sont ajoutés, portent leur propre nom ; ne pas
+  transformer silencieusement EXT 13 en m6 ou EXT 9 en add9.
+- Le choix d'une palette ne change pas tacitement la fondamentale, le mode ou la
+  qualité majeure/mineure de base. La suspension explicitement prévue est une
+  exception décrite par la table. Les transformations PARALLÈLE/V7 restent explicites.
+  SHAPE continue à choisir la disposition des notes ; pas de modification automatique
+  de ce réglage par le nom du genre.
+
+Un preset flamenco complet exigerait aussi de définir le mode et les qualités de degrés :
+un repos sur E majeur avec F naturel ne s'obtient pas seulement en altérant la 9 d'Em.
+Il faut distinguer ce futur preset complet de la seule palette d'extensions SPANISH.
+De même, l'orientation TANGO ne doit pas être réduite à « toutes les extensions bémolisées ».
+
+Repères consultés : [cours de Hayden Hill sur le neo-soul](https://www.pianogroove.com/live-seminars/neo-soul-jazz-harmony/)
+(m9/m11, accords suspendus et 13), [Kai Narezo sur la rumba et le flamenco](https://www.berklee.edu/berklee-today/summer-2016/rumba)
+(repos phrygien avec tierce majeure et ♭9),
+[programme de piano harmonique du Conservatoire Julián Aguirre](https://web.consaguirre.com.ar/archivos/Prog_superior/2016-prog_piano_arm_inst_sup.pdf)
+(travail de iiø–V7♭9–i avec différentes qualités de tonique, puis accompagnement
+de tango/zamba). Ces références justifient des ressources musicales disponibles,
+pas une mesure de fréquence des accords dans chaque genre.
+
+**[À FAIRE]** Définir et écouter la table complète de chaque palette, y compris les
+semi-diminués et les niveaux peu caractéristiques d'un style. Vérifier les voicings
+à quatre voix avant de fixer les intitulés. Décider comment les anciens patterns
+conservent DIATONIC et comment la palette des nouveaux patterns est initialisée.
+
+### 14.7. Matrice simplifiée : éviter les fonctions concurrentes (06/10/2026)
+
+**Source : nouvelle demande de Nico.** Il demande une table des extensions et des pads
+pour chaque palette, sans superposition de fonctions, et veut vérifier le rôle des
+différents modes. Si Spanish ne fait que choisir un autre mode, il préfère utiliser
+le sélecteur de gamme existant. **Ce qui suit est une recommandation révisée à discuter,
+pas une implémentation ni une validation par Nico des changements de mapping.**
+
+#### Répartition des responsabilités
+
+| Contrôle | Responsabilité |
+|---|---|
+| ROOT + SCALE | Fondamentales des sept degrés et familles des accords de base |
+| PALETTE | Intervalles des extensions demandées ; ne change ni fondamentale ni tierce ni septième de base |
+| EXT par degré | Niveau enregistré : TRI, 7, 9, 11, 13 |
+| T1–T6 | Modification temporaire explicite, sans réécrire EXT |
+| SHAPE | Disposition/inversions des notes retenues |
+
+La suspension automatique de la proposition SOUL du §14.6 concurrençait directement
+le pad SUS. La recommandation révisée retire cette suspension automatique : les
+palettes d'extensions conservent la tierce. La distinction Jazz/Soul n'est donc plus
+assez nette dans ces seules tables pour justifier deux choix. Leurs autres ressources
+restent accessibles par les extensions, SUS, PARALLÈLE et SHAPE.
+
+SPANISH ne devient pas un second sélecteur de gamme. `[FAIT dans le code]` SCALE offre
+actuellement MAJ, DOR, PHR, LYD, MIX, MINOR, LOC. Le phrygien dominant n'en fait pas
+partie. PHR donne une tonique mineure ; un repos flamenco avec tierce majeure exige
+une transformation explicite ou un mode supplémentaire, avec ses nouvelles familles
+à définir. Le phrygien dominant est un repère possible, pas une définition exhaustive
+de la pratique flamenca.
+
+TANGO n'est pas fixé comme palette indépendante sans règles supplémentaires justifiées.
+6/m6 serait un choix explicite EXT 6, disponible dans tous les styles, et non un
+changement caché de EXT 13. Un futur preset de style pourrait réunir des réglages
+existants ; il ne devrait pas introduire une seconde logique de construction.
+
+#### Trois palettes de départ proposées
+
+Les intervalles sont relatifs à la fondamentale de l'accord joué, même lorsque ce
+degré n'est pas la tonique du mode.
+
+| Palette | Famille | EXT 9 | EXT 11 | EXT 13 |
+|---|---|---|---|---|
+| DIATONIC | Toutes | Degré diatonique +8 | Degré diatonique +10 | Degré diatonique +12 |
+| JAZZ | maj7 | 9 | ♯11 | 13 |
+| JAZZ | m7 | 9 | 11 | 13 |
+| JAZZ | dominante 7 | 9 | ♯11 | 13 |
+| TENSION | maj7 | 9 | ♯11 | 13 |
+| TENSION | m7 | 9 | 11 | 13 |
+| TENSION | dominante 7 | ♭9 | ♯11 | ♭13 |
+
+TRI et 7 restent identiques entre les palettes. TENSION est un choix explicite de
+dominantes plus tendues ; ce n'est pas une déduction de la résolution future ni
+une promesse que cette résolution convient à la mélodie. Les tensions partagées
+entre palettes ne sont pas des commandes dupliquées : ne pas modifier artificiellement
+les accords pour rendre toutes les cases différentes.
+
+Sur G7, les triplets de résultats JAZZ sont G9 / G7(♯11) / G13 ; TENSION donne
+G7(♭9) / G7(♯11) / G7(♭13). Leurs voicings restent fondamentale, tierce, septième,
+tension. Sur Cmaj7 et Em7, les deux palettes coïncident volontairement.
+
+**Exception à traiter avant implémentation : m7♭5.** Pour éviter les trois commandes
+équivalentes proposées au §14.3, ne plus recommander le repli silencieux 9/11/13 → 7.
+Tant qu'un voicing étendu adapté n'est pas choisi, annoncer ces niveaux comme
+indisponibles sur cette famille ; TRI et 7 conservent la quinte diminuée. Le code
+actuel omet la quinte sur tous les degrés aux niveaux 9/11/13, donc une stricte
+compatibilité des anciens patterns et cette nouvelle restriction ne sont pas
+identiques. Leur migration reste à spécifier ; ne pas réécrire les anciens sons
+implicitement. Des voicings sans fondamentale ou sans tierce pourraient permettre
+ces tensions, au prix d'autres compromis : aucune impossibilité musicale n'est affirmée.
+
+#### Mapping de pads révisé proposé
+
+| Pad | Demande | Dépendance à PALETTE |
+|---|---|---|
+| T1 | 9 temporaire | Ligne EXT 9 de la table |
+| T2 | 11 temporaire | Ligne EXT 11 de la table |
+| T3 | 13 temporaire | Ligne EXT 13 de la table |
+| T4 | SUS7 fixe : 1–4–5–♭7 | Aucune : toujours 7sus4, indépendant d'EXT enregistré |
+| T5 | PARALLÈLE | Transformer la famille, puis recalculer le niveau EXT enregistré dans la palette |
+| T6 | V7 de la cible | Aucune : septième dominante simple, comme au §14.1 |
+
+Le T4 fixe est une **révision proposée** du SUS qui conservait EXT : il évite le
+cas d'une 11 doublant la quarte suspendue ou d'une ♯11 frottant automatiquement
+avec elle. Exemples : Cmaj13 → C7sus4, G9 → G7sus4. Les variantes 9sus4 et 13sus4
+peuvent être des affectations explicites alternatives du pad assignable ; elles
+ne sont pas appliquées par la palette. EXT 6 serait aussi un choix explicite,
+avec C6 ou Cm6 selon la tierce, sans septième ajoutée ni altération par la palette.
+Ces ajouts d'affectations et EXT 6 restent à valider avant de changer le menu.
+
+Pour T5 : maj7 → m7, m7 → maj7, dominante 7 → m7 ; conserver la fondamentale et
+le niveau EXT, puis résoudre la nouvelle famille. Exemples Fmaj9 → Fm9 et Fm9 →
+Fmaj9. Il ne s'agit pas seulement de bouger une tierce en conservant chaque autre
+note, ni d'une bascule qui resterait mémorisée. Sur une triade, le résultat reste
+une triade. Sur m7♭5, ne pas inventer une conversion parallèle automatique.
+Pour T6, la cible doit être majeure ou mineure : ne pas promettre une tonicisation
+conventionnelle d'un accord diminué. Les cas non pris en charge doivent être visibles.
+
+Un seul pad modificateur agit à la fois. Pour des appuis qui se chevauchent, proposition
+déterministe : le dernier appuyé prévaut ; son relâchement restaure le précédent encore
+tenu, puis le réglage enregistré lorsqu'il n'en reste aucun. Tous ces gestes nécessitent
+encore une preuve d'émulation du changement sans retrigger.
+
+**Limite assumée :** EXT 9 + T1 redemande le même accord. Éviter cette égalité en changeant
+secrètement T1 en « retirer la 9 » rendrait le geste contextuel. Garder son sens constant
+et permettre une autre affectation explicite (TRI, 7 ou 6, par exemple). Les settings
+définissent le repos ; les pads définissent les écarts temporaires.
+
+#### Interaction avec les sept modes actuels
+
+Voici les tensions théoriques du **degré I** ; pour un autre degré, refaire le calcul
+depuis sa propre fondamentale. Les trois valeurs représentent 9 / 11 / 13.
+
+| SCALE | Famille de I | DIATONIC | JAZZ | TENSION |
+|---|---|---|---|---|
+| MAJ | maj7 | 9 / 11 / 13 | 9 / ♯11 / 13 | 9 / ♯11 / 13 |
+| DOR | m7 | 9 / 11 / 13 | 9 / 11 / 13 | 9 / 11 / 13 |
+| PHR | m7 | ♭9 / 11 / ♭13 | 9 / 11 / 13 | 9 / 11 / 13 |
+| LYD | maj7 | 9 / ♯11 / 13 | 9 / ♯11 / 13 | 9 / ♯11 / 13 |
+| MIX | 7 | 9 / 11 / 13 | 9 / ♯11 / 13 | ♭9 / ♯11 / ♭13 |
+| MINOR | m7 | 9 / 11 / ♭13 | 9 / 11 / 13 | 9 / 11 / 13 |
+| LOC | m7♭5 | ♭9 / 11 / ♭13 en théorie | Voicing étendu à définir | Voicing étendu à définir |
+
+Les modes gardent leur rôle : fondamentales et familles des autres degrés diffèrent.
+En revanche, une palette chromatique peut atténuer le caractère du mode sur un accord.
+Exemples : I en mi phrygien + 9 donne F en DIATONIC et F♯ en JAZZ ; I en la mineur
+naturel + 13 donne F en DIATONIC et F♯ en JAZZ ; III en do majeur + 9 donne F en
+DIATONIC et F♯ en JAZZ, ce qui répond à la demande initiale Em9.
+
+Le workflow reste donc cohérent, mais la garantie que toute note appartient à SCALE
+n'existe qu'en DIATONIC **sans transformation chromatique explicite de pad**. SUS7,
+PARALLÈLE et V7 peuvent eux-mêmes sortir du mode. Une 9 naturelle fixe sur tout m7
+et une préservation absolue du caractère phrygien ne peuvent pas être promises ensemble.
+La table illustre des choix du produit ; elle ne remplace pas l'écoute du contexte
+et de la mélodie. Voir [accords et modes, Open Music Theory](https://viva.pressbooks.pub/openmusictheory/chapter/chord-scale-theory/).
+
+### 14.8. Décision : SHAPE combine disposition et mélange, COLOR choisit la palette (06/10/2026)
+
+**Source : discussion avec Nico, sans lien public.** Il propose : « podriamos mergear
+COLOR y SHAPE en un solo knob, y usar el otro para variar las paletas ». Après la
+proposition SHAPE → VOICING et COLOR → PALETTE ci-dessous, il répond : « dale en otro
+chat arranco la implementacion ». **Orientation acceptée ; implémentation reportée
+à une autre conversation.** Aucun code firmware, tweak ou résultat de test n'est
+modifié par cette décision.
+
+#### Organisation retenue pour la suite
+
+| Commande | Rôle prévu avec Chord Keys actif |
+|---|---|
+| ROOT + SCALE | Fondamentales des degrés et familles des accords de base |
+| I–VII / EXT | Niveau habituel de chaque degré : TRI, 7, 9, 11 ou 13 |
+| SHAPE → VOICING | Une macro combinant disposition/inversions et balance des voix |
+| COLOR → PALETTE | Trois états nommés : DIATONIC, JAZZ, TENSION, selon la matrice §14.7 |
+| TRIG 1–16 | I–VII, I–VII à l'octave, I–II deux octaves plus haut |
+| T1–T6 en HARMONY | Modifications temporaires selon la proposition §14.7 ; TRACK conserve le jeu natif |
+
+La fusion signifie que disposition et balance ne sont plus deux réglages indépendants.
+Le point de départ proposé et accepté dans son principe conserve **BASE, CLS0–3 et
+OPN0–3**, avec une balance conçue pour chaque disposition. BASE reste le point de
+départ équilibré. Les valeurs de gains et les transitions restent à concevoir et à
+écouter ; aucun tableau de gains n'a été arrêté. Ne pas simplement parcourir toute
+la plage de COLOR stock en parallèle de SHAPE : certaines valeurs atténuent des voix
+jusqu'au silence. La nouvelle macro doit garder audible l'extension demandée.
+
+COLOR choisit une palette par états discrets, affichés clairement, sans interpolation
+chromatique entre les notes des différentes palettes. La même palette gouverne EXT
+et les pads d'extension T1–T3. Elle ne change ni la fondamentale, ni le degré joué,
+ni la disposition sélectionnée avec SHAPE. Exemple : III en do majeur, EXT 9,
+DIATONIC → Em7(♭9), JAZZ → Em9 ; SHAPE continue à disposer et équilibrer les voix.
+
+**Précision musicale issue de la discussion :** les extensions diatoniques sont
+courantes, y compris en jazz. JAZZ désigne notre choix de tensions par famille, pas
+« les extensions correctes » ni une mesure de ce qui est le plus souvent joué.
+L'affectation automatique de ♯11 aux majeurs/dominantes et de 13 naturelle aux mineurs
+est un choix de cette palette. La proposition de la prendre par défaut pour les
+nouveaux patterns n'a pas fait l'objet d'une décision explicite ; le défaut reste
+à définir. Les références et limites du §14.7 s'appliquent toujours.
+
+#### Point de reprise pour l'implémentation
+
+`[FAIT dans le code actuel]` `tools/machines/chord_keys/chord_voicing.c` calcule les
+neuf dispositions ; `chord_audio.c` les applique avant l'appel au moteur stock.
+Les gains natifs de COLOR sont encore conservés, tandis que ses déplacements
+d'octave sont contournés (§12). Cette séparation offre une piste pour réaffecter
+les paramètres ; elle ne prouve pas encore le fonctionnement de la nouvelle macro.
+
+`[À FAIRE]` Dans la prochaine conversation :
+
+- Définir les balances associées à SHAPE, le découpage des valeurs COLOR et leurs
+  libellés ; garder un seul choix de palette cohérent entre moteur, écran et réglages.
+- Compléter les cas encore ouverts du §14.7, notamment m7♭5 et PARALLÈLE avec DIATONIC,
+  puis les règles d'assignation des pads et le routage des raccourcis de pistes/mute.
+- Définir stockage et migration : les anciennes valeurs SHAPE/COLOR, y compris leurs
+  parameter locks, ne doivent pas changer implicitement les sons des anciens patterns.
+- Prouver les modifications sur l'accord tenu et le retour au relâchement sans
+  redéclenchement de l'enveloppe ; vérifier les pads superposés, le retour TRACK/Keys OFF,
+  la sauvegarde/relecture, les CC/LFO/locks et les combinaisons de mods applicables.
+- Ne pas présenter l'enregistrement des gestes T1–T6 comme acquis : le séquenceur
+  actuel ne conserve que la fondamentale ; leur représentation reste à définir.
+- Suivre les générateurs, preuves, documentation et PR brouillon prévus par AGENTS.md.
+  Cette nouvelle révision doit rester expérimentale jusqu'à son propre essai matériel.
+
+La discussion s'arrête ici à la demande de Nico ; commencer l'implémentation dans
+l'autre conversation en lisant **§14.7 puis §14.8**, sans reprendre les propositions
+antérieures comme des fonctions supplémentaires cumulatives.
+
+
+## 15. Implémentation des palettes et des pads harmoniques (06/10/2026)
+
+**Source : demande explicite de Nico dans cette conversation** : « Arranquemos la implementacion […]
+el uso de los pads T1-T6 para cambios temporales […] el knob de color para elegir entre DIATONIC,
+JAZZ, y TENSION […] y el shape para la distribucion y equilibrio de esas notas. » Cette révision
+met en œuvre la direction des §14.7–14.8. Les propositions précédentes restent un historique,
+pas une liste de fonctions supplémentaires. **Aucun essai matériel de cette révision n'est rapporté.**
+Le retour positif du §13 concerne uniquement la version précédente, installée seule.
+
+### 15.1. Contrat musical retenu
+
+`[FAIT dans les sources]` Root, Scale et I–VII gardent leurs rôles. COLOR fournit une palette unique
+aux extensions enregistrées et aux demandes temporaires T1–T3 : **0–42 DIATONIC**, **43–85 JAZZ**,
+**86–127 TENSION**. Les frontières réelles portent sur les mots signés Q8 aux valeurs `43*256`
+et `86*256`, sans interpolation des notes. Les valeurs inférieures restent DIATONIC, les supérieures
+TENSION. TRI et 7 sont indépendants de la palette.
+
+- DIATONIC choisit les degrés +8/+10/+12 de la gamme pour 9/11/13.
+- JAZZ choisit 9/♯11/13 sur maj7 et dominante, 9/11/13 sur m7 et m7♭5.
+- TENSION garde les choix JAZZ, sauf la dominante : ♭9/♯11/♭13.
+
+La famille provient de la tierce, de la quinte et de la septième diatoniques du degré joué.
+JAZZ/TENSION n'inférent ni une résolution future ni le style de la pièce. Les quatre voix des
+extensions ordinaires sont fondamentale/tierce/septième/tension. **Décision d'implémentation m7♭5 :**
+au niveau 9/11/13, garder fondamentale/quinte diminuée/septième/tension et omettre la tierce.
+Cela rend l'extension distincte sans perdre la quinte caractéristique. Le chemin LEGACY conserve
+son ancien choix, y compris son omission de quinte ; aucune migration implicite de l'ancien son.
+
+| Pad en HARMONY | Transformation | Limite |
+|---|---|---|
+| T1 | EXT 9 dans la palette courante | Ne réécrit pas I–VII |
+| T2 | EXT 11 dans la palette courante | Ne réécrit pas I–VII |
+| T3 | EXT 13 dans la palette courante | Ne réécrit pas I–VII |
+| T4 | SUS7 fixe : 0, 5, 7, 10 demi-tons | Indépendant de la palette et d'EXT |
+| T5 | Majeur/dominante → mineur ; mineur → majeur, même fondamentale et niveau EXT | Indisponible sur diminué |
+| T6 | V7 de la cible : 7, 11, 14, 17 demi-tons au-dessus de sa fondamentale | Indisponible sur diminué |
+
+Pour PARALLEL + DIATONIC, la famille parallèle détermine les tensions : majeure 9/11/13,
+mineure naturelle 9/11/♭13. C'est une transformation chromatique explicite, pas une promesse de
+rester dans Scale. Les autres palettes utilisent la table de la famille transformée. SUS7 reste
+fixe ; les variantes assignables, EXT 6 et d'autres palettes évoquées plus haut ne sont pas ajoutées.
+Sur une demande T5/T6 indisponible, l'audio conserve l'accord de base du degré avec la palette courante.
+
+### 15.2. SHAPE, COLOR et chemin audio
+
+`[FAIT : image officielle et sources]` Les descripteurs restent stock : table à `0x4010dce0`,
+entrées de 56 octets. **COLOR = descripteur 71**, `0x4010ec68`, machine 5, paramètre 11,
+0..127 Q8, défaut 32, CC16. **SHAPE = descripteur 72**, `0x4010eca0`, paramètre 12,
+0..37 Q8, défaut 3, CC17. Les formatters contextuels réemploient les trois crochets du §12.4.
+
+En NEW, SHAPE garde BASE/CLS0–3/OPN0–3 et leurs mêmes plages. Le wrapper lit la palette avant de
+remplacer COLOR dans sa **copie locale** par 32, afin de disposer de trois gains supérieurs positifs.
+Il calcule les intervalles, applique la disposition, appelle l'update CHORD original et pondère les
+gains supérieurs. Les paramètres partagés, locks et valeurs de l'OS ne sont pas réécrits.
+Le cadre local fait **100 octets** ; les offsets partagés avec le hook assembleur restent identiques.
+
+| SHAPE | Pondérations des trois positions supérieures, en trente-deuxièmes |
+|---|---|
+| BASE | 32 / 32 / 32 |
+| CLS0 | 30 / 26 / 28 |
+| CLS1 | 26 / 32 / 28 |
+| CLS2 | 28 / 26 / 32 |
+| CLS3 | 32 / 28 / 26 |
+| OPN0 | 22 / 28 / 32 |
+| OPN1 | 28 / 22 / 32 |
+| OPN2 | 32 / 22 / 28 |
+| OPN3 | 28 / 32 / 22 |
+
+Le premier opérateur conserve son niveau natif. Les autres poids vont de 22/32 à 1, soit Q15
+22 528..32 768 ; aucune voix demandée n'est volontairement réduite à zéro. Les poids suivent
+les positions ordonnées graves→aigus après disposition, pas une identité permanente de tierce ou
+septième. C'est un choix de départ à écouter, pas un équilibre matériel déjà validé.
+
+`[FAIT : désassemblage]` `0x400aada4` écrit les gains en `voice+0x0c`, `+0x10`, `+0x14`.
+Le garde-fou aigu peut ensuite les annuler en `0x400ab20c`. La pondération finale **multiplie**
+ces gains déjà calculés ; elle ne réactive donc jamais une voix coupée par cette protection.
+BASE évite la multiplication pour conserver les bits de gain exacts. La triade garde le
+quatrième opérateur muet. La protection du premier opérateur au plafond aigu du §12.1 est conservée.
+
+### 15.3. Pads et durée du geste
+
+`[FAIT dans les sources]` Deux entrées de PadsView sont détournées : pointeur `0x4010025c`
+vers `ck_ui_pad`, et thunk `0x401002b0` vers `ck_ui_pad_thunk`. Les chemins de repli restent
+`0x4001d180` et `0x4001d3d4`. Les gestes ne passent pas par un nouveau note-on : le getter audio
+lit le modificateur temporaire au prochain update du moteur. Le contrat recherché est une
+modification de l'accord tenu sans recommencer son enveloppe, puis une restauration au relâchement.
+
+`[FAIT en émulation : banc des pads]` Une vue prioritaire peut intercepter le relâchement après
+qu'un pad a été capturé par HARMONY : le test ouvre QuickMute après T3, puis relâche T3.
+Un crochet commun en `0x4007746c` vers `ck_ui_pad_dispatch_hook` consomme uniquement les
+relâchements de pads précédemment capturés, avant les vues prioritaires. Pour les autres événements,
+il rejoue le prologue `4fefffc048d70c04` puis reprend le dispatcher stock en `0x40077474`.
+Le test vérifie le retour du modificateur à zéro, sans note-off parasite ni mute du chemin stock.
+
+Six captures retiennent pad, piste, identité d'en-tête de pattern et rang. Le dernier pad pressé
+prévaut ; son relâchement redonne la main au précédent encore tenu. Les rangs sont compactés,
+sans compteur croissant pouvant déborder. Une nouvelle frappe TRIG n'efface pas les pads encore
+tenus. Les captures de relâchement restent reconnues après l'annulation du geste, pour éviter
+d'envoyer au chemin stock un note-off dont il n'a pas reçu le note-on.
+
+TRACK, FUNC, PATTERN, RETRIG et les événements marqués comme raccourcis conservent le chemin natif.
+Changer Controls/Pads ou désactiver Keys efface les gestes ; le changement d'identité de pattern
+audio invalide les captures précédentes : revenir au pattern ne ressuscite pas un ancien geste.
+Un chargement ou reset annule seulement les gestes appartenant au buffer destination.
+**Pads = N/A** s'affiche dans le menu pendant une demande
+T5/T6 indisponible sur un TRIG tenu identifié comme diminué. Cet indicateur UI ne déduit pas
+la note actuellement jouée par le séquenceur ou par MIDI ; cette limite est affichée dans le guide.
+
+Les gestes T1–T6 sont **live uniquement**. Aucune représentation n'est ajoutée au séquenceur,
+aucune extension n'est réécrite dans I–VII, aucun geste n'est sérialisé. L'enregistrement des
+TRIG continue à conserver la fondamentale, pas une capture complète des notes entendues.
+
+### 15.4. Stockage et migration explicite
+
+`[FAIT dans les sources]` Les six mots Root/Scale/I–VII/Keys à `header+40..63` ne changent pas.
+L'ancienne signature `0x434b01a7` signifie **Controls LEGACY** pour tout le pattern.
+La nouvelle signature a pour base `0x434b0200`, avec les bits 0..5 comme masques Pads HARMONY
+propres aux six pistes. Zéro signifie TRACK. **Controls s'applique aux six pistes du pattern**,
+et non seulement à celle affichée ; cette portée est explicitée dans le guide et BUILD.md.
+
+Le chargement reconnaît les deux signatures et préserve les mots de configuration. Les initialisations
+nouvelles écrivent NEW, toutes les pistes en TRACK et Keys OFF. Choisir NEW pour un ancien pattern
+est volontaire : les valeurs SHAPE/COLOR et les locks restent identiques mais leur interprétation
+change. Revenir à LEGACY restaure le sens précédent. La sélection d'une révision remet les modes
+Pads à TRACK ; la signature et les six mots sont sérialisés par les mécanismes déjà établis.
+Les événements temporaires restent en RAM et sont exclus du format sauvegardé.
+
+### 15.5. Réserves de code supplémentaires
+
+`[FAIT : lecture exhaustive de l'image officielle]` Il existe exactement 22 exemplaires du masque
+47×47 déjà connu : les 19 réserves du générateur, l'exemplaire conservé et les deux masques utilisés
+par l'arp. Aucun autre exemplaire de cette forme n'est supposé libre.
+
+L'inspection des constantes des constructeurs Bitmap trouve aussi **19 masques 35×35 identiques**
+de 280 octets. Douze sont ajoutés comme réserves de Chord Keys, avec exemplaire conservé
+`0x4014a660`. Un masque **33×48 de 384 octets**, `0x40158744`, partage celui conservé en
+`0x4016ac78`. Le masque est une donnée graphique ; sa libération exige la redirection du constructeur.
+
+| Réserve | Capacité | Constante du constructeur | Exemplaire conservé |
+|---|---:|---|---|
+| `0x40158744` | 384 | `0x400b7a5a` | `0x4016ac78` |
+| `0x4016aa28` | 280 | `0x400b1480` | `0x4014a660` |
+| `0x401699a8` | 280 | `0x400b1500` | `0x4014a660` |
+| `0x401696a0` | 280 | `0x400b1540` | `0x4014a660` |
+| `0x40166760` | 280 | `0x400b272e` | `0x4014a660` |
+| `0x4016616c` | 280 | `0x400b2898` | `0x4014a660` |
+| `0x40163fb8` | 280 | `0x400b34c8` | `0x4014a660` |
+| `0x401625bc` | 280 | `0x400b3e2a` | `0x4014a660` |
+| `0x40160e6c` | 280 | `0x400b482e` | `0x4014a660` |
+| `0x40160b6c` | 280 | `0x400b4870` | `0x4014a660` |
+| `0x40160864` | 280 | `0x400b48ac` | `0x4014a660` |
+| `0x401601fc` | 280 | `0x400b4b4a` | `0x4014a660` |
+| `0x4015f50c` | 280 | `0x400b5028` | `0x4014a660` |
+
+Sur **chaque plage complète**, `build.refs_into` trouve uniquement la constante du constructeur,
+aucune référence intérieure et aucun branchement. La comparaison de tous les octets avec l'exemplaire
+conservé passe. Les plages et leurs redirections n'empiètent sur aucun tweak existant, y compris
+ceux exclus fonctionnellement. Le générateur répète ces contrôles pour toute nouvelle réserve utilisée,
+vérifie les dimensions poussées au constructeur et adapte le placement à sa capacité réelle.
+
+La réserve totale atteint **10 888 octets** (19×376 + 12×280 + 384). Seuls les masques occupés
+sont écrits et redirigés ; une fonction n'est jamais coupée entre deux masques. Cela conserve une
+implantation entièrement en MAIN OS, sans nouvelle charge utile ni modification des autres sections.
+
+`[FAIT : génération finale]` Le JSON final contient **60 écritures**, dont **12 accroches** et
+24 paires code/redirection. **8 550 octets** de code, constantes et état occupent **24 masques**.
+Les réserves restantes ne sont ni modifiées ni redirigées. Le build extrait puis reconstruit exactement
+le MAIN OS attendu ; les sections compressées **2, 4 et 5 restent identiques octet pour octet**
+à l'image officielle. Les quatre empreintes de référence figurent dans BUILD.md.
+
+### 15.6. État des preuves et essai matériel
+
+`[FAIT : exécution du noyau portable]` `tools/test_chord_harmony.py` passe : exemples indépendants
+Em9, dominantes tendues, SUS7, PARALLEL et m7♭5 ; **245 comparaisons** DIATONIC/historique avec
+exception m7♭5 explicite ; **5 145 harmonies et neuf SHAPE** ; **65 536 valeurs** COLOR/SHAPE,
+gains actifs et inutilisés ; entrées invalides et transformations refusées sans sortie modifiée.
+La lecture des treize nouvelles réserves de code passe les contrôles décrits au §15.5.
+Ces résultats ne remplacent pas l'exécution du firmware final.
+
+`[FAIT en émulation : JSON final]` La suite ColdFire passe **296 contrôles seule** et **304 avec
+6ch-usbup, latching-mute, trig-preview, browser-scroll, trig-hold, arp, tempo-max, boot-anim et
+les cinq moteurs Syntakt installés ensemble**. Elle couvre les anciennes règles LEGACY, les
+palettes, l'accord tenu sans nouvelle attaque, le retour des pads superposés, la libération sous
+QuickMute, l'isolation entre pistes/patterns, le stockage et la migration, les vrais glyphes
+DIATONIC/JAZZ/TENSION et les paramètres effectifs COLOR/SHAPE. Le banc d'intégration transmet
+séquentiellement les 72 octets de `held_pads` et l'en-tête de 64 octets de l'UI vers le DSP :
+il ne simule pas une interruption
+audio réellement concurrente à chaque écriture d'interface, ni le matériel complet.
+
+Le régulateur combiné passe ses quatre scénarios pour LEGACY puis ses quatre scénarios pour
+NEW/TENSION/OPN3 : accords audibles, charge normale à 50 % simulés, pic isolé à 99 % sans vol
+de voix, surcharge répétée avec fondu au bloc 41 puis reprise après retrig. Les durées de charge
+sont injectées ; cela ne mesure pas le temps réel de ces accords sur le processeur.
+Le banc indépendant `tools/emu/test_governor.py` passe aussi ses **12 contrôles**, avec
+**TOUT OK** et code de sortie zéro.
+
+| Scénario NEW, six pistes CHORD, palette TENSION | BASE, instructions/bloc | OPN3, instructions/bloc |
+|---|---:|---:|
+| Chord Keys seul, getter natif compris | 59 006 | 61 754 |
+| Avec tous les mods compatibles, getter natif compris | 60 488 | 63 488 |
+
+La pile observée sous l'entrée update atteint 248 octets contre 104 pour le stock, soit
+144 octets supplémentaires. Ces comptes d'instructions sont propres aux scénarios du banc ;
+ils ne sont ni des cycles ColdFire ni un pourcentage de charge matérielle.
+
+`[FAIT : contrôles de construction]` Générateur Chord Keys et `gen_flasher_tweaks.py --check`,
+`relocate_6ch.py --check` avec le wrapper binutils `-S`, compilation Python, syntaxe JavaScript,
+comparaisons builder Python/JS et validation SysEx passent. Le smoke synthétique termine
+**ALL OK**. `REF_MAINOS --check` valide **17 407 références** ; la comparaison avec la révision
+précédente confirme que seules les **8 192 combinaisons Chord Keys** changent et que les
+**9 215 autres références restent identiques**. Le contrôle de roundtrip et la conservation
+des sections 2/4/5 sont décrits au §15.5.
+
+`[FAIT : smoke réel du flasher]` `SMOKE_JOBS=4 tools/webflash_smoke.sh` avec les deux fichiers
+officiels valide les **17 407 combinaisons proposées**, toutes conformes à leur empreinte MAIN OS.
+Les quatre parties terminent **ALL OK**, l'agrégation vérifie la couverture exacte des références,
+et la commande termine **ALL PARTS OK, code de sortie zéro**. Le journal local ignoré est
+`build/chord-harmony-smoke.log`. Les scénarios UI confirment aussi le badge expérimental de cette
+nouvelle révision, seule ou combinée, en anglais et en français.
+
+La preuve fonctionnelle complète couvre le mod seul et la combinaison groupée ci-dessus ; les
+références et le smoke ne signifient pas que toutes les combinaisons ont reçu cette émulation
+fonctionnelle complète. Aucun résultat matériel de cette nouvelle révision n'est revendiqué.
+
+`[À FAIRE sur la machine]` Installer Chord Keys seul, garder une copie du projet, puis :
+
+1. Charger un ancien pattern : vérifier LEGACY et le son/les locks d'origine ; passer volontairement
+   à NEW, comparer les palettes, revenir à LEGACY, sauvegarder/recharger les deux choix.
+2. Avec Root C2, MAJ, EXT 9, jouer III : DIATONIC donne Mim7(♭9), JAZZ Mim9. Sur V, comparer
+   les niveaux 9/11/13 en JAZZ puis TENSION ; vérifier que TRI/7 ne changent pas de palette.
+3. En HARMONY, tenir un TRIG puis T1, T2, relâcher T2 puis T1 : aucune nouvelle attaque,
+   retour au précédent pad puis au réglage I–VII. Essayer les six pads, plusieurs ordres,
+   changer de TRIG, puis changer de piste, pattern, Keys et mode Pads pendant un maintien.
+4. Sur VII de MAJ et I de LOC, écouter les trois extensions m7♭5 ; vérifier T5/T6 indisponibles
+   et le menu N/A sur un TRIG tenu. Comparer SUS7 et V7 sur les cibles majeures/mineures.
+5. Balayer les neuf SHAPE : aucune extension en plage ne doit disparaître ; écouter les transitions
+   et les notes aiguës. Contrôler les trois libellés COLOR complets, les locks, CC16/17 et LFO.
+6. Vérifier TRACK/FUNC/PATTERN/mute/retrig/édition ; confirmer que les gestes de pads ne sont pas
+   enregistrés. Après le test seul, essayer les combinaisons avec USB/effets et six pistes chargées.
+
+La nouvelle révision reste **experimental**, même installée seule, jusqu'à son propre retour matériel.

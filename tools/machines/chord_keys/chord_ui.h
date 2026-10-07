@@ -9,8 +9,26 @@
 unsigned ck_ui_config_get(unsigned track);
 void ck_ui_config_set(unsigned track, unsigned word);
 
+/* La révision s'applique au pattern entier ; les pads restent par piste.
+ * Le schéma historique ne réinterprète jamais les anciens COLOR/SHAPE/locks.
+ */
+unsigned ck_ui_revision_get(void);
+void ck_ui_revision_set(unsigned revision);
+unsigned ck_ui_pad_mode_get(unsigned track);
+void ck_ui_pad_mode_set(unsigned track, unsigned harmony);
+void *ck_ui_header(void);
+
+/* Modificateurs éphémères : 0 aucun, 1..6 T1..T6. header est celui du
+ * pattern réellement lu, pour ne pas appliquer un geste à un autre pattern.
+ */
+unsigned ck_ui_modifier_get(unsigned track, const void *header);
+void ck_ui_clear_modifiers(unsigned track, const volatile void *header);
+void ck_ui_clear_header(const volatile void *header);
+unsigned ck_ui_modifier_unavailable(unsigned track);
+unsigned ck_ui_pad(void *view, unsigned char *event);
+
 /* Pointeur de KeyboardView 0x400ff9cc, repli vers 0x4001a0d2.
- * KeyEvent : code +12 (16..31), indicateurs +16. PadsView reste stock.
+ * KeyEvent : code +12 (16..31), indicateurs +16.
  */
 unsigned ck_ui_key(void *view, unsigned char *event);
 
