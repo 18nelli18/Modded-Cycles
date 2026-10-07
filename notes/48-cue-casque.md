@@ -9,7 +9,7 @@ entre MAIN L/R et le casque ». Tweaks `34-sample-cue.json` (sur `sample-preview
 (`sample_cue.S`, `sample_cue.ld`), preuve en émulation `tools/emu/test_sample_cue.py`. Adresses : VA de l'OS 1.13 ;
 celles de Model-TG sont celles de sa v1.1.0 (identiques dans ses deux versions).
 
-**Statut : expérimental. Le câblage du cue split est à confirmer sur la machine (§9), puis le tweak à essayer.**
+**Statut : expérimental. Premier test sur la machine (07/10/2026) : couper OUT1_R n'a rien coupé, MAIN OUT R joue toujours (§9). Le cue split tel qu'il est écrit ne marche pas sur la machine de Maxime tant que le diagnostic (§9.1) n'a pas montré une autre coupure possible.**
 
 ## Réponse courte
 
@@ -19,10 +19,10 @@ celles de Model-TG sont celles de sa v1.1.0 (identiques dans ses deux versions).
   mélange, côté par côté. Seuls leurs volumes diffèrent (réglage HP MAX). §1.
 - **Jacks et USB sont deux copies séparées du mix** `[FAIT, émulé]` : l'OS s'en sert déjà (le clic du métronome ne va
   qu'aux jacks, `INT OUT = OFF` coupe les jacks en gardant l'USB). §2.
-- **Le cue « split » des tables DJ est possible** : couper la sortie ligne droite dans la puce (registre `0x1F`) rend
-  MAIN OUT R muet sans toucher à l'oreille droite du casque. Le canal G porte alors la perf en mono (MAIN OUT L et
-  oreille gauche), le canal D la perf en mono plus l'écoute (oreille droite seulement). Le prix : MAIN OUT en mono sur
-  L. §4.
+- **Le cue « split » des tables DJ était l'idée** : couper la sortie ligne droite dans la puce (registre `0x1F`) devait
+  rendre MAIN OUT R muet sans toucher à l'oreille droite du casque. Le canal G porte alors la perf en mono (MAIN OUT L
+  et oreille gauche), le canal D la perf en mono plus l'écoute (oreille droite seulement). Le prix : MAIN OUT en mono
+  sur L. §4. **Sur la machine, couper `0x1F` n'a pas coupé MAIN OUT R** (07/10/2026) : diagnostic en cours, §9.
 - **L'écoute des samples (notes/46) ne suffit pas** : elle joue sur la voix de la piste, donc dans le mix, l'USB et le
   rééchantillonnage. Le tweak ajoute un **petit lecteur à part** dans l'interruption audio, après l'étage de sortie et
   après le rééchantillonnage de Model-TG. §3, §4.
@@ -232,3 +232,34 @@ identiques, MAIN OS `8623f45136ef84481fdf3bc1b307840339ce1bfd6eab77d53f45ef36e47
 - l'oreille droite du casque se tait aussi : le casque est pris sur la sortie ligne, pas de split possible (rester sur
   la sortie « jacks » ou « USB », §6) ;
 - rien ne change : la puce n'est pas une DA7210.
+
+**Résultat sur la machine (Maxime, 07/10/2026)** : « Headphone marche dans les deux oreilles, et dans les mains j'ai
+le L qui marche et le R qui marche aussi ». Rien n'a changé.
+
+Relecture `[FAIT, émulé]` : l'image de test diffère de l'officielle seulement en `0x40044614`, et tous les chemins qui
+écrivent le registre `0x1F` envoient `34 1F 00` (démarrage `0x400054ba` → `0x400441de` → `0x4004462e`, volume
+rappelé au démarrage `0x400057de` → `0x400248e0`, bouton, HP max, `0x400514c8`/`0x40051504`, réinitialisation par la
+surveillance `0x40044188`). Aucune autre écriture I2C n'existe dans les sections 2 à 5 (seul I2C0 est utilisé, à
+l'adresse `0x1A`). La troisième lecture ci-dessus est fausse : le jeu d'écritures ne s'explique que sur une DA7210/7211
+(registre `0x01` relu et comparé à `0x17`, données sur 8 bits). Restent `[HYP]` :
+
+- le firmware de test n'a pas tourné (il n'avait pas de marque visible) ;
+- MAIN OUT sort de l'ampli casque de la puce (HPL/HPR, par le DRV632), comme le casque : pas de cue split possible ;
+- MAIN OUT R suit le registre de gauche `0x1E` (bit non documenté, ou câblage) : pas de split par `0x1F`.
+
+Les photos de la carte ne tranchent pas : quatre condensateurs de 10 µF entre U17 et le DRV632 (U18) collent avec la
+sortie ligne différentielle OUT1, mais les pistes passent par les couches internes.
+
+### 9.1 Diagnostic en cours
+
+Procédure envoyée à Maxime (`/mnt/project-files/cue-casque/diagnostic.md`) :
+
+1. Avant `test-split`, ses mods avaient-ils disparu (preuve que l'image a tourné) ?
+2. Sans flasher : HP max au minimum (registre `0x22` = `0x10`, casque muet). Si MAIN OUT se tait aussi, il sort de
+   l'ampli casque et le cue split est impossible.
+3. Sinon, `diag-volume_model-cycles_OS1.13.syx` (jamais dans le dépôt) : l'OS officiel avec, en place dans
+   `0x400445fa..0x4004461b` (34 o), `0x1F` = `0x90` (sortie active, gain muet : la valeur de l'OS au volume 0) sur
+   les crans de volume impairs, la valeur d'origine sur les pairs (`btst #0,d3`), et « HP max » → « HPdiag »
+   (`0x40127011`) comme marque visible. MAIN OS `eb8089b0f485c0600346adcaae4380d356f94981e2bc4d596956d3c1c7053f3f`.
+   Émulé : seules les écritures de `0x1F` diffèrent de l'OS d'origine. Si MAIN OUT R se coupe un cran sur deux, le
+   split marche (avec `0x90` plutôt que `0x00`) ; sinon, il reste les sorties « jacks » ou « USB » (§6).
