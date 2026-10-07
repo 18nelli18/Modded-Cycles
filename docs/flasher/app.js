@@ -10340,7 +10340,7 @@ function renderSelection() {
       `</div>` +
     `</div>` +
     `<div class="sel-body" id="sel-body">` +
-      `<ul class="chips">${on.map(chip).join("")}${needsSyntakt() ? `<li class="sel-need">${esc(t("sel_syntakt"))}</li>` : ""}</ul>` +
+      `<ul class="chips">${on.map(chip).join("")}${choiceNeedsSyntakt() ? `<li class="sel-need">${esc(t("sel_syntakt"))}</li>` : ""}</ul>` +
       (sw ? `<p class="sel-msg">${esc(swapText(sw))} <button type="button" class="lnk" data-undo>${esc(t("undo"))}</button></p>` : "") +
       `<p class="sel-foot"><button type="button" class="lnk soft" data-clear>${esc(t("sel_clear"))}</button></p>` +
     `</div>`;
@@ -10483,8 +10483,12 @@ function chosenEngines() {
   return sel && sel.on ? f.engines.filter((e) => sel.engines.includes(e.code)) : [];
 }
 
+// The ticked mods need the Syntakt OS file (the selection bar says so in any tab); step 2 asks for it in the Mods tab.
+function choiceNeedsSyntakt() {
+  return chosenTweaks().some((x) => x.append && x.append.syntakt);
+}
 function needsSyntakt() {
-  return st.mode === "mods" && chosenTweaks().some((x) => x.append && x.append.syntakt);
+  return st.mode === "mods" && choiceNeedsSyntakt();
 }
 
 function setMode(mode) {

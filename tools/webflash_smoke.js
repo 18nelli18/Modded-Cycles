@@ -409,6 +409,13 @@ async function main() {
         && doc.querySelector("label[for=feat-model-tg] .tag").textContent === "Tested",
         "« Use this choice » ticks the engines tried on the machine with Model-TG (" + codes + "): both rows Tested");
     } else console.log("  skip « Use this choice »: Model-TG + SDVtg is tried on the machine, or nothing is");
+    // the selection bar's "+ Syntakt OS file" line survives a language switch made in another tab
+    const need = () => !!doc.querySelector("#mod-sel .sel-need");
+    const needHere = box("feat-syntakt").checked && need();
+    app.setMode("samples"); app.applyLang("fr"); app.setMode("mods"); await wait(5);
+    check(needHere && need() && /Syntakt/.test(textOf(doc, "#mod-sel .sel-need")),
+      "selection bar keeps « + Syntakt OS file » after a language switch in the Samples OS tab");
+    app.applyLang("en");
     await clearAll();
     // focus stays on the checkbox just ticked, although the rows are rebuilt
     const arp = box("feat-arp");
