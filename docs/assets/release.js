@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.31", date: "2026-10-07", changes: [
+    { en: "New mod, MACRO machine: one extra machine with the 47 synthesis models of Braids, Émilie Gillet's open-source macro-oscillator, compiled from her own code (MIT license). SHAPE picks the model (0 to 46), COLOR and SWEEP shape it, CONTOUR lets the amp envelope open the timbre; DECAY, GATE and PUNCH work as on Tone",
+      fr: "Nouveau mod, Machine MACRO : une machine ajoutée avec les 47 modèles de synthèse de Braids, le macro-oscillateur libre d'Émilie Gillet, compilés depuis son propre code (licence MIT). SHAPE choisit le modèle (0 à 46), COLOR et SWEEP le façonnent, CONTOUR laisse l'enveloppe d'ampli ouvrir le timbre ; DECAY, GATE et PUNCH marchent comme sur Tone" },
+    { en: "MACRO is the 7th machine, or the 8th with Model-TG. Tested on a Model:Cycles, and checked in the emulator: all 47 models give exactly the samples of the original code",
+      fr: "MACRO est la 7e machine, ou la 8e avec Model-TG. Testée sur un Model:Cycles, et vérifiée en émulation : les 47 modèles donnent exactement les échantillons du code d'origine" },
+    { en: "A MACRO voice computes about twice as much as an original voice (less for the noises, up to 3.5 times for the wave maps), and there is no load governor yet: several MACRO tracks playing at once can make the sound crackle, so start with one or two. It goes with every mod except the Syntakt engines",
+      fr: "Une voix MACRO calcule environ deux fois plus qu'une voix d'origine (moins pour les bruits, jusqu'à 3,5 fois pour les cartes d'ondes), et il n'y a pas encore de régulateur de charge : plusieurs pistes MACRO qui jouent en même temps peuvent faire craquer le son ; commencez avec une ou deux. Elle se combine avec tous les mods sauf les moteurs du Syntakt" },
+  ] },
   { version: "1.28", date: "2026-10-07", changes: [
     { en: "A tidier list of mods in the flasher: they are sorted into sections (Packs, Sounds & machines, Sequencer, Live playing, Screen & browsing, USB & MIDI), with one short line each. The buttons at the top jump to a section and light up when it holds a ticked mod; a section folds away with a click on its title",
       fr: "Une liste de mods plus claire dans le flasher : ils sont rangés par rubriques (Packs, Sons et machines, Séquenceur, Jeu en live, Écran et navigation, USB et MIDI), avec une ligne courte chacun. Les boutons du haut mènent à une rubrique et s'allument quand elle contient un mod coché ; un clic sur le titre d'une rubrique la replie" },
