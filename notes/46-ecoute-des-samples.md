@@ -219,15 +219,15 @@ parler du Sound Pool.
 ## 6. Pourquoi un tweak à part (option B)
 
 **Option A, une retouche de la source de Model-TG** (`MC_PATCHES` de `tools/gen_model_tg.py`) : le bloc grossit, donc
-`reserved_end` bouge `[FAIT]`. Il faudrait régénérer les 31 `31-syntakt-tg-*`, `91` et `92`, ce qui demande
-`m68k-elf-gcc` 16.2 (avec GCC 13.3, `gen_syntakt_engines.py --all --tg --check` échoue `[FAIT]`) ; les 1 024 empreintes
+`reserved_end` bouge `[FAIT]`. Il faudrait régénérer les 31 `31-syntakt-tg-*`, `32-macro-tg`, `91` et `92`, ce qui demande
+`m68k-elf-gcc` 16.2 (avec GCC 13.3, `gen_syntakt_engines.py --all --tg --check` échoue `[FAIT]`) ; les 1 056 empreintes
 Model-TG de `REF_MAINOS` changeraient, et l'étiquette « testé » de Model-TG + 5 moteurs (`HW_TESTED_TG`) serait remise en
 cause.
 
 **Option B, retenue** : un tweak séparé, ordre 33, appliqué après Model-TG (`requires`).
 
 - Les builds de Model-TG ne changent pas : MAIN OS `aa0740d7…` (`model-tg`), `d5e73e10…`
-  (`model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm`), les 9 215 empreintes d'avant restent dans `REF_MAINOS` ; qui ne coche
+  (`model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm`), les 9 503 empreintes d'avant (main avec MACRO) restent dans `REF_MAINOS` ; qui ne coche
   pas l'option garde exactement son firmware.
 - Ses écritures ne peuvent pas atteindre le bloc de Model-TG : `apply_writes` (`tools/build.py`, et `applyWrites` de
   `builder.js`) ne travaille que sur l'image d'origine, le bloc est un `append` posé après `[FAIT]`. D'où une copie
@@ -413,8 +413,8 @@ ces PR.
 | `sp_lock`, `tok_of`, `pd_mode`, `ld_busy`, `pad_load_hook`, nom des sample locks | `[FAIT]` source de Model-TG v1.1.0 (§4) |
 | Les trois accroches et leur effet, du navigateur à la boucle des voix ; `pv_fail` / `pv_failp` ; source `0x80` | `[FAIT en émulation]` §11 (TOUT OK, Model-TG seul et avec les autres tweaks, les deux versions) |
 | `kit_ok` et `proj_has`, réserve de 16 Mo, lecture complète d'un fichier qui n'est pas un sample | `[FAIT]` source de Model-TG (§10, points 8, 12, 13) |
-| Durée du chargement, concurrence, verrous, lecture en +96, pistes non Sampler, live rec et fin de note d'un appui muet, case reprise par `pl_step`, niveau d'interruption des pads, pile | `[HYP]` (§10) |
-| Sur la machine | `[FAIT]` 07/10/2026, les deux fichiers : « Tout marche nickel » (§12) |
+| Durée du chargement, concurrence, verrous, lecture en +96, pistes non Sampler, live rec et fin de note d'un appui muet, case reprise par `pl_step`, pile | `[HYP]` (§10) |
+| Sur la machine | `[FAIT]` 07/10/2026, les deux fichiers : « Tout marche nickel » (§12), dont le niveau d'interruption des pads (§10, point 15) |
 
 ## 11. Preuve en émulation (`tools/emu/test_sample_preview.py`)
 
@@ -428,7 +428,7 @@ ce moment, et rend la case choisie). La pile sous chaque appel est remplie de `0
 
 | Vérification | Origine | Avec le tweak |
 |---|---|---|
-| Écritures : `old` (OS d'origine ; `jmp` de Model-TG en `0x4008171e`), aucune autre différence, aucun recouvrement sauf ce `jmp`, refusé sans Model-TG, `sp_lock` attendu, `pd_mode` et `ld_busy` ceux du chargeur | — | 11 écritures, 1 063 octets différents ; aucun recouvrement avec les tweaks choisis ni avec le catalogue (40 tweaks compatibles avec `model-tg-st`, 7 avec `model-tg` ; écartés : conflit déclaré d'un côté ou de l'autre) ; refusé seul et avec l'autre version de Model-TG ; `tg_uses` = {`pd_mode` : 1, `ld_busy` : 2} ; les six copies disjointes et sous `0x48000000` ; `pv_fail` et `pv_failp` à zéro dans l'image, hors des copies |
+| Écritures : `old` (OS d'origine ; `jmp` de Model-TG en `0x4008171e`), aucune autre différence, aucun recouvrement sauf ce `jmp`, refusé sans Model-TG, `sp_lock` attendu, `pd_mode` et `ld_busy` ceux du chargeur | — | 11 écritures, 1 063 octets différents ; aucun recouvrement avec les tweaks choisis ni avec le catalogue (41 tweaks compatibles avec `model-tg-st`, dont `macro-tg` depuis la fusion de MACRO, 7 avec `model-tg` ; écartés : conflit déclaré d'un côté ou de l'autre) ; refusé seul et avec l'autre version de Model-TG ; `tg_uses` = {`pd_mode` : 1, `ld_busy` : 2} ; les six copies disjointes et sous `0x48000000` ; `pv_fail` et `pv_failp` à zéro dans l'image, hors des copies |
 | Navigateur (vrais `0x400a64be` et `0x400a63ac`), piste Sampler, fichier de 2 Mo | rien de désigné, fichier laissé ouvert | tampon de 100 o = son de la piste nommé « SMP » + empreinte, fichier pas ouvert, registres gardés, résultat {`pv_src`, 0} exactement (pile remplie de `0xA5`), `pv_fail` à 0 |
 | Preset valide ; piste qui n'est pas un Sampler ou sans objet son | — | identique à l'origine (l'appel d'origine a lieu) |
 | Fichier de 120 o qui n'est pas un preset ; 47, 48, 65 o ; 66 et 160 o ; 161 o | — | écouté ; rien ; écoutés après la lecture d'origine (refusée) ; écouté sans lecture du preset ni bit « ouvert » |
