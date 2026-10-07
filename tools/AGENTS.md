@@ -54,7 +54,8 @@ and check the writes of **every** other tweak for overlaps.
   returns with the registers the following code expects. Document that contract at the top of the `.S`.
 - No branch, jump or stored pointer may target the inside of a hook's padding (frozen logo / `VEC:04`).
 - Code reachable from an interrupt or re-entrantly must not keep its state in a single global; save and restore every
-  register it touches; no waits or blocking calls.
+  register it touches; no waits or blocking calls. One deliberate, bounded exception: trigless-dim's 0.5 µs latch
+  waits in the panel interrupt (at most 64 counter reads each, notes/45 §7).
 - The audio interrupt is the tight spot: the stock OS already spends about 77 % of each 0.67 ms audio block there
   (notes/23). Measure the cost of anything added to the voice loop or the audio path, keep it out of there when you
   can, and check the load governor (notes/25, 30, 36) with `emu/test_governor.py`.

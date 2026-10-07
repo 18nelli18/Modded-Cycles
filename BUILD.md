@@ -250,15 +250,16 @@ python3 tools/emu/test_level_pan.py --cycles model-cycles_OS1.13.syx [--show] \
 ### Trigless trigs atténués
 
 `tweaks/model-cycles_OS1.13/47-trigless-dim.json` est produit par `tools/gen_trigless_dim.py` : d'après le mod de djd_oz, en
-mode grille, une touche qui porte un trigless trig prend l'état de LED 260 (traité comme 4 par l'OS) et l'horloge des LED
-(120 Hz) l'éteint 16 ticks sur 25 ; les touches à atténuer sont relevées à la fin de chaque image de l'interface. Assemblé depuis
-`tools/machines/trigless_dim/` dans un masque de sprite libéré ([note 45](notes/45-trigless-trigs-attenues.md)). La preuve
-passe par le vrai code des LED de l'OS (image de l'interface, clignotement, tick, envoi des rangées) et, avec `--djd`, compare
-les LED au fichier de djd_oz, tick par tick :
+mode grille, une touche qui porte un trigless trig prend l'état de LED 260 (traité comme 4 par l'OS) ; l'interruption du
+panneau, qui charge les verrous des LED, ne l'allume qu'une milliseconde sur trois (333 Hz) en rechargeant sa rangée en plus
+du tour d'origine. Assemblé depuis `tools/machines/trigless_dim/` dans deux masques de sprites libérés
+([note 45](notes/45-trigless-trigs-attenues.md)). La preuve fait tourner le vrai code de l'interruption du panneau, du tick des
+LED et de l'image de l'interface sur une même ligne de temps, d'origine contre modifié, avec un modèle des verrous ; `--defsym`
+construit les variantes d'essai (jamais versionnées, `--out` hors de `tweaks/`) :
 ```sh
 python3 tools/gen_trigless_dim.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/gen_trigless_dim.py --cycles model-cycles_OS1.13.syx --defsym WAIT=272 --out essai-2us.json
 python3 tools/emu/test_trigless_dim.py --cycles model-cycles_OS1.13.syx \
-    [--djd model-cycles_OS1.13_Trigless-Trigs-LED-36pct-v4-experimental.syx] \
     [--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max,boot-anim,level-pan-values \
      --syntakt Syntakt_OS1.42.syx]
 ```
@@ -266,10 +267,10 @@ python3 tools/emu/test_trigless_dim.py --cycles model-cycles_OS1.13.syx \
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
 | `level-pan-values` | `7fb415147e8605ab035e3fc064986b1c640cddc7ced972ad5b6ff6fcaa9f5eb7` |
-| `trigless-dim` | `55ccc8583a60346f6d73797133c0e20901e5f724eb378c92638c4133815350a4` |
-| `level-pan-values,trigless-dim` | `67d527f265eef90d83489cfc557c7d3cd1c741484f08576f7b76606792bd2763` |
-| `model-tg,level-pan-values,trigless-dim` | `61ce3bba9b57c01c307e67fc7eec2d3ba61311fa938afdcfc699524b0ae9fa74` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,level-pan-values,trigless-dim` | `2c8cbf547ff54fc4d6136d96bdaf57b6a845a2d0f899821c6ba03384f13b141f` |
+| `trigless-dim` | `8ac3901242dc4ebf01f3d4b6465173a0ca54fa9b453871600149b19677da9a85` |
+| `level-pan-values,trigless-dim` | `89711478bd9d2e7f307c1e909c31daa250177fa9c0a5cf44ab0c2b0c7104971b` |
+| `model-tg,level-pan-values,trigless-dim` | `2dbae5c1b86d04ae66be8b40a31dfd2e7db64cf526896d95019d060d9299f02d` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,level-pan-values,trigless-dim` | `1b9f73ceaeb292fb525c0ad29187017b0baacdc952a40f8fa0dd6ce8a7ac9e96` |
 
 ### Écoute d'un pas en pause
 
