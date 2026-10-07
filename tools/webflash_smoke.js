@@ -301,7 +301,7 @@ async function main() {
       "FR: tempo card translated, with its guide link");
     check(/Animation de démarrage modded-cycles/.test(text(doc, "features")) && doc.querySelector('#features a[href$="#boot-anim"]'),
       "FR: startup animation card translated, with its guide link");
-    check(/Machine MACRO : 47 modèles de synthèse/.test(text(doc, "features")) && /d'après eurorack d'Émilie Gillet/.test(text(doc, "features"))
+    check(/Machine MACRO/.test(text(doc, "features")) && /tirés du code libre de Braids/.test(text(doc, "features")) && /d'après eurorack d'Émilie Gillet/.test(text(doc, "features"))
       && doc.querySelector('#features a[href$="#macro"]'), "FR: MACRO card translated, with its credit and guide link");
     doc.getElementById("feat-model-tg").click(); await wait(5);
     check(/\(inclus avec Model-TG\)/.test(doc.querySelector("label[for=feat-browser-scroll] .ttl").textContent),
@@ -399,15 +399,16 @@ async function main() {
       "× on a chip unticks the mod, the focus goes to the next ×");
     await clearAll();
     check(ids() === "" && /No mod ticked yet/.test(text(doc, "mod-sel")), "« Untick all » empties the selection");
-    // a conflict (injected here: no mod has excludes yet), said before ticking, then Undo
+    // a conflict injected between two mods that do go together (MACRO / Syntakt is checked above), said before
+    // ticking, then Undo
     const tempo = feats.find((f) => f.id === "tempo-max");
     tempo.excludes = ["arp"];
     await click(box("feat-arp"));
-    const said = /Doesn't go with Arpeggiator/.test(textOf(doc, "#mod-tempo-max .say.clash"))
+    const said = /Doesn't go with the mod “Arpeggiator”/.test(textOf(doc, "#mod-tempo-max .say.clash"))
       && /Doesn't go with/.test(textOf(doc, "#det-tempo-max")) && !doc.querySelector("#mod-arp .say.clash");
     await click(box("feat-tempo-max"));
-    const swapped = ids() === "tempo-max" && /Arpeggiator unticked/.test(textOf(doc, "#mod-tempo-max .say.swap"))
-      && /Arpeggiator unticked/.test(textOf(doc, "#mod-sel .sel-msg"));
+    const swapped = ids() === "tempo-max" && /The mod “Arpeggiator” was unticked/.test(textOf(doc, "#mod-tempo-max .say.swap"))
+      && /The mod “Arpeggiator” was unticked/.test(textOf(doc, "#mod-sel .sel-msg"));
     await click(doc.querySelector("#mod-tempo-max [data-undo]"));
     check(said && swapped && ids() === "arp" && !box("feat-tempo-max").checked && !doc.querySelector(".say.swap")
       && doc.activeElement && doc.activeElement.id === "feat-tempo-max",
@@ -459,7 +460,7 @@ async function main() {
       "search from 20 mods: « ÉCOUTE » finds Trig preview (French name, any case or accent); Esc shows all again");
     feats.splice(feats.findIndex((f) => f.id === "usb6-copy-0"));
     app.applyLang("en");
-    check(box("mod-find").hidden && !box("mod-usb6-copy-0"), "back to 10 mods");
+    check(box("mod-find").hidden && !box("mod-usb6-copy-0"), "back to " + feats.length + " mods");
     // French
     app.applyLang("fr");
     await click(box("feat-model-tg"));

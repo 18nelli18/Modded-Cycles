@@ -9649,10 +9649,11 @@ const T = {
     with_mod: "with {name}",
     part_tested: "Partly tested",
     good_to_know: "Good to know:",
-    clash_row: "<b>Doesn't go with {name}</b> (ticked): {why}. Ticking this one unticks {name}.",
+    clash_row: "<b>Doesn't go with the mod {name}</b>, already ticked: {why}. Ticking this one unticks it.",
     clash_generic: "both change the same part of the firmware",
-    swapped: "{off} unticked: it doesn't go with {on}.",
-    swapped_n: "{off} unticked: they don't go with {on}.",
+    swapped: "The mod {off} was unticked: it doesn't go with {on}.",
+    swapped_n: "The mods {off} were unticked: they don't go with {on}.",
+    quoted: "“{name}”",
     undo: "Undo",
     eng_group: "Engines",
     combo_known: "Already tried on the machine: {list}.",
@@ -9894,10 +9895,11 @@ const T = {
     with_mod: "avec {name}",
     part_tested: "Testé en partie",
     good_to_know: "À savoir :",
-    clash_row: "<b>Ne va pas avec {name}</b> (coché) : {why}. Cocher celui-ci décochera {name}.",
+    clash_row: "<b>Ne va pas avec le mod {name}</b>, déjà coché : {why}. Cocher celui-ci le décochera.",
     clash_generic: "les deux modifient le même endroit du firmware",
-    swapped: "{off} décoché : il ne va pas avec {on}.",
-    swapped_n: "{off} décochés : ils ne vont pas avec {on}.",
+    swapped: "Le mod {off} a été décoché : il ne va pas avec {on}.",
+    swapped_n: "Les mods {off} ont été décochés : ils ne vont pas avec {on}.",
+    quoted: "« {name} »",
     undo: "Annuler",
     eng_group: "Moteurs",
     combo_known: "Déjà essayé sur la machine : {list}.",
@@ -10156,8 +10158,8 @@ const FEAT = {
     "boot-anim": { label: "modded-cycles startup animation",
       short: "At startup the modded-cycles logo animates, without making startup longer.",
       desc: "When the Model:Cycles starts, the four rounded squares of the modded-cycles logo pop in one by one and “modded-cycles” types itself underneath, instead of the original tile animation. It lasts as long as the original: startup is not slower." },
-    macro: { label: "MACRO machine: 47 synthesis models",
-      short: "An extra machine with Braids' 47 synthesis models, from Émilie Gillet's open-source code.",
+    macro: { label: "MACRO machine",
+      short: "One extra machine with 47 synthesis models, from Braids' open-source code.",
       clash: "both put their code in the same place in memory",
       desc: "An extra machine after Chord (after the Sampler with Model-TG) with the 47 synthesis models of Braids, Émilie Gillet's open-source macro-oscillator, from her own code: analog-style waves, FM, vowels and speech, physical models, drums, wavetables and noises. SHAPE picks the model, COLOR and SWEEP shape it, CONTOUR lets the amp envelope open the timbre. DECAY, GATE and PUNCH work as on Tone.",
       note: "About twice as heavy on the processor as an original machine, with no load governor yet: several MACRO tracks playing at once can make the sound crackle, so start with one or two. A project using MACRO needs a firmware with MACRO at the same place (7th machine, or 8th with Model-TG)." },
@@ -10201,8 +10203,8 @@ const FEAT = {
     "boot-anim": { label: "Animation de démarrage modded-cycles",
       short: "Au démarrage, le logo modded-cycles s'anime, sans rallonger le démarrage.",
       desc: "Au démarrage du Model:Cycles, les quatre carrés arrondis du logo modded-cycles apparaissent un par un et « modded-cycles » s'écrit dessous, à la place de l'animation de carreaux d'origine. Elle dure autant que l'originale : le démarrage n'est pas plus long." },
-    macro: { label: "Machine MACRO : 47 modèles de synthèse",
-      short: "Une machine en plus avec les 47 modèles de synthèse de Braids, d'après le code libre d'Émilie Gillet.",
+    macro: { label: "Machine MACRO",
+      short: "Une machine en plus avec 47 modèles de synthèse, tirés du code libre de Braids.",
       clash: "les deux placent leur code au même endroit de la mémoire",
       desc: "Une machine ajoutée après Chord (après le Sampler avec Model-TG) avec les 47 modèles de synthèse de Braids, le macro-oscillateur libre d'Émilie Gillet, à partir de son propre code : ondes façon analogique, FM, voyelles et voix, modèles physiques, percussions, tables d'ondes et bruits. SHAPE choisit le modèle, COLOR et SWEEP le façonnent, CONTOUR laisse l'enveloppe d'ampli ouvrir le timbre. DECAY, GATE et PUNCH marchent comme sur Tone.",
       note: "Environ deux fois plus gourmande en calcul qu'une machine d'origine, et sans régulateur de charge pour l'instant : plusieurs pistes MACRO qui jouent en même temps peuvent faire craquer le son ; commencez avec une ou deux. Un projet qui utilise MACRO demande un firmware où MACRO est à la même place (7e machine, ou 8e avec Model-TG)." },
@@ -10491,7 +10493,7 @@ function renderRow(f) {
   if (pick.swap && pick.swap.by === f.id) add(`<p class="say swap">${esc(swapText(pick.swap))} <button type="button" class="lnk" data-undo>${esc(t("undo"))}</button></p>`);
   // before ticking: why this mod doesn't go with a ticked one
   if (!on) for (const g of features())
-    if (g !== f && isOn(g.id) && clashOnly(f, g)) add(`<p class="say clash">${t("clash_row", { name: esc(label(g)), why: esc(clashWhy(f, g)) })}</p>`);
+    if (g !== f && isOn(g.id) && clashOnly(f, g)) add(`<p class="say clash">${t("clash_row", { name: esc(t("quoted", { name: label(g) })), why: esc(clashWhy(f, g)) })}</p>`);
   // several variants of one mod (none today): a sub-choice once ticked
   if (!f.engines && f.variants.length > 1 && sel.on) add(renderVariants(f, sel));
   if (f.engines && sel.on) add(renderEngines(f, sel, status));
@@ -10502,7 +10504,7 @@ function renderRow(f) {
 
 function swapText(sw) {
   return t(sw.off.length > 1 ? "swapped_n" : "swapped",
-    { off: sw.off.map((id) => label(featById(id))).join(", "), on: label(featById(sw.by)) });
+    { off: sw.off.map((id) => t("quoted", { name: label(featById(id)) })).join(", "), on: t("quoted", { name: label(featById(sw.by)) }) });
 }
 
 function renderVariants(f, sel) {

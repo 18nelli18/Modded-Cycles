@@ -139781,7 +139781,7 @@ window.MC_TWEAKS = {
   },
   {
    "id": "macro",
-   "label": "Machine MACRO : 47 modeles de synthese",
+   "label": "Machine MACRO",
    "desc": "Une machine ajoutee apres Chord (apres le Sampler avec Model-TG) : les 47 modeles du code libre de Braids d'Emilie Gillet. SHAPE choisit le modele, COLOR et SWEEP le reglent, CONTOUR ouvre le timbre avec l'enveloppe.",
    "status": "tested",
    "credit": {
