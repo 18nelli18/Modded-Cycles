@@ -164,7 +164,7 @@ FEATURES = [
         "desc": "Une machine ajoutee apres Chord (apres le Sampler avec Model-TG) : les 47 modeles du code libre "
                 "de Braids d'Emilie Gillet. SHAPE choisit le modele, COLOR et SWEEP le reglent, CONTOUR ouvre le "
                 "timbre avec l'enveloppe.",
-        "status": "experimental",
+        "status": "tested",
         "credit": {"kind": "based", "who": "Émilie Gillet", "repo": "pichenettes/eurorack"},
         "license": "LICENSE-Braids",
         # meme bloc apres l'image que les moteurs du Syntakt (notes/43) : jamais ensemble

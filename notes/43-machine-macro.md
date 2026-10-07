@@ -23,6 +23,7 @@ MACRO avec les modèles de Braids, les moteurs de Plaits plus tard, un par un, s
   dépasser le temps d'un bloc (son qui craque, écran ralenti, comme les moteurs du Syntakt avant leur régulateur,
   [25](25-regulateur-de-charge.md)). À écouter sur la machine.
 - **Licence** : MIT, crédit à Émilie Gillet ; ni le nom du module ni celui de Mutable Instruments sur la machine.
+- **Testé sur la machine** (07/10/2026) : « Ça marche nickel » (Maxime, §10) ; la carte du flasher passe en « Testé ».
 
 ## 1. Faisabilité : Braids ou Plaits `[FAIT en émulation, 06/10/2026]`
 
@@ -269,7 +270,15 @@ temps de MACRO sur sa page System.
    craquements, écran ralenti ? Avec Model-TG, la page System donne le temps de chaque piste.
 5. Remettre les pistes MACRO sur une machine d'origine avant de reflasher un autre choix ou l'OS officiel.
 
-## 10. Suite
+## 10. Testé sur la machine (07/10/2026)
+
+Maxime a reçu au fil du projet trois firmwares de test construits depuis son OS officiel (MAIN OS : MACRO seule
+`beb70b58…`, avec Model-TG `d738fafa…`, avec 6 canaux, Model-TG, trig-hold, arpégiateur, tempo et animation
+`f584f099…`) et la liste du §9. Après les avoir flashés sur son Model:Cycles, il répond : « Ça marche nickel. Ajoute le
+au flasher ». La carte passe de « Expérimental » à « Testé ». Il n'a pas détaillé la charge (§9, point 4) : le régulateur reste à faire si des pistes
+MACRO lourdes font craquer le son.
+
+## 11. Suite
 
 - Un régulateur de charge (celui des moteurs du Syntakt) si la machine craque.
 - Les moteurs de Plaits en virgule fixe, un par un, comparés au Plaits d'origine, dans la même machine s'ils tiennent
