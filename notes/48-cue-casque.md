@@ -206,7 +206,11 @@ généré, en attendant le choix de Maxime (carte de décision du 07/10/2026) :
 | de bout en bout : navigateur, pad, 3 blocs, relâchement, fondu, silence, nouvel appui | écoute dans le mix | écoute à droite seulement, perf mono, fondu, silence, repart du début |
 
 Avec `--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max,boot-anim` et avec
-`6ch-usbup,arp,trig-hold,tempo-max,boot-anim` (les deux versions de Model-TG) : tout OK.
+`6ch-usbup,arp,trig-hold,tempo-max,boot-anim` (les deux versions de Model-TG) : tout OK. Avec la machine MACRO
+(notes/43, fusionnée le 07/10/2026), Model-TG prend sa base `model-tg-st` et l'écoute `sample-preview-st` : le cue
+prend `34-sample-cue-st` (clé `macro` de sa carte, comme l'écoute) ; aucun recouvrement avec `25-macro` ni
+`32-macro-tg`, et `--with model-tg-st,macro-tg` puis `--with 6ch-usbup,model-tg-st,macro-tg,arp,trig-hold,tempo-max,
+boot-anim` : tout OK (la charge utile de MACRO copiée à sa place, comme dans le banc de l'écoute).
 
 ## 8. Limites et points à vérifier sur la machine
 

@@ -167,9 +167,9 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 16).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,sample-cue,sample-cue-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,syntakt-sd,syntakt-tg-sd"
-      && ids.length === 14 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
-      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 12,
+    check(ids.slice(0, 18).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,sample-cue,sample-cue-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,macro,macro-tg,syntakt-sd,syntakt-tg-sd"
+      && ids.length === 16 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 13,
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG: ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
@@ -179,8 +179,8 @@ async function main() {
     // display order: by section (Packs, Sounds & machines, Sequencer, Live playing, Screen & browsing, USB & MIDI),
     // FEATURES order inside a section; the build keeps FEATURES order (checked in 1b)
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-model-tg,feat-syntakt,feat-trig-preview,feat-trig-hold,feat-arp,feat-tempo-max,feat-latching-mute,feat-sample-preview,feat-sample-cue,feat-browser-scroll,feat-boot-anim,feat-usb6",
-      "12 feature rows, by section: " + JSON.stringify(feats));
+    check(feats.join() === "feat-model-tg,feat-macro,feat-syntakt,feat-trig-preview,feat-trig-hold,feat-arp,feat-tempo-max,feat-latching-mute,feat-sample-preview,feat-sample-cue,feat-browser-scroll,feat-boot-anim,feat-usb6",
+      "13 feature rows, by section: " + JSON.stringify(feats));
     check(w.MC_TWEAKS.features.every((f) => doc.querySelector(`#cat-${f.cat || "other"} #mod-${f.id} #feat-${f.id}`)),
       "every feature has a row in its section (cat)");
     const tagOfFeat = (f) => (f.status === "tested" ? "Tested" : "Experimental");
@@ -212,20 +212,37 @@ async function main() {
       && doc.getElementById("drop3-wrap").hidden, "last engine unticked -> the card turns off");
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
     const creditOf = (id) => [...doc.querySelectorAll(`label[for=feat-${id}] .credit a`)].map((a) => a.href);
-    check(credits.length === 8 && creditOf("usb6").join() === "https://github.com/scottmetoyer/ms-multi-output"
+    check(credits.length === 10 && creditOf("usb6").join() === "https://github.com/scottmetoyer/ms-multi-output"
       && creditOf("model-tg")[0] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(creditOf("model-tg")[1])
       && creditOf("sample-preview").join() === "https://github.com/TinyGregAudio/Model-TG"
       && creditOf("sample-cue").join() === "https://github.com/TinyGregAudio/Model-TG"
-      && ["latching-mute", "trig-preview", "browser-scroll"].every((id) => creditOf(id).join() === "https://github.com/drumkilla/elektron-model-tweaks"),
-      "each row credits its author, Model-TG with its MIT license, sample preview and headphone cue based on Model-TG: " + JSON.stringify(credits));
+      && ["latching-mute", "trig-preview", "browser-scroll"].every((id) => creditOf(id).join() === "https://github.com/drumkilla/elektron-model-tweaks")
+      && creditOf("macro")[0] === "https://github.com/pichenettes/eurorack" && /\/LICENSE-Braids\.txt$/.test(creditOf("macro")[1]),
+      "each row credits its author, Model-TG and MACRO with their MIT license, sample preview and headphone cue based on Model-TG: " + JSON.stringify(credits));
     const list = [...doc.querySelectorAll("#credits-list a")].map((a) => a.textContent);
-    check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",
-      "credits section lists the 5 upstream repositories");
+    check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,pichenettes/eurorack,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",
+      "credits section lists the 6 upstream repositories");
+    const box = (id) => doc.getElementById(id);
+    // MACRO (notes/43): with Model-TG, Model-TG takes its base and MACRO the version built on it; never with the
+    // Syntakt engines (same block after the image): ticking one unticks the other
+    box("feat-macro").click(); await wait(5);
+    const macroAlone = w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
+    box("feat-model-tg").click(); await wait(5);
+    const macroTg = w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
+    const macroNote = /needs a firmware with MACRO at the same place/.test(text(doc, "features"));
+    box("feat-model-tg").click(); await wait(5);
+    box("feat-syntakt").click(); await wait(5);
+    const swapped = !box("feat-macro").checked && box("feat-syntakt").checked;
+    box("feat-macro").click(); await wait(5);
+    const back = box("feat-macro").checked && !box("feat-syntakt").checked;
+    box("feat-macro").click(); await wait(5);
+    check(macroAlone === "macro" && macroTg === "model-tg-st,macro-tg" && macroNote && swapped && back
+      && !w.MCFlasherApp.chosenTweaks().length && doc.querySelector('#features a[href$="#macro"]'),
+      `MACRO: alone ${macroAlone}, with Model-TG ${macroTg}, its note shown, and never with the Syntakt engines`);
     // Model-TG holds drumkilla's tweaks: ticked, it shows them ticked and locked, "(included with Model-TG)", and
     // builds without them; unticked, they are free again. With the Syntakt engines it makes the combined version
     // (notes/31): its base, then the engines' tweak built on top of it
     const drum = ["feat-latching-mute", "feat-trig-preview", "feat-browser-scroll"];
-    const box = (id) => doc.getElementById(id);
     box("feat-latching-mute").click(); await wait(5);
     box("feat-syntakt").click(); await wait(5);
     box("feat-model-tg").click(); await wait(5);
@@ -279,9 +296,17 @@ async function main() {
     box("feat-model-tg").click(); await wait(5);
     const reqOff = !box("feat-model-tg").checked && !box("feat-sample-preview").checked
       && !box("feat-latching-mute").checked && !box("feat-latching-mute").disabled && ids1() === "";
-    check(reqSt && reqSt5 && reqPlain && keepTg && reqOn && reqOff,
+    box("feat-macro").click(); await wait(5);                        // with MACRO: Model-TG's base, like the engines
+    box("feat-sample-preview").click(); await wait(5);
+    const reqMacro = box("feat-model-tg").checked && box("feat-macro").checked
+      && ids1() === "model-tg-st,sample-preview-st,macro-tg" && spCard().querySelector(".tag").textContent === spTag;
+    box("feat-model-tg").click(); await wait(5);
+    const macroLeft = box("feat-macro").checked && !box("feat-sample-preview").checked && ids1() === "macro";
+    box("feat-macro").click(); await wait(5);
+    check(reqSt && reqSt5 && reqPlain && keepTg && reqOn && reqOff && reqMacro && macroLeft && ids1() === "",
       "sample preview: says « with Model-TG » (Details: only with it), ticking it ticks Model-TG (latching mute then included), unticking Model-TG "
-      + "unticks it, unticking it keeps Model-TG; with the Syntakt engines: model-tg-st,sample-preview-st,syntakt-tg-…, "
+      + "unticks it, unticking it keeps Model-TG; with the Syntakt engines: model-tg-st,sample-preview-st,syntakt-tg-…; with MACRO: "
+      + "model-tg-st,sample-preview-st,macro-tg; "
       + `its own badge (${spTag}, Model-TG + the 5 engines: ${tg5 ? "Tested" : "Experimental"}); guide link`);
     // Headphone cue needs sample preview, which needs Model-TG: a chain, ticked whole from its end and dropped whole
     // from its start; unticking the cue keeps the other two
@@ -295,6 +320,9 @@ async function main() {
     box("feat-syntakt").click(); await wait(5);
     const cueSt = ids1() === "model-tg-st,sample-preview-st,sample-cue-st,syntakt-tg-sd";
     box("feat-syntakt").click(); await wait(5);
+    box("feat-macro").click(); await wait(5);                        // with MACRO too: Model-TG's base
+    const cueMacro = ids1() === "model-tg-st,sample-preview-st,sample-cue-st,macro-tg";
+    box("feat-macro").click(); await wait(5);
     box("feat-sample-cue").click(); await wait(5);
     const cueKeep = !box("feat-sample-cue").checked && ids1() === "model-tg,sample-preview";
     box("feat-sample-cue").click(); await wait(5);
@@ -303,9 +331,10 @@ async function main() {
     box("feat-sample-cue").click(); await wait(5);
     box("feat-model-tg").click(); await wait(5);
     const cueDrop2 = ["feat-model-tg", "feat-sample-preview", "feat-sample-cue"].every((id) => !box(id).checked) && ids1() === "";
-    check(cueOn && cueSt && cueKeep && cueDrop1 && cueDrop2,
+    check(cueOn && cueSt && cueMacro && cueKeep && cueDrop1 && cueDrop2,
       "headphone cue: says « with Sample preview (Model-TG) » (Details: only with it), ticking it ticks sample preview and Model-TG; with the Syntakt engines: "
-      + "model-tg-st,sample-preview-st,sample-cue-st,syntakt-tg-sd; unticking sample preview or Model-TG unticks it; "
+      + "model-tg-st,sample-preview-st,sample-cue-st,syntakt-tg-sd; with MACRO: model-tg-st,sample-preview-st,sample-cue-st,macro-tg; "
+      + "unticking sample preview or Model-TG unticks it; "
       + "unticking it keeps the other two; guide link");
     // the combined version's badges follow its tests on the hardware (gen_syntakt_engines.HW_TESTED_TG, the
     // combos' tg_tested in tweaks.js): Model-TG + the 5 engines, then Model-TG + SDVtg alone
@@ -355,6 +384,8 @@ async function main() {
       && /Écoute des samples \(Model-TG\) seulement : cocher celui-ci le coche aussi/.test(textOf(doc, "#det-sample-cue"))
       && doc.querySelector('#mod-sample-cue a[href$="#sample-cue"]'),
       "FR: headphone cue row translated, says « avec Écoute des samples (Model-TG) » (Détails : seulement avec elle), with its guide link");
+    check(/Machine MACRO/.test(text(doc, "features")) && /tirés du code libre de Braids/.test(text(doc, "features")) && /d'après eurorack d'Émilie Gillet/.test(text(doc, "features"))
+      && doc.querySelector('#features a[href$="#macro"]'), "FR: MACRO card translated, with its credit and guide link");
     doc.getElementById("feat-model-tg").click(); await wait(5);
     check(/\(inclus avec Model-TG\)/.test(doc.querySelector("label[for=feat-browser-scroll] .ttl").textContent),
       "FR: the tweaks Model-TG holds say « (inclus avec Model-TG) »");
@@ -451,15 +482,16 @@ async function main() {
       "× on a chip unticks the mod, the focus goes to the next ×");
     await clearAll();
     check(ids() === "" && /No mod ticked yet/.test(text(doc, "mod-sel")), "« Untick all » empties the selection");
-    // a conflict (injected here: no mod has excludes yet), said before ticking, then Undo
+    // a conflict injected between two mods that do go together (MACRO / Syntakt is checked above), said before
+    // ticking, then Undo
     const tempo = feats.find((f) => f.id === "tempo-max");
     tempo.excludes = ["arp"];
     await click(box("feat-arp"));
-    const said = /Doesn't go with Arpeggiator/.test(textOf(doc, "#mod-tempo-max .say.clash"))
+    const said = /Doesn't go with the mod “Arpeggiator”/.test(textOf(doc, "#mod-tempo-max .say.clash"))
       && /Doesn't go with/.test(textOf(doc, "#det-tempo-max")) && !doc.querySelector("#mod-arp .say.clash");
     await click(box("feat-tempo-max"));
-    const swapped = ids() === "tempo-max" && /Arpeggiator unticked/.test(textOf(doc, "#mod-tempo-max .say.swap"))
-      && /Arpeggiator unticked/.test(textOf(doc, "#mod-sel .sel-msg"));
+    const swapped = ids() === "tempo-max" && /The mod “Arpeggiator” was unticked/.test(textOf(doc, "#mod-tempo-max .say.swap"))
+      && /The mod “Arpeggiator” was unticked/.test(textOf(doc, "#mod-sel .sel-msg"));
     await click(doc.querySelector("#mod-tempo-max [data-undo]"));
     check(said && swapped && ids() === "arp" && !box("feat-tempo-max").checked && !doc.querySelector(".say.swap")
       && doc.activeElement && doc.activeElement.id === "feat-tempo-max",
@@ -511,7 +543,7 @@ async function main() {
       "search from 20 mods: « ÉCOUTE » finds Trig preview, Sample preview and Headphone cue (French names, any case or accent); Esc shows all again");
     feats.splice(feats.findIndex((f) => f.id === "usb6-copy-0"));
     app.applyLang("en");
-    check(box("mod-find").hidden && !box("mod-usb6-copy-0"), "back to 10 mods");
+    check(box("mod-find").hidden && !box("mod-usb6-copy-0"), "back to " + feats.length + " mods");
     // French
     app.applyLang("fr");
     await click(box("feat-model-tg"));
@@ -739,8 +771,10 @@ async function main() {
       check(f && f.kind === "built" && f.ref, `real OS: ${app.state.buildKey} matches its reference hash`);
     }
     const combos = engineCombos(w);
-    // what goes with the engines (not the cards that require Model-TG: they go in the Model-TG group below)
-    const plain = boxes.filter((b) => b !== "feat-syntakt" && b !== "feat-model-tg" && !reqOf[b]);
+    // what goes with the engines: not the cards that exclude them (MACRO), nor the cards that require Model-TG (they
+    // go in the Model-TG group below)
+    const synEx = w.MC_TWEAKS.features.filter((f) => (f.excludes || []).includes("syntakt")).map((f) => "feat-" + f.id);
+    const plain = boxes.filter((b) => b !== "feat-syntakt" && b !== "feat-model-tg" && !synEx.includes(b) && !reqOf[b]);
     const sets = [];                                  // with the engines: any of these, or Model-TG (with or without USB)
     for (let mask = 0; mask < 1 << plain.length; mask++) sets.push(plain.filter((b, k) => mask & (1 << k)));
     const tgEx = w.MC_TWEAKS.features.find((f) => f.id === "model-tg").includes.map((x) => "feat-" + x);

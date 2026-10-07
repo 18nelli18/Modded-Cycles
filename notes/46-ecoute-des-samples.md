@@ -219,15 +219,15 @@ parler du Sound Pool.
 ## 6. Pourquoi un tweak à part (option B)
 
 **Option A, une retouche de la source de Model-TG** (`MC_PATCHES` de `tools/gen_model_tg.py`) : le bloc grossit, donc
-`reserved_end` bouge `[FAIT]`. Il faudrait régénérer les 31 `31-syntakt-tg-*`, `91` et `92`, ce qui demande
-`m68k-elf-gcc` 16.2 (avec GCC 13.3, `gen_syntakt_engines.py --all --tg --check` échoue `[FAIT]`) ; les 1 024 empreintes
+`reserved_end` bouge `[FAIT]`. Il faudrait régénérer les 31 `31-syntakt-tg-*`, `32-macro-tg`, `91` et `92`, ce qui demande
+`m68k-elf-gcc` 16.2 (avec GCC 13.3, `gen_syntakt_engines.py --all --tg --check` échoue `[FAIT]`) ; les 1 056 empreintes
 Model-TG de `REF_MAINOS` changeraient, et l'étiquette « testé » de Model-TG + 5 moteurs (`HW_TESTED_TG`) serait remise en
 cause.
 
 **Option B, retenue** : un tweak séparé, ordre 33, appliqué après Model-TG (`requires`).
 
 - Les builds de Model-TG ne changent pas : MAIN OS `aa0740d7…` (`model-tg`), `d5e73e10…`
-  (`model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm`), les 9 215 empreintes d'avant restent dans `REF_MAINOS` ; qui ne coche
+  (`model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm`), les 9 503 empreintes d'avant (main avec MACRO) restent dans `REF_MAINOS` ; qui ne coche
   pas l'option garde exactement son firmware.
 - Ses écritures ne peuvent pas atteindre le bloc de Model-TG : `apply_writes` (`tools/build.py`, et `applyWrites` de
   `builder.js`) ne travaille que sur l'image d'origine, le bloc est un `append` posé après `[FAIT]`. D'où une copie
@@ -244,8 +244,9 @@ cause.
   `[FAIT]`.
 - Flasher : une ligne « Écoute des samples (Model-TG) » dans la rubrique Écran et navigation (`cat: screen`, depuis le
   nouveau choix des mods de la release 1.28), `"requires": "model-tg"` (la cocher coche Model-TG, décocher Model-TG la
-  décoche ; Détails : « Marche avec Model-TG seulement »), `with: {"syntakt": "33-sample-preview-st"}` ; `REF_MAINOS`
-  passe de 9 215 à 10 239 combinaisons.
+  décoche ; Détails : « Marche avec Model-TG seulement »), `with: {"syntakt": "33-sample-preview-st", "macro":
+  "33-sample-preview-st"}` (les mêmes clés que Model-TG, vérifié par `check_requires`) ; `REF_MAINOS` passe de 9 503
+  à 10 559 combinaisons (main avec MACRO : 9 503).
 
 ## 7. Le code et la place
 
@@ -312,9 +313,15 @@ ces PR.
 
   À revérifier à la fusion, avec la preuve `--with` de ces tweaks (pour #52, une note d'écoute après un défilement
   dans un sous-dossier).
-- **Numérotation** : note 46, ordre 33, version 1.26, tampon `2026-10-07-01`, parce que les notes 40 à 45, l'ordre 32 et
-  les versions 1.22 à 1.25 sont réclamés par des PR en cours (#47, #48, #50, #52, #53 et une autre branche). À renuméroter à la
-  fusion s'il le faut.
+- **La machine MACRO** (#57, `25-macro`, `32-macro-tg`, notes/43), fusionnée pendant la relecture : avec Model-TG,
+  MACRO prend `32-macro-tg`, posé sur `30-model-tg-st` ; l'écoute prend alors `33-sample-preview-st` (champ `with` de
+  la carte, `"macro"` comme `"syntakt"`). Aucun octet commun entre `32-macro-tg` et `33-sample-preview-st` ; la preuve
+  passe avec `--with model-tg-st,macro-tg` et avec `6ch-usbup,model-tg-st,macro-tg,arp,trig-hold,tempo-max,boot-anim`
+  (le banc charge la charge utile de MACRO en `0x46700000`, que la boucle des voix appelle) `[FAIT en émulation]`.
+  Pas d'essai sur la machine de cette combinaison.
+- **Numérotation** : note 46, ordre 33, version 1.32, tampon `2026-10-07-10`. Prévus d'abord en 1.26 / `2026-10-07-01`
+  (les notes 40 à 45, l'ordre 32 et les versions 1.22 à 1.25 étaient réclamés par des PR en cours), renumérotés à la
+  fusion de main (1.28 du sélecteur de mods, 1.31 de MACRO).
 
 ## 9. Le tweak
 
@@ -394,10 +401,11 @@ ces PR.
     `pl_step` (même tâche, après l'appui) peut le chasser pour un sample des patterns avant le bloc audio suivant ;
     cet appui joue alors le sample de la piste, et le suivant attend un nouveau chargement. D'où « en général tout de
     suite » sur le site.
-15. `[HYP]` **Non vérifié sur la machine.** Que le gestionnaire des pads tourne au niveau d'interruption 0 : sinon
-    chaque appui sur un sample pas en mémoire reste muet (`pv_note` ne charge qu'au niveau 0), ce que l'essai de §12
-    montrera tout de suite. Et la marge de pile de la tâche de l'interface : le chargement y descend environ 250 o plus
-    bas que depuis `tick_hook`.
+15. Que le gestionnaire des pads tourne au niveau d'interruption 0 : sinon chaque appui sur un sample pas en mémoire
+    resterait muet (`pv_note` ne charge qu'au niveau 0). **Vu sur la machine (07/10/2026)**, implicitement : la liste
+    de §12 demandait de signaler un appui toujours muet sur un sample pas en mémoire, et Maxime répond « Tout marche
+    nickel ». La marge de pile de la tâche de l'interface (le chargement y descend environ 250 o plus bas que depuis
+    `tick_hook`) reste `[HYP]` : aucun plantage signalé.
 
 | Établi | Comment |
 |---|---|
@@ -405,8 +413,8 @@ ces PR.
 | `sp_lock`, `tok_of`, `pd_mode`, `ld_busy`, `pad_load_hook`, nom des sample locks | `[FAIT]` source de Model-TG v1.1.0 (§4) |
 | Les trois accroches et leur effet, du navigateur à la boucle des voix ; `pv_fail` / `pv_failp` ; source `0x80` | `[FAIT en émulation]` §11 (TOUT OK, Model-TG seul et avec les autres tweaks, les deux versions) |
 | `kit_ok` et `proj_has`, réserve de 16 Mo, lecture complète d'un fichier qui n'est pas un sample | `[FAIT]` source de Model-TG (§10, points 8, 12, 13) |
-| Durée du chargement, concurrence, verrous, lecture en +96, pistes non Sampler, live rec et fin de note d'un appui muet, case reprise par `pl_step`, niveau d'interruption des pads, pile | `[HYP]` (§10) |
-| Sur la machine | `[À FAIRE]` §12 |
+| Durée du chargement, concurrence, verrous, lecture en +96, pistes non Sampler, live rec et fin de note d'un appui muet, case reprise par `pl_step`, pile | `[HYP]` (§10) |
+| Sur la machine | `[FAIT]` 07/10/2026, les deux fichiers : « Tout marche nickel » (§12), dont le niveau d'interruption des pads (§10, point 15) |
 
 ## 11. Preuve en émulation (`tools/emu/test_sample_preview.py`)
 
@@ -420,7 +428,7 @@ ce moment, et rend la case choisie). La pile sous chaque appel est remplie de `0
 
 | Vérification | Origine | Avec le tweak |
 |---|---|---|
-| Écritures : `old` (OS d'origine ; `jmp` de Model-TG en `0x4008171e`), aucune autre différence, aucun recouvrement sauf ce `jmp`, refusé sans Model-TG, `sp_lock` attendu, `pd_mode` et `ld_busy` ceux du chargeur | — | 11 écritures, 1 063 octets différents ; aucun recouvrement avec les tweaks choisis ni avec le catalogue (40 tweaks compatibles avec `model-tg-st`, 7 avec `model-tg` ; écartés : conflit déclaré d'un côté ou de l'autre) ; refusé seul et avec l'autre version de Model-TG ; `tg_uses` = {`pd_mode` : 1, `ld_busy` : 2} ; les six copies disjointes et sous `0x48000000` ; `pv_fail` et `pv_failp` à zéro dans l'image, hors des copies |
+| Écritures : `old` (OS d'origine ; `jmp` de Model-TG en `0x4008171e`), aucune autre différence, aucun recouvrement sauf ce `jmp`, refusé sans Model-TG, `sp_lock` attendu, `pd_mode` et `ld_busy` ceux du chargeur | — | 11 écritures, 1 063 octets différents ; aucun recouvrement avec les tweaks choisis ni avec le catalogue (41 tweaks compatibles avec `model-tg-st`, dont `macro-tg` depuis la fusion de MACRO, 7 avec `model-tg` ; écartés : conflit déclaré d'un côté ou de l'autre) ; refusé seul et avec l'autre version de Model-TG ; `tg_uses` = {`pd_mode` : 1, `ld_busy` : 2} ; les six copies disjointes et sous `0x48000000` ; `pv_fail` et `pv_failp` à zéro dans l'image, hors des copies |
 | Navigateur (vrais `0x400a64be` et `0x400a63ac`), piste Sampler, fichier de 2 Mo | rien de désigné, fichier laissé ouvert | tampon de 100 o = son de la piste nommé « SMP » + empreinte, fichier pas ouvert, registres gardés, résultat {`pv_src`, 0} exactement (pile remplie de `0xA5`), `pv_fail` à 0 |
 | Preset valide ; piste qui n'est pas un Sampler ou sans objet son | — | identique à l'origine (l'appel d'origine a lieu) |
 | Fichier de 120 o qui n'est pas un preset ; 47, 48, 65 o ; 66 et 160 o ; 161 o | — | écouté ; rien ; écoutés après la lecture d'origine (refusée) ; écouté sans lecture du preset ni bit « ouvert » |
@@ -449,6 +457,8 @@ ce moment, et rend la case choisie). La pile sous chaque appel est remplie de `0
 | `--cycles` seul (origine `model-tg`) | 84 | TOUT OK | 43 s |
 | `--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max,boot-anim --syntakt …` | 84 | TOUT OK | 65 s (trois exécutions en parallèle) |
 | `--syntakt …` sans `--with` : les deux versions, `model-tg` puis `model-tg-st` | 168 | TOUT OK | 83 s (idem) |
+| `--with model-tg-st,macro-tg` (après la fusion de MACRO, le banc charge sa charge utile) | 84 | TOUT OK | — |
+| `--with 6ch-usbup,model-tg-st,macro-tg,arp,trig-hold,tempo-max,boot-anim` | 84 | TOUT OK | — |
 
 La version précédente (`pv_fail` seul) passait 76 vérifications par version de Model-TG.
 
@@ -496,11 +506,11 @@ premières lignes ci-dessous passaient la preuve telle qu'elle était à la revu
   envoie toujours le message de la touche à l'interface, comme l'origine (§10 point 10).
 
 Flasher (fait par ailleurs, `tools/gen_flasher_tweaks.py`, `docs/flasher/app.js`) : la ligne `sample-preview`
-(`cat: screen`, `"requires": "model-tg"`, `with: {"syntakt": "33-sample-preview-st"}` ; `setOn` coche la carte demandée,
-`dropOrphans` décoche l'ajout resté seul, annulable avec le reste), et `REF_MAINOS` qui passe de 9 215 à
-10 239 combinaisons (les 1 024 nouvelles contiennent l'écoute des samples, aucune ancienne ne change ; recalculées après
-le changement de masques). `tools/webflash_smoke.sh` vérifie que cocher la carte coche Model-TG, que décocher Model-TG
-la décoche, et que la version Syntakt prend `sample-preview-st`.
+(`cat: screen`, `"requires": "model-tg"`, `with: {"syntakt": …, "macro": "33-sample-preview-st"}` ; `setOn` coche la
+carte demandée, `dropOrphans` décoche l'ajout resté seul, annulable avec le reste), et `REF_MAINOS` qui passe de 9 503 à
+10 559 combinaisons (les 1 056 nouvelles, une par combinaison de main qui contient Model-TG, ajoutent l'écoute des
+samples ; aucune ancienne ne change). `tools/webflash_smoke.sh` vérifie que cocher la carte coche Model-TG, que décocher
+Model-TG la décoche, et qu'avec les moteurs du Syntakt ou MACRO elle prend `sample-preview-st`.
 
 ```sh
 python3 tools/gen_sample_preview.py --cycles model-cycles_OS1.13.syx --check
@@ -509,7 +519,7 @@ python3 tools/emu/test_sample_preview.py --cycles model-cycles_OS1.13.syx \
     [--syntakt Syntakt_OS1.42.syx]
 ```
 
-## 12. Sur la machine
+## 12. Testé sur la machine (07/10/2026)
 
 **Testé sur la machine (07/10/2026).** Maxime a flashé les deux fichiers de test du dossier `ecoute-samples/` du
 projet (Model-TG + l'écoute seule, MAIN OS `b7342804…` ; l'écoute avec tout le reste, Model-TG version Syntakt et les

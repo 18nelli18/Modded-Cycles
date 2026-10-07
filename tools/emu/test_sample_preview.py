@@ -191,11 +191,14 @@ class Variant:
         self.img = bytes(build.apply_writes(stock, sorted(self.tweaks + [self.pv], key=lambda t: t["order"]))[0]) + pl
         self.end = BASE + len(stock) + self.tg["append"]["size"]
         syn = [t for t in self.tweaks if t.get("append", {}).get("syntakt")]
+        mac = [t for t in self.tweaks if t["id"] in ("macro", "macro-tg")]
         self.payload = None
         if syn:
             import syntakt
             self.payload = (int(syn[0]["append"]["dest"], 16),
                             build.payload_runtime(syn[0], stock, syntakt.dsp_image(syntakt_file)))
+        elif mac:                                   # MACRO (notes/43) : sa charge utile telle qu'en mémoire
+            self.payload = (int(mac[0]["append"]["dest"], 16), build.payload_runtime(mac[0], stock, None))
         self.tgs = {n: int(v, 16) for n, v in self.tg["symbols"].items()}
         self.pvs = {n: int(v, 16) for n, v in self.pv["symbols"].items()}
 

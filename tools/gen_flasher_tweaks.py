@@ -71,8 +71,9 @@ FEATURES = [
             {"file": "30-model-tg", "label": None},
         ],
         # avec les moteurs du Syntakt : la base de la version combinee (notes/31), et pour chaque combinaison de
-        # moteurs son tweak syntakt-tg-<moteurs> (« tg » des combinaisons de la carte des moteurs)
-        "with": {"syntakt": "30-model-tg-st"},
+        # moteurs son tweak syntakt-tg-<moteurs> (« tg » des combinaisons de la carte des moteurs) ; de meme avec
+        # la machine MACRO (notes/43), qui prend alors macro-tg
+        "with": {"syntakt": "30-model-tg-st", "macro": "30-model-tg-st"},
     },
     {
         "id": "sample-preview",
@@ -88,7 +89,7 @@ FEATURES = [
             {"file": "33-sample-preview", "label": None},
         ],
         # avec les moteurs du Syntakt, Model-TG devient model-tg-st : l'ecoute prend la version faite pour lui
-        "with": {"syntakt": "33-sample-preview-st"},
+        "with": {"syntakt": "33-sample-preview-st", "macro": "33-sample-preview-st"},
     },
     {
         "id": "sample-cue",
@@ -103,8 +104,8 @@ FEATURES = [
         "variants": [
             {"file": "34-sample-cue", "label": None},
         ],
-        # avec les moteurs du Syntakt, l'ecoute des samples devient sample-preview-st : le cue prend la sienne
-        "with": {"syntakt": "34-sample-cue-st"},
+        # avec les moteurs du Syntakt ou MACRO, l'ecoute des samples devient sample-preview-st : le cue prend la sienne
+        "with": {"syntakt": "34-sample-cue-st", "macro": "34-sample-cue-st"},
     },
     {
         "id": "latching-mute",
@@ -189,6 +190,24 @@ FEATURES = [
         "variants": [
             {"file": "43-boot-anim", "label": None},
         ],
+    },
+    {
+        "id": "macro",
+        "cat": "sound",
+        "label": "Machine MACRO",
+        "desc": "Une machine ajoutee apres Chord (apres le Sampler avec Model-TG) : les 47 modeles du code libre "
+                "de Braids d'Emilie Gillet. SHAPE choisit le modele, COLOR et SWEEP le reglent, CONTOUR ouvre le "
+                "timbre avec l'enveloppe.",
+        "status": "tested",
+        "credit": {"kind": "based", "who": "Émilie Gillet", "repo": "pichenettes/eurorack"},
+        "license": "LICENSE-Braids",
+        # meme bloc apres l'image que les moteurs du Syntakt (notes/43) : jamais ensemble
+        "excludes": ["syntakt"],
+        "variants": [
+            {"file": "25-macro", "label": None},
+        ],
+        # avec Model-TG : la version qui s'ajoute apres model-tg-st (Model-TG prend cette base, « with » ci-dessus)
+        "with": {"model-tg": "32-macro-tg"},
     },
     {
         "id": "syntakt",
