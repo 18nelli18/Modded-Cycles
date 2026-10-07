@@ -606,9 +606,16 @@ async function main() {
     const sets = [];                                  // with the engines: any of these, or Model-TG (with or without USB)
     for (let mask = 0; mask < 1 << plain.length; mask++) sets.push(plain.filter((b, k) => mask & (1 << k)));
     const tgEx = w.MC_TWEAKS.features.find((f) => f.id === "model-tg").includes.map((x) => "feat-" + x);
-    // Model-TG and what it goes with (USB, sample preview, trig removal, arpeggiator…), in card order
-    const withTg = boxes.filter((b) => (plain.includes(b) && !tgEx.includes(b)) || reqOf[b] === "feat-model-tg");
-    for (let mask = 0; mask < 1 << withTg.length; mask++) sets.push(["feat-model-tg", ...withTg.filter((b, k) => mask & (1 << k))]);
+    // Model-TG and what it goes with (USB, sample preview, headphone cue, trig removal, arpeggiator…), in card order;
+    // a card whose chain of requirements leads to Model-TG (headphone cue -> sample preview -> Model-TG) only with
+    // the card it requires
+    const needsTg = (b) => { for (let r = reqOf[b]; r; r = reqOf[r]) if (r === "feat-model-tg") return true; return false; };
+    const withTg = boxes.filter((b) => (plain.includes(b) && !tgEx.includes(b)) || needsTg(b));
+    for (let mask = 0; mask < 1 << withTg.length; mask++) {
+      const on = withTg.filter((b, k) => mask & (1 << k));
+      if (on.some((b) => reqOf[b] && reqOf[b] !== "feat-model-tg" && !on.includes(reqOf[b]))) continue;
+      sets.push(["feat-model-tg", ...on]);
+    }
     const tgOf = Object.fromEntries(w.MC_TWEAKS.features.find((f) => f.engines).combos.map((c) => [c.id, c.tg]));
     for (const variant of REAL_ST ? Object.keys(combos).slice(1) : []) {   // the other engine combinations
       for (const on of sets) {
