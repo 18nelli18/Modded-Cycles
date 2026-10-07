@@ -54,21 +54,18 @@ def block(cycles, syntakt):
     if len(extra) > 1 or any(len(options(f)) != 1 for f in base):
         raise SystemExit("!! disposition des cartes inattendue : adapter ref_mainos.py")
     stock = main_os(cycles)
-    # carte « requires » : la page ne la laisse cochée qu'avec la carte qu'elle demande (tweak de cette carte)
-    cards = {g["id"]: g for g in base}
-    need = {}
+    # carte « requires » : la page ne la laisse cochée qu'avec la carte qu'elle demande
+    cards = {g["id"] for g in base}
     for f in base:
-        if f.get("requires"):
-            if f["requires"] not in cards:
-                raise SystemExit(f"!! la carte {f['id']} demande (requires) {f['requires']!r}, qui n'est pas une carte "
-                                 "à variantes de tweaks.js : relancer tools/gen_flasher_tweaks.py, ou adapter ref_mainos.py")
-            need[options(f)[0]] = options(cards[f["requires"]])[0]
-    subsets = [c for r in range(len(base) + 1) for c in itertools.combinations([options(f)[0] for f in base], r)
-               if all(need[i] in c for i in c if i in need)]
+        if f.get("requires") and f["requires"] not in cards:
+            raise SystemExit(f"!! la carte {f['id']} demande (requires) {f['requires']!r}, qui n'est pas une carte "
+                             "à variantes de tweaks.js : relancer tools/gen_flasher_tweaks.py, ou adapter ref_mainos.py")
+    subsets = [c for r in range(len(base) + 1) for c in itertools.combinations(base, r)
+               if all(f["requires"] in {g["id"] for g in c} for f in c if f.get("requires"))]
     payloads = {}
-    # avec les moteurs du Syntakt, une carte « with » (Model-TG) prend un autre tweak, et les moteurs le leur (tg) ;
-    # une carte « requires » de Model-TG (l'écoute des samples) prend la sienne en même temps que Model-TG
-    alt = {options(f)[0]: f["with"][extra[0]["id"]] for f in base if extra and extra[0]["id"] in f.get("with", {})}
+    # une carte « with » prend un autre tweak quand une autre carte est cochée aussi (Model-TG avec les moteurs du
+    # Syntakt ou MACRO : sa base model-tg-st ; MACRO avec Model-TG : macro-tg ; l'écoute des samples suit Model-TG),
+    # comme chosenTweaks() de app.js ; et les moteurs du Syntakt, avec Model-TG, le leur (tg)
     tg_of = {c["id"]: c["tg"] for c in extra[0]["combos"]} if extra else {}
 
     def payload(apps):
@@ -84,9 +81,11 @@ def block(cycles, syntakt):
             names = ", ".join(c["label"] for c in extra[0]["combos"] if c["id"] == last)
             lines.append(f"  // + real Syntakt engines {names} (tweak {last}), with the official Syntakt OS 1.42 or 1.41")
         for sub in subsets:
-            ids = list(sub) + ([last] if last else [])
-            if last and any(i in alt for i in sub if i not in need):   # version combinée (notes/31)
-                ids = [alt.get(i, i) for i in sub] + [tg_of[last]]
+            on = {f["id"] for f in sub} | ({extra[0]["id"]} if last else set())
+            ids = [next((a for g, a in reversed(list(f.get("with", {}).items())) if g in on), options(f)[0])
+                   for f in sub]
+            if last:                                      # avec Model-TG : la version combinée (notes/31)
+                ids.append(tg_of[last] if "model-tg" in on else last)
             chosen = [by_id[i] for i in ids]
             if not ids or any(o in ids for t in chosen for o in t.get("conflicts", [])):
                 continue                                  # cases incompatibles : la page ne les propose pas

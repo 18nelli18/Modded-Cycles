@@ -142,7 +142,7 @@ python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --sy
 | `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `d5e73e10a07042a85e9022e87e488b6ca4960ecef69f49652d5c3dc706a1f6fc` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `70354db7660a9ffc60956d523d2976299be4fa4813e483c1222abe26edae2b3c` |
 
-Les 10 239 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
+Les 10 559 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
 `tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;
 `tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.42.syx` les reconstruit toutes dans la page et les compare.
 SD VINTAGE v1 (clean-room d'origine, **testée sur le matériel** le 29/09/2026, compilée par GCC 13.3) donnait `80b7b2bd…` seule et `38754937…` avec `6ch-usbup` ;
@@ -176,6 +176,7 @@ python3 tools/emu/test_sample_preview.py --cycles model-cycles_OS1.13.syx \
 | `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,sample-preview-st` (idem) | `cde4365ff392e68b373afe9fa2004dc5e275c7c15f8a3c732549478ca2d36ca4` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,sample-preview-st` (idem) | `7b142604f35d11c63e3c22a0f1a4426c6630e2d184c5f680ed5f47125e2e891e` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,sample-preview-st` (idem) | `20a116b1dbbc05e84dfc32df2f269f5c23df2d54fcb39d9b4a7c577c5916a432` |
+| `model-tg-st,macro-tg,sample-preview-st` (avec la machine MACRO) | `a371d4a3a7df7e5d8b8078da4cdd8a0b34efee558b52f7ecb78811c21e6f98bd` |
 
 ### Arpégiateur
 
@@ -276,6 +277,33 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim
 | `6ch-usbup,boot-anim` | `76b1a532c8119ce222a3545b8a21b4cf0b2e12887e40c32f9a80b0d70975533e` |
 | `model-tg,boot-anim` | `cbec181684805bf37dd07c62dc47f7daf35e6abab530a3f3b06ec5db590278ec` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim` | `d468a729f32780870dbd591e52e8c782a5cdd347459ac1c61ef35473e26c9323` |
+
+### Machine MACRO (les modèles de Braids)
+
+`tweaks/model-cycles_OS1.13/25-macro.json` (7e machine) et `32-macro-tg.json` (avec Model-TG : 8e machine, par-dessus
+`model-tg-st`) sont produits par `tools/gen_macro.py` : le code de Braids d'Émilie Gillet (MIT,
+[pichenettes/eurorack](https://github.com/pichenettes/eurorack) au commit `08460a6`, stmlib `e3bd7c9`) compilé tel quel
+avec la passerelle `tools/machines/macro/macro.cc`, en charge utile rangée après l'image et reconstituée au démarrage à
+`0x43000000` (`0x46700000` avec Model-TG), avec la mécanique des machines ajoutées des moteurs du Syntakt
+([note 43](notes/43-machine-macro.md)). Le générateur a besoin du clone d'eurorack (sous `vendor/`, ignoré par git) et de
+`m68k-linux-gnu-g++` (les JSON versionnés viennent du GCC 13.3 d'Ubuntu 24.04 : un autre GCC donne d'autres octets) ; la
+preuve, de `g++` pour Braids compilé pour l'ordinateur, la référence :
+```sh
+git clone https://github.com/pichenettes/eurorack vendor/eurorack
+git -C vendor/eurorack checkout 08460a69a7e1f7a81c5a2abcc7189c9a6b7208d4
+git -C vendor/eurorack submodule update --init stmlib
+python3 tools/gen_macro.py --cycles model-cycles_OS1.13.syx --eurorack vendor/eurorack [--check]
+python3 tools/emu/test_macro.py --cycles model-cycles_OS1.13.syx --eurorack vendor/eurorack [--quick] \
+    [--with 6ch-usbup,model-tg-st,trig-hold,arp,tempo-max,boot-anim]
+```
+Incompatible avec les moteurs du Syntakt et SD VINTAGE (même mécanique, même place).
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `macro` | `beb70b58001c12da348427b5f46f33567a6d6c2178cf7f4b7902741757e83e33` |
+| `6ch-usbup,macro` | `32932ae6eca06406f1c954368dc3465cf83e1026128b39ebfc7e746e9e01023f` |
+| `model-tg-st,macro-tg` | `d738fafaa86bbac86e328e6f0b70dd9688c1d9c3b05a423c957751c74abbd8d8` |
+| `6ch-usbup,model-tg-st,macro-tg,trig-hold,arp,tempo-max,boot-anim` | `f584f099bd2a26abfcccf3d954dd3b86ab1880c07a0b110bce88d569eed1daeb` |
 
 ### Écoute d'un pas en pause
 
