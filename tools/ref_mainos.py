@@ -55,7 +55,14 @@ def block(cycles, syntakt):
         raise SystemExit("!! disposition des cartes inattendue : adapter ref_mainos.py")
     stock = main_os(cycles)
     # carte « requires » : la page ne la laisse cochée qu'avec la carte qu'elle demande (tweak de cette carte)
-    need = {options(f)[0]: options(next(g for g in base if g["id"] == f["requires"]))[0] for f in base if f.get("requires")}
+    cards = {g["id"]: g for g in base}
+    need = {}
+    for f in base:
+        if f.get("requires"):
+            if f["requires"] not in cards:
+                raise SystemExit(f"!! la carte {f['id']} demande (requires) {f['requires']!r}, qui n'est pas une carte "
+                                 "à variantes de tweaks.js : relancer tools/gen_flasher_tweaks.py, ou adapter ref_mainos.py")
+            need[options(f)[0]] = options(cards[f["requires"]])[0]
     subsets = [c for r in range(len(base) + 1) for c in itertools.combinations([options(f)[0] for f in base], r)
                if all(need[i] in c for i in c if i in need)]
     payloads = {}

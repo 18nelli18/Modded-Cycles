@@ -32,7 +32,7 @@
 #define ARMED	0x40fb5a04		/* son désigné pour l'écoute, ou 0 */
 #define PARSE	0x400a3052		/* lit un preset : (a0 = &résultat, &handle) */
 
-	.globl	pv_parse, pv_note, pv_copy, pv_tab, pv_src, pv_fail
+	.globl	pv_parse, pv_note, pv_copy, pv_tab, pv_src, pv_fail, pv_failp
 
 /* 0x400a6426, dans 0x400a63ac : jsr pv_parse à la place de jsr 0x400a3052.
  * Entrée : a0 = &résultat (fp-24 : son, compteur), 4(sp) = &handle {id, empreinte, taille, …} de getEntry.
@@ -40,6 +40,7 @@
  * un compteur nul sans rien faire (0x400cf23c). Sur une piste qui n'est pas un Sampler : l'original, tel quel. */
 	.section .text.pv_parse, "ax"
 pv_parse:
+	clr.l	pv_fail			/* nouveau son désigné : on retentera un chargement raté */
 	lea	-16(%sp), %sp
 	movem.l	%d2-%d3/%a2-%a3, (%sp)
 	movea.l	%a0, %a2		/* &résultat */
@@ -89,7 +90,6 @@ pv_parse:
 3:	move.b	%d0, (%a0)+
 	subq.l	#4, %d1
 	bpl.s	2b
-	clr.l	pv_fail			/* nouveau son désigné : on retentera un chargement raté */
 	move.l	#pv_src, (%a2)
 	clr.l	4(%a2)
 	bra.s	.Lout
@@ -136,11 +136,15 @@ pv_note:
 	lea	TG_SLOT_HASH, %a0
 	moveq	#63, %d1
 1:	cmp.l	(%a0)+, %d0
-	beq.s	.Lgo			/* déjà en mémoire */
+	beq.w	.Lgo			/* déjà en mémoire */
 	subq.l	#1, %d1
 	bpl.s	1b
+	move.l	ARMED, %d1
+	cmp.l	pv_failp, %d1
+	bne.s	2f			/* un autre son désigné depuis : on retente */
 	cmp.l	pv_fail, %d0
 	beq.s	.Lmute			/* déjà raté sur ce son désigné */
+2:
 	lea	-44(%sp), %sp
 	movem.l	%d2-%d7/%a2-%a6, (%sp)
 	move.l	%d0, %d2
@@ -162,7 +166,9 @@ pv_note:
 	clr.l	TG_LD_BUSY
 	tst.l	%d0
 	bpl.s	.Lok			/* chargé : la note joue le sample */
-	move.l	%d2, pv_fail		/* raté : plus d'essai avant le prochain son désigné */
+	move.l	%d2, pv_fail		/* raté : plus d'essai sur ce son désigné */
+	move.l	ARMED, %d0
+	move.l	%d0, pv_failp
 	bra.s	.Lrest
 .Lbusy:
 	move.w	%d3, %sr		/* chargeur occupé : pas d'essai cette fois */
@@ -214,7 +220,8 @@ pv_copy:
 	.section .data.pv_tab, "aw"
 	.balign	4
 pv_tab:	.long	pv_b0, pv_b1, pv_b2, pv_b3, pv_b4, pv_b5
-pv_fail: .long	0			/* empreinte dont le chargement a raté, depuis le dernier son désigné */
+pv_fail: .long	0			/* empreinte dont le chargement a raté… */
+pv_failp: .long	0			/* …sur ce son désigné (ARMED à ce moment) */
 	.section .data.pv_b01, "aw"
 	.balign	4
 pv_b0:	.space	100

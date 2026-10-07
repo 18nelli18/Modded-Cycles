@@ -58,7 +58,7 @@ HOOKS = (
     (0x400a6426, "4eb9400a3052", 6, "parse",
      "navigateur, écoute d'un preset : jsr 0x400a3052 (lit le preset) -> jsr pv_parse"),
 )
-SYMBOLS = ("pv_parse", "pv_note", "pv_copy", "pv_tab", "pv_src", "pv_fail")   # pour tools/emu/test_sample_preview.py
+SYMBOLS = ("pv_parse", "pv_note", "pv_copy", "pv_tab", "pv_src", "pv_fail", "pv_failp")   # pour tools/emu/test_sample_preview.py
 
 
 def tg_symbols():
@@ -91,11 +91,36 @@ def check_contract(stock, syms, tgs):
         for n, size in TG_ZERO.items():
             if any(rt[syms[n] - dest:syms[n] - dest + size]):
                 raise SystemExit(f"!! {tid} : {n} ({syms[n]:#x}) n'est pas à zéro au départ")
+        uses = tg_uses(rt, dest, syms)
+        if uses["pd_mode"] != 1 or uses["ld_busy"] < 2:
+            raise SystemExit(f"!! {tid} : pd_mode / ld_busy ne sont plus ceux du préchargeur et de led_hook ({uses})")
         cur, _ = build.apply_writes(stock, [t])
         hooked[tid] = cur[NOTE_ON - BASE:NOTE_ON - BASE + 6]
         if hooked[tid] != struct.pack(">HI", 0x4ef9, syms["pad_load_hook"]):
             raise SystemExit(f"!! {tid} n'écrit plus jmp pad_load_hook en {NOTE_ON:#x}")
     return hooked
+
+
+def tg_uses(rt, dest, syms):
+    """Que pd_mode et ld_busy sont bien les variables du chargeur de Model-TG, dans sa charge utile rt (à dest) :
+    pl_step fait move.l %d0,pd_mode ; … ; jsr ensure_loaded ; clr.l pd_mode (à moins de 64 o), et led_hook prend
+    ld_busy par lea (d16,%pc) (deux fois : test-and-set, puis remise à zéro). Renvoie le nombre de chaque."""
+    def at(va, n):
+        return rt[va - dest:va - dest + n]
+
+    def call_to(va):                                   # jsr (d16,pc), bsr.w ou jsr abs.l vers ensure_loaded
+        op = at(va, 2)
+        if op in (b"\x4e\xba", b"\x61\x00"):
+            return va + 2 + struct.unpack(">h", at(va + 2, 2))[0] == syms["ensure_loaded"]
+        return op == b"\x4e\xb9" and int.from_bytes(at(va + 2, 4), "big") == syms["ensure_loaded"]
+    pd = syms["pd_mode"].to_bytes(4, "big")
+    code = range(dest, dest + len(rt) - 6, 2)
+    sets = [va for va in code if at(va, 6) == b"\x23\xc0" + pd]
+    clrs = [va for va in code if at(va, 6) == b"\x42\xb9" + pd]
+    pl = [a for a in sets for b in clrs if a < b < a + 64 and any(call_to(va) for va in range(a, b, 2))]
+    lea = [va for va in code if at(va, 2) == b"\x41\xfa"
+           and va + 2 + struct.unpack(">h", at(va + 2, 2))[0] == syms["ld_busy"]]
+    return {"pd_mode": len(pl), "ld_busy": len(lea)}
 
 
 def compile_preview(syms):
@@ -164,8 +189,8 @@ def make_tweak(tg, writes, pv, used):
             "clavier) joue le sample sous le curseur, comme l'OS d'origine joue le preset sous le curseur.",
             "Un sample qui n'est pas en mémoire est chargé au premier appui, seulement dans la place libre ou à la "
             "place de samples que le projet n'utilise pas. S'il ne se charge pas, l'appui ne joue rien.",
-            "Les presets du Sampler et les sample locks du pool font entendre leur propre sample, plus celui de la "
-            "piste.",
+            "Les presets du Sampler qui gardent leur sample (nom « SMP » + empreinte) devraient aussi faire entendre "
+            "ce sample plutôt que celui de la piste (prouvé en émulation pour le son, pas encore sur la machine).",
             f"Pour {'la version de Model-TG combinée avec les moteurs du Syntakt (model-tg-st)' if st else 'Model-TG (model-tg)'} ; "
             f"appelle ses fonctions aux adresses de ses symboles. Code dans quatre masques de sprites 47x47 libérés "
             f"(tools/sprites.py) : {' + '.join(map(str, used))} o. Généré par tools/gen_sample_preview.py, notes/46.",
@@ -188,8 +213,9 @@ def check_overlaps(tweaks):
         tg = cat[t["requires"][0]]
         mine = [(w["off"], w["off"] + len(bytes.fromhex(w["old"]))) for w in t["writes"]]
         for o in cat.values():
-            if o["id"] in ("sample-preview", "sample-preview-st") or o["id"] in tg.get("conflicts", []):
-                continue
+            if (o["id"] in ("sample-preview", "sample-preview-st") or o["id"] in tg.get("conflicts", [])
+                    or o["id"] in t.get("conflicts", []) or {tg["id"], t["id"]} & set(o.get("conflicts", []))):
+                continue                               # jamais construits ensemble
             for w in o["writes"]:
                 a, b = w["off"], w["off"] + len(bytes.fromhex(w["old"]))
                 for lo, hi in mine:

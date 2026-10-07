@@ -33,7 +33,8 @@ OUT = ROOT / "docs" / "flasher" / "tweaks.js"
 # les affiche coches et verrouilles, « inclus avec … », tant qu'elle est cochee.
 # requires : carte sans laquelle celle-ci ne marche pas (un ajout a Model-TG). La cocher coche aussi l'autre (avec
 # les exclusions de l'autre, comme si on l'avait cochee) ; decocher l'autre la decoche. ref_mainos.py ne compte que
-# les combinaisons ou l'autre carte est cochee.
+# les combinaisons ou l'autre carte est cochee. Elle a les memes cles « with » que l'autre carte, et chacun de ses
+# tweaks demande (« requires » de son JSON) le tweak correspondant de l'autre : check_requires le verifie.
 # Les moteurs s'ajoutent en machines supplementaires : sdvintage-exact (a la place de SNARE) reste dans build.py.
 # status : "tested" (flashe sur un vrai Model:Cycles) ou "experimental".
 # credit : auteur du travail d'origine, affiche sur la carte (voir aussi les credits de la page).
@@ -187,6 +188,40 @@ def engine_feature(f, load):
     return engines, combos
 
 
+def check_requires(features, by_id):
+    """Cartes « requires » : la carte demandee existe (carte a variantes, pas les moteurs), et chaque tweak de
+    l'ajout demande (champ « requires » de son JSON) le tweak correspondant de cette carte : une variante, une des
+    variantes de l'autre carte ; le tweak « with » d'une autre carte, le tweak « with » de l'autre carte pour la
+    meme. Les deux cartes ont donc les memes cles « with ». Sinon le flasher proposerait un build que build.py et
+    builder.js refusent (ou un ajout pose sur la mauvaise version de l'autre carte)."""
+    cards = {f["id"]: f for f in features}
+    for f in features:
+        rid = f.get("requires")
+        if not rid:
+            continue
+        need = cards.get(rid)
+        if rid == f["id"]:
+            raise SystemExit(f"!! FEATURES : la carte {f['id']} se demande elle-meme (requires)")
+        if need is None:
+            raise SystemExit(f"!! FEATURES : la carte {f['id']} demande (requires) la carte {rid!r}, qui n'existe pas")
+        if f.get("engines") or need.get("engines"):
+            raise SystemExit(f"!! FEATURES : requires de {f['id']} vers {rid} : seulement entre cartes a variantes, "
+                             "pas avec la carte des moteurs")
+        base = [v["id"] for v in need["variants"]]
+        for v in f["variants"]:
+            if not set(base) & set(by_id[v["id"]].get("requires", [])):
+                raise SystemExit(f"!! FEATURES : la carte {f['id']} demande {rid}, mais le tweak {v['id']} ne demande "
+                                 f"aucun de {', '.join(base)} (champ « requires » de son JSON)")
+        w, nw = f.get("with", {}), need.get("with", {})
+        if set(w) != set(nw):
+            raise SystemExit(f"!! FEATURES : la carte {f['id']} doit avoir les memes cles « with » que {rid} "
+                             f"({', '.join(sorted(w)) or 'aucune'} contre {', '.join(sorted(nw)) or 'aucune'})")
+        for g, tid in w.items():
+            if nw[g] not in by_id[tid].get("requires", []):
+                raise SystemExit(f"!! FEATURES : avec {g}, la carte {f['id']} prend {tid} et {rid} prend {nw[g]}, "
+                                 f"mais {tid} ne demande pas {nw[g]} (champ « requires » de son JSON)")
+
+
 def render():
     from crossflash import OFFICIAL            # empreintes des OS officiels, source unique (tools/crossflash.py)
     device = json.loads((DEV_DIR / "device.json").read_text(encoding="utf-8"))
@@ -225,6 +260,7 @@ def render():
         if f.get("license"):                    # texte de la licence, servi a cote de la page (licenses())
             feat["license"] = f["license"] + ".txt"
         features.append(feat)
+    check_requires(features, by_id)
     payload = {
         "device": {k: device[k] for k in ("device", "os", "section_sha256", "stock_syx_sha256", "cave_refs_ok")
                    if k in device},

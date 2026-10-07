@@ -25,7 +25,13 @@ Write for musicians: what changes on the machine, which buttons to press, the li
 ## Adding a mod to the flasher
 
 1. Add it to `FEATURES` in `tools/gen_flasher_tweaks.py` (`"status": "experimental"`, `credit`, `excludes`,
-   `includes` or `needs` if any), then `python3 tools/gen_flasher_tweaks.py` to regenerate `flasher/tweaks.js`.
+   `includes`, `needs` or `requires` if any), then `python3 tools/gen_flasher_tweaks.py` to regenerate `flasher/tweaks.js`.
+   `"requires": "<card id>"` is for an add-on that only works with another card (sample preview needs Model-TG):
+   ticking it ticks that card too (with that card's own exclusions), unticking that card unticks it, the card shows
+   "(needs …)", and `ref_mainos.py` only lists combinations that hold both. Give the add-on the same `with` as the
+   card it requires (sample preview takes `33-sample-preview-st` when Model-TG takes `30-model-tg-st`), and make the
+   `requires` of each of its tweak files point at the matching tweak (`sample-preview` → `model-tg`,
+   `sample-preview-st` → `model-tg-st`); `gen_flasher_tweaks.py` refuses a card that doesn't.
 2. `python3 tools/ref_mainos.py --cycles … --syntakt …` rewrites `REF_MAINOS` in `flasher/app.js`: the flasher refuses
    to send a build whose MAIN OS hash is not listed, so every offered combination must be there.
 3. In `flasher/app.js`: the card texts in `FEAT.en` and `FEAT.fr` (`label`, `desc`, optional `note` shown once
@@ -35,7 +41,7 @@ Write for musicians: what changes on the machine, which buttons to press, the li
 5. A guide section in `guide/index.html` (next number, before *Samples OS*; renumber the ones after): a lede, the
    steps (`<ol>`) with the buttons in `<b>`, then `<dl class="facts">` with the limits and a *Tested* / *Experimental*
    line saying how it was checked. Copy the `#tempo` or `#trig-hold` section.
-6. A new entry at the top of `assets/release.js`: next version (`1.21` is the last), today's date, 2 to 4 changes
+6. A new entry at the top of `assets/release.js`: next version (`1.26` is the last), today's date, 2 to 4 changes
    (what the user gets, the limits, how it was checked, which mods it goes with). Once merged into `main`, the
    English text is posted as is to the Discord server's #announcements (`.github/workflows/discord.yml`), so write it
    for musicians.

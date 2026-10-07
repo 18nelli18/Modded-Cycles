@@ -317,9 +317,9 @@ async function main() {
     check(/Animation de démarrage modded-cycles/.test(text(doc, "features")) && doc.querySelector('#features a[href$="#boot-anim"]'),
       "FR: startup animation card translated, with its guide link");
     check(/Écoute des samples \(Model-TG\)/.test(text(doc, "features"))
-      && /\(avec Model-TG\)/.test(doc.querySelector("label[for=feat-sample-preview] .ttl").textContent)
+      && /\(demande Model-TG\)/.test(doc.querySelector("label[for=feat-sample-preview] .ttl").textContent)
       && doc.querySelector('#features a[href$="#sample-preview"]'),
-      "FR: sample preview card translated, says « (avec Model-TG) », with its guide link");
+      "FR: sample preview card translated, says « (demande Model-TG) », with its guide link");
     doc.getElementById("feat-model-tg").click(); await wait(5);
     check(/\(inclus avec Model-TG\)/.test(doc.querySelector("label[for=feat-browser-scroll] .ttl").textContent),
       "FR: the tweaks Model-TG holds say « (inclus avec Model-TG) »");
