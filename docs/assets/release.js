@@ -3,6 +3,12 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.30", date: "2026-10-07", changes: [
+    { en: "Every mod you tick is now checked against its reference build, whatever the combination. Until now the page carried the expected result of each of the 9,215 possible combinations and checked only those; that list doubled with every new mod. It now keeps one reference per mod, plus a sample of 416 combinations checked whole (each mod alone, every pair, the largest ones)",
+      fr: "Chaque mod coché est maintenant vérifié contre son build de référence, quelle que soit la combinaison. Jusqu'ici la page contenait le résultat attendu de chacune des 9 215 combinaisons possibles et ne vérifiait que celles-là ; cette liste doublait à chaque nouveau mod. Elle garde maintenant une référence par mod, plus un échantillon de 416 combinaisons vérifiées en entier (chaque mod seul, chaque paire, les plus grandes)" },
+    { en: "The page is lighter (about 1.2 MB less to load) and ready for many more mods. Nothing changes on the machine: for the same choice of mods, the firmware built and sent is exactly the same as before, as all 9,215 combinations were rebuilt and compared to check",
+      fr: "La page est plus légère (environ 1,2 Mo de moins à charger) et prête pour beaucoup plus de mods. Rien ne change sur la machine : pour un même choix de mods, le firmware construit et envoyé est exactement le même qu'avant, ce qui a été vérifié en reconstruisant et en comparant les 9 215 combinaisons" },
+  ] },
   { version: "1.22", date: "2026-10-07", changes: [
     { en: "Samples OS tab, the other way round (experimental): a Model:Samples can now start as a Model:Cycles. Choose “Model:Samples → Cycles OS”: the page puts the official Model:Cycles OS inside your Model:Samples firmware, whose startup menu, updater and signature stay in place, and sends it over USB",
       fr: "Onglet OS Samples, dans l'autre sens (expérimental) : un Model:Samples peut maintenant démarrer en Model:Cycles. Choisissez « Model:Samples → OS Cycles » : la page place l'OS officiel du Model:Cycles dans le firmware de votre Model:Samples, dont le menu de démarrage, l'updater et la signature restent en place, et l'envoie par USB" },

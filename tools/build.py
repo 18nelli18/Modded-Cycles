@@ -25,6 +25,7 @@ import array
 import hashlib
 import json
 import pathlib
+import re
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -40,6 +41,16 @@ BASE = 0x40000400                             # VA du premier octet de la sectio
 
 def sha(b):
     return hashlib.sha256(b).hexdigest()
+
+
+HEX = re.compile(r"(?:[0-9a-fA-F]{2})*")
+
+
+def unhex(s):
+    """bytes.fromhex, mais sans espace (deux chiffres par octet), comme fromHex de docs/flasher/builder.js."""
+    if not isinstance(s, str) or not HEX.fullmatch(s):
+        raise SystemExit(f"!! hexadecimal invalide : {str(s)[:24]}")
+    return bytes.fromhex(s)
 
 
 def load_catalog():
@@ -221,8 +232,10 @@ def apply_writes(main_os, tweaks_selected):
     for t in tweaks_selected:
         for w in t["writes"]:
             off = w["off"]
-            old = bytes.fromhex(w["old"])
-            new = bytes.fromhex(w["new"])
+            old = unhex(w["old"])
+            new = unhex(w["new"])
+            if not isinstance(off, int) or off < 0 or off + len(old) > len(data):
+                raise SystemExit(f"!! {t['id']} : ecriture hors de la section 3 (off {off})")
             cur = bytes(data[off:off + len(old)])
             if cur == new and cur != old:
                 continue                         # la meme ecriture, deja faite par un autre tweak (masque partage)
@@ -255,7 +268,7 @@ def payload_runtime(t, main_os, st_img):
             lo, hi = (int(x, 16) for x in part["cycles"])
             chunk = main_os[lo - BASE:hi - BASE]
         else:
-            chunk = bytes.fromhex(part["hex"])
+            chunk = unhex(part["hex"])
         out[at:at + len(chunk)] = chunk
     for va, old, new in ap_["reloc"]:
         at = int(va, 16) - dest
