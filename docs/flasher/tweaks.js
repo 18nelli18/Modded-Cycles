@@ -138172,6 +138172,7 @@ window.MC_TWEAKS = {
     "who": "scottmetoyer",
     "repo": "scottmetoyer/ms-multi-output"
    },
+   "cat": "io",
    "variants": [
     {
      "id": "6ch-usbup",
@@ -138189,6 +138190,7 @@ window.MC_TWEAKS = {
     "who": "TinyGregAudio",
     "repo": "TinyGregAudio/Model-TG"
    },
+   "cat": "pack",
    "variants": [
     {
      "id": "model-tg",
@@ -138215,13 +138217,14 @@ window.MC_TWEAKS = {
     "who": "TinyGregAudio",
     "repo": "TinyGregAudio/Model-TG"
    },
+   "cat": "screen",
+   "requires": "model-tg",
    "variants": [
     {
      "id": "sample-preview",
      "label": null
     }
    ],
-   "requires": "model-tg",
    "with": {
     "syntakt": "sample-preview-st"
    }
@@ -138236,6 +138239,7 @@ window.MC_TWEAKS = {
     "who": "drumkilla",
     "repo": "drumkilla/elektron-model-tweaks"
    },
+   "cat": "live",
    "variants": [
     {
      "id": "latching-mute",
@@ -138253,6 +138257,7 @@ window.MC_TWEAKS = {
     "who": "drumkilla",
     "repo": "drumkilla/elektron-model-tweaks"
    },
+   "cat": "seq",
    "variants": [
     {
      "id": "trig-preview",
@@ -138270,6 +138275,7 @@ window.MC_TWEAKS = {
     "who": "drumkilla",
     "repo": "drumkilla/elektron-model-tweaks"
    },
+   "cat": "screen",
    "variants": [
     {
      "id": "browser-scroll",
@@ -138283,6 +138289,7 @@ window.MC_TWEAKS = {
    "desc": "Un appui sur une touche de pas qui porte deja un trig l'efface si tu relaches en moins d'une demi-seconde (0,2 s avec l'OS d'origine). Tenu plus longtemps, le trig reste et ses reglages s'affichent.",
    "status": "tested",
    "credit": null,
+   "cat": "seq",
    "variants": [
     {
      "id": "trig-hold",
@@ -138296,6 +138303,7 @@ window.MC_TWEAKS = {
    "desc": "Le retrig devient un arpegiateur : plusieurs notes tenues avec RETRIG (ou A.On) se jouent l'une apres l'autre. FUNC + RETRIG : sens (Arp) et octaves (Oct), enregistres avec le pattern. En live rec, les notes jouees par l'arpege sont enregistrees une a une.",
    "status": "tested",
    "credit": null,
+   "cat": "seq",
    "variants": [
     {
      "id": "arp",
@@ -138309,6 +138317,7 @@ window.MC_TWEAKS = {
    "desc": "Le tempo monte jusqu'a 546 BPM au lieu de 300 (molette, tap tempo, horloge MIDI recue). 546 est le plafond du format des projets.",
    "status": "tested",
    "credit": null,
+   "cat": "seq",
    "variants": [
     {
      "id": "tempo-max",
@@ -138322,6 +138331,7 @@ window.MC_TWEAKS = {
    "desc": "Au demarrage, les quatre carres du logo apparaissent un par un puis modded-cycles s'ecrit dessous, a la place des carreaux qui clignotent. Meme duree qu'a l'origine.",
    "status": "tested",
    "credit": null,
+   "cat": "screen",
    "variants": [
     {
      "id": "boot-anim",
@@ -138335,6 +138345,7 @@ window.MC_TWEAKS = {
    "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.42.syx (a deposer a l'etape 2), en machines supplementaires apres les 6 d'origine : coche ceux que tu veux. Identiques au Syntakt en emulation.",
    "status": "tested",
    "credit": null,
+   "cat": "sound",
    "engines": [
     {
      "code": "sd",

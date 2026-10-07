@@ -10298,6 +10298,11 @@ const REF_MAINOS = {
 // "Samples OS" tab: official Model:Samples OS 1.13 inside the official Model:Cycles container
 // (tools/crossflash.py --to cycles). SHA-256 of the resulting .syx; tested on a real Model:Cycles.
 const REF_SAMPLES_ON_CYCLES = "614d28cfe1100856aef7a67aa49003726e27e0e6eb3b6b05ecba6dc177e83911";
+// Same tab, for a Model:Samples (notes/41): the official Model:Cycles OS inside the official Model:Samples container,
+// its update check switched to the Model:Samples key (tools/crossflash.py --to samples); and the way back, the
+// official Model:Samples OS in the Model:Cycles SysEx packing (--back-samples). SHA-256 of the resulting .syx.
+const REF_CYCLES_ON_SAMPLES = "c06c23f31e50fac6ad40cd0f633acd4a7da4f63c929dff563dae887b93105dd4";
+const REF_SAMPLES_BACK = "d63ce13dd1a5039d11b60d3f69d4e88e9d0f56fb2e7350c105ec641d32083680";
 
 // Open-source work this flasher builds on (shown in the Credits section).
 const CREDITS = [
@@ -10317,9 +10322,36 @@ const CREDITS = [
 
 const FLASH_GUIDE = `${REPO}/blob/main/FLASH.md`;
 const GUIDE = "../guide/";                      // the site's guide (docs/guide/)
-const GUIDE_OF = { usb6: "usb6", "model-tg": "model-tg", "sample-preview": "sample-preview", "latching-mute": "mute",
-  "trig-preview": "preview", "browser-scroll": "scroll", "trig-hold": "trig-hold", syntakt: "syntakt", arp: "arp",
-  "tempo-max": "tempo", "boot-anim": "boot-anim" };
+// mod id -> anchor of its section in the guide (one line per mod)
+const GUIDE_OF = {
+  usb6: "usb6",
+  "model-tg": "model-tg",
+  "sample-preview": "sample-preview",
+  "latching-mute": "mute",
+  "trig-preview": "preview",
+  "browser-scroll": "scroll",
+  "trig-hold": "trig-hold",
+  syntakt: "syntakt",
+  arp: "arp",
+  "tempo-max": "tempo",
+  "boot-anim": "boot-anim",
+};
+
+// Step 1's sections, in display order: the `cat` of each feature (tools/gen_flasher_tweaks.py, same list there
+// without "other"). A feature without a known cat goes to "other", at the end.
+const CATS = ["pack", "sound", "seq", "live", "screen", "io", "other"];
+const CAT_ICON = {
+  pack: '<rect x="3" y="7" width="12" height="12" rx="2.5"/><path d="M7 7V5.5A2.5 2.5 0 0 1 9.5 3H18.5A2.5 2.5 0 0 1 21 5.5v9a2.5 2.5 0 0 1-2.5 2.5H15"/>',
+  sound: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 7.5v3"/>',
+  seq: '<rect x="2.5" y="8" width="4" height="8" rx="1.2"/><rect x="10" y="8" width="4" height="8" rx="1.2" fill="currentColor"/><rect x="17.5" y="8" width="4" height="8" rx="1.2"/>',
+  live: '<path d="M7 3v18M17 3v18"/><rect x="4.5" y="13" width="5" height="4" rx="1" fill="var(--paper)"/><rect x="14.5" y="6" width="5" height="4" rx="1" fill="var(--paper)"/>',
+  screen: '<rect x="2.5" y="5" width="19" height="12" rx="2"/><path d="M6 9.5h8M6 12.5h5M9 21h6"/>',
+  io: '<path d="M9 2.5v5M15 2.5v5"/><rect x="6" y="7.5" width="12" height="6" rx="1.5"/><path d="M12 13.5v4a3 3 0 0 0 3 3h3"/>',
+  other: '<circle cx="6" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18" cy="12" r="1.4"/>',
+};
+const SEARCH_FROM = 20;         // the search field shows from this many mods
+const PARTLY = false;           // true: an unticked engine card tested with some engines only says "Partly tested"
+const DISCORD = "https://discord.gg/hWegtJZcmm";
 
 // ---------------------------------------------------------------------------
 // Texts
@@ -10331,7 +10363,62 @@ const T = {
     s1: "What do you want to install?",
     tab_mods: "Mods",
     tab_restore: "Official firmware",
-    mods_note: "Tick several to combine them. Choices tagged “Experimental” are not tested on a real Model:Cycles yet.",
+    mods_note: 'Tick what you want: mods combine, unless a line says otherwise. <span class="tag ok">Tested</span>: tried on a real Model:Cycles. <span class="tag exp">Experimental</span>: checked in the emulator, not on the machine yet.',
+    cats_label: "Sections",
+    cat_lit: ", with ticked mods",
+    cat_pack: "Packs", cat_pack_sub: "several mods in one",
+    cat_sound: "Sounds & machines", cat_sound_sub: "new machines, filters",
+    cat_seq: "Sequencer", cat_seq_sub: "trigs, tempo, arpeggios",
+    cat_live: "Live playing", cat_live_sub: "mutes, chords, mixing",
+    cat_screen: "Screen & browsing", cat_screen_sub: "browser, display, startup",
+    cat_io: "USB & MIDI", cat_io_sub: "audio and MIDI in and out",
+    cat_other: "Other mods", cat_other_sub: "",
+    grp_n: "{n} mods", grp_n1: "1 mod",
+    grp_on: "<b>{k}</b> ticked of {n}", grp_on1: "<b>1</b> ticked of {n}",
+    details: "Details",
+    details_of: "Details: {name}",
+    also: "Also contains {n} mods of this list: {names}.",
+    need_syntakt: "+ Syntakt OS in step 2",
+    with_mod: "with {name}",
+    part_tested: "Partly tested",
+    good_to_know: "Good to know:",
+    clash_row: "<b>Doesn't go with {name}</b> (ticked): {why}. Ticking this one unticks {name}.",
+    clash_generic: "both change the same part of the firmware",
+    swapped: "{off} unticked: it doesn't go with {on}.",
+    swapped_n: "{off} unticked: they don't go with {on}.",
+    undo: "Undo",
+    eng_group: "Engines",
+    combo_known: "Already tried on the machine: {list}.",
+    combo_all: "the {n} engines",
+    take: "Use this choice",
+    d_status: "Status",
+    d_tested: "Tested on a real Model:Cycles.",
+    d_exp: "Checked in the emulator, not tested on a Model:Cycles yet.",
+    d_combos: "Tried on the machine: {list}. The other choices are checked in the emulator.",
+    d_with_tested: "With {name}: tried on the machine with {list}.",
+    d_contains: "Contains", d_contains_v: "{names}: nothing more to tick.",
+    d_clash: "Doesn't go with", d_clash_v: "{name}: {why}.",
+    d_file: "Extra file", d_file_syntakt: "your Syntakt OS file, asked for in step 2.",
+    d_requires: "Works with", d_requires_v: "{name} only: ticking this one ticks it too, and unticking {name} unticks this one.",
+    d_engines: "Engines",
+    d_note: "Before installing",
+    d_guide: "How to use it", read_guide: "Read the guide",
+    sel_title: "Your selection",
+    sel_n: "{n} mods", sel_n1: "1 mod",
+    sel_incl: "+ {n} included",
+    sel_exp: "{n} experimental", sel_exp1: "1 experimental",
+    sel_none: "No mod ticked yet: tick the ones to install.",
+    sel_show: "Show", sel_hide: "Hide",
+    sel_clear: "Untick all",
+    sel_remove: "Untick {name}",
+    sel_next: "Step 2",
+    sel_syntakt: "+ your Syntakt OS file, to load in step 2.",
+    search_label: "Search the mods",
+    search_ph: "Search: tempo, filter, mute…",
+    search_clear: "Clear the search",
+    found: "<b>{n}</b> of {total} mods for “{q}” · ",
+    show_all: "show all",
+    found_none: `No mod for “{q}”. An idea for a mod? <a href="${DISCORD}" target="_blank" rel="noopener">Suggest it on Discord</a>. · `,
     restore_text: "Sends your official OS file <b>unchanged</b>, to go back to the stock firmware. It is also a good first rehearsal: it checks your cable and your setup without changing anything.",
     tab_samples: "Samples OS",
     samples_title: "Turn your Model:Cycles into a Model:Samples",
@@ -10420,7 +10507,6 @@ const T = {
     combo_tested: "This choice was tested on a real Model:Cycles.",
     combo_new: "New choice: checked in the emulator, not tested on a Model:Cycles yet.",
     included: "(included with {name})",
-    requires: "(needs {name})",
     with_tg: "With Model-TG: its Sampler is the 7th machine and these engines come after it, from the 8th. A track set to an added machine plays another one on the version without Model-TG, and the other way round.",
     renumber: "Before changing this choice or going back to the official firmware, set the tracks that use an added machine back to an original one (Kick…Chord): their numbers depend on the ticked engines, and MACHINES can freeze on such a track.",
     done_syn_tg: "Then press MACHINES on a track: after Chord comes the Sampler, then {list}. Their knobs show the Syntakt's names. Model-TG's Attack, Filter and Resonance work on them too: hold MACHINE and turn DECAY, SWEEP or CONTOUR. If something goes wrong, flash the official firmware back with this page (first set the tracks that use an added machine back to an original machine).",
@@ -10432,6 +10518,32 @@ const T = {
     miss_samples_cycles: "The first file must be the official Model:Cycles OS (step 2).",
     miss_samples_file: "Load the official Model:Samples OS file (step 2).",
     miss_samples_ack: "Confirm you have a MIDI interface for the way back (step 1).",
+    smp_dir_cyc: "Model:Cycles → Samples OS",
+    smp_dir_smp: "Model:Samples → Cycles OS",
+    smp_dir_back: "Model:Samples: back to its OS",
+    cos_title: "Turn your Model:Samples into a Model:Cycles",
+    cos_text: "Play the Model:Cycles synth engines on your Model:Samples. The page puts the official Model:Cycles OS inside your Model:Samples firmware: the startup menu, the updater and the signature of the Model:Samples stay in place. One small change in the Model:Cycles OS lets it accept the official Model:Samples OS again over USB, so the way back is in this tab too (“Model:Samples: back to its OS”).",
+    cos_w1: "Experimental: not yet tried on a real Model:Samples.",
+    cos_w2: "Back up your samples and projects with Elektron Transfer first: the Model:Cycles OS uses the same storage, and what it does with Model:Samples data is not known yet.",
+    cos_w3: "Under the Cycles OS, your Model:Samples refuses Model:Cycles firmwares (official or with mods), including an update offered by Elektron Transfer: that is expected, nothing is written. To leave, use “Model:Samples: back to its OS”.",
+    cos_w4: `If the way back over USB ever failed, the startup menu of the Model:Samples still takes its official OS through the MIDI IN, with a MIDI interface (<a href="${GUIDE}#cycles-on-samples">guide</a>).`,
+    cos_w5: "Only for a real Model:Samples. A Model:Cycles running the Samples OS (first choice of this tab) also answers as a Model:Samples and would take this firmware, then refuse Model:Cycles firmwares over USB until its startup menu reinstalls its OS through the MIDI IN.",
+    xos_reset: "If the machine does not start properly after the update, switch it off and on again. If it still hangs, hold FUNC while switching it on, then press TRIG 2 (EMPTY RESET): it clears the active project, hence the backup first.",
+    cos_ack: "I have backed up my samples and projects with Elektron Transfer, and I keep the official Model:Samples OS file for the way back.",
+    sback_title: "Give your Model:Samples its own OS back",
+    sback_text: "For a Model:Samples running the Model:Cycles OS installed from this page. The page sends the official Model:Samples OS, unchanged, packed so that the Model:Cycles OS accepts it. The machine restarts as a Model:Samples, as before.",
+    sback_w1: "A Model:Cycles OS installed another way (another tool, or a Model:Cycles build with mods) refuses this file: the machine says the update failed and nothing changes. Such an OS accepts the first choice, “Model:Cycles → Samples OS”, which brings the Model:Samples OS back; failing that, the startup menu and the MIDI IN.",
+    sback_w2: `Sent to a real Model:Cycles, it is refused and nothing changes (<a href="${GUIDE}#cycles-on-samples">guide</a>).`,
+    cos_needs_cycles: "For this choice, the first file must be the official <code>model-cycles_OS1.13.syx</code>, and the second the official Model:Samples OS.",
+    cos_ready: "Firmware ready: the Model:Cycles OS for your Model:Samples.",
+    sback_ready: "Firmware ready: the official Model:Samples OS, for the way back over USB.",
+    mods_list_cos: "Model:Cycles OS (for Model:Samples)",
+    mods_list_sback: "Official Model:Samples OS (way back)",
+    miss_cos_ack: "Confirm your backup and the official Model:Samples file (step 1).",
+    done_cos: "It restarts as a <b>Model:Cycles</b>: Elektron Transfer and your computer see a “Model:Cycles”. To go back, choose “Model:Samples: back to its OS” in the Samples OS tab.",
+    done_sback: "It restarts as a <b>Model:Samples</b>, with its own OS.",
+    dev_fwd_on_cycles: "This machine answers as a Model:Cycles: it would refuse this firmware. If it is a Model:Samples already running the Cycles OS, there is nothing to install; to go back, choose “Model:Samples: back to its OS” if that Cycles OS came from this page, or “Model:Cycles → Samples OS” if it was installed another way.",
+    dev_back_on_samples: "This machine answers as a Model:Samples OS: there is nothing to bring back. If it actually runs the Cycles OS with Model-TG, set Model-TG's Transfer identity back to CYC (or restart the machine), then try again.",
     done_samples: "It restarts as a <b>Model:Samples</b>: Elektron Transfer and your computer see a “Model:Samples”. Load your samples with Transfer.",
     pick_one: "Select at least one mod, or switch to “Official firmware”.",
     midi_asking: "Asking for MIDI access…",
@@ -10453,8 +10565,8 @@ const T = {
     miss_midi: "Allow MIDI access (step 3).",
     miss_port: "Choose a MIDI output (step 3).",
     miss_ack: "Tick the box above to confirm.",
-    miss_ready: "Open CONFIG › UPGRADE on the Model:Cycles (step 3), then flash.",
-    miss_ready_fast: "Ready. At the end, the Model:Cycles asks you to confirm on its screen.",
+    miss_ready: "Open CONFIG › UPGRADE on the {m} (step 3), then flash.",
+    miss_ready_fast: "Ready. At the end, the {m} asks you to confirm on its screen.",
     miss_probe: "Waiting for the Model:Cycles to answer (step 3).",
     miss_dev: "The Model:Cycles must answer first (step 3).",
     miss_dev_mismatch: "This machine can't take this firmware (step 3).",
@@ -10468,10 +10580,10 @@ const T = {
     dev_wrong_file: "This firmware is for a Model:Samples, and this machine is a Model:Cycles: nothing will be sent.",
     watch_fast: "The Model:Cycles checks every block as it arrives. At the end it asks you to confirm the update on its screen.",
     done_title_fast: "Firmware sent.",
-    after_confirm: "Now confirm the update on the Model:Cycles screen (<b>YES</b>). It then writes the firmware and restarts by itself: <b>don't turn it off</b> until it has restarted.",
-    after_gone: "The Model:Cycles is writing the firmware and restarting. <b>Don't turn it off.</b>",
-    after_back: "The Model:Cycles is back: {device} OS {v}.",
-    after_back_plain: "The Model:Cycles is back.",
+    after_confirm: "Now confirm the update on the {m} screen (<b>YES</b>). It then writes the firmware and restarts by itself: <b>don't turn it off</b> until it has restarted.",
+    after_gone: "The {m} is writing the firmware and restarting. <b>Don't turn it off.</b>",
+    after_back: "The {m} is back: {device} OS {v}.",
+    after_back_plain: "The {m} is back.",
     fast_timeout: "The Model:Cycles stopped answering. Turn it off and on, then flash again. If it happens again, choose the classic method in step 3.",
     fast_refused: "The Model:Cycles refused the update{why}. Turn it off and on and try again, or choose the classic method in step 3.",
     fast_write: "The Model:Cycles reported an error while receiving{why}. Turn it off and on and try again, or choose the classic method in step 3.",
@@ -10495,7 +10607,62 @@ const T = {
     s1: "Que voulez-vous installer ?",
     tab_mods: "Mods",
     tab_restore: "Firmware officiel",
-    mods_note: "Cochez-en plusieurs pour les combiner. Les choix marqués « Expérimental » ne sont pas encore testés sur un vrai Model:Cycles.",
+    mods_note: 'Cochez ce que vous voulez : les mods se combinent, sauf mention contraire. <span class="tag ok">Testé</span> : essayé sur un vrai Model:Cycles. <span class="tag exp">Expérimental</span> : vérifié en émulation, pas encore sur la machine.',
+    cats_label: "Rubriques",
+    cat_lit: ", avec des mods cochés",
+    cat_pack: "Packs", cat_pack_sub: "plusieurs mods en un",
+    cat_sound: "Sons et machines", cat_sound_sub: "nouvelles machines, filtres",
+    cat_seq: "Séquenceur", cat_seq_sub: "trigs, tempo, arpèges",
+    cat_live: "Jeu en live", cat_live_sub: "mutes, accords, mixage",
+    cat_screen: "Écran et navigation", cat_screen_sub: "navigateur, affichage, démarrage",
+    cat_io: "USB et MIDI", cat_io_sub: "audio et MIDI vers l'extérieur",
+    cat_other: "Autres mods", cat_other_sub: "",
+    grp_n: "{n} mods", grp_n1: "1 mod",
+    grp_on: "<b>{k}</b> cochés sur {n}", grp_on1: "<b>1</b> coché sur {n}",
+    details: "Détails",
+    details_of: "Détails : {name}",
+    also: "Contient aussi {n} mods de la liste : {names}.",
+    need_syntakt: "+ OS Syntakt à l'étape 2",
+    with_mod: "avec {name}",
+    part_tested: "Testé en partie",
+    good_to_know: "À savoir :",
+    clash_row: "<b>Ne va pas avec {name}</b> (coché) : {why}. Cocher celui-ci décochera {name}.",
+    clash_generic: "les deux modifient le même endroit du firmware",
+    swapped: "{off} décoché : il ne va pas avec {on}.",
+    swapped_n: "{off} décochés : ils ne vont pas avec {on}.",
+    undo: "Annuler",
+    eng_group: "Moteurs",
+    combo_known: "Déjà essayé sur la machine : {list}.",
+    combo_all: "les {n} moteurs",
+    take: "Prendre ce choix",
+    d_status: "État",
+    d_tested: "Testé sur un vrai Model:Cycles.",
+    d_exp: "Vérifié en émulation, pas encore testé sur un Model:Cycles.",
+    d_combos: "Essayé sur la machine : {list}. Les autres choix sont vérifiés en émulation.",
+    d_with_tested: "Avec {name} : essayé sur la machine avec {list}.",
+    d_contains: "Contient", d_contains_v: "{names} : rien à cocher en plus.",
+    d_clash: "Ne va pas avec", d_clash_v: "{name} : {why}.",
+    d_file: "Fichier en plus", d_file_syntakt: "votre fichier d'OS Syntakt, demandé à l'étape 2.",
+    d_requires: "Marche avec", d_requires_v: "{name} seulement : cocher celui-ci le coche aussi, et décocher {name} décoche celui-ci.",
+    d_engines: "Moteurs",
+    d_note: "Avant d'installer",
+    d_guide: "Mode d'emploi", read_guide: "Lire le guide",
+    sel_title: "Votre sélection",
+    sel_n: "{n} mods", sel_n1: "1 mod",
+    sel_incl: "+ {n} inclus",
+    sel_exp: "{n} expérimentaux", sel_exp1: "1 expérimental",
+    sel_none: "Aucun mod coché : cochez ceux à installer.",
+    sel_show: "Voir", sel_hide: "Masquer",
+    sel_clear: "Tout décocher",
+    sel_remove: "Décocher {name}",
+    sel_next: "Étape 2",
+    sel_syntakt: "+ votre fichier d'OS Syntakt, à charger à l'étape 2.",
+    search_label: "Chercher un mod",
+    search_ph: "Chercher : tempo, filtre, mute…",
+    search_clear: "Effacer la recherche",
+    found: "<b>{n}</b> mods sur {total} pour « {q} » · ",
+    show_all: "tout afficher",
+    found_none: `Aucun mod pour « {q} ». Une idée de mod ? <a href="${DISCORD}" target="_blank" rel="noopener">Proposez-la sur Discord</a>. · `,
     restore_text: "Envoie votre fichier d'OS officiel <b>sans le modifier</b>, pour revenir au firmware d'origine. C'est aussi une bonne répétition avant un mod : elle vérifie le câble et l'installation sans rien changer.",
     tab_samples: "OS Samples",
     samples_title: "Transformer le Model:Cycles en Model:Samples",
@@ -10583,7 +10750,6 @@ const T = {
     combo_tested: "Ce choix a été testé sur un vrai Model:Cycles.",
     combo_new: "Nouveau choix : vérifié en émulation, pas encore testé sur un Model:Cycles.",
     included: "(inclus avec {name})",
-    requires: "(demande {name})",
     with_tg: "Avec Model-TG : son Sampler est la 7e machine et ces moteurs viennent après lui, à partir de la 8e. Une piste réglée sur une machine ajoutée en joue une autre sur la version sans Model-TG, et inversement.",
     renumber: "Avant de changer de choix ou de revenir au firmware officiel, remettez sur une machine d'origine (de Kick à Chord) les pistes qui utilisent une machine ajoutée : leurs numéros dépendent des moteurs cochés, et MACHINES peut geler sur une telle piste.",
     done_syn_tg: "Appuyez ensuite sur MACHINES sur une piste : après Chord vient le Sampler, puis {list}. Leurs potards affichent les noms du Syntakt. Attack, Filtre et Résonance de Model-TG y fonctionnent aussi : maintenez MACHINE et tournez DECAY, SWEEP ou CONTOUR. En cas de problème, reflashez le firmware officiel avec cette page (remettez d'abord sur une machine d'origine les pistes qui utilisent une machine ajoutée).",
@@ -10595,6 +10761,32 @@ const T = {
     miss_samples_cycles: "Le premier fichier doit être l'OS officiel du Model:Cycles (étape 2).",
     miss_samples_file: "Déposez le fichier officiel de l'OS Model:Samples (étape 2).",
     miss_samples_ack: "Confirmez que vous avez une interface MIDI pour le retour (étape 1).",
+    smp_dir_cyc: "Model:Cycles → OS Samples",
+    smp_dir_smp: "Model:Samples → OS Cycles",
+    smp_dir_back: "Model:Samples : retour à son OS",
+    cos_title: "Transformer le Model:Samples en Model:Cycles",
+    cos_text: "Jouez les moteurs de synthèse du Model:Cycles sur votre Model:Samples. La page place l'OS officiel du Model:Cycles dans le firmware de votre Model:Samples : le menu de démarrage, l'updater et la signature du Model:Samples restent en place. Une petite modification de l'OS du Model:Cycles lui fait accepter à nouveau l'OS officiel du Model:Samples par USB : le retour se fait aussi depuis cet onglet (« Model:Samples : retour à son OS »).",
+    cos_w1: "Expérimental : pas encore essayé sur un vrai Model:Samples.",
+    cos_w2: "Sauvegardez d'abord vos samples et vos projets avec Elektron Transfer : l'OS du Model:Cycles utilise le même stockage, et on ne sait pas encore ce qu'il fait des données du Model:Samples.",
+    cos_w3: "Sous l'OS Cycles, votre Model:Samples refuse les firmwares Model:Cycles (officiels ou avec mods), y compris une mise à jour proposée par Elektron Transfer : c'est voulu, rien n'est écrit. Pour revenir, utilisez « Model:Samples : retour à son OS ».",
+    cos_w4: `Si le retour par USB échouait un jour, le menu de démarrage du Model:Samples accepte toujours son OS officiel par le MIDI IN, avec une interface MIDI (<a href="${GUIDE}#cycles-on-samples">guide</a>).`,
+    cos_w5: "Seulement pour un vrai Model:Samples. Un Model:Cycles sous l'OS Samples (premier choix de cet onglet) répond lui aussi Model:Samples et prendrait ce firmware, puis refuserait les firmwares Model:Cycles par USB jusqu'à ce que son menu de démarrage réinstalle son OS par le MIDI IN.",
+    xos_reset: "Si la machine démarre mal après la mise à jour, éteignez-la et rallumez-la. Si elle bloque encore, maintenez FUNC à l'allumage puis appuyez sur TRIG 2 (EMPTY RESET) : il vide le projet actif, d'où la sauvegarde d'abord.",
+    cos_ack: "J'ai sauvegardé mes samples et mes projets avec Elektron Transfer, et je garde le fichier officiel de l'OS Model:Samples pour le retour.",
+    sback_title: "Rendre au Model:Samples son propre OS",
+    sback_text: "Pour un Model:Samples sous l'OS du Model:Cycles installé depuis cette page. La page envoie l'OS officiel du Model:Samples, sans le modifier, emballé pour que l'OS du Model:Cycles l'accepte. La machine redémarre en Model:Samples, comme avant.",
+    sback_w1: "Un OS Model:Cycles installé autrement (avec un autre outil, ou un build Model:Cycles avec mods) refuse ce fichier : la machine dit que la mise à jour a échoué et rien ne change. Un tel OS accepte le premier choix, « Model:Cycles → OS Samples », qui rend l'OS du Model:Samples ; à défaut, le menu de démarrage et le MIDI IN.",
+    sback_w2: `Envoyé à un vrai Model:Cycles, il est refusé et rien ne change (<a href="${GUIDE}#cycles-on-samples">guide</a>).`,
+    cos_needs_cycles: "Pour ce choix, le premier fichier doit être le <code>model-cycles_OS1.13.syx</code> officiel, et le second l'OS officiel du Model:Samples.",
+    cos_ready: "Firmware prêt : l'OS du Model:Cycles pour votre Model:Samples.",
+    sback_ready: "Firmware prêt : l'OS officiel du Model:Samples, pour le retour par USB.",
+    mods_list_cos: "OS Model:Cycles (pour Model:Samples)",
+    mods_list_sback: "OS Model:Samples officiel (retour)",
+    miss_cos_ack: "Confirmez votre sauvegarde et le fichier officiel du Model:Samples (étape 1).",
+    done_cos: "Il redémarre en <b>Model:Cycles</b> : Elektron Transfer et votre ordinateur voient un « Model:Cycles ». Pour revenir, choisissez « Model:Samples : retour à son OS » dans l'onglet OS Samples.",
+    done_sback: "Il redémarre en <b>Model:Samples</b>, avec son propre OS.",
+    dev_fwd_on_cycles: "Cette machine répond comme un Model:Cycles : elle refuserait ce firmware. Si c'est un Model:Samples déjà sous l'OS Cycles, il n'y a rien à installer ; pour revenir, choisissez « Model:Samples : retour à son OS » si cet OS Cycles vient de cette page, ou « Model:Cycles → OS Samples » s'il a été installé autrement.",
+    dev_back_on_samples: "Cette machine répond comme l'OS du Model:Samples : il n'y a rien à rendre. Si elle tourne en fait sous l'OS Cycles avec Model-TG, remettez l'identité Transfer de Model-TG sur CYC (ou redémarrez la machine), puis réessayez.",
     done_samples: "Il redémarre en <b>Model:Samples</b> : Elektron Transfer et votre ordinateur voient un « Model:Samples ». Chargez vos samples avec Transfer.",
     pick_one: "Cochez au moins un mod, ou passez sur « Firmware officiel ».",
     midi_asking: "Demande d'accès MIDI…",
@@ -10616,8 +10808,8 @@ const T = {
     miss_midi: "Autorisez le MIDI (étape 3).",
     miss_port: "Choisissez une sortie MIDI (étape 3).",
     miss_ack: "Cochez la case ci-dessus pour confirmer.",
-    miss_ready: "Ouvrez CONFIG › UPGRADE sur le Model:Cycles (étape 3), puis flashez.",
-    miss_ready_fast: "Prêt. À la fin, le Model:Cycles demande de confirmer sur son écran.",
+    miss_ready: "Ouvrez CONFIG › UPGRADE sur le {m} (étape 3), puis flashez.",
+    miss_ready_fast: "Prêt. À la fin, le {m} demande de confirmer sur son écran.",
     miss_probe: "En attente d'une réponse du Model:Cycles (étape 3).",
     miss_dev: "Le Model:Cycles doit d'abord répondre (étape 3).",
     miss_dev_mismatch: "Cette machine ne peut pas recevoir ce firmware (étape 3).",
@@ -10631,10 +10823,10 @@ const T = {
     dev_wrong_file: "Ce firmware est pour un Model:Samples, et cette machine est un Model:Cycles : rien ne sera envoyé.",
     watch_fast: "Le Model:Cycles vérifie chaque bloc à son arrivée. À la fin, il demande de confirmer la mise à jour sur son écran.",
     done_title_fast: "Firmware envoyé.",
-    after_confirm: "Confirmez maintenant la mise à jour sur l'écran du Model:Cycles (<b>YES</b>). Il écrit alors le firmware et redémarre tout seul : <b>ne l'éteignez pas</b> avant qu'il ait redémarré.",
-    after_gone: "Le Model:Cycles écrit le firmware et redémarre. <b>Ne l'éteignez pas.</b>",
-    after_back: "Le Model:Cycles est de retour : {device} OS {v}.",
-    after_back_plain: "Le Model:Cycles est de retour.",
+    after_confirm: "Confirmez maintenant la mise à jour sur l'écran du {m} (<b>YES</b>). Il écrit alors le firmware et redémarre tout seul : <b>ne l'éteignez pas</b> avant qu'il ait redémarré.",
+    after_gone: "Le {m} écrit le firmware et redémarre. <b>Ne l'éteignez pas.</b>",
+    after_back: "Le {m} est de retour : {device} OS {v}.",
+    after_back_plain: "Le {m} est de retour.",
     fast_timeout: "Le Model:Cycles ne répond plus. Éteignez-le puis rallumez-le, et relancez. Si ça recommence, choisissez la méthode classique à l'étape 3.",
     fast_refused: "Le Model:Cycles a refusé la mise à jour{why}. Éteignez-le puis rallumez-le et réessayez, ou choisissez la méthode classique à l'étape 3.",
     fast_write: "Le Model:Cycles a signalé une erreur pendant la réception{why}. Éteignez-le puis rallumez-le et réessayez, ou choisissez la méthode classique à l'étape 3.",
@@ -10658,66 +10850,90 @@ const T = {
 const FEAT = {
   en: {
     usb6: { label: "6-channel USB audio",
+      short: "Each track on its own USB channel. No stereo mix over USB any more.",
       desc: "Each track gets its own USB channel (48 kHz / 32-bit): record the 6 tracks separately in your DAW. The stereo mix is no longer sent over USB. OS updates over USB keep working." },
     "model-tg": { label: "Model-TG",
+      short: "TinyGregAudio's big pack: a 7th Sampler machine and many additions.",
+      parts: ["Sampler (7th machine)", "resampling", "retrig and master FX", "filter and resonance on the stock machines", "slide trigs", "Scale Lock", "samples through Elektron Transfer"],
       desc: "A Sampler machine (7th machine) with seven playback modes, resampling, a beat-repeat page with master FX, Attack, Filter and Resonance on the stock machines, slide trigs that glide the parameters from one trig to the next, Scale Lock, sample upload through Elektron Transfer, and lower CPU use. It already includes drumkilla's three tweaks. With the Syntakt engines, the Sampler stays the 7th machine and the engines follow it.",
       note: "Only install an OS while Device Config > Transfer is set to CYC (every power-on starts at CYC). Projects using the Sampler won't play those tracks on another firmware." },
     "sample-preview": { label: "Sample preview (Model-TG)",
+      short: "On a Sampler track, in the preset menu, the pad plays the sample under the cursor.",
       desc: "On a Sampler track, press FUNC + MACHINES (preset menu) and move the cursor onto a sample: the track's pad (or its trig keys in keyboard mode) plays it, just as the original OS lets you hear the preset under the cursor. Nothing plays by itself while you scroll. A sample that isn't in memory yet loads on the first press (a short wait), into free space or in place of samples the project doesn't use. The track keeps its own sample: its trigs still play it, and so does its pad once you leave the menu. Sampler presets that remember their sample should also play that sample instead of the track's.",
       note: "If there isn't enough free memory (a preview keeps room for recording and never removes a sample your project uses), or while Model-TG is resampling, the press plays nothing. It needs Model-TG: unticking Model-TG unticks it." },
     "latching-mute": { label: "Latching mute mode",
+      short: "TRACK + FUNC: mute mode stays on, no need to hold FUNC.",
       desc: "Hold TRACK and tap FUNC: mute mode stays on, so you mute tracks without holding FUNC. A short tap on FUNC leaves it." },
     "trig-preview": { label: "Trig preview",
+      short: "Sequencer stopped, hold a step and press PAGE to hear it.",
       desc: "With the sequencer stopped or paused, hold a step and press PAGE: the step plays with its own note, length and p-locks." },
     "browser-scroll": { label: "Scroll long names",
+      short: "In the sound browser, names too long for the screen scroll.",
       desc: "In the sound browser, a name too long for the screen scrolls so you can read it." },
     syntakt: { label: "Real Syntakt engines",
+      short: "Syntakt engines as extra machines, read from your own Syntakt OS file.",
       desc: "The Syntakt's own engines, read from your Syntakt OS file (step 2) and added after Chord, in this order, with the Syntakt's knob names and defaults. Tick the ones you want." },
-    "eng-sd": { note: "Vintage snare." },
-    "eng-cp": { note: "Vintage clap." },
-    "eng-toy": { note: "Toy-like tuned percussion." },
-    "eng-bits": { note: "Two digital oscillators with rate and bit reduction. PUNCH switches Bit Redux on." },
-    "eng-swarm": { note: "A swarm of detuned saws (supersaw). PUNCH adds the sub-octave." },
+    "eng-sd": { short: "vintage snare", note: "Vintage snare." },
+    "eng-cp": { short: "vintage clap", note: "Vintage clap." },
+    "eng-toy": { short: "toy-like percussion", note: "Toy-like tuned percussion." },
+    "eng-bits": { short: "digital, bit crush", note: "Two digital oscillators with rate and bit reduction. PUNCH switches Bit Redux on." },
+    "eng-swarm": { short: "supersaw", note: "A swarm of detuned saws (supersaw). PUNCH adds the sub-octave." },
     "trig-hold": { label: "Easier trig removal",
+      short: "A short press removes the trig; a long one keeps it and shows its settings.",
       desc: "Pressing a trig key whose step already holds a trig removes it if you let go within half a second (0.2 s on the stock OS). Hold it longer and the trig stays, as before: its settings show up. Turning a knob while you hold keeps the trig too." },
     arp: { label: "Arpeggiator",
+      short: "The retrig becomes an arpeggiator: held notes play one after another.",
       desc: "The retrig becomes an arpeggiator: hold several notes on a track with RETRIG held (or A.On) and they play one after another at the retrig rate. FUNC + RETRIG adds Arp (direction: UP, DOWN, UPDN, RAND, PLAY or OFF) and Oct (1 to 4 octaves), saved with the pattern." },
     "tempo-max": { label: "Tempo up to 546 BPM",
+      short: "Tempo goes up to 546 BPM instead of 300, MIDI clock included.",
       desc: "The tempo goes up to 546.0 BPM instead of 300: TEMPO knob, tap tempo, incoming MIDI clock and saved projects. 546 is the ceiling of the project format. Tempo-synced LFOs stay right at these speeds.",
       note: "Above 300 BPM, the processor may struggle to keep up with busy patterns: push it knowingly. A project saved above 300 BPM reopens at 120 BPM on the original OS." },
     "boot-anim": { label: "modded-cycles startup animation",
+      short: "At startup the modded-cycles logo animates, without making startup longer.",
       desc: "When the Model:Cycles starts, the four rounded squares of the modded-cycles logo pop in one by one and “modded-cycles” types itself underneath, instead of the original tile animation. It lasts as long as the original: startup is not slower." },
   },
   fr: {
     usb6: { label: "Audio USB 6 canaux",
+      short: "Chaque piste sur son propre canal USB. Plus de mix stéréo en USB.",
       desc: "Chaque piste a son propre canal USB (48 kHz / 32 bits) : enregistrez les 6 pistes séparément dans votre logiciel. Le mix stéréo n'est plus envoyé en USB. La mise à jour de l'OS par USB continue de fonctionner." },
     "model-tg": { label: "Model-TG",
+      short: "Le grand pack de TinyGregAudio : une 7e machine Sampler et de nombreux ajouts.",
+      parts: ["Sampler (7e machine)", "rééchantillonnage", "retrig et effets master", "filtre et résonance sur les machines d'origine", "slide trigs", "Scale Lock", "samples par Elektron Transfer"],
       desc: "Une machine Sampler (7e machine) à sept modes de lecture, le rééchantillonnage, une page de retrig avec effets master, Attack, Filtre et Résonance sur les machines d'origine, des slide trigs qui font glisser les paramètres d'un trig au suivant, Scale Lock, l'envoi d'échantillons par Elektron Transfer, et moins de charge processeur. Contient déjà les trois tweaks de drumkilla. Avec les moteurs du Syntakt, le Sampler reste la 7e machine et les moteurs le suivent.",
       note: "N'installez un OS que lorsque Device Config > Transfer est sur CYC (chaque démarrage repart sur CYC). Les projets qui utilisent le Sampler ne joueront pas ces pistes sur un autre firmware." },
     "sample-preview": { label: "Écoute des samples (Model-TG)",
+      short: "Sur une piste Sampler, dans le menu des presets, le pad joue le sample sous le curseur.",
       desc: "Sur une piste Sampler, appuyez sur FUNC + MACHINES (menu des presets) et placez le curseur sur un sample : le pad de la piste (ou ses touches de pas en mode clavier) le joue, comme l'OS d'origine fait entendre le preset sous le curseur. Rien ne joue tout seul pendant le défilement. Un sample pas encore en mémoire se charge au premier appui (un court instant), dans la place libre ou à la place de samples que le projet n'utilise pas. La piste garde son propre sample : ses trigs le jouent toujours, et son pad aussi dès que vous quittez le menu. Les presets du Sampler qui gardent leur sample devraient aussi faire entendre ce sample plutôt que celui de la piste.",
       note: "S'il n'y a pas assez de mémoire libre (une écoute garde de la place pour l'enregistrement et ne retire jamais un sample utilisé par votre projet), ou pendant que Model-TG rééchantillonne, l'appui ne joue rien. L'option demande Model-TG : décocher Model-TG la décoche." },
     "latching-mute": { label: "Mode mute verrouillé",
+      short: "TRACK + FUNC : le mode mute reste actif, plus besoin de tenir FUNC.",
       desc: "Maintenez TRACK et tapez FUNC : le mode mute reste actif, vous mutez les pistes sans tenir FUNC. Un appui court sur FUNC en sort." },
     "trig-preview": { label: "Écoute d'un pas",
+      short: "Séquenceur arrêté, maintenez un pas et appuyez sur PAGE pour l'entendre.",
       desc: "Séquenceur à l'arrêt ou en pause, maintenez un pas et appuyez sur PAGE : le pas joue avec sa note, sa longueur et ses p-locks." },
     "browser-scroll": { label: "Défilement des noms longs",
+      short: "Dans le navigateur de sons, les noms trop longs pour l'écran défilent.",
       desc: "Dans le navigateur de sons, un nom trop long pour l'écran défile pour rester lisible." },
     syntakt: { label: "Vrais moteurs du Syntakt",
+      short: "Des moteurs du Syntakt en machines en plus, lus dans votre propre OS Syntakt.",
       desc: "Les moteurs du Syntakt, lus dans votre fichier d'OS Syntakt (étape 2) et ajoutés après Chord, dans cet ordre, avec les noms et réglages des potards du Syntakt. Cochez ceux que vous voulez." },
-    "eng-sd": { note: "Caisse claire vintage." },
-    "eng-cp": { note: "Clap vintage." },
-    "eng-toy": { note: "Percussion accordée façon jouet." },
-    "eng-bits": { note: "Deux oscillateurs numériques avec réduction d'échantillonnage et de bits. PUNCH active Bit Redux." },
-    "eng-swarm": { note: "Un essaim de dents de scie désaccordées (supersaw). PUNCH ajoute l'octave inférieure." },
+    "eng-sd": { short: "caisse claire vintage", note: "Caisse claire vintage." },
+    "eng-cp": { short: "clap vintage", note: "Clap vintage." },
+    "eng-toy": { short: "percu façon jouet", note: "Percussion accordée façon jouet." },
+    "eng-bits": { short: "numérique, bit crush", note: "Deux oscillateurs numériques avec réduction d'échantillonnage et de bits. PUNCH active Bit Redux." },
+    "eng-swarm": { short: "supersaw", note: "Un essaim de dents de scie désaccordées (supersaw). PUNCH ajoute l'octave inférieure." },
     "trig-hold": { label: "Effacer un trig plus facilement",
+      short: "Un appui bref efface le trig ; un appui long le garde et montre ses réglages.",
       desc: "Un appui sur une touche de pas qui porte déjà un trig l'efface si vous relâchez en moins d'une demi-seconde (0,2 s avec l'OS d'origine). Tenez plus longtemps et le trig reste, comme avant : ses réglages s'affichent. Tourner un potard pendant l'appui garde aussi le trig." },
     arp: { label: "Arpégiateur",
+      short: "Le retrig devient un arpégiateur : les notes tenues se jouent l'une après l'autre.",
       desc: "Le retrig devient un arpégiateur : tenez plusieurs notes sur une piste avec RETRIG tenu (ou A.On) et elles se jouent l'une après l'autre au rythme du retrig. FUNC + RETRIG ajoute Arp (sens : UP, DOWN, UPDN, RAND, PLAY ou OFF) et Oct (1 à 4 octaves), enregistrés avec le pattern." },
     "tempo-max": { label: "Tempo jusqu'à 546 BPM",
+      short: "Le tempo monte jusqu'à 546 BPM au lieu de 300, horloge MIDI comprise.",
       desc: "Le tempo monte jusqu'à 546,0 BPM au lieu de 300 : potard TEMPO, tap tempo, horloge MIDI reçue et projets enregistrés. 546 est le plafond du format des projets. Les LFO synchronisés au tempo restent justes à ces vitesses.",
       note: "Au-delà de 300 BPM, le processeur peut avoir plus de mal à suivre la cadence sur des patterns chargés : à utiliser en connaissance de cause. Un projet enregistré au-dessus de 300 BPM se rouvre à 120 BPM sur l'OS d'origine." },
     "boot-anim": { label: "Animation de démarrage modded-cycles",
+      short: "Au démarrage, le logo modded-cycles s'anime, sans rallonger le démarrage.",
       desc: "Au démarrage du Model:Cycles, les quatre carrés arrondis du logo modded-cycles apparaissent un par un et « modded-cycles » s'écrit dessous, à la place de l'animation de carreaux d'origine. Elle dure autant que l'originale : le démarrage n'est pas plus long." },
   },
 };
@@ -10729,6 +10945,7 @@ const st = {
   lang: "en",
   mode: "mods",            // "mods" | "restore" | "samples"
   samplesOs: null,         // official Model:Samples OS { raw, name, sha } ("samples" mode)
+  smpDir: "cyc",           // "samples" mode: "cyc" Samples OS for a Model:Cycles | "smp" Cycles OS for a Model:Samples | "back" its way back
   samplesError: null,
   syntakt: null,           // official Syntakt OS { raw, name, sha } (source of the Syntakt engines)
   syntaktError: null,
@@ -10815,6 +11032,8 @@ function applyLang(lang) {
 // ---------------------------------------------------------------------------
 // feature id -> { on: bool, variant: id } ; engine cards (real Syntakt engines): { on: bool, engines: [codes] }
 const selection = {};
+// display-only state of the picker (never saved): open Details drawers, folded sections, search, last swap (Undo)
+const pick = { open: new Set(), folded: new Set(), q: "", swap: null, selOpen: false };
 
 // Engine card: the combination of ticked engines (kept in catalog order) and its tweak.
 // Two cards that can't be ticked together (Model-TG and the tweaks it already holds, or the Syntakt engines).
@@ -10827,19 +11046,6 @@ function excludes(f, g) {
 // locked, "included with Model-TG", but adds nothing to the build (it is not on in the selection).
 function includedBy(f) {
   return ((window.MC_TWEAKS && window.MC_TWEAKS.features) || []).find((g) => (g.includes || []).includes(f.id) && isOn(g.id));
-}
-
-// Tick a card. A card that only works with another one (f.requires: sample preview needs Model-TG) ticks that one
-// first, exactly as if the user had ticked it; then the cards that can't go with this one go off.
-function tick(f) {
-  const tw = window.MC_TWEAKS;
-  const need = f.requires && tw.features.find((g) => g.id === f.requires);
-  if (need && !isOn(need.id)) tick(need);
-  const sel = selection[f.id];
-  sel.on = true;
-  for (const g of tw.features)                      // cards that can't go together: the other one goes off
-    if (g !== f && selection[g.id] && excludes(f, g)) selection[g.id].on = false;
-  if (f.engines && !sel.engines.length) sel.engines = [f.engines[0].code];
 }
 
 // A card whose required card is off goes off too, whatever turned that one off (unticked, or excluded by another
@@ -10864,129 +11070,414 @@ function comboOfFeature(id) {
   return f && isOn(id) ? comboOf(f, selection[id]) : null;
 }
 
+// The mods, shown by section (cat), in FEATURES order inside a section. The build keeps FEATURES order whatever the
+// display order (chosenTweaks, REF_MAINOS keys).
+const features = () => (window.MC_TWEAKS && window.MC_TWEAKS.features) || [];
+const featById = (id) => features().find((f) => f.id === id);
+function selOf(f) {
+  return selection[f.id] ||
+    (selection[f.id] = f.engines ? { on: false, engines: [] } : { on: false, variant: f.variants[0].id });
+}
+const label = (f) => featText(f.id, "label", f.label);
+// a mod without a short text shows the first sentence of its description (cut to 2 lines by the CSS)
+function shortOf(f) {
+  const d = featText(f.id, "desc", f.desc);
+  return featText(f.id, "short", "") || (d.match(/^.*?[.!?](?=\s|$)/) || [d])[0];
+}
+const catOf = (f) => (f.cat && CATS.includes(f.cat) ? f.cat : "other");
+const order = () => CATS.flatMap((c) => features().filter((f) => catOf(f) === c));    // display order
+// the real "excludes" (explained to the user); excludes() above also counts what a pack includes
+const clashOnly = (f, g) => (f.excludes || []).includes(g.id) || (g.excludes || []).includes(f.id);
+const clashWhy = (f, g) => featText(f.id, "clash", "") || featText(g.id, "clash", "") || t("clash_generic");
+
+// Tested or experimental, down to the exact engine combination (with Model-TG, the combined version's own tests).
+// "part": an unticked engine card that is tested with some engines only (PARTLY).
+function statusOf(f) {
+  const sel = selOf(f);
+  if (f.engines) {
+    if (!sel.on) return PARTLY && f.status === "tested" && f.combos.some((c) => !c.tested && !c.tg_tested) ? "part" : f.status;
+    const c = comboOf(f, sel);
+    return c && (isOn("model-tg") ? c.tg_tested : c.tested) ? "tested" : "experimental";
+  }
+  // Model-TG's card follows the engines' choice
+  // (a card that requires another one, sample preview, keeps its own status: those tests didn't include it)
+  const withId = sel.on && f.with && !f.requires ? Object.keys(f.with).find(isOn) : null;
+  const tgCombo = withId ? comboOfFeature(withId) : null;
+  if (tgCombo) return tgCombo.tg_tested ? "tested" : "experimental";
+  return f.status === "tested" ? "tested" : "experimental";
+}
+const tagHtml = (s) => s === "tested" ? `<span class="tag ok">${esc(t("tested"))}</span>`
+  : s === "part" ? `<span class="tag ok">${esc(t("part_tested"))}</span>` : `<span class="tag exp">${esc(t("experimental"))}</span>`;
+
+// Tick or untick a card: cards that can't go together turn the other one off, as before; a real clash (excludes) is
+// said on the row just ticked and in the selection bar, with Undo. A card that only works with another one
+// (f.requires: sample preview needs Model-TG) ticks that one first, with that card's own exclusions, as if the user
+// had ticked it; a card left without the card it requires goes off too (dropOrphans), said with the others.
+function setOn(f, on) {
+  if (includedBy(f)) return;                           // locked while the card holding it is ticked
+  const before = JSON.parse(JSON.stringify(selection));
+  pick.swap = null;
+  const off = [];
+  const turnOn = (h) => {
+    const sel = selOf(h);
+    sel.on = true;
+    for (const g of features())
+      if (g !== h && isOn(g.id) && excludes(h, g)) { selection[g.id].on = false; if (clashOnly(h, g)) off.push(g.id); }
+    if (h.engines && !sel.engines.length) sel.engines = [h.engines[0].code];
+  };
+  if (!on) selOf(f).on = false;
+  else {
+    const need = f.requires && featById(f.requires);
+    if (need && !isOn(need.id)) turnOn(need);
+    turnOn(f);
+  }
+  dropOrphans();
+  if (on) for (const g of features())
+    if (g.requires && before[g.id] && before[g.id].on && !isOn(g.id) && !off.includes(g.id)) off.push(g.id);
+  if (off.length) pick.swap = { by: f.id, off, before };
+}
+// One engine pad: the ticked engines stay in catalog order; no engine left turns the card off.
+function setEngine(f, code, on) {
+  const sel = selOf(f), keep = new Set(sel.engines);
+  if (on) keep.add(code); else keep.delete(code);
+  sel.engines = f.engines.map((e) => e.code).filter((c) => keep.has(c));
+  if (!sel.engines.length) sel.on = false;
+  pick.swap = null;
+}
+function undo() {
+  if (!pick.swap) return null;
+  const by = pick.swap.by, before = pick.swap.before;
+  for (const id in before) selection[id] = before[id];
+  pick.swap = null;
+  return by;
+}
+
+// Search (shown from SEARCH_FROM mods): accent- and case-insensitive, in both languages, every word must match.
+const fold = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const hay = {};
+function haystack(f) {
+  if (hay[f.id]) return hay[f.id];
+  const parts = [f.label, f.desc];
+  for (const L of ["en", "fr"]) {
+    const x = FEAT[L][f.id] || {};
+    parts.push(x.label, x.short, x.desc, x.clash, (x.parts || []).join(" "), T[L]["cat_" + catOf(f)]);
+    for (const e of f.engines || []) parts.push(e.name, e.label, (FEAT[L]["eng-" + e.code] || {}).short);
+  }
+  if (f.credit) parts.push(f.credit.who);
+  return (hay[f.id] = fold(parts.filter(Boolean).join(" ")));
+}
+const searching = () => features().length >= SEARCH_FROM && pick.q.trim() !== "";
+const matches = (f) => !searching() || fold(pick.q).split(/\s+/).filter(Boolean).every((w) => haystack(f).includes(w));
+
 function renderFeatures() {
   const box = $("features");
-  const tw = window.MC_TWEAKS;
-  if (!box || !tw || !tw.features) return;
+  if (!box || !window.MC_TWEAKS || !window.MC_TWEAKS.features) return;
+  const focusId = document.activeElement && document.activeElement.id;
+  features().forEach(selOf);
   box.innerHTML = "";
-  dropOrphans();
-  for (const f of tw.features) {
-    const sel = selection[f.id] ||
-      (selection[f.id] = f.engines ? { on: false, engines: [] } : { on: false, variant: f.variants[0].id });
-    const holder = includedBy(f);
-    const need = f.requires && tw.features.find((g) => g.id === f.requires);   // "(needs Model-TG)"
-    const card = document.createElement("label");
-    card.className = "feat" + (sel.on || holder ? " on" : "") + (holder ? " included" : "");
-    card.htmlFor = "feat-" + f.id;
+  dropOrphans();                                   // a card without the card it requires goes off
+  for (const c of CATS) {
+    const mods = features().filter((f) => catOf(f) === c);
+    if (!mods.length) continue;
+    const lit = mods.filter((f) => isOn(f.id) || includedBy(f));
+    const folded = pick.folded.has(c) && !searching();
+    const g = document.createElement("section");
+    g.className = "grp";
+    g.id = "cat-" + c;
+    g.hidden = !mods.some(matches);
+    const n = lit.length ? t(lit.length > 1 ? "grp_on" : "grp_on1", { k: lit.length, n: mods.length })
+      : esc(t(mods.length > 1 ? "grp_n" : "grp_n1", { n: mods.length }));
+    const sub = t("cat_" + c + "_sub");
+    g.innerHTML = `<h3><button type="button" class="grp-h" id="grp-h-${c}" aria-expanded="${!folded}" aria-controls="grp-${c}">` +
+      `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CAT_ICON[c]}</svg>` +
+      `<span class="gt">${esc(t("cat_" + c))}</span>${sub ? `<span class="gs">${esc(sub)}</span>` : ""}<span class="gn">${n}</span>` +
+      `<svg class="chev" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5l4 4 4-4"/></svg>` +
+      `</button></h3>` +
+      (folded && lit.length ? `<p class="grp-sel">${lit.map((f) => `<span class="${includedBy(f) ? "inc" : ""}">${esc(label(f))}</span>`).join("")}</p>` : "");
+    const body = document.createElement("div");
+    body.className = "grp-body";
+    body.id = "grp-" + c;
+    body.hidden = folded;
+    for (const f of mods) body.appendChild(renderRow(f));
+    g.appendChild(body);
+    box.appendChild(g);
+  }
+  renderFind();
+  renderCats();
+  renderSelection();
+  // keyboard users keep their place: the element that had the focus gets it back after the rebuild
+  if (focusId && (!document.activeElement || document.activeElement.id !== focusId) && $(focusId)) $(focusId).focus({ preventScroll: true });
+}
 
-    const cb = document.createElement("input");
-    cb.type = "checkbox";
-    cb.id = "feat-" + f.id;
-    cb.checked = sel.on || !!holder;
-    cb.disabled = !!holder;
-    cb.addEventListener("change", () => {
-      if (includedBy(f)) { renderFeatures(); return; }   // locked while the card holding it is ticked
-      if (cb.checked) tick(f); else sel.on = false;       // unticked: the cards that require it go off (dropOrphans)
+function renderRow(f) {
+  const sel = selOf(f), holder = includedBy(f), status = statusOf(f), on = sel.on || !!holder;
+  const d = document.createElement("div");
+  d.className = "mod" + (on ? " on" : "") + (holder ? " incl" : "");
+  d.id = "mod-" + f.id;
+  d.hidden = !matches(f);
+  const side = [];
+  // "by drumkilla" / "based on ms-multi-output by scottmetoyer"; a link inside the <label> doesn't toggle the checkbox
+  if (f.credit) side.push(`<span class="credit">${creditHtml(f.credit)}` +
+    (f.license ? ` · <a href="${esc(f.license)}" target="_blank" rel="noopener">${esc(t("license_mit"))}</a>` : "") + `</span>`);
+  if (f.needs === "syntakt") side.push(`<span class="need">${esc(t("need_syntakt"))}</span>`);
+  const req = f.requires && featById(f.requires);
+  if (req) side.push(`<span class="need">${esc(t("with_mod", { name: label(req) }))}</span>`);
+  const open = pick.open.has(f.id);
+  d.innerHTML = `<label class="mod-row" for="feat-${f.id}">` +
+      `<input type="checkbox" id="feat-${f.id}"${on ? " checked" : ""}${holder ? " disabled" : ""}>` +
+      `<span class="ttl"><span class="nm">${esc(label(f))}</span>${holder ? `<span class="incl">${esc(t("included", { name: label(holder) }))}</span>` : ""}</span>` +
+      `<span class="by">${side.join("")}</span>` +
+      `<span class="st">${tagHtml(status)}</span>` +
+      `<span class="short">${esc(shortOf(f))}</span>` +
+    `</label>` +
+    `<button type="button" class="more" id="more-${f.id}" aria-expanded="${open}" aria-controls="det-${f.id}" aria-label="${esc(t("details_of", { name: label(f) }))}">` +
+      `<span class="lbl">${esc(t("details"))}</span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5l4 4 4-4"/></svg></button>` +
+    `<div class="ext"></div>`;
+  const ext = d.querySelector(".ext");
+  const add = (html) => ext.insertAdjacentHTML("beforeend", html);
+
+  // a pack: what it brings, and the mods of this list it already holds
+  const parts = featText(f.id, "parts", null);
+  if (parts) add(`<ul class="parts">${parts.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>`);
+  const held = (f.includes || []).map(featById).filter(Boolean);
+  if (held.length) add(`<p class="also">${t("also", { n: held.length, names: held.map((g) => `<b>${esc(label(g))}</b>`).join(", ") })}</p>`);
+  // just unticked: said on the row just ticked, where the eyes are, with Undo
+  if (pick.swap && pick.swap.by === f.id) add(`<p class="say swap">${esc(swapText(pick.swap))} <button type="button" class="lnk" data-undo>${esc(t("undo"))}</button></p>`);
+  // before ticking: why this mod doesn't go with a ticked one
+  if (!on) for (const g of features())
+    if (g !== f && isOn(g.id) && clashOnly(f, g)) add(`<p class="say clash">${t("clash_row", { name: esc(label(g)), why: esc(clashWhy(f, g)) })}</p>`);
+  // several variants of one mod (none today): a sub-choice once ticked
+  if (!f.engines && f.variants.length > 1 && sel.on) add(renderVariants(f, sel));
+  if (f.engines && sel.on) add(renderEngines(f, sel, status));
+  if (sel.on && featText(f.id, "note", "")) add(`<p class="say"><b>${esc(t("good_to_know"))}</b> ${esc(featText(f.id, "note", ""))}</p>`);
+  add(renderDetails(f, sel, open));
+  return d;
+}
+
+function swapText(sw) {
+  return t(sw.off.length > 1 ? "swapped_n" : "swapped",
+    { off: sw.off.map((id) => label(featById(id))).join(", "), on: label(featById(sw.by)) });
+}
+
+function renderVariants(f, sel) {
+  return `<div class="variants">` + f.variants.map((v) =>
+    `<label><input type="radio" name="var-${f.id}" value="${esc(v.id)}"${sel.variant === v.id ? " checked" : ""}>` +
+    `<span>${esc(featText(v.id, "label", v.label || v.id))}<small>${esc(featText(v.id, "note", ""))}</small></span></label>`).join("") + `</div>`;
+}
+
+// An engine card (real Syntakt engines): one pad per engine, the state of the ticked combination, and the warnings in
+// full. The pads sit outside the row's label: no nested labels.
+function renderEngines(f, sel, status) {
+  const pads = f.engines.map((e) => `<label class="pad"><input type="checkbox" id="eng-${e.code}" name="eng-${f.id}" value="${e.code}"` +
+    `${sel.engines.includes(e.code) ? " checked" : ""}><b>${esc(e.name)}</b><span class="vh"> — </span><small class="pl">${esc(e.label)}</small>` +
+    `<small>${esc(featText("eng-" + e.code, "short", ""))}</small></label>`).join("");
+  let html = `<div class="pads" role="group" aria-label="${esc(t("eng_group"))}">${pads}</div>`;
+  const combo = comboOf(f, sel);
+  const tg = isOn("model-tg"), tgName = label(featById("model-tg") || { id: "model-tg", label: "Model-TG" });
+  const list = (c, withTg) => (c.engines.length === f.engines.length ? t("combo_all", { n: c.engines.length })
+    : c.engines.map((k) => f.engines.find((e) => e.code === k).name).join(" + ")) + (withTg ? " " + t("with_mod", { name: tgName }) : "");
+  if (combo) {
+    // the ticked engines by name, even when they are all ticked
+    const names = sel.engines.map((k) => f.engines.find((e) => e.code === k).name).join(" + ") +
+      (tg ? " " + t("with_mod", { name: tgName }) : "");
+    html += `<p class="combo">${tagHtml(status)}<b>${esc(names)}.</b> ` +
+      `${esc(t(status === "tested" ? "combo_tested" : "combo_new"))}</p>`;
+    if (status !== "tested") {
+      // the choices already tried on the machine; "Use this choice" only changes this card's engines
+      const here = f.combos.filter((c) => (tg ? c.tg_tested : c.tested));
+      const there = f.combos.filter((c) => (tg ? c.tested : c.tg_tested));
+      if (here.length) {
+        const best = here.slice().sort((a, b) => dist(a, sel) - dist(b, sel))[0];
+        html += `<p class="combo">${esc(t("combo_known", { list: list(best, tg) }))} ` +
+          `<button type="button" class="lnk" data-take="${f.id}" data-codes="${best.engines.join()}">${esc(t("take"))}</button></p>`;
+      } else if (there.length) html += `<p class="combo">${esc(t("combo_known", { list: there.map((c) => list(c, !tg)).join(" ; ") }))}</p>`;
+    }
+  }
+  if (tg) html += `<p class="combo quiet">${esc(t("with_tg"))}</p>`;
+  html += `<p class="say"><b>${esc(t("good_to_know"))}</b> ${esc(t("renumber"))}</p>`;
+  return html;
+}
+const dist = (c, sel) => c.engines.filter((x) => !sel.engines.includes(x)).length + sel.engines.filter((x) => !c.engines.includes(x)).length;
+
+// The Details drawer: the full description and the facts. Always in the page, hidden while closed.
+function renderDetails(f, sel, open) {
+  const rows = [];
+  const row = (k, v) => rows.push(`<dt>${esc(t(k))}</dt><dd>${v}</dd>`);
+  const tgName = label(featById("model-tg") || { id: "model-tg", label: "Model-TG" });
+  const comboName = (g, c) => (c.engines.length === g.engines.length ? t("combo_all", { n: c.engines.length }) : c.label);
+  let status = esc(t(f.status === "tested" ? "d_tested" : "d_exp"));
+  if (f.combos) {
+    const tried = f.combos.filter((c) => c.tested).map((c) => comboName(f, c))
+      .concat(f.combos.filter((c) => c.tg_tested).map((c) => comboName(f, c) + " " + t("with_mod", { name: tgName })));
+    status = esc(tried.length ? t("d_combos", { list: tried.join(" ; ") }) : t("d_exp"));
+  }
+  for (const gid of Object.keys(f.with || {})) {            // Model-TG: its combined versions already tried
+    const g = featById(gid), ok = ((g && g.combos) || []).filter((c) => c.tg_tested);
+    if (ok.length) status += " " + esc(t("d_with_tested", { name: label(g), list: ok.map((c) => comboName(g, c)).join(" ; ") }));
+  }
+  row("d_status", status);
+  const held = (f.includes || []).map(featById).filter(Boolean);
+  if (held.length) row("d_contains", t("d_contains_v", { names: held.map((g) => `<b>${esc(label(g))}</b>`).join(", ") }));
+  const clash = features().filter((g) => g !== f && clashOnly(f, g));
+  if (clash.length) row("d_clash", clash.map((g) => t("d_clash_v", { name: `<b>${esc(label(g))}</b>`, why: esc(clashWhy(f, g)) })).join(" "));
+  if (f.needs === "syntakt") row("d_file", esc(t("d_file_syntakt")));
+  const req = f.requires && featById(f.requires);
+  if (req) row("d_requires", t("d_requires_v", { name: `<b>${esc(label(req))}</b>` }));
+  if (f.engines) row("d_engines", f.engines.map((e) =>
+    `<b>${esc(e.name)}</b> (${esc(e.label)})${featText("eng-" + e.code, "note", "") ? " : " + esc(featText("eng-" + e.code, "note", "")) : ""}`).join("<br>"));
+  if (!sel.on && featText(f.id, "note", "")) row("d_note", esc(featText(f.id, "note", "")));
+  if (GUIDE_OF[f.id]) row("d_guide", `<a class="feat-guide" href="${GUIDE}#${GUIDE_OF[f.id]}">${esc(t("read_guide"))} <span aria-hidden="true">→</span></a>`);
+  return `<div class="det" id="det-${f.id}"${open ? "" : " hidden"}><p>${esc(featText(f.id, "desc", f.desc))}</p><dl class="facts">${rows.join("")}</dl></div>`;
+}
+
+// Section chips: they jump to a section (never filter); the LED lights when the section holds a ticked mod.
+function renderCats() {
+  const box = $("cats");
+  if (!box) return;
+  box.setAttribute("aria-label", t("cats_label"));
+  box.innerHTML = CATS.map((c) => {
+    const mods = features().filter((f) => catOf(f) === c);
+    if (!mods.length) return "";
+    const lit = mods.some((f) => isOn(f.id) || includedBy(f));
+    const n = mods.filter(matches).length;
+    return `<li class="${n ? "" : "zero"}"><a href="#cat-${c}" data-cat="${c}"><span class="led${lit ? " on" : ""}" aria-hidden="true"></span>` +
+      `${esc(t("cat_" + c))} <span class="n">${n}</span>${lit ? `<span class="vh">${esc(t("cat_lit"))}</span>` : ""}</a></li>`;
+  }).join("");
+}
+
+function renderFind() {
+  if (!$("mod-find")) return;
+  $("mod-find").hidden = features().length < SEARCH_FROM;
+  const q = $("mod-q");
+  q.placeholder = t("search_ph");
+  $("mod-q-clr").setAttribute("aria-label", t("search_clear"));
+  $("mod-q-clr").hidden = !pick.q;
+  if (q.value !== pick.q) q.value = pick.q;
+  const found = $("mod-found");
+  found.hidden = !searching();
+  if (searching()) {
+    const n = features().filter(matches).length;
+    found.innerHTML = (n ? t("found", { n, total: features().length, q: esc(pick.q.trim()) }) : t("found_none", { q: esc(pick.q.trim()) })) +
+      `<button type="button" class="lnk soft" data-showall>${esc(t("show_all"))}</button>`;
+  }
+}
+
+// "Your selection": what will be installed, in display order, with × to untick; stuck to the bottom of the screen
+// while the list scrolls (where IntersectionObserver exists).
+function renderSelection() {
+  const box = $("mod-sel");
+  if (!box) return;
+  const on = order().filter((f) => isOn(f.id));
+  const inc = features().filter((f) => includedBy(f));
+  const exp = on.filter((f) => statusOf(f) === "experimental");
+  if (!on.length) {
+    box.innerHTML = `<div class="sel-h"><div class="sel-sum"><span class="sel-t" id="sel-title" tabindex="-1">${esc(t("sel_title"))}</span></div></div>` +
+      `<p class="sel-none">${esc(t("sel_none"))}</p>`;
+    box.classList.remove("open");
+    live(t("sel_none"));
+    return;
+  }
+  const counts = `<span class="sel-n">${esc(t(on.length > 1 ? "sel_n" : "sel_n1", { n: on.length })) + (inc.length ? " " + esc(t("sel_incl", { n: inc.length })) : "")}</span>` +
+    (exp.length ? `<span class="dotsep"> · </span><span class="fx">${esc(t(exp.length > 1 ? "sel_exp" : "sel_exp1", { n: exp.length }))}</span>` : "");
+  const chip = (f) => {
+    const sel = selOf(f);
+    const mine = inc.filter((g) => (f.includes || []).includes(g.id));
+    const extra = f.engines ? sel.engines.map((c) => f.engines.find((e) => e.code === c).name).join(", ")
+      : mine.length ? t("sel_incl", { n: mine.length }) : "";
+    return `<li class="chip"><span>${esc(label(f))}${extra ? ` <span class="ci">${esc(extra)}</span>` : ""}</span>` +
+      (statusOf(f) === "experimental" ? `<span class="cx" role="img" aria-label="${esc(t("experimental"))}" title="${esc(t("experimental"))}"></span>` : "") +
+      `<button type="button" class="x" data-off="${f.id}" aria-label="${esc(t("sel_remove", { name: label(f) }))}">×</button></li>`;
+  };
+  const sw = pick.swap;
+  box.innerHTML = `<div class="sel-h">` +
+      `<div class="sel-sum"><span class="sel-t" id="sel-title" tabindex="-1">${esc(t("sel_title"))}</span><span class="sel-c">${counts}</span></div>` +
+      `<div class="sel-x">` +
+        `<button type="button" class="lnk soft clear" data-clear>${esc(t("sel_clear"))}</button>` +
+        `<button type="button" class="lnk soft sel-more" aria-expanded="${pick.selOpen}" aria-controls="sel-body">${esc(t(pick.selOpen ? "sel_hide" : "sel_show"))}</button>` +
+        `<a class="btn sel-next" href="#step-file">${esc(t("sel_next"))} <span aria-hidden="true">↓</span></a>` +
+      `</div>` +
+    `</div>` +
+    `<div class="sel-body" id="sel-body">` +
+      `<ul class="chips">${on.map(chip).join("")}${choiceNeedsSyntakt() ? `<li class="sel-need">${esc(t("sel_syntakt"))}</li>` : ""}</ul>` +
+      (sw ? `<p class="sel-msg">${esc(swapText(sw))} <button type="button" class="lnk" data-undo>${esc(t("undo"))}</button></p>` : "") +
+      `<p class="sel-foot"><button type="button" class="lnk soft" data-clear>${esc(t("sel_clear"))}</button></p>` +
+    `</div>`;
+  box.classList.toggle("open", pick.selOpen);
+  // short announcement for screen readers: the live region stays in place, only its text changes
+  live(box.querySelector(".sel-c").textContent + (sw ? ". " + swapText(sw) : ""));
+}
+function live(text) {
+  const el = $("mod-live");
+  if (el && el.textContent !== text) el.textContent = text;
+}
+
+// One listener per zone (delegation): they survive the rebuild that follows every change.
+function wirePicker() {
+  const changed = () => { renderFeatures(); update(); };
+  $("features").addEventListener("change", (e) => {
+    const el = e.target, f = (id) => featById(id);
+    if (el.id && el.id.startsWith("feat-") && f(el.id.slice(5))) setOn(f(el.id.slice(5)), el.checked);
+    else if (el.name && el.name.startsWith("eng-") && f(el.name.slice(4))) setEngine(f(el.name.slice(4)), el.value, el.checked);
+    else if (el.name && el.name.startsWith("var-") && f(el.name.slice(4))) { selOf(f(el.name.slice(4))).variant = el.value; pick.swap = null; }
+    else return;
+    changed();
+  });
+  $("features").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    if (b.classList.contains("more")) {
+      const id = b.id.slice(5);
+      if (pick.open.has(id)) pick.open.delete(id); else pick.open.add(id);
       renderFeatures();
-      update();
-    });
-
-    const ttl = document.createElement("div");
-    ttl.className = "ttl";
-    const combo = f.engines && sel.on ? comboOf(f, sel) : null;
-    // with Model-TG, the combined version's own tests (combo.tg_tested); Model-TG's card follows the engines' choice.
-    // A card that requires another one (sample preview) keeps its own status: those tests didn't include it.
-    const withId = sel.on && f.with && !f.requires ? Object.keys(f.with).find(isOn) : null;
-    const tgCombo = withId ? comboOfFeature(withId) : null;
-    const tested = combo ? (isOn("model-tg") ? combo.tg_tested : combo.tested)
-      : tgCombo ? !!tgCombo.tg_tested : f.status === "tested";
-    ttl.innerHTML = `<span>${esc(featText(f.id, "label", f.label))}</span>` +
-      (holder ? `<span class="incl">${esc(t("included", { name: featText(holder.id, "label", holder.label) }))}</span>` : "") +
-      (need ? `<span class="incl">${esc(t("requires", { name: featText(need.id, "label", need.label) }))}</span>` : "") +
-      `<span class="tag${tested ? " ok" : ""}">${esc(t(tested ? "tested" : "experimental"))}</span>` +
-      (GUIDE_OF[f.id] ? `<a class="feat-guide" href="${GUIDE}#${GUIDE_OF[f.id]}">Guide <span aria-hidden="true">→</span></a>` : "");
-    const desc = document.createElement("div");
-    desc.className = "desc";
-    desc.textContent = featText(f.id, "desc", f.desc);
-    card.append(cb, ttl, desc);
-    if (f.credit) {
-      const cr = document.createElement("div");
-      cr.className = "credit";
-      cr.innerHTML = creditHtml(f.credit) +
-        (f.license ? ` · <a href="${esc(f.license)}" target="_blank" rel="noopener">${esc(t("license_mit"))}</a>` : "");
-      card.appendChild(cr);
+    } else if (b.classList.contains("grp-h")) {
+      const c = b.id.slice(6);
+      if (pick.folded.has(c)) pick.folded.delete(c); else pick.folded.add(c);
+      renderFeatures();
+    } else if (b.hasAttribute("data-undo")) {
+      const by = undo();
+      changed();
+      if (by && $("feat-" + by)) $("feat-" + by).focus({ preventScroll: true });
+    } else if (b.dataset.take && featById(b.dataset.take)) {
+      selOf(featById(b.dataset.take)).engines = b.dataset.codes.split(",");
+      pick.swap = null;
+      changed();
     }
-    if (sel.on && featText(f.id, "note", "")) {
-      const n = document.createElement("div");
-      n.className = "combo";
-      n.textContent = featText(f.id, "note", "");
-      card.appendChild(n);
+  });
+  $("cats").addEventListener("click", (e) => {               // a jump to a folded section unfolds it first
+    const a = e.target.closest("a[data-cat]");
+    if (a && pick.folded.delete(a.dataset.cat)) renderFeatures();
+  });
+  $("mod-sel").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    if (b.dataset.off && featById(b.dataset.off)) {
+      const xs = [...$("mod-sel").querySelectorAll("[data-off]")], k = xs.indexOf(b);
+      setOn(featById(b.dataset.off), false);
+      changed();
+      const next = $("mod-sel").querySelectorAll("[data-off]")[k] || $("sel-title");   // focus: the next ×, else the title
+      if (next) next.focus({ preventScroll: true });
+      return;
     }
-
-    if (!f.engines && f.variants.length > 1 && sel.on) {
-      const vs = document.createElement("div");
-      vs.className = "variants";
-      for (const v of f.variants) {
-        const l = document.createElement("label");
-        const r = document.createElement("input");
-        r.type = "radio";
-        r.name = "var-" + f.id;
-        r.value = v.id;
-        r.checked = sel.variant === v.id;
-        r.addEventListener("change", () => { sel.variant = v.id; update(); });
-        const s = document.createElement("span");
-        s.innerHTML = `${esc(featText(v.id, "label", v.label || v.id))}<small>${esc(featText(v.id, "note", ""))}</small>`;
-        l.append(r, s);
-        l.addEventListener("click", (e) => e.stopPropagation());   // don't toggle the card
-        vs.appendChild(l);
-      }
-      card.appendChild(vs);
-    }
-
-    if (f.engines && sel.on) {
-      const vs = document.createElement("div");
-      vs.className = "variants";
-      for (const e of f.engines) {
-        const l = document.createElement("label");
-        const r = document.createElement("input");
-        r.type = "checkbox";
-        r.id = "eng-" + e.code;
-        r.name = "eng-" + f.id;
-        r.value = e.code;
-        r.checked = sel.engines.includes(e.code);
-        r.addEventListener("change", () => {
-          const on = new Set(sel.engines);
-          if (r.checked) on.add(e.code); else on.delete(e.code);
-          sel.engines = f.engines.map((x) => x.code).filter((c) => on.has(c));
-          if (!sel.engines.length) sel.on = false;       // no engine left: the card is off
-          renderFeatures();
-          update();
-        });
-        const s = document.createElement("span");
-        s.innerHTML = `<b>${esc(e.name)}</b> — ${esc(e.label)}<small>${esc(featText("eng-" + e.code, "note", ""))}</small>`;
-        l.append(r, s);
-        l.addEventListener("click", (ev) => ev.stopPropagation());   // don't toggle the card
-        vs.appendChild(l);
-      }
-      if (combo) {
-        const n = document.createElement("div");
-        n.className = "combo";
-        n.textContent = t(tested ? "combo_tested" : "combo_new");
-        vs.appendChild(n);
-      }
-      if (isOn("model-tg")) {
-        const n = document.createElement("div");
-        n.className = "combo";
-        n.textContent = t("with_tg");
-        vs.appendChild(n);
-      }
-      const w = document.createElement("div");
-      w.className = "combo";
-      w.textContent = t("renumber");
-      vs.appendChild(w);
-      card.appendChild(vs);
-    }
-    box.appendChild(card);
+    if (b.hasAttribute("data-clear")) { for (const id in selection) selection[id].on = false; pick.swap = null; }
+    else if (b.hasAttribute("data-undo")) {
+      const by = undo();
+      changed();
+      if (by && $("feat-" + by)) $("feat-" + by).focus({ preventScroll: true });
+      return;
+    } else if (b.classList.contains("sel-more")) { pick.selOpen = !pick.selOpen; renderFeatures(); return; }
+    else return;
+    changed();
+  });
+  $("mod-q").addEventListener("input", (e) => { pick.q = e.target.value; renderFeatures(); });
+  $("mod-q").addEventListener("keydown", (e) => { if (e.key === "Escape") { pick.q = ""; renderFeatures(); } });
+  $("mod-q-clr").addEventListener("click", () => { pick.q = ""; renderFeatures(); $("mod-q").focus(); });
+  $("mod-found").addEventListener("click", (e) => { if (e.target.closest("[data-showall]")) { pick.q = ""; renderFeatures(); } });
+  // the selection bar floats only where IntersectionObserver exists (not in jsdom); its shadow only while it floats
+  if ("IntersectionObserver" in window) {
+    $("panel-mods").classList.add("js-sticky");
+    new IntersectionObserver(([en]) => {
+      $("mod-sel").classList.toggle("stuck", !en.isIntersecting && en.boundingClientRect.top > 0);
+    }).observe($("mod-sel-end"));
   }
 }
 
@@ -11050,8 +11541,12 @@ function chosenEngines() {
   return sel && sel.on ? f.engines.filter((e) => sel.engines.includes(e.code)) : [];
 }
 
+// The ticked mods need the Syntakt OS file (the selection bar says so in any tab); step 2 asks for it in the Mods tab.
+function choiceNeedsSyntakt() {
+  return chosenTweaks().some((x) => x.append && x.append.syntakt);
+}
 function needsSyntakt() {
-  return st.mode === "mods" && chosenTweaks().some((x) => x.append && x.append.syntakt);
+  return st.mode === "mods" && choiceNeedsSyntakt();
 }
 
 function setMode(mode) {
@@ -11063,6 +11558,22 @@ function setMode(mode) {
   $("drop2-wrap").hidden = mode !== "samples";
   if (st.os) describeOs();
   update();
+}
+
+// "Samples OS" tab: which machine, which way.
+function setSmpDir(dir) {
+  st.smpDir = dir;
+  for (const d of ["cyc", "smp", "back"]) {
+    $("smp-dir-" + d).setAttribute("aria-checked", String(dir === d));
+    $("smp-pane-" + d).hidden = dir !== d;
+  }
+  st.finished = null;
+  update();
+}
+
+// The tick box the chosen way asks for (none for the way back).
+function samplesAcked() {
+  return st.smpDir === "back" ? true : $(st.smpDir === "smp" ? "cos-ack" : "samples-ack").checked;
 }
 
 // ---------------------------------------------------------------------------
@@ -11206,11 +11717,32 @@ function prepareFirmware() {
   });
 }
 
-// Model:Samples OS in the Model:Cycles container (MCBuilder.crossflash = tools/crossflash.py).
+// Model:Samples OS in the Model:Cycles container (MCBuilder.crossflash = tools/crossflash.py), or, for a Model:Samples,
+// the Model:Cycles OS (MCBuilder.cyclesForSamples = --to samples) and its way back (MCBuilder.samplesBack = --back-samples).
 function prepareSamples(os) {
   if (!os.stock) { st.fw = null; st.fwError = "samples_needs_cycles"; return; }
   const smp = st.samplesOs;
   if (!smp) { st.fw = null; st.fwError = null; return; }
+  if (st.smpDir === "smp") {
+    buildCached("cycles-os:" + smp.sha, (raw) => {
+      const r = window.MCBuilder.cyclesForSamples(raw, smp.raw);
+      const sha = window.MCBuilder.hex(window.MCBuilder.sha256(r.raw));
+      if (sha !== REF_CYCLES_ON_SAMPLES) throw new Error(`result ${sha.slice(0, 16)}… is not the reference build`);
+      log(`Built the Model:Cycles OS for Model:Samples: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.raw.length} bytes.`, "is-ok");
+      return { raw: r.raw, name: "model-cycles_OS1.13_for-model-samples.syx", kind: "cos", mods: [], ref: true, sixch: false };
+    });
+    return;
+  }
+  if (st.smpDir === "back") {
+    buildCached("samples-back:" + smp.sha, (raw) => {
+      const r = window.MCBuilder.samplesBack(raw, smp.raw);
+      const sha = window.MCBuilder.hex(window.MCBuilder.sha256(r.raw));
+      if (sha !== REF_SAMPLES_BACK) throw new Error(`result ${sha.slice(0, 16)}… is not the reference build`);
+      log(`Packed the official Model:Samples OS for the way back: ${r.raw.length} bytes.`, "is-ok");
+      return { raw: r.raw, name: "model-samples_OS1.13_back-from-cycles-os.syx", kind: "sback", mods: [], ref: true, sixch: false };
+    });
+    return;
+  }
   buildCached("samples-os:" + smp.sha, (raw) => {
     const r = window.MCBuilder.crossflash(raw, smp.raw);
     const sha = window.MCBuilder.hex(window.MCBuilder.sha256(r.raw));
@@ -11371,6 +11903,8 @@ function devProblem() {
   if (!d || d.state === "probing") return "probing";
   if (d.state !== "ok") return "dev_" + d.state;
   if (st.fw && st.fw.raw[4] !== d.product) {
+    if (st.fw.kind === "sback" && d.id === 25) return "dev_back_on_samples";
+    if (st.fw.kind === "cos" && d.id === 27) return "dev_fwd_on_cycles";
     if (d.id === 25) return "dev_samples";
     if (d.id === 27) return "dev_wrong_file";
     return "dev_other";
@@ -11458,7 +11992,7 @@ function missingReason() {
   if (st.mode === "samples") {
     if (st.fwError === "samples_needs_cycles") return "miss_samples_cycles";
     if (!st.samplesOs) return "miss_samples_file";
-    if (!$("samples-ack").checked) return "miss_samples_ack";
+    if (!samplesAcked()) return st.smpDir === "smp" ? "miss_cos_ack" : "miss_samples_ack";
   }
   if (st.fwError === "pick_one") return "miss_mod";
   if (needsSyntakt() && !st.syntakt) return "miss_syntakt";
@@ -11469,7 +12003,8 @@ function missingReason() {
   if (st.method === "fast") {
     const why = devProblem();
     if (why === "probing") return "miss_probe";
-    if (why === "dev_samples" || why === "dev_wrong_file" || why === "dev_other") return "miss_dev_mismatch";
+    if (["dev_samples", "dev_wrong_file", "dev_other", "dev_back_on_samples", "dev_fwd_on_cycles"].includes(why))
+      return "miss_dev_mismatch";
     if (why) return "miss_dev";
   }
   if (!$("ack").checked) return "miss_ack";
@@ -11479,7 +12014,8 @@ function missingReason() {
 function render() {
   // step 2 status
   $("h2s").textContent = t(st.mode === "samples" ? "s2_samples" : "s2");
-  if (st.os && st.mode === "samples" && !st.os.stock) setStatus("file-status", [["is-bad", t("samples_needs_cycles")]]);
+  if (st.os && st.mode === "samples" && !st.os.stock)
+    setStatus("file-status", [["is-bad", t(st.smpDir === "cyc" ? "samples_needs_cycles" : "cos_needs_cycles")]]);
   else if (st.os) {
     const rows = [];
     if (st.os.stock) rows.push(["is-ok", esc(t("os_ok"))]);
@@ -11497,6 +12033,8 @@ function render() {
         ` <span class="hash">MAIN OS ${esc(st.fw.sha.slice(0, 8))}</span>`]);
     else if (st.fw && st.fw.kind === "stock") rows.push(["is-ok", esc(t("stock_ready"))]);
     else if (st.fw && st.fw.kind === "samples") rows.push(["is-ok", esc(t("samples_ready")) + " " + esc(t("built_ref"))]);
+    else if (st.fw && st.fw.kind === "cos") rows.push(["is-ok", esc(t("cos_ready")) + " " + esc(t("built_ref"))]);
+    else if (st.fw && st.fw.kind === "sback") rows.push(["is-ok", esc(t("sback_ready")) + " " + esc(t("built_ref"))]);
     setStatus("file-status", rows);
   }
   setStatus("file2-status", st.samplesOs ? [["is-ok", esc(t("smp_ok"))]]
@@ -11522,7 +12060,7 @@ function render() {
   }
 
   // step badges
-  const choseOk = st.mode === "restore" || (st.mode === "samples" ? $("samples-ack").checked : chosenTweaks().length > 0);
+  const choseOk = st.mode === "restore" || (st.mode === "samples" ? samplesAcked() : chosenTweaks().length > 0);
   $("step-choose").classList.toggle("done", choseOk);
   $("step-file").classList.toggle("done", !!st.fw && !st.building);
   $("step-connect").classList.toggle("done", st.midiState === "ready" && !!currentPort() && (st.method !== "fast" || !devProblem()));
@@ -11533,7 +12071,9 @@ function render() {
   if (st.fw) {
     const what = st.fw.kind === "built" ? st.fw.mods.join(" + ")
       : st.fw.kind === "stock" ? t("mods_list_restore")
-      : st.fw.kind === "samples" ? t("mods_list_samples") : t("mods_list_custom", { name: st.fw.name });
+      : st.fw.kind === "samples" ? t("mods_list_samples")
+      : st.fw.kind === "cos" ? t("mods_list_cos")
+      : st.fw.kind === "sback" ? t("mods_list_sback") : t("mods_list_custom", { name: st.fw.name });
     const port = currentPort();
     const secs = st.method === "fast" ? window.MCFlasher.fastSeconds(st.fw.raw) : window.MCFlasher.transferSeconds(st.fw.raw, pace());
     const mins = Math.max(1, Math.round(secs / 60));
@@ -11546,22 +12086,29 @@ function render() {
   const miss = st.sending ? null : missingReason();
   $("flash").disabled = st.sending || !!miss;
   $("flash").textContent = st.sending ? t("flashing") : t("flash_btn");
-  $("missing").textContent = st.sending ? "" : miss ? t(miss) : st.finished === "ok" ? "" : t(st.method === "fast" ? "miss_ready_fast" : "miss_ready");
+  $("missing").textContent = st.sending ? "" : miss ? t(miss) : st.finished === "ok" ? ""
+    : t(st.method === "fast" ? "miss_ready_fast" : "miss_ready", { m: hardware() });
   $("stop").hidden = !st.sending;
   renderAfter();
 }
 
 // Fast method, once the firmware is sent: confirm on the machine, then it restarts.
+// The machine the firmware goes to: a Model:Samples for the Cycles OS and its way back, else a Model:Cycles.
+function hardware() {
+  return st.fw && (st.fw.kind === "cos" || st.fw.kind === "sback") ? "Model:Samples" : "Model:Cycles";
+}
+
 function renderAfter() {
   const el = $("after");
   if (!el) return;
   const d = st.dev;
   const rows = [];
-  if (st.after === "confirm") rows.push(["is-busy", t("after_confirm")]);
-  else if (st.after === "gone") rows.push(["is-busy", t("after_gone")]);
+  const m = hardware();
+  if (st.after === "confirm") rows.push(["is-busy", t("after_confirm", { m })]);
+  else if (st.after === "gone") rows.push(["is-busy", t("after_gone", { m })]);
   else if (st.after === "back") {
-    if (d && d.state === "ok") rows.push(["is-ok", esc(t("after_back", { device: d.device || d.name, v: d.version || "?" }))]);
-    else rows.push(["is-ok", esc(t("after_back_plain"))]);
+    if (d && d.state === "ok") rows.push(["is-ok", esc(t("after_back", { m, device: d.device || d.name, v: d.version || "?" }))]);
+    else rows.push(["is-ok", esc(t("after_back_plain", { m }))]);
   }
   setStatus("after", rows);
 }
@@ -11658,7 +12205,9 @@ async function flash() {
       (fast ? `<div class="status" id="after" aria-live="polite"></div>` : `<p>${t("done_body")}</p>`) +
       (fw.sixch ? `<p>${t("done_6ch")}</p>` : "") +
       (fw.sdv ? `<p>${t(/^syntakt-tg-/.test(fw.sdv) ? "done_syn_tg" : "done_syn", { list: fw.engines.map((e) => `<b>${esc(e.name)}</b> (${esc(e.label)})`).join(", ") })}</p>` : "") +
-      (fw.kind === "samples" ? `<p>${t("done_samples")}</p>` : "");
+      (fw.kind === "samples" ? `<p>${t("done_samples")}</p>` : "") +
+      (fw.kind === "cos" ? `<p>${t("done_cos")}</p>` : "") +
+      (fw.kind === "sback" ? `<p>${t("done_sback")}</p>` : "");
     log(fast ? `Firmware sent in ${Math.round(res.seconds)} s (${res.blocks} blocks): waiting for the confirmation on the machine.`
       : `Transfer complete in ${Math.round(res.seconds)} s.`, "is-ok");
   }
@@ -11721,6 +12270,8 @@ function init() {
   $("tab-restore").addEventListener("click", () => setMode("restore"));
   $("tab-samples").addEventListener("click", () => setMode("samples"));
   $("samples-ack").addEventListener("change", render);
+  $("cos-ack").addEventListener("change", render);
+  for (const d of ["cyc", "smp", "back"]) $("smp-dir-" + d).addEventListener("click", () => setSmpDir(d));
 
   const drop = $("drop"), file = $("file");
   file.addEventListener("change", (e) => { if (e.target.files[0]) readFile(e.target.files[0]); e.target.value = ""; });
@@ -11766,6 +12317,7 @@ function init() {
   });
 
   $("build-stamp").textContent = "· build " + (window.MC_BUILD || "?");
+  wirePicker();
   applyLang(st.lang);
   update();
 
@@ -11778,8 +12330,9 @@ function init() {
 }
 
 // test hooks (tools/webflash_smoke.js)
-window.MCFlasherApp = { state: st, REF_MAINOS, REF_SAMPLES_ON_CYCLES, loadOs, loadSamples, loadSyntakt, setMode, setMethod, applyLang, render,
-  chosenTweaks };
+window.MCFlasherApp = { state: st, REF_MAINOS, REF_SAMPLES_ON_CYCLES, REF_CYCLES_ON_SAMPLES, REF_SAMPLES_BACK, loadOs,
+  loadSamples, loadSyntakt, setMode, setSmpDir, setMethod, applyLang, render,
+  chosenTweaks, chosenLabels, CATS };
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
 else init();

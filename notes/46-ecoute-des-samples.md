@@ -242,8 +242,10 @@ cause.
   exige `model-tg`, `33-sample-preview-st` exige `model-tg-st`. Le code de Model-TG est aux mêmes adresses dans les deux ;
   seules 18 constantes dérivées de `REGION_END` diffèrent (56 octets isolés dans la charge utile), inutilisées ici
   `[FAIT]`.
-- Flasher : une carte « Écoute des samples (Model-TG) », `"requires": "model-tg"` (la cocher coche Model-TG, décocher
-  Model-TG la décoche), `with: {"syntakt": "33-sample-preview-st"}` ; `REF_MAINOS` passe de 9 215 à 10 239 combinaisons.
+- Flasher : une ligne « Écoute des samples (Model-TG) » dans la rubrique Écran et navigation (`cat: screen`, depuis le
+  nouveau choix des mods de la release 1.28), `"requires": "model-tg"` (la cocher coche Model-TG, décocher Model-TG la
+  décoche ; Détails : « Marche avec Model-TG seulement »), `with: {"syntakt": "33-sample-preview-st"}` ; `REF_MAINOS`
+  passe de 9 215 à 10 239 combinaisons.
 
 ## 7. Le code et la place
 
@@ -493,8 +495,9 @@ premières lignes ci-dessous passaient la preuve telle qu'elle était à la revu
   fichier de 2 Mo (le chemin modifié ne l'ouvre pas ; pour 48..160 o, pas regardé, §10 point 4) ; un appui rendu muet
   envoie toujours le message de la touche à l'interface, comme l'origine (§10 point 10).
 
-Flasher (fait par ailleurs, `tools/gen_flasher_tweaks.py`, `docs/flasher/app.js`) : la carte `sample-preview`
-(`"requires": "model-tg"`, `with: {"syntakt": "33-sample-preview-st"}`), et `REF_MAINOS` qui passe de 9 215 à
+Flasher (fait par ailleurs, `tools/gen_flasher_tweaks.py`, `docs/flasher/app.js`) : la ligne `sample-preview`
+(`cat: screen`, `"requires": "model-tg"`, `with: {"syntakt": "33-sample-preview-st"}` ; `setOn` coche la carte demandée,
+`dropOrphans` décoche l'ajout resté seul, annulable avec le reste), et `REF_MAINOS` qui passe de 9 215 à
 10 239 combinaisons (les 1 024 nouvelles contiennent l'écoute des samples, aucune ancienne ne change ; recalculées après
 le changement de masques). `tools/webflash_smoke.sh` vérifie que cocher la carte coche Model-TG, que décocher Model-TG
 la décoche, et que la version Syntakt prend `sample-preview-st`.

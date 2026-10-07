@@ -86,10 +86,10 @@ Follow the shape of the last ones (tempo-max: commits `5997b4a`, `14fb9fa`, `6e5
    Check that its writes do not overlap any other tweak, or declare `conflicts`.
 4. **Register it**: `tweaks/model-cycles_OS1.13/PROVENANCE.md` row; `BUILD.md` section with the commands and the
    MAIN OS SHA-256 of the main combinations.
-5. **Put it in the flasher**: add it to `FEATURES` in `tools/gen_flasher_tweaks.py` (`"status": "experimental"`),
-   regenerate `docs/flasher/tweaks.js`, regenerate `REF_MAINOS` with `tools/ref_mainos.py`, add its card texts (`FEAT`
-   en + fr) and guide anchor (`GUIDE_OF`) in `docs/flasher/app.js`, update the card lists checked by
-   `tools/webflash_smoke.js`. See `docs/AGENTS.md`.
+5. **Put it in the flasher**: add it to `FEATURES` in `tools/gen_flasher_tweaks.py` (`"status": "experimental"`, and
+   its section `cat`), regenerate `docs/flasher/tweaks.js`, regenerate `REF_MAINOS` with `tools/ref_mainos.py`, add its
+   row texts (`FEAT` en + fr: `label`, `short`, `desc`) and guide anchor (`GUIDE_OF`) in `docs/flasher/app.js`, update
+   the lists checked by `tools/webflash_smoke.js`. See `docs/AGENTS.md`.
 6. **Document it for users**: a guide section in `docs/guide/index.html` (en + fr, buttons to press, limits), a new
    release at the top of `docs/assets/release.js` (en + fr), bump the `MC_BUILD` / `?v=` stamp on the pages, a row
    in the mod table of `README.md`.
