@@ -143,9 +143,10 @@ FEATURES = [
     },
     {
         "id": "chord-keys",
-        "label": "Accords de gamme sur les six pads",
-        "desc": "Une piste CHORD, sept modes et une extension par degré. T1–T6 jouent I–VI ; "
-                "RETRIG tenu donne VII puis I–V à l'octave. Réglages dans FUNC + RETRIG, sauvés avec le pattern.",
+        "label": "Accords de gamme sur TRIG 1–16",
+        "desc": "Une piste CHORD, sept modes et une extension par degré. TRIG 1–7 jouent I–VII, "
+                "8–14 une octave plus haut, 15–16 I–II deux octaves plus haut. T1–T6 gardent leurs fonctions. "
+                "Réglages dans FUNC + RETRIG, sauvés avec le pattern.",
         "status": "experimental",
         "credit": {"kind": "by", "who": "Nico Heuser", "repo": "byNicoHeuser"},
         "excludes": ["model-tg"],

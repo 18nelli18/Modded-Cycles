@@ -4,12 +4,12 @@
  */
 window.MC_RELEASES = [
   { version: "1.23", date: "2026-10-06", changes: [
-    { en: "New experimental mod by Nico Heuser, Chord keys: choose a scale and play its chords with T1–T6 on the selected CHORD track. Hold RETRIG for degree VII, then I to V an octave higher; PAGE keeps its usual functions",
-      fr: "Nouveau mod expérimental de Nico Heuser, Clavier d'accords : choisissez une gamme et jouez ses accords avec T1–T6 sur la piste CHORD sélectionnée. Maintenez RETRIG pour le degré VII, puis I à V une octave plus haut ; PAGE garde ses fonctions habituelles" },
-    { en: "FUNC + RETRIG gains Keys, Root, Scale and seven extension settings: triad, 7th, 9th, 11th or 13th, all within the scale. They are saved per track and pattern and also shape sequenced notes. Four voices maximum; 9ths, 11ths and 13ths omit the fifth",
-      fr: "FUNC + RETRIG gagne Keys, Root, Scale et sept réglages d'extension : triade, 7e, 9e, 11e ou 13e, toujours dans la gamme. Ils sont enregistrés par piste et par pattern et s'appliquent aussi aux notes séquencées. Quatre voix au maximum ; les 9es, 11es et 13es omettent la quinte" },
-    { en: "Checked in emulation with the OS's own pad, menu, storage and CHORD code; not yet tested on hardware. The arpeggiator can be installed alongside it, but Chord keys uses RETRIG as its bank switch. Model-TG cannot be combined with this first version",
-      fr: "Vérifié en émulation avec le code même de l'OS pour les pads, le menu, le stockage et CHORD ; pas encore testé sur la machine. L'arpégiateur peut être installé avec lui, mais le clavier d'accords utilise RETRIG pour changer de banque. Model-TG ne se combine pas avec cette première version" },
+    { en: "New experimental mod by Nico Heuser, Chord Keys: on a CHORD track, the sixteen lower TRIG buttons play the chords of a scale. 1–7 play degrees I to VII, 8–14 the same one octave higher, 15–16 I and II two octaves higher. T1–T6 keep their usual controls",
+      fr: "Nouveau mod expérimental de Nico Heuser, Chord Keys : sur une piste CHORD, les seize boutons TRIG du bas jouent les accords d'une gamme. 1–7 jouent les degrés I à VII, 8–14 les mêmes une octave plus haut, 15–16 I et II deux octaves plus haut. T1–T6 gardent leurs commandes habituelles" },
+    { en: "FUNC + RETRIG gains Keys, Root, Scale (seven modes) and a triad, 7th, 9th, 11th or 13th for each degree, saved per track and pattern. SHAPE picks the voicing (BASE, close or open positions) and COLOR the balance of the voices. Four voices maximum; 9ths, 11ths and 13ths omit the fifth",
+      fr: "FUNC + RETRIG gagne Keys, Root, Scale (sept modes) et une triade, 7e, 9e, 11e ou 13e par degré, enregistrés par piste et par pattern. SHAPE choisit la disposition (BASE, positions resserrées ou ouvertes) et COLOR l'équilibre des voix. Quatre voix au maximum ; les 9es, 11es et 13es omettent la quinte" },
+    { en: "Checked in emulation on the OS's own code. Its author tested it alone on his Model:Cycles; combinations with other mods are not tested on hardware yet. Cannot be combined with Model-TG",
+      fr: "Vérifié en émulation sur le code même de l'OS. Son auteur l'a testé seul sur son Model:Cycles ; les combinaisons avec d'autres mods ne sont pas encore testées sur la machine. Ne se combine pas avec Model-TG" },
   ] },
   { version: "1.21", date: "2026-10-05", changes: [
     { en: "New mod, Startup animation: when the Model:Cycles starts, the four rounded squares of the modded-cycles logo pop in one by one, the top right one hollows out, then “modded-cycles” types itself underneath, instead of the original tile animation",

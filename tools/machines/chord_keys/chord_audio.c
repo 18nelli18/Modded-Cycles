@@ -1,9 +1,11 @@
 /* Accord diatonique dans le véritable update CHORD de l'OS 1.13 (notes/42).
  * Le réglage SHAPE est remplacé dans une copie locale des paramètres ; l'OS
- * conserve enveloppes, timbre, Pitch/Fine et gains/inversions de COLOR.
+ * conserve enveloppes, timbre, Pitch/Fine et gains de COLOR. SHAPE choisit
+ * la disposition des notes ; les déplacements d'octave de COLOR sont sautés.
  * Aucun état de calcul partagé : chaque appel possède sa propre pile.
  */
 #include "chord_audio.h"
+#include "chord_voicing.h"
 
 /* Trampoline du prologue stock, évite de repasser par le détournement d'entrée. */
 extern void chord_audio_original(int pitch_q16, void *voice, const unsigned short *params);
@@ -55,7 +57,7 @@ static void __attribute__((noinline))
 chord_audio_prepare(struct chord_audio_frame *frame, unsigned int cfg, unsigned int note)
 {
     unsigned int i, mode = (cfg >> 28) & 7u;
-    unsigned int tonic, relative, degree, extension;
+    unsigned int tonic, relative, degree, extension, intervals[4];
     if (!(cfg & 0x80000000u) || mode >= 7)
         return;
     tonic = ((cfg >> 21) & 127u) % 12u;
@@ -74,7 +76,17 @@ chord_audio_prepare(struct chord_audio_frame *frame, unsigned int cfg, unsigned 
         unsigned int position = degree + positions[extension][i];
         unsigned int interval = 12u * (position / 7u)
                              + scales[mode][position % 7u] - relative;
-        frame->ratios[i] = semitone_ratios[interval];
+        intervals[i] = interval;
+    }
+    ck_voicing_apply(intervals, frame->count,
+                     ck_voicing_index((short)frame->params[12]));
+    for (i = 0; i < 4; ++i) {
+        unsigned int interval = intervals[i];
+        /* BASE conserve exactement les rapports arrondis historiques. Les
+         * dispositions ouvertes peuvent dépasser 23 demi-tons, au plus 35.
+         */
+        frame->ratios[i] = interval < 24 ? semitone_ratios[interval]
+                                       : semitone_ratios[interval - 12] << 1;
     }
     frame->params[12] = 7u << 8; /* m7 : gain des quatre opérateurs disponible. */
     frame->active = 1;
@@ -102,6 +114,13 @@ void chord_audio_update(int pitch_q16, void *voice, const unsigned short *params
     if (track < 6 && voice_offset == 0 && note >= 0 && note <= 127)
         chord_audio_prepare(&frame, ck_audio_config(track), (unsigned int)note);
 
+    /* Au-delà du seuil aigu, l'OS garde l'ancien incrément de l'opérateur 0,
+     * contrairement aux autres voix qu'il rend muettes. Préparer son plafond
+     * évite une note périmée avec les inversions ; en plage normale, l'update
+     * le réécrit. Conversion stock : ((0x454800 * 0x57619f10) >> 31) >> 2.
+     */
+    if (frame.active)
+        ((unsigned int *)voice)[0x70 / 4] = 0x000bd2f1u;
     chord_audio_original(pitch_q16, voice, frame.params);
     if (frame.active && frame.count == 3)
         ((unsigned int *)voice)[5] = 0; /* Triade : quatrième opérateur inaudible. */

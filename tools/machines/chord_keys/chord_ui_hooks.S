@@ -20,15 +20,3 @@ ck_ui_item_label:
     move.l -8(%fp), %d2
     unlk %fp
     rts
-
-/* Le dispatch PadEvent emploie l'interface secondaire à PadsView +16,
- * pointeur virtuel 0x401002b0. Comme le thunk stock 0x4001d3d4, corrige this
- * avant d'appeler le consommateur. Le pointeur principal 0x4010025c est aussi
- * redirigé pour les appels qui possèdent déjà le pointeur complet de la vue.
- */
-    .globl ck_ui_pad_thunk
-    .section .text.ck_ui_pad_thunk, "ax"
-ck_ui_pad_thunk:
-    moveq #-16, %d0
-    add.l %d0, 4(%sp)
-    jmp ck_ui_pad

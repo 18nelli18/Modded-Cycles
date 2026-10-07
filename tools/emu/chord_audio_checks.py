@@ -3,7 +3,7 @@
 Appelé par test_chord_keys.py avec les images de référence et modifiée. Le getter
 de configuration est seul instrumenté pour isoler le DSP du stockage/menu : les
 deux crochets ColdFire, le trampoline et l'update stock s'exécutent réellement.
-Les preuves de stockage et de pads doivent compléter ces vérifications.
+Les preuves de stockage et de touches doivent compléter ces vérifications.
 run_audio_storage_checks ajoute le vrai getter, des changements de pattern et
 le coût complet de la boucle native ; aucun getter n'y est instrumenté.
 """
@@ -50,7 +50,7 @@ class AudioRunner:
         uc.reg_write(mk.UC_M68K_REG_A7, sp + 4)
         uc.reg_write(mk.UC_M68K_REG_PC, ret)
 
-    def update(self, track=0, root=48, shape=4, color=32, pitch=64, fine=64):
+    def update(self, track=0, root=48, shape=3, color=32, pitch=64, fine=64):
         e = self.engine
         e.machine_defaults(track, "CHORD")
         e.set(track, note=root, pitch=pitch, finetune=fine, shape=shape, color=color)
@@ -139,6 +139,24 @@ def run_audio_storage_checks(stock, patched, extra_code=(), setup=None):
             valid &= ratios == expected and (bool(gains[-1]) == (len(notes) == 4))
     check(valid, "getter natif : six pistes, changements de patterns 0/1/95 sans cache ni UI")
 
+    # Le paramètre effectif reste propre à sa piste et au bloc courant ; les
+    # déplacements de SHAPE n'altèrent pas les extensions persistantes.
+    shapes = (3, 4, 8, 16, 20, 32)
+    expected_notes = ((0, 4, 11, 14), (0, 2, 4, 11), (2, 4, 11, 12),
+                      (11, 12, 14, 16), (0, 4, 14, 23), (11, 14, 24, 28))
+    config.select(0)
+    config.configure([config_word(root=24, extensions=(2,) * 7)] * 6)
+    header_before = bytes(b.engine.uc.mem_read(config.HEADERS + 32, 32))
+    live_shapes = True
+    for shapes_now, notes_now in ((shapes, expected_notes), (shapes[::-1], expected_notes[::-1]),
+                                 ((3,) * 6, (expected_notes[0],) * 6)):
+        for track, (shape, notes) in enumerate(zip(shapes_now, notes_now)):
+            ratios, _, _ = b.update(track=track, root=24, shape=shape, color=96)
+            live_shapes &= all(abs(actual - expected) <= 2
+                               for actual, expected in zip(ratios, frequency_ratios(notes)))
+    live_shapes &= bytes(b.engine.uc.mem_read(config.HEADERS + 32, 32)) == header_before
+    check(live_shapes, "getter natif : SHAPE effectif indépendant sur six pistes, COLOR sans transposition, réglages conservés")
+
     invalid = True
     config.configure([config_word()] * 6)
     for case in ("signature", "mode", "tonique", "extension", "pattern"):
@@ -203,14 +221,22 @@ def run_audio_storage_checks(stock, patched, extra_code=(), setup=None):
     b.engine.block()
     off_ref, off_mod = a.engine.instructions, b.engine.instructions
     config.configure([config_word(extensions=(2,) * 7)] * 6)
-    a.engine.instructions = b.engine.instructions = 0
-    ref = a.engine.block()
-    got = b.engine.block()
-    check((got != 0).any() and (ref != got).any(),
-          "getter natif : activation des six pistes au bloc suivant, PCM changé")
+    counts = []
+    changed_pcm = True
+    for shape in (3, 32):
+        for runner in (a, b):
+            for track in range(6):
+                runner.engine.set(track, shape=shape)
+        a.engine.instructions = b.engine.instructions = 0
+        ref = a.engine.block()
+        got = b.engine.block()
+        changed_pcm &= (got != 0).any() and (ref != got).any()
+        counts.append((a.engine.instructions, b.engine.instructions))
+    check(changed_pcm, "getter natif : activation BASE puis OPN3 des six pistes au bloc suivant, PCM changé")
     print(f"info  instructions/bloc, getter natif inclus : inactif {off_ref} → {off_mod} "
-          f"(+{off_mod - off_ref}), actif {a.engine.instructions} → {b.engine.instructions} "
-          f"(+{b.engine.instructions - a.engine.instructions}) ; pas une mesure de cycles matériels", flush=True)
+          f"(+{off_mod - off_ref}), BASE {counts[0][0]} → {counts[0][1]} "
+          f"(+{counts[0][1] - counts[0][0]}), OPN3 {counts[1][0]} → {counts[1][1]} "
+          f"(+{counts[1][1] - counts[1][0]}) ; pas une mesure de cycles matériels", flush=True)
     check(not a.engine.unmapped and not b.engine.unmapped,
           "getter natif : aucun accès hors mémoire avec le DSP")
     return failures
@@ -311,12 +337,13 @@ def run_audio_checks(stock, patched, config_address, extra_code=(), setup=None):
     # Une note hors gamme et une configuration invalide gardent SHAPE stock.
     passthrough = True
     for word, note in ((config_word(), 49), (config_word(mode=7), 48),
-                       (config_word(extensions=(7,) * 7), 48)):
+                       (config_word(extensions=(7,) * 7), 48),
+                       (config_word(), -1), (config_word(), 128)):
         b.configs[0] = word
         a.update(0, note, 24, 96)
         b.update(0, note, 24, 96)
         passthrough &= a.voices() == b.voices()
-    check(passthrough, "audio : note hors gamme/mode invalide/extension invalide restent stock")
+    check(passthrough, "audio : note hors gamme/hors plage, mode/extension invalides restent stock")
 
     # Références de phase du même moteur OS avec chacune des notes comme racine.
     references = {n: a.update(root=n)[1][0] for n in range(24, 96)}
@@ -328,7 +355,7 @@ def run_audio_checks(stock, patched, config_address, extra_code=(), setup=None):
             first_error = None
             for tonic in range(24, 49):
                 b.configs[0] = config_word(tonic, mode, (extension,) * 7)
-                for slot in range(12):
+                for slot in range(16):
                     notes = tuple(tonic + 12 * ((slot + pos) // 7)
                                   + scale[(slot + pos) % 7] for pos in positions)
                     intervals = tuple(n - notes[0] for n in notes)
@@ -346,15 +373,15 @@ def run_audio_checks(stock, patched, config_address, extra_code=(), setup=None):
                     if not ok and first_error is None:
                         first_error = (tonic, slot, ratios, expected, gains, cents)
                     count += 1
-            check(valid, f"audio mode {mode}, extension {extension} : 25 toniques × 12 pads"
+            check(valid, f"audio mode {mode}, extension {extension} : 25 toniques × 16 touches TRIG"
                   + (f" ; premier écart {first_error}" if first_error else ""))
-    check(count == 10500, f"audio : {count} accords, paramètres inchangés, écart maximal {worst:.3f} cent")
+    check(count == 14000, f"audio : {count} accords, paramètres inchangés, écart maximal {worst:.3f} cent")
 
     degree_settings = True
     mixed = (0, 1, 2, 3, 4, 0, 1)
     for mode, scale in enumerate(SCALES):
         b.configs[0] = config_word(mode=mode, extensions=mixed)
-        for slot in range(12):
+        for slot in range(16):
             positions = POSITIONS[mixed[slot % 7]]
             notes = tuple(48 + 12 * ((slot + pos) // 7) + scale[(slot + pos) % 7]
                           for pos in positions)
@@ -364,21 +391,177 @@ def run_audio_checks(stock, patched, config_address, extra_code=(), setup=None):
             degree_settings &= ratios == expected and (bool(gains[-1]) == (len(notes) == 4))
     check(degree_settings, "audio : sept extensions distinctes par degré, retrouvées à l'octave suivante")
 
-    # COLOR conserve exactement les déplacements d'octave de l'update stock.
+    # Exemples musicaux indépendants : les trois inversions, la remise en
+    # position serrée des extensions et l'ouverture ne changent pas l'accord.
+    # Les noms sont ceux de l'écran ; les notes sont en demi-tons depuis do.
+    shapes = (3, 4, 8, 12, 16, 20, 24, 28, 32)
+    examples = {
+        0: ((0, 4, 7), (0, 4, 7), (4, 7, 12), (7, 12, 16), (12, 16, 19),
+            (0, 7, 16), (4, 12, 19), (7, 16, 24), (12, 19, 28)),
+        1: ((0, 4, 7, 11), (0, 4, 7, 11), (4, 7, 11, 12), (7, 11, 12, 16),
+            (11, 12, 16, 19), (0, 7, 16, 23), (4, 11, 19, 24),
+            (7, 12, 23, 28), (11, 16, 24, 31)),
+        2: ((0, 4, 11, 14), (0, 2, 4, 11), (2, 4, 11, 12), (4, 11, 12, 14),
+            (11, 12, 14, 16), (0, 4, 14, 23), (2, 11, 16, 24),
+            (4, 12, 23, 26), (11, 14, 24, 28)),
+    }
+
+    def ratios_match(got, intervals):
+        # Les rapports Q26 sont arrondis avant un éventuel décalage d'octave.
+        # Deux unités au plus couvrent ce choix sans masquer un écart musical.
+        expected = frequency_ratios(intervals + ((0,) if len(intervals) == 3 else ()))
+        return all(abs(x - y) <= 2 for x, y in zip(got, expected))
+
+    examples_ok = True
+    for extension, voicings in examples.items():
+        b.configs[0] = config_word(root=24, extensions=(extension,) * 7)
+        for shape, intervals in zip(shapes, voicings):
+            ratios, phases, gains = b.update(root=24, shape=shape)
+            examples_ok &= ratios_match(ratios, intervals)
+            examples_ok &= all(gains[:len(intervals) - 1])
+            examples_ok &= (len(intervals) == 4 or gains[-1] == 0)
+            # L'opérateur zéro peut lui aussi monter : sa phase doit suivre.
+            examples_ok &= all(abs(1200 * math.log2(got / references[24 + interval])) < 1
+                               for got, interval in zip(phases, intervals))
+    check(examples_ok, "SHAPE : exemples C/Cmaj7/Cmaj9, BASE et huit dispositions, phases des quatre opérateurs")
+
+    # Toutes les frontières Q8, valeurs fractionnaires et bornes de modulation.
+    # Une valeur négative doit rester BASE, sans déborder vers OPN3.
+    boundaries = True
+    b.configs[0] = config_word(root=24, extensions=(2,) * 7)
+    shape_cases = [(-128, 0), (-1 / 256, 0), (0, 0), (37, 8),
+                   (37 + 1 / 256, 8), (127 + 255 / 256, 8)]
+    for boundary in range(4, 33, 4):
+        shape_cases.extend(((boundary - 1 / 256, boundary // 4 - 1),
+                            (boundary, boundary // 4),
+                            (boundary + 1 / 256, boundary // 4)))
+    for shape, state in shape_cases:
+        ratios, _, _ = b.update(root=24, shape=shape)
+        boundaries &= ratios_match(ratios, examples[2][state])
+    check(boundaries, "SHAPE : frontières Q8, fractions, valeurs négatives et saturation haute")
+
+    # Critères musicaux sur tous les modes, degrés, extensions et dispositions :
+    # notes de même classe, sans doublon ajouté ou note perdue, tessiture bornée.
+    # Ce contrôle n'importe aucune table de disposition depuis le générateur.
+    exhaustive = True
+    voicing_count, worst_voicing = 0, 0.0
+    for mode, scale in enumerate(SCALES):
+        for extension, positions in enumerate(POSITIONS):
+            b.configs[0] = config_word(root=24, mode=mode, extensions=(extension,) * 7)
+            for degree in range(7):
+                root = 24 + scale[degree]
+                base_notes = tuple(12 * ((degree + p) // 7)
+                                   + scale[(degree + p) % 7] - scale[degree] for p in positions)
+                closed = sorted(n % 12 for n in base_notes)
+                for state, shape in enumerate(shapes):
+                    if state == 0:
+                        intervals = base_notes
+                    else:
+                        inversion = (state - 1) % 4
+                        # Une inversion équivaut à poursuivre la séquence des
+                        # notes de l'accord dans l'octave suivante.
+                        intervals = tuple(closed[(i + inversion) % len(closed)]
+                                          + 12 * ((i + inversion) // len(closed))
+                                          for i in range(len(closed)))
+                        if state >= 5:
+                            intervals = tuple(sorted(n + 12 * (i % 2)
+                                                     for i, n in enumerate(intervals)))
+                    ratios, phases, gains = b.update(root=root, shape=shape)
+                    cents = max(abs(1200 * math.log2(got / references[root + interval]))
+                                for got, interval in zip(phases, intervals))
+                    worst_voicing = max(worst_voicing, cents)
+                    exhaustive &= ratios_match(ratios, intervals) and cents < 1
+                    exhaustive &= sorted(n % 12 for n in intervals) == sorted(n % 12 for n in base_notes)
+                    exhaustive &= len(intervals) == len(base_notes) and max(intervals) <= 34
+                    exhaustive &= all(gains[:len(intervals) - 1]) and (len(intervals) == 4 or gains[-1] == 0)
+                    voicing_count += 1
+    check(exhaustive and voicing_count == 2205,
+          f"SHAPE : {voicing_count} accords, 7 modes × 5 extensions × 7 degrés × 9 états, "
+          f"classes de notes conservées, écart maximal {worst_voicing:.3f} cent")
+
+    # COLOR n'agit plus sur les octaves. Comparaison des gains à une fondamentale
+    # grave : les coupures anti-alias stock dépendent sinon des notes du voicing.
     color_ok = True
-    b.configs[0] = config_word(extensions=(2,) * 7)
-    base = frequency_ratios((0, 4, 11, 14))
-    for color in range(128):
-        expected = list(base)
-        for i, (lo, hi, up) in enumerate(((37, 68, 100), (47, 78, 110), (57, 88, 120)), 1):
-            if lo <= color <= hi:
-                expected[i] >>= 1
-            elif color > up:
-                expected[i] <<= 1
-        ratios, _, gains = b.update(root=48, color=color)
-        _, _, stock_gains = a.update(root=48, shape=7, color=color)
-        color_ok &= ratios == tuple(expected) and gains == stock_gains
-    check(color_ok, "audio : les 128 positions de COLOR conservent gains et inversions stock")
+    for extension in (0, 2):
+        b.configs[0] = config_word(root=24, extensions=(extension,) * 7)
+        for shape, intervals in zip(shapes, examples[extension]):
+            for color in range(128):
+                ratios, _, gains = b.update(root=24, shape=shape, color=color)
+                _, _, stock_gains = a.update(root=24, shape=7, color=color)
+                expected_gains = stock_gains if extension else stock_gains[:2] + (0,)
+                color_ok &= ratios_match(ratios, intervals) and gains == expected_gains
+    check(color_ok, "COLOR : 128 positions × 9 dispositions × triade/neuvième, gains stock et hauteurs fixes")
+
+    # Le même buffer effectif est fourni à chaque update, comme après modulation
+    # ou parameter lock ; il ne s'agit pas d'un test du séquenceur de locks.
+    # Le retour BASE prouve que les inversions ne s'accumulent pas dans la voix.
+    effective = True
+    b.configs[0] = config_word(root=24, extensions=(2,) * 7)
+    for shape, color, state in ((3, 32, 0), (8, 64, 2), (32, 127, 8), (3, 32, 0)):
+        ratios, _, _ = b.update(root=24, shape=shape, color=color)
+        effective &= ratios_match(ratios, examples[2][state])
+    check(effective, "paramètres effectifs : BASE → CLS1 → OPN3 → BASE sans accumulation ni écriture dans les paramètres")
+
+    # PITCH/FINE restent ceux de l'OS, même si SHAPE déplace la première voix.
+    tuning_ok = True
+    b.configs[0] = config_word(root=36, extensions=(2,) * 7)
+    for pitch in (60, 64, 68):
+        for fine in (16, 64, 112):
+            for shape, intervals in zip(shapes, examples[2]):
+                _, phases, _ = b.update(root=36, shape=shape, pitch=pitch, fine=fine)
+                for phase, interval in zip(phases, intervals):
+                    reference = a.update(root=36 + interval, pitch=pitch, fine=fine)[1][0]
+                    tuning_ok &= abs(1200 * math.log2(phase / reference)) < 1
+    check(tuning_ok, "PITCH/FINE : neuf dispositions transposées et désaccordées par le vrai moteur stock")
+
+    # L'OS borne la fondamentale dans l'aigu et peut couper des opérateurs :
+    # cette protection reste active, sans revendiquer quatre voix audibles.
+    high_ok = True
+    b.configs[0] = config_word(root=24, extensions=(2,) * 7)
+    for shape, intervals in zip(shapes, examples[2]):
+        high = [b.update(root=root, shape=shape) for root in (96, 108, 120)]
+        high_ok &= all(ratios_match(result[0], intervals) for result in high)
+        high_ok &= high[0] == high[1] == high[2]
+        high_ok &= not any(high[0][2])
+    check(high_ok, "registre aigu : fondamentale bornée et protections de gains stock conservées, neuf dispositions")
+
+    # Le moteur stock laisse l'ancien incrément de l'opérateur zéro si une
+    # inversion le pousse au-delà de son plafond : ce cas est normalement
+    # inaccessible avec sa fondamentale fixe. Le mod doit préparer une valeur
+    # plafonnée déterministe, puis laisser l'OS l'écraser dans la plage normale.
+    # 0xbd2f1 = conversion native de son seuil interne 0x454800.
+    phase_ceiling = 0x000bd2f1
+    history_independent = True
+    for extension in (0, 2):
+        b.configs[:] = [config_word(extensions=(extension,) * 7)] * 6
+        for track in (0, 5):
+            voice = E.VOICE0 + track * E.VSTRIDE
+            for shape in shapes:
+                low_phase = b.update(track=track, root=36, shape=shape)[1][0]
+                for root, pitch in ((74, 75), (72, 77), (96, 64)):
+                    phases = []
+                    for marker in (0, 0x12345678):
+                        b.engine.uc.mem_write(voice + 0x70, struct.pack(">I", marker))
+                        phases.append(b.update(track=track, root=root, shape=shape, pitch=pitch)[1][0])
+                    history_independent &= phases[0] == phases[1] and 0 < phases[0] <= phase_ceiling
+                    history_independent &= b.update(track=track, root=36, shape=shape)[1][0] == low_phase
+    check(history_independent,
+          "opérateur zéro : état froid/chaud sans note retenue, deux pistes × neuf dispositions × triade/neuvième, retour grave")
+
+    # Frontières accessibles depuis le clavier avec PITCH/FINE : TRI CLS3/OPN3
+    # place la fondamentale une octave au-dessus. Une unité de FINE suffit à
+    # franchir le seuil, sans dépendre de l'incrément joué auparavant.
+    ceiling_ok = True
+    b.configs[0] = config_word(extensions=(0,) * 7)
+    for shape in (16, 32):
+        for pitch, fine, clipped in ((74, 95, False), (74, 96, True),
+                                     (75, 63, False), (75, 64, True)):
+            b.engine.call(E.VOICE_RESET, E.VOICE0)
+            cold = b.update(root=74, shape=shape, pitch=pitch, fine=fine)[1][0]
+            b.update(root=36, shape=shape)
+            warm = b.update(root=74, shape=shape, pitch=pitch, fine=fine)[1][0]
+            ceiling_ok &= cold == warm and (cold == phase_ceiling if clipped else 0 < cold < phase_ceiling)
+    check(ceiling_ok, "opérateur zéro : huit frontières PITCH/FINE, plafond exact 0xbd2f1 au lieu de la note précédente")
 
     # Chaque voix reçoit son propre réglage ; aucun écrit dans les cinq autres.
     isolation = True

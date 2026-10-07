@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Génère 45-chord-keys.json : accords diatoniques sur les pads (notes/42).
+"""Génère 45-chord-keys.json : accords diatoniques sur TRIG 1–16 (notes/42).
 
 Compile les sources ColdFire, les répartit dans des masques 47x47 identiques
 redirigés vers leur exemplaire conservé, puis vérifie chaque écriture sur l'OS
@@ -35,16 +35,19 @@ CROSS = os.environ.get("M68K_CROSS") or "m68k-elf-"
 CFLAGS = ["-mcpu=54418", "-Os", "-ffreestanding", "-fno-builtin", "-nostdlib", "-fno-pic", "-fno-common",
           "-ffunction-sections", "-fdata-sections", "-fomit-frame-pointer", "-fno-stack-protector",
           "-Wall", "-Wextra", "-Werror"]
+# Les quatorze masques réservés à chord-keys (tools/AGENTS.md) ; les autres masques 47x47 libérés appartiennent à
+# d'autres mods. Le placement remplit les masques dans cet ordre : un code plus gros échoue au lieu de déborder.
 MASKS = (0x4016b6f8, 0x4016b9e8, 0x40171f30, 0x40172608, 0x40179730,
          0x40182b38, 0x40182e28, 0x40183118, 0x40185018, 0x40185968,
-         0x40185c58, 0x4018cd48, 0x4018d1b8, 0x4018d4a8, 0x4018dba8,
-         0x4018f4b4, 0x4018fc74, 0x40192734)  # 0x401904b4 : réservé au navigateur multiligne
+         0x40185c58, 0x4018cd48, 0x4018d1b8, 0x4018d4a8)
 # Adresse, contrat attendu, symbole, opcode (None = pointeur de vtable).
 HOOKS = (
     (0x400aae88, "4fefffe448d71c3c", "chord_audio_update", 0x4ef9),
-    (0x400ab0e4, "d1fc4012142c", "chord_audio_ratios", 0x4eb9),
-    (0x4010025c, "4001d180", "ck_ui_pad", None),
-    (0x401002b0, "4001d3d4", "ck_ui_pad_thunk", None),
+    (0x400ab0e4, "d1fc4012142c", "chord_audio_ratios", 0x4ef9),
+    (0x400ff9cc, "4001a0d2", "ck_ui_key", None),
+    (0x400fd170, "4000a70e", "ck_shape_format", None),
+    (0x400fd174, "4000a66a", "ck_shape_draw", None),
+    (0x4001e4ca, "4eb94000b22a", "ck_shape_name", 0x4eb9),
     (0x4001cb3e, "4eb94002d138", "ck_ui_menu_ctor", 0x4eb9),
     (0x4005b4a8, "7001156b001c001c", "ck_storage_load_hook", 0x4ef9),
     (0x40061564, "1140001b48780010", "ck_storage_init_hook", 0x4ef9),
@@ -94,9 +97,10 @@ def compile_code():
             objects.append(obj)
             for name, size, _, align in sections(obj):
                 if name.startswith((".text", ".rodata", ".data", ".bss")):
-                    # L'assembleur accepte des sections de code alignées sur un octet ;
-                    # le ColdFire exige pourtant une adresse paire à chaque entrée.
-                    align = max(align, 2) if name.startswith(".text") else align
+                    # Le ColdFire exige une adresse paire à chaque entrée. Les tables
+                    # locales prennent aussi le type T dans le masque mixte final ;
+                    # les aligner évite de confondre leurs symboles avec du code impair.
+                    align = max(align, 2)
                     inputs.append((obj, name, size, align))
         bins = [{"at": va, "size": 0, "parts": []} for va in MASKS]
         for obj, name, size, align in sorted(inputs, key=lambda s: (-s[2], s[0].name, s[1])):
@@ -170,14 +174,17 @@ def build_tweak(stock):
         new += b"\x4e\x71" * ((len(old) - len(new)) // 2)
         writes.append({"off": address - BASE, "old": old.hex(), "new": new.hex()})
     tweak = {
-        "id": "chord-keys", "order": 45, "name": "Accords de gamme sur les six pads",
+        "id": "chord-keys", "order": 45, "name": "Accords de gamme sur TRIG 1–16",
         "description": [
             "Mode Keys dans FUNC + RETRIG : une piste CHORD, gamme et tonique, extensions par degré.",
-            "T1–T6 jouent I–VI ; RETRIG tenu donne VII, puis I–V à l'octave supérieure.",
+            "TRIG 1–7 jouent I–VII, 8–14 les mêmes degrés une octave plus haut, 15–16 I–II deux octaves plus haut.",
+            "Les grands pads T1–T6 gardent leur sélection et leur jeu stock. L'édition des pas reste disponible.",
             "Sept modes ; triades, septièmes, neuvièmes, onzièmes ou treizièmes diatoniques, quatre voix au plus.",
-            "Les accords 9/11/13 omettent la quinte (et les extensions intermédiaires pour 11/13). COLOR reste actif.",
-            "Réglages par piste sauvegardés avec le pattern. Dernier pad prioritaire, sans retour au pad précédent.",
-            "Model-TG incompatible : son Scale Lock transforme les notes avant le moteur. Aucun essai matériel.",
+            "Les accords 9/11/13 omettent la quinte (et les extensions intermédiaires pour 11/13).",
+            "SHAPE choisit BASE, CLS0–3 ou OPN0–3 ; COLOR règle le mélange sans déplacer les octaves.",
+            "I–VII restent seuls responsables des extensions.",
+            "Réglages par piste sauvegardés avec le pattern. Dernière touche prioritaire, sans retour à la précédente.",
+            "Model-TG incompatible : son Scale Lock transforme les notes avant le moteur. Expérimental.",
             f"Code et état dans {len(compiled)} masques 47×47 redirigés, {sum(len(c) for _, c in compiled)} octets.",
             "Généré par tools/gen_chord_keys.py ; sources tools/machines/chord_keys/ ; notes/42.",
         ],

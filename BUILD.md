@@ -230,18 +230,23 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim
 | `model-tg,boot-anim` | `cbec181684805bf37dd07c62dc47f7daf35e6abab530a3f3b06ec5db590278ec` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim` | `d468a729f32780870dbd591e52e8c782a5cdd347459ac1c61ef35473e26c9323` |
 
-### Accords de gamme sur les six pads
+### Accords de gamme sur TRIG 1–16
 
 Contribution de Nico Heuser ([PR #46](https://github.com/18nelli18/Modded-Cycles/pull/46)).
 `45-chord-keys.json` est généré depuis `tools/machines/chord_keys/` par `tools/gen_chord_keys.py`
 (GCC m68k-elf 16.2.0, binutils 2.47, par exemple ceux de Homebrew). Le générateur refuse `m68k-linux-gnu-gcc` : son ABI lit
 dans `a0` les pointeurs que l'OS rend dans `d0`, ce qui fausserait les appels à l'OS ([note 42 §6](notes/42-clavier-accords-diatoniques.md)).
-**Expérimental, sans essai matériel.** Sélectionnez une piste CHORD,
-puis activez **Keys** dans **FUNC + RETRIG**. Root, Scale et I Ext–VII Ext choisissent la tonique, le mode
-et les extensions diatoniques. T1–T6 jouent I–VI ; RETRIG tenu donne VII puis I–V à l'octave supérieure.
-Réglages par piste, enregistrés avec le pattern. Model-TG est explicitement incompatible.
+**Expérimental** : Nico l'a essayé seul sur son Model:Cycles (06/10/2026) ; pas encore d'essai par Maxime ni en
+combinaison. Sélectionnez une piste CHORD,
+puis activez **Keys** dans **FUNC + RETRIG**. Root, Scale et I–VII choisissent la tonique, le mode
+et les extensions diatoniques ; le majeur s'affiche **MAJ**. Hors édition des pas, TRIG 1–7 jouent I–VII,
+8–14 les mêmes degrés une octave plus haut, 15–16 I–II deux octaves plus haut. Les grands pads T1–T6
+conservent leur sélection et leur jeu stock ; les accords des TRIG ne déclenchent pas le retrig/arpège.
+Réglages par piste, enregistrés avec le pattern. **I–VII** seuls choisissent les extensions ; **SHAPE** règle
+la disposition (**BASE**, **CLS0–3**, **OPN0–3**) et **COLOR** les niveaux, sans changement d'octave.
+Model-TG est explicitement incompatible.
 
-Onze masques identiques sont redirigés avant d'y placer le code ; seule la section 3 change. Aucun firmware
+Quatorze masques identiques sont redirigés avant d'y placer les 5 035 octets de code, constantes et état ; seule la section 3 change. Aucun firmware
 n'est distribué dans le dépôt. Génération, preuve autonome, puis preuve avec tous les mods compatibles :
 
 ```sh
@@ -257,13 +262,14 @@ python3 tools/build.py -i firmware/model-cycles_OS1.13.syx -t chord-keys \
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `chord-keys` | `b3bc0e811af225dcb7525c95a2a5d3408c2f4ab9611e6708ea2726ca2a789d2d` |
-| `6ch-usbup,chord-keys` | `66cf446910e4b3630a8431b4278b6a3e8fa7493e5b1aa4814ff7e82c1a16af34` |
-| `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,chord-keys` | `3c4b9dbc85003c9c5faac8e66f05b5fdddb06ad7d3276b274f3019b537f519aa` |
-| `6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-sd-cp-toy-bits-swarm` | `1e088ef71db247976e56d9c141b4e6c89a149d2c9408b730b02bee468ca39620` |
+| `chord-keys` | `47e399fbe52dfdac44a96ff08cef3bd40beeed1b38e3fb64764af96ddda4e4cf` |
+| `6ch-usbup,chord-keys` | `fc0476aef34218fb4904d9994c06f3a35853e213a125237c5b4a5b4022f431de` |
+| `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,chord-keys` | `1416a46ee7e7168dee5aa4409c9ba0797e280ddbc6b4aadeaa616923e910fc5b` |
+| `6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-sd-cp-toy-bits-swarm` | `39f8455e01389dde13578a3509b43f2f0140b7fe324bb6f790efa9ac0f11701c` |
 
-La preuve exécute les pads, menus, sauvegardes et calculs CHORD du véritable OS ; 10 500 accords diatoniques
-et les chemins inactifs sont comparés à la référence. Les frontières simulées, le coût en instructions et
+La preuve exécute les touches, pads, menus, sauvegardes et calculs CHORD du véritable OS ; 14 000 accords
+BASE, 2 205 combinaisons SHAPE et les chemins inactifs sont comparés à la référence. COLOR, les frontières de
+SHAPE, les libellés et le plafond aigu du premier opérateur sont contrôlés. Les frontières simulées, le coût en instructions et
 les vérifications restantes sur la machine sont détaillés dans [la note 42](notes/42-clavier-accords-diatoniques.md).
 Les accords étendus restent limités à quatre notes ; l'enregistrement conserve la fondamentale et le réglage
 du degré s'applique à la relecture, sans enregistrer une extension différente par trig.

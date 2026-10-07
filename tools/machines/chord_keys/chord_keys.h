@@ -1,9 +1,9 @@
 #ifndef CHORD_KEYS_H
 #define CHORD_KEYS_H
 
-/* Noyau harmonique du clavier d'accords (notes/42) : appelé par le gestionnaire des pads
- * (chord_ui.c) pour choisir la fondamentale ; l'audio (chord_audio.c) refait le même calcul.
- * Aucun bouton, état de piste, stockage ou envoi MIDI n'est modifié ici.
+/* Noyau harmonique autonome du clavier CHORD (notes/42).
+ * Calcule les notes des seize touches TRIG, sans accès au firmware ni au DSP.
+ * Aucun état de piste, stockage ou envoi MIDI n'est modifié ici.
  */
 
 enum chord_keys_mode {
@@ -33,21 +33,21 @@ enum chord_keys_status {
 };
 
 struct chord_keys_config {
-    int root; /* Tonique MIDI 0..127 ; le menu et le stockage la limitent à 24..48 (C1–C3). */
+    int root; /* Tonique MIDI 0..127 ; tessiture réellement jouable de CHORD à établir. */
     enum chord_keys_mode mode;
     enum chord_keys_extension extensions[7]; /* Un réglage par degré I..VII. */
 };
 
 struct chord_keys_result {
     int degree;     /* 0..6 : degré I..VII, réutilisé à l'octave supérieure. */
-    int slot;       /* 0..11 : position dans les deux banques de six pads. */
-    int octave;     /* 0 ou 1 : octave de la fondamentale par rapport à root. */
+    int slot;       /* 0..15 : touche TRIG 1..16. */
+    int octave;     /* 0..2 : octave de la fondamentale par rapport à root. */
     int count;      /* 3 ou 4 ; les cases inutilisées valent zéro. */
     int notes[4];   /* Notes MIDI absolues, strictement croissantes. */
     int offsets[4]; /* Demi-tons au-dessus de notes[0]. */
 };
 
-/* pad = 0..5 (T1..T6), bank = 0..1 (I..VI puis VII, I..V à l'octave).
+/* key = 0..15 (TRIG 1..16) : I..VII, I..VII +12, puis I..II +24.
  * Chaque voix appartient à la gamme, y compris les extensions.
  * Tous les réglages sont validés. Un accord dépassant la note MIDI 127 est
  * refusé en entier, sans rabattement ni écrêtage. En cas d'erreur, result reste
@@ -55,7 +55,7 @@ struct chord_keys_result {
  * Aucun état global mutable, allocation, appel système ou dépendance à la libc.
  */
 enum chord_keys_status chord_keys_build(const struct chord_keys_config *config,
-                                       int pad, int bank,
+                                       int key,
                                        struct chord_keys_result *result);
 
 #endif
