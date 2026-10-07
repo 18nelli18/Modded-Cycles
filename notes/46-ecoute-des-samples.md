@@ -8,7 +8,7 @@ like engine presets ». Tweaks `33-sample-preview.json` (sur `model-tg`) et `33-
 `sample_preview.ld`), preuve en émulation `tools/emu/test_sample_preview.py`. Adresses : VA de l'OS 1.13 ; celles de
 Model-TG sont celles de sa v1.1.0 telle que la construit `tools/gen_model_tg.py` (identiques dans ses deux versions).
 
-**Statut : expérimental, en attente de l'essai de Maxime.**
+**Statut : testé sur la machine (07/10/2026), voir §12.**
 
 ## Réponse courte
 
@@ -509,7 +509,16 @@ python3 tools/emu/test_sample_preview.py --cycles model-cycles_OS1.13.syx \
     [--syntakt Syntakt_OS1.42.syx]
 ```
 
-## 12. À vérifier sur la machine `[À FAIRE]`
+## 12. Sur la machine
+
+**Testé sur la machine (07/10/2026).** Maxime a flashé les deux fichiers de test du dossier `ecoute-samples/` du
+projet (Model-TG + l'écoute seule, MAIN OS `b7342804…` ; l'écoute avec tout le reste, Model-TG version Syntakt et les
+5 moteurs, audio 6 canaux, trig hold, arpégiateur, tempo, animation, MAIN OS `20a116b1…`) avec la liste ci-dessous, et
+répond : « Tout marche nickel, tu peux fusionner ». La carte passe de Expérimental à Testé (release 1.32). Il n'a pas
+détaillé chaque point ; ceux qu'il n'a pas commentés (durée du premier chargement, live rec, Sound Pool) restent les
+points à surveiller si un utilisateur signale un souci.
+
+Liste envoyée pour l'essai :
 
 Firmware : Model-TG + l'écoute des samples (et, à part, la version combinée avec les moteurs du Syntakt).
 

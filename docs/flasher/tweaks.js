@@ -138211,7 +138211,7 @@ window.MC_TWEAKS = {
    "id": "sample-preview",
    "label": "Ecoute des samples (Model-TG)",
    "desc": "Sur une piste Sampler, dans le navigateur de samples, le pad de la piste (ou ses touches en mode clavier) joue le sample sous le curseur, comme pour les presets. Un sample pas encore en memoire se charge au premier appui. Demande Model-TG.",
-   "status": "experimental",
+   "status": "tested",
    "credit": {
     "kind": "based",
     "who": "TinyGregAudio",
