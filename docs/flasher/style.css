@@ -332,3 +332,5 @@ details.trouble{margin-top:24px}
   .chip{min-height:44px;padding-left:12px}
   .chip .x{width:44px;height:44px}
 }
+.seg.sub{margin:0 0 18px;gap:6px 18px}
+.seg.sub button{font-size:15px}

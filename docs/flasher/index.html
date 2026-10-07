@@ -82,14 +82,43 @@
         <p class="note" data-i18n-html="restore_from_samples"></p>
       </div>
       <div id="panel-samples" role="tabpanel" aria-labelledby="tab-samples" hidden>
-        <p class="samples-head"><span data-i18n="samples_title">Turn your Model:Cycles into a Model:Samples</span><span class="tag ok" data-i18n="tested">Tested</span></p>
-        <p class="panel-text" data-i18n="samples_text"></p>
-        <ul class="warn-list">
-          <li data-i18n="samples_w1"></li>
-          <li data-i18n-html="samples_w2"></li>
-          <li data-i18n="samples_w3"></li>
-        </ul>
-        <label class="check"><input id="samples-ack" type="checkbox"><span data-i18n="samples_ack">I have a MIDI interface for the way back (to the Model:Cycles MIDI IN).</span></label>
+        <div class="seg sub" role="radiogroup" aria-label="Machine">
+          <button type="button" role="radio" id="smp-dir-cyc" aria-checked="true" data-i18n="smp_dir_cyc">Model:Cycles → Samples OS</button>
+          <button type="button" role="radio" id="smp-dir-smp" aria-checked="false" data-i18n="smp_dir_smp">Model:Samples → Cycles OS</button>
+          <button type="button" role="radio" id="smp-dir-back" aria-checked="false" data-i18n="smp_dir_back">Model:Samples: back to its OS</button>
+        </div>
+        <div id="smp-pane-cyc">
+          <p class="samples-head"><span data-i18n="samples_title">Turn your Model:Cycles into a Model:Samples</span><span class="tag ok" data-i18n="tested">Tested</span></p>
+          <p class="panel-text" data-i18n="samples_text"></p>
+          <ul class="warn-list">
+            <li data-i18n="samples_w1"></li>
+            <li data-i18n-html="samples_w2"></li>
+            <li data-i18n="samples_w3"></li>
+          </ul>
+          <label class="check"><input id="samples-ack" type="checkbox"><span data-i18n="samples_ack">I have a MIDI interface for the way back (to the Model:Cycles MIDI IN).</span></label>
+        </div>
+        <div id="smp-pane-smp" hidden>
+          <p class="samples-head"><span data-i18n="cos_title">Turn your Model:Samples into a Model:Cycles</span><span class="tag" data-i18n="experimental">Experimental</span></p>
+          <p class="panel-text" data-i18n="cos_text"></p>
+          <ul class="warn-list">
+            <li data-i18n="cos_w1"></li>
+            <li data-i18n="cos_w5"></li>
+            <li data-i18n-html="cos_w2"></li>
+            <li data-i18n="cos_w3"></li>
+            <li data-i18n="xos_reset"></li>
+            <li data-i18n-html="cos_w4"></li>
+          </ul>
+          <label class="check"><input id="cos-ack" type="checkbox"><span data-i18n="cos_ack">I have backed up my samples and projects with Elektron Transfer, and I keep the official Model:Samples OS file for the way back.</span></label>
+        </div>
+        <div id="smp-pane-back" hidden>
+          <p class="samples-head"><span data-i18n="sback_title">Give your Model:Samples its own OS back</span><span class="tag" data-i18n="experimental">Experimental</span></p>
+          <p class="panel-text" data-i18n="sback_text"></p>
+          <ul class="warn-list">
+            <li data-i18n="sback_w1"></li>
+            <li data-i18n-html="sback_w2"></li>
+            <li data-i18n="xos_reset"></li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
