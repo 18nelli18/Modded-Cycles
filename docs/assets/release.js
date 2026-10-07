@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.26", date: "2026-10-07", changes: [
+    { en: "A tidier list of mods in the flasher: they are sorted into sections (Packs, Sounds & machines, Sequencer, Live playing, Screen & browsing, USB & MIDI), with one short line each. The buttons at the top jump to a section and light up when it holds a ticked mod; a section folds away with a click on its title",
+      fr: "Une liste de mods plus claire dans le flasher : ils sont rangés par rubriques (Packs, Sons et machines, Séquenceur, Jeu en live, Écran et navigation, USB et MIDI), avec une ligne courte chacun. Les boutons du haut mènent à une rubrique et s'allument quand elle contient un mod coché ; un clic sur le titre d'une rubrique la replie" },
+    { en: "Details opens the full description of a mod, how it was tested and its guide link. A Your selection bar stays at the bottom of the screen with the ticked mods, the experimental ones, an × to untick each and a button to step 2. When two mods can't go together, the row says so before you tick, and Undo puts things back",
+      fr: "Détails ouvre la description complète d'un mod, comment il a été testé et le lien vers le guide. Une barre « Votre sélection » reste en bas de l'écran avec les mods cochés, les expérimentaux, une × pour décocher chacun et un bouton vers l'étape 2. Quand deux mods ne vont pas ensemble, la ligne le dit avant de cocher, et Annuler remet tout comme avant" },
+    { en: "Display only: for the same choice of mods, the firmware built and sent is exactly the same as before (checked on every combination)",
+      fr: "Affichage seulement : pour un même choix de mods, le firmware construit et envoyé est exactement le même qu'avant (vérifié sur toutes les combinaisons)" },
+  ] },
   { version: "1.21", date: "2026-10-05", changes: [
     { en: "New mod, Startup animation: when the Model:Cycles starts, the four rounded squares of the modded-cycles logo pop in one by one, the top right one hollows out, then “modded-cycles” types itself underneath, instead of the original tile animation",
       fr: "Nouveau mod, Animation de démarrage : au démarrage du Model:Cycles, les quatre carrés arrondis du logo modded-cycles apparaissent un par un, celui en haut à droite se creuse, puis « modded-cycles » s'écrit dessous, à la place de l'animation de carreaux d'origine" },
