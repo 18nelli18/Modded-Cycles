@@ -72,6 +72,12 @@ def run(stock, patched, symbols, extra_code, check):
     runner.engine.uc.hook_add(UC_HOOK_CODE, control_getter,
                              begin=symbols['ck_audio_controls'], end=symbols['ck_audio_controls'])
 
+    def snapshot_matches(notes, root, bass):
+        packet = int.from_bytes(runner.engine.uc.mem_read(symbols['ck_chord_live'], 4), 'big')
+        expected = 0x80000000 | root | ((bass % 12) << 27)
+        expected |= sum(n << (7 + 5 * i) for i, n in enumerate(notes))
+        return packet == expected
+
     def matches(notes, ratios, gains):
         reference = frequency_ratios(notes + ((0,) if len(notes) == 3 else ()))
         return (all(abs(a - b) <= 4 for a, b in zip(reference, ratios))
@@ -90,14 +96,14 @@ def run(stock, patched, symbols, extra_code, check):
                         controls[0] = 1 | (transform << 8)
                         notes = expected_notes(mode, degree, ext, palette, transform)
                         ratios, _, gains = runner.update(root=root, color=color)
-                        ok = matches(notes, ratios, gains)
+                        ok = matches(notes, ratios, gains) and snapshot_matches(notes, root, notes[0])
                         valid &= ok
                         total += 1
                         if not ok and first is None:
                             first = (mode, degree, ext, palette, transform, notes, ratios, gains)
         check(valid, f'harmonie DSP mode {mode} : 7 degrés × 5 extensions × 3 palettes × 7 gestes'
               + (f' ; premier écart {first}' if not valid else ''))
-    check(total == 5145 and first is None, f'harmonie DSP : {total} accords avec racine, famille et tension attendues')
+    check(total == 5145 and first is None, f'harmonie DSP : {total} accords avec racine, famille, tension et instantané écran exacts')
 
     # Le balayage fait varier simultanément les paramètres effectifs et les
     # gestes ; les gains natifs COLOR ne doivent plus couper les extensions.
@@ -112,11 +118,13 @@ def run(stock, patched, symbols, extra_code, check):
             palette = 0 if color < 43 else 1 if color < 86 else 2
             for transform in range(7):
                 controls[0] = 1 | (transform << 8)
-                notes = voiced(expected_notes(0,0,4,palette,transform), index)
+                base_notes = expected_notes(0,0,4,palette,transform)
+                notes = voiced(base_notes, index)
                 ratios, _, gains = runner.update(root=24, shape=shape, color=color)
                 target_gains = tuple(g if w == 32 else (g >> 15) * (w << 10)
                                      for g, w in zip(stock_gains, weights[index]))
-                ok = matches(notes, ratios, gains) and gains == target_gains
+                ok = (matches(notes, ratios, gains) and gains == target_gains
+                      and snapshot_matches(base_notes, 24, notes[0]))
                 valid &= ok
                 if not ok and first is None:
                     first = (index,color,transform,notes,ratios,gains,target_gains)
@@ -124,7 +132,7 @@ def run(stock, patched, symbols, extra_code, check):
           + (f' ; premier écart {first}' if first else ''))
 
     # Deux vraies configurations de pattern : le mot musical reste identique,
-    # seule la signature d'opt-in active la nouvelle interprétation de COLOR.
+    # les deux signatures appliquent désormais les mêmes contrôles COLOR.
     native_runner = AudioRunner(patched, extra_code=extra_code)
     config = NativeAudioConfig(native_runner.engine)
     words = [config_word(root=24, extensions=(2,) * 7)] * 6
@@ -132,12 +140,12 @@ def run(stock, patched, symbols, extra_code, check):
     config.configure(words, 1)
     config.write(config.HEADERS + 256 + 32, 0x434b0200)
     valid = True
-    for pattern, notes in ((0,(0,3,10,13)), (1,(0,3,10,14)), (0,(0,3,10,13))):
+    for pattern, notes in ((0,(0,3,10,14)), (1,(0,3,10,14)), (0,(0,3,10,14))):
         config.select(pattern)
         for track in range(6):
             ratios, _, gains = native_runner.update(track=track, root=28, color=64)
             valid &= matches(notes, ratios, gains)
-    check(valid, 'migration : anciens patterns v1 inchangés, v2 JAZZ donne Em9, retour v1 et six pistes')
+    check(valid, 'contrôles permanents : signatures v1/v2 donnent Em9 en JAZZ, six pistes')
 
     # Le même accord tenu passe d'une palette à l'autre avec trig_mask=0.
     # Les deux appels stock d'enveloppe/trigger ne sont jamais nécessaires.
@@ -171,8 +179,22 @@ def run(stock, patched, symbols, extra_code, check):
         e.instructions = 0
         e.block(0)
         costs.append(e.instructions)
-    print(f'info  NEW / six CHORD / TENSION : BASE {costs[0]}, OPN3 {costs[1]} instructions/bloc ; '
+    print(f'info  six CHORD / TENSION : BASE {costs[0]}, OPN3 {costs[1]} instructions/bloc ; '
           'getter réel inclus, pas une mesure de cycles matériels', flush=True)
+    # Une inversion aiguë peut couper des opérateurs natifs dès TRIG 15/16.
+    # Le nom conserve l'harmonie voulue mais signale cette limite réelle, puis
+    # efface le marqueur dès que l'on redescend ; aucune fausse alerte de triade.
+    limited_ok = True
+    controls[0] = 1
+    for root, ext, shape, limited in ((72, 1, 32, True), (74, 1, 32, True),
+                                      (24, 1, 32, False), (24, 0, 3, False),
+                                      (96, 1, 3, True), (24, 1, 3, False)):
+        runner.configs[0] = config_word(root=48, extensions=(ext,) * 7)
+        _, phases, gains = runner.update(root=root, shape=shape, color=64)
+        packet = int.from_bytes(runner.engine.uc.mem_read(symbols['ck_chord_live'], 4), 'big')
+        actual_limit = phases[0] == 0x000bd2f1 or not all(gains[:2 if ext == 0 else 3])
+        limited_ok &= actual_limit == limited and bool(packet & 0x400) == limited
+    check(limited_ok, 'écran DSP : HIGH LIMIT suit les vraies voix coupées/plafonnées, retour grave et triade sans fausse alerte')
     protected = True
     for shape in (3,4,8,12,16,20,24,28,32):
         for color in (0,64,127):

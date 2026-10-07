@@ -145,8 +145,8 @@ FEATURES = [
         "id": "chord-keys",
         "label": "Chord Keys",
         "desc": "TRIG 1–16 jouent les degrés. COLOR choisit DIATONIC, JAZZ ou TENSION ; SHAPE dispose "
-                "et équilibre les voix. Pads HARMONY : T1–T6 transforment temporairement l'accord. "
-                "Controls LEGACY préserve les anciens patterns jusqu'au passage explicite à NEW.",
+                "et équilibre les voix. T1–T6 transforment toujours l'accord en HARMONY lorsque Keys est actif. "
+                "L'écran affiche l'accord tenu ; les options Controls et Pads sont supprimées.",
         "status": "experimental",
         "credit": {"kind": "by", "who": "Modded Cycles", "repo": "18nelli18/Modded-Cycles"},
         "excludes": ["model-tg"],

@@ -305,7 +305,8 @@ async function main() {
       && /no reported hardware test, alone or combined/.test(text(doc, "chord-test-scope"))
       && /previous revision/.test(text(doc, "chord-test-scope"))
       && /DIATONIC, JAZZ or TENSION/.test(text(doc, "features"))
-      && /LEGACY/.test(text(doc, "features")),
+      && /T1–T6 always change the chord temporarily and keep the selected track/.test(text(doc, "features"))
+      && /played chord’s name on screen/.test(text(doc, "features")),
       "Chord Keys alone: new revision stays experimental; previous hardware report is scoped");
     box("feat-usb6").click(); await wait(5);
     check(tagOf("feat-chord-keys") === "Experimental"

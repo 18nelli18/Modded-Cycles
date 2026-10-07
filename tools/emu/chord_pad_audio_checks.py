@@ -25,11 +25,9 @@ def run(stock, image, symbols, extra_code, check):
     symbols = {name: int(value, 16) if isinstance(value, str) else value
                for name, value in symbols.items()}
     ui, _, selected, _, _ = _ui_rig(image, symbols)
-    ui.call(symbols["ck_ui_revision_set"], 1)
     word = config_word(root=24, extensions=(1,) * 7)
     for track in range(6):
         ui.call(symbols["ck_ui_config_set"], track, word)
-        ui.call(symbols["ck_ui_pad_mode_set"], track, 1)
     header_before = bytes(ui.uc.mem_read(HEADER, 64))
 
     engine = E.Engine(image, extra_code=extra_code)
@@ -105,12 +103,11 @@ def run(stock, image, symbols, extra_code, check):
 
     _pad(ui, 3, True)
     valid = block_matches(2, 3)
-    ui.call(symbols["ck_ui_pad_mode_set"], 2, 0)
+    ui.call(symbols["ck_ui_clear_modifiers"], 2, HEADER)
     valid &= block_matches(2, 0)
     _pad(ui, 3, False)
     valid &= not ui.calls and block_matches(2, 0)
-    check(valid, "pads→DSP : sortie HARMONY vers TRACK restaure le repos, relâchement capturé sans note parasite")
-    ui.call(symbols["ck_ui_pad_mode_set"], 2, 1)
+    check(valid, "pads→DSP : annulation ciblée restaure le repos, relâchement capturé sans note parasite")
     check(bytes(ui.uc.mem_read(HEADER, 64)) == header_before
           and not ui.bad and not engine.unmapped,
           "pads→DSP : en-tête identique après retour des réglages, aucun accès mémoire hors du banc")

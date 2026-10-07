@@ -230,24 +230,30 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim
 | `model-tg,boot-anim` | `cbec181684805bf37dd07c62dc47f7daf35e6abab530a3f3b06ec5db590278ec` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim` | `d468a729f32780870dbd591e52e8c782a5cdd347459ac1c61ef35473e26c9323` |
 
-### Chord Keys : palettes et pads harmoniques
+### Chord Keys : pads harmoniques permanents et nom de l'accord
 
 `44-chord-keys.json` est généré depuis `tools/machines/chord_keys/` par `tools/gen_chord_keys.py`
-(GCC m68k-elf 16.2.0, binutils 2.47). **Révision expérimentale du 06/10/2026, sans essai matériel rapporté.**
+(GCC m68k-elf 16.2.0, binutils 2.47). **Révision expérimentale du 07/10/2026, sans essai matériel rapporté.**
 Le retour positif de Nico, seul sans autres mods, concerne la révision antérieure décrite en note 40 §13.
 
-Sur une piste CHORD, **FUNC + RETRIG** donne Keys, Root, Scale, I–VII, **Controls** et **Pads**.
+Sur une piste CHORD, **FUNC + RETRIG** donne Keys, Root, Scale et I–VII.
 TRIG 1–7 jouent I–VII, 8–14 à l'octave, 15–16 I–II deux octaves plus haut. I–VII conservent
-le niveau TRI/7/9/11/13 propre à chaque degré. **Controls NEW** donne à **COLOR** les palettes
-DIATONIC (0–42), JAZZ (43–85), TENSION (86–127), et à **SHAPE** les neuf dispositions
-BASE/CLS0–3/OPN0–3 avec une balance associée. **Pads HARMONY** affecte T1–T6 à 9, 11, 13,
+le niveau TRI/7/9/11/13 propre à chaque degré. **COLOR** choisit les palettes
+DIATONIC (0–42), JAZZ (43–85), TENSION (86–127), et **SHAPE** les neuf dispositions
+BASE/CLS0–3/OPN0–3 avec une balance associée. **Keys ON impose HARMONY** : T1–T6 donnent 9, 11, 13,
 SUS7, PARALLEL et V7 temporaires. Dernier pad pressé prioritaire ; son relâchement revient au
-précédent encore tenu, puis au réglage enregistré. **Pads TRACK** conserve le jeu habituel.
+précédent encore tenu, puis au réglage enregistré. Un pad pressé après un accord tenu ne sélectionne
+plus sa piste. **TRACK + T1–T6** reste la commande de sélection. Pendant le maintien d'un TRIG,
+l'écran nomme l'accord joué, avec la palette et le geste temporaire actifs, par exemple Cmaj7 ou Em9.
+Le nom indique l'harmonie et la basse du renversement ; **HIGH LIMIT** signale une fondamentale
+limitée ou des voix retirées par la protection du moteur dans l'aigu. PITCH/FINE restent l'accordage
+natif et ne changent pas le nom affiché.
 Les raccourcis de piste, mute et édition gardent le chemin de l'OS ; les TRIG n'activent pas retrig/arp.
 
-**Controls s'applique au pattern entier.** Un ancien pattern reste LEGACY : mêmes réglages, valeurs
-SHAPE/COLOR et locks, jusqu'au choix explicite NEW. Ce choix réinterprète alors les valeurs existantes,
-sans réécrire les locks. Les patterns initialisés par cette version commencent NEW, Pads TRACK, Keys OFF.
+**Controls NEW/LEGACY et Pads TRACK/HARMONY sont retirés du menu.** Les commandes améliorées
+s'appliquent aussi aux anciens patterns : leurs valeurs SHAPE/COLOR et locks sont conservés mais
+réinterprétés avec les palettes et balances actuelles. Les nouveaux patterns commencent Keys OFF.
+Keys OFF retrouve le clavier chromatique, les pads et retrig/arp habituels.
 Les extensions m7♭5 gardent fondamentale, quinte diminuée, septième et tension en omettant la tierce ;
 PARALLEL/V7 y sont indisponibles. Quatre voix maximum. Les gestes de pads restent live et ne sont pas
 sauvegardés ni enregistrés dans le séquenceur. Model-TG reste incompatible.
@@ -259,6 +265,7 @@ la section 3 change. Aucun firmware n'est distribué dans le dépôt.
 ```sh
 python3 tools/test_chord_keys.py
 python3 tools/test_chord_harmony.py
+python3 tools/test_chord_names.py
 python3 tools/gen_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx --check
 python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx
 python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx \
@@ -270,14 +277,14 @@ python3 tools/build.py -i firmware/model-cycles_OS1.13.syx -t chord-keys \
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `chord-keys` | `10815cf1c64e81f1b89717e6ef5900efa7eb27fc0ecacb36f583ab0980cb9043` |
-| `6ch-usbup,chord-keys` | `6217ceb64487376fb316ef286a2d32395a219fbf7d9dfa29ef6c12dea7434b74` |
-| `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,chord-keys` | `f67d1403df295df1e2010db2adff668eb2c663ee98782498e394c33ef771edc6` |
-| `6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-sd-cp-toy-bits-swarm` | `bd550ffc9876caf8a72ec5238a8c3b067f1747315b64476cb3fae96a10da3335` |
+| `chord-keys` | `957d7b995cacfe8206ad3d9065c92ec887b3a3d028fa34eec7810640c1f81acb` |
+| `6ch-usbup,chord-keys` | `8f35bf121651033b309bb00756a174aad0da3feef96d84efeec0bb1961ef5f89` |
+| `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,chord-keys` | `bdb322e062ada9616454a473ddcbae8cc1627934b25aecb41adcb610688c84a6` |
+| `6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-sd-cp-toy-bits-swarm` | `7f5d1a14357ae32871209b64ec730d4da1ea70ffff26c18a04ad57deb9890ea6` |
 
 Le banc portable vérifie les choix harmoniques et la balance. Les preuves ColdFire exécutent les routines
 OS de clavier, pads, menu, stockage et CHORD ; le coût en instructions ne mesure pas la charge matérielle.
-Les résultats de cette révision et le protocole d'écoute sont suivis dans [la note 40 §15](notes/40-clavier-accords-diatoniques.md).
+Les résultats de cette révision et le protocole d'écoute sont suivis dans [la note 40 §16](notes/40-clavier-accords-diatoniques.md).
 
 ### Écoute d'un pas en pause
 

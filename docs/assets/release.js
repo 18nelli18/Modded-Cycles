@@ -3,6 +3,16 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.28", date: "2026-10-07", changes: [
+    { en: "Chord Keys: hold a chord, then press T1–T6 to change its harmony while keeping the selected track. TRACK + T1–T6 still selects tracks",
+      fr: "Chord Keys : tenez un accord, puis appuyez sur T1–T6 pour modifier son harmonie en gardant la piste sélectionnée. TRACK + T1–T6 sélectionne toujours les pistes" },
+    { en: "The screen names the played harmony, such as Cmaj7 or Em9, following the COLOR palette and temporary pad changes. HIGH LIMIT indicates when the engine’s high-note protection limits the root or removes voices",
+      fr: "L’écran nomme l’harmonie jouée, comme Cmaj7 ou Em9, en suivant la palette COLOR et les changements temporaires des pads. HIGH LIMIT indique quand la protection du moteur dans l’aigu limite la fondamentale ou retire des voix" },
+    { en: "Improved controls and HARMONY pads are permanent with Keys ON on CHORD. Removed Controls NEW/LEGACY and Pads TRACK/HARMONY from the menu. Existing patterns use the improved controls too; their saved values and locks are preserved with the new interpretation",
+      fr: "Les commandes améliorées et les pads HARMONY sont définitifs avec Keys ON sur CHORD. Retrait de Controls NEW/LEGACY et Pads TRACK/HARMONY du menu. Les anciens patterns utilisent aussi les commandes améliorées ; leurs valeurs et locks sont conservés avec la nouvelle interprétation" },
+    { en: "Experimental revision, awaiting its own hardware test. Pad gestures remain live only; four voices maximum and Model-TG remains incompatible",
+      fr: "Révision expérimentale, en attente de son propre essai matériel. Les gestes des pads restent live uniquement ; quatre voix au maximum et Model-TG reste incompatible" },
+  ] },
   { version: "1.27", date: "2026-10-06", changes: [
     { en: "Chord Keys: COLOR selects DIATONIC, JAZZ or TENSION; SHAPE combines nine voicings with voice balance. I–VII keeps each degree’s usual TRI/7/9/11/13 setting",
       fr: "Chord Keys : COLOR choisit DIATONIC, JAZZ ou TENSION ; SHAPE combine neuf dispositions et la balance des voix. I–VII conserve le réglage habituel TRI/7/9/11/13 de chaque degré" },

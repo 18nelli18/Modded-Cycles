@@ -9,13 +9,8 @@
 unsigned ck_ui_config_get(unsigned track);
 void ck_ui_config_set(unsigned track, unsigned word);
 
-/* La révision s'applique au pattern entier ; les pads restent par piste.
- * Le schéma historique ne réinterprète jamais les anciens COLOR/SHAPE/locks.
- */
+/* Les contrôles améliorés sont permanents, y compris pour les anciens patterns. */
 unsigned ck_ui_revision_get(void);
-void ck_ui_revision_set(unsigned revision);
-unsigned ck_ui_pad_mode_get(unsigned track);
-void ck_ui_pad_mode_set(unsigned track, unsigned harmony);
 void *ck_ui_header(void);
 
 /* Modificateurs éphémères : 0 aucun, 1..6 T1..T6. header est celui du
@@ -39,5 +34,9 @@ void ck_ui_menu_ctor(void *view);
  * relâchement, pour que celui-ci ne soit pas réinterprété par le mode stock.
  */
 void ck_ui_cancel_track(unsigned track);
+
+/* Indice de la dernière touche encore sonore de la piste, ou 16 si aucune. */
+unsigned ck_ui_active_key(unsigned track);
+unsigned ck_ui_active_note(unsigned track);
 
 #endif

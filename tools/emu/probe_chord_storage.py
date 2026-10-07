@@ -189,7 +189,7 @@ def patched_headers(rig, stock_result):
     rig.call(0x40061526, H2, 1)
     require(rig.bytes(H2) == before, "Init avec conservation perd les réglages")
     rig.call(0x40061526, H2, 0)
-    require(rig.word(H2 + 32) == TAG_NEW, "Nouveau pattern hors schéma v2/Pads TRACK")
+    require(rig.word(H2 + 32) == TAG_NEW, "Nouveau pattern hors format v2")
     require(all(rig.call("ck_storage_read", H2, track) == DEFAULT for track in range(6)),
             "Init ne désactive pas les accords")
     for signature in (0, 0xFFFFFFFF, TAG ^ 1, TAG_NEW | 64):
@@ -205,7 +205,7 @@ def patched_headers(rig, stock_result):
 
 
 def revisions(rig):
-    """Deux schémas complets, opt-in explicite, réglages et locks intacts."""
+    """Anciens schémas lisibles, contrôles permanents, réglages et locks intacts."""
     words = [configuration(track) for track in range(6)]
     for tag in (TAG, TAG_NEW, TAG_NEW | 0x15, TAG_NEW | 0x3f):
         rig.header(H1, words)
@@ -214,30 +214,17 @@ def revisions(rig):
         require(rig.word(H2 + 32) == tag, "Le chargeur migre un schéma implicitement")
         require([rig.call("ck_storage_read", H2, t) for t in range(6)] == words,
                 "Schéma v1/v2 : configuration perdue au chargement")
-    rig.selected = 0
-    install_config_fixture(rig.uc, words)
-    before = rig.bytes(H1)
-    require(rig.call("ck_ui_revision_get") == 0, "Ancien pattern réinterprété")
-    require(all(rig.call("ck_audio_controls", t) == 0 for t in range(6)),
-            "Ancien pattern active nouvelle macro")
-    rig.call("ck_ui_revision_set", 1)
-    require(rig.word(H1 + 32) == TAG_NEW, "Opt-in v2 absent")
-    for track in range(6):
-        rig.call("ck_ui_pad_mode_set", track, track % 2)
-        require(bool(rig.call("ck_ui_pad_mode_get", track)) == bool(track % 2),
-                "Mode de pad par piste perdu")
-        require(rig.call("ck_audio_controls", track) == 1,
-                "Mode HARMONY sans geste invente une transformation")
-    require(rig.word(H1 + 32) == TAG_NEW | 0x2a, "Masque six pistes incorrect")
-    rig.call("ck_ui_revision_set", 1)
-    rig.call("ck_ui_pad_mode_set", 5, 1)
-    require(rig.word(H1 + 32) == TAG_NEW | 0x2a, "Valeur répétée efface le masque des pads")
-    require(all(before[i] == rig.bytes(H1)[i] for i in range(64) if not 32 <= i < 36),
-            "Changement de contrôles réécrit les valeurs du pattern")
-    rig.call("ck_ui_revision_set", 0)
-    require(rig.bytes(H1) == before, "Retour LEGACY change les anciens réglages")
-    require(all(rig.call("ck_audio_controls", t) == 0 for t in range(6)),
-            "Retour LEGACY conserve macro active")
+        rig.selected = 0
+        install_config_fixture(rig.uc, words)
+        rig.word(H1 + 32, tag)
+        before = rig.bytes(H1)
+        require(rig.call("ck_ui_revision_get") == 1,
+                "Les contrôles améliorés dépendent encore de l'ancien schéma")
+        require(all(rig.call("ck_audio_controls", t) == 1 for t in range(6)),
+                "HARMONY permanent sans geste doit conserver l'accord au repos")
+        require(rig.bytes(H1) == before,
+                "Les lecteurs réécrivent les valeurs ou l'ancienne signature")
+    require(rig.call("ck_audio_controls", 6) == 0, "Piste invalide acceptée")
 
 
 def stock_accessors(rig):

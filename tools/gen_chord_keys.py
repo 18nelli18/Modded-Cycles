@@ -44,6 +44,8 @@ EXTRA_MASKS = (0x40158744, 0x4016aa28, 0x401699a8, 0x401696a0, 0x40166760,
 MASKS += EXTRA_MASKS
 # Adresse, contrat attendu, symbole, opcode (None = pointeur de vtable).
 HOOKS = (
+    (0x400075f0, "4eb940076be4", "ck_chord_display_dirty", 0x4eb9),
+    (0x4008e622, "4fefffd848d71c7c", "ck_chord_display_hook", 0x4ef9),
     (0x4007746c, "4fefffc048d70c04", "ck_ui_pad_dispatch_hook", 0x4ef9),
     (0x400aae88, "4fefffe448d71c3c", "chord_audio_update", 0x4ef9),
     (0x400ab0e4, "d1fc4012142c", "chord_audio_ratios", 0x4ef9),
@@ -187,14 +189,15 @@ def build_tweak(stock):
         "description": [
             "Mode Keys dans FUNC + RETRIG : une piste CHORD, gamme et tonique, extensions par degré.",
             "TRIG 1–7 jouent I–VII, 8–14 les mêmes degrés une octave plus haut, 15–16 I–II deux octaves plus haut.",
-            "Controls NEW : COLOR choisit DIATONIC, JAZZ ou TENSION ; SHAPE dispose et équilibre les voix.",
-            "Pads TRACK conserve le jeu stock ; HARMONY transforme temporairement l'accord avec T1–T6.",
+            "COLOR choisit DIATONIC, JAZZ ou TENSION ; SHAPE dispose et équilibre les voix, sans ancien mode.",
+            "Keys actif : T1–T6 transforment temporairement l'accord en HARMONY sans changer de piste.",
             "T1/T2/T3 : 9/11/13 ; T4 : 7sus4 ; T5 : parallèle majeur/mineur ; T6 : dominante V7 de la cible.",
             "Dernier pad prioritaire ; son relâchement restaure le précédent encore tenu puis EXT, sans retrigger.",
             "Sept modes et quatre voix au plus : 9/11/13 omettent la quinte et les tensions intermédiaires.",
             "Exception m7♭5 étendu : fondamentale, quinte diminuée, septième, tension ; sans tierce. T5/T6 indisponibles.",
-            "SHAPE : BASE, CLS0–3, OPN0–3. Les nouveaux patterns utilisent NEW/DIATONIC et Pads TRACK.",
-            "Les anciens patterns conservent LEGACY, leurs sons et leurs locks ; Controls NEW est un choix explicite par pattern.",
+            "SHAPE : BASE, CLS0–3, OPN0–3. Les options Controls et Pads sont supprimées.",
+            "Anciens et nouveaux patterns utilisent les mêmes contrôles ; gamme et extensions sauvegardées conservées.",
+            "L'écran nomme l'accord tenu selon les intervalles audio, les transformations et la basse du voicing.",
             "Les gestes des pads restent live ; le séquenceur conserve seulement la fondamentale, pas ces transformations.",
             "Réglages par piste sauvegardés avec le pattern. Dernière touche prioritaire, sans retour à la précédente.",
             "Model-TG incompatible : son Scale Lock transforme les notes avant le moteur. Aucun essai matériel.",

@@ -27,6 +27,7 @@ import chord_ui_checks
 import chord_harmony_checks
 import chord_palette_ui_checks
 import chord_pad_audio_checks
+import chord_display_checks
 from probe_chord_storage import run_storage_checks
 
 DIRECTORY = HERE.parents[1] / "tweaks/model-cycles_OS1.13"
@@ -92,6 +93,7 @@ def main():
         check(False, f"stockage : {error}")
     chord_ui_checks.run(reference, patched, symbols, check)
     chord_palette_ui_checks.run(reference, patched, symbols, check)
+    chord_display_checks.run(reference, patched, symbols, check)
     extra_code = [(build.BASE + w["off"], len(w["new"])//2) for w in tweak["writes"]
                   if len(w["new"])//2 > 32]
     audio_failures = run_audio_checks(reference, patched, symbols["ck_audio_config"], extra_code)

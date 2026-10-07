@@ -65,7 +65,6 @@ def run(stock, image, symbols, check):
                for name, value in symbols.items()}
     reference, _, _, ref_machine, stock_drawn = _prepare(stock)
     altered, config, selected, machine, drawn = _prepare(image, symbols)
-    altered.call(symbols["ck_ui_revision_set"], 1)
     format_fn, draw_fn = altered.r32(0x400FD170), altered.r32(0x400FD174)
     name_fn = altered.r32(0x4001E4CC)
     labels = ("DIATONIC", "JAZZ", "TENSION")
@@ -112,11 +111,9 @@ def run(stock, image, symbols, check):
             ("Keys OFF", 2, 71, True, False, 1, 0),
             ("autre piste OFF", 4, 71, True, False, 1, 0),
             ("autre machine", 2, 71, False, True, 1, 0),
-            ("pattern historique", 2, 71, True, True, 0, 0),
             ("autre paramètre", 2, 51, True, True, 1, 0),
             ("objet extérieur", 2, 71, True, True, 1, 2)):
         selected[0] = 0
-        altered.call(symbols["ck_ui_revision_set"], revision)
         config[track] = (48 << 21) | (0x80000000 if enabled else 0)
         machine[0] = ref_machine[0] = 5 if chord else 0
         obj = BANK + 504 + 8 * track + offset

@@ -90,14 +90,20 @@ static __attribute__((noinline)) int pad_press(u32 pad, u8 *event)
 {
     u32 track, i, rank = 0, sr;
     const void *header;
+    void *state;
     if (WORD(event, 28))
         return 0;
     for (i = 1; i <= 4; ++i)
         if (KEY(i))
             return 0;
+    state = ((void *(*)(void))0x400cf9a8)();
+    /* Les pads restent disponibles pour l'édition de grille et les modes
+     * réservés, comme les TRIG ; le live rec n'active pas ces gardes.
+     */
+    if (((u8 (*)(void *))0x4006b978)(state) || ((u8 (*)(void *))0x4006bb18)(state))
+        return 0;
     track = selected_track();
-    if (track >= 6 || !is_chord(track) || !ck_ui_pad_mode_get(track) ||
-        !(ck_ui_config_get(track) & ENABLED))
+    if (track >= 6 || !is_chord(track) || !(ck_ui_config_get(track) & ENABLED))
         return 0;
     header = ck_ui_header();
     /* Rangs 1..6 sans compteur susceptible de reboucler. */
@@ -150,6 +156,21 @@ void ck_ui_cancel_track(u32 track)
     for (i = 0; i < 16; ++i)
         if (held[i].valid && held[i].track == track)
             release_key(&held[i]);
+}
+
+u32 ck_ui_active_key(u32 track)
+{
+    u32 i;
+    for (i = 0; i < 16; ++i)
+        if (held[i].active && held[i].track == track)
+            return i;
+    return 16;
+}
+
+u32 ck_ui_active_note(u32 track)
+{
+    u32 key = ck_ui_active_key(track);
+    return key < 16 ? held[key].note : 128;
 }
 
 static __attribute__((noinline)) u32 key_velocity(u32 track)
@@ -258,7 +279,7 @@ typedef struct {
 
 extern char ck_ui_item_label[];
 static const char *const labels[] = {
-    "Keys", "Root", "Scale", "I", "II", "III", "IV", "V", "VI", "VII", "Controls", "Pads"
+    "Keys", "Root", "Scale", "I", "II", "III", "IV", "V", "VI", "VII"
 };
 static const char *const modes[] = { "MAJ", "DOR", "PHR", "LYD", "MIX", "MINOR", "LOC" };
 static const char *const extensions[] = { "TRI", "7", "9", "11", "13" };
@@ -274,13 +295,8 @@ static u32 field_value(u32 word, u32 field)
     return (word >> field_shift(field)) & (field == 0 ? 1 : field == 1 ? 127 : 7);
 }
 
-static __attribute__((noinline)) const char *field_text(u32 field, u32 value, u32 track)
+static __attribute__((noinline)) const char *field_text(u32 field, u32 value)
 {
-    if (field == 10)
-        return ck_ui_revision_get() ? "NEW" : "LEGACY";
-    if (field == 11)
-        return ck_ui_modifier_unavailable(track) ? "N/A" :
-               ck_ui_pad_mode_get(track) ? "HARMONY" : "TRACK";
     if (!field)
         return value ? "ON" : "OFF";
     if (field == 2)
@@ -293,14 +309,14 @@ void ck_ui_item_draw(u32 **closure, u32 unused, u32 canvas, u8 *item, u32 flags)
     u32 field = **closure, track = selected_track(), word, value, buffer[2];
     (void)unused;
     word = track < 6 ? ck_ui_config_get(track) : 0;
-    value = field < 10 ? field_value(word, field) : 0;
+    value = field_value(word, field);
     ((void (*)(u32 *, u32))0x40072260)(buffer, 0x40140ab0);
     if (field == 1)
         ((void (*)(u32, u32 *, u8 *, u32, u32, const char *, const char *, int))0x40071a04)
             (canvas, buffer, item + 24, flags, 4, "%s%d", notes[value % 12], (int)(value / 12) - 1);
     else
         ((void (*)(u32, u32 *, u8 *, u32, u32, const char *, const char *))0x40071a04)
-            (canvas, buffer, item + 24, flags, 4, "%s", field_text(field, value, track));
+            (canvas, buffer, item + 24, flags, 4, "%s", field_text(field, value));
     ((void (*)(u32 *))0x40072080)(buffer);
 }
 
@@ -311,15 +327,6 @@ void ck_ui_item_change(u32 **closure, u32 unused, s32 delta)
     (void)unused;
     if (track >= 6)
         return;
-    if (field >= 10) {
-        if (delta) {
-            if (field == 10)
-                ck_ui_revision_set(delta > 0);
-            else
-                ck_ui_pad_mode_set(track, delta > 0);
-        }
-        return;
-    }
     word = ck_ui_config_get(track);
     low = field == 1 ? ROOT_MIN : 0;
     high = !field ? 1 : field == 1 ? ROOT_MAX : field == 2 ? 6 : 4;
@@ -364,6 +371,6 @@ void ck_ui_menu_ctor(void *view)
 {
     u32 field;
     ((void (*)(void *))0x4002d138)(view);
-    for (field = 0; field < 12; ++field)
+    for (field = 0; field < 10; ++field)
         add_item(view, field);
 }

@@ -125,48 +125,7 @@ void *ck_ui_header(void)
 
 u32 ck_ui_revision_get(void)
 {
-    u8 *header = ck_ui_header();
-    return header && (get32(header + 32) & ~63u) == CK_MAGIC_NEW;
-}
-
-u32 ck_ui_pad_mode_get(u32 track)
-{
-    u8 *header = ck_ui_header();
-    u32 magic = header ? get32(header + 32) : 0;
-    return track < 6 && (magic & ~63u) == CK_MAGIC_NEW && (magic & (1u << track));
-}
-
-static void signature_set(u32 magic, u32 track)
-{
-    u8 *object = ui_header_object(), *header;
-    u32 sr;
-    if (!object || !(header = *(u8 **)(object + 16)))
-        return;
-    if (get32(header + 32) == magic)
-        return;
-    sr = ck_storage_irq_save();
-    ck_ui_clear_modifiers(track, header);
-    if (!signature_valid(get32(header + 32)))
-        defaults(header);
-    put32(header + 32, magic);
-    ck_storage_irq_restore(sr);
-    ((void (*)(u8 *, u32))(*(u32 **)object)[4])(object, 0);
-}
-
-void ck_ui_revision_set(u32 revision)
-{
-    if (ck_ui_revision_get() == !!revision)
-        return;
-    signature_set(revision ? CK_MAGIC_NEW : CK_MAGIC, 6);
-}
-
-void ck_ui_pad_mode_set(u32 track, u32 harmony)
-{
-    u8 *header = ck_ui_header();
-    u32 magic = header ? get32(header + 32) : 0;
-    if (track >= 6 || (magic & ~63u) != CK_MAGIC_NEW)
-        return;
-    signature_set((magic & ~(1u << track)) | (harmony ? 1u << track : 0), track);
+    return 1;
 }
 
 void ck_ui_config_set(u32 track, u32 word)
@@ -222,10 +181,12 @@ u32 ck_audio_config(u32 track)
 u32 ck_audio_controls(u32 track)
 {
     u8 *header = audio_header();
-    u32 magic = header ? get32(header + 32) : 0;
-    if (track >= 6 || (magic & ~63u) != CK_MAGIC_NEW)
+    if (track >= 6)
         return 0;
-    if (!(magic & (1u << track)) || !(ck_storage_read(header, track) & 0x80000000u))
+    /* Les signatures v1/v2 restent lisibles sans modifier les valeurs ni les
+     * locks sauvegardés. Leurs anciens choix Controls/Pads sont ignorés.
+     */
+    if (!(ck_storage_read(header, track) & 0x80000000u))
         return 1;
     return 1 | (ck_ui_modifier_get(track, header) << 8);
 }

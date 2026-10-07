@@ -70,7 +70,6 @@ def _ui_rig(image, symbols=None):
     if symbols:
         for track in range(6):
             rig.call(symbols["ck_ui_config_set"], track, (48 << 21) | 0x80000000)
-        rig.call(symbols["ck_ui_revision_set"], 0)  # Régressions du schéma historique.
     for operand in (0x4001D260, 0x4001A1C6):
         rate_reader = rig.r32(operand)
         if rate_reader != 0x40016086:
@@ -194,7 +193,8 @@ def _keys(stock, image, symbols, check):
 
 def _pads(stock, image, symbols, check):
     reference, _, _, _, _ = _ui_rig(stock)
-    altered, _, _, _, _ = _ui_rig(image, symbols)
+    altered, config, _, _, _ = _ui_rig(image, symbols)
+    config[2] &= 0x7fffffff
     check(altered.r32(0x4010025C) == symbols["ck_ui_pad"] and
           altered.r32(0x401002B0) == symbols["ck_ui_pad_thunk"],
           "pads : consommateur principal et interface secondaire redirigés")
@@ -209,14 +209,12 @@ def _pads(stock, image, symbols, check):
                     events.append((consumed & 255, candidate.calls[:], candidate.held(pad)))
                 snapshots.append(events)
             check(snapshots[0] == snapshots[1],
-                  f"T{pad} {name} : sélection, note, vélocité, retrig et relâchement identiques au stock")
+                  f"T{pad} {name}, Keys OFF : sélection, note, vélocité, retrig et relâchement identiques au stock")
     check(not altered.bad and not reference.bad, "pads : aucun accès mémoire hors du banc")
 
 
 def _harmony_pads(stock, image, symbols, check):
     rig, config, selected, machine, _ = _ui_rig(image, symbols)
-    rig.call(symbols["ck_ui_revision_set"], 1)
-    rig.call(symbols["ck_ui_pad_mode_set"], 2, 1)
     modifier = lambda: rig.call(symbols["ck_ui_modifier_get"], 2, HEADER)
     _key(rig, 1, True)
     before = bytes(rig.uc.mem_read(HEADER, 64))
@@ -231,11 +229,6 @@ def _harmony_pads(stock, image, symbols, check):
     check(bytes(rig.uc.mem_read(HEADER, 64)) == before,
           "HARMONY : les six gestes ne modifient aucun réglage persistant")
     _pad(rig, 1, True)
-    signature = rig.r32(HEADER + 32)
-    rig.call(symbols["ck_ui_revision_set"], 1)
-    rig.call(symbols["ck_ui_pad_mode_set"], 2, 1)
-    check(modifier() == 1 and rig.r32(HEADER + 32) == signature,
-          "HARMONY : Controls NEW et Pads HARMONY répétés conservent le geste et le masque")
     for _ in range(30):
         _pad(rig, 6, True)
         _pad(rig, 6, False)
@@ -253,12 +246,6 @@ def _harmony_pads(stock, image, symbols, check):
               f"HARMONY T{pad} : degré diminué identifié indisponible pour l'affichage N/A")
         _pad(rig, pad, False)
     _key(rig, 7, False)
-    _pad(rig, 3, True)
-    rig.call(symbols["ck_ui_pad_mode_set"], 2, 0)
-    check(modifier() == 0, "HARMONY : retour TRACK efface le geste actif")
-    _pad(rig, 3, False)
-    check(not rig.calls, "HARMONY : relâchement conservé après retour TRACK, aucune note stock coupée")
-    rig.call(symbols["ck_ui_pad_mode_set"], 2, 1)
     _pad(rig, 4, True)
     rig.call(symbols["ck_ui_config_set"], 2, config[2] & 0x7fffffff)
     check(modifier() == 0, "HARMONY : Keys OFF efface le geste actif")
@@ -282,46 +269,43 @@ def _harmony_pads(stock, image, symbols, check):
           "HARMONY : revenir au pattern initial ne réactive pas un ancien geste")
     _pad(rig, 2, False)
     check(not rig.calls, "HARMONY : le geste annulé par changement de pattern conserve son relâchement")
-    rig.call(symbols["ck_ui_pad_mode_set"], 1, 1)
     selected[0] = 1
     _pad(rig, 1, True)
     selected[0] = 2
     _pad(rig, 2, True)
-    rig.call(symbols["ck_ui_pad_mode_set"], 1, 0)
+    rig.call(symbols["ck_ui_config_set"], 1, config[1] & 0x7fffffff)
     check(rig.call(symbols["ck_ui_modifier_get"], 1, HEADER) == 0 and modifier() == 2,
-          "HARMONY : changer Pads sur une piste conserve le geste tenu sur l'autre")
+          "HARMONY : désactiver Keys sur une piste conserve le geste tenu sur l'autre")
     playing = bytes(rig.uc.mem_read(HEADER, 64))
     rig.uc.mem_write(other_header, playing)
     rig.w32(PATTERN + 60, other_header)
-    rig.call(symbols["ck_ui_pad_mode_set"], 2, 0)
     rig.call(symbols["ck_ui_config_set"], 2, config[2] & 0x7fffffff)
-    rig.call(symbols["ck_ui_revision_set"], 0)
     check(modifier() == 2 and bytes(rig.uc.mem_read(HEADER, 64)) == playing,
-          "HARMONY : modifier Pads, Keys ou Controls d'un autre pattern conserve le geste joué")
+          "HARMONY : modifier Keys d'un autre pattern conserve le geste joué")
     rig.w32(PATTERN + 60, HEADER)
     _pad(rig, 1, False)
     _pad(rig, 2, False)
 
     # Replis réellement exécutés, y compris les fins de notes originelles.
-    for label, key, function, chord, on, harmony, revision in (
-            ("FUNC", 1, 0, True, True, True, True),
-            ("FUNC mémorisé", 0, 1, True, True, True, True),
-            ("TRACK", 2, 0, True, True, True, True),
-            ("PATTERN", 3, 0, True, True, True, True),
-            ("RETRIG", 4, 0, True, True, True, True),
-            ("autre machine", 0, 0, False, True, True, True),
-            ("Keys OFF", 0, 0, True, False, True, True),
-            ("Pads TRACK", 0, 0, True, True, False, True),
-            ("LEGACY", 0, 0, True, True, True, False)):
+    for label, key, function, chord, on, grid, secondary in (
+            ("FUNC", 1, 0, True, True, False, False),
+            ("FUNC mémorisé", 0, 1, True, True, False, False),
+            ("TRACK", 2, 0, True, True, False, False),
+            ("PATTERN", 3, 0, True, True, False, False),
+            ("RETRIG", 4, 0, True, True, False, False),
+            ("autre machine", 0, 0, False, True, False, False),
+            ("Keys OFF", 0, 0, True, False, False, False),
+            ("grille d'enregistrement", 0, 0, True, True, True, False),
+            ("mode secondaire", 0, 0, True, True, False, True)):
         reference, _, _, _, _ = _ui_rig(stock)
         changed, _, _, mch, _ = _ui_rig(image, symbols)
-        changed.call(symbols["ck_ui_revision_set"], int(revision))
-        changed.call(symbols["ck_ui_pad_mode_set"], 2, int(harmony))
         changed.call(symbols["ck_ui_config_set"], 2, (48 << 21) | (int(on) << 31))
         mch[0] = 5 if chord else 0
         outputs = []
         for candidate in (reference, changed):
             candidate.pressed = {key} if key else set()
+            candidate.uc.mem_write(UIST + 357, bytes([int(grid), int(grid)]))
+            candidate.uc.mem_write(UIST + 389, bytes([int(secondary)]))
             events = []
             for down in (True, False):
                 consumed = _pad(candidate, 3, down, function=function, secondary=True)
@@ -333,8 +317,6 @@ def _harmony_pads(stock, image, symbols, check):
 def _pad_dispatch(image, symbols, check):
     """Vrai contrôleur et QuickMute prioritaires, avec interface PadEvent secondaire."""
     rig, _, _, _, _ = _ui_rig(image, symbols)
-    rig.call(symbols["ck_ui_revision_set"], 1)
-    rig.call(symbols["ck_ui_pad_mode_set"], 2, 1)
     rig.w32(pads.VIEW, 0x40100218)
     rig.w32(pads.VIEW + 16, 0x401002a8)
     heap = [0x93200000]
@@ -383,6 +365,90 @@ def _pad_dispatch(image, symbols, check):
     dispatch(2, False)
     check(not rig.calls, "dispatch PadEvent réel : QuickMute consomme son relâchement")
     check(not rig.bad, "dispatch PadEvent réel : aucun accès hors mémoire du banc")
+
+
+def _held_pad_dispatch(stock, image, symbols, check):
+    """TRIG tenu puis pads dans les deux dispatchers stock, sélection observée."""
+    for signature in (0x434b01a7, 0x434b0200, 0x434b0215, 0x434b023f):
+        rig, _, selected, _, _ = _ui_rig(image, symbols)
+        rig.w32(HEADER + 32, signature)
+        rig.w32(pads.VIEW, 0x40100218)
+        rig.w32(pads.VIEW + 16, 0x401002a8)
+        keyboard, key_node, pad_node = 0x93012000, 0x93010100, 0x93010200
+        rig.w32(keyboard, 0x400ff9c4)
+        rig.w32(keyboard + 16, 0x400ffa4c)
+        rig.w32(keyboard + 44, pads.CONTROLLER)
+        rig.w32(keyboard + 148, KEY_NOTES)
+        rig.w32(keyboard + 152, KEY_NOTES)
+        rig.w32(keyboard + 156, KEY_NOTES + 0xa00)
+        rig.w32(key_node, pads.CONTROLLER + 20)
+        rig.w32(key_node + 8, keyboard)
+        rig.w32(key_node + 4, pad_node)
+        rig.w32(pad_node, key_node)
+        rig.w32(pad_node + 8, pads.VIEW)
+        rig.w32(pad_node + 4, pads.CONTROLLER + 20)
+        rig.w32(pads.CONTROLLER + 20, pad_node)
+        rig.w32(pads.CONTROLLER + 24, key_node)
+        heap = [0x93200000]
+
+        def allocate(args):
+            pointer = heap[0]
+            heap[0] += (args[0] + 15) & ~15
+            rig.uc.mem_write(pointer, bytes(args[0]))
+            return pointer
+
+        class SelectingCalls(list):
+            def append(self, call):
+                if call[0] == "select":
+                    selected[0] = call[1][0]
+                super().append(call)
+
+        # La capture déjà installée par Rig ne doit pas être doublée : elle
+        # termine l'appel stock. Observer sa sortie applique la vraie sélection.
+        rig.calls = SelectingCalls()
+
+        for address, handler in (
+                (0x400802e0, allocate), (0x400802ec, lambda a: 0),
+                (0x400e8684, lambda a: 0), (0x400d08ce, lambda a: 0)):
+            _install(rig, address, handler)
+
+        def key(down):
+            rig.calls.clear()
+            rig.pressed = {16} if down else set()
+            rig.call(KEY_CTOR, pads.EVENT, 16, int(down), 123, 127)
+            rig.call(0x40077720, pads.CONTROLLER, pads.EVENT)
+
+        def pad(number, down):
+            rig.calls.clear()
+            rig.call(pads.PAD_CTOR, pads.EVENT, number, int(down), 100, 123, 0)
+            rig.call(0x4007746c, pads.CONTROLLER, pads.EVENT)
+
+        key(True)
+        valid = rig.calls == [_on(2, 48)] and rig.call(symbols["ck_ui_active_note"], 2) == 48
+        before = bytes(rig.uc.mem_read(HEADER, 64))
+        for number in range(1, 7):
+            pad(number, True)
+            valid &= (not rig.calls and selected[0] == 2 and
+                      rig.call(symbols["ck_ui_modifier_get"], 2, HEADER) == number and
+                      rig.call(symbols["ck_ui_active_note"], 2) == 48)
+            pad(number, False)
+            valid &= not rig.calls and selected[0] == 2
+        key(False)
+        valid &= rig.calls == [("off", (2, 48, 64))]
+        valid &= rig.call(symbols["ck_ui_active_note"], 2) == 128
+        check(valid and bytes(rig.uc.mem_read(HEADER, 64)) == before,
+              f"TRIG tenu + T1–T6 : dispatchs réels, signature {signature:08x}, piste et note conservées")
+
+        # La commande explicite TRACK doit encore sélectionner une autre piste.
+        key(True)
+        rig.pressed.add(2)
+        pad(6, True)
+        check(selected[0] == 5 and ("select", (5,)) in rig.calls,
+              f"TRIG tenu + TRACK + T6 : sélection volontaire conservée ({signature:08x})")
+        pad(6, False)
+        key(False)
+        check(rig.calls == [("off", (2, 48, 64))] and not rig.bad,
+              "TRIG tenu : relâchement retrouve la piste initiale après sélection volontaire")
 
 
 def _dispatch(stock, image, symbols, check):
@@ -501,9 +567,9 @@ def _menu(image, symbols, check):
     items.clear()
     emulator.uc.mem_write(view, bytes(0x400))
     emulator.call(symbols["ck_ui_menu_ctor"], view)
-    check(len(items) == original_count + 12,
-          f"menu réel : {original_count} lignes préexistantes conservées, douze ajoutées")
-    if len(items) != original_count + 12:
+    check(len(items) == original_count + 10,
+          f"menu réel : {original_count} lignes préexistantes conservées, dix ajoutées sans Controls ni Pads")
+    if len(items) != original_count + 10:
         return
     _header(emulator)
     emulator.call(symbols["ck_storage_reset"], HEADER)
@@ -564,25 +630,6 @@ def _menu(image, symbols, check):
     change = items[original_count][3]
     emulator.call(change[1], arp.make_fn(emulator, change), 0, 1)
     check(config[2] == 48 << 21, "menu : activation refusée sur une machine autre que CHORD")
-    for field, name, getter, texts in (
-            (10, "Controls", "ck_ui_revision_get", ("LEGACY", "NEW")),
-            (11, "Pads", "ck_ui_pad_mode_get", ("TRACK", "HARMONY"))):
-        label, _, draw, change = items[original_count + field]
-        check(arp.cstr(emulator, label[2]) == name, f"menu : nouveau libellé {name}")
-        changer, drawer = arp.make_fn(emulator, change), arp.make_fn(emulator, draw)
-        for delta, value in ((-99, 0), (99, 1)):
-            before = [config[t] for t in range(6)]
-            emulator.call(change[1], changer, 0, delta & 0xffffffff)
-            actual = emulator.call(symbols[getter], *(() if field == 10 else (2,)))
-            emulator.call(draw[1], drawer, 0, 0x93700000, 0x93710000, 7)
-            check(bool(actual) == bool(value) and arp.cstr(emulator, drawn[-1][6]) == texts[value]
-                  and [config[t] for t in range(6)] == before,
-                  f"menu : {name} {texts[value]}, six configurations conservées")
-    signature = emulator.r32(HEADER + 32)
-    change = items[original_count + 10][3]
-    emulator.call(change[1], arp.make_fn(emulator, change), 0, 1)
-    check(emulator.r32(HEADER + 32) == signature and emulator.call(symbols["ck_ui_pad_mode_get"], 2),
-          "menu : tourner Controls au-delà de NEW conserve Pads HARMONY")
     check(not emulator.bad, "menu : aucun accès mémoire hors du banc")
 
 
@@ -786,6 +833,7 @@ def run(stock, patched, symbols, check):
     _pads(stock, patched, symbols, check)
     _harmony_pads(stock, patched, symbols, check)
     _pad_dispatch(patched, symbols, check)
+    _held_pad_dispatch(stock, patched, symbols, check)
     _dispatch(stock, patched, symbols, check)
     _menu(patched, symbols, check)
     _shape_ui(stock, patched, symbols, check)

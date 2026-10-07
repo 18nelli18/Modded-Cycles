@@ -11,27 +11,31 @@ Source : conversation locale, sans lien public. Adresses : VA de l'OS **1.13**. 
 Tweak : [`44-chord-keys.json`](../tweaks/model-cycles_OS1.13/44-chord-keys.json), générateur
 [`tools/gen_chord_keys.py`](../tools/gen_chord_keys.py), sources
 [`tools/machines/chord_keys/`](../tools/machines/chord_keys/), preuves sous `tools/emu/` et test natif
-[`tools/test_chord_keys.py`](../tools/test_chord_keys.py) et
-[`tools/test_chord_harmony.py`](../tools/test_chord_harmony.py). **État de la nouvelle révision au 06/10/2026 :
-expérimentale, sans essai matériel rapporté** (§15). Le retour de Nico seul sur Model:Cycles concerne
-la version précédente (§13). Les §1–12 décrivent cette version historique, conservée par Controls LEGACY.
+[`tools/test_chord_keys.py`](../tools/test_chord_keys.py),
+[`tools/test_chord_harmony.py`](../tools/test_chord_harmony.py) et
+[`tools/test_chord_names.py`](../tools/test_chord_names.py). **État de la nouvelle révision au 07/10/2026 :
+expérimentale, sans essai matériel rapporté** (§16). Le retour positif de Nico seul sur Model:Cycles concerne
+la version précédente (§13). Les §1–15 conservent les étapes antérieures ; Controls LEGACY est retiré au §16.
 
 ## Réponse courte
 
-`[FAIT dans les sources de la révision §15]` TRIG 1–16 jouent les degrés de la piste CHORD sélectionnée,
-avec Root, Scale et le niveau TRI/7/9/11/13 propre à chaque degré. En **Controls NEW**, **COLOR** choisit
+TRIG 1–16 jouent les degrés de la piste CHORD sélectionnée,
+avec Root, Scale et le niveau TRI/7/9/11/13 propre à chaque degré. **COLOR** choisit
 DIATONIC, JAZZ ou TENSION ; **SHAPE** combine les neuf dispositions BASE/CLS0–3/OPN0–3 avec leur balance.
-**Pads HARMONY** donne à T1–T6 des changements temporaires 9/11/13/SUS7/PARALLEL/V7. Le dernier pad
+**HARMONY est permanent avec Keys ON sur CHORD** : T1–T6 donnent des changements temporaires
+9/11/13/SUS7/PARALLEL/V7, sans sélectionner une autre piste après un TRIG tenu. Le dernier pad
 pressé prévaut ; au relâchement, retour au pad précédent encore tenu puis au réglage du degré.
 
-**Controls LEGACY/NEW s'applique au pattern entier.** Les anciens patterns restent LEGACY jusqu'au choix
-explicite NEW : leurs valeurs et locks ne sont pas réécrits. Les nouveaux patterns initialisés commencent
-NEW, Pads TRACK et Keys OFF. Les réglages de pads sont par piste ; les gestes restent live et ne sont
+**Les options Controls NEW/LEGACY et Pads TRACK/HARMONY sont supprimées.** Les anciens patterns
+utilisent aussi les palettes et balances améliorées : leurs valeurs et locks ne sont pas réécrits,
+mais leur interprétation change. Les nouveaux patterns initialisés commencent Keys OFF.
+L'écran affiche le nom de l'accord joué, par exemple Cmaj7 ou Em9, avec sa palette et son geste
+temporaire. Les gestes restent live et ne sont
 pas enregistrés. Quatre voix maximum ; les extensions m7♭5 préservent la quinte diminuée en omettant
 la tierce, et PARALLEL/V7 sont indisponibles sur les cibles diminuées.
 
 Model-TG reste incompatible. Les notes reçues hors gamme gardent le son CHORD stock. Les détails,
-la migration, les choix de balance, les nouvelles caves et l'état des preuves figurent en **§15**.
+les choix de balance et les caves figurent en **§15** ; la révision actuelle et ses contrôles en **§16**.
 **Aucun résultat matériel de cette révision n'est revendiqué.** Les §13–14 conservent le retour matériel
 antérieur et la discussion qui a mené à ces choix.
 
@@ -1076,6 +1080,9 @@ antérieures comme des fonctions supplémentaires cumulatives.
 
 ## 15. Implémentation des palettes et des pads harmoniques (06/10/2026)
 
+**Historique :** les choix Controls/Pads et le protocole de migration de cette section décrivent
+la révision du 06/10. La demande du 07/10 et leur remplacement définitif figurent au §16.
+
 **Source : demande explicite de Nico dans cette conversation** : « Arranquemos la implementacion […]
 el uso de los pads T1-T6 para cambios temporales […] el knob de color para elegir entre DIATONIC,
 JAZZ, y TENSION […] y el shape para la distribucion y equilibrio de esas notas. » Cette révision
@@ -1315,3 +1322,180 @@ fonctionnelle complète. Aucun résultat matériel de cette nouvelle révision n
    enregistrés. Après le test seul, essayer les combinaisons avec USB/effets et six pistes chargées.
 
 La nouvelle révision reste **experimental**, même installée seule, jusqu'à son propre retour matériel.
+
+## 16. Pads sans changement de piste, commandes définitives et accord affiché (07/10/2026)
+
+**Source : Nico, cette conversation du 07/10/2026, sans lien public.** Retour sur la révision
+précédente : « si mantengo apretado un acorde y después intento apretar un pad T, se me cambia
+al track de ese pad ». Il demande aussi le nom exact de l'accord à l'écran (« Cmaj7, Em9 »),
+la suppression de **Controls NEW/LEGACY** et celle de **Pads TRACK/HARMONY** : les commandes
+améliorées et HARMONY doivent devenir définitifs. Ce retour signale un défaut ; il ne vaut pas
+validation matérielle de cette correction ni des autres fonctions de la révision précédente.
+
+### 16.1. Contrat musical et interface
+
+- Avec Keys ON sur CHORD, T1–T6 modifient toujours l'harmonie de la piste sélectionnée, même
+  après l'appui maintenu d'un TRIG. TRACK + T1–T6 conserve la sélection volontaire de piste.
+- Le menu FUNC + RETRIG garde **Keys, Root, Scale et I–VII**. Les deux sélecteurs Controls/Pads
+  disparaissent. COLOR et SHAPE utilisent les palettes, dispositions et balances du §15.
+- L'écran nomme l'accord en cours en tenant compte de la fondamentale, de l'extension du
+  degré, de la palette et du dernier pad tenu. Relâcher ce pad retrouve le précédent encore
+  tenu, puis l'extension enregistrée. Un geste indisponible doit nommer l'accord de repli
+  effectivement utilisé, sans afficher une transformation qui n'est pas jouée.
+- Les gestes restent temporaires : aucune écriture d'extension, de trig ou de lock. Keys OFF
+  retrouve le clavier chromatique et les pads habituels. Les limites de quatre voix et les
+  règles musicales du §15 restent applicables. Model-TG reste incompatible.
+
+### 16.2. Anciens patterns et stockage
+
+`[FAIT dans les sources]` `ck_storage_read` et `ck_storage_load` reconnaissent toujours la
+signature initiale `0x434b01a7` et la famille `0x434b0200..0x434b023f`. Les mots de configuration
+dans `header+40..63` restent inchangés. Les bits de choix Controls/Pads n'orientent plus le jeu
+ni le DSP : `ck_audio_controls` utilise les commandes améliorées et le geste temporaire de la
+piste dès que Keys est actif. Les anciennes signatures restent lisibles sans conversion destructive.
+
+Les valeurs SHAPE/COLOR et leurs locks sont conservés, **avec la nouvelle interprétation dès
+le chargement d'un ancien pattern Keys ON**. Il n'existe plus de choix LEGACY pour retrouver
+le son précédent. Les nouveaux patterns gardent Keys OFF, Root C3, MAJ et TRI par défaut.
+Le changement concerne l'interprétation musicale ; aucune nouvelle donnée de pad live n'est
+ajoutée au projet. Le menu construit dix lignes supplémentaires au lieu de douze.
+
+### 16.3. Correction du routage des pads et affichage
+
+`[FAIT : lecture des sources et du code stock]` Dans la révision §15, `pad_press` refusait
+HARMONY lorsque `ck_ui_pad_mode_get` renvoyait zéro : signature v1, ou bit de la piste absent
+de la signature v2. L'événement continuait vers PadsView stock `0x4001d180`, qui appelle la
+sélection de piste `0x40023c90` depuis `0x4001d36a`. Tenir un TRIG ne levait pas cette condition.
+
+Le test de mode de pads est retiré. Un pad simple est maintenant capturé dès que la piste
+sélectionnée est CHORD avec Keys ON. Les modificateurs FUNC/TRACK/PATTERN/RETRIG et événements
+de raccourci, ainsi que l'édition en grille, gardent le chemin stock. Les accroches existantes
+suffisent : pointeurs de vtable
+`0x4010025c` et `0x401002b0`, interception des relâchements capturés en `0x4007746c`. La
+correction du choix de piste ne requiert aucune accroche supplémentaire.
+
+`[FAIT en émulation : preuve ciblée du routage]` Le vrai dispatcher des TRIG `0x40077720`,
+puis le vrai dispatcher des pads, exécutent le maintien TRIG puis T1–T6. La piste et la note
+restent celles de l'accord pour les signatures `0x434b01a7`, `0x434b0200`, `0x434b0215` et
+`0x434b023f`. TRACK + T6 sélectionne volontairement sa piste ; le relâchement du TRIG continue
+à viser la piste capturée à l'appui. Cela exerce les anciennes signatures avec et sans les
+anciens bits HARMONY, au lieu de contourner le routage natif.
+
+`[FAIT dans les sources]` `chord_display.c` publie depuis l'update audio un seul mot aligné
+par piste dans `ck_chord_live[6]`. Bits 0..6 : fondamentale MIDI de la touche ; quatre champs
+de cinq bits à partir des bits 7/12/17/22 : intervalles harmoniques résolus avant disposition ;
+bits 27..30 : basse après disposition, modulo 12 ; bit 31 : validité. Une quatrième case nulle
+identifie la triade. Le premier intervalle ne vaut que 0 ou 7 ; son bit inutilisé 10 transporte
+le drapeau de protection aiguë, retiré avant le décodage du nom. Ce format évite de partager
+un tampon de texte entre le DSP et l'interface.
+La publication unique a lieu après le véritable update natif et la balance, pour que le drapeau
+de limite corresponde au même accord, sans état transitoire non signalé. Le nom n'est donc pas
+une table fixe par degré : `chord_name.c` interprète le résultat de la
+palette, de l'extension et du geste temporaire utilisés par l'audio.
+
+| Accroche d'affichage | Rôle |
+|---|---|
+| `0x400075f0`, appel initial à `0x40076be4` | Comparer l'instantané affiché à l'accord visible ; si différent, positionner `controller+32`, le drapeau de reconstruction de l'écran |
+| `0x4008e622`, reprise en `0x4008e62a` | Dessiner le bandeau avant le flush LCD, puis rejouer le prologue stock en préservant les registres |
+
+Le drapeau est nécessaire : l'application peut sauter tout le rendu tant qu'aucune vue n'est
+sale. Sa mise à jour suit aussi le dernier relâchement, afin de reconstruire le contenu stock
+et retirer le bandeau. Le rendu emprunte le Bitmap 128×64 de l'OS, ses polices `0x4014120c` et
+`0x40140ab0` et la primitive de texte `0x400716c0`. Les vingt lignes supérieures (coordonnées
+natives y=44..63) reçoivent le nom et les omissions. Le flush, le DSPI et l'échange des buffers
+restent ceux de l'OS.
+
+Le bandeau apparaît pour le TRIG encore actif de la piste CHORD sélectionnée, avec Keys ON,
+si la note de l'instantané correspond à la note tenue. Aucune vue de projet n'est recherchée
+au démarrage en l'absence d'une touche capturée. Les renversements indiquent leur basse après
+une barre oblique, et une seconde ligne précise les notes omises (`no5`, `no3`, etc.).
+PITCH/FINE restent l'accordage natif de l'ensemble et ne changent pas le nom harmonique affiché.
+Le bandeau ne suit pas le séquenceur ou le MIDI. **HIGH LIMIT** remplace la ligne d'omissions
+lorsque la protection aiguë
+native borne la fondamentale ou coupe une voix demandée : le nom conserve alors l'harmonie
+visée, même si toutes ses notes ne sont plus audibles. Il ne s'agit pas d'une reconnaissance
+des fréquences de la sortie audio. Baisser Root ou revenir à SHAPE BASE permet de
+retrouver une plage où toutes les voix sont disponibles.
+
+| Accord ou geste résolu | Première ligne | Seconde ligne |
+|---|---|---|
+| I7 de do majeur | `Cmaj7` | vide |
+| III9, JAZZ | `Em9` | `no5` |
+| III9, DIATONIC | `Em7(b9)` | `no5` |
+| I11, JAZZ, basse mi | `Cmaj7(#11)/E` | `no5` |
+| VII13, JAZZ, basse fa | `Bm13b5/F` | `no3,9,11` |
+| T4 sur do | `C7sus4` | vide |
+| T6 sur do | `G7`, ou `G7/D` selon SHAPE | vide |
+
+`[FAIT : génération finale]` Le JSON contient **68 écritures**. Le code, les constantes et l'état
+occupent **9 441 octets dans 27 masques**, dans la même réserve de **10 888 octets** qu'au §15. Les deux accroches de rendu
+s'ajoutent aux accroches existantes, sans nouvelle famille de masque ni charge utile externe.
+Les empreintes du MAIN OS de la révision actuelle sont dans BUILD.md. Les résultats chiffrés
+du §15 décrivent le build antérieur.
+
+### 16.4. Preuves et essai matériel
+
+`[FAIT : exécution native]` `python3 tools/test_chord_keys.py` et
+`python3 tools/test_chord_harmony.py` passent. `python3 tools/test_chord_names.py` vérifie
+**92 610 noms**, décodés indépendamment en notes et basse puis comparés à l'accord attendu.
+Le nom le plus large mesure **103 pixels** avec la police de l'OS, dans les 128 pixels disponibles.
+Cette vérification du noyau de nommage ne remplace pas le rendu ColdFire du firmware final.
+
+`[FAIT en émulation : affichage]` Le banc d'écran passe **22 contrôles**, avec les véritables
+fonctions Application, Bitmap, glyphes et envoi DSPI. Il compare le chemin stock et le chemin
+patché, puis vérifie le nom, la basse, les omissions et les conditions d'affichage :
+
+| Situation | Chemin stock | Chemin patché |
+|---|---|---|
+| Accord tenu, interface sans autre changement | Aucun bandeau d'accord | L'instantané modifié force le rendu et dessine le bandeau |
+| Accord tenu, instantané inchangé | Pas de reconstruction supplémentaire | Pas de reconstruction supplémentaire |
+| Dernier TRIG relâché | Écran ordinaire | Le rendu est invalidé une fois et retrouve le panneau stock |
+
+Les glyphes de **HIGH LIMIT** sont aussi exercés sur `Cmaj7/B` (note 72) et `Dm7/C`
+(note 74), après le véritable update natif.
+La régression DSP confirme le drapeau sur les notes 72/74 en OPN3 et au plafond 96,
+son absence sur une note grave 24 et sur la triade de contrôle, puis sa remise à zéro en
+revenant à la note 24. Le banc indépendant du régulateur passe ses **12 contrôles**, avec
+**TOUT OK**, sans prétendre mesurer le processeur réel.
+
+Le rendu de référence est conservé localement dans `build/chord-live-screen.png` (ignoré par
+Git). Le banc ne mesure pas les délais ni la charge sur un Model:Cycles réel.
+
+`[FAIT en émulation : JSON final]` La suite complète Chord Keys seul passe **322 contrôles,
+zéro échec**, et **330 contrôles, zéro échec** avec 6ch-usbup, latching-mute, trig-preview,
+browser-scroll, trig-hold, arp, tempo-max, boot-anim et les cinq moteurs Syntakt installés
+ensemble. Les deux suites terminent **TOUT OK** sur les routines de l'OS : clavier, pads,
+menu, stockage, DSP et écran.
+Elle couvre les signatures anciennes, le maintien TRIG puis pad, les raccourcis et l'édition,
+les gestes superposés, le relâchement sous une vue prioritaire, les palettes et dispositions,
+ainsi que les noms d'accord et la protection aiguë. Les **22 contrôles d'écran** ci-dessus
+font partie de cette suite ; les **92 610 noms** sont vérifiés séparément par le banc natif.
+
+`[FAIT : build final]` Le firmware reconstruit a été réextrait et son MAIN OS vérifié contre
+l'empreinte attendue. Les sections compressées **2, 4 et 5 restent identiques octet pour octet**
+à l'image officielle. `REF_MAINOS` a été régénéré pour les **17 407 combinaisons** proposées,
+et `tools/ref_mainos.py --check` valide ces 17 407 références.
+Les empreintes actuelles figurent dans BUILD.md ; les fichiers de firmware restent locaux et ignorés.
+
+`[FAIT : contrôle navigateur final]` Le smoke du flasher avec les fichiers officiels a validé
+les **17 407 combinaisons**, réparties en quatre parties : **ALL PARTS OK**, aucun échec.
+Chaque reconstruction concorde avec son empreinte de référence et l'union des quatre parties
+couvre exactement les combinaisons proposées. Ce contrôle porte sur la présente révision.
+La preuve fonctionnelle ci-dessus couvre le mod seul et la combinaison groupée ; les empreintes
+ne constituent pas une preuve fonctionnelle complète de chaque combinaison.
+
+`[À FAIRE sur la machine]` Avec Chord Keys seul, sur une piste CHORD, Keys ON, Root C2, MAJ :
+
+1. Tenir TRIG 1 puis essayer successivement T1–T6 : la piste doit rester sélectionnée ; relâcher
+   chaque pad doit retrouver l'accord de base. Essayer T1 puis T2, relâcher T2 puis T1, et changer
+   de TRIG pendant le maintien. TRACK + T1–T6 doit continuer à changer de piste.
+2. Régler I sur 7 : TRIG 1 doit afficher Cmaj7. Régler III sur 9 : TRIG 3 doit afficher Em9 avec
+   COLOR JAZZ et distinguer la neuvième abaissée avec DIATONIC. Vérifier les noms avec SUS7,
+   PARALLEL, V7 et le retour au nom précédent après relâchement.
+3. Charger un ancien pattern : aucune ligne Controls ou Pads ; mêmes valeurs enregistrées,
+   palettes et balances améliorées actives. Sauvegarder/recharger, puis vérifier Keys OFF.
+4. Vérifier mute, édition en grille, retrig/arp hors Chord Keys et relâchement d'un pad après
+   ouverture d'un menu. Vérifier les cibles diminuées, les notes aiguës et les transitions sonores.
+
+Cette révision reste **experimental**, seule ou combinée. Aucun résultat matériel de cette
+correction n'est revendiqué ; les essais des versions précédentes gardent leur portée initiale.
