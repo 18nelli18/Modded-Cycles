@@ -212,13 +212,18 @@ async function main() {
       && doc.getElementById("drop3-wrap").hidden, "last engine unticked -> the card turns off");
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
     const creditOf = (id) => [...doc.querySelectorAll(`label[for=feat-${id}] .credit a`)].map((a) => a.href);
-    check(credits.length === 6 && creditOf("usb6").join() === "https://github.com/scottmetoyer/ms-multi-output"
+    check(credits.length === 10 && creditOf("usb6")[0] === "https://github.com/scottmetoyer/ms-multi-output"
+      && /\/LICENSE-ms-multi-output\.txt$/.test(creditOf("usb6")[1])
       && creditOf("model-tg")[0] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(creditOf("model-tg")[1])
-      && ["latching-mute", "trig-preview", "browser-scroll"].every((id) => creditOf(id).join() === "https://github.com/drumkilla/elektron-model-tweaks"),
-      "each row credits its author, Model-TG with its MIT license: " + JSON.stringify(credits));
+      && ["latching-mute", "trig-preview", "browser-scroll"].every((id) => creditOf(id)[0] === "https://github.com/drumkilla/elektron-model-tweaks"
+        && /\/LICENSE-elektron-model-tweaks\.txt$/.test(creditOf(id)[1])),
+      "each row credits its author with a link to their MIT license: " + JSON.stringify(credits));
     const list = [...doc.querySelectorAll("#credits-list a")].map((a) => a.textContent);
-    check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",
-      "credits section lists the 5 upstream repositories");
+    check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,dagargo/elektroid,mxldyn/octamax",
+      "credits section lists the 6 upstream repositories");
+    const lic = [...doc.querySelectorAll("#credits a")].map((a) => a.href).filter((h) => /LICENSE|NOTICES/.test(h));
+    check(lic.join() === "https://github.com/18nelli18/Modded-Cycles/blob/main/LICENSE,https://github.com/18nelli18/Modded-Cycles/blob/main/THIRD-PARTY-NOTICES.md",
+      "credits section links the project's MIT license and the third-party notices: " + JSON.stringify(lic));
     // Model-TG holds drumkilla's tweaks: ticked, it shows them ticked and locked, "(included with Model-TG)", and
     // builds without them; unticked, they are free again. With the Syntakt engines it makes the combined version
     // (notes/31): its base, then the engines' tweak built on top of it
@@ -279,7 +284,8 @@ async function main() {
     check(/Audio USB 6 canaux/.test(text(doc, "features")) && /Mode mute verrouillé/.test(text(doc, "features"))
       && /par drumkilla/.test(text(doc, "features")) && /Vrais moteurs du Syntakt/.test(text(doc, "features"))
       && /Testé/.test(text(doc, "features")), "FR switch translates the feature cards and credits");
-    check(/Crédits/.test(text(doc, "credits")) && /boîte à outils/.test(text(doc, "credits")), "FR switch translates the credits section");
+    check(/Crédits/.test(text(doc, "credits")) && /boîte à outils/.test(text(doc, "credits")) && /publié sous licence MIT/.test(text(doc, "credits")),
+      "FR switch translates the credits section");
     check(/Tempo jusqu'à 546 BPM/.test(text(doc, "features")) && doc.querySelector('label[for=feat-tempo-max] a.feat-guide, #features a[href$="#tempo"]'),
       "FR: tempo card translated, with its guide link");
     check(/Animation de démarrage modded-cycles/.test(text(doc, "features")) && doc.querySelector('#features a[href$="#boot-anim"]'),
