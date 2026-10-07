@@ -8,7 +8,7 @@ like engine presets ». Tweaks `33-sample-preview.json` (sur `model-tg`) et `33-
 `sample_preview.ld`), preuve en émulation `tools/emu/test_sample_preview.py`. Adresses : VA de l'OS 1.13 ; celles de
 Model-TG sont celles de sa v1.1.0 telle que la construit `tools/gen_model_tg.py` (identiques dans ses deux versions).
 
-**Statut : expérimental, en attente de l'essai de Maxime.**
+**Statut : testé sur la machine (07/10/2026), voir §12.**
 
 ## Réponse courte
 
@@ -242,8 +242,10 @@ cause.
   exige `model-tg`, `33-sample-preview-st` exige `model-tg-st`. Le code de Model-TG est aux mêmes adresses dans les deux ;
   seules 18 constantes dérivées de `REGION_END` diffèrent (56 octets isolés dans la charge utile), inutilisées ici
   `[FAIT]`.
-- Flasher : une carte « Écoute des samples (Model-TG) », `"requires": "model-tg"` (la cocher coche Model-TG, décocher
-  Model-TG la décoche), `with: {"syntakt": "33-sample-preview-st"}` ; `REF_MAINOS` passe de 9 215 à 10 239 combinaisons.
+- Flasher : une ligne « Écoute des samples (Model-TG) » dans la rubrique Écran et navigation (`cat: screen`, depuis le
+  nouveau choix des mods de la release 1.28), `"requires": "model-tg"` (la cocher coche Model-TG, décocher Model-TG la
+  décoche ; Détails : « Marche avec Model-TG seulement »), `with: {"syntakt": "33-sample-preview-st"}` ; `REF_MAINOS`
+  passe de 9 215 à 10 239 combinaisons.
 
 ## 7. Le code et la place
 
@@ -493,8 +495,9 @@ premières lignes ci-dessous passaient la preuve telle qu'elle était à la revu
   fichier de 2 Mo (le chemin modifié ne l'ouvre pas ; pour 48..160 o, pas regardé, §10 point 4) ; un appui rendu muet
   envoie toujours le message de la touche à l'interface, comme l'origine (§10 point 10).
 
-Flasher (fait par ailleurs, `tools/gen_flasher_tweaks.py`, `docs/flasher/app.js`) : la carte `sample-preview`
-(`"requires": "model-tg"`, `with: {"syntakt": "33-sample-preview-st"}`), et `REF_MAINOS` qui passe de 9 215 à
+Flasher (fait par ailleurs, `tools/gen_flasher_tweaks.py`, `docs/flasher/app.js`) : la ligne `sample-preview`
+(`cat: screen`, `"requires": "model-tg"`, `with: {"syntakt": "33-sample-preview-st"}` ; `setOn` coche la carte demandée,
+`dropOrphans` décoche l'ajout resté seul, annulable avec le reste), et `REF_MAINOS` qui passe de 9 215 à
 10 239 combinaisons (les 1 024 nouvelles contiennent l'écoute des samples, aucune ancienne ne change ; recalculées après
 le changement de masques). `tools/webflash_smoke.sh` vérifie que cocher la carte coche Model-TG, que décocher Model-TG
 la décoche, et que la version Syntakt prend `sample-preview-st`.
@@ -506,7 +509,16 @@ python3 tools/emu/test_sample_preview.py --cycles model-cycles_OS1.13.syx \
     [--syntakt Syntakt_OS1.42.syx]
 ```
 
-## 12. À vérifier sur la machine `[À FAIRE]`
+## 12. Sur la machine
+
+**Testé sur la machine (07/10/2026).** Maxime a flashé les deux fichiers de test du dossier `ecoute-samples/` du
+projet (Model-TG + l'écoute seule, MAIN OS `b7342804…` ; l'écoute avec tout le reste, Model-TG version Syntakt et les
+5 moteurs, audio 6 canaux, trig hold, arpégiateur, tempo, animation, MAIN OS `20a116b1…`) avec la liste ci-dessous, et
+répond : « Tout marche nickel, tu peux fusionner ». La carte passe de Expérimental à Testé (release 1.32). Il n'a pas
+détaillé chaque point ; ceux qu'il n'a pas commentés (durée du premier chargement, live rec, Sound Pool) restent les
+points à surveiller si un utilisateur signale un souci.
+
+Liste envoyée pour l'essai :
 
 Firmware : Model-TG + l'écoute des samples (et, à part, la version combinée avec les moteurs du Syntakt).
 
