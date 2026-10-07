@@ -103,10 +103,11 @@ mélange de l'ancien et du nouveau relevé ne peut durer qu'un tick. `td_tick` n
 
 ## 5. Place et conflits
 
-- Code et état dans le masque de sprite 47 × 47 libéré `0x4018d4a8` (284 o sur 376), identique au masque gardé
-  `0x40172220` et désigné seulement par la constante de son constructeur (`0x400acd56`), redirigée. `td_cnt` en
-  `0x4018d5b0`, `td_mask` en `0x4018d5b4`, `td_lock` en `0x4018d5bc`.
-- Aucune écriture commune avec les 81 autres tweaks du dépôt, ni avec `45-chord-keys` (PR #50) ;
+- Code et état dans le masque de sprite 47 × 47 libéré `0x4018dba8` (284 o sur 376), identique au masque gardé
+  `0x40172220` et désigné seulement par la constante de son constructeur (`0x400accfe`), redirigée. `td_cnt` en
+  `0x4018dcb0`, `td_mask` en `0x4018dcb4`, `td_lock` en `0x4018dcbc`.
+- Masque attribué le 07/10/2026 avec les autres branches en cours (le premier choisi, `0x4018d4a8`, est pris par
+  chord-keys). Aucune écriture commune avec les 81 autres tweaks du dépôt, ni avec chord-keys (PR #46 et #50) ;
   `46-level-pan-values` (note 44) se combine avec. Model-TG écrit en `0x40021f56` et `0x40021f67`, à côté de
   `0x40021f54` sans le toucher.
 

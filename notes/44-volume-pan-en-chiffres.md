@@ -140,11 +140,12 @@ chiffre à 3,0 s pile au lieu de 3 à 4 s.
 
 - Code et variables dans deux masques de sprites 47 × 47 libérés (notes/14 §5, notes/32 §11 ; `tools/sprites.py`),
   identiques au masque gardé `0x40172220` et désignés seulement par la constante de leur constructeur, redirigée :
-  `0x4018cd48` (360 o sur 376 : tick, enveloppes, pan) et `0x4018d1b8` (364 o sur 376 : piste, instructions
-  déplacées, volume, police, puis `lp_cnt` en `0x4018d2e0`, `lp_pan` en `0x4018d2e4`, `lp_lvl` en `0x4018d304` ;
+  `0x4018f4b4` (360 o sur 376 : tick, enveloppes, pan) et `0x4018fc74` (364 o sur 376 : piste, instructions
+  déplacées, volume, police, puis `lp_cnt` en `0x4018fd9c`, `lp_pan` en `0x4018fda0`, `lp_lvl` en `0x4018fdc0` ;
   échéances des 6 pistes puis leurs drapeaux en +24).
-- Aucune écriture commune avec les 81 autres tweaks du dépôt, ni avec `45-chord-keys` (PR #50) ; le navigateur
-  multiligne en cours prend un autre masque (`0x401904b4`). `sdvintage-7th` et les moteurs du Syntakt écrivent dans
+- Aucune écriture commune avec les 81 autres tweaks du dépôt, ni avec chord-keys (PR #46 et #50) ; le navigateur
+  multiligne en cours prend un autre masque (`0x401904b4`). Masques attribués le 07/10/2026 avec les autres branches
+  en cours : les premiers choisis (`0x4018cd48`, `0x4018d1b8`) sont pris par chord-keys. `sdvintage-7th` et les moteurs du Syntakt écrivent dans
   le dessin de l'écran principal (`0x4001b69c`, le nom de la machine), loin des barres.
 - Coût : 1 632 instructions par dessin quand les deux chiffres sont affichés, au plus 30 fois par seconde, dans la
   tâche de l'interface ; rien dans le chemin audio.

@@ -151,7 +151,7 @@ def writes_ok(stock, img, tweak, others):
     for w in tweak["writes"]:
         o, old = w["off"], bytes.fromhex(w["old"])
         check(stock[o:o + len(old)] == old, f"octets d'origine en {o + BASE:#x} ({len(old)} o)")
-    mask, (size, ref, _, shared) = 0x4018d4a8, sprites.MASKS[0x4018d4a8]
+    mask, (size, ref, _, shared) = 0x4018dba8, sprites.MASKS[0x4018dba8]
     check(stock[mask - BASE:mask - BASE + size] == stock[shared - BASE:shared - BASE + size],
           f"masque {mask:#x} identique au masque gardé {shared:#x}")
     refs = [m.start() + BASE for m in re.finditer(re.escape(struct.pack(">I", mask)), stock)]

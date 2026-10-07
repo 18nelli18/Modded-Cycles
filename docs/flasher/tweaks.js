@@ -2175,26 +2175,26 @@ window.MC_TWEAKS = {
     "Le chiffre reste 3 s après le dernier mouvement (90 ticks de l'interface à 30 Hz), puis part au redessin suivant (au plus 1 s après). Pas d'affichage quand la valeur change autrement (MIDI, chargement).",
     "LEVEL/DATA avance de 1 par cran sur l'écran principal au lieu de 2 (volume et pan, une piste ou TRK pour toutes) ; le mode rapide (x16) ne change pas.",
     "D'après le mod de djd_oz (envoyé à Maxime le 06/10/2026), réécrit pour s'exécuter en place : même police, mêmes positions.",
-    "Code et état dans deux masques de sprites 47x47 libérés (tools/sprites.py) : 360 o en 0x4018cd48, 364 o en 0x4018d1b8. Généré par tools/gen_level_pan.py, notes/44."
+    "Code et état dans deux masques de sprites 47x47 libérés (tools/sprites.py) : 360 o en 0x4018f4b4, 364 o en 0x4018fc74. Généré par tools/gen_level_pan.py, notes/44."
    ],
    "device": "Model:Cycles",
    "os": "1.13",
    "section": 3,
    "symbols": {
-    "lp_cnt": "0x4018d2e0",
-    "lp_pan": "0x4018d2e4",
-    "lp_lvl": "0x4018d304"
+    "lp_cnt": "0x4018fd9c",
+    "lp_pan": "0x4018fda0",
+    "lp_lvl": "0x4018fdc0"
    },
    "writes": [
     {
      "off": 32242,
      "old": "4eb940090f48",
-     "new": "4eb94018cd48"
+     "new": "4eb94018f4b4"
     },
     {
      "off": 108110,
      "old": "4fefffe048d70cfc",
-     "new": "4ef94018cd544e71"
+     "new": "4ef94018f4c04e71"
     },
     {
      "off": 108218,
@@ -2204,25 +2204,25 @@ window.MC_TWEAKS = {
     {
      "off": 110122,
      "old": "4e56ffc048d73cfc",
-     "new": "4ef94018cdc04e71"
+     "new": "4ef94018f52c4e71"
     },
     {
-     "off": 706934,
-     "old": "4018d1b8",
+     "off": 705564,
+     "old": "4018fc74",
      "new": "40172220"
     },
     {
-     "off": 706994,
-     "old": "4018cd48",
+     "off": 705744,
+     "old": "4018f4b4",
      "new": "40172220"
     },
     {
-     "off": 1624392,
+     "off": 1634484,
      "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000",
-     "new": "52b94018d2e04ef940090f482f2f00082f2f000861000474508f206f00087201b2a8000c66502f002f0a487800014eb94007faf4588f45f94018d3044a80670645f94018d2e4610004287206b081642222394018d2e006810000005a25810c007201158108182f2f000c4eb940076082588f245f201f4e752f2f00082f2f000861000416508f4fefffec48d70c1c246f001c4eb9400cf9a82f004eb94006b704588f4a006626610003c87206b081641c240047f94018d2e4611c6702613647f94018d30461106704610003dc4cd70c1c4fef00144e754a332818671622394018d2e092b32c006b084233281870004e7570014e754eb9400cf8662f004eb94000eb9c2f022f004eb9400097f04fef000c204022502269001c4878001c2f084e91508fe08072409081280042a74878001d4878007f48780015487800722f0a4eb940070dea4fef001876734a846a084484700a610003c8610003b04a806704610003bc2004600003b6"
+     "new": "52b94018fd9c4ef940090f482f2f00082f2f0008610007c4508f206f00087201b2a8000c66502f002f0a487800014eb94007faf4588f45f94018fdc04a80670645f94018fda0610007787206b081642222394018fd9c06810000005a25810c007201158108182f2f000c4eb940076082588f245f201f4e752f2f00082f2f000861000766508f4fefffec48d70c1c246f001c4eb9400cf9a82f004eb94006b704588f4a006626610007187206b081641c240047f94018fda0611c6702613647f94018fdc0611067046100072c4cd70c1c4fef00144e754a332818671622394018fd9c92b32c006b084233281870004e7570014e754eb9400cf8662f004eb94000eb9c2f022f004eb9400097f04fef000c204022502269001c4878001c2f084e91508fe08072409081280042a74878001d4878007f48780015487800722f0a4eb940070dea4fef001876734a846a084484700a61000718610007004a8067046100070c200460000706"
     },
     {
-     "off": 1625528,
+     "off": 1636468,
      "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffffffff",
      "new": "4eb9400cf8662f004eb94000eb902e804eb940012412588f4e754fefffe048d70cfc4ef94001aa564e56ffc048d73cfc4ef94001b2324eb9400cf8662f004eb94000eb9c2f022f004eb940009c5a4fef000c7800180042a7487800104878004d48780008487800412f0a4eb940070dea4fef001876427264b8816508988170016126600c5883720ab88164045883600461066114200460107000720ab88165069881528060f64e757209600272164feffff048d7007441fa00442a300c007c1f9c8178077001eda874020505671672029282d2834c2a1800000ce589226a001081b1180053826ae2e68d5386538466d44cd700744fef001058834e75001edb6f000b2497001c9f27001c9e4f0016de49001e4e4f001e4f6f001c9492001edf6f001ede4f00000e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
     }
@@ -2236,27 +2236,27 @@ window.MC_TWEAKS = {
     "Mode grille : une touche de pas qui porte un trigless trig (lock trig, FUNC + pas) s'allume à 36 % au lieu de pleine lumière ; elle garde le clignotement d'origine (éteinte 0,35 s toutes les 2 s).",
     "L'état de sa LED devient 260 au lieu de 4 (traité comme 4 par l'OS) ; elle est éteinte 16 ticks sur 25 de l'horloge des LED (120 Hz). Trigs de note, trigs avec p-locks, lumière de lecture, pads : inchangés.",
     "D'après le mod de djd_oz (envoyé à Maxime le 06/10/2026), réécrit pour s'exécuter en place : mêmes accroches, même motif. Les LED à atténuer sont relevées à la fin de chaque image de l'interface (accroche en plus en 0x40006086) : un tick tombé au milieu d'une image ne rallume plus les touches à fond.",
-    "Code et état dans le masque de sprite 47x47 libéré 0x4018d4a8 (tools/sprites.py) : 284 o. Généré par tools/gen_trigless_dim.py, notes/45."
+    "Code et état dans le masque de sprite 47x47 libéré 0x4018dba8 (tools/sprites.py) : 284 o. Généré par tools/gen_trigless_dim.py, notes/45."
    ],
    "device": "Model:Cycles",
    "os": "1.13",
    "section": 3,
    "symbols": {
-    "td_cnt": "0x4018d5b0",
-    "td_mask": "0x4018d5b4",
-    "td_lock": "0x4018d5bc",
-    "td_tick": "0x4018d552"
+    "td_cnt": "0x4018dcb0",
+    "td_mask": "0x4018dcb4",
+    "td_lock": "0x4018dcbc",
+    "td_tick": "0x4018dc52"
    },
    "writes": [
     {
      "off": 23350,
      "old": "b2ac00286730",
-     "new": "4ef94018d4a8"
+     "new": "4ef94018dba8"
     },
     {
      "off": 23686,
      "old": "4ef94008e77e",
-     "new": "4ef94018d500"
+     "new": "4ef94018dc00"
     },
     {
      "off": 138068,
@@ -2266,17 +2266,17 @@ window.MC_TWEAKS = {
     {
      "off": 582484,
      "old": "b18371832f00",
-     "new": "4ef94018d4c8"
+     "new": "4ef94018dbc8"
     },
     {
      "off": 582568,
      "old": "73b228007180",
-     "new": "4ef94018d4e4"
+     "new": "4ef94018dbe4"
     },
     {
      "off": 582602,
      "old": "4feffff448d7040c",
-     "new": "4ef94018d5524e71"
+     "new": "4ef94018dc524e71"
     },
     {
      "off": 582702,
@@ -2284,14 +2284,14 @@ window.MC_TWEAKS = {
      "new": "4e71"
     },
     {
-     "off": 706902,
-     "old": "4018d4a8",
+     "off": 706814,
+     "old": "4018dba8",
      "new": "40172220"
     },
     {
-     "off": 1626280,
+     "off": 1628072,
      "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffffffff",
-     "new": "222c00280c8100000104670e0c810000000467064ef940005f3c4ef940005f6cb18343f94018d5b47000103128004680c68071832f004ef94008e75a41f94018d5b47200123028004681c08173b2280071804ef94008e7ae206f00044feffff448d7001c42a742a741e8002843f94010abf87836201824190c8000000104660c4a826b082602e68b05f73800538466e423df4018d5bc23df4018d5c04cd7001c4fef000c4ef94008e77e2f002f0120394018d5b00680000000097219b0816516908123c04018d5b042b94018d5b442b94018d5b8601e23c04018d5b020394018d5bc22394018d5c023c04018d5b423c14018d5b8221f201f4feffff448d7040c4ef94008e7d200000000000000000000000000000000000000000000"
+     "new": "222c00280c8100000104670e0c810000000467064ef940005f3c4ef940005f6cb18343f94018dcb47000103128004680c68071832f004ef94008e75a41f94018dcb47200123028004681c08173b2280071804ef94008e7ae206f00044feffff448d7001c42a742a741e8002843f94010abf87836201824190c8000000104660c4a826b082602e68b05f73800538466e423df4018dcbc23df4018dcc04cd7001c4fef000c4ef94008e77e2f002f0120394018dcb00680000000097219b0816516908123c04018dcb042b94018dcb442b94018dcb8601e23c04018dcb020394018dcbc22394018dcc023c04018dcb423c14018dcb8221f201f4feffff448d7040c4ef94008e7d200000000000000000000000000000000000000000000"
     }
    ]
   },

@@ -32,7 +32,7 @@ import test_sdvintage as T         # noqa: E402
 SRC = HERE / "machines" / "trigless_dim"
 OUT = HERE.parent / "tweaks" / "model-cycles_OS1.13" / "47-trigless-dim.json"
 BASE = gx.BASE
-MASK = 0x4018d4a8                                      # masque 47x47 libéré (376 o)
+MASK = 0x4018dba8                                      # masque 47x47 libéré (376 o)
 # (adresse, octets d'origine, symbole, instruction, rôle)
 HOOKS = (
     (0x40006086, "4ef94008e77e", "td_frame", 0x4ef9,
@@ -110,7 +110,7 @@ def build_tweak(stock):
             "D'après le mod de djd_oz (envoyé à Maxime le 06/10/2026), réécrit pour s'exécuter en place : mêmes "
             "accroches, même motif. Les LED à atténuer sont relevées à la fin de chaque image de l'interface (accroche "
             "en plus en 0x40006086) : un tick tombé au milieu d'une image ne rallume plus les touches à fond.",
-            f"Code et état dans le masque de sprite 47x47 libéré 0x4018d4a8 (tools/sprites.py) : {len(code)} o. "
+            f"Code et état dans le masque de sprite 47x47 libéré 0x4018dba8 (tools/sprites.py) : {len(code)} o. "
             "Généré par tools/gen_trigless_dim.py, notes/45.",
         ],
         "device": "Model:Cycles",

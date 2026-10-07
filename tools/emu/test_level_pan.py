@@ -277,7 +277,7 @@ def writes_ok(stock, img, tweak, others):
     for w in tweak["writes"]:
         o, old = w["off"], bytes.fromhex(w["old"])
         check(stock[o:o + len(old)] == old, f"octets d'origine en {o + BASE:#x} ({len(old)} o)")
-    for mask in (0x4018cd48, 0x4018d1b8):
+    for mask in (0x4018f4b4, 0x4018fc74):
         size, ref, _, shared = sprites.MASKS[mask]
         check(stock[mask - BASE:mask - BASE + size] == stock[shared - BASE:shared - BASE + size],
               f"masque {mask:#x} identique au masque gardé {shared:#x}")

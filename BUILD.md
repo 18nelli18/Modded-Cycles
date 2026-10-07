@@ -265,11 +265,11 @@ python3 tools/emu/test_trigless_dim.py --cycles model-cycles_OS1.13.syx \
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `level-pan-values` | `407e5310a7f12bc0382994dfd314b0124ecca710b386b62e56456090004a0a28` |
-| `trigless-dim` | `49adf97c6e9b0530fac06585412056858beaa0a7ef9ea1259c2a9c5c117836c6` |
-| `level-pan-values,trigless-dim` | `bfd3a83f41a406d0c04a97d065e413d16b651a1168e473b1c62736d98f6e0a30` |
-| `model-tg,level-pan-values,trigless-dim` | `268568e505c8850ee28257c5548081e09f3e57e222b6c7b751b43df1e69f3ca8` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,level-pan-values,trigless-dim` | `6ad10d24c07e2286d2225f4e73b703b8b61372bb580084aa1eab1e6e4b89b19b` |
+| `level-pan-values` | `7fb415147e8605ab035e3fc064986b1c640cddc7ced972ad5b6ff6fcaa9f5eb7` |
+| `trigless-dim` | `55ccc8583a60346f6d73797133c0e20901e5f724eb378c92638c4133815350a4` |
+| `level-pan-values,trigless-dim` | `67d527f265eef90d83489cfc557c7d3cd1c741484f08576f7b76606792bd2763` |
+| `model-tg,level-pan-values,trigless-dim` | `61ce3bba9b57c01c307e67fc7eec2d3ba61311fa938afdcfc699524b0ae9fa74` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,level-pan-values,trigless-dim` | `2c8cbf547ff54fc4d6136d96bdaf57b6a845a2d0f899821c6ba03384f13b141f` |
 
 ### Écoute d'un pas en pause
 

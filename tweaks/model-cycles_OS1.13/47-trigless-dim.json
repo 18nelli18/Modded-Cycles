@@ -6,27 +6,27 @@
   "Mode grille : une touche de pas qui porte un trigless trig (lock trig, FUNC + pas) s'allume à 36 % au lieu de pleine lumière ; elle garde le clignotement d'origine (éteinte 0,35 s toutes les 2 s).",
   "L'état de sa LED devient 260 au lieu de 4 (traité comme 4 par l'OS) ; elle est éteinte 16 ticks sur 25 de l'horloge des LED (120 Hz). Trigs de note, trigs avec p-locks, lumière de lecture, pads : inchangés.",
   "D'après le mod de djd_oz (envoyé à Maxime le 06/10/2026), réécrit pour s'exécuter en place : mêmes accroches, même motif. Les LED à atténuer sont relevées à la fin de chaque image de l'interface (accroche en plus en 0x40006086) : un tick tombé au milieu d'une image ne rallume plus les touches à fond.",
-  "Code et état dans le masque de sprite 47x47 libéré 0x4018d4a8 (tools/sprites.py) : 284 o. Généré par tools/gen_trigless_dim.py, notes/45."
+  "Code et état dans le masque de sprite 47x47 libéré 0x4018dba8 (tools/sprites.py) : 284 o. Généré par tools/gen_trigless_dim.py, notes/45."
  ],
  "device": "Model:Cycles",
  "os": "1.13",
  "section": 3,
  "symbols": {
-  "td_cnt": "0x4018d5b0",
-  "td_mask": "0x4018d5b4",
-  "td_lock": "0x4018d5bc",
-  "td_tick": "0x4018d552"
+  "td_cnt": "0x4018dcb0",
+  "td_mask": "0x4018dcb4",
+  "td_lock": "0x4018dcbc",
+  "td_tick": "0x4018dc52"
  },
  "writes": [
   {
    "off": 23350,
    "old": "b2ac00286730",
-   "new": "4ef94018d4a8"
+   "new": "4ef94018dba8"
   },
   {
    "off": 23686,
    "old": "4ef94008e77e",
-   "new": "4ef94018d500"
+   "new": "4ef94018dc00"
   },
   {
    "off": 138068,
@@ -36,17 +36,17 @@
   {
    "off": 582484,
    "old": "b18371832f00",
-   "new": "4ef94018d4c8"
+   "new": "4ef94018dbc8"
   },
   {
    "off": 582568,
    "old": "73b228007180",
-   "new": "4ef94018d4e4"
+   "new": "4ef94018dbe4"
   },
   {
    "off": 582602,
    "old": "4feffff448d7040c",
-   "new": "4ef94018d5524e71"
+   "new": "4ef94018dc524e71"
   },
   {
    "off": 582702,
@@ -54,14 +54,14 @@
    "new": "4e71"
   },
   {
-   "off": 706902,
-   "old": "4018d4a8",
+   "off": 706814,
+   "old": "4018dba8",
    "new": "40172220"
   },
   {
-   "off": 1626280,
+   "off": 1628072,
    "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffffffff",
-   "new": "222c00280c8100000104670e0c810000000467064ef940005f3c4ef940005f6cb18343f94018d5b47000103128004680c68071832f004ef94008e75a41f94018d5b47200123028004681c08173b2280071804ef94008e7ae206f00044feffff448d7001c42a742a741e8002843f94010abf87836201824190c8000000104660c4a826b082602e68b05f73800538466e423df4018d5bc23df4018d5c04cd7001c4fef000c4ef94008e77e2f002f0120394018d5b00680000000097219b0816516908123c04018d5b042b94018d5b442b94018d5b8601e23c04018d5b020394018d5bc22394018d5c023c04018d5b423c14018d5b8221f201f4feffff448d7040c4ef94008e7d200000000000000000000000000000000000000000000"
+   "new": "222c00280c8100000104670e0c810000000467064ef940005f3c4ef940005f6cb18343f94018dcb47000103128004680c68071832f004ef94008e75a41f94018dcb47200123028004681c08173b2280071804ef94008e7ae206f00044feffff448d7001c42a742a741e8002843f94010abf87836201824190c8000000104660c4a826b082602e68b05f73800538466e423df4018dcbc23df4018dcc04cd7001c4fef000c4ef94008e77e2f002f0120394018dcb00680000000097219b0816516908123c04018dcb042b94018dcb442b94018dcb8601e23c04018dcb020394018dcbc22394018dcc023c04018dcb423c14018dcb8221f201f4feffff448d7040c4ef94008e7d200000000000000000000000000000000000000000000"
   }
  ]
 }

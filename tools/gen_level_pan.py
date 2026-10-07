@@ -36,8 +36,8 @@ OUT = HERE.parent / "tweaks" / "model-cycles_OS1.13" / "46-level-pan-values.json
 BASE = gx.BASE
 # sections de level_pan.ld : (masque libéré, début de la zone utilisée, taille disponible)
 CAVES = {
-    ".cave_a": (0x4018cd48, 0x4018cd48, 376),
-    ".cave_b": (0x4018d1b8, 0x4018d1b8, 376),
+    ".cave_a": (0x4018f4b4, 0x4018f4b4, 376),
+    ".cave_b": (0x4018fc74, 0x4018fc74, 376),
 }
 # (adresse, octets d'origine, symbole, instruction, rôle)
 HOOKS = (
@@ -120,7 +120,7 @@ def build_tweak(stock):
             "D'après le mod de djd_oz (envoyé à Maxime le 06/10/2026), réécrit pour s'exécuter en place : même police, mêmes "
             "positions.",
             f"Code et état dans deux masques de sprites 47x47 libérés (tools/sprites.py) : {used['.cave_a']} o en "
-            f"0x4018cd48, {used['.cave_b']} o en 0x4018d1b8. Généré par tools/gen_level_pan.py, notes/44.",
+            f"0x4018f4b4, {used['.cave_b']} o en 0x4018fc74. Généré par tools/gen_level_pan.py, notes/44.",
         ],
         "device": "Model:Cycles",
         "os": "1.13",
