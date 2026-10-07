@@ -12,7 +12,7 @@ plus à chaque mod. Outils : `tools/check_overlaps.py` (nouveau), `tools/ref_mai
 
 - **Aucun firmware n'est stocké** : la page construit le firmware dans le navigateur, depuis le fichier officiel de
   l'utilisateur, en appliquant les mods cochés. Ce qui doublait à chaque mod, c'était la **vérification** :
-  `REF_MAINOS` listait l'empreinte du MAIN OS de chacune des 9 215 combinaisons proposées (92 % des 1,34 Mo de
+  `REF_MAINOS` listait l'empreinte du MAIN OS de chacune des 9 215 combinaisons proposées (90 % des 1,36 Mo de
   `app.js`), et `tools/webflash_smoke.sh` les reconstruisait toutes dans la page (de 45 min à 1 h 40 en morceaux, faute
   de mémoire sinon). [FAIT]
 - Elle est remplacée par trois choses :
@@ -26,7 +26,7 @@ plus à chaque mod. Outils : `tools/check_overlaps.py` (nouveau), `tools/ref_mai
   combinaisons, reconstruites dans la page avec le nouveau code, donnent le même MAIN OS qu'avant, chaque mod vérifié
   (§6). [FAIT]
 - La liste grandit maintenant d'une quarantaine d'entrées par carte au lieu de doubler, et `app.js` passe de
-  1 335 786 à 160 028 octets.
+  1 364 561 à 188 803 octets (`main` 1.28, avec le sélecteur de mods).
 
 ## 1. Ce qui grandissait
 
@@ -36,7 +36,7 @@ ou sans Model-TG) multiplient le tout. Mesuré le 07/10/2026 sur `main` et les P
 
 | Où | Combinaisons | `app.js` |
 |---|---:|---:|
-| `main` (1.22) | 9 215 | 1 335 786 o |
+| `main` (1.28) | 9 215 | 1 364 561 o |
 | PR clavier d'accords (#50), filtre par piste (#55) | 17 407 | 2,5 Mo |
 | PR menu multiligne (#52) | 18 431 | 2,7 Mo |
 | PR mods de djd_oz (#53, deux cartes) | 36 863 | 5,6 Mo |
@@ -116,8 +116,10 @@ La dernière ligne rejoue le conflit de pochoirs trouvé à la main le 07/10/202
   - les plus grandes : à partir de chaque carte, on coche toutes les autres qui vont avec, dans l'ordre des cartes puis
     à l'envers, avec et sans les moteurs du Syntakt : 64.
   Total 416, en 2 minutes. Les règles des cartes sont lues comme dans `app.js` : `excludes` et `includes` (jamais
-  ensemble), le `requires` d'une carte (elle coche l'autre), `with` (un autre tweak quand une autre carte est cochée),
-  Model-TG avec les moteurs (leur version `tg`). Les PR ouvertes avaient dû adapter l'ancien script à chaque nouvelle
+  ensemble), `with` (un autre tweak quand une autre carte est cochée), Model-TG avec les moteurs (leur version `tg`).
+  Le `requires` d'une carte n'est qu'affiché par la page depuis le sélecteur de mods (1.28, « avec … ») : il ajoute
+  l'autre carte à l'échantillon, et une sélection dont un tweak n'a pas le tweak qu'il demande est écartée (les deux
+  builds la refusent). Les PR ouvertes avaient dû adapter l'ancien script à chaque nouvelle
   forme de carte ; celui-ci les lit toutes.
 - Croissance : la k-ième nouvelle carte ajoute 1 entrée seule, une paire avec chaque autre carte et chaque combinaison
   de moteurs (≈ 9 + 31), et quelques grandes : une quarantaine, au lieu de doubler. [FAIT pour main, calcul ensuite]
