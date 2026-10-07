@@ -165,9 +165,9 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 14).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,syntakt-sd,syntakt-tg-sd"
-      && ids.length === 12 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
-      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 11,
+    check(ids.slice(0, 16).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,sample-cue,sample-cue-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,syntakt-sd,syntakt-tg-sd"
+      && ids.length === 14 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 12,
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG: ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
@@ -175,7 +175,7 @@ async function main() {
       && srcs.every((x) => x.endsWith("?v=" + w.MC_BUILD)), "scripts loaded with ?v=<build> (no stale cache): " + srcs.join());
     check(doc.getElementById("compat").hidden, "no compatibility banner in a good browser");
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-usb6,feat-model-tg,feat-sample-preview,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-trig-hold,feat-arp,feat-tempo-max,feat-boot-anim,feat-syntakt", "11 feature cards: " + JSON.stringify(feats));
+    check(feats.join() === "feat-usb6,feat-model-tg,feat-sample-preview,feat-sample-cue,feat-latching-mute,feat-trig-preview,feat-browser-scroll,feat-trig-hold,feat-arp,feat-tempo-max,feat-boot-anim,feat-syntakt", "12 feature cards: " + JSON.stringify(feats));
     const tags = [...doc.querySelectorAll("#features .tag")].map((x) => x.textContent);
     const tagOfFeat = (f) => (f.status === "tested" ? "Tested" : "Experimental");
     const synTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.engines));
@@ -184,7 +184,8 @@ async function main() {
     const tempoTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "tempo-max"));
     const bootTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "boot-anim"));
     const previewTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "sample-preview"));
-    check(tags.join() === "Tested,Experimental," + previewTag + ",Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + "," + synTag,
+    const cueTag = tagOfFeat(w.MC_TWEAKS.features.find((f) => f.id === "sample-cue"));
+    check(tags.join() === "Tested,Experimental," + previewTag + "," + cueTag + ",Tested,Tested,Tested," + holdTag + "," + arpTag + "," + tempoTag + "," + bootTag + "," + synTag,
       "cards tagged as tested or not (Model-TG experimental until tested here): " + tags.join());
     check(doc.getElementById("drop3-wrap").hidden, "Syntakt drop zone hidden until the Syntakt engines are ticked");
     doc.getElementById("feat-syntakt").click();
@@ -209,11 +210,11 @@ async function main() {
     check(!doc.getElementById("feat-syntakt").checked && doc.querySelectorAll('input[name="eng-syntakt"]').length === 0
       && doc.getElementById("drop3-wrap").hidden, "last engine unticked -> the card turns off");
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
-    check(credits.length === 7 && credits[0] === "https://github.com/scottmetoyer/ms-multi-output"
+    check(credits.length === 8 && credits[0] === "https://github.com/scottmetoyer/ms-multi-output"
       && credits[1] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(credits[2])
-      && credits[3] === "https://github.com/TinyGregAudio/Model-TG"
-      && credits.slice(4).every((h) => h === "https://github.com/drumkilla/elektron-model-tweaks"),
-      "each card credits its author, Model-TG with its MIT license, sample preview based on Model-TG: " + JSON.stringify(credits));
+      && credits[3] === "https://github.com/TinyGregAudio/Model-TG" && credits[4] === "https://github.com/TinyGregAudio/Model-TG"
+      && credits.slice(5).every((h) => h === "https://github.com/drumkilla/elektron-model-tweaks"),
+      "each card credits its author, Model-TG with its MIT license, sample preview and headphone cue based on Model-TG: " + JSON.stringify(credits));
     const list = [...doc.querySelectorAll("#credits-list a")].map((a) => a.textContent);
     check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",
       "credits section lists the 5 upstream repositories");
@@ -278,6 +279,29 @@ async function main() {
       "sample preview: says it needs Model-TG, ticking it ticks Model-TG (latching mute then included), unticking Model-TG "
       + "unticks it, unticking it keeps Model-TG; with the Syntakt engines: model-tg-st,sample-preview-st,syntakt-tg-…, "
       + `its own badge (${spTag}, Model-TG + the 5 engines: ${tg5 ? "Tested" : "Experimental"}); guide link`);
+    // Headphone cue needs sample preview, which needs Model-TG: a chain, ticked whole from its end and dropped whole
+    // from its start; unticking the cue keeps the other two
+    const cueCard = () => doc.querySelector("label[for=feat-sample-cue]");
+    box("feat-sample-cue").click(); await wait(5);
+    const cueOn = box("feat-sample-cue").checked && box("feat-sample-preview").checked && box("feat-model-tg").checked
+      && ids1() === "model-tg,sample-preview,sample-cue"
+      && /\(needs Sample preview \(Model-TG\)\)/.test(cueCard().querySelector(".ttl").textContent)
+      && !!cueCard().querySelector('a.feat-guide[href$="#sample-cue"]');
+    box("feat-syntakt").click(); await wait(5);
+    const cueSt = ids1() === "model-tg-st,sample-preview-st,sample-cue-st,syntakt-tg-sd";
+    box("feat-syntakt").click(); await wait(5);
+    box("feat-sample-cue").click(); await wait(5);
+    const cueKeep = !box("feat-sample-cue").checked && ids1() === "model-tg,sample-preview";
+    box("feat-sample-cue").click(); await wait(5);
+    box("feat-sample-preview").click(); await wait(5);
+    const cueDrop1 = !box("feat-sample-cue").checked && !box("feat-sample-preview").checked && ids1() === "model-tg";
+    box("feat-sample-cue").click(); await wait(5);
+    box("feat-model-tg").click(); await wait(5);
+    const cueDrop2 = ["feat-model-tg", "feat-sample-preview", "feat-sample-cue"].every((id) => !box(id).checked) && ids1() === "";
+    check(cueOn && cueSt && cueKeep && cueDrop1 && cueDrop2,
+      "headphone cue: says it needs sample preview, ticking it ticks sample preview and Model-TG; with the Syntakt engines: "
+      + "model-tg-st,sample-preview-st,sample-cue-st,syntakt-tg-sd; unticking sample preview or Model-TG unticks it; "
+      + "unticking it keeps the other two; guide link");
     // the combined version's badges follow its tests on the hardware (gen_syntakt_engines.HW_TESTED_TG, the
     // combos' tg_tested in tweaks.js): Model-TG + the 5 engines, then Model-TG + SDVtg alone
     doc.getElementById("feat-model-tg").click(); await wait(5);
@@ -320,6 +344,10 @@ async function main() {
       && /\(demande Model-TG\)/.test(doc.querySelector("label[for=feat-sample-preview] .ttl").textContent)
       && doc.querySelector('#features a[href$="#sample-preview"]'),
       "FR: sample preview card translated, says « (demande Model-TG) », with its guide link");
+    check(/Écoute au casque/.test(text(doc, "features"))
+      && /\(demande Écoute des samples \(Model-TG\)\)/.test(doc.querySelector("label[for=feat-sample-cue] .ttl").textContent)
+      && doc.querySelector('#features a[href$="#sample-cue"]'),
+      "FR: headphone cue card translated, says « (demande Écoute des samples (Model-TG)) », with its guide link");
     doc.getElementById("feat-model-tg").click(); await wait(5);
     check(/\(inclus avec Model-TG\)/.test(doc.querySelector("label[for=feat-browser-scroll] .ttl").textContent),
       "FR: the tweaks Model-TG holds say « (inclus avec Model-TG) »");

@@ -84,6 +84,21 @@ FEATURES = [
         "with": {"syntakt": "33-sample-preview-st"},
     },
     {
+        "id": "sample-cue",
+        "label": "Ecoute des samples au casque (cue)",
+        "desc": "Avec l'ecoute des samples : le pad de la piste fait entendre le sample sous le curseur au casque "
+                "seulement, a droite, sans le jouer sur la piste. MAIN OUT passe en mono sur L (R muet). "
+                "Demande l'ecoute des samples.",
+        "status": "experimental",
+        "credit": {"kind": "based", "who": "TinyGregAudio", "repo": "TinyGregAudio/Model-TG"},
+        "requires": "sample-preview",
+        "variants": [
+            {"file": "34-sample-cue", "label": None},
+        ],
+        # avec les moteurs du Syntakt, l'ecoute des samples devient sample-preview-st : le cue prend la sienne
+        "with": {"syntakt": "34-sample-cue-st"},
+    },
+    {
         "id": "latching-mute",
         "label": "Mode mute verrouille",
         "desc": "Maintiens TRK et tape FUNC : le mode mute reste actif, tu mutes les pistes sans tenir FUNC. "
