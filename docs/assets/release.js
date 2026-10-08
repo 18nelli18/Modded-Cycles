@@ -3,6 +3,12 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.33", date: "2026-10-08", changes: [
+    { en: "New mod, Acid machine (experimental): one extra machine after Chord, a 303-style bass. SHAPE blends saw into square, COLOR is a DJ-style filter (low-pass below 64, none at 64, high-pass above, same volume across the middle), SWEEP is the resonance, CONTOUR sends the filter envelope up or down, PUNCH is the accent",
+      fr: "Nouveau mod, Machine Acid (expérimental) : une machine ajoutée après Chord, une basse façon 303. SHAPE fond la scie en carré, COLOR est un filtre façon DJ (passe-bas sous 64, rien à 64, passe-haut au-dessus, même volume de part et d'autre du milieu), SWEEP est la résonance, CONTOUR envoie l'enveloppe du filtre vers le haut ou vers le bas, PUNCH est l'accent" },
+    { en: "About as light on the processor as Tone. Checked in the emulator on the OS's own code; not yet tested on a Model:Cycles. No slide yet, and not with Model-TG, MACRO or the Syntakt engines for now",
+      fr: "À peu près aussi légère en calcul que Tone. Vérifiée en émulation sur le code même de l'OS ; pas encore essayée sur un Model:Cycles. Pas encore de slide, et pas avec Model-TG, MACRO ni les moteurs du Syntakt pour l'instant" },
+  ] },
   { version: "1.32", date: "2026-10-07", changes: [
     { en: "New mod, Sample preview (with Model-TG): on a Sampler track, press FUNC + MACHINES (preset menu) and move the cursor onto a sample: the track's pad (or its trig keys in keyboard mode) plays it, the way the original OS lets you hear a preset before you pick it. Nothing plays while you scroll. It has its own row in the flasher, under Screen & browsing; ticking it ticks Model-TG too",
       fr: "Nouveau mod, Écoute des samples (avec Model-TG) : sur une piste Sampler, appuyez sur FUNC + MACHINES (menu des presets) et placez le curseur sur un échantillon : le pad de la piste (ou ses touches de pas en mode clavier) le joue, comme l'OS d'origine fait écouter un preset avant de le choisir. Rien ne joue pendant le défilement. Il a sa propre ligne dans le flasher, sous Écran et navigation ; le cocher coche aussi Model-TG" },
