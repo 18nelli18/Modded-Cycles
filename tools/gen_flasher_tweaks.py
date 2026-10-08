@@ -194,6 +194,21 @@ FEATURES = [
         "with": {"model-tg": "32-macro-tg"},
     },
     {
+        "id": "kick",
+        "cat": "sound",
+        "label": "Machines Kick2 et Kick3",
+        "desc": "Deux machines de kick ajoutees apres Chord, ports du moteur de zicBox. Kick2 : forme d'onde, "
+                "waveshaper, forme de la chute de hauteur, resonateur. Kick3 : la forme d'onde se construit avec "
+                "les potards (forme, repli, asymetrie, harmonique), PITCH change le caractere de la chute.",
+        "status": "experimental",
+        "credit": {"kind": "based", "who": "apiel", "repo": "apiel/zicBox"},
+        # meme bloc apres l'image et memes tables de machines que MACRO, les moteurs du Syntakt et Model-TG (notes/47)
+        "excludes": ["macro", "syntakt", "model-tg"],
+        "variants": [
+            {"file": "26-kick", "label": None},
+        ],
+    },
+    {
         "id": "syntakt",
         "cat": "sound",
         "label": "Vrais moteurs du Syntakt",

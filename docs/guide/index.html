@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-07-10">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-07-10">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-08-01">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-08-01">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -52,6 +52,7 @@
         <li><a href="#tempo"><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></a></li>
         <li><a href="#boot-anim"><span data-l="en">Startup animation</span><span data-l="fr">Animation de démarrage</span></a></li>
         <li><a href="#macro"><span data-l="en">MACRO machine</span><span data-l="fr">Machine MACRO</span></a></li>
+        <li><a href="#kick"><span data-l="en">Kick2 and Kick3</span><span data-l="fr">Kick2 et Kick3</span></a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
         <li><a href="#stock"><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></a></li>
         <li><a href="#recovery"><span data-l="en">Recovery</span><span data-l="fr">Secours</span></a></li>
@@ -536,8 +537,26 @@
         <p class="note"><span data-l="en"><b>Before flashing another choice or the official firmware,</b> set your MACRO tracks back to an original machine (Kick to Chord): MACRO is the 7th machine alone and the 8th with Model-TG, and the official OS doesn't have it.</span><span data-l="fr"><b>Avant de flasher un autre choix ou le firmware officiel,</b> remettez vos pistes MACRO sur une machine d'origine (de Kick à Chord) : MACRO est la 7<sup>e</sup> machine seule et la 8<sup>e</sup> avec Model-TG, et l'OS officiel ne l'a pas.</span></p>
       </section>
 
+      <section id="kick">
+        <h2><span class="n">14</span><span data-l="en">Kick2 and Kick3 machines</span><span data-l="fr">Machines Kick2 et Kick3</span></h2>
+        <p class="by"><span data-l="en">Based on</span><span data-l="fr">D'après</span> <a href="https://github.com/apiel/zicBox" target="_blank" rel="noopener">zicBox</a> <span data-l="en">by apiel</span><span data-l="fr">d'apiel</span></p>
+        <p class="lede"><span data-l="en">Two extra machines for kicks, after Chord: Kick2 and Kick3, ports of the kick engines of apiel's zicBox. Both build the kick from a morphing wave, a pitch drop and some distortion, all on the knobs.</span><span data-l="fr">Deux machines ajoutées pour les kicks, après Chord : Kick2 et Kick3, portées depuis les moteurs de kick de zicBox d'apiel. Toutes deux construisent le kick à partir d'une forme d'onde qui se fond, d'une chute de hauteur et d'un peu de distorsion, le tout aux potards.</span></p>
+        <ol>
+          <li><span data-l="en">Press <b>MACHINES</b> and pick <b>Kick2</b> (7th machine) or <b>Kick3</b> (8th machine), after Chord. Their icon is Kick's.</span><span data-l="fr">Appuyez sur <b>MACHINES</b> et choisissez <b>Kick2</b> (7<sup>e</sup> machine) ou <b>Kick3</b> (8<sup>e</sup> machine), après Chord. Leur icône est celle de Kick.</span></li>
+          <li><span data-l="en"><b>Kick2</b>: <b>COLOR</b> (MRPH) morphs the wave from sine to triangle, saw, square and soft-clipped saw; <b>SHAPE</b> (SHPR) is a waveshaper, from clean to drive then wavefold; <b>SWEEP</b> (SW.SH) picks the shape of the pitch drop, from a classic punch through a gabber double drop to a long glide; <b>CONTOUR</b> (RESO) adds a resonant body that follows the pitch. <b>PITCH</b> sets the base note, 30 to 100 Hz. <b>PUNCH</b> adds drive.</span><span data-l="fr"><b>Kick2</b> : <b>COLOR</b> (MRPH) fond la forme d'onde du sinus au triangle, à la scie, au carré et à la scie écrêtée ; <b>SHAPE</b> (SHPR) est un waveshaper, du son propre au drive puis au repli d'onde ; <b>SWEEP</b> (SW.SH) choisit la forme de la chute de hauteur, du punch classique à un glissé long en passant par une double chute gabber ; <b>CONTOUR</b> (RESO) ajoute un corps résonant qui suit la hauteur. <b>PITCH</b> règle la note de base, de 30 à 100 Hz. <b>PUNCH</b> ajoute du drive.</span></li>
+          <li><span data-l="en"><b>Kick3</b>: the wave is built with the knobs. <b>COLOR</b> (WAVE) picks it, sine, triangle, saw or square; <b>SHAPE</b> (FOLD) folds it; <b>SWEEP</b> (SKEW) skews it, with the middle of the knob symmetric; <b>CONTOUR</b> (HARM) adds the octave, the middle of the knob adds nothing. <b>PITCH</b> sets how the pitch drops: a soft glide at 0, a classic kick around 40, a gabber double drop (fast dive, then a slow tail) around 85, a long dive at 127. The pitch itself follows the note of the trig, 52 Hz at C4. <b>PUNCH</b> adds drive.</span><span data-l="fr"><b>Kick3</b> : la forme d'onde se construit aux potards. <b>COLOR</b> (WAVE) la choisit, sinus, triangle, scie ou carré ; <b>SHAPE</b> (FOLD) la replie ; <b>SWEEP</b> (SKEW) la déforme, le milieu du potard étant symétrique ; <b>CONTOUR</b> (HARM) ajoute l'octave, le milieu du potard n'ajoute rien. <b>PITCH</b> règle la façon dont la hauteur tombe : glissé doux à 0, kick classique vers 40, double chute gabber (plongeon rapide, puis longue queue) vers 85, plongeon long à 127. La hauteur elle-même suit la note du trig, 52 Hz à C4. <b>PUNCH</b> ajoute du drive.</span></li>
+          <li><span data-l="en"><b>DECAY</b> sets the length of the kick, from 50 ms to 3 s on Kick2 and 1.5 s on Kick3. <b>GATE</b> works as on the other machines.</span><span data-l="fr"><b>DECAY</b> règle la durée du kick, de 50 ms à 3 s sur Kick2 et à 1,5 s sur Kick3. <b>GATE</b> marche comme sur les autres machines.</span></li>
+        </ol>
+        <dl class="facts">
+          <div><dt><span data-l="en">Sound</span><span data-l="fr">Son</span></dt><dd><span data-l="en">the code works in fixed point (the Model:Cycles' processor has no floating-point unit), so the sound is very close to, but not sample-for-sample the same as, the original floating-point engines. In the emulator, Kick3 follows a floating-point model of KickWave with a correlation above 0.93 on ten settings.</span><span data-l="fr">le code calcule en virgule fixe (le processeur du Model:Cycles n'a pas d'unité flottante) : le son est très proche des moteurs d'origine en virgule flottante, sans lui être identique échantillon par échantillon. En émulation, Kick3 suit un modèle en virgule flottante de KickWave avec une corrélation supérieure à 0,93 sur dix réglages.</span></dd></div>
+          <div><dt><span data-l="en">Other mods</span><span data-l="fr">Autres mods</span></dt><dd><span data-l="en">goes with the other mods, except MACRO, the Syntakt engines and Model-TG: all of them add machines in the same place (not together, for now).</span><span data-l="fr">se combine avec les autres mods, sauf MACRO, les moteurs du Syntakt et Model-TG : tous ajoutent des machines au même endroit (pas ensemble, pour l'instant).</span></dd></div>
+          <div><dt><span data-l="en">Experimental</span><span data-l="fr">Expérimental</span></dt><dd><span data-l="en">checked in the emulator on the OS's own code: menus, knobs and machine locks work, the original machines are unchanged. Not tested on a Model:Cycles yet.</span><span data-l="fr">vérifié en émulation sur le code même de l'OS : les menus, potards et machine locks marchent, et les machines d'origine ne changent pas. Pas encore testé sur un Model:Cycles.</span></dd></div>
+        </dl>
+        <p class="note"><span data-l="en"><b>Before flashing another choice or the official firmware,</b> set your Kick2 and Kick3 tracks back to an original machine (Kick to Chord): they are the 7th and 8th machines, and the official OS doesn't have them.</span><span data-l="fr"><b>Avant de flasher un autre choix ou le firmware officiel,</b> remettez vos pistes Kick2 et Kick3 sur une machine d'origine (de Kick à Chord) : ce sont les 7<sup>e</sup> et 8<sup>e</sup> machines, et l'OS officiel ne les a pas.</span></p>
+      </section>
+
       <section id="samples">
-        <h2><span class="n">14</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">15</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -571,13 +590,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">15</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">16</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">With Syntakt engines, the MACRO machine or Model-TG's Sampler, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt, la machine MACRO ou le Sampler de Model-TG, remettez d'abord vos pistes sur une machine d'origine.</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">16</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">17</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -591,7 +610,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">17</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">18</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -655,8 +674,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-07-10"></script>
-<script src="../assets/cycles.js?v=2026-10-07-10"></script>
-<script src="../assets/site.js?v=2026-10-07-10"></script>
+<script src="../assets/release.js?v=2026-10-08-01"></script>
+<script src="../assets/cycles.js?v=2026-10-08-01"></script>
+<script src="../assets/site.js?v=2026-10-08-01"></script>
 </body>
 </html>

@@ -305,6 +305,26 @@ Incompatible avec les moteurs du Syntakt et SD VINTAGE (même mécanique, même 
 | `model-tg-st,macro-tg` | `d738fafaa86bbac86e328e6f0b70dd9688c1d9c3b05a423c957751c74abbd8d8` |
 | `6ch-usbup,model-tg-st,macro-tg,trig-hold,arp,tempo-max,boot-anim` | `f584f099bd2a26abfcccf3d954dd3b86ab1880c07a0b110bce88d569eed1daeb` |
 
+### Machines Kick2 et Kick3 (ports de zicBox)
+
+`tweaks/model-cycles_OS1.13/26-kick.json` (Kick2 en 7e machine, Kick3 en 8e) est produit par `tools/gen_kick.py` : deux
+moteurs de kick en virgule fixe, `tools/machines/kick/zic_kick2.cpp` et `zic_kick3.cpp` (ports de `PotKick.h` et
+`KickWave.h` de [apiel/zicBox](https://github.com/apiel/zicBox)), liés sans libgcc (le ColdFire n'a pas de FPU, la libgcc
+de m68k-linux-gnu est faite pour le 68020), en charge utile rangée après l'image et reconstituée au démarrage à
+`0x43000000`, avec la mécanique des machines ajoutées de MACRO ([note 47](notes/47-machines-kick.md)). Il lui faut
+`m68k-linux-gnu-g++` (les JSON versionnés viennent du GCC 13.3 d'Ubuntu 24.04 : un autre GCC donne d'autres octets) ;
+la preuve compare Kick3 à un modèle en virgule flottante de KickWave.h calculé en Python :
+```sh
+python3 tools/gen_kick.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/emu/test_kick.py --cycles model-cycles_OS1.13.syx [--with 6ch-usbup,trig-hold,arp,tempo-max,boot-anim]
+```
+Incompatible avec MACRO, les moteurs du Syntakt, SD VINTAGE et Model-TG (même mécanique, même place).
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `kick` | `3c8423e19eda7e36c158280c85d7f8d7085a5e075d593ed34a0936aaf52eb2fd` |
+| `6ch-usbup,kick,trig-hold,arp,tempo-max,boot-anim` | `c49081b59a12020607a98df4c1175af062fa2b938c4463409bc051a9175ebfc9` |
+
 ### Écoute d'un pas en pause
 
 `trig-preview` (et sa copie dans Model-TG) accepte le séquenceur en pause, où le met un Stop MIDI reçu même à l'arrêt : 3 octets
