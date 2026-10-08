@@ -514,7 +514,8 @@ compile aussi le moteur pour l'ordinateur avec `gcc`, la référence :
 python3 tools/gen_acid.py --cycles model-cycles_OS1.13.syx [--check]
 python3 tools/emu/test_acid.py --cycles model-cycles_OS1.13.syx [--with 6ch-usbup,model-tg-st,trig-hold,arp,tempo-max,boot-anim]
 ```
-Avec Model-TG, `35-acid-tg.json` (même générateur) s'ajoute après `model-tg-st` : Acid est la 8e machine. Incompatible
+Avec Model-TG, `35-acid-tg.json` (même générateur) s'ajoute après `model-tg-st` : Acid est la 8e machine, et joue les slide trigs de Model-TG
+en slide 303 (notes/51 §10.5). Incompatible
 avec MACRO, les moteurs du Syntakt et SD VINTAGE (même mécanique, même place).
 
 | `-t` | MAIN OS patché (SHA-256) |
