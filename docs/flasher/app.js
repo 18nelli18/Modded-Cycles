@@ -1045,6 +1045,7 @@ const GUIDE_OF = {
   macro: "macro",
   "chord-keys": "chord-keys",
   "track-filter": "track-filter",
+  acid: "acid",
 };
 
 // Step 1's sections, in display order: the `cat` of each feature (tools/gen_flasher_tweaks.py, same list there
@@ -1651,6 +1652,11 @@ const FEAT = {
       clash: "both use MACHINES + SWEEP / CONTOUR for a track filter",
       desc: "Hold MACHINES and turn SWEEP: a filter on the track, low-pass to the left, off in the centre, high-pass to the right, like a DJ mixer, with the Model:Samples' range (5 Hz to 20 kHz). CONTOUR sets the resonance, COLOR and SHAPE a filter envelope (amount up or down, decay) restarted by each note. Four real parameters on every machine: p-locks, LFO, velocity, MIDI CC 74 and 71, saved with the sound and the pattern.",
       note: "Can't be ticked together with Model-TG for now: both use MACHINES + SWEEP / CONTOUR. Model-TG's filter will make way for this one once it is tested. A sound opened on another firmware plays without its filter." },
+    acid: { label: "Acid machine",
+      short: "One extra machine: a 303-style bass with a resonant filter and accent.",
+      clash: "both add machines in the same place in memory (no combined version yet)",
+      desc: "An extra machine after Chord: a 303-style bass. COLOR is a DJ-style filter: low-pass below 64, no filter at 64, high-pass above, at the same volume on both sides of the middle. SHAPE blends saw into square, SWEEP is the resonance (it whistles on its own near the top), CONTOUR sends the filter envelope up or down (64: none), DECAY sets the filter envelope and the note length, PUNCH is the accent (harder filter, louder). PITCH, FINE, GATE and the keys work as on the original machines.",
+      note: "About as light on the processor as Tone, lighter than the other original machines. No slide yet. Not available with Model-TG, MACRO or the Syntakt engines for now. A project using Acid needs a firmware with Acid as the 7th machine." },
   },
   fr: {
     usb6: { label: "Audio USB 6 canaux",
@@ -1724,6 +1730,11 @@ const FEAT = {
       short: "Sur une piste CHORD, les TRIG 1–16 jouent les accords de votre gamme.",
       clash: "les deux changent les notes des boutons TRIG (Model-TG a son propre Scale Lock)",
       desc: "Jouez une piste CHORD avec les boutons TRIG du bas : I–VII sur 1–7, une octave plus haut sur 8–14, puis I–II deux octaves plus haut sur 15–16. T1–T6 gardent leurs commandes habituelles. FUNC + RETRIG ajoute Keys, Root, Scale et le choix triade/7/9/11/13 par degré, commun aux octaves et enregistré avec le pattern." },
+    acid: { label: "Machine Acid",
+      short: "Une machine en plus : une basse façon 303, filtre résonant et accent.",
+      clash: "les deux ajoutent des machines au même endroit de la mémoire (pas encore de version commune)",
+      desc: "Une machine ajoutée après Chord : une basse façon 303. COLOR est un filtre façon DJ : passe-bas sous 64, pas de filtre à 64, passe-haut au-dessus, au même volume de part et d'autre du milieu. SHAPE fond la scie en carré, SWEEP est la résonance (elle siffle toute seule vers le haut), CONTOUR envoie l'enveloppe du filtre vers le haut ou vers le bas (64 : rien), DECAY règle l'enveloppe du filtre et la durée de la note, PUNCH est l'accent (filtre plus attaqué, plus fort). PITCH, FINE, GATE et les touches marchent comme sur les machines d'origine.",
+      note: "À peu près aussi légère en calcul que Tone, plus légère que les autres machines d'origine. Pas encore de slide. Pas disponible avec Model-TG, MACRO ni les moteurs du Syntakt pour l'instant. Un projet qui utilise Acid demande un firmware où Acid est la 7e machine." },
     "track-filter": { label: "Filtre par piste (LP / OFF / HP)",
       short: "MACHINES tenu + SWEEP : passe-bas à gauche, rien au centre, passe-haut à droite.",
       clash: "les deux utilisent MACHINES + SWEEP / CONTOUR pour un filtre de piste",

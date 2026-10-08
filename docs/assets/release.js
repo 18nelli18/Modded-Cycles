@@ -3,6 +3,12 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.46", date: "2026-10-11", changes: [
+    { en: "New mod, Acid machine (experimental): one extra machine after Chord, a 303-style bass. SHAPE blends saw into square, COLOR is a DJ-style filter (low-pass below 64, none at 64, high-pass above, same volume across the middle), SWEEP is the resonance, CONTOUR sends the filter envelope up or down, PUNCH is the accent",
+      fr: "Nouveau mod, Machine Acid (expérimental) : une machine ajoutée après Chord, une basse façon 303. SHAPE fond la scie en carré, COLOR est un filtre façon DJ (passe-bas sous 64, rien à 64, passe-haut au-dessus, même volume de part et d'autre du milieu), SWEEP est la résonance, CONTOUR envoie l'enveloppe du filtre vers le haut ou vers le bas, PUNCH est l'accent" },
+    { en: "About as light on the processor as Tone. Checked in the emulator on the OS's own code; not yet tested on a Model:Cycles. No slide yet, and not with Model-TG, MACRO or the Syntakt engines for now",
+      fr: "À peu près aussi légère en calcul que Tone. Vérifiée en émulation sur le code même de l'OS ; pas encore essayée sur un Model:Cycles. Pas encore de slide, et pas avec Model-TG, MACRO ni les moteurs du Syntakt pour l'instant" },
+  ] },
   { version: "1.45", date: "2026-10-11", changes: [
     { en: "New mod, Per-track filter: hold MACHINES and turn SWEEP for a filter on the track, low-pass to the left, off in the centre, high-pass to the right, like a DJ mixer, with the Model:Samples' range (5 Hz to 20 kHz). CONTOUR sets the resonance, COLOR and SHAPE a filter envelope (amount up or down, decay) restarted by each note",
       fr: "Nouveau mod, Filtre par piste : maintenez MACHINES et tournez SWEEP pour un filtre sur la piste, passe-bas à gauche, rien au centre, passe-haut à droite, comme sur une table de mixage DJ, avec la plage du Model:Samples (5 Hz à 20 kHz). CONTOUR règle la résonance, COLOR et SHAPE une enveloppe du filtre (quantité vers le haut ou le bas, decay) relancée à chaque note" },
