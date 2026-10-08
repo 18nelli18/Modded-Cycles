@@ -167,9 +167,9 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 16).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,macro,macro-tg,syntakt-sd,syntakt-tg-sd"
-      && ids.length === 14 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
-      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 12,
+    check(ids.slice(0, 16).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,macro,macro-tg,kick,kick-tg"
+      && ids.length === 16 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 13,
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG: ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
@@ -179,8 +179,8 @@ async function main() {
     // display order: by section (Packs, Sounds & machines, Sequencer, Live playing, Screen & browsing, USB & MIDI),
     // FEATURES order inside a section; the build keeps FEATURES order (checked in 1b)
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-model-tg,feat-macro,feat-syntakt,feat-trig-preview,feat-trig-hold,feat-arp,feat-tempo-max,feat-latching-mute,feat-sample-preview,feat-browser-scroll,feat-boot-anim,feat-usb6",
-      "12 feature rows, by section: " + JSON.stringify(feats));
+    check(feats.join() === "feat-model-tg,feat-macro,feat-kick,feat-syntakt,feat-trig-preview,feat-trig-hold,feat-arp,feat-tempo-max,feat-latching-mute,feat-sample-preview,feat-browser-scroll,feat-boot-anim,feat-usb6",
+      "13 feature rows, by section: " + JSON.stringify(feats));
     check(w.MC_TWEAKS.features.every((f) => doc.querySelector(`#cat-${f.cat || "other"} #mod-${f.id} #feat-${f.id}`)),
       "every feature has a row in its section (cat)");
     const tagOfFeat = (f) => (f.status === "tested" ? "Tested" : "Experimental");
@@ -212,14 +212,15 @@ async function main() {
       && doc.getElementById("drop3-wrap").hidden, "last engine unticked -> the card turns off");
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
     const creditOf = (id) => [...doc.querySelectorAll(`label[for=feat-${id}] .credit a`)].map((a) => a.href);
-    check(credits.length === 9 && creditOf("usb6").join() === "https://github.com/scottmetoyer/ms-multi-output"
+    check(credits.length === 10 && creditOf("usb6").join() === "https://github.com/scottmetoyer/ms-multi-output"
       && creditOf("model-tg")[0] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(creditOf("model-tg")[1])
       && creditOf("sample-preview").join() === "https://github.com/TinyGregAudio/Model-TG"
       && ["latching-mute", "trig-preview", "browser-scroll"].every((id) => creditOf(id).join() === "https://github.com/drumkilla/elektron-model-tweaks")
-      && creditOf("macro")[0] === "https://github.com/pichenettes/eurorack" && /\/LICENSE-Braids\.txt$/.test(creditOf("macro")[1]),
+      && creditOf("macro")[0] === "https://github.com/pichenettes/eurorack" && /\/LICENSE-Braids\.txt$/.test(creditOf("macro")[1])
+      && creditOf("kick").join() === "https://github.com/apiel/zicBox",
       "each row credits its author, Model-TG and MACRO with their MIT license, sample preview based on Model-TG: " + JSON.stringify(credits));
     const list = [...doc.querySelectorAll("#credits-list a")].map((a) => a.textContent);
-    check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,pichenettes/eurorack,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",
+    check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,pichenettes/eurorack,apiel/zicBox,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",
       "credits section lists the 6 upstream repositories");
     const box = (id) => doc.getElementById(id);
     // MACRO (notes/43): with Model-TG, Model-TG takes its base and MACRO the version built on it; never with the
@@ -238,6 +239,19 @@ async function main() {
     check(macroAlone === "macro" && macroTg === "model-tg-st,macro-tg" && macroNote && swapped && back
       && !w.MCFlasherApp.chosenTweaks().length && doc.querySelector('#features a[href$="#macro"]'),
       `MACRO: alone ${macroAlone}, with Model-TG ${macroTg}, its note shown, and never with the Syntakt engines`);
+    box("feat-kick").click(); await wait(5);
+    const kickAlone = w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
+    box("feat-macro").click(); await wait(5);
+    const kickSwapped = !box("feat-kick").checked && box("feat-macro").checked;
+    box("feat-macro").click(); await wait(5);
+    box("feat-kick").click(); await wait(5);
+    box("feat-model-tg").click(); await wait(5);
+    const kickTg = w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
+    box("feat-model-tg").click(); await wait(5);
+    box("feat-kick").click(); await wait(5);
+    check(kickAlone === "kick" && kickSwapped && kickTg === "model-tg-st,kick-tg" && !w.MCFlasherApp.chosenTweaks().length
+      && doc.querySelector('#features a[href$="#kick"]'),
+      `Kick2 and Kick3: alone ${kickAlone}, swapped out by MACRO, with Model-TG ${kickTg}`);
     // Model-TG holds drumkilla's tweaks: ticked, it shows them ticked and locked, "(included with Model-TG)", and
     // builds without them; unticked, they are free again. With the Syntakt engines it makes the combined version
     // (notes/31): its base, then the engines' tweak built on top of it
