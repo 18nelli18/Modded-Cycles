@@ -1,0 +1,1090 @@
+{
+ "id": "acid-tg",
+ "order": 35,
+ "name": "Model-TG + Machine Acid : une basse fa\u00e7on 303 (scie -> carr\u00e9, filtre en \u00e9chelle passe-bas / passe-haut)",
+ "description": [
+  "Version combin\u00e9e avec Model-TG (notes/31, notes/51) : s'ajoute apr\u00e8s model-tg-st, Acid est la 8e machine,",
+  "apr\u00e8s le Sampler ; sa sortie passe par l'\u00e9tage d'amplitude de Model-TG (Attack, filtre).",
+  "COLOR = filtre fa\u00e7on DJ (passe-bas 20 Hz -> 20 kHz, ouvert \u00e0 64, passe-haut 10 Hz -> 20 kHz), SHAPE = scie",
+  "-> carr\u00e9, SWEEP = r\u00e9sonance, CONTOUR = enveloppe du filtre (bipolaire, 64 : rien),",
+  "DECAY = dur\u00e9e de l'enveloppe du filtre et cha\u00eene d'ampli d'origine r\u00e9gl\u00e9e comme TONE, PUNCH = accent.",
+  "Filtre en \u00e9chelle du mod\u00e8le libre Open303 (Robin Schmidt, MIT) : \u00e9tages TPT, passe-haut 150 Hz de la",
+  "contre-r\u00e9action, tables b0/k \u00e0 1/16 d'octave, r\u00e9sonance et loi de gain d'Open303, sortie remise \u00e0",
+  "l'\u00e9chelle par un d\u00e9calage de 8 born\u00e9 par l'EMAC. Une voix muette",
+  "n'est pas calcul\u00e9e. Code : tools/machines/acid/acid.c. G\u00e9n\u00e9r\u00e9 par tools/gen_acid.py. Aucun octet Elektron."
+ ],
+ "device": "Model:Cycles",
+ "os": "1.13",
+ "section": 3,
+ "requires": [
+  "model-tg-st"
+ ],
+ "conflicts": [
+  "acid",
+  "macro",
+  "macro-tg",
+  "sdvintage-7th",
+  "sdvintage-exact",
+  "sdvintage-snare",
+  "syntakt-bits",
+  "syntakt-bits-macro",
+  "syntakt-bits-swarm",
+  "syntakt-bits-swarm-macro",
+  "syntakt-cp",
+  "syntakt-cp-bits",
+  "syntakt-cp-bits-macro",
+  "syntakt-cp-bits-swarm",
+  "syntakt-cp-bits-swarm-macro",
+  "syntakt-cp-macro",
+  "syntakt-cp-swarm",
+  "syntakt-cp-swarm-macro",
+  "syntakt-cp-toy",
+  "syntakt-cp-toy-bits",
+  "syntakt-cp-toy-bits-macro",
+  "syntakt-cp-toy-bits-swarm",
+  "syntakt-cp-toy-bits-swarm-macro",
+  "syntakt-cp-toy-macro",
+  "syntakt-cp-toy-swarm",
+  "syntakt-cp-toy-swarm-macro",
+  "syntakt-meter",
+  "syntakt-sd",
+  "syntakt-sd-bits",
+  "syntakt-sd-bits-macro",
+  "syntakt-sd-bits-swarm",
+  "syntakt-sd-bits-swarm-macro",
+  "syntakt-sd-cp",
+  "syntakt-sd-cp-bits",
+  "syntakt-sd-cp-bits-macro",
+  "syntakt-sd-cp-bits-swarm",
+  "syntakt-sd-cp-bits-swarm-macro",
+  "syntakt-sd-cp-macro",
+  "syntakt-sd-cp-swarm",
+  "syntakt-sd-cp-swarm-macro",
+  "syntakt-sd-cp-toy",
+  "syntakt-sd-cp-toy-bits",
+  "syntakt-sd-cp-toy-bits-macro",
+  "syntakt-sd-cp-toy-bits-swarm",
+  "syntakt-sd-cp-toy-bits-swarm-macro",
+  "syntakt-sd-cp-toy-macro",
+  "syntakt-sd-cp-toy-swarm",
+  "syntakt-sd-cp-toy-swarm-macro",
+  "syntakt-sd-macro",
+  "syntakt-sd-swarm",
+  "syntakt-sd-swarm-macro",
+  "syntakt-sd-toy",
+  "syntakt-sd-toy-bits",
+  "syntakt-sd-toy-bits-macro",
+  "syntakt-sd-toy-bits-swarm",
+  "syntakt-sd-toy-bits-swarm-macro",
+  "syntakt-sd-toy-macro",
+  "syntakt-sd-toy-swarm",
+  "syntakt-sd-toy-swarm-macro",
+  "syntakt-swarm",
+  "syntakt-swarm-macro",
+  "syntakt-tg-bits",
+  "syntakt-tg-bits-macro",
+  "syntakt-tg-bits-swarm",
+  "syntakt-tg-bits-swarm-macro",
+  "syntakt-tg-cp",
+  "syntakt-tg-cp-bits",
+  "syntakt-tg-cp-bits-macro",
+  "syntakt-tg-cp-bits-swarm",
+  "syntakt-tg-cp-bits-swarm-macro",
+  "syntakt-tg-cp-macro",
+  "syntakt-tg-cp-swarm",
+  "syntakt-tg-cp-swarm-macro",
+  "syntakt-tg-cp-toy",
+  "syntakt-tg-cp-toy-bits",
+  "syntakt-tg-cp-toy-bits-macro",
+  "syntakt-tg-cp-toy-bits-swarm",
+  "syntakt-tg-cp-toy-bits-swarm-macro",
+  "syntakt-tg-cp-toy-macro",
+  "syntakt-tg-cp-toy-swarm",
+  "syntakt-tg-cp-toy-swarm-macro",
+  "syntakt-tg-meter",
+  "syntakt-tg-profile",
+  "syntakt-tg-sd",
+  "syntakt-tg-sd-bits",
+  "syntakt-tg-sd-bits-macro",
+  "syntakt-tg-sd-bits-swarm",
+  "syntakt-tg-sd-bits-swarm-macro",
+  "syntakt-tg-sd-cp",
+  "syntakt-tg-sd-cp-bits",
+  "syntakt-tg-sd-cp-bits-macro",
+  "syntakt-tg-sd-cp-bits-swarm",
+  "syntakt-tg-sd-cp-bits-swarm-macro",
+  "syntakt-tg-sd-cp-macro",
+  "syntakt-tg-sd-cp-swarm",
+  "syntakt-tg-sd-cp-swarm-macro",
+  "syntakt-tg-sd-cp-toy",
+  "syntakt-tg-sd-cp-toy-bits",
+  "syntakt-tg-sd-cp-toy-bits-macro",
+  "syntakt-tg-sd-cp-toy-bits-swarm",
+  "syntakt-tg-sd-cp-toy-bits-swarm-macro",
+  "syntakt-tg-sd-cp-toy-macro",
+  "syntakt-tg-sd-cp-toy-swarm",
+  "syntakt-tg-sd-cp-toy-swarm-macro",
+  "syntakt-tg-sd-macro",
+  "syntakt-tg-sd-swarm",
+  "syntakt-tg-sd-swarm-macro",
+  "syntakt-tg-sd-toy",
+  "syntakt-tg-sd-toy-bits",
+  "syntakt-tg-sd-toy-bits-macro",
+  "syntakt-tg-sd-toy-bits-swarm",
+  "syntakt-tg-sd-toy-bits-swarm-macro",
+  "syntakt-tg-sd-toy-macro",
+  "syntakt-tg-sd-toy-swarm",
+  "syntakt-tg-sd-toy-swarm-macro",
+  "syntakt-tg-swarm",
+  "syntakt-tg-swarm-macro",
+  "syntakt-tg-toy",
+  "syntakt-tg-toy-bits",
+  "syntakt-tg-toy-bits-macro",
+  "syntakt-tg-toy-bits-swarm",
+  "syntakt-tg-toy-bits-swarm-macro",
+  "syntakt-tg-toy-macro",
+  "syntakt-tg-toy-swarm",
+  "syntakt-tg-toy-swarm-macro",
+  "syntakt-toy",
+  "syntakt-toy-bits",
+  "syntakt-toy-bits-macro",
+  "syntakt-toy-bits-swarm",
+  "syntakt-toy-bits-swarm-macro",
+  "syntakt-toy-macro",
+  "syntakt-toy-swarm",
+  "syntakt-toy-swarm-macro",
+  "syntakt-vintage"
+ ],
+ "writes": [
+  {
+   "off": 306,
+   "old": "401bf3d8",
+   "new": "4016cae8"
+  },
+  {
+   "off": 42302,
+   "old": "744c",
+   "new": "7451"
+  },
+  {
+   "off": 42318,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 42334,
+   "old": "744c",
+   "new": "7451"
+  },
+  {
+   "off": 42372,
+   "old": "704b",
+   "new": "7050"
+  },
+  {
+   "off": 42578,
+   "old": "704b",
+   "new": "7050"
+  },
+  {
+   "off": 44552,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 44564,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 44586,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 44598,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 45028,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 45036,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 45174,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 45182,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 45338,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 45346,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 45658,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 45666,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 45804,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 45812,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 45960,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 45968,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 46406,
+   "old": "704b",
+   "new": "7050"
+  },
+  {
+   "off": 82852,
+   "old": "7006",
+   "new": "7007"
+  },
+  {
+   "off": 83114,
+   "old": "7206",
+   "new": "7207"
+  },
+  {
+   "off": 83122,
+   "old": "7006",
+   "new": "7007"
+  },
+  {
+   "off": 111254,
+   "old": "7205",
+   "new": "7207"
+  },
+  {
+   "off": 111270,
+   "old": "d0b940fe384c",
+   "new": "4eb946733428"
+  },
+  {
+   "off": 119266,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 119278,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 120046,
+   "old": "704b",
+   "new": "7050"
+  },
+  {
+   "off": 120066,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 120078,
+   "old": "704b",
+   "new": "7050"
+  },
+  {
+   "off": 121894,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 121906,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 124122,
+   "old": "202f0020226a0068",
+   "new": "4eb9467332b84e71"
+  },
+  {
+   "off": 126758,
+   "old": "704c",
+   "new": "7051"
+  },
+  {
+   "off": 126766,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 140924,
+   "old": "704c",
+   "new": "7051"
+  },
+  {
+   "off": 140932,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 141054,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 141062,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 170616,
+   "old": "744c",
+   "new": "7451"
+  },
+  {
+   "off": 170632,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 170648,
+   "old": "744c",
+   "new": "7451"
+  },
+  {
+   "off": 176176,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 176184,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 289116,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 289124,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 318272,
+   "old": "704c222f0004",
+   "new": "4ef946733028"
+  },
+  {
+   "off": 318300,
+   "old": "4ef9401ae84e",
+   "new": "4ef94673311c"
+  },
+  {
+   "off": 318326,
+   "old": "4ef9401b278a",
+   "new": "4ef946733148"
+  },
+  {
+   "off": 318370,
+   "old": "704c222f0004",
+   "new": "4ef94673303e"
+  },
+  {
+   "off": 319262,
+   "old": "704b",
+   "new": "7050"
+  },
+  {
+   "off": 319278,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 319418,
+   "old": "704c",
+   "new": "7051"
+  },
+  {
+   "off": 368312,
+   "old": "487800c0",
+   "new": "48780100"
+  },
+  {
+   "off": 368318,
+   "old": "40a79418",
+   "new": "46735800"
+  },
+  {
+   "off": 368350,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 368410,
+   "old": "20065286eb88",
+   "new": "4ef946733354"
+  },
+  {
+   "off": 368418,
+   "old": "40a79418",
+   "new": "46735800"
+  },
+  {
+   "off": 368448,
+   "old": "7005b085643e",
+   "new": "4ef94673330e"
+  },
+  {
+   "off": 368488,
+   "old": "704c",
+   "new": "7051"
+  },
+  {
+   "off": 368528,
+   "old": "40a79418",
+   "new": "46735800"
+  },
+  {
+   "off": 368554,
+   "old": "40a7ada4",
+   "new": "46735a00"
+  },
+  {
+   "off": 368872,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 368884,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 368906,
+   "old": "724c202f0004",
+   "new": "4ef9467332d8"
+  },
+  {
+   "off": 368918,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 368940,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 368952,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 368982,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 368994,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 369010,
+   "old": "7205",
+   "new": "7206"
+  },
+  {
+   "off": 369026,
+   "old": "724b",
+   "new": "7250"
+  },
+  {
+   "off": 369050,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 369100,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 369112,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 369150,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 369162,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 369192,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 369204,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 369244,
+   "old": "704c",
+   "new": "7051"
+  },
+  {
+   "off": 369274,
+   "old": "4010dce8",
+   "new": "46734008"
+  },
+  {
+   "off": 369318,
+   "old": "4ef9401ae8fc",
+   "new": "4ef946733338"
+  },
+  {
+   "off": 369334,
+   "old": "4ef9401ae936",
+   "new": "4ef946733368"
+  },
+  {
+   "off": 369392,
+   "old": "40a79418",
+   "new": "46735800"
+  },
+  {
+   "off": 369514,
+   "old": "724b",
+   "new": "7250"
+  },
+  {
+   "off": 369534,
+   "old": "4010dd00",
+   "new": "46734020"
+  },
+  {
+   "off": 369546,
+   "old": "4010dd00",
+   "new": "46734020"
+  },
+  {
+   "off": 369578,
+   "old": "724b",
+   "new": "7250"
+  },
+  {
+   "off": 369596,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 369616,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 369628,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 369656,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 369668,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 369690,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 369702,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 369724,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 369736,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 369758,
+   "old": "724c",
+   "new": "7251"
+  },
+  {
+   "off": 369770,
+   "old": "4010dce0",
+   "new": "46734000"
+  },
+  {
+   "off": 369904,
+   "old": "7405b4816532",
+   "new": "4ef946733070"
+  },
+  {
+   "off": 369938,
+   "old": "40a7ada4",
+   "new": "46735a00"
+  },
+  {
+   "off": 664032,
+   "old": "7006",
+   "new": "7007"
+  },
+  {
+   "off": 664084,
+   "old": "401bf51a",
+   "new": "46733800"
+  },
+  {
+   "off": 664120,
+   "old": "eb8c48780001",
+   "new": "4ef946733388"
+  },
+  {
+   "off": 664226,
+   "old": "7850428545f9",
+   "new": "4ef946733260"
+  },
+  {
+   "off": 670870,
+   "old": "7205",
+   "new": "7207"
+  },
+  {
+   "off": 670908,
+   "old": "d0b940fe37f0",
+   "new": "4eb94673344e"
+  },
+  {
+   "off": 674244,
+   "old": "700541e8000a",
+   "new": "4ef9467333ee"
+  },
+  {
+   "off": 674718,
+   "old": "7205",
+   "new": "7207"
+  },
+  {
+   "off": 674758,
+   "old": "d0b940fe37f0",
+   "new": "4eb94673344e"
+  },
+  {
+   "off": 686444,
+   "old": "40118628",
+   "new": "46733820"
+  },
+  {
+   "off": 686522,
+   "old": "7205",
+   "new": "7207"
+  },
+  {
+   "off": 686532,
+   "old": "40118640",
+   "new": "46733880"
+  },
+  {
+   "off": 686580,
+   "old": "7006",
+   "new": "7007"
+  },
+  {
+   "off": 686590,
+   "old": "b08465224ef9",
+   "new": "4ef946733474"
+  },
+  {
+   "off": 724230,
+   "old": "4016cae8",
+   "new": "40154ae4"
+  },
+  {
+   "off": 1492712,
+   "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "new": "43f946700000203c0000d8844299538066fa41f9401bf8c043fa001e2209224120290004670c2251508122d8538066fa60ec4ef9401bf3d8467000000000054146701800000000d54673300000000136467338000000002e467340000000046e0000000000000000"
+  }
+ ],
+ "append": {
+  "at": "0x401bf8c0",
+  "dest": "0x46700000",
+  "size": 221712,
+  "parts": [
+   {
+    "dest": "0x46700000",
+    "hex": "4fefffcc48d77cfc246f0040243c0000031c266f003c220b0681bdcf77d8302a001e792a00242c443f4000324c4210014a846d0004867b2a001c326a001a756a00164a856d0003c8263c41434431b6ab002c670003ca7e584c0718002041d1fc4673600020080680000000584218b1c066fa71ce207c414344312748002c207c4011d84c41f00c00275002504aab0038660003aa41f946736000716a00227d6a00140680ffffc000e788e18ed0860680ffc00000d0af00380c80007f00006f00021a707f48407e0c48472c0047f946700ffe4c476806772a001845f018002e062846e58f2a43761299c72e0ce7af760cd0872e00e6a0028700000fff28730c0020330c04908c4c070800e6a8d08ceda87cff4c40600625400004254600084a8d6d00021e2005760f0680ffffffc02a3c010204087e3fe7a82c0d4c0658002545000c4c4708004a6f003267000220760d4c0308002c3c733333332e3c433333332a30181421861810218718544a806d000380e680263c000060007c0f7e0f4c030800eca02c05484648c64c0068007039eea6b0846c000382263c7f919e15a6050800a1c5218518140c8200007f006f000210203c00007f000c8200003fff6e000214243c00009f8076014c020800283c00003f004c44080079492404e082068000001000d08622424a846d0002e6e188218318440c8000adffff6f0002e8203c00adffff2a00760f484548c5e7a845f946700d422c0552862e325c0002807fff800026326c009687a0030800a1c4de842809e28c2409761ce7aa45f946700a4202840003fffc21871848260202837ff000002432480045f946700a46283248009882a6040800a1c3d4834a6f0032670a26027e0a4c473803d48345f946700a8622725c0026326c009689a0030800a1c0d089a4000800a1c3d1c12143004c223c78787878a2000800a1c00680f0000000a4000800a1c0e2820680100000002202068140000000a2000800a1c04cd77cfc214000504fef00344e754a806c00fde87e0c484742802c0047f946700ffe4c476806772a001845f018002e062846e58f2a43761299c72e0ce7af760cd0872e00e6a0028700000fff28730c0020330c04908c4c070800e6a8d08ceda87cff4c40600625400004254600084a8d6c00fde62005760f0680ffffffc09bcde7a82a3c010204087e3f2c0d4c0658002545000c4c4708004a6f00326600fde42a301814263c000060004c03080028052c3c40000000484448c4218618107c0f2e3c2ccccccd218718547e0feca047f9467013022633ec004c0408002c00eea6a6050800a1c5218518140c8200007f006e00fdf420024a826c00fdf242800c8200003fff6f00fdf00c8200004000670001c20680ffffc0002a3c0000af8076024c0508002e3c00003f0079494c4708002404e082d08622424a846c00fde6600000c64285263c41434431b6ab002c6600fc3a71ce207c4011d84c7c584c06180041f00c00275002504aab00386700fc5a4a6f0032660000e491c827480048263c012c0f262e3c7fffffff41f9467360002c3c7fffffff218718142e3c001f7c5c27430278203c2000000027430274263c7fffffff27470284274702802e3c82581e4b2743029427430290263c803ef8b82746029c2c3c200000002747027c27430288274002a0274602a46000fbe27b2a001c326a001a756a00169dce4a856c00fb7c6000ff3ee1882183184493c90c8000adffff6e00fd1c4a806c00fd1c42806000fd165e80e680263c000060007c0f7e0f4c030800eca02c05484648c64c0068007039eea6b0846d00fc8245f9467013022632ec006000fc7a307c0001263c012c0f262e3c7fffffff2c3c2000000027480048203c6000000041f946736000218718142e3c001f7c5c2743027827430274263c7fffffff27470284274702802e3c82581e4b2743029427430290263c803ef8b82746029c2c3c200000002747027c27430288274002a0274602a46000fafe4cd77cfc42b018444fef00344e754fefff78206f009048d77cfc2f6f008c00742f4800704aa8003466304aa80038662a202802304a806d0004180c8000003fff62182a6f0070202d02344a806d0004120c8000003fff63000414202f0070243c0000031c0680bdcf77d84c4200007658781f226f007441e900804c0038002f48003841f946736000207038002f4300782443d5fc46736000202a00082600e9ab2f480084266a00482a0bda8524082208068280000000206a00042c084c0068004c020800282a00542f43004c262a0010242a001c2f4500802f4300402a2a0018262a00202f4400442f4500682a6a000c2f4200602f4300542f4d003c282a00242f4400582a2a0028242a002c262a00302f4500502a6a00442f42006c2f430064240026002e2a0034468253832f4d002c282a00382a2a004c2c6a003c2f440030286a0040246a00502f45005c2f4a007c2001e8880680f8000000b288640001be282f004cd882e28ca8040800a1c4e884d0842a010685800000002805e88c0684f8000000b1c5630001742a02e28daa050800a1c5e885d885246f003ca80a0800a1c42a6f00409084aa400800a1c0d2884aaf002c670000867801b8af002c670001882a2f005ca8450800a1c42a409bc4200d9087a00b0800a1c02800d8872e04de80200490af0030a00b0800a1c0246f0030d5c0d08a2a0a9a8e2f400030aa0b0800a1c52005d08e2c40ddc52a009a8caa0b0800a1c5e588e58c2f4000482005d08c2840d9c52a0d9a842a454bf5ac0045f5aa00280a98af0048d084282f0044a8000800a1c00c8007ffffff6e0000ee0c80f80000016d0001ece988228058899486d686b3ef00386600fee62008eb88222f00784bf946736000206f0078d1fc46736000216f00680018216f0060001c216f00540020216f0058002421470034214e003c214c0040d0af0084216f00500028216f006c002c216f006400302b801800216f003000382f2f00704eb9400a92522f2f00742f2f007c4eb9400a94304cef7cfc000c2f6f007c009c2f6f008000984fef00944ef9400a967a2a3c800000009a81ba886400fe902a03e28daa050800a1c5e88598856000fe7e28014484b1c46300fe4e282f004cd883e28ca8040800a1c4e88490846000fe38203c7fffffff22806000ff18246f005c2a2f0050aa0a0800a1c4ef8c2a2f0064247c7ec170492a7c7d82e0922f44004898af006ca80a0800aa0d0800a1c590852f40006890af0060282f00802f450064d0af0054a0040800a1c02a2f0054d1af0060202f0060da859085d0af0058a00b0800a1c02a2f0058d1af0054202f0054da859085d0af0050a00b0800a1c02a2f0050d1af0058202f0058da859085a00b0800a1c0d1af0050246f007c2a2f0050aa0a0800a1c00c80007fffff6e300c80ff8000016d000086e1882a6f0044a00d0800a1c022802f6f0048006c58899486d686b3ef00386600fd2c6000fe442a6f0044203c7fffffffa00d0800a1c022802f6f0048006c60d4203c8000000122806000fe1044800c8000003fff6200fc006000fbe444800c8000003fff6200fbf0206f007420080680000000804298b1c066fa4cd77cfc4fef00884e752a6f0044203c80000001a00d0800a1c022802f6f0048006c6000ff76000000001707ea052a1fcc7339f3ff494713634851f46ba35af94b2a62736aab68a647cb6dc9d632720c789d7594a38d788238617aefa51f7cf2d3027e9dec3f7fffffff1107c28011081dfe11087d8b1108e154110949891109b65c110a2802110a9eb1110b1aa3110b9c14110c2341110cb06d110d43db110dddd3110e7e9e110f268b110fd5ea11108d1011114c55111214171112e4b51113be951114a21f11158fc2111687f011178b23111899d61119b48e111adbd3111c1035111d5248111ea2a9112001fc112170ea1122f0261124806a112622781127d71c11299f2a112b7b80112d6d06112f74af113193771133ca6811361a9611388523113b0b3c113dae1f11406f1611434f79114650b21149743b114cbb9f115028791153bc7b11577966115b6114115f75721163b88411682c67116cd3501171af8d1176c389117c11cb11819cf8118767d5118d75471193c857119a643111a14c2711a883b411b00e7d11b7f05111c02d3011c8c94811d1c8fc11db30e411e505ce11ef4cc711fa0b17120546491211042b121d4ad6122a20ab12378c60124594fb125441dd12639ac31273a7cd12847183129600da12a85f3b12bb968712cfb12112e4b9f212fabc711311c4b01329df5b134319ca135d8206137926d3139617bd13b4652213d4204013f55b3d1418293c143c9e661462cffb148ad46514b4c34714e0b58f150ec58c153f0f041571af4715a6c54715de71b71618d71c165619f4169660ca16d9d45d17209fbd176af07017b8f696180ae5121860f1af18bb554c191a4c09197e157419e6f4b91a5530d01ac914b11b42ef841bc314d61c49dcc61cd7a43b1d6ccd0d1e09be341eaee3ed1f5cafd82013991420d41c46219ebb9e2273fec3235472ab2440a95d2539398e263ebe1f2751d5642873204029a340f72ae2d9b42c328ac02d92f03a2f049f6e30882380321df98a33c68beb35822cbe37510f5b393340b73b289e903d30cd283f4b2b874176c60943b2472445fbe643485154b34aafa8994d1346054f77c67651d7df1f542d46b556709bc258994d155a9d8660002cb9ef002e0b28002f6b400030dadf00325ab30033eb7200358dda003742b100390ac7003ae6f3003cd817003edf1c0040fcf9004332ae004581440047e9d3004a6d7c004d0d6e004fcae50052a72b0055a3960058c18c005c0284005f68010062f39b0066a6f8006a83d0006e8bf10072c13800772599007bbb1d008083e100858219008ab813009028330095d4f8009bc0f900a1eeeb00a8619e00af1c0100b6211f00bd742500c5186100cd114100d5625800de0f5d00e71c2d00f08ccc00fa65670104aa53010f6013011a8b54012630f3013255fa013effa6014c33670159f6de01684fe2017744840186db09019719f101a807f901b9ac1701cc0d8201df33af01f326520207ed62021d9119023419f5024b90b80263fe69027d6c560297e41602b36f8302d018c202edea3f030ceead032d3105034ebc8803719cbb0395dd6a03bb8a9f03e2b0a9040b5c12043599a104617655048eff6204be422a04ef4c3e05222b520556ed3b058d9fe805c6515b06010f9e063de8be067ceac106be23980701a118074770ef078fa09207da3d33082753b40876f09508c91fe4091ded2e0975636c09cf8cf20a2c73590a8c1f6d0aee991c0b53e75b0bbc10130c27180e0c9502e00d05d2cd0d7988ba0df024120e69a2b40ee600dc0f6539110fe74410106c18bc10f3ac0c117df0fc120ad87e129a5173132c489a13c0a890145759c714f04284158b46df162848c916c7280d1767c2601809f36518ad94c419527e3719f885a01a9f7f241b473d441bef90f91c9849d61d41362c1dea232b1e92dd0a1f3b2f2d1fe2e4522089c6b5212fa03e21d43aaa22775fb62318d94623b871942455f35124f129d02589e12a261fe65f26b30779274313ab27cfdb6a2859308a28dee6542960d19929dec8c52a58a3ec2ace3cd92b3f6f162bac17f22c14168a2c774bc92cd59a662d2ee6eb2d8317ab2dd214c12e1bc80d000b29a6000b33fc000b3e5b000b48c4000b5337000b5db3000b6839000b72c9000b7d62000b8806000b92b3000b9d6a000ba82b000bb2f6000bbdcb000bc8aa000bd393000bde86000be983000bf48b000bff9c000c0ab8000c15de000c210f000c2c4a000c378f000c42df000c4e39000c599e000c650d000c7087000c7c0b000c879a000c9334000c9ed9000caa88000cb642000cc207000ccdd7000cd9b2000ce598000cf188000cfd84000d098b000d159d000d21bb000d2de3000d3a17000d4656000d52a1000d5ef6000d6b57000d77c4000d843c000d90c0000d9d4f000da9ea000db691000dc343000dd001000ddccb000de9a1000df682000e0370000e1069000e1d6f000e2a81000e379e000e44c8000e51fe000e5f40000e6c8f000e79e9000e8751000e94c4000ea244000eafd1000ebd6a000ecb10000ed8c2000ee681000ef44d000f0225000f100a000f1dfd000f2bfc000f3a08000f4821000f5647000f647a000f72ba000f8108000f8f63000f9dcb000fac40000fbac3000fc953000fd7f1000fe69c000ff5550010041c001012f0001021d2001030c100103fbf00104eca00105de400106d0b00107c4000108b8400109ad50010aa350010b9a30010c91f0010d8a90010e8420010f7ea001107a0001117640011273700113719001147090011570800116716001177330011875f0011979a0011a7e30011b83c0011c8a40011d91b0011e9a20011fa3700120adc00121b9100122c5500123d2800124e0b00125efe0012700000128112001292340012a3660012b4a80012c5f90012d75b0012e8cd0012fa4f00130be100131d8300132f36001340f9001352cd001364b1001376a5001388ab00139ac00013ace70013bf1f0013d1670013e3c00013f62b001408a600141b3200142dd00014407f0014533f00146611001478f300148be800149eee0014b2050014c52f0014d86a0014ebb70014ff1500151286001526080015399d00154d44001560fd001574c8001588a600159c960015b0980015c4ad0015d8d50015ed0f0016015c001615bc00162a2e00163eb40016534c7d2fda7e7d4706fd7d5d76997d732f347d8836847d9c92147db047437dc35b477dd5d32f7de7b3e37df902227e09c28a7e19f9927e29ab917e38dcb97e47911e7e55ccb27e6393487e70e8957e7dd0337e8a4d9c7e9664307ea217347ead69d47eb85f227ec2fa177ecd3d947ed72c647ee0c93b7eea16b97ef317657efbcdb67f043c0d7f0c64b77f1449f07f1bede27f2352a57f2a7a3f7f3166a77f3819c47f3e956d7f44db6b7f4aed767f50cd3b7f567c597f5bfc5f7f614ed37f66752b7f6b70d47f70432e7f74ed8e7f79713e7f7dcf7d7f8209817f8620757f8a157b7f8de9ab7f919e157f9533c07f98abaa7f9c06c97f9f460b7fa26a587fa5748e7fa865857fab3e0f7fadfef67fb0a8fe7fb33ce37fb5bb5e7fb825217fba7ad67fbcbd257fbeecae7fc10a0c7fc315d77fc510a17fc6faf67fc8d55e7fcaa05f7fcc5c787fce0a247fcfa9dc7fd13c137fd2c13a7fd439bd7fd5a6047fd706767fd85b757fd9a55f7fdae4927fdc19657fdd44307fde65457fdf7cf57fe08b8f7fe1915d7fe28ea97fe383ba7fe470d47fe556397fe6342a7fe70ae47fe7daa37fe8a3a27fe966187fea223b7fead8417feb885d7fec32bf7fecd7977fed77137fee115f7feea6a87fef37167fefc2d27ff04a037ff0cccf7ff14b5a7ff1c5c87ff23c3a7ff2aed37ff31db27ff388f67ff3f0bd7ff455257ff4b6487ff51443"
+   },
+   {
+    "dest": "0x46733000",
+    "hex": "724cb081650000200c8000000051650470004e75724c90817205b0816504908160f67233d0814e75202f00046100ffd272644c010800068040a717544e75202f00046100ffbc72644c010800068040a71768487940a715002f2f000c2f004eb9400ddf604fef000c203c40a715004e757405b48165127406b48067127407b480650c4ef94005a8fa4ef94005a9284ef94005a91c7207b081660470044e754e7520036100fff02800e588eb8c988048780001487800174878002045f940071da4227940fe32ccd3c42f092f024e924fef00304878000148780022d8b940fe384c487800602f042f024e924fef00144ef9400a268041e8000a2f082f2e001020026a0270007205b2806c0c6100ff887205b2806c0270054ef9400a4dde202f00047208b0816700004e7208b280640670012f4000042f082f092f2f000c4eb9401ae84e588f60000084202f00047207b081670000227207b280640670002f4000042f082f092f2f000c4eb9401b278a588f600000582f082f0941f946735c007019600000022f082f0072004eb9401b2480201f205f610000624ab9401b244e672a204043f946735f00721222d853816afa41f946735f00720d2141000c720c21410018720b2141001c200841f94010dd0c43f94673402c724b229023680004000423680008000841e8003843e9003853816ae6225f205f4e754a28004c6600005e2f022f0a24482400487940a715d82f0a4eb9400f8f02508f487940a715dc486a00044eb9400f8f02508f41f940a715e043ea000872102f0120187233b0816d087237b2806d02d08222c053976aea588f70011540004c204a245f241f20084e7545f940070c4e47f940070efc42852805720b7007b8806d04988072042004e788908406800000005028015884487800012f042f002f0159802f002f02b68566044e9360024e924fef001852857008b08566bc4ef9400a26f2202f0024226a00687207b280640470004e757207b0816d0643f9467338604e75202f00040c800000004c650c0c800000004f620470074e750c8000000051650270002200e789ed88908141f946734000203008004e757006b0856500001e0c820000004c650e0c820000004f62067a07600000024ef94005a3844ef94005a3460c8200000007650e0c820000000762064ef94005a6dc4ef9401ae8fc7006bc806602528620065286eb884ef94005a3200c82000000066712eb8a41f946735800203028004ef94005a6fc4ef9401ae93620036100fd082800e588eb8c988048780001487800174878002045f940071da4227940fe32ccd3c4d8b940fe384c7007b680660c43f946701800283c4670181c2f092f024e924fef00304878000148780022487800602f042f024e924fef00144ef9400a268041e8000a2f082f2e00107007b480660c203c467018384ef9400a4dec20026a0270007205b2806c0c6100fc7c7205b2806c0270054ef9400a4dde0c80000000c46608203c4670181c4e750c80000000a86606203c0000008cd0b940fe384c4e750c80000000c46608203c467018384e750c80000000a86606203c0000008cd0b940fe37f04e75b0846500005a7007b88064064ef9401aca582039fc07800c23c0401b8114204622704c002f0a2f0e2f014e912f0e2f0341f94673384022704c004e914eb9401b3d484fef00142039fc07800c90b9401b81146b0a41f9401b8118d1b02c004ef9400a7e24"
+   },
+   {
+    "dest": "0x46733800",
+    "hex": "401300d8401300dd401300e3401300e940129960401300ee401b105846733888400aa08c400ab3b0400aa49c400aa998400aa7b8400aae88400aa08c46700000400aa3c4400ab6e8400aa712400aacc2400aa930400ab24c400aa3c4467005ac0000000100000002000000030000000400000005000000060000000700000008000102030405060741636964004375746f66660043555400576176650057415645005265736f0052455300456e76204d6f6400454e5600"
+   },
+   {
+    "dest": "0x46734000",
+    "cycles": [
+     "0x4010dce0",
+     "0x4010ed80"
+    ]
+   },
+   {
+    "dest": "0x467350a0",
+    "hex": "000000060000000b0000000000007f0000001e00000000000010ffffffffffff0000000000000600000000284673388d4012996f46733894000000060000000c0000000000007f0000000000000000000011ffffffffffff000000000000060000000032467338984012996f4673389d000000060000000d0000000000007f0000005a00000000000012ffffffffffff00000000000006000000003c467338a24012996f467338a7000000060000000e0000000000007f0000006400000000000013ffffffffffff000000000000060000000046467338ab4012996f467338b300000007000000120000000000007f0000003200000000000050ffff0000009a00000000000006000000001e401298784012988240129886"
+   },
+   {
+    "dest": "0x46701800",
+    "hex": "401117c8000000300000002100000002467018604016ac7800000000401117c8000000220000002200000002467019e04017c20c00000000401117c800000019000000160000000146701af04017a21800000000"
+   },
+   {
+    "dest": "0x46701860",
+    "cycles": [
+     "0x4016b3f8",
+     "0x4016b578"
+    ]
+   },
+   {
+    "dest": "0x467019e0",
+    "hex": "0001e00000000000001ffe0000000000007fff800000000001ffffe00000000003fffff00000000007fffff8000000000ffffffc000000001fcffffe000000001f0ffffe000000003e07ffff000000003e1fc07f000000007c3fc07f80000000787fc07f8000000078ffe0ff8000000078ffffff80000000f8ffffffc0000000f0ffffffc0000000f0ffffffc0000000f8ffffffc000000078ffffff8000000078ffe0ff80000000787fc07f800000007c3fc07f800000003e1fc07f000000003e07ffff000000001f0ffffe000000001fcffffe000000000ffffffc0000000007fffff80000000003fffff00000000001ffffe000000000007fff8000000000001ffe00000000000001e00000000000"
+   },
+   {
+    "dest": "0x46701af0",
+    "hex": "000000000078000003ff00000fffc0001fffe0003efff0003cfff00070f9f80071e07800e3f0fc00e7fffc00e7fffc00e7fffc00e7fffc00e7fffc00e3f0fc0071e0780070f9f8003cfff0003efff0001fffe0000fffc00003ff00000078000000000000"
+   }
+  ],
+  "reloc": [
+   [
+    "0x46734268",
+    "ffffffff",
+    "00000007"
+   ],
+   [
+    "0x4673426c",
+    "ffffffff",
+    "00000019"
+   ],
+   [
+    "0x46734274",
+    "00000000",
+    "00007f00"
+   ],
+   [
+    "0x46734280",
+    "0078ffff",
+    "ffffffff"
+   ],
+   [
+    "0x46734288",
+    "0000000c",
+    "00000000"
+   ],
+   [
+    "0x4673428c",
+    "00000000",
+    "00000600"
+   ],
+   [
+    "0x46734290",
+    "00007fff",
+    "00000025"
+   ],
+   [
+    "0x46734294",
+    "401256f0",
+    "401b2469"
+   ],
+   [
+    "0x46734298",
+    "4012bc6f",
+    "40129882"
+   ],
+   [
+    "0x4673429c",
+    "40125326",
+    "401b2473"
+   ],
+   [
+    "0x467342a0",
+    "ffffffff",
+    "00000007"
+   ],
+   [
+    "0x467342a4",
+    "ffffffff",
+    "00000018"
+   ],
+   [
+    "0x467342ac",
+    "00000000",
+    "00007f00"
+   ],
+   [
+    "0x467342b0",
+    "00000000",
+    "00007f00"
+   ],
+   [
+    "0x467342b8",
+    "0079ffff",
+    "ffffffff"
+   ],
+   [
+    "0x467342c0",
+    "0000000d",
+    "00000000"
+   ],
+   [
+    "0x467342c4",
+    "00000000",
+    "00000600"
+   ],
+   [
+    "0x467342c8",
+    "00007fff",
+    "00000024"
+   ],
+   [
+    "0x467342cc",
+    "401256f0",
+    "401b245e"
+   ],
+   [
+    "0x467342d0",
+    "4012bc6f",
+    "40129882"
+   ],
+   [
+    "0x467342d4",
+    "40125326",
+    "401b2465"
+   ],
+   [
+    "0x467342d8",
+    "ffffffff",
+    "00000007"
+   ],
+   [
+    "0x467342dc",
+    "ffffffff",
+    "00000017"
+   ],
+   [
+    "0x467342e4",
+    "00000000",
+    "00007f00"
+   ],
+   [
+    "0x467342f0",
+    "007bffff",
+    "ffffffff"
+   ],
+   [
+    "0x467342f8",
+    "0000000e",
+    "00000000"
+   ],
+   [
+    "0x467342fc",
+    "00000000",
+    "00000600"
+   ],
+   [
+    "0x46734300",
+    "00007fff",
+    "00000023"
+   ],
+   [
+    "0x46734304",
+    "401256f0",
+    "401b2452"
+   ],
+   [
+    "0x46734308",
+    "4012bc6f",
+    "40129882"
+   ],
+   [
+    "0x4673430c",
+    "40125326",
+    "401b245a"
+   ],
+   [
+    "0x46734904",
+    "00000500",
+    "00000700"
+   ],
+   [
+    "0x4673491c",
+    "00000000",
+    "00000200"
+   ],
+   [
+    "0x467018e8",
+    "50e1c54a",
+    "70e1c54a"
+   ],
+   [
+    "0x467018f0",
+    "89f3e444",
+    "f9f3e444"
+   ],
+   [
+    "0x467018f8",
+    "50e1c000",
+    "70e1c000"
+   ],
+   [
+    "0x46701918",
+    "50e1c000",
+    "70e1c000"
+   ],
+   [
+    "0x46701920",
+    "89f3e7c9",
+    "f9f3e789"
+   ],
+   [
+    "0x46701928",
+    "50e1c14a",
+    "70e1c14a"
+   ],
+   [
+    "0x46701930",
+    "20408684",
+    "20408784"
+   ],
+   [
+    "0x46701940",
+    "20408789",
+    "20408389"
+   ],
+   [
+    "0x46701948",
+    "50e1c14a",
+    "70e1c44a"
+   ],
+   [
+    "0x46701950",
+    "89f3e787",
+    "f9f3e447"
+   ],
+   [
+    "0x46701958",
+    "50e1c000",
+    "70e1c000"
+   ],
+   [
+    "0x46701960",
+    "204087cf",
+    "2040844f"
+   ],
+   [
+    "0x46701968",
+    "00000200",
+    "000007c0"
+   ],
+   [
+    "0x46701970",
+    "204087cf",
+    "2040844f"
+   ],
+   [
+    "0x46701980",
+    "89f3e000",
+    "89f3e7c0"
+   ],
+   [
+    "0x46701988",
+    "50e1c00f",
+    "50e1c44f"
+   ],
+   [
+    "0x46701990",
+    "20408000",
+    "20408380"
+   ]
+  ],
+  "pack": [
+   [
+    "0x46700000",
+    5380
+   ],
+   [
+    "0x46701800",
+    852
+   ],
+   [
+    "0x46733000",
+    1240
+   ],
+   [
+    "0x46733800",
+    184
+   ],
+   [
+    "0x46734000",
+    4536
+   ]
+  ]
+ },
+ "symbols": {
+  "acid_update": "0x46700000",
+  "acid_render": "0x467005ac",
+  "art_card": "0x46701800",
+  "art_mid": "0x4670181c",
+  "art_small": "0x46701838"
+ }
+}

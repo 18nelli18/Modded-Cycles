@@ -5,9 +5,11 @@
  "description": [
   "Machine Acid en 7e machine, apr\u00e8s les 6 d'origine (notes/51).",
   "COLOR = filtre fa\u00e7on DJ (passe-bas 20 Hz -> 20 kHz, ouvert \u00e0 64, passe-haut 10 Hz -> 20 kHz), SHAPE = scie",
-  "-> carr\u00e9, SWEEP = r\u00e9sonance (auto-oscillation en haut), CONTOUR = enveloppe du filtre (bipolaire, 64 : rien),",
+  "-> carr\u00e9, SWEEP = r\u00e9sonance, CONTOUR = enveloppe du filtre (bipolaire, 64 : rien),",
   "DECAY = dur\u00e9e de l'enveloppe du filtre et cha\u00eene d'ampli d'origine r\u00e9gl\u00e9e comme TONE, PUNCH = accent.",
-  "Filtre en \u00e9chelle \u00e0 4 p\u00f4les sans retard, r\u00e9sonance \u00e9cras\u00e9e par un coude r\u00e9solu exactement. Une voix muette",
+  "Filtre en \u00e9chelle du mod\u00e8le libre Open303 (Robin Schmidt, MIT) : \u00e9tages TPT, passe-haut 150 Hz de la",
+  "contre-r\u00e9action, tables b0/k \u00e0 1/16 d'octave, r\u00e9sonance et loi de gain d'Open303, sortie remise \u00e0",
+  "l'\u00e9chelle par un d\u00e9calage de 8 born\u00e9 par l'EMAC. Une voix muette",
   "n'est pas calcul\u00e9e. Code : tools/machines/acid/acid.c. G\u00e9n\u00e9r\u00e9 par tools/gen_acid.py. Aucun octet Elektron.",
   "Envoi \u00e0 l'USB \u00e0 heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arr\u00eat des voix muettes.",
   "Boucle des voix : division des pistes par 2 plus courte (tools/voice_loop.py, notes/36), m\u00eames valeurs."

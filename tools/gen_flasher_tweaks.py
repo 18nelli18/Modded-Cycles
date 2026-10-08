@@ -78,8 +78,8 @@ FEATURES = [
         ],
         # avec les moteurs du Syntakt : la base de la version combinee (notes/31), et pour chaque combinaison de
         # moteurs son tweak syntakt-tg-<moteurs> (« tg » des combinaisons de la carte des moteurs) ; de meme avec
-        # la machine MACRO (notes/43), qui prend alors macro-tg
-        "with": {"syntakt": "30-model-tg-st", "macro": "30-model-tg-st"},
+        # la machine MACRO (notes/43), qui prend alors macro-tg, et Acid (notes/51), acid-tg
+        "with": {"syntakt": "30-model-tg-st", "macro": "30-model-tg-st", "acid": "30-model-tg-st"},
     },
     {
         "id": "sample-preview",
@@ -95,7 +95,7 @@ FEATURES = [
             {"file": "33-sample-preview", "label": None},
         ],
         # avec les moteurs du Syntakt, Model-TG devient model-tg-st : l'ecoute prend la version faite pour lui
-        "with": {"syntakt": "33-sample-preview-st", "macro": "33-sample-preview-st"},
+        "with": {"syntakt": "33-sample-preview-st", "macro": "33-sample-preview-st", "acid": "33-sample-preview-st"},
     },
     {
         "id": "latching-mute",
@@ -292,16 +292,20 @@ FEATURES = [
         "id": "acid",
         "cat": "sound",
         "label": "Machine Acid",
-        "desc": "Une machine ajoutee apres Chord : une basse facon 303. COLOR = filtre facon DJ (passe-bas, ouvert a "
-                "64, passe-haut), SHAPE = scie vers carre, SWEEP = resonance, CONTOUR = enveloppe du filtre, "
-                "PUNCH = accent.",
+        "desc": "Une machine ajoutee apres Chord (apres le Sampler avec Model-TG) : une basse facon 303, avec le "
+                "filtre en echelle du modele libre Open303 (Robin Schmidt, MIT). COLOR = filtre facon DJ "
+                "(passe-bas, ouvert a 64, passe-haut), SHAPE = scie vers carre, SWEEP = resonance, CONTOUR = "
+                "enveloppe du filtre, PUNCH = accent.",
         "status": "experimental",
         "credit": None,
-        # meme place que MACRO et les moteurs du Syntakt ; pas de version Model-TG pour l'instant (notes/51)
-        "excludes": ["syntakt", "macro", "model-tg"],
+        # le filtre est celui d'Open303 (Robin Schmidt, MIT) ; meme place que MACRO et les moteurs du Syntakt
+        # (notes/51)
+        "excludes": ["syntakt", "macro"],
+        "license": "LICENSE-Open303",
         "variants": [
             {"file": "26-acid", "label": None},
         ],
+        "with": {"model-tg": "35-acid-tg"},
     },
     {
         "id": "syntakt",

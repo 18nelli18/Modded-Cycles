@@ -1654,9 +1654,9 @@ const FEAT = {
       note: "Can't be ticked together with Model-TG for now: both use MACHINES + SWEEP / CONTOUR. Model-TG's filter will make way for this one once it is tested. A sound opened on another firmware plays without its filter." },
     acid: { label: "Acid machine",
       short: "One extra machine: a 303-style bass with a resonant filter and accent.",
-      clash: "both add machines in the same place in memory (no combined version yet)",
-      desc: "An extra machine after Chord: a 303-style bass. COLOR is a DJ-style filter: low-pass below 64, no filter at 64, high-pass above, at the same volume on both sides of the middle. SHAPE blends saw into square, SWEEP is the resonance (it whistles on its own near the top), CONTOUR sends the filter envelope up or down (64: none), DECAY sets the filter envelope and the note length, PUNCH is the accent (harder filter, louder). PITCH, FINE, GATE and the keys work as on the original machines.",
-      note: "About as light on the processor as Tone, lighter than the other original machines. No slide yet. Not available with Model-TG, MACRO or the Syntakt engines for now. A project using Acid needs a firmware with Acid as the 7th machine." },
+      clash: "both add machines in the same place in memory",
+      desc: "An extra machine after Chord (after the Sampler with Model-TG): a 303-style bass. COLOR is a DJ-style filter: low-pass below 64, no filter at 64, high-pass above, at the same volume on both sides of the middle. SHAPE blends saw into square, SWEEP is the resonance (it whistles on its own near the top), CONTOUR sends the filter envelope up or down (64: none), DECAY sets the filter envelope and the note length, PUNCH is the accent (harder filter, louder). PITCH, FINE, GATE and the keys work as on the original machines.",
+      note: "About as light on the processor as Tone, lighter than the other original machines. No slide yet. A project using Acid needs a firmware with Acid at the same place (7th machine, or 8th with Model-TG)." },
   },
   fr: {
     usb6: { label: "Audio USB 6 canaux",

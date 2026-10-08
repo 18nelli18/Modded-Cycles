@@ -299,7 +299,7 @@ async function main() {
     const acidAlone = chosen();
     const acidNote = /needs a firmware with Acid as the 7th machine/.test(text(doc, "features"));
     const acidOff = [];
-    for (const other of ["feat-model-tg", "feat-macro", "feat-syntakt"]) {
+    for (const other of ["feat-macro", "feat-syntakt"]) {
       box(other).click(); await wait(5);
       acidOff.push(!box("feat-acid").checked && box(other).checked);
       box("feat-acid").click(); await wait(5);
@@ -308,7 +308,7 @@ async function main() {
     box("feat-acid").click(); await wait(5);
     check(acidAlone === "acid" && acidNote && acidOff.every(Boolean) && !chosen().length
       && doc.querySelector('#features a[href$="#acid"]') && /Experimental/.test(doc.querySelector("label[for=feat-acid] .tag").textContent),
-      `Acid: alone ${acidAlone}, its note shown, experimental, never with Model-TG, MACRO or the Syntakt engines ${acidOff}`);
+      `Acid: alone ${acidAlone}, with Model-TG ${acidTg}, with sample preview ${acidSp}, its note shown, experimental, never with MACRO or the Syntakt engines ${acidOff}`);
     // Model-TG holds drumkilla's tweaks: ticked, it shows them ticked and locked, "(included with Model-TG)", and
     // builds without them; unticked, they are free again. With the Syntakt engines it makes the combined version
     // (notes/31): its base, then the engines' tweak built on top of it
