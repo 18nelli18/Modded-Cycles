@@ -233,19 +233,22 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim
 ### Chord Keys : pads harmoniques, P-locks et nom de l'accord
 
 `44-chord-keys.json` est généré depuis `tools/machines/chord_keys/` par `tools/gen_chord_keys.py`
-(GCC m68k-elf 16.2.0, binutils 2.47). **Révision expérimentale du 07/10/2026, sans essai matériel rapporté.**
+(GCC m68k-elf 16.2.0, binutils 2.47). **Révision du 07/10/2026 : essai matériel de Nico rapporté pour la 1.2, avec les autres mods Cycles (note 40 §23). Classification amont expérimentale inchangée.**
 Le générateur exige cette cible et cette version de GCC : les appels directs à l'OS renvoient
 leurs pointeurs dans `d0`, contrairement à l'ABI Linux. `M68K_CROSS` accepte un chemin vers
 le préfixe `m68k-elf-` si la chaîne n'est pas dans `PATH`.
-Le retour positif de Nico, seul sans autres mods, concerne la révision antérieure décrite en note 40 §13.
+Le retour matériel n’est pas une validation exhaustive de chaque combinaison du flasher.
 
 Sur une piste CHORD, **FUNC + RETRIG** donne Keys, Root, Scale et I–VII.
 TRIG 1–7 jouent I–VII, 8–14 à l'octave, 15–16 I–II deux octaves plus haut. I–VII conservent
 le niveau TRI/7/9/11/13 propre à chaque degré. **COLOR** choisit les palettes
 DIATONIC (0–42), JAZZ (43–85), TENSION (86–127), et **SHAPE** les neuf dispositions
 BASE/CLS0–3/OPN0–3 avec une balance associée. **Keys ON impose HARMONY** : T1–T6 donnent 9, 11, 13,
-SUS7, PARALLEL et V7 temporaires. Dernier pad pressé prioritaire ; son relâchement revient au
-précédent encore tenu, puis au réglage enregistré. Un pad pressé après un accord tenu ne sélectionne
+SUS7, PARALLEL et V7 temporaires. Pendant un TRIG tenu, chaque nouvel appui disponible rejoue
+l'accord entier à la vélocité de ce TRIG, avec une nouvelle attaque ; le maintien ne répète pas.
+Dernier pad pressé prioritaire ; son relâchement conserve l'accord modifié, sans nouvelle
+attaque. Sans préparation, chaque nouvel appui TRIG retrouve son extension enregistrée. Sans TRIG tenu, presser T prépare le prochain TRIG sans modifier la queue précédente ni écrire de lock. Relâcher T avant le TRIG annule cette préparation ; le prochain TRIG la consomme une seule fois.
+Un pad pressé après un accord tenu ne sélectionne
 plus sa piste. **TRACK + T1–T6** reste la commande de sélection. Pendant le maintien d'un TRIG,
 l'écran nomme l'accord joué, avec la palette et le geste temporaire actifs, par exemple Cmaj7 ou Em9.
 Le nom indique l'harmonie et la basse du renversement ; **HIGH LIMIT** signale une fondamentale
@@ -260,11 +263,19 @@ Keys OFF retrouve le clavier chromatique, les pads et retrig/arp habituels.
 Les extensions m7♭5 gardent fondamentale, quinte diminuée, septième et tension en omettant la tierce ;
 PARALLEL/V7 y sont indisponibles. Quatre voix maximum. Les gestes de pads s'enregistrent en
 P-locks HARMONY dans le séquenceur, indépendamment de COLOR et SHAPE. Le relâchement en live rec
-enregistre le retour au pad précédent ou à EXT. Les locks sont sauvegardés avec le pattern.
-Model-TG reste incompatible.
+n'ajoute ni note ni lock de retour. Les locks sont sauvegardés avec le pattern.
+Les nouvelles attaques sont aussi des notes enregistrées : réenregistrer sur un pas suit les
+règles natives de remplacement de la note et de ses locks. Un nouvel appui TRIG enregistre sa préparation tenue, ou son extension de base sans préparation.
+Le lock suit uniquement le pas choisi par le recorder, sans écriture anticipée sur le pas précédent.
+La relecture reprend chaque accord enregistré, sans priorité persistante du dernier pad live (§21).
+Chord Keys se combine avec tous les autres mods Cycles, y compris Model-TG seul ou avec les moteurs Syntakt.
+Avec Keys ON sur CHORD, Root et Scale de Chord Keys gardent la main sur les notes du clavier ; Scale Lock de
+Model-TG reste actif sur les autres pistes et avec Keys OFF. HARMONY utilise le slot RAM 28, distinct des
+paramètres 23–27 de Model-TG ; son identifiant disque reste 33, donc les anciens projets Chord Keys conservent
+leurs locks. Les restrictions entre les autres mods restent applicables ; Samples OS est une installation séparée.
 
 Le générateur vérifie les masques identiques, leurs redirections et les chevauchements ; sa réserve totalise
-10 888 octets, avec seuls les masques occupés écrits. Aucune nouvelle charge utile n'est requise ; seule
+11 168 octets, dont 280 octets ajoutés pour la compatibilité Model-TG (§22), avec seuls les masques occupés écrits. Aucune nouvelle charge utile n'est requise ; seule
 la section 3 change. Aucun firmware n'est distribué dans le dépôt.
 
 ```sh
@@ -276,20 +287,42 @@ python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx
 python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx \
   --with 6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,syntakt-sd-cp-toy-bits-swarm \
   --syntakt firmware/Syntakt_OS1.42.syx
+python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx --focus compatibility \
+  --with 6ch-usbup,model-tg-st,trig-hold,arp,tempo-max,boot-anim,syntakt-tg-sd-cp-toy-bits-swarm \
+  --syntakt firmware/Syntakt_OS1.42.syx
 python3 tools/build.py -i firmware/model-cycles_OS1.13.syx -t chord-keys \
   -o build/model-cycles_OS1.13_chord-keys-experimental.syx
 ```
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `chord-keys` | `7ad0ce047b936e8a6c1b42e06917eee8af71e0a86d90fb75d99d74ed841b8e5e` |
-| `6ch-usbup,chord-keys` | `efe16eee5696f151df00e67e888189aa2e03cbd5d8d4fe95055f826e6e1bb788` |
-| `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,chord-keys` | `7cdf5afb1f87130f63090b3f9ba00a5c47e8ae81b532453e6f4ddc459eeedb55` |
-| `6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-sd-cp-toy-bits-swarm` | `cd760adf4a041002ca1f63f108bcec51dc087afb14d9a2ee4cc845aca6bf1c5f` |
+| `chord-keys` | `c7f96922f4ccd0f11c79eed20f4c7b5aa982484f4b0f567da73e83d432777827` |
+| `6ch-usbup,chord-keys` | `07191c2fa021bdc5fde75717bd48d5e3b1f0eb68bae86ae9f45cc48f867ae346` |
+| `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,chord-keys` | `d9f6ca35c26e8674c4b8ac21fbec136eb08adf7e041c284befcd5a322342479d` |
+| `6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-sd-cp-toy-bits-swarm` | `0f18452e186d86333a6ce6fbb19bc3cfcbdd5350e53392c1cf473194a1a6dff3` |
+| `model-tg,chord-keys` | `a4f575f9802fc804e115c4afb0846f2adaa7de5f23c780ad8a8a2a335507e432` |
+| `6ch-usbup,model-tg-st,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-tg-sd-cp-toy-bits-swarm` | `5cff076bf076d1906fb23e6e69d903186de648fa4e486a83a767bafc2d64ae07` |
 
 Le banc portable vérifie les choix harmoniques et la balance. Les preuves ColdFire exécutent les routines
 OS de clavier, pads, menu, stockage et CHORD ; le coût en instructions ne mesure pas la charge matérielle.
-Les résultats de cette révision et le protocole d'écoute sont suivis dans [la note 40 §17](notes/40-clavier-accords-diatoniques.md).
+Les résultats de cette révision et le protocole d'écoute sont suivis dans [la note 40 §22](notes/40-clavier-accords-diatoniques.md#22-compatibilité-avec-model-tg-et-les-autres-mods-07102026).
+
+Pendant l'implémentation, la preuve ciblée du relâchement T s'exécute avec
+`python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx --focus pad-release`.
+Pour la préparation T sans modifier la queue précédente, utiliser `--focus pad-prepare`.
+Pour la prise TRIG puis T et sa relecture, utiliser `--focus live-recording`.
+Pour la compatibilité Model-TG, utiliser `--focus compatibility` avec `--with model-tg`,
+ou avec la combinaison Model-TG-ST ci-dessus et `--syntakt`.
+Le contrôle ciblé du builder web reconstruit quatre images réelles, sans envoi MIDI :
+
+```sh
+node tools/webchord_compat_check.js firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42.syx
+```
+
+La révision de prise live du §21 avait été vérifiée avec Chord Keys seul. Le §22 ajoute la compatibilité
+Model-TG ; les résultats de ses preuves ciblées sont consignés dans la note. Les options `--with` et
+`--syntakt` ci-dessus sélectionnent les combinaisons pour ces vérifications.
+Les suites complètes et la publication attendent le signal de fin d'implémentation de Nico.
 
 ### Écoute d'un pas en pause
 

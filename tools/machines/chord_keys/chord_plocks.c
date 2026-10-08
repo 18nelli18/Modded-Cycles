@@ -1,6 +1,6 @@
 /* HARMONY dans les véritables P-locks OS 1.13 (notes/40).
- * Aucun détournement de COLOR, de ses fractions, du MIDI ou du LFO : le slot23
- * n'a aucun descripteur et n'est lu par aucun des six moteurs stock.
+ * Aucun détournement de COLOR, de ses fractions, du MIDI ou du LFO : le slot28
+ * n'a aucun descripteur et n'est lu ni par les six moteurs stock ni par Model-TG.
  * Les écritures, les flags de présence, la copie et l'effacement restent natifs.
  */
 #include "chord_ui.h"

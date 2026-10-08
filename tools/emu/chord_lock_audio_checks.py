@@ -9,6 +9,7 @@ import struct
 import mcengine as E
 from chord_audio_checks import AudioRunner, NativeAudioConfig, config_word
 from chord_harmony_checks import expected_notes
+from chord_plock_checks import SLOT
 from probe_chord_keys import UPDATE, frequency_ratios
 
 
@@ -42,7 +43,7 @@ def run_lock_audio_checks(stock, patched, symbols, extra_code, check):
 
     def apply(track, modifier):
         e.uc.mem_write(RAW, b"\xff" * 68)
-        e.uc.mem_write(RAW + 2 * 23, struct.pack(">H", modifier))
+        e.uc.mem_write(RAW + 2 * SLOT, struct.pack(">H", modifier))
         e.call(EXTRACT, EVENT, RAW, 0, 0)
         e.call(APPLY, track, EVENT, E.PARAMS)
 
@@ -56,7 +57,7 @@ def run_lock_audio_checks(stock, patched, symbols, extra_code, check):
         assert bytes(e.uc.mem_read(params, 66)) == before, "paramètres lissés modifiés"
         ratios = tuple(word(voice + 0x50 + 0x78 * index) for index in range(4))
         packet = word(symbols["ck_chord_live"] + 4 * track)
-        return ratios, packet, word(params + 2 * 23, 2)
+        return ratios, packet, word(params + 2 * SLOT, 2)
 
     def matches(track, modifier, palette):
         ratios, packet, lane = update(track)
@@ -75,8 +76,8 @@ def run_lock_audio_checks(stock, patched, symbols, extra_code, check):
                 apply(track, modifier)
                 ok, lane = matches(track, modifier, palette)
                 replay &= (ok and lane == modifier and word(EVENT + 8) == 1
-                           and word(EVENT + 20, 2) == 23
-                           and bool(word(LOCK_MASK + 8 * track) & (1 << 23)))
+                           and word(EVENT + 20, 2) == SLOT
+                           and bool(word(LOCK_MASK + 8 * track) & (1 << SLOT)))
                 count += 1
             apply(track, 6)
             e.call(RESET, track, E.PARAMS, SOUND)
@@ -92,7 +93,7 @@ def run_lock_audio_checks(stock, patched, symbols, extra_code, check):
     guarded = True
     setup(0, 32)
     for modifier in range(1, 7):
-        e.call(SET_PARAM, 7 + 23, modifier, E.PARAMS)
+        e.call(SET_PARAM, 7 + SLOT, modifier, E.PARAMS)
         ok, lane = matches(0, 0, 0)
         guarded &= ok and lane == modifier and word(LOCK_MASK) == 0
     for modifier in (7, 127, 0x7fff, 0xfffe):
@@ -101,6 +102,28 @@ def run_lock_audio_checks(stock, patched, symbols, extra_code, check):
         guarded &= ok
     check(guarded,
           "P-lock→DSP : valeur sans bitmap et lock hors 0..6 ignorés, aucun geste fantôme")
+
+    # Model-TG utilise le slot23 pour Attack. Une petite valeur de son lock
+    # ne doit jamais devenir un numéro HARMONY, même si sa présence est armée.
+    # Les deux voies passent ici par le vrai extracteur et le lisseur OS.
+    independent = True
+    setup(0, 32)
+    for attack in range(1, 7):
+        e.call(RESET, 0, E.PARAMS, SOUND)
+        e.uc.mem_write(RAW, b"\xff" * 68)
+        e.uc.mem_write(RAW + 2 * 23, struct.pack(">H", attack))
+        e.call(EXTRACT, EVENT, RAW, 0, 0)
+        e.call(APPLY, 0, EVENT, E.PARAMS)
+        ok, lane = matches(0, 0, 0)
+        independent &= ok and lane == 0 and word(LOCK_MASK) == 1 << 23
+        apply(0, 7 - attack)
+        ok, lane = matches(0, 7 - attack, 0)
+        smoothed = e.call(SMOOTH, E.PARAMS)
+        independent &= (ok and lane == 7 - attack
+                        and word(smoothed + 14 + 2 * 23, 2) == attack
+                        and word(LOCK_MASK) == (1 << 23) | (1 << SLOT))
+    check(independent,
+          "P-lock→DSP : Attack23 et HARMONY28 indépendants, deux locks présents sans altérer leurs valeurs")
 
     # Keys OFF doit rester strictement stock même si le pattern contient des
     # locks HARMONY ; ils redeviennent audibles uniquement avec Keys ON.

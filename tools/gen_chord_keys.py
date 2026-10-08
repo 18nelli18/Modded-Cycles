@@ -40,7 +40,7 @@ MASKS = (0x4016b6f8, 0x4016b9e8, 0x40171f30, 0x40172608, 0x40179730,
          0x4018f4b4, 0x4018fc74, 0x401904b4, 0x40192734)
 EXTRA_MASKS = (0x40158744, 0x4016aa28, 0x401699a8, 0x401696a0, 0x40166760,
                0x4016616c, 0x40163fb8, 0x401625bc, 0x40160e6c, 0x40160b6c,
-               0x40160864, 0x401601fc, 0x4015f50c)
+               0x40160864, 0x401601fc, 0x4015f50c, 0x4014d74c)
 MASKS += EXTRA_MASKS
 # Adresse, contrat attendu, symbole, opcode (None = pointeur de vtable).
 HOOKS = (
@@ -49,7 +49,9 @@ HOOKS = (
     (0x4007746c, "4fefffc048d70c04", "ck_ui_pad_dispatch_hook", 0x4ef9),
     (0x400aae88, "4fefffe448d71c3c", "chord_audio_update", 0x4ef9),
     (0x400ab0e4, "d1fc4012142c", "chord_audio_ratios", 0x4ef9),
-    (0x400ff9cc, "4001a0d2", "ck_ui_key", None),
+    (0x4001a0d2, "4fefffd448d77cfc", "ck_ui_key", 0x4ef9),
+    (0x40081734, "2e2e001c2c2e0020", "ck_tg_note_on_hook", 0x4ef9),
+    (0x4008146c, "262e000c2a2e0010", "ck_tg_note_off_hook", 0x4ef9),
     (0x4010025c, "4001d180", "ck_ui_pad", None),
     (0x401002b0, "4001d3d4", "ck_ui_pad_thunk", None),
     (0x400fd170, "4000a70e", "ck_shape_format", None),
@@ -62,6 +64,7 @@ HOOKS = (
     (0x4005bad2, "28713c0070ff", "ck_plock_partial_hook", 0x4ef9),
     (0x4005aa1a, "2f027406222f0008", "ck_plock_decode_hook", 0x4ef9),
     (0x40012274, "4eb9400cfd0e", "ck_plock_note_hook", 0x4ef9),
+    (0x40058ec6, "222a0028028100000081", "ck_plock_sequence_hook", 0x4ef9),
 )
 # Le chargeur stock ignore les identifiants >32 : HARMONY utilise 33 pour
 # qu'un retour au firmware officiel ignore ce lock au lieu de modifier LEVEL.
@@ -214,21 +217,24 @@ def build_tweak(stock):
             "COLOR choisit DIATONIC, JAZZ ou TENSION ; SHAPE dispose et équilibre les voix, sans ancien mode.",
             "Keys actif : T1–T6 transforment temporairement l'accord en HARMONY sans changer de piste.",
             "T1/T2/T3 : 9/11/13 ; T4 : 7sus4 ; T5 : parallèle majeur/mineur ; T6 : dominante V7 de la cible.",
-            "Dernier pad prioritaire ; son relâchement restaure le précédent encore tenu puis EXT, sans retrigger.",
+            "TRIG tenu : chaque nouvel appui de pad disponible rejoue l'accord entier à sa vélocité, sans répétition de maintien.",
+            "Dernier pad prioritaire ; le relâchement conserve l'accord modifié. Sans préparation, le prochain TRIG retrouve son extension.",
             "Sept modes et quatre voix au plus : 9/11/13 omettent la quinte et les tensions intermédiaires.",
             "Exception m7♭5 étendu : fondamentale, quinte diminuée, septième, tension ; sans tierce. T5/T6 indisponibles.",
             "SHAPE : BASE, CLS0–3, OPN0–3. Les options Controls et Pads sont supprimées.",
             "Anciens et nouveaux patterns utilisent les mêmes contrôles ; gamme et extensions sauvegardées conservées.",
             "L'écran nomme l'accord tenu selon les intervalles audio, les transformations et la basse du voicing.",
             "Les gestes HARMONY s'enregistrent en P-locks natifs : live rec ou pas tenus en grille, puis sauvegarde du pattern.",
-            "COLOR et SHAPE restent indépendants. Le relâchement en live rec enregistre le retour au geste précédent ou à EXT.",
+            "Chaque attaque reçoit son lock sur le pas choisi par le recorder ; la relecture retrouve chaque accord sans garder le dernier pad.",
+            "Sans TRIG tenu, T prépare le prochain TRIG sans toucher la queue ni écrire de lock ; relâcher T annule la préparation.",
             "Réglages par piste sauvegardés avec le pattern. Dernière touche prioritaire, sans retour à la précédente.",
-            "Model-TG incompatible : son Scale Lock transforme les notes avant le moteur. Aucun essai matériel.",
+            "Compatible avec les autres mods, dont Model-TG : Keys garde sa gamme sur CHORD ; Scale Lock reste actif ailleurs.",
+            "HARMONY utilise un slot distinct d'Attack, Filter et Resonance. Aucun essai matériel de cette révision.",
             f"Code et état dans {len(compiled)} masques de sprites redirigés, {sum(len(c) for _, c in compiled)} octets.",
             "Généré par tools/gen_chord_keys.py ; sources tools/machines/chord_keys/ ; notes/40.",
         ],
         "device": "Model:Cycles", "os": "1.13", "section": 3,
-        "conflicts": ["model-tg", "model-tg-st"],
+        "conflicts": [],
         "symbols": {name: f"{value:#x}" for name, value in sorted(symbols.items())},
         "writes": sorted(writes, key=lambda w: w["off"]),
     }

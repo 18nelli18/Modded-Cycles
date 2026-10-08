@@ -13,7 +13,7 @@ from probe_chord_storage import Rig, BASE, B1, B2, SERIAL, PROJECT, require
 
 UI, CLOCK = 0x92040000, 0x92041000
 PLOCK_HOOKS = ((0x4005B9C6, 8), (0x4005BAD2, 6), (0x4005AA1A, 8), (0x40012274, 6), (0x4005B816, 2))
-SLOT = 23
+SLOT = 28
 
 
 class PlockRig(Rig):
@@ -152,6 +152,100 @@ def _observer_checks(stock, patched, symbols):
     print("ok P-lock : 180 événements réels, observateur miroir natif, ajout et suppression HARMONY sans altérer les autres locks", flush=True)
 
 
+def _attack_recording_checks(stock, patched, symbols):
+    """Vrais gestes et relais, puis recorder natif à la frontière de transport.
+
+    Les appels de sortie sont collectés puis remis au recorder avec un pas
+    choisi par le banc ; l'horloge et la file inter-tâches ne sont pas émulées.
+    """
+    rig = PlockRig(stock, patched, symbols)
+    view, notes, event = 0x92060000, 0x92061000, 0x92062000
+    reference = PlockRig(stock, patched, symbols)
+    reference.parameter_hooks(False)
+    for offset, pointer in ((148, notes), (152, notes), (156, notes + 0xa00)):
+        rig.word(view + offset, pointer)
+    held, events = set(), []
+    rig.stub(0x4007FAF4, lambda args: int(args[0] in held))
+    rig.stub(0x40015AC4, lambda args: 97)
+    rig.stub(0x40075F3C, lambda args: 0)
+    rig.stub(0x40016E90, lambda args: 0)
+
+    def capture(kind, count):
+        def handler(args):
+            events.append((kind, args[:count]))
+            return 0
+        return handler
+
+    rig.stub(0x4008171E, capture("on", 7))
+    rig.stub(0x4008145E, capture("off", 3))
+
+    def record(step):
+        for kind, args in events:
+            if kind == "on":
+                rig.call(0x40012158, PROJECT, args[0], args[1], args[2], 0,
+                         step, 0, 0, 0xFFFFFFFF)
+
+    held.add(16)
+    rig.live(True, 0)
+    rig.call(0x4007238C, event, 16, 1, 123, 127)
+    rig.call("ck_ui_key", view, event)
+    record(0)
+    require(len(events) == 1 and events[0][0] == "on", "TRIG initial sans note")
+    for step, pad, down, modifier in ((1, 1, True, 1), (2, 4, True, 4),
+                                      (3, 4, False, -1), (4, 1, False, -1)):
+        rig.live(True, step)
+        # Une nouvelle note suit le remplacement de locks stock ; le geste
+        # de relâchement, sans note ni lock HARMONY, laisse le pas intact.
+        for candidate in (rig, reference):
+            candidate.call(0x40017BB0, candidate.track(0), step, 1)
+            candidate.set(0, step, 11, 32 * 256 + 173)
+            candidate.set(0, step, 12, 7 * 256 + 19)
+        events.clear()
+        rig.pad(pad, down)
+        require([kind for kind, _ in events] == (["off", "on"] if down else []),
+                "L'attaque ou le relâchement de pad émet des notes inattendues")
+        record(step)
+        if down:
+            reference.call(0x40012158, PROJECT, 0, 48, 97, 0, step, 0, 0, 0xFFFFFFFF)
+        require(bool(rig.call(0x40015C20, rig.track(0), step) & 255) == down,
+                "L'attaque enregistrée n'est pas un trig, ou le relâchement en crée un")
+        require(rig.get(0, step) == modifier and all(
+                    rig.get(0, step, slot) == reference.get(0, step, slot) for slot in (11, 12)),
+                f"Recorder pas {step}: HARMONY/COLOR/SHAPE = "
+                f"{[rig.get(0, step, slot) for slot in (SLOT, 11, 12)]}")
+    # Un nouveau TRIG, même encore physiquement tenu, repart de son extension.
+    events.clear()
+    rig.call(0x4007238C, event, 16, 1, 123, 127)
+    rig.call("ck_ui_key", view, event)
+    record(5)
+    require(rig.get(0, 5) == 0, "Nouveau TRIG conserve le dernier pad dans sa prise")
+    held.remove(16)
+    rig.call(0x4007238C, event, 16, 0, 123, 127)
+    rig.call("ck_ui_key", view, event)
+    events.clear()
+    rig.live(True, 6)
+    before = rig.bytes(rig.raw, 30720)
+    rig.pad(6, True)
+    require(not events and rig.bytes(rig.raw, 30720) == before,
+            "Préparation sans TRIG modifie la prise ou crée une note")
+    held.add(16)
+    rig.call(0x4007238C, event, 16, 1, 123, 127)
+    rig.call("ck_ui_key", view, event)
+    record(7)
+    require(rig.get(0, 7) == 6, "Prochain TRIG perd son pad préparé dans le recorder")
+    events.clear()
+    rig.pad(6, False)
+    require(not events and rig.get(0, 6) == -1, "Relâchement de préparation écrit un retour")
+    rig.call(0x4005BA0A, SERIAL, B1, 0)
+    rig.call(0x4005B894, B2, SERIAL, 0)
+    rig.bind(B2, initialize=False)
+    require([bool(rig.call(0x40015C20, rig.track(0), s) & 255) for s in range(5)]
+            == [True, True, True, False, False], "Save/load perd les attaques enregistrées")
+    require([rig.get(0, s) for s in range(8)] == [0, 1, 4, -1, -1, 0, -1, 6],
+            "Save/load perd les attaques ou ajoute un retour au relâchement")
+    print("ok attaques T→recorder : queue/préparation sans lock, prochain TRIG avec HARMONY préparé, save/load conserve les gestes", flush=True)
+
+
 def run_plock_checks(stock, patched, symbols):
     rig = PlockRig(stock, patched, symbols)
     # Toutes les valeurs stock restent identiques, y compris les entrées
@@ -164,7 +258,7 @@ def run_plock_checks(stock, patched, symbols):
         actual = rig.call(0x4005AA1A, track, slot)
         require(actual == (SLOT if track < 6 and slot == 33 else value),
                 f"Décodage modifié hors HARMONY : {track}/{slot}")
-    print("ok P-lock : mapping natif conservé, seule extension ID33 → slot23, bornes audio/FX", flush=True)
+    print("ok P-lock : mapping natif conservé, seule extension ID33 → slot28, bornes audio/FX", flush=True)
     rig.bind(B2)
     empty_locks = rig.bytes(B2 + 4332, 26310)
     scratch = SERIAL + 16000
@@ -174,6 +268,24 @@ def run_plock_checks(stock, patched, symbols):
         rig.call(0x4005B766, B2 + 4332, scratch)
         require(rig.bytes(B2 + 4332, 26310) == empty_locks,
                 "Le chargeur accepte une nouvelle lane sur FX/piste ou ID invalide")
+    # Une lane ID33 existante ne contient pas son ancien numéro de slot RAM.
+    # Construire ces octets indépendamment du nouveau writer prouve que les
+    # prises de la version slot23 migrent vers 28 sans atteindre Attack.
+    rig.uc.mem_write(scratch, b"\xff" * 10400)
+    for track in range(6):
+        lane = scratch + 130 * track
+        rig.uc.mem_write(lane, bytes([33, track]))
+        for step, modifier in ((0, 0), (7, track + 1), (63, 6 - track)):
+            rig.uc.mem_write(lane + 2 + 2 * step, struct.pack(">H", modifier))
+    rig.call(0x4005B766, B2 + 4332, scratch)
+    require(all(rig.get(track, step) == modifier
+                for track in range(6)
+                for step, modifier in ((0, 0), (7, track + 1), (63, 6 - track))),
+            "Une ancienne lane ID33 perd ses valeurs dans le nouveau slot")
+    require(all(rig.get(track, step, slot) == -1
+                for track in range(6) for step in range(64) for slot in range(23, 28)),
+            "La migration ID33 écrase un paramètre de Model-TG")
+    print("ok P-lock : anciennes lanes ID33 chargées au slot28, réserves Model-TG23..27 intactes", flush=True)
     rig.bind(B1)
 
     for track in range(6):
@@ -241,19 +353,22 @@ def run_plock_checks(stock, patched, symbols):
     rig.call(0x40012158, PROJECT, 0, 48, 100, 0, 4, 0, 0, 0xFFFFFFFF)
     require(rig.get(0, 4) == 0, "Nouvelle note sans pad conserve une ancienne extension")
     require(rig.call(0x40015C20, rig.track(0), 4) & 0xFF, "Le hook enlève la note native")
-    for step, pad, down, expected in ((16, 1, True, 1), (17, 4, True, 4),
-                                     (18, 4, False, 1), (19, 1, False, 0)):
+    for step, pad, down, expected in ((16, 1, True, -1), (17, 4, True, -1),
+                                     (18, 4, False, -1), (19, 1, False, -1)):
         rig.live(True, step)
         rig.pad(pad, down)
         require(rig.get(0, step) == expected,
-                "Le vrai chemin pad press/release perd l'empilement ou le retour EXT")
+                "Le vrai chemin pad press/release perd l'appui ou enregistre un retour")
     rig.live(False)
     rig.pad(6, True)
     rig.call(0x40012158, PROJECT, 0, 50, 100, 0, 20, 0, 0, 0xFFFFFFFF)
-    require(rig.get(0, 20) == 6, "Pad avant note : le recorder natif perd son snapshot")
+    require(rig.get(0, 20) == 0, "Pad préparé fuit dans la capture d'une note hors UI")
     rig.pad(6, False)
     rig.call(0x40012158, PROJECT, 0, 50, 100, 0, 20, 0, 0, 0xFFFFFFFF)
-    require(rig.get(0, 20) == 0, "Nouvelle prise conserve le pad d'une ancienne note")
+    require(rig.get(0, 20) == 0, "Pad préparé relâché fuit dans la capture d'une note")
+    rig.call("ck_ui_clear_modifiers", 0, rig.call("ck_ui_header"))
+    rig.call(0x40012158, PROJECT, 0, 50, 100, 0, 20, 0, 0, 0xFFFFFFFF)
+    require(rig.get(0, 20) == 0, "Nouvelle prise à EXT conserve un ancien lock")
     rig.live(False)
     rig.uc.mem_write(UI + 357, b"\1")
     require(rig.call("ck_plock_grid", 1, 6) == 0,
@@ -273,7 +388,7 @@ def run_plock_checks(stock, patched, symbols):
     rig.machine = 0
     require(rig.call("ck_plock_grid", 1, 3) == 0, "Autre machine écrit HARMONY")
     require(rig.get(1, 2) == 6, "Geste rejeté modifie le lock")
-    print("ok P-lock : vrais pads press/release empilés, snapshot note et retour EXT, held TRIG+T répété, modes protégés", flush=True)
+    print("ok P-lock : préparations sans lock, snapshot note/EXT, held TRIG+T répété, modes protégés", flush=True)
     rig.bind(B2)
     for slot in range(13):
         for track in range(6):
@@ -297,4 +412,5 @@ def run_plock_checks(stock, patched, symbols):
             "Limite de capacité native modifiée")
     print("ok P-lock : IDs/pistes invalides ignorés ; capacité native saturée conservée sans débordement", flush=True)
     _observer_checks(stock, patched, symbols)
+    _attack_recording_checks(stock, patched, symbols)
     return rig

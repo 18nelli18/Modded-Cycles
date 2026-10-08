@@ -149,7 +149,6 @@ FEATURES = [
                 "L'écran affiche l'accord tenu ; les changements HARMONY s'enregistrent en P-locks.",
         "status": "experimental",
         "credit": {"kind": "by", "who": "Modded Cycles", "repo": "18nelli18/Modded-Cycles"},
-        "excludes": ["model-tg"],
         "variants": [{"file": "44-chord-keys", "label": None}],
     },
     {

@@ -18,8 +18,8 @@
 
 ---
 
-**Chord Keys on Nico's fork:** [open this fork's flasher](https://bynicoheuser.github.io/Modded-Cycles/flasher/).
-This revision adds temporary harmony pads, three COLOR palettes and a SHAPE voicing/balance macro. **Experimental: no hardware test of this revision has been reported.** Nico's successful standalone test on 6 October 2026 concerns the previous revision only.
+**Chord Keys 1.2 on Nico's fork:** [explore the mod and quick guide](https://bynicoheuser.github.io/Modded-Cycles/chord-keys/) · [open this fork's flasher](https://bynicoheuser.github.io/Modded-Cycles/flasher/).
+This revision adds temporary harmony pads, three COLOR palettes and a SHAPE voicing/balance macro. **Nico reports testing version 1.2 on his Model:Cycles, including with the other Cycles mods, on 7 October 2026.** This is his hardware report; the upstream experimental classification is unchanged.
 The upstream links above belong to the original project; this fork's flasher includes the Chord Keys revision described here.
 
 ## Why
@@ -46,7 +46,7 @@ Going back to the official firmware is one click away.
 | **Syntakt engines** | Up to five real Syntakt machines added next to the original six: **SD VINTAGE**, **CP VINTAGE**, **SY TOY**, **SY BITS** and **SY SWARM**, with the Syntakt's knob names and defaults. They are read from your own Syntakt OS file. | ✅ Tested |
 | **Model-TG** | A full Sampler machine with seven playback modes, resampling, a beat-repeat page with master FX, slide trigs, Scale Lock and more, by [TinyGregAudio](https://github.com/TinyGregAudio/Model-TG). Works with the 6-channel mod and the Syntakt engines. | 🧪 Experimental |
 | **Arpeggiator** | Hold several notes with RETRIG and they play as an arpeggio. `FUNC` + `RETRIG` adds direction (up, down, up/down, random, or in the order played) and range (1 to 4 octaves), saved with the pattern. | ✅ Tested |
-| **Chord Keys** | Play the selected CHORD track with `TRIG 1–16` and see the played chord's name on screen. Choose each degree's TRI/7/9/11/13 in `FUNC` + `RETRIG`. COLOR selects DIATONIC, JAZZ or TENSION; SHAPE arranges and balances the notes. With Keys ON, T1–T6 always make temporary 9/11/13/SUS7/PARALLEL/V7 changes without selecting another track. Record pad changes as HARMONY parameter locks. Improved controls also apply to existing patterns. Model-TG is incompatible. | 🧪 Experimental revision |
+| **Chord Keys** | Play the selected CHORD track with `TRIG 1–16` and see the played chord's name on screen. Choose each degree's TRI/7/9/11/13 in `FUNC` + `RETRIG`. COLOR selects DIATONIC, JAZZ or TENSION; SHAPE arranges and balances the notes. With Keys ON, T1–T6 always make temporary 9/11/13/SUS7/PARALLEL/V7 changes without selecting another track. Press a pad while holding a TRIG to replay the whole changed chord with a fresh attack. Releasing the pad keeps the changed chord; each new TRIG starts with its saved extension unless you prepare a T pad first. Record the attacks and HARMONY parameter locks. Improved controls also apply to existing patterns. Combines with every other Cycles mod, including Model-TG and the Syntakt engines. | 🧪 Experimental revision |
 | **Tempo up to 546 BPM** | The TEMPO knob, tap tempo, MIDI clock and saved projects go past 300 BPM. Tempo-synced LFOs stay in time. | ✅ Tested |
 | **Startup animation** | When the Model:Cycles starts, the four squares of the modded-cycles logo pop in and “modded-cycles” types itself underneath, instead of the original tile animation. Same duration. | ✅ Tested |
 | **Easier trig removal** | A quick press on a step that holds a trig removes it, instead of opening it as a hold. | ✅ Tested |
@@ -55,7 +55,7 @@ Going back to the official firmware is one click away.
 | **Scrolling names** | Sound names too long for the screen scroll in the sound browser. By drumkilla. | ✅ Tested |
 | **Samples OS** | Turns the Model:Cycles into a Model:Samples, built from both official OS files. Coming back needs a MIDI interface. | ✅ Tested |
 
-Most mods can be combined. Chord keys and Model-TG are alternatives; Samples OS is a separate install. Each mod is explained step by step, with the buttons to press, in the
+Chord Keys can be combined with every other Cycles mod, including Model-TG and the Syntakt engines. Existing restrictions between other mods still apply; Samples OS is a separate install. Each mod is explained step by step, with the buttons to press, in the
 **[guide](https://18nelli18.github.io/Modded-Cycles/guide/)**.
 
 **Chord Keys:** Root, Scale and the I–VII extension rows remain per-track settings saved with the pattern.
@@ -63,17 +63,24 @@ The improved controls and HARMONY pads are permanent whenever Keys is ON on a CH
 menu options have been removed. Existing patterns use these controls too: their saved SHAPE/COLOR values and locks
 are preserved but interpreted with the improved behavior. Freshly initialized patterns start with Keys OFF. COLOR ranges
 0–42 / 43–85 / 86–127 select DIATONIC / JAZZ / TENSION. SHAPE offers BASE, CLS0–3 and OPN0–3 with a balance for
-each position. The last pad pressed wins; release it to restore an earlier held pad, then the saved
-extension. While a TRIG is held, the screen names the chord being played, including the current palette and temporary pad change,
+each position. With a TRIG held, each new available T-pad press replays the whole changed chord with a fresh attack
+at that TRIG's original velocity. Holding a pad does not repeat it. The last pad pressed wins; releasing it keeps
+the changed chord sounding without an extra attack. Without a prepared pad, each new TRIG starts with its saved extension. With no TRIG held, press and hold T to prepare the next TRIG without changing the previous chord’s tail. Releasing T before the TRIG cancels that preparation; the next TRIG consumes it once.
+LIVE RECORDING captures these attacks as notes with HARMONY locks; releases add no notes or locks.
+Each attack keeps its own chord on playback, including when recording places a pad attack on the next step.
+Recording over a step uses the stock note-recording rules, including replacement of its existing locks.
+While a TRIG is held, the screen names the chord being played, including the current palette and temporary pad change,
 for example Cmaj7 or Em9. HIGH LIMIT warns when the engine limits the root or removes voices in the high register;
 the displayed harmonic name stays the same. HARMONY pad changes can be recorded as parameter locks and saved with the pattern; COLOR and SHAPE remain independent. Four voices maximum: extended m7♭5
 keeps its diminished fifth and omits the third; PARALLEL and V7 are unavailable for diminished targets.
 
-Compatible combinations are checked in software with USB audio, latching mute, trig preview, scrolling names,
-easier trig removal, arpeggiator, tempo, startup animation and the five Syntakt engines. Software tests do not
-establish real-device timing or load. **This revision remains experimental alone and in every combination.**
-Model-TG is incompatible; Samples OS is a separate installation. TRACK + T1–T6 still selects tracks. Keys OFF
-restores ordinary pad playing and retrig/arp; the lower TRIG chord keys do not arpeggiate.
+Chord Keys also combines with Model-TG, including its version with the Syntakt engines. On CHORD with Keys ON,
+Root and Scale in the Chord Keys menu choose the keyboard notes; Model-TG’s Scale Lock continues to work on other
+tracks and with Keys OFF. HARMONY locks stay separate from Model-TG’s Attack, Filter, Resonance and Sampler
+settings, and existing Chord Keys projects keep their saved harmony locks. Existing restrictions between other
+mods still apply. **Nico reports successful hardware testing of version 1.2 with the other Cycles mods.** This is
+not an exhaustive test of every possible selection in the flasher. Samples OS is a separate installation. TRACK + T1–T6 still selects tracks.
+Keys OFF restores ordinary pad playing and retrig/arp; the lower TRIG chord keys do not arpeggiate.
 
 <p align="center">
   <img src="docs/images/readme/device-syntakt.png" alt="The MACHINES menu on the Model:Cycles screen, listing 05 Tone, 06 Chord, 07 SDVtg and 08 CPVtg" width="560"><br>

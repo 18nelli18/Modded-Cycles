@@ -7,6 +7,9 @@ le clavier stock, les relais de notes, le contrôleur de vues et le menu sont
 réellement exécutés. La sélection du pattern et la notification sont simulées.
 Les sélections, envois audio/MIDI et opérations de mute sont observés à leur
 entrée ; la synthèse et le séquenceur sont vérifiés par les autres contrôles.
+Avec Model-TG, le vrai tick_hook reste dans la chaîne. Ses huit appels
+d'entretien (fichiers, échantillons et écran système) sont observés à l'entrée,
+sans simuler ces périphériques ; le traitement clavier reste exécuté.
 """
 import struct
 
@@ -49,6 +52,20 @@ def _install(rig, address, handler):
 
 def _ui_rig(image, symbols=None):
     rig = pads.Rig(image)
+    rig.tg_maintenance = []
+    tick = rig.r32(KEY_VTABLE)
+    if tick != KEY_CONSUMER:
+        # Contrat du tick_hook Model-TG v1.1.0, commun aux deux variantes.
+        # Aucun remplacement de sa vtable, de son appel clavier ni de son ABI.
+        prefix = bytes.fromhex("2f2f00082f2f00084eb94001a0d2508f4fefffd048d70fff")
+        assert bytes(rig.uc.mem_read(tick, len(prefix))) == prefix
+        for index in range(8):
+            call = tick + len(prefix) + 4 * index
+            opcode, offset = struct.unpack(">Hh", rig.uc.mem_read(call, 4))
+            assert opcode == 0x4eba
+            target = call + 2 + offset
+            _install(rig, target, lambda a, i=index: rig.tg_maintenance.append(i) or 0)
+        assert bytes(rig.uc.mem_read(tick + len(prefix) + 32, 10)) == bytes.fromhex("4cd70fff4fef00304e75")
     config = _header(rig)
     selected, machine, velocity = [2], [5], [97]
     for address, handler in {
@@ -80,6 +97,7 @@ def _ui_rig(image, symbols=None):
 
 
 def _key(rig, key, down, flags=0, velocity=127):
+    (rig.pressed.add if down else rig.pressed.discard)(15 + key)
     rig.calls.clear()
     rig.call(KEY_CTOR, pads.EVENT, 15 + key, int(down) | flags, 123, velocity)
     return rig.call(rig.r32(KEY_VTABLE), pads.VIEW, pads.EVENT) & 255
@@ -100,8 +118,9 @@ def _keys(stock, image, symbols, check):
     rig, config, selected, machine, velocity = _ui_rig(image, symbols)
     check(all(rig.call(symbols["ck_ui_config_get"], t) == config[t] for t in range(6)),
           "touches : six configurations lues par la vraie API persistante")
-    check(rig.r32(KEY_VTABLE) == symbols["ck_ui_key"],
-          "touches : seul le consommateur KeyEvent du clavier est redirigé")
+    check(rig.r32(KEY_VTABLE) == struct.unpack_from(">I", stock, KEY_VTABLE - 0x40000400)[0]
+          and rig.r32(KEY_CONSUMER + 2) == symbols["ck_ui_key"],
+          "touches : entrée clavier détournée, vtable et relais des autres mods conservés")
     for key in range(1, 17):
         slot = key - 1
         note = 48 + 12 * (slot // 7) + (0, 2, 4, 5, 7, 9, 11)[slot % 7]
@@ -189,6 +208,10 @@ def _keys(stock, image, symbols, check):
     _key(rig, 1, False)
     check(rig.calls == [("off", (0, 48, 64))], "touches : l'autre piste se relâche normalement")
     check(not rig.bad, "touches : aucun accès mémoire hors du banc")
+    if rig.r32(KEY_VTABLE) != KEY_CONSUMER:
+        check(bool(rig.tg_maintenance) and
+              rig.tg_maintenance == list(range(8)) * (len(rig.tg_maintenance) // 8),
+              "Model-TG : les huit callbacks d'entretien suivent chaque événement clavier, même consommé par Keys")
 
 
 def _pads(stock, image, symbols, check):
@@ -220,19 +243,20 @@ def _harmony_pads(stock, image, symbols, check):
     before = bytes(rig.uc.mem_read(HEADER, 64))
     for pad in range(1, 7):
         consumed = _pad(rig, pad, True, secondary=True)
-        check(consumed == 1 and modifier() == pad and not rig.calls,
-              f"HARMONY T{pad} : interface secondaire, modification sans note ni sélection")
+        check(consumed == 1 and modifier() == pad
+              and rig.calls == [("off", (2, 48, 64)), _on(2, 48)],
+              f"HARMONY T{pad} : interface secondaire, accord réarticulé sans sélection")
     for pad in range(6, 0, -1):
         _pad(rig, pad, False)
-        check(modifier() == pad - 1 and not rig.calls,
-              f"HARMONY T{pad} : relâchement restaure le précédent sans retrigger")
+        check(modifier() == 6 and not rig.calls,
+              f"HARMONY T{pad} : relâchement conserve le dernier accord sans retrigger")
     check(bytes(rig.uc.mem_read(HEADER, 64)) == before,
           "HARMONY : les six gestes ne modifient aucun réglage persistant")
     _pad(rig, 1, True)
     for _ in range(30):
         _pad(rig, 6, True)
         _pad(rig, 6, False)
-    check(modifier() == 1, "HARMONY : trente appuis superposés conservent le plus ancien tenu")
+    check(modifier() == 6, "HARMONY : trente appuis superposés conservent la dernière transformation")
     _pad(rig, 1, False)
     _pad(rig, 1, True)
     _pad(rig, 2, True)
@@ -252,6 +276,7 @@ def _harmony_pads(stock, image, symbols, check):
     _pad(rig, 4, False)
     check(not rig.calls, "HARMONY : relâchement conservé après Keys OFF")
     rig.call(symbols["ck_ui_config_set"], 2, config[2] | 0x80000000)
+    _key(rig, 1, True)
     active, other_header = 0x93140000, HEADER + 256
     rig.w32(0x40a7887c, active)
     rig.w32(active + 30706, 0)
@@ -270,6 +295,7 @@ def _harmony_pads(stock, image, symbols, check):
     _pad(rig, 2, False)
     check(not rig.calls, "HARMONY : le geste annulé par changement de pattern conserve son relâchement")
     selected[0] = 1
+    _key(rig, 2, True)
     _pad(rig, 1, True)
     selected[0] = 2
     _pad(rig, 2, True)
@@ -344,11 +370,11 @@ def _pad_dispatch(image, symbols, check):
         rig.call(0x4007746c, pads.CONTROLLER, pads.EVENT)
 
     dispatch(1, True)
-    check(not rig.calls and rig.call(symbols["ck_ui_modifier_get"], 2, HEADER) == 1,
-          "dispatch PadEvent réel : l'interface secondaire active T1 sans note")
+    check(not rig.calls and rig.call(symbols["ck_ui_modifier_get"], 2, HEADER) == 0,
+          "dispatch PadEvent réel : l'interface secondaire prépare T1 sans toucher la queue")
     dispatch(1, False)
     check(not rig.calls and rig.call(symbols["ck_ui_modifier_get"], 2, HEADER) == 0,
-          "dispatch PadEvent réel : le relâchement remet l'accord enregistré")
+          "dispatch PadEvent réel : relâcher T1 annule sa préparation sans toucher la queue")
     dispatch(3, True)
     rig.w32(mute_node + 8, mute_view)
     rig.w32(mute_node + 4, pads_node)
@@ -428,7 +454,7 @@ def _held_pad_dispatch(stock, image, symbols, check):
         before = bytes(rig.uc.mem_read(HEADER, 64))
         for number in range(1, 7):
             pad(number, True)
-            valid &= (not rig.calls and selected[0] == 2 and
+            valid &= (rig.calls == [("off", (2, 48, 64)), _on(2, 48)] and selected[0] == 2 and
                       rig.call(symbols["ck_ui_modifier_get"], 2, HEADER) == number and
                       rig.call(symbols["ck_ui_active_note"], 2) == 48)
             pad(number, False)
@@ -826,14 +852,170 @@ def _shape_ui(stock, image, symbols, check):
     check(valid, "SHAPE UI : Keys OFF, autre piste, machine, paramètre ou objet restent stock")
 
 
-def run(stock, patched, symbols, check):
-    """Exécute les contrôles ; check(bool, texte) appartient à la preuve principale."""
+def _pad_attacks(image, symbols, check):
+    """Réarticulation native, vélocité capturée, maintien et absence de note fantôme."""
+    rig, _, selected, _, velocity = _ui_rig(image, symbols)
+    for track in range(6):
+        selected[0], velocity[0] = track, 37 + 13 * track
+        captured = velocity[0]
+        _key(rig, 8, True)
+        velocity[0] = 1
+        valid = True
+        for pad in range(1, 7):
+            _pad(rig, pad, True, velocity=1 if pad % 2 else 127)
+            valid &= rig.calls == [("off", (track, 60, 64)), _on(track, 60, captured)]
+            _pad(rig, pad, True)
+            valid &= not rig.calls  # événement du même pad encore maintenu
+            _pad(rig, pad, False)
+            valid &= not rig.calls
+        _key(rig, 8, False)
+        valid &= rig.calls == [("off", (track, 60, 64))]
+        _pad(rig, 1, True)
+        valid &= not rig.calls
+        _pad(rig, 1, False)
+        check(valid, f"attaques T piste {track + 1} : note et vélocité TRIG conservées, un appui = une attaque, relâchements normaux")
+
+    _key(rig, 1, True)
+    _key(rig, 2, True)
+    _pad(rig, 1, True)
+    valid = rig.calls == [("off", (5, 50, 64)), _on(5, 50, 1)]
+    _key(rig, 1, False)
+    valid &= not rig.calls
+    _key(rig, 2, False)
+    valid &= rig.calls == [("off", (5, 50, 64))]
+    _pad(rig, 2, True)
+    valid &= not rig.calls
+    _pad(rig, 2, False)
+    _pad(rig, 1, False)
+    check(valid and not rig.calls, "attaques T : dernière touche prioritaire, fin du TRIG avant les pads sans reprise d'une ancienne note")
+
+    _key(rig, 7, True)
+    valid = True
+    for pad in (5, 6):
+        _pad(rig, pad, True)
+        valid &= not rig.calls
+        _pad(rig, pad, False)
+    _key(rig, 7, False)
+    check(valid, "attaques T : PARALLEL et V7 indisponibles sur degré diminué ne rejouent pas l'accord de repos")
+    check(not rig.bad, "attaques T : aucun accès mémoire hors du banc")
+
+
+def _pad_latch(image, symbols, check):
+    """La transformation suit la note ; les captures physiques restent séparées."""
+    rig, _, selected, _, _ = _ui_rig(image, symbols)
+    modifier = lambda track: rig.call(symbols["ck_ui_modifier_get"], track, HEADER)
+    valid = True
+    for track in range(6):
+        selected[0] = track
+        _key(rig, track + 1, True)
+        valid &= modifier(track) == 0
+        _pad(rig, 4, True)
+        _pad(rig, 4, False)
+        valid &= not rig.calls and modifier(track) == 4
+    check(valid and all(modifier(t) == 4 for t in range(6)),
+          "T relâché : le même pad conserve six harmonies indépendantes, une par piste")
+    for track in range(6):
+        selected[0] = track
+        _key(rig, track + 1, True, flags=8)
+        valid = not rig.calls and modifier(track) == 4
+        _key(rig, track + 1, False)
+        valid &= modifier(track) == 4
+        _pad(rig, 1, True)
+        valid &= not rig.calls and modifier(track) == 4
+        _key(rig, track + 1, True)
+        valid &= modifier(track) == 1
+        _key(rig, track + 1, True)
+        valid &= modifier(track) == 0
+        _pad(rig, 1, True)
+        valid &= not rig.calls and modifier(track) == 0
+        _pad(rig, 1, False)
+        valid &= not rig.calls and modifier(track) == 0
+        _pad(rig, 1, True)
+        valid &= [kind for kind, _ in rig.calls] == ["off", "on"] and modifier(track) == 1
+        _pad(rig, 1, False)
+        valid &= not rig.calls and modifier(track) == 1
+        _key(rig, track + 1, True)
+        valid &= modifier(track) == 0
+        _key(rig, track + 1, False)
+        valid &= all(modifier(t) == (0 if t <= track else 4) for t in range(6))
+        check(valid, f"T piste {track + 1} : queue conservée, préparation consommée une fois, TRIG suivant à EXT, prochain appui T actif")
+    check(not rig.bad, "T conservé : aucun accès mémoire hors du banc")
+
+
+def _pad_prepare(image, symbols, check):
+    """Préparer une harmonie sans publier de changement avant le prochain TRIG."""
+    rig, config, selected, _, _ = _ui_rig(image, symbols)
+    modifier = lambda track=2: rig.call(symbols["ck_ui_modifier_get"], track, HEADER)
+    for pad in range(1, 7):
+        _key(rig, 1, True)
+        _pad(rig, 4, True)
+        _pad(rig, 4, False)
+        _key(rig, 1, False)
+        before = bytes(rig.uc.mem_read(symbols["live_modifiers"], 48))
+        _pad(rig, pad, True)
+        valid = not rig.calls and bytes(rig.uc.mem_read(symbols["live_modifiers"], 48)) == before
+        _key(rig, 1, True)
+        valid &= rig.calls == [_on(2, 48)] and modifier() == pad
+        _pad(rig, pad, False)
+        valid &= not rig.calls and modifier() == pad
+        _key(rig, 1, False)
+        _pad(rig, pad, True)
+        _pad(rig, pad, False)
+        _key(rig, 2, True)
+        valid &= rig.calls == [_on(2, 50)] and modifier() == 0
+        _key(rig, 2, False)
+        check(valid, f"préparation T{pad} : queue intacte, prochain TRIG transformé, préparation relâchée annulée")
+
+    # Captures physiques et identités de piste/pattern restent distinctes.
+    _pad(rig, 1, True)
+    _pad(rig, 6, True)
+    _pad(rig, 1, False)
+    selected[0] = 1
+    _key(rig, 1, True)
+    valid = modifier(1) == 0
+    selected[0] = 2
+    _key(rig, 2, True)
+    valid &= modifier() == 6
+    _key(rig, 2, True)
+    valid &= modifier() == 0
+    _pad(rig, 6, False)
+    _key(rig, 2, False)
+    check(valid, "préparation : dernier pad prioritaire, piste indépendante, consommation unique même T tenu")
+
+    _pad(rig, 3, True)
+    rig.call(symbols["ck_ui_config_set"], 2, config[2])
+    _key(rig, 1, True)
+    valid = modifier() == 0
+    _pad(rig, 3, False)
+    # Le scanner physique signale une fin absorbée par une vue prioritaire.
+    rig.pressed.discard(16)
+    before = bytes(rig.uc.mem_read(symbols["live_modifiers"], 48))
+    _pad(rig, 5, True)
+    valid &= not rig.calls and bytes(rig.uc.mem_read(symbols["live_modifiers"], 48)) == before
+    _key(rig, 1, True)
+    valid &= modifier() == 5
+    _pad(rig, 5, False)
+    _key(rig, 1, False)
+    check(valid and not rig.bad, "préparation : changement de réglage annule, capture TRIG périmée ne transforme pas la queue")
+
+
+def run_pad_release(stock, patched, symbols, check):
+    """Preuves ciblées TRIG/pads, sans les suites indépendantes de menu/SHAPE."""
     symbols = {name: int(value, 16) if isinstance(value, str) else value for name, value in symbols.items()}
     _keys(stock, patched, symbols, check)
     _pads(stock, patched, symbols, check)
     _harmony_pads(stock, patched, symbols, check)
+    _pad_attacks(patched, symbols, check)
+    _pad_latch(patched, symbols, check)
+    _pad_prepare(patched, symbols, check)
     _pad_dispatch(patched, symbols, check)
     _held_pad_dispatch(stock, patched, symbols, check)
+
+
+def run(stock, patched, symbols, check):
+    """Exécute les contrôles ; check(bool, texte) appartient à la preuve principale."""
+    symbols = {name: int(value, 16) if isinstance(value, str) else value for name, value in symbols.items()}
+    run_pad_release(stock, patched, symbols, check)
     _dispatch(stock, patched, symbols, check)
     _menu(patched, symbols, check)
     _shape_ui(stock, patched, symbols, check)

@@ -4,6 +4,7 @@
  * Les hooks de chargement et d'initialisation rétablissent ces champs réservés.
  */
 #include "chord_ui.h"
+#include "chord_plocks.h"
 typedef unsigned char u8;
 typedef unsigned int u32;
 
@@ -16,6 +17,19 @@ typedef unsigned int u32;
 extern u32 ck_storage_irq_save(void);
 extern void ck_storage_irq_restore(u32 sr);
 static const void *last_audio_header;
+/* Écrit uniquement par la boucle d'événements audio, lu par son DSP. */
+static u8 sequenced[6];
+
+void ck_audio_event(u32 track, const u32 *event)
+{
+    /* Une fin de note conserve l'origine de la queue. Un événement accepté
+     * note-on ou lock-only choisit l'harmonie de la nouvelle note. Ne jamais
+     * effacer ici l'état UI : une note live peut attendre derrière cet événement
+     * dans la même file, avec sa transformation déjà publiée par l'interface.
+     */
+    if (track < 6 && (event[1] == 1 || (event[10] & 129u) == 1))
+        sequenced[track] = event[3] == 1;
+}
 
 static u32 get32(const volatile u8 *p)
 {
@@ -194,13 +208,17 @@ u32 ck_audio_controls(u32 track)
 u32 ck_audio_locked_controls(u32 track, u32 locked)
 {
     u32 controls = ck_audio_controls(track);
-    /* Un pad tenu ou une touche jouée à la main conserve la priorité directe.
-     * Sans geste, le séquenceur fournit son lock natif, rétabli à zéro par son
-     * chemin de retour au son de base. Aucun cache par piste ni par pattern.
+    /* Le jeu direct garde sa queue jusqu'au prochain événement accepté du
+     * séquenceur. Une capture physique encore tenue ne doit pas masquer cet
+     * événement : l'OS a déjà arbitré la priorité dans sa boucle audio.
      */
-    if (!controls || controls > 1 || ck_ui_active_key(track) < 16)
+    if (!controls)
         return controls;
-    if (!(*(volatile u32 *)(0x423087f8u + track * 8u) & (1u << 23)))
+    if (track < 6 && sequenced[track])
+        controls = 1;
+    else if (controls > 1 || ck_ui_modifier_active(track, audio_header()))
+        return controls;
+    if (!(*(volatile u32 *)(0x423087f8u + track * 8u) & (1u << CK_HARMONY_SLOT)))
         locked = 0;
     return controls | ((locked <= 6 ? locked : 0) << 8);
 }

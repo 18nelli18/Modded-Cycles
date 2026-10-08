@@ -13,16 +13,20 @@ void ck_ui_config_set(unsigned track, unsigned word);
 unsigned ck_ui_revision_get(void);
 void *ck_ui_header(void);
 
-/* Modificateurs éphémères : 0 aucun, 1..6 T1..T6. header est celui du
- * pattern réellement lu, pour ne pas appliquer un geste à un autre pattern.
+/* Modificateurs éphémères : 0 aucun, 1..6 T1..T6, conservés au relâchement
+ * du pad. Un pad pressé sans TRIG prépare uniquement le prochain appui TRIG ;
+ * sans préparation encore tenue, ce nouvel appui revient à zéro. header est celui du pattern
+ * réellement lu, pour ne pas appliquer un geste à un autre pattern.
  */
 unsigned ck_ui_modifier_get(unsigned track, const void *header);
+unsigned ck_ui_modifier_active(unsigned track, const void *header);
 void ck_ui_clear_modifiers(unsigned track, const volatile void *header);
 void ck_ui_clear_header(const volatile void *header);
 unsigned ck_ui_modifier_unavailable(unsigned track);
 unsigned ck_ui_pad(void *view, unsigned char *event);
 
-/* Pointeur de KeyboardView 0x400ff9cc, repli vers 0x4001a0d2.
+/* Entrée KeyboardView 0x4001a0d2 ; repli par trampoline vers 0x4001a0da.
+ * La vtable 0x400ff9cc et son éventuel relais Model-TG restent intacts.
  * KeyEvent : code +12 (16..31), indicateurs +16.
  */
 unsigned ck_ui_key(void *view, unsigned char *event);

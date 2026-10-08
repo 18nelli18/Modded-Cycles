@@ -68,6 +68,8 @@ MASKS = {
     0x401601fc: (280, 0x400b4b4a, "sprite 35x35", SHARED_35),
     0x4015f50c: (280, 0x400b5028, "sprite 35x35", SHARED_35),
     0x40158744: (384, 0x400b7a5a, "sprite 33x48", SHARED_33_48),
+    # Coexistence Chord Keys / Model-TG (notes/40 §22).
+    0x4014d74c: (280, 0x400bac28, "sprite 35x35", SHARED_35),
 }
 
 

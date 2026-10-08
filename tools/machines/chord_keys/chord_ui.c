@@ -23,32 +23,38 @@ typedef int s32;
 struct held_key {
     void *view;
     u32 track, note;
-    u8 valid, active;
+    u8 valid, active, velocity;
 };
 
 /* Zéro dans l'image, y compris sans remise à zéro des caves au démarrage. */
 static struct held_key held[16];
 
-struct held_pad { const void *header; u32 track, rank; };
-static struct held_pad held_pads[6];
+/* Captures physiques séparées de l'harmonie : relâcher un pad ne change pas
+ * le son. La dernière transformation reste propre à sa piste et son pattern.
+ */
+static u8 held_pads[6];
+struct live_modifier { const void *header; u32 modifier; };
+static struct live_modifier live_modifiers[6];
+/* Préparation UI seulement : jamais lue par le DSP de la note précédente. */
+static struct live_modifier prepared_modifiers[6];
+static void replay_held_key(u32 track);
+extern u32 ck_ui_key_original(void *view, u8 *event);
+extern void ck_tg_key_release(void *view, u32 track, u32 note);
 extern u32 ck_storage_irq_save(void);
 extern void ck_storage_irq_restore(u32 sr);
-
-static void pad_release_rank(u32 pad)
-{
-    u32 i, rank = held_pads[pad].rank;
-    held_pads[pad].rank = 0;
-    for (i = 0; rank && i < 6; ++i)
-        if (held_pads[i].rank > rank)
-            --held_pads[i].rank;
-}
 
 void ck_ui_clear_modifiers(u32 track, const volatile void *header)
 {
     u32 i;
     for (i = 0; i < 6; ++i)
-        if (held_pads[i].header == header && (track >= 6 || held_pads[i].track == track))
-            pad_release_rank(i);
+        if (track >= 6 || i == track) {
+            if (live_modifiers[i].header == header) {
+                live_modifiers[i].modifier = 0;
+                live_modifiers[i].header = 0;
+            }
+            if (prepared_modifiers[i].header == header)
+                prepared_modifiers[i].modifier = 0;
+        }
 }
 
 void ck_ui_clear_header(const volatile void *header)
@@ -58,20 +64,23 @@ void ck_ui_clear_header(const volatile void *header)
 
 u32 ck_ui_modifier_get(u32 track, const void *header)
 {
-    u32 i, best = 0, modifier = 0;
-    for (i = 0; i < 6; ++i) {
-        /* track=6 synchronise seulement l'identité du pattern audio. Une
-         * mutation de rang est atomique ; les éditeurs masquent l'IRQ.
-         */
-        if (track == 6 && held_pads[i].header != header)
-            pad_release_rank(i);
-        if (held_pads[i].header == header && held_pads[i].track == track &&
-            held_pads[i].rank > best) {
-            best = held_pads[i].rank;
-            modifier = i + 1;
-        }
-    }
-    return modifier;
+    u32 i;
+    /* track=6 synchronise seulement l'identité du pattern audio. Les mots
+     * sont atomiques ; les éditeurs masquent l'IRQ pendant leur publication.
+     */
+    if (track == 6)
+        for (i = 0; i < 6; ++i)
+            if (live_modifiers[i].header != header) {
+                live_modifiers[i].modifier = 0;
+                live_modifiers[i].header = 0;
+            }
+    return track < 6 && live_modifiers[track].header == header
+        ? live_modifiers[track].modifier : 0;
+}
+
+u32 ck_ui_modifier_active(u32 track, const void *header)
+{
+    return header && track < 6 && live_modifiers[track].header == header;
 }
 
 static u32 selected_track(void)
@@ -87,9 +96,31 @@ static int is_chord(u32 track)
     return ((s32 (*)(void *, u32))0x4001e318)(0, track) == 5;
 }
 
+static __attribute__((noinline)) void pad_live(u32 pad, u32 track, const void *header)
+{
+    u32 key = ck_ui_active_key(track), sr;
+    held_pads[pad] = 1;
+    /* Une capture dont le relâchement a été absorbé n'est plus un TRIG tenu.
+     * Préparer le prochain appui ne touche ni la queue audio ni les P-locks.
+     */
+    if (key >= 16 || !KEY(key + 16)) {
+        prepared_modifiers[track].header = header;
+        prepared_modifiers[track].modifier = pad + 1;
+        return;
+    }
+    sr = ck_storage_irq_save();
+    live_modifiers[track].header = header;
+    live_modifiers[track].modifier = pad + 1;
+    ck_storage_irq_restore(sr);
+    /* Le recorder capture HARMONY sur le pas de la nouvelle note. Écrire ici
+     * au pas courant peut écraser le TRIG précédent avant la quantification.
+     */
+    replay_held_key(track);
+}
+
 static __attribute__((noinline)) int pad_press(u32 pad, u8 *event)
 {
-    u32 track, i, rank = 0, sr;
+    u32 track, i;
     const void *header;
     void *state;
     /* PadEvent::function est un booléen d'un octet. Son constructeur laisse
@@ -109,44 +140,25 @@ static __attribute__((noinline)) int pad_press(u32 pad, u8 *event)
         /* Un pas tenu reçoit le verrou, sans transformer un accord live.
          * Garder l'identité physique consomme aussi la fin de ce geste.
          */
-        sr = ck_storage_irq_save();
-        held_pads[pad].header = header;
-        held_pads[pad].track = track;
-        held_pads[pad].rank = 0;
-        ck_storage_irq_restore(sr);
+        held_pads[pad] = 1;
         return 1;
     }
     /* Sans pas tenu, l'édition de grille et les modes réservés restent stock. */
     if (((u8 (*)(void *))0x4006b978)(state) || ((u8 (*)(void *))0x4006bb18)(state))
         return 0;
-    /* Rangs 1..6 sans compteur susceptible de reboucler. */
-    sr = ck_storage_irq_save();
-    for (i = 0; i < 6; ++i)
-        if (held_pads[i].rank > rank)
-            rank = held_pads[i].rank;
-    held_pads[pad].header = header;
-    held_pads[pad].track = track;
-    held_pads[pad].rank = rank + 1;
-    ck_storage_irq_restore(sr);
-    ck_plock_gesture(track, pad + 1);
+    pad_live(pad, track, header);
     return 1;
 }
 
 u32 ck_ui_pad_finish(u8 *event)
 {
-    u32 sr, track, rank, pad = WORD(event, 20) - 1;
-    const void *header;
-    if (WORD(event, 12) != 1 || pad >= 6 || WORD(event, 16) || !held_pads[pad].header)
+    u32 i, pad = WORD(event, 20) - 1;
+    if (WORD(event, 12) != 1 || pad >= 6 || WORD(event, 16) || !held_pads[pad])
         return 0;
-    sr = ck_storage_irq_save();
-    track = held_pads[pad].track;
-    rank = held_pads[pad].rank;
-    header = held_pads[pad].header;
-    pad_release_rank(pad);
-    held_pads[pad].header = 0;
-    ck_storage_irq_restore(sr);
-    if (rank && header == ck_ui_header())
-        ck_plock_gesture(track, ck_ui_modifier_get(track, header));
+    held_pads[pad] = 0;
+    for (i = 0; i < 6; ++i)
+        if (prepared_modifiers[i].modifier == pad + 1)
+            prepared_modifiers[i].modifier = 0;
     return 1;
 }
 
@@ -154,7 +166,7 @@ u32 ck_ui_pad(void *view, u8 *event)
 {
     u32 pad = WORD(event, 20) - 1;
     if (WORD(event, 12) == 1 && pad < 6) {
-        if (ck_ui_pad_finish(event) || held_pads[pad].header)
+        if (ck_ui_pad_finish(event) || held_pads[pad])
             return 1;
         if (WORD(event, 16) && pad_press(pad, event))
             return 1;
@@ -165,7 +177,7 @@ u32 ck_ui_pad(void *view, u8 *event)
 static void release_key(struct held_key *key)
 {
     if (key->active) {
-        ((void (*)(void *, u32, u32))0x40019c84)(key->view, key->track, key->note);
+        ck_tg_key_release(key->view, key->track, key->note);
         key->active = 0;
     }
 }
@@ -214,6 +226,7 @@ static void play_key(void *view, u32 key, u32 track, u32 note, u32 velocity)
     h->view = view;
     h->track = track;
     h->note = note;
+    h->velocity = velocity;
     h->valid = h->active = 1;
     ((void (*)(void *, u32, u32, u32, s32))0x40019e7a)(view, track, note, velocity, -1);
 }
@@ -246,11 +259,24 @@ u32 ck_ui_modifier_unavailable(u32 track)
     return 0;
 }
 
+static void replay_held_key(u32 track)
+{
+    u32 key = ck_ui_active_key(track);
+    /* Une capture peut survivre au relâchement absorbé par une vue prioritaire.
+     * Seul un TRIG physiquement tenu peut réarticuler l'accord.
+     */
+    if (key < 16 && KEY(key + 16) && !ck_ui_modifier_unavailable(track)) {
+        struct held_key *h = &held[key];
+        play_key(h->view, key, track, h->note, h->velocity);
+    }
+}
+
 static __attribute__((noinline)) int handle_press(void *view, u8 *event, u32 key)
 {
     struct chord_keys_result chord;
     void *state;
-    u32 track, word;
+    u32 track, word, sr, modifier;
+    const void *header;
     if ((WORD(event, 16) & 2) || KEY(1) || KEY(2) || KEY(3))
         return 0;
     state = ((void *(*)(void))0x400cf9a8)();
@@ -265,6 +291,18 @@ static __attribute__((noinline)) int handle_press(void *view, u8 *event, u32 key
         return 0;
     if (!chord_for(word, key, &chord))
         return 1; /* réglage invalide : ne pas déclencher une autre piste */
+    /* Le nouveau TRIG consomme une préparation encore tenue sur sa piste et
+     * son pattern, sinon il part de son extension. Le pad de la note précédente
+     * n'est pas une préparation ; play_key conserve les réarticulations live.
+     */
+    header = ck_ui_header();
+    modifier = prepared_modifiers[track].header == header
+        ? prepared_modifiers[track].modifier : 0;
+    sr = ck_storage_irq_save();
+    ck_ui_clear_modifiers(track, header);
+    live_modifiers[track].header = header;
+    live_modifiers[track].modifier = modifier;
+    ck_storage_irq_restore(sr);
     play_key(view, key, track, chord.notes[0], key_velocity(track));
     return 1;
 }
@@ -293,7 +331,7 @@ u32 ck_ui_key(void *view, u8 *event)
                 return 1;
         }
     }
-    return ((u32 (*)(void *, u8 *))0x4001a0d2)(view, event);
+    return ck_ui_key_original(view, event);
 }
 
 /* Menu FUNC + RETRIG : conventions de MenuItem déjà éprouvées par l'arpège.

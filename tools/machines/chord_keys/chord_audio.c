@@ -7,6 +7,7 @@
 #include "chord_audio.h"
 #include "chord_voicing.h"
 #include "chord_display.h"
+#include "chord_plocks.h"
 
 /* Trampoline du prologue stock, évite de repasser par le détournement d'entrée. */
 extern void chord_audio_original(int pitch_q16, void *voice, const unsigned short *params);
@@ -165,7 +166,7 @@ void chord_audio_update(int pitch_q16, void *voice, const unsigned short *params
         if (note > 96)
             note = 96;
         if (cfg & 0x80000000u)
-            frame.controls = ck_audio_locked_controls(track, params[23]);
+            frame.controls = ck_audio_locked_controls(track, params[CK_HARMONY_SLOT]);
         chord_audio_prepare(&frame, cfg, (unsigned int)note);
         if (!frame.active)
             ck_chord_live[track] = 0;

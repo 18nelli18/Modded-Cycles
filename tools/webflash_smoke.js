@@ -285,29 +285,33 @@ async function main() {
       "FR: chord keyboard translated, with its guide link");
     doc.getElementById("feat-chord-keys").click(); await wait(5);
     check(doc.getElementById("feat-chord-keys").checked && !doc.getElementById("feat-model-tg").checked,
-      "Chord Keys selection excludes Model-TG");
+      "Chord Keys can be selected independently");
     doc.getElementById("feat-model-tg").click(); await wait(5);
-    check(!doc.getElementById("feat-chord-keys").checked,
-      "Model-TG selection excludes Chord Keys in the other direction");
+    check(doc.getElementById("feat-chord-keys").checked && doc.getElementById("feat-model-tg").checked,
+      "Model-TG and Chord Keys stay selected together");
+    doc.getElementById("feat-chord-keys").click(); await wait(5);
+    doc.getElementById("feat-chord-keys").click(); await wait(5);
+    check(doc.getElementById("feat-model-tg").checked && doc.getElementById("feat-chord-keys").checked,
+      "Chord Keys also preserves Model-TG when selected second");
     check(/\(inclus avec Model-TG\)/.test(doc.querySelector("label[for=feat-browser-scroll] .ttl").textContent),
       "FR: the tweaks Model-TG holds say « (inclus avec Model-TG) »");
     doc.getElementById("feat-model-tg").click(); await wait(5);
     doc.querySelector('.lang button[data-lang="en"]').click();
     await wait(20);
 
-    // Le retour matériel ancien ne valide pas la nouvelle révision Harmony.
+    // Le retour matériel de Nico reste distinct de la classification expérimentale amont.
     for (const f of w.MC_TWEAKS.features) {
       const cb = doc.getElementById("feat-" + f.id);
       if (cb.checked && !cb.disabled) cb.click();
     }
     box("feat-chord-keys").click(); await wait(5);
     check(tagOf("feat-chord-keys") === "Experimental"
-      && /no reported hardware test, alone or combined/.test(text(doc, "chord-test-scope"))
-      && /previous revision/.test(text(doc, "chord-test-scope"))
+      && /Tested by Nico Heuser on his Model:Cycles/.test(text(doc, "chord-test-scope"))
+      && /not every possible combination/.test(text(doc, "chord-test-scope"))
       && /DIATONIC, JAZZ or TENSION/.test(text(doc, "features"))
       && /T1–T6 always change the chord temporarily and keep the selected track/.test(text(doc, "features"))
       && /played chord’s name on screen/.test(text(doc, "features")),
-      "Chord Keys alone: new revision stays experimental; previous hardware report is scoped");
+      "Chord Keys alone: Nico hardware report is scoped; upstream status stays experimental");
     box("feat-usb6").click(); await wait(5);
     check(tagOf("feat-chord-keys") === "Experimental"
       && !doc.querySelector("label[for=feat-chord-keys] .tag").classList.contains("ok"),

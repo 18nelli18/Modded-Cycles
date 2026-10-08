@@ -3,6 +3,58 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.35", date: "2026-10-07", changes: [
+    { en: "Chord Keys, the flasher and the full guide are linked together on Nico’s GitHub Pages site",
+      fr: "Chord Keys, le flasher et le guide complet sont reliés sur le site GitHub Pages de Nico" },
+    { en: "A dedicated Chord Keys 1.2 page introduces the chord keyboard with interactive triad, seventh and extension examples, the three new features, a quick guide and a direct link to Nico Heuser’s Modded Cycles flasher",
+      fr: "Une page dédiée à Chord Keys 1.2 présente le clavier d’accords avec des exemples interactifs de triades, septièmes et extensions, les trois nouveautés, un guide rapide et un accès direct au flasher Modded Cycles de Nico Heuser" },
+    { en: "Nico reports testing Chord Keys 1.2 on his Model:Cycles, including with the other Cycles mods. This is his hardware report, not an exhaustive test of every flasher selection; the upstream experimental classification is unchanged",
+      fr: "Nico confirme avoir testé Chord Keys 1.2 sur son Model:Cycles, y compris avec les autres mods Cycles. Il s’agit de son retour matériel, pas d’un essai exhaustif de chaque sélection du flasher ; la classification expérimentale amont est inchangée" },
+  ] },
+  { version: "1.34", date: "2026-10-07", changes: [
+    { en: "Chord Keys now combines with every other Cycles mod, including Model-TG and its version with the Syntakt engines. Existing restrictions between other mods still apply; Samples OS remains a separate installation",
+      fr: "Chord Keys se combine désormais avec tous les autres mods Cycles, dont Model-TG et sa version avec les moteurs Syntakt. Les restrictions entre les autres mods restent applicables ; l’OS Samples reste une installation séparée" },
+    { en: "With Keys ON on CHORD, choose the keyboard’s Root and Scale in FUNC + RETRIG. Model-TG’s Scale Lock still works on other tracks and with Keys OFF",
+      fr: "Avec Keys ON sur CHORD, choisissez Root et Scale du clavier dans FUNC + RETRIG. Scale Lock de Model-TG fonctionne toujours sur les autres pistes et avec Keys OFF" },
+    { en: "HARMONY locks stay independent of Model-TG’s Attack, Filter, Resonance and Sampler settings. Existing Chord Keys projects keep their saved harmony locks",
+      fr: "Les locks HARMONY restent indépendants des réglages Attack, Filtre, Résonance et Sampler de Model-TG. Les anciens projets Chord Keys conservent leurs locks harmoniques" },
+    { en: "Checked in focused emulation with Model-TG and the Syntakt combinations, plus four real firmware builds in the web builder. Experimental revision; hardware testing is pending",
+      fr: "Vérifié en émulation ciblée avec Model-TG et les combinaisons Syntakt, ainsi que par quatre constructions réelles de firmware dans le builder web. Révision expérimentale ; essai matériel en attente" },
+  ] },
+  { version: "1.33", date: "2026-10-07", changes: [
+    { en: "Chord Keys: LIVE RECORDING now replays the original TRIG chord and the later T-pad chord separately, instead of making both sound like the last pad",
+      fr: "Chord Keys : LIVE RECORDING rejoue désormais séparément l’accord TRIG initial et l’accord du pad T suivant, au lieu de leur donner à tous deux le son du dernier pad" },
+    { en: "A pad attack placed on the next step no longer changes the previous step’s chord. Releasing T still keeps the live chord’s tail; preparing the next TRIG remains available",
+      fr: "Une attaque de pad placée sur le pas suivant ne change plus l’accord du pas précédent. Relâcher T conserve la queue de l’accord live ; la préparation du prochain TRIG reste disponible" },
+    { en: "Checked with focused Chord Keys recording, playback and save/load emulation. Experimental revision; hardware testing is pending",
+      fr: "Vérifié en émulation ciblée Chord Keys : enregistrement, relecture et sauvegarde/recharge. Révision expérimentale, essai matériel en attente" },
+  ] },
+  { version: "1.32", date: "2026-10-07", changes: [
+    { en: "Chord Keys: with no TRIG held, pressing T leaves the previous chord’s tail untouched. Hold T while choosing the next TRIG to start that chord with the prepared change",
+      fr: "Chord Keys : sans TRIG tenu, presser T laisse intacte la queue de l’accord précédent. Maintenez T en choisissant le prochain TRIG pour jouer cet accord avec le changement préparé" },
+    { en: "Release T before the TRIG to cancel the preparation. The next TRIG consumes it once; releasing T after that keeps the changed chord sounding",
+      fr: "Relâchez T avant le TRIG pour annuler la préparation. Le prochain TRIG la consomme une seule fois ; relâcher T ensuite conserve l’accord modifié" },
+    { en: "Preparing T adds no note or recording lock. LIVE RECORDING captures the prepared change with the next TRIG. Checked with focused Chord Keys emulation; hardware testing is pending",
+      fr: "Préparer T n’ajoute ni note ni lock enregistré. LIVE RECORDING capture le changement préparé avec le prochain TRIG. Vérifié par des preuves ciblées Chord Keys ; essai matériel en attente" },
+  ] },
+  { version: "1.31", date: "2026-10-07", changes: [
+    { en: "Chord Keys: releasing T1–T6 now keeps the changed chord sounding, with no return to an earlier pad or the original chord and no extra attack",
+      fr: "Chord Keys : relâcher T1–T6 conserve désormais l’accord modifié, sans retour à un pad précédent ni à l’accord original, et sans attaque supplémentaire" },
+    { en: "Each new TRIG press starts with that degree’s saved extension, even if a pad is still held. Press T again to change and reattack the new chord",
+      fr: "Chaque nouvel appui TRIG retrouve l’extension enregistrée de son degré, même si un pad reste tenu. Appuyez de nouveau sur T pour modifier et réarticuler le nouvel accord" },
+    { en: "LIVE RECORDING no longer writes return locks when you release a pad. Pad attacks and grid editing remain available. Experimental revision; hardware testing is pending",
+      fr: "LIVE RECORDING n’écrit plus de locks de retour au relâchement d’un pad. Les attaques des pads et l’édition en grille restent disponibles. Révision expérimentale, essai matériel en attente" },
+  ] },
+  { version: "1.30", date: "2026-10-07", changes: [
+    { en: "Chord Keys: while holding a TRIG, each new T1–T6 press plays the whole changed chord with a fresh attack, at the original TRIG velocity. Changes remain audible after the previous chord has faded",
+      fr: "Chord Keys : pendant un TRIG tenu, chaque nouvel appui T1–T6 rejoue l’accord modifié entier avec une nouvelle attaque, à la vélocité du TRIG initial. Les changements restent audibles après la décroissance de l’accord précédent" },
+    { en: "Holding a pad does not repeat the chord. Release it to return to the previous held pad or saved extension without an extra attack. Pads alone do not start a note; unavailable changes remain inactive",
+      fr: "Maintenir un pad ne répète pas l’accord. Relâchez-le pour retrouver le pad précédent ou l’extension enregistrée sans attaque supplémentaire. Un pad seul ne lance pas de note ; les changements indisponibles restent inactifs" },
+    { en: "LIVE RECORDING captures these new attacks as notes with HARMONY locks. Releases remain changes without a new note. Recording over a step follows the normal note-recording rules",
+      fr: "LIVE RECORDING capture ces attaques comme notes avec leurs locks HARMONY. Les relâchements restent des changements sans nouvelle note. Réenregistrer sur un pas suit les règles habituelles de prise de notes" },
+    { en: "Experimental revision checked in emulation; hardware listening and timing checks are still required",
+      fr: "Révision expérimentale vérifiée en émulation ; écoute et vérification du timing sur la machine encore nécessaires" },
+  ] },
   { version: "1.29", date: "2026-10-07", changes: [
     { en: "Chord Keys: fixed the remaining track changes when pressing T1–T6 while holding a chord. TRACK + pad still selects a track",
       fr: "Chord Keys : correction des changements de piste encore possibles en appuyant sur T1–T6 pendant un accord tenu. TRACK + pad sélectionne toujours une piste" },

@@ -1,3 +1,15 @@
+/* Entrée KeyboardView 0x4001a0d2 : les huit octets déplacés par ck_ui_key.
+ * La vtable reste intacte : Model-TG appelle cette entrée depuis tick_hook,
+ * puis exécute son entretien. Le repli saute le détour sans récursion.
+ * Même cadre de 44 octets et mêmes registres sauvegardés que le stock.
+ */
+    .globl ck_ui_key_original
+    .section .text.ck_ui_key_original, "ax"
+ck_ui_key_original:
+    lea -44(%sp), %sp
+    movem.l %d2-%d7/%a2-%a6, (%sp)
+    jmp 0x4001a0da
+
 /* Construction du libellé std::string : même ABI que 0x4002cc44.
  * a0 = adresse de retour de la chaîne ; 4(sp) = stockage de std::function,
  * contenant un pointeur vers la fermeture de quatre octets, elle-même le texte.

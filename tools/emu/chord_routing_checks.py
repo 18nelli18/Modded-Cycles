@@ -61,6 +61,7 @@ def _rig(image, symbols=None):
 
 
 def _key(rig, down, flags=0, key=1):
+    (rig.pressed.add if down else rig.pressed.discard)(15 + key)
     rig.calls.clear()
     rig.call(ui.KEY_CTOR, pads.EVENT, 15 + key, int(down) | flags, 123, 127)
     return rig.call(0x40077720, pads.CONTROLLER, pads.EVENT) & 255
@@ -87,11 +88,11 @@ def _padding(stock, image, symbols, check):
             valid &= stock_selected[0] == number - 1
             _pad(reference, number, False, padding)
             valid &= _pad(rig, number, True, padding) == 1
-            valid &= not rig.calls and selected[0] == 2
+            valid &= rig.calls == [("off", (2, 48, 64)), ui._on(2, 48)] and selected[0] == 2
             valid &= rig.call(symbols["ck_ui_modifier_get"], 2, ui.HEADER) == number
             valid &= rig.call(symbols["ck_ui_active_note"], 2) == 48
             _pad(rig, number, False, padding)
-            valid &= not rig.calls and rig.call(symbols["ck_ui_modifier_get"], 2, ui.HEADER) == 0
+            valid &= not rig.calls and rig.call(symbols["ck_ui_modifier_get"], 2, ui.HEADER) == number
         _key(rig, False)
         valid &= rig.calls == [("off", (2, 48, 64))]
         check(valid and not rig.bad and not reference.bad,
@@ -137,6 +138,9 @@ def _lost_release(image, symbols, check):
         check(consumed == 1 and not rig.calls and rig.r32(PATTERN_VIEW + 140) == 2 and
               rig.call(symbols["ck_ui_active_note"], 2) == 48,
               f"relâchement perdu ({fallback}) : vraie vue PATTERN consomme le TRIG avant KeyboardView")
+        _pad(rig, 1, True, b"\xa5\x5a\xe3")
+        check(not rig.calls, "attaque T : capture TRIG périmée après PATTERN, aucune note fantôme")
+        _pad(rig, 1, False, b"\xa5\x5a\xe3")
         if fallback in ("Keys OFF", "annulation puis OFF"):
             if fallback == "annulation puis OFF":
                 rig.call(symbols["ck_ui_cancel_track"], 2)
