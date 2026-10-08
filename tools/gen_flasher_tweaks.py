@@ -72,8 +72,8 @@ FEATURES = [
         ],
         # avec les moteurs du Syntakt : la base de la version combinee (notes/31), et pour chaque combinaison de
         # moteurs son tweak syntakt-tg-<moteurs> (« tg » des combinaisons de la carte des moteurs) ; de meme avec
-        # la machine MACRO (notes/43), qui prend alors macro-tg
-        "with": {"syntakt": "30-model-tg-st", "macro": "30-model-tg-st"},
+        # la machine MACRO (notes/43), qui prend alors macro-tg, et les machines Kick2 et Kick3 (notes/47), kick-tg
+        "with": {"syntakt": "30-model-tg-st", "macro": "30-model-tg-st", "kick": "30-model-tg-st"},
     },
     {
         "id": "sample-preview",
@@ -89,7 +89,7 @@ FEATURES = [
             {"file": "33-sample-preview", "label": None},
         ],
         # avec les moteurs du Syntakt, Model-TG devient model-tg-st : l'ecoute prend la version faite pour lui
-        "with": {"syntakt": "33-sample-preview-st", "macro": "33-sample-preview-st"},
+        "with": {"syntakt": "33-sample-preview-st", "macro": "33-sample-preview-st", "kick": "33-sample-preview-st"},
     },
     {
         "id": "latching-mute",
@@ -202,11 +202,13 @@ FEATURES = [
                 "les potards (forme, repli, asymetrie, harmonique), PITCH change le caractere de la chute.",
         "status": "experimental",
         "credit": {"kind": "based", "who": "apiel", "repo": "apiel/zicBox"},
-        # meme bloc apres l'image et memes tables de machines que MACRO, les moteurs du Syntakt et Model-TG (notes/47)
-        "excludes": ["macro", "syntakt", "model-tg"],
+        # memes tables de machines et meme bloc apres l'image que MACRO et les moteurs du Syntakt : jamais ensemble (notes/47)
+        "excludes": ["macro", "syntakt"],
         "variants": [
             {"file": "26-kick", "label": None},
         ],
+        # avec Model-TG : la version qui s'ajoute apres model-tg-st (Model-TG prend cette base, « with » ci-dessous)
+        "with": {"model-tg": "34-kick-tg"},
     },
     {
         "id": "syntakt",

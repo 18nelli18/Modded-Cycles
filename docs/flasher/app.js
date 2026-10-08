@@ -11487,8 +11487,8 @@ const FEAT = {
     kick: { label: "Kick2 and Kick3 machines",
       short: "Two extra kick machines: shape the wave and the pitch drop with the knobs.",
       clash: "both add machines in the same place in memory",
-      desc: "Two extra machines after Chord, ports of the kick engines of apiel's zicBox. Kick2: COLOR morphs the wave (sine, triangle, saw, square, soft-clipped saw), SHAPE is a waveshaper, SWEEP picks the shape of the pitch drop (from a classic punch to a gabber double drop), CONTOUR adds a resonant body, PUNCH adds drive. Kick3: the wave is built with the knobs: COLOR picks it (sine, triangle, saw, square), SHAPE folds it, SWEEP skews it, CONTOUR adds the octave; PITCH sets how the pitch drops (soft glide, classic, gabber double drop, long dive); PUNCH adds drive. The pitch follows the note of the trig. DECAY and GATE work as on the other machines.",
-      note: "A project using these machines needs a firmware with them at the same place (7th and 8th machines). Not with MACRO, the Syntakt engines or Model-TG." },
+      desc: "Two extra machines after Chord (after the Sampler with Model-TG), ports of the kick engines of apiel's zicBox. Kick2: COLOR morphs the wave (sine, triangle, saw, square, soft-clipped saw), SHAPE is a waveshaper, SWEEP picks the shape of the pitch drop (from a classic punch to a gabber double drop), CONTOUR adds a resonant body, PUNCH adds drive. Kick3: the wave is built with the knobs: COLOR picks it (sine, triangle, saw, square), SHAPE folds it, SWEEP skews it, CONTOUR adds the octave; PITCH sets how the pitch drops (soft glide, classic, gabber double drop, long dive); PUNCH adds drive. The pitch follows the note of the trig. DECAY and GATE work as on the other machines.",
+      note: "A project using these machines needs a firmware with them at the same place (7th and 8th machines, or 8th and 9th with Model-TG). Not with MACRO or the Syntakt engines." },
   },
   fr: {
     usb6: { label: "Audio USB 6 canaux",
@@ -11541,8 +11541,8 @@ const FEAT = {
     kick: { label: "Machines Kick2 et Kick3",
       short: "Deux machines de kick en plus : la forme d'onde et la chute de hauteur se règlent aux potards.",
       clash: "les deux ajoutent des machines au même endroit de la mémoire",
-      desc: "Deux machines ajoutées après Chord, portées depuis les moteurs de kick de zicBox d'apiel. Kick2 : COLOR fond la forme d'onde (sinus, triangle, scie, carré, scie écrêtée), SHAPE est un waveshaper, SWEEP choisit la forme de la chute de hauteur (du punch classique à la double chute gabber), CONTOUR ajoute un corps résonant, PUNCH ajoute du drive. Kick3 : la forme d'onde se construit aux potards : COLOR la choisit (sinus, triangle, scie, carré), SHAPE la replie, SWEEP la déforme, CONTOUR ajoute l'octave ; PITCH règle la façon dont la hauteur tombe (glissé doux, classique, double chute gabber, plongeon long) ; PUNCH ajoute du drive. La hauteur suit la note du trig. DECAY et GATE marchent comme sur les autres machines.",
-      note: "Un projet qui utilise ces machines demande un firmware où elles sont à la même place (7e et 8e machines). Pas avec MACRO, les moteurs du Syntakt ni Model-TG." },
+      desc: "Deux machines ajoutées après Chord (après le Sampler avec Model-TG), portées depuis les moteurs de kick de zicBox d'apiel. Kick2 : COLOR fond la forme d'onde (sinus, triangle, scie, carré, scie écrêtée), SHAPE est un waveshaper, SWEEP choisit la forme de la chute de hauteur (du punch classique à la double chute gabber), CONTOUR ajoute un corps résonant, PUNCH ajoute du drive. Kick3 : la forme d'onde se construit aux potards : COLOR la choisit (sinus, triangle, scie, carré), SHAPE la replie, SWEEP la déforme, CONTOUR ajoute l'octave ; PITCH règle la façon dont la hauteur tombe (glissé doux, classique, double chute gabber, plongeon long) ; PUNCH ajoute du drive. La hauteur suit la note du trig. DECAY et GATE marchent comme sur les autres machines.",
+      note: "Un projet qui utilise ces machines demande un firmware où elles sont à la même place (7e et 8e machines, ou 8e et 9e avec Model-TG). Pas avec MACRO ni les moteurs du Syntakt." },
   },
 };
 

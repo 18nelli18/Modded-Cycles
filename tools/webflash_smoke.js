@@ -167,8 +167,8 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 16).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,macro,macro-tg,kick,syntakt-sd"
-      && ids.length === 15 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+    check(ids.slice(0, 16).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,macro,macro-tg,kick,kick-tg"
+      && ids.length === 16 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
       && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 13,
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG: ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
@@ -246,11 +246,12 @@ async function main() {
     box("feat-macro").click(); await wait(5);
     box("feat-kick").click(); await wait(5);
     box("feat-model-tg").click(); await wait(5);
-    const kickTg = !box("feat-kick").checked && box("feat-model-tg").checked;
+    const kickTg = w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
     box("feat-model-tg").click(); await wait(5);
-    check(kickAlone === "kick" && kickSwapped && kickTg && !w.MCFlasherApp.chosenTweaks().length
+    box("feat-kick").click(); await wait(5);
+    check(kickAlone === "kick" && kickSwapped && kickTg === "model-tg-st,kick-tg" && !w.MCFlasherApp.chosenTweaks().length
       && doc.querySelector('#features a[href$="#kick"]'),
-      `Kick2 and Kick3: alone ${kickAlone}, swapped out by MACRO and by Model-TG (same machine slots)`);
+      `Kick2 and Kick3: alone ${kickAlone}, swapped out by MACRO, with Model-TG ${kickTg}`);
     // Model-TG holds drumkilla's tweaks: ticked, it shows them ticked and locked, "(included with Model-TG)", and
     // builds without them; unticked, they are free again. With the Syntakt engines it makes the combined version
     // (notes/31): its base, then the engines' tweak built on top of it

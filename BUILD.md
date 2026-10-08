@@ -307,7 +307,8 @@ Incompatible avec les moteurs du Syntakt et SD VINTAGE (même mécanique, même 
 
 ### Machines Kick2 et Kick3 (ports de zicBox)
 
-`tweaks/model-cycles_OS1.13/26-kick.json` (Kick2 en 7e machine, Kick3 en 8e) est produit par `tools/gen_kick.py` : deux
+`tweaks/model-cycles_OS1.13/26-kick.json` (Kick2 en 7e machine, Kick3 en 8e) et `34-kick-tg.json` (avec Model-TG : 8e et 9e machines, par-dessus
+`model-tg-st`) sont produits par `tools/gen_kick.py` : deux
 moteurs de kick en virgule fixe, `tools/machines/kick/zic_kick2.cpp` et `zic_kick3.cpp` (ports de `PotKick.h` et
 `KickWave.h` de [apiel/zicBox](https://github.com/apiel/zicBox)), liés sans libgcc (le ColdFire n'a pas de FPU, la libgcc
 de m68k-linux-gnu est faite pour le 68020), en charge utile rangée après l'image et reconstituée au démarrage à
@@ -318,12 +319,13 @@ la preuve compare Kick3 à un modèle en virgule flottante de KickWave.h calcul�
 python3 tools/gen_kick.py --cycles model-cycles_OS1.13.syx [--check]
 python3 tools/emu/test_kick.py --cycles model-cycles_OS1.13.syx [--with 6ch-usbup,trig-hold,arp,tempo-max,boot-anim]
 ```
-Incompatible avec MACRO, les moteurs du Syntakt, SD VINTAGE et Model-TG (même mécanique, même place).
+Incompatible avec MACRO, les moteurs du Syntakt et SD VINTAGE (même mécanique, même place). Avec Model-TG : `-t model-tg-st,kick-tg`.
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
 | `kick` | `3c8423e19eda7e36c158280c85d7f8d7085a5e075d593ed34a0936aaf52eb2fd` |
 | `6ch-usbup,kick,trig-hold,arp,tempo-max,boot-anim` | `c49081b59a12020607a98df4c1175af062fa2b938c4463409bc051a9175ebfc9` |
+| `model-tg-st,kick-tg` | `28feacaf9b22db971fc041dd87e7a59016062d33bf57fa6dd23420deee9588e6` |
 
 ### Écoute d'un pas en pause
 

@@ -47,6 +47,8 @@ import build                        # noqa: E402
 import gen_kick as gk               # noqa: E402
 import gen_syntakt_engines as gs    # noqa: E402
 import mcengine as E                # noqa: E402
+import test_model_tg as TM          # noqa: E402
+import test_model_tg_syntakt as tms  # noqa: E402
 import test_sdvintage as T          # noqa: E402
 import test_sdvintage_7th as t7     # noqa: E402
 import test_syntakt_machines as tsm  # noqa: E402
@@ -70,7 +72,11 @@ class Fw:
         p, _ = build.apply_writes(stock, tweaks)
         pl, _ = build.build_payload(tweaks, stock, None)
         self.img, self.tweaks = bytes(p) + pl, tweaks
-        ours = [t for t in tweaks if t["id"] == "kick"]
+        tg = [t for t in tweaks if t["id"].startswith("model-tg")]
+        self.blob_end = BASE + len(stock) + tg[0]["append"]["size"] if tg else None
+        self.k2 = gs.TG_FIRST if tg else 6                  # index de Kick2 (Kick3 : le suivant)
+        self.k3 = self.k2 + 1
+        ours = [t for t in tweaks if t["id"].startswith("kick")]
         self.payload = None
         if not ours:
             return
@@ -82,7 +88,10 @@ class Fw:
         self.syms = {k: int(v, 16) for k, v in ours[0]["symbols"].items()}
 
     def engine(self, solo=None):
-        e = E.Engine(self.img, payload=self.payload)
+        if self.blob_end:
+            e = TM.engine(self.img, end=self.blob_end, payload=self.payload)
+        else:
+            e = E.Engine(self.img, payload=self.payload)
         if solo is not None:             # les autres pistes : machine hors limites, rien n'est calculé
             for t in range(6):
                 if t != solo:
@@ -91,9 +100,9 @@ class Fw:
 
 
 # --- 1. démarrage ----------------------------------------------------------------------------------------------
-def boot(fw):
-    """Le crochet de démarrage, exécuté pour de vrai : au début de la remise à zéro du BSS (0x400004b2, jusqu'à son
-    retour)."""
+def boot(fw, tg=None):
+    """Le crochet de démarrage, exécuté pour de vrai : seul, au début de la remise à zéro du BSS (0x400004b2, jusqu'à
+    son retour) ; avec Model-TG, par le jsr de 0x40000530, jusqu'à boot_extra_hook de Model-TG."""
     uc = Uc(UC_ARCH_M68K, UC_MODE_BIG_ENDIAN)
     uc.ctl_set_cpu_model(mk.UC_CPU_M68K_ANY)
     uc.mem_map(0x40000000, 0x02400000)
@@ -117,18 +126,29 @@ def boot(fw):
     for r, v in keep.items():
         uc.reg_write(r, v)
     sp0 = 0x90010000
-    uc.mem_write(sp0, struct.pack(">I", E.STOP))
-    uc.reg_write(mk.UC_M68K_REG_A7, sp0)
-    uc.emu_start(0x400004b2, E.STOP, count=100_000_000)
-    regs = all(uc.reg_read(r) == v for r, v in keep.items())
-    tail = BASE + E.IMAGE_LEN
-    cleared = not any(uc.mem_read(tail, len(fw.img) - E.IMAGE_LEN)) and not any(uc.mem_read(0x42338000, 0xb0))
-    check(uc.reg_read(mk.UC_M68K_REG_PC) == E.STOP and uc.reg_read(mk.UC_M68K_REG_A7) == sp0 + 4 and regs
-          and cleared and not bad,
-          "0x400004b2 -> notre crochet -> remise à zéro du BSS de l'OS (nos morceaux rangés compris), retour normal, "
-          "d2..d7/a2..a6 intacts")
+    if tg:
+        uc.reg_write(mk.UC_M68K_REG_A7, sp0)
+        uc.emu_start(gs.BOOT_CALL, tg["boot_extra_hook"], count=5_000_000)
+        pc, sp = uc.reg_read(mk.UC_M68K_REG_PC), uc.reg_read(mk.UC_M68K_REG_A7)
+        ret = struct.unpack(">I", uc.mem_read(sp, 4))[0]
+        regs = all(uc.reg_read(r) == v for r, v in keep.items())
+        check(pc == tg["boot_extra_hook"] and sp == sp0 - 4 and ret == gs.BOOT_CALL + 6 and regs and not bad,
+              f"jsr 0x40000530 -> notre crochet -> boot_extra_hook {tg['boot_extra_hook']:#x}, pile et d2..d7/a2..a6 "
+              "intactes")
+        check(bytes(uc.mem_read(BASE, len(fw.img))) == fw.img, "image (OS, Model-TG, nos morceaux) inchangée")
+    else:
+        uc.mem_write(sp0, struct.pack(">I", E.STOP))
+        uc.reg_write(mk.UC_M68K_REG_A7, sp0)
+        uc.emu_start(0x400004b2, E.STOP, count=100_000_000)
+        regs = all(uc.reg_read(r) == v for r, v in keep.items())
+        tail = BASE + E.IMAGE_LEN
+        cleared = not any(uc.mem_read(tail, len(fw.img) - E.IMAGE_LEN)) and not any(uc.mem_read(0x42338000, 0xb0))
+        check(uc.reg_read(mk.UC_M68K_REG_PC) == E.STOP and uc.reg_read(mk.UC_M68K_REG_A7) == sp0 + 4 and regs
+              and cleared and not bad,
+              "0x400004b2 -> notre crochet -> remise à zéro du BSS de l'OS (nos morceaux rangés compris), retour normal, "
+              "d2..d7/a2..a6 intacts")
     got = bytes(uc.mem_read(dst, len(rt)))
-    packed = sum(n for _, n in next(t for t in fw.tweaks if t["id"] == "kick")["append"]["pack"])
+    packed = sum(n for _, n in next(t for t in fw.tweaks if t["id"].startswith("kick"))["append"]["pack"])
     check(got == rt, f"charge utile reconstituée à {dst:#x} : {len(rt)} o (code et tables, détours, données), "
                      f"rangée en {packed} o dans l'image")
     check(bytes(uc.mem_read(0x80000000, 0x10000)) == bytes(sram), "SRAM intacte")
@@ -264,7 +284,7 @@ def sound_reference(fw):
              ("chute : plongeon long", dict(pitch=127, color=40)))
     for name, kw in cases:
         kw = dict(BASE_KW, **kw)
-        x, unm, _ = play(fw, KICK3, kw, 250)
+        x, unm, _ = play(fw, fw.k3, kw, 250)
         r = kickwave_ref(kw["pitch"], kw["color"], kw["shape"], kw["sweep"], kw["contour"], kw["punch"], kw["decay"], len(x))
         lo, hi = 64, min(len(x), 20000)
         c, lag = best_corr(x[lo:hi], r[lo:hi])
@@ -279,7 +299,7 @@ def sound_plays(fw):
     """Les deux machines jouent à tous les réglages, sans accès hors mémoire, avec un niveau borné."""
     knobs = dict(pitch=(0, 64, 127), color=(0, 64, 127), shape=(0, 64, 127), sweep=(0, 64, 127), contour=(0, 64, 127),
                  decay=(0, 64, 127), punch=(0, 1))
-    for idx, name in ((KICK2, "Kick2"), (KICK3, "Kick3")):
+    for idx, name in ((fw.k2, "Kick2"), (fw.k3, "Kick3")):
         bad, runs = [], 0
         for knob, values in knobs.items():
             for v in values:
@@ -292,8 +312,9 @@ def sound_plays(fw):
                        f"niveau entre 0,02 et 1 {bad[:3]}")
         x, unm, _ = play(fw, idx, dict(color=127, shape=127, sweep=127, contour=127, pitch=127, punch=1, decay=127), 120)
         check(not unm and np.abs(x).max() <= 1.0, f"{name} : tous les potards au maximum, PUNCH et DECAY 127")
-    # une note plus aiguë et plus grave : la hauteur suit la note
-    for idx, name in ((KICK2, "Kick2"), (KICK3, "Kick3")):
+    # une note plus aiguë et plus grave : Kick3 suit la note du trig, Kick2 non (sa hauteur est le potard PITCH) ;
+    # les deux jouent
+    for idx, name in ((fw.k2, "Kick2"), (fw.k3, "Kick3")):
         res = []
         for note in (36, 60, 84):
             x, unm, _ = play(fw, idx, dict(note=note, decay=20), 60)
@@ -352,9 +373,9 @@ def stock_unchanged(ref_fw, fw, label):
 def locks(fw, label):
     """Sur une même piste : Kick2, Kick3, SNARE, Kick3, Kick2 : chacune joue."""
     e = fw.engine(solo=0)
-    e.set(0, **dict(BASE_KW, machine=KICK2))
-    seq = {60: dict(machine=KICK3), 120: dict(machine=1, color=0, shape=127, sweep=8, contour=0),
-           180: dict(machine=KICK3), 240: dict(machine=KICK2)}
+    e.set(0, **dict(BASE_KW, machine=fw.k2))
+    seq = {60: dict(machine=fw.k3), 120: dict(machine=1, color=0, shape=127, sweep=8, contour=0),
+           180: dict(machine=fw.k3), 240: dict(machine=fw.k2)}
     x = e.render(310, trig_at=(1, 61, 121, 181, 241), on_block=lambda eng, b: eng.set(0, **seq[b]) if b in seq else None)
     segs = [np.abs(x[32 * a:32 * b]).max() / 2**31 for a, b in ((2, 58), (62, 118), (122, 178), (182, 238), (242, 308))]
     check(all(s > 0.05 for s in segs) and not e.unmapped,
@@ -366,12 +387,12 @@ def six_tracks(fw, label):
     """Les 6 pistes en kick (3 + 3), trig en même temps : chaque piste identique à elle seule."""
     solo = []
     for t in range(6):
-        idx = KICK2 if t % 2 == 0 else KICK3
+        idx = fw.k2 if t % 2 == 0 else fw.k3
         x, _, _ = play(fw, idx, dict(decay=30, color=20 * t), 150, track=t)
         solo.append(x)
     e = fw.engine()
     for t in range(6):
-        e.set(t, **dict(BASE_KW, machine=KICK2 if t % 2 == 0 else KICK3, decay=30, color=20 * t))
+        e.set(t, **dict(BASE_KW, machine=fw.k2 if t % 2 == 0 else fw.k3, decay=30, color=20 * t))
     x = np.stack([e.block(0x3f if b == 1 else 0) for b in range(150)])        # (blocs, pistes, 32)
     got = [x[:, t, :].reshape(-1).astype(np.float64) / 2**31 for t in range(6)]
     check(all(np.array_equal(g, s) for g, s in zip(got, solo)) and not e.unmapped,
@@ -382,7 +403,7 @@ def mixed(fw, ref_fw, label):
     """Kicks mêlés aux machines d'origine : les pistes d'origine restent identiques à celles du firmware sans kicks."""
     def run(f):
         e = f.engine()
-        ms = (0, KICK2, 2, KICK3, 4, 5)
+        ms = (0, fw.k2, 2, fw.k3, 4, 5)
         for t in range(6):
             e.set(t, **dict(BASE_KW, machine=ms[t], color=64, shape=64, contour=64, decay=50))
         return np.stack([e.block(0x3f if b == 1 else 0) for b in range(200)]), e.unmapped
@@ -398,7 +419,7 @@ def mixed(fw, ref_fw, label):
 def cost(fw):
     """Instructions par bloc de chaque machine (une voix qui joue), comparées à TONE (celle de l'OS)."""
     res = {}
-    for idx, name in ((TONE, "TONE"), (KICK2, "Kick2"), (KICK3, "Kick3"), (KICK3, "Kick3 tout au maximum")):
+    for idx, name in ((TONE, "TONE"), (fw.k2, "Kick2"), (fw.k3, "Kick3"), (fw.k3, "Kick3 tout au maximum")):
         e = fw.engine(solo=0)
         kw = dict(BASE_KW, machine=idx)
         if name.endswith("maximum"):
@@ -428,25 +449,67 @@ def with_others(stock, cycles, ids, alone):
     if unknown:
         raise SystemExit(f"!! tweaks inconnus : {unknown}")
     others = [by_id[i] for i in ids]
-    mine = by_id["kick"]
+    with_tg = any(t["id"].startswith("model-tg") for t in others)
+    mine = by_id["kick-tg" if with_tg else "kick"]
     clash = [t["id"] for t in others if mine["id"] in t.get("conflicts", []) or t["id"] in mine["conflicts"]]
     if clash:
-        raise SystemExit(f"!! incompatibles avec kick : {clash}")
+        raise SystemExit(f"!! incompatibles avec {mine['id']} : {clash}")
     fw = Fw(stock, sorted(others + [mine], key=lambda t: t["order"]))
     ref_fw = Fw(stock, sorted(others, key=lambda t: t["order"]))
     label = ", ".join(ids)
-    print(f"\n== kick avec {label}")
+    print(f"\n== {mine['id']} avec {label} : Kick2 en machine {fw.k2 + 1}, Kick3 en machine {fw.k3 + 1}")
     print("démarrage")
     t7.X.bootstrap_depack_ok(cycles, fw.tweaks, None) or t7.FAIL.append("bootstrap avec " + label)
-    boot(fw)
+    boot(fw, tg_context(stock, others) if with_tg else None)
     print("son")
     stock_unchanged(ref_fw, fw, f"{label} sans les kicks")
-    for idx, name in ((KICK2, "Kick2"), (KICK3, "Kick3")):
-        a, _, _ = play(alone, idx, dict(decay=40, color=64, shape=50), 200, (1, 120))
-        b, unm, _ = play(fw, idx, dict(decay=40, color=64, shape=50), 200, (1, 120))
+    for i, name in enumerate(("Kick2", "Kick3")):
+        a, _, _ = play(alone, alone.k2 + i, dict(decay=40, color=64, shape=50), 200, (1, 120))
+        b, unm, _ = play(fw, fw.k2 + i, dict(decay=40, color=64, shape=50), 200, (1, 120))
         check(np.array_equal(a, b) and not unm and a.any(), f"{name} avec {label} : sortie identique à celle des kicks seuls")
     locks(fw, f"kick avec {label}")
     mixed(fw, ref_fw, f"kick avec {label}")
+
+
+def tg_context(stock, others):
+    """Les symboles de Model-TG pour boot() : ceux de son tweak model-tg-st, et notre table de potards."""
+    tg_tw = next(t for t in others if t["id"].startswith("model-tg"))
+    tg = {k: int(v, 16) for k, v in tg_tw["symbols"].items()}
+    tg["knob_vec"] = tms.knob_vec_at(load("34-kick-tg.json"))
+    return tg
+
+
+# --- 6. avec Model-TG --------------------------------------------------------------------------------------------
+def with_model_tg(stock, cycles, alone):
+    """34-kick-tg.json par-dessus 30-model-tg-st.json : Kick2 et Kick3 en 8e et 9e machines, après le Sampler."""
+    tg_tw, kick_tg = load("30-model-tg-st.json"), load("34-kick-tg.json")
+    gs.set_base(gs.PAY_TG)
+    for m in gk.MACHINES:                                 # test_model_tg_syntakt lit les machines dans gs.CATALOG
+        gs.CATALOG[m["prefix"]] = dict(m, label=m["name"])
+    fw, ref_tg = Fw(stock, [tg_tw, kick_tg]), Fw(stock, [tg_tw])
+    tg = tg_context(stock, [tg_tw])
+    tg["knob_vec"] = tms.knob_vec_at(kick_tg)
+    print(f"\n== {kick_tg['id']} : avec Model-TG, Kick2 en machine {fw.k2 + 1}, Kick3 en machine {fw.k3 + 1}")
+    print("démarrage")
+    t7.X.bootstrap_depack_ok(cycles, [tg_tw, kick_tg], None) or t7.FAIL.append("bootstrap avec Model-TG")
+    boot(fw, tg)
+    print("interface")
+    tms.interface(ref_tg, fw, [m["prefix"] for m in gk.MACHINES], tg)
+    print("son")
+    sound_reference(fw)
+    sound_plays(fw)
+    stock_unchanged(ref_tg, fw, "Model-TG seul")
+    for i, name in enumerate(("Kick2", "Kick3")):
+        a, _, _ = play(alone, alone.k2 + i, dict(decay=40, color=64, shape=50), 200, (1, 120))
+        b, unm, _ = play(fw, fw.k2 + i, dict(decay=40, color=64, shape=50), 200, (1, 120))
+        check(not unm and a.any() and b.any() and best_corr(a[64:20000], b[64:20000], 2)[0] > 0.99,
+              f"{name} avec Model-TG : même son que seul (l'étage d'amplitude de Model-TG, Attack 0 et filtre ouvert, "
+              "ne change presque rien)")
+    locks(fw, "kick avec Model-TG")
+    six_tracks(fw, "kick avec Model-TG")
+    mixed(fw, ref_tg, "kick avec Model-TG")
+    print("coût")
+    cost(fw)
 
 
 def main():
@@ -474,7 +537,9 @@ def main():
     mixed(alone, None, "kick seul")
     print("coût")
     cost(alone)
+    with_model_tg(stock, args.cycles, alone)
     if args.others:
+        gs.set_base(gs.PAY_ALONE)
         with_others(stock, args.cycles, args.others.split(","), alone)
     print("\nTOUT OK" if not t7.FAIL else f"\n{len(t7.FAIL)} ÉCHEC(S)")
     return 1 if t7.FAIL else 0

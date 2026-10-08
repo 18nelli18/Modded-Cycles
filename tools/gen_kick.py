@@ -13,8 +13,9 @@ ColdFire) : tout est en entiers, et l'édition de liens ne prend pas libgcc, si 
 build au lieu de planter la machine.
 
 La mécanique des machines ajoutées est celle de MACRO (gen_macro.py, notes/43) pour deux machines : mêmes détours
-(gs.detours_asm), mêmes tables déplacées, mêmes adresses dans la charge utile (gs.LAYOUT). Pas de Model-TG : le
-flasher n'offre pas ce mod avec lui.
+(gs.detours_asm), mêmes tables déplacées, mêmes adresses dans la charge utile (gs.LAYOUT). Le
+flasher offre aussi la version avec Model-TG, 34-kick-tg.json (Kick2 et Kick3 en 8e et 9e machines, par-dessus
+model-tg-st), comme macro-tg pour MACRO.
 
     python3 tools/gen_kick.py --cycles model-cycles_OS1.13.syx [--check]
 
@@ -43,6 +44,7 @@ import voice_loop                  # noqa: E402
 
 DEV = HERE.parent / "tweaks" / "model-cycles_OS1.13"
 OUT = DEV / "26-kick.json"
+OUT_TG = DEV / "34-kick-tg.json"
 SRC = HERE / "machines" / "kick"
 BASE = gx.BASE
 
@@ -106,21 +108,23 @@ def compile_machines(tmp, pay):
     return blob, syms
 
 
-def build_tweak(img):
-    """Tweak des deux machines (7e et 8e)."""
-    pay = gs.PAY_ALONE
+def build_tweak(img, tg=None):
+    """Tweak des deux machines (7e et 8e ; 8e et 9e avec Model-TG, dont le Sampler est la 7e). tg : Model-TG
+    (gs.tg_context) pour la version combinée."""
+    pay = gs.PAY_TG if tg else gs.PAY_ALONE
     gs.set_base(pay)
-    first = 6
-    nm = first + N                              # machines : 6 d'origine, puis les nôtres
+    first = gs.TG_FIRST if tg else 6
+    nm = first + N                              # machines : 6 d'origine, le Sampler avec Model-TG, puis les nôtres
     top = nm - 1
     n = N
-    cur = img
+    cur = tg["img"] if tg else img              # l'image telle que nos écritures la trouvent
     u32 = lambda va: struct.unpack_from(">I", cur, va - BASE)[0]
     with tempfile.TemporaryDirectory() as d:
         tmp = pathlib.Path(d)
         blob, syms = compile_machines(tmp, pay)
         names_at, upd_at, rnd_at, map_at = gs.DATA, gs.DATA + 4 * nm, gs.DATA + 8 * nm, gs.DATA + 16 * nm
-        stubs, ssyms = gm.assemble(tmp, "det", gs.detours_asm(n, [m["image"] for m in MACHINES], FIRSTS, None), gs.STUBS)
+        stubs, ssyms = gm.assemble(tmp, "det", gs.detours_asm(n, [m["image"] for m in MACHINES], FIRSTS, tg)
+                                   + (gm.dispatch_tg_asm(syms, rnd_at, tg) if tg else ""), gs.STUBS)
         if gs.STUBS + len(stubs) > gs.DATA:
             raise SystemExit("!! détours trop grands")
 
@@ -131,9 +135,14 @@ def build_tweak(img):
             if s_ not in addr:
                 addr[s_] = at
                 at += len(s_) + 1
-        names = [u32(g7.NAMES + 4 * i) for i in range(6)] + [addr[m["name"]] for m in MACHINES]
-        upd = [u32(g7.UPDATE_TAB + 4 * i) for i in range(6)] + [syms[m["prefix"] + "_update"] for m in MACHINES]
-        rnd = [u32(g7.RENDER_TAB + 4 * i) for i in range(6)] + [syms[m["prefix"] + "_render"] for m in MACHINES]
+        if tg:                                  # noms : ceux de Model-TG (le Sampler montre son échantillon)
+            blob_u32 = lambda va: struct.unpack_from(">I", tg["blob"], va - tg["blob_at"])[0]
+            names = [blob_u32(tg["sampler_name_table"] + 4 * i) for i in range(7)] + [addr[m["name"]] for m in MACHINES]
+        else:
+            names = [u32(g7.NAMES + 4 * i) for i in range(6)] + [addr[m["name"]] for m in MACHINES]
+        pad = [u32(g7.UPDATE_TAB)] * (first - 6), [u32(g7.RENDER_TAB)] * (first - 6)   # entrée 6 du Sampler : jamais lue
+        upd = [u32(g7.UPDATE_TAB + 4 * i) for i in range(6)] + pad[0] + [syms[m["prefix"] + "_update"] for m in MACHINES]
+        rnd = [u32(g7.RENDER_TAB + 4 * i) for i in range(6)] + pad[1] + [syms[m["prefix"] + "_render"] for m in MACHINES]
         data = bytearray()
         for t in (names, upd, rnd, range(1, nm + 1)):
             data += b"".join(g7.be32(x) for x in t)
@@ -174,17 +183,26 @@ def build_tweak(img):
         writes.append(None)                     # crochet de démarrage : écrit plus bas (il porte la liste des morceaux)
         red = sprites.redirect_write(gx.CAVE)
         w(BASE + red["off"], bytes.fromhex(red["old"]), bytes.fromhex(red["new"]))
-        w(gx.HOOK, bytes.fromhex(gx.HOOK_OLD), jmp(gx.CAVE) + bytes.fromhex("4e71"))
+        if tg:                                  # notre crochet, puis le sien (stub.S, CHAIN_TO)
+            w(gs.BOOT_CALL + 2, g7.be32(tg["boot_extra_hook"]), g7.be32(gx.CAVE))
+        else:
+            w(gx.HOOK, bytes.fromhex(gx.HOOK_OLD), jmp(gx.CAVE) + bytes.fromhex("4e71"))
+        names_src = tg["sampler_name_table"] if tg else g7.NAMES
         moved = {g7.DESC: gs.DESCN, g7.DESC + 8: gs.DESCN + 8, g7.DESC + 0x20: gs.DESCN + 0x20, g7.ROWS: gs.ROWSN,
-                 g7.CCROWS: gs.CCROWSN, g7.NAMES: names_at, g7.UPDATE_TAB: upd_at, g7.RENDER_TAB: rnd_at,
+                 g7.CCROWS: gs.CCROWSN, names_src: names_at, g7.UPDATE_TAB: upd_at, g7.RENDER_TAB: rnd_at,
                  gs.MAP: map_at}
-        want = {g7.DESC: 34, g7.DESC + 8: 1, g7.DESC + 0x20: 2, g7.ROWS: 5, g7.CCROWS: 2, gs.MAP: 1, g7.RENDER_TAB: 1}
+        # sans Model-TG, la référence à la table render est dans l'appel de la boucle des voix (0x400a7e14), que l'on
+        # garde ; avec Model-TG, son dispatch l'a remplacé (et notre détour lit rnd_at)
+        want = {g7.DESC: 34, g7.DESC + 8: 1, g7.DESC + 0x20: 2, g7.ROWS: 4 if tg else 5, g7.CCROWS: 2, gs.MAP: 1,
+                g7.RENDER_TAB: 0 if tg else 1}
         for old, new_ in moved.items():
             rs = g7.refs32(cur, old)
             if len(rs) != want.get(old, 1):
                 raise SystemExit(f"!! références à {old:#x} : {len(rs)}")
             for va in rs:
                 w(va, g7.be32(old), g7.be32(new_))
+        if tg:
+            w(gs.DISPATCH[0], cur[gs.DISPATCH[0] - BASE:gs.DISPATCH[0] - BASE + 6], jmp(ssyms["dispatch"]))
         jumps = g7.JUMPS + g8.JUMPS8
         for va in g7.BOUNDS:
             if va in {j[0] for j in jumps}:
@@ -195,6 +213,8 @@ def build_tweak(img):
             moveq(va, b1, b1 + 5 * n, b0)
         for va, reg in ((0x400a7dba, 0x72), (0x400a7df4, 0x70), (0x4005a6a6, 0x72), (0x400147a4, 0x70),
                         (0x400148aa, 0x72), (0x400148b2, 0x70), (0x400a25e0, 0x70)):
+            if tg and va == 0x4005a6a6:
+                continue                        # son détour sampler_lfo_gate : chaîné par lfo_gate (plus bas)
             if cur[va - BASE] != reg or cur[va - BASE + 1] not in (5, 6):
                 raise SystemExit(f"!! borne {va:#x}")
             moveq(va, cur[va - BASE + 1], top, reg)
@@ -204,10 +224,19 @@ def build_tweak(img):
             w(0x400a26a2, bytes.fromhex("7850428545f9"), jmp(ssyms["marks"]))
         else:
             moveq(0x400a26e8, cur[0x400a26e8 - BASE + 1], nm, 0x70)
-        for va in (0x4001b69c, 0x400a40a6, 0x400a4fb0):
-            moveq(va, 5, 1, 0x70)
+        if not tg:
+            for va in (0x4001b69c, 0x400a40a6, 0x400a4fb0):
+                moveq(va, 5, 1, 0x70)
+        chained = {0x4004df5c: "descr_hook", 0x4004df76: "descr_b_hook"}
         for va, old, sym in jumps:
-            w(va, bytes.fromhex(old), jmp(ssyms[sym]))
+            old = bytes.fromhex(old)
+            if tg and va in chained:            # ses détours, appelés par les nôtres
+                old = jmp(tg[chained[va]])
+            w(va, old, jmp(ssyms[sym]))
+        if tg:
+            w(gs.AMP_ROW, bytes.fromhex("20065286eb88"), jmp(ssyms["amp_row"]))
+            w(0x4005a6a6, jmp(tg["sampler_lfo_gate"]), jmp(ssyms["lfo_gate"]))
+            w(0x4005a6b6, jmp(tg["sampler_amp_gate"]), jmp(ssyms["amp_gate"]))
         for va, old, sym in g7.CALLS:
             w(va, bytes.fromhex(old), bytes.fromhex("4eb9") + g7.be32(ssyms[sym]) + bytes.fromhex("4e71"))
 
@@ -229,12 +258,13 @@ def build_tweak(img):
                  for k in range(0, len(final), 4) if final[k:k + 4] != orig[k:k + 4]]
         size = gs.TABLES_AT - pay
         segs = gs.segments(parts, size)
-        at = BASE + gx.IMAGE_LEN
+        at = tg["at"] if tg else BASE + gx.IMAGE_LEN
         if at + sum(n_ for _, n_ in segs) > gs.END_LIMIT:
             raise SystemExit(f"!! ajout de {sum(n_ for _, n_ in segs)} o : l'image dépasserait {gs.END_LIMIT:#x}")
         (tmp / "segs.inc").write_text("".join(f"\t.long\t{a:#x}, {n_ // 4}\n" for a, n_ in segs))
         stub, _ = gm.assemble(tmp, "stub", gx.SRC / "stub.S", gx.CAVE, [
-            f"-DPAYLOAD_SRC={at:#x}", f"-DPAYLOAD_DST={pay:#x}", f"-DPAYLOAD_LONGS={size // 4}", "-DPACK", f"-I{tmp}"])
+            f"-DPAYLOAD_SRC={at:#x}", f"-DPAYLOAD_DST={pay:#x}", f"-DPAYLOAD_LONGS={size // 4}", "-DPACK", f"-I{tmp}",
+            *([f"-DCHAIN_TO={tg['boot_extra_hook']:#x}"] if tg else [])])
     if len(stub) > sprites.zone(gx.CAVE)[1]:
         raise SystemExit("!! crochet de démarrage trop grand pour sa place")
     writes[0] = {"off": gx.CAVE - BASE, "old": "ff" * len(stub), "new": stub.hex()}
@@ -245,51 +275,64 @@ def build_tweak(img):
         if a_["off"] + len(a_["new"]) // 2 > b_["off"]:
             raise SystemExit(f"!! écritures qui se chevauchent en {BASE + b_['off']:#x}")
 
-    tid = "kick"
-    ids = gm.other_ids() | {"macro", "macro-tg", "model-tg", "model-tg-st"}
+    tid = "kick-tg" if tg else "kick"
+    ids = gm.other_ids() | {"macro", "macro-tg", "kick", "kick-tg", "model-tg"} | (set() if tg else {"model-tg-st"})
+    where = ("8e et 9e machines, après le Sampler de Model-TG (7e)" if tg else "7e et 8e machines, après les 6 d'origine")
     out = {
         "id": tid,
-        "order": 26,
-        "name": "Machines Kick2 et Kick3 (ports de zicBox PotKick.h et KickWave.h)",
-        "description": [
-            "Deux machines de kick en 7e et 8e machines, après les 6 d'origine (notes/47).",
+        "order": 34 if tg else 26,
+        "name": ("Model-TG + " if tg else "") + "Machines Kick2 et Kick3 (ports de zicBox PotKick.h et KickWave.h)",
+        "description": ([
+            "Version combinée avec Model-TG (notes/31, notes/47) : s'ajoute après model-tg-st, le Sampler reste la 7e",
+            "machine, Kick2 est la 8e et Kick3 la 9e. Leur sortie passe par l'étage d'amplitude de Model-TG (Attack, filtre).",
+        ] if tg else []) + [
+            f"Deux machines de kick en {where} (notes/47).",
             "Kick2 : COLOR = MRPH (forme d'onde : sinus, triangle, scie, carré, scie écrêtée), SHAPE = SHPR (waveshaper),",
             "SWEEP = SW.SH (forme de la chute de hauteur), CONTOUR = RESO (résonateur du corps), PUNCH = drive.",
             "Kick3 : COLOR = WAVE (sinus, triangle, scie, carré), SHAPE = FOLD (repli d'onde), SWEEP = SKEW (asymétrie),",
             "CONTOUR = HARM (harmonique 2), PITCH = caractère de la chute de hauteur, PUNCH = drive. La hauteur suit la note.",
             "Code en virgule fixe (tools/machines/kick/), sans libgcc : le ColdFire n'a pas de flottants. DECAY, GATE et",
             "PUNCH : la chaîne d'ampli d'origine. Généré par tools/gen_kick.py. Aucun octet Elektron dans ce fichier.",
+        ] + ([] if tg else [
             "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35), boucle des voix : division des pistes par 2",
             "plus courte (tools/voice_loop.py, notes/36), mêmes valeurs.",
-        ],
+        ]),
         "device": "Model:Cycles",
         "os": "1.13",
         "section": 3,
+    }
+    if tg:
+        out["requires"] = [tg["id"]]
+    out.update({
         "conflicts": sorted(ids - {tid}),
         "writes": writes,
         "append": {"at": f"{at:#x}", "dest": f"{pay:#x}", "size": size, "parts": parts, "reloc": reloc,
                    "pack": [[f"{a_:#x}", n_] for a_, n_ in segs]},
         # pour la preuve (tools/emu/test_kick.py) : les entrées des deux machines
         "symbols": {f"{m['prefix']}_{f}": f"{syms[m['prefix'] + '_' + f]:#x}" for m in MACHINES for f in ("update", "render")},
-    }
-    out = usb_steady.add_to(out)
-    out = voice_loop.add_to(out)
+    })
+    if not tg:                    # comme MACRO seule : envoi à l'USB à heure fixe (notes/35), boucle des voix (notes/36) ;
+        out = usb_steady.add_to(out)          # la version combinée les a par model-tg-st
+        out = voice_loop.add_to(out)
     return out, dict(code=len(blob), image=sum(n_ for _, n_ in segs), syms=syms)
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--cycles", required=True, help="model-cycles_OS1.13.syx officiel")
-    ap.add_argument("--check", action="store_true", help="vérifie que le JSON versionné correspond")
+    ap.add_argument("--check", action="store_true", help="vérifie que les JSON versionnés correspondent")
     args = ap.parse_args()
     img = g7.cycles_main(args.cycles)
     if len(img) != gx.IMAGE_LEN:
         raise SystemExit("!! ce n'est pas le MAIN OS 1.13 officiel")
-    tweak, info = build_tweak(img)
-    text = json.dumps(tweak, indent=1) + "\n"
-    print(f"  {tweak['id']} : {len(tweak['writes'])} écritures, code et tables {info['code']} o, ajout à l'image "
-          f"{info['image']} o")
-    if gm.emit(OUT, text, args.check):
+    bad = 0
+    for path, tg in ((OUT, None), (OUT_TG, gs.tg_context(img))):
+        tweak, info = build_tweak(img, tg)
+        text = json.dumps(tweak, indent=1) + "\n"
+        print(f"  {tweak['id']} : {len(tweak['writes'])} écritures, code et tables {info['code']} o, ajout à l'image "
+              f"{info['image']} o")
+        bad += gm.emit(path, text, args.check)
+    if bad:
         raise SystemExit(1)
 
 

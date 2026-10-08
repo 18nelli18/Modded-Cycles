@@ -19,6 +19,7 @@
  "os": "1.13",
  "section": 3,
  "conflicts": [
+  "kick-tg",
   "macro",
   "macro-tg",
   "model-tg",

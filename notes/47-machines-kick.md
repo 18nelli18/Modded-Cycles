@@ -2,14 +2,15 @@
 
 Proposition d'apiel (auteur de [zicBox](https://github.com/apiel/zicBox), 08/10/2026) : ajouter au Model:Cycles deux
 machines de kick portées de ses moteurs, `PotKick.h` (Kick2) et `KickWave.h` (Kick3). Tweak `26-kick.json`, générateur
-`tools/gen_kick.py`, sources `tools/machines/kick/`, preuve `tools/emu/test_kick.py`. Adresses : VA de l'OS 1.13.
+`tools/gen_kick.py` (et `34-kick-tg.json`, avec Model-TG), sources `tools/machines/kick/`, preuve `tools/emu/test_kick.py`. Adresses : VA de l'OS 1.13.
 
 ## Réponse courte
 
 - **Deux machines ajoutées**, Kick2 (7e) et Kick3 (8e), après les 6 d'origine, avec la mécanique des machines ajoutées de
   MACRO ([43](43-machine-macro.md)) pour N = 2 machines : mêmes détours (`gs.detours_asm`), mêmes tables déplacées, mêmes
-  adresses dans la charge utile (`gs.LAYOUT`). Pas de Model-TG, pas de moteurs du Syntakt, pas de MACRO : ils ajoutent
-  des machines au même endroit ; le tweak les déclare dans `conflicts` et la carte du flasher les exclut (§6).
+  adresses dans la charge utile (`gs.LAYOUT`). Avec Model-TG, la version `34-kick-tg.json` (par-dessus `model-tg-st`,
+  comme `32-macro-tg.json`) met Kick2 et Kick3 en 8e et 9e machines, après le Sampler. Les moteurs du Syntakt et MACRO
+  ajoutent des machines au même endroit : le tweak les déclare dans `conflicts` et la carte du flasher les exclut (§6).
 - **Tout en entiers.** Le ColdFire du Cycles n'a pas d'unité flottante, et la seule libgcc fournie par
   `m68k-linux-gnu-gcc` est compilée pour le 68020 : ses routines de flottant logiciel contiennent des instructions
   absentes du ColdFire et plantent la machine (§2). L'édition de liens se fait donc **sans libgcc** : un float égaré
@@ -83,8 +84,9 @@ Rangé en 14 616 o dans l'image (crochet de démarrage `stub.S` en mode PACK, co
 ## 6. Conflits `[FAIT]`
 
 `26-kick.json` déclare `conflicts` avec tout ce qui ajoute des machines ou un bloc après l'image : MACRO, les moteurs du
-Syntakt, SD VINTAGE, Model-TG (et `model-tg-st`). La carte du flasher a `excludes: macro, syntakt, model-tg`. Elle se
-combine avec les autres tweaks (testé en émulation avec `6ch-usbup`, `trig-hold`, `arp`, `tempo-max`, `boot-anim`, §7).
+Syntakt, SD VINTAGE, Model-TG (et `model-tg-st`, avec qui il faut prendre `34-kick-tg.json`, qui `requires`
+`model-tg-st`). La carte du flasher a `excludes: macro, syntakt` et `with: model-tg → 34-kick-tg` (Model-TG et
+l'écoute des samples prennent leur version « -st » quand la carte est cochée). Elle se combine avec les autres tweaks (testé en émulation avec `6ch-usbup`, `trig-hold`, `arp`, `tempo-max`, `boot-anim`, §7).
 Comme MACRO seule, elle prend l'envoi USB à heure fixe (`usb_steady.py`, [35](35-glitches-usb-multipiste.md)) et la
 boucle des voix plus courte (`voice_loop.py`, [36](36-regulateur-sans-coupures-inutiles.md)).
 
