@@ -499,3 +499,2251 @@ const REF_MAINOS = {
   "midi-live-both+syntakt-toy-swarm": "893d2deeb587210d47fe6b348a23cb5b3f7e4d06e13f3a9a8e32af09568c1249",
   "midi-live-both+syntakt-bits-swarm": "bd91ee295d9cff132875d3bd2ac657a17543fb627e07638c196c722bbc1a75e5",
   "midi-live-both+syntakt-sd-cp-toy": "29ccf597fa6e08a6de47ad4261d0cb2d4c9dfe15be55685b73663f0fb097f8c1",
+  "midi-live-both+syntakt-sd-cp-bits": "f7ca65409afad56e8b2354ab01c0af68586d59db9c4ad1388e8b05533978afe1",
+  "midi-live-both+syntakt-sd-cp-swarm": "abe4be9cef7efbf43c5756eda2170e195e06efc71a52a690c053436e823132ae",
+  "midi-live-both+syntakt-sd-toy-bits": "ed78dcc5218da2a5457a03aee22f010a295213ad5b6d737af14aac2e8962368a",
+  "midi-live-both+syntakt-sd-toy-swarm": "80281d771c73a57cd2ec1f229368bacf7e8c5b6a283c2e08d3eb0e7b0b8d71a4",
+  "midi-live-both+syntakt-sd-bits-swarm": "014ed8e771a18f3c46351284022353cd53eb18bc287fea2f7b7cc0d90e871b97",
+  "midi-live-both+syntakt-cp-toy-bits": "f81f7afcfe5296ec23d87042c3bc9b7f012f367a1de08a6f18d90f3cfe52cfef",
+  "midi-live-both+syntakt-cp-toy-swarm": "b11ec4b6aa54a931dc7e8c6b6e4efc9f755db68bee4a20bdb0a675c3df4524a7",
+  "midi-live-both+syntakt-cp-bits-swarm": "ad4f4751d1a65f43e0bde9b6d2f8ee5cacb0f6e796fdb44a93e8fa772f93e046",
+  "midi-live-both+syntakt-toy-bits-swarm": "ea37d147e9f29adb7094c4af08d4f5c72f726e33d27d8dcf5617dcfc45310619",
+  "midi-live-both+syntakt-sd-cp-toy-bits": "cb4b8cacb2db396442572853283fe96b9fe142a644539f1129d287956b275cfc",
+  "midi-live-both+syntakt-sd-cp-toy-swarm": "f5fc794a40fb5119085fece0b7e39a36e8e7cd32b7db1641bd73d50cb1e88851",
+  "midi-live-both+syntakt-sd-cp-bits-swarm": "4ca978a9e19eaa303ed44188db8914b9cd57f4a6ea6ed1c40c7de22679b03e1f",
+  "midi-live-both+syntakt-sd-toy-bits-swarm": "635058e0c77dde38956e6594bb24b9ee7a180e6793d425fa089bd57743c7cb99",
+  "midi-live-both+syntakt-cp-toy-bits-swarm": "006bc23752409c62c4af932217f7ab34e53755774c4c3b7b3018a588a6a74174",
+  "midi-live-both+syntakt-sd-cp-toy-bits-swarm": "9a0d5ead408c50f17e5a35934e380213d721817bf5a5be60601ca4e311442617",
+  // the largest combinations: every compatible card ticked, from each card, both ways, with and without the Syntakt engines
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+macro-tg": "6675a37f390890764dcf2e71a60a19e27db3e6a2d86c629ffd91a5590ccc7372",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-sd-cp-toy-bits-swarm": "de9c3916e807ee2e7bf2d79631d2552987225f83315a6f523d50b5d5be736e80",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+macro": "b02cf4991074c9a04cc123c8b629632399d787cfafb83359a046c28144821dfb",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-tg-sd-cp-toy-bits-swarm": "a7e934de96f82ac3fcd60db9798e770adeeb4da181b596d2c0b53da0fc82a73a",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-live-both+macro-tg": "3be6f6b0cec85a08b93a35e345a2b1d5c6cec85185789143a3585f06bb04852b",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-both+macro": "8b84593623149f14e0f0a0f15d76db5a1dd40148e4ab0d3ec145caae23359d4d",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-sd-cp-toy-bits-swarm": "e2a41e92d6f250c39f551efcb570649cd17b8c2f49661de4bb20302022bc5088",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-sd": "1988fc38b288b07301bb8a88055b30fd533f7b6415e7b6867f17591f99798b7a",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-sd": "88c6f735ded5b91f93c7ebf95788b8fe59b422f9b69d9377d7bd8bad4bddf050",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-cp": "ae6d48aeefc4af9211ab986070636e340c2624bc2046b1ff0b6cfdb11bd0fc53",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-cp": "35360d6d636441307ca139a35d29f1d586d73be219eb4603fdea727e93a0d40b",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-toy": "a565f91216f850c2bf819e80915a298ecc5ddaa4d771be9eb9c77cc315a2653a",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-toy": "677101f1142336a5ccc6843af8ff6e0d14a01d56b65653594c06f1f03a9f723a",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-bits": "5e03562f690ef80fe3d66515bff758bb60f10ded15ac8a56f79435a65b6982d5",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-bits": "74bb2a73ebe38dcbb8dc7871fe196f47fddcdc9310e6791309412a9f1f211854",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-swarm": "034cc3167c4012905f6c44dc44d9e56c57068fcd887817eb352f68463e04dc1c",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-swarm": "7feaa106d01dcdf88d839225a2dc74710389a0c286d5dff7b57802a317416f72",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-sd-cp": "8277425f69a3836238b1c016ee574ef72dd09cbc0cec43be3c3b01b43009dbf3",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-sd-cp": "602483a4e352a59f72b2bce07790bb7b6899c277c4b41e2b34781a6761d948e5",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-sd-toy": "5085a04071b7645ccb9118964abcfe12f1138572f25440a961c3842ab47f39bd",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-sd-toy": "b2f90a51271b27b81f974f52140744c063fee5ad80e0327a76248cbc00f0fea7",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-sd-bits": "8a562d1e93a5d9800d95bfa7d40fa21854814a6a5f8a3c3171776eee861a669a",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-sd-bits": "9ca0ccebda204822c00c79e6a6c56e62b6bcbcba4c880f68f8502384ceaa24e8",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-sd-swarm": "b1ba0f50bbe754fb6b70a75e935056925e1df46d547f4383755c1fef35d7312d",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-sd-swarm": "08b2b271741014d0785b22ae8605b1c6b8580a2940426fee9ce1dff26402b3a5",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-cp-toy": "d6284189a0c108c2d2e3c51d748ae4cf9e855af1e8627eced9d0164808e624c9",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-cp-toy": "5619f68b73afd7985116806128f83f60d31641c5bdde26553be5b44d1941e35b",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-cp-bits": "8781f0826f0c3e9e46e93c25e547a33d7e589079d4b32741e7e553954ea8fc37",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-cp-bits": "dcd84116c820471415617dac2b5f87f3256843f2b7ef864f13f8e811b2b0b655",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-cp-swarm": "e1c0b25c44e4b5b1860f008f0ad9b43d19a9efc67c34547ed24c740f45913842",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-cp-swarm": "38131dc07b522fcd44ceafa4ac131a7fd58742df3a540318c54a224f204d9cb5",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-toy-bits": "bbc7eb2d0abf52314bcad79bb4dac80334e064da9b4e39bec03f0c8516441cfd",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-toy-bits": "d9160dd9e7e67a7c6d8d1399fe1c40616cc02ad8886e3c04387faf545bdd1c8e",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-toy-swarm": "fb0f2d4252f877206188a40d886af6c04e5b1b134967387546bed0ccdcc60b01",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-toy-swarm": "49dadb5163ba7afd864fa56daa87764e67095b9d52a00ffd82f9ec96e2dda412",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-bits-swarm": "4d267d9e8bcb0056ee3250c06223c3573f61969a60d62a8cf99ab555bfe6170c",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-bits-swarm": "ea1bd620bc8b2e7a2b90fabb0c43c4cde23755885e1acf0b54b72d4cf7598b5b",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-sd-cp-toy": "4786e8b22788c11863236f22aa43e512ef308813d162b7b8c4bbe1842b9cadd6",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-sd-cp-toy": "5ac809c2595a27d1711598122f56b0c62be5c3e2367e9797d584872f80e06048",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-sd-cp-bits": "f2a643713797acefe5a0d8ad7c2160d4f14ff6858afd4a3d3d480ef1329e9117",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-sd-cp-bits": "c21517db25103526daa68641c2049afdf4442e8249ce6b059fc179652543f77a",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-sd-cp-swarm": "3c84c40f195c07dcba478ef2c3bd995cf433ee71df908182667307672f9ec77a",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-sd-cp-swarm": "d38cf87321ce1b1e8f4c34ad498ae3fc8b3e5ce28dfa7b6e58ff7b3225e9a018",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-sd-toy-bits": "fd5430fdb48474160e0320df3b4d73566244f2d4dd614edf976c56a6e9647f68",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-sd-toy-bits": "45f644f8816a7d7290fcf20644f210cae5ff96ce8e04a0957e72ec4ee5b62783",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-sd-toy-swarm": "43ddbe7f7c810c394af815e0fa84cc131ece26791c93d3aeb0441c770fca9bd9",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-sd-toy-swarm": "7079ff51184e0c7213f114d90fa84a28060c8a3879806ab0a97fc392d555a978",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-sd-bits-swarm": "b57225293cb414b3d987cf7686233bbe9b6736217a27c8f99b6b22619b2cb30b",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-sd-bits-swarm": "0ec80cbe49785f7d5096e39a5daff933cae53d9568478e9e3b8b093b51d62280",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-cp-toy-bits": "9c6f69847b807583c4e394c157a45103eba772fb7b14cebabf9afc1e726545ef",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-cp-toy-bits": "d54d4b415e0c80bd59c1e6ccd0abf98082615d867c16d3cccb115852b97ab4d6",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-cp-toy-swarm": "fc135338282174b8509af21684c7ffba2d94cb4786a9ad8a54819c9883696ade",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-cp-toy-swarm": "c15187d9a949864e649573e7caf3fd5328b604d160aedb5d8b11ab9fbb138947",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-cp-bits-swarm": "e6ef48a9eaba87ffbe88ecafcb730ccf8f2bc3cadf2466650146436788a8c6de",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-cp-bits-swarm": "60ba8ecda514b6c70794a5508b0f09b0a53193a5cb80fd260cbd75388931b9d3",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-toy-bits-swarm": "be59bec01d0928b868e494ca65fce12e197004201f9c867c517e78ed96604625",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-toy-bits-swarm": "d98ec535ce21d295fdc9eb0ff29d03ad96d28bc15212ababfd70d5a49e184feb",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-sd-cp-toy-bits": "bd9a6a9f1c5bbb52d7c7dbf02dea464e5b36c3e96f2681d10726cd94a4f16221",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-sd-cp-toy-bits": "e8cad7867161cd7b3993b18c871dcf3db1d7a4580f135f36aac5a2215a376999",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-sd-cp-toy-swarm": "1e841915f3442210266499e9e9b254d338e01088601eb1b2a9d718654038a1c1",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-sd-cp-toy-swarm": "e47871558797941cf4a96aaaadb082838cca3047dd1c9231b43d6c36e2e71e55",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-sd-cp-bits-swarm": "1a82131833016d63f65d58234adeeb74ebfae519f4f903e1a352a3e410610d25",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-sd-cp-bits-swarm": "63b6e1666f5ca5df5dded785b1a2a3fff8282995b0aacab78f5338ef6cd18d79",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-sd-toy-bits-swarm": "37493c94dfeca33b812d2062e24de58c2c1b8e7dd058a69dc4a4529ed943f8f4",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-sd-toy-bits-swarm": "b39e27c0694a468e5b4f4d2e1c5c69c457dff2820f7debe2e276201d1e45ceea",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-cp-toy-bits-swarm": "f9db551430a5ea7a479d0dc3a267d57b26ed8191f2baa7089351768608652a63",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-live-both+syntakt-cp-toy-bits-swarm": "90a7e4225db3866c46795e224549db1e0c677cb4cda81f38f67c8f611887ebbf",
+  "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-tg-sd-cp-toy-bits-swarm": "8d31b14f13f9c6111a53043a3c40e5ba73eea536154d4be45fd7ac3e2a6159b1",
+};
+const REF_MODS = {
+  "6ch-usbup": {"w": "9e4a546894a480c25a8bac2b283d4f6dd81d8b5c2b39f321256ae42016ad5009"},
+  "model-tg": {"w": "c4686bd09a145fd10a6424b7229e414a084fbbcc212b722e4ab7d3ecd7cb7931", "p": "d08e9e34d222aa92a2028712adfc65646ac1024acf6f88ebf51979d85bac7655"},
+  "model-tg-st": {"w": "c4686bd09a145fd10a6424b7229e414a084fbbcc212b722e4ab7d3ecd7cb7931", "p": "e269630fe5251b58c2a5eb4298e3ab09b4e6fff9f38c254afecf121c8ad446c2"},
+  "sample-preview": {"w": "f9aaf10e71f3a06e22b608405eeca967c254a7400b4e8ba0557cddf7eb6166e3"},
+  "sample-preview-st": {"w": "f9aaf10e71f3a06e22b608405eeca967c254a7400b4e8ba0557cddf7eb6166e3"},
+  "latching-mute": {"w": "588e9ff2b7fab80819e79faac560f524641c1cbf4d6327cc169ef0b2b0df76fe"},
+  "trig-preview": {"w": "c18ee2dbf1e52d1df85585389c881e8e5116a24665299c15ccf95d794529f2b0"},
+  "browser-scroll": {"w": "eecf48e9b8e3c9843e97b213efb18add01e0a56d47e87ccb0a78f5c643771f43"},
+  "trig-hold": {"w": "c9a9aafba763ea25ac3c35e33c55f34a18c0eda94cc726fa344ce6bdd06271f8"},
+  "arp": {"w": "5bf9b805de8757164548fd4d77a3c2e8419d914e8164ac363ab10c9fe105ca80"},
+  "tempo-max": {"w": "12115f0b665c9423922febfaa7b63d8bf5529de525ba0a51c22450e005d22f64"},
+  "boot-anim": {"w": "a3681504456299c2f8c316e09181765455fdc51a9276a6a43ff11d78e2ba5382"},
+  "midi-both": {"w": "260b8eeba4d71e5cefdd8ccd4fc94794b76902e7675b960d3867f35c5ed6ca6c"},
+  "midi-live-both": {"w": "41ebb16c99d2aae71f3f1eca853d107bf39dbd8eee8ef1f24ff2b08af081eec8"},
+  "macro": {"w": "85bacb039fb24d2a425ba67323d0c3d49bf22fa5e4a3ad7f800e6500738f8d1a", "p": "29085f8877c80137fec46b16ebbfdb428b098c79b39a4c9a89ba033138ace30b"},
+  "macro-tg": {"w": "3e6981c2a7bf05ec648364b4f07d16987737df9f750630ee1fe4dd08d80be72e", "p": "9958c81e9b155d478bba3613d2843f2b1618757300390e8fc89bace3fa93eb31"},
+  "syntakt-sd": {"w": "302e17ec196915060072e1dabab1ffddb4dd0dd9db8eeee75fbfcb8a4d479949", "p": "e4313c5df5b583392463ae00fba165b8fd892d819bac145d9e1b85a7fbeb572c"},
+  "syntakt-tg-sd": {"w": "9c2d77a0c27270c16cf111b7ee2f6d45b6d0724d21d1055cfc102236f773c920", "p": "e1569a046be718e9fa1dacf6cc904f30082f321783a2a615dbdbcf752321c200"},
+  "syntakt-cp": {"w": "302e17ec196915060072e1dabab1ffddb4dd0dd9db8eeee75fbfcb8a4d479949", "p": "49fe2722a5bdce42d5083d8ce42b4e24c02f399efca86333dcd41875f25b424a"},
+  "syntakt-tg-cp": {"w": "9c2d77a0c27270c16cf111b7ee2f6d45b6d0724d21d1055cfc102236f773c920", "p": "d1b45c64989e4baf39b2d622513b86872a8e07556cb7cc0649d03efb97a4fa81"},
+  "syntakt-toy": {"w": "302e17ec196915060072e1dabab1ffddb4dd0dd9db8eeee75fbfcb8a4d479949", "p": "13d331b6db41320ceedcc75894dbe1d74688096564b628def63c39b839821912"},
+  "syntakt-tg-toy": {"w": "3857c743d0b54c9816223c9d7c8e8748ab68cac799bba3948589229517091d29", "p": "ba150cecaea0661e8f5d96929c77c82902f20047e4441bcfb0d16a1a8be614f7"},
+  "syntakt-bits": {"w": "8ce1067da3d8ec2fdb852c23fe266b67f8a634b217072fd58dfff2d3191fdec9", "p": "12a8726a3a605b4dd7c8a3e96d86c147a2404d18aa881c140e6da49c9534fae5"},
+  "syntakt-tg-bits": {"w": "8acf0672c2759a6d7cfd26c77c80dcb54de6ba7c841c4427c24bd77360e61b47", "p": "3dc44b3d47932062654680e8a9998b6f9c918e6df8c042b0c94392cb9d310f10"},
+  "syntakt-swarm": {"w": "360e6b8fd412574ecf5f39d489c3cef6dcfb9ac7102fae0bd785ce65af313293", "p": "3a6f2b7558952ae0ee98a24f94ced91e3549a171b8a0a9a49616fd2dee6eaf45"},
+  "syntakt-tg-swarm": {"w": "125d625f4990b2c042998c61d907bc2ba42efd5a6777e69e479ac571f434d8d3", "p": "764cfac20bf1a9b732ab52ffe136fccea4d4271a2423812afc69750488797dcc"},
+  "syntakt-sd-cp": {"w": "b5cbdfffa4b4791ebb63f59298b8e47b443f8d293c99a3c26a283e99c5d4859e", "p": "14b6d040a0ee80677644b02925bb5398cf95d08fdf9529e458fdad256612677a"},
+  "syntakt-tg-sd-cp": {"w": "f4e2e9684553ee0921706e12a19ef12d47c7ec590d5322f71edddb1535fce900", "p": "ac06d46fb8d7c4c4294fb6f06bc7d0ee7037bb0e9774c7a39ac67a832843ec8b"},
+  "syntakt-sd-toy": {"w": "b5cbdfffa4b4791ebb63f59298b8e47b443f8d293c99a3c26a283e99c5d4859e", "p": "86009341c5627330f89f30de90cc9413148d9b7ba924b1c860d1c52db8b83a98"},
+  "syntakt-tg-sd-toy": {"w": "a6458464c61122abaeda53756934558a30007cfb184057ab64bf397958b1847b", "p": "84fb2c682e3f1fdded50d429085eed5abfd493fafda225e40a865cd41f03de9b"},
+  "syntakt-sd-bits": {"w": "6ca68900965c6e43dacc1013ad72670f4458317bc6d284a8701df3ad36cafc01", "p": "26b78d37e9cee75611ed43a387a89e3eb5f6e8ca6a3a9fccaa58d13c1c60a28c"},
+  "syntakt-tg-sd-bits": {"w": "1772974bfe1ce3f16cd08bd6ee2f78d6efac6654e66e3a98b1b5e0087d794a39", "p": "7c7cef48a40350b6b4c6bb963a55a81ee43d8d0f71c60b805fcd506fa45c126f"},
+  "syntakt-sd-swarm": {"w": "6beb6cf8bb467020dd627770cd50dcf633409fe9568fd430699296a8055255cd", "p": "5cf17594198adc179d5103d2b5464c1e3746e8c30bacd9c916f41595411436a6"},
+  "syntakt-tg-sd-swarm": {"w": "8b07e3ad361c7f91d4edb92180019e157f89c461c9510c09a5908d6b60d22ca5", "p": "81e3cfe33cd12da23a7a4e6b76c1685bf179d1e9a4f0c814f80af4fa0e4faaf6"},
+  "syntakt-cp-toy": {"w": "b5cbdfffa4b4791ebb63f59298b8e47b443f8d293c99a3c26a283e99c5d4859e", "p": "7fa55e16f170350042166a4fce1893e57006c05a2dd970d6be956378d4fc64d9"},
+  "syntakt-tg-cp-toy": {"w": "a6458464c61122abaeda53756934558a30007cfb184057ab64bf397958b1847b", "p": "506ba8619ce6b945f91250a13b412acbc7ce0efb8878799b146d65bd0fc9fbef"},
+  "syntakt-cp-bits": {"w": "6ca68900965c6e43dacc1013ad72670f4458317bc6d284a8701df3ad36cafc01", "p": "31fb2a740e4374e9d6cdc6a1ee76fbf7f7273dc45390d87abeed22fd5dcebb9c"},
+  "syntakt-tg-cp-bits": {"w": "4b54fb41056617d96971ebb91ca328a6f76ff8de82a6797c05c4f6d312dad0cb", "p": "873a44e1d263cf678a85a013b9bc4872dd5bb07c3d6f1491478873079e2fd903"},
+  "syntakt-cp-swarm": {"w": "6beb6cf8bb467020dd627770cd50dcf633409fe9568fd430699296a8055255cd", "p": "385abff60fd340bddd0e887fcf00fe692ee6d13a6caf8c249ffb979fde5ea13d"},
+  "syntakt-tg-cp-swarm": {"w": "fa6f2a6e21192b7047f0f7c0e88f422e9757585093edaa727db73a4841acb81e", "p": "a81cff848118ff1d8ce29325e3757007d7d09e0a922613880fe6e436fd3f1c92"},
+  "syntakt-toy-bits": {"w": "6ca68900965c6e43dacc1013ad72670f4458317bc6d284a8701df3ad36cafc01", "p": "422b80b4928879125760ba09bafe46f35e161d240385019d4d745d028ae394b9"},
+  "syntakt-tg-toy-bits": {"w": "165cb44ca7ad0ade1ff3c21b5c9f979b100437e9d5f0969c88f7cc0be8f1ec8e", "p": "0fba45ee4f603c0ab22452f8928e078fc63ec54199f951a24fb96c79de1ba663"},
+  "syntakt-toy-swarm": {"w": "6beb6cf8bb467020dd627770cd50dcf633409fe9568fd430699296a8055255cd", "p": "429b88bc92012100012550e82cc636d5541869a0ac5edb608766a56c2e1539a1"},
+  "syntakt-tg-toy-swarm": {"w": "87047b1196d71e970e2cfb05e1189efca46e7a4d021ae940a8ccb95c4b9844b4", "p": "d36280aea4a5a245a3fd4182ddd1fa7c82a5f853fc1a0269abfe9493a7f3dc62"},
+  "syntakt-bits-swarm": {"w": "6beb6cf8bb467020dd627770cd50dcf633409fe9568fd430699296a8055255cd", "p": "f51be8e0b00a437eb1686e02dcafa9523f70d97978fe4ab70fe9fd3ec8bdfd6b"},
+  "syntakt-tg-bits-swarm": {"w": "377d41640022a315491001d4402af4e5ae5b649cc8cb31f277305f63e04dc8c5", "p": "834b1f55c38b2cb66dddc83d0fea43db2e2b1597eff60d546424669e71b40c71"},
+  "syntakt-sd-cp-toy": {"w": "0dedfe732b6a22e819791dc679833fe83b8a1bba15ae69243aaa59d7a16ed8ee", "p": "634921523c879ca433c96fa3da0492b6734be63359cb3081cbbda54dfe8b24dd"},
+  "syntakt-tg-sd-cp-toy": {"w": "ebe10368cfece778a23e1d46e82a13376b95cb422f8ca62232b0c69a4e808a66", "p": "da840e5ccac0dcc27b74b42a5a052d31bffa860729bc0bc7ae8d435462ace096"},
+  "syntakt-sd-cp-bits": {"w": "4c592622fd417a96b01fcc884ca1c5634b43c19cd27ad4fc8515dc285aa2e156", "p": "3de431dd6b560c5ac407e35c5089621d8c083f05dbb7e7a44cec194f2e8c32da"},
+  "syntakt-tg-sd-cp-bits": {"w": "2b03cc4ed4c529011d62a96d65cbf0025cd1d93019f671b796a6bc53627cff1a", "p": "e6a72e8ece7406e44ef3767c4f8b91aca6058eb5c0b50550a65be676d2063278"},
+  "syntakt-sd-cp-swarm": {"w": "e2e264e5f6c6641db39131d2304b2f4e5b954eb51038c0815c6062b238d9e410", "p": "6c3dd4546d7df4852ed465553a80c622da892cb32429cde10f34ad383600ea98"},
+  "syntakt-tg-sd-cp-swarm": {"w": "f9d64c29e840410ac6c947e181a45069153cb4e108bcdfaf42b497f45d5b3cca", "p": "ada5d11b51da0d3e90ac47dc55ab4d7827e5604bec07252f852a6e099e8c7632"},
+  "syntakt-sd-toy-bits": {"w": "4c592622fd417a96b01fcc884ca1c5634b43c19cd27ad4fc8515dc285aa2e156", "p": "412b3f3b03c7c171d397238a006707373afcd8ea3a932e6949a28a5c8bc079e7"},
+  "syntakt-tg-sd-toy-bits": {"w": "59f8db5a7fbc68bf25e00f2b9fe169717f50b1c3d9d2193bc91a11be4e922a81", "p": "8e89be4f0a8fcddc10b61b4ed584224bb1511ab2a4c16e526e60fc12c0ce20b2"},
+  "syntakt-sd-toy-swarm": {"w": "e2e264e5f6c6641db39131d2304b2f4e5b954eb51038c0815c6062b238d9e410", "p": "eedf7fd8d2f3ab9dbbb2012b27178b48ca7777338e3bfa3056e24c9d22efcffb"},
+  "syntakt-tg-sd-toy-swarm": {"w": "6d01b0b6928568adeab0b21fd6a4867490d316bc37f6adc12abf29550c96bd1d", "p": "02234466f9dccae446425c696c7084df3e8d1e03b3751ebc714aa392dd563024"},
+  "syntakt-sd-bits-swarm": {"w": "e2e264e5f6c6641db39131d2304b2f4e5b954eb51038c0815c6062b238d9e410", "p": "3e96d9e16ccc8a0d45d9fbe90dbc659a214056aeff9c10cd3785214059375b64"},
+  "syntakt-tg-sd-bits-swarm": {"w": "248d8783151d5163363a516994b2de4a41b6da184659888f64a10f9942ab450c", "p": "7c65c2d1bf6e861851935dd87e99d65a3c6b0c1c627b7e0a3430e052a3808c5b"},
+  "syntakt-cp-toy-bits": {"w": "4c592622fd417a96b01fcc884ca1c5634b43c19cd27ad4fc8515dc285aa2e156", "p": "a799e1e55f0ddfea31a5ed8cd67bd1c99396aacdc9f4551ca0ed54fbb7313d82"},
+  "syntakt-tg-cp-toy-bits": {"w": "834c62f3802c8f195ea97375d2431ba112582aaa3f7b8bfd233d4734892c90e6", "p": "25d7673f194115c2f8dd2100ec3f4fe91dfafd9639aa0727134560d2d8d6f58f"},
+  "syntakt-cp-toy-swarm": {"w": "e2e264e5f6c6641db39131d2304b2f4e5b954eb51038c0815c6062b238d9e410", "p": "4a9bef6fa8c3e65d127c06ad985ad2054836e33c725cff0d1632a676cc9bdc5f"},
+  "syntakt-tg-cp-toy-swarm": {"w": "a981e697e5375a08f6f6c4562be685e74c9bf9db7302338d53e20746ffeda1f3", "p": "ff81bcffc505dec316678746a08a8a63e04c56532f22ab76d16cb20da13b93eb"},
+  "syntakt-cp-bits-swarm": {"w": "e2e264e5f6c6641db39131d2304b2f4e5b954eb51038c0815c6062b238d9e410", "p": "68fbe1de3798fa0967f1de83e982c002e3007775ef410c2d10c3dcb93e1c1032"},
+  "syntakt-tg-cp-bits-swarm": {"w": "d4d22314f7bf39d1f9d392e5111944d5aeb5555519ae236d3007952df5467d16", "p": "4da8349398fedbcf8a473f70ceee7494fcd4e3f6d5e9078d458d41ab21d2536d"},
+  "syntakt-toy-bits-swarm": {"w": "e2e264e5f6c6641db39131d2304b2f4e5b954eb51038c0815c6062b238d9e410", "p": "b69670e3dceef5800b459909cb22cd8ba2c8490174bd4c9a57e52f63bf0a436f"},
+  "syntakt-tg-toy-bits-swarm": {"w": "bfff22b0f49160f78e58028dae050eebe4726c4c8f00db710780303d8172ef29", "p": "c0083779130111bf2fb05be8b9ab4456648faacd8a66b02805a778700280c040"},
+  "syntakt-sd-cp-toy-bits": {"w": "6e40a243ef591ee13566db7c0ec4c03e064e459cfdb467f79c5231cdcaf859c5", "p": "c7d2dd362220832683eb5a61ad41258a66a56a1ac6e8b217b8bbb64857817627"},
+  "syntakt-tg-sd-cp-toy-bits": {"w": "ff77376bdd8d3ec069a7815ff95cb5565e98e0bdcc465a146c86167649592a08", "p": "b19b9cebcd74251cbaab94a61cb8e2f47511768e23a9d40d2752619bf53d3919"},
+  "syntakt-sd-cp-toy-swarm": {"w": "0d37782baa71cf0e118589c68eaaf65854dcb8d312bfe5cdc223cf1862cd49f6", "p": "e6e2ce15aa68677d188326c7a3a9417fbed7c7b964d4f1624f47c285e44a1e9a"},
+  "syntakt-tg-sd-cp-toy-swarm": {"w": "64eaf48daa7167499f5a0883481a672b142516da87fc07ea10f24fc5098f9c80", "p": "8fe4e32506aa155240a955c025300e9a32d327686ecbecb04185e89767d4341d"},
+  "syntakt-sd-cp-bits-swarm": {"w": "0d37782baa71cf0e118589c68eaaf65854dcb8d312bfe5cdc223cf1862cd49f6", "p": "f86da834216e165764e0c2ea013021b509a596fa1097feac7b5da01d5cde00d5"},
+  "syntakt-tg-sd-cp-bits-swarm": {"w": "2c1dcd6caa5aa535a587c4c3a1a3e3af40d4a7bd103b218cc502e2124cf86bf4", "p": "9d192d3d560b10c7e3115322c626a7768910ddf40d82f7e2f8ff9c4a197dad3f"},
+  "syntakt-sd-toy-bits-swarm": {"w": "0d37782baa71cf0e118589c68eaaf65854dcb8d312bfe5cdc223cf1862cd49f6", "p": "582e9083d79cd747b8061a39e22ca2f05554eeb0756af14799b1316e88f3fe8a"},
+  "syntakt-tg-sd-toy-bits-swarm": {"w": "2c1dcd6caa5aa535a587c4c3a1a3e3af40d4a7bd103b218cc502e2124cf86bf4", "p": "99d0b37716fb4ea5f73c3c350c361f68109a4f0a5f4bb2281428a74c3006bd44"},
+  "syntakt-cp-toy-bits-swarm": {"w": "0d37782baa71cf0e118589c68eaaf65854dcb8d312bfe5cdc223cf1862cd49f6", "p": "3433d4b81ee7cafa5400195a7a0aa770dbe097f2aa6c2fa499743d6c50b6768a"},
+  "syntakt-tg-cp-toy-bits-swarm": {"w": "eb510cb2734b5e428dc67e4252e7c196b1b4e28a61859b65b57d907a939186f6", "p": "7a3e77c297549d39f1419639351cc328ee30eef2d88f430d6d7c2bd20d120bc2"},
+  "syntakt-sd-cp-toy-bits-swarm": {"w": "d5a6c342d74317dcc4c0d9655e0ad5037b8f2972bd280b8bd2589f4528e2a66b", "p": "ebee93e96a83f16d8f2d81e3e13872614e1972c0226d7e5292bd9a54897ec39c"},
+  "syntakt-tg-sd-cp-toy-bits-swarm": {"w": "e2151929c5d4023841f56047bb3752a7358c619114881158b1cd203d32a2cc41", "p": "9ae1a5b199ab1f33d0eb69e1bd267149e8909fdb6609230620c994bfeeb5d9b8"},
+};
+
+// "Samples OS" tab: official Model:Samples OS 1.13 inside the official Model:Cycles container
+// (tools/crossflash.py --to cycles). SHA-256 of the resulting .syx; tested on a real Model:Cycles.
+const REF_SAMPLES_ON_CYCLES = "614d28cfe1100856aef7a67aa49003726e27e0e6eb3b6b05ecba6dc177e83911";
+// Same tab, for a Model:Samples (notes/41): the official Model:Cycles OS inside the official Model:Samples container,
+// its update check switched to the Model:Samples key (tools/crossflash.py --to samples); and the way back, the
+// official Model:Samples OS in the Model:Cycles SysEx packing (--back-samples). SHA-256 of the resulting .syx.
+const REF_CYCLES_ON_SAMPLES = "c06c23f31e50fac6ad40cd0f633acd4a7da4f63c929dff563dae887b93105dd4";
+const REF_SAMPLES_BACK = "d63ce13dd1a5039d11b60d3f69d4e88e9d0f56fb2e7350c105ec641d32083680";
+
+// Open-source work this flasher builds on (shown in the Credits section).
+const CREDITS = [
+  { who: "scottmetoyer", repo: "scottmetoyer/ms-multi-output",
+    en: "the 6-channel USB audio mod", fr: "le mod audio USB 6 canaux" },
+  { who: "drumkilla", repo: "drumkilla/elektron-model-tweaks",
+    en: "latching mute, trig preview and name scrolling, and the firmware toolkit (mtlib) this page's builder is ported from",
+    fr: "le mute verrouillé, l'écoute d'un pas et le défilement des noms, et la boîte à outils firmware (mtlib) dont le builder de cette page est un portage" },
+  { who: "Émilie Gillet", repo: "pichenettes/eurorack",
+    en: "the synthesis models of the MACRO machine: her Braids code (MIT license), compiled as is",
+    fr: "les modèles de synthèse de la machine MACRO : son code de Braids (licence MIT), compilé tel quel" },
+  { who: "TinyGregAudio", repo: "TinyGregAudio/Model-TG",
+    en: "Model-TG (MIT license), built here by its own build, with two changes: in mute mode, each track key mutes at once; with 6-channel audio, a muted track's stem is no longer cut off",
+    fr: "Model-TG (licence MIT), construit ici par son propre build, avec deux retouches : en mode mute, chaque touche de piste mute tout de suite ; avec l'audio 6 canaux, la piste USB d'une piste mutée n'est plus coupée net" },
+  { who: "mischa85", repo: "mischa85/elektron-firmware-tool",
+    en: "the Elektron firmware container format and its re-signing", fr: "le format du conteneur firmware Elektron et sa re-signature" },
+  { who: "mxldyn", repo: "mxldyn/octamax",
+    en: "the reverse-engineering method for Elektron firmware", fr: "la méthode de rétro-ingénierie des firmwares Elektron" },
+];
+
+const FLASH_GUIDE = `${REPO}/blob/main/FLASH.md`;
+const GUIDE = "../guide/";                      // the site's guide (docs/guide/)
+// mod id -> anchor of its section in the guide (one line per mod)
+const GUIDE_OF = {
+  usb6: "usb6",
+  "model-tg": "model-tg",
+  "sample-preview": "sample-preview",
+  "latching-mute": "mute",
+  "trig-preview": "preview",
+  "browser-scroll": "scroll",
+  "trig-hold": "trig-hold",
+  syntakt: "syntakt",
+  arp: "arp",
+  "tempo-max": "tempo",
+  "boot-anim": "boot-anim",
+  "midi-both": "midi-both",
+  macro: "macro",
+};
+
+// Step 1's sections, in display order: the `cat` of each feature (tools/gen_flasher_tweaks.py, same list there
+// without "other"). A feature without a known cat goes to "other", at the end.
+const CATS = ["pack", "sound", "seq", "live", "screen", "io", "other"];
+const CAT_ICON = {
+  pack: '<rect x="3" y="7" width="12" height="12" rx="2.5"/><path d="M7 7V5.5A2.5 2.5 0 0 1 9.5 3H18.5A2.5 2.5 0 0 1 21 5.5v9a2.5 2.5 0 0 1-2.5 2.5H15"/>',
+  sound: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 7.5v3"/>',
+  seq: '<rect x="2.5" y="8" width="4" height="8" rx="1.2"/><rect x="10" y="8" width="4" height="8" rx="1.2" fill="currentColor"/><rect x="17.5" y="8" width="4" height="8" rx="1.2"/>',
+  live: '<path d="M7 3v18M17 3v18"/><rect x="4.5" y="13" width="5" height="4" rx="1" fill="var(--paper)"/><rect x="14.5" y="6" width="5" height="4" rx="1" fill="var(--paper)"/>',
+  screen: '<rect x="2.5" y="5" width="19" height="12" rx="2"/><path d="M6 9.5h8M6 12.5h5M9 21h6"/>',
+  io: '<path d="M9 2.5v5M15 2.5v5"/><rect x="6" y="7.5" width="12" height="6" rx="1.5"/><path d="M12 13.5v4a3 3 0 0 0 3 3h3"/>',
+  other: '<circle cx="6" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18" cy="12" r="1.4"/>',
+};
+const SEARCH_FROM = 20;         // the search field shows from this many mods
+const PARTLY = false;           // true: an unticked engine card tested with some engines only says "Partly tested"
+const DISCORD = "https://discord.gg/hWegtJZcmm";
+
+// ---------------------------------------------------------------------------
+// Texts
+// ---------------------------------------------------------------------------
+const T = {
+  en: {
+    title: "Model:Cycles Flasher",
+    tagline: "Install mods on your Elektron Model:Cycles, right from your browser.",
+    s1: "What do you want to install?",
+    tab_mods: "Mods",
+    tab_restore: "Official firmware",
+    mods_note: 'Tick what you want: mods combine, unless a line says otherwise. <span class="tag ok">Tested</span>: tried on a real Model:Cycles. <span class="tag exp">Experimental</span>: checked in the emulator, not on the machine yet.',
+    cats_label: "Sections",
+    cat_lit: ", with ticked mods",
+    cat_pack: "Packs", cat_pack_sub: "several mods in one",
+    cat_sound: "Sounds & machines", cat_sound_sub: "new machines, filters",
+    cat_seq: "Sequencer", cat_seq_sub: "trigs, tempo, arpeggios",
+    cat_live: "Live playing", cat_live_sub: "mutes, chords, mixing",
+    cat_screen: "Screen & browsing", cat_screen_sub: "browser, display, startup",
+    cat_io: "USB & MIDI", cat_io_sub: "audio and MIDI in and out",
+    cat_other: "Other mods", cat_other_sub: "",
+    grp_n: "{n} mods", grp_n1: "1 mod",
+    grp_on: "<b>{k}</b> ticked of {n}", grp_on1: "<b>1</b> ticked of {n}",
+    details: "Details",
+    details_of: "Details: {name}",
+    also: "Also contains {n} mods of this list: {names}.",
+    need_syntakt: "+ Syntakt OS in step 2",
+    with_mod: "with {name}",
+    part_tested: "Partly tested",
+    good_to_know: "Good to know:",
+    clash_row: "<b>Doesn't go with the mod {name}</b>, already ticked: {why}. Ticking this one unticks it.",
+    clash_generic: "both change the same part of the firmware",
+    swapped: "The mod {off} was unticked: it doesn't go with {on}.",
+    swapped_n: "The mods {off} were unticked: they don't go with {on}.",
+    quoted: "“{name}”",
+    undo: "Undo",
+    eng_group: "Engines",
+    combo_known: "Already tried on the machine: {list}.",
+    combo_all: "the {n} engines",
+    take: "Use this choice",
+    d_status: "Status",
+    d_tested: "Tested on a real Model:Cycles.",
+    d_exp: "Checked in the emulator, not tested on a Model:Cycles yet.",
+    d_combos: "Tried on the machine: {list}. The other choices are checked in the emulator.",
+    d_with_tested: "With {name}: tried on the machine with {list}.",
+    d_contains: "Contains", d_contains_v: "{names}: nothing more to tick.",
+    d_clash: "Doesn't go with", d_clash_v: "{name}: {why}.",
+    d_file: "Extra file", d_file_syntakt: "your Syntakt OS file, asked for in step 2.",
+    d_requires: "Works with", d_requires_v: "{name} only: ticking this one ticks it too, and unticking {name} unticks this one.",
+    d_engines: "Engines",
+    d_note: "Before installing",
+    d_guide: "How to use it", read_guide: "Read the guide",
+    sel_title: "Your selection",
+    sel_n: "{n} mods", sel_n1: "1 mod",
+    sel_incl: "+ {n} included",
+    sel_exp: "{n} experimental", sel_exp1: "1 experimental",
+    sel_none: "No mod ticked yet: tick the ones to install.",
+    sel_show: "Show", sel_hide: "Hide",
+    sel_clear: "Untick all",
+    sel_remove: "Untick {name}",
+    sel_next: "Step 2",
+    sel_syntakt: "+ your Syntakt OS file, to load in step 2.",
+    search_label: "Search the mods",
+    search_ph: "Search: tempo, filter, mute…",
+    search_clear: "Clear the search",
+    found: "<b>{n}</b> of {total} mods for “{q}” · ",
+    show_all: "show all",
+    found_none: `No mod for “{q}”. An idea for a mod? <a href="${DISCORD}" target="_blank" rel="noopener">Suggest it on Discord</a>. · `,
+    restore_text: "Sends your official OS file <b>unchanged</b>, to go back to the stock firmware. It is also a good first rehearsal: it checks your cable and your setup without changing anything.",
+    tab_samples: "Samples OS",
+    samples_title: "Turn your Model:Cycles into a Model:Samples",
+    samples_text: "Load and play your own samples, managed with Elektron Transfer. The page puts the official Model:Samples OS inside your Model:Cycles firmware: the startup menu, the updater and the signature of the Model:Cycles stay in place.",
+    samples_w1: "Back up your projects with Transfer first: the Model:Samples OS uses the same storage.",
+    samples_w2: `Coming back to the Model:Cycles OS goes through the startup menu, which only listens to the MIDI IN: it needs a MIDI interface (<a href="${GUIDE}#samples">guide</a>).`,
+    samples_w3: "From the Samples OS, never install a Model:Samples OS file, neither with CONFIG › UPGRADE nor when Elektron Transfer offers an update: it would also replace the startup menu of your Model:Cycles.",
+    samples_ack: "I have a MIDI interface for the way back (to the Model:Cycles MIDI IN).",
+    restore_from_samples: `Coming back from the Samples OS? Its way back is the startup menu through the MIDI IN: see the <a href="${GUIDE}#recovery">guide</a>.`,
+    tested: "Tested",
+    experimental: "Experimental",
+    credit_by: "by {who}",
+    credit_based: "based on {repo} by {who}",
+    credit_based_v: "based on {repo} by {who}",
+    s2: "Load your official OS file",
+    drop_title: "Drop model-cycles_OS1.13.syx here",
+    drop_sub: "or click to choose it",
+    drop_again: "Checked. Click or drop to use another file.",
+    get_os: `Don't have it? <a href="${ELEKTRON_DL}" target="_blank" rel="noopener">Download Model:Cycles OS 1.13 from elektron.se</a>, then unzip it.`,
+    s2_samples: "Load both official OS files",
+    drop2_title: "Drop model-samples_OS1.13.syx here",
+    drop2_sub: "the official Model:Samples OS, or click to choose it",
+    get_os_samples: `Don't have it? <a href="${ELEKTRON_SMP_DL}" target="_blank" rel="noopener">Download Model:Samples OS 1.13 from elektron.se</a>, then unzip it.`,
+    drop3_title: "Drop Syntakt_OS1.42.syx here",
+    drop3_sub: "the official Syntakt OS, for its engines, or click to choose it",
+    get_os_syntakt: `Don't have it? <a href="${ELEKTRON_ST_DL}" target="_blank" rel="noopener">Download Syntakt OS 1.42 from elektron.se</a>, then unzip it. The page reads the engines from it, on your computer: no Syntakt needed.`,
+    s3: "Connect your Model:Cycles over USB",
+    hu1: "Connect the Model:Cycles to the computer with a USB cable and turn it on normally.",
+    hu2: "On the Model:Cycles, press <b>SETTINGS</b>, open <b>CONFIG › UPGRADE</b> and confirm with <b>YES</b>. It now waits for the firmware.",
+    hu3: "Allow MIDI access below: the port named “Model:Cycles” is selected automatically.",
+    m_fast: "Fast (USB)",
+    m_slow: "Classic (CONFIG › UPGRADE)",
+    method_fast: "The update protocol of Elektron Transfer, straight from this page: about 30 seconds. At the end, the Model:Cycles asks you to confirm (YES or NO).",
+    method_slow: "The firmware is sent at MIDI speed while CONFIG › UPGRADE waits for it: 5 to 10 minutes. The fallback if the fast method doesn't work.",
+    hf1: "Connect the Model:Cycles to the computer with a USB cable and turn it on normally. Stay on its usual screen: no menu to open.",
+    hf2: "Close <b>Elektron Transfer</b> and any music software that uses the Model:Cycles: they hold its USB port.",
+    hf3: "Allow MIDI access below: the page finds the Model:Cycles and shows its OS version.",
+    allow: "Allow MIDI access",
+    refresh: "Refresh",
+    s4: "Flash",
+    ack: "I've backed up my projects (Elektron Transfer) and I understand that flashing is at my own risk.",
+    flash_btn: "Flash the Model:Cycles",
+    flashing: "Flashing…",
+    stop: "Stop",
+    trouble: "Something went wrong?",
+    t1q: "Nothing happens on the Model:Cycles screen",
+    t1a: "Fast method: step 3 must say that the Model:Cycles was found. Classic method: check that <b>CONFIG › UPGRADE</b> is open and waiting. Either way, pick the port named “Model:Cycles” in step 3 and close Elektron Transfer, Overbridge and your music software (on Windows they lock the port), then try again.",
+    t2q: "The transfer stops, or the Model:Cycles shows an error",
+    t2a: "Turn the Model:Cycles off and on and flash again. With the classic method, open <b>CONFIG › UPGRADE</b> again and set <b>Advanced › Send speed margin</b> to 2.0 first.",
+    t3q: "No MIDI port in the list",
+    t3a: "Connect the Model:Cycles with a USB cable that carries data (some cables only charge), turn it on, then click <b>Refresh</b>. Some systems only show a new device after the browser is restarted.",
+    t5q: "The fast method doesn't find the Model:Cycles, or stops",
+    t5a: "Turn the Model:Cycles on normally (not in CONFIG › UPGRADE), close Elektron Transfer, then click <b>Refresh</b> in step 3. If it still fails, choose <b>Classic</b> in step 3: slower, but it doesn't need answers from the machine. Elektron Transfer works too: download the .syx (step 4) and drop it onto Transfer's window.",
+    t4q: "The update over USB is refused, or the Model:Cycles doesn't start any more",
+    t4a: `Recovery goes through the startup menu, which only listens to the MIDI IN: follow the <a href="${GUIDE}#recovery">guide</a> (it needs a MIDI interface). The same goes if you installed the old “6-channel reference version”, which disables updates over USB.`,
+    advanced: "Advanced",
+    pace: "Send speed margin",
+    pace_hint: "Classic method only. 1.4 by default: raise it to 2.0 if the transfer stalls.",
+    download: "Download the .syx",
+    download_hint: "to drop onto <b>Elektron Transfer</b> (just as fast), or to keep.",
+    credits: "Credits",
+    credits_intro: "This flasher stands on the shoulders of these open-source projects (MIT licence), none of which includes firmware:",
+    privacy: "Your firmware file never leaves your computer. Nothing is uploaded, no firmware is provided.",
+    links: "Not affiliated with Elektron. Model:Cycles, Model:Samples and Syntakt are Elektron products.",
+    // dynamic
+    no_webmidi: "This browser can't talk to MIDI devices. Open this page in <b>Chrome, Edge or Opera</b> on a computer (Firefox and Safari don't support Web MIDI). You can still prepare the firmware here.",
+    insecure: "Web MIDI needs a secure page. Open the online version, or serve this folder with <code>python3 -m http.server</code>, not by double-clicking the file.",
+    reading: "Reading {name}…",
+    os_ok: "Official Model:Cycles OS 1.13 recognised.",
+    os_custom: "{name}: {device} firmware, but not the official OS 1.13 file. It will be sent <b>exactly as it is</b>.",
+    os_custom_mods: "Your mod selection is ignored for this file.",
+    os_restore_needs: "To restore the official firmware, load the official <code>model-cycles_OS1.13.syx</code>.",
+    os_bad: "This file can't be used: {err}",
+    building: "Preparing the firmware…",
+    built: "Firmware ready: {mods}.",
+    built_ref: "Checked against the reference build.",
+    built_ref_mods: "Each mod checked against its reference build.",
+    build_failed: "The firmware couldn't be prepared: {err}",
+    stock_ready: "Ready to send the official firmware, unchanged.",
+    smp_ok: "Official Model:Samples OS 1.13 recognised.",
+    smp_bad: "This is not the official Model:Samples OS 1.13 file: {err}",
+    smp_not_official: "its SHA-256 differs from the official file",
+    st_ok: "Official Syntakt OS {v} recognised.",
+    st_bad: "This is not the official Syntakt OS 1.42 file: {err}",
+    needs_syntakt: "The Syntakt engines are read from the official Syntakt OS file: drop it below.",
+    license_mit: "MIT license",
+    miss_syntakt: "Load the official Syntakt OS file (step 2).",
+    combo_tested: "This choice was tested on a real Model:Cycles.",
+    combo_new: "New choice: checked in the emulator, not tested on a Model:Cycles yet.",
+    included: "(included with {name})",
+    with_tg: "With Model-TG: its Sampler is the 7th machine and these engines come after it, from the 8th. A track set to an added machine plays another one on the version without Model-TG, and the other way round.",
+    renumber: "Before changing this choice or going back to the official firmware, set the tracks that use an added machine back to an original one (Kick…Chord): their numbers depend on the ticked engines, and MACHINES can freeze on such a track.",
+    done_syn_tg: "Then press MACHINES on a track: after Chord comes the Sampler, then {list}. Their knobs show the Syntakt's names. Model-TG's Attack, Filter and Resonance work on them too: hold MACHINE and turn DECAY, SWEEP or CONTOUR. If something goes wrong, flash the official firmware back with this page (first set the tracks that use an added machine back to an original machine).",
+    done_syn: "Then press MACHINES on a track: after Chord come {list}. Their knobs show the Syntakt's names. The 6 original machines are unchanged. If something goes wrong, flash the official firmware back with this page (first set the tracks that use an added machine back to an original machine).",
+    warn_samples_port: "This port is a Model:Samples (a Model:Cycles running the Samples OS): it refuses a Model:Cycles firmware over USB. The way back goes through the startup menu and the MIDI IN (see the full guide).",
+    samples_needs_cycles: "For the Samples OS, the first file must be the official <code>model-cycles_OS1.13.syx</code>: it provides the startup menu, updater and signature that stay on your Model:Cycles.",
+    samples_ready: "Firmware ready: the Model:Samples OS for your Model:Cycles.",
+    mods_list_samples: "Model:Samples OS (for Model:Cycles)",
+    miss_samples_cycles: "The first file must be the official Model:Cycles OS (step 2).",
+    miss_samples_file: "Load the official Model:Samples OS file (step 2).",
+    miss_samples_ack: "Confirm you have a MIDI interface for the way back (step 1).",
+    smp_dir_cyc: "Model:Cycles → Samples OS",
+    smp_dir_smp: "Model:Samples → Cycles OS",
+    smp_dir_back: "Model:Samples: back to its OS",
+    cos_title: "Turn your Model:Samples into a Model:Cycles",
+    cos_text: "Play the Model:Cycles synth engines on your Model:Samples. The page puts the official Model:Cycles OS inside your Model:Samples firmware: the startup menu, the updater and the signature of the Model:Samples stay in place. One small change in the Model:Cycles OS lets it accept the official Model:Samples OS again over USB, so the way back is in this tab too (“Model:Samples: back to its OS”).",
+    cos_w1: "Experimental: not yet tried on a real Model:Samples.",
+    cos_w2: "Back up your samples and projects with Elektron Transfer first: the Model:Cycles OS uses the same storage, and what it does with Model:Samples data is not known yet.",
+    cos_w3: "Under the Cycles OS, your Model:Samples refuses Model:Cycles firmwares (official or with mods), including an update offered by Elektron Transfer: that is expected, nothing is written. To leave, use “Model:Samples: back to its OS”.",
+    cos_w4: `If the way back over USB ever failed, the startup menu of the Model:Samples still takes its official OS through the MIDI IN, with a MIDI interface (<a href="${GUIDE}#cycles-on-samples">guide</a>).`,
+    cos_w5: "Only for a real Model:Samples. A Model:Cycles running the Samples OS (first choice of this tab) also answers as a Model:Samples and would take this firmware, then refuse Model:Cycles firmwares over USB until its startup menu reinstalls its OS through the MIDI IN.",
+    xos_reset: "If the machine does not start properly after the update, switch it off and on again. If it still hangs, hold FUNC while switching it on, then press TRIG 2 (EMPTY RESET): it clears the active project, hence the backup first.",
+    cos_ack: "I have backed up my samples and projects with Elektron Transfer, and I keep the official Model:Samples OS file for the way back.",
+    sback_title: "Give your Model:Samples its own OS back",
+    sback_text: "For a Model:Samples running the Model:Cycles OS installed from this page. The page sends the official Model:Samples OS, unchanged, packed so that the Model:Cycles OS accepts it. The machine restarts as a Model:Samples, as before.",
+    sback_w1: "A Model:Cycles OS installed another way (another tool, or a Model:Cycles build with mods) refuses this file: the machine says the update failed and nothing changes. Such an OS accepts the first choice, “Model:Cycles → Samples OS”, which brings the Model:Samples OS back; failing that, the startup menu and the MIDI IN.",
+    sback_w2: `Sent to a real Model:Cycles, it is refused and nothing changes (<a href="${GUIDE}#cycles-on-samples">guide</a>).`,
+    cos_needs_cycles: "For this choice, the first file must be the official <code>model-cycles_OS1.13.syx</code>, and the second the official Model:Samples OS.",
+    cos_ready: "Firmware ready: the Model:Cycles OS for your Model:Samples.",
+    sback_ready: "Firmware ready: the official Model:Samples OS, for the way back over USB.",
+    mods_list_cos: "Model:Cycles OS (for Model:Samples)",
+    mods_list_sback: "Official Model:Samples OS (way back)",
+    miss_cos_ack: "Confirm your backup and the official Model:Samples file (step 1).",
+    done_cos: "It restarts as a <b>Model:Cycles</b>: Elektron Transfer and your computer see a “Model:Cycles”. To go back, choose “Model:Samples: back to its OS” in the Samples OS tab.",
+    done_sback: "It restarts as a <b>Model:Samples</b>, with its own OS.",
+    dev_fwd_on_cycles: "This machine answers as a Model:Cycles: it would refuse this firmware. If it is a Model:Samples already running the Cycles OS, there is nothing to install; to go back, choose “Model:Samples: back to its OS” if that Cycles OS came from this page, or “Model:Cycles → Samples OS” if it was installed another way.",
+    dev_back_on_samples: "This machine answers as a Model:Samples OS: there is nothing to bring back. If it actually runs the Cycles OS with Model-TG, set Model-TG's Transfer identity back to CYC (or restart the machine), then try again.",
+    done_samples: "It restarts as a <b>Model:Samples</b>: Elektron Transfer and your computer see a “Model:Samples”. Load your samples with Transfer.",
+    pick_one: "Select at least one mod, or switch to “Official firmware”.",
+    midi_asking: "Asking for MIDI access…",
+    midi_wait: "Waiting for your permission: Chrome shows a prompt near the address bar. Click “Allow”. If you blocked it before, click the icon left of the address and allow MIDI.",
+    midi_denied: "MIDI access was refused. Click the icon left of the address, allow MIDI, reload the page and try again.",
+    midi_none: "No MIDI output found. Connect the Model:Cycles over USB, turn it on, then click Refresh.",
+    midi_pick_dev: "The Model:Cycles USB port is selected.",
+    midi_no_dev: "The Model:Cycles doesn't appear over USB. Connect it, turn it on and click Refresh.",
+    warn_not_dev: "This doesn't look like the Model:Cycles: pick the port named “Model:Cycles”.",
+    choose_port: "Choose a MIDI output",
+    via: "via",
+    minutes: "about {m} min",
+    mods_list_restore: "Official firmware (unchanged)",
+    mods_list_custom: "Custom file {name} (sent as is)",
+    miss_file: "Load your official OS file (step 2).",
+    miss_mod: "Select a mod (step 1), or switch to “Official firmware”.",
+    miss_build: "Preparing the firmware…",
+    miss_fw: "The firmware isn't ready (step 2).",
+    miss_midi: "Allow MIDI access (step 3).",
+    miss_port: "Choose a MIDI output (step 3).",
+    miss_ack: "Tick the box above to confirm.",
+    miss_ready: "Open CONFIG › UPGRADE on the {m} (step 3), then flash.",
+    miss_ready_fast: "Ready. At the end, the {m} asks you to confirm on its screen.",
+    miss_probe: "Waiting for the Model:Cycles to answer (step 3).",
+    miss_dev: "The Model:Cycles must answer first (step 3).",
+    miss_dev_mismatch: "This machine can't take this firmware (step 3).",
+    dev_probing: "Looking for the Model:Cycles…",
+    dev_ok: "{device} found: OS {v}.",
+    dev_none: "The Model:Cycles doesn't answer. If CONFIG › UPGRADE is open, leave it (NO); close Elektron Transfer, then click Refresh. Or choose the classic method.",
+    dev_busy: "Its USB port is in use by another program: close Elektron Transfer, Overbridge and your music software, then click Refresh.",
+    dev_noinput: "The page sees no MIDI input from the Model:Cycles, and the fast method needs both directions. Click Refresh, or choose the classic method.",
+    dev_samples: `This machine answers as a Model:Samples, so it would refuse this firmware. With Model-TG, set Device Config › Transfer back to CYC (or turn it off and on). Under the Samples OS, the way back is in the <a href="${GUIDE}#recovery">guide</a>.`,
+    dev_other: "This Elektron machine ({name}) is not a Model:Cycles: nothing will be sent.",
+    dev_wrong_file: "This firmware is for a Model:Samples, and this machine is a Model:Cycles: nothing will be sent.",
+    watch_fast: "The Model:Cycles checks every block as it arrives. At the end it asks you to confirm the update on its screen.",
+    done_title_fast: "Firmware sent.",
+    after_confirm: "Now confirm the update on the {m} screen (<b>YES</b>). It then writes the firmware and restarts by itself: <b>don't turn it off</b> until it has restarted.",
+    after_gone: "The {m} is writing the firmware and restarting. <b>Don't turn it off.</b>",
+    after_back: "The {m} is back: {device} OS {v}.",
+    after_back_plain: "The {m} is back.",
+    fast_timeout: "The Model:Cycles stopped answering. Turn it off and on, then flash again. If it happens again, choose the classic method in step 3.",
+    fast_refused: "The Model:Cycles refused the update{why}. Turn it off and on and try again, or choose the classic method in step 3.",
+    fast_write: "The Model:Cycles reported an error while receiving{why}. Turn it off and on and try again, or choose the classic method in step 3.",
+    stopped_fast: "Stopped before the end: the Model:Cycles hasn't received the whole firmware. Turn it off and on, then flash again.",
+    log_start_fast: "Fast upgrade: {kb} KB in {n} blocks to “{port}” ({device} OS {v}).",
+    watch: "Watch the Model:Cycles screen: it should show that it is receiving. If nothing happens within a few seconds, press <b>Stop</b>.",
+    keep_visible: "Keep this tab in the foreground: browsers slow down background tabs.",
+    remaining: "{t} left",
+    done_title: "Transfer complete.",
+    done_body: "The Model:Cycles now writes the firmware (<code>UPDATING FLASH</code>) and restarts by itself. <b>Don't turn it off</b> until it has restarted.",
+    done_6ch: "With the 6-channel mod, your computer should then show a Model:Cycles audio device with <b>6 input channels</b>.",
+    stopped: "Stopped. Turn the Model:Cycles off and on, open CONFIG › UPGRADE again, then flash again.",
+    send_error: "The transfer failed: {err}. Turn the Model:Cycles off and on, open CONFIG › UPGRADE again and retry.",
+    port_gone: "The MIDI output has disappeared. Check the connection and pick it again.",
+    leave: "A firmware transfer is in progress. Leaving now will interrupt it.",
+    log_start: "Sending {n} packets to “{port}”, margin {pace}.",
+  },
+  fr: {
+    title: "Flasher Model:Cycles",
+    tagline: "Installez des mods sur votre Elektron Model:Cycles, depuis votre navigateur.",
+    s1: "Que voulez-vous installer ?",
+    tab_mods: "Mods",
+    tab_restore: "Firmware officiel",
+    mods_note: 'Cochez ce que vous voulez : les mods se combinent, sauf mention contraire. <span class="tag ok">Testé</span> : essayé sur un vrai Model:Cycles. <span class="tag exp">Expérimental</span> : vérifié en émulation, pas encore sur la machine.',
+    cats_label: "Rubriques",
+    cat_lit: ", avec des mods cochés",
+    cat_pack: "Packs", cat_pack_sub: "plusieurs mods en un",
+    cat_sound: "Sons et machines", cat_sound_sub: "nouvelles machines, filtres",
+    cat_seq: "Séquenceur", cat_seq_sub: "trigs, tempo, arpèges",
+    cat_live: "Jeu en live", cat_live_sub: "mutes, accords, mixage",
+    cat_screen: "Écran et navigation", cat_screen_sub: "navigateur, affichage, démarrage",
+    cat_io: "USB et MIDI", cat_io_sub: "audio et MIDI vers l'extérieur",
+    cat_other: "Autres mods", cat_other_sub: "",
+    grp_n: "{n} mods", grp_n1: "1 mod",
+    grp_on: "<b>{k}</b> cochés sur {n}", grp_on1: "<b>1</b> coché sur {n}",
+    details: "Détails",
+    details_of: "Détails : {name}",
+    also: "Contient aussi {n} mods de la liste : {names}.",
+    need_syntakt: "+ OS Syntakt à l'étape 2",
+    with_mod: "avec {name}",
+    part_tested: "Testé en partie",
+    good_to_know: "À savoir :",
+    clash_row: "<b>Ne va pas avec le mod {name}</b>, déjà coché : {why}. Cocher celui-ci le décochera.",
+    clash_generic: "les deux modifient le même endroit du firmware",
+    swapped: "Le mod {off} a été décoché : il ne va pas avec {on}.",
+    swapped_n: "Les mods {off} ont été décochés : ils ne vont pas avec {on}.",
+    quoted: "« {name} »",
+    undo: "Annuler",
+    eng_group: "Moteurs",
+    combo_known: "Déjà essayé sur la machine : {list}.",
+    combo_all: "les {n} moteurs",
+    take: "Prendre ce choix",
+    d_status: "État",
+    d_tested: "Testé sur un vrai Model:Cycles.",
+    d_exp: "Vérifié en émulation, pas encore testé sur un Model:Cycles.",
+    d_combos: "Essayé sur la machine : {list}. Les autres choix sont vérifiés en émulation.",
+    d_with_tested: "Avec {name} : essayé sur la machine avec {list}.",
+    d_contains: "Contient", d_contains_v: "{names} : rien à cocher en plus.",
+    d_clash: "Ne va pas avec", d_clash_v: "{name} : {why}.",
+    d_file: "Fichier en plus", d_file_syntakt: "votre fichier d'OS Syntakt, demandé à l'étape 2.",
+    d_requires: "Marche avec", d_requires_v: "{name} seulement : cocher celui-ci le coche aussi, et décocher {name} décoche celui-ci.",
+    d_engines: "Moteurs",
+    d_note: "Avant d'installer",
+    d_guide: "Mode d'emploi", read_guide: "Lire le guide",
+    sel_title: "Votre sélection",
+    sel_n: "{n} mods", sel_n1: "1 mod",
+    sel_incl: "+ {n} inclus",
+    sel_exp: "{n} expérimentaux", sel_exp1: "1 expérimental",
+    sel_none: "Aucun mod coché : cochez ceux à installer.",
+    sel_show: "Voir", sel_hide: "Masquer",
+    sel_clear: "Tout décocher",
+    sel_remove: "Décocher {name}",
+    sel_next: "Étape 2",
+    sel_syntakt: "+ votre fichier d'OS Syntakt, à charger à l'étape 2.",
+    search_label: "Chercher un mod",
+    search_ph: "Chercher : tempo, filtre, mute…",
+    search_clear: "Effacer la recherche",
+    found: "<b>{n}</b> mods sur {total} pour « {q} » · ",
+    show_all: "tout afficher",
+    found_none: `Aucun mod pour « {q} ». Une idée de mod ? <a href="${DISCORD}" target="_blank" rel="noopener">Proposez-la sur Discord</a>. · `,
+    restore_text: "Envoie votre fichier d'OS officiel <b>sans le modifier</b>, pour revenir au firmware d'origine. C'est aussi une bonne répétition avant un mod : elle vérifie le câble et l'installation sans rien changer.",
+    tab_samples: "OS Samples",
+    samples_title: "Transformer le Model:Cycles en Model:Samples",
+    samples_text: "Chargez et jouez vos propres samples, gérés avec Elektron Transfer. La page place l'OS officiel du Model:Samples dans le firmware de votre Model:Cycles : le menu de démarrage, l'updater et la signature du Model:Cycles restent en place.",
+    samples_w1: "Sauvegardez d'abord vos projets avec Transfer : l'OS du Model:Samples utilise le même stockage.",
+    samples_w2: `Le retour à l'OS du Model:Cycles passe par le menu de démarrage, qui n'écoute que le MIDI IN : il faut une interface MIDI (<a href="${GUIDE}#samples">guide</a>).`,
+    samples_w3: "Depuis l'OS Samples, n'installez jamais un fichier d'OS Model:Samples, ni par CONFIG › UPGRADE ni quand Elektron Transfer propose une mise à jour : il remplacerait aussi le menu de démarrage de votre Model:Cycles.",
+    samples_ack: "J'ai une interface MIDI pour le retour (vers le MIDI IN du Model:Cycles).",
+    restore_from_samples: `Vous revenez de l'OS Samples ? Le retour passe par le menu de démarrage et le MIDI IN : voir le <a href="${GUIDE}#recovery">guide</a>.`,
+    tested: "Testé",
+    experimental: "Expérimental",
+    credit_by: "par {who}",
+    credit_based: "d'après {repo} de {who}",
+    credit_based_v: "d'après {repo} d'{who}",
+    s2: "Déposez votre fichier d'OS officiel",
+    drop_title: "Déposez model-cycles_OS1.13.syx ici",
+    drop_sub: "ou cliquez pour le choisir",
+    drop_again: "Vérifié. Cliquez ou déposez un autre fichier pour le remplacer.",
+    get_os: `Vous ne l'avez pas ? <a href="${ELEKTRON_DL}" target="_blank" rel="noopener">Téléchargez l'OS Model:Cycles 1.13 sur elektron.se</a>, puis dézippez-le.`,
+    s2_samples: "Déposez les deux fichiers d'OS officiels",
+    drop2_title: "Déposez model-samples_OS1.13.syx ici",
+    drop2_sub: "l'OS officiel du Model:Samples, ou cliquez pour le choisir",
+    get_os_samples: `Vous ne l'avez pas ? <a href="${ELEKTRON_SMP_DL}" target="_blank" rel="noopener">Téléchargez l'OS Model:Samples 1.13 sur elektron.se</a>, puis dézippez-le.`,
+    drop3_title: "Déposez Syntakt_OS1.42.syx ici",
+    drop3_sub: "l'OS officiel du Syntakt, pour ses moteurs, ou cliquez pour le choisir",
+    get_os_syntakt: `Vous ne l'avez pas ? <a href="${ELEKTRON_ST_DL}" target="_blank" rel="noopener">Téléchargez l'OS Syntakt 1.42 sur elektron.se</a>, puis dézippez-le. La page y lit les moteurs, sur votre ordinateur : pas besoin d'avoir un Syntakt.`,
+    s3: "Branchez le Model:Cycles en USB",
+    hu1: "Reliez le Model:Cycles à l'ordinateur avec un câble USB et allumez-le normalement.",
+    hu2: "Sur le Model:Cycles, appuyez sur <b>SETTINGS</b>, ouvrez <b>CONFIG › UPGRADE</b> et confirmez avec <b>YES</b>. Il attend alors le firmware.",
+    hu3: "Autorisez le MIDI ci-dessous : le port nommé « Model:Cycles » est choisi automatiquement.",
+    m_fast: "Rapide (USB)",
+    m_slow: "Classique (CONFIG › UPGRADE)",
+    method_fast: "Le protocole de mise à jour d'Elektron Transfer, directement depuis cette page : une trentaine de secondes. À la fin, le Model:Cycles demande de confirmer (YES ou NO).",
+    method_slow: "Le firmware est envoyé à la vitesse du MIDI pendant que CONFIG › UPGRADE l'attend : 5 à 10 minutes. La solution de secours si la méthode rapide ne marche pas.",
+    hf1: "Reliez le Model:Cycles à l'ordinateur avec un câble USB et allumez-le normalement. Restez sur son écran habituel : aucun menu à ouvrir.",
+    hf2: "Fermez <b>Elektron Transfer</b> et tout logiciel de musique qui utilise le Model:Cycles : ils occupent son port USB.",
+    hf3: "Autorisez le MIDI ci-dessous : la page trouve le Model:Cycles et affiche sa version d'OS.",
+    allow: "Autoriser le MIDI",
+    refresh: "Rafraîchir",
+    s4: "Flasher",
+    ack: "J'ai sauvegardé mes projets (Elektron Transfer) et je comprends que je flashe à mes risques.",
+    flash_btn: "Flasher le Model:Cycles",
+    flashing: "Flash en cours…",
+    stop: "Arrêter",
+    trouble: "Un problème ?",
+    t1q: "Rien ne se passe sur l'écran du Model:Cycles",
+    t1a: "Méthode rapide : l'étape 3 doit indiquer que le Model:Cycles a été trouvé. Méthode classique : vérifiez que <b>CONFIG › UPGRADE</b> est ouvert et en attente. Dans les deux cas, choisissez le port nommé « Model:Cycles » à l'étape 3 et fermez Elektron Transfer, Overbridge et votre logiciel de musique (sous Windows, ils bloquent le port), puis réessayez.",
+    t2q: "Le transfert s'arrête, ou le Model:Cycles affiche une erreur",
+    t2a: "Éteignez puis rallumez le Model:Cycles et relancez. Avec la méthode classique, rouvrez d'abord <b>CONFIG › UPGRADE</b> et réglez <b>Options avancées › Marge de vitesse</b> sur 2.0.",
+    t3q: "Aucun port MIDI dans la liste",
+    t3a: "Branchez le Model:Cycles avec un câble USB qui transporte les données (certains câbles ne font que charger), allumez-le, puis cliquez sur <b>Rafraîchir</b>. Certains systèmes n'affichent un nouvel appareil qu'après un redémarrage du navigateur.",
+    t5q: "La méthode rapide ne trouve pas le Model:Cycles, ou s'arrête",
+    t5a: "Allumez le Model:Cycles normalement (pas dans CONFIG › UPGRADE), fermez Elektron Transfer, puis cliquez sur <b>Rafraîchir</b> à l'étape 3. Si ça échoue encore, choisissez <b>Classique</b> à l'étape 3 : plus lent, mais sans besoin de réponse de la machine. Elektron Transfer marche aussi : téléchargez le .syx (étape 4) et déposez-le sur la fenêtre de Transfer.",
+    t4q: "La mise à jour par USB est refusée, ou le Model:Cycles ne démarre plus",
+    t4a: `La récupération passe par le menu de démarrage, qui n'écoute que le MIDI IN : suivez le <a href="${GUIDE}#recovery">guide</a> (il faut une interface MIDI). C'est aussi le cas si vous aviez installé l'ancienne « version de référence » du 6 canaux, qui désactive la mise à jour par USB.`,
+    advanced: "Options avancées",
+    pace: "Marge de vitesse d'envoi",
+    pace_hint: "Méthode classique seulement. 1.4 par défaut : montez à 2.0 si le transfert se bloque.",
+    download: "Télécharger le .syx",
+    download_hint: "à déposer sur <b>Elektron Transfer</b> (aussi rapide), ou à garder.",
+    credits: "Crédits",
+    credits_intro: "Ce flasher s'appuie sur ces projets open source (licence MIT), dont aucun ne contient de firmware :",
+    privacy: "Votre fichier firmware ne quitte jamais votre ordinateur. Rien n'est envoyé en ligne, aucun firmware n'est fourni.",
+    links: "Projet non affilié à Elektron. Model:Cycles, Model:Samples et Syntakt sont des produits Elektron.",
+    no_webmidi: "Ce navigateur ne sait pas parler aux appareils MIDI. Ouvrez cette page dans <b>Chrome, Edge ou Opera</b> sur ordinateur (Firefox et Safari ne gèrent pas le Web MIDI). Vous pouvez quand même préparer le firmware ici.",
+    insecure: "Le Web MIDI exige une page sécurisée. Ouvrez la version en ligne, ou servez ce dossier avec <code>python3 -m http.server</code>, pas par double-clic sur le fichier.",
+    reading: "Lecture de {name}…",
+    os_ok: "OS officiel Model:Cycles 1.13 reconnu.",
+    os_custom: "{name} : firmware {device}, mais pas le fichier d'OS 1.13 officiel. Il sera envoyé <b>tel quel</b>.",
+    os_custom_mods: "Votre sélection de mods est ignorée pour ce fichier.",
+    os_restore_needs: "Pour restaurer le firmware officiel, déposez le fichier officiel <code>model-cycles_OS1.13.syx</code>.",
+    os_bad: "Fichier inutilisable : {err}",
+    building: "Préparation du firmware…",
+    built: "Firmware prêt : {mods}.",
+    built_ref: "Conforme au build de référence.",
+    built_ref_mods: "Chaque mod est conforme à son build de référence.",
+    build_failed: "Impossible de préparer le firmware : {err}",
+    stock_ready: "Prêt à envoyer le firmware officiel, sans modification.",
+    smp_ok: "OS officiel Model:Samples 1.13 reconnu.",
+    smp_bad: "Ce n'est pas le fichier officiel de l'OS Model:Samples 1.13 : {err}",
+    smp_not_official: "son SHA-256 diffère du fichier officiel",
+    st_ok: "OS officiel Syntakt {v} reconnu.",
+    st_bad: "Ce n'est pas le fichier officiel de l'OS Syntakt 1.42 : {err}",
+    needs_syntakt: "Les moteurs du Syntakt se lisent dans le fichier officiel de l'OS Syntakt : déposez-le ci-dessous.",
+    license_mit: "licence MIT",
+    miss_syntakt: "Déposez le fichier officiel de l'OS Syntakt (étape 2).",
+    combo_tested: "Ce choix a été testé sur un vrai Model:Cycles.",
+    combo_new: "Nouveau choix : vérifié en émulation, pas encore testé sur un Model:Cycles.",
+    included: "(inclus avec {name})",
+    with_tg: "Avec Model-TG : son Sampler est la 7e machine et ces moteurs viennent après lui, à partir de la 8e. Une piste réglée sur une machine ajoutée en joue une autre sur la version sans Model-TG, et inversement.",
+    renumber: "Avant de changer de choix ou de revenir au firmware officiel, remettez sur une machine d'origine (de Kick à Chord) les pistes qui utilisent une machine ajoutée : leurs numéros dépendent des moteurs cochés, et MACHINES peut geler sur une telle piste.",
+    done_syn_tg: "Appuyez ensuite sur MACHINES sur une piste : après Chord vient le Sampler, puis {list}. Leurs potards affichent les noms du Syntakt. Attack, Filtre et Résonance de Model-TG y fonctionnent aussi : maintenez MACHINE et tournez DECAY, SWEEP ou CONTOUR. En cas de problème, reflashez le firmware officiel avec cette page (remettez d'abord sur une machine d'origine les pistes qui utilisent une machine ajoutée).",
+    done_syn: "Appuyez ensuite sur MACHINES sur une piste : après Chord viennent {list}. Leurs potards affichent les noms du Syntakt. Les 6 machines d'origine ne changent pas. En cas de problème, reflashez le firmware officiel avec cette page (remettez d'abord sur une machine d'origine les pistes qui utilisent une machine ajoutée).",
+    warn_samples_port: "Ce port est un Model:Samples (un Model:Cycles sous l'OS Samples) : il refuse un firmware Model:Cycles par USB. Le retour passe par le menu de démarrage et le MIDI IN (voir le guide).",
+    samples_needs_cycles: "Pour l'OS Samples, le premier fichier doit être le <code>model-cycles_OS1.13.syx</code> officiel : il fournit le menu de démarrage, l'updater et la signature qui restent sur votre Model:Cycles.",
+    samples_ready: "Firmware prêt : l'OS Model:Samples pour votre Model:Cycles.",
+    mods_list_samples: "OS Model:Samples (pour Model:Cycles)",
+    miss_samples_cycles: "Le premier fichier doit être l'OS officiel du Model:Cycles (étape 2).",
+    miss_samples_file: "Déposez le fichier officiel de l'OS Model:Samples (étape 2).",
+    miss_samples_ack: "Confirmez que vous avez une interface MIDI pour le retour (étape 1).",
+    smp_dir_cyc: "Model:Cycles → OS Samples",
+    smp_dir_smp: "Model:Samples → OS Cycles",
+    smp_dir_back: "Model:Samples : retour à son OS",
+    cos_title: "Transformer le Model:Samples en Model:Cycles",
+    cos_text: "Jouez les moteurs de synthèse du Model:Cycles sur votre Model:Samples. La page place l'OS officiel du Model:Cycles dans le firmware de votre Model:Samples : le menu de démarrage, l'updater et la signature du Model:Samples restent en place. Une petite modification de l'OS du Model:Cycles lui fait accepter à nouveau l'OS officiel du Model:Samples par USB : le retour se fait aussi depuis cet onglet (« Model:Samples : retour à son OS »).",
+    cos_w1: "Expérimental : pas encore essayé sur un vrai Model:Samples.",
+    cos_w2: "Sauvegardez d'abord vos samples et vos projets avec Elektron Transfer : l'OS du Model:Cycles utilise le même stockage, et on ne sait pas encore ce qu'il fait des données du Model:Samples.",
+    cos_w3: "Sous l'OS Cycles, votre Model:Samples refuse les firmwares Model:Cycles (officiels ou avec mods), y compris une mise à jour proposée par Elektron Transfer : c'est voulu, rien n'est écrit. Pour revenir, utilisez « Model:Samples : retour à son OS ».",
+    cos_w4: `Si le retour par USB échouait un jour, le menu de démarrage du Model:Samples accepte toujours son OS officiel par le MIDI IN, avec une interface MIDI (<a href="${GUIDE}#cycles-on-samples">guide</a>).`,
+    cos_w5: "Seulement pour un vrai Model:Samples. Un Model:Cycles sous l'OS Samples (premier choix de cet onglet) répond lui aussi Model:Samples et prendrait ce firmware, puis refuserait les firmwares Model:Cycles par USB jusqu'à ce que son menu de démarrage réinstalle son OS par le MIDI IN.",
+    xos_reset: "Si la machine démarre mal après la mise à jour, éteignez-la et rallumez-la. Si elle bloque encore, maintenez FUNC à l'allumage puis appuyez sur TRIG 2 (EMPTY RESET) : il vide le projet actif, d'où la sauvegarde d'abord.",
+    cos_ack: "J'ai sauvegardé mes samples et mes projets avec Elektron Transfer, et je garde le fichier officiel de l'OS Model:Samples pour le retour.",
+    sback_title: "Rendre au Model:Samples son propre OS",
+    sback_text: "Pour un Model:Samples sous l'OS du Model:Cycles installé depuis cette page. La page envoie l'OS officiel du Model:Samples, sans le modifier, emballé pour que l'OS du Model:Cycles l'accepte. La machine redémarre en Model:Samples, comme avant.",
+    sback_w1: "Un OS Model:Cycles installé autrement (avec un autre outil, ou un build Model:Cycles avec mods) refuse ce fichier : la machine dit que la mise à jour a échoué et rien ne change. Un tel OS accepte le premier choix, « Model:Cycles → OS Samples », qui rend l'OS du Model:Samples ; à défaut, le menu de démarrage et le MIDI IN.",
+    sback_w2: `Envoyé à un vrai Model:Cycles, il est refusé et rien ne change (<a href="${GUIDE}#cycles-on-samples">guide</a>).`,
+    cos_needs_cycles: "Pour ce choix, le premier fichier doit être le <code>model-cycles_OS1.13.syx</code> officiel, et le second l'OS officiel du Model:Samples.",
+    cos_ready: "Firmware prêt : l'OS du Model:Cycles pour votre Model:Samples.",
+    sback_ready: "Firmware prêt : l'OS officiel du Model:Samples, pour le retour par USB.",
+    mods_list_cos: "OS Model:Cycles (pour Model:Samples)",
+    mods_list_sback: "OS Model:Samples officiel (retour)",
+    miss_cos_ack: "Confirmez votre sauvegarde et le fichier officiel du Model:Samples (étape 1).",
+    done_cos: "Il redémarre en <b>Model:Cycles</b> : Elektron Transfer et votre ordinateur voient un « Model:Cycles ». Pour revenir, choisissez « Model:Samples : retour à son OS » dans l'onglet OS Samples.",
+    done_sback: "Il redémarre en <b>Model:Samples</b>, avec son propre OS.",
+    dev_fwd_on_cycles: "Cette machine répond comme un Model:Cycles : elle refuserait ce firmware. Si c'est un Model:Samples déjà sous l'OS Cycles, il n'y a rien à installer ; pour revenir, choisissez « Model:Samples : retour à son OS » si cet OS Cycles vient de cette page, ou « Model:Cycles → OS Samples » s'il a été installé autrement.",
+    dev_back_on_samples: "Cette machine répond comme l'OS du Model:Samples : il n'y a rien à rendre. Si elle tourne en fait sous l'OS Cycles avec Model-TG, remettez l'identité Transfer de Model-TG sur CYC (ou redémarrez la machine), puis réessayez.",
+    done_samples: "Il redémarre en <b>Model:Samples</b> : Elektron Transfer et votre ordinateur voient un « Model:Samples ». Chargez vos samples avec Transfer.",
+    pick_one: "Cochez au moins un mod, ou passez sur « Firmware officiel ».",
+    midi_asking: "Demande d'accès MIDI…",
+    midi_wait: "En attente de votre autorisation : Chrome affiche une demande près de la barre d'adresse. Cliquez sur « Autoriser ». Si vous l'avez bloquée, cliquez sur l'icône à gauche de l'adresse et autorisez le MIDI.",
+    midi_denied: "Accès MIDI refusé. Cliquez sur l'icône à gauche de l'adresse, autorisez le MIDI, rechargez la page et réessayez.",
+    midi_none: "Aucune sortie MIDI. Branchez le Model:Cycles en USB, allumez-le, puis cliquez sur Rafraîchir.",
+    midi_pick_dev: "Le port USB du Model:Cycles est sélectionné.",
+    midi_no_dev: "Le Model:Cycles n'apparaît pas en USB. Branchez-le, allumez-le et cliquez sur Rafraîchir.",
+    warn_not_dev: "Ce port ne semble pas être le Model:Cycles : choisissez le port nommé « Model:Cycles ».",
+    choose_port: "Choisissez une sortie MIDI",
+    via: "via",
+    minutes: "environ {m} min",
+    mods_list_restore: "Firmware officiel (sans modification)",
+    mods_list_custom: "Fichier {name} (envoyé tel quel)",
+    miss_file: "Déposez votre fichier d'OS officiel (étape 2).",
+    miss_mod: "Cochez un mod (étape 1), ou passez sur « Firmware officiel ».",
+    miss_build: "Préparation du firmware…",
+    miss_fw: "Le firmware n'est pas prêt (étape 2).",
+    miss_midi: "Autorisez le MIDI (étape 3).",
+    miss_port: "Choisissez une sortie MIDI (étape 3).",
+    miss_ack: "Cochez la case ci-dessus pour confirmer.",
+    miss_ready: "Ouvrez CONFIG › UPGRADE sur le {m} (étape 3), puis flashez.",
+    miss_ready_fast: "Prêt. À la fin, le {m} demande de confirmer sur son écran.",
+    miss_probe: "En attente d'une réponse du Model:Cycles (étape 3).",
+    miss_dev: "Le Model:Cycles doit d'abord répondre (étape 3).",
+    miss_dev_mismatch: "Cette machine ne peut pas recevoir ce firmware (étape 3).",
+    dev_probing: "Recherche du Model:Cycles…",
+    dev_ok: "{device} trouvé : OS {v}.",
+    dev_none: "Le Model:Cycles ne répond pas. Si CONFIG › UPGRADE est ouvert, quittez-le (NO) ; fermez Elektron Transfer, puis cliquez sur Rafraîchir. Ou choisissez la méthode classique.",
+    dev_busy: "Son port USB est occupé par un autre programme : fermez Elektron Transfer, Overbridge et votre logiciel de musique, puis cliquez sur Rafraîchir.",
+    dev_noinput: "La page ne voit pas d'entrée MIDI venant du Model:Cycles, or la méthode rapide a besoin des deux sens. Cliquez sur Rafraîchir, ou choisissez la méthode classique.",
+    dev_samples: `Cette machine répond comme un Model:Samples : elle refuserait ce firmware. Avec Model-TG, remettez Device Config › Transfer sur CYC (ou éteignez-la et rallumez-la). Sous l'OS Samples, le retour est expliqué dans le <a href="${GUIDE}#recovery">guide</a>.`,
+    dev_other: "Cette machine Elektron ({name}) n'est pas un Model:Cycles : rien ne sera envoyé.",
+    dev_wrong_file: "Ce firmware est pour un Model:Samples, et cette machine est un Model:Cycles : rien ne sera envoyé.",
+    watch_fast: "Le Model:Cycles vérifie chaque bloc à son arrivée. À la fin, il demande de confirmer la mise à jour sur son écran.",
+    done_title_fast: "Firmware envoyé.",
+    after_confirm: "Confirmez maintenant la mise à jour sur l'écran du {m} (<b>YES</b>). Il écrit alors le firmware et redémarre tout seul : <b>ne l'éteignez pas</b> avant qu'il ait redémarré.",
+    after_gone: "Le {m} écrit le firmware et redémarre. <b>Ne l'éteignez pas.</b>",
+    after_back: "Le {m} est de retour : {device} OS {v}.",
+    after_back_plain: "Le {m} est de retour.",
+    fast_timeout: "Le Model:Cycles ne répond plus. Éteignez-le puis rallumez-le, et relancez. Si ça recommence, choisissez la méthode classique à l'étape 3.",
+    fast_refused: "Le Model:Cycles a refusé la mise à jour{why}. Éteignez-le puis rallumez-le et réessayez, ou choisissez la méthode classique à l'étape 3.",
+    fast_write: "Le Model:Cycles a signalé une erreur pendant la réception{why}. Éteignez-le puis rallumez-le et réessayez, ou choisissez la méthode classique à l'étape 3.",
+    stopped_fast: "Arrêté avant la fin : le Model:Cycles n'a pas reçu tout le firmware. Éteignez-le puis rallumez-le, et relancez.",
+    log_start_fast: "Mise à jour rapide : {kb} Ko en {n} blocs vers « {port} » ({device} OS {v}).",
+    watch: "Regardez l'écran du Model:Cycles : il doit indiquer qu'il reçoit. S'il ne se passe rien en quelques secondes, cliquez sur <b>Arrêter</b>.",
+    keep_visible: "Gardez cet onglet au premier plan : les navigateurs ralentissent les onglets en arrière-plan.",
+    remaining: "encore {t}",
+    done_title: "Transfert terminé.",
+    done_body: "Le Model:Cycles écrit maintenant le firmware (<code>UPDATING FLASH</code>) puis redémarre tout seul. <b>Ne l'éteignez pas</b> avant qu'il ait redémarré.",
+    done_6ch: "Avec le mod 6 canaux, votre ordinateur doit ensuite voir un périphérique audio Model:Cycles avec <b>6 canaux d'entrée</b>.",
+    stopped: "Arrêté. Éteignez puis rallumez le Model:Cycles, rouvrez CONFIG › UPGRADE, puis relancez.",
+    send_error: "Le transfert a échoué : {err}. Éteignez puis rallumez le Model:Cycles, rouvrez CONFIG › UPGRADE et réessayez.",
+    port_gone: "La sortie MIDI a disparu. Vérifiez le branchement et choisissez-la de nouveau.",
+    leave: "Un flash est en cours. Quitter maintenant l'interromprait.",
+    log_start: "Envoi de {n} paquets vers « {port} », marge {pace}.",
+  },
+};
+
+// Feature texts shown in the UI (fallback: labels from tweaks.js).
+const FEAT = {
+  en: {
+    usb6: { label: "6-channel USB audio",
+      short: "Each track on its own USB channel. No stereo mix over USB any more.",
+      desc: "Each track gets its own USB channel (48 kHz / 32-bit): record the 6 tracks separately in your DAW. The stereo mix is no longer sent over USB. OS updates over USB keep working." },
+    "model-tg": { label: "Model-TG",
+      short: "TinyGregAudio's big pack: a 7th Sampler machine and many additions.",
+      parts: ["Sampler (7th machine)", "resampling", "retrig and master FX", "filter and resonance on the stock machines", "slide trigs", "Scale Lock", "samples through Elektron Transfer"],
+      desc: "A Sampler machine (7th machine) with seven playback modes, resampling, a beat-repeat page with master FX, Attack, Filter and Resonance on the stock machines, slide trigs that glide the parameters from one trig to the next, Scale Lock, sample upload through Elektron Transfer, and lower CPU use. It already includes drumkilla's three tweaks. With the Syntakt engines, the Sampler stays the 7th machine and the engines follow it.",
+      note: "Only install an OS while Device Config > Transfer is set to CYC (every power-on starts at CYC). Projects using the Sampler won't play those tracks on another firmware." },
+    "sample-preview": { label: "Sample preview (Model-TG)",
+      short: "On a Sampler track, in the preset menu, the pad plays the sample under the cursor.",
+      desc: "On a Sampler track, press FUNC + MACHINES (preset menu) and move the cursor onto a sample: the track's pad (or its trig keys in keyboard mode) plays it, just as the original OS lets you hear the preset under the cursor. Nothing plays by itself while you scroll. A sample that isn't in memory yet loads on the first press (a short wait), into free space or in place of samples the project doesn't use. The track keeps its own sample: its trigs still play it, and so does its pad once you leave the menu. Sampler presets that remember their sample should also play that sample instead of the track's.",
+      note: "If there isn't enough free memory (a preview keeps room for recording and never removes a sample your project uses), or while Model-TG is resampling, the press plays nothing. It needs Model-TG: unticking Model-TG unticks it." },
+    "latching-mute": { label: "Latching mute mode",
+      short: "TRACK + FUNC: mute mode stays on, no need to hold FUNC.",
+      desc: "Hold TRACK and tap FUNC: mute mode stays on, so you mute tracks without holding FUNC. A short tap on FUNC leaves it." },
+    "trig-preview": { label: "Trig preview",
+      short: "Sequencer stopped, hold a step and press PAGE to hear it.",
+      desc: "With the sequencer stopped or paused, hold a step and press PAGE: the step plays with its own note, length and p-locks." },
+    "browser-scroll": { label: "Scroll long names",
+      short: "In the sound browser, names too long for the screen scroll.",
+      desc: "In the sound browser, a name too long for the screen scrolls so you can read it." },
+    syntakt: { label: "Real Syntakt engines",
+      short: "Syntakt engines as extra machines, read from your own Syntakt OS file.",
+      desc: "The Syntakt's own engines, read from your Syntakt OS file (step 2) and added after Chord, in this order, with the Syntakt's knob names and defaults. Tick the ones you want." },
+    "eng-sd": { short: "vintage snare", note: "Vintage snare." },
+    "eng-cp": { short: "vintage clap", note: "Vintage clap." },
+    "eng-toy": { short: "toy-like percussion", note: "Toy-like tuned percussion." },
+    "eng-bits": { short: "digital, bit crush", note: "Two digital oscillators with rate and bit reduction. PUNCH switches Bit Redux on." },
+    "eng-swarm": { short: "supersaw", note: "A swarm of detuned saws (supersaw). PUNCH adds the sub-octave." },
+    "trig-hold": { label: "Easier trig removal",
+      short: "A short press removes the trig; a long one keeps it and shows its settings.",
+      desc: "Pressing a trig key whose step already holds a trig removes it if you let go within half a second (0.2 s on the stock OS). Hold it longer and the trig stays, as before: its settings show up. Turning a knob while you hold keeps the trig too." },
+    arp: { label: "Arpeggiator",
+      short: "The retrig becomes an arpeggiator: held notes play one after another.",
+      desc: "The retrig becomes an arpeggiator: hold several notes on a track with RETRIG held (or A.On) and they play one after another at the retrig rate. FUNC + RETRIG adds Arp (direction: UP, DOWN, UPDN, RAND, PLAY or OFF) and Oct (1 to 4 octaves), saved with the pattern." },
+    "tempo-max": { label: "Tempo up to 546 BPM",
+      short: "Tempo goes up to 546 BPM instead of 300, MIDI clock included.",
+      desc: "The tempo goes up to 546.0 BPM instead of 300: TEMPO knob, tap tempo, incoming MIDI clock and saved projects. 546 is the ceiling of the project format. Tempo-synced LFOs stay right at these speeds.",
+      note: "Above 300 BPM, the processor may struggle to keep up with busy patterns: push it knowingly. A project saved above 300 BPM reopens at 120 BPM on the original OS." },
+    "boot-anim": { label: "modded-cycles startup animation",
+      short: "At startup the modded-cycles logo animates, without making startup longer.",
+      desc: "When the Model:Cycles starts, the four rounded squares of the modded-cycles logo pop in one by one and “modded-cycles” types itself underneath, instead of the original tile animation. It lasts as long as the original: startup is not slower." },
+    "midi-both": { label: "MIDI OUT while in THRU",
+      short: "In THR, the Cycles forwards incoming MIDI and also sends its own MIDI.",
+      desc: "Selecting THR in CONFIG > MIDI > PORTS > OUT/THRU continues to forward incoming MIDI and also lets the Cycles send its own clock and track/parameter messages. OUT keeps its normal behavior." },
+    macro: { label: "MACRO machine",
+      short: "One extra machine with 47 synthesis models, from Braids' open-source code.",
+      clash: "both put their code in the same place in memory",
+      desc: "An extra machine after Chord (after the Sampler with Model-TG) with the 47 synthesis models of Braids, Émilie Gillet's open-source macro-oscillator, from her own code: analog-style waves, FM, vowels and speech, physical models, drums, wavetables and noises. SHAPE picks the model, COLOR and SWEEP shape it, CONTOUR lets the amp envelope open the timbre. DECAY, GATE and PUNCH work as on Tone.",
+      note: "About twice as heavy on the processor as an original machine, with no load governor yet: several MACRO tracks playing at once can make the sound crackle, so start with one or two. A project using MACRO needs a firmware with MACRO at the same place (7th machine, or 8th with Model-TG)." },
+  },
+  fr: {
+    usb6: { label: "Audio USB 6 canaux",
+      short: "Chaque piste sur son propre canal USB. Plus de mix stéréo en USB.",
+      desc: "Chaque piste a son propre canal USB (48 kHz / 32 bits) : enregistrez les 6 pistes séparément dans votre logiciel. Le mix stéréo n'est plus envoyé en USB. La mise à jour de l'OS par USB continue de fonctionner." },
+    "model-tg": { label: "Model-TG",
+      short: "Le grand pack de TinyGregAudio : une 7e machine Sampler et de nombreux ajouts.",
+      parts: ["Sampler (7e machine)", "rééchantillonnage", "retrig et effets master", "filtre et résonance sur les machines d'origine", "slide trigs", "Scale Lock", "samples par Elektron Transfer"],
+      desc: "Une machine Sampler (7e machine) à sept modes de lecture, le rééchantillonnage, une page de retrig avec effets master, Attack, Filtre et Résonance sur les machines d'origine, des slide trigs qui font glisser les paramètres d'un trig au suivant, Scale Lock, l'envoi d'échantillons par Elektron Transfer, et moins de charge processeur. Contient déjà les trois tweaks de drumkilla. Avec les moteurs du Syntakt, le Sampler reste la 7e machine et les moteurs le suivent.",
+      note: "N'installez un OS que lorsque Device Config > Transfer est sur CYC (chaque démarrage repart sur CYC). Les projets qui utilisent le Sampler ne joueront pas ces pistes sur un autre firmware." },
+    "sample-preview": { label: "Écoute des samples (Model-TG)",
+      short: "Sur une piste Sampler, dans le menu des presets, le pad joue le sample sous le curseur.",
+      desc: "Sur une piste Sampler, appuyez sur FUNC + MACHINES (menu des presets) et placez le curseur sur un sample : le pad de la piste (ou ses touches de pas en mode clavier) le joue, comme l'OS d'origine fait entendre le preset sous le curseur. Rien ne joue tout seul pendant le défilement. Un sample pas encore en mémoire se charge au premier appui (un court instant), dans la place libre ou à la place de samples que le projet n'utilise pas. La piste garde son propre sample : ses trigs le jouent toujours, et son pad aussi dès que vous quittez le menu. Les presets du Sampler qui gardent leur sample devraient aussi faire entendre ce sample plutôt que celui de la piste.",
+      note: "S'il n'y a pas assez de mémoire libre (une écoute garde de la place pour l'enregistrement et ne retire jamais un sample utilisé par votre projet), ou pendant que Model-TG rééchantillonne, l'appui ne joue rien. L'option demande Model-TG : décocher Model-TG la décoche." },
+    "latching-mute": { label: "Mode mute verrouillé",
+      short: "TRACK + FUNC : le mode mute reste actif, plus besoin de tenir FUNC.",
+      desc: "Maintenez TRACK et tapez FUNC : le mode mute reste actif, vous mutez les pistes sans tenir FUNC. Un appui court sur FUNC en sort." },
+    "trig-preview": { label: "Écoute d'un pas",
+      short: "Séquenceur arrêté, maintenez un pas et appuyez sur PAGE pour l'entendre.",
+      desc: "Séquenceur à l'arrêt ou en pause, maintenez un pas et appuyez sur PAGE : le pas joue avec sa note, sa longueur et ses p-locks." },
+    "browser-scroll": { label: "Défilement des noms longs",
+      short: "Dans le navigateur de sons, les noms trop longs pour l'écran défilent.",
+      desc: "Dans le navigateur de sons, un nom trop long pour l'écran défile pour rester lisible." },
+    syntakt: { label: "Vrais moteurs du Syntakt",
+      short: "Des moteurs du Syntakt en machines en plus, lus dans votre propre OS Syntakt.",
+      desc: "Les moteurs du Syntakt, lus dans votre fichier d'OS Syntakt (étape 2) et ajoutés après Chord, dans cet ordre, avec les noms et réglages des potards du Syntakt. Cochez ceux que vous voulez." },
+    "eng-sd": { short: "caisse claire vintage", note: "Caisse claire vintage." },
+    "eng-cp": { short: "clap vintage", note: "Clap vintage." },
+    "eng-toy": { short: "percu façon jouet", note: "Percussion accordée façon jouet." },
+    "eng-bits": { short: "numérique, bit crush", note: "Deux oscillateurs numériques avec réduction d'échantillonnage et de bits. PUNCH active Bit Redux." },
+    "eng-swarm": { short: "supersaw", note: "Un essaim de dents de scie désaccordées (supersaw). PUNCH ajoute l'octave inférieure." },
+    "trig-hold": { label: "Effacer un trig plus facilement",
+      short: "Un appui bref efface le trig ; un appui long le garde et montre ses réglages.",
+      desc: "Un appui sur une touche de pas qui porte déjà un trig l'efface si vous relâchez en moins d'une demi-seconde (0,2 s avec l'OS d'origine). Tenez plus longtemps et le trig reste, comme avant : ses réglages s'affichent. Tourner un potard pendant l'appui garde aussi le trig." },
+    arp: { label: "Arpégiateur",
+      short: "Le retrig devient un arpégiateur : les notes tenues se jouent l'une après l'autre.",
+      desc: "Le retrig devient un arpégiateur : tenez plusieurs notes sur une piste avec RETRIG tenu (ou A.On) et elles se jouent l'une après l'autre au rythme du retrig. FUNC + RETRIG ajoute Arp (sens : UP, DOWN, UPDN, RAND, PLAY ou OFF) et Oct (1 à 4 octaves), enregistrés avec le pattern." },
+    "tempo-max": { label: "Tempo jusqu'à 546 BPM",
+      short: "Le tempo monte jusqu'à 546 BPM au lieu de 300, horloge MIDI comprise.",
+      desc: "Le tempo monte jusqu'à 546,0 BPM au lieu de 300 : potard TEMPO, tap tempo, horloge MIDI reçue et projets enregistrés. 546 est le plafond du format des projets. Les LFO synchronisés au tempo restent justes à ces vitesses.",
+      note: "Au-delà de 300 BPM, le processeur peut avoir plus de mal à suivre la cadence sur des patterns chargés : à utiliser en connaissance de cause. Un projet enregistré au-dessus de 300 BPM se rouvre à 120 BPM sur l'OS d'origine." },
+    "boot-anim": { label: "Animation de démarrage modded-cycles",
+      short: "Au démarrage, le logo modded-cycles s'anime, sans rallonger le démarrage.",
+      desc: "Au démarrage du Model:Cycles, les quatre carrés arrondis du logo modded-cycles apparaissent un par un et « modded-cycles » s'écrit dessous, à la place de l'animation de carreaux d'origine. Elle dure autant que l'originale : le démarrage n'est pas plus long." },
+    "midi-both": { label: "MIDI OUT pendant THRU",
+      short: "En THR, le Cycles relaie le MIDI reçu et envoie aussi son propre MIDI.",
+      desc: "En choisissant THR dans CONFIG > MIDI > PORTS > OUT/THRU, le Cycles continue de relayer le MIDI reçu et envoie aussi son horloge et ses messages de piste/paramètres. OUT garde son comportement normal." },
+    macro: { label: "Machine MACRO",
+      short: "Une machine en plus avec 47 modèles de synthèse, tirés du code libre de Braids.",
+      clash: "les deux placent leur code au même endroit de la mémoire",
+      desc: "Une machine ajoutée après Chord (après le Sampler avec Model-TG) avec les 47 modèles de synthèse de Braids, le macro-oscillateur libre d'Émilie Gillet, à partir de son propre code : ondes façon analogique, FM, voyelles et voix, modèles physiques, percussions, tables d'ondes et bruits. SHAPE choisit le modèle, COLOR et SWEEP le façonnent, CONTOUR laisse l'enveloppe d'ampli ouvrir le timbre. DECAY, GATE et PUNCH marchent comme sur Tone.",
+      note: "Environ deux fois plus gourmande en calcul qu'une machine d'origine, et sans régulateur de charge pour l'instant : plusieurs pistes MACRO qui jouent en même temps peuvent faire craquer le son ; commencez avec une ou deux. Un projet qui utilise MACRO demande un firmware où MACRO est à la même place (7e machine, ou 8e avec Model-TG)." },
+  },
+};
+
+// ---------------------------------------------------------------------------
+// State
+// ---------------------------------------------------------------------------
+const st = {
+  lang: "en",
+  mode: "mods",            // "mods" | "restore" | "samples"
+  samplesOs: null,         // official Model:Samples OS { raw, name, sha } ("samples" mode)
+  smpDir: "cyc",           // "samples" mode: "cyc" Samples OS for a Model:Cycles | "smp" Cycles OS for a Model:Samples | "back" its way back
+  samplesError: null,
+  syntakt: null,           // official Syntakt OS { raw, name, sha } (source of the Syntakt engines)
+  syntaktError: null,
+  os: null,                // { raw, name, info, sha, stock }
+  osError: null,
+  fw: null,                // { raw, name, kind: "built"|"stock"|"custom", mods:[labels], ref:bool, modsRef:bool, sixch:bool }
+  fwError: null,
+  building: false,
+  buildKey: null,
+  cache: {},               // build results per selection key, for the current OS file
+  midi: null,
+  midiState: "idle",       // idle | asking | ready | denied | unsupported
+  portManual: false,
+  method: "fast",          // "fast" (Transfer protocol) | "slow" (CONFIG > UPGRADE)
+  dev: null,               // fast: who answers on the chosen port { state: probing|ok|none|busy|noinput, outId, inId, id, device, product, name, version }
+  probing: null,           // the running probe (a promise)
+  reprobe: false,
+  after: null,             // fast, once the firmware is sent: "confirm" -> "gone" (restarting) -> "back"
+  booting: false,          // the machine has just come back: wait before asking it
+  sending: false,
+  cancel: false,
+  finished: null,          // "ok" | "stopped" | "error"
+  url: null,
+  wakeLock: null,
+};
+
+function t(key, vars) {
+  let s = (T[st.lang] && T[st.lang][key]) || T.en[key] || key;
+  if (vars) for (const k in vars) s = s.split("{" + k + "}").join(vars[k]);
+  return s;
+}
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+function featText(id, key, fallback) {
+  const f = (FEAT[st.lang] && FEAT[st.lang][id]) || FEAT.en[id];
+  return (f && f[key]) || fallback || "";
+}
+
+function log(msg, cls) {
+  const el = $("log");
+  if (!el) return;
+  const d = document.createElement("div");
+  if (cls) d.className = cls;
+  d.textContent = new Date().toLocaleTimeString() + "  " + msg;
+  el.appendChild(d);
+  el.scrollTop = el.scrollHeight;
+}
+
+// status block: list of [cls, html]
+function setStatus(id, rows) {
+  const el = $(id);
+  el.innerHTML = (rows || []).filter(Boolean)
+    .map(([cls, html]) => `<div class="row ${cls || ""}"><span class="dot"></span><span>${html}</span></div>`).join("");
+}
+
+const isDevicePort = (name) => /model\s*[:_-]?\s*(cycles|samples)/i.test(name || "");
+
+// ---------------------------------------------------------------------------
+// Language
+// ---------------------------------------------------------------------------
+function applyLang(lang) {
+  st.lang = T[lang] ? lang : "en";
+  document.documentElement.lang = st.lang;
+  try { localStorage.setItem("mc-lang", st.lang); } catch (e) { /* private mode */ }
+  document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-html]").forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
+  // a loaded file keeps its name in its drop zone
+  if (st.os) { $("drop-title").textContent = st.os.name; $("drop-sub").textContent = t("drop_again"); }
+  if (st.samplesOs) { $("drop2-title").textContent = st.samplesOs.name; $("drop2-sub").textContent = t("drop_again"); }
+  if (st.syntakt) { $("drop3-title").textContent = st.syntakt.name; $("drop3-sub").textContent = t("drop_again"); }
+  document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === st.lang)));
+  document.title = t("title");
+  renderFeatures();
+  renderCredits();
+  if (st.os) describeOs();
+  fillPorts();
+  checkCompat();
+  render();
+}
+
+// ---------------------------------------------------------------------------
+// Step 1 — features
+// ---------------------------------------------------------------------------
+// feature id -> { on: bool, variant: id } ; engine cards (real Syntakt engines): { on: bool, engines: [codes] }
+const selection = {};
+// display-only state of the picker (never saved): open Details drawers, folded sections, search, last swap (Undo)
+const pick = { open: new Set(), folded: new Set(), q: "", swap: null, selOpen: false };
+
+// Engine card: the combination of ticked engines (kept in catalog order) and its tweak.
+// Two cards that can't be ticked together (Model-TG and the tweaks it already holds, or the Syntakt engines).
+function excludes(f, g) {
+  const no = (a, b) => (a.excludes || []).includes(b.id) || (a.includes || []).includes(b.id);
+  return no(f, g) || no(g, f);
+}
+
+// The ticked card that already holds this one (Model-TG holds drumkilla's tweaks): the card shows ticked and
+// locked, "included with Model-TG", but adds nothing to the build (it is not on in the selection).
+function includedBy(f) {
+  return ((window.MC_TWEAKS && window.MC_TWEAKS.features) || []).find((g) => (g.includes || []).includes(f.id) && isOn(g.id));
+}
+
+// A card whose required card is off goes off too, whatever turned that one off (unticked, or excluded by another
+// card). Run before every render and every build: the builder never gets sample preview without Model-TG.
+// Repeated until nothing changes, so a chain (A requires B requires C) goes off whole in one call.
+function dropOrphans() {
+  const feats = (window.MC_TWEAKS && window.MC_TWEAKS.features) || [];
+  for (let changed = true; changed; ) {
+    changed = false;
+    for (const f of feats)
+      if (f.requires && isOn(f.id) && !isOn(f.requires)) { selection[f.id].on = false; changed = true; }
+  }
+}
+
+function comboOf(f, sel) {
+  return f.combos.find((c) => c.engines.join() === sel.engines.join());
+}
+
+// The ticked engines' combination of a feature card with engines, if it is on.
+function comboOfFeature(id) {
+  const f = ((window.MC_TWEAKS && window.MC_TWEAKS.features) || []).find((x) => x.id === id && x.engines);
+  return f && isOn(id) ? comboOf(f, selection[id]) : null;
+}
+
+// The mods, shown by section (cat), in FEATURES order inside a section. The build keeps FEATURES order whatever the
+// display order (chosenTweaks, REF_MAINOS keys).
+const features = () => (window.MC_TWEAKS && window.MC_TWEAKS.features) || [];
+const featById = (id) => features().find((f) => f.id === id);
+function selOf(f) {
+  return selection[f.id] ||
+    (selection[f.id] = f.engines ? { on: false, engines: [] } : { on: false, variant: f.variants[0].id });
+}
+const label = (f) => featText(f.id, "label", f.label);
+// a mod without a short text shows the first sentence of its description (cut to 2 lines by the CSS)
+function shortOf(f) {
+  const d = featText(f.id, "desc", f.desc);
+  return featText(f.id, "short", "") || (d.match(/^.*?[.!?](?=\s|$)/) || [d])[0];
+}
+const catOf = (f) => (f.cat && CATS.includes(f.cat) ? f.cat : "other");
+const order = () => CATS.flatMap((c) => features().filter((f) => catOf(f) === c));    // display order
+// the real "excludes" (explained to the user); excludes() above also counts what a pack includes
+const clashOnly = (f, g) => (f.excludes || []).includes(g.id) || (g.excludes || []).includes(f.id);
+const clashWhy = (f, g) => featText(f.id, "clash", "") || featText(g.id, "clash", "") || t("clash_generic");
+// the card whose clash with g keeps f from going with g: f itself, or the card f requires (ticking sample preview
+// ticks Model-TG, so it doesn't go with what Model-TG doesn't go with); null if f goes with g
+function clashVia(f, g) {
+  if (clashOnly(f, g)) return f;
+  const req = f.requires && f.requires !== g.id && featById(f.requires);
+  return req && clashOnly(req, g) ? req : null;
+}
+
+// Tested or experimental, down to the exact engine combination (with Model-TG, the combined version's own tests).
+// "part": an unticked engine card that is tested with some engines only (PARTLY).
+function statusOf(f) {
+  const sel = selOf(f);
+  if (f.engines) {
+    if (!sel.on) return PARTLY && f.status === "tested" && f.combos.some((c) => !c.tested && !c.tg_tested) ? "part" : f.status;
+    const c = comboOf(f, sel);
+    return c && (isOn("model-tg") ? c.tg_tested : c.tested) ? "tested" : "experimental";
+  }
+  // Model-TG's card follows the engines' choice
+  // (a card that requires another one, sample preview, keeps its own status: those tests didn't include it)
+  const withId = sel.on && f.with && !f.requires ? Object.keys(f.with).find(isOn) : null;
+  const tgCombo = withId ? comboOfFeature(withId) : null;
+  if (tgCombo) return tgCombo.tg_tested ? "tested" : "experimental";
+  return f.status === "tested" ? "tested" : "experimental";
+}
+const tagHtml = (s) => s === "tested" ? `<span class="tag ok">${esc(t("tested"))}</span>`
+  : s === "part" ? `<span class="tag ok">${esc(t("part_tested"))}</span>` : `<span class="tag exp">${esc(t("experimental"))}</span>`;
+
+// Tick or untick a card: cards that can't go together turn the other one off, as before; a real clash (excludes) is
+// said on the row just ticked and in the selection bar, with Undo. A card that only works with another one
+// (f.requires: sample preview needs Model-TG) ticks that one first, with that card's own exclusions, as if the user
+// had ticked it; a card left without the card it requires goes off too (dropOrphans), said with the others.
+function setOn(f, on) {
+  if (includedBy(f)) return;                           // locked while the card holding it is ticked
+  const before = JSON.parse(JSON.stringify(selection));
+  pick.swap = null;
+  const off = [];
+  const turnOn = (h) => {
+    const sel = selOf(h);
+    sel.on = true;
+    for (const g of features())
+      if (g !== h && isOn(g.id) && excludes(h, g)) { selection[g.id].on = false; if (clashOnly(h, g)) off.push(g.id); }
+    if (h.engines && !sel.engines.length) sel.engines = [h.engines[0].code];
+  };
+  if (!on) selOf(f).on = false;
+  else {
+    const need = f.requires && featById(f.requires);
+    if (need && !isOn(need.id)) turnOn(need);
+    turnOn(f);
+  }
+  dropOrphans();
+  if (on) for (const g of features())
+    if (g.requires && before[g.id] && before[g.id].on && !isOn(g.id) && !off.includes(g.id)) off.push(g.id);
+  if (off.length) pick.swap = { by: f.id, off, before };
+}
+// One engine pad: the ticked engines stay in catalog order; no engine left turns the card off.
+function setEngine(f, code, on) {
+  const sel = selOf(f), keep = new Set(sel.engines);
+  if (on) keep.add(code); else keep.delete(code);
+  sel.engines = f.engines.map((e) => e.code).filter((c) => keep.has(c));
+  if (!sel.engines.length) sel.on = false;
+  pick.swap = null;
+}
+function undo() {
+  if (!pick.swap) return null;
+  const by = pick.swap.by, before = pick.swap.before;
+  for (const id in before) selection[id] = before[id];
+  pick.swap = null;
+  return by;
+}
+
+// Search (shown from SEARCH_FROM mods): accent- and case-insensitive, in both languages, every word must match.
+const fold = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const hay = {};
+function haystack(f) {
+  if (hay[f.id]) return hay[f.id];
+  const parts = [f.label, f.desc];
+  for (const L of ["en", "fr"]) {
+    const x = FEAT[L][f.id] || {};
+    parts.push(x.label, x.short, x.desc, x.clash, (x.parts || []).join(" "), T[L]["cat_" + catOf(f)]);
+    for (const e of f.engines || []) parts.push(e.name, e.label, (FEAT[L]["eng-" + e.code] || {}).short);
+  }
+  if (f.credit) parts.push(f.credit.who);
+  return (hay[f.id] = fold(parts.filter(Boolean).join(" ")));
+}
+const searching = () => features().length >= SEARCH_FROM && pick.q.trim() !== "";
+const matches = (f) => !searching() || fold(pick.q).split(/\s+/).filter(Boolean).every((w) => haystack(f).includes(w));
+
+function renderFeatures() {
+  const box = $("features");
+  if (!box || !window.MC_TWEAKS || !window.MC_TWEAKS.features) return;
+  const focusId = document.activeElement && document.activeElement.id;
+  features().forEach(selOf);
+  box.innerHTML = "";
+  dropOrphans();                                   // a card without the card it requires goes off
+  for (const c of CATS) {
+    const mods = features().filter((f) => catOf(f) === c);
+    if (!mods.length) continue;
+    const lit = mods.filter((f) => isOn(f.id) || includedBy(f));
+    const folded = pick.folded.has(c) && !searching();
+    const g = document.createElement("section");
+    g.className = "grp";
+    g.id = "cat-" + c;
+    g.hidden = !mods.some(matches);
+    const n = lit.length ? t(lit.length > 1 ? "grp_on" : "grp_on1", { k: lit.length, n: mods.length })
+      : esc(t(mods.length > 1 ? "grp_n" : "grp_n1", { n: mods.length }));
+    const sub = t("cat_" + c + "_sub");
+    g.innerHTML = `<h3><button type="button" class="grp-h" id="grp-h-${c}" aria-expanded="${!folded}" aria-controls="grp-${c}">` +
+      `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CAT_ICON[c]}</svg>` +
+      `<span class="gt">${esc(t("cat_" + c))}</span>${sub ? `<span class="gs">${esc(sub)}</span>` : ""}<span class="gn">${n}</span>` +
+      `<svg class="chev" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5l4 4 4-4"/></svg>` +
+      `</button></h3>` +
+      (folded && lit.length ? `<p class="grp-sel">${lit.map((f) => `<span class="${includedBy(f) ? "inc" : ""}">${esc(label(f))}</span>`).join("")}</p>` : "");
+    const body = document.createElement("div");
+    body.className = "grp-body";
+    body.id = "grp-" + c;
+    body.hidden = folded;
+    for (const f of mods) body.appendChild(renderRow(f));
+    g.appendChild(body);
+    box.appendChild(g);
+  }
+  renderFind();
+  renderCats();
+  renderSelection();
+  // keyboard users keep their place: the element that had the focus gets it back after the rebuild
+  if (focusId && (!document.activeElement || document.activeElement.id !== focusId) && $(focusId)) $(focusId).focus({ preventScroll: true });
+}
+
+function renderRow(f) {
+  const sel = selOf(f), holder = includedBy(f), status = statusOf(f), on = sel.on || !!holder;
+  const d = document.createElement("div");
+  d.className = "mod" + (on ? " on" : "") + (holder ? " incl" : "");
+  d.id = "mod-" + f.id;
+  d.hidden = !matches(f);
+  const side = [];
+  // "by drumkilla" / "based on ms-multi-output by scottmetoyer"; a link inside the <label> doesn't toggle the checkbox
+  if (f.credit) side.push(`<span class="credit">${creditHtml(f.credit)}` +
+    (f.license ? ` · <a href="${esc(f.license)}" target="_blank" rel="noopener">${esc(t("license_mit"))}</a>` : "") + `</span>`);
+  if (f.needs === "syntakt") side.push(`<span class="need">${esc(t("need_syntakt"))}</span>`);
+  const req = f.requires && featById(f.requires);
+  if (req) side.push(`<span class="need">${esc(t("with_mod", { name: label(req) }))}</span>`);
+  const open = pick.open.has(f.id);
+  d.innerHTML = `<label class="mod-row" for="feat-${f.id}">` +
+      `<input type="checkbox" id="feat-${f.id}"${on ? " checked" : ""}${holder ? " disabled" : ""}>` +
+      `<span class="ttl"><span class="nm">${esc(label(f))}</span>${holder ? `<span class="incl">${esc(t("included", { name: label(holder) }))}</span>` : ""}</span>` +
+      `<span class="by">${side.join("")}</span>` +
+      `<span class="st">${tagHtml(status)}</span>` +
+      `<span class="short">${esc(shortOf(f))}</span>` +
+    `</label>` +
+    `<button type="button" class="more" id="more-${f.id}" aria-expanded="${open}" aria-controls="det-${f.id}" aria-label="${esc(t("details_of", { name: label(f) }))}">` +
+      `<span class="lbl">${esc(t("details"))}</span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5l4 4 4-4"/></svg></button>` +
+    `<div class="ext"></div>`;
+  const ext = d.querySelector(".ext");
+  const add = (html) => ext.insertAdjacentHTML("beforeend", html);
+
+  // a pack: what it brings, and the mods of this list it already holds
+  const parts = featText(f.id, "parts", null);
+  if (parts) add(`<ul class="parts">${parts.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>`);
+  const held = (f.includes || []).map(featById).filter(Boolean);
+  if (held.length) add(`<p class="also">${t("also", { n: held.length, names: held.map((g) => `<b>${esc(label(g))}</b>`).join(", ") })}</p>`);
+  // just unticked: said on the row just ticked, where the eyes are, with Undo
+  if (pick.swap && pick.swap.by === f.id) add(`<p class="say swap">${esc(swapText(pick.swap))} <button type="button" class="lnk" data-undo>${esc(t("undo"))}</button></p>`);
+  // before ticking: why this mod doesn't go with a ticked one
+  if (!on) for (const g of features()) {
+    const by = g !== f && isOn(g.id) && clashVia(f, g);
+    if (by) add(`<p class="say clash">${t("clash_row", { name: esc(t("quoted", { name: label(g) })), why: esc(clashWhy(by, g)) })}</p>`);
+  }
+  // several variants of one mod (none today): a sub-choice once ticked
+  if (!f.engines && f.variants.length > 1 && sel.on) add(renderVariants(f, sel));
+  if (f.engines && sel.on) add(renderEngines(f, sel, status));
+  if (sel.on && featText(f.id, "note", "")) add(`<p class="say"><b>${esc(t("good_to_know"))}</b> ${esc(featText(f.id, "note", ""))}</p>`);
+  add(renderDetails(f, sel, open));
+  return d;
+}
+
+function swapText(sw) {
+  return t(sw.off.length > 1 ? "swapped_n" : "swapped",
+    { off: sw.off.map((id) => t("quoted", { name: label(featById(id)) })).join(", "), on: t("quoted", { name: label(featById(sw.by)) }) });
+}
+
+function renderVariants(f, sel) {
+  return `<div class="variants">` + f.variants.map((v) =>
+    `<label><input type="radio" name="var-${f.id}" value="${esc(v.id)}"${sel.variant === v.id ? " checked" : ""}>` +
+    `<span>${esc(featText(v.id, "label", v.label || v.id))}<small>${esc(featText(v.id, "note", ""))}</small></span></label>`).join("") + `</div>`;
+}
+
+// An engine card (real Syntakt engines): one pad per engine, the state of the ticked combination, and the warnings in
+// full. The pads sit outside the row's label: no nested labels.
+function renderEngines(f, sel, status) {
+  const pads = f.engines.map((e) => `<label class="pad"><input type="checkbox" id="eng-${e.code}" name="eng-${f.id}" value="${e.code}"` +
+    `${sel.engines.includes(e.code) ? " checked" : ""}><b>${esc(e.name)}</b><span class="vh"> — </span><small class="pl">${esc(e.label)}</small>` +
+    `<small>${esc(featText("eng-" + e.code, "short", ""))}</small></label>`).join("");
+  let html = `<div class="pads" role="group" aria-label="${esc(t("eng_group"))}">${pads}</div>`;
+  const combo = comboOf(f, sel);
+  const tg = isOn("model-tg"), tgName = label(featById("model-tg") || { id: "model-tg", label: "Model-TG" });
+  const list = (c, withTg) => (c.engines.length === f.engines.length ? t("combo_all", { n: c.engines.length })
+    : c.engines.map((k) => f.engines.find((e) => e.code === k).name).join(" + ")) + (withTg ? " " + t("with_mod", { name: tgName }) : "");
+  if (combo) {
+    // the ticked engines by name, even when they are all ticked
+    const names = sel.engines.map((k) => f.engines.find((e) => e.code === k).name).join(" + ") +
+      (tg ? " " + t("with_mod", { name: tgName }) : "");
+    html += `<p class="combo">${tagHtml(status)}<b>${esc(names)}.</b> ` +
+      `${esc(t(status === "tested" ? "combo_tested" : "combo_new"))}</p>`;
+    if (status !== "tested") {
+      // the choices already tried on the machine; "Use this choice" only changes this card's engines
+      const here = f.combos.filter((c) => (tg ? c.tg_tested : c.tested));
+      const there = f.combos.filter((c) => (tg ? c.tested : c.tg_tested));
+      if (here.length) {
+        const best = here.slice().sort((a, b) => dist(a, sel) - dist(b, sel))[0];
+        html += `<p class="combo">${esc(t("combo_known", { list: list(best, tg) }))} ` +
+          `<button type="button" class="lnk" data-take="${f.id}" data-codes="${best.engines.join()}">${esc(t("take"))}</button></p>`;
+      } else if (there.length) html += `<p class="combo">${esc(t("combo_known", { list: there.map((c) => list(c, !tg)).join(" ; ") }))}</p>`;
+    }
+  }
+  if (tg) html += `<p class="combo quiet">${esc(t("with_tg"))}</p>`;
+  html += `<p class="say"><b>${esc(t("good_to_know"))}</b> ${esc(t("renumber"))}</p>`;
+  return html;
+}
+const dist = (c, sel) => c.engines.filter((x) => !sel.engines.includes(x)).length + sel.engines.filter((x) => !c.engines.includes(x)).length;
+
+// The Details drawer: the full description and the facts. Always in the page, hidden while closed.
+function renderDetails(f, sel, open) {
+  const rows = [];
+  const row = (k, v) => rows.push(`<dt>${esc(t(k))}</dt><dd>${v}</dd>`);
+  const tgName = label(featById("model-tg") || { id: "model-tg", label: "Model-TG" });
+  const comboName = (g, c) => (c.engines.length === g.engines.length ? t("combo_all", { n: c.engines.length }) : c.label);
+  let status = esc(t(f.status === "tested" ? "d_tested" : "d_exp"));
+  if (f.combos) {
+    const tried = f.combos.filter((c) => c.tested).map((c) => comboName(f, c))
+      .concat(f.combos.filter((c) => c.tg_tested).map((c) => comboName(f, c) + " " + t("with_mod", { name: tgName })));
+    status = esc(tried.length ? t("d_combos", { list: tried.join(" ; ") }) : t("d_exp"));
+  }
+  // Model-TG: its combined versions already tried (not on a card that only rides along, sample preview)
+  for (const gid of f.requires ? [] : Object.keys(f.with || {})) {
+    const g = featById(gid), ok = ((g && g.combos) || []).filter((c) => c.tg_tested);
+    if (ok.length) status += " " + esc(t("d_with_tested", { name: label(g), list: ok.map((c) => comboName(g, c)).join(" ; ") }));
+  }
+  row("d_status", status);
+  const held = (f.includes || []).map(featById).filter(Boolean);
+  if (held.length) row("d_contains", t("d_contains_v", { names: held.map((g) => `<b>${esc(label(g))}</b>`).join(", ") }));
+  const clash = features().filter((g) => g !== f && clashVia(f, g));
+  if (clash.length) row("d_clash", clash.map((g) => t("d_clash_v", { name: `<b>${esc(label(g))}</b>`, why: esc(clashWhy(clashVia(f, g), g)) })).join(" "));
+  if (f.needs === "syntakt") row("d_file", esc(t("d_file_syntakt")));
+  const req = f.requires && featById(f.requires);
+  if (req) row("d_requires", t("d_requires_v", { name: `<b>${esc(label(req))}</b>` }));
+  if (f.engines) row("d_engines", f.engines.map((e) =>
+    `<b>${esc(e.name)}</b> (${esc(e.label)})${featText("eng-" + e.code, "note", "") ? " : " + esc(featText("eng-" + e.code, "note", "")) : ""}`).join("<br>"));
+  if (!sel.on && featText(f.id, "note", "")) row("d_note", esc(featText(f.id, "note", "")));
+  if (GUIDE_OF[f.id]) row("d_guide", `<a class="feat-guide" href="${GUIDE}#${GUIDE_OF[f.id]}">${esc(t("read_guide"))} <span aria-hidden="true">→</span></a>`);
+  return `<div class="det" id="det-${f.id}"${open ? "" : " hidden"}><p>${esc(featText(f.id, "desc", f.desc))}</p><dl class="facts">${rows.join("")}</dl></div>`;
+}
+
+// Section chips: they jump to a section (never filter); the LED lights when the section holds a ticked mod.
+function renderCats() {
+  const box = $("cats");
+  if (!box) return;
+  box.setAttribute("aria-label", t("cats_label"));
+  box.innerHTML = CATS.map((c) => {
+    const mods = features().filter((f) => catOf(f) === c);
+    if (!mods.length) return "";
+    const lit = mods.some((f) => isOn(f.id) || includedBy(f));
+    const n = mods.filter(matches).length;
+    return `<li class="${n ? "" : "zero"}"><a href="#cat-${c}" data-cat="${c}"><span class="led${lit ? " on" : ""}" aria-hidden="true"></span>` +
+      `${esc(t("cat_" + c))} <span class="n">${n}</span>${lit ? `<span class="vh">${esc(t("cat_lit"))}</span>` : ""}</a></li>`;
+  }).join("");
+}
+
+function renderFind() {
+  if (!$("mod-find")) return;
+  $("mod-find").hidden = features().length < SEARCH_FROM;
+  const q = $("mod-q");
+  q.placeholder = t("search_ph");
+  $("mod-q-clr").setAttribute("aria-label", t("search_clear"));
+  $("mod-q-clr").hidden = !pick.q;
+  if (q.value !== pick.q) q.value = pick.q;
+  const found = $("mod-found");
+  found.hidden = !searching();
+  if (searching()) {
+    const n = features().filter(matches).length;
+    found.innerHTML = (n ? t("found", { n, total: features().length, q: esc(pick.q.trim()) }) : t("found_none", { q: esc(pick.q.trim()) })) +
+      `<button type="button" class="lnk soft" data-showall>${esc(t("show_all"))}</button>`;
+  }
+}
+
+// "Your selection": what will be installed, in display order, with × to untick; stuck to the bottom of the screen
+// while the list scrolls (where IntersectionObserver exists).
+function renderSelection() {
+  const box = $("mod-sel");
+  if (!box) return;
+  const on = order().filter((f) => isOn(f.id));
+  const inc = features().filter((f) => includedBy(f));
+  const exp = on.filter((f) => statusOf(f) === "experimental");
+  if (!on.length) {
+    box.innerHTML = `<div class="sel-h"><div class="sel-sum"><span class="sel-t" id="sel-title" tabindex="-1">${esc(t("sel_title"))}</span></div></div>` +
+      `<p class="sel-none">${esc(t("sel_none"))}</p>`;
+    box.classList.remove("open");
+    live(t("sel_none"));
+    return;
+  }
+  const counts = `<span class="sel-n">${esc(t(on.length > 1 ? "sel_n" : "sel_n1", { n: on.length })) + (inc.length ? " " + esc(t("sel_incl", { n: inc.length })) : "")}</span>` +
+    (exp.length ? `<span class="dotsep"> · </span><span class="fx">${esc(t(exp.length > 1 ? "sel_exp" : "sel_exp1", { n: exp.length }))}</span>` : "");
+  const chip = (f) => {
+    const sel = selOf(f);
+    const mine = inc.filter((g) => (f.includes || []).includes(g.id));
+    const extra = f.engines ? sel.engines.map((c) => f.engines.find((e) => e.code === c).name).join(", ")
+      : mine.length ? t("sel_incl", { n: mine.length }) : "";
+    return `<li class="chip"><span>${esc(label(f))}${extra ? ` <span class="ci">${esc(extra)}</span>` : ""}</span>` +
+      (statusOf(f) === "experimental" ? `<span class="cx" role="img" aria-label="${esc(t("experimental"))}" title="${esc(t("experimental"))}"></span>` : "") +
+      `<button type="button" class="x" data-off="${f.id}" aria-label="${esc(t("sel_remove", { name: label(f) }))}">×</button></li>`;
+  };
+  const sw = pick.swap;
+  box.innerHTML = `<div class="sel-h">` +
+      `<div class="sel-sum"><span class="sel-t" id="sel-title" tabindex="-1">${esc(t("sel_title"))}</span><span class="sel-c">${counts}</span></div>` +
+      `<div class="sel-x">` +
+        `<button type="button" class="lnk soft clear" data-clear>${esc(t("sel_clear"))}</button>` +
+        `<button type="button" class="lnk soft sel-more" aria-expanded="${pick.selOpen}" aria-controls="sel-body">${esc(t(pick.selOpen ? "sel_hide" : "sel_show"))}</button>` +
+        `<a class="btn sel-next" href="#step-file">${esc(t("sel_next"))} <span aria-hidden="true">↓</span></a>` +
+      `</div>` +
+    `</div>` +
+    `<div class="sel-body" id="sel-body">` +
+      `<ul class="chips">${on.map(chip).join("")}${choiceNeedsSyntakt() ? `<li class="sel-need">${esc(t("sel_syntakt"))}</li>` : ""}</ul>` +
+      (sw ? `<p class="sel-msg">${esc(swapText(sw))} <button type="button" class="lnk" data-undo>${esc(t("undo"))}</button></p>` : "") +
+      `<p class="sel-foot"><button type="button" class="lnk soft" data-clear>${esc(t("sel_clear"))}</button></p>` +
+    `</div>`;
+  box.classList.toggle("open", pick.selOpen);
+  // short announcement for screen readers: the live region stays in place, only its text changes
+  live(box.querySelector(".sel-c").textContent + (sw ? ". " + swapText(sw) : ""));
+}
+function live(text) {
+  const el = $("mod-live");
+  if (el && el.textContent !== text) el.textContent = text;
+}
+
+// One listener per zone (delegation): they survive the rebuild that follows every change.
+function wirePicker() {
+  const changed = () => { renderFeatures(); update(); };
+  $("features").addEventListener("change", (e) => {
+    const el = e.target, f = (id) => featById(id);
+    if (el.id && el.id.startsWith("feat-") && f(el.id.slice(5))) setOn(f(el.id.slice(5)), el.checked);
+    else if (el.name && el.name.startsWith("eng-") && f(el.name.slice(4))) setEngine(f(el.name.slice(4)), el.value, el.checked);
+    else if (el.name && el.name.startsWith("var-") && f(el.name.slice(4))) { selOf(f(el.name.slice(4))).variant = el.value; pick.swap = null; }
+    else return;
+    changed();
+  });
+  $("features").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    if (b.classList.contains("more")) {
+      const id = b.id.slice(5);
+      if (pick.open.has(id)) pick.open.delete(id); else pick.open.add(id);
+      renderFeatures();
+    } else if (b.classList.contains("grp-h")) {
+      const c = b.id.slice(6);
+      if (pick.folded.has(c)) pick.folded.delete(c); else pick.folded.add(c);
+      renderFeatures();
+    } else if (b.hasAttribute("data-undo")) {
+      const by = undo();
+      changed();
+      if (by && $("feat-" + by)) $("feat-" + by).focus({ preventScroll: true });
+    } else if (b.dataset.take && featById(b.dataset.take)) {
+      selOf(featById(b.dataset.take)).engines = b.dataset.codes.split(",");
+      pick.swap = null;
+      changed();
+    }
+  });
+  $("cats").addEventListener("click", (e) => {               // a jump to a folded section unfolds it first
+    const a = e.target.closest("a[data-cat]");
+    if (a && pick.folded.delete(a.dataset.cat)) renderFeatures();
+  });
+  $("mod-sel").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    if (b.dataset.off && featById(b.dataset.off)) {
+      const xs = [...$("mod-sel").querySelectorAll("[data-off]")], k = xs.indexOf(b);
+      setOn(featById(b.dataset.off), false);
+      changed();
+      const next = $("mod-sel").querySelectorAll("[data-off]")[k] || $("sel-title");   // focus: the next ×, else the title
+      if (next) next.focus({ preventScroll: true });
+      return;
+    }
+    if (b.hasAttribute("data-clear")) { for (const id in selection) selection[id].on = false; pick.swap = null; }
+    else if (b.hasAttribute("data-undo")) {
+      const by = undo();
+      changed();
+      if (by && $("feat-" + by)) $("feat-" + by).focus({ preventScroll: true });
+      return;
+    } else if (b.classList.contains("sel-more")) { pick.selOpen = !pick.selOpen; renderFeatures(); return; }
+    else return;
+    changed();
+  });
+  $("mod-q").addEventListener("input", (e) => { pick.q = e.target.value; renderFeatures(); });
+  $("mod-q").addEventListener("keydown", (e) => { if (e.key === "Escape") { pick.q = ""; renderFeatures(); } });
+  $("mod-q-clr").addEventListener("click", () => { pick.q = ""; renderFeatures(); $("mod-q").focus(); });
+  $("mod-found").addEventListener("click", (e) => { if (e.target.closest("[data-showall]")) { pick.q = ""; renderFeatures(); } });
+  // the selection bar floats only where IntersectionObserver exists (not in jsdom); its shadow only while it floats
+  if ("IntersectionObserver" in window) {
+    $("panel-mods").classList.add("js-sticky");
+    new IntersectionObserver(([en]) => {
+      $("mod-sel").classList.toggle("stuck", !en.isIntersecting && en.boundingClientRect.top > 0);
+    }).observe($("mod-sel-end"));
+  }
+}
+
+// "by drumkilla" / "based on ms-multi-output by scottmetoyer", linked to the repository.
+// A link inside the card's <label> doesn't toggle the checkbox (interactive content).
+function creditHtml(c) {
+  const url = "https://github.com/" + c.repo;
+  const link = (txt) => `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(txt)}</a>`;
+  return c.kind === "based"
+    // "d'après eurorack d'Émilie Gillet": French elides "de" before a vowel
+    ? t(/^[aeiouàâéèêëîïôùûœ]/i.test(c.who) ? "credit_based_v" : "credit_based",
+        { repo: link(c.repo.split("/")[1]), who: esc(c.who) })
+    : t("credit_by", { who: link(c.who) });
+}
+
+function renderCredits() {
+  const box = $("credits-list");
+  if (!box) return;
+  box.innerHTML = CREDITS.map((c) =>
+    `<li><a href="https://github.com/${esc(c.repo)}" target="_blank" rel="noopener">${esc(c.repo)}</a>, ` +
+    `${esc(c[st.lang] || c.en)}</li>`).join("");
+}
+
+// Model-TG with the Syntakt engines: the combined version (notes/31), its base (f.with) then the engines' tweak
+// built on top of it (combo.tg). In card order (the REF_MAINOS keys); MCBuilder.build applies them in tweak order.
+function isOn(id) {
+  return !!(selection[id] && selection[id].on);
+}
+
+function chosenTweaks() {
+  const tw = window.MC_TWEAKS;
+  if (!tw || !tw.features) return [];
+  const out = [];
+  for (const f of tw.features) {
+    const sel = selection[f.id];
+    if (!sel || !sel.on) continue;
+    let id = f.engines ? (comboOf(f, sel) || {}).id : f.variants.length > 1 ? sel.variant : f.variants[0].id;
+    if (f.engines && isOn("model-tg")) id = (comboOf(f, sel) || {}).tg;
+    for (const [g, alt] of Object.entries(f.with || {})) if (isOn(g)) id = alt;
+    const tk = tw.tweaks.find((x) => x.id === id);
+    if (tk) out.push(tk);
+  }
+  return out;
+}
+function chosenLabels() {
+  const tw = window.MC_TWEAKS, out = [];
+  for (const f of (tw && tw.features) || []) {
+    const sel = selection[f.id];
+    if (!sel || !sel.on) continue;
+    let l = featText(f.id, "label", f.label);
+    if (f.engines) l += ` — ${(comboOf(f, sel) || {}).label || ""}`;
+    else if (f.variants.length > 1) l += ` — ${featText(sel.variant, "label", sel.variant)}`;
+    out.push(l);
+  }
+  return out;
+}
+
+// A mod whose engines are copied from the Syntakt OS (tweak "append", notes/17).
+// Real Syntakt engines ticked, in catalog order: [{ code, name, label }].
+function chosenEngines() {
+  const f = ((window.MC_TWEAKS && window.MC_TWEAKS.features) || []).find((x) => x.engines);
+  const sel = f && selection[f.id];
+  return sel && sel.on ? f.engines.filter((e) => sel.engines.includes(e.code)) : [];
+}
+
+// The ticked mods need the Syntakt OS file (the selection bar says so in any tab); step 2 asks for it in the Mods tab.
+function choiceNeedsSyntakt() {
+  return chosenTweaks().some((x) => x.append && x.append.syntakt);
+}
+function needsSyntakt() {
+  return st.mode === "mods" && choiceNeedsSyntakt();
+}
+
+function setMode(mode) {
+  st.mode = mode;
+  for (const m of ["mods", "restore", "samples"]) {
+    $("tab-" + m).setAttribute("aria-selected", String(mode === m));
+    $("panel-" + m).hidden = mode !== m;
+  }
+  $("drop2-wrap").hidden = mode !== "samples";
+  if (st.os) describeOs();
+  update();
+}
+
+// "Samples OS" tab: which machine, which way.
+function setSmpDir(dir) {
+  st.smpDir = dir;
+  for (const d of ["cyc", "smp", "back"]) {
+    $("smp-dir-" + d).setAttribute("aria-checked", String(dir === d));
+    $("smp-pane-" + d).hidden = dir !== d;
+  }
+  st.finished = null;
+  update();
+}
+
+// The tick box the chosen way asks for (none for the way back).
+function samplesAcked() {
+  return st.smpDir === "back" ? true : $(st.smpDir === "smp" ? "cos-ack" : "samples-ack").checked;
+}
+
+// ---------------------------------------------------------------------------
+// Step 2 — OS file and automatic build
+// ---------------------------------------------------------------------------
+function readFile(file) {
+  setStatus("file-status", [["is-busy", esc(t("reading", { name: file.name }))]]);
+  const r = new FileReader();
+  r.onload = () => loadOs(new Uint8Array(r.result), file.name);
+  r.onerror = () => setStatus("file-status", [["is-bad", esc(t("os_bad", { err: String(r.error) }))]]);
+  r.readAsArrayBuffer(file);
+}
+
+function loadOs(raw, name) {
+  st.fw = null; st.fwError = null; st.buildKey = null; st.cache = {}; st.finished = null;
+  $("result").innerHTML = ""; $("result").className = "result";
+  try {
+    const info = window.MCFlasher.verify(raw);
+    const sha = window.MCBuilder.hex(window.MCBuilder.sha256(raw));
+    const stock = !!(window.MC_TWEAKS && sha === window.MC_TWEAKS.device.stock_syx_sha256);
+    st.os = { raw, name, info, sha, stock };
+    st.osError = null;
+    log(`${name}: ${info.name}, ${info.count} packets, checksums OK${stock ? ", official OS 1.13" : ""}.`, "is-ok");
+  } catch (e) {
+    st.os = null;
+    st.osError = e.message;
+    log(`${name}: refused — ${e.message}`, "is-bad");
+  }
+  const d = $("drop");
+  d.classList.toggle("loaded", !!st.os);
+  $("drop-title").textContent = st.os ? name : t("drop_title");
+  $("drop-sub").textContent = st.os ? t("drop_again") : t("drop_sub");
+  describeOs();
+  update();
+}
+
+// "Samples OS" tab: the second file, the official Model:Samples OS (recognised by its SHA-256).
+function readSamplesFile(file) {
+  const r = new FileReader();
+  r.onload = () => loadSamples(new Uint8Array(r.result), file.name);
+  r.onerror = () => { st.samplesOs = null; st.samplesError = String(r.error); update(); };
+  r.readAsArrayBuffer(file);
+}
+
+function loadSamples(raw, name) {
+  st.finished = null;
+  try {
+    const info = window.MCFlasher.verify(raw);
+    const sha = window.MCBuilder.hex(window.MCBuilder.sha256(raw));
+    if (sha !== window.MC_TWEAKS.samples.syx_sha256) throw new Error(t("smp_not_official") + ` (${info.name})`);
+    st.samplesOs = { raw, name, sha };
+    st.samplesError = null;
+    log(`${name}: official Model:Samples OS 1.13, ${info.count} packets, checksums OK.`, "is-ok");
+  } catch (e) {
+    st.samplesOs = null;
+    st.samplesError = e.message;
+    log(`${name}: refused — ${e.message}`, "is-bad");
+  }
+  $("drop2").classList.toggle("loaded", !!st.samplesOs);
+  $("drop2-title").textContent = st.samplesOs ? name : t("drop2_title");
+  $("drop2-sub").textContent = st.samplesOs ? t("drop_again") : t("drop2_sub");
+  update();
+}
+
+// Mods tab, real Syntakt engines: the official Syntakt OS (recognised by its SHA-256). Only read here, in the browser.
+function readSyntaktFile(file) {
+  const r = new FileReader();
+  r.onload = () => loadSyntakt(new Uint8Array(r.result), file.name);
+  r.onerror = () => { st.syntakt = null; st.syntaktError = String(r.error); update(); };
+  r.readAsArrayBuffer(file);
+}
+
+function loadSyntakt(raw, name) {
+  st.finished = null;
+  try {
+    // OS 1.42 or 1.41: same audio program (section 7), so the same engines and the same firmware
+    const tk = window.MC_TWEAKS.tweaks.find((x) => x.append && x.append.syntakt);
+    const version = tk && window.MCBuilder.syntaktVersion(tk.append, raw);
+    if (!version) throw new Error(t("smp_not_official"));
+    st.syntakt = { raw, name, version };
+    st.syntaktError = null;
+    log(`${name}: official Syntakt OS ${version}.`, "is-ok");
+  } catch (e) {
+    st.syntakt = null;
+    st.syntaktError = e.message;
+    log(`${name}: refused — ${e.message}`, "is-bad");
+  }
+  $("drop3").classList.toggle("loaded", !!st.syntakt);
+  $("drop3-title").textContent = st.syntakt ? name : t("drop3_title");
+  $("drop3-sub").textContent = st.syntakt ? t("drop_again") : t("drop3_sub");
+  update();
+}
+
+function describeOs() {
+  if (!st.os) {
+    if (st.osError) setStatus("file-status", [["is-bad", esc(t("os_bad", { err: st.osError }))]]);
+    else setStatus("file-status", []);
+  }
+}
+
+function update() {
+  prepareFirmware();
+  render();
+}
+
+// Decide what will be sent, building it when needed.
+function prepareFirmware() {
+  dropOrphans();                                   // never a card without the card it requires
+  const os = st.os;
+  st.building = false;
+  st.buildKey = null;
+  if (!os) { st.fw = null; st.fwError = null; return; }
+  if (st.mode === "samples") { prepareSamples(os); return; }
+  if (!os.stock) {
+    if (st.mode === "restore") { st.fw = null; st.fwError = "restore_needs"; return; }
+    st.fw = { raw: os.raw, name: os.name, kind: "custom", mods: [], ref: false, sixch: false };
+    st.fwError = null;
+    return;
+  }
+  if (st.mode === "restore") {
+    st.fw = { raw: os.raw, name: os.name, kind: "stock", mods: [], ref: true, sixch: false };
+    st.fwError = null;
+    return;
+  }
+  const tweaks = chosenTweaks();
+  if (!tweaks.length) { st.fw = null; st.fwError = "pick_one"; return; }
+  const sdv = needsSyntakt();
+  if (sdv && !st.syntakt) { st.fw = null; st.fwError = "needs_syntakt"; return; }
+  const key = tweaks.map((x) => x.id).join("+");
+  const labels = chosenLabels();
+  const syntakt = sdv ? st.syntakt.raw : null;     // only official files, all with the same section 7: same bytes for every key
+  buildCached(key, (raw) => {
+    const opts = {};
+    if (REF_MAINOS[key]) opts.expectMainOsSha = REF_MAINOS[key];
+    opts.refMods = REF_MODS;                       // every mod, on every build (notes/49)
+    if (syntakt) opts.syntakt = syntakt;
+    const r = window.MCBuilder.build(raw, window.MC_TWEAKS.device, tweaks, opts);
+    log(`Built ${key}: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.patchedBytes} bytes patched, ${r.raw.length} bytes.`, "is-ok");
+    return { raw: r.raw, name: `model-cycles_OS1.13_${key}.syx`, kind: "built", mods: labels, sha: r.mainOsSha,
+      ref: !!REF_MAINOS[key], modsRef: r.modsChecked, sixch: tweaks.some((x) => x.id.startsWith("6ch")),
+      sdv: sdv && (tweaks.find((x) => x.append && x.append.syntakt) || {}).id, engines: sdv ? chosenEngines() : [] };
+  });
+}
+
+// Model:Samples OS in the Model:Cycles container (MCBuilder.crossflash = tools/crossflash.py), or, for a Model:Samples,
+// the Model:Cycles OS (MCBuilder.cyclesForSamples = --to samples) and its way back (MCBuilder.samplesBack = --back-samples).
+function prepareSamples(os) {
+  if (!os.stock) { st.fw = null; st.fwError = "samples_needs_cycles"; return; }
+  const smp = st.samplesOs;
+  if (!smp) { st.fw = null; st.fwError = null; return; }
+  if (st.smpDir === "smp") {
+    buildCached("cycles-os:" + smp.sha, (raw) => {
+      const r = window.MCBuilder.cyclesForSamples(raw, smp.raw);
+      const sha = window.MCBuilder.hex(window.MCBuilder.sha256(r.raw));
+      if (sha !== REF_CYCLES_ON_SAMPLES) throw new Error(`result ${sha.slice(0, 16)}… is not the reference build`);
+      log(`Built the Model:Cycles OS for Model:Samples: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.raw.length} bytes.`, "is-ok");
+      return { raw: r.raw, name: "model-cycles_OS1.13_for-model-samples.syx", kind: "cos", mods: [], ref: true, sixch: false };
+    });
+    return;
+  }
+  if (st.smpDir === "back") {
+    buildCached("samples-back:" + smp.sha, (raw) => {
+      const r = window.MCBuilder.samplesBack(raw, smp.raw);
+      const sha = window.MCBuilder.hex(window.MCBuilder.sha256(r.raw));
+      if (sha !== REF_SAMPLES_BACK) throw new Error(`result ${sha.slice(0, 16)}… is not the reference build`);
+      log(`Packed the official Model:Samples OS for the way back: ${r.raw.length} bytes.`, "is-ok");
+      return { raw: r.raw, name: "model-samples_OS1.13_back-from-cycles-os.syx", kind: "sback", mods: [], ref: true, sixch: false };
+    });
+    return;
+  }
+  buildCached("samples-os:" + smp.sha, (raw) => {
+    const r = window.MCBuilder.crossflash(raw, smp.raw);
+    const sha = window.MCBuilder.hex(window.MCBuilder.sha256(r.raw));
+    if (sha !== REF_SAMPLES_ON_CYCLES) throw new Error(`result ${sha.slice(0, 16)}… is not the reference build`);
+    log(`Built the Model:Samples OS for Model:Cycles: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.raw.length} bytes.`, "is-ok");
+    return { raw: r.raw, name: "model-samples_OS1.13_for-model-cycles.syx", kind: "samples", mods: [], ref: true, sixch: false };
+  });
+}
+
+// Builds once per key and OS file (st.cache is reset when the Model:Cycles file changes), after
+// letting the browser paint "Preparing…". The result is applied only if it is still the current choice.
+function buildCached(key, make) {
+  st.buildKey = key;
+  const cached = st.cache[key];
+  if (cached) { st.fw = cached.fw || null; st.fwError = cached.error || null; return; }
+  st.fw = null; st.fwError = null; st.building = true;
+  const osRef = st.os;
+  setTimeout(() => {
+    if (st.os !== osRef || st.cache[key]) return;
+    let entry;
+    try {
+      entry = { fw: make(osRef.raw) };
+    } catch (e) {
+      entry = { error: e.message };
+      log(`Build ${key} refused: ${e.message}`, "is-bad");
+    }
+    if (st.os !== osRef) return;              // another file was loaded meanwhile
+    st.cache[key] = entry;
+    if (st.buildKey === key) {                 // still the current choice
+      st.building = false;
+      st.fw = entry.fw || null;
+      st.fwError = entry.error || null;
+    }
+    render();
+  }, 40);
+}
+
+// ---------------------------------------------------------------------------
+// Step 3 — MIDI
+// ---------------------------------------------------------------------------
+function checkCompat() {
+  const box = $("compat");
+  let msg = "";
+  if (typeof window.isSecureContext !== "undefined" && !window.isSecureContext) msg = t("insecure");
+  else if (!navigator.requestMIDIAccess) msg = t("no_webmidi");
+  box.innerHTML = msg;
+  box.hidden = !msg;
+  if (msg) st.midiState = st.midiState === "ready" ? "ready" : "unsupported";
+  return !msg;
+}
+
+async function initMidi(silent) {
+  if (!checkCompat()) { render(); return; }
+  if (st.midiState === "asking") return;
+  st.midiState = "asking";
+  if (!silent) log("Requesting MIDI access (with SysEx)…");
+  renderMidi();
+  let done = false;
+  const hint = setTimeout(() => { if (!done) { st.midiHint = true; renderMidi(); } }, 2500);
+  try {
+    st.midi = await navigator.requestMIDIAccess({ sysex: true });
+  } catch (e) {
+    done = true; clearTimeout(hint); st.midiHint = false;
+    st.midiState = "denied";
+    log("MIDI access failed: " + (e && e.message ? e.message : e), "is-bad");
+    render();
+    return;
+  }
+  done = true; clearTimeout(hint); st.midiHint = false;
+  st.midiState = "ready";
+  st.midi.onstatechange = onPortChange;
+  log("MIDI access granted.", "is-ok");
+  fillPorts();
+  render();
+  probeIfNeeded();
+}
+
+// A port appeared or vanished (opening one also lands here, with nothing to do).
+function onPortChange(e) {
+  const port = e && e.port;
+  if (port && port.state === "disconnected" && st.dev && (port.id === st.dev.outId || port.id === st.dev.inId)) {
+    st.dev = null;
+    if (st.after === "confirm") st.after = "gone";
+  }
+  if (port && port.state === "connected" && st.after === "gone" && isDevicePort(port.name)) {
+    st.after = "back";
+    st.booting = true;                      // let it finish starting before asking who it is
+    setTimeout(() => { st.booting = false; fillPorts(); render(); probeIfNeeded(true, 4); }, 2500);
+  }
+  fillPorts();
+  render();
+  if (!st.booting) probeIfNeeded();
+}
+
+const present = (p) => p && p.state !== "disconnected";   // Chrome keeps unplugged ports in its maps
+
+function outputs() {
+  return st.midi ? [...st.midi.outputs.values()].filter(present) : [];
+}
+
+function inputs() {
+  return st.midi && st.midi.inputs ? [...st.midi.inputs.values()].filter(present) : [];
+}
+
+// The input that goes with an output: same name, else a name that contains the other, else the
+// only Model:Cycles / Model:Samples input.
+function inputFor(out) {
+  const ins = inputs();
+  const name = (out.name || "").trim();
+  const dev = ins.filter((i) => isDevicePort(i.name));
+  return ins.find((i) => (i.name || "").trim() === name)
+    || ins.find((i) => i.name && name && (i.name.includes(name) || name.includes(i.name)))
+    || (isDevicePort(name) && dev.length === 1 ? dev[0] : null);
+}
+
+// Fast method: ask the machine on the chosen port who it is, once per port (Refresh asks again).
+function probeIfNeeded(force, tries) {
+  if (st.method !== "fast" || st.midiState !== "ready" || st.sending) return;
+  const out = currentPort();
+  if (!out) { st.dev = null; return; }
+  if (!force && st.dev && st.dev.outId === out.id) return;
+  if (st.probing) { st.reprobe = true; return; }
+  st.probing = probe(out, tries || 1).finally(() => {
+    st.probing = null;
+    if (st.reprobe) { st.reprobe = false; probeIfNeeded(true); }
+  });
+}
+
+async function probe(out, tries) {
+  const inp = inputFor(out);
+  if (!inp) { st.dev = { state: "noinput", outId: out.id }; render(); return; }
+  st.dev = { state: "probing", outId: out.id, inId: inp.id };
+  render();
+  const F = window.MCFlasher;
+  for (let k = 1; k <= tries; k++) {
+    let session = null;
+    try {
+      session = await F.xferOpen(inp, out);
+      const info = await F.xferIdentify(session);
+      st.dev = Object.assign({ state: "ok", outId: out.id, inId: inp.id }, info);
+      log(`“${out.name}” answers: ${info.device || "Elektron device " + info.id} “${info.name}”, OS ${info.version}.`, "is-ok");
+      break;
+    } catch (e) {
+      const last = e.code === "busy" || k === tries;
+      log(`No answer from “${out.name}” (${e.message || e}).`, last ? "is-warn" : "");
+      if (last) { st.dev = { state: e.code === "busy" ? "busy" : "none", outId: out.id, inId: inp.id }; break; }
+    } finally {
+      if (session) session.close();
+    }
+    await new Promise((r) => setTimeout(r, 2000));    // a retry: the machine is still starting
+  }
+  render();
+}
+
+// What blocks the fast method on the answering machine, as a text key (null: good to go).
+function devProblem() {
+  const d = st.dev;
+  if (!d || d.state === "probing") return "probing";
+  if (d.state !== "ok") return "dev_" + d.state;
+  if (st.fw && st.fw.raw[4] !== d.product) {
+    if (st.fw.kind === "sback" && d.id === 25) return "dev_back_on_samples";
+    if (st.fw.kind === "cos" && d.id === 27) return "dev_fwd_on_cycles";
+    if (d.id === 25) return "dev_samples";
+    if (d.id === 27) return "dev_wrong_file";
+    return "dev_other";
+  }
+  if (!d.product) return "dev_other";
+  return null;
+}
+
+function fillPorts() {
+  const sel = $("port");
+  if (!sel) return;
+  const outs = outputs();
+  const prev = sel.value;
+  sel.innerHTML = "";
+  const ph = document.createElement("option");
+  ph.value = "";
+  ph.textContent = t("choose_port");
+  sel.appendChild(ph);
+  for (const o of outs) {
+    const opt = document.createElement("option");
+    opt.value = o.id;
+    opt.textContent = o.name + (o.manufacturer && !(o.name || "").includes(o.manufacturer) ? ` (${o.manufacturer})` : "");
+    sel.appendChild(opt);
+  }
+  if (st.portManual && outs.some((o) => o.id === prev)) sel.value = prev;
+  else {
+    st.portManual = false;
+    const want = outs.find((o) => isDevicePort(o.name));
+    sel.value = want ? want.id : "";
+  }
+}
+
+function currentPort() {
+  const id = $("port").value;
+  const out = id && st.midi ? st.midi.outputs.get(id) : null;
+  return present(out) ? out : null;
+}
+
+function renderMidi() {
+  const ready = st.midiState === "ready";
+  const fast = st.method === "fast";
+  $("m-fast").setAttribute("aria-checked", String(fast));
+  $("m-slow").setAttribute("aria-checked", String(!fast));
+  $("m-fast").disabled = $("m-slow").disabled = st.sending;
+  $("method-note").textContent = t(fast ? "method_fast" : "method_slow");
+  $("howto-fast").hidden = !fast;
+  $("howto-usb").hidden = fast;
+  $("allow").hidden = ready;
+  $("allow").disabled = st.midiState === "unsupported";
+  $("port").hidden = !ready;
+  $("refresh").hidden = !ready;
+  const rows = [];
+  if (st.midiState === "asking") rows.push(["is-busy", esc(t(st.midiHint ? "midi_wait" : "midi_asking"))]);
+  if (st.midiState === "denied") rows.push(["is-bad", esc(t("midi_denied"))]);
+  if (ready) {
+    const outs = outputs();
+    const port = currentPort();
+    if (!outs.length) rows.push(["is-warn", esc(t("midi_none"))]);
+    else if (port && !isDevicePort(port.name) && !(fast && st.dev && st.dev.state === "ok")) rows.push(["is-warn", esc(t("warn_not_dev"))]);
+    else if (port && fast) rows.push(devRow());
+    else if (port && /samples/i.test(port.name)) rows.push(["is-warn", esc(t("warn_samples_port"))]);
+    else if (port) rows.push(["is-ok", esc(t("midi_pick_dev"))]);
+    else if (!outs.some((o) => isDevicePort(o.name))) rows.push(["is-warn", esc(t("midi_no_dev"))]);
+  }
+  setStatus("midi-status", rows);
+}
+
+// Fast method: what the machine answered.
+function devRow() {
+  const d = st.dev;
+  const why = devProblem();
+  if (why === "probing") return ["is-busy", esc(t("dev_probing"))];
+  if (d.state !== "ok") return [d.state === "busy" ? "is-bad" : "is-warn", esc(t(why))];
+  const found = esc(t("dev_ok", { device: d.device || d.name, v: d.version || "?" }));
+  if (why === "dev_samples") return ["is-warn", found + " " + t("dev_samples")];
+  if (why) return ["is-warn", found + " " + esc(t(why, { name: d.name || d.id }))];
+  return ["is-ok", found];
+}
+
+// ---------------------------------------------------------------------------
+// Rendering (status, step badges, flash button)
+// ---------------------------------------------------------------------------
+function missingReason() {
+  if (!st.os) return st.osError ? "miss_fw" : "miss_file";
+  if (st.mode === "samples") {
+    if (st.fwError === "samples_needs_cycles") return "miss_samples_cycles";
+    if (!st.samplesOs) return "miss_samples_file";
+    if (!samplesAcked()) return st.smpDir === "smp" ? "miss_cos_ack" : "miss_samples_ack";
+  }
+  if (st.fwError === "pick_one") return "miss_mod";
+  if (needsSyntakt() && !st.syntakt) return "miss_syntakt";
+  if (st.building) return "miss_build";
+  if (!st.fw) return "miss_fw";
+  if (st.midiState !== "ready") return "miss_midi";
+  if (!currentPort()) return "miss_port";
+  if (st.method === "fast") {
+    const why = devProblem();
+    if (why === "probing") return "miss_probe";
+    if (["dev_samples", "dev_wrong_file", "dev_other", "dev_back_on_samples", "dev_fwd_on_cycles"].includes(why))
+      return "miss_dev_mismatch";
+    if (why) return "miss_dev";
+  }
+  if (!$("ack").checked) return "miss_ack";
+  return null;
+}
+
+function render() {
+  // step 2 status
+  $("h2s").textContent = t(st.mode === "samples" ? "s2_samples" : "s2");
+  if (st.os && st.mode === "samples" && !st.os.stock)
+    setStatus("file-status", [["is-bad", t(st.smpDir === "cyc" ? "samples_needs_cycles" : "cos_needs_cycles")]]);
+  else if (st.os) {
+    const rows = [];
+    if (st.os.stock) rows.push(["is-ok", esc(t("os_ok"))]);
+    else {
+      rows.push(["is-warn", t("os_custom", { name: esc(st.os.name), device: esc(st.os.info.name) })]);
+      if (st.mode === "mods" && chosenTweaks().length) rows.push(["", esc(t("os_custom_mods"))]);
+    }
+    if (st.fwError === "restore_needs") rows.push(["is-bad", t("os_restore_needs")]);
+    else if (st.fwError === "pick_one") rows.push(["", esc(t("pick_one"))]);
+    else if (st.fwError === "needs_syntakt") rows.push(["", esc(t("needs_syntakt"))]);
+    else if (st.building) rows.push(["is-busy", esc(t("building"))]);
+    else if (st.fwError) rows.push(["is-bad", esc(t("build_failed", { err: st.fwError }))]);
+    else if (st.fw && st.fw.kind === "built")
+      rows.push(["is-ok", esc(t("built", { mods: st.fw.mods.join(" + ") })) + (st.fw.ref ? " " + esc(t("built_ref")) : st.fw.modsRef ? " " + esc(t("built_ref_mods")) : "") +
+        ` <span class="hash">MAIN OS ${esc(st.fw.sha.slice(0, 8))}</span>`]);
+    else if (st.fw && st.fw.kind === "stock") rows.push(["is-ok", esc(t("stock_ready"))]);
+    else if (st.fw && st.fw.kind === "samples") rows.push(["is-ok", esc(t("samples_ready")) + " " + esc(t("built_ref"))]);
+    else if (st.fw && st.fw.kind === "cos") rows.push(["is-ok", esc(t("cos_ready")) + " " + esc(t("built_ref"))]);
+    else if (st.fw && st.fw.kind === "sback") rows.push(["is-ok", esc(t("sback_ready")) + " " + esc(t("built_ref"))]);
+    setStatus("file-status", rows);
+  }
+  setStatus("file2-status", st.samplesOs ? [["is-ok", esc(t("smp_ok"))]]
+    : st.samplesError ? [["is-bad", esc(t("smp_bad", { err: st.samplesError }))]] : []);
+  const sdv = needsSyntakt();
+  $("drop3-wrap").hidden = !sdv;
+  setStatus("file3-status", st.syntakt ? [["is-ok", esc(t("st_ok", { v: st.syntakt.version }))]]
+    : st.syntaktError ? [["is-bad", esc(t("st_bad", { err: st.syntaktError }))]] : []);
+
+  renderMidi();
+
+  // download button (for Elektron Transfer)
+  const dl = $("download");
+  $("alt").hidden = !st.fw || st.sending;
+  if (st.fw) {
+    if (st.urlFor !== st.fw.raw) {
+      if (st.url) URL.revokeObjectURL(st.url);
+      st.url = URL.createObjectURL(new Blob([st.fw.raw], { type: "application/octet-stream" }));
+      st.urlFor = st.fw.raw;
+    }
+    dl.href = st.url;
+    dl.download = st.fw.name;
+  }
+
+  // step badges
+  const choseOk = st.mode === "restore" || (st.mode === "samples" ? samplesAcked() : chosenTweaks().length > 0);
+  $("step-choose").classList.toggle("done", choseOk);
+  $("step-file").classList.toggle("done", !!st.fw && !st.building);
+  $("step-connect").classList.toggle("done", st.midiState === "ready" && !!currentPort() && (st.method !== "fast" || !devProblem()));
+  $("step-flash").classList.toggle("done", st.finished === "ok");
+
+  // summary
+  const sum = $("summary");
+  if (st.fw) {
+    const what = st.fw.kind === "built" ? st.fw.mods.join(" + ")
+      : st.fw.kind === "stock" ? t("mods_list_restore")
+      : st.fw.kind === "samples" ? t("mods_list_samples")
+      : st.fw.kind === "cos" ? t("mods_list_cos")
+      : st.fw.kind === "sback" ? t("mods_list_sback") : t("mods_list_custom", { name: st.fw.name });
+    const port = currentPort();
+    const secs = st.method === "fast" ? window.MCFlasher.fastSeconds(st.fw.raw) : window.MCFlasher.transferSeconds(st.fw.raw, pace());
+    const mins = Math.max(1, Math.round(secs / 60));
+    sum.innerHTML = `<b>${esc(what)}</b>` + (port ? ` ${esc(t("via"))} <b>${esc(port.name)}</b>` : "") +
+      ` · ${esc(t("minutes", { m: mins }))}`;
+    sum.hidden = false;
+  } else sum.hidden = true;
+
+  // flash button
+  const miss = st.sending ? null : missingReason();
+  $("flash").disabled = st.sending || !!miss;
+  $("flash").textContent = st.sending ? t("flashing") : t("flash_btn");
+  $("missing").textContent = st.sending ? "" : miss ? t(miss) : st.finished === "ok" ? ""
+    : t(st.method === "fast" ? "miss_ready_fast" : "miss_ready", { m: hardware() });
+  $("stop").hidden = !st.sending;
+  renderAfter();
+}
+
+// Fast method, once the firmware is sent: confirm on the machine, then it restarts.
+// The machine the firmware goes to: a Model:Samples for the Cycles OS and its way back, else a Model:Cycles.
+function hardware() {
+  return st.fw && (st.fw.kind === "cos" || st.fw.kind === "sback") ? "Model:Samples" : "Model:Cycles";
+}
+
+function renderAfter() {
+  const el = $("after");
+  if (!el) return;
+  const d = st.dev;
+  const rows = [];
+  const m = hardware();
+  if (st.after === "confirm") rows.push(["is-busy", t("after_confirm", { m })]);
+  else if (st.after === "gone") rows.push(["is-busy", t("after_gone", { m })]);
+  else if (st.after === "back") {
+    if (d && d.state === "ok") rows.push(["is-ok", esc(t("after_back", { m, device: d.device || d.name, v: d.version || "?" }))]);
+    else rows.push(["is-ok", esc(t("after_back_plain", { m }))]);
+  }
+  setStatus("after", rows);
+}
+
+function pace() {
+  const v = parseFloat($("pace").value);
+  return Number.isFinite(v) && v >= 0 ? v : window.MCFlasher.DEFAULT_PACE;
+}
+
+// ---------------------------------------------------------------------------
+// Step 4 — flash
+// ---------------------------------------------------------------------------
+// Progress as 16 trig LEDs: the done steps lit, the current one blinking.
+function leds(pct) {
+  const cells = $("barwrap").querySelectorAll("i");
+  const lit = Math.floor((pct / 100) * cells.length + 1e-9);
+  cells.forEach((c, k) => { c.className = k < lit ? "on" : k === lit && pct < 100 ? "cur" : ""; });
+}
+
+function fmtTime(s) {
+  s = Math.max(0, Math.round(s));
+  const m = Math.floor(s / 60), r = s % 60;
+  return m ? `${m} min ${String(r).padStart(2, "0")} s` : `${r} s`;
+}
+
+async function flash() {
+  if (missingReason() || st.sending) return;
+  const out = currentPort();
+  const fw = st.fw;
+  const fast = st.method === "fast";
+  const p = pace();
+  st.sending = true; st.cancel = false; st.finished = null; st.after = null;
+  $("result").innerHTML = ""; $("result").className = "result";
+  $("progress").hidden = false;
+  $("bar").style.width = "0%";
+  leds(0);
+  $("pct").textContent = "0 %";
+  $("eta").textContent = "";
+  $("watch").className = "callout";
+  $("watch").hidden = false;
+  $("watch").innerHTML = t(fast ? "watch_fast" : "watch") + "<br>" + esc(t("keep_visible"));
+  render();
+  try { if (navigator.wakeLock) st.wakeLock = await navigator.wakeLock.request("screen"); } catch (e) { /* optional */ }
+  const F = window.MCFlasher;
+  const total = fast ? F.fastSeconds(fw.raw) : F.transferSeconds(fw.raw, p);
+  const t0 = Date.now();
+  const gone = () => !st.midi || !present(st.midi.outputs.get(out.id));
+  const onProgress = (n, tot) => {
+    const pct = (100 * n) / tot;
+    $("bar").style.width = pct.toFixed(1) + "%";
+    leds(pct);
+    $("barwrap").setAttribute("aria-valuenow", pct.toFixed(0));
+    $("pct").textContent = `${pct.toFixed(0)} %`;
+    const el = (Date.now() - t0) / 1000;
+    const left = n <= 0 ? total : fast ? (el / n) * (tot - n) : Math.max(total - el, (el / n) * (tot - n));
+    $("eta").textContent = t("remaining", { t: fmtTime(left) });
+  };
+  let res = null, err = null;
+  try {
+    if (fast) res = await flashFast(out, fw, onProgress, gone);
+    else {
+      log(t("log_start", { n: F.splitMessages(fw.raw).length, port: out.name, pace: p }));
+      res = await F.sendSysex(out, fw.raw, { pace: p, isCancelled: () => st.cancel || gone(), onProgress });
+    }
+  } catch (e) {
+    err = e;
+  }
+  try { if (st.wakeLock) await st.wakeLock.release(); } catch (e) { /* ignore */ }
+  st.wakeLock = null;
+  st.sending = false;
+  const r = $("result");
+  if (err) {
+    st.finished = "error";
+    r.className = "result bad";
+    r.innerHTML = `<p>${fast ? fastError(err) : esc(t("send_error", { err: err.message || err }))}</p>`;
+    log("Transfer error: " + (err.message || err), "is-bad");
+  } else if (res.cancelled) {
+    st.finished = "stopped";
+    r.className = "result warn";
+    const lost = !st.cancel;
+    const again = t(fast ? "stopped_fast" : "stopped");
+    r.innerHTML = (lost ? `<p>${esc(t("port_gone"))}</p>` : "") + `<p>${esc(again)}</p>`;
+    log(`Stopped after ${res.sent}/${res.total} ${fast ? "bytes" : "packets"}.`, "is-warn");
+  } else {
+    st.finished = "ok";
+    st.after = fast ? "confirm" : null;
+    $("watch").hidden = true;
+    $("bar").style.width = "100%";
+    leds(100);
+    $("pct").textContent = "100 %";
+    $("eta").textContent = fmtTime(res.seconds);
+    r.className = "result ok";
+    r.innerHTML = `<p><b>${esc(t(fast ? "done_title_fast" : "done_title"))}</b></p>` +
+      (fast ? `<div class="status" id="after" aria-live="polite"></div>` : `<p>${t("done_body")}</p>`) +
+      (fw.sixch ? `<p>${t("done_6ch")}</p>` : "") +
+      (fw.sdv ? `<p>${t(/^syntakt-tg-/.test(fw.sdv) ? "done_syn_tg" : "done_syn", { list: fw.engines.map((e) => `<b>${esc(e.name)}</b> (${esc(e.label)})`).join(", ") })}</p>` : "") +
+      (fw.kind === "samples" ? `<p>${t("done_samples")}</p>` : "") +
+      (fw.kind === "cos" ? `<p>${t("done_cos")}</p>` : "") +
+      (fw.kind === "sback" ? `<p>${t("done_sback")}</p>` : "");
+    log(fast ? `Firmware sent in ${Math.round(res.seconds)} s (${res.blocks} blocks): waiting for the confirmation on the machine.`
+      : `Transfer complete in ${Math.round(res.seconds)} s.`, "is-ok");
+  }
+  $("progress").hidden = st.finished !== "ok";
+  render();
+}
+
+// Fast method: check again who answers, then send the .syx as an OS upgrade.
+async function flashFast(out, fw, onProgress, gone) {
+  const F = window.MCFlasher;
+  const inp = inputFor(out);
+  if (!inp) throw new F.XferError("gone");
+  const session = await F.xferOpen(inp, out);
+  try {
+    const info = await F.xferIdentify(session);
+    st.dev = Object.assign({ state: "ok", outId: out.id, inId: inp.id }, info);
+    if (devProblem()) throw new F.XferError("mismatch", info.name);
+    log(t("log_start_fast", { kb: Math.round(fw.raw.length / 1024), n: Math.ceil(fw.raw.length / F.OS_BLOCK),
+      port: out.name, device: info.device, v: info.version }));
+    return await F.upgradeFast(session, fw.raw, { onProgress, isCancelled: () => st.cancel || gone() });
+  } finally {
+    session.close();
+  }
+}
+
+function fastError(err) {
+  const q = st.lang === "fr" ? ["« ", " »"] : ["“", "”"];
+  const why = err.detail ? ` (${q[0]}${esc(err.detail)}${q[1]})` : "";
+  switch (err.code) {
+    case "timeout": return esc(t("fast_timeout"));
+    case "refused": return t("fast_refused", { why });
+    case "write": return t("fast_write", { why });
+    case "busy": return esc(t("dev_busy"));
+    case "gone": return esc(t("port_gone"));
+    case "mismatch": { const k = devProblem() || "dev_other"; return k === "dev_samples" ? t(k) : esc(t(k, { name: err.detail })); }
+    default: return t("fast_write", { why: ` (${esc(err.message || err)})` });
+  }
+}
+
+function setMethod(m) {
+  if (st.sending || (m !== "fast" && m !== "slow")) return;
+  st.method = m;
+  try { localStorage.setItem("mc-method", m); } catch (e) { /* private mode */ }
+  render();
+  probeIfNeeded();
+}
+
+// ---------------------------------------------------------------------------
+// Wiring
+// ---------------------------------------------------------------------------
+function init() {
+  let lang = "en";
+  try { lang = localStorage.getItem("mc-lang") || ""; } catch (e) { lang = ""; }
+  if (!lang) lang = /^fr\b/i.test(navigator.language || "") ? "fr" : "en";
+  st.lang = lang;
+  try { st.method = localStorage.getItem("mc-method") === "slow" ? "slow" : "fast"; } catch (e) { /* private mode */ }
+
+  document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => applyLang(b.dataset.lang)));
+  $("tab-mods").addEventListener("click", () => setMode("mods"));
+  $("tab-restore").addEventListener("click", () => setMode("restore"));
+  $("tab-samples").addEventListener("click", () => setMode("samples"));
+  $("samples-ack").addEventListener("change", render);
+  $("cos-ack").addEventListener("change", render);
+  for (const d of ["cyc", "smp", "back"]) $("smp-dir-" + d).addEventListener("click", () => setSmpDir(d));
+
+  const drop = $("drop"), file = $("file");
+  file.addEventListener("change", (e) => { if (e.target.files[0]) readFile(e.target.files[0]); e.target.value = ""; });
+  drop.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); file.click(); } });
+  ["dragover", "dragenter"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
+  drop.addEventListener("drop", (e) => { if (e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]); });
+
+  const drop2 = $("drop2"), file2 = $("file2");
+  file2.addEventListener("change", (e) => { if (e.target.files[0]) readSamplesFile(e.target.files[0]); e.target.value = ""; });
+  drop2.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); file2.click(); } });
+  ["dragover", "dragenter"].forEach((ev) => drop2.addEventListener(ev, (e) => { e.preventDefault(); drop2.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((ev) => drop2.addEventListener(ev, (e) => { e.preventDefault(); drop2.classList.remove("over"); }));
+  drop2.addEventListener("drop", (e) => { if (e.dataTransfer.files[0]) readSamplesFile(e.dataTransfer.files[0]); });
+
+  const drop3 = $("drop3"), file3 = $("file3");
+  file3.addEventListener("change", (e) => { if (e.target.files[0]) readSyntaktFile(e.target.files[0]); e.target.value = ""; });
+  drop3.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); file3.click(); } });
+  ["dragover", "dragenter"].forEach((ev) => drop3.addEventListener(ev, (e) => { e.preventDefault(); drop3.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((ev) => drop3.addEventListener(ev, (e) => { e.preventDefault(); drop3.classList.remove("over"); }));
+  drop3.addEventListener("drop", (e) => { if (e.dataTransfer.files[0]) readSyntaktFile(e.dataTransfer.files[0]); });
+
+  $("allow").addEventListener("click", () => initMidi(false));
+  $("refresh").addEventListener("click", () => { fillPorts(); render(); probeIfNeeded(true); });
+  $("port").addEventListener("change", () => { st.portManual = true; render(); probeIfNeeded(); });
+  $("m-fast").addEventListener("click", () => setMethod("fast"));
+  $("m-slow").addEventListener("click", () => setMethod("slow"));
+  $("ack").addEventListener("change", render);
+  $("pace").addEventListener("input", render);
+  $("flash").addEventListener("click", flash);
+  $("stop").addEventListener("click", () => { st.cancel = true; });
+
+  document.addEventListener("visibilitychange", () => {
+    if (st.sending && document.hidden) {
+      log(t("keep_visible"), "is-warn");
+      $("watch").classList.add("warn");
+    }
+  });
+  window.addEventListener("beforeunload", (e) => {
+    if (!st.sending) return;
+    e.preventDefault();
+    e.returnValue = t("leave");
+  });
+
+  $("build-stamp").textContent = "· build " + (window.MC_BUILD || "?");
+  wirePicker();
+  applyLang(st.lang);
+  update();
+
+  // Returning visitor who already allowed MIDI: connect without a click.
+  if (checkCompat() && navigator.permissions && navigator.permissions.query) {
+    navigator.permissions.query({ name: "midi", sysex: true })
+      .then((p) => { if (p.state === "granted") initMidi(true); })
+      .catch(() => { /* not supported */ });
+  }
+}
+
+// test hooks (tools/webflash_smoke.js)
+window.MCFlasherApp = { state: st, REF_MAINOS, REF_MODS, REF_SAMPLES_ON_CYCLES, REF_CYCLES_ON_SAMPLES, REF_SAMPLES_BACK, loadOs,
+  loadSamples, loadSyntakt, setMode, setSmpDir, setMethod, applyLang, render,
+  chosenTweaks, chosenLabels, CATS };
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+else init();
+})();
