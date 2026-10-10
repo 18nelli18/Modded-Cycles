@@ -22,10 +22,10 @@ sans marcher sur les autres ?** Maxime a demandé de l'engager le 07/10/2026 («
 - Il **refuse** une écriture dans un masque dont le sprite n'est pas redirigé (le sprite afficherait le code), une
   écriture dans une copie gardée, une redirection qui ne vise pas la copie gardée. `tools/check_overlaps.py`
   (notes/49) garde son rôle : deux mods installables ensemble n'écrivent jamais les mêmes octets. [FAIT]
-- La place : **164 masques libérables, 35 960 o**, dont 9 pris par les mods de `main` (5 024 o) et **155 libres
-  (30 936 o)**. Avec les cinq branches de mods ouvertes (clavier d'accords, mods de djd_oz, navigateur multiligne,
-  cue casque, filtre par piste) : 44 pris, **120 libres (20 136 o)**. Le relevé des masques est vérifié sur l'OS
-  officiel (`--cycles`) : 174 masques, copies identiques, une seule référence chacun. [FAIT]
+- La place : **164 masques libérables, 35 960 o**, dont 10 pris par les mods de `main` (5 400 o) et **154 libres
+  (30 560 o)**. Avec les quatre branches de mods ouvertes (clavier d'accords, mods de djd_oz, cue casque, filtre par
+  piste) : 44 pris, **120 libres (20 136 o)**. Le relevé des masques est vérifié sur l'OS officiel (`--cycles`) :
+  174 masques, copies identiques, une seule référence chacun. [FAIT]
 - Un auteur extérieur lit `REGISTRY.md`, prend un masque marqué *libre* avec `sprites.redirect_write`, régénère le
   registre et le commet avec son tweak : c'est ce qu'il faut connaître pour écrire un mod compatible.
 
@@ -65,8 +65,9 @@ dans l'image. [FAIT]
 
 `sprites.MASKS` garde son format (taille, constante, description, copie gardée) et ses neuf anciennes entrées à
 l'identique : les générateurs existants (`gen_arp.py`, `gen_trig_hold.py`, `gen_sample_preview.py`,
-`gen_sdvintage*.py`, `gen_syntakt_*.py`, `gen_macro.py`) produisent les mêmes tweaks (`--check` vérifié pour
-trig-hold et sample-preview). Les 155 autres masques s'y ajoutent, construits depuis `GROUPS`. [FAIT]
+`gen_sdvintage*.py`, `gen_syntakt_*.py`, `gen_macro*.py`, `gen_multiline_browser.py`) produisent les mêmes tweaks
+(`--check` vérifié pour trig-hold, sample-preview et multiline-browser). Les 154 autres masques s'y ajoutent,
+construits depuis `GROUPS`. [FAIT]
 
 ## 3. Le registre : lire le rôle d'une écriture dans ses octets
 
@@ -84,9 +85,10 @@ nouveaux octets (`new`), et c'est assez pour la classer. [FAIT]
 | patch | tout le reste | les 12 écritures de tempo-max |
 
 Pour les crochets et les pointeurs, la cible est nommée : masque et décalage (avec le symbole si le tweak le porte
-dans `symbols`), charge utile (image ou mémoire) et décalage, ou adresse de l'OS. Les 62 combinaisons de moteurs du
-Syntakt visent des décalages différents dans leur charge utile : une ligne par adresse et par zone, avec le nombre de
-cibles, et les moteurs résumés en deux familles (`syntakt-*`, `syntakt-tg-*`, présents/total).
+dans `symbols`), charge utile (image ou mémoire) et décalage, ou adresse de l'OS. Les 124 combinaisons de moteurs du
+Syntakt (seuls, sur Model-TG, et avec MACRO depuis notes/50) visent des décalages différents dans leur charge utile :
+une ligne par adresse et par zone, avec le nombre de cibles, et les moteurs résumés en quatre familles (`syntakt-*`,
+`syntakt-tg-*`, `syntakt-*-macro`, `syntakt-tg-*-macro`, présents/total).
 
 Ce que les écritures ne montrent pas, les octets des structures sauvegardées qu'un mod s'attribue, est déclaré à la
 main dans `DECLARED` (`tools/registry.py`), avec la note qui le prouve : l'octet +512 de la piste pour l'arpégiateur
@@ -96,9 +98,9 @@ main dans `DECLARED` (`tools/registry.py`), avec la note qui le prouve : l'octet
 
 | règle | pourquoi | résultat sur `main` |
 |---|---|---|
-| une écriture dans un masque libérable exige la redirection de son sprite, dans le même tweak ou dans un tweak qu'il demande (`requires`) | sinon le sprite affiche le code du mod | 9 masques écrits, 9 redirigés |
+| une écriture dans un masque libérable exige la redirection de son sprite, dans le même tweak ou dans un tweak qu'il demande (`requires`) | sinon le sprite affiche le code du mod | 10 masques écrits, 10 redirigés |
 | personne n'écrit dans une copie gardée | tous les sprites redirigés la lisent | aucune |
-| une redirection vise la copie gardée de son groupe | c'est la seule copie dont on sait qu'elle reste intacte | les redirections des 9 masques visent toutes la copie gardée |
+| une redirection vise la copie gardée de son groupe | c'est la seule copie dont on sait qu'elle reste intacte | les redirections des 10 masques visent toutes la copie gardée |
 | (remarque) une redirection sans écriture dans le masque | place prise pour rien | aucune |
 
 Deux mods peuvent écrire dans le même masque : `check_overlaps.py` garantit qu'ils n'écrivent pas les mêmes octets
@@ -107,27 +109,30 @@ crochet de démarrage des moteurs dans `0x4016cae8`), ou qu'ils ne s'installent 
 chord-keys sur quatre masques 47×47). Le registre montre pour chaque masque les octets écrits par chacun et ceux
 qu'aucun mod n'écrit.
 
-## 4. Ce que le registre dit de `main` (1.33)
+## 4. Ce que le registre dit de `main` (1.37)
 
-- 84 tweaks, 8 730 écritures. Masques : 9 pris (5 024 o), 155 libres (30 936 o). Les 21 masques 47×47 ne sont pas
-  tous pris sur `main` (6 : arp 2, sample-preview 4), mais le sont avec les branches ouvertes (§5).
+- 147 tweaks (dont 124 combinaisons de moteurs du Syntakt), 16 217 écritures. Masques : 10 pris (5 400 o), 154
+  libres (30 560 o). Les 21 masques 47×47 ne sont pas tous pris sur `main` (7 : arp 2, sample-preview 4, navigateur
+  multiligne 1), mais le sont avec les branches ouvertes (§5).
 - Masques 0xFF : `0x4015c044` 550/720 o écrits (6ch-usbup, trig-hold, et les 208 o des stubs USB communs à
   Model-TG, MACRO et aux moteurs) ; `0x4016cae8` 1 016/1 024 o (arp 824 o, crochet de démarrage et stubs des
-  moteurs, sdvintage-snare 973 o, qui exclut les autres) ; `0x4018a788` 1 016/1 024 o (arp, sdvintage-snare).
-- 65 adresses de l'OS détournées, dont 54 à l'identique par des mods de familles différentes (le crochet de
+  moteurs, avec ou sans MACRO, sdvintage-snare 973 o, qui exclut les autres) ; `0x4018a788` 1 016/1 024 o (arp,
+  sdvintage-snare).
+- 69 adresses de l'OS détournées, dont 56 à l'identique par des mods de familles différentes (le crochet de
   démarrage `0x400004b2`, les stubs USB `0x40058ca0`, `0x40059392`, `0x400593ce`, l'aiguillage des voix
   `0x4004df40`…) ; 51 pointeurs réécrits ; 14 zones 0xFF hors masques (tables de glyphes de drumkilla, reprises par
   Model-TG).
-- 72 tweaks à charge utile ; la plus haute finit en `0x401fb180`, 20 096 o avant la limite `0x40200000`.
+- 134 tweaks à charge utile ; la plus haute finit en `0x401fb180`, 20 096 o avant la limite `0x40200000`.
 
 ## 5. Avec les branches ouvertes (`--git`, 10/10/2026)
 
 `python3 tools/registry.py --git origin/claude/chord-keys-flasher-ozqjas --git origin/claude/djd-oz-mods-0vgnze
---git origin/claude/project-thread-p68dlg --git origin/claude/headphone-cue-k48r6s --git origin/claude/discord-filter-439loo` :
-91 tweaks, 44 masques pris (15 824 o), 120 libres (20 136 o). Les 21 masques 47×47 sont tous pris : chord-keys 14
-(dont les 4 de sample-preview, qui l'exclut), arp 2, trigless-dim 2, level-pan-values 2, multiline-browser 1 ; le
-cue casque prend 5 masques 48×22 (37 libres), le filtre par piste 15 masques 35×35 (4 libres). C'est exactement la
-répartition tenue à la main dans la mémoire des fils (`sprite-mask-allocation`), qu'il remplace. [FAIT]
+--git origin/claude/headphone-cue-k48r6s --git origin/claude/discord-filter-439loo` (le navigateur multiligne est
+sur `main` depuis) : 153 tweaks, 44 masques pris (15 824 o), 120 libres (20 136 o). Les 21 masques 47×47 sont tous
+pris : `main` 7 (arp 2, sample-preview 4, navigateur multiligne 1), chord-keys 14 (dont les 4 de sample-preview,
+qui l'exclut), trigless-dim 2, level-pan-values 2 ; le cue casque prend 5 masques 48×22 (37 libres), le filtre par
+piste 15 masques 35×35 (4 libres). C'est exactement la répartition tenue à la main dans la mémoire des fils
+(`sprite-mask-allocation`), qu'il remplace. [FAIT]
 
 ## 6. Ce qui reste
 

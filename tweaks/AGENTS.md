@@ -24,7 +24,7 @@ cave check; add to it only with the reasoning in `why` and in a note.
 | `10`–`19` | USB audio (6 channels) |
 | `20`–`29` | machines: SD VINTAGE, Syntakt engines (`24-syntakt-*`), MACRO (`25`) |
 | `30`–`39` | Model-TG and its combinations: with the Syntakt engines (`30`, `31`), with MACRO (`32` macro-tg); add-ons that need it: `33` sample-preview |
-| `40`–`49` | sequencer and interface features: `40` arp, `41` trig-hold, `42` tempo-max, `43` boot-anim; **next one is `44`** |
+| `40`–`49` | sequencer and interface features: `40` arp, `41` trig-hold, `42` tempo-max, `43` boot-anim, `44` multiline-browser; **next one is `45`** |
 | `90`–`99` | diagnostics (load meters, profile), not offered to users |
 
 ## Fields
@@ -42,7 +42,8 @@ cave check; add to it only with the reasoning in `why` and in a note.
 }
 ```
 
-Optional fields used by existing tweaks: `append` (payload copied at boot, notes/17, 31), `gov` (load governor
+Optional fields used by existing tweaks: `append` (payload copied at boot, notes/17, 31; with `compress: "aplib"`
+it is stored compressed and `stored` gives its size in the image, notes/50), `gov` (load governor
 settings), `symbols` (addresses of the mod's state, for the proofs), `version`, `source`, `result_sha256`. Look at how
 `build.py` and `docs/flasher/builder.js` read a field before adding a new one: **both builders must handle it the
 same way**, which `tools/webbuild_check.sh` and `tools/webflash_smoke.sh` verify.

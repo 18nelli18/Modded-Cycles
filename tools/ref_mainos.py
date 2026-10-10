@@ -17,9 +17,10 @@ La page compare le MAIN OS de ces combinaisons à leur empreinte et refuse s'il 
 l'autre), cet échantillon suffit : il grandit d'une quarantaine d'entrées par nouvelle carte, au lieu de doubler. Les
 cartes suivent les règles de app.js : « excludes » et « includes » (jamais cochées ensemble), « with » (un autre tweak
 quand une autre carte est cochée), « requires » (une carte qui ne va qu'avec une autre : la page coche l'autre avec
-elle, l'aperçu des samples avec Model-TG), et Model-TG avec les moteurs du Syntakt (leur version « tg »). Une sélection
-dont un tweak n'a pas le tweak qu'il demande (« requires » du tweak) est laissée de côté, car les deux builds la
-refusent.
+elle, l'aperçu des samples avec Model-TG), « joins » (une carte qui, cochée avec la carte des moteurs du Syntakt,
+n'ajoute rien : chaque combinaison de moteurs a sa version avec elle, MACRO, notes/50), et Model-TG avec les moteurs
+du Syntakt (leur version « tg »). Une sélection dont un tweak n'a pas le tweak qu'il demande (« requires » du tweak)
+est laissée de côté, car les deux builds la refusent.
 
     python3 tools/ref_mainos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx [--check]
 """
@@ -39,6 +40,7 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE / "emu"))
 
 import build                       # noqa: E402
+import gen_flasher_tweaks          # noqa: E402
 
 ROOT = HERE.parent
 TWEAKS_JS = ROOT / "docs" / "flasher" / "tweaks.js"
@@ -48,8 +50,7 @@ BLOCKS = {name: re.compile(r"(const " + name + r" = \{)((?:\n  .*)*)(\n\};\n)") 
 
 
 def mc_tweaks():
-    text = TWEAKS_JS.read_text(encoding="utf-8")
-    return json.loads(text[text.index("window.MC_TWEAKS = ") + len("window.MC_TWEAKS = "):text.rindex(";")])
+    return gen_flasher_tweaks.read_js(TWEAKS_JS.read_text(encoding="utf-8"))
 
 
 def main_os(cycles):
@@ -116,10 +117,14 @@ class Cards:
         """Tweaks construits pour une sélection {carte: choix}, dans l'ordre des cartes (la clé de REF_MAINOS)."""
         out = []
         for f in self.features:
-            if f["id"] not in sel:
+            if f["id"] not in sel or f.get("joins") in sel:   # « joins » : MACRO avec les moteurs, dans leur version
                 continue
             o = sel[f["id"]]
-            tid = (o["tg"] if "model-tg" in sel else o["id"]) if f.get("engines") else o
+            if f.get("engines"):                               # avec MACRO cochée : la version avec MACRO (notes/50)
+                o = next((o[g["id"]] for g in self.features if g.get("joins") == f["id"] and g["id"] in sel), o)
+                tid = o["tg"] if "model-tg" in sel else o["id"]
+            else:
+                tid = o
             for g, alt in (f.get("with") or {}).items():
                 if g in sel:
                     tid = alt

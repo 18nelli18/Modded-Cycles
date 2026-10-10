@@ -44,7 +44,7 @@ BASE = co.BASE
 END_LIMIT = co.END_LIMIT
 OUT = ROOT / "tweaks" / co.DEV / "REGISTRY.md"
 DETOURS = {0x4EB9: "jsr", 0x4EF9: "jmp", 0x61FF: "bsr.l", 0x60FF: "bra.l"}
-ENGINE = re.compile(r"^(syntakt-(?:tg-)?)(?:sd|cp|toy|bits|swarm|meter|profile)(?:-(?:sd|cp|toy|bits|swarm))*$")
+ENGINE = re.compile(r"^(syntakt-(?:tg-)?)(?:sd|cp|toy|bits|swarm|meter|profile)(?:-(?:sd|cp|toy|bits|swarm))*(-macro)?$")
 
 # Déclaré à la main, d'après les notes : ce que les écritures ne montrent pas (octets des structures sauvegardées).
 DECLARED = (
@@ -59,9 +59,10 @@ def fmt(n):
 
 
 def family(tid):
-    """Les 62 combinaisons de moteurs du Syntakt se résument à deux familles, syntakt-* et syntakt-tg-*."""
+    """Les combinaisons de moteurs du Syntakt se résument à quatre familles : syntakt-*, syntakt-tg-* et, avec la
+    machine MACRO (notes/50), syntakt-*-macro, syntakt-tg-*-macro."""
     m = ENGINE.match(tid)
-    return m[1] + "*" if m else tid
+    return m[1] + "*" + (m[2] or "") if m else tid
 
 
 def names(ids, by_id, extra=None):
@@ -73,7 +74,7 @@ def names(ids, by_id, extra=None):
     out = []
     for f in sorted(fams):
         ms = sorted(fams[f])
-        if f.endswith("*"):
+        if "*" in f:
             total = sum(1 for i in by_id if family(i) == f)
             s = f"{f} ({len(ms)}/{total}"
             if extra:
@@ -378,7 +379,7 @@ def render(tweaks, zones, rows, warns):
       "autre fonction de l'OS. Deux mods installables ensemble ne peuvent détourner la même adresse qu'avec les mêmes "
       "octets (`check_overlaps.py`) ; sinon ils se déclarent `conflicts`. Les combinaisons de moteurs du Syntakt "
       "visent des décalages différents dans leur charge utile : une ligne par adresse et par zone visée, avec le "
-      "nombre de cibles. Le rôle de chaque crochet est dans la note du mod.")
+      "nombre de cibles (moteurs résumés en familles : présents/total). Le rôle de chaque crochet est dans la note du mod.")
     p("")
     p("| adresse | origine (hex) | détour | vers | mods | notes |")
     p("|---|---|---|---|---|---|")
