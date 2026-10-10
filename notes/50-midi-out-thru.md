@@ -77,7 +77,7 @@ Le retour utilisateur (build 03 : valeur bloquée sur THRU; build 04 : exception
 
 ### 6. Bascule en direct FUNC + appui — expérience publiée sur le flasher test
 
-Une voie plus prudente que le troisième état du menu consiste à garder entièrement le réglage stock OUT/THR et à ajouter un **drapeau temporaire en RAM** « THRU envoie aussi » : 0 au démarrage = comportement THRU stock; 1 = relais entrant + émission générée. Les trois portes `0x4000154a`, `0x4000156a` et `0x40001590` consultent ce drapeau. Le raccourci inverse le drapeau; il ne réécrit pas le réglage persistant et ne change pas le chemin MIDI entrant. En OUT, les portes conservent toujours le comportement stock.
+Une voie plus prudente que le troisième état du menu consiste à garder entièrement le réglage stock OUT/THR et à utiliser la valeur cachée du réglage « THRU envoie aussi » : 1 = comportement THRU stock; 2 = relais entrant + émission générée. Les trois portes `0x4000154a`, `0x4000156a` et `0x40001590` consultent cet octet. Le raccourci fait alterner les valeurs sans changer le chemin MIDI entrant. La persistance après extinction n’a pas été vérifiée. En OUT, les portes conservent toujours le comportement stock.
 
 Le geste proposé par l'utilisatrice est plus naturel et évite de réserver une touche : **quand la ligne OUT/THRU affiche THR, tenir FUNC et appuyer sur son encodeur de valeur**. Comme l'appui seul appelle déjà le callback de la ligne, l'accroche pourrait intercepter exactement cet événement : avec FUNC tenu, basculer le drapeau une seule fois et laisser l'octet OUT/THRU intact; sans FUNC, exécuter le callback stock. L'écran continue d'afficher THR. C'est préférable au tour d'encodeur, qui pourrait déplacer le curseur ou avoir un chemin d'événements différent.
 
