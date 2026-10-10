@@ -97693,7 +97693,8 @@ window.MC_TWEAKS = {
    "with": {
     "syntakt": "sample-preview-st",
     "macro": "sample-preview-st"
-   }
+   },
+   "license": "LICENSE-Model-TG.txt"
   },
   {
    "id": "latching-mute",

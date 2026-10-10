@@ -92,6 +92,7 @@ FEATURES = [
                 "se charge au premier appui. Demande Model-TG.",
         "status": "tested",
         "credit": {"kind": "based", "who": "TinyGregAudio", "repo": "TinyGregAudio/Model-TG"},
+        "license": "LICENSE-Model-TG",          # pv_parse reprend un passage de son pool_store_hook
         "requires": "model-tg",
         "variants": [
             {"file": "33-sample-preview", "label": None},

@@ -258,14 +258,14 @@ async function main() {
       && doc.getElementById("drop3-wrap").hidden, "last engine unticked -> the card turns off");
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
     const creditOf = (id) => [...doc.querySelectorAll(`label[for=feat-${id}] .credit a`)].map((a) => a.href);
-    check(credits.length === 13 && creditOf("usb6")[0] === "https://github.com/scottmetoyer/ms-multi-output"
+    check(credits.length === 14 && creditOf("usb6")[0] === "https://github.com/scottmetoyer/ms-multi-output"
       && /\/LICENSE-ms-multi-output\.txt$/.test(creditOf("usb6")[1])
       && creditOf("model-tg")[0] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(creditOf("model-tg")[1])
-      && creditOf("sample-preview").join() === "https://github.com/TinyGregAudio/Model-TG"
+      && creditOf("sample-preview")[0] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(creditOf("sample-preview")[1])
       && ["latching-mute", "trig-preview", "browser-scroll"].every((id) => creditOf(id)[0] === "https://github.com/drumkilla/elektron-model-tweaks"
         && /\/LICENSE-elektron-model-tweaks\.txt$/.test(creditOf(id)[1]))
       && creditOf("macro")[0] === "https://github.com/pichenettes/eurorack" && /\/LICENSE-Braids\.txt$/.test(creditOf("macro")[1]),
-      "each row credits its author with a link to their MIT license, sample preview based on Model-TG: " + JSON.stringify(credits));
+      "each row credits its author with a link to their MIT license, sample preview based on Model-TG with its license: " + JSON.stringify(credits));
     const list = [...doc.querySelectorAll("#credits-list a")].map((a) => a.textContent);
     check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,pichenettes/eurorack,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,dagargo/elektroid,mxldyn/octamax",
       "credits section lists the 7 upstream repositories");
