@@ -39,7 +39,8 @@ OUT = ROOT / "docs" / "flasher" / "tweaks.js"
 # tweaks demande (« requires » de son JSON) le tweak correspondant de l'autre : check_requires le verifie.
 # Les moteurs s'ajoutent en machines supplementaires : sdvintage-exact (a la place de SNARE) reste dans build.py.
 # status : "tested" (flashe sur un vrai Model:Cycles) ou "experimental".
-# credit : auteur du travail d'origine, affiche sur la carte (voir aussi les credits de la page).
+# credit : auteur du travail d'origine, affiche sur la carte (voir aussi les credits de la page) ; sans « repo »
+# (un mod recu sans depot public), la carte dit « d'apres un mod de … », sans lien.
 # cat : rubrique du flasher, une de CATS (meme liste que CATS dans docs/flasher/app.js, plus « other »). Sans cat,
 # la carte s'affiche a la fin, dans « Autres mods » (avertissement ici). L'ordre de FEATURES reste l'ordre du build
 # (cles de REF_MAINOS), quel que soit l'ordre d'affichage par rubriques.
@@ -178,6 +179,42 @@ FEATURES = [
         "credit": None,
         "variants": [
             {"file": "43-boot-anim", "label": None},
+        ],
+    },
+    {
+        "id": "multiline-browser",
+        "cat": "screen",
+        "label": "Navigateur sur plusieurs lignes",
+        "desc": "Le navigateur de sons, de dossiers et d'echantillons affiche 3 noms a la fois, en petite police, "
+                "au lieu d'un seul en gros caracteres. > devant le nom sous le curseur ; le son charge reste inverse.",
+        "status": "tested",
+        "credit": None,                  # idee : un script d'un membre de la communaute (notes/40), nom a venir
+        "variants": [
+            {"file": "44-multiline-browser", "label": None},
+        ],
+    },
+    {
+        "id": "level-pan-values",
+        "cat": "screen",
+        "label": "Volume et pan en chiffres",
+        "desc": "Sur l'ecran principal, LEVEL/DATA affiche le volume de la piste (0 a 127) en chiffres, FUNC + "
+                "LEVEL/DATA son pan (-64 a 63), pendant 3 s. LEVEL/DATA y avance de 1 par cran au lieu de 2.",
+        "status": "tested",
+        "credit": {"kind": "based", "who": "djd_oz"},
+        "variants": [
+            {"file": "46-level-pan-values", "label": None},
+        ],
+    },
+    {
+        "id": "trigless-dim",
+        "cat": "seq",
+        "label": "Trigless trigs attenues",
+        "desc": "Une touche de pas qui porte un trigless trig (FUNC + touche) s'allume attenuee au lieu de pleine "
+                "lumiere : on la distingue d'un trig de note. Elle garde son clignotement habituel.",
+        "status": "tested",
+        "credit": {"kind": "based", "who": "djd_oz"},
+        "variants": [
+            {"file": "47-trigless-dim", "label": None},
         ],
     },
     {
