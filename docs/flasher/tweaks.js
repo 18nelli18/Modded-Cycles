@@ -2357,11 +2357,10 @@ window.MC_TWEAKS = {
   {
    "id": "midi-both",
    "order": 44,
-   "name": "MIDI OUT + THRU (BTH)",
+   "name": "MIDI OUT avec THRU",
    "description": [
-    "Ajoute BTH au réglage CONFIG > MIDI > PORTS > OUT/THRU : envoie l'horloge et les messages MIDI du Cycles",
-    "tout en relayant les messages reçus. OUT et THR gardent leur comportement d'origine. Généré par",
-    "tools/gen_midi_both.py (note 50). Le helper est dans le masque 35x35 libéré 0x40167c50."
+    "Avec THRU sélectionné, le Cycles relaie toujours le MIDI reçu et envoie aussi son horloge et ses messages",
+    "de piste/paramètres. OUT garde son comportement normal. Généré par tools/gen_midi_both.py (note 50)."
    ],
    "device": "Model:Cycles",
    "os": "1.13",
@@ -2369,39 +2368,19 @@ window.MC_TWEAKS = {
    "conflicts": [],
    "writes": [
     {
-     "off": 728350,
-     "old": "40167c50",
-     "new": "4014a660"
-    },
-    {
-     "off": 1472592,
-     "old": "ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffff",
-     "new": "4eb940044df80c800000000267144a806708203c401272814e75203c40127bad4e75203c40167c7a4e75425448004eb940044df80c800000000157c00280000000ff4e75"
-    },
-    {
-     "off": 220120,
-     "old": "4eb940044df84a806708263c401272816006263c40127bad",
-     "new": "4eb940167c5026004e714e714e714e714e714e714e714e71"
-    },
-    {
-     "off": 220168,
-     "old": "48780002",
-     "new": "48780003"
-    },
-    {
      "off": 4426,
      "old": "4eb940044df8",
-     "new": "4eb940167c7e"
+     "new": "70004e714e71"
     },
     {
      "off": 4458,
      "old": "4eb940044df8",
-     "new": "4eb940167c7e"
+     "new": "70004e714e71"
     },
     {
      "off": 4496,
      "old": "4eb940044df8",
-     "new": "4eb940167c7e"
+     "new": "70004e714e71"
     }
    ]
   },
@@ -140043,8 +140022,8 @@ window.MC_TWEAKS = {
   },
   {
    "id": "midi-both",
-   "label": "MIDI OUT + THRU (BTH)",
-   "desc": "Ajoute BTH au réglage CONFIG > MIDI > PORTS > OUT/THRU : le Cycles envoie son horloge et ses messages MIDI tout en relayant les messages reçus. OUT et THR gardent leur comportement d'origine.",
+   "label": "MIDI OUT pendant THRU",
+   "desc": "Avec THRU choisi dans CONFIG > MIDI > PORTS > OUT/THRU, le Cycles relaie le MIDI reçu et envoie aussi son horloge et ses messages de piste/paramètres. OUT garde son comportement normal.",
    "status": "experimental",
    "credit": null,
    "cat": "io",

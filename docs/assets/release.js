@@ -3,9 +3,15 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.36", date: "2026-10-10", changes: [
+    { en: "The MIDI option now keeps the stock OUT/THRU selector: with THR selected, incoming MIDI is forwarded and the Cycles' own clock and track/parameter messages are also sent. This avoids the third BTH value, which the previous build could not select",
+      fr: "L'option MIDI conserve maintenant le sélecteur OUT/THRU d'origine : avec THR, le MIDI reçu est relayé et l'horloge ainsi que les messages de piste/paramètres du Cycles sont aussi envoyés. Cela évite la troisième valeur BTH, que le build précédent ne permettait pas de choisir" },
+    { en: "Experimental: patch, overlap and browser-build checks passed; the mode still needs a hardware test",
+      fr: "Expérimental : vérifications du patch, des chevauchements et du build navigateur réussies ; le mode doit encore être testé sur la machine" },
+  ] },
   { version: "1.35", date: "2026-10-10", changes: [
-    { en: "Corrected the experimental BTH option to read the OUT/THRU setting itself instead of the adjacent MIDI routing setting. Press the encoder while the value is on screen to cycle through OUT, THR and BTH.",
-      fr: "Correction de l'option BTH expérimentale : elle lit maintenant le réglage OUT/THRU lui-même, et non le réglage MIDI voisin. Appuyez sur l'encodeur lorsque la valeur est affichée pour parcourir OUT, THR et BTH." },
+    { en: "First attempt at a third BTH option; later hardware feedback showed it could not be selected. The current version keeps the stock OUT/THRU menu and makes THR send the Cycles' own MIDI while forwarding incoming MIDI",
+      fr: "Premier essai d'une troisième option BTH ; le retour matériel a montré qu'elle ne pouvait pas être choisie. La version actuelle garde le menu OUT/THRU d'origine et fait envoyer par THR le MIDI du Cycles tout en relayant le MIDI reçu" },
     { en: "The generated firmware and browser builder checks pass. The M68K emulator could not run on this host, so the fix remains experimental and still needs a hardware check.",
       fr: "Le firmware généré et les contrôles du générateur Web passent. L'émulateur M68K n'a pas pu s'exécuter sur cet ordinateur ; le correctif reste expérimental et doit encore être vérifié sur la machine." },
   ] },

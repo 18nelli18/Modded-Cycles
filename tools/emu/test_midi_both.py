@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Vérifie BTH sur les fragments MIDI réels de l'OS (notes/50).
+"""Vérifie que THRU relaie l'entrée et transmet aussi la sortie (notes/50).
 
-Le test exécute le menu, les trois portes d'émission et le test de relais de l'OS 1.13,
-sur l'image stock et après application du tweak. Le getter d'option est intercepté pour
-parcourir chacun des trois choix.
+Le test exécute les trois portes d'émission et le test de relais de l'OS 1.13,
+sur l'image stock et après application du tweak. Le getter est intercepté pour simuler
+OUT et THRU ; le menu reste celui de l'OS.
 
     python3 tools/emu/test_midi_both.py --cycles firmware/model-cycles_OS1.13.syx
 """
@@ -27,7 +27,6 @@ DEV = HERE.parent.parent / "tweaks" / "model-cycles_OS1.13"
 TWEAK = DEV / "44-midi-both.json"
 STACK = 0x90010000
 STOP = 0x9F000000
-MENU = 0x40035FD8
 OUT_GATES = (0x4000154A, 0x4000156A, 0x40001590)
 GET_BOOL = 0x40044DF8
 FAIL = []
@@ -62,7 +61,7 @@ class Rig:
             uc.reg_write(mk.UC_M68K_REG_A7, sp + 4)
             uc.reg_write(mk.UC_M68K_REG_PC, ret)
             return
-        if self.stop_at is not None and addr == self.stop_at:
+        if self.stop_at is not None and addr in (self.stop_at if isinstance(self.stop_at, tuple) else (self.stop_at,)):
             self.result = [uc.reg_read(getattr(mk, f"UC_M68K_REG_{r}")) for r in ("D0", "D3", "PC")]
             uc.emu_stop()
 
@@ -91,33 +90,26 @@ def main():
     check(startup.bootstrap_depack_ok(args.cycles, tweak, None), "real bootstrap decompresses the MIDI build")
     check(startup.boot_hook_ok(os_image, payload), "startup hook returns normally and preserves SRAM")
 
-    for mode in (0, 1):
-        rig = Rig(stock, mode)
-        # La porte stock laisse D0=0 en OUT et renvoie D0=1 en THRU.
-        got = rig.run(OUT_GATES[0], OUT_GATES[0] + 6)
-        check(got is not None and got[0] == mode, f"stock OUT/THRU émission mode {mode}")
+    for site in OUT_GATES:
+        skip = site + (26 if site == OUT_GATES[2] else 22)
+        for mode, expected_pc in ((0, site + 10), (1, skip)):
+            rig = Rig(stock, mode)
+            got = rig.run(site, (site + 10, skip))
+            check(got is not None and got[2] == expected_pc,
+                  f"porte stock {site:#x}, mode {mode}: {'sortie' if mode == 0 else 'bloquée'}")
 
-    for mode, label in ((0, b"OUT\0"), (1, b"THR\0"), (2, b"BTH\0")):
-        rig = Rig(patched, mode)
-        got = rig.run(MENU, MENU + 24)
-        ptr = {0: 0x40127BAD, 1: 0x40127281, 2: G.HELPER + 42}[mode]
-        check(got is not None and got[1] == ptr, f"menu mode {mode} -> {label[:-1].decode()}")
+        rig = Rig(patched, 1)
+        got = rig.run(site, site + 10)
+        check(got is not None and got[0] == 0 and got[2] == site + 10,
+              f"porte modifiée {site:#x}: sortie autorisée en THRU")
 
-    for mode, expected in ((0, 0), (1, 0xFF), (2, 0)):
-        vals = []
-        for site in OUT_GATES:
-            rig = Rig(patched, mode)
-            got = rig.run(site, site + 6)
-            vals.append(got[0] & 0xFF if got is not None else None)
-        check(vals == [expected] * 3, f"horloge/messages générés, mode {mode}: {vals}")
-
-    # Le relais de l'OS teste seulement le mode non nul, donc THRU et BTH suivent le même chemin.
-    for mode, next_pc in ((0, 0x400012E6), (1, 0x400012E0), (2, 0x400012E0)):
+    # Le chemin de relais stock est conservé : OUT ne relaie pas, THRU relaie.
+    for mode, next_pc in ((0, 0x400012E6), (1, 0x400012E0)):
         rig = Rig(patched, mode)
         got = rig.run(0x400012D2, next_pc)
         check(got is not None and got[2] == next_pc, f"relais entrant, mode {mode}")
 
-    print("\nTous les parcours MIDI BTH ont réussi." if not FAIL else f"\n{len(FAIL)} échec(s).")
+    print("\nTHRU émet et relaie." if not FAIL else f"\n{len(FAIL)} échec(s).")
     raise SystemExit(bool(FAIL))
 
 

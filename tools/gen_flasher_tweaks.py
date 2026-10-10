@@ -178,9 +178,9 @@ FEATURES = [
     {
         "id": "midi-both",
         "cat": "io",
-        "label": "MIDI OUT + THRU (BTH)",
-        "desc": "Ajoute BTH au réglage CONFIG > MIDI > PORTS > OUT/THRU : le Cycles envoie son horloge et ses messages "
-                "MIDI tout en relayant les messages reçus. OUT et THR gardent leur comportement d'origine.",
+        "label": "MIDI OUT pendant THRU",
+        "desc": "Avec THRU choisi dans CONFIG > MIDI > PORTS > OUT/THRU, le Cycles relaie le MIDI reçu et envoie aussi "
+                "son horloge et ses messages de piste/paramètres. OUT garde son comportement normal.",
         "status": "experimental",
         "credit": None,
         "variants": [

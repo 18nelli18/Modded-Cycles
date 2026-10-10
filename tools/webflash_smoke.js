@@ -381,8 +381,8 @@ async function main() {
       "FR: tempo card translated, with its guide link");
     check(/Animation de démarrage modded-cycles/.test(text(doc, "features")) && doc.querySelector('#features a[href$="#boot-anim"]'),
       "FR: startup animation card translated, with its guide link");
-    check(/MIDI OUT \+ THRU \(BTH\)/.test(text(doc, "features")) && /relayant le MIDI reçu/.test(text(doc, "features"))
-      && doc.querySelector('#features a[href$="#midi-both"]'), "FR: MIDI BTH card translated, with its guide link");
+    check(/MIDI OUT pendant THRU/.test(text(doc, "features")) && /relayer le MIDI reçu/.test(text(doc, "features"))
+      && doc.querySelector('#features a[href$="#midi-both"]'), "FR: MIDI OUT during THRU card translated, with its guide link");
     check(/Écoute des samples \(Model-TG\)/.test(text(doc, "features"))
       && /^avec Model-TG$/.test(doc.querySelector("label[for=feat-sample-preview] .need").textContent)
       && /Model-TG seulement : cocher celui-ci le coche aussi/.test(textOf(doc, "#det-sample-preview"))

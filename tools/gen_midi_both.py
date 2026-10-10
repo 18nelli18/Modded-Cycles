@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Ajoute le choix MIDI BTH (OUT + THRU) au Model:Cycles (notes/50).
+"""Fait aussi sortir le MIDI généré quand OUT/THRU est réglé sur THRU (notes/50).
 
     python3 tools/gen_midi_both.py --cycles firmware/model-cycles_OS1.13.syx [--check]
 
-Le petit adaptateur 68 octets tient dans un masque de sprite 35x35 libéré.
+Le relais entrant reste celui de l'OS ; les trois portes d'émission sont ouvertes.
 """
 import argparse
 import hashlib
@@ -15,9 +15,6 @@ HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
 DEV = ROOT / "tweaks" / "model-cycles_OS1.13"
 BASE = 0x40000400
-HELPER = 0x40167C50
-
-
 def stock_mainos(path):
     """Lit et vérifie la section 3 de l'OS officiel fourni."""
     sys.path.insert(0, str(HERE))
@@ -36,41 +33,13 @@ def stock_mainos(path):
     return main
 
 
-def helpers():
-    """Génère le sélecteur OUT/THR/BTH et le filtre qui bloque seulement en THRU."""
-    menu = bytearray.fromhex(
-        "4eb940044df8"          # jsr getter OUT/THRU (identifiant 0x50)
-        "0c8000000002"          # cmpi.l #2,d0
-        "6714"                  # beq BTH
-        "4a80"                  # tst.l d0
-        "6708"                  # beq OUT
-        "203c40127281"          # move.l #THR,d0
-        "4e75"
-        "203c40127bad"          # move.l #OUT,d0
-        "4e75"
-        "203c00000000"          # move.l #BTH,d0
-        "4e75"
-    )
-    menu[34:40] = b"\x20\x3c" + (HELPER + len(menu)).to_bytes(4, "big")
-    menu += b"BTH\0"
-    output = bytes.fromhex(
-        "4eb940044df8"          # getter OUT/THRU (identifiant 0x50)
-        "0c8000000001"          # compare à THRU
-        "57c0"                  # seq d0
-        "0280000000ff"          # renvoie 0 ou 255
-        "4e75"
-    )
-    return bytes(menu + output)
-
-
 def generate(main):
     tweak = {
         "id": "midi-both", "order": 44,
-        "name": "MIDI OUT + THRU (BTH)",
+        "name": "MIDI OUT avec THRU",
         "description": [
-            "Ajoute BTH au réglage CONFIG > MIDI > PORTS > OUT/THRU : envoie l'horloge et les messages MIDI du Cycles",
-            "tout en relayant les messages reçus. OUT et THR gardent leur comportement d'origine. Généré par",
-            "tools/gen_midi_both.py (note 50). Le helper est dans le masque 35x35 libéré 0x40167c50.",
+            "Avec THRU sélectionné, le Cycles relaie toujours le MIDI reçu et envoie aussi son horloge et ses messages",
+            "de piste/paramètres. OUT garde son comportement normal. Généré par tools/gen_midi_both.py (note 50).",
         ],
         "device": "Model:Cycles", "os": "1.13", "section": 3,
         "conflicts": [],
@@ -83,20 +52,11 @@ def generate(main):
             raise SystemExit(f"!! octets inattendus pour {label} à {va:#x}")
         tweak["writes"].append({"off": off, "old": old.hex(), "new": new.hex()})
 
-    # Le masque 35x35 est identique aux autres, désormais renvoyés vers celui gardé.
-    sys.path.insert(0, str(HERE))
-    import sprites
-    tweak["writes"].append(sprites.redirect_write(HELPER))
-    helper = helpers()
-    add(HELPER, main[HELPER - BASE:HELPER - BASE + len(helper)], helper, "helper MIDI")
-
-    old_menu = bytes.fromhex("4eb940044df84a806708263c401272816006263c40127bad")
-    new_menu = b"\x4e\xb9" + HELPER.to_bytes(4, "big") + b"\x26\x00" + b"\x4e\x71" * 8
-    add(0x40035FD8, old_menu, new_menu, "menu OUT/THRU")
-    add(0x40036008, bytes.fromhex("48780002"), bytes.fromhex("48780003"), "nombre de choix")
+    # Le THRU d'origine relaie l'entrée mais bloque les messages générés.
+    # Ces appels alimentent le test stock qui saute l'émission en mode THRU.
+    # Un D0 nul conserve la suite normale et laisse sortir horloge et paramètres.
     for va in (0x4000154A, 0x4000156A, 0x40001590):
-        add(va, bytes.fromhex("4eb940044df8"), b"\x4e\xb9" + (HELPER + 46).to_bytes(4, "big"), f"porte de sortie {va:#x}")
-    sys.path.insert(0, str(HERE))
+        add(va, bytes.fromhex("4eb940044df8"), bytes.fromhex("70004e714e71"), f"porte de sortie {va:#x}")
     import build
     build.apply_writes(main, [tweak])
     return tweak
