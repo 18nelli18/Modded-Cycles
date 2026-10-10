@@ -33,3 +33,11 @@ dans la table de glyphes de la police de chiffres est sans danger ([note 15 §2]
 
 | `46-level-pan-values.json` | adapté de [18nelli18/Modded-Cycles#53](https://github.com/18nelli18/Modded-Cycles/pull/53), mod de djd_oz | Volume et pan numériques sur l'écran principal, pas de LEVEL/DATA de 1 ; assembleur dans le masque de sprite `0x4018f4b4` (`tools/gen_level_pan.py`, note 44). Testé sur Model:Cycles en amont. |
 | `47-trigless-dim.json` | adapté de [18nelli18/Modded-Cycles#53](https://github.com/18nelli18/Modded-Cycles/pull/53), mod de djd_oz | LED des trigless trigs atténuée, clignotement conservé ; interruption du panneau, masque de sprite `0x40192734` (`tools/gen_trigless_dim.py`, note 45). Testé sur Model:Cycles en amont. |
+
+## Générateur de séquence — flasher de test uniquement
+
+`49-scale-gen.json` / `49-scale-gen-st.json` : générateur et accroche originaux,
+page adaptée de Model-TG (TinyGregAudio, commit `70b39dd6787770ebefc7a2d78dea1678ec012679`,
+MIT, `LICENSE-Model-TG`). Génération de notes/trigs en gamme et Undo, à la demande
+d'aveycole ; `tools/gen_seq_gen.py`, sources `tools/machines/seq_gen/`, note 53.
+Statut expérimental, aucune validation matérielle ; seulement dans `docs/flasher-test/`.

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Experimental Model:Cycles MIDI Test Flasher</title>
+<title>Model:Cycles — Scale Generator Test Flasher</title>
 <meta name="description" content="Install mods on the Elektron Model:Cycles from your browser, over USB in about 30 seconds (Web MIDI). No firmware is provided or uploaded: you bring your own official OS file.">
 <meta name="theme-color" content="#e3e2de" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b1b1b" media="(prefers-color-scheme: dark)">
@@ -11,14 +11,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-10-bth-func-05">
-<link rel="stylesheet" href="style.css?v=2026-10-10-bth-func-05">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-10-scale-gen-01">
+<link rel="stylesheet" href="style.css?v=2026-10-10-scale-gen-01">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="flasher">
 <script>
   // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-  window.MC_BUILD = "2026-10-10-bth-func-05";
+  window.MC_BUILD = "2026-10-10-scale-gen-01";
   window.addEventListener("error", function (e) {
     var b = document.getElementById("errbar");
     if (!b) return;
@@ -33,7 +33,7 @@
   <nav aria-label="Site">
     <a href="./" aria-current="page">Flasher</a>
     <a href="../guide/">Guide</a>
-    <a href="https://github.com/AveyCole/Modded-Cycles" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://github.com/18nelli18/Modded-Cycles" target="_blank" rel="noopener">GitHub</a>
     <a href="https://discord.gg/hWegtJZcmm" target="_blank" rel="noopener">Discord</a>
     <a href="https://ko-fi.com/18nelli" target="_blank" rel="noopener">Ko-fi</a>
   </nav>
@@ -42,9 +42,9 @@
 </header>
 
 <main class="wrap fl">
-  <div class="alert bad" role="alert"><span data-l="en"><strong>EXPERIMENTAL TEST BUILD — NOT EMULATOR OR HARDWARE VERIFIED.</strong> This option changes MIDI firmware behavior. Earlier menu experiments froze a Model:Cycles. Keep official OS recovery available. Production flasher and its tested MIDI option remain unchanged.</span><span data-l="fr"><strong>BUILD DE TEST EXPÉRIMENTAL — NON VÉRIFIÉ EN ÉMULATION NI SUR MACHINE.</strong> Cette option modifie le MIDI du firmware. Des essais précédents ont figé un Model:Cycles. Gardez un moyen de restaurer l’OS officiel. Le flasher de production et son option MIDI testée restent inchangés.</span></div>
+  <div class="alert bad" role="alert" id="test-build-notice"><span data-l="en"><strong>EXPERIMENTAL TEST FLASHER</strong> — All existing mods plus the scale sequence generator. The generator has passed emulation checks but has not been tested on hardware. Use SETTINGS + PAGE with playback stopped. <a href="../flasher/">Production flasher</a>.</span><span data-l="fr"><strong>FLASHER DE TEST EXPÉRIMENTAL</strong> — Tous les mods existants et le générateur en gamme. Le générateur passe les vérifications en émulation mais n'a pas été essayé sur machine. Utilisez SETTINGS + PAGE, lecture arrêtée. <a href="../flasher/">Flasher de production</a>.</span></div>
   <div class="fl-head">
-    <h1 data-i18n="title">Experimental Model:Cycles MIDI Test Flasher</h1>
+    <h1 data-i18n="title">Model:Cycles Flasher</h1>
     <div>
       <p data-i18n="tagline">Install mods on your Elektron Model:Cycles, right from your browser.</p>
       <p class="ver"><span data-l="en">Version</span><span data-l="fr">Version</span> <span data-rel="version">1.0</span> · <a href="../#version"><span data-l="en">what's new</span><span data-l="fr">nouveautés</span></a> · <a href="../guide/"><span data-l="en">guide</span><span data-l="fr">guide</span></a></p>
@@ -245,11 +245,12 @@
 </footer>
 
 <!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
-<script src="../assets/release.js?v=2026-10-10-bth-func-05"></script>
-<script src="../assets/site.js?v=2026-10-10-bth-func-05"></script>
-<script src="builder.js?v=2026-10-10-bth-func-05"></script>
-<script src="tweaks.js?v=2026-10-10-bth-func-05"></script>
-<script src="flasher.js?v=2026-10-10-bth-func-05"></script>
-<script src="app.js?v=2026-10-10-bth-func-05"></script>
+<script src="release.js?v=2026-10-10-scale-gen-01"></script>
+<script src="../assets/site.js?v=2026-10-10-scale-gen-01"></script>
+<script src="builder.js?v=2026-10-10-scale-gen-01"></script>
+<script src="../flasher/tweaks.js?v=2026-10-10-scale-gen-01"></script>
+<script src="tweaks.js?v=2026-10-10-scale-gen-01"></script>
+<script src="flasher.js?v=2026-10-10-scale-gen-01"></script>
+<script src="app.js?v=2026-10-10-scale-gen-01"></script>
 </body>
 </html>
