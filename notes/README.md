@@ -44,6 +44,7 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
 | [bryantysinger/octa-bt-pt](https://github.com/bryantysinger/octa-bt-pt) | ➕ bonus (seul dépôt public du même auteur) | `e970dd0` | Patch de valeurs du firmware Octatrack : méthode registre, vérification, hashs |
 | [mxldyn/octamax](https://github.com/mxldyn/octamax) | ➕ bonus (crédité par ms-multi-output) | `7d9debc` | Rétro-ingénierie complète de l'OS Octatrack : technique code cave + détour, Ghidra, émulateur, pièges |
 | [drumkilla/elektron-model-tweaks](https://github.com/drumkilla/elektron-model-tweaks) | ✅ lu et **adopté** (mtlib versé dans `tools/`) | `6e0b4df` (19/09/2026) | Outillage Python pur (SysEx/aPLib/ELE3/HMAC), format de tweak JSON, 3 tweaks QoL pour le M:C 1.13 |
+| [50 — Valeurs PAN et niveau](50-valeurs-pan-niveau.md) | **Prototype hors flasher** ; pas un, affichage trois secondes ; émulation bloquée sur macOS ARM, validation complète à faire. |
 
 ## Plan des notes
 
