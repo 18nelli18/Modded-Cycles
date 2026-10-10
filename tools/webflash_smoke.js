@@ -46,14 +46,23 @@ async function pickEngines(doc, codes) {
 // The cards to tick for a REF_MAINOS key (tweak ids joined with "+"): tweak id -> its card and the choice in it (a variant,
 // or the Syntakt engines of a combination, alone or with Model-TG), including the tweak a card takes with another one ("with").
 function cardsOf(w, key) {
-  const own = {};
-  for (const f of w.MC_TWEAKS.features) {
-    if (f.engines) for (const c of f.combos) own[c.id] = own[c.tg] = { f, engines: c.engines };
+  const own = {}, feats = w.MC_TWEAKS.features;
+  for (const f of feats) {
+    if (f.engines) for (const c of f.combos) {
+      own[c.id] = own[c.tg] = { f, engines: c.engines };
+      for (const g of feats.filter((x) => x.joins === f.id && c[x.id]))   // MACRO with the engines (notes/50): both cards
+        own[c[g.id].id] = own[c[g.id].tg] = { f, engines: c.engines, also: g };
+    }
     else for (const v of f.variants) own[v.id] = { f, variant: v.id };
   }
-  for (const f of w.MC_TWEAKS.features)
+  for (const f of feats)
     for (const alt of Object.values(f.with || {})) if (!own[alt]) own[alt] = f.engines ? { f } : { f, variant: f.variants[0].id };
-  return new Map(key.split("+").map((id) => [own[id].f.id, own[id]]));
+  const sel = new Map();
+  for (const id of key.split("+")) {
+    sel.set(own[id].f.id, own[id]);
+    if (own[id].also) sel.set(own[id].also.id, { f: own[id].also, variant: own[id].also.variants[0].id });
+  }
+  return sel;
 }
 
 // Tick exactly the cards of a key (off first: a card held by another one is locked until that one goes off), then the
@@ -204,9 +213,10 @@ async function main() {
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
     check(ids.slice(0, 16).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,macro,macro-tg,syntakt-sd,syntakt-tg-sd"
-      && ids.length === 14 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+      && ids.length === 14 + 4 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+      && ids.includes("syntakt-sd-macro") && ids.includes("syntakt-tg-sd-cp-toy-bits-swarm-macro")
       && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 12,
-      `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG: ${ids.length} tweaks`);
+      `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG, with and without MACRO: ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
     check(["builder.js", "tweaks.js", "flasher.js", "app.js"].every((f) => srcs.some((x) => x.startsWith(f + "?")))
@@ -258,22 +268,27 @@ async function main() {
     check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,pichenettes/eurorack,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,mxldyn/octamax",
       "credits section lists the 6 upstream repositories");
     const box = (id) => doc.getElementById(id);
-    // MACRO (notes/43): with Model-TG, Model-TG takes its base and MACRO the version built on it; never with the
-    // Syntakt engines (same block after the image): ticking one unticks the other
+    // MACRO (notes/43): with Model-TG, Model-TG takes its base and MACRO the version built on it. With the Syntakt
+    // engines (notes/50) both stay ticked: MACRO adds nothing itself, the engines take their version with MACRO
+    const chosen = () => w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
     box("feat-macro").click(); await wait(5);
-    const macroAlone = w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
+    const macroAlone = chosen();
     box("feat-model-tg").click(); await wait(5);
-    const macroTg = w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
+    const macroTg = chosen();
     const macroNote = /needs a firmware with MACRO at the same place/.test(text(doc, "features"));
-    box("feat-model-tg").click(); await wait(5);
     box("feat-syntakt").click(); await wait(5);
-    const swapped = !box("feat-macro").checked && box("feat-syntakt").checked;
+    const allThree = chosen();
+    const saidTg = /SDVtg \+ MACRO with Model-TG\./.test(textOf(doc, "#mod-syntakt .combo"))
+      && /With the MACRO machine: it comes last/.test(textOf(doc, "#mod-syntakt"));
+    box("feat-model-tg").click(); await wait(5);
+    const withEng = chosen();
+    const bothOn = box("feat-macro").checked && box("feat-syntakt").checked && /SDVtg \+ MACRO\./.test(textOf(doc, "#mod-syntakt .combo"))
+      && /With Real Syntakt engines: (checked in the emulator|tried on the machine)/.test(textOf(doc, "#det-macro"));
+    box("feat-syntakt").click(); await wait(5);
     box("feat-macro").click(); await wait(5);
-    const back = box("feat-macro").checked && !box("feat-syntakt").checked;
-    box("feat-macro").click(); await wait(5);
-    check(macroAlone === "macro" && macroTg === "model-tg-st,macro-tg" && macroNote && swapped && back
-      && !w.MCFlasherApp.chosenTweaks().length && doc.querySelector('#features a[href$="#macro"]'),
-      `MACRO: alone ${macroAlone}, with Model-TG ${macroTg}, its note shown, and never with the Syntakt engines`);
+    check(macroAlone === "macro" && macroTg === "model-tg-st,macro-tg" && macroNote && allThree === "model-tg-st,syntakt-tg-sd-macro"
+      && saidTg && withEng === "syntakt-sd-macro" && bothOn && !chosen().length && doc.querySelector('#features a[href$="#macro"]'),
+      `MACRO: alone ${macroAlone}, with Model-TG ${macroTg}, its note shown; with the Syntakt engines ${withEng}, and with Model-TG too ${allThree}`);
     // Model-TG holds drumkilla's tweaks: ticked, it shows them ticked and locked, "(included with Model-TG)", and
     // builds without them; unticked, they are free again. With the Syntakt engines it makes the combined version
     // (notes/31): its base, then the engines' tweak built on top of it
@@ -484,8 +499,8 @@ async function main() {
       "× on a chip unticks the mod, the focus goes to the next ×");
     await clearAll();
     check(ids() === "" && /No mod ticked yet/.test(text(doc, "mod-sel")), "« Untick all » empties the selection");
-    // a conflict injected between two mods that do go together (MACRO / Syntakt is checked above), said before
-    // ticking, then Undo
+    // a conflict injected between two mods that do go together (no two mods clash today), said before ticking, then
+    // Undo
     const tempo = feats.find((f) => f.id === "tempo-max");
     tempo.excludes = ["arp"];
     await click(box("feat-arp"));
@@ -1032,6 +1047,20 @@ async function main() {
       check(sent.length - n1 === w.MCFlasher.splitMessages(fv.raw).length && msg.test(text(doc, "result")),
         `full transfer + message for ${combos[variant].join(" + ")}`);
     }
+    // MACRO ticked too (notes/50): the engines' version with MACRO, and MACRO named last after the transfer
+    doc.getElementById("feat-macro").click();
+    await settle(w);
+    const fm = app.state.fw;
+    check(fm && fm.ref && fm.sdv === "syntakt-cp-macro" && fm.name.endsWith("syntakt-cp-macro.syx"),
+      `CPVtg + MACRO -> reference build ${fm ? fm.name : ""}`);
+    const n2 = sent.length;
+    doc.getElementById("flash").click();
+    for (let i = 0; i < 200 && app.state.sending; i++) await wait(50);
+    check(sent.length - n2 === w.MCFlasher.splitMessages(fm.raw).length
+      && /after Chord come CPVtg \(CP VINTAGE\), MACRO \(47 models from Braids\)\./.test(text(doc, "result")),
+      "full transfer + message for CPVtg + MACRO: " + text(doc, "result").slice(0, 110));
+    doc.getElementById("feat-macro").click();
+    await settle(w);
     doc.getElementById("eng-cp").click();
     await settle(w);
     check(!app.state.fw && app.state.fwError === "pick_one" && !doc.getElementById("feat-syntakt").checked,

@@ -42,7 +42,8 @@ cave check; add to it only with the reasoning in `why` and in a note.
 }
 ```
 
-Optional fields used by existing tweaks: `append` (payload copied at boot, notes/17, 31), `gov` (load governor
+Optional fields used by existing tweaks: `append` (payload copied at boot, notes/17, 31; with `compress: "aplib"`
+it is stored compressed and `stored` gives its size in the image, notes/50), `gov` (load governor
 settings), `symbols` (addresses of the mod's state, for the proofs), `version`, `source`, `result_sha256`. Look at how
 `build.py` and `docs/flasher/builder.js` read a field before adding a new one: **both builders must handle it the
 same way**, which `tools/webbuild_check.sh` and `tools/webflash_smoke.sh` verify.

@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.36", date: "2026-10-10", changes: [
+    { en: "MACRO and the Syntakt engines together: the flasher now lets you tick both cards. MACRO comes last, right after the engines you tick (after the Sampler and the engines with Model-TG: with all five engines, MACRO is the 13th machine)",
+      fr: "MACRO et les moteurs du Syntakt ensemble : le flasher permet maintenant de cocher les deux cartes. MACRO vient en dernier, juste après les moteurs cochés (après le Sampler et les moteurs avec Model-TG : avec les cinq moteurs, MACRO est la 13e machine)" },
+    { en: "In this combination, the engines' load governor looks after MACRO tracks too. To fit in the firmware, the added code is stored compressed and unpacked when the machine starts",
+      fr: "Dans cette combinaison, le régulateur de charge des moteurs veille aussi sur les pistes MACRO. Pour tenir dans le firmware, le code ajouté est rangé compressé et décompressé au démarrage de la machine" },
+    { en: "Tested on a Model:Cycles with Model-TG and all five engines (with 6-channel audio, sample preview, trig removal, the arpeggiator, the tempo and the startup animation); the first test file froze at startup, which is fixed. Other combinations are checked in the emulator only (the engines and MACRO play exactly as each one alone, alone and with Model-TG). MACRO alone and the engines alone are unchanged",
+      fr: "Testé sur un Model:Cycles avec Model-TG et les cinq moteurs (avec l'audio 6 canaux, l'écoute des samples, l'effacement des trigs, l'arpégiateur, le tempo et l'animation de démarrage) ; le premier fichier de test se figeait au démarrage, c'est corrigé. Les autres combinaisons sont vérifiées en émulation seulement (les moteurs et MACRO jouent exactement comme chacun seul, avec ou sans Model-TG). MACRO seule et les moteurs seuls ne changent pas" },
+  ] },
   { version: "1.33", date: "2026-10-10", changes: [
     { en: "Every mod you tick is now checked against its reference build, whatever the combination. Until now the page carried the expected result of each of the 10,559 possible combinations and checked only those; that list doubled with every new mod. It now keeps one reference per mod, plus a sample of 464 combinations checked whole (each mod alone, every pair, the largest ones)",
       fr: "Chaque mod coché est maintenant vérifié contre son build de référence, quelle que soit la combinaison. Jusqu'ici la page contenait le résultat attendu de chacune des 10 559 combinaisons possibles et ne vérifiait que celles-là ; cette liste doublait à chaque nouveau mod. Elle garde maintenant une référence par mod, plus un échantillon de 464 combinaisons vérifiées en entier (chaque mod seul, chaque paire, les plus grandes)" },
