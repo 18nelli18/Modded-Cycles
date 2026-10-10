@@ -181,6 +181,18 @@ FEATURES = [
         ],
     },
     {
+        "id": "multiline-browser",
+        "cat": "screen",
+        "label": "Navigateur sur plusieurs lignes",
+        "desc": "Le navigateur de sons, de dossiers et d'echantillons affiche 3 noms a la fois, en petite police, "
+                "au lieu d'un seul en gros caracteres. > devant le nom sous le curseur ; le son charge reste inverse.",
+        "status": "tested",
+        "credit": None,                  # idee : un script d'un membre de la communaute (notes/40), nom a venir
+        "variants": [
+            {"file": "44-multiline-browser", "label": None},
+        ],
+    },
+    {
         "id": "macro",
         "cat": "sound",
         "label": "Machine MACRO",

@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.37", date: "2026-10-10", changes: [
+    { en: "New mod, Multi-line browser: the preset browser shows three names at once in a small font, instead of one in big letters. A > marks the name under the cursor, the sound loaded on the track stays highlighted, and folders get a small mark before their name. From an idea and a script by a community member",
+      fr: "Nouveau mod, Navigateur sur plusieurs lignes : le navigateur de presets affiche trois noms à la fois en petite police, au lieu d'un seul en gros caractères. Un > signale le nom sous le curseur, le son chargé sur la piste reste en surbrillance, et les dossiers ont un petit repère devant leur nom. D'après une idée et un script d'un membre de la communauté" },
+    { en: "It works for sounds, folders and the Model-TG Sampler's samples. With Scrolling names or Model-TG, only the name under the cursor scrolls; the others stay put",
+      fr: "Il marche pour les sons, les dossiers et les échantillons du Sampler de Model-TG. Avec Noms qui défilent ou Model-TG, seul le nom sous le curseur défile ; les autres ne bougent pas" },
+    { en: "Tested on a Model:Cycles, and checked in the emulator on the OS's own drawing code and fonts. It goes with every other mod, Model-TG and the Syntakt engines included",
+      fr: "Testé sur un Model:Cycles, et vérifié en émulation sur le code de dessin et les polices de l'OS. Il se combine avec tous les autres mods, Model-TG et moteurs du Syntakt compris" },
+  ] },
   { version: "1.36", date: "2026-10-10", changes: [
     { en: "MACRO and the Syntakt engines together: the flasher now lets you tick both cards. MACRO comes last, right after the engines you tick (after the Sampler and the engines with Model-TG: with all five engines, MACRO is the 13th machine)",
       fr: "MACRO et les moteurs du Syntakt ensemble : le flasher permet maintenant de cocher les deux cartes. MACRO vient en dernier, juste après les moteurs cochés (après le Sampler et les moteurs avec Model-TG : avec les cinq moteurs, MACRO est la 13e machine)" },
