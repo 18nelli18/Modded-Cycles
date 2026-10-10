@@ -3,6 +3,12 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.38", date: "2026-10-10", changes: [
+    { en: "New hardware-tested live MIDI toggle: in THR, hold FUNC and press LEVEL/DATA to switch the Cycles' own MIDI output on or off while incoming MIDI keeps passing through. The stock OUT/THR menu stays unchanged",
+      fr: "Nouvelle bascule MIDI testée sur machine : en THR, tenez FUNC et appuyez sur LEVEL/DATA pour activer ou couper le MIDI généré par le Cycles tandis que le MIDI reçu continue de passer. Le menu OUT/THR d'origine reste inchangé" },
+    { en: "The existing MIDI OUT while in THRU option remains available; select either MIDI mod, not both",
+      fr: "L'option MIDI OUT pendant THRU reste disponible ; choisissez l'un des deux mods MIDI, pas les deux" },
+  ] },
   { version: "1.37", date: "2026-10-10", changes: [
     { en: "Tested on a Model:Cycles: with the MIDI OUT during THRU mod installed and THR selected, incoming MIDI is forwarded while the Cycles' own clock and track/parameter messages are sent",
       fr: "Testé sur un Model:Cycles : avec le mod MIDI OUT pendant THRU installé et THR choisi, le MIDI reçu est relayé tandis que l'horloge et les messages de piste/paramètres du Cycles sont envoyés" },

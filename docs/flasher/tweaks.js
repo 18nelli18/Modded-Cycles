@@ -2385,6 +2385,54 @@ window.MC_TWEAKS = {
    ]
   },
   {
+   "id": "midi-live-both",
+   "order": 45,
+   "name": "MIDI THRU combiné (FUNC + appui)",
+   "description": [
+    "Expérience : en THR, FUNC + appui sur l'encodeur OUT/THRU alterne entre le relais seul et le relais avec l'émission MIDI du Cycles.",
+    "L'écran reste sur THR. Généré par tools/gen_midi_live_both.py (note 50)."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "conflicts": [
+    "midi-both",
+    "midi-bth-three-state"
+   ],
+   "writes": [
+    {
+     "off": 217610,
+     "old": "4eb940044df84a8057c0710044802f4000044ef940044dc2",
+     "new": "4ef940167c504e714e714e714e714e714e714e714e714e71"
+    },
+    {
+     "off": 4426,
+     "old": "4eb940044df8",
+     "new": "4eb940167cc0"
+    },
+    {
+     "off": 4458,
+     "old": "4eb940044df8",
+     "new": "4eb940167cc0"
+    },
+    {
+     "off": 4496,
+     "old": "4eb940044df8",
+     "new": "4eb940167cc0"
+    },
+    {
+     "off": 728350,
+     "old": "40167c50",
+     "new": "4014a660"
+    },
+    {
+     "off": 1472592,
+     "old": "ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffff",
+     "new": "487800014eb94007faf4588f4a80670000484eb940044df84a806700003c1039404e9b500c0000026700000870026000000470014e56fffc1d40ffff48780001486effff4879404e9b504eb940044b884fef000c4e5e4e754eb940044df84a8057c0710044802f4000044ef940044dc21039404e9b500c000001670470004e7570014e75"
+    }
+   ]
+  },
+  {
    "id": "macro",
    "order": 25,
    "name": "Machine MACRO : les 47 modèles de synthèse de Braids (Émilie Gillet, MIT)",
@@ -140032,6 +140080,23 @@ window.MC_TWEAKS = {
      "id": "midi-both",
      "label": null
     }
+   ]
+  },
+  {
+   "id": "midi-live-both",
+   "label": "MIDI OUT + THRU bascule en direct",
+   "desc": "Conserve le menu OUT/THRU d'origine. Sur THR, tenez FUNC et appuyez sur l'encodeur LEVEL/DATA pour basculer entre le relais THRU stock et le relais avec émission de l'horloge et des messages de piste/paramètres. L'écran reste sur THR.",
+   "status": "tested",
+   "credit": null,
+   "cat": "io",
+   "variants": [
+    {
+     "id": "midi-live-both",
+     "label": null
+    }
+   ],
+   "excludes": [
+    "midi-both"
    ]
   },
   {

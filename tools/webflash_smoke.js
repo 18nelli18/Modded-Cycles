@@ -203,9 +203,9 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 17).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,midi-both,macro,macro-tg,syntakt-sd,syntakt-tg-sd"
-      && ids.length === 15 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
-      && ids.includes("arp") && ids.includes("midi-both") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 13,
+    check(ids.slice(0, 18).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,midi-both,midi-live-both,macro,macro-tg,syntakt-sd,syntakt-tg-sd"
+      && ids.length === 16 + 2 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+      && ids.includes("arp") && ids.includes("midi-both") && ids.includes("midi-live-both") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 14,
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG: ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
@@ -215,8 +215,8 @@ async function main() {
     // display order: by section (Packs, Sounds & machines, Sequencer, Live playing, Screen & browsing, USB & MIDI),
     // FEATURES order inside a section; the build keeps FEATURES order (checked in 1b)
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-model-tg,feat-macro,feat-syntakt,feat-trig-preview,feat-trig-hold,feat-arp,feat-tempo-max,feat-latching-mute,feat-sample-preview,feat-browser-scroll,feat-boot-anim,feat-usb6,feat-midi-both",
-      "13 feature rows, by section: " + JSON.stringify(feats));
+    check(feats.join() === "feat-model-tg,feat-macro,feat-syntakt,feat-trig-preview,feat-trig-hold,feat-arp,feat-tempo-max,feat-latching-mute,feat-sample-preview,feat-browser-scroll,feat-boot-anim,feat-usb6,feat-midi-both,feat-midi-live-both",
+      "14 feature rows, by section: " + JSON.stringify(feats));
     check(w.MC_TWEAKS.features.every((f) => doc.querySelector(`#cat-${f.cat || "other"} #mod-${f.id} #feat-${f.id}`)),
       "every feature has a row in its section (cat)");
     const tagOfFeat = (f) => (f.status === "tested" ? "Tested" : "Experimental");
@@ -383,6 +383,8 @@ async function main() {
       "FR: startup animation card translated, with its guide link");
     check(/MIDI OUT pendant THRU/.test(text(doc, "features")) && /relayer le MIDI reçu/.test(text(doc, "features"))
       && doc.querySelector('#features a[href$="#midi-both"]'), "FR: MIDI OUT during THRU card translated, with its guide link");
+    check(/Basculer MIDI OUT \+ THRU en direct/.test(text(doc, "features")) && /tenez FUNC/.test(text(doc, "features"))
+      && doc.querySelector('#features a[href$="#midi-live-both"]'), "FR: live MIDI toggle card translated, with its guide link");
     check(/Écoute des samples \(Model-TG\)/.test(text(doc, "features"))
       && /^avec Model-TG$/.test(doc.querySelector("label[for=feat-sample-preview] .need").textContent)
       && /Model-TG seulement : cocher celui-ci le coche aussi/.test(textOf(doc, "#det-sample-preview"))

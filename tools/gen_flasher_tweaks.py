@@ -188,6 +188,18 @@ FEATURES = [
         ],
     },
     {
+        "id": "midi-live-both",
+        "cat": "io",
+        "label": "MIDI OUT + THRU bascule en direct",
+        "desc": "Conserve le menu OUT/THRU d'origine. Sur THR, tenez FUNC et appuyez sur l'encodeur LEVEL/DATA pour basculer entre le relais THRU stock et le relais avec émission de l'horloge et des messages de piste/paramètres. L'écran reste sur THR.",
+        "status": "tested",
+        "credit": None,
+        "excludes": ["midi-both"],
+        "variants": [
+            {"file": "45-midi-live-both", "label": None},
+        ],
+    },
+    {
         "id": "macro",
         "cat": "sound",
         "label": "Machine MACRO",

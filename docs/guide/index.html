@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Guide · Modded Cycles</title>
-<meta name="description" content="What each Modded Cycles mod does and how to install it: 6-channel USB audio, latching mute, trig preview, scrolling names, easier trig removal, Syntakt engines, Model-TG, arpeggiator, Samples OS, recovery.">
+<meta name="description" content="What each Modded Cycles mod does and how to install it: USB audio, MIDI, sequencer and sound additions, Samples OS, recovery.">
 <meta name="theme-color" content="#e3e2de" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b1b1b" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-10-05">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-10-05">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-10-06">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-10-06">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -51,6 +51,7 @@
         <li><a href="#arp"><span data-l="en">Arpeggiator</span><span data-l="fr">Arpégiateur</span></a></li>
         <li><a href="#tempo"><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></a></li>
         <li><a href="#midi-both"><span data-l="en">MIDI OUT while in THRU</span><span data-l="fr">MIDI OUT pendant THRU</span></a></li>
+        <li><a href="#midi-live-both"><span data-l="en">Live MIDI toggle</span><span data-l="fr">Bascule MIDI en direct</span></a></li>
         <li><a href="#boot-anim"><span data-l="en">Startup animation</span><span data-l="fr">Animation de démarrage</span></a></li>
         <li><a href="#macro"><span data-l="en">MACRO machine</span><span data-l="fr">Machine MACRO</span></a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
@@ -537,8 +538,20 @@
         <p class="note"><span data-l="en"><b>Before flashing another choice or the official firmware,</b> set your MACRO tracks back to an original machine (Kick to Chord): MACRO is the 7th machine alone and the 8th with Model-TG, and the official OS doesn't have it.</span><span data-l="fr"><b>Avant de flasher un autre choix ou le firmware officiel,</b> remettez vos pistes MACRO sur une machine d'origine (de Kick à Chord) : MACRO est la 7<sup>e</sup> machine seule et la 8<sup>e</sup> avec Model-TG, et l'OS officiel ne l'a pas.</span></p>
       </section>
 
+      <section id="midi-live-both">
+        <h2><span class="n">14</span><span data-l="en">Switch THRU output live</span><span data-l="fr">Basculer la sortie THRU en direct</span></h2>
+        <p class="lede"><span data-l="en">This option keeps the stock OUT/THR menu and adds an on-device shortcut for choosing whether THR also sends the Cycles' own MIDI.</span><span data-l="fr">Cette option garde le menu OUT/THR d'origine et ajoute un raccourci sur l'appareil pour choisir si THR envoie aussi le MIDI généré par le Cycles.</span></p>
+        <ol>
+          <li><span data-l="en">Select the <b>Live MIDI OUT + THRU toggle</b> option in the flasher and install that firmware.</span><span data-l="fr">Choisissez <b>Basculer MIDI OUT + THRU en direct</b> dans le flasher et installez ce firmware.</span></li>
+          <li><span data-l="en">On the Cycles, open <b>CONFIG › MIDI › PORTS › OUT/THRU</b> and select <b>THR</b> as usual.</span><span data-l="fr">Sur le Cycles, ouvrez <b>CONFIG › MIDI › PORTS › OUT/THRU</b> et choisissez <b>THR</b> comme d'habitude.</span></li>
+          <li><span data-l="en">While the value is on screen, hold <b>FUNC</b> and press the <b>LEVEL/DATA</b> knob. Incoming MIDI keeps passing through; the shortcut turns the Cycles' own clock and track/parameter output on or off. The display remains <b>THR</b>.</span><span data-l="fr">Quand la valeur est affichée, tenez <b>FUNC</b> et appuyez sur le knob <b>LEVEL/DATA</b>. Le MIDI reçu continue de passer ; le raccourci active ou coupe l'horloge et les messages de piste/paramètres du Cycles. L'écran reste sur <b>THR</b>.</span></li>
+          <li><span data-l="en">Use the same shortcut again to switch back. The live choice resets when the machine is powered off. The regular <b>OUT</b> setting keeps its stock behavior.</span><span data-l="fr">Refaites le même raccourci pour revenir en arrière. Le choix en direct est réinitialisé à l'extinction. Le réglage normal <b>OUT</b> garde son comportement d'origine.</span></li>
+        </ol>
+        <p class="note"><span data-l="en">This toggle cannot be combined with <b>MIDI OUT while in THRU</b>, which makes THR combined all the time. The live shortcut was tested on a Model:Cycles by the owner on 2026-10-10.</span><span data-l="fr">Cette bascule ne peut pas être combinée avec <b>MIDI OUT pendant THRU</b>, qui rend THR combiné en permanence. La propriétaire a testé ce raccourci sur un Model:Cycles le 10/10/2026.</span></p>
+      </section>
+
       <section id="samples">
-        <h2><span class="n">14</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">15</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -572,7 +585,7 @@
       </section>
 
       <section id="midi-both">
-        <h2><span class="n">15</span><span data-l="en">Send and forward MIDI together</span><span data-l="fr">Envoyer et relayer le MIDI</span></h2>
+        <h2><span class="n">16</span><span data-l="en">Send and forward MIDI together</span><span data-l="fr">Envoyer et relayer le MIDI</span></h2>
         <p class="lede"><span data-l="en">THR now forwards incoming MIDI and also sends the Cycles' own MIDI output.</span><span data-l="fr">THR relaie le MIDI reçu et envoie aussi le MIDI généré par le Cycles.</span></p>
         <ol>
           <li><span data-l="en">Open <b>CONFIG › MIDI › PORTS › OUT/THRU</b> and press the encoder to choose <b>THR</b>.</span><span data-l="fr">Ouvrez <b>CONFIG › MIDI › PORTS › OUT/THRU</b> et appuyez sur l'encodeur pour choisir <b>THR</b>.</span></li>
@@ -581,14 +594,15 @@
         <p class="note"><span data-l="en">Tested on a Model:Cycles: THR forwards incoming MIDI and sends the Cycles' own clock and track/parameter messages.</span><span data-l="fr">Testé sur un Model:Cycles : THR relaie le MIDI reçu et envoie l'horloge ainsi que les messages de piste/paramètres du Cycles.</span></p>
       </section>
 
+
       <section id="stock">
-        <h2><span class="n">16</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">17</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">With Syntakt engines, the MACRO machine or Model-TG's Sampler, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt, la machine MACRO ou le Sampler de Model-TG, remettez d'abord vos pistes sur une machine d'origine.</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">17</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">18</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -602,7 +616,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">18</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">19</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -666,8 +680,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-10-05"></script>
-<script src="../assets/cycles.js?v=2026-10-10-05"></script>
-<script src="../assets/site.js?v=2026-10-10-05"></script>
+<script src="../assets/release.js?v=2026-10-10-06"></script>
+<script src="../assets/cycles.js?v=2026-10-10-06"></script>
+<script src="../assets/site.js?v=2026-10-10-06"></script>
 </body>
 </html>
