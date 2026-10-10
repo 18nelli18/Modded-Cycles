@@ -62,7 +62,10 @@ tools/gen_*.py                one generator per mod: writes its tweak JSON, --ch
 tools/machines/<mod>/         C and assembly sources compiled into the firmware
 tools/emu/                    Unicorn emulation of the OS: test_<mod>.py proofs, mcengine.py, emac.py, syntakt.py
 tools/gen_flasher_tweaks.py   FEATURES list -> docs/flasher/tweaks.js (generated)
-tools/ref_mainos.py           expected MAIN OS hash of every flasher combination -> REF_MAINOS in docs/flasher/app.js
+tools/check_overlaps.py       no firmware needed: mods that can be ticked together never write the same bytes, except
+                              the same whole write or a mod applied on top of another (`requires`) (notes/49)
+tools/ref_mainos.py           reference hashes in docs/flasher/app.js: each mod (REF_MODS) and a sample of combinations
+                              (REF_MAINOS: each card alone, every pair, the largest ones)
 tools/web*_check.*, webflash_smoke.*   checks of the web flasher against the Python build (node, jsdom)
 docs/                         GitHub Pages site: index.html, flasher/, guide/, assets/release.js
 notes/                        numbered technical notes (French), index in notes/README.md
@@ -83,13 +86,14 @@ Follow the shape of the last ones (tempo-max: commits `5997b4a`, `14fb9fa`, `6e5
    compares with the committed file. See `tools/AGENTS.md` and `tweaks/AGENTS.md`.
 3. **Prove it**: `tools/emu/test_<mod>.py`, stock vs patched, on the OS's own code, alone and with the other mods
    (`--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,… --syntakt Syntakt_OS1.42.syx`).
-   Check that its writes do not overlap any other tweak, or declare `conflicts`.
+   `tools/check_overlaps.py` must pass: its writes overlap no tweak it can be installed with (run it with `--git` on
+   the open branches too), or it declares `conflicts`.
 4. **Register it**: `tweaks/model-cycles_OS1.13/PROVENANCE.md` row; `BUILD.md` section with the commands and the
    MAIN OS SHA-256 of the main combinations.
 5. **Put it in the flasher**: add it to `FEATURES` in `tools/gen_flasher_tweaks.py` (`"status": "experimental"`, and
-   its section `cat`), regenerate `docs/flasher/tweaks.js`, regenerate `REF_MAINOS` with `tools/ref_mainos.py`, add its
-   row texts (`FEAT` en + fr: `label`, `short`, `desc`) and guide anchor (`GUIDE_OF`) in `docs/flasher/app.js`, update
-   the lists checked by `tools/webflash_smoke.js`. See `docs/AGENTS.md`.
+   its section `cat`), regenerate `docs/flasher/tweaks.js`, regenerate `REF_MAINOS` and `REF_MODS` with
+   `tools/ref_mainos.py`, add its row texts (`FEAT` en + fr: `label`, `short`, `desc`) and guide anchor (`GUIDE_OF`) in
+   `docs/flasher/app.js`, update the lists checked by `tools/webflash_smoke.js`. See `docs/AGENTS.md`.
 6. **Document it for users**: a guide section in `docs/guide/index.html` (en + fr, buttons to press, limits), a new
    release at the top of `docs/assets/release.js` (en + fr), bump the `MC_BUILD` / `?v=` stamp on the pages, a row
    in the mod table of `README.md`.
@@ -107,6 +111,8 @@ Without firmware (always possible, run them all):
 
 ```sh
 python3 tools/gen_flasher_tweaks.py --check      # tweaks.js matches tweaks/
+python3 tools/check_overlaps.py                  # mods ticked together never write the same bytes (notes/49), except the
+                                                 # same whole write or a mod on top of another (`requires`)
 python3 tools/relocate_6ch.py --check            # needs m68k binutils (below)
 tools/webbuild_check.sh                          # builder.js == build.py, byte for byte (node)
 tools/webflash_check.sh                          # flasher.js validates .syx like mtlib (node)
@@ -121,7 +127,7 @@ With the official files (download them from elektron.se into `firmware/`, which 
 python3 tools/gen_<mod>.py --cycles firmware/model-cycles_OS1.13.syx --check
 python3 tools/emu/test_<mod>.py --cycles firmware/model-cycles_OS1.13.syx
 python3 tools/ref_mainos.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --check
-SMOKE_JOBS=4 tools/webflash_smoke.sh firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42.syx   # every combination
+tools/webflash_smoke.sh firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42.syx   # the REF_MAINOS sample, each mod checked
 ```
 
 Emulation needs `pip install unicorn numpy`. Code mods need the m68k toolchain (`m68k-linux-gnu-*` from the Debian/Ubuntu
@@ -133,7 +139,7 @@ If a check cannot run (no network, no toolchain), say so in the PR instead of sk
 
 - Commit messages in English: a short subject saying what the user gets ("Tempo up to 546 BPM (tempo-max tweak,
   notes/38)"), a body with the why, the bullets of what changed, and how it was proven.
-- Merge `main` into a feature branch rather than rebasing shared branches; regenerate `tweaks.js` and `REF_MAINOS`
+- Merge `main` into a feature branch rather than rebasing shared branches; regenerate `tweaks.js` and `REF_MAINOS`/`REF_MODS`
   after a merge instead of resolving their conflicts by hand.
 - The PR body says what the user sees before and after, how it was proven, and **what Maxime should test on the
   machine** (which mods ticked, which buttons, what to listen or look for).

@@ -3,13 +3,19 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
-  { version: "1.35", date: "2026-10-07", changes: [
+  { version: "1.35", date: "2026-10-10", changes: [
     { en: "New experimental mod by Nico Heuser, Chord Keys: on a CHORD track, the sixteen lower TRIG buttons play the chords of a scale. 1–7 play degrees I to VII, 8–14 the same one octave higher, 15–16 I and II two octaves higher. T1–T6 keep their usual controls",
       fr: "Nouveau mod expérimental de Nico Heuser, Chord Keys : sur une piste CHORD, les seize boutons TRIG du bas jouent les accords d'une gamme. 1–7 jouent les degrés I à VII, 8–14 les mêmes une octave plus haut, 15–16 I et II deux octaves plus haut. T1–T6 gardent leurs commandes habituelles" },
     { en: "FUNC + RETRIG gains Keys, Root, Scale (seven modes) and a triad, 7th, 9th, 11th or 13th for each degree, saved per track and pattern. SHAPE picks the voicing (BASE, close or open positions) and COLOR the balance of the voices. Four voices maximum; 9ths, 11ths and 13ths omit the fifth",
       fr: "FUNC + RETRIG gagne Keys, Root, Scale (sept modes) et une triade, 7e, 9e, 11e ou 13e par degré, enregistrés par piste et par pattern. SHAPE choisit la disposition (BASE, positions resserrées ou ouvertes) et COLOR l'équilibre des voix. Quatre voix au maximum ; les 9es, 11es et 13es omettent la quinte" },
     { en: "Checked in emulation on the OS's own code. Tested on a Model:Cycles, alone and with other mods; a note that could stay stuck (TRIG let go while PATTERN was held) is fixed in this version, which awaits a last check on the machine. Cannot be combined with Model-TG",
       fr: "Vérifié en émulation sur le code même de l'OS. Testé sur un Model:Cycles, seul et avec d'autres mods ; une note qui pouvait rester bloquée (TRIG lâché pendant que PATTERN était tenu) est corrigée dans cette version, qui attend un dernier essai sur la machine. Ne se combine pas avec Model-TG" },
+  ] },
+  { version: "1.33", date: "2026-10-10", changes: [
+    { en: "Every mod you tick is now checked against its reference build, whatever the combination. Until now the page carried the expected result of each of the 10,559 possible combinations and checked only those; that list doubled with every new mod. It now keeps one reference per mod, plus a sample of 464 combinations checked whole (each mod alone, every pair, the largest ones)",
+      fr: "Chaque mod coché est maintenant vérifié contre son build de référence, quelle que soit la combinaison. Jusqu'ici la page contenait le résultat attendu de chacune des 10 559 combinaisons possibles et ne vérifiait que celles-là ; cette liste doublait à chaque nouveau mod. Elle garde maintenant une référence par mod, plus un échantillon de 464 combinaisons vérifiées en entier (chaque mod seul, chaque paire, les plus grandes)" },
+    { en: "The page is lighter (about 1.3 MB less to load) and ready for many more mods. Nothing changes on the machine: for the same choice of mods, the firmware built and sent is exactly the same as before, as checked by rebuilding and comparing every combination of the previous version",
+      fr: "La page est plus légère (environ 1,3 Mo de moins à charger) et prête pour beaucoup plus de mods. Rien ne change sur la machine : pour un même choix de mods, le firmware construit et envoyé est exactement le même qu'avant, ce qui a été vérifié en reconstruisant et en comparant toutes les combinaisons de la version précédente" },
   ] },
   { version: "1.32", date: "2026-10-07", changes: [
     { en: "New mod, Sample preview (with Model-TG): on a Sampler track, press FUNC + MACHINES (preset menu) and move the cursor onto a sample: the track's pad (or its trig keys in keyboard mode) plays it, the way the original OS lets you hear a preset before you pick it. Nothing plays while you scroll. It has its own row in the flasher, under Screen & browsing; ticking it ticks Model-TG too",

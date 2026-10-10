@@ -830,3 +830,12 @@ masques (`0x40183118`, `0x40185018`, `0x40185968`, `0x40185c58`). Le contrôle d
 déclare. Le JSON ne change pas. `gen_chord_keys.py --check` et `gen_sample_preview.py --check` passent tous deux avec
 les deux fichiers présents. `ref_mainos.py` : **19 007** combinaisons ; les empreintes de Chord Keys ne changent pas.
 
+Le parcours réel du flasher (16 parts) valide ces **19 007** combinaisons, sans échec, toutes couvertes.
+
+**Troisième fusion (10/10/2026)** : la vérification mod par mod (1.33, notes/49) arrive dans `main`. Le flasher ne
+porte plus une empreinte par combinaison : `REF_MODS` (l'empreinte des écritures de chaque tweak) et un échantillon
+`REF_MAINOS` (chaque carte seule, chaque paire, les plus grandes combinaisons), soit **505** combinaisons et 77 mods
+avec Chord Keys. `check_overlaps.py` passe avec Chord Keys (aucune écriture partagée avec un mod installable en même
+temps, hors les cas prévus). Les empreintes de Chord Keys ne changent pas (`901675f5…c334321f` seul). Tampon de version
+`2026-10-10-04` (le `2026-10-07-13` d'avant était plus ancien que celui de `main`).
+

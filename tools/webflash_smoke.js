@@ -4,10 +4,11 @@
  * decoder and zlib's CRC, and keeps every byte it is sent, to compare with the firmware.
  * Run through tools/webflash_smoke.sh (installs jsdom in a temp folder).
  *   node tools/webflash_smoke.js <synth_dir> [model-cycles_OS1.13.syx] [model-samples_OS1.13.syx] [Syntakt_OS1.42.syx or 1.41]
- * The optional official files are told apart by their names. The Model:Cycles OS checks every
- * combination the page offers against its reference hash (REF_MAINOS in app.js; the real Syntakt
- * engines need the Syntakt OS too); with the Model:Samples OS, the "Samples OS" tab is checked end
- * to end (REF_SAMPLES_ON_CYCLES); with the Syntakt OS, the Syntakt engines flow is. */
+ * The optional official files are told apart by their names. The Model:Cycles OS checks each
+ * combination of the REF_MAINOS sample against its reference hash, and each mod against REF_MODS
+ * (app.js, notes/49; the real Syntakt engines need the Syntakt OS too); with the Model:Samples OS,
+ * the "Samples OS" tab is checked end to end (REF_SAMPLES_ON_CYCLES); with the Syntakt OS, the
+ * Syntakt engines flow is. */
 const fs = require("fs");
 const path = require("path");
 const zlib = require("zlib");
@@ -39,6 +40,41 @@ async function pickEngines(doc, codes) {
       const box = doc.getElementById("eng-" + cb);                 // re-query: the cards are re-rendered
       if (codes.includes(cb) === want && box.checked !== want) { box.click(); await wait(5); }
     }
+  }
+}
+
+// The cards to tick for a REF_MAINOS key (tweak ids joined with "+"): tweak id -> its card and the choice in it (a variant,
+// or the Syntakt engines of a combination, alone or with Model-TG), including the tweak a card takes with another one ("with").
+function cardsOf(w, key) {
+  const own = {};
+  for (const f of w.MC_TWEAKS.features) {
+    if (f.engines) for (const c of f.combos) own[c.id] = own[c.tg] = { f, engines: c.engines };
+    else for (const v of f.variants) own[v.id] = { f, variant: v.id };
+  }
+  for (const f of w.MC_TWEAKS.features)
+    for (const alt of Object.values(f.with || {})) if (!own[alt]) own[alt] = f.engines ? { f } : { f, variant: f.variants[0].id };
+  return new Map(key.split("+").map((id) => [own[id].f.id, own[id]]));
+}
+
+// Tick exactly the cards of a key (off first: a card held by another one is locked until that one goes off), then the
+// variant or the engines of each, and wait for the build.
+async function tickKey(w, doc, key) {
+  const sel = cardsOf(w, key);
+  for (let round = 0; round < 3; round++) {
+    for (const want of [false, true])
+      for (const f of w.MC_TWEAKS.features) {
+        const cb = doc.getElementById("feat-" + f.id);       // re-query: the cards are re-rendered
+        if (sel.has(f.id) === want && cb.checked !== want && !cb.disabled) { cb.click(); await wait(5); }
+      }
+    for (const [id, o] of sel) {
+      if (o.engines) await pickEngines(doc, o.engines);
+      else if (o.variant) {
+        const r = doc.querySelector(`input[name="var-${id}"][value="${o.variant}"]`);
+        if (r && !r.checked) { r.click(); await wait(5); }
+      }
+    }
+    await settle(w);
+    if (w.MCFlasherApp.state.buildKey === key) return;
   }
 }
 
@@ -714,7 +750,57 @@ async function main() {
     check(errors.length === 0, "no JS error during the flow " + (errors.length ? JSON.stringify(errors) : ""));
   }
 
-  // 6. Real official OS: every combination the page offers must match its reference hash
+  // 5b. The page's own rules against the sample (notes/49): each card alone and every pair of cards the page lets you
+  // tick together, whatever it does with them (a card held by another, a swap), is a combination of REF_MAINOS.
+  // No OS needed: the build key is chosenTweaks().
+  if (MAIN) {
+    const { w, doc, errors } = await load();
+    const app = w.MCFlasherApp, feats = w.MC_TWEAKS.features;
+    const keyNow = () => app.chosenTweaks().map((x) => x.id).join("+");
+    const choices = (f) => (f.engines ? f.combos.map((c) => ({ engines: c.engines })) : f.variants.map((v) => ({ variant: v.id })));
+    const clear = async () => {
+      for (let round = 0; round < 3; round++)
+        for (const f of feats) {
+          const cb = doc.getElementById("feat-" + f.id);
+          if (cb.checked && !cb.disabled) { cb.click(); await wait(5); }
+        }
+    };
+    const pick = async (f, o) => {                   // false if the page holds the card (included by another one)
+      if (o.engines) { await pickEngines(doc, o.engines); return true; }
+      const cb = doc.getElementById("feat-" + f.id);
+      if (cb.disabled) return false;
+      if (!cb.checked) { cb.click(); await wait(5); }
+      const r = doc.querySelector(`input[name="var-${f.id}"][value="${o.variant}"]`);
+      if (r && !r.checked) { r.click(); await wait(5); }
+      return true;
+    };
+    const reached = new Set(), missing = [];
+    for (const [i, f] of feats.entries())
+      for (const o of choices(f)) {
+        await clear();
+        await pick(f, o);
+        const one = keyNow();
+        reached.add(one);
+        if (!app.REF_MAINOS[one]) missing.push(one);
+        for (const g of feats.slice(i + 1))
+          for (const p of choices(g)) {
+            await clear();
+            await pick(f, o);
+            if (!(await pick(g, p))) continue;
+            const k = keyNow();
+            reached.add(k);
+            if (!app.REF_MAINOS[k]) missing.push(k);
+          }
+      }
+    check(missing.length === 0 && !reached.has(""),
+      `the page's singles and pairs are all in the REF_MAINOS sample (${reached.size} combinations)` +
+      (missing.length ? `; missing: ${[...new Set(missing)].slice(0, 5).join(", ")}` : ""));
+    check(errors.length === 0, "no JS error while ticking every single and pair");
+  }
+
+  // 6. Real official OS (notes/49): every combination of REF_MAINOS (each card alone, every pair, the largest ones) is
+  // reached by ticking its cards and must match its reference hash; on every build each mod is checked against REF_MODS,
+  // so a combination outside the list builds too, mod by mod; and a mod that is not the Python one is refused
   if (REAL_OS) {
     const { w, doc, errors } = await load();
     const app = w.MCFlasherApp;
@@ -722,100 +808,64 @@ async function main() {
     await wait(20);
     if (REAL_ST) app.loadSyntakt(new Uint8Array(fs.readFileSync(REAL_ST)), ST_NAME);
     await wait(20);
-    const boxes = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    const features = w.MC_TWEAKS.features;
-    // carte -> carte qu'elle exige (écoute des samples -> Model-TG) : la cocher coche l'autre
-    const lacks = (on) => on.some((f) => f.requires && !on.some((g) => g.id === f.requires));
-    const incompatible = (a, b) => (a.excludes || []).includes(b.id) || (a.includes || []).includes(b.id)
-      || (b.excludes || []).includes(a.id) || (b.includes || []).includes(a.id);
-    // Gray : une case change entre voisins. Placer Model-TG au bit de poids
-    // fort regroupe ses exclusions ; leur filtrage conserve ce voisinage.
-    const traversal = [...features.filter((f) => f.id !== "model-tg"), features.find((f) => f.id === "model-tg")];
-    const initial = [];
-    for (let step = 1; step < 1 << boxes.length; step++) {
-      const mask = step ^ (step >> 1);
-      const on = traversal.filter((f, k) => mask & (1 << k));
-      // Les cartes incluses ne sont pas des choix supplémentaires : le porteur
-      // les coche et les verrouille. Écarter aussi les exclusions explicites
-      // et une carte sans celle qu'elle exige (un état construit ailleurs).
-      if (!lacks(on) && !on.some((a, k) => on.slice(k + 1).some((b) => incompatible(a, b))))
-        initial.push(on.map((f) => "feat-" + f.id));
-    }
-    check(initial.length === 1727 && initial.filter((on) => on.includes("feat-syntakt")).length === 576,
-      "compatible feature selections: 1151 without engines, 576 with the first engine combination");
-    async function pickCards(on) {
-      // Retirer d'abord les choix précédents ; une case incluse et verrouillée
-      // suit son porteur, sans clic artificiel ni changement direct de l'état.
-      for (const want of [false, true]) {
-        for (const id of boxes) {
-          const cb = doc.getElementById(id);
-          if (on.includes(id) === want && !cb.disabled && cb.checked !== want) {
-            cb.click();
-            await wait(5);
-          }
-        }
-      }
-    }
-    function trimCache() {
-      // Garder au plus 32 images, dont le choix courant, pour réutiliser les
-      // étapes intermédiaires sans accumuler les 19 007 firmwares vérifiés.
-      const keys = Object.keys(app.state.cache);
-      let excess = keys.length - 32;
-      for (const key of keys) {
-        if (excess > 0 && key !== app.state.buildKey) {
-          delete app.state.cache[key];
-          excess--;
-        }
-      }
-    }
-    const combos = engineCombos(w);
-    const sets = initial.filter((on) => on.includes("feat-syntakt"));
-    const variants = REAL_ST ? Object.keys(combos).slice(1) : [];
-    const total = initial.length + variants.length * sets.length;
-    // Des tranches contiguës gardent les voisins dans le même processus.
-    // Tous les indices appartiennent à un et un seul shard, même aux bornes.
-    const first = Math.floor(total * SHARD_K / SHARD_N);
-    const last = Math.floor(total * (SHARD_K + 1) / SHARD_N);
+    const needsSt = (key) => /sdvintage|syntakt/.test(key);
+    const offered = Object.keys(app.REF_MAINOS).filter((k) => REAL_ST || !needsSt(k));
+    check(Object.keys(app.REF_MODS).length === w.MC_TWEAKS.tweaks.length
+      && w.MC_TWEAKS.tweaks.every((x) => app.REF_MODS[x.id] && /^[0-9a-f]{64}$/.test(app.REF_MODS[x.id].w)
+        && !!x.append === /^[0-9a-f]{64}$/.test(app.REF_MODS[x.id].p || "")),
+      `REF_MODS: the writes of each of the ${w.MC_TWEAKS.tweaks.length} tweaks, and the payload of those that append one`);
     const seen = new Set();
     let idx = -1;
-    const mine = () => { idx++; return idx >= first && idx < last; };
-    for (const on of initial) {
+    const mine = () => ++idx % SHARD_N === SHARD_K;   // this part's share of the combinations
+    for (const key of Object.keys(app.REF_MAINOS)) {
+      if (!REAL_ST && needsSt(key)) continue;          // the real Syntakt engines need the Syntakt OS
       if (!mine()) continue;
-      await pickCards(on);
-      await settle(w);
+      await tickKey(w, doc, key);
       const f = app.state.fw;
-      if (!REAL_ST && doc.getElementById("feat-syntakt").checked) {
-        check(!f && app.state.fwError === "needs_syntakt", `real OS without the Syntakt OS: Syntakt engines combination waits for it`);
-        trimCache();
-        continue;
-      }
       seen.add(app.state.buildKey);
-      check(f && f.kind === "built" && f.ref, `real OS: ${app.state.buildKey} matches its reference hash`);
-      trimCache();
+      check(app.state.buildKey === key && f && f.kind === "built" && f.ref && f.modsRef,
+        `real OS: ${key} matches its reference hash, each mod checked`);
     }
-    const tgOf = Object.fromEntries(w.MC_TWEAKS.features.find((f) => f.engines).combos.map((c) => [c.id, c.tg]));
-    for (const variant of variants) {   // the other engine combinations
-      for (const on of sets) {
-        if (!mine()) continue;
-        await pickCards(on);
-        await pickEngines(doc, combos[variant]);
-        await settle(w);
-        const f = app.state.fw;
-        seen.add(app.state.buildKey);
-        check(f && f.kind === "built" && f.ref && app.state.buildKey.endsWith(on.includes("feat-model-tg") ? tgOf[variant] : variant),
-          `real OS: ${app.state.buildKey} matches its reference hash`);
-        trimCache();
-      }
+    if (MAIN) {
+      // three cards together, not in the sample: built, each mod checked, no whole-firmware reference
+      const plain = w.MC_TWEAKS.features.filter((f) => !f.engines && !f.excludes && !f.includes && !f.requires && !f.with)
+        .map((f) => f.variants[0].id);
+      const three = [...Array(plain.length).keys()].flatMap((i) => [...Array(plain.length).keys()].flatMap((j) =>
+        [...Array(plain.length).keys()].map((k) => (i < j && j < k ? [plain[i], plain[j], plain[k]].join("+") : null))))
+        .find((k) => k && !app.REF_MAINOS[k]);
+      await tickKey(w, doc, three);
+      const f = app.state.fw;
+      check(three && app.state.buildKey === three && f && f.kind === "built" && !f.ref && f.modsRef
+        && /Each mod checked against its reference build/.test(text(doc, "file-status")),
+        `real OS: ${three} (not in the sample) builds, each mod checked: ${text(doc, "file-status").slice(0, 80)}`);
     }
-    const offered = Object.keys(app.REF_MAINOS).filter((k) => REAL_ST || !/sdvintage|syntakt/.test(k));
     if (SHARD_N === 1)
       check(seen.size === offered.length && offered.every((k) => seen.has(k)),
-        `REF_MAINOS lists exactly the ${seen.size} combinations offered` + (REAL_ST ? "" : " (without the Syntakt engines: no Syntakt OS given)"));
+        `REF_MAINOS: the ${seen.size} combinations of the sample all built` + (REAL_ST ? "" : " (without the Syntakt engines: no Syntakt OS given)"));
     else {
       fs.writeFileSync(process.env.SMOKE_SEEN, JSON.stringify({ seen: [...seen], offered }));
       console.log(`  (part ${SHARD_K + 1}/${SHARD_N}: ${seen.size} combinations built; coverage checked over all parts)`);
     }
     check(errors.length === 0, "no JS error with the real OS");
+  }
+  if (REAL_OS && MAIN) {
+    // a mod whose writes or payload differ from the Python ones is refused (fresh page: builds are cached per key)
+    const { w, doc, errors } = await load();
+    const app = w.MCFlasherApp;
+    app.loadOs(new Uint8Array(fs.readFileSync(REAL_OS)), "model-cycles_OS1.13.syx");
+    await wait(20);
+    const tm = app.REF_MODS["tempo-max"].w, tg = app.REF_MODS["model-tg"].p;
+    app.REF_MODS["tempo-max"].w = "0".repeat(64);
+    app.REF_MODS["model-tg"].p = "0".repeat(64);
+    await tickKey(w, doc, "tempo-max");
+    check(!app.state.fw && /tempo-max : ecritures differentes de la reference/.test(app.state.fwError || ""),
+      "a mod whose writes differ from REF_MODS is refused: " + app.state.fwError);
+    await tickKey(w, doc, "model-tg");
+    check(!app.state.fw && /model-tg : charge utile differente de la reference/.test(app.state.fwError || ""),
+      "a mod whose payload differs from REF_MODS is refused: " + app.state.fwError);
+    app.REF_MODS["tempo-max"].w = tm;
+    app.REF_MODS["model-tg"].p = tg;
+    check(errors.length === 0, "no JS error when a mod is refused");
   }
 
   // 7. "Samples OS" tab with both official files
