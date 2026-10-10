@@ -246,9 +246,9 @@ python3 tools/emu/test_track_filter.py --cycles model-cycles_OS1.13.syx [--quick
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `track-filter` | `bf1f9fb311e81fd18f985c249d5e19971277a79f4b1a9d9fdcbaa78305056294` |
-| `6ch-usbup,track-filter` | `823e2130a5476f625e47401516093b333eee52c764789a031e5f156bbdd09412` |
-| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,track-filter` | `e324417c835e55e34e7928b95d47ee1db30c310eca06db3651423c3ff5310372` |
+| `track-filter` | `f5db01334779499fc0932cfdc4a23c899319d333fed98fc5169972080b662967` |
+| `6ch-usbup,track-filter` | `340fb353bacb25fc2923f836b7d685a704c710e43988258cdc2d21f42b997016` |
+| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,track-filter` | `5493f878652f5050a75ed0aab4aba9b19671764455943c5dd525484465c3f5ac` |
 
 ### Écoute d'un pas en pause
 
