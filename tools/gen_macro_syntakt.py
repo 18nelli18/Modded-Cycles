@@ -56,7 +56,10 @@ MACRO_BSS = 0x5a000
 TG_ROOM = 0x100000           # avec Model-TG : le dernier Mo de sa zone d'échantillons est à nous (notes/31 §4)
 # Combinaisons testées sur un vrai Model:Cycles (seules, puis avec Model-TG). Ajouter ici après un test réussi.
 HW_TESTED = set()
-HW_TESTED_TG = set()
+# 10/10/2026 : Model-TG + les 5 moteurs + MACRO, avec 6ch-usbup, sample-preview-st, trig-hold, arp, tempo-max et
+# boot-anim, construit par build.py (MAIN OS f44bfad6…), après la correction du blocage au démarrage (notes/50 §8) :
+# « ça marche nickel » (Maxime).
+HW_TESTED_TG = {("sd", "cp", "toy", "bits", "swarm")}
 
 
 def tweak_id(codes, tg=False):

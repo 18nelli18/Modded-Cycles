@@ -21,7 +21,8 @@ cartes exclusives ([43 §6](43-machine-macro.md)). Tweaks `24-syntakt-<moteurs>-
   **veille aussi sur les pistes MACRO** dans ces combinaisons ; MACRO seule n'en a toujours pas.
 - **Flasher** : les deux cartes se cochent ensemble ; la combinaison de moteurs prend alors sa version avec MACRO.
 - **Prouvé en émulation** `[FAIT en émulation]` (§6). 1er essai sur la machine (10/10/2026) : blocage au logo
-  Elektron, dû au cache d'instructions ; corrigé, à réessayer (§8).
+  Elektron, dû au cache d'instructions, corrigé (§8). **Testé sur la machine (10/10/2026)** avec Model-TG et les 5
+  moteurs (§9) ; les autres combinaisons, en émulation seulement.
 
 ## 1. Pourquoi ce n'était pas possible tel quel `[FAIT]`
 
@@ -172,7 +173,7 @@ de l'échantillon construites dans la page, chacune à son empreinte, dont 93 av
 5. Sans Model-TG, une petite combinaison (SDVtg + MACRO : MACRO 8ᵉ).
 6. Avant de reflasher autre chose, remettre sur une machine d'origine les pistes qui utilisent une machine ajoutée.
 
-## 8. Essai du 10/10/2026 : blocage au logo Elektron, cache d'instructions `[HYP forte]`
+## 8. Essai du 10/10/2026 : blocage au logo Elektron, cache d'instructions `[FAIT]`
 
 **Essai de Maxime** (fichier Model-TG + les 5 moteurs + MACRO, avec 6ch-usbup, sample-preview, trig-hold, arp,
 tempo-max, boot-anim) : la mise à jour passe, puis la machine reste sur le logo Elektron, avant l'animation de
@@ -194,8 +195,8 @@ du V4e, qui prédit les changements de flot, peut remplir le cache avec ces adre
 donc avec l'ancien contenu de la SDRAM. Au saut, le processeur exécute ces lignes périmées. La marque 0 du diagnostic était
 elle aussi du code fraîchement écrit (`0x46741c00`), d'où aucun carré. Les versions testées (moteurs seuls, avec ou
 sans Model-TG, MACRO seule) n'exécutent jamais pendant le crochet du code qu'il vient d'écrire : leur code ne tourne
-qu'après le `movec cacr` de l'OS (`0x40000548`, `0xa50ce100` : ICINVA + BCINVA). `[HYP forte]` : cohérent avec tout
-ce qui est observé, mais non observable directement ; confirmé seulement si le fichier corrigé démarre.
+qu'après le `movec cacr` de l'OS (`0x40000548`, `0xa50ce100` : ICINVA + BCINVA). Cohérent avec tout ce qui est
+observé ; le fichier corrigé démarre (§9).
 
 **Correction** (`stub.S`, `APLIB`) : avant `jsr AFTER`, `nop` (écritures terminées), `movec` de `0x000cc100` dans
 `CACR` (la valeur du bootstrap à `0x80000c40` : caches d'instructions et de branchements invalidés, toujours actifs,
@@ -204,3 +205,10 @@ cache de données toujours coupé), `nop`. 14 o de plus : crochet de 188 o (180 
 **Preuve** : Unicorn n'a pas de cache ; `test_macro_syntakt.py` (démarrage) le modélise : toute ligne de 16 o écrite
 dans la charge utile est périmée jusqu'au prochain `movec …,cacr` avec ICINVA, et exécuter une ligne périmée est une
 faute. Ancien crochet : **ÉCHEC** (`0x43041b00`, `0x46741b00`) ; crochet corrigé : ok.
+
+## 9. Testé sur la machine (10/10/2026)
+
+Fichier corrigé (`…_avec-model-tg_v2.syx`, MAIN OS `f44bfad6…`) : Model-TG + les 5 moteurs + MACRO, avec 6ch-usbup,
+sample-preview-st, trig-hold, arp, tempo-max et boot-anim, construit par `build.py`. Retour de Maxime : « ça marche
+nickel ». La combinaison des 5 moteurs avec Model-TG est marquée testée (`HW_TESTED_TG` de `gen_macro_syntakt.py`) ;
+les autres combinaisons, et la version sans Model-TG, restent vérifiées en émulation seulement.
