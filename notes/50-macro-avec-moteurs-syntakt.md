@@ -130,9 +130,28 @@ La décompression ajoute au démarrage quelques dizaines de millisecondes `[HYP]
 décompresse. Références : les moteurs seuls (leur tweak) et MACRO seule (`25-macro`, `32-macro-tg`, elle-même identique
 à Braids compilé pour l'ordinateur, [43 §7](43-machine-macro.md)).
 
-| Vérification | Seuls | Avec Model-TG |
+Résultats avec les 5 moteurs (`--only alone`, `--only tg`) : **TOUT OK** (36 et 28 vérifications) ; avec SDVtg seul
+(`--engines sd`, les deux versions) : **TOUT OK** (64).
+
+| Vérification | Seuls (MACRO 12ᵉ) | Avec Model-TG (MACRO 13ᵉ) |
 |---|---|---|
-| (à compléter) | | |
+| Décompresseur du bootstrap : l'OS agrandi relu à l'identique | fin `0x401e4d62` | fin `0x401fa5f4` |
+| Crochet : appelé, décompresse, appelle le 2ᵉ étage, rend la main ; pile et d2..d7/a2..a6 intacts | `0x400004b2`, reprise à `0x400004ba` | `jsr 0x40000530`, puis `boot_extra_hook` |
+| Charge utile décompressée (471 792 o, zéros compris), tables de CHORD reprises en SRAM | rangée en 240 674 o | rangée en 240 948 o |
+| Partie des moteurs identique à celle des moteurs seuls (hors détours, données, descripteurs) | 1 952 o diffèrent au plus | 2 268 o au plus |
+| SRAM : code et voix du Syntakt en place, le reste intact | oui | oui |
+| Interface : tables de l'OS, descripteurs, CC, écran MACHINES, molette, potards, changement de machine, icônes | 12 machines | 13 machines, Sampler compris |
+| MACRO avant la chaîne d'ampli : identique échantillon par échantillon à Braids compilé pour l'ordinateur (12 cas) | oui | oui |
+| Voix MACRO calculée exactement quand l'OS l'impose (1 799 blocs), par blocs de 24 échantillons | oui | oui |
+| Les 6 machines d'origine (CHORD compris) et chaque moteur : identiques aux moteurs seuls | oui | oui |
+| Piste MACRO identique à MACRO seule (9 modèles) ; 6 pistes mêlées (origine, moteurs, MACRO) | oui | oui (Sampler compris) |
+| Machine locks SNARE → moteur → MACRO → TONE → moteur → MACRO → KICK sur une piste | tout joue | tout joue |
+| Régulateur, charge fixe de 97 % : toutes les pistes MACRO éteintes, muettes ensuite | 6 sur 6 | 5 sur 5, jamais le Sampler |
+| Régulateur, charge de 46 % + 7 % par voix calculée : une partie seulement, les autres identiques à la référence | 1 éteinte | 1 éteinte, jamais le Sampler |
+
+Le régulateur lit les gains du mixeur de l'OS (`gov_gains.S`) : la preuve met le BSS de l'OS en mémoire et ces gains
+au maximum, comme `test_governor.py`. Avec les autres mods (`--with 6ch-usbup,trig-hold,arp,tempo-max,boot-anim`, et
+avec `model-tg-st,sample-preview-st` en plus) : RESULTATS_AVEC.
 
 ## 7. À vérifier sur la machine
 
