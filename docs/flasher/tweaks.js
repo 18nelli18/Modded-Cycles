@@ -97808,7 +97808,7 @@ window.MC_TWEAKS = {
    "id": "multiline-browser",
    "label": "Navigateur sur plusieurs lignes",
    "desc": "Le navigateur de sons, de dossiers et d'echantillons affiche 3 noms a la fois, en petite police, au lieu d'un seul en gros caracteres. > devant le nom sous le curseur ; le son charge reste inverse.",
-   "status": "experimental",
+   "status": "tested",
    "credit": null,
    "cat": "screen",
    "variants": [

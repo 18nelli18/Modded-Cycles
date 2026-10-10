@@ -171,7 +171,12 @@ Combinaisons passées : seul ; avec browser-scroll ; avec model-tg ; avec model-
 trig-hold, arp et tempo-max ; avec 6ch-usbup, browser-scroll, latching-mute, trig-preview, trig-hold, arp, tempo-max et
 syntakt-sd-cp-toy-bits-swarm.
 
-## 6. À vérifier sur la machine `[À FAIRE]`
+## 6. Testé sur la machine (10/10/2026)
+
+Maxime, le 10/10/2026 : « ça marche nickel sur ma machine » (fichiers de test : le navigateur seul, et avec
+Model-TG). Le mod passe en `tested`. Reste ouvert : le nom sous lequel l'auteur du script veut être crédité.
+
+Points qui étaient à vérifier :
 
 - La 1ʳᵉ ligne en haut, et le « > » qui suit le curseur dans les deux sens, à la racine de +Drive comme dans un
   sous-dossier ; le retour au dossier parent comme avant.
