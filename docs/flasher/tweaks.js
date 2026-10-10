@@ -247,6 +247,15 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": []
+   },
+   "symbols": {
+    "tok_of": "0x401b2d96",
+    "sound_obj": "0x401b32a2",
+    "ensure_loaded": "0x401b27d0",
+    "slot_hash": "0x401be4a0",
+    "pd_mode": "0x401befc8",
+    "ld_busy": "0x401beff4",
+    "pad_load_hook": "0x401b3210"
    }
   },
   {
@@ -358,7 +367,78 @@ window.MC_TWEAKS = {
     "mq_toggle": "0x401b7978",
     "mq_pending": "0x401b7a68",
     "mq_apply": "0x401b79fe",
-    "voice_quiet": "0x401adae0"
+    "voice_quiet": "0x401adae0",
+    "tok_of": "0x401b2d96",
+    "sound_obj": "0x401b32a2",
+    "ensure_loaded": "0x401b27d0",
+    "slot_hash": "0x401be4a0",
+    "pd_mode": "0x401befc8",
+    "ld_busy": "0x401beff4",
+    "pad_load_hook": "0x401b3210"
+   }
+  },
+  {
+   "id": "sample-preview",
+   "order": 33,
+   "name": "Écoute des samples (Model-TG)",
+   "description": [
+    "Navigateur de presets d'une piste Sampler de Model-TG : le pad de la piste (ou ses touches en mode clavier) joue le sample sous le curseur, comme l'OS d'origine joue le preset sous le curseur.",
+    "Un sample qui n'est pas en mémoire est chargé au premier appui, seulement dans la place libre ou à la place de samples que le projet n'utilise pas. S'il ne se charge pas, l'appui ne joue rien.",
+    "Les presets du Sampler qui gardent leur sample (nom « SMP » + empreinte) devraient aussi faire entendre ce sample plutôt que celui de la piste (prouvé en émulation pour le son, pas encore sur la machine).",
+    "Pour Model-TG (model-tg) ; appelle ses fonctions aux adresses de ses symboles. Code dans quatre masques de sprites 47x47 libérés (tools/sprites.py) : 292 + 300 + 332 + 312 o. Généré par tools/gen_sample_preview.py, notes/46."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "requires": [
+    "model-tg"
+   ],
+   "conflicts": [
+    "chord-keys"
+   ],
+   "symbols": {
+    "pv_parse": "0x40185c58",
+    "pv_note": "0x40185968",
+    "pv_copy": "0x40183118",
+    "pv_tab": "0x40183154",
+    "pv_src": "0x40185d2c",
+    "pv_fail": "0x4018316c",
+    "pv_failp": "0x40183170"
+   },
+   "writes": {
+    "$shared": 1
+   }
+  },
+  {
+   "id": "sample-preview-st",
+   "order": 33,
+   "name": "Écoute des samples (Model-TG), avec les moteurs du Syntakt",
+   "description": [
+    "Navigateur de presets d'une piste Sampler de Model-TG : le pad de la piste (ou ses touches en mode clavier) joue le sample sous le curseur, comme l'OS d'origine joue le preset sous le curseur.",
+    "Un sample qui n'est pas en mémoire est chargé au premier appui, seulement dans la place libre ou à la place de samples que le projet n'utilise pas. S'il ne se charge pas, l'appui ne joue rien.",
+    "Les presets du Sampler qui gardent leur sample (nom « SMP » + empreinte) devraient aussi faire entendre ce sample plutôt que celui de la piste (prouvé en émulation pour le son, pas encore sur la machine).",
+    "Pour la version de Model-TG combinée avec les moteurs du Syntakt (model-tg-st) ; appelle ses fonctions aux adresses de ses symboles. Code dans quatre masques de sprites 47x47 libérés (tools/sprites.py) : 292 + 300 + 332 + 312 o. Généré par tools/gen_sample_preview.py, notes/46."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "requires": [
+    "model-tg-st"
+   ],
+   "conflicts": [
+    "chord-keys"
+   ],
+   "symbols": {
+    "pv_parse": "0x40185c58",
+    "pv_note": "0x40185968",
+    "pv_copy": "0x40183118",
+    "pv_tab": "0x40183154",
+    "pv_src": "0x40185d2c",
+    "pv_fail": "0x4018316c",
+    "pv_failp": "0x40183170"
+   },
+   "writes": {
+    "$shared": 1
    }
   },
   {
@@ -2472,7 +2552,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 1
+    "$shared": 2
    },
    "append": {
     "at": "0x401aa140",
@@ -2757,7 +2837,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 2
+       "$shared": 3
       }
      },
      {
@@ -2785,7 +2865,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 3
+     "$shared": 4
     }
    }
   },
@@ -2899,7 +2979,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 4
+    "$shared": 5
    },
    "append": {
     "at": "0x401bf8c0",
@@ -3184,7 +3264,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46705f60",
       "hex": {
-       "$shared": 5
+       "$shared": 6
       }
      },
      {
@@ -3212,7 +3292,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 6
+     "$shared": 7
     },
     "pack": [
      [
@@ -3427,7 +3507,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 7
+    "$shared": 8
    },
    "append": {
     "at": "0x401aa140",
@@ -3698,7 +3778,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 2
+       "$shared": 3
       }
      },
      {
@@ -3727,7 +3807,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -3736,7 +3816,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 9
+     "$shared": 10
     },
     "compress": "aplib"
    },
@@ -3924,7 +4004,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 10
+    "$shared": 11
    },
    "append": {
     "at": "0x401bf8c0",
@@ -4195,7 +4275,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46705f60",
       "hex": {
-       "$shared": 5
+       "$shared": 6
       }
      },
      {
@@ -4224,7 +4304,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -4233,7 +4313,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 12
+     "$shared": 13
     },
     "compress": "aplib"
    },
@@ -4318,1853 +4398,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 1
-   },
-   "append": {
-    "at": "0x401aa140",
-    "dest": "0x43000000",
-    "size": 260352,
-    "syntakt": {
-     "os": {
-      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
-      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
-     },
-     "section": 7,
-     "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
-    },
-    "parts": [
-     {
-      "dest": "0x43000000",
-      "syntakt": [
-       "0x40002544",
-       "0x40002686"
-      ]
-     },
-     {
-      "dest": "0x43000142",
-      "syntakt": [
-       "0x4000290e",
-       "0x40002a62"
-      ]
-     },
-     {
-      "dest": "0x43000296",
-      "syntakt": [
-       "0x400035de",
-       "0x40003732"
-      ]
-     },
-     {
-      "dest": "0x430003ec",
-      "syntakt": [
-       "0x40003958",
-       "0x40003aac"
-      ]
-     },
-     {
-      "dest": "0x43000542",
-      "syntakt": [
-       "0x40003c0e",
-       "0x40004324"
-      ]
-     },
-     {
-      "dest": "0x43000c5a",
-      "syntakt": [
-       "0x400044e2",
-       "0x40004534"
-      ]
-     },
-     {
-      "dest": "0x43000cac",
-      "syntakt": [
-       "0x400045a0",
-       "0x40004608"
-      ]
-     },
-     {
-      "dest": "0x43000d14",
-      "syntakt": [
-       "0x40004674",
-       "0x400046dc"
-      ]
-     },
-     {
-      "dest": "0x43000d7e",
-      "syntakt": [
-       "0x400047ea",
-       "0x400048c6"
-      ]
-     },
-     {
-      "dest": "0x43000e5c",
-      "syntakt": [
-       "0x400049f4",
-       "0x40004a6a"
-      ]
-     },
-     {
-      "dest": "0x43000ed2",
-      "syntakt": [
-       "0x40004cd6",
-       "0x40004e14"
-      ]
-     },
-     {
-      "dest": "0x43001010",
-      "syntakt": [
-       "0x40004e6c",
-       "0x40004ee6"
-      ]
-     },
-     {
-      "dest": "0x4300108c",
-      "syntakt": [
-       "0x40004f74",
-       "0x400050a6"
-      ]
-     },
-     {
-      "dest": "0x430011c0",
-      "syntakt": [
-       "0x400052f8",
-       "0x40005624"
-      ]
-     },
-     {
-      "dest": "0x430014ee",
-      "syntakt": [
-       "0x4000569a",
-       "0x40005866"
-      ]
-     },
-     {
-      "dest": "0x430016bc",
-      "syntakt": [
-       "0x400058e8",
-       "0x40005964"
-      ]
-     },
-     {
-      "dest": "0x43001738",
-      "syntakt": [
-       "0x40008074",
-       "0x40008e0c"
-      ]
-     },
-     {
-      "dest": "0x430024d0",
-      "syntakt": [
-       "0x400596e0",
-       "0x40059f08"
-      ]
-     },
-     {
-      "dest": "0x43002cf8",
-      "syntakt": [
-       "0x40056654",
-       "0x40056e78"
-      ]
-     },
-     {
-      "dest": "0x43003520",
-      "syntakt": [
-       "0x4004f6e0",
-       "0x4004fde8"
-      ]
-     },
-     {
-      "dest": "0x43003c28",
-      "syntakt": [
-       "0x4004fde8",
-       "0x400504f0"
-      ]
-     },
-     {
-      "dest": "0x43004330",
-      "syntakt": [
-       "0x400504f0",
-       "0x40050bf8"
-      ]
-     },
-     {
-      "dest": "0x43004a38",
-      "syntakt": [
-       "0x40050bf8",
-       "0x40051300"
-      ]
-     },
-     {
-      "dest": "0x43005140",
-      "syntakt": [
-       "0x40051300",
-       "0x40051a08"
-      ]
-     },
-     {
-      "dest": "0x43005858",
-      "syntakt": [
-       "0x40051a08",
-       "0x40052110"
-      ]
-     },
-     {
-      "dest": "0x43007878",
-      "syntakt": [
-       "0x4000e488",
-       "0x40010490"
-      ]
-     },
-     {
-      "dest": "0x43009880",
-      "syntakt": [
-       "0x40014980",
-       "0x40016b90"
-      ]
-     },
-     {
-      "dest": "0x4300ba90",
-      "syntakt": [
-       "0x40028438",
-       "0x4003be38"
-      ]
-     },
-     {
-      "dest": "0x43036000",
-      "syntakt": [
-       "0x4003be38",
-       "0x4003de38"
-      ]
-     },
-     {
-      "dest": "0x43020000",
-      "syntakt": [
-       "0x4004f6e0",
-       "0x40057670"
-      ]
-     },
-     {
-      "dest": "0x43028000",
-      "syntakt": [
-       "0x40057670",
-       "0x4005df10"
-      ]
-     },
-     {
-      "dest": "0x430003ea",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x43000540",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x43000c58",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x43000d7c",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x43000e5a",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x4300108a",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x430011be",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x430014ec",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x430016ba",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x43038000",
-      "cycles": [
-       "0x4019d1ec",
-       "0x401a2a44"
-      ]
-     },
-     {
-      "dest": "0x4303d858",
-      "cycles": [
-       "0x401a7510",
-       "0x401a9530"
-      ]
-     },
-     {
-      "dest": "0x43031000",
-      "hex": {
-       "$shared": 13
-      }
-     },
-     {
-      "dest": "0x43033000",
-      "hex": "724cb081650000200c8000000051650470004e75724c90817205b0816504908160f67233d0814e75202f00046100ffd272644c010800068040a717544e75202f00046100ffbc72644c010800068040a71768487940a715002f2f000c2f004eb9400ddf604fef000c203c40a715004e757405b481650c7406b480650c4ef94005a8fa4ef94005a9284ef94005a91c7206b081660470034e754e7520036100fff02800e588eb8c988048780001487800174878002045f940071da4227940fe32ccd3c42f092f024e924fef00304878000148780022d8b940fe384c487800602f042f024e924fef00144ef9400a268041e8000a2f082f2e001020026a0270007205b2806c0c6100ff887205b2806c0270054ef9400a4dde202f00047207b0816700004a7206b28064027001724c4c010800068040a715404e75202f00047206b081670000287205b280651041f9401091b4713008007206b28064027001724c4c010800068040a715404e7541f943035c007019600000024a28004c6600005e2f022f0a24482400487940a715d82f0a4eb9400f8f02508f487940a715dc486a00044eb9400f8f02508f41f940a715e043ea000872102f0120187233b0816d087237b2806d02d08222c053976aea588f70011540004c204a245f241f20084e75202f0024226a00687206b280640470004e757206b0816d0643f9430338544e75202f00040c800000004c650c0c800000004f620470064e750c8000000051650270002200e789ed88908141f943034000203008004e757006b0856500001e0c820000004c650e0c820000004f62067a06600000024ef94005a3844ef94005a34623df4303207a2239fc07000c23c1430320764eb94005979e2f004eb94303118a201f2f394303207a4e75b0846500005a2f012f04201580932f002f024eb9430310004fef000c221f4a80670e2043701f429853806afa60000030204622704c002f0a2f0e2f014e912f0e2f0341f94303383822704c004e914fef00142f032f024eb94303109a508f4ef9400a7e24"
-     },
-     {
-      "dest": "0x43033800",
-      "hex": "401300d8401300dd401300e3401300e940129960401300ee43033878400aa08c400ab3b0400aa49c400aa998400aa7b8400aae8843031340400aa3c4400ab6e8400aa712400aacc2400aa930400ab24c43031528000000010000000200000003000000040000000500000006000000070001020304050600435056746700426f6479204368617200424f44590042616c616e63650042414c0053706163696e67204372756e6368005350435200426f647920456e76656c6f70650042454e5600"
-     },
-     {
-      "dest": "0x43034000",
-      "cycles": [
-       "0x4010dce0",
-       "0x4010ed80"
-      ]
-     },
-     {
-      "dest": "0x430350a0",
-      "hex": "000000060000000b0000000000007f0000001800000000000010ffffffffffff0000000000000600000000284303387e4012996f43033888000000060000000c0000000000007f0000001900000000000011ffffffffffff0000000000000600000000324303388d4012996f43033895000000060000000d0000000000007f0000002e00000000000012ffffffffffff00000000000006000000003c430338994012996f430338a8000000060000000e0000000000007f0000002500000000000013ffffffffffff000000000000060000000046430338ad4012996f430338bb00000007000000120000000000007f0000002000000000000050ffff0000009a00000000000006000000001e401298784012988240129886"
-     },
-     {
-      "dest": "0x43032c00",
-      "hex": "4fefffc048d73cfc2a49e08a76000c84000000dc650c26040483000000d14c0238000c85000000ee651220050480000000e34c020800b083630226007e404aad005a67027e107c080c85000000f565027c0249d547ed0f18700074ff4a35084e66144a350842671a222d0f0892b30c007820b284642422340c009681621c6000007e79b50854b887641079f50a30988698866b064eb94303123e2f820c2852807206b08166b47a0274fe72ff93c9700028370c28b882650c661479f50a30b3c4640c6006240479f50a302244220052807806b08466da4a816b241b86184e1b861848202d0f0827801c0070ff2f801c2820341c00528096806304538566aa4cd73cfc4fef00404e75"
-     }
-    ],
-    "reloc": {
-     "$shared": 3
-    }
-   }
-  },
-  {
-   "id": "syntakt-tg-cp",
-   "order": 31,
-   "name": "Model-TG + Vrais moteurs du Syntakt en machines ajoutées : CPVtg (CP VINTAGE)",
-   "description": [
-    "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
-    "les moteurs du Syntakt suivent : CPVtg = CP VINTAGE (machine 8).",
-    "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
-    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Régulateur de charge en assembleur (tools/gov_asm.py, notes/36) : pics isolés ignorés, voix la moins audible dans le mix."
-   ],
-   "gov": {
-    "audio_end": "0x8000d1c8",
-    "gov_age": "0x4673203a",
-    "gov_avg": "0x46732078",
-    "gov_cost": "0x4673200a",
-    "gov_fading": "0x46732058",
-    "gov_flen": "0x46732052",
-    "gov_free": "0x46732004",
-    "gov_load": "0x4673207c",
-    "gov_peak": "0x46732022",
-    "gov_period": "0x46732074",
-    "gov_pressure": "0x46732064",
-    "gov_quiet": "0x4673205e",
-    "gov_ran": "0x46732000",
-    "gov_ret_audio": "0x46732084",
-    "gov_slow": "0x46732070",
-    "gov_st": "0x46732046",
-    "gov_stolen": "0x4673204c",
-    "gov_t0_audio": "0x46732080",
-    "voice_after": "0x8000d38c",
-    "voice_gate": "0x8000d4c4"
-   },
-   "device": "Model:Cycles",
-   "os": "1.13",
-   "section": 3,
-   "requires": [
-    "model-tg-st"
-   ],
-   "conflicts": [
-    "model-tg",
-    "sdvintage-7th",
-    "sdvintage-exact",
-    "sdvintage-snare",
-    "syntakt-bits",
-    "syntakt-bits-swarm",
-    "syntakt-cp",
-    "syntakt-cp-bits",
-    "syntakt-cp-bits-swarm",
-    "syntakt-cp-swarm",
-    "syntakt-cp-toy",
-    "syntakt-cp-toy-bits",
-    "syntakt-cp-toy-bits-swarm",
-    "syntakt-cp-toy-swarm",
-    "syntakt-meter",
-    "syntakt-sd",
-    "syntakt-sd-bits",
-    "syntakt-sd-bits-swarm",
-    "syntakt-sd-cp",
-    "syntakt-sd-cp-bits",
-    "syntakt-sd-cp-bits-swarm",
-    "syntakt-sd-cp-swarm",
-    "syntakt-sd-cp-toy",
-    "syntakt-sd-cp-toy-bits",
-    "syntakt-sd-cp-toy-bits-swarm",
-    "syntakt-sd-cp-toy-swarm",
-    "syntakt-sd-swarm",
-    "syntakt-sd-toy",
-    "syntakt-sd-toy-bits",
-    "syntakt-sd-toy-bits-swarm",
-    "syntakt-sd-toy-swarm",
-    "syntakt-swarm",
-    "syntakt-tg-bits",
-    "syntakt-tg-bits-swarm",
-    "syntakt-tg-cp-bits",
-    "syntakt-tg-cp-bits-swarm",
-    "syntakt-tg-cp-swarm",
-    "syntakt-tg-cp-toy",
-    "syntakt-tg-cp-toy-bits",
-    "syntakt-tg-cp-toy-bits-swarm",
-    "syntakt-tg-cp-toy-swarm",
-    "syntakt-tg-meter",
-    "syntakt-tg-sd",
-    "syntakt-tg-sd-bits",
-    "syntakt-tg-sd-bits-swarm",
-    "syntakt-tg-sd-cp",
-    "syntakt-tg-sd-cp-bits",
-    "syntakt-tg-sd-cp-bits-swarm",
-    "syntakt-tg-sd-cp-swarm",
-    "syntakt-tg-sd-cp-toy",
-    "syntakt-tg-sd-cp-toy-bits",
-    "syntakt-tg-sd-cp-toy-bits-swarm",
-    "syntakt-tg-sd-cp-toy-swarm",
-    "syntakt-tg-sd-swarm",
-    "syntakt-tg-sd-toy",
-    "syntakt-tg-sd-toy-bits",
-    "syntakt-tg-sd-toy-bits-swarm",
-    "syntakt-tg-sd-toy-swarm",
-    "syntakt-tg-swarm",
-    "syntakt-tg-toy",
-    "syntakt-tg-toy-bits",
-    "syntakt-tg-toy-bits-swarm",
-    "syntakt-tg-toy-swarm",
-    "syntakt-toy",
-    "syntakt-toy-bits",
-    "syntakt-toy-bits-swarm",
-    "syntakt-toy-swarm",
-    "syntakt-vintage"
-   ],
-   "writes": {
-    "$shared": 4
-   },
-   "append": {
-    "at": "0x401bf8c0",
-    "dest": "0x46700000",
-    "size": 260352,
-    "syntakt": {
-     "os": {
-      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
-      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
-     },
-     "section": 7,
-     "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
-    },
-    "parts": [
-     {
-      "dest": "0x46700000",
-      "syntakt": [
-       "0x40002544",
-       "0x40002686"
-      ]
-     },
-     {
-      "dest": "0x46700142",
-      "syntakt": [
-       "0x4000290e",
-       "0x40002a62"
-      ]
-     },
-     {
-      "dest": "0x46700296",
-      "syntakt": [
-       "0x400035de",
-       "0x40003732"
-      ]
-     },
-     {
-      "dest": "0x467003ec",
-      "syntakt": [
-       "0x40003958",
-       "0x40003aac"
-      ]
-     },
-     {
-      "dest": "0x46700542",
-      "syntakt": [
-       "0x40003c0e",
-       "0x40004324"
-      ]
-     },
-     {
-      "dest": "0x46700c5a",
-      "syntakt": [
-       "0x400044e2",
-       "0x40004534"
-      ]
-     },
-     {
-      "dest": "0x46700cac",
-      "syntakt": [
-       "0x400045a0",
-       "0x40004608"
-      ]
-     },
-     {
-      "dest": "0x46700d14",
-      "syntakt": [
-       "0x40004674",
-       "0x400046dc"
-      ]
-     },
-     {
-      "dest": "0x46700d7e",
-      "syntakt": [
-       "0x400047ea",
-       "0x400048c6"
-      ]
-     },
-     {
-      "dest": "0x46700e5c",
-      "syntakt": [
-       "0x400049f4",
-       "0x40004a6a"
-      ]
-     },
-     {
-      "dest": "0x46700ed2",
-      "syntakt": [
-       "0x40004cd6",
-       "0x40004e14"
-      ]
-     },
-     {
-      "dest": "0x46701010",
-      "syntakt": [
-       "0x40004e6c",
-       "0x40004ee6"
-      ]
-     },
-     {
-      "dest": "0x4670108c",
-      "syntakt": [
-       "0x40004f74",
-       "0x400050a6"
-      ]
-     },
-     {
-      "dest": "0x467011c0",
-      "syntakt": [
-       "0x400052f8",
-       "0x40005624"
-      ]
-     },
-     {
-      "dest": "0x467014ee",
-      "syntakt": [
-       "0x4000569a",
-       "0x40005866"
-      ]
-     },
-     {
-      "dest": "0x467016bc",
-      "syntakt": [
-       "0x400058e8",
-       "0x40005964"
-      ]
-     },
-     {
-      "dest": "0x46701738",
-      "syntakt": [
-       "0x40008074",
-       "0x40008e0c"
-      ]
-     },
-     {
-      "dest": "0x467024d0",
-      "syntakt": [
-       "0x400596e0",
-       "0x40059f08"
-      ]
-     },
-     {
-      "dest": "0x46702cf8",
-      "syntakt": [
-       "0x40056654",
-       "0x40056e78"
-      ]
-     },
-     {
-      "dest": "0x46703520",
-      "syntakt": [
-       "0x4004f6e0",
-       "0x4004fde8"
-      ]
-     },
-     {
-      "dest": "0x46703c28",
-      "syntakt": [
-       "0x4004fde8",
-       "0x400504f0"
-      ]
-     },
-     {
-      "dest": "0x46704330",
-      "syntakt": [
-       "0x400504f0",
-       "0x40050bf8"
-      ]
-     },
-     {
-      "dest": "0x46704a38",
-      "syntakt": [
-       "0x40050bf8",
-       "0x40051300"
-      ]
-     },
-     {
-      "dest": "0x46705140",
-      "syntakt": [
-       "0x40051300",
-       "0x40051a08"
-      ]
-     },
-     {
-      "dest": "0x46705858",
-      "syntakt": [
-       "0x40051a08",
-       "0x40052110"
-      ]
-     },
-     {
-      "dest": "0x46707878",
-      "syntakt": [
-       "0x4000e488",
-       "0x40010490"
-      ]
-     },
-     {
-      "dest": "0x46709880",
-      "syntakt": [
-       "0x40014980",
-       "0x40016b90"
-      ]
-     },
-     {
-      "dest": "0x4670ba90",
-      "syntakt": [
-       "0x40028438",
-       "0x4003be38"
-      ]
-     },
-     {
-      "dest": "0x46736000",
-      "syntakt": [
-       "0x4003be38",
-       "0x4003de38"
-      ]
-     },
-     {
-      "dest": "0x46720000",
-      "syntakt": [
-       "0x4004f6e0",
-       "0x40057670"
-      ]
-     },
-     {
-      "dest": "0x46728000",
-      "syntakt": [
-       "0x40057670",
-       "0x4005df10"
-      ]
-     },
-     {
-      "dest": "0x467003ea",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x46700540",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x46700c58",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x46700d7c",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x46700e5a",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x4670108a",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x467011be",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x467014ec",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x467016ba",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x46738000",
-      "cycles": [
-       "0x4019d1ec",
-       "0x401a2a44"
-      ]
-     },
-     {
-      "dest": "0x4673d858",
-      "cycles": [
-       "0x401a7510",
-       "0x401a9530"
-      ]
-     },
-     {
-      "dest": "0x46705f60",
-      "hex": {
-       "$shared": 5
-      }
-     },
-     {
-      "dest": "0x46731000",
-      "hex": "4fefffdc48d77c1c2a6f002c240d0682bdcf77d82202263c0000031c4c431001286f00302f6f0028002041f94673208c203c534456312441b0ad002c660a71b018005f804a80671c70077201263c534456312b43002c1180a80041f9467320921181a8002679467320884a8b666c4aad00386700016a263c46728a60283c467200007005b08b6d00013241f9467312802c70bc004eb980001c5c2d43056c2f0e4eb980002470528b068400000708068300000030588f7008b08b66c6363c0101223c01010101700123c14673209223c04673208833c3467320960c82000012a7620000de41f9467312802670ac00276d00340034222d003827410038276d003c003c4bf9467320921035a8004a81670000c84a0067202f0b76014eb980002470420127430038588f700727400004700726801b81a800260aed8b700742412443d5fc4673209815400022356c00140024356c00160026356c00180028356c001a002a356c001c002c356c001e002e302c0020354000307140356c0024003235410034274003ec2f0b4eb980001c762f4a00342f4b0030716c00224cef7c1c00040680ffffc000e788d0af00242f40002c4fef00284ef9800038a02c446000fed6200a223c000007084c0108002640d7fc467200006000ff184a006700ff5a4cd77c1c4fef00244e754feffff448d7040c202f00140680bdcf77d82200243c0000031c4c421001206f00100c80000012a7624643f94673128024711c004ab946732088671c43f9467320924a311800661043f94673208c71b118005f804a80672c20080680000000804298b08866fa4cd7040c4fef000c4e75203c000007084c0108002440d5fc4672000060b02f0a2f084eb980003ca8256a00340038508f60ce8000517c8000588480005f8c8000669480006d9c8000cac0"
-     },
-     {
-      "dest": "0x46733000",
-      "hex": "724cb081650000200c8000000051650470004e75724c90817205b0816504908160f67233d0814e75202f00046100ffd272644c010800068040a717544e75202f00046100ffbc72644c010800068040a71768487940a715002f2f000c2f004eb9400ddf604fef000c203c40a715004e757405b48165127406b48067127407b480650c4ef94005a8fa4ef94005a9284ef94005a91c7207b081660470034e754e7520036100fff02800e588eb8c988048780001487800174878002045f940071da4227940fe32ccd3c42f092f024e924fef00304878000148780022d8b940fe384c487800602f042f024e924fef00144ef9400a268041e8000a2f082f2e001020026a0270007205b2806c0c6100ff887205b2806c0270054ef9400a4dde202f00047208b0816700004e7208b280640670012f4000042f082f092f2f000c4eb9401ae84e588f60000084202f00047207b081670000227207b280640670002f4000042f082f092f2f000c4eb9401b278a588f600000582f082f0941f946735c007019600000022f082f0072004eb9401b2480201f205f610000624ab9401b244e672a204043f946735f00721222d853816afa41f946735f00720d2141000c720c21410018720b2141001c200841f94010dd0c43f94673402c724b229023680004000423680008000841e8003843e9003853816ae6225f205f4e754a28004c6600005e2f022f0a24482400487940a715d82f0a4eb9400f8f02508f487940a715dc486a00044eb9400f8f02508f41f940a715e043ea000872102f0120187233b0816d087237b2806d02d08222c053976aea588f70011540004c204a245f241f20084e7545f940070c4e47f940070efc42852805720b7007b8806d04988072042004e788908406800000005028015884487800012f042f002f0159802f002f02b68566044e9360024e924fef001852857008b08566bc4ef9400a26f2202f0024226a00687207b280640470004e757207b0816d0643f9467338604e75202f00040c800000004c650c0c800000004f620470074e750c8000000051650270002200e789ed88908141f946734000203008004e757006b0856500001e0c820000004c650e0c820000004f62067a07600000024ef94005a3844ef94005a3460c8200000007650e0c820000000762064ef94005a6dc4ef9401ae8fc7006bc806602528620065286eb884ef94005a3200c82000000066712eb8a41f946735800203028004ef94005a6fc4ef9401ae93623df467320842239fc07000c23c1467320804eb94005979e2f004eb98000d1c8201f2f39467320844e75b084650000842f012f04201580932f002f024eb98000d4c44fef000c221f4a80670e2043701f429853806afa6000005a7007b88064064ef9401aca582039fc07800c23c0401b8114204622704c002f0a2f0e2f014e912f0e2f0341f94673384022704c004e914eb9401b3d484fef00142039fc07800c90b9401b81146b0a41f9401b8118d1b02c004ef9400a7e242f032f024eb98000d5c6508f2695224342804ef9400a7e2a"
-     },
-     {
-      "dest": "0x46733800",
-      "hex": "401300d8401300dd401300e3401300e940129960401300ee401b105846733888400aa08c400ab3b0400aa49c400aa998400aa7b8400aae88400aa08c46731000400aa3c4400ab6e8400aa712400aacc2400aa930400ab24c400aa3c4467311e800000001000000020000000300000004000000050000000600000007000000080001020304050607435056746700426f6479204368617200424f44590042616c616e63650042414c0053706163696e67204372756e6368005350435200426f647920456e76656c6f70650042454e5600"
-     },
-     {
-      "dest": "0x46734000",
-      "cycles": [
-       "0x4010dce0",
-       "0x4010ed80"
-      ]
-     },
-     {
-      "dest": "0x467350a0",
-      "hex": "000000060000000b0000000000007f0000001800000000000010ffffffffffff0000000000000600000000284673388e4012996f46733898000000060000000c0000000000007f0000001900000000000011ffffffffffff0000000000000600000000324673389d4012996f467338a5000000060000000d0000000000007f0000002e00000000000012ffffffffffff00000000000006000000003c467338a94012996f467338b8000000060000000e0000000000007f0000002500000000000013ffffffffffff000000000000060000000046467338bd4012996f467338cb00000007000000120000000000007f0000002000000000000050ffff0000009a00000000000006000000001e401298784012988240129886"
-     }
-    ],
-    "reloc": {
-     "$shared": 6
-    },
-    "pack": [
-     [
-      "0x46700000",
-      25476
-     ],
-     [
-      "0x46707878",
-      97304
-     ],
-     [
-      "0x46720000",
-      32656
-     ],
-     [
-      "0x46728000",
-      26784
-     ],
-     [
-      "0x46731000",
-      664
-     ],
-     [
-      "0x46733000",
-      1112
-     ],
-     [
-      "0x46733800",
-      208
-     ],
-     [
-      "0x46734000",
-      4536
-     ],
-     [
-      "0x46736000",
-      39032
-     ]
-    ]
-   }
-  },
-  {
-   "id": "syntakt-cp-macro",
-   "order": 24,
-   "name": "Vrais moteurs du Syntakt (CPVtg) et machine MACRO (Braids, Émilie Gillet, MIT)",
-   "description": [
-    "Moteurs du Syntakt (OS 1.42 ou 1.41, extraits AU BUILD de TON Syntakt_OS1.42.syx) et machine MACRO (notes/43),",
-    "ensemble (notes/50) : CPVtg = CP VINTAGE (machine 7), MACRO (machine 8).",
-    "Passerelle des moteurs reprise telle quelle de syntakt-cp ; MACRO compilé comme 25-macro.json",
-    "(pichenettes/eurorack 08460a6, licence MIT : LICENSE-Braids). Charge utile rangée compressée",
-    "(aPLib), décompressée au démarrage ; tables d'ondes de CHORD reprises en SRAM. Le régulateur de charge des",
-    "moteurs vaut aussi pour MACRO. Généré par tools/gen_macro_syntakt.py. Aucun octet Elektron dans ce fichier.",
-    "Régulateur de charge en assembleur (tools/gov_asm.py, notes/36) : pics isolés ignorés, voix la moins audible dans le mix."
-   ],
-   "gov": {
-    "audio_end": "0x4303118a",
-    "gov_age": "0x43032030",
-    "gov_avg": "0x4303206e",
-    "gov_cost": "0x43032000",
-    "gov_fading": "0x4303204e",
-    "gov_flen": "0x43032048",
-    "gov_load": "0x43032072",
-    "gov_peak": "0x43032018",
-    "gov_period": "0x4303206a",
-    "gov_pressure": "0x4303205a",
-    "gov_quiet": "0x43032054",
-    "gov_ret_audio": "0x4303207a",
-    "gov_slow": "0x43032066",
-    "gov_st": "0x4303203c",
-    "gov_stolen": "0x43032042",
-    "gov_t0_audio": "0x43032076",
-    "voice_after": "0x4303109a",
-    "voice_gate": "0x43031000"
-   },
-   "device": "Model:Cycles",
-   "os": "1.13",
-   "section": 3,
-   "conflicts": [
-    "macro",
-    "macro-tg",
-    "model-tg",
-    "model-tg-st",
-    "sdvintage-7th",
-    "sdvintage-exact",
-    "sdvintage-snare",
-    "syntakt-bits",
-    "syntakt-bits-macro",
-    "syntakt-bits-swarm",
-    "syntakt-bits-swarm-macro",
-    "syntakt-cp",
-    "syntakt-cp-bits",
-    "syntakt-cp-bits-macro",
-    "syntakt-cp-bits-swarm",
-    "syntakt-cp-bits-swarm-macro",
-    "syntakt-cp-swarm",
-    "syntakt-cp-swarm-macro",
-    "syntakt-cp-toy",
-    "syntakt-cp-toy-bits",
-    "syntakt-cp-toy-bits-macro",
-    "syntakt-cp-toy-bits-swarm",
-    "syntakt-cp-toy-bits-swarm-macro",
-    "syntakt-cp-toy-macro",
-    "syntakt-cp-toy-swarm",
-    "syntakt-cp-toy-swarm-macro",
-    "syntakt-meter",
-    "syntakt-sd",
-    "syntakt-sd-bits",
-    "syntakt-sd-bits-macro",
-    "syntakt-sd-bits-swarm",
-    "syntakt-sd-bits-swarm-macro",
-    "syntakt-sd-cp",
-    "syntakt-sd-cp-bits",
-    "syntakt-sd-cp-bits-macro",
-    "syntakt-sd-cp-bits-swarm",
-    "syntakt-sd-cp-bits-swarm-macro",
-    "syntakt-sd-cp-macro",
-    "syntakt-sd-cp-swarm",
-    "syntakt-sd-cp-swarm-macro",
-    "syntakt-sd-cp-toy",
-    "syntakt-sd-cp-toy-bits",
-    "syntakt-sd-cp-toy-bits-macro",
-    "syntakt-sd-cp-toy-bits-swarm",
-    "syntakt-sd-cp-toy-bits-swarm-macro",
-    "syntakt-sd-cp-toy-macro",
-    "syntakt-sd-cp-toy-swarm",
-    "syntakt-sd-cp-toy-swarm-macro",
-    "syntakt-sd-macro",
-    "syntakt-sd-swarm",
-    "syntakt-sd-swarm-macro",
-    "syntakt-sd-toy",
-    "syntakt-sd-toy-bits",
-    "syntakt-sd-toy-bits-macro",
-    "syntakt-sd-toy-bits-swarm",
-    "syntakt-sd-toy-bits-swarm-macro",
-    "syntakt-sd-toy-macro",
-    "syntakt-sd-toy-swarm",
-    "syntakt-sd-toy-swarm-macro",
-    "syntakt-swarm",
-    "syntakt-swarm-macro",
-    "syntakt-tg-bits",
-    "syntakt-tg-bits-macro",
-    "syntakt-tg-bits-swarm",
-    "syntakt-tg-bits-swarm-macro",
-    "syntakt-tg-cp",
-    "syntakt-tg-cp-bits",
-    "syntakt-tg-cp-bits-macro",
-    "syntakt-tg-cp-bits-swarm",
-    "syntakt-tg-cp-bits-swarm-macro",
-    "syntakt-tg-cp-macro",
-    "syntakt-tg-cp-swarm",
-    "syntakt-tg-cp-swarm-macro",
-    "syntakt-tg-cp-toy",
-    "syntakt-tg-cp-toy-bits",
-    "syntakt-tg-cp-toy-bits-macro",
-    "syntakt-tg-cp-toy-bits-swarm",
-    "syntakt-tg-cp-toy-bits-swarm-macro",
-    "syntakt-tg-cp-toy-macro",
-    "syntakt-tg-cp-toy-swarm",
-    "syntakt-tg-cp-toy-swarm-macro",
-    "syntakt-tg-meter",
-    "syntakt-tg-profile",
-    "syntakt-tg-sd",
-    "syntakt-tg-sd-bits",
-    "syntakt-tg-sd-bits-macro",
-    "syntakt-tg-sd-bits-swarm",
-    "syntakt-tg-sd-bits-swarm-macro",
-    "syntakt-tg-sd-cp",
-    "syntakt-tg-sd-cp-bits",
-    "syntakt-tg-sd-cp-bits-macro",
-    "syntakt-tg-sd-cp-bits-swarm",
-    "syntakt-tg-sd-cp-bits-swarm-macro",
-    "syntakt-tg-sd-cp-macro",
-    "syntakt-tg-sd-cp-swarm",
-    "syntakt-tg-sd-cp-swarm-macro",
-    "syntakt-tg-sd-cp-toy",
-    "syntakt-tg-sd-cp-toy-bits",
-    "syntakt-tg-sd-cp-toy-bits-macro",
-    "syntakt-tg-sd-cp-toy-bits-swarm",
-    "syntakt-tg-sd-cp-toy-bits-swarm-macro",
-    "syntakt-tg-sd-cp-toy-macro",
-    "syntakt-tg-sd-cp-toy-swarm",
-    "syntakt-tg-sd-cp-toy-swarm-macro",
-    "syntakt-tg-sd-macro",
-    "syntakt-tg-sd-swarm",
-    "syntakt-tg-sd-swarm-macro",
-    "syntakt-tg-sd-toy",
-    "syntakt-tg-sd-toy-bits",
-    "syntakt-tg-sd-toy-bits-macro",
-    "syntakt-tg-sd-toy-bits-swarm",
-    "syntakt-tg-sd-toy-bits-swarm-macro",
-    "syntakt-tg-sd-toy-macro",
-    "syntakt-tg-sd-toy-swarm",
-    "syntakt-tg-sd-toy-swarm-macro",
-    "syntakt-tg-swarm",
-    "syntakt-tg-swarm-macro",
-    "syntakt-tg-toy",
-    "syntakt-tg-toy-bits",
-    "syntakt-tg-toy-bits-macro",
-    "syntakt-tg-toy-bits-swarm",
-    "syntakt-tg-toy-bits-swarm-macro",
-    "syntakt-tg-toy-macro",
-    "syntakt-tg-toy-swarm",
-    "syntakt-tg-toy-swarm-macro",
-    "syntakt-toy",
-    "syntakt-toy-bits",
-    "syntakt-toy-bits-macro",
-    "syntakt-toy-bits-swarm",
-    "syntakt-toy-bits-swarm-macro",
-    "syntakt-toy-macro",
-    "syntakt-toy-swarm",
-    "syntakt-toy-swarm-macro",
-    "syntakt-vintage"
-   ],
-   "writes": {
-    "$shared": 7
-   },
-   "append": {
-    "at": "0x401aa140",
-    "dest": "0x43000000",
-    "size": 471792,
-    "syntakt": {
-     "os": {
-      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
-      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
-     },
-     "section": 7,
-     "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
-    },
-    "parts": [
-     {
-      "dest": "0x43000000",
-      "syntakt": [
-       "0x40002544",
-       "0x40002686"
-      ]
-     },
-     {
-      "dest": "0x43000142",
-      "syntakt": [
-       "0x4000290e",
-       "0x40002a62"
-      ]
-     },
-     {
-      "dest": "0x43000296",
-      "syntakt": [
-       "0x400035de",
-       "0x40003732"
-      ]
-     },
-     {
-      "dest": "0x430003ec",
-      "syntakt": [
-       "0x40003958",
-       "0x40003aac"
-      ]
-     },
-     {
-      "dest": "0x43000542",
-      "syntakt": [
-       "0x40003c0e",
-       "0x40004324"
-      ]
-     },
-     {
-      "dest": "0x43000c5a",
-      "syntakt": [
-       "0x400044e2",
-       "0x40004534"
-      ]
-     },
-     {
-      "dest": "0x43000cac",
-      "syntakt": [
-       "0x400045a0",
-       "0x40004608"
-      ]
-     },
-     {
-      "dest": "0x43000d14",
-      "syntakt": [
-       "0x40004674",
-       "0x400046dc"
-      ]
-     },
-     {
-      "dest": "0x43000d7e",
-      "syntakt": [
-       "0x400047ea",
-       "0x400048c6"
-      ]
-     },
-     {
-      "dest": "0x43000e5c",
-      "syntakt": [
-       "0x400049f4",
-       "0x40004a6a"
-      ]
-     },
-     {
-      "dest": "0x43000ed2",
-      "syntakt": [
-       "0x40004cd6",
-       "0x40004e14"
-      ]
-     },
-     {
-      "dest": "0x43001010",
-      "syntakt": [
-       "0x40004e6c",
-       "0x40004ee6"
-      ]
-     },
-     {
-      "dest": "0x4300108c",
-      "syntakt": [
-       "0x40004f74",
-       "0x400050a6"
-      ]
-     },
-     {
-      "dest": "0x430011c0",
-      "syntakt": [
-       "0x400052f8",
-       "0x40005624"
-      ]
-     },
-     {
-      "dest": "0x430014ee",
-      "syntakt": [
-       "0x4000569a",
-       "0x40005866"
-      ]
-     },
-     {
-      "dest": "0x430016bc",
-      "syntakt": [
-       "0x400058e8",
-       "0x40005964"
-      ]
-     },
-     {
-      "dest": "0x43001738",
-      "syntakt": [
-       "0x40008074",
-       "0x40008e0c"
-      ]
-     },
-     {
-      "dest": "0x430024d0",
-      "syntakt": [
-       "0x400596e0",
-       "0x40059f08"
-      ]
-     },
-     {
-      "dest": "0x43002cf8",
-      "syntakt": [
-       "0x40056654",
-       "0x40056e78"
-      ]
-     },
-     {
-      "dest": "0x43003520",
-      "syntakt": [
-       "0x4004f6e0",
-       "0x4004fde8"
-      ]
-     },
-     {
-      "dest": "0x43003c28",
-      "syntakt": [
-       "0x4004fde8",
-       "0x400504f0"
-      ]
-     },
-     {
-      "dest": "0x43004330",
-      "syntakt": [
-       "0x400504f0",
-       "0x40050bf8"
-      ]
-     },
-     {
-      "dest": "0x43004a38",
-      "syntakt": [
-       "0x40050bf8",
-       "0x40051300"
-      ]
-     },
-     {
-      "dest": "0x43005140",
-      "syntakt": [
-       "0x40051300",
-       "0x40051a08"
-      ]
-     },
-     {
-      "dest": "0x43005858",
-      "syntakt": [
-       "0x40051a08",
-       "0x40052110"
-      ]
-     },
-     {
-      "dest": "0x43007878",
-      "syntakt": [
-       "0x4000e488",
-       "0x40010490"
-      ]
-     },
-     {
-      "dest": "0x43009880",
-      "syntakt": [
-       "0x40014980",
-       "0x40016b90"
-      ]
-     },
-     {
-      "dest": "0x4300ba90",
-      "syntakt": [
-       "0x40028438",
-       "0x4003be38"
-      ]
-     },
-     {
-      "dest": "0x43036000",
-      "syntakt": [
-       "0x4003be38",
-       "0x4003de38"
-      ]
-     },
-     {
-      "dest": "0x43020000",
-      "syntakt": [
-       "0x4004f6e0",
-       "0x40057670"
-      ]
-     },
-     {
-      "dest": "0x43028000",
-      "syntakt": [
-       "0x40057670",
-       "0x4005df10"
-      ]
-     },
-     {
-      "dest": "0x430003ea",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x43000540",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x43000c58",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x43000d7c",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x43000e5a",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x4300108a",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x430011be",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x430014ec",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x430016ba",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x43031000",
-      "hex": {
-       "$shared": 13
-      }
-     },
-     {
-      "dest": "0x43033000",
-      "hex": "724cb081650000200c8000000056650470004e75724c90817205b0816504908160f67233d0814e75202f00046100ffd272644c010800068040a717544e75202f00046100ffbc72644c010800068040a71768487940a715002f2f000c2f004eb9400ddf604fef000c203c40a715004e757405b481650c7407b480650c4ef94005a8fa4ef94005a9284ef94005a91c7206b081660470034e757207b081660470044e754e7520036100ffe62800e588eb8c988048780001487800174878002045f940071da4227940fe32ccd3c42f092f024e924fef00304878000148780022d8b940fe384c487800602f042f024e924fef00144ef9400a268041e8000a2f082f2e001020026a0270007205b2806c0c6100ff7e7205b2806c0270054ef9400a4dde202f00047207b0816700005a7208b0816700005e7206b28064027001724c4c010800068040a715404e75202f00047206b081670000307207b081670000347205b280651041f9401091b4713008007206b28064027001724c4c010800068040a715404e7541f943035c0070196000000e41f943035c60701e600000024a28004c6600005e2f022f0a24482400487940a715d82f0a4eb9400f8f02508f487940a715dc486a00044eb9400f8f02508f41f940a715e043ea000872102f0120187233b0816d087237b2806d02d08222c053976aea588f70011540004c204a245f241f20084e7545f940070c4e47f940070efc42852805720b7007b8806d04988072042004e788908406800000005028015884487800012f042f002f0159802f002f02b68566044e9360024e924fef001852857008b08566bc4ef9400a26f2202f0024226a00687207b280640470004e757206b0816d0643f9430338604e75202f00040c800000004c650c0c800000004f620470064e750c8000000051650c0c8000000054620470074e750c8000000056650270002200e789ed88908141f943034000203008004e757006b085650000340c820000004c650e0c820000004f62067a06600000180c8200000051650e0c820000005462067a07600000024ef94005a3844ef94005a34623df4303207a2239fc07000c23c1430320764eb94005979e2f004eb94303118a201f2f394303207a4e75b0846500005a2f012f04201580932f002f024eb9430310004fef000c221f4a80670e2043701f429853806afa60000030204622704c002f0a2f0e2f014e912f0e2f0341f94303384022704c004e914fef00142f032f024eb94303109a508f4ef9400a7e24"
-     },
-     {
-      "dest": "0x43033800",
-      "hex": "401300d8401300dd401300e3401300e940129960401300ee430338884303388e400aa08c400ab3b0400aa49c400aa998400aa7b8400aae884303134043042000400aa3c4400ab6e8400aa712400aacc2400aa930400ab24c430315284304237a000000010000000200000003000000040000000500000006000000070000000800010203040506074350567467004d4143524f00426f6479204368617200424f44590042616c616e63650042414c0053706163696e67204372756e6368005350435200426f647920456e76656c6f70650042454e560054696d6272650054494d42004d6f64656c004d4f444c00436f6c6f7200434f4c5200456e762054696d62726500454e565400"
-     },
-     {
-      "dest": "0x43034000",
-      "cycles": [
-       "0x4010dce0",
-       "0x4010ed80"
-      ]
-     },
-     {
-      "dest": "0x430350a0",
-      "hex": "000000060000000b0000000000007f0000001800000000000010ffffffffffff000000000000060000000028430338944012996f4303389e000000060000000c0000000000007f0000001900000000000011ffffffffffff000000000000060000000032430338a34012996f430338ab000000060000000d0000000000007f0000002e00000000000012ffffffffffff00000000000006000000003c430338af4012996f430338be000000060000000e0000000000007f0000002500000000000013ffffffffffff000000000000060000000046430338c34012996f430338d100000007000000120000000000007f0000002000000000000050ffff0000009a00000000000006000000001e401298784012988240129886000000060000000b0000000000007f0000004000000000000010ffffffffffff000000000000060000000028430338d64012996f430338dd000000060000000c0000000000002e0000000000000000000011ffffffffffff000000000000060000000032430338e24012996f430338e8000000060000000d0000000000007f0000004000000000000012ffffffffffff00000000000006000000003c430338ed4012996f430338f3000000060000000e0000000000007f0000000000000000000013ffffffffffff000000000000060000000046430338f84012996f4303390300000007000000120000000000007f0000003200000000000050ffff0000009a00000000000006000000001e401298784012988240129886"
-     },
-     {
-      "dest": "0x43032c00",
-      "hex": "4fefffc048d73cfc2a49e08a76000c84000000dc650c26040483000000d14c0238000c85000000ee651220050480000000e34c020800b083630226007e404aad005a67027e107c080c85000000f565027c0249d547ed0f18700074ff4a35084e66144a350842671a222d0f0892b30c007820b284642422340c009681621c6000007e79b50854b887641079f50a30988698866b064eb94303123e2f820c2852807206b08166b47a0274fe72ff93c9700028370c28b882650c661479f50a30b3c4640c6006240479f50a302244220052807806b08466da4a816b241b86184e1b861848202d0f0827801c0070ff2f801c2820341c00528096806304538566aa4cd73cfc4fef00404e75"
-     },
-     {
-      "dest": "0x43042000",
-      "hex": {
-       "$shared": 8
-      }
-     },
-     {
-      "dest": "0x4303f900",
-      "hex": "41f980001c5c43f943038000203c0000161622d8538066fa41f98000cac0203c0000080822d8538066fa41f94300000043f980001c5c203c0000161622d8538066fa43f98000cac0203c0000080822d8538066fa4e75"
-     }
-    ],
-    "reloc": {
-     "$shared": 9
-    },
-    "compress": "aplib"
-   },
-   "symbols": {
-    "macro_update": "0x43042000",
-    "macro_render": "0x4304237a",
-    "braids_render": "0x43042f90"
-   }
-  },
-  {
-   "id": "syntakt-tg-cp-macro",
-   "order": 31,
-   "name": "Model-TG + Vrais moteurs du Syntakt (CPVtg) et machine MACRO (Braids, Émilie Gillet, MIT)",
-   "description": [
-    "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine.",
-    "Moteurs du Syntakt (OS 1.42 ou 1.41, extraits AU BUILD de TON Syntakt_OS1.42.syx) et machine MACRO (notes/43),",
-    "ensemble (notes/50) : CPVtg = CP VINTAGE (machine 8), MACRO (machine 9).",
-    "Passerelle des moteurs reprise telle quelle de syntakt-tg-cp ; MACRO compilé comme 25-macro.json",
-    "(pichenettes/eurorack 08460a6, licence MIT : LICENSE-Braids). Charge utile rangée compressée",
-    "(aPLib), décompressée au démarrage ; tables d'ondes de CHORD reprises en SRAM. Le régulateur de charge des",
-    "moteurs vaut aussi pour MACRO. Généré par tools/gen_macro_syntakt.py. Aucun octet Elektron dans ce fichier.",
-    "Régulateur de charge en assembleur (tools/gov_asm.py, notes/36) : pics isolés ignorés, voix la moins audible dans le mix."
-   ],
-   "gov": {
-    "audio_end": "0x8000d1c8",
-    "gov_age": "0x4673203a",
-    "gov_avg": "0x46732078",
-    "gov_cost": "0x4673200a",
-    "gov_fading": "0x46732058",
-    "gov_flen": "0x46732052",
-    "gov_free": "0x46732004",
-    "gov_load": "0x4673207c",
-    "gov_peak": "0x46732022",
-    "gov_period": "0x46732074",
-    "gov_pressure": "0x46732064",
-    "gov_quiet": "0x4673205e",
-    "gov_ran": "0x46732000",
-    "gov_ret_audio": "0x46732084",
-    "gov_slow": "0x46732070",
-    "gov_st": "0x46732046",
-    "gov_stolen": "0x4673204c",
-    "gov_t0_audio": "0x46732080",
-    "voice_after": "0x8000d38c",
-    "voice_gate": "0x8000d4c4"
-   },
-   "device": "Model:Cycles",
-   "os": "1.13",
-   "section": 3,
-   "requires": [
-    "model-tg-st"
-   ],
-   "conflicts": [
-    "macro",
-    "macro-tg",
-    "model-tg",
-    "sdvintage-7th",
-    "sdvintage-exact",
-    "sdvintage-snare",
-    "syntakt-bits",
-    "syntakt-bits-macro",
-    "syntakt-bits-swarm",
-    "syntakt-bits-swarm-macro",
-    "syntakt-cp",
-    "syntakt-cp-bits",
-    "syntakt-cp-bits-macro",
-    "syntakt-cp-bits-swarm",
-    "syntakt-cp-bits-swarm-macro",
-    "syntakt-cp-macro",
-    "syntakt-cp-swarm",
-    "syntakt-cp-swarm-macro",
-    "syntakt-cp-toy",
-    "syntakt-cp-toy-bits",
-    "syntakt-cp-toy-bits-macro",
-    "syntakt-cp-toy-bits-swarm",
-    "syntakt-cp-toy-bits-swarm-macro",
-    "syntakt-cp-toy-macro",
-    "syntakt-cp-toy-swarm",
-    "syntakt-cp-toy-swarm-macro",
-    "syntakt-meter",
-    "syntakt-sd",
-    "syntakt-sd-bits",
-    "syntakt-sd-bits-macro",
-    "syntakt-sd-bits-swarm",
-    "syntakt-sd-bits-swarm-macro",
-    "syntakt-sd-cp",
-    "syntakt-sd-cp-bits",
-    "syntakt-sd-cp-bits-macro",
-    "syntakt-sd-cp-bits-swarm",
-    "syntakt-sd-cp-bits-swarm-macro",
-    "syntakt-sd-cp-macro",
-    "syntakt-sd-cp-swarm",
-    "syntakt-sd-cp-swarm-macro",
-    "syntakt-sd-cp-toy",
-    "syntakt-sd-cp-toy-bits",
-    "syntakt-sd-cp-toy-bits-macro",
-    "syntakt-sd-cp-toy-bits-swarm",
-    "syntakt-sd-cp-toy-bits-swarm-macro",
-    "syntakt-sd-cp-toy-macro",
-    "syntakt-sd-cp-toy-swarm",
-    "syntakt-sd-cp-toy-swarm-macro",
-    "syntakt-sd-macro",
-    "syntakt-sd-swarm",
-    "syntakt-sd-swarm-macro",
-    "syntakt-sd-toy",
-    "syntakt-sd-toy-bits",
-    "syntakt-sd-toy-bits-macro",
-    "syntakt-sd-toy-bits-swarm",
-    "syntakt-sd-toy-bits-swarm-macro",
-    "syntakt-sd-toy-macro",
-    "syntakt-sd-toy-swarm",
-    "syntakt-sd-toy-swarm-macro",
-    "syntakt-swarm",
-    "syntakt-swarm-macro",
-    "syntakt-tg-bits",
-    "syntakt-tg-bits-macro",
-    "syntakt-tg-bits-swarm",
-    "syntakt-tg-bits-swarm-macro",
-    "syntakt-tg-cp",
-    "syntakt-tg-cp-bits",
-    "syntakt-tg-cp-bits-macro",
-    "syntakt-tg-cp-bits-swarm",
-    "syntakt-tg-cp-bits-swarm-macro",
-    "syntakt-tg-cp-swarm",
-    "syntakt-tg-cp-swarm-macro",
-    "syntakt-tg-cp-toy",
-    "syntakt-tg-cp-toy-bits",
-    "syntakt-tg-cp-toy-bits-macro",
-    "syntakt-tg-cp-toy-bits-swarm",
-    "syntakt-tg-cp-toy-bits-swarm-macro",
-    "syntakt-tg-cp-toy-macro",
-    "syntakt-tg-cp-toy-swarm",
-    "syntakt-tg-cp-toy-swarm-macro",
-    "syntakt-tg-meter",
-    "syntakt-tg-profile",
-    "syntakt-tg-sd",
-    "syntakt-tg-sd-bits",
-    "syntakt-tg-sd-bits-macro",
-    "syntakt-tg-sd-bits-swarm",
-    "syntakt-tg-sd-bits-swarm-macro",
-    "syntakt-tg-sd-cp",
-    "syntakt-tg-sd-cp-bits",
-    "syntakt-tg-sd-cp-bits-macro",
-    "syntakt-tg-sd-cp-bits-swarm",
-    "syntakt-tg-sd-cp-bits-swarm-macro",
-    "syntakt-tg-sd-cp-macro",
-    "syntakt-tg-sd-cp-swarm",
-    "syntakt-tg-sd-cp-swarm-macro",
-    "syntakt-tg-sd-cp-toy",
-    "syntakt-tg-sd-cp-toy-bits",
-    "syntakt-tg-sd-cp-toy-bits-macro",
-    "syntakt-tg-sd-cp-toy-bits-swarm",
-    "syntakt-tg-sd-cp-toy-bits-swarm-macro",
-    "syntakt-tg-sd-cp-toy-macro",
-    "syntakt-tg-sd-cp-toy-swarm",
-    "syntakt-tg-sd-cp-toy-swarm-macro",
-    "syntakt-tg-sd-macro",
-    "syntakt-tg-sd-swarm",
-    "syntakt-tg-sd-swarm-macro",
-    "syntakt-tg-sd-toy",
-    "syntakt-tg-sd-toy-bits",
-    "syntakt-tg-sd-toy-bits-macro",
-    "syntakt-tg-sd-toy-bits-swarm",
-    "syntakt-tg-sd-toy-bits-swarm-macro",
-    "syntakt-tg-sd-toy-macro",
-    "syntakt-tg-sd-toy-swarm",
-    "syntakt-tg-sd-toy-swarm-macro",
-    "syntakt-tg-swarm",
-    "syntakt-tg-swarm-macro",
-    "syntakt-tg-toy",
-    "syntakt-tg-toy-bits",
-    "syntakt-tg-toy-bits-macro",
-    "syntakt-tg-toy-bits-swarm",
-    "syntakt-tg-toy-bits-swarm-macro",
-    "syntakt-tg-toy-macro",
-    "syntakt-tg-toy-swarm",
-    "syntakt-tg-toy-swarm-macro",
-    "syntakt-toy",
-    "syntakt-toy-bits",
-    "syntakt-toy-bits-macro",
-    "syntakt-toy-bits-swarm",
-    "syntakt-toy-bits-swarm-macro",
-    "syntakt-toy-macro",
-    "syntakt-toy-swarm",
-    "syntakt-toy-swarm-macro",
-    "syntakt-vintage"
-   ],
-   "writes": {
-    "$shared": 10
-   },
-   "append": {
-    "at": "0x401bf8c0",
-    "dest": "0x46700000",
-    "size": 471792,
-    "syntakt": {
-     "os": {
-      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
-      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
-     },
-     "section": 7,
-     "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
-    },
-    "parts": [
-     {
-      "dest": "0x46700000",
-      "syntakt": [
-       "0x40002544",
-       "0x40002686"
-      ]
-     },
-     {
-      "dest": "0x46700142",
-      "syntakt": [
-       "0x4000290e",
-       "0x40002a62"
-      ]
-     },
-     {
-      "dest": "0x46700296",
-      "syntakt": [
-       "0x400035de",
-       "0x40003732"
-      ]
-     },
-     {
-      "dest": "0x467003ec",
-      "syntakt": [
-       "0x40003958",
-       "0x40003aac"
-      ]
-     },
-     {
-      "dest": "0x46700542",
-      "syntakt": [
-       "0x40003c0e",
-       "0x40004324"
-      ]
-     },
-     {
-      "dest": "0x46700c5a",
-      "syntakt": [
-       "0x400044e2",
-       "0x40004534"
-      ]
-     },
-     {
-      "dest": "0x46700cac",
-      "syntakt": [
-       "0x400045a0",
-       "0x40004608"
-      ]
-     },
-     {
-      "dest": "0x46700d14",
-      "syntakt": [
-       "0x40004674",
-       "0x400046dc"
-      ]
-     },
-     {
-      "dest": "0x46700d7e",
-      "syntakt": [
-       "0x400047ea",
-       "0x400048c6"
-      ]
-     },
-     {
-      "dest": "0x46700e5c",
-      "syntakt": [
-       "0x400049f4",
-       "0x40004a6a"
-      ]
-     },
-     {
-      "dest": "0x46700ed2",
-      "syntakt": [
-       "0x40004cd6",
-       "0x40004e14"
-      ]
-     },
-     {
-      "dest": "0x46701010",
-      "syntakt": [
-       "0x40004e6c",
-       "0x40004ee6"
-      ]
-     },
-     {
-      "dest": "0x4670108c",
-      "syntakt": [
-       "0x40004f74",
-       "0x400050a6"
-      ]
-     },
-     {
-      "dest": "0x467011c0",
-      "syntakt": [
-       "0x400052f8",
-       "0x40005624"
-      ]
-     },
-     {
-      "dest": "0x467014ee",
-      "syntakt": [
-       "0x4000569a",
-       "0x40005866"
-      ]
-     },
-     {
-      "dest": "0x467016bc",
-      "syntakt": [
-       "0x400058e8",
-       "0x40005964"
-      ]
-     },
-     {
-      "dest": "0x46701738",
-      "syntakt": [
-       "0x40008074",
-       "0x40008e0c"
-      ]
-     },
-     {
-      "dest": "0x467024d0",
-      "syntakt": [
-       "0x400596e0",
-       "0x40059f08"
-      ]
-     },
-     {
-      "dest": "0x46702cf8",
-      "syntakt": [
-       "0x40056654",
-       "0x40056e78"
-      ]
-     },
-     {
-      "dest": "0x46703520",
-      "syntakt": [
-       "0x4004f6e0",
-       "0x4004fde8"
-      ]
-     },
-     {
-      "dest": "0x46703c28",
-      "syntakt": [
-       "0x4004fde8",
-       "0x400504f0"
-      ]
-     },
-     {
-      "dest": "0x46704330",
-      "syntakt": [
-       "0x400504f0",
-       "0x40050bf8"
-      ]
-     },
-     {
-      "dest": "0x46704a38",
-      "syntakt": [
-       "0x40050bf8",
-       "0x40051300"
-      ]
-     },
-     {
-      "dest": "0x46705140",
-      "syntakt": [
-       "0x40051300",
-       "0x40051a08"
-      ]
-     },
-     {
-      "dest": "0x46705858",
-      "syntakt": [
-       "0x40051a08",
-       "0x40052110"
-      ]
-     },
-     {
-      "dest": "0x46707878",
-      "syntakt": [
-       "0x4000e488",
-       "0x40010490"
-      ]
-     },
-     {
-      "dest": "0x46709880",
-      "syntakt": [
-       "0x40014980",
-       "0x40016b90"
-      ]
-     },
-     {
-      "dest": "0x4670ba90",
-      "syntakt": [
-       "0x40028438",
-       "0x4003be38"
-      ]
-     },
-     {
-      "dest": "0x46736000",
-      "syntakt": [
-       "0x4003be38",
-       "0x4003de38"
-      ]
-     },
-     {
-      "dest": "0x46720000",
-      "syntakt": [
-       "0x4004f6e0",
-       "0x40057670"
-      ]
-     },
-     {
-      "dest": "0x46728000",
-      "syntakt": [
-       "0x40057670",
-       "0x4005df10"
-      ]
-     },
-     {
-      "dest": "0x467003ea",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x46700540",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x46700c58",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x46700d7c",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x46700e5a",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x4670108a",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x467011be",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x467014ec",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x467016ba",
-      "hex": "4e71"
-     },
-     {
-      "dest": "0x46705f60",
-      "hex": {
-       "$shared": 5
-      }
-     },
-     {
-      "dest": "0x46731000",
-      "hex": "4fefffdc48d77c1c2a6f002c240d0682bdcf77d82202263c0000031c4c431001286f00302f6f0028002041f94673208c203c534456312441b0ad002c660a71b018005f804a80671c70077201263c534456312b43002c1180a80041f9467320921181a8002679467320884a8b666c4aad00386700016a263c46728a60283c467200007005b08b6d00013241f9467312802c70bc004eb980001c5c2d43056c2f0e4eb980002470528b068400000708068300000030588f7008b08b66c6363c0101223c01010101700123c14673209223c04673208833c3467320960c82000012a7620000de41f9467312802670ac00276d00340034222d003827410038276d003c003c4bf9467320921035a8004a81670000c84a0067202f0b76014eb980002470420127430038588f700727400004700726801b81a800260aed8b700742412443d5fc4673209815400022356c00140024356c00160026356c00180028356c001a002a356c001c002c356c001e002e302c0020354000307140356c0024003235410034274003ec2f0b4eb980001c762f4a00342f4b0030716c00224cef7c1c00040680ffffc000e788d0af00242f40002c4fef00284ef9800038a02c446000fed6200a223c000007084c0108002640d7fc467200006000ff184a006700ff5a4cd77c1c4fef00244e754feffff448d7040c202f00140680bdcf77d82200243c0000031c4c421001206f00100c80000012a7624643f94673128024711c004ab946732088671c43f9467320924a311800661043f94673208c71b118005f804a80672c20080680000000804298b08866fa4cd7040c4fef000c4e75203c000007084c0108002440d5fc4672000060b02f0a2f084eb980003ca8256a00340038508f60ce8000517c8000588480005f8c8000669480006d9c8000cac0"
-     },
-     {
-      "dest": "0x46733000",
-      "hex": "724cb081650000200c8000000056650470004e75724c90817205b0816504908160f67233d0814e75202f00046100ffd272644c010800068040a717544e75202f00046100ffbc72644c010800068040a71768487940a715002f2f000c2f004eb9400ddf604fef000c203c40a715004e757405b48165127406b48067127408b480650c4ef94005a8fa4ef94005a9284ef94005a91c7207b081660470034e757208b081660470044e754e7520036100ffe62800e588eb8c988048780001487800174878002045f940071da4227940fe32ccd3c42f092f024e924fef00304878000148780022d8b940fe384c487800602f042f024e924fef00144ef9400a268041e8000a2f082f2e001020026a0270007205b2806c0c6100ff7e7205b2806c0270054ef9400a4dde202f00047208b0816700005e7209b081670000667209b280640670012f4000042f082f092f2f000c4eb9401ae84e588f6000009c202f00047207b0816700002a7208b081670000327208b280640670002f4000042f082f092f2f000c4eb9401b278a588f600000682f082f0941f946735c007019600000122f082f0941f946735c60701e600000022f082f0072004eb9401b2480201f205f610000624ab9401b244e672a204043f946735f00721222d853816afa41f946735f00720d2141000c720c21410018720b2141001c200841f94010dd0c43f94673402c724b229023680004000423680008000841e8003843e9003853816ae6225f205f4e754a28004c6600005e2f022f0a24482400487940a715d82f0a4eb9400f8f02508f487940a715dc486a00044eb9400f8f02508f41f940a715e043ea000872102f0120187233b0816d087237b2806d02d08222c053976aea588f70011540004c204a245f241f20084e7545f940070c4e47f940070efc42852805720b7007b8806d04988072042004e788908406800000005028015884487800012f042f002f0159802f002f02b68566044e9360024e924fef001852857009b08566bc4ef9400a26f2202f0024226a00687208b280640470004e757207b0816d0643f94673386c4e75202f00040c800000004c650c0c800000004f620470074e750c8000000051650c0c8000000054620470084e750c8000000056650270002200e789ed88908141f946734000203008004e757006b085650000340c820000004c650e0c820000004f62067a07600000180c8200000051650e0c820000005462067a08600000024ef94005a3844ef94005a3460c8200000007650e0c820000000862064ef94005a6dc4ef9401ae8fc7006bc806602528620065286eb884ef94005a3200c82000000066712eb8a41f946735800203028004ef94005a6fc4ef9401ae93623df467320842239fc07000c23c1467320804eb94005979e2f004eb98000d1c8201f2f39467320844e75b084650000842f012f04201580932f002f024eb98000d4c44fef000c221f4a80670e2043701f429853806afa6000005a7007b88064064ef9401aca582039fc07800c23c0401b8114204622704c002f0a2f0e2f014e912f0e2f0341f94673384822704c004e914eb9401b3d484fef00142039fc07800c90b9401b81146b0a41f9401b8118d1b02c004ef9400a7e242f032f024eb98000d5c6508f2695224342804ef9400a7e2a"
-     },
-     {
-      "dest": "0x46733800",
-      "hex": "401300d8401300dd401300e3401300e940129960401300ee401b10584673389c467338a2400aa08c400ab3b0400aa49c400aa998400aa7b8400aae88400aa08c4673100046742000400aa3c4400ab6e8400aa712400aacc2400aa930400ab24c400aa3c4467311e84674237a0000000100000002000000030000000400000005000000060000000700000008000000090001020304050607080000004350567467004d4143524f00426f6479204368617200424f44590042616c616e63650042414c0053706163696e67204372756e6368005350435200426f647920456e76656c6f70650042454e560054696d6272650054494d42004d6f64656c004d4f444c00436f6c6f7200434f4c5200456e762054696d62726500454e565400"
-     },
-     {
-      "dest": "0x46734000",
-      "cycles": [
-       "0x4010dce0",
-       "0x4010ed80"
-      ]
-     },
-     {
-      "dest": "0x467350a0",
-      "hex": "000000060000000b0000000000007f0000001800000000000010ffffffffffff000000000000060000000028467338a84012996f467338b2000000060000000c0000000000007f0000001900000000000011ffffffffffff000000000000060000000032467338b74012996f467338bf000000060000000d0000000000007f0000002e00000000000012ffffffffffff00000000000006000000003c467338c34012996f467338d2000000060000000e0000000000007f0000002500000000000013ffffffffffff000000000000060000000046467338d74012996f467338e500000007000000120000000000007f0000002000000000000050ffff0000009a00000000000006000000001e401298784012988240129886000000060000000b0000000000007f0000004000000000000010ffffffffffff000000000000060000000028467338ea4012996f467338f1000000060000000c0000000000002e0000000000000000000011ffffffffffff000000000000060000000032467338f64012996f467338fc000000060000000d0000000000007f0000004000000000000012ffffffffffff00000000000006000000003c467339014012996f46733907000000060000000e0000000000007f0000000000000000000013ffffffffffff0000000000000600000000464673390c4012996f4673391700000007000000120000000000007f0000003200000000000050ffff0000009a00000000000006000000001e401298784012988240129886"
-     },
-     {
-      "dest": "0x46742000",
-      "hex": {
-       "$shared": 11
-      }
-     },
-     {
-      "dest": "0x4673f900",
-      "hex": "41f980001c5c43f946738000203c0000161622d8538066fa41f98000cac0203c0000080822d8538066fa41f94670000043f980001c5c203c0000161622d8538066fa43f98000cac0203c0000080822d8538066fa4e75"
-     }
-    ],
-    "reloc": {
-     "$shared": 12
-    },
-    "compress": "aplib"
-   },
-   "symbols": {
-    "macro_update": "0x46742000",
-    "macro_render": "0x4674237a",
-    "braids_render": "0x46742f90"
-   }
-  },
-  {
-   "id": "syntakt-toy",
-   "order": 24,
-   "name": "Vrais moteurs du Syntakt en machines ajoutées : SYToy (SY TOY)",
-   "description": [
-    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
-    "les 6 d'origine (notes/20) : SYToy = SY TOY (machine 7).",
-    "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
-    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
-    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes.",
-    "Boucle des voix : division des pistes par 2 plus courte (tools/voice_loop.py, notes/36), mêmes valeurs.",
-    "Régulateur de charge en assembleur (tools/gov_asm.py, notes/36) : pics isolés ignorés, voix la moins audible dans le mix."
-   ],
-   "gov": {
-    "audio_end": "0x4303118a",
-    "gov_age": "0x43032030",
-    "gov_avg": "0x4303206e",
-    "gov_cost": "0x43032000",
-    "gov_fading": "0x4303204e",
-    "gov_flen": "0x43032048",
-    "gov_load": "0x43032072",
-    "gov_peak": "0x43032018",
-    "gov_period": "0x4303206a",
-    "gov_pressure": "0x4303205a",
-    "gov_quiet": "0x43032054",
-    "gov_ret_audio": "0x4303207a",
-    "gov_slow": "0x43032066",
-    "gov_st": "0x4303203c",
-    "gov_stolen": "0x43032042",
-    "gov_t0_audio": "0x43032076",
-    "voice_after": "0x4303109a",
-    "voice_gate": "0x43031000"
-   },
-   "device": "Model:Cycles",
-   "os": "1.13",
-   "section": 3,
-   "conflicts": [
-    "model-tg",
-    "sdvintage-7th",
-    "sdvintage-exact",
-    "sdvintage-snare",
-    "syntakt-bits",
-    "syntakt-bits-swarm",
-    "syntakt-cp",
-    "syntakt-cp-bits",
-    "syntakt-cp-bits-swarm",
-    "syntakt-cp-swarm",
-    "syntakt-cp-toy",
-    "syntakt-cp-toy-bits",
-    "syntakt-cp-toy-bits-swarm",
-    "syntakt-cp-toy-swarm",
-    "syntakt-meter",
-    "syntakt-sd",
-    "syntakt-sd-bits",
-    "syntakt-sd-bits-swarm",
-    "syntakt-sd-cp",
-    "syntakt-sd-cp-bits",
-    "syntakt-sd-cp-bits-swarm",
-    "syntakt-sd-cp-swarm",
-    "syntakt-sd-cp-toy",
-    "syntakt-sd-cp-toy-bits",
-    "syntakt-sd-cp-toy-bits-swarm",
-    "syntakt-sd-cp-toy-swarm",
-    "syntakt-sd-swarm",
-    "syntakt-sd-toy",
-    "syntakt-sd-toy-bits",
-    "syntakt-sd-toy-bits-swarm",
-    "syntakt-sd-toy-swarm",
-    "syntakt-swarm",
-    "syntakt-toy-bits",
-    "syntakt-toy-bits-swarm",
-    "syntakt-toy-swarm",
-    "syntakt-vintage"
-   ],
-   "writes": {
-    "$shared": 1
+    "$shared": 2
    },
    "append": {
     "at": "0x401aa140",
@@ -6454,6 +4688,1852 @@ window.MC_TWEAKS = {
      },
      {
       "dest": "0x43033000",
+      "hex": "724cb081650000200c8000000051650470004e75724c90817205b0816504908160f67233d0814e75202f00046100ffd272644c010800068040a717544e75202f00046100ffbc72644c010800068040a71768487940a715002f2f000c2f004eb9400ddf604fef000c203c40a715004e757405b481650c7406b480650c4ef94005a8fa4ef94005a9284ef94005a91c7206b081660470034e754e7520036100fff02800e588eb8c988048780001487800174878002045f940071da4227940fe32ccd3c42f092f024e924fef00304878000148780022d8b940fe384c487800602f042f024e924fef00144ef9400a268041e8000a2f082f2e001020026a0270007205b2806c0c6100ff887205b2806c0270054ef9400a4dde202f00047207b0816700004a7206b28064027001724c4c010800068040a715404e75202f00047206b081670000287205b280651041f9401091b4713008007206b28064027001724c4c010800068040a715404e7541f943035c007019600000024a28004c6600005e2f022f0a24482400487940a715d82f0a4eb9400f8f02508f487940a715dc486a00044eb9400f8f02508f41f940a715e043ea000872102f0120187233b0816d087237b2806d02d08222c053976aea588f70011540004c204a245f241f20084e75202f0024226a00687206b280640470004e757206b0816d0643f9430338544e75202f00040c800000004c650c0c800000004f620470064e750c8000000051650270002200e789ed88908141f943034000203008004e757006b0856500001e0c820000004c650e0c820000004f62067a06600000024ef94005a3844ef94005a34623df4303207a2239fc07000c23c1430320764eb94005979e2f004eb94303118a201f2f394303207a4e75b0846500005a2f012f04201580932f002f024eb9430310004fef000c221f4a80670e2043701f429853806afa60000030204622704c002f0a2f0e2f014e912f0e2f0341f94303383822704c004e914fef00142f032f024eb94303109a508f4ef9400a7e24"
+     },
+     {
+      "dest": "0x43033800",
+      "hex": "401300d8401300dd401300e3401300e940129960401300ee43033878400aa08c400ab3b0400aa49c400aa998400aa7b8400aae8843031340400aa3c4400ab6e8400aa712400aacc2400aa930400ab24c43031528000000010000000200000003000000040000000500000006000000070001020304050600435056746700426f6479204368617200424f44590042616c616e63650042414c0053706163696e67204372756e6368005350435200426f647920456e76656c6f70650042454e5600"
+     },
+     {
+      "dest": "0x43034000",
+      "cycles": [
+       "0x4010dce0",
+       "0x4010ed80"
+      ]
+     },
+     {
+      "dest": "0x430350a0",
+      "hex": "000000060000000b0000000000007f0000001800000000000010ffffffffffff0000000000000600000000284303387e4012996f43033888000000060000000c0000000000007f0000001900000000000011ffffffffffff0000000000000600000000324303388d4012996f43033895000000060000000d0000000000007f0000002e00000000000012ffffffffffff00000000000006000000003c430338994012996f430338a8000000060000000e0000000000007f0000002500000000000013ffffffffffff000000000000060000000046430338ad4012996f430338bb00000007000000120000000000007f0000002000000000000050ffff0000009a00000000000006000000001e401298784012988240129886"
+     },
+     {
+      "dest": "0x43032c00",
+      "hex": "4fefffc048d73cfc2a49e08a76000c84000000dc650c26040483000000d14c0238000c85000000ee651220050480000000e34c020800b083630226007e404aad005a67027e107c080c85000000f565027c0249d547ed0f18700074ff4a35084e66144a350842671a222d0f0892b30c007820b284642422340c009681621c6000007e79b50854b887641079f50a30988698866b064eb94303123e2f820c2852807206b08166b47a0274fe72ff93c9700028370c28b882650c661479f50a30b3c4640c6006240479f50a302244220052807806b08466da4a816b241b86184e1b861848202d0f0827801c0070ff2f801c2820341c00528096806304538566aa4cd73cfc4fef00404e75"
+     }
+    ],
+    "reloc": {
+     "$shared": 4
+    }
+   }
+  },
+  {
+   "id": "syntakt-tg-cp",
+   "order": 31,
+   "name": "Model-TG + Vrais moteurs du Syntakt en machines ajoutées : CPVtg (CP VINTAGE)",
+   "description": [
+    "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine,",
+    "les moteurs du Syntakt suivent : CPVtg = CP VINTAGE (machine 8).",
+    "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py --tg.",
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
+    "Régulateur de charge en assembleur (tools/gov_asm.py, notes/36) : pics isolés ignorés, voix la moins audible dans le mix."
+   ],
+   "gov": {
+    "audio_end": "0x8000d1c8",
+    "gov_age": "0x4673203a",
+    "gov_avg": "0x46732078",
+    "gov_cost": "0x4673200a",
+    "gov_fading": "0x46732058",
+    "gov_flen": "0x46732052",
+    "gov_free": "0x46732004",
+    "gov_load": "0x4673207c",
+    "gov_peak": "0x46732022",
+    "gov_period": "0x46732074",
+    "gov_pressure": "0x46732064",
+    "gov_quiet": "0x4673205e",
+    "gov_ran": "0x46732000",
+    "gov_ret_audio": "0x46732084",
+    "gov_slow": "0x46732070",
+    "gov_st": "0x46732046",
+    "gov_stolen": "0x4673204c",
+    "gov_t0_audio": "0x46732080",
+    "voice_after": "0x8000d38c",
+    "voice_gate": "0x8000d4c4"
+   },
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "requires": [
+    "model-tg-st"
+   ],
+   "conflicts": [
+    "model-tg",
+    "sdvintage-7th",
+    "sdvintage-exact",
+    "sdvintage-snare",
+    "syntakt-bits",
+    "syntakt-bits-swarm",
+    "syntakt-cp",
+    "syntakt-cp-bits",
+    "syntakt-cp-bits-swarm",
+    "syntakt-cp-swarm",
+    "syntakt-cp-toy",
+    "syntakt-cp-toy-bits",
+    "syntakt-cp-toy-bits-swarm",
+    "syntakt-cp-toy-swarm",
+    "syntakt-meter",
+    "syntakt-sd",
+    "syntakt-sd-bits",
+    "syntakt-sd-bits-swarm",
+    "syntakt-sd-cp",
+    "syntakt-sd-cp-bits",
+    "syntakt-sd-cp-bits-swarm",
+    "syntakt-sd-cp-swarm",
+    "syntakt-sd-cp-toy",
+    "syntakt-sd-cp-toy-bits",
+    "syntakt-sd-cp-toy-bits-swarm",
+    "syntakt-sd-cp-toy-swarm",
+    "syntakt-sd-swarm",
+    "syntakt-sd-toy",
+    "syntakt-sd-toy-bits",
+    "syntakt-sd-toy-bits-swarm",
+    "syntakt-sd-toy-swarm",
+    "syntakt-swarm",
+    "syntakt-tg-bits",
+    "syntakt-tg-bits-swarm",
+    "syntakt-tg-cp-bits",
+    "syntakt-tg-cp-bits-swarm",
+    "syntakt-tg-cp-swarm",
+    "syntakt-tg-cp-toy",
+    "syntakt-tg-cp-toy-bits",
+    "syntakt-tg-cp-toy-bits-swarm",
+    "syntakt-tg-cp-toy-swarm",
+    "syntakt-tg-meter",
+    "syntakt-tg-sd",
+    "syntakt-tg-sd-bits",
+    "syntakt-tg-sd-bits-swarm",
+    "syntakt-tg-sd-cp",
+    "syntakt-tg-sd-cp-bits",
+    "syntakt-tg-sd-cp-bits-swarm",
+    "syntakt-tg-sd-cp-swarm",
+    "syntakt-tg-sd-cp-toy",
+    "syntakt-tg-sd-cp-toy-bits",
+    "syntakt-tg-sd-cp-toy-bits-swarm",
+    "syntakt-tg-sd-cp-toy-swarm",
+    "syntakt-tg-sd-swarm",
+    "syntakt-tg-sd-toy",
+    "syntakt-tg-sd-toy-bits",
+    "syntakt-tg-sd-toy-bits-swarm",
+    "syntakt-tg-sd-toy-swarm",
+    "syntakt-tg-swarm",
+    "syntakt-tg-toy",
+    "syntakt-tg-toy-bits",
+    "syntakt-tg-toy-bits-swarm",
+    "syntakt-tg-toy-swarm",
+    "syntakt-toy",
+    "syntakt-toy-bits",
+    "syntakt-toy-bits-swarm",
+    "syntakt-toy-swarm",
+    "syntakt-vintage"
+   ],
+   "writes": {
+    "$shared": 5
+   },
+   "append": {
+    "at": "0x401bf8c0",
+    "dest": "0x46700000",
+    "size": 260352,
+    "syntakt": {
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
+     "section": 7,
+     "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
+    },
+    "parts": [
+     {
+      "dest": "0x46700000",
+      "syntakt": [
+       "0x40002544",
+       "0x40002686"
+      ]
+     },
+     {
+      "dest": "0x46700142",
+      "syntakt": [
+       "0x4000290e",
+       "0x40002a62"
+      ]
+     },
+     {
+      "dest": "0x46700296",
+      "syntakt": [
+       "0x400035de",
+       "0x40003732"
+      ]
+     },
+     {
+      "dest": "0x467003ec",
+      "syntakt": [
+       "0x40003958",
+       "0x40003aac"
+      ]
+     },
+     {
+      "dest": "0x46700542",
+      "syntakt": [
+       "0x40003c0e",
+       "0x40004324"
+      ]
+     },
+     {
+      "dest": "0x46700c5a",
+      "syntakt": [
+       "0x400044e2",
+       "0x40004534"
+      ]
+     },
+     {
+      "dest": "0x46700cac",
+      "syntakt": [
+       "0x400045a0",
+       "0x40004608"
+      ]
+     },
+     {
+      "dest": "0x46700d14",
+      "syntakt": [
+       "0x40004674",
+       "0x400046dc"
+      ]
+     },
+     {
+      "dest": "0x46700d7e",
+      "syntakt": [
+       "0x400047ea",
+       "0x400048c6"
+      ]
+     },
+     {
+      "dest": "0x46700e5c",
+      "syntakt": [
+       "0x400049f4",
+       "0x40004a6a"
+      ]
+     },
+     {
+      "dest": "0x46700ed2",
+      "syntakt": [
+       "0x40004cd6",
+       "0x40004e14"
+      ]
+     },
+     {
+      "dest": "0x46701010",
+      "syntakt": [
+       "0x40004e6c",
+       "0x40004ee6"
+      ]
+     },
+     {
+      "dest": "0x4670108c",
+      "syntakt": [
+       "0x40004f74",
+       "0x400050a6"
+      ]
+     },
+     {
+      "dest": "0x467011c0",
+      "syntakt": [
+       "0x400052f8",
+       "0x40005624"
+      ]
+     },
+     {
+      "dest": "0x467014ee",
+      "syntakt": [
+       "0x4000569a",
+       "0x40005866"
+      ]
+     },
+     {
+      "dest": "0x467016bc",
+      "syntakt": [
+       "0x400058e8",
+       "0x40005964"
+      ]
+     },
+     {
+      "dest": "0x46701738",
+      "syntakt": [
+       "0x40008074",
+       "0x40008e0c"
+      ]
+     },
+     {
+      "dest": "0x467024d0",
+      "syntakt": [
+       "0x400596e0",
+       "0x40059f08"
+      ]
+     },
+     {
+      "dest": "0x46702cf8",
+      "syntakt": [
+       "0x40056654",
+       "0x40056e78"
+      ]
+     },
+     {
+      "dest": "0x46703520",
+      "syntakt": [
+       "0x4004f6e0",
+       "0x4004fde8"
+      ]
+     },
+     {
+      "dest": "0x46703c28",
+      "syntakt": [
+       "0x4004fde8",
+       "0x400504f0"
+      ]
+     },
+     {
+      "dest": "0x46704330",
+      "syntakt": [
+       "0x400504f0",
+       "0x40050bf8"
+      ]
+     },
+     {
+      "dest": "0x46704a38",
+      "syntakt": [
+       "0x40050bf8",
+       "0x40051300"
+      ]
+     },
+     {
+      "dest": "0x46705140",
+      "syntakt": [
+       "0x40051300",
+       "0x40051a08"
+      ]
+     },
+     {
+      "dest": "0x46705858",
+      "syntakt": [
+       "0x40051a08",
+       "0x40052110"
+      ]
+     },
+     {
+      "dest": "0x46707878",
+      "syntakt": [
+       "0x4000e488",
+       "0x40010490"
+      ]
+     },
+     {
+      "dest": "0x46709880",
+      "syntakt": [
+       "0x40014980",
+       "0x40016b90"
+      ]
+     },
+     {
+      "dest": "0x4670ba90",
+      "syntakt": [
+       "0x40028438",
+       "0x4003be38"
+      ]
+     },
+     {
+      "dest": "0x46736000",
+      "syntakt": [
+       "0x4003be38",
+       "0x4003de38"
+      ]
+     },
+     {
+      "dest": "0x46720000",
+      "syntakt": [
+       "0x4004f6e0",
+       "0x40057670"
+      ]
+     },
+     {
+      "dest": "0x46728000",
+      "syntakt": [
+       "0x40057670",
+       "0x4005df10"
+      ]
+     },
+     {
+      "dest": "0x467003ea",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x46700540",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x46700c58",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x46700d7c",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x46700e5a",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x4670108a",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x467011be",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x467014ec",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x467016ba",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x46738000",
+      "cycles": [
+       "0x4019d1ec",
+       "0x401a2a44"
+      ]
+     },
+     {
+      "dest": "0x4673d858",
+      "cycles": [
+       "0x401a7510",
+       "0x401a9530"
+      ]
+     },
+     {
+      "dest": "0x46705f60",
+      "hex": {
+       "$shared": 6
+      }
+     },
+     {
+      "dest": "0x46731000",
+      "hex": "4fefffdc48d77c1c2a6f002c240d0682bdcf77d82202263c0000031c4c431001286f00302f6f0028002041f94673208c203c534456312441b0ad002c660a71b018005f804a80671c70077201263c534456312b43002c1180a80041f9467320921181a8002679467320884a8b666c4aad00386700016a263c46728a60283c467200007005b08b6d00013241f9467312802c70bc004eb980001c5c2d43056c2f0e4eb980002470528b068400000708068300000030588f7008b08b66c6363c0101223c01010101700123c14673209223c04673208833c3467320960c82000012a7620000de41f9467312802670ac00276d00340034222d003827410038276d003c003c4bf9467320921035a8004a81670000c84a0067202f0b76014eb980002470420127430038588f700727400004700726801b81a800260aed8b700742412443d5fc4673209815400022356c00140024356c00160026356c00180028356c001a002a356c001c002c356c001e002e302c0020354000307140356c0024003235410034274003ec2f0b4eb980001c762f4a00342f4b0030716c00224cef7c1c00040680ffffc000e788d0af00242f40002c4fef00284ef9800038a02c446000fed6200a223c000007084c0108002640d7fc467200006000ff184a006700ff5a4cd77c1c4fef00244e754feffff448d7040c202f00140680bdcf77d82200243c0000031c4c421001206f00100c80000012a7624643f94673128024711c004ab946732088671c43f9467320924a311800661043f94673208c71b118005f804a80672c20080680000000804298b08866fa4cd7040c4fef000c4e75203c000007084c0108002440d5fc4672000060b02f0a2f084eb980003ca8256a00340038508f60ce8000517c8000588480005f8c8000669480006d9c8000cac0"
+     },
+     {
+      "dest": "0x46733000",
+      "hex": "724cb081650000200c8000000051650470004e75724c90817205b0816504908160f67233d0814e75202f00046100ffd272644c010800068040a717544e75202f00046100ffbc72644c010800068040a71768487940a715002f2f000c2f004eb9400ddf604fef000c203c40a715004e757405b48165127406b48067127407b480650c4ef94005a8fa4ef94005a9284ef94005a91c7207b081660470034e754e7520036100fff02800e588eb8c988048780001487800174878002045f940071da4227940fe32ccd3c42f092f024e924fef00304878000148780022d8b940fe384c487800602f042f024e924fef00144ef9400a268041e8000a2f082f2e001020026a0270007205b2806c0c6100ff887205b2806c0270054ef9400a4dde202f00047208b0816700004e7208b280640670012f4000042f082f092f2f000c4eb9401ae84e588f60000084202f00047207b081670000227207b280640670002f4000042f082f092f2f000c4eb9401b278a588f600000582f082f0941f946735c007019600000022f082f0072004eb9401b2480201f205f610000624ab9401b244e672a204043f946735f00721222d853816afa41f946735f00720d2141000c720c21410018720b2141001c200841f94010dd0c43f94673402c724b229023680004000423680008000841e8003843e9003853816ae6225f205f4e754a28004c6600005e2f022f0a24482400487940a715d82f0a4eb9400f8f02508f487940a715dc486a00044eb9400f8f02508f41f940a715e043ea000872102f0120187233b0816d087237b2806d02d08222c053976aea588f70011540004c204a245f241f20084e7545f940070c4e47f940070efc42852805720b7007b8806d04988072042004e788908406800000005028015884487800012f042f002f0159802f002f02b68566044e9360024e924fef001852857008b08566bc4ef9400a26f2202f0024226a00687207b280640470004e757207b0816d0643f9467338604e75202f00040c800000004c650c0c800000004f620470074e750c8000000051650270002200e789ed88908141f946734000203008004e757006b0856500001e0c820000004c650e0c820000004f62067a07600000024ef94005a3844ef94005a3460c8200000007650e0c820000000762064ef94005a6dc4ef9401ae8fc7006bc806602528620065286eb884ef94005a3200c82000000066712eb8a41f946735800203028004ef94005a6fc4ef9401ae93623df467320842239fc07000c23c1467320804eb94005979e2f004eb98000d1c8201f2f39467320844e75b084650000842f012f04201580932f002f024eb98000d4c44fef000c221f4a80670e2043701f429853806afa6000005a7007b88064064ef9401aca582039fc07800c23c0401b8114204622704c002f0a2f0e2f014e912f0e2f0341f94673384022704c004e914eb9401b3d484fef00142039fc07800c90b9401b81146b0a41f9401b8118d1b02c004ef9400a7e242f032f024eb98000d5c6508f2695224342804ef9400a7e2a"
+     },
+     {
+      "dest": "0x46733800",
+      "hex": "401300d8401300dd401300e3401300e940129960401300ee401b105846733888400aa08c400ab3b0400aa49c400aa998400aa7b8400aae88400aa08c46731000400aa3c4400ab6e8400aa712400aacc2400aa930400ab24c400aa3c4467311e800000001000000020000000300000004000000050000000600000007000000080001020304050607435056746700426f6479204368617200424f44590042616c616e63650042414c0053706163696e67204372756e6368005350435200426f647920456e76656c6f70650042454e5600"
+     },
+     {
+      "dest": "0x46734000",
+      "cycles": [
+       "0x4010dce0",
+       "0x4010ed80"
+      ]
+     },
+     {
+      "dest": "0x467350a0",
+      "hex": "000000060000000b0000000000007f0000001800000000000010ffffffffffff0000000000000600000000284673388e4012996f46733898000000060000000c0000000000007f0000001900000000000011ffffffffffff0000000000000600000000324673389d4012996f467338a5000000060000000d0000000000007f0000002e00000000000012ffffffffffff00000000000006000000003c467338a94012996f467338b8000000060000000e0000000000007f0000002500000000000013ffffffffffff000000000000060000000046467338bd4012996f467338cb00000007000000120000000000007f0000002000000000000050ffff0000009a00000000000006000000001e401298784012988240129886"
+     }
+    ],
+    "reloc": {
+     "$shared": 7
+    },
+    "pack": [
+     [
+      "0x46700000",
+      25476
+     ],
+     [
+      "0x46707878",
+      97304
+     ],
+     [
+      "0x46720000",
+      32656
+     ],
+     [
+      "0x46728000",
+      26784
+     ],
+     [
+      "0x46731000",
+      664
+     ],
+     [
+      "0x46733000",
+      1112
+     ],
+     [
+      "0x46733800",
+      208
+     ],
+     [
+      "0x46734000",
+      4536
+     ],
+     [
+      "0x46736000",
+      39032
+     ]
+    ]
+   }
+  },
+  {
+   "id": "syntakt-cp-macro",
+   "order": 24,
+   "name": "Vrais moteurs du Syntakt (CPVtg) et machine MACRO (Braids, Émilie Gillet, MIT)",
+   "description": [
+    "Moteurs du Syntakt (OS 1.42 ou 1.41, extraits AU BUILD de TON Syntakt_OS1.42.syx) et machine MACRO (notes/43),",
+    "ensemble (notes/50) : CPVtg = CP VINTAGE (machine 7), MACRO (machine 8).",
+    "Passerelle des moteurs reprise telle quelle de syntakt-cp ; MACRO compilé comme 25-macro.json",
+    "(pichenettes/eurorack 08460a6, licence MIT : LICENSE-Braids). Charge utile rangée compressée",
+    "(aPLib), décompressée au démarrage ; tables d'ondes de CHORD reprises en SRAM. Le régulateur de charge des",
+    "moteurs vaut aussi pour MACRO. Généré par tools/gen_macro_syntakt.py. Aucun octet Elektron dans ce fichier.",
+    "Régulateur de charge en assembleur (tools/gov_asm.py, notes/36) : pics isolés ignorés, voix la moins audible dans le mix."
+   ],
+   "gov": {
+    "audio_end": "0x4303118a",
+    "gov_age": "0x43032030",
+    "gov_avg": "0x4303206e",
+    "gov_cost": "0x43032000",
+    "gov_fading": "0x4303204e",
+    "gov_flen": "0x43032048",
+    "gov_load": "0x43032072",
+    "gov_peak": "0x43032018",
+    "gov_period": "0x4303206a",
+    "gov_pressure": "0x4303205a",
+    "gov_quiet": "0x43032054",
+    "gov_ret_audio": "0x4303207a",
+    "gov_slow": "0x43032066",
+    "gov_st": "0x4303203c",
+    "gov_stolen": "0x43032042",
+    "gov_t0_audio": "0x43032076",
+    "voice_after": "0x4303109a",
+    "voice_gate": "0x43031000"
+   },
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "conflicts": [
+    "macro",
+    "macro-tg",
+    "model-tg",
+    "model-tg-st",
+    "sdvintage-7th",
+    "sdvintage-exact",
+    "sdvintage-snare",
+    "syntakt-bits",
+    "syntakt-bits-macro",
+    "syntakt-bits-swarm",
+    "syntakt-bits-swarm-macro",
+    "syntakt-cp",
+    "syntakt-cp-bits",
+    "syntakt-cp-bits-macro",
+    "syntakt-cp-bits-swarm",
+    "syntakt-cp-bits-swarm-macro",
+    "syntakt-cp-swarm",
+    "syntakt-cp-swarm-macro",
+    "syntakt-cp-toy",
+    "syntakt-cp-toy-bits",
+    "syntakt-cp-toy-bits-macro",
+    "syntakt-cp-toy-bits-swarm",
+    "syntakt-cp-toy-bits-swarm-macro",
+    "syntakt-cp-toy-macro",
+    "syntakt-cp-toy-swarm",
+    "syntakt-cp-toy-swarm-macro",
+    "syntakt-meter",
+    "syntakt-sd",
+    "syntakt-sd-bits",
+    "syntakt-sd-bits-macro",
+    "syntakt-sd-bits-swarm",
+    "syntakt-sd-bits-swarm-macro",
+    "syntakt-sd-cp",
+    "syntakt-sd-cp-bits",
+    "syntakt-sd-cp-bits-macro",
+    "syntakt-sd-cp-bits-swarm",
+    "syntakt-sd-cp-bits-swarm-macro",
+    "syntakt-sd-cp-macro",
+    "syntakt-sd-cp-swarm",
+    "syntakt-sd-cp-swarm-macro",
+    "syntakt-sd-cp-toy",
+    "syntakt-sd-cp-toy-bits",
+    "syntakt-sd-cp-toy-bits-macro",
+    "syntakt-sd-cp-toy-bits-swarm",
+    "syntakt-sd-cp-toy-bits-swarm-macro",
+    "syntakt-sd-cp-toy-macro",
+    "syntakt-sd-cp-toy-swarm",
+    "syntakt-sd-cp-toy-swarm-macro",
+    "syntakt-sd-macro",
+    "syntakt-sd-swarm",
+    "syntakt-sd-swarm-macro",
+    "syntakt-sd-toy",
+    "syntakt-sd-toy-bits",
+    "syntakt-sd-toy-bits-macro",
+    "syntakt-sd-toy-bits-swarm",
+    "syntakt-sd-toy-bits-swarm-macro",
+    "syntakt-sd-toy-macro",
+    "syntakt-sd-toy-swarm",
+    "syntakt-sd-toy-swarm-macro",
+    "syntakt-swarm",
+    "syntakt-swarm-macro",
+    "syntakt-tg-bits",
+    "syntakt-tg-bits-macro",
+    "syntakt-tg-bits-swarm",
+    "syntakt-tg-bits-swarm-macro",
+    "syntakt-tg-cp",
+    "syntakt-tg-cp-bits",
+    "syntakt-tg-cp-bits-macro",
+    "syntakt-tg-cp-bits-swarm",
+    "syntakt-tg-cp-bits-swarm-macro",
+    "syntakt-tg-cp-macro",
+    "syntakt-tg-cp-swarm",
+    "syntakt-tg-cp-swarm-macro",
+    "syntakt-tg-cp-toy",
+    "syntakt-tg-cp-toy-bits",
+    "syntakt-tg-cp-toy-bits-macro",
+    "syntakt-tg-cp-toy-bits-swarm",
+    "syntakt-tg-cp-toy-bits-swarm-macro",
+    "syntakt-tg-cp-toy-macro",
+    "syntakt-tg-cp-toy-swarm",
+    "syntakt-tg-cp-toy-swarm-macro",
+    "syntakt-tg-meter",
+    "syntakt-tg-profile",
+    "syntakt-tg-sd",
+    "syntakt-tg-sd-bits",
+    "syntakt-tg-sd-bits-macro",
+    "syntakt-tg-sd-bits-swarm",
+    "syntakt-tg-sd-bits-swarm-macro",
+    "syntakt-tg-sd-cp",
+    "syntakt-tg-sd-cp-bits",
+    "syntakt-tg-sd-cp-bits-macro",
+    "syntakt-tg-sd-cp-bits-swarm",
+    "syntakt-tg-sd-cp-bits-swarm-macro",
+    "syntakt-tg-sd-cp-macro",
+    "syntakt-tg-sd-cp-swarm",
+    "syntakt-tg-sd-cp-swarm-macro",
+    "syntakt-tg-sd-cp-toy",
+    "syntakt-tg-sd-cp-toy-bits",
+    "syntakt-tg-sd-cp-toy-bits-macro",
+    "syntakt-tg-sd-cp-toy-bits-swarm",
+    "syntakt-tg-sd-cp-toy-bits-swarm-macro",
+    "syntakt-tg-sd-cp-toy-macro",
+    "syntakt-tg-sd-cp-toy-swarm",
+    "syntakt-tg-sd-cp-toy-swarm-macro",
+    "syntakt-tg-sd-macro",
+    "syntakt-tg-sd-swarm",
+    "syntakt-tg-sd-swarm-macro",
+    "syntakt-tg-sd-toy",
+    "syntakt-tg-sd-toy-bits",
+    "syntakt-tg-sd-toy-bits-macro",
+    "syntakt-tg-sd-toy-bits-swarm",
+    "syntakt-tg-sd-toy-bits-swarm-macro",
+    "syntakt-tg-sd-toy-macro",
+    "syntakt-tg-sd-toy-swarm",
+    "syntakt-tg-sd-toy-swarm-macro",
+    "syntakt-tg-swarm",
+    "syntakt-tg-swarm-macro",
+    "syntakt-tg-toy",
+    "syntakt-tg-toy-bits",
+    "syntakt-tg-toy-bits-macro",
+    "syntakt-tg-toy-bits-swarm",
+    "syntakt-tg-toy-bits-swarm-macro",
+    "syntakt-tg-toy-macro",
+    "syntakt-tg-toy-swarm",
+    "syntakt-tg-toy-swarm-macro",
+    "syntakt-toy",
+    "syntakt-toy-bits",
+    "syntakt-toy-bits-macro",
+    "syntakt-toy-bits-swarm",
+    "syntakt-toy-bits-swarm-macro",
+    "syntakt-toy-macro",
+    "syntakt-toy-swarm",
+    "syntakt-toy-swarm-macro",
+    "syntakt-vintage"
+   ],
+   "writes": {
+    "$shared": 8
+   },
+   "append": {
+    "at": "0x401aa140",
+    "dest": "0x43000000",
+    "size": 471792,
+    "syntakt": {
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
+     "section": 7,
+     "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
+    },
+    "parts": [
+     {
+      "dest": "0x43000000",
+      "syntakt": [
+       "0x40002544",
+       "0x40002686"
+      ]
+     },
+     {
+      "dest": "0x43000142",
+      "syntakt": [
+       "0x4000290e",
+       "0x40002a62"
+      ]
+     },
+     {
+      "dest": "0x43000296",
+      "syntakt": [
+       "0x400035de",
+       "0x40003732"
+      ]
+     },
+     {
+      "dest": "0x430003ec",
+      "syntakt": [
+       "0x40003958",
+       "0x40003aac"
+      ]
+     },
+     {
+      "dest": "0x43000542",
+      "syntakt": [
+       "0x40003c0e",
+       "0x40004324"
+      ]
+     },
+     {
+      "dest": "0x43000c5a",
+      "syntakt": [
+       "0x400044e2",
+       "0x40004534"
+      ]
+     },
+     {
+      "dest": "0x43000cac",
+      "syntakt": [
+       "0x400045a0",
+       "0x40004608"
+      ]
+     },
+     {
+      "dest": "0x43000d14",
+      "syntakt": [
+       "0x40004674",
+       "0x400046dc"
+      ]
+     },
+     {
+      "dest": "0x43000d7e",
+      "syntakt": [
+       "0x400047ea",
+       "0x400048c6"
+      ]
+     },
+     {
+      "dest": "0x43000e5c",
+      "syntakt": [
+       "0x400049f4",
+       "0x40004a6a"
+      ]
+     },
+     {
+      "dest": "0x43000ed2",
+      "syntakt": [
+       "0x40004cd6",
+       "0x40004e14"
+      ]
+     },
+     {
+      "dest": "0x43001010",
+      "syntakt": [
+       "0x40004e6c",
+       "0x40004ee6"
+      ]
+     },
+     {
+      "dest": "0x4300108c",
+      "syntakt": [
+       "0x40004f74",
+       "0x400050a6"
+      ]
+     },
+     {
+      "dest": "0x430011c0",
+      "syntakt": [
+       "0x400052f8",
+       "0x40005624"
+      ]
+     },
+     {
+      "dest": "0x430014ee",
+      "syntakt": [
+       "0x4000569a",
+       "0x40005866"
+      ]
+     },
+     {
+      "dest": "0x430016bc",
+      "syntakt": [
+       "0x400058e8",
+       "0x40005964"
+      ]
+     },
+     {
+      "dest": "0x43001738",
+      "syntakt": [
+       "0x40008074",
+       "0x40008e0c"
+      ]
+     },
+     {
+      "dest": "0x430024d0",
+      "syntakt": [
+       "0x400596e0",
+       "0x40059f08"
+      ]
+     },
+     {
+      "dest": "0x43002cf8",
+      "syntakt": [
+       "0x40056654",
+       "0x40056e78"
+      ]
+     },
+     {
+      "dest": "0x43003520",
+      "syntakt": [
+       "0x4004f6e0",
+       "0x4004fde8"
+      ]
+     },
+     {
+      "dest": "0x43003c28",
+      "syntakt": [
+       "0x4004fde8",
+       "0x400504f0"
+      ]
+     },
+     {
+      "dest": "0x43004330",
+      "syntakt": [
+       "0x400504f0",
+       "0x40050bf8"
+      ]
+     },
+     {
+      "dest": "0x43004a38",
+      "syntakt": [
+       "0x40050bf8",
+       "0x40051300"
+      ]
+     },
+     {
+      "dest": "0x43005140",
+      "syntakt": [
+       "0x40051300",
+       "0x40051a08"
+      ]
+     },
+     {
+      "dest": "0x43005858",
+      "syntakt": [
+       "0x40051a08",
+       "0x40052110"
+      ]
+     },
+     {
+      "dest": "0x43007878",
+      "syntakt": [
+       "0x4000e488",
+       "0x40010490"
+      ]
+     },
+     {
+      "dest": "0x43009880",
+      "syntakt": [
+       "0x40014980",
+       "0x40016b90"
+      ]
+     },
+     {
+      "dest": "0x4300ba90",
+      "syntakt": [
+       "0x40028438",
+       "0x4003be38"
+      ]
+     },
+     {
+      "dest": "0x43036000",
+      "syntakt": [
+       "0x4003be38",
+       "0x4003de38"
+      ]
+     },
+     {
+      "dest": "0x43020000",
+      "syntakt": [
+       "0x4004f6e0",
+       "0x40057670"
+      ]
+     },
+     {
+      "dest": "0x43028000",
+      "syntakt": [
+       "0x40057670",
+       "0x4005df10"
+      ]
+     },
+     {
+      "dest": "0x430003ea",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x43000540",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x43000c58",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x43000d7c",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x43000e5a",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x4300108a",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x430011be",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x430014ec",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x430016ba",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x43031000",
+      "hex": {
+       "$shared": 14
+      }
+     },
+     {
+      "dest": "0x43033000",
+      "hex": "724cb081650000200c8000000056650470004e75724c90817205b0816504908160f67233d0814e75202f00046100ffd272644c010800068040a717544e75202f00046100ffbc72644c010800068040a71768487940a715002f2f000c2f004eb9400ddf604fef000c203c40a715004e757405b481650c7407b480650c4ef94005a8fa4ef94005a9284ef94005a91c7206b081660470034e757207b081660470044e754e7520036100ffe62800e588eb8c988048780001487800174878002045f940071da4227940fe32ccd3c42f092f024e924fef00304878000148780022d8b940fe384c487800602f042f024e924fef00144ef9400a268041e8000a2f082f2e001020026a0270007205b2806c0c6100ff7e7205b2806c0270054ef9400a4dde202f00047207b0816700005a7208b0816700005e7206b28064027001724c4c010800068040a715404e75202f00047206b081670000307207b081670000347205b280651041f9401091b4713008007206b28064027001724c4c010800068040a715404e7541f943035c0070196000000e41f943035c60701e600000024a28004c6600005e2f022f0a24482400487940a715d82f0a4eb9400f8f02508f487940a715dc486a00044eb9400f8f02508f41f940a715e043ea000872102f0120187233b0816d087237b2806d02d08222c053976aea588f70011540004c204a245f241f20084e7545f940070c4e47f940070efc42852805720b7007b8806d04988072042004e788908406800000005028015884487800012f042f002f0159802f002f02b68566044e9360024e924fef001852857008b08566bc4ef9400a26f2202f0024226a00687207b280640470004e757206b0816d0643f9430338604e75202f00040c800000004c650c0c800000004f620470064e750c8000000051650c0c8000000054620470074e750c8000000056650270002200e789ed88908141f943034000203008004e757006b085650000340c820000004c650e0c820000004f62067a06600000180c8200000051650e0c820000005462067a07600000024ef94005a3844ef94005a34623df4303207a2239fc07000c23c1430320764eb94005979e2f004eb94303118a201f2f394303207a4e75b0846500005a2f012f04201580932f002f024eb9430310004fef000c221f4a80670e2043701f429853806afa60000030204622704c002f0a2f0e2f014e912f0e2f0341f94303384022704c004e914fef00142f032f024eb94303109a508f4ef9400a7e24"
+     },
+     {
+      "dest": "0x43033800",
+      "hex": "401300d8401300dd401300e3401300e940129960401300ee430338884303388e400aa08c400ab3b0400aa49c400aa998400aa7b8400aae884303134043042000400aa3c4400ab6e8400aa712400aacc2400aa930400ab24c430315284304237a000000010000000200000003000000040000000500000006000000070000000800010203040506074350567467004d4143524f00426f6479204368617200424f44590042616c616e63650042414c0053706163696e67204372756e6368005350435200426f647920456e76656c6f70650042454e560054696d6272650054494d42004d6f64656c004d4f444c00436f6c6f7200434f4c5200456e762054696d62726500454e565400"
+     },
+     {
+      "dest": "0x43034000",
+      "cycles": [
+       "0x4010dce0",
+       "0x4010ed80"
+      ]
+     },
+     {
+      "dest": "0x430350a0",
+      "hex": "000000060000000b0000000000007f0000001800000000000010ffffffffffff000000000000060000000028430338944012996f4303389e000000060000000c0000000000007f0000001900000000000011ffffffffffff000000000000060000000032430338a34012996f430338ab000000060000000d0000000000007f0000002e00000000000012ffffffffffff00000000000006000000003c430338af4012996f430338be000000060000000e0000000000007f0000002500000000000013ffffffffffff000000000000060000000046430338c34012996f430338d100000007000000120000000000007f0000002000000000000050ffff0000009a00000000000006000000001e401298784012988240129886000000060000000b0000000000007f0000004000000000000010ffffffffffff000000000000060000000028430338d64012996f430338dd000000060000000c0000000000002e0000000000000000000011ffffffffffff000000000000060000000032430338e24012996f430338e8000000060000000d0000000000007f0000004000000000000012ffffffffffff00000000000006000000003c430338ed4012996f430338f3000000060000000e0000000000007f0000000000000000000013ffffffffffff000000000000060000000046430338f84012996f4303390300000007000000120000000000007f0000003200000000000050ffff0000009a00000000000006000000001e401298784012988240129886"
+     },
+     {
+      "dest": "0x43032c00",
+      "hex": "4fefffc048d73cfc2a49e08a76000c84000000dc650c26040483000000d14c0238000c85000000ee651220050480000000e34c020800b083630226007e404aad005a67027e107c080c85000000f565027c0249d547ed0f18700074ff4a35084e66144a350842671a222d0f0892b30c007820b284642422340c009681621c6000007e79b50854b887641079f50a30988698866b064eb94303123e2f820c2852807206b08166b47a0274fe72ff93c9700028370c28b882650c661479f50a30b3c4640c6006240479f50a302244220052807806b08466da4a816b241b86184e1b861848202d0f0827801c0070ff2f801c2820341c00528096806304538566aa4cd73cfc4fef00404e75"
+     },
+     {
+      "dest": "0x43042000",
+      "hex": {
+       "$shared": 9
+      }
+     },
+     {
+      "dest": "0x4303f900",
+      "hex": "41f980001c5c43f943038000203c0000161622d8538066fa41f98000cac0203c0000080822d8538066fa41f94300000043f980001c5c203c0000161622d8538066fa43f98000cac0203c0000080822d8538066fa4e75"
+     }
+    ],
+    "reloc": {
+     "$shared": 10
+    },
+    "compress": "aplib"
+   },
+   "symbols": {
+    "macro_update": "0x43042000",
+    "macro_render": "0x4304237a",
+    "braids_render": "0x43042f90"
+   }
+  },
+  {
+   "id": "syntakt-tg-cp-macro",
+   "order": 31,
+   "name": "Model-TG + Vrais moteurs du Syntakt (CPVtg) et machine MACRO (Braids, Émilie Gillet, MIT)",
+   "description": [
+    "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine.",
+    "Moteurs du Syntakt (OS 1.42 ou 1.41, extraits AU BUILD de TON Syntakt_OS1.42.syx) et machine MACRO (notes/43),",
+    "ensemble (notes/50) : CPVtg = CP VINTAGE (machine 8), MACRO (machine 9).",
+    "Passerelle des moteurs reprise telle quelle de syntakt-tg-cp ; MACRO compilé comme 25-macro.json",
+    "(pichenettes/eurorack 08460a6, licence MIT : LICENSE-Braids). Charge utile rangée compressée",
+    "(aPLib), décompressée au démarrage ; tables d'ondes de CHORD reprises en SRAM. Le régulateur de charge des",
+    "moteurs vaut aussi pour MACRO. Généré par tools/gen_macro_syntakt.py. Aucun octet Elektron dans ce fichier.",
+    "Régulateur de charge en assembleur (tools/gov_asm.py, notes/36) : pics isolés ignorés, voix la moins audible dans le mix."
+   ],
+   "gov": {
+    "audio_end": "0x8000d1c8",
+    "gov_age": "0x4673203a",
+    "gov_avg": "0x46732078",
+    "gov_cost": "0x4673200a",
+    "gov_fading": "0x46732058",
+    "gov_flen": "0x46732052",
+    "gov_free": "0x46732004",
+    "gov_load": "0x4673207c",
+    "gov_peak": "0x46732022",
+    "gov_period": "0x46732074",
+    "gov_pressure": "0x46732064",
+    "gov_quiet": "0x4673205e",
+    "gov_ran": "0x46732000",
+    "gov_ret_audio": "0x46732084",
+    "gov_slow": "0x46732070",
+    "gov_st": "0x46732046",
+    "gov_stolen": "0x4673204c",
+    "gov_t0_audio": "0x46732080",
+    "voice_after": "0x8000d38c",
+    "voice_gate": "0x8000d4c4"
+   },
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "requires": [
+    "model-tg-st"
+   ],
+   "conflicts": [
+    "macro",
+    "macro-tg",
+    "model-tg",
+    "sdvintage-7th",
+    "sdvintage-exact",
+    "sdvintage-snare",
+    "syntakt-bits",
+    "syntakt-bits-macro",
+    "syntakt-bits-swarm",
+    "syntakt-bits-swarm-macro",
+    "syntakt-cp",
+    "syntakt-cp-bits",
+    "syntakt-cp-bits-macro",
+    "syntakt-cp-bits-swarm",
+    "syntakt-cp-bits-swarm-macro",
+    "syntakt-cp-macro",
+    "syntakt-cp-swarm",
+    "syntakt-cp-swarm-macro",
+    "syntakt-cp-toy",
+    "syntakt-cp-toy-bits",
+    "syntakt-cp-toy-bits-macro",
+    "syntakt-cp-toy-bits-swarm",
+    "syntakt-cp-toy-bits-swarm-macro",
+    "syntakt-cp-toy-macro",
+    "syntakt-cp-toy-swarm",
+    "syntakt-cp-toy-swarm-macro",
+    "syntakt-meter",
+    "syntakt-sd",
+    "syntakt-sd-bits",
+    "syntakt-sd-bits-macro",
+    "syntakt-sd-bits-swarm",
+    "syntakt-sd-bits-swarm-macro",
+    "syntakt-sd-cp",
+    "syntakt-sd-cp-bits",
+    "syntakt-sd-cp-bits-macro",
+    "syntakt-sd-cp-bits-swarm",
+    "syntakt-sd-cp-bits-swarm-macro",
+    "syntakt-sd-cp-macro",
+    "syntakt-sd-cp-swarm",
+    "syntakt-sd-cp-swarm-macro",
+    "syntakt-sd-cp-toy",
+    "syntakt-sd-cp-toy-bits",
+    "syntakt-sd-cp-toy-bits-macro",
+    "syntakt-sd-cp-toy-bits-swarm",
+    "syntakt-sd-cp-toy-bits-swarm-macro",
+    "syntakt-sd-cp-toy-macro",
+    "syntakt-sd-cp-toy-swarm",
+    "syntakt-sd-cp-toy-swarm-macro",
+    "syntakt-sd-macro",
+    "syntakt-sd-swarm",
+    "syntakt-sd-swarm-macro",
+    "syntakt-sd-toy",
+    "syntakt-sd-toy-bits",
+    "syntakt-sd-toy-bits-macro",
+    "syntakt-sd-toy-bits-swarm",
+    "syntakt-sd-toy-bits-swarm-macro",
+    "syntakt-sd-toy-macro",
+    "syntakt-sd-toy-swarm",
+    "syntakt-sd-toy-swarm-macro",
+    "syntakt-swarm",
+    "syntakt-swarm-macro",
+    "syntakt-tg-bits",
+    "syntakt-tg-bits-macro",
+    "syntakt-tg-bits-swarm",
+    "syntakt-tg-bits-swarm-macro",
+    "syntakt-tg-cp",
+    "syntakt-tg-cp-bits",
+    "syntakt-tg-cp-bits-macro",
+    "syntakt-tg-cp-bits-swarm",
+    "syntakt-tg-cp-bits-swarm-macro",
+    "syntakt-tg-cp-swarm",
+    "syntakt-tg-cp-swarm-macro",
+    "syntakt-tg-cp-toy",
+    "syntakt-tg-cp-toy-bits",
+    "syntakt-tg-cp-toy-bits-macro",
+    "syntakt-tg-cp-toy-bits-swarm",
+    "syntakt-tg-cp-toy-bits-swarm-macro",
+    "syntakt-tg-cp-toy-macro",
+    "syntakt-tg-cp-toy-swarm",
+    "syntakt-tg-cp-toy-swarm-macro",
+    "syntakt-tg-meter",
+    "syntakt-tg-profile",
+    "syntakt-tg-sd",
+    "syntakt-tg-sd-bits",
+    "syntakt-tg-sd-bits-macro",
+    "syntakt-tg-sd-bits-swarm",
+    "syntakt-tg-sd-bits-swarm-macro",
+    "syntakt-tg-sd-cp",
+    "syntakt-tg-sd-cp-bits",
+    "syntakt-tg-sd-cp-bits-macro",
+    "syntakt-tg-sd-cp-bits-swarm",
+    "syntakt-tg-sd-cp-bits-swarm-macro",
+    "syntakt-tg-sd-cp-macro",
+    "syntakt-tg-sd-cp-swarm",
+    "syntakt-tg-sd-cp-swarm-macro",
+    "syntakt-tg-sd-cp-toy",
+    "syntakt-tg-sd-cp-toy-bits",
+    "syntakt-tg-sd-cp-toy-bits-macro",
+    "syntakt-tg-sd-cp-toy-bits-swarm",
+    "syntakt-tg-sd-cp-toy-bits-swarm-macro",
+    "syntakt-tg-sd-cp-toy-macro",
+    "syntakt-tg-sd-cp-toy-swarm",
+    "syntakt-tg-sd-cp-toy-swarm-macro",
+    "syntakt-tg-sd-macro",
+    "syntakt-tg-sd-swarm",
+    "syntakt-tg-sd-swarm-macro",
+    "syntakt-tg-sd-toy",
+    "syntakt-tg-sd-toy-bits",
+    "syntakt-tg-sd-toy-bits-macro",
+    "syntakt-tg-sd-toy-bits-swarm",
+    "syntakt-tg-sd-toy-bits-swarm-macro",
+    "syntakt-tg-sd-toy-macro",
+    "syntakt-tg-sd-toy-swarm",
+    "syntakt-tg-sd-toy-swarm-macro",
+    "syntakt-tg-swarm",
+    "syntakt-tg-swarm-macro",
+    "syntakt-tg-toy",
+    "syntakt-tg-toy-bits",
+    "syntakt-tg-toy-bits-macro",
+    "syntakt-tg-toy-bits-swarm",
+    "syntakt-tg-toy-bits-swarm-macro",
+    "syntakt-tg-toy-macro",
+    "syntakt-tg-toy-swarm",
+    "syntakt-tg-toy-swarm-macro",
+    "syntakt-toy",
+    "syntakt-toy-bits",
+    "syntakt-toy-bits-macro",
+    "syntakt-toy-bits-swarm",
+    "syntakt-toy-bits-swarm-macro",
+    "syntakt-toy-macro",
+    "syntakt-toy-swarm",
+    "syntakt-toy-swarm-macro",
+    "syntakt-vintage"
+   ],
+   "writes": {
+    "$shared": 11
+   },
+   "append": {
+    "at": "0x401bf8c0",
+    "dest": "0x46700000",
+    "size": 471792,
+    "syntakt": {
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
+     "section": 7,
+     "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
+    },
+    "parts": [
+     {
+      "dest": "0x46700000",
+      "syntakt": [
+       "0x40002544",
+       "0x40002686"
+      ]
+     },
+     {
+      "dest": "0x46700142",
+      "syntakt": [
+       "0x4000290e",
+       "0x40002a62"
+      ]
+     },
+     {
+      "dest": "0x46700296",
+      "syntakt": [
+       "0x400035de",
+       "0x40003732"
+      ]
+     },
+     {
+      "dest": "0x467003ec",
+      "syntakt": [
+       "0x40003958",
+       "0x40003aac"
+      ]
+     },
+     {
+      "dest": "0x46700542",
+      "syntakt": [
+       "0x40003c0e",
+       "0x40004324"
+      ]
+     },
+     {
+      "dest": "0x46700c5a",
+      "syntakt": [
+       "0x400044e2",
+       "0x40004534"
+      ]
+     },
+     {
+      "dest": "0x46700cac",
+      "syntakt": [
+       "0x400045a0",
+       "0x40004608"
+      ]
+     },
+     {
+      "dest": "0x46700d14",
+      "syntakt": [
+       "0x40004674",
+       "0x400046dc"
+      ]
+     },
+     {
+      "dest": "0x46700d7e",
+      "syntakt": [
+       "0x400047ea",
+       "0x400048c6"
+      ]
+     },
+     {
+      "dest": "0x46700e5c",
+      "syntakt": [
+       "0x400049f4",
+       "0x40004a6a"
+      ]
+     },
+     {
+      "dest": "0x46700ed2",
+      "syntakt": [
+       "0x40004cd6",
+       "0x40004e14"
+      ]
+     },
+     {
+      "dest": "0x46701010",
+      "syntakt": [
+       "0x40004e6c",
+       "0x40004ee6"
+      ]
+     },
+     {
+      "dest": "0x4670108c",
+      "syntakt": [
+       "0x40004f74",
+       "0x400050a6"
+      ]
+     },
+     {
+      "dest": "0x467011c0",
+      "syntakt": [
+       "0x400052f8",
+       "0x40005624"
+      ]
+     },
+     {
+      "dest": "0x467014ee",
+      "syntakt": [
+       "0x4000569a",
+       "0x40005866"
+      ]
+     },
+     {
+      "dest": "0x467016bc",
+      "syntakt": [
+       "0x400058e8",
+       "0x40005964"
+      ]
+     },
+     {
+      "dest": "0x46701738",
+      "syntakt": [
+       "0x40008074",
+       "0x40008e0c"
+      ]
+     },
+     {
+      "dest": "0x467024d0",
+      "syntakt": [
+       "0x400596e0",
+       "0x40059f08"
+      ]
+     },
+     {
+      "dest": "0x46702cf8",
+      "syntakt": [
+       "0x40056654",
+       "0x40056e78"
+      ]
+     },
+     {
+      "dest": "0x46703520",
+      "syntakt": [
+       "0x4004f6e0",
+       "0x4004fde8"
+      ]
+     },
+     {
+      "dest": "0x46703c28",
+      "syntakt": [
+       "0x4004fde8",
+       "0x400504f0"
+      ]
+     },
+     {
+      "dest": "0x46704330",
+      "syntakt": [
+       "0x400504f0",
+       "0x40050bf8"
+      ]
+     },
+     {
+      "dest": "0x46704a38",
+      "syntakt": [
+       "0x40050bf8",
+       "0x40051300"
+      ]
+     },
+     {
+      "dest": "0x46705140",
+      "syntakt": [
+       "0x40051300",
+       "0x40051a08"
+      ]
+     },
+     {
+      "dest": "0x46705858",
+      "syntakt": [
+       "0x40051a08",
+       "0x40052110"
+      ]
+     },
+     {
+      "dest": "0x46707878",
+      "syntakt": [
+       "0x4000e488",
+       "0x40010490"
+      ]
+     },
+     {
+      "dest": "0x46709880",
+      "syntakt": [
+       "0x40014980",
+       "0x40016b90"
+      ]
+     },
+     {
+      "dest": "0x4670ba90",
+      "syntakt": [
+       "0x40028438",
+       "0x4003be38"
+      ]
+     },
+     {
+      "dest": "0x46736000",
+      "syntakt": [
+       "0x4003be38",
+       "0x4003de38"
+      ]
+     },
+     {
+      "dest": "0x46720000",
+      "syntakt": [
+       "0x4004f6e0",
+       "0x40057670"
+      ]
+     },
+     {
+      "dest": "0x46728000",
+      "syntakt": [
+       "0x40057670",
+       "0x4005df10"
+      ]
+     },
+     {
+      "dest": "0x467003ea",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x46700540",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x46700c58",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x46700d7c",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x46700e5a",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x4670108a",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x467011be",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x467014ec",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x467016ba",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x46705f60",
+      "hex": {
+       "$shared": 6
+      }
+     },
+     {
+      "dest": "0x46731000",
+      "hex": "4fefffdc48d77c1c2a6f002c240d0682bdcf77d82202263c0000031c4c431001286f00302f6f0028002041f94673208c203c534456312441b0ad002c660a71b018005f804a80671c70077201263c534456312b43002c1180a80041f9467320921181a8002679467320884a8b666c4aad00386700016a263c46728a60283c467200007005b08b6d00013241f9467312802c70bc004eb980001c5c2d43056c2f0e4eb980002470528b068400000708068300000030588f7008b08b66c6363c0101223c01010101700123c14673209223c04673208833c3467320960c82000012a7620000de41f9467312802670ac00276d00340034222d003827410038276d003c003c4bf9467320921035a8004a81670000c84a0067202f0b76014eb980002470420127430038588f700727400004700726801b81a800260aed8b700742412443d5fc4673209815400022356c00140024356c00160026356c00180028356c001a002a356c001c002c356c001e002e302c0020354000307140356c0024003235410034274003ec2f0b4eb980001c762f4a00342f4b0030716c00224cef7c1c00040680ffffc000e788d0af00242f40002c4fef00284ef9800038a02c446000fed6200a223c000007084c0108002640d7fc467200006000ff184a006700ff5a4cd77c1c4fef00244e754feffff448d7040c202f00140680bdcf77d82200243c0000031c4c421001206f00100c80000012a7624643f94673128024711c004ab946732088671c43f9467320924a311800661043f94673208c71b118005f804a80672c20080680000000804298b08866fa4cd7040c4fef000c4e75203c000007084c0108002440d5fc4672000060b02f0a2f084eb980003ca8256a00340038508f60ce8000517c8000588480005f8c8000669480006d9c8000cac0"
+     },
+     {
+      "dest": "0x46733000",
+      "hex": "724cb081650000200c8000000056650470004e75724c90817205b0816504908160f67233d0814e75202f00046100ffd272644c010800068040a717544e75202f00046100ffbc72644c010800068040a71768487940a715002f2f000c2f004eb9400ddf604fef000c203c40a715004e757405b48165127406b48067127408b480650c4ef94005a8fa4ef94005a9284ef94005a91c7207b081660470034e757208b081660470044e754e7520036100ffe62800e588eb8c988048780001487800174878002045f940071da4227940fe32ccd3c42f092f024e924fef00304878000148780022d8b940fe384c487800602f042f024e924fef00144ef9400a268041e8000a2f082f2e001020026a0270007205b2806c0c6100ff7e7205b2806c0270054ef9400a4dde202f00047208b0816700005e7209b081670000667209b280640670012f4000042f082f092f2f000c4eb9401ae84e588f6000009c202f00047207b0816700002a7208b081670000327208b280640670002f4000042f082f092f2f000c4eb9401b278a588f600000682f082f0941f946735c007019600000122f082f0941f946735c60701e600000022f082f0072004eb9401b2480201f205f610000624ab9401b244e672a204043f946735f00721222d853816afa41f946735f00720d2141000c720c21410018720b2141001c200841f94010dd0c43f94673402c724b229023680004000423680008000841e8003843e9003853816ae6225f205f4e754a28004c6600005e2f022f0a24482400487940a715d82f0a4eb9400f8f02508f487940a715dc486a00044eb9400f8f02508f41f940a715e043ea000872102f0120187233b0816d087237b2806d02d08222c053976aea588f70011540004c204a245f241f20084e7545f940070c4e47f940070efc42852805720b7007b8806d04988072042004e788908406800000005028015884487800012f042f002f0159802f002f02b68566044e9360024e924fef001852857009b08566bc4ef9400a26f2202f0024226a00687208b280640470004e757207b0816d0643f94673386c4e75202f00040c800000004c650c0c800000004f620470074e750c8000000051650c0c8000000054620470084e750c8000000056650270002200e789ed88908141f946734000203008004e757006b085650000340c820000004c650e0c820000004f62067a07600000180c8200000051650e0c820000005462067a08600000024ef94005a3844ef94005a3460c8200000007650e0c820000000862064ef94005a6dc4ef9401ae8fc7006bc806602528620065286eb884ef94005a3200c82000000066712eb8a41f946735800203028004ef94005a6fc4ef9401ae93623df467320842239fc07000c23c1467320804eb94005979e2f004eb98000d1c8201f2f39467320844e75b084650000842f012f04201580932f002f024eb98000d4c44fef000c221f4a80670e2043701f429853806afa6000005a7007b88064064ef9401aca582039fc07800c23c0401b8114204622704c002f0a2f0e2f014e912f0e2f0341f94673384822704c004e914eb9401b3d484fef00142039fc07800c90b9401b81146b0a41f9401b8118d1b02c004ef9400a7e242f032f024eb98000d5c6508f2695224342804ef9400a7e2a"
+     },
+     {
+      "dest": "0x46733800",
+      "hex": "401300d8401300dd401300e3401300e940129960401300ee401b10584673389c467338a2400aa08c400ab3b0400aa49c400aa998400aa7b8400aae88400aa08c4673100046742000400aa3c4400ab6e8400aa712400aacc2400aa930400ab24c400aa3c4467311e84674237a0000000100000002000000030000000400000005000000060000000700000008000000090001020304050607080000004350567467004d4143524f00426f6479204368617200424f44590042616c616e63650042414c0053706163696e67204372756e6368005350435200426f647920456e76656c6f70650042454e560054696d6272650054494d42004d6f64656c004d4f444c00436f6c6f7200434f4c5200456e762054696d62726500454e565400"
+     },
+     {
+      "dest": "0x46734000",
+      "cycles": [
+       "0x4010dce0",
+       "0x4010ed80"
+      ]
+     },
+     {
+      "dest": "0x467350a0",
+      "hex": "000000060000000b0000000000007f0000001800000000000010ffffffffffff000000000000060000000028467338a84012996f467338b2000000060000000c0000000000007f0000001900000000000011ffffffffffff000000000000060000000032467338b74012996f467338bf000000060000000d0000000000007f0000002e00000000000012ffffffffffff00000000000006000000003c467338c34012996f467338d2000000060000000e0000000000007f0000002500000000000013ffffffffffff000000000000060000000046467338d74012996f467338e500000007000000120000000000007f0000002000000000000050ffff0000009a00000000000006000000001e401298784012988240129886000000060000000b0000000000007f0000004000000000000010ffffffffffff000000000000060000000028467338ea4012996f467338f1000000060000000c0000000000002e0000000000000000000011ffffffffffff000000000000060000000032467338f64012996f467338fc000000060000000d0000000000007f0000004000000000000012ffffffffffff00000000000006000000003c467339014012996f46733907000000060000000e0000000000007f0000000000000000000013ffffffffffff0000000000000600000000464673390c4012996f4673391700000007000000120000000000007f0000003200000000000050ffff0000009a00000000000006000000001e401298784012988240129886"
+     },
+     {
+      "dest": "0x46742000",
+      "hex": {
+       "$shared": 12
+      }
+     },
+     {
+      "dest": "0x4673f900",
+      "hex": "41f980001c5c43f946738000203c0000161622d8538066fa41f98000cac0203c0000080822d8538066fa41f94670000043f980001c5c203c0000161622d8538066fa43f98000cac0203c0000080822d8538066fa4e75"
+     }
+    ],
+    "reloc": {
+     "$shared": 13
+    },
+    "compress": "aplib"
+   },
+   "symbols": {
+    "macro_update": "0x46742000",
+    "macro_render": "0x4674237a",
+    "braids_render": "0x46742f90"
+   }
+  },
+  {
+   "id": "syntakt-toy",
+   "order": 24,
+   "name": "Vrais moteurs du Syntakt en machines ajoutées : SYToy (SY TOY)",
+   "description": [
+    "Moteurs du Syntakt (OS 1.42 ou 1.41) extraits AU BUILD de TON Syntakt_OS1.42.syx, en machines ajoutées après",
+    "les 6 d'origine (notes/20) : SYToy = SY TOY (machine 7).",
+    "Potards propres, noms et défauts du Syntakt. Généré par tools/gen_syntakt_engines.py.",
+    "Demande build.py --syntakt Syntakt_OS1.42.syx. Aucun octet Elektron dans ce fichier.",
+    "Envoi à l'USB à heure fixe (tools/usb_steady.py, notes/35) : la charge varie avec l'arrêt des voix muettes.",
+    "Boucle des voix : division des pistes par 2 plus courte (tools/voice_loop.py, notes/36), mêmes valeurs.",
+    "Régulateur de charge en assembleur (tools/gov_asm.py, notes/36) : pics isolés ignorés, voix la moins audible dans le mix."
+   ],
+   "gov": {
+    "audio_end": "0x4303118a",
+    "gov_age": "0x43032030",
+    "gov_avg": "0x4303206e",
+    "gov_cost": "0x43032000",
+    "gov_fading": "0x4303204e",
+    "gov_flen": "0x43032048",
+    "gov_load": "0x43032072",
+    "gov_peak": "0x43032018",
+    "gov_period": "0x4303206a",
+    "gov_pressure": "0x4303205a",
+    "gov_quiet": "0x43032054",
+    "gov_ret_audio": "0x4303207a",
+    "gov_slow": "0x43032066",
+    "gov_st": "0x4303203c",
+    "gov_stolen": "0x43032042",
+    "gov_t0_audio": "0x43032076",
+    "voice_after": "0x4303109a",
+    "voice_gate": "0x43031000"
+   },
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "conflicts": [
+    "model-tg",
+    "sdvintage-7th",
+    "sdvintage-exact",
+    "sdvintage-snare",
+    "syntakt-bits",
+    "syntakt-bits-swarm",
+    "syntakt-cp",
+    "syntakt-cp-bits",
+    "syntakt-cp-bits-swarm",
+    "syntakt-cp-swarm",
+    "syntakt-cp-toy",
+    "syntakt-cp-toy-bits",
+    "syntakt-cp-toy-bits-swarm",
+    "syntakt-cp-toy-swarm",
+    "syntakt-meter",
+    "syntakt-sd",
+    "syntakt-sd-bits",
+    "syntakt-sd-bits-swarm",
+    "syntakt-sd-cp",
+    "syntakt-sd-cp-bits",
+    "syntakt-sd-cp-bits-swarm",
+    "syntakt-sd-cp-swarm",
+    "syntakt-sd-cp-toy",
+    "syntakt-sd-cp-toy-bits",
+    "syntakt-sd-cp-toy-bits-swarm",
+    "syntakt-sd-cp-toy-swarm",
+    "syntakt-sd-swarm",
+    "syntakt-sd-toy",
+    "syntakt-sd-toy-bits",
+    "syntakt-sd-toy-bits-swarm",
+    "syntakt-sd-toy-swarm",
+    "syntakt-swarm",
+    "syntakt-toy-bits",
+    "syntakt-toy-bits-swarm",
+    "syntakt-toy-swarm",
+    "syntakt-vintage"
+   ],
+   "writes": {
+    "$shared": 2
+   },
+   "append": {
+    "at": "0x401aa140",
+    "dest": "0x43000000",
+    "size": 260352,
+    "syntakt": {
+     "os": {
+      "1.42": "ded3c59fdb909eb9e2c3307b30a486452c8fa6947b12c14e0ce35a187b7f37c1",
+      "1.41": "8e2488f462c4a5656396a895f113bcd415e9900fa8709340dccf45d4cb9ed19e"
+     },
+     "section": 7,
+     "section_sha256": "daf6451cf9587c0b628e901b7bb6b25f4e2633d448c534c0c181dd35ec783bc2"
+    },
+    "parts": [
+     {
+      "dest": "0x43000000",
+      "syntakt": [
+       "0x40002544",
+       "0x40002686"
+      ]
+     },
+     {
+      "dest": "0x43000142",
+      "syntakt": [
+       "0x4000290e",
+       "0x40002a62"
+      ]
+     },
+     {
+      "dest": "0x43000296",
+      "syntakt": [
+       "0x400035de",
+       "0x40003732"
+      ]
+     },
+     {
+      "dest": "0x430003ec",
+      "syntakt": [
+       "0x40003958",
+       "0x40003aac"
+      ]
+     },
+     {
+      "dest": "0x43000542",
+      "syntakt": [
+       "0x40003c0e",
+       "0x40004324"
+      ]
+     },
+     {
+      "dest": "0x43000c5a",
+      "syntakt": [
+       "0x400044e2",
+       "0x40004534"
+      ]
+     },
+     {
+      "dest": "0x43000cac",
+      "syntakt": [
+       "0x400045a0",
+       "0x40004608"
+      ]
+     },
+     {
+      "dest": "0x43000d14",
+      "syntakt": [
+       "0x40004674",
+       "0x400046dc"
+      ]
+     },
+     {
+      "dest": "0x43000d7e",
+      "syntakt": [
+       "0x400047ea",
+       "0x400048c6"
+      ]
+     },
+     {
+      "dest": "0x43000e5c",
+      "syntakt": [
+       "0x400049f4",
+       "0x40004a6a"
+      ]
+     },
+     {
+      "dest": "0x43000ed2",
+      "syntakt": [
+       "0x40004cd6",
+       "0x40004e14"
+      ]
+     },
+     {
+      "dest": "0x43001010",
+      "syntakt": [
+       "0x40004e6c",
+       "0x40004ee6"
+      ]
+     },
+     {
+      "dest": "0x4300108c",
+      "syntakt": [
+       "0x40004f74",
+       "0x400050a6"
+      ]
+     },
+     {
+      "dest": "0x430011c0",
+      "syntakt": [
+       "0x400052f8",
+       "0x40005624"
+      ]
+     },
+     {
+      "dest": "0x430014ee",
+      "syntakt": [
+       "0x4000569a",
+       "0x40005866"
+      ]
+     },
+     {
+      "dest": "0x430016bc",
+      "syntakt": [
+       "0x400058e8",
+       "0x40005964"
+      ]
+     },
+     {
+      "dest": "0x43001738",
+      "syntakt": [
+       "0x40008074",
+       "0x40008e0c"
+      ]
+     },
+     {
+      "dest": "0x430024d0",
+      "syntakt": [
+       "0x400596e0",
+       "0x40059f08"
+      ]
+     },
+     {
+      "dest": "0x43002cf8",
+      "syntakt": [
+       "0x40056654",
+       "0x40056e78"
+      ]
+     },
+     {
+      "dest": "0x43003520",
+      "syntakt": [
+       "0x4004f6e0",
+       "0x4004fde8"
+      ]
+     },
+     {
+      "dest": "0x43003c28",
+      "syntakt": [
+       "0x4004fde8",
+       "0x400504f0"
+      ]
+     },
+     {
+      "dest": "0x43004330",
+      "syntakt": [
+       "0x400504f0",
+       "0x40050bf8"
+      ]
+     },
+     {
+      "dest": "0x43004a38",
+      "syntakt": [
+       "0x40050bf8",
+       "0x40051300"
+      ]
+     },
+     {
+      "dest": "0x43005140",
+      "syntakt": [
+       "0x40051300",
+       "0x40051a08"
+      ]
+     },
+     {
+      "dest": "0x43005858",
+      "syntakt": [
+       "0x40051a08",
+       "0x40052110"
+      ]
+     },
+     {
+      "dest": "0x43007878",
+      "syntakt": [
+       "0x4000e488",
+       "0x40010490"
+      ]
+     },
+     {
+      "dest": "0x43009880",
+      "syntakt": [
+       "0x40014980",
+       "0x40016b90"
+      ]
+     },
+     {
+      "dest": "0x4300ba90",
+      "syntakt": [
+       "0x40028438",
+       "0x4003be38"
+      ]
+     },
+     {
+      "dest": "0x43036000",
+      "syntakt": [
+       "0x4003be38",
+       "0x4003de38"
+      ]
+     },
+     {
+      "dest": "0x43020000",
+      "syntakt": [
+       "0x4004f6e0",
+       "0x40057670"
+      ]
+     },
+     {
+      "dest": "0x43028000",
+      "syntakt": [
+       "0x40057670",
+       "0x4005df10"
+      ]
+     },
+     {
+      "dest": "0x430003ea",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x43000540",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x43000c58",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x43000d7c",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x43000e5a",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x4300108a",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x430011be",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x430014ec",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x430016ba",
+      "hex": "4e71"
+     },
+     {
+      "dest": "0x43038000",
+      "cycles": [
+       "0x4019d1ec",
+       "0x401a2a44"
+      ]
+     },
+     {
+      "dest": "0x4303d858",
+      "cycles": [
+       "0x401a7510",
+       "0x401a9530"
+      ]
+     },
+     {
+      "dest": "0x43031000",
+      "hex": {
+       "$shared": 15
+      }
+     },
+     {
+      "dest": "0x43033000",
       "hex": "724cb081650000200c8000000051650470004e75724c90817205b0816504908160f67233d0814e75202f00046100ffd272644c010800068040a717544e75202f00046100ffbc72644c010800068040a71768487940a715002f2f000c2f004eb9400ddf604fef000c203c40a715004e757405b481650c7406b480650c4ef94005a8fa4ef94005a9284ef94005a91c7206b081660470044e754e7520036100fff02800e588eb8c988048780001487800174878002045f940071da4227940fe32ccd3c42f092f024e924fef00304878000148780022d8b940fe384c487800602f042f024e924fef00144ef9400a268041e8000a2f082f2e001020026a0270007205b2806c0c6100ff887205b2806c0270054ef9400a4dde202f00047207b0816700004a7206b28064027001724c4c010800068040a715404e75202f00047206b081670000287205b280651041f9401091b4713008007206b28064027001724c4c010800068040a715404e7541f943035c007019600000024a28004c6600005e2f022f0a24482400487940a715d82f0a4eb9400f8f02508f487940a715dc486a00044eb9400f8f02508f41f940a715e043ea000872102f0120187233b0816d087237b2806d02d08222c053976aea588f70011540004c204a245f241f20084e75202f0024226a00687206b280640470004e757206b0816d0643f9430338544e75202f00040c800000004c650c0c800000004f620470064e750c8000000051650270002200e789ed88908141f943034000203008004e757006b0856500001e0c820000004c650e0c820000004f62067a06600000024ef94005a3844ef94005a34623df4303207a2239fc07000c23c1430320764eb94005979e2f004eb94303118a201f2f394303207a4e75b0846500005a2f012f04201580932f002f024eb9430310004fef000c221f4a80670e2043701f429853806afa60000030204622704c002f0a2f0e2f014e912f0e2f0341f94303383822704c004e914fef00142f032f024eb94303109a508f4ef9400a7e24"
      },
      {
@@ -6477,7 +6557,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 3
+     "$shared": 4
     }
    }
   },
@@ -7460,7 +7540,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46705f60",
       "hex": {
-       "$shared": 5
+       "$shared": 6
       }
      },
      {
@@ -7488,7 +7568,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 6
+     "$shared": 7
     },
     "pack": [
      [
@@ -7703,7 +7783,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 7
+    "$shared": 8
    },
    "append": {
     "at": "0x401aa140",
@@ -7974,7 +8054,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 14
+       "$shared": 15
       }
      },
      {
@@ -8003,7 +8083,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -8012,7 +8092,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 9
+     "$shared": 10
     },
     "compress": "aplib"
    },
@@ -8200,7 +8280,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 10
+    "$shared": 11
    },
    "append": {
     "at": "0x401bf8c0",
@@ -8471,7 +8551,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46705f60",
       "hex": {
-       "$shared": 5
+       "$shared": 6
       }
      },
      {
@@ -8500,7 +8580,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -8509,7 +8589,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 12
+     "$shared": 13
     },
     "compress": "aplib"
    },
@@ -9534,7 +9614,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 15
+       "$shared": 16
       }
      },
      {
@@ -13884,7 +13964,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 15
+       "$shared": 16
       }
      },
      {
@@ -13913,7 +13993,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -13922,7 +14002,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 16
+     "$shared": 17
     },
     "compress": "aplib"
    },
@@ -15032,7 +15112,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -15041,7 +15121,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 17
+     "$shared": 18
     },
     "compress": "aplib"
    },
@@ -16055,7 +16135,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 18
+       "$shared": 19
       }
      },
      {
@@ -20893,7 +20973,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 18
+       "$shared": 19
       }
      },
      {
@@ -20922,7 +21002,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -20931,7 +21011,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 19
+     "$shared": 20
     },
     "compress": "aplib"
    },
@@ -22030,7 +22110,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -22039,7 +22119,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 20
+     "$shared": 21
     },
     "compress": "aplib"
    },
@@ -22124,7 +22204,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 21
+    "$shared": 22
    },
    "append": {
     "at": "0x401aa140",
@@ -22409,7 +22489,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 22
+       "$shared": 23
       }
      },
      {
@@ -22437,7 +22517,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 9
+     "$shared": 10
     }
    }
   },
@@ -23420,7 +23500,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46705f60",
       "hex": {
-       "$shared": 23
+       "$shared": 24
       }
      },
      {
@@ -23448,7 +23528,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 12
+     "$shared": 13
     },
     "pack": [
      [
@@ -23663,7 +23743,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 24
+    "$shared": 25
    },
    "append": {
     "at": "0x401aa140",
@@ -23934,7 +24014,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 22
+       "$shared": 23
       }
      },
      {
@@ -23963,7 +24043,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -23972,7 +24052,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 25
+     "$shared": 26
     },
     "compress": "aplib"
    },
@@ -24160,7 +24240,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 26
+    "$shared": 27
    },
    "append": {
     "at": "0x401bf8c0",
@@ -24431,7 +24511,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46705f60",
       "hex": {
-       "$shared": 23
+       "$shared": 24
       }
      },
      {
@@ -24460,7 +24540,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -24469,7 +24549,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 27
+     "$shared": 28
     },
     "compress": "aplib"
    },
@@ -24554,7 +24634,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 21
+    "$shared": 22
    },
    "append": {
     "at": "0x401aa140",
@@ -24839,7 +24919,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 28
+       "$shared": 29
       }
      },
      {
@@ -24867,7 +24947,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 9
+     "$shared": 10
     }
    }
   },
@@ -24981,7 +25061,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 29
+    "$shared": 30
    },
    "append": {
     "at": "0x401bf8c0",
@@ -25266,7 +25346,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46705f60",
       "hex": {
-       "$shared": 30
+       "$shared": 31
       }
      },
      {
@@ -25294,7 +25374,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 12
+     "$shared": 13
     },
     "pack": [
      [
@@ -25509,7 +25589,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 24
+    "$shared": 25
    },
    "append": {
     "at": "0x401aa140",
@@ -25780,7 +25860,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 28
+       "$shared": 29
       }
      },
      {
@@ -25809,7 +25889,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -25818,7 +25898,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 25
+     "$shared": 26
     },
     "compress": "aplib"
    },
@@ -26006,7 +26086,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 26
+    "$shared": 27
    },
    "append": {
     "at": "0x401bf8c0",
@@ -26277,7 +26357,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46705f60",
       "hex": {
-       "$shared": 30
+       "$shared": 31
       }
      },
      {
@@ -26306,7 +26386,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -26315,7 +26395,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 27
+     "$shared": 28
     },
     "compress": "aplib"
    },
@@ -26400,7 +26480,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 31
+    "$shared": 32
    },
    "append": {
     "at": "0x401aa140",
@@ -26721,7 +26801,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 32
+       "$shared": 33
       }
      },
      {
@@ -26749,7 +26829,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 16
+     "$shared": 17
     }
    }
   },
@@ -27798,7 +27878,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 17
+     "$shared": 18
     },
     "pack": [
      [
@@ -28013,7 +28093,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 33
+    "$shared": 34
    },
    "append": {
     "at": "0x401aa140",
@@ -28320,7 +28400,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 32
+       "$shared": 33
       }
      },
      {
@@ -28349,7 +28429,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -28358,7 +28438,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 34
+     "$shared": 35
     },
     "compress": "aplib"
    },
@@ -28546,7 +28626,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 35
+    "$shared": 36
    },
    "append": {
     "at": "0x401bf8c0",
@@ -28884,7 +28964,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -28893,7 +28973,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 36
+     "$shared": 37
     },
     "compress": "aplib"
    },
@@ -28978,7 +29058,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 37
+    "$shared": 38
    },
    "append": {
     "at": "0x401aa140",
@@ -29288,7 +29368,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 38
+       "$shared": 39
       }
      },
      {
@@ -29316,7 +29396,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 19
+     "$shared": 20
     }
    }
   },
@@ -30354,7 +30434,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 20
+     "$shared": 21
     },
     "pack": [
      [
@@ -30569,7 +30649,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 39
+    "$shared": 40
    },
    "append": {
     "at": "0x401aa140",
@@ -30865,7 +30945,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 38
+       "$shared": 39
       }
      },
      {
@@ -30894,7 +30974,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -30903,7 +30983,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 40
+     "$shared": 41
     },
     "compress": "aplib"
    },
@@ -31091,7 +31171,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 41
+    "$shared": 42
    },
    "append": {
     "at": "0x401bf8c0",
@@ -31418,7 +31498,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -31427,7 +31507,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 42
+     "$shared": 43
     },
     "compress": "aplib"
    },
@@ -31512,7 +31592,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 21
+    "$shared": 22
    },
    "append": {
     "at": "0x401aa140",
@@ -31797,7 +31877,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 43
+       "$shared": 44
       }
      },
      {
@@ -31825,7 +31905,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 9
+     "$shared": 10
     }
    }
   },
@@ -31939,7 +32019,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 29
+    "$shared": 30
    },
    "append": {
     "at": "0x401bf8c0",
@@ -32224,7 +32304,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46705f60",
       "hex": {
-       "$shared": 44
+       "$shared": 45
       }
      },
      {
@@ -32252,7 +32332,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 12
+     "$shared": 13
     },
     "pack": [
      [
@@ -32467,7 +32547,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 24
+    "$shared": 25
    },
    "append": {
     "at": "0x401aa140",
@@ -32738,7 +32818,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 43
+       "$shared": 44
       }
      },
      {
@@ -32767,7 +32847,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -32776,7 +32856,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 25
+     "$shared": 26
     },
     "compress": "aplib"
    },
@@ -32964,7 +33044,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 26
+    "$shared": 27
    },
    "append": {
     "at": "0x401bf8c0",
@@ -33235,7 +33315,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46705f60",
       "hex": {
-       "$shared": 44
+       "$shared": 45
       }
      },
      {
@@ -33264,7 +33344,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -33273,7 +33353,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 27
+     "$shared": 28
     },
     "compress": "aplib"
    },
@@ -33358,7 +33438,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 31
+    "$shared": 32
    },
    "append": {
     "at": "0x401aa140",
@@ -33679,7 +33759,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 45
+       "$shared": 46
       }
      },
      {
@@ -33707,7 +33787,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 16
+     "$shared": 17
     }
    }
   },
@@ -34756,7 +34836,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 17
+     "$shared": 18
     },
     "pack": [
      [
@@ -34971,7 +35051,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 33
+    "$shared": 34
    },
    "append": {
     "at": "0x401aa140",
@@ -35278,7 +35358,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 45
+       "$shared": 46
       }
      },
      {
@@ -35307,7 +35387,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -35316,7 +35396,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 34
+     "$shared": 35
     },
     "compress": "aplib"
    },
@@ -35504,7 +35584,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 35
+    "$shared": 36
    },
    "append": {
     "at": "0x401bf8c0",
@@ -35842,7 +35922,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -35851,7 +35931,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 36
+     "$shared": 37
     },
     "compress": "aplib"
    },
@@ -35936,7 +36016,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 37
+    "$shared": 38
    },
    "append": {
     "at": "0x401aa140",
@@ -36246,7 +36326,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 46
+       "$shared": 47
       }
      },
      {
@@ -36274,7 +36354,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 19
+     "$shared": 20
     }
    }
   },
@@ -37312,7 +37392,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 20
+     "$shared": 21
     },
     "pack": [
      [
@@ -37527,7 +37607,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 39
+    "$shared": 40
    },
    "append": {
     "at": "0x401aa140",
@@ -37823,7 +37903,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 46
+       "$shared": 47
       }
      },
      {
@@ -37852,7 +37932,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -37861,7 +37941,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 40
+     "$shared": 41
     },
     "compress": "aplib"
    },
@@ -38049,7 +38129,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 41
+    "$shared": 42
    },
    "append": {
     "at": "0x401bf8c0",
@@ -38376,7 +38456,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -38385,7 +38465,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 42
+     "$shared": 43
     },
     "compress": "aplib"
    },
@@ -38470,7 +38550,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 31
+    "$shared": 32
    },
    "append": {
     "at": "0x401aa140",
@@ -38791,7 +38871,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 47
+       "$shared": 48
       }
      },
      {
@@ -38819,7 +38899,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 16
+     "$shared": 17
     }
    }
   },
@@ -39868,7 +39948,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 17
+     "$shared": 18
     },
     "pack": [
      [
@@ -40083,7 +40163,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 33
+    "$shared": 34
    },
    "append": {
     "at": "0x401aa140",
@@ -40390,7 +40470,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 47
+       "$shared": 48
       }
      },
      {
@@ -40419,7 +40499,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -40428,7 +40508,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 34
+     "$shared": 35
     },
     "compress": "aplib"
    },
@@ -40616,7 +40696,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 35
+    "$shared": 36
    },
    "append": {
     "at": "0x401bf8c0",
@@ -40954,7 +41034,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -40963,7 +41043,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 36
+     "$shared": 37
     },
     "compress": "aplib"
    },
@@ -41048,7 +41128,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 37
+    "$shared": 38
    },
    "append": {
     "at": "0x401aa140",
@@ -41358,7 +41438,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 48
+       "$shared": 49
       }
      },
      {
@@ -41386,7 +41466,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 19
+     "$shared": 20
     }
    }
   },
@@ -42424,7 +42504,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 20
+     "$shared": 21
     },
     "pack": [
      [
@@ -42639,7 +42719,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 39
+    "$shared": 40
    },
    "append": {
     "at": "0x401aa140",
@@ -42935,7 +43015,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 48
+       "$shared": 49
       }
      },
      {
@@ -42964,7 +43044,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -42973,7 +43053,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 40
+     "$shared": 41
     },
     "compress": "aplib"
    },
@@ -43161,7 +43241,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 41
+    "$shared": 42
    },
    "append": {
     "at": "0x401bf8c0",
@@ -43488,7 +43568,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -43497,7 +43577,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 42
+     "$shared": 43
     },
     "compress": "aplib"
    },
@@ -43582,7 +43662,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 37
+    "$shared": 38
    },
    "append": {
     "at": "0x401aa140",
@@ -43892,7 +43972,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 49
+       "$shared": 50
       }
      },
      {
@@ -43920,7 +44000,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 19
+     "$shared": 20
     }
    }
   },
@@ -44958,7 +45038,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 20
+     "$shared": 21
     },
     "pack": [
      [
@@ -45177,7 +45257,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 39
+    "$shared": 40
    },
    "append": {
     "at": "0x401aa140",
@@ -45473,7 +45553,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 49
+       "$shared": 50
       }
      },
      {
@@ -45502,7 +45582,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -45511,7 +45591,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 40
+     "$shared": 41
     },
     "compress": "aplib"
    },
@@ -45699,7 +45779,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 41
+    "$shared": 42
    },
    "append": {
     "at": "0x401bf8c0",
@@ -46026,7 +46106,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -46035,7 +46115,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 42
+     "$shared": 43
     },
     "compress": "aplib"
    },
@@ -47024,7 +47104,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 50
+       "$shared": 51
       }
      },
      {
@@ -47052,7 +47132,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 25
+     "$shared": 26
     }
    }
   },
@@ -48035,7 +48115,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46705f60",
       "hex": {
-       "$shared": 51
+       "$shared": 52
       }
      },
      {
@@ -48063,7 +48143,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 27
+     "$shared": 28
     },
     "pack": [
      [
@@ -49168,7 +49248,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 50
+       "$shared": 51
       }
      },
      {
@@ -49197,7 +49277,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -50978,7 +51058,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46705f60",
       "hex": {
-       "$shared": 51
+       "$shared": 52
       }
      },
      {
@@ -51007,7 +51087,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -51990,7 +52070,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 52
+    "$shared": 53
    },
    "append": {
     "at": "0x401aa140",
@@ -52311,7 +52391,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 53
+       "$shared": 54
       }
      },
      {
@@ -52339,7 +52419,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 34
+     "$shared": 35
     }
    }
   },
@@ -53388,7 +53468,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 36
+     "$shared": 37
     },
     "pack": [
      [
@@ -53603,7 +53683,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 54
+    "$shared": 55
    },
    "append": {
     "at": "0x401aa140",
@@ -53910,13 +53990,13 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 53
+       "$shared": 54
       }
      },
      {
       "dest": "0x43033000",
       "hex": {
-       "$shared": 55
+       "$shared": 56
       }
      },
      {
@@ -53941,7 +54021,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -53950,7 +54030,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 56
+     "$shared": 57
     },
     "compress": "aplib"
    },
@@ -54138,7 +54218,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 57
+    "$shared": 58
    },
    "append": {
     "at": "0x401bf8c0",
@@ -54457,7 +54537,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46733000",
       "hex": {
-       "$shared": 58
+       "$shared": 59
       }
      },
      {
@@ -54478,7 +54558,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -54487,7 +54567,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 59
+     "$shared": 60
     },
     "compress": "aplib"
    },
@@ -54572,7 +54652,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 60
+    "$shared": 61
    },
    "append": {
     "at": "0x401aa140",
@@ -54882,7 +54962,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 61
+       "$shared": 62
       }
      },
      {
@@ -54910,7 +54990,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 40
+     "$shared": 41
     }
    }
   },
@@ -55948,7 +56028,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 42
+     "$shared": 43
     },
     "pack": [
      [
@@ -56163,7 +56243,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 62
+    "$shared": 63
    },
    "append": {
     "at": "0x401aa140",
@@ -56459,7 +56539,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 61
+       "$shared": 62
       }
      },
      {
@@ -56488,7 +56568,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -56497,7 +56577,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 63
+     "$shared": 64
     },
     "compress": "aplib"
    },
@@ -56685,7 +56765,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 64
+    "$shared": 65
    },
    "append": {
     "at": "0x401bf8c0",
@@ -57012,7 +57092,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -57021,7 +57101,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 65
+     "$shared": 66
     },
     "compress": "aplib"
    },
@@ -57106,7 +57186,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 52
+    "$shared": 53
    },
    "append": {
     "at": "0x401aa140",
@@ -57427,7 +57507,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 66
+       "$shared": 67
       }
      },
      {
@@ -57455,7 +57535,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 34
+     "$shared": 35
     }
    }
   },
@@ -58504,7 +58584,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 36
+     "$shared": 37
     },
     "pack": [
      [
@@ -58719,7 +58799,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 54
+    "$shared": 55
    },
    "append": {
     "at": "0x401aa140",
@@ -59026,7 +59106,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 66
+       "$shared": 67
       }
      },
      {
@@ -59055,7 +59135,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -59064,7 +59144,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 56
+     "$shared": 57
     },
     "compress": "aplib"
    },
@@ -59252,7 +59332,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 57
+    "$shared": 58
    },
    "append": {
     "at": "0x401bf8c0",
@@ -59590,7 +59670,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -59599,7 +59679,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 59
+     "$shared": 60
     },
     "compress": "aplib"
    },
@@ -59684,7 +59764,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 60
+    "$shared": 61
    },
    "append": {
     "at": "0x401aa140",
@@ -59994,7 +60074,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 67
+       "$shared": 68
       }
      },
      {
@@ -60022,7 +60102,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 40
+     "$shared": 41
     }
    }
   },
@@ -61060,7 +61140,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 42
+     "$shared": 43
     },
     "pack": [
      [
@@ -61275,7 +61355,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 62
+    "$shared": 63
    },
    "append": {
     "at": "0x401aa140",
@@ -61571,7 +61651,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 67
+       "$shared": 68
       }
      },
      {
@@ -61600,7 +61680,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -61609,7 +61689,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 63
+     "$shared": 64
     },
     "compress": "aplib"
    },
@@ -61797,7 +61877,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 64
+    "$shared": 65
    },
    "append": {
     "at": "0x401bf8c0",
@@ -62124,7 +62204,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -62133,7 +62213,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 65
+     "$shared": 66
     },
     "compress": "aplib"
    },
@@ -62218,7 +62298,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 60
+    "$shared": 61
    },
    "append": {
     "at": "0x401aa140",
@@ -62528,7 +62608,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 68
+       "$shared": 69
       }
      },
      {
@@ -62556,7 +62636,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 40
+     "$shared": 41
     }
    }
   },
@@ -63594,7 +63674,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 42
+     "$shared": 43
     },
     "pack": [
      [
@@ -63813,7 +63893,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 62
+    "$shared": 63
    },
    "append": {
     "at": "0x401aa140",
@@ -64109,7 +64189,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 68
+       "$shared": 69
       }
      },
      {
@@ -64138,7 +64218,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -64147,7 +64227,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 63
+     "$shared": 64
     },
     "compress": "aplib"
    },
@@ -64335,7 +64415,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 64
+    "$shared": 65
    },
    "append": {
     "at": "0x401bf8c0",
@@ -64662,7 +64742,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -64671,7 +64751,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 65
+     "$shared": 66
     },
     "compress": "aplib"
    },
@@ -64756,7 +64836,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 52
+    "$shared": 53
    },
    "append": {
     "at": "0x401aa140",
@@ -65077,7 +65157,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 69
+       "$shared": 70
       }
      },
      {
@@ -65105,7 +65185,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 34
+     "$shared": 35
     }
    }
   },
@@ -66154,7 +66234,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 36
+     "$shared": 37
     },
     "pack": [
      [
@@ -66369,7 +66449,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 54
+    "$shared": 55
    },
    "append": {
     "at": "0x401aa140",
@@ -66676,7 +66756,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 69
+       "$shared": 70
       }
      },
      {
@@ -66705,7 +66785,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -66714,7 +66794,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 56
+     "$shared": 57
     },
     "compress": "aplib"
    },
@@ -66902,7 +66982,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 57
+    "$shared": 58
    },
    "append": {
     "at": "0x401bf8c0",
@@ -67240,7 +67320,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -67249,7 +67329,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 59
+     "$shared": 60
     },
     "compress": "aplib"
    },
@@ -67334,7 +67414,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 60
+    "$shared": 61
    },
    "append": {
     "at": "0x401aa140",
@@ -67644,7 +67724,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 70
+       "$shared": 71
       }
      },
      {
@@ -67672,7 +67752,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 40
+     "$shared": 41
     }
    }
   },
@@ -68710,7 +68790,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 42
+     "$shared": 43
     },
     "pack": [
      [
@@ -68925,7 +69005,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 62
+    "$shared": 63
    },
    "append": {
     "at": "0x401aa140",
@@ -69221,7 +69301,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 70
+       "$shared": 71
       }
      },
      {
@@ -69250,7 +69330,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -69259,7 +69339,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 63
+     "$shared": 64
     },
     "compress": "aplib"
    },
@@ -69447,7 +69527,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 64
+    "$shared": 65
    },
    "append": {
     "at": "0x401bf8c0",
@@ -69774,7 +69854,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -69783,7 +69863,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 65
+     "$shared": 66
     },
     "compress": "aplib"
    },
@@ -69868,7 +69948,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 60
+    "$shared": 61
    },
    "append": {
     "at": "0x401aa140",
@@ -70178,7 +70258,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 71
+       "$shared": 72
       }
      },
      {
@@ -70206,7 +70286,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 40
+     "$shared": 41
     }
    }
   },
@@ -71244,7 +71324,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 42
+     "$shared": 43
     },
     "pack": [
      [
@@ -71463,7 +71543,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 62
+    "$shared": 63
    },
    "append": {
     "at": "0x401aa140",
@@ -71759,7 +71839,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 71
+       "$shared": 72
       }
      },
      {
@@ -71788,7 +71868,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -71797,7 +71877,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 63
+     "$shared": 64
     },
     "compress": "aplib"
    },
@@ -71985,7 +72065,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 64
+    "$shared": 65
    },
    "append": {
     "at": "0x401bf8c0",
@@ -72312,7 +72392,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -72321,7 +72401,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 65
+     "$shared": 66
     },
     "compress": "aplib"
    },
@@ -72406,7 +72486,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 60
+    "$shared": 61
    },
    "append": {
     "at": "0x401aa140",
@@ -72716,7 +72796,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 72
+       "$shared": 73
       }
      },
      {
@@ -72744,7 +72824,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 40
+     "$shared": 41
     }
    }
   },
@@ -73782,7 +73862,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 42
+     "$shared": 43
     },
     "pack": [
      [
@@ -74001,7 +74081,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 62
+    "$shared": 63
    },
    "append": {
     "at": "0x401aa140",
@@ -74297,7 +74377,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 72
+       "$shared": 73
       }
      },
      {
@@ -74326,7 +74406,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -74335,7 +74415,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 63
+     "$shared": 64
     },
     "compress": "aplib"
    },
@@ -74523,7 +74603,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 64
+    "$shared": 65
    },
    "append": {
     "at": "0x401bf8c0",
@@ -74850,7 +74930,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -74859,7 +74939,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 65
+     "$shared": 66
     },
     "compress": "aplib"
    },
@@ -75884,13 +75964,13 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 73
+       "$shared": 74
       }
      },
      {
       "dest": "0x43033000",
       "hex": {
-       "$shared": 55
+       "$shared": 56
       }
      },
      {
@@ -75914,7 +75994,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 56
+     "$shared": 57
     }
    }
   },
@@ -76945,7 +77025,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46733000",
       "hex": {
-       "$shared": 58
+       "$shared": 59
       }
      },
      {
@@ -76965,7 +77045,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 59
+     "$shared": 60
     },
     "pack": [
      [
@@ -78106,7 +78186,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 73
+       "$shared": 74
       }
      },
      {
@@ -78135,7 +78215,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -80238,7 +80318,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -81476,7 +81556,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 74
+    "$shared": 75
    },
    "append": {
     "at": "0x401aa140",
@@ -81786,7 +81866,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 75
+       "$shared": 76
       }
      },
      {
@@ -81814,7 +81894,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 63
+     "$shared": 64
     }
    }
   },
@@ -82852,7 +82932,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 65
+     "$shared": 66
     },
     "pack": [
      [
@@ -83067,7 +83147,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 76
+    "$shared": 77
    },
    "append": {
     "at": "0x401aa140",
@@ -83363,7 +83443,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 75
+       "$shared": 76
       }
      },
      {
@@ -83392,7 +83472,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -83401,7 +83481,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 77
+     "$shared": 78
     },
     "compress": "aplib"
    },
@@ -83589,7 +83669,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 78
+    "$shared": 79
    },
    "append": {
     "at": "0x401bf8c0",
@@ -83916,7 +83996,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -83925,7 +84005,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 79
+     "$shared": 80
     },
     "compress": "aplib"
    },
@@ -84010,7 +84090,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 74
+    "$shared": 75
    },
    "append": {
     "at": "0x401aa140",
@@ -84320,7 +84400,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 80
+       "$shared": 81
       }
      },
      {
@@ -84348,7 +84428,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 63
+     "$shared": 64
     }
    }
   },
@@ -84462,7 +84542,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 81
+    "$shared": 82
    },
    "append": {
     "at": "0x401bf8c0",
@@ -84802,7 +84882,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 65
+     "$shared": 66
     },
     "pack": [
      [
@@ -85021,7 +85101,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 76
+    "$shared": 77
    },
    "append": {
     "at": "0x401aa140",
@@ -85317,7 +85397,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 80
+       "$shared": 81
       }
      },
      {
@@ -85346,7 +85426,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -85355,7 +85435,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 77
+     "$shared": 78
     },
     "compress": "aplib"
    },
@@ -85543,7 +85623,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 78
+    "$shared": 79
    },
    "append": {
     "at": "0x401bf8c0",
@@ -85870,7 +85950,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -85879,7 +85959,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 79
+     "$shared": 80
     },
     "compress": "aplib"
    },
@@ -85964,7 +86044,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 74
+    "$shared": 75
    },
    "append": {
     "at": "0x401aa140",
@@ -86274,7 +86354,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 82
+       "$shared": 83
       }
      },
      {
@@ -86302,7 +86382,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 63
+     "$shared": 64
     }
    }
   },
@@ -86416,7 +86496,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 81
+    "$shared": 82
    },
    "append": {
     "at": "0x401bf8c0",
@@ -86756,7 +86836,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 65
+     "$shared": 66
     },
     "pack": [
      [
@@ -86975,7 +87055,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 76
+    "$shared": 77
    },
    "append": {
     "at": "0x401aa140",
@@ -87271,7 +87351,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 82
+       "$shared": 83
       }
      },
      {
@@ -87300,7 +87380,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -87309,7 +87389,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 77
+     "$shared": 78
     },
     "compress": "aplib"
    },
@@ -87497,7 +87577,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 78
+    "$shared": 79
    },
    "append": {
     "at": "0x401bf8c0",
@@ -87824,7 +87904,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -87833,7 +87913,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 79
+     "$shared": 80
     },
     "compress": "aplib"
    },
@@ -87918,7 +87998,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 74
+    "$shared": 75
    },
    "append": {
     "at": "0x401aa140",
@@ -88228,7 +88308,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 83
+       "$shared": 84
       }
      },
      {
@@ -88256,7 +88336,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 63
+     "$shared": 64
     }
    }
   },
@@ -89294,7 +89374,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 65
+     "$shared": 66
     },
     "pack": [
      [
@@ -89513,7 +89593,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 76
+    "$shared": 77
    },
    "append": {
     "at": "0x401aa140",
@@ -89809,7 +89889,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 83
+       "$shared": 84
       }
      },
      {
@@ -89838,7 +89918,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -89847,7 +89927,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 77
+     "$shared": 78
     },
     "compress": "aplib"
    },
@@ -90035,7 +90115,7 @@ window.MC_TWEAKS = {
     "syntakt-vintage"
    ],
    "writes": {
-    "$shared": 78
+    "$shared": 79
    },
    "append": {
     "at": "0x401bf8c0",
@@ -90362,7 +90442,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -90371,7 +90451,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 79
+     "$shared": 80
     },
     "compress": "aplib"
    },
@@ -91385,7 +91465,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 84
+       "$shared": 85
       }
      },
      {
@@ -91413,7 +91493,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 77
+     "$shared": 78
     }
    }
   },
@@ -92451,7 +92531,7 @@ window.MC_TWEAKS = {
      }
     ],
     "reloc": {
-     "$shared": 79
+     "$shared": 80
     },
     "pack": [
      [
@@ -93585,7 +93665,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43031000",
       "hex": {
-       "$shared": 84
+       "$shared": 85
       }
      },
      {
@@ -93614,7 +93694,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x43042000",
       "hex": {
-       "$shared": 8
+       "$shared": 9
       }
      },
      {
@@ -95961,7 +96041,7 @@ window.MC_TWEAKS = {
      {
       "dest": "0x46742000",
       "hex": {
-       "$shared": 11
+       "$shared": 12
       }
      },
      {
@@ -97428,6 +97508,29 @@ window.MC_TWEAKS = {
    "license": "LICENSE-Model-TG.txt"
   },
   {
+   "id": "sample-preview",
+   "label": "Ecoute des samples (Model-TG)",
+   "desc": "Sur une piste Sampler, dans le navigateur de samples, le pad de la piste (ou ses touches en mode clavier) joue le sample sous le curseur, comme pour les presets. Un sample pas encore en memoire se charge au premier appui. Demande Model-TG.",
+   "status": "tested",
+   "credit": {
+    "kind": "based",
+    "who": "TinyGregAudio",
+    "repo": "TinyGregAudio/Model-TG"
+   },
+   "cat": "screen",
+   "requires": "model-tg",
+   "variants": [
+    {
+     "id": "sample-preview",
+     "label": null
+    }
+   ],
+   "with": {
+    "syntakt": "sample-preview-st",
+    "macro": "sample-preview-st"
+   }
+  },
+  {
    "id": "latching-mute",
    "label": "Mode mute verrouille",
    "desc": "Maintiens TRK et tape FUNC : le mode mute reste actif, tu mutes les pistes sans tenir FUNC. Un appui court sur FUNC en sort.",
@@ -98863,6 +98966,63 @@ window.MC_TWEAKS = {
     "off": 1424956,
     "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
     "new": "a93c000000202f0a45f94015c2fc4aaa000467404ab9404a062c670c4ab9404a06446704610000322f2a00042f1242aa00044eb940002912508f4aaa000c67142f2a000c2f2a000842aa000c4eb940002912508f245f4e7541f980008007721f70000810000767025c8041e8004053816af073b9400029b95281c2fc000304810000001090816a027000721fb0816f02200123c0404a06204e7541f94015c2fc4aa80004670850884aa80004660c20af0004216f000800044e754ef94000291200000000000000000000000000000000"
+   }
+  ],
+  [
+   {
+    "off": 363790,
+    "old": "4aaa0030670c2002",
+    "new": "4eb940183118600a"
+   },
+   {
+    "off": 529182,
+    "old": "4ef9401b3210",
+    "new": "4ef940185968"
+   },
+   {
+    "off": 679974,
+    "old": "4eb9400a3052",
+    "new": "4eb940185c58"
+   },
+   {
+    "off": 710112,
+    "old": "40185c58",
+    "new": "40172220"
+   },
+   {
+    "off": 710144,
+    "old": "40185968",
+    "new": "40172220"
+   },
+   {
+    "off": 710568,
+    "old": "40185018",
+    "new": "40172220"
+   },
+   {
+    "off": 711582,
+    "old": "40183118",
+    "new": "40172220"
+   },
+   {
+    "off": 1584408,
+    "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffffffff",
+    "new": "202a003067342240200206800000009373a900265d81661e7206b481641841f94018315420702c0029880c00701820d953806afa4e7542b40c004e7540183174401831d8401850184018507c401850e040185a5000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+   },
+   {
+    "off": 1592344,
+    "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffffffff",
+    "new": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+   },
+   {
+    "off": 1594728,
+    "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffffffff",
+    "new": "203940fb5a04670000d27240b2af0010660000c84aaf0014660000c0222f0004b2b940a700c4660000b220404eb9401b2d964a80670000a441f9401be4a0723fb0986700009653816af6223940fb5a04b2b9401831706608b0b94018316c676a4fefffd448d77cfc240040c372003203028100000700664a46fc27004ab9401beff4663c700123c0401beff446c323c0401befc820024eb9401b27d042b9401befc842b9401beff44a806a2623c24018316c203940fb5a0423c040183170600246c34cd77cfc4fef002c70012f40001460084cd77cfc4fef002c4e56ff98707f4ef940081724000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+   },
+   {
+    "off": 1595480,
+    "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000",
+    "new": "42b94018316c4feffff048d70c0c2448226f00142429000826290004203940a700c44eb9401b32a24a8067000086264071ab00267206b081667820020480000000300c8000000070620661764a9266647042b48065544a83675041f940185d2c224b701820d953806afa41f940185d3010fc005310fc004d10fc0050721c2003e2a802800000000f0680000000300c800000003a65025e8010c059816ae024bc40185d2c42aa0004600a429242aa00046002610e200a204a4cd70c0c4fef00104e752f2f0018204a4eb9400a3052588f4e75000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
    }
   ],
   [

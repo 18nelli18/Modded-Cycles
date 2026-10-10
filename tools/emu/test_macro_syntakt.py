@@ -106,7 +106,7 @@ class Fw(tm.Fw):
 
 def engines_of(t):
     """Moteurs du Syntakt d'un tweak (syntakt-[tg-]<moteurs>[-macro])."""
-    return [c for c in t["id"].split("-") if c in gs.CATALOG]
+    return [c for c in t["id"].split("-") if c in gs.CATALOG and c != "macro"]   # "macro" : ajouté au catalogue pour l'interface
 
 
 def chord_at(t, ctx):
@@ -313,26 +313,31 @@ FULL = 0x20000000
 
 
 def governor(fw, tw, label, sampler=False):
-    """Surcharge (comme test_model_tg_syntakt.governor) : 6 pistes MACRO (avec Model-TG, le Sampler en piste 3) ; le
-    régulateur éteint des pistes MACRO, jamais le Sampler ; les autres restent identiques à la référence."""
+    """Surcharge (comme test_model_tg_syntakt.governor et test_governor) : 6 pistes MACRO (avec Model-TG, le Sampler en
+    piste 3). Charge fixe de 97 % : le régulateur éteint toutes les pistes MACRO, jamais le Sampler. Charge qui suit les
+    voix calculées (46 % + 7 % par voix, comme test_governor) : il en éteint une partie seulement, puis la charge
+    retombe ; les pistes épargnées restent identiques à la référence, les pistes éteintes se taisent."""
     sy = {k: int(v, 16) for k, v in tw["gov"].items()}
     setup = {t: dict(BASE_KW, machine=fw.index, shape=(0, 1, 2, 3, 9, 10)[t], note=48 + 5 * t, decay=100)
              for t in range(6)}
     if sampler:
         setup[2] = dict(BASE_KW, machine=6, decay=100)
+    cost = 2 * 7 * BLOCK // 100                    # par voix calculée, la moitié entre voice_gate et voice_after
 
     def play_(load_):
+        """load_ : None ou fonction (bloc, voix calculées dans ce bloc) -> charge en %."""
         e = fw.engine()
         if fw.blob_end is None:
             e.uc.mem_map(0x40800000, 0x00800000)   # BSS de l'OS (Model-TG l'a déjà) : le régulateur y lit les gains
         for t in range(6):
             for a in GAINS:
                 e.uc.mem_write(a + 4 * t, struct.pack(">I", FULL))
-        clock = {"t": 10_000_000, "fixed": None}
+        clock = {"t": 10_000_000, "fixed": None, "reads": 0}
 
         def read(uc, access, addr, size, value, ud):
             if clock["fixed"] is None:
-                clock["t"] += 2000
+                clock["t"] += cost // 2
+                clock["reads"] += 1
                 v = clock["t"]
             else:
                 v = clock["fixed"]
@@ -343,22 +348,29 @@ def governor(fw, tw, label, sampler=False):
         e.uc.mem_write(tms.gs_x(tw, "X_SLOW"), struct.pack(">I", 88 * 65536 // 100))
         out, stolen, now = [], set(), 10_000_000
         for b in range(300):
+            clock["reads"] = 0
             out.append(e.block(0x3f if b == 1 else 0))
-            if load_:
+            if load_ is not None:
                 e.uc.mem_write(sy["gov_t0_audio"], struct.pack(">I", now & 0xffffffff))
-                clock["fixed"] = now + (97 if b < 200 else 50) * BLOCK // 100
+                clock["fixed"] = now + load_(b, clock["reads"] // 2) * BLOCK // 100
                 e.call(sy["audio_end"])
                 clock["fixed"] = None
                 now += BLOCK
             stolen |= {t for t, v in enumerate(bytes(e.uc.mem_read(sy["gov_stolen"], 6))) if v}
         return np.stack(out), stolen, e.unmapped
-    ref, _, _ = play_(False)
-    mod, stolen, unm = play_(True)
-    spared = set(range(6)) - stolen
-    same = all(np.array_equal(ref[:, t], mod[:, t]) for t in spared)
-    check(stolen and not (sampler and 2 in stolen) and spared and same and not unm,
-          f"{label} : surcharge (97 %) avec des pistes MACRO : pistes éteintes {sorted(t + 1 for t in stolen)}"
-          f"{', jamais le Sampler (piste 3)' if sampler else ''} ; les autres identiques à la référence")
+    ref, _, _ = play_(None)
+    macro = set(range(6)) - ({2} if sampler else set())
+    silent = lambda mod, ts: all(not np.abs(mod[-50:, t]).max() and np.abs(ref[-50:, t]).max() for t in ts)
+    for name, load_, want in (("charge fixe de 97 %", lambda b, n: 97 if b < 200 else 50, lambda st: st == macro),
+                              ("charge de 46 % + 7 % par voix calculée", lambda b, n: 46 + 7 * n,
+                               lambda st: st and st < macro)):
+        mod, stolen, unm = play_(load_)
+        spared = set(range(6)) - stolen
+        same = all(np.array_equal(ref[:, t], mod[:, t]) for t in spared)
+        check(want(stolen) and same and silent(mod, stolen) and not unm,
+              f"{label} : surcharge ({name}) : pistes MACRO éteintes {sorted(t + 1 for t in stolen)}, muettes ensuite"
+              f"{', jamais le Sampler (piste 3)' if sampler else ''} ; les autres "
+              f"{sorted(t + 1 for t in spared)} identiques à la référence")
 
 
 def exact_some(fw, ref_braids, label):

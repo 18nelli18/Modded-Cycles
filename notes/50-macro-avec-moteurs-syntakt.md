@@ -116,8 +116,9 @@ La décompression ajoute au démarrage quelques dizaines de millisecondes `[HYP]
   utile, comme pour les moteurs seuls.
 - Une version combinée ne va ni avec `macro`/`macro-tg`, ni avec les tweaks des moteurs seuls, ni avec une autre
   version combinée (`conflicts`) : le flasher n'en prend qu'une. Sans Model-TG, elle ne va pas avec `model-tg-st`.
-- Avec les autres mods du flasher (6 canaux, arpégiateur, trig-hold, tempo, animation, drumkilla) : les écritures
-  communes sont identiques (redirections de sprites, envoi USB à heure fixe), aucune ne diffère.
+- Avec les autres mods du flasher (6 canaux, arpégiateur, trig-hold, tempo, animation, drumkilla, écoute des samples
+  `sample-preview-st` avec Model-TG, [46](46-ecoute-des-samples.md)) : les écritures communes sont identiques
+  (redirections de sprites, envoi USB à heure fixe), aucune ne diffère.
 
 ## 6. Preuve en émulation `[FAIT en émulation]`
 
