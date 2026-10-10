@@ -199,7 +199,8 @@ def build_tweak(stock):
     build.apply_writes(stock, [tweak])
     for path in OUT.parent.glob("*.json"):
         other = json.loads(path.read_text())
-        if other.get("id") in (tweak["id"], *tweak["conflicts"]):
+        # un conflit déclaré d'un côté ou de l'autre (sample-preview partage quatre masques) : jamais construits ensemble
+        if other.get("id") in (tweak["id"], *tweak["conflicts"]) or tweak["id"] in other.get("conflicts", []):
             continue
         for a in tweak["writes"]:
             for b in other.get("writes", []):

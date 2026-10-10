@@ -823,3 +823,10 @@ rangée après l'image). Preuves en émulation :
 
 `[HYP]` Sur la machine, Chord Keys et MACRO ensemble n'ont pas été essayés.
 
+**Deuxième fusion (10/10/2026)** : l'écoute des samples (sample-preview, 1.32, notes/46) arrive dans `main`. Elle
+exige Model-TG, que Chord Keys exclut, et déclare le conflit avec Chord Keys : elle peut donc occuper quatre de ses
+masques (`0x40183118`, `0x40185018`, `0x40185968`, `0x40185c58`). Le contrôle de chevauchement de
+`gen_chord_keys.py` ignorait seulement les conflits que Chord Keys déclare ; il ignore aussi ceux que l'autre tweak
+déclare. Le JSON ne change pas. `gen_chord_keys.py --check` et `gen_sample_preview.py --check` passent tous deux avec
+les deux fichiers présents. `ref_mainos.py` : **19 007** combinaisons ; les empreintes de Chord Keys ne changent pas.
+

@@ -27,9 +27,14 @@ Write for musicians: what changes on the machine, which buttons to press, the li
 1. Add it to `FEATURES` in `tools/gen_flasher_tweaks.py` (`"status": "experimental"`, `cat`, `credit`, `excludes`,
    `includes`, `needs` or `requires` if any), then `python3 tools/gen_flasher_tweaks.py` to regenerate
    `flasher/tweaks.js`. `cat` is the flasher section the mod shows in, one of `CATS` (`pack`, `sound`, `seq`, `live`,
-   `screen`, `io`); without it the mod lands at the end, in « Other mods ». `requires` names a mod it only works with
-   (shown as "with …", not enforced). The order of `FEATURES` is the build order (the `REF_MAINOS` keys); the page
-   shows the mods by section, in `FEATURES` order inside a section.
+   `screen`, `io`); without it the mod lands at the end, in « Other mods ». The order of `FEATURES` is the build order
+   (the `REF_MAINOS` keys); the page shows the mods by section, in `FEATURES` order inside a section.
+   `"requires": "<card id>"` is for an add-on that only works with another card (sample preview needs Model-TG):
+   ticking it ticks that card too (with that card's own exclusions), unticking that card unticks it, its Details say
+   "Works with …", and `ref_mainos.py` only lists combinations that hold both. Give the add-on the same `with` as the
+   card it requires (sample preview takes `33-sample-preview-st` when Model-TG takes `30-model-tg-st`), and make the
+   `requires` of each of its tweak files point at the matching tweak (`sample-preview` → `model-tg`,
+   `sample-preview-st` → `model-tg-st`); `gen_flasher_tweaks.py` refuses a card that doesn't.
 2. `python3 tools/ref_mainos.py --cycles … --syntakt …` rewrites `REF_MAINOS` in `flasher/app.js`: the flasher refuses
    to send a build whose MAIN OS hash is not listed, so every offered combination must be there.
 3. In `flasher/app.js`: the row texts in `FEAT.en` and `FEAT.fr`: `label`; `short`, the one sentence shown on the

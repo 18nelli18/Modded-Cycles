@@ -41,11 +41,12 @@ and check the writes of **every** other tweak for overlaps.
   (`sprites.redirect_write`), freeing its own. Already used: `0x4015c044` (6ch-usbup stubs, trig-hold in front),
   `0x4016cae8` (Syntakt engines' boot hook at the start, arpeggiator menu after it), `0x4018a788`, `0x40189930`,
   `0x4018a220` (arpeggiator), fourteen 47×47 masks: the eleven from `0x4016b6f8` to `0x40185c58`, then `0x4018cd48`,
-  `0x4018d1b8`, `0x4018d4a8` (chord-keys, notes/42 §6). Five more 47×47 masks (376 bytes each, identical to the kept
-  `0x40172220`, listed in `sprites.py`) can be freed the same way: `0x4018dba8`, `0x4018f4b4`, `0x4018fc74`,
-  `0x40192734`, and `0x401904b4`, reserved for the multiline browser in progress (notes/32 §11). Two tweaks that can
-  be installed together must never share a mask; tweaks that exclude each other (chord-keys and anything that needs
-  Model-TG) may.
+  `0x4018d1b8`, `0x4018d4a8` (chord-keys, notes/42 §6); sample-preview uses `0x40183118`, `0x40185018`, `0x40185968`,
+  `0x40185c58`, shared with chord-keys, which excludes Model-TG: two tweaks may share a mask only if they can never be
+  built together. In all, 21 47×47 masks (376 bytes each, one constructor constant each, `0x400ac2b2`..`0x400b133e`)
+  are identical to the kept `0x40172220` and can be freed the same way (notes/46 §7). The last five listed in
+  `sprites.py` are claimed by open PRs: `0x4018dba8`, `0x4018f4b4`, `0x4018fc74`, `0x40192734` (djd_oz's mods) and
+  `0x401904b4` (the multiline browser). Check their tweak files before taking one.
 - **Payload appended to the image** and copied at boot to SDRAM (`0x43000000`, notes/17; Model-TG uses
   `0x46700000`, notes/31): for large code, at the cost of a boot hook shared with the Syntakt engines.
 - **In place**: rewrite the function you change when the new code fits (tempo-max's LFO loop, trig-preview's 3 bytes).
