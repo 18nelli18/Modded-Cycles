@@ -195,7 +195,10 @@ def check_overlaps(tweaks, g):
 
 
 def chunk_len(ap):
-    """Octets qu'une charge utile prend dans l'image (rangée en morceaux « pack », ou entière)."""
+    """Octets qu'une charge utile prend dans l'image (rangée en morceaux « pack », compressée « compress » : sa taille
+    rangée « stored », notes/50, ou entière)."""
+    if "compress" in ap:
+        return ap["stored"]
     return sum(n for _, n in ap["pack"]) if "pack" in ap else ap["size"]
 
 
@@ -283,3 +286,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

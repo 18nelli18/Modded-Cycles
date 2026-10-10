@@ -282,9 +282,15 @@ def payload_runtime(t, main_os, st_img):
 
 
 def payload_image(t, runtime):
-    """Ce qui va dans l'image : la charge utile entière, ou rangée en morceaux (append.pack : [adresse, taille]) ;
-    hors des morceaux, tout doit être à zéro (le crochet de démarrage remet à zéro, puis recopie les morceaux)."""
+    """Ce qui va dans l'image : la charge utile entière, rangée en morceaux (append.pack : [adresse, taille] ; hors
+    des morceaux, tout doit être à zéro : le crochet de démarrage remet à zéro, puis recopie les morceaux), ou
+    compressée (append.compress = "aplib" : tools/aplib_grow.py pack, décompressée par le crochet, notes/51)."""
     ap_ = t["append"]
+    if "compress" in ap_:
+        if ap_["compress"] != "aplib":
+            raise SystemExit(f"!! {t['id']} : compression {ap_['compress']!r} inconnue")
+        import aplib_grow                               # noqa: E402
+        return aplib_grow.pack(runtime)
     if "pack" not in ap_:
         return runtime
     dest, out, kept = int(ap_["dest"], 16), bytearray(), bytearray(runtime)
@@ -326,7 +332,8 @@ def build_payload(chosen, main_os, syntakt_path):
         out += chunk
         src = pathlib.Path(syntakt_path).name if "syntakt" in ap_ else "le tweak seul"
         where = "en place" if ap_["dest"] == ap_["at"] else f"copiée à {ap_['dest']} au démarrage"
-        packed = f", rangée en {len(chunk)} o" if "pack" in ap_ else ""
+        packed = (f", compressée en {len(chunk)} o" if "compress" in ap_ else f", rangée en {len(chunk)} o" if "pack" in ap_
+                  else "")
         print(f"  charge utile {t['id']} : {ap_['size']} o depuis {src}, {len(ap_['reloc'])} relocalisations, {where}{packed}")
     if BASE + len(main_os) + len(out) > END_LIMIT:
         raise SystemExit(f"!! l'OS agrandi dépasserait {END_LIMIT:#x}")
@@ -433,3 +440,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

@@ -319,6 +319,15 @@ function aplibTail(w, data, start, lastOff) {
   return lastOff;
 }
 
+// Charge utile rangée compressée dans l'image (append.compress === "aplib", notes/50) : flux aPLib sans l'en-tête de
+// 8 o, même compresseur que la partie ajoutée (tools/aplib_grow.py pack), décompressé au démarrage (stub.S, APLIB).
+function aplibPack(data) {
+  const w = new _Writer();
+  aplibTail(w, data, 0, 1);
+  w.end();
+  return Uint8Array.from(w.o.slice(SECT_HDR));
+}
+
 // origLen < data.length : section agrandie, la fin est compressée par aplibTail.
 function aplibRepack(data, ops, dirty, origLen = data.length) {
   const w = new _Writer();
@@ -605,8 +614,9 @@ function syntaktVersion(ap, syntaktRaw) {
 
 /* Charge utile d'un tweak « append » : plages copiées du programme audio du Syntakt (section 7, chargée
  * à 0x40000400) ou du MAIN OS Cycles d'origine (mainOs), notre code, puis la table de relocalisation
- * (ancienne valeur vérifiée à chaque fois). Rend ce qui va dans l'image : la charge utile entière, ou rangée en
- * morceaux (ap.pack : [adresse, taille], tools/build.py payload_image ; hors des morceaux, tout doit être à zéro). */
+ * (ancienne valeur vérifiée à chaque fois). Rend ce qui va dans l'image : la charge utile entière, rangée en
+ * morceaux (ap.pack : [adresse, taille], tools/build.py payload_image ; hors des morceaux, tout doit être à zéro),
+ * ou compressée (ap.compress === "aplib" : aplibPack). */
 function buildPayload(ap, syntaktRaw, mainOs) {
   let img = null;                               // section 7 du Syntakt, si le tweak en copie des morceaux
   if (ap.syntakt) {
@@ -617,6 +627,10 @@ function buildPayload(ap, syntaktRaw, mainOs) {
     if (hex(sha256(img)) !== ap.syntakt.section_sha256) throw new Error("section 7 du Syntakt inattendue");
   }
   const out = payloadRuntime(ap, img, mainOs);
+  if (ap.compress) {
+    if (ap.compress !== "aplib") throw new Error(`charge utile : compression ${ap.compress} inconnue`);
+    return aplibPack(out);
+  }
   if (!ap.pack) return out;
   const dest = parseInt(ap.dest, 16), kept = Uint8Array.from(out), parts = [];
   for (const [a, n] of ap.pack) {
@@ -814,10 +828,11 @@ function samplesBack(cycRaw, smpRaw) {
 }
 
 // ---- Export node / navigateur ---------------------------------------------
-const API = { sha256, hmacSha256, writesBytes, unwrap, wrap, aplibDepack, aplibRepack, parseContainer, findKey,
+const API = { sha256, hmacSha256, writesBytes, unwrap, wrap, aplibDepack, aplibRepack, aplibPack, parseContainer, findKey,
               rebuildContainer, buildStream, contentChecksum, applyWrites, checkConflicts, checkCaves,
               build, crossflash, cyclesForSamples, samplesBack, syntaktSection, syntaktVersion, buildPayload,
               hex, fromHex, PRODUCTS, BASE };
 if (typeof module !== "undefined" && module.exports) module.exports = API;
 if (typeof window !== "undefined") window.MCBuilder = API;
 })();
+

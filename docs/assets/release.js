@@ -3,6 +3,22 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.41", date: "2026-10-10", changes: [
+    { en: "Volume and pan readouts on the main screen, with one-step LEVEL/DATA changes; dimmed trigless step lights; and the latest multi-line browser, all from 18nelli18's flasher. Your MIDI options and tested FUNC + LEVEL/DATA live toggle remain available.",
+      fr: "Affichage numérique du volume et du pan sur l'écran principal, réglage par pas de 1 ; LEDs des trigless trigs atténuées ; et dernière version du navigateur sur plusieurs lignes, du flasher de 18nelli18. Vos options MIDI et la bascule FUNC + LEVEL/DATA testée restent disponibles." },
+  ] },
+  { version: "1.40", date: "2026-10-10", changes: [
+    { en: "MACRO and the Syntakt engines can now be selected together. Each engine combination has a matching build with MACRO last; with Model-TG, MACRO follows the Sampler and selected engines. The tested hardware configuration used Model-TG and all five engines; other combinations remain experimental",
+      fr: "MACRO et les moteurs du Syntakt peuvent maintenant être choisis ensemble. Chaque combinaison de moteurs a son build avec MACRO en dernier ; avec Model-TG, MACRO vient après le Sampler et les moteurs choisis. La combinaison testée sur machine utilisait Model-TG et les cinq moteurs ; les autres restent expérimentales" },
+    { en: "Multi-line browser: three preset names at once, from 18nelli18's flasher. The MIDI options remain available",
+      fr: "Navigateur sur plusieurs lignes : trois noms de presets à la fois, du flasher de 18nelli18. Les options MIDI restent disponibles" },
+  ] },
+  { version: "1.39", date: "2026-10-10", changes: [
+    { en: "New tested Multi-line browser option, from 18nelli18's flasher: three preset names at once, with the cursor and loaded sound marked. Works with Scroll long names, Model-TG, and the existing mods",
+      fr: "Nouvelle option testée Navigateur sur plusieurs lignes, du flasher de 18nelli18 : trois presets à la fois, avec repères du curseur et du son chargé. Compatible avec Noms qui défilent, Model-TG et les mods existants" },
+    { en: "The MIDI OUT + THRU live toggle and its fixed THRU fallback remain available",
+      fr: "La bascule MIDI OUT + THRU en direct et son option THRU combinée restent disponibles" },
+  ] },
   { version: "1.38", date: "2026-10-10", changes: [
     { en: "New hardware-tested live MIDI toggle: in THR, hold FUNC and press LEVEL/DATA to switch the Cycles' own MIDI output on or off while incoming MIDI keeps passing through. The stock OUT/THR menu stays unchanged",
       fr: "Nouvelle bascule MIDI testée sur machine : en THR, tenez FUNC et appuyez sur LEVEL/DATA pour activer ou couper le MIDI généré par le Cycles tandis que le MIDI reçu continue de passer. Le menu OUT/THR d'origine reste inchangé" },

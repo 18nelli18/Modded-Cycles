@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Guide · Modded Cycles</title>
-<meta name="description" content="What each Modded Cycles mod does and how to install it: USB audio, MIDI, sequencer and sound additions, Samples OS, recovery.">
+<meta name="description" content="What each Modded Cycles mod does and how to install it: USB audio, MIDI, sequencer, browser and sound additions, Samples OS, recovery.">
 <meta name="theme-color" content="#e3e2de" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b1b1b" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-10-07">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-10-07">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-10-09">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-10-09">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -52,6 +52,9 @@
         <li><a href="#tempo"><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></a></li>
         <li><a href="#midi-both"><span data-l="en">MIDI OUT while in THRU</span><span data-l="fr">MIDI OUT pendant THRU</span></a></li>
         <li><a href="#midi-live-both"><span data-l="en">Live MIDI toggle</span><span data-l="fr">Bascule MIDI en direct</span></a></li>
+        <li><a href="#level-pan-values"><span data-l="en">Volume and pan readout</span><span data-l="fr">Volume et pan en chiffres</span></a></li>
+        <li><a href="#trigless-dim"><span data-l="en">Dimmed trigless trigs</span><span data-l="fr">Trigless trigs atténués</span></a></li>
+        <li><a href="#multiline-browser"><span data-l="en">Multi-line browser</span><span data-l="fr">Navigateur sur plusieurs lignes</span></a></li>
         <li><a href="#boot-anim"><span data-l="en">Startup animation</span><span data-l="fr">Animation de démarrage</span></a></li>
         <li><a href="#macro"><span data-l="en">MACRO machine</span><span data-l="fr">Machine MACRO</span></a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
@@ -291,6 +294,7 @@
           <p class="muted" style="font-size:15px;margin-top:12px"><span data-l="en">Measured on the hardware, as a share of one audio block. A silent voice costs nothing; shorter decays free the voices sooner.</span><span data-l="fr">Mesuré sur la machine, en part d'un bloc audio. Une voix muette ne coûte rien ; des decays plus courts libèrent les voix plus tôt.</span></p>
         </div>
 
+        <p class="note"><span data-l="en">You can tick both <b>MACRO</b> and <b>Syntakt engines</b> in the flasher. MACRO is added after the engines you selected (and after the Sampler with Model-TG). The combination with Model-TG and all five engines has been tested on a Model:Cycles; the other combinations are experimental.</span><span data-l="fr">Vous pouvez cocher <b>MACRO</b> et <b>Moteurs du Syntakt</b> ensemble dans le flasher. MACRO vient après les moteurs choisis (et après le Sampler avec Model-TG). La combinaison Model-TG + cinq moteurs a été testée sur un Model:Cycles ; les autres sont expérimentales.</span></p>
         <p class="note"><span data-l="en"><b>Before flashing another choice or the official firmware,</b> set the tracks that use an added machine back to an original one (Kick to Chord). The numbers of the added machines depend on the engines ticked: otherwise MACHINES can freeze on those tracks.</span><span data-l="fr"><b>Avant de flasher un autre choix ou le firmware officiel,</b> remettez sur une machine d'origine (de Kick à Chord) les pistes qui utilisent une machine ajoutée. Les numéros des machines ajoutées dépendent des moteurs cochés : sinon MACHINES peut geler sur ces pistes.</span></p>
       </section>
 
@@ -507,7 +511,7 @@
         <p class="by"><span data-l="en">Based on</span><span data-l="fr">D'après</span> <a href="https://github.com/pichenettes/eurorack" target="_blank" rel="noopener">eurorack</a> <span data-l="en">by Émilie Gillet</span><span data-l="fr">d'Émilie Gillet</span> · <span data-l="en">MIT license</span><span data-l="fr">licence MIT</span></p>
         <p class="lede"><span data-l="en">One extra machine, MACRO, holds the 47 synthesis models of Braids, Émilie Gillet's open-source macro-oscillator: her own code, compiled for the Model:Cycles. In the emulator, it computes exactly the same samples as that code on a computer.</span><span data-l="fr">Une machine ajoutée, MACRO, réunit les 47 modèles de synthèse de Braids, le macro-oscillateur libre d'Émilie Gillet : son propre code, compilé pour le Model:Cycles. En émulation, il calcule exactement les mêmes échantillons que ce code sur un ordinateur.</span></p>
         <ol>
-          <li><span data-l="en">Press <b>MACHINES</b> and pick <b>MACRO</b>, after Chord: the 7th machine, or the 8th with <a href="#model-tg">Model-TG</a> (after its Sampler). Its icon is Tone's.</span><span data-l="fr">Appuyez sur <b>MACHINES</b> et choisissez <b>MACRO</b>, après Chord : la 7<sup>e</sup> machine, ou la 8<sup>e</sup> avec <a href="#model-tg">Model-TG</a> (après son Sampler). Son icône est celle de Tone.</span></li>
+          <li><span data-l="en">Press <b>MACHINES</b> and pick <b>MACRO</b>, after Chord: the 7th machine, or the 8th with <a href="#model-tg">Model-TG</a>. When combined with Syntakt engines, MACRO comes after the engines; with Model-TG it follows the Sampler too. Its icon is Tone's.</span><span data-l="fr">Appuyez sur <b>MACHINES</b> et choisissez <b>MACRO</b>, après Chord : la 7<sup>e</sup> machine, ou la 8<sup>e</sup> avec <a href="#model-tg">Model-TG</a>. Avec les moteurs du Syntakt, MACRO vient après eux ; avec Model-TG, après le Sampler aussi. Son icône est celle de Tone.</span></li>
           <li><span data-l="en">Turn <b>SHAPE</b> (Model) to choose one of the 47 models, from 0 to 46 (list below). Lock it on a step to change model from one step to the next.</span><span data-l="fr">Tournez <b>SHAPE</b> (Model) pour choisir l'un des 47 modèles, de 0 à 46 (liste ci-dessous). Verrouillez-le sur un pas pour changer de modèle d'un pas à l'autre.</span></li>
           <li><span data-l="en">Shape the sound with <b>COLOR</b> (Timbre) and <b>SWEEP</b> (Color): what they do depends on the model. <b>CONTOUR</b> (Env Timbre) lets the amp envelope open the timbre: at 0, nothing; turned up, each note starts brighter and closes as it fades.</span><span data-l="fr">Façonnez le son avec <b>COLOR</b> (Timbre) et <b>SWEEP</b> (Color) : leur rôle dépend du modèle. <b>CONTOUR</b> (Env Timbre) laisse l'enveloppe d'ampli ouvrir le timbre : à 0, rien ; plus haut, chaque note démarre plus brillante et se referme en s'éteignant.</span></li>
           <li><span data-l="en"><b>PITCH</b>, the keys and FINE set the note as on the original machines. <b>DECAY</b>, <b>GATE</b> and <b>PUNCH</b> work as on Tone.</span><span data-l="fr"><b>PITCH</b>, les touches et FINE règlent la note comme sur les machines d'origine. <b>DECAY</b>, <b>GATE</b> et <b>PUNCH</b> marchent comme sur Tone.</span></li>
@@ -531,11 +535,11 @@
         </div>
         <dl class="facts">
           <div><dt><span data-l="en">Sound</span><span data-l="fr">Son</span></dt><dd><span data-l="en">computed at 96 kHz as on the module, then brought down to the Model:Cycles' 48 kHz by a filter that keeps everything up to 19 kHz. A silent MACRO track is not computed.</span><span data-l="fr">calculé à 96 kHz comme sur le module, puis ramené aux 48 kHz du Model:Cycles par un filtre qui garde tout jusqu'à 19 kHz. Une piste MACRO muette n'est pas calculée.</span></dd></div>
-          <div><dt><span data-l="en">Processor</span><span data-l="fr">Processeur</span></dt><dd><span data-l="en">a MACRO voice needs about twice the computing of an original voice: from less than one for CLOCKED NOISE to about 3.5 times for WAVE MAP (measured in the emulator; memory access can make it heavier on the machine). The heaviest are the wave maps (WAVE MAP, WAVE LINE, WAVE PARAPHONIC), HARMONICS, TRIPLE SQUARE, SINE/TRIANGLE and CYMBAL; the lightest are FM and the noises. There is no load governor yet: several MACRO tracks playing at once can make the sound crackle and the screen slow down. Start with one or two MACRO tracks next to the original machines.</span><span data-l="fr">une voix MACRO demande environ deux fois le calcul d'une voix d'origine : de moins d'une pour CLOCKED NOISE à environ 3,5 fois pour WAVE MAP (mesuré en émulation ; les accès à la mémoire peuvent l'alourdir sur la machine). Les plus lourds sont les cartes d'ondes (WAVE MAP, WAVE LINE, WAVE PARAPHONIC), HARMONICS, TRIPLE SQUARE, SINE/TRIANGLE et CYMBAL ; les plus légers, la FM et les bruits. Il n'y a pas encore de régulateur de charge : plusieurs pistes MACRO qui jouent en même temps peuvent faire craquer le son et ralentir l'écran. Commencez avec une ou deux pistes MACRO à côté des machines d'origine.</span></dd></div>
-          <div><dt><span data-l="en">Other mods</span><span data-l="fr">Autres mods</span></dt><dd><span data-l="en">goes with every mod except the Syntakt engines (not both at once, for now).</span><span data-l="fr">se combine avec tous les mods sauf les moteurs du Syntakt (pas les deux à la fois, pour l'instant).</span></dd></div>
-          <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">on a Model:Cycles, and in the emulator on the OS's own code, alone and with Model-TG: all 47 models sound exactly as the original code, the menus, knobs and machine locks work, and the original machines are unchanged.</span><span data-l="fr">sur un Model:Cycles, et en émulation sur le code même de l'OS, seul et avec Model-TG : les 47 modèles sonnent exactement comme le code d'origine, les menus, potards et machine locks marchent, et les machines d'origine ne changent pas.</span></dd></div>
+          <div><dt><span data-l="en">Processor</span><span data-l="fr">Processeur</span></dt><dd><span data-l="en">a MACRO voice needs about twice the computing of an original voice: from less than one for CLOCKED NOISE to about 3.5 times for WAVE MAP (measured in the emulator; memory access can make it heavier on the machine). The heaviest are the wave maps (WAVE MAP, WAVE LINE, WAVE PARAPHONIC), HARMONICS, TRIPLE SQUARE, SINE/TRIANGLE and CYMBAL; the lightest are FM and the noises. With the Syntakt engines, their load governor also watches MACRO tracks. Without them, there is no load governor yet: several MACRO tracks playing at once can make the sound crackle and the screen slow down. Start with one or two MACRO tracks next to the original machines.</span><span data-l="fr">une voix MACRO demande environ deux fois le calcul d'une voix d'origine : de moins d'une pour CLOCKED NOISE à environ 3,5 fois pour WAVE MAP (mesuré en émulation ; les accès à la mémoire peuvent l'alourdir sur la machine). Les plus lourds sont les cartes d'ondes (WAVE MAP, WAVE LINE, WAVE PARAPHONIC), HARMONICS, TRIPLE SQUARE, SINE/TRIANGLE et CYMBAL ; les plus légers, la FM et les bruits. Avec les moteurs du Syntakt, leur régulateur de charge surveille aussi les pistes MACRO. Sans eux, il n'y a pas encore de régulateur : plusieurs pistes MACRO qui jouent en même temps peuvent faire craquer le son et ralentir l'écran. Commencez avec une ou deux pistes MACRO à côté des machines d'origine.</span></dd></div>
+          <div><dt><span data-l="en">Other mods</span><span data-l="fr">Autres mods</span></dt><dd><span data-l="en">goes with the Syntakt engines too. Select both cards; the engine combination adds its matching MACRO build.</span><span data-l="fr">se combine aussi avec les moteurs du Syntakt. Cochez les deux cartes ; la combinaison de moteurs ajoute le build MACRO correspondant.</span></dd></div>
+          <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">on a Model:Cycles, including Model-TG with all five Syntakt engines; other engine combinations are emulator-checked only. Alone and with Model-TG, all 47 models sound exactly as the original code, the menus, knobs and machine locks work, and the original machines are unchanged.</span><span data-l="fr">sur un Model:Cycles, dont Model-TG avec les cinq moteurs du Syntakt ; les autres combinaisons de moteurs sont vérifiées en émulation seulement. Seul et avec Model-TG, les 47 modèles sonnent exactement comme le code d'origine, les menus, potards et machine locks marchent, et les machines d'origine ne changent pas.</span></dd></div>
         </dl>
-        <p class="note"><span data-l="en"><b>Before flashing another choice or the official firmware,</b> set your MACRO tracks back to an original machine (Kick to Chord): MACRO is the 7th machine alone and the 8th with Model-TG, and the official OS doesn't have it.</span><span data-l="fr"><b>Avant de flasher un autre choix ou le firmware officiel,</b> remettez vos pistes MACRO sur une machine d'origine (de Kick à Chord) : MACRO est la 7<sup>e</sup> machine seule et la 8<sup>e</sup> avec Model-TG, et l'OS officiel ne l'a pas.</span></p>
+        <p class="note"><span data-l="en"><b>Before flashing another choice or the official firmware,</b> set your MACRO tracks back to an original machine (Kick to Chord): MACRO is the 7th machine alone and the 8th with Model-TG. With Syntakt engines it comes after them, and with Model-TG after the Sampler. The official OS doesn't have it.</span><span data-l="fr"><b>Avant de flasher un autre choix ou le firmware officiel,</b> remettez vos pistes MACRO sur une machine d'origine (de Kick à Chord) : MACRO est la 7<sup>e</sup> machine seule et la 8<sup>e</sup> avec Model-TG. Avec les moteurs du Syntakt, elle vient après eux, et avec Model-TG après le Sampler. L'OS officiel ne l'a pas.</span></p>
       </section>
 
       <section id="midi-live-both">
@@ -550,8 +554,33 @@
         <p class="note"><span data-l="en">This toggle cannot be combined with <b>MIDI OUT while in THRU</b>, which makes THR combined all the time. The live shortcut was tested on a Model:Cycles by the owner on 2026-10-10.</span><span data-l="fr">Cette bascule ne peut pas être combinée avec <b>MIDI OUT pendant THRU</b>, qui rend THR combiné en permanence. La propriétaire a testé ce raccourci sur un Model:Cycles le 10/10/2026.</span></p>
       </section>
 
+      <section id="level-pan-values">
+        <h2><span class="n">15</span><span data-l="en">Volume and pan readout</span><span data-l="fr">Volume et pan en chiffres</span></h2>
+        <p class="lede"><span data-l="en">See exact track volume and pan values on the main screen.</span><span data-l="fr">Affichez les valeurs exactes de volume et de pan sur l'écran principal.</span></p>
+        <ul><li><span data-l="en">Turn <b>LEVEL/DATA</b> to show volume (0–127); hold <b>FUNC</b> and turn it to show pan (−64 to 63). The number stays for about three seconds.</span><span data-l="fr">Tournez <b>LEVEL/DATA</b> pour afficher le volume (0–127) ; tenez <b>FUNC</b> et tournez-le pour afficher le pan (−64 à 63). Le nombre reste environ trois secondes.</span></li>
+        <li><span data-l="en">On the main screen, each knob step changes volume or pan by 1 instead of 2.</span><span data-l="fr">Sur l'écran principal, chaque cran change le volume ou le pan de 1 au lieu de 2.</span></li></ul>
+        <p class="note"><span data-l="en">From 18nelli18's flasher; upstream reports testing on a Model:Cycles.</span><span data-l="fr">Du flasher de 18nelli18 ; le projet d'origine rapporte un essai sur Model:Cycles.</span></p>
+      </section>
+
+      <section id="trigless-dim">
+        <h2><span class="n">16</span><span data-l="en">Dimmed trigless trigs</span><span data-l="fr">Trigless trigs atténués</span></h2>
+        <p class="lede"><span data-l="en">Trigless step keys glow at about one third brightness, so they are distinct from note trigs while keeping their normal blink.</span><span data-l="fr">Les touches des trigless trigs s'allument à environ un tiers de leur intensité, pour les distinguer des trigs de note tout en gardant leur clignotement normal.</span></p>
+        <p><span data-l="en">Choose <b>Dimmed trigless trigs</b> in the flasher. Note trigs, playback lights and pads keep their original behavior. Upstream reports hardware testing.</span><span data-l="fr">Choisissez <b>Trigless trigs atténués</b> dans le flasher. Les trigs de note, LEDs de lecture et pads gardent leur comportement d'origine. Le projet d'origine rapporte un essai sur machine.</span></p>
+      </section>
+
+      <section id="multiline-browser">
+        <h2><span class="n">19</span><span data-l="en">Multi-line browser</span><span data-l="fr">Navigateur sur plusieurs lignes</span></h2>
+        <p class="lede"><span data-l="en">See three presets at once in the sound, folder and sample browser, instead of one name in large text.</span><span data-l="fr">Affichez trois presets à la fois dans le navigateur de sons, dossiers et samples, au lieu d'un nom en grands caractères.</span></p>
+        <ol>
+          <li><span data-l="en">Select <b>Multi-line browser</b> in the flasher and install the firmware.</span><span data-l="fr">Choisissez <b>Navigateur sur plusieurs lignes</b> dans le flasher et installez le firmware.</span></li>
+          <li><span data-l="en">Open the sound or sample browser with <b>FUNC + MACHINES</b>. Three names appear in the small title font; <b>&gt;</b> marks the current selection, the loaded sound remains highlighted, and folders have a marker.</span><span data-l="fr">Ouvrez le navigateur de sons ou de samples avec <b>FUNC + MACHINES</b>. Trois noms s'affichent en petite police ; <b>&gt;</b> indique la sélection, le son chargé reste en surbrillance et les dossiers ont un repère.</span></li>
+          <li><span data-l="en">Move through the list as usual. In +Drive folders the cursor moves down the visible rows before the list scrolls. With <b>Scroll long names</b> or <b>Model-TG</b>, only the name under the cursor scrolls.</span><span data-l="fr">Parcourez la liste comme d'habitude. Dans les dossiers +Drive, le curseur descend sur les lignes visibles avant le défilement de la liste. Avec <b>Noms qui défilent</b> ou <b>Model-TG</b>, seul le nom sous le curseur défile.</span></li>
+        </ol>
+        <p class="note"><span data-l="en">This tested feature comes from 18nelli18's flasher and was inspired by a community member's Model:Samples browser. The upstream project reports hardware testing and emulator checks, including combinations with Model-TG, scrolling names and other mods.</span><span data-l="fr">Cette fonction testée vient du flasher de 18nelli18 et s'inspire du navigateur Model:Samples demandé par un membre de la communauté. Le projet d'origine indique des essais sur machine et en émulation, notamment avec Model-TG, Noms qui défilent et d'autres mods.</span></p>
+      </section>
+
       <section id="samples">
-        <h2><span class="n">15</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">18</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -585,7 +614,7 @@
       </section>
 
       <section id="midi-both">
-        <h2><span class="n">16</span><span data-l="en">Send and forward MIDI together</span><span data-l="fr">Envoyer et relayer le MIDI</span></h2>
+        <h2><span class="n">19</span><span data-l="en">Send and forward MIDI together</span><span data-l="fr">Envoyer et relayer le MIDI</span></h2>
         <p class="lede"><span data-l="en">THR now forwards incoming MIDI and also sends the Cycles' own MIDI output.</span><span data-l="fr">THR relaie le MIDI reçu et envoie aussi le MIDI généré par le Cycles.</span></p>
         <ol>
           <li><span data-l="en">Open <b>CONFIG › MIDI › PORTS › OUT/THRU</b> and press the encoder to choose <b>THR</b>.</span><span data-l="fr">Ouvrez <b>CONFIG › MIDI › PORTS › OUT/THRU</b> et appuyez sur l'encodeur pour choisir <b>THR</b>.</span></li>
@@ -596,13 +625,13 @@
 
 
       <section id="stock">
-        <h2><span class="n">17</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">20</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">With Syntakt engines, the MACRO machine or Model-TG's Sampler, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt, la machine MACRO ou le Sampler de Model-TG, remettez d'abord vos pistes sur une machine d'origine.</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">18</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">21</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -616,7 +645,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">19</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">22</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -680,8 +709,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-10-07"></script>
-<script src="../assets/cycles.js?v=2026-10-10-07"></script>
-<script src="../assets/site.js?v=2026-10-10-07"></script>
+<script src="../assets/release.js?v=2026-10-10-09"></script>
+<script src="../assets/cycles.js?v=2026-10-10-09"></script>
+<script src="../assets/site.js?v=2026-10-10-09"></script>
 </body>
 </html>
