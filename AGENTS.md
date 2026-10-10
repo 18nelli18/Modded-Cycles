@@ -64,6 +64,8 @@ tools/emu/                    Unicorn emulation of the OS: test_<mod>.py proofs,
 tools/gen_flasher_tweaks.py   FEATURES list -> docs/flasher/tweaks.js (generated)
 tools/check_overlaps.py       no firmware needed: mods that can be ticked together never write the same bytes, except
                               the same whole write or a mod applied on top of another (`requires`) (notes/49)
+tools/registry.py             no firmware needed: builds tweaks/model-cycles_OS1.13/REGISTRY.md from the tweaks, the
+                              registry of free space (freed sprite masks, caves, payloads) and OS hooks (notes/52)
 tools/ref_mainos.py           reference hashes in docs/flasher/app.js: each mod (REF_MODS) and a sample of combinations
                               (REF_MAINOS: each card alone, every pair, the largest ones)
 tools/web*_check.*, webflash_smoke.*   checks of the web flasher against the Python build (node, jsdom)
@@ -78,7 +80,7 @@ README.md                     English overview for Model:Cycles owners (mod tabl
 
 Follow the shape of the last ones (tempo-max: commits `5997b4a`, `14fb9fa`, `6e592bc`; trig-hold, arp). In order:
 
-1. **Investigate and write the note.** New file `notes/NN-<slug>.md` (next free number; 50 is the last) with the
+1. **Investigate and write the note.** New file `notes/NN-<slug>.md` (next free number; 52 is the last) with the
    user's request and its source, the OS code involved (addresses, `[FAIT]`/`[HYP]`), the design, free space used and
    conflicts with other tweaks. Add a row to `notes/README.md`. See `notes/AGENTS.md`.
 2. **Write the generator** `tools/gen_<mod>.py` (and sources under `tools/machines/<mod>/` if it has code). It reads
@@ -87,7 +89,9 @@ Follow the shape of the last ones (tempo-max: commits `5997b4a`, `14fb9fa`, `6e5
 3. **Prove it**: `tools/emu/test_<mod>.py`, stock vs patched, on the OS's own code, alone and with the other mods
    (`--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,… --syntakt Syntakt_OS1.42.syx`).
    `tools/check_overlaps.py` must pass: its writes overlap no tweak it can be installed with (run it with `--git` on
-   the open branches too), or it declares `conflicts`.
+   the open branches too), or it declares `conflicts`. Code goes in a mask marked free in
+   `tweaks/model-cycles_OS1.13/REGISTRY.md`; `python3 tools/registry.py` regenerates that file (commit it) and refuses
+   a write in a mask whose sprite is not redirected.
 4. **Register it**: `tweaks/model-cycles_OS1.13/PROVENANCE.md` row; `BUILD.md` section with the commands and the
    MAIN OS SHA-256 of the main combinations.
 5. **Put it in the flasher**: add it to `FEATURES` in `tools/gen_flasher_tweaks.py` (`"status": "experimental"`, and
@@ -113,6 +117,7 @@ Without firmware (always possible, run them all):
 python3 tools/gen_flasher_tweaks.py --check      # tweaks.js matches tweaks/
 python3 tools/check_overlaps.py                  # mods ticked together never write the same bytes (notes/49), except the
                                                  # same whole write or a mod on top of another (`requires`)
+python3 tools/registry.py --check                # REGISTRY.md (free space and hooks, notes/52) matches tweaks/
 python3 tools/relocate_6ch.py --check            # needs m68k binutils (below)
 tools/webbuild_check.sh                          # builder.js == build.py, byte for byte (node)
 tools/webflash_check.sh                          # flasher.js validates .syx like mtlib (node)
