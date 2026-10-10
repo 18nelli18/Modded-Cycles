@@ -39,7 +39,7 @@ def stock_mainos(path):
 def helpers():
     """Génère le sélecteur OUT/THR/BTH et le filtre qui bloque seulement en THRU."""
     menu = bytearray.fromhex(
-        "4eb940044e32"          # jsr getter numérique
+        "4eb940044df8"          # jsr getter OUT/THRU (identifiant 0x50)
         "0c8000000002"          # cmpi.l #2,d0
         "6714"                  # beq BTH
         "4a80"                  # tst.l d0
@@ -54,7 +54,7 @@ def helpers():
     menu[34:40] = b"\x20\x3c" + (HELPER + len(menu)).to_bytes(4, "big")
     menu += b"BTH\0"
     output = bytes.fromhex(
-        "4eb940044e32"          # getter numérique
+        "4eb940044df8"          # getter OUT/THRU (identifiant 0x50)
         "0c8000000001"          # compare à THRU
         "57c0"                  # seq d0
         "0280000000ff"          # renvoie 0 ou 255

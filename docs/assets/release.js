@@ -3,6 +3,12 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.35", date: "2026-10-10", changes: [
+    { en: "Corrected the experimental BTH option to read the OUT/THRU setting itself instead of the adjacent MIDI routing setting. Press the encoder while the value is on screen to cycle through OUT, THR and BTH.",
+      fr: "Correction de l'option BTH expérimentale : elle lit maintenant le réglage OUT/THRU lui-même, et non le réglage MIDI voisin. Appuyez sur l'encodeur lorsque la valeur est affichée pour parcourir OUT, THR et BTH." },
+    { en: "The generated firmware and browser builder checks pass. The M68K emulator could not run on this host, so the fix remains experimental and still needs a hardware check.",
+      fr: "Le firmware généré et les contrôles du générateur Web passent. L'émulateur M68K n'a pas pu s'exécuter sur cet ordinateur ; le correctif reste expérimental et doit encore être vérifié sur la machine." },
+  ] },
   { version: "1.34", date: "2026-10-10", changes: [
     { en: "New experimental MIDI option: BTH combines OUT and THRU, so the Model:Cycles sends MIDI clock and track/parameter messages while forwarding incoming MIDI. Select it under CONFIG > MIDI > PORTS > OUT/THRU; OUT and THR keep their original behavior",
       fr: "Nouvelle option MIDI expérimentale : BTH combine OUT et THRU, pour que le Model:Cycles envoie l'horloge MIDI et les messages de piste/paramètres tout en relayant le MIDI reçu. Choisissez-la dans CONFIG > MIDI > PORTS > OUT/THRU ; OUT et THR gardent leur comportement d'origine" },

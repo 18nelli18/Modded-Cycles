@@ -29,7 +29,7 @@ STACK = 0x90010000
 STOP = 0x9F000000
 MENU = 0x40035FD8
 OUT_GATES = (0x4000154A, 0x4000156A, 0x40001590)
-GET_BOOL, GET_NUMBER = 0x40044DF8, 0x40044E32
+GET_BOOL = 0x40044DF8
 FAIL = []
 
 
@@ -53,10 +53,12 @@ class Rig:
         self.uc.hook_add(UC_HOOK_CODE, self._hook)
 
     def _hook(self, uc, addr, size, _):
-        if addr in (GET_BOOL, GET_NUMBER):
+        if addr == GET_BOOL:
             sp = uc.reg_read(mk.UC_M68K_REG_A7)
             ret = struct.unpack(">I", uc.mem_read(sp, 4))[0]
-            uc.reg_write(mk.UC_M68K_REG_D0, (self.mode if addr == GET_NUMBER else int(self.mode != 0)))
+            # The OUT/THRU setting is ID 0x50. Its original getter returns the
+            # stored value (0, 1, or 2), even though stock only used it as a bool.
+            uc.reg_write(mk.UC_M68K_REG_D0, self.mode)
             uc.reg_write(mk.UC_M68K_REG_A7, sp + 4)
             uc.reg_write(mk.UC_M68K_REG_PC, ret)
             return
