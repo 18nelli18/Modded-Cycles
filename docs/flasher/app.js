@@ -1,3 +1,4 @@
+/opt/homebrew/Library/Homebrew/cmd/shellenv.sh: line 18: /bin/ps: Operation not permitted
 /* Model:Cycles web flasher — user interface.
  *
  * Four steps: 1) choose (mods or official firmware), 2) load the official OS file,
@@ -3035,12 +3036,9 @@ function init() {
   applyLang(st.lang);
   update();
 
-  // Returning visitor who already allowed MIDI: connect without a click.
-  if (checkCompat() && navigator.permissions && navigator.permissions.query) {
-    navigator.permissions.query({ name: "midi", sysex: true })
-      .then((p) => { if (p.state === "granted") initMidi(true); })
-      .catch(() => { /* not supported */ });
-  }
+  // Start MIDI access only after the user clicks “Allow MIDI access”. On some
+  // Windows setups, automatically enumerating MIDI devices during page load can
+  // stall the browser (for example, when a MIDI driver is unresponsive).
 }
 
 // test hooks (tools/webflash_smoke.js)
