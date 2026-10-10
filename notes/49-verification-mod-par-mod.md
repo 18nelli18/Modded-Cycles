@@ -151,7 +151,7 @@ La dernière ligne rejoue le conflit de pochoirs trouvé à la main le 07/10/202
 |---|---|
 | les clés de l'échantillon dans l'ancienne liste exhaustive, même empreinte | 416 / 416 sur `main` 1.28 ; 464 / 464 sur `main` 1.32 (10 559 entrées) [FAIT] |
 | les 9 215 combinaisons de l'ancienne liste de `main` 1.28, reconstruites dans la page (jsdom) avec le nouveau `builder.js`/`app.js` : même MAIN OS qu'avant, chaque mod vérifié | 9 215 / 9 215 en 12 parties (jsdom, 4 à la fois, ~4 h), aucun écart [FAIT] ; lancé avant la lecture stricte des relocalisations (§5), qui ne change rien aux tweaks du dépôt (`webbuild_check.sh` et l'échantillon repassés après) |
-| `tools/webflash_smoke.sh` avec les fichiers officiels : les combinaisons de l'échantillon, une combinaison de trois cartes hors échantillon (construite, chaque mod vérifié), un mod falsifié (écritures, puis charge utile) refusé | ALL OK, 536 vérifications, 13 min (après fusion de `main` 1.28 et la relecture) ; SMOKE4 (après fusion de `main` 1.32) |
+| `tools/webflash_smoke.sh` avec les fichiers officiels : les combinaisons de l'échantillon, une combinaison de trois cartes hors échantillon (construite, chaque mod vérifié), un mod falsifié (écritures, puis charge utile) refusé | ALL OK, 536 vérifications, 13 min (après fusion de `main` 1.28 et la relecture) ; ALL OK, 541 vérifications, 17 min (après fusion de `main` 1.32 : MACRO, écoute des samples) |
 | la page elle-même, sans OS : chaque carte seule et chaque paire qu'elle laisse cocher (ce qu'elle en fait : carte incluse, échange) donne une clé de l'échantillon | 352 / 352 [FAIT] |
 | `gen_flasher_tweaks.py --check`, `webbuild_check.sh`, `webflash_check.sh`, `py_compile` | OK [FAIT] |
 
