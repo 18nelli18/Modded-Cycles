@@ -244,10 +244,10 @@ TONE CHORD, trois séries de notes aux blocs 1, 100 et 180) :
 |---|---|
 | Centre (Filter Cutoff OFF), Volume + Dist 64 et 108, enveloppe et résonance réglées | les 6 pistes identiques bit pour bit à l'OS d'origine sur 240 blocs |
 | Contrat de l'appel, à chaque bloc | d2-d7/a2-a6 gardés, `0x80001858` et a2 laissés sur la pile comme l'appel d'origine, MACSR rendu à 0x20, accumulateurs à zéro, aucun accès hors de la mémoire émulée |
-| Six réglages fixes (LP 332 Hz, HP 332 Hz, LP près de 20 kHz, HP 41 Hz enveloppe −32, LP 116 Hz résonance 112 enveloppe +63, HP 5 Hz) | sortie comparée à un modèle flottant (SVF en double, mêmes lois) : écart max −111 à −163 dB sous la crête ; KICK et SNARE nettement changés |
-| Balayage à chaque bloc, de LP à HP en passant par le centre | écart au modèle −113 à −122 dB sous la crête |
+| Six réglages fixes (LP 332 Hz, HP 332 Hz, LP près de 20 kHz, HP 41 Hz enveloppe −32, LP 116 Hz résonance 112 enveloppe +63, HP 5 Hz) | sortie comparée à un modèle flottant (SVF en double, mêmes lois) : écart max −111 à −167 dB sous la crête ; KICK et SNARE nettement changés |
+| Balayage à chaque bloc, de LP à HP en passant par le centre | écart au modèle −110 à −120 dB sous la crête |
 | Enveloppe, Decay 0 à 127 | relancée à chaque note (bit t de a3+16), τ de 5 ms à 10 s, écart à la loi < 10⁻⁷, décalage = quantité × enveloppe exactement |
-| Lois | 170 réglages, 5 Hz à 20 kHz des deux côtés, Q 0,5 à 50 : fréquence à 0,01 cent près, Q à 0,06 % près (tirés des coefficients calculés par le code) |
+| Lois | 170 réglages, 5 Hz à 20 kHz des deux côtés, Q 0,5 à 50 : fréquence à 0,01 cent près, Q à 0,08 % près (tirés des coefficients calculés par le code) |
 | Potards | MACHINES tenu : SWEEP, CONTOUR, COLOR, SHAPE → paramètres 1 à 4 ; les 8 autres potards et tout sans MACHINES : la recherche d'origine, mêmes arguments |
 | Affichage (vrai constructeur, vrai `sprintf`) | les 128 pas : `L64` … `L1`, `OFF` au centre, `H1` … `H63`, trois caractères au plus ; Reso et Decay 0..127 ; Env −64..OFF..+63 ; l'image « Error » n'est plus dessinée |
 | Tables construites au démarrage | descripteurs 1 à 4, k 28..31 sur les 6 machines, CC 74/71 sur les pistes 1 à 6, NRPN 1:20 et 1:21, rien d'autre ; un son neuf : Cutoff OFF, Reso 0, Env OFF, Decay 64, le reste comme sans le filtre |
