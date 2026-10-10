@@ -15,6 +15,7 @@
 | `42-tempo-max.json` | ce projet | Tempo jusqu'à 546 BPM au lieu de 300 : onze constantes (bornes du tempo et contrôles au chargement) et la remise dans le cycle du LFO en boucle, écrites par `tools/gen_tempo_max.py` d'après le MAIN OS officiel ([note 38](../../notes/38-tempo-546-bpm.md)). |
 | `43-boot-anim.json` | ce projet | Animation de démarrage « modded-cycles » d'après le logo du site : assemblée depuis `tools/machines/boot_anim/` (`boot_anim.S`, `boot_anim.ld`) par `tools/gen_boot_anim.py`, à la place du corps de la tâche d'animation de démarrage de l'OS (`0x40053a6c`) ; police et dessin propres au projet ([note 39](../../notes/39-animation-demarrage.md)). |
 | `44-midi-both.json` | ce projet | Avec THRU sélectionné, conserve le relais entrant de l'OS et neutralise les trois portes qui bloquaient l'émission générée ; le sélecteur OUT/THRU reste celui d'origine. Généré par `tools/gen_midi_both.py` ([note 50](../../notes/50-midi-out-thru.md)). |
+| `45-midi-live-both.json` | ce projet | Expérience isolée : FUNC + appui sur l'encodeur OUT/THRU alterne l'octet de configuration caché 1/2, conserve le texte THR et active ou bloque l'émission générée dans les trois portes ; généré par `tools/gen_midi_live_both.py`, non vérifié sur machine ([note 50](../../notes/50-midi-out-thru.md)). Exclut `midi-both` et `midi-bth-three-state`. |
 
 SHA-256 des fichiers de drumkilla, identiques à ceux du dépôt d'origine (sauf `02-trig-preview.json`, retouché) :
 
