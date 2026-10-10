@@ -142,11 +142,47 @@ python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --sy
 | `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `d5e73e10a07042a85e9022e87e488b6ca4960ecef69f49652d5c3dc706a1f6fc` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `70354db7660a9ffc60956d523d2976299be4fa4813e483c1222abe26edae2b3c` |
 
-Les 2 303 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
-`tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;
-`tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.42.syx` les reconstruit toutes dans la page et les compare.
+Le flasher web vérifie chaque mod, à chaque build, contre l'outil Python ([note 49](notes/49-verification-mod-par-mod.md)) :
+`REF_MODS` de `docs/flasher/app.js` donne l'empreinte des écritures et de la charge utile de chaque tweak, et `REF_MAINOS`
+le MAIN OS d'un échantillon de combinaisons (chaque carte seule, chaque paire, les plus grandes : 464 aujourd'hui).
+`tools/ref_mainos.py` réécrit les deux blocs (`--check` pour vérifier) ; `tools/check_overlaps.py` prouve, sans firmware,
+que deux mods qu'on peut cocher ensemble n'écrivent jamais aux mêmes octets (sauf écriture identique ou mod posé
+par-dessus l'autre par `requires`) ; `tools/registry.py` écrit `tweaks/model-cycles_OS1.13/REGISTRY.md`, le registre
+de la place libre (masques de sprites pris et libres, caves, charges utiles) et des crochets posés sur l'OS
+([note 52](notes/52-registre-place-libre.md)), à régénérer et commettre avec tout nouveau tweak ;
+`tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.42.syx` reconstruit l'échantillon dans la page et le compare.
 SD VINTAGE v1 (clean-room d'origine, **testée sur le matériel** le 29/09/2026, compilée par GCC 13.3) donnait `80b7b2bd…` seule et `38754937…` avec `6ch-usbup` ;
 la v2 est compilée par `m68k-elf-gcc` 16.2 (Homebrew), voir [note 16 §6](notes/16-moteur-syntakt.md).
+
+### Écoute des samples (Model-TG)
+
+`tweaks/model-cycles_OS1.13/33-sample-preview.json` (sur `model-tg`) et `33-sample-preview-st.json` (sur `model-tg-st`,
+mêmes écritures) sont produits par `tools/gen_sample_preview.py`, qui assemble `tools/machines/sample_preview/` et le lie
+dans quatre masques de sprites 47×47 libérés, partagés avec `chord-keys`, qui exclut Model-TG (`conflicts`)
+([note 46](notes/46-ecoute-des-samples.md)). Le code appelle celui de
+Model-TG aux adresses des `symbols` de `30-model-tg*.json` ; le générateur vérifie ce code avant d'écrire. Le tweak
+exige Model-TG (`requires`) : les builds de Model-TG sans lui ne changent pas. La preuve fait tourner le vrai code de
+l'OS et de Model-TG, du navigateur à la boucle des voix (avec `--syntakt` seul, les deux versions) :
+```sh
+python3 tools/gen_sample_preview.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/build.py -i model-cycles_OS1.13.syx -t model-tg,sample-preview
+python3 tools/build.py -i model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \
+    -t model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,sample-preview-st
+python3 tools/emu/test_sample_preview.py --cycles model-cycles_OS1.13.syx \
+    [--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max,boot-anim] \
+    [--syntakt Syntakt_OS1.42.syx]
+```
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `model-tg,sample-preview` | `b73428049e2779ff8c73d91787c6bbaffe0a97b4f77e6b2e3819f09e035d9353` |
+| `6ch-usbup,model-tg,sample-preview` | `4671f7b80784249d8e8c533d4546297fda2ff52b97c993fab7de83cbb5c60867` |
+| `model-tg,arp,trig-hold,tempo-max,boot-anim,sample-preview` | `1d90726905d583347dc8cdaf359ad4fb25c1b907e659fa665cecdada35c1c585` |
+| `model-tg-st,syntakt-tg-sd,sample-preview-st` (avec `--syntakt`) | `2557d21b5d2f20cdd909e727ae458fa71ce59ed864ab701c43d1f86730c31d17` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,sample-preview-st` (idem) | `cde4365ff392e68b373afe9fa2004dc5e275c7c15f8a3c732549478ca2d36ca4` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,sample-preview-st` (idem) | `7b142604f35d11c63e3c22a0f1a4426c6630e2d184c5f680ed5f47125e2e891e` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,sample-preview-st` (idem) | `20a116b1dbbc05e84dfc32df2f269f5c23df2d54fcb39d9b4a7c577c5916a432` |
+| `model-tg-st,macro-tg,sample-preview-st` (avec la machine MACRO) | `a371d4a3a7df7e5d8b8078da4cdd8a0b34efee558b52f7ecb78811c21e6f98bd` |
 
 ### Arpégiateur
 
@@ -248,6 +284,82 @@ python3 tools/emu/test_boot_anim.py --cycles model-cycles_OS1.13.syx [--gif anim
 | `model-tg,boot-anim` | `cbec181684805bf37dd07c62dc47f7daf35e6abab530a3f3b06ec5db590278ec` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim` | `d468a729f32780870dbd591e52e8c782a5cdd347459ac1c61ef35473e26c9323` |
 
+### Machine MACRO (les modèles de Braids)
+
+`tweaks/model-cycles_OS1.13/25-macro.json` (7e machine) et `32-macro-tg.json` (avec Model-TG : 8e machine, par-dessus
+`model-tg-st`) sont produits par `tools/gen_macro.py` : le code de Braids d'Émilie Gillet (MIT,
+[pichenettes/eurorack](https://github.com/pichenettes/eurorack) au commit `08460a6`, stmlib `e3bd7c9`) compilé tel quel
+avec la passerelle `tools/machines/macro/macro.cc`, en charge utile rangée après l'image et reconstituée au démarrage à
+`0x43000000` (`0x46700000` avec Model-TG), avec la mécanique des machines ajoutées des moteurs du Syntakt
+([note 43](notes/43-machine-macro.md)). Le générateur a besoin du clone d'eurorack (sous `vendor/`, ignoré par git) et de
+`m68k-linux-gnu-g++` (les JSON versionnés viennent du GCC 13.3 d'Ubuntu 24.04 : un autre GCC donne d'autres octets) ; la
+preuve, de `g++` pour Braids compilé pour l'ordinateur, la référence :
+```sh
+git clone https://github.com/pichenettes/eurorack vendor/eurorack
+git -C vendor/eurorack checkout 08460a69a7e1f7a81c5a2abcc7189c9a6b7208d4
+git -C vendor/eurorack submodule update --init stmlib
+python3 tools/gen_macro.py --cycles model-cycles_OS1.13.syx --eurorack vendor/eurorack [--check]
+python3 tools/emu/test_macro.py --cycles model-cycles_OS1.13.syx --eurorack vendor/eurorack [--quick] \
+    [--with 6ch-usbup,model-tg-st,trig-hold,arp,tempo-max,boot-anim]
+```
+Avec les moteurs du Syntakt : les tweaks combinés de la section suivante. Incompatible avec SD VINTAGE (même mécanique,
+même place).
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `macro` | `beb70b58001c12da348427b5f46f33567a6d6c2178cf7f4b7902741757e83e33` |
+| `6ch-usbup,macro` | `32932ae6eca06406f1c954368dc3465cf83e1026128b39ebfc7e746e9e01023f` |
+| `model-tg-st,macro-tg` | `d738fafaa86bbac86e328e6f0b70dd9688c1d9c3b05a423c957751c74abbd8d8` |
+| `6ch-usbup,model-tg-st,macro-tg,trig-hold,arp,tempo-max,boot-anim` | `f584f099bd2a26abfcccf3d954dd3b86ab1880c07a0b110bce88d569eed1daeb` |
+
+### MACRO avec les moteurs du Syntakt
+
+`tweaks/model-cycles_OS1.13/24-syntakt-<moteurs>-macro.json` et `31-syntakt-tg-<moteurs>-macro.json` (avec Model-TG,
+par-dessus `model-tg-st`) sont produits par `tools/gen_macro_syntakt.py` : les moteurs exactement comme dans leur tweak
+(passerelle reprise octet pour octet, pas recompilée), MACRO en dernière machine, après eux ; la charge utile commune
+(471 792 o) est rangée compressée et décompressée au démarrage ([note 50](notes/50-macro-avec-moteurs-syntakt.md)).
+Mêmes besoins que les deux mods (fichier Syntakt, clone d'eurorack, `m68k-linux-gnu-g++` 13.3) :
+```sh
+python3 tools/gen_macro_syntakt.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \
+    --eurorack vendor/eurorack [--engines sd,cp] [--tg] [--check]
+python3 tools/emu/test_macro_syntakt.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \
+    --eurorack vendor/eurorack [--engines sd,cp] [--only alone|tg] [--with 6ch-usbup,trig-hold,arp,tempo-max,boot-anim]
+```
+
+| `-t` (avec `--syntakt Syntakt_OS1.42.syx`) | MAIN OS patché (SHA-256) |
+|---|---|
+| `syntakt-sd-macro` | `5c096030a7035c766d0119e5f8053214e299c7dac9d28db8c6aa9b41df465f45` |
+| `syntakt-sd-cp-toy-bits-swarm-macro` | `f8be2f118bfb7f7b3033a9e6fa2e3ce9b146e428cf8a815f98d710dc1987b76b` |
+| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `126e5108aa6b3a7a8578a3a0e2d9453d47571bbe19797875bce433473dc53ea3` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro` | `2f40a8c6672dd2f46c11adb6c1c5d0c9a77049188837fe4c44c7ce778f8c4785` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `7789622b49c4833b46dd99dcb09f5c9803a58408b25b73097df0ca0ebf85654d` |
+| `6ch-usbup,model-tg-st,sample-preview-st,syntakt-tg-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `f44bfad622145e30ce0cbb3649864e74aebca5559d63c0393ac4eea0eef4ace9` |
+
+### Navigateur sur plusieurs lignes
+
+`tweaks/model-cycles_OS1.13/44-multiline-browser.json` est produit par `tools/gen_multiline_browser.py`, qui assemble
+`tools/machines/multiline_browser/multiline_browser.S` (370 o) dans le masque de sprite 47×47 libéré `0x401904b4`
+(`tools/sprites.py`) : le navigateur de presets (sons, dossiers, échantillons de Model-TG) montre 3 lignes en petite police au
+lieu d'une, « > » devant la ligne du curseur, le son chargé inversé, un repère de 7 px pour les dossiers. Quatre accroches dans
+le dessin `0x400a539c`, huit constantes, et deux retouches de la liste dans un sous-dossier de +Drive (`0x4003f622`,
+`0x400406a8`) pour que le curseur y descende sur les 3 lignes au lieu de rester sur la 1ʳᵉ ; l'accroche du défilement des noms longs (`0x400a55a1`, browser-scroll et Model-TG)
+n'est pas touchée et ne sert qu'à la ligne du curseur ([note 40](notes/40-navigateur-multiligne.md)). La preuve fait tourner le
+vrai dessin, avec les vraies polices, dans un vrai écran de l'OS ; `--png` écrit l'écran d'origine et le modifié :
+```sh
+python3 tools/gen_multiline_browser.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/emu/test_multiline_browser.py --cycles model-cycles_OS1.13.syx [--png dossier] \
+    [--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max --syntakt Syntakt_OS1.42.syx]
+```
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `multiline-browser` | `75a5054403de65968e07bed84f3fcb183719b965626fd0c042b29bc963f8af31` |
+| `6ch-usbup,multiline-browser` | `ce1681cd208f4ca812f25b9386ad64fd0c4aa5957314cde5ba6f77a302d2c49f` |
+| `browser-scroll,multiline-browser` | `32e4a6b8e3897a1faa8ab12b33cd8e82b5a214cd3e91b80824ab17bc9d6042c1` |
+| `model-tg,multiline-browser` | `428e7bc4f18fde071a201544266d97012dd41556220867b60b59df193d861221` |
+| `boot-anim,multiline-browser` | `120860e74d59d207951128ed926d8e0196d9d16142c6a67b004d64510bed339e` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,multiline-browser` | `0787cf23a48549870bb9580b3b99e284c72056c677986671659e7f949d67d1e2` |
+
 ### Écoute d'un pas en pause
 
 `trig-preview` (et sa copie dans Model-TG) accepte le séquenceur en pause, où le met un Stop MIDI reçu même à l'arrêt : 3 octets
@@ -301,7 +413,8 @@ python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --sy
 python3 tools/ref_mainos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx --check
 ```
 Pour ajouter un moteur : l'ajouter à `CATALOG` de `tools/gen_syntakt_engines.py` (et ses plages copiées), puis relancer
-`gen_syntakt_engines.py --all` et `--all --tg`, `gen_flasher_tweaks.py` et `ref_mainos.py`, et tester chaque nouveau tweak en émulation.
+`gen_syntakt_engines.py --all` et `--all --tg`, `gen_flasher_tweaks.py`, `check_overlaps.py` et `ref_mainos.py`, et tester chaque
+nouveau tweak en émulation.
 
 ## Flasher (rappel)
 
