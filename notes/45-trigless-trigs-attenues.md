@@ -20,8 +20,11 @@ ensuite les intégrer au webflasher ». Tweak `47-trigless-dim.json` (`tools/gen
   7 ms, ce qui rend le motif irrégulier (paliers de 7 à 21 ms, de 28 à 49 % de lumière selon le moment).
 - **Version 2** (07/10/2026, celle du tweak) : même état 260, même clignotement ; la lumière est découpée dans
   l'interruption du panneau, à chaque cycle de 1 ms. Prouvé en émulation sur le vrai code de l'interruption (§10) :
-  allumée exactement 1 cycle, éteinte 2, toutes les autres LED identiques à l'origine au même instant. Ce qui reste à
-  voir sur la machine : que les verrous suivent des écritures espacées de 0,5 µs au lieu de 83 µs (§11).
+  allumée exactement 1 cycle, éteinte 2, toutes les autres LED identiques à l'origine au même instant. Écritures
+  espacées de 2 µs (au lieu de 83 µs à l'origine).
+- **Testé sur la machine (07/10/2026)** par Maxime, avec la version 2 à 2 µs et tous les autres mods : « Le trigless
+  trig est nettement plus sombre et stable, pas de pointillés gênants, même avec les 16 en trigless trig. Tout le
+  reste marche nickel » (§12).
 
 ## 1. Le fichier de djd_oz `[FAIT]`
 
@@ -139,8 +142,8 @@ le tour d'origine a verrouillé pour chaque rangée) et C (`td_cur`, l'octet que
    SET 8, attente, CLR `0xfff7`, attente. Puis l'écriture DATA d'origine.
 
 `td_wait` : un `nop` (sur ColdFire, attend la fin des écritures en cours `[HYP]`, de mémoire du manuel), puis lit le
-compteur de PIT3 (`0xfc08c004`, décompte) jusqu'à ce que (début − maintenant) mod 11 265 ≥ 68 coups (0,50 µs), au plus
-64 lectures.
+compteur de PIT3 (`0xfc08c004`, décompte) jusqu'à ce que (début − maintenant) mod 11 265 ≥ 272 coups (2,0 µs), au
+plus 64 lectures.
 
 Ce que ça donne pour une touche dans l'état 260, allumée à l'origine : allumée 1 cycle (1,000 ms), éteinte 2, quel
 que soit le nombre de touches atténuées ; 333 Hz ; un tiers de la lumière (perçue vers 60 % de la pleine lumière
@@ -149,7 +152,8 @@ l'atténuation au plus une image plus tard (33 ms). Clignotement et lumière de 
 l'origine) gagnent toujours : le mod ne fait qu'ajouter des bits « éteinte ».
 
 Paramètres (`.equ` de `trigless_dim.S`, variantes par `--defsym` du générateur, jamais versionnées) : `PWM_N` = 3
-cycles par période, `PWM_ON` = 1 cycle allumé, `WAIT` = 68 coups. 4/1 donnerait 250 Hz à 25 %, 2/1 500 Hz à 50 %.
+cycles par période, `PWM_ON` = 1 cycle allumé, `WAIT` = 272 coups (2 µs, la valeur testée sur la machine ; 68, soit
+0,5 µs, n'a jamais été essayé). 4/1 donnerait 250 Hz à 25 %, 2/1 500 Hz à 50 %.
 
 ## 7. Effets de bord, coût et attente active
 
@@ -158,17 +162,19 @@ cycles par période, `PWM_ON` = 1 cycle allumé, `WAIT` = 68 coups. 4/1 donnerai
   `0x40006016` n'a pas d'appelant. Model-TG (`sld_led`, accroché juste après, en `0x40021f56`) transmet a5 tel quel.
 - `[FAIT en émulation]` Sans trigless trig : mêmes écritures sur le port, dans le même ordre ; l'étape 0 passe de 32 à
   54 instructions (DIR écrit environ 0,2 µs plus tard dans l'étape, sans effet : le strobe vient à l'étape suivante).
-- `[FAIT en émulation]` Avec des trigless trigs : l'étape 0 coûte 139 instructions sans rangée à recharger, puis
-  environ 150 instructions et 2,2 µs par rangée rechargée (modèle : 1 coup de bus par instruction, 8 par lecture du
-  compteur). Les 16 touches de pas sont sur les rangées 0, 2, 3, 4 et 5 : avec les phases décalées, 3 ou 4 rangées
-  rechargées par cycle, jamais plus ; 9,8 µs au pire, **8,3 µs par ms en moyenne (0,8 % du processeur)** avec 16
-  trigless trigs. Le code en accepte 7 (au plus 5 changent ensemble, environ 12 µs).
+- `[FAIT en émulation]` Avec des trigless trigs : l'étape 0 coûte 139 instructions et 1 µs sans rangée à recharger,
+  puis environ 6,8 µs par rangée rechargée, presque tout en attente du compteur (modèle : 1 coup de bus par
+  instruction, 8 par lecture du compteur). Les 16 touches de pas sont sur les rangées 0, 2, 3, 4 et 5 : avec les
+  phases décalées, 3 ou 4 rangées rechargées par cycle, jamais plus ; 28,2 µs au pire, **23,5 µs par ms en moyenne
+  (2,35 % du processeur)** avec 16 trigless trigs. Le code en accepte 7 (au plus 5 changent ensemble, environ 35 µs).
+  Avec des attentes de 0,5 µs (version non essayée), c'était 9,8 µs au pire et 0,8 %.
 - **Attente active dans une interruption** : c'est une exception à `tools/AGENTS.md` (« no waits »), voulue. Les
   verrous ont besoin d'un strobe d'une certaine durée ; l'OS l'étale sur trois interruptions (83 µs chacune), ce qui
-  limite le tour d'origine à une rangée par ms. Ici : 3 attentes de 0,5 µs par rangée rechargée, au plus 5 rangées par cycle, chaque
+  limite le tour d'origine à une rangée par ms. Ici : 3 attentes de 2 µs par rangée rechargée, au plus 5 rangées par cycle, chaque
   attente bornée à 64 lectures du compteur (si le compteur était figé, l'étape se terminerait quand même : 92 µs
   modélisés au pire, prouvé). Le temps est pris au niveau 6, sur le rendu audio (niveau 5) comme les 12 000
-  interruptions du panneau d'origine : 0,8 % en moyenne, seulement quand des trigless trigs sont affichés. Le
+  interruptions du panneau d'origine : 2,35 % en moyenne avec 16 trigless trigs, seulement quand des trigless trigs
+  sont affichés ; aucun craquement ni coupure en plus sur la machine avec tous les mods (07/10/2026). Le
   régulateur de charge (notes 25, 30, 36) mesure ce temps comme le reste.
 - `[FAIT]` Pile : 24 octets de plus sur la pile interrompue (20 pendant `td_led`, 4 de plus pendant `td_wait`).
 
@@ -206,11 +212,12 @@ bit 0 à 0, `[HYP]` câblage de la note 21) ; le compteur de PIT3 suit la ligne 
 | Écritures | octets d'origine ; masques identiques et à référence unique ; interruption du panneau d'origine sauf les 10 octets ; tick des LED d'origine ; pas de saut vers l'accroche ; 260 écrit seulement en `0x40021f52` |
 | Clignotement | 260 donne les mêmes appels que 4 |
 | Démarrage (pointeur des LED nul), puis images sans trigless trig, avec tête de lecture | 11 900 écritures sur le port identiques (valeur, étape), octets verrouillés identiques aux mêmes instants |
-| 6 trigless trigs sur 5 rangées, 1,5 s | début, colonnes, étapes 1 et 2 identiques (18 000 écritures) ; étape 0 = [DIR, (DATA, SET 8, CLR `0xfff7`) × k, DATA], k ≤ 4 ; aucun danger sur les verrous (donnée qui change strobe haut, strobe avec le balayage ou DIR ≠ `0xffff`, adresse 7) ; au moins 68 coups entre deux écritures ; les 50 autres bits de LED identiques aux mêmes instants ; touches atténuées allumées 1,00 cycle (2 136 fois), éteintes 2,00 (2 130) ; jamais allumées quand l'origine est éteinte ; tête de lecture (49 → 50 cycles) et clignotement (343 → 344,9, 350 → 353) |
-| Retard des interruptions de 0 à 20 µs, 1 s | lumière de 32,9 à 34,0 % sur chaque fenêtre de 100 ms |
-| Étape 0 en retard de 80 à 83 µs | le compteur se recharge pendant 234 étapes : écritures toujours espacées d'au moins 68 coups |
+| 6 trigless trigs sur 5 rangées, 1,5 s | début, colonnes, étapes 1 et 2 identiques (18 000 écritures) ; étape 0 = [DIR, (DATA, SET 8, CLR `0xfff7`) × k, DATA], k ≤ 4 ; aucun danger sur les verrous (donnée qui change strobe haut, strobe avec le balayage ou DIR ≠ `0xffff`, adresse 7) ; au moins 272 coups entre deux écritures (303 au plus court) ; les 50 autres bits de LED identiques aux mêmes instants ; touches atténuées allumées 1,00 cycle (2 136 fois), éteintes 2,00 (2 130) ; jamais allumées quand l'origine est éteinte ; tête de lecture (49 → 50 cycles) et clignotement (343 → 344,9, 350 → 353) |
+| Retard des interruptions de 0 à 20 µs, 1 s | lumière de 32,7 à 34,1 % sur chaque fenêtre de 100 ms |
+| Étape 0 en retard de 80 à 83 µs | le compteur se recharge pendant 234 étapes : écritures toujours espacées d'au moins 272 coups (293 au plus court) |
 | Compteur figé | chaque étape 0 se termine, 64 lectures par attente |
 | 16 trigless trigs | `td_lock` = bits 6, 16, 19 à 23, 28, 29, 31, 37, 38, 40, 44, 46, 47 ; chaque touche 1 cycle sur 3 (5 264 passages) |
+| Coût | étape 0 : 1 µs sans rangée à recharger, 28,2 µs au pire (4 rangées) ; 23,5 µs par ms avec 16 trigless trigs |
 | États remis à zéro au milieu d'une image, 70 ms | la touche reste atténuée ; à l'origine allumée |
 | Registres et pile | rendus à chaque `rte` (registres au hasard), par la fin de l'image ; l'interruption n'écrit en mémoire que ce qu'écrit l'origine plus l'état du mod |
 
@@ -221,24 +228,32 @@ Avec `--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold
 Non émulé : la vraie vue de la grille (`0x40021d22`, qui demande un pattern en mémoire) ; l'écriture de 260 y est
 vérifiée octet par octet et par la lecture du code. Et surtout le matériel lui-même (§11).
 
-## 11. Ce qui peut rater sur la machine, et le repli `[HYP]`
+## 11. Ce qui aurait pu rater sur la machine, et le repli
 
-L'OS espace les écritures d'une transaction de 83 µs ; ici 0,5 µs. Les 74HC373 et 74HC238 sont sur la carte
-principale avec le processeur (note 21) et demandent quelques dizaines de ns : ça devrait suivre, mais personne ne l'a
-encore fait sur cette carte. Signes d'un échec, visibles et sans danger (le tour d'origine corrige chaque verrou tous
-les 7 ms) :
+L'OS espace les écritures d'une transaction de 83 µs. La version 2 a d'abord été écrite avec 0,5 µs (`WAIT` = 68) ;
+Maxime a reçu le 07/10/2026 deux jeux de fichiers, à 0,5 µs et à 2 µs (le repli), et a flashé directement celui à
+2 µs avec tous les mods : il marche (§12). C'est donc la valeur du tweak ; 0,5 µs n'a pas été essayé. Les 74HC373 et
+74HC238 sont sur la carte principale avec le processeur (note 21) et demandent quelques dizaines de ns. Signes d'un
+échec, visibles et sans danger (le tour d'origine corrige chaque verrou tous les 7 ms), à surveiller si on change
+`WAIT` :
 - les transactions ajoutées sont ignorées : seule la valeur du tour d'origine reste, et comme 7 mod 3 = 1, la touche
   montre 7 ms allumée, 14 éteinte, un scintillement **régulier** à 48 Hz ;
 - verrouillage limite : des LED fausses ou des étincelles sur les rangées 0, 2, 3, 4 et 5, au plus 7 ms.
 
-Repli, dans l'ordre : `WAIT` = 272 (2 µs, `--defsym WAIT=272`) ; puis des transactions au rythme de l'OS (une étape
-par interruption, de 333 Hz pour une rangée à 77 Hz pour cinq) ; au pire 1 rafraîchissement sur 2 (71 Hz, 50 %).
+Replis qui restaient en réserve : des transactions au rythme de l'OS (une étape par interruption, de 333 Hz pour une
+rangée à 77 Hz pour cinq) ; au pire 1 rafraîchissement sur 2 (71 Hz, 50 %).
 
 Autres points à juger : un sifflement à 333 Hz dans le son (le courant des LED commutées ; les phases décalées par
 rangée le réduisent) ; une traînée en pointillés en balayant vite le panneau des yeux dans le noir (visible jusqu'à
 environ 2 kHz ; une version à 1 kHz demanderait deux fois plus de temps d'interruption).
 
-## 12. À vérifier sur la machine `[À FAIRE]`
+## 12. Essais sur la machine
+
+**Testé sur la machine (07/10/2026)** : Maxime a flashé `…_volume-pan_trigless-v2-repli-2us_avec-tout` (les deux
+mods de djd_oz, `WAIT` = 272, avec 6 canaux, Model-TG, les 5 moteurs du Syntakt, effacer un trig, arpégiateur, tempo
+546, animation de démarrage ; MAIN OS `366aebfc…7fe7540`) : « Le trigless trig est nettement plus sombre et stable,
+pas de pointillés gênants, même avec les 16 en trigless trig. Tout le reste marche nickel. » Les deux mods seuls à
+2 µs donnent le MAIN OS `c4a547df…4a68797e6`, celui du tweak. La liste suivie :
 
 - Arrêté, une piste : des trigs de note, un trigless trig (FUNC + touche sur un pas vide), un trig avec un p-lock. Le
   trigless trig nettement plus sombre, stable, avec son clignotement de 2 s ; les autres comme à l'origine.
@@ -251,8 +266,7 @@ environ 2 kHz ; une version à 1 kHz demanderait deux fois plus de temps d'inter
   piste et de page : l'atténuation suit.
 - Casque fort, rien ne joue : 16 trigless trigs contre aucun, un sifflement à 333 Hz ? Puis un pattern chargé avec
   l'enregistrement USB 6 canaux quelques minutes : pas de nouvelle coupure.
-- Si les touches scintillent régulièrement (vers 48 Hz) ou si d'autres LED étincellent : le dire, le repli est prêt
-  (§11).
+- Si les touches scintillent régulièrement (vers 48 Hz) ou si d'autres LED étincellent : le dire (§11).
 
 ## 13. Crédit
 

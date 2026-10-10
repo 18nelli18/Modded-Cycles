@@ -13,7 +13,7 @@
  * abîmée » sur la machine. Ici la lumière est découpée dans l'interruption du panneau elle-même, à chaque cycle de
  * 1 ms : à l'étape 0 des LED, avant la rangée du tour, td_led recharge chaque rangée qui porte une touche atténuée
  * quand elle doit s'allumer ou s'éteindre, par une transaction complète comme celle de l'OS (DATA, SET du bit 3,
- * CLR du bit 3), à 0,5 us d'intervalle au lieu de 83 us. Les autres LED gardent la valeur que le tour d'origine leur
+ * CLR du bit 3), à 2 us d'intervalle au lieu de 83 us. Les autres LED gardent la valeur que le tour d'origine leur
  * a donnée, au même instant que sans le mod. Les rangées ont des phases décalées (rangée r allumée quand
  * (phase + r) mod 3 = 0), pour que les touches ne s'allument pas toutes ensemble.
  *
@@ -25,7 +25,7 @@
  * panneau, qui ne s'imbrique pas et seule lit et écrit td_last, td_cur, td_ph et td_list. td_frame écrit td_lock en
  * deux mots longs ; un mélange de l'ancien et du nouveau relevé dure au plus 1 ms.
  *
- * Attente active dans une interruption (exception à tools/AGENTS.md, notes/45 §7) : 3 attentes de 0,5 us par
+ * Attente active dans une interruption (exception à tools/AGENTS.md, notes/45 §7) : 3 attentes de 2 us par
  * rangée rechargée, au plus 5 rangées par cycle, chacune bornée à 64 lectures du compteur de PIT3. */
 
 	.equ	LED_BIT, 0x4010abf8		/* LED logique -> bit des 7 octets de LED (-1 : pas de LED) */
@@ -40,7 +40,7 @@
 	.equ	PWM_ON, 1			/* allumé 1 cycle sur 3 : 33 % */
 	.endif
 	.ifndef WAIT
-	.equ	WAIT, 68			/* coups de PIT3 entre deux écritures du port : 0,50 us */
+	.equ	WAIT, 272			/* coups de PIT3 entre deux écritures du port : 2,0 us (testé sur la machine ; 68 = 0,5 us, non testé) */
 	.endif
 
 	/* PAT : bit k à 1 si (k mod PWM_N) < PWM_ON ; la rangée r est allumée au cycle de phase ph si le bit r de

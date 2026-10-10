@@ -258,7 +258,7 @@ LED et de l'image de l'interface sur une même ligne de temps, d'origine contre 
 construit les variantes d'essai (jamais versionnées, `--out` hors de `tweaks/`) :
 ```sh
 python3 tools/gen_trigless_dim.py --cycles model-cycles_OS1.13.syx [--check]
-python3 tools/gen_trigless_dim.py --cycles model-cycles_OS1.13.syx --defsym WAIT=272 --out essai-2us.json
+python3 tools/gen_trigless_dim.py --cycles model-cycles_OS1.13.syx --defsym WAIT=68 --out essai-0p5us.json
 python3 tools/emu/test_trigless_dim.py --cycles model-cycles_OS1.13.syx \
     [--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max,boot-anim,level-pan-values \
      --syntakt Syntakt_OS1.42.syx]

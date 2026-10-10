@@ -13,8 +13,8 @@ masques de sprites 47x47 libérés (tools/sprites.py). Les accroches sur l'OS so
 
     python3 tools/gen_trigless_dim.py --cycles model-cycles_OS1.13.syx [--check]
 
-Variantes d'essai (jamais versionnées) : --defsym WAIT=272 --out essai.json (attente de 2 us entre deux écritures du
-port au lieu de 0,5 us), --defsym PWM_N=2 (1 ms sur 2, 50 %).
+Variantes d'essai (jamais versionnées) : --defsym WAIT=68 --out essai.json (attente de 0,5 us entre deux écritures du
+port au lieu de 2 us, jamais essayée sur la machine), --defsym PWM_N=2 (1 ms sur 2, 50 %).
 """
 import argparse
 import json
