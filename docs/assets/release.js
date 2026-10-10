@@ -1,8 +1,13 @@
+/opt/homebrew/Library/Homebrew/cmd/shellenv.sh: line 18: /bin/ps: Operation not permitted
 /* Flasher versions, newest first. Shown on the home page and in the flasher.
  * New version: add an entry at the top, with what changed since the previous one:
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.42", date: "2026-10-10", changes: [
+    { en: "The flasher now waits for you to click Allow MIDI access before it connects to MIDI devices, avoiding automatic MIDI enumeration during page load on Windows.",
+      fr: "Le flasher attend maintenant que vous cliquiez sur Autoriser l’accès MIDI avant de se connecter aux appareils MIDI, afin d’éviter l’énumération automatique au chargement sous Windows." },
+  ] },
   { version: "1.41", date: "2026-10-10", changes: [
     { en: "Volume and pan readouts on the main screen, with one-step LEVEL/DATA changes; dimmed trigless step lights; and the latest multi-line browser, all from 18nelli18's flasher. Your MIDI options and tested FUNC + LEVEL/DATA live toggle remain available.",
       fr: "Affichage numérique du volume et du pan sur l'écran principal, réglage par pas de 1 ; LEDs des trigless trigs atténuées ; et dernière version du navigateur sur plusieurs lignes, du flasher de 18nelli18. Vos options MIDI et la bascule FUNC + LEVEL/DATA testée restent disponibles." },
