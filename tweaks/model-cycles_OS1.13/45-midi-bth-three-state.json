@@ -1,0 +1,52 @@
+{
+ "id": "midi-bth-three-state",
+ "order": 45,
+ "name": "MIDI OUT / THRU / BTH",
+ "description": [
+  "Ajoute BTH comme troisième valeur : OUT envoie, THR relaie, BTH fait les deux. Expérimental, non proposé dans le flasher ;",
+  "test sur machine requis. Généré par tools/gen_midi_bth_three_state.py (note 50)."
+ ],
+ "device": "Model:Cycles",
+ "os": "1.13",
+ "section": 3,
+ "conflicts": [
+  "midi-both"
+ ],
+ "writes": [
+  {
+   "off": 217610,
+   "old": "4eb940044df84a8057c0710044802f4000044ef940044dc2",
+   "new": "4ef940167c504e714e714e714e714e714e714e714e714e71"
+  },
+  {
+   "off": 220120,
+   "old": "4eb940044df84a806708263c401272816006263c40127bad",
+   "new": "4eb940167c6c4e714e714e714e714e714e714e714e714e71"
+  },
+  {
+   "off": 4426,
+   "old": "4eb940044df8",
+   "new": "4eb940167c9a"
+  },
+  {
+   "off": 4458,
+   "old": "4eb940044df8",
+   "new": "4eb940167c9a"
+  },
+  {
+   "off": 4496,
+   "old": "4eb940044df8",
+   "new": "4eb940167c9a"
+  },
+  {
+   "off": 728350,
+   "old": "40167c50",
+   "new": "4014a660"
+  },
+  {
+   "off": 1472592,
+   "old": "ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffff",
+   "new": "4eb940044df852800c8000000003660242802f4000044ef940044dc24eb940044df80c800000000267144a806708263c401272814e75263c40127bad4e75263c40167c964e75425448004eb940044df80c800000000157c04e75"
+  }
+ ]
+}

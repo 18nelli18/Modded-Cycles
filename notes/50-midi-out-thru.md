@@ -10,15 +10,16 @@ Avec le mod coché et **THR** choisi dans `CONFIG > MIDI > PORTS > OUT/THRU`, le
 
 | VA | Rôle |
 |---|---|
-| `0x40035fd8` | Rend OUT ou THR selon le réglage OUT/THRU. La version finale ne le modifie pas. |
-| `0x40036008` | Initialise l'éditeur du réglage. La version finale ne le modifie pas. |
-| `0x40044df8` | Getter appelé par les trois portes d'émission. |
+| `0x40035fd8` | Affiche OUT ou THR à partir de la valeur lue. |
+| `0x4003560a` | Callback d'appui : le code stock transforme explicitement la valeur en bascule booléenne 0↔1. |
+| `0x40044df8` | Lit l'octet de réglage `0x50` sans le réduire à un booléen. |
+| `0x40044dc2` | Écrit un octet de réglage `0x50`. |
 | `0x400012d2` | Chemin de réception et de relais ; la version finale ne le modifie pas. |
 | `0x4000154a`, `0x4000156a`, `0x40001590` | Portes qui empêchent l'émission générée lorsque le réglage est THRU. |
 
 ## 2. Correctif
 
-Le premier essai ajoutait un libellé et une valeur BTH, mais la propriétaire de l'appareil a confirmé que le réglage ne parcourait toujours que OUT et THR. Le nombre de choix et le libellé personnalisé n'ont donc pas permis de créer une troisième valeur réellement sélectionnable.
+Le premier essai ajoutait un libellé et modifiait le rendu du menu, mais la propriétaire de l'appareil a confirmé que le réglage ne parcourait toujours que OUT et THR. Le callback d'appui n'avait pas été modifié : il inversait explicitement un booléen.
 
 Le correctif final conserve le menu stock. Aux trois portes d'émission, il remplace l'appel au getter par `moveq #0,d0` (les quatre octets restants sont des NOP). Le test stock suivant reçoit donc zéro et laisse passer les messages générés en mode THRU. Le chemin de relais entrant reste intact ; THRU effectue alors les deux comportements. Le patch ne prend aucune code cave et s'applique avec les autres mods sans réserver de mémoire.
 
@@ -38,3 +39,17 @@ Le premier essai a été installé sans problème, mais l'appareil ne permettait
 ### 4.1 Testé le 10/10/2026
 
 Après avoir installé le build avec ce mod, l'utilisatrice a confirmé : « I tested this on my Model Cycles and it functions as intended! » THR relaie donc le MIDI reçu et transmet en même temps l'horloge et les messages générés par le Cycles. Le statut du flasher passe à **testé**.
+
+## 5. Faisabilité d'un troisième état (10/10/2026)
+
+### 5.1 Limite trouvée dans le menu stock
+
+- **`[FAIT]`** Le getter `0x40044df8` lit l'octet associé à la clé `0x50`. Le setter `0x40044dc2` reçoit une valeur et l'enregistre sur un octet ; la représentation peut donc contenir `0`, `1` et `2`.
+- **`[FAIT]`** Le callback `0x4003560a` force cependant chaque appui à `0` ou `1` (`tst`, `seq`, extension du signe, négation), puis appelle le setter. C'est la raison du cycle OUT↔THR : la limite est dans ce callback, pas dans la capacité de stockage.
+- **Conclusion :** un troisième état est **faisable dans le firmware**. Il faut remplacer le callback booléen, afficher les trois valeurs et faire en sorte que les trois portes de sortie ne bloquent que THR (`1`). Le relais entrant d'origine accepte déjà les valeurs non nulles, donc BTH (`2`) est relayé.
+
+### 5.2 Expérience locale, non publiée
+
+`tools/gen_midi_bth_three_state.py` produit `45-midi-bth-three-state.json`, séparé du mod de secours `44-midi-both.json`. L'expérience remplace le cycle par `0→1→2→0`, associe les libellés OUT/THR/BTH et adapte les trois portes pour bloquer uniquement à `1`. Elle réutilise le masque 35×35 libéré à `0x40167c50`, comme le premier essai. Les deux mods sont déclarés incompatibles : le secours rend aussi THR émetteur et empêcherait de retrouver le comportement stock de THR.
+
+Le générateur et la construction complète du fichier `.syx` ont réussi sur l'OS officiel 1.13. Les octets ont été désassemblés avec binutils ColdFire : le callback appelle le nouveau cycle, la valeur BTH pointe vers son libellé, et les portes comparent la valeur à `1`. L'émulateur M68K de cet hôte n'est pas utilisable ; **aucun test sur la machine n'a encore été fait**. L'expérience n'est donc pas inscrite dans le flasher. Le mod de secours, déjà confirmé par l'utilisatrice sur son appareil, reste disponible sur `main`.
