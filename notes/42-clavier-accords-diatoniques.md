@@ -842,8 +842,9 @@ temps, hors les cas prévus). Les empreintes de Chord Keys ne changent pas (`901
 **Quatrième fusion (10/10/2026)** : MACRO avec les moteurs du Syntakt (1.36, notes/50), le navigateur sur plusieurs
 lignes (1.37, notes/40, tweak 44) et le registre de la place libre (notes/52) arrivent dans `main`.
 
-- **Numéros** : version **1.40** et tampon **2026-10-10-07** (1.38 et 1.39 sont réservées par des PR ouvertes ;
-  `main` est à 1.37 et `2026-10-10-05`). Tweak 45 inchangé ; dans `tweaks/AGENTS.md`, le suivant est 46.
+- **Numéros** : version **1.40** et tampon **2026-10-10-10** (1.38, 1.39 et les tampons -06 à -09 sont réservés
+  par des PR ouvertes ; `main` est à 1.37 et `2026-10-10-05`). Tweak 45 inchangé ; dans `tweaks/AGENTS.md`, le
+  suivant est 46.
 - **Guide** : le navigateur prend la section 14, Chord Keys passe en 15 ; les suivantes sont renumérotées.
 - **Masques** : `tools/sprites.py` prend la version de `main`, où les masques 47×47 viennent de `GROUPS` (mêmes
   adresses, mêmes constantes). `registry.py` régénère `REGISTRY.md` : Chord Keys y occupe ses quatorze masques (quatre
