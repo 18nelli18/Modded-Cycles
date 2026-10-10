@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.38", date: "2026-10-11", changes: [
+    { en: "Mods on a Model:Samples (experimental): the Mods tab now asks which machine you are flashing. Choose “Model:Samples, on its own OS” and the page installs the Model:Cycles OS with the mods you tick, packed inside your Model:Samples firmware; Model-TG's Sampler keeps your samples playing. Step 2 asks for the official Model:Samples OS file too",
+      fr: "Des mods sur un Model:Samples (expérimental) : l'onglet Mods demande maintenant quelle machine vous flashez. Choisissez « Model:Samples, sous son OS » et la page installe l'OS du Model:Cycles avec les mods cochés, emballé dans le firmware de votre Model:Samples ; le Sampler de Model-TG continue de jouer vos samples. L'étape 2 demande aussi le fichier officiel de l'OS Model:Samples" },
+    { en: "To change mods later, choose “Model:Samples, already on the Cycles OS”. The page only sends to a machine that answers as expected, and the way back to the Model:Samples OS stays in the Samples OS tab, over USB. Whatever the machine, the flasher always installs the Model:Cycles OS",
+      fr: "Pour changer de mods plus tard, choisissez « Model:Samples, déjà sous l'OS Cycles ». La page n'envoie qu'à une machine qui répond comme prévu, et le retour à l'OS du Model:Samples reste dans l'onglet OS Samples, par USB. Quelle que soit la machine, le flasher installe toujours l'OS du Model:Cycles" },
+    { en: "Checked in the emulator on both OSes' own update checks and on the Model:Samples startup code, up to the largest set of mods; not yet tried on a real Model:Samples. Nothing changes for a Model:Cycles. Original flasher by RDS (AIM), integrated into Modded Cycles by DaftMaple",
+      fr: "Vérifié en émulation sur les contrôles de mise à jour des deux OS et sur le code de démarrage du Model:Samples, jusqu'au plus gros ensemble de mods ; pas encore essayé sur un vrai Model:Samples. Rien ne change pour un Model:Cycles. Flasher d'origine de RDS (AIM), intégré à Modded Cycles par DaftMaple" },
+  ] },
   { version: "1.37", date: "2026-10-10", changes: [
     { en: "New mod, Multi-line browser: the preset browser shows three names at once in a small font, instead of one in big letters. A > marks the name under the cursor, the sound loaded on the track stays highlighted, and folders get a small mark before their name. From an idea and a script by a community member",
       fr: "Nouveau mod, Navigateur sur plusieurs lignes : le navigateur de presets affiche trois noms à la fois en petite police, au lieu d'un seul en gros caractères. Un > signale le nom sous le curseur, le son chargé sur la piste reste en surbrillance, et les dossiers ont un petit repère devant leur nom. D'après une idée et un script d'un membre de la communauté" },
