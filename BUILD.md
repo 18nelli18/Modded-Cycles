@@ -142,9 +142,13 @@ python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --sy
 | `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `d5e73e10a07042a85e9022e87e488b6ca4960ecef69f49652d5c3dc706a1f6fc` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` | `70354db7660a9ffc60956d523d2976299be4fa4813e483c1222abe26edae2b3c` |
 
-Les 10 559 combinaisons proposées par le flasher web sont toutes listées dans `docs/flasher/app.js` (`REF_MAINOS`), calculées par
-`tools/ref_mainos.py` (qui réécrit le bloc ; `--check` pour vérifier) ;
-`tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.42.syx` les reconstruit toutes dans la page et les compare.
+Le flasher web vérifie chaque mod, à chaque build, contre l'outil Python ([note 49](notes/49-verification-mod-par-mod.md)) :
+`REF_MODS` de `docs/flasher/app.js` donne l'empreinte des écritures et de la charge utile de chaque tweak, et `REF_MAINOS`
+le MAIN OS d'un échantillon de combinaisons (chaque carte seule, chaque paire, les plus grandes : 464 aujourd'hui).
+`tools/ref_mainos.py` réécrit les deux blocs (`--check` pour vérifier) ; `tools/check_overlaps.py` prouve, sans firmware,
+que deux mods qu'on peut cocher ensemble n'écrivent jamais aux mêmes octets (sauf écriture identique ou mod posé
+par-dessus l'autre par `requires`) ;
+`tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.42.syx` reconstruit l'échantillon dans la page et le compare.
 SD VINTAGE v1 (clean-room d'origine, **testée sur le matériel** le 29/09/2026, compilée par GCC 13.3) donnait `80b7b2bd…` seule et `38754937…` avec `6ch-usbup` ;
 la v2 est compilée par `m68k-elf-gcc` 16.2 (Homebrew), voir [note 16 §6](notes/16-moteur-syntakt.md).
 
@@ -296,7 +300,8 @@ python3 tools/gen_macro.py --cycles model-cycles_OS1.13.syx --eurorack vendor/eu
 python3 tools/emu/test_macro.py --cycles model-cycles_OS1.13.syx --eurorack vendor/eurorack [--quick] \
     [--with 6ch-usbup,model-tg-st,trig-hold,arp,tempo-max,boot-anim]
 ```
-Incompatible avec les moteurs du Syntakt et SD VINTAGE (même mécanique, même place).
+Avec les moteurs du Syntakt : les tweaks combinés de la section suivante. Incompatible avec SD VINTAGE (même mécanique,
+même place).
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
@@ -304,6 +309,29 @@ Incompatible avec les moteurs du Syntakt et SD VINTAGE (même mécanique, même 
 | `6ch-usbup,macro` | `32932ae6eca06406f1c954368dc3465cf83e1026128b39ebfc7e746e9e01023f` |
 | `model-tg-st,macro-tg` | `d738fafaa86bbac86e328e6f0b70dd9688c1d9c3b05a423c957751c74abbd8d8` |
 | `6ch-usbup,model-tg-st,macro-tg,trig-hold,arp,tempo-max,boot-anim` | `f584f099bd2a26abfcccf3d954dd3b86ab1880c07a0b110bce88d569eed1daeb` |
+
+### MACRO avec les moteurs du Syntakt
+
+`tweaks/model-cycles_OS1.13/24-syntakt-<moteurs>-macro.json` et `31-syntakt-tg-<moteurs>-macro.json` (avec Model-TG,
+par-dessus `model-tg-st`) sont produits par `tools/gen_macro_syntakt.py` : les moteurs exactement comme dans leur tweak
+(passerelle reprise octet pour octet, pas recompilée), MACRO en dernière machine, après eux ; la charge utile commune
+(471 792 o) est rangée compressée et décompressée au démarrage ([note 50](notes/50-macro-avec-moteurs-syntakt.md)).
+Mêmes besoins que les deux mods (fichier Syntakt, clone d'eurorack, `m68k-linux-gnu-g++` 13.3) :
+```sh
+python3 tools/gen_macro_syntakt.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \
+    --eurorack vendor/eurorack [--engines sd,cp] [--tg] [--check]
+python3 tools/emu/test_macro_syntakt.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \
+    --eurorack vendor/eurorack [--engines sd,cp] [--only alone|tg] [--with 6ch-usbup,trig-hold,arp,tempo-max,boot-anim]
+```
+
+| `-t` (avec `--syntakt Syntakt_OS1.42.syx`) | MAIN OS patché (SHA-256) |
+|---|---|
+| `syntakt-sd-macro` | `5c096030a7035c766d0119e5f8053214e299c7dac9d28db8c6aa9b41df465f45` |
+| `syntakt-sd-cp-toy-bits-swarm-macro` | `f8be2f118bfb7f7b3033a9e6fa2e3ce9b146e428cf8a815f98d710dc1987b76b` |
+| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `126e5108aa6b3a7a8578a3a0e2d9453d47571bbe19797875bce433473dc53ea3` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro` | `2f40a8c6672dd2f46c11adb6c1c5d0c9a77049188837fe4c44c7ce778f8c4785` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `7789622b49c4833b46dd99dcb09f5c9803a58408b25b73097df0ca0ebf85654d` |
+| `6ch-usbup,model-tg-st,sample-preview-st,syntakt-tg-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `f44bfad622145e30ce0cbb3649864e74aebca5559d63c0393ac4eea0eef4ace9` |
 
 ### Navigateur sur plusieurs lignes
 
@@ -383,7 +411,8 @@ python3 tools/emu/test_model_tg_syntakt.py --cycles model-cycles_OS1.13.syx --sy
 python3 tools/ref_mainos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx --check
 ```
 Pour ajouter un moteur : l'ajouter à `CATALOG` de `tools/gen_syntakt_engines.py` (et ses plages copiées), puis relancer
-`gen_syntakt_engines.py --all` et `--all --tg`, `gen_flasher_tweaks.py` et `ref_mainos.py`, et tester chaque nouveau tweak en émulation.
+`gen_syntakt_engines.py --all` et `--all --tg`, `gen_flasher_tweaks.py`, `check_overlaps.py` et `ref_mainos.py`, et tester chaque
+nouveau tweak en émulation.
 
 ## Flasher (rappel)
 

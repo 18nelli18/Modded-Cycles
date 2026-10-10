@@ -42,13 +42,18 @@ cave check; add to it only with the reasoning in `why` and in a note.
 }
 ```
 
-Optional fields used by existing tweaks: `append` (payload copied at boot, notes/17, 31), `gov` (load governor
+Optional fields used by existing tweaks: `append` (payload copied at boot, notes/17, 31; with `compress: "aplib"`
+it is stored compressed and `stored` gives its size in the image, notes/50), `gov` (load governor
 settings), `symbols` (addresses of the mod's state, for the proofs), `version`, `source`, `result_sha256`. Look at how
 `build.py` and `docs/flasher/builder.js` read a field before adding a new one: **both builders must handle it the
 same way**, which `tools/webbuild_check.sh` and `tools/webflash_smoke.sh` verify.
 
 A write into a `0xFF` zone (cave) is refused when the stock image points into it, unless one of the chosen tweaks
 rewrites that pointer (`sprites.redirect_write`) or `device.json` lists the reference in `cave_refs_ok`.
+
+`tools/check_overlaps.py` (notes/49) refuses two tweaks that can be installed together and write the same bytes,
+unless it is the same whole write (`off`, `old`, `new`) or one `requires` the other; declare `conflicts` otherwise.
+It also wants `old` and `new` of the same length, in plain hex, inside section 3, and unique ids.
 
 ## `PROVENANCE.md`
 

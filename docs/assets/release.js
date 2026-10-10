@@ -3,13 +3,27 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
-  { version: "1.37", date: "2026-10-07", changes: [
+  { version: "1.37", date: "2026-10-10", changes: [
     { en: "New mod, Multi-line browser: the preset browser shows three names at once in a small font, instead of one in big letters. A > marks the name under the cursor, the sound loaded on the track stays highlighted, and folders get a small mark before their name. From an idea and a script by a community member",
       fr: "Nouveau mod, Navigateur sur plusieurs lignes : le navigateur de presets affiche trois noms à la fois en petite police, au lieu d'un seul en gros caractères. Un > signale le nom sous le curseur, le son chargé sur la piste reste en surbrillance, et les dossiers ont un petit repère devant leur nom. D'après une idée et un script d'un membre de la communauté" },
     { en: "It works for sounds, folders and the Model-TG Sampler's samples. With Scrolling names or Model-TG, only the name under the cursor scrolls; the others stay put",
       fr: "Il marche pour les sons, les dossiers et les échantillons du Sampler de Model-TG. Avec Noms qui défilent ou Model-TG, seul le nom sous le curseur défile ; les autres ne bougent pas" },
     { en: "Checked in the emulator on the OS's own drawing code and fonts; experimental until tested on a Model:Cycles. It goes with every other mod, Model-TG and the Syntakt engines included",
       fr: "Vérifié en émulation sur le code de dessin et les polices de l'OS ; expérimental jusqu'à un test sur un Model:Cycles. Il se combine avec tous les autres mods, Model-TG et moteurs du Syntakt compris" },
+  ] },
+  { version: "1.36", date: "2026-10-10", changes: [
+    { en: "MACRO and the Syntakt engines together: the flasher now lets you tick both cards. MACRO comes last, right after the engines you tick (after the Sampler and the engines with Model-TG: with all five engines, MACRO is the 13th machine)",
+      fr: "MACRO et les moteurs du Syntakt ensemble : le flasher permet maintenant de cocher les deux cartes. MACRO vient en dernier, juste après les moteurs cochés (après le Sampler et les moteurs avec Model-TG : avec les cinq moteurs, MACRO est la 13e machine)" },
+    { en: "In this combination, the engines' load governor looks after MACRO tracks too. To fit in the firmware, the added code is stored compressed and unpacked when the machine starts",
+      fr: "Dans cette combinaison, le régulateur de charge des moteurs veille aussi sur les pistes MACRO. Pour tenir dans le firmware, le code ajouté est rangé compressé et décompressé au démarrage de la machine" },
+    { en: "Tested on a Model:Cycles with Model-TG and all five engines (with 6-channel audio, sample preview, trig removal, the arpeggiator, the tempo and the startup animation); the first test file froze at startup, which is fixed. Other combinations are checked in the emulator only (the engines and MACRO play exactly as each one alone, alone and with Model-TG). MACRO alone and the engines alone are unchanged",
+      fr: "Testé sur un Model:Cycles avec Model-TG et les cinq moteurs (avec l'audio 6 canaux, l'écoute des samples, l'effacement des trigs, l'arpégiateur, le tempo et l'animation de démarrage) ; le premier fichier de test se figeait au démarrage, c'est corrigé. Les autres combinaisons sont vérifiées en émulation seulement (les moteurs et MACRO jouent exactement comme chacun seul, avec ou sans Model-TG). MACRO seule et les moteurs seuls ne changent pas" },
+  ] },
+  { version: "1.33", date: "2026-10-10", changes: [
+    { en: "Every mod you tick is now checked against its reference build, whatever the combination. Until now the page carried the expected result of each of the 10,559 possible combinations and checked only those; that list doubled with every new mod. It now keeps one reference per mod, plus a sample of 464 combinations checked whole (each mod alone, every pair, the largest ones)",
+      fr: "Chaque mod coché est maintenant vérifié contre son build de référence, quelle que soit la combinaison. Jusqu'ici la page contenait le résultat attendu de chacune des 10 559 combinaisons possibles et ne vérifiait que celles-là ; cette liste doublait à chaque nouveau mod. Elle garde maintenant une référence par mod, plus un échantillon de 464 combinaisons vérifiées en entier (chaque mod seul, chaque paire, les plus grandes)" },
+    { en: "The page is lighter (about 1.3 MB less to load) and ready for many more mods. Nothing changes on the machine: for the same choice of mods, the firmware built and sent is exactly the same as before, as checked by rebuilding and comparing every combination of the previous version",
+      fr: "La page est plus légère (environ 1,3 Mo de moins à charger) et prête pour beaucoup plus de mods. Rien ne change sur la machine : pour un même choix de mods, le firmware construit et envoyé est exactement le même qu'avant, ce qui a été vérifié en reconstruisant et en comparant toutes les combinaisons de la version précédente" },
   ] },
   { version: "1.32", date: "2026-10-07", changes: [
     { en: "New mod, Sample preview (with Model-TG): on a Sampler track, press FUNC + MACHINES (preset menu) and move the cursor onto a sample: the track's pad (or its trig keys in keyboard mode) plays it, the way the original OS lets you hear a preset before you pick it. Nothing plays while you scroll. It has its own row in the flasher, under Screen & browsing; ticking it ticks Model-TG too",

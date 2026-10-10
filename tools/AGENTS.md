@@ -81,8 +81,13 @@ and check the writes of **every** other tweak for overlaps.
 
 - `gen_flasher_tweaks.py`: the `FEATURES` list (cards of the web flasher). Add the new mod there, then run it; `--check`
   in validation. Card `status` is `"experimental"` until Maxime tests it.
-- `ref_mainos.py --cycles … --syntakt … [--check]`: rewrites the `REF_MAINOS` block of `docs/flasher/app.js`, the
-  expected MAIN OS hash of every combination the flasher offers. Rerun after any change to a tweak or to `FEATURES`.
+- `check_overlaps.py [--git REF …]`: no firmware needed. Two tweaks that can be installed together never write the
+  same bytes (except the same whole write, or one applied on top of the other through `requires`), every write is
+  well formed, and the payloads of every installable set chain up (`at`, `END_LIMIT`, `dest`). With `--git` it reads
+  branches and checks them together (the open PRs). This is what lets the flasher check mods one by one (notes/49).
+- `ref_mainos.py --cycles … --syntakt … [--check]`: rewrites `REF_MODS` (each tweak's writes and payload hashes) and
+  `REF_MAINOS` (the MAIN OS of a sample: each card alone, every pair, the largest combinations) in
+  `docs/flasher/app.js`. Rerun after any change to a tweak or to `FEATURES`; it reads the card rules like `app.js`.
 - `webflash_smoke.js`: asserts the list and order of tweaks and cards and their tags; update it with the new card.
 - Adding a Syntakt engine: `CATALOG` in `gen_syntakt_engines.py`, then `--all` and `--all --tg`,
-  `gen_flasher_tweaks.py`, `ref_mainos.py`, and a proof per new tweak (see BUILD.md).
+  `gen_flasher_tweaks.py`, `check_overlaps.py`, `ref_mainos.py`, and a proof per new tweak (see BUILD.md).
