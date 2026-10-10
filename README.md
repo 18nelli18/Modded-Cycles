@@ -47,6 +47,8 @@ Going back to the official firmware is one click away.
 | **Tempo up to 546 BPM** | The TEMPO knob, tap tempo, MIDI clock and saved projects go past 300 BPM. Tempo-synced LFOs stay in time. | ✅ Tested |
 | **Startup animation** | When the Model:Cycles starts, the four squares of the modded-cycles logo pop in and “modded-cycles” types itself underneath, instead of the original tile animation. Same duration. | ✅ Tested |
 | **Multi-line browser** | The preset browser shows three names at once in a small font instead of one in big letters, with a `>` on the name under the cursor. From an idea by a community member. | ✅ Tested |
+| **Volume and pan as numbers** | On the main screen, turning `LEVEL/DATA` shows the track's volume (0 to 127) as a number; with `FUNC` held, its pan (-64 to 63). `LEVEL/DATA` then moves in steps of 1 instead of 2 there. Based on a mod by djd_oz. | ✅ Tested |
+| **Dimmed trigless trigs** | A trig key that holds a trigless trig lights dimmed, so you can tell it from a note trig. Based on a mod by djd_oz. | ✅ Tested |
 | **Easier trig removal** | A quick press on a step that holds a trig removes it, instead of opening it as a hold. | ✅ Tested |
 | **Latching mute** | Hold `TRACK` and tap `FUNC`: mute mode stays on, no more holding `FUNC`. By [drumkilla](https://github.com/drumkilla/elektron-model-tweaks). | ✅ Tested |
 | **Trig preview** | Sequencer stopped or paused: hold a step and press `PAGE` to hear it, with its note, length and p-locks. By drumkilla. | ✅ Tested |
