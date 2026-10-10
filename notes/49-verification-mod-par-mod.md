@@ -12,21 +12,21 @@ plus à chaque mod. Outils : `tools/check_overlaps.py` (nouveau), `tools/ref_mai
 
 - **Aucun firmware n'est stocké** : la page construit le firmware dans le navigateur, depuis le fichier officiel de
   l'utilisateur, en appliquant les mods cochés. Ce qui doublait à chaque mod, c'était la **vérification** :
-  `REF_MAINOS` listait l'empreinte du MAIN OS de chacune des 9 215 combinaisons proposées (90 % des 1,36 Mo de
-  `app.js`), et `tools/webflash_smoke.sh` les reconstruisait toutes dans la page (de 45 min à 1 h 40 en morceaux, faute
+  `REF_MAINOS` listait l'empreinte du MAIN OS de chacune des 10 559 combinaisons proposées (90 % des 1,56 Mo de
+  `app.js`, `main` 1.32), et `tools/webflash_smoke.sh` les reconstruisait toutes dans la page (de 45 min à 1 h 40 en morceaux, faute
   de mémoire sinon). [FAIT]
 - Elle est remplacée par trois choses :
   1. `tools/check_overlaps.py`, **sans firmware** : deux mods qu'on peut installer ensemble n'écrivent jamais aux mêmes
      octets (sauf écriture identique ou mod posé par-dessus l'autre), et leurs charges utiles s'enchaînent ;
   2. `REF_MODS` : l'empreinte des écritures et de la charge utile de **chaque tweak**, vérifiée par la page **à chaque
      build** ;
-  3. `REF_MAINOS` réduit à un **échantillon de 416 combinaisons** construites en entier : chaque carte seule, chaque
+  3. `REF_MAINOS` réduit à un **échantillon de 464 combinaisons** construites en entier : chaque carte seule, chaque
      paire, les plus grandes.
-- Les firmwares sont les mêmes octet pour octet : les 416 empreintes sont celles de l'ancienne liste, et les 9 215
-  combinaisons, reconstruites dans la page avec le nouveau code, donnent le même MAIN OS qu'avant, chaque mod vérifié
-  (§6). [FAIT]
+- Les firmwares sont les mêmes octet pour octet : les 464 empreintes sont celles de l'ancienne liste, et les 9 215
+  combinaisons de `main` 1.28, reconstruites dans la page avec le nouveau code, donnent le même MAIN OS qu'avant,
+  chaque mod vérifié (§6). [FAIT]
 - La liste grandit maintenant d'une quarantaine d'entrées par carte au lieu de doubler, et `app.js` passe de
-  1 364 561 à 188 803 octets (`main` 1.28, avec le sélecteur de mods).
+  1 560 289 à 202 520 octets (`main` 1.32, avec le sélecteur de mods, MACRO et l'aperçu des samples).
 
 ## 1. Ce qui grandissait
 
@@ -37,6 +37,7 @@ ou sans Model-TG) multiplient le tout. Mesuré le 07/10/2026 sur `main` et les P
 | Où | Combinaisons | `app.js` |
 |---|---:|---:|
 | `main` (1.28) | 9 215 | 1 364 561 o |
+| `main` (1.32, MACRO et aperçu des samples) | 10 559 | 1 560 289 o |
 | PR clavier d'accords (#50), filtre par piste (#55) | 17 407 | 2,5 Mo |
 | PR menu multiligne (#52) | 18 431 | 2,7 Mo |
 | PR mods de djd_oz (#53, deux cartes) | 36 863 | 5,6 Mo |
@@ -103,7 +104,8 @@ Résultats du 07/10/2026 [FAIT] :
 
 | Où | Résultat |
 |---|---|
-| `main` | 80 tweaks, 8 472 écritures, 705 cas prévus, 70 ensembles de charges utiles : aucun problème |
+| `main` (1.28) | 80 tweaks, 8 472 écritures, 705 cas prévus, 70 ensembles de charges utiles : aucun problème |
+| `main` (1.32, le 10/10/2026) | 84 tweaks, 8 730 écritures, 728 cas prévus, 72 ensembles : aucun problème |
 | chacune des 7 PR de mods ouvertes, seule | aucun problème (deux tweaks de #56 et #59 nomment `chord-keys`, absent de leur branche) |
 | `main` + les 7 PR ensemble | 91 tweaks, 8 871 écritures : aucun problème |
 | djd_oz avant 02cd68d + clavier d'accords | **3 chevauchements** : `level-pan-values` (deux zones) et `trigless-dim` sur les pochoirs de `chord-keys` |
@@ -112,21 +114,21 @@ La dernière ligne rejoue le conflit de pochoirs trouvé à la main le 07/10/202
 
 ## 4. `REF_MODS` et `REF_MAINOS` (`tools/ref_mainos.py`)
 
-- `REF_MODS[id] = { w, p }` pour chacun des 72 tweaks de `tweaks.js` : `w` = SHA-256 des écritures mises bout à bout
+- `REF_MODS[id] = { w, p }` pour chacun des 76 tweaks de `tweaks.js` : `w` = SHA-256 des écritures mises bout à bout
   (pour chacune : `off` sur 4 octets, longueur de `old` sur 4 octets, `old`, longueur de `new` sur 4 octets, `new` ;
   `writes_bytes()` en Python, `writesBytes()` dans `builder.js`) ; `p` = SHA-256 de la charge utile telle qu'elle va
   dans l'image (`payload_image(payload_runtime(…))`), pour les tweaks `append`, depuis les fichiers officiels.
 - `REF_MAINOS` : le MAIN OS, construit en entier comme `build.py` (`check_conflicts`, `apply_writes`, `check_caves`,
   `build_payload`), de :
-  - chaque carte seule, chaque variante, chaque combinaison de moteurs du Syntakt : 40 ;
-  - chaque paire de cartes que la page laisse cocher ensemble : 312 ;
+  - chaque carte seule, chaque variante, chaque combinaison de moteurs du Syntakt : 42 ;
+  - chaque paire de cartes que la page laisse cocher ensemble (avec la carte qu'une des deux demande) : 358 ;
   - les plus grandes : à partir de chaque carte, on coche toutes les autres qui vont avec, dans l'ordre des cartes puis
     à l'envers, avec et sans les moteurs du Syntakt : 64.
-  Total 416, en 2 minutes. Les règles des cartes sont lues comme dans `app.js` : `excludes` et `includes` (jamais
+  Total 464, en 3 minutes (`main` 1.32 ; 416 sur `main` 1.28). Les règles des cartes sont lues comme dans `app.js` : `excludes` et `includes` (jamais
   ensemble), `with` (un autre tweak quand une autre carte est cochée), Model-TG avec les moteurs (leur version `tg`).
-  Le `requires` d'une carte n'est qu'affiché par la page depuis le sélecteur de mods (1.28, « avec … ») : il ajoute
-  l'autre carte à l'échantillon, et une sélection dont un tweak n'a pas le tweak qu'il demande est écartée (les deux
-  builds la refusent). Les PR ouvertes avaient dû adapter l'ancien script à chaque nouvelle
+  Le `requires` d'une carte (l'aperçu des samples ne va qu'avec Model-TG, 1.32) : la page coche l'autre carte avec
+  elle, l'échantillon aussi (`close()`), et une sélection dont un tweak n'a pas le tweak qu'il demande est écartée (les
+  deux builds la refusent). Les PR ouvertes avaient dû adapter l'ancien script à chaque nouvelle
   forme de carte ; celui-ci les lit toutes.
 - Croissance : la k-ième nouvelle carte ajoute 1 entrée seule, une paire avec chaque autre carte et chaque combinaison
   de moteurs (≈ 9 + 31), et quelques grandes : une quarantaine, au lieu de doubler. [FAIT pour main, calcul ensuite]
@@ -147,9 +149,9 @@ La dernière ligne rejoue le conflit de pochoirs trouvé à la main le 07/10/202
 
 | Vérification | Résultat |
 |---|---|
-| les 416 clés de l'échantillon dans l'ancienne liste, même empreinte | 416 / 416 [FAIT] |
-| les 9 215 combinaisons de l'ancienne liste, reconstruites dans la page (jsdom) avec le nouveau `builder.js`/`app.js` : même MAIN OS qu'avant, chaque mod vérifié | 9 215 / 9 215 en 12 parties (jsdom, 4 à la fois, ~4 h), aucun écart [FAIT] ; lancé avant la lecture stricte des relocalisations (§5), qui ne change rien aux tweaks du dépôt (`webbuild_check.sh` et l'échantillon repassés après) |
-| `tools/webflash_smoke.sh` avec les fichiers officiels : les 416 combinaisons, une combinaison de trois cartes hors échantillon (construite, chaque mod vérifié), un mod falsifié (écritures, puis charge utile) refusé | ALL OK, 536 vérifications, 13 min (version finale, après fusion de `main` 1.28 et la relecture) [FAIT] |
+| les clés de l'échantillon dans l'ancienne liste exhaustive, même empreinte | 416 / 416 sur `main` 1.28 ; 464 / 464 sur `main` 1.32 (10 559 entrées) [FAIT] |
+| les 9 215 combinaisons de l'ancienne liste de `main` 1.28, reconstruites dans la page (jsdom) avec le nouveau `builder.js`/`app.js` : même MAIN OS qu'avant, chaque mod vérifié | 9 215 / 9 215 en 12 parties (jsdom, 4 à la fois, ~4 h), aucun écart [FAIT] ; lancé avant la lecture stricte des relocalisations (§5), qui ne change rien aux tweaks du dépôt (`webbuild_check.sh` et l'échantillon repassés après) |
+| `tools/webflash_smoke.sh` avec les fichiers officiels : les combinaisons de l'échantillon, une combinaison de trois cartes hors échantillon (construite, chaque mod vérifié), un mod falsifié (écritures, puis charge utile) refusé | ALL OK, 536 vérifications, 13 min (après fusion de `main` 1.28 et la relecture) ; SMOKE4 (après fusion de `main` 1.32) |
 | la page elle-même, sans OS : chaque carte seule et chaque paire qu'elle laisse cocher (ce qu'elle en fait : carte incluse, échange) donne une clé de l'échantillon | 352 / 352 [FAIT] |
 | `gen_flasher_tweaks.py --check`, `webbuild_check.sh`, `webflash_check.sh`, `py_compile` | OK [FAIT] |
 

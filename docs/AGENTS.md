@@ -27,15 +27,20 @@ Write for musicians: what changes on the machine, which buttons to press, the li
 1. Add it to `FEATURES` in `tools/gen_flasher_tweaks.py` (`"status": "experimental"`, `cat`, `credit`, `excludes`,
    `includes`, `needs` or `requires` if any), then `python3 tools/gen_flasher_tweaks.py` to regenerate
    `flasher/tweaks.js`. `cat` is the flasher section the mod shows in, one of `CATS` (`pack`, `sound`, `seq`, `live`,
-   `screen`, `io`); without it the mod lands at the end, in « Other mods ». `requires` names a mod it only works with
-   (shown as "with …", not enforced). The order of `FEATURES` is the build order (the `REF_MAINOS` keys); the page
-   shows the mods by section, in `FEATURES` order inside a section.
+   `screen`, `io`); without it the mod lands at the end, in « Other mods ». The order of `FEATURES` is the build order
+   (the `REF_MAINOS` keys); the page shows the mods by section, in `FEATURES` order inside a section.
+   `"requires": "<card id>"` is for an add-on that only works with another card (sample preview needs Model-TG):
+   ticking it ticks that card too (with that card's own exclusions), unticking that card unticks it, its Details say
+   "Works with …", and `ref_mainos.py` only lists combinations that hold both. Give the add-on the same `with` as the
+   card it requires (sample preview takes `33-sample-preview-st` when Model-TG takes `30-model-tg-st`), and make the
+   `requires` of each of its tweak files point at the matching tweak (`sample-preview` → `model-tg`,
+   `sample-preview-st` → `model-tg-st`); `gen_flasher_tweaks.py` refuses a card that doesn't.
 2. `python3 tools/check_overlaps.py`, then `python3 tools/ref_mainos.py --cycles … --syntakt …`: it rewrites `REF_MODS`
    (the hash of each tweak's writes and payload, checked by the page on every build) and `REF_MAINOS` (the whole MAIN
    OS of a sample: each mod alone, every pair, the largest combinations) in `flasher/app.js` (notes/49). A build whose
    mod or listed MAIN OS differs is refused; a combination outside the sample is built and checked mod by mod. The
-   rules between mods (`excludes`, `includes`, `with`, the Syntakt engines' `tg` version) are read by `ref_mainos.py`
-   as `app.js` reads them: a new kind of rule goes into both (`tools/webflash_smoke.js` ticks each card alone and every
+   rules between mods (`excludes`, `includes`, a card's `requires`, `with`, the Syntakt engines' `tg` version) are read
+   by `ref_mainos.py` as `app.js` reads them: a new kind of rule goes into both (`tools/webflash_smoke.js` ticks each card alone and every
    pair in the page and checks that each one is in the sample).
 3. In `flasher/app.js`: the row texts in `FEAT.en` and `FEAT.fr`: `label`; `short`, the one sentence shown on the
    row (about 80 characters, what it does on the machine, with any deal-breaker; without it the row shows the first

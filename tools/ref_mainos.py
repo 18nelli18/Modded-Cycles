@@ -16,10 +16,10 @@ La page compare le MAIN OS de ces combinaisons à leur empreinte et refuse s'il 
 (deux mods qu'on peut cocher ensemble n'écrivent jamais aux mêmes octets, sauf écriture identique ou mod posé par-dessus
 l'autre), cet échantillon suffit : il grandit d'une quarantaine d'entrées par nouvelle carte, au lieu de doubler. Les
 cartes suivent les règles de app.js : « excludes » et « includes » (jamais cochées ensemble), « with » (un autre tweak
-quand une autre carte est cochée), et Model-TG avec les moteurs du Syntakt (leur version « tg »). Le « requires »
-d'une carte n'est qu'affiché par la page (« avec … ») : ici il sert à cocher l'autre carte avec elle dans
-l'échantillon ; une sélection dont un tweak n'a pas le tweak qu'il demande (« requires » du tweak) est laissée de côté,
-car les deux builds la refusent.
+quand une autre carte est cochée), « requires » (une carte qui ne va qu'avec une autre : la page coche l'autre avec
+elle, l'aperçu des samples avec Model-TG), et Model-TG avec les moteurs du Syntakt (leur version « tg »). Une sélection
+dont un tweak n'a pas le tweak qu'il demande (« requires » du tweak) est laissée de côté, car les deux builds la
+refusent.
 
     python3 tools/ref_mainos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx [--check]
 """
@@ -90,7 +90,7 @@ class Cards:
         return no(f, g) or no(g, f)
 
     def needs(self, f):
-        """Cartes qu'une carte demande (son « requires », affiché par la page) : cochées avec elle dans l'échantillon."""
+        """Cartes qu'une carte demande (son « requires ») : la page les coche avec elle, l'échantillon aussi."""
         r = f.get("requires") or []
         return [r] if isinstance(r, str) else list(r)
 

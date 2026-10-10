@@ -2,14 +2,14 @@
  * recopie la charge utile ajoutee a la fin de l'image (section 3 agrandie) vers 0x43000000, au-dessus
  * du BSS, puis refait les deux instructions deplacees et reprend a 0x400004ba.
  * PAYLOAD_SRC, PAYLOAD_DST et PAYLOAD_LONGS sont fournis par tools/gen_sdvintage_exact.py (-D) ; SRAM_RUN_AT et
- * SRAM_LONGS par tools/gen_syntakt_engines.py. */
+ * SRAM_LONGS par tools/gen_syntakt_engines.py. PACK sans CHAIN_TO : machine MACRO seule (tools/gen_macro.py). */
 	.text
 	.globl	boot_stub
 boot_stub:
 #ifdef PACK
-	/* avec Model-TG (notes/31) : la charge utile est rangee en morceaux apres son bloc (segs.inc : adresse, mots) ;
-	 * tout a zero, puis chaque morceau a sa place. Seuls d0, d1, a0 et a1 servent : appele par le jsr de 0x40000530,
-	 * a la place de boot_extra_hook de Model-TG, ou l'on finit (CHAIN_TO). */
+	/* avec Model-TG (notes/31), et pour la machine MACRO (notes/43) : la charge utile est rangee en morceaux
+	 * (segs.inc : adresse, mots) ; tout a zero, puis chaque morceau a sa place. Seuls d0, d1, a0 et a1 servent.
+	 * Avec Model-TG : appele par le jsr de 0x40000530, a la place de boot_extra_hook, ou l'on finit (CHAIN_TO). */
 	lea	PAYLOAD_DST, %a1
 	move.l	#PAYLOAD_LONGS, %d0
 0:	clr.l	(%a1)+
@@ -56,12 +56,14 @@ boot_stub:
 #endif
 #ifdef CHAIN_TO
 	jmp	CHAIN_TO		/* boot_extra_hook de Model-TG (ACR1, remise a zero du BSS sauf son bloc) */
-	.align	2
-segs:
-#include "segs.inc"
-	.long	0, 0
 #else
 	lea	-16(%sp), %sp		/* instructions deplacees de 0x400004b2 */
 	movem.l	%d4-%d7, (%sp)
 	jmp	0x400004ba
+#endif
+#ifdef PACK
+	.align	2
+segs:
+#include "segs.inc"
+	.long	0, 0
 #endif
