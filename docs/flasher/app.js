@@ -1,4 +1,3 @@
-/opt/homebrew/Library/Homebrew/cmd/shellenv.sh: line 18: /bin/ps: Operation not permitted
 /* Model:Cycles web flasher — user interface.
  *
  * Four steps: 1) choose (mods or official firmware), 2) load the official OS file,
