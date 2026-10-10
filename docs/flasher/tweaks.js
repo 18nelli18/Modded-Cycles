@@ -964,7 +964,11 @@ window.MC_TWEAKS = {
     "slot_hash": "0x401be4a0",
     "pd_mode": "0x401befc8",
     "ld_busy": "0x401beff4",
-    "pad_load_hook": "0x401b3210"
+    "pad_load_hook": "0x401b3210",
+    "slot_base": "0x401be5a0",
+    "slot_count": "0x401be6a0",
+    "slot_soff": "0x401b99ec",
+    "slot_pgain": "0x401b94a8"
    }
   },
   {
@@ -1792,7 +1796,11 @@ window.MC_TWEAKS = {
     "slot_hash": "0x401be4a0",
     "pd_mode": "0x401befc8",
     "ld_busy": "0x401beff4",
-    "pad_load_hook": "0x401b3210"
+    "pad_load_hook": "0x401b3210",
+    "slot_base": "0x401be5a0",
+    "slot_count": "0x401be6a0",
+    "slot_soff": "0x401b99ec",
+    "slot_pgain": "0x401b94a8"
    }
   },
   {
@@ -1964,6 +1972,226 @@ window.MC_TWEAKS = {
      "off": 1595480,
      "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000",
      "new": "42b94018316c4feffff048d70c0c2448226f00142429000826290004203940a700c44eb9401b32a24a8067000086264071ab00267206b081667820020480000000300c8000000070620661764a9266647042b48065544a83675041f940185d2c224b701820d953806afa41f940185d3010fc005310fc004d10fc0050721c2003e2a802800000000f0680000000300c800000003a65025e8010c059816ae024bc40185d2c42aa0004600a429242aa00046002610e200a204a4cd70c0c4fef00104e752f2f0018204a4eb9400a3052588f4e75000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    }
+   ]
+  },
+  {
+   "id": "sample-cue",
+   "order": 34,
+   "name": "Écoute des samples au casque (cue split, Model-TG)",
+   "description": [
+    "Navigateur d'une piste Sampler de Model-TG, avec l'écoute des samples : le pad de la piste (ou ses touches en mode clavier) fait entendre le sample sous le curseur au casque seulement. La note ne part pas à la piste : un lecteur à part lit le sample et l'ajoute après le mix, ni dans l'USB ni dans le rééchantillonnage. Relâcher le pad, bouger le curseur, charger le fichier ou fermer le navigateur l'arrête.",
+    "Cue « split », comme sur une table de mixage DJ : MAIN OUT R est coupé dans la puce audio, MAIN OUT L porte la perf en mono ; au casque, la perf à gauche, la perf et l'écoute à droite. L'USB reste stéréo.",
+    "Les presets (sons des machines) s'écoutent comme avant, sur la piste.",
+    "Pour l'écoute des samples (sample-preview) ; lit l'état de Model-TG et appelle tok_of, aux adresses de ses symboles. Code et données dans cinq masques de sprites 48x22 libérés (tools/sprites.py) : 182 + 180 + 148 + 88 + 132 o. Généré par tools/gen_sample_cue.py, notes/48."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "requires": [
+    "sample-preview"
+   ],
+   "symbols": {
+    "cue_dec": "0x40152d38",
+    "cue_start": "0x401592bc",
+    "cue_held": "0x40165fec",
+    "cue_off": "0x40152da6",
+    "cue_arm": "0x40159346",
+    "cue_load": "0x40159364",
+    "cue_out": "0x4015943c",
+    "cue_play": "0x4015f38c",
+    "cue_data": "0x40166034"
+   },
+   "writes": [
+    {
+     "off": 279060,
+     "old": "2f02",
+     "new": "42a7"
+    },
+    {
+     "off": 365688,
+     "old": "4fef0014245f",
+     "new": "4ef94015943c"
+    },
+    {
+     "off": 528478,
+     "old": "4e56ff84707f",
+     "new": "4ef940152da6"
+    },
+    {
+     "off": 529422,
+     "old": "4aae00186664",
+     "new": "4ef940152d38"
+    },
+    {
+     "off": 530390,
+     "old": "41ef000423d0",
+     "new": "4ef940159346"
+    },
+    {
+     "off": 681964,
+     "old": "400a64fa",
+     "new": "40159364"
+    },
+    {
+     "off": 730292,
+     "old": "40165fec",
+     "new": "4014b364"
+    },
+    {
+     "off": 740426,
+     "old": "4015f38c",
+     "new": "4014b364"
+    },
+    {
+     "off": 749540,
+     "old": "4015943c",
+     "new": "4014b364"
+    },
+    {
+     "off": 749572,
+     "old": "401592bc",
+     "new": "4014b364"
+    },
+    {
+     "off": 758566,
+     "old": "40152d38",
+     "new": "4014b364"
+    },
+    {
+     "off": 1386808,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
+     "new": "4aae001866524a8b67547040b085664e203940fb5a046746204043f940185d2c72182018b099663653816af6207940fb5a044eb9401b2d964a806722220042010c81524d0000671041f9401be4a0723fb098671053816af84ef9400818784ef940081814703f90814ef9401592bc7040b0af000c663443f940166034202f0004b0a900246624707fc0af00082200ea8941f11c2c22100101671001812081b0a90028660452a900044e754e56ff84707f4ef940081464"
+    },
+    {
+     "off": 1412796,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+     "new": "28002c2e0010cdfc006a41f9401b94a820304c0067084c006800e086e886203c00007fffbc806f022c0041f9401be5a02e304c0041f9401be6a022304c0041f9401b99ec24704c0041f9401be4a02a304c0043f94016603440c046fc2700234400082345000c2347001023410014234a00182346001c42a9002042a900047201228146c04ef940165fec206f0004b1f940fb5a04670652b94016603841ef000423d040fb5a044e7552b9401660384ef9400a64fa"
+    },
+    {
+     "off": 1413180,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+     "new": "20574fefffe448d710fc2248741f2019d099e2802340fff82340fffc53826aee49f9401660344a94675a222c000843f9401be4a020311c00b0ac000c664443f9401be5a020311c00b0ac00106634244043f9401be6a026311c00b6ac00146304262c0014282c002096846f167a20b6856c022a03dbac002043f24a404ef94015f38c42944cd710fc4fef0030245f4ef94005987e"
+    },
+    {
+     "off": 1437580,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+     "new": "2c2c001c7e004aac000467042e06ea87263c007fffff283cff800000588871594c060800e08022109280b2836f022203b2846c022204208150889c87538566de4aac0004670242944cd710fc4fef0030245f4ef94005987e"
+    },
+    {
+     "off": 1465324,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+     "new": "b4a9002467142342002442a9002c42a9003042a9003442a90038707fc0ae000c234000282200ea8941f11c2c221001c12081200cd08341f940fb5c0c53b00c004ef94008190e0000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffff00000000000000000000000000000000"
+    }
+   ]
+  },
+  {
+   "id": "sample-cue-st",
+   "order": 34,
+   "name": "Écoute des samples au casque (cue split, Model-TG), avec les moteurs du Syntakt",
+   "description": [
+    "Navigateur d'une piste Sampler de Model-TG, avec l'écoute des samples : le pad de la piste (ou ses touches en mode clavier) fait entendre le sample sous le curseur au casque seulement. La note ne part pas à la piste : un lecteur à part lit le sample et l'ajoute après le mix, ni dans l'USB ni dans le rééchantillonnage. Relâcher le pad, bouger le curseur, charger le fichier ou fermer le navigateur l'arrête.",
+    "Cue « split », comme sur une table de mixage DJ : MAIN OUT R est coupé dans la puce audio, MAIN OUT L porte la perf en mono ; au casque, la perf à gauche, la perf et l'écoute à droite. L'USB reste stéréo.",
+    "Les presets (sons des machines) s'écoutent comme avant, sur la piste.",
+    "Pour la version de l'écoute des samples faite pour les moteurs du Syntakt (sample-preview-st) ; lit l'état de Model-TG et appelle tok_of, aux adresses de ses symboles. Code et données dans cinq masques de sprites 48x22 libérés (tools/sprites.py) : 182 + 180 + 148 + 88 + 132 o. Généré par tools/gen_sample_cue.py, notes/48."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "requires": [
+    "sample-preview-st"
+   ],
+   "symbols": {
+    "cue_dec": "0x40152d38",
+    "cue_start": "0x401592bc",
+    "cue_held": "0x40165fec",
+    "cue_off": "0x40152da6",
+    "cue_arm": "0x40159346",
+    "cue_load": "0x40159364",
+    "cue_out": "0x4015943c",
+    "cue_play": "0x4015f38c",
+    "cue_data": "0x40166034"
+   },
+   "writes": [
+    {
+     "off": 279060,
+     "old": "2f02",
+     "new": "42a7"
+    },
+    {
+     "off": 365688,
+     "old": "4fef0014245f",
+     "new": "4ef94015943c"
+    },
+    {
+     "off": 528478,
+     "old": "4e56ff84707f",
+     "new": "4ef940152da6"
+    },
+    {
+     "off": 529422,
+     "old": "4aae00186664",
+     "new": "4ef940152d38"
+    },
+    {
+     "off": 530390,
+     "old": "41ef000423d0",
+     "new": "4ef940159346"
+    },
+    {
+     "off": 681964,
+     "old": "400a64fa",
+     "new": "40159364"
+    },
+    {
+     "off": 730292,
+     "old": "40165fec",
+     "new": "4014b364"
+    },
+    {
+     "off": 740426,
+     "old": "4015f38c",
+     "new": "4014b364"
+    },
+    {
+     "off": 749540,
+     "old": "4015943c",
+     "new": "4014b364"
+    },
+    {
+     "off": 749572,
+     "old": "401592bc",
+     "new": "4014b364"
+    },
+    {
+     "off": 758566,
+     "old": "40152d38",
+     "new": "4014b364"
+    },
+    {
+     "off": 1386808,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
+     "new": "4aae001866524a8b67547040b085664e203940fb5a046746204043f940185d2c72182018b099663653816af6207940fb5a044eb9401b2d964a806722220042010c81524d0000671041f9401be4a0723fb098671053816af84ef9400818784ef940081814703f90814ef9401592bc7040b0af000c663443f940166034202f0004b0a900246624707fc0af00082200ea8941f11c2c22100101671001812081b0a90028660452a900044e754e56ff84707f4ef940081464"
+    },
+    {
+     "off": 1412796,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+     "new": "28002c2e0010cdfc006a41f9401b94a820304c0067084c006800e086e886203c00007fffbc806f022c0041f9401be5a02e304c0041f9401be6a022304c0041f9401b99ec24704c0041f9401be4a02a304c0043f94016603440c046fc2700234400082345000c2347001023410014234a00182346001c42a9002042a900047201228146c04ef940165fec206f0004b1f940fb5a04670652b94016603841ef000423d040fb5a044e7552b9401660384ef9400a64fa"
+    },
+    {
+     "off": 1413180,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+     "new": "20574fefffe448d710fc2248741f2019d099e2802340fff82340fffc53826aee49f9401660344a94675a222c000843f9401be4a020311c00b0ac000c664443f9401be5a020311c00b0ac00106634244043f9401be6a026311c00b6ac00146304262c0014282c002096846f167a20b6856c022a03dbac002043f24a404ef94015f38c42944cd710fc4fef0030245f4ef94005987e"
+    },
+    {
+     "off": 1437580,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+     "new": "2c2c001c7e004aac000467042e06ea87263c007fffff283cff800000588871594c060800e08022109280b2836f022203b2846c022204208150889c87538566de4aac0004670242944cd710fc4fef0030245f4ef94005987e"
+    },
+    {
+     "off": 1465324,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+     "new": "b4a9002467142342002442a9002c42a9003042a9003442a90038707fc0ae000c234000282200ea8941f11c2c221001c12081200cd08341f940fb5c0c53b00c004ef94008190e0000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffff00000000000000000000000000000000"
     }
    ]
   },
@@ -139878,6 +140106,29 @@ window.MC_TWEAKS = {
    "with": {
     "syntakt": "sample-preview-st",
     "macro": "sample-preview-st"
+   }
+  },
+  {
+   "id": "sample-cue",
+   "label": "Ecoute des samples au casque (cue)",
+   "desc": "Avec l'ecoute des samples : le pad de la piste fait entendre le sample sous le curseur au casque seulement, a droite, sans le jouer sur la piste. MAIN OUT passe en mono sur L (R muet). Demande l'ecoute des samples.",
+   "status": "experimental",
+   "credit": {
+    "kind": "based",
+    "who": "TinyGregAudio",
+    "repo": "TinyGregAudio/Model-TG"
+   },
+   "cat": "screen",
+   "requires": "sample-preview",
+   "variants": [
+    {
+     "id": "sample-cue",
+     "label": null
+    }
+   ],
+   "with": {
+    "syntakt": "sample-cue-st",
+    "macro": "sample-cue-st"
    }
   },
   {

@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-07-10">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-07-10">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-07-12">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-07-12">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -323,6 +323,22 @@
           <div><dt><span data-l="en">Silence</span><span data-l="fr">Silence</span></dt><dd><span data-l="en">If there isn't enough free memory (a preview keeps room for recording and never removes a sample your project uses), or while Model-TG is resampling, the press plays nothing. The same goes for a file that isn't a readable sample. To try again, move the cursor away and back; if Model-TG was busy loading, just press again.</span><span data-l="fr">S'il n'y a pas assez de mémoire libre (une écoute garde de la place pour l'enregistrement et ne retire jamais un échantillon utilisé par votre projet), ou pendant que Model-TG rééchantillonne, l'appui ne joue rien. De même pour un fichier qui n'est pas un échantillon lisible. Pour réessayer, déplacez le curseur puis revenez sur le fichier ; si Model-TG était en train de charger, appuyez simplement de nouveau.</span></dd></div>
           <div><dt><span data-l="en">Bonus</span><span data-l="fr">En plus</span></dt><dd><span data-l="en">Sampler presets that remember their sample should also play that sample instead of the track's.</span><span data-l="fr">Les presets du Sampler qui gardent leur échantillon devraient aussi faire entendre cet échantillon plutôt que celui de la piste.</span></dd></div>
           <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">on a Model:Cycles, with Model-TG alone and with the 5 Syntakt engines, 6-channel audio, trig removal and the arpeggiator; and in the emulator, on the OS's and Model-TG's own code, from the preset menu to the Sampler's voice. With the MACRO machine: in the emulator only. Without it, the Model-TG firmware is unchanged.</span><span data-l="fr">sur un Model:Cycles, avec Model-TG seul et avec les 5 moteurs du Syntakt, l'audio 6 canaux, l'effacement des trigs et l'arpégiateur ; et en émulation, sur le code même de l'OS et de Model-TG, du menu des presets à la voix du Sampler. Avec la machine MACRO : en émulation seulement. Sans lui, le firmware Model-TG ne change pas.</span></dd></div>
+        </dl>
+
+        <h3 id="sample-cue"><span data-l="en">Headphone cue</span><span data-l="fr">Écoute au casque</span></h3>
+        <p><span data-l="en">Another option, the <b>Headphone cue</b> box under Sample preview in the flasher (ticking it ticks Sample preview and Model-TG too). The sample under the cursor plays in your headphones only, not on the track, like the split cue of a DJ mixer.</span><span data-l="fr">Une autre option, la case <b>Écoute au casque</b> sous l'Écoute des samples dans le flasher (la cocher coche aussi l'Écoute des samples et Model-TG). L'échantillon sous le curseur s'entend au casque seulement, pas sur la piste, comme le cue « split » d'une table de mixage DJ.</span></p>
+        <ol>
+          <li><span data-l="en">Plug your PA or recorder into <b>MAIN OUT L</b> only: with this mod, L carries your whole performance in mono, and <b>MAIN OUT R</b> is silent.</span><span data-l="fr">Branchez la sono ou l'enregistreur sur <b>MAIN OUT L</b> seulement : avec ce mod, L porte toute votre performance en mono, et <b>MAIN OUT R</b> se tait.</span></li>
+          <li><span data-l="en">On a Sampler track, press <b>FUNC</b> + <b>MACHINES</b> (preset menu) and move the cursor onto a sample file.</span><span data-l="fr">Sur une piste Sampler, appuyez sur <b>FUNC</b> + <b>MACHINES</b> (menu des presets) et placez le curseur sur un fichier d'échantillon.</span></li>
+          <li><span data-l="en">Hold the track's pad (or one of its trig keys in keyboard mode): the sample plays in the <b>right</b> ear of the headphones, over the performance. The left ear and MAIN OUT keep the performance alone, and the track keeps playing its pattern.</span><span data-l="fr">Tenez le pad de la piste (ou une de ses touches de pas en mode clavier) : l'échantillon joue dans l'oreille <b>droite</b> du casque, par-dessus la performance. L'oreille gauche et MAIN OUT gardent la performance seule, et la piste continue de jouer son pattern.</span></li>
+          <li><span data-l="en">Let go to stop it. Moving the cursor, loading the file or leaving the menu stops it too.</span><span data-l="fr">Relâchez pour l'arrêter. Bouger le curseur, charger le fichier ou quitter le menu l'arrête aussi.</span></li>
+        </ol>
+        <dl class="facts">
+          <div><dt><span data-l="en">Why mono</span><span data-l="fr">Pourquoi le mono</span></dt><dd><span data-l="en">The Model:Cycles sends the same two channels to MAIN OUT and to the headphones; only their volumes differ (HP MAX). A separate stereo cue is impossible, so the right channel carries the cue and MAIN OUT R is switched off inside the audio chip.</span><span data-l="fr">Le Model:Cycles envoie les deux mêmes canaux à MAIN OUT et au casque ; seuls leurs volumes diffèrent (HP MAX). Un cue stéréo séparé est impossible : le canal droit porte donc l'écoute, et MAIN OUT R est coupé dans la puce audio.</span></dd></div>
+          <div><dt><span data-l="en">USB</span><span data-l="fr">USB</span></dt><dd><span data-l="en">USB audio stays stereo and never carries the preview (6-channel USB as well). Resampling doesn't record it either.</span><span data-l="fr">L'audio USB reste stéréo et ne porte jamais l'écoute (l'USB 6 canaux non plus). Le rééchantillonnage ne l'enregistre pas non plus.</span></dd></div>
+          <div><dt><span data-l="en">What you hear</span><span data-l="fr">Ce que vous entendez</span></dt><dd><span data-l="en">The raw sample at its original pitch, from its start, louder with a harder press: every key plays the same pitch, and the track's settings (Start, filter…) don't apply. One sample at a time. Presets are still previewed on the track, as before.</span><span data-l="fr">L'échantillon brut, à sa hauteur d'origine, depuis son début, plus fort avec un appui plus appuyé : toutes les touches jouent la même hauteur, et les réglages de la piste (Start, filtre…) ne s'appliquent pas. Un échantillon à la fois. Les presets s'écoutent toujours sur la piste, comme avant.</span></dd></div>
+          <div><dt><span data-l="en">MIDI</span><span data-l="fr">MIDI</span></dt><dd><span data-l="en">The pad still sends its MIDI note while you preview.</span><span data-l="fr">Le pad envoie toujours sa note MIDI pendant l'écoute.</span></dd></div>
+          <div><dt><span data-l="en">Experimental</span><span data-l="fr">Expérimental</span></dt><dd><span data-l="en">Checked in the emulator on the OS's, Model-TG's and Sample preview's own code, alone and with the other mods (the Syntakt engines included). Not yet tested on a Model:Cycles.</span><span data-l="fr">Vérifié en émulation sur le code même de l'OS, de Model-TG et de l'Écoute des samples, seul et avec les autres mods (moteurs du Syntakt compris). Pas encore testé sur un Model:Cycles.</span></dd></div>
         </dl>
 
         <h3><span data-l="en">Playback modes</span><span data-l="fr">Modes de lecture</span></h3>
@@ -655,8 +671,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-07-10"></script>
-<script src="../assets/cycles.js?v=2026-10-07-10"></script>
-<script src="../assets/site.js?v=2026-10-07-10"></script>
+<script src="../assets/release.js?v=2026-10-07-12"></script>
+<script src="../assets/cycles.js?v=2026-10-07-12"></script>
+<script src="../assets/site.js?v=2026-10-07-12"></script>
 </body>
 </html>

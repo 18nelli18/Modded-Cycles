@@ -18,10 +18,14 @@ de 376 o sont identiques (un carré opaque de 47 colonnes, octets ff ff ff ff ff
 ligne). On garde celui de 0x40172220 ; les autres peuvent pointer dessus (notes/32 §11).
 Chacun n'est désigné que par la constante du constructeur. Ces masques ne sont pas à 0xFF :
 le contrôle des caves de build.py ne les voit pas, les octets « old » des écritures si.
+
+Même principe pour 43 sprites 48x22 : leurs masques de 192 o sont identiques. On garde celui de 0x4014b364 ; les
+autres peuvent pointer dessus (notes/48 ; relevé de tous les groupes dans /mnt/project-files/espace-libre-masques.md).
 """
 BASE = 0x40000400
 SHARED_MASK = 0x40154ae4        # masque du sprite 32x260 (1040 o), gardé intact
 SHARED_47 = 0x40172220          # masque d'un sprite 47x47 (376 o), gardé intact
+SHARED_48 = 0x4014b364          # masque d'un sprite 48x22 (192 o), gardé intact
 
 # va du masque : (taille, va de la constante 32 bits qui le désigne, description[, masque partagé])
 MASKS = {
@@ -34,6 +38,14 @@ MASKS = {
     0x40185018: (376, 0x400adba8, "sprite 47x47, constructeur 0x400adba6", SHARED_47),
     0x40185968: (376, 0x400ada00, "sprite 47x47, constructeur 0x400ad9fe", SHARED_47),
     0x40185c58: (376, 0x400ad9e0, "sprite 47x47, constructeur 0x400ad9de", SHARED_47),
+    0x40152d38: (192, 0x400b9726, "sprite 48x22, constante d'un pea", SHARED_48),
+    0x401592bc: (192, 0x400b7404, "sprite 48x22, constante d'un move.l #imm,(sp)", SHARED_48),
+    0x4015943c: (192, 0x400b73e4, "sprite 48x22, constante d'un pea", SHARED_48),
+    0x4015f38c: (192, 0x400b504a, "sprite 48x22, constante d'un pea", SHARED_48),
+    0x40165fec: (192, 0x400b28b4, "sprite 48x22, constante d'un pea", SHARED_48),
+    0x40168a84: (192, 0x400b1bc0, "sprite 48x22, constante d'un move.l #imm,(sp)", SHARED_48),
+    0x40168da4: (192, 0x400b1b32, "sprite 48x22, constante d'un pea", SHARED_48),
+    0x4016bcd8: (192, 0x400b12fe, "sprite 48x22, constante d'un move.l #imm,(sp)", SHARED_48),
 }
 
 

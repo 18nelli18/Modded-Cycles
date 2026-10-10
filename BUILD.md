@@ -178,6 +178,35 @@ python3 tools/emu/test_sample_preview.py --cycles model-cycles_OS1.13.syx \
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,sample-preview-st` (idem) | `20a116b1dbbc05e84dfc32df2f269f5c23df2d54fcb39d9b4a7c577c5916a432` |
 | `model-tg-st,macro-tg,sample-preview-st` (avec la machine MACRO) | `a371d4a3a7df7e5d8b8078da4cdd8a0b34efee558b52f7ecb78811c21e6f98bd` |
 
+### Écoute des samples au casque (cue split)
+
+`tweaks/model-cycles_OS1.13/34-sample-cue.json` (sur `sample-preview`) et `34-sample-cue-st.json` (sur
+`sample-preview-st`, mêmes écritures) sont produits par `tools/gen_sample_cue.py`, qui assemble
+`tools/machines/sample_cue/` et le lie dans cinq masques de sprites 48×22 libérés ([note 48](notes/48-cue-casque.md)).
+Le code lit les tables d'échantillons de Model-TG aux adresses des `symbols` de `30-model-tg*.json` et compare le son
+désigné à `pv_src` de l'écoute des samples ; le générateur vérifie ce code avant d'écrire. Il coupe la sortie ligne
+droite de la puce audio (MAIN OUT R muet, MAIN OUT L en mono) et ajoute l'écoute à l'oreille droite du casque. La preuve
+fait tourner le vrai code de l'OS, de Model-TG et de l'écoute des samples (avec `--syntakt` seul, les deux versions) ;
+elle assemble aussi les sorties « jacks » et « USB » du même source :
+```sh
+python3 tools/gen_sample_cue.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/build.py -i model-cycles_OS1.13.syx -t model-tg,sample-preview,sample-cue
+python3 tools/build.py -i model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \
+    -t model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,sample-preview-st,sample-cue-st
+python3 tools/emu/test_sample_cue.py --cycles model-cycles_OS1.13.syx \
+    [--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max,boot-anim] \
+    [--syntakt Syntakt_OS1.42.syx]
+```
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `model-tg,sample-preview,sample-cue` | `537549a8ec72133cb19a4b1fd994a0694cd6d8605088bb05eb23d2dad53ebc4a` |
+| `6ch-usbup,model-tg,sample-preview,sample-cue` | `9db4f01e6779e221d63e0c411c80212396e6c31fd585574b5a86def4e45ac6a4` |
+| `model-tg,arp,trig-hold,tempo-max,boot-anim,sample-preview,sample-cue` | `e392e032f113bfd1c2f42d2141242e63a166c78719379cf69fd84bdef805a336` |
+| `model-tg-st,syntakt-tg-sd,sample-preview-st,sample-cue-st` (avec `--syntakt`) | `2eb091701cfabc895607be6238e21a803f5450c9570785103501483bf3b24993` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,sample-preview-st,sample-cue-st` (idem) | `d1f3cf6624632375d09997b7f210a7027857d21ff4c8f09d48f228d6af63e447` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,sample-preview-st,sample-cue-st` (idem) | `c557e78f92cb15cd159a7b133289b7ca269e85e445d769ce5d856f42bb497a9e` |
+
 ### Arpégiateur
 
 `tweaks/model-cycles_OS1.13/40-arp.json` est produit par `tools/gen_arp.py`, qui compile `tools/machines/arp/` (`m68k-elf-gcc`)
