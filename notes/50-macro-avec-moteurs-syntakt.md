@@ -88,8 +88,8 @@ Model-TG, qui finit par `jmp boot_extra_hook`), `gen_syntakt_engines.py` vérifi
 | | Seuls (`syntakt-<moteurs>-macro`) | Avec Model-TG (`syntakt-tg-<moteurs>-macro`) |
 |---|---|---|
 | Charge utile en mémoire | 471 792 o à `0x43000000` | 471 792 o à `0x46700000` |
-| Dans l'image (compressée) | 229 095 o (SDVtg) à 240 671 o (les 5) | 229 367 o (SDVtg) à 240 948 o (les 5) |
-| Fin de l'image décompressée (limite `0x40200000`) | `0x401e4d1f` au plus (marge 111 329 o) | `0x401fa5f4` au plus (marge 23 052 o) |
+| Dans l'image (compressée) | 229 134 o (SYToy) à 240 674 o (les 5) | 229 403 o (SYToy) à 240 948 o (les 5) |
+| Fin de l'image décompressée (limite `0x40200000`) | `0x401e4d62` au plus (marge 111 262 o) | `0x401fa5f4` au plus (marge 23 052 o) |
 | Crochet au masque `0x4016cae8` (192 o au plus) | 174 o | 166 o |
 | Décompression au démarrage (émulation, flux de 241 Ko) | ~4,4 millions d'instructions | idem |
 
