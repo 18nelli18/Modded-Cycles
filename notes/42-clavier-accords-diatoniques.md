@@ -13,10 +13,10 @@ Source : conversation locale, sans lien public. Adresses : VA de l'OS **1.13**. 
 Tweak : [`45-chord-keys.json`](../tweaks/model-cycles_OS1.13/45-chord-keys.json), générateur
 [`tools/gen_chord_keys.py`](../tools/gen_chord_keys.py), sources
 [`tools/machines/chord_keys/`](../tools/machines/chord_keys/), preuves sous `tools/emu/` et test natif
-[`tools/test_chord_keys.py`](../tools/test_chord_keys.py). **État au 07/10/2026 : expérimental.** Nico rapporte que
+[`tools/test_chord_keys.py`](../tools/test_chord_keys.py). **État au 10/10/2026 : testé.** Nico rapporte que
 Chord Keys seul fonctionne sur son Model:Cycles (§13). Maxime l'a essayé le 07/10/2026, seul et avec six autres mods :
-tout marche, sauf le cas de note bloquée attendu (§15). Ce cas est corrigé au §16 ; la version corrigée attend son
-dernier essai. Relecture de l'intégration et défauts connus au §14.
+tout marche, sauf le cas de note bloquée attendu (§15). Ce cas est corrigé au §16 ; Maxime a validé la version
+corrigée le 10/10/2026 (§18). Relecture de l'intégration et défauts connus au §14.
 
 ## Réponse courte
 
@@ -854,3 +854,14 @@ lignes (1.37, notes/40, tweak 44) et le registre de la place libre (notes/52) ar
   `gen_chord_keys.py --check` passe ; `ref_mainos.py` donne **580** combinaisons (74 avec Chord Keys) et 140 mods ;
   Chord Keys seul garde `901675f5…c334321f`.
 
+## 18. Testé sur la machine (10/10/2026)
+
+Les fichiers du 07/10 ne se téléchargeaient plus : ils ont été reconstruits le 10/10/2026 avec les tweaks de cette
+branche (Chord Keys seul et avec six mods, identiques à l'octet près à ceux du 07/10 : `901675f5…c334321f` et
+`db9ea486…959db364`) et, pour les deux fichiers avec djd_oz, ses mods à jour de la PR #53.
+
+`[FAIT]` Maxime a refait les essais demandés (point 9, la note bloquée, et point 3, le jeu normal) et répond le
+10/10/2026 : « j'ai testé et ça marche parfait ». Statut **testé** : `FEATURES`, `tweaks.js`, guide, notes de version,
+README, `PROVENANCE.md` et `BUILD.md`.
+
+`[HYP]` Chord Keys avec MACRO reste vérifié en émulation seulement (§17) ; le guide le dit.

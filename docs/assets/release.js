@@ -4,12 +4,12 @@
  */
 window.MC_RELEASES = [
   { version: "1.40", date: "2026-10-10", changes: [
-    { en: "New experimental mod by Nico Heuser, Chord Keys: on a CHORD track, the sixteen lower TRIG buttons play the chords of a scale. 1–7 play degrees I to VII, 8–14 the same one octave higher, 15–16 I and II two octaves higher. T1–T6 keep their usual controls",
-      fr: "Nouveau mod expérimental de Nico Heuser, Chord Keys : sur une piste CHORD, les seize boutons TRIG du bas jouent les accords d'une gamme. 1–7 jouent les degrés I à VII, 8–14 les mêmes une octave plus haut, 15–16 I et II deux octaves plus haut. T1–T6 gardent leurs commandes habituelles" },
+    { en: "New mod by Nico Heuser, Chord Keys: on a CHORD track, the sixteen lower TRIG buttons play the chords of a scale. 1–7 play degrees I to VII, 8–14 the same one octave higher, 15–16 I and II two octaves higher. T1–T6 keep their usual controls",
+      fr: "Nouveau mod de Nico Heuser, Chord Keys : sur une piste CHORD, les seize boutons TRIG du bas jouent les accords d'une gamme. 1–7 jouent les degrés I à VII, 8–14 les mêmes une octave plus haut, 15–16 I et II deux octaves plus haut. T1–T6 gardent leurs commandes habituelles" },
     { en: "FUNC + RETRIG gains Keys, Root, Scale (seven modes) and a triad, 7th, 9th, 11th or 13th for each degree, saved per track and pattern. SHAPE picks the voicing (BASE, close or open positions) and COLOR the balance of the voices. Four voices maximum; 9ths, 11ths and 13ths omit the fifth",
       fr: "FUNC + RETRIG gagne Keys, Root, Scale (sept modes) et une triade, 7e, 9e, 11e ou 13e par degré, enregistrés par piste et par pattern. SHAPE choisit la disposition (BASE, positions resserrées ou ouvertes) et COLOR l'équilibre des voix. Quatre voix au maximum ; les 9es, 11es et 13es omettent la quinte" },
-    { en: "Checked in emulation on the OS's own code. Tested on a Model:Cycles, alone and with other mods; a note that could stay stuck (TRIG let go while PATTERN was held) is fixed in this version, which awaits a last check on the machine. Cannot be combined with Model-TG",
-      fr: "Vérifié en émulation sur le code même de l'OS. Testé sur un Model:Cycles, seul et avec d'autres mods ; une note qui pouvait rester bloquée (TRIG lâché pendant que PATTERN était tenu) est corrigée dans cette version, qui attend un dernier essai sur la machine. Ne se combine pas avec Model-TG" },
+    { en: "Checked in emulation on the OS's own code. Tested on a Model:Cycles, alone and with other mods, including the fix for a note that could stay stuck (TRIG let go while PATTERN was held). Cannot be combined with Model-TG",
+      fr: "Vérifié en émulation sur le code même de l'OS. Testé sur un Model:Cycles, seul et avec d'autres mods, y compris la correction d'une note qui pouvait rester bloquée (TRIG lâché pendant que PATTERN était tenu). Ne se combine pas avec Model-TG" },
   ] },
   { version: "1.37", date: "2026-10-10", changes: [
     { en: "New mod, Multi-line browser: the preset browser shows three names at once in a small font, instead of one in big letters. A > marks the name under the cursor, the sound loaded on the track stays highlighted, and folders get a small mark before their name. From an idea and a script by a community member",

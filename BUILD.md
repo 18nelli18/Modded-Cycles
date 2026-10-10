@@ -291,8 +291,8 @@ Contribution de Nico Heuser ([PR #46](https://github.com/18nelli18/Modded-Cycles
 (GCC m68k-elf 16.2.0, binutils 2.47 : ceux de Homebrew, ou compilés depuis les sources d'Ubuntu comme au
 [§16 de la note 42](notes/42-clavier-accords-diatoniques.md)). Le générateur refuse `m68k-linux-gnu-gcc` : son ABI lit
 dans `a0` les pointeurs que l'OS rend dans `d0`, ce qui fausserait les appels à l'OS ([note 42 §6](notes/42-clavier-accords-diatoniques.md)).
-**Expérimental** : Maxime l'a essayé le 07/10/2026, seul et avec six autres mods ; la correction de la note bloquée
-(note 42 §16) attend son dernier essai. Sélectionnez une piste CHORD,
+**Testé** sur la machine par Maxime, seul et avec six autres mods (07/10/2026), puis la correction de la note
+bloquée (note 42 §16, 10/10/2026). Sélectionnez une piste CHORD,
 puis activez **Keys** dans **FUNC + RETRIG**. Root, Scale et I–VII choisissent la tonique, le mode
 et les extensions diatoniques ; le majeur s'affiche **MAJ**. Hors édition des pas, TRIG 1–7 jouent I–VII,
 8–14 les mêmes degrés une octave plus haut, 15–16 I–II deux octaves plus haut. Les grands pads T1–T6
@@ -313,7 +313,7 @@ python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx \
   --syntakt firmware/Syntakt_OS1.42.syx
 python3 tools/emu/test_chord_keys_release.py --cycles firmware/model-cycles_OS1.13.syx
 python3 tools/build.py -i firmware/model-cycles_OS1.13.syx -t chord-keys \
-  -o build/model-cycles_OS1.13_chord-keys-experimental.syx
+  -o build/model-cycles_OS1.13_chord-keys.syx
 ```
 
 | `-t` | MAIN OS patché (SHA-256) |
