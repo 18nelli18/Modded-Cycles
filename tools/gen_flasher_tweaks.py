@@ -31,14 +31,23 @@ OUT = ROOT / "docs" / "flasher" / "tweaks.js"
 # excludes : cartes qu'on ne peut pas cocher ensemble (cocher l'une decoche l'autre).
 # includes : tweaks deja contenus dans cette fonctionnalite ; ils s'en excluent comme avec excludes, et le flasher
 # les affiche coches et verrouilles, « inclus avec … », tant qu'elle est cochee.
+# requires : carte sans laquelle celle-ci ne marche pas (un ajout a Model-TG). La cocher coche aussi l'autre (avec
+# les exclusions de l'autre, comme si on l'avait cochee) ; decocher l'autre la decoche. ref_mainos.py ne compte que
+# les combinaisons ou l'autre carte est cochee. Elle a les memes cles « with » que l'autre carte, et chacun de ses
+# tweaks demande (« requires » de son JSON) le tweak correspondant de l'autre : check_requires le verifie.
 # Les moteurs s'ajoutent en machines supplementaires : sdvintage-exact (a la place de SNARE) reste dans build.py.
 # status : "tested" (flashe sur un vrai Model:Cycles) ou "experimental".
 # credit : auteur du travail d'origine, affiche sur la carte (voir aussi les credits de la page) ; sans « repo »
 # (un mod recu sans depot public), la carte dit « d'apres un mod de … », sans lien.
+# cat : rubrique du flasher, une de CATS (meme liste que CATS dans docs/flasher/app.js, plus « other »). Sans cat,
+# la carte s'affiche a la fin, dans « Autres mods » (avertissement ici). L'ordre de FEATURES reste l'ordre du build
+# (cles de REF_MAINOS), quel que soit l'ordre d'affichage par rubriques.
 # Pour ajouter une fonctionnalite : ecrire son tweak JSON, puis l'ajouter ici.
+CATS = ("pack", "sound", "seq", "live", "screen", "io")
 FEATURES = [
     {
         "id": "usb6",
+        "cat": "io",
         "label": "Sortie USB 6 canaux separes",
         "desc": "Chaque piste sort sur son propre canal USB (48 kHz / 32 bits). Le mix stereo "
                 "n'est plus envoye en USB : tu melanges les 6 pistes dans ton logiciel.",
@@ -50,6 +59,7 @@ FEATURES = [
     },
     {
         "id": "model-tg",
+        "cat": "pack",
         "label": "Model-TG",
         "desc": "Machine Sampler, reechantillonnage, retrig et effets master, et plus.",
         "status": "experimental",
@@ -62,11 +72,29 @@ FEATURES = [
             {"file": "30-model-tg", "label": None},
         ],
         # avec les moteurs du Syntakt : la base de la version combinee (notes/31), et pour chaque combinaison de
-        # moteurs son tweak syntakt-tg-<moteurs> (« tg » des combinaisons de la carte des moteurs)
-        "with": {"syntakt": "30-model-tg-st"},
+        # moteurs son tweak syntakt-tg-<moteurs> (« tg » des combinaisons de la carte des moteurs) ; de meme avec
+        # la machine MACRO (notes/43), qui prend alors macro-tg
+        "with": {"syntakt": "30-model-tg-st", "macro": "30-model-tg-st"},
+    },
+    {
+        "id": "sample-preview",
+        "cat": "screen",
+        "label": "Ecoute des samples (Model-TG)",
+        "desc": "Sur une piste Sampler, dans le navigateur de samples, le pad de la piste (ou ses touches en mode "
+                "clavier) joue le sample sous le curseur, comme pour les presets. Un sample pas encore en memoire "
+                "se charge au premier appui. Demande Model-TG.",
+        "status": "tested",
+        "credit": {"kind": "based", "who": "TinyGregAudio", "repo": "TinyGregAudio/Model-TG"},
+        "requires": "model-tg",
+        "variants": [
+            {"file": "33-sample-preview", "label": None},
+        ],
+        # avec les moteurs du Syntakt, Model-TG devient model-tg-st : l'ecoute prend la version faite pour lui
+        "with": {"syntakt": "33-sample-preview-st", "macro": "33-sample-preview-st"},
     },
     {
         "id": "latching-mute",
+        "cat": "live",
         "label": "Mode mute verrouille",
         "desc": "Maintiens TRK et tape FUNC : le mode mute reste actif, tu mutes les pistes sans tenir FUNC. "
                 "Un appui court sur FUNC en sort.",
@@ -78,6 +106,7 @@ FEATURES = [
     },
     {
         "id": "trig-preview",
+        "cat": "seq",
         "label": "Ecoute d'un pas (TRIG + PAGE)",
         "desc": "Sequenceur a l'arret (ou en pause), maintiens un pas et appuie sur PAGE : le pas joue avec sa note, "
                 "sa longueur et ses p-locks.",
@@ -89,6 +118,7 @@ FEATURES = [
     },
     {
         "id": "browser-scroll",
+        "cat": "screen",
         "label": "Defilement des noms longs",
         "desc": "Dans le navigateur de sons, un nom trop long pour l'ecran defile.",
         "status": "tested",
@@ -99,6 +129,7 @@ FEATURES = [
     },
     {
         "id": "trig-hold",
+        "cat": "seq",
         "label": "Effacer un trig plus facilement",
         "desc": "Un appui sur une touche de pas qui porte deja un trig l'efface si tu relaches en moins d'une "
                 "demi-seconde (0,2 s avec l'OS d'origine). Tenu plus longtemps, le trig reste et ses reglages s'affichent.",
@@ -110,6 +141,7 @@ FEATURES = [
     },
     {
         "id": "arp",
+        "cat": "seq",
         "label": "Arpegiateur",
         "desc": "Le retrig devient un arpegiateur : plusieurs notes tenues avec RETRIG (ou A.On) se jouent l'une "
                 "apres l'autre. FUNC + RETRIG : sens (Arp) et octaves (Oct), enregistres avec le pattern. "
@@ -122,6 +154,7 @@ FEATURES = [
     },
     {
         "id": "tempo-max",
+        "cat": "seq",
         "label": "Tempo jusqu'a 546 BPM",
         "desc": "Le tempo monte jusqu'a 546 BPM au lieu de 300 (molette, tap tempo, horloge MIDI recue). "
                 "546 est le plafond du format des projets.",
@@ -133,6 +166,7 @@ FEATURES = [
     },
     {
         "id": "boot-anim",
+        "cat": "screen",
         "label": "Animation de demarrage modded-cycles",
         "desc": "Au demarrage, les quatre carres du logo apparaissent un par un puis modded-cycles s'ecrit "
                 "dessous, a la place des carreaux qui clignotent. Meme duree qu'a l'origine.",
@@ -144,6 +178,7 @@ FEATURES = [
     },
     {
         "id": "level-pan-values",
+        "cat": "screen",
         "label": "Volume et pan en chiffres",
         "desc": "Sur l'ecran principal, LEVEL/DATA affiche le volume de la piste (0 a 127) en chiffres, FUNC + "
                 "LEVEL/DATA son pan (-64 a 63), pendant 3 s. LEVEL/DATA y avance de 1 par cran au lieu de 2.",
@@ -155,6 +190,7 @@ FEATURES = [
     },
     {
         "id": "trigless-dim",
+        "cat": "seq",
         "label": "Trigless trigs attenues",
         "desc": "Une touche de pas qui porte un trigless trig (FUNC + touche) s'allume attenuee au lieu de pleine "
                 "lumiere : on la distingue d'un trig de note. Elle garde son clignotement habituel.",
@@ -165,7 +201,26 @@ FEATURES = [
         ],
     },
     {
+        "id": "macro",
+        "cat": "sound",
+        "label": "Machine MACRO",
+        "desc": "Une machine ajoutee apres Chord (apres le Sampler avec Model-TG) : les 47 modeles du code libre "
+                "de Braids d'Emilie Gillet. SHAPE choisit le modele, COLOR et SWEEP le reglent, CONTOUR ouvre le "
+                "timbre avec l'enveloppe.",
+        "status": "tested",
+        "credit": {"kind": "based", "who": "Émilie Gillet", "repo": "pichenettes/eurorack"},
+        "license": "LICENSE-Braids",
+        # meme bloc apres l'image que les moteurs du Syntakt (notes/43) : jamais ensemble
+        "excludes": ["syntakt"],
+        "variants": [
+            {"file": "25-macro", "label": None},
+        ],
+        # avec Model-TG : la version qui s'ajoute apres model-tg-st (Model-TG prend cette base, « with » ci-dessus)
+        "with": {"model-tg": "32-macro-tg"},
+    },
+    {
         "id": "syntakt",
+        "cat": "sound",
         "label": "Vrais moteurs du Syntakt",
         "desc": "Les moteurs du Syntakt, extraits de TON fichier Syntakt_OS1.42.syx (a deposer a l'etape 2), "
                 "en machines supplementaires apres les 6 d'origine : coche ceux que tu veux. "
@@ -192,6 +247,40 @@ def engine_feature(f, load):
     return engines, combos
 
 
+def check_requires(features, by_id):
+    """Cartes « requires » : la carte demandee existe (carte a variantes, pas les moteurs), et chaque tweak de
+    l'ajout demande (champ « requires » de son JSON) le tweak correspondant de cette carte : une variante, une des
+    variantes de l'autre carte ; le tweak « with » d'une autre carte, le tweak « with » de l'autre carte pour la
+    meme. Les deux cartes ont donc les memes cles « with ». Sinon le flasher proposerait un build que build.py et
+    builder.js refusent (ou un ajout pose sur la mauvaise version de l'autre carte)."""
+    cards = {f["id"]: f for f in features}
+    for f in features:
+        rid = f.get("requires")
+        if not rid:
+            continue
+        need = cards.get(rid)
+        if rid == f["id"]:
+            raise SystemExit(f"!! FEATURES : la carte {f['id']} se demande elle-meme (requires)")
+        if need is None:
+            raise SystemExit(f"!! FEATURES : la carte {f['id']} demande (requires) la carte {rid!r}, qui n'existe pas")
+        if f.get("engines") or need.get("engines"):
+            raise SystemExit(f"!! FEATURES : requires de {f['id']} vers {rid} : seulement entre cartes a variantes, "
+                             "pas avec la carte des moteurs")
+        base = [v["id"] for v in need["variants"]]
+        for v in f["variants"]:
+            if not set(base) & set(by_id[v["id"]].get("requires", [])):
+                raise SystemExit(f"!! FEATURES : la carte {f['id']} demande {rid}, mais le tweak {v['id']} ne demande "
+                                 f"aucun de {', '.join(base)} (champ « requires » de son JSON)")
+        w, nw = f.get("with", {}), need.get("with", {})
+        if set(w) != set(nw):
+            raise SystemExit(f"!! FEATURES : la carte {f['id']} doit avoir les memes cles « with » que {rid} "
+                             f"({', '.join(sorted(w)) or 'aucune'} contre {', '.join(sorted(nw)) or 'aucune'})")
+        for g, tid in w.items():
+            if nw[g] not in by_id[tid].get("requires", []):
+                raise SystemExit(f"!! FEATURES : avec {g}, la carte {f['id']} prend {tid} et {rid} prend {nw[g]}, "
+                                 f"mais {tid} ne demande pas {nw[g]} (champ « requires » de son JSON)")
+
+
 def render():
     from crossflash import OFFICIAL            # empreintes des OS officiels, source unique (tools/crossflash.py)
     device = json.loads((DEV_DIR / "device.json").read_text(encoding="utf-8"))
@@ -210,6 +299,14 @@ def render():
         return t
     for f in FEATURES:
         feat = {"id": f["id"], "label": f["label"], "desc": f["desc"], "status": f["status"], "credit": f["credit"]}
+        if f.get("cat"):                        # rubrique de la carte dans le flasher
+            if f["cat"] not in CATS:
+                sys.exit(f"!! {f['id']} : cat {f['cat']!r} inconnue (une de {', '.join(CATS)})")
+            feat["cat"] = f["cat"]
+        else:
+            print(f"attention : {f['id']} n'a pas de cat, il ira dans « Autres mods »", file=sys.stderr)
+        if f.get("requires"):                   # carte qui doit etre cochee aussi (verifiee par check_requires)
+            feat["requires"] = f["requires"]
         if f.get("engines"):
             feat["engines"], feat["combos"] = engine_feature(f, load)
             feat["status"] = "tested" if any(c["tested"] or c["tg_tested"] for c in feat["combos"]) else "experimental"
@@ -228,6 +325,7 @@ def render():
         if f.get("license"):                    # texte de la licence, servi a cote de la page (licenses())
             feat["license"] = f["license"] + ".txt"
         features.append(feat)
+    check_requires(features, by_id)
     payload = {
         "device": {k: device[k] for k in ("device", "os", "section_sha256", "stock_syx_sha256", "cave_refs_ok")
                    if k in device},

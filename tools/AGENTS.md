@@ -37,9 +37,13 @@ and check the writes of **every** other tweak for overlaps.
 - **Freed sprite masks** (`sprites.py`, notes/14 §5, notes/32 §11): a sprite is redirected to an identical mask
   (`sprites.redirect_write`), freeing its own. Already used: `0x4015c044` (6ch-usbup stubs, trig-hold in front),
   `0x4016cae8` (Syntakt engines' boot hook at the start, arpeggiator menu after it), `0x4018a788`, `0x40189930`,
-  `0x4018a220` (arpeggiator), `0x4018f4b4` and `0x4018fc74` (level-pan-values), `0x4018dba8` (trigless-dim). Five more
-  47×47 masks (376 bytes each, constructors `0x400ac784`..`0x400b0580`) are identical to the kept `0x40172220` and can
-  be freed the same way (notes/32 §11).
+  `0x4018a220` (arpeggiator), `0x40183118`, `0x40185018`, `0x40185968`, `0x40185c58` (sample-preview, shared with
+  chord-keys, which excludes Model-TG: two tweaks may share a mask only if they can never be built together),
+  `0x4018f4b4` and `0x4018fc74` (level-pan-values), `0x4018dba8` and `0x40192734` (trigless-dim). In all, 21 47×47
+  masks (376 bytes each, one constructor constant each, `0x400ac2b2`..`0x400b133e`) are identical to the kept
+  `0x40172220` and can be freed the same way (notes/46 §7: 22 such sprites, where notes/32 §11 counted eleven).
+  `sprites.py` lists ten, so 11 are still unused here, but open PRs (chord-keys, the multiline browser) claim them
+  all: check their tweak files before taking one.
 - **Payload appended to the image** and copied at boot to SDRAM (`0x43000000`, notes/17; Model-TG uses
   `0x46700000`, notes/31): for large code, at the cost of a boot hook shared with the Syntakt engines.
 - **In place**: rewrite the function you change when the new code fits (tempo-max's LFO loop, trig-preview's 3 bytes).
