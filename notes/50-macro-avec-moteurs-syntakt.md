@@ -108,7 +108,11 @@ La décompression ajoute au démarrage quelques dizaines de millisecondes `[HYP]
   répète (`shared`, `{"$shared": k}`) et `tweaks.js` les remet en place au chargement ; `read_js()` fait de même en
   Python (`tools/ref_mainos.py`) et vérifie qu'on retrouve les tweaks de `tweaks/` à l'identique. `tweaks.js` passe de
   3,5 Mo à 4,5 Mo au lieu de 18 Mo. Les JSON de `tweaks/` restent complets.
-- `REF_MAINOS` : chaque combinaison de cartes avec MACRO et des moteurs a son empreinte (§6).
+- Vérification mod par mod ([49](49-verification-mod-par-mod.md)) : chaque tweak combiné a son empreinte dans
+  `REF_MODS` (écritures, et charge utile telle que rangée, donc compressée) ; l'échantillon de `REF_MAINOS` compte
+  chaque combinaison de moteurs avec MACRO (les paires de cartes) et les plus grandes combinaisons ; `tools/ref_mainos.py`
+  suit `joins` comme `app.js`. `tools/check_overlaps.py` compte une charge utile compressée pour sa taille rangée,
+  `append.stored`, que `gen_macro_syntakt.py` mesure avec le Syntakt OS 1.42 (le build revérifie la limite).
 
 ## 5. Incompatibilités
 

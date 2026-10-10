@@ -169,6 +169,9 @@ def build_tweak(img, st_img, repo, codes, tg=None):
     at = int(out["append"]["at"], 16)
     if at + packed > gs.END_LIMIT:
         raise SystemExit(f"!! {tid} : {packed} o compressés, l'image dépasserait {gs.END_LIMIT:#x}")
+    # place dans l'image, pour tools/check_overlaps.py (sans fichier d'Elektron) : mesurée avec le Syntakt OS du
+    # générateur (1.42) ; build.py et le flasher revérifient la limite sur le vrai build
+    out["append"]["stored"] = packed
     return out, dict(ndesc=ndesc, size=len(rt), packed=packed, end=at + packed, macro=len(blob))
 
 

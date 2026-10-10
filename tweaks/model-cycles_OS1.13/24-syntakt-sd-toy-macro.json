@@ -1826,7 +1826,8 @@
     "00000800"
    ]
   ],
-  "compress": "aplib"
+  "compress": "aplib",
+  "stored": 229411
  },
  "symbols": {
   "macro_update": "0x43042000",
