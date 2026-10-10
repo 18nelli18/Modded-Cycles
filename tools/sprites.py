@@ -31,6 +31,10 @@ MASKS = {
     0x40189930: (376, 0x400ad328, "sprite 47x47, constructeur 0x400ad326", SHARED_47),
     0x4018a220: (376, 0x400ad202, "sprite 47x47, constructeur 0x400ad200", SHARED_47),
     0x401904b4: (376, 0x400ac784, "sprite 47x47, constructeur 0x400ac782", SHARED_47),
+    0x40183118: (376, 0x400adf9e, "sprite 47x47, constructeur 0x400adf9c", SHARED_47),
+    0x40185018: (376, 0x400adba8, "sprite 47x47, constructeur 0x400adba6", SHARED_47),
+    0x40185968: (376, 0x400ada00, "sprite 47x47, constructeur 0x400ad9fe", SHARED_47),
+    0x40185c58: (376, 0x400ad9e0, "sprite 47x47, constructeur 0x400ad9de", SHARED_47),
 }
 
 
