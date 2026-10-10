@@ -147,7 +147,9 @@ Le flasher web vérifie chaque mod, à chaque build, contre l'outil Python ([not
 le MAIN OS d'un échantillon de combinaisons (chaque carte seule, chaque paire, les plus grandes : 464 aujourd'hui).
 `tools/ref_mainos.py` réécrit les deux blocs (`--check` pour vérifier) ; `tools/check_overlaps.py` prouve, sans firmware,
 que deux mods qu'on peut cocher ensemble n'écrivent jamais aux mêmes octets (sauf écriture identique ou mod posé
-par-dessus l'autre par `requires`) ;
+par-dessus l'autre par `requires`) ; `tools/registry.py` écrit `tweaks/model-cycles_OS1.13/REGISTRY.md`, le registre
+de la place libre (masques de sprites pris et libres, caves, charges utiles) et des crochets posés sur l'OS
+([note 52](notes/52-registre-place-libre.md)), à régénérer et commettre avec tout nouveau tweak ;
 `tools/webflash_smoke.sh model-cycles_OS1.13.syx Syntakt_OS1.42.syx` reconstruit l'échantillon dans la page et le compare.
 SD VINTAGE v1 (clean-room d'origine, **testée sur le matériel** le 29/09/2026, compilée par GCC 13.3) donnait `80b7b2bd…` seule et `38754937…` avec `6ch-usbup` ;
 la v2 est compilée par `m68k-elf-gcc` 16.2 (Homebrew), voir [note 16 §6](notes/16-moteur-syntakt.md).
@@ -265,7 +267,7 @@ python3 tools/emu/test_crossflash_samples.py --cycles model-cycles_OS1.13.syx --
 ### OS Cycles avec mods pour Model:Samples
 
 Le firmware est **toujours l'OS du Model:Cycles**, avec les mods choisis, quelle que soit la machine
-([note 51](notes/51-os-cycles-quelle-que-soit-la-machine.md)) : sur un Model:Samples, le sampling vient de Model-TG. On
+([note 53](notes/53-os-cycles-quelle-que-soit-la-machine.md)) : sur un Model:Samples, le sampling vient de Model-TG. On
 construit les mods comme pour un Model:Cycles, puis `tools/mods_for_samples.py` met ce MAIN OS dans le conteneur officiel
 du Samples avec le même correctif de 32 octets que `crossflash.py --to samples` (toujours appliqué), et écrit deux
 fichiers : `_smp-os` pour un Model:Samples sous son OS (transport `0x0F`), `_cyc-os` pour un Model:Samples déjà sous un
@@ -385,6 +387,48 @@ python3 tools/emu/test_multiline_browser.py --cycles model-cycles_OS1.13.syx [--
 | `model-tg,multiline-browser` | `428e7bc4f18fde071a201544266d97012dd41556220867b60b59df193d861221` |
 | `boot-anim,multiline-browser` | `120860e74d59d207951128ed926d8e0196d9d16142c6a67b004d64510bed339e` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,multiline-browser` | `0787cf23a48549870bb9580b3b99e284c72056c677986671659e7f949d67d1e2` |
+
+### Volume et pan en chiffres sur l'écran principal
+
+`tweaks/model-cycles_OS1.13/46-level-pan-values.json` est produit par `tools/gen_level_pan.py` : d'après le mod de djd_oz,
+LEVEL/DATA affiche le volume de la piste sélectionnée (0 à 127) à la place du haut-parleur, FUNC + LEVEL/DATA son pan (-64 à
+63) à la place du « R », 3 s après le dernier mouvement ; LEVEL/DATA avance de 1 au lieu de 2 sur l'écran principal. Assemblé
+depuis `tools/machines/level_pan/` dans deux masques de sprites libérés ([note 44](notes/44-volume-pan-en-chiffres.md)). La
+preuve passe par le vrai tick de la tâche de l'interface, le pas de LEVEL/DATA, le gestionnaire des encodeurs et le dessin de
+l'écran principal, compare chaque pixel au modèle pour les 256 valeurs, et, avec `--djd`, au fichier de djd_oz ; `--show`
+dessine l'écran avec les barres de l'OS :
+```sh
+python3 tools/gen_level_pan.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/emu/test_level_pan.py --cycles model-cycles_OS1.13.syx [--show] \
+    [--djd model-cycles_OS1.13_PAN-Level-values-3s-turn-only.syx] \
+    [--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max,boot-anim,trigless-dim \
+     --syntakt Syntakt_OS1.42.syx]
+```
+
+### Trigless trigs atténués
+
+`tweaks/model-cycles_OS1.13/47-trigless-dim.json` est produit par `tools/gen_trigless_dim.py` : d'après le mod de djd_oz, en
+mode grille, une touche qui porte un trigless trig prend l'état de LED 260 (traité comme 4 par l'OS) ; l'interruption du
+panneau, qui charge les verrous des LED, ne l'allume qu'une milliseconde sur trois (333 Hz) en rechargeant sa rangée en plus
+du tour d'origine. Assemblé depuis `tools/machines/trigless_dim/` dans deux masques de sprites libérés
+([note 45](notes/45-trigless-trigs-attenues.md)). La preuve fait tourner le vrai code de l'interruption du panneau, du tick des
+LED et de l'image de l'interface sur une même ligne de temps, d'origine contre modifié, avec un modèle des verrous ; `--defsym`
+construit les variantes d'essai (jamais versionnées, `--out` hors de `tweaks/`) :
+```sh
+python3 tools/gen_trigless_dim.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/gen_trigless_dim.py --cycles model-cycles_OS1.13.syx --defsym WAIT=68 --out essai-0p5us.json
+python3 tools/emu/test_trigless_dim.py --cycles model-cycles_OS1.13.syx \
+    [--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max,boot-anim,level-pan-values \
+     --syntakt Syntakt_OS1.42.syx]
+```
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `level-pan-values` | `7fb415147e8605ab035e3fc064986b1c640cddc7ced972ad5b6ff6fcaa9f5eb7` |
+| `trigless-dim` | `ff47b71399d7ab72a53f73e2e0ff0f5759e4ef20fe1da1780eb0c28e85ed4631` |
+| `level-pan-values,trigless-dim` | `c4a547df87f681e27e5f7d0b04d9e08d601017577f810e2dced51eb4a68797e6` |
+| `model-tg,level-pan-values,trigless-dim` | `551e86a8aa2a0288440a8e620ff1cdf11da34676489a5895f4f9a031021efd07` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,level-pan-values,trigless-dim` | `366aebfc88b31a9f6d8206e53fa94b76897ef7fc929ff0237aa57578e3fe7540` |
 
 ### Écoute d'un pas en pause
 

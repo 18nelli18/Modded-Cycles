@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preuve de l'OS Cycles AVEC MODS pour Model:Samples (notes/51, tools/mods_for_samples.py, MCBuilder.modsForSamples).
+"""Preuve de l'OS Cycles AVEC MODS pour Model:Samples (notes/53, tools/mods_for_samples.py, MCBuilder.modsForSamples).
 
 Le firmware est toujours l'OS Cycles (avec mods), quelle que soit la machine ; sur un Model:Samples, il voyage dans le
 conteneur officiel du Samples, signé Samples, avec le correctif de 32 octets de notes/41 §3. Ce test reprend les outils
@@ -43,7 +43,7 @@ REPO = HERE.parent.parent
 # combinaisons de l'échantillon REF_MAINOS (clés de la page, ordre des cartes) : Model-TG seul, avec la sortie 6 canaux
 # (le rapport d'akrism, notes/41 §8), avec MACRO, et la plus grosse de l'échantillon
 COMBOS = ["model-tg", "6ch-usbup+model-tg", "model-tg-st+sample-preview-st+macro-tg",
-          "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+multiline-browser+syntakt-tg-sd-cp-toy-bits-swarm-macro"]
+          "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+syntakt-tg-sd-cp-toy-bits-swarm-macro"]
 check = T.check
 
 
