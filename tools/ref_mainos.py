@@ -52,10 +52,11 @@ def block(cycles, syntakt):
     if len(extra) > 1 or any(len(options(f)) != 1 for f in base):
         raise SystemExit("!! disposition des cartes inattendue : adapter ref_mainos.py")
     stock = main_os(cycles)
-    subsets = [c for r in range(len(base) + 1) for c in itertools.combinations([options(f)[0] for f in base], r)]
+    subsets = [c for r in range(len(base) + 1) for c in itertools.combinations(base, r)]
     payloads = {}
-    # avec les moteurs du Syntakt, une carte « with » (Model-TG) prend un autre tweak, et les moteurs le leur (tg)
-    alt = {options(f)[0]: f["with"][extra[0]["id"]] for f in base if extra and extra[0]["id"] in f.get("with", {})}
+    # une carte « with » prend un autre tweak quand une autre carte est cochée aussi (Model-TG avec les moteurs du
+    # Syntakt ou MACRO : sa base model-tg-st ; MACRO avec Model-TG : macro-tg), comme chosenTweaks() de app.js ; et
+    # les moteurs du Syntakt, avec Model-TG, le leur (tg)
     tg_of = {c["id"]: c["tg"] for c in extra[0]["combos"]} if extra else {}
 
     def payload(apps):
@@ -71,9 +72,11 @@ def block(cycles, syntakt):
             names = ", ".join(c["label"] for c in extra[0]["combos"] if c["id"] == last)
             lines.append(f"  // + real Syntakt engines {names} (tweak {last}), with the official Syntakt OS 1.42 or 1.41")
         for sub in subsets:
-            ids = list(sub) + ([last] if last else [])
-            if last and any(i in alt for i in sub):       # version combinée (notes/31)
-                ids = [alt.get(i, i) for i in sub] + [tg_of[last]]
+            on = {f["id"] for f in sub} | ({extra[0]["id"]} if last else set())
+            ids = [next((a for g, a in reversed(list(f.get("with", {}).items())) if g in on), options(f)[0])
+                   for f in sub]
+            if last:                                      # avec Model-TG : la version combinée (notes/31)
+                ids.append(tg_of[last] if "model-tg" in on else last)
             chosen = [by_id[i] for i in ids]
             if not ids or any(o in ids for t in chosen for o in t.get("conflicts", [])):
                 continue                                  # cases incompatibles : la page ne les propose pas

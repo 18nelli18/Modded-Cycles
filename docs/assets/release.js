@@ -3,13 +3,37 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
-  { version: "1.22", date: "2026-10-06", changes: [
+  { version: "1.37", date: "2026-10-07", changes: [
     { en: "New mod, Multi-line browser: the preset browser shows three names at once in a small font, instead of one in big letters. A > marks the name under the cursor, the sound loaded on the track stays highlighted, and folders get a small mark before their name. From an idea and a script by a community member",
       fr: "Nouveau mod, Navigateur sur plusieurs lignes : le navigateur de presets affiche trois noms à la fois en petite police, au lieu d'un seul en gros caractères. Un > signale le nom sous le curseur, le son chargé sur la piste reste en surbrillance, et les dossiers ont un petit repère devant leur nom. D'après une idée et un script d'un membre de la communauté" },
     { en: "It works for sounds, folders and the Model-TG Sampler's samples. With Scrolling names or Model-TG, only the name under the cursor scrolls; the others stay put",
       fr: "Il marche pour les sons, les dossiers et les échantillons du Sampler de Model-TG. Avec Noms qui défilent ou Model-TG, seul le nom sous le curseur défile ; les autres ne bougent pas" },
     { en: "Checked in the emulator on the OS's own drawing code and fonts; experimental until tested on a Model:Cycles. It goes with every other mod, Model-TG and the Syntakt engines included",
       fr: "Vérifié en émulation sur le code de dessin et les polices de l'OS ; expérimental jusqu'à un test sur un Model:Cycles. Il se combine avec tous les autres mods, Model-TG et moteurs du Syntakt compris" },
+  ] },
+  { version: "1.31", date: "2026-10-07", changes: [
+    { en: "New mod, MACRO machine: one extra machine with the 47 synthesis models of Braids, Émilie Gillet's open-source macro-oscillator, compiled from her own code (MIT license). SHAPE picks the model (0 to 46), COLOR and SWEEP shape it, CONTOUR lets the amp envelope open the timbre; DECAY, GATE and PUNCH work as on Tone",
+      fr: "Nouveau mod, Machine MACRO : une machine ajoutée avec les 47 modèles de synthèse de Braids, le macro-oscillateur libre d'Émilie Gillet, compilés depuis son propre code (licence MIT). SHAPE choisit le modèle (0 à 46), COLOR et SWEEP le façonnent, CONTOUR laisse l'enveloppe d'ampli ouvrir le timbre ; DECAY, GATE et PUNCH marchent comme sur Tone" },
+    { en: "MACRO is the 7th machine, or the 8th with Model-TG. Tested on a Model:Cycles, and checked in the emulator: all 47 models give exactly the samples of the original code",
+      fr: "MACRO est la 7e machine, ou la 8e avec Model-TG. Testée sur un Model:Cycles, et vérifiée en émulation : les 47 modèles donnent exactement les échantillons du code d'origine" },
+    { en: "A MACRO voice computes about twice as much as an original voice (less for the noises, up to 3.5 times for the wave maps), and there is no load governor yet: several MACRO tracks playing at once can make the sound crackle, so start with one or two. It goes with every mod except the Syntakt engines",
+      fr: "Une voix MACRO calcule environ deux fois plus qu'une voix d'origine (moins pour les bruits, jusqu'à 3,5 fois pour les cartes d'ondes), et il n'y a pas encore de régulateur de charge : plusieurs pistes MACRO qui jouent en même temps peuvent faire craquer le son ; commencez avec une ou deux. Elle se combine avec tous les mods sauf les moteurs du Syntakt" },
+  ] },
+  { version: "1.28", date: "2026-10-07", changes: [
+    { en: "A tidier list of mods in the flasher: they are sorted into sections (Packs, Sounds & machines, Sequencer, Live playing, Screen & browsing, USB & MIDI), with one short line each. The buttons at the top jump to a section and light up when it holds a ticked mod; a section folds away with a click on its title",
+      fr: "Une liste de mods plus claire dans le flasher : ils sont rangés par rubriques (Packs, Sons et machines, Séquenceur, Jeu en live, Écran et navigation, USB et MIDI), avec une ligne courte chacun. Les boutons du haut mènent à une rubrique et s'allument quand elle contient un mod coché ; un clic sur le titre d'une rubrique la replie" },
+    { en: "Details opens the full description of a mod, how it was tested and its guide link. A Your selection bar stays at the bottom of the screen with the ticked mods, the experimental ones, an × to untick each and a button to step 2. When two mods can't go together, the row says so before you tick, and Undo puts things back",
+      fr: "Détails ouvre la description complète d'un mod, comment il a été testé et le lien vers le guide. Une barre « Votre sélection » reste en bas de l'écran avec les mods cochés, les expérimentaux, une × pour décocher chacun et un bouton vers l'étape 2. Quand deux mods ne vont pas ensemble, la ligne le dit avant de cocher, et Annuler remet tout comme avant" },
+    { en: "Display only: for the same choice of mods, the firmware built and sent is exactly the same as before (checked on every combination)",
+      fr: "Affichage seulement : pour un même choix de mods, le firmware construit et envoyé est exactement le même qu'avant (vérifié sur toutes les combinaisons)" },
+  ] },
+  { version: "1.22", date: "2026-10-07", changes: [
+    { en: "Samples OS tab, the other way round (experimental): a Model:Samples can now start as a Model:Cycles. Choose “Model:Samples → Cycles OS”: the page puts the official Model:Cycles OS inside your Model:Samples firmware, whose startup menu, updater and signature stay in place, and sends it over USB",
+      fr: "Onglet OS Samples, dans l'autre sens (expérimental) : un Model:Samples peut maintenant démarrer en Model:Cycles. Choisissez « Model:Samples → OS Cycles » : la page place l'OS officiel du Model:Cycles dans le firmware de votre Model:Samples, dont le menu de démarrage, l'updater et la signature restent en place, et l'envoie par USB" },
+    { en: "The way back works over USB too, no MIDI interface needed: “Model:Samples: back to its OS” sends the official Model:Samples OS, unchanged. The Model:Cycles OS put on by the page checks updates with the Model:Samples signature (a 32-byte change); an unmodified one would refuse it, which is why going back used to need the MIDI IN",
+      fr: "Le retour marche aussi par USB, sans interface MIDI : « Model:Samples : retour à son OS » envoie l'OS officiel du Model:Samples, sans le modifier. L'OS Cycles installé par la page vérifie les mises à jour avec la signature du Model:Samples (une modification de 32 octets) ; un OS Cycles non modifié le refuserait, d'où le passage obligé par le MIDI IN jusqu'ici" },
+    { en: "Checked in the emulator on the update checks of both OSes and on the Model:Samples startup code that loads the new OS (way there, way back, and the firmwares they must refuse); not yet tried on a real Model:Samples. The existing choice, the Samples OS on a Model:Cycles, is unchanged",
+      fr: "Vérifié en émulation sur les contrôles de mise à jour des deux OS et sur le code de démarrage du Model:Samples qui charge le nouvel OS (aller, retour, et les firmwares qu'ils doivent refuser) ; pas encore essayé sur un vrai Model:Samples. Le choix existant, l'OS Samples sur un Model:Cycles, ne change pas" },
   ] },
   { version: "1.21", date: "2026-10-05", changes: [
     { en: "New mod, Startup animation: when the Model:Cycles starts, the four rounded squares of the modded-cycles logo pop in one by one, the top right one hollows out, then “modded-cycles” types itself underneath, instead of the original tile animation",

@@ -33,6 +33,7 @@ const REF_MAINOS = {
   "tempo-max": "5d6417b175e89b68c76743bbcad45306ba210969ad049fc1bfa6da46e432eaef",
   "boot-anim": "388ed6c6ee65529e2dc2d2c93aadb37c6878324acf90ad931d5ca3f7c6b68b27",
   "multiline-browser": "75a5054403de65968e07bed84f3fcb183719b965626fd0c042b29bc963f8af31",
+  "macro": "beb70b58001c12da348427b5f46f33567a6d6c2178cf7f4b7902741757e83e33",
   "6ch-usbup+model-tg": "96b6aec20df7c66f4a8d84c3ab4358a92b01d754c319923927d272aed0d34322",
   "6ch-usbup+latching-mute": "55959997b8b7799b7697509707af0b95a1f2eca75f7153fe70a560a7051a6b7a",
   "6ch-usbup+trig-preview": "10763d7423ce6f3cdbd5e652d01e12346057ff16d5e343a0942d16876587426f",
@@ -42,11 +43,13 @@ const REF_MAINOS = {
   "6ch-usbup+tempo-max": "0f7a47738be9a70aa3c8e586d28636c535d787693ddf6cc756c92b5824717d42",
   "6ch-usbup+boot-anim": "76b1a532c8119ce222a3545b8a21b4cf0b2e12887e40c32f9a80b0d70975533e",
   "6ch-usbup+multiline-browser": "ce1681cd208f4ca812f25b9386ad64fd0c4aa5957314cde5ba6f77a302d2c49f",
+  "6ch-usbup+macro": "32932ae6eca06406f1c954368dc3465cf83e1026128b39ebfc7e746e9e01023f",
   "model-tg+trig-hold": "f71e6ea6d7bc530e3ad255b161babbfa388a93595d74c671a4ed9793bde5c87c",
   "model-tg+arp": "062f16db10bae6d9d3c6fda89aff382bf2896b531a6b511c236bb07c632247be",
   "model-tg+tempo-max": "97cc13b34d3f4b3440d42bdb1c692e64bf0aa8b2de54b806b14320914936ef4f",
   "model-tg+boot-anim": "cbec181684805bf37dd07c62dc47f7daf35e6abab530a3f3b06ec5db590278ec",
   "model-tg+multiline-browser": "428e7bc4f18fde071a201544266d97012dd41556220867b60b59df193d861221",
+  "model-tg-st+macro-tg": "d738fafaa86bbac86e328e6f0b70dd9688c1d9c3b05a423c957751c74abbd8d8",
   "latching-mute+trig-preview": "6b9989cec38b12f4100dc57ad72afabc50dc5919f9f9ea231afea7562a755c3c",
   "latching-mute+browser-scroll": "2b52fec33202d5ba41ae50e1453efbb73f5de06b573de2d3ca8fce0b479aea60",
   "latching-mute+trig-hold": "56b8e30b76180571c64c94a38e92c377a8f8227648c0529ebf23a5ee3d8bb846",
@@ -54,32 +57,41 @@ const REF_MAINOS = {
   "latching-mute+tempo-max": "4c463e5b2b9be4018ccee04c92b5f012fd353e880c9a2853d4b22df4995f4cf4",
   "latching-mute+boot-anim": "6ba9610f1a15d98214cb1fc3ff4102da4d080b73563a45b2acf1e52a5fd58277",
   "latching-mute+multiline-browser": "902dcb0f7eb0700b5d0557cce2b36c42b36ffe95311f76ce42ba94b261567c7e",
+  "latching-mute+macro": "e2d628d6cc5a271eab998dd501d3c127ce82b7a729d07d69f6653c33bfbf852f",
   "trig-preview+browser-scroll": "f71c78850d0ca5fd9768eaec65497ed1f8284042488439239673e952bc2436ab",
   "trig-preview+trig-hold": "fd59b5fbd30946c3b7e273d15c573f4ec07f5348d40c38b0d5899004b053317c",
   "trig-preview+arp": "0bb021f4eee51a53708ccdbdec28110107434e19e32fff4acfc28e6c899fb2e3",
   "trig-preview+tempo-max": "cdcd18fc77f89cb86f4f0794af9c1292e67c0cf41fb781c5e20096c4630bf64d",
   "trig-preview+boot-anim": "53a59ee0c3ff77a689653acc32e349eb1872b147ba6ca73cad82941babed21f8",
   "trig-preview+multiline-browser": "a79837fec5798b96cce12fcf5c11c3cc58422ff1b83fd7786b0b5aecfd88e866",
+  "trig-preview+macro": "f3f961ea371af658e334f532f2cd6e1a5adc59e11e7ef826860e0367ef5120fa",
   "browser-scroll+trig-hold": "8903b2e9e61ea52ad14b4ecba346f1f3e17f3d154f38218a3794d2fbf529214b",
   "browser-scroll+arp": "078402819d15e7a30ac90b04c841bf5db830b45690d5f7bd9a4bc73e49a982e5",
   "browser-scroll+tempo-max": "66bfc2e72054de5ab8c18de7e6ba17e00a636d8e64736ce805c3c47e354278e8",
   "browser-scroll+boot-anim": "e8fb9160de8d54eba2d833e70526344933df32bc181c37e6ce85bf8a76f85f32",
   "browser-scroll+multiline-browser": "32e4a6b8e3897a1faa8ab12b33cd8e82b5a214cd3e91b80824ab17bc9d6042c1",
+  "browser-scroll+macro": "8cea30e7cb079ee969bda51d77af37949ff203e5ac68312ef4606236ca3d6a6c",
   "trig-hold+arp": "d6d58bccb4ae463dd3b7cff4880e712b4cab8c6c28d8cea3b169b9e77048cbdb",
   "trig-hold+tempo-max": "f88b1d47e203b81bdde81a46f9ccc7edb6198008d1d6edc2537b6d2b199cc654",
   "trig-hold+boot-anim": "440f6cd9c892a7d27637686b7c03e569a201eef8682d01e3973d55b65e8234a7",
   "trig-hold+multiline-browser": "b6405e3854bf07bde429d8983b0d639142556e9f41daea0c6933dabc0f22a6a0",
+  "trig-hold+macro": "a9c0bce8b15db38dd200d8caf19ccf79a8eb3e28a228a0f7dce2756d51108241",
   "arp+tempo-max": "a2286cddfd65ba0ee25611a6ac897a918b6b6e1702fab34ece5db24c263c6c51",
   "arp+boot-anim": "31456b5966d95eeb26a9e83be8c570d7a6ed7b5bc30145361b76f994d5d6eb2e",
   "arp+multiline-browser": "5f5718dccfa65f769c37f2effebcb7736408be5b751b05dde8518a2d71d2398f",
+  "arp+macro": "296bf61018cb2d0f2d4beb1576874992f02415db602355d6b38dcaec6243de93",
   "tempo-max+boot-anim": "69aec36e4e0729789af88ffbdd622306b31ce0e0716170c07e0ff9a296dac559",
   "tempo-max+multiline-browser": "7a08717db1384a0364e8102e159fe0b85479aa66ceb7ed5dc10b9b98277947fe",
+  "tempo-max+macro": "d328fca9a61962370f5f2e632b0de0045a12b1076ab36e843c48c288af455c41",
   "boot-anim+multiline-browser": "120860e74d59d207951128ed926d8e0196d9d16142c6a67b004d64510bed339e",
+  "boot-anim+macro": "d5ee2dc42e6e2f0503b48675550380f1f47a6a2b03954f23b9cd9d67dbd65e71",
+  "multiline-browser+macro": "806f35a33ec516a296e63c4db4e89e551d1f7d744872692fe05dc7c8d9b00097",
   "6ch-usbup+model-tg+trig-hold": "859035f3f93a9409d8175ca29f1e2fcf48514e7e5321d05b12d3cceafc9070a8",
   "6ch-usbup+model-tg+arp": "31f3d0beedae08baa0651e957e08587881b785cf50c627da89f4256b3470151e",
   "6ch-usbup+model-tg+tempo-max": "3c665d242b69a74f2034db3875b02eafd8e9598d0f6e704e59368a4344b6acc4",
   "6ch-usbup+model-tg+boot-anim": "7d0488e912593a6054eb08f613731c89f493f095f74330d7f2c848bb6e1abdb0",
   "6ch-usbup+model-tg+multiline-browser": "18126089f0ebe782c7fd43d80bb55ef21448cf1936c9e9e06a498dfcf9614175",
+  "6ch-usbup+model-tg-st+macro-tg": "b8386b9b0601fa182f700685b2490bdafc9e30bcb040db1da79f28d27a6cd5a1",
   "6ch-usbup+latching-mute+trig-preview": "822e0196cae372691029175c8973d2ca343d1e94497b094d09d341366a116840",
   "6ch-usbup+latching-mute+browser-scroll": "c25ce5c83b16f4f59ebbe9e4430b877941896f656a87265a3140e277641867e3",
   "6ch-usbup+latching-mute+trig-hold": "f677a4e676fcc70ac46df2cfb5db499aa6624d576f438139e52a94813c2bc8bf",
@@ -87,517 +99,1081 @@ const REF_MAINOS = {
   "6ch-usbup+latching-mute+tempo-max": "e96fa489553ce776a2debe3a2d0652cad91fe520e0cb94c8dd995afc5c274740",
   "6ch-usbup+latching-mute+boot-anim": "1052dcb69bd3eed2d99df1278100e0cb2f49928d2776ace60edbb9dce296be8e",
   "6ch-usbup+latching-mute+multiline-browser": "406cc3a230fcbdab954c40c74edd184fd3c4bc59644ba7eab3ecadebd3a063a1",
+  "6ch-usbup+latching-mute+macro": "2247f7507f446bad064cef2ae8d9867d80517aa75242ffb67aac08c389a9ebca",
   "6ch-usbup+trig-preview+browser-scroll": "aead7232e9a53a07eebfecedf56037c71e103015ad0c7ed6dd0ed047a9a63f91",
   "6ch-usbup+trig-preview+trig-hold": "a1d9be9a1a4db4549caff4a0f28a3efec9909ca0a5b5530523d98d461f10faa9",
   "6ch-usbup+trig-preview+arp": "64be321863fa03eb0672441d34a7f5f2a6675528ab9d6582630df853f3f7b5ff",
   "6ch-usbup+trig-preview+tempo-max": "2d36b512cbcafc956c407a54e050508667b2e74056fc943541b6222e6086ef0d",
   "6ch-usbup+trig-preview+boot-anim": "c5989e7e5b9074f61950d1e31dd9e434d96c529d3f7824c965453e362546a7a2",
   "6ch-usbup+trig-preview+multiline-browser": "39406ba76d2fc128b816fff8c523d0d9cccf993fd4b14ec6f1117bbcacc19b29",
+  "6ch-usbup+trig-preview+macro": "8d3b1b0187cf9c1474d226788f2bdd614e9f8fdf84400a8b2e7077b6b57c7412",
   "6ch-usbup+browser-scroll+trig-hold": "07dcff57cceddc1fce0108f24abf3405797a975f9c62f2e9fa11f3cf74cc9049",
   "6ch-usbup+browser-scroll+arp": "b5b6c9a6df52215ae3b757e065b50164982e95e56b50b78168c4be0ad245682a",
   "6ch-usbup+browser-scroll+tempo-max": "19fb0fa8acef8777358d0e10192af68a08bf55eda74453fb47ce1498f1e29347",
   "6ch-usbup+browser-scroll+boot-anim": "b69db706ea2bbd6f931fd2f91264c8cec7e8bd4d25ec3801266725699873ed57",
   "6ch-usbup+browser-scroll+multiline-browser": "02200577d413748455509c453fd4841a5ab5792a6eb9a214ae8c7cb45a841c8c",
+  "6ch-usbup+browser-scroll+macro": "af3b2e9d6dd1febecd56cb9ac45c9d0eb08d4aeb8a2c13a7c231dafbef20c9b0",
   "6ch-usbup+trig-hold+arp": "5ef24aa0e10df318abd843ef574fd9c3415d8f6e91bd43cc8be96b1cfccc208e",
   "6ch-usbup+trig-hold+tempo-max": "880e584e0aab0ac5dbcc0ed11b056da01f76b8130e33eee254cc377de84d54ee",
   "6ch-usbup+trig-hold+boot-anim": "0d76f752a7e57c07708c6c2b164f3447c3f05a73eb4d99decf9c4e9c38ddcc35",
   "6ch-usbup+trig-hold+multiline-browser": "c7244641a0def790a2d575cc711521e6c3fe8eb412d54e700ce96cb282995ce7",
+  "6ch-usbup+trig-hold+macro": "60977ceaaa83f73a5d6a49fe18eed567a4b443111ac2e08a0f02a39fdca196bc",
   "6ch-usbup+arp+tempo-max": "223858f10794184146e9cadeb00f5c7b273b01430305f45b2f4ccd4c2e475288",
   "6ch-usbup+arp+boot-anim": "e1f81164104e9ec2711db4687e9cbc1bed420d729686ba904a233ef28d7ef6ef",
   "6ch-usbup+arp+multiline-browser": "a6c66753ce5228b579ec37e45226dc03e4a24ff359c8ba2b062a34f39e011ada",
+  "6ch-usbup+arp+macro": "34dae43e8f0a7cab8fd3f143d77b3dad09335294de5b9ddf142c6890e18c62f7",
   "6ch-usbup+tempo-max+boot-anim": "83762974ad777fdd61aec0f625e32a7602311209540110f6793d0f62d8d1a4bb",
   "6ch-usbup+tempo-max+multiline-browser": "86c6aab33d6bbc77b70c0e62cb4da5494548142f7e5158b5573565c65f903d26",
+  "6ch-usbup+tempo-max+macro": "9753fda3e9a34cb5c53ac13c48ce9a31404d2f4f136a6cbd0de3c1ee2884af16",
   "6ch-usbup+boot-anim+multiline-browser": "28ed4de6a846ca7e3807ed63fd4ab24a2030665695e960bf7c34794c5732373a",
+  "6ch-usbup+boot-anim+macro": "efd84a7fbb3ec7b66a7db139157080b34b3d004387a223fb90dba525c6e3b7d5",
+  "6ch-usbup+multiline-browser+macro": "6d0d81c5d40593baa291d33c27281a1a9b6c5057299d469cdb3731d79873beaa",
   "model-tg+trig-hold+arp": "93f754998059777002a7f3b3f0afd9e6df6602ceaf563a87b97e4cf4b114467f",
   "model-tg+trig-hold+tempo-max": "49c1ddc3c1f36ed816aed902b6914cbc809a338fc016484290012f60f682c3e6",
   "model-tg+trig-hold+boot-anim": "fe41c3b4cff35a8e3f813dc87a7a2a5654cf3b034386cf91e0b699eef0eb8f33",
   "model-tg+trig-hold+multiline-browser": "b40bbe5ef531e875a9e4572660038a9f472532ddc5dc56c284c4e5793a4b213a",
+  "model-tg-st+trig-hold+macro-tg": "7d77a3732a583ffd8f12adc1a6349a6899187728cd2bad9d674c131be6ef0ec2",
   "model-tg+arp+tempo-max": "5b7dcdd056b374190a274e78c35bca7591ae2d9f3d35c88d707df4776a776e01",
   "model-tg+arp+boot-anim": "004de236dc6a8a5061bd385e4c10d3394278d728e6395b98daf3469831376d81",
   "model-tg+arp+multiline-browser": "44c8a576ead61fca2acd973bcd0b21c5a948566063dd20d745297d0ae57cf39c",
+  "model-tg-st+arp+macro-tg": "331e7ec117a417e089e64388965013062f43f936906ac61ec3fc3912eaf8493f",
   "model-tg+tempo-max+boot-anim": "f017896d365a090fafc6fdc06b49bd2a3fc0396358ba63f023a04d29091f5e16",
   "model-tg+tempo-max+multiline-browser": "537403da32f9874a4c85030ce470c24924d1085630d3bba958708f97e7513571",
+  "model-tg-st+tempo-max+macro-tg": "c362d13d17aae0dc2fe8133ea9edc9716257ee24e72ca7442b21fdda48c74e66",
   "model-tg+boot-anim+multiline-browser": "ee0b8b471efad29e5c443d03ff026cbb444fd768ba2b8b195a7c18fe95c6b06a",
+  "model-tg-st+boot-anim+macro-tg": "122bcc69b1d1f54aa33f2dd937320a0a9dd6623e0ae2114663f6761c7cc5b1a4",
+  "model-tg-st+multiline-browser+macro-tg": "786a9074390b1307dde5ede05158a97684db841f864afa584383fe2872e9e1ff",
   "latching-mute+trig-preview+browser-scroll": "c6aea7e51d1caf3e9be4553f3a0c5b033592d804cb25226ef9df3fd19add8c08",
   "latching-mute+trig-preview+trig-hold": "b62b2c2b3d3161dd746c4032242616f05bf5e0b31b386690c7979b96c08bae01",
   "latching-mute+trig-preview+arp": "a02687fa401e2d0583d9e3799716510c20bb7585ec6b2c675d40ba2a5a823a4c",
   "latching-mute+trig-preview+tempo-max": "5348d61eb6d3b44b27dbe6395b7e71d54a7aab897ec94271f4d205e11d48bdbc",
   "latching-mute+trig-preview+boot-anim": "c9e3ce2276b42f8dbefed3f4a50ead84acfb4635b1c39f6dcfa126b9a89dbe05",
   "latching-mute+trig-preview+multiline-browser": "e997c194b8f1e1ec88360d50bc4f6a00b6a76fb09d61d61762ab2faf51135881",
+  "latching-mute+trig-preview+macro": "45568e857c721784738e8af1f99dd37639d568d1197086aafc21842132cfbca4",
   "latching-mute+browser-scroll+trig-hold": "90fa9387370ea3f6f41c616356a1f74b9503d1c63705b2f0af30c90c95df5951",
   "latching-mute+browser-scroll+arp": "a17357a4e787a8f58a439aa731bf2a82aa6af96d2a0fc7e5e68fdb2a508c4565",
   "latching-mute+browser-scroll+tempo-max": "30edfec665249051aade969e312b6852b92534c735cdcbf830d68ede3c75f282",
   "latching-mute+browser-scroll+boot-anim": "5d8890d8714b0744b1f97b8396fae86129c888f71c7d41b4367788a03ba7fca1",
   "latching-mute+browser-scroll+multiline-browser": "a3ca39402118c50cb6b42073955385ced61104972abfe147c8b16c85d75cdba0",
+  "latching-mute+browser-scroll+macro": "82752752c56d6d87872011a187ea5b8539b37ee551020682175acc5fe970adb3",
   "latching-mute+trig-hold+arp": "81c29caa29e5e043287b64a1ffadce47f8adc8589d711210da3a07c124fbab4a",
   "latching-mute+trig-hold+tempo-max": "0fa3ba768987cf3736ca91c1bd3cd40dc43a3d6246aac834bb5d7b0976160416",
   "latching-mute+trig-hold+boot-anim": "daf4f0b915f516250ab1876e7af05c6b2789129e40aab269a5039108857f59f3",
   "latching-mute+trig-hold+multiline-browser": "3c8af32f5a9b721e33ff8625698726c0946366348ed3575777147f579dbd5f65",
+  "latching-mute+trig-hold+macro": "2d4e02b07a6009b10957e52b75eae7d51586b292a335ca4e56daf1a168930e11",
   "latching-mute+arp+tempo-max": "d1761bb20766bfd4c913e4e4e423665d1933e6ec640052dd5d27ecab9bd9f133",
   "latching-mute+arp+boot-anim": "e62d87c880cde2bea5827ed67d5381dc89684115b5918b95d3f3e0e08cb7a6b1",
   "latching-mute+arp+multiline-browser": "19b8a4016f5dc851a6aac54b7c4531d4f824221a97a862246b34fe9b4526d42e",
+  "latching-mute+arp+macro": "bf322b4d87c14ed4cf2225cdb48ca9213e2825ba14d71cdd7d924bb0355c344f",
   "latching-mute+tempo-max+boot-anim": "21ee9c14846453ad5d730ab80f7a1ca016ed3c652506fdef212a21e80e1222d9",
   "latching-mute+tempo-max+multiline-browser": "92fd91f2105ce166f8fec41b4e262650df8ccdd9a64e3f0b33d67e379727eb81",
+  "latching-mute+tempo-max+macro": "c0bc15b4b23560a43c640afd5c4c634cac50909699fb1699c00e71a707e6b24c",
   "latching-mute+boot-anim+multiline-browser": "c64d2e3bb73e6d56b1f90270ec0644b485eedc59580810f96a186e05cf892468",
+  "latching-mute+boot-anim+macro": "49ff3a83535d858d5cf0a4478475e3c277b2016a660394fefebfe8beaa997452",
+  "latching-mute+multiline-browser+macro": "0d26668342a907c6b246a3f3268fe53df9b7d61acb5ca3ca1a084eb31f3e1fe0",
   "trig-preview+browser-scroll+trig-hold": "64b68c69d223fd9030e4cec700a79c87d52539984eed604e4ccd6b9ec3796353",
   "trig-preview+browser-scroll+arp": "57f1811a043435d84767bc1fc89b0f49ab97934f8d8119af84ec4d0ae072f6be",
   "trig-preview+browser-scroll+tempo-max": "24ff729aff55558a0d4559c5315a16585dbf328b423fe40987837bbd0774cfa3",
   "trig-preview+browser-scroll+boot-anim": "ed0e2d695d157e93ca1c38139fb992acfc6324932f48c6be68daa4077198a6ed",
   "trig-preview+browser-scroll+multiline-browser": "6745bd4b2913566829263e7b34f9691cb7cb676d75a3931cedc37bf5ae431c59",
+  "trig-preview+browser-scroll+macro": "067a52b6677fbc5a97c12a42383fdd5ca84676405aca707f3093e65550154ba8",
   "trig-preview+trig-hold+arp": "9b8d03e7b74f60509f29b9c703424675e9c1eeec6213107181105a587e6a2c68",
   "trig-preview+trig-hold+tempo-max": "b8919b932d81d97ac70919d431257768abeb742183d5c8fe35ba1c4975943db6",
   "trig-preview+trig-hold+boot-anim": "8df9b92cff69b3ed2b76db7fcaf2c11bc177b8874e6937f5f0c6f7011089b0b0",
   "trig-preview+trig-hold+multiline-browser": "f5871d56d3f1f65dc60a912b09dd7ede4e0b13f9ee18634ce5d227334f639dbe",
+  "trig-preview+trig-hold+macro": "aec07e4ed526caa18a281a458a8faa853671c88ff599b6ffbfeba7d8e6d13c13",
   "trig-preview+arp+tempo-max": "d1bac60de8d45ff1c40e3ac05e730a32d6e3c06aa60d10797d1c9388ce6a5a9a",
   "trig-preview+arp+boot-anim": "2db0f107bedd2af78e0100df0bb165ffc141014aa392552663250abd2944c2f0",
   "trig-preview+arp+multiline-browser": "94a7a22c2df2f5d5f468a9d36d07e885e775e99404fb9e9ecee64a01ff09ff44",
+  "trig-preview+arp+macro": "b84fee508484a7d9264487f84f8ddfd2364d5b7f74d37ece179c280dc3dcdb80",
   "trig-preview+tempo-max+boot-anim": "e576bbd4c90bc1d75e0d8ec37a12f867670425faafd72d7d639ce3a03cc01f3d",
   "trig-preview+tempo-max+multiline-browser": "757db7d4e0924433cbc814dfdef12f0d649163ce04b914572ce9f79a9b8a7209",
+  "trig-preview+tempo-max+macro": "8457daad4536a52171b25e0ce87ddedc49658260f85b3c7346dea10ca0373d13",
   "trig-preview+boot-anim+multiline-browser": "c91eb816adb7cc31708a5ee37408a3f31505dfdb287cedcc14a45e293b81c1b2",
+  "trig-preview+boot-anim+macro": "9048745632a7821b3bb202a92ea3a52a97f06bac91bd79149d5c7f2a628bd1a1",
+  "trig-preview+multiline-browser+macro": "404594ad5b8b7da41781ed637ba46d5cc17b4d6c9eb7a6bc00335d2c927dfe26",
   "browser-scroll+trig-hold+arp": "4b9ba3a370fb2c53a51a178127cac80a9c878f897a17ab3cdf2a020a12ddbaeb",
   "browser-scroll+trig-hold+tempo-max": "ab0f177e9e88acb2215e3ebf0159e4844fccad32899bcdcba4ffd4ebca31e436",
   "browser-scroll+trig-hold+boot-anim": "89adc98e38b3c3bed9728a2ff504beb5edd3829e2ef316bec0b36fb3e26bfae3",
   "browser-scroll+trig-hold+multiline-browser": "ea705f4e39e4343884288837f27aeda14702cb423cb7432e3ef0cacc09039e61",
+  "browser-scroll+trig-hold+macro": "3c2264e7e4cc7c376a82aa815984fc86acaaa46dfb161c479b9ca0be95b9b03a",
   "browser-scroll+arp+tempo-max": "2310f72ded2a42d9467d29c437e3d47bbf27f8a7c24091282daa361ef497f3ae",
   "browser-scroll+arp+boot-anim": "b45b72acd0bfd748b287ef23391574486c00e170d6c9865ed3f9e1c27db2f562",
   "browser-scroll+arp+multiline-browser": "c4cd53a6450103743599779e411105742ec03746d6f12f1cc253dc1b122e65f4",
+  "browser-scroll+arp+macro": "de85fad01bbdf2129fa440b74d07995844d9fe3f4f1917f45208601be792a681",
   "browser-scroll+tempo-max+boot-anim": "c5edfdb70b6e6fbc858e6fc94ffebae556e9311b59d755e8b32c8b0e0aa354e9",
   "browser-scroll+tempo-max+multiline-browser": "00370fbd13b47a774066b3031b5f094d75b3823cfb1f7fbc8a5479af229131c9",
+  "browser-scroll+tempo-max+macro": "b829abb4ded2f4422773a6e7b6f8c1bbbaee0d7f198c863c894d3d632491172c",
   "browser-scroll+boot-anim+multiline-browser": "ff8c1770d08ec0b0c835d2f5d8f50d1fb23e874a4379dfb859fb9ac76fdb48ec",
+  "browser-scroll+boot-anim+macro": "0d810cb49c436cfdf9195427544e569abc79cfbd1e674042375e8aaea3ea59af",
+  "browser-scroll+multiline-browser+macro": "8d505e2624c1e00974c159fedd6172ce5ef41230f881211b6583d7a9f5be75d7",
   "trig-hold+arp+tempo-max": "bbd415500a812f5af368b22cff659bb488190a8052ca8bd091df219ecb0b5d79",
   "trig-hold+arp+boot-anim": "8edd300e357c6b356cd0124635c0a9cf05d88c833c7f7224f7d1599ed9859ab1",
   "trig-hold+arp+multiline-browser": "15786be2a4210fcbdce2704e1b1a6f8e4dd23943509a325b78d5a90d5e14dfe5",
+  "trig-hold+arp+macro": "9d6d0334f5a4f4fe8c7c6c583d2dec887ae2faa4c570eeb51069c5b552827946",
   "trig-hold+tempo-max+boot-anim": "ee794f111e045968f538726106e9150d6eedca26ba829308ad36b54714ce109d",
   "trig-hold+tempo-max+multiline-browser": "af6d91420675115d2a41f5095865a1e3ff09b73ce51f83c566b670c143d206f8",
+  "trig-hold+tempo-max+macro": "31d057e82bece0fc052a07a8aeb5536d663292e3412b210166ebc02599186248",
   "trig-hold+boot-anim+multiline-browser": "855457ebea6ef8410e37beec0f569ebea891ae365e3ca00d6d72f720e07af533",
+  "trig-hold+boot-anim+macro": "2b0a7e7ae3b7af64cf2e8ca91368212633fe8adf8fe5ab0e9f5c21205f703da6",
+  "trig-hold+multiline-browser+macro": "223e61afc7667be997e08d95d85cef2b1de92b971288ae17a06143aac1f4eeee",
   "arp+tempo-max+boot-anim": "a3481bac837b4d46517f995d21ec70856834f711e2c447e2da6e1d0b495e782c",
   "arp+tempo-max+multiline-browser": "bb79dcd21e44f9c82fa46c05e1003052436f35b356487135a372e99375301197",
+  "arp+tempo-max+macro": "177d0c302174bbcb4f82e166fc2c51d45e45c702d0565a08fea7ec7e210b0b13",
   "arp+boot-anim+multiline-browser": "e8ed5c3072a87dcf062f123a6b422428e334ec280a0bd9a5d6154d94aaf26bce",
+  "arp+boot-anim+macro": "cec30d507d02debced1e9a7cb3f10ceb6dfa9a2ba37840fe1468a3cbb69289f6",
+  "arp+multiline-browser+macro": "b767e30352d7f95521485bc914b9d8cccc1807471deee01451ef8364b7ab4828",
   "tempo-max+boot-anim+multiline-browser": "8122c97ba8eea059434e5fdb137b0c28e68f70a1a5180427333b277a6b8e5ff1",
+  "tempo-max+boot-anim+macro": "1aa57f062f7df957d15c86611813dc3564d9b2b7876aac0c7dd83210da1329fe",
+  "tempo-max+multiline-browser+macro": "b9fc977ba82845ed7d5e534b791476ad74c5870f54f84372c249c6db6f146908",
+  "boot-anim+multiline-browser+macro": "57d28beb1eb4df511856e7825e3d8b0a9a58901903e20e59a1fede2d289a0b57",
   "6ch-usbup+model-tg+trig-hold+arp": "c24986e327379a4ccb94760ad9c9a994683ccbf93a19829ebe3387f46bc44fc4",
   "6ch-usbup+model-tg+trig-hold+tempo-max": "7cd3133ec2c6daa5da9d2740220568cf5e6e12f38fe3aa1558b4cc466627a2e8",
   "6ch-usbup+model-tg+trig-hold+boot-anim": "ad2a4b4d798547b0690f1c5c1d4a784144c398423f6327dc8544e495e548783d",
   "6ch-usbup+model-tg+trig-hold+multiline-browser": "2d3b780d2be5511edad7a63da15f415eddab82796332a99ca5ff4c6c5110c6fa",
+  "6ch-usbup+model-tg-st+trig-hold+macro-tg": "390ae39e580a887be393b5098470c85e66163ad9eb9ca389f8819fd70ff686f0",
   "6ch-usbup+model-tg+arp+tempo-max": "99b4d5dcdf566cbe3ea871ae4fc42cd2b983f6ebb94f8f2bebbcfb69d127524d",
   "6ch-usbup+model-tg+arp+boot-anim": "52596bc2a263a33e96e3b8b74f209a27d21d3cfd930eba836ec5942df5f26d4c",
   "6ch-usbup+model-tg+arp+multiline-browser": "c779580a078f3b6ae42712de3fa362dac927335c8f52497ae112f8c48cc80338",
+  "6ch-usbup+model-tg-st+arp+macro-tg": "e976bd6ed3f54f8ce79ae946d40a712256b1e190b85ba41658871d39ca9354b1",
   "6ch-usbup+model-tg+tempo-max+boot-anim": "87ea2507e63701f3cdab463fa74cce0ffd9e76bc1a08ca718419a66ae5fba40a",
   "6ch-usbup+model-tg+tempo-max+multiline-browser": "6be28f92ca6ccc0bbf3938891e050daa6b9f8e13f8d4a241878862cfc0250951",
+  "6ch-usbup+model-tg-st+tempo-max+macro-tg": "3fe3a5caf25d619c0149f570085baa91030e977cb8207e829e5fd80d92e5eeb2",
   "6ch-usbup+model-tg+boot-anim+multiline-browser": "3a04cfe234a5d40f999669dfa0bea8b898ed871505587bedb46d544228bb6e64",
+  "6ch-usbup+model-tg-st+boot-anim+macro-tg": "9e42d3dd8ce2f4ac18604c3836387d562fe5a00660d1a4ec686e42dfc64104d0",
+  "6ch-usbup+model-tg-st+multiline-browser+macro-tg": "338bd4737c057891534cfd1ffa155c727eb770bb8b04ff91415e3e06ad361fa8",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll": "b8911cb1692476c266fdad6fae7bdabd824bd8976149cc5a2baae4dfb9252176",
   "6ch-usbup+latching-mute+trig-preview+trig-hold": "f139a65c1c7290d435dc72fcaef8c24cb4201515a644871e742007a4eebd081f",
   "6ch-usbup+latching-mute+trig-preview+arp": "073f2dc5bcc9e5432fd6e4c4d5a4b45a08f5b62ede68c68d4b8724fd429776b4",
   "6ch-usbup+latching-mute+trig-preview+tempo-max": "9f9c031093b9a25b49bd489af9d6dd02138b9dfa245566cb37e31d0735e54b36",
   "6ch-usbup+latching-mute+trig-preview+boot-anim": "ad8afeb453372e3436f54969a8aef74e469e9d90d65f352853ed552e9f7496a3",
   "6ch-usbup+latching-mute+trig-preview+multiline-browser": "53e0588854a26e4c83ab2919491f01c4db1d9572bfaaddd0b54b0b9d96f73911",
+  "6ch-usbup+latching-mute+trig-preview+macro": "e8b76cad2f64f80c33ad51d001685e8898dc83748762074fbd646042297e45e4",
   "6ch-usbup+latching-mute+browser-scroll+trig-hold": "8ab720d2d4504b618a5122666292b8d3c8726bb0abfe77f3541cd6b40d68a450",
   "6ch-usbup+latching-mute+browser-scroll+arp": "af7ffde4c7276b50ae91d3381a30dd936a89995063e93c4207a8fbb9f076cd16",
   "6ch-usbup+latching-mute+browser-scroll+tempo-max": "1f6e713b3bbf6e160d3c6664c82367767f1637507131a091d682081354973cf8",
   "6ch-usbup+latching-mute+browser-scroll+boot-anim": "e1492f031b8df799c47edb65dce583d3016d2941f19a8e15859495c04166ca59",
   "6ch-usbup+latching-mute+browser-scroll+multiline-browser": "d3c04ec6b2c7af0fd29f877bf24708b2ccbc1a13fce7b172ae54d70f79de5159",
+  "6ch-usbup+latching-mute+browser-scroll+macro": "797429a167f57e3ff994062bc29a6f7e001369aaf7e78064216f21d2d806230d",
   "6ch-usbup+latching-mute+trig-hold+arp": "5df3f49a86de244f3beeef59e469fbb2629a64eceb3d0b9b44331777280decc2",
   "6ch-usbup+latching-mute+trig-hold+tempo-max": "b28172b3a47cd07f86b6006db7f3d0758c9aadf1be13337b802c8b75a8442a11",
   "6ch-usbup+latching-mute+trig-hold+boot-anim": "b833bb8ede4152323bc6b3ae54e25697ef3657d83dbbbd12d1985046be09f67b",
   "6ch-usbup+latching-mute+trig-hold+multiline-browser": "8a22a846c0a7d1c941d9f423e99dec982481b2aaa7b1011b92f1274b4d2d6267",
+  "6ch-usbup+latching-mute+trig-hold+macro": "09dc49b490ae71866a19f0c50a50ee5d8fad89f44eea101c2ceeb89d69fc637c",
   "6ch-usbup+latching-mute+arp+tempo-max": "d4388df0010e6eb1cc34eca4480740228f4967fcc06da9b279de464c1d1f4d8e",
   "6ch-usbup+latching-mute+arp+boot-anim": "86ae229b1a024dfe31010a59a4a94ea21a7e2d86d34b97127a5307287a858e41",
   "6ch-usbup+latching-mute+arp+multiline-browser": "d82e44ed4ecad2e8383504fa52fb204de185cb8d71729b72ce370c5d55cbf2d9",
+  "6ch-usbup+latching-mute+arp+macro": "616285e0d790ab1521929a88180f3faa178f9fc0079b2ff5fcf57efedec51a0e",
   "6ch-usbup+latching-mute+tempo-max+boot-anim": "2e8acbc42b48d059293ff90d5d02bd457a5e48d337ad0689c51e1db7d8e27d61",
   "6ch-usbup+latching-mute+tempo-max+multiline-browser": "218e29155e6dbc910ad8841c53b1ea59b468a34ef6e42f0cc12ad2ca578a22a1",
+  "6ch-usbup+latching-mute+tempo-max+macro": "b7558d2fb402758502fa09c469b58b3568ab17bf57135fdf87ec7218ef73f0c8",
   "6ch-usbup+latching-mute+boot-anim+multiline-browser": "b84b52aee79b63b7863770c1da0bd104766129d6fa257f7134b9c4429a2cdb0f",
+  "6ch-usbup+latching-mute+boot-anim+macro": "69d56c660fc5167fa6f673eb63b108d1dbfc37c6f19001a0af85514180b94f28",
+  "6ch-usbup+latching-mute+multiline-browser+macro": "a7b0a993c63ab29af31ca64dd77e1ff06204434432edd4919a2ec5cd2ea6ba88",
   "6ch-usbup+trig-preview+browser-scroll+trig-hold": "959007947fab71424c7ab8bd8a9c1b78acb96a81916959b699ea237945032185",
   "6ch-usbup+trig-preview+browser-scroll+arp": "4ac48fd53314f7fa182926d2fe0ae42af917c3aed1e0449c0c83d15367ae4442",
   "6ch-usbup+trig-preview+browser-scroll+tempo-max": "44e7c1845555c014349a6b084f61086746493979aa32d722df110223c5b88d5c",
   "6ch-usbup+trig-preview+browser-scroll+boot-anim": "0deeb04be9477a46b633bd7db91f88d7b5456015ab1dfb32492e04e786bdde9c",
   "6ch-usbup+trig-preview+browser-scroll+multiline-browser": "dcd4cd4fe2db6cbecfd291e6f4cb7ae8c8bf39fb0e9a3afa3e41429de3687c6d",
+  "6ch-usbup+trig-preview+browser-scroll+macro": "21a6a19429328a7b6fa49a12dcc100ab93d8d64cd67573cd7ff8279a80daa38e",
   "6ch-usbup+trig-preview+trig-hold+arp": "5ea4a17ad597341b59c349147fb14a8ab33f3bf05bcabb13e2f318adcd2972eb",
   "6ch-usbup+trig-preview+trig-hold+tempo-max": "4d4b07d83b779ab43c1f4e7c084b085762782008d7c5651093bc1fd08abdfec3",
   "6ch-usbup+trig-preview+trig-hold+boot-anim": "37d9280164d0db88aafc254cd1fc79eb48fc81171488702a877e93482cf1b3e9",
   "6ch-usbup+trig-preview+trig-hold+multiline-browser": "d96b3ff45f2f766b221650305f0c7215e3a331ad791feca6418313cac39553d3",
+  "6ch-usbup+trig-preview+trig-hold+macro": "39b4bb91d195921b11a4825f9a7912c5b6a2aa0ea7e2499af66f540b8f3cba65",
   "6ch-usbup+trig-preview+arp+tempo-max": "338323ac2752eb3d2fd28603fde9cd77ea5349de6917b39d0a1867aa007a4146",
   "6ch-usbup+trig-preview+arp+boot-anim": "7c404aeb1f68083d05c590dc7b866042e234bf99d65075cbe71882ed621b0b88",
   "6ch-usbup+trig-preview+arp+multiline-browser": "5c6b95a1e7e0e968ed800320807a25d4d17d9a8139eb035a5717fe1a13e15db5",
+  "6ch-usbup+trig-preview+arp+macro": "5b3b2045af2a32bf6e2154d49768c74795259c4543eb819b08c62d2ee94edf03",
   "6ch-usbup+trig-preview+tempo-max+boot-anim": "582b736452978b885484087c953bc523c4b084b0a8b2409e42cd59164042b86d",
   "6ch-usbup+trig-preview+tempo-max+multiline-browser": "e652f85c5f4d31bc74eccb62aadcaaaff2b5c44046c88d1330f68f7d29eefe49",
+  "6ch-usbup+trig-preview+tempo-max+macro": "0e63d83663dddfc49ec5b9a67ea2d588bdbdba8453cf1a3f9b65f3cdf6d73d54",
   "6ch-usbup+trig-preview+boot-anim+multiline-browser": "422f03d65393b8f78557eeeca64373b55bb9ecdfc76db4f67fb6522b8c1fb2f0",
+  "6ch-usbup+trig-preview+boot-anim+macro": "a60cabeb455c89371d2136ac544fd82140a5add7c44709ed19e09b464db9e7a9",
+  "6ch-usbup+trig-preview+multiline-browser+macro": "86299e682db0f8c4e591bec326db7288189c5626bf17832f959a2d92e9873b8b",
   "6ch-usbup+browser-scroll+trig-hold+arp": "5e01638488cdc0f6adc628047718239e9a36a98ecf68547a2667ee6d5ad4a131",
   "6ch-usbup+browser-scroll+trig-hold+tempo-max": "fe7bfa86f473195eb21df847ca60213ac12f2b5f1c3af943c5c982a02a14cc11",
   "6ch-usbup+browser-scroll+trig-hold+boot-anim": "8df9bdfb3299e72273c7cb23846c3bc0df7036732e2d61b5c389bd047936aed8",
   "6ch-usbup+browser-scroll+trig-hold+multiline-browser": "a63c2f5958e57233ae2bebec50edf9afda5ff2bb83ea0a9f6925f46cf78fca20",
+  "6ch-usbup+browser-scroll+trig-hold+macro": "d7afdabad90bd35b4facdf2d8efc2e326c976d00f5576e96b30532a1e3e678e3",
   "6ch-usbup+browser-scroll+arp+tempo-max": "d39e23606d88961387b12730a41c79dfa5ead42ccd7da6463c4850e4aa6704ad",
   "6ch-usbup+browser-scroll+arp+boot-anim": "14310ba9d351c7ad2423e2cff888d76124b3bcf19f086c4ac72ef823bcb06416",
   "6ch-usbup+browser-scroll+arp+multiline-browser": "2fd09337c7394a0287cc8a763c08fe84297eb7082fe2af500ffebb48718c010c",
+  "6ch-usbup+browser-scroll+arp+macro": "08e0d7ad7ebc7dd222ca641abe9259016cf5728b68314d779ba709713a0088b4",
   "6ch-usbup+browser-scroll+tempo-max+boot-anim": "b70c22f46888eeb9833ac0bfab6db46bd766ec771029a20a7f98557258e2d215",
   "6ch-usbup+browser-scroll+tempo-max+multiline-browser": "317f01a70783b25d27b66f2f7d251b1abe6b69c2012679b641d2a920e3fcf34a",
+  "6ch-usbup+browser-scroll+tempo-max+macro": "af53235371c8c34503f5564677df321801b34612f9ef9caf5a1dc8165099222b",
   "6ch-usbup+browser-scroll+boot-anim+multiline-browser": "27ed6ba08d86b48d50df672f52c35c411286d0893123021ff95bb79deee72055",
+  "6ch-usbup+browser-scroll+boot-anim+macro": "2719ec3fab5b06c8e9befdba5af0f373e954e8a1847724533be415e175e4a1ab",
+  "6ch-usbup+browser-scroll+multiline-browser+macro": "de48f65e68b5a4794affe872ea2d99d92a99a49d1401bb36bccabcdb7c73f0ca",
   "6ch-usbup+trig-hold+arp+tempo-max": "9496a9a21d2b5501fb11860758345a266905a489c73abee028ab997ef9951d2d",
   "6ch-usbup+trig-hold+arp+boot-anim": "85294f60b02bab56c70fabdc1d9ab112c0a07cd7ffb37fb4ba175411a0412c10",
   "6ch-usbup+trig-hold+arp+multiline-browser": "f9f1edb52e8cf23d1f4ce341a98ca4c8fbc168690a09f56bff5df3d7cc0d949b",
+  "6ch-usbup+trig-hold+arp+macro": "d41f37388e383a44d0c5ec83c6c129e76fdedc6235bee17f45815cc545e02970",
   "6ch-usbup+trig-hold+tempo-max+boot-anim": "b8e2fb0a352e4b589744221267e51b6262eabd5a973633b745ac58d17a40d3f7",
   "6ch-usbup+trig-hold+tempo-max+multiline-browser": "5efe686a09e3507e251e41e39ebd8f283c272ce57d959e622e6f3b63ad8228a0",
+  "6ch-usbup+trig-hold+tempo-max+macro": "eca8a19dcc8ce3cc5bd565a18ffe2f9b99fcd796926b9b452c91b5cb3ffecf84",
   "6ch-usbup+trig-hold+boot-anim+multiline-browser": "a16aaf0677a1484a68d2142ef62a2ea83598c846e437d4eec7e9683fc4268424",
+  "6ch-usbup+trig-hold+boot-anim+macro": "1cbc5ad6c30f7ff709fc831e08172e7b2af2b8fab85652e3c6fb2640c850699b",
+  "6ch-usbup+trig-hold+multiline-browser+macro": "efdc7b78be9dec1ef110c6f540c8b96a35d7a15b9f1c1df583b24df786a1f86c",
   "6ch-usbup+arp+tempo-max+boot-anim": "9779e86ea096fc4a5920bdd4cf8ef17234fa746fcceb2cebfc1f11dc7b548000",
   "6ch-usbup+arp+tempo-max+multiline-browser": "42fbe2cef72dff25c22d3fd40f0543ee029750d0d62cc194de6de30e7dd69270",
+  "6ch-usbup+arp+tempo-max+macro": "18d1619ba744b106e3517fb7f056cd8d5449420c408f785e6f88b8f37db6063d",
   "6ch-usbup+arp+boot-anim+multiline-browser": "80f1106f35f37a53f3db99b165deeda15b4a081eb4b1c9edd17a1b7e32d9a9c9",
+  "6ch-usbup+arp+boot-anim+macro": "0c0cb5d2cc42041ab48e553a651c347089d060cc970665086552eea6defb2551",
+  "6ch-usbup+arp+multiline-browser+macro": "01cb811c0ae04ba64d185547e9c8662d504984456301f7fb5515e862932ef997",
   "6ch-usbup+tempo-max+boot-anim+multiline-browser": "b547b761e412ecd785842aa3f6cf33562378270bf5d82b3226ba49c20ff86156",
+  "6ch-usbup+tempo-max+boot-anim+macro": "6a309aae977d5f5675cab20d02cab1ffa099c293b9a25713de33eacb4412054f",
+  "6ch-usbup+tempo-max+multiline-browser+macro": "1c107ee619ae07b81414c9c8fa702954061f9ada67460be0aa2ff1b8c26c66f8",
+  "6ch-usbup+boot-anim+multiline-browser+macro": "a4a4ed122f72a71f51e56307ddfd4a3423da36ae1335d0cfef117877c8194b5b",
   "model-tg+trig-hold+arp+tempo-max": "521d8e8a8efadf5028c7fda054db7795e88e7cfa69c2c548f4eb64561455c44f",
   "model-tg+trig-hold+arp+boot-anim": "dc073bde586c01398c6d095acd12a94c0b48ad2d4a766aeb21b5042e0087fea5",
   "model-tg+trig-hold+arp+multiline-browser": "83381c0d4982835cc1102644ee0a73f9e3292ef72faf5157b8cee0592947775d",
+  "model-tg-st+trig-hold+arp+macro-tg": "8bb786ced55d1ea42f7428b742ae15cd18fca04e5f9fea4b8def94a400df9930",
   "model-tg+trig-hold+tempo-max+boot-anim": "32b1d948936bc71c3f96c963dbafff4bb8b6d431af1b1c5983a2864bbdce09bc",
   "model-tg+trig-hold+tempo-max+multiline-browser": "c79e19bd7282d69e50e770ff0c767f97a66372d65e6fda0bcd0391d56f862ffb",
+  "model-tg-st+trig-hold+tempo-max+macro-tg": "27d256b3a2e93a3e398d6454f3486581389f94abe62a5763aba50e25630763ab",
   "model-tg+trig-hold+boot-anim+multiline-browser": "aba648cf826363e12b724afda953fbe648e2df1f5f47cfbc4befbd15a65c749c",
+  "model-tg-st+trig-hold+boot-anim+macro-tg": "e1c3b3edd367d10bb8173211a0cc0b9a6b794f9dbc12b0f621817c8651dfbf3a",
+  "model-tg-st+trig-hold+multiline-browser+macro-tg": "0d2854179c34e8d3708d2fe224124662ae6b058854b61fed2299ec1743864069",
   "model-tg+arp+tempo-max+boot-anim": "ec1728321da031d1eaefee1a5396b8d9bd51eac91bbc40acb614b01d34f7c2bd",
   "model-tg+arp+tempo-max+multiline-browser": "185c14c174cb4194d59391de3313cbb099135c6133e1e3929eb2a25878355235",
+  "model-tg-st+arp+tempo-max+macro-tg": "a2238136d84a0cbca3c85c8f61a1e883a383c6497f101a0a84670f658c3bb4c5",
   "model-tg+arp+boot-anim+multiline-browser": "23a0a2306275a26ef0e4c74556edf67b3427b1c73f7fc43e6cd78372e09d1caa",
+  "model-tg-st+arp+boot-anim+macro-tg": "a95a5a0c2dbd5f8839bed776692b33086e74f6e555514a6118b4ff7cf2fc19e2",
+  "model-tg-st+arp+multiline-browser+macro-tg": "542f45c92931477415066d3759eaabe1550a7248e945299328242df8b9c5bdbb",
   "model-tg+tempo-max+boot-anim+multiline-browser": "886d97667a94b70ab06b286bcbff6be31cfd662b93a57f08239be530de67a222",
+  "model-tg-st+tempo-max+boot-anim+macro-tg": "f3103da158c646cc1d63ac66756d78855b816c219f136c4a7a5665c582a78545",
+  "model-tg-st+tempo-max+multiline-browser+macro-tg": "c4186d7241938f0d22b3d061c478b3ccb24f88a8b3d97c115af265eda4d72230",
+  "model-tg-st+boot-anim+multiline-browser+macro-tg": "762c698d3bbda077a4a7ab67c19d3fde3b9ff411177763e8e9e9b14d9daac3d4",
   "latching-mute+trig-preview+browser-scroll+trig-hold": "f79f7684117d8e2d058e1b02712a94da9c005ba1f18a0cb1b7037c30fd46f9fe",
   "latching-mute+trig-preview+browser-scroll+arp": "495f2896296ac6270f53b30d1ce4b7b31bb39b380419a1767bd3dbaf74e640fc",
   "latching-mute+trig-preview+browser-scroll+tempo-max": "84cf77dc054dc5400e4e89a14e33e0d2376374b653d08cb34d7cf166dc55802f",
   "latching-mute+trig-preview+browser-scroll+boot-anim": "8bb5741942823ca1f1825465b852c63363294da9ce4ddb9d546ab99168dff0c8",
   "latching-mute+trig-preview+browser-scroll+multiline-browser": "44ba6f5d25d033b1c7dc79ee65bd74d53fa5949db4db7651028579f9bae66dbe",
+  "latching-mute+trig-preview+browser-scroll+macro": "6fed0a10fa50d7fa5f3a5bf9426bd1583e19090ba6f364727ad8d30b2226bbcd",
   "latching-mute+trig-preview+trig-hold+arp": "26abce138c3aef32196aeeef4e86e6cd03998dee20fb2fdad49a448b2f914704",
   "latching-mute+trig-preview+trig-hold+tempo-max": "8e1eca4eaabc07dddb58b003cf4112a96ea15eb5f800f4fe1176fc7467179951",
   "latching-mute+trig-preview+trig-hold+boot-anim": "f9aafa7dbe63ac75abafe3c8d274542afae6fedffc08ea4965863c9a7493a3f5",
   "latching-mute+trig-preview+trig-hold+multiline-browser": "9ec85a943a2f3fcc6a43f015a0e7c4b4d640ae4e1595a131dc20da04947b0e34",
+  "latching-mute+trig-preview+trig-hold+macro": "e815ca4f5e580675f5eca4608fc7ab12c3a6faed5483fc2ee80737c5b1239d20",
   "latching-mute+trig-preview+arp+tempo-max": "76741d6a992d4da943546ceeb4c7640d75c063dfc58ab7ecd577d2db06bcfbbb",
   "latching-mute+trig-preview+arp+boot-anim": "b476e81699d6119f80cd01b727cb7b285eceddbd8eb3b3feb327ea59fb0ab809",
   "latching-mute+trig-preview+arp+multiline-browser": "a328b483733f8aaaeaf49b1800caaa13a3603b74bfe98df6af9b89a2d0f3a84c",
+  "latching-mute+trig-preview+arp+macro": "f8255839e5bb476b935358b5e344deb21c6f6208d7842a573b04edd60541097a",
   "latching-mute+trig-preview+tempo-max+boot-anim": "249f7209e2144972bdbcee589e2b135506e16a95475d2f0b774bf2b53c9bd044",
   "latching-mute+trig-preview+tempo-max+multiline-browser": "9cd28b919207df857a3e4e48ca6a06ccd1765f71ea65d131579038ab51e47246",
+  "latching-mute+trig-preview+tempo-max+macro": "77423a1e0e24718b9ad4242af4458f0c3b42e399760d1bbc82707f8e1556163f",
   "latching-mute+trig-preview+boot-anim+multiline-browser": "9050c5dbed037a927e089c2b2df52a67226aa22200f489823143265ee6d5970a",
+  "latching-mute+trig-preview+boot-anim+macro": "2e1a26f03093b4ac7cb36276c41239385c7ec66278540ca6b340c5c156fc636c",
+  "latching-mute+trig-preview+multiline-browser+macro": "436674037745a121f924fbf381223b14e5b0abc0d4fbc0d250ea43b05c3f0ecf",
   "latching-mute+browser-scroll+trig-hold+arp": "489333a93d9e88f7db5b1277349b5e01253d1b718aa944e70b730b1dbe6c1460",
   "latching-mute+browser-scroll+trig-hold+tempo-max": "3201fc97a8c2929845ebe07cf67c9c9b9382222cacb660e95526b5ebd21156d4",
   "latching-mute+browser-scroll+trig-hold+boot-anim": "9bf2838096443dcb128e755408aa84e7af10b4cea1aaa94803c89acb495c318c",
   "latching-mute+browser-scroll+trig-hold+multiline-browser": "b31cb85a02118d2346c4c2198165d9483afaf625637c091f7abdc8af56b7d3df",
+  "latching-mute+browser-scroll+trig-hold+macro": "a0f4d46302a8d2618d939429392aba998b49bfbd79d3f70746e5a4beb2939d85",
   "latching-mute+browser-scroll+arp+tempo-max": "34fa7f36282fd3d89d2eb54d8b7daba9763f586a889dc7c980e49ff212222101",
   "latching-mute+browser-scroll+arp+boot-anim": "97319597ede059a9c2f182b3956d809856b51035bbc3fb33018625733e90bd7d",
   "latching-mute+browser-scroll+arp+multiline-browser": "de35b6b5ac8a60ea32ae26c522a79cea8e5649aebb0318a7e691cc834206384f",
+  "latching-mute+browser-scroll+arp+macro": "d5f3c99b015545c7add359bc1e35ee38c880d1f77cecc841a4f89bdb87e7e3d4",
   "latching-mute+browser-scroll+tempo-max+boot-anim": "cfbf279ae539809ffa5c621e71c1ab3b3bd3f82b0423c020aa0341f327d00368",
   "latching-mute+browser-scroll+tempo-max+multiline-browser": "54202783a1ed3fba564aca906397abd129c841398137c5699e7098b33476fcd0",
+  "latching-mute+browser-scroll+tempo-max+macro": "97dfb703ff610a95c3f9868b440f6a0e6bae524e271907f21e3937417004f195",
   "latching-mute+browser-scroll+boot-anim+multiline-browser": "db93e1f32aab770088e74c4030032c15f48f241e24a2019691093d4bd5b6aa42",
+  "latching-mute+browser-scroll+boot-anim+macro": "c84e09b87bd7327d4b5ed859f4e1a755a7790eb098dd04d7a69412e89d2cc1c1",
+  "latching-mute+browser-scroll+multiline-browser+macro": "29015b3478e3ebc4beb1cc66b7ac3d4c11b2cb3447d8813fe453caea4e0d0f87",
   "latching-mute+trig-hold+arp+tempo-max": "60c1f5cb2cb3c73cdf6e18ffe3a8b8d03c5a88ea77a010ec668d44e369854fc5",
   "latching-mute+trig-hold+arp+boot-anim": "3ba4e20e960a9c7f3e62f8933bce5251a7b1ecbd9c81457df9226ab5bd492935",
   "latching-mute+trig-hold+arp+multiline-browser": "13d55255f58a913d2290581f14780b8a45a766a1ada5cf8f02c7f35513dd077a",
+  "latching-mute+trig-hold+arp+macro": "488ad6f9384a37e8a1e79846424e0bd21a38c245029e206bd66409b980dd119d",
   "latching-mute+trig-hold+tempo-max+boot-anim": "652d92d5062292bd836d2836736d7d99dfb89a8a76e3682ab65f2b0844cfbe60",
   "latching-mute+trig-hold+tempo-max+multiline-browser": "ae15ce27c4a5dbdf9cc157a0fc2aaaa3df5afb5c75135f77bf50679c055ce1ed",
+  "latching-mute+trig-hold+tempo-max+macro": "7f9e9fd7add4ca6bd89350d16aca379de3e7c631e100c14192a4130fdcc33c34",
   "latching-mute+trig-hold+boot-anim+multiline-browser": "7561785f20bad3edf0a47e9a35454840f4277066ba9d935e89f179ecbbbd23df",
+  "latching-mute+trig-hold+boot-anim+macro": "01b84dad8b9b4c0ec28f682b1912040c083e68840d222f5941c0b42232c12468",
+  "latching-mute+trig-hold+multiline-browser+macro": "048b56216df2ac20b8e6af0f4e47abfd153dac768729c10e8cc879c6ab5209f4",
   "latching-mute+arp+tempo-max+boot-anim": "0f0ac4dc6bf49720a2e5343578219b05e3fabafaec3af8cbcdaacb169f254f9d",
   "latching-mute+arp+tempo-max+multiline-browser": "867cca254c5d33c7d771714b8690f1c2cc18bb8c8684bc8d67b506afcb6e8072",
+  "latching-mute+arp+tempo-max+macro": "1b7fea4e8aed88ed568c5ea55c15ca60f964a53d88d02ff0f727757526b60670",
   "latching-mute+arp+boot-anim+multiline-browser": "2d3f0ca6b350297972539baeeba37a84c25887ff8466ff8a37b509bb2a9d3cbe",
+  "latching-mute+arp+boot-anim+macro": "9e3656c577f2fc2f6327aad4fdc5f7e0d449d5e23c327e6e88043b6d984fbcee",
+  "latching-mute+arp+multiline-browser+macro": "8a585aa107b006bd93f622855a153a672373d8558aef39053fbef55f4c13f0a6",
   "latching-mute+tempo-max+boot-anim+multiline-browser": "a128345a89a53e37efffba3be417877bdc8c0ff1c5ba8149346c64e6e910934f",
+  "latching-mute+tempo-max+boot-anim+macro": "19fccc733c74a59e1ac147b1086b02738070c034bb74c8b2812032269e35e02d",
+  "latching-mute+tempo-max+multiline-browser+macro": "1e4cbbfa5c1e41b4cebcf614912d8ff59f9abd5df53b0ab6ba311f2a5eb0076e",
+  "latching-mute+boot-anim+multiline-browser+macro": "7ab5be398eb5ee3b30618a646106b2e112505fcd94feaf64310a2d8cd3d7ca2f",
   "trig-preview+browser-scroll+trig-hold+arp": "b003c053db104b4303eb96feb34619452e80fcdbef6da2a979ab36ab6923c8eb",
   "trig-preview+browser-scroll+trig-hold+tempo-max": "2a24ed9ce43c1f4af852ab65839b2a83fbe95d74a26d891dddd361f276a3b885",
   "trig-preview+browser-scroll+trig-hold+boot-anim": "803d550834e1d9564e97ee6fe9a6454683a153e8013c47c90322e6ef7cb2968f",
   "trig-preview+browser-scroll+trig-hold+multiline-browser": "0a58d2a8bd1a487ef222cdd080583cb970d371f55deac4990ca90ab61c18875b",
+  "trig-preview+browser-scroll+trig-hold+macro": "52fe7e9b0c2dd5424c27c5916fd38555db8942b35d91c000d233f49303b9b876",
   "trig-preview+browser-scroll+arp+tempo-max": "853f9642641c3e2c470af2628749996cfc104946709b132bef501a3e39e470b4",
   "trig-preview+browser-scroll+arp+boot-anim": "0be940ea133dbe18550f1b043bcc493012d6fd20c5e784d74c6d3cd883b9f257",
   "trig-preview+browser-scroll+arp+multiline-browser": "87b393df3217a1f24407be842fc04703abd9c22a4c7460b287ee61a8e47ff3ac",
+  "trig-preview+browser-scroll+arp+macro": "275bb6df42c9260f402e5dc3d5f04aa7024b9201b37574e0aaf9a9bdda9afc0f",
   "trig-preview+browser-scroll+tempo-max+boot-anim": "c8b9ba7bfccf6e60e0068876132c7722fc71df8ac90acba4e94dc337c8d92b87",
   "trig-preview+browser-scroll+tempo-max+multiline-browser": "17e45e63d6a27605cbc5d6af9670196fd3675643283f3cd6e983093a7edfe2e6",
+  "trig-preview+browser-scroll+tempo-max+macro": "a94840016bcb2c481938cfc28a5c189c2c8fead0e4bf16ae2c4b7770dbbfc61d",
   "trig-preview+browser-scroll+boot-anim+multiline-browser": "496eac850b0f49b119530d04f097467cf0129bf71ccbb05787b7ae723d6ddf37",
+  "trig-preview+browser-scroll+boot-anim+macro": "125159225b6742e74a1f45062a3d7d18fd79f927bce40b4d1eb3b7a1268b02e8",
+  "trig-preview+browser-scroll+multiline-browser+macro": "8275a90279495565009f7b5d9ed704711d6a96af9319159c206e6721802f65a3",
   "trig-preview+trig-hold+arp+tempo-max": "4a6481452a406f4ff2879870bd388126e66078bc5b519e3a598684884200bcda",
   "trig-preview+trig-hold+arp+boot-anim": "fe0ace89b9a1c1d9fdf3248d94b3d9f8465435182dffd86ba5658247215fdad7",
   "trig-preview+trig-hold+arp+multiline-browser": "e17ce78a03ef1b84b22581e6e783ee312b2ab9577c83e951466a2258c232d236",
+  "trig-preview+trig-hold+arp+macro": "d692dc71eebad4d0deb70ef6bc90cbce74dc0059e8da4dbb5304fe27c210d616",
   "trig-preview+trig-hold+tempo-max+boot-anim": "9b5da5f670e6d66112ccb70da9b5b1c9cd8669921ea8797f70fda0f346dfc8f8",
   "trig-preview+trig-hold+tempo-max+multiline-browser": "be6a7a81ca525e82918f15ae3d8f1dfab851faac6e8578356adf8c6fa85be99c",
+  "trig-preview+trig-hold+tempo-max+macro": "6f958ea5800244183354ca1495d06c484194e5744bf4c29cde1d9cfcfd3129cb",
   "trig-preview+trig-hold+boot-anim+multiline-browser": "4533726fa91f0957fff58c5072ba5e4fecb2874d6c77b18d7747a04b689cc581",
+  "trig-preview+trig-hold+boot-anim+macro": "cd83c23e833277c4172317b307b5703c772b8b9e7098132597a619f40dfe20c2",
+  "trig-preview+trig-hold+multiline-browser+macro": "0552f3c518a981f22d8f187af0f871ce5f8b0114980d38bf76258f53bc3f512d",
   "trig-preview+arp+tempo-max+boot-anim": "37f11c37b3da6cc36a69adbf64410d75940a4f359a4ce7d5f9009a383ce08dfe",
   "trig-preview+arp+tempo-max+multiline-browser": "7f4e626ceaf101d0d835f4164b3d871f7bffb2051bde78d4622a4e45d479da12",
+  "trig-preview+arp+tempo-max+macro": "aa59c0c66c416031b766d694710a2b01557bb5ea8e95c678082afaa807a4d49c",
   "trig-preview+arp+boot-anim+multiline-browser": "606612116c250a463b9b8bfdedc68716980d28aa0de9cb0cb344d6374350ebd6",
+  "trig-preview+arp+boot-anim+macro": "30828c619944dd7419b04d0cdc97e05871626f05d7d4c9a8f375a98ec5d8e9a1",
+  "trig-preview+arp+multiline-browser+macro": "47b21bc874039ab73ecca5f1a8800f488d38547775434fe3b7f6912d47d8396c",
   "trig-preview+tempo-max+boot-anim+multiline-browser": "5c128b70ef6c2f3dd0604ff9dca864fe239f5369e2203dec062aa0b49d423162",
+  "trig-preview+tempo-max+boot-anim+macro": "0d230565842c8554b6b845d66356680712d511d485afbd688111ce79a5bfe0a3",
+  "trig-preview+tempo-max+multiline-browser+macro": "a5d1248c458b808c10861d929db0729076a5c5ba7b6c240eaa12bf75e2c3e5bb",
+  "trig-preview+boot-anim+multiline-browser+macro": "d02fca3f867c09501d3191ad04149581e47cfd932f02824a33106e82d07ad00d",
   "browser-scroll+trig-hold+arp+tempo-max": "61afa521a89df731c8a0c14208037d300a2f9367b51cb939f4a324c05b80afed",
   "browser-scroll+trig-hold+arp+boot-anim": "c51f274cd9c6ee15b48640a89e8f4ae17f3bfb4670cc606f6cb633f57da3ca2b",
   "browser-scroll+trig-hold+arp+multiline-browser": "0dd5b8379dcbb67b40b7a41fd4832e0633eb6a39473aa61f8cb8bd4336a8e912",
+  "browser-scroll+trig-hold+arp+macro": "6a10355996e8119996ee734348142dcfc10847f4cc279252cd4e949267c57a72",
   "browser-scroll+trig-hold+tempo-max+boot-anim": "3ecf178d4ece2f64586dd9e5f9aff1baf1232dfd95af01096e39290d71b64d97",
   "browser-scroll+trig-hold+tempo-max+multiline-browser": "cf900136f7719531ecff36ddcee12a80c46ab696c73f2daf46d6c7441300dab8",
+  "browser-scroll+trig-hold+tempo-max+macro": "11271ce4f8f14bb864f3b57669dabb964f9cf758a637f69b754fa92691f30628",
   "browser-scroll+trig-hold+boot-anim+multiline-browser": "b29f6717cc825a71d305d6b2632d78794a99f5dc18ff2553eb4209ffb1f6c3f3",
+  "browser-scroll+trig-hold+boot-anim+macro": "6c886b74a0c26dd6064cbf19fbb6461cbf529bb630237ecc8e87804ef53f453a",
+  "browser-scroll+trig-hold+multiline-browser+macro": "2e75249612a5c708565833526eb74be7dd26f4575afb5e4313b7435afc6c3ecd",
   "browser-scroll+arp+tempo-max+boot-anim": "105625032b58592f2339288d7f13e50059a79683c17015cf1db30bcdd15ed9e0",
   "browser-scroll+arp+tempo-max+multiline-browser": "ce22ed5319ab01299a858599ca90857e919215046e4f984f272923c2d26e6b2e",
+  "browser-scroll+arp+tempo-max+macro": "91a33e74f5edadeae94a035100952c4a4c38a55c95081d532548b9ba64792ef6",
   "browser-scroll+arp+boot-anim+multiline-browser": "b826da793724699cb84c634d046aff25041296e79d0fafbee210857a152b6394",
+  "browser-scroll+arp+boot-anim+macro": "de401fe3b605641ca8d79fb0252d9831c881221a55c252699644561d48316869",
+  "browser-scroll+arp+multiline-browser+macro": "ca816ffd9b2b9f0e89f2ed10297f72162045034e8a2b6c80cf8c8ec401d661a8",
   "browser-scroll+tempo-max+boot-anim+multiline-browser": "e1953bcbc7b9d33bd943cbef6f944499c73439288ab7fd1c1305826e878aedb3",
+  "browser-scroll+tempo-max+boot-anim+macro": "e097221ccc5daf842d7aed652a2c30dfb4dd4d8878ca15c21a0323e0cb4b20e3",
+  "browser-scroll+tempo-max+multiline-browser+macro": "ff6a21abde793df8f67e05b51c8e0c7062e4a78f2dbc8170f3f54775f01bbec2",
+  "browser-scroll+boot-anim+multiline-browser+macro": "a0f2d8dc7ac5527277cff12ad28b935f41fde2cb1cd6551af81c8cb3226252b7",
   "trig-hold+arp+tempo-max+boot-anim": "718bb05a4423f355b363e22372795c93d7e09ca671e508d7e00d2e907e3b5a35",
   "trig-hold+arp+tempo-max+multiline-browser": "84455296c97d18bd5566b95c8a9e4a69501c7355d5d56902af5f9f4343683d33",
+  "trig-hold+arp+tempo-max+macro": "a85c3073742bb1a7779c5497fb487a13126ef053eebcd9fd610f121da32de1b1",
   "trig-hold+arp+boot-anim+multiline-browser": "8784976b61cdef5ac8fd2c1ebe763c49831063afce4dc5d8c455f5319779d2d3",
+  "trig-hold+arp+boot-anim+macro": "076827f2973ab48384591a7e55b885deda0a7be31b13c0e80b4c0816e0459206",
+  "trig-hold+arp+multiline-browser+macro": "3a12a58d6ef11e023c2a5433fa2608db5037febde8b91a6e7aeced99e7fe06e0",
   "trig-hold+tempo-max+boot-anim+multiline-browser": "c6d529bddc3f7edb69071ade3f3e6f3505cf3ce8b0eade195ce230aa8bf61709",
+  "trig-hold+tempo-max+boot-anim+macro": "135a159061692ad0e28ee36e915acb571d3060eb60cda51c6f033c3d749991ef",
+  "trig-hold+tempo-max+multiline-browser+macro": "a76eefd439e5e1326e7c743db3c817589f1206c564282640b79fef6e1fc7392d",
+  "trig-hold+boot-anim+multiline-browser+macro": "2bbb8f9b0f55b5bb84540842f636a3a92eca836147e42a04a5e050721b12532c",
   "arp+tempo-max+boot-anim+multiline-browser": "71fadc57f9937ad8ec54bc7257721ff120db2f8096c552ea45767feb002143bc",
+  "arp+tempo-max+boot-anim+macro": "caf07bebeb8fbe4c16e45e3c382f6f3cc5b856c43fbe6e03cd48e8d1bc2f2f44",
+  "arp+tempo-max+multiline-browser+macro": "6be2b6d078366b91b3784c89778fbb2417f4e02fcd8e15f9dd91dacf6780c903",
+  "arp+boot-anim+multiline-browser+macro": "e47bbd9f34a465df699011acb5047c4096cf25314b3605c5204bcdb2c32442c4",
+  "tempo-max+boot-anim+multiline-browser+macro": "2660b6752e486da20bf95c2fad9980eefa3eea0272191b47a304384961db06ff",
   "6ch-usbup+model-tg+trig-hold+arp+tempo-max": "d60b0192dbb31a74563eb20c0ade94bdc9c91c53edd4407894303679eaaf15cd",
   "6ch-usbup+model-tg+trig-hold+arp+boot-anim": "e1e63303939c4dbc64ec143353c3f6a565f89e11baff326176bce31538808146",
   "6ch-usbup+model-tg+trig-hold+arp+multiline-browser": "2e316374eb3ff1346556cc7120b319dd19c25e13433b4df3098de388ac5cf676",
+  "6ch-usbup+model-tg-st+trig-hold+arp+macro-tg": "90e98e809ec7e46e7d3d989f7c4abf954f9cf8f945834b224eecbe564af037eb",
   "6ch-usbup+model-tg+trig-hold+tempo-max+boot-anim": "81ba77de0106204f76d5e0e69a311f39cbb7b7384224571a028975263ea29ae1",
   "6ch-usbup+model-tg+trig-hold+tempo-max+multiline-browser": "d57a96f4530db381ebb4bddec5edd2c1cb66ff2a4b6d963281d49f441f332660",
+  "6ch-usbup+model-tg-st+trig-hold+tempo-max+macro-tg": "32e7b51494123eb3b8b3790a5964f0aa5f44a270abfa2ecba0d3595e0ffe3bbb",
   "6ch-usbup+model-tg+trig-hold+boot-anim+multiline-browser": "e8578a3e332ce2ca68736b59c5000bd70fbc556cf79727482d3b0438904afb69",
+  "6ch-usbup+model-tg-st+trig-hold+boot-anim+macro-tg": "4d4a231c6d8fa9942fc1b2381bb2762eed9645af8aa64f64332dda6af00cf4f1",
+  "6ch-usbup+model-tg-st+trig-hold+multiline-browser+macro-tg": "8a1a4b0801ccaf71208e311040e013687ab71623f9d9e9ee7aa6c63b32688814",
   "6ch-usbup+model-tg+arp+tempo-max+boot-anim": "d537d62f5d1919f480f1ebaab1878221eb0f5b088e825c913c3c6955847d6284",
   "6ch-usbup+model-tg+arp+tempo-max+multiline-browser": "2649c4df6ac1aa92c813b0c12a19c8acfdc1ad8751d96f1c2648f16464519776",
+  "6ch-usbup+model-tg-st+arp+tempo-max+macro-tg": "74e538a734ef82bef59f91366c1044bbf994a869a3d86bc154ba717ec9ddbc8c",
   "6ch-usbup+model-tg+arp+boot-anim+multiline-browser": "886d295a1052b7f25dadefd5a5469ae2698ed83b684a8026bb783637d6d6941b",
+  "6ch-usbup+model-tg-st+arp+boot-anim+macro-tg": "d7992951f0eb450997016574fafb3c0239e770b7160ac1a2c6f36bd5144f1123",
+  "6ch-usbup+model-tg-st+arp+multiline-browser+macro-tg": "5dff7b7f25d99d255fcb8c0382bcac5ce82e0e2dc4d6b3c8c30e6a5bc4a21631",
   "6ch-usbup+model-tg+tempo-max+boot-anim+multiline-browser": "a8e264873f2a7962fa9509d5de2c1677e9cdd35e3061c08cc13cd847f39b0ad2",
+  "6ch-usbup+model-tg-st+tempo-max+boot-anim+macro-tg": "57ad4508cd40864f68a7bef7f297812f216d6e478e731bea746da7098abd8071",
+  "6ch-usbup+model-tg-st+tempo-max+multiline-browser+macro-tg": "bdcafd26b4966d6832e412ed5420e163b75e525893ffd26a16d698988841e200",
+  "6ch-usbup+model-tg-st+boot-anim+multiline-browser+macro-tg": "66c87cda1d05676550239e0edaacf38578549cdff7036610db5c9ca618b6c41c",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold": "14f995c0404185c0d3e1aad642052df2245564b25cfd56ddecee87be8c90c8fc",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+arp": "a8f05027878e13ba88255dc7d115da7a9a89ba00acda3b606ef40285caf89c0e",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+tempo-max": "793e79570f33f9930a83a36b509e029e61afed3562035b021d8a88b122a7cad0",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+boot-anim": "759f13a93b4dfa2adba346467dbac8b6f40ed0eb1390f88fb2efea7842b282e5",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+multiline-browser": "af6bbaa83ce880f5eb1ee782d67bf3a3d7d27927449c852815e9eb8d41bd42ae",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+macro": "80814b89a4c6b12293f2bf7f834f9982bd2066132f746ba3a085f179368f0533",
   "6ch-usbup+latching-mute+trig-preview+trig-hold+arp": "4b42a63140a6376c414203beaa12197b21e6a441ac8d8dd946e96d6c8520b218",
   "6ch-usbup+latching-mute+trig-preview+trig-hold+tempo-max": "b06766218f47d9b33da98e4d7f3ac6e3eb57c0ec7cea9eb354b00c8599bb2522",
   "6ch-usbup+latching-mute+trig-preview+trig-hold+boot-anim": "f011843e655e67a5132073e575c615fb2609af7afced9ba7cf504d5ac52ab32b",
   "6ch-usbup+latching-mute+trig-preview+trig-hold+multiline-browser": "711cdb32fe8ece32e81dd7f66465301becc06168d577e6352d9a8d5e417797be",
+  "6ch-usbup+latching-mute+trig-preview+trig-hold+macro": "cd3d7c72f02e7f4b3cfb50d5ce7b581e48308dd87b1d00d4d34ac121ecfaf329",
   "6ch-usbup+latching-mute+trig-preview+arp+tempo-max": "68ecfe408aecd4adf21d2a1a97c61bb981618c1b5fc1ed9c8456a7efc138f5f3",
   "6ch-usbup+latching-mute+trig-preview+arp+boot-anim": "4a83829d0be440190ac80e382d1dee5a6bbb03fc2f241ec14d6d907d6c246109",
   "6ch-usbup+latching-mute+trig-preview+arp+multiline-browser": "0467a07daa5da15da1a577878061fd083ea878dcb9a6eab055423ed42243d764",
+  "6ch-usbup+latching-mute+trig-preview+arp+macro": "b4ba029ba71bd5f22cd26cf2dfb6011b110d2c3356cea819e4a958cb529b536c",
   "6ch-usbup+latching-mute+trig-preview+tempo-max+boot-anim": "8ce9aaf7804572f7e11597ccd589798c5375c7f4887441621855d9972051ccf7",
   "6ch-usbup+latching-mute+trig-preview+tempo-max+multiline-browser": "bb34269348f504687c7e22d216f2e3610234d715680c539a0ded5770d8817847",
+  "6ch-usbup+latching-mute+trig-preview+tempo-max+macro": "6355411e7b5e74a58cb29711fe41a22238b0f7ad2212bf4cbbb3e9cc48b574ff",
   "6ch-usbup+latching-mute+trig-preview+boot-anim+multiline-browser": "e3e92b9e15e7ccf2bed5364e116bd98b59df8b039c3c2f5c41416233e323a341",
+  "6ch-usbup+latching-mute+trig-preview+boot-anim+macro": "d467d401bc61d34b2ffe61e313c909a6fc2e93941c033abeaad4d805302a5bef",
+  "6ch-usbup+latching-mute+trig-preview+multiline-browser+macro": "16843c886a4a7607835df00514ce9ef8f4869e2cbb695fe1fc0488e0162d5643",
   "6ch-usbup+latching-mute+browser-scroll+trig-hold+arp": "9f46e149082294dfa7288d883ea76b3b607482ba311b60f810b768efc485da20",
   "6ch-usbup+latching-mute+browser-scroll+trig-hold+tempo-max": "a65df1243e2cee2974d6931f2fd8fc32987ace8da22d78e262f7ef0d7a855ef3",
   "6ch-usbup+latching-mute+browser-scroll+trig-hold+boot-anim": "7c895837729ec895da783a6f05f6d272d2a19020bc1a441bec4c923cca114524",
   "6ch-usbup+latching-mute+browser-scroll+trig-hold+multiline-browser": "16df295cbe29781ac04533833621c7504df892437037ae39f91a0b27e4fd41a6",
+  "6ch-usbup+latching-mute+browser-scroll+trig-hold+macro": "2e359ae0f3be66897787db6142a998050b9bbad96f4ee2eab425c0b798b8899e",
   "6ch-usbup+latching-mute+browser-scroll+arp+tempo-max": "a1e0b5f6fae0e54186fcb22f5f24be7011817454cbb7a4e7c24aec0c4b675b86",
   "6ch-usbup+latching-mute+browser-scroll+arp+boot-anim": "a17a051093e8d3b99ab03b122039f87bbdb865d9d83384820f04009c02c5c5bc",
   "6ch-usbup+latching-mute+browser-scroll+arp+multiline-browser": "068755a07472c17bdd472ae4e7bdc5fe63e13143f4c628b4c99beba52ceef200",
+  "6ch-usbup+latching-mute+browser-scroll+arp+macro": "4b8ad4a7fd2d84cca3b74671103c355f7d6d3bbe24d81c85e8ef85b6ea96c8b4",
   "6ch-usbup+latching-mute+browser-scroll+tempo-max+boot-anim": "93ef8b6819680183893b8e05ffb2ef2b59bf59408c531d5e91426666692e9001",
   "6ch-usbup+latching-mute+browser-scroll+tempo-max+multiline-browser": "d51509d7b1ccde34a0098e2173a983a40cb5721816d09c3c24fca67c7716b047",
+  "6ch-usbup+latching-mute+browser-scroll+tempo-max+macro": "f6540f5a27de83917cdc6be988af3d2d7410be27dc67e7bfb8c39a32574c2cc3",
   "6ch-usbup+latching-mute+browser-scroll+boot-anim+multiline-browser": "e8530ebfc82b2500d5dfd18ff8f606c980640ae0dd00c84ecf6c2817d66796bc",
+  "6ch-usbup+latching-mute+browser-scroll+boot-anim+macro": "f6f5fb4f7e917b5d14c3bf51638db03ecd4656044b815ab023abed341547b4c1",
+  "6ch-usbup+latching-mute+browser-scroll+multiline-browser+macro": "722dcd995f0dd7947642a7d69c570873c049bc84d71250e3e987ca232979c0af",
   "6ch-usbup+latching-mute+trig-hold+arp+tempo-max": "aea672c6174c475417d7e82a4b8f58817f75dd22e6506666e0e78fa7627d7837",
   "6ch-usbup+latching-mute+trig-hold+arp+boot-anim": "63d9727b3bf9bd7cc8a95ee7bb8c44c3f38db297f16837c6e6298c8c84748ccc",
   "6ch-usbup+latching-mute+trig-hold+arp+multiline-browser": "a7a9bdeff5b3f0ac3d11a16f641891626a8b9748dfc694beb1e5dd307f9a0e2c",
+  "6ch-usbup+latching-mute+trig-hold+arp+macro": "6ea6bbf77cde8dba9dcc0639935d6e5d106289d3eb05918ca90f218b035ced7d",
   "6ch-usbup+latching-mute+trig-hold+tempo-max+boot-anim": "a8095612bf4ff489dd4b04f9ec34afb440fe25ec316e85df6bf11008a039e4c9",
   "6ch-usbup+latching-mute+trig-hold+tempo-max+multiline-browser": "99130d39eff6e13adb9f4eb908b1fcd77d12dd494770af6e570fc9beeed7ebb4",
+  "6ch-usbup+latching-mute+trig-hold+tempo-max+macro": "0f540d2943c9d1b1469f3d8ae2a2e92593bff2c0fd4bb587e46dc5cd2f68854d",
   "6ch-usbup+latching-mute+trig-hold+boot-anim+multiline-browser": "d4ea80e1471ba6f1e74475faa0fc95fd98ede15fe5e0ce5e43be7b7a7d80d55e",
+  "6ch-usbup+latching-mute+trig-hold+boot-anim+macro": "55f6ec26a985851134a321ee6ee90612e887b485bf60e5f4d4cf6e1a4c4bd996",
+  "6ch-usbup+latching-mute+trig-hold+multiline-browser+macro": "2720815f32005eb3bcae273a9b5cdfc21a3918d2b67e3df5dd8c5d824ffe6aa0",
   "6ch-usbup+latching-mute+arp+tempo-max+boot-anim": "404089fc4d8adb95bad2e24ec8330e48268767ffad2a0e326f7abe6bb42a91a4",
   "6ch-usbup+latching-mute+arp+tempo-max+multiline-browser": "5e51083c7790482062e0dd4f13cb79964a9b7222a942d1a6272e7b90b3713209",
+  "6ch-usbup+latching-mute+arp+tempo-max+macro": "6b85e56164164f26f17ff3975e4dc2ef55fdca7cbd52604571140d12735bc6cf",
   "6ch-usbup+latching-mute+arp+boot-anim+multiline-browser": "22e972be8193a549b2f8379089362e825716bd16cbd9ddcb529b13c464de50e3",
+  "6ch-usbup+latching-mute+arp+boot-anim+macro": "1ffd6462408b92cdababa42712e2908240de2901e855e65717363053fb0cea66",
+  "6ch-usbup+latching-mute+arp+multiline-browser+macro": "a84b6d54bc573c68b155ec3a0b637cf66503242cdd647f58460ada6f0b3cda66",
   "6ch-usbup+latching-mute+tempo-max+boot-anim+multiline-browser": "533d7b3879a5ce3908ac6fd337befcb8a927b4858e5bb1f5534b7126da3fc8d8",
+  "6ch-usbup+latching-mute+tempo-max+boot-anim+macro": "8831fbeaf8dc4ffa6c0407fa5dc256f1e8fbb82c9932be76a41cf004019b6ab8",
+  "6ch-usbup+latching-mute+tempo-max+multiline-browser+macro": "bdbf3f186db7aa1bdebec813ddf85670483124e1bd78680a6daadcdc90857b45",
+  "6ch-usbup+latching-mute+boot-anim+multiline-browser+macro": "fc882c4e6d536d97b25433c352bd1b1d0678a780c361a7e09085a0d846c7aae7",
   "6ch-usbup+trig-preview+browser-scroll+trig-hold+arp": "57846cecac59a9526a638eb686c4e27dcc2127956b5ff58d9d11fd51180aad16",
   "6ch-usbup+trig-preview+browser-scroll+trig-hold+tempo-max": "97157c07d82c1c299703b9b9d3c54f38409479daf81fb547506413924f15cfba",
   "6ch-usbup+trig-preview+browser-scroll+trig-hold+boot-anim": "844e6dbf9ac7e80537cd2e3df1475d3002063544bc68b95e2c030d5556df1f81",
   "6ch-usbup+trig-preview+browser-scroll+trig-hold+multiline-browser": "81ae572c8d325bfb030bb508c60143f7a7af74ece88115f3ab7ab2e915ced46e",
+  "6ch-usbup+trig-preview+browser-scroll+trig-hold+macro": "de75f8b4f6d1308cd0cd1eb423337b5be654970054702f8ed956e22558720a2f",
   "6ch-usbup+trig-preview+browser-scroll+arp+tempo-max": "46197c6d6c44e7090d3bc4a239afc0ee39a01dda510a8e267ab3fbed5e18fd32",
   "6ch-usbup+trig-preview+browser-scroll+arp+boot-anim": "c6166bf6ba29b92c71c09ceae1579b17cb584bdabf2e5c329850941e4c02e552",
   "6ch-usbup+trig-preview+browser-scroll+arp+multiline-browser": "946af20055b529c6414628119682a5f5d708fa5b34dcb3db6c4296a9e3de171b",
+  "6ch-usbup+trig-preview+browser-scroll+arp+macro": "0ce2abb08516d9a913f61b9991dcfbdf035930b170f21825de2676033f946e06",
   "6ch-usbup+trig-preview+browser-scroll+tempo-max+boot-anim": "3bbdf70b426d5c436e24bce74b3a416a15f20c1133dfa777669d686eeb0b7ec7",
   "6ch-usbup+trig-preview+browser-scroll+tempo-max+multiline-browser": "43064bdbc8c2c3423a963be40a53a1a84c7701537bc0d2ff42cb52d74f4dd433",
+  "6ch-usbup+trig-preview+browser-scroll+tempo-max+macro": "eb942bb8d7265bc739ce247937bbdbef0c15e9ab5b19311df33729818ff0ad5d",
   "6ch-usbup+trig-preview+browser-scroll+boot-anim+multiline-browser": "7866de6189058d810cf7698ffd034e5becdc70f9ee3c028a51e17bd2ab9d7834",
+  "6ch-usbup+trig-preview+browser-scroll+boot-anim+macro": "2e98ef327396c2eeb0c49c24e8ffe6a95558e70a4b5f73194c574fff892cd854",
+  "6ch-usbup+trig-preview+browser-scroll+multiline-browser+macro": "985aabf474acb3127052e3496b8336c47134f49934964667afac10c85edadca5",
   "6ch-usbup+trig-preview+trig-hold+arp+tempo-max": "00343b4f4679cec8808d07ae33107d64b70342195006588536aaa5c36cb285d8",
   "6ch-usbup+trig-preview+trig-hold+arp+boot-anim": "88805079693d7452bcfacc3afe52e1b29b3013db3ca3a08714a3c249804acfbd",
   "6ch-usbup+trig-preview+trig-hold+arp+multiline-browser": "56db512ecedbaf3cc946b0818c4dc06ebe907e675d67149010aa6a3048dd337e",
+  "6ch-usbup+trig-preview+trig-hold+arp+macro": "eb2d0f3bef37c00ccc7d33d15e5c5d9c36fc1a6cd84c7f53c4810dd8c16dbe44",
   "6ch-usbup+trig-preview+trig-hold+tempo-max+boot-anim": "3eec136ecb8871b980f9e9845fd7eec65d697947f648f2bd2c9bbcd58ccaa2ff",
   "6ch-usbup+trig-preview+trig-hold+tempo-max+multiline-browser": "89186aa6d249bba24b51155a7308f2bde603fa0aeaaa08d6c04b5bdbe9b9a3ed",
+  "6ch-usbup+trig-preview+trig-hold+tempo-max+macro": "eb6b02bd6a54becbec67710ad803ab52a156a9ecfb1e4446c93b38db3f5292d0",
   "6ch-usbup+trig-preview+trig-hold+boot-anim+multiline-browser": "83f816ef8ae5a8683320fbdd9dc1aa0f48577c9e4164e727e7b6a58a88f03147",
+  "6ch-usbup+trig-preview+trig-hold+boot-anim+macro": "c959e9604c22b56b47e8dee28424c265f6a8eba270f5c1e15a6b6130ff9981ce",
+  "6ch-usbup+trig-preview+trig-hold+multiline-browser+macro": "d8072a0c065eec0d4020b276e9f48099379e2db356602041eabdf588cb3f6d7f",
   "6ch-usbup+trig-preview+arp+tempo-max+boot-anim": "09b3e1309c665bc63576f7c9b9023ef8bd673a8ebcb0e02bb9de62c3cd943715",
   "6ch-usbup+trig-preview+arp+tempo-max+multiline-browser": "efc7ec3a688186ffc5829091b9a230fda5a61fd8e596f954d31c49794473e4fe",
+  "6ch-usbup+trig-preview+arp+tempo-max+macro": "502950e7494c2e7fdcbf30cbba9761cbc6257502c1a839252492f6f7fbe97b9d",
   "6ch-usbup+trig-preview+arp+boot-anim+multiline-browser": "f151e4958668803bbe56e19368defbf7a434302be8b611b498425cefc7f421cf",
+  "6ch-usbup+trig-preview+arp+boot-anim+macro": "d917ea1376d2940d5ce02cf34c5ee61fe4e910f5d09dee511dcfec984d1fbad5",
+  "6ch-usbup+trig-preview+arp+multiline-browser+macro": "3da1658750ad763dd3c8cfca70138fa1a05bc20c50250cb6e466787aa4e13fc2",
   "6ch-usbup+trig-preview+tempo-max+boot-anim+multiline-browser": "bdf659f8ba16298e4aa940c6e78b6840c9cf1b9f671019c92c90ba24adc63699",
+  "6ch-usbup+trig-preview+tempo-max+boot-anim+macro": "0feab0d360cebf09e9e67dcdedc11057bfcce2b490ab37c4aab9eeff06210716",
+  "6ch-usbup+trig-preview+tempo-max+multiline-browser+macro": "f91aa583c9c2f4b44dafa7971641bf1109b22b3652a68213a278facc4c3ae6fb",
+  "6ch-usbup+trig-preview+boot-anim+multiline-browser+macro": "880f1fa905de97847c143087ee116d896958797d73c4f654d4f1908f5786b557",
   "6ch-usbup+browser-scroll+trig-hold+arp+tempo-max": "ebee121720ef410b61c468881e192fcbfd7252db4bc29e45510d5780dc21fca7",
   "6ch-usbup+browser-scroll+trig-hold+arp+boot-anim": "ea6598ed23739841ece7bdd013f8d5825bbe22228a7b995637e352d20ecd89f9",
   "6ch-usbup+browser-scroll+trig-hold+arp+multiline-browser": "b75466d9cc1c8319c989c41540b2ab1c581aa57c4320af0911b676bddcfd16b1",
+  "6ch-usbup+browser-scroll+trig-hold+arp+macro": "dea713be35a88a61fe3b43e6217652ecb72a13d0a589a8b095496817c4358ac5",
   "6ch-usbup+browser-scroll+trig-hold+tempo-max+boot-anim": "e67ab104e975736eb69e47e002a529acb3f904bb2438123818e4ee5aba85c423",
   "6ch-usbup+browser-scroll+trig-hold+tempo-max+multiline-browser": "060cec650a22615ea7c2557b11bb9716234ced626d52725b9b0b1908d5bee53c",
+  "6ch-usbup+browser-scroll+trig-hold+tempo-max+macro": "37a30ed76e62436f165e0df91cef2b274acff178879b1af6c9fff88576c06bf9",
   "6ch-usbup+browser-scroll+trig-hold+boot-anim+multiline-browser": "bd84fd42f3fe97fac274550c84ddf608ed144eaa97b533d9f8634769fd7f8333",
+  "6ch-usbup+browser-scroll+trig-hold+boot-anim+macro": "40fdbf37925dafa52dcbfb1ff585f814da95e3e21bd59b0ce4f53cdbb9c7cf07",
+  "6ch-usbup+browser-scroll+trig-hold+multiline-browser+macro": "5e32edefc65cf3130b9620d303eaaf983b1b21d162842861b27515b74c5af823",
   "6ch-usbup+browser-scroll+arp+tempo-max+boot-anim": "fec4c6e8bd1779f989cec0f7aca5be5a01be222408d680dd8012d2299374c1c7",
   "6ch-usbup+browser-scroll+arp+tempo-max+multiline-browser": "8e83601a9fadd224cc07f92187db9014092d9e9b5d557a8d0ad71007ec8f1764",
+  "6ch-usbup+browser-scroll+arp+tempo-max+macro": "1aecb553cc3c85fae9abf913407c8e0bed544c78f265b0977127697bd6f61dfb",
   "6ch-usbup+browser-scroll+arp+boot-anim+multiline-browser": "b649151a1de5ebc136fef5560af93c27f8fe56cf33263e9cb15156e90fb91796",
+  "6ch-usbup+browser-scroll+arp+boot-anim+macro": "1546a2d8f6da73393365ebb136c76c87d4cf1141fc6a4ef462513781b51f3b19",
+  "6ch-usbup+browser-scroll+arp+multiline-browser+macro": "d84b6a0530743d973658bcbc4796b5b7ba74b702c6b82c9aaa99741c49b96d83",
   "6ch-usbup+browser-scroll+tempo-max+boot-anim+multiline-browser": "abbbe84bd8f21ffd5ac4793a32ac655618e41e73ba283505c9029a2b4cfa57a3",
+  "6ch-usbup+browser-scroll+tempo-max+boot-anim+macro": "a4f39b8328c696d99bba23e121ec0ee1f4f70baf02edea7961d8ea2287f6ca5e",
+  "6ch-usbup+browser-scroll+tempo-max+multiline-browser+macro": "05cb8376313a69da196d96a67acddde955ff5b948918d20c576ae50bca0224a5",
+  "6ch-usbup+browser-scroll+boot-anim+multiline-browser+macro": "499d0d40f7e0abe2c02bd3c264f3f7ece69969400821c515f1cbff6fd2fd29d5",
   "6ch-usbup+trig-hold+arp+tempo-max+boot-anim": "e6b96c8f5d59f4f7abd151894763b8e01a5555b9c5003c4de30b844acd2a0ca6",
   "6ch-usbup+trig-hold+arp+tempo-max+multiline-browser": "40360b9acae515260f8c3e633fb40131578ab09073292b354b4b3f7b0a7c20a7",
+  "6ch-usbup+trig-hold+arp+tempo-max+macro": "49c5892939d8bd578be9265830dde252b7238fc8b50343d4a62607604cbeb2bd",
   "6ch-usbup+trig-hold+arp+boot-anim+multiline-browser": "fda5a8e61c43c56b73c805b00ca68fa3803a2abf5211e1567e3c94b25d630b74",
+  "6ch-usbup+trig-hold+arp+boot-anim+macro": "75ae582b02cd8c11dd26814fe1054e6ab741709e86bf056dc144bcb6105573b2",
+  "6ch-usbup+trig-hold+arp+multiline-browser+macro": "7c6aa6ab49285cb20fd128af1e357df1981017fc9fcd600764c8da6dd13a91be",
   "6ch-usbup+trig-hold+tempo-max+boot-anim+multiline-browser": "c27aaf7fd6142f640c858b7df5573742a78dfb7d9dddbb708ddd931260022940",
+  "6ch-usbup+trig-hold+tempo-max+boot-anim+macro": "0139ab4e5ec4596bd4e1df7666a4762ceb78b30c1015bbf4619007666e441de5",
+  "6ch-usbup+trig-hold+tempo-max+multiline-browser+macro": "c1a9a08f64dde039639f6d5ff8e8d3943e63e4b203cb109309cbf76f755502a6",
+  "6ch-usbup+trig-hold+boot-anim+multiline-browser+macro": "b3703a325919abdf613fd93ba4993a4f5c05913f89a9e06b157b1bd64d321537",
   "6ch-usbup+arp+tempo-max+boot-anim+multiline-browser": "52742186ef3cd946f6009914e8a1aebc846148800fb8f186e905b600e73a4005",
+  "6ch-usbup+arp+tempo-max+boot-anim+macro": "7f0f810810c2c2d25fe71fb2a2bbd479f4aa8417c862cbee194a55bd4c356951",
+  "6ch-usbup+arp+tempo-max+multiline-browser+macro": "64854b9b77f75a6303b9c8864c3212c7b5dd4cccc4cfdf24ceeed304768849bf",
+  "6ch-usbup+arp+boot-anim+multiline-browser+macro": "f73e47cc692a5327705934854aa21f129d725ef4bbf55f1f48abf8bc98d06599",
+  "6ch-usbup+tempo-max+boot-anim+multiline-browser+macro": "ae16360ae0f2e1ec65973e77fc94f44ee7d25335426d3641055ee1050da07dac",
   "model-tg+trig-hold+arp+tempo-max+boot-anim": "76a66186000eb98abaa495503e304ba6534991817e00557f5dcb3d9a050b7941",
   "model-tg+trig-hold+arp+tempo-max+multiline-browser": "408dc42186b921aafd2c584b384605f367f430b09e24fde42e0ee5db4b5a6a41",
+  "model-tg-st+trig-hold+arp+tempo-max+macro-tg": "23b502b7856e4d3b9545d8f7f1b95800797f2dc32714642d2935cbbdcb1230c6",
   "model-tg+trig-hold+arp+boot-anim+multiline-browser": "c3726d9d92d4b3a46fc3390691e30a80db7081c2c911be77ee7e6edbdf322db9",
+  "model-tg-st+trig-hold+arp+boot-anim+macro-tg": "adedc716a97226265b64a0ff6783113920461eae41b62c502d852100359a3ae3",
+  "model-tg-st+trig-hold+arp+multiline-browser+macro-tg": "c96bd35c647a9e87c2f0de9ced5fcfaef84a59fda64cb210c2d44c3348249c33",
   "model-tg+trig-hold+tempo-max+boot-anim+multiline-browser": "b7ee7b4238ff9483a96c815851c272cc8e7e7feefdc45a1c145ada45da82fc2b",
+  "model-tg-st+trig-hold+tempo-max+boot-anim+macro-tg": "c77c157b6358eeb98f9583895e4c573b718c72f7650f05deaf3682fa7e2d33eb",
+  "model-tg-st+trig-hold+tempo-max+multiline-browser+macro-tg": "8250099b05040dffa17f6606362b79219d45134c9b722b3554b374d41dc7630a",
+  "model-tg-st+trig-hold+boot-anim+multiline-browser+macro-tg": "ddcd2fb19b5dadf5daf0f430f27fb748528b1d4bec6558d60df7158702cd37fd",
   "model-tg+arp+tempo-max+boot-anim+multiline-browser": "f7970bcef104f8a4aa45c1f6b8da67f262ec3e57d61befa69443e11b8712924c",
+  "model-tg-st+arp+tempo-max+boot-anim+macro-tg": "167bab9cdd2e12a4176921c98ecaada571d3c715ffbaa997b399d45e20bb0736",
+  "model-tg-st+arp+tempo-max+multiline-browser+macro-tg": "e88751cb2350d89ecc3dbb88bd03645f9bf596fb14c19282d26b03306e9a4cb0",
+  "model-tg-st+arp+boot-anim+multiline-browser+macro-tg": "59ef1ae035dde8531bec073f069497c40147e26200ddcfb37691b6d5a2fdb721",
+  "model-tg-st+tempo-max+boot-anim+multiline-browser+macro-tg": "4c050651e5c88ab2faa7ec5c06fe13e9b2e9a9ec8b8d58c5b9671a0c773df2de",
   "latching-mute+trig-preview+browser-scroll+trig-hold+arp": "0e88521dc64349ccd35ba9f4be7f649f6533d477506af6f599a7e92a3e898322",
   "latching-mute+trig-preview+browser-scroll+trig-hold+tempo-max": "c3a02287e0ed0636ed581198f161a2d1d2c985c2b426080a82d6a70376252a62",
   "latching-mute+trig-preview+browser-scroll+trig-hold+boot-anim": "f2884f20fa87c64159a6e0c62516acdc97547f0e26ac6cfc4043156925e2bfb0",
   "latching-mute+trig-preview+browser-scroll+trig-hold+multiline-browser": "92d6ef0ea929010c4568e82e611667b21c93383feb57e8323a3c75f5010a9a31",
+  "latching-mute+trig-preview+browser-scroll+trig-hold+macro": "f23a8ae0b2f52804406bfccf25cc1026aeb7c131772d1584e762c427a501886d",
   "latching-mute+trig-preview+browser-scroll+arp+tempo-max": "5b10ed34fbd82e2574697105bd9a3f0c2d25d77961e45c63514514ebeb36c9b1",
   "latching-mute+trig-preview+browser-scroll+arp+boot-anim": "09147501429a6797de8db74b1aa99513b11bab8929d8db113d9e4710f9d4d369",
   "latching-mute+trig-preview+browser-scroll+arp+multiline-browser": "d68e2b96294ce0607991c43bea70eba76c1d3105ba35124df836dc505f6af96d",
+  "latching-mute+trig-preview+browser-scroll+arp+macro": "c21815f838ec8699324fc3467595326009bf019e19510978c9b9386f0359c154",
   "latching-mute+trig-preview+browser-scroll+tempo-max+boot-anim": "16126a7f75f7ff82e49af1974fccd314be747dfe621c6ea6b392ede07dedfac5",
   "latching-mute+trig-preview+browser-scroll+tempo-max+multiline-browser": "ad4f3114fc29b787e6dc88000da634e1d6b24c5a9ab3341b53b5ec1f80f61f47",
+  "latching-mute+trig-preview+browser-scroll+tempo-max+macro": "8ad9d60df0ba4ba323864576fae66b5741eb5198c464097599d2258974a7a2a3",
   "latching-mute+trig-preview+browser-scroll+boot-anim+multiline-browser": "f883c72c73d12114c9f058eed0872a2cea7a970b6bf2bf388c5b4ae714340b86",
+  "latching-mute+trig-preview+browser-scroll+boot-anim+macro": "9ac7023cb1060e5cb8a060f36c96d6d85939a182c390bef01c5ea305167a61e0",
+  "latching-mute+trig-preview+browser-scroll+multiline-browser+macro": "3b58167cc82e0cd42a7c7571b6856649bf8fa3977f3f4da8dfb447a0f7d27481",
   "latching-mute+trig-preview+trig-hold+arp+tempo-max": "c1259a7b1c4827b5c446132bbeca8dee9a1f42f1b0e5af1f90797610fb6e39eb",
   "latching-mute+trig-preview+trig-hold+arp+boot-anim": "7f45b0dc2847967e2e25a8c2ecf26ee10b8946d5587bd785eaa45fa21ad154d1",
   "latching-mute+trig-preview+trig-hold+arp+multiline-browser": "8112327380d49483a1a67ad7b87af1a8592ea230f3ccdfd47bddc6c8de7a38be",
+  "latching-mute+trig-preview+trig-hold+arp+macro": "11d4cfec3a806be3084ab4a07eddaf7bfcc2b2c48d69756ed4f987bff2f3bc26",
   "latching-mute+trig-preview+trig-hold+tempo-max+boot-anim": "b3da5b644d95589f0f64c3eabbdfbbd0a2f10eb52590464587bcbf2335d90953",
   "latching-mute+trig-preview+trig-hold+tempo-max+multiline-browser": "c3040f41c02db0052905660d0d3339a102d76834daa0a14f2bc6faf7e7993c09",
+  "latching-mute+trig-preview+trig-hold+tempo-max+macro": "3377f72a70e53fc029cf9d913944ae0f08c842e857ae05e71eeecaf3e5195e8e",
   "latching-mute+trig-preview+trig-hold+boot-anim+multiline-browser": "6ce907f9d451849a04926fd96b45e2486b8216607be446c8b202e1d2e40e9255",
+  "latching-mute+trig-preview+trig-hold+boot-anim+macro": "a858be808930a663c1b0f19c1bf2ea4d90c27071c91c1065ea9ec08ac653be43",
+  "latching-mute+trig-preview+trig-hold+multiline-browser+macro": "d763b877929c191dbfdd685b4434a7c8ea8298e7aad89a028edd7584ddb80927",
   "latching-mute+trig-preview+arp+tempo-max+boot-anim": "ccb9d6098265c8849e0522c88764591d0ffb99cb352a29f9862cb6c412ac4263",
   "latching-mute+trig-preview+arp+tempo-max+multiline-browser": "81f3ed0f23165191d17ef8ce84b99e5788edaec5255ffc9b6ff37918e883aa8b",
+  "latching-mute+trig-preview+arp+tempo-max+macro": "41ab5da2e4d9c20b7ca409bdc1b05e2aa8370fe54ae829c8c8e4481872593f5a",
   "latching-mute+trig-preview+arp+boot-anim+multiline-browser": "609f0bd4b86fcfa22170028fd4c035d512c2b3bbacfd4f1ecb85af69b2a95282",
+  "latching-mute+trig-preview+arp+boot-anim+macro": "082f1df81baabfa2717e96ae483ea5d4f9e0b698edc4bc9330566b8df2076c09",
+  "latching-mute+trig-preview+arp+multiline-browser+macro": "cdcf8c7b68869ffb3050bb6a9a50712c4ffbb1989e872a8e6511dd477959f6dd",
   "latching-mute+trig-preview+tempo-max+boot-anim+multiline-browser": "df8957ed01972bf106db2abeae43ddf6957719819a22fc6db781ad914b946d6e",
+  "latching-mute+trig-preview+tempo-max+boot-anim+macro": "255a258046eb91876ffd9743e6fdd7198c9077ef28ae08fb652b5755dd6370ac",
+  "latching-mute+trig-preview+tempo-max+multiline-browser+macro": "d7b3417106085ab94cf98d988a12cdbc53ebb12462719d50ef5c77a9d13aba6d",
+  "latching-mute+trig-preview+boot-anim+multiline-browser+macro": "7e14ccda08a943a9ec4e39df3e2d67a6dca1ca5628d454809a714824d4ace8cc",
   "latching-mute+browser-scroll+trig-hold+arp+tempo-max": "cda1366d7af02463e604d5492ceb4f66a5b4449eb479629637b171796685fb9b",
   "latching-mute+browser-scroll+trig-hold+arp+boot-anim": "0dfb87fa21344df4e9d11519ad978727a8edb6d5ad0e208f3f18fe82fb2b8a0f",
   "latching-mute+browser-scroll+trig-hold+arp+multiline-browser": "6f61443dd9efc2539255f9304ba5e1eb778c93e619b89c9fab09ba39353d1b90",
+  "latching-mute+browser-scroll+trig-hold+arp+macro": "e8c6f2ac8f8d5b43c8f72df08ca90392be369febf72057092be6ba520e889f0b",
   "latching-mute+browser-scroll+trig-hold+tempo-max+boot-anim": "7fa5790b69af2bcdfcfb876e313de26fd57eac988659606fed907e3a971c4561",
   "latching-mute+browser-scroll+trig-hold+tempo-max+multiline-browser": "9307ba426e7f1971c37dafa68f2f5d510135af349f008ba5c8708bcd6509eda0",
+  "latching-mute+browser-scroll+trig-hold+tempo-max+macro": "3f62789e93ca8804e9c652316706e0837a8971175c38167f0c308261cc3d4c2e",
   "latching-mute+browser-scroll+trig-hold+boot-anim+multiline-browser": "1416f58633aae1955150011327751574954d3728f7f4fb874bb0ed40d7ef557c",
+  "latching-mute+browser-scroll+trig-hold+boot-anim+macro": "b65c5f8f80a97706539ef692f9447a685174d1e124a949b533f42c5c1087c44f",
+  "latching-mute+browser-scroll+trig-hold+multiline-browser+macro": "1eac027123b2a1baa2ef85f30d7b26f3aea1b39372263d2edfa400582f7362c6",
   "latching-mute+browser-scroll+arp+tempo-max+boot-anim": "f7d79b6200a4a5fcba5424bf03fe29710ea6750a09a6a2e214d18ffffe3e128e",
   "latching-mute+browser-scroll+arp+tempo-max+multiline-browser": "46e79c35062245d50a755d8e5307447f06aaec5ff35c21560ae740775bbacf02",
+  "latching-mute+browser-scroll+arp+tempo-max+macro": "ad55fb5f50b5ddc441a3edc2d90d7f95b60d5ec78ccbd0d184f838ebc967e792",
   "latching-mute+browser-scroll+arp+boot-anim+multiline-browser": "c25f5dffb20ba1d21a5335b28aca16cc9f94421f3d733c076933369dc69b956d",
+  "latching-mute+browser-scroll+arp+boot-anim+macro": "98d1f240c850799ff0d85db859d532eac1419cf4f0367abd70ee7a7671fe55e1",
+  "latching-mute+browser-scroll+arp+multiline-browser+macro": "a43e59e3a4fd47739910f65a269e09607f2f7f007fe7e7e358a8c3cfc5af3c4e",
   "latching-mute+browser-scroll+tempo-max+boot-anim+multiline-browser": "8604a35bd419d01d93b6c47bf9f797da4c62b90f2c64ccda20d19d2f6f75d9ec",
+  "latching-mute+browser-scroll+tempo-max+boot-anim+macro": "2de8b167342506874df46fad90ae83bcbafc12d890aa17b5dcbc0a78b422e135",
+  "latching-mute+browser-scroll+tempo-max+multiline-browser+macro": "d46d1e0dbee392eec5b862328c5754b55f2691e560170770bada313a07ecc49c",
+  "latching-mute+browser-scroll+boot-anim+multiline-browser+macro": "fa772da08efccb38fbbbcbad16b434e194988f479511c206362832e1ba5c9ef8",
   "latching-mute+trig-hold+arp+tempo-max+boot-anim": "ad1cf8bcf9699b677de3fc2aab675f3247fa24cffa896e916a5d24f4156c3b3a",
   "latching-mute+trig-hold+arp+tempo-max+multiline-browser": "5619a48936d27f79c9ecd078d1bb0d1ae8d74a009d36c2b0098c294e1917a9c6",
+  "latching-mute+trig-hold+arp+tempo-max+macro": "7a62433fae56de18bc5eeceff2f30530997ca0f57e7c9ca1af43f745c0ac859f",
   "latching-mute+trig-hold+arp+boot-anim+multiline-browser": "edbf351f0ba73f2e5df35d42c3a67ee000539f19f5b307cc8928e957967c00ed",
+  "latching-mute+trig-hold+arp+boot-anim+macro": "a69735b9994d1b6ad825e3ccbe58d588bdbbc7a4af06f98961170e3cbfd8253c",
+  "latching-mute+trig-hold+arp+multiline-browser+macro": "f9f1eb3a5be93b618d08088cc7195dbd20f64345ccec83dbdeca4e84a3add28b",
   "latching-mute+trig-hold+tempo-max+boot-anim+multiline-browser": "97bdade9d85b783a78c5c79b7bf426bd0bce28e2866901171737766f1de75f6f",
+  "latching-mute+trig-hold+tempo-max+boot-anim+macro": "68e04d2d4fa461374184944228e4d98c9fb10e1e505a240be297da982b36866c",
+  "latching-mute+trig-hold+tempo-max+multiline-browser+macro": "5ec6cc78c0bcfa8b18a74c43abcb96e831305e318008a037ef47bafd45c20424",
+  "latching-mute+trig-hold+boot-anim+multiline-browser+macro": "31adcce2548c933cb83340cee8a422969053e603986e7d1a8c41d22cda9b4fc6",
   "latching-mute+arp+tempo-max+boot-anim+multiline-browser": "a80968c0c120e25a04ac3685a38386d2a6cd430326e2eb55bf5c16f0403526a9",
+  "latching-mute+arp+tempo-max+boot-anim+macro": "d0938f3e8524bd474c69e639f372c9d5510c0df797b37109904c198094c3d4b6",
+  "latching-mute+arp+tempo-max+multiline-browser+macro": "33f2d07b97ee7bcb48a62cc4ef33b7ebbf784624157bbb19c93f2a723528e8b0",
+  "latching-mute+arp+boot-anim+multiline-browser+macro": "eeacbb2af36695e9c921df762017e17b391abe688afc487011ba32155f2c930d",
+  "latching-mute+tempo-max+boot-anim+multiline-browser+macro": "b1d64b4a42f2902dc47565cd5c656cdac686d355347b9ad0b178c8c96abfdcb0",
   "trig-preview+browser-scroll+trig-hold+arp+tempo-max": "67161ce549f190ccc9a1e838bc94d4a00bbead10cf1caa4ebf20b7104fd4c49a",
   "trig-preview+browser-scroll+trig-hold+arp+boot-anim": "3110630b7b5538e976f81a43ce744abb149b09fe43b7320e2c98d47cfcfa9dd2",
   "trig-preview+browser-scroll+trig-hold+arp+multiline-browser": "bec1080da4ca022830094d19f4d98fa1870fd20ed1a8cca0330f2e20162d6abf",
+  "trig-preview+browser-scroll+trig-hold+arp+macro": "4ee748309cc26999feb95c5edd1541fc237aa63e6eced02f3eb0a16e7d128515",
   "trig-preview+browser-scroll+trig-hold+tempo-max+boot-anim": "6484b548d1ee30c116de0f19a07ef61e2639f9e5fa71511aa0ad185747b6257a",
   "trig-preview+browser-scroll+trig-hold+tempo-max+multiline-browser": "48f97683c06eb143947c4f458eb2606a2b7c7d8de72a6aa8d2fdafbca8f18482",
+  "trig-preview+browser-scroll+trig-hold+tempo-max+macro": "60c5f0b1e46780a09bb3d2c1fa5c230293a135b7c85ca7e2b2573c6cfd7ba993",
   "trig-preview+browser-scroll+trig-hold+boot-anim+multiline-browser": "c17ca246856ce1513c8cc239a5ac08137bedcdba2680225e7b3e1c511cdda9d2",
+  "trig-preview+browser-scroll+trig-hold+boot-anim+macro": "fd955ba5a3c8f9651e2ef24f13cf9a17b89d5a23fb99030a2b91cdb1f1188cff",
+  "trig-preview+browser-scroll+trig-hold+multiline-browser+macro": "3c7cba88618ab68b9d804824ab31005d65a7c8fa8af54caba79ccbce5f6fc5a9",
   "trig-preview+browser-scroll+arp+tempo-max+boot-anim": "980725668bd12d308bd6e8b6e12c63de68753880d0821a024e362014ad37e5de",
   "trig-preview+browser-scroll+arp+tempo-max+multiline-browser": "735ba1c1a3d305e989625ded0c5ee1f141887a43777e750d6443a55a6fcbb4a4",
+  "trig-preview+browser-scroll+arp+tempo-max+macro": "4f86750993fac68df3c9c9baab1236dbe8d33422497d1834be212c188d2b2134",
   "trig-preview+browser-scroll+arp+boot-anim+multiline-browser": "6b74df2e06275725d26d5ebd4feeda43a4b14fb90985e33e4767aca287a33ac6",
+  "trig-preview+browser-scroll+arp+boot-anim+macro": "8c72a957a06b3f725ad2c90c0919eedc051558dc0739aaa4217641af2361745e",
+  "trig-preview+browser-scroll+arp+multiline-browser+macro": "c638da4231f9b7cdb7c3893faae25490c8cac724ded8b8998b55472b1d1488f0",
   "trig-preview+browser-scroll+tempo-max+boot-anim+multiline-browser": "946bbbe3252da1ac5b66acad9aa3e58f0f8891fb263df09c2d42c0533e191c4b",
+  "trig-preview+browser-scroll+tempo-max+boot-anim+macro": "54a2d4643a463d77d5a8a99af381933f05b1af97f66662b423e39cccef4505a9",
+  "trig-preview+browser-scroll+tempo-max+multiline-browser+macro": "b4fda9e9d8942aa043252765c3014a831d0aecb50ace3ddb2b165a34ce2c8e04",
+  "trig-preview+browser-scroll+boot-anim+multiline-browser+macro": "c2cb9df367474d8702f0905dd6af974189c4bccf7bba6126816395514eaff104",
   "trig-preview+trig-hold+arp+tempo-max+boot-anim": "c2030f0d22b0da6e24fd651b1b1c23a1dd6c1a0d4423a96402bd8a8f155714e2",
   "trig-preview+trig-hold+arp+tempo-max+multiline-browser": "726c1ceb6f9f6c5a2a7f880d6653313c645a34a7b92299239b1f1ea1d06d49fd",
+  "trig-preview+trig-hold+arp+tempo-max+macro": "841ae9ac67b6c6196c843aa99b71672806fbe9a479a9b5b92e3237c27d352f63",
   "trig-preview+trig-hold+arp+boot-anim+multiline-browser": "25d5966884b79e5f2dd1dfb8a84a4ac5edd48bf463fe14524600c91ee2aeb032",
+  "trig-preview+trig-hold+arp+boot-anim+macro": "d886562ae2c3abbd372cc191a9e0d4a5b077fb01c8103a18330baf85f8917056",
+  "trig-preview+trig-hold+arp+multiline-browser+macro": "6f10a55d1f42cc186307ee3d80b4e47b83836584dc501f99f3b2aaa8f8fdf9de",
   "trig-preview+trig-hold+tempo-max+boot-anim+multiline-browser": "b519c3a19276b10da584860488cc7657175b54dc07fa35c0a7a3416ea9bfcb46",
+  "trig-preview+trig-hold+tempo-max+boot-anim+macro": "26389786cf9887b2bb6ae50bc77c8408444fb52794d2118bcb8a34837d00aa00",
+  "trig-preview+trig-hold+tempo-max+multiline-browser+macro": "44a25a8bc556dd0c0088689db781e80454f1315201952db0a42dd123ae0dc5d7",
+  "trig-preview+trig-hold+boot-anim+multiline-browser+macro": "1a476c3ba685feefdb6e509e35629f8c71a5b8adb5c9d5b4ef6d2c7d598cfb06",
   "trig-preview+arp+tempo-max+boot-anim+multiline-browser": "a823db8a91a70b2dee85be7d358437d9f9701e6c351851c76699c57f9b0640f0",
+  "trig-preview+arp+tempo-max+boot-anim+macro": "565f725cba458f562da6c348f73cd751555b032ee447077f2d73a5a562eea25e",
+  "trig-preview+arp+tempo-max+multiline-browser+macro": "2d6e3b18df78c1e8b3465a21381f04a4c6ceca51c54a6e2d1b3fc53b2e5f75b7",
+  "trig-preview+arp+boot-anim+multiline-browser+macro": "3d1fbf7c5ea426b687ffe38594981cfed72fa62dfe061a508e71b9ce52c03f7a",
+  "trig-preview+tempo-max+boot-anim+multiline-browser+macro": "f272f3ffb7e13713e612920dcb009f5679ca11eaa82d4625f4382453ee42e72d",
   "browser-scroll+trig-hold+arp+tempo-max+boot-anim": "e343027365034b010e30502431b35b70982b7f8fc24c6bee029a8cb1e9e989ca",
   "browser-scroll+trig-hold+arp+tempo-max+multiline-browser": "cf7f6b0da75374acc10773ae580b15d37de8ab7ced6628706f80132f8eb80919",
+  "browser-scroll+trig-hold+arp+tempo-max+macro": "4c08903919f58780ed1908b3b5ef3f5d456373891654edf18de3615b4e9f2e66",
   "browser-scroll+trig-hold+arp+boot-anim+multiline-browser": "21fa95fe62f1f8b397c860f5dcc8d99bd7bf89b6a9451ef1382377eba0bf70ff",
+  "browser-scroll+trig-hold+arp+boot-anim+macro": "b90b6ee27f2e571507d2757612529e42f6fe2df2ec7009a16314c3f746a3bb13",
+  "browser-scroll+trig-hold+arp+multiline-browser+macro": "1dcdd4017419735b18d0081f883f61ae7e86bd7576d705ac92d455125ed631ac",
   "browser-scroll+trig-hold+tempo-max+boot-anim+multiline-browser": "8b44d6f450b545af0acc3f6695aab7420a6fc11fc4dba2748f5fde19f23961a1",
+  "browser-scroll+trig-hold+tempo-max+boot-anim+macro": "74557c44c67c7bbb6590cdc3cfe17fc60b2ef02a68325136a0452382bcdb6789",
+  "browser-scroll+trig-hold+tempo-max+multiline-browser+macro": "25d027b88fb183b5360cccd8a235d158bf644f97a7619395a6cc113ea5e85f52",
+  "browser-scroll+trig-hold+boot-anim+multiline-browser+macro": "c96cadcd195090d6213ff97f829323ff894791928d626d5a45f62d765aaaa58b",
   "browser-scroll+arp+tempo-max+boot-anim+multiline-browser": "f64465539ebf72b52a3d9f39c09307cba3f2b383c76fb1ceadf487a0b4988630",
+  "browser-scroll+arp+tempo-max+boot-anim+macro": "eb310f5fcd16daa0085ac083d9d1d46ff389023d980ba1dee4348ddc7f7cd7ab",
+  "browser-scroll+arp+tempo-max+multiline-browser+macro": "e2d7c1e51f7a79de928abd3ac855c1d4b5ab1dbf0c067d8eaa668a33da5fa118",
+  "browser-scroll+arp+boot-anim+multiline-browser+macro": "e9d0963c99d3807d54327876ef5fe7218eacc6401a9872e8010acf774010abd2",
+  "browser-scroll+tempo-max+boot-anim+multiline-browser+macro": "ca6cd98d1fb35f6dc3091c948ee9a6a8ec795e5e373393e2cdea05eda0e8f08d",
   "trig-hold+arp+tempo-max+boot-anim+multiline-browser": "6e9ecc24e28c21ab6fb8f1cd095e377fa74f7a6b16b6ada90aeaec5a0e18d63d",
+  "trig-hold+arp+tempo-max+boot-anim+macro": "6b1282af51e688810a5e1282db0734e8ad12e0b5b358920e431616286840edaa",
+  "trig-hold+arp+tempo-max+multiline-browser+macro": "0ed701d2b0e4ffeb17324e069889c77bd785c93709097d77da3eeba75a71ec39",
+  "trig-hold+arp+boot-anim+multiline-browser+macro": "fac99a0e8417e3914b8dc2e71fc113de3b2fa1bb1728952a6a318f18819323e5",
+  "trig-hold+tempo-max+boot-anim+multiline-browser+macro": "53400745bfa8b8da189961c7a392ae2c0c44a63178e9a8d9115c5f6d4b8e41bd",
+  "arp+tempo-max+boot-anim+multiline-browser+macro": "66c3e4d386695a601393a16c8863850f2859d0e8f70d3240f2ca25686ce55497",
   "6ch-usbup+model-tg+trig-hold+arp+tempo-max+boot-anim": "ddead139c1b27844fa20842fc271726f756b46d03c9f934fc8999929fa0ce11f",
   "6ch-usbup+model-tg+trig-hold+arp+tempo-max+multiline-browser": "f179617d82147c6e06af4aa332727de8a44f5aa234bc412edb833749a7dcdeae",
+  "6ch-usbup+model-tg-st+trig-hold+arp+tempo-max+macro-tg": "d0f6c5405b15d0aced72414eacd324c5136dc191efab71bf7238d44d95bb5044",
   "6ch-usbup+model-tg+trig-hold+arp+boot-anim+multiline-browser": "65a00fd9a8587398307d32d3e316640a8e5fb9c249c48f59cfa5e52e13aa13aa",
+  "6ch-usbup+model-tg-st+trig-hold+arp+boot-anim+macro-tg": "288b78f6799dc75a21e7b864139951f027a65bfafcf4edc8447acd7d837582fe",
+  "6ch-usbup+model-tg-st+trig-hold+arp+multiline-browser+macro-tg": "24d8a4beab1acf96385900441f578cf22a4acb02b2bbda8bd991079309ed2f51",
   "6ch-usbup+model-tg+trig-hold+tempo-max+boot-anim+multiline-browser": "f8d0b07cacdeba921ef2255bdbd5fd3d12308b942971236e466ee4db06a64f08",
+  "6ch-usbup+model-tg-st+trig-hold+tempo-max+boot-anim+macro-tg": "396be6f4810383c0e17208ca9fefb7dc8b3e43310d4482c05da812002d9ca226",
+  "6ch-usbup+model-tg-st+trig-hold+tempo-max+multiline-browser+macro-tg": "6f768e0b785802c82f59abfb99e4bf1a01c5d515860f3a58daf3a5c66a368082",
+  "6ch-usbup+model-tg-st+trig-hold+boot-anim+multiline-browser+macro-tg": "9dee4e74e10e9dca087b1cb8d8be5aecea08a0f4778115c27e3b818453e3a9d5",
   "6ch-usbup+model-tg+arp+tempo-max+boot-anim+multiline-browser": "e7d2d0e4f384c48f13eeeed6922dd00273650af6c2459507635bea5dc2bd6153",
+  "6ch-usbup+model-tg-st+arp+tempo-max+boot-anim+macro-tg": "964619abd4f71eb293ffb3cc5dd93c4e7013e5ffde68787b51f54073b745b23c",
+  "6ch-usbup+model-tg-st+arp+tempo-max+multiline-browser+macro-tg": "3594d6fb6fab9c2b91483abc8030f1f70cb8b5968d0db7ffd4d4cb7601dc6417",
+  "6ch-usbup+model-tg-st+arp+boot-anim+multiline-browser+macro-tg": "f909167feabb8588526e1db879ba11f303d2eea90acfca6afdbfc63b22fa4c47",
+  "6ch-usbup+model-tg-st+tempo-max+boot-anim+multiline-browser+macro-tg": "ca7b35a17b286fc65e2191c0c950f09066ac16fa72b60316a2b216d25bcefe01",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp": "ef3b1185d85656b706d3aa0e8732e74607f34417d2f539985d9a806cff06d240",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+tempo-max": "a047bc9a0a4e9e48dd6c1994a0aeacf7b237143ef6a83d08aed5bac28be0e2ce",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+boot-anim": "5f435ab5f80e09bb47fd8702f5dab6a9fccd96b38c8013bf4bc03b26f7f65759",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+multiline-browser": "4748bff3b87f659635b0c2ce4d731a2cdcc4bafdb05fe2f6ff826b559d5be2c8",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+macro": "2cc53bcc2466179058c2afa482d22c8286bcc5ca822ab52acb369abc34901561",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+arp+tempo-max": "ab0c34b81da8be1b1957626f1e782814ae7144fa81822bc4d76d674a0b07e442",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+arp+boot-anim": "c3a470afc301c57aaa619b5ccdd9ce5dd5bffc7025b3479230f7b10dbc95b2fc",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+arp+multiline-browser": "5560462d0e0db0a4fac95716e6fcf5fe806d29a5a874759b449593da388783ec",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+arp+macro": "cc6167354c553e474245dfe32c63d3d5fc67d4f587f9f3bbbed4bc7163b7b32e",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+tempo-max+boot-anim": "8177cc527bda0dd1e97b9a44e1af741fd399d224223bdd02780ab325b6ef7057",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+tempo-max+multiline-browser": "359e1dacc0f68ca9a693fd0aaed8cc7b20c843b487e76d62834222d279c29f81",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+tempo-max+macro": "33e97b8d8e7a83db18fe547bda1adc248289df93fb6e6eb6c2d59cc79e6be630",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+boot-anim+multiline-browser": "1a8e2095c18eeb5c1967662e8a6caab069acfc92292af0e836477b74f027712f",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+boot-anim+macro": "0ff467300737a0a678d98f8085bc4b347685b075a4c3708d89ebffc17d7224e2",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+multiline-browser+macro": "4368cc7cf7e1700fa8a52542d9168250fe8ba779be6ccf83521f2617d68541c3",
   "6ch-usbup+latching-mute+trig-preview+trig-hold+arp+tempo-max": "30d2b100d28facea368779339c051eb5f18cd6d36ded9fb49a450140aac18368",
   "6ch-usbup+latching-mute+trig-preview+trig-hold+arp+boot-anim": "0d2d3b4dbe2f049243bd27822ec5f3d559c1dc19e926cafd479488d45c545175",
   "6ch-usbup+latching-mute+trig-preview+trig-hold+arp+multiline-browser": "5e18dbbca13e5b1c1332cdc55cac2b38c3d591e3cdf37dd2e2730c992b630afb",
+  "6ch-usbup+latching-mute+trig-preview+trig-hold+arp+macro": "9035f99143065a2b49fd4c0ecfd16166ea092d91bd6a4c99532c8d6f654922a4",
   "6ch-usbup+latching-mute+trig-preview+trig-hold+tempo-max+boot-anim": "0862a585f8606bebe9a2dd69ad2af435e5a4023ee5c88adee32d74a0d6c4dc3b",
   "6ch-usbup+latching-mute+trig-preview+trig-hold+tempo-max+multiline-browser": "06cc5da833d77e5750c508d2bc15d54d09b710e1a1942150ee311c47c0404780",
+  "6ch-usbup+latching-mute+trig-preview+trig-hold+tempo-max+macro": "e3ae9bcd54d9f25b855b9c0140e8038d377c76b6d4dd0a9078469b18c23c1180",
   "6ch-usbup+latching-mute+trig-preview+trig-hold+boot-anim+multiline-browser": "bf6d0eed06b30d165e9f01f75ccdba7ed4c4332fa2d78f1c2bdab23e7a9f856e",
+  "6ch-usbup+latching-mute+trig-preview+trig-hold+boot-anim+macro": "ff2ba9f4cba4e6b49e1ea13dc3b70a00615a3c524e37156fd127ad5cf3b04daf",
+  "6ch-usbup+latching-mute+trig-preview+trig-hold+multiline-browser+macro": "52b6ab83d708c96369ea6e9ee9b5f31b784ccf31b6583a9fb8673d9346eb2b99",
   "6ch-usbup+latching-mute+trig-preview+arp+tempo-max+boot-anim": "b39b168a9349fb4e9602e1106bf52f5d33d4637a2169763bbecbe9fbd0a0cf1c",
   "6ch-usbup+latching-mute+trig-preview+arp+tempo-max+multiline-browser": "308588944056c94296b9901743da31e0d400d1a126b8ef8e9284867ec9e91603",
+  "6ch-usbup+latching-mute+trig-preview+arp+tempo-max+macro": "33327bbd8d342183183b3c9e89c7b3fcf97a5e18a3e9bc54734a41c70cf66d46",
   "6ch-usbup+latching-mute+trig-preview+arp+boot-anim+multiline-browser": "a41460fed2db225751f257ce1272dfb96440c360f181834fc33fc542e47e9dc3",
+  "6ch-usbup+latching-mute+trig-preview+arp+boot-anim+macro": "ac82125463aa8d0c8a2a7e763e76ec90d5f05e881d221b060a1b27681c9bbcf0",
+  "6ch-usbup+latching-mute+trig-preview+arp+multiline-browser+macro": "4af488ba93e90c9a923680513a17211ec59bdaff2ef253636de36c1815331c14",
   "6ch-usbup+latching-mute+trig-preview+tempo-max+boot-anim+multiline-browser": "809cc2a67c12c3f5376822a9b2befb7f3b49384a673bf61ba084cd13622201bf",
+  "6ch-usbup+latching-mute+trig-preview+tempo-max+boot-anim+macro": "ee77df7e83361a6576782443c3ceb920e809d15ebb1e91d8f9fd057492233213",
+  "6ch-usbup+latching-mute+trig-preview+tempo-max+multiline-browser+macro": "5ceb959530bce6fd5076a7c4d0a03a9065bf2f158c33d5d817268ca0450d7b8d",
+  "6ch-usbup+latching-mute+trig-preview+boot-anim+multiline-browser+macro": "7a05ee82a3bfa1a70e24f62060caca1bb6a5a21a335432b50676db67309325ce",
   "6ch-usbup+latching-mute+browser-scroll+trig-hold+arp+tempo-max": "b8c481c9309d7430181ae1058e69e5bd58f03facd3a0241582a5e23b03332aac",
   "6ch-usbup+latching-mute+browser-scroll+trig-hold+arp+boot-anim": "bc14635bbe84097b90226043d6c7ebf3bc0b162c674ca5b69df35d7c86141a2d",
   "6ch-usbup+latching-mute+browser-scroll+trig-hold+arp+multiline-browser": "ac12b0801b8dcf4daf0dcb5cc1ebff7ed5a2f693a9d89318c7e033fdde47158f",
+  "6ch-usbup+latching-mute+browser-scroll+trig-hold+arp+macro": "7f8bdd3c9b1ef3f5666598fd774b1d32f9034b938507b470a5cfcff20d8ccd27",
   "6ch-usbup+latching-mute+browser-scroll+trig-hold+tempo-max+boot-anim": "9f2e8bd6d3fa1c2b0f99609efa8ffe03a78bff7cc178b7e7083fc0526edf7008",
   "6ch-usbup+latching-mute+browser-scroll+trig-hold+tempo-max+multiline-browser": "0ce8c61a0571688e07e70cd0dd6fab731b303ac89e11b0fe29eccc246d92bec9",
+  "6ch-usbup+latching-mute+browser-scroll+trig-hold+tempo-max+macro": "10ade7d8e2f00581815b812dab1024284ca30adb6387bb09b8e0cd9f666adc3f",
   "6ch-usbup+latching-mute+browser-scroll+trig-hold+boot-anim+multiline-browser": "d1b2b9a3ba0e5b264cd6adb3b721f34577b54f97df578152021be9231850adbe",
+  "6ch-usbup+latching-mute+browser-scroll+trig-hold+boot-anim+macro": "ef6b7bfc2dc5cef41e59c57ff284882b4e4661e9c006fed3fca79434c5e40e78",
+  "6ch-usbup+latching-mute+browser-scroll+trig-hold+multiline-browser+macro": "46a1b1509560a85f5f07dadaf4b4a40b7bd4199bc690e63ffb42e3f2eee0cc45",
   "6ch-usbup+latching-mute+browser-scroll+arp+tempo-max+boot-anim": "ba8ee7390e7161761b837c5df1b16aa3ee4c02134288fed329f428d7e8637db8",
   "6ch-usbup+latching-mute+browser-scroll+arp+tempo-max+multiline-browser": "1ca25b0a0a50a8022bfa14a0c6422b4f60bea8050f90bc49b942243fb29a8f46",
+  "6ch-usbup+latching-mute+browser-scroll+arp+tempo-max+macro": "9b48ff88e2c2e13dc3c2be34476af6561c47d8f1da029ad85b88d17d6280cfdf",
   "6ch-usbup+latching-mute+browser-scroll+arp+boot-anim+multiline-browser": "74dc84a93ecc5308044bfcf189bdd6e61a3f4772ca1f89dea10e02084f0bf922",
+  "6ch-usbup+latching-mute+browser-scroll+arp+boot-anim+macro": "42ce12d4de98a6720f1339e7705c7a9926d272f0d9dc1957e1b73f73d3c4ca5b",
+  "6ch-usbup+latching-mute+browser-scroll+arp+multiline-browser+macro": "7cfc24424525e7a15d3594a1c7363385b83b48c4c42d2ccb44c79ef415853e4b",
   "6ch-usbup+latching-mute+browser-scroll+tempo-max+boot-anim+multiline-browser": "40b29b7cf7b6e3a652c8bad66c28e90664a4bbf86c80ba2f672ab055ad969433",
+  "6ch-usbup+latching-mute+browser-scroll+tempo-max+boot-anim+macro": "ca37b0dc5087e7b38e1f2d0aa0704bc8e9f01df5915e45667152c277e555dcb6",
+  "6ch-usbup+latching-mute+browser-scroll+tempo-max+multiline-browser+macro": "485a16d5fdcc85ac19df1a209a522e7dbe4db9bd643f79bbdd8835ff24f9ce9b",
+  "6ch-usbup+latching-mute+browser-scroll+boot-anim+multiline-browser+macro": "4f3cb268d46d1b18b7ee054540fdf886e216a8aeaa877f2bec683b8123c03e57",
   "6ch-usbup+latching-mute+trig-hold+arp+tempo-max+boot-anim": "807208abbdff09706b6e78eb2444448f6cff28ea0121564e338edd9718aafdf7",
   "6ch-usbup+latching-mute+trig-hold+arp+tempo-max+multiline-browser": "bf58bcc7566130e38e9fe778035e913fba3f4dff9cfe47ad1deb0a74661c81f1",
+  "6ch-usbup+latching-mute+trig-hold+arp+tempo-max+macro": "0822dab6d073f69eb713602cd510c02e53f16b68b4a4dd5d791d0f661a62bef0",
   "6ch-usbup+latching-mute+trig-hold+arp+boot-anim+multiline-browser": "0f35ba487fe445192939a84417ccdb9c6c48da699803f9d8dbd67d2724954cf0",
+  "6ch-usbup+latching-mute+trig-hold+arp+boot-anim+macro": "0a85d013f16c4bc9c07b85e79149d00b14ce2ac4641a0b1583c913d815574347",
+  "6ch-usbup+latching-mute+trig-hold+arp+multiline-browser+macro": "7d5872d0542167179a233b3b2c0c1b1579c5d156e50b24f3c5a11fc5ef009e6c",
   "6ch-usbup+latching-mute+trig-hold+tempo-max+boot-anim+multiline-browser": "e3d920ec532592daaa9679fc2a69f52abe1f51e9324d3b77e714dc605b2a47cb",
+  "6ch-usbup+latching-mute+trig-hold+tempo-max+boot-anim+macro": "87deb962520971eee3cff4e8f769971ad0a0b02fa310075851c723dd486c799f",
+  "6ch-usbup+latching-mute+trig-hold+tempo-max+multiline-browser+macro": "f0bfd5af4d79baa43488a766ded9727baad4a029e252239108549e2caf1c30ec",
+  "6ch-usbup+latching-mute+trig-hold+boot-anim+multiline-browser+macro": "1f4f705a226239ce97f26a2c762d97d7eaa997439b36446feea9f889c7f2907e",
   "6ch-usbup+latching-mute+arp+tempo-max+boot-anim+multiline-browser": "ae41dd4b67ec5783a38b1452d05e0ee263f669d76715e807f3c612f0450c294d",
+  "6ch-usbup+latching-mute+arp+tempo-max+boot-anim+macro": "68d4d660d4e7cf4310aaf069f65233c65a057d299050f160ea0f779333be5bb4",
+  "6ch-usbup+latching-mute+arp+tempo-max+multiline-browser+macro": "712ef26cf2215f24bcc692bd217dc5f35a9d5fdb653ea7430f72311f768bb301",
+  "6ch-usbup+latching-mute+arp+boot-anim+multiline-browser+macro": "81a5889c17dbe9b9791a27505b8870c015a884cb52671bc0d273b0aa8d2622e7",
+  "6ch-usbup+latching-mute+tempo-max+boot-anim+multiline-browser+macro": "b119edbf5c7af5e8f91eaedbe8e8f4f8a4378f59e5090c3e69cbbe5bfd47e2b9",
   "6ch-usbup+trig-preview+browser-scroll+trig-hold+arp+tempo-max": "18c14c50fe2f64507b652d4ce030f1c899c11da5ff496e3c327c2be68e145f5e",
   "6ch-usbup+trig-preview+browser-scroll+trig-hold+arp+boot-anim": "dc80b00ac7f35a027244ad813107329683fba7b790786e2dbba958d041b45039",
   "6ch-usbup+trig-preview+browser-scroll+trig-hold+arp+multiline-browser": "68ccf7cc95b879c07b3e7de915918d65afa48fb651aedb667223a0f05a06e41b",
+  "6ch-usbup+trig-preview+browser-scroll+trig-hold+arp+macro": "c3110591e383197123f8673be6f7e3852b28af0808b9c7e4c08c29e598f49a5d",
   "6ch-usbup+trig-preview+browser-scroll+trig-hold+tempo-max+boot-anim": "15b5b389096c5b03336fe5689dcb26ed611fa31cfeac3cde93fd97f273b06b96",
   "6ch-usbup+trig-preview+browser-scroll+trig-hold+tempo-max+multiline-browser": "9e8c8d68130e09ada915c1fdb21e920879cf611e7b65d849f3f8d4a3352fc3ba",
+  "6ch-usbup+trig-preview+browser-scroll+trig-hold+tempo-max+macro": "c572dbc6746b90d95fae9006c0349b3ba6155aa6f9acd7f49c0027482eecd80d",
   "6ch-usbup+trig-preview+browser-scroll+trig-hold+boot-anim+multiline-browser": "2eb42c862b1e9ddf533afaf674d1dad0c42ffa50b43351927cfd7dafa3c35f3e",
+  "6ch-usbup+trig-preview+browser-scroll+trig-hold+boot-anim+macro": "91b3a1ac2b2d98267b2bed6c63c7b4239e4ccf9dc84b3f53e47a2dd3e627fcb2",
+  "6ch-usbup+trig-preview+browser-scroll+trig-hold+multiline-browser+macro": "e5e5559cc6972612630c42b5662e12d39ce3582580b6e4229a9069785527d3e1",
   "6ch-usbup+trig-preview+browser-scroll+arp+tempo-max+boot-anim": "ee4266c1b186340092f92ef1cd9e6931bb60256ec02919386415eeeb77564e92",
   "6ch-usbup+trig-preview+browser-scroll+arp+tempo-max+multiline-browser": "30b4da84753e617dc2f1b2f4807a04c3cefeb6b2b99d7b1fed7c29cf31230c46",
+  "6ch-usbup+trig-preview+browser-scroll+arp+tempo-max+macro": "9eeac2b273fa74fc392e1c5e872f105fd3dfebfc32e5b5f39c1120b0b8fec796",
   "6ch-usbup+trig-preview+browser-scroll+arp+boot-anim+multiline-browser": "24da7076e1b78a3d274d7ad841a48d2e2c234b76569527db08ac67792dc011e4",
+  "6ch-usbup+trig-preview+browser-scroll+arp+boot-anim+macro": "472133a6a51d87945bace296968c56611a1c1c88915f895045d38cd065fb84ab",
+  "6ch-usbup+trig-preview+browser-scroll+arp+multiline-browser+macro": "c1ee439568bedf8f73704aa2506d3a502417f94e776e0e1733321789708a50c8",
   "6ch-usbup+trig-preview+browser-scroll+tempo-max+boot-anim+multiline-browser": "7496eefc38a2f0ad4d5eca6ab977f58aa6fe416b0272a3df350457a08b4d0b40",
+  "6ch-usbup+trig-preview+browser-scroll+tempo-max+boot-anim+macro": "adcf3c1e993ba498eea37dcef5ece8ba3531d8f59aeb661bdee3cf48a17780a4",
+  "6ch-usbup+trig-preview+browser-scroll+tempo-max+multiline-browser+macro": "7723b7bcc025768ba554bbecf695d68058601f066c8abc3f04fc194b5431eb8b",
+  "6ch-usbup+trig-preview+browser-scroll+boot-anim+multiline-browser+macro": "5482ce01ae60a52821c58875551c71dac836c22b770cd9ced7ebe0a31360eb77",
   "6ch-usbup+trig-preview+trig-hold+arp+tempo-max+boot-anim": "d8ab1611dff2024e410cf57aaefadb9fd38efec7e04dcfca78a3fdf102bdc49a",
   "6ch-usbup+trig-preview+trig-hold+arp+tempo-max+multiline-browser": "c857d2fccc71714c010654323a2a8ad138c4b757d097ba0a0af6c8955f6588dd",
+  "6ch-usbup+trig-preview+trig-hold+arp+tempo-max+macro": "8875a75fdb64794dfbe5831aa55643f2af377c45965e888af0e6e8b6a9ca8c1a",
   "6ch-usbup+trig-preview+trig-hold+arp+boot-anim+multiline-browser": "9a3195344275a936638e8b85285c1c20c376841ae085a421c297813ff30c3dc6",
+  "6ch-usbup+trig-preview+trig-hold+arp+boot-anim+macro": "cfca7f7405e1ea0832d7b8b6a85a8db2a2f4b7363ca9f39be7b1e96c3c32b2ea",
+  "6ch-usbup+trig-preview+trig-hold+arp+multiline-browser+macro": "47d891464828685462ce560c7eaafcddad9f2c73c666912d00dd5683ead21503",
   "6ch-usbup+trig-preview+trig-hold+tempo-max+boot-anim+multiline-browser": "ba244e790cb2042fca48e904c4eb100388c93e7d766ec433b979a626e0099b93",
+  "6ch-usbup+trig-preview+trig-hold+tempo-max+boot-anim+macro": "7fa4ee9d43a0b1ef5dbf3cf9de0850f2480ed7a8571b0451d9f227e92272e7a0",
+  "6ch-usbup+trig-preview+trig-hold+tempo-max+multiline-browser+macro": "e2883488ce70981e3214bfbfe4db7aaaca805844b463bc1f14911f6a9e87060f",
+  "6ch-usbup+trig-preview+trig-hold+boot-anim+multiline-browser+macro": "789837c6cbbe43efcda7396345822c60839e3c0e315d19bfc0c8dd937abd5837",
   "6ch-usbup+trig-preview+arp+tempo-max+boot-anim+multiline-browser": "886b2a72cdaabfdbb7d0ce95caa2006bab07ee1092af1e44cbf9e57a9680ccfa",
+  "6ch-usbup+trig-preview+arp+tempo-max+boot-anim+macro": "cd6da156b86db27c20cea73e06c5fea0b64e9bf530c80f964cdf851861140662",
+  "6ch-usbup+trig-preview+arp+tempo-max+multiline-browser+macro": "5de098bebd85d705ad139aa0ba0d9ceef8f4216b01183901e4b2878c5a927034",
+  "6ch-usbup+trig-preview+arp+boot-anim+multiline-browser+macro": "75b4859ec8bd36562e2922a31ee9c4ec415267fe140cc01619bf288049132e81",
+  "6ch-usbup+trig-preview+tempo-max+boot-anim+multiline-browser+macro": "dc51b1f64f1f7ec6e44cb77c5b862ccf95b51ef26c87cb8e945ba81a714b8fc3",
   "6ch-usbup+browser-scroll+trig-hold+arp+tempo-max+boot-anim": "30b54ed067c01c2aaa760616e2c74154618642b50f6bf54c0280fc2bfd14970f",
   "6ch-usbup+browser-scroll+trig-hold+arp+tempo-max+multiline-browser": "fe8fbb0de7c883a5d6d007240cb9e759dbe8694fd60a5e790a46aeb3fb9146f5",
+  "6ch-usbup+browser-scroll+trig-hold+arp+tempo-max+macro": "a1af3feddecbe6348896b83bbd9d2e99a5e9ba02accaeaaab87325d2139ece44",
   "6ch-usbup+browser-scroll+trig-hold+arp+boot-anim+multiline-browser": "8ccf45e41d49845137fe3f3516bc5fa6827f258d30148fb8875804dd72c3d7c1",
+  "6ch-usbup+browser-scroll+trig-hold+arp+boot-anim+macro": "4c9841b219f7c06b506ce480891e687d66ff2878bb2f5e6a7cd8d0ade94e97a8",
+  "6ch-usbup+browser-scroll+trig-hold+arp+multiline-browser+macro": "bb271303ecd2749c445ae04819365f774a259eb9a671854bd8c2abb0bc395d71",
   "6ch-usbup+browser-scroll+trig-hold+tempo-max+boot-anim+multiline-browser": "5d007a3bc4d480ece7954a47f067440af7ff25cb857c57e9e1da1b1df295670d",
+  "6ch-usbup+browser-scroll+trig-hold+tempo-max+boot-anim+macro": "46c8ac977111b000acba842df06b8e4e41f9bf3739a304881492d86fba28be66",
+  "6ch-usbup+browser-scroll+trig-hold+tempo-max+multiline-browser+macro": "60964526b29990cfc1bebc167571d4a45e3b14e91b8bdc4c95ae3fbfd9e58ed3",
+  "6ch-usbup+browser-scroll+trig-hold+boot-anim+multiline-browser+macro": "9cbc998289c4ea4d5d31a341a0835badc82241d43583f75d300d6ddc52eba222",
   "6ch-usbup+browser-scroll+arp+tempo-max+boot-anim+multiline-browser": "2a847447abf1d785c235e89c981ef8155c73dba929f4b611b015ba4104f73220",
+  "6ch-usbup+browser-scroll+arp+tempo-max+boot-anim+macro": "0bd2733bca7fe30c99edd1827118e229dc2805bc1ac970928e98001a638735ee",
+  "6ch-usbup+browser-scroll+arp+tempo-max+multiline-browser+macro": "a28a2106c685e7dc7d747753afbb20fa14192d4a5253035d4a0257786ffc3840",
+  "6ch-usbup+browser-scroll+arp+boot-anim+multiline-browser+macro": "27e46c0a3fe6f6b65f089912ab8b777d82b033054e8c308049d906c09dd4e8c0",
+  "6ch-usbup+browser-scroll+tempo-max+boot-anim+multiline-browser+macro": "0202f759dfa1797a97446ca520186b9153fb3a9f99debd3d5a68f2faf895cf62",
   "6ch-usbup+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "b346148c5f7edf721953b9111e4c095e881ff170ad6775928f077298cc224a5b",
+  "6ch-usbup+trig-hold+arp+tempo-max+boot-anim+macro": "ff9ada5fc8ea78f2618610f8271129123b53baeae43681b271eb1817defc2345",
+  "6ch-usbup+trig-hold+arp+tempo-max+multiline-browser+macro": "a7316712161d7025ef18d8ed0ebdf7057d0430afa8e90be7c9a841f64425b0b3",
+  "6ch-usbup+trig-hold+arp+boot-anim+multiline-browser+macro": "9aac6f5ff200b5d7f5477a24b2dbd1644d6e09969dff906a9b66a017854e4cd5",
+  "6ch-usbup+trig-hold+tempo-max+boot-anim+multiline-browser+macro": "11b0a2649adeb7bd67c4dad154889a730881607ebcea6a6e6e54c99d1fa17727",
+  "6ch-usbup+arp+tempo-max+boot-anim+multiline-browser+macro": "69ef912b90d1d3d2b7d3741664191d468a62cb76a7b38b488a627456d1cf9255",
   "model-tg+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "93e2adc037e83668b5d55f28a5980e3096f2e7cf057616c1d6f194f811b1c81e",
+  "model-tg-st+trig-hold+arp+tempo-max+boot-anim+macro-tg": "0c19dfd74e4bbe399eba68d4167e43bc44059d0b03fb6e726fbf8dc0936be7fc",
+  "model-tg-st+trig-hold+arp+tempo-max+multiline-browser+macro-tg": "19f51d9c6c8142b9481d9e6efc1ed5b1704f7a68382dcf23249d503afb0d9383",
+  "model-tg-st+trig-hold+arp+boot-anim+multiline-browser+macro-tg": "03e5993825348cd187e2c608c947852c8b764eb45d0a96f46e3d17ca492e8f26",
+  "model-tg-st+trig-hold+tempo-max+boot-anim+multiline-browser+macro-tg": "7e6a9921c8f2272e3f921a3aa34d8b959c08f604efbc6bb32dcbcbc2df62a057",
+  "model-tg-st+arp+tempo-max+boot-anim+multiline-browser+macro-tg": "236ac254c60ab256491fe243da08a46e1de40aee4df46b28b0e2ee7ebbdb6339",
   "latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max": "13bf5cf49d539eae22a57959f3b79bfa2949034187ea188dda43be67657072fc",
   "latching-mute+trig-preview+browser-scroll+trig-hold+arp+boot-anim": "de228617805ee1c255fc5fc8bf64ab8bffe41bb59e3302debb146e54bb181f7d",
   "latching-mute+trig-preview+browser-scroll+trig-hold+arp+multiline-browser": "726f1e3d0f26e04eeff0f871c28859909f53ddb0cc1b86d91a0f545296317db3",
+  "latching-mute+trig-preview+browser-scroll+trig-hold+arp+macro": "c004364d96704dfe316590e52e9b35fea6d12c8a5b8ce20060e0fd9f34deda1e",
   "latching-mute+trig-preview+browser-scroll+trig-hold+tempo-max+boot-anim": "3c8fbf3f46769d651396fd2006695da7cf06937c750448d2ce6a5cdc5df7b7a0",
   "latching-mute+trig-preview+browser-scroll+trig-hold+tempo-max+multiline-browser": "411181d8772434b1bf55045b124a16cc0c882e3ab16812d34faeed1a2ba432db",
+  "latching-mute+trig-preview+browser-scroll+trig-hold+tempo-max+macro": "dd0082c867e1576569a48d60143870fb69482549111535f5c044a3da157d55fd",
   "latching-mute+trig-preview+browser-scroll+trig-hold+boot-anim+multiline-browser": "2a1362819b7a85f2fd8b12afe403780117ca256d9f108e68de918762c037f66d",
+  "latching-mute+trig-preview+browser-scroll+trig-hold+boot-anim+macro": "f68aad093edd35449b3765c75d5268e9173b581eb34c2165e30459b402767a94",
+  "latching-mute+trig-preview+browser-scroll+trig-hold+multiline-browser+macro": "956feee416403a12ec2b7aa14bb0188d8260a38f5d4a6dd47708cb3f1dddab55",
   "latching-mute+trig-preview+browser-scroll+arp+tempo-max+boot-anim": "d4655679d314fc7eab9dcae41043a4be36dd9da00a06faa543aa111e4731058a",
   "latching-mute+trig-preview+browser-scroll+arp+tempo-max+multiline-browser": "8e8d8c224703e9baf8c88e5a30ef4dd83d04f6ec3679e35a60fe273c242b3943",
+  "latching-mute+trig-preview+browser-scroll+arp+tempo-max+macro": "3410fdb5ee9a95e230a8e9619591f52db27ee1285fd30b2252392bd7a779ef1e",
   "latching-mute+trig-preview+browser-scroll+arp+boot-anim+multiline-browser": "5963b92feb590ab7cb9229d124c00c35fbf9244e1db9254fee7450bdbb17b6a9",
+  "latching-mute+trig-preview+browser-scroll+arp+boot-anim+macro": "cdfa4e95de1cb7d8e6f7fb95fa5132f1439e9e56ce5d45cd9a80969fc194586c",
+  "latching-mute+trig-preview+browser-scroll+arp+multiline-browser+macro": "8c499aadaa9e6eb84416b8e4a01563633e3b233e7db7ea7010d6b477e3bab891",
   "latching-mute+trig-preview+browser-scroll+tempo-max+boot-anim+multiline-browser": "f6795bf9c686818c0b17b9cee0e9d0eac10549bd817e5193a4fcac8e6f38e67f",
+  "latching-mute+trig-preview+browser-scroll+tempo-max+boot-anim+macro": "92e8483cea9b519f116855c36c8077cbead53e28d5de93784a9e37a0b42e99b4",
+  "latching-mute+trig-preview+browser-scroll+tempo-max+multiline-browser+macro": "7e78bf0f216802d33a1860faddc3568c249c3a9d6c74db53baf169533e4c5b34",
+  "latching-mute+trig-preview+browser-scroll+boot-anim+multiline-browser+macro": "6bd2184f475dc29b3ebc10598fe2a4c26b1ee7d48d4919aad58ad03e686b6e5c",
   "latching-mute+trig-preview+trig-hold+arp+tempo-max+boot-anim": "c6bc0d48278b18a9ca1a221a5132144fb660f7cd7979021b6a4822f6bb8b1378",
   "latching-mute+trig-preview+trig-hold+arp+tempo-max+multiline-browser": "4129b821836df9eb7102f84ab720489c89960b346c6b3cf5283f1cf7cbb04b06",
+  "latching-mute+trig-preview+trig-hold+arp+tempo-max+macro": "e6c3a8c546f0b91a0df775261e2fdd71b1bb0fc632431dbefa7d6d5f9bede449",
   "latching-mute+trig-preview+trig-hold+arp+boot-anim+multiline-browser": "d5c337c5e9d83888683025c4bb9b44bccc49d329fcce139d00627854d9f7c765",
+  "latching-mute+trig-preview+trig-hold+arp+boot-anim+macro": "350991a8922b8265674fcc2859e4e1ffc2cab24c34b8346fd2570cdac7d5fc02",
+  "latching-mute+trig-preview+trig-hold+arp+multiline-browser+macro": "4ff7a5b3ba45d0e928133427012da3caa1d36899ef1e5c5be3d44c5603fec241",
   "latching-mute+trig-preview+trig-hold+tempo-max+boot-anim+multiline-browser": "b0c4b8b4e631e832ab436225fdc3abb6d5712d9e890955f2f3c2146904d2ee84",
+  "latching-mute+trig-preview+trig-hold+tempo-max+boot-anim+macro": "a93213037274815fdc103885bab1092e5eea6f6c6f1ab3c7d2152646b0e85321",
+  "latching-mute+trig-preview+trig-hold+tempo-max+multiline-browser+macro": "2a4e2ce49ed075ccada3f9d383935f34762627268233000850104dcf2c0c278c",
+  "latching-mute+trig-preview+trig-hold+boot-anim+multiline-browser+macro": "fe83d62e855756b906fba23bf228fe69191e47c9d6c4aec995d08a8ae1a8579a",
   "latching-mute+trig-preview+arp+tempo-max+boot-anim+multiline-browser": "ffb702ece7facdb27ddb0a15c596c3c357667809ccbe5c875af38f82e4696272",
+  "latching-mute+trig-preview+arp+tempo-max+boot-anim+macro": "ce01e1efe03a02d41f312c32d5fe1fe10874b9012047ef28e365350b6419c7d2",
+  "latching-mute+trig-preview+arp+tempo-max+multiline-browser+macro": "7276a562674d5a9742a31126cf436a2e27cad4f2b568c6eb9ae7237db2288ec4",
+  "latching-mute+trig-preview+arp+boot-anim+multiline-browser+macro": "43ef97187aa5b753f890491045cfd6a035ab5bcc14ffc9bc224e8d5975e8b2b9",
+  "latching-mute+trig-preview+tempo-max+boot-anim+multiline-browser+macro": "330f265d3055c276458152910830a1b3c0a02dd61c3e774b5bcc92a9e4279333",
   "latching-mute+browser-scroll+trig-hold+arp+tempo-max+boot-anim": "ad2af69f1519661695fba9dfce2bbe2fc08455a4c572efc70df7656e4068c015",
   "latching-mute+browser-scroll+trig-hold+arp+tempo-max+multiline-browser": "cd55a2bfeb8c9ea85cfc6a1b77c487685501612b115be5798f21f869100608de",
+  "latching-mute+browser-scroll+trig-hold+arp+tempo-max+macro": "9753805fc7ec36832c48f01c8721ce29c52e7689d16c9417e8cdd1d6cd052afe",
   "latching-mute+browser-scroll+trig-hold+arp+boot-anim+multiline-browser": "50b8b002e94022a503a468b195d5038b6e59c94f2bed42e391929c678928535e",
+  "latching-mute+browser-scroll+trig-hold+arp+boot-anim+macro": "b76a70d3d09aaf51829289049d9cc6f64c326edde6b05fbff1ff5179a00d973d",
+  "latching-mute+browser-scroll+trig-hold+arp+multiline-browser+macro": "28e0adf42caaee5067ba7951c8742e36815555dd7093ef59688d147a626bfc8c",
   "latching-mute+browser-scroll+trig-hold+tempo-max+boot-anim+multiline-browser": "b6c5f1336b11a0588cc7da2cbc62ad94c3e2e816b197c801f41bee514438f8c6",
+  "latching-mute+browser-scroll+trig-hold+tempo-max+boot-anim+macro": "c799ad6f8b2bff808ace38d278edd972b61e57fea35e2fcea1944b981bea7906",
+  "latching-mute+browser-scroll+trig-hold+tempo-max+multiline-browser+macro": "c36e49a5423bdaee3d7e580d6f1eb4ddaa327718f527a09712ac1f9877b896a5",
+  "latching-mute+browser-scroll+trig-hold+boot-anim+multiline-browser+macro": "5ce4fc4e00f5125184f4dc6a458188e64811a86a093d111a5334685f04ad831e",
   "latching-mute+browser-scroll+arp+tempo-max+boot-anim+multiline-browser": "a9e68c99fc48a9dd778f06ff18417a9a5b51cbe7a1a3ac0869ccd340e412eded",
+  "latching-mute+browser-scroll+arp+tempo-max+boot-anim+macro": "f4c3714cb9b97ebf0a233657af300a0bf45ef9a82bffc60e8d1d1c64d61ac31b",
+  "latching-mute+browser-scroll+arp+tempo-max+multiline-browser+macro": "57b2154a74e4c5a05266ba9252d9a48813112a7d4655d16b7a6735e2ba840657",
+  "latching-mute+browser-scroll+arp+boot-anim+multiline-browser+macro": "20ba7c534ce7a7f669350e017d00e3cc446d3ccb135813226611fe87bdf00f8d",
+  "latching-mute+browser-scroll+tempo-max+boot-anim+multiline-browser+macro": "8a8ed74e90aabf7f44f5a0c7425a2b600117481ca384f0b475ec30e27d5e3fc1",
   "latching-mute+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "8aee7e9c5f38aa2a1b88dac2d31fb05d5e03ef3ca5c6f492f0daf10c1fad532e",
+  "latching-mute+trig-hold+arp+tempo-max+boot-anim+macro": "bb8ca922c48327b264d2fea8f03d4bf4824ac8fafb82615899e60686f254f7b1",
+  "latching-mute+trig-hold+arp+tempo-max+multiline-browser+macro": "567d1096efed34862968bdd1f784b66ab0f966054720b457720621b24c91f233",
+  "latching-mute+trig-hold+arp+boot-anim+multiline-browser+macro": "fa00d67622703eb9afcdd540721add6a3ead98333376fff988f35ac4b106259b",
+  "latching-mute+trig-hold+tempo-max+boot-anim+multiline-browser+macro": "a5813ad5b6799de978c8455c25a73682c603d05e2d26066a7eadb4aa2c440708",
+  "latching-mute+arp+tempo-max+boot-anim+multiline-browser+macro": "6cac1e6bd81169c7cf93de4e1e44e42e72866c25131a7a8f080cf4e3ea8da917",
   "trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim": "5e64a2f094cdecc23289835b31d242409a819b99956337862647b13212e0a2bf",
   "trig-preview+browser-scroll+trig-hold+arp+tempo-max+multiline-browser": "217033bac95836bb9d1f58acdd0b1c72158fbafd0b4d79e46b9ea88f9b324f81",
+  "trig-preview+browser-scroll+trig-hold+arp+tempo-max+macro": "4cfff9270e10e237ba40c7cf96b3263fe16f72a7c241feb39d5c0000f3848a10",
   "trig-preview+browser-scroll+trig-hold+arp+boot-anim+multiline-browser": "b8ae25c1471195f61890d2f138ececcd73018afe7733fcb5ed5897769547fd3d",
+  "trig-preview+browser-scroll+trig-hold+arp+boot-anim+macro": "ea3d58d2211413949b2797478c3a66588ef5a271e389a6012a2b223a943c6b36",
+  "trig-preview+browser-scroll+trig-hold+arp+multiline-browser+macro": "902ef8dc6f672900415cf288d447cf249896bc58ef0ff6e6de7c96fcd2011f2b",
   "trig-preview+browser-scroll+trig-hold+tempo-max+boot-anim+multiline-browser": "2ba149791da1e51010df0895cc76831aa83a79a673a34910bb03b532ee233d36",
+  "trig-preview+browser-scroll+trig-hold+tempo-max+boot-anim+macro": "117f8c299d55c4d6b0df2acb4bf0a09ada46c86d0433180d05a2f35b0b463054",
+  "trig-preview+browser-scroll+trig-hold+tempo-max+multiline-browser+macro": "d3f278393f51f777dde03ada536f8761908b1f168591a53e434a02f217d61ffd",
+  "trig-preview+browser-scroll+trig-hold+boot-anim+multiline-browser+macro": "355051ba28c6d71b6cb32b4f1685886797d6e0b8410aa6976303680cdca3f675",
   "trig-preview+browser-scroll+arp+tempo-max+boot-anim+multiline-browser": "ef927155683cedb331faf4b1125cb5ac7f9cdb387fdb66ba98d81e0e74fd56f3",
+  "trig-preview+browser-scroll+arp+tempo-max+boot-anim+macro": "f4f3dbc42ca37884df7ca2ee272e1c97223b23a2357212ff3c1f54c4a359d6c5",
+  "trig-preview+browser-scroll+arp+tempo-max+multiline-browser+macro": "8b97b61f56b883413c74a5099dbec3adbbecf92eeb9ed5018faba5468dea3553",
+  "trig-preview+browser-scroll+arp+boot-anim+multiline-browser+macro": "b9cd57fc4b642373df8394494a51e661de0f0f8238000ee05a26b1a5cb542d4d",
+  "trig-preview+browser-scroll+tempo-max+boot-anim+multiline-browser+macro": "f397d848664cad33bd4ba1ad30961d16b24c680b05cb4facec9485fd0df76368",
   "trig-preview+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "d7ab3db910e151ab5a4c49d98cfcd75c3c9cb4645de368519c2c3e00558278a2",
+  "trig-preview+trig-hold+arp+tempo-max+boot-anim+macro": "fec057ab012ab56803ef35009b9daacbb5b97db46779f7d58c1c10741b5578db",
+  "trig-preview+trig-hold+arp+tempo-max+multiline-browser+macro": "dae01e85349b9942811a56ae53e069bcf3cece09bfdc3fe051433e11e302e70d",
+  "trig-preview+trig-hold+arp+boot-anim+multiline-browser+macro": "6de2903994b16e9bbe23487ecf93acdf6f0d7faf6c7e701abdeb02674b7f5c61",
+  "trig-preview+trig-hold+tempo-max+boot-anim+multiline-browser+macro": "024dc35072cb95a880b7db4fb5c44879bdfe78833c5efbaf4582bf9010566e8f",
+  "trig-preview+arp+tempo-max+boot-anim+multiline-browser+macro": "d615c2c02295776cb4cf9699213a2acb6ae6083f60ff118cc5f30b6f29d75f58",
   "browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "a2a1007b2c7a2597fb39384f28e7559b60bcbdab6810e35e02dc1558222cdfc4",
+  "browser-scroll+trig-hold+arp+tempo-max+boot-anim+macro": "a8d02af19c2a1601ad39458b6e6d88d3cca5fb565d30f407e6cdebdd3b7ce1a8",
+  "browser-scroll+trig-hold+arp+tempo-max+multiline-browser+macro": "ad22241890ceabe4b62061ef0f21291fa314877e56b76ca0a90a6ecf2e534d4b",
+  "browser-scroll+trig-hold+arp+boot-anim+multiline-browser+macro": "633d22b8fc24cb03aee15e7d95a111a5d1649f3d564edbb4d765af747deba477",
+  "browser-scroll+trig-hold+tempo-max+boot-anim+multiline-browser+macro": "424004614bd76052ecde34947095fe208cccc39117b6c8419fcf3d7d4c71f656",
+  "browser-scroll+arp+tempo-max+boot-anim+multiline-browser+macro": "349861aad8de3d5cf1eae58f63350565f2df45e569ea56d76e8be8376bfd75cf",
+  "trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro": "f2bda238441bea150258c0a3936a37b66b44548c67ebe02c8e492295dfd86727",
   "6ch-usbup+model-tg+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "f92dccf7c990bafbca59250f2e73740f8de2c7e0b8eb6ba643340c5e9f189a22",
+  "6ch-usbup+model-tg-st+trig-hold+arp+tempo-max+boot-anim+macro-tg": "f584f099bd2a26abfcccf3d954dd3b86ab1880c07a0b110bce88d569eed1daeb",
+  "6ch-usbup+model-tg-st+trig-hold+arp+tempo-max+multiline-browser+macro-tg": "bde74bcda06ea012455f1a7b183f5dd647fb6d9935505ee01c3b86a31c1a9293",
+  "6ch-usbup+model-tg-st+trig-hold+arp+boot-anim+multiline-browser+macro-tg": "13dd305717629535b9b1c8ea597ead493fe8dccc6e1e9016cbc82caff6ae8150",
+  "6ch-usbup+model-tg-st+trig-hold+tempo-max+boot-anim+multiline-browser+macro-tg": "d40157053c3b67ab814f2ca3d18e577400c96eb5ec9e49c725e2488d5555869a",
+  "6ch-usbup+model-tg-st+arp+tempo-max+boot-anim+multiline-browser+macro-tg": "c6156ca3417c1f1b915d9f3ebec9bd3bb64138805f339024cdcf48720b2fae6d",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max": "8e91f97aa2ffbad29c4edfb515e826aed9265875004a8d373c18d56233bfbcd5",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+boot-anim": "f27b64638e8a3df0504269a606bd8c927551539f63a82f415ad46f71b8ee0909",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+multiline-browser": "dc3d8039319623d28cda13945d0a9c934ef3be4d2757f7c8306ed8a25d25f0ee",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+macro": "3c7a082a2912f7092c4fe4e72cec15d9bb6b3e30d11e021ca7c7bea45336e7db",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+tempo-max+boot-anim": "f79799c8e0e3f5cfe8d9c9d1f3a438e59f4b60db12b6ba77b3b617817bf9ed00",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+tempo-max+multiline-browser": "3bd1167ec7d41af294d00d5d5fc0919beece19bfde6ae3ab23c54e80e90d7f5d",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+tempo-max+macro": "4413a13917c278b5cc918a917eaafdf4266292784345be5685742dcb4d87e2c1",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+boot-anim+multiline-browser": "39f1597bebe53f26081eeea4d471d308ad590dd684745692159604b5072cc89c",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+boot-anim+macro": "b2c4ed68d8756525dc65ec55155d0a67368938a6628245e0dc3ca38bab93a0fb",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+multiline-browser+macro": "7d549234ccb079154b7f9068b3a13b856506fe687b13afb70ef1270d82109a79",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+arp+tempo-max+boot-anim": "6a22169a45e0aa88108712f0906e677537dd3e17196f528770cf5478e65b99d0",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+arp+tempo-max+multiline-browser": "7342bc5130563c4470bd387fe504ab170a81f10d3595a7770e2af50ae4a5d453",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+arp+tempo-max+macro": "c36edf8e1160db629ab4f72281013ea8e4906afdf23d2a7edac1789554c5b075",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+arp+boot-anim+multiline-browser": "4da311971e477e147ba5d6ef3189081f5405b463984e3fb7e48a53f659ce2b65",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+arp+boot-anim+macro": "a5d97343d329bcf41fdc40cdeea211e1e7e8bb552ac9f28e4dc026bff72417b2",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+arp+multiline-browser+macro": "7fdac7f0f0f9efcd93d51d00461ce65b7b30f695d5b190c7061cb7959d49161e",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+tempo-max+boot-anim+multiline-browser": "593db5c50d0215802695d210ce4440c9458938fe5aa37cac1c07f402e5af1404",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+tempo-max+boot-anim+macro": "d44561de940dbfa22e9731515e237a787f42528c771509b8d57798cd9ebecce1",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+tempo-max+multiline-browser+macro": "4327ce6e33badaacb1d2a7aaa64a3ac4ab80ee1c5358064101b11ec22e0370f1",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+boot-anim+multiline-browser+macro": "673ddb1330f82dafdf8e6679d500fc0288cd156f5b9ebc8906a263a023c3f073",
   "6ch-usbup+latching-mute+trig-preview+trig-hold+arp+tempo-max+boot-anim": "0ec535d2acfd812b1820f041b1f8577eaf06c63e826cda0d22bbabf80d264e56",
   "6ch-usbup+latching-mute+trig-preview+trig-hold+arp+tempo-max+multiline-browser": "d59a781f835b4ba3d9eebb68ba69ceb23e6591b091b3cff85ac0806e39511641",
+  "6ch-usbup+latching-mute+trig-preview+trig-hold+arp+tempo-max+macro": "2ff184fe51ec97de7bcb1b415e6e15d1b3ad3fc04feefda8e35a289d66eee21a",
   "6ch-usbup+latching-mute+trig-preview+trig-hold+arp+boot-anim+multiline-browser": "803bad1ea126075d2a58fae76a7c23887a66614a5dd6ec50e08a3a69a26ce473",
+  "6ch-usbup+latching-mute+trig-preview+trig-hold+arp+boot-anim+macro": "d2164e7fad57abf55a5999447b5a9e3ebaa0d2f0d12a93bcf8b311dd784f8dd1",
+  "6ch-usbup+latching-mute+trig-preview+trig-hold+arp+multiline-browser+macro": "d5d972d62164ab859864caaec69a672728c80215c3dd47cab2da1065ac33b1bb",
   "6ch-usbup+latching-mute+trig-preview+trig-hold+tempo-max+boot-anim+multiline-browser": "6c0efa06682a714442494aedeac19280c2c4553da6edcfa08b137f0d4a064942",
+  "6ch-usbup+latching-mute+trig-preview+trig-hold+tempo-max+boot-anim+macro": "947675988ea251accf1c86c81749199162f083f997d6ae082f3521aa9deb9831",
+  "6ch-usbup+latching-mute+trig-preview+trig-hold+tempo-max+multiline-browser+macro": "ac2c4d49e32a634a1bc6066e5a5a64fd35f68076eb8d8904d09c991f5312f0e6",
+  "6ch-usbup+latching-mute+trig-preview+trig-hold+boot-anim+multiline-browser+macro": "2821b8754910cfe142d14d41c3574c470e1be6fdb924e2593c9047adeef467ba",
   "6ch-usbup+latching-mute+trig-preview+arp+tempo-max+boot-anim+multiline-browser": "22643e449efd9edbaeaf0e0bdd288124b194688c2433c5e6591ec625b9ec12f4",
+  "6ch-usbup+latching-mute+trig-preview+arp+tempo-max+boot-anim+macro": "31fbd91e1b86d22485e62955b98dd461e582f16dcb3c53ba2da3f03162e977a2",
+  "6ch-usbup+latching-mute+trig-preview+arp+tempo-max+multiline-browser+macro": "6bcdfe15cf35e230a40472c8783931dde252caa74a93df43caa959026fca6d5c",
+  "6ch-usbup+latching-mute+trig-preview+arp+boot-anim+multiline-browser+macro": "3ba2f4f51ead857c5a4e0805b49372bc25a04832c5ddc0fc7627103e880bbf95",
+  "6ch-usbup+latching-mute+trig-preview+tempo-max+boot-anim+multiline-browser+macro": "b9372f74eeb3cd08a807629ad6503571cf1c4378fefe793cf4aa0e0d86c91cea",
   "6ch-usbup+latching-mute+browser-scroll+trig-hold+arp+tempo-max+boot-anim": "676e66d8b2186b458372f0618ca2a19753e6f5f2de29f2dffae54121c6d259ed",
   "6ch-usbup+latching-mute+browser-scroll+trig-hold+arp+tempo-max+multiline-browser": "b852085989c53cf2aa732e43e29efe9a35ff1f4e0f2e791fcc6e7b8be7dbe86f",
+  "6ch-usbup+latching-mute+browser-scroll+trig-hold+arp+tempo-max+macro": "e78aa936925e2aeca4e3eb02c6bf545004590a9e96dee86c17eb2ffb0ef3094c",
   "6ch-usbup+latching-mute+browser-scroll+trig-hold+arp+boot-anim+multiline-browser": "c6ca3f4c1846ffc4b33781066b85cbdfc1fa43e59e81cc1ee759ee6f6c820ccb",
+  "6ch-usbup+latching-mute+browser-scroll+trig-hold+arp+boot-anim+macro": "22357b8855cecc96e33cfdb22438ab08ec94225e8e1e85038a66ec1c31cd45ad",
+  "6ch-usbup+latching-mute+browser-scroll+trig-hold+arp+multiline-browser+macro": "ed9e795b2a26ca35c602beb889041bfd450eaa5fb83f846d28792843c87926af",
   "6ch-usbup+latching-mute+browser-scroll+trig-hold+tempo-max+boot-anim+multiline-browser": "346c78341e700de9e3699305f879eef8e0afc602cc37efa5b75c7a7055b51e5d",
+  "6ch-usbup+latching-mute+browser-scroll+trig-hold+tempo-max+boot-anim+macro": "f1971254bc7a45c57603a45b220aab74c989f98ae918c5d33de6fa9d1a4e2559",
+  "6ch-usbup+latching-mute+browser-scroll+trig-hold+tempo-max+multiline-browser+macro": "a52fdae884fc908f0dab0b9019e0fba81017ade230c411b1208fa6997aaf3499",
+  "6ch-usbup+latching-mute+browser-scroll+trig-hold+boot-anim+multiline-browser+macro": "418ea37a08ee9036ebd565b7431433f5fa5733a617d8169733c9de05f2e9037f",
   "6ch-usbup+latching-mute+browser-scroll+arp+tempo-max+boot-anim+multiline-browser": "1455409a97884f40305667d289dd11c7d757f8994965e65b848bd6f3907ee952",
+  "6ch-usbup+latching-mute+browser-scroll+arp+tempo-max+boot-anim+macro": "616aa0afae59874ee7bd298c4b6acd7868ad57b4092f4dd72df67dfa23b4c128",
+  "6ch-usbup+latching-mute+browser-scroll+arp+tempo-max+multiline-browser+macro": "2ec6b740019de21fefb63ba755880fc6e1d49e8d7ee21dbd7eac3137afef9e05",
+  "6ch-usbup+latching-mute+browser-scroll+arp+boot-anim+multiline-browser+macro": "f8c8db17d4a042df3ee48b939ed2dec9b8af72b0d85d415e4d239381a531278e",
+  "6ch-usbup+latching-mute+browser-scroll+tempo-max+boot-anim+multiline-browser+macro": "aa9a7dc9fdcaa37708f402020aec9b70203e7ad26d1b662f21423554f876889d",
   "6ch-usbup+latching-mute+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "b057b163aadc65cf3b6b75147fe01ab5dca10b0da61236bf3f289262bd636b8e",
+  "6ch-usbup+latching-mute+trig-hold+arp+tempo-max+boot-anim+macro": "edd3aafc658533f4f9d08b671dcefd5a22380db75127f440637ac8b076a5a196",
+  "6ch-usbup+latching-mute+trig-hold+arp+tempo-max+multiline-browser+macro": "26fc3423873c8f2456436b4ea7c3a4e08c4b4cbe768d7de38a3a5efd2fecd826",
+  "6ch-usbup+latching-mute+trig-hold+arp+boot-anim+multiline-browser+macro": "8534df2b14bf5038af9b7661526f5483fc4f4bff961cd4edd66b38225a0da1fe",
+  "6ch-usbup+latching-mute+trig-hold+tempo-max+boot-anim+multiline-browser+macro": "1aba6fe28429771d9b3330dcb42a551f2c839fb6fa5ccff399e649604d9c5bcf",
+  "6ch-usbup+latching-mute+arp+tempo-max+boot-anim+multiline-browser+macro": "6196cd49273dc447550b74c7a8dc862805ffc68b7e33cdd3a81de83e9981736c",
   "6ch-usbup+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim": "4cc27e7b4cecb4a28d5457ef8939f9da624ea3f425b29f56fb60731400d0ad6d",
   "6ch-usbup+trig-preview+browser-scroll+trig-hold+arp+tempo-max+multiline-browser": "b293a8449a8ebf1126e44a53bb3cf86f943980be4fddbd4292fbf99686e809ea",
+  "6ch-usbup+trig-preview+browser-scroll+trig-hold+arp+tempo-max+macro": "41687cef91e7a243414154df7a292d4ef7ef1604a32cc37f16533677aaad80d2",
   "6ch-usbup+trig-preview+browser-scroll+trig-hold+arp+boot-anim+multiline-browser": "624422b4f4ed6aaf693134d7c1dfeac6a25696f5aeac0c465fdea9929395dfff",
+  "6ch-usbup+trig-preview+browser-scroll+trig-hold+arp+boot-anim+macro": "c0a82a3867ef34c66e1126b56dedaf90e86880b4ecbf6bb4646ba466cd61f86d",
+  "6ch-usbup+trig-preview+browser-scroll+trig-hold+arp+multiline-browser+macro": "5f5e3e4daa59351038031fe200971cc6c4610a4aefebf325475d7210d8815ab5",
   "6ch-usbup+trig-preview+browser-scroll+trig-hold+tempo-max+boot-anim+multiline-browser": "5be0680080ecf17840dd4c4a93ee2b3f0810515c39f59935851e51a69766b5c6",
+  "6ch-usbup+trig-preview+browser-scroll+trig-hold+tempo-max+boot-anim+macro": "352270f41747b3830e47ba686aefba31b02904475660f9401066d220890b5f14",
+  "6ch-usbup+trig-preview+browser-scroll+trig-hold+tempo-max+multiline-browser+macro": "92217084d262f34182820b6818a86143c4ce9f1d682b3e7f8b52288ad40f899b",
+  "6ch-usbup+trig-preview+browser-scroll+trig-hold+boot-anim+multiline-browser+macro": "f7f44ec85687e9da95ec60aef8b064fc10f18f5866c54c6c87e1f7b49009cfbb",
   "6ch-usbup+trig-preview+browser-scroll+arp+tempo-max+boot-anim+multiline-browser": "bceb11edf1a7981be5f65dc391149648fbc8a59dce640b27715e2e5f591cea27",
+  "6ch-usbup+trig-preview+browser-scroll+arp+tempo-max+boot-anim+macro": "bcaa23ab3cbf52cc9317e8884644cd710acf5699fd05c613e12c792e41ceb974",
+  "6ch-usbup+trig-preview+browser-scroll+arp+tempo-max+multiline-browser+macro": "c68077fa08c36b330f81ce6a33e56ff54f0988891a6c0a732f236ad4e247845e",
+  "6ch-usbup+trig-preview+browser-scroll+arp+boot-anim+multiline-browser+macro": "22bb109265779562abfb0127ead7a52ce5f9fb65aa2958d6b5d53ecdeae098db",
+  "6ch-usbup+trig-preview+browser-scroll+tempo-max+boot-anim+multiline-browser+macro": "a0e2bf3ba8659f1650716368d456bdb5be04a200ecc013f66b68fe6ed391cac4",
   "6ch-usbup+trig-preview+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "6037b5617c7fb41e4662232739c6f03d3f6a07a6e44f3afafa49829d5261f455",
+  "6ch-usbup+trig-preview+trig-hold+arp+tempo-max+boot-anim+macro": "83a1a7a330121a77ff661444632da5e1ca4010a533b41f8a8c473c5d2639feb5",
+  "6ch-usbup+trig-preview+trig-hold+arp+tempo-max+multiline-browser+macro": "1a9e93564a4757648d699d64f46214b144e5941a1706339e969698a18e962c94",
+  "6ch-usbup+trig-preview+trig-hold+arp+boot-anim+multiline-browser+macro": "96b576544b61ba3b4d4e62da141b8064fd44fe07cbcb0a176ced89216960c668",
+  "6ch-usbup+trig-preview+trig-hold+tempo-max+boot-anim+multiline-browser+macro": "33f83e2cbca482c6b780b92a84e6343d8289d2a69de8d38cc028f2ca4a8d9429",
+  "6ch-usbup+trig-preview+arp+tempo-max+boot-anim+multiline-browser+macro": "9f340998e07a81cad6cc652cda7fc775ef13d748ef866f34c0fdd67f7be014d3",
   "6ch-usbup+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "4b01794034f1a0dafeeac3b879a24365b6086cf379857edb522d9fdd48fbc1f7",
+  "6ch-usbup+browser-scroll+trig-hold+arp+tempo-max+boot-anim+macro": "dc0c3f9e4cb230a174d71d3dc121385d55e126f6daa13a97a73ac797b6d69c15",
+  "6ch-usbup+browser-scroll+trig-hold+arp+tempo-max+multiline-browser+macro": "468caa046c14ea2ee89af6a88b39e9297e0c736e816b07521b2703a6b6be1695",
+  "6ch-usbup+browser-scroll+trig-hold+arp+boot-anim+multiline-browser+macro": "e242e38fd63b6ae9ef5a000c0ab71f7bbd7003263127e3379f242d1ee377680e",
+  "6ch-usbup+browser-scroll+trig-hold+tempo-max+boot-anim+multiline-browser+macro": "868d9bbeb812e2bf47816a6c6c385eb217eaa80bb8db08daf30ab3b24efbcf06",
+  "6ch-usbup+browser-scroll+arp+tempo-max+boot-anim+multiline-browser+macro": "d3ee7a2f799317c3fe0e114a3cb354df56d2101eabe53f35acdc1818e1df9d55",
+  "6ch-usbup+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro": "5624d8cecf1dc6f25bcac9d43baaf2f6575eeecc7a95e26997cddc284bc86a50",
+  "model-tg-st+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro-tg": "99047aeeeb51a714bf2c07e359dd84379a358c0f93ef29198c9c8c7221f30f19",
   "latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim": "039adeeafbe5cb50b62616c2fcda967a3fe53910f235abfec36439e3f3e1b61f",
   "latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+multiline-browser": "283f6586220e7928eca77a8b9db59cc73b9a09219daa566a8bbe5edca851cd2c",
+  "latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+macro": "c11d5cd5bddf24baa349b4f7be6fc086816d7edca91dc523602e970d0a25dc88",
   "latching-mute+trig-preview+browser-scroll+trig-hold+arp+boot-anim+multiline-browser": "075be6128ee367939c9a4b35aab027a31d55f79bef1670978d494584d8fb1647",
+  "latching-mute+trig-preview+browser-scroll+trig-hold+arp+boot-anim+macro": "7a282c253deaadd67d35e87e2b875efa5a581436037aab910d40ebd043275545",
+  "latching-mute+trig-preview+browser-scroll+trig-hold+arp+multiline-browser+macro": "86f90ee5b66d719149feb214d5f76a826f85470a6e3a414dd37776b3a5a46265",
   "latching-mute+trig-preview+browser-scroll+trig-hold+tempo-max+boot-anim+multiline-browser": "02da1e9e65bc061b845042b94186b6c9a8245d78ac482ede54a66f009897baa0",
+  "latching-mute+trig-preview+browser-scroll+trig-hold+tempo-max+boot-anim+macro": "a9cf27617c81c922904de8ad3c7bc977abbe0be3922fe2dbeb78d180ca1a3839",
+  "latching-mute+trig-preview+browser-scroll+trig-hold+tempo-max+multiline-browser+macro": "cb03210d8199b71fd7076cdb7933cf2f6ac87dd9d227bacc781641c1f6c3d3ad",
+  "latching-mute+trig-preview+browser-scroll+trig-hold+boot-anim+multiline-browser+macro": "bd16c2582b1a367a11fb38256321b83707061bf2f33a7a8d65b1d6a02600453a",
   "latching-mute+trig-preview+browser-scroll+arp+tempo-max+boot-anim+multiline-browser": "e6d8d9d1d03bcb9746610d533c4257791370b6ca6da0df844e2230e5bb7146a0",
+  "latching-mute+trig-preview+browser-scroll+arp+tempo-max+boot-anim+macro": "0e9069f55cf6683f3c2cb684500d3fec10a451ebd46c456f481c364d442fa5fd",
+  "latching-mute+trig-preview+browser-scroll+arp+tempo-max+multiline-browser+macro": "d39f4e3443a4620a9bc2e8fe5b7b6a50e67ef9bbfbdec271c922cb172fc8b841",
+  "latching-mute+trig-preview+browser-scroll+arp+boot-anim+multiline-browser+macro": "63250283f34f2a952241524d80662b70eeeac6ec227ef167cc076417fc1fdbb4",
+  "latching-mute+trig-preview+browser-scroll+tempo-max+boot-anim+multiline-browser+macro": "b431b53f9d7d224f17f073ec8c12fd7f0f5fc13feebff4706fd6b1c6e032818b",
   "latching-mute+trig-preview+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "27ee951f0b62411f7b0643d8f537bcf908883f0d5e16152bd59f24ac315b10be",
+  "latching-mute+trig-preview+trig-hold+arp+tempo-max+boot-anim+macro": "ef6469f5337266dd94332f5020e2c31e6dff71213e39e98f2b492a1383fcf090",
+  "latching-mute+trig-preview+trig-hold+arp+tempo-max+multiline-browser+macro": "db6eeeca45ae554b4ef017e0593ae419a3c3773e8db3f69e01de3275fa7d0cf8",
+  "latching-mute+trig-preview+trig-hold+arp+boot-anim+multiline-browser+macro": "41cad9b5f30269ed150c4cf29030092f51a48def0d4fb71d1f6394480d525c70",
+  "latching-mute+trig-preview+trig-hold+tempo-max+boot-anim+multiline-browser+macro": "7dfe31a8b795f6e4a8636a02d0e925ff1187d91d674507f684a7ce41c2b7f711",
+  "latching-mute+trig-preview+arp+tempo-max+boot-anim+multiline-browser+macro": "fb1226ab3abfe259759460c9cfdfe50fb81f102a014a6d3d96bca3578a2214b5",
   "latching-mute+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "1b4ddd23edb8f86d6a066dbbcdb54ece7da80d4f53fd8680fab72cfdb204c3ce",
+  "latching-mute+browser-scroll+trig-hold+arp+tempo-max+boot-anim+macro": "872137602ab1b31b5e4ce76c03f7f1d61e570d8edd7e45cf308b0595e9509f2c",
+  "latching-mute+browser-scroll+trig-hold+arp+tempo-max+multiline-browser+macro": "fe8ebad04c235785e7606f153450b4b09b7afa5d68aefb6f2d77a76c57f9b67e",
+  "latching-mute+browser-scroll+trig-hold+arp+boot-anim+multiline-browser+macro": "a43ef18c30de19ffbd6f97e258be1b2943c09a181933256e415fcd39082aebea",
+  "latching-mute+browser-scroll+trig-hold+tempo-max+boot-anim+multiline-browser+macro": "508eaf353d3005c8f7c08508de0829b7b52c3b5468a45552325f8796a4ab8477",
+  "latching-mute+browser-scroll+arp+tempo-max+boot-anim+multiline-browser+macro": "8ac4f120448117971e949c10607bbc7e88f4c626ef44fe369578f3b2ac95d3cc",
+  "latching-mute+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro": "5bd5f64791107e210974faf04c6f0db6cbec6e598a480b08f41bbd1ff9b42e8b",
   "trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "9f2a47d9e4b6ae89f0d8184bb14afb5cef5c10e3ca47b14f99f9c8edffaf50bb",
+  "trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+macro": "038486b6d5e40d575bd1364416707225b8b11a1d3a2957a07be9724f3af50911",
+  "trig-preview+browser-scroll+trig-hold+arp+tempo-max+multiline-browser+macro": "b41bd64e46a5c56568bade9b96d2e1775636fb87feb94e5bba8b355c53ad2dfd",
+  "trig-preview+browser-scroll+trig-hold+arp+boot-anim+multiline-browser+macro": "8dc32fd507cade49166371271ab8e75a0381ec3e7ec17cf6a93656bcbb890d6f",
+  "trig-preview+browser-scroll+trig-hold+tempo-max+boot-anim+multiline-browser+macro": "4a0b2858fe6e7bd1c71d63e0c5092da4fc6d794e8e6d1da6465c8708230cb91e",
+  "trig-preview+browser-scroll+arp+tempo-max+boot-anim+multiline-browser+macro": "e13bdc68fd63034fddf471a0142febfa0a3f61f29e1e313304f6b98f453b85a9",
+  "trig-preview+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro": "5dae1c915be17f57783a64931f987b8b84440c2225d5c72a4b7a1ebb07d7d444",
+  "browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro": "f0dd7bc35867123d72c9d4ba75db932d8912aedc53fee6527ae6e9edb3d837b8",
+  "6ch-usbup+model-tg-st+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro-tg": "043736727787d2320d49ba64dbee707976d97eb1f4b76bcf64d95da2cdcac152",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim": "bad03d0fba420b81115edf091658712b6653db0150462581defdfbe62e0586a3",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+multiline-browser": "f071dd37dbc5716d71ce6171acb23954bd5f5808c4d720ecbe574c2960cb14fe",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+macro": "eb0434f6a771d874358e3c1b0e4c87895764fcad8137b9333f917ea3715852c1",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+boot-anim+multiline-browser": "1145cc154f0d3829068808f4b50f2d28f4791d767c353d063dfa0c21c0c3c470",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+boot-anim+macro": "0d55876f5b36778d6d38fae21330affafa090e64acbe1978efa71e65de167210",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+multiline-browser+macro": "9e20c52f52b632cdfc37a59378db978088dd8a639959c33bd4c0645f100f9f85",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+tempo-max+boot-anim+multiline-browser": "7a2951a6b7e4c570149341c4cf641007c2f9dc6a32e26b8b7807f3ebddc04553",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+tempo-max+boot-anim+macro": "bfeabe0a0be61870b2a2749d8879d6db223eb5d0edf7c126e64bf798620927dc",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+tempo-max+multiline-browser+macro": "39b7a44a3437185fb868dd717dc7324a871abe67d1ad0212ea6d8edd950b4393",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+boot-anim+multiline-browser+macro": "4ee50545e49ac6c887e801b2a242cc63d15418c236d99af0860a6640d158cfe5",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+arp+tempo-max+boot-anim+multiline-browser": "10631cdf5cf0c44ef575245523e82fb46425348100c679bed31ed78d7cb81fe2",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+arp+tempo-max+boot-anim+macro": "a1aa47bf3e47331ad749b997a30ab6dba7173c972bdc27386769290e6d7cda7a",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+arp+tempo-max+multiline-browser+macro": "c221e16596fda733d1239850400bc3e843b4e91da1de244e7e4f5583fdad38df",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+arp+boot-anim+multiline-browser+macro": "120be26bdb2640f0a276ca8db390d8acdc4467298b08b47732aa18e6a6a20f31",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+tempo-max+boot-anim+multiline-browser+macro": "c41bf049640e4dad6c6f821578a49a9de92dd687562653f37855ca8d18e61561",
   "6ch-usbup+latching-mute+trig-preview+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "82a5d7d73597e2dfd7a6d4e65c1e5724acbf71b7fa8210b8f4779bec09ed5b77",
+  "6ch-usbup+latching-mute+trig-preview+trig-hold+arp+tempo-max+boot-anim+macro": "3caffe5ac8cdce335561c0af5b896fefa8ec060745ee20d4acf6bb8eca2d91f7",
+  "6ch-usbup+latching-mute+trig-preview+trig-hold+arp+tempo-max+multiline-browser+macro": "118d964188d08447f9e81d945fef4da464d9a8a56910a3d88f3dd97dec966459",
+  "6ch-usbup+latching-mute+trig-preview+trig-hold+arp+boot-anim+multiline-browser+macro": "1099e8c3d9688b21b5669309685351bf5044d5240ed5bcc3cc13c7121f68ba21",
+  "6ch-usbup+latching-mute+trig-preview+trig-hold+tempo-max+boot-anim+multiline-browser+macro": "0d04f38632c38b9a6dc151536d7bee6b1e52cdff9bfb9966d48dffc8b6045029",
+  "6ch-usbup+latching-mute+trig-preview+arp+tempo-max+boot-anim+multiline-browser+macro": "f2168a5c6831fafbfd6045ca84dde136974b2eb0197e1ce5cbecf36560adbcaf",
   "6ch-usbup+latching-mute+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "308982cfbeb60ab5c7f24cd5d86ce85b27fc5fe30090a1af2f1c2f817b6fefa6",
+  "6ch-usbup+latching-mute+browser-scroll+trig-hold+arp+tempo-max+boot-anim+macro": "b3c89ee5e2f3fae175f2c99f1b13eacc7716df825a123e5b4eaf82cc7f7f1edc",
+  "6ch-usbup+latching-mute+browser-scroll+trig-hold+arp+tempo-max+multiline-browser+macro": "cdee65dc8719fe4d6a6db8f821476f349cb145fda8ae91d0c54276be88cc393f",
+  "6ch-usbup+latching-mute+browser-scroll+trig-hold+arp+boot-anim+multiline-browser+macro": "3892e05ac155ebd97b2fc40e98671335c08bc44557a97b198efac1fad099eb31",
+  "6ch-usbup+latching-mute+browser-scroll+trig-hold+tempo-max+boot-anim+multiline-browser+macro": "b4003d2433fa11f3854520d210ff20ae8c263f4e1b326d83cda8847c624da161",
+  "6ch-usbup+latching-mute+browser-scroll+arp+tempo-max+boot-anim+multiline-browser+macro": "600c2af990f625897c0176a37e09745621d6712efb54b6a95b6a46f78c95a8be",
+  "6ch-usbup+latching-mute+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro": "42ad05e33d9c20b825fba7dbb2629800e7a379d875a233a911f330e283410d24",
   "6ch-usbup+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "90f78d75d62ceb3636f563bf5cb2f8fce00cf2e3ef4f9399d998aded7c21e53b",
+  "6ch-usbup+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+macro": "88e4312d7b699f7982bc6049ec564ea0af0d8a500375a7a6ad5020e3a82e57be",
+  "6ch-usbup+trig-preview+browser-scroll+trig-hold+arp+tempo-max+multiline-browser+macro": "f0eb0bc9ac3089dcf5a54a579cf034b74354362e96b4001cdcb0379f2061c0c4",
+  "6ch-usbup+trig-preview+browser-scroll+trig-hold+arp+boot-anim+multiline-browser+macro": "e42b86bbe24039ad211268ee2ef77108733cb7f91960bde3266ae217a51891ec",
+  "6ch-usbup+trig-preview+browser-scroll+trig-hold+tempo-max+boot-anim+multiline-browser+macro": "5aea718ceafb9ffcb4b98eb0bb58f0079f4c2377b02dc6a12fe63bb5ef34c46d",
+  "6ch-usbup+trig-preview+browser-scroll+arp+tempo-max+boot-anim+multiline-browser+macro": "c4403fd611555bd84f02c8f97fe6b33b55ec9b46a0846d512c6a7f4e828d626b",
+  "6ch-usbup+trig-preview+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro": "6476743c33177d34d6967a385d714bee9105305577145982f12b3558802630fb",
+  "6ch-usbup+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro": "65db557b4950e60085f4bf8ce799c9c3b856023b0996f543a5dbb4cf4d2b598f",
   "latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "4902d8189f952d3804945ca552525b691cb88c451f0c914ba2329446fb08f354",
+  "latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+macro": "69907190ce6ad46c02d82b83a16d71175502d24ceda80171e0b71ba7df5872ad",
+  "latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+multiline-browser+macro": "dbe70ce62d53e6d043ee76d6bb19644a44ceaf4275b6972e0ff7c07f8ccb00a4",
+  "latching-mute+trig-preview+browser-scroll+trig-hold+arp+boot-anim+multiline-browser+macro": "e434a8373ab1b9a50d446d412190eee16bb91dd548e4776bf147f3e3356fee71",
+  "latching-mute+trig-preview+browser-scroll+trig-hold+tempo-max+boot-anim+multiline-browser+macro": "9400281cac0b001d38db72f22565ef1aab4442e1b1f00d40746376b825b49b5c",
+  "latching-mute+trig-preview+browser-scroll+arp+tempo-max+boot-anim+multiline-browser+macro": "35f1dfabf630b171fd6a41f40cb35944c516badceb8d883fe1855731a2bf8072",
+  "latching-mute+trig-preview+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro": "92a977ec0f0aa1fb4c7bf377c7d59e2110336164816704bd1c5596aa476df9de",
+  "latching-mute+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro": "254114d91faf4adc2f55862551671f741a75c9ea2d8445230bd3d98df006107f",
+  "trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro": "aa33bf46be1d450c0d6caf575627aea03ebeeaa8a2fbfc590a4a3f1c070aef1e",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser": "a8b6e09c20122dfef30ed67daa27476f71e3cba52ccbdb423734493d2fb7119a",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+macro": "ae1638d328636e3ad38760dffe5c71f2ad0d17c1ad0d4ed1cbcdf9e3cee62368",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+multiline-browser+macro": "8b676834092af055b0690ecc83e370c5239410dcb9285540647db6d2dd0a79f2",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+boot-anim+multiline-browser+macro": "e86d70e16b7fa8b5fdc0118e0f7b2a708adaee5b5628568e0c136497131736a1",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+tempo-max+boot-anim+multiline-browser+macro": "bb0598b951c28f0b844f4ebedf8143644465a374c046820b230764395399f774",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+arp+tempo-max+boot-anim+multiline-browser+macro": "b80c5984bc9289e7be5f76dd64d7d4cc85320412400c45bcd8903e4f890513c1",
+  "6ch-usbup+latching-mute+trig-preview+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro": "133725929ee8076a73c639775b2482ce05479ba84a2ed8f9e0e82b553121f12e",
+  "6ch-usbup+latching-mute+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro": "77bdea7fe8f9588a37a4d711408fd3124f7d505760a0b935c7788a967fee4b68",
+  "6ch-usbup+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro": "d3c8e9f289aef80e1634438d140af8241cf1d4b3f56989b203ea67776e3bfaaa",
+  "latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro": "613fdddfaad42a1ace65dcdab903eada706a24f54272e7209700af2cbe884766",
+  "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser+macro": "ab6bbb2dfe226174627ef0a16cca1010b1e8082324d0e97a368ac0e0782c65ff",
   // + real Syntakt engines SDVtg (tweak syntakt-sd), with the official Syntakt OS 1.42 or 1.41
   "syntakt-sd": "6fc3e84db5e7a0203d1b838adc908ea555bc070f8214e8720e2bea3ad158dfde",
   "6ch-usbup+syntakt-sd": "ab39c7e2e487831ecc54edcc3ae4c5d8e5171ebd2a32de64248f7fb270d83edd",
@@ -18490,6 +19066,11 @@ const REF_MAINOS = {
 // "Samples OS" tab: official Model:Samples OS 1.13 inside the official Model:Cycles container
 // (tools/crossflash.py --to cycles). SHA-256 of the resulting .syx; tested on a real Model:Cycles.
 const REF_SAMPLES_ON_CYCLES = "614d28cfe1100856aef7a67aa49003726e27e0e6eb3b6b05ecba6dc177e83911";
+// Same tab, for a Model:Samples (notes/41): the official Model:Cycles OS inside the official Model:Samples container,
+// its update check switched to the Model:Samples key (tools/crossflash.py --to samples); and the way back, the
+// official Model:Samples OS in the Model:Cycles SysEx packing (--back-samples). SHA-256 of the resulting .syx.
+const REF_CYCLES_ON_SAMPLES = "c06c23f31e50fac6ad40cd0f633acd4a7da4f63c929dff563dae887b93105dd4";
+const REF_SAMPLES_BACK = "d63ce13dd1a5039d11b60d3f69d4e88e9d0f56fb2e7350c105ec641d32083680";
 
 // Open-source work this flasher builds on (shown in the Credits section).
 const CREDITS = [
@@ -18498,6 +19079,9 @@ const CREDITS = [
   { who: "drumkilla", repo: "drumkilla/elektron-model-tweaks",
     en: "latching mute, trig preview and name scrolling, and the firmware toolkit (mtlib) this page's builder is ported from",
     fr: "le mute verrouillé, l'écoute d'un pas et le défilement des noms, et la boîte à outils firmware (mtlib) dont le builder de cette page est un portage" },
+  { who: "Émilie Gillet", repo: "pichenettes/eurorack",
+    en: "the synthesis models of the MACRO machine: her Braids code (MIT license), compiled as is",
+    fr: "les modèles de synthèse de la machine MACRO : son code de Braids (licence MIT), compilé tel quel" },
   { who: "TinyGregAudio", repo: "TinyGregAudio/Model-TG",
     en: "Model-TG (MIT license), built here by its own build, with two changes: in mute mode, each track key mutes at once; with 6-channel audio, a muted track's stem is no longer cut off",
     fr: "Model-TG (licence MIT), construit ici par son propre build, avec deux retouches : en mode mute, chaque touche de piste mute tout de suite ; avec l'audio 6 canaux, la piste USB d'une piste mutée n'est plus coupée net" },
@@ -18509,9 +19093,37 @@ const CREDITS = [
 
 const FLASH_GUIDE = `${REPO}/blob/main/FLASH.md`;
 const GUIDE = "../guide/";                      // the site's guide (docs/guide/)
-const GUIDE_OF = { usb6: "usb6", "model-tg": "model-tg", "latching-mute": "mute", "trig-preview": "preview",
-  "browser-scroll": "scroll", "trig-hold": "trig-hold", syntakt: "syntakt", arp: "arp", "tempo-max": "tempo",
-  "boot-anim": "boot-anim", "multiline-browser": "multiline" };
+// mod id -> anchor of its section in the guide (one line per mod)
+const GUIDE_OF = {
+  usb6: "usb6",
+  "model-tg": "model-tg",
+  "latching-mute": "mute",
+  "trig-preview": "preview",
+  "browser-scroll": "scroll",
+  "trig-hold": "trig-hold",
+  syntakt: "syntakt",
+  arp: "arp",
+  "tempo-max": "tempo",
+  "boot-anim": "boot-anim",
+  "multiline-browser": "multiline",
+  macro: "macro",
+};
+
+// Step 1's sections, in display order: the `cat` of each feature (tools/gen_flasher_tweaks.py, same list there
+// without "other"). A feature without a known cat goes to "other", at the end.
+const CATS = ["pack", "sound", "seq", "live", "screen", "io", "other"];
+const CAT_ICON = {
+  pack: '<rect x="3" y="7" width="12" height="12" rx="2.5"/><path d="M7 7V5.5A2.5 2.5 0 0 1 9.5 3H18.5A2.5 2.5 0 0 1 21 5.5v9a2.5 2.5 0 0 1-2.5 2.5H15"/>',
+  sound: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 7.5v3"/>',
+  seq: '<rect x="2.5" y="8" width="4" height="8" rx="1.2"/><rect x="10" y="8" width="4" height="8" rx="1.2" fill="currentColor"/><rect x="17.5" y="8" width="4" height="8" rx="1.2"/>',
+  live: '<path d="M7 3v18M17 3v18"/><rect x="4.5" y="13" width="5" height="4" rx="1" fill="var(--paper)"/><rect x="14.5" y="6" width="5" height="4" rx="1" fill="var(--paper)"/>',
+  screen: '<rect x="2.5" y="5" width="19" height="12" rx="2"/><path d="M6 9.5h8M6 12.5h5M9 21h6"/>',
+  io: '<path d="M9 2.5v5M15 2.5v5"/><rect x="6" y="7.5" width="12" height="6" rx="1.5"/><path d="M12 13.5v4a3 3 0 0 0 3 3h3"/>',
+  other: '<circle cx="6" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18" cy="12" r="1.4"/>',
+};
+const SEARCH_FROM = 20;         // the search field shows from this many mods
+const PARTLY = false;           // true: an unticked engine card tested with some engines only says "Partly tested"
+const DISCORD = "https://discord.gg/hWegtJZcmm";
 
 // ---------------------------------------------------------------------------
 // Texts
@@ -18523,7 +19135,63 @@ const T = {
     s1: "What do you want to install?",
     tab_mods: "Mods",
     tab_restore: "Official firmware",
-    mods_note: "Tick several to combine them. Choices tagged “Experimental” are not tested on a real Model:Cycles yet.",
+    mods_note: 'Tick what you want: mods combine, unless a line says otherwise. <span class="tag ok">Tested</span>: tried on a real Model:Cycles. <span class="tag exp">Experimental</span>: checked in the emulator, not on the machine yet.',
+    cats_label: "Sections",
+    cat_lit: ", with ticked mods",
+    cat_pack: "Packs", cat_pack_sub: "several mods in one",
+    cat_sound: "Sounds & machines", cat_sound_sub: "new machines, filters",
+    cat_seq: "Sequencer", cat_seq_sub: "trigs, tempo, arpeggios",
+    cat_live: "Live playing", cat_live_sub: "mutes, chords, mixing",
+    cat_screen: "Screen & browsing", cat_screen_sub: "browser, display, startup",
+    cat_io: "USB & MIDI", cat_io_sub: "audio and MIDI in and out",
+    cat_other: "Other mods", cat_other_sub: "",
+    grp_n: "{n} mods", grp_n1: "1 mod",
+    grp_on: "<b>{k}</b> ticked of {n}", grp_on1: "<b>1</b> ticked of {n}",
+    details: "Details",
+    details_of: "Details: {name}",
+    also: "Also contains {n} mods of this list: {names}.",
+    need_syntakt: "+ Syntakt OS in step 2",
+    with_mod: "with {name}",
+    part_tested: "Partly tested",
+    good_to_know: "Good to know:",
+    clash_row: "<b>Doesn't go with the mod {name}</b>, already ticked: {why}. Ticking this one unticks it.",
+    clash_generic: "both change the same part of the firmware",
+    swapped: "The mod {off} was unticked: it doesn't go with {on}.",
+    swapped_n: "The mods {off} were unticked: they don't go with {on}.",
+    quoted: "“{name}”",
+    undo: "Undo",
+    eng_group: "Engines",
+    combo_known: "Already tried on the machine: {list}.",
+    combo_all: "the {n} engines",
+    take: "Use this choice",
+    d_status: "Status",
+    d_tested: "Tested on a real Model:Cycles.",
+    d_exp: "Checked in the emulator, not tested on a Model:Cycles yet.",
+    d_combos: "Tried on the machine: {list}. The other choices are checked in the emulator.",
+    d_with_tested: "With {name}: tried on the machine with {list}.",
+    d_contains: "Contains", d_contains_v: "{names}: nothing more to tick.",
+    d_clash: "Doesn't go with", d_clash_v: "{name}: {why}.",
+    d_file: "Extra file", d_file_syntakt: "your Syntakt OS file, asked for in step 2.",
+    d_requires: "Works with", d_requires_v: "{name} only: tick it too.",
+    d_engines: "Engines",
+    d_note: "Before installing",
+    d_guide: "How to use it", read_guide: "Read the guide",
+    sel_title: "Your selection",
+    sel_n: "{n} mods", sel_n1: "1 mod",
+    sel_incl: "+ {n} included",
+    sel_exp: "{n} experimental", sel_exp1: "1 experimental",
+    sel_none: "No mod ticked yet: tick the ones to install.",
+    sel_show: "Show", sel_hide: "Hide",
+    sel_clear: "Untick all",
+    sel_remove: "Untick {name}",
+    sel_next: "Step 2",
+    sel_syntakt: "+ your Syntakt OS file, to load in step 2.",
+    search_label: "Search the mods",
+    search_ph: "Search: tempo, filter, mute…",
+    search_clear: "Clear the search",
+    found: "<b>{n}</b> of {total} mods for “{q}” · ",
+    show_all: "show all",
+    found_none: `No mod for “{q}”. An idea for a mod? <a href="${DISCORD}" target="_blank" rel="noopener">Suggest it on Discord</a>. · `,
     restore_text: "Sends your official OS file <b>unchanged</b>, to go back to the stock firmware. It is also a good first rehearsal: it checks your cable and your setup without changing anything.",
     tab_samples: "Samples OS",
     samples_title: "Turn your Model:Cycles into a Model:Samples",
@@ -18537,6 +19205,7 @@ const T = {
     experimental: "Experimental",
     credit_by: "by {who}",
     credit_based: "based on {repo} by {who}",
+    credit_based_v: "based on {repo} by {who}",
     s2: "Load your official OS file",
     drop_title: "Drop model-cycles_OS1.13.syx here",
     drop_sub: "or click to choose it",
@@ -18623,6 +19292,32 @@ const T = {
     miss_samples_cycles: "The first file must be the official Model:Cycles OS (step 2).",
     miss_samples_file: "Load the official Model:Samples OS file (step 2).",
     miss_samples_ack: "Confirm you have a MIDI interface for the way back (step 1).",
+    smp_dir_cyc: "Model:Cycles → Samples OS",
+    smp_dir_smp: "Model:Samples → Cycles OS",
+    smp_dir_back: "Model:Samples: back to its OS",
+    cos_title: "Turn your Model:Samples into a Model:Cycles",
+    cos_text: "Play the Model:Cycles synth engines on your Model:Samples. The page puts the official Model:Cycles OS inside your Model:Samples firmware: the startup menu, the updater and the signature of the Model:Samples stay in place. One small change in the Model:Cycles OS lets it accept the official Model:Samples OS again over USB, so the way back is in this tab too (“Model:Samples: back to its OS”).",
+    cos_w1: "Experimental: not yet tried on a real Model:Samples.",
+    cos_w2: "Back up your samples and projects with Elektron Transfer first: the Model:Cycles OS uses the same storage, and what it does with Model:Samples data is not known yet.",
+    cos_w3: "Under the Cycles OS, your Model:Samples refuses Model:Cycles firmwares (official or with mods), including an update offered by Elektron Transfer: that is expected, nothing is written. To leave, use “Model:Samples: back to its OS”.",
+    cos_w4: `If the way back over USB ever failed, the startup menu of the Model:Samples still takes its official OS through the MIDI IN, with a MIDI interface (<a href="${GUIDE}#cycles-on-samples">guide</a>).`,
+    cos_w5: "Only for a real Model:Samples. A Model:Cycles running the Samples OS (first choice of this tab) also answers as a Model:Samples and would take this firmware, then refuse Model:Cycles firmwares over USB until its startup menu reinstalls its OS through the MIDI IN.",
+    xos_reset: "If the machine does not start properly after the update, switch it off and on again. If it still hangs, hold FUNC while switching it on, then press TRIG 2 (EMPTY RESET): it clears the active project, hence the backup first.",
+    cos_ack: "I have backed up my samples and projects with Elektron Transfer, and I keep the official Model:Samples OS file for the way back.",
+    sback_title: "Give your Model:Samples its own OS back",
+    sback_text: "For a Model:Samples running the Model:Cycles OS installed from this page. The page sends the official Model:Samples OS, unchanged, packed so that the Model:Cycles OS accepts it. The machine restarts as a Model:Samples, as before.",
+    sback_w1: "A Model:Cycles OS installed another way (another tool, or a Model:Cycles build with mods) refuses this file: the machine says the update failed and nothing changes. Such an OS accepts the first choice, “Model:Cycles → Samples OS”, which brings the Model:Samples OS back; failing that, the startup menu and the MIDI IN.",
+    sback_w2: `Sent to a real Model:Cycles, it is refused and nothing changes (<a href="${GUIDE}#cycles-on-samples">guide</a>).`,
+    cos_needs_cycles: "For this choice, the first file must be the official <code>model-cycles_OS1.13.syx</code>, and the second the official Model:Samples OS.",
+    cos_ready: "Firmware ready: the Model:Cycles OS for your Model:Samples.",
+    sback_ready: "Firmware ready: the official Model:Samples OS, for the way back over USB.",
+    mods_list_cos: "Model:Cycles OS (for Model:Samples)",
+    mods_list_sback: "Official Model:Samples OS (way back)",
+    miss_cos_ack: "Confirm your backup and the official Model:Samples file (step 1).",
+    done_cos: "It restarts as a <b>Model:Cycles</b>: Elektron Transfer and your computer see a “Model:Cycles”. To go back, choose “Model:Samples: back to its OS” in the Samples OS tab.",
+    done_sback: "It restarts as a <b>Model:Samples</b>, with its own OS.",
+    dev_fwd_on_cycles: "This machine answers as a Model:Cycles: it would refuse this firmware. If it is a Model:Samples already running the Cycles OS, there is nothing to install; to go back, choose “Model:Samples: back to its OS” if that Cycles OS came from this page, or “Model:Cycles → Samples OS” if it was installed another way.",
+    dev_back_on_samples: "This machine answers as a Model:Samples OS: there is nothing to bring back. If it actually runs the Cycles OS with Model-TG, set Model-TG's Transfer identity back to CYC (or restart the machine), then try again.",
     done_samples: "It restarts as a <b>Model:Samples</b>: Elektron Transfer and your computer see a “Model:Samples”. Load your samples with Transfer.",
     pick_one: "Select at least one mod, or switch to “Official firmware”.",
     midi_asking: "Asking for MIDI access…",
@@ -18644,8 +19339,8 @@ const T = {
     miss_midi: "Allow MIDI access (step 3).",
     miss_port: "Choose a MIDI output (step 3).",
     miss_ack: "Tick the box above to confirm.",
-    miss_ready: "Open CONFIG › UPGRADE on the Model:Cycles (step 3), then flash.",
-    miss_ready_fast: "Ready. At the end, the Model:Cycles asks you to confirm on its screen.",
+    miss_ready: "Open CONFIG › UPGRADE on the {m} (step 3), then flash.",
+    miss_ready_fast: "Ready. At the end, the {m} asks you to confirm on its screen.",
     miss_probe: "Waiting for the Model:Cycles to answer (step 3).",
     miss_dev: "The Model:Cycles must answer first (step 3).",
     miss_dev_mismatch: "This machine can't take this firmware (step 3).",
@@ -18659,10 +19354,10 @@ const T = {
     dev_wrong_file: "This firmware is for a Model:Samples, and this machine is a Model:Cycles: nothing will be sent.",
     watch_fast: "The Model:Cycles checks every block as it arrives. At the end it asks you to confirm the update on its screen.",
     done_title_fast: "Firmware sent.",
-    after_confirm: "Now confirm the update on the Model:Cycles screen (<b>YES</b>). It then writes the firmware and restarts by itself: <b>don't turn it off</b> until it has restarted.",
-    after_gone: "The Model:Cycles is writing the firmware and restarting. <b>Don't turn it off.</b>",
-    after_back: "The Model:Cycles is back: {device} OS {v}.",
-    after_back_plain: "The Model:Cycles is back.",
+    after_confirm: "Now confirm the update on the {m} screen (<b>YES</b>). It then writes the firmware and restarts by itself: <b>don't turn it off</b> until it has restarted.",
+    after_gone: "The {m} is writing the firmware and restarting. <b>Don't turn it off.</b>",
+    after_back: "The {m} is back: {device} OS {v}.",
+    after_back_plain: "The {m} is back.",
     fast_timeout: "The Model:Cycles stopped answering. Turn it off and on, then flash again. If it happens again, choose the classic method in step 3.",
     fast_refused: "The Model:Cycles refused the update{why}. Turn it off and on and try again, or choose the classic method in step 3.",
     fast_write: "The Model:Cycles reported an error while receiving{why}. Turn it off and on and try again, or choose the classic method in step 3.",
@@ -18686,7 +19381,63 @@ const T = {
     s1: "Que voulez-vous installer ?",
     tab_mods: "Mods",
     tab_restore: "Firmware officiel",
-    mods_note: "Cochez-en plusieurs pour les combiner. Les choix marqués « Expérimental » ne sont pas encore testés sur un vrai Model:Cycles.",
+    mods_note: 'Cochez ce que vous voulez : les mods se combinent, sauf mention contraire. <span class="tag ok">Testé</span> : essayé sur un vrai Model:Cycles. <span class="tag exp">Expérimental</span> : vérifié en émulation, pas encore sur la machine.',
+    cats_label: "Rubriques",
+    cat_lit: ", avec des mods cochés",
+    cat_pack: "Packs", cat_pack_sub: "plusieurs mods en un",
+    cat_sound: "Sons et machines", cat_sound_sub: "nouvelles machines, filtres",
+    cat_seq: "Séquenceur", cat_seq_sub: "trigs, tempo, arpèges",
+    cat_live: "Jeu en live", cat_live_sub: "mutes, accords, mixage",
+    cat_screen: "Écran et navigation", cat_screen_sub: "navigateur, affichage, démarrage",
+    cat_io: "USB et MIDI", cat_io_sub: "audio et MIDI vers l'extérieur",
+    cat_other: "Autres mods", cat_other_sub: "",
+    grp_n: "{n} mods", grp_n1: "1 mod",
+    grp_on: "<b>{k}</b> cochés sur {n}", grp_on1: "<b>1</b> coché sur {n}",
+    details: "Détails",
+    details_of: "Détails : {name}",
+    also: "Contient aussi {n} mods de la liste : {names}.",
+    need_syntakt: "+ OS Syntakt à l'étape 2",
+    with_mod: "avec {name}",
+    part_tested: "Testé en partie",
+    good_to_know: "À savoir :",
+    clash_row: "<b>Ne va pas avec le mod {name}</b>, déjà coché : {why}. Cocher celui-ci le décochera.",
+    clash_generic: "les deux modifient le même endroit du firmware",
+    swapped: "Le mod {off} a été décoché : il ne va pas avec {on}.",
+    swapped_n: "Les mods {off} ont été décochés : ils ne vont pas avec {on}.",
+    quoted: "« {name} »",
+    undo: "Annuler",
+    eng_group: "Moteurs",
+    combo_known: "Déjà essayé sur la machine : {list}.",
+    combo_all: "les {n} moteurs",
+    take: "Prendre ce choix",
+    d_status: "État",
+    d_tested: "Testé sur un vrai Model:Cycles.",
+    d_exp: "Vérifié en émulation, pas encore testé sur un Model:Cycles.",
+    d_combos: "Essayé sur la machine : {list}. Les autres choix sont vérifiés en émulation.",
+    d_with_tested: "Avec {name} : essayé sur la machine avec {list}.",
+    d_contains: "Contient", d_contains_v: "{names} : rien à cocher en plus.",
+    d_clash: "Ne va pas avec", d_clash_v: "{name} : {why}.",
+    d_file: "Fichier en plus", d_file_syntakt: "votre fichier d'OS Syntakt, demandé à l'étape 2.",
+    d_requires: "Marche avec", d_requires_v: "{name} seulement : cochez-le aussi.",
+    d_engines: "Moteurs",
+    d_note: "Avant d'installer",
+    d_guide: "Mode d'emploi", read_guide: "Lire le guide",
+    sel_title: "Votre sélection",
+    sel_n: "{n} mods", sel_n1: "1 mod",
+    sel_incl: "+ {n} inclus",
+    sel_exp: "{n} expérimentaux", sel_exp1: "1 expérimental",
+    sel_none: "Aucun mod coché : cochez ceux à installer.",
+    sel_show: "Voir", sel_hide: "Masquer",
+    sel_clear: "Tout décocher",
+    sel_remove: "Décocher {name}",
+    sel_next: "Étape 2",
+    sel_syntakt: "+ votre fichier d'OS Syntakt, à charger à l'étape 2.",
+    search_label: "Chercher un mod",
+    search_ph: "Chercher : tempo, filtre, mute…",
+    search_clear: "Effacer la recherche",
+    found: "<b>{n}</b> mods sur {total} pour « {q} » · ",
+    show_all: "tout afficher",
+    found_none: `Aucun mod pour « {q} ». Une idée de mod ? <a href="${DISCORD}" target="_blank" rel="noopener">Proposez-la sur Discord</a>. · `,
     restore_text: "Envoie votre fichier d'OS officiel <b>sans le modifier</b>, pour revenir au firmware d'origine. C'est aussi une bonne répétition avant un mod : elle vérifie le câble et l'installation sans rien changer.",
     tab_samples: "OS Samples",
     samples_title: "Transformer le Model:Cycles en Model:Samples",
@@ -18700,6 +19451,7 @@ const T = {
     experimental: "Expérimental",
     credit_by: "par {who}",
     credit_based: "d'après {repo} de {who}",
+    credit_based_v: "d'après {repo} d'{who}",
     s2: "Déposez votre fichier d'OS officiel",
     drop_title: "Déposez model-cycles_OS1.13.syx ici",
     drop_sub: "ou cliquez pour le choisir",
@@ -18785,6 +19537,32 @@ const T = {
     miss_samples_cycles: "Le premier fichier doit être l'OS officiel du Model:Cycles (étape 2).",
     miss_samples_file: "Déposez le fichier officiel de l'OS Model:Samples (étape 2).",
     miss_samples_ack: "Confirmez que vous avez une interface MIDI pour le retour (étape 1).",
+    smp_dir_cyc: "Model:Cycles → OS Samples",
+    smp_dir_smp: "Model:Samples → OS Cycles",
+    smp_dir_back: "Model:Samples : retour à son OS",
+    cos_title: "Transformer le Model:Samples en Model:Cycles",
+    cos_text: "Jouez les moteurs de synthèse du Model:Cycles sur votre Model:Samples. La page place l'OS officiel du Model:Cycles dans le firmware de votre Model:Samples : le menu de démarrage, l'updater et la signature du Model:Samples restent en place. Une petite modification de l'OS du Model:Cycles lui fait accepter à nouveau l'OS officiel du Model:Samples par USB : le retour se fait aussi depuis cet onglet (« Model:Samples : retour à son OS »).",
+    cos_w1: "Expérimental : pas encore essayé sur un vrai Model:Samples.",
+    cos_w2: "Sauvegardez d'abord vos samples et vos projets avec Elektron Transfer : l'OS du Model:Cycles utilise le même stockage, et on ne sait pas encore ce qu'il fait des données du Model:Samples.",
+    cos_w3: "Sous l'OS Cycles, votre Model:Samples refuse les firmwares Model:Cycles (officiels ou avec mods), y compris une mise à jour proposée par Elektron Transfer : c'est voulu, rien n'est écrit. Pour revenir, utilisez « Model:Samples : retour à son OS ».",
+    cos_w4: `Si le retour par USB échouait un jour, le menu de démarrage du Model:Samples accepte toujours son OS officiel par le MIDI IN, avec une interface MIDI (<a href="${GUIDE}#cycles-on-samples">guide</a>).`,
+    cos_w5: "Seulement pour un vrai Model:Samples. Un Model:Cycles sous l'OS Samples (premier choix de cet onglet) répond lui aussi Model:Samples et prendrait ce firmware, puis refuserait les firmwares Model:Cycles par USB jusqu'à ce que son menu de démarrage réinstalle son OS par le MIDI IN.",
+    xos_reset: "Si la machine démarre mal après la mise à jour, éteignez-la et rallumez-la. Si elle bloque encore, maintenez FUNC à l'allumage puis appuyez sur TRIG 2 (EMPTY RESET) : il vide le projet actif, d'où la sauvegarde d'abord.",
+    cos_ack: "J'ai sauvegardé mes samples et mes projets avec Elektron Transfer, et je garde le fichier officiel de l'OS Model:Samples pour le retour.",
+    sback_title: "Rendre au Model:Samples son propre OS",
+    sback_text: "Pour un Model:Samples sous l'OS du Model:Cycles installé depuis cette page. La page envoie l'OS officiel du Model:Samples, sans le modifier, emballé pour que l'OS du Model:Cycles l'accepte. La machine redémarre en Model:Samples, comme avant.",
+    sback_w1: "Un OS Model:Cycles installé autrement (avec un autre outil, ou un build Model:Cycles avec mods) refuse ce fichier : la machine dit que la mise à jour a échoué et rien ne change. Un tel OS accepte le premier choix, « Model:Cycles → OS Samples », qui rend l'OS du Model:Samples ; à défaut, le menu de démarrage et le MIDI IN.",
+    sback_w2: `Envoyé à un vrai Model:Cycles, il est refusé et rien ne change (<a href="${GUIDE}#cycles-on-samples">guide</a>).`,
+    cos_needs_cycles: "Pour ce choix, le premier fichier doit être le <code>model-cycles_OS1.13.syx</code> officiel, et le second l'OS officiel du Model:Samples.",
+    cos_ready: "Firmware prêt : l'OS du Model:Cycles pour votre Model:Samples.",
+    sback_ready: "Firmware prêt : l'OS officiel du Model:Samples, pour le retour par USB.",
+    mods_list_cos: "OS Model:Cycles (pour Model:Samples)",
+    mods_list_sback: "OS Model:Samples officiel (retour)",
+    miss_cos_ack: "Confirmez votre sauvegarde et le fichier officiel du Model:Samples (étape 1).",
+    done_cos: "Il redémarre en <b>Model:Cycles</b> : Elektron Transfer et votre ordinateur voient un « Model:Cycles ». Pour revenir, choisissez « Model:Samples : retour à son OS » dans l'onglet OS Samples.",
+    done_sback: "Il redémarre en <b>Model:Samples</b>, avec son propre OS.",
+    dev_fwd_on_cycles: "Cette machine répond comme un Model:Cycles : elle refuserait ce firmware. Si c'est un Model:Samples déjà sous l'OS Cycles, il n'y a rien à installer ; pour revenir, choisissez « Model:Samples : retour à son OS » si cet OS Cycles vient de cette page, ou « Model:Cycles → OS Samples » s'il a été installé autrement.",
+    dev_back_on_samples: "Cette machine répond comme l'OS du Model:Samples : il n'y a rien à rendre. Si elle tourne en fait sous l'OS Cycles avec Model-TG, remettez l'identité Transfer de Model-TG sur CYC (ou redémarrez la machine), puis réessayez.",
     done_samples: "Il redémarre en <b>Model:Samples</b> : Elektron Transfer et votre ordinateur voient un « Model:Samples ». Chargez vos samples avec Transfer.",
     pick_one: "Cochez au moins un mod, ou passez sur « Firmware officiel ».",
     midi_asking: "Demande d'accès MIDI…",
@@ -18806,8 +19584,8 @@ const T = {
     miss_midi: "Autorisez le MIDI (étape 3).",
     miss_port: "Choisissez une sortie MIDI (étape 3).",
     miss_ack: "Cochez la case ci-dessus pour confirmer.",
-    miss_ready: "Ouvrez CONFIG › UPGRADE sur le Model:Cycles (étape 3), puis flashez.",
-    miss_ready_fast: "Prêt. À la fin, le Model:Cycles demande de confirmer sur son écran.",
+    miss_ready: "Ouvrez CONFIG › UPGRADE sur le {m} (étape 3), puis flashez.",
+    miss_ready_fast: "Prêt. À la fin, le {m} demande de confirmer sur son écran.",
     miss_probe: "En attente d'une réponse du Model:Cycles (étape 3).",
     miss_dev: "Le Model:Cycles doit d'abord répondre (étape 3).",
     miss_dev_mismatch: "Cette machine ne peut pas recevoir ce firmware (étape 3).",
@@ -18821,10 +19599,10 @@ const T = {
     dev_wrong_file: "Ce firmware est pour un Model:Samples, et cette machine est un Model:Cycles : rien ne sera envoyé.",
     watch_fast: "Le Model:Cycles vérifie chaque bloc à son arrivée. À la fin, il demande de confirmer la mise à jour sur son écran.",
     done_title_fast: "Firmware envoyé.",
-    after_confirm: "Confirmez maintenant la mise à jour sur l'écran du Model:Cycles (<b>YES</b>). Il écrit alors le firmware et redémarre tout seul : <b>ne l'éteignez pas</b> avant qu'il ait redémarré.",
-    after_gone: "Le Model:Cycles écrit le firmware et redémarre. <b>Ne l'éteignez pas.</b>",
-    after_back: "Le Model:Cycles est de retour : {device} OS {v}.",
-    after_back_plain: "Le Model:Cycles est de retour.",
+    after_confirm: "Confirmez maintenant la mise à jour sur l'écran du {m} (<b>YES</b>). Il écrit alors le firmware et redémarre tout seul : <b>ne l'éteignez pas</b> avant qu'il ait redémarré.",
+    after_gone: "Le {m} écrit le firmware et redémarre. <b>Ne l'éteignez pas.</b>",
+    after_back: "Le {m} est de retour : {device} OS {v}.",
+    after_back_plain: "Le {m} est de retour.",
     fast_timeout: "Le Model:Cycles ne répond plus. Éteignez-le puis rallumez-le, et relancez. Si ça recommence, choisissez la méthode classique à l'étape 3.",
     fast_refused: "Le Model:Cycles a refusé la mise à jour{why}. Éteignez-le puis rallumez-le et réessayez, ou choisissez la méthode classique à l'étape 3.",
     fast_write: "Le Model:Cycles a signalé une erreur pendant la réception{why}. Éteignez-le puis rallumez-le et réessayez, ou choisissez la méthode classique à l'étape 3.",
@@ -18848,65 +19626,99 @@ const T = {
 const FEAT = {
   en: {
     usb6: { label: "6-channel USB audio",
+      short: "Each track on its own USB channel. No stereo mix over USB any more.",
       desc: "Each track gets its own USB channel (48 kHz / 32-bit): record the 6 tracks separately in your DAW. The stereo mix is no longer sent over USB. OS updates over USB keep working." },
     "model-tg": { label: "Model-TG",
+      short: "TinyGregAudio's big pack: a 7th Sampler machine and many additions.",
+      parts: ["Sampler (7th machine)", "resampling", "retrig and master FX", "filter and resonance on the stock machines", "slide trigs", "Scale Lock", "samples through Elektron Transfer"],
       desc: "A Sampler machine (7th machine) with seven playback modes, resampling, a beat-repeat page with master FX, Attack, Filter and Resonance on the stock machines, slide trigs that glide the parameters from one trig to the next, Scale Lock, sample upload through Elektron Transfer, and lower CPU use. It already includes drumkilla's three tweaks. With the Syntakt engines, the Sampler stays the 7th machine and the engines follow it.",
       note: "Only install an OS while Device Config > Transfer is set to CYC (every power-on starts at CYC). Projects using the Sampler won't play those tracks on another firmware." },
     "latching-mute": { label: "Latching mute mode",
+      short: "TRACK + FUNC: mute mode stays on, no need to hold FUNC.",
       desc: "Hold TRACK and tap FUNC: mute mode stays on, so you mute tracks without holding FUNC. A short tap on FUNC leaves it." },
     "trig-preview": { label: "Trig preview",
+      short: "Sequencer stopped, hold a step and press PAGE to hear it.",
       desc: "With the sequencer stopped or paused, hold a step and press PAGE: the step plays with its own note, length and p-locks." },
     "browser-scroll": { label: "Scroll long names",
+      short: "In the sound browser, names too long for the screen scroll.",
       desc: "In the sound browser, a name too long for the screen scrolls so you can read it." },
     syntakt: { label: "Real Syntakt engines",
+      short: "Syntakt engines as extra machines, read from your own Syntakt OS file.",
       desc: "The Syntakt's own engines, read from your Syntakt OS file (step 2) and added after Chord, in this order, with the Syntakt's knob names and defaults. Tick the ones you want." },
-    "eng-sd": { note: "Vintage snare." },
-    "eng-cp": { note: "Vintage clap." },
-    "eng-toy": { note: "Toy-like tuned percussion." },
-    "eng-bits": { note: "Two digital oscillators with rate and bit reduction. PUNCH switches Bit Redux on." },
-    "eng-swarm": { note: "A swarm of detuned saws (supersaw). PUNCH adds the sub-octave." },
+    "eng-sd": { short: "vintage snare", note: "Vintage snare." },
+    "eng-cp": { short: "vintage clap", note: "Vintage clap." },
+    "eng-toy": { short: "toy-like percussion", note: "Toy-like tuned percussion." },
+    "eng-bits": { short: "digital, bit crush", note: "Two digital oscillators with rate and bit reduction. PUNCH switches Bit Redux on." },
+    "eng-swarm": { short: "supersaw", note: "A swarm of detuned saws (supersaw). PUNCH adds the sub-octave." },
     "trig-hold": { label: "Easier trig removal",
+      short: "A short press removes the trig; a long one keeps it and shows its settings.",
       desc: "Pressing a trig key whose step already holds a trig removes it if you let go within half a second (0.2 s on the stock OS). Hold it longer and the trig stays, as before: its settings show up. Turning a knob while you hold keeps the trig too." },
     arp: { label: "Arpeggiator",
+      short: "The retrig becomes an arpeggiator: held notes play one after another.",
       desc: "The retrig becomes an arpeggiator: hold several notes on a track with RETRIG held (or A.On) and they play one after another at the retrig rate. FUNC + RETRIG adds Arp (direction: UP, DOWN, UPDN, RAND, PLAY or OFF) and Oct (1 to 4 octaves), saved with the pattern." },
     "tempo-max": { label: "Tempo up to 546 BPM",
+      short: "Tempo goes up to 546 BPM instead of 300, MIDI clock included.",
       desc: "The tempo goes up to 546.0 BPM instead of 300: TEMPO knob, tap tempo, incoming MIDI clock and saved projects. 546 is the ceiling of the project format. Tempo-synced LFOs stay right at these speeds.",
       note: "Above 300 BPM, the processor may struggle to keep up with busy patterns: push it knowingly. A project saved above 300 BPM reopens at 120 BPM on the original OS." },
     "boot-anim": { label: "modded-cycles startup animation",
+      short: "At startup the modded-cycles logo animates, without making startup longer.",
       desc: "When the Model:Cycles starts, the four rounded squares of the modded-cycles logo pop in one by one and “modded-cycles” types itself underneath, instead of the original tile animation. It lasts as long as the original: startup is not slower." },
     "multiline-browser": { label: "Multi-line browser",
+      short: "The browser shows three names at once in a small font, a > before the current one.",
       desc: "The sound, folder and sample browser shows 3 names at once in a small font, instead of one in big letters. A > marks the name under the cursor, the loaded sound stays highlighted, and a small mark stands for a folder. With Scroll long names or Model-TG, only the name under the cursor scrolls. From an idea and a script by a community member." },
+    macro: { label: "MACRO machine",
+      short: "One extra machine with 47 synthesis models, from Braids' open-source code.",
+      clash: "both put their code in the same place in memory",
+      desc: "An extra machine after Chord (after the Sampler with Model-TG) with the 47 synthesis models of Braids, Émilie Gillet's open-source macro-oscillator, from her own code: analog-style waves, FM, vowels and speech, physical models, drums, wavetables and noises. SHAPE picks the model, COLOR and SWEEP shape it, CONTOUR lets the amp envelope open the timbre. DECAY, GATE and PUNCH work as on Tone.",
+      note: "About twice as heavy on the processor as an original machine, with no load governor yet: several MACRO tracks playing at once can make the sound crackle, so start with one or two. A project using MACRO needs a firmware with MACRO at the same place (7th machine, or 8th with Model-TG)." },
   },
   fr: {
     usb6: { label: "Audio USB 6 canaux",
+      short: "Chaque piste sur son propre canal USB. Plus de mix stéréo en USB.",
       desc: "Chaque piste a son propre canal USB (48 kHz / 32 bits) : enregistrez les 6 pistes séparément dans votre logiciel. Le mix stéréo n'est plus envoyé en USB. La mise à jour de l'OS par USB continue de fonctionner." },
     "model-tg": { label: "Model-TG",
+      short: "Le grand pack de TinyGregAudio : une 7e machine Sampler et de nombreux ajouts.",
+      parts: ["Sampler (7e machine)", "rééchantillonnage", "retrig et effets master", "filtre et résonance sur les machines d'origine", "slide trigs", "Scale Lock", "samples par Elektron Transfer"],
       desc: "Une machine Sampler (7e machine) à sept modes de lecture, le rééchantillonnage, une page de retrig avec effets master, Attack, Filtre et Résonance sur les machines d'origine, des slide trigs qui font glisser les paramètres d'un trig au suivant, Scale Lock, l'envoi d'échantillons par Elektron Transfer, et moins de charge processeur. Contient déjà les trois tweaks de drumkilla. Avec les moteurs du Syntakt, le Sampler reste la 7e machine et les moteurs le suivent.",
       note: "N'installez un OS que lorsque Device Config > Transfer est sur CYC (chaque démarrage repart sur CYC). Les projets qui utilisent le Sampler ne joueront pas ces pistes sur un autre firmware." },
     "latching-mute": { label: "Mode mute verrouillé",
+      short: "TRACK + FUNC : le mode mute reste actif, plus besoin de tenir FUNC.",
       desc: "Maintenez TRACK et tapez FUNC : le mode mute reste actif, vous mutez les pistes sans tenir FUNC. Un appui court sur FUNC en sort." },
     "trig-preview": { label: "Écoute d'un pas",
+      short: "Séquenceur arrêté, maintenez un pas et appuyez sur PAGE pour l'entendre.",
       desc: "Séquenceur à l'arrêt ou en pause, maintenez un pas et appuyez sur PAGE : le pas joue avec sa note, sa longueur et ses p-locks." },
     "browser-scroll": { label: "Défilement des noms longs",
+      short: "Dans le navigateur de sons, les noms trop longs pour l'écran défilent.",
       desc: "Dans le navigateur de sons, un nom trop long pour l'écran défile pour rester lisible." },
     syntakt: { label: "Vrais moteurs du Syntakt",
+      short: "Des moteurs du Syntakt en machines en plus, lus dans votre propre OS Syntakt.",
       desc: "Les moteurs du Syntakt, lus dans votre fichier d'OS Syntakt (étape 2) et ajoutés après Chord, dans cet ordre, avec les noms et réglages des potards du Syntakt. Cochez ceux que vous voulez." },
-    "eng-sd": { note: "Caisse claire vintage." },
-    "eng-cp": { note: "Clap vintage." },
-    "eng-toy": { note: "Percussion accordée façon jouet." },
-    "eng-bits": { note: "Deux oscillateurs numériques avec réduction d'échantillonnage et de bits. PUNCH active Bit Redux." },
-    "eng-swarm": { note: "Un essaim de dents de scie désaccordées (supersaw). PUNCH ajoute l'octave inférieure." },
+    "eng-sd": { short: "caisse claire vintage", note: "Caisse claire vintage." },
+    "eng-cp": { short: "clap vintage", note: "Clap vintage." },
+    "eng-toy": { short: "percu façon jouet", note: "Percussion accordée façon jouet." },
+    "eng-bits": { short: "numérique, bit crush", note: "Deux oscillateurs numériques avec réduction d'échantillonnage et de bits. PUNCH active Bit Redux." },
+    "eng-swarm": { short: "supersaw", note: "Un essaim de dents de scie désaccordées (supersaw). PUNCH ajoute l'octave inférieure." },
     "trig-hold": { label: "Effacer un trig plus facilement",
+      short: "Un appui bref efface le trig ; un appui long le garde et montre ses réglages.",
       desc: "Un appui sur une touche de pas qui porte déjà un trig l'efface si vous relâchez en moins d'une demi-seconde (0,2 s avec l'OS d'origine). Tenez plus longtemps et le trig reste, comme avant : ses réglages s'affichent. Tourner un potard pendant l'appui garde aussi le trig." },
     arp: { label: "Arpégiateur",
+      short: "Le retrig devient un arpégiateur : les notes tenues se jouent l'une après l'autre.",
       desc: "Le retrig devient un arpégiateur : tenez plusieurs notes sur une piste avec RETRIG tenu (ou A.On) et elles se jouent l'une après l'autre au rythme du retrig. FUNC + RETRIG ajoute Arp (sens : UP, DOWN, UPDN, RAND, PLAY ou OFF) et Oct (1 à 4 octaves), enregistrés avec le pattern." },
     "tempo-max": { label: "Tempo jusqu'à 546 BPM",
+      short: "Le tempo monte jusqu'à 546 BPM au lieu de 300, horloge MIDI comprise.",
       desc: "Le tempo monte jusqu'à 546,0 BPM au lieu de 300 : potard TEMPO, tap tempo, horloge MIDI reçue et projets enregistrés. 546 est le plafond du format des projets. Les LFO synchronisés au tempo restent justes à ces vitesses.",
       note: "Au-delà de 300 BPM, le processeur peut avoir plus de mal à suivre la cadence sur des patterns chargés : à utiliser en connaissance de cause. Un projet enregistré au-dessus de 300 BPM se rouvre à 120 BPM sur l'OS d'origine." },
     "boot-anim": { label: "Animation de démarrage modded-cycles",
+      short: "Au démarrage, le logo modded-cycles s'anime, sans rallonger le démarrage.",
       desc: "Au démarrage du Model:Cycles, les quatre carrés arrondis du logo modded-cycles apparaissent un par un et « modded-cycles » s'écrit dessous, à la place de l'animation de carreaux d'origine. Elle dure autant que l'originale : le démarrage n'est pas plus long." },
     "multiline-browser": { label: "Navigateur sur plusieurs lignes",
+      short: "Le navigateur affiche trois noms à la fois en petite police, un > devant le nom courant.",
       desc: "Le navigateur de sons, de dossiers et d'échantillons affiche 3 noms à la fois en petite police, au lieu d'un seul en gros caractères. Un > signale le nom sous le curseur, le son chargé reste en surbrillance, et un petit repère désigne un dossier. Avec Défilement des noms longs ou Model-TG, seul le nom sous le curseur défile. D'après une idée et un script d'un membre de la communauté." },
+    macro: { label: "Machine MACRO",
+      short: "Une machine en plus avec 47 modèles de synthèse, tirés du code libre de Braids.",
+      clash: "les deux placent leur code au même endroit de la mémoire",
+      desc: "Une machine ajoutée après Chord (après le Sampler avec Model-TG) avec les 47 modèles de synthèse de Braids, le macro-oscillateur libre d'Émilie Gillet, à partir de son propre code : ondes façon analogique, FM, voyelles et voix, modèles physiques, percussions, tables d'ondes et bruits. SHAPE choisit le modèle, COLOR et SWEEP le façonnent, CONTOUR laisse l'enveloppe d'ampli ouvrir le timbre. DECAY, GATE et PUNCH marchent comme sur Tone.",
+      note: "Environ deux fois plus gourmande en calcul qu'une machine d'origine, et sans régulateur de charge pour l'instant : plusieurs pistes MACRO qui jouent en même temps peuvent faire craquer le son ; commencez avec une ou deux. Un projet qui utilise MACRO demande un firmware où MACRO est à la même place (7e machine, ou 8e avec Model-TG)." },
   },
 };
 
@@ -18917,6 +19729,7 @@ const st = {
   lang: "en",
   mode: "mods",            // "mods" | "restore" | "samples"
   samplesOs: null,         // official Model:Samples OS { raw, name, sha } ("samples" mode)
+  smpDir: "cyc",           // "samples" mode: "cyc" Samples OS for a Model:Cycles | "smp" Cycles OS for a Model:Samples | "back" its way back
   samplesError: null,
   syntakt: null,           // official Syntakt OS { raw, name, sha } (source of the Syntakt engines)
   syntaktError: null,
@@ -19003,6 +19816,8 @@ function applyLang(lang) {
 // ---------------------------------------------------------------------------
 // feature id -> { on: bool, variant: id } ; engine cards (real Syntakt engines): { on: bool, engines: [codes] }
 const selection = {};
+// display-only state of the picker (never saved): open Details drawers, folded sections, search, last swap (Undo)
+const pick = { open: new Set(), folded: new Set(), q: "", swap: null, selOpen: false };
 
 // Engine card: the combination of ticked engines (kept in catalog order) and its tweak.
 // Two cards that can't be ticked together (Model-TG and the tweaks it already holds, or the Syntakt engines).
@@ -19027,129 +19842,401 @@ function comboOfFeature(id) {
   return f && isOn(id) ? comboOf(f, selection[id]) : null;
 }
 
+// The mods, shown by section (cat), in FEATURES order inside a section. The build keeps FEATURES order whatever the
+// display order (chosenTweaks, REF_MAINOS keys).
+const features = () => (window.MC_TWEAKS && window.MC_TWEAKS.features) || [];
+const featById = (id) => features().find((f) => f.id === id);
+function selOf(f) {
+  return selection[f.id] ||
+    (selection[f.id] = f.engines ? { on: false, engines: [] } : { on: false, variant: f.variants[0].id });
+}
+const label = (f) => featText(f.id, "label", f.label);
+// a mod without a short text shows the first sentence of its description (cut to 2 lines by the CSS)
+function shortOf(f) {
+  const d = featText(f.id, "desc", f.desc);
+  return featText(f.id, "short", "") || (d.match(/^.*?[.!?](?=\s|$)/) || [d])[0];
+}
+const catOf = (f) => (f.cat && CATS.includes(f.cat) ? f.cat : "other");
+const order = () => CATS.flatMap((c) => features().filter((f) => catOf(f) === c));    // display order
+// the real "excludes" (explained to the user); excludes() above also counts what a pack includes
+const clashOnly = (f, g) => (f.excludes || []).includes(g.id) || (g.excludes || []).includes(f.id);
+const clashWhy = (f, g) => featText(f.id, "clash", "") || featText(g.id, "clash", "") || t("clash_generic");
+
+// Tested or experimental, down to the exact engine combination (with Model-TG, the combined version's own tests).
+// "part": an unticked engine card that is tested with some engines only (PARTLY).
+function statusOf(f) {
+  const sel = selOf(f);
+  if (f.engines) {
+    if (!sel.on) return PARTLY && f.status === "tested" && f.combos.some((c) => !c.tested && !c.tg_tested) ? "part" : f.status;
+    const c = comboOf(f, sel);
+    return c && (isOn("model-tg") ? c.tg_tested : c.tested) ? "tested" : "experimental";
+  }
+  // Model-TG's card follows the engines' choice
+  const withId = sel.on && f.with ? Object.keys(f.with).find(isOn) : null;
+  const tgCombo = withId ? comboOfFeature(withId) : null;
+  if (tgCombo) return tgCombo.tg_tested ? "tested" : "experimental";
+  return f.status === "tested" ? "tested" : "experimental";
+}
+const tagHtml = (s) => s === "tested" ? `<span class="tag ok">${esc(t("tested"))}</span>`
+  : s === "part" ? `<span class="tag ok">${esc(t("part_tested"))}</span>` : `<span class="tag exp">${esc(t("experimental"))}</span>`;
+
+// Tick or untick a card: cards that can't go together turn the other one off, as before; a real clash (excludes) is
+// said on the row just ticked and in the selection bar, with Undo.
+function setOn(f, on) {
+  if (includedBy(f)) return;                           // locked while the card holding it is ticked
+  const before = JSON.parse(JSON.stringify(selection));
+  const sel = selOf(f);
+  pick.swap = null;
+  sel.on = on;
+  if (on) {
+    const off = [];
+    for (const g of features())
+      if (g !== f && isOn(g.id) && excludes(f, g)) { selection[g.id].on = false; if (clashOnly(f, g)) off.push(g.id); }
+    if (f.engines && !sel.engines.length) sel.engines = [f.engines[0].code];
+    if (off.length) pick.swap = { by: f.id, off, before };
+  }
+}
+// One engine pad: the ticked engines stay in catalog order; no engine left turns the card off.
+function setEngine(f, code, on) {
+  const sel = selOf(f), keep = new Set(sel.engines);
+  if (on) keep.add(code); else keep.delete(code);
+  sel.engines = f.engines.map((e) => e.code).filter((c) => keep.has(c));
+  if (!sel.engines.length) sel.on = false;
+  pick.swap = null;
+}
+function undo() {
+  if (!pick.swap) return null;
+  const by = pick.swap.by, before = pick.swap.before;
+  for (const id in before) selection[id] = before[id];
+  pick.swap = null;
+  return by;
+}
+
+// Search (shown from SEARCH_FROM mods): accent- and case-insensitive, in both languages, every word must match.
+const fold = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const hay = {};
+function haystack(f) {
+  if (hay[f.id]) return hay[f.id];
+  const parts = [f.label, f.desc];
+  for (const L of ["en", "fr"]) {
+    const x = FEAT[L][f.id] || {};
+    parts.push(x.label, x.short, x.desc, x.clash, (x.parts || []).join(" "), T[L]["cat_" + catOf(f)]);
+    for (const e of f.engines || []) parts.push(e.name, e.label, (FEAT[L]["eng-" + e.code] || {}).short);
+  }
+  if (f.credit) parts.push(f.credit.who);
+  return (hay[f.id] = fold(parts.filter(Boolean).join(" ")));
+}
+const searching = () => features().length >= SEARCH_FROM && pick.q.trim() !== "";
+const matches = (f) => !searching() || fold(pick.q).split(/\s+/).filter(Boolean).every((w) => haystack(f).includes(w));
+
 function renderFeatures() {
   const box = $("features");
-  const tw = window.MC_TWEAKS;
-  if (!box || !tw || !tw.features) return;
+  if (!box || !window.MC_TWEAKS || !window.MC_TWEAKS.features) return;
+  const focusId = document.activeElement && document.activeElement.id;
+  features().forEach(selOf);
   box.innerHTML = "";
-  for (const f of tw.features) {
-    const sel = selection[f.id] ||
-      (selection[f.id] = f.engines ? { on: false, engines: [] } : { on: false, variant: f.variants[0].id });
-    const holder = includedBy(f);
-    const card = document.createElement("label");
-    card.className = "feat" + (sel.on || holder ? " on" : "") + (holder ? " included" : "");
-    card.htmlFor = "feat-" + f.id;
+  for (const c of CATS) {
+    const mods = features().filter((f) => catOf(f) === c);
+    if (!mods.length) continue;
+    const lit = mods.filter((f) => isOn(f.id) || includedBy(f));
+    const folded = pick.folded.has(c) && !searching();
+    const g = document.createElement("section");
+    g.className = "grp";
+    g.id = "cat-" + c;
+    g.hidden = !mods.some(matches);
+    const n = lit.length ? t(lit.length > 1 ? "grp_on" : "grp_on1", { k: lit.length, n: mods.length })
+      : esc(t(mods.length > 1 ? "grp_n" : "grp_n1", { n: mods.length }));
+    const sub = t("cat_" + c + "_sub");
+    g.innerHTML = `<h3><button type="button" class="grp-h" id="grp-h-${c}" aria-expanded="${!folded}" aria-controls="grp-${c}">` +
+      `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CAT_ICON[c]}</svg>` +
+      `<span class="gt">${esc(t("cat_" + c))}</span>${sub ? `<span class="gs">${esc(sub)}</span>` : ""}<span class="gn">${n}</span>` +
+      `<svg class="chev" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5l4 4 4-4"/></svg>` +
+      `</button></h3>` +
+      (folded && lit.length ? `<p class="grp-sel">${lit.map((f) => `<span class="${includedBy(f) ? "inc" : ""}">${esc(label(f))}</span>`).join("")}</p>` : "");
+    const body = document.createElement("div");
+    body.className = "grp-body";
+    body.id = "grp-" + c;
+    body.hidden = folded;
+    for (const f of mods) body.appendChild(renderRow(f));
+    g.appendChild(body);
+    box.appendChild(g);
+  }
+  renderFind();
+  renderCats();
+  renderSelection();
+  // keyboard users keep their place: the element that had the focus gets it back after the rebuild
+  if (focusId && (!document.activeElement || document.activeElement.id !== focusId) && $(focusId)) $(focusId).focus({ preventScroll: true });
+}
 
-    const cb = document.createElement("input");
-    cb.type = "checkbox";
-    cb.id = "feat-" + f.id;
-    cb.checked = sel.on || !!holder;
-    cb.disabled = !!holder;
-    cb.addEventListener("change", () => {
-      if (includedBy(f)) { renderFeatures(); return; }   // locked while the card holding it is ticked
-      sel.on = cb.checked;
-      if (sel.on)                                         // cards that can't go together: the other one goes off
-        for (const g of tw.features)
-          if (g !== f && selection[g.id] && excludes(f, g)) selection[g.id].on = false;
-      if (f.engines && sel.on && !sel.engines.length) sel.engines = [f.engines[0].code];
+function renderRow(f) {
+  const sel = selOf(f), holder = includedBy(f), status = statusOf(f), on = sel.on || !!holder;
+  const d = document.createElement("div");
+  d.className = "mod" + (on ? " on" : "") + (holder ? " incl" : "");
+  d.id = "mod-" + f.id;
+  d.hidden = !matches(f);
+  const side = [];
+  // "by drumkilla" / "based on ms-multi-output by scottmetoyer"; a link inside the <label> doesn't toggle the checkbox
+  if (f.credit) side.push(`<span class="credit">${creditHtml(f.credit)}` +
+    (f.license ? ` · <a href="${esc(f.license)}" target="_blank" rel="noopener">${esc(t("license_mit"))}</a>` : "") + `</span>`);
+  if (f.needs === "syntakt") side.push(`<span class="need">${esc(t("need_syntakt"))}</span>`);
+  const req = f.requires && featById(f.requires);
+  if (req) side.push(`<span class="need">${esc(t("with_mod", { name: label(req) }))}</span>`);
+  const open = pick.open.has(f.id);
+  d.innerHTML = `<label class="mod-row" for="feat-${f.id}">` +
+      `<input type="checkbox" id="feat-${f.id}"${on ? " checked" : ""}${holder ? " disabled" : ""}>` +
+      `<span class="ttl"><span class="nm">${esc(label(f))}</span>${holder ? `<span class="incl">${esc(t("included", { name: label(holder) }))}</span>` : ""}</span>` +
+      `<span class="by">${side.join("")}</span>` +
+      `<span class="st">${tagHtml(status)}</span>` +
+      `<span class="short">${esc(shortOf(f))}</span>` +
+    `</label>` +
+    `<button type="button" class="more" id="more-${f.id}" aria-expanded="${open}" aria-controls="det-${f.id}" aria-label="${esc(t("details_of", { name: label(f) }))}">` +
+      `<span class="lbl">${esc(t("details"))}</span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5l4 4 4-4"/></svg></button>` +
+    `<div class="ext"></div>`;
+  const ext = d.querySelector(".ext");
+  const add = (html) => ext.insertAdjacentHTML("beforeend", html);
+
+  // a pack: what it brings, and the mods of this list it already holds
+  const parts = featText(f.id, "parts", null);
+  if (parts) add(`<ul class="parts">${parts.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>`);
+  const held = (f.includes || []).map(featById).filter(Boolean);
+  if (held.length) add(`<p class="also">${t("also", { n: held.length, names: held.map((g) => `<b>${esc(label(g))}</b>`).join(", ") })}</p>`);
+  // just unticked: said on the row just ticked, where the eyes are, with Undo
+  if (pick.swap && pick.swap.by === f.id) add(`<p class="say swap">${esc(swapText(pick.swap))} <button type="button" class="lnk" data-undo>${esc(t("undo"))}</button></p>`);
+  // before ticking: why this mod doesn't go with a ticked one
+  if (!on) for (const g of features())
+    if (g !== f && isOn(g.id) && clashOnly(f, g)) add(`<p class="say clash">${t("clash_row", { name: esc(t("quoted", { name: label(g) })), why: esc(clashWhy(f, g)) })}</p>`);
+  // several variants of one mod (none today): a sub-choice once ticked
+  if (!f.engines && f.variants.length > 1 && sel.on) add(renderVariants(f, sel));
+  if (f.engines && sel.on) add(renderEngines(f, sel, status));
+  if (sel.on && featText(f.id, "note", "")) add(`<p class="say"><b>${esc(t("good_to_know"))}</b> ${esc(featText(f.id, "note", ""))}</p>`);
+  add(renderDetails(f, sel, open));
+  return d;
+}
+
+function swapText(sw) {
+  return t(sw.off.length > 1 ? "swapped_n" : "swapped",
+    { off: sw.off.map((id) => t("quoted", { name: label(featById(id)) })).join(", "), on: t("quoted", { name: label(featById(sw.by)) }) });
+}
+
+function renderVariants(f, sel) {
+  return `<div class="variants">` + f.variants.map((v) =>
+    `<label><input type="radio" name="var-${f.id}" value="${esc(v.id)}"${sel.variant === v.id ? " checked" : ""}>` +
+    `<span>${esc(featText(v.id, "label", v.label || v.id))}<small>${esc(featText(v.id, "note", ""))}</small></span></label>`).join("") + `</div>`;
+}
+
+// An engine card (real Syntakt engines): one pad per engine, the state of the ticked combination, and the warnings in
+// full. The pads sit outside the row's label: no nested labels.
+function renderEngines(f, sel, status) {
+  const pads = f.engines.map((e) => `<label class="pad"><input type="checkbox" id="eng-${e.code}" name="eng-${f.id}" value="${e.code}"` +
+    `${sel.engines.includes(e.code) ? " checked" : ""}><b>${esc(e.name)}</b><span class="vh"> — </span><small class="pl">${esc(e.label)}</small>` +
+    `<small>${esc(featText("eng-" + e.code, "short", ""))}</small></label>`).join("");
+  let html = `<div class="pads" role="group" aria-label="${esc(t("eng_group"))}">${pads}</div>`;
+  const combo = comboOf(f, sel);
+  const tg = isOn("model-tg"), tgName = label(featById("model-tg") || { id: "model-tg", label: "Model-TG" });
+  const list = (c, withTg) => (c.engines.length === f.engines.length ? t("combo_all", { n: c.engines.length })
+    : c.engines.map((k) => f.engines.find((e) => e.code === k).name).join(" + ")) + (withTg ? " " + t("with_mod", { name: tgName }) : "");
+  if (combo) {
+    // the ticked engines by name, even when they are all ticked
+    const names = sel.engines.map((k) => f.engines.find((e) => e.code === k).name).join(" + ") +
+      (tg ? " " + t("with_mod", { name: tgName }) : "");
+    html += `<p class="combo">${tagHtml(status)}<b>${esc(names)}.</b> ` +
+      `${esc(t(status === "tested" ? "combo_tested" : "combo_new"))}</p>`;
+    if (status !== "tested") {
+      // the choices already tried on the machine; "Use this choice" only changes this card's engines
+      const here = f.combos.filter((c) => (tg ? c.tg_tested : c.tested));
+      const there = f.combos.filter((c) => (tg ? c.tested : c.tg_tested));
+      if (here.length) {
+        const best = here.slice().sort((a, b) => dist(a, sel) - dist(b, sel))[0];
+        html += `<p class="combo">${esc(t("combo_known", { list: list(best, tg) }))} ` +
+          `<button type="button" class="lnk" data-take="${f.id}" data-codes="${best.engines.join()}">${esc(t("take"))}</button></p>`;
+      } else if (there.length) html += `<p class="combo">${esc(t("combo_known", { list: there.map((c) => list(c, !tg)).join(" ; ") }))}</p>`;
+    }
+  }
+  if (tg) html += `<p class="combo quiet">${esc(t("with_tg"))}</p>`;
+  html += `<p class="say"><b>${esc(t("good_to_know"))}</b> ${esc(t("renumber"))}</p>`;
+  return html;
+}
+const dist = (c, sel) => c.engines.filter((x) => !sel.engines.includes(x)).length + sel.engines.filter((x) => !c.engines.includes(x)).length;
+
+// The Details drawer: the full description and the facts. Always in the page, hidden while closed.
+function renderDetails(f, sel, open) {
+  const rows = [];
+  const row = (k, v) => rows.push(`<dt>${esc(t(k))}</dt><dd>${v}</dd>`);
+  const tgName = label(featById("model-tg") || { id: "model-tg", label: "Model-TG" });
+  const comboName = (g, c) => (c.engines.length === g.engines.length ? t("combo_all", { n: c.engines.length }) : c.label);
+  let status = esc(t(f.status === "tested" ? "d_tested" : "d_exp"));
+  if (f.combos) {
+    const tried = f.combos.filter((c) => c.tested).map((c) => comboName(f, c))
+      .concat(f.combos.filter((c) => c.tg_tested).map((c) => comboName(f, c) + " " + t("with_mod", { name: tgName })));
+    status = esc(tried.length ? t("d_combos", { list: tried.join(" ; ") }) : t("d_exp"));
+  }
+  for (const gid of Object.keys(f.with || {})) {            // Model-TG: its combined versions already tried
+    const g = featById(gid), ok = ((g && g.combos) || []).filter((c) => c.tg_tested);
+    if (ok.length) status += " " + esc(t("d_with_tested", { name: label(g), list: ok.map((c) => comboName(g, c)).join(" ; ") }));
+  }
+  row("d_status", status);
+  const held = (f.includes || []).map(featById).filter(Boolean);
+  if (held.length) row("d_contains", t("d_contains_v", { names: held.map((g) => `<b>${esc(label(g))}</b>`).join(", ") }));
+  const clash = features().filter((g) => g !== f && clashOnly(f, g));
+  if (clash.length) row("d_clash", clash.map((g) => t("d_clash_v", { name: `<b>${esc(label(g))}</b>`, why: esc(clashWhy(f, g)) })).join(" "));
+  if (f.needs === "syntakt") row("d_file", esc(t("d_file_syntakt")));
+  const req = f.requires && featById(f.requires);
+  if (req) row("d_requires", t("d_requires_v", { name: `<b>${esc(label(req))}</b>` }));
+  if (f.engines) row("d_engines", f.engines.map((e) =>
+    `<b>${esc(e.name)}</b> (${esc(e.label)})${featText("eng-" + e.code, "note", "") ? " : " + esc(featText("eng-" + e.code, "note", "")) : ""}`).join("<br>"));
+  if (!sel.on && featText(f.id, "note", "")) row("d_note", esc(featText(f.id, "note", "")));
+  if (GUIDE_OF[f.id]) row("d_guide", `<a class="feat-guide" href="${GUIDE}#${GUIDE_OF[f.id]}">${esc(t("read_guide"))} <span aria-hidden="true">→</span></a>`);
+  return `<div class="det" id="det-${f.id}"${open ? "" : " hidden"}><p>${esc(featText(f.id, "desc", f.desc))}</p><dl class="facts">${rows.join("")}</dl></div>`;
+}
+
+// Section chips: they jump to a section (never filter); the LED lights when the section holds a ticked mod.
+function renderCats() {
+  const box = $("cats");
+  if (!box) return;
+  box.setAttribute("aria-label", t("cats_label"));
+  box.innerHTML = CATS.map((c) => {
+    const mods = features().filter((f) => catOf(f) === c);
+    if (!mods.length) return "";
+    const lit = mods.some((f) => isOn(f.id) || includedBy(f));
+    const n = mods.filter(matches).length;
+    return `<li class="${n ? "" : "zero"}"><a href="#cat-${c}" data-cat="${c}"><span class="led${lit ? " on" : ""}" aria-hidden="true"></span>` +
+      `${esc(t("cat_" + c))} <span class="n">${n}</span>${lit ? `<span class="vh">${esc(t("cat_lit"))}</span>` : ""}</a></li>`;
+  }).join("");
+}
+
+function renderFind() {
+  if (!$("mod-find")) return;
+  $("mod-find").hidden = features().length < SEARCH_FROM;
+  const q = $("mod-q");
+  q.placeholder = t("search_ph");
+  $("mod-q-clr").setAttribute("aria-label", t("search_clear"));
+  $("mod-q-clr").hidden = !pick.q;
+  if (q.value !== pick.q) q.value = pick.q;
+  const found = $("mod-found");
+  found.hidden = !searching();
+  if (searching()) {
+    const n = features().filter(matches).length;
+    found.innerHTML = (n ? t("found", { n, total: features().length, q: esc(pick.q.trim()) }) : t("found_none", { q: esc(pick.q.trim()) })) +
+      `<button type="button" class="lnk soft" data-showall>${esc(t("show_all"))}</button>`;
+  }
+}
+
+// "Your selection": what will be installed, in display order, with × to untick; stuck to the bottom of the screen
+// while the list scrolls (where IntersectionObserver exists).
+function renderSelection() {
+  const box = $("mod-sel");
+  if (!box) return;
+  const on = order().filter((f) => isOn(f.id));
+  const inc = features().filter((f) => includedBy(f));
+  const exp = on.filter((f) => statusOf(f) === "experimental");
+  if (!on.length) {
+    box.innerHTML = `<div class="sel-h"><div class="sel-sum"><span class="sel-t" id="sel-title" tabindex="-1">${esc(t("sel_title"))}</span></div></div>` +
+      `<p class="sel-none">${esc(t("sel_none"))}</p>`;
+    box.classList.remove("open");
+    live(t("sel_none"));
+    return;
+  }
+  const counts = `<span class="sel-n">${esc(t(on.length > 1 ? "sel_n" : "sel_n1", { n: on.length })) + (inc.length ? " " + esc(t("sel_incl", { n: inc.length })) : "")}</span>` +
+    (exp.length ? `<span class="dotsep"> · </span><span class="fx">${esc(t(exp.length > 1 ? "sel_exp" : "sel_exp1", { n: exp.length }))}</span>` : "");
+  const chip = (f) => {
+    const sel = selOf(f);
+    const mine = inc.filter((g) => (f.includes || []).includes(g.id));
+    const extra = f.engines ? sel.engines.map((c) => f.engines.find((e) => e.code === c).name).join(", ")
+      : mine.length ? t("sel_incl", { n: mine.length }) : "";
+    return `<li class="chip"><span>${esc(label(f))}${extra ? ` <span class="ci">${esc(extra)}</span>` : ""}</span>` +
+      (statusOf(f) === "experimental" ? `<span class="cx" role="img" aria-label="${esc(t("experimental"))}" title="${esc(t("experimental"))}"></span>` : "") +
+      `<button type="button" class="x" data-off="${f.id}" aria-label="${esc(t("sel_remove", { name: label(f) }))}">×</button></li>`;
+  };
+  const sw = pick.swap;
+  box.innerHTML = `<div class="sel-h">` +
+      `<div class="sel-sum"><span class="sel-t" id="sel-title" tabindex="-1">${esc(t("sel_title"))}</span><span class="sel-c">${counts}</span></div>` +
+      `<div class="sel-x">` +
+        `<button type="button" class="lnk soft clear" data-clear>${esc(t("sel_clear"))}</button>` +
+        `<button type="button" class="lnk soft sel-more" aria-expanded="${pick.selOpen}" aria-controls="sel-body">${esc(t(pick.selOpen ? "sel_hide" : "sel_show"))}</button>` +
+        `<a class="btn sel-next" href="#step-file">${esc(t("sel_next"))} <span aria-hidden="true">↓</span></a>` +
+      `</div>` +
+    `</div>` +
+    `<div class="sel-body" id="sel-body">` +
+      `<ul class="chips">${on.map(chip).join("")}${choiceNeedsSyntakt() ? `<li class="sel-need">${esc(t("sel_syntakt"))}</li>` : ""}</ul>` +
+      (sw ? `<p class="sel-msg">${esc(swapText(sw))} <button type="button" class="lnk" data-undo>${esc(t("undo"))}</button></p>` : "") +
+      `<p class="sel-foot"><button type="button" class="lnk soft" data-clear>${esc(t("sel_clear"))}</button></p>` +
+    `</div>`;
+  box.classList.toggle("open", pick.selOpen);
+  // short announcement for screen readers: the live region stays in place, only its text changes
+  live(box.querySelector(".sel-c").textContent + (sw ? ". " + swapText(sw) : ""));
+}
+function live(text) {
+  const el = $("mod-live");
+  if (el && el.textContent !== text) el.textContent = text;
+}
+
+// One listener per zone (delegation): they survive the rebuild that follows every change.
+function wirePicker() {
+  const changed = () => { renderFeatures(); update(); };
+  $("features").addEventListener("change", (e) => {
+    const el = e.target, f = (id) => featById(id);
+    if (el.id && el.id.startsWith("feat-") && f(el.id.slice(5))) setOn(f(el.id.slice(5)), el.checked);
+    else if (el.name && el.name.startsWith("eng-") && f(el.name.slice(4))) setEngine(f(el.name.slice(4)), el.value, el.checked);
+    else if (el.name && el.name.startsWith("var-") && f(el.name.slice(4))) { selOf(f(el.name.slice(4))).variant = el.value; pick.swap = null; }
+    else return;
+    changed();
+  });
+  $("features").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    if (b.classList.contains("more")) {
+      const id = b.id.slice(5);
+      if (pick.open.has(id)) pick.open.delete(id); else pick.open.add(id);
       renderFeatures();
-      update();
-    });
-
-    const ttl = document.createElement("div");
-    ttl.className = "ttl";
-    const combo = f.engines && sel.on ? comboOf(f, sel) : null;
-    // with Model-TG, the combined version's own tests (combo.tg_tested); Model-TG's card follows the engines' choice
-    const withId = sel.on && f.with ? Object.keys(f.with).find(isOn) : null;
-    const tgCombo = withId ? comboOfFeature(withId) : null;
-    const tested = combo ? (isOn("model-tg") ? combo.tg_tested : combo.tested)
-      : tgCombo ? !!tgCombo.tg_tested : f.status === "tested";
-    ttl.innerHTML = `<span>${esc(featText(f.id, "label", f.label))}</span>` +
-      (holder ? `<span class="incl">${esc(t("included", { name: featText(holder.id, "label", holder.label) }))}</span>` : "") +
-      `<span class="tag${tested ? " ok" : ""}">${esc(t(tested ? "tested" : "experimental"))}</span>` +
-      (GUIDE_OF[f.id] ? `<a class="feat-guide" href="${GUIDE}#${GUIDE_OF[f.id]}">Guide <span aria-hidden="true">→</span></a>` : "");
-    const desc = document.createElement("div");
-    desc.className = "desc";
-    desc.textContent = featText(f.id, "desc", f.desc);
-    card.append(cb, ttl, desc);
-    if (f.credit) {
-      const cr = document.createElement("div");
-      cr.className = "credit";
-      cr.innerHTML = creditHtml(f.credit) +
-        (f.license ? ` · <a href="${esc(f.license)}" target="_blank" rel="noopener">${esc(t("license_mit"))}</a>` : "");
-      card.appendChild(cr);
+    } else if (b.classList.contains("grp-h")) {
+      const c = b.id.slice(6);
+      if (pick.folded.has(c)) pick.folded.delete(c); else pick.folded.add(c);
+      renderFeatures();
+    } else if (b.hasAttribute("data-undo")) {
+      const by = undo();
+      changed();
+      if (by && $("feat-" + by)) $("feat-" + by).focus({ preventScroll: true });
+    } else if (b.dataset.take && featById(b.dataset.take)) {
+      selOf(featById(b.dataset.take)).engines = b.dataset.codes.split(",");
+      pick.swap = null;
+      changed();
     }
-    if (sel.on && featText(f.id, "note", "")) {
-      const n = document.createElement("div");
-      n.className = "combo";
-      n.textContent = featText(f.id, "note", "");
-      card.appendChild(n);
+  });
+  $("cats").addEventListener("click", (e) => {               // a jump to a folded section unfolds it first
+    const a = e.target.closest("a[data-cat]");
+    if (a && pick.folded.delete(a.dataset.cat)) renderFeatures();
+  });
+  $("mod-sel").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    if (b.dataset.off && featById(b.dataset.off)) {
+      const xs = [...$("mod-sel").querySelectorAll("[data-off]")], k = xs.indexOf(b);
+      setOn(featById(b.dataset.off), false);
+      changed();
+      const next = $("mod-sel").querySelectorAll("[data-off]")[k] || $("sel-title");   // focus: the next ×, else the title
+      if (next) next.focus({ preventScroll: true });
+      return;
     }
-
-    if (!f.engines && f.variants.length > 1 && sel.on) {
-      const vs = document.createElement("div");
-      vs.className = "variants";
-      for (const v of f.variants) {
-        const l = document.createElement("label");
-        const r = document.createElement("input");
-        r.type = "radio";
-        r.name = "var-" + f.id;
-        r.value = v.id;
-        r.checked = sel.variant === v.id;
-        r.addEventListener("change", () => { sel.variant = v.id; update(); });
-        const s = document.createElement("span");
-        s.innerHTML = `${esc(featText(v.id, "label", v.label || v.id))}<small>${esc(featText(v.id, "note", ""))}</small>`;
-        l.append(r, s);
-        l.addEventListener("click", (e) => e.stopPropagation());   // don't toggle the card
-        vs.appendChild(l);
-      }
-      card.appendChild(vs);
-    }
-
-    if (f.engines && sel.on) {
-      const vs = document.createElement("div");
-      vs.className = "variants";
-      for (const e of f.engines) {
-        const l = document.createElement("label");
-        const r = document.createElement("input");
-        r.type = "checkbox";
-        r.id = "eng-" + e.code;
-        r.name = "eng-" + f.id;
-        r.value = e.code;
-        r.checked = sel.engines.includes(e.code);
-        r.addEventListener("change", () => {
-          const on = new Set(sel.engines);
-          if (r.checked) on.add(e.code); else on.delete(e.code);
-          sel.engines = f.engines.map((x) => x.code).filter((c) => on.has(c));
-          if (!sel.engines.length) sel.on = false;       // no engine left: the card is off
-          renderFeatures();
-          update();
-        });
-        const s = document.createElement("span");
-        s.innerHTML = `<b>${esc(e.name)}</b> — ${esc(e.label)}<small>${esc(featText("eng-" + e.code, "note", ""))}</small>`;
-        l.append(r, s);
-        l.addEventListener("click", (ev) => ev.stopPropagation());   // don't toggle the card
-        vs.appendChild(l);
-      }
-      if (combo) {
-        const n = document.createElement("div");
-        n.className = "combo";
-        n.textContent = t(tested ? "combo_tested" : "combo_new");
-        vs.appendChild(n);
-      }
-      if (isOn("model-tg")) {
-        const n = document.createElement("div");
-        n.className = "combo";
-        n.textContent = t("with_tg");
-        vs.appendChild(n);
-      }
-      const w = document.createElement("div");
-      w.className = "combo";
-      w.textContent = t("renumber");
-      vs.appendChild(w);
-      card.appendChild(vs);
-    }
-    box.appendChild(card);
+    if (b.hasAttribute("data-clear")) { for (const id in selection) selection[id].on = false; pick.swap = null; }
+    else if (b.hasAttribute("data-undo")) {
+      const by = undo();
+      changed();
+      if (by && $("feat-" + by)) $("feat-" + by).focus({ preventScroll: true });
+      return;
+    } else if (b.classList.contains("sel-more")) { pick.selOpen = !pick.selOpen; renderFeatures(); return; }
+    else return;
+    changed();
+  });
+  $("mod-q").addEventListener("input", (e) => { pick.q = e.target.value; renderFeatures(); });
+  $("mod-q").addEventListener("keydown", (e) => { if (e.key === "Escape") { pick.q = ""; renderFeatures(); } });
+  $("mod-q-clr").addEventListener("click", () => { pick.q = ""; renderFeatures(); $("mod-q").focus(); });
+  $("mod-found").addEventListener("click", (e) => { if (e.target.closest("[data-showall]")) { pick.q = ""; renderFeatures(); } });
+  // the selection bar floats only where IntersectionObserver exists (not in jsdom); its shadow only while it floats
+  if ("IntersectionObserver" in window) {
+    $("panel-mods").classList.add("js-sticky");
+    new IntersectionObserver(([en]) => {
+      $("mod-sel").classList.toggle("stuck", !en.isIntersecting && en.boundingClientRect.top > 0);
+    }).observe($("mod-sel-end"));
   }
 }
 
@@ -19159,7 +20246,9 @@ function creditHtml(c) {
   const url = "https://github.com/" + c.repo;
   const link = (txt) => `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(txt)}</a>`;
   return c.kind === "based"
-    ? t("credit_based", { repo: link(c.repo.split("/")[1]), who: esc(c.who) })
+    // "d'après eurorack d'Émilie Gillet": French elides "de" before a vowel
+    ? t(/^[aeiouàâéèêëîïôùûœ]/i.test(c.who) ? "credit_based_v" : "credit_based",
+        { repo: link(c.repo.split("/")[1]), who: esc(c.who) })
     : t("credit_by", { who: link(c.who) });
 }
 
@@ -19213,8 +20302,12 @@ function chosenEngines() {
   return sel && sel.on ? f.engines.filter((e) => sel.engines.includes(e.code)) : [];
 }
 
+// The ticked mods need the Syntakt OS file (the selection bar says so in any tab); step 2 asks for it in the Mods tab.
+function choiceNeedsSyntakt() {
+  return chosenTweaks().some((x) => x.append && x.append.syntakt);
+}
 function needsSyntakt() {
-  return st.mode === "mods" && chosenTweaks().some((x) => x.append && x.append.syntakt);
+  return st.mode === "mods" && choiceNeedsSyntakt();
 }
 
 function setMode(mode) {
@@ -19226,6 +20319,22 @@ function setMode(mode) {
   $("drop2-wrap").hidden = mode !== "samples";
   if (st.os) describeOs();
   update();
+}
+
+// "Samples OS" tab: which machine, which way.
+function setSmpDir(dir) {
+  st.smpDir = dir;
+  for (const d of ["cyc", "smp", "back"]) {
+    $("smp-dir-" + d).setAttribute("aria-checked", String(dir === d));
+    $("smp-pane-" + d).hidden = dir !== d;
+  }
+  st.finished = null;
+  update();
+}
+
+// The tick box the chosen way asks for (none for the way back).
+function samplesAcked() {
+  return st.smpDir === "back" ? true : $(st.smpDir === "smp" ? "cos-ack" : "samples-ack").checked;
 }
 
 // ---------------------------------------------------------------------------
@@ -19368,11 +20477,32 @@ function prepareFirmware() {
   });
 }
 
-// Model:Samples OS in the Model:Cycles container (MCBuilder.crossflash = tools/crossflash.py).
+// Model:Samples OS in the Model:Cycles container (MCBuilder.crossflash = tools/crossflash.py), or, for a Model:Samples,
+// the Model:Cycles OS (MCBuilder.cyclesForSamples = --to samples) and its way back (MCBuilder.samplesBack = --back-samples).
 function prepareSamples(os) {
   if (!os.stock) { st.fw = null; st.fwError = "samples_needs_cycles"; return; }
   const smp = st.samplesOs;
   if (!smp) { st.fw = null; st.fwError = null; return; }
+  if (st.smpDir === "smp") {
+    buildCached("cycles-os:" + smp.sha, (raw) => {
+      const r = window.MCBuilder.cyclesForSamples(raw, smp.raw);
+      const sha = window.MCBuilder.hex(window.MCBuilder.sha256(r.raw));
+      if (sha !== REF_CYCLES_ON_SAMPLES) throw new Error(`result ${sha.slice(0, 16)}… is not the reference build`);
+      log(`Built the Model:Cycles OS for Model:Samples: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.raw.length} bytes.`, "is-ok");
+      return { raw: r.raw, name: "model-cycles_OS1.13_for-model-samples.syx", kind: "cos", mods: [], ref: true, sixch: false };
+    });
+    return;
+  }
+  if (st.smpDir === "back") {
+    buildCached("samples-back:" + smp.sha, (raw) => {
+      const r = window.MCBuilder.samplesBack(raw, smp.raw);
+      const sha = window.MCBuilder.hex(window.MCBuilder.sha256(r.raw));
+      if (sha !== REF_SAMPLES_BACK) throw new Error(`result ${sha.slice(0, 16)}… is not the reference build`);
+      log(`Packed the official Model:Samples OS for the way back: ${r.raw.length} bytes.`, "is-ok");
+      return { raw: r.raw, name: "model-samples_OS1.13_back-from-cycles-os.syx", kind: "sback", mods: [], ref: true, sixch: false };
+    });
+    return;
+  }
   buildCached("samples-os:" + smp.sha, (raw) => {
     const r = window.MCBuilder.crossflash(raw, smp.raw);
     const sha = window.MCBuilder.hex(window.MCBuilder.sha256(r.raw));
@@ -19533,6 +20663,8 @@ function devProblem() {
   if (!d || d.state === "probing") return "probing";
   if (d.state !== "ok") return "dev_" + d.state;
   if (st.fw && st.fw.raw[4] !== d.product) {
+    if (st.fw.kind === "sback" && d.id === 25) return "dev_back_on_samples";
+    if (st.fw.kind === "cos" && d.id === 27) return "dev_fwd_on_cycles";
     if (d.id === 25) return "dev_samples";
     if (d.id === 27) return "dev_wrong_file";
     return "dev_other";
@@ -19620,7 +20752,7 @@ function missingReason() {
   if (st.mode === "samples") {
     if (st.fwError === "samples_needs_cycles") return "miss_samples_cycles";
     if (!st.samplesOs) return "miss_samples_file";
-    if (!$("samples-ack").checked) return "miss_samples_ack";
+    if (!samplesAcked()) return st.smpDir === "smp" ? "miss_cos_ack" : "miss_samples_ack";
   }
   if (st.fwError === "pick_one") return "miss_mod";
   if (needsSyntakt() && !st.syntakt) return "miss_syntakt";
@@ -19631,7 +20763,8 @@ function missingReason() {
   if (st.method === "fast") {
     const why = devProblem();
     if (why === "probing") return "miss_probe";
-    if (why === "dev_samples" || why === "dev_wrong_file" || why === "dev_other") return "miss_dev_mismatch";
+    if (["dev_samples", "dev_wrong_file", "dev_other", "dev_back_on_samples", "dev_fwd_on_cycles"].includes(why))
+      return "miss_dev_mismatch";
     if (why) return "miss_dev";
   }
   if (!$("ack").checked) return "miss_ack";
@@ -19641,7 +20774,8 @@ function missingReason() {
 function render() {
   // step 2 status
   $("h2s").textContent = t(st.mode === "samples" ? "s2_samples" : "s2");
-  if (st.os && st.mode === "samples" && !st.os.stock) setStatus("file-status", [["is-bad", t("samples_needs_cycles")]]);
+  if (st.os && st.mode === "samples" && !st.os.stock)
+    setStatus("file-status", [["is-bad", t(st.smpDir === "cyc" ? "samples_needs_cycles" : "cos_needs_cycles")]]);
   else if (st.os) {
     const rows = [];
     if (st.os.stock) rows.push(["is-ok", esc(t("os_ok"))]);
@@ -19659,6 +20793,8 @@ function render() {
         ` <span class="hash">MAIN OS ${esc(st.fw.sha.slice(0, 8))}</span>`]);
     else if (st.fw && st.fw.kind === "stock") rows.push(["is-ok", esc(t("stock_ready"))]);
     else if (st.fw && st.fw.kind === "samples") rows.push(["is-ok", esc(t("samples_ready")) + " " + esc(t("built_ref"))]);
+    else if (st.fw && st.fw.kind === "cos") rows.push(["is-ok", esc(t("cos_ready")) + " " + esc(t("built_ref"))]);
+    else if (st.fw && st.fw.kind === "sback") rows.push(["is-ok", esc(t("sback_ready")) + " " + esc(t("built_ref"))]);
     setStatus("file-status", rows);
   }
   setStatus("file2-status", st.samplesOs ? [["is-ok", esc(t("smp_ok"))]]
@@ -19684,7 +20820,7 @@ function render() {
   }
 
   // step badges
-  const choseOk = st.mode === "restore" || (st.mode === "samples" ? $("samples-ack").checked : chosenTweaks().length > 0);
+  const choseOk = st.mode === "restore" || (st.mode === "samples" ? samplesAcked() : chosenTweaks().length > 0);
   $("step-choose").classList.toggle("done", choseOk);
   $("step-file").classList.toggle("done", !!st.fw && !st.building);
   $("step-connect").classList.toggle("done", st.midiState === "ready" && !!currentPort() && (st.method !== "fast" || !devProblem()));
@@ -19695,7 +20831,9 @@ function render() {
   if (st.fw) {
     const what = st.fw.kind === "built" ? st.fw.mods.join(" + ")
       : st.fw.kind === "stock" ? t("mods_list_restore")
-      : st.fw.kind === "samples" ? t("mods_list_samples") : t("mods_list_custom", { name: st.fw.name });
+      : st.fw.kind === "samples" ? t("mods_list_samples")
+      : st.fw.kind === "cos" ? t("mods_list_cos")
+      : st.fw.kind === "sback" ? t("mods_list_sback") : t("mods_list_custom", { name: st.fw.name });
     const port = currentPort();
     const secs = st.method === "fast" ? window.MCFlasher.fastSeconds(st.fw.raw) : window.MCFlasher.transferSeconds(st.fw.raw, pace());
     const mins = Math.max(1, Math.round(secs / 60));
@@ -19708,22 +20846,29 @@ function render() {
   const miss = st.sending ? null : missingReason();
   $("flash").disabled = st.sending || !!miss;
   $("flash").textContent = st.sending ? t("flashing") : t("flash_btn");
-  $("missing").textContent = st.sending ? "" : miss ? t(miss) : st.finished === "ok" ? "" : t(st.method === "fast" ? "miss_ready_fast" : "miss_ready");
+  $("missing").textContent = st.sending ? "" : miss ? t(miss) : st.finished === "ok" ? ""
+    : t(st.method === "fast" ? "miss_ready_fast" : "miss_ready", { m: hardware() });
   $("stop").hidden = !st.sending;
   renderAfter();
 }
 
 // Fast method, once the firmware is sent: confirm on the machine, then it restarts.
+// The machine the firmware goes to: a Model:Samples for the Cycles OS and its way back, else a Model:Cycles.
+function hardware() {
+  return st.fw && (st.fw.kind === "cos" || st.fw.kind === "sback") ? "Model:Samples" : "Model:Cycles";
+}
+
 function renderAfter() {
   const el = $("after");
   if (!el) return;
   const d = st.dev;
   const rows = [];
-  if (st.after === "confirm") rows.push(["is-busy", t("after_confirm")]);
-  else if (st.after === "gone") rows.push(["is-busy", t("after_gone")]);
+  const m = hardware();
+  if (st.after === "confirm") rows.push(["is-busy", t("after_confirm", { m })]);
+  else if (st.after === "gone") rows.push(["is-busy", t("after_gone", { m })]);
   else if (st.after === "back") {
-    if (d && d.state === "ok") rows.push(["is-ok", esc(t("after_back", { device: d.device || d.name, v: d.version || "?" }))]);
-    else rows.push(["is-ok", esc(t("after_back_plain"))]);
+    if (d && d.state === "ok") rows.push(["is-ok", esc(t("after_back", { m, device: d.device || d.name, v: d.version || "?" }))]);
+    else rows.push(["is-ok", esc(t("after_back_plain", { m }))]);
   }
   setStatus("after", rows);
 }
@@ -19820,7 +20965,9 @@ async function flash() {
       (fast ? `<div class="status" id="after" aria-live="polite"></div>` : `<p>${t("done_body")}</p>`) +
       (fw.sixch ? `<p>${t("done_6ch")}</p>` : "") +
       (fw.sdv ? `<p>${t(/^syntakt-tg-/.test(fw.sdv) ? "done_syn_tg" : "done_syn", { list: fw.engines.map((e) => `<b>${esc(e.name)}</b> (${esc(e.label)})`).join(", ") })}</p>` : "") +
-      (fw.kind === "samples" ? `<p>${t("done_samples")}</p>` : "");
+      (fw.kind === "samples" ? `<p>${t("done_samples")}</p>` : "") +
+      (fw.kind === "cos" ? `<p>${t("done_cos")}</p>` : "") +
+      (fw.kind === "sback" ? `<p>${t("done_sback")}</p>` : "");
     log(fast ? `Firmware sent in ${Math.round(res.seconds)} s (${res.blocks} blocks): waiting for the confirmation on the machine.`
       : `Transfer complete in ${Math.round(res.seconds)} s.`, "is-ok");
   }
@@ -19883,6 +21030,8 @@ function init() {
   $("tab-restore").addEventListener("click", () => setMode("restore"));
   $("tab-samples").addEventListener("click", () => setMode("samples"));
   $("samples-ack").addEventListener("change", render);
+  $("cos-ack").addEventListener("change", render);
+  for (const d of ["cyc", "smp", "back"]) $("smp-dir-" + d).addEventListener("click", () => setSmpDir(d));
 
   const drop = $("drop"), file = $("file");
   file.addEventListener("change", (e) => { if (e.target.files[0]) readFile(e.target.files[0]); e.target.value = ""; });
@@ -19928,6 +21077,7 @@ function init() {
   });
 
   $("build-stamp").textContent = "· build " + (window.MC_BUILD || "?");
+  wirePicker();
   applyLang(st.lang);
   update();
 
@@ -19940,8 +21090,9 @@ function init() {
 }
 
 // test hooks (tools/webflash_smoke.js)
-window.MCFlasherApp = { state: st, REF_MAINOS, REF_SAMPLES_ON_CYCLES, loadOs, loadSamples, loadSyntakt, setMode, setMethod, applyLang, render,
-  chosenTweaks };
+window.MCFlasherApp = { state: st, REF_MAINOS, REF_SAMPLES_ON_CYCLES, REF_CYCLES_ON_SAMPLES, REF_SAMPLES_BACK, loadOs,
+  loadSamples, loadSyntakt, setMode, setSmpDir, setMethod, applyLang, render,
+  chosenTweaks, chosenLabels, CATS };
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
 else init();
