@@ -52,9 +52,9 @@ def helper_code():
         fixups.append((len(b), name))
         b.extend(bytes.fromhex(op + "0000"))
 
-    # Callback de la ligne OUT/THRU. L'index physique 10 correspond à FUNC;
-    # 0x4007faf4 lit son état courant dans le bitmap scruté par l'OS.
-    emit("4878000a4eb94007faf4588f4a80")
+    # Callback de la ligne OUT/THRU. 0x4007faf4 prend le code logique
+    # de touche, comme ses appels stock pour FUNC (1) et RETRIG (4).
+    emit("48780001 4eb94007faf4 588f 4a80".replace(" ", ""))
     branch("6700", "stock")
     emit("4eb940044df84a80")
     branch("6700", "stock")

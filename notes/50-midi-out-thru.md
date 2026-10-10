@@ -88,3 +88,10 @@ Le callback stock n'est pas passé de `KeyEvent`. L'expérience `tools/gen_midi_
 Le tweak est `45-midi-live-both.json`. Il réutilise le masque libéré `0x40167c50`, garde une copie de secours indépendante (`44-midi-both.json`) et est offert uniquement sur `/flasher-test/` comme carte expérimentale. Il exclut les deux variantes MIDI qui écrivent les mêmes portes. Le sélecteur affiche THR dans les deux modes; le raccourci inverse l'émission du Cycles, tandis que le relais entrant est actif dans les deux cas.
 
 **Statut : expérience publiée, pas encore exécutée dans un émulateur ni vérifiée sur la machine.** `0x4007faf4(10)` lit une entrée de touche du bitmap scanné, mais le moment exact où le scan reflète FUNC par rapport à l'appui de l'encodeur reste à confirmer sur le matériel. La routine d'écriture de préférence est la même que celle utilisée par le code stock; cela n'établit pas la sûreté de la nouvelle séquence complète. La page de test affiche un avertissement de risque et recommande de garder l'OS officiel prêt à restaurer. Ne pas marquer le tweak testé avant un essai matériel.
+
+
+### 6.1 Retour utilisateur et correction FUNC 02 (10/10/2026)
+
+L’utilisatrice précise que « l’encodeur » désigne le bouton-poussoir du knob LEVEL/DATA, sur la ligne OUT/THRU. Le premier build n’a rien changé. L’audit des appels montre que `0x4007faf4` attend un **code logique** de touche : `notes/32` l’appelle avec 4 pour RETRIG, et `notes/33` identifie FUNC par le code 1. Le build FUNC 01 passait 10 (un code différent), donc la condition FUNC était fausse. Le générateur passe maintenant 1. Aucun autre combo n’a été choisi : c’était la combinaison demandée, et l’erreur était dans l’identifiant transmis.
+
+Le build FUNC 02 reste expérimental. Il n’a pas été validé sur émulateur ni sur la machine. La page avertit que le toggle est invisible à l’écran et demande de vérifier le MIDI reçu sur un appareil externe.
