@@ -182,7 +182,7 @@ FEATURES = [
         "label": "Volume et pan en chiffres",
         "desc": "Sur l'ecran principal, LEVEL/DATA affiche le volume de la piste (0 a 127) en chiffres, FUNC + "
                 "LEVEL/DATA son pan (-64 a 63), pendant 3 s. LEVEL/DATA y avance de 1 par cran au lieu de 2.",
-        "status": "experimental",
+        "status": "tested",
         "credit": {"kind": "based", "who": "djd_oz"},
         "variants": [
             {"file": "46-level-pan-values", "label": None},
@@ -194,7 +194,7 @@ FEATURES = [
         "label": "Trigless trigs attenues",
         "desc": "Une touche de pas qui porte un trigless trig (FUNC + touche) s'allume attenuee au lieu de pleine "
                 "lumiere : on la distingue d'un trig de note. Elle garde son clignotement habituel.",
-        "status": "experimental",
+        "status": "tested",
         "credit": {"kind": "based", "who": "djd_oz"},
         "variants": [
             {"file": "47-trigless-dim", "label": None},

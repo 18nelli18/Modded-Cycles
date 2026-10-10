@@ -15,6 +15,7 @@ intégrer au webflasher ». Tweak `46-level-pan-values.json` (`tools/gen_level_p
 - **Effet de bord voulu par djd_oz et gardé** : sur l'écran principal, LEVEL/DATA avance de 1 par pas de l'encodeur au
   lieu de 2, pour que le chiffre passe par toutes les valeurs. Il faut tourner deux fois plus pour parcourir la
   plage ; le mode rapide (× 16) ne change pas.
+- **Testé sur la machine (06/10/2026 et 07/10/2026)** par Maxime, avec tous les autres mods (§7).
 - Le fichier de djd_oz est sain et se flashe seul (§1). Mais son code est ajouté après l'image et recopié au démarrage
   en `0x42339000`, comme celui de son autre mod : en l'état, il ne se combine ni avec Model-TG, ni avec les moteurs du
   Syntakt, ni avec l'autre mod. **Réécrit ici pour s'exécuter en place, dans deux masques de sprites libérés** : plus
@@ -177,7 +178,12 @@ exécuté), `--djd` contre le fichier de djd_oz, `--with` sur les autres mods :
 Avec `--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max,boot-anim,trigless-dim
 --syntakt Syntakt_OS1.42.syx`, et avec `chord-keys` (PR #50) à la place de Model-TG : tout ok.
 
-## 7. À vérifier sur la machine `[À FAIRE]`
+## 7. Essais sur la machine
+
+**Testé sur la machine (06/10/2026 et 07/10/2026)** par Maxime : avec la première version des trigless trigs
+atténués, « ça marche parfaitement » ; puis avec la version 2 des trigless trigs et tous les autres mods (6 canaux,
+Model-TG, les 5 moteurs du Syntakt, effacer un trig, arpégiateur, tempo 546, animation de démarrage ; MAIN OS
+`366aebfc…7fe7540`) : « Tout le reste marche nickel ». La liste suivie :
 
 - Les chiffres nets et à l'endroit, 0, 7, 99, 100, 127 pour le volume ; -64, -1, 0, 63 pour le pan.
 - La durée : 3 à 4 s après le dernier mouvement.
