@@ -39,7 +39,8 @@ and check the writes of **every** other tweak for overlaps.
   `0x4016cae8` (Syntakt engines' boot hook at the start, arpeggiator menu after it), `0x4018a788`, `0x40189930`,
   `0x4018a220` (arpeggiator), `0x40183118`, `0x40185018`, `0x40185968`, `0x40185c58` (sample-preview, shared with
   chord-keys, which excludes Model-TG: two tweaks may share a mask only if they can never be built together),
-  `0x401904b4` (multiline-browser, constant `0x400ac784`). In all,
+  `0x401904b4` (multiline-browser, constant `0x400ac784`), `0x40192ba4` (midi-live-both, a 34×34 mask of 272 bytes,
+  constant `0x400ac276`, kept twin `0x4016bfc8`, notes/53). In all,
   21 47×47 masks (376 bytes each, one constructor constant each, `0x400ac2b2`..`0x400b133e`) are identical to the kept
   `0x40172220` and can be freed the same way (notes/46 §7: 22 such sprites, where notes/32 §11 counted eleven).
   `sprites.py` lists seven, so 14 are still unused here, but open PRs (chord-keys, djd_oz's mods)

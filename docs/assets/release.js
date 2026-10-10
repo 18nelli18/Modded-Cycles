@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.39", date: "2026-10-10", changes: [
+    { en: "Two new MIDI mods by AveyCole, under USB & MIDI. With THR selected (SETTINGS, CONFIG › MIDI › PORTS › OUT/THRU), the Model:Cycles forwards what arrives on its MIDI IN and also sends its own clock, notes and parameter changes. MIDI OUT while in THRU does it all the time; Live MIDI OUT + THRU toggle switches it on and off with FUNC + a press on the LEVEL/DATA knob, the screen staying on THR",
+      fr: "Deux nouveaux mods MIDI d'AveyCole, dans USB et MIDI. Avec THR choisi (SETTINGS, CONFIG › MIDI › PORTS › OUT/THRU), le Model:Cycles relaie ce qui arrive sur son MIDI IN et envoie aussi son horloge, ses notes et ses changements de paramètres. MIDI OUT pendant THRU le fait tout le temps ; Basculer MIDI OUT + THRU en direct l'active et le coupe avec FUNC + un appui sur le potard LEVEL/DATA, l'écran restant sur THR" },
+    { en: "Pick one of the two; each goes with every other mod. The original OUT/THR menu doesn't change, and OUT works as before",
+      fr: "Choisissez l'un des deux ; chacun se combine avec tous les autres mods. Le menu OUT/THR d'origine ne change pas, et OUT marche comme avant" },
+    { en: "Experimental here: checked in the emulator on the OS's own MIDI code, alone and with the other mods",
+      fr: "Expérimentaux ici : vérifiés en émulation sur le code MIDI de l'OS, seuls et avec les autres mods" },
+  ] },
   { version: "1.37", date: "2026-10-10", changes: [
     { en: "New mod, Multi-line browser: the preset browser shows three names at once in a small font, instead of one in big letters. A > marks the name under the cursor, the sound loaded on the track stays highlighted, and folders get a small mark before their name. From an idea and a script by a community member",
       fr: "Nouveau mod, Navigateur sur plusieurs lignes : le navigateur de presets affiche trois noms à la fois en petite police, au lieu d'un seul en gros caractères. Un > signale le nom sous le curseur, le son chargé sur la piste reste en surbrillance, et les dossiers ont un petit repère devant leur nom. D'après une idée et un script d'un membre de la communauté" },

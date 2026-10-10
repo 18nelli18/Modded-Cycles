@@ -22,6 +22,7 @@ le contrôle des caves de build.py ne les voit pas, les octets « old » des éc
 BASE = 0x40000400
 SHARED_MASK = 0x40154ae4        # masque du sprite 32x260 (1040 o), gardé intact
 SHARED_47 = 0x40172220          # masque d'un sprite 47x47 (376 o), gardé intact
+SHARED_34 = 0x4016bfc8          # masque d'un sprite 34x34 (272 o), gardé intact (15 copies identiques, notes/53)
 
 # va du masque : (taille, va de la constante 32 bits qui le désigne, description[, masque partagé])
 MASKS = {
@@ -35,6 +36,7 @@ MASKS = {
     0x40185018: (376, 0x400adba8, "sprite 47x47, constructeur 0x400adba6", SHARED_47),
     0x40185968: (376, 0x400ada00, "sprite 47x47, constructeur 0x400ad9fe", SHARED_47),
     0x40185c58: (376, 0x400ad9e0, "sprite 47x47, constructeur 0x400ad9de", SHARED_47),
+    0x40192ba4: (272, 0x400ac276, "sprite 34x34, constructeur 0x400ac274", SHARED_34),
 }
 
 

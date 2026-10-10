@@ -47,6 +47,8 @@ Going back to the official firmware is one click away.
 | **Tempo up to 546 BPM** | The TEMPO knob, tap tempo, MIDI clock and saved projects go past 300 BPM. Tempo-synced LFOs stay in time. | ✅ Tested |
 | **Startup animation** | When the Model:Cycles starts, the four squares of the modded-cycles logo pop in and “modded-cycles” types itself underneath, instead of the original tile animation. Same duration. | ✅ Tested |
 | **Multi-line browser** | The preset browser shows three names at once in a small font instead of one in big letters, with a `>` on the name under the cursor. From an idea by a community member. | ✅ Tested |
+| **MIDI OUT while in THRU** | With `THR` selected (CONFIG › MIDI › PORTS › OUT/THRU), the Model:Cycles forwards incoming MIDI and also sends its own clock, notes and parameter changes. `OUT` and the menu stay as they are. By [AveyCole](https://github.com/AveyCole/Modded-Cycles). | 🧪 Experimental |
+| **Live MIDI OUT + THRU toggle** | With `THR` selected, hold `FUNC` and press the `LEVEL/DATA` knob to add the Cycles' own MIDI to what it forwards, or take it away. The screen stays on `THR`. By AveyCole. | 🧪 Experimental |
 | **Easier trig removal** | A quick press on a step that holds a trig removes it, instead of opening it as a hold. | ✅ Tested |
 | **Latching mute** | Hold `TRACK` and tap `FUNC`: mute mode stays on, no more holding `FUNC`. By [drumkilla](https://github.com/drumkilla/elektron-model-tweaks). | ✅ Tested |
 | **Trig preview** | Sequencer stopped or paused: hold a step and press `PAGE` to hear it, with its note, length and p-locks. By drumkilla. | ✅ Tested |
@@ -54,7 +56,7 @@ Going back to the official firmware is one click away.
 | **Samples OS** | Turns the Model:Cycles into a Model:Samples, built from both official OS files. Coming back needs a MIDI interface. | ✅ Tested |
 | **Cycles OS for Model:Samples** | The other way round: turns a Model:Samples into a Model:Cycles, over USB, from both official OS files. Going back to the Model:Samples OS works over USB too, from the same tab. | 🧪 Experimental |
 
-The mods can be combined freely (Samples OS and Cycles OS for Model:Samples are separate installs). Each one is explained step by step, with the buttons to press, in the
+The mods can be combined freely (the two MIDI THRU mods are alternatives; Samples OS and Cycles OS for Model:Samples are separate installs). Each one is explained step by step, with the buttons to press, in the
 **[guide](https://18nelli18.github.io/Modded-Cycles/guide/)**.
 
 <p align="center">
