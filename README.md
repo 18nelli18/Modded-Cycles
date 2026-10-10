@@ -18,6 +18,8 @@
 
 ---
 
+Scale sequence generator: **hardware tested by AveyCole (10 October 2026)**. Requires Model-TG. With playback stopped, press **SETTINGS + PAGE** to choose scale, root, note range and density, then Generate. Undo lasts while the page stays open.
+
 ## Why
 
 The Model:Cycles is a great little groovebox, but its firmware leaves some obvious things on the table:

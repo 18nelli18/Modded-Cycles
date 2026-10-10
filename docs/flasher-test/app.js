@@ -974,7 +974,7 @@ const CREDITS = [
 ];
 
 const FLASH_GUIDE = `${REPO}/blob/main/FLASH.md`;
-const GUIDE = "guide.html";                      // the site's guide (docs/guide/)
+const GUIDE = "../guide/";                      // the site's guide (docs/guide/)
 // mod id -> anchor of its section in the guide (one line per mod)
 const GUIDE_OF = {
   "scale-gen": "scale-gen",
@@ -1523,7 +1523,7 @@ const T = {
 // Feature texts shown in the UI (fallback: labels from tweaks.js).
 const FEAT = {
   en: {
-    "scale-gen": {"label": "Scale sequence generator (test)", "short": "SETTINGS + PAGE: generate notes and trigs in your scale. Stopped transport only.", "desc": "Hold SETTINGS and press PAGE. Turn DATA to select Scale, Root, Low note, High note or Density; press to edit. Select Generate and press DATA to fill the active track length with notes and trigs. Undo restores the last generation while the page stays open. Note limits are inclusive MIDI numbers. Requires Model-TG and shares its Scale and Root settings.", "note": "Experimental hardware test: not hardware verified. Stop playback before Generate or Undo. Closing the page discards Undo. Parameter locks are retained; existing conditions and retrig settings can affect the generated trigs."},
+    "scale-gen": {"label": "Scale sequence generator", "short": "SETTINGS + PAGE: generate notes and trigs in your scale. Stopped transport only.", "desc": "Hold SETTINGS and press PAGE. Turn DATA to select Scale, Root, Low note, High note or Density; press to edit. Select Generate and press DATA to fill the active track length with notes and trigs. Undo restores the last generation while the page stays open. Note limits are inclusive MIDI numbers. Requires Model-TG and shares its Scale and Root settings.", "note": "Hardware tested by AveyCole on 10 October 2026. Stop playback before Generate or Undo. Closing the page discards Undo. Parameter locks are retained; existing conditions and retrig settings can affect the generated trigs."},
     usb6: { label: "6-channel USB audio",
       short: "Each track on its own USB channel. No stereo mix over USB any more.",
       desc: "Each track gets its own USB channel (48 kHz / 32-bit): record the 6 tracks separately in your DAW. The stereo mix is no longer sent over USB. OS updates over USB keep working." },
@@ -1585,7 +1585,7 @@ const FEAT = {
       note: "About twice as heavy on the processor as an original machine. On its own it has no load governor: several MACRO tracks playing at once can make the sound crackle, so start with one or two. With the Syntakt engines, their load governor looks after MACRO tracks too. A project using MACRO needs a firmware with MACRO at the same place: it is the last machine, so its number depends on Model-TG and on the ticked Syntakt engines." },
   },
   fr: {
-    "scale-gen": {"label": "Générateur de séquence en gamme (test)", "short": "SETTINGS + PAGE : générez notes et trigs en gamme. Transport arrêté uniquement.", "desc": "Maintenez SETTINGS et appuyez sur PAGE. Tournez DATA pour choisir Scale, Root, Low note, High note ou Density ; appuyez pour éditer. Choisissez Generate et appuyez sur DATA pour remplir la longueur active de la piste de notes et de trigs. Undo restaure la dernière génération tant que la page reste ouverte. Les bornes sont des numéros MIDI inclusifs. Demande Model-TG et partage ses réglages Scale et Root.", "note": "Essai matériel expérimental : non vérifié sur machine. Arrêtez la lecture avant Generate ou Undo. Fermer la page efface Undo. Les p-locks restent ; les conditions et réglages de retrig existants peuvent influencer les nouveaux trigs."},
+    "scale-gen": {"label": "Générateur de séquence en gamme", "short": "SETTINGS + PAGE : générez notes et trigs en gamme. Transport arrêté uniquement.", "desc": "Maintenez SETTINGS et appuyez sur PAGE. Tournez DATA pour choisir Scale, Root, Low note, High note ou Density ; appuyez pour éditer. Choisissez Generate et appuyez sur DATA pour remplir la longueur active de la piste de notes et de trigs. Undo restaure la dernière génération tant que la page reste ouverte. Les bornes sont des numéros MIDI inclusifs. Demande Model-TG et partage ses réglages Scale et Root.", "note": "Testé sur machine par AveyCole le 10/10/2026. Arrêtez la lecture avant Generate ou Undo. Fermer la page efface Undo. Les p-locks restent ; les conditions et réglages de retrig existants peuvent influencer les nouveaux trigs."},
     usb6: { label: "Audio USB 6 canaux",
       short: "Chaque piste sur son propre canal USB. Plus de mix stéréo en USB.",
       desc: "Chaque piste a son propre canal USB (48 kHz / 32 bits) : enregistrez les 6 pistes séparément dans votre logiciel. Le mix stéréo n'est plus envoyé en USB. La mise à jour de l'OS par USB continue de fonctionner." },

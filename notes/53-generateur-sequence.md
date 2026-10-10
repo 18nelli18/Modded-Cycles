@@ -256,3 +256,7 @@ NODE_PATH=/chemin/vers/jsdom/node_modules node tools/webflash_seq_gen_check.js f
 ```
 
 Les fichiers officiels restent ignorés ; aucune image firmware n'est distribuée.
+
+## 9. Testé sur la machine (10/10/2026)
+
+AveyCole rapporte : « Tested on real hardware, it works, go ahead and add it to my main ». Le générateur du flasher de test fonctionne sur son Model:Cycles. Les options exactes installées et les machines essayées ne sont pas précisées ; ce retour ne prouve pas chaque combinaison. À sa demande, promotion dans le flasher principal et statut `tested`, sans changement des octets du firmware.

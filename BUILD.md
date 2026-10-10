@@ -390,3 +390,12 @@ nouveau tweak en émulation.
 
 Le C [`mischa85/elektron-firmware-tool`](https://github.com/mischa85/elektron-firmware-tool) fait le même travail
 de conteneur ; voir [`notes/02-format-os-syx.md`](notes/02-format-os-syx.md).
+
+## Générateur de séquence en gamme
+
+Testé sur Model:Cycles par AveyCole le 10/10/2026 (notes/53). Les fichiers `49-scale-gen.json` et `49-scale-gen-st.json` demandent respectivement Model-TG et Model-TG-ST. Les empreintes MAIN OS et de chaque mod sont dans `docs/flasher/app.js`. Régénération :
+
+```sh
+python3 tools/gen_seq_gen.py --help
+python3 tools/gen_flasher_tweaks.py --check
+```

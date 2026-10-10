@@ -119,3 +119,5 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
 | Moteur de synthèse : boucle des 6 voix / tables `update` et `render` des machines | `0x400a7d4a` / `0x40118628` et `0x40118610` | non analysé |
 | Descripteurs de paramètres (entrées de `0x38` o) | `0x4010dce0` | non analysé |
 | Écran 128 × 64 : tampon de dessin, envoi des blocs changés, repère des `Bitmap` | `*0x401492f0`, `0x4008e622` ; **y = 0 en bas**, x = 0 à gauche ([39 §2](39-animation-demarrage.md)) | non analysé |
+
+Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10/10/2026**, disponible dans le flasher principal.

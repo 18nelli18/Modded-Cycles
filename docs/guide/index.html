@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-10-11">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-10-11">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-10-scale-gen-main">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-10-scale-gen-main">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -697,6 +697,12 @@
       </section>
     </article>
   </div>
+<section id="scale-gen"><h2><span data-l="en">Scale sequence generator</span><span data-l="fr">Générateur de séquence en gamme</span></h2>
+<p><span data-l="en">Requires Model-TG. Experimental: emulation checks passed; no hardware result yet.</span><span data-l="fr">Demande Model-TG. Expérimental : vérifications en émulation réussies, pas encore de résultat matériel.</span></p>
+<ol><li><span data-l="en">Stop playback. Hold <b>SETTINGS</b> and press <b>PAGE</b>.</span><span data-l="fr">Arrêtez la lecture. Maintenez <b>SETTINGS</b> et appuyez sur <b>PAGE</b>.</span></li>
+<li><span data-l="en">Turn <b>DATA</b> to select a field, press to edit, turn to change it, press to finish. Scale and Root share Model-TG's settings. Low/High note are inclusive MIDI numbers (default 48–72); Density is a per-step probability (default 50%).</span><span data-l="fr">Tournez <b>DATA</b> pour choisir un champ, appuyez pour éditer, tournez pour modifier, appuyez pour terminer. Scale et Root partagent les réglages Model-TG. Low/High note sont les bornes MIDI incluses (48–72 par défaut) ; Density est une probabilité par pas (50 % par défaut).</span></li>
+<li><span data-l="en">Select <b>Generate</b> and press <b>DATA</b>. It replaces note trigs across the active length of the current track. Select <b>Undo</b> to restore the last generation.</span><span data-l="fr">Choisissez <b>Generate</b> et appuyez sur <b>DATA</b>. Les trigs de notes sont remplacés dans la longueur active de la piste courante. Choisissez <b>Undo</b> pour restaurer la dernière génération.</span></li></ol>
+<p><span data-l="en">Undo lasts only while this page is open. BACK closes it. Parameter locks are retained; existing conditions and retrig settings still apply. Generate and Undo refuse active transport. “Check range/stop” means stop playback or choose a range containing a note of your scale.</span><span data-l="fr">Undo ne reste disponible que dans cette page. BACK la ferme. Les p-locks sont conservés ; les conditions et réglages de retrig existants restent actifs. Generate et Undo refusent le transport actif. « Check range/stop » demande d'arrêter la lecture ou de choisir une plage contenant une note de la gamme.</span></p><p><span data-l="en">Tested on a Model:Cycles by AveyCole on 10 October 2026.</span><span data-l="fr">Testé sur un Model:Cycles par AveyCole le 10/10/2026.</span></p></section>
 </main>
 
 <footer class="foot">
@@ -709,8 +715,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-10-11"></script>
-<script src="../assets/cycles.js?v=2026-10-10-11"></script>
-<script src="../assets/site.js?v=2026-10-10-11"></script>
+<script src="../assets/release.js?v=2026-10-10-scale-gen-main"></script>
+<script src="../assets/cycles.js?v=2026-10-10-scale-gen-main"></script>
+<script src="../assets/site.js?v=2026-10-10-scale-gen-main"></script>
 </body>
 </html>

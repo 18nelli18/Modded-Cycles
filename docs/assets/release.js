@@ -3,6 +3,7 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  {"version": "1.43", "date": "2026-10-10", "changes": [{"en": "Scale sequence generator, tested on a Model:Cycles by AveyCole. With playback stopped, press SETTINGS + PAGE to generate notes and trigs in your chosen scale, root, note range and density. Undo remains available while the page is open. Requires Model-TG; works with the available machines.", "fr": "Générateur de séquence en gamme, testé sur un Model:Cycles par AveyCole. Lecture arrêtée, appuyez sur SETTINGS + PAGE pour générer notes et trigs selon la gamme, la fondamentale, la plage de notes et la densité choisies. Undo reste disponible dans la page. Demande Model-TG ; fonctionne avec les machines disponibles."}]},
   { version: "1.42", date: "2026-10-10", changes: [
     { en: "The flasher now waits for you to click Allow MIDI access before it connects to MIDI devices, avoiding automatic MIDI enumeration during page load on Windows.",
       fr: "Le flasher attend maintenant que vous cliquiez sur Autoriser l’accès MIDI avant de se connecter aux appareils MIDI, afin d’éviter l’énumération automatique au chargement sous Windows." },
