@@ -5,7 +5,7 @@
  "description": [
   "Ajoute BTH au réglage CONFIG > MIDI > PORTS > OUT/THRU : envoie l'horloge et les messages MIDI du Cycles",
   "tout en relayant les messages reçus. OUT et THR gardent leur comportement d'origine. Généré par",
-  "tools/gen_midi_both.py (note 49). Le helper est dans le masque 35x35 libéré 0x40167c50."
+  "tools/gen_midi_both.py (note 50). Le helper est dans le masque 35x35 libéré 0x40167c50."
  ],
  "device": "Model:Cycles",
  "os": "1.13",

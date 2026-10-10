@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Ajoute le choix MIDI BTH (OUT + THRU) au Model:Cycles (notes/49).
+"""Ajoute le choix MIDI BTH (OUT + THRU) au Model:Cycles (notes/50).
 
     python3 tools/gen_midi_both.py --cycles firmware/model-cycles_OS1.13.syx [--check]
 
@@ -70,7 +70,7 @@ def generate(main):
         "description": [
             "Ajoute BTH au réglage CONFIG > MIDI > PORTS > OUT/THRU : envoie l'horloge et les messages MIDI du Cycles",
             "tout en relayant les messages reçus. OUT et THR gardent leur comportement d'origine. Généré par",
-            "tools/gen_midi_both.py (note 49). Le helper est dans le masque 35x35 libéré 0x40167c50.",
+            "tools/gen_midi_both.py (note 50). Le helper est dans le masque 35x35 libéré 0x40167c50.",
         ],
         "device": "Model:Cycles", "os": "1.13", "section": 3,
         "conflicts": [],

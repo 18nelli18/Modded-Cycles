@@ -3,11 +3,17 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
-  { version: "1.33", date: "2026-10-10", changes: [
+  { version: "1.34", date: "2026-10-10", changes: [
     { en: "New experimental MIDI option: BTH combines OUT and THRU, so the Model:Cycles sends MIDI clock and track/parameter messages while forwarding incoming MIDI. Select it under CONFIG > MIDI > PORTS > OUT/THRU; OUT and THR keep their original behavior",
       fr: "Nouvelle option MIDI expérimentale : BTH combine OUT et THRU, pour que le Model:Cycles envoie l'horloge MIDI et les messages de piste/paramètres tout en relayant le MIDI reçu. Choisissez-la dans CONFIG > MIDI > PORTS > OUT/THRU ; OUT et THR gardent leur comportement d'origine" },
     { en: "Checked in the emulator; still needs a test on a real Model:Cycles",
       fr: "Vérifiée en émulation ; reste à tester sur un vrai Model:Cycles" },
+  ] },
+  { version: "1.33", date: "2026-10-10", changes: [
+    { en: "Every mod you tick is now checked against its reference build, whatever the combination. Until now the page carried the expected result of each of the 10,559 possible combinations and checked only those; that list doubled with every new mod. It now keeps one reference per mod, plus a sample of 464 combinations checked whole (each mod alone, every pair, the largest ones)",
+      fr: "Chaque mod coché est maintenant vérifié contre son build de référence, quelle que soit la combinaison. Jusqu'ici la page contenait le résultat attendu de chacune des 10 559 combinaisons possibles et ne vérifiait que celles-là ; cette liste doublait à chaque nouveau mod. Elle garde maintenant une référence par mod, plus un échantillon de 464 combinaisons vérifiées en entier (chaque mod seul, chaque paire, les plus grandes)" },
+    { en: "The page is lighter (about 1.3 MB less to load) and ready for many more mods. Nothing changes on the machine: for the same choice of mods, the firmware built and sent is exactly the same as before, as checked by rebuilding and comparing every combination of the previous version",
+      fr: "La page est plus légère (environ 1,3 Mo de moins à charger) et prête pour beaucoup plus de mods. Rien ne change sur la machine : pour un même choix de mods, le firmware construit et envoyé est exactement le même qu'avant, ce qui a été vérifié en reconstruisant et en comparant toutes les combinaisons de la version précédente" },
   ] },
   { version: "1.32", date: "2026-10-07", changes: [
     { en: "New mod, Sample preview (with Model-TG): on a Sampler track, press FUNC + MACHINES (preset menu) and move the cursor onto a sample: the track's pad (or its trig keys in keyboard mode) plays it, the way the original OS lets you hear a preset before you pick it. Nothing plays while you scroll. It has its own row in the flasher, under Screen & browsing; ticking it ticks Model-TG too",

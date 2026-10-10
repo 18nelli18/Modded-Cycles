@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Vérifie BTH sur les fragments MIDI réels de l'OS (notes/49).
+"""Vérifie BTH sur les fragments MIDI réels de l'OS (notes/50).
 
 Le test exécute le menu, les trois portes d'émission et le test de relais de l'OS 1.13,
 sur l'image stock et après application du tweak. Le getter d'option est intercepté pour

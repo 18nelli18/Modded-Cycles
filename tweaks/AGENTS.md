@@ -50,6 +50,10 @@ same way**, which `tools/webbuild_check.sh` and `tools/webflash_smoke.sh` verify
 A write into a `0xFF` zone (cave) is refused when the stock image points into it, unless one of the chosen tweaks
 rewrites that pointer (`sprites.redirect_write`) or `device.json` lists the reference in `cave_refs_ok`.
 
+`tools/check_overlaps.py` (notes/49) refuses two tweaks that can be installed together and write the same bytes,
+unless it is the same whole write (`off`, `old`, `new`) or one `requires` the other; declare `conflicts` otherwise.
+It also wants `old` and `new` of the same length, in plain hex, inside section 3, and unique ids.
+
 ## `PROVENANCE.md`
 
 One row per tweak (or family): author, origin (repo + commit for outside work), license, what this project changed,
