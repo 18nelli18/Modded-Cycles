@@ -151,7 +151,13 @@ Résultats avec les 5 moteurs (`--only alone`, `--only tg`) : **TOUT OK** (36 et
 
 Le régulateur lit les gains du mixeur de l'OS (`gov_gains.S`) : la preuve met le BSS de l'OS en mémoire et ces gains
 au maximum, comme `test_governor.py`. Avec les autres mods (`--with 6ch-usbup,trig-hold,arp,tempo-max,boot-anim`, et
-avec `model-tg-st,sample-preview-st` en plus) : RESULTATS_AVEC.
+avec `model-tg-st,sample-preview-st` en plus) : **TOUT OK** (13 vérifications chacune : démarrage, charge utile et
+SRAM, machines d'origine et moteurs, MACRO, pistes mêlées, machine locks, régulateur ; l'interface n'y est pas refaite).
+L'écoute des samples avec cette combinaison (`tools/emu/test_sample_preview.py --with 6ch-usbup,model-tg-st,
+syntakt-tg-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim`) : **TOUT OK** (84 vérifications).
+
+Flasher (`tools/webflash_smoke.sh` avec les fichiers officiels) : **ALL OK**, 646 vérifications ; les 495 combinaisons
+de l'échantillon construites dans la page, chacune à son empreinte, dont 93 avec les moteurs et MACRO.
 
 ## 7. À vérifier sur la machine
 
