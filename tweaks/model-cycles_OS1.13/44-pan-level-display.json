@@ -1,0 +1,166 @@
+{
+ "id": "pan-level-display",
+ "order": 44,
+ "name": "Valeurs PAN et niveau temporaires",
+ "description": [
+  "Tourner LEVEL/DATA affiche le niveau ; FUNC + LEVEL/DATA affiche PAN pendant trois secondes.",
+  "Pas normal de un ; clics inchangés. Prototype expérimental, non proposé au flasher.",
+  "Généré par tools/gen_pan_level.py ; notes/50-valeurs-pan-niveau.md."
+ ],
+ "device": "Model:Cycles",
+ "os": "1.13",
+ "section": 3,
+ "conflicts": [
+  "macro",
+  "macro-tg",
+  "model-tg",
+  "model-tg-st",
+  "sdvintage-7th",
+  "sdvintage-exact",
+  "syntakt-bits",
+  "syntakt-bits-swarm",
+  "syntakt-cp",
+  "syntakt-cp-bits",
+  "syntakt-cp-bits-swarm",
+  "syntakt-cp-swarm",
+  "syntakt-cp-toy",
+  "syntakt-cp-toy-bits",
+  "syntakt-cp-toy-bits-swarm",
+  "syntakt-cp-toy-swarm",
+  "syntakt-meter",
+  "syntakt-sd",
+  "syntakt-sd-bits",
+  "syntakt-sd-bits-swarm",
+  "syntakt-sd-cp",
+  "syntakt-sd-cp-bits",
+  "syntakt-sd-cp-bits-swarm",
+  "syntakt-sd-cp-swarm",
+  "syntakt-sd-cp-toy",
+  "syntakt-sd-cp-toy-bits",
+  "syntakt-sd-cp-toy-bits-swarm",
+  "syntakt-sd-cp-toy-swarm",
+  "syntakt-sd-swarm",
+  "syntakt-sd-toy",
+  "syntakt-sd-toy-bits",
+  "syntakt-sd-toy-bits-swarm",
+  "syntakt-sd-toy-swarm",
+  "syntakt-swarm",
+  "syntakt-tg-bits",
+  "syntakt-tg-bits-swarm",
+  "syntakt-tg-cp",
+  "syntakt-tg-cp-bits",
+  "syntakt-tg-cp-bits-swarm",
+  "syntakt-tg-cp-swarm",
+  "syntakt-tg-cp-toy",
+  "syntakt-tg-cp-toy-bits",
+  "syntakt-tg-cp-toy-bits-swarm",
+  "syntakt-tg-cp-toy-swarm",
+  "syntakt-tg-meter",
+  "syntakt-tg-profile",
+  "syntakt-tg-sd",
+  "syntakt-tg-sd-bits",
+  "syntakt-tg-sd-bits-swarm",
+  "syntakt-tg-sd-cp",
+  "syntakt-tg-sd-cp-bits",
+  "syntakt-tg-sd-cp-bits-swarm",
+  "syntakt-tg-sd-cp-swarm",
+  "syntakt-tg-sd-cp-toy",
+  "syntakt-tg-sd-cp-toy-bits",
+  "syntakt-tg-sd-cp-toy-bits-swarm",
+  "syntakt-tg-sd-cp-toy-swarm",
+  "syntakt-tg-sd-swarm",
+  "syntakt-tg-sd-toy",
+  "syntakt-tg-sd-toy-bits",
+  "syntakt-tg-sd-toy-bits-swarm",
+  "syntakt-tg-sd-toy-swarm",
+  "syntakt-tg-swarm",
+  "syntakt-tg-toy",
+  "syntakt-tg-toy-bits",
+  "syntakt-tg-toy-bits-swarm",
+  "syntakt-tg-toy-swarm",
+  "syntakt-toy",
+  "syntakt-toy-bits",
+  "syntakt-toy-bits-swarm",
+  "syntakt-toy-swarm",
+  "syntakt-vintage"
+ ],
+ "symbols": {
+  "pan_ui_tick": "0x42339000",
+  "level_pan_delta": "0x4233900c",
+  "pan_encoder": "0x42339018",
+  "pan_arm": "0x4233906c",
+  "level_arm": "0x423390ba",
+  "pan_draw": "0x42339108",
+  "level_glyph": "0x423392cc",
+  "pan_glyph": "0x423392d0",
+  "pan_encoder_stock": "0x42339338",
+  "pan_draw_stock": "0x42339346",
+  "pan_font": "0x42339354",
+  "pan_clock": "0x423393a4",
+  "pan_deadlines": "0x423393a8",
+  "pan_valid": "0x423393c0",
+  "level_deadlines": "0x423393c8",
+  "level_valid": "0x423393e0"
+ },
+ "writes": [
+  {
+   "off": 108110,
+   "old": "4fefffe048d70cfc",
+   "new": "4ef9423390184e71"
+  },
+  {
+   "off": 110122,
+   "old": "4e56ffc048d73cfc",
+   "new": "4ef9423391084e71"
+  },
+  {
+   "off": 108226,
+   "old": "4eb94006f73a",
+   "new": "4eb94233900c"
+  },
+  {
+   "off": 32242,
+   "old": "4eb940090f48",
+   "new": "4eb942339000"
+  },
+  {
+   "off": 92,
+   "old": "2f0a45f94019b590",
+   "new": "4ef9401aa1404e71"
+  }
+ ],
+ "append": {
+  "at": "0x401aa140",
+  "dest": "0x401aa140",
+  "size": 1052,
+  "parts": [
+   {
+    "dest": "0x401aa140",
+    "hex": "2f002f0a487a00102f0a45f94019b5904ef94000046445fa001c41f942339000203c000000fa20da538066fa245f201f4e75000052b9423393a44ef940090f4870012f4000084ef94006f73a4e5600004feffff448d70c04246e0008266e000c2f0b2f0a4eb942339338508f2400202b000c0c8000000001661a487800014eb94007faf4588f4a8067066100001460046100005c20024cee0c04fff44e5e4e754eb9400cf8662f004eb94000eb902e804eb940012412588f0c8000000006642c41f9423393a82239423393a406810000005a21810c0041f9423393c07201118108002f0a4eb940076082588f4e754eb9400cf8662f004eb94000eb902e804eb940012412588f0c8000000006642c41f9423393c82239423393a406810000005a21810c0041f9423393e07201118108002f0a4eb940076082588f4e754e5600004fefffe048d71c7c246e000c2f0a2f2e00084eb942339346508f4eb9400cf9a82f004eb94006b704588f4a00660001884eb9400cf8662f004eb94000eb902e804eb940012412588f0c80000000066400016624002c0241f9423393c04a302800670000a443f9423393a82239423393a492b12c006b08423028006000008a4eb9400cf8662f004eb94000eb9c2f022f004eb9400097f04fef000c204022502269001c4878001c2f084e91508fe080048000000040280042a74878001d4878007f48780015487800722f0a4eb940070dea4fef001874734a846a084484700a610000e47a000c840000000a650a04840000000a528560ee4a8567062005610000c62004610000c041f9423393e04a306800670000a443f9423393c82239423393a492b16c006b08423068006000008a4eb9400cf8662f004eb94000eb9c2f062f004eb940009c5a4fef000c0280000000ff280042a7487800104878004d48780008487800412f0a4eb940070dea4fef001874420c8400000064650e04840000006470016100003c600e58820c840000000a64045882601a7a000c840000000a650a04840000000a528560ee20056100001220046100000c4cee1c7cffe04e5e4e757209600272164fefffe848d71878260128035e842200e788908147f942339354d7c05e8b7c001c237a00700290850106671e2002d085222a000c4c010800e588286a0010d9c0701f90837201e1a9839452850c850000000366d05283b68466c44cd718784fef001858824e75"
+   },
+   {
+    "dest": "0x401aa4ac",
+    "cycles": [
+     "0x4001aa4e",
+     "0x4001aa56"
+    ]
+   },
+   {
+    "dest": "0x401aa4b4",
+    "hex": "4ef94001aa56"
+   },
+   {
+    "dest": "0x401aa4ba",
+    "cycles": [
+     "0x4001b22a",
+     "0x4001b232"
+    ]
+   },
+   {
+    "dest": "0x401aa4c2",
+    "hex": "4ef94001b23207050505050507020602020202070701010704040707010107010107050505070101010704040701010707040407050507070101020202020705050705050707050507010107000000070000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+   }
+  ],
+  "reloc": []
+ }
+}

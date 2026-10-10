@@ -377,3 +377,11 @@ nouveau tweak en émulation.
 
 Le C [`mischa85/elektron-firmware-tool`](https://github.com/mischa85/elektron-firmware-tool) fait le même travail
 de conteneur ; voir [`notes/02-format-os-syx.md`](notes/02-format-os-syx.md).
+
+### Prototype PAN/niveau (hors flasher)
+
+`pan-level-display` : valeurs temporaires au tour de LEVEL/DATA, pas normal un,
+clics inchangés. Génération et construction : voir [notes/50](notes/50-valeurs-pan-niveau.md).
+La preuve complète reste à faire ; le test ciblé est bloqué par SIGILL de Unicorn
+sur macOS ARM. Ne pas ajouter au flasher avant preuve. Incompatible avec les
+autres recettes de charge utile `append`.
