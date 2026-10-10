@@ -140024,7 +140024,7 @@ window.MC_TWEAKS = {
    "id": "midi-both",
    "label": "MIDI OUT pendant THRU",
    "desc": "Avec THRU choisi dans CONFIG > MIDI > PORTS > OUT/THRU, le Cycles relaie le MIDI reçu et envoie aussi son horloge et ses messages de piste/paramètres. OUT garde son comportement normal.",
-   "status": "experimental",
+   "status": "tested",
    "credit": null,
    "cat": "io",
    "variants": [

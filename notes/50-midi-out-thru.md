@@ -24,7 +24,7 @@ Le correctif final conserve le menu stock. Aux trois portes d'émission, il remp
 
 ## 3. Vérifications et limites
 
-Les données de patch sont générées depuis l'OS officiel 1.13 et comparées aux octets stock attendus. Les vérifications locales couvrent le générateur, les chevauchements, les empreintes du flasher et son build navigateur. L'émulateur M68K disponible sur l'hôte échoue au démarrage ; il n'est pas utilisé comme preuve. Le comportement doit rester expérimental jusqu'à vérification sur le Model:Cycles.
+Les données de patch sont générées depuis l'OS officiel 1.13 et comparées aux octets stock attendus. Les vérifications locales couvrent le générateur, les chevauchements, les empreintes du flasher et son build navigateur. L'émulateur M68K disponible sur l'hôte échoue au démarrage ; le comportement a donc été confirmé sur la machine.
 
 | Réglage | Envoi par le Cycles | Relais du MIDI entrant |
 |---|---|---|
@@ -33,4 +33,8 @@ Les données de patch sont générées depuis l'OS officiel 1.13 et comparées a
 
 ## 4. Test sur la machine
 
-Le premier essai a été installé sans problème, mais l'appareil ne permettait pas de choisir BTH : l'encodeur faisait alterner OUT et THR. Le correctif ci-dessus est destiné à faire de THR le mode combiné. Le test matériel restant consiste à sélectionner THR, envoyer du MIDI vers l'entrée du Cycles, et vérifier à la fois le relais reçu et l'émission du Cycles (horloge et changements de paramètres).
+Le premier essai a été installé sans problème, mais l'appareil ne permettait pas de choisir BTH : l'encodeur faisait alterner OUT et THR. Le correctif ci-dessus fait de THR le mode combiné.
+
+### 4.1 Testé le 10/10/2026
+
+Après avoir installé le build avec ce mod, l'utilisatrice a confirmé : « I tested this on my Model Cycles and it functions as intended! » THR relaie donc le MIDI reçu et transmet en même temps l'horloge et les messages générés par le Cycles. Le statut du flasher passe à **testé**.

@@ -3,6 +3,10 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.37", date: "2026-10-10", changes: [
+    { en: "Tested on a Model:Cycles: with the MIDI OUT during THRU mod installed and THR selected, incoming MIDI is forwarded while the Cycles' own clock and track/parameter messages are sent",
+      fr: "Testé sur un Model:Cycles : avec le mod MIDI OUT pendant THRU installé et THR choisi, le MIDI reçu est relayé tandis que l'horloge et les messages de piste/paramètres du Cycles sont envoyés" },
+  ] },
   { version: "1.36", date: "2026-10-10", changes: [
     { en: "The MIDI option now keeps the stock OUT/THRU selector: with THR selected, incoming MIDI is forwarded and the Cycles' own clock and track/parameter messages are also sent. This avoids the third BTH value, which the previous build could not select",
       fr: "L'option MIDI conserve maintenant le sélecteur OUT/THRU d'origine : avec THR, le MIDI reçu est relayé et l'horloge ainsi que les messages de piste/paramètres du Cycles sont aussi envoyés. Cela évite la troisième valeur BTH, que le build précédent ne permettait pas de choisir" },
