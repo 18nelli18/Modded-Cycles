@@ -2355,6 +2355,57 @@ window.MC_TWEAKS = {
    ]
   },
   {
+   "id": "midi-both",
+   "order": 44,
+   "name": "MIDI OUT + THRU (BTH)",
+   "description": [
+    "Ajoute BTH au réglage CONFIG > MIDI > PORTS > OUT/THRU : envoie l'horloge et les messages MIDI du Cycles",
+    "tout en relayant les messages reçus. OUT et THR gardent leur comportement d'origine. Généré par",
+    "tools/gen_midi_both.py (note 49). Le helper est dans le masque 35x35 libéré 0x40167c50."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "conflicts": [],
+   "writes": [
+    {
+     "off": 728350,
+     "old": "40167c50",
+     "new": "4014a660"
+    },
+    {
+     "off": 1472592,
+     "old": "ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffff",
+     "new": "4eb940044e320c800000000267144a806708203c401272814e75203c40127bad4e75203c40167c7a4e75425448004eb940044e320c800000000157c00280000000ff4e75"
+    },
+    {
+     "off": 220120,
+     "old": "4eb940044df84a806708263c401272816006263c40127bad",
+     "new": "4eb940167c5026004e714e714e714e714e714e714e714e71"
+    },
+    {
+     "off": 220168,
+     "old": "48780002",
+     "new": "48780003"
+    },
+    {
+     "off": 4426,
+     "old": "4eb940044df8",
+     "new": "4eb940167c7e"
+    },
+    {
+     "off": 4458,
+     "old": "4eb940044df8",
+     "new": "4eb940167c7e"
+    },
+    {
+     "off": 4496,
+     "old": "4eb940044df8",
+     "new": "4eb940167c7e"
+    }
+   ]
+  },
+  {
    "id": "macro",
    "order": 25,
    "name": "Machine MACRO : les 47 modèles de synthèse de Braids (Émilie Gillet, MIT)",
@@ -139986,6 +140037,20 @@ window.MC_TWEAKS = {
    "variants": [
     {
      "id": "boot-anim",
+     "label": null
+    }
+   ]
+  },
+  {
+   "id": "midi-both",
+   "label": "MIDI OUT + THRU (BTH)",
+   "desc": "Ajoute BTH au réglage CONFIG > MIDI > PORTS > OUT/THRU : le Cycles envoie son horloge et ses messages MIDI tout en relayant les messages reçus. OUT et THR gardent leur comportement d'origine.",
+   "status": "experimental",
+   "credit": null,
+   "cat": "io",
+   "variants": [
+    {
+     "id": "midi-both",
      "label": null
     }
    ]

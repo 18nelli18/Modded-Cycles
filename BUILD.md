@@ -239,6 +239,19 @@ python3 tools/emu/test_tempo_max.py --cycles model-cycles_OS1.13.syx
 | `model-tg,tempo-max` | `97cc13b34d3f4b3440d42bdb1c692e64bf0aa8b2de54b806b14320914936ef4f` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max` | `c8214dc5fe88a5ff346d8554f05753bb25acec448cb0eb23140236b10a9404d4` |
 
+### MIDI OUT + THRU (BTH)
+
+`tweaks/model-cycles_OS1.13/44-midi-both.json` ajoute le troisième choix BTH au réglage OUT/THRU. L'horloge et les messages générés par le Cycles sortent pendant que les messages reçus sont relayés. Le tweak peut être combiné aux machines et aux autres mods : son helper tient dans un masque de sprite 35×35 libéré.
+
+```sh
+python3 tools/gen_midi_both.py --cycles firmware/model-cycles_OS1.13.syx --check
+python3 tools/emu/test_midi_both.py --cycles firmware/model-cycles_OS1.13.syx
+python3 tools/build.py -i firmware/model-cycles_OS1.13.syx -t midi-both
+```
+
+Le test exécute les chemins MIDI de l'OS d'origine et modifié dans Unicorn. BTH reste expérimental jusqu'au test sur la machine.
+MAIN OS seul : `9e289aa96beabd7961b60febda15a7193d65c550c33d55d09233de6056de117d`.
+
 ### OS Cycles pour Model:Samples (et retour par USB)
 
 Pas un tweak : `tools/crossflash.py` met l'OS Cycles officiel dans le conteneur officiel du Model:Samples, en changeant les

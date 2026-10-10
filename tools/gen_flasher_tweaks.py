@@ -176,6 +176,18 @@ FEATURES = [
         ],
     },
     {
+        "id": "midi-both",
+        "cat": "io",
+        "label": "MIDI OUT + THRU (BTH)",
+        "desc": "Ajoute BTH au réglage CONFIG > MIDI > PORTS > OUT/THRU : le Cycles envoie son horloge et ses messages "
+                "MIDI tout en relayant les messages reçus. OUT et THR gardent leur comportement d'origine.",
+        "status": "experimental",
+        "credit": None,
+        "variants": [
+            {"file": "44-midi-both", "label": None},
+        ],
+    },
+    {
         "id": "macro",
         "cat": "sound",
         "label": "Machine MACRO",

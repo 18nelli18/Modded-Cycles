@@ -3,6 +3,12 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.33", date: "2026-10-10", changes: [
+    { en: "New experimental MIDI option: BTH combines OUT and THRU, so the Model:Cycles sends MIDI clock and track/parameter messages while forwarding incoming MIDI. Select it under CONFIG > MIDI > PORTS > OUT/THRU; OUT and THR keep their original behavior",
+      fr: "Nouvelle option MIDI expérimentale : BTH combine OUT et THRU, pour que le Model:Cycles envoie l'horloge MIDI et les messages de piste/paramètres tout en relayant le MIDI reçu. Choisissez-la dans CONFIG > MIDI > PORTS > OUT/THRU ; OUT et THR gardent leur comportement d'origine" },
+    { en: "Checked in the emulator; still needs a test on a real Model:Cycles",
+      fr: "Vérifiée en émulation ; reste à tester sur un vrai Model:Cycles" },
+  ] },
   { version: "1.32", date: "2026-10-07", changes: [
     { en: "New mod, Sample preview (with Model-TG): on a Sampler track, press FUNC + MACHINES (preset menu) and move the cursor onto a sample: the track's pad (or its trig keys in keyboard mode) plays it, the way the original OS lets you hear a preset before you pick it. Nothing plays while you scroll. It has its own row in the flasher, under Screen & browsing; ticking it ticks Model-TG too",
       fr: "Nouveau mod, Écoute des samples (avec Model-TG) : sur une piste Sampler, appuyez sur FUNC + MACHINES (menu des presets) et placez le curseur sur un échantillon : le pad de la piste (ou ses touches de pas en mode clavier) le joue, comme l'OS d'origine fait écouter un preset avant de le choisir. Rien ne joue pendant le défilement. Il a sa propre ligne dans le flasher, sous Écran et navigation ; le cocher coche aussi Model-TG" },

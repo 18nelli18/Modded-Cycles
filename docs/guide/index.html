@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-07-10">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-07-10">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-10-01">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-10-01">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -50,6 +50,7 @@
         <li><a href="#model-tg">Model-TG</a></li>
         <li><a href="#arp"><span data-l="en">Arpeggiator</span><span data-l="fr">Arpégiateur</span></a></li>
         <li><a href="#tempo"><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></a></li>
+        <li><a href="#midi-both"><span data-l="en">MIDI OUT + THRU</span><span data-l="fr">MIDI OUT + THRU</span></a></li>
         <li><a href="#boot-anim"><span data-l="en">Startup animation</span><span data-l="fr">Animation de démarrage</span></a></li>
         <li><a href="#macro"><span data-l="en">MACRO machine</span><span data-l="fr">Machine MACRO</span></a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
@@ -570,14 +571,24 @@
         </ul>
       </section>
 
+      <section id="midi-both">
+        <h2><span class="n">15</span><span data-l="en">Send and forward MIDI together</span><span data-l="fr">Envoyer et relayer le MIDI</span></h2>
+        <p class="lede"><span data-l="en">The new BTH choice combines MIDI OUT and MIDI THRU.</span><span data-l="fr">Le nouveau choix BTH combine MIDI OUT et MIDI THRU.</span></p>
+        <ol>
+          <li><span data-l="en">Open <b>CONFIG › MIDI › PORTS › OUT/THRU</b> and choose <b>BTH</b>.</span><span data-l="fr">Ouvrez <b>CONFIG › MIDI › PORTS › OUT/THRU</b> et choisissez <b>BTH</b>.</span></li>
+          <li><span data-l="en">The Cycles sends MIDI clock and its track/parameter messages while forwarding incoming MIDI. Choose <b>OUT</b> or <b>THR</b> for their original behavior.</span><span data-l="fr">Le Cycles envoie l'horloge MIDI et ses messages de piste/paramètres tout en relayant le MIDI reçu. Choisissez <b>OUT</b> ou <b>THR</b> pour retrouver leur comportement d'origine.</span></li>
+        </ol>
+        <p class="note"><span data-l="en">Experimental: checked in the emulator; not yet tested on a Model:Cycles.</span><span data-l="fr">Expérimental : vérifié en émulation, pas encore testé sur un Model:Cycles.</span></p>
+      </section>
+
       <section id="stock">
-        <h2><span class="n">15</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">16</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">With Syntakt engines, the MACRO machine or Model-TG's Sampler, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt, la machine MACRO ou le Sampler de Model-TG, remettez d'abord vos pistes sur une machine d'origine.</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">16</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">17</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -591,7 +602,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">17</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">18</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -655,8 +666,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-07-10"></script>
-<script src="../assets/cycles.js?v=2026-10-07-10"></script>
-<script src="../assets/site.js?v=2026-10-07-10"></script>
+<script src="../assets/release.js?v=2026-10-10-01"></script>
+<script src="../assets/cycles.js?v=2026-10-10-01"></script>
+<script src="../assets/site.js?v=2026-10-10-01"></script>
 </body>
 </html>

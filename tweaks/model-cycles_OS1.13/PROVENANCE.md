@@ -14,6 +14,7 @@
 | `41-trig-hold.json` | ce projet | Plus de temps pour effacer un trig (défaut de l'OS d'origine) : assemblé depuis `tools/machines/trig_hold/` (`trig_hold.S`, `trig_hold.ld`) par `tools/gen_trig_hold.py`, au début du masque de sprite libéré `0x4015c044` (`tools/sprites.py`), devant les stubs de `6ch-usbup` ([note 33](../../notes/33-effacer-un-trig.md)). |
 | `42-tempo-max.json` | ce projet | Tempo jusqu'à 546 BPM au lieu de 300 : onze constantes (bornes du tempo et contrôles au chargement) et la remise dans le cycle du LFO en boucle, écrites par `tools/gen_tempo_max.py` d'après le MAIN OS officiel ([note 38](../../notes/38-tempo-546-bpm.md)). |
 | `43-boot-anim.json` | ce projet | Animation de démarrage « modded-cycles » d'après le logo du site : assemblée depuis `tools/machines/boot_anim/` (`boot_anim.S`, `boot_anim.ld`) par `tools/gen_boot_anim.py`, à la place du corps de la tâche d'animation de démarrage de l'OS (`0x40053a6c`) ; police et dessin propres au projet ([note 39](../../notes/39-animation-demarrage.md)). |
+| `44-midi-both.json` | ce projet | Ajoute BTH (OUT + THRU) : helper 68 octets généré par `tools/gen_midi_both.py` dans le masque 35×35 libéré `0x40167c50`, l’un des emplacements laissés libres par le filtre de piste (PR #55, note 47 §4) ; redirige son sprite vers le masque identique conservé. Adresses et preuve dans [la note 49](../../notes/49-midi-out-thru.md). |
 
 SHA-256 des fichiers de drumkilla, identiques à ceux du dépôt d'origine (sauf `02-trig-preview.json`, retouché) :
 
