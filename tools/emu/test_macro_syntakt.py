@@ -397,7 +397,8 @@ def run_set(stock, ctx, codes, tg_ctx, others, label_extra=""):
     t7.X.bootstrap_depack_ok(ctx["cycles"], fw.tweaks, ctx["syntakt"]) or t7.FAIL.append("bootstrap " + tw["id"])
     tgs = None
     if tg:
-        tgs = {k: int(v, 16) for k, v in fw.tweaks[0]["symbols"].items()}
+        tg_tw = next(t for t in fw.tweaks if t["id"].startswith("model-tg"))     # pas forcément le 1er (6ch-usbup)
+        tgs = {k: int(v, 16) for k, v in tg_tw["symbols"].items()}
         tgs["knob_vec"] = tms.knob_vec_at(tw)
     boot(fw, ref, tgs)
     if not others:
