@@ -90,7 +90,7 @@ accroches changent par rapport au fork (`jmp 0x40192ba4`, `jsr 0x40192c14`).
 
 Le masque de sprite 34×34 `0x40192ba4` (272 o), que désigne la seule constante `0x400ac276` (constructeur `0x400ac274`),
 est identique au masque `0x4016bfc8`, gardé intact ; `sprites.redirect_write` fait pointer la constante sur ce dernier et
-libère le premier (`tools/sprites.py`, `SHARED_34`). 132 o occupés, 140 libres derrière. Le fork prenait le masque 35×35
+libère le premier (groupe 34×34 de `sprites.GROUPS`, [note 52](52-registre-place-libre.md) ; `REGISTRY.md` le marque pris). 132 o occupés, 140 libres derrière. Le fork prenait le masque 35×35
 `0x40167c50`, que le filtre par piste (PR #55) réserve avec tout son groupe ; d'où le déplacement.
 
 ## 5. Conflits
