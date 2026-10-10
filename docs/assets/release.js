@@ -3,13 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
-  { version: "1.33", date: "2026-10-07", changes: [
+  { version: "1.33", date: "2026-10-10", changes: [
     { en: "MACRO and the Syntakt engines together: the flasher now lets you tick both cards. MACRO comes last, right after the engines you tick (after the Sampler and the engines with Model-TG: with all five engines, MACRO is the 13th machine)",
       fr: "MACRO et les moteurs du Syntakt ensemble : le flasher permet maintenant de cocher les deux cartes. MACRO vient en dernier, juste après les moteurs cochés (après le Sampler et les moteurs avec Model-TG : avec les cinq moteurs, MACRO est la 13e machine)" },
     { en: "In this combination, the engines' load governor looks after MACRO tracks too. To fit in the firmware, the added code is stored compressed and unpacked when the machine starts",
       fr: "Dans cette combinaison, le régulateur de charge des moteurs veille aussi sur les pistes MACRO. Pour tenir dans le firmware, le code ajouté est rangé compressé et décompressé au démarrage de la machine" },
     { en: "Experimental: checked in the emulator (the engines and MACRO play exactly as each one alone, alone and with Model-TG), not yet tested on a Model:Cycles. MACRO alone and the engines alone are unchanged",
       fr: "Expérimental : vérifié en émulation (les moteurs et MACRO jouent exactement comme chacun seul, avec ou sans Model-TG), pas encore testé sur un Model:Cycles. MACRO seule et les moteurs seuls ne changent pas" },
+  ] },
   { version: "1.32", date: "2026-10-07", changes: [
     { en: "New mod, Sample preview (with Model-TG): on a Sampler track, press FUNC + MACHINES (preset menu) and move the cursor onto a sample: the track's pad (or its trig keys in keyboard mode) plays it, the way the original OS lets you hear a preset before you pick it. Nothing plays while you scroll. It has its own row in the flasher, under Screen & browsing; ticking it ticks Model-TG too",
       fr: "Nouveau mod, Écoute des samples (avec Model-TG) : sur une piste Sampler, appuyez sur FUNC + MACHINES (menu des presets) et placez le curseur sur un échantillon : le pad de la piste (ou ses touches de pas en mode clavier) le joue, comme l'OS d'origine fait écouter un preset avant de le choisir. Rien ne joue pendant le défilement. Il a sa propre ligne dans le flasher, sous Écran et navigation ; le cocher coche aussi Model-TG" },
