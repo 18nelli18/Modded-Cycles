@@ -36,18 +36,25 @@ def stock_mainos(path):
 
 
 def helper_code():
-    """Cycle 0→1→2→0, affiche le libellé et bloque les sorties générées seulement en THR."""
+    """Cycle the raw stored byte; the public getter/setter both normalize it to boolean."""
     toggle = bytes.fromhex(
-        "4eb940044df8"          # jsr getter brut (clé 0x50)
+        "7000"                  # clear d0
+        "1039404e9b50"          # read raw config byte (getter normalizes it to boolean)
         "5280"                  # addq.l #1,d0
         "0c8000000003"          # cmpi.l #3,d0
         "6602"                  # bne.s après clr
         "4280"                  # clr.l d0 quand l'ancienne valeur était 2
-        "2f400004"              # move.l d0,4(sp), argument du setter
-        "4ef940044dc2"          # jmp setter brut (clé 0x50)
+        "1f00"                  # move.b d0,-(sp), temporary source byte
+        "48780001"              # pea 1 (copy length)
+        "486f0004"              # pea 4(sp), address of temporary source byte
+        "4879404e9b50"          # pea destination config byte
+        "4eb940044b88"          # jsr shared config-copy/write-notify routine
+        "548f"                  # addq.l #2,sp (discard temporary byte)
+        "4e75"                  # rts to the menu callback caller
     )
     display = bytes.fromhex(
-        "4eb940044df8"          # jsr getter brut
+        "7000"                  # clear d0
+        "1039404e9b50"          # read raw config byte
         "0c8000000002"          # cmpi.l #2,d0
         "6714"                  # beq BTH
         "4a80"                  # tst.l d0
@@ -56,16 +63,20 @@ def helper_code():
         "4e75"                  # rts
         "263c40127bad"          # move.l #OUT,d3
         "4e75"                  # rts
-        "263c40167c96"          # move.l #HELPER+70,d3 (BTH string)
+        "263c00000000"          # placeholder: move.l #BTH string,d3
         "4e75"                  # rts
         "42544800"              # "BTH\0"
     )
     output_gate = bytes.fromhex(
-        "4eb940044df8"          # jsr getter brut
+        "7000"                  # clear d0
+        "1039404e9b50"          # read raw config byte
         "0c8000000001"          # cmpi.l #1,d0 (THR seulement)
         "57c0"                  # seq.b d0: nonzero seulement pour THR
         "4e75"                  # rts
     )
+    toggle_len, display_len = len(toggle), len(display)
+    bth_string = HELPER + toggle_len + display_len - 4
+    display = display.replace(bytes.fromhex("263c00000000"), b"\x26\x3c" + bth_string.to_bytes(4, "big"))
     return toggle + display + output_gate
 
 
@@ -74,7 +85,7 @@ def generate(main):
     import sprites
 
     all_helpers = helper_code()
-    toggle, display, output_gate = all_helpers[:28], all_helpers[28:74], all_helpers[74:]
+    toggle_len, display_len = 46, 48
     tweak = {
         "id": "midi-bth-three-state", "order": 45,
         "name": "MIDI OUT / THRU / BTH",
@@ -92,8 +103,8 @@ def generate(main):
             raise SystemExit(f"!! octets inattendus pour {label} à {va:#x}")
         tweak["writes"].append({"off": off, "old": old.hex(), "new": new.hex()})
 
-    # The input callback is a hard-coded boolean inversion. Redirect it to a
-    # byte-valued cycle while keeping the stock one-byte setting setter.
+    # The stock getter and setter both normalize the setting to boolean. Read
+    # and write the raw config byte through its underlying shared copy routine.
     add(0x4003560A, bytes.fromhex("4eb940044df84a8057c0710044802f4000044ef940044dc2"),
         b"\x4e\xf9" + HELPER.to_bytes(4, "big") + b"\x4e\x71" * 9,
         "callback de changement OUT/THRU")
@@ -101,14 +112,14 @@ def generate(main):
     # The display callback chooses its label from the raw stored byte.
     display_site = 0x40035FD8
     old_display = bytes.fromhex("4eb940044df84a806708263c401272816006263c40127bad")
-    new_display = b"\x4e\xb9" + (HELPER + len(toggle)).to_bytes(4, "big") + b"\x4e\x71" * 9
+    new_display = b"\x4e\xb9" + (HELPER + toggle_len).to_bytes(4, "big") + b"\x4e\x71" * 9
     add(display_site, old_display, new_display, "affichage du réglage")
 
     # Stock gates block generated MIDI for every nonzero value. Replace their
     # boolean check with an exact THR==1 check; BTH==2 must still transmit.
     for va in (0x4000154A, 0x4000156A, 0x40001590):
         add(va, bytes.fromhex("4eb940044df8"),
-            b"\x4e\xb9" + (HELPER + 74).to_bytes(4, "big"),
+            b"\x4e\xb9" + (HELPER + toggle_len + display_len).to_bytes(4, "big"),
             f"porte de sortie {va:#x}")
 
     # The sprite's identical mask is redirected before its 280 bytes are used
