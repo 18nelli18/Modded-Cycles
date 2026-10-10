@@ -3,7 +3,7 @@
 
 Demande du Discord (forum feature-requests, « High-pass filter per track / machine ») : un passe-haut par piste, puis un
 filtre bipolaire « DJ » (centre = rien, d'un côté LP, de l'autre HP). Sur la machine : MACHINES tenu + SWEEP = Filter
-Cutoff (LP64..OFF..HP63), + CONTOUR = Filter Reso, + COLOR = Filter Env (quantité), + SHAPE = Env Decay. Quatre vrais
+Cutoff (L64..OFF..H63), + CONTOUR = Filter Reso, + COLOR = Filter Env (quantité), + SHAPE = Env Decay. Quatre vrais
 paramètres de toutes les machines : p-locks, LFO, vélocité, CC 74 et 71, sauvegardés avec le son et le pattern.
 
 tools/machines/track_filter/ : track_filter.S (le filtre, appelé une fois par bloc après Volume + Dist) et tf_ui.S
@@ -82,9 +82,14 @@ def cutoff_hz(i):
     return min(5.0 * 4400 ** (i / 16384), 20000.0)
 
 
+Q_MIN, Q_MAX = 0.5, 50.0
+
+
 def q_of(r):
-    """Q pour Filter Reso r (0..32512), loi du Model:Samples (notes/47 §3)."""
-    return 0.501 * (math.sqrt(500) / 0.501) ** (r / 32512)
+    """Q pour Filter Reso r (0..32512) : exponentielle de Q_MIN à Q_MAX, environ 10 dB de bosse de plus par quart de
+    tour. Plus forte que celle du Model:Samples (0,5 à 22, la première version), trop discrète à l'essai de Maxime
+    (10/10/2026, notes/47 §5.1)."""
+    return Q_MIN * (Q_MAX / Q_MIN) ** (r / 32512)
 
 
 def reso_scale(i):
@@ -200,8 +205,8 @@ def build_tweak(stock):
         "description": [
             "Un filtre 2 pôles par piste, après Volume + Dist et avant le panoramique, les envois et le mixage (comme "
             "sur le Model:Samples) :",
-            "MACHINES tenu + SWEEP = Filter Cutoff (LP64..OFF..HP63 : passe-bas à gauche, rien au centre, passe-haut à "
-            "droite, 5 Hz à 20 kHz), + CONTOUR = Filter Reso (Q 0,5 à 22),",
+            "MACHINES tenu + SWEEP = Filter Cutoff (L64..OFF..H63 : passe-bas à gauche, rien au centre, passe-haut à "
+            "droite, 5 Hz à 20 kHz), + CONTOUR = Filter Reso (Q 0,5 à 50),",
             "+ COLOR = Filter Env (l'enveloppe, relancée à chaque note, monte ou descend la fréquence), + SHAPE = Env "
             "Decay (5 ms à 10 s).",
             "Quatre paramètres de toutes les machines (descripteurs 1 à 4, k 28 à 31) : p-locks, LFO, vélocité, CC 74 "

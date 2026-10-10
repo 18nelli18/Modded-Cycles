@@ -7,7 +7,7 @@
  * machines, sur les mots k = 28 à 31 de chaque piste :
  *   k28 Filter Cutoff  0..0x7f00, centre 0x4000 = OFF ; à gauche LP, à droite HP, fréquence 5 Hz x 4400^(|C-centre|/0x4000)
  *                      (la loi du Model:Samples), plafonnée à 20 kHz ;
- *   k29 Filter Reso    Q = 0,501 x (22,36/0,501)^(R/32512) (Model:Samples), réduit sous 30 Hz et vers 20 kHz (tf_ntab) ;
+ *   k29 Filter Reso    Q = 0,5 x 100^(R/32512), de 0,5 à 50 (tf_ktab), réduit sous 30 Hz et vers 20 kHz (tf_ntab) ;
  *   k30 Filter Env     quantité de l'enveloppe, bipolaire (centre = 0) : déplace la fréquence vers le haut ou le bas,
  *                      sans changer de côté ;
  *   k31 Env Decay      constante de temps de 5 ms à 10 s.

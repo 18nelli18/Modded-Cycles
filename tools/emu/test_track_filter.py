@@ -337,12 +337,12 @@ def law_tests(img, payload):
             worst_c, worst_q = max(worst_c, abs(cents)), max(worst_q, abs(qerr))
             rows.append((c, r, fc, fl, q, ql))
     check(worst_c < 5 and worst_q < 0.01,
-          f"{len(pts)} réglages, 5 Hz à 20 kHz des deux côtés, Q 0,5 à 22 : fréquence à {worst_c:.2f} cent près, "
+          f"{len(pts)} réglages, 5 Hz à 20 kHz des deux côtés, Q {G.Q_MIN:g} à {G.Q_MAX:g} : fréquence à {worst_c:.2f} cent près, "
           f"Q à {worst_q * 100:.2f} % près")
     for c, r, fc, fl, q, ql in rows:
         if (c, r) in ((0x0000, 0), (0x2000, 0x4000), (0x3f00, 0x7f00), (0x4100, 0x7f00), (0x6000, 0x2000),
                       (0x7f00, 0x7f00)):
-            print(f"        {'LP' if c < 0x4000 else 'HP'}{abs(c - 0x4000) >> 8:<3d} Reso {r >> 8:3d} : "
+            print(f"        {'L' if c < 0x4000 else 'H'}{abs(c - 0x4000) >> 8:<3d} Reso {r >> 8:3d} : "
                   f"{fc:8.1f} Hz (loi {fl:8.1f}), Q {q:6.2f} (loi {ql:6.2f})")
 
 
@@ -485,8 +485,18 @@ def display_tests(img, syms):
             shown[i, v] = u.cstr(SCRATCH + 0x100)
     print("        " + " | ".join(f"{['', 'FREQ', 'RESO', 'FENV', 'FDEC'][i]} " +
                                   " ".join(shown[i, v] for v in vs) for i, vs in vals.items()))
-    check([shown[1, v] for v in vals[1]] == ["LP64", "LP32", "LP1", "LP0", "OFF", "HP1", "HP32", "HP63"],
-          "Filter Cutoff : LP64 .. LP1, OFF au centre, HP1 .. HP63")
+    check([shown[1, v] for v in vals[1]] == ["L64", "L32", "L1", "L0", "OFF", "H1", "H32", "H63"],
+          "Filter Cutoff : L64 .. L1, OFF au centre, H1 .. H63")
+    check(all(len(shown[i, v]) <= 3 for i, vs in vals.items() for v in vs),
+          "trois caractères au plus, comme Pan (L64, CEN, R63) : l'écran n'en montre pas plus")
+    # chaque pas du potard (0..127) : son étiquette, différente de ses voisines (« LP64 » se lisait « LP6 » sur la machine)
+    inv, steps = u.u32(REC + 100 + 0x20), []
+    for n in range(128):
+        u.uc.mem_write(SCRATCH + 0x100, bytes(32))
+        u.call(inv, REC + 100 + 0x14, n << 8, SCRATCH + 0x100)
+        steps.append(u.cstr(SCRATCH + 0x100))
+    check(steps == [f"L{64 - n}" for n in range(64)] + ["OFF"] + [f"H{n - 64}" for n in range(65, 128)],
+          "les 128 pas de Filter Cutoff : L64 .. L1, OFF, H1 .. H63, tous différents, 3 caractères au plus")
     check([shown[2, v] for v in vals[2]] == ["0", "64", "127"] and [shown[4, v] for v in vals[4]] == ["0", "64", "127"],
           "Filter Reso et Env Decay : 0 .. 127")
     check(shown[3, 0x4000] in ("OFF", "0") and shown[3, 0] == "-64" and shown[3, 0x7f00] == "+63",

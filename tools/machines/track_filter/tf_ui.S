@@ -3,7 +3,7 @@
  *
  *   tf_knob   : MACHINES tenu + COLOR / SHAPE / SWEEP / CONTOUR = Filter Env / Env Decay / Filter Cutoff / Filter Reso
  *               (le geste de l'Attack de Model-TG), en remplaçant la recherche du descripteur d'un potard ;
- *   tf_objs   : l'affichage des quatre valeurs (LP64..OFF..HP63, 0..127, -64..OFF..+63) ;
+ *   tf_objs   : l'affichage des quatre valeurs (L64..OFF..H63, 0..127, -64..OFF..+63) ;
  *   tf_save*, tf_load : les quatre réglages dans l'enregistrement du son (emplacements 30, 31 et 18), et les
  *               destinations du LFO et de la vélocité vers eux (emplacement 27, comme Model-TG) ;
  *   tf_ptab, tf_conv : leurs p-locks dans le pattern (l'OS d'origine les range sur d'autres paramètres) ;
@@ -74,7 +74,8 @@ tf_objs:
 	.balign	4
 tf_fmts:	.long	tf_fmt_cut, FMT_INT, FMT_OFF, FMT_INT
 
-/* ---- formateur de Filter Cutoff, comme celui de Pan (0x40045aee) : (fonction, v, tampon) -> "LP64".."OFF".."HP63" */
+/* ---- formateur de Filter Cutoff, comme celui de Pan (0x40045aee) : (fonction, v, tampon) -> "L64".."OFF".."H63".
+ * Trois caractères au plus, comme Pan (L64, CEN, R63) : l'écran n'en montre pas plus (« LP64 » s'y lisait « LP6 »). */
 	.section .text.fmt, "ax"
 tf_fmt_cut:
 	move.l	8(%sp), %d0
@@ -99,8 +100,8 @@ tf_fmt_cut:
 	jsr	SPRINTF
 	addq.l	#8, %sp
 	rts
-tf_s_lp:	.asciz	"LP"
-tf_s_hp:	.asciz	"HP"
+tf_s_lp:	.asciz	"L"
+tf_s_hp:	.asciz	"H"
 tf_s_cut:	.asciz	"Filter Cutoff"
 tf_s_res:	.asciz	"Filter Reso"
 tf_s_env:	.asciz	"Filter Env"

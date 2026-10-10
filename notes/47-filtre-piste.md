@@ -10,8 +10,8 @@ Syntakt 1.42, Model-TG v1.1.0) dans `/mnt/project-files/filtre-piste/faisabilite
 
 ## En bref
 
-- **MACHINES tenu + SWEEP = Filter Cutoff** : LP64 … LP1, **OFF**, HP1 … HP63. Passe-bas à gauche (5 Hz à 20 kHz),
-  passe-haut à droite (5 Hz à 19 kHz), la loi du potard du Model:Samples. **+ CONTOUR = Filter Reso** (Q 0,5 à 22),
+- **MACHINES tenu + SWEEP = Filter Cutoff** : L64 … L1, **OFF**, H1 … H63. Passe-bas à gauche (5 Hz à 20 kHz),
+  passe-haut à droite (5 Hz à 19 kHz), la loi du potard du Model:Samples. **+ CONTOUR = Filter Reso** (Q 0,5 à 50),
   **+ COLOR = Filter Env** (quantité d'une enveloppe, bipolaire), **+ SHAPE = Env Decay** (5 ms à 10 s). L'enveloppe
   repart à chaque note de la piste.
 - Quatre **vrais paramètres de toutes les machines** (k 28 à 31, descripteurs 1 à 4 de l'OS, des emplacements
@@ -29,15 +29,15 @@ Syntakt 1.42, Model-TG v1.1.0) dans `/mnt/project-files/filtre-piste/faisabilite
 
 | Geste | Paramètre (nom court) | Affichage | Défaut |
 |---|---|---|---|
-| MACHINES tenu + SWEEP | Filter Cutoff (FREQ) | `LP64` … `LP1`, `OFF`, `HP1` … `HP63` | OFF |
+| MACHINES tenu + SWEEP | Filter Cutoff (FREQ) | `L64` … `L1`, `OFF`, `H1` … `H63` | OFF |
 | MACHINES tenu + CONTOUR | Filter Reso (RESO) | 0 … 127 | 0 |
 | MACHINES tenu + COLOR | Filter Env (FENV) | −64 … OFF … +63 | OFF |
 | MACHINES tenu + SHAPE | Env Decay (FDEC) | 0 … 127 | 64 |
 
 C'est le geste de l'Attack de Model-TG, et la place des potards CUTOFF / RESONANCE du Model:Samples. MACHINES appuyé
 seul ouvre toujours le menu des machines. Un pas de potard (256 en 8.8) vaut environ 2 demi-tons de fréquence (64 pas
-de chaque côté). Entre OFF et le pas voisin (LP1, HP1), la sortie passe de l'entrée au filtre (w = |C − centre| / 256,
-pour les valeurs fines du lissage des paramètres, d'un NRPN ou d'un LFO ; elles s'affichent `LP0` / `HP0`) : le
+de chaque côté). Entre OFF et le pas voisin (L1, H1), la sortie passe de l'entrée au filtre (w = |C − centre| / 256,
+pour les valeurs fines du lissage des paramètres, d'un NRPN ou d'un LFO ; elles s'affichent `L0` / `H0`) : le
 passage par le centre ne claque pas.
 
 ## 2. Où brancher le filtre `[FAIT]`
@@ -90,8 +90,13 @@ SWEEP ou CONTOUR (4..7) et que MACHINES (touche 5, `0x4007faf4`) est tenu, rend 
 
 Objets d'interface `0x40a71754 + 100 i` : formateur à +0x20 (appelé avec +0x14, la valeur et le tampon, par
 `0x4000a70e`), dessin spécial à +0x2c (les « Error » dessinent une image à la place du texte). `tf_knob` (via
-`tf_objs`) installe à chaque appel : `tf_fmt_cut` (`LP`/`HP` + |v − 0x4000| >> 8 par `sprintf "%s%d"`, `OFF` au
+`tf_objs`) installe à chaque appel : `tf_fmt_cut` (`L`/`H` + |v − 0x4000| >> 8 par `sprintf "%s%d"`, `OFF` au
 centre), `0x400456c8` (entier), `0x40045bd6` (`OFF` au centre, ±n) et `0x400456c8` ; et efface +0x2c.
+
+L'écran ne montre que **trois caractères** de la valeur, comme ceux des formateurs de l'OS (Pan : `L64`, `CEN`,
+`R63` ; défaut : `ERR`). La première version écrivait `LP64` : sur la machine, `LP10` à `LP64` se lisaient `LP1` à
+`LP6` (essai de Maxime, 10/10/2026, §10.1). Les tampons passés au formateur (16 o à `0x4001e4d0`, 12 o à
+`0x4001d890`) contenaient bien les 5 octets : c'est l'affichage qui coupe, pas un débordement.
 
 ### 3.4 Tables construites au démarrage, son neuf
 
@@ -154,12 +159,15 @@ Model-TG, qui reste avec le projet. `[HYP]` à confirmer sur la machine (§10).
 
 ## 5. Le filtre
 
-### 5.1 Lois (celles du Model:Samples, recalculées par formule)
+### 5.1 Lois
 
 - Fréquence : index i = C pour le passe-bas (C < 0x4000), i = C − 0x4000 pour le passe-haut ;
-  fc = 5 Hz × 4 400^(i / 16 384), plafonnée à 20 kHz (LP1 : 19,3 kHz ; HP63 : 19,3 kHz).
-- Résonance : Q = 0,501 × (22,36 / 0,501)^(R′ / 32 512), avec R′ = R × réduction(i) : rien sous 10 Hz (pas de bosse
-  subsonique, un défaut du Model:Samples), tout à 30 Hz, moins vers 20 kHz (1 − (fc / 24 000)^2,5).
+  fc = 5 Hz × 4 400^(i / 16 384), plafonnée à 20 kHz (L1 : 19,3 kHz ; H63 : 19,3 kHz). Celle du Model:Samples.
+- Résonance : Q = 0,5 × 100^(R′ / 32 512), de 0,5 à 50, avec R′ = R × réduction(i) : rien sous 10 Hz (pas de bosse
+  subsonique, un défaut du Model:Samples), tout à 30 Hz, moins vers 20 kHz (1 − (fc / 24 000)^2,5). La bosse à fc
+  (gain Q) monte d'environ 10 dB par quart de tour : +4 dB à 32, +14 dB à 64, +24 dB à 96, +34 dB à 127. La
+  première version suivait le Model:Samples (Q 0,501 × (22,36 / 0,501)^(R′ / 32 512), +11 dB à 64, +27 dB à 127) :
+  trop discrète à l'essai (§10.1).
 - Enveloppe : e = 1 à la note (bit t de a3+16), puis e × exp(−1 / (1 500 τ)) par bloc, τ = 5 ms × 2 000^(D / 32 512) ;
   arrêtée sous 2⁻¹⁵. Décalage d'index = (A − 0x4000) × e, ajouté à i et borné au côté choisi (0..0x3fff) : la
   quantité monte ou baisse la fréquence, sans changer de côté.
@@ -182,8 +190,8 @@ LP : gx = 1 − w, hl = w / 2, hb = 0          HP = x − k BP − LP : gx = 1, 
 18 instructions par trame (11 `mac`/`msac`, 3 `movclr`). Les coefficients sont recalculés quand (C, R, décalage de
 l'enveloppe) change, une fois par bloc au plus : 1 / (1 + g (g + k)) par normalisation et trois pas de Newton. Au
 premier bloc filtré, le passe-bas part du niveau de l'entrée (pas de clic), le passe-haut du repos ; un bloc nul avec
-un état retombé (< 2⁻¹⁹) ne coûte presque rien. Saturation par l'EMAC (MACSR 0xa0) : à Q 22 une sinusoïde à fc
-monte de 27 dB, sans repli du signe (le défaut du Model:Samples).
+un état retombé (< 2⁻¹⁹) ne coûte presque rien. Saturation par l'EMAC (MACSR 0xa0) : à Q 50 une sinusoïde à fc
+monte de 34 dB, sans repli du signe (le défaut du Model:Samples).
 
 Au centre exact (C = 0x4000), la piste reste telle quelle et l'état est oublié ; l'enveloppe continue de tourner.
 
@@ -239,9 +247,9 @@ TONE CHORD, trois séries de notes aux blocs 1, 100 et 180) :
 | Six réglages fixes (LP 332 Hz, HP 332 Hz, LP près de 20 kHz, HP 41 Hz enveloppe −32, LP 116 Hz résonance 112 enveloppe +63, HP 5 Hz) | sortie comparée à un modèle flottant (SVF en double, mêmes lois) : écart max −111 à −163 dB sous la crête ; KICK et SNARE nettement changés |
 | Balayage à chaque bloc, de LP à HP en passant par le centre | écart au modèle −113 à −122 dB sous la crête |
 | Enveloppe, Decay 0 à 127 | relancée à chaque note (bit t de a3+16), τ de 5 ms à 10 s, écart à la loi < 10⁻⁷, décalage = quantité × enveloppe exactement |
-| Lois | 170 réglages, 5 Hz à 20 kHz des deux côtés, Q 0,5 à 22 : fréquence à 0,01 cent près, Q à 0,06 % près (tirés des coefficients calculés par le code) |
+| Lois | 170 réglages, 5 Hz à 20 kHz des deux côtés, Q 0,5 à 50 : fréquence à 0,01 cent près, Q à 0,06 % près (tirés des coefficients calculés par le code) |
 | Potards | MACHINES tenu : SWEEP, CONTOUR, COLOR, SHAPE → paramètres 1 à 4 ; les 8 autres potards et tout sans MACHINES : la recherche d'origine, mêmes arguments |
-| Affichage (vrai constructeur, vrai `sprintf`) | `LP64` … `LP1`, `OFF` au centre, `HP1` … `HP63` ; Reso et Decay 0..127 ; Env −64..OFF..+63 ; l'image « Error » n'est plus dessinée |
+| Affichage (vrai constructeur, vrai `sprintf`) | les 128 pas : `L64` … `L1`, `OFF` au centre, `H1` … `H63`, trois caractères au plus ; Reso et Decay 0..127 ; Env −64..OFF..+63 ; l'image « Error » n'est plus dessinée |
 | Tables construites au démarrage | descripteurs 1 à 4, k 28..31 sur les 6 machines, CC 74/71 sur les pistes 1 à 6, NRPN 1:20 et 1:21, rien d'autre ; un son neuf : Cutoff OFF, Reso 0, Env OFF, Decay 64, le reste comme sans le filtre |
 | Sauvegarde du son, versions 2 et 1 | même enregistrement plus 7 octets (emplacements 18, 27, 30, 31) ; relu : valeurs, LFO → Filter Reso, vélocité → Filter Env ; un son d'avant le filtre se charge filtre OFF |
 | P-locks du pattern | aller-retour complet et mise à jour d'un seul p-lock : tout revient (sur l'OS d'origine, 7 pistes de p-locks k ≥ 23 se perdaient ou changeaient de paramètre) ; p-locks d'origine : fichier identique octet pour octet |
@@ -266,11 +274,23 @@ coefficients sont recalculés à chaque bloc (enveloppe, LFO, potard qui tourne)
 mesurée en note 36 (moteurs Syntakt, Model-TG, régulateur) prend environ 44 % d'un bloc : six pistes filtrées et
 modulées y ajoutent moins de 5 %, borne vérifiée par l'essai.
 
-## 10. Limites, et ce qui reste à vérifier sur la machine `[À FAIRE]`
+## 10. Sur la machine
 
-- Le geste : MACHINES tenu + SWEEP / CONTOUR / COLOR / SHAPE, l'affichage (`LP32`, `OFF`, `HP20`…), le menu des
+### 10.1 Premier essai (10/10/2026)
+
+Maxime, build « filtre seul » (MAIN OS `bf1f9fb3…`) : « c'est pas mal », mais :
+
+- **Affichage** : en tournant à gauche, `LP8` puis de nouveau `LP1`, alors que le son continue de se fermer. Cause :
+  l'écran ne montre que trois caractères (§3.3) ; `LP10` à `LP19` se lisaient `LP1`. Corrigé : `L64` … `OFF` …
+  `H63`, comme Pan (`L64` … `R63`) ; la preuve vérifie les 128 pas.
+- **Résonance** « qui ne s'entend pas beaucoup » : la loi du Model:Samples ne donne que +11 dB à mi-course. Passée
+  à Q 0,5 à 50 (§5.1), environ 10 dB de plus par quart de tour. À réessayer.
+
+### 10.2 Limites, et ce qui reste à vérifier `[À FAIRE]`
+
+- Le geste : MACHINES tenu + SWEEP / CONTOUR / COLOR / SHAPE, l'affichage (`L32`, `OFF`, `H20`…), le menu des
   machines qui s'ouvre toujours sur un appui seul.
-- Le son : passe-bas, passe-haut, résonance (Q 22 près de fc : +27 dB, saturé), l'enveloppe à chaque note, le passage
+- Le son : passe-bas, passe-haut, résonance (Q 50 près de fc : +34 dB, saturé), l'enveloppe à chaque note, le passage
   par le centre sans clic, un LFO qui balaie de LP à HP.
 - La sauvegarde : son (kit), projet rechargé, réserve de sons, copier-coller d'un son, p-locks rechargés ; le
   récepteur des changements (§4.4) ne range pas k ≥ 23 : si un chemin de l'OS recharge un son depuis cette copie
