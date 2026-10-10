@@ -26,7 +26,7 @@ const ELEKTRON_ST_DL = "https://www.elektron.se/support-downloads/syntakt";
 // the combination (tools/check_overlaps.py proves that mods ticked together never write the same bytes, except the
 // same whole write or a mod applied on top of another through "requires").
 const REF_MAINOS = {
-  "midi-bth-three-state": "fa87b1fa0967c8fae97b4e5acdbf7c663a6c4fce80c3d12eb39e1079dbb03f10",
+  "midi-bth-three-state": "a2a9b136e4c59043ca0b89a72633ed2006aefdbd5b0f594d91ad381402debcd4",
   // each card alone: each variant, each combination of real Syntakt engines
   "6ch-usbup": "57fa258f209c10359f6888af79087f656e994930ff86ffcc1e2e2e48512d9530",
   "model-tg": "aa0740d714d502d440ec003cca8ca389c1ac9190de28395aef748ec9bf5c4c3a",
@@ -539,7 +539,7 @@ const REF_MAINOS = {
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+midi-both+syntakt-cp-toy-bits-swarm": "e28ea2c2b12c0d37c57b39ab09ff2b3da0a8ccbea08c56945dd2be5219277c5b",
 };
 const REF_MODS = {
-  "midi-bth-three-state": {"w": "1ce8d59324f1ae3485728e1b2e3e45999c9277773dfd1597ee8d9af1fd0a867b"},
+  "midi-bth-three-state": {"w": "2b646586ebe373bb96b0eeb213d901fbd64bd9ce08ae3a5197feeec418a8af1f"},
   "6ch-usbup": {"w": "9e4a546894a480c25a8bac2b283d4f6dd81d8b5c2b39f321256ae42016ad5009"},
   "model-tg": {"w": "c4686bd09a145fd10a6424b7229e414a084fbbcc212b722e4ab7d3ecd7cb7931", "p": "d08e9e34d222aa92a2028712adfc65646ac1024acf6f88ebf51979d85bac7655"},
   "model-tg-st": {"w": "c4686bd09a145fd10a6424b7229e414a084fbbcc212b722e4ab7d3ecd7cb7931", "p": "e269630fe5251b58c2a5eb4298e3ab09b4e6fff9f38c254afecf121c8ad446c2"},

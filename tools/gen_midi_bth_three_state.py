@@ -49,7 +49,7 @@ def helper_code():
         "486f0004"              # pea 4(sp), address of temporary source byte
         "4879404e9b50"          # pea destination config byte
         "4eb940044b88"          # jsr shared config-copy/write-notify routine
-        "548f"                  # addq.l #2,sp (discard temporary byte)
+        "4fef000e"              # lea 14(sp),sp (discard 3 args and temporary byte)
         "4e75"                  # rts to the menu callback caller
     )
     display = bytes.fromhex(
@@ -85,7 +85,7 @@ def generate(main):
     import sprites
 
     all_helpers = helper_code()
-    toggle_len, display_len = 46, 48
+    toggle_len, display_len = 48, 48
     tweak = {
         "id": "midi-bth-three-state", "order": 45,
         "name": "MIDI OUT / THRU / BTH",
