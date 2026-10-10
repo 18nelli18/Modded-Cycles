@@ -1011,9 +1011,9 @@ async function main() {
       && doc.getElementById("mach-cyc").getAttribute("aria-checked") === "true", "Mods tab: Model:Cycles by default, no Samples pane");
     doc.getElementById("mach-smp").click();
     await wait(20);
-    check(!doc.getElementById("mach-pane").hidden && /Experimental/.test(text(doc, "mach-pane")) && !doc.getElementById("drop2-wrap").hidden
+    check(!doc.getElementById("mach-pane").hidden && /Tested/.test(text(doc, "mach-pane")) && !doc.getElementById("drop2-wrap").hidden
       && /Load both official OS files/.test(text(doc, "h2s")) && !doc.getElementById("mach-w-smp").hidden
-      && doc.getElementById("mach-w-cos").hidden, "Model:Samples on its OS: pane tagged experimental, second drop zone");
+      && doc.getElementById("mach-w-cos").hidden, "Model:Samples on its OS: pane tagged tested, second drop zone");
     app.loadOs(cyc, "model-cycles_OS1.13.syx");
     doc.getElementById("feat-model-tg").click();
     await settle(w);

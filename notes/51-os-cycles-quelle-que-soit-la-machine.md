@@ -31,8 +31,8 @@ de mods ; aucun mod ne se construit sur l'OS Samples.
   `_smp-os` (Model:Samples sous son OS, transport `0x0F`) et `_cyc-os` (Model:Samples déjà sous un OS Cycles de la page,
   transport `0x11`) : c'est ce second fichier qui permet de **changer de mods plus tard**.
 - Le retour à l'OS Samples ne change pas : *Model:Samples : retour à son OS* (onglet Samples OS).
-- `[FAIT en émulation]` sur quatre combinaisons de l'échantillon `REF_MAINOS`, dont la plus grosse (§5) ; **pas encore
-  essayé sur un vrai Model:Samples** (akrism a fait tourner une variante sans correctif, [41 §8](41-os-cycles-sur-samples.md)).
+- `[FAIT en émulation]` sur quatre combinaisons de l'échantillon `REF_MAINOS`, dont la plus grosse (§5) ; **testé sur un
+  Model:Samples le 11/10/2026** (DaftMaple), les deux choix (§6).
 
 ## 1. Ce qui est construit
 
@@ -78,7 +78,7 @@ Ce que la page ne peut pas distinguer (même raisonnement que [41 §6](41-os-cyc
 ## 3. Dans le flasher
 
 - Onglet Mods, en tête : *Votre machine* (`mach-cyc`, `mach-smp`, `mach-cos`), retenu par le navigateur
-  (`mc-machine`). Pour un Model:Samples, un encadré **Expérimental** (ce qui est installé, quel choix pour quel état, la
+  (`mc-machine`). Pour un Model:Samples, un encadré **Testé** (d'abord **Expérimental**) (ce qui est installé, quel choix pour quel état, la
   sauvegarde, le retour, le redémarrage difficile) et une case de sauvegarde ; l'étape 2 demande aussi l'OS officiel du
   Samples (même zone que l'onglet Samples OS).
 - `prepareFirmware` : le build Model:Cycles (mis en cache sous sa clé habituelle), puis `MCBuilder.modsForSamples` ; la
@@ -122,7 +122,7 @@ démarrage des mods sur le matériel du Samples. Le bootstrap et l'initialisatio
 Model:Cycles, au produit près ([41 §1](41-os-cycles-sur-samples.md), `crossflash.py`), et akrism a rapporté Model-TG et
 l'audio USB 6 canaux en marche sur son Model:Samples ([41 §8](41-os-cycles-sur-samples.md)).
 
-## 6. Ce qui reste à vérifier sur la machine `[À FAIRE]`
+## 6. Essais sur la machine
 
 Sur un vrai Model:Samples (DaftMaple en a un), sauvegarde Transfer d'abord :
 1. *Model:Samples, sous son OS*, Model-TG et quelques mods, méthode rapide : la machine redémarre en Model:Cycles avec
@@ -131,5 +131,6 @@ Sur un vrai Model:Samples (DaftMaple en a un), sauvegarde Transfer d'abord :
 3. onglet Samples OS, *retour à son OS* : retour au Model:Samples, samples et projets présents ;
 4. en secours : menu de démarrage du Samples et l'OS Samples officiel par le MIDI IN.
 
-Le statut reste **expérimental** tant que ces essais ne sont pas rapportés ; les cartes de mods gardent leur propre
-statut, établi sur un Model:Cycles.
+**Testé sur la machine (11/10/2026)** par DaftMaple, sur son Model:Samples : les essais 1 (*sous son OS*) et 2 (*déjà sous
+l'OS Cycles*, changement de mods) marchent ; l'encadré du flasher passe de **Expérimental** à **Testé**. Les essais 3
+et 4 n'ont pas été rapportés. Les cartes de mods gardent leur propre statut, établi sur un Model:Cycles.
