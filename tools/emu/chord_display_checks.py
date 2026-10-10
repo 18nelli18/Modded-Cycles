@@ -7,6 +7,7 @@ instantanés passent par le vrai éditeur atomique ColdFire. Aucun rendu hôte n
 remplace les glyphes, le clipping, l'échange des tampons ou l'envoi à l'écran.
 """
 import struct
+import random
 
 from unicorn import UC_HOOK_MEM_WRITE, UC_HOOK_CODE
 
@@ -19,6 +20,33 @@ BUFFER_A, BUFFER_B = 0x93300010, 0x93301010
 CANVAS, TEXT_A, TEXT_B, INTERVALS = 0x93302000, 0x93303000, 0x93303100, 0x93303200
 BACKGROUND = bytes((i * 47 + i // 13) & 255 for i in range(1024))
 APPLICATION = 0x93304000
+
+
+def active_note_scan(image, symbols, check):
+    """Même priorité que les six getters, même avec captures hors plage."""
+    rig, _, _, _, _ = _ui_rig(image, symbols)
+    rng = random.Random(0x434b)
+    empty = [(0, 0, 0)] * 16
+    cases = [empty]
+    for key in range(16):
+        for track in range(6):
+            cases.append(empty[:key] + [(track, 127, 1)] + empty[key + 1:])
+    for track in range(6):
+        for first, second in ((127, 128), (128, 127), (0xffffffff, 0)):
+            cases.append([(track, first, 1), (track, second, 1)] + empty[2:])
+    for _ in range(128):
+        cases.append([(rng.choice((0, 1, 2, 3, 4, 5, 6, 0xffffffff)),
+                       rng.choice((0, 48, 127, 128, 255, 0xffffffff)), rng.randrange(2))
+                      for _ in range(16)])
+    exact = True
+    for entries in cases:
+        rig.uc.mem_write(symbols['held'], b''.join(
+            struct.pack('>IIIBBBx', 0, track, note, 1, active, 100)
+            for track, note, active in entries))
+        expected = any(rig.call(symbols['ck_ui_active_note'], track) < 128
+                       for track in range(6))
+        exact &= rig.call(symbols['ck_ui_has_active_note']) == int(expected)
+    check(exact, f'affichage : balayage unique équivalent aux six pistes sur {len(cases)} captures, priorité et notes invalides conservées')
 
 
 def _prepare(image, symbols=None):
@@ -124,6 +152,7 @@ def _redraw(stock, image, symbols, check):
 
 
 def run(stock, image, symbols, check):
+    active_note_scan(image, symbols, check)
     reference, _, _, _, original_panel = _prepare(stock)
     altered, config, selected, machine, panel = _prepare(image, symbols)
     _background(reference)

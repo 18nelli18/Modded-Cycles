@@ -1,6 +1,6 @@
 """Palettes et macro SHAPE dans le véritable DSP CHORD (notes/40 §15).
 
-Seuls les deux getters sont instrumentés pour le balayage combinatoire. Une
+Seuls la configuration et les contrôles résolus sont instrumentés pour le balayage combinatoire. Une
 seconde partie utilise le vrai stockage ; les gestes UI sont prouvés séparément.
 Les références ci-dessous sont des intervalles musicaux, jamais du code firmware.
 """
@@ -69,8 +69,11 @@ def run(stock, patched, symbols, extra_code, check):
         uc.reg_write(mk.UC_M68K_REG_A7, sp + 4)
         uc.reg_write(mk.UC_M68K_REG_PC, ret)
 
+    # Le balayage choisit directement le résultat musical du geste/lock. La
+    # résolution depuis le vrai stockage reste couverte dans la seconde partie.
     runner.engine.uc.hook_add(UC_HOOK_CODE, control_getter,
-                             begin=symbols['ck_audio_controls'], end=symbols['ck_audio_controls'])
+                             begin=symbols['ck_audio_locked_controls'],
+                             end=symbols['ck_audio_locked_controls'])
 
     def snapshot_matches(notes, root, bass):
         packet = int.from_bytes(runner.engine.uc.mem_read(symbols['ck_chord_live'], 4), 'big')

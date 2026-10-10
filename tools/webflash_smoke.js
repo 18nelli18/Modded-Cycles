@@ -564,8 +564,8 @@ async function main() {
       if (!on.some((a, k) => on.slice(k + 1).some((b) => incompatible(a, b))))
         initial.push(on.map((f) => "feat-" + f.id));
     }
-    check(initial.length === 1087 && initial.filter((on) => on.includes("feat-syntakt")).length === 544,
-      "compatible feature selections: 543 without engines, 544 with the first engine combination");
+    check(initial.length === 1151 && initial.filter((on) => on.includes("feat-syntakt")).length === 576,
+      "compatible feature selections: 575 without engines, 576 with the first engine combination");
     async function pickCards(on) {
       // Retirer d'abord les choix précédents ; une case incluse et verrouillée
       // suit son porteur, sans clic artificiel ni changement direct de l'état.
@@ -581,7 +581,7 @@ async function main() {
     }
     function trimCache() {
       // Garder au plus 32 images, dont le choix courant, pour réutiliser les
-      // étapes intermédiaires sans accumuler les 17 407 firmwares vérifiés.
+      // étapes intermédiaires sans accumuler les 18 431 firmwares vérifiés.
       const keys = Object.keys(app.state.cache);
       let excess = keys.length - 32;
       for (const key of keys) {

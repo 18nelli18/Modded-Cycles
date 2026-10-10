@@ -14,8 +14,8 @@ unsigned ck_ui_revision_get(void);
 void *ck_ui_header(void);
 
 /* Modificateurs éphémères : 0 aucun, 1..6 T1..T6, conservés au relâchement
- * du pad. Un pad pressé sans TRIG prépare uniquement le prochain appui TRIG ;
- * sans préparation encore tenue, ce nouvel appui revient à zéro. header est celui du pattern
+ * du pad pour la note courante. Un pad tenu prépare tous les nouveaux appuis
+ * TRIG ; une fois relâché, le prochain appui revient à zéro. header est celui du pattern
  * réellement lu, pour ne pas appliquer un geste à un autre pattern.
  */
 unsigned ck_ui_modifier_get(unsigned track, const void *header);
@@ -42,5 +42,6 @@ void ck_ui_cancel_track(unsigned track);
 /* Indice de la dernière touche encore sonore de la piste, ou 16 si aucune. */
 unsigned ck_ui_active_key(unsigned track);
 unsigned ck_ui_active_note(unsigned track);
+unsigned ck_ui_has_active_note(void);
 
 #endif

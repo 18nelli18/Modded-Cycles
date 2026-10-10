@@ -3,6 +3,26 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.37", date: "2026-10-10", changes: [
+    { en: "Keep T1–T6 held across successive TRIGs to carry the same harmony change into each new chord; releasing the pad keeps the current chord sounding",
+      fr: "Gardez T1–T6 tenu entre plusieurs TRIG pour appliquer le même changement harmonique à chaque nouvel accord ; relâcher le pad conserve l’accord actuel" },
+    { en: "Choose MIDI CHORD in FUNC + RETRIG to send up to four chord notes from live playing and the sequencer; MIDI ROOT keeps the original single-note output",
+      fr: "Choisissez MIDI CHORD dans FUNC + RETRIG pour envoyer jusqu’à quatre notes d’accord en jeu live et au séquenceur ; MIDI ROOT conserve la sortie d’une seule note" },
+    { en: "Chord Keys does less processing work while keeping the same sound, controls, MIDI output and HARMONY recording",
+      fr: "Chord Keys demande moins de calculs en conservant le même son, les mêmes commandes, la sortie MIDI et l’enregistrement HARMONY" },
+    { en: "Audio matched sample for sample before and after optimization in firmware emulation. These additions remain experimental and await hardware testing; performance on the Model:Cycles has not yet been measured",
+      fr: "L’audio avant et après optimisation est identique, échantillon par échantillon, en émulation du firmware. Ces ajouts restent expérimentaux et attendent un essai matériel ; les performances sur le Model:Cycles n’ont pas encore été mesurées" },
+  ] },
+  { version: "1.36", date: "2026-10-08", changes: [
+    { en: "Chord Keys: keep T1–T6 held while playing successive TRIGs. Every new chord keeps the modifier until you release the pad. Release keeps the current chord sounding; later TRIGs return to their saved extension",
+      fr: "Chord Keys : gardez T1–T6 tenu en jouant plusieurs TRIG. Chaque nouvel accord garde le modificateur jusqu’au relâchement du pad. Le relâchement conserve l’accord actuel ; les TRIG suivants retrouvent leur extension enregistrée" },
+    { en: "Choose MIDI CHORD in FUNC + RETRIG to send up to four chord notes from live playing and the sequencer. Palettes, voicings and HARMONY changes follow the chord. MIDI ROOT preserves the original single-note output and remains the default",
+      fr: "Choisissez MIDI CHORD dans FUNC + RETRIG pour envoyer jusqu’à quatre notes d’accord depuis le jeu live et le séquenceur. Palettes, dispositions et changements HARMONY suivent l’accord. MIDI ROOT conserve la sortie d’une seule note et reste le réglage par défaut" },
+    { en: "Checked in focused firmware emulation: held-pad recording, MIDI notes, note lengths, Stop and channel changes, alone and with Model-TG and Syntakt mods",
+      fr: "Vérifié par émulation ciblée du firmware : enregistrement des pads tenus, notes MIDI, durées, Stop et changements de canal, seul et avec les mods Model-TG et Syntakt" },
+    { en: "Both additions are experimental and await hardware testing. Nico’s hardware report for version 1.2 applies to the preceding revision",
+      fr: "Les deux ajouts sont expérimentaux et attendent un essai matériel. Le retour de Nico sur machine pour la version 1.2 concerne la révision précédente" },
+  ] },
   { version: "1.35", date: "2026-10-07", changes: [
     { en: "Chord Keys, the flasher and the full guide are linked together on Nico’s GitHub Pages site",
       fr: "Chord Keys, le flasher et le guide complet sont reliés sur le site GitHub Pages de Nico" },

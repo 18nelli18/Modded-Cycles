@@ -18,8 +18,9 @@
 
 ---
 
-**Chord Keys 1.2 on Nico's fork:** [explore the mod and quick guide](https://bynicoheuser.github.io/Modded-Cycles/chord-keys/) · [open this fork's flasher](https://bynicoheuser.github.io/Modded-Cycles/flasher/).
+**Chord Keys on Nico's fork:** [explore the mod and quick guide](https://bynicoheuser.github.io/Modded-Cycles/chord-keys/) · [open this fork's flasher](https://bynicoheuser.github.io/Modded-Cycles/flasher/).
 This revision adds temporary harmony pads, three COLOR palettes and a SHAPE voicing/balance macro. **Nico reports testing version 1.2 on his Model:Cycles, including with the other Cycles mods, on 7 October 2026.** This is his hardware report; the upstream experimental classification is unchanged.
+The new held-modifier and MIDI chord-output additions are experimental and await hardware testing.
 The upstream links above belong to the original project; this fork's flasher includes the Chord Keys revision described here.
 
 ## Why
@@ -46,7 +47,7 @@ Going back to the official firmware is one click away.
 | **Syntakt engines** | Up to five real Syntakt machines added next to the original six: **SD VINTAGE**, **CP VINTAGE**, **SY TOY**, **SY BITS** and **SY SWARM**, with the Syntakt's knob names and defaults. They are read from your own Syntakt OS file. | ✅ Tested |
 | **Model-TG** | A full Sampler machine with seven playback modes, resampling, a beat-repeat page with master FX, slide trigs, Scale Lock and more, by [TinyGregAudio](https://github.com/TinyGregAudio/Model-TG). Works with the 6-channel mod and the Syntakt engines. | 🧪 Experimental |
 | **Arpeggiator** | Hold several notes with RETRIG and they play as an arpeggio. `FUNC` + `RETRIG` adds direction (up, down, up/down, random, or in the order played) and range (1 to 4 octaves), saved with the pattern. | ✅ Tested |
-| **Chord Keys** | Play the selected CHORD track with `TRIG 1–16` and see the played chord's name on screen. Choose each degree's TRI/7/9/11/13 in `FUNC` + `RETRIG`. COLOR selects DIATONIC, JAZZ or TENSION; SHAPE arranges and balances the notes. With Keys ON, T1–T6 always make temporary 9/11/13/SUS7/PARALLEL/V7 changes without selecting another track. Press a pad while holding a TRIG to replay the whole changed chord with a fresh attack. Releasing the pad keeps the changed chord; each new TRIG starts with its saved extension unless you prepare a T pad first. Record the attacks and HARMONY parameter locks. Improved controls also apply to existing patterns. Combines with every other Cycles mod, including Model-TG and the Syntakt engines. | 🧪 Experimental revision |
+| **Chord Keys** | Play the selected CHORD track with `TRIG 1–16` and see the played chord's name on screen. Choose each degree's TRI/7/9/11/13 in `FUNC` + `RETRIG`. COLOR selects DIATONIC, JAZZ or TENSION; SHAPE arranges and balances the notes. With Keys ON, T1–T6 always make temporary 9/11/13/SUS7/PARALLEL/V7 changes without selecting another track. Press a pad while holding a TRIG to replay the whole changed chord with a fresh attack. Keep T held across successive TRIGs to reuse its modifier. Releasing T keeps the current chord; later TRIGs return to their saved extension. Choose MIDI CHORD in FUNC + RETRIG for chord-note output, or ROOT for the original output. Record the attacks and HARMONY parameter locks. Improved controls also apply to existing patterns. Combines with every other Cycles mod, including Model-TG and the Syntakt engines. | 🧪 Experimental revision |
 | **Tempo up to 546 BPM** | The TEMPO knob, tap tempo, MIDI clock and saved projects go past 300 BPM. Tempo-synced LFOs stay in time. | ✅ Tested |
 | **Startup animation** | When the Model:Cycles starts, the four squares of the modded-cycles logo pop in and “modded-cycles” types itself underneath, instead of the original tile animation. Same duration. | ✅ Tested |
 | **Easier trig removal** | A quick press on a step that holds a trig removes it, instead of opening it as a hold. | ✅ Tested |
@@ -81,6 +82,10 @@ settings, and existing Chord Keys projects keep their saved harmony locks. Exist
 mods still apply. **Nico reports successful hardware testing of version 1.2 with the other Cycles mods.** This is
 not an exhaustive test of every possible selection in the flasher. Samples OS is a separate installation. TRACK + T1–T6 still selects tracks.
 Keys OFF restores ordinary pad playing and retrig/arp; the lower TRIG chord keys do not arpeggiate.
+
+The 9 October Chord Keys optimization reduces processing work while preserving the sound, controls, MIDI output
+and HARMONY recording. Audio matched sample for sample in firmware emulation; hardware performance has not been
+measured, and this revision remains experimental.
 
 <p align="center">
   <img src="docs/images/readme/device-syntakt.png" alt="The MACHINES menu on the Model:Cycles screen, listing 05 Tone, 06 Chord, 07 SDVtg and 08 CPVtg" width="560"><br>

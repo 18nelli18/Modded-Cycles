@@ -46,7 +46,7 @@ def main():
     parser.add_argument("--cycles", required=True)
     parser.add_argument("--with", dest="others", default="")
     parser.add_argument("--syntakt")
-    parser.add_argument("--focus", choices=("pad-release", "pad-prepare", "live-recording", "compatibility"),
+    parser.add_argument("--focus", choices=("pad-release", "pad-prepare", "live-recording", "compatibility", "midi-output"),
                         help="preuves ciblées TRIG/pads, P-locks, routage et DSP ; compatibility inclut Model-TG")
     args = parser.parse_args()
     stock = load_stock(args.cycles)
@@ -97,7 +97,14 @@ def main():
     check(not overlap, f"aucun chevauchement avec les autres tweaks compatibles : {overlap}")
     extra_code = [(build.BASE + w["off"], len(w["new"])//2) for w in tweak["writes"]
                   if len(w["new"])//2 > 32]
-    if args.focus == "compatibility":
+    if args.focus == "midi-output":
+        import chord_midi_checks
+        import chord_midi_event_checks
+        run_storage_checks(reference, patched, symbols)
+        chord_ui_checks._menu(patched, symbols, check)
+        chord_midi_checks.run(reference, patched, symbols, check)
+        chord_midi_event_checks.run(reference, patched, symbols, extra_code, check)
+    elif args.focus == "compatibility":
         # Les intégrations touchées : clavier/entretien TG, nouvelle lane
         # HARMONY, Scale Lock et dispatch DSP. Pas de matrice musicale complète.
         run_storage_checks(reference, patched, symbols)
@@ -126,7 +133,16 @@ def main():
             _attack_recording_checks(reference, patched, symbols)
         except AssertionError as error:
             check(False, f"préparation et enregistrement : {error}")
-        chord_pad_audio_checks.run_prepare(patched, symbols, extra_code, check)
+        if chosen:
+            from chord_compat_audio_checks import Config, runtime_payload, shared_engine
+            tg = next((t for t in chosen if t["id"].startswith("model-tg")), None)
+            runtime = runtime_payload(stock, chosen, args.syntakt)
+            chord_pad_audio_checks.run_prepare(
+                patched, symbols, extra_code, check,
+                engine_factory=lambda: shared_engine(patched, extra_code, tg, runtime, len(stock)),
+                config_factory=Config)
+        else:
+            chord_pad_audio_checks.run_prepare(patched, symbols, extra_code, check)
     elif args.focus == "pad-release":
         chord_ui_checks.run_pad_release(reference, patched, symbols, check)
         chord_routing_checks.run(reference, patched, symbols, check)
@@ -165,7 +181,7 @@ def main():
         chord_pad_audio_checks.run(reference, patched, symbols, extra_code, check)
         chord_pad_audio_checks.run_prepare(patched, symbols, extra_code, check)
         chord_recording_checks.run(reference, patched, symbols, extra_code, check)
-    for governor in (item for item in chosen if item.get("gov") and args.focus not in ("pad-prepare", "compatibility")):
+    for governor in (item for item in chosen if item.get("gov") and args.focus not in ("pad-prepare", "compatibility", "midi-output")):
         for new_controls in (False, True):
             governor_failures = run_audio_governor_checks(patched, governor, extra_code, new_controls)
             if governor_failures:

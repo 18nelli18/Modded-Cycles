@@ -24,7 +24,8 @@ from chord_ui_checks import HEADER, _ui_rig, _key, _pad, _on
 from probe_chord_keys import frequency_ratios
 
 
-def run_prepare(image, symbols, extra_code, check):
+def run_prepare(image, symbols, extra_code, check, engine_factory=None,
+                config_factory=NativeAudioConfig):
     """Deux DSP natifs : queue laissée seule contre préparation réelle T6."""
     ui, _, _, _, _ = _ui_rig(image, symbols)
     ui.call(symbols["ck_ui_config_set"], 2, config_word(root=24, extensions=(1,) * 7))
@@ -41,8 +42,8 @@ def run_prepare(image, symbols, extra_code, check):
 
     twins = []
     for _ in range(2):
-        engine = E.Engine(image, extra_code=extra_code)
-        config = NativeAudioConfig(engine)
+        engine = engine_factory() if engine_factory else E.Engine(image, extra_code=extra_code)
+        config = config_factory(engine)
         engine.uc.mem_map(0x93100000, 0x10000)
         config.write(config.ROOT + 5192 + 60, HEADER)
         transfer(engine)
@@ -77,11 +78,36 @@ def run_prepare(image, symbols, extra_code, check):
     valid &= all(abs(a - b) <= 4 for a, b in zip(actual, expected))
     check(valid and changed.call(symbols["ck_audio_controls"], 2) == 1 | (6 << 8),
           "T6 préparé→TRIG : une seule note, rapports V7 natifs dès la nouvelle attaque")
+    for key, previous, note in ((2, 24, 26), (3, 26, 28)):
+        _key(ui, key, True)
+        valid = ui.calls == [("off", (2, previous, 64)), _on(2, note)]
+        transfer(changed)
+        changed.set(2, note=note)
+        changed.block(4, 4)
+        changed.block(0)
+        pcm = changed.block(0)
+        actual = tuple(int.from_bytes(changed.uc.mem_read(voice + 0x50 + 0x78 * i, 4), "big") for i in range(4))
+        expected = frequency_ratios(expected_notes(0, key - 1, 1, 2, 6))
+        valid &= all(abs(a - b) <= 4 for a, b in zip(actual, expected))
+        check(valid and pcm[2].any() and changed.call(symbols["ck_audio_controls"], 2) == 1 | (6 << 8),
+              f"T6 encore tenu→TRIG {key} : nouvel accord V7 audible, rapports natifs conservés")
     _pad(ui, 6, False)
     transfer(changed)
     check(not ui.calls and changed.call(symbols["ck_audio_controls"], 2) == 1 | (6 << 8)
           and not ui.bad and not any(t.unmapped for t in twins),
           "T préparé relâché après TRIG : accord conservé, aucun accès mémoire hors du banc")
+    _key(ui, 4, True)
+    valid = ui.calls == [("off", (2, 28, 64)), _on(2, 29)]
+    transfer(changed)
+    changed.set(2, note=29)
+    changed.block(4, 4)
+    changed.block(0)
+    changed.block(0)
+    actual = tuple(int.from_bytes(changed.uc.mem_read(voice + 0x50 + 0x78 * i, 4), "big") for i in range(4))
+    expected = frequency_ratios(expected_notes(0, 3, 1, 2, 0))
+    check(valid and all(abs(a - b) <= 4 for a, b in zip(actual, expected)) and
+          changed.call(symbols["ck_audio_controls"], 2) == 1 and not changed.unmapped,
+          "T6 relâché→nouveau TRIG : retour aux rapports natifs de l'extension du degré")
 
 
 def run(stock, image, symbols, extra_code, check):

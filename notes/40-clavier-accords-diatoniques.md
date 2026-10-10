@@ -13,8 +13,9 @@ Tweak : [`44-chord-keys.json`](../tweaks/model-cycles_OS1.13/44-chord-keys.json)
 [`tools/machines/chord_keys/`](../tools/machines/chord_keys/), preuves sous `tools/emu/` et test natif
 [`tools/test_chord_keys.py`](../tools/test_chord_keys.py),
 [`tools/test_chord_harmony.py`](../tools/test_chord_harmony.py) et
-[`tools/test_chord_names.py`](../tools/test_chord_names.py). **État de la nouvelle révision au 07/10/2026 :
-expérimentale, sans essai matériel rapporté** (§22). Le retour positif de Nico seul sur Model:Cycles concerne
+[`tools/test_chord_names.py`](../tools/test_chord_names.py). **État des ajouts du 08/10/2026 :
+expérimentaux, sans essai matériel rapporté** (§24–25). Le retour de Nico sur la version 1.2
+du 07/10 reste décrit au §23. Le retour positif de Nico seul sur Model:Cycles concerne
 la version précédente (§13). Les §1–15 conservent les étapes antérieures ; Controls LEGACY est retiré au §16.
 
 ## Réponse courte
@@ -26,7 +27,9 @@ DIATONIC, JAZZ ou TENSION ; **SHAPE** combine les neuf dispositions BASE/CLS0–
 9/11/13/SUS7/PARALLEL/V7, sans sélectionner une autre piste après un TRIG tenu. Le dernier pad
 pressé prévaut. Depuis le §18, un nouvel appui disponible pendant un TRIG tenu réarticule
 l'accord entier. Depuis les §19–21, le relâchement garde cet accord sans nouvelle attaque ni lock ;
-un T tenu sans TRIG prépare l'accord suivant et les attaques enregistrées gardent leur propre harmonie.
+un T tenu sans TRIG prépare les accords suivants et les attaques enregistrées gardent leur propre harmonie.
+Depuis le §24, T reste actif sur chaque nouveau TRIG jusqu’à son relâchement.
+Le choix MIDI CHORD envoie les notes des accords live et séquencés (§25) ; ROOT garde la sortie native.
 
 **Les options Controls NEW/LEGACY et Pads TRACK/HARMONY sont supprimées.** Les anciens patterns
 utilisent aussi les palettes et balances améliorées : leurs valeurs et locks ne sont pas réécrits,
@@ -80,8 +83,9 @@ des boutons ne rejouent pas l'accord. La vélocité provient du réglage de pist
 
 Le moteur déduit le degré de la note reçue et de la gamme du **pattern actif**. Il n'ajoute pas de métadonnée
 d'accord à chaque événement : les fondamentales enregistrées ou séquencées sont réinterprétées avec les réglages
-courants. Modifier une extension change donc aussi le rendu des notes correspondantes du pattern. Le MIDI
-sortant conserve la fondamentale transmise par le helper stock ; ce mod ne crée pas quatre notes MIDI sortantes.
+courants. Modifier une extension change donc aussi le rendu des notes correspondantes du pattern.
+MIDI ROOT conserve la fondamentale transmise par le helper stock. Depuis le §25, MIDI CHORD peut
+envoyer les trois ou quatre notes de l’accord à chaque attaque, sans transposer avec PITCH/FINE.
 La preuve live rec suit le vrai chemin jusqu'au message de note : TRIG 15, fondamentale 72, vélocité 97, retrig −1,
 durée 20 000 et fin de note correcte pour cette troisième octave. **L'écriture finale du trig enregistré
 n'est pas exécutée dans ce banc** ; la sauvegarde de la configuration et le rendu des fondamentales sont
@@ -2251,3 +2255,363 @@ Contrôles ciblés pour cette publication :
 La campagne exhaustive de toutes les combinaisons n’est pas relancée : Nico demande une
 publication et conserve sa préférence pour les contrôles ciblés pendant le développement.
 Aucune image firmware ni résultat audio n’est ajouté au dépôt.
+
+## 24. Conserver T1–T6 pendant plusieurs TRIG (08/10/2026)
+
+Demande de Nico dans cette conversation : « hold a modifier (T1-T6) and have that carry on
+being used », car le premier TRIG consomme le changement préparé. Cette demande remplace
+la consommation unique des §19–20. Adresses : VA de l’OS 1.13.
+
+`[FAIT : source]` `handle_press` dans `chord_ui.c` lit `prepared_modifiers`, puis appelle
+`ck_ui_clear_modifiers`, qui efface cette préparation avant le TRIG suivant. Un pad pressé
+pendant un TRIG publie seulement le changement live. Il faut donc conserver séparément
+le pad physiquement tenu et l’harmonie de la note en cours, avec leur piste et leur pattern.
+
+Comportement demandé : un T maintenu transforme chaque nouveau TRIG jusqu’à son relâchement,
+qu’il ait été pressé avant ou pendant un TRIG. Relâcher T ne réarticule pas et conserve la
+queue actuelle ; les TRIG suivants retrouvent leur extension. Un pad sans TRIG ne touche
+pas la queue précédente et n’écrit pas de lock. Les notes prises en live rec gardent chacune
+leur changement HARMONY. Les raccourcis et les pistes étrangères conservent leur chemin.
+
+`[FAIT en émulation]` Les nouvelles assertions échouent avec le JSON précédent : six pads
+perdent leur effet après le premier TRIG. Le correctif conserve la préparation lors de
+`handle_press` et la publie aussi quand T est pressé pendant une note tenue. La version
+isolée du correctif passe **181 contrôles ciblés** : T1–T6 sur les seize TRIG par les vrais
+dispatchers, signatures anciennes et actuelle, séparation des pistes, réarticulations,
+rapports et PCM du CHORD natif, puis retour à l’extension après relâchement. Le recorder
+natif et save/load conservent les locks **6, 6, 6, 0** de trois notes avec T6 tenu puis
+d’une note après relâchement. Ce résultat ne constitue pas un essai matériel.
+
+`[À FAIRE sur machine]` Tenir T1 puis jouer TRIG 1, 3, 5 ; refaire avec TRIG→T6 puis
+d’autres TRIG. Relâcher T, laisser finir l’accord, puis vérifier l’extension du TRIG suivant.
+Enregistrer ces gestes et écouter les quatre attaques après sauvegarde/recharge.
+
+## 25. Sortie MIDI des accords (08/10/2026)
+
+Demande de Nico dans cette conversation : « implement also midi chord output mode ».
+Le MIDI ROOT existant envoie une fondamentale ; le choix par piste **MIDI CHORD**, dans
+**FUNC + RETRIG**, doit envoyer les notes de l’accord par la route MIDI native.
+ROOT reste la valeur par défaut des nouveaux patterns et des anciens projets.
+
+`[CONCEPTION]` La sélection est sauvegardée avec le pattern. Le calcul réutilise les
+intervalles harmoniques du mod. Les fins de notes doivent libérer les notes et le canal
+capturés à l’attaque, même si les réglages ont changé entre-temps. Aucune note MIDI ne doit
+être envoyée à partir de la boucle DSP de chaque bloc audio.
+
+### 25.1. Stockage et place disponible
+
+`[FAIT : source]` La signature **v3 `0x434b0300`** utilise ses six bits bas pour MIDI CHORD
+sur chaque piste. Les mots de configuration et les octets musicaux restent inchangés.
+Les signatures v1 et v2 restent lisibles, avec MIDI ROOT ; le setter convertit la signature
+lors d’un choix explicite. Le getter audio lit le pattern joué, le getter UI le pattern affiché.
+
+`[FAIT : analyse de l’image officielle]` La réserve de 11 168 octets ne suffit plus aux
+nouveaux réglages et aux relais MIDI. Les réserves ci-dessous apportent **3 016 octets**,
+soit **14 184 octets** au total. Pour chacune : masque identique à l’exemplaire conservé,
+une seule référence à son début, contrat du constructeur Bitmap et dimensions exacts,
+aucune constante ni branche intérieure selon `build.refs_into`, aucun chevauchement
+avec un autre tweak. Le générateur refait ces vérifications ; seuls les masques occupés
+sont redirigés et écrits. Aucun changement d’image ou de format de charge utile.
+
+| Masque | Octets | Constante du constructeur | Exemplaire conservé |
+|---|---:|---|---|
+| `0x4015b8f8` | 280 | `0x400b668c` | `0x4014a660` |
+| `0x401548b4` | 280 | `0x400b903a` | `0x4014a660` |
+| `0x401542f8` | 280 | `0x400b91d8` | `0x4014a660` |
+| `0x40192ba4` | 272 | `0x400ac276` | `0x4016f8c8` |
+| `0x4018ff64` | 272 | `0x400ac7fc` | `0x4016f8c8` |
+| `0x4018b1a8` | 272 | `0x400ad16e` | `0x4016f8c8` |
+| `0x4018af88` | 272 | `0x400ad18a` | `0x4016f8c8` |
+| `0x40189618` | 272 | `0x400ad364` | `0x4016f8c8` |
+| `0x40186238` | 272 | `0x400ad988` | `0x4016f8c8` |
+| `0x40185308` | 272 | `0x400adb8c` | `0x4016f8c8` |
+| `0x401835b8` | 272 | `0x400adedc` | `0x4016f8c8` |
+
+### 25.2. Chemins MIDI natifs
+
+| Site | Rôle |
+|---|---|
+| `0x40019e7a` / `0x40019c84` | Helpers clavier, attaque et relâchement |
+| `0x40019ee2` / `0x40019cba` | Relais MIDI après le traitement audio du clavier |
+| `0x4001d05e` / `0x4001d0fc` | Helpers pads natifs |
+| `0x4001d094` / `0x4001d120` | Relais MIDI après le traitement audio des pads |
+| `0x40058fac` | Ancien producteur MIDI des événements note-on, différé |
+| `0x4005919e` | Nouveau relais après application du son et des P-locks |
+| `0x4008a5d0` | Allocateur circulaire natif, 128 messages de 16 octets |
+| `0x4008a0ba` | Worker MIDI natif : canaux, répétitions, LEN et STOP |
+| `0x40082686` / `0x400826b0` | Destination courante et routage MIDI USB/DIN |
+
+`[FAIT : code et émulation]` Le jeu direct mémorise les notes réellement envoyées,
+le canal et la destination pour chaque piste. Une nouvelle attaque ferme l’accord
+précédent. Le relâchement utilise cette capture même après un changement de canal,
+de destination, de MOut ou de mode. La destination OFF du résolveur (1) est convertie en destination vide (0) :
+l’émetteur brut interprète 1 comme AUTO, ce qui laisserait un relâchement tardif suivre
+une destination activée après l’attaque silencieuse. La régression OFF→USB+DIN est prouvée. Un bitmap conserve les identités d’accords remplacés
+pour absorber leurs relâchements tardifs sans avaler celui d’une note ROOT antérieure.
+Le repli des fins de notes ROOT reprend exactement le code stock, y compris son filtre MOut.
+
+Pour le séquenceur, l’événement accepté est développé après les P-locks ; les trois ou
+quatre messages gardent la piste, la vélocité, l’instant et LEN d’origine. Le worker
+stock gère les durées et STOP. Sa table est indexée par **canal et note**, avec 2 048
+fiches ; elle accepte donc plusieurs notes sur une piste. Le calcul harmonique ne
+s’exécute qu’à l’attaque, jamais dans l’update DSP de chaque bloc. Aucun retour ni
+registre temporaire n’est conservé dans une globale partagée.
+
+### 25.3. Limites musicales et test matériel
+
+- Le mode CHORD demande Keys ON et la machine CHORD. ROOT, les autres machines et les
+  notes hors gamme gardent une seule note native.
+- Les palettes, extensions, transformations et dispositions reprennent les fonctions
+  harmoniques du DSP. Les fondamentales supérieures à MIDI 96 suivent son plafond à 96
+  avant le choix du degré ; les voix au-delà de 127 sont omises.
+- PITCH/FINE et la balance audio de SHAPE n’affectent pas les notes ni les vélocités MIDI.
+  Chaque voix garde la vélocité de l’attaque.
+- Tourner COLOR/SHAPE ou poser un lock sans attaque ne réaccorde pas un accord MIDI tenu :
+  le changement s’applique à la prochaine attaque. T pendant un TRIG réarticule déjà une note.
+- La retransmission native du MIDI entrant reste monophonique : ce mode concerne le
+  clavier/pads et le séquenceur, pas un harmoniseur MIDI externe. Les notes harmoniques
+  peuvent aussi rester présentes en MIDI si la protection HIGH LIMIT les retire du son audio.
+- La signature v3 n’est pas reconnue par les versions antérieures de Chord Keys ; leur
+  retour peut réinitialiser les réglages spécifiques au mod. Le chargement vers cette
+  nouvelle version préserve les anciens réglages et locks.
+- Le banc instrumente les périphériques : ni le timing USB/DIN réel ni la charge matérielle
+  ne sont mesurés. **Aucun retour matériel de ces deux ajouts n’est revendiqué.**
+
+`[À FAIRE sur machine]` Relier un synthétiseur polyphonique ou un moniteur MIDI, activer
+MOut et MIDI CHORD sur CHORD/Keys ON. Jouer une triade, une neuvième et V7, puis tenir T
+entre plusieurs TRIG. Vérifier les notes et les fins sur USB puis DIN. Réenregistrer
+la progression et la relire avec des locks COLOR/SHAPE/HARMONY, des LEN courts et longs,
+des répétitions et STOP. Pendant une note tenue, changer canal, destination ou mode et
+vérifier qu’aucune note ne reste bloquée. Sauvegarder/recharger, puis refaire avec
+Model-TG et les moteurs Syntakt. ROOT doit retrouver la sortie habituelle.
+
+### 25.4. Résultats ciblés de cette révision
+
+`[FAIT en émulation]` Sur le JSON final, chacun des deux ensembles ci-dessous passe seul
+puis avec `6ch-usbup,model-tg-st,trig-hold,arp,tempo-max,boot-anim,syntakt-tg-sd-cp-toy-bits-swarm` :
+
+- `--focus pad-prepare` : **91 contrôles**, maintien, réarticulation, recorder, save/load et
+  vrai DSP. Le banc composé charge désormais la même fixture Syntakt/Model-TG que la preuve
+  de compatibilité ; sa première tentative avait échoué faute de RAM/payload dans la fixture.
+- `--focus midi-output` : **112 contrôles**, accroches, masques, stockage, menu, MIDI live,
+  file audio et worker MIDI natifs. Sont couverts 96 paires clavier/pads en ROOT identiques
+  au stock, 189 accords palette/geste/disposition, la vraie chaîne TRIG→T→TRIG,
+  24 notes simultanées sur six pistes avec dix répétitions, LEN et STOP, les captures après
+  changement de canal/destination/MOut/mode, puis les notes ROOT relâchées après activation CHORD.
+- Les **neuf contrôles de file audio** inclus vérifient les P-locks avant l’envoi,
+  l’absence de doublon du producteur live, mute, note-off, lock-only, MOut désactivé,
+  événement refusé en live rec et changement de pattern actif.
+
+Un passage de boucle pour une attaque Cmaj7 mesure **306 / 529 / 1 613 instructions**
+stock / ROOT / CHORD, et **325 / 548 / 1 632** avec les autres mods. Cela exclut le worker
+MIDI et les périphériques ; ce n’est ni une mesure de temps réel ni un pourcentage de CPU.
+
+`[FAIT : génération et construction]` GCC m68k-elf **16.2.0**, binutils **2.47** :
+**110 écritures**, **41 masques occupés**, **13 183 octets** de code, constantes et état.
+`gen_chord_keys.py --check` et `gen_flasher_tweaks.py --check` passent. Les **18 431 empreintes**
+REF_MAINOS ont été régénérées comme données nécessaires au flasher ; aucune campagne
+exhaustive de toutes les constructions n’a été lancée. Les **quatre constructions ciblées**
+de `webchord_compat_check.js` passent et conservent toutes les sections hors MAIN OS.
+Le smoke web synthétique passe **83 contrôles**, sans erreur JavaScript. Les **99 liens,
+ressources et ancres locaux** des quatre pages sont valides, avec les paires EN/FR.
+
+Le fichier local ignoré `build/model-cycles_OS1.13_chord-keys-held-midi-experimental.syx`
+est reconstruit depuis l’officiel. Sa réextraction confirme chaque octet du JSON final et
+des sections hors MAIN OS identiques. MAIN OS SHA-256 :
+`5984423df71fab6b21bd544716377a5191947cbc120455fc267b70aef1e89099`.
+Les six principales empreintes sont mises à jour dans BUILD.md. Aucun firmware n’est
+versionné, aucun appareil flashé, aucun push effectué. Suite exhaustive et publication
+restent différées conformément au signal de fin demandé par Nico.
+
+## 26. Moins de calcul à son et fonctions identiques (09/10/2026)
+
+Demande de Nico dans le chat du projet : examiner Chord Keys et réduire autant que
+possible son travail CPU, sans réduire la qualité ni les fonctions. La référence
+est la révision locale du §25, avec le maintien des pads et MIDI ROOT/CHORD, avant
+cette optimisation ; les autres changements en cours sont conservés.
+
+### 26.1. Résultat et portée
+
+**[FAIT en émulation]** Sur 1 220 appels comparatifs, l'update CHORD complet avec
+ses vrais lecteurs de configuration passe de **2 085,8 à 1 492,6 instructions en
+moyenne (−28,44 %)**. Chaque cas mesuré coûte moins d'instructions. Les états
+complets des six voix et les instantanés d'accords restent identiques octet par
+octet. Les **32 blocs PCM** comparés restent identiques échantillon par échantillon,
+avec un signal non nul dans chacune des huit scènes.
+
+| Bloc natif, six pistes CHORD | Avant | Après | Instructions économisées |
+|---|---:|---:|---:|
+| Keys OFF | 57 302 | 55 958 | 2,35 % |
+| BASE | 60 945 | 57 412 | 5,80 % |
+| OPN3 | 63 660 | 59 533 | 6,48 % |
+| JAZZ | 62 738 | 59 155 | 5,71 % |
+| TENSION | 63 287 | 59 535 | 5,93 % |
+| Geste live | 61 977 | 58 365 | 5,83 % |
+| Extension live | 62 906 | 59 239 | 5,83 % |
+| Priorité séquenceur | 63 830 | 59 336 | 7,04 % |
+
+Ces nombres comptent des **instructions émulées**, pas des cycles ni un pourcentage
+de charge réelle du MCF54415. La latence des divisions, les caches et la mémoire
+ne sont pas modélisés par ce compteur. **[À FAIRE sur machine]** Mesurer la charge
+et écouter six CHORD actifs, avec changements de COLOR/SHAPE, gestes, P-locks et
+MIDI, seuls puis avec Model-TG/Syntakt. Aucun résultat matériel de cette révision
+n'est revendiqué ; elle reste expérimentale.
+
+### 26.2. Changements exacts, sans cache musical persistant
+
+- `chord_voicing.c` prolonge les sept gammes jusqu'au degré requis par la
+  treizième : les divisions/restes par sept disparaissent. La famille harmonique
+  provient de la rotation des familles du mode majeur, sans recalcul des tierce,
+  quinte et septième. SUS7/PARALLEL/V7 évitent les intervalles qu'ils remplaçaient.
+- Après le tri initial des classes, une inversion déplace directement la note
+  grave relevée d'une octave à la fin. Une disposition ouverte échange seulement
+  les deux positions centrales après le relèvement des voix impaires. Les tris
+  supplémentaires deviennent inutiles, sans changer les notes ni leur ordre.
+- `chord_audio.c` retrouve le degré dans une table inverse de 7 × 12 entrées,
+  avec une sentinelle hors gamme. `(note + 144 - root) % 12` remplace deux restes
+  successifs : 144 est multiple de douze et supérieur à toute racine encodée.
+- Les rapports couvrent maintenant 0..35 demi-tons. Les entrées 24..35 sont
+  **exactement** le double des anciennes entrées 12..23 : leurs arrondis sont
+  conservés, sans recalcul flottant ni nouvelle approximation.
+- La copie locale des 33 paramètres avance de quatre mots par tour, puis copie
+  le dernier mot. Elle conserve les accès 16 bits, le pas natif de 66 octets et le
+  marqueur du crochet interne, même lorsque Keys est OFF.
+- BASE évite les appels de balance neutres. Les autres dispositions ne traitent
+  que les voix utilisées ; une triade coupe toujours son quatrième opérateur.
+  Les protections aiguës, l'accordage et le DSP natif restent identiques.
+- `chord_storage.c` valide simultanément les sept extensions par leurs bits
+  (`bit2 & (bit1 | bit0)` détecte 5/6/7), sans modifier les cas invalides. La
+  résolution d'un contrôle garde le même pointeur d'en-tête local pendant l'appel,
+  au lieu de parcourir deux fois les pointeurs du projet. Aucun réglage n'est
+  conservé entre blocs : changement de pattern, geste live et priorité du
+  séquenceur restent relus.
+- L'affichage recherche une note tenue par un seul parcours des seize captures,
+  au lieu de six. Un masque local conserve la priorité de la première capture
+  de chaque piste, même en présence d'une note invalide. Aucun état partagé ajouté.
+
+La validation d'un mot passe de **90 à 28 instructions**. Selon le contexte,
+`ck_audio_locked_controls` passe de 347→241 (sans geste), 335→229 (geste zéro),
+269→206 (pad live) et 278→215 (séquenceur). La consultation d'affichage au repos
+passe de **832 à 138 instructions**. Dans le banc MIDI composé du §25, l'attaque
+CHORD passe de **1 632 à 1 326 instructions** ; ROOT reste à 548.
+
+### 26.3. Preuves ciblées et reproduction
+
+Le nouveau banc `tools/emu/chord_cpu_checks.py` accepte deux JSON. Il applique
+chacun séparément à l'image officielle, puis compare les vraies routines ColdFire,
+sans remplacer les getters audio ni masquer de différence dans les voix :
+
+```sh
+# Conserver le JSON précédent avant de régénérer une optimisation suivante.
+mkdir -p build/chord-cpu-before
+cp tweaks/model-cycles_OS1.13/44-chord-keys.json build/chord-cpu-before/
+# Après modification des sources et régénération :
+python3 tools/emu/chord_cpu_checks.py \
+  --cycles firmware/model-cycles_OS1.13.syx \
+  --before-tweak build/chord-cpu-before/44-chord-keys.json
+```
+
+Pour cette comparaison, le snapshot local ignoré `build/chord-cpu-before/` est déjà
+conservé : ne pas le remplacer par le JSON optimisé. Empreintes SHA-256 des JSON :
+
+- Avant : `829754d06acc66128a16958fa1bc835413848c11404a114fca17c2f489143263`.
+- Après : `a938f4896c64b874e665624ad59ce7ff52bd6b2d733a3bbb683dae8cc4dec089`.
+
+**[FAIT en émulation / sur l'hôte]** Contrôles ciblés passés :
+
+- Noyau harmonique : **5 145 harmonies et 44 415 dispositions** identiques à la
+  référence précédente et à une référence musicale indépendante ; limites
+  COLOR/SHAPE, arguments invalides et refus sans mutation conservés.
+- Table inverse/classe relative : **114 688 combinaisons** comparées aux anciennes
+  gammes. Validation stockage : **2 101 248 mots** comparés à l'ancien code sur
+  l'hôte et **2 272 cas limites ColdFire** dans la preuve de stockage.
+- Banc comparatif : **1 220 updates**, sept modes, tous les degrés/extensions,
+  trois palettes, neuf dispositions, sept gestes, six pistes, douze toniques et
+  classes relatives, limites MIDI/PITCH/FINE, états invalides, patterns 0/1/95,
+  signatures v1/v2/v3 et arbitrage live/séquenceur. **32 blocs PCM** avec attaques,
+  queues, relâchements et changements de paramètres sans nouveau trig.
+- Stockage et affichage : sauvegarde/relecture natives, **243 fixtures de captures**,
+  glyphes, pixels, DSPI et décisions de redessin réels.
+- `run_audio_storage_checks` : ABI d2..d7/a2..a6 et pile conservés ; profondeur
+  observée sous l'entrée update **328 octets**, contre 104 pour le stock.
+- `--focus midi-output` et `--focus compatibility` avec
+  `6ch-usbup,model-tg-st,trig-hold,arp,tempo-max,boot-anim,syntakt-tg-sd-cp-toy-bits-swarm` :
+  sortie MIDI, locks, routage, Scale Lock, machines ajoutées et régulateur partagé
+  conservés. Les charges du régulateur sont simulées.
+- Régulateur : les quatre scénarios CHORD actif du banc audio passent aussi avec
+  Syntakt sans Model-TG. `tools/emu/test_governor.py`, sur le tweak Syntakt composé
+  avec les écritures Chord Keys, passe ses **12 contrôles** historiques (charges,
+  pics, fondus, priorité dans le mix et moyenne soutenue).
+
+Compilation inchangée : m68k-elf GCC **16.2.0**, binutils **2.47**. Le JSON final
+contient **112 écritures**, **42 masques occupés** et **13 337 octets** de code,
+tables et état, soit **154 octets de plus**. La réserve existante suffit : aucune
+nouvelle cave réservée, aucune nouvelle charge utile, seuls les octets de section 3
+changent. Les générateurs et les empreintes du flasher sont synchronisés dans
+cette révision ; les principales empreintes restent dans BUILD.md.
+
+`gen_chord_keys.py --check` et `gen_flasher_tweaks.py --check` passent. Les
+**18 431 empreintes REF_MAINOS** sont régénérées comme données du flasher, sans
+lancer un parcours exhaustif de ses combinaisons. Les **quatre constructions
+ciblées** de `webchord_compat_check.js` passent : Chord Keys seul, avec Model-TG,
+avec les moteurs Syntakt et les autres mods, puis la combinaison Model-TG-ST/Syntakt.
+Chaque MAIN OS correspond à sa référence Python ; les autres sections restent
+identiques à l'officiel. La release locale est **1.37**, cache **2026-10-09-01**.
+
+La suite exhaustive et la publication étaient différées jusqu'au signal de Nico,
+donné le 10/10/2026 ; voir §27.
+
+## 27. Préparation de la publication 1.37 (10/10/2026)
+
+Nico demande de publier les trois changements locaux (§24–26), puis confirme
+explicitement la fin d'implémentation et la validation complète : « Sí, validá
+y publicá ». La cible est son fork `byNicoHeuser/Modded-Cycles`, branche
+`codex/chord-harmony-controls`, dossier `/docs`, déjà source de GitHub Pages.
+La release 1.37 présente ensemble le maintien des pads, MIDI ROOT/CHORD et
+l'optimisation ; date de publication 10/10/2026, cache `2026-10-10-01`.
+Les maquettes house de la note 41 restent hors de cette publication.
+
+**[FAIT en émulation / sur l'hôte]** Les générateurs Chord Keys et flasher,
+`relocate_6ch.py --check`, les comparaisons des constructeurs Python/JS, la
+validation SysEx et la compilation Python passent. Le générateur Chord Keys
+utilise GCC m68k-elf 16.2.0 et binutils 2.47 ; le contrôle USB reprend le wrapper
+local `build/binutils-repro/m68k-elf-as` (`-S`), déjà utilisé pour reproduire
+l'encodage des branches du tweak USB existant. Les 18 431 références MAIN OS
+passent `ref_mainos.py --check`.
+
+Les preuves complètes passent seules et avec USB 6 canaux, latching-mute,
+trig-preview, browser-scroll, trig-hold, arp, tempo-max, boot-anim et les cinq
+moteurs Syntakt. MIDI ROOT/CHORD passe seul et avec Model-TG-ST/Syntakt ; les
+focus `pad-prepare` et `compatibility` passent avec cette dernière combinaison.
+Le banc CPU retrouve les 1 220 updates et 32 blocs PCM identiques du §26.
+Les quatre constructions web ciblées conservent les sections hors MAIN OS.
+Le smoke synthétique passe, ainsi que les 99 liens, ressources et ancres
+locaux et les paires EN/FR des quatre pages.
+
+**Limite du banc générique avec Model-TG-ST/Syntakt :** sans focus, la preuve
+d'interface `_shape_ui` ne charge pas le code Syntakt relogé à `0x46700000` et
+s'arrête sur un fetch non mappé à `0x46733028`. Le même arrêt a été reproduit
+avec le JSON de la version publiée (`19169a4`) et celui de cette révision.
+Ce parcours n'est donc pas revendiqué comme réussi. Le banc dédié
+`--focus compatibility` charge la zone à son adresse réelle et passe ses
+contrôles UI, DSP, locks, Scale Lock et régulateur ; les deux nouveaux chemins
+de jeu/MIDI sont également exercés dans leurs focus avec la combinaison.
+
+Le smoke réel a révélé une assertion de cardinalité ancienne : 543/544
+sélections sans/avec moteurs, avant la compatibilité Chord Keys/Model-TG.
+Elle est corrigée en 575/576, soit 18 431 combinaisons avec les 31 sélections
+de moteurs. L'énumération du code corrigé a été vérifiée indépendamment.
+**[FAIT : parcours exhaustif]** Les **18 431 constructions réelles** passent,
+sans doublon ni omission par rapport à REF_MAINOS ; aucune erreur JavaScript
+pendant les parcours. La commande démarrée avant la correction du compteur
+termine avec le statut 1 uniquement pour cette ancienne assertion, une fois
+par shard. L'assertion corrigée est réexécutée directement depuis le code du
+smoke et passe ; un contrôle final compare les 18 431 clés réussies à REF_MAINOS,
+confirme l'absence d'autre échec et vérifie que les fichiers web sont restés
+identiques pendant le parcours. Les constructions coûteuses ne sont pas
+répétées pour ce changement de cardinalité attendu.
+
+Journaux locaux ignorés : `build/publication-137-smoke.log` et
+`build/publication-137/`, notamment `final-smoke-verification.json`.
+Aucun résultat matériel nouveau n'est revendiqué : les trois changements
+restent expérimentaux.

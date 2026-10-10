@@ -265,7 +265,7 @@ PARALLEL/V7 y sont indisponibles. Quatre voix maximum. Les gestes de pads s'enre
 P-locks HARMONY dans le séquenceur, indépendamment de COLOR et SHAPE. Le relâchement en live rec
 n'ajoute ni note ni lock de retour. Les locks sont sauvegardés avec le pattern.
 Les nouvelles attaques sont aussi des notes enregistrées : réenregistrer sur un pas suit les
-règles natives de remplacement de la note et de ses locks. Un nouvel appui TRIG enregistre sa préparation tenue, ou son extension de base sans préparation.
+règles natives de remplacement de la note et de ses locks. Chaque TRIG joué avec T maintenu enregistre ce changement, jusqu’au relâchement de T ; les TRIG suivants retrouvent leur extension de base.
 Le lock suit uniquement le pas choisi par le recorder, sans écriture anticipée sur le pas précédent.
 La relecture reprend chaque accord enregistré, sans priorité persistante du dernier pad live (§21).
 Chord Keys se combine avec tous les autres mods Cycles, y compris Model-TG seul ou avec les moteurs Syntakt.
@@ -274,8 +274,18 @@ Model-TG reste actif sur les autres pistes et avec Keys OFF. HARMONY utilise le 
 paramètres 23–27 de Model-TG ; son identifiant disque reste 33, donc les anciens projets Chord Keys conservent
 leurs locks. Les restrictions entre les autres mods restent applicables ; Samples OS est une installation séparée.
 
+**Sortie MIDI :** dans FUNC + RETRIG, choisir MIDI CHORD sur une piste CHORD avec Keys ON,
+puis activer sa sortie MIDI et régler canal/destination comme d’habitude. Les attaques live et
+séquencées envoient jusqu’à quatre notes avec palette, disposition et HARMONY. ROOT garde la
+sortie monophonique native et reste le défaut des anciens/nouveaux patterns. Le choix est sauvegardé
+avec le pattern. PITCH/FINE et la balance audio de SHAPE ne modifient pas les notes/vélocités MIDI ;
+les changements de réglages prennent effet à l’attaque suivante. Les voix au-delà de MIDI 127 sont
+omises. Les deux ajouts du 08/10 sont expérimentaux ; le retour matériel de la 1.2 ne les couvre pas.
+
+**Optimisation du 09/10/2026 (§26) :** intervalles, dispositions, validation du stockage et affichage demandent moins de calculs. Les notes, les gains, les contrôles et le MIDI restent identiques. Le banc comparatif conserve les états des voix et le PCM exactement ; ses compteurs d’instructions ne sont pas des mesures CPU matérielles. La révision reste expérimentale.
+
 Le générateur vérifie les masques identiques, leurs redirections et les chevauchements ; sa réserve totalise
-11 168 octets, dont 280 octets ajoutés pour la compatibilité Model-TG (§22), avec seuls les masques occupés écrits. Aucune nouvelle charge utile n'est requise ; seule
+14 184 octets, dont 3 016 octets ajoutés pour la sortie MIDI (§25), avec seuls les masques occupés écrits. Aucune nouvelle charge utile n'est requise ; seule
 la section 3 change. Aucun firmware n'est distribué dans le dépôt.
 
 ```sh
@@ -296,23 +306,27 @@ python3 tools/build.py -i firmware/model-cycles_OS1.13.syx -t chord-keys \
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `chord-keys` | `c7f96922f4ccd0f11c79eed20f4c7b5aa982484f4b0f567da73e83d432777827` |
-| `6ch-usbup,chord-keys` | `07191c2fa021bdc5fde75717bd48d5e3b1f0eb68bae86ae9f45cc48f867ae346` |
-| `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,chord-keys` | `d9f6ca35c26e8674c4b8ac21fbec136eb08adf7e041c284befcd5a322342479d` |
-| `6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-sd-cp-toy-bits-swarm` | `0f18452e186d86333a6ce6fbb19bc3cfcbdd5350e53392c1cf473194a1a6dff3` |
-| `model-tg,chord-keys` | `a4f575f9802fc804e115c4afb0846f2adaa7de5f23c780ad8a8a2a335507e432` |
-| `6ch-usbup,model-tg-st,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-tg-sd-cp-toy-bits-swarm` | `5cff076bf076d1906fb23e6e69d903186de648fa4e486a83a767bafc2d64ae07` |
+| `chord-keys` | `08fb7b61034ddda4e3fe5b7f59e28997f4092078005323ff1e0474b5ed5b52b3` |
+| `6ch-usbup,chord-keys` | `8b3f838e9123c13f0a1a763052493bc3c4e79fcbf42c80432e8beaa221c85e11` |
+| `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,chord-keys` | `93e39d00110f9f55ee3f91f41470d3a233a251d8872867cfcf8093808bcecc5f` |
+| `6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-sd-cp-toy-bits-swarm` | `d2e48121799d665e4abf3fe73dc34c211e15abf23e08c80d2d8143e53a6b7e3b` |
+| `model-tg,chord-keys` | `e23ff55162c7e329f91d85d18320701c33377ec19814160ad83ee726a94d53df` |
+| `6ch-usbup,model-tg-st,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-tg-sd-cp-toy-bits-swarm` | `6f43d2482c2cea24ce9f6c46f3ef453d9b00ed548007b34d446d3f023b673828` |
 
 Le banc portable vérifie les choix harmoniques et la balance. Les preuves ColdFire exécutent les routines
 OS de clavier, pads, menu, stockage et CHORD ; le coût en instructions ne mesure pas la charge matérielle.
-Les résultats de cette révision et le protocole d'écoute sont suivis dans [la note 40 §22](notes/40-clavier-accords-diatoniques.md#22-compatibilité-avec-model-tg-et-les-autres-mods-07102026).
+Les résultats MIDI et le protocole d’écoute sont suivis dans [la note 40 §25](notes/40-clavier-accords-diatoniques.md#25-sortie-midi-des-accords-08102026) ; les optimisations et mesures comparatives sont au [§26](notes/40-clavier-accords-diatoniques.md#26-moins-de-calcul-à-son-et-fonctions-identiques-09102026).
 
 Pendant l'implémentation, la preuve ciblée du relâchement T s'exécute avec
 `python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx --focus pad-release`.
-Pour la préparation T sans modifier la queue précédente, utiliser `--focus pad-prepare`.
+Pour T maintenu entre plusieurs TRIG sans modifier la queue précédente, utiliser `--focus pad-prepare`.
+Pour la sortie MIDI, le menu et la persistance ROOT/CHORD, utiliser `--focus midi-output`.
+Ces deux focus ont passé seuls et avec la combinaison Model-TG-ST/Syntakt ci-dessus ;
+ils ne lancent pas la matrice complète du DSP ni des combinaisons du flasher.
 Pour la prise TRIG puis T et sa relecture, utiliser `--focus live-recording`.
 Pour la compatibilité Model-TG, utiliser `--focus compatibility` avec `--with model-tg`,
 ou avec la combinaison Model-TG-ST ci-dessus et `--syntakt`.
+Le banc `tools/emu/chord_cpu_checks.py --cycles firmware/model-cycles_OS1.13.syx --before-tweak build/chord-cpu-before/44-chord-keys.json` compare le JSON optimisé à un snapshot local préalable. Il vérifie 1 220 updates et 32 blocs audio avec les vrais getters ; voir §26 pour conserver la référence avant toute régénération.
 Le contrôle ciblé du builder web reconstruit quatre images réelles, sans envoi MIDI :
 
 ```sh

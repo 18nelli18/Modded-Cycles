@@ -37,32 +37,44 @@ class Config(NativeAudioConfig):
         self.select(0)
 
 
+def runtime_payload(stock, chosen, syntakt_path):
+    """Charge utile telle que le bootstrap la reconstitue, sans lancer de preuve."""
+    ours = next((t for t in chosen if t.get('append', {}).get('syntakt')), None)
+    return ((int(ours['append']['dest'], 16),
+             build.payload_runtime(ours, stock, syntakt.dsp_image(syntakt_path)))
+            if ours else (E.PAYLOAD_DST, b''))
+
+
+def shared_engine(image, extra_code=(), tg=None, payload=None, image_len=E.IMAGE_LEN):
+    """Fixture réutilisable du vrai dispatch composé, sans la matrice de tests."""
+    tg_code = [(TG.BLOB, E.BASE + image_len + tg['append']['size'] - TG.BLOB)] if tg else []
+    e = E.Engine(image, extra_code=tg_code + list(extra_code), payload=payload or (E.PAYLOAD_DST, b''))
+    e.uc.mem_map(0x40800000, 0x01800000)
+    if tg:
+        e.uc.mem_map(0x42400000, 0x00c00000)
+        e.uc.mem_map(0x48000000, 0x08000000)
+        e.uc.mem_map(0xfc078000, 0x1000)
+    for track in range(6):
+        for address in GAINS:
+            e.uc.mem_write(address + 4 * track, struct.pack('>I', FULL))
+        if tg:
+            e.uc.mem_write(E.PARAMS + 14 + 66 * track + 46,
+                           struct.pack('>3H', 0, 32512, 0))
+    return e
+
+
 def run(stock, reference, patched, symbols, chosen, syntakt_path, extra_code, check):
     """Compare le même ensemble de mods avant et après ajout de Chord Keys."""
     tg = next((t for t in chosen if t['id'].startswith('model-tg')), None)
     ours = next((t for t in chosen if t.get('append', {}).get('syntakt')), None)
-    payload = (E.PAYLOAD_DST, b'')
+    payload = runtime_payload(stock, chosen, syntakt_path)
     if ours:
-        payload = (int(ours['append']['dest'], 16),
-                   build.payload_runtime(ours, stock, syntakt.dsp_image(syntakt_path)))
         check(payload[0] == (gs.PAY_TG if tg else gs.PAY_ALONE),
               f"DSP partagé : charge utile Syntakt à son adresse d'exécution {payload[0]:#x}")
-    tg_code = [(TG.BLOB, E.BASE + len(stock) + tg['append']['size'] - TG.BLOB)] if tg else []
     engines = []
 
     def engine(image, chord=False):
-        e = E.Engine(image, extra_code=tg_code + (list(extra_code) if chord else []), payload=payload)
-        e.uc.mem_map(0x40800000, 0x01800000)
-        if tg:
-            e.uc.mem_map(0x42400000, 0x00c00000)
-            e.uc.mem_map(0x48000000, 0x08000000)
-            e.uc.mem_map(0xfc078000, 0x1000)
-        for track in range(6):
-            for address in GAINS:
-                e.uc.mem_write(address + 4 * track, struct.pack('>I', FULL))
-            if tg:
-                e.uc.mem_write(E.PARAMS + 14 + 66 * track + 46,
-                               struct.pack('>3H', 0, 32512, 0))
+        e = shared_engine(image, extra_code if chord else (), tg, payload, len(stock))
         engines.append(e)
         return e
 

@@ -8,6 +8,7 @@
 #include "chord_keys.h"
 #include "chord_ui.h"
 #include "chord_plocks.h"
+#include "chord_midi.h"
 
 typedef unsigned char u8;
 typedef unsigned u32;
@@ -35,7 +36,9 @@ static struct held_key held[16];
 static u8 held_pads[6];
 struct live_modifier { const void *header; u32 modifier; };
 static struct live_modifier live_modifiers[6];
-/* Préparation UI seulement : jamais lue par le DSP de la note précédente. */
+/* Geste tenu côté UI : jamais lu par le DSP de la note précédente. Il prépare
+ * chaque nouveau TRIG jusqu'au relâchement du pad, même après une attaque live.
+ */
 static struct live_modifier prepared_modifiers[6];
 static void replay_held_key(u32 track);
 extern u32 ck_ui_key_original(void *view, u8 *event);
@@ -100,12 +103,12 @@ static __attribute__((noinline)) void pad_live(u32 pad, u32 track, const void *h
 {
     u32 key = ck_ui_active_key(track), sr;
     held_pads[pad] = 1;
+    prepared_modifiers[track].header = header;
+    prepared_modifiers[track].modifier = pad + 1;
     /* Une capture dont le relâchement a été absorbé n'est plus un TRIG tenu.
      * Préparer le prochain appui ne touche ni la queue audio ni les P-locks.
      */
     if (key >= 16 || !KEY(key + 16)) {
-        prepared_modifiers[track].header = header;
-        prepared_modifiers[track].modifier = pad + 1;
         return;
     }
     sr = ck_storage_irq_save();
@@ -205,6 +208,24 @@ u32 ck_ui_active_note(u32 track)
     return key < 16 ? held[key].note : 128;
 }
 
+u32 ck_ui_has_active_note(void)
+{
+    u32 i, seen = 0;
+    /* Même priorité que six appels à active_note : seule la première touche
+     * active de chaque piste compte, même si sa note est hors plage. Une seule
+     * traversée suffit au rafraîchissement, y compris sans aucune touche.
+     */
+    for (i = 0; i < 16; ++i) {
+        u32 track = held[i].track;
+        if (held[i].active && track < 6 && !(seen & (1u << track))) {
+            seen |= 1u << track;
+            if (held[i].note < 128)
+                return 1;
+        }
+    }
+    return 0;
+}
+
 static __attribute__((noinline)) u32 key_velocity(u32 track)
 {
     void *root = ((void *(*)(void))0x400cf866)();
@@ -291,15 +312,14 @@ static __attribute__((noinline)) int handle_press(void *view, u8 *event, u32 key
         return 0;
     if (!chord_for(word, key, &chord))
         return 1; /* réglage invalide : ne pas déclencher une autre piste */
-    /* Le nouveau TRIG consomme une préparation encore tenue sur sa piste et
-     * son pattern, sinon il part de son extension. Le pad de la note précédente
-     * n'est pas une préparation ; play_key conserve les réarticulations live.
+    /* Chaque nouveau TRIG applique le pad encore tenu sur sa piste et son
+     * pattern, sinon il part de son extension. Seuls le relâchement du pad ou
+     * un changement de réglage annulent cette préparation.
      */
     header = ck_ui_header();
     modifier = prepared_modifiers[track].header == header
         ? prepared_modifiers[track].modifier : 0;
     sr = ck_storage_irq_save();
-    ck_ui_clear_modifiers(track, header);
     live_modifiers[track].header = header;
     live_modifiers[track].modifier = modifier;
     ck_storage_irq_restore(sr);
@@ -345,7 +365,7 @@ typedef struct {
 
 extern char ck_ui_item_label[];
 static const char *const labels[] = {
-    "Keys", "Root", "Scale", "I", "II", "III", "IV", "V", "VI", "VII"
+    "Keys", "Root", "Scale", "I", "II", "III", "IV", "V", "VI", "VII", "MIDI"
 };
 static const char *const modes[] = { "MAJ", "DOR", "PHR", "LYD", "MIX", "MINOR", "LOC" };
 static const char *const extensions[] = { "TRI", "7", "9", "11", "13" };
@@ -363,6 +383,8 @@ static u32 field_value(u32 word, u32 field)
 
 static __attribute__((noinline)) const char *field_text(u32 field, u32 value)
 {
+    if (field == 10)
+        return value ? "CHORD" : "ROOT";
     if (!field)
         return value ? "ON" : "OFF";
     if (field == 2)
@@ -375,7 +397,7 @@ void ck_ui_item_draw(u32 **closure, u32 unused, u32 canvas, u8 *item, u32 flags)
     u32 field = **closure, track = selected_track(), word, value, buffer[2];
     (void)unused;
     word = track < 6 ? ck_ui_config_get(track) : 0;
-    value = field_value(word, field);
+    value = field == 10 ? ck_ui_midi_get(track) : field_value(word, field);
     ((void (*)(u32 *, u32))0x40072260)(buffer, 0x40140ab0);
     if (field == 1)
         ((void (*)(u32, u32 *, u8 *, u32, u32, const char *, const char *, int))0x40071a04)
@@ -393,6 +415,16 @@ void ck_ui_item_change(u32 **closure, u32 unused, s32 delta)
     (void)unused;
     if (track >= 6)
         return;
+    if (field == 10) {
+        value = (s32)ck_ui_midi_get(track) + delta;
+        if (value < 0)
+            value = 0;
+        if (value > 1)
+            value = 1;
+        ck_ui_cancel_track(track);
+        ck_ui_midi_set(track, value);
+        return;
+    }
     word = ck_ui_config_get(track);
     low = field == 1 ? ROOT_MIN : 0;
     high = !field ? 1 : field == 1 ? ROOT_MAX : field == 2 ? 6 : 4;
@@ -437,6 +469,6 @@ void ck_ui_menu_ctor(void *view)
 {
     u32 field;
     ((void (*)(void *))0x4002d138)(view);
-    for (field = 0; field < 10; ++field)
+    for (field = 0; field < 11; ++field)
         add_item(view, field);
 }

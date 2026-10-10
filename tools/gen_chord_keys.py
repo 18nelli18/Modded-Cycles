@@ -40,7 +40,10 @@ MASKS = (0x4016b6f8, 0x4016b9e8, 0x40171f30, 0x40172608, 0x40179730,
          0x4018f4b4, 0x4018fc74, 0x401904b4, 0x40192734)
 EXTRA_MASKS = (0x40158744, 0x4016aa28, 0x401699a8, 0x401696a0, 0x40166760,
                0x4016616c, 0x40163fb8, 0x401625bc, 0x40160e6c, 0x40160b6c,
-               0x40160864, 0x401601fc, 0x4015f50c, 0x4014d74c)
+               0x40160864, 0x401601fc, 0x4015f50c, 0x4014d74c,
+               0x4015b8f8, 0x401548b4, 0x401542f8, 0x40192ba4,
+               0x4018ff64, 0x4018b1a8, 0x4018af88, 0x40189618,
+               0x40186238, 0x40185308, 0x401835b8)
 MASKS += EXTRA_MASKS
 # Adresse, contrat attendu, symbole, opcode (None = pointeur de vtable).
 HOOKS = (
@@ -65,10 +68,19 @@ HOOKS = (
     (0x4005aa1a, "2f027406222f0008", "ck_plock_decode_hook", 0x4ef9),
     (0x40012274, "4eb9400cfd0e", "ck_plock_note_hook", 0x4ef9),
     (0x40058ec6, "222a0028028100000081", "ck_plock_sequence_hook", 0x4ef9),
+    (0x40019ee2, "4e922f004eb94000f208", "ck_midi_key_on_hook", 0x4ef9),
+    (0x40019cba, "2f044eb940016e90", "ck_midi_key_off_hook", 0x4ef9),
+    (0x4001d094, "45f9400cf866", "ck_midi_pad_on_hook", 0x4ef9),
+    (0x4001d120, "45f9400cf866", "ck_midi_pad_off_hook", 0x4ef9),
+    (0x4005919e, "42b940a78e18", "ck_midi_sequence_hook", 0x4ef9),
 )
 # Le chargeur stock ignore les identifiants >32 : HARMONY utilise 33 pour
 # qu'un retour au firmware officiel ignore ce lock au lieu de modifier LEVEL.
-PATCHES = ((0x4005b816, "7a20", "7a21"),)
+PATCHES = (
+    (0x4005b816, "7a20", "7a21"),
+    # Diffère le message MIDI jusqu'après les P-locks ; reprise native exacte.
+    (0x40058fac, "4a2a00146738", "4ef940058fea"),
+)
 
 
 def run(args):
@@ -185,7 +197,7 @@ def build_tweak(stock):
         if locations != [pointer - BASE]:
             raise ValueError(f"Références imprévues vers le masque {address:#x}")
         at = pointer - BASE
-        width, height = {376: (47, 47), 280: (35, 35), 384: (33, 48)}[capacity]
+        width, height = {376: (47, 47), 280: (35, 35), 384: (33, 48), 272: (34, 34)}[capacity]
         dimensions = struct.pack(">HHHH", 0x4878, width, 0x4878, height)
         if (stock[at - 2:at] not in (b"\x48\x79", b"\x2e\xbc") or
                 stock[at + 4:at + 6] != b"\x48\x79" or
@@ -227,6 +239,10 @@ def build_tweak(stock):
             "Les gestes HARMONY s'enregistrent en P-locks natifs : live rec ou pas tenus en grille, puis sauvegarde du pattern.",
             "Chaque attaque reçoit son lock sur le pas choisi par le recorder ; la relecture retrouve chaque accord sans garder le dernier pad.",
             "Sans TRIG tenu, T prépare le prochain TRIG sans toucher la queue ni écrire de lock ; relâcher T annule la préparation.",
+            "Un pad T1–T6 encore tenu s'applique à chaque nouveau TRIG de cette piste, jusqu'à son relâchement.",
+            "MIDI ROOT conserve la sortie d'origine ; MIDI CHORD émet les trois ou quatre notes disposées, en jeu et au séquenceur.",
+            "La sortie CHORD respecte MOut, le canal et la destination natifs ; chaque voix garde sa vélocité et sa fin de note.",
+            "Palette, SHAPE et HARMONY sont capturés à l'attaque ; PITCH/FINE et balance restent audio. Notes MIDI au-delà de 127 omises.",
             "Réglages par piste sauvegardés avec le pattern. Dernière touche prioritaire, sans retour à la précédente.",
             "Compatible avec les autres mods, dont Model-TG : Keys garde sa gamme sur CHORD ; Scale Lock reste actif ailleurs.",
             "HARMONY utilise un slot distinct d'Attack, Filter et Resonance. Aucun essai matériel de cette révision.",

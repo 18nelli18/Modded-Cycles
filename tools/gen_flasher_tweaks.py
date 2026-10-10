@@ -146,7 +146,8 @@ FEATURES = [
         "label": "Chord Keys",
         "desc": "TRIG 1–16 jouent les degrés. COLOR choisit DIATONIC, JAZZ ou TENSION ; SHAPE dispose "
                 "et équilibre les voix. T1–T6 transforment toujours l'accord en HARMONY lorsque Keys est actif. "
-                "L'écran affiche l'accord tenu ; les changements HARMONY s'enregistrent en P-locks.",
+                "Le pad tenu reste actif entre les TRIG ; MIDI CHORD envoie les notes de l’accord. "
+                "L’écran affiche l’accord tenu ; les changements HARMONY s’enregistrent en P-locks.",
         "status": "experimental",
         "credit": {"kind": "by", "who": "Modded Cycles", "repo": "18nelli18/Modded-Cycles"},
         "variants": [{"file": "44-chord-keys", "label": None}],

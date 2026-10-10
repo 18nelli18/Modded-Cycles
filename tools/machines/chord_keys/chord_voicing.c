@@ -3,11 +3,17 @@
  */
 #include "chord_voicing.h"
 
-static const unsigned char scales[7][7] = {
-    {0, 2, 4, 5, 7, 9, 11}, {0, 2, 3, 5, 7, 9, 10},
-    {0, 1, 3, 5, 7, 8, 10}, {0, 2, 4, 6, 7, 9, 11},
-    {0, 2, 4, 5, 7, 9, 10}, {0, 2, 3, 5, 7, 8, 10},
-    {0, 1, 3, 5, 6, 8, 10}
+/* Le degré maximal (6) et la treizième (12 pas) demandent l'indice 18.
+ * Prolonger chaque gamme supprime divisions et restes dans l'IRQ audio.
+ */
+static const unsigned char scales[7][19] = {
+    {0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24, 26, 28, 29, 31},
+    {0, 2, 3, 5, 7, 9, 10, 12, 14, 15, 17, 19, 21, 22, 24, 26, 27, 29, 31},
+    {0, 1, 3, 5, 7, 8, 10, 12, 13, 15, 17, 19, 20, 22, 24, 25, 27, 29, 31},
+    {0, 2, 4, 6, 7, 9, 11, 12, 14, 16, 18, 19, 21, 23, 24, 26, 28, 30, 31},
+    {0, 2, 4, 5, 7, 9, 10, 12, 14, 16, 17, 19, 21, 22, 24, 26, 28, 29, 31},
+    {0, 2, 3, 5, 7, 8, 10, 12, 14, 15, 17, 19, 20, 22, 24, 26, 27, 29, 31},
+    {0, 1, 3, 5, 6, 8, 10, 12, 13, 15, 17, 18, 20, 22, 24, 25, 27, 29, 30}
 };
 
 static const unsigned char positions[5][4] = {
@@ -24,21 +30,16 @@ unsigned int ck_palette_index(int color_q8)
 }
 
 static __attribute__((noinline)) unsigned int
-scale_interval(unsigned int mode, unsigned int degree, unsigned int step)
-{
-    unsigned int position = degree + step;
-    return 12u * (position / 7u) + scales[mode][position % 7u]
-         - scales[mode][degree];
-}
-
-static __attribute__((noinline)) unsigned int
 harmonic_family(unsigned int mode, unsigned int degree)
 {
-    if (scale_interval(mode, degree, 4) == 6)
-        return DIMINISHED;
-    if (scale_interval(mode, degree, 2) == 3)
-        return MINOR;
-    return scale_interval(mode, degree, 6) == 11 ? MAJOR : DOMINANT;
+    /* Les sept modes sont les rotations successives de la gamme majeure. */
+    static const unsigned char families[7] = {
+        MAJOR, MINOR, MINOR, MAJOR, DOMINANT, MINOR, DIMINISHED
+    };
+    unsigned int position = mode + degree;
+    if (position >= 7)
+        position -= 7;
+    return families[position];
 }
 
 /* Un appel séparé évite de dépasser les masques de sprites de 376 octets. */
@@ -47,8 +48,10 @@ diatonic_intervals(unsigned int mode, unsigned int degree,
                     unsigned int extension, unsigned int notes[4])
 {
     unsigned int i;
+    const unsigned char *scale = scales[mode] + degree;
+    unsigned int root = scale[0];
     for (i = 0; i < 4; ++i)
-        notes[i] = scale_interval(mode, degree, positions[extension][i]);
+        notes[i] = scale[positions[extension][i]] - root;
 }
 
 static __attribute__((noinline)) unsigned int
@@ -117,7 +120,9 @@ unsigned int ck_harmony_intervals(unsigned int mode, unsigned int degree,
         return 0;
     if (transform >= CK_TRANSFORM_NINTH && transform <= CK_TRANSFORM_THIRTEENTH)
         extension = transform + 1;
-    diatonic_intervals(mode, degree, extension, notes);
+    /* SUS7, PARALLÈLE et V7 remplacent les quatre notes entièrement. */
+    if (transform < CK_TRANSFORM_SUS7)
+        diatonic_intervals(mode, degree, extension, notes);
     count = transform_intervals(harmonic_family(mode, degree), extension,
                                 palette, transform, notes);
     if (count)
@@ -174,12 +179,24 @@ void ck_voicing_apply(unsigned int notes[4], unsigned int count, unsigned int in
     sort_notes(notes, count);
     rotations = (index - 1) & 3u;
     while (rotations--) {
-        notes[0] += 12;
-        sort_notes(notes, count);
+        /* Après le tri des classes, l'étendue reste au plus une octave :
+         * le minimum relevé d'une octave devient directement le maximum.
+         */
+        unsigned int note = notes[0] + 12;
+        for (i = 1; i < count; ++i)
+            notes[i - 1] = notes[i];
+        notes[i - 1] = note;
     }
     if (index >= 5) {
         for (i = 1; i < count; i += 2)
             notes[i] += 12;
-        sort_notes(notes, count);
+        /* L'étendue reste <= 12 avant l'ouverture. La troisième note passe
+         * donc devant la deuxième relevée ; la quatrième reste la plus haute.
+         */
+        if (count >= 3) {
+            unsigned int note = notes[1];
+            notes[1] = notes[2];
+            notes[2] = note;
+        }
     }
 }

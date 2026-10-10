@@ -30,10 +30,7 @@ static __attribute__((noinline)) unsigned int visible_chord(void)
     unsigned int track, packet;
     void *root, *state;
     /* L'écran sert aussi au démarrage, avant la construction du projet. */
-    for (track = 0; track < 6; ++track)
-        if (ck_ui_active_note(track) < 128)
-            break;
-    if (track == 6)
+    if (!ck_ui_has_active_note())
         return 0;
     root = ((void *(*)(void))0x400cf866)();
     state = ((void *(*)(void *))0x4000eb90)(root);

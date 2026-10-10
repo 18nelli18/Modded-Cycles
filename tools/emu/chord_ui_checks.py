@@ -438,10 +438,10 @@ def _held_pad_dispatch(stock, image, symbols, check):
                 (0x400e8684, lambda a: 0), (0x400d08ce, lambda a: 0)):
             _install(rig, address, handler)
 
-        def key(down):
+        def key(down, number=1):
             rig.calls.clear()
-            rig.pressed = {16} if down else set()
-            rig.call(KEY_CTOR, pads.EVENT, 16, int(down), 123, 127)
+            rig.pressed = {15 + number} if down else set()
+            rig.call(KEY_CTOR, pads.EVENT, 15 + number, int(down), 123, 127)
             rig.call(0x40077720, pads.CONTROLLER, pads.EVENT)
 
         def pad(number, down):
@@ -464,6 +464,26 @@ def _held_pad_dispatch(stock, image, symbols, check):
         valid &= rig.call(symbols["ck_ui_active_note"], 2) == 128
         check(valid and bytes(rig.uc.mem_read(HEADER, 64)) == before,
               f"TRIG tenu + T1–T6 : dispatchs réels, signature {signature:08x}, piste et note conservées")
+
+        # Le même appui physique T traverse les seize degrés, sans nouvel
+        # événement PadEvent : c'est le geste réel qui perdait son modificateur.
+        for number in range(1, 7):
+            pad(number, True)
+            valid = not rig.calls
+            for trig in range(1, 17):
+                note = 48 + 12 * ((trig - 1) // 7) + (0, 2, 4, 5, 7, 9, 11)[(trig - 1) % 7]
+                key(True, trig)
+                valid &= (rig.calls == [_on(2, note)] and selected[0] == 2 and
+                          rig.call(symbols["ck_ui_modifier_get"], 2, HEADER) == number)
+                key(False, trig)
+                valid &= rig.calls == [("off", (2, note, 64))]
+            pad(number, False)
+            valid &= not rig.calls and rig.call(symbols["ck_ui_modifier_get"], 2, HEADER) == number
+            key(True)
+            valid &= rig.calls == [_on(2, 48)] and rig.call(symbols["ck_ui_modifier_get"], 2, HEADER) == 0
+            key(False)
+            check(valid and bytes(rig.uc.mem_read(HEADER, 64)) == before and not rig.bad,
+                  f"T{number} tenu : seize TRIG transformés, relâchement puis retour EXT, dispatchs réels ({signature:08x})")
 
         # La commande explicite TRACK doit encore sélectionner une autre piste.
         key(True)
@@ -593,13 +613,13 @@ def _menu(image, symbols, check):
     items.clear()
     emulator.uc.mem_write(view, bytes(0x400))
     emulator.call(symbols["ck_ui_menu_ctor"], view)
-    check(len(items) == original_count + 10,
-          f"menu réel : {original_count} lignes préexistantes conservées, dix ajoutées sans Controls ni Pads")
-    if len(items) != original_count + 10:
+    check(len(items) == original_count + 11,
+          f"menu réel : {original_count} lignes préexistantes conservées, onze ajoutées dont MIDI")
+    if len(items) != original_count + 11:
         return
     _header(emulator)
     emulator.call(symbols["ck_storage_reset"], HEADER)
-    expected = ("Keys", "Root", "Scale", "I", "II", "III", "IV", "V", "VI", "VII")
+    expected = ("Keys", "Root", "Scale", "I", "II", "III", "IV", "V", "VI", "VII", "MIDI")
     for field, name in enumerate(expected):
         label, press, draw, change = items[original_count + field]
         valid = all(func[0] == 0x4002CF00 for func in items[original_count + field])
@@ -618,12 +638,14 @@ def _menu(image, symbols, check):
         changer = arp.make_fn(emulator, change)
         shift = 31 if field == 0 else 21 if field == 1 else 28 if field == 2 else 3 * (field - 3)
         mask = 1 if field == 0 else 127 if field == 1 else 7
-        for delta, target in ((99, (1, 48, 6, 4, 4, 4, 4, 4, 4, 4)[field]),
+        for delta, target in ((99, (1, 48, 6, 4, 4, 4, 4, 4, 4, 4, 1)[field]),
                               (-99, 24 if field == 1 else 0)):
             before = config[2]
             emulator.call(change[1], changer, 0, delta & 0xFFFFFFFF)
-            check(((config[2] >> shift) & mask) == target and
-                  (config[2] & ~(mask << shift)) == (before & ~(mask << shift)),
+            good = (emulator.call(symbols["ck_ui_midi_get"], 2) == target and config[2] == before
+                    if field == 10 else ((config[2] >> shift) & mask) == target and
+                    (config[2] & ~(mask << shift)) == (before & ~(mask << shift)))
+            check(good,
                   f"menu : {name}, borne {target}, autres champs conservés")
 
         config[2] = (48 << 21) | 0x80000000 | (5 << 28) | sum(4 << (3 * degree) for degree in range(7))
@@ -635,7 +657,8 @@ def _menu(image, symbols, check):
         if field == 1:
             good = arp.cstr(emulator, args[5]) == "%s%d" and value == "C" and args[7] == 3
         else:
-            good = arp.cstr(emulator, args[5]) == "%s" and value == ("ON" if field == 0 else "MINOR" if field == 2 else "13")
+            good = arp.cstr(emulator, args[5]) == "%s" and value == (
+                "ON" if field == 0 else "MINOR" if field == 2 else "ROOT" if field == 10 else "13")
         check(good and args[2:5] == (0x93710000 + 24, 7, 4), f"menu : affichage {name} et placement stock")
 
     config[2] = 48 << 21
@@ -656,6 +679,15 @@ def _menu(image, symbols, check):
     change = items[original_count][3]
     emulator.call(change[1], arp.make_fn(emulator, change), 0, 1)
     check(config[2] == 48 << 21, "menu : activation refusée sur une machine autre que CHORD")
+    change, draw = items[original_count + 10][3], items[original_count + 10][2]
+    emulator.call(change[1], arp.make_fn(emulator, change), 0, 1)
+    emulator.call(draw[1], arp.make_fn(emulator, draw), 0, 0x93700000, 0x93710000, 7)
+    check(arp.cstr(emulator, drawn[-1][6]) == "CHORD" and config[2] == 48 << 21,
+          "menu : MIDI CHORD affiché sans modifier Keys ou l'harmonie")
+    selected[0] = 3
+    emulator.call(draw[1], arp.make_fn(emulator, draw), 0, 0x93700000, 0x93710000, 7)
+    check(arp.cstr(emulator, drawn[-1][6]) == "ROOT",
+          "menu : une autre piste conserve MIDI ROOT")
     check(not emulator.bad, "menu : aucun accès mémoire hors du banc")
 
 
@@ -925,11 +957,11 @@ def _pad_latch(image, symbols, check):
         _key(rig, track + 1, True)
         valid &= modifier(track) == 1
         _key(rig, track + 1, True)
-        valid &= modifier(track) == 0
+        valid &= modifier(track) == 1
         _pad(rig, 1, True)
-        valid &= not rig.calls and modifier(track) == 0
+        valid &= not rig.calls and modifier(track) == 1
         _pad(rig, 1, False)
-        valid &= not rig.calls and modifier(track) == 0
+        valid &= not rig.calls and modifier(track) == 1
         _pad(rig, 1, True)
         valid &= [kind for kind, _ in rig.calls] == ["off", "on"] and modifier(track) == 1
         _pad(rig, 1, False)
@@ -938,7 +970,7 @@ def _pad_latch(image, symbols, check):
         valid &= modifier(track) == 0
         _key(rig, track + 1, False)
         valid &= all(modifier(t) == (0 if t <= track else 4) for t in range(6))
-        check(valid, f"T piste {track + 1} : queue conservée, préparation consommée une fois, TRIG suivant à EXT, prochain appui T actif")
+        check(valid, f"T piste {track + 1} : queue conservée, tous les TRIG transformés tant que T est tenu, retour à EXT après relâchement")
     check(not rig.bad, "T conservé : aucun accès mémoire hors du banc")
 
 
@@ -956,15 +988,22 @@ def _pad_prepare(image, symbols, check):
         valid = not rig.calls and bytes(rig.uc.mem_read(symbols["live_modifiers"], 48)) == before
         _key(rig, 1, True)
         valid &= rig.calls == [_on(2, 48)] and modifier() == pad
+        _key(rig, 1, False)
+        _key(rig, 2, True)
+        valid &= rig.calls == [_on(2, 50)] and modifier() == pad
+        _key(rig, 3, True)
+        valid &= rig.calls == [("off", (2, 50, 64)), _on(2, 52)] and modifier() == pad
         _pad(rig, pad, False)
         valid &= not rig.calls and modifier() == pad
-        _key(rig, 1, False)
+        _key(rig, 2, False)
+        valid &= not rig.calls and modifier() == pad
+        _key(rig, 3, False)
         _pad(rig, pad, True)
         _pad(rig, pad, False)
         _key(rig, 2, True)
         valid &= rig.calls == [_on(2, 50)] and modifier() == 0
         _key(rig, 2, False)
-        check(valid, f"préparation T{pad} : queue intacte, prochain TRIG transformé, préparation relâchée annulée")
+        check(valid, f"préparation T{pad} : queue intacte, TRIG répétés et superposés transformés, préparation relâchée annulée")
 
     # Captures physiques et identités de piste/pattern restent distinctes.
     _pad(rig, 1, True)
@@ -977,10 +1016,10 @@ def _pad_prepare(image, symbols, check):
     _key(rig, 2, True)
     valid &= modifier() == 6
     _key(rig, 2, True)
-    valid &= modifier() == 0
+    valid &= modifier() == 6
     _pad(rig, 6, False)
     _key(rig, 2, False)
-    check(valid, "préparation : dernier pad prioritaire, piste indépendante, consommation unique même T tenu")
+    check(valid, "préparation : dernier pad prioritaire, piste indépendante, répétition tant que T reste tenu")
 
     _pad(rig, 3, True)
     rig.call(symbols["ck_ui_config_set"], 2, config[2])

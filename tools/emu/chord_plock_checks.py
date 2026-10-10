@@ -213,7 +213,7 @@ def _attack_recording_checks(stock, patched, symbols):
                     rig.get(0, step, slot) == reference.get(0, step, slot) for slot in (11, 12)),
                 f"Recorder pas {step}: HARMONY/COLOR/SHAPE = "
                 f"{[rig.get(0, step, slot) for slot in (SLOT, 11, 12)]}")
-    # Un nouveau TRIG, même encore physiquement tenu, repart de son extension.
+    # Après le relâchement des pads, un nouveau TRIG repart de son extension.
     events.clear()
     rig.call(0x4007238C, event, 16, 1, 123, 127)
     rig.call("ck_ui_key", view, event)
@@ -233,17 +233,28 @@ def _attack_recording_checks(stock, patched, symbols):
     rig.call("ck_ui_key", view, event)
     record(7)
     require(rig.get(0, 7) == 6, "Prochain TRIG perd son pad préparé dans le recorder")
+    for step in (8, 9):
+        events.clear()
+        rig.call(0x4007238C, event, 16, 1, 123, 127)
+        rig.call("ck_ui_key", view, event)
+        record(step)
+        require([kind for kind, _ in events] == ["off", "on"] and rig.get(0, step) == 6,
+                f"T tenu perd sa transformation sur l'attaque enregistrée au pas {step}")
     events.clear()
     rig.pad(6, False)
     require(not events and rig.get(0, 6) == -1, "Relâchement de préparation écrit un retour")
+    rig.call(0x4007238C, event, 16, 1, 123, 127)
+    rig.call("ck_ui_key", view, event)
+    record(10)
+    require(rig.get(0, 10) == 0, "Le premier TRIG après relâchement garde la transformation")
     rig.call(0x4005BA0A, SERIAL, B1, 0)
     rig.call(0x4005B894, B2, SERIAL, 0)
     rig.bind(B2, initialize=False)
     require([bool(rig.call(0x40015C20, rig.track(0), s) & 255) for s in range(5)]
             == [True, True, True, False, False], "Save/load perd les attaques enregistrées")
-    require([rig.get(0, s) for s in range(8)] == [0, 1, 4, -1, -1, 0, -1, 6],
+    require([rig.get(0, s) for s in range(11)] == [0, 1, 4, -1, -1, 0, -1, 6, 6, 6, 0],
             "Save/load perd les attaques ou ajoute un retour au relâchement")
-    print("ok attaques T→recorder : queue/préparation sans lock, prochain TRIG avec HARMONY préparé, save/load conserve les gestes", flush=True)
+    print("ok attaques T→recorder : préparation sans lock, chaque TRIG avec HARMONY tant que T est tenu, retour EXT et save/load conservés", flush=True)
 
 
 def run_plock_checks(stock, patched, symbols):

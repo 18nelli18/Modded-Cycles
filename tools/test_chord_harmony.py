@@ -68,6 +68,49 @@ def family_of(mode, degree):
     return "dim" if fifth == 6 else "minor" if third == 3 else "major" if seventh == 11 else "dom"
 
 
+def expected_harmony(mode, degree, extension, palette, transform):
+    """Référence musicale : pas modaux, puis substitution des notes demandées."""
+    family = family_of(mode, degree)
+    if family == "dim" and transform in (PARALLEL, V7):
+        return []
+    if transform == SUS7:
+        return [0, 5, 7, 10]
+    if transform == V7:
+        return [7, 11, 14, 17]
+    if transform in (NINTH, ELEVENTH, THIRTEENTH):
+        extension = transform + 1
+    if transform == PARALLEL:
+        family = "major" if family == "minor" else "minor"
+        scale, degree = mode_notes(0 if family == "major" else 5), 0
+    else:
+        scale = mode_notes(mode)
+    positions = [0, 2, 4] if extension == TRIAD else [0, 2, 4, 6]
+    if extension >= EXT9:
+        positions = [0, 2, 6, 2 * (extension + 2)]
+    notes = [scale[degree + position] - scale[degree] for position in positions]
+    if extension >= EXT9:
+        if family == "dim":
+            notes[1] = 6
+        if palette != DIATONIC:
+            notes[3] = {EXT9: 14, EXT11: 18 if family in ("major", "dom") else 17,
+                        EXT13: 21}[extension]
+            if family == "dom" and palette == TENSION and extension != EXT11:
+                notes[3] -= 1
+    return notes
+
+
+def expected_voicing(notes, shape):
+    """Référence par tri complet, indépendante du déplacement optimisé en C."""
+    if not shape:
+        return notes
+    result = sorted(note % 12 for note in notes)
+    for _ in range((shape - 1) % 4):
+        result = sorted([result[0] + 12, *result[1:]])
+    if shape >= 5:
+        result = sorted(note + 12 * (index % 2) for index, note in enumerate(result))
+    return result
+
+
 def concrete_examples(library):
     examples = [
         # Em7(b9) → Em9 à fondamentale, tierce et septième identiques.
@@ -119,6 +162,9 @@ def exhaustive_harmony(library):
         family = family_of(mode, degree)
         count, actual = intervals(library, mode, degree, extension, palette, transform)
         context = (mode, degree, extension, palette, transform)
+        expected = expected_harmony(*context)
+        require(count == len(expected) and list(actual[:count]) == expected,
+                f"Intervalles différents de la référence musicale : {context}")
         if family == "dim" and transform in (PARALLEL, V7):
             require(count == 0, f"Transformation diminuée acceptée : {context}")
             continue
@@ -166,6 +212,9 @@ def exhaustive_harmony(library):
         for shape in range(9):
             shaped = U4(*actual)
             library.ck_voicing_apply(shaped, count, shape)
+            expected = expected_voicing(notes, shape) + [0] * (4 - count)
+            require(list(shaped) == expected,
+                    f"Disposition différente de la référence par tri : {context}, {shape}")
             require(sorted(n % 12 for n in shaped[:count]) == sorted(n % 12 for n in notes),
                     f"SHAPE change les notes : {context}, {shape}")
             require(all(a < b for a, b in zip(shaped[:count], shaped[1:count])),
@@ -214,7 +263,7 @@ def main():
     families = [
         ("exemples Em9, dominantes tendues, SUS7, parallèle et m7b5", concrete_examples),
         ("245 comparaisons DIATONIC/historique, exception m7b5 explicite", legacy_compatibility),
-        ("5 145 harmonies et neuf SHAPE : familles, tensions, retours, audibilité", exhaustive_harmony),
+        ("5 145 harmonies et neuf SHAPE : équivalence exacte à la référence musicale", exhaustive_harmony),
         ("65 536 valeurs COLOR/SHAPE et gains actifs/inutilisés", parameter_boundaries),
         ("arguments invalides et transformations refusées sans sortie modifiée", invalid_arguments),
     ]
