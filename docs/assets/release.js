@@ -3,13 +3,29 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
-  { version: "1.35", date: "2026-10-10", changes: [
+  { version: "1.40", date: "2026-10-10", changes: [
     { en: "New experimental mod by Nico Heuser, Chord Keys: on a CHORD track, the sixteen lower TRIG buttons play the chords of a scale. 1–7 play degrees I to VII, 8–14 the same one octave higher, 15–16 I and II two octaves higher. T1–T6 keep their usual controls",
       fr: "Nouveau mod expérimental de Nico Heuser, Chord Keys : sur une piste CHORD, les seize boutons TRIG du bas jouent les accords d'une gamme. 1–7 jouent les degrés I à VII, 8–14 les mêmes une octave plus haut, 15–16 I et II deux octaves plus haut. T1–T6 gardent leurs commandes habituelles" },
     { en: "FUNC + RETRIG gains Keys, Root, Scale (seven modes) and a triad, 7th, 9th, 11th or 13th for each degree, saved per track and pattern. SHAPE picks the voicing (BASE, close or open positions) and COLOR the balance of the voices. Four voices maximum; 9ths, 11ths and 13ths omit the fifth",
       fr: "FUNC + RETRIG gagne Keys, Root, Scale (sept modes) et une triade, 7e, 9e, 11e ou 13e par degré, enregistrés par piste et par pattern. SHAPE choisit la disposition (BASE, positions resserrées ou ouvertes) et COLOR l'équilibre des voix. Quatre voix au maximum ; les 9es, 11es et 13es omettent la quinte" },
     { en: "Checked in emulation on the OS's own code. Tested on a Model:Cycles, alone and with other mods; a note that could stay stuck (TRIG let go while PATTERN was held) is fixed in this version, which awaits a last check on the machine. Cannot be combined with Model-TG",
       fr: "Vérifié en émulation sur le code même de l'OS. Testé sur un Model:Cycles, seul et avec d'autres mods ; une note qui pouvait rester bloquée (TRIG lâché pendant que PATTERN était tenu) est corrigée dans cette version, qui attend un dernier essai sur la machine. Ne se combine pas avec Model-TG" },
+  ] },
+  { version: "1.37", date: "2026-10-10", changes: [
+    { en: "New mod, Multi-line browser: the preset browser shows three names at once in a small font, instead of one in big letters. A > marks the name under the cursor, the sound loaded on the track stays highlighted, and folders get a small mark before their name. From an idea and a script by a community member",
+      fr: "Nouveau mod, Navigateur sur plusieurs lignes : le navigateur de presets affiche trois noms à la fois en petite police, au lieu d'un seul en gros caractères. Un > signale le nom sous le curseur, le son chargé sur la piste reste en surbrillance, et les dossiers ont un petit repère devant leur nom. D'après une idée et un script d'un membre de la communauté" },
+    { en: "It works for sounds, folders and the Model-TG Sampler's samples. With Scrolling names or Model-TG, only the name under the cursor scrolls; the others stay put",
+      fr: "Il marche pour les sons, les dossiers et les échantillons du Sampler de Model-TG. Avec Noms qui défilent ou Model-TG, seul le nom sous le curseur défile ; les autres ne bougent pas" },
+    { en: "Tested on a Model:Cycles, and checked in the emulator on the OS's own drawing code and fonts. It goes with every other mod, Model-TG and the Syntakt engines included",
+      fr: "Testé sur un Model:Cycles, et vérifié en émulation sur le code de dessin et les polices de l'OS. Il se combine avec tous les autres mods, Model-TG et moteurs du Syntakt compris" },
+  ] },
+  { version: "1.36", date: "2026-10-10", changes: [
+    { en: "MACRO and the Syntakt engines together: the flasher now lets you tick both cards. MACRO comes last, right after the engines you tick (after the Sampler and the engines with Model-TG: with all five engines, MACRO is the 13th machine)",
+      fr: "MACRO et les moteurs du Syntakt ensemble : le flasher permet maintenant de cocher les deux cartes. MACRO vient en dernier, juste après les moteurs cochés (après le Sampler et les moteurs avec Model-TG : avec les cinq moteurs, MACRO est la 13e machine)" },
+    { en: "In this combination, the engines' load governor looks after MACRO tracks too. To fit in the firmware, the added code is stored compressed and unpacked when the machine starts",
+      fr: "Dans cette combinaison, le régulateur de charge des moteurs veille aussi sur les pistes MACRO. Pour tenir dans le firmware, le code ajouté est rangé compressé et décompressé au démarrage de la machine" },
+    { en: "Tested on a Model:Cycles with Model-TG and all five engines (with 6-channel audio, sample preview, trig removal, the arpeggiator, the tempo and the startup animation); the first test file froze at startup, which is fixed. Other combinations are checked in the emulator only (the engines and MACRO play exactly as each one alone, alone and with Model-TG). MACRO alone and the engines alone are unchanged",
+      fr: "Testé sur un Model:Cycles avec Model-TG et les cinq moteurs (avec l'audio 6 canaux, l'écoute des samples, l'effacement des trigs, l'arpégiateur, le tempo et l'animation de démarrage) ; le premier fichier de test se figeait au démarrage, c'est corrigé. Les autres combinaisons sont vérifiées en émulation seulement (les moteurs et MACRO jouent exactement comme chacun seul, avec ou sans Model-TG). MACRO seule et les moteurs seuls ne changent pas" },
   ] },
   { version: "1.33", date: "2026-10-10", changes: [
     { en: "Every mod you tick is now checked against its reference build, whatever the combination. Until now the page carried the expected result of each of the 10,559 possible combinations and checked only those; that list doubled with every new mod. It now keeps one reference per mod, plus a sample of 464 combinations checked whole (each mod alone, every pair, the largest ones)",

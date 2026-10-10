@@ -37,16 +37,15 @@ Copy the shape of `gen_tempo_max.py` (data only) or `gen_trig_hold.py` (assemble
 Free space is scarce and every byte of it is accounted for in a note. Before taking any, read the notes that use it
 and check the writes of **every** other tweak for overlaps.
 
-- **Freed sprite masks** (`sprites.py`, notes/14 §5, notes/32 §11): a sprite is redirected to an identical mask
-  (`sprites.redirect_write`), freeing its own. Already used: `0x4015c044` (6ch-usbup stubs, trig-hold in front),
-  `0x4016cae8` (Syntakt engines' boot hook at the start, arpeggiator menu after it), `0x4018a788`, `0x40189930`,
-  `0x4018a220` (arpeggiator), fourteen 47×47 masks: the eleven from `0x4016b6f8` to `0x40185c58`, then `0x4018cd48`,
-  `0x4018d1b8`, `0x4018d4a8` (chord-keys, notes/42 §6); sample-preview uses `0x40183118`, `0x40185018`, `0x40185968`,
-  `0x40185c58`, shared with chord-keys, which excludes Model-TG: two tweaks may share a mask only if they can never be
-  built together. In all, 21 47×47 masks (376 bytes each, one constructor constant each, `0x400ac2b2`..`0x400b133e`)
-  are identical to the kept `0x40172220` and can be freed the same way (notes/46 §7). The last five listed in
-  `sprites.py` are claimed by open PRs: `0x4018dba8`, `0x4018f4b4`, `0x4018fc74`, `0x40192734` (djd_oz's mods) and
-  `0x401904b4` (the multiline browser). Check their tweak files before taking one.
+- **Freed sprite masks** (`sprites.py`, notes/14 §5, notes/32 §11, notes/52): a sprite is redirected to an identical
+  mask (`sprites.redirect_write`), freeing its own. `sprites.GROUPS` lists the 10 groups of identical masks (164
+  freeable masks, 104 to 1024 bytes each, about 36 KB); **`tweaks/model-cycles_OS1.13/REGISTRY.md` says which are
+  taken and which are free**, with the bytes each mod writes. Take a free one, then run `python3 tools/registry.py`
+  and commit the regenerated file; `python3 tools/registry.py --git <branch>` shows what the open PRs have taken.
+  Several mods may share a mask only if they never write the same bytes when built together (trig-hold in front of
+  6ch-usbup's stubs in `0x4015c044`), or can never be built together (sample-preview and chord-keys): that is what
+  `check_overlaps.py` checks. `registry.py` refuses a write into a mask whose sprite the tweak (or a tweak it
+  `requires`) does not redirect, and any write into a kept copy.
 - **Payload appended to the image** and copied at boot to SDRAM (`0x43000000`, notes/17; Model-TG uses
   `0x46700000`, notes/31): for large code, at the cost of a boot hook shared with the Syntakt engines.
 - **In place**: rewrite the function you change when the new code fits (tempo-max's LFO loop, trig-preview's 3 bytes).
@@ -88,6 +87,11 @@ and check the writes of **every** other tweak for overlaps.
   same bytes (except the same whole write, or one applied on top of the other through `requires`), every write is
   well formed, and the payloads of every installable set chain up (`at`, `END_LIMIT`, `dest`). With `--git` it reads
   branches and checks them together (the open PRs). This is what lets the flasher check mods one by one (notes/49).
+- `registry.py [--check] [--git REF …] [--cycles SYX]`: no firmware needed. Rewrites
+  `tweaks/model-cycles_OS1.13/REGISTRY.md`, the registry of free space and hook points built from the tweak writes
+  (notes/52): freed masks taken and free, 0xFF caves, payload chains, OS detours, rewritten pointers, what each mod
+  touches. `--check` in validation; `--git` adds branches (to the screen); `--cycles` also verifies the mask survey on
+  the official OS. Saved-structure bytes a mod claims (the arpeggiator's pattern byte +512) go in its `DECLARED` table.
 - `ref_mainos.py --cycles … --syntakt … [--check]`: rewrites `REF_MODS` (each tweak's writes and payload hashes) and
   `REF_MAINOS` (the MAIN OS of a sample: each card alone, every pair, the largest combinations) in
   `docs/flasher/app.js`. Rerun after any change to a tweak or to `FEATURES`; it reads the card rules like `app.js`.
