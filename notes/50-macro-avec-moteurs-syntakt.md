@@ -20,7 +20,8 @@ cartes exclusives ([43 §6](43-machine-macro.md)). Tweaks `24-syntakt-<moteurs>-
 - **Le régulateur de charge des moteurs** ([25](25-regulateur-de-charge.md), [36](36-regulateur-sans-coupures-inutiles.md))
   **veille aussi sur les pistes MACRO** dans ces combinaisons ; MACRO seule n'en a toujours pas.
 - **Flasher** : les deux cartes se cochent ensemble ; la combinaison de moteurs prend alors sa version avec MACRO.
-- **Prouvé en émulation** `[FAIT en émulation]` (§6), pas encore essayé sur la machine.
+- **Prouvé en émulation** `[FAIT en émulation]` (§6). 1er essai sur la machine (10/10/2026) : blocage au logo
+  Elektron, dû au cache d'instructions ; corrigé, à réessayer (§8).
 
 ## 1. Pourquoi ce n'était pas possible tel quel `[FAIT]`
 
@@ -75,7 +76,7 @@ utile est donc rangée compressée (`append.compress = "aplib"`) :
 
 Le crochet entier (décompression, tables de CHORD, deux copies vers la SRAM) faisait 252 o ; le masque `0x4016cae8`
 n'en laisse que 192 au crochet, l'arpégiateur ayant la suite (`gen_arp.py`, `.cave_menu` à `0x4016cba8`) :
-`tools/ref_mainos.py` l'a trouvé (octets `old` de l'arpégiateur). D'où les deux étages : 174 o au masque (166 avec
+`tools/ref_mainos.py` l'a trouvé (octets `old` de l'arpégiateur). D'où les deux étages : 188 o au masque (180 avec
 Model-TG, qui finit par `jmp boot_extra_hook`), `gen_syntakt_engines.py` vérifie la limite (`STUB_END`). Le 2ᵉ étage
 (`BOOT2`, 60 o environ) :
 
@@ -90,7 +91,7 @@ Model-TG, qui finit par `jmp boot_extra_hook`), `gen_syntakt_engines.py` vérifi
 | Charge utile en mémoire | 471 792 o à `0x43000000` | 471 792 o à `0x46700000` |
 | Dans l'image (compressée) | 229 134 o (SYToy) à 240 674 o (les 5) | 229 403 o (SYToy) à 240 948 o (les 5) |
 | Fin de l'image décompressée (limite `0x40200000`) | `0x401e4d62` au plus (marge 111 262 o) | `0x401fa5f4` au plus (marge 23 052 o) |
-| Crochet au masque `0x4016cae8` (192 o au plus) | 174 o | 166 o |
+| Crochet au masque `0x4016cae8` (192 o au plus) | 188 o | 180 o |
 | Décompression au démarrage (émulation, flux de 241 Ko) | ~4,4 millions d'instructions | idem |
 
 La décompression ajoute au démarrage quelques dizaines de millisecondes `[HYP]` (4,4 millions d'instructions à
@@ -170,3 +171,36 @@ de l'échantillon construites dans la page, chacune à son empreinte, dont 93 av
    voix plutôt que de laisser craquer le son.
 5. Sans Model-TG, une petite combinaison (SDVtg + MACRO : MACRO 8ᵉ).
 6. Avant de reflasher autre chose, remettre sur une machine d'origine les pistes qui utilisent une machine ajoutée.
+
+## 8. Essai du 10/10/2026 : blocage au logo Elektron, cache d'instructions `[HYP forte]`
+
+**Essai de Maxime** (fichier Model-TG + les 5 moteurs + MACRO, avec 6ch-usbup, sample-preview, trig-hold, arp,
+tempo-max, boot-anim) : la mise à jour passe, puis la machine reste sur le logo Elektron, avant l'animation de
+démarrage (carrés), et ne répond plus. En émulation, le même fichier démarrait jusqu'à l'animation.
+
+**Diagnostic** (fichier jamais versionné) : 6 marques à l'écran, la 1ʳᵉ juste après la décompression, les autres
+dans `main` et la tâche de démarrage. Sur la machine, **aucune** ne s'affiche. Écartés : la place (une image plus
+grande, `0x401fae10`, a déjà été testée), le bootstrap (relit et décompresse les deux conteneurs à l'identique,
+`0x80000820` ; rien n'écrit dans la zone de la charge utile après), le chien de garde, des instructions hors
+ColdFire (`-mcpu=54418`), la SDRAM non initialisée (démarrage émulé avec une mémoire pleine de valeurs au hasard :
+même parcours que la version testée).
+
+**Cause** : le bootstrap, avant de sauter dans l'OS, laisse le **cache d'instructions actif** (`CACR = 0x0008c000`,
+`0x80000886` : IEC + BEC, cache de données coupé ; adresses de la SDRAM cachables par défaut). Ce cache n'est pas
+cohérent avec les écritures. Le crochet décompresse le 2ᵉ étage (`BOOT2`, `0x46741b00` avec Model-TG) comme des
+données, puis y saute **sans invalider** le cache. Or le crochet passe des centaines de milliers de fois sur
+`jsr AFTER` en lecture anticipée (juste après le `rts` de la lecture du gamma) : le pipeline de lecture d'instructions
+du V4e, qui prédit les changements de flot, peut remplir le cache avec ces adresses **avant** qu'elles soient écrites,
+donc avec l'ancien contenu de la SDRAM. Au saut, le processeur exécute ces lignes périmées. La marque 0 du diagnostic était
+elle aussi du code fraîchement écrit (`0x46741c00`), d'où aucun carré. Les versions testées (moteurs seuls, avec ou
+sans Model-TG, MACRO seule) n'exécutent jamais pendant le crochet du code qu'il vient d'écrire : leur code ne tourne
+qu'après le `movec cacr` de l'OS (`0x40000548`, `0xa50ce100` : ICINVA + BCINVA). `[HYP forte]` : cohérent avec tout
+ce qui est observé, mais non observable directement ; confirmé seulement si le fichier corrigé démarre.
+
+**Correction** (`stub.S`, `APLIB`) : avant `jsr AFTER`, `nop` (écritures terminées), `movec` de `0x000cc100` dans
+`CACR` (la valeur du bootstrap à `0x80000c40` : caches d'instructions et de branchements invalidés, toujours actifs,
+cache de données toujours coupé), `nop`. 14 o de plus : crochet de 188 o (180 avec Model-TG), sous les 192 o.
+
+**Preuve** : Unicorn n'a pas de cache ; `test_macro_syntakt.py` (démarrage) le modélise : toute ligne de 16 o écrite
+dans la charge utile est périmée jusqu'au prochain `movec …,cacr` avec ICINVA, et exécuter une ligne périmée est une
+faute. Ancien crochet : **ÉCHEC** (`0x43041b00`, `0x46741b00`) ; crochet corrigé : ok.

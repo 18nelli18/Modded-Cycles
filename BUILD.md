@@ -326,12 +326,12 @@ python3 tools/emu/test_macro_syntakt.py --cycles model-cycles_OS1.13.syx --synta
 
 | `-t` (avec `--syntakt Syntakt_OS1.42.syx`) | MAIN OS patché (SHA-256) |
 |---|---|
-| `syntakt-sd-macro` | `94c5ff0d120912d5a2d36e452dea735860b650ab13e46b4136ec94acc4921dbf` |
-| `syntakt-sd-cp-toy-bits-swarm-macro` | `a47f326a03fdd1618e07bdc569763486c2f79bdc020bd01b4295826855ec7ddb` |
-| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `44285490d2f7166818f21fb4f73cb624218afcf45f4152620ab1f9cbd0690921` |
-| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro` | `b6c2bf8d3627faed85e9f9ee8b405d8fc56737246989de0f52de5b659634d1d9` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `3ad56cde759754e0844dbc30d3228520750ba4a520f5159edf142d48315e145f` |
-| `6ch-usbup,model-tg-st,sample-preview-st,syntakt-tg-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `f11242ed7dccbaa3cf642bc793ccea6c9145be5cc4f5370f1108a52215a247dc` |
+| `syntakt-sd-macro` | `5c096030a7035c766d0119e5f8053214e299c7dac9d28db8c6aa9b41df465f45` |
+| `syntakt-sd-cp-toy-bits-swarm-macro` | `f8be2f118bfb7f7b3033a9e6fa2e3ce9b146e428cf8a815f98d710dc1987b76b` |
+| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `126e5108aa6b3a7a8578a3a0e2d9453d47571bbe19797875bce433473dc53ea3` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro` | `2f40a8c6672dd2f46c11adb6c1c5d0c9a77049188837fe4c44c7ce778f8c4785` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `7789622b49c4833b46dd99dcb09f5c9803a58408b25b73097df0ca0ebf85654d` |
+| `6ch-usbup,model-tg-st,sample-preview-st,syntakt-tg-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `f44bfad622145e30ce0cbb3649864e74aebca5559d63c0393ac4eea0eef4ace9` |
 
 ### Écoute d'un pas en pause
 

@@ -79,6 +79,15 @@ boot_stub:
 19:	movem.l	(%sp), %d2-%d6/%a2
 	lea	24(%sp), %sp
 #ifdef AFTER
+	/* Le 2e etage est du code qu'on vient d'ecrire comme des donnees : le cache d'instructions, que le bootstrap
+	 * laisse actif (CACR 0x0008c000), peut deja tenir ces adresses (lues d'avance pendant la decompression, avec ce
+	 * qu'il y avait avant en SDRAM) et ne voit pas les ecritures. Sans cela, la machine reste sur le logo Elektron
+	 * (essai du 10/10/2026, notes/50). On l'invalide donc, avec le cache de branchements, avant d'y sauter : la
+	 * valeur du bootstrap (0x80000c40), ICINVA + BCINVA, le cache de donnees reste coupe. */
+	nop				/* ecritures terminees */
+	move.l	#0x000cc100, %d0
+	movec	%d0, %cacr
+	nop
 	jsr	AFTER			/* 2e etage (BOOT2), dans la charge utile qu'on vient de decompresser */
 #endif
 #elif defined(PACK)

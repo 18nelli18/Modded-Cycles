@@ -36,7 +36,8 @@ import sys
 import tempfile
 
 import numpy as np
-from unicorn import Uc, UC_ARCH_M68K, UC_MODE_BIG_ENDIAN, UC_HOOK_MEM_READ, UC_HOOK_MEM_UNMAPPED
+from unicorn import (Uc, UC_ARCH_M68K, UC_MODE_BIG_ENDIAN, UC_HOOK_BLOCK, UC_HOOK_CODE, UC_HOOK_MEM_READ,
+                     UC_HOOK_MEM_UNMAPPED, UC_HOOK_MEM_WRITE)
 from unicorn import m68k_const as mk
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -124,6 +125,38 @@ def chord_tables(stock):
 
 
 # --- 1. démarrage ----------------------------------------------------------------------------------------------
+def icache_watch(uc, fw, dst):
+    """Le cache d'instructions, qu'Unicorn n'a pas (notes/50 §8) : le bootstrap le laisse actif, sans cohérence avec
+    les écritures. Toute ligne de 16 o écrite dans la charge utile est « périmée » jusqu'au prochain movec …,cacr
+    avec ICINVA (0x100) ; exécuter une ligne périmée est une faute (sur la machine : l'ancien contenu de la SDRAM).
+    Rend ([adresses fautives], [movec avec ICINVA vus])."""
+    dirty, faults, inval = set(), [], []
+
+    def wr(u, access, addr, size, value, d):
+        if dst <= addr < dst + 0x00100000:
+            dirty.update(range(addr >> 4, ((addr + size - 1) >> 4) + 1))
+
+    def blk(u, addr, size, d):
+        if dirty and dst <= addr < dst + 0x00100000 and \
+                any(k in dirty for k in range(addr >> 4, ((addr + size - 1) >> 4) + 1)):
+            faults.append(addr)
+
+    def movec(u, addr, size, d):
+        r = struct.unpack(">H", u.mem_read(addr + 2, 2))[0] >> 12
+        if u.reg_read((mk.UC_M68K_REG_D0 + r) if r < 8 else (mk.UC_M68K_REG_A0 + r - 8)) & 0x100:
+            dirty.clear()
+            inval.append(addr)
+
+    uc.hook_add(UC_HOOK_MEM_WRITE, wr, begin=dst, end=dst + 0x00100000 - 1)
+    uc.hook_add(UC_HOOK_BLOCK, blk, begin=dst, end=dst + 0x00100000 - 1)
+    lo, hi = gs.gx.CAVE, gs.STUB_END
+    for a in range(lo, hi, 2):
+        k = a - BASE
+        if fw.img[k:k + 2] == b"\x4e\x7b" and struct.unpack(">H", fw.img[k + 2:k + 4])[0] & 0xfff == 0x002:
+            uc.hook_add(UC_HOOK_CODE, movec, begin=a, end=a)
+    return faults, inval
+
+
 def boot(fw, ref, tg=None):
     """Le crochet de démarrage, exécuté pour de vrai (comme test_macro.boot)."""
     uc = Uc(UC_ARCH_M68K, UC_MODE_BIG_ENDIAN)
@@ -148,6 +181,8 @@ def boot(fw, ref, tg=None):
                                                      mk.UC_M68K_REG_A5, mk.UC_M68K_REG_A6))}
     for r, v in keep.items():
         uc.reg_write(r, v)
+    stale = icache_watch(uc, fw, dst)
+    uc.reg_write(mk.UC_M68K_REG_SR, 0x2700)              # superviseur, comme au démarrage (movec)
     sp0 = 0x90010000
     if tg:
         uc.reg_write(mk.UC_M68K_REG_A7, sp0)
@@ -169,6 +204,10 @@ def boot(fw, ref, tg=None):
               and cleared and not bad,
               "0x400004b2 -> notre crochet -> remise à zéro du BSS de l'OS (charge utile rangée comprise), retour "
               "normal, d2..d7/a2..a6 intacts")
+    check(stale[1] and not stale[0],
+          f"cache d'instructions : le crochet l'invalide (movec cacr, ICINVA) avant d'exécuter le code qu'il vient "
+          f"d'écrire (2e étage) ; Unicorn n'a pas de cache, la machine si (notes/50 §8) "
+          f"{[hex(a) for a in stale[0][:4]]}")
     got = bytes(uc.mem_read(dst, len(rt)))
     check(got == rt, f"charge utile décompressée à {dst:#x} : {len(rt)} o (moteurs, MACRO et ses variables à zéro), "
                      f"rangée en {fw.packed} o dans l'image ; tables d'ondes de CHORD reprises en SRAM")
