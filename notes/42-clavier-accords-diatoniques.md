@@ -855,6 +855,13 @@ lignes (1.37, notes/40, tweak 44) et le registre de la place libre (notes/52) ar
   `gen_chord_keys.py --check` passe ; `ref_mainos.py` donne **580** combinaisons (74 avec Chord Keys) et 140 mods ;
   Chord Keys seul garde `901675f5…c334321f`.
 
+**Cinquième fusion (11/10/2026)** : les deux mods de djd_oz (volume et pan en chiffres, trigless trigs atténués,
+tweaks 46 et 47, notes 44 et 45, version 1.38) arrivent dans `main`. Le guide leur donne les sections 15 et 16 ;
+Chord Keys passe en 17 et sa ligne de compatibilité les cite. `REGISTRY.md` régénéré : 140 masques libres sur 164.
+`check_overlaps.py` passe (150 tweaks) ; `ref_mainos.py` donne **671** combinaisons et 142 mods. L'index des notes de
+`main` portait deux fois la ligne 43 (l'ancienne, « incompatible avec les moteurs du Syntakt », et la nouvelle) : seule
+la nouvelle est gardée.
+
 ## 18. Testé sur la machine (10/10/2026)
 
 Les fichiers du 07/10 ne se téléchargeaient plus : ils ont été reconstruits le 10/10/2026 avec les tweaks de cette
