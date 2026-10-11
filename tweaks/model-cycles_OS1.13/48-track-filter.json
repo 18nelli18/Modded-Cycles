@@ -4,8 +4,8 @@
  "name": "Filtre par piste : passe-bas, OFF, passe-haut",
  "description": [
   "Un filtre 2 p\u00f4les par piste, apr\u00e8s Volume + Dist et avant le panoramique, les envois et le mixage (comme sur le Model:Samples) :",
-  "MACHINES tenu + SWEEP = Filter Cutoff (L64..OFF..H63 : passe-bas \u00e0 gauche, rien au centre, passe-haut \u00e0 droite, 5 Hz \u00e0 20 kHz), + CONTOUR = Filter Reso (Q 0,5 \u00e0 50),",
-  "+ COLOR = Filter Env (l'enveloppe, relanc\u00e9e \u00e0 chaque note, monte ou descend la fr\u00e9quence), + SHAPE = Env Decay (5 ms \u00e0 10 s).",
+  "MACHINES tenu + SWEEP = Filter Cutoff (L64..OFF..H63 : passe-bas \u00e0 gauche, rien au centre, passe-haut \u00e0 droite, 5 Hz \u00e0 20 kHz), + CONTOUR = Filter Reso (Q 0,5 \u00e0 1 000, qui siffle en haut de course),",
+  "+ COLOR = Filter Env (l'enveloppe, relanc\u00e9e \u00e0 chaque note, monte ou descend la fr\u00e9quence ; elle arrive sur les 8 premiers pas de chaque c\u00f4t\u00e9 du centre), + SHAPE = Env Decay (5 ms \u00e0 10 s).",
   "Quatre param\u00e8tres de toutes les machines (descripteurs 1 \u00e0 4, k 28 \u00e0 31) : p-locks, LFO, v\u00e9locit\u00e9, CC 74 et 71 ; sauvegard\u00e9s avec le son (emplacements 30, 31, 18) et le pattern.",
   "Corrige au passage les p-locks des param\u00e8tres k >= 23 dans le pattern (ils revenaient sur LFO Speed).",
   "Au centre, la piste n'est pas touch\u00e9e (bit pour bit) ; environ 640 instructions par bloc et par piste filtr\u00e9e (0,6 % d'un bloc).",

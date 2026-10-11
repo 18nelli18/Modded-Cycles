@@ -179,11 +179,11 @@ python3 tools/emu/test_sample_preview.py --cycles model-cycles_OS1.13.syx \
 | `model-tg,sample-preview` | `a6a4aa2228db2fb126e5ea88822f962f8a743ee77af96842f366f0f2ee1c88b5` |
 | `6ch-usbup,model-tg,sample-preview` | `4a9b2f67213f1af1ccd2d740aa64c32032ac33904d5884ca2eaed1dead9c3e36` |
 | `model-tg,arp,trig-hold,tempo-max,boot-anim,sample-preview` | `df6adf9607db59875408097821ce28d9a45c30e942cb7985c57f117550410998` |
-| `model-tg-st,syntakt-tg-sd,sample-preview-st` (avec `--syntakt`) | `2557d21b5d2f20cdd909e727ae458fa71ce59ed864ab701c43d1f86730c31d17` |
-| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,sample-preview-st` (idem) | `cde4365ff392e68b373afe9fa2004dc5e275c7c15f8a3c732549478ca2d36ca4` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,sample-preview-st` (idem) | `7b142604f35d11c63e3c22a0f1a4426c6630e2d184c5f680ed5f47125e2e891e` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,sample-preview-st` (idem) | `20a116b1dbbc05e84dfc32df2f269f5c23df2d54fcb39d9b4a7c577c5916a432` |
-| `model-tg-st,macro-tg,sample-preview-st` (avec la machine MACRO) | `a371d4a3a7df7e5d8b8078da4cdd8a0b34efee558b52f7ecb78811c21e6f98bd` |
+| `model-tg-st,syntakt-tg-sd,sample-preview-st` (avec `--syntakt`) | `867e8e4298024b787d15c02b605e38188fc82353a2a5e773504347c483142be5` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,sample-preview-st` (idem) | `9b0eb18e944bf9c3cfd70c6daae253dee2ba7e3f794e63b2d2fad57c65fe644f` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,sample-preview-st` (idem) | `54536f98a9f599d2886a09fd969eb4fed4e336024d798d81491f642290661d4a` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,sample-preview-st` (idem) | `8d491ab9e77bc53fcb7f812403f857e090b82ac3aad195944c667263496275f9` |
+| `model-tg-st,macro-tg,sample-preview-st` (avec la machine MACRO) | `9e3b1ce3972403c2bfec864c7691bfeef00c0161fde6e2778c7d64b5946b710e` |
 
 ### Arpégiateur
 
@@ -264,6 +264,34 @@ python3 tools/emu/test_crossflash_samples.py --cycles model-cycles_OS1.13.syx --
 | `model-cycles_OS1.13_for-model-samples.syx` | `c06c23f31e50fac6ad40cd0f633acd4a7da4f63c929dff563dae887b93105dd4` |
 | son MAIN OS | `b6fbc48f7d7d07cecae3859e07270fa2298f393e8afa2643144bdb4efc317aad` |
 | `model-samples_OS1.13_back-from-cycles-os.syx` | `d63ce13dd1a5039d11b60d3f69d4e88e9d0f56fb2e7350c105ec641d32083680` |
+
+### OS Cycles avec mods pour Model:Samples
+
+Le firmware est **toujours l'OS du Model:Cycles**, avec les mods choisis, quelle que soit la machine
+([note 57](notes/57-os-cycles-quelle-que-soit-la-machine.md)) : sur un Model:Samples, le sampling vient de Model-TG. On
+construit les mods comme pour un Model:Cycles, puis `tools/mods_for_samples.py` met ce MAIN OS dans le conteneur officiel
+du Samples avec le même correctif de 32 octets que `crossflash.py --to samples` (toujours appliqué), et écrit deux
+fichiers : `_smp-os` pour un Model:Samples sous son OS (transport `0x0F`), `_cyc-os` pour un Model:Samples déjà sous un
+OS Cycles de la page ou de ce script (transport `0x11`, pour changer de mods). La page fait la même chose
+(`MCBuilder.modsForSamples`, choix de la machine dans l'onglet Mods).
+```sh
+python3 tools/build.py -i model-cycles_OS1.13.syx -t model-tg,arp -o mods.syx
+python3 tools/mods_for_samples.py --cycles model-cycles_OS1.13.syx --samples model-samples_OS1.13.syx --mods mods.syx
+python3 tools/emu/test_mods_for_samples.py --cycles model-cycles_OS1.13.syx --samples model-samples_OS1.13.syx \
+    --syntakt Syntakt_OS1.42.syx
+```
+
+Sans mods (l'OS Cycles officiel en `--mods`), le fichier `_smp-os` est octet pour octet celui de
+`crossflash.py --to samples`. Empreintes de la preuve (le MAIN OS installé est celui de `REF_MAINOS` sauf les 32 octets
+de la clé) :
+
+| Combinaison | `_smp-os` (SHA-256) | `_cyc-os` (SHA-256) |
+|---|---|---|
+| `model-tg` | `1985e8e703092b768d32aa2c9b446cb0f95c1f944dc3e206f75973337469f686` | `1317199fbc625c38700344b69ce00496cdee0c8be6fae305843e6373e6394d19` |
+| `6ch-usbup,model-tg` | `fdbf4621e291618a98de64c561a39de59852d5a4dfdb58c927e312467557a839` | `a5a21ac6dfe5697b9e39fa80518a53989af4be8edac3cf9cbe6f1ebddb00ce79` |
+| `model-tg-st,sample-preview-st,macro-tg` | `4b069c69c47c6ef55ab6e50d067b2a8ced067fe3ed1b883419f5731db4044f5f` | `156ef6c22544de9873ed2119b30d4619354848cd27ca429e79bd1d628c586ffd` |
+| `6ch-usbup,model-tg-st,sample-preview-st,trig-hold,arp,tempo-max,boot-anim,syntakt-tg-sd-cp-toy-bits-swarm` | `f030b1a210c3ed9e5e2026dd0ac00daa99ca2a99cb963133f27d7e160f36fbcc` | `62d70e2bac0b22af70a56f71dc24791c52f79bda105c6375b9a3561a7e6b8a96` |
+
 ### Animation de démarrage modded-cycles
 
 `tweaks/model-cycles_OS1.13/43-boot-anim.json` est produit par `tools/gen_boot_anim.py` : le corps de la tâche d'animation de
@@ -322,7 +350,7 @@ python3 tools/build.py -i firmware/model-cycles_OS1.13.syx -t chord-keys \
 | `chord-keys` | `901675f5b8291f3b91d134208236e83431d6a079c73c2d5f1e4e54ebc334321f` |
 | `6ch-usbup,chord-keys` | `d6e43f0ca6a8df953df7a12da7458c70552f1b3a8de1bb39213f0c52168f0352` |
 | `6ch-usbup,arp,trig-hold,tempo-max,boot-anim,chord-keys` | `0922d3967c6d29ea86c14ffe41a5555cfb5346ecffb6298fe84c8ba3e3c51c43` |
-| `macro,chord-keys` | `80a12bae5cbd3a541d3e093223fe5305684193063e2d3be8cee9d1858e805133` |
+| `macro,chord-keys` | `5acc062be3c532f94e13615c7da89f3e1a60eab8520a9ee1e89d2113669505e9` |
 | `6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,chord-keys,syntakt-sd-cp-toy-bits-swarm` | `569e6bb39b628ebbd8a8f1ef64e43f0097f4c3d4bb8430974f01dab6d82ca110` |
 
 La preuve exécute les touches, pads, menus, sauvegardes et calculs CHORD du véritable OS ; 14 000 accords
@@ -339,7 +367,8 @@ du degré s'applique à la relecture, sans enregistrer une extension différente
 [pichenettes/eurorack](https://github.com/pichenettes/eurorack) au commit `08460a6`, stmlib `e3bd7c9`) compilé tel quel
 avec la passerelle `tools/machines/macro/macro.cc`, en charge utile rangée après l'image et reconstituée au démarrage à
 `0x43000000` (`0x46700000` avec Model-TG), avec la mécanique des machines ajoutées des moteurs du Syntakt
-([note 43](notes/43-machine-macro.md)). Le générateur a besoin du clone d'eurorack (sous `vendor/`, ignoré par git) et de
+([note 43](notes/43-machine-macro.md)) ; 13 modèles rendus à 48 kHz et le lo-fi RATE/BITS sur FINE
+([note 55](notes/55-macro-allegee-et-lofi.md)). Le générateur a besoin du clone d'eurorack (sous `vendor/`, ignoré par git) et de
 `m68k-linux-gnu-g++` (les JSON versionnés viennent du GCC 13.3 d'Ubuntu 24.04 : un autre GCC donne d'autres octets) ; la
 preuve, de `g++` pour Braids compilé pour l'ordinateur, la référence :
 ```sh
@@ -348,24 +377,25 @@ git -C vendor/eurorack checkout 08460a69a7e1f7a81c5a2abcc7189c9a6b7208d4
 git -C vendor/eurorack submodule update --init stmlib
 python3 tools/gen_macro.py --cycles model-cycles_OS1.13.syx --eurorack vendor/eurorack [--check]
 python3 tools/emu/test_macro.py --cycles model-cycles_OS1.13.syx --eurorack vendor/eurorack [--quick] \
-    [--with 6ch-usbup,model-tg-st,trig-hold,arp,tempo-max,boot-anim]
+    [--with 6ch-usbup,model-tg-st,sample-preview-st,trig-hold,arp,tempo-max,boot-anim]
+python3 tools/emu/test_macro.py --cycles model-cycles_OS1.13.syx --eurorack vendor/eurorack --spectres   # notes/55 §2
 ```
 Avec les moteurs du Syntakt : les tweaks combinés de la section suivante. Incompatible avec SD VINTAGE (même mécanique,
 même place).
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `macro` | `beb70b58001c12da348427b5f46f33567a6d6c2178cf7f4b7902741757e83e33` |
-| `6ch-usbup,macro` | `32932ae6eca06406f1c954368dc3465cf83e1026128b39ebfc7e746e9e01023f` |
-| `model-tg-st,macro-tg` | `edd7c9957f405e7df260c83003a476218839ee7406c3c9b39aecb379c21c4f18` |
-| `6ch-usbup,model-tg-st,macro-tg,trig-hold,arp,tempo-max,boot-anim` | `a72b5f9ae97ea0c0f405954dc1e60f6162861a7aded3fe809d3e50dfdd0e529b` |
+| `macro` | `f39223c286166b1d018d215b36e3fbd3dedaba9ed05681a2784c407c92f6d7c6` |
+| `6ch-usbup,macro` | `bf83bbf3c61495114e427dd70f46fb84270617476afd5309456adb4c9fe21bc0` |
+| `model-tg-st,macro-tg` | `f710475fbfb15caa261c81a3a13e99bc21385caab8adc3d93595b8ab56dd4ebe` |
+| `6ch-usbup,model-tg-st,macro-tg,trig-hold,arp,tempo-max,boot-anim` | `b1295ad6789430649dc190654e6483c26d9fb9c305bf0d328c669aceebdc7bb1` |
 
 ### MACRO avec les moteurs du Syntakt
 
 `tweaks/model-cycles_OS1.13/24-syntakt-<moteurs>-macro.json` et `31-syntakt-tg-<moteurs>-macro.json` (avec Model-TG,
 par-dessus `model-tg-st`) sont produits par `tools/gen_macro_syntakt.py` : les moteurs exactement comme dans leur tweak
 (passerelle reprise octet pour octet, pas recompilée), MACRO en dernière machine, après eux ; la charge utile commune
-(471 792 o) est rangée compressée et décompressée au démarrage ([note 50](notes/50-macro-avec-moteurs-syntakt.md)).
+(476 128 o) est rangée compressée et décompressée au démarrage ([note 50](notes/50-macro-avec-moteurs-syntakt.md)).
 Mêmes besoins que les deux mods (fichier Syntakt, clone d'eurorack, `m68k-linux-gnu-g++` 13.3) :
 ```sh
 python3 tools/gen_macro_syntakt.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \
@@ -376,12 +406,12 @@ python3 tools/emu/test_macro_syntakt.py --cycles model-cycles_OS1.13.syx --synta
 
 | `-t` (avec `--syntakt Syntakt_OS1.42.syx`) | MAIN OS patché (SHA-256) |
 |---|---|
-| `syntakt-sd-macro` | `5c096030a7035c766d0119e5f8053214e299c7dac9d28db8c6aa9b41df465f45` |
-| `syntakt-sd-cp-toy-bits-swarm-macro` | `f8be2f118bfb7f7b3033a9e6fa2e3ce9b146e428cf8a815f98d710dc1987b76b` |
-| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `126e5108aa6b3a7a8578a3a0e2d9453d47571bbe19797875bce433473dc53ea3` |
-| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro` | `9c855c34dbe8194bda308a847f4a259523a8542b9753d11fd1afc335217c16d7` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `7a222b2dca6907ecc15365302387ffc59f6172724ae135f108c76e2983b8777e` |
-| `6ch-usbup,model-tg-st,sample-preview-st,syntakt-tg-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `fb7d5aa657c45a2121e25b75d9d770cbb73c5272be410d4f48e2d9a22dd2f06c` |
+| `syntakt-sd-macro` | `db0cf81eb99790a7da888cd220386dd93b4ad9f5d88495b4948d22e1e791d1f3` |
+| `syntakt-sd-cp-toy-bits-swarm-macro` | `10f4e481090ec12bdb73760f89cc307f9fc755060758173c24de15820217cb9f` |
+| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `89370adafa0491712dc2d710d85a6d3bf6b60d19f6a0702ac950bde24e387b32` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro` | `76409e8cf573361b96acfad732d26c3c85430c04b02bca9ddd65a722b6be0f5d` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `29b8a65099b27dcb1c0d2f1a10fbcc0044a9cb9acf552e4e3af3b36a31f27402` |
+| `6ch-usbup,model-tg-st,sample-preview-st,syntakt-tg-sd-cp-toy-bits-swarm-macro,trig-hold,arp,tempo-max,boot-anim` | `224cf1584265de8a720072465e3e973430e653617b4fdca0e8cc8b83cd7bd89f` |
 
 ### Navigateur sur plusieurs lignes
 
@@ -501,15 +531,15 @@ python3 tools/emu/test_track_filter.py --cycles model-cycles_OS1.13.syx [--quick
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `track-filter` | `f5db01334779499fc0932cfdc4a23c899319d333fed98fc5169972080b662967` |
-| `6ch-usbup,track-filter` | `340fb353bacb25fc2923f836b7d685a704c710e43988258cdc2d21f42b997016` |
-| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,track-filter` | `5493f878652f5050a75ed0aab4aba9b19671764455943c5dd525484465c3f5ac` |
-| `macro,track-filter` | `fd3cb1440d5123d7b8a227024064fdce09e1a70ac12d3587ff6a0930dd87a19c` |
-| `model-tg,track-filter-tg` | `078d47030958f2346fa6701dd28357a5ffc7c3c47dc88f1dbbb6104c5788afd7` |
-| `6ch-usbup,model-tg,sample-preview,track-filter-tg` | `0a0f245f3be404617d62d4815ce0d62f00d1f1f8df48bd662d681ec658bd8a5a` |
-| `model-tg-st,macro-tg,track-filter-tg-st` | `e747f6a36753064d59864c7d4d4541b815e9103272c6ae0ceb94096685af64e7` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,sample-preview-st,track-filter-tg-st` | `367edc6be71a902ff3c80178a7c8fe6e04a5272b54816f5123d440a6c65c11db` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro,sample-preview-st,track-filter-tg-st` | `b3be6bf334ad27f4e097e062dbd02188d317b9c7d12fd848007380393ff7f024` |
+| `track-filter` | `a4b782e30ab8787588337a5b7fad3a49ae04e9991e39948c310651298925c339` |
+| `6ch-usbup,track-filter` | `6c1efc7852909c7175f792892ec0f8bd35923f7ab64b26ee9d60b214b6615d96` |
+| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,track-filter` | `83a344a4fd64b7e3b6f98e58149874390193306871294a704f4a6f5c8fa6ad8c` |
+| `macro,track-filter` | `af02e6411df4ab6c53bf98afcdcc817d3626ad123ec66ade3061fd9fe9f2cce7` |
+| `model-tg,track-filter-tg` | `adcc9e26cfa4c488849483173ef4e1dafd29985aae1c4fe0e65c85997a0b125d` |
+| `6ch-usbup,model-tg,sample-preview,track-filter-tg` | `d0e6080419f9bd70672e3ce48b2a87b71c49fc058d40507aff1e73a47ea1d758` |
+| `model-tg-st,macro-tg,track-filter-tg-st` | `4f5b284d7905532adfc1791d9f90bad8cce8161e9cfc8287f1e9e8afe0226e1d` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,sample-preview-st,track-filter-tg-st` | `63b6166584eb0554d816fa7903a8093466c28638240727947d80315b2346bf8c` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro,sample-preview-st,track-filter-tg-st` | `218a55eda822625c66836357d3418bcf1f3a0724deae657526c200714953817a` |
 
 ### Écoute d'un pas en pause
 

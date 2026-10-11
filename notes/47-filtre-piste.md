@@ -32,7 +32,7 @@ forte en haut de course et enveloppe qui arrive en douceur près du centre, apr�
 - **Au centre, la piste n'est pas touchée, bit pour bit** (prouvé sur le vrai code, avec les autres mods).
 - Corrige au passage la sauvegarde des **p-locks des paramètres k ≥ 23** dans le pattern : l'OS d'origine les rangeait
   sur LFO Speed, LFO Multiplier… ou les perdait (§4.3).
-- Place : 3 001 o de code, tables et état dans **quinze masques de sprites 35×35** libérés (§6). Coût : §9.
+- Place : 3 029 o de code, tables et état dans **quinze masques de sprites 35×35** libérés (§6). Coût : §9.
 - **Avec Model-TG** (étape 2, §11) : le filtre de piste de Model-TG est retiré, ce filtre prend sa place (versions
   `48-track-filter-tg*.json`), côté stéréo du Sampler compris. Expérimental avec Model-TG.
 
@@ -221,7 +221,7 @@ On garde celui de `0x4014a660` ; `tools/sprites.py` les déclare (`SHARED_35`) e
 | Section | Masque | Octets | Contenu |
 |---|---|---|---|
 | `.tf_post` | `0x4014ab5c` | 152 | accroche H3, boucle des 6 pistes |
-| `.tf_track` | `0x4014b85c` | 148 | enveloppe, clé des coefficients |
+| `.tf_track` | `0x4014b85c` | 178 | enveloppe, son arrivée près du centre, clé des coefficients |
 | `.tf_kern` | `0x4014d74c` | 164 | départ, repos, boucle des 32 trames |
 | `.tf_coef1` | `0x401542f8` | 162 | index, G, résonance, K ; `tf_interp` |
 | `.tf_coef2` | `0x401548b4` | 206 | réciproque, b1 b2 c2 a3, gx hl hb |
@@ -229,7 +229,7 @@ On garde celui de `0x4014a660` ; `tools/sprites.py` les déclare (`SHARED_35`) e
 | `.tf_kst` | `0x40160b6c` | 216 | état et coefficients, 6 × 36 o |
 | `.tf_cst` | `0x40160e6c` | 256 | commande, 6 × 20 o, `tf_trig`, `tf_ptab` |
 | `.tf_knob` | `0x401625bc` | 136 | `tf_knob`, `tf_objs` |
-| `.tf_fmt` | `0x40163fb8` | 149 | `tf_fmt_cut`, chaînes |
+| `.tf_fmt` | `0x40163fb8` | 147 | `tf_fmt_cut`, chaînes |
 | `.tf_save` | `0x4016616c` | 164 | `tf_save1/2`, `tf_save_post` |
 | `.tf_load` | `0x40166760` | 208 | `tf_load`, `tf_conv`, `tf_boot` |
 
@@ -264,8 +264,9 @@ TONE CHORD, trois séries de notes aux blocs 1, 100 et 180) :
 | Six réglages fixes (LP 332 Hz, HP 332 Hz, LP près de 20 kHz, HP 41 Hz enveloppe −32, LP 116 Hz résonance 112 enveloppe +63, HP 5 Hz) | sortie comparée à un modèle flottant (SVF en double, mêmes lois) : écart max −111 à −167 dB sous la crête ; KICK et SNARE nettement changés |
 | Balayage à chaque bloc, de LP à HP en passant par le centre | écart au modèle −110 à −120 dB sous la crête |
 | Enveloppe, Decay 0 à 127 | relancée à chaque note (bit t de a3+16), τ de 5 ms à 10 s, écart à la loi < 10⁻⁷, décalage = quantité × enveloppe exactement |
-| Résonance au maximum (Q 50) : signal plein échelle (carré, sinus à fc, bruit, impulsions, balayage, échelon) après Volume + Dist 108, puis silence ; LP 947 Hz et HP 2,7 kHz | contrat tenu, sortie saturée à 1 FS sans repli (LP : aucun saut de plus de 1,5 FS d'une trame à l'autre) ; après le signal, décroissance régulière à la vitesse de la loi (51,7 et 147,4 dB par 100 ms, à 3 % près) jusqu'à zéro exactement |
-| Lois | 170 réglages, 5 Hz à 20 kHz des deux côtés, Q 0,5 à 50 : fréquence à 0,01 cent près, Q à 0,08 % près (tirés des coefficients calculés par le code) |
+| Résonance au maximum (Q 800 et 953 depuis le §12) : signal plein échelle (carré, sinus à fc, bruit, impulsions, balayage, échelon) après Volume + Dist 108, puis silence ; LP 947 Hz et HP 2,7 kHz | contrat tenu, sortie saturée à 1 FS sans repli (LP : aucun saut de plus de 1,5 FS d'une trame à l'autre) ; après le signal, décroissance régulière à la vitesse de la loi (3,23 et 7,60 dB par 100 ms, loi 3,23 et 7,74, à 3 % près) jusqu'à zéro exactement, en 4,4 et 1,8 s au plus |
+| Lois | 170 réglages, 5 Hz à 20 kHz des deux côtés, Q 0,5 à 1 000 : fréquence à 0,01 cent près, Q à 0,39 % près (tirés des coefficients calculés par le code) |
+| Enveloppe près du centre (§12) | H1, H2, H4, H8, L2, L6, Filter Env au maximum, 40 blocs : décalage = quantité × enveloppe × (\|d\| / 0x800)², au pas d'index près |
 | Potards | MACHINES tenu : SWEEP, CONTOUR, COLOR, SHAPE → paramètres 1 à 4 ; les 8 autres potards et tout sans MACHINES : la recherche d'origine, mêmes arguments |
 | Affichage (vrai constructeur, vrai `sprintf`) | les 128 pas : `L64` … `L1`, `OFF` au centre, `H1` … `H63`, trois caractères au plus ; Reso et Decay 0..127 ; Env −64..OFF..+63 ; l'image « Error » n'est plus dessinée |
 | Tables construites au démarrage | descripteurs 1 à 4, k 28..31 sur les 6 machines, CC 74/71 sur les pistes 1 à 6, NRPN 1:20 et 1:21, rien d'autre ; un son neuf : Cutoff OFF, Reso 0, Env OFF, Decay 64, le reste comme sans le filtre |
@@ -379,7 +380,7 @@ avec Model-TG s'applique (`with_exp`).
   le seizième) filtre ce côté avec les mêmes coefficients que la piste et son propre état (`tf_sst`, 16 o par piste :
   ic1, ic2, actif). À la première utilisation, l'état démarre comme celui de la piste ; quand le côté s'arrête ou que
   le filtre est à OFF, l'état est oublié.
-- **Place** : 3 209 o dans seize masques 35×35 (le seizième, `0x40167c50`, était une réserve, §6) ; 42 écritures.
+- **Place** : 3 239 o dans seize masques 35×35 (le seizième, `0x40167c50`, était une réserve, §6) ; 42 écritures.
 - **Slide trigs** : ceux de Model-TG font glisser les mots 1 à 25 (`SLD_ELIG`) ; nos paramètres (k 28..31) sautent à
   la valeur du slide trig, sans glisser.
 
@@ -433,8 +434,8 @@ filtre entre OFF et H1/H2. Un LFO ou la vélocité vers FREQ feraient le même e
 
 **Changement** : le décalage de l'enveloppe est multiplié par f² (f = |C − 0x4000| / 0x800, borné à 1) : elle arrive
 sur les 8 premiers pas de chaque côté (1,6 % à H1, 6 % à H2, 25 % à H4, 56 % à H6, entière à L8 / H8), sans changer
-la loi de la fréquence ni le fondu du premier pas. Dix instructions de plus dans `tf_track` (178 o, masque
-`0x4014b85c`). Ce qui est perdu : une enveloppe entière depuis H1 à H7 (5,7 à 12 Hz, inaudibles) ou depuis L1 à L7
+la loi de la fréquence ni le fondu du premier pas. `tf_track` (178 o, masque `0x4014b85c`) fait quatre ou cinq
+instructions de plus par piste filtrée et par bloc, onze sur les 8 premiers pas. Ce qui est perdu : une enveloppe entière depuis H1 à H7 (5,7 à 12 Hz, inaudibles) ou depuis L1 à L7
 (19 à 9 kHz) ; une enveloppe qui part du tout en bas ou du tout en haut se règle à H8 ou L8.
 
 ### 12.2 La résonance `[FAIT]`
@@ -465,4 +466,6 @@ un coude) reste possible ici si cela ne siffle toujours pas assez, au prix d'un 
   enveloppe × f², au pas d'index près.
 - `law_tests` : 170 réglages, Q 0,5 à 1 000 : fréquence à 0,01 cent près, Q à 0,39 % près.
 - `ringdown_tests` : résonance au maximum sur un signal plein échelle, la fenêtre d'observation suit la loi (jusqu'à
-  144 dB de décroissance) : RINGDOWN_RESULT.
+  144 dB de décroissance) : LP 947 Hz (Q 800) et HP 2,7 kHz (Q 953), sortie saturée à 1 FS sans repli, puis
+  décroissance à 3,23 et 7,60 dB par 100 ms (loi 3,23 et 7,74) jusqu'à zéro exactement, en 4,4 et 1,8 s au plus :
+  pas d'oscillation entretenue, même à Q 950.
