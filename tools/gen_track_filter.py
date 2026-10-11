@@ -97,20 +97,27 @@ def cutoff_hz(i):
     return min(5.0 * 4400 ** (i / 16384), 20000.0)
 
 
-Q_MIN, Q_MAX = 0.5, 50.0
+Q_MIN, Q_MAX = 0.5, 1000.0
+Q_CURVE = 1.5                                           # exposant de la course de Filter Reso (1 : exponentielle)
+RING_MAX = 2.0                                          # s : au plus, la résonance sonne 2 s (60 dB) après un coup
 
 
 def q_of(r):
-    """Q pour Filter Reso r (0..32512) : exponentielle de Q_MIN à Q_MAX, environ 10 dB de bosse de plus par quart de
-    tour. Plus forte que celle du Model:Samples (0,5 à 22, la première version), trop discrète à l'essai de Maxime
-    (10/10/2026, notes/47 §5.1)."""
-    return Q_MIN * (Q_MAX / Q_MIN) ** (r / 32512)
+    """Q pour Filter Reso r (0..32512) : de Q_MIN à Q_MAX, doucement sur la première moitié, puis la résonance siffle
+    sur le dernier quart (à 1 kHz : Q 7 à 64, 67 à 96, 870 à 127). Q 0,5 à 50 (exponentielle, deuxième version)
+    restait trop discrète à l'essai de Maxime (11/10/2026, notes/47 §12) : à Q 50, un coup ne sonne que 0,1 s à
+    1 kHz."""
+    return Q_MIN * (Q_MAX / Q_MIN) ** ((r / 32512) ** Q_CURVE)
 
 
 def reso_scale(i):
-    """Part de la résonance gardée : rien sous 10 Hz (pas de bosse subsonique), tout à 30 Hz, moins vers 20 kHz."""
+    """Part de la résonance gardée : rien sous 10 Hz (pas de bosse subsonique), tout à 30 Hz, moins vers 20 kHz ;
+    et bornée pour qu'un coup ne sonne pas plus de RING_MAX (60 dB en ln(1000) Q / (pi fc)) : Q au plus 0,9 fc,
+    37 à 100 Hz, 155 à 300 Hz, Q_MAX au-dessus de 1,1 kHz."""
     fc = cutoff_hz(i)
-    return (1 - (fc / 24000) ** 2.5) * min(max((fc - 10) / 20, 0.0), 1.0)
+    s = (1 - (fc / 24000) ** 2.5) * min(max((fc - 10) / 20, 0.0), 1.0)
+    qcap = math.pi * fc * RING_MAX / math.log(1000)
+    return min(s, math.log(max(qcap, Q_MIN) / Q_MIN) / math.log(Q_MAX / Q_MIN))
 
 
 def decay_tau(d):

@@ -44,6 +44,7 @@
 	.equ	C_ON, 8
 	.equ	C_ENV, 12
 	.equ	C_MODE, 16
+	.equ	ENV_FADE, 0x800			/* 8 pas de chaque côté du centre (lsl #20 : Q31) */
 
 	.globl	tf_post, tf_track, tf_kern, tf_coef, tf_coef2, tf_interp
 	.globl	tf_kst, tf_cst, tf_trig, tf_gtab, tf_ntab, tf_ktab, tf_dtab
@@ -136,7 +137,18 @@ tf_track:
 	bne.s	6f
 	clr.l	C_ON(%a6)			/* centre : la piste reste telle quelle, l'état est oublié */
 	rts
-6:	mvs.w	OFF_R(%a5), %d1
+6:	move.l	%d2, %d1			/* l'enveloppe arrive sur les 8 premiers pas : quantité x (|d| / 0x800)² */
+	bpl.s	61f
+	neg.l	%d1
+61:	cmpi.l	#ENV_FADE, %d1
+	bcc.s	62f
+	moveq	#20, %d3
+	lsl.l	%d3, %d1			/* f = |d| / 0x800, Q31 */
+	mac.l	%d1, %d1, %acc0
+	movclr.l %acc0, %d1
+	mac.l	%d1, %d6, %acc0
+	movclr.l %acc0, %d6
+62:	mvs.w	OFF_R(%a5), %d1
 	swap	%d0
 	move.w	%d1, %d0			/* clé = C << 16 | R */
 	cmp.l	(%a6), %d0

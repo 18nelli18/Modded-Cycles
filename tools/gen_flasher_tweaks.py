@@ -42,7 +42,8 @@ OUT = ROOT / "docs" / "flasher" / "tweaks.js"
 # Les moteurs s'ajoutent en machines supplementaires : sdvintage-exact (a la place de SNARE) reste dans build.py.
 # status : "tested" (flashe sur un vrai Model:Cycles) ou "experimental".
 # credit : auteur du travail d'origine, affiche sur la carte (voir aussi les credits de la page) ; sans « repo »
-# (un mod recu sans depot public), la carte dit « d'apres un mod de … », sans lien.
+# (un mod recu sans depot public), la carte dit « d'apres un mod de … », sans lien. kind « idea » : « idee de … »,
+# pour l'auteur de l'idee, sans code repris de lui.
 # cat : rubrique du flasher, une de CATS (meme liste que CATS dans docs/flasher/app.js, plus « other »). Sans cat,
 # la carte s'affiche a la fin, dans « Autres mods » (avertissement ici). L'ordre de FEATURES reste l'ordre du build
 # (cles de REF_MAINOS), quel que soit l'ordre d'affichage par rubriques.
@@ -282,8 +283,9 @@ FEATURES = [
         "label": "Filtre par piste (LP / OFF / HP)",
         "desc": "MACHINES tenu + SWEEP : un filtre par piste, passe-bas a gauche, rien au centre, passe-haut a droite. "
                 "CONTOUR : resonance ; COLOR et SHAPE : enveloppe du filtre (quantite, decay). P-locks, LFO, CC 74 / 71.",
-        "status": "tested",
-        "credit": None,
+        "status": "experimental",       # resonance et enveloppe pres du centre revues (notes/47 §12), a reessayer
+        # idee : le filtre DJ d'un seul potard de la machine Acid de Kevin Shallvari (PR #65), notes/47
+        "credit": {"kind": "idea", "who": "Kevin Shallvari", "repo": "Kevin-Shallvari"},
         "variants": [
             {"file": "48-track-filter", "label": None},
         ],

@@ -2990,7 +2990,7 @@ window.MC_TWEAKS = {
     "Quatre paramètres de toutes les machines (descripteurs 1 à 4, k 28 à 31) : p-locks, LFO, vélocité, CC 74 et 71 ; sauvegardés avec le son (emplacements 30, 31, 18) et le pattern.",
     "Corrige au passage les p-locks des paramètres k >= 23 dans le pattern (ils revenaient sur LFO Speed).",
     "Au centre, la piste n'est pas touchée (bit pour bit) ; environ 640 instructions par bloc et par piste filtrée (0,6 % d'un bloc).",
-    "Code, tables et état dans quinze masques de sprites 35x35 libérés (tools/sprites.py) : 2999 o. Généré par tools/gen_track_filter.py, notes/47."
+    "Code, tables et état dans quinze masques de sprites 35x35 libérés (tools/sprites.py) : 3029 o. Généré par tools/gen_track_filter.py, notes/47."
    ],
    "device": "Model:Cycles",
    "os": "1.13",
@@ -3147,8 +3147,8 @@ window.MC_TWEAKS = {
     },
     {
      "off": 1356892,
-     "old": "ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffff",
-     "new": "282e000c43f940160ee7081100006708283c7fffffff602a4a84672a716d003e6a02700043f94016086472094eb940154374a8000800a1c40c8400010000640278002d44000c7c004a846710716d003c048000004000a8000800a1c6716d00382400048200004000660642ae00084e75736d003a48403001b0966606bcae0004670c2c802d4600044eb9401542f84ef94014d74c"
+     "old": "ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffff",
+     "new": "282e000c43f940160ee7081100006708283c7fffffff602a4a84672a716d003e6a02700043f94016086472094eb940154374a8000800a1c40c8400010000640278002d44000c7c004a846710716d003c048000004000a8000800a1c6716d00382400048200004000660642ae00084e7522026a0244810c810000080064107614e7a9a2010800a1c1ac010800a1c6736d003a48403001b0966606bcae0004670c2c802d4600044eb9401542f84ef94014d74c"
     },
     {
      "off": 1364812,
@@ -3173,12 +3173,12 @@ window.MC_TWEAKS = {
     {
      "off": 1437964,
      "old": "ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffff",
-     "new": "000000000000000000000000000000000000000000000000064333ec101a8c8a1b52c34f281d44bc36b2697447526e785a46901e6fe24caf7fffff7c7fffff487fffff017ffffe9f7ffffe167ffffd577ffffc4f7ffffae17ffff8e57ffff6237ffff2507fffed017fffe5a37fffdb6b7fffcd3b7fffb98b7fff9e387fff784d7fff43ad7ffefaa67ffe954d7ffe08a67ffd45757ffc36937ffabea57ff8b4f07ff5e0ea7ff1f4217fec81b47fe4f28a7fda74f27fcbe5ea7fb7b1997f9ba7887f74bdea7f3ebd537ef3cbc37e8bca4f7dfb73e57d3324a37c1d28077a9b5ece7883fb68759cfa5a7195d8f76bfedc0f643cf4895978f21c4a88320f35cc432a2edb1d67"
+     "new": "000000000000000000000000000000000000000000000000064333ec101a8c8a1b52c34f281d44bc36b269743d7644983fab60f741e07d55441599b4464ab613487fd2724ab4eed04cea0b2f4f1f278e515443ed5389604b55be7caa57f399095a28b5685c5dd1c65e92ee2560c80a8462fd26e36532434167675fa0699c7bff6bd1985e6e06b4bc703bd11b7270ed7a74a609d976db2637791042967b455ef57d7a7b547faf97b27fec81b47fe4f28a7fda74f27fcbe5ea7fb7b1997f9ba7887f74bdea7f3ebd537ef3cbc37e8bca4f7dfb73e57d3324a37c1d28077a9b5ece7883fb68759cfa5a7195d8f76bfedc0f643cf4895978f21c4a88320f35cc432a2edb1d67"
     },
     {
      "off": 1441276,
      "old": "ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffff",
-     "new": "7fffffff770bb6796eb7c85c66f8fde65fc4e83e5911d35c52d6b9014d0b348b47a777a442a43fc53dfacc6739a4d5f1359c853d31dc6bbf2e5f7c322b2103c7281ca3d5254e4bf522b234872044d99c1e02f63a1be97ff419f5a2d01824bd7b16745dbc14e23d27136c3e11121068b210cce87f0fa009b50e88370d0d83f79b0c91eccd0bb0d09d0adf73ce0a1cbc5e0967a40208bf36ca082291d70790e2270709637d068b5f5506162bef05a92b6d0543cafb04e5820a048dd19a043c438b03f06a0303a9ded5036842fc032b3e1802f27df602bdb625028c9f8c025ef80d02348226020d04a801e84a5f01c621d301a65d000188d11c016d565a0153c7b6013c02c3"
+     "new": "7fffffff7e1776ba7aacf78e7663a5277181ae446c36288c66a4cf6560ea3a1f5b1dd59a5552fda54f99af6a49ff074b448da1ab3f4dea623a466115357bd5ce30f19fbb2ca9cf1928a55af324e44af92165ddbf1e28ab731b2ac53e1869d16115e324421393d67b1178d8200f8f016c0dd320f70c4207b50ad892e60993b42c087077f5076c0a770683bb4d05b5000804fd75bc045ae1bb03cb31a3034c7ade02dcf9a3027b0fa50225427401da39b10198bd1b015fb286012e1bcc010314bf00ddd11b00bd9a9500a1ceec0089de20007548b900639e2a00547b5600478928003c7b4d00330f0a002b0a26002439f3001e726b00198d68001569e90011eb74000ef97e"
     },
     {
      "off": 1442916,
@@ -3228,7 +3228,7 @@ window.MC_TWEAKS = {
     "Quatre paramètres de toutes les machines (descripteurs 1 à 4, k 28 à 31) : p-locks, LFO, vélocité, CC 74 et 71 ; sauvegardés avec le son (emplacements 30, 31, 18) et le pattern.",
     "Corrige au passage les p-locks des paramètres k >= 23 dans le pattern (ils revenaient sur LFO Speed).",
     "Au centre, la piste n'est pas touchée (bit pour bit) ; environ 640 instructions par bloc et par piste filtrée (0,6 % d'un bloc).",
-    "Code, tables et état dans seize masques de sprites 35x35 libérés (tools/sprites.py) : 3209 o. Généré par tools/gen_track_filter.py, notes/47.",
+    "Code, tables et état dans seize masques de sprites 35x35 libérés (tools/sprites.py) : 3239 o. Généré par tools/gen_track_filter.py, notes/47.",
     "Version par-dessus model-tg (notes/47 §11), qui n'a plus de filtre par piste (MC_PATCHES de tools/gen_model_tg.py) : nos accroches de sauvegarde et de chargement",
     "d'un son passent par les siennes (Attack et nos réglages, chacun ses emplacements ; l'emplacement 27 garde la destination du LFO de l'un ou de l'autre),",
     "et le côté stéréo des pistes du Sampler est filtré aussi, avec son propre état (tf_side)."
@@ -3274,7 +3274,7 @@ window.MC_TWEAKS = {
     "Quatre paramètres de toutes les machines (descripteurs 1 à 4, k 28 à 31) : p-locks, LFO, vélocité, CC 74 et 71 ; sauvegardés avec le son (emplacements 30, 31, 18) et le pattern.",
     "Corrige au passage les p-locks des paramètres k >= 23 dans le pattern (ils revenaient sur LFO Speed).",
     "Au centre, la piste n'est pas touchée (bit pour bit) ; environ 640 instructions par bloc et par piste filtrée (0,6 % d'un bloc).",
-    "Code, tables et état dans seize masques de sprites 35x35 libérés (tools/sprites.py) : 3209 o. Généré par tools/gen_track_filter.py, notes/47.",
+    "Code, tables et état dans seize masques de sprites 35x35 libérés (tools/sprites.py) : 3239 o. Généré par tools/gen_track_filter.py, notes/47.",
     "Version par-dessus model-tg-st (notes/47 §11), qui n'a plus de filtre par piste (MC_PATCHES de tools/gen_model_tg.py) : nos accroches de sauvegarde et de chargement",
     "d'un son passent par les siennes (Attack et nos réglages, chacun ses emplacements ; l'emplacement 27 garde la destination du LFO de l'un ou de l'autre),",
     "et le côté stéréo des pistes du Sampler est filtré aussi, avec son propre état (tf_side)."
@@ -98147,8 +98147,12 @@ window.MC_TWEAKS = {
    "id": "track-filter",
    "label": "Filtre par piste (LP / OFF / HP)",
    "desc": "MACHINES tenu + SWEEP : un filtre par piste, passe-bas a gauche, rien au centre, passe-haut a droite. CONTOUR : resonance ; COLOR et SHAPE : enveloppe du filtre (quantite, decay). P-locks, LFO, CC 74 / 71.",
-   "status": "tested",
-   "credit": null,
+   "status": "experimental",
+   "credit": {
+    "kind": "idea",
+    "who": "Kevin Shallvari",
+    "repo": "Kevin-Shallvari"
+   },
    "cat": "sound",
    "variants": [
     {
@@ -99572,8 +99576,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1356892,
-    "old": "ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffff",
-    "new": "282e000c43f940160ee7081100006708283c7fffffff602a4a84672a716d003e6a02700043f94016086472094eb940154374a8000800a1c40c8400010000640278002d44000c7c004a846710716d003c048000004000a8000800a1c6716d00382400048200004000660642ae00084e75736d003a48403001b0966606bcae0004670c2c802d4600044eb9401542f84ef94014d74c"
+    "old": "ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffff",
+    "new": "282e000c43f940160ee7081100006708283c7fffffff602a4a84672a716d003e6a02700043f94016086472094eb940154374a8000800a1c40c8400010000640278002d44000c7c004a846710716d003c048000004000a8000800a1c6716d00382400048200004000660642ae00084e7522026a0244810c810000080064107614e7a9a2010800a1c1ac010800a1c6736d003a48403001b0966606bcae0004670c2c802d4600044eb9401542f84ef94014d74c"
    },
    {
     "off": 1364812,
@@ -99598,12 +99602,12 @@ window.MC_TWEAKS = {
    {
     "off": 1437964,
     "old": "ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffff",
-    "new": "000000000000000000000000000000000000000000000000064333ec101a8c8a1b52c34f281d44bc36b2697447526e785a46901e6fe24caf7fffff7c7fffff487fffff017ffffe9f7ffffe167ffffd577ffffc4f7ffffae17ffff8e57ffff6237ffff2507fffed017fffe5a37fffdb6b7fffcd3b7fffb98b7fff9e387fff784d7fff43ad7ffefaa67ffe954d7ffe08a67ffd45757ffc36937ffabea57ff8b4f07ff5e0ea7ff1f4217fec81b47fe4f28a7fda74f27fcbe5ea7fb7b1997f9ba7887f74bdea7f3ebd537ef3cbc37e8bca4f7dfb73e57d3324a37c1d28077a9b5ece7883fb68759cfa5a7195d8f76bfedc0f643cf4895978f21c4a88320f35cc432a2edb1d67"
+    "new": "000000000000000000000000000000000000000000000000064333ec101a8c8a1b52c34f281d44bc36b269743d7644983fab60f741e07d55441599b4464ab613487fd2724ab4eed04cea0b2f4f1f278e515443ed5389604b55be7caa57f399095a28b5685c5dd1c65e92ee2560c80a8462fd26e36532434167675fa0699c7bff6bd1985e6e06b4bc703bd11b7270ed7a74a609d976db2637791042967b455ef57d7a7b547faf97b27fec81b47fe4f28a7fda74f27fcbe5ea7fb7b1997f9ba7887f74bdea7f3ebd537ef3cbc37e8bca4f7dfb73e57d3324a37c1d28077a9b5ece7883fb68759cfa5a7195d8f76bfedc0f643cf4895978f21c4a88320f35cc432a2edb1d67"
    },
    {
     "off": 1441276,
     "old": "ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffff",
-    "new": "7fffffff770bb6796eb7c85c66f8fde65fc4e83e5911d35c52d6b9014d0b348b47a777a442a43fc53dfacc6739a4d5f1359c853d31dc6bbf2e5f7c322b2103c7281ca3d5254e4bf522b234872044d99c1e02f63a1be97ff419f5a2d01824bd7b16745dbc14e23d27136c3e11121068b210cce87f0fa009b50e88370d0d83f79b0c91eccd0bb0d09d0adf73ce0a1cbc5e0967a40208bf36ca082291d70790e2270709637d068b5f5506162bef05a92b6d0543cafb04e5820a048dd19a043c438b03f06a0303a9ded5036842fc032b3e1802f27df602bdb625028c9f8c025ef80d02348226020d04a801e84a5f01c621d301a65d000188d11c016d565a0153c7b6013c02c3"
+    "new": "7fffffff7e1776ba7aacf78e7663a5277181ae446c36288c66a4cf6560ea3a1f5b1dd59a5552fda54f99af6a49ff074b448da1ab3f4dea623a466115357bd5ce30f19fbb2ca9cf1928a55af324e44af92165ddbf1e28ab731b2ac53e1869d16115e324421393d67b1178d8200f8f016c0dd320f70c4207b50ad892e60993b42c087077f5076c0a770683bb4d05b5000804fd75bc045ae1bb03cb31a3034c7ade02dcf9a3027b0fa50225427401da39b10198bd1b015fb286012e1bcc010314bf00ddd11b00bd9a9500a1ceec0089de20007548b900639e2a00547b5600478928003c7b4d00330f0a002b0a26002439f3001e726b00198d68001569e90011eb74000ef97e"
    },
    {
     "off": 1442916,

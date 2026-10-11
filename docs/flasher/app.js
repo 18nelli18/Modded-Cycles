@@ -1150,6 +1150,7 @@ const T = {
     credit_based: "based on {repo} by {who}",
     credit_based_v: "based on {repo} by {who}",
     credit_mod: "based on a mod by {who}",
+    credit_idea: "idea by {who}",
     s2: "Load your official OS file",
     drop_title: "Drop model-cycles_OS1.13.syx here",
     drop_sub: "or click to choose it",
@@ -1402,6 +1403,7 @@ const T = {
     credit_based: "d'après {repo} de {who}",
     credit_based_v: "d'après {repo} d'{who}",
     credit_mod: "d'après un mod de {who}",
+    credit_idea: "idée de {who}",
     s2: "Déposez votre fichier d'OS officiel",
     drop_title: "Déposez model-cycles_OS1.13.syx ici",
     drop_sub: "ou cliquez pour le choisir",
@@ -1653,7 +1655,7 @@ const FEAT = {
     "track-filter": { label: "Per-track filter (LP / OFF / HP)",
       short: "Hold MACHINES and turn SWEEP: low-pass to the left, off in the centre, high-pass to the right.",
       desc: "Hold MACHINES and turn SWEEP: a filter on the track, low-pass to the left, off in the centre, high-pass to the right, like a DJ mixer, with the Model:Samples' range (5 Hz to 20 kHz). CONTOUR sets the resonance, COLOR and SHAPE a filter envelope (amount up or down, decay) restarted by each note. Four real parameters on every machine: p-locks, LFO, velocity, MIDI CC 74 and 71, saved with the sound and the pattern.",
-      note: "Goes with Model-TG, whose own track filter it replaces: it also filters the Sampler, in stereo, after the Sampler's own filter. With Model-TG it is still experimental (not yet tried on the machine). A sound opened on another firmware plays without its filter." },
+      note: "Goes with Model-TG, whose own track filter it replaces: it also filters the Sampler, in stereo, after the Sampler's own filter. Experimental again: the stronger resonance, which whistles at the top, and the envelope coming in gently near OFF are not yet tried on the machine, nor the Model-TG version. A sound opened on another firmware plays without its filter." },
   },
   fr: {
     usb6: { label: "Audio USB 6 canaux",
@@ -1730,7 +1732,7 @@ const FEAT = {
     "track-filter": { label: "Filtre par piste (LP / OFF / HP)",
       short: "MACHINES tenu + SWEEP : passe-bas à gauche, rien au centre, passe-haut à droite.",
       desc: "Maintenez MACHINES et tournez SWEEP : un filtre sur la piste, passe-bas à gauche, rien au centre, passe-haut à droite, comme sur une table de mixage DJ, avec la plage du Model:Samples (5 Hz à 20 kHz). CONTOUR règle la résonance, COLOR et SHAPE une enveloppe du filtre (quantité vers le haut ou le bas, decay) relancée à chaque note. Quatre vrais paramètres de toutes les machines : p-locks, LFO, vélocité, CC MIDI 74 et 71, enregistrés avec le son et le pattern.",
-      note: "Va avec Model-TG, dont il remplace le filtre de piste : il filtre aussi le Sampler, en stéréo, après le filtre propre au Sampler. Avec Model-TG, il est encore expérimental (pas encore essayé sur la machine). Un son ouvert sur un autre firmware joue sans son filtre." },
+      note: "Va avec Model-TG, dont il remplace le filtre de piste : il filtre aussi le Sampler, en stéréo, après le filtre propre au Sampler. De nouveau expérimental : la résonance plus forte, qui siffle en haut de course, et l'enveloppe qui arrive en douceur près de OFF ne sont pas encore essayées sur la machine, ni la version avec Model-TG. Un son ouvert sur un autre firmware joue sans son filtre." },
   },
 };
 
@@ -2324,12 +2326,13 @@ function wirePicker() {
 }
 
 // "by drumkilla" / "based on ms-multi-output by scottmetoyer", linked to the repository; a mod received without
-// a public repository: "based on a mod by djd_oz", no link.
+// a public repository: "based on a mod by djd_oz", no link; "idea by Kevin Shallvari": the idea, none of his code.
 // A link inside the card's <label> doesn't toggle the checkbox (interactive content).
 function creditHtml(c) {
-  if (!c.repo) return t(c.kind === "based" ? "credit_mod" : "credit_by", { who: esc(c.who) });
+  if (!c.repo) return t(c.kind === "based" ? "credit_mod" : c.kind === "idea" ? "credit_idea" : "credit_by", { who: esc(c.who) });
   const url = "https://github.com/" + c.repo;
   const link = (txt) => `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(txt)}</a>`;
+  if (c.kind === "idea") return t("credit_idea", { who: link(c.who) });
   return c.kind === "based"
     // "d'après eurorack d'Émilie Gillet": French elides "de" before a vowel
     ? t(/^[aeiouàâéèêëîïôùûœ]/i.test(c.who) ? "credit_based_v" : "credit_based",

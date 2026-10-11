@@ -8,12 +8,20 @@ celui-ci remplace. Tweak `48-track-filter.json`, généré par `tools/gen_track_
 `track_filter.ld`), preuve `tools/emu/test_track_filter.py`. Étude préalable (OS Cycles 1.13, Samples 1.13,
 Syntakt 1.42, Model-TG v1.1.0) dans `/mnt/project-files/filtre-piste/faisabilite.md`. Adresses : VA de l'OS 1.13.
 
+**Crédit.** Idée créditée à **Kevin Shallvari** ([Kevin-Shallvari](https://github.com/Kevin-Shallvari)), à la
+demande de Maxime (11/10/2026) : sa machine Acid (PR #65 de ce dépôt, 08/10/2026, non fusionnée) a le même filtre
+DJ sur un seul potard (passe-bas d'un côté, rien au centre, passe-haut de l'autre), avec une résonance qui peut
+auto-osciller. La demande sur Discord vient de Tom (05/10/2026), Simone y cite le filtre du Model:Samples. Aucun code
+de Kevin n'est repris ici : le filtre de ce mod est écrit pour ce projet (§5).
+
 ## En bref
 
-**Testé sur la machine (11/10/2026)**, après une correction de l'affichage et de la résonance (§10).
+Testé sur la machine (11/10/2026) dans sa deuxième version (§10). **De nouveau expérimental** : résonance bien plus
+forte en haut de course et enveloppe qui arrive en douceur près du centre, après l'essai de Maxime avec Model-TG
+(§12).
 
 - **MACHINES tenu + SWEEP = Filter Cutoff** : L64 … L1, **OFF**, H1 … H63. Passe-bas à gauche (5 Hz à 20 kHz),
-  passe-haut à droite (5 Hz à 19 kHz), la loi du potard du Model:Samples. **+ CONTOUR = Filter Reso** (Q 0,5 à 50),
+  passe-haut à droite (5 Hz à 19 kHz), la loi du potard du Model:Samples. **+ CONTOUR = Filter Reso** (Q 0,5 à 1 000, sifflante en haut de course),
   **+ COLOR = Filter Env** (quantité d'une enveloppe, bipolaire), **+ SHAPE = Env Decay** (5 ms à 10 s). L'enveloppe
   repart à chaque note de la piste.
 - Quatre **vrais paramètres de toutes les machines** (k 28 à 31, descripteurs 1 à 4 de l'OS, des emplacements
@@ -166,14 +174,18 @@ Model-TG, qui reste avec le projet. `[HYP]` à confirmer sur la machine (§10).
 
 - Fréquence : index i = C pour le passe-bas (C < 0x4000), i = C − 0x4000 pour le passe-haut ;
   fc = 5 Hz × 4 400^(i / 16 384), plafonnée à 20 kHz (L1 : 19,3 kHz ; H63 : 19,3 kHz). Celle du Model:Samples.
-- Résonance : Q = 0,5 × 100^(R′ / 32 512), de 0,5 à 50, avec R′ = R × réduction(i) : rien sous 10 Hz (pas de bosse
-  subsonique, un défaut du Model:Samples), tout à 30 Hz, moins vers 20 kHz (1 − (fc / 24 000)^2,5). La bosse à fc
-  (gain Q) monte d'environ 10 dB par quart de tour : +4 dB à 32, +14 dB à 64, +24 dB à 96, +34 dB à 127. La
-  première version suivait le Model:Samples (Q 0,501 × (22,36 / 0,501)^(R′ / 32 512), +11 dB à 64, +27 dB à 127) :
-  trop discrète à l'essai (§10.1).
+- Résonance (troisième version, §12) : Q = 0,5 × 2 000^((R′ / 32 512)^1,5), de 0,5 à 1 000, avec R′ = R ×
+  réduction(i). Réduction : rien sous 10 Hz (pas de bosse subsonique, un défaut du Model:Samples), tout à 30 Hz,
+  moins vers 20 kHz (1 − (fc / 24 000)^2,5), et bornée pour qu'un coup ne sonne pas plus de 2 s (60 dB en
+  ln(1 000) Q / (π fc)) : Q au plus 0,9 fc, soit 37 à 100 Hz, 155 à 300 Hz, 1 000 au-dessus de 1,1 kHz. À 1 kHz :
+  Q 1,3 à 32, 7 à 64, 67 à 96, 240 à 112, 870 à 127 ; un coup y sonne 16 ms à 64, 0,15 s à 96, 0,5 s à 112, 1,9 s à
+  127. La première version suivait le Model:Samples (Q 0,501 × (22,36 / 0,501)^(R′ / 32 512)), la deuxième allait de
+  0,5 à 50 (0,5 × 100^(R′ / 32 512)) : trop discrètes à l'essai (§10.1, §12).
 - Enveloppe : e = 1 à la note (bit t de a3+16), puis e × exp(−1 / (1 500 τ)) par bloc, τ = 5 ms × 2 000^(D / 32 512) ;
-  arrêtée sous 2⁻¹⁵. Décalage d'index = (A − 0x4000) × e, ajouté à i et borné au côté choisi (0..0x3fff) : la
-  quantité monte ou baisse la fréquence, sans changer de côté.
+  arrêtée sous 2⁻¹⁵. Décalage d'index = (A − 0x4000) × e × f², ajouté à i et borné au côté choisi (0..0x3fff) : la
+  quantité monte ou baisse la fréquence, sans changer de côté. f = |C − 0x4000| / 0x800, borné à 1 : l'enveloppe
+  arrive sur les 8 premiers pas de chaque côté (1,6 % à H1, 6 % à H2, 25 % à H4, entière à L8 / H8), pour qu'en
+  quittant OFF avec une enveloppe réglée le filtre ne saute pas d'un coup (§12).
 
 Quatre tables de 65 points (Q31) calculées par le générateur et interpolées linéairement : G = tan(π fc / 48 000) / 4
 (i = 256 j), réduction de la résonance (i = 256 j), K = 1 / (2Q) (R′ = 512 j), décroissance par bloc (D = 512 j).
@@ -193,8 +205,8 @@ LP : gx = 1 − w, hl = w / 2, hb = 0          HP = x − k BP − LP : gx = 1, 
 18 instructions par trame (11 `mac`/`msac`, 3 `movclr`). Les coefficients sont recalculés quand (C, R, décalage de
 l'enveloppe) change, une fois par bloc au plus : 1 / (1 + g (g + k)) par normalisation et trois pas de Newton. Au
 premier bloc filtré, le passe-bas part du niveau de l'entrée (pas de clic), le passe-haut du repos ; un bloc nul avec
-un état retombé (< 2⁻¹⁹) ne coûte presque rien. Saturation par l'EMAC (MACSR 0xa0) : à Q 50 une sinusoïde à fc
-monte de 34 dB, sans repli du signe (le défaut du Model:Samples). Les états (Q31) saturent aussi : sur un son fort à
+un état retombé (< 2⁻¹⁹) ne coûte presque rien. Saturation par l'EMAC (MACSR 0xa0) : à Q 870 une sinusoïde à fc
+monterait de 59 dB, elle sature sans repli du signe (le défaut du Model:Samples). Les états (Q31) saturent aussi : sur un son fort à
 forte résonance, le filtre écrête (il distord) au lieu de suivre le modèle linéaire, puis retombe au silence à la
 vitesse de sa loi, sans oscillation entretenue (§8).
 
@@ -302,9 +314,9 @@ Maxime, builds `-v2` : « ça marche nickel sur la machine ». Le mod passe de �
 
 - Le geste : MACHINES tenu + SWEEP / CONTOUR / COLOR / SHAPE, l'affichage (`L32`, `OFF`, `H20`…), le menu des
   machines qui s'ouvre toujours sur un appui seul.
-- Le son : passe-bas, passe-haut, résonance (Q 50 près de fc : +34 dB ; sur un son fort, au-dessus de 100, la piste
-  sature : à écouter, sinon une marge interne ou un Q plus bas), l'enveloppe à chaque note, le passage
-  par le centre sans clic, un LFO qui balaie de LP à HP.
+- Le son : passe-bas, passe-haut, résonance (jusqu'à Q 1 000 depuis le §12 : un son fort pile sur fc sature le
+  filtre, à écouter ; sinon une marge interne ou un Q plus bas), l'enveloppe à chaque note, le passage par le centre
+  sans clic, un LFO qui balaie de LP à HP.
 - La sauvegarde : son (kit), projet rechargé, réserve de sons, copier-coller d'un son, p-locks rechargés ; le
   récepteur des changements (§4.4) ne range pas k ≥ 23 : si un chemin de l'OS recharge un son depuis cette copie
   plutôt que par la sauvegarde complète, nos réglages y reviendraient à leur dernière sauvegarde. `[HYP]`
@@ -350,8 +362,8 @@ l'ancien filtre s'ouvre sans lui : la piste joue sans filtre.
 ### 11.2 Le filtre par-dessus Model-TG `[FAIT]`
 
 Deux tweaks de plus, aux écritures identiques, l'un sur `model-tg` (`48-track-filter-tg.json`), l'autre sur
-`model-tg-st` (`48-track-filter-tg-st.json`, avec les moteurs du Syntakt ou MACRO) ; `48-track-filter.json` reste
-octet pour octet le même, testé, et déclare toujours `conflicts` avec Model-TG. Le flasher prend la bonne version
+`model-tg-st` (`48-track-filter-tg-st.json`, avec les moteurs du Syntakt ou MACRO) ; `48-track-filter.json` restait
+octet pour octet le même, testé (jusqu'au §12), et déclare toujours `conflicts` avec Model-TG. Le flasher prend la bonne version
 (clés « with » `model-tg`, `model-tg+syntakt`, `model-tg+macro`) ; la carte se dit expérimentale quand une version
 avec Model-TG s'applique (`with_exp`).
 
@@ -401,3 +413,56 @@ combinaison et `--meter`, `gen_macro`, `gen_macro_syntakt`, `gen_sample_preview`
 **À essayer sur la machine** (expérimental avec Model-TG) : le geste MACHINES tenu (DECAY = Attack, SWEEP / CONTOUR
 / COLOR / SHAPE = notre filtre), le filtre sur une piste Sampler en stéréo, la sauvegarde d'un son avec Attack et
 filtre, un projet fait avec l'ancien filtre de Model-TG.
+
+## 12. Troisième essai, avec Model-TG : progressivité et résonance (11/10/2026)
+
+**Source : Maxime, dans le fil du projet (11/10/2026, 16:26 UTC), build de l'étape 2 avec Model-TG** : « il est très
+peu progressif. Genre on observe une grosse différence de volume et de filtre entre le OFF et H2 par exemple. Et la
+résonance est vraiment trop subtile, on peut à peine la faire siffler. »
+
+### 12.1 OFF → H2 : mesuré en émulation `[FAIT]`
+
+Sur la vraie boucle des voix (6 pistes, Volume + Dist 64 et 127, Reso 0 et 127, enveloppe au centre), écart de
+niveau RMS avec OFF : H1 −0,12 dB, H2 −0,14 dB, H4 −0,23 dB au plus (le KICK, que H4 = 8,6 Hz entame à peine) ;
+L1 +1,0 dB, L2 +2,8 dB sur METAL à Reso 127 (la bosse vers 19 kHz), moins de 0,3 dB ailleurs. Sans enveloppe, le
+filtre ne saute donc pas entre OFF et H2 : H1 à H8 sont des passe-haut de 5,7 à 14 Hz.
+
+`[HYP]` Ce qui saute : **l'enveloppe** (COLOR avec MACHINES). Son décalage s'ajoutait entier dès H1 : avec Filter
+Env à +32, chaque note mettait le passe-haut à environ 330 Hz à H1 comme à H20, d'où un grand écart de volume et de
+filtre entre OFF et H1/H2. Un LFO ou la vélocité vers FREQ feraient le même effet ; à demander à Maxime.
+
+**Changement** : le décalage de l'enveloppe est multiplié par f² (f = |C − 0x4000| / 0x800, borné à 1) : elle arrive
+sur les 8 premiers pas de chaque côté (1,6 % à H1, 6 % à H2, 25 % à H4, 56 % à H6, entière à L8 / H8), sans changer
+la loi de la fréquence ni le fondu du premier pas. Dix instructions de plus dans `tf_track` (178 o, masque
+`0x4014b85c`). Ce qui est perdu : une enveloppe entière depuis H1 à H7 (5,7 à 12 Hz, inaudibles) ou depuis L1 à L7
+(19 à 9 kHz) ; une enveloppe qui part du tout en bas ou du tout en haut se règle à H8 ou L8.
+
+### 12.2 La résonance `[FAIT]`
+
+À Q 50 (deuxième version), la bosse fait +34 dB, mais un coup ne sonne que 0,1 s à 1 kHz (60 dB en
+ln(1 000) Q / (π fc)) : sur des sons de batterie, la résonance « pique » sans siffler. Pour siffler, il faut que la
+résonance sonne longtemps après le coup, donc un Q de plusieurs centaines. Nouvelle loi (§5.1) : Q = 0,5 ×
+2 000^((R′ / 32 512)^1,5), de 0,5 à 1 000, la course en puissance 1,5 pour garder la première moitié douce, et une
+borne qui limite la durée d'un coup à 2 s (Q ≤ 0,9 fc) pour que le grave ne bourdonne pas des dizaines de secondes.
+
+| Reso | Q à 100 Hz | Q à 300 Hz | Q à 1 kHz | Q à 3 kHz | Q à 8 kHz | un coup sonne (1 kHz) |
+|---|---|---|---|---|---|---|
+| 32 | 0,9 | 1,0 | 1,3 | 1,3 | 1,2 | 3 ms |
+| 64 | 2,3 | 3,9 | 7,2 | 7,4 | 5,9 | 16 ms |
+| 96 | 8,5 | 22 | 67 | 71 | 46 | 0,15 s |
+| 112 | 18 | 58 | 241 | 257 | 149 | 0,53 s |
+| 127 | 37 | 155 | 868 | 939 | 487 | 1,9 s |
+
+Pas d'auto-oscillation : le filtre est après le Volume + Dist de la piste, une résonance qui s'entretient sifflerait
+sans fin entre les notes. Au maximum, un son fort pile sur fc ferait +59 dB : les états saturent (EMAC en mode saturé),
+le filtre écrête comme un filtre analogique poussé, sans repli du signe, puis retombe au silence à la vitesse de sa
+loi (§12.3). Ce que Kevin Shallvari fait dans sa machine Acid (PR #65 : échelle 4 pôles qui auto-oscille, bornée par
+un coude) reste possible ici si cela ne siffle toujours pas assez, au prix d'un étage non linéaire.
+
+### 12.3 Preuve `[FAIT]`
+
+- `fade_tests` (nouveau) : H1, H2, H4, H8, L2, L6 avec Filter Env au maximum, sur 40 blocs : décalage = quantité ×
+  enveloppe × f², au pas d'index près.
+- `law_tests` : 170 réglages, Q 0,5 à 1 000 : fréquence à 0,01 cent près, Q à 0,39 % près.
+- `ringdown_tests` : résonance au maximum sur un signal plein échelle, la fenêtre d'observation suit la loi (jusqu'à
+  144 dB de décroissance) : RINGDOWN_RESULT.

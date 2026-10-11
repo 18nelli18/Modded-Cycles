@@ -258,14 +258,15 @@ async function main() {
       && doc.getElementById("drop3-wrap").hidden, "last engine unticked -> the card turns off");
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
     const creditOf = (id) => [...doc.querySelectorAll(`label[for=feat-${id}] .credit a`)].map((a) => a.href);
-    check(credits.length === 12 && creditOf("usb6").join() === "https://github.com/scottmetoyer/ms-multi-output"
+    check(credits.length === 13 && creditOf("usb6").join() === "https://github.com/scottmetoyer/ms-multi-output"
       && creditOf("model-tg")[0] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(creditOf("model-tg")[1])
       && creditOf("sample-preview").join() === "https://github.com/TinyGregAudio/Model-TG"
       && ["latching-mute", "trig-preview", "browser-scroll"].every((id) => creditOf(id).join() === "https://github.com/drumkilla/elektron-model-tweaks")
       && creditOf("macro")[0] === "https://github.com/pichenettes/eurorack" && /\/LICENSE-Braids\.txt$/.test(creditOf("macro")[1])
       && creditOf("chord-keys").join() === "https://github.com/byNicoHeuser"
-      && ["midi-both", "midi-live-both"].every((id) => creditOf(id).join() === "https://github.com/AveyCole/Modded-Cycles"),
-      "each row credits its author, Model-TG and MACRO with their MIT license, sample preview based on Model-TG, Chord Keys by Nico Heuser, the MIDI THRU mods by AveyCole: " + JSON.stringify(credits));
+      && ["midi-both", "midi-live-both"].every((id) => creditOf(id).join() === "https://github.com/AveyCole/Modded-Cycles")
+      && creditOf("track-filter").join() === "https://github.com/Kevin-Shallvari",
+      "each row credits its author, Model-TG and MACRO with their MIT license, sample preview based on Model-TG, Chord Keys by Nico Heuser, the MIDI THRU mods by AveyCole, the track filter's idea by Kevin Shallvari: " + JSON.stringify(credits));
     const djd = ["level-pan-values", "trigless-dim"].map((id) => doc.querySelector(`label[for=feat-${id}] .credit`));
     check(djd.every((c) => c && c.textContent === "based on a mod by djd_oz" && !c.querySelector("a")),
       "djd_oz's two mods: “based on a mod by djd_oz”, no link (no public repository)");
@@ -427,7 +428,7 @@ async function main() {
     check(/Filtre par piste \(LP \/ OFF \/ HP\)/.test(text(doc, "features")) && doc.querySelector('#features a[href$="#track-filter"]'),
       "FR: per-track filter card translated, with its guide link");
     // the per-track filter with Model-TG (notes/47 §11): its version on top of Model-TG, model-tg-st's with MACRO,
-    // experimental while it applies; alone, the card keeps its own status
+    // experimental while it applies; alone, the card keeps its own status (experimental too since notes/47 §12)
     const tfTag = () => doc.querySelector("label[for=feat-track-filter] .tag").textContent;
     const tfAlone = tfTag();
     doc.getElementById("feat-model-tg").click(); await wait(5);
@@ -440,7 +441,7 @@ async function main() {
     doc.getElementById("feat-macro").click(); await wait(5);
     doc.getElementById("feat-track-filter").click(); await wait(5);
     check(tfBoth && tfIds === "model-tg,track-filter-tg" && tfMacro === "model-tg-st,macro-tg,track-filter-tg-st"
-      && tfExp === "Expérimental" && tfAlone === "Testé" && tfTag() === tfAlone && doc.getElementById("feat-model-tg").checked,
+      && tfExp === "Expérimental" && tfAlone === "Expérimental" && tfTag() === tfAlone && doc.getElementById("feat-model-tg").checked,
       `per-track filter with Model-TG: ${tfIds}, with MACRO ${tfMacro}, ${tfExp} (alone ${tfAlone})`);
     doc.getElementById("feat-model-tg").click(); await wait(5);
     doc.getElementById("feat-chord-keys").click(); await wait(5);
