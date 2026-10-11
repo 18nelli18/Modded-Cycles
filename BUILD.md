@@ -620,3 +620,25 @@ nouveau tweak en émulation.
 
 Le C [`mischa85/elektron-firmware-tool`](https://github.com/mischa85/elektron-firmware-tool) fait le même travail
 de conteneur ; voir [`notes/02-format-os-syx.md`](notes/02-format-os-syx.md).
+
+### Recharger en gardant les niveaux
+
+`52-reload-keep-levels.json` : un appui bref sur FUNC + PATTERN garde les niveaux
+actuels des six pistes. PAN et les autres réglages se rechargent ; menus et
+sauvegarde inchangés. Code original MIT, 80 octets dans un masque libéré, sans
+charge utile au boot ([note 58](notes/58-rechargement-niveaux.md)).
+
+```sh
+python3 tools/gen_reload_keep_levels.py --cycles model-cycles_OS1.13.syx --check
+python3 tools/emu/test_reload_keep_levels.py --cycles model-cycles_OS1.13.syx
+python3 tools/build.py -i model-cycles_OS1.13.syx -t reload-keep-levels -o build/reload.syx
+python3 tools/build.py -i model-cycles_OS1.13.syx -t reload-keep-levels,level-pan-values -o build/reload-values.syx
+```
+
+Expérimental : tester les six niveaux avec l'affichage volume/PAN, puis la lecture
+et le MIDI. Le rechargement du menu restaure toujours les niveaux sauvegardés.
+
+Empreintes MAIN OS vérifiées sur le fichier officiel :
+
+- `reload-keep-levels` : `857300dcedcde73259f8f404f73e50c7f5925f3a716df9f05b438d41f9551a70`.
+- `reload-keep-levels,level-pan-values` : `1d947379ea5f0549d0daaca2a62abea24d506bdcd9001bd05bd76c4b79c049d0`.

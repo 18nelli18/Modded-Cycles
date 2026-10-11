@@ -1,0 +1,34 @@
+{
+ "id": "reload-keep-levels",
+ "order": 52,
+ "name": "Recharger le pattern en gardant les niveaux",
+ "description": [
+  "Un appui bref sur FUNC + PATTERN (RELOAD PTN) garde les niveaux actuels des six pistes ; le reste du pattern et PAN se rechargent normalement.",
+  "Aucun changement de sauvegarde ; le maintien du raccourci et les rechargements du menu gardent le comportement d’origine.",
+  "Code MIT de 80 octets dans un masque libéré ; sans état ou recopie au démarrage. tools/gen_reload_keep_levels.py, notes/58."
+ ],
+ "device": "Model:Cycles",
+ "os": "1.13",
+ "section": 3,
+ "conflicts": [],
+ "symbols": {
+  "reload_keep_levels": "0x4014a890"
+ },
+ "writes": [
+  {
+   "off": 66468,
+   "old": "4eb94005d080",
+   "new": "4eb94014a890"
+  },
+  {
+   "off": 765436,
+   "old": "4014a890",
+   "new": "4014a550"
+  },
+  {
+   "off": 1352848,
+   "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+   "new": "202e00040c804001c1a2663e206f0004226f00084a8867324a89672e20110c8000000004662433680010001433680012001633680014001833680016001a33680018001c3368001a001e4ef94005d080"
+  }
+ ]
+}

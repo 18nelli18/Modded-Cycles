@@ -6,9 +6,9 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 154 tweaks, 16 349 écritures.
-- Masques de sprites libérables : 164 (35 960 o), dont 47 pris (17 040 o) et **117 libres (18 920 o)**.
-- Crochets sur l'OS : 100 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
+- 155 tweaks, 16 352 écritures.
+- Masques de sprites libérables : 164 (35 960 o), dont 48 pris (17 148 o) et **116 libres (18 812 o)**.
+- Crochets sur l'OS : 101 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
 - Pointeurs réécrits : 61 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 134 tweaks ; place restante au §3.
 
@@ -132,11 +132,11 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x4018ff64` | `0x400ac7fc` | libre | |
 | `0x40192ba4` | `0x400ac276` | pris (132/272 o) | midi-live-both (132 o) |
 
-### 27×27 : 24 masques de 108 o (copie gardée `0x4014a550`) : 0 pris, 24 libres (2 592 o)
+### 27×27 : 24 masques de 108 o (copie gardée `0x4014a550`) : 1 pris, 23 libres (2 484 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x4014a890` | `0x400bb1fc` | libre | |
+| `0x4014a890` | `0x400bb1fc` | pris (80/108 o) | reload-keep-levels (80 o) |
 | `0x4014aa34` | `0x400bb178` | libre | |
 | `0x4014af84` | `0x400bb044` | libre | |
 | `0x4014b05c` | `0x400bb028` | libre | |
@@ -423,6 +423,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x40006086` | `4ef94008e77e` | jmp | masque `0x4018dba8` +0x20 | trigless-dim | notes/45 |
 | `0x400081f2` | `4eb940090f48` | jsr | masque `0x4018f4b4` +0x0 | level-pan-values | notes/44 |
 | `0x4000c140` | `4e56ffe0202e000c` | jmp | masque `0x401780a8` +0x0 `lfo_dest` | lfo-plus | notes/56 |
+| `0x400107a4` | `4eb94005d080` | jsr | masque `0x4014a890` +0x0 `reload_keep_levels` | reload-keep-levels | notes/58 |
 | `0x4001413e` | `205242a72f0a` | jmp | charge utile (image) +0x10eb6 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400169f0` | `4feffff448d7040c` | jmp | charge utile (image) +0x4fb6 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4001a1c4` | `4eb940016086` | jsr | masque `0x4018a788` +0x16 | arp | notes/32 |
@@ -638,5 +639,6 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | track-filter | 40 | 1 | 6 | 3 | 15 | 15 | 0 |  | notes/47 |
 | midi-both | 3 | 3 | 0 | 0 | 0 | 0 | 0 |  | notes/53 |
 | midi-live-both | 6 | 0 | 4 | 0 | 1 | 1 | 0 |  | notes/53 |
+| reload-keep-levels | 3 | 0 | 1 | 0 | 1 | 1 | 0 |  | notes/58 |
 | lfo-plus | 30 | 0 | 12 | 4 | 7 | 7 | 0 |  | notes/56 |
 

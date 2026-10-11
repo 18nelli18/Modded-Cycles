@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-12-04">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-12-04">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-12-05">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-12-05">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -60,6 +60,7 @@
         <li><a href="#midi-live-both"><span data-l="en">Live MIDI OUT + THRU toggle</span><span data-l="fr">Basculer MIDI OUT + THRU en direct</span></a></li>
         <li><a href="#track-filter"><span data-l="en">Per-track filter</span><span data-l="fr">Filtre par piste</span></a></li>
         <li><a href="#lfo-plus">LFO 2, 3, 4</a></li>
+        <li><a href="#reload-keep-levels"><span data-l="en">Reload keeping levels</span><span data-l="fr">Recharger en gardant les niveaux</span></a></li>
         <li><a href="#mods-on-samples"><span data-l="en">Mods on a Model:Samples</span><span data-l="fr">Des mods sur un Model:Samples</span></a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
         <li><a href="#stock"><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></a></li>
@@ -727,8 +728,24 @@
         </dl>
       </section>
 
+      <section id="reload-keep-levels">
+        <h2><span class="n">22</span><span data-l="en">Reload while keeping track levels</span><span data-l="fr">Recharger en gardant les niveaux</span></h2>
+        <p class="by"><span data-l="en">By djdoz · MIT</span><span data-l="fr">Par djdoz · MIT</span></p>
+        <p class="lede"><span data-l="en">Restore your pattern during a performance while keeping the current levels of all six tracks.</span><span data-l="fr">Restaurez votre pattern pendant une performance en gardant les niveaux actuels des six pistes.</span></p>
+        <ol>
+          <li><span data-l="en">Tap <b>FUNC + SETTINGS (SAVE PTN)</b> to set a temporary restore point.</span><span data-l="fr">Appuyez brièvement sur <b>FUNC + SETTINGS (SAVE PTN)</b> pour créer un point de restauration temporaire.</span></li>
+          <li><span data-l="en">Change some track levels, PAN and a sound parameter or sequencer step.</span><span data-l="fr">Changez des niveaux de piste, PAN et un paramètre sonore ou un pas du séquenceur.</span></li>
+          <li><span data-l="en">Tap <b>FUNC + PATTERN (RELOAD PTN)</b>: the six levels stay current; PAN and the other edits return to the restore point.</span><span data-l="fr">Appuyez brièvement sur <b>FUNC + PATTERN (RELOAD PTN)</b> : les six niveaux restent actuels ; PAN et les autres éditions reviennent au point de restauration.</span></li>
+        </ol>
+        <dl class="facts">
+          <div><dt><span data-l="en">Limits</span><span data-l="fr">Limites</span></dt><dd><span data-l="en">Only a short tap changes. Holding the shortcut to open permanent reload and reloading from the menu still restore saved levels. Saving is unchanged.</span><span data-l="fr">Seul l'appui bref change. Maintenir le raccourci pour le rechargement permanent ou recharger depuis le menu restaure toujours les niveaux sauvegardés. La sauvegarde ne change pas.</span></dd></div>
+          <div><dt><span data-l="en">Checking values</span><span data-l="fr">Vérifier les valeurs</span></dt><dd><span data-l="en">Combine with <a href="#level-pan">Volume and pan as numbers</a>. Save levels 10, 30, 50, 70, 90, 110, change them to 0, 20, 40, 60, 80, 120, then reload: expect the latter values. If a label expired, turn one detent up and one down.</span><span data-l="fr">Combinez avec <a href="#level-pan">Volume et pan en chiffres</a>. Sauvegardez les niveaux 10, 30, 50, 70, 90, 110, passez à 0, 20, 40, 60, 80, 120, puis rechargez : ces dernières valeurs doivent rester. Si un chiffre a disparu, tournez un cran vers le haut puis un vers le bas.</span></dd></div>
+          <div><dt><span data-l="en">Experimental</span><span data-l="fr">Expérimental</span></dt><dd><span data-l="en">Checked on the OS's own reload code, alone and with other mods. Maintainer hardware testing of this integration, playback and MIDI is pending.</span><span data-l="fr">Vérifié sur le code de rechargement de l'OS, seul et avec d'autres mods. Le test matériel de cette intégration, de la lecture et du MIDI par le mainteneur reste à faire.</span></dd></div>
+        </dl>
+      </section>
+
       <section id="mods-on-samples">
-        <h2><span class="n">22</span><span data-l="en">Mods on a Model:Samples</span><span data-l="fr">Des mods sur un Model:Samples</span></h2>
+        <h2><span class="n">23</span><span data-l="en">Mods on a Model:Samples</span><span data-l="fr">Des mods sur un Model:Samples</span></h2>
         <p class="lede"><span data-l="en">A Model:Samples can run the Model:Cycles OS with the same mods as a Model:Cycles. Whatever the machine, the flasher always installs the Model:Cycles OS; on a Model:Samples, <a href="#model-tg">Model-TG</a>'s Sampler plays your samples.</span><span data-l="fr">Un Model:Samples peut tourner sous l'OS du Model:Cycles avec les mêmes mods qu'un Model:Cycles. Quelle que soit la machine, le flasher installe toujours l'OS du Model:Cycles ; sur un Model:Samples, le Sampler de <a href="#model-tg">Model-TG</a> joue vos samples.</span></p>
         <ol>
           <li><span data-l="en">Back up your samples and projects with Elektron Transfer, then close Transfer.</span><span data-l="fr">Sauvegardez vos samples et vos projets avec Elektron Transfer, puis fermez Transfer.</span></li>
@@ -752,7 +769,7 @@
       </section>
 
       <section id="samples">
-        <h2><span class="n">23</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">24</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -786,13 +803,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">24</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">25</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">With Syntakt engines, the MACRO machine or Model-TG's Sampler, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt, la machine MACRO ou le Sampler de Model-TG, remettez d'abord vos pistes sur une machine d'origine.</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">25</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">26</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -806,7 +823,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">26</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">27</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -872,8 +889,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-12-04"></script>
-<script src="../assets/cycles.js?v=2026-10-12-04"></script>
-<script src="../assets/site.js?v=2026-10-12-04"></script>
+<script src="../assets/release.js?v=2026-10-12-05"></script>
+<script src="../assets/cycles.js?v=2026-10-12-05"></script>
+<script src="../assets/site.js?v=2026-10-12-05"></script>
 </body>
 </html>

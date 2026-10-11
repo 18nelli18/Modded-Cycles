@@ -225,6 +225,16 @@ FEATURES = [
         ],
     },
     {
+        "id": "reload-keep-levels",
+        "cat": "seq",
+        "label": "Recharger en gardant les niveaux",
+        "desc": "Un appui bref sur FUNC + PATTERN recharge le pattern en gardant les niveaux des six pistes. "
+                "PAN et les autres paramètres se rechargent normalement. Les rechargements du menu restent inchangés.",
+        "status": "experimental",
+        "credit": {"kind": "by", "who": "djdoz"},
+        "variants": [{"file": "52-reload-keep-levels", "label": None}],
+    },
+    {
         "id": "midi-both",
         "cat": "io",
         "label": "MIDI OUT pendant THRU",
