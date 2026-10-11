@@ -25,6 +25,7 @@ const ST_VERSION = (/OS(\d+\.\d+)/.exec(ST_NAME) || [])[1];   // "1.42" or "1.41
 const REAL_SMP = REAL.find((f) => /samples/i.test(path.basename(f)));
 const REAL_OS = REAL.find((f) => f !== REAL_ST && f !== REAL_SMP);
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const until = async (cond, ms) => { for (let t = 0; t < ms && !cond(); t += 50) await wait(50); };
 // SMOKE_SHARD=k/n (tools/webflash_smoke.sh with SMOKE_JOBS=n): part k of the combinations of section 6; the other
 // sections run in part 0 only; each part writes what it built to SMOKE_SEEN and the script checks the coverage
 const [SHARD_K, SHARD_N] = (process.env.SMOKE_SHARD || "0/1").split("/").map(Number);
@@ -472,6 +473,8 @@ async function main() {
       "fast method by default: its steps (close Transfer, no menu to open)");
     doc.getElementById("allow").click();
     await wait(150);
+    // with the real OS, the builds queued by the card checks above (Model-TG, MACRO, filter) delay the answer
+    await until(() => !/Looking for/.test(text(doc, "midi-status")), 60000);
     const sel = doc.getElementById("port");
     check(!sel.hidden && sel.value === "dev", "Allow MIDI -> Model:Cycles port preselected (" + sel.value + ")");
     check(/Model:Cycles found: OS 1\.13/.test(text(doc, "midi-status")) && doc.getElementById("step-connect").classList.contains("done"),
