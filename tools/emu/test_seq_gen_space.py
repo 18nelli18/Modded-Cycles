@@ -18,6 +18,7 @@ ROOT = HERE.parents[1]
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--test-two",action="store_true",help="audit du catalogue complet du second flasher")
     ap.add_argument("--upstream", type=pathlib.Path)
     ap.add_argument("--scroll", action="store_true")
     ap.add_argument("--git", action="append", default=[])
@@ -25,6 +26,13 @@ def main():
     ap.add_argument("--advanced", action="store_true")
     ap.add_argument("--sequence-only",action="store_true")
     args = ap.parse_args()
+    if args.test_two:
+        import gen_flasher_tweaks as catalog
+        tw=catalog.read_js((ROOT/"docs/flasher-test-2/tweaks.js").read_text())
+        errors,summary=audit.check(tw["tweaks"],audit.load_dir(ROOT)[0]["section_len"])
+        assert not errors,errors
+        print("ok : test flasher 2 ; "+summary)
+        return
     folder = "experimental/sequence-only/" if args.sequence_only else "experimental/advanced/" if args.advanced else ""
     prototypes = [json.loads((ROOT / f"tweaks/model-cycles_OS1.13/{folder}49-{n}.json").read_text())
                   for n in ("scale-gen", "scale-gen-st")]

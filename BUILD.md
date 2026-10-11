@@ -450,3 +450,27 @@ python3 tools/emu/test_seq_gen_space.py --sequence-only --upstream ../upstream-c
 ```
 
 Generate et Undo exigent toujours l’arrêt ; transport et mutes restent disponibles.
+
+## Test flasher 2 — SCRAMBLE et génération au prochain cycle (notes 55–56)
+
+Les nouveaux JSON restent sous `experimental/`, hors catalogue principal.
+Le sous-choix différé demande longueur/vitesse communes, sans chaîne de patterns.
+Aucun firmware Elektron distribué ; construire depuis les fichiers officiels.
+
+```sh
+python3 tools/gen_seq_gen.py --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --advanced --sequence-only --queued --check
+python3 tools/gen_scramble.py --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --check
+python3 tools/emu/test_seq_gen_queue.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+python3 tools/emu/test_scramble.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+python3 tools/gen_test_flasher.py --second --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --check
+python3 tools/emu/test_seq_gen_space.py --test-two
+MC_TEST_PAGE=docs/flasher-test-2 node tools/webflash_seq_gen_check.js firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42.syx
+```
+
+Statut expérimental : le timing maximal et le démarrage complet doivent encore
+être confirmés sur la machine. Les pages `flasher/` et `flasher-test/` sont inchangées.
+
+Empreintes MAIN OS du test 2 :
+
+- `model-tg+scale-gen-queued+scramble-gen-queued` : `585845c9a50219407f643fd4dac8ca0716099210a5c7fc2adeae26bbea7ca4fd`.
+- `6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+multiline-browser+midi-live-both+level-pan-values+trigless-dim+syntakt-tg-sd-cp-toy-bits-swarm-macro+scale-gen-st-queued+scramble-st-gen-queued` : `328e230833b8c45e4fdedca4c67adaf31f742709b2d6d93663c3c3c8bc8e42c5`.

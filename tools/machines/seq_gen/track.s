@@ -14,10 +14,23 @@ sg_track_write:
     moveal %a1,%a4
     movel %d0,%d4
     moveq #0,%d0
+    .ifdef SG_QUEUE
+    tstl sg_q_building
+    beqw stw_stopped_check
+    movel sg_obj,%d0
+    addil #5632,%d0
+    cmpl %a3,%d0
+    bnew stw_fail
+    braw stw_length_check
+stw_stopped_check:
+    .endif
     tstl 0x40a78874
     bnew stw_out
     tstl 0x40a7883c
     bnew stw_out
+    .ifdef SG_QUEUE
+stw_length_check:
+    .endif
     cmpil #1,%d4
     bltw stw_out
     cmpil #64,%d4

@@ -73,7 +73,7 @@ def configure_slots(dynamics=False):
     ):
         SLOTS.append((va,sprites.MASKS[va][1],sections))
 
-def compile_code(cross, tg, scroll=False, dynamics=False, advanced=False, sequence_only=False):
+def compile_code(cross, tg, scroll=False, dynamics=False, advanced=False, sequence_only=False, queued=False):
     """Place chaque section dans un masque et refuse tout dépassement du slot."""
     configure_slots(dynamics)
     with tempfile.TemporaryDirectory() as tmp:
@@ -86,7 +86,7 @@ def compile_code(cross, tg, scroll=False, dynamics=False, advanced=False, sequen
         script += ' .unused : { *(.text) *(.data) *(.bss) }\n ASSERT(SIZEOF(.unused) == 0, "section non placee")\n}\n'
         (p / "link.ld").write_text(script)
         objects = []
-        for name in ("seq_gen", "key", "track", "menu", "dynamics", "advanced", "sound", "performance", "rows", "intro_large"):
+        for name in ("seq_gen", "key", "track", "menu", "dynamics", "advanced", "sound", "performance", "rows", "intro_large", "queue"):
             obj = p / (name + ".o")
             source = SRC / (name + ".s")
             if advanced:
@@ -103,7 +103,7 @@ def compile_code(cross, tg, scroll=False, dynamics=False, advanced=False, sequen
                 body = re.sub(r"^[ \t]*b(ra|sr|ne|eq|lt|gt|le|ge|hi|ls|cc|cs|mi|pl)w[ \t]+(\w+)[ \t]*(?:\|[^\n]*)?$",far_branch, source.read_text(), flags=re.M)
                 source = p / (name + ".s")
                 source.write_text(body)
-            subprocess.run([cross + "as", "-march=cfv4e", *(["--defsym", "SG_SCROLL=1"] if scroll else []), *(["--defsym", "SG_DYNAMICS=1"] if dynamics else []), *(["--defsym", "SG_ADVANCED=1"] if advanced else []), *(["--defsym", "SG_SEQUENCE_ONLY=1"] if sequence_only else []), "-o", str(obj), str(source)], check=True)
+            subprocess.run([cross + "as", "-march=cfv4e", *(["--defsym", "SG_SCROLL=1"] if scroll else []), *(["--defsym", "SG_DYNAMICS=1"] if dynamics else []), *(["--defsym", "SG_ADVANCED=1"] if advanced else []), *(["--defsym", "SG_SEQUENCE_ONLY=1"] if sequence_only else []), *(["--defsym", "SG_QUEUE=1"] if queued else []), "-o", str(obj), str(source)], check=True)
             objects.append(str(obj))
         if advanced:
             # Allocation déterministe parmi les masques sans écriture d'un autre mod.
@@ -173,6 +173,13 @@ def generate(main, base, blobs, syms, tg):
             patched,_=build.apply_writes(main,[base])
             assert patched[va-build.BASE:va-build.BASE+4]==old
             writes.append(write(va,old,struct.pack(">I",syms["sg_tick"])))
+    if "sg_q_hook" in syms:
+        va=0x400550da
+        assert raw(va,6)==bytes.fromhex("247940a7887c")
+        writes.append(write(va,raw(va,6),b"\x4e\xf9"+struct.pack(">I",syms["sg_q_hook"])))
+        va=0x40055f14
+        assert raw(va,6)==bytes.fromhex("2f024aaf000c")
+        writes.append(write(va,raw(va,6),b"\x4e\xf9"+struct.pack(">I",syms["sg_q_stop"])))
     return {"id": "scale-gen-st" if base["id"] == "model-tg-st" else "scale-gen",
             "order": 49, "name": "Générateur de séquence en gamme (prototype)",
             "description": ["SETTINGS + PAGE : gamme, tonalité, bornes de notes, densité, Generate et Undo.",
@@ -189,6 +196,7 @@ def main():
     ap.add_argument("--cycles", required=True)
     ap.add_argument("--model-tg", type=pathlib.Path, required=True)
     ap.add_argument("--cross", default=os.environ.get("M68K_CROSS", "m68k-elf-"))
+    ap.add_argument("--queued",action="store_true",help="préparation privée et commit à la lecture anticipée du prochain cycle")
     ap.add_argument("--sequence-only",action="store_true",help="générateur sans aucun runtime de tirage du son")
     ap.add_argument("--advanced", action="store_true", help="extension expérimentale : plages, mutation, Euclid et son")
     ap.add_argument("--check", action="store_true")
@@ -200,9 +208,12 @@ def main():
     stock = main_os_from_syx(args.cycles)
     assert hashlib.sha256(stock).hexdigest() == STOCK, "OS officiel 1.13 requis"
     tg = symbols(args.cross, args.model_tg / "build/_b.elf")
-    blobs, syms = compile_code(args.cross, tg, args.scroll, args.dynamics, args.advanced, args.sequence_only)
+    blobs, syms = compile_code(args.cross, tg, args.scroll, args.dynamics, args.advanced, args.sequence_only, args.queued)
     assert not args.sequence_only or args.advanced, "--sequence-only exige --advanced"
     out = OUT / ("experimental/sequence-only" if args.sequence_only else "experimental/advanced") if args.advanced else OUT
+    if args.queued:
+        assert args.sequence_only and args.advanced
+        out=OUT/"experimental/queued"
     out.mkdir(parents=True, exist_ok=True)
     for name in ("model-tg", "model-tg-st"):
         base = json.loads((HERE.parent / f"tweaks/model-cycles_OS1.13/30-{name}.json").read_text())
@@ -221,6 +232,12 @@ def main():
         if args.sequence_only:
             tweak["name"]="Générateur étendu — sans tirage du son (expérimental)"
             tweak["description"]=["SETTINGS + PAGE : plages velocity/decay/pan, rythme/notes, mutation et Euclid.","PLAY/STOP et FUNC + pads dans la page. Generate/Undo arrêtés. Cartouche agrandi arrondi.","Aucun code de tirage du son ; tools/gen_seq_gen.py --advanced --sequence-only, notes/54."]
+        if args.queued:
+            tweak["id"]+="-queued"
+            tweak["conflicts"]=["scale-gen","scale-gen-st","scale-gen-queued","scale-gen-st-queued"]
+            tweak["conflicts"].remove(tweak["id"])
+            tweak["name"]="Générateur — application au prochain cycle (expérimental)"
+            tweak["description"]=["Generate en lecture prépare une séquence privée, appliquée avant le premier trig du prochain cycle.","Première version : longueur/vitesse communes, une seule entrée dans la chaîne. Cancel queue annule ; Undo après arrêt.","Annulation si changement de pattern, édition concurrente, arrêt ou fermeture de page. tools/gen_seq_gen.py --queued, notes/56."]
         build.apply_writes(stock,[base,tweak])
         path = out / ("49-" + tweak["id"] + ".json")
         text = json.dumps(tweak, indent=1, ensure_ascii=False) + "\n"

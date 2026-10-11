@@ -20,6 +20,9 @@ sg_tick:
     bnew sgt_done
     tstl sg_obj
     beqw sgt_done
+    .ifdef SG_QUEUE
+    jsr sg_q_service
+    .endif
     tstl sg_intro
     beqw sgt_done
     movel TG_blk_clk,%d0

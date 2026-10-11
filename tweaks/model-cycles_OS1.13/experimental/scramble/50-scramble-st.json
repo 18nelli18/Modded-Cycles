@@ -1,0 +1,124 @@
+{
+ "id": "scramble-st",
+ "order": 50,
+ "name": "SCRAMBLE — quatre paramètres (expérimental)",
+ "description": [
+  "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
+  "Sans menu ni état du générateur ; Sampler exclu. Vérification matérielle attendue.",
+  "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
+ ],
+ "device": "Model:Cycles",
+ "os": "1.13",
+ "section": 3,
+ "requires": [
+  "model-tg-st"
+ ],
+ "conflicts": [
+  "scramble",
+  "scramble-gen",
+  "scramble-st-gen",
+  "scramble-gen-queued",
+  "scramble-st-gen-queued",
+  "scale-gen",
+  "scale-gen-st",
+  "scale-gen-queued",
+  "scale-gen-st-queued"
+ ],
+ "writes": [
+  {
+   "off": 708452,
+   "old": "40189618",
+   "new": "4016bfc8"
+  },
+  {
+   "off": 1610264,
+   "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000",
+   "new": "206f00042028000c0c800000000267044efa00d6222800100801000066044efa00a24ab9401629dc66044efa001eb1f9401629e067044efa001220280008b0b9401629e466044efa00a64ab9401b235c66044efa009402810000000a67044efa00884ab9401b208867044efa007c4ab9401b6d8c67044efa00704ab9401bcaec67044efa0064700040c002800000070067044efa005423c8401629e02028000823c0401629e4700123c0401629dc23c0401b23602f084eb940168da4205f4efa002e4ab9401629dc66044efa001c42b9401629dc23c8401629e02028000823c0401629e44efa00084ef9401ae968222800100081000000082141001070004e75"
+  },
+  {
+   "off": 707950,
+   "old": "4018b1a8",
+   "new": "4016bfc8"
+  },
+  {
+   "off": 1617320,
+   "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000",
+   "new": "260206830000000b2f062f034eb94005a692508f4a8066064ef9401617e429802e002f0041ef004c4eb94005a65a588f262f0048282f004c4a836a064ef9401617e40c8400007f006f064ef9401617e4b8836c064ef9401617e40683000000ffe08be08c988352844eb94016188002800000ffff80c4484002800000ffffd08329802e042f342e004eb94005a7f8588f4a806a064ef9401617e40c800000007f63064ef9401617e426002f032f062f054eb94005a8ce4fef000cb0b42e0067064ef9401617e429832e0052820c82000000046c044efaff2a74004ef9401617a8"
+  },
+  {
+   "off": 726834,
+   "old": "40168da4",
+   "new": "4014b364"
+  },
+  {
+   "off": 1477028,
+   "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
+   "new": "4fefffa848d73cfc42b9401629ec4eb9400cf8664a8066064ef9401617e42440486a00304eb940012412588f0c800000000563064ef9401617e42a00c0fc004441ea00d4d1c02f082250200966044efa003e22690028200966044efa00324e91588f4a8066064ef9401617e426407c001c2b00260c860000000666064ef9401617e4740049ef00284ef94018b1a8588f4ef9401617e4"
+  },
+  {
+   "off": 737158,
+   "old": "401617a8",
+   "new": "4014a550"
+  },
+  {
+   "off": 1446824,
+   "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+   "new": "42a72f052f342e042f342e002f0a4eb94000f2a24fef001452820c82000000046c044efaffdc700123c0401629ec487940163a604eb9401b2284588f4cd73cfc4fef00584e75"
+  },
+  {
+   "off": 737126,
+   "old": "40161880",
+   "new": "4014a550"
+  },
+  {
+   "off": 1447040,
+   "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+   "new": "2039401629e82239401b1054b3806606203c6d2b79f52200e189eb89b3802200e089e089e289b3802200eb89b38023c0401629e822004e75"
+  },
+  {
+   "off": 735638,
+   "old": "401629dc",
+   "new": "4014a550"
+  },
+  {
+   "off": 1451484,
+   "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+   "new": "0000000000000000000000006d2b79f500000000"
+  },
+  {
+   "off": 733742,
+   "old": "40163a60",
+   "new": "4014a550"
+  },
+  {
+   "off": 1455712,
+   "old": "ffffffe0ffffffe0ff",
+   "new": "534352414d424c4500"
+  },
+  {
+   "off": 466956,
+   "old": "4ef9401ae968",
+   "new": "4ef940189618"
+  }
+ ],
+ "symbols": {
+  "sc_apply": "0x401617a8",
+  "sc_eat": "0x40189706",
+  "sc_event": "0x401629e0",
+  "sc_fresh": "0x40189662",
+  "sc_key": "0x40189618",
+  "sc_no_get": "0x40168e32",
+  "sc_out": "0x401617e4",
+  "sc_pass": "0x40189700",
+  "sc_prepare": "0x4018b1a8",
+  "sc_random": "0x40161880",
+  "sc_release": "0x401896da",
+  "sc_result": "0x401629ec",
+  "sc_rng_seed": "0x40161896",
+  "sc_run": "0x40168da4",
+  "sc_seed": "0x401629e8",
+  "sc_taken": "0x401629dc",
+  "sc_text": "0x40163a60",
+  "sc_time": "0x401629e4"
+ }
+}

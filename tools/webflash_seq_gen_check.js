@@ -33,13 +33,15 @@ async function main() {
   vm.runInNewContext(fs.readFileSync(path.join(root, "docs/flasher/tweaks.js"), "utf8"), production);
   const old = production.window.MC_TWEAKS, tw = w.MC_TWEAKS, app = w.MCFlasherApp;
   const isTest = test !== path.join(root, "docs/flasher");
+  const second = test.endsWith("flasher-test-2");
   for (const f of old.features) {
     const want = isTest && f.id === "scale-gen" ? {...f, status: "experimental"} : f;
+    if (second && f.id === "scale-gen") want.queued = {"scale-gen":"scale-gen-queued","scale-gen-st":"scale-gen-st-queued"};
     assert.equal(JSON.stringify(tw.features.find(x=>x.id===f.id)), JSON.stringify(want));
     assert.ok(doc.getElementById("feat-"+f.id));
   }
-  assert.equal(tw.features.length, old.features.length);
-  assert.equal(tw.tweaks.length, old.tweaks.length);
+  assert.equal(tw.features.length, old.features.length + (second ? 1 : 0));
+  assert.equal(tw.tweaks.length, old.tweaks.length + (second ? 8 : 0));
   assert.match(doc.getElementById("mod-scale-gen").textContent, isTest ? /Experimental/ : /Tested/);
   if (isTest) assert.ok(doc.getElementById("test-build-notice"));
   console.log(`ok : all ${old.features.length} existing cards retained, generator included, no automatic MIDI request`);
@@ -47,9 +49,31 @@ async function main() {
   click("scale-gen");
   assert.ok(doc.getElementById("feat-model-tg").checked);
   assert.ok(app.chosenTweaks().some(t=>t.id==="scale-gen"));
+  if (second) {
+    assert.match(doc.getElementById("mod-scale-gen").textContent,/Sequence Generator/);
+    const q=doc.getElementById("queue-scale-gen");
+    assert.ok(q && doc.getElementById("mod-scale-gen").contains(q));
+    assert.equal(q.checked,false);q.click();
+    assert.ok(app.chosenTweaks().some(t=>t.id==="scale-gen-queued"));
+    click("scramble");
+    assert.ok(app.chosenTweaks().some(t=>t.id==="scramble-gen-queued"));
+    doc.getElementById("queue-scale-gen").click();
+    assert.ok(app.chosenTweaks().some(t=>t.id==="scramble-gen"));
+  }
   click("macro");
   assert.ok(app.chosenTweaks().some(t=>t.id==="scale-gen-st"));
   assert.ok(app.chosenTweaks().some(t=>t.id==="model-tg-st"));
+  if (second) {
+    doc.getElementById("queue-scale-gen").click();
+    assert.ok(app.chosenTweaks().some(t=>t.id==="scale-gen-st-queued"));
+    assert.ok(app.chosenTweaks().some(t=>t.id==="scramble-st-gen-queued"));
+    doc.getElementById("queue-scale-gen").click();
+    click("scale-gen");
+    assert.ok(app.chosenTweaks().some(t=>t.id==="scramble-st"));
+    click("scale-gen");
+    click("scramble");
+    console.log("ok : queued checkbox nested under Sequence Generator, both bases, all SCRAMBLE chains, standalone SCRAMBLE");
+  }
   click("model-tg");
   assert.equal(doc.getElementById("feat-scale-gen").checked, false);
   app.applyLang("fr");
@@ -80,6 +104,27 @@ async function main() {
       {syntakt: new Uint8Array(fs.readFileSync(process.argv[3])), refMods: app.REF_MODS, expectMainOsSha: app.REF_MAINOS[key]});
     assert.ok(out.modsChecked && out.raw.length>0);
     console.log("ok : browser full build + Python reference + all mod hashes: " + key);
+  }
+  if (isTest && doc.getElementById("select-all")) {
+    doc.getElementById("select-all").click();
+    for(let i=0;i<600 && app.state.building;i++) await pause(50);
+    assert.ok(doc.getElementById("feat-model-tg").checked);
+    assert.ok(doc.getElementById("feat-midi-live-both").checked);
+    const ids = app.chosenTweaks().map(t=>t.id);
+    assert.ok(ids.includes("model-tg-st") && ids.includes("midi-live-both"));
+    assert.ok(!ids.includes("midi-both"));
+    if(second) {
+      assert.ok(ids.includes("scale-gen-st-queued") && ids.includes("scramble-st-gen-queued"));
+      assert.equal(doc.getElementById("queue-scale-gen").checked,true);
+    }
+    assert.equal(doc.getElementById("feat-midi-both").checked, false);
+    assert.ok(app.state.fw && app.state.fw.kind==="built", app.state.fwError);
+    const first = ids.join();
+    doc.getElementById("select-all").click();
+    assert.equal(app.chosenTweaks().map(t=>t.id).join(), first);
+    app.applyLang("fr");
+    assert.equal(doc.getElementById("select-all").textContent, "Tout sélectionner");
+    console.log("ok : Select all preserves Model-TG/live MIDI, builds full selection, repeats identically and translates");
   }
   const original = app.REF_MODS["scale-gen"].w;
   app.REF_MODS["scale-gen"].w = "0".repeat(64);

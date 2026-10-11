@@ -1,3 +1,6 @@
+    .ifdef SG_QUEUE
+    .globl sg_action_generate,sg_action_undo,sg_undo_track
+    .endif
     .ifdef SG_DYNAMICS
     .globl sg_obj,sg_options,sg_config
     .endif
@@ -69,7 +72,11 @@ sg_o_cp:
 sg_o_allocate:
     lea.l   0x400802e0,%a3        | operator new
         .ifdef SG_DYNAMICS
+    .ifdef SG_QUEUE
+    pea     0x3000
+    .else
     pea     0x1600
+    .endif
     .else
     pea     0x500
     .endif
@@ -149,6 +156,10 @@ sg_o_done:
     .section .text.sg_dtor,"ax"
 | ---- destructeurs : oublier la page, puis appeler ceux de l’OS ----
 sg_dtor0:
+    .ifdef SG_QUEUE
+    jsr sg_q_service
+    jsr sg_q_cancel
+    .endif
     lea.l   sg_obj,%a0
     clrl    %a0@
     clrl    sg_undo_valid
@@ -159,6 +170,10 @@ sg_dtor0:
     .endif
     jmp     0x400f43ca
 sg_dtor1:
+    .ifdef SG_QUEUE
+    jsr sg_q_service
+    jsr sg_q_cancel
+    .endif
     lea.l   sg_obj,%a0
     clrl    %a0@
     clrl    sg_undo_valid
@@ -482,6 +497,9 @@ smr_loop:
     beqw smr_label
     lea.l sg_error_text,%a2
 smr_label:
+    .ifdef SG_QUEUE
+    jsr sg_q_label
+    .endif
     .ifdef SG_SEQUENCE_ONLY
     movel %d3,%d0
     jsr sg_unmap_row
@@ -655,17 +673,40 @@ smr_cursor:
 
     .section .text.sg_action,"ax"
 sg_action_generate:
+    .ifdef SG_QUEUE
+    tstl sg_q_building
+    bnew sag_begin
+    jsr sg_q_service
+    tstl 0x40a7883c
+    bnew sg_q_stage
+    jsr sg_q_cancel
+sag_begin:
+    .endif
     lea.l %sp@(-12),%sp
     movem.l %d2/%a2-%a3,%sp@
     clrl sg_error
+    .ifdef SG_QUEUE
+    tstl sg_q_building
+    bnew sag_get_track
+    .endif
     tstl 0x40a78874
     bnew sag_error
     tstl 0x40a7883c
     bnew sag_error
+    .ifdef SG_QUEUE
+sag_get_track:
+    .endif
     jsr 0x400cf866
     movel %d0,%sp@-
     jsr 0x4000f23e
     addql #4,%sp
+    .ifdef SG_QUEUE
+    tstl sg_q_building
+    beqw sag_real_track
+    movel sg_obj,%d0
+    addil #5632,%d0
+sag_real_track:
+    .endif
     tstl %d0
     beqw sag_error
     moveal %d0,%a3
@@ -706,6 +747,14 @@ sag_out:
     rts
     .section .text.sg_undo,"ax"
 sg_action_undo:
+    .ifdef SG_QUEUE
+    jsr sg_q_service
+    movel sg_q_state,%d0
+    cmpil #1,%d0
+    bnew sau_regular
+    jmp sg_q_cancel
+sau_regular:
+    .endif
     tstl sg_undo_valid
     beqw sau_out
     lea.l %sp@(-8),%sp

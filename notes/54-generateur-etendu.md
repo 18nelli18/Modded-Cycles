@@ -64,3 +64,36 @@ mutes et temporisation. Audit upstream sans conflit nouveau ; 767 combinaisons
 de référence recalculées, quatre builds navigateur et empreinte altérée rejetée.
 [À FAIRE] Validation matérielle de ce remplacement ; génération en lecture
 toujours absente. Principal inchangé.
+
+## 8. Tout sélectionner — second flasher de test
+
+Bouton bilingue sélectionnant l’ensemble compatible du catalogue, avec priorité
+à Model-TG et MIDI OUT + THRU en direct. Les fonctions incluses restent couvertes
+par Model-TG ; la carte MIDI OUT en mode THRU reste décochée. Tous les moteurs
+de la carte Syntakt sont sélectionnés, avec le besoin du fichier officiel indiqué
+par l’interface existante. Preuve navigateur : build intégral de la sélection,
+priorités conservées, clic répété stable et traduction française.
+
+## 9. Périmètre du second test demandé le 10/10/2026
+
+AveyCole demande un flasher de test 2 indépendant réunissant SCRAMBLE, génération
+pendant la lecture avec application au début de la boucle suivante, et Tout
+sélectionner. Aucun changement du test actuel ni du principal. Le générateur
+de catalogue accepte `--second` ; la copie locale n’est pas publiée tant que
+les deux nouveaux chemins firmware ne sont pas prouvés.
+
+[À FAIRE] SCRAMBLE : SETTINGS + TRACK, sans menu, quatre slots machine 11–14
+seulement, popup SCRAMBLE ; mod sélectionnable distinct. Ne pas réintroduire le
+setter groupé et les observateurs simulés de l’essai ayant planté sans preuve
+du chemin réel. [À FAIRE] Établir un transfert atomique avant le premier trig
+de la boucle, hors opération lourde dans l’ISR. Un polling UI après le wrap
+n’est pas une preuve suffisante ; aucun crochet audio nouveau livré ici.
+
+## 10. Confirmation matérielle du test séquence seul — 10/10/2026
+
+AveyCole confirme : « The current test flasher features (larger rounded display,
+euclidian, no sound gen.) are verified working on hardware now ». Build publié
+`2026-10-10-generator-sequence-only-test`, commit 9a8df272. Cette confirmation
+concerne le test séquence seul ; elle ne valide ni SCRAMBLE ni la génération
+différée en lecture. Aucun changement du flasher principal effectué ; AveyCole
+choisira les éléments à promouvoir après le second test.

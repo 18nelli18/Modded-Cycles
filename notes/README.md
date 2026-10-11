@@ -122,4 +122,8 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
 
 Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10/10/2026**, disponible dans le flasher principal.
 
+| Note | Résultat |
+|---|---|
 | [54 — Générateur étendu](54-generateur-etendu.md) | **Expérimental** : plages, modes, mutation, Euclid, son indépendant, mutes et cartouche ; preuves émulation, matériel à tester. |
+| [55 — SCRAMBLE indépendant](55-scramble.md) | **Expérimental, test 2** : SETTINGS + TRACK, quatre paramètres seuls, sans menu ; setter natif et combinaison maximale vérifiés en émulation. |
+| [56 — Génération différée](56-generation-differee.md) | **Expérimental, test 2** : staging privé, commit avant le premier trig, sous-option distincte ; longueur/vitesse communes, sans chaîne. |
