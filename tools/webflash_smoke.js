@@ -218,9 +218,9 @@ async function main() {
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
     check(ids.slice(0, 22).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-both,midi-live-both,macro,macro-tg,chord-keys,track-filter,syntakt-sd"
-      && ids.length === 31 + 4 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+      && ids.length === 32 + 4 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
       && ids.includes("syntakt-sd-macro") && ids.includes("syntakt-tg-sd-cp-toy-bits-swarm-macro")
-      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 21,
+      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 22,
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG, with and without MACRO: ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
@@ -230,8 +230,8 @@ async function main() {
     // display order: by section (Packs, Sounds & machines, Sequencer, Live playing, Screen & browsing, USB & MIDI),
     // FEATURES order inside a section; the build keeps FEATURES order (checked in 1b)
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-model-tg,feat-macro,feat-track-filter,feat-syntakt,feat-scramble,feat-trig-preview,feat-trig-hold,feat-arp,feat-tempo-max,feat-trigless-dim,feat-scale-gen,feat-latching-mute,feat-chord-keys,feat-sample-preview,feat-browser-scroll,feat-boot-anim,feat-multiline-browser,feat-level-pan-values,feat-usb6,feat-midi-both,feat-midi-live-both",
-      "21 feature rows, by section: " + JSON.stringify(feats));
+    check(feats.join() === "feat-model-tg,feat-macro,feat-track-filter,feat-syntakt,feat-scramble,feat-trig-preview,feat-trig-hold,feat-arp,feat-tempo-max,feat-trigless-dim,feat-scale-gen,feat-lfo-secondary,feat-latching-mute,feat-chord-keys,feat-sample-preview,feat-browser-scroll,feat-boot-anim,feat-multiline-browser,feat-level-pan-values,feat-usb6,feat-midi-both,feat-midi-live-both",
+      "22 feature rows, by section: " + JSON.stringify(feats));
     check(w.MC_TWEAKS.features.every((f) => doc.querySelector(`#cat-${f.cat || "other"} #mod-${f.id} #feat-${f.id}`)),
       "every feature has a row in its section (cat)");
     const tagOfFeat = (f) => (f.status === "tested" ? "Tested" : "Experimental");
@@ -263,7 +263,8 @@ async function main() {
       && doc.getElementById("drop3-wrap").hidden, "last engine unticked -> the card turns off");
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
     const creditOf = (id) => [...doc.querySelectorAll(`label[for=feat-${id}] .credit a`)].map((a) => a.href);
-    check(credits.length === 16 && creditOf("usb6").join() === "https://github.com/scottmetoyer/ms-multi-output"
+    check(creditOf("lfo-secondary")[0] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(creditOf("lfo-secondary")[1])
+      && credits.length === 18 && creditOf("usb6").join() === "https://github.com/scottmetoyer/ms-multi-output"
       && creditOf("model-tg")[0] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(creditOf("model-tg")[1])
       && creditOf("sample-preview").join() === "https://github.com/TinyGregAudio/Model-TG"
       && ["latching-mute", "trig-preview", "browser-scroll"].every((id) => creditOf(id).join() === "https://github.com/drumkilla/elektron-model-tweaks")

@@ -99059,318 +99059,12 @@ window.MC_TWEAKS = {
    }
   },
   {
-   "id": "scramble-gen",
-   "order": 50,
-   "name": "SCRAMBLE — quatre paramètres et verrous par pas",
-   "description": [
-    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
-    "Maintenir des trigs puis SETTINGS + TRACK active/retire des valeurs fraîches à chaque passage, sans modifier le son de base. Sampler exclu. SCRAMBLE par pas testé sur machine par AveyCole le 11/10/2026.",
-    "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
-   ],
-   "device": "Model:Cycles",
-   "os": "1.13",
-   "section": 3,
-   "requires": [
-    "model-tg",
-    "scale-gen"
-   ],
-   "conflicts": [
-    "scramble",
-    "scramble-st",
-    "scramble-st-gen",
-    "scramble-gen-queued",
-    "scramble-st-gen-queued"
-   ],
-   "writes": {
-    "$shared": 88
-   },
-   "symbols": {
-    "sc_apply": "0x40161880",
-    "sc_eat": "0x40189710",
-    "sc_event": "0x40163a64",
-    "sc_fresh": "0x40189662",
-    "sc_key": "0x40189618",
-    "sc_no_get": "0x40168e32",
-    "sc_out": "0x401618bc",
-    "sc_pass": "0x4018970a",
-    "sc_prepare": "0x4018b1a8",
-    "sc_random": "0x401629dc",
-    "sc_release": "0x401896e4",
-    "sc_result": "0x40163a70",
-    "sc_rng_seed": "0x401629f2",
-    "sc_run": "0x40168da4",
-    "sc_seed": "0x40163a6c",
-    "sc_skip_run": "0x401896de",
-    "sc_steps_event": "0x4016fae8",
-    "sc_steps_toggle": "0x40160a94",
-    "sc_taken": "0x40163a60",
-    "sc_text": "0x40167900",
-    "sc_time": "0x40163a68"
-   }
-  },
-  {
-   "id": "scramble-st-gen",
-   "order": 50,
-   "name": "SCRAMBLE — quatre paramètres et verrous par pas",
-   "description": [
-    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
-    "Maintenir des trigs puis SETTINGS + TRACK active/retire des valeurs fraîches à chaque passage, sans modifier le son de base. Sampler exclu. SCRAMBLE par pas testé sur machine par AveyCole le 11/10/2026.",
-    "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
-   ],
-   "device": "Model:Cycles",
-   "os": "1.13",
-   "section": 3,
-   "requires": [
-    "model-tg-st",
-    "scale-gen-st"
-   ],
-   "conflicts": [
-    "scramble",
-    "scramble-st",
-    "scramble-gen",
-    "scramble-gen-queued",
-    "scramble-st-gen-queued"
-   ],
-   "writes": {
-    "$shared": 88
-   },
-   "symbols": {
-    "sc_apply": "0x40161880",
-    "sc_eat": "0x40189710",
-    "sc_event": "0x40163a64",
-    "sc_fresh": "0x40189662",
-    "sc_key": "0x40189618",
-    "sc_no_get": "0x40168e32",
-    "sc_out": "0x401618bc",
-    "sc_pass": "0x4018970a",
-    "sc_prepare": "0x4018b1a8",
-    "sc_random": "0x401629dc",
-    "sc_release": "0x401896e4",
-    "sc_result": "0x40163a70",
-    "sc_rng_seed": "0x401629f2",
-    "sc_run": "0x40168da4",
-    "sc_seed": "0x40163a6c",
-    "sc_skip_run": "0x401896de",
-    "sc_steps_event": "0x4016fae8",
-    "sc_steps_toggle": "0x40160a94",
-    "sc_taken": "0x40163a60",
-    "sc_text": "0x40167900",
-    "sc_time": "0x40163a68"
-   }
-  },
-  {
-   "id": "scramble-gen-queued",
-   "order": 50,
-   "name": "SCRAMBLE — quatre paramètres et verrous par pas",
-   "description": [
-    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
-    "Maintenir des trigs puis SETTINGS + TRACK active/retire des valeurs fraîches à chaque passage, sans modifier le son de base. Sampler exclu. SCRAMBLE par pas testé sur machine par AveyCole le 11/10/2026.",
-    "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
-   ],
-   "device": "Model:Cycles",
-   "os": "1.13",
-   "section": 3,
-   "requires": [
-    "model-tg",
-    "scale-gen-queued"
-   ],
-   "conflicts": [
-    "scramble",
-    "scramble-st",
-    "scramble-gen",
-    "scramble-st-gen",
-    "scramble-st-gen-queued"
-   ],
-   "writes": {
-    "$shared": 89
-   },
-   "symbols": {
-    "sc_apply": "0x40161880",
-    "sc_eat": "0x40189710",
-    "sc_event": "0x40163a64",
-    "sc_fresh": "0x40189662",
-    "sc_key": "0x40189618",
-    "sc_no_get": "0x40168e32",
-    "sc_out": "0x401618bc",
-    "sc_pass": "0x4018970a",
-    "sc_prepare": "0x4018b1a8",
-    "sc_random": "0x401629dc",
-    "sc_release": "0x401896e4",
-    "sc_result": "0x40163a70",
-    "sc_rng_seed": "0x401629f2",
-    "sc_run": "0x40168da4",
-    "sc_seed": "0x40163a6c",
-    "sc_skip_run": "0x401896de",
-    "sc_steps_event": "0x4016fae8",
-    "sc_steps_toggle": "0x40160a94",
-    "sc_taken": "0x40163a60",
-    "sc_text": "0x40167900",
-    "sc_time": "0x40163a68"
-   }
-  },
-  {
-   "id": "scramble-st-gen-queued",
-   "order": 50,
-   "name": "SCRAMBLE — quatre paramètres et verrous par pas",
-   "description": [
-    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
-    "Maintenir des trigs puis SETTINGS + TRACK active/retire des valeurs fraîches à chaque passage, sans modifier le son de base. Sampler exclu. SCRAMBLE par pas testé sur machine par AveyCole le 11/10/2026.",
-    "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
-   ],
-   "device": "Model:Cycles",
-   "os": "1.13",
-   "section": 3,
-   "requires": [
-    "model-tg-st",
-    "scale-gen-st-queued"
-   ],
-   "conflicts": [
-    "scramble",
-    "scramble-st",
-    "scramble-gen",
-    "scramble-st-gen",
-    "scramble-gen-queued"
-   ],
-   "writes": {
-    "$shared": 89
-   },
-   "symbols": {
-    "sc_apply": "0x40161880",
-    "sc_eat": "0x40189710",
-    "sc_event": "0x40163a64",
-    "sc_fresh": "0x40189662",
-    "sc_key": "0x40189618",
-    "sc_no_get": "0x40168e32",
-    "sc_out": "0x401618bc",
-    "sc_pass": "0x4018970a",
-    "sc_prepare": "0x4018b1a8",
-    "sc_random": "0x401629dc",
-    "sc_release": "0x401896e4",
-    "sc_result": "0x40163a70",
-    "sc_rng_seed": "0x401629f2",
-    "sc_run": "0x40168da4",
-    "sc_seed": "0x40163a6c",
-    "sc_skip_run": "0x401896de",
-    "sc_steps_event": "0x4016fae8",
-    "sc_steps_toggle": "0x40160a94",
-    "sc_taken": "0x40163a60",
-    "sc_text": "0x40167900",
-    "sc_time": "0x40163a68"
-   }
-  },
-  {
-   "id": "scramble",
-   "order": 50,
-   "name": "SCRAMBLE — quatre paramètres et verrous par pas",
-   "description": [
-    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
-    "Maintenir des trigs puis SETTINGS + TRACK active/retire des valeurs fraîches à chaque passage, sans modifier le son de base. Sampler exclu. SCRAMBLE par pas testé sur machine par AveyCole le 11/10/2026.",
-    "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
-   ],
-   "device": "Model:Cycles",
-   "os": "1.13",
-   "section": 3,
-   "requires": [
-    "model-tg"
-   ],
-   "conflicts": [
-    "scramble-st",
-    "scramble-gen",
-    "scramble-st-gen",
-    "scramble-gen-queued",
-    "scramble-st-gen-queued",
-    "scale-gen",
-    "scale-gen-st",
-    "scale-gen-queued",
-    "scale-gen-st-queued"
-   ],
-   "writes": {
-    "$shared": 90
-   },
-   "symbols": {
-    "sc_apply": "0x40161880",
-    "sc_eat": "0x40189710",
-    "sc_event": "0x40163a64",
-    "sc_fresh": "0x40189662",
-    "sc_key": "0x40189618",
-    "sc_no_get": "0x40168e32",
-    "sc_out": "0x401618bc",
-    "sc_pass": "0x4018970a",
-    "sc_prepare": "0x4018b1a8",
-    "sc_random": "0x401629dc",
-    "sc_release": "0x401896e4",
-    "sc_result": "0x40163a70",
-    "sc_rng_seed": "0x401629f2",
-    "sc_run": "0x40168da4",
-    "sc_seed": "0x40163a6c",
-    "sc_skip_run": "0x401896de",
-    "sc_steps_event": "0x4016fae8",
-    "sc_steps_toggle": "0x40160a94",
-    "sc_taken": "0x40163a60",
-    "sc_text": "0x40167900",
-    "sc_time": "0x40163a68"
-   }
-  },
-  {
-   "id": "scramble-st",
-   "order": 50,
-   "name": "SCRAMBLE — quatre paramètres et verrous par pas",
-   "description": [
-    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
-    "Maintenir des trigs puis SETTINGS + TRACK active/retire des valeurs fraîches à chaque passage, sans modifier le son de base. Sampler exclu. SCRAMBLE par pas testé sur machine par AveyCole le 11/10/2026.",
-    "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
-   ],
-   "device": "Model:Cycles",
-   "os": "1.13",
-   "section": 3,
-   "requires": [
-    "model-tg-st"
-   ],
-   "conflicts": [
-    "scramble",
-    "scramble-gen",
-    "scramble-st-gen",
-    "scramble-gen-queued",
-    "scramble-st-gen-queued",
-    "scale-gen",
-    "scale-gen-st",
-    "scale-gen-queued",
-    "scale-gen-st-queued"
-   ],
-   "writes": {
-    "$shared": 90
-   },
-   "symbols": {
-    "sc_apply": "0x40161880",
-    "sc_eat": "0x40189710",
-    "sc_event": "0x40163a64",
-    "sc_fresh": "0x40189662",
-    "sc_key": "0x40189618",
-    "sc_no_get": "0x40168e32",
-    "sc_out": "0x401618bc",
-    "sc_pass": "0x4018970a",
-    "sc_prepare": "0x4018b1a8",
-    "sc_random": "0x401629dc",
-    "sc_release": "0x401896e4",
-    "sc_result": "0x40163a70",
-    "sc_rng_seed": "0x401629f2",
-    "sc_run": "0x40168da4",
-    "sc_seed": "0x40163a6c",
-    "sc_skip_run": "0x401896de",
-    "sc_steps_event": "0x4016fae8",
-    "sc_steps_toggle": "0x40160a94",
-    "sc_taken": "0x40163a60",
-    "sc_text": "0x40167900",
-    "sc_time": "0x40163a68"
-   }
-  },
-  {
    "id": "lfo-secondary",
    "order": 52,
-   "name": "Second LFO — prototype intégré",
+   "name": "Second LFO",
    "description": [
     "Deuxième appui LFO : page secondaire, six états indépendants.",
-    "Expérimental : réglages RAM uniquement, budget audio matériel non vérifié.",
+    "Testé sur machine par AveyCole le 11/10/2026 ; réglages RAM uniquement.",
     "Sources et preuve : tools/gen_lfo_secondary.py, notes/58 ; page adaptée de Model-TG (MIT)."
    ],
    "device": "Model:Cycles",
@@ -99843,6 +99537,312 @@ window.MC_TWEAKS = {
     "lf2p_track_label": "0x4017946a",
     "lf2p_vt": "0x401736c8",
     "lf2p_wave": "0x40179492"
+   }
+  },
+  {
+   "id": "scramble-gen",
+   "order": 50,
+   "name": "SCRAMBLE — quatre paramètres et verrous par pas",
+   "description": [
+    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
+    "Maintenir des trigs puis SETTINGS + TRACK active/retire des valeurs fraîches à chaque passage, sans modifier le son de base. Sampler exclu. SCRAMBLE par pas testé sur machine par AveyCole le 11/10/2026.",
+    "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "requires": [
+    "model-tg",
+    "scale-gen"
+   ],
+   "conflicts": [
+    "scramble",
+    "scramble-st",
+    "scramble-st-gen",
+    "scramble-gen-queued",
+    "scramble-st-gen-queued"
+   ],
+   "writes": {
+    "$shared": 88
+   },
+   "symbols": {
+    "sc_apply": "0x40161880",
+    "sc_eat": "0x40189710",
+    "sc_event": "0x40163a64",
+    "sc_fresh": "0x40189662",
+    "sc_key": "0x40189618",
+    "sc_no_get": "0x40168e32",
+    "sc_out": "0x401618bc",
+    "sc_pass": "0x4018970a",
+    "sc_prepare": "0x4018b1a8",
+    "sc_random": "0x401629dc",
+    "sc_release": "0x401896e4",
+    "sc_result": "0x40163a70",
+    "sc_rng_seed": "0x401629f2",
+    "sc_run": "0x40168da4",
+    "sc_seed": "0x40163a6c",
+    "sc_skip_run": "0x401896de",
+    "sc_steps_event": "0x4016fae8",
+    "sc_steps_toggle": "0x40160a94",
+    "sc_taken": "0x40163a60",
+    "sc_text": "0x40167900",
+    "sc_time": "0x40163a68"
+   }
+  },
+  {
+   "id": "scramble-st-gen",
+   "order": 50,
+   "name": "SCRAMBLE — quatre paramètres et verrous par pas",
+   "description": [
+    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
+    "Maintenir des trigs puis SETTINGS + TRACK active/retire des valeurs fraîches à chaque passage, sans modifier le son de base. Sampler exclu. SCRAMBLE par pas testé sur machine par AveyCole le 11/10/2026.",
+    "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "requires": [
+    "model-tg-st",
+    "scale-gen-st"
+   ],
+   "conflicts": [
+    "scramble",
+    "scramble-st",
+    "scramble-gen",
+    "scramble-gen-queued",
+    "scramble-st-gen-queued"
+   ],
+   "writes": {
+    "$shared": 88
+   },
+   "symbols": {
+    "sc_apply": "0x40161880",
+    "sc_eat": "0x40189710",
+    "sc_event": "0x40163a64",
+    "sc_fresh": "0x40189662",
+    "sc_key": "0x40189618",
+    "sc_no_get": "0x40168e32",
+    "sc_out": "0x401618bc",
+    "sc_pass": "0x4018970a",
+    "sc_prepare": "0x4018b1a8",
+    "sc_random": "0x401629dc",
+    "sc_release": "0x401896e4",
+    "sc_result": "0x40163a70",
+    "sc_rng_seed": "0x401629f2",
+    "sc_run": "0x40168da4",
+    "sc_seed": "0x40163a6c",
+    "sc_skip_run": "0x401896de",
+    "sc_steps_event": "0x4016fae8",
+    "sc_steps_toggle": "0x40160a94",
+    "sc_taken": "0x40163a60",
+    "sc_text": "0x40167900",
+    "sc_time": "0x40163a68"
+   }
+  },
+  {
+   "id": "scramble-gen-queued",
+   "order": 50,
+   "name": "SCRAMBLE — quatre paramètres et verrous par pas",
+   "description": [
+    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
+    "Maintenir des trigs puis SETTINGS + TRACK active/retire des valeurs fraîches à chaque passage, sans modifier le son de base. Sampler exclu. SCRAMBLE par pas testé sur machine par AveyCole le 11/10/2026.",
+    "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "requires": [
+    "model-tg",
+    "scale-gen-queued"
+   ],
+   "conflicts": [
+    "scramble",
+    "scramble-st",
+    "scramble-gen",
+    "scramble-st-gen",
+    "scramble-st-gen-queued"
+   ],
+   "writes": {
+    "$shared": 89
+   },
+   "symbols": {
+    "sc_apply": "0x40161880",
+    "sc_eat": "0x40189710",
+    "sc_event": "0x40163a64",
+    "sc_fresh": "0x40189662",
+    "sc_key": "0x40189618",
+    "sc_no_get": "0x40168e32",
+    "sc_out": "0x401618bc",
+    "sc_pass": "0x4018970a",
+    "sc_prepare": "0x4018b1a8",
+    "sc_random": "0x401629dc",
+    "sc_release": "0x401896e4",
+    "sc_result": "0x40163a70",
+    "sc_rng_seed": "0x401629f2",
+    "sc_run": "0x40168da4",
+    "sc_seed": "0x40163a6c",
+    "sc_skip_run": "0x401896de",
+    "sc_steps_event": "0x4016fae8",
+    "sc_steps_toggle": "0x40160a94",
+    "sc_taken": "0x40163a60",
+    "sc_text": "0x40167900",
+    "sc_time": "0x40163a68"
+   }
+  },
+  {
+   "id": "scramble-st-gen-queued",
+   "order": 50,
+   "name": "SCRAMBLE — quatre paramètres et verrous par pas",
+   "description": [
+    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
+    "Maintenir des trigs puis SETTINGS + TRACK active/retire des valeurs fraîches à chaque passage, sans modifier le son de base. Sampler exclu. SCRAMBLE par pas testé sur machine par AveyCole le 11/10/2026.",
+    "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "requires": [
+    "model-tg-st",
+    "scale-gen-st-queued"
+   ],
+   "conflicts": [
+    "scramble",
+    "scramble-st",
+    "scramble-gen",
+    "scramble-st-gen",
+    "scramble-gen-queued"
+   ],
+   "writes": {
+    "$shared": 89
+   },
+   "symbols": {
+    "sc_apply": "0x40161880",
+    "sc_eat": "0x40189710",
+    "sc_event": "0x40163a64",
+    "sc_fresh": "0x40189662",
+    "sc_key": "0x40189618",
+    "sc_no_get": "0x40168e32",
+    "sc_out": "0x401618bc",
+    "sc_pass": "0x4018970a",
+    "sc_prepare": "0x4018b1a8",
+    "sc_random": "0x401629dc",
+    "sc_release": "0x401896e4",
+    "sc_result": "0x40163a70",
+    "sc_rng_seed": "0x401629f2",
+    "sc_run": "0x40168da4",
+    "sc_seed": "0x40163a6c",
+    "sc_skip_run": "0x401896de",
+    "sc_steps_event": "0x4016fae8",
+    "sc_steps_toggle": "0x40160a94",
+    "sc_taken": "0x40163a60",
+    "sc_text": "0x40167900",
+    "sc_time": "0x40163a68"
+   }
+  },
+  {
+   "id": "scramble",
+   "order": 50,
+   "name": "SCRAMBLE — quatre paramètres et verrous par pas",
+   "description": [
+    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
+    "Maintenir des trigs puis SETTINGS + TRACK active/retire des valeurs fraîches à chaque passage, sans modifier le son de base. Sampler exclu. SCRAMBLE par pas testé sur machine par AveyCole le 11/10/2026.",
+    "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "requires": [
+    "model-tg"
+   ],
+   "conflicts": [
+    "scramble-st",
+    "scramble-gen",
+    "scramble-st-gen",
+    "scramble-gen-queued",
+    "scramble-st-gen-queued",
+    "scale-gen",
+    "scale-gen-st",
+    "scale-gen-queued",
+    "scale-gen-st-queued"
+   ],
+   "writes": {
+    "$shared": 90
+   },
+   "symbols": {
+    "sc_apply": "0x40161880",
+    "sc_eat": "0x40189710",
+    "sc_event": "0x40163a64",
+    "sc_fresh": "0x40189662",
+    "sc_key": "0x40189618",
+    "sc_no_get": "0x40168e32",
+    "sc_out": "0x401618bc",
+    "sc_pass": "0x4018970a",
+    "sc_prepare": "0x4018b1a8",
+    "sc_random": "0x401629dc",
+    "sc_release": "0x401896e4",
+    "sc_result": "0x40163a70",
+    "sc_rng_seed": "0x401629f2",
+    "sc_run": "0x40168da4",
+    "sc_seed": "0x40163a6c",
+    "sc_skip_run": "0x401896de",
+    "sc_steps_event": "0x4016fae8",
+    "sc_steps_toggle": "0x40160a94",
+    "sc_taken": "0x40163a60",
+    "sc_text": "0x40167900",
+    "sc_time": "0x40163a68"
+   }
+  },
+  {
+   "id": "scramble-st",
+   "order": 50,
+   "name": "SCRAMBLE — quatre paramètres et verrous par pas",
+   "description": [
+    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
+    "Maintenir des trigs puis SETTINGS + TRACK active/retire des valeurs fraîches à chaque passage, sans modifier le son de base. Sampler exclu. SCRAMBLE par pas testé sur machine par AveyCole le 11/10/2026.",
+    "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "requires": [
+    "model-tg-st"
+   ],
+   "conflicts": [
+    "scramble",
+    "scramble-gen",
+    "scramble-st-gen",
+    "scramble-gen-queued",
+    "scramble-st-gen-queued",
+    "scale-gen",
+    "scale-gen-st",
+    "scale-gen-queued",
+    "scale-gen-st-queued"
+   ],
+   "writes": {
+    "$shared": 90
+   },
+   "symbols": {
+    "sc_apply": "0x40161880",
+    "sc_eat": "0x40189710",
+    "sc_event": "0x40163a64",
+    "sc_fresh": "0x40189662",
+    "sc_key": "0x40189618",
+    "sc_no_get": "0x40168e32",
+    "sc_out": "0x401618bc",
+    "sc_pass": "0x4018970a",
+    "sc_prepare": "0x4018b1a8",
+    "sc_random": "0x401629dc",
+    "sc_release": "0x401896e4",
+    "sc_result": "0x40163a70",
+    "sc_rng_seed": "0x401629f2",
+    "sc_run": "0x40168da4",
+    "sc_seed": "0x40163a6c",
+    "sc_skip_run": "0x401896de",
+    "sc_steps_event": "0x4016fae8",
+    "sc_steps_toggle": "0x40160a94",
+    "sc_taken": "0x40163a60",
+    "sc_text": "0x40167900",
+    "sc_time": "0x40163a68"
    }
   }
  ],
@@ -100790,6 +100790,25 @@ window.MC_TWEAKS = {
    "queued_status": "tested"
   },
   {
+   "id": "lfo-secondary",
+   "label": "Second LFO",
+   "desc": "Deuxième appui LFO : six LFO secondaires indépendants. Testé sur machine ; réglages RAM uniquement.",
+   "status": "tested",
+   "credit": {
+    "kind": "based",
+    "who": "TinyGregAudio",
+    "repo": "TinyGregAudio/Model-TG"
+   },
+   "cat": "seq",
+   "variants": [
+    {
+     "id": "lfo-secondary",
+     "label": null
+    }
+   ],
+   "license": "LICENSE-Model-TG.txt"
+  },
+  {
    "id": "scramble",
    "label": "SCRAMBLE",
    "desc": "SETTINGS + TRACK : quatre contrôles machine aléatoires ; maintenir des trigs avant le combo active/retire un tirage frais par passage. Testé sur machine ; Sampler exclu.",
@@ -100812,18 +100831,6 @@ window.MC_TWEAKS = {
     "macro": "scramble-st"
    },
    "license": "LICENSE-Model-TG.txt"
-  },
-  {
-   "id": "lfo-secondary",
-   "cat": "seq",
-   "label": "Second LFO",
-   "status": "experimental",
-   "variants": [
-    {
-     "id": "lfo-secondary",
-     "label": null
-    }
-   ]
   }
  ],
  "samples": {

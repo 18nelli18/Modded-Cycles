@@ -1,10 +1,10 @@
 {
  "id": "lfo-secondary",
  "order": 52,
- "name": "Second LFO — prototype intégré",
+ "name": "Second LFO",
  "description": [
   "Deuxième appui LFO : page secondaire, six états indépendants.",
-  "Expérimental : réglages RAM uniquement, budget audio matériel non vérifié.",
+  "Testé sur machine par AveyCole le 11/10/2026 ; réglages RAM uniquement.",
   "Sources et preuve : tools/gen_lfo_secondary.py, notes/58 ; page adaptée de Model-TG (MIT)."
  ],
  "device": "Model:Cycles",

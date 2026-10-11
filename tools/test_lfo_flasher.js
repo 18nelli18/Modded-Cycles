@@ -1,7 +1,7 @@
 // Note 58 : page LFO 2 réelle, sélection compatible et firmware navigateur.
 const fs=require('fs'),path=require('path'),assert=require('assert');
 const {JSDOM,VirtualConsole}=require('jsdom');
-const root=path.resolve(__dirname,'..'),dir=path.join(root,'docs/flasher-lfo-test');
+const root=path.resolve(__dirname,'..'),main=process.argv.includes('--main'),dir=path.join(root,main?'docs/flasher':'docs/flasher-lfo-test');
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 (async()=>{
  const errors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(String(e)));
@@ -14,12 +14,13 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
  await wait(20);
  const app=w.MCFlasherApp,tw=w.MC_TWEAKS;
  assert(app&&tw&&doc.getElementById('feat-lfo-secondary'));
- assert(doc.getElementById('lfo-test-notice').textContent.includes('RAM'));
+ if(!main)assert(doc.getElementById('lfo-test-notice').textContent.includes('RAM'));
+ assert(tw.features.find(f=>f.id==='lfo-secondary').status==='tested');
  for(const lang of ['en','fr']){
   app.applyLang(lang);doc.getElementById('more-lfo-secondary').click();
   const detail=doc.getElementById('det-lfo-secondary');
   assert(detail.textContent.includes('RAM'));
-  assert(detail.querySelector('a.feat-guide').href.endsWith('guide.html#lfo-secondary'));
+  assert(detail.querySelector('a.feat-guide').href.endsWith(main?'guide/#lfo-secondary':'guide.html#lfo-secondary'));
   doc.getElementById('more-lfo-secondary').click();
  }
  app.applyLang('en');doc.getElementById('feat-lfo-secondary').click();

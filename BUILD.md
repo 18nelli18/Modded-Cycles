@@ -686,7 +686,7 @@ Empreinte principale `model-tg+scale-gen+scramble-gen` : `9e5b2c2875e5cd942082ab
 Catalogue autonome `/flasher-test-2/`, build
 `2026-10-11-test-2-genie-scramble-queue`. Génération différée reste une
 sous-option du générateur ; SCRAMBLE reste une sélection indépendante.
-Second LFO et voies MIDI secondaires ne sont pas inclus.
+Second LFO rejoint le catalogue principal le 11/10/2026 après validation matérielle par AveyCole ; voies MIDI secondaires encore en développement.
 
 ```sh
 python3 tools/gen_seq_gen.py --advanced --sequence-only --queued --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --check
@@ -739,3 +739,7 @@ node tools/test_lfo_flasher.js
 Menu de paramètres OS réel : panneau LFO, quatre lignes défilantes et
 curseur natif. Le dessin bas niveau est simulé dans la preuve UI ; essai
 LCD et budget audio combiné sur matériel attendus. Voir note 58 §12.
+
+## Second LFO — catalogue principal (11/10/2026)
+
+`52-lfo-secondary.json`, généré par `tools/gen_lfo_secondary.py`, identique en code au flasher de test validé par AveyCole. Deuxième appui LFO ; réglages RAM uniquement, sans sauvegarde pattern/projet. Voir note 58.

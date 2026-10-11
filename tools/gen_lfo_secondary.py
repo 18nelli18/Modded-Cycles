@@ -18,13 +18,14 @@ import sprites
 from gen_seq_gen import STOCK, main_os_from_syx, symbols
 
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-OUT=ROOT/'tweaks/model-cycles_OS1.13/experimental/lfo-secondary/52-lfo-secondary.json'
+OUT=ROOT/'tweaks/model-cycles_OS1.13/52-lfo-secondary.json'
 
 
 def compile_code(cross):
     occupied=[]
     for path in sorted((ROOT/'tweaks/model-cycles_OS1.13').glob('*.json')):
         tweak=json.loads(path.read_text())
+        if tweak.get('id')=='lfo-secondary':continue
         occupied.extend((build.BASE+w['off'],build.BASE+w['off']+len(bytes.fromhex(w['new']))) for w in tweak.get('writes',[]))
     free=[(va,row) for va,row in sprites.MASKS.items() if len(row)==4 and not any(va<hi and lo<va+row[0] for lo,hi in occupied)]
     inverse={'ne':'eq','eq':'ne','lt':'ge','ge':'lt','gt':'le','le':'gt','hi':'ls','ls':'hi','mi':'pl','pl':'mi','cs':'cc','cc':'cs'}
@@ -101,15 +102,16 @@ def generate(stock,cross):
         write(va,struct.pack('>I',syms[target]))
     assert raw(0x400597c6,6)==bytes.fromhex('4eb940091ab2')
     write(0x400597c6,b'\x4e\xb9'+struct.pack('>I',syms['lf2_dispatch']))
-    tweak=dict(id='lfo-secondary',order=52,name='Second LFO — prototype intégré',
+    tweak=dict(id='lfo-secondary',order=52,name='Second LFO',
         description=['Deuxième appui LFO : page secondaire, six états indépendants.',
-            'Expérimental : réglages RAM uniquement, budget audio matériel non vérifié.',
+            'Testé sur machine par AveyCole le 11/10/2026 ; réglages RAM uniquement.',
             'Sources et preuve : tools/gen_lfo_secondary.py, notes/58 ; page adaptée de Model-TG (MIT).'],
         device='Model:Cycles',os='1.13',section=3,requires=[],conflicts=[],writes=writes,
         symbols={name:hex(value) for name,value in syms.items() if name.startswith('lf2')})
     build.apply_writes(stock,[tweak])
     for path in (ROOT/'tweaks/model-cycles_OS1.13').glob('*.json'):
         other=json.loads(path.read_text())
+        if other.get('id')=='lfo-secondary':continue
         for ours in writes:
             low=ours['off'];high=low+len(bytes.fromhex(ours['new']))
             for theirs in other.get('writes',[]):

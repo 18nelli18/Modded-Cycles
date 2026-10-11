@@ -302,6 +302,7 @@ FEATURES = [
         "engines": True,
     },
     {'id': 'scale-gen', 'cat': 'seq', 'status': 'tested', 'label': 'Générateur de séquence', 'desc': 'SETTINGS + PAGE : SEQUENCE GENIE, plages, rythme/notes, mutation, Euclid, Undo et génération optionnelle au prochain cycle. Testé sur machine. Demande Model-TG.', 'credit': {'kind': 'based', 'who': 'TinyGregAudio', 'repo': 'TinyGregAudio/Model-TG'}, 'license': 'LICENSE-Model-TG', 'requires': 'model-tg', 'variants': [{'file': '49-scale-gen', 'label': None}], 'with': {'syntakt': '49-scale-gen-st', 'macro': '49-scale-gen-st'}},
+    {'id':'lfo-secondary','cat':'seq','status':'tested','label':'Second LFO','desc':'Deuxième appui LFO : six LFO secondaires indépendants. Testé sur machine ; réglages RAM uniquement.','credit':{'kind':'based','who':'TinyGregAudio','repo':'TinyGregAudio/Model-TG'},'license':'LICENSE-Model-TG','variants':[{'file':'52-lfo-secondary','label':None}]},
     {'id':'scramble','cat':'sound','status':'tested','label':'SCRAMBLE','desc':'SETTINGS + TRACK : quatre contrôles machine aléatoires ; maintenir des trigs avant le combo active/retire un tirage frais par passage. Testé sur machine ; Sampler exclu.','requires':'model-tg','credit':{'kind':'based','who':'TinyGregAudio','repo':'TinyGregAudio/Model-TG'},'license':'LICENSE-Model-TG','variants':[{'file':'50-scramble','label':None}],'with':{'syntakt':'50-scramble-st','macro':'50-scramble-st'}},
 ]
 

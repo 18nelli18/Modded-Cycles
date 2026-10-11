@@ -335,3 +335,7 @@ valeur non définie affiche OFF. Le setter/audio n'est pas modifié.
 La preuve parcourt toute la liste disponible dans les deux sens sur les
 six machines, vérifie OFF et refuse tout ERR affiché. Cette correction
 doit encore être confirmée sur le matériel ; aucun succès revendiqué.
+
+## 17. Testé sur la machine et publication principale (11/10/2026)
+
+AveyCole confirme que LFO 2 fonctionne comme prévu avec le correctif de police/libellés, puis demande sa publication principale. Le code et les destinations du build validé restent identiques ; statut `tested` dans le catalogue principal. Réglages RAM seulement, sans sauvegarde des patterns/projets. JSON désormais `52-lfo-secondary.json` à la racine des tweaks ; le générateur ignore sa propre sortie lors du contrôle des chevauchements.

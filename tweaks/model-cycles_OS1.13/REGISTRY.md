@@ -6,10 +6,10 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 164 tweaks, 16 966 écritures.
-- Masques de sprites libérables : 164 (35 960 o), dont 111 pris (26 492 o) et **53 libres (9 468 o)**.
-- Crochets sur l'OS : 92 adresses détournées, dont 64 à l'identique par des mods de familles différentes.
-- Pointeurs réécrits : 62 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
+- 165 tweaks, 17 043 écritures.
+- Masques de sprites libérables : 164 (35 960 o), dont 148 pris (32 712 o) et **16 libres (3 248 o)**.
+- Crochets sur l'OS : 93 adresses détournées, dont 64 à l'identique par des mods de familles différentes.
+- Pointeurs réécrits : 64 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 134 tweaks ; place restante au §3.
 
 ## 1. Masques de sprites libérés
@@ -42,7 +42,7 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x401904b4` | `0x400ac784` | pris (370/376 o) | multiline-browser (370 o) |
 | `0x40192734` | `0x400ac2b2` | pris (318/376 o) | trigless-dim (318 o) |
 
-### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 8 pris, 34 libres (6 528 o)
+### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 28 pris, 14 libres (2 688 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
@@ -51,29 +51,29 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x4015943c` | `0x400b73e4` | pris (142/192 o) | scale-gen (142 o), scale-gen-queued (142 o), scale-gen-st (142 o), scale-gen-st-queued (142 o) |
 | `0x4015f38c` | `0x400b504a` | pris (142/192 o) | scale-gen (140 o), scale-gen-queued (142 o), scale-gen-st (140 o), scale-gen-st-queued (142 o) |
 | `0x40165fec` | `0x400b28b4` | pris (140/192 o) | scale-gen-queued (140 o), scale-gen-st-queued (140 o) |
-| `0x40168a84` | `0x400b1bc0` | libre | |
+| `0x40168a84` | `0x400b1bc0` | pris (188/192 o) | lfo-secondary (188 o) |
 | `0x40168da4` | `0x400b1b32` | pris (150/192 o) | scramble (150 o), scramble-gen (150 o), scramble-gen-queued (150 o), scramble-st (150 o), scramble-st-gen (150 o), scramble-st-gen-queued (150 o) |
-| `0x4016bcd8` | `0x400b12fe` | libre | |
+| `0x4016bcd8` | `0x400b12fe` | pris (186/192 o) | lfo-secondary (186 o) |
 | `0x4016dab8` | `0x400b0f78` | pris (146/192 o) | scramble (146 o), scramble-gen (146 o), scramble-gen-queued (146 o), scramble-st (146 o), scramble-st-gen (146 o), scramble-st-gen-queued (146 o) |
 | `0x4016fae8` | `0x400b0b20` | pris (134/192 o) | scramble (134 o), scramble-gen (134 o), scramble-gen-queued (134 o), scramble-st (134 o), scramble-st-gen (134 o), scramble-st-gen-queued (134 o) |
-| `0x40170c48` | `0x400b08da` | libre | |
-| `0x40171a48` | `0x400b06ec` | libre | |
-| `0x40172a68` | `0x400b0508` | libre | |
-| `0x40172be8` | `0x400b04ec` | libre | |
-| `0x401736c8` | `0x400b036c` | libre | |
-| `0x40177f28` | `0x400af962` | libre | |
-| `0x40178708` | `0x400af812` | libre | |
-| `0x40178fc0` | `0x400af6e2` | libre | |
-| `0x401792b0` | `0x400af6a6` | libre | |
-| `0x40179430` | `0x400af686` | libre | |
-| `0x401795b0` | `0x400af66a` | libre | |
-| `0x40179b18` | `0x400af60e` | libre | |
-| `0x4017c97c` | `0x400aee4e` | libre | |
-| `0x401829b8` | `0x400adff6` | libre | |
-| `0x40183408` | `0x400adf7e` | libre | |
-| `0x40184808` | `0x400adc40` | libre | |
-| `0x40184af8` | `0x400adc04` | libre | |
-| `0x40184c78` | `0x400adbe4` | libre | |
+| `0x40170c48` | `0x400b08da` | pris (184/192 o) | lfo-secondary (184 o) |
+| `0x40171a48` | `0x400b06ec` | pris (182/192 o) | lfo-secondary (182 o) |
+| `0x40172a68` | `0x400b0508` | pris (180/192 o) | lfo-secondary (180 o) |
+| `0x40172be8` | `0x400b04ec` | pris (178/192 o) | lfo-secondary (178 o) |
+| `0x401736c8` | `0x400b036c` | pris (176/192 o) | lfo-secondary (176 o) |
+| `0x40177f28` | `0x400af962` | pris (158/192 o) | lfo-secondary (158 o) |
+| `0x40178708` | `0x400af812` | pris (152/192 o) | lfo-secondary (152 o) |
+| `0x40178fc0` | `0x400af6e2` | pris (144/192 o) | lfo-secondary (144 o) |
+| `0x401792b0` | `0x400af6a6` | pris (142/192 o) | lfo-secondary (142 o) |
+| `0x40179430` | `0x400af686` | pris (140/192 o) | lfo-secondary (140 o) |
+| `0x401795b0` | `0x400af66a` | pris (140/192 o) | lfo-secondary (140 o) |
+| `0x40179b18` | `0x400af60e` | pris (28/192 o) | lfo-secondary (28 o) |
+| `0x4017c97c` | `0x400aee4e` | pris (26/192 o) | lfo-secondary (26 o) |
+| `0x401829b8` | `0x400adff6` | pris (22/192 o) | lfo-secondary (22 o) |
+| `0x40183408` | `0x400adf7e` | pris (20/192 o) | lfo-secondary (20 o) |
+| `0x40184808` | `0x400adc40` | pris (4/192 o) | lfo-secondary (4 o) |
+| `0x40184af8` | `0x400adc04` | pris (4/192 o) | lfo-secondary (4 o) |
+| `0x40184c78` | `0x400adbe4` | pris (4/192 o) | lfo-secondary (4 o) |
 | `0x40187528` | `0x400ad742` | libre | |
 | `0x401876a8` | `0x400ad726` | libre | |
 | `0x40188f98` | `0x400ad3a0` | libre | |
@@ -89,7 +89,7 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x4019089c` | `0x400ac748` | libre | |
 | `0x40192a24` | `0x400ac292` | libre | |
 
-### 35×35 : 19 masques de 280 o (copie gardée `0x4014a660`) : 16 pris, 3 libres (840 o)
+### 35×35 : 19 masques de 280 o (copie gardée `0x4014a660`) : 17 pris, 2 libres (560 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
@@ -109,11 +109,11 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x4016616c` | `0x400b2898` | pris (164/280 o) | track-filter (164 o) |
 | `0x40166760` | `0x400b272e` | pris (208/280 o) | track-filter (208 o) |
 | `0x40167c50` | `0x400b211e` | pris (114/280 o) | midi-bth-three-state (114 o) |
-| `0x401696a0` | `0x400b1540` | libre | |
+| `0x401696a0` | `0x400b1540` | pris (194/280 o) | lfo-secondary (194 o) |
 | `0x401699a8` | `0x400b1500` | libre | |
 | `0x4016aa28` | `0x400b1480` | libre | |
 
-### 34×34 : 14 masques de 272 o (copie gardée `0x4016bfc8`) : 13 pris, 1 libres (272 o)
+### 34×34 : 14 masques de 272 o (copie gardée `0x4016bfc8`) : 14 pris, 0 libres (0 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
@@ -129,10 +129,10 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x40189618` | `0x400ad364` | pris (266/272 o) | scramble (266 o), scramble-gen (266 o), scramble-gen-queued (266 o), scramble-st (266 o), scramble-st-gen (266 o), scramble-st-gen-queued (266 o) |
 | `0x4018af88` | `0x400ad18a` | pris (200/272 o) | scale-gen-queued (200 o), scale-gen-st-queued (200 o) |
 | `0x4018b1a8` | `0x400ad16e` | pris (222/272 o) | scramble (222 o), scramble-gen (222 o), scramble-gen-queued (222 o), scramble-st (222 o), scramble-st-gen (222 o), scramble-st-gen-queued (222 o) |
-| `0x4018ff64` | `0x400ac7fc` | libre | |
+| `0x4018ff64` | `0x400ac7fc` | pris (234/272 o) | lfo-secondary (234 o) |
 | `0x40192ba4` | `0x400ac276` | pris (132/272 o) | midi-live-both (132 o) |
 
-### 27×27 : 24 masques de 108 o (copie gardée `0x4014a550`) : 22 pris, 2 libres (216 o)
+### 27×27 : 24 masques de 108 o (copie gardée `0x4014a550`) : 24 pris, 0 libres (0 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
@@ -158,10 +158,10 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x40167900` | `0x400b21ac` | pris (11/108 o) | scramble (11 o), scramble-gen (11 o), scramble-gen-queued (11 o), scramble-st (11 o), scramble-st-gen (11 o), scramble-st-gen-queued (11 o) |
 | `0x40167aa8` | `0x400b216c` | pris (18/108 o) | scale-gen-queued (18 o), scale-gen-st-queued (18 o) |
 | `0x40168440` | `0x400b1d7c` | pris (12/108 o) | scale-gen-queued (12 o), scale-gen-st-queued (12 o) |
-| `0x401688b4` | `0x400b1c5e` | libre | |
-| `0x401698d0` | `0x400b1522` | libre | |
+| `0x401688b4` | `0x400b1c5e` | pris (98/108 o) | lfo-secondary (98 o) |
+| `0x401698d0` | `0x400b1522` | pris (88/108 o) | lfo-secondary (88 o) |
 
-### 31×22 : 18 masques de 124 o (copie gardée `0x4016e980`) : 5 pris, 13 libres (1 612 o)
+### 31×22 : 18 masques de 124 o (copie gardée `0x4016e980`) : 18 pris, 0 libres (0 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
@@ -170,19 +170,19 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x40172510` | `0x400b0564` | pris (112/124 o) | scale-gen-queued (112 o), scale-gen-st-queued (112 o) |
 | `0x40178888` | `0x400af7f6` | pris (111/124 o) | scale-gen-queued (111 o), scale-gen-st-queued (111 o) |
 | `0x40179a20` | `0x400af62e` | pris (112/124 o) | scramble (112 o), scramble-gen (112 o), scramble-gen-queued (112 o), scramble-st (112 o), scramble-st-gen (112 o), scramble-st-gen-queued (112 o) |
-| `0x4017a4d4` | `0x400af43c` | libre | |
-| `0x401837d8` | `0x400adeba` | libre | |
-| `0x401871a0` | `0x400ad77e` | libre | |
-| `0x40189838` | `0x400ad344` | libre | |
-| `0x4018a510` | `0x400ad1e6` | libre | |
-| `0x4018bcc8` | `0x400ad00c` | libre | |
-| `0x4018f98c` | `0x400ac874` | libre | |
-| `0x4018fa84` | `0x400ac858` | libre | |
-| `0x4018fb7c` | `0x400ac838` | libre | |
-| `0x401907a4` | `0x400ac768` | libre | |
-| `0x40190a1c` | `0x400ac72c` | libre | |
-| `0x40194ad4` | `0x400abeaa` | libre | |
-| `0x40195a7c` | `0x400abc76` | libre | |
+| `0x4017a4d4` | `0x400af43c` | pris (plein) | lfo-secondary (124 o) |
+| `0x401837d8` | `0x400adeba` | pris (122/124 o) | lfo-secondary (122 o) |
+| `0x401871a0` | `0x400ad77e` | pris (118/124 o) | lfo-secondary (118 o) |
+| `0x40189838` | `0x400ad344` | pris (116/124 o) | lfo-secondary (116 o) |
+| `0x4018a510` | `0x400ad1e6` | pris (82/124 o) | lfo-secondary (82 o) |
+| `0x4018bcc8` | `0x400ad00c` | pris (76/124 o) | lfo-secondary (76 o) |
+| `0x4018f98c` | `0x400ac874` | pris (74/124 o) | lfo-secondary (74 o) |
+| `0x4018fa84` | `0x400ac858` | pris (70/124 o) | lfo-secondary (70 o) |
+| `0x4018fb7c` | `0x400ac838` | pris (68/124 o) | lfo-secondary (68 o) |
+| `0x401907a4` | `0x400ac768` | pris (62/124 o) | lfo-secondary (62 o) |
+| `0x40190a1c` | `0x400ac72c` | pris (50/124 o) | lfo-secondary (50 o) |
+| `0x40194ad4` | `0x400abeaa` | pris (44/124 o) | lfo-secondary (44 o) |
+| `0x40195a7c` | `0x400abc76` | pris (34/124 o) | lfo-secondary (34 o) |
 
 ### 26×26 : 14 masques de 104 o (copie gardée `0x4014b4e4`) : 14 pris, 0 libres (0 o)
 
@@ -468,6 +468,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x40059382` | `4eb94005979e` | jsr | charge utile (mémoire), 12 cibles selon la combinaison | syntakt-* (32/32), syntakt-*-macro (31/31), syntakt-tg-* (33/33), syntakt-tg-*-macro (31/31) | notes/31, notes/36 |
 | `0x40059392` | `4eb940002912` | jsr | masque `0x4015c044` +0x292 | 6ch-usbup, macro, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-macro (31/31) | notes/31, notes/36 |
 | `0x400593ce` | `4eb940002912` | jsr | masque `0x4015c044` +0x292 | 6ch-usbup, macro, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-macro (31/31) | notes/31, notes/36 |
+| `0x400597c6` | `4eb940091ab2` | jsr | masque `0x40168a84` +0x0 `lf2_dispatch` | lfo-secondary | notes/58 |
 | `0x4005981e` | `4eb9401b715c` | jsr | charge utile (mémoire) +0x3350e | syntakt-tg-* (1/33) | notes/31 |
 | `0x40059852` | `4eb940056f58` | jsr | masque `0x4014ab5c` +0x0 `tf_post` | track-filter | notes/47 |
 | `0x40059872` | `4eb9401b7b54` | jsr | charge utile (mémoire) +0x3353e | syntakt-tg-* (1/33) | notes/31 |
@@ -589,6 +590,8 @@ Constantes 32 bits de l'OS (tables de fonctions, données) qui pointent maintena
 | `0x400ffa78` | `401bb076` | masque `0x4014af84` +0x0 | scale-gen, scale-gen-st |
 | `0x400ffa78` | `401bb076` | masque `0x4016fd60` +0x0 | scale-gen-queued, scale-gen-st-queued |
 | `0x401005a8` | `4001e814` | masque `0x401625bc` +0x0 | track-filter |
+| `0x401016c8` | `40024e0c` | masque `0x4017a4d4` +0xa | lfo-secondary |
+| `0x401016e4` | `40024e86` | masque `0x4017a4d4` +0x0 | lfo-secondary |
 | `0x40103070` | `401bb076` | masque `0x4014af84` +0x0 | scale-gen, scale-gen-st |
 | `0x40103070` | `401bb076` | masque `0x4016fd60` +0x0 | scale-gen-queued, scale-gen-st-queued |
 | `0x401031b4` | `401bb076` | masque `0x4014af84` +0x0 | scale-gen, scale-gen-st |
@@ -655,3 +658,4 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | scramble-st-gen | 26 | 0 | 2 | 0 | 12 | 12 | 0 |  | notes/55 |
 | scramble-st-gen-queued | 26 | 0 | 2 | 0 | 12 | 12 | 0 |  | notes/55 |
 | midi-live-both | 6 | 0 | 4 | 0 | 1 | 1 | 0 |  | notes/53 |
+| lfo-secondary | 77 | 0 | 1 | 2 | 37 | 37 | 0 |  | notes/58 |
