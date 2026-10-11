@@ -47,7 +47,7 @@ Dans le paquet (ordre des cartes, qui est l'ordre du build) :
 
 | Carte | Tweak | Testé sur la machine |
 |---|---|---|
-| Mute verrouillé, Écoute d'un pas, Noms qui défilent | `latching-mute`, `trig-preview`, `browser-scroll` | par drumkilla ; par Maxime à travers la copie de Model-TG ([15 §1](15-demandes-reddit.md)) |
+| Mute verrouillé, Écoute d'un pas, Noms qui défilent | `latching-mute`, `trig-preview`, `browser-scroll` | par drumkilla ([15 §1](15-demandes-reddit.md)) ; par Maxime à travers Model-TG, qui contient `trig-preview` et `browser-scroll` octet pour octet et une variante de `latching-mute` (5 octets diffèrent en `0x40148696` : trois NOP ici, un `jsr` vers sa propre fonction dans Model-TG, [31](31-model-tg.md)) |
 | Effacer un trig | `trig-hold` | 03/10 ([33](33-effacer-un-trig.md)) |
 | Arpégiateur | `arp` | 03/10 ([32](32-arpegiateur.md)) |
 | Tempo jusqu'à 546 BPM | `tempo-max` | 04/10 ([38](38-tempo-546-bpm.md)) |
@@ -119,9 +119,9 @@ compléter `STANDARD` suffit, rien d'autre à réécrire dans la page.
 | `test_track_filter.py` | 62 ok | 25 min |
 | `test_macro.py` (`--eurorack`) | voir §4.1 | ~ 1 h |
 
-`latching-mute` et `browser-scroll` n'ont pas de preuve à eux (tweaks de drumkilla, octet pour octet ceux de
-Model-TG) : `test_standard.py` le dit au lieu de les sauter en silence, et refuse un mod du paquet qui n'a ni preuve
-(`PROOFS`) ni raison (`NO_PROOF`).
+`latching-mute` et `browser-scroll` n'ont pas de preuve à eux (tweaks de drumkilla ; le second est octet pour octet
+dans Model-TG, le premier y est en variante, tableau du §2) : `test_standard.py` le dit au lieu de les sauter en
+silence, et refuse un mod du paquet qui n'a ni preuve (`PROOFS`) ni raison (`NO_PROOF`).
 
 Deux corrections faites en route, qui ne changent aucun firmware :
 - `test_chord_keys.py` posait dans le banc d'interface la charge utile **rangée** (compressée) de MACRO au lieu de celle
@@ -129,6 +129,14 @@ Deux corrections faites en route, qui ne changent aucun firmware :
   comme `test_track_filter.py`. Il ne compte plus comme chevauchement les tweaks qui demandent une carte que Chord Keys
   exclut (l'écoute des samples demande Model-TG) : ils ne sont jamais construits ensemble.
 - `test_tempo_max.py` gagne `--with` (les bancs tournent sur l'OS avec les autres mods, avec et sans tempo-max).
+- `test_macro.py` (section 5, MACRO avec d'autres mods) s'arrêtait sur une lecture hors mémoire dès que Chord Keys était
+  installé : son getter lit ses réglages dans le BSS de l'OS, que le banc des voix ne pose pas
+  ([55 §5](55-macro-allegee-et-lofi.md)). `Fw.engine()` pose maintenant ce BSS à zéro quand Chord Keys est là (Keys OFF sur les six pistes), comme
+  `test_track_filter.py` et l'essai de [42 §17](42-clavier-accords-diatoniques.md).
+
+Le test complet de la page (`webflash_smoke.js` avec les fichiers officiels du Model:Cycles, du Model:Samples et du
+Syntakt, en 40 parts lancées deux par deux) : toutes les parts « ALL OK », les 817 combinaisons de `REF_MAINOS`
+construites et conformes, le paquet standard compris.
 
 ### 4.1 MACRO avec le paquet
 
@@ -158,7 +166,8 @@ version (code à une autre adresse). Points à essayer, par priorité :
    SWEEP sur une piste MACRO (filtre), relâcher rend les potards à MACRO ; FUNC + PITCH (RATE/BITS) ; trigs en mode
    grille sur une piste Keys ON (effacer, trigless atténué, écoute avec PAGE à l'arrêt) ; mute verrouillé puis TRIG et
    RETRIG ; volume et pan en chiffres sans écraser « Chord Voicing » ni les L/H du filtre ; bascule MIDI (THR, FUNC +
-   appui sur LEVEL/DATA) avec un moniteur MIDI.
+   appui sur LEVEL/DATA) avec un moniteur MIDI, et le MIDI OUT ordinaire (horloge et notes sur OUT) : la porte de
+   `midi-live-both` est sur tous les chemins d'envoi MIDI ([53](53-midi-thru-aveycole.md)).
 5. **Sauvegarde** : un projet avec arp, Chord Keys sur deux patterns, filtre et lo-fi de MACRO verrouillés, tempo 400 :
    éteindre, rallumer, tout revient.
 

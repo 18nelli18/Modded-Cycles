@@ -8,9 +8,9 @@ Ce test vérifie que la combinaison existe et tient :
   1. Build : tools/build.py construit le paquet depuis le .syx officiel, et son MAIN OS a l'empreinte que la page
      attend (REF_MAINOS de docs/flasher/app.js, tools/ref_mainos.py).
   2. Chaque mod du paquet : sa preuve en émulation (le code de l'OS, d'origine contre modifié) tourne avec tous les
-     autres mods du paquet installés (--with). latching-mute et browser-scroll (tweaks de drumkilla, octet pour octet
-     ceux que Model-TG contient) n'ont pas de preuve à eux ; MACRO demande les sources de Braids (--eurorack), sans
-     elles sa preuve est sautée et le test le dit.
+     autres mods du paquet installés (--with). latching-mute et browser-scroll (tweaks de drumkilla ; Model-TG
+     contient le second octet pour octet, une variante du premier) n'ont pas de preuve à eux ; MACRO demande les
+     sources de Braids (--eurorack), sans elles sa preuve est sautée et le test le dit.
 
 Un mod ajouté à STANDARD sans preuve dans PROOFS fait échouer le test : on l'y ajoute (ou dans NO_PROOF, avec la raison).
 Le Model:Samples est prouvé à part, par tools/emu/test_mods_for_samples.py, qui emballe aussi le paquet standard.
@@ -51,7 +51,8 @@ PROOFS = {
     "track-filter": ["test_track_filter.py"],
 }
 NO_PROOF = {
-    "latching-mute": "tweak de drumkilla, octet pour octet celui que contient Model-TG (testé sur la machine)",
+    "latching-mute": "tweak de drumkilla, testé par lui ; Model-TG en contient une variante (5 octets diffèrent en "
+                     "0x40148696 : trois NOP ici, un jsr vers sa propre fonction dans Model-TG)",
     "browser-scroll": "tweak de drumkilla, octet pour octet celui que contient Model-TG (testé sur la machine)",
 }
 QUICK = {"test_macro.py", "test_track_filter.py"}                   # ont une option --quick

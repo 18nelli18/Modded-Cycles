@@ -122,6 +122,10 @@ class Fw:
             e = TM.engine(self.img, end=self.blob_end, payload=self.payload)
         else:
             e = E.Engine(self.img, payload=self.payload)
+            if any(t["id"].startswith("chord-keys") for t in self.tweaks):
+                # le getter de Chord Keys lit ses réglages dans le BSS de l'OS (notes/42) : à zéro, Keys OFF sur
+                # les six pistes, comme dans test_track_filter.py
+                e.uc.mem_map(0x40800000, 0x01800000)
         if solo is not None:             # les autres pistes : machine hors limites, rien n'est calculé
             for t in range(6):
                 if t != solo:
