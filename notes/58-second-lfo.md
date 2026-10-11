@@ -229,3 +229,30 @@ dispatcher complet : 5153 instructions, pas une mesure matérielle de durée.
 
 [À FAIRE] Publication Pages/retour matériel, puis poursuite de la sauvegarde
 et de la banque MIDI indépendante ; aucun statut « testé sur machine » ajouté.
+
+
+## 12. Rendu de paramètres natif restauré (11/10/2026)
+
+[FAIT en émulation] Après récupération du dépôt publié `a560a36`,
+`layout.s` remplace le dessin personnalisé par le renderer OS `0x400423e4`.
+La page MACHINES conserve ses 0x500 octets ; une allocation de 0xb00
+réserve 0x600 octets supplémentaires pour la présentation privée, neuf
+widgets de 84 octets et une police privée. Aucun champ de la page LFO
+primaire ni aucune piste sonore n'est modifié.
+
+Le panneau gauche reprend l'icône LFO native et affiche « LFO 2 ».
+Quatre lignes, curseur navigation/édition et flèches viennent du renderer
+natif. Ordre de navigation : Wav, Mul, Dst, Dep, Spd, Fad, SPH, Rst, Trk.
+Les valeurs sont alignées à x=120 dans le curseur natif. Les tables natives
+fournissent les noms des formes et des modes ; multiplicateur et destination
+restent numériques (OFF disponible), à améliorer avant une équivalence
+complète de tous les libellés stock.
+
+`test_lfo_secondary_page.py` exécute le constructeur/destructeur et le
+renderer natifs : 108 présentations, navigation et bornes des 48 champs,
+pads/transport/réouverture et refus d'allocation. Les primitives de dessin,
+la mesure des chaînes, la présentation et l'allocation sont simulées :
+ce n'est pas une capture du LCD physique. `test_lfo_secondary_state.py`
+couvre 1120 blocs combinés et 33792 événements natifs. Le catalogue de test
+est régénéré depuis les nouveaux octets placés puis comparé au builder Web.
+La persistance et la marge audio matérielle restent non validées.

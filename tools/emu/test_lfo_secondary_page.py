@@ -37,7 +37,7 @@ def load(r):
     with tempfile.TemporaryDirectory() as temp:
         p = pathlib.Path(temp)
         objects = []
-        for name in ('update', 'mix', 'dispatch', 'edit', 'init', 'prepare', 'launch', 'key', 'page'):
+        for name in ('update', 'mix', 'dispatch', 'edit', 'init', 'prepare', 'launch', 'key', 'page', 'layout'):
             obj = p/(name+'.o')
             subprocess.run([cross+'as', '-march=cfv4e', '-o', str(obj),
                             str(root/'tools/machines/lfo_secondary'/(name+'.s'))], check=True)
@@ -56,6 +56,19 @@ def load(r):
 def make(stock, real=True):
     r = Rig(stock, {'writes': []}, {'writes': [], 'symbols': {}}, real_ui=real)
     load(r)
+    def formatted(a):
+        f=r.string(a[5])
+        r.texts.append((a[2],a[3],r.string(a[6]) if f=='%s' else str(a[6]) if f=='%d' else f))
+    native_stubs={
+        0x40070f6e:lambda a:0,0x40071da4:lambda a:0,
+        0x4007199c:lambda a:r.texts.append((a[2],a[3],r.string(a[5]))) or 0,
+        0x40072204:lambda a:r.r32(r.r32(a[2])-12),
+        0x40070efc:lambda a:r.rects.append(a[:6]) or 0,
+    }
+    r.stubs[0x40071a04]=formatted
+    for addr,fn in native_stubs.items():
+        r.stubs[addr]=fn
+        r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
     r.u.mem_write(CTX, bytes(1240))
     frame = bytearray(476)
     for track in range(6):
@@ -193,14 +206,14 @@ def main():
         r.w32(r.s['lf2p_edit'], editing)
         r.texts.clear(); r.rects.clear()
         r.call('lf2p_render', obj, 0x93006000)
-        assert len(r.texts) == 7 and r.texts[0][2] == 'LFO 2'
-        assert all(0 <= x <= 127 and 0 <= y <= 49 for x, y, _ in r.texts)
-        assert sorted(set(y for _, y, _ in r.texts)) == [7, 21, 35, 49]
-        assert len(r.rects) == 2
+        assert len(r.texts) == 9 and r.texts[0][2] == 'LFO 2'
+        assert all(0 <= x <= 127 and 0 <= y <= 55 for x, y, _ in r.texts)
+        assert sorted(set(y for _, y, _ in r.texts)) == [8, 21, 34, 47]
+        assert len(r.rects) == 3
         for _, x1, y1, x2, y2, mode in r.rects:
             assert 0 <= x1 <= x2 <= 127 and 0 <= y1 <= y2 <= 63
-        assert r.rects[-1][1] == (64 if editing else 0)
-    print('ok : six pistes × neuf positions × édition/navigation, titre et trois lignes, coordonnées sans débordement')
+        assert r.rects[1][1] == (95 if editing else 70)
+    print('ok : six pistes × neuf positions × édition/navigation, rendu natif avec quatre lignes, coordonnées sans débordement')
 
     r.w32(r.s['lf2p_track'],0)
     for field,names in ((4,('TRI','SIN','SQR','SAW','EXP','RMP','RND')),
@@ -210,7 +223,7 @@ def main():
             r.w32(r.s['lf2p_row'],field+1)
             r.texts.clear()
             r.call('lf2p_render',obj,0x93006000)
-            assert any(x==125 and text==name for x,y,text in r.texts)
+            assert any(x==120 and text==name for x,y,text in r.texts)
     print('ok : noms des sept formes et cinq modes lus dans les tables natives')
 
     maximum = (32767, 23, 32767, 127, 6, 32767, 4, 32767)
@@ -229,10 +242,10 @@ def main():
     print('ok : édition ColdFire huit champs × six pistes, deux sens, clamps et destination OFF ; phases/buffers et autres champs intacts')
 
     r.w32(r.s['lf2p_edit'], 0)
-    r.w32(r.s['lf2p_row'], 0)
-    knob(r, -1); assert r.r32(r.s['lf2p_row']) == 0
+    r.w32(r.s['lf2p_row'], 5)
+    knob(r, -1); assert r.r32(r.s['lf2p_row']) == 5
     for _ in range(12): knob(r, 1)
-    assert r.r32(r.s['lf2p_row']) == 8
+    assert r.r32(r.s['lf2p_row']) == 0
     event(r, 32, 16)
     r.call('lf2p_menu_key', obj, EVENT)
     assert r.r32(r.s['lf2p_edit']) == 1

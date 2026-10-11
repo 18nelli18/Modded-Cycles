@@ -720,3 +720,22 @@ python3 tools/gen_scramble.py --main --cycles firmware/model-cycles_OS1.13.syx -
 ```
 
 La sous-option différée reste distincte dans le flasher. AveyCole confirme la correction format B/vélocité sur matériel et demande le passage au principal. Preuve : `test_seq_gen_queue.py --main`, y compris combinaison maximale, lecteur et notifications natifs. Synchronisation upstream 1.46 : `03941fd029e1730125463946b6d91f7ce8e28bee`.
+
+
+### Flasher LFO 2 : rendu natif expérimental (11/10/2026)
+
+`docs/flasher-lfo-test/` propose le second LFO avec le catalogue principal.
+La carte reste expérimentale ; réglages RAM seulement, sans sauvegarde.
+Le build principal ne contient pas ce prototype. Reproduction :
+
+```sh
+python3 tools/gen_lfo_secondary.py --cycles firmware/model-cycles_OS1.13.syx --check
+python3 tools/emu/test_lfo_secondary_page.py --cycles firmware/model-cycles_OS1.13.syx --tweak tweaks/model-cycles_OS1.13/experimental/lfo-secondary/52-lfo-secondary.json
+python3 tools/emu/test_lfo_secondary_state.py --cycles firmware/model-cycles_OS1.13.syx --tweak tweaks/model-cycles_OS1.13/experimental/lfo-secondary/52-lfo-secondary.json
+python3 tools/gen_lfo_test_flasher.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --check
+node tools/test_lfo_flasher.js
+```
+
+Menu de paramètres OS réel : panneau LFO, quatre lignes défilantes et
+curseur natif. Le dessin bas niveau est simulé dans la preuve UI ; essai
+LCD et budget audio combiné sur matériel attendus. Voir note 58 §12.

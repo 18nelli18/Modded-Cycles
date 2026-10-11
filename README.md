@@ -154,3 +154,9 @@ Step SCRAMBLE is hardware tested by AveyCole (11 October 2026) and available in 
 ### AveyCole release 1.49
 
 Includes 18nelli18’s release 1.46 (commit `03941fd`): Chord Keys, Track Filter, lighter 48 kHz MACRO and RATE/BITS on FUNC + PITCH. Existing compatibility exclusions apply. Sequence Generator now includes the SEQUENCE GENIE intro, ranges, separate rhythm/notes regeneration, mutation and Euclidean rhythm. Optional Queued Generation applies at the selected track’s next loop. The corrected playback format and explicit velocity were confirmed on hardware by AveyCole on 11 October 2026.
+
+
+The [LFO 2 test flasher](https://aveycole.github.io/Modded-Cycles/flasher-lfo-test/)
+uses the native parameter menu renderer with four scrolling rows. Press LFO
+twice to open it. This remains experimental: settings stay in RAM during
+the session and are not saved with patterns or projects. See note 58.

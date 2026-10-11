@@ -1,4 +1,4 @@
-| Note 58 : page LFO 2 expérimentale, trois lignes défilantes et titre.
+| Note 58 : page LFO 2 expérimentale, rendu natif du menu de paramètres.
 | Construction adaptée de Model-TG (TinyGregAudio, MIT), commit 70b39dd ;
 | licence dans tweaks/model-cycles_OS1.13/LICENSE-Model-TG.
 | Contexte audio fourni et initialisé séparément ; fermeture sans le libérer.
@@ -62,7 +62,7 @@ lf2p_o_default_track:
 lf2p_o_track_ready:
     movel %d0,lf2p_track
     lea.l   0x400802e0,%a3        | operator new
-    pea     0x500
+    pea     0xb00
     jsr     %a3@
     addql   #4,%sp
     tstl    %d0
@@ -71,6 +71,9 @@ lf2p_o_track_ready:
     movel   %a4,%sp@-
     jsr     0x400a22b0            | constructeur OS de la page MACHINES
     addql   #4,%sp
+    movel %a4,%sp@-
+    jsr lf2l_init
+    addql #4,%sp
     lea.l   lf2p_vt,%a1
     lea.l   %a1@(8),%a0
     movel   %a0,%a4@              | vptr principal
@@ -91,7 +94,8 @@ lf2p_o_track_ready:
 lf2p_o_holder:
     movea.l %d0,%a0
     movel %a4,lf2p_obj
-    clrl lf2p_row
+    moveq #5,%d0
+    movel %d0,lf2p_row
     clrl lf2p_edit
     moveq   #1,%d1
     movel   #0x401000c4,%d0
@@ -238,10 +242,14 @@ lf2p_enc:
     movel lf2p_row,%d2
     tstl lf2p_edit
     bne .Lpe_value
+    lea.l lf2l_inverse,%a0
+    movel %a0@(0,%d2:l:4),%d2
     addl %d3,%d2
     bmi .Lpe_out
     cmpil #8,%d2
     bhi .Lpe_out
+    lea.l lf2l_order,%a0
+    movel %a0@(0,%d2:l:4),%d2
     movel %d2,lf2p_row
     bra .Lpe_redraw
 .Lpe_value:
@@ -329,53 +337,9 @@ lf2p_raw_value:
 .Lpv_done:
     rts
 
-    .section .text.lf2p_render_start,"ax"
-lf2p_render:
-    lea.l %sp@(-24),%sp
-    movem.l %d2-%d6/%a2,%sp@
-    movel %sp@(32),%d6
-    clrl %sp@-
-    pea 63
-    pea 127
-    clrl %sp@-
-    clrl %sp@-
-    movel %d6,%sp@-
-    jsr 0x40070dea
-    lea.l %sp@(24),%sp
-    pea lf2p_title
-    pea lf2p_fmt_s
-    pea 0x10
-    pea 49
-    pea 2
-    pea 0x40ea14cc
-    movel %d6,%sp@-
-    jsr 0x40071a04
-    lea.l %sp@(28),%sp
-    movel lf2p_row,%d5
-    subql #1,%d5
-    bpl .Lpr_nonnegative
-    moveq #0,%d5
-.Lpr_nonnegative:
-    cmpil #6,%d5
-    bls .Lpr_start
-    moveq #6,%d5
-.Lpr_start:
-    movel %d5,%d2
-    moveq #35,%d4
-    jmp .Lpr_loop
-    .section .text.lf2p_render_line,"ax"
-.Lpr_loop:
-    lea.l lf2p_labels,%a0
-    moveal %a0@(0,%d2:l:4),%a2
-    movel %a2,%sp@-
-    pea lf2p_fmt_s
-    pea 0x10
-    movel %d4,%sp@-
-    pea 2
-    pea 0x40ea14cc
-    movel %d6,%sp@-
-    jsr 0x40071a04
-    lea.l %sp@(28),%sp
+    .section .text.lf2p_value,"ax"
+    .globl lf2l_value_start
+lf2l_value_start:
     tstl %d2
     bne .Lpr_field
     movel lf2p_track,%d0
@@ -428,38 +392,13 @@ lf2p_render:
 .Lpr_value:
     pea 0x14
     movel %d4,%sp@-
-    pea 125
+    pea 120
     pea 0x40ea14cc
     movel %d6,%sp@-
     jsr 0x40071a04
     lea.l %sp@(28),%sp
-    addql #1,%d2
-    subil #14,%d4
-    movel %d2,%d0
-    subl %d5,%d0
-    cmpil #3,%d0
-    bcs .Lpr_loop
-    movel lf2p_row,%d0
-    subl %d5,%d0
-    muluw #14,%d0
-    moveq #48,%d1
-    subl %d0,%d1
-    pea -1
-    movel %d1,%sp@-
-    pea 127
-    subil #13,%d1
-    movel %d1,%sp@-
-    moveq #0,%d0
-    tstl lf2p_edit
-    beq .Lpr_cursor
-    moveq #64,%d0
-.Lpr_cursor:
-    movel %d0,%sp@-
-    movel %d6,%sp@-
-    jsr 0x40070dea
-    lea.l %sp@(24),%sp
-    movem.l %sp@,%d2-%d6/%a2
-    lea.l %sp@(24),%sp
+    movem.l %sp@,%d2/%d4/%d6/%a2
+    lea.l %sp@(16),%sp
     rts
 
     .section .data.lf2p_state,"aw"
