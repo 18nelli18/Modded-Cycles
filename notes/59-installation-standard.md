@@ -117,13 +117,13 @@ compléter `STANDARD` suffit, rien d'autre à réécrire dans la page.
 | `test_chord_keys.py` | tout ok | ~ 15 min |
 | `test_chord_keys_release.py` | 41 ok | 1 s |
 | `test_track_filter.py` | 62 ok | 25 min |
-| `test_macro.py` (`--eurorack`) | voir §4.1 | ~ 1 h |
+| `test_macro.py` (`--eurorack`, `--quick`) | 72 ok (§4.1) | 36 min |
 
 `latching-mute` et `browser-scroll` n'ont pas de preuve à eux (tweaks de drumkilla ; le second est octet pour octet
 dans Model-TG, le premier y est en variante, tableau du §2) : `test_standard.py` le dit au lieu de les sauter en
 silence, et refuse un mod du paquet qui n'a ni preuve (`PROOFS`) ni raison (`NO_PROOF`).
 
-Deux corrections faites en route, qui ne changent aucun firmware :
+Trois corrections faites en route, qui ne changent aucun firmware :
 - `test_chord_keys.py` posait dans le banc d'interface la charge utile **rangée** (compressée) de MACRO au lieu de celle
   copiée au démarrage : exception du CPU dès que MACRO était installée. Il prend maintenant `build.payload_runtime`,
   comme `test_track_filter.py`. Il ne compte plus comme chevauchement les tweaks qui demandent une carte que Chord Keys
@@ -131,8 +131,8 @@ Deux corrections faites en route, qui ne changent aucun firmware :
 - `test_tempo_max.py` gagne `--with` (les bancs tournent sur l'OS avec les autres mods, avec et sans tempo-max).
 - `test_macro.py` (section 5, MACRO avec d'autres mods) s'arrêtait sur une lecture hors mémoire dès que Chord Keys était
   installé : son getter lit ses réglages dans le BSS de l'OS, que le banc des voix ne pose pas
-  ([55 §5](55-macro-allegee-et-lofi.md)). `Fw.engine()` pose maintenant ce BSS à zéro quand Chord Keys est là (Keys OFF sur les six pistes), comme
-  `test_track_filter.py` et l'essai de [42 §17](42-clavier-accords-diatoniques.md).
+  ([55 §5](55-macro-allegee-et-lofi.md)). `Fw.engine()` pose maintenant ce BSS à zéro quand Chord Keys est là (Keys
+  OFF sur les six pistes), comme `test_track_filter.py` et l'essai de [42 §17](42-clavier-accords-diatoniques.md).
 
 Le test complet de la page (`webflash_smoke.js` avec les fichiers officiels du Model:Cycles, du Model:Samples et du
 Syntakt, en 40 parts lancées deux par deux) : toutes les parts « ALL OK », les 817 combinaisons de `REF_MAINOS`
@@ -140,7 +140,20 @@ construites et conformes, le paquet standard compris.
 
 ### 4.1 MACRO avec le paquet
 
-[À compléter avec le résultat de `test_macro.py --with …` (section 5 : MACRO avec les autres mods).]
+`[FAIT en émulation]` `test_macro.py --quick --with` les 13 autres mods du paquet, « TOUT OK » (72 contrôles,
+36 min). Les sections 1 à 4 (MACRO seule, puis avec Model-TG) ne changent pas ; la section 5, MACRO avec le paquet :
+
+| Contrôle | Résultat |
+|---|---|
+| Démarrage | le décompresseur du bootstrap relit l'OS agrandi à l'identique (776 768 → 1 848 920 o, fin `0x401c3a58` sous `0x40200000`) ; le crochet en `0x400004b2` remet le BSS à zéro et rend la main, registres intacts ; charge utile reconstituée en `0x43000000` (324 576 o, rangée en 104 728 o) ; SRAM intacte |
+| Six machines d'origine | identiques à ces mods sans MACRO, échantillon par échantillon, sans une instruction de Braids |
+| MACRO | sortie finale de la piste identique à MACRO seule (5 modèles en `--quick`) |
+| Machine locks | SNARE → MACRO (FM) → TONE → MACRO (WAVETABLES) → KICK sur une piste : tout joue |
+| Six pistes | machines [1, 7, 3, 6, 7, 5] ensemble : les machines d'origine identiques sans MACRO, chaque piste MACRO identique à la même piste jouée seule |
+
+Ce banc joue les voix ; le filtre par piste et Chord Keys y sont installés mais au repos (filtre OFF, Keys OFF), leurs
+propres preuves les font tourner avec MACRO installée. Le coût d'une voix MACRO ne change pas avec le paquet : 3 945 à
+11 807 instructions par bloc en moyenne selon le modèle, TONE 5 291 (§5 point 3 pour la charge sur la machine).
 
 ## 5. Ce qui reste à vérifier sur la machine
 
