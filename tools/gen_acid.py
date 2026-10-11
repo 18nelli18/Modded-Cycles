@@ -29,6 +29,7 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE / "emu"))
 
 import gen_macro as gm             # noqa: E402
+import gen_macro_syntakt as gms    # noqa: E402
 import gen_sdvintage_exact as gx   # noqa: E402
 import gen_sdvintage_7th as g7     # noqa: E402
 import gen_syntakt_machines as g8  # noqa: E402
@@ -469,6 +470,8 @@ def build_tweak(img):
             raise SystemExit(f"!! écritures qui se chevauchent en {BASE + b_['off']:#x}")
 
     ids = gm.other_ids() | {"macro", "macro-tg", "model-tg", "model-tg-st"}
+    for codes in gs.subsets():                  # les mêmes, avec la machine MACRO dans la combinaison (notes/50)
+        ids |= {gms.tweak_id(codes), gms.tweak_id(codes, tg=True)}
     out = {
         "id": "acid",
         "order": 26,
