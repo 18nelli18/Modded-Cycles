@@ -167,6 +167,16 @@ class Cards:
         return res
 
 
+def standard_ids():
+    """Les tweaks du paquet standard (notes/59), lus dans tweaks.js comme la page : sa clé de REF_MAINOS est
+    « + ».join(standard_ids())."""
+    tw = mc_tweaks()
+    cards = Cards(tw["features"], tw["tweaks"], tw.get("standard", ()))
+    if not cards.standard:
+        raise SystemExit("!! tweaks.js n'a pas de paquet standard : relance tools/gen_flasher_tweaks.py")
+    return cards.ids(cards.standard_sel())
+
+
 GROUPS = {
     "single": "each card alone: each variant, each combination of real Syntakt engines",
     "pair": "every pair of cards the page lets you tick together",
