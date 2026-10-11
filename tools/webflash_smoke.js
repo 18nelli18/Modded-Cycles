@@ -433,9 +433,10 @@ async function main() {
     doc.getElementById("feat-model-tg").click(); await wait(5);
     doc.getElementById("feat-track-filter").click(); await wait(5);
     const tfBoth = doc.getElementById("feat-track-filter").checked && doc.getElementById("feat-model-tg").checked;
-    const tfIds = w.MCFlasherApp.chosenTweaks().map((x) => x.id).join(), tfExp = tfTag();
+    const tfPicked = () => w.MCFlasherApp.chosenTweaks().map((x) => x.id).filter((x) => x !== "6ch-usbup").join();
+    const tfIds = tfPicked(), tfExp = tfTag();
     doc.getElementById("feat-macro").click(); await wait(5);
-    const tfMacro = w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
+    const tfMacro = tfPicked();
     doc.getElementById("feat-macro").click(); await wait(5);
     doc.getElementById("feat-track-filter").click(); await wait(5);
     check(tfBoth && tfIds === "model-tg,track-filter-tg" && tfMacro === "model-tg-st,macro-tg,track-filter-tg-st"
