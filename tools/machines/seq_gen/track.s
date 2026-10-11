@@ -61,6 +61,12 @@ stw_check:
     beqs stw_valid
     cmpil #127,%d1
     bhiw stw_out
+    .ifdef SG_SEQUENCE_ONLY
+    cmpil #36,%d1
+    bltw stw_out
+    cmpil #96,%d1
+    bgtw stw_out
+    .endif
 stw_valid:
     addql #1,%d2
     cmpl %d4,%d2
@@ -120,10 +126,15 @@ stw_step:
     .ifdef SG_ADVANCED
     movel sg_advanced+24,%d0
     cmpil #2,%d0
-    beqw stw_flags
+    beqw stw_active
     .endif
     cmpil #255,%d3
     beqs stw_rest
+stw_active:
+    .ifdef SG_SEQUENCE_ONLY
+    moveq #0,%d1
+    jsr sg_safe_step
+    .endif
     andil #65533,%d1           | pas de trigless en même temps qu'un trig note
     oril #513,%d1             | bit 0 note, bit 9 comme le setter stock
     bras stw_flags

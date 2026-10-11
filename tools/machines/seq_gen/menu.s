@@ -387,7 +387,12 @@ sme_range_body:
     bnew sme_high
     movel %a0@(8),%d0
     addl %d3,%d0
+    .ifdef SG_SEQUENCE_ONLY
+    cmpil #36,%d0
+    bltw sme_out
+    .else
     bmiw sme_out
+    .endif
     cmpl %a0@(12),%d0
     bgtw sme_out
     movel %d0,%a0@(8)
@@ -397,7 +402,11 @@ sme_high:
     bnew sme_density
     movel %a0@(12),%d0
     addl %d3,%d0
+    .ifdef SG_SEQUENCE_ONLY
+    cmpil #96,%d0
+    .else
     cmpil #127,%d0
+    .endif
     bgtw sme_out
     cmpl %a0@(8),%d0
     bltw sme_out

@@ -25,7 +25,7 @@ def setup(stock,base,tweak,index=3,length=16):
     r.w32(OBJ+16,RAW);r.w32(POOL+16,PRAW)
     r.w32(OBJ+32,0x931a0004+index*722) # sauvegarde, distincte du lecteur
     r.u.mem_write(PAT,bytes(30710))
-    for tr in range(6):r.call(0x4005b642,PAT+tr*722,RAW,0,0xffffffff,0xffffffff)
+    for tr in range(6):r.u.mem_write(PAT+tr*722,bytes(raw))
     r.raw=RAW;r.praw=PRAW
     for addr,fn in {0x400cfd0e:lambda a:0x93005000,0x4006a96c:lambda a:0}.items():
         r.stubs[addr]=fn;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
@@ -63,11 +63,69 @@ def boundary(r,step=0,phase=0,tick=0):
         assert r.u.reg_read(reg)==(r.r32(0x40a7887c) if reg==mk.UC_M68K_REG_A2 else val),(reg,hex(r.u.reg_read(reg)),hex(val))
     return r.count
 
+def audible_steps(stock,base,tweak):
+    for playing in (False,True):
+      for inherited,default,expected in ((0,90,90),(255,80,80),(255,0,100),(0,255,100),(50,0,50)):
+        r=setup(stock,base,tweak,index=5)
+        r.u.mem_write(r.raw+128,bytes([inherited])*64)
+        r.u.mem_write(r.raw+708,bytes([default]))
+        r.u.mem_write(r.raw+516,bytes([0])*64)
+        r.u.mem_write(r.raw+644,bytes([0])*64)
+        r.u.mem_write(r.raw,struct.pack('>H',0xfffe)*64)
+        r.u.mem_write(PAT+5*722,bytes(r.u.mem_read(r.raw,722)))
+        r.w32(r.s['sg_config']+4,100)
+        if not playing:
+            r.w32(0x40a78874,0);r.w32(0x40a7883c,0)
+        r.call('sg_action_generate');assert not r.r32(r.s['sg_error'])
+        if playing:boundary(r);assert r.r32(r.s['sg_q_state'])==2
+        data=bytes(r.u.mem_read(r.raw,722))
+        for i in range(16):
+            assert struct.unpack_from('>H',data,2*i)[0]==513
+            assert data[128+i]==expected
+            assert 36<=data[580+i]<=96
+            assert data[516+i]==100 and data[644+i]==255
+        if playing:assert bytes(r.u.mem_read(PAT+5*722,722))==data
+        r.w32(0x40a78874,0);r.w32(0x40a7883c,0)
+        if playing:r.call('sg_q_service')
+        r.call('sg_action_undo')
+        assert bytes(r.u.mem_read(r.raw+128,64))==bytes([inherited])*64
+    print('ok : arrêt/lecture, vélocité zéro/héritée/default muet ; trigs note explicites, conditions et presets neutralisés ; Undo exact')
+
+
+def notification_roundtrip(stock,base,tweak):
+    from test_seq_gen_sync import SyncRig
+    global RIG
+    previous=RIG
+    try:
+        RIG=SyncRig
+        r=setup(stock,base,tweak,index=5)
+    finally:RIG=previous
+    r.w32(r.s['sg_config']+4,100)
+    r.w32(r.s['sg_config']+8,70);r.w32(r.s['sg_config']+12,70)
+    r.w32(r.s['sg_options'],1)
+    r.u.mem_write(r.s['sg_advanced'],struct.pack('>2I',83,83))
+    r.call('sg_action_generate');boundary(r)
+    assert r.r32(r.s['sg_q_state'])==2
+    playback=bytes(r.u.mem_read(PAT+5*722,722))
+    r.call('sg_q_service');r.drain()
+    assert bytes(r.u.mem_read(PAT+5*722,722))==playback
+    assert bytes(r.u.mem_read(r.raw,722))==playback
+    storage=r.r32(OBJ+32)
+    assert bytes(r.u.mem_read(storage+128,16))==bytes([70])*16
+    assert bytes(r.u.mem_read(storage+192,16))==bytes([83])*16
+    # Les setters d'une édition ultérieure gardent leurs vrais champs.
+    r.call(0x40016642,OBJ,1,75);r.call(0x400166c2,OBJ,1,99);r.drain()
+    assert r.u.mem_read(r.raw+581,1)==b'K' and r.u.mem_read(r.raw+129,1)==b'c'
+    assert r.u.mem_read(storage+129,1)==b'K' and r.u.mem_read(storage+193,1)==b'c'
+    assert struct.unpack('>H',r.u.mem_read(r.raw+2,2))[0]==513
+    print('ok : commit B puis vraies notifications/RTTI/conversion B→A différée ; champs stockage et édition ultérieure indépendants')
+
+
 def run(stock,base,tweak):
     # Le lecteur peut différer de sa reconstruction UI avant la demande.
     for index in range(6):
         r=setup(stock,base,tweak,index=index)
-        r.u.mem_write(PAT+index*722+192,bytes([73]))
+        r.u.mem_write(PAT+index*722+128,bytes([73]))
         audio=bytes(r.u.mem_read(PAT+index*722,722))
         r.call('sg_action_generate')
         obj=r.r32(r.s['sg_obj'])
@@ -82,7 +140,7 @@ def run(stock,base,tweak):
     r.u.mem_write(pget,b'\x20\x3c'+struct.pack('>I',praw)+b'\x4e\x75')
     r.u.mem_write(praw+20,struct.pack('>H',16));r.u.mem_write(praw+25,b'\0')
     r.u.mem_write(r.raw+713,struct.pack('>H',64));r.original=bytes(r.u.mem_read(r.raw,722))
-    r.call(0x4005b642,PAT+3*722,r.raw,0,0xffffffff,0xffffffff)
+    r.u.mem_write(PAT+3*722,bytes(r.u.mem_read(r.raw,722)))
     r.initial_audio=bytes(r.u.mem_read(PAT,30710))
     assert r.call(0x40016402,OBJ)==16
     r.call('sg_action_generate')
@@ -197,18 +255,18 @@ def run(stock,base,tweak):
             assert actual==expected,(mutation,actual,expected)
     print('ok : éditions concurrentes, changement/chaîne, arrêt, fermeture, Cancel queue : aucune écriture tardive')
 
-def native_read(stock,base,tweak):
+def native_read(stock,base,tweak,quick=False):
     # Vrai parcours horloge -> lecteur -> événement et copie des p-locks.
-    for mode in (0,1,2):
-      for speed in range(7):
-        for micro in (-23,0,23):
+    for mode in ((0,) if quick else (0,1,2)):
+      for speed in ((0,) if quick else range(7)):
+        for micro in ((0,) if quick else (-23,0,23)):
           r=setup(stock,base,tweak,index=5)
           r.u.mem_write(PAT+30667,bytes([mode]))
           r.u.mem_write(r.raw,struct.pack('>H',513)*16)
           r.u.mem_write(r.raw+192,bytes([micro&255])*64)
           r.u.mem_write(r.raw+320,bytes([255])*64)
           r.u.mem_write(r.raw+719,b'\xff')
-          r.call(0x4005b642,PAT+5*722,r.raw,0,0xffffffff,0xffffffff)
+          r.u.mem_write(PAT+5*722,bytes(r.u.mem_read(r.raw,722)))
           r.u.mem_write(r.raw+715,bytes([speed]));r.u.mem_write(PAT+5*722+715,bytes([speed]));r.u.mem_write(0x40a788b5,bytes([speed]*6));r.u.mem_write(PAT+30668,bytes([speed]));r.u.mem_write(0x40a788b4,bytes([speed]))
           r.w32(r.s['sg_config']+4,100);r.w32(r.s['sg_config']+8,70);r.w32(r.s['sg_config']+12,70)
           for i in range(3):r.w32(r.s['sg_options']+i*4,1)
@@ -224,7 +282,6 @@ def native_read(stock,base,tweak):
               if a[0]==evt:emitted.append((bytes(r.u.mem_read(evt,76)),bytes(r.u.mem_read(locks,300)),a[1]))
               return 0
           for addr,fn in {0x40091eb6:lambda a:evt,0x40091e66:lambda a:locks,
-                          0x400913a8:lambda a:1,0x400913f0:lambda a:0,
                           0x40091f82:lambda a:0,0x40091fdc:lambda a:0,
                           0x4009203c:scheduled,0x40001fba:lambda a:0}.items():
               r.stubs[addr]=fn;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
@@ -240,13 +297,14 @@ def native_read(stock,base,tweak):
           assert read==[(tr,0,2) for tr in range(6)],(speed,micro,read)
           assert len(emitted)==1,(speed,micro,len(emitted))
           event,pool,when=emitted[0]
-          assert struct.unpack_from('>H',event,22)[0]==70*256
+          assert struct.unpack_from('>I',event,28)[0]==70,('note',event.hex())
+          assert struct.unpack_from('>H',event,22)[0]==r.u.mem_read(r.raw+128,1)[0]*256,('velocity',event.hex())
           n=struct.unpack_from('>I',pool,8)[0]
           locks_read={struct.unpack_from('>H',pool,20+i*8)[0]:struct.unpack_from('>H',pool,22+i*8)[0] for i in range(n)}
           for param in (18,22):
               expected=struct.unpack('>H',r.u.mem_read(PAT+4332+5*4385+param*2,2))[0]
               assert locks_read[param]==expected,(param,locks_read,expected)
-    print('ok : vrai ordonnanceur/lecteur/événement OS, modes 0/1/2 × 7 vitesses × microtiming -23/0/+23 ; note et locks neufs avant le premier trig')
+    print('ok : vrai ordonnanceur/lecteur/événement OS et conditions natives ; note MIDI +28, vélocité +22 et locks vérifiés séparément')
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--syntakt');a=ap.parse_args()
@@ -254,6 +312,8 @@ def main():
     for name,dep in [('scale-gen-queued','model-tg'),('scale-gen-st-queued','model-tg-st')]:
         base=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/30-{dep}.json').read_text())
         tweak=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/experimental/queued/49-{name}.json').read_text())
+        audible_steps(stock,base,tweak)
+        notification_roundtrip(stock,base,tweak)
         run(stock,base,tweak)
         native_read(stock,base,tweak)
     if a.syntakt:
@@ -278,6 +338,6 @@ def main():
                 self.u.mem_map(dest,0x100000);self.u.mem_write(dest,runtime)
         global RIG
         RIG=FullRig
-        run(stock,base,tweak);native_read(stock,base,tweak)
+        audible_steps(stock,base,tweak);run(stock,base,tweak);native_read(stock,base,tweak)
         print('ok : mêmes preuves sur la combinaison maximale, SCRAMBLE, 6ch, arp, MIDI et tous les moteurs inclus')
 if __name__=='__main__':main()

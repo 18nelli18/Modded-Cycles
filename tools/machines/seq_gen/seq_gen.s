@@ -27,7 +27,15 @@ sg_generate:
     movel %a2@(8),%d3
     cmpil #127,%d3
     bhiw sg_exit
+    .ifdef SG_SEQUENCE_ONLY
+    cmpil #36,%d3
+    bltw sg_exit
+    .endif
     movel %a2@(12),%d4
+    .ifdef SG_SEQUENCE_ONLY
+    cmpil #96,%d4
+    bgtw sg_exit
+    .endif
     cmpil #127,%d4
     bhiw sg_exit
     cmpl %d3,%d4

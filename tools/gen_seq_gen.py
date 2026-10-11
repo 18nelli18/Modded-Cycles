@@ -86,7 +86,7 @@ def compile_code(cross, tg, scroll=False, dynamics=False, advanced=False, sequen
         script += ' .unused : { *(.text) *(.data) *(.bss) }\n ASSERT(SIZEOF(.unused) == 0, "section non placee")\n}\n'
         (p / "link.ld").write_text(script)
         objects = []
-        for name in ("seq_gen", "key", "track", "menu", "dynamics", "advanced", "sound", "performance", "rows", "intro_large", "queue"):
+        for name in ("seq_gen", "key", "track", "menu", "dynamics", "advanced", "sound", "performance", "rows", "intro_large", "queue", "safe"):
             obj = p / (name + ".o")
             source = SRC / (name + ".s")
             if advanced:

@@ -21,9 +21,9 @@ Cette limitation est présentée dans la sous-option du flasher.
 
 ## 2. Données et frontière
 
-`[FAIT]` Le getter piste éditable utilise +16 (UI), +32 (audio), +44 (pool),
-+56 (index). La conversion native `0x4005b642` transforme les 722 octets UI
-vers les 722 octets du lecteur. Pool étendu : 4 385 octets par piste,
+`[FAIT]` Le getter piste éditable utilise +16 (UI), +32 (stockage A), +44 (pool),
++56 (index). Le lecteur actif utilise le format B, comme l’UI. La conversion
+`0x4005b642` transforme B vers le stockage A, pas vers le lecteur. Pool étendu : 4 385 octets par piste,
 64 × 34 mots puis 33 indicateurs ; le lecteur `0x4005487c` utilise exactement
 ce format, à pattern audio +4 332 +index×4 385.
 
@@ -133,8 +133,8 @@ piste ciblée, pas ceux de la piste 1.
 être égal à la banque de lecture active. Celle-ci est lue via `0x40a7887c` ;
 son identité est vérifiée avec la banque native `0x406fa040 + index × 30710`.
 Le pointeur +32 est conservé pour détecter un changement de contexte, sans
-imposer l'ancienne égalité erronée. La conversion native `0x4005b642` reste
-nécessaire : le format éditable et celui du lecteur diffèrent.
+imposer l'ancienne égalité erronée. Cette recherche concluait à tort que `0x4005b642` était nécessaire pour le
+lecteur ; correction ci-dessous (§11).
 
 [FAIT en émulation] Vraie liaison +32, préparation puis commit ; modes par
 piste sur six pistes et sept vitesses, longueur piste 16 différente de la
@@ -190,3 +190,28 @@ supplémentaire se fait dans le service UI.
 La preuve ajoute six cas dont la vélocité du lecteur diffère déjà de celle
 de l'UI : le snapshot doit être identique au lecteur et le commit doit
 réussir. Ce correctif vise le refus observé ; validation matérielle requise.
+
+## 11. Corruption du format après commit différé (11/10/2026)
+
+Retour matériel après `queue-playback-snapshot` : trigs inaudibles, vélocité
+`--`, octave zéro, mauvais locks et éditions ultérieures altérées. Le snapshot
+réel a levé le refus, exposant une erreur distincte dans le résultat.
+
+[FAIT] `0x400548ce` reçoit directement la banque active et lit la note à
++580, la vélocité à +128, la condition à +516 : format B de l'UI.
+`0x4005b642` est B→A pour +32 (stockage), pas pour ce lecteur. Le staging
+copiait donc A dans une banque B. Le résultat est désormais une copie B→B.
+
+La preuve précédente recréait également la banque active en A et contrôlait
+le mot événement +22 comme une note. C'est la vélocité (8.8) ; la note est
+un long à +28. La fixture initialise désormais B et contrôle séparément
+les deux champs. Les vraies routines de probabilité/condition ne sont plus
+remplacées. Les conclusions antérieures sur la note jouée étaient erronées ;
+la preuve corrigée remplace ces résultats.
+
+À la demande d'AveyCole : plage générable 36..96 ; chaque note effectivement
+modifiée reçoit des flags note 0x201, une vélocité explicite 1..127 (défaut
+de piste valide, sinon 100), une condition sans suppression (100) et aucun
+preset-lock hérité. Locks decay/pan séparés ; Undo conserve l'original. Ces
+garde-fous ne réparent pas automatiquement un pattern déjà corrompu ni un
+son muet/mute de piste. Correctif non confirmé sur matériel.

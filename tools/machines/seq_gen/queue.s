@@ -323,19 +323,11 @@ sqs_shadow:
     jmp sqs_convert
     .section .text.sg_q_convert,"ax"
 sqs_convert:
-    | Initialiser la cible depuis le lecteur, indépendamment du contenu du tas.
-    lea.l %a2@(Q_OLD_AUDIO),%a0
+    | Le lecteur 400548ce consomme le format éditable B, pas le stockage A.
+    lea.l %a2@(Q_RAW),%a0
     lea.l %a2@(Q_AUDIO),%a1
     movel #722,%d0
     jsr sg_q_copy
-    | Conversion native complète avant publication, jamais dans l'ISR.
-    pea -1
-    pea -1
-    clrl %sp@-
-    pea %a2@(Q_RAW)
-    pea %a2@(Q_AUDIO)
-    jsr 0x4005b642
-    lea.l %sp@(20),%sp
     moveq #1,%d0
     movel %d0,sg_q_state         | publication atomique après préparation complète
     braw sqs_out

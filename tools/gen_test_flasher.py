@@ -24,7 +24,7 @@ def main():
     global OUT, STAMP
     if a.second:
         OUT=ROOT/"docs/flasher-test-2"
-        STAMP="2026-10-11-test-2-queue-playback-snapshot"
+        STAMP="2026-10-11-test-2-queue-format-velocity"
     else:
         STAMP="2026-10-10-generator-sequence-only-test"
     OUT.mkdir(parents=True,exist_ok=True)
@@ -102,8 +102,8 @@ def main():
         descriptions[1]["label"]="Générateur de séquence"
         descriptions[0]["short"]="Ranges, rhythm/notes, mutation, Euclid and the SEQUENCE GENIE entry popup."
         descriptions[1]["short"]="Plages, rythme/notes, mutation, Euclid et cartouche d’entrée SEQUENCE GENIE."
-        descriptions[0]["note"]="Boundary diagnostic build: a canceled queue identifies UI data, UI locks, playback data or playback locks. Expanded menu confirmed working on hardware by AveyCole. Stop for Generate and Undo unless Queued generation is selected. Closing the page discards Undo and cancels a pending queue."
-        descriptions[1]["note"]="Diagnostic de frontière : une annulation distingue données/locks UI et données/locks de lecture. Menu étendu confirmé sur machine par AveyCole. Arrêtez pour Generate et Undo, sauf avec génération au prochain cycle. Fermer la page efface Undo et annule la préparation."
+        descriptions[0]["note"]="Playback-format and velocity correction: generated note trigs use explicit nonzero velocity, notes 36–96, no inherited preset lock and no skipping condition. Re-test required; reload a clean pattern if an earlier queued build corrupted it. Stop for Generate and Undo unless Queued generation is selected. Closing the page discards Undo and cancels a pending queue."
+        descriptions[1]["note"]="Correction du format de lecture et de la vélocité : trigs note avec vélocité explicite non nulle, notes 36–96, sans preset-lock hérité ni condition de suppression. À retester ; rechargez un pattern intact si un ancien build différé l’a corrompu. Arrêtez pour Generate et Undo, sauf avec génération au prochain cycle. Fermer la page efface Undo et annule la préparation."
     entries=iter(descriptions)
     files["app.js"]=re.sub(r'    "scale-gen": \{[^\n]+\},',lambda m:'    "scale-gen": '+json.dumps(next(entries),ensure_ascii=False)+',',files["app.js"])
     for name in ("index.html",):
