@@ -22,16 +22,21 @@ demarrage, par le MIDI IN, verifie la signature). Ce test fait tourner dans Unic
   7. OS Cycles installe autrement (cle Cycles d'origine, avec ou sans mods : aucun tweak ne touche la verification) :
      il refuse le retour (groupe 3) mais accepte `--to cycles` (choix « Model:Cycles -> OS Samples » de la page),
      dont le bootstrap Samples tire l'OS Samples officiel ; ce que dit la carte du retour (sback_w1).
+  8. Menu de demarrage : a chaque demarrage, le bootstrap ne se remplace par la section 2 du conteneur en 0x20000
+     que si sa version est plus haute (0x8000214c). Aucun des fichiers ci-dessus, ni l'OS officiel de l'autre
+     modele, ne reecrit le bootstrap du Model:Samples ou du Model:Cycles (0x0400 partout en 1.13) ; temoin : un
+     bootstrap Cycles de version 0x0401 remplace celui du Samples, sans controle de modele (notes/41 §1).
 
     python3 tools/emu/test_crossflash_samples.py --cycles model-cycles_OS1.13.syx --samples model-samples_OS1.13.syx
 
-Environ 20 s (chaque verification calcule deux SHA-256 et un HMAC sur ~1 Mo en emulation).
+Environ 30 s (chaque verification calcule deux SHA-256 et un HMAC sur ~1 Mo en emulation).
 """
 import argparse
 import hashlib
 import hmac
 import pathlib
 import sys
+import zlib
 
 from unicorn import Uc, UC_ARCH_M68K, UC_MODE_BIG_ENDIAN, UC_HOOK_CODE
 from unicorn import m68k_const as mk
@@ -108,31 +113,70 @@ def verify(main, fn, power, blob):
 # SPI (emulee ici). 0x80003b36 / 0x800059fa : checksum de contenu + HMAC, appeles par le seul menu de demarrage (MIDI).
 BS_BASE, BS_LOADER, BS_READ, BS_CHECKS = 0x80000400, 0x80000820, 0x8000f010, (0x80003b36, 0x800059fa)
 STAGE = 0x20000                                                    # ou l'OS qui tourne ecrit la mise a jour
+BS_FLASH = 0x10000                                                 # ou vit le bootstrap (menu de demarrage)
+
+# Auto-mise a jour du bootstrap, appelee a chaque demarrage (0x80000e9c) avant le menu de demarrage. Elle lit
+# l'entree de la section 2 du conteneur en 0x20000 (0x80004a40) et ne va plus loin que si le mot haut de son
+# attribut depasse la version du bootstrap en place (0x80000408) : `cmp.l d3,d0` / `bcc` en 0x8000216e. Sinon elle
+# renvoie 0. Au-dela : lecture et decompression de la section 2, CRC (0x800020d4), version de l'image, taille,
+# puis effacement (0x80002bd2) et ecriture (0x80002de0) en flash 0x10000. Aucun controle de modele ni de cle.
+BS_UPGRADE, BS_GATE, BS_ERASE, BS_PROG = 0x8000214c, 0x8000216e, 0x80002bd2, 0x80002de0
+BS_HANGS = (0x8000227e, 0x8000278a)        # « CONNECT POWER ADAPTER », « COMPLETE / PLEASE RESTART ME » : boucles
+BS_SCREEN = (0x80001474, 0x800014fe, 0x80001518, 0x800014e8, 0x800018ee, 0x800019d4, 0x80001ae8,   # ecran
+             0x800053da, 0x80005398, 0x800008e4, 0x8000156e)                                      # LED, attente
 
 
-def boot(bootstrap, blob):
-    """Fait tourner le chargeur du bootstrap sur `blob` ecrit en flash 0x20000 ; renvoie (entree, RAM depuis
-    0x40000400 sur 2 Mo, verifications appelees)."""
+def bs_off(adr):
+    """Adresse du bootstrap -> position dans la section 2 decompressee (4 octets de taille, puis le code)."""
+    return adr - BS_BASE + 4
+
+
+def bs_args(u, n):
+    sp = u.reg_read(mk.UC_M68K_REG_A7)
+    return [int.from_bytes(u.mem_read(sp + 4 + 4 * k, 4), "big") for k in range(n)]
+
+
+def bs_return(u, d0=None):
+    sp = u.reg_read(mk.UC_M68K_REG_A7)
+    if d0 is not None:
+        u.reg_write(mk.UC_M68K_REG_D0, d0)
+    u.reg_write(mk.UC_M68K_REG_PC, int.from_bytes(u.mem_read(sp, 4), "big"))
+    u.reg_write(mk.UC_M68K_REG_A7, sp + 4)
+
+
+def bs_machine(bootstrap, blob):
+    """Machine Unicorn dans l'etat ou le bootstrap appelle son chargeur : code en 0x80000400, routines SPI recopiees
+    en 0x8000f000 (0x800011e0) et .bss videe (0x80001136), comme au demarrage ; flash SPI emulee avec `blob` en
+    0x20000 et le bootstrap en 0x10000, ou il vit. Renvoie (uc, flash)."""
     uc = Uc(UC_ARCH_M68K, UC_MODE_BIG_ENDIAN)
     uc.ctl_set_cpu_model(mk.UC_CPU_M68K_ANY)
     uc.reg_write(mk.UC_M68K_REG_SR, 0x2700)
     uc.mem_map(0x80000000, 0x20000)                                # SRAM du bootstrap
     uc.mem_write(BS_BASE, bootstrap[4:])
-    uc.mem_write(0x8000f000, bootstrap[4 + 0x6a8c:4 + 0x6be2])      # routines SPI recopiees, comme au demarrage
+    uc.mem_write(0x8000f000, bootstrap[bs_off(0x80006a8c):bs_off(0x80006be2)])
+    uc.mem_write(0x80006a90, bytes(0x80007e90 - 0x80006a90))
     uc.mem_map(0x40000000, 0x01000000)
+    uc.mem_map(0xec000000, 0x100000)                               # GPIO : 0xec094018 bit 3 = 0, alimentation branchee
+    uc.mem_map(0xfc000000, 0x100000)
     uc.mem_map(STOP & ~0xfff, 0x1000)
     uc.mem_write(STOP, b"\x4e\x71\x4e\x71")
     flash = bytearray(b"\xff" * 0x200000)
+    flash[BS_FLASH:BS_FLASH + len(bootstrap)] = bootstrap
     flash[STAGE:STAGE + len(blob)] = blob
-    seen = []
 
     def read(u, a, s, d):
-        sp = u.reg_read(mk.UC_M68K_REG_A7)
-        src, n, dst = (int.from_bytes(u.mem_read(sp + k, 4), "big") for k in (4, 8, 12))
+        src, n, dst = bs_args(u, 3)
         u.mem_write(dst, bytes(flash[src:src + n]))
-        u.reg_write(mk.UC_M68K_REG_PC, int.from_bytes(u.mem_read(sp, 4), "big"))
-        u.reg_write(mk.UC_M68K_REG_A7, sp + 4)
+        bs_return(u)
     uc.hook_add(UC_HOOK_CODE, read, begin=BS_READ, end=BS_READ)
+    return uc, flash
+
+
+def boot(bootstrap, blob):
+    """Fait tourner le chargeur du bootstrap sur `blob` ecrit en flash 0x20000 ; renvoie (entree, RAM depuis
+    0x40000400 sur 2 Mo, verifications appelees)."""
+    uc, flash = bs_machine(bootstrap, blob)
+    seen = []
     for a in BS_CHECKS:
         uc.hook_add(UC_HOOK_CODE, lambda u, adr, s, d: seen.append(adr), begin=a, end=a)
     sp = 0x8000e000
@@ -140,6 +184,56 @@ def boot(bootstrap, blob):
     uc.reg_write(mk.UC_M68K_REG_A7, sp)
     uc.emu_start(BS_LOADER, STOP, count=400_000_000)
     return uc.reg_read(mk.UC_M68K_REG_D0), bytes(uc.mem_read(0x40000400, 0x200000)), seen
+
+
+def upgrade(bootstrap, blob):
+    """Fait tourner l'auto-mise a jour du bootstrap avec `blob` en flash 0x20000 ; renvoie (d0, (version recue,
+    version en place) comparees en 0x8000216e, effacements et ecritures demandes, flash 0x10000 apres)."""
+    uc, flash = bs_machine(bootstrap, blob)
+    gate, writes = [], []
+
+    def erase(u, a, s, d):
+        (adr,) = bs_args(u, 1)
+        writes.append(("effacement", adr))
+        flash[adr & ~0xffff:(adr & ~0xffff) + 0x10000] = b"\xff" * 0x10000
+        bs_return(u, 0)
+
+    def prog(u, a, s, d):
+        adr, n, src = bs_args(u, 3)
+        writes.append(("ecriture", adr))
+        flash[adr:adr + n] = bytes(uc.mem_read(src, n))
+        bs_return(u, 0)
+    uc.hook_add(UC_HOOK_CODE, erase, begin=BS_ERASE, end=BS_ERASE)
+    uc.hook_add(UC_HOOK_CODE, prog, begin=BS_PROG, end=BS_PROG)
+    uc.hook_add(UC_HOOK_CODE, lambda u, a, s, d: gate.append((u.reg_read(mk.UC_M68K_REG_D3),
+                                                               u.reg_read(mk.UC_M68K_REG_D0))),
+                begin=BS_GATE, end=BS_GATE)
+    for a in BS_SCREEN:
+        uc.hook_add(UC_HOOK_CODE, lambda u, adr, s, d: bs_return(u, 0), begin=a, end=a)
+    for a in BS_HANGS:
+        uc.hook_add(UC_HOOK_CODE, lambda u, adr, s, d: u.emu_stop(), begin=a, end=a)
+    sp = 0x8000e000
+    uc.mem_write(sp, STOP.to_bytes(4, "big"))
+    uc.reg_write(mk.UC_M68K_REG_A7, sp)
+    uc.emu_start(BS_UPGRADE, STOP, count=60_000_000)
+    return uc.reg_read(mk.UC_M68K_REG_D0), gate[0] if gate else None, writes, bytes(flash[BS_FLASH:BS_FLASH + 0x10000])
+
+
+def newer_bootstrap(c, key):
+    """Temoin : le conteneur `c` avec un bootstrap de version 0x0401 (mot de version et CRC refaits, attribut de la
+    section 2 a 0x0401), comme le serait une future version. Renvoie (conteneur, bootstrap decompresse)."""
+    s2 = next(x for x in c["sections"] if x["id"] == 2)
+    plain, ops = aplib.depack(c["blob"][s2["off"]:s2["off"] + s2["size"]])
+    p = bytearray(plain)
+    p[0xc:0xe] = (0x0401).to_bytes(2, "big")
+    p[-4:] = zlib.crc32(bytes(p[:-4])).to_bytes(4, "little")
+    dirty = bytearray(len(p))
+    dirty[0xc:0xe] = b"\1\1"
+    dirty[-4:] = b"\1" * 4
+    blob = bytearray(c["blob"])
+    e = 0x20 + 16 * s2["index"] + 12
+    blob[e:e + 2] = (0x0401).to_bytes(2, "big")
+    return container.rebuild(dict(c, blob=bytes(blob)), {2: aplib.repack(bytes(p), ops, dirty)}, key), bytes(p)
 
 
 def blob_of(raw):
@@ -224,6 +318,24 @@ def main():
     entry, ram, seen = boot(smp_boot, b_s4c)
     check(entry == 0x40000400 and ram[:len(smp_main)] == smp_main and not seen,
           "le bootstrap Samples en tire l'OS Samples officiel, sans verification")
+
+    print("8. Menu de demarrage : aucune mise a jour 1.13 ne remplace le bootstrap")
+    cyc_boot = cyc[3][2]
+    check(sec(b_s4c)[2] == sec(b_cyc)[2] and sec(b_fwd)[2] == sec(b_back)[2] == sec(b_smp)[2],
+          "--to cycles porte le bootstrap Cycles, --to samples et --back-samples celui du Samples")
+    for host, bs, cases in (
+            ("Model:Samples", smp_boot, (("OS Samples officiel", b_smp), ("OS Cycles officiel (comme un build Mods)", b_cyc),
+                                         ("--to cycles", b_s4c), ("--to samples", b_fwd), ("--back-samples", b_back))),
+            ("Model:Cycles", cyc_boot, (("OS Samples officiel (15 §3.2, etape 5)", b_smp), ("--to cycles", b_s4c)))):
+        for name, blob in cases:
+            d0, gate, writes, after = upgrade(bs, blob)
+            check(d0 == 0 and gate == (0x0400, 0x0400) and not writes and after.startswith(bs),
+                  f"bootstrap {host}, {name} en 0x20000 : versions 0x0400 = 0x0400, rien d'ecrit, menu inchange")
+    newer, newer_plain = newer_bootstrap(cyc[1], c_key)
+    d0, gate, writes, after = upgrade(smp_boot, newer)
+    check(gate == (0x0401, 0x0400) and ("effacement", BS_FLASH) in writes and after.startswith(newer_plain)
+          and b"CYCLES" in after[:len(newer_plain)],
+          "temoin : un bootstrap Cycles de version 0x0401 remplace celui du Model:Samples (aucun controle de modele)")
     print(f"\nMAIN OS de --to samples : {fwd_main_sha}")
     print(f"--to samples   : {hashlib.sha256(fwd).hexdigest()}")
     print(f"--back-samples : {hashlib.sha256(back).hexdigest()}")
