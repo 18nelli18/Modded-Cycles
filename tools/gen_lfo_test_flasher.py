@@ -16,7 +16,7 @@ import ref_mainos
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 PROD=ROOT/'docs/flasher'
 OUT=ROOT/'docs/flasher-lfo-test'
-STAMP='2026-10-11-lfo2-native-menu'
+STAMP='2026-10-11-lfo2-label-fix'
 TEXT={
     'en':dict(label='Second LFO',short='Second press of LFO opens LFO 2. Settings are held in RAM only.',
         desc='Press LFO to open the native LFO page, then press LFO again for LFO 2. The stock parameter menu renderer supplies the left panel, four scrolling rows, fonts and selection cursor. Turn DATA to choose a row, click to edit, turn to adjust and click to finish. Track pads select one of six secondary LFOs without playing a note. LFO, RETURN or SETTINGS closes the page; PLAY/STOP works normally. The two LFOs have independent speed, multiplier, fade, destination, waveform, start phase, mode and depth. Their contributions add when targeting the same parameter. Destination 127 is OFF. This first hardware test keeps LFO 2 settings in RAM across page changes; they are not saved with patterns or projects and are lost on restart. Model-TG is optional.',

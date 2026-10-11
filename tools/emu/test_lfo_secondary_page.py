@@ -56,6 +56,21 @@ def load(r):
 def make(stock, real=True):
     r = Rig(stock, {'writes': []}, {'writes': [], 'symbols': {}}, real_ui=real)
     load(r)
+    allocations=set();freed=set();original_new=r.stubs[0x400802e0]
+    def allocate(a):
+        pointer=original_new(a)
+        if pointer:allocations.add(pointer)
+        return pointer
+    def release(a):
+        pointer=a[0]
+        assert pointer==0 or pointer in allocations, ('invalid free',hex(pointer))
+        assert pointer==0 or pointer not in freed, ('double free',hex(pointer))
+        if pointer:freed.add(pointer)
+        r.free.append(pointer)
+        return 0
+    r.stubs[0x400802e0]=allocate
+    r.stubs[0x400802ec]=release
+    if not real:r.u.hook_add(UC_HOOK_CODE,r.stub,begin=0x400802ec,end=0x400802ec)
     def formatted(a):
         f=r.string(a[5])
         r.texts.append((a[2],a[3],r.string(a[6]) if f=='%s' else str(a[6]) if f=='%d' else f))
@@ -114,6 +129,18 @@ def main():
     args = ap.parse_args()
     PLACED=args.tweak
     stock = main_os_from_syx(args.cycles)
+    # Régression : l'ancien retour statique doit être refusé par le heap simulé.
+    bad=make(stock)
+    assert bad.call('lf2p_open') == 1
+    borrowed=bad.r32(bad.s['lf2l_labels'])
+    bad.u.mem_write(bad.s['lf2l_label'],b'\x20\xbc'+struct.pack('>I',borrowed)+b'\x4e\x75')
+    try:
+        bad.call('lf2p_render',page(bad),0x93006000)
+    except AssertionError as failure:
+        assert failure.args[0][0] == 'invalid free', failure
+    else:
+        raise AssertionError('Le renderer doit détruire le résultat de libellé')
+    print('ok : régression ancien libellé statique détectée comme libération invalide')
     b=make(stock)
     b.w32(b.s['lf2_context'],0)
     allocations=b.new_count

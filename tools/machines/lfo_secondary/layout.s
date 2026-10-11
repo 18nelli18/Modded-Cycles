@@ -104,10 +104,17 @@ lf2l_widget:
     clrl %a0@(4)
     rts
 lf2l_label:
-    moveal %sp@(4),%a1
+    | Retour std::string possédé : le renderer détruit ce résultat.
+    | Un pointeur statique provoquerait le trap du heap à 0x40080282.
+    subql #4,%sp
+    moveal %sp@(8),%a1
     movel %a1@,%d0
     lea.l lf2l_labels,%a1
-    movel %a1@(0,%d0:l:4),%a0@
+    pea %sp@(3)
+    movel %a1@(0,%d0:l:4),%sp@-
+    movel %a0,%sp@-
+    jsr 0x400f980c
+    lea.l %sp@(16),%sp
     rts
 lf2l_value:
     lea.l %sp@(-16),%sp

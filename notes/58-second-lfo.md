@@ -256,3 +256,25 @@ ce n'est pas une capture du LCD physique. `test_lfo_secondary_state.py`
 couvre 1120 blocs combinés et 33792 événements natifs. Le catalogue de test
 est régénéré depuis les nouveaux octets placés puis comparé au builder Web.
 La persistance et la marge audio matérielle restent non validées.
+
+
+## 13. Exception à l'ouverture et propriété des libellés (11/10/2026)
+
+[FAIT matériel, rapport AveyCole] Le deuxième appui LFO provoque
+`EXCEPTION v04-M0-P40080282` dans la version native-menu. La sélection
+LFO 2 a été retirée du flasher de test pendant le diagnostic.
+
+[FAIT] `0x40080282` est le trap de libération d'un pointeur inférieur à
+la base du heap. Le renderer natif détruit le std::string renvoyé par
+le callback de libellé (`0x400f7d5c`). Notre callback renvoyait un pointeur
+statique dans le masque de code ; cette chaîne ne lui appartenait pas.
+Le callback corrigé utilise le constructeur natif `0x400f980c` pour
+renvoyer une copie possédée. Le titre et la chaîne de sous-titre restent
+empruntés conformément à leur contrat distinct.
+
+[FAIT en émulation] L'allocateur simulé vérifie désormais la propriété
+et refuse les doubles libérations. Une régression injecte l'ancien retour
+statique : le renderer doit provoquer une erreur « invalid free ».
+Le parcours corrigé vérifie les vrais octets placés, ouverture/rendu,
+édition, fermeture et réouverture. Les primitives de dessin et allocations
+restent simulées ; aucun nouveau succès matériel n'est revendiqué.
