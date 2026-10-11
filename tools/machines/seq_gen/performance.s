@@ -129,8 +129,13 @@ sgi_text:
     lea.l %sp@(28),%sp
     rts
     .section .rodata.sg_intro,"a"
+    .ifdef SG_SEQUENCE_ONLY
+sg_intro_seq: .asciz "SEQUENCE"
+sg_intro_gen: .asciz "GENIE"
+    .else
 sg_intro_seq: .asciz "SEQ."
 sg_intro_gen: .asciz "GEN."
+    .endif
 sg_intro_fmt: .asciz "%s"
 
     .ifndef SG_SEQUENCE_ONLY

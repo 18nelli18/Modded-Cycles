@@ -65,3 +65,33 @@ AveyCole : « Scramble is now functional », avec demande explicite de publicati
 au flasher principal. Promotion de SCRAMBLE seul ; génération différée toujours
 expérimentale, nouveau refus « Check range/stop » signalé. Les variantes
 principales chaînent le générateur principal, pas celui du test 2.
+
+## 6. SCRAMBLE par pas, prototype local (11/10/2026)
+
+Demande : maintenir un trig, puis SETTINGS, puis TRACK ; valeurs fraîches
+à chaque passage. `tools/machines/scramble/steps.s` ajoute une marque de pas
+via les setters natifs et un hook au constructeur d'événement `0x40054c0e`.
+Les quatre valeurs deviennent des locks dans l'événement courant, sans
+modifier le son de base. Le même geste retire la marque. Sans trig tenu,
+le raccourci conserve le SCRAMBLE immédiat. Aucun menu ajouté.
+
+[FAIT en émulation] `tools/emu/test_scramble_steps.py` exécute les setters,
+la conversion sauvegarde/chargement et le constructeur d'événement natifs :
+six machines, trois passages frais, pools de 0/2/33 locks, autres locks
+inchangés, registres/SR conservés, Sampler ignoré. Les pas 0/15/32/63 couvrent
+les deux mots des touches tenues. La route panneau complète teste le doublon
+d'événement et le relâchement, sans changer le son de base. Même preuve avec
+générateur différé et tous les mods compatibles. Le SCRAMBLE immédiat reste
+vérifié sur six pistes et douze machines de synthèse.
+
+[À FAIRE] Compléter l'audit statique du bit 6 proposé comme marque :
+sa conservation par le format natif est prouvée, son absence d'usage dans
+tous les chemins UI reste à établir. La marque est supprimée de l'événement
+avant le moteur sonore. La preuve couvre aussi les six machines ajoutées
+(douze machines de synthèse au total). Un démarrage complet reste à vérifier.
+
+Taille expérimentale : 1 383 octets, douze masques. Le texte du popup ajoute
+une espace de chaque côté pour élargir sa présentation native. La vraie
+mesure OS avec sa police de popup passe de 47 à 59 pixels ; rendu matériel
+à vérifier. Les variantes principales testées restent
+inchangées. Aucun nouveau résultat matériel ni publication revendiqué.

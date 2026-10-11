@@ -97847,62 +97847,62 @@ window.MC_TWEAKS = {
     "$shared": 86
    },
    "symbols": {
-    "sg_a": "0x40162af0",
+    "sg_a": "0x40160dd8",
     "sg_action_generate": "0x4016ea78",
     "sg_action_undo": "0x40163990",
-    "sg_advanced": "0x401679e4",
+    "sg_advanced": "0x4016669c",
     "sg_advanced_edit": "0x4014aa34",
     "sg_advanced_steps": "0x401573cc",
-    "sg_advanced_value": "0x401638c0",
-    "sg_as": "0x40162af2",
-    "sg_b": "0x40162af5",
-    "sg_bool_names": "0x40167b80",
-    "sg_both": "0x40167b9c",
-    "sg_c": "0x40162ada",
-    "sg_chrom": "0x40162ac2",
+    "sg_advanced_value": "0x401630e4",
+    "sg_as": "0x40160dda",
+    "sg_b": "0x40160ddd",
+    "sg_bool_names": "0x401679d8",
+    "sg_both": "0x401679f4",
+    "sg_c": "0x40160dc2",
+    "sg_chrom": "0x40160daa",
     "sg_config": "0x40184e14",
-    "sg_cs": "0x40162adc",
-    "sg_d": "0x40162adf",
-    "sg_decay": "0x4014b06a",
+    "sg_cs": "0x40160dc4",
+    "sg_d": "0x40160dc7",
+    "sg_decay": "0x40186176",
     "sg_density": "0x4014a8f2",
     "sg_dhigh": "0x401592d6",
     "sg_dlow": "0x401592cc",
-    "sg_dorian": "0x40162ad0",
-    "sg_ds": "0x40162ae1",
-    "sg_dtor0": "0x40179c98",
-    "sg_dtor1": "0x40179cac",
+    "sg_dorian": "0x40160db8",
+    "sg_ds": "0x40160dc9",
+    "sg_dtor0": "0x40168fb4",
+    "sg_dtor1": "0x40168fc8",
     "sg_dyn_backup": "0x401780a8",
     "sg_dyn_copy": "0x40163b74",
     "sg_dyn_lock": "0x40171c46",
     "sg_dyn_restore": "0x40163b38",
     "sg_dyn_step": "0x40171bc8",
     "sg_dyn_validate": "0x4017812a",
-    "sg_e": "0x40162ae4",
+    "sg_e": "0x40160dcc",
     "sg_edit": "0x40184e0c",
     "sg_enc": "0x4016f8cc",
     "sg_enc_th": "0x4016f8c8",
     "sg_error": "0x40184e10",
-    "sg_error_text": "0x40162b06",
-    "sg_euclid": "0x40167bb5",
+    "sg_error_text": "0x40160dee",
+    "sg_euclid": "0x40167a0d",
     "sg_exit": "0x4016b82c",
-    "sg_f": "0x40162ae6",
+    "sg_f": "0x40160dce",
     "sg_fields": "0x401784e8",
-    "sg_fmt_d": "0x40162afa",
-    "sg_fmt_s": "0x40162af7",
-    "sg_fs": "0x40162ae8",
-    "sg_func": "0x4014e608",
-    "sg_g": "0x40162aeb",
+    "sg_fmt_d": "0x40160de2",
+    "sg_fmt_s": "0x40160ddf",
+    "sg_fs": "0x40160dd0",
+    "sg_func": "0x4014b784",
+    "sg_g": "0x40160dd3",
     "sg_generate": "0x4016b6f8",
-    "sg_go": "0x40162ab4",
-    "sg_gs": "0x40162aed",
+    "sg_go": "0x40160d9c",
+    "sg_gs": "0x40160dd5",
     "sg_high": "0x4014a8e8",
     "sg_hits": "0x4015930d",
-    "sg_intro": "0x4014e610",
-    "sg_intro_fmt": "0x4015b82a",
-    "sg_intro_gen": "0x4015b825",
+    "sg_intro": "0x4014b78c",
+    "sg_intro_fmt": "0x40159aeb",
+    "sg_intro_gen": "0x40159ae5",
     "sg_intro_render": "0x4015943c",
-    "sg_intro_seq": "0x4015b820",
-    "sg_intro_time": "0x4014e614",
+    "sg_intro_seq": "0x40159adc",
+    "sg_intro_time": "0x4014b790",
     "sg_key": "0x40171f30",
     "sg_key_chain": "0x40172038",
     "sg_key_eat": "0x4017203e",
@@ -97910,20 +97910,20 @@ window.MC_TWEAKS = {
     "sg_key_pass": "0x4017200e",
     "sg_key_up": "0x40171fee",
     "sg_keys": "0x4014a8a4",
-    "sg_labels": "0x401630e4",
-    "sg_large_intro": "0x4016f7d0",
-    "sg_large_letters": "0x401666a4",
+    "sg_labels": "0x40162ab4",
+    "sg_large_intro": "0x4015f38c",
+    "sg_large_letters": "0x4016f7e4",
     "sg_low": "0x4014a8df",
-    "sg_major": "0x40162ac8",
-    "sg_map_row": "0x40152f8c",
-    "sg_masks": "0x40159adc",
+    "sg_major": "0x40160db0",
+    "sg_map_row": "0x4014e60c",
+    "sg_masks": "0x40159a04",
     "sg_menu_key": "0x4018d918",
-    "sg_minor": "0x40162acc",
+    "sg_minor": "0x40160db4",
     "sg_mutation": "0x401592fb",
     "sg_next_note": "0x4016b7ae",
-    "sg_no_undo": "0x40162b03",
+    "sg_no_undo": "0x40160deb",
     "sg_notes": "0x4016b78c",
-    "sg_notes_only": "0x40167ba8",
+    "sg_notes_only": "0x40167a00",
     "sg_o_allocate": "0x40173848",
     "sg_o_cp": "0x4017918e",
     "sg_o_done": "0x40173938",
@@ -97933,54 +97933,54 @@ window.MC_TWEAKS = {
     "sg_on": "0x40159349",
     "sg_open": "0x40179140",
     "sg_opened": "0x40184dfc",
-    "sg_options": "0x401679d8",
+    "sg_options": "0x40166690",
     "sg_pad": "0x40152d38",
-    "sg_pads": "0x4014e60c",
-    "sg_page_event": "0x4015bf28",
-    "sg_page_taken": "0x4015bf24",
-    "sg_page_time": "0x4015bf2c",
-    "sg_pan": "0x4014b075",
-    "sg_penta": "0x40162ad4",
+    "sg_pads": "0x4014b788",
+    "sg_page_event": "0x4015b824",
+    "sg_page_taken": "0x4015b820",
+    "sg_page_time": "0x4015b828",
+    "sg_pan": "0x40186181",
+    "sg_penta": "0x40160dbc",
     "sg_phigh": "0x401592e8",
     "sg_pick_note": "0x4016b804",
     "sg_plow": "0x401592e0",
-    "sg_random": "0x4014b5b4",
-    "sg_random_range": "0x40159a04",
-    "sg_random_text": "0x40167bae",
-    "sg_ready": "0x40162afd",
+    "sg_random": "0x4014b05c",
+    "sg_random_range": "0x40152f88",
+    "sg_random_text": "0x40167a06",
+    "sg_ready": "0x40160de5",
     "sg_render": "0x4016b9e8",
-    "sg_render_start": "0x40168fb4",
+    "sg_render_start": "0x40168c4c",
     "sg_rhythm": "0x40159306",
-    "sg_rhythm_names": "0x40167b94",
-    "sg_rhythm_only": "0x40167ba1",
+    "sg_rhythm_names": "0x401679ec",
+    "sg_rhythm_only": "0x401679f9",
     "sg_root": "0x4014a8da",
     "sg_rotate": "0x40159319",
-    "sg_round_bands": "0x40166690",
+    "sg_round_bands": "0x4016f7d0",
     "sg_row": "0x40184e08",
     "sg_scale": "0x4014a8d4",
     "sg_scales": "0x4014a890",
     "sg_seed_ok": "0x4016b7c6",
     "sg_sound_amount": "0x40159322",
     "sg_sound_back": "0x4015933e",
-    "sg_sound_event": "0x4014e61c",
+    "sg_sound_event": "0x4014b798",
     "sg_sound_go": "0x40159331",
-    "sg_sound_taken": "0x4014e618",
-    "sg_sound_time": "0x4014e620",
+    "sg_sound_taken": "0x4014b794",
+    "sg_sound_time": "0x4014b79c",
     "sg_steps": "0x4016b7ca",
     "sg_store": "0x4016b81c",
     "sg_target": "0x401592f0",
-    "sg_target_names": "0x40167b88",
+    "sg_target_names": "0x401679e0",
     "sg_tick": "0x4014af84",
     "sg_track_restore": "0x40170ad8",
     "sg_track_write": "0x401835b8",
-    "sg_ui_last": "0x40152f88",
-    "sg_undo": "0x40162abd",
+    "sg_ui_last": "0x4014e608",
+    "sg_undo": "0x40160da5",
     "sg_undo_track": "0x40184e04",
     "sg_undo_valid": "0x40184e00",
-    "sg_unmap_row": "0x40152f98",
-    "sg_velocity": "0x4014b05c",
+    "sg_unmap_row": "0x4014e618",
+    "sg_velocity": "0x40186168",
     "sg_vhigh": "0x401592c4",
-    "sg_view_start": "0x40168c4c",
+    "sg_view_start": "0x40167b80",
     "sg_vlow": "0x401592bc",
     "sg_vt": "0x40184e30"
    }
@@ -98007,62 +98007,62 @@ window.MC_TWEAKS = {
     "$shared": 86
    },
    "symbols": {
-    "sg_a": "0x40162af0",
+    "sg_a": "0x40160dd8",
     "sg_action_generate": "0x4016ea78",
     "sg_action_undo": "0x40163990",
-    "sg_advanced": "0x401679e4",
+    "sg_advanced": "0x4016669c",
     "sg_advanced_edit": "0x4014aa34",
     "sg_advanced_steps": "0x401573cc",
-    "sg_advanced_value": "0x401638c0",
-    "sg_as": "0x40162af2",
-    "sg_b": "0x40162af5",
-    "sg_bool_names": "0x40167b80",
-    "sg_both": "0x40167b9c",
-    "sg_c": "0x40162ada",
-    "sg_chrom": "0x40162ac2",
+    "sg_advanced_value": "0x401630e4",
+    "sg_as": "0x40160dda",
+    "sg_b": "0x40160ddd",
+    "sg_bool_names": "0x401679d8",
+    "sg_both": "0x401679f4",
+    "sg_c": "0x40160dc2",
+    "sg_chrom": "0x40160daa",
     "sg_config": "0x40184e14",
-    "sg_cs": "0x40162adc",
-    "sg_d": "0x40162adf",
-    "sg_decay": "0x4014b06a",
+    "sg_cs": "0x40160dc4",
+    "sg_d": "0x40160dc7",
+    "sg_decay": "0x40186176",
     "sg_density": "0x4014a8f2",
     "sg_dhigh": "0x401592d6",
     "sg_dlow": "0x401592cc",
-    "sg_dorian": "0x40162ad0",
-    "sg_ds": "0x40162ae1",
-    "sg_dtor0": "0x40179c98",
-    "sg_dtor1": "0x40179cac",
+    "sg_dorian": "0x40160db8",
+    "sg_ds": "0x40160dc9",
+    "sg_dtor0": "0x40168fb4",
+    "sg_dtor1": "0x40168fc8",
     "sg_dyn_backup": "0x401780a8",
     "sg_dyn_copy": "0x40163b74",
     "sg_dyn_lock": "0x40171c46",
     "sg_dyn_restore": "0x40163b38",
     "sg_dyn_step": "0x40171bc8",
     "sg_dyn_validate": "0x4017812a",
-    "sg_e": "0x40162ae4",
+    "sg_e": "0x40160dcc",
     "sg_edit": "0x40184e0c",
     "sg_enc": "0x4016f8cc",
     "sg_enc_th": "0x4016f8c8",
     "sg_error": "0x40184e10",
-    "sg_error_text": "0x40162b06",
-    "sg_euclid": "0x40167bb5",
+    "sg_error_text": "0x40160dee",
+    "sg_euclid": "0x40167a0d",
     "sg_exit": "0x4016b82c",
-    "sg_f": "0x40162ae6",
+    "sg_f": "0x40160dce",
     "sg_fields": "0x401784e8",
-    "sg_fmt_d": "0x40162afa",
-    "sg_fmt_s": "0x40162af7",
-    "sg_fs": "0x40162ae8",
-    "sg_func": "0x4014e608",
-    "sg_g": "0x40162aeb",
+    "sg_fmt_d": "0x40160de2",
+    "sg_fmt_s": "0x40160ddf",
+    "sg_fs": "0x40160dd0",
+    "sg_func": "0x4014b784",
+    "sg_g": "0x40160dd3",
     "sg_generate": "0x4016b6f8",
-    "sg_go": "0x40162ab4",
-    "sg_gs": "0x40162aed",
+    "sg_go": "0x40160d9c",
+    "sg_gs": "0x40160dd5",
     "sg_high": "0x4014a8e8",
     "sg_hits": "0x4015930d",
-    "sg_intro": "0x4014e610",
-    "sg_intro_fmt": "0x4015b82a",
-    "sg_intro_gen": "0x4015b825",
+    "sg_intro": "0x4014b78c",
+    "sg_intro_fmt": "0x40159aeb",
+    "sg_intro_gen": "0x40159ae5",
     "sg_intro_render": "0x4015943c",
-    "sg_intro_seq": "0x4015b820",
-    "sg_intro_time": "0x4014e614",
+    "sg_intro_seq": "0x40159adc",
+    "sg_intro_time": "0x4014b790",
     "sg_key": "0x40171f30",
     "sg_key_chain": "0x40172038",
     "sg_key_eat": "0x4017203e",
@@ -98070,20 +98070,20 @@ window.MC_TWEAKS = {
     "sg_key_pass": "0x4017200e",
     "sg_key_up": "0x40171fee",
     "sg_keys": "0x4014a8a4",
-    "sg_labels": "0x401630e4",
-    "sg_large_intro": "0x4016f7d0",
-    "sg_large_letters": "0x401666a4",
+    "sg_labels": "0x40162ab4",
+    "sg_large_intro": "0x4015f38c",
+    "sg_large_letters": "0x4016f7e4",
     "sg_low": "0x4014a8df",
-    "sg_major": "0x40162ac8",
-    "sg_map_row": "0x40152f8c",
-    "sg_masks": "0x40159adc",
+    "sg_major": "0x40160db0",
+    "sg_map_row": "0x4014e60c",
+    "sg_masks": "0x40159a04",
     "sg_menu_key": "0x4018d918",
-    "sg_minor": "0x40162acc",
+    "sg_minor": "0x40160db4",
     "sg_mutation": "0x401592fb",
     "sg_next_note": "0x4016b7ae",
-    "sg_no_undo": "0x40162b03",
+    "sg_no_undo": "0x40160deb",
     "sg_notes": "0x4016b78c",
-    "sg_notes_only": "0x40167ba8",
+    "sg_notes_only": "0x40167a00",
     "sg_o_allocate": "0x40173848",
     "sg_o_cp": "0x4017918e",
     "sg_o_done": "0x40173938",
@@ -98093,54 +98093,54 @@ window.MC_TWEAKS = {
     "sg_on": "0x40159349",
     "sg_open": "0x40179140",
     "sg_opened": "0x40184dfc",
-    "sg_options": "0x401679d8",
+    "sg_options": "0x40166690",
     "sg_pad": "0x40152d38",
-    "sg_pads": "0x4014e60c",
-    "sg_page_event": "0x4015bf28",
-    "sg_page_taken": "0x4015bf24",
-    "sg_page_time": "0x4015bf2c",
-    "sg_pan": "0x4014b075",
-    "sg_penta": "0x40162ad4",
+    "sg_pads": "0x4014b788",
+    "sg_page_event": "0x4015b824",
+    "sg_page_taken": "0x4015b820",
+    "sg_page_time": "0x4015b828",
+    "sg_pan": "0x40186181",
+    "sg_penta": "0x40160dbc",
     "sg_phigh": "0x401592e8",
     "sg_pick_note": "0x4016b804",
     "sg_plow": "0x401592e0",
-    "sg_random": "0x4014b5b4",
-    "sg_random_range": "0x40159a04",
-    "sg_random_text": "0x40167bae",
-    "sg_ready": "0x40162afd",
+    "sg_random": "0x4014b05c",
+    "sg_random_range": "0x40152f88",
+    "sg_random_text": "0x40167a06",
+    "sg_ready": "0x40160de5",
     "sg_render": "0x4016b9e8",
-    "sg_render_start": "0x40168fb4",
+    "sg_render_start": "0x40168c4c",
     "sg_rhythm": "0x40159306",
-    "sg_rhythm_names": "0x40167b94",
-    "sg_rhythm_only": "0x40167ba1",
+    "sg_rhythm_names": "0x401679ec",
+    "sg_rhythm_only": "0x401679f9",
     "sg_root": "0x4014a8da",
     "sg_rotate": "0x40159319",
-    "sg_round_bands": "0x40166690",
+    "sg_round_bands": "0x4016f7d0",
     "sg_row": "0x40184e08",
     "sg_scale": "0x4014a8d4",
     "sg_scales": "0x4014a890",
     "sg_seed_ok": "0x4016b7c6",
     "sg_sound_amount": "0x40159322",
     "sg_sound_back": "0x4015933e",
-    "sg_sound_event": "0x4014e61c",
+    "sg_sound_event": "0x4014b798",
     "sg_sound_go": "0x40159331",
-    "sg_sound_taken": "0x4014e618",
-    "sg_sound_time": "0x4014e620",
+    "sg_sound_taken": "0x4014b794",
+    "sg_sound_time": "0x4014b79c",
     "sg_steps": "0x4016b7ca",
     "sg_store": "0x4016b81c",
     "sg_target": "0x401592f0",
-    "sg_target_names": "0x40167b88",
+    "sg_target_names": "0x401679e0",
     "sg_tick": "0x4014af84",
     "sg_track_restore": "0x40170ad8",
     "sg_track_write": "0x401835b8",
-    "sg_ui_last": "0x40152f88",
-    "sg_undo": "0x40162abd",
+    "sg_ui_last": "0x4014e608",
+    "sg_undo": "0x40160da5",
     "sg_undo_track": "0x40184e04",
     "sg_undo_valid": "0x40184e00",
-    "sg_unmap_row": "0x40152f98",
-    "sg_velocity": "0x4014b05c",
+    "sg_unmap_row": "0x4014e618",
+    "sg_velocity": "0x40186168",
     "sg_vhigh": "0x401592c4",
-    "sg_view_start": "0x40168c4c",
+    "sg_view_start": "0x40167b80",
     "sg_vlow": "0x401592bc",
     "sg_vt": "0x40184e30"
    }
@@ -98169,62 +98169,62 @@ window.MC_TWEAKS = {
     "$shared": 87
    },
    "symbols": {
-    "sg_a": "0x40163120",
+    "sg_a": "0x40160dd8",
     "sg_action_generate": "0x4014ab5c",
     "sg_action_undo": "0x4016f7d0",
-    "sg_advanced": "0x40179ca4",
+    "sg_advanced": "0x40168fc0",
     "sg_advanced_edit": "0x4014aa34",
     "sg_advanced_steps": "0x401573cc",
-    "sg_advanced_value": "0x40163990",
-    "sg_as": "0x40163122",
-    "sg_b": "0x40163125",
-    "sg_bool_names": "0x40186168",
-    "sg_both": "0x40186184",
-    "sg_c": "0x4016310a",
-    "sg_chrom": "0x401630f2",
-    "sg_config": "0x40185324",
-    "sg_cs": "0x4016310c",
-    "sg_d": "0x4016310f",
-    "sg_decay": "0x4014e616",
+    "sg_advanced_value": "0x401630e4",
+    "sg_as": "0x40160dda",
+    "sg_b": "0x40160ddd",
+    "sg_bool_names": "0x40179c98",
+    "sg_both": "0x40179cb4",
+    "sg_c": "0x40160dc2",
+    "sg_chrom": "0x40160daa",
+    "sg_config": "0x40184e14",
+    "sg_cs": "0x40160dc4",
+    "sg_d": "0x40160dc7",
+    "sg_decay": "0x4014b792",
     "sg_density": "0x4014a8f2",
     "sg_dhigh": "0x40159456",
     "sg_dlow": "0x4015944c",
-    "sg_dorian": "0x40163100",
-    "sg_ds": "0x40163111",
-    "sg_dtor0": "0x40168fb4",
-    "sg_dtor1": "0x40168fd4",
+    "sg_dorian": "0x40160db8",
+    "sg_ds": "0x40160dc9",
+    "sg_dtor0": "0x40168c4c",
+    "sg_dtor1": "0x40168c6c",
     "sg_dyn_backup": "0x401784e8",
     "sg_dyn_copy": "0x401666cc",
     "sg_dyn_lock": "0x40171c46",
     "sg_dyn_restore": "0x40166690",
     "sg_dyn_step": "0x40171bc8",
     "sg_dyn_validate": "0x4017856a",
-    "sg_e": "0x40163114",
-    "sg_edit": "0x4018531c",
+    "sg_e": "0x40160dcc",
+    "sg_edit": "0x40184e0c",
     "sg_enc": "0x4016f8cc",
     "sg_enc_th": "0x4016f8c8",
-    "sg_error": "0x40185320",
-    "sg_error_text": "0x40163136",
-    "sg_euclid": "0x4018619d",
+    "sg_error": "0x40184e10",
+    "sg_error_text": "0x40160dee",
+    "sg_euclid": "0x40179ccd",
     "sg_exit": "0x4016b82c",
-    "sg_f": "0x40163116",
-    "sg_fields": "0x40184df8",
-    "sg_fmt_d": "0x4016312a",
-    "sg_fmt_s": "0x40163127",
-    "sg_fs": "0x40163118",
-    "sg_func": "0x40159adc",
-    "sg_g": "0x4016311b",
+    "sg_f": "0x40160dce",
+    "sg_fields": "0x401835b8",
+    "sg_fmt_d": "0x40160de2",
+    "sg_fmt_s": "0x40160ddf",
+    "sg_fs": "0x40160dd0",
+    "sg_func": "0x40159a04",
+    "sg_g": "0x40160dd3",
     "sg_generate": "0x4016b6f8",
-    "sg_go": "0x401630e4",
-    "sg_gs": "0x4016311d",
+    "sg_go": "0x40160d9c",
+    "sg_gs": "0x40160dd5",
     "sg_high": "0x4014a8e8",
     "sg_hits": "0x4015948d",
-    "sg_intro": "0x40159ae4",
-    "sg_intro_fmt": "0x4015fb76",
-    "sg_intro_gen": "0x4015fb71",
+    "sg_intro": "0x40159a0c",
+    "sg_intro_fmt": "0x4015c9b3",
+    "sg_intro_gen": "0x4015c9ad",
     "sg_intro_render": "0x4015f38c",
-    "sg_intro_seq": "0x4015fb6c",
-    "sg_intro_time": "0x40159ae8",
+    "sg_intro_seq": "0x4015c9a4",
+    "sg_intro_time": "0x40159a10",
     "sg_key": "0x40179730",
     "sg_key_chain": "0x40179838",
     "sg_key_eat": "0x4017983e",
@@ -98232,107 +98232,110 @@ window.MC_TWEAKS = {
     "sg_key_pass": "0x4017980e",
     "sg_key_up": "0x401797ee",
     "sg_keys": "0x4014a8a4",
-    "sg_labels": "0x401638c0",
-    "sg_large_intro": "0x4016fd60",
-    "sg_large_letters": "0x401679ec",
+    "sg_labels": "0x40162ab4",
+    "sg_large_intro": "0x40168a84",
+    "sg_large_letters": "0x4017889c",
     "sg_low": "0x4014a8df",
-    "sg_major": "0x401630f8",
-    "sg_map_row": "0x4015b824",
-    "sg_masks": "0x4015c9a4",
+    "sg_major": "0x40160db0",
+    "sg_map_row": "0x40159ae0",
+    "sg_masks": "0x4015bf24",
     "sg_menu_key": "0x4018d918",
-    "sg_minor": "0x401630fc",
+    "sg_minor": "0x40160db4",
     "sg_mutation": "0x4015947b",
     "sg_next_note": "0x4016b7ae",
-    "sg_no_undo": "0x40163133",
+    "sg_no_undo": "0x40160deb",
     "sg_notes": "0x4016b78c",
-    "sg_notes_only": "0x40186190",
+    "sg_notes_only": "0x40179cc0",
     "sg_o_allocate": "0x40173848",
     "sg_o_cp": "0x4017918e",
     "sg_o_done": "0x40173938",
     "sg_o_holder": "0x401738a4",
-    "sg_obj": "0x40185308",
+    "sg_obj": "0x40184df8",
     "sg_off": "0x401594cc",
     "sg_on": "0x401594c9",
     "sg_open": "0x40179140",
-    "sg_opened": "0x4018530c",
-    "sg_options": "0x40179c98",
+    "sg_opened": "0x40184dfc",
+    "sg_options": "0x40168fb4",
     "sg_pad": "0x401592bc",
-    "sg_pads": "0x40159ae0",
-    "sg_page_event": "0x40160a98",
-    "sg_page_taken": "0x40160a94",
-    "sg_page_time": "0x40160a9c",
-    "sg_pan": "0x4014e621",
-    "sg_penta": "0x40163104",
+    "sg_pads": "0x40159a08",
+    "sg_page_event": "0x4015fb70",
+    "sg_page_taken": "0x4015fb6c",
+    "sg_page_time": "0x4015fb74",
+    "sg_pan": "0x4014b79d",
+    "sg_penta": "0x40160dbc",
     "sg_phigh": "0x40159468",
     "sg_pick_note": "0x4016b804",
     "sg_plow": "0x40159460",
-    "sg_q_audio": "0x40160dc4",
-    "sg_q_building": "0x40160db0",
+    "sg_q_audio": "0x40172538",
+    "sg_q_building": "0x40172524",
     "sg_q_cancel": "0x4016ea84",
-    "sg_q_cancel_text": "0x40168b03",
-    "sg_q_chain_ok": "0x40168c4c",
+    "sg_q_cancel_text": "0x4016bd57",
+    "sg_q_chain_ok": "0x40167b80",
     "sg_q_copy": "0x4016ea8c",
-    "sg_q_detail": "0x40160d9c",
+    "sg_q_detail": "0x40172510",
     "sg_q_equal": "0x4016eaae",
-    "sg_q_format": "0x40167b80",
+    "sg_q_format": "0x401679d8",
     "sg_q_get": "0x4016ea78",
-    "sg_q_hook": "0x40185648",
-    "sg_q_index": "0x40160dcc",
+    "sg_q_hook": "0x40152d38",
+    "sg_q_index": "0x40172540",
     "sg_q_label": "0x4016eade",
-    "sg_q_length": "0x40160dd0",
-    "sg_q_pattern": "0x40160dc8",
-    "sg_q_pool": "0x40160dbc",
-    "sg_q_powner": "0x40160dc0",
+    "sg_q_length": "0x40172544",
+    "sg_q_mode": "0x4017254c",
+    "sg_q_pattern": "0x4017253c",
+    "sg_q_pool": "0x40172530",
+    "sg_q_powner": "0x40172534",
     "sg_q_quiet": "0x4016ea82",
-    "sg_q_raw": "0x40160db8",
-    "sg_q_reason": "0x40160da8",
+    "sg_q_raw": "0x4017252c",
+    "sg_q_reason": "0x4017251c",
     "sg_q_service": "0x401780a8",
-    "sg_q_speed": "0x40160dd4",
-    "sg_q_stage": "0x40172608",
-    "sg_q_state": "0x40160dac",
-    "sg_q_stop": "0x4014b5b4",
-    "sg_q_track": "0x40160db4",
-    "sg_q_vt": "0x40160dd8",
-    "sg_q_wait": "0x40168afc",
-    "sg_random": "0x40152f88",
-    "sg_random_range": "0x4015bf24",
-    "sg_random_text": "0x40186196",
-    "sg_ready": "0x4016312d",
+    "sg_q_speed": "0x40172548",
+    "sg_q_stage": "0x40185308",
+    "sg_q_state": "0x40172520",
+    "sg_q_stop": "0x4014b05c",
+    "sg_q_storage": "0x40172550",
+    "sg_q_timing": "0x40163990",
+    "sg_q_track": "0x40172528",
+    "sg_q_vt": "0x40172554",
+    "sg_q_wait": "0x4016bd50",
+    "sg_random": "0x4014e608",
+    "sg_random_range": "0x4015b820",
+    "sg_random_text": "0x40179cc6",
+    "sg_ready": "0x40160de5",
     "sg_render": "0x4016b9e8",
-    "sg_render_start": "0x4014b05c",
+    "sg_render_start": "0x4014af84",
     "sg_rhythm": "0x40159486",
-    "sg_rhythm_names": "0x4018617c",
-    "sg_rhythm_only": "0x40186189",
+    "sg_rhythm_names": "0x40179cac",
+    "sg_rhythm_only": "0x40179cb9",
     "sg_root": "0x4014a8da",
     "sg_rotate": "0x40159499",
-    "sg_round_bands": "0x401679d8",
-    "sg_row": "0x40185318",
+    "sg_round_bands": "0x40178888",
+    "sg_row": "0x40184e08",
     "sg_scale": "0x4014a8d4",
     "sg_scales": "0x4014a890",
     "sg_seed_ok": "0x4016b7c6",
     "sg_sound_amount": "0x401594a2",
     "sg_sound_back": "0x401594be",
-    "sg_sound_event": "0x40159af0",
+    "sg_sound_event": "0x40159a18",
     "sg_sound_go": "0x401594b1",
-    "sg_sound_taken": "0x40159aec",
-    "sg_sound_time": "0x40159af4",
+    "sg_sound_taken": "0x40159a14",
+    "sg_sound_time": "0x40159a1c",
     "sg_steps": "0x4016b7ca",
     "sg_store": "0x4016b81c",
     "sg_target": "0x40159470",
-    "sg_target_names": "0x40186170",
-    "sg_tick": "0x40172510",
+    "sg_target_names": "0x40179ca0",
+    "sg_tick": "0x4016fd60",
     "sg_track_restore": "0x40170ad8",
     "sg_track_write": "0x4014b85c",
-    "sg_ui_last": "0x4015b820",
-    "sg_undo": "0x401630ed",
-    "sg_undo_track": "0x40185314",
-    "sg_undo_valid": "0x40185310",
-    "sg_unmap_row": "0x4015b830",
-    "sg_velocity": "0x4014e608",
+    "sg_ui_last": "0x40159adc",
+    "sg_undo": "0x40160da5",
+    "sg_undo_track": "0x40184e04",
+    "sg_undo_valid": "0x40184e00",
+    "sg_unmap_row": "0x40159aec",
+    "sg_velocity": "0x4014b784",
     "sg_vhigh": "0x40159444",
-    "sg_view_start": "0x4014af84",
+    "sg_view_start": "0x40186168",
     "sg_vlow": "0x4015943c",
-    "sg_vt": "0x40185340"
+    "sg_vt": "0x40184e30"
    }
   },
   {
@@ -98359,62 +98362,62 @@ window.MC_TWEAKS = {
     "$shared": 87
    },
    "symbols": {
-    "sg_a": "0x40163120",
+    "sg_a": "0x40160dd8",
     "sg_action_generate": "0x4014ab5c",
     "sg_action_undo": "0x4016f7d0",
-    "sg_advanced": "0x40179ca4",
+    "sg_advanced": "0x40168fc0",
     "sg_advanced_edit": "0x4014aa34",
     "sg_advanced_steps": "0x401573cc",
-    "sg_advanced_value": "0x40163990",
-    "sg_as": "0x40163122",
-    "sg_b": "0x40163125",
-    "sg_bool_names": "0x40186168",
-    "sg_both": "0x40186184",
-    "sg_c": "0x4016310a",
-    "sg_chrom": "0x401630f2",
-    "sg_config": "0x40185324",
-    "sg_cs": "0x4016310c",
-    "sg_d": "0x4016310f",
-    "sg_decay": "0x4014e616",
+    "sg_advanced_value": "0x401630e4",
+    "sg_as": "0x40160dda",
+    "sg_b": "0x40160ddd",
+    "sg_bool_names": "0x40179c98",
+    "sg_both": "0x40179cb4",
+    "sg_c": "0x40160dc2",
+    "sg_chrom": "0x40160daa",
+    "sg_config": "0x40184e14",
+    "sg_cs": "0x40160dc4",
+    "sg_d": "0x40160dc7",
+    "sg_decay": "0x4014b792",
     "sg_density": "0x4014a8f2",
     "sg_dhigh": "0x40159456",
     "sg_dlow": "0x4015944c",
-    "sg_dorian": "0x40163100",
-    "sg_ds": "0x40163111",
-    "sg_dtor0": "0x40168fb4",
-    "sg_dtor1": "0x40168fd4",
+    "sg_dorian": "0x40160db8",
+    "sg_ds": "0x40160dc9",
+    "sg_dtor0": "0x40168c4c",
+    "sg_dtor1": "0x40168c6c",
     "sg_dyn_backup": "0x401784e8",
     "sg_dyn_copy": "0x401666cc",
     "sg_dyn_lock": "0x40171c46",
     "sg_dyn_restore": "0x40166690",
     "sg_dyn_step": "0x40171bc8",
     "sg_dyn_validate": "0x4017856a",
-    "sg_e": "0x40163114",
-    "sg_edit": "0x4018531c",
+    "sg_e": "0x40160dcc",
+    "sg_edit": "0x40184e0c",
     "sg_enc": "0x4016f8cc",
     "sg_enc_th": "0x4016f8c8",
-    "sg_error": "0x40185320",
-    "sg_error_text": "0x40163136",
-    "sg_euclid": "0x4018619d",
+    "sg_error": "0x40184e10",
+    "sg_error_text": "0x40160dee",
+    "sg_euclid": "0x40179ccd",
     "sg_exit": "0x4016b82c",
-    "sg_f": "0x40163116",
-    "sg_fields": "0x40184df8",
-    "sg_fmt_d": "0x4016312a",
-    "sg_fmt_s": "0x40163127",
-    "sg_fs": "0x40163118",
-    "sg_func": "0x40159adc",
-    "sg_g": "0x4016311b",
+    "sg_f": "0x40160dce",
+    "sg_fields": "0x401835b8",
+    "sg_fmt_d": "0x40160de2",
+    "sg_fmt_s": "0x40160ddf",
+    "sg_fs": "0x40160dd0",
+    "sg_func": "0x40159a04",
+    "sg_g": "0x40160dd3",
     "sg_generate": "0x4016b6f8",
-    "sg_go": "0x401630e4",
-    "sg_gs": "0x4016311d",
+    "sg_go": "0x40160d9c",
+    "sg_gs": "0x40160dd5",
     "sg_high": "0x4014a8e8",
     "sg_hits": "0x4015948d",
-    "sg_intro": "0x40159ae4",
-    "sg_intro_fmt": "0x4015fb76",
-    "sg_intro_gen": "0x4015fb71",
+    "sg_intro": "0x40159a0c",
+    "sg_intro_fmt": "0x4015c9b3",
+    "sg_intro_gen": "0x4015c9ad",
     "sg_intro_render": "0x4015f38c",
-    "sg_intro_seq": "0x4015fb6c",
-    "sg_intro_time": "0x40159ae8",
+    "sg_intro_seq": "0x4015c9a4",
+    "sg_intro_time": "0x40159a10",
     "sg_key": "0x40179730",
     "sg_key_chain": "0x40179838",
     "sg_key_eat": "0x4017983e",
@@ -98422,107 +98425,110 @@ window.MC_TWEAKS = {
     "sg_key_pass": "0x4017980e",
     "sg_key_up": "0x401797ee",
     "sg_keys": "0x4014a8a4",
-    "sg_labels": "0x401638c0",
-    "sg_large_intro": "0x4016fd60",
-    "sg_large_letters": "0x401679ec",
+    "sg_labels": "0x40162ab4",
+    "sg_large_intro": "0x40168a84",
+    "sg_large_letters": "0x4017889c",
     "sg_low": "0x4014a8df",
-    "sg_major": "0x401630f8",
-    "sg_map_row": "0x4015b824",
-    "sg_masks": "0x4015c9a4",
+    "sg_major": "0x40160db0",
+    "sg_map_row": "0x40159ae0",
+    "sg_masks": "0x4015bf24",
     "sg_menu_key": "0x4018d918",
-    "sg_minor": "0x401630fc",
+    "sg_minor": "0x40160db4",
     "sg_mutation": "0x4015947b",
     "sg_next_note": "0x4016b7ae",
-    "sg_no_undo": "0x40163133",
+    "sg_no_undo": "0x40160deb",
     "sg_notes": "0x4016b78c",
-    "sg_notes_only": "0x40186190",
+    "sg_notes_only": "0x40179cc0",
     "sg_o_allocate": "0x40173848",
     "sg_o_cp": "0x4017918e",
     "sg_o_done": "0x40173938",
     "sg_o_holder": "0x401738a4",
-    "sg_obj": "0x40185308",
+    "sg_obj": "0x40184df8",
     "sg_off": "0x401594cc",
     "sg_on": "0x401594c9",
     "sg_open": "0x40179140",
-    "sg_opened": "0x4018530c",
-    "sg_options": "0x40179c98",
+    "sg_opened": "0x40184dfc",
+    "sg_options": "0x40168fb4",
     "sg_pad": "0x401592bc",
-    "sg_pads": "0x40159ae0",
-    "sg_page_event": "0x40160a98",
-    "sg_page_taken": "0x40160a94",
-    "sg_page_time": "0x40160a9c",
-    "sg_pan": "0x4014e621",
-    "sg_penta": "0x40163104",
+    "sg_pads": "0x40159a08",
+    "sg_page_event": "0x4015fb70",
+    "sg_page_taken": "0x4015fb6c",
+    "sg_page_time": "0x4015fb74",
+    "sg_pan": "0x4014b79d",
+    "sg_penta": "0x40160dbc",
     "sg_phigh": "0x40159468",
     "sg_pick_note": "0x4016b804",
     "sg_plow": "0x40159460",
-    "sg_q_audio": "0x40160dc4",
-    "sg_q_building": "0x40160db0",
+    "sg_q_audio": "0x40172538",
+    "sg_q_building": "0x40172524",
     "sg_q_cancel": "0x4016ea84",
-    "sg_q_cancel_text": "0x40168b03",
-    "sg_q_chain_ok": "0x40168c4c",
+    "sg_q_cancel_text": "0x4016bd57",
+    "sg_q_chain_ok": "0x40167b80",
     "sg_q_copy": "0x4016ea8c",
-    "sg_q_detail": "0x40160d9c",
+    "sg_q_detail": "0x40172510",
     "sg_q_equal": "0x4016eaae",
-    "sg_q_format": "0x40167b80",
+    "sg_q_format": "0x401679d8",
     "sg_q_get": "0x4016ea78",
-    "sg_q_hook": "0x40185648",
-    "sg_q_index": "0x40160dcc",
+    "sg_q_hook": "0x40152d38",
+    "sg_q_index": "0x40172540",
     "sg_q_label": "0x4016eade",
-    "sg_q_length": "0x40160dd0",
-    "sg_q_pattern": "0x40160dc8",
-    "sg_q_pool": "0x40160dbc",
-    "sg_q_powner": "0x40160dc0",
+    "sg_q_length": "0x40172544",
+    "sg_q_mode": "0x4017254c",
+    "sg_q_pattern": "0x4017253c",
+    "sg_q_pool": "0x40172530",
+    "sg_q_powner": "0x40172534",
     "sg_q_quiet": "0x4016ea82",
-    "sg_q_raw": "0x40160db8",
-    "sg_q_reason": "0x40160da8",
+    "sg_q_raw": "0x4017252c",
+    "sg_q_reason": "0x4017251c",
     "sg_q_service": "0x401780a8",
-    "sg_q_speed": "0x40160dd4",
-    "sg_q_stage": "0x40172608",
-    "sg_q_state": "0x40160dac",
-    "sg_q_stop": "0x4014b5b4",
-    "sg_q_track": "0x40160db4",
-    "sg_q_vt": "0x40160dd8",
-    "sg_q_wait": "0x40168afc",
-    "sg_random": "0x40152f88",
-    "sg_random_range": "0x4015bf24",
-    "sg_random_text": "0x40186196",
-    "sg_ready": "0x4016312d",
+    "sg_q_speed": "0x40172548",
+    "sg_q_stage": "0x40185308",
+    "sg_q_state": "0x40172520",
+    "sg_q_stop": "0x4014b05c",
+    "sg_q_storage": "0x40172550",
+    "sg_q_timing": "0x40163990",
+    "sg_q_track": "0x40172528",
+    "sg_q_vt": "0x40172554",
+    "sg_q_wait": "0x4016bd50",
+    "sg_random": "0x4014e608",
+    "sg_random_range": "0x4015b820",
+    "sg_random_text": "0x40179cc6",
+    "sg_ready": "0x40160de5",
     "sg_render": "0x4016b9e8",
-    "sg_render_start": "0x4014b05c",
+    "sg_render_start": "0x4014af84",
     "sg_rhythm": "0x40159486",
-    "sg_rhythm_names": "0x4018617c",
-    "sg_rhythm_only": "0x40186189",
+    "sg_rhythm_names": "0x40179cac",
+    "sg_rhythm_only": "0x40179cb9",
     "sg_root": "0x4014a8da",
     "sg_rotate": "0x40159499",
-    "sg_round_bands": "0x401679d8",
-    "sg_row": "0x40185318",
+    "sg_round_bands": "0x40178888",
+    "sg_row": "0x40184e08",
     "sg_scale": "0x4014a8d4",
     "sg_scales": "0x4014a890",
     "sg_seed_ok": "0x4016b7c6",
     "sg_sound_amount": "0x401594a2",
     "sg_sound_back": "0x401594be",
-    "sg_sound_event": "0x40159af0",
+    "sg_sound_event": "0x40159a18",
     "sg_sound_go": "0x401594b1",
-    "sg_sound_taken": "0x40159aec",
-    "sg_sound_time": "0x40159af4",
+    "sg_sound_taken": "0x40159a14",
+    "sg_sound_time": "0x40159a1c",
     "sg_steps": "0x4016b7ca",
     "sg_store": "0x4016b81c",
     "sg_target": "0x40159470",
-    "sg_target_names": "0x40186170",
-    "sg_tick": "0x40172510",
+    "sg_target_names": "0x40179ca0",
+    "sg_tick": "0x4016fd60",
     "sg_track_restore": "0x40170ad8",
     "sg_track_write": "0x4014b85c",
-    "sg_ui_last": "0x4015b820",
-    "sg_undo": "0x401630ed",
-    "sg_undo_track": "0x40185314",
-    "sg_undo_valid": "0x40185310",
-    "sg_unmap_row": "0x4015b830",
-    "sg_velocity": "0x4014e608",
+    "sg_ui_last": "0x40159adc",
+    "sg_undo": "0x40160da5",
+    "sg_undo_track": "0x40184e04",
+    "sg_undo_valid": "0x40184e00",
+    "sg_unmap_row": "0x40159aec",
+    "sg_velocity": "0x4014b784",
     "sg_vhigh": "0x40159444",
-    "sg_view_start": "0x4014af84",
+    "sg_view_start": "0x40186168",
     "sg_vlow": "0x4015943c",
-    "sg_vt": "0x40185340"
+    "sg_vt": "0x40184e30"
    }
   },
   {
@@ -98530,8 +98536,8 @@ window.MC_TWEAKS = {
    "order": 50,
    "name": "SCRAMBLE — quatre paramètres (expérimental)",
    "description": [
-    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
-    "Sans menu ni état du générateur ; Sampler exclu. Vérification matérielle attendue.",
+    "SETTINGS + TRACK : cartouche SCRAMBLE élargi et tirage des quatre contrôles machine.",
+    "Maintenir des trigs puis SETTINGS + TRACK active/retire des locks frais à chaque passage, sans modifier le son de base. Sampler exclu ; expérimental.",
     "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
    ],
    "device": "Model:Cycles",
@@ -98552,24 +98558,27 @@ window.MC_TWEAKS = {
     "$shared": 88
    },
    "symbols": {
-    "sc_apply": "0x401617a8",
-    "sc_eat": "0x40189706",
-    "sc_event": "0x401629e0",
+    "sc_apply": "0x40161880",
+    "sc_eat": "0x40189710",
+    "sc_event": "0x40163a64",
     "sc_fresh": "0x40189662",
     "sc_key": "0x40189618",
     "sc_no_get": "0x40168e32",
-    "sc_out": "0x401617e4",
-    "sc_pass": "0x40189700",
+    "sc_out": "0x401618bc",
+    "sc_pass": "0x4018970a",
     "sc_prepare": "0x4018b1a8",
-    "sc_random": "0x40161880",
-    "sc_release": "0x401896da",
-    "sc_result": "0x401629ec",
-    "sc_rng_seed": "0x40161896",
+    "sc_random": "0x401629dc",
+    "sc_release": "0x401896e4",
+    "sc_result": "0x40163a70",
+    "sc_rng_seed": "0x401629f2",
     "sc_run": "0x40168da4",
-    "sc_seed": "0x401629e8",
-    "sc_taken": "0x401629dc",
-    "sc_text": "0x40163a60",
-    "sc_time": "0x401629e4"
+    "sc_seed": "0x40163a6c",
+    "sc_skip_run": "0x401896de",
+    "sc_steps_event": "0x4016fae8",
+    "sc_steps_toggle": "0x40160a94",
+    "sc_taken": "0x40163a60",
+    "sc_text": "0x40167900",
+    "sc_time": "0x40163a68"
    }
   },
   {
@@ -98577,8 +98586,8 @@ window.MC_TWEAKS = {
    "order": 50,
    "name": "SCRAMBLE — quatre paramètres (expérimental)",
    "description": [
-    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
-    "Sans menu ni état du générateur ; Sampler exclu. Vérification matérielle attendue.",
+    "SETTINGS + TRACK : cartouche SCRAMBLE élargi et tirage des quatre contrôles machine.",
+    "Maintenir des trigs puis SETTINGS + TRACK active/retire des locks frais à chaque passage, sans modifier le son de base. Sampler exclu ; expérimental.",
     "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
    ],
    "device": "Model:Cycles",
@@ -98599,24 +98608,27 @@ window.MC_TWEAKS = {
     "$shared": 89
    },
    "symbols": {
-    "sc_apply": "0x401617a8",
-    "sc_eat": "0x40189706",
-    "sc_event": "0x401629e0",
+    "sc_apply": "0x40161880",
+    "sc_eat": "0x40189710",
+    "sc_event": "0x40163a64",
     "sc_fresh": "0x40189662",
     "sc_key": "0x40189618",
     "sc_no_get": "0x40168e32",
-    "sc_out": "0x401617e4",
-    "sc_pass": "0x40189700",
+    "sc_out": "0x401618bc",
+    "sc_pass": "0x4018970a",
     "sc_prepare": "0x4018b1a8",
-    "sc_random": "0x40161880",
-    "sc_release": "0x401896da",
-    "sc_result": "0x401629ec",
-    "sc_rng_seed": "0x40161896",
+    "sc_random": "0x401629dc",
+    "sc_release": "0x401896e4",
+    "sc_result": "0x40163a70",
+    "sc_rng_seed": "0x401629f2",
     "sc_run": "0x40168da4",
-    "sc_seed": "0x401629e8",
-    "sc_taken": "0x401629dc",
-    "sc_text": "0x40163a60",
-    "sc_time": "0x401629e4"
+    "sc_seed": "0x40163a6c",
+    "sc_skip_run": "0x401896de",
+    "sc_steps_event": "0x4016fae8",
+    "sc_steps_toggle": "0x40160a94",
+    "sc_taken": "0x40163a60",
+    "sc_text": "0x40167900",
+    "sc_time": "0x40163a68"
    }
   },
   {
@@ -98624,8 +98636,8 @@ window.MC_TWEAKS = {
    "order": 50,
    "name": "SCRAMBLE — quatre paramètres (expérimental)",
    "description": [
-    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
-    "Sans menu ni état du générateur ; Sampler exclu. Vérification matérielle attendue.",
+    "SETTINGS + TRACK : cartouche SCRAMBLE élargi et tirage des quatre contrôles machine.",
+    "Maintenir des trigs puis SETTINGS + TRACK active/retire des locks frais à chaque passage, sans modifier le son de base. Sampler exclu ; expérimental.",
     "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
    ],
    "device": "Model:Cycles",
@@ -98646,24 +98658,27 @@ window.MC_TWEAKS = {
     "$shared": 88
    },
    "symbols": {
-    "sc_apply": "0x401617a8",
-    "sc_eat": "0x40189706",
-    "sc_event": "0x401629e0",
+    "sc_apply": "0x40161880",
+    "sc_eat": "0x40189710",
+    "sc_event": "0x40163a64",
     "sc_fresh": "0x40189662",
     "sc_key": "0x40189618",
     "sc_no_get": "0x40168e32",
-    "sc_out": "0x401617e4",
-    "sc_pass": "0x40189700",
+    "sc_out": "0x401618bc",
+    "sc_pass": "0x4018970a",
     "sc_prepare": "0x4018b1a8",
-    "sc_random": "0x40161880",
-    "sc_release": "0x401896da",
-    "sc_result": "0x401629ec",
-    "sc_rng_seed": "0x40161896",
+    "sc_random": "0x401629dc",
+    "sc_release": "0x401896e4",
+    "sc_result": "0x40163a70",
+    "sc_rng_seed": "0x401629f2",
     "sc_run": "0x40168da4",
-    "sc_seed": "0x401629e8",
-    "sc_taken": "0x401629dc",
-    "sc_text": "0x40163a60",
-    "sc_time": "0x401629e4"
+    "sc_seed": "0x40163a6c",
+    "sc_skip_run": "0x401896de",
+    "sc_steps_event": "0x4016fae8",
+    "sc_steps_toggle": "0x40160a94",
+    "sc_taken": "0x40163a60",
+    "sc_text": "0x40167900",
+    "sc_time": "0x40163a68"
    }
   },
   {
@@ -98671,8 +98686,8 @@ window.MC_TWEAKS = {
    "order": 50,
    "name": "SCRAMBLE — quatre paramètres (expérimental)",
    "description": [
-    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
-    "Sans menu ni état du générateur ; Sampler exclu. Vérification matérielle attendue.",
+    "SETTINGS + TRACK : cartouche SCRAMBLE élargi et tirage des quatre contrôles machine.",
+    "Maintenir des trigs puis SETTINGS + TRACK active/retire des locks frais à chaque passage, sans modifier le son de base. Sampler exclu ; expérimental.",
     "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
    ],
    "device": "Model:Cycles",
@@ -98693,24 +98708,27 @@ window.MC_TWEAKS = {
     "$shared": 89
    },
    "symbols": {
-    "sc_apply": "0x401617a8",
-    "sc_eat": "0x40189706",
-    "sc_event": "0x401629e0",
+    "sc_apply": "0x40161880",
+    "sc_eat": "0x40189710",
+    "sc_event": "0x40163a64",
     "sc_fresh": "0x40189662",
     "sc_key": "0x40189618",
     "sc_no_get": "0x40168e32",
-    "sc_out": "0x401617e4",
-    "sc_pass": "0x40189700",
+    "sc_out": "0x401618bc",
+    "sc_pass": "0x4018970a",
     "sc_prepare": "0x4018b1a8",
-    "sc_random": "0x40161880",
-    "sc_release": "0x401896da",
-    "sc_result": "0x401629ec",
-    "sc_rng_seed": "0x40161896",
+    "sc_random": "0x401629dc",
+    "sc_release": "0x401896e4",
+    "sc_result": "0x40163a70",
+    "sc_rng_seed": "0x401629f2",
     "sc_run": "0x40168da4",
-    "sc_seed": "0x401629e8",
-    "sc_taken": "0x401629dc",
-    "sc_text": "0x40163a60",
-    "sc_time": "0x401629e4"
+    "sc_seed": "0x40163a6c",
+    "sc_skip_run": "0x401896de",
+    "sc_steps_event": "0x4016fae8",
+    "sc_steps_toggle": "0x40160a94",
+    "sc_taken": "0x40163a60",
+    "sc_text": "0x40167900",
+    "sc_time": "0x40163a68"
    }
   },
   {
@@ -98718,8 +98736,8 @@ window.MC_TWEAKS = {
    "order": 50,
    "name": "SCRAMBLE — quatre paramètres (expérimental)",
    "description": [
-    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
-    "Sans menu ni état du générateur ; Sampler exclu. Vérification matérielle attendue.",
+    "SETTINGS + TRACK : cartouche SCRAMBLE élargi et tirage des quatre contrôles machine.",
+    "Maintenir des trigs puis SETTINGS + TRACK active/retire des locks frais à chaque passage, sans modifier le son de base. Sampler exclu ; expérimental.",
     "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
    ],
    "device": "Model:Cycles",
@@ -98743,24 +98761,27 @@ window.MC_TWEAKS = {
     "$shared": 90
    },
    "symbols": {
-    "sc_apply": "0x401617a8",
-    "sc_eat": "0x40189706",
-    "sc_event": "0x401629e0",
+    "sc_apply": "0x40161880",
+    "sc_eat": "0x40189710",
+    "sc_event": "0x40163a64",
     "sc_fresh": "0x40189662",
     "sc_key": "0x40189618",
     "sc_no_get": "0x40168e32",
-    "sc_out": "0x401617e4",
-    "sc_pass": "0x40189700",
+    "sc_out": "0x401618bc",
+    "sc_pass": "0x4018970a",
     "sc_prepare": "0x4018b1a8",
-    "sc_random": "0x40161880",
-    "sc_release": "0x401896da",
-    "sc_result": "0x401629ec",
-    "sc_rng_seed": "0x40161896",
+    "sc_random": "0x401629dc",
+    "sc_release": "0x401896e4",
+    "sc_result": "0x40163a70",
+    "sc_rng_seed": "0x401629f2",
     "sc_run": "0x40168da4",
-    "sc_seed": "0x401629e8",
-    "sc_taken": "0x401629dc",
-    "sc_text": "0x40163a60",
-    "sc_time": "0x401629e4"
+    "sc_seed": "0x40163a6c",
+    "sc_skip_run": "0x401896de",
+    "sc_steps_event": "0x4016fae8",
+    "sc_steps_toggle": "0x40160a94",
+    "sc_taken": "0x40163a60",
+    "sc_text": "0x40167900",
+    "sc_time": "0x40163a68"
    }
   },
   {
@@ -98768,8 +98789,8 @@ window.MC_TWEAKS = {
    "order": 50,
    "name": "SCRAMBLE — quatre paramètres (expérimental)",
    "description": [
-    "SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.",
-    "Sans menu ni état du générateur ; Sampler exclu. Vérification matérielle attendue.",
+    "SETTINGS + TRACK : cartouche SCRAMBLE élargi et tirage des quatre contrôles machine.",
+    "Maintenir des trigs puis SETTINGS + TRACK active/retire des locks frais à chaque passage, sans modifier le son de base. Sampler exclu ; expérimental.",
     "Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55."
    ],
    "device": "Model:Cycles",
@@ -98793,24 +98814,27 @@ window.MC_TWEAKS = {
     "$shared": 90
    },
    "symbols": {
-    "sc_apply": "0x401617a8",
-    "sc_eat": "0x40189706",
-    "sc_event": "0x401629e0",
+    "sc_apply": "0x40161880",
+    "sc_eat": "0x40189710",
+    "sc_event": "0x40163a64",
     "sc_fresh": "0x40189662",
     "sc_key": "0x40189618",
     "sc_no_get": "0x40168e32",
-    "sc_out": "0x401617e4",
-    "sc_pass": "0x40189700",
+    "sc_out": "0x401618bc",
+    "sc_pass": "0x4018970a",
     "sc_prepare": "0x4018b1a8",
-    "sc_random": "0x40161880",
-    "sc_release": "0x401896da",
-    "sc_result": "0x401629ec",
-    "sc_rng_seed": "0x40161896",
+    "sc_random": "0x401629dc",
+    "sc_release": "0x401896e4",
+    "sc_result": "0x40163a70",
+    "sc_rng_seed": "0x401629f2",
     "sc_run": "0x40168da4",
-    "sc_seed": "0x401629e8",
-    "sc_taken": "0x401629dc",
-    "sc_text": "0x40163a60",
-    "sc_time": "0x401629e4"
+    "sc_seed": "0x40163a6c",
+    "sc_skip_run": "0x401896de",
+    "sc_steps_event": "0x4016fae8",
+    "sc_steps_toggle": "0x40160a94",
+    "sc_taken": "0x40163a60",
+    "sc_text": "0x40167900",
+    "sc_time": "0x40163a68"
    }
   }
  ],
@@ -136976,7 +137000,7 @@ window.MC_TWEAKS = {
    {
     "off": 1627416,
     "old": "ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff80",
-    "new": "4feffff848d70404246f000c242f00102f024eb94007240c588f0c800000000a66044efa00660c800000000b66044efa005a0c800000000166044efa00620c800000002066044efa006c0c800000000c66044efa00c00c800000000d66044efa00b40c800000000f66044efa00a80c800000000266044efa009c0c800000000366044efa00904efa00b2204208280001001367044efa00a470004efa00a020422028001002800000000123c04014e6084efa00882f024eb940072434588f4a0066044efa0076203940184e084eb940152f8c0c800000001466044efa001a0c800000001566044efa00187001b1b940184e0c4efa00124eb94016ea784efa00084eb9401639902f0a4eb940076082588f4efa00282f024eb9400724a0588f4a0066044efa0016700123c0401b236020522f0a206800284e90588f70014cd704044fef00084e75"
+    "new": "4feffff848d70404246f000c242f00102f024eb94007240c588f0c800000000a66044efa00660c800000000b66044efa005a0c800000000166044efa00620c800000002066044efa006c0c800000000c66044efa00c00c800000000d66044efa00b40c800000000f66044efa00a80c800000000266044efa009c0c800000000366044efa00904efa00b2204208280001001367044efa00a470004efa00a020422028001002800000000123c04014b7844efa00882f024eb940072434588f4a0066044efa0076203940184e084eb94014e60c0c800000001466044efa001a0c800000001566044efa00187001b1b940184e0c4efa00124eb94016ea784efa00084eb9401639902f0a4eb940076082588f4efa00282f024eb9400724a0588f4a0066044efa0016700123c0401b236020522f0a206800284e90588f70014cd704044fef00084e75"
    },
    {
     "off": 724798,
@@ -136986,7 +137010,7 @@ window.MC_TWEAKS = {
    {
     "off": 1487608,
     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe",
-    "new": "4fefff5848d73cfc2448264970ff24120c82000000016c044efa011a0c82000000406f044efa010e222a00040c810000006463044efa00fe262a00080c830000007f63044efa00ee282a000c0c840000007f63044efa00deb8836c044efa00d6222a00100c810000000463044efa00c6222a00140c810000000b63044efa00b649ef00287a0041f940159adc222a00102c301c00200306800000000c90aa001480fc000c484002800000ffff010667061983580052855283b6846fd870ff4a8567722e2a001866062e3c6d2b79f5760078004eb94014b5b480fc0064484002800000ffff72ff4ab940167a0467044efa001c2239401679fc0c810000000266044efa000a72ffb0aa000464184eb94014b5b480c5484002800000ffff7200123408005284178138005283b6826da42547001820044cd73cfc4fef00a84e75"
+    "new": "4fefff5848d73cfc2448264970ff24120c82000000016c044efa011a0c82000000406f044efa010e222a00040c810000006463044efa00fe262a00080c830000007f63044efa00ee282a000c0c840000007f63044efa00deb8836c044efa00d6222a00100c810000000463044efa00c6222a00140c810000000b63044efa00b649ef00287a0041f940159a04222a00102c301c00200306800000000c90aa001480fc000c484002800000ffff010667061983580052855283b6846fd870ff4a8567722e2a001866062e3c6d2b79f5760078004eb94014b05c80fc0064484002800000ffff72ff4ab9401666bc67044efa001c2239401666b40c810000000266044efa000a72ffb0aa000464184eb94014b05c80c5484002800000ffff7200123408005284178138005283b6826da42547001820044cd73cfc4fef00a84e75"
    },
    {
     "off": 724764,
@@ -136996,7 +137020,7 @@ window.MC_TWEAKS = {
    {
     "off": 1488360,
     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffffffff",
-    "new": "4ab94014e61067064ef94016f7d04ef940168fb420034eb940152f8c260041f9401630e424703c000c830000001467044efa00144ab940184e1066044efa000845f940162b0620034eb940152f9828009885c8fc000f703190842f0a487940162af7487800102f0048780002487940ea14cc2f024eb940071a044fef001c0c83000000146d044efa009e0c83000000056d064ef9401638c070004a8367044efa00161039401bbd7841f94014a89024700c004efa001e0c830000000167044efa001e1039401bbd7941f94014a8a424700c002f0a487940162af74efa002441f940184e14202800040c830000000466044efa000620303c002f00487940162afa48780014703190842f004878007d487940ea14cc2f024eb940071a044fef001c4ef9401858244ef9401857f8"
+    "new": "4ab94014b78c67064ef94015f38c4ef940168c4c20034eb94014e60c260041f940162ab424703c000c830000001467044efa00144ab940184e1066044efa000845f940160dee20034eb94014e61828009885c8fc000f703190842f0a487940160ddf487800102f0048780002487940ea14cc2f024eb940071a044fef001c0c83000000146d044efa009e0c83000000056d064ef9401630e470004a8367044efa00161039401bbd7841f94014a89024700c004efa001e0c830000000167044efa001e1039401bbd7941f94014a8a424700c002f0a487940160ddf4efa002441f940184e14202800040c830000000466044efa000620303c002f00487940160de248780014703190842f004878007d487940ea14cc2f024eb940071a044fef001c4ef9401858244ef9401857f8"
    },
    {
     "off": 721312,
@@ -137006,7 +137030,7 @@ window.MC_TWEAKS = {
    {
     "off": 1514288,
     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000",
-    "new": "206f00042028000c720fb08167044efa00ce222800100801000066044efa00a04ab94015bf246718b1f94015bf28661020280008b0b94015bf2c66044efa00d04ab9401b235c66044efa00940801000367044efa008a4ab9401b208867044efa007e4ab9401b6d8c67044efa00724ab9401bcaec67044efa00660801000167044efa005c23c84015bf282228000823c14015bf2c720123c14015bf2423c1401b23602f0822280010008100000008214100104eb940179140205f4efa00524ab94015bf24671842b94015bf2423c84015bf282228000823c14015bf2c6030206f00042028000c720fb081661cb1f94015bf28661420280008b0b94015bf2c660808280000001367064ef9401ae968222800100081000000082141001070004e75"
+    "new": "206f00042028000c720fb08167044efa00ce222800100801000066044efa00a04ab94015b8206718b1f94015b824661020280008b0b94015b82866044efa00d04ab9401b235c66044efa00940801000367044efa008a4ab9401b208867044efa007e4ab9401b6d8c67044efa00724ab9401bcaec67044efa00660801000167044efa005c23c84015b8242228000823c14015b828720123c14015b82023c1401b23602f0822280010008100000008214100104eb940179140205f4efa00524ab94015b820671842b94015b82023c84015b8242228000823c14015b8286030206f00042028000c720fb081661cb1f94015b824661420280008b0b94015b828660808280000001367064ef9401ae968222800100081000000082141001070004e75"
    },
    {
     "off": 722748,
@@ -137016,7 +137040,7 @@ window.MC_TWEAKS = {
    {
     "off": 1504456,
     "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffff",
-    "new": "59af00044feffff448d7040c246f0010206f00142028000c0c800000000167064ef94017299848780001487800012f084eb94006f73a4fef000c4a8066064ef94017299876014a806b044efa000476ff243940184e084ab940184e0c67044efa0028d4836a064ef9401729984eb940152f88b4806f064ef94017299823c240184e084ef94017298e20024eb940152f8c24004a8267044efa002e70001039401bbd78d0836a064ef9401729980c80000000046f064ef94017299813c0401bbd784ef94017298e0c820000000167044efa002e70001039401bbd79d0836a064ef9401729980c800000000b6f064ef94017299813c0401bbd794ef94017298e4ef9401728f8"
+    "new": "59af00044feffff448d7040c246f0010206f00142028000c0c800000000167064ef94017299848780001487800012f084eb94006f73a4fef000c4a8066064ef94017299876014a806b044efa000476ff243940184e084ab940184e0c67044efa0028d4836a064ef9401729984eb94014e608b4806f064ef94017299823c240184e084ef94017298e20024eb94014e60c24004a8267044efa002e70001039401bbd78d0836a064ef9401729980c80000000046f064ef94017299813c0401bbd784ef94017298e0c820000000167044efa002e70001039401bbd79d0836a064ef9401729980c800000000b6f064ef94017299813c0401bbd794ef94017298e4ef9401728f8"
    },
    {
     "off": 720720,
@@ -137026,7 +137050,7 @@ window.MC_TWEAKS = {
    {
     "off": 1520712,
     "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffff",
-    "new": "47f9400802e0487816004e93588f4a8066044efa00dc28402f0c4eb9400a22b0588f43f940184e3041e90008288841e900582948000441e9009429480010487800104e93588f4a8067044efa00102f0c4eb9400f4486588f4efa0096204023cc40184df842b940184e0842b940184e0c42b940184e0042b940184e1042b94014e60842b94014e60c2039401b105423c04014e614700123c04014e6107201203c401000c420802141000421410008214c000c2f082f0c4eb9400d09742f004eb9400060d8588f204f42a72f082f004eb94007700e4fef000c486f00044eb9400cf23c4fef000c41f940184dfc700120804cd71c1c4fef00184e75"
+    "new": "47f9400802e0487816004e93588f4a8066044efa00dc28402f0c4eb9400a22b0588f43f940184e3041e90008288841e900582948000441e9009429480010487800104e93588f4a8067044efa00102f0c4eb9400f4486588f4efa0096204023cc40184df842b940184e0842b940184e0c42b940184e0042b940184e1042b94014b78442b94014b7882039401b105423c04014b790700123c04014b78c7201203c401000c420802141000421410008214c000c2f082f0c4eb9400d09742f004eb9400060d8588f204f42a72f082f004eb94007700e4fef000c486f00044eb9400cf23c4fef000c41f940184dfc700120804cd71c1c4fef00184e75"
    },
    {
     "off": 718150,
@@ -137036,7 +137060,7 @@ window.MC_TWEAKS = {
    {
     "off": 1539240,
     "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc000",
-    "new": "4feffff448d70c04247940184df82039401679dc80b9401679e066044efa0050206b002c4a8866044efa004c242b00380c820000000563044efa003c2f082250226900284e91588f4a8066044efa0028c4fc11212040d1c2254803e8256b002c03ec43ea03f04eb940163b74600442aa03e87001600270004cd70c044fef000c4e754feffff448d70c04247940184df82f0b2053206800284e90588fb0aa03e467044efaffd24aaa03e866044efaffc4206b002cb1ea03ec67044efaffba242b00380c820000000563044efaffaa2f082250226900284e91588f4a8066044efaff96c4fc1121d082b0aa03e866044efaff824efaff82"
+    "new": "4feffff448d70c04247940184df820394016669480b94016669866044efa0050206b002c4a8866044efa004c242b00380c820000000563044efa003c2f082250226900284e91588f4a8066044efa0028c4fc11212040d1c2254803e8256b002c03ec43ea03f04eb940163b74600442aa03e87001600270004cd70c044fef000c4e754feffff448d70c04247940184df82f0b2053206800284e90588fb0aa03e467044efaffd24aaa03e866044efaffc4206b002cb1ea03ec67044efaffba242b00380c820000000563044efaffaa2f082250226900284e91588f4a8066044efaff96c4fc1121d082b0aa03e866044efaff824efaff82"
    },
    {
     "off": 717874,
@@ -137046,7 +137070,7 @@ window.MC_TWEAKS = {
    {
     "off": 1540328,
     "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000",
-    "new": "401679d8000000000000000100000000401679e4000000010000007f401679e8401679e8000000010000007f401679e4401679dc000000000000000100000000401679ec000000000000007f401679f0401679f0000000000000007f401679ec401679e0000000000000000100000000401679f4000000000000007f401679f8401679f8000000000000007f401679f4401679fc00000000000000020000000040167a0000000000000000640000000040167a0400000000000000010000000040167a0800000000000000400000000040167a0c000000000000003f0000000040167a10000000000000006400000000"
+    "new": "401666900000000000000001000000004016669c000000010000007f401666a0401666a0000000010000007f4016669c40166694000000000000000100000000401666a4000000000000007f401666a8401666a8000000000000007f401666a440166698000000000000000100000000401666ac000000000000007f401666b0401666b0000000000000007f401666ac401666b4000000000000000200000000401666b8000000000000006400000000401666bc000000000000000100000000401666c0000000000000004000000000401666c4000000000000003f00000000401666c8000000000000006400000000"
    },
    {
     "off": 711388,
@@ -137096,7 +137120,7 @@ window.MC_TWEAKS = {
    {
     "off": 1513416,
     "old": "fffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffe",
-    "new": "103428000c0000ff66044efa00704fefffec48d70c8c2e3940184e2c4ab9401679d866044efa00244eb94014b5b441f9401679e44eb940159a042f002f022f0b4eb9400166c24fef000c4ab9401679dc66044efa000876124eba00244ab9401679e066044efa000876164eba001223c740184e2c4cd70c8c4fef00144e754eb94014b5b441f9401679ec0c8300000012670250884eb940159a04e1882f002f032f022f0b4eb94001646a4fef00104e75"
+    "new": "103428000c0000ff66044efa00704fefffec48d70c8c2e3940184e2c4ab94016669066044efa00244eb94014b05c41f94016669c4eb940152f882f002f022f0b4eb9400166c24fef000c4ab94016669466044efa000876124eba00244ab94016669866044efa000876164eba001223c740184e2c4cd70c8c4fef00144e754eb94014b05c41f9401666a40c8300000012670250884eb940152f88e1882f002f032f022f0b4eb94001646a4fef00104e75"
    },
    {
     "off": 721192,
@@ -137116,7 +137140,7 @@ window.MC_TWEAKS = {
    {
     "off": 1543488,
     "old": "fffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffeffff",
-    "new": "41f940184dfc42904fefffe848d71c1c700040c002800000070067064ef94017393841f940184df84a9067064ef9401739384ab940fe417866064ef94017393841f94011791843f940184e30702b22d853806b044efafff843f940184e30203c40179c9823400008203c40179cac2340000c203c4018d91823400010203c4016b9e823400018203c4016f8cc2340004c203c4016f8c823400060203c40152d382340009c4ef940173848"
+    "new": "41f940184dfc42904fefffe848d71c1c700040c002800000070067064ef94017393841f940184df84a9067064ef9401739384ab940fe417866064ef94017393841f94011791843f940184e30702b22d853806b044efafff843f940184e30203c40168fb423400008203c40168fc82340000c203c4018d91823400010203c4016b9e823400018203c4016f8cc2340004c203c4016f8c823400060203c40152d382340009c4ef940173848"
    },
    {
     "off": 710688,
@@ -137126,7 +137150,7 @@ window.MC_TWEAKS = {
    {
     "off": 1590664,
     "old": "fffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffeffff",
-    "new": "2c3940167a08bc846f022c04203940167a0c80c4484002800000ffff2202d2849280c2c682c4484102810000ffffb28664044efa0008263c000000ff2239401679fc0c810000000167044efa003a0805000066044efa00300c83000000ff66044efa0024760041ea0244163028004efa00160805000066044efa00064efa0008263c000000fe178328005282b4846c064ef9401573e223c740184e2c4cd71cfc4fef00244e75"
+    "new": "2c39401666c0bc846f022c042039401666c480c4484002800000ffff2202d2849280c2c682c4484102810000ffffb28664044efa0008263c000000ff2239401666b40c810000000167044efa003a0805000066044efa00300c83000000ff66044efa0024760041ea0244163028004efa00160805000066044efa00064efa0008263c000000fe178328005282b4846c064ef9401573e223c740184e2c4cd71cfc4fef00244e75"
    },
    {
     "off": 710232,
@@ -137136,7 +137160,7 @@ window.MC_TWEAKS = {
    {
     "off": 1593928,
     "old": "fffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffeffff",
-    "new": "121812c152820c82000002d26df27400103428000c0000fe66044efa006c2f0b2053206800284e90588f2040760016342800720032302a002039401679fc0c800000000266044efa00260c83000000ff670e02810000fffd008100000201600e02810000fffe43e802441631280031812a002f032f022f0b4eb9400166424fef000c4eb940171bc85282b4846c044efaff807001600270004cd71c3c4fef001c4e75"
+    "new": "121812c152820c82000002d26df27400103428000c0000fe66044efa006c2f0b2053206800284e90588f2040760016342800720032302a002039401666b40c800000000266044efa00260c83000000ff670e02810000fffd008100000201600e02810000fffe43e802441631280031812a002f032f022f0b4eb9400166424fef000c4eb940171bc85282b4846c044efaff807001600270004cd71c3c4fef001c4e75"
    },
    {
     "off": 710172,
@@ -137146,7 +137170,7 @@ window.MC_TWEAKS = {
    {
     "off": 1594360,
     "old": "fffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffeffff",
-    "new": "0c830000001567044efa002245f940162b034ab940184e0066064ef94016baba45f940162afd4ef94016baba20034eb940152f98260052834eb940152f88b6806f044efa0014200390850c80000000046c064ef94016b9fc4878ffff203940184e089085c0fc000f723e92802f014878007f04810000000d2f0170004ab940184e0c66044efa000470402f002f024eb940070dea4fef00184cd7043c4fef00144e75"
+    "new": "0c830000001567044efa002245f940160deb4ab940184e0066064ef94016baba45f940160de54ef94016baba20034eb94014e618260052834eb94014e608b6806f044efa0014200390850c80000000046c064ef94016b9fc4878ffff203940184e089085c0fc000f723e92802f014878007f04810000000d2f0170004ab940184e0c66044efa000470402f002f024eb940070dea4fef00184cd7043c4fef00144e75"
    },
    {
     "off": 758566,
@@ -137156,7 +137180,7 @@ window.MC_TWEAKS = {
    {
     "off": 1386808,
     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
-    "new": "4feffff448d70c04246f0014242a001453820c820000000563044efa007447f94014e60c22134aaa001066044efa0050202a00100c800000000167044efa004c050167044efa00444ab94014e60866044efa003e05c126814eb9400cf8662f004eb94000eb90588f487800012f022f004eb9400139044fef000c4efa000e050166044efa000c0581268170014efa000470004cd70c044fef000c4e75"
+    "new": "4feffff448d70c04246f0014242a001453820c820000000563044efa007447f94014b78822134aaa001066044efa0050202a00100c800000000167044efa004c050167044efa00444ab94014b78466044efa003e05c126814eb9400cf8662f004eb94000eb90588f487800012f022f004eb9400139044fef000c4efa000e050166044efa000c0581268170014efa000470004cd70c044fef000c4e75"
    },
    {
     "off": 749572,
@@ -137176,7 +137200,17 @@ window.MC_TWEAKS = {
    {
     "off": 1413180,
     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
-    "new": "4feffff448d7040c242f001442a74878003f4878007f42a742a72f024eb940070dea4fef001845f94015b82076254eba003845f94015b82576154eba002c4878ffff48780035487800624878000a4878001d2f024eb940070dea4fef00184cd7040c4fef000c4e752f0a48794015b82a487800122f0348780040487940ea14cc2f024eb940071a044fef001c4e75"
+    "new": "4feffff448d7040c242f001442a74878003f4878007f42a742a72f024eb940070dea4fef001845f940159adc76254eba003845f940159ae576154eba002c4878ffff48780035487800624878000a4878001d2f024eb940070dea4fef00184cd7040c4fef000c4e752f0a487940159aeb487800122f0348780040487940ea14cc2f024eb940071a044fef001c4e75"
+   },
+   {
+    "off": 740426,
+    "old": "4015f38c",
+    "new": "4014b364"
+   },
+   {
+    "off": 1437580,
+    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+    "new": "4fefffd848d73cfc242f003042a74878003f4878007f42a742a72f024eb940070dea4fef001845f94016f7d076044878ffff7000101a2f00101a2f00101a2f00101a2f002f024eb940070dea4fef001853836b044efaffd845f94016f7e447ea0038287c000000117e314eb9401638c047ea0023287c000000237e1b4eb9401638c04cd73cfc4fef00284e75"
    },
    {
     "off": 722780,
@@ -137185,8 +137219,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1504208,
-    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
-    "new": "4fefffd848d73cfc242f003042a74878003f4878007f42a742a72f024eb940070dea4fef001845f94016669076044878ffff7000101a2f00101a2f00101a2f00101a2f002f024eb940070dea4fef001853836b044efaffd845f9401666a47e367c014eb940160d9c7e1a4eb940160d9c4cd73cfc4fef00284e75"
+    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc",
+    "new": "0577040807790606377b0804397938063b773a080f10100e01011e1f10101e10101f0e11111115120d1111111111110e1f10101e10101f111919151313110e11101010110e1f10101e10101f0e11101711110e1f10101e10101f111919151313111f04040404041f1f10101e10101f"
    },
    {
     "off": 765436,
@@ -137196,7 +137230,7 @@ window.MC_TWEAKS = {
    {
     "off": 1352848,
     "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "40162ac240162ac840162acc40162ad040162ad440162ada40162adc40162adf40162ae140162ae440162ae640162ae840162aeb40162aed40162af040162af240162af55363616c6500526f6f74004c6f77206e6f74650048696768206e6f74650044656e73697479202500"
+    "new": "40160daa40160db040160db440160db840160dbc40160dc240160dc440160dc740160dc940160dcc40160dce40160dd040160dd340160dd540160dd840160dda40160ddd5363616c6500526f6f74004c6f77206e6f74650048696768206e6f74650044656e73697479202500"
    },
    {
     "off": 765304,
@@ -137216,7 +137250,7 @@ window.MC_TWEAKS = {
    {
     "off": 1354628,
     "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
-    "new": "4fefffec48d70307700040c002800000070067044efa00464ab940184df866044efa003a4ab94014e61066044efa002e2039401b105490b94014e6140c80000005dc64044efa001642b94014e6102f3940184df84eb940076082588f4cd703074fef00144ef9401bb076"
+    "new": "4fefffec48d70307700040c002800000070067044efa00464ab940184df866044efa003a4ab94014b78c66044efa002e2039401b105490b94014b7900c80000005dc64044efa001642b94014b78c2f3940184df84eb940076082588f4cd703074fef00144ef9401bb076"
    },
    {
     "off": 753626,
@@ -137226,7 +137260,7 @@ window.MC_TWEAKS = {
    {
     "off": 1404876,
     "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "4fefffdc48d71cfc24482649280074002e3940184e2c4eb94014b5b480fc0064484002800000ffffb0b940167a0065064ef940184a087600163328003a322a002239401679fc0c810000000266064ef9401849fa4ab940167a0466064ef9401849c44ef940184988"
+    "new": "4fefffdc48d71cfc24482649280074002e3940184e2c4eb94014b05c80fc0064484002800000ffffb0b9401666b865064ef940184a087600163328003a322a002239401666b40c810000000266064ef9401849fa4ab9401666bc66064ef9401849c44ef940184988"
    },
    {
     "off": 738384,
@@ -137235,8 +137269,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1444252,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffff",
-    "new": "760078007a007c001c1a70069085010666044efa00262003c0fc00180680000000112205c2fc0003d0812204c2fc00034481d2874eb94014b78452850c85000000076c044efaffc452840c84000000076c044efaffb052830c83000000046c044efaffa04e75"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffff",
+    "new": "47656e657261746500556e646f004348524f4d004d414a004d494e00444f520050454e54410043004323004400442300450046004623004700472300410041230042002573002564005265616479002d2d00436865636b2072616e67652f73746f7000"
    },
    {
     "off": 735606,
@@ -137245,8 +137279,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1451700,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffff",
-    "new": "47656e657261746500556e646f004348524f4d004d414a004d494e00444f520050454e54410043004323004400442300450046004623004700472300410041230042002573002564005265616479002d2d00436865636b2072616e67652f73746f7000"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
+    "new": "4014a8d44014a8da4014a8df4014a8e84014a8f240186168401592bc401592c440186176401592cc401592d640186181401592e0401592e8401592f0401592fb401593064015930d401593194015932240160d9c40160da5401593314015933e"
    },
    {
     "off": 735022,
@@ -137256,7 +137290,7 @@ window.MC_TWEAKS = {
    {
     "off": 1453284,
     "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "4014a8d44014a8da4014a8df4014a8e84014a8f24014b05c401592bc401592c44014b06a401592cc401592d64014b075401592e0401592e8401592f0401592fb401593064015930d401593194015932240162ab440162abd401593314015933e"
+    "new": "20035b80e98841f9401784e82070080020100c830000000567260c8300000008671e0c830000000b67160c830000000e67160c830000001067164ef94016bae041f9401679d8600e41f9401679e0600641f9401679ec24700c004ef94016baba"
    },
    {
     "off": 733802,
@@ -137265,8 +137299,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1455296,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "20035b80e98841f9401784e82070080020100c830000000567260c8300000008671e0c830000000b67160c830000000e67160c830000001067164ef94016bae041f940167b80600e41f940167b88600641f940167b9424700c004ef94016baba"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffff",
+    "new": "760078007a007c001c1a70049085010666044efa00222003c0fc000cd08c2205c2fc0002d0812204c2fc00024481d2874eb94014b5b452850c85000000056c044efaffc852840c84000000076c044efaffb45283b5cb64044efaffa84e75"
    },
    {
     "off": 733770,
@@ -137295,8 +137329,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1467024,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "0577040807790606377b0804397938063b773a083e41403e01413e7f40407c40407f3e41414145423d00000000000c0c3e41404f41413e7f40407c40407f4161514945434100000000000c0c"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
+    "new": "000000000000000000000000000000010000007f000000000000007f000000000000007f000000000000006400000000000000040000000000000019"
    },
    {
     "off": 728458,
@@ -137306,7 +137340,7 @@ window.MC_TWEAKS = {
    {
     "off": 1471960,
     "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "000000000000000000000000000000010000007f000000000000007f000000000000007f000000000000006400000000000000040000000000000019"
+    "new": "4015934c40159349401679f4401679f940167a0040167a0640167a0d426f74680052687974686d004e6f7465730052616e646f6d004575636c696400"
    },
    {
     "off": 728388,
@@ -137315,8 +137349,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1472384,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "4015934c4015934940167b9c40167ba140167ba840167bae40167bb5426f74680052687974686d004e6f7465730052616e646f6d004575636c696400"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffff",
+    "new": "2a3940184e0855856b044efa00047a004eb94014e60857806a027000ba806e044efa00042a0026054ef94016b9fc"
    },
    {
     "off": 726912,
@@ -137325,8 +137359,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1476684,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffff",
-    "new": "2a3940184e0855856b044efa00047a004eb940152f8857806a027000ba806e044efa00042a0026054ef94016b9fc"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
+    "new": "4fefffec48d7043c242f001c42a74878003f4878007f42a742a72f024eb940070dea4fef00184ef940167b80"
    },
    {
     "off": 726642,
@@ -137335,8 +137369,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1477556,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "4fefffec48d7043c242f001c42a74878003f4878007f42a742a72f024eb940070dea4fef00184ef940168c4c"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
+    "new": "41f940184df8429042b940184e004ef9400f43ca41f940184df8429042b940184e004ef9400f4486"
    },
    {
     "off": 717298,
@@ -137346,7 +137380,7 @@ window.MC_TWEAKS = {
    {
     "off": 1546392,
     "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "41f940184df8429042b940184e004ef9400f43ca41f940184df8429042b940184e004ef9400f4486"
+    "new": "20035b8041f9401666904ab00c0045f94015934c66064ef94016baba45f9401593494ef94016baba"
    },
    {
     "off": 710052,
@@ -137355,8 +137389,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1596776,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "20035b8041f9401679d84ab00c0045f94015934c66064ef94016baba45f9401593494ef94016baba"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffff",
+    "new": "52616e642076656c6f636974790052616e642064656361790052616e642070616e00"
    },
    {
     "off": 764968,
@@ -137365,8 +137399,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1354844,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
-    "new": "52616e642076656c6f636974790052616e642064656361790052616e642070616e00"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+    "new": "2007720de3a8b18720077211e2a8b1872007eb88b1872007028000007fff4e75"
    },
    {
     "off": 764718,
@@ -137376,7 +137410,7 @@ window.MC_TWEAKS = {
    {
     "off": 1356212,
     "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "2007720de3a8b18720077211e2a8b1872007eb88b1872007028000007fff4e75"
+    "new": "42a752812f0152802f0053812f0153802f002f024eb940070dea4fef00184e75"
    },
    {
     "off": 764526,
@@ -137385,8 +137419,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1356676,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "42a754812f0154802f0055812f0155802f002f024eb940070dea4fef00184e75"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+    "new": "00000000000000000000000000000000000000000000000000000000"
    },
    {
     "off": 763122,
@@ -137396,7 +137430,7 @@ window.MC_TWEAKS = {
    {
     "off": 1368584,
     "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "00000000000000000000000000000000000000000000000000000000"
+    "new": "70144e750c80000000136d0252804e750c80000000146d0253804e75"
    },
    {
     "off": 758478,
@@ -137405,8 +137439,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1387400,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "70144e750c80000000136d0252804e750c80000000146d0253804e75"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+    "new": "222800049290528180c1484002800000ffffd0904e75"
    },
    {
     "off": 749034,
@@ -137415,8 +137449,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1414660,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
-    "new": "222800049290528180c1484002800000ffffd0904e75"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+    "new": "00000fff00000ab5000005ad000006ad00000295"
    },
    {
     "off": 749006,
@@ -137425,8 +137459,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1414876,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "00000fff00000ab5000005ad000006ad00000295"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+    "new": "53455155454e43450047454e494500257300"
    },
    {
     "off": 746152,
@@ -137435,16 +137469,6 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1422368,
-    "old": "ffffffe0ffffffe0ffffffe0ff",
-    "new": "5345512e0047454e2e00257300"
-   },
-   {
-    "off": 745590,
-    "old": "4015bf24",
-    "new": "4014a550"
-   },
-   {
-    "off": 1424164,
     "old": "ffffffe0ffffffe0ffffffe0",
     "new": "000000000000000000000000"
    },
@@ -137488,7 +137512,7 @@ window.MC_TWEAKS = {
    {
     "off": 1627416,
     "old": "ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff800000ffffffffff80",
-    "new": "4feffff848d70404246f000c242f00102f024eb94007240c588f0c800000000a66044efa00660c800000000b66044efa005a0c800000000166044efa00620c800000002066044efa006c0c800000000c66044efa00c00c800000000d66044efa00b40c800000000f66044efa00a80c800000000266044efa009c0c800000000366044efa00904efa00b2204208280001001367044efa00a470004efa00a020422028001002800000000123c040159adc4efa00882f024eb940072434588f4a0066044efa00762039401853184eb94015b8240c800000001466044efa001a0c800000001566044efa00187001b1b94018531c4efa00124eb94014ab5c4efa00084eb94016f7d02f0a4eb940076082588f4efa00282f024eb9400724a0588f4a0066044efa0016700123c0401b236020522f0a206800284e90588f70014cd704044fef00084e75"
+    "new": "4feffff848d70404246f000c242f00102f024eb94007240c588f0c800000000a66044efa00660c800000000b66044efa005a0c800000000166044efa00620c800000002066044efa006c0c800000000c66044efa00c00c800000000d66044efa00b40c800000000f66044efa00a80c800000000266044efa009c0c800000000366044efa00904efa00b2204208280001001367044efa00a470004efa00a020422028001002800000000123c040159a044efa00882f024eb940072434588f4a0066044efa0076203940184e084eb940159ae00c800000001466044efa001a0c800000001566044efa00187001b1b940184e0c4efa00124eb94014ab5c4efa00084eb94016f7d02f0a4eb940076082588f4efa00282f024eb9400724a0588f4a0066044efa0016700123c0401b236020522f0a206800284e90588f70014cd704044fef00084e75"
    },
    {
     "off": 724798,
@@ -137498,7 +137522,7 @@ window.MC_TWEAKS = {
    {
     "off": 1487608,
     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe",
-    "new": "4fefff5848d73cfc2448264970ff24120c82000000016c044efa011a0c82000000406f044efa010e222a00040c810000006463044efa00fe262a00080c830000007f63044efa00ee282a000c0c840000007f63044efa00deb8836c044efa00d6222a00100c810000000463044efa00c6222a00140c810000000b63044efa00b649ef00287a0041f94015c9a4222a00102c301c00200306800000000c90aa001480fc000c484002800000ffff010667061983580052855283b6846fd870ff4a8567722e2a001866062e3c6d2b79f5760078004eb940152f8880fc0064484002800000ffff72ff4ab940179cc467044efa001c223940179cbc0c810000000266044efa000a72ffb0aa000464184eb940152f8880c5484002800000ffff7200123408005284178138005283b6826da42547001820044cd73cfc4fef00a84e75"
+    "new": "4fefff5848d73cfc2448264970ff24120c82000000016c044efa011a0c82000000406f044efa010e222a00040c810000006463044efa00fe262a00080c830000007f63044efa00ee282a000c0c840000007f63044efa00deb8836c044efa00d6222a00100c810000000463044efa00c6222a00140c810000000b63044efa00b649ef00287a0041f94015bf24222a00102c301c00200306800000000c90aa001480fc000c484002800000ffff010667061983580052855283b6846fd870ff4a8567722e2a001866062e3c6d2b79f5760078004eb94014e60880fc0064484002800000ffff72ff4ab940168fe067044efa001c223940168fd80c810000000266044efa000a72ffb0aa000464184eb94014e60880c5484002800000ffff7200123408005284178138005283b6826da42547001820044cd73cfc4fef00a84e75"
    },
    {
     "off": 724764,
@@ -137508,7 +137532,7 @@ window.MC_TWEAKS = {
    {
     "off": 1488360,
     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffff",
-    "new": "4ab940159ae467064ef94016fd604ef94014b05c20034eb94015b824260041f9401638c024703c000c830000001467044efa00144ab94018532066044efa000845f9401631364eb94016eade20034eb94015b83028009885c8fc000f703190842f0a487940163127487800102f0048780002487940ea14cc2f024eb940071a044fef001c0c83000000146d044efa009e0c83000000056d064ef94016399070004a8367044efa00161039401bbd7841f94014a89024700c004efa001e0c830000000167044efa001e1039401bbd7941f94014a8a424700c002f0a4879401631274efa002441f940185324202800040c830000000466044efa000620303c002f0048794016312a48780014703190842f004878007d487940ea14cc2f024eb940071a044fef001c4ef940152d644ef940152d38"
+    "new": "4ab940159a0c67064ef940168a844ef94014af8420034eb940159ae0260041f940162ab424703c000c830000001467044efa00144ab940184e1066044efa000845f940160dee4eb94016eade20034eb940159aec28009885c8fc000f703190842f0a487940160ddf487800102f0048780002487940ea14cc2f024eb940071a044fef001c0c83000000146d044efa009e0c83000000056d064ef9401630e470004a8367044efa00161039401bbd7841f94014a89024700c004efa001e0c830000000167044efa001e1039401bbd7941f94014a8a424700c002f0a487940160ddf4efa002441f940184e14202800040c830000000466044efa000620303c002f00487940160de248780014703190842f004878007d487940ea14cc2f024eb940071a044fef001c4ef9401858244ef9401857f8"
    },
    {
     "off": 721312,
@@ -137518,7 +137542,7 @@ window.MC_TWEAKS = {
    {
     "off": 1514288,
     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe",
-    "new": "207940160db420280010b0b940160db867064ef94016605820280020b0b940160dc467064ef9401660582028002cb0b940160dc067064ef94016605820280038b0b940160dcc67064ef940166058227940160dc0203940160dccc0fc1121d0a90010b0b940160dbc67064ef9401660587000302c77c6b0b940160dd067064ef940166058102c77cc0280000000ffb0b940160dd467064ef94016605841ea00d0227940160db8203c000002d24eb94016eaae4a8067064ef94016605841ea03f0227940160dbc203c000011214eb94016eaae4a8067064ef94016605841ea2d24227940160dc4203c000002d24eb94016eaae4a8067064ef940166058243940160dccc4fc112147ec10ecd7c241ea03f0224b203c000011214eb94016eaae4a8067064ef9401660584ef940165fec"
+    "new": "20794017252820280010b0b94017252c67064ef94016605820280020b0b94017255067064ef9401660582028002cb0b94017253467064ef94016605820280038b0b94017254067064ef940166058227940172534203940172540c0fc1121d0a90010b0b94017253067064ef9401660584eb9401639904a8066064ef940166058b2b94017254467064ef940166058b4b94017254867064ef94016605841ea00d022794017252c203c000002d24eb94016eaae4a8067064ef94016605841ea03f0227940172530203c000011214eb94016eaae4a8067064ef94016605841ea2d24227940172538203c000002d24eb94016eaae4a8067064ef940166058243940172540c4fc112147ec10ecd7c241ea03f0224b203c000011214eb94016eaae4a8067064ef9401660584ef940165fec"
    },
    {
     "off": 721220,
@@ -137527,8 +137551,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1516040,
-    "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000",
-    "new": "4fefffe048d73c3c41f940168a8423c840160da84ab940160dac67064ef940163b7c42b9401853102479401853084a8a66064ef940163b7c41f940168a9223c840160da8203940a7883c0c800000000167064ef940163b7c287940a7887c4a8c66064ef940163b7c7000102c77cb223c6d6f64204eb940167b804a8067064ef940163b7c7400342c77c62002223c6c656e204eb940167b800c82000000016c064ef940163b7c0c82000000406f064ef940163b7c23c240160dd07000102c77cc223c737064204eb940167b800c800000000663064ef940163b7c23c040160dd4203940a78848223c72756e204eb940167b800c800000000167064ef940163b7c41f940168aaf23c840160da84eb940168c4c4a8066064ef940163b7c23cc40160dc84ef9401835b8"
+    "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffffffff",
+    "new": "41f94016bd1023c84017251c4eb9400cf8662f004eb94000f23e588f4a8066064ef940163b7c264023cb40172528262b00380c830000000563064ef940163b7c23c34017254041f94016bd1d23c84017251c2003c0fc02d2d08c23c040172538202b002023c04017255041f94016bd2a23c84017251c2f0b2053206800284e90588f4a8066064ef940163b7cb0ab001067064ef940163b7c23c04017252c4eb9401639904a8066064ef940163b7c23c14017254423c24017254841f940a7884820394017254020300c000c800000000167064ef940163b7c41f94016bd3623c84017251c2a6b002c4a8d66064ef940163b7c23cd401725342f0d2055206800284e90588f4a8066064ef940163b7cb0ad001067064ef940163b7cc6fc1121d08323c0401725304ef940185f48"
    },
    {
     "off": 717386,
@@ -137538,7 +137562,7 @@ window.MC_TWEAKS = {
    {
     "off": 1545008,
     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000",
-    "new": "206f00042028000c720fb08167044efa00ce222800100801000066044efa00a04ab940160a946718b1f940160a98661020280008b0b940160a9c66044efa00d04ab9401b235c66044efa00940801000367044efa008a4ab9401b208867044efa007e4ab9401b6d8c67044efa00724ab9401bcaec67044efa00660801000167044efa005c23c840160a982228000823c140160a9c720123c140160a9423c1401b23602f0822280010008100000008214100104eb940179140205f4efa00524ab940160a94671842b940160a9423c840160a982228000823c140160a9c6030206f00042028000c720fb081661cb1f940160a98661420280008b0b940160a9c660808280000001367064ef9401ae968222800100081000000082141001070004e75"
+    "new": "206f00042028000c720fb08167044efa00ce222800100801000066044efa00a04ab94015fb6c6718b1f94015fb70661020280008b0b94015fb7466044efa00d04ab9401b235c66044efa00940801000367044efa008a4ab9401b208867044efa007e4ab9401b6d8c67044efa00724ab9401bcaec67044efa00660801000167044efa005c23c84015fb702228000823c14015fb74720123c14015fb6c23c1401b23602f0822280010008100000008214100104eb940179140205f4efa00524ab94015fb6c671842b94015fb6c23c84015fb702228000823c14015fb746030206f00042028000c720fb081661cb1f94015fb70661420280008b0b94015fb74660808280000001367064ef9401ae968222800100081000000082141001070004e75"
    },
    {
     "off": 765216,
@@ -137548,7 +137572,7 @@ window.MC_TWEAKS = {
    {
     "off": 1353564,
     "old": "ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000",
-    "new": "4ab940160db067044efa001c4eb9401780a84ab940a7883c67064ef9401726084eb94016ea844feffff448d70c0442b9401853204ab940160db067044efa001a4ab940a7887467044efa00bc4ab940a7883c67044efa00b04eb9400cf8662f004eb94000f23e588f4ab940160db066044efa000e2039401853080680000016004a8066044efa008026402f0b4eb940016402588f41f940185324208070001039401bbd78214000101039401bbd790280000000ff2140001424794018530843ea03a24eb94016b6f84a806a044efa003824794018530843ea03a245ea00d0204b2039401853244eb94014b85c4a8066044efa0014700123c04018531023cb401853144efa000a700123c0401853204cd70c044fef000c4e75"
+    "new": "4ab94017252467044efa001c4eb9401780a84ab940a7883c67064ef9401853084eb94016ea844feffff448d70c0442b940184e104ab94017252467044efa001a4ab940a7887467044efa00bc4ab940a7883c67044efa00b04eb9400cf8662f004eb94000f23e588f4ab94017252466044efa000e203940184df80680000016004a8066044efa008026402f0b4eb940016402588f41f940184e14208070001039401bbd78214000101039401bbd790280000000ff21400014247940184df843ea03a24eb94016b6f84a806a044efa0038247940184df843ea03a245ea00d0204b203940184e144eb94014b85c4a8066044efa0014700123c040184e0023cb40184e044efa000a700123c040184e104cd70c044fef000c4e75"
    },
    {
     "off": 764494,
@@ -137558,7 +137582,7 @@ window.MC_TWEAKS = {
    {
     "off": 1356892,
     "old": "ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffff",
-    "new": "4fefffe448d71c3c26482849280070004ab940160db066044efa001c203940185308068000001600b08b67064ef94018588e4efa001e4ab940a7887467064ef9401858904ab940a7883c67064ef9401858900c84000000016c064ef9401858900c84000000406f064ef9401858902f0b2053206800284e90588f4a8066064ef94018588e2040224c20044eb9401573cc74007200123428000c81000000fe67160c81000000ff670e0c810000007f63064ef9401858905282b4846dd62f0b4eb940016402588fb08467064ef94018588e2f0b2053206800284e90588f4a8066064ef94018588e2040224a4feffff848d703004eb9401784e84cd70300508f4a8066064ef94018588e2348031474004ef9401857f8"
+    "new": "4fefffe448d71c3c26482849280070004ab94017252466044efa001c203940184df8068000001600b08b67064ef9401856de4efa001e4ab940a7887467064ef9401856e04ab940a7883c67064ef9401856e00c84000000016c064ef9401856e00c84000000406f064ef9401856e02f0b2053206800284e90588f4a8066064ef9401856de2040224c20044eb9401573cc74007200123428000c81000000fe67160c81000000ff670e0c810000007f63064ef9401856e05282b4846dd62f0b4eb940016402588fb08467064ef9401856de2f0b2053206800284e90588f4a8066064ef9401856de2040224a4feffff848d703004eb9401784e84cd70300508f4a8066064ef9401856de2348031474004ef940185648"
    },
    {
     "off": 722748,
@@ -137568,7 +137592,7 @@ window.MC_TWEAKS = {
    {
     "off": 1504456,
     "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffff",
-    "new": "59af00044feffff448d7040c246f0010206f00142028000c0c800000000167064ef94017299848780001487800012f084eb94006f73a4fef000c4a8066064ef94017299876014a806b044efa000476ff2439401853184ab94018531c67044efa0028d4836a064ef9401729984eb94015b820b4806f064ef94017299823c2401853184ef94017298e20024eb94015b82424004a8267044efa002e70001039401bbd78d0836a064ef9401729980c80000000046f064ef94017299813c0401bbd784ef94017298e0c820000000167044efa002e70001039401bbd79d0836a064ef9401729980c800000000b6f064ef94017299813c0401bbd794ef94017298e4ef9401728f8"
+    "new": "59af00044feffff448d7040c246f0010206f00142028000c0c800000000167064ef94017299848780001487800012f084eb94006f73a4fef000c4a8066064ef94017299876014a806b044efa000476ff243940184e084ab940184e0c67044efa0028d4836a064ef9401729984eb940159adcb4806f064ef94017299823c240184e084ef94017298e20024eb940159ae024004a8267044efa002e70001039401bbd78d0836a064ef9401729980c80000000046f064ef94017299813c0401bbd784ef94017298e0c820000000167044efa002e70001039401bbd79d0836a064ef9401729980c800000000b6f064ef94017299813c0401bbd794ef94017298e4ef9401728f8"
    },
    {
     "off": 720720,
@@ -137578,7 +137602,7 @@ window.MC_TWEAKS = {
    {
     "off": 1520712,
     "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffff",
-    "new": "47f9400802e0487830004e93588f4a8066044efa00dc28402f0c4eb9400a22b0588f43f94018534041e90008288841e900582948000441e9009429480010487800104e93588f4a8067044efa00102f0c4eb9400f4486588f4efa0096204023cc4018530842b94018531842b94018531c42b94018531042b94018532042b940159adc42b940159ae02039401b105423c040159ae8700123c040159ae47201203c401000c420802141000421410008214c000c2f082f0c4eb9400d09742f004eb9400060d8588f204f42a72f082f004eb94007700e4fef000c486f00044eb9400cf23c4fef000c41f94018530c700120804cd71c1c4fef00184e75"
+    "new": "47f9400802e0487830004e93588f4a8066044efa00dc28402f0c4eb9400a22b0588f43f940184e3041e90008288841e900582948000441e9009429480010487800104e93588f4a8067044efa00102f0c4eb9400f4486588f4efa0096204023cc40184df842b940184e0842b940184e0c42b940184e0042b940184e1042b940159a0442b940159a082039401b105423c040159a10700123c040159a0c7201203c401000c420802141000421410008214c000c2f082f0c4eb9400d09742f004eb9400060d8588f204f42a72f082f004eb94007700e4fef000c486f00044eb9400cf23c4fef000c41f940184dfc700120804cd71c1c4fef00184e75"
    },
    {
     "off": 718150,
@@ -137588,7 +137612,7 @@ window.MC_TWEAKS = {
    {
     "off": 1539240,
     "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000",
-    "new": "203940160dac0c800000000266044efa0026203940160dac0c800000000367044efa00ca42b940160dac700123c0401853204efa00a242b940160dac4eb9400cf8662f004eb94000f23e588fb0b940160db467044efa0098204020280010b0b940160db867044efa0086203940a7887cb0b940160dc867044efa00744feffff448d70c04267940160db4247940160db87400700041ea0244103028002f002f022f0b4eb9400166424fef000c5282b4b9401853246c044efaffda207940160dc042a72f082250226900104e91508f4cd70c044fef000c20394018530866044efa000c2f004eb940076082588f4e7542b9401853104efaffe0"
+    "new": "2039401725200c800000000266044efa00262039401725200c800000000367044efa00ca42b940172520700123c040184e104efa00a242b9401725204eb9400cf8662f004eb94000f23e588fb0b94017252867044efa0098204020280010b0b94017252c67044efa0086203940a7887cb0b94017253c67044efa00744feffff448d70c0426794017252824794017252c7400700041ea0244103028002f002f022f0b4eb9400166424fef000c5282b4b940184e146c044efaffda20794017253442a72f082250226900104e91508f4cd70c044fef000c203940184df866044efa000c2f004eb940076082588f4e7542b940184e004efaffe0"
    },
    {
     "off": 717874,
@@ -137598,7 +137622,7 @@ window.MC_TWEAKS = {
    {
     "off": 1540328,
     "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc000",
-    "new": "4feffff448d70c04247940185308203940179c9c80b940179ca066044efa0050206b002c4a8866044efa004c242b00380c820000000563044efa003c2f082250226900284e91588f4a8066044efa0028c4fc11212040d1c2254803e8256b002c03ec43ea03f04eb9401666cc600442aa03e87001600270004cd70c044fef000c4e754feffff448d70c042479401853082f0b2053206800284e90588fb0aa03e467044efaffd24aaa03e866044efaffc4206b002cb1ea03ec67044efaffba242b00380c820000000563044efaffaa2f082250226900284e91588f4a8066044efaff96c4fc1121d082b0aa03e866044efaff824efaff82"
+    "new": "4feffff448d70c04247940184df8203940168fb880b940168fbc66044efa0050206b002c4a8866044efa004c242b00380c820000000563044efa003c2f082250226900284e91588f4a8066044efa0028c4fc11212040d1c2254803e8256b002c03ec43ea03f04eb9401666cc600442aa03e87001600270004cd70c044fef000c4e754feffff448d70c04247940184df82f0b2053206800284e90588fb0aa03e467044efaffd24aaa03e866044efaffc4206b002cb1ea03ec67044efaffba242b00380c820000000563044efaffaa2f082250226900284e91588f4a8066044efaff96c4fc1121d082b0aa03e866044efaff824efaff82"
    },
    {
     "off": 711388,
@@ -137607,8 +137631,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1585592,
-    "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffff",
-    "new": "41f940168abc23c840160da84eb9400cf8662f004eb94000f23e588f4a8066064ef940163b7c264023cb40160db4262b00380c830000000563064ef940163b7c23c340160dcc41f940168ac923c840160da82003c0fc02d2d08cb0ab002067064ef940163b7c23c040160dc441f940168ad623c840160da82f0b2053206800284e90588f4a8066064ef940163b7cb0ab001067064ef940163b7c23c040160db841f940168ae223c840160da82a6b002c4a8d66064ef940163b7c23cd40160dc02f0d2055206800284e90588f4a8066064ef940163b7cb0ad001067064ef940163b7cc6fc1121d08323c040160dbc4ef940185f48"
+    "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000",
+    "new": "40168fb400000000000000010000000040168fc0000000010000007f40168fc440168fc4000000010000007f40168fc040168fb800000000000000010000000040168fc8000000000000007f40168fcc40168fcc000000000000007f40168fc840168fbc00000000000000010000000040168fd0000000000000007f40168fd440168fd4000000000000007f40168fd040168fd800000000000000020000000040168fdc00000000000000640000000040168fe000000000000000010000000040168fe400000000000000400000000040168fe8000000000000003f0000000040168fec000000000000006400000000"
    },
    {
     "off": 710600,
@@ -137617,8 +137641,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1591800,
-    "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000",
-    "new": "40179c9800000000000000010000000040179ca4000000010000007f40179ca840179ca8000000010000007f40179ca440179c9c00000000000000010000000040179cac000000000000007f40179cb040179cb0000000000000007f40179cac40179ca000000000000000010000000040179cb4000000000000007f40179cb840179cb8000000000000007f40179cb440179cbc00000000000000020000000040179cc000000000000000640000000040179cc400000000000000010000000040179cc800000000000000400000000040179ccc000000000000003f0000000040179cd0000000000000006400000000"
+    "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000",
+    "new": "000000000000000000000000000000000000000000000000000000000000001000000032000000300000004800000000000000006d2b79f50000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
    },
    {
     "off": 710540,
@@ -137628,7 +137652,7 @@ window.MC_TWEAKS = {
    {
     "off": 1593096,
     "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000",
-    "new": "000000000000000000000000000000000000000000000000000000000000001000000032000000300000004800000000000000006d2b79f50000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    "new": "4fefffe048d73c3c41f94016bcd823c84017251c4ab94017252067064ef940163b7c42b940184e00247940184df84a8a66064ef940163b7c41f94016bce623c84017251c203940a7883c0c800000000167064ef940163b7c287940a7887c4a8c66064ef940163b7c7000102c77cb223c6d6f64204eb9401679d80c800000000263064ef940163b7c23c04017254c41f94016bd0323c84017251c4eb940167b804a8066064ef940163b7c4eb9400cfd0e2f004eb94006a96c588f0c800000005f63064ef940163b7cc0fc77f60680406fa040b08c67064ef940163b7c23cc4017253c4ef940172608"
    },
    {
     "off": 710084,
@@ -137638,7 +137662,7 @@ window.MC_TWEAKS = {
    {
     "off": 1596232,
     "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffff",
-    "new": "204b43ea160070404eb94016ea8c41ea160020bc40160dd843ea16582149001042a8002042a8003843ea16402149002c22bc40160dd841ea192c23480010207940160db843ea1658203c000002d24eb94016ea8c207940160dbc43ea192c203c000011214eb94016ea8c207940160dbc43ea03f0203c000011214eb94016ea8c700123c040160db041f940168aef23c840160da84eb94014ab5c42b940160db042b9401853104ab94018532067064ef940163b7c203940160db423c040185314203940160db8254003e4203940160dbc254003e8203940160dc0254003ec4ef940163b38"
+    "new": "204b43ea160070404eb94016ea8c41ea160020bc4017255443ea16582149001042a8002042a8003843ea16402149002c22bc4017255441ea192c2348001020794017252c43ea1658203c000002d24eb94016ea8c20794017253043ea192c203c000011214eb94016ea8c20794017253043ea03f0203c000011214eb94016ea8c700123c04017252441f94016bd4323c84017251c4eb94014ab5c42b94017252442b940184e004ab940184e1067064ef940163b7c20394017252823c040184e0420394017252c254003e4203940172530254003e8203940172534254003ec4ef940163b38"
    },
    {
     "off": 723280,
@@ -137648,7 +137672,17 @@ window.MC_TWEAKS = {
    {
     "off": 1500792,
     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
-    "new": "206f0004202800104e754e7542b940160dac4e752f00e4886708221822c1538066f8201f0280000000036708121812c1538066f84e752f00e488670a2218b299661e538066f62017028000000003670a1218b219660a538066f6588f70004e75588f70014e750c830000001467044efa001e4ab94018532066044efa0012203940160da866044efa000624404e75203940160dac0c800000000167044efa00280c830000001467044efa000a45f940168afc4e750c830000001567044efa000845f940168b034e75"
+    "new": "206f0004202800104e754e7542b9401725204e752f00e4886708221822c1538066f8201f0280000000036708121812c1538066f84e752f00e488670a2218b299661e538066f62017028000000003670a1218b219660a538066f6588f70004e75588f70014e750c830000001467044efa001e4ab940184e1066044efa001220394017251c66044efa000624404e752039401725200c800000000167044efa00280c830000001467044efa000a45f94016bd504e750c830000001567044efa000845f94016bd574e75"
+   },
+   {
+    "off": 758566,
+    "old": "40152d38",
+    "new": "4014b364"
+   },
+   {
+    "off": 1386808,
+    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+    "new": "4fefffdc48d71f0740c02f4000202039401725200c800000000167064ef940166060203940a7883c0c800000000167064ef940166058247940184df84a8a66064ef940166058287940a7887cb9f94017253c67064ef9401660584eb940167b804a8066064ef9401660584ab940a7863067064ef94016606020394017254041f940a788604a30080067064ef94016606041f940a788664a30080067064ef9401660607000102c77cbb0b94017254c67064ef9401660584ef940171f30"
    },
    {
     "off": 722166,
@@ -137668,7 +137702,7 @@ window.MC_TWEAKS = {
    {
     "off": 1513416,
     "old": "fffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffe",
-    "new": "103428000c0000ff66044efa00704fefffec48d70c8c2e394018533c4ab940179c9866044efa00244eb940152f8841f940179ca44eb94015bf242f002f022f0b4eb9400166c24fef000c4ab940179c9c66044efa000876124eba00244ab940179ca066044efa000876164eba001223c74018533c4cd70c8c4fef00144e754eb940152f8841f940179cac0c8300000012670250884eb94015bf24e1882f002f032f022f0b4eb94001646a4fef00104e75"
+    "new": "103428000c0000ff66044efa00704fefffec48d70c8c2e3940184e2c4ab940168fb466044efa00244eb94014e60841f940168fc04eb94015b8202f002f022f0b4eb9400166c24fef000c4ab940168fb866044efa000876124eba00244ab940168fbc66044efa000876164eba001223c740184e2c4cd70c8c4fef00144e754eb94014e60841f940168fc80c8300000012670250884eb94015b820e1882f002f032f022f0b4eb94001646a4fef00104e75"
    },
    {
     "off": 721192,
@@ -137678,7 +137712,7 @@ window.MC_TWEAKS = {
    {
     "off": 1516792,
     "old": "fffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffe",
-    "new": "0c82000000056d064ef94014aa3441f9401853240c820000000267044efa002020280008d0836a044efa0076b0a8000c6f044efa006c214000084efa005a0c820000000367044efa00262028000cd0830c800000007f6f044efa0046b0a800086c044efa003c2140000c4efa002a0c820000000467044efa002820280004d0836a044efa001c0c80000000646f044efa0010214000042f0a4eb940076082588f70014cd7040c4fef000c4e75"
+    "new": "0c82000000056d064ef94014aa3441f940184e140c820000000267044efa002020280008d0836a044efa0076b0a8000c6f044efa006c214000084efa005a0c820000000367044efa00262028000cd0830c800000007f6f044efa0046b0a800086c044efa003c2140000c4efa002a0c820000000467044efa002820280004d0836a044efa001c0c80000000646f044efa0010214000042f0a4eb940076082588f70014cd7040c4fef000c4e75"
    },
    {
     "off": 717506,
@@ -137688,7 +137722,7 @@ window.MC_TWEAKS = {
    {
     "off": 1543488,
     "old": "fffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffeffff",
-    "new": "41f94018530c42904fefffe848d71c1c700040c002800000070067064ef94017393841f9401853084a9067064ef9401739384ab940fe417866064ef94017393841f94011791843f940185340702b22d853806b044efafff843f940185340203c40168fb423400008203c40168fd42340000c203c4018d91823400010203c4016b9e823400018203c4016f8cc2340004c203c4016f8c823400060203c401592bc2340009c4ef940173848"
+    "new": "41f940184dfc42904fefffe848d71c1c700040c002800000070067064ef94017393841f940184df84a9067064ef9401739384ab940fe417866064ef94017393841f94011791843f940184e30702b22d853806b044efafff843f940184e30203c40168c4c23400008203c40168c6c2340000c203c4018d91823400010203c4016b9e823400018203c4016f8cc2340004c203c4016f8c823400060203c401592bc2340009c4ef940173848"
    },
    {
     "off": 710688,
@@ -137698,7 +137732,7 @@ window.MC_TWEAKS = {
    {
     "off": 1590664,
     "old": "fffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffeffff",
-    "new": "2c3940179cc8bc846f022c04203940179ccc80c4484002800000ffff2202d2849280c2c682c4484102810000ffffb28664044efa0008263c000000ff223940179cbc0c810000000167044efa003a0805000066044efa00300c83000000ff66044efa0024760041ea0244163028004efa00160805000066044efa00064efa0008263c000000fe178328005282b4846c064ef9401573e223c74018533c4cd71cfc4fef00244e75"
+    "new": "2c3940168fe4bc846f022c04203940168fe880c4484002800000ffff2202d2849280c2c682c4484102810000ffffb28664044efa0008263c000000ff223940168fd80c810000000167044efa003a0805000066044efa00300c83000000ff66044efa0024760041ea0244163028004efa00160805000066044efa00064efa0008263c000000fe178328005282b4846c064ef9401573e223c740184e2c4cd71cfc4fef00244e75"
    },
    {
     "off": 710232,
@@ -137707,8 +137741,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1593928,
-    "old": "fffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffeffff",
-    "new": "4fefffdc48d71f0740c02f400020203940160dac0c800000000167064ef940166060203940a7883c0c800000000167064ef9401660582479401853084a8a66064ef940166058287940a7887cb9f940160dc867064ef9401660584eb940168c4c4a8066064ef9401660584ab940a7863067064ef9401660604a3940a7886067064ef9401660604a3940a7886667064ef9401660604a2c77cb67064ef9401660584ef940171f30"
+    "old": "fffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffeffff",
+    "new": "121812c152820c82000002d26df27400103428000c0000fe66044efa006c2f0b2053206800284e90588f2040760016342800720032302a00203940168fd80c800000000266044efa00260c83000000ff670e02810000fffd008100000201600e02810000fffe43e802441631280031812a002f032f022f0b4eb9400166424fef000c4eb940171bc85282b4846c044efaff807001600270004cd71c3c4fef001c4e75"
    },
    {
     "off": 710172,
@@ -137718,17 +137752,7 @@ window.MC_TWEAKS = {
    {
     "off": 1594360,
     "old": "fffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffeffff",
-    "new": "121812c152820c82000002d26df27400103428000c0000fe66044efa006c2f0b2053206800284e90588f2040760016342800720032302a00203940179cbc0c800000000266044efa00260c83000000ff670e02810000fffd008100000201600e02810000fffe43e802441631280031812a002f032f022f0b4eb9400166424fef000c4eb940171bc85282b4846c044efaff807001600270004cd71c3c4fef001c4e75"
-   },
-   {
-    "off": 758566,
-    "old": "40152d38",
-    "new": "4014b364"
-   },
-   {
-    "off": 1386808,
-    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
-    "new": "0c830000001567044efa002245f9401631334ab94018531066064ef94016bac045f94016312d4ef94016bac020034eb94015b830260052834eb94015b820b6806f044efa0014200390850c80000000046c064ef94016b9fc4878ffff2039401853189085c0fc000f723e92802f014878007f04810000000d2f0170004ab94018531c66044efa000470402f002f024eb940070dea4fef00184cd7043c4fef00144e75"
+    "new": "0c830000001567044efa002245f940160deb4ab940184e0066064ef94016bac045f940160de54ef94016bac020034eb940159aec260052834eb940159adcb6806f044efa0014200390850c80000000046c064ef94016b9fc4878ffff203940184e089085c0fc000f723e92802f014878007f04810000000d2f0170004ab940184e0c66044efa000470402f002f024eb940070dea4fef00184cd7043c4fef00144e75"
    },
    {
     "off": 749572,
@@ -137738,7 +137762,7 @@ window.MC_TWEAKS = {
    {
     "off": 1412796,
     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
-    "new": "4feffff448d70c04246f0014242a001453820c820000000563044efa007447f940159ae022134aaa001066044efa0050202a00100c800000000167044efa004c050167044efa00444ab940159adc66044efa003e05c126814eb9400cf8662f004eb94000eb90588f487800012f022f004eb9400139044fef000c4efa000e050166044efa000c0581268170014efa000470004cd70c044fef000c4e75"
+    "new": "4feffff448d70c04246f0014242a001453820c820000000563044efa007447f940159a0822134aaa001066044efa0050202a00100c800000000167044efa004c050167044efa00444ab940159a0466044efa003e05c126814eb9400cf8662f004eb94000eb90588f487800012f022f004eb9400139044fef000c4efa000e050166044efa000c0581268170014efa000470004cd70c044fef000c4e75"
    },
    {
     "off": 749540,
@@ -137758,7 +137782,7 @@ window.MC_TWEAKS = {
    {
     "off": 1437580,
     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
-    "new": "4feffff448d7040c242f001442a74878003f4878007f42a742a72f024eb940070dea4fef001845f94015fb6c76254eba003845f94015fb7176154eba002c4878ffff48780035487800624878000a4878001d2f024eb940070dea4fef00184cd7040c4fef000c4e752f0a48794015fb76487800122f0348780040487940ea14cc2f024eb940071a044fef001c4e75"
+    "new": "4feffff448d7040c242f001442a74878003f4878007f42a742a72f024eb940070dea4fef001845f94015c9a476254eba003845f94015c9ad76154eba002c4878ffff48780035487800624878000a4878001d2f024eb940070dea4fef00184cd7040c4fef000c4e752f0a48794015c9b3487800122f0348780040487940ea14cc2f024eb940071a044fef001c4e75"
    },
    {
     "off": 730292,
@@ -137768,7 +137792,7 @@ window.MC_TWEAKS = {
    {
     "off": 1465324,
     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
-    "new": "46fc270041ea1658227940160db8203c000002d24eb94016ea8c41ea192c227940160dbc203c000011214eb94016ea8c41ea2a50227940160dc4203c000002d24eb94016ea8c41ea192c224b203c000011214eb94016ea8c700123c040185310700223c040160dac4efa000a700323c040160dac202f002046c04cd71f074fef0024247940a7887c4ef9400550e0"
+    "new": "46fc270041ea165822794017252c203c000002d24eb94016ea8c41ea192c227940172530203c000011214eb94016ea8c41ea2a50227940172538203c000002d24eb94016ea8c41ea192c224b203c000011214eb94016ea8c700123c040184e00700223c0401725204efa000a700323c040172520202f002046c04cd71f074fef0024247940a7887c4ef9400550e0"
    },
    {
     "off": 726976,
@@ -137777,6 +137801,16 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1476228,
+    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+    "new": "4fefffd848d73cfc242f003042a74878003f4878007f42a742a72f024eb940070dea4fef001845f94017888876044878ffff7000101a2f00101a2f00101a2f00101a2f002f024eb940070dea4fef001853836b044efaffd845f94017889c47ea0038287c000000117e314eb9401638c047ea0023287c000000237e1b4eb9401638c04cd73cfc4fef00284e75"
+   },
+   {
+    "off": 724734,
+    "old": "4016bcd8",
+    "new": "4014b364"
+   },
+   {
+    "off": 1489112,
     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
     "new": "51756575652070656e64696e670051756575653a207472616e73706f72740051756575653a206d6f64650051756575653a20636861696e0051756575653a20747261636b0051756575653a20617564696f0051756575653a20646174610051756575653a206c6f636b730051756575653a206275696c64005175657565640043616e63656c20717565756500"
    },
@@ -137788,7 +137822,7 @@ window.MC_TWEAKS = {
    {
     "off": 1504208,
     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
-    "new": "4eb9401780a8203940160dac0c800000000167044efa00084ef94016ea844ab94018531066044efa00504feffff848d70c004eb9400cf8662f004eb94000f23e588fb0b94018531467044efa0024264024794018530845ea00d0204b4eb940170ad84a8066044efa000842b9401853104cd70c004fef00084e75"
+    "new": "4eb9401780a82039401725200c800000000167044efa00084ef94016ea844ab940184e0066044efa00504feffff848d70c004eb9400cf8662f004eb94000f23e588fb0b940184e0467044efa00242640247940184df845ea00d0204b4eb940170ad84a8066044efa000842b940184e004cd70c004fef00084e75"
    },
    {
     "off": 722660,
@@ -137797,8 +137831,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1505632,
-    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
-    "new": "4fefffd848d73cfc242f003042a74878003f4878007f42a742a72f024eb940070dea4fef001845f9401679d876044878ffff7000101a2f00101a2f00101a2f00101a2f002f024eb940070dea4fef001853836b044efaffd845f9401679ec7e367c014eb940162ab47e1a4eb940162ab44cd73cfc4fef00284e75"
+    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+    "new": "4fefffec48d70307700040c002800000070067044efa004c4ab940184df866044efa00404eb9401780a84ab940159a0c66044efa002e2039401b105490b940159a100c80000005dc64044efa001642b940159a0c2f3940184df84eb940076082588f4cd703074fef00144ef9401bb076"
    },
    {
     "off": 721252,
@@ -137808,7 +137842,17 @@ window.MC_TWEAKS = {
    {
     "off": 1515792,
     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
-    "new": "4fefffec48d70307700040c002800000070067044efa004c4ab94018530866044efa00404eb9401780a84ab940159ae466044efa002e2039401b105490b940159ae80c80000005dc64044efa001642b940159ae42f39401853084eb940076082588f4cd703074fef00144ef9401bb076"
+    "new": "51206d6f64203030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004016ea8200000000000000000000000000000000000000004016ea78"
+   },
+   {
+    "off": 717814,
+    "old": "40178888",
+    "new": "4016e980"
+   },
+   {
+    "off": 1541256,
+    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc",
+    "new": "0577040807790606377b0804397938063b773a080f10100e01011e1f10101e10101f0e11111115120d1111111111110e1f10101e10101f111919151313110e11101010110e1f10101e10101f0e11101711110e1f10101e10101f111919151313111f04040404041f1f10101e10101f"
    },
    {
     "off": 765436,
@@ -137818,7 +137862,7 @@ window.MC_TWEAKS = {
    {
     "off": 1352848,
     "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "401630f2401630f8401630fc40163100401631044016310a4016310c4016310f401631114016311440163116401631184016311b4016311d4016312040163122401631255363616c6500526f6f74004c6f77206e6f74650048696768206e6f74650044656e73697479202500"
+    "new": "40160daa40160db040160db440160db840160dbc40160dc240160dc440160dc740160dc940160dcc40160dce40160dd040160dd340160dd540160dd840160dda40160ddd5363616c6500526f6f74004c6f77206e6f74650048696768206e6f74650044656e73697479202500"
    },
    {
     "off": 765304,
@@ -137828,7 +137872,7 @@ window.MC_TWEAKS = {
    {
     "off": 1353268,
     "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
-    "new": "20025b8043f940184df8e988d3c020512010d083b0a900046c064ef940172998b0a900086f064ef9401729982229000c673022410c8200000006671c0c820000000967140c820000000c670cb0916c064ef940172998600ab0916f064ef94017299820804ef94017298e"
+    "new": "20025b8043f9401835b8e988d3c020512010d083b0a900046c064ef940172998b0a900086f064ef9401729982229000c673022410c8200000006671c0c820000000967140c820000000c670cb0916c064ef940172998600ab0916f064ef94017299820804ef94017298e"
    },
    {
     "off": 753626,
@@ -137838,7 +137882,7 @@ window.MC_TWEAKS = {
    {
     "off": 1404876,
     "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "4fefffdc48d71cfc24482649280074002e394018533c4eb940152f8880fc0064484002800000ffffb0b940179cc065064ef940184a087600163328003a322a00223940179cbc0c810000000266064ef9401849fa4ab940179cc466064ef9401849c44ef940184988"
+    "new": "4fefffdc48d71cfc24482649280074002e3940184e2c4eb94014e60880fc0064484002800000ffffb0b940168fdc65064ef940184a087600163328003a322a00223940168fd80c810000000266064ef9401849fa4ab940168fe066064ef9401849c44ef940184988"
    },
    {
     "off": 738384,
@@ -137847,8 +137891,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1444252,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "51206d6f6420303030303000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004016ea8200000000000000000000000000000000000000004016ea78"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffff",
+    "new": "47656e657261746500556e646f004348524f4d004d414a004d494e00444f520050454e54410043004323004400442300450046004623004700472300410041230042002573002564005265616479002d2d00436865636b2072616e67652f73746f7000"
    },
    {
     "off": 735606,
@@ -137857,8 +137901,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1451700,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffff",
-    "new": "760078007a007c001c1a70069085010666044efa00262003c0fc00180680000000112205c2fc0003d0812204c2fc00034481d2874eb940159a0452850c85000000076c044efaffc452840c84000000076c044efaffb052830c83000000046c044efaffa04e75"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
+    "new": "4014a8d44014a8da4014a8df4014a8e84014a8f24014b7844015943c401594444014b7924015944c401594564014b79d4015946040159468401594704015947b401594864015948d40159499401594a240160d9c40160da5401594b1401594be"
    },
    {
     "off": 735022,
@@ -137867,8 +137911,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1453284,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffff",
-    "new": "47656e657261746500556e646f004348524f4d004d414a004d494e00444f520050454e54410043004323004400442300450046004623004700472300410041230042002573002564005265616479002d2d00436865636b2072616e67652f73746f7000"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
+    "new": "20035b80e98841f9401835b82070080020100c830000000567260c8300000008671e0c830000000b67160c830000000e67160c830000001067164ef94016bae641f940179c98600e41f940179ca0600641f940179cac24700c004ef94016bac0"
    },
    {
     "off": 733802,
@@ -137877,8 +137921,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1455296,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "4014a8d44014a8da4014a8df4014a8e84014a8f24014e6084015943c401594444014e6164015944c401594564014e6214015946040159468401594704015947b401594864015948d40159499401594a2401630e4401630ed401594b1401594be"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffff",
+    "new": "760078007a007c001c1a70049085010666044efa00222003c0fc000cd08c2205c2fc0002d0812204c2fc00024481d2874eb940152f8852850c85000000056c044efaffc852840c84000000076c044efaffb45283b5cb64044efaffa84e75"
    },
    {
     "off": 733770,
@@ -137887,8 +137931,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1455504,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "20035b80e98841f940184df82070080020100c830000000567260c8300000008671e0c830000000b67160c830000000e67160c830000001067164ef94016bae641f940186168600e41f940186170600641f94018617c24700c004ef94016bac0"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffff",
+    "new": "700072007400203940172540c0fc02d241f408004ab94017254c6606322c77c66004322802c9142c77cc20394017254c0c80000000016604142802cb70000c81000000016d120c81000000406e0a0c8200000006620270014e75"
    },
    {
     "off": 733710,
@@ -137898,7 +137942,7 @@ window.MC_TWEAKS = {
    {
     "off": 1455928,
     "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffff",
-    "new": "4878ffff4878ffff42a7486a1658486a2a504eb94005b6424fef00144878ffff4878ffff42a7486a00d0486a2d244eb94005b6424fef0014700123c040160dac4efa000a700123c0401853204cd73c3c4fef00204e75"
+    "new": "4878ffff4878ffff42a7486a1658486a2a504eb94005b6424fef00144878ffff4878ffff42a7486a00d0486a2d244eb94005b6424fef0014700123c0401725204efa000a700123c040184e104cd73c3c4fef00204e75"
    },
    {
     "off": 729932,
@@ -137908,7 +137952,7 @@ window.MC_TWEAKS = {
    {
     "off": 1467024,
     "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "4feffff848d70c00247940185308226a03e84a8966044efa001c41ea03f04eba001c206a03ec225042a72f08226900104e91508f4cd70c00508f4e75203c00001120121812c153806b044efafff64e75"
+    "new": "4feffff848d70c00247940184df8226a03e84a8966044efa001c41ea03f04eba001c206a03ec225042a72f08226900104e91508f4cd70c00508f4e75203c00001120121812c153806b044efafff64e75"
    },
    {
     "off": 728458,
@@ -137918,7 +137962,7 @@ window.MC_TWEAKS = {
    {
     "off": 1471960,
     "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "0577040807790606377b0804397938063b773a083e41403e01413e7f40407c40407f3e41414145423d00000000000c0c3e41404f41413e7f40407c40407f4161514945434100000000000c0c"
+    "new": "4feffff848d7000541f9401725102141000223c84017251c43e8000b02800000ffff740480fc000a22004841068100000030130102800000ffff53826b044efaffe44cd700054fef00084e75"
    },
    {
     "off": 728388,
@@ -137927,8 +137971,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1472384,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "4feffff848d7000541f940160d9c2141000223c840160da843e8000b02800000ffff740480fc000a22004841068100000030130102800000ffff53826b044efaffe44cd700054fef00084e75"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
+    "new": "7000223940a786380c810000000167044efa0034b9f940a7863c67044efa00284ab940a788f467044efa001c4ab940a788f867044efa00104a3940a788bb67044efa000470014e75"
    },
    {
     "off": 726912,
@@ -137937,8 +137981,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1476684,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "7000223940a786380c810000000167044efa0034b9f940a7863c67044efa00284ab940a788f467044efa001c4ab940a788f867044efa00104a3940a788bb67044efa000470014e75"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
+    "new": "4eb9401780a84eb94016ea8441f940184df8429042b940184e004ef9400f43ca4eb9401780a84eb94016ea8441f940184df8429042b940184e004ef9400f4486"
    },
    {
     "off": 726642,
@@ -137947,8 +137991,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1477556,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "4eb9401780a84eb94016ea8441f940185308429042b9401853104ef9400f43ca4eb9401780a84eb94016ea8441f940185308429042b9401853104ef9400f4486"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
+    "new": "000000000000000000000000000000010000007f000000000000007f000000000000007f000000000000006400000000000000040000000000000019"
    },
    {
     "off": 717298,
@@ -137958,7 +138002,7 @@ window.MC_TWEAKS = {
    {
     "off": 1546392,
     "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "000000000000000000000000000000010000007f000000000000007f000000000000007f000000000000006400000000000000040000000000000019"
+    "new": "401594cc401594c940179cb440179cb940179cc040179cc640179ccd426f74680052687974686d004e6f7465730052616e646f6d004575636c696400"
    },
    {
     "off": 710052,
@@ -137967,8 +138011,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1596776,
-    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0",
-    "new": "401594cc401594c9401861844018618940186190401861964018619d426f74680052687974686d004e6f7465730052616e646f6d004575636c696400"
+    "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffff",
+    "new": "2a3940184e0855856b044efa00047a004eb940159adc57806a027000ba806e044efa00042a0026054ef94016b9fc"
    },
    {
     "off": 764996,
@@ -137977,8 +138021,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1354628,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
-    "new": "2a394018531855856b044efa00047a004eb94015b82057806a027000ba806e044efa00042a0026054ef94016b9fc"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+    "new": "4fefffec48d7043c242f001c42a74878003f4878007f42a742a72f024eb940070dea4fef00184ef940186168"
    },
    {
     "off": 764968,
@@ -137987,8 +138031,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1354844,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "4fefffec48d7043c242f001c42a74878003f4878007f42a742a72f024eb940070dea4fef00184ef94014af84"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+    "new": "2f002039401725200c800000000167044efa000a700323c040172520201f2f024aaf000c4ef940055f1a"
    },
    {
     "off": 764718,
@@ -137997,8 +138041,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1356212,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
-    "new": "2f00203940160dac0c800000000167044efa000a700323c040160dac201f2f024aaf000c4ef940055f1a"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+    "new": "20035b8041f940168fb44ab00c0045f9401594cc66064ef94016bac045f9401594c94ef94016bac0"
    },
    {
     "off": 764526,
@@ -138007,8 +138051,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1356676,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "20035b8041f940179c984ab00c0045f9401594cc66064ef94016bac045f9401594c94ef94016bac0"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+    "new": "52616e642076656c6f636974790052616e642064656361790052616e642070616e00"
    },
    {
     "off": 763122,
@@ -138017,8 +138061,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1368584,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
-    "new": "52616e642076656c6f636974790052616e642064656361790052616e642070616e00"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+    "new": "2007720de3a8b18720077211e2a8b1872007eb88b1872007028000007fff4e75"
    },
    {
     "off": 758478,
@@ -138028,7 +138072,7 @@ window.MC_TWEAKS = {
    {
     "off": 1387400,
     "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "2007720de3a8b18720077211e2a8b1872007eb88b1872007028000007fff4e75"
+    "new": "42a752812f0152802f0053812f0153802f002f024eb940070dea4fef00184e75"
    },
    {
     "off": 749034,
@@ -138037,8 +138081,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1414660,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "42a754812f0154802f0055812f0155802f002f024eb940070dea4fef00184e75"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+    "new": "00000000000000000000000000000000000000000000000000000000"
    },
    {
     "off": 749006,
@@ -138048,7 +138092,7 @@ window.MC_TWEAKS = {
    {
     "off": 1414876,
     "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "00000000000000000000000000000000000000000000000000000000"
+    "new": "70144e750c80000000136d0252804e750c80000000146d0253804e75"
    },
    {
     "off": 746152,
@@ -138057,8 +138101,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1422368,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "70144e750c80000000136d0252804e750c80000000146d0253804e75"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+    "new": "222800049290528180c1484002800000ffffd0904e75"
    },
    {
     "off": 745590,
@@ -138067,8 +138111,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1424164,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
-    "new": "222800049290528180c1484002800000ffffd0904e75"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+    "new": "00000fff00000ab5000005ad000006ad00000295"
    },
    {
     "off": 745010,
@@ -138077,8 +138121,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1426852,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "00000fff00000ab5000005ad000006ad00000295"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+    "new": "53455155454e43450047454e494500257300"
    },
    {
     "off": 739930,
@@ -138087,16 +138131,6 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1439596,
-    "old": "ffffffe0ffffffe0ffffffe0ff",
-    "new": "5345512e0047454e2e00257300"
-   },
-   {
-    "off": 738444,
-    "old": "40160a94",
-    "new": "4014a550"
-   },
-   {
-    "off": 1443476,
     "old": "ffffffe0ffffffe0ffffffe0",
     "new": "000000000000000000000000"
    },
@@ -138108,37 +138142,37 @@ window.MC_TWEAKS = {
    {
     "off": 1045944,
     "old": "401bb076",
-    "new": "40172510"
+    "new": "4016fd60"
    },
    {
     "off": 1046136,
     "old": "401bb076",
-    "new": "40172510"
+    "new": "4016fd60"
    },
    {
     "off": 1059952,
     "old": "401bb076",
-    "new": "40172510"
+    "new": "4016fd60"
    },
    {
     "off": 1060276,
     "old": "401bb076",
-    "new": "40172510"
+    "new": "4016fd60"
    },
    {
     "off": 1079832,
     "old": "401bb076",
-    "new": "40172510"
+    "new": "4016fd60"
    },
    {
     "off": 347354,
     "old": "247940a7887c",
-    "new": "4ef940185648"
+    "new": "4ef940152d38"
    },
    {
     "off": 350996,
     "old": "2f024aaf000c",
-    "new": "4ef94014b5b4"
+    "new": "4ef94014b05c"
    }
   ],
   [
@@ -138149,8 +138183,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1610264,
-    "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000",
-    "new": "206f00042028000c0c800000000267044efa00d6222800100801000066044efa00a24ab9401629dc66044efa001eb1f9401629e067044efa001220280008b0b9401629e466044efa00a64ab9401b235c66044efa009402810000000a67044efa00884ab9401b208867044efa007c4ab9401b6d8c67044efa00704ab9401bcaec67044efa0064700040c002800000070067044efa005423c8401629e02028000823c0401629e4700123c0401629dc23c0401b23602f084eb940168da4205f4efa002e4ab9401629dc66044efa001c42b9401629dc23c8401629e02028000823c0401629e44efa00084ef940179730222800100081000000082141001070004e75"
+    "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffff",
+    "new": "206f00042028000c0c800000000267044efa00e0222800100801000066044efa00ac4ab940163a6066044efa001eb1f940163a6467044efa001220280008b0b940163a6866044efa00b04ab9401b235c66044efa009e02810000000a67044efa00924ab9401b208867044efa00864ab9401b6d8c67044efa007a4ab9401bcaec67044efa006e700040c002800000070067044efa005e23c840163a642028000823c040163a68700123c040163a6023c0401b23602f084eb940160a944a8066064eb940168da4205f4efa002e4ab940163a6066044efa001c42b940163a6023c840163a642028000823c040163a684efa00084ef940179730222800100081000000082141001070004e75"
    },
    {
     "off": 707950,
@@ -138160,7 +138194,7 @@ window.MC_TWEAKS = {
    {
     "off": 1617320,
     "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc000",
-    "new": "260206830000000b2f062f034eb94005a692508f4a8066064ef9401617e428802f0041ef004c4eb94005a65a588f262f0048282f004c4a836a064ef9401617e40c8400007f006f064ef9401617e4b8836c064ef9401617e40683000000ffe08be08c988352844eb94016188002800000ffff80c4484002800000ffffd083294000042f144eb94005a7f8588f4a806a064ef9401617e40c800000007f63064ef9401617e426002f032f062f054eb94005a8ce4fef000cb09467064ef9401617e42883508c52820c82000000046c044efaff30740049ef00284ef9401617a8"
+    "new": "260206830000000b2f062f034eb94005a692508f4a8066064ef9401618bc28802f0041ef004c4eb94005a65a588f262f0048282f004c4a836a064ef9401618bc0c8400007f006f064ef9401618bcb8836c064ef9401618bc0683000000ffe08be08c988352844eb9401629dc02800000ffff80c4484002800000ffffd083294000042f144eb94005a7f8588f4a806a064ef9401618bc0c800000007f63064ef9401618bc26002f032f062f054eb94005a8ce4fef000cb09467064ef9401618bc2883508c52820c82000000046c044efaff30740049ef00284ef940161880"
    },
    {
     "off": 726834,
@@ -138170,7 +138204,47 @@ window.MC_TWEAKS = {
    {
     "off": 1477028,
     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
-    "new": "4fefffa848d73cfc42b9401629ec4eb9400cf8664a8066064ef9401617e42440486a00304eb940012412588f0c800000000563064ef9401617e42a00c0fc004441ea00d4d1c02f082250200966044efa003e22690028200966044efa00324e91588f4a8066064ef9401617e426407c001c2b00260c860000000666064ef9401617e4740049ef00284ef94018b1a8588f4ef9401617e4"
+    "new": "4fefffa848d73cfc42b940163a704eb9400cf8664a8066064ef9401618bc2440486a00304eb940012412588f0c800000000563064ef9401618bc2a00c0fc004441ea00d4d1c02f082250200966044efa003e22690028200966044efa00324e91588f4a8066064ef9401618bc26407c001c2b00260c860000000666064ef9401618bc740049ef00284ef94018b1a8588f4ef9401618bc"
+   },
+   {
+    "off": 723832,
+    "old": "4016dab8",
+    "new": "4014b364"
+   },
+   {
+    "off": 1496760,
+    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
+    "new": "2f062f024eb94005a692508f4a8066064ef94016fb5a2f0041ef00544eb94005a65a588f262f0050282f00544a836a064ef94016fb5a0c8400007f006f064ef94016fb5ab8836c064ef94016fb5a0683000000ffe08be08c988352844eb9401629dc02800000ffff80c4484002800000ffffd083e1882ac052820c820000000f6c044efaff7c740b4bef00404ef9401617a8"
+   },
+   {
+    "off": 722720,
+    "old": "4016fae8",
+    "new": "4014b364"
+   },
+   {
+    "off": 1505000,
+    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
+    "new": "254e0048200a4fefffa048d73fff40c02f400038202a00280800000666044efa00520280ffffffbf25400028266a002c286a00484a8b66044efa00384a8c66044efa0030202c00080c800000002163044efa00207c001c2b00260c860000000666044efa000e740b4bef00404ef94016dab8202f003846c04cd73fff4fef00604ef940054c14"
+   },
+   {
+    "off": 717358,
+    "old": "40179a20",
+    "new": "4016e980"
+   },
+   {
+    "off": 1545760,
+    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+    "new": "0c820000002067044efa000428050804000066044efa004442a72f022f0b4eb94006b91a4fef000c487800402f022f0a4eb9400157d64fef000c76014a0066044efa000476002f03487800402f022f0a4eb9400179ce4fef0010e28c52820c82000000406c044efaff984ef940160ae4"
+   },
+   {
+    "off": 738444,
+    "old": "40160a94",
+    "new": "4014a550"
+   },
+   {
+    "off": 1443476,
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+    "new": "4fefffe048d73c3c4eb9400cf9a84a8066044efa00382640282b01602a2b015c2004808566044efa00244eb9400cf8662f004eb94000f23e588f4a8066044efa0010244074004ef940179a20700060104879401679004eb9401b2284588f70014cd73c3c4fef00204e75"
    },
    {
     "off": 737158,
@@ -138179,8 +138253,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1446824,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
-    "new": "42a72f052f2c00042f142f0a4eb94000f2a24fef0014508c52820c82000000046c044efaffdc700123c0401629ec487940163a604eb9401b2284588f4cd73cfc4fef00584e75"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+    "new": "262c0008780041ec0014b88366044efa001670003010b08266044efa0024508852844efaffe60c830000002165064ef94016fb5a308242a80004528329430008201d3140000252820c820000000f6c044efaffae4ef94016fb5a"
    },
    {
     "off": 737126,
@@ -138189,8 +138263,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1447040,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "2039401629e82239401b1054b3806606203c6d2b79f52200e189eb89b3802200e089e089e289b3802200eb89b38023c0401629e822004e75"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+    "new": "42a72f052f2c00042f142f0a4eb94000f2a24fef0014508c52820c82000000046c044efaffdc700123c040163a704879401679004eb9401b2284588f4cd73cfc4fef00584e75"
    },
    {
     "off": 735638,
@@ -138199,8 +138273,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1451484,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "0000000000000000000000006d2b79f500000000"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+    "new": "203940163a6c2239401b1054b3806606203c6d2b79f52200e189eb89b3802200e089e089e289b3802200eb89b38023c040163a6c22004e75"
    },
    {
     "off": 733742,
@@ -138209,13 +138283,28 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1455712,
-    "old": "ffffffe0ffffffe0ff",
-    "new": "534352414d424c4500"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+    "new": "0000000000000000000000006d2b79f500000000"
+   },
+   {
+    "off": 728492,
+    "old": "40167900",
+    "new": "4014a550"
+   },
+   {
+    "off": 1471744,
+    "old": "ffffffe0ffffffe0ffffff",
+    "new": "20534352414d424c452000"
    },
    {
     "off": 466956,
     "old": "4ef940179730",
     "new": "4ef940189618"
+   },
+   {
+    "off": 346126,
+    "old": "254e0048200a",
+    "new": "4ef94016fae8"
    }
   ],
   [
@@ -138226,8 +138315,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1610264,
-    "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000",
-    "new": "206f00042028000c0c800000000267044efa00d6222800100801000066044efa00a24ab9401629dc66044efa001eb1f9401629e067044efa001220280008b0b9401629e466044efa00a64ab9401b235c66044efa009402810000000a67044efa00884ab9401b208867044efa007c4ab9401b6d8c67044efa00704ab9401bcaec67044efa0064700040c002800000070067044efa005423c8401629e02028000823c0401629e4700123c0401629dc23c0401b23602f084eb940168da4205f4efa002e4ab9401629dc66044efa001c42b9401629dc23c8401629e02028000823c0401629e44efa00084ef940171f30222800100081000000082141001070004e75"
+    "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffff",
+    "new": "206f00042028000c0c800000000267044efa00e0222800100801000066044efa00ac4ab940163a6066044efa001eb1f940163a6467044efa001220280008b0b940163a6866044efa00b04ab9401b235c66044efa009e02810000000a67044efa00924ab9401b208867044efa00864ab9401b6d8c67044efa007a4ab9401bcaec67044efa006e700040c002800000070067044efa005e23c840163a642028000823c040163a68700123c040163a6023c0401b23602f084eb940160a944a8066064eb940168da4205f4efa002e4ab940163a6066044efa001c42b940163a6023c840163a642028000823c040163a684efa00084ef940171f30222800100081000000082141001070004e75"
    },
    {
     "off": 707950,
@@ -138237,7 +138326,7 @@ window.MC_TWEAKS = {
    {
     "off": 1617320,
     "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc000",
-    "new": "260206830000000b2f062f034eb94005a692508f4a8066064ef9401617e428802f0041ef004c4eb94005a65a588f262f0048282f004c4a836a064ef9401617e40c8400007f006f064ef9401617e4b8836c064ef9401617e40683000000ffe08be08c988352844eb94016188002800000ffff80c4484002800000ffffd083294000042f144eb94005a7f8588f4a806a064ef9401617e40c800000007f63064ef9401617e426002f032f062f054eb94005a8ce4fef000cb09467064ef9401617e42883508c52820c82000000046c044efaff30740049ef00284ef9401617a8"
+    "new": "260206830000000b2f062f034eb94005a692508f4a8066064ef9401618bc28802f0041ef004c4eb94005a65a588f262f0048282f004c4a836a064ef9401618bc0c8400007f006f064ef9401618bcb8836c064ef9401618bc0683000000ffe08be08c988352844eb9401629dc02800000ffff80c4484002800000ffffd083294000042f144eb94005a7f8588f4a806a064ef9401618bc0c800000007f63064ef9401618bc26002f032f062f054eb94005a8ce4fef000cb09467064ef9401618bc2883508c52820c82000000046c044efaff30740049ef00284ef940161880"
    },
    {
     "off": 726834,
@@ -138247,7 +138336,47 @@ window.MC_TWEAKS = {
    {
     "off": 1477028,
     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
-    "new": "4fefffa848d73cfc42b9401629ec4eb9400cf8664a8066064ef9401617e42440486a00304eb940012412588f0c800000000563064ef9401617e42a00c0fc004441ea00d4d1c02f082250200966044efa003e22690028200966044efa00324e91588f4a8066064ef9401617e426407c001c2b00260c860000000666064ef9401617e4740049ef00284ef94018b1a8588f4ef9401617e4"
+    "new": "4fefffa848d73cfc42b940163a704eb9400cf8664a8066064ef9401618bc2440486a00304eb940012412588f0c800000000563064ef9401618bc2a00c0fc004441ea00d4d1c02f082250200966044efa003e22690028200966044efa00324e91588f4a8066064ef9401618bc26407c001c2b00260c860000000666064ef9401618bc740049ef00284ef94018b1a8588f4ef9401618bc"
+   },
+   {
+    "off": 723832,
+    "old": "4016dab8",
+    "new": "4014b364"
+   },
+   {
+    "off": 1496760,
+    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
+    "new": "2f062f024eb94005a692508f4a8066064ef94016fb5a2f0041ef00544eb94005a65a588f262f0050282f00544a836a064ef94016fb5a0c8400007f006f064ef94016fb5ab8836c064ef94016fb5a0683000000ffe08be08c988352844eb9401629dc02800000ffff80c4484002800000ffffd083e1882ac052820c820000000f6c044efaff7c740b4bef00404ef9401617a8"
+   },
+   {
+    "off": 722720,
+    "old": "4016fae8",
+    "new": "4014b364"
+   },
+   {
+    "off": 1505000,
+    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
+    "new": "254e0048200a4fefffa048d73fff40c02f400038202a00280800000666044efa00520280ffffffbf25400028266a002c286a00484a8b66044efa00384a8c66044efa0030202c00080c800000002163044efa00207c001c2b00260c860000000666044efa000e740b4bef00404ef94016dab8202f003846c04cd73fff4fef00604ef940054c14"
+   },
+   {
+    "off": 717358,
+    "old": "40179a20",
+    "new": "4016e980"
+   },
+   {
+    "off": 1545760,
+    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+    "new": "0c820000002067044efa000428050804000066044efa004442a72f022f0b4eb94006b91a4fef000c487800402f022f0a4eb9400157d64fef000c76014a0066044efa000476002f03487800402f022f0a4eb9400179ce4fef0010e28c52820c82000000406c044efaff984ef940160ae4"
+   },
+   {
+    "off": 738444,
+    "old": "40160a94",
+    "new": "4014a550"
+   },
+   {
+    "off": 1443476,
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+    "new": "4fefffe048d73c3c4eb9400cf9a84a8066044efa00382640282b01602a2b015c2004808566044efa00244eb9400cf8662f004eb94000f23e588f4a8066044efa0010244074004ef940179a20700060104879401679004eb9401b2284588f70014cd73c3c4fef00204e75"
    },
    {
     "off": 737158,
@@ -138256,8 +138385,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1446824,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
-    "new": "42a72f052f2c00042f142f0a4eb94000f2a24fef0014508c52820c82000000046c044efaffdc700123c0401629ec487940163a604eb9401b2284588f4cd73cfc4fef00584e75"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+    "new": "262c0008780041ec0014b88366044efa001670003010b08266044efa0024508852844efaffe60c830000002165064ef94016fb5a308242a80004528329430008201d3140000252820c820000000f6c044efaffae4ef94016fb5a"
    },
    {
     "off": 737126,
@@ -138266,8 +138395,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1447040,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "2039401629e82239401b1054b3806606203c6d2b79f52200e189eb89b3802200e089e089e289b3802200eb89b38023c0401629e822004e75"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+    "new": "42a72f052f2c00042f142f0a4eb94000f2a24fef0014508c52820c82000000046c044efaffdc700123c040163a704879401679004eb9401b2284588f4cd73cfc4fef00584e75"
    },
    {
     "off": 735638,
@@ -138276,8 +138405,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1451484,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "0000000000000000000000006d2b79f500000000"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+    "new": "203940163a6c2239401b1054b3806606203c6d2b79f52200e189eb89b3802200e089e089e289b3802200eb89b38023c040163a6c22004e75"
    },
    {
     "off": 733742,
@@ -138286,13 +138415,28 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1455712,
-    "old": "ffffffe0ffffffe0ff",
-    "new": "534352414d424c4500"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+    "new": "0000000000000000000000006d2b79f500000000"
+   },
+   {
+    "off": 728492,
+    "old": "40167900",
+    "new": "4014a550"
+   },
+   {
+    "off": 1471744,
+    "old": "ffffffe0ffffffe0ffffff",
+    "new": "20534352414d424c452000"
    },
    {
     "off": 466956,
     "old": "4ef940171f30",
     "new": "4ef940189618"
+   },
+   {
+    "off": 346126,
+    "old": "254e0048200a",
+    "new": "4ef94016fae8"
    }
   ],
   [
@@ -138303,8 +138447,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1610264,
-    "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000",
-    "new": "206f00042028000c0c800000000267044efa00d6222800100801000066044efa00a24ab9401629dc66044efa001eb1f9401629e067044efa001220280008b0b9401629e466044efa00a64ab9401b235c66044efa009402810000000a67044efa00884ab9401b208867044efa007c4ab9401b6d8c67044efa00704ab9401bcaec67044efa0064700040c002800000070067044efa005423c8401629e02028000823c0401629e4700123c0401629dc23c0401b23602f084eb940168da4205f4efa002e4ab9401629dc66044efa001c42b9401629dc23c8401629e02028000823c0401629e44efa00084ef9401ae968222800100081000000082141001070004e75"
+    "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffff",
+    "new": "206f00042028000c0c800000000267044efa00e0222800100801000066044efa00ac4ab940163a6066044efa001eb1f940163a6467044efa001220280008b0b940163a6866044efa00b04ab9401b235c66044efa009e02810000000a67044efa00924ab9401b208867044efa00864ab9401b6d8c67044efa007a4ab9401bcaec67044efa006e700040c002800000070067044efa005e23c840163a642028000823c040163a68700123c040163a6023c0401b23602f084eb940160a944a8066064eb940168da4205f4efa002e4ab940163a6066044efa001c42b940163a6023c840163a642028000823c040163a684efa00084ef9401ae968222800100081000000082141001070004e75"
    },
    {
     "off": 707950,
@@ -138314,7 +138458,7 @@ window.MC_TWEAKS = {
    {
     "off": 1617320,
     "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc000",
-    "new": "260206830000000b2f062f034eb94005a692508f4a8066064ef9401617e428802f0041ef004c4eb94005a65a588f262f0048282f004c4a836a064ef9401617e40c8400007f006f064ef9401617e4b8836c064ef9401617e40683000000ffe08be08c988352844eb94016188002800000ffff80c4484002800000ffffd083294000042f144eb94005a7f8588f4a806a064ef9401617e40c800000007f63064ef9401617e426002f032f062f054eb94005a8ce4fef000cb09467064ef9401617e42883508c52820c82000000046c044efaff30740049ef00284ef9401617a8"
+    "new": "260206830000000b2f062f034eb94005a692508f4a8066064ef9401618bc28802f0041ef004c4eb94005a65a588f262f0048282f004c4a836a064ef9401618bc0c8400007f006f064ef9401618bcb8836c064ef9401618bc0683000000ffe08be08c988352844eb9401629dc02800000ffff80c4484002800000ffffd083294000042f144eb94005a7f8588f4a806a064ef9401618bc0c800000007f63064ef9401618bc26002f032f062f054eb94005a8ce4fef000cb09467064ef9401618bc2883508c52820c82000000046c044efaff30740049ef00284ef940161880"
    },
    {
     "off": 726834,
@@ -138324,7 +138468,47 @@ window.MC_TWEAKS = {
    {
     "off": 1477028,
     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
-    "new": "4fefffa848d73cfc42b9401629ec4eb9400cf8664a8066064ef9401617e42440486a00304eb940012412588f0c800000000563064ef9401617e42a00c0fc004441ea00d4d1c02f082250200966044efa003e22690028200966044efa00324e91588f4a8066064ef9401617e426407c001c2b00260c860000000666064ef9401617e4740049ef00284ef94018b1a8588f4ef9401617e4"
+    "new": "4fefffa848d73cfc42b940163a704eb9400cf8664a8066064ef9401618bc2440486a00304eb940012412588f0c800000000563064ef9401618bc2a00c0fc004441ea00d4d1c02f082250200966044efa003e22690028200966044efa00324e91588f4a8066064ef9401618bc26407c001c2b00260c860000000666064ef9401618bc740049ef00284ef94018b1a8588f4ef9401618bc"
+   },
+   {
+    "off": 723832,
+    "old": "4016dab8",
+    "new": "4014b364"
+   },
+   {
+    "off": 1496760,
+    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
+    "new": "2f062f024eb94005a692508f4a8066064ef94016fb5a2f0041ef00544eb94005a65a588f262f0050282f00544a836a064ef94016fb5a0c8400007f006f064ef94016fb5ab8836c064ef94016fb5a0683000000ffe08be08c988352844eb9401629dc02800000ffff80c4484002800000ffffd083e1882ac052820c820000000f6c044efaff7c740b4bef00404ef9401617a8"
+   },
+   {
+    "off": 722720,
+    "old": "4016fae8",
+    "new": "4014b364"
+   },
+   {
+    "off": 1505000,
+    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
+    "new": "254e0048200a4fefffa048d73fff40c02f400038202a00280800000666044efa00520280ffffffbf25400028266a002c286a00484a8b66044efa00384a8c66044efa0030202c00080c800000002163044efa00207c001c2b00260c860000000666044efa000e740b4bef00404ef94016dab8202f003846c04cd73fff4fef00604ef940054c14"
+   },
+   {
+    "off": 717358,
+    "old": "40179a20",
+    "new": "4016e980"
+   },
+   {
+    "off": 1545760,
+    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+    "new": "0c820000002067044efa000428050804000066044efa004442a72f022f0b4eb94006b91a4fef000c487800402f022f0a4eb9400157d64fef000c76014a0066044efa000476002f03487800402f022f0a4eb9400179ce4fef0010e28c52820c82000000406c044efaff984ef940160ae4"
+   },
+   {
+    "off": 738444,
+    "old": "40160a94",
+    "new": "4014a550"
+   },
+   {
+    "off": 1443476,
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+    "new": "4fefffe048d73c3c4eb9400cf9a84a8066044efa00382640282b01602a2b015c2004808566044efa00244eb9400cf8662f004eb94000f23e588f4a8066044efa0010244074004ef940179a20700060104879401679004eb9401b2284588f70014cd73c3c4fef00204e75"
    },
    {
     "off": 737158,
@@ -138333,8 +138517,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1446824,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
-    "new": "42a72f052f2c00042f142f0a4eb94000f2a24fef0014508c52820c82000000046c044efaffdc700123c0401629ec487940163a604eb9401b2284588f4cd73cfc4fef00584e75"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+    "new": "262c0008780041ec0014b88366044efa001670003010b08266044efa0024508852844efaffe60c830000002165064ef94016fb5a308242a80004528329430008201d3140000252820c820000000f6c044efaffae4ef94016fb5a"
    },
    {
     "off": 737126,
@@ -138343,8 +138527,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1447040,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "2039401629e82239401b1054b3806606203c6d2b79f52200e189eb89b3802200e089e089e289b3802200eb89b38023c0401629e822004e75"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+    "new": "42a72f052f2c00042f142f0a4eb94000f2a24fef0014508c52820c82000000046c044efaffdc700123c040163a704879401679004eb9401b2284588f4cd73cfc4fef00584e75"
    },
    {
     "off": 735638,
@@ -138353,8 +138537,8 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1451484,
-    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
-    "new": "0000000000000000000000006d2b79f500000000"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+    "new": "203940163a6c2239401b1054b3806606203c6d2b79f52200e189eb89b3802200e089e089e289b3802200eb89b38023c040163a6c22004e75"
    },
    {
     "off": 733742,
@@ -138363,13 +138547,28 @@ window.MC_TWEAKS = {
    },
    {
     "off": 1455712,
-    "old": "ffffffe0ffffffe0ff",
-    "new": "534352414d424c4500"
+    "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+    "new": "0000000000000000000000006d2b79f500000000"
+   },
+   {
+    "off": 728492,
+    "old": "40167900",
+    "new": "4014a550"
+   },
+   {
+    "off": 1471744,
+    "old": "ffffffe0ffffffe0ffffff",
+    "new": "20534352414d424c452000"
    },
    {
     "off": 466956,
     "old": "4ef9401ae968",
     "new": "4ef940189618"
+   },
+   {
+    "off": 346126,
+    "old": "254e0048200a",
+    "new": "4ef94016fae8"
    }
   ]
  ]

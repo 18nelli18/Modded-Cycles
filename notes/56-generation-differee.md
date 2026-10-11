@@ -119,3 +119,30 @@ est vérifié ; les validations restent inchangées. Cause matérielle à déter
 avec la valeur remontée, aucun correctif de lecture revendiqué.
 
 Build valeurs : 8 762 octets dans 62 masques ; interface principale inchangée.
+
+## 8. Banque de lecture et frontières propres aux pistes (11/10/2026)
+
+AveyCole rapporte ensuite `Q mod 00001`, puis `Queue: audio`.
+[FAIT] La valeur 1 est un mode natif valide, avec longueur/vitesse par piste.
+Le helper accepte maintenant les modes 0/1/2 : commun, par piste, longueur
+par piste avec vitesse commune. La frontière utilise les compteurs de la
+piste ciblée, pas ceux de la piste 1.
+
+[FAIT] Correction de l'interprétation initiale du pointeur piste +32 :
+`0x400156d0` et `0x4000c570` le lient au stockage du pattern. Il ne doit pas
+être égal à la banque de lecture active. Celle-ci est lue via `0x40a7887c` ;
+son identité est vérifiée avec la banque native `0x406fa040 + index × 30710`.
+Le pointeur +32 est conservé pour détecter un changement de contexte, sans
+imposer l'ancienne égalité erronée. La conversion native `0x4005b642` reste
+nécessaire : le format éditable et celui du lecteur diffèrent.
+
+[FAIT en émulation] Vraie liaison +32, préparation puis commit ; modes par
+piste sur six pistes et sept vitesses, longueur piste 16 différente de la
+longueur commune 64 ; vrai ordonnanceur, lecteur et constructeur d'événement
+sur les modes 0/1/2, sept vitesses et microtimings -23/0/+23. Les nouvelles
+notes et locks sont présents dès le premier trig. Même preuve avec la
+combinaison maximale, SCRAMBLE compris. Test : `tools/emu/test_seq_gen_queue.py`.
+
+Build local : 8 924 octets, 63 masques. Pas encore publié ni confirmé sur
+matériel. Les chaînes restent exclues ; ces preuves ne mesurent pas le temps
+réel d'exécution de l'interruption sur l'appareil.

@@ -8,12 +8,14 @@ import build,sprites
 import gen_seq_gen as sg
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'tweaks/model-cycles_OS1.13/experimental/scramble'
+# Placement testé figé : une cave libérée par une expérience ne déplace pas le principal.
+MAIN_SLOTS=(0x40189618,0x4018b1a8,0x40168da4,0x401617a8,0x40161880,0x401629dc,0x40163a60)
 
 def check_index_modes(disassembly):
     """Unicorn accepte ces modes 68000 interdits par ColdFire (vecteur 03)."""
     assert not re.search(r"%[da][0-7]:[wl]:8|%[da][0-7]:w",disassembly), "mode indexé interdit ColdFire"
 
-def compile_code(cross,tg,next_hook):
+def compile_code(cross,tg,next_hook,steps=False):
     occupied=[]
     paths=list((ROOT/'tweaks/model-cycles_OS1.13').glob('*.json'))+list((ROOT/'tweaks/model-cycles_OS1.13/experimental/sequence-only').glob('*.json'))+list((ROOT/'tweaks/model-cycles_OS1.13/experimental/queued').glob('*.json'))
     for p in paths:
@@ -21,7 +23,10 @@ def compile_code(cross,tg,next_hook):
         if t.get('id','').startswith('scramble'):continue
         occupied.extend((build.BASE+w['off'],build.BASE+w['off']+len(bytes.fromhex(w['new']))) for w in t.get('writes',[]))
     free=[(va,row) for va,row in sprites.MASKS.items() if len(row)==4 and not any(va<hi and lo<va+row[0] for lo,hi in occupied)]
-    body=(ROOT/'tools/machines/scramble/scramble.s').read_text()
+    if not steps:
+        free=[(va,row) for va,row in free if va in MAIN_SLOTS]
+        assert len(free)==len(MAIN_SLOTS),'placement principal testé occupé'
+    body=(ROOT/'tools/machines/scramble/scramble.s').read_text()+'\n'+(ROOT/'tools/machines/scramble/steps.s').read_text()
     inverse={'ne':'eq','eq':'ne','lt':'ge','gt':'le','hi':'ls','mi':'pl','cs':'cc','cc':'cs'}
     serial=0
     def far(m):
@@ -33,7 +38,7 @@ def compile_code(cross,tg,next_hook):
     body=re.sub(r'^[ \t]*b(ra|ne|eq|lt|gt|hi|mi|cs|cc)w[ \t]+(\w+)[ \t]*(?:\|[^\n]*)?$',far,body,flags=re.M)
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);(p/'sc.s').write_text(body)
-        subprocess.run([cross+'as','-march=cfv4e','-o',str(p/'sc.o'),str(p/'sc.s')],check=True)
+        subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','SC_STEPS=1'] if steps else []),'-o',str(p/'sc.o'),str(p/'sc.s')],check=True)
         sections=[]
         for line in subprocess.check_output([cross+'objdump','-h',str(p/'sc.o')],text=True).splitlines():
             cols=line.split()
@@ -74,7 +79,7 @@ def main():
             if gen=='queued':seqname+='-queued'
             seq=json.loads((ROOT/(f'tweaks/model-cycles_OS1.13/49-{seqname}.json' if a.main else f'tweaks/model-cycles_OS1.13/experimental/{folder}/49-{seqname}.json')).read_text())
             next_hook=int(seq['symbols']['sg_key'],16) if gen else tg['key_hook']
-            slots,blobs,syms=compile_code(a.cross,tg,next_hook)
+            slots,blobs,syms=compile_code(a.cross,tg,next_hook,steps=not a.main)
             writes=[]
             def write(va,old,new):writes.append(dict(off=va-build.BASE,old=old.hex(),new=new.hex()))
             for (va,row,_),blob in zip(slots,blobs):
@@ -85,11 +90,17 @@ def main():
                 assert [build.BASE+i for i in range(0,len(stock)-3,2) if stock[i:i+4]==struct.pack('>I',va)]==[ptr]
                 write(ptr,raw(ptr,4),struct.pack('>I',kept));write(va,raw(va,len(blob)),blob)
             write(0x4007240c,b'\x4e\xf9'+struct.pack('>I',next_hook),b'\x4e\xf9'+struct.pack('>I',syms['sc_key']))
-            name='scramble'+('-st' if st else '')+('-gen' if gen else '')+('-queued' if gen=='queued' else '')
+            if not a.main:
+                va=0x40054c0e
+                write(va,stock[va-build.BASE:va-build.BASE+6],b'\x4e\xf9'+struct.pack('>I',syms['sc_steps_event']))
+            name='scramble' +('-st' if st else '')+('-gen' if gen else '')+('-queued' if gen=='queued' else '')
             t=dict(id=name,order=50,name='SCRAMBLE — quatre paramètres (expérimental)',description=['SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.','Sans menu ni état du générateur ; Sampler exclu. Vérification matérielle attendue.','Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55.'],device='Model:Cycles',os='1.13',section=3,requires=[dep]+([seqname] if gen else []),conflicts=[n for n in ['scramble','scramble-st','scramble-gen','scramble-st-gen','scramble-gen-queued','scramble-st-gen-queued'] if n!=name]+([] if gen else ['scale-gen','scale-gen-st','scale-gen-queued','scale-gen-st-queued']),writes=writes,symbols={n:hex(v) for n,v in syms.items() if n.startswith('sc_')})
             if a.main:
                 t['name']='SCRAMBLE — quatre paramètres'
                 t['description'][1]='Sans menu ni état du générateur ; Sampler exclu. Testé sur machine par AveyCole le 11/10/2026.'
+            else:
+                t['description'][0]='SETTINGS + TRACK : cartouche SCRAMBLE élargi et tirage des quatre contrôles machine.'
+                t['description'][1]='Maintenir des trigs puis SETTINGS + TRACK active/retire des locks frais à chaque passage, sans modifier le son de base. Sampler exclu ; expérimental.'
             text=json.dumps(t,ensure_ascii=False,indent=1)+'\n';p=out/f'50-{name}.json'
             if a.check:assert p.read_text()==text,p
             else:p.write_text(text)

@@ -74,3 +74,10 @@ son ; cartouche agrandi avec glyphes originaux. 6238 octets / 48 masques, notes/
 | `experimental/queued/49-scale-gen*-queued.json` | ce projet ; page adaptée de Model-TG (TinyGregAudio, MIT) | Source `tools/machines/seq_gen/queue.s`, générateur `tools/gen_seq_gen.py --advanced --sequence-only --queued`, [note 56](../../notes/56-generation-differee.md). Préparation privée et copie à la frontière anticipée ; expérimental, test 2 uniquement. |
 
 SCRAMBLE principal : sources originales `tools/gen_scramble.py --main`, Model-TG TinyGregAudio (MIT), notes/55 ; quatre variantes compatibles avec le générateur principal. Confirmé matériel par AveyCole le 11/10/2026.
+
+Extensions du test 2 (11/10/2026) : `tools/machines/scramble/steps.s` est original,
+avec setters de marque natifs et locks temporaires par événement ; cartouche
+SCRAMBLE élargi, sans modifier les variantes principales testées. L'intro
+SEQUENCE GENIE utilise des glyphes originaux dans `intro_large.s`. La génération
+différée vérifie la vraie banque de lecture et les modes commun/par piste.
+Générateurs `gen_scramble.py` et `gen_seq_gen.py`, notes 55/56. Expérimental.

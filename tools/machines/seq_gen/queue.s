@@ -1,7 +1,7 @@
 | Génération différée, note 56. Aucune API OS dans l'interruption.
 | Hook 0x400550da : préserver tous registres/SR, rejouer movea.l active,a2.
-| Frontière : juste avant la lecture anticipée du pas 0, phase piste 0 = 0.
-| Première version : longueur/vitesse communes, sans chaîne de patterns.
+| Frontière : avant la lecture anticipée du pas 0 de la piste ciblée, phase = 0.
+| Modes commun et par piste (0/1/2), sans chaîne de patterns.
     .ifdef SG_QUEUE
     .globl sg_q_state,sg_q_building,sg_q_stage,sg_q_hook,sg_q_service,sg_q_cancel,sg_q_label,sg_q_stop
     .globl sg_action_generate,sg_undo_track,sg_undo_valid,sg_action_undo
@@ -26,6 +26,8 @@ sg_q_pattern: .long 0
 sg_q_index: .long 0
 sg_q_length: .long 0
 sg_q_speed: .long 0
+sg_q_mode: .long 0
+sg_q_storage: .long 0
 sg_q_vt: .long 0,0,0,0,sg_q_quiet,0,0,0,0,0,sg_q_get
     .section .text.sg_q_helpers,"ax"
 sg_q_get:
@@ -170,35 +172,25 @@ sg_q_stage:
     moveb %a4@(30667),%d0
     movel #0x6d6f6420,%d1        | "mod "
     jsr sg_q_format
-    tstl %d0                    | modes de longueur par piste refusés
-    bnew sqs_fail
-    moveq #0,%d2
-    movew %a4@(30662),%d2
-    movel %d2,%d0
-    movel #0x6c656e20,%d1        | "len "
-    jsr sg_q_format
-    cmpil #1,%d2
-    bltw sqs_fail
-    cmpil #64,%d2
-    bgtw sqs_fail
-    movel %d2,sg_q_length
-    moveq #0,%d0
-    moveb %a4@(30668),%d0
-    movel #0x73706420,%d1        | "spd "
-    jsr sg_q_format
-    cmpil #6,%d0
+    cmpil #2,%d0
     bhiw sqs_fail
-    movel %d0,sg_q_speed
-    movel 0x40a78848,%d0
-    movel #0x72756e20,%d1        | "run "
-    jsr sg_q_format
-    cmpil #1,%d0
-    bnew sqs_fail
+    movel %d0,sg_q_mode
     lea.l sq_chain,%a0
     movel %a0,sg_q_reason
     jsr sg_q_chain_ok
     tstl %d0
     beqw sqs_fail
+    | Banque native, même index de pattern que l'interface (4002018a).
+    jsr 0x400cfd0e
+    movel %d0,%sp@-
+    jsr 0x4006a96c
+    addql #4,%sp
+    cmpil #95,%d0
+    bhiw sqs_fail
+    muluw #30710,%d0
+    addil #0x406fa040,%d0
+    cmpl %a4,%d0
+    bnew sqs_fail
     movel %a4,sg_q_pattern
     jmp sqs_identity
     .section .text.sg_q_identity,"ax"
@@ -222,9 +214,9 @@ sqs_identity:
     movel %d3,%d0
     muluw #722,%d0
     addl %a4,%d0
-    cmpl %a3@(32),%d0            | véritable destination audio de cette piste
-    bnew sqs_fail
     movel %d0,sg_q_audio
+    movel %a3@(32),%d0
+    movel %d0,sg_q_storage
     lea.l sq_data,%a0
     movel %a0,sg_q_reason
     movel %a3,%sp@-
@@ -237,7 +229,17 @@ sqs_identity:
     cmpl %a3@(16),%d0
     bnew sqs_fail
     movel %d0,sg_q_raw
-    | Longueur effective via parent +60 ; +713 peut rester différente en mode commun.
+    | Longueur/vitesse effectives, exactement comme le lecteur natif.
+    jsr sg_q_timing
+    tstl %d0
+    beqw sqs_fail
+    movel %d1,sg_q_length
+    movel %d2,sg_q_speed
+    lea.l 0x40a78848,%a0
+    movel sg_q_index,%d0
+    movel %a0@(0,%d0:l:4),%d0
+    cmpil #1,%d0
+    bnew sqs_fail
     lea.l sq_pool,%a0
     movel %a0,sg_q_reason
     moveal %a3@(44),%a5
@@ -374,11 +376,16 @@ sg_q_hook:
     beqw sqh_cancel
     tstl 0x40a78630              | une seule fois au tick séquenceur
     bnew sqh_out
-    tstb 0x40a78860              | prochain pas piste 0
+    movel sg_q_index,%d0
+    lea.l 0x40a78860,%a0
+    tstb %a0@(0,%d0:l)           | prochain pas de la piste cible
     bnew sqh_out
-    tstb 0x40a78866              | avant la première lecture anticipée
+    lea.l 0x40a78866,%a0
+    tstb %a0@(0,%d0:l)           | première lecture anticipée de cette piste
     bnew sqh_out
-    tstb %a4@(30667)
+    moveq #0,%d0
+    moveb %a4@(30667),%d0
+    cmpl sg_q_mode,%d0
     bnew sqh_cancel
     jmp sqh_validate
     .section .text.sg_q_validate,"ax"
@@ -388,7 +395,7 @@ sqh_validate:
     cmpl sg_q_raw,%d0
     bnew sqh_cancel
     movel %a0@(32),%d0
-    cmpl sg_q_audio,%d0
+    cmpl sg_q_storage,%d0
     bnew sqh_cancel
     movel %a0@(44),%d0
     cmpl sg_q_powner,%d0
@@ -402,13 +409,12 @@ sqh_validate:
     addl %a1@(16),%d0
     cmpl sg_q_pool,%d0
     bnew sqh_cancel
-    moveq #0,%d0
-    movew %a4@(30662),%d0
-    cmpl sg_q_length,%d0
+    jsr sg_q_timing
+    tstl %d0
+    beqw sqh_cancel
+    cmpl sg_q_length,%d1
     bnew sqh_cancel
-    moveb %a4@(30668),%d0
-    andil #255,%d0
-    cmpl sg_q_speed,%d0
+    cmpl sg_q_speed,%d2
     bnew sqh_cancel
     | Annuler si une édition UI/audio a changé depuis le snapshot.
     lea.l %a2@(208),%a0
@@ -554,4 +560,39 @@ sqstop_native:
     movel %d2,%sp@-
     tstl %sp@(12)
     jmp 0x40055f1a
+    .endif
+
+    .ifdef SG_QUEUE
+    .section .text.sg_q_timing,"ax"
+| a4 pattern actif ; d0 succès, d1 longueur, d2 vitesse ; a0 temporaire.
+sg_q_timing:
+    moveq #0,%d0
+    moveq #0,%d1
+    moveq #0,%d2
+    movel sg_q_index,%d0
+    muluw #722,%d0
+    lea.l %a4@(0,%d0:l),%a0
+    tstl sg_q_mode
+    bnes sqt_track
+    movew %a4@(30662),%d1
+    bras sqt_speed
+sqt_track:
+    movew %a0@(713),%d1
+sqt_speed:
+    moveb %a4@(30668),%d2
+    movel sg_q_mode,%d0
+    cmpil #1,%d0
+    bnes sqt_check
+    moveb %a0@(715),%d2
+sqt_check:
+    moveq #0,%d0
+    cmpil #1,%d1
+    blts sqt_out
+    cmpil #64,%d1
+    bgts sqt_out
+    cmpil #6,%d2
+    bhis sqt_out
+    moveq #1,%d0
+sqt_out:
+    rts
     .endif

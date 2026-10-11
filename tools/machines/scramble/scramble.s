@@ -46,7 +46,15 @@ sc_fresh:
     movel %d0,sc_taken
     movel %d0,TG_mod_used
     movel %a0,%sp@-
+    .ifdef SC_STEPS
+    jsr sc_steps_toggle
+    tstl %d0
+    bnes sc_skip_run
+    .endif
     jsr sc_run
+    .ifdef SC_STEPS
+sc_skip_run:
+    .endif
     moveal %sp@+,%a0
     braw sc_eat
 sc_release:
@@ -211,4 +219,8 @@ sc_rng_seed:
     movel %d0,%d1
     rts
     .section .rodata.sc_text,"a"
+    .ifdef SC_STEPS
+sc_text: .asciz " SCRAMBLE "
+    .else
 sc_text: .asciz "SCRAMBLE"
+    .endif

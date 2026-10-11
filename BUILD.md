@@ -485,3 +485,25 @@ python3 tools/emu/test_scramble.py --main --cycles firmware/model-cycles_OS1.13.
 ```
 
 Empreinte principale `model-tg+scale-gen+scramble-gen` : `2e5b580a5451f993b4c1ab3dc79325cf56156a96addab8fdd65a51476e9db950`.
+
+### Test 2 — SEQUENCE GENIE, SCRAMBLE par pas et génération par piste (11/10/2026)
+
+Catalogue autonome `/flasher-test-2/`, build
+`2026-10-11-test-2-genie-scramble-queue`. Génération différée reste une
+sous-option du générateur ; SCRAMBLE reste une sélection indépendante.
+Second LFO et voies MIDI secondaires ne sont pas inclus.
+
+```sh
+python3 tools/gen_seq_gen.py --advanced --sequence-only --queued --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --check
+python3 tools/gen_scramble.py --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --check
+python3 tools/emu/test_seq_gen_queue.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+python3 tools/emu/test_scramble_steps.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+python3 tools/emu/test_seq_gen_space.py --test-two
+MC_TEST_PAGE=docs/flasher-test-2 node tools/webflash_seq_gen_check.js firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42.syx
+```
+
+Sélection maximale avec `midi-live-both`, les moteurs et MACRO, générateur
+différé et SCRAMBLE par pas : MAIN OS
+`9db3d5fef2b788b99a137e7be81a590a7db21efc0b62c77a5d921b108ffbb28a`.
+861 références de combinaisons, 153 tweaks ; preuves natives et navigateur.
+Les nouveautés restent expérimentales et attendent l'essai matériel d'AveyCole.

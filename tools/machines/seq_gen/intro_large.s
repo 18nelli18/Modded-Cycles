@@ -1,4 +1,4 @@
-| Cartouche 120×56 à coins arrondis, caractères originaux 7×7 agrandis ×3.
+| Cartouche 120×56 à coins arrondis, caractères originaux 5×7 agrandis ×2.
     .ifdef SG_SEQUENCE_ONLY
     .globl sg_large_intro
     .section .text.sg_large_intro,"ax"
@@ -33,10 +33,13 @@ sgli_band:
     subql #1,%d3
     bplw sgli_band
     lea.l sg_large_letters,%a2
-    moveq #54,%d7
-    moveq #1,%d6
+    lea.l %a2@(56),%a3
+    moveal #17,%a4
+    moveq #49,%d7
     jsr sgli_line
-    moveq #26,%d7
+    lea.l %a2@(35),%a3
+    moveal #35,%a4
+    moveq #27,%d7
     jsr sgli_line
     movem.l %sp@,%d2-%d7/%a2-%a5
     lea.l %sp@(40),%sp
@@ -51,42 +54,42 @@ sgli_row:
     moveq #0,%d6
     moveb %a2@+,%d6
 sgli_pixel:
-    moveq #6,%d0
+    moveq #4,%d0
     subl %d5,%d0
     btst %d0,%d6
     beqw sgli_skip
     movel %d3,%d0
-    muluw #24,%d0
-    addil #17,%d0
+    muluw #12,%d0
+    addl %a4,%d0
     movel %d5,%d1
-    muluw #3,%d1
+    muluw #2,%d1
     addl %d1,%d0
     movel %d4,%d1
-    muluw #3,%d1
+    muluw #2,%d1
     negl %d1
     addl %d7,%d1
     jsr sgli_white
 sgli_skip:
     addql #1,%d5
-    cmpil #7,%d5
+    cmpil #5,%d5
     bltw sgli_pixel
     addql #1,%d4
     cmpil #7,%d4
     bltw sgli_row
     addql #1,%d3
-    cmpil #4,%d3
-    bltw sgli_letter
+    cmpal %a3,%a2
+    bcsw sgli_letter
     rts
     .section .text.sg_large_white,"ax"
 sgli_white:
     clrl %sp@-
-    addql #2,%d1
+    addql #1,%d1
     movel %d1,%sp@-
-    addql #2,%d0
+    addql #1,%d0
     movel %d0,%sp@-
-    subql #2,%d1
+    subql #1,%d1
     movel %d1,%sp@-
-    subql #2,%d0
+    subql #1,%d0
     movel %d0,%sp@-
     movel %d2,%sp@-
     jsr 0x40070dea
@@ -97,12 +100,17 @@ sgli_white:
 sg_round_bands:
     .byte 5,119,4,8, 7,121,6,6, 55,123,8,4, 57,121,56,6, 59,119,58,8
 sg_large_letters:
-    .byte 62,65,64,62,1,65,62
-    .byte 127,64,64,124,64,64,127
-    .byte 62,65,65,65,69,66,61
-    .byte 0,0,0,0,0,12,12
-    .byte 62,65,64,79,65,65,62
-    .byte 127,64,64,124,64,64,127
-    .byte 65,97,81,73,69,67,65
-    .byte 0,0,0,0,0,12,12
+    .byte 15,16,16,14,1,1,30
+    .byte 31,16,16,30,16,16,31
+    .byte 14,17,17,17,21,18,13
+    .byte 17,17,17,17,17,17,14
+    .byte 31,16,16,30,16,16,31
+    .byte 17,25,25,21,19,19,17
+    .byte 14,17,16,16,16,17,14
+    .byte 31,16,16,30,16,16,31
+    .byte 14,17,16,23,17,17,14
+    .byte 31,16,16,30,16,16,31
+    .byte 17,25,25,21,19,19,17
+    .byte 31,4,4,4,4,4,31
+    .byte 31,16,16,30,16,16,31
     .endif

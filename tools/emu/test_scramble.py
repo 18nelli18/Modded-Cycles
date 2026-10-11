@@ -16,7 +16,7 @@ from gen_seq_gen import symbols
 KIT,SVT,SRAW,SGET,NOTIFY,CTX,ZVT,ZERO=(0x93050000+i*0x1000 for i in range(8))
 
 def setup(stock,base,tweak,index=0, extras=None, syntakt_path=None):
-    sequence=next((t for t in (extras or []) if t['id'] in ('scale-gen','scale-gen-st')),None)
+    sequence=next((t for t in (extras or []) if t['id'] in ('scale-gen','scale-gen-st','scale-gen-queued','scale-gen-st-queued')),None)
     r=Rig(stock,base,sequence or tweak)
     if extras:
         all_tweaks=[base]+[t for t in extras if t['id']!=base['id']]+[tweak]
@@ -33,6 +33,7 @@ def setup(stock,base,tweak,index=0, extras=None, syntakt_path=None):
     r.stubs[0x400cf866]=lambda a:KIT
     r.stubs[0x40012412]=lambda a:index
     r.stubs[0x4000f26c]=lambda a:CTX
+    r.stubs[0x400cf9a8]=lambda a:0x930f0000
     r.stubs[ZERO]=lambda a:0
     r.stubs[0x400802ec]=lambda a:0
     r.notifications=[];r.popup=[]
@@ -40,8 +41,8 @@ def setup(stock,base,tweak,index=0, extras=None, syntakt_path=None):
         r.notifications.append(bytes(r.u.mem_read(a[1],8)) if a[1] else None);return 0
     r.stubs[NOTIFY]=notify
     tg=symbols(str(ROOT.parent/'toolchain/bin/m68k-elf-'),ROOT.parent/'model-tg/build/_b.elf')
-    r.stubs[tg['show_popup']]=lambda a:r.popup.append(r.string(a[0])) or 0
-    for addr in (0x40012412,0x4000f26c,0x400802ec,ZERO,NOTIFY,tg['show_popup']):
+    r.stubs[tg['show_popup']]=lambda a:r.popup.append(r.string(a[0]).strip()) or 0
+    for addr in (0x400cf9a8,0x40012412,0x4000f26c,0x400802ec,ZERO,NOTIFY,tg['show_popup']):
         r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
     r.w32(handle,SVT);r.w32(SVT+40,SGET);r.w32(SVT+16,NOTIFY)
     r.u.mem_write(SGET,b'\x20\x3c'+struct.pack('>I',SRAW)+b'\x4e\x75')

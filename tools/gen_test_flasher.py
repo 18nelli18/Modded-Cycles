@@ -24,7 +24,7 @@ def main():
     global OUT, STAMP
     if a.second:
         OUT=ROOT/"docs/flasher-test-2"
-        STAMP="2026-10-11-test-2-queue-values"
+        STAMP="2026-10-11-test-2-genie-scramble-queue"
     else:
         STAMP="2026-10-10-generator-sequence-only-test"
     OUT.mkdir(parents=True,exist_ok=True)
@@ -100,12 +100,14 @@ def main():
     if a.second:
         descriptions[0]["label"]="Sequence Generator"
         descriptions[1]["label"]="Générateur de séquence"
+        descriptions[0]["short"]="Ranges, rhythm/notes, mutation, Euclid and the SEQUENCE GENIE entry popup."
+        descriptions[1]["short"]="Plages, rythme/notes, mutation, Euclid et cartouche d’entrée SEQUENCE GENIE."
         descriptions[0]["note"]="Expanded menu confirmed working on hardware by AveyCole. Stop for Generate and Undo unless Queued generation is selected. Closing the page discards Undo and cancels a pending queue."
         descriptions[1]["note"]="Menu étendu confirmé sur machine par AveyCole. Arrêtez pour Generate et Undo, sauf avec génération au prochain cycle. Fermer la page efface Undo et annule la préparation."
     entries=iter(descriptions)
     files["app.js"]=re.sub(r'    "scale-gen": \{[^\n]+\},',lambda m:'    "scale-gen": '+json.dumps(next(entries),ensure_ascii=False)+',',files["app.js"])
     for name in ("index.html",):
-        files[name]=re.sub(r"2026-10-10-scale-gen-dynamics-main|2026-10-11-scramble-main",STAMP,files[name])
+        files[name]=re.sub(r"2026-10-10-scale-gen-dynamics-main|2026-10-11-scramble-main|2026-10-11-select-all-main",STAMP,files[name])
     notice='<p id="test-build-notice" role="note"><span data-l="en">Experimental expanded generator: ranges, rhythm/notes, mutation, Euclidean rhythm and a larger rounded SEQ. GEN. popup. Sound randomization has been removed. Hardware testing required. Generate and Undo require stopped playback.</span><span data-l="fr">Générateur étendu expérimental : plages, rythme/notes, mutation, rythme euclidien et cartouche SEQ. GEN. agrandi arrondi. Tirage du son retiré. À tester sur la machine. Generate et Undo demandent la lecture arrêtée.</span></p>'
     files["index.html"]=files["index.html"].replace('<main',notice+'\n<main',1)
     if a.second:
@@ -116,8 +118,8 @@ def main():
         app=app.replace('    out.push(l);', '    if (f.queued && sel.queued) l += " — " + t("queued_generation");\n    out.push(l);')
         # Les textes SCRAMBLE sont ajoutés aux deux dictionnaires FEAT.
         entries=iter([
-            dict(label="SCRAMBLE",short="SETTINGS + TRACK randomizes the machine’s four controls, with a popup.",desc="One press of SETTINGS + TRACK randomizes only the active machine’s four parameters and displays SCRAMBLE. Works outside Sequence Generator; has no menu and does not generate notes or trigs. Requires Model-TG. Sampler is excluded.",note="Experimental: emulation checked, awaiting hardware testing. Sound changes have no Undo."),
-            dict(label="SCRAMBLE",short="SETTINGS + TRACK tire les quatre contrôles machine et affiche un cartouche.",desc="SETTINGS + TRACK tire uniquement les quatre paramètres de la machine active et affiche SCRAMBLE. Fonctionne hors du générateur, sans menu ni notes/trigs générés. Demande Model-TG. Sampler exclu.",note="Expérimental : vérifié en émulation, à tester sur machine. Les changements du son n’ont pas de Undo.")])
+            dict(label="SCRAMBLE",short="Randomize four machine controls now or freshly on a marked step, with a wider popup.",desc="SETTINGS + TRACK randomizes the active machine’s four controls. Hold one or more trigs first, then press SETTINGS and TRACK to toggle fresh SCRAMBLE locks on those steps. Each pass produces new values without changing the base sound. Works independently of Sequence Generator. Requires Model-TG. Sampler is excluded.",note="Step SCRAMBLE is experimental and emulation checked. Immediate SCRAMBLE has no Undo; repeat the held-trig combo to remove a step marker."),
+            dict(label="SCRAMBLE",short="Quatre contrôles tirés immédiatement ou à chaque passage sur un pas marqué, cartouche élargi.",desc="SETTINGS + TRACK tire les quatre contrôles machine. Maintenez d’abord un ou plusieurs trigs, puis SETTINGS et TRACK pour activer ou retirer les locks SCRAMBLE de ces pas. Chaque passage donne de nouvelles valeurs sans changer le son de base. Indépendant du générateur. Demande Model-TG. Sampler exclu.",note="SCRAMBLE par pas est expérimental, vérifié en émulation. Pas de Undo du tirage immédiat ; répétez le geste avec trig tenu pour retirer sa marque.")])
         app=re.sub(r'    "scale-gen": \{[^\n]+\},',lambda m:m[0]+'\n    "scramble": '+json.dumps(next(entries),ensure_ascii=False)+',',app)
         app=app.replace('const GUIDE_OF = {','const GUIDE_OF = {\n  "scramble": "scramble",')
         app=app.replace("function wirePicker() {",(ROOT/"tools/test_flasher_2_ui.js").read_text()+"\nfunction wirePicker() {")
@@ -132,6 +134,21 @@ def main():
     if a.second:
         files["guide.html"]=files["guide.html"].replace('</body>', '<section id="queued-generation"><h2>Queued generation / Génération au prochain cycle</h2><p><span data-l="en">Select Queued generation beneath Sequence Generator. While playing, Generate prepares the result; Queued appears until the next loop’s first trig is read. Cancel queue cancels. Stop to Undo. Shared pattern length and speed only; no pattern chains. Changing the pattern, editing the track, stopping or closing cancels pending generation.</span><span data-l="fr">Cochez Génération au prochain cycle sous le générateur. Pendant la lecture, Generate prépare le résultat ; Queued reste affiché jusqu’à la lecture du premier trig du cycle suivant. Cancel queue annule. Arrêtez pour Undo. Longueur/vitesse communes, sans chaîne. Changement de pattern, édition, arrêt et fermeture annulent la préparation.</span></p></section><section id="scramble"><h2>SCRAMBLE</h2><p><span data-l="en">Select SCRAMBLE independently. SETTINGS + TRACK changes the four machine controls once and displays SCRAMBLE, without a menu. Sampler excluded. Experimental; no sound Undo.</span><span data-l="fr">Cochez SCRAMBLE indépendamment. SETTINGS + TRACK tire les quatre contrôles machine une fois et affiche SCRAMBLE, sans menu. Sampler exclu. Expérimental ; pas de Undo du son.</span></p></section></body>')
     for name,text in files.items():
+        if a.second:
+            text=text.replace('Generate and Undo require stopped playback.','Stop to Undo. Generate works during playback when Queued generation is selected.')
+            text=text.replace('Generate et Undo demandent la lecture arrêtée.','Arrêtez pour Undo. Generate fonctionne pendant la lecture avec l’option au prochain cycle.')
+            text=text.replace('Shared pattern length and speed only; no pattern chains.','Shared or per-track length and speed; no pattern chains.')
+            text=text.replace('Longueur/vitesse communes, sans chaîne.','Longueur/vitesse communes ou par piste, sans chaîne.')
+            text=text.replace('next loop’s first trig is read','selected track’s next loop begins')
+            text=text.replace('jusqu’à la lecture du premier trig du cycle suivant','jusqu’au début du prochain cycle de la piste choisie')
+            text=text.replace('a larger rounded SEQ. GEN. popup','a larger rounded SEQUENCE GENIE popup')
+            text=text.replace('cartouche SEQ. GEN. agrandi arrondi','cartouche SEQUENCE GENIE agrandi arrondi')
+            text=text.replace('The entry popup uses a larger rounded black box and larger white text.','The entry popup says SEQUENCE GENIE in a large rounded black box with white text.')
+            text=text.replace('Le cartouche utilise un grand fond noir arrondi et du texte blanc agrandi.','Le cartouche affiche SEQUENCE GENIE sur un grand fond noir arrondi en texte blanc.')
+            text=text.replace('SETTINGS + TRACK changes the four machine controls once and displays SCRAMBLE, without a menu. Sampler excluded. Experimental; no sound Undo.','SETTINGS + TRACK changes four machine controls and shows a wider SCRAMBLE popup. Hold trigs first, then SETTINGS and TRACK, to toggle fresh random locks on those steps each pass. Step locks leave the base sound unchanged. Repeat the combo to remove the markers. Sampler excluded. Experimental; immediate sound changes have no Undo.')
+            text=text.replace('SETTINGS + TRACK tire les quatre contrôles machine une fois et affiche SCRAMBLE, sans menu. Sampler exclu. Expérimental ; pas de Undo du son.','SETTINGS + TRACK tire quatre contrôles machine et affiche un cartouche SCRAMBLE élargi. Maintenez d’abord des trigs, puis SETTINGS et TRACK, pour activer ou retirer les locks aléatoires frais à chaque passage. Les locks par pas gardent le son de base intact. Sampler exclu. Expérimental ; pas de Undo du tirage immédiat.')
+            text=text.replace('Sequence Generator with optional queued generation, standalone SCRAMBLE and compatible Select all.','SEQUENCE GENIE intro, optional per-track queued generation, step-lockable SCRAMBLE with a wider popup, and compatible Select all.')
+            text=text.replace('générateur avec option au prochain cycle, SCRAMBLE indépendant et sélection compatible.','intro SEQUENCE GENIE, génération au prochain cycle par piste, SCRAMBLE par pas avec cartouche élargi et sélection compatible.')
         text=text.rstrip()+"\n"
         if a.check:assert (OUT/name).read_text()==text,str(OUT/name)
         else:(OUT/name).write_text(text)
