@@ -121,7 +121,7 @@ async function main() {
     assert.ok(out.modsChecked && out.raw.length>0);
     console.log("ok : browser full build + Python reference + all mod hashes: " + key);
   }
-  if (isTest && doc.getElementById("select-all")) {
+  if (doc.getElementById("select-all")) {
     doc.getElementById("select-all").click();
     for(let i=0;i<600 && app.state.building;i++) await pause(50);
     assert.ok(doc.getElementById("feat-model-tg").checked);

@@ -11,14 +11,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-11-scramble-main">
-<link rel="stylesheet" href="style.css?v=2026-10-11-scramble-main">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-11-select-all-main">
+<link rel="stylesheet" href="style.css?v=2026-10-11-select-all-main">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="flasher">
 <script>
   // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-  window.MC_BUILD = "2026-10-11-scramble-main";
+  window.MC_BUILD = "2026-10-11-select-all-main";
   window.addEventListener("error", function (e) {
     var b = document.getElementById("errbar");
     if (!b) return;
@@ -72,7 +72,7 @@
         </div>
         <p class="found" id="mod-found" aria-live="polite" hidden></p>
         <ul class="cats" id="cats"></ul>
-        <div id="features"></div>
+        <p><button type="button" class="btn" id="select-all" data-i18n="select_all" aria-describedby="select-all-note">Select all</button></p><p id="select-all-note" data-i18n="select_all_note"></p><div id="features"></div>
         <div class="sel" id="mod-sel" role="region" aria-labelledby="sel-title"></div>
         <p class="vh" id="mod-live" aria-live="polite"></p>
         <div id="mod-sel-end" aria-hidden="true"></div>
@@ -244,11 +244,11 @@
 </footer>
 
 <!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
-<script src="../assets/release.js?v=2026-10-11-scramble-main"></script>
-<script src="../assets/site.js?v=2026-10-11-scramble-main"></script>
-<script src="builder.js?v=2026-10-11-scramble-main"></script>
-<script src="tweaks.js?v=2026-10-11-scramble-main"></script>
-<script src="flasher.js?v=2026-10-11-scramble-main"></script>
-<script src="app.js?v=2026-10-11-scramble-main"></script>
+<script src="../assets/release.js?v=2026-10-11-select-all-main"></script>
+<script src="../assets/site.js?v=2026-10-11-select-all-main"></script>
+<script src="builder.js?v=2026-10-11-select-all-main"></script>
+<script src="tweaks.js?v=2026-10-11-select-all-main"></script>
+<script src="flasher.js?v=2026-10-11-select-all-main"></script>
+<script src="app.js?v=2026-10-11-select-all-main"></script>
 </body>
 </html>
