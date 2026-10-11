@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-12-04">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-12-04">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-12-05">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-12-05">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -60,6 +60,7 @@
         <li><a href="#midi-live-both"><span data-l="en">Live MIDI OUT + THRU toggle</span><span data-l="fr">Basculer MIDI OUT + THRU en direct</span></a></li>
         <li><a href="#track-filter"><span data-l="en">Per-track filter</span><span data-l="fr">Filtre par piste</span></a></li>
         <li><a href="#lfo-plus">LFO 2, 3, 4</a></li>
+        <li><a href="#mchn-lfo">MCHN LFO</a></li>
         <li><a href="#mods-on-samples"><span data-l="en">Mods on a Model:Samples</span><span data-l="fr">Des mods sur un Model:Samples</span></a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
         <li><a href="#stock"><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></a></li>
@@ -727,8 +728,24 @@
         </dl>
       </section>
 
+      <section id="mchn-lfo">
+        <h2><span class="n">22</span><span data-l="en">Machine as LFO destination</span><span data-l="fr">Machine comme destination du LFO</span></h2>
+        <p class="by"><span data-l="en">Contribution by djd_oz · MIT</span><span data-l="fr">Contribution de djd_oz · MIT</span></p>
+        <p class="lede"><span data-l="en">Let the LFO change the track's machine. MCHN fits on the destination display and follows the machine range of your selected mods.</span><span data-l="fr">Le LFO change la machine de la piste. MCHN tient dans l'affichage de destination et suit la plage de machines des mods choisis.</span></p>
+        <ol>
+          <li><span data-l="en">Open the <b>LFO</b> page and set <b>DEP</b> to zero.</span><span data-l="fr">Ouvrez la page <b>LFO</b> et réglez <b>DEP</b> à zéro.</span></li>
+          <li><span data-l="en">Turn <b>DEST</b> to <b>MCHN</b>, choose a waveform and speed, then raise DEP gradually.</span><span data-l="fr">Tournez <b>DEST</b> jusqu'à <b>MCHN</b>, choisissez une forme et une vitesse, puis montez DEP progressivement.</span></li>
+          <li><span data-l="en">Choose the track's base machine as usual. Different machines can produce abrupt changes in sound.</span><span data-l="fr">Choisissez la machine de départ de la piste comme d'habitude. Le passage d'une machine à l'autre peut changer brutalement le son.</span></li>
+        </ol>
+        <dl class="facts">
+          <div><dt><span data-l="en">Added machines</span><span data-l="fr">Machines ajoutées</span></dt><dd><span data-l="en">uses the installed machine range, including Model-TG, Syntakt engines and MACRO; no fixed six-machine limit is added.</span><span data-l="fr">utilise la plage installée, y compris Model-TG, les moteurs Syntakt et MACRO ; aucune limite fixe de six machines n'est ajoutée.</span></dd></div>
+          <div><dt><span data-l="en">Velocity</span><span data-l="fr">Vélocité</span></dt><dd><span data-l="en">MCHN also appears among velocity destinations because the OS shares their eligibility flags.</span><span data-l="fr">MCHN apparaît aussi parmi les destinations de vélocité, car l'OS partage leurs indicateurs d'éligibilité.</span></dd></div>
+          <div><dt><span data-l="en">Experimental</span><span data-l="fr">Expérimental</span></dt><dd><span data-l="en">checked in emulation; this repository integration awaits the maintainer's hardware test.</span><span data-l="fr">vérifié en émulation ; cette intégration attend le test matériel du mainteneur.</span></dd></div>
+        </dl>
+      </section>
+
       <section id="mods-on-samples">
-        <h2><span class="n">22</span><span data-l="en">Mods on a Model:Samples</span><span data-l="fr">Des mods sur un Model:Samples</span></h2>
+        <h2><span class="n">23</span><span data-l="en">Mods on a Model:Samples</span><span data-l="fr">Des mods sur un Model:Samples</span></h2>
         <p class="lede"><span data-l="en">A Model:Samples can run the Model:Cycles OS with the same mods as a Model:Cycles. Whatever the machine, the flasher always installs the Model:Cycles OS; on a Model:Samples, <a href="#model-tg">Model-TG</a>'s Sampler plays your samples.</span><span data-l="fr">Un Model:Samples peut tourner sous l'OS du Model:Cycles avec les mêmes mods qu'un Model:Cycles. Quelle que soit la machine, le flasher installe toujours l'OS du Model:Cycles ; sur un Model:Samples, le Sampler de <a href="#model-tg">Model-TG</a> joue vos samples.</span></p>
         <ol>
           <li><span data-l="en">Back up your samples and projects with Elektron Transfer, then close Transfer.</span><span data-l="fr">Sauvegardez vos samples et vos projets avec Elektron Transfer, puis fermez Transfer.</span></li>
@@ -752,7 +769,7 @@
       </section>
 
       <section id="samples">
-        <h2><span class="n">23</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">24</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -786,13 +803,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">24</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">25</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">With Syntakt engines, the MACRO machine or Model-TG's Sampler, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt, la machine MACRO ou le Sampler de Model-TG, remettez d'abord vos pistes sur une machine d'origine.</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">25</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">26</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -806,7 +823,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">26</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">27</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -872,8 +889,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-12-04"></script>
-<script src="../assets/cycles.js?v=2026-10-12-04"></script>
-<script src="../assets/site.js?v=2026-10-12-04"></script>
+<script src="../assets/release.js?v=2026-10-12-05"></script>
+<script src="../assets/cycles.js?v=2026-10-12-05"></script>
+<script src="../assets/site.js?v=2026-10-12-05"></script>
 </body>
 </html>

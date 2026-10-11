@@ -64,6 +64,8 @@ is under the MIT License, like the rest of the project, is still pending (see [`
 
 Confirmed under the MIT License:
 
+- **Machine as LFO destination** (`61-mchn-lfo.json`): original contribution by djd_oz, authorized under MIT on 12/10/2026; see [`LICENSE-MCHN`](tweaks/model-cycles_OS1.13/LICENSE-MCHN).
+
 - **LFO 2, 3, 4** (`60-lfo-plus.json`): rewritten by this project from DavidCaruso's `Model-TG-VA-DR-v1` firmware;
   DavidCaruso agreed to the MIT License (relayed by Maxime on 11/10/2026).
 

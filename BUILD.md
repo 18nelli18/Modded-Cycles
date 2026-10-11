@@ -620,3 +620,25 @@ nouveau tweak en émulation.
 
 Le C [`mischa85/elektron-firmware-tool`](https://github.com/mischa85/elektron-firmware-tool) fait le même travail
 de conteneur ; voir [`notes/02-format-os-syx.md`](notes/02-format-os-syx.md).
+
+### Machine comme destination du LFO (MCHN)
+
+Contribution de djd_oz sous MIT, [note 58](notes/58-machine-destination-lfo.md). `mchn-lfo` rend Algorithm
+éligible à la modulation et affiche MCHN. Les accesseurs partagés conservent la plage installée ; aucune
+allocation RAM. Expérimental, à tester par le mainteneur sur sa machine.
+
+```sh
+python3 tools/gen_mchn_lfo.py --cycles model-cycles_OS1.13.syx --check
+python3 tools/build.py -i model-cycles_OS1.13.syx -t mchn-lfo
+python3 tools/emu/test_mchn_lfo.py --cycles model-cycles_OS1.13.syx
+python3 tools/emu/test_mchn_lfo.py --cycles model-cycles_OS1.13.syx --with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max,level-pan-values,trigless-dim,lfo-plus --syntakt Syntakt_OS1.42.syx
+```
+
+SHA-256 du MAIN OS (OS officiel 1.13) :
+
+| Combinaison | SHA-256 |
+|---|---|
+| `mchn-lfo` | `5904d0ae9c384d095f728081b57bddcafddc4d1a4667115979180e9afea31153` |
+| `model-tg+mchn-lfo` | `398673e8df024cd30c39ba56d8b263acffac6a5db6205197042c1cc0eaff2ae2` |
+| `lfo-plus+mchn-lfo` | `dc1bf854946fc775d1232c3027bc5fa4638eaea3aba4392b6a4cd65ab90f7905` |
+| `macro+mchn-lfo` | `2e74ac9097585d575129503dda3a5d0f252485d4463784ad209786609d307fbc` |

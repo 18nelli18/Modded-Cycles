@@ -3,6 +3,12 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.49", date: "2026-10-12", changes: [
+    { en: "New experimental mod: Machine as LFO destination. Choose MCHN with DEST on the LFO page and gradually raise DEP to move between machines. The range follows the installed machines, including Model-TG, Syntakt engines and MACRO",
+      fr: "Nouveau mod expérimental : Machine comme destination du LFO. Choisissez MCHN avec DEST sur la page LFO et montez DEP progressivement pour passer entre les machines. La plage suit les machines installées, y compris Model-TG, les moteurs Syntakt et MACRO" },
+    { en: "MCHN also becomes a velocity destination. Contribution by djd_oz under MIT; proven against the OS's own code in emulation. This integration awaits the maintainer's hardware test",
+      fr: "MCHN devient aussi une destination de vélocité. Contribution de djd_oz sous MIT ; vérifiée sur le code même de l'OS en émulation. Cette intégration attend le test matériel du mainteneur" },
+  ] },
   { version: "1.48", date: "2026-10-12", changes: [
     { en: "New mod, LFO 2, 3, 4: three more LFOs on every track, under Sounds & machines. On the LFO page, press [LFO] again: a big 2, then 3, then 4 shows in the left box, and the fifth press closes the page. Each extra LFO has its own speed, multiplier, waveform, destination and depth; fade, start phase and mode stay shared with LFO 1",
       fr: "Nouveau mod, LFO 2, 3, 4 : trois LFO de plus sur chaque piste, dans Sons et machines. Sur la page LFO, appuyez encore sur [LFO] : un grand 2, puis 3, puis 4 s'affiche dans le cadre de gauche, et le cinquième appui ferme la page. Chaque LFO de plus a sa vitesse, son multiplicateur, sa forme, sa destination et sa profondeur ; le fondu, la phase de départ et le mode restent communs avec LFO 1" },

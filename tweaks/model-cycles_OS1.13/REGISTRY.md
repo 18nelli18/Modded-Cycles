@@ -6,9 +6,9 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 154 tweaks, 16 349 écritures.
-- Masques de sprites libérables : 164 (35 960 o), dont 47 pris (17 040 o) et **117 libres (18 920 o)**.
-- Crochets sur l'OS : 100 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
+- 155 tweaks, 16 354 écritures.
+- Masques de sprites libérables : 164 (35 960 o), dont 48 pris (17 232 o) et **116 libres (18 728 o)**.
+- Crochets sur l'OS : 102 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
 - Pointeurs réécrits : 61 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 134 tweaks ; place restante au §3.
 
@@ -42,11 +42,11 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x401904b4` | `0x400ac784` | pris (370/376 o) | multiline-browser (370 o) |
 | `0x40192734` | `0x400ac2b2` | pris (318/376 o) | trigless-dim (318 o) |
 
-### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 0 pris, 42 libres (8 064 o)
+### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 1 pris, 41 libres (7 872 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x40152d38` | `0x400b9726` | libre | |
+| `0x40152d38` | `0x400b9726` | pris (56/192 o) | mchn-lfo (56 o) |
 | `0x401592bc` | `0x400b7404` | libre | |
 | `0x4015943c` | `0x400b73e4` | libre | |
 | `0x4015f38c` | `0x400b504a` | libre | |
@@ -422,6 +422,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x40005f36` | `b2ac00286730` | jmp | masque `0x4018dba8` +0x0 | trigless-dim | notes/45 |
 | `0x40006086` | `4ef94008e77e` | jmp | masque `0x4018dba8` +0x20 | trigless-dim | notes/45 |
 | `0x400081f2` | `4eb940090f48` | jsr | masque `0x4018f4b4` +0x0 | level-pan-values | notes/44 |
+| `0x4000b20a` | `202f0008b280` | jmp | masque `0x40152d38` +0x1c `mchn_short` | mchn-lfo | notes/58 |
 | `0x4000c140` | `4e56ffe0202e000c` | jmp | masque `0x401780a8` +0x0 `lfo_dest` | lfo-plus | notes/56 |
 | `0x4001413e` | `205242a72f0a` | jmp | charge utile (image) +0x10eb6 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400169f0` | `4feffff448d7040c` | jmp | charge utile (image) +0x4fb6 | model-tg, model-tg-st | notes/31, notes/36 |
@@ -476,6 +477,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4005a6a6` | `7205b2826430` | jmp | charge utile (image) +0x47bc | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4005a6b6` | `4ef9401ae936` | jmp | charge utile (mémoire), 6 cibles selon la combinaison | macro-tg, syntakt-tg-* (33/33), syntakt-tg-*-macro (31/31) | notes/31, notes/36, notes/43 |
 | `0x4005a6b6` | `eb8a41f940a7` | jmp | charge utile (image) +0x47f6 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4005a860` | `202f0004b280` | jmp | masque `0x40152d38` +0x0 `mchn_flags` | mchn-lfo | notes/58 |
 | `0x4005a8f0` | `7405b4816532` | jmp | charge utile (mémoire), 3 cibles selon la combinaison | macro, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-macro (31/31), syntakt-tg-* (33/33), syntakt-tg-*-macro (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43 |
 | `0x4005aa22` | `202f000cb481` | jmp | masque `0x40185308` +0x82 `lfo_plk_load` | lfo-plus | notes/56 |
 | `0x4005aa34` | `7417b480640c` | jmp | masque `0x40166760` +0x8a `tf_conv` | track-filter | notes/47 |
@@ -639,4 +641,5 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | midi-both | 3 | 3 | 0 | 0 | 0 | 0 | 0 |  | notes/53 |
 | midi-live-both | 6 | 0 | 4 | 0 | 1 | 1 | 0 |  | notes/53 |
 | lfo-plus | 30 | 0 | 12 | 4 | 7 | 7 | 0 |  | notes/56 |
+| mchn-lfo | 5 | 1 | 2 | 0 | 1 | 1 | 0 |  | notes/58 |
 

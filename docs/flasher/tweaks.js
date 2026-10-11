@@ -3489,6 +3489,52 @@ window.MC_TWEAKS = {
    ]
   },
   {
+   "id": "mchn-lfo",
+   "order": 61,
+   "name": "Machine comme destination du LFO (MCHN)",
+   "description": [
+    "Choisissez MCHN dans DEST du LFO pour moduler la sélection de machine.",
+    "Conserve la plage de machines de la combinaison installée ; les autres destinations restent identiques.",
+    "L'éligibilité partagée rend aussi MCHN disponible comme destination de vélocité.",
+    "Contribution de djd_oz, licence MIT. Statut expérimental : à vérifier par le mainteneur sur sa machine.",
+    "56 o dans un masque 48×22 libéré (0x40152d38), sans état en RAM. Généré par tools/gen_mchn_lfo.py, notes/58."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "symbols": {
+    "mchn_flags": "0x40152d38",
+    "mchn_short": "0x40152d54"
+   },
+   "writes": [
+    {
+     "off": 44554,
+     "old": "202f0008b280",
+     "new": "4ef940152d54"
+    },
+    {
+     "off": 369760,
+     "old": "202f0004b280",
+     "new": "4ef940152d38"
+    },
+    {
+     "off": 758566,
+     "old": "40152d38",
+     "new": "4014b364"
+    },
+    {
+     "off": 1217893,
+     "old": "416c676f726974686d00",
+     "new": "4d43484e000000000000"
+    },
+    {
+     "off": 1386808,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+     "new": "202f00040c80000000296708b2804ef94005a866203c000006004e75202f00080c80000000296708b2804ef94000b210203c401299654e75"
+    }
+   ]
+  },
+  {
    "id": "syntakt-sd",
    "order": 24,
    "name": "Vrais moteurs du Syntakt en machines ajoutées : SDVtg (SD VINTAGE)",
@@ -98888,6 +98934,24 @@ window.MC_TWEAKS = {
    "excludes": [
     "track-filter"
    ]
+  },
+  {
+   "id": "mchn-lfo",
+   "label": "Machine comme destination du LFO",
+   "desc": "MCHN dans DEST : le LFO change la machine de la piste. Conserve la plage des machines ajoutées.",
+   "status": "experimental",
+   "credit": {
+    "kind": "based",
+    "who": "djd_oz"
+   },
+   "cat": "sound",
+   "variants": [
+    {
+     "id": "mchn-lfo",
+     "label": null
+    }
+   ],
+   "license": "LICENSE-MCHN.txt"
   },
   {
    "id": "syntakt",
