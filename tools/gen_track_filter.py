@@ -275,7 +275,9 @@ def build_tweak(stock, mtg=None, tid=None):
         ]
         others = [t for _, t, _ in TG_OUTS if t != tid]
         tweak.update({"id": tid, "name": tweak["name"] + " (avec Model-TG)",
-                      "conflicts": ["track-filter"] + others, "requires": [mtg["id"]]})
+                      # lfo-plus (LFO 2, 3, 4) range ses réglages dans les mêmes k 28..31 et octets +88..+91 du son
+                      # (notes/56 §3.6) ; il ne déclare son conflit qu'envers track-filter
+                      "conflicts": ["track-filter", "lfo-plus"] + others, "requires": [mtg["id"]]})
         tweak["symbols"]["tf_side"] = f"{syms['tf_side']:#x}"
     return tweak, syms, used
 

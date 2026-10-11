@@ -19,6 +19,7 @@
  "section": 3,
  "conflicts": [
   "track-filter",
+  "lfo-plus",
   "track-filter-tg"
  ],
  "symbols": {

@@ -380,6 +380,9 @@ avec Model-TG s'applique (`with_exp`).
   le seizième) filtre ce côté avec les mêmes coefficients que la piste et son propre état (`tf_sst`, 16 o par piste :
   ic1, ic2, actif). À la première utilisation, l'état démarre comme celui de la piste ; quand le côté s'arrête ou que
   le filtre est à OFF, l'état est oublié.
+- **LFO 2, 3, 4** (`lfo-plus`, PR #79, notes/56 §3.6) range ses réglages dans les mêmes paramètres k 28..31 et
+  octets +88..+91 du son. Il déclare `conflicts` avec `track-filter` ; les deux versions TG le déclarent envers
+  `lfo-plus` (vers un tweak absent du dépôt, `tools/check_overlaps.py` le signale seulement).
 - **Place** : 3 239 o dans seize masques 35×35 (le seizième, `0x40167c50`, était une réserve, §6) ; 42 écritures.
 - **Slide trigs** : ceux de Model-TG font glisser les mots 1 à 25 (`SLD_ELIG`) ; nos paramètres (k 28..31) sautent à
   la valeur du slide trig, sans glisser.

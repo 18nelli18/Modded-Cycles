@@ -3238,6 +3238,7 @@ window.MC_TWEAKS = {
    "section": 3,
    "conflicts": [
     "track-filter",
+    "lfo-plus",
     "track-filter-tg-st"
    ],
    "symbols": {
@@ -3284,6 +3285,7 @@ window.MC_TWEAKS = {
    "section": 3,
    "conflicts": [
     "track-filter",
+    "lfo-plus",
     "track-filter-tg"
    ],
    "symbols": {
