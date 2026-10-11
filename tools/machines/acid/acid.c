@@ -14,18 +14,16 @@
  * dans le filtre, d'enveloppe et de resonance, decroissance du filtre bornee a ~200 ms, +3,5 dB) ; PITCH, FINE
  * et les touches : la note, comme les machines d'origine.
  *
- * Filtre : 4 etages passe-bas a un pole (TPT), contre-reaction globale k * f(y4), sans retard (ZDF). f est un coude
- * a 3 segments (lineaire jusqu'a T1, pente S jusqu'a T2, plat ensuite) : lineaire par morceaux, donc l'equation
- * sans retard se resout exactement en essayant un segment apres l'autre ; ses divisions ne dependent que des
- * coefficients du bloc (calcules dans update). Sur le segment plat, la contre-reaction est une constante : la
- * solution n'est pas calculee. Passe-haut : melange des etages (u - 4 y1 + 6 y2 - 4 y3 + y4), sans multiplication.
- * Oscillateur : dent de scie a polyBLEP ; carre = scie - scie decalee d'une demi-periode, d'ou le fondu
- * scie - m * scie decalee.
+ * Filtre : celui d'Open303 (Robin Schmidt, licence MIT, LICENSE-Open303) : echelle a 4 poles passe-bas, un pole
+ * par etage (TPT, sans retard), contre-reaction globale k * y4 passée dans un passe-haut a 150 Hz, coefficients
+ * pris dans une table a 1/16 d'octave (200 Hz -> 16,6 kHz, stable sans suréchantillonnage) puis interpolés.
+ * Passe-haut : melange des étages (y0 - 4 y1 + 6 y2 - 4 y3 + y4), sans multiplication. Oscillateur : notre dent
+ * de scie a polyBLEP ; carre = scie - scie decalee d'une demi-periode, d'ou le fondu scie - m * scie decalee.
  *
  * Formats : signaux Q27 (marge +-16), coefficients Q31 ; qmul = multiplication fractionnaire de l'EMAC, saturee
  * (MACSR = 0xa0 pendant la boucle des voix). Compile avec HOST pour l'ordinateur : meme calcul en entiers
- * (tools/emu/acid_ref.c, la reference de la preuve tools/emu/test_acid.py). Tables : acid_tables.h, ecrit par
- * tools/gen_acid.py.
+ * (tools/emu/acid_ref.c, la reference de la preuve tools/emu/test_acid.py). Tables : acid_tables.h et
+ * acid303_tables.h (le filtre), ecrites par tools/gen_acid.py.
  *
  * Etat : un par piste (BSS de la charge utile, mis a zero au demarrage), remis a zero a la premiere note apres un
  * changement de machine (marque en v+0x2c, effacee par la remise a zero de la voix 0x400a7ab8). Une voix muette
@@ -37,6 +35,7 @@ typedef int s32;
 typedef unsigned int u32;
 
 #include "acid_tables.h"
+#include "acid303_tables.h"
 
 #define Q31MAX 0x7fffffff
 
@@ -52,10 +51,6 @@ static inline s32 rd(int64_t acc)
 }
 static inline s32 qmul(s32 a, s32 b) { return rd(prod(a, b)); }
 static inline s32 qmac2(s32 a, s32 b, s32 c, s32 d) { return rd(prod(a, b) + prod(c, d)); }
-static inline s32 qmac4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g, s32 h)
-{
-	return rd(prod(a, b) + prod(c, d) + prod(e, f) + prod(g, h));
-}
 #else
 /* ACC0 rendu vide, comme l'exige l'OS (movclr) */
 static inline s32 qmul(s32 a, s32 b)
@@ -69,14 +64,6 @@ static inline s32 qmac2(s32 a, s32 b, s32 c, s32 d)
 	s32 r;
 	__asm__ volatile("mac.l %1,%2,%%acc0\n\tmac.l %3,%4,%%acc0\n\tmovclr.l %%acc0,%0"
 			 : "=d"(r) : "r"(a), "r"(b), "r"(c), "r"(d));
-	return r;
-}
-static inline s32 qmac4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g, s32 h)
-{
-	s32 r;
-	__asm__ volatile("mac.l %1,%2,%%acc0\n\tmac.l %3,%4,%%acc0\n\tmac.l %5,%6,%%acc0\n\tmac.l %7,%8,%%acc0\n\t"
-			 "movclr.l %%acc0,%0"
-			 : "=d"(r) : "r"(a), "r"(b), "r"(c), "r"(d), "r"(e), "r"(f), "r"(g), "r"(h));
 	return r;
 }
 #endif
@@ -99,14 +86,7 @@ void host_amp(s32 *out, char *v);                 /* la reference : rien (sortie
 #define MARK       0x41434431                       /* 'ACD1' */
 #define IDLE_LEVEL (1 << 14)                        /* enveloppe d'ampli sous -102 dB : voix muette */
 
-/* coude, niveaux Q27 ; B2/B3 = decalages des segments 2 et 3 */
-#define T1       16106127                           /* 0,12 */
-#define T2       53687091                           /* 0,40 */
-#define KNEE_S   751619277                          /* pente 0,35 (Q31) */
-#define B2_Q27   10468982                           /* T1 - S T1 = 0,078 */
-#define B3_Q27   29259839                           /* T1 + S (T2 - T1) = 0,218 */
-#define B2_Q31   167503724
-#define OUT_GAIN 751619277                          /* 0,35 */
+#define OUT_GAIN 751619277                          /* 0,35, comme avant l'echange du filtre */
 #define OUT_ACC  1127428915                         /* 0,525 : accent +3,5 dB */
 
 enum { BYPASS, LP, HP };
@@ -114,8 +94,10 @@ enum { BYPASS, LP, HP };
 struct acid {
 	u32 ph, dt, invdt;
 	s32 m, xg, fenv;
-	s32 s0, s1, s2, s3;                             /* etats du filtre, Q27 */
-	s32 mode, G, c1, c2, c3, c4, P1, D1, Ps, Ds, Qs, kq8, og;
+	s32 y0, y1, y2, y3, y4;                         /* etats de l'echelle et de sa sortie, Q27 */
+	s32 f1, fh;                                     /* passe-haut de la contre-reaction (150 Hz) */
+	s32 n1, n2, n3, n4;                             /* echelle du passe-haut (cascade TPT) */
+	s32 mode, b, k, g, og;
 };
 
 #ifdef HOST
@@ -134,23 +116,11 @@ static inline s32 shl_sat(s32 x, int sh)
 	return x > lim ? Q31MAX : x < -lim ? -Q31MAX : x << sh;
 }
 
-/* 1/D pour D dans [1, 8) en Q28, resultat Q31 (sature a 1) : Newton, 3 tours, une fois par bloc */
-static s32 recip_q28(s32 d)
+/* 17 points sur la course d'un potard (0..32767), interpolés (comme Open303) */
+static inline s32 lut17(const s32 *t, s32 x)
 {
-	int sh = 0;
-	s32 r, e;
-	while (d < 0x40000000) {                        /* d lu en Q31 = D/8, ramene dans [0,5, 1) */
-		d <<= 1;
-		sh++;
-	}
-	r = 1515870810 - (qmul(d, 2021161080) >> 1);    /* Q29 : 48/17 - 32/17 d */
-	for (int i = 0; i < 3; i++) {
-		e = (1 << 30) - qmul(d, r);             /* 2 - d r */
-		r = qmul(r, e) << 2;
-	}
-	if (sh == 0)
-		return r >> 1;
-	return r >= (Q31MAX >> (sh - 1)) ? Q31MAX : r << (sh - 1);
+	s32 i = x >> 11;
+	return t[i] + qmul(t[i + 1] - t[i], (x & 0x7ff) << 20);
 }
 
 /* dent de scie a bande limitee (polyBLEP), Q27 dans [-1, 1) */
@@ -172,7 +142,7 @@ void acid_update(s32 pmod, char *v, const char *p)
 	struct acid *a = track_of(v);
 	s32 acc = P16(0x1e) != 0, dec = knob(P16(0x24));
 	s32 col8 = P16(0x16), sweep = knob(P16(0x1a)), cont = knob(P16(0x1c));
-	s32 n, oct, r, i, fr, idx, amt, mod, top = 0;
+	s32 n, oct, r, i, fr, idx, amt, mod;
 	u32 d;
 
 	if (V32(MARK_OFF) != MARK) {                    /* 1re note sur cette machine */
@@ -212,6 +182,7 @@ void acid_update(s32 pmod, char *v, const char *p)
 
 	a->m = knob(P16(0x18)) * 16909320;              /* SHAPE / 127, Q31 */
 	a->xg = acc ? 1932735283 : 1073741824;          /* attaque du filtre : 0,9 / 0,5 */
+	a->og = acc ? OUT_ACC : OUT_GAIN;
 
 	/* coupure en pas de table (1/16 d'octave au-dessus de 10 Hz) Q8 : 10 octaves = 40832 ; + 6 octaves d'enveloppe */
 	amt = (cont - 64) * 32768 / 63;
@@ -223,56 +194,49 @@ void acid_update(s32 pmod, char *v, const char *p)
 	col8 = col8 < 0 ? 0 : col8 > (127 << 8) ? (127 << 8) : col8;
 	if (col8 < (64 << 8)) {
 		a->mode = LP;
-		idx = col8 * 40832 / (63 << 8);
-		top = idx - (40832 - 4096);             /* derniere octave de COLOR : 0 .. 4096 */
-		top = top < 0 ? 0 : top > 4096 ? 4096 : top;
-		idx += 4096 + mod;
+		idx = col8 * 40832 / (63 << 8) + 4096 + mod;
 	} else if (col8 > (64 << 8)) {
 		a->mode = HP;
 		/* depuis 10 Hz (notes/51 §3.2) */
 		idx = (col8 - (64 << 8)) * 44928 / (63 << 8) + mod;
 	} else {
 		a->mode = BYPASS;
-		a->og = acc ? OUT_ACC : OUT_GAIN;
 		return;
 	}
-	idx = idx < 0 ? 0 : idx > (G_TAB_N - 1) * 256 - 1 ? (G_TAB_N - 1) * 256 - 1 : idx;
-	i = idx >> 8;
+	/* notre coupure (1/16 d'octave au-dessus de 10 Hz, Q8 : 256 par pas) dans le pas des tables d'Open303 :
+	 * 175 coefficients couvrent 10 Hz -> 16,6 kHz, stabilité vérifiée sans suréchantillonnage */
+	s32 lc = idx * 256;
+	lc = lc < 0 ? 0 : lc > ((ACID_NCUT - 1) << 16) - 1 ? ((ACID_NCUT - 1) << 16) - 1 : lc;
+	i = lc >> 16;
+	fr = (lc & 0xffff) << 15;
+	a->b = ACID_B0[i] + qmul(ACID_B0[i + 1] - ACID_B0[i], fr);
+	r = lut17(ACID_RES, sweep << 8);
+	if (acc) {                                      /* accent : resonance +10 % */
+		r = r + r / 10 > Q31MAX ? Q31MAX : r + r / 10;
+	}
 	{
-		s32 G = G_TAB[i] + qmul(G_TAB[i + 1] - G_TAB[i], (idx & 255) << 23);
-		s32 i1g = Q31MAX - G, G2 = qmul(G, G), G3 = qmul(G2, G), G4 = qmul(G3, G);
-		s32 kq8 = sweep * 9089028, kG4;     /* k / 8, k = 4,3 SWEEP / 127 (+10 % avec l'accent) */
-		if (acc)
-			kq8 += kq8 / 10;
-		kG4 = qmul(kq8, G4);                    /* k G4, Q28 */
-		a->G = G;
-		a->c1 = qmul(G3, i1g);
-		a->c2 = qmul(G2, i1g);
-		a->c3 = qmul(G, i1g);
-		a->c4 = i1g;
-		a->D1 = recip_q28((1 << 28) + kG4);
-		a->Ds = recip_q28((1 << 28) + qmul(KNEE_S, kG4));
-		a->P1 = qmul(G4, a->D1);
-		a->Ps = qmul(G4, a->Ds);
-		a->Qs = qmul(qmul(kG4, B2_Q31), a->Ds) >> 1;
-		a->kq8 = kq8;
-		/* passe-bas : (1 + k/2 + t k/2) / 8, t de 0 a 1 (1/2 avec l'accent) sur la derniere octave (notes/51 §3.2) */
-		a->og = acc ? OUT_ACC : OUT_GAIN;
-		if (a->mode == LP)
-			a->og = qmul((1 << 28) + (kq8 >> 1) + qmul(kq8 >> 1, (top == 4096 ? Q31MAX : top << 19) >> acc),
-				     a->og);
+		s32 kf = ACID_KF[i] + qmul(ACID_KF[i + 1] - ACID_KF[i], fr);
+		a->k = qmul(kf, r);                         /* k / 128, cf. le decalage dans la contre-reaction */
+		/* gain du filtre d'Open303 : ((k/17 - 1) r + 1)(1 + r)/16, compresse dans le fait des etages */
+		s32 t = qmul(qmul(kf, ACID_K17) - (1 << 28), r) + (1 << 28);
+		a->g = qmul(t, (r >> 1) + (1 << 30));
 	}
 }
+
+/* Genou de sortie du filtre d'Open303 (acid_out, ramene a notre echelle) : lineaire jusqu'a 1/2, puis
+ * 1 (l'echelle d'Open303 rend le tiers de la notre : fois 32, borne avec l'EMAC sature). x : le gain du filtre
+ * fois y4, Q27 ; rend Q31. */
 
 void acid_render(s32 *out, char *v)
 {
 	struct acid *a = track_of(v);
 	u32 ph = a->ph, dt = a->dt, invdt = a->invdt;
 	s32 m = a->m, xg = a->xg, og = a->og, mode = a->mode;
-	s32 s0 = a->s0, s1 = a->s1, s2 = a->s2, s3 = a->s3;
-	s32 G = a->G, c1 = a->c1, c2 = a->c2, c3 = a->c3, c4 = a->c4;
-	s32 P1 = a->P1, D1 = a->D1, Ps = a->Ps, Ds = a->Ds, Qs = a->Qs, kq8 = a->kq8;
-	int sh = mode == LP ? 7 : 4;
+	s32 y0 = a->y0, y1 = a->y1, y2 = a->y2, y3 = a->y3, y4 = a->y4;
+	s32 f1 = a->f1, fh = a->fh;
+	s32 n1 = a->n1, n2 = a->n2, n3 = a->n3, n4 = a->n4;
+	s32 b = a->b, k = a->k, g = a->g;
+	int sh = 4;
 
 	if (!V32(0x34) && !V32(0x38) && mag(V32(0x230)) < IDLE_LEVEL && mag(V32(0x234)) < IDLE_LEVEL) {
 		for (int j = 0; j < 32; j++)            /* voix muette : pas calculee */
@@ -286,30 +250,36 @@ void acid_render(s32 *out, char *v)
 		ph += dt;
 		if (mode == BYPASS) {
 			o = x;
+		} else if (mode == LP) {
+			s32 fb = qmul(k, y4) << 7;          /* k / 128 dans la table : fois 128 ici */
+			fh = qmac2(ACID_HPF_B, fb - f1, ACID_HPF_A, fh);
+			f1 = fb;
+			y0 = x - fh;
+			y1 += qmul(b << 1, y0 - y1 + y2);
+			y2 += qmul(b, y1 - (y2 << 1) + y3);
+			y3 += qmul(b, y2 - (y3 << 1) + y4);
+			y4 += qmul(b, y3 - (y4 << 1));
+			/* echelle de sortie d'Open303 : y4 x g, renforce d'un facteur 32 (l'echelle de son y4 est
+			 * 32 fois plus petite que la notre), borne avec l'EMAC sature, og par-dessus */
+			out[j] = qmul(og, shl_sat(qmul(g, y4), 5));
+			continue;
 		} else {
-			s32 S = qmac4(c1, s0, c2, s1, c3, s2, c4, s3);
-			s32 y = qmac2(P1, x, D1, S), fb, u, w, y0, y1, y2;
-			if (y >= T1 || y <= -T1) {              /* au-dela du coude : segment suivant, puis le plat */
-				int neg = y < 0;
-				y = qmac2(Ps, x, Ds, S) + (neg ? Qs : -Qs);
-				if (mag(y) < T2)
-					fb = qmul(KNEE_S, y) + (neg ? -B2_Q27 : B2_Q27);
-				else                    /* segment plat : contre-reaction constante, y inutile */
-					fb = neg ? -B3_Q27 : B3_Q27;
-			} else {
-				fb = y;
-			}
-			u = x - (qmul(kq8, fb) << 3);
-			w = qmul(u - s0, G);  y0 = w + s0;  s0 = y0 + w;
-			w = qmul(y0 - s1, G); y1 = w + s1;  s1 = y1 + w;
-			w = qmul(y1 - s2, G); y2 = w + s2;  s2 = y2 + w;
-			w = qmul(y2 - s3, G); y = w + s3;   s3 = y + w;
-			o = mode == LP ? y : u - (y0 << 2) + (y1 << 2) + (y1 << 1) - (y2 << 2) + y;
+			/* passe-haut : cascade TPT en serie avec les memes coefficients, melange binomial (1 - t)^4 ;
+			 * contre-reaction sur y4 sans le passe-haut 150 Hz (stable, k < 1 dans les tables) */
+			s32 fb = qmul(k, n4);
+			s32 u = x - fb;
+			s32 w = qmul(b, u - n1);  s32 t1 = n1 + w;  n1 = t1 + w;
+			w = qmul(b, t1 - n2);     s32 t2 = n2 + w; n2 = t2 + w;
+			w = qmul(b, t2 - n3);     s32 t3 = n3 + w; n3 = t3 + w;
+			w = qmul(b, t3 - n4);     s32 t4 = n4 + w; n4 = t4 + w;
+			o = u - (t1 << 2) + (t2 << 2) + (t2 << 1) - (t3 << 2) + t4;
 		}
 		out[j] = shl_sat(qmul(o, og), sh);
 	}
 	a->ph = ph;
-	a->s0 = s0; a->s1 = s1; a->s2 = s2; a->s3 = s3;
+	a->y0 = y0; a->y1 = y1; a->y2 = y2; a->y3 = y3; a->y4 = y4;
+	a->f1 = f1; a->fh = fh;
+	a->n1 = n1; a->n2 = n2; a->n3 = n3; a->n4 = n4;
 #ifdef HOST
 	host_amp(out, v);
 #else

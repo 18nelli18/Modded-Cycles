@@ -86,6 +86,56 @@ def tables_h():
     ]) + "\n"
 
 
+# --- tables du filtre (acid303_tables.h), modèle d'Open303 (RobinSchmidt/Open303, MIT) -------------------------
+# Le filtre en échelle du moteur est celui d'Open303 (rosic_Open303.cpp, rosic_TeeBeeFilter.h) : coefficients des
+# 4 étages et de la contre-réaction pour 10 Hz x 2^(i/16) (i = 0..174, 16,6 kHz), table de la résonance (13 x),
+# et passe-haut de la contre-réaction à 150 Hz. Les formules sont reprises d'Open303 ; Open303 ne descend qu'à
+# 200 Hz (son plancher), ici la table commence au plafond de notre machine (10 Hz, les 1/16 d'octave de G_TAB).
+NCUT = 175               # table des coefficients : 10 Hz x 2^(i/16), i = 0..174 (16,6 kHz)
+F0 = 10.0                # plancher de la table
+
+
+def kfull(fx):
+    """Open303, TB_303 : k (résonance à 100 %) pour fx = fc / fs / sqrt(2)."""
+    return fx * (fx * (fx * (fx * (fx * (fx + 7198.6997) - 5837.7917) - 476.47308) + 614.95611) + 213.87126) + 16.998792
+
+
+def b0f(fx):
+    """Open303, TB_303 : coefficient b0 des 4 étages."""
+    return (0.00045522346 + 6.1922189 * fx) / (1.0 + 12.358354 * fx + 4.4156345 * fx * fx)
+
+
+def tables_303():
+    """(tableaux, constantes) du filtre d'Open303, en entiers."""
+    lut = lambda f: [f(j / 16) for j in range(17)]            # 17 points sur la course d'un potard
+    fx = [F0 * 2 ** (i / 16) / FS / math.sqrt(2) for i in range(NCUT)]
+    x = math.exp(-2 * math.pi * 150.0 / FS)                  # passe-haut de la contre-réaction (150 Hz)
+    t = {
+        "ACID_B0": [q31(b0f(v)) for v in fx],
+        "ACID_KF": [q31(kfull(v) / 128) for v in fx],
+        "ACID_RES": lut(lambda v: q31((1 - math.exp(-3 * v)) / (1 - math.exp(-3)))),
+    }
+    k = {
+        "ACID_NCUT": NCUT,
+        "ACID_K17": q31(128 / (17 * 8)),
+        "ACID_HPF_B": q31(0.5 * (1 + x)),
+        "ACID_HPF_A": q31(x),
+    }
+    out = ["/* Tables du filtre d'Open303 (Robin Schmidt, licence MIT, LICENSE-Open303), écrites par",
+           " * tools/gen_acid.py : ne pas modifier à la main. */",
+           "#pragma once", ""]
+    for name, v in k.items():
+        out.append(f"#define {name} {v}")
+    out.append("")
+    for name, v in t.items():
+        out.append(f"static const s32 {name}[{len(v)}] = {{")
+        for i in range(0, len(v), 6):
+            out.append("\t" + ", ".join(str(x_) for x_ in v[i:i + 6]) + ",")
+        out.append("};")
+        out.append("")
+    return "\n".join(out[:-1]) + "\n"
+
+
 # --- images (notes/51 §3.4) ----------------------------------------------------------------------------------
 # Les machines ont 3 images (Bitmap, 1 bit par pixel, colonne par colonne, y = 0 en bas, notes/39 §2), construites au
 # démarrage dans 3 tableaux de 6 : la fiche 48 x 33 (écran MACHINES), la lettre 34 x 34 (écran MACHINES, 0x4001b6a6) et
@@ -295,6 +345,7 @@ def compile_machine(tmp, pay):
     """Le moteur, lié à pay (code, tables) et pay + BSS_OFF (états des 6 pistes). Renvoie (octets, symboles, fin du
     BSS)."""
     (tmp / "acid_tables.h").write_text(tables_h())
+    (tmp / "acid303_tables.h").write_text(tables_303())
     o, ld, elf, out = tmp / "acid.o", tmp / "link.ld", tmp / "acid.elf", tmp / "acid.bin"
     gx.run([gx.CROSS + "gcc", *CFLAGS, f"-I{tmp}", "-c", str(SRC / "acid.c"), "-o", str(o)])
     ld.write_text(LINK.format(code=pay, bss=pay + BSS_OFF))

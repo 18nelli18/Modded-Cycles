@@ -242,6 +242,7 @@ class Ref:
 
     def __init__(self, tmp):
         (tmp / "acid_tables.h").write_text(ga.tables_h())
+        (tmp / "acid303_tables.h").write_text(ga.tables_303())
         self.exe = tmp / "acid_ref"
         subprocess.run(["gcc", "-DHOST", "-O2", "-Wall", "-Wextra", "-Werror", f"-I{tmp}", str(ga.SRC / "acid.c"),
                         str(HERE / "acid_ref.c"), "-o", str(self.exe)], check=True)
