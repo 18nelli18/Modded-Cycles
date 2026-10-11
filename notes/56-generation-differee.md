@@ -146,3 +146,28 @@ combinaison maximale, SCRAMBLE compris. Test : `tools/emu/test_seq_gen_queue.py`
 Build local : 8 924 octets, 63 masques. Pas encore publié ni confirmé sur
 matériel. Les chaînes restent exclues ; ces preuves ne mesurent pas le temps
 réel d'exécution de l'interruption sur l'appareil.
+
+## 9. Retour matériel du test combiné (11/10/2026)
+
+AveyCole confirme le SCRAMBLE par pas et l'intro SEQUENCE GENIE dans le test
+`2026-10-11-test-2-genie-scramble-queue`. La préparation différée est acceptée,
+mais au changement de mesure aucune séquence n'est appliquée ; le texte
+revient à `Queue: build`. Ce résultat ne valide pas la génération différée.
+Le motif build est posé avant la préparation ; les annulations du hook ne
+l'actualisent pas. Il peut donc être un motif périmé, et ne permet pas encore
+d'attribuer le refus à la construction. Les gardes de frontière et les
+snapshots doivent être diagnostiqués séparément.
+
+Diagnostic de frontière préparé localement : chaque groupe conserve son motif
+propre, dont `Q: UI data`, `Q: UI locks`, `Q: play data`, `Q: play locks`
+pour les quatre comparaisons complètes. Le service UI affiche ce motif après
+annulation ; aucune API UI ajoutée au hook. Génération locale : 9 105 octets,
+63 masques. Ce diagnostic n'est pas inclus dans la promotion principale du
+SCRAMBLE par pas ; validation de la preuve et publication test distinctes.
+
+[FAIT en émulation] Les quatre mutations raw/pool/audio/audio-pool provoquent
+les quatre motifs attendus après service UI. Même contrôle sur la combinaison
+maximale ; registres/SR, absence d'écriture tardive, modes 0/1/2 et lecteur
+natif conservés. Catalogue test : 861 références, 153 tweaks, audit des caves
+et équivalence navigateur/Python réussis. Build de diagnostic destiné au
+matériel, pas un correctif confirmé de la cause de l'annulation.

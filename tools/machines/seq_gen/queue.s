@@ -122,6 +122,11 @@ sq_audio: .asciz "Queue: audio"
 sq_data: .asciz "Queue: data"
 sq_pool: .asciz "Queue: locks"
 sq_build: .asciz "Queue: build"
+sqh_pattern: .asciz "Q: pattern"
+sqh_ui_data: .asciz "Q: UI data"
+sqh_ui_pool: .asciz "Q: UI locks"
+sqh_audio_data: .asciz "Q: play data"
+sqh_audio_pool: .asciz "Q: play locks"
 sg_q_wait: .asciz "Queued"
 sg_q_cancel_text: .asciz "Cancel queue"
     .section .text.sg_q_detail,"ax"
@@ -362,15 +367,21 @@ sg_q_hook:
     movel sg_q_state,%d0
     cmpil #1,%d0
     bnew sqh_out
+    lea.l sq_transport,%a0
+    movel %a0,sg_q_reason
     movel 0x40a7883c,%d0
     cmpil #1,%d0
     bnew sqh_cancel
     moveal sg_obj,%a2
     tstl %a2
     beqw sqh_cancel
+    lea.l sqh_pattern,%a0
+    movel %a0,sg_q_reason
     moveal 0x40a7887c,%a4
     cmpal sg_q_pattern,%a4
     bnew sqh_cancel
+    lea.l sq_chain,%a0
+    movel %a0,sg_q_reason
     jsr sg_q_chain_ok
     tstl %d0
     beqw sqh_cancel
@@ -384,12 +395,16 @@ sg_q_hook:
     tstb %a0@(0,%d0:l)           | première lecture anticipée de cette piste
     bnew sqh_out
     moveq #0,%d0
+    lea.l sq_mode,%a0
+    movel %a0,sg_q_reason
     moveb %a4@(30667),%d0
     cmpl sg_q_mode,%d0
     bnew sqh_cancel
     jmp sqh_validate
     .section .text.sg_q_validate,"ax"
 sqh_validate:
+    lea.l sq_track,%a0
+    movel %a0,sg_q_reason
     moveal sg_q_track,%a0
     movel %a0@(16),%d0
     cmpl sg_q_raw,%d0
@@ -409,6 +424,8 @@ sqh_validate:
     addl %a1@(16),%d0
     cmpl sg_q_pool,%d0
     bnew sqh_cancel
+    lea.l sq_data,%a0
+    movel %a0,sg_q_reason
     jsr sg_q_timing
     tstl %d0
     beqw sqh_cancel
@@ -416,6 +433,9 @@ sqh_validate:
     bnew sqh_cancel
     cmpl sg_q_speed,%d2
     bnew sqh_cancel
+    | Motif exact conservé pour le service UI, sans appel UI depuis le hook.
+    lea.l sqh_ui_data,%a0
+    movel %a0,sg_q_reason
     | Annuler si une édition UI/audio a changé depuis le snapshot.
     lea.l %a2@(208),%a0
     moveal sg_q_raw,%a1
@@ -423,18 +443,24 @@ sqh_validate:
     jsr sg_q_equal
     tstl %d0
     bnew sqh_cancel
+    lea.l sqh_ui_pool,%a0
+    movel %a0,sg_q_reason
     lea.l %a2@(1008),%a0
     moveal sg_q_pool,%a1
     movel #4385,%d0
     jsr sg_q_equal
     tstl %d0
     bnew sqh_cancel
+    lea.l sqh_audio_data,%a0
+    movel %a0,sg_q_reason
     lea.l %a2@(Q_OLD_AUDIO),%a0
     moveal sg_q_audio,%a1
     movel #722,%d0
     jsr sg_q_equal
     tstl %d0
     bnew sqh_cancel
+    lea.l sqh_audio_pool,%a0
+    movel %a0,sg_q_reason
     | Le pool audio utilise le même format natif étendu, prouvé au lecteur.
     movel sg_q_index,%d2
     muluw #4385,%d2

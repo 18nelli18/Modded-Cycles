@@ -510,3 +510,7 @@ différé et SCRAMBLE par pas : MAIN OS
 Les nouveautés restent expérimentales et attendent l'essai matériel d'AveyCole.
 
 SCRAMBLE par pas principal : 1 383 octets dans 12 masques, quatre variantes principales ; valeurs fraîches, sauvegarde/chargement, retrait et combo panneau prouvés avec tous les mods compatibles. Confirmé sur machine par AveyCole le 11/10/2026.
+
+### Diagnostic de frontière différée (11/10/2026)
+
+Test 2 `2026-10-11-test-2-queue-boundary-reasons` : motifs distincts pour snapshots UI/audio et pools, plutôt que le motif build périmé. 9 105 octets, 63 masques ; preuves du lecteur natif et de la combinaison maximale, 861 références, audit et navigateur/Python réussis. Cause matérielle restante à identifier. Aucun changement du flasher principal.

@@ -24,7 +24,7 @@ def main():
     global OUT, STAMP
     if a.second:
         OUT=ROOT/"docs/flasher-test-2"
-        STAMP="2026-10-11-test-2-genie-scramble-queue"
+        STAMP="2026-10-11-test-2-queue-boundary-reasons"
     else:
         STAMP="2026-10-10-generator-sequence-only-test"
     OUT.mkdir(parents=True,exist_ok=True)
@@ -56,7 +56,7 @@ def main():
         for p in sorted((ROOT/"tweaks/model-cycles_OS1.13/experimental/scramble").glob("*.json")):
             tw["tweaks"].append(json.loads(p.read_text()))
         next(f for f in tw["features"] if f["id"]=="scale-gen")["queued"]={"scale-gen":"scale-gen-queued","scale-gen-st":"scale-gen-st-queued"}
-        tw["features"].append(dict(id="scramble",cat="sound",label="SCRAMBLE",status="experimental",requires="model-tg",variants=[dict(id="scramble",label=None)],with_={}))
+        tw["features"].append(dict(id="scramble",cat="sound",label="SCRAMBLE",status="tested",requires="model-tg",variants=[dict(id="scramble",label=None)],with_={}))
         tw["features"][-1].pop("with_")
     compact=copy.deepcopy(tw)
     compact["tweaks"],compact["shared"]=catalog.share(compact["tweaks"])
@@ -102,8 +102,8 @@ def main():
         descriptions[1]["label"]="Générateur de séquence"
         descriptions[0]["short"]="Ranges, rhythm/notes, mutation, Euclid and the SEQUENCE GENIE entry popup."
         descriptions[1]["short"]="Plages, rythme/notes, mutation, Euclid et cartouche d’entrée SEQUENCE GENIE."
-        descriptions[0]["note"]="Expanded menu confirmed working on hardware by AveyCole. Stop for Generate and Undo unless Queued generation is selected. Closing the page discards Undo and cancels a pending queue."
-        descriptions[1]["note"]="Menu étendu confirmé sur machine par AveyCole. Arrêtez pour Generate et Undo, sauf avec génération au prochain cycle. Fermer la page efface Undo et annule la préparation."
+        descriptions[0]["note"]="Boundary diagnostic build: a canceled queue identifies UI data, UI locks, playback data or playback locks. Expanded menu confirmed working on hardware by AveyCole. Stop for Generate and Undo unless Queued generation is selected. Closing the page discards Undo and cancels a pending queue."
+        descriptions[1]["note"]="Diagnostic de frontière : une annulation distingue données/locks UI et données/locks de lecture. Menu étendu confirmé sur machine par AveyCole. Arrêtez pour Generate et Undo, sauf avec génération au prochain cycle. Fermer la page efface Undo et annule la préparation."
     entries=iter(descriptions)
     files["app.js"]=re.sub(r'    "scale-gen": \{[^\n]+\},',lambda m:'    "scale-gen": '+json.dumps(next(entries),ensure_ascii=False)+',',files["app.js"])
     for name in ("index.html",):
@@ -118,8 +118,8 @@ def main():
         app=app.replace('    out.push(l);', '    if (f.queued && sel.queued) l += " — " + t("queued_generation");\n    out.push(l);')
         # Les textes SCRAMBLE sont ajoutés aux deux dictionnaires FEAT.
         entries=iter([
-            dict(label="SCRAMBLE",short="Randomize four machine controls now or freshly on a marked step, with a wider popup.",desc="SETTINGS + TRACK randomizes the active machine’s four controls. Hold one or more trigs first, then press SETTINGS and TRACK to toggle fresh SCRAMBLE locks on those steps. Each pass produces new values without changing the base sound. Works independently of Sequence Generator. Requires Model-TG. Sampler is excluded.",note="Step SCRAMBLE is experimental and emulation checked. Immediate SCRAMBLE has no Undo; repeat the held-trig combo to remove a step marker."),
-            dict(label="SCRAMBLE",short="Quatre contrôles tirés immédiatement ou à chaque passage sur un pas marqué, cartouche élargi.",desc="SETTINGS + TRACK tire les quatre contrôles machine. Maintenez d’abord un ou plusieurs trigs, puis SETTINGS et TRACK pour activer ou retirer les locks SCRAMBLE de ces pas. Chaque passage donne de nouvelles valeurs sans changer le son de base. Indépendant du générateur. Demande Model-TG. Sampler exclu.",note="SCRAMBLE par pas est expérimental, vérifié en émulation. Pas de Undo du tirage immédiat ; répétez le geste avec trig tenu pour retirer sa marque.")])
+            dict(label="SCRAMBLE",short="Randomize four machine controls now or freshly on a marked step, with a wider popup.",desc="SETTINGS + TRACK randomizes the active machine’s four controls. Hold one or more trigs first, then press SETTINGS and TRACK to toggle fresh SCRAMBLE locks on those steps. Each pass produces new values without changing the base sound. Works independently of Sequence Generator. Requires Model-TG. Sampler is excluded.",note="Step SCRAMBLE was hardware tested by AveyCole on 11 October 2026. Immediate SCRAMBLE has no Undo; repeat the held-trig combo to remove a step marker."),
+            dict(label="SCRAMBLE",short="Quatre contrôles tirés immédiatement ou à chaque passage sur un pas marqué, cartouche élargi.",desc="SETTINGS + TRACK tire les quatre contrôles machine. Maintenez d’abord un ou plusieurs trigs, puis SETTINGS et TRACK pour activer ou retirer les locks SCRAMBLE de ces pas. Chaque passage donne de nouvelles valeurs sans changer le son de base. Indépendant du générateur. Demande Model-TG. Sampler exclu.",note="SCRAMBLE par pas a été testé sur machine par AveyCole le 11/10/2026. Pas de Undo du tirage immédiat ; répétez le geste avec trig tenu pour retirer sa marque.")])
         app=re.sub(r'    "scale-gen": \{[^\n]+\},',lambda m:m[0]+'\n    "scramble": '+json.dumps(next(entries),ensure_ascii=False)+',',app)
         app=app.replace('const GUIDE_OF = {','const GUIDE_OF = {\n  "scramble": "scramble",')
         app=app.replace("function wirePicker() {",(ROOT/"tools/test_flasher_2_ui.js").read_text()+"\nfunction wirePicker() {")

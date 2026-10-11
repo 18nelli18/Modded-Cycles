@@ -237,7 +237,7 @@ def main():
             tweak["conflicts"]=["scale-gen","scale-gen-st","scale-gen-queued","scale-gen-st-queued"]
             tweak["conflicts"].remove(tweak["id"])
             tweak["name"]="Générateur — application au prochain cycle (expérimental)"
-            tweak["description"]=["Generate en lecture prépare une séquence privée, appliquée avant le premier trig du prochain cycle.","Première version : longueur/vitesse communes, une seule entrée dans la chaîne. Cancel queue annule ; Undo après arrêt.","Annulation si changement de pattern, édition concurrente, arrêt ou fermeture de page. tools/gen_seq_gen.py --queued, notes/56."]
+            tweak["description"]=["Generate en lecture prépare une séquence privée, appliquée avant le premier trig du prochain cycle.","Longueur/vitesse communes ou par piste, une seule entrée dans la chaîne. Cancel queue annule ; Undo après arrêt.","Annulation si changement de pattern, édition concurrente, arrêt ou fermeture de page. tools/gen_seq_gen.py --queued, notes/56."]
         build.apply_writes(stock,[base,tweak])
         path = out / ("49-" + tweak["id"] + ".json")
         text = json.dumps(tweak, indent=1, ensure_ascii=False) + "\n"

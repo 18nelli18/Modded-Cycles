@@ -178,6 +178,12 @@ def run(stock,base,tweak):
         boundary(r)
         assert bytes(r.u.mem_read(r.raw,722))==before and bytes(r.u.mem_read(PAT,30710))==audio and bytes(r.u.mem_read(r.praw,26310))==pool,mutation
         assert r.r32(r.s['sg_q_state']) in (0,3),mutation
+        expected={'raw':'Q: UI data','pool':'Q: UI locks','audio':'Q: play data','audio-pool':'Q: play locks','pattern':'Q: pattern','chain':'Queue: chain','stop':'Queue: transport','length':'Queue: data','speed':'Queue: data','raw-pointer':'Queue: track','pool-pointer':'Queue: track'}.get(mutation)
+        if expected:
+            r.call('sg_q_service')
+            r.u.reg_write(mk.UC_M68K_REG_D3,20);r.call('sg_q_label')
+            actual=r.string(r.u.reg_read(mk.UC_M68K_REG_A2))
+            assert actual==expected,(mutation,actual,expected)
     print('ok : éditions concurrentes, changement/chaîne, arrêt, fermeture, Cancel queue : aucune écriture tardive')
 
 def native_read(stock,base,tweak):
