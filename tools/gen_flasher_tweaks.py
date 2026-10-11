@@ -312,6 +312,16 @@ FEATURES = [
         ],
     },
     {
+        "id": "mchn-lfo",
+        "cat": "sound",
+        "label": "Machine comme destination du LFO",
+        "desc": "MCHN dans DEST : le LFO change la machine de la piste. Conserve la plage des machines ajoutées.",
+        "status": "experimental",
+        "credit": {"kind": "based", "who": "djd_oz"},
+        "license": "LICENSE-MCHN",
+        "variants": [{"file": "61-mchn-lfo", "label": None}],
+    },
+    {
         "id": "syntakt",
         "cat": "sound",
         "label": "Vrais moteurs du Syntakt",
