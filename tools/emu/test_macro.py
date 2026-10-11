@@ -802,8 +802,10 @@ def main():
         print("interface")
         tms.interface(ref_tg, fw, ["macro"], tg)
         print("son")
-        # la passerelle est la même : avec Model-TG, chaque modèle, la voix qui se tait, le modèle qui change
-        tg_todo = [c for c in todo if c[0][:2].strip().isdigit() or c[0].startswith(("DECAY 10", "modèle qui"))]
+        # la passerelle est la même : avec Model-TG, chaque modèle, la voix qui se tait, le modèle qui change, et le
+        # lo-fi (notes/55) de WAVE MAP et de FM, les plafonds, l'allégé <-> non allégé (ses tables relogées autrement)
+        tg_todo = [c for c in todo if c[0][:2].strip().isdigit()
+                   or c[0].startswith(("DECAY 10", "modèle qui", "WAVE_MAP FINE", "FM FINE", "plafond", "modèle allégé"))]
         exact(fw, ref, tg_todo if not args.quick else tg_todo[:1] + tg_todo[-3:], "MACRO avec Model-TG")
         stock_unchanged(ref_tg, fw, "Model-TG seul")
         like(alone, fw, "MACRO avec Model-TG = MACRO seule")

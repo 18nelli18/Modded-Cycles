@@ -186,7 +186,34 @@ Avec les moteurs du Syntakt ([50](50-macro-avec-moteurs-syntakt.md)), le code de
 
 ## 5. Preuve en émulation `[FAIT en émulation]`
 
-À COMPLÉTER.
+`tools/emu/test_macro.py`, comme en [43 §7](43-machine-macro.md) : le vrai code de l'OS (Unicorn), avec la charge utile
+telle que le crochet la reconstitue. La référence est Braids compilé pour l'ordinateur (`braids_ref.cc`), qui rend
+maintenant aussi à la demande (mode 1 : 48 kHz ou moins, par rendus de la taille donnée) ; le test calcule d'après cette
+note ce que la passerelle doit demander à chaque bloc (`settings`, `simulate` : rendu à 96 ou à 48 kHz, hauteur, pas
+du rendu, phase de l'échantillonneur-bloqueur, BITS), fait rendre la référence de la même façon et compare la sortie
+échantillon par échantillon.
+
+| Vérification | Seule (`macro`) | Avec Model-TG (`macro-tg`) |
+|---|---|---|
+| Son avant la chaîne d'ampli = Braids compilé pour l'ordinateur, rendu comme ci-dessus, échantillon par échantillon | **173 cas** : les 107 d'avant (FINE au centre) ; FINE 0, 21, 48, 63, 65, 90, 127 sur CSAW, TRIPLE SAW, WAVETABLES, WAVE MAP, WAVE PARAPHONIC, DIGITAL MODULATION, FM, PLUCKED ; FINE qui balaie 0 → 127 et 127 → 0 pendant la note ; FINE fractionnaire (37,4 et 64,6) ; plafonds (TRIPLE SAW notes 80, 91,5 et 100 avec FINE 0, CSAW note 120, WAVE PARAPHONIC note 105) ; note qui franchit le plafond ; modèle allégé ↔ non allégé pendant la note | **72 cas** : les 47 modèles, WAVE MAP et FM aux 7 valeurs de FINE, les plafonds, l'allégé ↔ non allégé, la voix qui se tait, le modèle qui change |
+| Blocs rendus à 48 kHz ou moins / dont plus lents (RATE) / échantillonnés-bloqués / BITS | 7 369 / 2 582 / 1 548 / 2 674 | 2 857 / 498 / 614 / 528 |
+| Voix calculée exactement quand l'OS l'impose ; sinon sortie nulle et aucun appel de Braids | 17 364 blocs, dont 339 muets | 9 146 blocs, dont 339 muets |
+| Rendus de Braids : 3, 3 puis 2 de 24 échantillons par bloc à 96 kHz, 12 échantillons à 48 kHz (4 000 rendus par seconde dans les deux cas, comme le module) | ok | ok |
+| Modèles allégés : spectre à 48 kHz contre 96 kHz puis filtre demi-bande (tiers d'octave : médiane, 95 %, niveau ; seuils 1,5, 4 et 2 dB) | au pire 1,1 / 2,4 / 0,6 dB (§2) | même code |
+| Démarrage, interface, chaîne d'ampli, machines d'origine identiques, machine locks, 6 pistes MACRO, pistes mêlées (comme [43 §7](43-machine-macro.md)) | ok, fin de l'image `0x401c3a58` | ok, fin `0x401d9374` ; sortie de la piste = MACRO seule |
+| `--with 6ch-usbup,model-tg-st,sample-preview-st,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim` | — | ok : démarrage, machines d'origine identiques aux mêmes mods sans MACRO, sortie de MACRO identique, machine locks, pistes mêlées |
+
+Résultat : **TOUT OK** (73 vérifications).
+
+Avec les moteurs du Syntakt, `tools/emu/test_macro_syntakt.py` ([50 §6](50-macro-avec-moteurs-syntakt.md)) : les deux
+versions (5 moteurs, seuls et avec Model-TG) **TOUT OK** (66 vérifications) ; avec `--with 6ch-usbup,trig-hold,arp,
+tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim` **TOUT OK** (14) ; la même liste avec
+`model-tg-st,sample-preview-st` **TOUT OK** (14). La comparaison de la piste MACRO avec MACRO seule y ajoute 4 réglages
+lo-fi (FINE 16 sur WAVE MAP, 40 sur TRIPLE SAW, 30 sur FM, 100 sur CSAW) : la passerelle y est liée à une autre adresse,
+avec d'autres relocalisations. Fin de l'image décompressée : `0x401e5104` seuls, `0x401fa98d` avec Model-TG.
+
+Flasher (`tools/webflash_smoke.sh` avec les deux fichiers officiels, après la fusion de main) : **ALL OK**, 758
+vérifications ; les 627 combinaisons de l'échantillon construites dans la page, chacune à son empreinte.
 
 ## 6. Charge
 
