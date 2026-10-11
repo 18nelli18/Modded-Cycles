@@ -185,7 +185,7 @@ def writes(stock, both, live):
         clash = []
         for f in sorted(DEV.glob("*.json")):
             o = json.loads(f.read_text(encoding="utf-8")) if f.name != "device.json" else None
-            if o is None or o["id"] in (both["id"], live["id"]):
+            if o is None or o["id"] in (both["id"], live["id"]) or o["id"] in t.get("conflicts", []) or t["id"] in o.get("conflicts", []):
                 continue
             for w in o["writes"]:
                 a, n = w["off"] + BASE, bytes.fromhex(w["new"])

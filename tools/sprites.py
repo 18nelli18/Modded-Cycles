@@ -132,3 +132,4 @@ def redirect_write(mask_va):
 def zone(mask_va):
     """(va, taille) de la zone libérée."""
     return mask_va, MASKS[mask_va][0]
+

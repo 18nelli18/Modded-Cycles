@@ -479,7 +479,7 @@ def main():
             raise SystemExit("!! --cycles : ce n'est pas le MAIN OS officiel 1.13 (SHA-256 de la section 3 différent)")
         e, n_inv = verify_inventory(stock)
         errs += e
-    text = render(tweaks, zones, rows, warns) + "\n"
+    text = render(tweaks, zones, rows, warns).rstrip() + "\n"
     for w in warns:
         print(f"  ? {w}")
     for e in errs:

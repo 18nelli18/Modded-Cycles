@@ -6,10 +6,10 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 153 tweaks, 16 319 écritures.
-- Masques de sprites libérables : 164 (35 960 o), dont 40 pris (15 136 o) et **124 libres (20 824 o)**.
-- Crochets sur l'OS : 88 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
-- Pointeurs réécrits : 57 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
+- 164 tweaks, 16 966 écritures.
+- Masques de sprites libérables : 164 (35 960 o), dont 111 pris (26 492 o) et **53 libres (9 468 o)**.
+- Crochets sur l'OS : 92 adresses détournées, dont 64 à l'identique par des mods de familles différentes.
+- Pointeurs réécrits : 62 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 134 tweaks ; place restante au §3.
 
 ## 1. Masques de sprites libérés
@@ -20,12 +20,12 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x4016b6f8` | `0x400b133e` | pris (plein) | chord-keys (376 o) |
-| `0x4016b9e8` | `0x400b131c` | pris (374/376 o) | chord-keys (374 o) |
-| `0x40171f30` | `0x400b05a0` | pris (plein) | chord-keys (376 o) |
-| `0x40172608` | `0x400b0544` | pris (362/376 o) | chord-keys (362 o) |
-| `0x40179730` | `0x400af64a` | pris (373/376 o) | chord-keys (373 o) |
-| `0x40182b38` | `0x400adfda` | pris (plein) | chord-keys (376 o) |
+| `0x4016b6f8` | `0x400b133e` | pris (plein) | chord-keys (376 o), scale-gen (342 o), scale-gen-queued (374 o), scale-gen-st (342 o), scale-gen-st-queued (374 o) |
+| `0x4016b9e8` | `0x400b131c` | pris (374/376 o) | chord-keys (374 o), scale-gen (300 o), scale-gen-queued (342 o), scale-gen-st (300 o), scale-gen-st-queued (342 o) |
+| `0x40171f30` | `0x400b05a0` | pris (plein) | chord-keys (376 o), scale-gen (288 o), scale-gen-queued (306 o), scale-gen-st (288 o), scale-gen-st-queued (306 o) |
+| `0x40172608` | `0x400b0544` | pris (362/376 o) | chord-keys (362 o), scale-gen-queued (304 o), scale-gen-st-queued (304 o) |
+| `0x40179730` | `0x400af64a` | pris (373/376 o) | chord-keys (373 o), scale-gen-queued (300 o), scale-gen-st-queued (300 o) |
+| `0x40182b38` | `0x400adfda` | pris (plein) | chord-keys (376 o), scale-gen-queued (288 o), scale-gen-st-queued (288 o) |
 | `0x40182e28` | `0x400adfba` | pris (plein) | chord-keys (376 o) |
 | `0x40183118` | `0x400adf9e` | pris (374/376 o) | chord-keys (374 o), sample-preview (292 o), sample-preview-st (292 o) |
 | `0x40185018` | `0x400adba8` | pris (372/376 o) | chord-keys (372 o), sample-preview (300 o), sample-preview-st (300 o) |
@@ -42,20 +42,20 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x401904b4` | `0x400ac784` | pris (370/376 o) | multiline-browser (370 o) |
 | `0x40192734` | `0x400ac2b2` | pris (318/376 o) | trigless-dim (318 o) |
 
-### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 0 pris, 42 libres (8 064 o)
+### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 8 pris, 34 libres (6 528 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x40152d38` | `0x400b9726` | libre | |
-| `0x401592bc` | `0x400b7404` | libre | |
-| `0x4015943c` | `0x400b73e4` | libre | |
-| `0x4015f38c` | `0x400b504a` | libre | |
-| `0x40165fec` | `0x400b28b4` | libre | |
+| `0x40152d38` | `0x400b9726` | pris (156/192 o) | scale-gen (156 o), scale-gen-queued (156 o), scale-gen-st (156 o), scale-gen-st-queued (156 o) |
+| `0x401592bc` | `0x400b7404` | pris (148/192 o) | scale-gen (148 o), scale-gen-queued (148 o), scale-gen-st (148 o), scale-gen-st-queued (148 o) |
+| `0x4015943c` | `0x400b73e4` | pris (142/192 o) | scale-gen (142 o), scale-gen-queued (142 o), scale-gen-st (142 o), scale-gen-st-queued (142 o) |
+| `0x4015f38c` | `0x400b504a` | pris (142/192 o) | scale-gen (140 o), scale-gen-queued (142 o), scale-gen-st (140 o), scale-gen-st-queued (142 o) |
+| `0x40165fec` | `0x400b28b4` | pris (140/192 o) | scale-gen-queued (140 o), scale-gen-st-queued (140 o) |
 | `0x40168a84` | `0x400b1bc0` | libre | |
-| `0x40168da4` | `0x400b1b32` | libre | |
+| `0x40168da4` | `0x400b1b32` | pris (150/192 o) | scramble (150 o), scramble-gen (150 o), scramble-gen-queued (150 o), scramble-st (150 o), scramble-st-gen (150 o), scramble-st-gen-queued (150 o) |
 | `0x4016bcd8` | `0x400b12fe` | libre | |
-| `0x4016dab8` | `0x400b0f78` | libre | |
-| `0x4016fae8` | `0x400b0b20` | libre | |
+| `0x4016dab8` | `0x400b0f78` | pris (146/192 o) | scramble (146 o), scramble-gen (146 o), scramble-gen-queued (146 o), scramble-st (146 o), scramble-st-gen (146 o), scramble-st-gen-queued (146 o) |
+| `0x4016fae8` | `0x400b0b20` | pris (134/192 o) | scramble (134 o), scramble-gen (134 o), scramble-gen-queued (134 o), scramble-st (134 o), scramble-st-gen (134 o), scramble-st-gen-queued (134 o) |
 | `0x40170c48` | `0x400b08da` | libre | |
 | `0x40171a48` | `0x400b06ec` | libre | |
 | `0x40172a68` | `0x400b0508` | libre | |
@@ -89,11 +89,11 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x4019089c` | `0x400ac748` | libre | |
 | `0x40192a24` | `0x400ac292` | libre | |
 
-### 35×35 : 19 masques de 280 o (copie gardée `0x4014a660`) : 15 pris, 4 libres (1 120 o)
+### 35×35 : 19 masques de 280 o (copie gardée `0x4014a660`) : 16 pris, 3 libres (840 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x4014ab5c` | `0x400bb120` | pris (152/280 o) | track-filter (152 o) |
+| `0x4014ab5c` | `0x400bb120` | pris (plein) | scale-gen-queued (280 o), scale-gen-st-queued (280 o), track-filter (152 o) |
 | `0x4014b85c` | `0x400bae4e` | pris (148/280 o) | track-filter (148 o) |
 | `0x4014d74c` | `0x400bac28` | pris (164/280 o) | track-filter (164 o) |
 | `0x401542f8` | `0x400b91d8` | pris (162/280 o) | track-filter (162 o) |
@@ -108,68 +108,68 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x40163fb8` | `0x400b34c8` | pris (147/280 o) | track-filter (147 o) |
 | `0x4016616c` | `0x400b2898` | pris (164/280 o) | track-filter (164 o) |
 | `0x40166760` | `0x400b272e` | pris (208/280 o) | track-filter (208 o) |
-| `0x40167c50` | `0x400b211e` | libre | |
+| `0x40167c50` | `0x400b211e` | pris (114/280 o) | midi-bth-three-state (114 o) |
 | `0x401696a0` | `0x400b1540` | libre | |
 | `0x401699a8` | `0x400b1500` | libre | |
 | `0x4016aa28` | `0x400b1480` | libre | |
 
-### 34×34 : 14 masques de 272 o (copie gardée `0x4016bfc8`) : 1 pris, 13 libres (3 536 o)
+### 34×34 : 14 masques de 272 o (copie gardée `0x4016bfc8`) : 13 pris, 1 libres (272 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x4016f8c8` | `0x400b0b3c` | libre | |
-| `0x40173848` | `0x400b0350` | libre | |
-| `0x401780a8` | `0x400af946` | libre | |
-| `0x401784e8` | `0x400af832` | libre | |
-| `0x401835b8` | `0x400adedc` | libre | |
-| `0x40184df8` | `0x400adbc8` | libre | |
-| `0x40185308` | `0x400adb8c` | libre | |
-| `0x40185f48` | `0x400ad9c4` | libre | |
-| `0x40186238` | `0x400ad988` | libre | |
-| `0x40189618` | `0x400ad364` | libre | |
-| `0x4018af88` | `0x400ad18a` | libre | |
-| `0x4018b1a8` | `0x400ad16e` | libre | |
+| `0x4016f8c8` | `0x400b0b3c` | pris (266/272 o) | scale-gen (266 o), scale-gen-queued (260 o), scale-gen-st (266 o), scale-gen-st-queued (260 o) |
+| `0x40173848` | `0x400b0350` | pris (260/272 o) | scale-gen (260 o), scale-gen-queued (250 o), scale-gen-st (260 o), scale-gen-st-queued (250 o) |
+| `0x401780a8` | `0x400af946` | pris (250/272 o) | scale-gen (250 o), scale-gen-queued (248 o), scale-gen-st (250 o), scale-gen-st-queued (248 o) |
+| `0x401784e8` | `0x400af832` | pris (246/272 o) | scale-gen (246 o), scale-gen-queued (246 o), scale-gen-st (246 o), scale-gen-st-queued (246 o) |
+| `0x401835b8` | `0x400adedc` | pris (240/272 o) | scale-gen (240 o), scale-gen-queued (240 o), scale-gen-st (240 o), scale-gen-st-queued (240 o) |
+| `0x40184df8` | `0x400adbc8` | pris (236/272 o) | scale-gen (232 o), scale-gen-queued (236 o), scale-gen-st (232 o), scale-gen-st-queued (236 o) |
+| `0x40185308` | `0x400adb8c` | pris (232/272 o) | scale-gen-queued (232 o), scale-gen-st-queued (232 o) |
+| `0x40185f48` | `0x400ad9c4` | pris (232/272 o) | scale-gen-queued (232 o), scale-gen-st-queued (232 o) |
+| `0x40186238` | `0x400ad988` | pris (228/272 o) | scale-gen-queued (228 o), scale-gen-st-queued (228 o) |
+| `0x40189618` | `0x400ad364` | pris (266/272 o) | scramble (266 o), scramble-gen (266 o), scramble-gen-queued (266 o), scramble-st (266 o), scramble-st-gen (266 o), scramble-st-gen-queued (266 o) |
+| `0x4018af88` | `0x400ad18a` | pris (200/272 o) | scale-gen-queued (200 o), scale-gen-st-queued (200 o) |
+| `0x4018b1a8` | `0x400ad16e` | pris (222/272 o) | scramble (222 o), scramble-gen (222 o), scramble-gen-queued (222 o), scramble-st (222 o), scramble-st-gen (222 o), scramble-st-gen-queued (222 o) |
 | `0x4018ff64` | `0x400ac7fc` | libre | |
 | `0x40192ba4` | `0x400ac276` | pris (132/272 o) | midi-live-both (132 o) |
 
-### 27×27 : 24 masques de 108 o (copie gardée `0x4014a550`) : 0 pris, 24 libres (2 592 o)
+### 27×27 : 24 masques de 108 o (copie gardée `0x4014a550`) : 22 pris, 2 libres (216 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x4014a890` | `0x400bb1fc` | libre | |
-| `0x4014aa34` | `0x400bb178` | libre | |
-| `0x4014af84` | `0x400bb044` | libre | |
-| `0x4014b05c` | `0x400bb028` | libre | |
-| `0x4014b5b4` | `0x400baf2e` | libre | |
-| `0x4014b784` | `0x400bae6e` | libre | |
-| `0x4014e608` | `0x400ba8f2` | libre | |
-| `0x40152f88` | `0x400b96ce` | libre | |
-| `0x40159a04` | `0x400b71ea` | libre | |
-| `0x40159adc` | `0x400b71ce` | libre | |
-| `0x4015b820` | `0x400b66a8` | libre | |
-| `0x4015bf24` | `0x400b6476` | libre | |
-| `0x4015c9a4` | `0x400b6232` | libre | |
-| `0x4015fb6c` | `0x400b4e5a` | libre | |
-| `0x40160a94` | `0x400b488c` | libre | |
-| `0x401617a8` | `0x400b4386` | libre | |
-| `0x40161880` | `0x400b4366` | libre | |
-| `0x401629dc` | `0x400b3d96` | libre | |
-| `0x40163a60` | `0x400b362e` | libre | |
-| `0x40167900` | `0x400b21ac` | libre | |
-| `0x40167aa8` | `0x400b216c` | libre | |
-| `0x40168440` | `0x400b1d7c` | libre | |
+| `0x4014a890` | `0x400bb1fc` | pris (plein) | scale-gen (108 o), scale-gen-queued (108 o), scale-gen-st (108 o), scale-gen-st-queued (108 o) |
+| `0x4014aa34` | `0x400bb178` | pris (106/108 o) | scale-gen (106 o), scale-gen-queued (106 o), scale-gen-st (106 o), scale-gen-st-queued (106 o) |
+| `0x4014af84` | `0x400bb044` | pris (106/108 o) | scale-gen (106 o), scale-gen-queued (46 o), scale-gen-st (106 o), scale-gen-st-queued (46 o) |
+| `0x4014b05c` | `0x400bb028` | pris (44/108 o) | scale-gen (34 o), scale-gen-queued (44 o), scale-gen-st (34 o), scale-gen-st-queued (44 o) |
+| `0x4014b5b4` | `0x400baf2e` | pris (42/108 o) | scale-gen (32 o), scale-gen-queued (42 o), scale-gen-st (32 o), scale-gen-st-queued (42 o) |
+| `0x4014b784` | `0x400bae6e` | pris (40/108 o) | scale-gen (32 o), scale-gen-queued (40 o), scale-gen-st (32 o), scale-gen-st-queued (40 o) |
+| `0x4014e608` | `0x400ba8f2` | pris (34/108 o) | scale-gen (28 o), scale-gen-queued (34 o), scale-gen-st (28 o), scale-gen-st-queued (34 o) |
+| `0x40152f88` | `0x400b96ce` | pris (32/108 o) | scale-gen (28 o), scale-gen-queued (32 o), scale-gen-st (28 o), scale-gen-st-queued (32 o) |
+| `0x40159a04` | `0x400b71ea` | pris (32/108 o) | scale-gen (22 o), scale-gen-queued (32 o), scale-gen-st (22 o), scale-gen-st-queued (32 o) |
+| `0x40159adc` | `0x400b71ce` | pris (28/108 o) | scale-gen (20 o), scale-gen-queued (28 o), scale-gen-st (20 o), scale-gen-st-queued (28 o) |
+| `0x4015b820` | `0x400b66a8` | pris (28/108 o) | scale-gen (18 o), scale-gen-queued (28 o), scale-gen-st (18 o), scale-gen-st-queued (28 o) |
+| `0x4015bf24` | `0x400b6476` | pris (28/108 o) | scale-gen (12 o), scale-gen-queued (28 o), scale-gen-st (12 o), scale-gen-st-queued (28 o) |
+| `0x4015c9a4` | `0x400b6232` | pris (22/108 o) | scale-gen-queued (22 o), scale-gen-st-queued (22 o) |
+| `0x4015fb6c` | `0x400b4e5a` | pris (20/108 o) | scale-gen-queued (20 o), scale-gen-st-queued (20 o) |
+| `0x40160a94` | `0x400b488c` | pris (106/108 o) | scramble (106 o), scramble-gen (106 o), scramble-gen-queued (106 o), scramble-st (106 o), scramble-st-gen (106 o), scramble-st-gen-queued (106 o) |
+| `0x401617a8` | `0x400b4386` | pris (90/108 o) | scramble (90 o), scramble-gen (90 o), scramble-gen-queued (90 o), scramble-st (90 o), scramble-st-gen (90 o), scramble-st-gen-queued (90 o) |
+| `0x40161880` | `0x400b4366` | pris (70/108 o) | scramble (70 o), scramble-gen (70 o), scramble-gen-queued (70 o), scramble-st (70 o), scramble-st-gen (70 o), scramble-st-gen-queued (70 o) |
+| `0x401629dc` | `0x400b3d96` | pris (56/108 o) | scramble (56 o), scramble-gen (56 o), scramble-gen-queued (56 o), scramble-st (56 o), scramble-st-gen (56 o), scramble-st-gen-queued (56 o) |
+| `0x40163a60` | `0x400b362e` | pris (20/108 o) | scramble (20 o), scramble-gen (20 o), scramble-gen-queued (20 o), scramble-st (20 o), scramble-st-gen (20 o), scramble-st-gen-queued (20 o) |
+| `0x40167900` | `0x400b21ac` | pris (11/108 o) | scramble (11 o), scramble-gen (11 o), scramble-gen-queued (11 o), scramble-st (11 o), scramble-st-gen (11 o), scramble-st-gen-queued (11 o) |
+| `0x40167aa8` | `0x400b216c` | pris (18/108 o) | scale-gen-queued (18 o), scale-gen-st-queued (18 o) |
+| `0x40168440` | `0x400b1d7c` | pris (12/108 o) | scale-gen-queued (12 o), scale-gen-st-queued (12 o) |
 | `0x401688b4` | `0x400b1c5e` | libre | |
 | `0x401698d0` | `0x400b1522` | libre | |
 
-### 31×22 : 18 masques de 124 o (copie gardée `0x4016e980`) : 0 pris, 18 libres (2 232 o)
+### 31×22 : 18 masques de 124 o (copie gardée `0x4016e980`) : 5 pris, 13 libres (1 612 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x4016f7d0` | `0x400b0b5c` | libre | |
-| `0x4016fd60` | `0x400b0ae4` | libre | |
-| `0x40172510` | `0x400b0564` | libre | |
-| `0x40178888` | `0x400af7f6` | libre | |
-| `0x40179a20` | `0x400af62e` | libre | |
+| `0x4016f7d0` | `0x400b0b5c` | pris (122/124 o) | scale-gen (111 o), scale-gen-queued (122 o), scale-gen-st (111 o), scale-gen-st-queued (122 o) |
+| `0x4016fd60` | `0x400b0ae4` | pris (112/124 o) | scale-gen-queued (112 o), scale-gen-st-queued (112 o) |
+| `0x40172510` | `0x400b0564` | pris (112/124 o) | scale-gen-queued (112 o), scale-gen-st-queued (112 o) |
+| `0x40178888` | `0x400af7f6` | pris (111/124 o) | scale-gen-queued (111 o), scale-gen-st-queued (111 o) |
+| `0x40179a20` | `0x400af62e` | pris (112/124 o) | scramble (112 o), scramble-gen (112 o), scramble-gen-queued (112 o), scramble-st (112 o), scramble-st-gen (112 o), scramble-st-gen-queued (112 o) |
 | `0x4017a4d4` | `0x400af43c` | libre | |
 | `0x401837d8` | `0x400adeba` | libre | |
 | `0x401871a0` | `0x400ad77e` | libre | |
@@ -184,48 +184,48 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x40194ad4` | `0x400abeaa` | libre | |
 | `0x40195a7c` | `0x400abc76` | libre | |
 
-### 26×26 : 14 masques de 104 o (copie gardée `0x4014b4e4`) : 0 pris, 14 libres (1 456 o)
+### 26×26 : 14 masques de 104 o (copie gardée `0x4014b4e4`) : 14 pris, 0 libres (0 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x401573cc` | `0x400b83da` | libre | |
-| `0x40160d9c` | `0x400b4850` | libre | |
-| `0x40162ab4` | `0x400b3d76` | libre | |
-| `0x401630e4` | `0x400b3b2e` | libre | |
-| `0x401638c0` | `0x400b366a` | libre | |
-| `0x40163990` | `0x400b364a` | libre | |
-| `0x40163b38` | `0x400b360e` | libre | |
-| `0x40166690` | `0x400b274c` | libre | |
-| `0x401679d8` | `0x400b218a` | libre | |
-| `0x40167b80` | `0x400b2144` | libre | |
-| `0x40168c4c` | `0x400b1b80` | libre | |
-| `0x40168fb4` | `0x400b1a72` | libre | |
-| `0x40179c98` | `0x400af5f2` | libre | |
-| `0x40186168` | `0x400ad9a4` | libre | |
+| `0x401573cc` | `0x400b83da` | pris (plein) | scale-gen (104 o), scale-gen-queued (104 o), scale-gen-st (104 o), scale-gen-st-queued (104 o) |
+| `0x40160d9c` | `0x400b4850` | pris (99/104 o) | scale-gen (99 o), scale-gen-queued (99 o), scale-gen-st (99 o), scale-gen-st-queued (99 o) |
+| `0x40162ab4` | `0x400b3d76` | pris (96/104 o) | scale-gen (96 o), scale-gen-queued (96 o), scale-gen-st (96 o), scale-gen-st-queued (96 o) |
+| `0x401630e4` | `0x400b3b2e` | pris (96/104 o) | scale-gen (96 o), scale-gen-queued (96 o), scale-gen-st (96 o), scale-gen-st-queued (96 o) |
+| `0x401638c0` | `0x400b366a` | pris (94/104 o) | scale-gen (94 o), scale-gen-queued (94 o), scale-gen-st (94 o), scale-gen-st-queued (94 o) |
+| `0x40163990` | `0x400b364a` | pris (92/104 o) | scale-gen (92 o), scale-gen-queued (90 o), scale-gen-st (92 o), scale-gen-st-queued (90 o) |
+| `0x40163b38` | `0x400b360e` | pris (84/104 o) | scale-gen (84 o), scale-gen-queued (84 o), scale-gen-st (84 o), scale-gen-st-queued (84 o) |
+| `0x40166690` | `0x400b274c` | pris (80/104 o) | scale-gen (80 o), scale-gen-queued (80 o), scale-gen-st (80 o), scale-gen-st-queued (80 o) |
+| `0x401679d8` | `0x400b218a` | pris (76/104 o) | scale-gen (60 o), scale-gen-queued (76 o), scale-gen-st (60 o), scale-gen-st-queued (76 o) |
+| `0x40167b80` | `0x400b2144` | pris (72/104 o) | scale-gen (60 o), scale-gen-queued (72 o), scale-gen-st (60 o), scale-gen-st-queued (72 o) |
+| `0x40168c4c` | `0x400b1b80` | pris (64/104 o) | scale-gen (46 o), scale-gen-queued (64 o), scale-gen-st (46 o), scale-gen-st-queued (64 o) |
+| `0x40168fb4` | `0x400b1a72` | pris (60/104 o) | scale-gen (44 o), scale-gen-queued (60 o), scale-gen-st (44 o), scale-gen-st-queued (60 o) |
+| `0x40179c98` | `0x400af5f2` | pris (60/104 o) | scale-gen (40 o), scale-gen-queued (60 o), scale-gen-st (40 o), scale-gen-st-queued (60 o) |
+| `0x40186168` | `0x400ad9a4` | pris (50/104 o) | scale-gen (40 o), scale-gen-queued (50 o), scale-gen-st (40 o), scale-gen-st-queued (50 o) |
 
-### 46×31 : 7 masques de 184 o (copie gardée `0x4016be58`) : 0 pris, 7 libres (1 288 o)
-
-| masque | constante | état | mods (octets écrits) |
-|---|---|---|---|
-| `0x40170ad8` | `0x400b08f6` | libre | |
-| `0x40171bc8` | `0x400b06d0` | libre | |
-| `0x401728f8` | `0x400b0528` | libre | |
-| `0x40179140` | `0x400af6c2` | libre | |
-| `0x40184988` | `0x400adc20` | libre | |
-| `0x40185648` | `0x400ada58` | libre | |
-| `0x401857f8` | `0x400ada1c` | libre | |
-
-### 41×41 : 1 masques de 328 o (copie gardée `0x40187298`) : 0 pris, 1 libres (328 o)
+### 46×31 : 7 masques de 184 o (copie gardée `0x4016be58`) : 7 pris, 0 libres (0 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x4018d918` | `0x400acd1a` | libre | |
+| `0x40170ad8` | `0x400b08f6` | pris (182/184 o) | scale-gen (182 o), scale-gen-queued (182 o), scale-gen-st (182 o), scale-gen-st-queued (182 o) |
+| `0x40171bc8` | `0x400b06d0` | pris (178/184 o) | scale-gen (178 o), scale-gen-queued (178 o), scale-gen-st (178 o), scale-gen-st-queued (178 o) |
+| `0x401728f8` | `0x400b0528` | pris (176/184 o) | scale-gen (176 o), scale-gen-queued (176 o), scale-gen-st (176 o), scale-gen-st-queued (176 o) |
+| `0x40179140` | `0x400af6c2` | pris (170/184 o) | scale-gen (170 o), scale-gen-queued (170 o), scale-gen-st (170 o), scale-gen-st-queued (170 o) |
+| `0x40184988` | `0x400adc20` | pris (170/184 o) | scale-gen (170 o), scale-gen-queued (170 o), scale-gen-st (170 o), scale-gen-st-queued (170 o) |
+| `0x40185648` | `0x400ada58` | pris (166/184 o) | scale-gen (166 o), scale-gen-queued (166 o), scale-gen-st (166 o), scale-gen-st-queued (166 o) |
+| `0x401857f8` | `0x400ada1c` | pris (162/184 o) | scale-gen (162 o), scale-gen-queued (162 o), scale-gen-st (162 o), scale-gen-st-queued (162 o) |
 
-### 52×22 : 1 masques de 208 o (copie gardée `0x4014bfe4`) : 0 pris, 1 libres (208 o)
+### 41×41 : 1 masques de 328 o (copie gardée `0x40187298`) : 1 pris, 0 libres (0 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x4016ea78` | `0x400b0d50` | libre | |
+| `0x4018d918` | `0x400acd1a` | pris (326/328 o) | scale-gen (326 o), scale-gen-queued (326 o), scale-gen-st (326 o), scale-gen-st-queued (326 o) |
+
+### 52×22 : 1 masques de 208 o (copie gardée `0x4014bfe4`) : 1 pris, 0 libres (0 o)
+
+| masque | constante | état | mods (octets écrits) |
+|---|---|---|---|
+| `0x4016ea78` | `0x400b0d50` | pris (206/208 o) | scale-gen (206 o), scale-gen-queued (201 o), scale-gen-st (206 o), scale-gen-st-queued (201 o) |
 
 ### Masques 0xFF redirigés vers `0x40154ae4` (notes/14 §5)
 
@@ -408,8 +408,11 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | adresse | origine (hex) | détour | vers | mods | notes |
 |---|---|---|---|---|---|
 | `0x400004b2` | `4feffff048d700f0` | jmp | masque `0x4016cae8` +0x0 | macro, sdvintage-7th, sdvintage-exact, syntakt-* (32/32), syntakt-*-macro (31/31), syntakt-vintage | notes/17, notes/18, notes/36 |
+| `0x4000154a` | `4eb940044df8` | jsr | masque `0x40167c50` +0x60 | midi-bth-three-state |  |
 | `0x4000154a` | `4eb940044df8` | jsr | masque `0x40192ba4` +0x70 `midi_gate` | midi-live-both | notes/53 |
+| `0x4000156a` | `4eb940044df8` | jsr | masque `0x40167c50` +0x60 | midi-bth-three-state |  |
 | `0x4000156a` | `4eb940044df8` | jsr | masque `0x40192ba4` +0x70 `midi_gate` | midi-live-both | notes/53 |
+| `0x40001590` | `4eb940044df8` | jsr | masque `0x40167c50` +0x60 | midi-bth-three-state |  |
 | `0x40001590` | `4eb940044df8` | jsr | masque `0x40192ba4` +0x70 `midi_gate` | midi-live-both | notes/53 |
 | `0x400027e8` | `203c0030008072302540…` | jmp | OS `0x4019b136` | 6ch-multiout |  |
 | `0x400027e8` | `203c0030008072302540…` | jmp | masque `0x4015c044` +0xd2 | 6ch-usbup | notes/36 |
@@ -440,7 +443,9 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4002d480` | `4cef7c7c0018` | jmp | masque `0x4016cae8` +0xc0 | arp | notes/32 |
 | `0x4002f7d8` | `4cef7c7c0018` | jmp | charge utile (image) +0x11350 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x40032aee` | `4cef7c7c0018` | jmp | charge utile (image) +0xd424 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4003560a` | `4eb940044df84a8057c0…` | jmp | masque `0x40167c50` +0x0 | midi-bth-three-state |  |
 | `0x4003560a` | `4eb940044df84a8057c0…` | jmp | masque `0x40192ba4` +0x0 `midi_key` | midi-live-both | notes/53 |
+| `0x40035fd8` | `4eb940044df84a806708…` | jsr | masque `0x40167c50` +0x30 | midi-bth-three-state |  |
 | `0x4004486c` | `4eb94005a274` | jsr | masque `0x40166760` +0xaa `tf_boot` | track-filter | notes/47 |
 | `0x4004df40` | `704c222f0004` | jmp | charge utile (mémoire), 3 cibles selon la combinaison | macro, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-macro (31/31), syntakt-tg-* (33/33), syntakt-tg-*-macro (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43 |
 | `0x4004df5c` | `7206202f0004` | jmp | charge utile (mémoire), 8 cibles selon la combinaison | macro, sdvintage-7th, syntakt-* (32/32), syntakt-*-macro (31/31), syntakt-vintage | notes/18, notes/36 |
@@ -451,6 +456,9 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4004df76` | `7205202f0004` | jmp | charge utile (image) +0x864a | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4004dfa2` | `704c222f0004` | jmp | charge utile (mémoire), 3 cibles selon la combinaison | macro, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-macro (31/31), syntakt-tg-* (33/33), syntakt-tg-*-macro (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43 |
 | `0x40053a6c` | `4fefff8048d77cfc42af…` | jsr | OS `0x4008e6ba` | boot-anim | notes/39 |
+| `0x40054c0e` | `254e0048200a` | jmp | masque `0x4016fae8` +0x0 `sc_steps_event` | scramble, scramble-gen, scramble-gen-queued, scramble-st, scramble-st-gen, scramble-st-gen-queued | notes/55 |
+| `0x400550da` | `247940a7887c` | jmp | masque `0x40184df8` +0x0 `sg_q_hook` | scale-gen-queued, scale-gen-st-queued | notes/56 |
+| `0x40055f14` | `2f024aaf000c` | jmp | masque `0x4014b5b4` +0x0 `sg_q_stop` | scale-gen-queued, scale-gen-st-queued | notes/56 |
 | `0x40056610` | `4fefffd848d73cfc` | jmp | charge utile (image) +0xdbf6 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x40056b38` | `4878000448798000b990` | jsr | charge utile (image) +0xab08 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400587f6` | `4eb940091f20` | jsr | masque `0x4018a788` +0x1b2 | arp | notes/32 |
@@ -482,6 +490,11 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4005b4a8` | `7001156b001c001c` | jmp | masque `0x4016b6f8` +0x14e `ck_storage_load_hook` | chord-keys | notes/42 |
 | `0x40061564` | `1140001b48780010` | jmp | masque `0x4018d1b8` +0xea `ck_storage_init_hook` | chord-keys | notes/42 |
 | `0x4007240c` | `206f00042028` | jmp | charge utile (image) +0x4828 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4007240c` | `4ef9401ae968` | jmp | masque `0x40171f30` +0x0 `sg_key` | scale-gen, scale-gen-st | notes/56 |
+| `0x4007240c` | `4ef9401ae968` | jmp | masque `0x40182b38` +0x0 `sg_key` | scale-gen-queued, scale-gen-st-queued | notes/56 |
+| `0x4007240c` | `4ef9401ae968` | jmp | masque `0x40189618` +0x0 `sc_key` | scramble, scramble-st | notes/55 |
+| `0x4007240c` | `4ef940171f30` | jmp | masque `0x40189618` +0x0 `sc_key` | scramble-gen, scramble-st-gen | notes/55 |
+| `0x4007240c` | `4ef940182b38` | jmp | masque `0x40189618` +0x0 `sc_key` | scramble-gen-queued, scramble-st-gen-queued | notes/55 |
 | `0x40081474` | `b08365000178` | jmp | charge utile (image) +0x10ffc | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4008171e` | `4ef9401b3210` | jmp | masque `0x40185968` +0x0 `pv_note` | sample-preview, sample-preview-st | notes/46 |
 | `0x4008173c` | `b083650001ce` | jmp | charge utile (image) +0x10fb2 | model-tg, model-tg-st | notes/31, notes/36 |
@@ -570,8 +583,18 @@ Constantes 32 bits de l'OS (tables de fonctions, données) qui pointent maintena
 | `0x400a7e16` | `40118610` | charge utile (mémoire), 2 valeurs selon la combinaison | macro, sdvintage-7th, syntakt-vintage |
 | `0x400fd170` | `4000a70e` | masque `0x40179730` +0xf8 | chord-keys |
 | `0x400fd174` | `4000a66a` | masque `0x40185968` +0xba | chord-keys |
+| `0x400ff9b8` | `401bb076` | masque `0x4014af84` +0x0 | scale-gen, scale-gen-st |
+| `0x400ff9b8` | `401bb076` | masque `0x4016fd60` +0x0 | scale-gen-queued, scale-gen-st-queued |
 | `0x400ff9cc` | `4001a0d2` | masque `0x40185018` +0x0 | chord-keys |
+| `0x400ffa78` | `401bb076` | masque `0x4014af84` +0x0 | scale-gen, scale-gen-st |
+| `0x400ffa78` | `401bb076` | masque `0x4016fd60` +0x0 | scale-gen-queued, scale-gen-st-queued |
 | `0x401005a8` | `4001e814` | masque `0x401625bc` +0x0 | track-filter |
+| `0x40103070` | `401bb076` | masque `0x4014af84` +0x0 | scale-gen, scale-gen-st |
+| `0x40103070` | `401bb076` | masque `0x4016fd60` +0x0 | scale-gen-queued, scale-gen-st-queued |
+| `0x401031b4` | `401bb076` | masque `0x4014af84` +0x0 | scale-gen, scale-gen-st |
+| `0x401031b4` | `401bb076` | masque `0x4016fd60` +0x0 | scale-gen-queued, scale-gen-st-queued |
+| `0x40107e18` | `401bb076` | masque `0x4014af84` +0x0 | scale-gen, scale-gen-st |
+| `0x40107e18` | `401bb076` | masque `0x4016fd60` +0x0 | scale-gen-queued, scale-gen-st-queued |
 | `0x40118614` | `400ab6e8` | charge utile (mémoire) +0x31196 | sdvintage-exact |
 | `0x40118614` | `400ab6e8` | masque `0x4018a788` +0x0 | sdvintage-snare |
 | `0x4011862c` | `400ab3b0` | charge utile (mémoire) +0x31000 | sdvintage-exact |
@@ -616,9 +639,19 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | boot-anim | 1 | 0 | 1 | 0 | 0 | 0 | 0 |  | notes/39 |
 | multiline-browser | 16 | 10 | 4 | 0 | 1 | 1 | 0 |  | notes/40 |
 | chord-keys | 37 | 0 | 6 | 3 | 14 | 14 | 0 |  | notes/42 |
+| midi-bth-three-state | 7 | 0 | 5 | 0 | 1 | 1 | 0 |  |  |
 | level-pan-values | 8 | 1 | 3 | 0 | 2 | 2 | 0 |  | notes/44 |
 | trigless-dim | 8 | 1 | 3 | 0 | 2 | 2 | 0 |  | notes/45 |
 | track-filter | 40 | 1 | 6 | 3 | 15 | 15 | 0 |  | notes/47 |
+| scale-gen | 104 | 0 | 1 | 5 | 49 | 49 | 0 |  | notes/56 |
+| scale-gen-queued | 138 | 0 | 3 | 5 | 65 | 65 | 0 |  | notes/56 |
+| scale-gen-st | 104 | 0 | 1 | 5 | 49 | 49 | 0 |  | notes/56 |
+| scale-gen-st-queued | 138 | 0 | 3 | 5 | 65 | 65 | 0 |  | notes/56 |
 | midi-both | 3 | 3 | 0 | 0 | 0 | 0 | 0 |  | notes/53 |
+| scramble | 26 | 0 | 2 | 0 | 12 | 12 | 0 |  | notes/55 |
+| scramble-gen | 26 | 0 | 2 | 0 | 12 | 12 | 0 |  | notes/55 |
+| scramble-gen-queued | 26 | 0 | 2 | 0 | 12 | 12 | 0 |  | notes/55 |
+| scramble-st | 26 | 0 | 2 | 0 | 12 | 12 | 0 |  | notes/55 |
+| scramble-st-gen | 26 | 0 | 2 | 0 | 12 | 12 | 0 |  | notes/55 |
+| scramble-st-gen-queued | 26 | 0 | 2 | 0 | 12 | 12 | 0 |  | notes/55 |
 | midi-live-both | 6 | 0 | 4 | 0 | 1 | 1 | 0 |  | notes/53 |
-

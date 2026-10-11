@@ -6,9 +6,9 @@
 
 6-channel USB audio · Syntakt engines · Model-TG sampler · arpeggiator · up to 546 BPM · and more
 
-[**Open the web flasher**](https://18nelli18.github.io/Modded-Cycles/flasher/) &nbsp;·&nbsp;
-[Read the guide](https://18nelli18.github.io/Modded-Cycles/guide/) &nbsp;·&nbsp;
-[Website](https://18nelli18.github.io/Modded-Cycles/) &nbsp;·&nbsp;
+[**Open the web flasher**](https://aveycole.github.io/Modded-Cycles/flasher/) &nbsp;·&nbsp;
+[Read the guide](https://aveycole.github.io/Modded-Cycles/guide/) &nbsp;·&nbsp;
+[Website](https://aveycole.github.io/Modded-Cycles/) &nbsp;·&nbsp;
 [Join the Discord](https://discord.gg/hWegtJZcmm) &nbsp;·&nbsp;
 [Support on Ko-fi](https://ko-fi.com/18nelli)
 
@@ -17,6 +17,10 @@
 </div>
 
 ---
+
+Scale sequence generator: **hardware tested by AveyCole (10 October 2026)**. Requires Model-TG. With playback stopped, press **SETTINGS + PAGE** to choose scale, root, note range and density, then Generate. The four-row menu scrolls as you turn DATA. Optional velocity, decay and pan randomization defaults Off. PLAY/STOP previews the sequence inside the menu; stop before Generate or Undo. Undo restores notes, velocity and parameter locks while the page stays open. Preview and randomization also hardware tested by AveyCole.
+
+SCRAMBLE: **hardware confirmed by AveyCole (11 October 2026)**. Independently selectable in the main flasher. Hold **SETTINGS + TRACK** to randomize the current machine’s four controls and display SCRAMBLE. Requires Model-TG; Sampler excluded; no sound Undo.
 
 ## Why
 
@@ -42,17 +46,15 @@ Going back to the official firmware is one click away.
 | **Syntakt engines** | Up to five real Syntakt machines added next to the original six: **SD VINTAGE**, **CP VINTAGE**, **SY TOY**, **SY BITS** and **SY SWARM**, with the Syntakt's knob names and defaults. They are read from your own Syntakt OS file. | ✅ Tested |
 | **Model-TG** | A full Sampler machine with seven playback modes, resampling, a beat-repeat page with master FX, slide trigs, Scale Lock and more, by [TinyGregAudio](https://github.com/TinyGregAudio/Model-TG). Works with the 6-channel mod and the Syntakt engines. | 🧪 Experimental |
 | **Sample preview** | An add-on to Model-TG: on a Sampler track, press FUNC + MACHINES (preset menu) and the track's pad plays the sample under the cursor, the way presets can be heard before you pick them. A sample not yet in memory loads on the first press; if there isn't enough free memory, or while Model-TG is resampling, the press plays nothing. The track keeps its own sample. Requires Model-TG (ticking it ticks Model-TG). | ✅ Tested |
-| **MACRO machine** | One extra machine with the 47 synthesis models of Braids, Émilie Gillet's open-source macro-oscillator, from [her own code](https://github.com/pichenettes/eurorack): analog-style waves, FM, vowels, physical models, drums, wavetables and noises. `SHAPE` picks the model, `COLOR` and `SWEEP` shape it, `FUNC` + `PITCH` gives lo-fi (sample rate down to 4 kHz on the left, bit depth down to 2 bits on the right). Thirteen of the models are computed at 48 kHz for half the processor time. Works with Model-TG and the Syntakt engines. | ✅ Tested |
+| **MACRO machine** | One extra machine with the 47 synthesis models of Braids, Émilie Gillet's open-source macro-oscillator, from [her own code](https://github.com/pichenettes/eurorack): analog-style waves, FM, vowels, physical models, drums, wavetables and noises. `SHAPE` picks the model, `COLOR` and `SWEEP` shape it. Works with Model-TG and with the Syntakt engines; the combined option puts MACRO after the selected engines. | ✅ Tested |
 | **Arpeggiator** | Hold several notes with RETRIG and they play as an arpeggio. `FUNC` + `RETRIG` adds direction (up, down, up/down, random, or in the order played) and range (1 to 4 octaves), saved with the pattern. | ✅ Tested |
-| **Chord Keys** | Play the selected CHORD track with the lower `TRIG 1–16` buttons: I–VII on 1–7, the same degrees one octave higher on 8–14, then I–II two octaves higher on 15–16. T1–T6 keep their normal controls. Choose a triad, 7th, 9th, 11th or 13th for each degree in `FUNC` + `RETRIG`, saved per track and pattern. SHAPE arranges the notes (BASE, close or open voicings); COLOR blends their levels. Does not combine with Model-TG. By Nico Heuser. | ✅ Tested |
 | **Tempo up to 546 BPM** | The TEMPO knob, tap tempo, MIDI clock and saved projects go past 300 BPM. Tempo-synced LFOs stay in time. | ✅ Tested |
-| **Per-track filter** | Hold `MACHINES` and turn `SWEEP`: low-pass to the left, off in the centre, high-pass to the right, like a DJ mixer, with the Model:Samples' range. `CONTOUR` sets the resonance, `COLOR` and `SHAPE` a filter envelope. Real parameters: p-locks, LFO, velocity, MIDI CC 74/71. Not with Model-TG yet. | ✅ Tested |
+| **MIDI OUT during THRU** | With `THR` selected, forward incoming MIDI and also send the Cycles' MIDI clock and track/parameter messages. | ✅ Tested |
+| **Live MIDI OUT + THRU toggle** | With `THR` selected, hold `FUNC` and press the `LEVEL/DATA` knob to switch the Cycles' own MIDI output on or off while incoming MIDI keeps passing through. The stock `OUT`/`THR` menu stays unchanged. | ✅ Tested |
 | **Startup animation** | When the Model:Cycles starts, the four squares of the modded-cycles logo pop in and “modded-cycles” types itself underneath, instead of the original tile animation. Same duration. | ✅ Tested |
-| **Multi-line browser** | The preset browser shows three names at once in a small font instead of one in big letters, with a `>` on the name under the cursor. From an idea by a community member. | ✅ Tested |
-| **Volume and pan as numbers** | On the main screen, turning `LEVEL/DATA` shows the track's volume (0 to 127) as a number; with `FUNC` held, its pan (-64 to 63). `LEVEL/DATA` then moves in steps of 1 instead of 2 there. Based on a mod by djd_oz. | ✅ Tested |
-| **Dimmed trigless trigs** | A trig key that holds a trigless trig lights dimmed, so you can tell it from a note trig. Based on a mod by djd_oz. | ✅ Tested |
-| **MIDI OUT while in THRU** | With `THR` selected (CONFIG › MIDI › PORTS › OUT/THRU), the Model:Cycles forwards incoming MIDI and also sends its own clock, notes and parameter changes. `OUT` and the menu stay as they are. Best when only one side plays notes, since what comes in is passed on as it arrives. By [AveyCole](https://github.com/AveyCole/Modded-Cycles). | ✅ Tested |
-| **Live MIDI OUT + THRU toggle** | With `THR` selected, hold `FUNC` and press the `LEVEL/DATA` knob to add the Cycles' own MIDI to what it forwards, or take it away. The screen stays on `THR`. By AveyCole. | ✅ Tested |
+| **Volume and pan readout** | On the main screen, turn `LEVEL/DATA` to show the selected track volume (0–127); hold `FUNC` and turn it to show pan (−64 to 63). Values fade after three seconds; the knob changes values one step at a time. | ✅ Tested |
+| **Dimmed trigless trigs** | Trigless step keys glow at about one third brightness and keep their normal blink, making them easier to distinguish from note trigs. | ✅ Tested |
+| **Multi-line browser** | Show three sound, folder or sample presets at once in the small font. `>` marks the cursor, the loaded sound stays highlighted, and folders get a marker. Compatible with scrolling names and Model-TG. From 18nelli18's flasher, based on a community member's idea. | ✅ Tested |
 | **Easier trig removal** | A quick press on a step that holds a trig removes it, instead of opening it as a hold. | ✅ Tested |
 | **Latching mute** | Hold `TRACK` and tap `FUNC`: mute mode stays on, no more holding `FUNC`. By [drumkilla](https://github.com/drumkilla/elektron-model-tweaks). | ✅ Tested |
 | **Trig preview** | Sequencer stopped or paused: hold a step and press `PAGE` to hear it, with its note, length and p-locks. By drumkilla. | ✅ Tested |
@@ -60,8 +62,8 @@ Going back to the official firmware is one click away.
 | **Samples OS** | Turns the Model:Cycles into a Model:Samples, built from both official OS files. Coming back needs a MIDI interface. | ✅ Tested |
 | **Cycles OS for Model:Samples** | The other way round: turns a Model:Samples into a Model:Cycles, over USB, from both official OS files. Going back to the Model:Samples OS works over USB too, from the same tab. | 🧪 Experimental |
 
-The mods can be combined freely (the two MIDI THRU mods are alternatives; Samples OS and Cycles OS for Model:Samples are separate installs; Chord Keys and Model-TG not together). Each one is explained step by step, with the buttons to press, in the
-**[guide](https://18nelli18.github.io/Modded-Cycles/guide/)**.
+The mods can be combined except where stated (the two MIDI mods are alternatives; Samples OS and Cycles OS for Model:Samples are separate installs). Each one is explained step by step, with the buttons to press, in the
+**[guide](https://aveycole.github.io/Modded-Cycles/guide/)**.
 
 <p align="center">
   <img src="docs/images/readme/device-syntakt.png" alt="The MACHINES menu on the Model:Cycles screen, listing 05 Tone, 06 Chord, 07 SDVtg and 08 CPVtg" width="560"><br>
@@ -72,7 +74,7 @@ The mods can be combined freely (the two MIDI THRU mods are alternatives; Sample
 
 <img src="docs/images/readme/flasher.png" alt="The web flasher, step 1: a list of mods with checkboxes, 6-channel USB audio ticked" width="100%">
 
-1. **Open the [web flasher](https://18nelli18.github.io/Modded-Cycles/flasher/)** in Chrome, Edge or Opera on a desktop computer (it needs Web MIDI).
+1. **Open the [web flasher](https://aveycole.github.io/Modded-Cycles/flasher/)** in Chrome, Edge or Opera on a desktop computer (it needs Web MIDI).
 2. **Tick the mods you want.**
 3. **Drop your official OS file**, `model-cycles_OS1.13.syx`, from the [Elektron download](https://www.elektron.se/support-downloads/modelcycles) (unzip it first).
    For the Syntakt engines, also drop `Syntakt_OS1.42.syx` ([download](https://www.elektron.se/support-downloads/syntakt); 1.41 works too).
@@ -106,7 +108,7 @@ set any track that uses an added machine (Syntakt engine, MACRO or Sampler) back
 
 If a Model:Cycles ever stops starting, it can always be recovered from its startup menu (`FUNC` + power on, then `TRIG 4`).
 That menu only listens to the **MIDI IN** port, so you need a USB-MIDI interface and the scripts described in
-[`FLASH.md`](FLASH.md) (in French). The guide has a [troubleshooting section](https://18nelli18.github.io/Modded-Cycles/guide/#trouble).
+[`FLASH.md`](FLASH.md) (in French). The guide has a [troubleshooting section](https://aveycole.github.io/Modded-Cycles/guide/#trouble).
 
 </details>
 
@@ -131,7 +133,7 @@ relocated into the Model:Cycles firmware, and they produce the same samples as t
 
 The research behind it (firmware analysis, hardware architecture, engine ports, measurements) is written up in the
 [technical notes](notes/README.md), in French. Release notes for each flasher version are on the
-[website](https://18nelli18.github.io/Modded-Cycles/#version).
+[website](https://aveycole.github.io/Modded-Cycles/#version).
 
 ## Credits
 
@@ -146,3 +148,9 @@ This project stands on the work of others, all MIT licensed:
 
 If these mods are useful to you, you can support the project on **[Ko-fi](https://ko-fi.com/18nelli)**.
 Questions, feedback and feature requests are welcome on the **[Discord](https://discord.gg/hWegtJZcmm)**; bug reports also fit in the [issues](https://github.com/18nelli18/Modded-Cycles/issues).
+
+Step SCRAMBLE is hardware tested by AveyCole (11 October 2026) and available in the main flasher. Hold one or more trigs, then SETTINGS and TRACK, to toggle fresh random values for the four machine controls each pass; the base sound stays unchanged.
+
+### AveyCole release 1.49
+
+Includes 18nelli18’s release 1.46 (commit `03941fd`): Chord Keys, Track Filter, lighter 48 kHz MACRO and RATE/BITS on FUNC + PITCH. Existing compatibility exclusions apply. Sequence Generator now includes the SEQUENCE GENIE intro, ranges, separate rhythm/notes regeneration, mutation and Euclidean rhythm. Optional Queued Generation applies at the selected track’s next loop. The corrected playback format and explicit velocity were confirmed on hardware by AveyCole on 11 October 2026.

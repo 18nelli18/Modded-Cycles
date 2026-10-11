@@ -301,6 +301,8 @@ FEATURES = [
         "needs": "syntakt",
         "engines": True,
     },
+    {'id': 'scale-gen', 'cat': 'seq', 'status': 'tested', 'label': 'Générateur de séquence', 'desc': 'SETTINGS + PAGE : SEQUENCE GENIE, plages, rythme/notes, mutation, Euclid, Undo et génération optionnelle au prochain cycle. Testé sur machine. Demande Model-TG.', 'credit': {'kind': 'based', 'who': 'TinyGregAudio', 'repo': 'TinyGregAudio/Model-TG'}, 'license': 'LICENSE-Model-TG', 'requires': 'model-tg', 'variants': [{'file': '49-scale-gen', 'label': None}], 'with': {'syntakt': '49-scale-gen-st', 'macro': '49-scale-gen-st'}},
+    {'id':'scramble','cat':'sound','status':'tested','label':'SCRAMBLE','desc':'SETTINGS + TRACK : quatre contrôles machine aléatoires ; maintenir des trigs avant le combo active/retire un tirage frais par passage. Testé sur machine ; Sampler exclu.','requires':'model-tg','credit':{'kind':'based','who':'TinyGregAudio','repo':'TinyGregAudio/Model-TG'},'license':'LICENSE-Model-TG','variants':[{'file':'50-scramble','label':None}],'with':{'syntakt':'50-scramble-st','macro':'50-scramble-st'}},
 ]
 
 
@@ -347,7 +349,8 @@ def share(tweaks):
     shared, index = [], {}
 
     def sub(v):
-        if isinstance(v, (str, list)) and count[k := key(v)] > 1:
+        if isinstance(v, (str, list)) and count[key(v)] > 1:
+            k = key(v)
             if k not in index:
                 index[k] = len(shared)
                 shared.append(v)
@@ -438,6 +441,8 @@ def render():
             tweaks.append(t)
         return t
     for f in FEATURES:
+        if f["id"]=="scramble":
+            load("scramble-gen");load("scramble-st-gen");load("scramble-gen-queued");load("scramble-st-gen-queued")
         feat = {"id": f["id"], "label": f["label"], "desc": f["desc"], "status": f["status"], "credit": f["credit"]}
         if f.get("cat"):                        # rubrique de la carte dans le flasher
             if f["cat"] not in CATS:
@@ -468,6 +473,9 @@ def render():
                             for g, v in f["with"].items()}
         if f.get("license"):                    # texte de la licence, servi a cote de la page (licenses())
             feat["license"] = f["license"] + ".txt"
+        if f["id"] == "scale-gen":
+            feat["queued"] = {"scale-gen": load("scale-gen-queued")["id"], "scale-gen-st": load("scale-gen-st-queued")["id"]}
+            feat["queued_status"] = "tested"
         features.append(feat)
     check_requires(features, by_id)
     tweaks, shared = share(tweaks)

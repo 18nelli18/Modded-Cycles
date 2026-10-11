@@ -245,6 +245,19 @@ python3 tools/emu/test_tempo_max.py --cycles model-cycles_OS1.13.syx
 | `model-tg,tempo-max` | `97cc13b34d3f4b3440d42bdb1c692e64bf0aa8b2de54b806b14320914936ef4f` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max` | `c8214dc5fe88a5ff346d8554f05753bb25acec448cb0eb23140236b10a9404d4` |
 
+### MIDI OUT + THRU (BTH)
+
+`tweaks/model-cycles_OS1.13/44-midi-both.json` ajoute le troisième choix BTH au réglage OUT/THRU. L'horloge et les messages générés par le Cycles sortent pendant que les messages reçus sont relayés. Le tweak peut être combiné aux machines et aux autres mods : son helper tient dans un masque de sprite 35×35 libéré.
+
+```sh
+python3 tools/gen_midi_both.py --cycles firmware/model-cycles_OS1.13.syx --check
+python3 tools/emu/test_midi_both.py --cycles firmware/model-cycles_OS1.13.syx
+python3 tools/build.py -i firmware/model-cycles_OS1.13.syx -t midi-both
+```
+
+Le test exécute les chemins MIDI de l'OS d'origine et modifié dans Unicorn. BTH reste expérimental jusqu'au test sur la machine.
+MAIN OS seul : `9e289aa96beabd7961b60febda15a7193d65c550c33d55d09233de6056de117d`.
+
 ### OS Cycles pour Model:Samples (et retour par USB)
 
 Pas un tweak : `tools/crossflash.py` met l'OS Cycles officiel dans le conteneur officiel du Model:Samples, en changeant les
@@ -571,3 +584,139 @@ nouveau tweak en émulation.
 
 Le C [`mischa85/elektron-firmware-tool`](https://github.com/mischa85/elektron-firmware-tool) fait le même travail
 de conteneur ; voir [`notes/02-format-os-syx.md`](notes/02-format-os-syx.md).
+
+## Générateur de séquence en gamme
+
+Testé sur Model:Cycles par AveyCole le 10/10/2026 (notes/53). Les fichiers `49-scale-gen.json` et `49-scale-gen-st.json` demandent respectivement Model-TG et Model-TG-ST. Les empreintes MAIN OS et de chaque mod sont dans `docs/flasher/app.js`. Régénération :
+
+```sh
+python3 tools/gen_seq_gen.py --help
+python3 tools/gen_flasher_tweaks.py --check
+```
+
+### Générateur : transport et variations validés (flasher 1.45)
+
+```sh
+python3 tools/gen_seq_gen.py --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --check
+python3 tools/emu/test_seq_gen_dynamics.py --cycles firmware/model-cycles_OS1.13.syx
+python3 tools/emu/test_seq_gen_space.py --dynamics
+python3 tools/gen_test_flasher.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --check
+MC_TEST_PAGE=docs/flasher-test node tools/webflash_seq_gen_check.js firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42.syx
+```
+
+Les deux JSON canoniques reproduisent les écritures du test validé par AveyCole
+le 10/10/2026. Les 767 références sont communes aux deux flashers. Réglages et
+limites dans notes/53 §12–13.
+
+Validation de promotion 1.45 : écritures/symboles identiques au test matériel,
+preuve dynamique et menu OS, 767 références recalculées identiques, builds
+navigateur et audit de chevauchements validés. `relocate_6ch.py --check` présente
+un écart préexistant dans les écritures de `11-6ch-usbup.json` ; le fichier
+est vérifié identique à HEAD et reste inchangé dans cette promotion.
+
+## Générateur étendu expérimental (notes/54)
+
+Les JSON de `experimental/advanced/` remplacent les deux variantes du générateur
+dans le catalogue autonome de test. Ils ne sont pas chargés par le build principal.
+
+```sh
+python3 tools/gen_seq_gen.py --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --advanced --check
+python3 tools/emu/test_seq_gen_advanced.py --cycles firmware/model-cycles_OS1.13.syx
+python3 tools/emu/test_seq_gen_space.py --advanced --upstream ../upstream-cycles --git origin/main
+python3 tools/gen_test_flasher.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --check
+MC_TEST_PAGE=docs/flasher-test node tools/webflash_seq_gen_check.js firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42.syx
+```
+
+Le flasher principal conserve les écritures déjà testées sur machine. Le test
+étendu demande l’arrêt pour Generate, Random sound et les deux Undo ; PLAY/STOP
+et FUNC + pads restent utilisables dans la page.
+
+### Remplacement séquence seul après incident matériel
+
+Le catalogue de test utilise maintenant `experimental/sequence-only/`, sans
+aucune fonction de tirage du son. Les sorties `advanced/` sont historiques et
+ne sont plus proposées par le flasher. Construction :
+
+```sh
+python3 tools/gen_seq_gen.py --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --advanced --sequence-only --check
+python3 tools/emu/test_seq_gen_sequence_only.py --cycles firmware/model-cycles_OS1.13.syx
+python3 tools/emu/test_seq_gen_space.py --sequence-only --upstream ../upstream-cycles --git origin/main
+```
+
+Generate et Undo exigent toujours l’arrêt ; transport et mutes restent disponibles.
+
+## Test flasher 2 — SCRAMBLE et génération au prochain cycle (notes 55–56)
+
+Les nouveaux JSON restent sous `experimental/`, hors catalogue principal.
+Le sous-choix différé demande longueur/vitesse communes, sans chaîne de patterns.
+Aucun firmware Elektron distribué ; construire depuis les fichiers officiels.
+
+```sh
+python3 tools/gen_seq_gen.py --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --advanced --sequence-only --queued --check
+python3 tools/gen_scramble.py --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --check
+python3 tools/emu/test_seq_gen_queue.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+python3 tools/emu/test_scramble.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+python3 tools/gen_test_flasher.py --second --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --check
+python3 tools/emu/test_seq_gen_space.py --test-two
+MC_TEST_PAGE=docs/flasher-test-2 node tools/webflash_seq_gen_check.js firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42.syx
+```
+
+Statut expérimental : le timing maximal et le démarrage complet doivent encore
+être confirmés sur la machine. Les pages `flasher/` et `flasher-test/` sont inchangées.
+
+Empreintes MAIN OS du test 2 :
+
+- `model-tg+scale-gen-queued+scramble-gen-queued` : `d12281b0518cc6aa7679e9754ed03eb99ef1ff5775268df90f8899787b50ce68`.
+- `6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+multiline-browser+midi-live-both+level-pan-values+trigless-dim+syntakt-tg-sd-cp-toy-bits-swarm-macro+scale-gen-st-queued+scramble-st-gen-queued` : `35896e625ba62204981403a4f6eed5386cc0d7fd47d8a39d14d43c0d81bb22ca`.
+
+### SCRAMBLE principal confirmé (11/10/2026)
+
+Variantes principales sans génération différée. Génération et preuve :
+
+```sh
+python3 tools/gen_scramble.py --main --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --check
+python3 tools/emu/test_scramble.py --main --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+python3 tools/emu/test_scramble_steps.py --main --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+```
+
+Empreinte principale `model-tg+scale-gen+scramble-gen` : `9e5b2c2875e5cd942082ab054933a7563f098c8818f14b03ec20e59dd7056ccc`.
+
+### Test 2 — SEQUENCE GENIE, SCRAMBLE par pas et génération par piste (11/10/2026)
+
+Catalogue autonome `/flasher-test-2/`, build
+`2026-10-11-test-2-genie-scramble-queue`. Génération différée reste une
+sous-option du générateur ; SCRAMBLE reste une sélection indépendante.
+Second LFO et voies MIDI secondaires ne sont pas inclus.
+
+```sh
+python3 tools/gen_seq_gen.py --advanced --sequence-only --queued --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --check
+python3 tools/gen_scramble.py --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --check
+python3 tools/emu/test_seq_gen_queue.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+python3 tools/emu/test_scramble_steps.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+python3 tools/emu/test_seq_gen_space.py --test-two
+MC_TEST_PAGE=docs/flasher-test-2 node tools/webflash_seq_gen_check.js firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42.syx
+```
+
+Sélection maximale avec `midi-live-both`, les moteurs et MACRO, générateur
+différé et SCRAMBLE par pas : MAIN OS
+`9db3d5fef2b788b99a137e7be81a590a7db21efc0b62c77a5d921b108ffbb28a`.
+861 références de combinaisons, 153 tweaks ; preuves natives et navigateur.
+Les nouveautés restent expérimentales et attendent l'essai matériel d'AveyCole.
+
+SCRAMBLE par pas principal : 1 383 octets dans 12 masques, quatre variantes principales ; valeurs fraîches, sauvegarde/chargement, retrait et combo panneau prouvés avec tous les mods compatibles. Confirmé sur machine par AveyCole le 11/10/2026.
+
+### Diagnostic de frontière différée (11/10/2026)
+
+Test 2 `2026-10-11-test-2-queue-boundary-reasons` : motifs distincts pour snapshots UI/audio et pools, plutôt que le motif build périmé. 9 105 octets, 63 masques ; preuves du lecteur natif et de la combinaison maximale, 861 références, audit et navigateur/Python réussis. Cause matérielle restante à identifier. Aucun changement du flasher principal.
+
+## Sequence Genie principal et génération différée (11/10/2026)
+
+Générateurs reproductibles des deux bases :
+
+```sh
+python3 tools/gen_seq_gen.py --main --advanced --sequence-only --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross ../toolchain/bin/m68k-elf- --check
+python3 tools/gen_seq_gen.py --main --advanced --sequence-only --queued --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross ../toolchain/bin/m68k-elf- --check
+python3 tools/gen_scramble.py --main --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross ../toolchain/bin/m68k-elf- --check
+```
+
+La sous-option différée reste distincte dans le flasher. AveyCole confirme la correction format B/vélocité sur matériel et demande le passage au principal. Preuve : `test_seq_gen_queue.py --main`, y compris combinaison maximale, lecteur et notifications natifs. Synchronisation upstream 1.46 : `03941fd029e1730125463946b6d91f7ce8e28bee`.

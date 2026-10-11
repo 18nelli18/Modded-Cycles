@@ -1,0 +1,625 @@
+| Note 57 : banque MIDI privée, édition de six voies et 64 pas.
+| Construction/rendu adaptés de la page LFO 2, elle-même adaptée de
+| Model-TG (TinyGregAudio, MIT), commit 70b39dd ; LICENSE-Model-TG.
+| Canaux 7..12 immuables. Contexte fourni séparément, sans voix interne.
+    .text
+    .globl mlp_open,mlp_dtor0,mlp_dtor1
+mlp_open:
+    lea.l   mlp_opened,%a0
+    clrl    %a0@
+    lea.l   %sp@(-24),%sp
+    moveml  %d2-%d4/%a2-%a4,%sp@
+    moveq   #0,%d0                | uniquement dans la tâche UI, comme loop_toggle
+    movew   %sr,%d0
+    andil   #0x0700,%d0
+    bnew    mlp_o_done
+    tstl ml_runtime
+    beqw mlp_o_done
+    tstl ml_pattern
+    beqw mlp_o_done
+    lea.l   mlp_obj,%a0
+    tstl    %a0@
+    bnew    mlp_o_done             | page déjà ouverte
+    tstl    0x40fe4178
+    beqw    mlp_o_done             | gestion des vues pas encore initialisée
+    | groupe vtable privé, reconstruit depuis celui de l’OS
+    lea.l   0x40117918,%a0
+    lea.l   mlp_vt,%a1
+    moveq   #(0xb0/4)-1,%d0
+mlp_o_cp:
+    movel   %a0@+,%a1@+
+    subql   #1,%d0
+    bplw    mlp_o_cp
+    lea.l   mlp_vt,%a1
+    movel   #mlp_dtor0,%d0
+    movel   %d0,%a1@(0x08)
+    movel   #mlp_dtor1,%d0
+    movel   %d0,%a1@(0x0c)
+    movel   #mlp_menu_key,%d0
+    movel   %d0,%a1@(0x10)
+    movel   #mlp_render,%d0
+    movel   %d0,%a1@(0x18)
+    movel   #mlp_enc,%d0
+    movel   %d0,%a1@(0x4c)
+    movel   #mlp_enc_th,%d0
+    movel   %d0,%a1@(0x60)
+    movel #mlp_pad,%d0
+    movel %d0,%a1@(0x9c)
+    jmp mlp_o_allocate
+    .section .text.mlp_open_allocate,"ax"
+mlp_o_allocate:
+    | Même sélection de piste que le menu LFO natif, sans la modifier.
+    jsr 0x400cf866
+    tstl %d0
+    beq mlp_o_default_track
+    movel %d0,%sp@-
+    jsr 0x4000eb90
+    movel %d0,%sp@-
+    jsr 0x40012412
+    addql #8,%sp
+    cmpil #5,%d0
+    bls mlp_o_track_ready
+mlp_o_default_track:
+    moveq #0,%d0
+mlp_o_track_ready:
+    movel %d0,mlp_track
+    lea.l   0x400802e0,%a3        | operator new
+    pea     0x500
+    jsr     %a3@
+    addql   #4,%sp
+    tstl    %d0
+    beqw    mlp_o_done
+    movea.l %d0,%a4
+    movel   %a4,%sp@-
+    jsr     0x400a22b0            | constructeur OS de la page MACHINES
+    addql   #4,%sp
+    lea.l   mlp_vt,%a1
+    lea.l   %a1@(8),%a0
+    movel   %a0,%a4@              | vptr principal
+    lea.l   %a1@(0x58),%a0
+    movel   %a0,%a4@(4)           | base +4 (événements encodeur)
+    lea.l mlp_vt+0x94,%a0
+    movel %a0,%a4@(16)
+    pea     0x10                  | détenteur de référence, comme l’ouverture OS
+    jsr     %a3@                  | construite à 0x4001ca40
+    addql   #4,%sp
+    tstl %d0
+    bnew mlp_o_holder
+    movel %a4,%sp@-
+    jsr 0x400f4486
+    addql #4,%sp
+    braw mlp_o_done
+mlp_o_holder:
+    movea.l %d0,%a0
+    movel %a4,mlp_obj
+    clrl mlp_row
+    clrl mlp_edit
+    clrl mlp_func
+    clrl mlp_pads
+    moveq   #1,%d1
+    movel   #0x401000c4,%d0
+    movel   %d0,%a0@
+    movel   %d1,%a0@(4)
+    movel   %d1,%a0@(8)
+    movel   %a4,%a0@(12)
+    movel   %a0,%sp@-             | {page, détenteur} sur la pile, détenteur au sommet
+    movel   %a4,%sp@-
+    jsr     0x400d0974
+    movel   %d0,%sp@-
+    jsr     0x400060d8
+    addql   #4,%sp
+    movea.l %sp,%a0
+    clrl    %sp@-
+    movel   %a0,%sp@-
+    movel   %d0,%sp@-
+    jsr     0x4007700e            | présenter
+    lea.l   %sp@(12),%sp
+    pea     %sp@(4)               | libérer notre référence au détenteur
+    jsr     0x400cf23c
+    lea.l   %sp@(12),%sp          | le pea et la paire
+    lea.l   mlp_opened,%a0
+    moveq   #1,%d0
+    movel   %d0,%a0@
+mlp_o_done:
+    movel mlp_opened,%d0
+    moveml  %sp@,%d2-%d4/%a2-%a4
+    lea.l   %sp@(24),%sp
+    rts
+
+    .section .text.mlp_dtor,"ax"
+| ---- destructeurs : oublier la page, puis appeler ceux de l’OS ----
+mlp_dtor0:
+    clrl mlp_func
+    clrl mlp_pads
+    lea.l   mlp_obj,%a0
+    clrl    %a0@
+    jmp     0x400f43ca
+mlp_dtor1:
+    clrl mlp_func
+    clrl mlp_pads
+    lea.l   mlp_obj,%a0
+    clrl    %a0@
+    jmp     0x400f4486
+
+
+    .text
+    .globl mlp_render
+    .globl mlp_menu_key,mlp_enc,mlp_enc_th,mlp_pad
+mlp_menu_key:
+    lea.l %sp@(-12),%sp
+    movem.l %d2-%d3/%a2,%sp@
+    moveal %sp@(16),%a2
+    moveal %sp@(20),%a0
+    movel %a0@(12),%d2
+    movel %a0@(16),%d3
+    cmpil #1,%d2
+    beq .Lmk_func
+    cmpil #10,%d2
+    beq .Lmk_transport
+    cmpil #11,%d2
+    beq .Lmk_transport
+    cmpil #32,%d2
+    beq .Lmk_data
+    movel %d3,%d0
+    andil #9,%d0
+    cmpil #1,%d0
+    bne .Lmk_used
+    cmpil #12,%d2
+    beq .Lmk_close
+    cmpil #13,%d2
+    beq .Lmk_close
+    cmpil #3,%d2
+    beq .Lmk_close
+    tstl mlp_func
+    bne .Lmk_used
+    cmpil #15,%d2
+    beq .Lmk_page
+    subil #16,%d2
+    cmpil #15,%d2
+    bhi .Lmk_used
+    movel mlp_step,%d0
+    andil #48,%d0
+    addl %d2,%d0
+    movel %d0,mlp_step
+    moveq #6,%d2
+    movel %d2,mlp_row
+    clrl mlp_edit
+    jsr mlp_raw_value
+    moveq #1,%d1
+    eorl %d1,%d0
+    jsr mlp_store
+    bra .Lmk_redraw
+.Lmk_page:
+    movel mlp_step,%d0
+    addil #16,%d0
+    andil #63,%d0
+    movel %d0,mlp_step
+    bra .Lmk_redraw
+.Lmk_func:
+    andil #1,%d3
+    movel %d3,mlp_func
+    bra .Lmk_used
+.Lmk_data:
+    btst #4,%d3
+    beq .Lmk_used
+    movel mlp_row,%d2
+    cmpil #1,%d2
+    beq .Lmk_used
+    cmpil #6,%d2
+    beq .Lmk_toggle
+    cmpil #10,%d2
+    beq .Lmk_toggle
+    moveq #1,%d0
+    eorl %d0,mlp_edit
+    bra .Lmk_redraw
+.Lmk_toggle:
+    jsr mlp_raw_value
+    moveq #1,%d1
+    eorl %d1,%d0
+    jsr mlp_store
+    bra .Lmk_redraw
+.Lmk_close:
+    moveal %a2@,%a0
+    moveal %a0@(0x28),%a0
+    movel %a2,%sp@-
+    jsr %a0@
+    addql #4,%sp
+    bra .Lmk_used
+.Lmk_transport:
+    btst #1,%d3
+    bne .Lmk_used
+    moveq #0,%d0
+    bra .Lmk_return
+.Lmk_redraw:
+    movel %a2,%sp@-
+    jsr 0x40076082
+    addql #4,%sp
+.Lmk_used:
+    moveq #1,%d0
+.Lmk_return:
+    movem.l %sp@,%d2-%d3/%a2
+    lea.l %sp@(12),%sp
+    rts
+
+mlp_pad:
+    lea.l %sp@(-12),%sp
+    movem.l %d2/%a2-%a3,%sp@
+    moveal %sp@(16),%a3
+    lea.l %a3@(-16),%a3
+    moveal %sp@(20),%a2
+    movel %a2@(20),%d2
+    subql #1,%d2
+    cmpil #5,%d2
+    bhi .Lmp_done
+    movel mlp_pads,%d1
+    tstl %a2@(16)
+    beq .Lmp_release
+    movel %a2@(16),%d0
+    cmpil #1,%d0
+    bne .Lmp_done
+    btst %d2,%d1
+    bne .Lmp_done
+    bset %d2,%d1
+    movel %d1,mlp_pads
+    tstl mlp_func
+    bne .Lmp_mute
+    movel %d2,mlp_track
+    bra .Lmp_redraw
+.Lmp_mute:
+    movel %d2,%d0
+    muluw #264,%d0
+    moveal ml_pattern,%a0
+    moveq #0,%d1
+    moveb %a0@(1,%d0:l),%d1
+    moveq #1,%d0
+    eorl %d0,%d1
+    movel %d1,%sp@-
+    pea 1
+    movel %d2,%sp@-
+    movel %a0,%sp@-
+    jsr ml_config
+    lea.l %sp@(16),%sp
+    movel %d2,%sp@-
+    movel ml_runtime,%sp@-
+    jsr ml_stop
+    addql #8,%sp
+.Lmp_redraw:
+    movel %a3,%sp@-
+    jsr 0x40076082
+    addql #4,%sp
+    bra .Lmp_done
+.Lmp_release:
+    bclr %d2,%d1
+    movel %d1,mlp_pads
+.Lmp_done:
+    moveq #1,%d0
+    movem.l %sp@,%d2/%a2-%a3
+    lea.l %sp@(12),%sp
+    rts
+
+mlp_enc_th:
+    subql #4,%sp@(4)
+mlp_enc:
+    lea.l %sp@(-16),%sp
+    movem.l %d2-%d4/%a2,%sp@
+    moveal %sp@(20),%a2
+    moveal %sp@(24),%a0
+    movel %a0@(12),%d0
+    cmpil #1,%d0
+    bne .Lme_out
+    pea 1
+    pea 1
+    movel %a0,%sp@-
+    jsr 0x4006f73a
+    lea.l %sp@(12),%sp
+    tstl %d0
+    beq .Lme_out
+    moveq #1,%d3
+    tstl %d0
+    bpl .Lme_sign
+    moveq #-1,%d3
+.Lme_sign:
+    movel mlp_row,%d2
+    tstl mlp_edit
+    bne .Lme_value
+    addl %d3,%d2
+    cmpil #10,%d2
+    bhi .Lme_out
+    movel %d2,mlp_row
+    bra .Lme_redraw
+.Lme_value:
+    cmpil #1,%d2
+    beq .Lme_out
+    jsr mlp_raw_value
+    addl %d3,%d0
+    lea.l mlp_min,%a0
+    moveq #0,%d1
+    moveb %a0@(0,%d2:l),%d1
+    cmpl %d1,%d0
+    bge .Lme_min_ok
+    movel %d1,%d0
+.Lme_min_ok:
+    lea.l mlp_max,%a0
+    moveq #0,%d1
+    moveb %a0@(0,%d2:l),%d1
+    cmpl %d1,%d0
+    ble .Lme_max_ok
+    movel %d1,%d0
+.Lme_max_ok:
+    jsr mlp_store
+.Lme_redraw:
+    movel %a2,%sp@-
+    jsr 0x40076082
+    addql #4,%sp
+.Lme_out:
+    moveq #1,%d0
+    movem.l %sp@,%d2-%d4/%a2
+    lea.l %sp@(16),%sp
+    rts
+
+| d2 = ligne, d0 = valeur brute. Seuls d0/d1/a0/a1 sont modifiés.
+mlp_store:
+    tstl %d2
+    bne .Lms_not_track
+    movel %d0,mlp_track
+    rts
+.Lms_not_track:
+    cmpil #5,%d2
+    bne .Lms_not_step
+    movel %d0,mlp_step
+    rts
+.Lms_not_step:
+    cmpil #1,%d2
+    beq .Lms_done
+    movel %d0,%sp@-
+    jsr mlp_raw_value
+    cmpl %sp@,%d0
+    bne .Lms_changed
+    addql #4,%sp
+    rts
+.Lms_changed:
+    lea.l mlp_fields,%a0
+    moveq #0,%d0
+    moveb %a0@(0,%d2:l),%d0
+    movel %d0,%sp@-
+    cmpil #6,%d2
+    bcs .Lms_config
+    cmpil #10,%d2
+    beq .Lms_config
+    movel mlp_step,%sp@-
+    movel mlp_track,%sp@-
+    movel ml_pattern,%sp@-
+    jsr ml_edit
+    lea.l %sp@(20),%sp
+    rts
+.Lms_config:
+    movel mlp_track,%sp@-
+    movel ml_pattern,%sp@-
+    jsr ml_config
+    lea.l %sp@(16),%sp
+    cmpil #2,%d2
+    beq .Lms_release
+    cmpil #10,%d2
+    bne .Lms_done
+.Lms_release:
+    movel mlp_track,%sp@-
+    movel ml_runtime,%sp@-
+    jsr ml_stop
+    addql #8,%sp
+.Lms_done:
+    rts
+
+mlp_raw_value:
+    moveq #0,%d0
+    moveal ml_pattern,%a0
+    tstl %d2
+    bne .Lmv_not_track
+    movel mlp_track,%d0
+    rts
+.Lmv_not_track:
+    cmpil #1,%d2
+    bne .Lmv_not_channel
+    movel mlp_track,%d0
+    addql #7,%d0
+    rts
+.Lmv_not_channel:
+    cmpil #5,%d2
+    bne .Lmv_data
+    movel mlp_step,%d0
+    rts
+.Lmv_data:
+    movel mlp_track,%d1
+    muluw #264,%d1
+    addal %d1,%a0
+    cmpil #6,%d2
+    bcs .Lmv_config
+    cmpil #10,%d2
+    beq .Lmv_config
+    movel mlp_step,%d1
+    lsll #2,%d1
+    lea.l %a0@(8,%d1:l),%a0
+.Lmv_config:
+    lea.l mlp_fields,%a1
+    moveb %a1@(0,%d2:l),%d1
+    andil #255,%d1
+    moveb %a0@(0,%d1:l),%d0
+    rts
+
+| d0 valeur numérique, a0 chaîne si énumération ; d2 ligne conservée.
+mlp_value:
+    jsr mlp_raw_value
+    moveal #0,%a0
+    tstl %d2
+    beq .Lmv_one_based
+    cmpil #5,%d2
+    beq .Lmv_one_based
+    cmpil #2,%d2
+    beq .Lmv_port
+    cmpil #4,%d2
+    beq .Lmv_speed
+    cmpil #6,%d2
+    beq .Lmv_bool
+    cmpil #10,%d2
+    beq .Lmv_bool
+    rts
+.Lmv_one_based:
+    addql #1,%d0
+    rts
+.Lmv_port:
+    subql #2,%d0
+    cmpil #2,%d0
+    bhi .Lmv_return
+    lea.l mlp_ports,%a0
+    bra .Lmv_string
+.Lmv_speed:
+    cmpil #6,%d0
+    bhi .Lmv_return
+    lea.l mlp_speeds,%a0
+.Lmv_string:
+    moveal %a0@(0,%d0:l:4),%a0
+.Lmv_return:
+    rts
+.Lmv_bool:
+    lea.l mlp_off,%a0
+    tstl %d0
+    beq .Lmv_return
+    lea.l mlp_on,%a0
+    rts
+
+mlp_render:
+    lea.l %sp@(-24),%sp
+    movem.l %d2-%d6/%a2,%sp@
+    movel %sp@(32),%d6
+    clrl %sp@-
+    pea 63
+    pea 127
+    clrl %sp@-
+    clrl %sp@-
+    movel %d6,%sp@-
+    jsr 0x40070dea
+    lea.l %sp@(24),%sp
+    pea mlp_title
+    pea mlp_fmt_s
+    pea 0x10
+    pea 49
+    pea 2
+    pea 0x40ea14cc
+    movel %d6,%sp@-
+    jsr 0x40071a04
+    lea.l %sp@(28),%sp
+    movel mlp_row,%d5
+    subql #1,%d5
+    bpl .Lpr_nonnegative
+    moveq #0,%d5
+.Lpr_nonnegative:
+    cmpil #8,%d5
+    bls .Lpr_start
+    moveq #8,%d5
+.Lpr_start:
+    movel %d5,%d2
+    moveq #35,%d4
+.Lpr_loop:
+    lea.l mlp_labels,%a0
+    moveal %a0@(0,%d2:l:4),%a2
+    movel %a2,%sp@-
+    pea mlp_fmt_s
+    pea 0x10
+    movel %d4,%sp@-
+    pea 2
+    pea 0x40ea14cc
+    movel %d6,%sp@-
+    jsr 0x40071a04
+    lea.l %sp@(28),%sp
+    jsr mlp_value
+    tstl %a0
+    beq .Lpr_number
+    movel %a0,%sp@-
+    pea mlp_fmt_s
+    bra .Lpr_value
+.Lpr_number:
+    movel %d0,%sp@-
+    pea mlp_fmt_d
+.Lpr_value:
+    pea 0x14
+    movel %d4,%sp@-
+    pea 125
+    pea 0x40ea14cc
+    movel %d6,%sp@-
+    jsr 0x40071a04
+    lea.l %sp@(28),%sp
+    addql #1,%d2
+    subil #14,%d4
+    movel %d2,%d0
+    subl %d5,%d0
+    cmpil #3,%d0
+    bcs .Lpr_loop
+    movel mlp_row,%d0
+    subl %d5,%d0
+    muluw #14,%d0
+    moveq #48,%d1
+    subl %d0,%d1
+    pea -1
+    movel %d1,%sp@-
+    pea 127
+    subil #13,%d1
+    movel %d1,%sp@-
+    moveq #0,%d0
+    tstl mlp_edit
+    beq .Lpr_cursor
+    moveq #64,%d0
+.Lpr_cursor:
+    movel %d0,%sp@-
+    movel %d6,%sp@-
+    jsr 0x40070dea
+    lea.l %sp@(24),%sp
+    movem.l %sp@,%d2-%d6/%a2
+    lea.l %sp@(24),%sp
+    rts
+
+    .data
+    .balign 4
+    .globl ml_pattern,ml_runtime,mlp_obj,mlp_opened,mlp_row,mlp_edit,mlp_track,mlp_step,mlp_func,mlp_pads,mlp_vt
+ml_pattern: .long 0
+ml_runtime: .long 0
+mlp_obj: .long 0
+mlp_opened: .long 0
+mlp_row: .long 0
+mlp_edit: .long 0
+mlp_track: .long 0
+mlp_step: .long 0
+mlp_func: .long 0
+mlp_pads: .long 0
+mlp_vt: .space 0xb0
+mlp_labels: .long mlp_track_label,mlp_channel,mlp_port,mlp_length,mlp_speed,mlp_step_label,mlp_trig,mlp_note,mlp_velocity,mlp_gate,mlp_mute
+mlp_ports: .long mlp_usb,mlp_din,mlp_both
+mlp_speeds: .long mlp_quarter,mlp_half,mlp_normal,mlp_threehalf,mlp_double,mlp_triple,mlp_four
+mlp_min: .byte 0,7,2,1,0,0,0,0,1,1,0
+mlp_max: .byte 5,12,4,64,6,63,1,127,127,64,1
+mlp_fields: .byte 0,2,3,4,5,0,3,0,1,2,1
+mlp_title: .asciz "MIDI BANK"
+mlp_track_label: .asciz "Track"
+mlp_channel: .asciz "MIDI Ch."
+mlp_port: .asciz "Output"
+mlp_length: .asciz "Length"
+mlp_speed: .asciz "Speed"
+mlp_step_label: .asciz "Step"
+mlp_trig: .asciz "Trig"
+mlp_note: .asciz "Note"
+mlp_velocity: .asciz "Velocity"
+mlp_gate: .asciz "Gate steps"
+mlp_mute: .asciz "Mute"
+mlp_on: .asciz "On"
+mlp_off: .asciz "Off"
+mlp_usb: .asciz "USB"
+mlp_din: .asciz "DIN"
+mlp_both: .asciz "USB+DIN"
+mlp_quarter: .asciz "1/4x"
+mlp_half: .asciz "1/2x"
+mlp_normal: .asciz "1x"
+mlp_threehalf: .asciz "3/2x"
+mlp_double: .asciz "2x"
+mlp_triple: .asciz "3x"
+mlp_four: .asciz "4x"
+mlp_fmt_s: .asciz "%s"
+mlp_fmt_d: .asciz "%d"
+
