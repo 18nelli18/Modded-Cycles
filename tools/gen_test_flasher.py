@@ -24,7 +24,7 @@ def main():
     global OUT, STAMP
     if a.second:
         OUT=ROOT/"docs/flasher-test-2"
-        STAMP="2026-10-10-test-2-queued-scramble"
+        STAMP="2026-10-11-test-2-scramble-fix"
     else:
         STAMP="2026-10-10-generator-sequence-only-test"
     OUT.mkdir(parents=True,exist_ok=True)

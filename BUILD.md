@@ -472,5 +472,5 @@ Statut expérimental : le timing maximal et le démarrage complet doivent encore
 
 Empreintes MAIN OS du test 2 :
 
-- `model-tg+scale-gen-queued+scramble-gen-queued` : `585845c9a50219407f643fd4dac8ca0716099210a5c7fc2adeae26bbea7ca4fd`.
-- `6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+multiline-browser+midi-live-both+level-pan-values+trigless-dim+syntakt-tg-sd-cp-toy-bits-swarm-macro+scale-gen-st-queued+scramble-st-gen-queued` : `328e230833b8c45e4fdedca4c67adaf31f742709b2d6d93663c3c3c8bc8e42c5`.
+- `model-tg+scale-gen-queued+scramble-gen-queued` : `a91a7a085a61c7e30db970f114ff1765e13b0e8b3489caae78884043046e75a7`.
+- `6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+multiline-browser+midi-live-both+level-pan-values+trigless-dim+syntakt-tg-sd-cp-toy-bits-swarm-macro+scale-gen-st-queued+scramble-st-gen-queued` : `b2cfd9596af6a0fbb41bdaf37a77731cb751f3080825c818ace4d517971d8feb`.

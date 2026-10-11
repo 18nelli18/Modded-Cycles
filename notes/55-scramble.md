@@ -40,3 +40,21 @@ bornes natives, quatre notifications, un popup ; Sampler refusé.
 La sélection du contexte sans verrous, les observateurs externes et le popup
 restent simulés dans cette preuve. Démarrage complet et comportement matériel
 à confirmer. Aucun résultat matériel revendiqué pour SCRAMBLE.
+
+## 4. Incident matériel et correction (11/10/2026)
+
+AveyCole signale `EXCEPTION v03-M0-P4018B1C6`. `[FAIT]` Dans le build
+publié, cette adresse est exactement `move.l d0,(0,a4,d2.l*8)` du premier
+stockage de descripteur. Le facteur huit est interdit sur ColdFire et provoque
+le vecteur 03 : voir [manuel NXP MCF54455, Address Error Exception](https://www.nxp.com/docs/en/reference-manual/MCF54455RM.pdf).
+Unicorn accepte ce mode 68000, donc la preuve précédente ne détectait pas
+cette incompatibilité ISA. Les mêmes modes existaient dans le prototype
+sonore retiré ; cela constitue une cause possible de son incident, sans
+rapport d’adresse permettant de le confirmer.
+
+Correction : parcours des quatre paires par pointeur `a4`, incrément de huit
+octets et réinitialisation avant application. Aucune adresse indexée facteur
+huit ne subsiste dans SCRAMBLE. Taille : 783 octets, sept masques. Le générateur
+contrôle le désassemblage compilé et refuse les index mots ou facteur huit ;
+la preuve conserve l’instruction fautive comme cas de régression refusé.
+Le correctif reste expérimental, à retester sur matériel.

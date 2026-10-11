@@ -9,6 +9,10 @@ import gen_seq_gen as sg
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'tweaks/model-cycles_OS1.13/experimental/scramble'
 
+def check_index_modes(disassembly):
+    """Unicorn accepte ces modes 68000 interdits par ColdFire (vecteur 03)."""
+    assert not re.search(r"%[da][0-7]:[wl]:8|%[da][0-7]:w",disassembly), "mode indexé interdit ColdFire"
+
 def compile_code(cross,tg,next_hook):
     occupied=[]
     paths=list((ROOT/'tweaks/model-cycles_OS1.13').glob('*.json'))+list((ROOT/'tweaks/model-cycles_OS1.13/experimental/sequence-only').glob('*.json'))+list((ROOT/'tweaks/model-cycles_OS1.13/experimental/queued').glob('*.json'))
@@ -45,6 +49,7 @@ def compile_code(cross,tg,next_hook):
         script+=' .unused : { *(.text) *(.data) *(.bss) }\nASSERT(SIZEOF(.unused) == 0, "section non placee")\n}\n'
         (p/'sc.ld').write_text(script)
         subprocess.run([cross+'ld','--orphan-handling=error','-T',str(p/'sc.ld'),'-o',str(p/'sc.elf'),str(p/'sc.o')],check=True)
+        check_index_modes(subprocess.check_output([cross+'objdump','-d',str(p/'sc.elf')],text=True))
         syms=sg.symbols(cross,p/'sc.elf');blobs=[]
         for i in range(len(slots)):
             subprocess.run([cross+'objcopy','-O','binary',f'--only-section=.slot{i}',str(p/'sc.elf'),str(p/'sc.bin')],check=True)

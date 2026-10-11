@@ -72,3 +72,19 @@ Décochée : exactement les octets du générateur déjà testé. SCRAMBLE est u
 carte indépendante avec variantes de chaîne adéquates. Select all coche aussi
 la sous-option et conserve Model-TG et Live MIDI OUT + THRU en priorité.
 Les deux flashers existants et leurs catalogues restent inchangés.
+
+## 5. Refus en lecture malgré mode commun (11/10/2026)
+
+AveyCole signale « Check range/stop », option différée cochée, longueur/vitesse
+communes et sans chaîne. `[FAIT en émulation]` Cas reproduit : longueur brute
+de piste +713 = 64 et longueur effective du parent = 16. Le contrôle initial
+comparait la longueur brute à celle du pattern et refusait ce cas valide.
+Le getter natif `0x40016402` consulte le parent +60 : `0x4000c964` lit le mode
+et `0x4000c994` retourne la longueur commune. Le clone garde ce parent ;
+le générateur et le writer vérifient donc déjà la vraie longueur effective.
+Suppression de la comparaison brute ; conservation de toutes les validations
+d’identité, de snapshots et de frontière. Régression avec vrais getters natifs,
+longueur effective 16 et longueur masquée 64 : l’ancien build refuse, le
+correctif doit préparer, appliquer seize pas et garder la longueur masquée.
+Cette cause reproduite peut expliquer le rapport ; confirmation matérielle
+du correctif encore attendue.

@@ -169,11 +169,7 @@ sqs_identity:
     cmpl %a3@(16),%d0
     bnew sqs_fail
     movel %d0,sg_q_raw
-    moveal %d0,%a0
-    moveq #0,%d1
-    movew %a0@(713),%d1
-    cmpl %d2,%d1
-    bnew sqs_fail
+    | Longueur effective via parent +60 ; +713 peut rester différente en mode commun.
     moveal %a3@(44),%a5
     tstl %a5
     beqw sqs_fail

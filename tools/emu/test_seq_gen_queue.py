@@ -60,6 +60,22 @@ def boundary(r,step=0,phase=0,tick=0):
     return r.count
 
 def run(stock,base,tweak):
+    # Mode commun natif : longueur masquée de piste 64, longueur effective 16.
+    r=setup(stock,base,tweak,length=16)
+    parent,pvt,pget,praw=0x931e0000,0x931e1000,0x931e2000,0x931e3000
+    r.w32(OBJ+60,parent);r.w32(parent+44,pvt);r.w32(pvt+40,pget)
+    r.u.mem_write(pget,b'\x20\x3c'+struct.pack('>I',praw)+b'\x4e\x75')
+    r.u.mem_write(praw+20,struct.pack('>H',16));r.u.mem_write(praw+25,b'\0')
+    r.u.mem_write(RAW+713,struct.pack('>H',64));r.original=bytes(r.u.mem_read(RAW,722))
+    r.call(0x4005b642,PAT+3*722,RAW,0,0xffffffff,0xffffffff)
+    r.initial_audio=bytes(r.u.mem_read(PAT,30710))
+    assert r.call(0x40016402,OBJ)==16
+    r.call('sg_action_generate')
+    assert r.r32(r.s['sg_q_state'])==1,('shared hidden length',r.r32(r.s['sg_error']))
+    boundary(r);assert r.r32(r.s['sg_q_state'])==2
+    assert bytes(r.u.mem_read(RAW+713,2))==struct.pack('>H',64)
+    r.call('sg_q_service');assert r.signals==list(range(16))
+    print('ok : longueur effective native 16 avec longueur masquée piste 64 ; staging et commit')
     worst=0
     for index in range(6):
       for length in (1,16,64):

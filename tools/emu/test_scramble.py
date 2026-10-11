@@ -7,6 +7,7 @@ restent simulées : ce n'est pas un boot complet ni une preuve matérielle.
 """
 import argparse,json,struct
 import build,gen_flasher_tweaks as catalog,syntakt
+from gen_scramble import check_index_modes
 from unicorn import UC_HOOK_CODE
 from unicorn import m68k_const as mk
 from test_seq_gen_menu import Rig,ROOT,EVENT
@@ -57,6 +58,11 @@ def setup(stock,base,tweak,index=0, extras=None, syntakt_path=None):
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--syntakt');a=ap.parse_args()
+    try:check_index_modes("4018b1c6: 2980 2e00 movel %d0,%a4@(0,%d2:l:8)")
+    except AssertionError:pass
+    else:raise AssertionError("la régression matérielle v03 doit être refusée")
+    check_index_modes("movel %d0,%a4@")
+    print("ok : instruction fautive matérielle 4018B1C6 refusée par le contrôle ColdFire")
     stock=main_os_from_syx(a.cycles)
     for dep,suffix in [('model-tg',''),('model-tg-st','-st')]:
         base=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/30-{dep}.json').read_text())

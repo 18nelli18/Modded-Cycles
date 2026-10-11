@@ -117,7 +117,7 @@ sc_prepare:
     addql #8,%sp
     tstl %d0
     beqw sc_out
-    movel %d0,%a4@(0,%d2:l:8)
+    movel %d0,%a4@
     movel %d0,%sp@-
     lea.l %sp@(76),%a0        | résultat caché à sp d'entrée de run +72.
     jsr 0x4005a65a
@@ -141,8 +141,8 @@ sc_prepare:
     swap %d0
     andil #65535,%d0
     addl %d3,%d0
-    movel %d0,%a4@(4,%d2:l:8)
-    movel %a4@(0,%d2:l:8),%sp@-
+    movel %d0,%a4@(4)
+    movel %a4@,%sp@-
     jsr 0x4005a7f8            | descripteur -> CC, valeur MIDI entière.
     addql #4,%sp
     tstl %d0
@@ -155,23 +155,26 @@ sc_prepare:
     movel %d5,%sp@-
     jsr 0x4005a8ce            | vérifier le mapping inverse avant toute écriture.
     lea.l %sp@(12),%sp
-    cmpl %a4@(0,%d2:l:8),%d0
+    cmpl %a4@,%d0
     bnew sc_out
-    movel %d3,%a4@(0,%d2:l:8)
+    movel %d3,%a4@
+    addql #8,%a4
     addql #1,%d2
     cmpil #4,%d2
     bltw sc_prepare
     moveq #0,%d2
+    lea.l %sp@(40),%a4
     jmp sc_apply
     .section .text.sc_apply,"ax"
 sc_apply:
     clrl %sp@-               | pas de renvoi MIDI demandé.
     movel %d5,%sp@-
-    movel %a4@(4,%d2:l:8),%sp@-
-    movel %a4@(0,%d2:l:8),%sp@-
+    movel %a4@(4),%sp@-
+    movel %a4@,%sp@-
     movel %a2,%sp@-
     jsr 0x4000f2a2
     lea.l %sp@(20),%sp
+    addql #8,%a4
     addql #1,%d2
     cmpil #4,%d2
     bltw sc_apply
