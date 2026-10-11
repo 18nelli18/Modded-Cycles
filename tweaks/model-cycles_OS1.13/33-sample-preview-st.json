@@ -14,9 +14,7 @@
  "requires": [
   "model-tg-st"
  ],
- "conflicts": [
-  "chord-keys"
- ],
+ "conflicts": [],
  "symbols": {
   "pv_parse": "0x40185c58",
   "pv_note": "0x40185968",

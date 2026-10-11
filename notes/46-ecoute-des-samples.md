@@ -552,3 +552,13 @@ Firmware : Model-TG + l'écoute des samples (et, à part, la version combinée a
   rééchantillonnage, par exemple) ; regarder si chacun pose un trig, quelle note, et si la fin de note d'un appui muet
   coupe une note de la piste qui sonnait encore (§10, point 10). Même chose avec l'arpégiateur actif sur la piste.
 - La même chose avec la version combinée (Model-TG + les 5 moteurs du Syntakt, audio 6 canaux).
+
+## 13. Chord Keys quitte les quatre masques (11/10/2026)
+
+La deuxième version de Chord Keys (note 42 §33) se combine avec Model-TG : elle ne pouvait plus partager les quatre
+masques 47×47 de ce tweak (§7, §8). Son générateur place désormais son code dans d'autres masques libres
+(`tweaks/model-cycles_OS1.13/REGISTRY.md`) ; `0x40183118`, `0x40185018`, `0x40185968` et `0x40185c58` ne servent
+plus qu'à l'écoute des samples. `tools/gen_sample_preview.py` ne déclare donc plus `conflicts: ["chord-keys"]` :
+les deux JSON ne changent que par ce champ, leurs écritures sont identiques, et le MAIN OS des combinaisons déjà
+construites ne bouge pas. `check_overlaps.py` et le générateur de Chord Keys vérifient qu'aucun octet n'est partagé.
+`[FAIT en émulation]` La preuve de Chord Keys passe avec `model-tg,sample-preview` (§33 de la note 42).

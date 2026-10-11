@@ -12,32 +12,46 @@ Source : conversation locale, sans lien public. Adresses : VA de l'OS **1.13**. 
 
 Tweak : [`45-chord-keys.json`](../tweaks/model-cycles_OS1.13/45-chord-keys.json), générateur
 [`tools/gen_chord_keys.py`](../tools/gen_chord_keys.py), sources
-[`tools/machines/chord_keys/`](../tools/machines/chord_keys/), preuves sous `tools/emu/` et test natif
-[`tools/test_chord_keys.py`](../tools/test_chord_keys.py). **État au 10/10/2026 : testé.** Nico rapporte que
-Chord Keys seul fonctionne sur son Model:Cycles (§13). Maxime l'a essayé le 07/10/2026, seul et avec six autres mods :
-tout marche, sauf le cas de note bloquée attendu (§15). Ce cas est corrigé au §16 ; Maxime a validé la version
-corrigée le 10/10/2026 (§18). Relecture de l'intégration et défauts connus au §14.
+[`tools/machines/chord_keys/`](../tools/machines/chord_keys/), preuves sous `tools/emu/` et tests natifs
+[`tools/test_chord_keys.py`](../tools/test_chord_keys.py),
+[`tools/test_chord_harmony.py`](../tools/test_chord_harmony.py) et
+[`tools/test_chord_names.py`](../tools/test_chord_names.py).
+
+**État au 11/10/2026 : deuxième version, expérimentale.** La première version (TRIG 1–16, SHAPE, COLOR ; §1–§18)
+est testée : Nico seul (§13), Maxime le 07/10/2026 seul et avec six autres mods (§15), correction de la note bloquée
+validée le 10/10/2026 (§18). La deuxième version de Nico (sa révision `c34e797`, §19–§32) ajoute les pads HARMONY,
+les palettes COLOR, les P-locks HARMONY, le nom de l'accord à l'écran, la sortie MIDI des accords et la compatibilité
+avec Model-TG ; Nico en a essayé une partie sur sa machine (§28). Sa reprise dans ce dépôt (place, preuves, flasher,
+version 1.52) est au §33. Relecture de la première intégration et défauts connus au §14.
 
 ## Réponse courte
 
-`[FAIT en émulation]` Le mod raccorde les boutons **TRIG 1–16**, un menu de réglage, le stockage des patterns et
-le véritable moteur CHORD. Dans **FUNC + RETRIG**, activer **Keys** sur une piste CHORD, régler **Root**, **Scale**
-et **I** à **VII**. Hors édition en grille, 1–7 jouent I–VII, 8–14 les mêmes degrés une octave plus haut, puis
-15–16 I–II deux octaves plus haut. **RETRIG ne change plus de banque.** Le menu affiche **MAJ** pour majeur.
-Les réglages restent propres à chaque piste du pattern ; les seize touches pilotent la piste CHORD sélectionnée.
-T1–T6 retrouvent intégralement leur routage d'événements stock. Le DSP reste réglé par piste : comme les notes
-séquencées ou MIDI, une note jouée par un grand pad peut donc recevoir les intervalles de Keys si elle est dans
-la gamme. PAGE garde ses fonctions.
+`[FAIT en émulation]` TRIG 1–16 jouent les degrés de la piste CHORD sélectionnée, avec Root, Scale et le niveau
+TRI/7/9/11/13 propre à chaque degré : 1–7 jouent I–VII, 8–14 les mêmes degrés une octave plus haut, 15–16 I–II
+deux octaves plus haut. Dans **FUNC + RETRIG**, activer **Keys** sur une piste CHORD, régler **Root** (C1–C3, notes
+MIDI 24–48), **Scale** (sept modes, **MAJ** pour majeur), **I** à **VII** et **MIDI** (ROOT ou CHORD). Les réglages
+restent propres à chaque piste du pattern. **RETRIG ne change plus de banque** ; PAGE garde ses fonctions.
 
-Les sept modes diatoniques et cinq choix d'extension sont implémentés, avec trois ou quatre voix. La tonique de
-l'interface est limitée aux notes MIDI **24–48**, soit **C1–C3** selon la notation du menu. SHAPE choisit **BASE**,
-**CLS0–3** ou **OPN0–3** pour les notes de la gamme lorsque Keys est actif. **I–VII** seuls choisissent les
-extensions ; **COLOR** garde les gains natifs sans déplacer les octaves. Commencer avec **BASE** et **COLOR 32**. Les notes hors gamme gardent l'accord SHAPE stock.
+Deuxième version (§19–§32) : **COLOR** choisit la palette DIATONIC, JAZZ ou TENSION ; **SHAPE** combine les neuf
+dispositions BASE/CLS0–3/OPN0–3 avec leur balance. **HARMONY est permanent avec Keys ON sur CHORD** : T1–T6 donnent
+des changements temporaires 9/11/13/SUS7/PARALLEL/V7, sans sélectionner une autre piste. Le dernier pad pressé
+prévaut ; un nouvel appui pendant un TRIG tenu réarticule l'accord entier (§23) ; le relâchement garde cet accord
+sans nouvelle attaque ni lock, et un T tenu sans TRIG prépare les accords suivants (§24–§26) ; T reste actif sur
+chaque nouveau TRIG jusqu'à son relâchement (§29). L'écran nomme l'accord joué, par exemple Cmaj7 ou Em9. Les gestes
+s'enregistrent en P-locks HARMONY (§22), avec des notes natives pour les nouvelles attaques (§23). MIDI CHORD envoie
+les notes des accords joués et séquencés (§30) ; ROOT garde la sortie native. Quatre voix au plus ; les extensions
+m7♭5 gardent la quinte diminuée en omettant la tierce, et PARALLEL/V7 sont indisponibles sur les cibles diminuées.
 
-Cette fonction était absente du dépôt. Le [Scale Lock de Model-TG](https://github.com/TinyGregAudio/Model-TG/blob/main/docs/USER_GUIDE.md#scale-lock)
-transforme les notes du clavier suivant une gamme ; il ne choisit pas un accord par degré. **Model-TG est déclaré
-incompatible** dans cette version : sa transformation des notes et son CHORD optimisé demanderaient une
-intégration spécifique. La recherche ne démontre pas l'absence d'un autre mod dans tous les projets externes.
+Les anciens patterns gardent Root, Scale et I–VII ; leurs valeurs SHAPE/COLOR et leurs locks sont relus avec la
+nouvelle interprétation (§21.2). Les nouveaux patterns commencent Keys OFF.
+
+Le [Scale Lock de Model-TG](https://github.com/TinyGregAudio/Model-TG/blob/main/docs/USER_GUIDE.md#scale-lock)
+transforme les notes du clavier suivant une gamme ; il ne choisit pas un accord par degré. La première version
+déclarait Model-TG incompatible ; la deuxième se combine avec les autres mods, dont **Model-TG** seul ou avec les
+moteurs du Syntakt (§27) : sur CHORD avec Keys ON, Root et Scale de Chord Keys déterminent les notes du clavier, et
+Scale Lock reste actif ailleurs. Les notes reçues hors gamme gardent le son CHORD stock. Dans ce dépôt, le code
+occupe 58 masques libres, sans en partager aucun avec un autre mod, et les P-locks HARMONY prennent le
+slot 32, à côté des réglages du filtre par piste (§33).
 
 ## 1. Comportement musical et limites
 
@@ -76,8 +90,9 @@ des boutons ne rejouent pas l'accord. La vélocité provient du réglage de pist
 
 Le moteur déduit le degré de la note reçue et de la gamme du **pattern actif**. Il n'ajoute pas de métadonnée
 d'accord à chaque événement : les fondamentales enregistrées ou séquencées sont réinterprétées avec les réglages
-courants. Modifier une extension change donc aussi le rendu des notes correspondantes du pattern. Le MIDI
-sortant conserve la fondamentale transmise par le helper stock ; ce mod ne crée pas quatre notes MIDI sortantes.
+courants. Modifier une extension change donc aussi le rendu des notes correspondantes du pattern.
+MIDI ROOT conserve la fondamentale transmise par le helper stock. Depuis le §30, MIDI CHORD peut
+envoyer les trois ou quatre notes de l’accord à chaque attaque, sans transposer avec PITCH/FINE.
 La preuve live rec suit le vrai chemin jusqu'au message de note : TRIG 15, fondamentale 72, vélocité 97, retrig −1,
 durée 20 000 et fin de note correcte pour cette troisième octave. **L'écriture finale du trig enregistré
 n'est pas exécutée dans ce banc** ; la sauvegarde de la configuration et le rendu des fondamentales sont
@@ -290,20 +305,24 @@ SHAPE/COLOR), ce qui lève ce refus ; le reste des octets diffère toujours avec
 
 ## 7. Compatibilités
 
+La colonne ci-dessous décrit la deuxième version (§27, §33). Les résultats datés qui suivent conservent
+leur portée historique. Les conflits entre deux autres mods restent applicables.
+
 | Mod / fonction | Traitement |
 |---|---|
-| Model-TG / Model-TG-ST | **Conflit déclaré**, transformation Scale Lock et moteur CHORD à intégrer séparément |
+| Model-TG / Model-TG-ST | Depuis le §27 : clavier chaîné via son entrée stock, HARMONY en slot RAM 32 (28 chez Nico, déplacé au §33) et Scale Lock conservé hors CHORD Keys ON (conflit déclaré dans la première version) |
 | Arp | Stockage distinct ; menu stock conservé avant les dix nouvelles lignes ; accords TRIG sans répétition (`retrig=-1`), grands pads traités par l'OS et l'arpège |
 | Trig-preview / trig-hold | PAGE et le consommateur de grille restent stock ; le hook KeyboardView laisse passer l'édition des pas et les modificateurs |
 | 6ch-usbup / moteurs Syntakt | Pas de cave partagée ni modification du transport USB ; preuves combinées dans la suite |
 | Machine MACRO (notes/43) | Aucun octet commun ; MACRO ajoute une 7e machine, Chord Keys ne vise que CHORD. Preuves au §17 |
 | Samples OS | Installation d'un autre OS, pas une combinaison avec ce mod pour Cycles OS 1.13 |
-| Autres machines | Grands pads toujours stock ; clavier TRIG stock si Keys est OFF ou la piste sélectionnée n'est pas CHORD ; wrapper audio uniquement sur l'update CHORD |
+| Filtre par piste (notes/47) | Ses réglages occupent les slots RAM 28..31 : HARMONY passe au slot 32 (§33), aucun octet commun |
+| Autres machines | Grands pads et clavier TRIG habituels si Keys est OFF ou la piste sélectionnée n'est pas CHORD ; les ajouts de Model-TG restent actifs ; wrapper audio uniquement sur l'update CHORD |
 
 `[FAIT en émulation, révision du 06/10/2026]` La suite complète passe seule et avec **6ch-usbup, latching-mute, trig-preview,
 browser-scroll, trig-hold, arp, tempo-max, boot-anim et les cinq moteurs Syntakt SD/CP/TOY/BITS/SWARM**.
 L'absence de chevauchement d'octets ne prouve pas à elle seule une compatibilité fonctionnelle ; la suite exécute
-les mêmes contrôles avec cette image combinée. Les résultats de la dernière révision sont suivis en §12.5.
+les mêmes contrôles avec cette image combinée. Les résultats détaillés de cette révision historique sont suivis en §12.5 ; ceux de la compatibilité actuelle en §27 et §33.
 **Le seul retour matériel reçu concerne Chord Keys sans autre mod** (§13). Toutes les combinaisons ci-dessus
 restent sans essai matériel rapporté, y compris une session dense avec effets et USB.
 
@@ -873,3 +892,2034 @@ branche (Chord Keys seul et avec six mods, identiques à l'octet près à ceux d
 README, `PROVENANCE.md` et `BUILD.md`.
 
 `[HYP]` Chord Keys avec MACRO reste vérifié en émulation seulement (§17) ; le guide le dit.
+
+## 19. Projet de jeu harmonique et d'extensions par famille (06/10/2026)
+
+**Source : discussion avec Nico, sans lien public.** Nico accepte le principe des pads de
+modification harmonique et demande de reporter l'implémentation à une autre conversation.
+Il demande ensuite de préciser les extensions musicales, communes aux réglages et aux pads,
+avec leurs variantes et les références HiChord, Orchid et Nopia.
+
+**Statut : conception uniquement.** Cette section ne décrit pas le firmware livré ; aucune
+nouvelle preuve en émulation ni aucun essai matériel ne couvre ce projet. Le comportement
+diatonique documenté plus haut reste celui de la version actuelle.
+
+Les propositions ont évolué pendant la discussion : lire **§19.8 en priorité** pour
+la décision de fusionner disposition et mélange sur SHAPE, et **§19.7** pour la matrice
+simplifiée et les corrections de superposition. Les tableaux précédents conservent
+l'historique du raisonnement et ne constituent pas des exigences cumulatives.
+
+### 19.1. Principe accepté pour les pads
+
+Dans un mode de pads HARMONY, les TRIG continuent à choisir les degrés. Les six pads sont
+assignables ; leur affectation initiale proposée dans la discussion est la suivante :
+
+| Pad | Action | Exemple |
+|---|---|---|
+| T1 | Extension 9 | Em7 → Em9 |
+| T2 | Extension 11 ou ♯11 selon la famille | Dm7 → Dm11 ; Cmaj7 → Cmaj7(♯11) |
+| T3 | Extension 13 | G7 → G13 |
+| T4 | SUS, remplacer la tierce par la quarte | G9 → G9sus4 |
+| T5 | Parallèle majeur/mineur, en conservant le niveau d'extension | Fmaj9 → Fm9 |
+| T6 | Dominante de la cible, fixée à la septième | TRIG Am9 → E7 pendant l'appui, puis Am9 au relâchement |
+
+Sans pad, le réglage enregistré du degré s'applique. Un pad d'extension **remplace
+temporairement** ce choix ; il ne cumule pas les extensions et ne réécrit pas le pattern.
+Ainsi, EXT 9 + pad 13 donne le voicing de 13 ; au relâchement, retour au voicing de 9.
+EXT 9 + pad 9 ne change rien. L'assignation permettrait de choisir TRI ou 7 à la place.
+Une seule modification harmonique est active à la fois dans la première version envisagée.
+
+Objectif de jeu : pouvoir maintenir le pad avant le TRIG, ou modifier un accord déjà tenu,
+puis revenir au réglage enregistré **sans redéclencher l'enveloppe**. Ce dernier point est un
+objectif à prouver, pas une capacité déjà démontrée. Un mode TRACK conserve le jeu natif des
+pads. Le routage exact des touches, la sélection des pistes et les combinaisons FUNC/mute
+devront être spécifiés et prouvés avant toute modification.
+
+### 19.2. Politique musicale recommandée, soumise à la discussion
+
+**[PROPOSITION, pas encore une décision de Nico]** La fondamentale, la tierce, la quinte et
+la septième de départ viennent du degré dans le mode choisi. L'extension vient ensuite
+d'une table de familles, commune au menu et aux pads. Une triade majeure ne suffit donc
+pas à décider de la septième : en do majeur, I et IV donnent maj7, V donne 7 dominante.
+En la mineur naturel, le V reste Em ; le passage à E7 demande une transformation explicite.
+
+Les intervalles se calculent depuis la fondamentale de l'accord : 9 = 14 demi-tons,
+11 = 17, ♯11 = 18, 13 = 21. « Naturelle » ne veut pas dire « dans la tonalité globale » :
+Em9 utilise F♯, Em11 utilise A, Em13 utilise C♯, même dans une progression en do majeur.
+
+| Famille | EXT 7 | EXT 9 | EXT 11 | EXT 13 |
+|---|---|---|---|---|
+| Majeure avec septième majeure | maj7 | maj9 | maj7(♯11) | maj13 |
+| Mineure avec septième mineure | m7 | m9 | m11 | m13 |
+| Dominante | 7 | 9 | 7(♯11) | 13 |
+| Semi-diminuée | m7♭5 | Repli m7♭5 proposé pour la première version | Même repli | Même repli |
+
+Ce choix forme une palette ; il ne prétend pas déterminer la meilleure tension pour toute
+mélodie ou toute progression. Le menu peut conserver les niveaux 9/11/13, mais le nom de
+l'accord résultant doit indiquer la véritable altération, notamment ♯11.
+
+**Variantes à distinguer explicitement :**
+
+- Sur maj7, ♯11 est un choix lydien fréquent. La 11 naturelle est également possible,
+  avec un frottement marqué contre la tierce majeure ; SUS remplace cette tierce au lieu
+  de conserver ce frottement.
+- Sur m7, 9 et 11 naturelles sont les choix de départ. La 13 naturelle donne une couleur
+  dorienne ; ♭13 donne une autre couleur, notamment éolienne, et doit être nommée m7(♭13).
+  Une ♭9 peut servir une couleur phrygienne volontaire. Le choix m(maj7) est aussi distinct
+  de m7 ; il n'est pas déduit automatiquement de toute triade mineure.
+- Sur dominante, 9 et 13 naturelles sont les valeurs de départ. ♭9, ♯9 et ♭13 sont de
+  véritables tensions usuelles, à choisir explicitement. Pour la quarte, les solutions
+  7sus4/9sus4 et 7(♯11) sont différentes : la première retire la tierce, la seconde la
+  conserve. La recommandation ci-dessus choisit ♯11 pour EXT 11, puisque T4 donne SUS.
+- Sur m7♭5, la 11 naturelle est une extension usuelle ; 9 naturelle ou ♭9 dépendent de
+  la couleur recherchée, et ♭13 est une autre possibilité. Il n'existe pas de règle
+  universelle imposant une 13 naturelle. Le repli proposé est une limitation volontaire
+  de notre première version à quatre voix, pas une impossibilité musicale.
+- add9 et 9 sont différents : add9 n'exige pas de septième, 9 en comporte une dans les
+  voicings proposés. De même, 6/9 est un autre choix que 13.
+
+### 19.3. Quatre voix : résultat sonore proposé
+
+**[FAIT dans le code actuel]** `chord_keys.c` et `chord_audio.c` utilisent quatre voix au
+maximum. Les niveaux 9/11/13 retiennent fondamentale, tierce, septième et tension, sans
+quinte ; ils n'empilent pas toutes les tensions inférieures. La nouvelle politique
+conserverait ce principe, avec des intervalles choisis par famille :
+
+| Accord | Notes, avant disposition SHAPE |
+|---|---|
+| Cmaj9 | C–E–B–D |
+| Cmaj7(♯11) | C–E–B–F♯ |
+| Cmaj13 | C–E–B–A |
+| Em9 | E–G–D–F♯ |
+| Em11 | E–G–D–A |
+| Em13 | E–G–D–C♯ |
+| G9 | G–B–F–A |
+| G7(♯11) | G–B–F–C♯ |
+| G13 | G–B–F–E |
+| G9sus4 | G–C–F–A |
+
+Pour Bm7♭5, B–D–F–A utilise déjà les quatre voix. Omettre F supprimerait précisément
+la quinte diminuée. Des voicings étendus restent possibles en omettant une autre note,
+par exemple la fondamentale si un bassiste la joue, mais cela change les hypothèses du
+jeu autonome. **Recommandation conservatrice pour la première version :** conserver
+m7♭5 pour les demandes 9/11/13 sur cette famille, afficher le véritable résultat et
+signaler cette limite dans le guide. Ne pas afficher une extension qui ne sonne pas.
+Nico peut préférer une autre politique de voicing ; cette exception reste à valider
+avec lui avant l'implémentation. m7♭5 ne doit pas être confondu avec dim7.
+
+### 19.4. Références et limites de la comparaison
+
+- [Open Music Theory, symboles](https://viva.pressbooks.pub/openmusictheory/chapter/chord-symbols/)
+  distingue qualité de l'accord, intervalles des extensions et altérations explicites.
+  Son chapitre [voicings](https://viva.pressbooks.pub/openmusictheory/chapter/jazz-voicings/)
+  traite des omissions ; celui sur les [accords et modes](https://viva.pressbooks.pub/openmusictheory/chapter/chord-scale-theory/)
+  explique pourquoi le contexte compte au-delà de la seule famille.
+- [Wayne Naus, Berklee](https://college.berklee.edu/berklee-today-55) propose notamment
+  9/♯11/13 sur maj7 et 9/11 sur m7 dans un exercice de réharmonisation. Il précise que
+  les règles de cet exercice s'affranchissent de la fonction dans la tonalité ; ce
+  tableau n'est pas une loi universelle, et l'absence de m13 n'en interdit pas l'usage.
+- [HiChord, manuel bêta Rev 3.0](https://hichord.github.io/hichord-beta-updater/manual/#joystick),
+  consulté le 06/10/2026 : le joystick applique des transformations momentanées et
+  revient au départ au relâchement. Le mode Default produit notamment maj9 ou m9 ;
+  sur l'accord diminué, son geste 9 donne m7♭5. Extended distingue add9, add11, min11,
+  dom9 et dom7♯9 ; Chromatic propose d'autres couleurs. Ce sont des choix explicites
+  de familles et de voicings. Notre règle ♯11 sur les accords majeurs et dominants
+  n'est pas présentée comme l'algorithme de HiChord.
+- [Orchid, documentation officielle](https://support.telepathicinstruments.com/hc/en-us/articles/16576229505167-Chord-Extensions-Explained) :
+  les boutons d'extension ajoutent des notes et peuvent se combiner. Ce fonctionnement
+  diffère de nos pads exclusifs. La page ne fournit pas une table complète de tensions
+  automatiques pour chaque degré.
+- [Nopia, entretien avec les créateurs](https://www.musicradar.com/music-tech/this-is-just-the-beginning-nopia-launches-on-kickstarter-and-hits-usd1-4m-in-24-hours) :
+  les créateurs décrivent le centre tonal, le contrôle des extensions, les dominantes
+  secondaires et l'emprunt modal. Aucune table publique exhaustive de leurs choix
+  d'intervalles par degré n'a été trouvée ; ne pas leur attribuer notre matrice.
+
+### 19.5. Reprise dans une autre conversation
+
+**[À FAIRE]** Arrêter avec Nico les recommandations du §19.2, surtout ♯11 sur dominante,
+13 naturelle sur mineur et le repli des semi-diminués. Définir le résultat de SUS et
+PARALLÈLE pour chaque famille/niveau, la priorité de pads simultanés et la portée de
+leur assignation. Les exemples simples ci-dessus ne constituent pas encore une table
+complète de ces deux transformations.
+
+La représentation actuelle réserve trois bits par degré ; des variantes supplémentaires
+nécessiteraient un choix de stockage et de migration explicite. Préserver les anciens
+patterns demande également de décider comment ils choisissent l'ancienne ou la nouvelle
+politique harmonique. Le séquenceur ne stocke actuellement que la note fondamentale :
+ne pas promettre l'enregistrement des gestes de pads avant d'en définir la représentation.
+L'audio et l'UI devront partager les mêmes règles harmoniques, puis recevoir les preuves
+requises par le dépôt, notamment pour le changement sans retrigger et le retour stock.
+
+### 19.6. Palettes harmoniques proposées par Nico (06/10/2026)
+
+**Source : suite de la même discussion.** Nico propose plusieurs palettes, par exemple
+Jazz, Soul, Spanish et Tango, qui changeraient les choix d'extensions. Cette orientation
+remplace l'idée d'imposer la matrice du §19.2 à tous les usages. Le contenu exact des
+palettes ci-dessous reste une **proposition de conception**, sans implémentation.
+
+La palette choisit les intervalles et le voicing réduit à partir du mode, du degré, de
+la famille et du niveau d'extension demandé. La même règle sert aux settings et aux
+pads. Des palettes peuvent partager certains accords : leur différence ne doit pas
+être inventée pour remplir une table. Les noms de genres désignent des palettes
+inspirées de ces pratiques, pas une statistique exhaustive ni une définition du genre.
+
+| Palette envisagée | Orientation proposée |
+|---|---|
+| DIATONIC | Conserver exactement le calcul diatonique existant, y compris ses voicings et ses tensions parfois altérées |
+| JAZZ | Départ sur la matrice §19.2 : 9 naturelles, 11 mineure/♯11 majeure et dominante, 13 naturelles ; une variante plus fonctionnelle ou altérée pourra être distincte |
+| SOUL | Départ maj9, m9, m11 ; favoriser les dominantes suspendues pour 11 et 13, par exemple 9sus4 et 13sus4 |
+| SPANISH | Explorer ♭9 et ♭13 sur les accords dominants appropriés, en distinguant dominante d'une tonalité mineure et accord de repos du flamenco phrygien |
+| TANGO | Explorer les tensions de dominante selon la résolution, notamment ♭9 vers une cible mineure ; ajouter les choix explicites 6/m6 pour les accords de repos |
+
+Exemple concret de différence à définir dans les tables : sur G7, EXT 11 donnerait
+G7(♯11) en JAZZ et G9sus4 en SOUL ; EXT 13 donnerait G13 en JAZZ et G13sus4 en SOUL.
+Voicings autonomes possibles à quatre voix : G–B–F–C♯, G–C–F–A, G–B–F–E et
+G–C–F–E respectivement. Le dernier omet la 9. Sur Em, EXT 9 peut donner Em9 dans
+les deux palettes. Ce recouvrement est voulu.
+
+**Règles d'interface proposées :**
+
+- Un sélecteur PALETTE s'applique à l'ensemble du clavier Chord Keys configuré et se
+  sauvegarde avec ses réglages. Il ne faut pas devoir choisir une palette pour chaque degré.
+- Les gestes restent prévisibles : T1 demande 9, T2 demande 11, T3 demande 13 ; la
+  palette précise les altérations ou la suspension. T4/T5/T6 gardent leur rôle annoncé.
+  T6 reste la dominante de la cible à la septième simple, conformément au §19.1 ;
+  une variante qui l'enrichit serait un choix explicite supplémentaire.
+- Le pad remplace le niveau enregistré pendant l'appui ; au relâchement, le degré
+  revient au niveau enregistré, interprété dans la même palette. EXT 9 + pad 9
+  continue donc à ne rien changer.
+- Le nom affiché doit refléter les notes : ♭9, ♯11, sus, etc. TRI reste une triade.
+  Les choix 6/m6, add9 ou 6/9, s'ils sont ajoutés, portent leur propre nom ; ne pas
+  transformer silencieusement EXT 13 en m6 ou EXT 9 en add9.
+- Le choix d'une palette ne change pas tacitement la fondamentale, le mode ou la
+  qualité majeure/mineure de base. La suspension explicitement prévue est une
+  exception décrite par la table. Les transformations PARALLÈLE/V7 restent explicites.
+  SHAPE continue à choisir la disposition des notes ; pas de modification automatique
+  de ce réglage par le nom du genre.
+
+Un preset flamenco complet exigerait aussi de définir le mode et les qualités de degrés :
+un repos sur E majeur avec F naturel ne s'obtient pas seulement en altérant la 9 d'Em.
+Il faut distinguer ce futur preset complet de la seule palette d'extensions SPANISH.
+De même, l'orientation TANGO ne doit pas être réduite à « toutes les extensions bémolisées ».
+
+Repères consultés : [cours de Hayden Hill sur le neo-soul](https://www.pianogroove.com/live-seminars/neo-soul-jazz-harmony/)
+(m9/m11, accords suspendus et 13), [Kai Narezo sur la rumba et le flamenco](https://www.berklee.edu/berklee-today/summer-2016/rumba)
+(repos phrygien avec tierce majeure et ♭9),
+[programme de piano harmonique du Conservatoire Julián Aguirre](https://web.consaguirre.com.ar/archivos/Prog_superior/2016-prog_piano_arm_inst_sup.pdf)
+(travail de iiø–V7♭9–i avec différentes qualités de tonique, puis accompagnement
+de tango/zamba). Ces références justifient des ressources musicales disponibles,
+pas une mesure de fréquence des accords dans chaque genre.
+
+**[À FAIRE]** Définir et écouter la table complète de chaque palette, y compris les
+semi-diminués et les niveaux peu caractéristiques d'un style. Vérifier les voicings
+à quatre voix avant de fixer les intitulés. Décider comment les anciens patterns
+conservent DIATONIC et comment la palette des nouveaux patterns est initialisée.
+
+### 19.7. Matrice simplifiée : éviter les fonctions concurrentes (06/10/2026)
+
+**Source : nouvelle demande de Nico.** Il demande une table des extensions et des pads
+pour chaque palette, sans superposition de fonctions, et veut vérifier le rôle des
+différents modes. Si Spanish ne fait que choisir un autre mode, il préfère utiliser
+le sélecteur de gamme existant. **Ce qui suit est une recommandation révisée à discuter,
+pas une implémentation ni une validation par Nico des changements de mapping.**
+
+#### Répartition des responsabilités
+
+| Contrôle | Responsabilité |
+|---|---|
+| ROOT + SCALE | Fondamentales des sept degrés et familles des accords de base |
+| PALETTE | Intervalles des extensions demandées ; ne change ni fondamentale ni tierce ni septième de base |
+| EXT par degré | Niveau enregistré : TRI, 7, 9, 11, 13 |
+| T1–T6 | Modification temporaire explicite, sans réécrire EXT |
+| SHAPE | Disposition/inversions des notes retenues |
+
+La suspension automatique de la proposition SOUL du §19.6 concurrençait directement
+le pad SUS. La recommandation révisée retire cette suspension automatique : les
+palettes d'extensions conservent la tierce. La distinction Jazz/Soul n'est donc plus
+assez nette dans ces seules tables pour justifier deux choix. Leurs autres ressources
+restent accessibles par les extensions, SUS, PARALLÈLE et SHAPE.
+
+SPANISH ne devient pas un second sélecteur de gamme. `[FAIT dans le code]` SCALE offre
+actuellement MAJ, DOR, PHR, LYD, MIX, MINOR, LOC. Le phrygien dominant n'en fait pas
+partie. PHR donne une tonique mineure ; un repos flamenco avec tierce majeure exige
+une transformation explicite ou un mode supplémentaire, avec ses nouvelles familles
+à définir. Le phrygien dominant est un repère possible, pas une définition exhaustive
+de la pratique flamenca.
+
+TANGO n'est pas fixé comme palette indépendante sans règles supplémentaires justifiées.
+6/m6 serait un choix explicite EXT 6, disponible dans tous les styles, et non un
+changement caché de EXT 13. Un futur preset de style pourrait réunir des réglages
+existants ; il ne devrait pas introduire une seconde logique de construction.
+
+#### Trois palettes de départ proposées
+
+Les intervalles sont relatifs à la fondamentale de l'accord joué, même lorsque ce
+degré n'est pas la tonique du mode.
+
+| Palette | Famille | EXT 9 | EXT 11 | EXT 13 |
+|---|---|---|---|---|
+| DIATONIC | Toutes | Degré diatonique +8 | Degré diatonique +10 | Degré diatonique +12 |
+| JAZZ | maj7 | 9 | ♯11 | 13 |
+| JAZZ | m7 | 9 | 11 | 13 |
+| JAZZ | dominante 7 | 9 | ♯11 | 13 |
+| TENSION | maj7 | 9 | ♯11 | 13 |
+| TENSION | m7 | 9 | 11 | 13 |
+| TENSION | dominante 7 | ♭9 | ♯11 | ♭13 |
+
+TRI et 7 restent identiques entre les palettes. TENSION est un choix explicite de
+dominantes plus tendues ; ce n'est pas une déduction de la résolution future ni
+une promesse que cette résolution convient à la mélodie. Les tensions partagées
+entre palettes ne sont pas des commandes dupliquées : ne pas modifier artificiellement
+les accords pour rendre toutes les cases différentes.
+
+Sur G7, les triplets de résultats JAZZ sont G9 / G7(♯11) / G13 ; TENSION donne
+G7(♭9) / G7(♯11) / G7(♭13). Leurs voicings restent fondamentale, tierce, septième,
+tension. Sur Cmaj7 et Em7, les deux palettes coïncident volontairement.
+
+**Exception à traiter avant implémentation : m7♭5.** Pour éviter les trois commandes
+équivalentes proposées au §19.3, ne plus recommander le repli silencieux 9/11/13 → 7.
+Tant qu'un voicing étendu adapté n'est pas choisi, annoncer ces niveaux comme
+indisponibles sur cette famille ; TRI et 7 conservent la quinte diminuée. Le code
+actuel omet la quinte sur tous les degrés aux niveaux 9/11/13, donc une stricte
+compatibilité des anciens patterns et cette nouvelle restriction ne sont pas
+identiques. Leur migration reste à spécifier ; ne pas réécrire les anciens sons
+implicitement. Des voicings sans fondamentale ou sans tierce pourraient permettre
+ces tensions, au prix d'autres compromis : aucune impossibilité musicale n'est affirmée.
+
+#### Mapping de pads révisé proposé
+
+| Pad | Demande | Dépendance à PALETTE |
+|---|---|---|
+| T1 | 9 temporaire | Ligne EXT 9 de la table |
+| T2 | 11 temporaire | Ligne EXT 11 de la table |
+| T3 | 13 temporaire | Ligne EXT 13 de la table |
+| T4 | SUS7 fixe : 1–4–5–♭7 | Aucune : toujours 7sus4, indépendant d'EXT enregistré |
+| T5 | PARALLÈLE | Transformer la famille, puis recalculer le niveau EXT enregistré dans la palette |
+| T6 | V7 de la cible | Aucune : septième dominante simple, comme au §19.1 |
+
+Le T4 fixe est une **révision proposée** du SUS qui conservait EXT : il évite le
+cas d'une 11 doublant la quarte suspendue ou d'une ♯11 frottant automatiquement
+avec elle. Exemples : Cmaj13 → C7sus4, G9 → G7sus4. Les variantes 9sus4 et 13sus4
+peuvent être des affectations explicites alternatives du pad assignable ; elles
+ne sont pas appliquées par la palette. EXT 6 serait aussi un choix explicite,
+avec C6 ou Cm6 selon la tierce, sans septième ajoutée ni altération par la palette.
+Ces ajouts d'affectations et EXT 6 restent à valider avant de changer le menu.
+
+Pour T5 : maj7 → m7, m7 → maj7, dominante 7 → m7 ; conserver la fondamentale et
+le niveau EXT, puis résoudre la nouvelle famille. Exemples Fmaj9 → Fm9 et Fm9 →
+Fmaj9. Il ne s'agit pas seulement de bouger une tierce en conservant chaque autre
+note, ni d'une bascule qui resterait mémorisée. Sur une triade, le résultat reste
+une triade. Sur m7♭5, ne pas inventer une conversion parallèle automatique.
+Pour T6, la cible doit être majeure ou mineure : ne pas promettre une tonicisation
+conventionnelle d'un accord diminué. Les cas non pris en charge doivent être visibles.
+
+Un seul pad modificateur agit à la fois. Pour des appuis qui se chevauchent, proposition
+déterministe : le dernier appuyé prévaut ; son relâchement restaure le précédent encore
+tenu, puis le réglage enregistré lorsqu'il n'en reste aucun. Tous ces gestes nécessitent
+encore une preuve d'émulation du changement sans retrigger.
+
+**Limite assumée :** EXT 9 + T1 redemande le même accord. Éviter cette égalité en changeant
+secrètement T1 en « retirer la 9 » rendrait le geste contextuel. Garder son sens constant
+et permettre une autre affectation explicite (TRI, 7 ou 6, par exemple). Les settings
+définissent le repos ; les pads définissent les écarts temporaires.
+
+#### Interaction avec les sept modes actuels
+
+Voici les tensions théoriques du **degré I** ; pour un autre degré, refaire le calcul
+depuis sa propre fondamentale. Les trois valeurs représentent 9 / 11 / 13.
+
+| SCALE | Famille de I | DIATONIC | JAZZ | TENSION |
+|---|---|---|---|---|
+| MAJ | maj7 | 9 / 11 / 13 | 9 / ♯11 / 13 | 9 / ♯11 / 13 |
+| DOR | m7 | 9 / 11 / 13 | 9 / 11 / 13 | 9 / 11 / 13 |
+| PHR | m7 | ♭9 / 11 / ♭13 | 9 / 11 / 13 | 9 / 11 / 13 |
+| LYD | maj7 | 9 / ♯11 / 13 | 9 / ♯11 / 13 | 9 / ♯11 / 13 |
+| MIX | 7 | 9 / 11 / 13 | 9 / ♯11 / 13 | ♭9 / ♯11 / ♭13 |
+| MINOR | m7 | 9 / 11 / ♭13 | 9 / 11 / 13 | 9 / 11 / 13 |
+| LOC | m7♭5 | ♭9 / 11 / ♭13 en théorie | Voicing étendu à définir | Voicing étendu à définir |
+
+Les modes gardent leur rôle : fondamentales et familles des autres degrés diffèrent.
+En revanche, une palette chromatique peut atténuer le caractère du mode sur un accord.
+Exemples : I en mi phrygien + 9 donne F en DIATONIC et F♯ en JAZZ ; I en la mineur
+naturel + 13 donne F en DIATONIC et F♯ en JAZZ ; III en do majeur + 9 donne F en
+DIATONIC et F♯ en JAZZ, ce qui répond à la demande initiale Em9.
+
+Le workflow reste donc cohérent, mais la garantie que toute note appartient à SCALE
+n'existe qu'en DIATONIC **sans transformation chromatique explicite de pad**. SUS7,
+PARALLÈLE et V7 peuvent eux-mêmes sortir du mode. Une 9 naturelle fixe sur tout m7
+et une préservation absolue du caractère phrygien ne peuvent pas être promises ensemble.
+La table illustre des choix du produit ; elle ne remplace pas l'écoute du contexte
+et de la mélodie. Voir [accords et modes, Open Music Theory](https://viva.pressbooks.pub/openmusictheory/chapter/chord-scale-theory/).
+
+### 19.8. Décision : SHAPE combine disposition et mélange, COLOR choisit la palette (06/10/2026)
+
+**Source : discussion avec Nico, sans lien public.** Il propose : « podriamos mergear
+COLOR y SHAPE en un solo knob, y usar el otro para variar las paletas ». Après la
+proposition SHAPE → VOICING et COLOR → PALETTE ci-dessous, il répond : « dale en otro
+chat arranco la implementacion ». **Orientation acceptée ; implémentation reportée
+à une autre conversation.** Aucun code firmware, tweak ou résultat de test n'est
+modifié par cette décision.
+
+#### Organisation retenue pour la suite
+
+| Commande | Rôle prévu avec Chord Keys actif |
+|---|---|
+| ROOT + SCALE | Fondamentales des degrés et familles des accords de base |
+| I–VII / EXT | Niveau habituel de chaque degré : TRI, 7, 9, 11 ou 13 |
+| SHAPE → VOICING | Une macro combinant disposition/inversions et balance des voix |
+| COLOR → PALETTE | Trois états nommés : DIATONIC, JAZZ, TENSION, selon la matrice §19.7 |
+| TRIG 1–16 | I–VII, I–VII à l'octave, I–II deux octaves plus haut |
+| T1–T6 en HARMONY | Modifications temporaires selon la proposition §19.7 ; TRACK conserve le jeu natif |
+
+La fusion signifie que disposition et balance ne sont plus deux réglages indépendants.
+Le point de départ proposé et accepté dans son principe conserve **BASE, CLS0–3 et
+OPN0–3**, avec une balance conçue pour chaque disposition. BASE reste le point de
+départ équilibré. Les valeurs de gains et les transitions restent à concevoir et à
+écouter ; aucun tableau de gains n'a été arrêté. Ne pas simplement parcourir toute
+la plage de COLOR stock en parallèle de SHAPE : certaines valeurs atténuent des voix
+jusqu'au silence. La nouvelle macro doit garder audible l'extension demandée.
+
+COLOR choisit une palette par états discrets, affichés clairement, sans interpolation
+chromatique entre les notes des différentes palettes. La même palette gouverne EXT
+et les pads d'extension T1–T3. Elle ne change ni la fondamentale, ni le degré joué,
+ni la disposition sélectionnée avec SHAPE. Exemple : III en do majeur, EXT 9,
+DIATONIC → Em7(♭9), JAZZ → Em9 ; SHAPE continue à disposer et équilibrer les voix.
+
+**Précision musicale issue de la discussion :** les extensions diatoniques sont
+courantes, y compris en jazz. JAZZ désigne notre choix de tensions par famille, pas
+« les extensions correctes » ni une mesure de ce qui est le plus souvent joué.
+L'affectation automatique de ♯11 aux majeurs/dominantes et de 13 naturelle aux mineurs
+est un choix de cette palette. La proposition de la prendre par défaut pour les
+nouveaux patterns n'a pas fait l'objet d'une décision explicite ; le défaut reste
+à définir. Les références et limites du §19.7 s'appliquent toujours.
+
+#### Point de reprise pour l'implémentation
+
+`[FAIT dans le code actuel]` `tools/machines/chord_keys/chord_voicing.c` calcule les
+neuf dispositions ; `chord_audio.c` les applique avant l'appel au moteur stock.
+Les gains natifs de COLOR sont encore conservés, tandis que ses déplacements
+d'octave sont contournés (§12). Cette séparation offre une piste pour réaffecter
+les paramètres ; elle ne prouve pas encore le fonctionnement de la nouvelle macro.
+
+`[À FAIRE]` Dans la prochaine conversation :
+
+- Définir les balances associées à SHAPE, le découpage des valeurs COLOR et leurs
+  libellés ; garder un seul choix de palette cohérent entre moteur, écran et réglages.
+- Compléter les cas encore ouverts du §19.7, notamment m7♭5 et PARALLÈLE avec DIATONIC,
+  puis les règles d'assignation des pads et le routage des raccourcis de pistes/mute.
+- Définir stockage et migration : les anciennes valeurs SHAPE/COLOR, y compris leurs
+  parameter locks, ne doivent pas changer implicitement les sons des anciens patterns.
+- Prouver les modifications sur l'accord tenu et le retour au relâchement sans
+  redéclenchement de l'enveloppe ; vérifier les pads superposés, le retour TRACK/Keys OFF,
+  la sauvegarde/relecture, les CC/LFO/locks et les combinaisons de mods applicables.
+- Ne pas présenter l'enregistrement des gestes T1–T6 comme acquis : le séquenceur
+  actuel ne conserve que la fondamentale ; leur représentation reste à définir.
+- Suivre les générateurs, preuves, documentation et PR brouillon prévus par AGENTS.md.
+  Cette nouvelle révision doit rester expérimentale jusqu'à son propre essai matériel.
+
+La discussion s'arrête ici à la demande de Nico ; commencer l'implémentation dans
+l'autre conversation en lisant **§19.7 puis §19.8**, sans reprendre les propositions
+antérieures comme des fonctions supplémentaires cumulatives.
+
+
+## 20. Implémentation des palettes et des pads harmoniques (06/10/2026)
+
+**Historique :** les choix Controls/Pads et le protocole de migration de cette section décrivent
+la révision du 06/10. La demande du 07/10 et leur remplacement définitif figurent au §21.
+
+**Source : demande explicite de Nico dans cette conversation** : « Arranquemos la implementacion […]
+el uso de los pads T1-T6 para cambios temporales […] el knob de color para elegir entre DIATONIC,
+JAZZ, y TENSION […] y el shape para la distribucion y equilibrio de esas notas. » Cette révision
+met en œuvre la direction des §19.7–19.8. Les propositions précédentes restent un historique,
+pas une liste de fonctions supplémentaires. **Aucun essai matériel de cette révision n'est rapporté.**
+Le retour positif du §13 concerne uniquement la version précédente, installée seule.
+
+### 20.1. Contrat musical retenu
+
+`[FAIT dans les sources]` Root, Scale et I–VII gardent leurs rôles. COLOR fournit une palette unique
+aux extensions enregistrées et aux demandes temporaires T1–T3 : **0–42 DIATONIC**, **43–85 JAZZ**,
+**86–127 TENSION**. Les frontières réelles portent sur les mots signés Q8 aux valeurs `43*256`
+et `86*256`, sans interpolation des notes. Les valeurs inférieures restent DIATONIC, les supérieures
+TENSION. TRI et 7 sont indépendants de la palette.
+
+- DIATONIC choisit les degrés +8/+10/+12 de la gamme pour 9/11/13.
+- JAZZ choisit 9/♯11/13 sur maj7 et dominante, 9/11/13 sur m7 et m7♭5.
+- TENSION garde les choix JAZZ, sauf la dominante : ♭9/♯11/♭13.
+
+La famille provient de la tierce, de la quinte et de la septième diatoniques du degré joué.
+JAZZ/TENSION n'inférent ni une résolution future ni le style de la pièce. Les quatre voix des
+extensions ordinaires sont fondamentale/tierce/septième/tension. **Décision d'implémentation m7♭5 :**
+au niveau 9/11/13, garder fondamentale/quinte diminuée/septième/tension et omettre la tierce.
+Cela rend l'extension distincte sans perdre la quinte caractéristique. Le chemin LEGACY conserve
+son ancien choix, y compris son omission de quinte ; aucune migration implicite de l'ancien son.
+
+| Pad en HARMONY | Transformation | Limite |
+|---|---|---|
+| T1 | EXT 9 dans la palette courante | Ne réécrit pas I–VII |
+| T2 | EXT 11 dans la palette courante | Ne réécrit pas I–VII |
+| T3 | EXT 13 dans la palette courante | Ne réécrit pas I–VII |
+| T4 | SUS7 fixe : 0, 5, 7, 10 demi-tons | Indépendant de la palette et d'EXT |
+| T5 | Majeur/dominante → mineur ; mineur → majeur, même fondamentale et niveau EXT | Indisponible sur diminué |
+| T6 | V7 de la cible : 7, 11, 14, 17 demi-tons au-dessus de sa fondamentale | Indisponible sur diminué |
+
+Pour PARALLEL + DIATONIC, la famille parallèle détermine les tensions : majeure 9/11/13,
+mineure naturelle 9/11/♭13. C'est une transformation chromatique explicite, pas une promesse de
+rester dans Scale. Les autres palettes utilisent la table de la famille transformée. SUS7 reste
+fixe ; les variantes assignables, EXT 6 et d'autres palettes évoquées plus haut ne sont pas ajoutées.
+Sur une demande T5/T6 indisponible, l'audio conserve l'accord de base du degré avec la palette courante.
+
+### 20.2. SHAPE, COLOR et chemin audio
+
+`[FAIT : image officielle et sources]` Les descripteurs restent stock : table à `0x4010dce0`,
+entrées de 56 octets. **COLOR = descripteur 71**, `0x4010ec68`, machine 5, paramètre 11,
+0..127 Q8, défaut 32, CC16. **SHAPE = descripteur 72**, `0x4010eca0`, paramètre 12,
+0..37 Q8, défaut 3, CC17. Les formatters contextuels réemploient les trois crochets du §12.4.
+
+En NEW, SHAPE garde BASE/CLS0–3/OPN0–3 et leurs mêmes plages. Le wrapper lit la palette avant de
+remplacer COLOR dans sa **copie locale** par 32, afin de disposer de trois gains supérieurs positifs.
+Il calcule les intervalles, applique la disposition, appelle l'update CHORD original et pondère les
+gains supérieurs. Les paramètres partagés, locks et valeurs de l'OS ne sont pas réécrits.
+Le cadre local fait **100 octets** ; les offsets partagés avec le hook assembleur restent identiques.
+
+| SHAPE | Pondérations des trois positions supérieures, en trente-deuxièmes |
+|---|---|
+| BASE | 32 / 32 / 32 |
+| CLS0 | 30 / 26 / 28 |
+| CLS1 | 26 / 32 / 28 |
+| CLS2 | 28 / 26 / 32 |
+| CLS3 | 32 / 28 / 26 |
+| OPN0 | 22 / 28 / 32 |
+| OPN1 | 28 / 22 / 32 |
+| OPN2 | 32 / 22 / 28 |
+| OPN3 | 28 / 32 / 22 |
+
+Le premier opérateur conserve son niveau natif. Les autres poids vont de 22/32 à 1, soit Q15
+22 528..32 768 ; aucune voix demandée n'est volontairement réduite à zéro. Les poids suivent
+les positions ordonnées graves→aigus après disposition, pas une identité permanente de tierce ou
+septième. C'est un choix de départ à écouter, pas un équilibre matériel déjà validé.
+
+`[FAIT : désassemblage]` `0x400aada4` écrit les gains en `voice+0x0c`, `+0x10`, `+0x14`.
+Le garde-fou aigu peut ensuite les annuler en `0x400ab20c`. La pondération finale **multiplie**
+ces gains déjà calculés ; elle ne réactive donc jamais une voix coupée par cette protection.
+BASE évite la multiplication pour conserver les bits de gain exacts. La triade garde le
+quatrième opérateur muet. La protection du premier opérateur au plafond aigu du §12.1 est conservée.
+
+### 20.3. Pads et durée du geste
+
+`[FAIT dans les sources]` Deux entrées de PadsView sont détournées : pointeur `0x4010025c`
+vers `ck_ui_pad`, et thunk `0x401002b0` vers `ck_ui_pad_thunk`. Les chemins de repli restent
+`0x4001d180` et `0x4001d3d4`. Les gestes ne passent pas par un nouveau note-on : le getter audio
+lit le modificateur temporaire au prochain update du moteur. Le contrat recherché est une
+modification de l'accord tenu sans recommencer son enveloppe, puis une restauration au relâchement.
+
+`[FAIT en émulation : banc des pads]` Une vue prioritaire peut intercepter le relâchement après
+qu'un pad a été capturé par HARMONY : le test ouvre QuickMute après T3, puis relâche T3.
+Un crochet commun en `0x4007746c` vers `ck_ui_pad_dispatch_hook` consomme uniquement les
+relâchements de pads précédemment capturés, avant les vues prioritaires. Pour les autres événements,
+il rejoue le prologue `4fefffc048d70c04` puis reprend le dispatcher stock en `0x40077474`.
+Le test vérifie le retour du modificateur à zéro, sans note-off parasite ni mute du chemin stock.
+
+Six captures retiennent pad, piste, identité d'en-tête de pattern et rang. Le dernier pad pressé
+prévaut ; son relâchement redonne la main au précédent encore tenu. Les rangs sont compactés,
+sans compteur croissant pouvant déborder. Une nouvelle frappe TRIG n'efface pas les pads encore
+tenus. Les captures de relâchement restent reconnues après l'annulation du geste, pour éviter
+d'envoyer au chemin stock un note-off dont il n'a pas reçu le note-on.
+
+TRACK, FUNC, PATTERN, RETRIG et les événements marqués comme raccourcis conservent le chemin natif.
+Changer Controls/Pads ou désactiver Keys efface les gestes ; le changement d'identité de pattern
+audio invalide les captures précédentes : revenir au pattern ne ressuscite pas un ancien geste.
+Un chargement ou reset annule seulement les gestes appartenant au buffer destination.
+**Pads = N/A** s'affiche dans le menu pendant une demande
+T5/T6 indisponible sur un TRIG tenu identifié comme diminué. Cet indicateur UI ne déduit pas
+la note actuellement jouée par le séquenceur ou par MIDI ; cette limite est affichée dans le guide.
+
+Les gestes T1–T6 sont **live uniquement**. Aucune représentation n'est ajoutée au séquenceur,
+aucune extension n'est réécrite dans I–VII, aucun geste n'est sérialisé. L'enregistrement des
+TRIG continue à conserver la fondamentale, pas une capture complète des notes entendues.
+
+### 20.4. Stockage et migration explicite
+
+`[FAIT dans les sources]` Les six mots Root/Scale/I–VII/Keys à `header+40..63` ne changent pas.
+L'ancienne signature `0x434b01a7` signifie **Controls LEGACY** pour tout le pattern.
+La nouvelle signature a pour base `0x434b0200`, avec les bits 0..5 comme masques Pads HARMONY
+propres aux six pistes. Zéro signifie TRACK. **Controls s'applique aux six pistes du pattern**,
+et non seulement à celle affichée ; cette portée est explicitée dans le guide et BUILD.md.
+
+Le chargement reconnaît les deux signatures et préserve les mots de configuration. Les initialisations
+nouvelles écrivent NEW, toutes les pistes en TRACK et Keys OFF. Choisir NEW pour un ancien pattern
+est volontaire : les valeurs SHAPE/COLOR et les locks restent identiques mais leur interprétation
+change. Revenir à LEGACY restaure le sens précédent. La sélection d'une révision remet les modes
+Pads à TRACK ; la signature et les six mots sont sérialisés par les mécanismes déjà établis.
+Les événements temporaires restent en RAM et sont exclus du format sauvegardé.
+
+### 20.5. Réserves de code supplémentaires
+
+`[FAIT : lecture exhaustive de l'image officielle]` Il existe exactement 22 exemplaires du masque
+47×47 déjà connu : les 19 réserves du générateur, l'exemplaire conservé et les deux masques utilisés
+par l'arp. Aucun autre exemplaire de cette forme n'est supposé libre.
+
+L'inspection des constantes des constructeurs Bitmap trouve aussi **19 masques 35×35 identiques**
+de 280 octets. Douze sont ajoutés comme réserves de Chord Keys, avec exemplaire conservé
+`0x4014a660`. Un masque **33×48 de 384 octets**, `0x40158744`, partage celui conservé en
+`0x4016ac78`. Le masque est une donnée graphique ; sa libération exige la redirection du constructeur.
+
+| Réserve | Capacité | Constante du constructeur | Exemplaire conservé |
+|---|---:|---|---|
+| `0x40158744` | 384 | `0x400b7a5a` | `0x4016ac78` |
+| `0x4016aa28` | 280 | `0x400b1480` | `0x4014a660` |
+| `0x401699a8` | 280 | `0x400b1500` | `0x4014a660` |
+| `0x401696a0` | 280 | `0x400b1540` | `0x4014a660` |
+| `0x40166760` | 280 | `0x400b272e` | `0x4014a660` |
+| `0x4016616c` | 280 | `0x400b2898` | `0x4014a660` |
+| `0x40163fb8` | 280 | `0x400b34c8` | `0x4014a660` |
+| `0x401625bc` | 280 | `0x400b3e2a` | `0x4014a660` |
+| `0x40160e6c` | 280 | `0x400b482e` | `0x4014a660` |
+| `0x40160b6c` | 280 | `0x400b4870` | `0x4014a660` |
+| `0x40160864` | 280 | `0x400b48ac` | `0x4014a660` |
+| `0x401601fc` | 280 | `0x400b4b4a` | `0x4014a660` |
+| `0x4015f50c` | 280 | `0x400b5028` | `0x4014a660` |
+
+Sur **chaque plage complète**, `build.refs_into` trouve uniquement la constante du constructeur,
+aucune référence intérieure et aucun branchement. La comparaison de tous les octets avec l'exemplaire
+conservé passe. Les plages et leurs redirections n'empiètent sur aucun tweak existant, y compris
+ceux exclus fonctionnellement. Le générateur répète ces contrôles pour toute nouvelle réserve utilisée,
+vérifie les dimensions poussées au constructeur et adapte le placement à sa capacité réelle.
+
+La réserve totale atteint **10 888 octets** (19×376 + 12×280 + 384). Seuls les masques occupés
+sont écrits et redirigés ; une fonction n'est jamais coupée entre deux masques. Cela conserve une
+implantation entièrement en MAIN OS, sans nouvelle charge utile ni modification des autres sections.
+
+`[FAIT : génération finale]` Le JSON final contient **60 écritures**, dont **12 accroches** et
+24 paires code/redirection. **8 550 octets** de code, constantes et état occupent **24 masques**.
+Les réserves restantes ne sont ni modifiées ni redirigées. Le build extrait puis reconstruit exactement
+le MAIN OS attendu ; les sections compressées **2, 4 et 5 restent identiques octet pour octet**
+à l'image officielle. Les quatre empreintes de référence figurent dans BUILD.md.
+
+### 20.6. État des preuves et essai matériel
+
+`[FAIT : exécution du noyau portable]` `tools/test_chord_harmony.py` passe : exemples indépendants
+Em9, dominantes tendues, SUS7, PARALLEL et m7♭5 ; **245 comparaisons** DIATONIC/historique avec
+exception m7♭5 explicite ; **5 145 harmonies et neuf SHAPE** ; **65 536 valeurs** COLOR/SHAPE,
+gains actifs et inutilisés ; entrées invalides et transformations refusées sans sortie modifiée.
+La lecture des treize nouvelles réserves de code passe les contrôles décrits au §20.5.
+Ces résultats ne remplacent pas l'exécution du firmware final.
+
+`[FAIT en émulation : JSON final]` La suite ColdFire passe **296 contrôles seule** et **304 avec
+6ch-usbup, latching-mute, trig-preview, browser-scroll, trig-hold, arp, tempo-max, boot-anim et
+les cinq moteurs Syntakt installés ensemble**. Elle couvre les anciennes règles LEGACY, les
+palettes, l'accord tenu sans nouvelle attaque, le retour des pads superposés, la libération sous
+QuickMute, l'isolation entre pistes/patterns, le stockage et la migration, les vrais glyphes
+DIATONIC/JAZZ/TENSION et les paramètres effectifs COLOR/SHAPE. Le banc d'intégration transmet
+séquentiellement les 72 octets de `held_pads` et l'en-tête de 64 octets de l'UI vers le DSP :
+il ne simule pas une interruption
+audio réellement concurrente à chaque écriture d'interface, ni le matériel complet.
+
+Le régulateur combiné passe ses quatre scénarios pour LEGACY puis ses quatre scénarios pour
+NEW/TENSION/OPN3 : accords audibles, charge normale à 50 % simulés, pic isolé à 99 % sans vol
+de voix, surcharge répétée avec fondu au bloc 41 puis reprise après retrig. Les durées de charge
+sont injectées ; cela ne mesure pas le temps réel de ces accords sur le processeur.
+Le banc indépendant `tools/emu/test_governor.py` passe aussi ses **12 contrôles**, avec
+**TOUT OK** et code de sortie zéro.
+
+| Scénario NEW, six pistes CHORD, palette TENSION | BASE, instructions/bloc | OPN3, instructions/bloc |
+|---|---:|---:|
+| Chord Keys seul, getter natif compris | 59 006 | 61 754 |
+| Avec tous les mods compatibles, getter natif compris | 60 488 | 63 488 |
+
+La pile observée sous l'entrée update atteint 248 octets contre 104 pour le stock, soit
+144 octets supplémentaires. Ces comptes d'instructions sont propres aux scénarios du banc ;
+ils ne sont ni des cycles ColdFire ni un pourcentage de charge matérielle.
+
+`[FAIT : contrôles de construction]` Générateur Chord Keys et `gen_flasher_tweaks.py --check`,
+`relocate_6ch.py --check` avec le wrapper binutils `-S`, compilation Python, syntaxe JavaScript,
+comparaisons builder Python/JS et validation SysEx passent. Le smoke synthétique termine
+**ALL OK**. `REF_MAINOS --check` valide **17 407 références** ; la comparaison avec la révision
+précédente confirme que seules les **8 192 combinaisons Chord Keys** changent et que les
+**9 215 autres références restent identiques**. Le contrôle de roundtrip et la conservation
+des sections 2/4/5 sont décrits au §20.5.
+
+`[FAIT : smoke réel du flasher]` `SMOKE_JOBS=4 tools/webflash_smoke.sh` avec les deux fichiers
+officiels valide les **17 407 combinaisons proposées**, toutes conformes à leur empreinte MAIN OS.
+Les quatre parties terminent **ALL OK**, l'agrégation vérifie la couverture exacte des références,
+et la commande termine **ALL PARTS OK, code de sortie zéro**. Le journal local ignoré est
+`build/chord-harmony-smoke.log`. Les scénarios UI confirment aussi le badge expérimental de cette
+nouvelle révision, seule ou combinée, en anglais et en français.
+
+La preuve fonctionnelle complète couvre le mod seul et la combinaison groupée ci-dessus ; les
+références et le smoke ne signifient pas que toutes les combinaisons ont reçu cette émulation
+fonctionnelle complète. Aucun résultat matériel de cette nouvelle révision n'est revendiqué.
+
+`[À FAIRE sur la machine]` Installer Chord Keys seul, garder une copie du projet, puis :
+
+1. Charger un ancien pattern : vérifier LEGACY et le son/les locks d'origine ; passer volontairement
+   à NEW, comparer les palettes, revenir à LEGACY, sauvegarder/recharger les deux choix.
+2. Avec Root C2, MAJ, EXT 9, jouer III : DIATONIC donne Mim7(♭9), JAZZ Mim9. Sur V, comparer
+   les niveaux 9/11/13 en JAZZ puis TENSION ; vérifier que TRI/7 ne changent pas de palette.
+3. En HARMONY, tenir un TRIG puis T1, T2, relâcher T2 puis T1 : aucune nouvelle attaque,
+   retour au précédent pad puis au réglage I–VII. Essayer les six pads, plusieurs ordres,
+   changer de TRIG, puis changer de piste, pattern, Keys et mode Pads pendant un maintien.
+4. Sur VII de MAJ et I de LOC, écouter les trois extensions m7♭5 ; vérifier T5/T6 indisponibles
+   et le menu N/A sur un TRIG tenu. Comparer SUS7 et V7 sur les cibles majeures/mineures.
+5. Balayer les neuf SHAPE : aucune extension en plage ne doit disparaître ; écouter les transitions
+   et les notes aiguës. Contrôler les trois libellés COLOR complets, les locks, CC16/17 et LFO.
+6. Vérifier TRACK/FUNC/PATTERN/mute/retrig/édition ; confirmer que les gestes de pads ne sont pas
+   enregistrés. Après le test seul, essayer les combinaisons avec USB/effets et six pistes chargées.
+
+La nouvelle révision reste **experimental**, même installée seule, jusqu'à son propre retour matériel.
+
+## 21. Pads sans changement de piste, commandes définitives et accord affiché (07/10/2026)
+
+**Source : Nico, cette conversation du 07/10/2026, sans lien public.** Retour sur la révision
+précédente : « si mantengo apretado un acorde y después intento apretar un pad T, se me cambia
+al track de ese pad ». Il demande aussi le nom exact de l'accord à l'écran (« Cmaj7, Em9 »),
+la suppression de **Controls NEW/LEGACY** et celle de **Pads TRACK/HARMONY** : les commandes
+améliorées et HARMONY doivent devenir définitifs. Ce retour signale un défaut ; il ne vaut pas
+validation matérielle de cette correction ni des autres fonctions de la révision précédente.
+
+### 21.1. Contrat musical et interface
+
+- Avec Keys ON sur CHORD, T1–T6 modifient toujours l'harmonie de la piste sélectionnée, même
+  après l'appui maintenu d'un TRIG. TRACK + T1–T6 conserve la sélection volontaire de piste.
+- Le menu FUNC + RETRIG garde **Keys, Root, Scale et I–VII**. Les deux sélecteurs Controls/Pads
+  disparaissent. COLOR et SHAPE utilisent les palettes, dispositions et balances du §20.
+- L'écran nomme l'accord en cours en tenant compte de la fondamentale, de l'extension du
+  degré, de la palette et du dernier pad tenu. Relâcher ce pad retrouve le précédent encore
+  tenu, puis l'extension enregistrée. Un geste indisponible doit nommer l'accord de repli
+  effectivement utilisé, sans afficher une transformation qui n'est pas jouée.
+- Les gestes restent temporaires : aucune écriture d'extension, de trig ou de lock. Keys OFF
+  retrouve le clavier chromatique et les pads habituels. Les limites de quatre voix et les
+  règles musicales du §20 restent applicables. Model-TG reste incompatible.
+
+### 21.2. Anciens patterns et stockage
+
+`[FAIT dans les sources]` `ck_storage_read` et `ck_storage_load` reconnaissent toujours la
+signature initiale `0x434b01a7` et la famille `0x434b0200..0x434b023f`. Les mots de configuration
+dans `header+40..63` restent inchangés. Les bits de choix Controls/Pads n'orientent plus le jeu
+ni le DSP : `ck_audio_controls` utilise les commandes améliorées et le geste temporaire de la
+piste dès que Keys est actif. Les anciennes signatures restent lisibles sans conversion destructive.
+
+Les valeurs SHAPE/COLOR et leurs locks sont conservés, **avec la nouvelle interprétation dès
+le chargement d'un ancien pattern Keys ON**. Il n'existe plus de choix LEGACY pour retrouver
+le son précédent. Les nouveaux patterns gardent Keys OFF, Root C3, MAJ et TRI par défaut.
+Le changement concerne l'interprétation musicale ; aucune nouvelle donnée de pad live n'est
+ajoutée au projet. Le menu construit dix lignes supplémentaires au lieu de douze.
+
+### 21.3. Correction du routage des pads et affichage
+
+`[FAIT : lecture des sources et du code stock]` Dans la révision §20, `pad_press` refusait
+HARMONY lorsque `ck_ui_pad_mode_get` renvoyait zéro : signature v1, ou bit de la piste absent
+de la signature v2. L'événement continuait vers PadsView stock `0x4001d180`, qui appelle la
+sélection de piste `0x40023c90` depuis `0x4001d36a`. Tenir un TRIG ne levait pas cette condition.
+
+Le test de mode de pads est retiré. Un pad simple est maintenant capturé dès que la piste
+sélectionnée est CHORD avec Keys ON. Les modificateurs FUNC/TRACK/PATTERN/RETRIG et événements
+de raccourci, ainsi que l'édition en grille, gardent le chemin stock. Les accroches existantes
+suffisent : pointeurs de vtable
+`0x4010025c` et `0x401002b0`, interception des relâchements capturés en `0x4007746c`. La
+correction du choix de piste ne requiert aucune accroche supplémentaire.
+
+`[FAIT en émulation : preuve ciblée du routage]` Le vrai dispatcher des TRIG `0x40077720`,
+puis le vrai dispatcher des pads, exécutent le maintien TRIG puis T1–T6. La piste et la note
+restent celles de l'accord pour les signatures `0x434b01a7`, `0x434b0200`, `0x434b0215` et
+`0x434b023f`. TRACK + T6 sélectionne volontairement sa piste ; le relâchement du TRIG continue
+à viser la piste capturée à l'appui. Cela exerce les anciennes signatures avec et sans les
+anciens bits HARMONY, au lieu de contourner le routage natif.
+
+`[FAIT dans les sources]` `chord_display.c` publie depuis l'update audio un seul mot aligné
+par piste dans `ck_chord_live[6]`. Bits 0..6 : fondamentale MIDI de la touche ; quatre champs
+de cinq bits à partir des bits 7/12/17/22 : intervalles harmoniques résolus avant disposition ;
+bits 27..30 : basse après disposition, modulo 12 ; bit 31 : validité. Une quatrième case nulle
+identifie la triade. Le premier intervalle ne vaut que 0 ou 7 ; son bit inutilisé 10 transporte
+le drapeau de protection aiguë, retiré avant le décodage du nom. Ce format évite de partager
+un tampon de texte entre le DSP et l'interface.
+La publication unique a lieu après le véritable update natif et la balance, pour que le drapeau
+de limite corresponde au même accord, sans état transitoire non signalé. Le nom n'est donc pas
+une table fixe par degré : `chord_name.c` interprète le résultat de la
+palette, de l'extension et du geste temporaire utilisés par l'audio.
+
+| Accroche d'affichage | Rôle |
+|---|---|
+| `0x400075f0`, appel initial à `0x40076be4` | Comparer l'instantané affiché à l'accord visible ; si différent, positionner `controller+32`, le drapeau de reconstruction de l'écran |
+| `0x4008e622`, reprise en `0x4008e62a` | Dessiner le bandeau avant le flush LCD, puis rejouer le prologue stock en préservant les registres |
+
+Le drapeau est nécessaire : l'application peut sauter tout le rendu tant qu'aucune vue n'est
+sale. Sa mise à jour suit aussi le dernier relâchement, afin de reconstruire le contenu stock
+et retirer le bandeau. Le rendu emprunte le Bitmap 128×64 de l'OS, ses polices `0x4014120c` et
+`0x40140ab0` et la primitive de texte `0x400716c0`. Les vingt lignes supérieures (coordonnées
+natives y=44..63) reçoivent le nom et les omissions. Le flush, le DSPI et l'échange des buffers
+restent ceux de l'OS.
+
+Le bandeau apparaît pour le TRIG encore actif de la piste CHORD sélectionnée, avec Keys ON,
+si la note de l'instantané correspond à la note tenue. Aucune vue de projet n'est recherchée
+au démarrage en l'absence d'une touche capturée. Les renversements indiquent leur basse après
+une barre oblique, et une seconde ligne précise les notes omises (`no5`, `no3`, etc.).
+PITCH/FINE restent l'accordage natif de l'ensemble et ne changent pas le nom harmonique affiché.
+Le bandeau ne suit pas le séquenceur ou le MIDI. **HIGH LIMIT** remplace la ligne d'omissions
+lorsque la protection aiguë
+native borne la fondamentale ou coupe une voix demandée : le nom conserve alors l'harmonie
+visée, même si toutes ses notes ne sont plus audibles. Il ne s'agit pas d'une reconnaissance
+des fréquences de la sortie audio. Baisser Root ou revenir à SHAPE BASE permet de
+retrouver une plage où toutes les voix sont disponibles.
+
+| Accord ou geste résolu | Première ligne | Seconde ligne |
+|---|---|---|
+| I7 de do majeur | `Cmaj7` | vide |
+| III9, JAZZ | `Em9` | `no5` |
+| III9, DIATONIC | `Em7(b9)` | `no5` |
+| I11, JAZZ, basse mi | `Cmaj7(#11)/E` | `no5` |
+| VII13, JAZZ, basse fa | `Bm13b5/F` | `no3,9,11` |
+| T4 sur do | `C7sus4` | vide |
+| T6 sur do | `G7`, ou `G7/D` selon SHAPE | vide |
+
+`[FAIT : génération finale]` Le JSON contient **68 écritures**. Le code, les constantes et l'état
+occupent **9 441 octets dans 27 masques**, dans la même réserve de **10 888 octets** qu'au §20. Les deux accroches de rendu
+s'ajoutent aux accroches existantes, sans nouvelle famille de masque ni charge utile externe.
+Les empreintes du MAIN OS de la révision actuelle sont dans BUILD.md. Les résultats chiffrés
+du §20 décrivent le build antérieur.
+
+### 21.4. Preuves et essai matériel
+
+`[FAIT : exécution native]` `python3 tools/test_chord_keys.py` et
+`python3 tools/test_chord_harmony.py` passent. `python3 tools/test_chord_names.py` vérifie
+**92 610 noms**, décodés indépendamment en notes et basse puis comparés à l'accord attendu.
+Le nom le plus large mesure **103 pixels** avec la police de l'OS, dans les 128 pixels disponibles.
+Cette vérification du noyau de nommage ne remplace pas le rendu ColdFire du firmware final.
+
+`[FAIT en émulation : affichage]` Le banc d'écran passe **22 contrôles**, avec les véritables
+fonctions Application, Bitmap, glyphes et envoi DSPI. Il compare le chemin stock et le chemin
+patché, puis vérifie le nom, la basse, les omissions et les conditions d'affichage :
+
+| Situation | Chemin stock | Chemin patché |
+|---|---|---|
+| Accord tenu, interface sans autre changement | Aucun bandeau d'accord | L'instantané modifié force le rendu et dessine le bandeau |
+| Accord tenu, instantané inchangé | Pas de reconstruction supplémentaire | Pas de reconstruction supplémentaire |
+| Dernier TRIG relâché | Écran ordinaire | Le rendu est invalidé une fois et retrouve le panneau stock |
+
+Les glyphes de **HIGH LIMIT** sont aussi exercés sur `Cmaj7/B` (note 72) et `Dm7/C`
+(note 74), après le véritable update natif.
+La régression DSP confirme le drapeau sur les notes 72/74 en OPN3 et au plafond 96,
+son absence sur une note grave 24 et sur la triade de contrôle, puis sa remise à zéro en
+revenant à la note 24. Le banc indépendant du régulateur passe ses **12 contrôles**, avec
+**TOUT OK**, sans prétendre mesurer le processeur réel.
+
+Le rendu de référence est conservé localement dans `build/chord-live-screen.png` (ignoré par
+Git). Le banc ne mesure pas les délais ni la charge sur un Model:Cycles réel.
+
+`[FAIT en émulation : JSON final]` La suite complète Chord Keys seul passe **322 contrôles,
+zéro échec**, et **330 contrôles, zéro échec** avec 6ch-usbup, latching-mute, trig-preview,
+browser-scroll, trig-hold, arp, tempo-max, boot-anim et les cinq moteurs Syntakt installés
+ensemble. Les deux suites terminent **TOUT OK** sur les routines de l'OS : clavier, pads,
+menu, stockage, DSP et écran.
+Elle couvre les signatures anciennes, le maintien TRIG puis pad, les raccourcis et l'édition,
+les gestes superposés, le relâchement sous une vue prioritaire, les palettes et dispositions,
+ainsi que les noms d'accord et la protection aiguë. Les **22 contrôles d'écran** ci-dessus
+font partie de cette suite ; les **92 610 noms** sont vérifiés séparément par le banc natif.
+
+`[FAIT : build final]` Le firmware reconstruit a été réextrait et son MAIN OS vérifié contre
+l'empreinte attendue. Les sections compressées **2, 4 et 5 restent identiques octet pour octet**
+à l'image officielle. `REF_MAINOS` a été régénéré pour les **17 407 combinaisons** proposées,
+et `tools/ref_mainos.py --check` valide ces 17 407 références.
+Les empreintes actuelles figurent dans BUILD.md ; les fichiers de firmware restent locaux et ignorés.
+
+`[FAIT : contrôle navigateur final]` Le smoke du flasher avec les fichiers officiels a validé
+les **17 407 combinaisons**, réparties en quatre parties : **ALL PARTS OK**, aucun échec.
+Chaque reconstruction concorde avec son empreinte de référence et l'union des quatre parties
+couvre exactement les combinaisons proposées. Ce contrôle porte sur la présente révision.
+La preuve fonctionnelle ci-dessus couvre le mod seul et la combinaison groupée ; les empreintes
+ne constituent pas une preuve fonctionnelle complète de chaque combinaison.
+
+`[À FAIRE sur la machine]` Avec Chord Keys seul, sur une piste CHORD, Keys ON, Root C2, MAJ :
+
+1. Tenir TRIG 1 puis essayer successivement T1–T6 : la piste doit rester sélectionnée ; relâcher
+   chaque pad doit retrouver l'accord de base. Essayer T1 puis T2, relâcher T2 puis T1, et changer
+   de TRIG pendant le maintien. TRACK + T1–T6 doit continuer à changer de piste.
+2. Régler I sur 7 : TRIG 1 doit afficher Cmaj7. Régler III sur 9 : TRIG 3 doit afficher Em9 avec
+   COLOR JAZZ et distinguer la neuvième abaissée avec DIATONIC. Vérifier les noms avec SUS7,
+   PARALLEL, V7 et le retour au nom précédent après relâchement.
+3. Charger un ancien pattern : aucune ligne Controls ou Pads ; mêmes valeurs enregistrées,
+   palettes et balances améliorées actives. Sauvegarder/recharger, puis vérifier Keys OFF.
+4. Vérifier mute, édition en grille, retrig/arp hors Chord Keys et relâchement d'un pad après
+   ouverture d'un menu. Vérifier les cibles diminuées, les notes aiguës et les transitions sonores.
+
+Cette révision reste **experimental**, seule ou combinée. Aucun résultat matériel de cette
+correction n'est revendiqué ; les essais des versions précédentes gardent leur portée initiale.
+
+## 22. Pads tenus, P-locks et retours de review (07/10/2026)
+
+Nico signale que le changement de piste persiste lorsqu'il tient une touche TRIG puis appuie
+sur un pad T pour modifier l'accord. Il demande aussi que ces transformations s'enregistrent
+en P-locks. Ce retour invalide la conclusion matérielle attendue au §21 : ses preuves ne
+couvraient pas encore le chemin responsable du défaut observé sur sa machine.
+
+La [review de Maxime du PR #46](https://github.com/18nelli18/Modded-Cycles/pull/46#issuecomment-6037081914)
+porte sur `696276b`, avant les pads HARMONY. Elle relève deux autres régressions à traiter :
+
+- un relâchement TRIG consommé par PATTERN ou par le masque de suppression laisse une identité
+  de touche périmée. La prochaine frappe normale peut alors perdre son note-off ;
+- au-dessus de la note MIDI 96, le moteur borne la fondamentale mais le mod choisissait encore
+  le degré depuis la note non bornée.
+
+`[FAIT : génération]` Chord Keys appelle directement des fonctions C++ de l'OS dont les
+retours de pointeur passent dans `d0`. Le générateur exige désormais **m68k-elf-gcc 16.2.0**
+et refuse la cible Linux (retours dans `a0`) avant toute compilation. `M68K_CROSS` peut
+désigner un autre chemin vers cette même chaîne. La version est figée pour reproduire les
+octets du JSON ; ce garde ne remplace pas les preuves d'ABI sur l'image finale.
+
+### 22.1. Pourquoi les pads pouvaient encore sélectionner une piste
+
+`[FAIT : désassemblage]` Le constructeur `PadEvent` en `0x40074092` écrit le drapeau
+de fonction avec `move.b d2,28(a2)`. Son accesseur `0x400740fc` lit également un octet.
+`pad_press` le lisait avec `WORD(event, 28)`, donc sur quatre octets : les trois octets
+de remplissage suivants, non initialisés par ce constructeur, pouvaient faire croire
+qu'un raccourci était actif. Le mod rendait alors l'événement à `PadsView`, qui sélectionnait
+la piste du pad. Les bancs précédents utilisaient une mémoire initialement nulle et masquaient
+ce défaut. La lecture devient `event[28]` ; les octets 29..31 n'ont aucun sens fonctionnel.
+
+### 22.2. Identité périmée après un relâchement intercepté
+
+`[FAIT : code]` Une première frappe `flags & 9 == 1` signifie que la touche physique
+est revenue à l'état relâché entre deux appuis. `ck_ui_key` termine donc toute ancienne
+capture de cette même touche puis remet `valid` à zéro avant `handle_press`, conformément
+à la review. Si le nouvel appui revient au clavier stock ou à la grille, son relâchement
+ne sera plus avalé par l'ancienne capture. Les répétitions de maintien ne passent pas
+dans cette branche. `active` est remis à zéro au premier note-off, ce qui évite les doublons.
+Les identités des quinze autres touches restent intactes.
+
+`[FAIT en émulation : régressions ciblées]` Le banc `chord_routing_checks.py` ajoute
+29 contrôles. Le constructeur réel préserve délibérément des valeurs non nulles dans chacun
+des trois octets de remplissage ; les deux dispatchers exécutent ensuite les vtables réelles.
+La vue `PatternAndBankSelectView` consomme effectivement un relâchement ; le masque natif
+est posé par `0x4007fb32` puis exercé par le scanner `0x4007fbde`, qui supprime le message
+de fin avant la file. Les nouvelles frappes sont alors rejouées dans le dispatcher réel.
+Sont aussi couverts : annulation de note avant Keys OFF, autre piste, nouvel accord Keys ON,
+répétitions de maintien, autre touche indépendante et retour à `PatternGridView`.
+Ces preuves restent des chemins ciblés avec services du banc ; aucun démarrage complet
+de l'appareil ni capteur physique de pad n'est simulé.
+
+### 22.3. Même fondamentale au-dessus de MIDI 96
+
+`[FAIT : code]` Le wrapper borne la note à 96 avant de déterminer son degré et son extension.
+Il transmet toujours le pitch Q16 original à l'update natif, qui conserve ses propres règles
+d'accordage. L'instantané harmonique utilise lui aussi la note bornée. Si cette note 96 est
+hors de la gamme choisie, le moteur garde SHAPE stock, même si la note MIDI reçue était diatonique.
+Keys OFF suit le chemin d'origine. Le nouveau banc teste l'entrée du DSP après réception de
+la note : il ne simule pas le transport MIDI USB/DIN complet.
+
+### 22.4. Une voie HARMONY dans les P-locks natifs
+
+`[FAIT : désassemblage et émulation]` Les buffers de paramètres et les locks natifs
+contiennent 33 slots par piste. Les six moteurs stock n'utilisent que les slots 0..22.
+Les recherches de descripteur sur 23..32 rendent l'identifiant d'erreur ; une preuve
+exécute les six moteurs avec des sentinelles dans ces mots, sans aucune lecture DSP
+et avec le même PCM pendant 32 blocs. HARMONY utilise le slot 23 : entier 0 pour EXT,
+1..6 pour T1..T6. Aucun encodage dans les fractions de COLOR ou de SHAPE.
+
+| Chemin | Routine ou accroche | Modification |
+|---|---|---|
+| Écriture d'un pas | `0x4001646a` | Setter de lock natif, présence et notification de la piste |
+| Pas vide | `0x40017bb0` | Lock-only natif, sans nouveau note-on |
+| Sauvegarde complète | `0x4005b9c6` | Slot 23 sérialisé sous l'identifiant 33 |
+| Sauvegarde partielle | `0x4005bad2` | Même identifiant pour la mise à jour d'une lane |
+| Chargement | `0x4005b816`, `0x4005aa1a` | Borne 33 puis décodage 33 → 23 pour les pistes audio |
+| Enregistrement d'une note | `0x40012274` | Capturer le pad déjà tenu sur le pas choisi par le recorder natif |
+| Relecture | `0x4005487c`, `0x400583da`, `0x40058474` | Extraction, application et lissage natifs jusqu'à CHORD |
+| Retour au son de base | `0x40058308` | Remise à zéro native du slot et de son bit de présence |
+
+L'identifiant disque 33 est volontairement au-dessus de la borne du chargeur officiel :
+en revenant à l'OS stock, les locks HARMONY sont ignorés au lieu d'être interprétés comme
+LEVEL. Les autres paramètres conservent leur représentation. Une sauvegarde ultérieure
+par l'OS officiel peut donc supprimer ces nouveaux locks.
+
+En live rec, chaque appui et relâchement écrit le nouvel état sur le pas courant ; une
+nouvelle note reçoit aussi son état HARMONY, même si le pad était déjà tenu. Un retour
+explicite à zéro évite de prolonger une transformation sur une note tenue. Comme les
+P-locks natifs, un seul état tient dans un pas : le dernier geste enregistré sur ce pas
+prévaut. Ce ne sont pas des événements à résolution audio.
+
+En grille, tenir un ou plusieurs pas puis appuyer sur T1–T6 écrit leur transformation.
+Un second appui sur le même pad remet les pas ayant cette valeur à EXT, sans effacer
+leurs autres locks. Relâcher le pad ne remplace pas le choix de grille par zéro.
+Sans pas tenu, les pads de grille gardent le chemin stock ; les raccourcis réservés
+et Keys OFF aussi. La capacité de locks reste celle du pool natif, partagée avec les
+autres paramètres.
+
+Dans le DSP, le pad tenu et le jeu direct des TRIG gardent la priorité. Sinon le slot 23
+n'est accepté qu'avec son bit de lock natif (`0x423087f8 + 8 × piste`) et une valeur 0..6.
+Une valeur parasite ou une écriture générique du LFO sans ce bit ne crée pas de geste.
+Le wrapper ne modifie pas les paramètres partagés et n'alloue rien dans l'interruption.
+
+`[FAIT : génération finale]` Cette révision contient **81 écritures** ; code, constantes
+et état occupent **10 461 octets dans 31 masques**, parmi les **10 888 octets** de la réserve
+existante. Aucun nouveau masque ni payload externe n'est ajouté. Les empreintes du MAIN OS
+figurent dans BUILD.md. La cible du générateur est m68k-elf-gcc 16.2.0, binutils 2.47.
+
+### 22.5. Preuves ciblées et essai matériel restant
+
+`[FAIT en émulation]` Les nouveaux bancs vérifient :
+
+- les 29 régressions de routage et de relâchement détaillées au §22.2 ;
+- 5 376 updates de notes aiguës (7 modes, 12 toniques, 96..127 et deux valeurs PITCH),
+  ainsi que l'identité stock sur les six pistes avec Keys OFF ;
+- le mapping de chargement audio/FX, la sauvegarde des anciens patterns identique octet
+  pour octet, les nouveaux locks sur six pistes et les frontières de pages 0/7/31/32/63,
+  la copie, le writer partiel et les effacements natifs ;
+- le retour au chargeur officiel, qui ignore HARMONY et préserve exactement les autres locks ;
+- les véritables événements PadEvent, le recorder de notes, le retour à EXT en live rec,
+  les masques de pas tenus en grille et le second appui qui remet EXT ;
+- 180 opérations via les notifications natives et leur miroir de sauvegarde partielle,
+  ainsi que la saturation du pool, sans écrasement des autres données ;
+- 162 relectures sur six pistes et trois palettes : extraction de l'événement, application,
+  bitmap, lissage natif, update CHORD et instantané ; retour natif à EXT et rejet des
+  valeurs sans bit de présence ou hors domaine.
+
+Le banc contrôle certains services de projet, l'horloge et les observateurs. Il ne simule
+ni un démarrage complet, ni le transport MIDI, ni toutes les vues de l'écran, ni les délais
+de l'appareil. Les contrôles de syntaxe et de build ne remplacent pas un essai sur machine.
+
+`[À FAIRE sur la machine]` Tester d'abord **Chord Keys seul**, CHORD, Keys ON, Root C2, MAJ :
+
+1. Tenir TRIG 1 puis T1–T6 successivement et plusieurs pads superposés : aucune sélection
+   involontaire, retour au précédent puis à EXT ; vérifier TRACK + pad séparément.
+2. En LIVE RECORDING, tenir une note sur plusieurs pas et changer les pads ; relâcher chaque
+   pad sur un pas différent. Rejouer sans toucher les pads, puis sauvegarder/recharger.
+   Une prise sans pad sur un pas déjà enregistré doit rétablir EXT.
+3. En GRID RECORDING, tenir un pas puis choisir T1, T4 ou T6 ; appuyer à nouveau sur le même
+   pad pour EXT. Répéter avec plusieurs pas, sur d'autres pages et pistes. Vérifier que les
+   locks COLOR/SHAPE existants restent audibles et que l'effacement fonctionne.
+4. Tenir un TRIG, ouvrir PATTERN, relâcher le TRIG, fermer PATTERN puis jouer une note sur
+   une autre piste ou avec Keys OFF : les notes suivantes doivent recevoir leur note-off.
+5. Envoyer des notes MIDI 96..127 : la fondamentale bornée conserve le même degré. Essayer
+   les renversements, PITCH/FINE et les transitions vers les notes basses.
+6. Après validation seule, répéter avec les autres mods souhaités et six pistes actives,
+   puis vérifier USB audio et CONFIG › UPGRADE. Cette révision reste **experimental**.
+
+### 22.6. Validation finale de cette révision
+
+`[FAIT en émulation : JSON final]` La suite standalone complète termine **TOUT OK**,
+avec **376 contrôles réussis**, sans erreur ni interruption. La suite combinée termine
+elle aussi **TOUT OK**, avec **384 contrôles réussis**, pour 6ch-usbup, latching-mute,
+trig-preview, browser-scroll, trig-hold, arp, tempo-max, boot-anim et les cinq moteurs
+Syntakt. Les deux scénarios CHORD du régulateur (DIATONIC/CLS0 et TENSION/OPN3) passent ;
+le banc indépendant du régulateur, avec les mêmes écritures Chord Keys, passe ses
+**12 contrôles**. Ces preuves exécutent les nouveaux chemins P-lock et les régressions précédentes sur les routines OS : événements, menu,
+stockage, DSP et écran. Le JSON vérifié contient 81 écritures, SHA-256
+`ea5a96f27cbe201c1cd742ed4316f94d01c77f782c8f628058cc785f181ef2b0`.
+
+Le getter natif inclus, les six pistes CHORD demandent **54 512 instructions par bloc**
+avec Keys OFF (référence 51 368), **61 490** en BASE (référence 51 488) et **64 214**
+en OPN3 (référence 51 536). Sous l'entrée de l'update, la pile observée passe de
+**104 à 348 octets**, soit 244 octets supplémentaires. Ce sont des instructions
+émulées et une profondeur observée dans ce banc, pas des cycles CPU ni une garantie
+de marge de pile ou de charge sur l'appareil.
+
+`[FAIT : génération et build]` Les contrôles du générateur Chord Keys, de
+`gen_flasher_tweaks.py` et de la relocalisation USB passent, ainsi que les contrôles de
+syntaxe Python/JavaScript et les comparaisons des builders et validateurs SysEx.
+Le parcours synthétique du flasher termine **ALL OK**. Le MAIN OS du fichier produit
+est réextrait et conforme ; les sections **2, 4 et 5 restent identiques octet pour octet**
+à l'image officielle, avec checksums et HMAC valides. Le fichier reste local, ignoré
+par Git. `REF_MAINOS --check` valide les **17 407 références** générées ; les quatre
+empreintes de construction usuelles figurent dans BUILD.md.
+
+`[FAIT : contrôle navigateur final]` Le parcours du flasher avec les deux fichiers
+OS officiels termine **ALL PARTS OK**, code retour 0 : **17 407 combinaisons** construites
+et conformes aux empreintes attendues, couverture exacte des choix proposés, aucune
+erreur JavaScript. Ces comparaisons de construction ne remplacent pas une émulation
+fonctionnelle de chaque combinaison ; cette dernière porte sur le mod seul et la
+combinaison groupée ci-dessus. Aucun résultat matériel n'est revendiqué.
+
+Le banc indépendant du régulateur utilise temporairement le tweak
+`24-syntakt-sd-cp-toy-bits-swarm.json`, avec les 81 écritures de `45-chord-keys.json`
+ajoutées à sa liste `writes`, sans changer son payload ni ses symboles `gov`.
+`test_governor.py --cycles … --syntakt … --tweak …` exerce alors cette image combinée.
+
+## 23. Réarticuler l'accord à l'appui d'un pad T (07/10/2026)
+
+**Source : Nico, cette conversation, sans lien public.** Il rapporte que le changement
+d'accord devient presque inaudible lorsqu'il maintient un pad T et propose de relancer
+l'attaque. Il hésite entre ajouter seulement les voix manquantes et rejouer l'accord entier.
+Ce retour remplace le choix antérieur d'un appui sans redéclenchement (§19–22).
+
+`[FAIT : code et désassemblage]` Les pads ne changeaient que les intervalles ; la
+décroissance continuait. Les quatre opérateurs CHORD passent par une enveloppe d'amplitude
+commune (`voix+0x230`, note 14 §2.4). Ajouter une voix après cette décroissance ne restaure
+donc pas l'attaque du son complet. Aucun comportement de HiChord n'est supposé ici.
+
+**Choix :** un nouvel appui T1–T6, pendant un TRIG réellement tenu sur la piste sélectionnée,
+rejoue l'accord complet avec la transformation et la vélocité de ce TRIG. Le relâchement
+du pad restaure le précédent encore tenu ou EXT sans attaque supplémentaire. Un pad
+maintenu ne répète pas ; sans TRIG tenu, il prépare/modifie l'harmonie sans inventer une note.
+Les transformations indisponibles T5/T6 sur un degré diminué restent sans nouvelle attaque.
+L'édition de locks en grille garde son chemin séparé.
+
+Le chemin réutilise les relais natifs `0x40019c84` (fin de note) et `0x40019e7a`
+(début de note), avec `retrig=-1`, après publication du nouveau pad. Le scanner
+`0x4007faf4` vérifie aussi la présence physique du TRIG : une capture dont PATTERN a
+absorbé le relâchement ne doit pas relancer une ancienne note. La nouvelle vélocité
+tient dans l'alignement de `held_key` ; aucun état ni calcul n'est ajouté dans l'IRQ audio.
+
+### 23.1. Preuves ciblées et espace utilisé
+
+`[FAIT en émulation]` Les vrais événements, dispatchers et relais OS exécutent un couple
+note-off/note-on par nouvel appui disponible sur chacune des six pistes. La note et la vélocité
+initiales sont conservées, indépendamment de la force du pad ou d'une modification ultérieure
+de la vélocité de piste. Les maintiens, relâchements et transformations indisponibles n'ajoutent
+aucune note ; après un relâchement absorbé par PATTERN, le contrôle physique interdit une reprise.
+
+`[FAIT en émulation]` Le banc séquentiel UI→DSP transfère les captures et la configuration,
+puis traduit les sorties des relais en masques d'entrée de la boucle des voix. Avec DECAY 16,
+après 53,3 ms de décroissance supplémentaire, changer les rapports seuls donne un RMS de
+1 275 062 ; transmettre le nouvel appui donne 193 316 265, soit +43,6 dB dans ce scénario.
+Ce n'est **pas** un gain ajouté : l'état de l'enveloppe est identique octet pour octet à celui
+d'un nouveau TRIG observé au même nombre de blocs. Les autres pistes ne sont pas redéclenchées.
+
+`[FAIT en émulation]` La preuve de capture remet les notes observées au recorder natif
+`0x40012158` : les appuis deviennent des trigs avec HARMONY, les retours des locks seuls.
+Le save/load natif conserve les deux. Réenregistrer une note sur un pas remplace ses anciens
+locks comme le stock ; un retour sur un lock-only existant préserve ses autres lanes.
+Ces deux bancs ne simulent pas la file inter-tâches ni l'ordonnancement complet UI/IRQ.
+
+`[FAIT : génération]` GCC m68k-elf 16.2.0 produit **83 écritures**, **32 masques** occupés
+et **10 673 octets** de code/état (contre 31 masques et 10 461 octets). Le masque `0x4015f50c`,
+déjà réservé au §22, reçoit maintenant du code ; sa référence en `0x400b5028` est redirigée
+vers l'exemplaire identique conservé. Le générateur vérifie ses références, ses dimensions
+et l'absence de chevauchement. Aucun nouvel emplacement hors des réserves, aucune autre section
+du conteneur ni format de pattern modifié. Les empreintes de construction sont actualisées dans BUILD.md.
+
+### 23.2. Écoute restant à faire
+
+`[À FAIRE sur la machine]` Tenir un TRIG jusqu'à extinction, presser/reprendre T1–T6, empiler deux
+pads, relâcher TRIG avant T, puis enregistrer et rejouer. Vérifier la force des attaques,
+l'absence de clic gênant et l'arrêt normal. Cette révision reste **experimental**.
+
+### 23.3. Validation finale
+
+`[FAIT en émulation : JSON final]` Les suites passent **397 contrôles** standalone et
+**405 contrôles** avec 6ch-usbup, latching-mute, trig-preview, browser-scroll, trig-hold,
+arp, tempo-max, boot-anim et les cinq moteurs Syntakt, toutes deux terminées par **TOUT OK**.
+Le banc indépendant du régulateur, avec ces mêmes écritures ajoutées au tweak des cinq
+moteurs Syntakt, passe aussi ses **12 contrôles** et termine **TOUT OK**.
+Le lecteur physique natif `0x4007faf4` est aussi exécuté sur les seize
+codes TRIG 16..31, avec leurs bits relâchés puis pressés : il confirme le contrat du garde.
+Les six pistes conservent les comptes du §22.6 : **54 512**, **61 490** et **64 214**
+instructions/bloc avec Keys OFF, BASE et OPN3. Aucune logique de réarticulation ne tourne
+dans l'interruption audio. Cela ne mesure pas le coût événementiel UI ni les cycles matériels.
+
+`[FAIT : génération et build]` Les contrôles du générateur, de `tweaks.js`, de la
+relocalisation USB, des syntaxes Python/JavaScript, des builders et validateurs SysEx,
+ainsi que le parcours synthétique du flasher passent. `REF_MAINOS --check` confirme
+**17 407 empreintes** : seules les **8 192** références contenant Chord Keys changent,
+les **9 215** autres restent identiques. Le fichier produit depuis l'OS officiel est
+réouvert : MAIN OS conforme, checksums SysEx/conteneur et HMAC vérifiés, sections **2, 4 et 5**
+identiques octet pour octet. Les fichiers firmware restent locaux et ignorés par Git.
+SHA-256 du JSON : `7d80370194059714aed60a15476121d2f83ce63e1c08f9b4b868f51142fc6dd7`.
+
+Le parcours navigateur exhaustif avec les fichiers réels a été **interrompu à la demande
+de Nico** : pendant l'implémentation, exécuter uniquement les preuves nécessaires au changement.
+La validation complète et la publication attendent qu'il indique que l'implémentation est terminée.
+Le parcours interrompu ne constitue pas une validation des 17 407 constructions navigateur.
+
+## 24. Conserver l'accord au relâchement de T (07/10/2026)
+
+**Source : Nico, cette conversation, sans lien public.** Il demande que relâcher un pad T
+ne fasse plus revenir l'accord original et que l'accord modifié continue de sonner.
+Il précise : « Acorde original en cada TRIG nuevo ». Cette demande remplace le retour
+au pad précédent puis à EXT décrit au §23.
+
+`[FAIT : code]` Le relâchement ne réarticulait pas la note, mais retirait le rang du pad
+et publiait l'harmonie précédente dans le lecteur audio et l'enregistrement HARMONY.
+Il faut séparer la capture physique du pad de la transformation sonore.
+
+Le nouvel état contient six captures physiques d'un octet et six couples
+`{en-tête du pattern, transformation}` de huit octets, un par piste. Le relâchement
+consomme seulement la capture ; aucun note-on/off ni lock HARMONY n'est produit.
+Un appui T remplace la transformation et conserve l'attaque ajoutée au §23.
+Un nouvel appui TRIG valide efface la transformation de sa piste avant la note,
+même si un ancien pad reste physiquement tenu. Relâcher le TRIG laisse la fin de
+note transformée décroître normalement. Keys OFF, modification des réglages et
+changement de pattern conservent leurs annulations ; aucune valeur persistante
+n'est ajoutée. La grille conserve son geste TRIG tenu + T et son second appui pour EXT.
+
+### 24.1. Preuves ciblées
+
+`[FAIT en émulation]` L'option `--focus pad-release` de `tools/emu/test_chord_keys.py`
+exécute uniquement les accroches, les touches/pads, les captures et leurs replis,
+les P-locks concernés et le lien au DSP. Le mod seul passe **227 contrôles**, avec
+`TOUT OK`. Les six pistes conservent leur transformation au relâchement ; réutiliser
+le même pad sur une autre piste n'efface pas la première. Un nouveau TRIG retrouve
+EXT même si T reste tenu, tandis qu'une répétition de maintien TRIG n'efface rien.
+QuickMute, les fins de notes absorbées par PATTERN et les raccourcis gardent leur chemin.
+
+La même preuve ciblée passe **235 contrôles** avec 6ch-usbup, latching-mute,
+trig-preview, browser-scroll, trig-hold, arp, tempo-max, boot-anim et les cinq moteurs
+Syntakt, et termine aussi `TOUT OK`. Les deux scénarios du régulateur CHORD
+(DIATONIC/CLS0 et TENSION/OPN3) passent : charge normale et pic isolé sans voix volée,
+surcharge répétée avec fondu puis reprise au déclenchement suivant. Ce sont des
+charges simulées, pas une mesure matérielle. Aucune suite exhaustive n'a été exécutée.
+
+`[FAIT en émulation]` Deux moteurs CHORD natifs partent du même état, T6 tenu :
+l'un reçoit ensuite le vrai relâchement UI, l'autre garde le pad tenu. Sur les
+**16 blocs suivants**, le PCM, l'enveloppe et l'instantané de l'accord affiché
+restent **identiques octet pour octet**. Aucun nouveau note-on/off n'est émis.
+Le recorder natif confirme des notes/locks aux appuis, aucun lock aux relâchements,
+EXT au nouveau TRIG et la conservation de ces événements après save/load.
+Comme au §23, les bancs relient les tâches séquentiellement ; ils ne simulent pas
+leur file de transport ni l'ordonnancement concurrent UI/IRQ.
+
+### 24.2. Génération et fichier local
+
+`[FAIT : génération]` GCC m68k-elf 16.2.0 produit **81 écritures**, **31 masques**
+occupés et **10 372 octets** de code/état. Le code tient dans les réserves existantes ;
+le masque supplémentaire utilisé au §23 n'est plus nécessaire. Les contrôles
+`gen_chord_keys.py --check` et `gen_flasher_tweaks.py --check` passent. `REF_MAINOS`
+est régénéré et les quatre empreintes de BUILD.md sont recoupées avec ses références.
+Il s'agit d'une régénération, pas d'un parcours navigateur des 17 407 combinaisons.
+
+Le fichier local `build/model-cycles_OS1.13_chord-keys-pad-release-experimental.syx`
+est construit depuis l'OS officiel puis réextrait : MAIN OS
+`1671207129c4fb8f3bcbda628fd80199b738665717e8d117dfd02356d713cffe`,
+checksums SysEx/conteneur et HMAC valides, sections **2, 4 et 5** identiques à l'original.
+Le JSON a pour SHA-256 `bba88bda138a0a6627b4f7c94a3e367d6f4d46bcd14037481e861601e57cb221`.
+Le firmware reste ignoré par Git. Documentation bilingue et version du flasher mises à jour.
+
+### 24.3. Écoute et validation restante
+
+`[À FAIRE sur la machine]` Tenir un TRIG, presser puis relâcher T1–T6 : l'accord et
+son nom doivent rester sur la dernière transformation sans reprise de l'accord initial.
+Superposer deux pads puis les relâcher dans les deux ordres ; jouer le même TRIG ou
+un autre, y compris avec T encore tenu : le nouvel accord doit partir de son extension.
+Enregistrer ces gestes puis les rejouer, et contrôler que relâcher le TRIG arrête
+la note normalement. La révision reste **experimental**, sans résultat matériel.
+Les suites complètes et la publication attendent le signal demandé par Nico.
+
+## 25. Préparer T sans modifier la queue précédente (07/10/2026)
+
+**Source : Nico, cette conversation, sans lien public.** Il demande de pouvoir presser
+T sans TRIG tenu, avant de choisir le prochain TRIG, sans transformer la queue du
+dernier accord. Cela précise la remise à l'extension du §24 : seul un pad préparé
+pendant le repos peut donner sa transformation au prochain TRIG.
+
+`[FAIT : code]` `pad_live` publiait sa transformation avant de vérifier la présence
+physique d'un TRIG ; l'absence de nouvelle attaque ne protégeait donc pas la queue.
+Un état de préparation séparé par piste et pattern reste désormais exclusivement
+dans le chemin UI. Sans TRIG physiquement tenu, T ne publie rien vers le DSP et
+n'écrit aucun lock. Relâcher ce pad annule sa préparation ; le prochain TRIG valide
+la consomme une seule fois. Un pad de l'accord précédent encore tenu ne compte pas
+comme préparation. La grille garde son chemin d'édition. Aucun calcul n'est ajouté
+au lecteur audio ni à l'interruption audio.
+
+`[FAIT en émulation]` La commande
+`tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx --focus pad-prepare`
+passe **80 contrôles** et termine `TOUT OK`, avec **Chord Keys seul**, conformément
+à la précision de Nico : il ne travaille pas avec les autres mods. Aucun test
+combiné, aucune suite complète ni nouvelle campagne du régulateur n'a été lancée.
+Les vrais événements prouvent T1–T6 préparés, l'annulation avant TRIG, la consommation
+unique, la priorité du dernier pad, l'indépendance des pistes, les captures physiques
+périmées et les replis stock. Le recorder et le save/load natifs conservent la
+transformation sur le prochain TRIG ; la préparation seule ne modifie aucun octet
+du pattern et ne crée pas de note.
+
+`[FAIT en émulation]` Deux DSP CHORD natifs jouent la même queue après relâchement du
+TRIG ; l'un reçoit ensuite la préparation réelle T6. Sur **huit blocs**, la queue
+reste audible et le PCM, l'enveloppe et l'accord affiché sont identiques à la
+référence sans préparation. Le prochain TRIG produit une seule note et les rapports
+V7 attendus ; relâcher ensuite T6 conserve cet accord. Le transfert UI→DSP est
+séquentiel, avec les mêmes limites d'ordonnancement qu'au §24.
+
+`[FAIT : génération]` Le JSON contient **83 écritures**, **32 masques** et
+**10 565 octets** de code/état, dans les réserves déjà décrites. Les générateurs
+et les contrôles de syntaxe concernés passent. Les références du flasher sont
+régénérées pour rester cohérentes ; cette opération ne constitue pas une campagne
+de tests des autres mods. Le fichier local de cette révision est
+`build/model-cycles_OS1.13_chord-keys-pad-prepare-experimental.syx`.
+Construit depuis l’OS officiel puis réextrait : MAIN OS `28d077f706ec2eaddc8c8d506bacb006897f03063fa03cde1da9d0f878740fbe`,
+sections 2/4/5 intactes, checksums SysEx/conteneur et HMAC vérifiés.
+SHA-256 du JSON : `d0e1894019f2f0e24a3d77daf5da3109357858f55054efddf658f596c36710fd`.
+
+`[À FAIRE sur la machine]` Laisser décroître un accord, tenir T puis choisir le
+prochain TRIG : seule la nouvelle attaque doit recevoir la transformation.
+Essayer aussi de relâcher T avant le TRIG (annulation), puis après (accord conservé).
+La révision reste **experimental**. La suite complète et la publication attendent
+toujours le signal de fin d'implémentation de Nico.
+
+
+## 26. Garder chaque accord dans la prise live TRIG→T (07/10/2026)
+
+**Source : Nico, cette conversation, sans lien public.** Il rapporte que jouer un
+TRIG puis un pad T en live rec conserve les temps des deux attaques mais leur donne
+à toutes deux le son du pad. Il précise de limiter les tests à Chord Keys seul et
+aux chemins concernés, sans autres mods ni suite complète.
+
+### 26.1. Deux causes reproduites
+
+`[FAIT en émulation]` Le nouveau banc `tools/emu/chord_recording_checks.py` reproduit
+cinq échecs avec les octets précédents :
+
+- `pad_live` écrivait immédiatement HARMONY au pas courant, avant que le recorder
+  natif choisisse le pas de la nouvelle attaque. Si celle-ci est placée au pas
+  suivant, le premier TRIG reçoit lui aussi la transformation T. Cette erreur
+  persiste après le save/load natif.
+- `ck_audio_locked_controls` donnait toujours la priorité au dernier pad conservé,
+  même après le relâchement du TRIG. Des locks distincts pouvaient donc être lus
+  correctement tout en produisant le même accord. Un lock-only EXT ou une nouvelle
+  note sans lock ne reprenait pas non plus la main.
+
+### 26.2. Correction
+
+L'appui T n'écrit plus anticipativement au pas courant : sa nouvelle attaque passe
+par les relais natifs et `ck_plock_note` capture HARMONY au pas retenu par le recorder
+`0x40012158`, via l'accroche existante `0x40012274`. La grille conserve ses setters.
+Le relâchement du pad ou du TRIG ne réécrit aucun lock. La limite native reste un
+accord par pas : deux attaques placées sur le même pas suivent le remplacement stock.
+
+Une nouvelle accroche en `0x40058ec6`, **après l'arbitrage natif**, suit l'origine de
+l'événement accepté (`événement+12`, source 1 = séquenceur). Six octets, un par piste,
+appartiennent exclusivement à la boucle audio. Une attaque ou un lock-only du
+séquenceur fait utiliser son HARMONY ; une nouvelle attaque live rend la priorité
+au jeu direct. Une fin de note conserve l'origine de sa queue. La préparation UI
+du prochain TRIG et les captures physiques ne sont pas effacées.
+
+`[FAIT en émulation]` Effacer directement le dernier pad à l'arrivée du séquenceur
+serait incorrect : une nouvelle attaque live peut déjà attendre derrière lui dans
+la même file, avec son état publié par l'interface. Le banc garde cette régression :
+les deux événements dans le même bloc doivent aboutir au nouveau T1, puis conserver
+sa queue au note-off. Le suivi d'origine audio évite cette perte.
+
+La présence d'une harmonie live inclut aussi zéro (EXT) et reste liée à son en-tête
+de pattern. Elle ne dépend plus seulement de la capture physique d'un TRIG : le
+moteur respecte la décision déjà prise par la file audio. Le code ne bloque ni
+n'alloue dans l'interruption ; sauvegarde des registres volatils et rejeu exact des
+deux instructions détournées, retour en `0x40058ed0`.
+
+### 26.3. Preuves ciblées et génération
+
+`[FAIT en émulation : JSON final]` La commande suivante passe **44 contrôles** et
+termine `TOUT OK`, avec Chord Keys seul :
+
+```sh
+python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx --focus live-recording
+```
+
+La preuve exerce les gestes TRIG/T et leurs relais, le recorder natif avec deux pas
+distincts malgré un pas courant identique, le save/load natif et la vraie file audio
+(`0x40091eb6`, `0x40092116`, boucle `0x40058d46`). Elle suit les locks jusqu'aux rapports
+CHORD : première note EXT, seconde T1, lock-only, note sans lock, note live prioritaire,
+événement séquencé rejeté pendant une prise et deux événements dans le même bloc.
+Les régressions directement liées couvrent les captures des attaques, 162 relectures
+HARMONY sur six pistes et trois palettes, et la préparation T6 avec queue PCM intacte.
+Le banc choisit le pas du recorder et transfère l'état UI entre deux émulateurs ; il
+ne simule pas l'ordonnancement concurrent complet, les périphériques ni une prise physique.
+
+`[FAIT en émulation : coût ciblé]` L'accroche d'événement, son helper et le rejeu des
+instructions demandent **27 à 33 instructions**, contre 2 auparavant, dans les cas
+note-on/off live et séquenceur et lock-only. Ce coût est par événement accepté,
+pas par échantillon ; il ne mesure ni les cycles matériels ni le budget IRQ complet.
+Aucune campagne du régulateur ni des autres mods n'a été exécutée.
+
+`[FAIT : génération]` GCC m68k-elf 16.2.0 produit **84 écritures**, **32 masques** et
+**10 758 octets** de code/état, dans la réserve de 10 888 octets déjà documentée.
+Les contrôles du générateur, de ses redirections, des destinations, des chevauchements,
+de `tweaks.js` et des syntaxes Python concernées passent. Les références du flasher
+sont régénérées pour sa cohérence ; ce n'est pas une validation fonctionnelle des combinaisons.
+
+Le fichier local est
+`build/model-cycles_OS1.13_chord-keys-live-recording-experimental.syx`.
+Construit depuis l'OS officiel puis réextrait : MAIN OS
+`073eed2046e91588ecd0b057766678a61b1ffcf1097a3753ca88fccf773358ce`,
+sections 2/4/5 identiques, checksums SysEx/conteneur et HMAC valides. Le firmware reste
+ignoré par Git. Les textes du guide et la version 1.33 du flasher sont bilingues.
+
+### 26.4. À écouter sur la machine
+
+`[À FAIRE sur la machine]` Avec Chord Keys seul, enregistrer une **nouvelle prise** :
+tenir TRIG, attendre un autre pas, presser T1, relâcher puis écouter sans toucher
+les pads. Le premier accord doit garder son extension et le second T1. Répéter
+près d'une frontière de pas, avec T4/T6, puis sauvegarder/recharger. Un lock déjà
+écrasé dans une ancienne prise ne peut pas être reconstruit automatiquement.
+La révision reste **experimental** ; suite complète et publication attendent le
+signal de fin d'implémentation de Nico.
+
+
+## 27. Compatibilité avec Model-TG et les autres mods (07/10/2026)
+
+**Source : demande de Nico dans cette conversation, sans lien public :** « Hace que mi mod Chord Keys
+sea compatible con todos los otros mods, incluyendo el Model-TG ». L’objectif couvre Model-TG seul,
+Model-TG-ST avec les moteurs Syntakt et les autres tweaks Cycles existants. Il ne supprime pas les
+restrictions entre ces autres tweaks ; l’OS Samples remplace l’OS Cycles et reste une installation séparée.
+Les déclarations d’incompatibilité Model-TG des sections précédentes décrivent les anciennes versions.
+
+### 27.1. Trois points à séparer
+
+`[FAIT : sources et contrats de l’OS officiel]`
+
+| Point commun | Ancienne version | Révision compatible |
+|---|---|---|
+| Clavier TRIG | Chord Keys remplaçait le pointeur de KeyboardView à `0x400ff9cc`, également utilisé par Model-TG | Détour à l’entrée stock `0x4001a0d2` ; le pointeur et le relais de Model-TG restent en place |
+| P-locks HARMONY | Slot RAM 23, aussi utilisé par Model-TG pour Attack | Slot RAM 28, après les paramètres 23–27 de Model-TG ; sauvegarde sous le même identifiant disque 33 |
+| Scale Lock | Model-TG pouvait quantifier de nouveau la fondamentale produite par Chord Keys | Root/Scale de Chord Keys ont la priorité uniquement sur CHORD avec Keys ON ; Scale Lock reste actif ailleurs |
+
+Le relais du clavier appelle l’entrée stock désormais détournée vers Chord Keys, puis conserve
+l’entretien d’état de Model-TG après son retour. Les traitements périodiques de Model-TG restent en place. Le repli de Chord Keys rejoue le prologue stock puis reprend après l’accroche : il
+ne rappelle pas son propre détour. Les accroches Scale Lock sont placées juste avant celles de Model-TG,
+à `0x40081734` pour note-on et `0x4008146c` pour note-off. `ck_tg_scale_bypass` laisse le chemin normal
+rejoindre Model-TG ; le chemin CHORD Keys rejoue la comparaison stock puis reprend après la quantification.
+Le relais `ck_tg_key_release` distingue le relâchement d’une touche Chord Keys par sa pile d’appel :
+le retour natif `0x40019cba` puis celui du relais `ck_tg_key_release_return`. Son note-off garde donc la
+hauteur initiale après Keys OFF ou un changement de machine. Une note externe ou du clavier stock de
+même hauteur conserve le traitement Model-TG ; l’identité de la note seule ne suffirait pas à la distinguer.
+La lecture du second retour est conditionnée par le premier, et aucun drapeau global temporaire n’est utilisé.
+Les paramètres Attack, Filter, Resonance et l’état Sampler restent
+séparés de HARMONY. Le code audio CHORD conserve ses points d’entrée et les autres machines gardent
+leur parcours habituel, y compris les machines ajoutées par Model-TG et Syntakt.
+
+### 27.2. Projets existants et portée de la compatibilité
+
+L’identifiant de sauvegarde **33 est inchangé** : un pattern écrit par une version précédente de
+Chord Keys recharge désormais son HARMONY dans le slot RAM 28. Aucune conversion du fichier de projet
+ni réécriture des valeurs COLOR/SHAPE n’est nécessaire. Sauvegarde complète, sauvegarde partielle,
+chargement et bits de présence du lecteur audio suivent tous le nouveau slot. Le retour à l’OS officiel
+conserve la limite déjà documentée : il ignore ces locks inconnus et peut les supprimer à la sauvegarde.
+
+Le choix **Keys ON sur CHORD** reste le seul qui réserve T1–T6 aux gestes harmoniques et choisit la gamme
+du clavier. Avec Keys OFF ou une autre machine sélectionnée, les commandes et Scale Lock de Model-TG
+restent disponibles. Aucun réglage de Scale Lock enregistré dans le projet n’est effacé.
+
+Les exclusions propres à Chord Keys sont retirées du générateur et de sa carte. Le flasher continue
+à résoudre les inclusions Model-TG et les versions combinées des moteurs Syntakt ; il garde les conflits
+entre les autres mods. Seule la section 3 est modifiée, depuis l’image officielle. Les données et le code
+propres à Model-TG conservent leur provenance TinyGregAudio, MIT ; Chord Keys n’embarque pas de copie
+supplémentaire de ce code.
+
+### 27.3. Preuves ciblées et génération
+
+`[FAIT : génération]` Le JSON contient **88 écritures** et **11 048 octets** de code, constantes et état
+répartis dans **33 masques**, pour une capacité totale de **11 168 octets**. La compatibilité ajoute un
+masque 35×35 de **280 octets**, nécessaire après épuisement de la réserve précédente :
+
+| Réserve ajoutée | Capacité | Constante du constructeur | Exemplaire conservé |
+|---|---:|---|---|
+| `0x4014d74c` | 280 | `0x400bac28` | `0x4014a660` |
+
+`[FAIT : image officielle et contrôles du générateur]` Les 280 octets sont identiques à l’exemplaire
+conservé. La seule référence littérale est celle du constructeur ; `build.refs_into` sur la **plage
+complète** ne trouve que cette constante, aucune référence intérieure ni aucun branchement. Le générateur
+vérifie aussi les dimensions 35×35, redirige le constructeur vers le masque conservé et refuse toute
+écriture différente commune avec les autres tweaks JSON. Le nouveau masque et sa redirection sont déclarés
+dans `tools/sprites.py`. Le placement ne coupe aucune fonction entre deux réserves. Aucun payload
+supplémentaire ni changement des autres sections du conteneur n’est nécessaire.
+
+SHA-256 du JSON : `bb05538e8c7df8a2d4c56d4838a94cc51a9b13d3172fccc2ffa8c79741733451`.
+Les **six empreintes ciblées** de BUILD.md ont été recalculées depuis l’OS officiel vérifié, avec
+`check_conflicts`, `apply_writes` et `build_payload` : seul, USB, combinaison de commandes,
+combinaison Syntakt, Model-TG et combinaison Model-TG-ST/Syntakt/USB/commandes. Ce calcul vérifie
+l’application des écritures et la construction des charges utiles ; ce n’est pas une émulation
+fonctionnelle complète de ces six images.
+
+`[FAIT en émulation ciblée]` Les volets stockage, P-locks, clavier et routage passent avec Model-TG
+et les combinaisons Syntakt listées ci-dessous ; la prise live TRIG→T est également vérifiée dans la
+combinaison sans Model-TG. Le contrôle sans Model-TG compare **192 paires note-on/off** : événements audio et recorder identiques au témoin, avec
+Keys ON/OFF et CHORD/TONE.
+
+Avec **Model-TG puis Model-TG-ST**, le banc Scale Lock passe dans chaque image **douze contrôles ciblés**,
+dont une matrice de **540 paires note-on/off** (quatre gammes + OFF, trois toniques, six pistes CHORD Keys
+et six notes).
+Les notes CHORD restent chromatiques ; Keys OFF, TONE, Sampler et moteurs Syntakt gardent les événements
+de Model-TG. Les notes hors 0..127 gardent le rejet natif. Une vraie touche CHORD rejoint le recorder
+natif puis le save/load avec sa hauteur exacte. Le cas limite TRIG CHORD 52 tenu → machine TONE →
+nouvelle attaque 52 conserve la note 59 attendue de Scale Lock ; le relâchement de l’ancien TRIG termine
+52, sans compteur de note bloqué. Quatre cas croisent le relâchement externe ou par helper de clavier stock
+avec les deux ordres de relâchement : note externe avant le TRIG Chord Keys ou après. Les deux notes se
+terminent à leur hauteur respective et les compteurs reviennent à zéro. Le relais distingue ainsi le
+note-off de Chord Keys de ceux du clavier stock ou d’une autre source.
+
+`[FAIT en émulation : JSON final]` Les trois commandes `--focus compatibility` terminent `TOUT OK`,
+soit **764 contrôles ciblés** :
+
+| Image avec Chord Keys | Contrôles |
+|---|---:|
+| USB 6 canaux + latching-mute + trig-preview + browser-scroll + trig-hold + arp + tempo-max + boot-anim + cinq moteurs Syntakt | 260 |
+| Model-TG | 250 |
+| USB 6 canaux + Model-TG-ST + trig-hold + arp + tempo-max + boot-anim + cinq moteurs Syntakt | 254 |
+
+```sh
+python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx --focus compatibility \
+  --with 6ch-usbup,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,syntakt-sd-cp-toy-bits-swarm \
+  --syntakt firmware/Syntakt_OS1.42.syx
+python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx --focus compatibility \
+  --with model-tg
+python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx --focus compatibility \
+  --with 6ch-usbup,model-tg-st,trig-hold,arp,tempo-max,boot-anim,syntakt-tg-sd-cp-toy-bits-swarm \
+  --syntakt firmware/Syntakt_OS1.42.syx
+```
+
+Le banc exécute la véritable boucle des six voix, le getter de pattern, le lisseur, les traitements
+par piste et l’oscillateur de Model-TG :
+
+- Keys OFF : PCM identique aux mêmes mods sans Chord Keys pour les six machines stock.
+- Keys ON : les cinq autres machines stock restent identiques ; CHORD joue Cmaj7 avec les rapports
+  attendus. Les sept états HARMONY passent par l’extracteur, le lisseur et l’audio réels ; les rapports
+  et le nom de l’accord concordent, et les locks Attack/Filter/Resonance restent intacts.
+- Le Sampler **vide** reste muet avec ou sans Chord Keys. Les cinq moteurs Syntakt restent audibles,
+  avec le même PCM en présence de HARMONY. Cela ne constitue pas un essai d’échantillons chargés.
+- Avec le régulateur partagé et six CHORD Keys, une charge **simulée à 50 %** donne le même PCM sans
+  vol de voix ; la surcharge répétée à **99 %** provoque le fondu attendu, puis un nouveau trig reste
+  audible. Ces durées sont injectées, sans mesure de marge processeur sur le matériel.
+- Aucun accès mémoire non mappé dans les **9 instances audio Model-TG** ni les **12 instances de la
+  combinaison Model-TG-ST**. La charge utile Syntakt s’exécute à son adresse combinée `0x46700000`.
+
+Le banc fournit les objets de projet et événements décodés ; il ne simule pas un démarrage complet,
+une session USB/MIDI réelle ni l’ordonnancement physique de l’instrument.
+
+Les générateurs Chord Keys et flasher passent `--check`. Le smoke test web sur données synthétiques passe ;
+il vérifie notamment la sélection simultanée de Chord Keys et Model-TG. Le contrôle ciblé des quatre
+constructions réelles utilise :
+
+```sh
+node tools/webchord_compat_check.js firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42.syx
+```
+
+`[FAIT : références de construction]` `REF_MAINOS` a été régénéré pour **18 431 combinaisons proposées**,
+soit les **1 024 combinaisons Chord Keys + Model-TG** désormais permises en plus des références précédentes.
+La génération d’empreintes ne remplace pas une preuve fonctionnelle de chaque combinaison.
+
+`[FAIT : quatre constructions web réelles]` Le contrôle ci-dessus passe sur le JSON final pour
+Chord Keys seul, Model-TG + Chord Keys, les cinq moteurs Syntakt avec USB et les commandes, puis
+la combinaison Model-TG-ST correspondante. Chaque MAIN OS concorde avec sa référence Python ; chaque
+section autre que 3 reste identique octet pour octet. Ce test ne transmet aucun firmware par MIDI
+et ne parcourt pas les 18 431 choix du flasher.
+
+Ces contrôles ne constituent pas une campagne exhaustive des combinaisons ni une mesure du budget audio
+sur la machine. La suite complète et la publication attendent le signal de fin d’implémentation de Nico.
+
+### 27.4. À essayer sur la machine
+
+`[À FAIRE sur la machine]` Essayer Chord Keys avec Model-TG, puis avec **6ch-usbup, Model-TG-ST,
+SD/CP/TOY/BITS/SWARM, arp, trig-hold, tempo-max et boot-anim** :
+
+1. Sur CHORD avec Keys ON, choisir une gamme différente de Scale Lock de Model-TG ; jouer TRIG 1–16
+   puis T1–T6. Vérifier les degrés, l’affichage et l’absence de changement de piste.
+2. Enregistrer TRIG puis T sur deux pas ; relire, sauvegarder et recharger. Vérifier aussi un projet
+   Chord Keys antérieur qui contient déjà des locks HARMONY.
+3. Sur cette piste, régler et enregistrer séparément Attack, Filter et Resonance de Model-TG ; vérifier
+   qu’aucun de ces réglages ne remplace HARMONY, et réciproquement.
+4. Passer Keys OFF puis sélectionner une autre machine : Scale Lock doit fonctionner comme avant.
+   Jouer le Sampler et les moteurs Syntakt ; essayer les pages retrig/FX et les raccourcis Model-TG.
+5. Écouter une séquence avec les autres pistes actives et enregistrer les six canaux USB ; vérifier
+   transitions, notes tenues et commandes de mise à jour USB habituelles.
+
+La révision reste **experimental**, seule et combinée. Aucun retour matériel n’est revendiqué.
+
+## 28. Retour matériel de Nico sur sa version 1.2 (07/10/2026)
+
+À la question « Cuando decís que la v1.2 está testeada con todos los mods, ¿incluye pruebas
+en tu Model:Cycles? », Nico répond : **« También probada en mi Model:Cycles »**.
+Le nouveau retour remplace donc l’absence de résultat matériel constatée au §27.4 : Nico
+confirme un essai de la 1.2 sur son instrument, y compris avec les autres mods Cycles.
+Il ne fournit pas de matrice détaillée des sélections ni de mesure de charge ou de délais USB ;
+ce retour ne prouve pas les 18 431 combinaisons du flasher. Il est attribué à Nico et ne constitue
+pas un retour de Maxime. La classification `experimental` du générateur reste inchangée.
+
+Sa page de présentation (`docs/chord-keys/`, avec un lien Ko-fi) et la publication sur son fork, décrites
+dans sa propre note, ne sont pas reprises dans ce dépôt (§33).
+
+## 29. Conserver T1–T6 pendant plusieurs TRIG (08/10/2026)
+
+Demande de Nico dans cette conversation : « hold a modifier (T1-T6) and have that carry on
+being used », car le premier TRIG consomme le changement préparé. Cette demande remplace
+la consommation unique des §24–25. Adresses : VA de l’OS 1.13.
+
+`[FAIT : source]` `handle_press` dans `chord_ui.c` lit `prepared_modifiers`, puis appelle
+`ck_ui_clear_modifiers`, qui efface cette préparation avant le TRIG suivant. Un pad pressé
+pendant un TRIG publie seulement le changement live. Il faut donc conserver séparément
+le pad physiquement tenu et l’harmonie de la note en cours, avec leur piste et leur pattern.
+
+Comportement demandé : un T maintenu transforme chaque nouveau TRIG jusqu’à son relâchement,
+qu’il ait été pressé avant ou pendant un TRIG. Relâcher T ne réarticule pas et conserve la
+queue actuelle ; les TRIG suivants retrouvent leur extension. Un pad sans TRIG ne touche
+pas la queue précédente et n’écrit pas de lock. Les notes prises en live rec gardent chacune
+leur changement HARMONY. Les raccourcis et les pistes étrangères conservent leur chemin.
+
+`[FAIT en émulation]` Les nouvelles assertions échouent avec le JSON précédent : six pads
+perdent leur effet après le premier TRIG. Le correctif conserve la préparation lors de
+`handle_press` et la publie aussi quand T est pressé pendant une note tenue. La version
+isolée du correctif passe **181 contrôles ciblés** : T1–T6 sur les seize TRIG par les vrais
+dispatchers, signatures anciennes et actuelle, séparation des pistes, réarticulations,
+rapports et PCM du CHORD natif, puis retour à l’extension après relâchement. Le recorder
+natif et save/load conservent les locks **6, 6, 6, 0** de trois notes avec T6 tenu puis
+d’une note après relâchement. Ce résultat ne constitue pas un essai matériel.
+
+`[À FAIRE sur machine]` Tenir T1 puis jouer TRIG 1, 3, 5 ; refaire avec TRIG→T6 puis
+d’autres TRIG. Relâcher T, laisser finir l’accord, puis vérifier l’extension du TRIG suivant.
+Enregistrer ces gestes et écouter les quatre attaques après sauvegarde/recharge.
+
+## 30. Sortie MIDI des accords (08/10/2026)
+
+Demande de Nico dans cette conversation : « implement also midi chord output mode ».
+Le MIDI ROOT existant envoie une fondamentale ; le choix par piste **MIDI CHORD**, dans
+**FUNC + RETRIG**, doit envoyer les notes de l’accord par la route MIDI native.
+ROOT reste la valeur par défaut des nouveaux patterns et des anciens projets.
+
+`[CONCEPTION]` La sélection est sauvegardée avec le pattern. Le calcul réutilise les
+intervalles harmoniques du mod. Les fins de notes doivent libérer les notes et le canal
+capturés à l’attaque, même si les réglages ont changé entre-temps. Aucune note MIDI ne doit
+être envoyée à partir de la boucle DSP de chaque bloc audio.
+
+### 30.1. Stockage et place disponible
+
+`[FAIT : source]` La signature **v3 `0x434b0300`** utilise ses six bits bas pour MIDI CHORD
+sur chaque piste. Les mots de configuration et les octets musicaux restent inchangés.
+Les signatures v1 et v2 restent lisibles, avec MIDI ROOT ; le setter convertit la signature
+lors d’un choix explicite. Le getter audio lit le pattern joué, le getter UI le pattern affiché.
+
+`[FAIT : analyse de l’image officielle]` La réserve de 11 168 octets ne suffit plus aux
+nouveaux réglages et aux relais MIDI. Les réserves ci-dessous apportent **3 016 octets**,
+soit **14 184 octets** au total. Pour chacune : masque identique à l’exemplaire conservé,
+une seule référence à son début, contrat du constructeur Bitmap et dimensions exacts,
+aucune constante ni branche intérieure selon `build.refs_into`, aucun chevauchement
+avec un autre tweak. Le générateur refait ces vérifications ; seuls les masques occupés
+sont redirigés et écrits. Aucun changement d’image ou de format de charge utile.
+
+| Masque | Octets | Constante du constructeur | Exemplaire conservé |
+|---|---:|---|---|
+| `0x4015b8f8` | 280 | `0x400b668c` | `0x4014a660` |
+| `0x401548b4` | 280 | `0x400b903a` | `0x4014a660` |
+| `0x401542f8` | 280 | `0x400b91d8` | `0x4014a660` |
+| `0x40192ba4` | 272 | `0x400ac276` | `0x4016f8c8` |
+| `0x4018ff64` | 272 | `0x400ac7fc` | `0x4016f8c8` |
+| `0x4018b1a8` | 272 | `0x400ad16e` | `0x4016f8c8` |
+| `0x4018af88` | 272 | `0x400ad18a` | `0x4016f8c8` |
+| `0x40189618` | 272 | `0x400ad364` | `0x4016f8c8` |
+| `0x40186238` | 272 | `0x400ad988` | `0x4016f8c8` |
+| `0x40185308` | 272 | `0x400adb8c` | `0x4016f8c8` |
+| `0x401835b8` | 272 | `0x400adedc` | `0x4016f8c8` |
+
+### 30.2. Chemins MIDI natifs
+
+| Site | Rôle |
+|---|---|
+| `0x40019e7a` / `0x40019c84` | Helpers clavier, attaque et relâchement |
+| `0x40019ee2` / `0x40019cba` | Relais MIDI après le traitement audio du clavier |
+| `0x4001d05e` / `0x4001d0fc` | Helpers pads natifs |
+| `0x4001d094` / `0x4001d120` | Relais MIDI après le traitement audio des pads |
+| `0x40058fac` | Ancien producteur MIDI des événements note-on, différé |
+| `0x4005919e` | Nouveau relais après application du son et des P-locks |
+| `0x4008a5d0` | Allocateur circulaire natif, 128 messages de 16 octets |
+| `0x4008a0ba` | Worker MIDI natif : canaux, répétitions, LEN et STOP |
+| `0x40082686` / `0x400826b0` | Destination courante et routage MIDI USB/DIN |
+
+`[FAIT : code et émulation]` Le jeu direct mémorise les notes réellement envoyées,
+le canal et la destination pour chaque piste. Une nouvelle attaque ferme l’accord
+précédent. Le relâchement utilise cette capture même après un changement de canal,
+de destination, de MOut ou de mode. La destination OFF du résolveur (1) est convertie en destination vide (0) :
+l’émetteur brut interprète 1 comme AUTO, ce qui laisserait un relâchement tardif suivre
+une destination activée après l’attaque silencieuse. La régression OFF→USB+DIN est prouvée. Un bitmap conserve les identités d’accords remplacés
+pour absorber leurs relâchements tardifs sans avaler celui d’une note ROOT antérieure.
+Le repli des fins de notes ROOT reprend exactement le code stock, y compris son filtre MOut.
+
+Pour le séquenceur, l’événement accepté est développé après les P-locks ; les trois ou
+quatre messages gardent la piste, la vélocité, l’instant et LEN d’origine. Le worker
+stock gère les durées et STOP. Sa table est indexée par **canal et note**, avec 2 048
+fiches ; elle accepte donc plusieurs notes sur une piste. Le calcul harmonique ne
+s’exécute qu’à l’attaque, jamais dans l’update DSP de chaque bloc. Aucun retour ni
+registre temporaire n’est conservé dans une globale partagée.
+
+### 30.3. Limites musicales et test matériel
+
+- Le mode CHORD demande Keys ON et la machine CHORD. ROOT, les autres machines et les
+  notes hors gamme gardent une seule note native.
+- Les palettes, extensions, transformations et dispositions reprennent les fonctions
+  harmoniques du DSP. Les fondamentales supérieures à MIDI 96 suivent son plafond à 96
+  avant le choix du degré ; les voix au-delà de 127 sont omises.
+- PITCH/FINE et la balance audio de SHAPE n’affectent pas les notes ni les vélocités MIDI.
+  Chaque voix garde la vélocité de l’attaque.
+- Tourner COLOR/SHAPE ou poser un lock sans attaque ne réaccorde pas un accord MIDI tenu :
+  le changement s’applique à la prochaine attaque. T pendant un TRIG réarticule déjà une note.
+- La retransmission native du MIDI entrant reste monophonique : ce mode concerne le
+  clavier/pads et le séquenceur, pas un harmoniseur MIDI externe. Les notes harmoniques
+  peuvent aussi rester présentes en MIDI si la protection HIGH LIMIT les retire du son audio.
+- La signature v3 n’est pas reconnue par les versions antérieures de Chord Keys ; leur
+  retour peut réinitialiser les réglages spécifiques au mod. Le chargement vers cette
+  nouvelle version préserve les anciens réglages et locks.
+- Le banc instrumente les périphériques : ni le timing USB/DIN réel ni la charge matérielle
+  ne sont mesurés. **Aucun retour matériel de ces deux ajouts n’est revendiqué.**
+
+`[À FAIRE sur machine]` Relier un synthétiseur polyphonique ou un moniteur MIDI, activer
+MOut et MIDI CHORD sur CHORD/Keys ON. Jouer une triade, une neuvième et V7, puis tenir T
+entre plusieurs TRIG. Vérifier les notes et les fins sur USB puis DIN. Réenregistrer
+la progression et la relire avec des locks COLOR/SHAPE/HARMONY, des LEN courts et longs,
+des répétitions et STOP. Pendant une note tenue, changer canal, destination ou mode et
+vérifier qu’aucune note ne reste bloquée. Sauvegarder/recharger, puis refaire avec
+Model-TG et les moteurs Syntakt. ROOT doit retrouver la sortie habituelle.
+
+### 30.4. Résultats ciblés de cette révision
+
+`[FAIT en émulation]` Sur le JSON final, chacun des deux ensembles ci-dessous passe seul
+puis avec `6ch-usbup,model-tg-st,trig-hold,arp,tempo-max,boot-anim,syntakt-tg-sd-cp-toy-bits-swarm` :
+
+- `--focus pad-prepare` : **91 contrôles**, maintien, réarticulation, recorder, save/load et
+  vrai DSP. Le banc composé charge désormais la même fixture Syntakt/Model-TG que la preuve
+  de compatibilité ; sa première tentative avait échoué faute de RAM/payload dans la fixture.
+- `--focus midi-output` : **112 contrôles**, accroches, masques, stockage, menu, MIDI live,
+  file audio et worker MIDI natifs. Sont couverts 96 paires clavier/pads en ROOT identiques
+  au stock, 189 accords palette/geste/disposition, la vraie chaîne TRIG→T→TRIG,
+  24 notes simultanées sur six pistes avec dix répétitions, LEN et STOP, les captures après
+  changement de canal/destination/MOut/mode, puis les notes ROOT relâchées après activation CHORD.
+- Les **neuf contrôles de file audio** inclus vérifient les P-locks avant l’envoi,
+  l’absence de doublon du producteur live, mute, note-off, lock-only, MOut désactivé,
+  événement refusé en live rec et changement de pattern actif.
+
+Un passage de boucle pour une attaque Cmaj7 mesure **306 / 529 / 1 613 instructions**
+stock / ROOT / CHORD, et **325 / 548 / 1 632** avec les autres mods. Cela exclut le worker
+MIDI et les périphériques ; ce n’est ni une mesure de temps réel ni un pourcentage de CPU.
+
+`[FAIT : génération et construction]` GCC m68k-elf **16.2.0**, binutils **2.47** :
+**110 écritures**, **41 masques occupés**, **13 183 octets** de code, constantes et état.
+`gen_chord_keys.py --check` et `gen_flasher_tweaks.py --check` passent. Les **18 431 empreintes**
+REF_MAINOS ont été régénérées comme données nécessaires au flasher ; aucune campagne
+exhaustive de toutes les constructions n’a été lancée. Les **quatre constructions ciblées**
+de `webchord_compat_check.js` passent et conservent toutes les sections hors MAIN OS.
+Le smoke web synthétique passe **83 contrôles**, sans erreur JavaScript. Les **99 liens,
+ressources et ancres locaux** des quatre pages sont valides, avec les paires EN/FR.
+
+Le fichier local ignoré `build/model-cycles_OS1.13_chord-keys-held-midi-experimental.syx`
+est reconstruit depuis l’officiel. Sa réextraction confirme chaque octet du JSON final et
+des sections hors MAIN OS identiques. MAIN OS SHA-256 :
+`5984423df71fab6b21bd544716377a5191947cbc120455fc267b70aef1e89099`.
+Les six principales empreintes sont mises à jour dans BUILD.md. Aucun firmware n’est
+versionné, aucun appareil flashé, aucun push effectué. Suite exhaustive et publication
+restent différées conformément au signal de fin demandé par Nico.
+
+## 31. Moins de calcul à son et fonctions identiques (09/10/2026)
+
+Demande de Nico dans le chat du projet : examiner Chord Keys et réduire autant que
+possible son travail CPU, sans réduire la qualité ni les fonctions. La référence
+est la révision locale du §30, avec le maintien des pads et MIDI ROOT/CHORD, avant
+cette optimisation ; les autres changements en cours sont conservés.
+
+### 31.1. Résultat et portée
+
+**[FAIT en émulation]** Sur 1 220 appels comparatifs, l'update CHORD complet avec
+ses vrais lecteurs de configuration passe de **2 085,8 à 1 492,6 instructions en
+moyenne (−28,44 %)**. Chaque cas mesuré coûte moins d'instructions. Les états
+complets des six voix et les instantanés d'accords restent identiques octet par
+octet. Les **32 blocs PCM** comparés restent identiques échantillon par échantillon,
+avec un signal non nul dans chacune des huit scènes.
+
+| Bloc natif, six pistes CHORD | Avant | Après | Instructions économisées |
+|---|---:|---:|---:|
+| Keys OFF | 57 302 | 55 958 | 2,35 % |
+| BASE | 60 945 | 57 412 | 5,80 % |
+| OPN3 | 63 660 | 59 533 | 6,48 % |
+| JAZZ | 62 738 | 59 155 | 5,71 % |
+| TENSION | 63 287 | 59 535 | 5,93 % |
+| Geste live | 61 977 | 58 365 | 5,83 % |
+| Extension live | 62 906 | 59 239 | 5,83 % |
+| Priorité séquenceur | 63 830 | 59 336 | 7,04 % |
+
+Ces nombres comptent des **instructions émulées**, pas des cycles ni un pourcentage
+de charge réelle du MCF54415. La latence des divisions, les caches et la mémoire
+ne sont pas modélisés par ce compteur. **[À FAIRE sur machine]** Mesurer la charge
+et écouter six CHORD actifs, avec changements de COLOR/SHAPE, gestes, P-locks et
+MIDI, seuls puis avec Model-TG/Syntakt. Aucun résultat matériel de cette révision
+n'est revendiqué ; elle reste expérimentale.
+
+### 31.2. Changements exacts, sans cache musical persistant
+
+- `chord_voicing.c` prolonge les sept gammes jusqu'au degré requis par la
+  treizième : les divisions/restes par sept disparaissent. La famille harmonique
+  provient de la rotation des familles du mode majeur, sans recalcul des tierce,
+  quinte et septième. SUS7/PARALLEL/V7 évitent les intervalles qu'ils remplaçaient.
+- Après le tri initial des classes, une inversion déplace directement la note
+  grave relevée d'une octave à la fin. Une disposition ouverte échange seulement
+  les deux positions centrales après le relèvement des voix impaires. Les tris
+  supplémentaires deviennent inutiles, sans changer les notes ni leur ordre.
+- `chord_audio.c` retrouve le degré dans une table inverse de 7 × 12 entrées,
+  avec une sentinelle hors gamme. `(note + 144 - root) % 12` remplace deux restes
+  successifs : 144 est multiple de douze et supérieur à toute racine encodée.
+- Les rapports couvrent maintenant 0..35 demi-tons. Les entrées 24..35 sont
+  **exactement** le double des anciennes entrées 12..23 : leurs arrondis sont
+  conservés, sans recalcul flottant ni nouvelle approximation.
+- La copie locale des 33 paramètres avance de quatre mots par tour, puis copie
+  le dernier mot. Elle conserve les accès 16 bits, le pas natif de 66 octets et le
+  marqueur du crochet interne, même lorsque Keys est OFF.
+- BASE évite les appels de balance neutres. Les autres dispositions ne traitent
+  que les voix utilisées ; une triade coupe toujours son quatrième opérateur.
+  Les protections aiguës, l'accordage et le DSP natif restent identiques.
+- `chord_storage.c` valide simultanément les sept extensions par leurs bits
+  (`bit2 & (bit1 | bit0)` détecte 5/6/7), sans modifier les cas invalides. La
+  résolution d'un contrôle garde le même pointeur d'en-tête local pendant l'appel,
+  au lieu de parcourir deux fois les pointeurs du projet. Aucun réglage n'est
+  conservé entre blocs : changement de pattern, geste live et priorité du
+  séquenceur restent relus.
+- L'affichage recherche une note tenue par un seul parcours des seize captures,
+  au lieu de six. Un masque local conserve la priorité de la première capture
+  de chaque piste, même en présence d'une note invalide. Aucun état partagé ajouté.
+
+La validation d'un mot passe de **90 à 28 instructions**. Selon le contexte,
+`ck_audio_locked_controls` passe de 347→241 (sans geste), 335→229 (geste zéro),
+269→206 (pad live) et 278→215 (séquenceur). La consultation d'affichage au repos
+passe de **832 à 138 instructions**. Dans le banc MIDI composé du §30, l'attaque
+CHORD passe de **1 632 à 1 326 instructions** ; ROOT reste à 548.
+
+### 31.3. Preuves ciblées et reproduction
+
+Le nouveau banc `tools/emu/chord_cpu_checks.py` accepte deux JSON. Il applique
+chacun séparément à l'image officielle, puis compare les vraies routines ColdFire,
+sans remplacer les getters audio ni masquer de différence dans les voix :
+
+```sh
+# Conserver le JSON précédent avant de régénérer une optimisation suivante.
+mkdir -p build/chord-cpu-before
+cp tweaks/model-cycles_OS1.13/45-chord-keys.json build/chord-cpu-before/
+# Après modification des sources et régénération :
+python3 tools/emu/chord_cpu_checks.py \
+  --cycles firmware/model-cycles_OS1.13.syx \
+  --before-tweak build/chord-cpu-before/45-chord-keys.json
+```
+
+Pour cette comparaison, le snapshot local ignoré `build/chord-cpu-before/` est déjà
+conservé : ne pas le remplacer par le JSON optimisé. Empreintes SHA-256 des JSON :
+
+- Avant : `829754d06acc66128a16958fa1bc835413848c11404a114fca17c2f489143263`.
+- Après : `a938f4896c64b874e665624ad59ce7ff52bd6b2d733a3bbb683dae8cc4dec089`.
+
+**[FAIT en émulation / sur l'hôte]** Contrôles ciblés passés :
+
+- Noyau harmonique : **5 145 harmonies et 44 415 dispositions** identiques à la
+  référence précédente et à une référence musicale indépendante ; limites
+  COLOR/SHAPE, arguments invalides et refus sans mutation conservés.
+- Table inverse/classe relative : **114 688 combinaisons** comparées aux anciennes
+  gammes. Validation stockage : **2 101 248 mots** comparés à l'ancien code sur
+  l'hôte et **2 272 cas limites ColdFire** dans la preuve de stockage.
+- Banc comparatif : **1 220 updates**, sept modes, tous les degrés/extensions,
+  trois palettes, neuf dispositions, sept gestes, six pistes, douze toniques et
+  classes relatives, limites MIDI/PITCH/FINE, états invalides, patterns 0/1/95,
+  signatures v1/v2/v3 et arbitrage live/séquenceur. **32 blocs PCM** avec attaques,
+  queues, relâchements et changements de paramètres sans nouveau trig.
+- Stockage et affichage : sauvegarde/relecture natives, **243 fixtures de captures**,
+  glyphes, pixels, DSPI et décisions de redessin réels.
+- `run_audio_storage_checks` : ABI d2..d7/a2..a6 et pile conservés ; profondeur
+  observée sous l'entrée update **328 octets**, contre 104 pour le stock.
+- `--focus midi-output` et `--focus compatibility` avec
+  `6ch-usbup,model-tg-st,trig-hold,arp,tempo-max,boot-anim,syntakt-tg-sd-cp-toy-bits-swarm` :
+  sortie MIDI, locks, routage, Scale Lock, machines ajoutées et régulateur partagé
+  conservés. Les charges du régulateur sont simulées.
+- Régulateur : les quatre scénarios CHORD actif du banc audio passent aussi avec
+  Syntakt sans Model-TG. `tools/emu/test_governor.py`, sur le tweak Syntakt composé
+  avec les écritures Chord Keys, passe ses **12 contrôles** historiques (charges,
+  pics, fondus, priorité dans le mix et moyenne soutenue).
+
+Compilation inchangée : m68k-elf GCC **16.2.0**, binutils **2.47**. Le JSON final
+contient **112 écritures**, **42 masques occupés** et **13 337 octets** de code,
+tables et état, soit **154 octets de plus**. La réserve existante suffit : aucune
+nouvelle cave réservée, aucune nouvelle charge utile, seuls les octets de section 3
+changent. Les générateurs et les empreintes du flasher sont synchronisés dans
+cette révision ; les principales empreintes restent dans BUILD.md.
+
+`gen_chord_keys.py --check` et `gen_flasher_tweaks.py --check` passent. Les
+**18 431 empreintes REF_MAINOS** sont régénérées comme données du flasher, sans
+lancer un parcours exhaustif de ses combinaisons. Les **quatre constructions
+ciblées** de `webchord_compat_check.js` passent : Chord Keys seul, avec Model-TG,
+avec les moteurs Syntakt et les autres mods, puis la combinaison Model-TG-ST/Syntakt.
+Chaque MAIN OS correspond à sa référence Python ; les autres sections restent
+identiques à l'officiel. (Numéros de version et de cache de son fork : voir §33.)
+
+La suite exhaustive et la publication étaient différées jusqu'au signal de Nico,
+donné le 10/10/2026 ; voir §32.
+
+## 32. Validation de Nico avant sa publication (10/10/2026)
+
+Nico demande de publier les trois changements locaux (§29–31) sur son fork, puis confirme
+explicitement la fin d'implémentation et la validation complète : « Sí, validá
+y publicá ». Les numéros de version et de cache de son fork ne s'appliquent pas à ce dépôt (§33).
+
+**[FAIT en émulation / sur l'hôte]** Les générateurs Chord Keys et flasher,
+`relocate_6ch.py --check`, les comparaisons des constructeurs Python/JS, la
+validation SysEx et la compilation Python passent. Le générateur Chord Keys
+utilise GCC m68k-elf 16.2.0 et binutils 2.47 ; le contrôle USB reprend le wrapper
+local `build/binutils-repro/m68k-elf-as` (`-S`), déjà utilisé pour reproduire
+l'encodage des branches du tweak USB existant. Les 18 431 références MAIN OS
+passent `ref_mainos.py --check`.
+
+Les preuves complètes passent seules et avec USB 6 canaux, latching-mute,
+trig-preview, browser-scroll, trig-hold, arp, tempo-max, boot-anim et les cinq
+moteurs Syntakt. MIDI ROOT/CHORD passe seul et avec Model-TG-ST/Syntakt ; les
+focus `pad-prepare` et `compatibility` passent avec cette dernière combinaison.
+Le banc CPU retrouve les 1 220 updates et 32 blocs PCM identiques du §31.
+Les quatre constructions web ciblées conservent les sections hors MAIN OS.
+Le smoke synthétique passe, ainsi que les 99 liens, ressources et ancres
+locaux et les paires EN/FR des quatre pages.
+
+**Limite du banc générique avec Model-TG-ST/Syntakt :** sans focus, la preuve
+d'interface `_shape_ui` ne charge pas le code Syntakt relogé à `0x46700000` et
+s'arrête sur un fetch non mappé à `0x46733028`. Le même arrêt a été reproduit
+avec le JSON de la version publiée (`19169a4`) et celui de cette révision.
+Ce parcours n'est donc pas revendiqué comme réussi. Le banc dédié
+`--focus compatibility` charge la zone à son adresse réelle et passe ses
+contrôles UI, DSP, locks, Scale Lock et régulateur ; les deux nouveaux chemins
+de jeu/MIDI sont également exercés dans leurs focus avec la combinaison.
+
+Le smoke réel a révélé une assertion de cardinalité ancienne : 543/544
+sélections sans/avec moteurs, avant la compatibilité Chord Keys/Model-TG.
+Elle est corrigée en 575/576, soit 18 431 combinaisons avec les 31 sélections
+de moteurs. L'énumération du code corrigé a été vérifiée indépendamment.
+**[FAIT : parcours exhaustif]** Les **18 431 constructions réelles** passent,
+sans doublon ni omission par rapport à REF_MAINOS ; aucune erreur JavaScript
+pendant les parcours. La commande démarrée avant la correction du compteur
+termine avec le statut 1 uniquement pour cette ancienne assertion, une fois
+par shard. L'assertion corrigée est réexécutée directement depuis le code du
+smoke et passe ; un contrôle final compare les 18 431 clés réussies à REF_MAINOS,
+confirme l'absence d'autre échec et vérifie que les fichiers web sont restés
+identiques pendant le parcours. Les constructions coûteuses ne sont pas
+répétées pour ce changement de cardinalité attendu.
+
+Journaux locaux ignorés : `build/publication-137-smoke.log` et
+`build/publication-137/`, notamment `final-smoke-verification.json`.
+Aucun résultat matériel nouveau n'est revendiqué : les trois changements
+restent expérimentaux.
+
+## 33. Reprise de la deuxième version dans ce dépôt (11/10/2026)
+
+La première version est fusionnée (PR #50, version 1.40) et testée (§18). Le 11/10/2026 à 15 h 08 UTC, Nico pousse
+sa révision `c34e797` sur la PR #46 (§19–§32) et demande de mettre à jour l'intégration. Maxime choisit de la reprendre
+et autorise ici l'exécution des tests en émulation de Nico, après relecture. Sa branche n'est pas touchée : ce dépôt
+fusionne sa révision (commit de fusion, ses commits et son nom conservés), puis l'adapte.
+
+### 33.1 Ce qui est repris, ce qui reste sur son fork
+
+- **Repris** : les sources `tools/machines/chord_keys/`, le générateur, ses tests natifs et en émulation, sa section
+  du guide (adaptée), et ses §14–§27 de la note, renumérotés §19–§32 avec leurs renvois.
+- **Laissé sur son fork** : la page `docs/chord-keys/` et son lien Ko-fi, ses numéros de version et de cache, ses
+  apartés du flasher et `tools/webchord_compat_check.js` (`REF_MAINOS` et le smoke du flasher couvrent la même
+  vérification). Le paragraphe du guide sur le calcul allégé et les détails de publication de son fork (§28, §32) sont
+  retirés.
+- **Numéros** : note 42 (sa note 40 ; les renvois des sources et des preuves suivent), tweak 45 (son 44), version
+  **1.52**, tampon **2026-10-12-06**. `main` est à 1.47 et `2026-10-12-01` ; 1.48 à 1.51 et les tampons -02 à -05
+  sont réservés par des PR ouvertes.
+
+### 33.2 Place : 58 masques libres
+
+`[FAIT]` Sa révision range 112 écritures dans 42 masques choisis avant les fusions récentes de `main` : vingt
+écritures chevauchent le filtre par piste, les trigless atténués, le volume et le pan en chiffres, le navigateur sur
+plusieurs lignes et le MIDI live, et `registry.py` refuse six de ses redirections 34×34 (il en garde une autre copie).
+Le code ne change pas ; seule la liste `MASKS` du générateur change : les masques libres de `REGISTRY.md`, y compris
+pour les PR ouvertes au 11/10/2026, rangés du plus grand au plus petit (le placement de Nico, premier masque assez
+grand par taille décroissante, est conservé). Les réserves annoncées par d'autres mods sont laissées de côté (trois
+48×22 de l'écoute au casque).
+
+| Groupe | Masques pris | Octets par masque |
+|---|---|---|
+| 47×47 | 10 (les dix de la première version, sans les quatre de l'écoute des samples) | 376 |
+| 41×41 | 1 (`0x4018d918`) | 328 |
+| 35×35 | 2 (`0x401696a0`, `0x401699a8` ; `0x4016aa28` reste au filtre par piste) | 280 |
+| 34×34 | 6 | 272 |
+| 52×22 | 1 (`0x4016ea78`) | 208 |
+| 48×22 | 27 | 192 |
+| 46×31 | 7 | 184 |
+| 31×22 | 4 (sur 18 listés) | 124 |
+
+Résultat : **144 écritures, 58 masques, 13 335 octets** de code, constantes et état. Vingt sections dépassent 192 o :
+il faut vingt masques d'au moins 208 o, d'où les deux 35×35 encore libres. Trois corrections du générateur :
+
+- **Constructeur des sprites** : l'OS empile la hauteur, puis la largeur (`pea.w`), avant l'adresse du Bitmap. Le
+  contrôle de Nico, écrit pour des masques carrés, les lisait dans l'autre ordre ; il prend maintenant les dimensions
+  de `sprites.GROUPS`.
+- **`build.refs_into` retiré du générateur** : sur les plans des sprites et sur des instructions lues à cheval, il
+  signale des références de hasard (par exemple `move.b 0xec094018,%d0 ; moveq #8` se lit `0x40187208`). Le relevé
+  des masques reste vérifié par `registry.py --cycles` ; le générateur garde ses contrôles de référence unique et de
+  constructeur.
+- **Chevauchements** : un conflit déclaré par l'un ou l'autre tweak suffit à ignorer la paire (comme au §17).
+
+L'écoute des samples ne partage plus aucun masque avec Chord Keys : son champ `conflicts` se vide, et les deux mods se
+cochent ensemble avec Model-TG (note 46 §13). `REGISTRY.md` régénéré : 76 masques libres sur 164.
+
+### 33.3 P-locks HARMONY : du slot 28 au slot 32
+
+`[FAIT]` Nico range HARMONY dans le mot de paramètre **28** (identifiant disque 33), libre quand il l'a choisi
+(§27). Le filtre par piste (notes/47, fusionné et testé depuis) occupe les mots **28 à 31** (Cutoff, Reso, Env,
+Decay, avec leurs descripteurs). Les deux mods se cochent ensemble : un lock HARMONY 1..6 aurait réglé le Cutoff à
+1..6 (passe-bas vers 5 Hz, piste muette sur ce pas) et un lock de Cutoff ≤ 6 aurait changé l'accord. La preuve de
+Nico le voit : `--focus compatibility --with track-filter,…` échoue sur « aucun descripteur pour 28..32 ».
+
+Le mot **32**, le dernier des 33, n'est lu ni par l'OS, ni par Model-TG (23..27), ni par le filtre (`tf_ptab` envoie
+k 32 vers l'index 0, inutilisé), ni par aucune PR ouverte au 11/10/2026. L'OS le traite comme le mot 28 :
+
+- écriture et lecture d'un lock (`0x4000dece`, `0x4000da2a`) : slot accepté jusqu'à 32 inclus (`cmp #32`) ;
+- sauvegarde complète (`0x4005b95c`) : boucle sur les 33 slots (`moveq #33`) ;
+- présence des locks lue par l'audio (`0x423087f8 + 8 × piste`) : **deux mots par piste**. `0x40058340` les
+  parcourt (slot = 32 × mot + bit, par `ff1`) et `0x400583da` met le slot k au bit k & 31 du mot k >> 5. Le
+  test de Chord Keys lisait le bit 28 du premier mot ; pour 32, il lit le bit 0 du second.
+
+Changements : `CK_HARMONY_SLOT 32` (`chord_plocks.h`) et le test de présence de `ck_audio_locked_controls` (mot
+`CK_HARMONY_SLOT >> 5`), plus deux octets de code. L'**identifiant disque 33 ne change pas** : un pattern enregistré
+avec la version de Nico (slot 28) se recharge au slot 32, comme au §27.2. Ses tests sont adaptés : une seule constante
+`SLOT` (`chord_plock_checks.py`), le masque de présence sur deux mots, la réserve vérifiée sur le seul mot 32, et
+l'aller-retour de l'observateur (`_observer_checks`) ajoute les quatre lanes du filtre quand il est installé (300
+événements au lieu de 180).
+
+Limite : la sauvegarde complète range au plus 79 lanes (piste × paramètre verrouillé) par pattern, dans l'ordre des
+slots ; HARMONY, dernier, serait la première lane perdue au-delà. Le contrôle « capacité native saturée » de Nico
+passe.
+
+Choix proposé à Maxime le 11/10/2026 : déplacer HARMONY (recommandé) ou déclarer le conflit avec le filtre par piste.
+En attendant sa réponse, le déplacement est appliqué.
+
+### 33.4 Clavier : l'accroche à l'entrée
+
+La deuxième version détourne `KeyboardView::consumeKeyEvent` à son entrée `0x4001a0d2` (§27) au lieu du pointeur
+`0x400ff9cc`. `test_chord_keys_release.py` (§16) suit : la sonde « stock » est au corps de la fonction
+(`0x4001a0da`), et le contrôle de l'accroche accepte le `jmp ck_ui_key` à l'entrée avec le pointeur intact, ou le
+relais de Model-TG dans le pointeur.
+
+### 33.5 Flasher et textes
+
+- `FEATURES` : statut **expérimental**, plus d'exclusion de Model-TG ; carte en anglais et en français ; `tweaks.js`,
+  `REF_MAINOS` (818 combinaisons) et `REF_MODS` régénérés. Le smoke coche Chord Keys et Model-TG ensemble au lieu de vérifier
+  l'exclusion.
+- Guide, section 17 : le texte de Nico, avec l'état expérimental et la ligne de compatibilité de ce dépôt.
+- Notes de version 1.52, README, `BUILD.md` (commandes et empreintes), `PROVENANCE.md`, note 46 §13.
+
+### 33.6 Preuves
+
+`[FAIT en émulation]` Avant le déplacement du slot, les journaux des tests de Nico sur la version relogée étaient
+identiques ligne à ligne à ceux de sa propre version (seule et quatre focus) : la nouvelle place ne change rien à ce
+qu'ils vérifient. Après le déplacement :
+
+| Preuve | Résultat |
+|---|---|
+| Tests natifs (`test_chord_keys.py`, `test_chord_harmony.py`, `test_chord_names.py`) | passent (560 frontières MIDI, 71 680 cas, 65 536 valeurs COLOR/SHAPE, 92 610 noms) |
+| `tools/emu/test_chord_keys.py`, seul | 477 contrôles, tout passe |
+| Focus `midi-output`, `pad-release`, `pad-prepare`, `live-recording` | 113, 275, 91 et 55 contrôles, tout passe |
+| `--focus compatibility` avec 6ch-usbup, latching-mute, trig-preview, browser-scroll, trig-hold, arp, tempo-max, boot-anim et les cinq moteurs du Syntakt | 291 contrôles, tout passe |
+| … avec Model-TG | 281, tout passe |
+| … avec Model-TG-ST, les moteurs du Syntakt, 6ch-usbup, trig-hold, arp, tempo-max, boot-anim | 285, tout passe |
+| … avec Model-TG, l'écoute des samples, le navigateur sur plusieurs lignes, volume et pan en chiffres, trigless atténués, MIDI live | 281, tout passe |
+| … avec le filtre par piste, le navigateur, volume et pan, trigless, MIDI, 6ch-usbup, trig-hold, arp, boot-anim, tempo-max | 285, tout passe (au slot 28 : 284 et l'échec ci-dessus) |
+| … avec le filtre par piste seul | 285, tout passe |
+| `test_track_filter.py --with chord-keys,6ch-usbup,arp,trig-hold --quick` | 61 contrôles, tout passe, Chord Keys installé |
+| `test_chord_keys_release.py` (§16) | 40/40 seul, avec 6ch-usbup, arp, trig-hold, tempo-max, boot-anim et les moteurs du Syntakt, avec Model-TG et l'écoute des samples, avec Model-TG-ST et les moteurs du Syntakt, avec le filtre par piste, MACRO et quatre autres mods |
+| Section 5 de `test_macro.py` (pilote du §17), avec chord-keys, 6ch-usbup, trig-hold, arp, tempo-max, boot-anim, filtre par piste, navigateur, volume et pan, trigless, MIDI live ; puis MACRO avec Model-TG-ST, chord-keys, l'écoute des samples, 6ch-usbup, trig-hold, arp | tout passe : la première avec cette version, la seconde avec la version au slot 28 (MACRO ne lit pas les locks HARMONY) |
+
+**Limite du banc avec MACRO** : `--focus compatibility --with …,macro` s'arrête sur une lecture non mappée dans
+`run_slot_checks` sur l'image de référence (le banc générique ne charge pas la charge utile de MACRO). Ce parcours
+n'est pas revendiqué ; MACRO est couvert par la preuve du §16 et la section 5 de `test_macro.py` ci-dessus.
+
+Contrôles du dépôt : `gen_chord_keys.py --check` (GCC m68k-elf 16.2), `gen_sample_preview.py --check`,
+`gen_flasher_tweaks.py --check`, `relocate_6ch.py --check`, `registry.py --check` et `--cycles`, `check_overlaps.py`
+(153 tweaks), `ref_mainos.py --check` (818 combinaisons, 145 mods), `webbuild_check.sh`, `webflash_check.sh`,
+`py_compile`, smoke du flasher sans firmware (120 contrôles) et avec les fichiers officiels (982 contrôles : les 818 combinaisons de l'échantillon construites et conformes).
+
+### 33.7 À essayer sur la machine
+
+Avec les fichiers de test : Chord Keys seul, avec six mods, avec Model-TG (et l'écoute des samples), avec le filtre
+par piste.
+
+1. Jeu normal (point 3 du §15) : TRIG 1–16, COLOR (DIATONIC, JAZZ, TENSION), SHAPE.
+2. Pads T1–T6 pendant un TRIG tenu, puis T tenu avant un TRIG ; relâchement.
+3. P-locks HARMONY : enregistrement live, puis pas tenus en grille ; sauvegarde, rechargement du pattern.
+4. Nom de l'accord à l'écran.
+5. MIDI CHORD vers un autre instrument (canal de la piste).
+6. Avec Model-TG : Keys ON sur CHORD, puis Scale Lock sur une autre piste.
+7. Avec le filtre par piste : des locks HARMONY et des locks de Cutoff sur les mêmes pas ; aucun ne doit agir sur
+   l'autre.
+8. Note bloquée (point 9 du §15) : PATTERN tenu pendant un accord.

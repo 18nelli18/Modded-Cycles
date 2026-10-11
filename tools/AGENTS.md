@@ -43,7 +43,7 @@ and check the writes of **every** other tweak for overlaps.
   taken and which are free**, with the bytes each mod writes. Take a free one, then run `python3 tools/registry.py`
   and commit the regenerated file; `python3 tools/registry.py --git <branch>` shows what the open PRs have taken.
   Several mods may share a mask only if they never write the same bytes when built together (trig-hold in front of
-  6ch-usbup's stubs in `0x4015c044`), or can never be built together (sample-preview and chord-keys): that is what
+  6ch-usbup's stubs in `0x4015c044`), or can never be built together (sample-preview and sample-preview-st, one per Model-TG version): that is what
   `check_overlaps.py` checks. `registry.py` refuses a write into a mask whose sprite the tweak (or a tweak it
   `requires`) does not redirect, and any write into a kept copy.
 - **Payload appended to the image** and copied at boot to SDRAM (`0x43000000`, notes/17; Model-TG uses

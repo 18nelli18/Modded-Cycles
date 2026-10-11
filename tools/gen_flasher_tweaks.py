@@ -275,11 +275,13 @@ FEATURES = [
         "cat": "live",
         "label": "Accords de gamme sur TRIG 1–16",
         "desc": "Une piste CHORD, sept modes et une extension par degré. TRIG 1–7 jouent I–VII, "
-                "8–14 une octave plus haut, 15–16 I–II deux octaves plus haut. T1–T6 gardent leurs fonctions. "
-                "Réglages dans FUNC + RETRIG, sauvés avec le pattern.",
-        "status": "tested",
+                "8–14 une octave plus haut, 15–16 I–II deux octaves plus haut, avec le nom de l'accord à l'écran. "
+                "COLOR choisit DIATONIC, JAZZ ou TENSION ; SHAPE dispose et équilibre les voix. Keys actif, "
+                "T1–T6 transforment l'accord (9, 11, 13, 7sus4, parallèle, V7), en P-locks ; MIDI CHORD envoie "
+                "l'accord. Réglages dans FUNC + RETRIG, sauvés avec le pattern. Va avec Model-TG.",
+        # v2 de Nico (PR #46, c34e797) : pads HARMONY, MIDI, P-locks, noms ; pas encore essayée par Maxime (notes/42 §33)
+        "status": "experimental",
         "credit": {"kind": "by", "who": "Nico Heuser", "repo": "byNicoHeuser"},
-        "excludes": ["model-tg"],
         "variants": [{"file": "45-chord-keys", "label": None}],
     },
     {
