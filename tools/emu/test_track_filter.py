@@ -311,6 +311,56 @@ def envelope_tests(img, payload):
               f"enveloppe (±{exact_d6:.0f}) ; relance au bloc 400 {'oui' if trigs[400] >> t & 1 else 'non (pas de note)'}")
 
 
+def ringdown_tests(img, payload):
+    """Q 50 sur un signal plein échelle : les états saturent (EMAC en mode saturé) au lieu de se replier, et le filtre
+    retombe au silence à la vitesse de sa loi, sans oscillation entretenue (notes/47 §5.2)."""
+    print("résonance au maximum (Q 50) sur un signal plein échelle (après Volume + Dist 108), puis silence")
+    on, off, w = 120, 400, 50                                   # 80 ms de signal, 267 ms de silence, fenêtres de 33 ms
+    rng = np.random.default_rng(1)
+    n = np.arange(on * 32)
+    for name, c, r in (("LP 947 Hz", 0x2800, 0x7f00), ("HP 2,7 kHz", 0x7000, 0x7f00)):
+        idx = c if c < 0x4000 else c - 0x4000
+        fc = G.cutoff_hz(idx)
+        sig = (np.sign(np.sin(2 * np.pi * 110 * n / G.FS) + 1e-9),           # carré 110 Hz
+               np.sin(2 * np.pi * fc * n / G.FS),                             # sinus à la coupure
+               rng.uniform(-1, 1, n.size),                                    # bruit blanc
+               (n % 480 == 0) * 1.0,                                          # impulsions
+               np.sin(2 * np.pi * 20 * (500 ** (n / n.size) - 1) / math.log(500) * n.size / G.FS),  # 20 Hz à 10 kHz
+               np.ones(n.size))                                               # échelon
+        x = np.zeros((6, (on + off) * 32), dtype=np.int64)
+        for t in range(6):
+            x[t, :on * 32] = np.round(0.9 * 2 ** 31 * sig[t])
+        a = Audio(img, payload)
+        voices(a)
+        for t in range(6):
+            a.setw(t, 19, 0x6c00)
+            a.filt(t, c=c, r=r)
+        nb = [0]
+
+        def synth(trig=0, release_mask=0):                    # à la place de la boucle des voix
+            a.e.uc.mem_write(E.TRACK_BASE, x[:, nb[0] * 32:(nb[0] + 1) * 32].astype(">i4").tobytes())
+            nb[0] += 1
+        a.e.block = synth
+        y = np.stack([a.block(0x3f if b == 0 else 0) for b in range(on + off)])
+        pk = np.abs(y[on:]).reshape(off // w, w, 6, 32).max(axis=(1, 3)) / 2 ** 31
+        law = 20 * math.log10(math.e) * math.pi * fc / G.q_of(r * G.reso_scale(idx)) * 0.1   # dB par 100 ms
+        rates = []
+        for t in range(6):
+            nz = [k for k in range(len(pk)) if pk[k, t] > 1e-7]
+            if len(nz) >= 3:
+                rates.append(20 * math.log10(pk[nz[0], t] / pk[nz[-1], t]) / ((nz[-1] - nz[0]) * w / G.BLOCK_HZ) * 0.1)
+        mono = all(pk[k + 1, t] <= pk[k, t] * 1.05 for k in range(len(pk) - 1) for t in range(6))
+        check(a.contract and not a.e.unmapped, f"{name} : contrat de l'appel tenu à chaque bloc, crête "
+                                               f"{np.abs(y).max() / 2 ** 31:.2f} FS (saturée, sans repli)")
+        check(mono and not pk[-1].any() and all(abs(v / law - 1) < 0.03 for v in rates),
+              f"{name} : après le signal, les 6 pistes décroissent à {min(rates):.1f}..{max(rates):.1f} dB/100 ms "
+              f"(loi analogique {law:.1f}, à 3 % près : la transformée bilinéaire amortit un peu moins dans l'aigu) "
+              f"jusqu'à zéro exactement")
+        if c < 0x4000:
+            jumps = int((np.abs(np.diff(y.transpose(1, 0, 2).reshape(6, -1), axis=1)) > 1.5 * 2 ** 31).sum())
+            check(jumps == 0, f"{name} : aucun saut de plus de 1,5 FS d'une trame à l'autre (un repli de signe en ferait)")
+
+
 def law_tests(img, payload):
     print("fréquence et Q réalisés (tirés des coefficients calculés par le code) contre la loi")
     pts = [(c, r) for c in list(range(0x0000, 0x4000, 0x0400)) + [0x3f00] + list(range(0x4100, 0x7f01, 0x0400))
@@ -732,6 +782,7 @@ def main():
     model_tests(base, img, payload)
     envelope_tests(img, payload)
     law_tests(img, payload)
+    ringdown_tests(img, payload)
     if not args.quick:
         cost_tests(img, payload)
     knob_tests(img, syms)

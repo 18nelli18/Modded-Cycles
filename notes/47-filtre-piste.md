@@ -191,7 +191,9 @@ LP : gx = 1 − w, hl = w / 2, hb = 0          HP = x − k BP − LP : gx = 1, 
 l'enveloppe) change, une fois par bloc au plus : 1 / (1 + g (g + k)) par normalisation et trois pas de Newton. Au
 premier bloc filtré, le passe-bas part du niveau de l'entrée (pas de clic), le passe-haut du repos ; un bloc nul avec
 un état retombé (< 2⁻¹⁹) ne coûte presque rien. Saturation par l'EMAC (MACSR 0xa0) : à Q 50 une sinusoïde à fc
-monte de 34 dB, sans repli du signe (le défaut du Model:Samples).
+monte de 34 dB, sans repli du signe (le défaut du Model:Samples). Les états (Q31) saturent aussi : sur un son fort à
+forte résonance, le filtre écrête (il distord) au lieu de suivre le modèle linéaire, puis retombe au silence à la
+vitesse de sa loi, sans oscillation entretenue (§8).
 
 Au centre exact (C = 0x4000), la piste reste telle quelle et l'état est oublié ; l'enveloppe continue de tourner.
 
@@ -247,6 +249,7 @@ TONE CHORD, trois séries de notes aux blocs 1, 100 et 180) :
 | Six réglages fixes (LP 332 Hz, HP 332 Hz, LP près de 20 kHz, HP 41 Hz enveloppe −32, LP 116 Hz résonance 112 enveloppe +63, HP 5 Hz) | sortie comparée à un modèle flottant (SVF en double, mêmes lois) : écart max −111 à −167 dB sous la crête ; KICK et SNARE nettement changés |
 | Balayage à chaque bloc, de LP à HP en passant par le centre | écart au modèle −110 à −120 dB sous la crête |
 | Enveloppe, Decay 0 à 127 | relancée à chaque note (bit t de a3+16), τ de 5 ms à 10 s, écart à la loi < 10⁻⁷, décalage = quantité × enveloppe exactement |
+| Résonance au maximum (Q 50) : signal plein échelle (carré, sinus à fc, bruit, impulsions, balayage, échelon) après Volume + Dist 108, puis silence ; LP 947 Hz et HP 2,7 kHz | contrat tenu, sortie saturée à 1 FS sans repli (LP : aucun saut de plus de 1,5 FS d'une trame à l'autre) ; après le signal, décroissance régulière à la vitesse de la loi (51,7 et 147,4 dB par 100 ms, à 3 % près) jusqu'à zéro exactement |
 | Lois | 170 réglages, 5 Hz à 20 kHz des deux côtés, Q 0,5 à 50 : fréquence à 0,01 cent près, Q à 0,08 % près (tirés des coefficients calculés par le code) |
 | Potards | MACHINES tenu : SWEEP, CONTOUR, COLOR, SHAPE → paramètres 1 à 4 ; les 8 autres potards et tout sans MACHINES : la recherche d'origine, mêmes arguments |
 | Affichage (vrai constructeur, vrai `sprintf`) | les 128 pas : `L64` … `L1`, `OFF` au centre, `H1` … `H63`, trois caractères au plus ; Reso et Decay 0..127 ; Env −64..OFF..+63 ; l'image « Error » n'est plus dessinée |
@@ -284,13 +287,15 @@ Maxime, build « filtre seul » (MAIN OS `bf1f9fb3…`) : « c'est pas mal », m
   l'écran ne montre que trois caractères (§3.3) ; `LP10` à `LP19` se lisaient `LP1`. Corrigé : `L64` … `OFF` …
   `H63`, comme Pan (`L64` … `R63`) ; la preuve vérifie les 128 pas.
 - **Résonance** « qui ne s'entend pas beaucoup » : la loi du Model:Samples ne donne que +11 dB à mi-course. Passée
-  à Q 0,5 à 50 (§5.1), environ 10 dB de plus par quart de tour. À réessayer.
+  à Q 0,5 à 50 (§5.1), environ 10 dB de plus par quart de tour. À réessayer : builds `-v2` envoyés le 11/10/2026
+  (filtre seul : MAIN OS `f5db0133…` ; avec les autres mods : `f0d77915…`).
 
 ### 10.2 Limites, et ce qui reste à vérifier `[À FAIRE]`
 
 - Le geste : MACHINES tenu + SWEEP / CONTOUR / COLOR / SHAPE, l'affichage (`L32`, `OFF`, `H20`…), le menu des
   machines qui s'ouvre toujours sur un appui seul.
-- Le son : passe-bas, passe-haut, résonance (Q 50 près de fc : +34 dB, saturé), l'enveloppe à chaque note, le passage
+- Le son : passe-bas, passe-haut, résonance (Q 50 près de fc : +34 dB ; sur un son fort, au-dessus de 100, la piste
+  sature : à écouter, sinon une marge interne ou un Q plus bas), l'enveloppe à chaque note, le passage
   par le centre sans clic, un LFO qui balaie de LP à HP.
 - La sauvegarde : son (kit), projet rechargé, réserve de sons, copier-coller d'un son, p-locks rechargés ; le
   récepteur des changements (§4.4) ne range pas k ≥ 23 : si un chemin de l'OS recharge un son depuis cette copie
