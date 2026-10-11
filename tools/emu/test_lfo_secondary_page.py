@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Note 58 : page d'édition LFO 2, vraie construction/destruction OS.
 
-Assemble la page et ses callbacks, exécute l'OS 1.13. Allocation, présentation,
-dessin, delta encodeur et fermeture du gestionnaire sont simulés. Aucune
+Assemble la page et ses callbacks, exécute l'OS 1.13. Métriques et glyphes
+des libellés réels ; allocation, présentation, valeurs, rectangles, delta
+encodeur et fermeture du gestionnaire sont simulés. Aucune
 installation du hook audio ni sauvegarde persistante dans cette preuve.
 """
 import argparse
@@ -76,14 +77,30 @@ def make(stock, real=True):
         r.texts.append((a[2],a[3],r.string(a[6]) if f=='%s' else str(a[6]) if f=='%d' else chr(a[6])+str(a[7])+('k' if f.endswith('k') else '') if f in ('%c%d','%c%dk') else f))
     native_stubs={
         0x40070f6e:lambda a:0,0x40071da4:lambda a:0,
-        0x4007199c:lambda a:r.texts.append((a[2],a[3],r.string(a[5]))) or 0,
-        0x40072204:lambda a:r.r32(r.r32(a[2])-12),
         0x40070efc:lambda a:r.rects.append(a[:6]) or 0,
     }
     r.stubs[0x40071a04]=formatted
     for addr,fn in native_stubs.items():
         r.stubs[addr]=fn
         r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
+    # Vraie initialisation des deux polices ; métriques natives, sans stub.
+    r.call(0x400e7dec)
+    # Le Bitmap et les glyphes des libellés sont réels, sans intercept du
+    # dessinateur. Valeurs/titre, rectangles et présentation restent simulés.
+    pixels=0x930b4000
+    r.u.mem_write(0x93006000,struct.pack('>5I',0,128,64,2,pixels))
+    r.label_pixels=[]
+    def label_entry(u,address,size,data):
+        sp=u.reg_read(mk.UC_M68K_REG_A7)
+        args=struct.unpack('>6I',u.mem_read(sp+4,24))
+        r.texts.append((args[2],args[3],r.string(args[5])))
+        u.mem_write(pixels,bytes(1024))
+    def label_done(u,address,size,data):
+        count=sum(bin(b).count('1') for b in u.mem_read(pixels,1024))
+        assert count>0,('libellé sans pixels',r.texts[-1])
+        r.label_pixels.append(count)
+    r.u.hook_add(UC_HOOK_CODE,label_entry,begin=0x4007199c,end=0x4007199c)
+    r.u.hook_add(UC_HOOK_CODE,label_done,begin=0x400425b8,end=0x400425b8)
     r.u.mem_write(CTX, bytes(1240))
     frame = bytearray(476)
     for track in range(6):
@@ -248,6 +265,7 @@ def main():
         r.texts.clear(); r.rects.clear()
         r.call('lf2p_render', obj, 0x93006000)
         assert len(r.texts) == 9 and r.texts[0][2] == 'LFO 2'
+        assert len(r.label_pixels)>=4 and all(n>0 for n in r.label_pixels[-4:])
         labels=('Trk','Spd','Mul','Fad','Dst','Wav','SPH','Rst','Dep')
         order=(5,2,4,8,1,3,6,7,0);scroll=max(0,min(5,order.index(row)-1))
         assert [text for x,y,text in r.texts if x==72]==[labels[i] for i in order[scroll:scroll+4]]
@@ -257,7 +275,7 @@ def main():
         for _, x1, y1, x2, y2, mode in r.rects:
             assert 0 <= x1 <= x2 <= 127 and 0 <= y1 <= y2 <= 63
         assert r.rects[1][1] == (95 if editing else 70)
-    print('ok : six pistes × neuf positions × édition/navigation, rendu natif avec quatre lignes, coordonnées sans débordement')
+    print('ok : six pistes × neuf positions × édition/navigation, quatre lignes ; métriques et glyphes natifs produisent des pixels pour chaque libellé')
 
     r.w32(r.s['lf2p_track'],0)
     for field,names in ((4,('TRI','SIN','SQR','SAW','EXP','RMP','RND')),
@@ -277,7 +295,20 @@ def main():
             r.texts.clear();r.call('lf2p_render',obj,0x93006000)
             descriptor=r.call(0x4005a692,destination,track) if destination!=127 else 0
             expected='OFF' if destination==127 else r.string(r.r32(0x4010dce0+56*descriptor+52))
+            if expected=='ERR':expected='OFF'
+            assert all(text!='ERR' for x,y,text in r.texts)
             assert any(x==120 and text==expected for x,y,text in r.texts),(track,destination,expected,r.texts)
+        valid=[i for i in range(33) if r.string(r.call('lf2p_destination_name',i))!='ERR']
+        assert valid and valid[0]==0
+        r.w32(r.s['lf2p_edit'],1)
+        assert r.call('lf2_edit',CTX,track,3,0)==1
+        for target in valid[1:]+[127]:
+            knob(r,1)
+            assert value(r,track,3)==target
+        for target in reversed(valid):
+            knob(r,-1)
+            assert value(r,track,3)==target
+        r.w32(r.s['lf2p_edit'],0)
     r.w32(r.s['lf2p_track'],0);r.w32(r.s['lf2p_row'],2)
     for index in range(24):
         assert r.call('lf2_edit',CTX,0,1,index)==1
@@ -285,7 +316,7 @@ def main():
         r.call(0x400459f4,0,index<<8,0x930b0000)
         expected=r.string(0x930b0000)
         assert any(x==120 and text==expected for x,y,text in r.texts),(index,expected,r.texts)
-    print('ok : noms natifs des 33 destinations + OFF sur six machines ; 24 multiplicateurs musicaux, libellés à gauche des valeurs')
+    print('ok : destinations non définies sautées dans les deux sens sur six machines, aucun ERR affiché ; 24 multiplicateurs musicaux')
 
     maximum = (32767, 23, 32767, 127, 6, 32767, 4, 32767)
     for track in range(6):
@@ -354,7 +385,7 @@ def main():
         if reason=='manager':b.w32(0x40fe4178,0)
         assert b.call('lf2p_open') == 0 and not page(b) and b.new_count == 0
     print('ok : allocations refusées et gardes IPL/contexte/gestionnaire sans page pendante')
-    print('NOTE : interface en émulation, dessin/présentation simulés ; persistance et budget audio matériel combiné restent à finaliser')
+    print('NOTE : glyphes des libellés réels ; valeurs/présentation simulées, persistance et budget audio matériel combiné restent à finaliser')
 
 
 if __name__ == '__main__':

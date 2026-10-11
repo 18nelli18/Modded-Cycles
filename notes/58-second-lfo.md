@@ -301,3 +301,37 @@ machines natives, ainsi que les 24 multiplicateurs comparés au vrai
 formateur `0x400459f4`. Tables boot et backend de mapping natifs exécutés,
 getters de contexte/son et primitives de dessin simulés. La nouvelle
 révision d'affichage reste expérimentale, sans succès matériel revendiqué.
+
+## 15. Retour matériel sur les libellés (11/10/2026)
+
+[FAIT matériel, rapport AveyCole] Sur la révision `lfo2-stock-names`,
+il ne voit pas les libellés à gauche ; toutes les destinations entre
+Res et OFF affichent ERR. La présentation demandée n'est donc pas validée
+sur la machine. La preuve précédente comparait le nom au lookup natif
+sans refuser ERR : cette égalité ne suffit pas à valider une destination.
+
+[À FAIRE] Vérifier les identifiants de destination réellement acceptés
+par le backend, puis le dessin des libellés jusqu'au framebuffer, au-delà
+des primitives simulées. Ne pas marquer cette révision d'affichage testée.
+
+## 16. Descripteur de police et destinations non définies (11/10/2026)
+
+[FAIT] Le champ +160 du renderer est un descripteur de police brut.
+`0x40072204` lit directement largeur/table de glyphes à +0/+8/+12.
+L'adaptateur fournissait un wrapper Font (vptr/données), accepté par le
+stub de mesure mais incorrect sur la machine. `layout.s` fournit maintenant
+`*0x40ea14d0`, initialisé nativement à `0x40140ab0`, sans wrapper intermédiaire.
+
+[FAIT en émulation] La preuve exécute l'initialisation des polices, la
+mesure native et le vrai dessin de glyphes `0x4007199c` dans un Bitmap
+128×64. Chaque libellé doit produire des pixels ; valeurs/titre et
+présentation restent simulés. Les 108 positions d'affichage passent.
+
+Les tables natives ont des emplacements non définis qui renvoient le
+descripteur 0, nommé ERR. DATA saute désormais ces emplacements dans les
+deux sens, en interrogeant le backend de la piste ; les destinations
+supplémentaires définies par un mod restent accessibles. Une ancienne
+valeur non définie affiche OFF. Le setter/audio n'est pas modifié.
+La preuve parcourt toute la liste disponible dans les deux sens sur les
+six machines, vérifie OFF et refuse tout ERR affiché. Cette correction
+doit encore être confirmée sur le matériel ; aucun succès revendiqué.

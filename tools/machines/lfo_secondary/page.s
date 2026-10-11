@@ -290,8 +290,24 @@ lf2p_enc:
 .Lpe_high_ok:
     cmpil #33,%d4
     bne .Lpe_set
-    cmpil #33,%d0
-    bne .Lpe_set
+    movel %d0,%d4
+.Lpe_dest_scan:
+    cmpil #33,%d4
+    beq .Lpe_dest_off
+    movel %d4,%sp@-
+    jsr lf2p_destination_name
+    addql #4,%sp
+    moveal %d0,%a0
+    movel %a0@,%d0
+    cmpil #0x45525200,%d0
+    bne .Lpe_dest_valid
+    addl %d3,%d4
+    bmi .Lpe_out
+    bra .Lpe_dest_scan
+.Lpe_dest_valid:
+    movel %d4,%d0
+    bra .Lpe_set
+.Lpe_dest_off:
     moveq #127,%d0
 .Lpe_set:
     movel %d0,%sp@-
@@ -410,6 +426,12 @@ lf2p_dest_name:
     movel %d0,%sp@-
     jsr lf2p_destination_name
     addql #4,%sp
+    moveal %d0,%a0
+    movel %a0@,%d1
+    cmpil #0x45525200,%d1
+    bne .Ldest_named
+    movel #lf2p_off,%d0
+.Ldest_named:
     movel %d0,%sp@-
     pea lf2p_fmt_s
     jmp .Lpr_value

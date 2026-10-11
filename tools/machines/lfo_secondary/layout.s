@@ -18,12 +18,10 @@ lf2l_init:
     movel %d0,%a0@(148)
     movel #0x40fe3758,%d0
     movel %d0,%a0@(152)
-    lea.l %a0@(512),%a1
-    movel %a1,%a0@(160)
-    movel #0x401117e0,%d0
-    movel %d0,%a1@
+    | +160 attend le descripteur brut, pas un wrapper Font (vptr/data).
+    | Mesure 0x40072204 et dessin 0x4007199c lisent ses champs directement.
     movel 0x40ea14d0,%d0
-    movel %d0,%a1@(4)
+    movel %d0,%a0@(160)
     movel #lf2l_empty,%d0
     movel %d0,%a0@(556)
     rts
