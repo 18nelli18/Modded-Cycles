@@ -3,17 +3,17 @@
  * du BSS, puis refait les deux instructions deplacees et reprend a 0x400004ba.
  * PAYLOAD_SRC, PAYLOAD_DST et PAYLOAD_LONGS sont fournis par tools/gen_sdvintage_exact.py (-D) ; SRAM_RUN_AT et
  * SRAM_LONGS par tools/gen_syntakt_engines.py. PACK sans CHAIN_TO : machine MACRO seule (tools/gen_macro.py).
- * APLIB, AFTER et BOOT2 : machine MACRO avec les moteurs du Syntakt (tools/gen_macro_syntakt.py, notes/51) : le crochet
+ * APLIB, AFTER et BOOT2 : machine MACRO avec les moteurs du Syntakt (tools/gen_macro_syntakt.py, notes/50) : le crochet
  * decompresse (APLIB) puis appelle (AFTER) un 2e etage range dans la charge utile (BOOT2 : CHORD_AT et SRAM), car
  * l'arpegiateur prend la suite du masque de sprite (gen_arp.py, .cave_menu : 192 o pour le crochet). */
 	.text
 	.globl	boot_stub
 boot_stub:
 #if defined(BOOT2)
-	/* 2e etage (notes/51), dans la charge utile decompressee : appele par le crochet (AFTER), finit par rts.
+	/* 2e etage (notes/50), dans la charge utile decompressee : appele par le crochet (AFTER), finit par rts.
 	 * Seuls d0, a0 et a1 servent. */
 #elif defined(APLIB)
-	/* MACRO avec les moteurs du Syntakt (notes/51) : la charge utile entiere (zeros compris) est rangee compressee,
+	/* MACRO avec les moteurs du Syntakt (notes/50) : la charge utile entiere (zeros compris) est rangee compressee,
 	 * au format aPLib d'Elektron (tools/mtlib/aplib.py, sans l'en-tete de 8 o), et decompressee ici de PAYLOAD_SRC
 	 * vers PAYLOAD_DST. Bits en attente dans d6 : (d6 & 0xff) == 0, lire un octet. Les registres que l'appelant
 	 * garde (d2..d7, a2) sont remis a la fin. */
@@ -82,7 +82,7 @@ boot_stub:
 	/* Le 2e etage est du code qu'on vient d'ecrire comme des donnees : le cache d'instructions, que le bootstrap
 	 * laisse actif (CACR 0x0008c000), peut deja tenir ces adresses (lues d'avance pendant la decompression, avec ce
 	 * qu'il y avait avant en SDRAM) et ne voit pas les ecritures. Sans cela, la machine reste sur le logo Elektron
-	 * (essai du 10/10/2026, notes/51). On l'invalide donc, avec le cache de branchements, avant d'y sauter : la
+	 * (essai du 10/10/2026, notes/50). On l'invalide donc, avec le cache de branchements, avant d'y sauter : la
 	 * valeur du bootstrap (0x80000c40), ICINVA + BCINVA, le cache de donnees reste coupe. */
 	nop				/* ecritures terminees */
 	move.l	#0x000cc100, %d0
@@ -121,7 +121,7 @@ boot_stub:
 	bne.s	1b
 #endif
 #ifdef CHORD_AT
-	/* 2e etage de MACRO avec les moteurs du Syntakt (notes/51) : les tables d'ondes de CHORD ne sont pas dans la
+	/* 2e etage de MACRO avec les moteurs du Syntakt (notes/50) : les tables d'ondes de CHORD ne sont pas dans la
 	 * charge utile ; l'OS vient de les mettre en SRAM (0x4000045c), on les recopie a leur place dans la charge utile
 	 * avant que les deux zones recoivent le code du Syntakt */
 	lea	SRAM_RUN_AT, %a0
@@ -169,4 +169,3 @@ segs:
 #include "segs.inc"
 	.long	0, 0
 #endif
-

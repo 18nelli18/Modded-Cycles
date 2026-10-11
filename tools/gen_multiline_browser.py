@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Génère tweaks/model-cycles_OS1.13/48-multiline-browser.json : le navigateur affiche plusieurs lignes (notes/40).
+"""Génère tweaks/model-cycles_OS1.13/44-multiline-browser.json : le navigateur affiche plusieurs lignes (notes/40).
 
 L'OS d'origine montre un seul nom à la fois, en gros caractères, dans le navigateur de sons, de dossiers et
 d'échantillons (ModelsFileManager) : son constructeur règle à 1 le nombre de lignes visibles de sa liste. Le tweak en
@@ -32,7 +32,7 @@ import sprites                     # noqa: E402
 import test_sdvintage as T         # noqa: E402
 
 SRC = HERE / "machines" / "multiline_browser"
-OUT = HERE.parent / "tweaks" / "model-cycles_OS1.13" / "48-multiline-browser.json"
+OUT = HERE.parent / "tweaks" / "model-cycles_OS1.13" / "44-multiline-browser.json"
 BASE = gx.BASE
 MASK = 0x401904b4                                      # masque 47x47 libéré (376 o)
 ROWS = 3                                               # lignes visibles (1 à l'origine)
@@ -117,7 +117,7 @@ def build_tweak(stock):
     writes.sort(key=lambda w: w["off"])
     tweak = {
         "id": "multiline-browser",
-        "order": 46,
+        "order": 44,
         "name": "Navigateur sur plusieurs lignes",
         "description": [
             f"Le navigateur de sons, de dossiers et d'échantillons affiche {ROWS} noms à la fois, en petite police, "

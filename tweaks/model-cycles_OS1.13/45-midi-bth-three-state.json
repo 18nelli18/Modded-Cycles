@@ -10,7 +10,8 @@
  "os": "1.13",
  "section": 3,
  "conflicts": [
-  "midi-both"
+  "midi-both",
+  "midi-live-both"
  ],
  "writes": [
   {

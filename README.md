@@ -150,3 +150,7 @@ If these mods are useful to you, you can support the project on **[Ko-fi](https:
 Questions, feedback and feature requests are welcome on the **[Discord](https://discord.gg/hWegtJZcmm)**; bug reports also fit in the [issues](https://github.com/18nelli18/Modded-Cycles/issues).
 
 Step SCRAMBLE is hardware tested by AveyCole (11 October 2026) and available in the main flasher. Hold one or more trigs, then SETTINGS and TRACK, to toggle fresh random values for the four machine controls each pass; the base sound stays unchanged.
+
+### AveyCole release 1.49
+
+Includes 18nelli18’s release 1.46 (commit `03941fd`): Chord Keys, Track Filter, lighter 48 kHz MACRO and RATE/BITS on FUNC + PITCH. Existing compatibility exclusions apply. Sequence Generator now includes the SEQUENCE GENIE intro, ranges, separate rhythm/notes regeneration, mutation and Euclidean rhythm. Optional Queued Generation applies at the selected track’s next loop. The corrected playback format and explicit velocity were confirmed on hardware by AveyCole on 11 October 2026.

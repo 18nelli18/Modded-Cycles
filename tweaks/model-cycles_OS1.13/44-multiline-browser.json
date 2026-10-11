@@ -1,6 +1,6 @@
 {
  "id": "multiline-browser",
- "order": 48,
+ "order": 44,
  "name": "Navigateur sur plusieurs lignes",
  "description": [
   "Le navigateur de sons, de dossiers et d'échantillons affiche 3 noms à la fois, en petite police, au lieu d'un seul en gros caractères.",

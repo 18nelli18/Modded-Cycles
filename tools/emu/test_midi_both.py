@@ -24,7 +24,7 @@ import gen_midi_both as G  # noqa: E402
 import test_sdvintage_exact as startup  # noqa: E402
 
 DEV = HERE.parent.parent / "tweaks" / "model-cycles_OS1.13"
-TWEAK = DEV / "44-midi-both.json"
+TWEAK = DEV / "50-midi-both.json"
 STACK = 0x90010000
 STOP = 0x9F000000
 OUT_GATES = (0x4000154A, 0x4000156A, 0x40001590)

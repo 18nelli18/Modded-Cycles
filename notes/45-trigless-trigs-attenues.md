@@ -273,4 +273,3 @@ pas de pointillés gênants, même avec les 16 en trigless trig. Tout le reste m
 Idée, état 260, clignotement et accroches du mode grille de djd_oz ; réécriture, correction du relevé et découpage
 dans l'interruption du panneau de ce projet. Crédit sur la carte du flasher et dans `PROVENANCE.md`. Sa licence n'est
 pas encore connue : Maxime la lui demande avant la fusion.
-

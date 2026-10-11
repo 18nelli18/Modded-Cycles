@@ -20,7 +20,7 @@ def compile_code(cross,tg,next_hook,steps=False,main=False):
     paths=list((ROOT/'tweaks/model-cycles_OS1.13').glob('*.json'))+list((ROOT/'tweaks/model-cycles_OS1.13/experimental/sequence-only').glob('*.json'))+list((ROOT/'tweaks/model-cycles_OS1.13/experimental/queued').glob('*.json'))
     for p in paths:
         t=json.loads(p.read_text())
-        if t.get('id','').startswith('scramble'):continue
+        if t.get('id','').startswith('scramble') or set(t.get('conflicts', [])) >= {'model-tg','model-tg-st'}:continue
         occupied.extend((build.BASE+w['off'],build.BASE+w['off']+len(bytes.fromhex(w['new']))) for w in t.get('writes',[]))
     free=[(va,row) for va,row in sprites.MASKS.items() if len(row)==4 and not any(va<hi and lo<va+row[0] for lo,hi in occupied)]
     if main:
@@ -73,7 +73,7 @@ def main():
     for st in (False,True):
         dep='model-tg-st' if st else 'model-tg'
         base=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/30-{dep}.json').read_text())
-        for gen in ((False,True) if a.main else (False,True,"queued")):
+        for gen in (False,True,"queued"):
             seqname='scale-gen-st' if st else 'scale-gen'
             folder='queued' if gen=='queued' else 'sequence-only'
             if gen=='queued':seqname+='-queued'

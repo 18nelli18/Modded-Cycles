@@ -110,7 +110,7 @@ def compile_code(cross, tg, scroll=False, dynamics=False, advanced=False, sequen
             occupied = []
             for path in OUT.glob("*.json"):
                 tweak = json.loads(path.read_text())
-                if tweak.get("id") in ("scale-gen", "scale-gen-st"):
+                if tweak.get("id") in ("scale-gen", "scale-gen-st", "scale-gen-queued", "scale-gen-st-queued") or set(tweak.get("conflicts", [])) >= {"model-tg", "model-tg-st"}:
                     continue
                 occupied += [(build.BASE+w["off"], build.BASE+w["off"]+len(bytes.fromhex(w["new"]))) for w in tweak.get("writes", [])]
             free = [(va, row) for va,row in sprites.MASKS.items() if len(row)==4 and not any(va < hi and lo < va+row[0] for lo,hi in occupied)]
@@ -196,6 +196,7 @@ def main():
     ap.add_argument("--cycles", required=True)
     ap.add_argument("--model-tg", type=pathlib.Path, required=True)
     ap.add_argument("--cross", default=os.environ.get("M68K_CROSS", "m68k-elf-"))
+    ap.add_argument("--main", action="store_true", help="publier les variantes étendues validées dans le catalogue principal")
     ap.add_argument("--queued",action="store_true",help="préparation privée et commit à la lecture anticipée du prochain cycle")
     ap.add_argument("--sequence-only",action="store_true",help="générateur sans aucun runtime de tirage du son")
     ap.add_argument("--advanced", action="store_true", help="extension expérimentale : plages, mutation, Euclid et son")
@@ -214,6 +215,9 @@ def main():
     if args.queued:
         assert args.sequence_only and args.advanced
         out=OUT/"experimental/queued"
+    if args.main:
+        assert args.advanced and args.sequence_only
+        out = OUT
     out.mkdir(parents=True, exist_ok=True)
     for name in ("model-tg", "model-tg-st"):
         base = json.loads((HERE.parent / f"tweaks/model-cycles_OS1.13/30-{name}.json").read_text())
@@ -238,6 +242,9 @@ def main():
             tweak["conflicts"].remove(tweak["id"])
             tweak["name"]="Générateur — application au prochain cycle (expérimental)"
             tweak["description"]=["Generate en lecture prépare une séquence privée, appliquée avant le premier trig du prochain cycle.","Longueur/vitesse communes ou par piste, une seule entrée dans la chaîne. Cancel queue annule ; Undo après arrêt.","Annulation si changement de pattern, édition concurrente, arrêt ou fermeture de page. tools/gen_seq_gen.py --queued, notes/56."]
+        if args.main:
+            tweak["name"] = "Sequence Generator" + (" — génération au prochain cycle" if args.queued else "")
+            tweak["description"][-1] = "SEQUENCE GENIE ; format de lecture et vélocité corrigés, confirmés sur machine par AveyCole le 11/10/2026. tools/gen_seq_gen.py, notes/56."
         build.apply_writes(stock,[base,tweak])
         path = out / ("49-" + tweak["id"] + ".json")
         text = json.dumps(tweak, indent=1, ensure_ascii=False) + "\n"

@@ -1053,7 +1053,7 @@ def tweak_id(codes, generic=False, meter=False, tg=False):
 
 def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None, own=None):
     """Tweak pour ces moteurs. tg : Model-TG (tg_context) pour la version combinée, à construire avec set_base(PAY_TG).
-    own : nos machines après les moteurs (machine MACRO, tools/gen_macro_syntakt.py, notes/51) : dict(machines=[comme
+    own : nos machines après les moteurs (machine MACRO, tools/gen_macro_syntakt.py, notes/50) : dict(machines=[comme
     CATALOG, avec update et render : adresses], bridge=passerelle reprise (own_code), parts=[morceaux de la charge
     utile], end=fin de la charge utile). La charge utile est alors rangée compressée (append.compress), et les tables
     d'ondes de CHORD reprises en SRAM au démarrage au lieu d'être recopiées de TON MAIN OS."""
@@ -1378,4 +1378,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

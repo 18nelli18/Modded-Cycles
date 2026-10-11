@@ -3,7 +3,7 @@
 Demande d'un membre de la communauté, transmise par Maxime le 05/10/2026 : retrouver le « menu de fichiers multiligne »
 qu'il avait sur son Model:Samples, avec une police de taille plus raisonnable, et en faire une option à part du flasher.
 Il l'avait obtenu avec un script Python qui modifiait `30-model-tg-st.json` (§1) ; il savait que le prochain build de
-Modded Cycles le casserait. Tweak `48-multiline-browser.json` (`tools/gen_multiline_browser.py`, code dans
+Modded Cycles le casserait. Tweak `44-multiline-browser.json` (`tools/gen_multiline_browser.py`, code dans
 `tools/machines/multiline_browser/`), preuve `tools/emu/test_multiline_browser.py`. Adresses : VA de l'OS 1.13.
 
 ## En bref

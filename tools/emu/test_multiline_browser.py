@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preuve du navigateur multiligne (notes/40, tweaks/model-cycles_OS1.13/48-multiline-browser.json).
+"""Preuve du navigateur multiligne (notes/40, tweaks/model-cycles_OS1.13/44-multiline-browser.json).
 
 Le vrai dessin du navigateur (ModelsFileManager, 0x400a539c) est exécuté sur le MAIN OS d'origine (ou avec les autres
 tweaks seuls) et sur le MAIN OS modifié. Il dessine dans un vrai écran de 128 x 64 (un Bitmap construit par l'OS,
@@ -49,7 +49,7 @@ import build                        # noqa: E402
 import sprites                      # noqa: E402
 import test_sdvintage as T          # noqa: E402
 
-TWEAK = HERE.parent.parent / "tweaks" / "model-cycles_OS1.13" / "48-multiline-browser.json"
+TWEAK = HERE.parent.parent / "tweaks" / "model-cycles_OS1.13" / "44-multiline-browser.json"
 BASE = build.BASE
 STOP, STACK = 0x90000100, 0x90010000
 FAIL = []

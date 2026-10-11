@@ -284,7 +284,7 @@ def payload_runtime(t, main_os, st_img):
 def payload_image(t, runtime):
     """Ce qui va dans l'image : la charge utile entière, rangée en morceaux (append.pack : [adresse, taille] ; hors
     des morceaux, tout doit être à zéro : le crochet de démarrage remet à zéro, puis recopie les morceaux), ou
-    compressée (append.compress = "aplib" : tools/aplib_grow.py pack, décompressée par le crochet, notes/51)."""
+    compressée (append.compress = "aplib" : tools/aplib_grow.py pack, décompressée par le crochet, notes/50)."""
     ap_ = t["append"]
     if "compress" in ap_:
         if ap_["compress"] != "aplib":
@@ -440,4 +440,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -129,3 +129,8 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [56 — Génération différée](56-generation-differee.md) | **Expérimental** : staging privé, commit avant le premier trig, sous-option distincte ; correctif local des modes commun/par piste et banque de lecture prouvé en émulation, sans chaîne. |
 | [57 — Séquences MIDI secondaires](57-pistes-midi-secondaires.md) | **Recherche** : six voies MIDI indépendantes du son interne ; routage natif et prototype gates/file avec note-off réservés prouvés ; horloge, édition et stockage restent à intégrer. Aucun firmware proposé. |
 | [58 — Second LFO](58-second-lfo.md) | **Recherche** : entrée native à banque indépendante et mélange des destinations prouvés en émulation ; intégration, seconde page, sauvegarde et coût audio à établir. |
+
+- [42 — Clavier d’accords diatoniques](42-clavier-accords-diatoniques.md) — upstream 1.46.
+- [47 — Filtre de piste](47-filtre-piste.md) — upstream 1.46.
+- [53 — MIDI THRU AveyCole](53-midi-thru-aveycole.md) — déplacement compatible du code MIDI.
+- [55 — MACRO allégée et lo-fi](55-macro-allegee-et-lofi.md) — upstream 1.46.

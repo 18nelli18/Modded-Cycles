@@ -215,3 +215,7 @@ de piste valide, sinon 100), une condition sans suppression (100) et aucun
 preset-lock hérité. Locks decay/pan séparés ; Undo conserve l'original. Ces
 garde-fous ne réparent pas automatiquement un pattern déjà corrompu ni un
 son muet/mute de piste. Correctif non confirmé sur matériel.
+
+## 12. Validation matérielle et passage au principal (11/10/2026)
+
+[FAIT] AveyCole confirme que le flasher `2026-10-11-test-2-queue-format-velocity` fonctionne sur son Model:Cycles : plus de trigs corrompus. Il demande explicitement de marquer la génération différée comme testée et de la publier au principal. Le catalogue principal conserve une sous-option séparée, les plages et Euclid ainsi que le cartouche SEQUENCE GENIE. Le format B reste B ; les nouvelles notes ont une vélocité explicite non nulle. Les caves occupées par chord-keys/track-filter peuvent être partagées puisque ces deux mods excluent les deux bases Model-TG requises. Les modulations LFO2 et pistes MIDI supplémentaires restent en développement.

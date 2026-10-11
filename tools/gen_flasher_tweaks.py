@@ -45,7 +45,7 @@ OUT = ROOT / "docs" / "flasher" / "tweaks.js"
 # la carte s'affiche a la fin, dans « Autres mods » (avertissement ici). L'ordre de FEATURES reste l'ordre du build
 # (cles de REF_MAINOS), quel que soit l'ordre d'affichage par rubriques.
 # joins : carte de moteurs qui contient deja cette fonctionnalite quand les deux sont cochees (MACRO avec les moteurs
-# du Syntakt, notes/51) : cette carte n'ajoute alors aucun tweak, chaque combinaison de moteurs porte le sien
+# du Syntakt, notes/50) : cette carte n'ajoute alors aucun tweak, chaque combinaison de moteurs porte le sien
 # (combo[<id de cette carte>] : id, tg, tested, tg_tested, comme la combinaison elle-meme).
 # Pour ajouter une fonctionnalite : ecrire son tweak JSON, puis l'ajouter ici.
 CATS = ("pack", "sound", "seq", "live", "screen", "io")
@@ -190,27 +190,8 @@ FEATURES = [
         "status": "tested",
         "credit": None,                  # idee : un script d'un membre de la communaute (notes/40), nom a venir
         "variants": [
-            {"file": "48-multiline-browser", "label": None},
+            {"file": "44-multiline-browser", "label": None},
         ],
-    },
-    {
-        "id": "midi-both",
-        "cat": "io",
-        "label": "MIDI OUT pendant THRU",
-        "desc": "Avec THRU choisi dans CONFIG > MIDI > PORTS > OUT/THRU, le Cycles relaie le MIDI reçu et envoie aussi son horloge et ses messages de piste/paramètres. OUT garde son comportement normal.",
-        "status": "tested",
-        "credit": None,
-        "variants": [{"file": "44-midi-both", "label": None}],
-    },
-    {
-        "id": "midi-live-both",
-        "cat": "io",
-        "label": "MIDI OUT + THRU bascule en direct",
-        "desc": "Conserve le menu OUT/THRU d'origine. Sur THR, tenez FUNC et appuyez sur l'encodeur LEVEL/DATA pour basculer entre le relais THRU stock et le relais avec émission de l'horloge et des messages de piste/paramètres. L'écran reste sur THR.",
-        "status": "tested",
-        "credit": None,
-        "excludes": ["midi-both"],
-        "variants": [{"file": "45-midi-live-both", "label": None}],
     },
     {
         "id": "level-pan-values",
@@ -237,23 +218,76 @@ FEATURES = [
         ],
     },
     {
+        "id": "midi-both",
+        "cat": "io",
+        "label": "MIDI OUT pendant THRU",
+        "desc": "Avec THR choisi dans CONFIG > MIDI > PORTS > OUT/THRU, le Cycles relaie le MIDI recu et envoie aussi "
+                "son horloge, ses notes et ses parametres. OUT ne change pas, le menu non plus.",
+        "status": "tested",                # par AveyCole, sur sa machine (notes/53 §9)
+        "credit": {"kind": "by", "who": "AveyCole", "repo": "AveyCole/Modded-Cycles"},
+        "excludes": ["midi-live-both"],
+        "variants": [
+            {"file": "50-midi-both", "label": None},
+        ],
+    },
+    {
+        "id": "midi-live-both",
+        "cat": "io",
+        "label": "Basculer MIDI OUT + THRU en direct",
+        "desc": "Sur la ligne OUT/THRU qui affiche THR, FUNC + appui sur le potard LEVEL/DATA ajoute au relais l'envoi "
+                "de l'horloge, des notes et des parametres du Cycles, ou le retire. L'ecran reste sur THR.",
+        "status": "tested",                # par AveyCole, sur sa machine (notes/53 §9)
+        "credit": {"kind": "by", "who": "AveyCole", "repo": "AveyCole/Modded-Cycles"},
+        "excludes": ["midi-both"],
+        "variants": [
+            {"file": "51-midi-live-both", "label": None},
+        ],
+    },
+    {
         "id": "macro",
         "cat": "sound",
         "label": "Machine MACRO",
         "desc": "Une machine ajoutee apres Chord (apres le Sampler avec Model-TG, apres les moteurs du Syntakt s'ils "
                 "sont coches aussi) : les 47 modeles du code libre "
                 "de Braids d'Emilie Gillet. SHAPE choisit le modele, COLOR et SWEEP le reglent, CONTOUR ouvre le "
-                "timbre avec l'enveloppe.",
+                "timbre avec l'enveloppe, FUNC + PITCH donne le lo-fi (RATE a gauche, BITS a droite).",
+        # 13 modeles a 48 kHz et le lo-fi (notes/55) : testes sur la machine le 11/10/2026
         "status": "tested",
         "credit": {"kind": "based", "who": "Émilie Gillet", "repo": "pichenettes/eurorack"},
         "license": "LICENSE-Braids",
-        # avec les moteurs du Syntakt : la combinaison de moteurs prend sa version avec MACRO (notes/51)
+        # avec les moteurs du Syntakt : la combinaison de moteurs prend sa version avec MACRO (notes/50)
         "joins": "syntakt",
         "variants": [
             {"file": "25-macro", "label": None},
         ],
         # avec Model-TG : la version qui s'ajoute apres model-tg-st (Model-TG prend cette base, « with » ci-dessus)
         "with": {"model-tg": "32-macro-tg"},
+    },
+    {
+        "id": "chord-keys",
+        "cat": "live",
+        "label": "Accords de gamme sur TRIG 1–16",
+        "desc": "Une piste CHORD, sept modes et une extension par degré. TRIG 1–7 jouent I–VII, "
+                "8–14 une octave plus haut, 15–16 I–II deux octaves plus haut. T1–T6 gardent leurs fonctions. "
+                "Réglages dans FUNC + RETRIG, sauvés avec le pattern.",
+        "status": "tested",
+        "credit": {"kind": "by", "who": "Nico Heuser", "repo": "byNicoHeuser"},
+        "excludes": ["model-tg"],
+        "variants": [{"file": "45-chord-keys", "label": None}],
+    },
+    {
+        "id": "track-filter",
+        "cat": "sound",
+        "label": "Filtre par piste (LP / OFF / HP)",
+        "desc": "MACHINES tenu + SWEEP : un filtre par piste, passe-bas a gauche, rien au centre, passe-haut a droite. "
+                "CONTOUR : resonance ; COLOR et SHAPE : enveloppe du filtre (quantite, decay). P-locks, LFO, CC 74 / 71.",
+        "status": "tested",
+        "credit": None,
+        # meme geste que le filtre de Model-TG (MACHINES + SWEEP / CONTOUR) : pas ensemble pour l'instant (notes/47 §7, §11)
+        "excludes": ["model-tg"],
+        "variants": [
+            {"file": "48-track-filter", "label": None},
+        ],
     },
     {
         "id": "syntakt",
@@ -267,7 +301,7 @@ FEATURES = [
         "needs": "syntakt",
         "engines": True,
     },
-    {'id': 'scale-gen', 'cat': 'seq', 'status': 'tested', 'label': 'Générateur de séquence en gamme', 'desc': 'SETTINGS + PAGE : notes en gamme, densité, bornes de notes et Undo. Transport arrêté. Demande Model-TG.', 'credit': {'kind': 'based', 'who': 'TinyGregAudio', 'repo': 'TinyGregAudio/Model-TG'}, 'license': 'LICENSE-Model-TG', 'requires': 'model-tg', 'variants': [{'file': '49-scale-gen', 'label': None}], 'with': {'syntakt': '49-scale-gen-st', 'macro': '49-scale-gen-st'}},
+    {'id': 'scale-gen', 'cat': 'seq', 'status': 'tested', 'label': 'Générateur de séquence', 'desc': 'SETTINGS + PAGE : SEQUENCE GENIE, plages, rythme/notes, mutation, Euclid, Undo et génération optionnelle au prochain cycle. Testé sur machine. Demande Model-TG.', 'credit': {'kind': 'based', 'who': 'TinyGregAudio', 'repo': 'TinyGregAudio/Model-TG'}, 'license': 'LICENSE-Model-TG', 'requires': 'model-tg', 'variants': [{'file': '49-scale-gen', 'label': None}], 'with': {'syntakt': '49-scale-gen-st', 'macro': '49-scale-gen-st'}},
     {'id':'scramble','cat':'sound','status':'tested','label':'SCRAMBLE','desc':'SETTINGS + TRACK : quatre contrôles machine aléatoires ; maintenir des trigs avant le combo active/retire un tirage frais par passage. Testé sur machine ; Sampler exclu.','requires':'model-tg','credit':{'kind':'based','who':'TinyGregAudio','repo':'TinyGregAudio/Model-TG'},'license':'LICENSE-Model-TG','variants':[{'file':'50-scramble','label':None}],'with':{'syntakt':'50-scramble-st','macro':'50-scramble-st'}},
 ]
 
@@ -287,7 +321,7 @@ def engine_feature(f, load):
              "label": ", ".join(gs.CATALOG[c]["name"] for c in codes),
              "tg": load(gs.tweak_id(codes, tg=True))["id"],      # avec Model-TG (notes/31)
              "tg_tested": tuple(codes) in gs.HW_TESTED_TG}
-        for j in joined:                                         # avec la machine MACRO (notes/51)
+        for j in joined:                                         # avec la machine MACRO (notes/50)
             c[j] = {"id": load(gms.tweak_id(codes))["id"], "tg": load(gms.tweak_id(codes, tg=True))["id"],
                     "tested": tuple(codes) in gms.HW_TESTED, "tg_tested": tuple(codes) in gms.HW_TESTED_TG}
         combos.append(c)
@@ -299,7 +333,7 @@ SHARED_MIN = 2048      # valeurs partagees : chaines ou listes d'au moins 2 Ko e
 
 def share(tweaks):
     """Valeurs repetees d'un tweak a l'autre (le code de MACRO dans chaque combinaison avec les moteurs du Syntakt,
-    notes/51) : rangees une seule fois dans "shared" et remplacees par {"$shared": k}. tweaks.js les remet en place
+    notes/50) : rangees une seule fois dans "shared" et remplacees par {"$shared": k}. tweaks.js les remet en place
     au chargement (HYDRATE), read_js() de meme en Python : les tweaks lus sont ceux de tweaks/, a l'identique."""
     def key(v):
         return json.dumps(v, ensure_ascii=False, separators=(",", ":"))
@@ -408,7 +442,7 @@ def render():
         return t
     for f in FEATURES:
         if f["id"]=="scramble":
-            load("scramble-gen");load("scramble-st-gen")
+            load("scramble-gen");load("scramble-st-gen");load("scramble-gen-queued");load("scramble-st-gen-queued")
         feat = {"id": f["id"], "label": f["label"], "desc": f["desc"], "status": f["status"], "credit": f["credit"]}
         if f.get("cat"):                        # rubrique de la carte dans le flasher
             if f["cat"] not in CATS:
@@ -439,6 +473,9 @@ def render():
                             for g, v in f["with"].items()}
         if f.get("license"):                    # texte de la licence, servi a cote de la page (licenses())
             feat["license"] = f["license"] + ".txt"
+        if f["id"] == "scale-gen":
+            feat["queued"] = {"scale-gen": load("scale-gen-queued")["id"], "scale-gen-st": load("scale-gen-st-queued")["id"]}
+            feat["queued_status"] = "tested"
         features.append(feat)
     check_requires(features, by_id)
     tweaks, shared = share(tweaks)
@@ -490,4 +527,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

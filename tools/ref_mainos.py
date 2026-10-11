@@ -79,7 +79,7 @@ class Cards:
 
     def options(self, f):
         """Choix d'une carte : ses variantes (ids de tweaks), ou ses combinaisons de moteurs."""
-        return list(f["combos"]) if f.get("engines") else [v["id"] for v in f["variants"]]
+        return list(f["combos"]) if f.get("engines") else [v["id"] for v in f["variants"]] + (["scale-gen-queued"] if f.get("queued") else [])
 
     def biggest(self, f):
         """Choix par défaut d'une carte ajoutée à une grande combinaison : la 1re variante, ou le plus de moteurs."""
@@ -125,10 +125,14 @@ class Cards:
                 tid = o["tg"] if "model-tg" in sel else o["id"]
             else:
                 tid = o
+            queued = f.get("queued") and str(o).endswith("-queued")
+            if queued: tid = tid.removesuffix("-queued")
             for g, alt in (f.get("with") or {}).items():
                 if g in sel:
                     tid = alt
-            if f["id"]=="scramble" and "scale-gen" in sel:tid += "-gen"
+            if queued: tid = f["queued"][tid]
+            if f["id"]=="scramble" and "scale-gen" in sel:
+                tid += "-gen" + ("-queued" if str(sel["scale-gen"]).endswith("-queued") else "")
             out.append(tid)
         return out
 

@@ -307,23 +307,23 @@ def native_read(stock,base,tweak,quick=False):
     print('ok : vrai ordonnanceur/lecteur/événement OS et conditions natives ; note MIDI +28, vélocité +22 et locks vérifiés séparément')
 
 def main():
-    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--syntakt');a=ap.parse_args()
+    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--syntakt');ap.add_argument('--main',action='store_true');a=ap.parse_args()
     stock=main_os_from_syx(a.cycles)
     for name,dep in [('scale-gen-queued','model-tg'),('scale-gen-st-queued','model-tg-st')]:
         base=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/30-{dep}.json').read_text())
-        tweak=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/experimental/queued/49-{name}.json').read_text())
+        tweak=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/{"" if a.main else "experimental/queued/"}49-{name}.json').read_text())
         audible_steps(stock,base,tweak)
         notification_roundtrip(stock,base,tweak)
         run(stock,base,tweak)
         native_read(stock,base,tweak)
     if a.syntakt:
         import build,syntakt,gen_flasher_tweaks as catalog
-        tw=catalog.read_js((ROOT/'docs/flasher-test/tweaks.js').read_text())
+        tw=catalog.read_js((ROOT/('docs/flasher/tweaks.js' if a.main else 'docs/flasher-test/tweaks.js')).read_text())
         ids='6ch-usbup model-tg-st sample-preview-st trig-hold arp tempo-max boot-anim multiline-browser midi-live-both level-pan-values trigless-dim syntakt-tg-sd-cp-toy-bits-swarm-macro'.split()
         extras=[next(t for t in tw['tweaks'] if t['id']==i) for i in ids]
         base=next(t for t in extras if t['id']=='model-tg-st')
-        tweak=json.loads((ROOT/'tweaks/model-cycles_OS1.13/experimental/queued/49-scale-gen-st-queued.json').read_text())
-        scramble=json.loads((ROOT/'tweaks/model-cycles_OS1.13/experimental/scramble/50-scramble-st-gen-queued.json').read_text())
+        tweak=json.loads((ROOT/('tweaks/model-cycles_OS1.13/49-scale-gen-st-queued.json' if a.main else 'tweaks/model-cycles_OS1.13/experimental/queued/49-scale-gen-st-queued.json')).read_text())
+        scramble=json.loads((ROOT/('tweaks/model-cycles_OS1.13/50-scramble-st-gen-queued.json' if a.main else 'tweaks/model-cycles_OS1.13/experimental/scramble/50-scramble-st-gen-queued.json')).read_text())
         combined=extras+[tweak,scramble]
         image,_=build.apply_writes(stock,combined)
         payload,_=build.build_payload(combined,stock,a.syntakt)

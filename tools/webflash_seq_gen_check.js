@@ -57,13 +57,13 @@ async function main() {
     assert.ok(app.chosenTweaks().some(t=>t.id==="scramble"));
     click("scale-gen");
   }
-  if (second) {
+  if (second || !isTest) {
     assert.match(doc.getElementById("mod-scale-gen").textContent,/Sequence Generator/);
     const q=doc.getElementById("queue-scale-gen");
     assert.ok(q && doc.getElementById("mod-scale-gen").contains(q));
     assert.equal(q.checked,false);q.click();
     assert.ok(app.chosenTweaks().some(t=>t.id==="scale-gen-queued"));
-    click("scramble");
+    if (!doc.getElementById("feat-scramble").checked) click("scramble");
     assert.ok(app.chosenTweaks().some(t=>t.id==="scramble-gen-queued"));
     doc.getElementById("queue-scale-gen").click();
     assert.ok(app.chosenTweaks().some(t=>t.id==="scramble-gen"));
@@ -73,9 +73,8 @@ async function main() {
   assert.ok(app.chosenTweaks().some(t=>t.id==="model-tg-st"));
   if (!isTest) {
     assert.ok(app.chosenTweaks().some(t=>t.id==="scramble-st-gen"));
-    click("scramble");
   }
-  if (second) {
+  if (second || !isTest) {
     doc.getElementById("queue-scale-gen").click();
     assert.ok(app.chosenTweaks().some(t=>t.id==="scale-gen-st-queued"));
     assert.ok(app.chosenTweaks().some(t=>t.id==="scramble-st-gen-queued"));
@@ -129,7 +128,7 @@ async function main() {
     const ids = app.chosenTweaks().map(t=>t.id);
     assert.ok(ids.includes("model-tg-st") && ids.includes("midi-live-both"));
     assert.ok(!ids.includes("midi-both"));
-    if(second) {
+    if(second || !isTest) {
       assert.ok(ids.includes("scale-gen-st-queued") && ids.includes("scramble-st-gen-queued"));
       assert.equal(doc.getElementById("queue-scale-gen").checked,true);
     }

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Génère les tweaks « syntakt-<moteurs>-macro » : la machine MACRO (notes/43) avec les vrais moteurs du Syntakt
-(notes/20), sur la même machine (notes/51). Avec Model-TG : « syntakt-tg-<moteurs>-macro », sur model-tg-st (notes/31).
+(notes/20), sur la même machine (notes/50). Avec Model-TG : « syntakt-tg-<moteurs>-macro », sur model-tg-st (notes/31).
 
 Les deux mods prennent la même place (charge utile à 0x43000000, 0x46700000 avec Model-TG ; même disposition
 gs.LAYOUT des tables). Ici, une seule charge utile les porte :
@@ -52,13 +52,14 @@ BASE = gx.BASE
 # Place de MACRO dans la charge utile (décalages depuis son début, PAY) : au-dessus de tout ce que les moteurs y
 # mettent (lay["end"] : 0x41c00 avec les 5), le code et les tables de Braids, puis ses variables (6 voix).
 MACRO_AT = 0x42000
-MACRO_BSS = 0x5a000
+MACRO_BSS = 0x5b000
 TG_ROOM = 0x100000           # avec Model-TG : le dernier Mo de sa zone d'échantillons est à nous (notes/31 §4)
 # Combinaisons testées sur un vrai Model:Cycles (seules, puis avec Model-TG). Ajouter ici après un test réussi.
 HW_TESTED = set()
 # 10/10/2026 : Model-TG + les 5 moteurs + MACRO, avec 6ch-usbup, sample-preview-st, trig-hold, arp, tempo-max et
-# boot-anim, construit par build.py (MAIN OS f44bfad6…), après la correction du blocage au démarrage (notes/51 §8) :
-# « ça marche nickel » (Maxime).
+# boot-anim, construit par build.py (MAIN OS f44bfad6…), après la correction du blocage au démarrage (notes/50 §8) :
+# « ça marche nickel » (Maxime). 11/10/2026, avec la MACRO de notes/55 (modèles allégés, lo-fi) : « ça marche
+# nickel sur machine » (Maxime).
 HW_TESTED_TG = {("sd", "cp", "toy", "bits", "swarm")}
 
 
@@ -150,7 +151,7 @@ def build_tweak(img, st_img, repo, codes, tg=None):
             "Version combinée avec Model-TG (notes/31) : s'ajoute après model-tg-st, le Sampler reste la 7e machine.",
         ] if tg else []) + [
             "Moteurs du Syntakt (OS 1.42 ou 1.41, extraits AU BUILD de TON Syntakt_OS1.42.syx) et machine MACRO (notes/43),",
-            "ensemble (notes/51) : " + which + ".",
+            "ensemble (notes/50) : " + which + ".",
             "Passerelle des moteurs reprise telle quelle de " + tw["id"] + " ; MACRO compilé comme 25-macro.json",
             f"({gm.EURORACK_REPO} {gm.EURORACK_COMMIT[:7]}, licence MIT : LICENSE-Braids). Charge utile rangée compressée",
             "(aPLib), décompressée au démarrage ; tables d'ondes de CHORD reprises en SRAM. Le régulateur de charge des",
@@ -221,4 +222,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

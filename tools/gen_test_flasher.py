@@ -41,7 +41,7 @@ def main():
         print("ok : extensions retirées, catalogue principal testé restauré")
         return
     tw=catalog.read_js((PROD/"tweaks.js").read_text())
-    tw["tweaks"]=[t for t in tw["tweaks"] if not t["id"].startswith("scramble")]
+    tw["tweaks"]=[t for t in tw["tweaks"] if not t["id"].startswith("scramble") and not t["id"].endswith("-queued")]
     tw["features"]=[f for f in tw["features"] if f["id"]!="scramble"]
     for i,t in enumerate(tw["tweaks"]):
         if t["id"] in ("scale-gen","scale-gen-st"):
@@ -49,7 +49,10 @@ def main():
             advanced["order"]=t["order"]
             tw["tweaks"][i]=advanced
     for f in tw["features"]:
-        if f["id"]=="scale-gen":f["status"]="experimental"
+        if f["id"]=="scale-gen":
+            f["status"]="experimental"
+            if not a.second:
+                f.pop("queued", None); f.pop("queued_status", None)
     if a.second:
         for p in sorted((ROOT/"tweaks/model-cycles_OS1.13/experimental/queued").glob("*.json")):
             tw["tweaks"].append(json.loads(p.read_text()))
@@ -74,16 +77,6 @@ def main():
     build.refs_into=cached_refs
     ref_mainos.mc_tweaks=lambda:tw
     original_cards=ref_mainos.Cards
-    if a.second:
-        class SecondCards(original_cards):
-            def options(self,f):
-                out=super().options(f)
-                return out+["scale-gen-queued"] if f["id"]=="scale-gen" else out
-            def ids(self,sel):
-                out=super().ids(sel)
-                queued=sel.get("scale-gen","").endswith("-queued")
-                return [(i+"-queued" if queued and not i.endswith("-queued") else i) if i.startswith("scale-gen") else (("scramble-st" if "syntakt" in sel or "macro" in sel else "scramble")+("-gen" if "scale-gen" in sel else "")+("-queued" if "scale-gen" in sel and queued else "")) if i.startswith("scramble") else i for i in out]
-        ref_mainos.Cards=SecondCards
     try: refs,mods,n=ref_mainos.blocks(a.cycles,a.syntakt)
     finally:
         build.refs_into=scan
@@ -112,10 +105,11 @@ def main():
     files["index.html"]=files["index.html"].replace('<main',notice+'\n<main',1)
     if a.second:
         app=files["app.js"]
-        app=app.replace('  // several variants of one mod', '  if (f.queued && sel.on) add(`<div class="variants"><label for="queue-scale-gen"><input type="checkbox" id="queue-scale-gen"${sel.queued ? " checked" : ""}><span>${esc(t("queued_generation"))}<small>${esc(t("queued_generation_note"))}</small></span></label></div>`);\n  // several variants of one mod')
-        app=app.replace('    else if (el.name && el.name.startsWith("eng-")', '    else if (el.id === "queue-scale-gen") { selOf(f("scale-gen")).queued = el.checked; pick.swap = null; }\n    else if (el.name && el.name.startsWith("eng-")')
-        app=app.replace('    const tk = tw.tweaks.find((x) => x.id === id);', '    if (f.queued && sel.queued) id = f.queued[id];\n    if (f.id === "scramble") id = (isOn("syntakt") || isOn("macro") ? "scramble-st" : "scramble") + (isOn("scale-gen") ? "-gen" + (selOf(featById("scale-gen")).queued ? "-queued" : "") : "");\n    const tk = tw.tweaks.find((x) => x.id === id);')
-        app=app.replace('    out.push(l);', '    if (f.queued && sel.queued) l += " — " + t("queued_generation");\n    out.push(l);')
+        if 'id="queue-scale-gen"' not in app:
+            app=app.replace('  // several variants of one mod', '  if (f.queued && sel.on) add(`<div class="variants"><label for="queue-scale-gen"><input type="checkbox" id="queue-scale-gen"${sel.queued ? " checked" : ""}><span>${esc(t("queued_generation"))}<small>${esc(t("queued_generation_note"))}</small></span></label></div>`);\n  // several variants of one mod')
+            app=app.replace('    else if (el.name && el.name.startsWith("eng-")', '    else if (el.id === "queue-scale-gen") { selOf(f("scale-gen")).queued = el.checked; pick.swap = null; }\n    else if (el.name && el.name.startsWith("eng-")')
+            app=app.replace('    const tk = tw.tweaks.find((x) => x.id === id);', '    if (f.queued && sel.queued) id = f.queued[id];\n    if (f.id === "scramble") id = (isOn("syntakt") || isOn("macro") ? "scramble-st" : "scramble") + (isOn("scale-gen") ? "-gen" + (selOf(featById("scale-gen")).queued ? "-queued" : "") : "");\n    const tk = tw.tweaks.find((x) => x.id === id);')
+            app=app.replace('    out.push(l);', '    if (f.queued && sel.queued) l += " — " + t("queued_generation");\n    out.push(l);')
         # Les textes SCRAMBLE sont ajoutés aux deux dictionnaires FEAT.
         entries=iter([
             dict(label="SCRAMBLE",short="Randomize four machine controls now or freshly on a marked step, with a wider popup.",desc="SETTINGS + TRACK randomizes the active machine’s four controls. Hold one or more trigs first, then press SETTINGS and TRACK to toggle fresh SCRAMBLE locks on those steps. Each pass produces new values without changing the base sound. Works independently of Sequence Generator. Requires Model-TG. Sampler is excluded.",note="Step SCRAMBLE was hardware tested by AveyCole on 11 October 2026. Immediate SCRAMBLE has no Undo; repeat the held-trig combo to remove a step marker."),

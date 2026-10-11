@@ -82,4 +82,3 @@ def pack(data):
     _tail(w, data, 0, 1)
     w.end()
     return bytes(w.o[aplib.SECT_HDR:])
-

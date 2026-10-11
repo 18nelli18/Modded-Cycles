@@ -52,7 +52,7 @@ def main():
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);a=ap.parse_args()
     stock=main_os_from_syx(a.cycles)
     # La porte combinée suffit à établir les limites de routage en THRU.
-    both=json.loads((DEV/'44-midi-both.json').read_text())
+    both=json.loads((DEV/'50-midi-both.json').read_text())
     patched,_=build.apply_writes(stock,[both])
     cases=0
     for image,combined in ((stock,False),(patched,True)):

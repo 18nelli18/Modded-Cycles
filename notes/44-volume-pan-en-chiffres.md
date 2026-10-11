@@ -197,4 +197,3 @@ Model-TG, les 5 moteurs du Syntakt, effacer un trig, arpégiateur, tempo 546, an
 
 Idée, police, positions et choix de djd_oz ; réécriture de ce projet. Crédit sur la carte du flasher et dans
 `PROVENANCE.md`. Sa licence n'est pas encore connue : Maxime la lui demande avant la fusion.
-

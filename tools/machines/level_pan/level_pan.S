@@ -299,4 +299,3 @@ lp_font:
 lp_cnt:	.long	0				/* ticks de l'interface (30 Hz) */
 lp_pan:	.space	32				/* échéances des 6 pistes (6 mots longs), puis leurs drapeaux (+24) */
 lp_lvl:	.space	32
-

@@ -94,7 +94,7 @@ def generate(main):
             "test sur machine requis. Généré par tools/gen_midi_bth_three_state.py (note 50).",
         ],
         "device": "Model:Cycles", "os": "1.13", "section": 3,
-        "conflicts": ["midi-both"], "writes": [],
+        "conflicts": ["midi-both", "midi-live-both"], "writes": [],
     }
 
     def add(va, old, new, label):
