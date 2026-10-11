@@ -99274,6 +99274,7 @@ window.MC_TWEAKS = {
   "chord-keys",
   "track-filter"
  ],
+ "standard_tested": false,
  "standard_out": [
   "usb6",
   "midi-both"

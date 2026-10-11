@@ -330,6 +330,10 @@ STANDARD = [
 # demandee hors du paquet) : la page en donne la raison. Une carte testee et compatible qui n'est dans aucune des deux
 # listes est signalee (attention), pour qu'un mod qui passe « tested » soit range dans l'une ou l'autre.
 STANDARD_OUT = ["usb6", "midi-both"]
+# Le paquet tel que Maxime l'a flashe et essaye sur sa machine, en entier (regle 3 de AGENTS.md ; notes/59, section
+# « Teste sur la machine ») : la page ne le dit teste que si c'est exactement STANDARD. Ajouter ou retirer un mod de
+# STANDARD le repasse donc en experimental jusqu'au prochain essai sur la machine.
+STANDARD_TESTED = []
 
 
 def check_standard(features):
@@ -340,6 +344,9 @@ def check_standard(features):
     for sid in STANDARD + STANDARD_OUT:
         if sid not in cards:
             raise SystemExit(f"!! STANDARD : la carte {sid!r} n'existe pas dans FEATURES")
+    for sid in STANDARD_TESTED:
+        if sid not in cards:
+            raise SystemExit(f"!! STANDARD_TESTED : la carte {sid!r} n'existe pas dans FEATURES")
     if set(STANDARD) & set(STANDARD_OUT):
         raise SystemExit(f"!! STANDARD et STANDARD_OUT ont en commun : {', '.join(sorted(set(STANDARD) & set(STANDARD_OUT)))}")
     on = [cards[i] for i in STANDARD]
@@ -538,6 +545,7 @@ def render():
         "features": features,
         # paquet standard (notes/59) : les cartes que la page coche par defaut, et celles laissees dehors expres
         "standard": STANDARD,
+        "standard_tested": sorted(STANDARD_TESTED) == sorted(STANDARD),
         "standard_out": STANDARD_OUT,
         # onglet « OS Samples » : l'OS Model:Samples officiel, mis dans le conteneur du Cycles (crossflash)
         "samples": {"syx_sha256": OFFICIAL["samples"]["syx"], "main_sha256": OFFICIAL["samples"]["main"],

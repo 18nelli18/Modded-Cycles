@@ -98,7 +98,7 @@ CONTRIBUTING.md               terms for outside contributions
 
 Follow the shape of the last ones (tempo-max: commits `5997b4a`, `14fb9fa`, `6e592bc`; trig-hold, arp). In order:
 
-1. **Investigate and write the note.** New file `notes/NN-<slug>.md` (next free number; 57 is the last) with the
+1. **Investigate and write the note.** New file `notes/NN-<slug>.md` (next free number; 59 is the last) with the
    user's request and its source, the OS code involved (addresses, `[FAIT]`/`[HYP]`), the design, free space used and
    conflicts with other tweaks. Add a row to `notes/README.md`. See `notes/AGENTS.md`.
 2. **Write the generator** `tools/gen_<mod>.py` (and sources under `tools/machines/<mod>/` if it has code). It reads
@@ -122,7 +122,12 @@ Follow the shape of the last ones (tempo-max: commits `5997b4a`, `14fb9fa`, `6e5
 7. **Validate** (below), commit, push, open a **draft** PR, and tell Maxime what to test on the machine.
 8. **After his test**: a small follow-up commit flips the status to `tested` (generator `FEATURES`, `tweaks.js`,
    guide, release notes, README, note: "Testé sur la machine (JJ/MM/AAAA)"). If he reports a problem, record it in the
-   note, fix, and bump the release.
+   note, fix, and bump the release. A mod that becomes `tested` goes into the **standard install** (`STANDARD` in
+   `tools/gen_flasher_tweaks.py`, what the flasher installs by default, notes/59) if it goes with all the others, or
+   into `STANDARD_OUT` with its reason; the generator warns about a tested mod in neither. Adding it to `STANDARD`
+   means: regenerate `tweaks.js` and `REF_MAINOS`, add its proof to `PROOFS` in `tools/emu/test_standard.py` and run
+   it, and say it in the release notes. The page tags the standard install *Tested* only once Maxime has flashed that
+   exact set (`STANDARD_TESTED`).
 
 A fix to an existing mod follows the same path, minus the new files: note section, generator, proof, regenerated
 JSON/`tweaks.js`/`REF_MAINOS`, release entry.
@@ -149,6 +154,7 @@ With the official files (download them from elektron.se into `firmware/`, which 
 ```sh
 python3 tools/gen_<mod>.py --cycles firmware/model-cycles_OS1.13.syx --check
 python3 tools/emu/test_<mod>.py --cycles firmware/model-cycles_OS1.13.syx
+python3 tools/emu/test_standard.py --cycles firmware/model-cycles_OS1.13.syx --eurorack eurorack/   # the standard install (notes/59)
 python3 tools/ref_mainos.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --check
 tools/webflash_smoke.sh firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42.syx   # the REF_MAINOS sample, each mod checked
 ```

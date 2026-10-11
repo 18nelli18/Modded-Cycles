@@ -375,3 +375,5 @@ details.trouble{margin-top:24px}
   .std-grid{grid-template-columns:minmax(0,1fr);gap:0}
   .std-t{font-size:19px}
 }
+.std-smp{margin:0 0 18px;padding:9px 0 9px 14px;border-left:3px solid var(--red);max-width:70ch;font-size:15px;line-height:1.5;color:var(--ink-2)}
+.std-smp .lnk{margin-left:8px}

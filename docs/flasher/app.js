@@ -1154,6 +1154,9 @@ const T = {
     std_why_tg: "tested on a Model:Cycles with Model-TG only",
     std_why_other: "not in the standard install yet",
     std_fw: "Modded Cycles standard ({n} mods)",
+    std_part: "Each of these mods is tested on a real Model:Cycles; this exact set, all together, is checked in the emulator, not yet on the machine.",
+    std_smp: "On a Model:Samples: the standard install has no Sampler machine, so your samples won't play. The Sampler comes with Model-TG, which is still experimental.",
+    std_smp_clash: "Model-TG doesn't go with {names}: adding it takes them out.",
     restore_text: "Sends your official OS file <b>unchanged</b>, to go back to the stock firmware. It is also a good first rehearsal: it checks your cable and your setup without changing anything.",
     tab_samples: "Samples OS",
     samples_title: "Turn your Model:Cycles into a Model:Samples",
@@ -1449,6 +1452,9 @@ const T = {
     std_why_tg: "testés sur un Model:Cycles avec Model-TG seulement",
     std_why_other: "pas encore dans l'installation standard",
     std_fw: "Modded Cycles standard ({n} mods)",
+    std_part: "Chacun de ces mods est testé sur un vrai Model:Cycles ; cet ensemble précis, tous ensemble, est vérifié en émulation, pas encore sur la machine.",
+    std_smp: "Sur un Model:Samples : l'installation standard n'a pas de machine Sampler, vos samples ne joueront donc pas. Le Sampler vient avec Model-TG, encore expérimental.",
+    std_smp_clash: "Model-TG ne va pas avec {names} : l'ajouter les retire.",
     restore_text: "Envoie votre fichier d'OS officiel <b>sans le modifier</b>, pour revenir au firmware d'origine. C'est aussi une bonne répétition avant un mod : elle vérifie le câble et l'installation sans rien changer.",
     tab_samples: "OS Samples",
     samples_title: "Transformer le Model:Cycles en Model:Samples",
@@ -2141,8 +2147,14 @@ function renderStandard() {
   const notes = std.filter((f) => featText(f.id, "note", ""));
   const out = order().filter((f) => !ids.includes(f.id));
   const det = (id, sum, body) => `<details id="${id}"${pick.stdOpen.has(id) ? " open" : ""}><summary>${esc(sum)}</summary>${body}</details>`;
-  box.innerHTML = `<p class="std-t"><span>${esc(t("std_title"))}</span>${tagHtml("tested")}</p>` +
-    `<p class="std-lede">${esc(t("std_lede", { n: std.length }))}</p>` +
+  // on a Model:Samples (notes/57), the Model:Cycles OS plays samples only with Model-TG's Sampler (render() shows it)
+  const tg = featById("model-tg"), tgClash = tg ? std.filter((g) => clashOnly(tg, g)) : [];
+  const smp = tg && !ids.includes(tg.id) ? `<p class="std-smp" id="std-smp"${st.machine === "cyc" ? " hidden" : ""}>` +
+    esc(t("std_smp")) + (tgClash.length ? " " + esc(t("std_smp_clash", { names: tgClash.map(label).join(", ") })) : "") +
+    `<button type="button" class="lnk" data-add="${tg.id}">${esc(t("std_add_of", { name: label(tg) }))}</button></p>` : "";
+  const tested = !!window.MC_TWEAKS.standard_tested;   // this exact set tried on the machine (STANDARD_TESTED)
+  box.innerHTML = `<p class="std-t"><span>${esc(t("std_title"))}</span>${tagHtml(tested ? "tested" : "part")}</p>` +
+    `<p class="std-lede">${esc(t("std_lede", { n: std.length }))}${tested ? "" : " " + esc(t("std_part"))}</p>` + smp +
     `<div class="std-grid">${groups.map(([c, l]) => `<section class="std-grp" id="std-${c}"><h3>${icon(c)}${esc(t("cat_" + c))}</h3>` +
       `<ul>${l.map((f) => `<li id="std-mod-${f.id}">${name(f)}${esc(shortOf(f))}</li>`).join("")}</ul></section>`).join("")}</div>` +
     (notes.length ? det("std-know", t("std_know", { n: notes.length }),
@@ -3122,6 +3134,7 @@ function render() {
   $("mach-w-cos").hidden = st.machine !== "cos";
   $("mach-w-only").hidden = st.machine !== "smp";
   for (const m of ["cyc", "smp", "cos"]) $("mach-" + m).setAttribute("aria-checked", String(st.machine === m));
+  if ($("std-smp")) $("std-smp").hidden = st.machine === "cyc";
   if (st.os && st.mode === "samples" && !st.os.stock)
     setStatus("file-status", [["is-bad", t(st.smpDir === "cyc" ? "samples_needs_cycles" : "cos_needs_cycles")]]);
   else if (st.os) {
