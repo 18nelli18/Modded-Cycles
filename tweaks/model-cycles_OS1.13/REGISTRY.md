@@ -6,9 +6,9 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 149 tweaks, 16 226 écritures.
-- Masques de sprites libérables : 164 (35 960 o), dont 11 pris (5 672 o) et **153 libres (30 288 o)**.
-- Crochets sur l'OS : 73 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
+- 151 tweaks, 16 242 écritures.
+- Masques de sprites libérables : 164 (35 960 o), dont 15 pris (7 176 o) et **149 libres (28 784 o)**.
+- Crochets sur l'OS : 79 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
 - Pointeurs réécrits : 51 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 134 tweaks ; place restante au §3.
 
@@ -16,7 +16,7 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 Les masques d'un groupe sont identiques octet pour octet et chacun n'est désigné que par la constante 32 bits de son constructeur (notes/14 §5, notes/32 §11, notes/52). Faire pointer cette constante sur la copie gardée libère le masque : le rendu ne change pas et l'OS, chargé en SDRAM, n'y lit plus rien. Règles : un mod qui écrit dans un masque le redirige dans le même tweak (ou dans un tweak qu'il demande) ; personne n'écrit dans une copie gardée ; deux mods ne partagent un masque que s'ils ne s'installent jamais ensemble, ou l'un par-dessus l'autre.
 
-### 47×47 : 21 masques de 376 o (copie gardée `0x40172220`) : 7 pris, 14 libres (5 264 o)
+### 47×47 : 21 masques de 376 o (copie gardée `0x40172220`) : 11 pris, 10 libres (3 760 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
@@ -36,11 +36,11 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x4018cd48` | `0x400acdb2` | libre | |
 | `0x4018d1b8` | `0x400acd76` | libre | |
 | `0x4018d4a8` | `0x400acd56` | libre | |
-| `0x4018dba8` | `0x400accfe` | libre | |
-| `0x4018f4b4` | `0x400ac8d0` | libre | |
-| `0x4018fc74` | `0x400ac81c` | libre | |
+| `0x4018dba8` | `0x400accfe` | pris (114/376 o) | trigless-dim (114 o) |
+| `0x4018f4b4` | `0x400ac8d0` | pris (360/376 o) | level-pan-values (360 o) |
+| `0x4018fc74` | `0x400ac81c` | pris (364/376 o) | level-pan-values (364 o) |
 | `0x401904b4` | `0x400ac784` | pris (370/376 o) | multiline-browser (370 o) |
-| `0x40192734` | `0x400ac2b2` | libre | |
+| `0x40192734` | `0x400ac2b2` | pris (318/376 o) | trigless-dim (318 o) |
 
 ### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 0 pris, 42 libres (8 064 o)
 
@@ -419,9 +419,14 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x40002a06` | `206f002422414281d1c5…` | jmp | masque `0x4015c044` +0x17c | 6ch-usbup | notes/36 |
 | `0x40002a42` | `721320402004e3ace788…` | jmp | OS `0x4019b182` | 6ch-multiout |  |
 | `0x40002a42` | `721320402004e3ace788…` | jmp | masque `0x4015c044` +0x11e | 6ch-usbup | notes/36 |
+| `0x40005f36` | `b2ac00286730` | jmp | masque `0x4018dba8` +0x0 | trigless-dim | notes/45 |
+| `0x40006086` | `4ef94008e77e` | jmp | masque `0x4018dba8` +0x20 | trigless-dim | notes/45 |
+| `0x400081f2` | `4eb940090f48` | jsr | masque `0x4018f4b4` +0x0 | level-pan-values | notes/44 |
 | `0x4001413e` | `205242a72f0a` | jmp | charge utile (image) +0x10eb6 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400169f0` | `4feffff448d7040c` | jmp | charge utile (image) +0x4fb6 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4001a1c4` | `4eb940016086` | jsr | masque `0x4018a788` +0x16 | arp | notes/32 |
+| `0x4001aa4e` | `4fefffe048d70cfc` | jmp | masque `0x4018f4b4` +0xc | level-pan-values | notes/44 |
+| `0x4001b22a` | `4e56ffc048d73cfc` | jmp | masque `0x4018f4b4` +0x78 | level-pan-values | notes/44 |
 | `0x4001d25e` | `4eb940016086` | jsr | masque `0x4018a788` +0x1a | arp | notes/32 |
 | `0x4001e8da` | `202f0020226a0068` | jsr | charge utile (mémoire), 14 cibles selon la combinaison | macro, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-macro (31/31), syntakt-tg-* (33/33), syntakt-tg-*-macro (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43 |
 | `0x40021f56` | `2f034e944879404a8cb8…` | jsr | charge utile (image) +0x4f16 | model-tg, model-tg-st | notes/31, notes/36 |
@@ -454,6 +459,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x400593ce` | `4eb940002912` | jsr | masque `0x4015c044` +0x292 | 6ch-usbup, macro, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-macro (31/31) | notes/31, notes/36 |
 | `0x4005981e` | `4eb9401b715c` | jsr | charge utile (mémoire) +0x3350e | syntakt-tg-* (1/33) | notes/31 |
 | `0x40059872` | `4eb9401b7b54` | jsr | charge utile (mémoire) +0x3353e | syntakt-tg-* (1/33) | notes/31 |
+| `0x40059dea` | `76ff781533c38c000000` | jmp | masque `0x40192734` +0x0 `td_led` | trigless-dim | notes/45 |
 | `0x4005a31a` | `20065286eb88` | jmp | charge utile (mémoire), 6 cibles selon la combinaison | macro-tg, syntakt-tg-* (33/33), syntakt-tg-*-macro (31/31) | notes/31, notes/36, notes/43 |
 | `0x4005a340` | `7005b085643e` | jmp | charge utile (mémoire), 13 cibles selon la combinaison | macro, macro-tg, syntakt-* (32/32), syntakt-*-macro (31/31), syntakt-tg-* (33/33), syntakt-tg-*-macro (31/31), syntakt-vintage | notes/31, notes/36, notes/43 |
 | `0x4005a50a` | `724c202f0004` | jmp | charge utile (mémoire), 13 cibles selon la combinaison | macro, macro-tg, syntakt-* (32/32), syntakt-*-macro (31/31), syntakt-tg-* (33/33), syntakt-tg-*-macro (31/31), syntakt-vintage | notes/31, notes/36, notes/43 |
@@ -591,6 +597,8 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | tempo-max | 12 | 12 | 0 | 0 | 0 | 0 | 0 |  | notes/38 |
 | boot-anim | 1 | 0 | 1 | 0 | 0 | 0 | 0 |  | notes/39 |
 | multiline-browser | 16 | 10 | 4 | 0 | 1 | 1 | 0 |  | notes/40 |
+| level-pan-values | 8 | 1 | 3 | 0 | 2 | 2 | 0 |  | notes/44 |
+| trigless-dim | 8 | 1 | 3 | 0 | 2 | 2 | 0 |  | notes/45 |
 | midi-both | 3 | 3 | 0 | 0 | 0 | 0 | 0 |  | notes/53 |
 | midi-live-both | 6 | 0 | 4 | 0 | 1 | 1 | 0 |  | notes/53 |
 

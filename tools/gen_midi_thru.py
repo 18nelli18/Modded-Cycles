@@ -15,7 +15,8 @@ lui-même). Les deux tweaks gardent ce menu tel quel et s'excluent :
 
 Les deux viennent d'AveyCole (https://github.com/AveyCole/Modded-Cycles, commit ba5f8bb : tools/gen_midi_both.py
 et tools/gen_midi_live_both.py), qui les a testés sur son Model:Cycles le 10/10/2026. Mêmes octets, sauf l'adresse du
-code de midi-live-both : 0x40167c50 dans le fork, un masque 35x35 que réserve le filtre par piste (notes/47) ; le code
+code de midi-live-both : 0x40167c50 dans le fork, un des 4 masques 35x35 que le filtre par piste (PR #55) laisse libres
+dans le groupe qu'il occupe, gardés pour sa suite ; ici un masque 34x34, dans un groupe où rien d'autre n'est pris. Le code
 lui-même est identique octet pour octet (aucune adresse interne), tools/emu/test_midi_thru.py le vérifie.
 
 Il faut les binutils m68k (as, ld, nm, objcopy : paquet binutils-m68k-linux-gnu, ou m68k-elf-*).
@@ -46,7 +47,7 @@ CROSS = os.environ.get("M68K_CROSS") or next(
     (c for c in ("m68k-linux-gnu-", "m68k-elf-") if shutil.which(c + "as")), "m68k-linux-gnu-")
 
 MASK = 0x40192ba4                  # masque 34x34 libéré (272 o), désigné par la seule constante 0x400ac276
-FORK_CAVE = 0x40167c50             # où le fork d'AveyCole mettait ce code (masque 35x35, réservé par notes/47)
+FORK_CAVE = 0x40167c50             # où le fork d'AveyCole mettait ce code (masque 35x35, groupe du filtre par piste)
 OUT_THRU = 0x404e9b50              # l'octet du réglage OUT/THRU : 0 OUT, 1 THR (2 : THR + MIDI du Cycles)
 GET = bytes.fromhex("4eb940044df8")                    # jsr 0x40044df8 (getter : mvs.b OUT_THRU,d0)
 GATES = (                                              # trois portes : jsr GET ; tst.l d0 ; bne <jeter>

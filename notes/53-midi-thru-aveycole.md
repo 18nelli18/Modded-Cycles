@@ -17,7 +17,7 @@ machine la personne l'a fait ». Tweaks `50-midi-both.json` et `51-midi-live-bot
 - Le menu ne change pas : l'écran affiche OUT ou THR, comme à l'origine.
 - `midi-both` remplace trois appels par `moveq #0,d0` ; aucune place libre.
 - `midi-live-both` utilise une valeur 2 du réglage, que l'OS lit déjà comme THR partout. 132 o de code dans un masque de
-  sprite 34×34 libéré (`0x40192ba4`), au lieu de `0x40167c50` dans le fork (masque réservé par le filtre par piste, PR #55).
+  sprite 34×34 libéré (`0x40192ba4`), au lieu de `0x40167c50` dans le fork (un des masques 35×35 restés libres dans le groupe du filtre par piste, PR #55).
 - Les deux s'excluent (mêmes trois portes) et vont avec tous les autres mods.
 
 ## 1. Le réglage OUT/THRU dans l'OS
@@ -30,7 +30,7 @@ machine la personne l'a fait ». Tweaks `50-midi-both.json` et `51-midi-live-bot
 | `0x404e9b50` | l'octet OUT/THRU : 0 OUT, 1 THR |
 | `0x40044df8` | lecture : `mvs.b 0x404e9b50,d0 ; rts`, **la valeur brute, étendue en signe** |
 | `0x40044dc2` | écriture : ramène l'argument à 0 ou 1 (`tst.l ; sne ; neg.l`), puis, s'il diffère de l'octet, le copie par `0x40044b88` |
-| `0x40044b88` | copie générique `(destination, source, longueur)` dans le bloc ; finit par `0x40044b4e`, qui recalcule la somme de contrôle et notifie |
+| `0x40044b88` | copie générique `(destination, source, longueur)` dans le bloc : efface la marque, copie, puis saute à `0x40044b4e`, qui recalcule la somme de contrôle (CRC-32 `0x40094e24`) et remet la marque `COKI` |
 | `0x400452fc` | valeurs par défaut des réglages : écrit 0 (OUT) par l'écriture `0x40044dc2` (appel en `0x40045330`) |
 
 La note du fork (§5.1) dit que la lecture `0x40044df8` rend un booléen ; c'est faux, elle rend l'octet tel quel. Seules
@@ -91,7 +91,8 @@ accroches changent par rapport au fork (`jmp 0x40192ba4`, `jsr 0x40192c14`).
 Le masque de sprite 34×34 `0x40192ba4` (272 o), que désigne la seule constante `0x400ac276` (constructeur `0x400ac274`),
 est identique au masque `0x4016bfc8`, gardé intact ; `sprites.redirect_write` fait pointer la constante sur ce dernier et
 libère le premier (groupe 34×34 de `sprites.GROUPS`, [note 52](52-registre-place-libre.md) ; `REGISTRY.md` le marque pris). 132 o occupés, 140 libres derrière. Le fork prenait le masque 35×35
-`0x40167c50`, que le filtre par piste (PR #55) réserve avec tout son groupe ; d'où le déplacement.
+`0x40167c50`, un des 4 masques que le filtre par piste (PR #55) laisse libres dans ce groupe, où il en prend 15 ; on les
+lui laisse pour la suite de ce mod et on prend un groupe où rien d'autre n'est pris.
 
 ## 5. Conflits
 
@@ -122,10 +123,38 @@ python3 tools/emu/test_midi_thru.py --cycles model-cycles_OS1.13.syx \
 ```
 
 **`[FAIT en émulation]`** Tout passe, seul et avec `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,
-tempo-max`, avec `macro` et avec `model-tg-st,sample-preview-st,boot-anim,multiline-browser`. Le flasher construit les deux cartes avec
+tempo-max,level-pan-values,trigless-dim`, avec `macro` et avec `model-tg-st,sample-preview-st,boot-anim,multiline-browser`. Le flasher construit les deux cartes avec
 toutes les autres (`REF_MODS`, échantillon `REF_MAINOS`, `tools/webflash_smoke.sh`).
 
-## 7. Ce qui reste à vérifier
+## 7. Limite : deux sources sur une seule sortie, octet par octet
+
+Trouvé à la relecture (11/10/2026), d'après le code de l'OS ; c'est une limite de la conception du fork, pas un défaut de
+son code, et le guide la dit aux utilisateurs.
+
+- **`[FAIT]`** Le relais passe **octet par octet** : l'interruption de réception `0x40001094` appelle le gestionnaire
+  installé (`*0x4049dce0` = `0x400012cc`, installé par `0x4000152c`) pour chaque octet reçu (`0x400010d4`..`0x400010e4`), qui le
+  renvoie aussitôt par l'envoi d'un octet `0x40001232`. Rien ne regroupe les messages ni ne suit le « running status ».
+- **`[FAIT]`** `0x40001232` écrit l'octet dans l'UART (`0xec07400c`) si la sortie est libre ; sinon (`0x4049dca0` non nul,
+  un message part par le DMA) il le range dans l'anneau d'octets `*0x4049dcac`, coupe les requêtes du canal DMA 37
+  (`0xfc044019`) et laisse l'interruption d'émission l'envoyer. C'est fait pour glisser un octet temps réel (`f8`, `fa`…)
+  au milieu d'un message, ce que la norme MIDI permet.
+- **`[FAIT]`** Les messages du Cycles partent entiers par `0x40001584` → `0x40001100` (anneau du DMA), chacun avec son octet
+  de statut (par exemple la note `0x40082772` : `90 | canal`, 3 octets). Dans l'OS d'origine, ces deux flux ne se croisent
+  jamais : en THR les trois portes taisent le Cycles, en OUT rien n'est relayé.
+- **Conséquence** : avec `midi-both` ou la valeur 2, un octet relayé peut tomber au milieu d'un message du Cycles, et un
+  message du Cycles au milieu d'un message relayé. Exemple reproduit en émulation (script ponctuel, sur l'image
+  `midi-live-both`, valeur 2) : `90` reçu et relayé, puis le Cycles envoie `b0 07 7f`, puis `3c 64` reçus : l'appareil
+  suivant lit `90 | b0 07 7f | 3c 64`, la note reçue est perdue et `3c 64` devient un CC 60 sur le canal du Cycles. Sans
+  même de coïncidence, un appareil qui omet les statuts répétés (« running status », courant pour les notes) voit ses
+  octets suivants rattachés au dernier statut du Cycles, d'où des notes fausses ou bloquées. Une SysEx relayée est coupée
+  par tout statut du Cycles.
+- L'horloge et le transport (`f8`..`ff`, temps réel) se mêlent sans dommage. L'usage sûr : un seul des deux côtés joue des
+  notes ou des contrôles (par exemple une horloge maître en amont, le Cycles qui joue l'aval, ou l'inverse).
+- **`[À FAIRE]`** si le besoin vient : un relais qui fusionne par messages (temps réel tout de suite ; le reste mis de côté
+  jusqu'au message complet, statut remis devant le running status, envoyé entier par `0x40001100`), avec sa preuve. Ce
+  serait du code nouveau dans l'interruption de réception, au-delà de ce qu'a testé AveyCole.
+
+## 8. Ce qui reste à vérifier
 
 - **`[HYP]`** La valeur 2 survit à l'extinction : le bloc `0x404e9b10` est enregistré entier (inscrit en `0x400ddef2`) et le
   chargement (`0x40044bc2`, contrôle `0x40044af4`) ne vérifie que la marque, la taille et la somme de contrôle. Pas vérifié
@@ -135,7 +164,7 @@ toutes les autres (`REF_MODS`, échantillon `REF_MAINOS`, `tools/webflash_smoke.
   reçus et le Cycles envoie les siens. Le guide conseille de couper l'envoi d'horloge dans ce cas.
 - **`[HYP]`** FUNC + rotation du potard sur cette ligne n'a pas été étudié ; le geste testé est l'appui.
 
-## 8. Testé sur la machine (10/10/2026)
+## 9. Testé sur la machine (10/10/2026)
 
 Par AveyCole, sur son Model:Cycles, avec le code du fork :
 
@@ -147,7 +176,7 @@ Maxime a jugé ce test suffisant (« pas besoin de tester sur ma machine la pers
 est repris octet pour octet, et `midi-live-both` ne diffère que par l'adresse du code, prouvé identique en émulation (§6).
 Les deux cartes sont donc marquées testées, par AveyCole.
 
-## 9. Ce qui n'est pas repris du fork
+## 10. Ce qui n'est pas repris du fork
 
 - Le sélecteur à trois états OUT/THR/BTH (`gen_midi_bth_three_state.py`, sa note §5) : le build test 04 a gelé la machine en
   entrant dans la ligne OUT/THRU, cause inconnue.
