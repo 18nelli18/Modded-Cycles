@@ -3,13 +3,21 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
-  { version: "1.39", date: "2026-10-11", changes: [
+  { version: "1.41", date: "2026-10-11", changes: [
     { en: "Two new MIDI mods by AveyCole, under USB & MIDI. With THR selected (SETTINGS, CONFIG › MIDI › PORTS › OUT/THRU), the Model:Cycles forwards what arrives on its MIDI IN and also sends its own clock, notes and parameter changes. MIDI OUT while in THRU does it all the time; Live MIDI OUT + THRU toggle switches it on and off with FUNC + a press on the LEVEL/DATA knob, the screen staying on THR",
       fr: "Deux nouveaux mods MIDI d'AveyCole, dans USB et MIDI. Avec THR choisi (SETTINGS, CONFIG › MIDI › PORTS › OUT/THRU), le Model:Cycles relaie ce qui arrive sur son MIDI IN et envoie aussi son horloge, ses notes et ses changements de paramètres. MIDI OUT pendant THRU le fait tout le temps ; Basculer MIDI OUT + THRU en direct l'active et le coupe avec FUNC + un appui sur le potard LEVEL/DATA, l'écran restant sur THR" },
     { en: "Pick one of the two; each goes with every other mod. The original OUT/THR menu doesn't change, and OUT works as before. Best when only the Cycles or only the device on its MIDI IN plays notes: the Cycles passes on what it receives as it comes in, so notes sent by both can get mixed up (see the guide)",
       fr: "Choisissez l'un des deux ; chacun se combine avec tous les autres mods. Le menu OUT/THR d'origine ne change pas, et OUT marche comme avant. Le mieux est que seul le Cycles ou seul l'appareil branché sur son MIDI IN joue des notes : le Cycles fait suivre ce qu'il reçoit au fil de l'eau, et des notes envoyées par les deux peuvent se mélanger (voir le guide)" },
     { en: "Tested on a Model:Cycles by AveyCole, and checked here in the emulator on the OS's own MIDI code, alone and with the other mods",
       fr: "Testés sur un Model:Cycles par AveyCole, et vérifiés ici en émulation sur le code MIDI de l'OS, seuls et avec les autres mods" },
+  ] },
+  { version: "1.40", date: "2026-10-10", changes: [
+    { en: "New mod by Nico Heuser, Chord Keys: on a CHORD track, the sixteen lower TRIG buttons play the chords of a scale. 1–7 play degrees I to VII, 8–14 the same one octave higher, 15–16 I and II two octaves higher. T1–T6 keep their usual controls",
+      fr: "Nouveau mod de Nico Heuser, Chord Keys : sur une piste CHORD, les seize boutons TRIG du bas jouent les accords d'une gamme. 1–7 jouent les degrés I à VII, 8–14 les mêmes une octave plus haut, 15–16 I et II deux octaves plus haut. T1–T6 gardent leurs commandes habituelles" },
+    { en: "FUNC + RETRIG gains Keys, Root, Scale (seven modes) and a triad, 7th, 9th, 11th or 13th for each degree, saved per track and pattern. SHAPE picks the voicing (BASE, close or open positions) and COLOR the balance of the voices. Four voices maximum; 9ths, 11ths and 13ths omit the fifth",
+      fr: "FUNC + RETRIG gagne Keys, Root, Scale (sept modes) et une triade, 7e, 9e, 11e ou 13e par degré, enregistrés par piste et par pattern. SHAPE choisit la disposition (BASE, positions resserrées ou ouvertes) et COLOR l'équilibre des voix. Quatre voix au maximum ; les 9es, 11es et 13es omettent la quinte" },
+    { en: "Checked in emulation on the OS's own code. Tested on a Model:Cycles, alone and with other mods, including the fix for a note that could stay stuck (TRIG let go while PATTERN was held). Cannot be combined with Model-TG",
+      fr: "Vérifié en émulation sur le code même de l'OS. Testé sur un Model:Cycles, seul et avec d'autres mods, y compris la correction d'une note qui pouvait rester bloquée (TRIG lâché pendant que PATTERN était tenu). Ne se combine pas avec Model-TG" },
   ] },
   { version: "1.38", date: "2026-10-10", changes: [
     { en: "New mod by djd_oz, Volume and pan as numbers: on the main screen, turning LEVEL/DATA shows the selected track's volume (0 to 127) in small digits in place of the loudspeaker; with FUNC held, its pan (-64 to 63) in place of the “R” of the pan bar. The number goes away 3 to 4 seconds after you stop turning. On the main screen, LEVEL/DATA now moves in steps of 1 instead of 2, so the number goes through every value",
