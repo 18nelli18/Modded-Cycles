@@ -1,5 +1,5 @@
     .ifdef SG_DYNAMICS
-    .globl sg_dyn_backup,sg_dyn_step,sg_dyn_restore
+    .globl sg_dyn_backup,sg_dyn_step,sg_dyn_restore,sg_dyn_validate
     .endif
 | Variation par trig, arrêt obligatoire déjà contrôlé par sg_track_write.
 | Stockage fixe OS : 6 pistes × 4385 octets, 64 × 34 mots et 33 indicateurs.
@@ -45,6 +45,39 @@ sdb_out:
     movem.l %sp@,%d2/%a2-%a3
     lea.l %sp@(12),%sp
     rts
+
+| Un changement de pattern ne doit jamais recevoir le snapshot précédent.
+sg_dyn_validate:
+    lea.l %sp@(-12),%sp
+    movem.l %d2/%a2-%a3,%sp@
+    moveal sg_obj,%a2
+    movel %a3,%sp@-
+    moveal %a3@,%a0
+    moveal %a0@(40),%a0
+    jsr %a0@
+    addql #4,%sp
+    cmpl %a2@(996),%d0
+    bnew sdb_fail
+    tstl %a2@(1000)
+    beqw sdb_ok
+    moveal %a3@(44),%a0
+    cmpal %a2@(1004),%a0
+    bnew sdb_fail
+    movel %a3@(56),%d2
+    cmpil #5,%d2
+    bhiw sdb_fail
+    movel %a0,%sp@-
+    moveal %a0@,%a1
+    moveal %a1@(40),%a1
+    jsr %a1@
+    addql #4,%sp
+    tstl %d0
+    beqw sdb_fail
+    muluw #4385,%d2
+    addl %d2,%d0
+    cmpl %a2@(1000),%d0
+    beqw sdb_ok
+    braw sdb_fail
 
     .section .text.sg_dyn_restore,"ax"
 sg_dyn_restore:

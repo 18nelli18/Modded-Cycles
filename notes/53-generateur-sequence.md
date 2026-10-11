@@ -304,7 +304,7 @@ de test. Le générateur principal validé reste octet pour octet identique.
   paramètres et autres pistes conservés. Deux Generate successifs offrent
   Undo de la dernière génération, comme auparavant.
 
-La variante utilise 17 masques, 3714 octets assemblés. Quatre masques 34×34
+La variante utilise 17 masques, 3834 octets assemblés. Quatre masques 34×34
 sont remplacés par des 47×47 : données texte `0x4016b6f8`, rendu `0x4018cd48`,
 édition `0x40171f30`, touches `0x40172608`. Quatre masques ajoutés :
 `0x40179730` (snapshot), `0x40182b38` (restauration), `0x40182e28`
@@ -323,3 +323,5 @@ Start/Stop sont simulées. Aucun rendu audio ou démarrage complet prétendu.
 et ajoutées, PLAY/STOP dans le menu puis Undo, sauvegarde/rechargement d’un
 pattern, comparaison avant/après des locks existants. Cette variante reste
 expérimentale ; le résultat matériel de la version précédente ne la valide pas.
+
+Protection Undo : identité du bloc de piste (+996), du pool et de son bloc par index vérifiée avant toute restauration. Changement de pattern pendant audition : refus sans écriture si ces identités changent. Preuve : même objet avec données remplacées et même pool avec stockage remplacé.

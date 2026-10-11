@@ -13,7 +13,7 @@ import ref_mainos as refs
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 PROD = ROOT / "docs/flasher"
 OUT = ROOT / "docs/flasher-test"
-STAMP = "2026-10-10-scale-gen-dynamics-01"
+STAMP = "2026-10-10-scale-gen-dynamics-02"
 BANNER = '<div class="alert bad" role="alert" id="test-build-notice"><span data-l="en"><strong>TEST: GENERATOR PREVIEW + RANDOMIZATION</strong> — PLAY/STOP inside the menu; optional velocity, decay and pan variation. Emulator checks pass; hardware test pending. <a href="../flasher/">Main flasher</a>.</span><span data-l="fr"><strong>TEST : ÉCOUTE ET VARIATIONS DU GÉNÉRATEUR</strong> — PLAY/STOP dans le menu ; velocity, decay et pan aléatoires en option. Émulation validée ; essai sur machine attendu. <a href="../flasher/">Flasher principal</a>.</span></div>'
 
 def render(cycles, syntakt):

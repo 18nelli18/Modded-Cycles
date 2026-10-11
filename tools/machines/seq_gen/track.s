@@ -57,6 +57,7 @@ stw_valid:
     addql #8,%sp
     tstl %d0
     beqw stw_fail
+    movel %a0,%a1@(788)       | identité des données de piste (+996 de la page)
     .endif
     moveq #0,%d2
 stw_backup:
@@ -126,6 +127,11 @@ sg_track_restore:
     bltw str_fail
     cmpil #64,%d3
     bgtw str_fail
+    .ifdef SG_DYNAMICS
+    jsr sg_dyn_validate
+    tstl %d0
+    beqw str_fail
+    .endif
     movel %a3,%sp@-
     moveal %a3@,%a0
     moveal %a0@(40),%a0

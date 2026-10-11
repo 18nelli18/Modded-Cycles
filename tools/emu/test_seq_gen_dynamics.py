@@ -142,6 +142,21 @@ def main():
         initial=bytes(r.u.mem_read(DEST,722))
         for i in range(3):r.w32(r.s['sg_options']+i*4,1)
         r.call('sg_action_generate');r.drain()
+        changed=bytes(r.u.mem_read(RAW,722))
+        for getter,newptr in ((PGET,PRAW+0x10000),):
+            r.u.mem_write(getter+2,struct.pack('>I',newptr))
+            r.u.ctl_remove_cache(getter,getter+8)
+            r.call('sg_action_undo')
+            assert r.r32(r.s['sg_undo_valid'])==1
+            assert bytes(r.u.mem_read(RAW,722))==changed
+            r.u.mem_write(getter+2,struct.pack('>I',PRAW))
+            r.u.ctl_remove_cache(getter,getter+8)
+        # Objet de piste identique, mais nouvelles données : refus sans écriture.
+        r.w32(OBJ+16,RAW+0x800);r.u.mem_write(RAW+0x800,changed)
+        r.call('sg_action_undo')
+        assert r.r32(r.s['sg_undo_valid'])==1
+        assert bytes(r.u.mem_read(RAW+0x800,722))==changed
+        r.w32(OBJ+16,RAW)
         actual=bytes(r.u.mem_read(DEST,722))
         r.call(0x4005b642,DEST,RAW,0,0xffffffff,0xffffffff)
         assert bytes(r.u.mem_read(DEST,722))==actual
