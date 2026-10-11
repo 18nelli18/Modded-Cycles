@@ -125,6 +125,6 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | Note | Résultat |
 |---|---|
 | [54 — Générateur étendu](54-generateur-etendu.md) | **Expérimental** : plages, modes, mutation, Euclid, son indépendant, mutes et cartouche ; preuves émulation, matériel à tester. |
-| [55 — SCRAMBLE indépendant](55-scramble.md) | **Testé sur machine par AveyCole le 11/10/2026, principal** : SETTINGS + TRACK, quatre paramètres seuls, sans menu ; setter natif et combinaison maximale vérifiés en émulation. |
+| [55 — SCRAMBLE indépendant](55-scramble.md) | **Testé sur machine par AveyCole le 11/10/2026, principal** : SETTINGS + TRACK, quatre paramètres seuls, sans menu ; SCRAMBLE par pas également testé, valeurs fraîches à chaque passage ; setter natif et combinaison maximale vérifiés en émulation. |
 | [56 — Génération différée](56-generation-differee.md) | **Expérimental** : staging privé, commit avant le premier trig, sous-option distincte ; correctif local des modes commun/par piste et banque de lecture prouvé en émulation, sans chaîne. |
 | [57 — Séquences MIDI secondaires](57-pistes-midi-secondaires.md) | **Recherche** : six voies MIDI indépendantes du son interne ; stockage, édition, émission et arrêt des notes à prouver. Aucun firmware proposé. |

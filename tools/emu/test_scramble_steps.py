@@ -138,20 +138,21 @@ def check(r,machines=tuple(range(6))):
     print('ok : combo panneau SETTINGS + TRACK avec trig tenu, sans changer le son de base ; doublon ignoré, relâchement et retrait')
 
 def main():
-    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--syntakt');a=ap.parse_args()
+    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--syntakt');ap.add_argument('--main',action='store_true');a=ap.parse_args()
+    folder='' if a.main else 'experimental/scramble/'
     stock=main_os_from_syx(a.cycles)
     for dep,suffix in [('model-tg',''),('model-tg-st','-st')]:
         base=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/30-{dep}.json').read_text())
-        tweak=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/experimental/scramble/50-scramble{suffix}.json').read_text())
+        tweak=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/{folder}50-scramble{suffix}.json').read_text())
         r=setup(stock,base,tweak);check(r)
     if a.syntakt:
         import gen_flasher_tweaks as catalog
-        tw=catalog.read_js((ROOT/'docs/flasher-test/tweaks.js').read_text())
+        tw=catalog.read_js((ROOT/('docs/flasher/tweaks.js' if a.main else 'docs/flasher-test/tweaks.js')).read_text())
         ids='6ch-usbup model-tg-st sample-preview-st trig-hold arp tempo-max boot-anim multiline-browser midi-live-both level-pan-values trigless-dim syntakt-tg-sd-cp-toy-bits-swarm-macro'.split()
         extras=[next(t for t in tw['tweaks'] if t['id']==i) for i in ids]
-        extras.append(json.loads((ROOT/'tweaks/model-cycles_OS1.13/experimental/queued/49-scale-gen-st-queued.json').read_text()))
+        extras.append(json.loads((ROOT/('tweaks/model-cycles_OS1.13/49-scale-gen-st.json' if a.main else 'tweaks/model-cycles_OS1.13/experimental/queued/49-scale-gen-st-queued.json')).read_text()))
         base=next(t for t in extras if t['id']=='model-tg-st')
-        tweak=json.loads((ROOT/'tweaks/model-cycles_OS1.13/experimental/scramble/50-scramble-st-gen-queued.json').read_text())
+        tweak=json.loads((ROOT/('tweaks/model-cycles_OS1.13/50-scramble-st-gen.json' if a.main else 'tweaks/model-cycles_OS1.13/experimental/scramble/50-scramble-st-gen-queued.json')).read_text())
         check(setup(stock,base,tweak,extras=extras,syntakt_path=a.syntakt),tuple(range(6))+tuple(range(7,13)))
-        print('ok : SCRAMBLE par pas et combo avec générateur différé, tous moteurs et mods compatibles')
+        print('ok : SCRAMBLE par pas et combo avec générateur sélectionné, tous moteurs et mods compatibles')
 if __name__=='__main__':main()

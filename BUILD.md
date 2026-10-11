@@ -482,9 +482,10 @@ Variantes principales sans génération différée. Génération et preuve :
 ```sh
 python3 tools/gen_scramble.py --main --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --check
 python3 tools/emu/test_scramble.py --main --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+python3 tools/emu/test_scramble_steps.py --main --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
 ```
 
-Empreinte principale `model-tg+scale-gen+scramble-gen` : `2e5b580a5451f993b4c1ab3dc79325cf56156a96addab8fdd65a51476e9db950`.
+Empreinte principale `model-tg+scale-gen+scramble-gen` : `9e5b2c2875e5cd942082ab054933a7563f098c8818f14b03ec20e59dd7056ccc`.
 
 ### Test 2 — SEQUENCE GENIE, SCRAMBLE par pas et génération par piste (11/10/2026)
 
@@ -507,3 +508,5 @@ différé et SCRAMBLE par pas : MAIN OS
 `9db3d5fef2b788b99a137e7be81a590a7db21efc0b62c77a5d921b108ffbb28a`.
 861 références de combinaisons, 153 tweaks ; preuves natives et navigateur.
 Les nouveautés restent expérimentales et attendent l'essai matériel d'AveyCole.
+
+SCRAMBLE par pas principal : 1 383 octets dans 12 masques, quatre variantes principales ; valeurs fraîches, sauvegarde/chargement, retrait et combo panneau prouvés avec tous les mods compatibles. Confirmé sur machine par AveyCole le 11/10/2026.

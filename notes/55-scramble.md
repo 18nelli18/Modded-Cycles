@@ -95,3 +95,7 @@ une espace de chaque côté pour élargir sa présentation native. La vraie
 mesure OS avec sa police de popup passe de 47 à 59 pixels ; rendu matériel
 à vérifier. Les variantes principales testées restent
 inchangées. Aucun nouveau résultat matériel ni publication revendiqué.
+
+## Testé sur la machine (11/10/2026) — SCRAMBLE par pas
+
+AveyCole confirme que « The Parameter Locked SCRAMBLE function […] function as intended » avec le test `2026-10-11-test-2-genie-scramble-queue`, puis demande explicitement la publication principale. Promotion des quatre variantes SCRAMBLE, sans génération différée ni nouvelle variante du générateur principal. Maintenir les trigs avant SETTINGS puis TRACK active/retire le marqueur ; valeurs fraîches à chaque passage.

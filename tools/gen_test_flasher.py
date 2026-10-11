@@ -107,7 +107,7 @@ def main():
     entries=iter(descriptions)
     files["app.js"]=re.sub(r'    "scale-gen": \{[^\n]+\},',lambda m:'    "scale-gen": '+json.dumps(next(entries),ensure_ascii=False)+',',files["app.js"])
     for name in ("index.html",):
-        files[name]=re.sub(r"2026-10-10-scale-gen-dynamics-main|2026-10-11-scramble-main|2026-10-11-select-all-main",STAMP,files[name])
+        files[name]=re.sub(r"2026-10-10-scale-gen-dynamics-main|2026-10-11-scramble-main|2026-10-11-select-all-main|2026-10-11-scramble-steps-main",STAMP,files[name])
     notice='<p id="test-build-notice" role="note"><span data-l="en">Experimental expanded generator: ranges, rhythm/notes, mutation, Euclidean rhythm and a larger rounded SEQ. GEN. popup. Sound randomization has been removed. Hardware testing required. Generate and Undo require stopped playback.</span><span data-l="fr">Générateur étendu expérimental : plages, rythme/notes, mutation, rythme euclidien et cartouche SEQ. GEN. agrandi arrondi. Tirage du son retiré. À tester sur la machine. Generate et Undo demandent la lecture arrêtée.</span></p>'
     files["index.html"]=files["index.html"].replace('<main',notice+'\n<main',1)
     if a.second:

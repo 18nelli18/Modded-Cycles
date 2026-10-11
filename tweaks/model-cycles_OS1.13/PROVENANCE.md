@@ -81,3 +81,5 @@ SCRAMBLE élargi, sans modifier les variantes principales testées. L'intro
 SEQUENCE GENIE utilise des glyphes originaux dans `intro_large.s`. La génération
 différée vérifie la vraie banque de lecture et les modes commun/par piste.
 Générateurs `gen_scramble.py` et `gen_seq_gen.py`, notes 55/56. Expérimental.
+
+SCRAMBLE par pas : code original, hook constructeur événement et marqueur de trig, note 55 ; dépend de Model-TG (TinyGregAudio, MIT). Testé sur machine par AveyCole le 11/10/2026 et promu au flasher principal sur sa demande.

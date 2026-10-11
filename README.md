@@ -148,3 +148,5 @@ This project stands on the work of others, all MIT licensed:
 
 If these mods are useful to you, you can support the project on **[Ko-fi](https://ko-fi.com/18nelli)**.
 Questions, feedback and feature requests are welcome on the **[Discord](https://discord.gg/hWegtJZcmm)**; bug reports also fit in the [issues](https://github.com/18nelli18/Modded-Cycles/issues).
+
+Step SCRAMBLE is hardware tested by AveyCole (11 October 2026) and available in the main flasher. Hold one or more trigs, then SETTINGS and TRACK, to toggle fresh random values for the four machine controls each pass; the base sound stays unchanged.
