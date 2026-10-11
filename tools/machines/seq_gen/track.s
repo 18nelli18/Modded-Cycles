@@ -49,6 +49,15 @@ stw_valid:
     beqw stw_fail
     moveal %d0,%a0
     moveal %a2,%a1
+    .ifdef SG_DYNAMICS
+    lea.l %sp@(-8),%sp
+    movem.l %a0-%a1,%sp@
+    jsr sg_dyn_backup
+    movem.l %sp@,%a0-%a1
+    addql #8,%sp
+    tstl %d0
+    beqw stw_fail
+    .endif
     moveq #0,%d2
 stw_backup:
     moveb %a0@+,%d1
@@ -84,6 +93,9 @@ stw_flags:
     movel %a3,%sp@-
     jsr 0x40016642            | même événement de modification que les flags
     lea.l %sp@(12),%sp
+    .ifdef SG_DYNAMICS
+    jsr sg_dyn_step
+    .endif
     addql #1,%d2
     cmpl %d4,%d2
     bltw stw_step
@@ -130,6 +142,9 @@ str_copy:
     addql #1,%d2
     cmpil #722,%d2
     blts str_copy
+    .ifdef SG_DYNAMICS
+    jsr sg_dyn_restore
+    .endif
     moveq #0,%d2
 str_notify:
     moveq #0,%d0

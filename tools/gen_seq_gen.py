@@ -19,6 +19,7 @@ import tempfile
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE / "emu"))
 import build
+import sprites
 from test_sdvintage import main_os_from_syx
 
 SRC = HERE / "machines/seq_gen"
@@ -54,21 +55,39 @@ def symbols(cross, elf):
     return result
 
 
-def compile_code(cross, tg, scroll=False):
+BASE_SLOTS = list(SLOTS)
+
+def configure_slots(dynamics=False):
+    SLOTS[:] = BASE_SLOTS
+    if not dynamics:
+        return
+    # Masques 47×47 libres, contrôle des références et conflits avant livraison.
+    for i,va in ((4,0x4016b6f8),(9,0x4018cd48),(11,0x40171f30),(12,0x40172608)):
+        SLOTS[i] = (va,sprites.MASKS[va][1],SLOTS[i][2])
+    for va,sections in (
+        (0x40179730,[".text.sg_dyn_backup"]),
+        (0x40182b38,[".text.sg_dyn_restore"]),
+        (0x40182e28,[".text.sg_dyn_step"]),
+        (0x4018d1b8,[".text.sg_option",".data.sg_options",".rodata.sg_options"]),
+    ):
+        SLOTS.append((va,sprites.MASKS[va][1],sections))
+
+def compile_code(cross, tg, scroll=False, dynamics=False):
     """Place chaque section dans un masque et refuse tout dépassement du slot."""
+    configure_slots(dynamics)
     with tempfile.TemporaryDirectory() as tmp:
         p = pathlib.Path(tmp)
         defs = "\n".join(f"TG_{n} = {tg[n]};" for n in TG_NAMES)
         script = defs + "\nSECTIONS {\n"
         for i, (va, _, sections) in enumerate(SLOTS):
             script += f" .slot{i} {va:#x} : {{ " + " ".join(f"*({s})" for s in sections) + " }\n"
-            script += f' ASSERT(SIZEOF(.slot{i}) <= 272, "masque {i} plein")\n'
+            script += f' ASSERT(SIZEOF(.slot{i}) <= {sprites.MASKS[va][0]}, "masque {i} plein")\n'
         script += ' .unused : { *(.text) *(.data) *(.bss) }\n ASSERT(SIZEOF(.unused) == 0, "section non placee")\n}\n'
         (p / "link.ld").write_text(script)
         objects = []
-        for name in ("seq_gen", "key", "track", "menu"):
+        for name in ("seq_gen", "key", "track", "menu", "dynamics"):
             obj = p / (name + ".o")
-            subprocess.run([cross + "as", "-march=cfv4e", *(["--defsym", "SG_SCROLL=1"] if scroll else []), "-o", str(obj), str(SRC / (name + ".s"))], check=True)
+            subprocess.run([cross + "as", "-march=cfv4e", *(["--defsym", "SG_SCROLL=1"] if scroll else []), *(["--defsym", "SG_DYNAMICS=1"] if dynamics else []), "-o", str(obj), str(SRC / (name + ".s"))], check=True)
             objects.append(str(obj))
         elf = p / "seq_gen.elf"
         subprocess.run([cross + "ld", "--orphan-handling=error", "-T", str(p / "link.ld"),
@@ -90,15 +109,15 @@ def generate(main, base, blobs, syms, tg):
         return {"off": va - build.BASE, "old": old.hex(), "new": new.hex()}
 
     writes = []
-    shared = raw(SHARED, 272)
     for (va, ptr, _), blob in zip(SLOTS, blobs):
-        assert raw(va, 272) == shared, f"masque différent : {va:#x}"
+        size, _, _, kept = sprites.MASKS[va]
+        assert raw(va, size) == raw(kept, size), f"masque différent : {va:#x}"
         assert raw(ptr, 4) == struct.pack(">I", va), f"référence différente : {ptr:#x}"
         # Les références alignées doivent se limiter au constructeur documenté.
         refs = [build.BASE + off for off in range(0, len(main) - 3, 2)
                 if main[off:off + 4] == struct.pack(">I", va)]
         assert refs == [ptr], f"références supplémentaires : {va:#x} {refs}"
-        writes.append(write(ptr, raw(ptr, 4), struct.pack(">I", SHARED)))
+        writes.append(write(ptr, raw(ptr, 4), struct.pack(">I", kept)))
         writes.append(write(va, raw(va, len(blob)), blob))
     hook = next(w for w in base["writes"] if w["off"] == 0x4007240c - build.BASE)
     assert bytes.fromhex(hook["new"]) == b"\x4e\xf9" + struct.pack(">I", tg["key_hook"])
@@ -121,14 +140,15 @@ def main():
     ap.add_argument("--cross", default=os.environ.get("M68K_CROSS", "m68k-elf-"))
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--scroll", action="store_true", default=True, help="variante de test à quatre lignes défilantes")
+    ap.add_argument("--dynamics", action="store_true", help="transport et variations, flasher de test uniquement")
     args = ap.parse_args()
     assert subprocess.check_output(["git", "-C", str(args.model_tg), "rev-parse", "HEAD"], text=True).strip() == COMMIT
     subprocess.run(["git", "-C", str(args.model_tg), "diff", "--quiet", "HEAD"], check=True)
     stock = main_os_from_syx(args.cycles)
     assert hashlib.sha256(stock).hexdigest() == STOCK, "OS officiel 1.13 requis"
     tg = symbols(args.cross, args.model_tg / "build/_b.elf")
-    blobs, syms = compile_code(args.cross, tg, args.scroll)
-    out = OUT
+    blobs, syms = compile_code(args.cross, tg, args.scroll, args.dynamics)
+    out = OUT / "experimental/dynamics" if args.dynamics else OUT
     out.mkdir(parents=True, exist_ok=True)
     for name in ("model-tg", "model-tg-st"):
         base = json.loads((HERE.parent / f"tweaks/model-cycles_OS1.13/30-{name}.json").read_text())
@@ -136,6 +156,11 @@ def main():
         if args.scroll:
             tweak["name"] = "Générateur en gamme — menu défilant"
             tweak["description"][2] = "Quatre lignes défilantes, police conservée et marges renforcées. Testé sur machine par AveyCole le 10/10/2026."
+        if args.dynamics:
+            tweak["name"] = "Générateur — transport et variations (expérimental)"
+            tweak["description"][0] += " Trois options : velocity, decay et pan."
+            tweak["description"][1] = "PLAY/STOP dans la page ; édition arrêtée. Undo restaure notes, velocity et p-locks."
+            tweak["description"][2] = "Preuve en émulation requise ; aucun test matériel annoncé."
         build.apply_writes(stock, [base, tweak])
         path = out / ("49-" + tweak["id"] + ".json")
         text = json.dumps(tweak, indent=1, ensure_ascii=False) + "\n"
@@ -143,7 +168,7 @@ def main():
             assert path.read_text() == text, f"{path} n'est pas à jour"
         else:
             path.write_text(text)
-        print(f"ok : {path.name}, {sum(map(len, blobs))} octets, 13 masques vérifiés ; " + ("menu défilant" if args.scroll else "menu principal"))
+        print(f"ok : {path.name}, {sum(map(len, blobs))} octets, {len(SLOTS)} masques vérifiés ; " + ("menu défilant" if args.scroll else "menu principal"))
 
 
 if __name__ == "__main__":

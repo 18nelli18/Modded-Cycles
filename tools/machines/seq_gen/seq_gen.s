@@ -1,3 +1,6 @@
+    .ifdef SG_DYNAMICS
+    .globl sg_random
+    .endif
 | Générateur de notes : aucune écriture dans le pattern avant validation.
 | sg_generate(a0=config, a1=sortie 64 octets) -> d0=nombre de trigs, -1 si invalide.
 | config : 7 longs BE {longueur, densité, note_min, note_max, gamme, tonalité, graine}.

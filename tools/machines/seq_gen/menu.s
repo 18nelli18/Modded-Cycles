@@ -1,3 +1,16 @@
+    .ifdef SG_DYNAMICS
+    .globl sg_obj,sg_options,sg_config
+    .endif
+| SG_DYNAMICS : variante expérimentale, commandes et paramètres aléatoires.
+    .ifdef SG_DYNAMICS
+    .equ SG_GO,8
+    .equ SG_UNDO,9
+    .equ SG_LAST,9
+    .else
+    .equ SG_GO,5
+    .equ SG_UNDO,6
+    .equ SG_LAST,6
+    .endif
 | Page du générateur : construction adaptée de Model-TG (TinyGregAudio, MIT),
 | commit 70b39dd ; licence dans tweaks/model-cycles_OS1.13/LICENSE-Model-TG.
 | SG_SCROLL : variante à quatre lignes du flasher de test (notes/53 §10).
@@ -42,7 +55,11 @@ sg_o_cp:
     .section .text.sg_open_allocate,"ax"
 sg_o_allocate:
     lea.l   0x400802e0,%a3        | operator new
+        .ifdef SG_DYNAMICS
+    pea     0x1600
+    .else
     pea     0x500
+    .endif
     jsr     %a3@
     addql   #4,%sp
     tstl    %d0
@@ -123,6 +140,12 @@ sg_menu_key:
     movel %d2,%sp@-
     jsr 0x4007240c
     addql #4,%sp
+    .ifdef SG_DYNAMICS
+    cmpil #10,%d0
+    beqw smk_transport
+    cmpil #11,%d0
+    beqw smk_transport
+    .endif
     cmpil #32,%d0
     beqw smk_data
     cmpil #12,%d0
@@ -137,6 +160,14 @@ sg_menu_key:
     beqw smk_close
     | Page modale : pas de jeu/édition ni transport pendant une transaction.
     braw smk_used
+    .ifdef SG_DYNAMICS
+smk_transport:
+    moveal %d2,%a0
+    btst #1,%a0@(19)       | FUNC reste consommé ; transport simple seulement
+    bnew smk_used
+    moveq #0,%d0
+    braw smk_return
+    .endif
 smk_data:
     movel %d2,%sp@-
     jsr 0x40072434
@@ -144,10 +175,20 @@ smk_data:
     tstb %d0
     beqw smk_used
     movel sg_row,%d0
-    cmpil #5,%d0
+    cmpil #SG_GO,%d0
     beqw smk_generate
-    cmpil #6,%d0
+    cmpil #SG_UNDO,%d0
     beqw smk_undo
+    .ifdef SG_DYNAMICS
+    cmpil #5,%d0
+    bltw smk_edit
+    subql #5,%d0
+    lea.l sg_options,%a0
+    moveq #1,%d1
+    eorl %d1,%a0@(0,%d0:l:4)
+    braw smk_redraw
+smk_edit:
+    .endif
     moveq #1,%d0
     eorl %d0,sg_edit
     braw smk_redraw
@@ -176,6 +217,7 @@ smk_close:
     addql #4,%sp
 smk_used:
     moveq #1,%d0
+smk_return:
     movem.l %sp@,%d2/%a2
     lea.l %sp@(8),%sp
     rts
@@ -208,7 +250,7 @@ sme_sign:
     bnew sme_value
     addl %d3,%d2
     bmiw sme_out
-    cmpil #6,%d2
+    cmpil #SG_LAST,%d2
     bgtw sme_out
     movel %d2,sg_row
     braw sme_redraw
@@ -310,9 +352,9 @@ sg_view_start:
     bplw smr_view_nonnegative
     moveq #0,%d5
 smr_view_nonnegative:
-    cmpil #3,%d5
+    cmpil #(SG_LAST-3),%d5
     blew smr_view_ready
-    moveq #3,%d5
+    moveq #(SG_LAST-3),%d5
 smr_view_ready:
     movel %d5,%d3
     jmp smr_loop
@@ -323,7 +365,7 @@ smr_view_ready:
 smr_loop:
     lea.l sg_labels,%a0
     moveal %a0@(0,%d3:l:4),%a2
-    cmpil #5,%d3
+    cmpil #SG_GO,%d3
     bnew smr_label
     tstl sg_error
     beqw smr_label
@@ -348,8 +390,12 @@ smr_label:
     movel %d2,%sp@-
     jsr 0x40071a04
     lea.l %sp@(28),%sp
-    cmpil #5,%d3
+    cmpil #SG_GO,%d3
     bgew smr_action
+    .ifdef SG_DYNAMICS
+    cmpil #5,%d3
+    bgew smr_option
+    .endif
     moveq #0,%d0
     tstl %d3
     bnew smr_root
@@ -391,11 +437,24 @@ smr_value:
     jsr 0x40071a04
     lea.l %sp@(28),%sp
     braw smr_next
+    .ifdef SG_DYNAMICS
+    .section .text.sg_option,"ax"
+smr_option:
+    movel %d3,%d0
+    subql #5,%d0
+    lea.l sg_options,%a0
+    tstl %a0@(0,%d0:l:4)
+    lea.l sg_off,%a2
+    beqw smr_string
+    lea.l sg_on,%a2
+    braw smr_string
+    .section .text.sg_render,"ax"
+    .endif
 smr_action:
     jmp smr_action_body
     .section .text.sg_render_tail,"ax"
 smr_action_body:
-    cmpil #6,%d3
+    cmpil #SG_UNDO,%d3
     bnew smr_next
     lea.l sg_no_undo,%a2
     tstl sg_undo_valid
@@ -537,7 +596,11 @@ sg_error: .long 0
 sg_config: .long 16,50,48,72,0,0,0x6d2b79f5
 sg_vt: .space 0xb0
     .section .rodata.sg_menu,"a"
-sg_labels: .long sg_scale,sg_root,sg_low,sg_high,sg_density,sg_go,sg_undo
+sg_labels: .long sg_scale,sg_root,sg_low,sg_high,sg_density
+    .ifdef SG_DYNAMICS
+    .long sg_velocity,sg_decay,sg_pan
+    .endif
+    .long sg_go,sg_undo
 sg_scales: .long sg_chrom,sg_major,sg_minor,sg_dorian,sg_penta
 sg_keys: .long sg_c,sg_cs,sg_d,sg_ds,sg_e,sg_f,sg_fs,sg_g,sg_gs,sg_a,sg_as,sg_b
 sg_scale: .asciz "Scale"
@@ -569,3 +632,14 @@ sg_fmt_d: .asciz "%d"
 sg_ready: .asciz "Ready"
 sg_no_undo: .asciz "--"
 sg_error_text: .asciz "Check range/stop"
+
+    .ifdef SG_DYNAMICS
+    .section .data.sg_options,"aw"
+sg_options: .long 0,0,0
+    .section .rodata.sg_options,"a"
+sg_velocity: .asciz "Rand velocity"
+sg_decay: .asciz "Rand decay"
+sg_pan: .asciz "Rand pan"
+sg_on: .asciz "On"
+sg_off: .asciz "Off"
+    .endif

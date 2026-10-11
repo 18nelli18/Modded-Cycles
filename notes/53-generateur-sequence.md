@@ -272,3 +272,54 @@ Preuve : `test_seq_gen_menu.py --scroll` parcourt les sept sélections, en navig
 ## 11. Menu défilant testé sur machine et promu (10/10/2026)
 
 Après sa demande « update main flasher », AveyCole précise : « everything is tested on hardware ». Ce retour confirme la mise en page défilante proposée dans le flasher de test. Promotion des mêmes octets dans les variantes principales, avec statut `tested` conservé, version 1.44 et documentation bilingue. Le générateur utilise désormais les quatre lignes par défaut. La page de test suit le catalogue principal.
+
+## 12. Essai transport et variations (10/10/2026)
+
+Demande d’AveyCole dans la conversation : écouter avec PLAY dans la page sans
+perdre Undo, puis ajouter trois interrupteurs velocity, decay et pan.
+Variante `--dynamics`, exclusivement dans `experimental/dynamics/` et le flasher
+de test. Le générateur principal validé reste octet pour octet identique.
+
+- `[FAIT]` PLAY=10, STOP=11. Retour 0 dans la page pour ces touches simples ;
+  FUNC et RECORD restent consommés. La boucle de vues `0x4007739e` atteint la
+  vue transport stock `0x4002439a`. Aucun appel direct au moteur depuis la page.
+- `[FAIT]` Velocity : octet `+128+pas` dans les 722 octets, setter
+  `0x400166c2`. Valeurs générées 1..127 (pas de note silencieuse).
+- `[FAIT]` Amp Decay : slot 18 ; Pan : slot 22 (centre 64). Descripteurs
+  `0x4010dce0`, entrées 24 et 28 : minimum 0, maximum `0x7f00` en 8.8.
+  Setter de piste `0x4001646a`, pool `0x4000dece` : valeurs et compte de
+  verrous du pas, puis indicateur du paramètre. Valeurs générées 0..127.
+- `[FAIT]` Pool accessible par piste `+44`, index `+56`, getter vtable `+40`.
+  Stockage fixe : six blocs de 4385 octets. Chaque bloc contient 64 lignes
+  de 68 octets (33 mots de valeurs et un mot compte), puis 33 indicateurs.
+  Pas de réserve dynamique à épuiser. Snapshot des 4385 octets de la seule
+  piste, restauré avant notification globale du pool et notifications de notes.
+- `[FAIT]` Page allouée à `0x1600` octets ; sauvegarde de notes à +208,
+  notes générées +930, pointeurs +1000/+1004, snapshot verrous +1008.
+  Allocation totale 5632, fin du snapshot 5393. Arrêt requis avant écriture
+  ou Undo ; lecture ne détruit pas les snapshots. Les options se commutent
+  par clic DATA, démarrent Off et s’appliquent à Generate seulement.
+- `[FAIT]` Dix lignes dans la fenêtre de quatre lignes ; les options sont
+  Rand velocity, Rand decay et Rand pan. Repos, pas hors longueur, autres
+  paramètres et autres pistes conservés. Deux Generate successifs offrent
+  Undo de la dernière génération, comme auparavant.
+
+La variante utilise 17 masques, 3714 octets assemblés. Quatre masques 34×34
+sont remplacés par des 47×47 : données texte `0x4016b6f8`, rendu `0x4018cd48`,
+édition `0x40171f30`, touches `0x40172608`. Quatre masques ajoutés :
+`0x40179730` (snapshot), `0x40182b38` (restauration), `0x40182e28`
+(variations), `0x4018d1b8` (rendu/options). Redirection de chacun vers
+`0x40172220`. Copies et références uniques contrôlées sur l’OS officiel,
+audit du fork et des quatre branches upstream sans conflit nouveau.
+
+`[FAIT en émulation]` `test_seq_gen_dynamics.py` : deux bases Model-TG,
+huit combinaisons d’options × longueurs 1/16/64, vrais setters OS, comptes
+cohérents, autres pistes intactes, Undo exact de tous les octets ; refus
+pendant la lecture ; dix lignes et clics des trois interrupteurs.
+Vraie chaîne contrôleur/vtable/transport ; seules les frontières matérielles
+Start/Stop sont simulées. Aucun rendu audio ou démarrage complet prétendu.
+
+`[À FAIRE]` Essai sur matériel : options seules et ensemble, machines stock
+et ajoutées, PLAY/STOP dans le menu puis Undo, sauvegarde/rechargement d’un
+pattern, comparaison avant/après des locks existants. Cette variante reste
+expérimentale ; le résultat matériel de la version précédente ne la valide pas.

@@ -45,3 +45,9 @@ Statut expérimental, aucune validation matérielle ; seulement dans `docs/flash
 Variante de test `experimental/scroll/49-scale-gen*.json` : même origine TinyGregAudio/Model-TG (MIT), mise en page à quatre lignes défilantes dans les mêmes masques, générée par `tools/gen_seq_gen.py --scroll` (notes/53 §10). Réservée au flasher de test ; affichage matériel en attente.
 
 Le 10/10/2026, AveyCole confirme le menu défilant sur machine. Les variantes de `experimental/scroll/` sont promues dans `49-scale-gen*.json` ; le générateur assemble ce menu par défaut. Voir notes/53 §11.
+
+Variante expérimentale du générateur (10/10/2026) : PLAY/STOP dans la page,
+velocity/decay/pan optionnels. Code original de ce fork ; construction de page
+adaptée de Model-TG (TinyGregAudio, MIT, pin inchangé). Générateur
+`tools/gen_seq_gen.py --dynamics`, preuve `tools/emu/test_seq_gen_dynamics.py`,
+notes/53 §12. Test flasher seulement, résultat matériel attendu.

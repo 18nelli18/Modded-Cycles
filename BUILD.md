@@ -399,3 +399,18 @@ Testé sur Model:Cycles par AveyCole le 10/10/2026 (notes/53). Les fichiers `49-
 python3 tools/gen_seq_gen.py --help
 python3 tools/gen_flasher_tweaks.py --check
 ```
+
+### Générateur : transport et variations expérimentaux (test flasher)
+
+```sh
+python3 tools/gen_seq_gen.py --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --dynamics --check
+python3 tools/emu/test_seq_gen_dynamics.py --cycles firmware/model-cycles_OS1.13.syx
+python3 tools/emu/test_seq_gen_space.py --dynamics
+python3 tools/gen_test_flasher.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --check
+MC_TEST_PAGE=docs/flasher-test node tools/webflash_seq_gen_check.js firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42.syx
+```
+
+La version principale reste inchangée ; les deux JSON de test se trouvent dans
+`tweaks/model-cycles_OS1.13/experimental/dynamics/`. Empreintes du catalogue
+complet et de 767 combinaisons recalculées dans le flasher de test. Essai matériel
+attendu avant promotion ; réglages et limites dans notes/53 §12.
