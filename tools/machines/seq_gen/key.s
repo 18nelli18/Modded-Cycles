@@ -8,6 +8,10 @@
 sg_key:
     moveal %sp@(4),%a0
     movel %a0@(12),%d0
+    .ifdef SG_ADVANCED
+    cmpil #2,%d0
+    beqw sg_sound_key
+    .endif
     moveq #15,%d1
     cmpl %d1,%d0
     bnew sg_key_pass

@@ -121,3 +121,5 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
 | Écran 128 × 64 : tampon de dessin, envoi des blocs changés, repère des `Bitmap` | `*0x401492f0`, `0x4008e622` ; **y = 0 en bas**, x = 0 à gauche ([39 §2](39-animation-demarrage.md)) | non analysé |
 
 Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10/10/2026**, disponible dans le flasher principal.
+
+| [54 — Générateur étendu](54-generateur-etendu.md) | **Expérimental** : plages, modes, mutation, Euclid, son indépendant, mutes et cartouche ; preuves émulation, matériel à tester. |

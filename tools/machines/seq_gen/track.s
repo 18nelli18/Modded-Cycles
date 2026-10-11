@@ -23,10 +23,27 @@ sg_track_write:
     cmpil #64,%d4
     bgtw stw_out
     | Valider toutes les notes AVANT de modifier quoi que ce soit.
+    .ifdef SG_ADVANCED
+    movel %a3,%sp@-
+    moveal %a3@,%a0
+    moveal %a0@(40),%a0
+    jsr %a0@
+    addql #4,%sp
+    tstl %d0
+    beqw stw_fail
+    moveal %d0,%a0
+    moveal %a4,%a1
+    movel %d4,%d0
+    jsr sg_advanced_steps
+    .endif
     moveq #0,%d2
 stw_check:
     moveq #0,%d1
     moveb %a4@(0,%d2:l),%d1
+    .ifdef SG_ADVANCED
+    cmpil #254,%d1
+    beqs stw_valid
+    .endif
     cmpil #255,%d1
     beqs stw_valid
     cmpil #127,%d1
@@ -60,6 +77,10 @@ stw_valid:
     movel %a0,%a1@(788)       | identité des données de piste (+996 de la page)
     .endif
     moveq #0,%d2
+    .ifdef SG_ADVANCED
+    jmp stw_backup
+    .section .text.sg_track_apply,"ax"
+    .endif
 stw_backup:
     moveb %a0@+,%d1
     moveb %d1,%a1@+
@@ -68,6 +89,11 @@ stw_backup:
     blts stw_backup
     moveq #0,%d2
 stw_step:
+    .ifdef SG_ADVANCED
+    moveb %a4@(0,%d2:l),%d0
+    cmpib #254,%d0
+    beqw stw_next
+    .endif
     movel %a3,%sp@-
     moveal %a3@,%a0
     moveal %a0@(40),%a0
@@ -78,6 +104,11 @@ stw_step:
     moveb %a4@(0,%d2:l),%d3
     moveq #0,%d1
     movew %a0@(0,%d2:l:2),%d1
+    .ifdef SG_ADVANCED
+    movel sg_advanced+24,%d0
+    cmpil #2,%d0
+    beqw stw_flags
+    .endif
     cmpil #255,%d3
     beqs stw_rest
     andil #65533,%d1           | pas de trigless en même temps qu'un trig note
@@ -97,6 +128,7 @@ stw_flags:
     .ifdef SG_DYNAMICS
     jsr sg_dyn_step
     .endif
+stw_next:
     addql #1,%d2
     cmpl %d4,%d2
     bltw stw_step

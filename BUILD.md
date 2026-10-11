@@ -419,3 +419,20 @@ preuve dynamique et menu OS, 767 références recalculées identiques, builds
 navigateur et audit de chevauchements validés. `relocate_6ch.py --check` présente
 un écart préexistant dans les écritures de `11-6ch-usbup.json` ; le fichier
 est vérifié identique à HEAD et reste inchangé dans cette promotion.
+
+## Générateur étendu expérimental (notes/54)
+
+Les JSON de `experimental/advanced/` remplacent les deux variantes du générateur
+dans le catalogue autonome de test. Ils ne sont pas chargés par le build principal.
+
+```sh
+python3 tools/gen_seq_gen.py --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --advanced --check
+python3 tools/emu/test_seq_gen_advanced.py --cycles firmware/model-cycles_OS1.13.syx
+python3 tools/emu/test_seq_gen_space.py --advanced --upstream ../upstream-cycles --git origin/main
+python3 tools/gen_test_flasher.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --check
+MC_TEST_PAGE=docs/flasher-test node tools/webflash_seq_gen_check.js firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42.syx
+```
+
+Le flasher principal conserve les écritures déjà testées sur machine. Le test
+étendu demande l’arrêt pour Generate, Random sound et les deux Undo ; PLAY/STOP
+et FUNC + pads restent utilisables dans la page.

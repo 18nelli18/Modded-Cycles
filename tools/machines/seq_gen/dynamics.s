@@ -120,10 +120,15 @@ sg_dyn_step:
     tstl sg_options
     beqw sds_decay
     jsr sg_random
+    .ifdef SG_ADVANCED
+    lea.l sg_advanced,%a0
+    jsr sg_random_range
+    .else
     divuw #127,%d0
     swap %d0
     andil #65535,%d0
     addql #1,%d0
+    .endif
     movel %d0,%sp@-
     movel %d2,%sp@-
     movel %a3,%sp@-
@@ -147,7 +152,16 @@ sds_done:
     rts
 sg_dyn_lock:
     jsr sg_random
+    .ifdef SG_ADVANCED
+    lea.l sg_advanced+8,%a0
+    cmpil #18,%d3
+    beqs sds_range
+    addql #8,%a0
+sds_range:
+    jsr sg_random_range
+    .else
     andil #127,%d0
+    .endif
     lsll #8,%d0
     movel %d0,%sp@-
     movel %d3,%sp@-

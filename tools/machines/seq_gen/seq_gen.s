@@ -73,8 +73,19 @@ sg_steps:
     swap %d0
     andil #65535,%d0
     moveq #-1,%d1
+    .ifdef SG_ADVANCED
+    tstl sg_advanced+32
+    bnew sg_pick_note
+    movel sg_advanced+24,%d1
+    cmpil #2,%d1
+    beqw sg_pick_note
+    moveq #-1,%d1
+    .endif
     cmpl %a2@(4),%d0
     bccs sg_store
+    .ifdef SG_ADVANCED
+sg_pick_note:
+    .endif
     bsrw sg_random
     divuw %d5,%d0
     swap %d0

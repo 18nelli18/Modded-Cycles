@@ -32,7 +32,7 @@ async function main() {
   const production = {window: {}};
   vm.runInNewContext(fs.readFileSync(path.join(root, "docs/flasher/tweaks.js"), "utf8"), production);
   const old = production.window.MC_TWEAKS, tw = w.MC_TWEAKS, app = w.MCFlasherApp;
-  const isTest = false; // Catalogue validé partagé entre les deux pages.
+  const isTest = test !== path.join(root, "docs/flasher");
   for (const f of old.features) {
     const want = isTest && f.id === "scale-gen" ? {...f, status: "experimental"} : f;
     assert.equal(JSON.stringify(tw.features.find(x=>x.id===f.id)), JSON.stringify(want));

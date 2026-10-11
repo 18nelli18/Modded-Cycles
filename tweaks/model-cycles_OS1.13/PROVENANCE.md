@@ -53,3 +53,12 @@ adaptée de Model-TG (TinyGregAudio, MIT, pin inchangé). Générateur
 notes/53 §12. Test flasher seulement, résultat matériel attendu.
 
 Transport et variations du générateur : test matériel confirmé par AveyCole le 10/10/2026, promus au catalogue principal 1.45 sans changement des écritures validées.
+
+### Générateur étendu expérimental — 10/10/2026
+
+`experimental/advanced/49-scale-gen*.json`, assemblage original Codex à la demande
+d’AveyCole ; base de la page adaptée de TinyGregAudio/Model-TG (MIT, commit
+70b39dd). Plages, modes de régénération, mutation, Euclid, tirage du son, mutes
+et cartouche : `tools/gen_seq_gen.py --advanced`, notes/54. Catalogue autonome
+`docs/flasher-test/`, aucun changement du principal. Preuves émulation et
+navigateur ; pas de résultat matériel pour ces extensions.

@@ -1,7 +1,15 @@
     .ifdef SG_DYNAMICS
     .globl sg_obj,sg_options,sg_config
     .endif
+    .ifdef SG_ADVANCED
+    .globl sme_out,sme_redraw,smr_num,smr_string,sg_off,sg_on,sg_undo_valid,sg_error,sg_row
+    .endif
 | SG_DYNAMICS : variante expérimentale, commandes et paramètres aléatoires.
+    .ifdef SG_ADVANCED
+    .equ SG_GO,20
+    .equ SG_UNDO,21
+    .equ SG_LAST,23
+    .else
     .ifdef SG_DYNAMICS
     .equ SG_GO,8
     .equ SG_UNDO,9
@@ -10,6 +18,7 @@
     .equ SG_GO,5
     .equ SG_UNDO,6
     .equ SG_LAST,6
+    .endif
     .endif
 | Page du générateur : construction adaptée de Model-TG (TinyGregAudio, MIT),
 | commit 70b39dd ; licence dans tweaks/model-cycles_OS1.13/LICENSE-Model-TG.
@@ -51,6 +60,10 @@ sg_o_cp:
     movel   %d0,%a1@(0x4c)
     movel   #sg_enc_th,%d0
     movel   %d0,%a1@(0x60)
+    .ifdef SG_ADVANCED
+    movel #sg_pad,%d0
+    movel %d0,%a1@(0x9c)
+    .endif
     jmp sg_o_allocate
     .section .text.sg_open_allocate,"ax"
 sg_o_allocate:
@@ -73,6 +86,10 @@ sg_o_allocate:
     movel   %a0,%a4@              | vptr principal
     lea.l   %a1@(0x58),%a0
     movel   %a0,%a4@(4)           | base +4 (événements encodeur)
+    .ifdef SG_ADVANCED
+    lea.l %a1@(0x94),%a0
+    movel %a0,%a4@(16)
+    .endif
     pea     0x10                  | détenteur de référence, comme l’ouverture OS
     jsr     %a3@                  | construite à 0x4001ca40
     addql   #4,%sp
@@ -89,6 +106,15 @@ sg_o_holder:
     clrl sg_edit
     clrl sg_undo_valid
     clrl sg_error
+    .ifdef SG_ADVANCED
+    clrl sg_sound_valid
+    clrl sg_func
+    clrl sg_pads
+    movel TG_blk_clk,%d0
+    movel %d0,sg_intro_time
+    moveq #1,%d0
+    movel %d0,sg_intro
+    .endif
     moveq   #1,%d1
     movel   #0x401000c4,%d0
     movel   %d0,%a0@
@@ -124,11 +150,17 @@ sg_dtor0:
     lea.l   sg_obj,%a0
     clrl    %a0@
     clrl    sg_undo_valid
+    .ifdef SG_ADVANCED
+    clrl sg_sound_valid
+    .endif
     jmp     0x400f43ca
 sg_dtor1:
     lea.l   sg_obj,%a0
     clrl    %a0@
     clrl    sg_undo_valid
+    .ifdef SG_ADVANCED
+    clrl sg_sound_valid
+    .endif
     jmp     0x400f4486
 
     .section .text.sg_menu_key,"ax"
@@ -145,6 +177,10 @@ sg_menu_key:
     beqw smk_transport
     cmpil #11,%d0
     beqw smk_transport
+    .endif
+    .ifdef SG_ADVANCED
+    cmpil #1,%d0
+    beqw smk_func
     .endif
     cmpil #32,%d0
     beqw smk_data
@@ -168,6 +204,14 @@ smk_transport:
     moveq #0,%d0
     braw smk_return
     .endif
+    .ifdef SG_ADVANCED
+smk_func:
+    moveal %d2,%a0
+    movel %a0@(16),%d0
+    andil #1,%d0
+    movel %d0,sg_func
+    braw smk_used
+    .endif
 smk_data:
     movel %d2,%sp@-
     jsr 0x40072434
@@ -179,6 +223,13 @@ smk_data:
     beqw smk_generate
     cmpil #SG_UNDO,%d0
     beqw smk_undo
+    .ifdef SG_ADVANCED
+    cmpil #22,%d0
+    beqw smk_sound
+    cmpil #23,%d0
+    beqw smk_sound_undo
+    bra smk_edit
+    .else
     .ifdef SG_DYNAMICS
     cmpil #5,%d0
     bltw smk_edit
@@ -187,11 +238,20 @@ smk_data:
     moveq #1,%d1
     eorl %d1,%a0@(0,%d0:l:4)
     braw smk_redraw
-smk_edit:
     .endif
+    .endif
+smk_edit:
     moveq #1,%d0
     eorl %d0,sg_edit
     braw smk_redraw
+    .ifdef SG_ADVANCED
+smk_sound:
+    jsr sg_sound_generate
+    braw smk_redraw
+smk_sound_undo:
+    jsr sg_sound_undo
+    braw smk_redraw
+    .endif
 smk_generate:
     jsr sg_action_generate
     braw smk_redraw
@@ -280,6 +340,10 @@ sme_range:
     jmp sme_range_body
     .section .text.sg_enc_range,"ax"
 sme_range_body:
+    .ifdef SG_ADVANCED
+    cmpil #5,%d2
+    bgew sg_advanced_edit
+    .endif
     lea.l sg_config,%a0
     cmpil #2,%d2
     bnew sme_high
@@ -322,6 +386,10 @@ sme_out:
 
     .section .text.sg_render,"ax"
 sg_render:
+    .ifdef SG_ADVANCED
+    tstl sg_intro
+    bnew sg_intro_render
+    .endif
     .ifdef SG_SCROLL
     jmp sg_render_start
     .section .text.sg_render_start,"ax"
@@ -392,9 +460,14 @@ smr_label:
     lea.l %sp@(28),%sp
     cmpil #SG_GO,%d3
     bgew smr_action
+    .ifdef SG_ADVANCED
+    cmpil #5,%d3
+    bgew sg_advanced_value
+    .else
     .ifdef SG_DYNAMICS
     cmpil #5,%d3
     bgew smr_option
+    .endif
     .endif
     moveq #0,%d0
     tstl %d3
@@ -454,6 +527,16 @@ smr_action:
     jmp smr_action_body
     .section .text.sg_render_tail,"ax"
 smr_action_body:
+    .ifdef SG_ADVANCED
+    cmpil #23,%d3
+    bnew smr_sequence_undo
+    lea.l sg_no_undo,%a2
+    tstl sg_sound_valid
+    beqw smr_string
+    lea.l sg_ready,%a2
+    braw smr_string
+smr_sequence_undo:
+    .endif
     cmpil #SG_UNDO,%d3
     bnew smr_next
     lea.l sg_no_undo,%a2
@@ -597,10 +680,19 @@ sg_config: .long 16,50,48,72,0,0,0x6d2b79f5
 sg_vt: .space 0xb0
     .section .rodata.sg_menu,"a"
 sg_labels: .long sg_scale,sg_root,sg_low,sg_high,sg_density
+    .ifdef SG_ADVANCED
+    .long sg_velocity,sg_vlow,sg_vhigh,sg_decay,sg_dlow,sg_dhigh,sg_pan,sg_plow,sg_phigh
+    .long sg_target,sg_mutation,sg_rhythm,sg_hits,sg_rotate,sg_sound_amount
+    .else
     .ifdef SG_DYNAMICS
     .long sg_velocity,sg_decay,sg_pan
     .endif
+    .endif
     .long sg_go,sg_undo
+    .ifdef SG_ADVANCED
+    .long sg_sound_go,sg_sound_back
+    .section .rodata.sg_names,"a"
+    .endif
 sg_scales: .long sg_chrom,sg_major,sg_minor,sg_dorian,sg_penta
 sg_keys: .long sg_c,sg_cs,sg_d,sg_ds,sg_e,sg_f,sg_fs,sg_g,sg_gs,sg_a,sg_as,sg_b
 sg_scale: .asciz "Scale"
@@ -608,6 +700,9 @@ sg_root: .asciz "Root"
 sg_low: .asciz "Low note"
 sg_high: .asciz "High note"
 sg_density: .asciz "Density %"
+    .ifdef SG_ADVANCED
+    .section .rodata.sg_names2,"a"
+    .endif
 sg_go: .asciz "Generate"
 sg_undo: .asciz "Undo"
 sg_chrom: .asciz "CHROM"
@@ -636,10 +731,31 @@ sg_error_text: .asciz "Check range/stop"
     .ifdef SG_DYNAMICS
     .section .data.sg_options,"aw"
 sg_options: .long 0,0,0
+    .ifdef SG_ADVANCED
+    .globl sg_advanced
+sg_advanced: .long 1,127,0,127,0,127,0,100,0,4,0,25
+    .endif
     .section .rodata.sg_options,"a"
 sg_velocity: .asciz "Rand velocity"
 sg_decay: .asciz "Rand decay"
 sg_pan: .asciz "Rand pan"
+    .ifdef SG_ADVANCED
+    .section .rodata.sg_advanced,"a"
+sg_vlow: .asciz "Vel min"
+sg_vhigh: .asciz "Vel max"
+sg_dlow: .asciz "Decay min"
+sg_dhigh: .asciz "Decay max"
+sg_plow: .asciz "Pan min"
+sg_phigh: .asciz "Pan max"
+sg_target: .asciz "Regenerate"
+sg_mutation: .asciz "Mutation %"
+sg_rhythm: .asciz "Rhythm"
+sg_hits: .asciz "Euclid hits"
+sg_rotate: .asciz "Rotation"
+sg_sound_amount: .asciz "Sound amount %"
+sg_sound_go: .asciz "Random sound"
+sg_sound_back: .asciz "Undo sound"
+    .endif
 sg_on: .asciz "On"
 sg_off: .asciz "Off"
     .endif
