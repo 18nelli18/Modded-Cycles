@@ -19,12 +19,14 @@ ROOT = HERE.parents[1]
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--upstream", type=pathlib.Path)
+    ap.add_argument("--scroll", action="store_true")
     ap.add_argument("--git", action="append", default=[])
     args = ap.parse_args()
-    prototypes = [json.loads((ROOT / f"tweaks/model-cycles_OS1.13/49-{n}.json").read_text())
+    folder = "experimental/scroll/" if args.scroll else ""
+    prototypes = [json.loads((ROOT / f"tweaks/model-cycles_OS1.13/{folder}49-{n}.json").read_text())
                   for n in ("scale-gen", "scale-gen-st")]
     dev, tweaks = audit.load_dir(ROOT)
-    sources = [("fork", tweaks + prototypes)]
+    sources = [("fork", [t for t in tweaks if t["id"] not in ("scale-gen", "scale-gen-st")] + prototypes)]
     if args.git:
         assert args.upstream, "--upstream requis avec --git"
         audit.ROOT = args.upstream.resolve()

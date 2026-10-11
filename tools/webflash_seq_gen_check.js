@@ -32,14 +32,17 @@ async function main() {
   const production = {window: {}};
   vm.runInNewContext(fs.readFileSync(path.join(root, "docs/flasher/tweaks.js"), "utf8"), production);
   const old = production.window.MC_TWEAKS, tw = w.MC_TWEAKS, app = w.MCFlasherApp;
+  const isTest = Boolean(process.env.MC_TEST_PAGE);
   for (const f of old.features) {
-    assert.equal(JSON.stringify(tw.features.find(x=>x.id===f.id)), JSON.stringify(f));
+    const want = isTest && f.id === "scale-gen" ? {...f, status: "experimental"} : f;
+    assert.equal(JSON.stringify(tw.features.find(x=>x.id===f.id)), JSON.stringify(want));
     assert.ok(doc.getElementById("feat-"+f.id));
   }
   assert.equal(tw.features.length, old.features.length);
   assert.equal(tw.tweaks.length, old.tweaks.length);
-  assert.match(doc.getElementById("mod-scale-gen").textContent, /Tested/);
-  console.log(`ok : all ${old.features.length} existing cards retained, hardware-tested generator included, no automatic MIDI request`);
+  assert.match(doc.getElementById("mod-scale-gen").textContent, isTest ? /Experimental/ : /Tested/);
+  if (isTest) assert.ok(doc.getElementById("test-build-notice"));
+  console.log(`ok : all ${old.features.length} existing cards retained, generator included, no automatic MIDI request`);
   const click = id => doc.getElementById("feat-"+id).click();
   click("scale-gen");
   assert.ok(doc.getElementById("feat-model-tg").checked);
@@ -51,7 +54,7 @@ async function main() {
   assert.equal(doc.getElementById("feat-scale-gen").checked, false);
   app.applyLang("fr");
   assert.match(doc.getElementById("mod-scale-gen").textContent, /Générateur de séquence/);
-  assert.ok(doc.querySelector('#mod-scale-gen a[href="../guide/#scale-gen"]'));
+  assert.ok(doc.querySelector(isTest ? '#mod-scale-gen a[href="guide.html#scale-gen"]' : '#mod-scale-gen a[href="../guide/#scale-gen"]'));
   assert.match(fs.readFileSync(path.join(root, "docs/guide/index.html"), "utf8"), /id="scale-gen"/);
   console.log("ok : automatic Model-TG dependency, combined variant, cascading deselection, French text and local guide");
   app.applyLang("en");

@@ -41,3 +41,5 @@ page adaptée de Model-TG (TinyGregAudio, commit `70b39dd6787770ebefc7a2d78dea16
 MIT, `LICENSE-Model-TG`). Génération de notes/trigs en gamme et Undo, à la demande
 d'aveycole ; `tools/gen_seq_gen.py`, sources `tools/machines/seq_gen/`, note 53.
 Statut expérimental, aucune validation matérielle ; seulement dans `docs/flasher-test/`.
+
+Variante de test `experimental/scroll/49-scale-gen*.json` : même origine TinyGregAudio/Model-TG (MIT), mise en page à quatre lignes défilantes dans les mêmes masques, générée par `tools/gen_seq_gen.py --scroll` (notes/53 §10). Réservée au flasher de test ; affichage matériel en attente.

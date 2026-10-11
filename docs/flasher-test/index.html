@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Model:Cycles Flasher</title>
+<title>Scrolling Generator Test — Model:Cycles Flasher</title>
 <meta name="description" content="Install mods on the Elektron Model:Cycles from your browser, over USB in about 30 seconds (Web MIDI). No firmware is provided or uploaded: you bring your own official OS file.">
 <meta name="theme-color" content="#e3e2de" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b1b1b" media="(prefers-color-scheme: dark)">
@@ -11,14 +11,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-10-scale-gen-main">
-<link rel="stylesheet" href="style.css?v=2026-10-10-scale-gen-main">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-10-scale-gen-scroll-01">
+<link rel="stylesheet" href="style.css?v=2026-10-10-scale-gen-scroll-01">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="flasher">
 <script>
   // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-  window.MC_BUILD = "2026-10-10-scale-gen-main";
+  window.MC_BUILD = "2026-10-10-scale-gen-scroll-01";
   window.addEventListener("error", function (e) {
     var b = document.getElementById("errbar");
     if (!b) return;
@@ -42,6 +42,7 @@
 </header>
 
 <main class="wrap fl">
+  <div class="alert bad" role="alert" id="test-build-notice"><span data-l="en"><strong>TEST: SCROLLING GENERATOR MENU</strong> — Four visible rows with more spacing and margins. Turn DATA to scroll. The generation engine is unchanged; this display layout awaits a hardware check. <a href="../flasher/">Main flasher</a>.</span><span data-l="fr"><strong>TEST : MENU DU GÉNÉRATEUR DÉFILANT</strong> — Quatre lignes visibles, plus espacées et avec des marges. Tournez DATA pour défiler. Le moteur de génération est inchangé ; cet affichage attend un essai sur machine. <a href="../flasher/">Flasher principal</a>.</span></div>
   <div class="fl-head">
     <h1 data-i18n="title">Model:Cycles Flasher</h1>
     <div>
@@ -244,11 +245,12 @@
 </footer>
 
 <!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
-<script src="../assets/release.js?v=2026-10-10-scale-gen-main"></script>
-<script src="../assets/site.js?v=2026-10-10-scale-gen-main"></script>
-<script src="builder.js?v=2026-10-10-scale-gen-main"></script>
-<script src="../flasher/tweaks.js?v=2026-10-10-scale-gen-main"></script>
-<script src="flasher.js?v=2026-10-10-scale-gen-main"></script>
-<script src="app.js?v=2026-10-10-scale-gen-main"></script>
+<script src="../assets/release.js?v=2026-10-10-scale-gen-scroll-01"></script>
+<script src="../assets/site.js?v=2026-10-10-scale-gen-scroll-01"></script>
+<script src="builder.js?v=2026-10-10-scale-gen-scroll-01"></script>
+<script src="../flasher/tweaks.js?v=2026-10-10-scale-gen-scroll-01"></script>
+<script src="tweaks.js?v=2026-10-10-scale-gen-scroll-01"></script>
+<script src="flasher.js?v=2026-10-10-scale-gen-scroll-01"></script>
+<script src="app.js?v=2026-10-10-scale-gen-scroll-01"></script>
 </body>
 </html>

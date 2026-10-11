@@ -260,3 +260,11 @@ Les fichiers officiels restent ignorés ; aucune image firmware n'est distribué
 ## 9. Testé sur la machine (10/10/2026)
 
 AveyCole rapporte : « Tested on real hardware, it works, go ahead and add it to my main ». Le générateur du flasher de test fonctionne sur son Model:Cycles. Les options exactes installées et les machines essayées ne sont pas précisées ; ce retour ne prouve pas chaque combinaison. À sa demande, promotion dans le flasher principal et statut `tested`, sans changement des octets du firmware.
+
+## 10. Menu défilant de test (10/10/2026)
+
+AveyCole signale que le texte du menu est coupé en haut et en bas, et accepte la proposition de quatre lignes défilantes. La page de test conserve la police système, affiche quatre lignes espacées de 15 pixels aux ordonnées 49, 34, 19 et 4, et garde une marge haute et basse. La première option affichée vaut `min(3, max(0, sélection - 2))` : les sept options restent accessibles. Le cadre de sélection couvre 14 pixels et se limite aux valeurs pendant l'édition.
+
+`gen_seq_gen.py --scroll` assemble le même source avec `SG_SCROLL=1`, dans les treize masques déjà réservés (3 149 octets). Les variantes sont rangées dans `tweaks/model-cycles_OS1.13/experimental/scroll/`, sans remplacer les JSON du principal. Le générateur normal `--check` confirme que les octets du principal n'ont pas changé. `gen_test_flasher.py` remplace les deux variantes dans le catalogue de la seule page de test et recalcule ses empreintes MAIN OS et par mod depuis les fichiers officiels.
+
+Preuve : `test_seq_gen_menu.py --scroll` parcourt les sept sélections, en navigation et en édition, vérifie les lignes visibles, les marges, le cadre et la conservation de D5, puis rejoue Generate/Undo, transport, bornes, allocation, construction/destruction et réouverture pour les deux bases Model-TG. Les appels de dessin restent interceptés : l'aspect physique de la police doit être confirmé sur l'écran réel. Le statut testé du principal concerne la version précédente ; cette mise en page reste expérimentale dans le flasher de test.

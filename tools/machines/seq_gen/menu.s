@@ -1,6 +1,6 @@
 | Page du générateur : construction adaptée de Model-TG (TinyGregAudio, MIT),
 | commit 70b39dd ; licence dans tweaks/model-cycles_OS1.13/LICENSE-Model-TG.
-| Prototype : emulation requise avant réservation des masques et export flasher.
+| SG_SCROLL : variante à quatre lignes du flasher de test (notes/53 §10).
     .section .text.sg_open,"ax"
     .globl sg_open
 sg_open:
@@ -280,9 +280,18 @@ sme_out:
 
     .section .text.sg_render,"ax"
 sg_render:
+    .ifdef SG_SCROLL
+    jmp sg_render_start
+    .section .text.sg_render_start,"ax"
+sg_render_start:
+    lea.l %sp@(-20),%sp
+    movem.l %d2-%d5/%a2,%sp@
+    movel %sp@(28),%d2
+    .else
     lea.l %sp@(-16),%sp
     movem.l %d2-%d4/%a2,%sp@
     movel %sp@(24),%d2
+    .endif
     clrl %sp@-
     pea 63
     pea 127
@@ -291,7 +300,26 @@ sg_render:
     movel %d2,%sp@-
     jsr 0x40070dea
     lea.l %sp@(24),%sp
+    .ifdef SG_SCROLL
+    jmp sg_view_start
+    .section .text.sg_view_start,"ax"
+sg_view_start:
+    | Quatre lignes de 15 pixels ; sélection centrée, marges aux extrémités.
+    movel sg_row,%d5
+    subql #2,%d5
+    bplw smr_view_nonnegative
+    moveq #0,%d5
+smr_view_nonnegative:
+    cmpil #3,%d5
+    blew smr_view_ready
+    moveq #3,%d5
+smr_view_ready:
+    movel %d5,%d3
+    jmp smr_loop
+    .section .text.sg_render,"ax"
+    .else
     moveq #0,%d3
+    .endif
 smr_loop:
     lea.l sg_labels,%a0
     moveal %a0@(0,%d3:l:4),%a2
@@ -302,8 +330,14 @@ smr_loop:
     lea.l sg_error_text,%a2
 smr_label:
     movel %d3,%d4
+    .ifdef SG_SCROLL
+    subl %d5,%d4
+    muluw #15,%d4
+    moveq #49,%d0
+    .else
     muluw #9,%d4
     moveq #55,%d0
+    .endif
     subl %d4,%d0
     movel %a2,%sp@-
     pea sg_fmt_s
@@ -344,7 +378,11 @@ smr_num:
     pea sg_fmt_d
 smr_value:
     pea 0x14
+    .ifdef SG_SCROLL
+    moveq #49,%d0
+    .else
     moveq #55,%d0
+    .endif
     subl %d4,%d0
     movel %d0,%sp@-
     pea 125
@@ -366,16 +404,32 @@ smr_action_body:
     braw smr_string
 smr_next:
     addql #1,%d3
+    .ifdef SG_SCROLL
+    movel %d3,%d0
+    subl %d5,%d0
+    cmpil #4,%d0
+    .else
     cmpil #7,%d3
+    .endif
     bltw smr_loop
     pea -1
     movel sg_row,%d0
+    .ifdef SG_SCROLL
+    subl %d5,%d0
+    muluw #15,%d0
+    moveq #62,%d1
+    .else
     muluw #9,%d0
     moveq #63,%d1
+    .endif
     subl %d0,%d1
     movel %d1,%sp@-
     pea 127
+    .ifdef SG_SCROLL
+    subil #13,%d1
+    .else
     subql #8,%d1
+    .endif
     movel %d1,%sp@-
     moveq #0,%d0
     tstl sg_edit
@@ -386,8 +440,13 @@ smr_cursor:
     movel %d2,%sp@-
     jsr 0x40070dea
     lea.l %sp@(24),%sp
+    .ifdef SG_SCROLL
+    movem.l %sp@,%d2-%d5/%a2
+    lea.l %sp@(20),%sp
+    .else
     movem.l %sp@,%d2-%d4/%a2
     lea.l %sp@(16),%sp
+    .endif
     rts
 
     .section .text.sg_action,"ax"

@@ -155,11 +155,13 @@ class Rig:
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--cycles", required=True)
+    ap.add_argument("--scroll", action="store_true")
     args = ap.parse_args()
     stock = main_os_from_syx(args.cycles)
+    folder = "experimental/scroll/" if args.scroll else ""
     for variant, dep in (("scale-gen", "model-tg"), ("scale-gen-st", "model-tg-st")):
         base = json.loads((ROOT / f"tweaks/model-cycles_OS1.13/30-{dep}.json").read_text())
-        tweak = json.loads((ROOT / f"tweaks/model-cycles_OS1.13/49-{variant}.json").read_text())
+        tweak = json.loads((ROOT / f"tweaks/model-cycles_OS1.13/{folder}49-{variant}.json").read_text())
         r = Rig(stock, base, tweak)
         r.call(0x4007240c, r.event(13, 1, 1))
         assert r.call(0x4007240c, r.event(15, 1, 2)) == 0
@@ -170,8 +172,29 @@ def main():
         r.call(0x4007240c, r.event(15, 16, 3))
         r.call(0x4007240c, r.event(13, 16, 4))
         r.call("sg_render", obj, 0x93006000)
-        assert len(r.texts) == 13, r.texts
-        assert [t[2] for t in r.texts if t[0] == 2] == ["Scale", "Root", "Low note", "High note", "Density %", "Generate", "Undo"]
+        labels = ["Scale", "Root", "Low note", "High note", "Density %", "Generate", "Undo"]
+        assert len(r.texts) == (8 if args.scroll else 13), r.texts
+        assert [t[2] for t in r.texts if t[0] == 2] == labels[:4 if args.scroll else 7]
+        if args.scroll:
+            for row in range(7):
+                for editing in (0, 1):
+                    r.w32(r.s["sg_row"], row)
+                    r.w32(r.s["sg_edit"], editing)
+                    r.u.reg_write(mk.UC_M68K_REG_D5, 0x12345678)
+                    r.texts.clear(); r.rects.clear()
+                    r.call("sg_render", obj, 0x93006000)
+                    assert r.u.reg_read(mk.UC_M68K_REG_D5) == 0x12345678
+                    first = min(3, max(0, row - 2))
+                    shown = [t for t in r.texts if t[0] == 2]
+                    assert [t[2] for t in shown] == labels[first:first + 4]
+                    assert [t[1] for t in shown] == [49, 34, 19, 4]
+                    assert all(4 <= t[1] <= 49 for t in r.texts)
+                    ctx, x, bottom, right, top, color = r.rects[-1]
+                    assert (x, right, color) == (64 if editing else 0, 127, 0xffffffff)
+                    assert top == 62 - 15 * (row - first) and bottom == top - 13
+                    assert 4 <= bottom < top <= 62
+            r.w32(r.s["sg_row"], 0); r.w32(r.s["sg_edit"], 0)
+            print(f"ok : {variant}, quatre lignes, sept sélections, édition, marges et registre D5 conservé")
         r.knob(1)
         assert r.r32(r.s["sg_row"]) == 1
         r.knob(-1)
@@ -209,7 +232,7 @@ def main():
         r.call("sg_open")
         assert r.r32(r.s["sg_obj"]) and r.r32(r.s["sg_row"]) == 0
         assert r.r32(r.s["sg_undo_valid"]) == 0
-        print(f"ok : {variant}, ouverture par vrai lecteur Model-TG, vtables, rendu 7 lignes, encodeur +/- et clic, Generate/Undo, transport, réouverture")
+        print(f"ok : {variant}, ouverture par vrai lecteur Model-TG, vtables, rendu, options, encodeur +/- et clic, Generate/Undo, transport, réouverture")
         # Bornes réelles des champs : la rotation ne déborde jamais.
         for row, offset, value, lo, hi in ((2, 8, 48, 0, 72),
                                           (3, 12, 72, 48, 127),
