@@ -23,8 +23,9 @@ def main():
     ap.add_argument("--git", action="append", default=[])
     ap.add_argument("--dynamics", action="store_true")
     ap.add_argument("--advanced", action="store_true")
+    ap.add_argument("--sequence-only",action="store_true")
     args = ap.parse_args()
-    folder = "experimental/advanced/" if args.advanced else ""
+    folder = "experimental/sequence-only/" if args.sequence_only else "experimental/advanced/" if args.advanced else ""
     prototypes = [json.loads((ROOT / f"tweaks/model-cycles_OS1.13/{folder}49-{n}.json").read_text())
                   for n in ("scale-gen", "scale-gen-st")]
     dev, tweaks = audit.load_dir(ROOT)

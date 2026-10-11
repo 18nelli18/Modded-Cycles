@@ -130,6 +130,7 @@ sg_intro_seq: .asciz "SEQ."
 sg_intro_gen: .asciz "GEN."
 sg_intro_fmt: .asciz "%s"
 
+    .ifndef SG_SEQUENCE_ONLY
     .section .text.sg_sound_key,"ax"
 | SETTINGS + TRACK : accès distinct aux réglages du son, sans tirage automatique.
 sg_sound_key:
@@ -192,4 +193,5 @@ ssk_pass:
     beqw ssk_eat
 ssk_chain:
     jmp TG_key_hook
+    .endif
     .endif

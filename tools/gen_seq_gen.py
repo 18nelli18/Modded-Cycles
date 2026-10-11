@@ -73,7 +73,7 @@ def configure_slots(dynamics=False):
     ):
         SLOTS.append((va,sprites.MASKS[va][1],sections))
 
-def compile_code(cross, tg, scroll=False, dynamics=False, advanced=False):
+def compile_code(cross, tg, scroll=False, dynamics=False, advanced=False, sequence_only=False):
     """Place chaque section dans un masque et refuse tout dépassement du slot."""
     configure_slots(dynamics)
     with tempfile.TemporaryDirectory() as tmp:
@@ -86,7 +86,7 @@ def compile_code(cross, tg, scroll=False, dynamics=False, advanced=False):
         script += ' .unused : { *(.text) *(.data) *(.bss) }\n ASSERT(SIZEOF(.unused) == 0, "section non placee")\n}\n'
         (p / "link.ld").write_text(script)
         objects = []
-        for name in ("seq_gen", "key", "track", "menu", "dynamics", "advanced", "sound", "performance"):
+        for name in ("seq_gen", "key", "track", "menu", "dynamics", "advanced", "sound", "performance", "rows", "intro_large"):
             obj = p / (name + ".o")
             source = SRC / (name + ".s")
             if advanced:
@@ -103,7 +103,7 @@ def compile_code(cross, tg, scroll=False, dynamics=False, advanced=False):
                 body = re.sub(r"^[ \t]*b(ra|sr|ne|eq|lt|gt|le|ge|hi|ls|cc|cs|mi|pl)w[ \t]+(\w+)[ \t]*(?:\|[^\n]*)?$",far_branch, source.read_text(), flags=re.M)
                 source = p / (name + ".s")
                 source.write_text(body)
-            subprocess.run([cross + "as", "-march=cfv4e", *(["--defsym", "SG_SCROLL=1"] if scroll else []), *(["--defsym", "SG_DYNAMICS=1"] if dynamics else []), *(["--defsym", "SG_ADVANCED=1"] if advanced else []), "-o", str(obj), str(source)], check=True)
+            subprocess.run([cross + "as", "-march=cfv4e", *(["--defsym", "SG_SCROLL=1"] if scroll else []), *(["--defsym", "SG_DYNAMICS=1"] if dynamics else []), *(["--defsym", "SG_ADVANCED=1"] if advanced else []), *(["--defsym", "SG_SEQUENCE_ONLY=1"] if sequence_only else []), "-o", str(obj), str(source)], check=True)
             objects.append(str(obj))
         if advanced:
             # Allocation déterministe parmi les masques sans écriture d'un autre mod.
@@ -189,6 +189,7 @@ def main():
     ap.add_argument("--cycles", required=True)
     ap.add_argument("--model-tg", type=pathlib.Path, required=True)
     ap.add_argument("--cross", default=os.environ.get("M68K_CROSS", "m68k-elf-"))
+    ap.add_argument("--sequence-only",action="store_true",help="générateur sans aucun runtime de tirage du son")
     ap.add_argument("--advanced", action="store_true", help="extension expérimentale : plages, mutation, Euclid et son")
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--scroll", action="store_true", default=True, help="variante de test à quatre lignes défilantes")
@@ -199,8 +200,9 @@ def main():
     stock = main_os_from_syx(args.cycles)
     assert hashlib.sha256(stock).hexdigest() == STOCK, "OS officiel 1.13 requis"
     tg = symbols(args.cross, args.model_tg / "build/_b.elf")
-    blobs, syms = compile_code(args.cross, tg, args.scroll, args.dynamics, args.advanced)
-    out = OUT / "experimental/advanced" if args.advanced else OUT
+    blobs, syms = compile_code(args.cross, tg, args.scroll, args.dynamics, args.advanced, args.sequence_only)
+    assert not args.sequence_only or args.advanced, "--sequence-only exige --advanced"
+    out = OUT / ("experimental/sequence-only" if args.sequence_only else "experimental/advanced") if args.advanced else OUT
     out.mkdir(parents=True, exist_ok=True)
     for name in ("model-tg", "model-tg-st"):
         base = json.loads((HERE.parent / f"tweaks/model-cycles_OS1.13/30-{name}.json").read_text())
@@ -216,7 +218,10 @@ def main():
         if args.advanced:
             tweak["name"] = "Générateur avancé et variations du son (expérimental)"
             tweak["description"] = ["SETTINGS + PAGE : plages velocity/decay/pan, Both/Rhythm/Notes, mutation, Euclid et rotation.", "Random sound indépendant, cinq paramètres selon les bornes de la machine active ; Sampler exclu. Undo séparés, arrêt avant édition.", "Expérimental : preuves émulation requises, non testé sur matériel. tools/gen_seq_gen.py --advanced, notes/54."]
-        build.apply_writes(stock, [base, tweak])
+        if args.sequence_only:
+            tweak["name"]="Générateur étendu — sans tirage du son (expérimental)"
+            tweak["description"]=["SETTINGS + PAGE : plages velocity/decay/pan, rythme/notes, mutation et Euclid.","PLAY/STOP et FUNC + pads dans la page. Generate/Undo arrêtés. Cartouche agrandi arrondi.","Aucun code de tirage du son ; tools/gen_seq_gen.py --advanced --sequence-only, notes/54."]
+        build.apply_writes(stock,[base,tweak])
         path = out / ("49-" + tweak["id"] + ".json")
         text = json.dumps(tweak, indent=1, ensure_ascii=False) + "\n"
         if args.check:

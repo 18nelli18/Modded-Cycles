@@ -436,3 +436,17 @@ MC_TEST_PAGE=docs/flasher-test node tools/webflash_seq_gen_check.js firmware/mod
 Le flasher principal conserve les écritures déjà testées sur machine. Le test
 étendu demande l’arrêt pour Generate, Random sound et les deux Undo ; PLAY/STOP
 et FUNC + pads restent utilisables dans la page.
+
+### Remplacement séquence seul après incident matériel
+
+Le catalogue de test utilise maintenant `experimental/sequence-only/`, sans
+aucune fonction de tirage du son. Les sorties `advanced/` sont historiques et
+ne sont plus proposées par le flasher. Construction :
+
+```sh
+python3 tools/gen_seq_gen.py --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --advanced --sequence-only --check
+python3 tools/emu/test_seq_gen_sequence_only.py --cycles firmware/model-cycles_OS1.13.syx
+python3 tools/emu/test_seq_gen_space.py --sequence-only --upstream ../upstream-cycles --git origin/main
+```
+
+Generate et Undo exigent toujours l’arrêt ; transport et mutes restent disponibles.

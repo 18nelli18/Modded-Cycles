@@ -62,3 +62,8 @@ d’AveyCole ; base de la page adaptée de TinyGregAudio/Model-TG (MIT, commit
 et cartouche : `tools/gen_seq_gen.py --advanced`, notes/54. Catalogue autonome
 `docs/flasher-test/`, aucun changement du principal. Preuves émulation et
 navigateur ; pas de résultat matériel pour ces extensions.
+
+Remplacement expérimental séquence seul : `experimental/sequence-only/`, même
+origine et licence, `--advanced --sequence-only`. Suppression complète des routines
+son ; cartouche agrandi avec glyphes originaux. 6238 octets / 48 masques, notes/54
+§7. Preuves émulation/navigateur ; validation matérielle attendue.

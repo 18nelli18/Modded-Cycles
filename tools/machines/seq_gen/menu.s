@@ -107,7 +107,9 @@ sg_o_holder:
     clrl sg_undo_valid
     clrl sg_error
     .ifdef SG_ADVANCED
+    .ifndef SG_SEQUENCE_ONLY
     clrl sg_sound_valid
+    .endif
     clrl sg_func
     clrl sg_pads
     movel TG_blk_clk,%d0
@@ -151,7 +153,9 @@ sg_dtor0:
     clrl    %a0@
     clrl    sg_undo_valid
     .ifdef SG_ADVANCED
+    .ifndef SG_SEQUENCE_ONLY
     clrl sg_sound_valid
+    .endif
     .endif
     jmp     0x400f43ca
 sg_dtor1:
@@ -159,7 +163,9 @@ sg_dtor1:
     clrl    %a0@
     clrl    sg_undo_valid
     .ifdef SG_ADVANCED
+    .ifndef SG_SEQUENCE_ONLY
     clrl sg_sound_valid
+    .endif
     .endif
     jmp     0x400f4486
 
@@ -219,10 +225,14 @@ smk_data:
     tstb %d0
     beqw smk_used
     movel sg_row,%d0
+    .ifdef SG_SEQUENCE_ONLY
+    jsr sg_map_row
+    .endif
     cmpil #SG_GO,%d0
     beqw smk_generate
     cmpil #SG_UNDO,%d0
     beqw smk_undo
+    .ifndef SG_SEQUENCE_ONLY
     .ifdef SG_ADVANCED
     cmpil #22,%d0
     beqw smk_sound
@@ -240,10 +250,12 @@ smk_data:
     braw smk_redraw
     .endif
     .endif
+    .endif
 smk_edit:
     moveq #1,%d0
     eorl %d0,sg_edit
     braw smk_redraw
+    .ifndef SG_SEQUENCE_ONLY
     .ifdef SG_ADVANCED
 smk_sound:
     jsr sg_sound_generate
@@ -251,6 +263,7 @@ smk_sound:
 smk_sound_undo:
     jsr sg_sound_undo
     braw smk_redraw
+    .endif
     .endif
 smk_generate:
     jsr sg_action_generate
@@ -310,11 +323,21 @@ sme_sign:
     bnew sme_value
     addl %d3,%d2
     bmiw sme_out
+    .ifdef SG_SEQUENCE_ONLY
+    jsr sg_ui_last
+    cmpl %d0,%d2
+    .else
     cmpil #SG_LAST,%d2
+    .endif
     bgtw sme_out
     movel %d2,sg_row
     braw sme_redraw
 sme_value:
+    .ifdef SG_SEQUENCE_ONLY
+    movel %d2,%d0
+    jsr sg_map_row
+    movel %d0,%d2
+    .endif
     tstl %d2
     bnew sme_root
     moveq #0,%d0
@@ -388,7 +411,11 @@ sme_out:
 sg_render:
     .ifdef SG_ADVANCED
     tstl sg_intro
+    .ifdef SG_SEQUENCE_ONLY
+    bnew sg_large_intro
+    .else
     bnew sg_intro_render
+    .endif
     .endif
     .ifdef SG_SCROLL
     jmp sg_render_start
@@ -420,9 +447,20 @@ sg_view_start:
     bplw smr_view_nonnegative
     moveq #0,%d5
 smr_view_nonnegative:
+    .ifdef SG_SEQUENCE_ONLY
+    jsr sg_ui_last
+    subql #3,%d0
+    bpls smr_last_nonnegative
+    moveq #0,%d0
+smr_last_nonnegative:
+    cmpl %d0,%d5
+    blew smr_view_ready
+    movel %d0,%d5
+    .else
     cmpil #(SG_LAST-3),%d5
     blew smr_view_ready
     moveq #(SG_LAST-3),%d5
+    .endif
 smr_view_ready:
     movel %d5,%d3
     jmp smr_loop
@@ -431,6 +469,11 @@ smr_view_ready:
     moveq #0,%d3
     .endif
 smr_loop:
+    .ifdef SG_SEQUENCE_ONLY
+    movel %d3,%d0
+    jsr sg_map_row
+    movel %d0,%d3
+    .endif
     lea.l sg_labels,%a0
     moveal %a0@(0,%d3:l:4),%a2
     cmpil #SG_GO,%d3
@@ -439,7 +482,13 @@ smr_loop:
     beqw smr_label
     lea.l sg_error_text,%a2
 smr_label:
+    .ifdef SG_SEQUENCE_ONLY
+    movel %d3,%d0
+    jsr sg_unmap_row
+    movel %d0,%d4
+    .else
     movel %d3,%d4
+    .endif
     .ifdef SG_SCROLL
     subl %d5,%d4
     muluw #15,%d4
@@ -527,6 +576,7 @@ smr_action:
     jmp smr_action_body
     .section .text.sg_render_tail,"ax"
 smr_action_body:
+    .ifndef SG_SEQUENCE_ONLY
     .ifdef SG_ADVANCED
     cmpil #23,%d3
     bnew smr_sequence_undo
@@ -537,6 +587,7 @@ smr_action_body:
     braw smr_string
 smr_sequence_undo:
     .endif
+    .endif
     cmpil #SG_UNDO,%d3
     bnew smr_next
     lea.l sg_no_undo,%a2
@@ -545,7 +596,17 @@ smr_sequence_undo:
     lea.l sg_ready,%a2
     braw smr_string
 smr_next:
+    .ifdef SG_SEQUENCE_ONLY
+    movel %d3,%d0
+    jsr sg_unmap_row
+    movel %d0,%d3
+    .endif
     addql #1,%d3
+    .ifdef SG_SEQUENCE_ONLY
+    jsr sg_ui_last
+    cmpl %d0,%d3
+    bgtw smr_highlight
+    .endif
     .ifdef SG_SCROLL
     movel %d3,%d0
     subl %d5,%d0
@@ -554,6 +615,7 @@ smr_next:
     cmpil #7,%d3
     .endif
     bltw smr_loop
+smr_highlight:
     pea -1
     movel sg_row,%d0
     .ifdef SG_SCROLL

@@ -47,3 +47,20 @@ disponibles pour l’investigation, sans nouveau résultat matériel positif.
 
 Nouvelle demande : mod son indépendant, combo direct sans menu, cartouche
 « SCRAMBLE ». Génération pendant la lecture conservée comme travail distinct.
+
+## 7. Test séquence seul — 10/10/2026
+
+Après précision d’AveyCole : crash en validant Random sound dans le générateur,
+tous les mods activés. Cause toujours non établie. Le nouveau test
+`experimental/sequence-only/` retire toutes les routines et entrées de tirage
+du son, ainsi que son combo. Il conserve 21 lignes : plages, modes séparés,
+mutation, Euclid, preview/Undo et mutes. SCRAMBLE reste un développement distinct,
+non publié. Cartouche agrandi 120 × 56, coins arrondis, glyphes originaux 7 × 7
+agrandis trois fois. 6238 octets dans 48 masques pour chaque variante.
+
+[FAIT en émulation] `test_seq_gen_sequence_only.py` vérifie les 21 lignes,
+l’absence des routines son, Generate/Undo, plages, modes, mutation, Euclid,
+mutes et temporisation. Audit upstream sans conflit nouveau ; 767 combinaisons
+de référence recalculées, quatre builds navigateur et empreinte altérée rejetée.
+[À FAIRE] Validation matérielle de ce remplacement ; génération en lecture
+toujours absente. Principal inchangé.

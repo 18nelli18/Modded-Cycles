@@ -1,5 +1,6 @@
 | Action distincte : cinq paramètres du son, sans pitch, niveau, FX ou machine.
 | Descripteurs actifs consultés via l'OS : bornes de SY BITS/MACRO comprises.
+    .ifndef SG_SEQUENCE_ONLY
     .ifdef SG_ADVANCED
     .globl sg_sound_generate,sg_sound_undo,sg_sound_valid
     .section .data.sg_sound,"aw"
@@ -176,4 +177,5 @@ sg_sound_apply:
     addql #8,%sp
     lea.l %sp@(12),%sp
     rts
+    .endif
     .endif
