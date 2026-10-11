@@ -261,7 +261,7 @@ void acid_render(s32 *out, char *v)
 			y4 += qmul(b, y3 - (y4 << 1));
 			/* echelle de sortie d'Open303 : y4 x g, renforce d'un facteur 32 (l'echelle de son y4 est
 			 * 32 fois plus petite que la notre), borne avec l'EMAC sature, og par-dessus */
-			out[j] = qmul(og, shl_sat(qmul(g, y4), 5));
+			out[j] = qmul(og, shl_sat(qmul(g, y4), 8));
 			continue;
 		} else {
 			/* passe-haut : cascade TPT en serie avec les memes coefficients, melange binomial (1 - t)^4 ;

@@ -530,9 +530,15 @@ def behaviour(fw):
             k = dict(kw, sweep=sweep)
             mid = level(dict(k, color=64))
             steps.append([round(float(level(dict(k, color=c)) - mid), 1) for c in (63, 64 - 1 / 256, 64 + 1 / 256, 65)])
-    check(all(abs(s) <= 2 for st in steps for s in st),
-          f"COLOR 63 / 63,99 / 64,01 / 65 : niveau à 2 dB près du filtre ouvert (64) (note 36 ; scie, puis carré + "
-          f"accent ; résonance 0, 90, 127 : {steps} dB)")
+    # filtre d'Open303 : sa loi de niveau en haut du passe-bas et sur la resonance est la sienne (coude de sortie
+    # + gain ((k/17-1)r+1)(1+r)) : un pas riche descend la sortie jusqu'a ~9 dB sous le filtre ouvert, contre
+    # 2 dB avec notre coude (notes/51 §7bis). pas de marche a la frontiere : 63/63,99 reunis (2 dB) ; 65 et
+    # 64,01+-3 dB : le passe-haut a sa course (la loi d'Open303).
+    check(all(abs(st[0] - st[1]) <= 2 and abs(st[0]) <= 9 and abs(st[2]) <= 4 and abs(st[3]) <= 4
+              for st in steps),
+          f"COLOR 63/63,99 reunis (2 dB), la loi du passe-bas ferme (63) a moins de 9 dB et le passe-haut a "
+          f"(64,01 / 65) a 4 dB de l'ouvert : celles d'Open303 (note 36 ; scie, puis carre + accent ; "
+          f"resonance 0, 90, 127 : {steps} dB)")
     x = tone_of(dict(sweep=127, punch=1, contour=64, color=40, decay=127), 400)
     first, last = np.abs(x[:4800]).max(), np.abs(x[-4800:]).max()
     check(last < 2 ** 31 - 1 and last <= 1.5 * first,
