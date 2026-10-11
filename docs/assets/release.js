@@ -3,6 +3,12 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.49", date: "2026-10-12", changes: [
+    { en: "New experimental mod: a short FUNC + RELOAD PTN restores the pattern while keeping the six current track levels. PAN and other edits reload normally; saving and menu reloads are unchanged",
+      fr: "Nouveau mod expérimental : un appui bref sur FUNC + RELOAD PTN restaure le pattern en gardant les six niveaux actuels. PAN et les autres éditions se rechargent normalement ; sauvegarde et rechargements du menu inchangés" },
+    { en: "Works with Volume and pan as numbers for checking levels. Native stock-versus-patched reload checks pass; maintainer hardware testing is pending. Original contribution by djdoz under MIT",
+      fr: "Se combine avec Volume et pan en chiffres pour vérifier les niveaux. Les comparaisons du rechargement natif d'origine et modifié passent ; test matériel du mainteneur à faire. Contribution originale de djdoz sous MIT" },
+  ] },
   { version: "1.48", date: "2026-10-12", changes: [
     { en: "New mod, LFO 2, 3, 4: three more LFOs on every track, under Sounds & machines. On the LFO page, press [LFO] again: a big 2, then 3, then 4 shows in the left box, and the fifth press closes the page. Each extra LFO has its own speed, multiplier, waveform, destination and depth; fade, start phase and mode stay shared with LFO 1",
       fr: "Nouveau mod, LFO 2, 3, 4 : trois LFO de plus sur chaque piste, dans Sons et machines. Sur la page LFO, appuyez encore sur [LFO] : un grand 2, puis 3, puis 4 s'affiche dans le cadre de gauche, et le cinquième appui ferme la page. Chaque LFO de plus a sa vitesse, son multiplicateur, sa forme, sa destination et sa profondeur ; le fondu, la phase de départ et le mode restent communs avec LFO 1" },

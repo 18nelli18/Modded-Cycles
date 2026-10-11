@@ -25,6 +25,8 @@
 | `21-sdvintage-exact.json`, `22-sdvintage-7th.json`, `23-syntakt-vintage.json`, `24-syntakt-<moteurs>.json` (31 combinaisons), `31-syntakt-tg-<moteurs>.json` (31) | ce projet | Vrais moteurs du Syntakt : le pont et les générateurs sont de ce projet (`tools/machines/syntakt_bridge/`, `tools/gen_sdvintage_exact.py`, `gen_sdvintage_7th.py`, `gen_syntakt_machines.py`, `gen_syntakt_engines.py`) ; le code et les tables des moteurs restent ceux d'Elektron : ils ne sont pas dans le dépôt, une recette les copie au build depuis la section 7 du `Syntakt_OS1.42.syx` de l'utilisateur ([note 17](../../notes/17-portage-exact-syntakt.md), [note 18](../../notes/18-septieme-machine.md), [note 20](../../notes/20-moteurs-syntakt-a-cocher.md)). Les fichiers portent des octets `old` et des valeurs de relocalisation lus dans les OS d'Elektron, non couverts par la licence du projet ([`THIRD-PARTY-NOTICES.md`](../../THIRD-PARTY-NOTICES.md)). Les `31-syntakt-tg-*` s'appliquent sur `30-model-tg-st` (Model-TG, MIT). |
 | `90-syntakt-meter.json`, `91-syntakt-tg-meter.json`, `92-syntakt-tg-profile.json` | ce projet | Diagnostics (compteurs de charge, profil), non proposés aux utilisateurs ; mêmes moteurs et même recette que ci-dessus. |
 
+| `52-reload-keep-levels.json` | djdoz | Contribution originale du 12/10/2026, licence [MIT](LICENSE-reload-keep-levels). Maintien des niveaux au raccourci FUNC + RELOAD PTN ; intégration en masque libéré par `tools/gen_reload_keep_levels.py`, [note 58](../../notes/58-rechargement-niveaux.md). Aucun firmware distribué. |
+
 SHA-256 des fichiers de drumkilla, identiques à ceux du dépôt d'origine (sauf `02-trig-preview.json`, retouché) :
 
 ```
