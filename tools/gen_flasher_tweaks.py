@@ -311,6 +311,58 @@ FEATURES = [
 ]
 
 
+# Paquet standard (notes/59) : ce que la page installe par defaut, d'un seul coup, sans rien cocher ; l'interrupteur
+# « mode avance » ouvre le choix carte par carte. UNE seule liste, a completer quand un mod la rejoint : des cartes de
+# FEATURES testees sur la machine (« tested »), qui vont toutes ensemble (ni excludes ni includes entre elles, chaque
+# « requires » dans la liste), sans autre fichier (« needs ») et sans carte de moteurs. check_standard() le verifie,
+# ref_mainos.py met cette combinaison dans REF_MAINOS et tools/emu/test_standard.py la prouve en emulation (chaque
+# preuve avec tous les autres mods du paquet). Ajouter une machine (MACRO, ACID…) change le numero des machines
+# ajoutees apres elle : le dire dans la note de version.
+STANDARD = [
+    "latching-mute", "trig-preview", "browser-scroll", "trig-hold", "arp", "tempo-max", "boot-anim",
+    "multiline-browser", "level-pan-values", "trigless-dim", "midi-live-both", "macro", "chord-keys", "track-filter",
+]
+# Cartes testees et compatibles laissees hors du paquet expres (la raison affichee est dans FEAT de app.js, « std_out ») :
+# - usb6 : change l'audio USB pour tout le monde (plus de mix stereo par USB, un telephone n'a plus de son USB) ;
+# - midi-both : l'une des deux cartes MIDI qui s'excluent ; midi-live-both garde le THRU d'origine tant qu'on ne le
+#   bascule pas.
+# Les autres cartes hors du paquet le sont par regle (experimentale, conflit avec le paquet, autre fichier, carte
+# demandee hors du paquet) : la page en donne la raison. Une carte testee et compatible qui n'est dans aucune des deux
+# listes est signalee (attention), pour qu'un mod qui passe « tested » soit range dans l'une ou l'autre.
+STANDARD_OUT = ["usb6", "midi-both"]
+
+
+def check_standard(features):
+    """Le paquet standard : des cartes connues, testees, qui vont toutes ensemble, sans autre fichier."""
+    cards = {f["id"]: f for f in features}
+    if len(set(STANDARD)) != len(STANDARD):
+        raise SystemExit("!! STANDARD : une carte y est deux fois")
+    for sid in STANDARD + STANDARD_OUT:
+        if sid not in cards:
+            raise SystemExit(f"!! STANDARD : la carte {sid!r} n'existe pas dans FEATURES")
+    if set(STANDARD) & set(STANDARD_OUT):
+        raise SystemExit(f"!! STANDARD et STANDARD_OUT ont en commun : {', '.join(sorted(set(STANDARD) & set(STANDARD_OUT)))}")
+    on = [cards[i] for i in STANDARD]
+    for f in on:
+        if f.get("engines") or f.get("needs"):
+            raise SystemExit(f"!! STANDARD : {f['id']} demande un autre fichier ou des moteurs : pas dans le paquet")
+        if f["status"] != "tested":
+            raise SystemExit(f"!! STANDARD : {f['id']} n'est pas teste sur la machine (status {f['status']!r})")
+        if f.get("requires") and f["requires"] not in STANDARD:
+            raise SystemExit(f"!! STANDARD : {f['id']} demande {f['requires']}, absent du paquet")
+    no = lambda a, b: b["id"] in (a.get("excludes") or []) or b["id"] in (a.get("includes") or [])  # noqa: E731
+    for i, f in enumerate(on):
+        for g in on[i + 1:]:
+            if no(f, g) or no(g, f):
+                raise SystemExit(f"!! STANDARD : {f['id']} et {g['id']} ne se cochent pas ensemble")
+    for f in features:
+        if (f["id"] not in STANDARD + STANDARD_OUT and f["status"] == "tested" and not f.get("engines")
+                and not f.get("needs") and not any(no(f, g) or no(g, f) for g in on)
+                and (not f.get("requires") or f["requires"] in STANDARD)):
+            print(f"attention : {f['id']} est testee et va avec le paquet standard : ajoute-la a STANDARD ou a "
+                  "STANDARD_OUT (tools/gen_flasher_tweaks.py)", file=sys.stderr)
+
+
 def engine_feature(f, load):
     """Carte des vrais moteurs du Syntakt : les moteurs du catalogue et le tweak de chaque combinaison."""
     import gen_syntakt_engines as gs
@@ -477,12 +529,16 @@ def render():
             feat["license"] = f["license"] + ".txt"
         features.append(feat)
     check_requires(features, by_id)
+    check_standard(features)
     tweaks, shared = share(tweaks)
     payload = {
         "device": {k: device[k] for k in ("device", "os", "section_sha256", "stock_syx_sha256", "cave_refs_ok")
                    if k in device},
         "tweaks": tweaks,
         "features": features,
+        # paquet standard (notes/59) : les cartes que la page coche par defaut, et celles laissees dehors expres
+        "standard": STANDARD,
+        "standard_out": STANDARD_OUT,
         # onglet « OS Samples » : l'OS Model:Samples officiel, mis dans le conteneur du Cycles (crossflash)
         "samples": {"syx_sha256": OFFICIAL["samples"]["syx"], "main_sha256": OFFICIAL["samples"]["main"],
                     "download": "https://www.elektron.se/support-downloads/modelsamples"},

@@ -11,14 +11,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-11-09">
-<link rel="stylesheet" href="style.css?v=2026-10-11-09">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-11-10">
+<link rel="stylesheet" href="style.css?v=2026-10-11-10">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="flasher">
 <script>
   // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-  window.MC_BUILD = "2026-10-11-09";
+  window.MC_BUILD = "2026-10-11-10";
   window.addEventListener("error", function (e) {
     var b = document.getElementById("errbar");
     if (!b) return;
@@ -63,6 +63,13 @@
         <button type="button" role="tab" id="tab-samples" aria-selected="false" aria-controls="panel-samples" data-i18n="tab_samples">Samples OS</button>
       </div>
       <div id="panel-mods" role="tabpanel" aria-labelledby="tab-mods">
+        <!-- standard install by default (every tested mod that goes with the others), advanced mode = the picker (notes/59) -->
+        <div class="mm" id="mods-mode">
+          <button type="button" class="sw" role="switch" id="adv-switch" aria-checked="false" aria-describedby="adv-hint"><span class="sw-track" aria-hidden="true"><span class="sw-knob"></span></span><span data-i18n="adv_switch">Advanced mode</span></button>
+          <span class="mm-hint" id="adv-hint" data-i18n="adv_hint">choose each mod yourself</span>
+        </div>
+        <div class="std" id="std-pane"></div>
+        <div id="adv-pane" hidden>
         <p class="mods-lede" data-i18n-html="mods_note"></p>
         <div class="find" id="mod-find" hidden>
           <svg class="mag" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.8"/><path d="M13 13l4.5 4.5"/></svg>
@@ -76,6 +83,7 @@
         <div class="sel" id="mod-sel" role="region" aria-labelledby="sel-title"></div>
         <p class="vh" id="mod-live" aria-live="polite"></p>
         <div id="mod-sel-end" aria-hidden="true"></div>
+        </div>
       </div>
       <div id="panel-restore" role="tabpanel" aria-labelledby="tab-restore" hidden>
         <p class="panel-text" data-i18n-html="restore_text"></p>
@@ -245,11 +253,11 @@
 </footer>
 
 <!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
-<script src="../assets/release.js?v=2026-10-11-09"></script>
-<script src="../assets/site.js?v=2026-10-11-09"></script>
-<script src="builder.js?v=2026-10-11-09"></script>
-<script src="tweaks.js?v=2026-10-11-09"></script>
-<script src="flasher.js?v=2026-10-11-09"></script>
-<script src="app.js?v=2026-10-11-09"></script>
+<script src="../assets/release.js?v=2026-10-11-10"></script>
+<script src="../assets/site.js?v=2026-10-11-10"></script>
+<script src="builder.js?v=2026-10-11-10"></script>
+<script src="tweaks.js?v=2026-10-11-10"></script>
+<script src="flasher.js?v=2026-10-11-10"></script>
+<script src="app.js?v=2026-10-11-10"></script>
 </body>
 </html>

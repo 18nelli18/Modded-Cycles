@@ -13,7 +13,10 @@ Le vrai code de l'OS, sur le MAIN OS d'origine et sur le MAIN OS modifié (tempo
      au maximum (et au minimum), multiplicateurs 9 à 11, 300 mises à jour par tempo : la phase reste dans son cycle
      et vaut exactement (ancienne + pas) modulo le cycle ; d'origine, elle en sort au-delà de 351,6 BPM.
 
-    python3 tools/emu/test_tempo_max.py --cycles model-cycles_OS1.13.syx [--syntakt Syntakt_OS1.42.syx]
+    python3 tools/emu/test_tempo_max.py --cycles model-cycles_OS1.13.syx [--syntakt Syntakt_OS1.42.syx] [--with ids]
+
+Avec --with (ex. le paquet standard, tools/emu/test_standard.py), les bancs 2 à 7 tournent sur l'OS qui porte aussi ces
+tweaks : sans ce tweak (« d'origine ») puis avec (« modifié »).
 """
 import argparse
 import json
@@ -251,13 +254,20 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--cycles", required=True)
     ap.add_argument("--syntakt", help="Syntakt_OS1.42.syx : vérifie aussi l'application avec les moteurs")
+    ap.add_argument("--with", dest="others", default="", help="autres tweaks appliqués aussi (écritures) : les bancs "
+                    "tournent sur l'OS avec eux, sans puis avec ce tweak")
     args = ap.parse_args()
     stock = T.main_os_from_syx(args.cycles)
     tweak = json.loads(TWEAK.read_text(encoding="utf-8"))
     check(tweak == G.build_tweak(stock), "42-tempo-max.json = tools/gen_tempo_max.py sur l'OS officiel")
     check(all(set(bytes.fromhex(w["old"])) != {0xff} for w in tweak["writes"]), "aucune place libre utilisée")
-    patched, _ = build.apply_writes(stock, [tweak])
+    by_id = {json.loads(f.read_text(encoding="utf-8"))["id"]: f for f in DEV.glob("*.json") if f.name != "device.json"}
+    extra = [json.loads(by_id[i].read_text(encoding="utf-8")) for i in args.others.split(",") if i]
+    base = bytes(build.apply_writes(stock, extra)[0]) if extra else stock
+    patched, _ = build.apply_writes(stock, sorted(extra + [tweak], key=lambda t: t["order"]))
     patched = bytes(patched)
+    if extra:
+        print(f"firmware : {', '.join(t['id'] for t in extra)} (+ tempo-max)")
 
     # 1. avec les autres mods
     others = [json.loads((DEV / f).read_text(encoding="utf-8")) for f in
@@ -273,7 +283,7 @@ def main():
     except SystemExit as e:
         check(False, f"application avec les autres mods : {e}")
 
-    rigs = [("d'origine", Rig(stock), G.STOCK_MAX), ("modifié", Rig(patched), G.MAX)]
+    rigs = [("d'origine", Rig(base), G.STOCK_MAX), ("modifié", Rig(patched), G.MAX)]
     test_engine(rigs)
     test_setters(rigs)
     test_midi_clock(rigs)
