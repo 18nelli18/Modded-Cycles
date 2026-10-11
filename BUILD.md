@@ -109,6 +109,29 @@ Les autres patchs n'ont pas de résultat connu-bon extérieur. Voici ce que donn
 | `syntakt-swarm` (idem) | `b47c9d7d2fb8d9568503033a3d0f318396c4b52b8df34c081564005c92b69517` |
 | `syntakt-sd-cp-toy-bits-swarm` (idem) | `c6cdfe22fe5a280c1e42ae1f11ae25156d86b36da1e9d0e83f1d6c3227117b7c` |
 
+### Installation standard (ce que le flasher installe par défaut)
+
+Pas un tweak : la liste `STANDARD` de `tools/gen_flasher_tweaks.py` ([note 59](notes/59-installation-standard.md)),
+recopiée dans `docs/flasher/tweaks.js`. Ce sont les mods testés sur la machine qui vont tous ensemble ; la page les coche
+sans rien demander, et l'interrupteur « Mode avancé » rouvre le choix mod par mod. `gen_flasher_tweaks.py` vérifie la
+liste, `ref_mainos.py` met la combinaison dans `REF_MAINOS`, et deux preuves la font tourner :
+```sh
+python3 tools/build.py -i model-cycles_OS1.13.syx -o standard.syx \
+    -t latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-live-both,macro,chord-keys,track-filter
+python3 tools/emu/test_standard.py --cycles model-cycles_OS1.13.syx --eurorack eurorack/ [--jobs 3] [--quick]
+python3 tools/emu/test_mods_for_samples.py --cycles model-cycles_OS1.13.syx --samples model-samples_OS1.13.syx \
+    --syntakt Syntakt_OS1.42.syx
+```
+`test_standard.py` construit le paquet (empreinte de `REF_MAINOS`) puis lance la preuve de chaque mod du paquet avec
+tous les autres (`--with`) ; `test_mods_for_samples.py` l'emballe aussi pour un Model:Samples.
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| le paquet standard (14 mods, ci-dessus) | `ffe398996b74a8d8d7960d2be259a1f86e6d9a4cada6b69014bec4e9b7d8117c` |
+
+Pour un Model:Samples, `_smp-os` `e9dd7558aa417fe1b8460230939ca9e84eade99b099e0eb008c7fae1ec6398e0`, `_cyc-os`
+`0bceb38c4a4403f8b86ea9d0be68a28dbfaaeb03ee8ba9b98228dcae7965ceee`.
+
 ### Model-TG
 
 `tweaks/model-cycles_OS1.13/30-model-tg.json` vient du build de [Model-TG](https://github.com/TinyGregAudio/Model-TG) lui-même (licence MIT),
@@ -290,6 +313,7 @@ de la clé) :
 | `6ch-usbup,model-tg` | `fdbf4621e291618a98de64c561a39de59852d5a4dfdb58c927e312467557a839` | `a5a21ac6dfe5697b9e39fa80518a53989af4be8edac3cf9cbe6f1ebddb00ce79` |
 | `model-tg-st,sample-preview-st,macro-tg` | `4b069c69c47c6ef55ab6e50d067b2a8ced067fe3ed1b883419f5731db4044f5f` | `156ef6c22544de9873ed2119b30d4619354848cd27ca429e79bd1d628c586ffd` |
 | `6ch-usbup,model-tg-st,sample-preview-st,trig-hold,arp,tempo-max,boot-anim,syntakt-tg-sd-cp-toy-bits-swarm` | `f030b1a210c3ed9e5e2026dd0ac00daa99ca2a99cb963133f27d7e160f36fbcc` | `62d70e2bac0b22af70a56f71dc24791c52f79bda105c6375b9a3561a7e6b8a96` |
+| le paquet standard ([installation standard](#installation-standard-ce-que-le-flasher-installe-par-défaut)) | `e9dd7558aa417fe1b8460230939ca9e84eade99b099e0eb008c7fae1ec6398e0` | `0bceb38c4a4403f8b86ea9d0be68a28dbfaaeb03ee8ba9b98228dcae7965ceee` |
 
 ### Animation de démarrage modded-cycles
 

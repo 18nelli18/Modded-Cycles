@@ -4,7 +4,8 @@
 Le firmware est toujours l'OS Cycles (avec mods), quelle que soit la machine ; sur un Model:Samples, il voyage dans le
 conteneur officiel du Samples, signé Samples, avec le correctif de 32 octets de notes/41 §3. Ce test reprend les outils
 de test_crossflash_samples.py (vrai code de vérification des deux OS, chargeur du bootstrap Samples, dans Unicorn) et
-les fait tourner sur des builds avec mods de l'échantillon REF_MAINOS de la page (dont la plus grosse combinaison) :
+les fait tourner sur des builds avec mods de l'échantillon REF_MAINOS de la page (dont la plus grosse combinaison et le paquet
+standard que la page installe par défaut) :
 
   1. Aller (Model:Samples sous son OS) : l'OS Samples accepte le fichier _smp-os ; un vrai Model:Cycles le refuse.
   2. MAIN OS installé : le build avec mods sauf les 32 octets de la clé ; les remettre redonne l'entrée de REF_MAINOS.
@@ -36,14 +37,17 @@ sys.path.insert(0, str(HERE.parent))
 
 import crossflash as X                                               # noqa: E402
 import mods_for_samples as M                                         # noqa: E402
+import ref_mainos                                                    # noqa: E402
 import test_crossflash_samples as T                                  # noqa: E402
 from mtlib.syx import unwrap                                         # noqa: E402
 
 REPO = HERE.parent.parent
 # combinaisons de l'échantillon REF_MAINOS (clés de la page, ordre des cartes) : Model-TG seul, avec la sortie 6 canaux
-# (le rapport d'akrism, notes/41 §8), avec MACRO, et la plus grosse de l'échantillon
+# (le rapport d'akrism, notes/41 §8), avec MACRO, la plus grosse de l'échantillon, et le paquet standard que la page
+# installe par défaut (notes/59)
 COMBOS = ["model-tg", "6ch-usbup+model-tg", "model-tg-st+sample-preview-st+macro-tg",
-          "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-both+syntakt-tg-sd-cp-toy-bits-swarm-macro"]
+          "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-both+syntakt-tg-sd-cp-toy-bits-swarm-macro",
+          "+".join(ref_mainos.standard_ids())]
 check = T.check
 
 

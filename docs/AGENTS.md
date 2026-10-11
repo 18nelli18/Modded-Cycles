@@ -65,7 +65,20 @@ The home page list (`ol.mods` in `index.html`, each item with the controls it li
 text in `data-lcd`) is a short selection, not every mod: add an item only when the mod is a headline one, and ask.
 
 When Maxime has tested it: `status` to `"tested"` in `FEATURES` (regenerate `tweaks.js`), the guide's *Tested* line,
-the release entry ("Tested on a Model:Cycles"), and the stamp again.
+the release entry ("Tested on a Model:Cycles"), and the stamp again. Then decide where it goes in the **standard
+install** (notes/59), the Mods tab's default: `STANDARD` in `tools/gen_flasher_tweaks.py` if it goes with all the
+others (then `ref_mainos.py`, `PROOFS` in `tools/emu/test_standard.py`, and the release entry names it), or
+`STANDARD_OUT` with its reason in `FEAT` (`std_out`, en + fr). The standard pane, its "Not in the standard install"
+list and its reasons are drawn from these lists; `STANDARD_TESTED` holds the set Maxime flashed as a whole (the pane
+says *Tested* only when it equals `STANDARD`).
+
+## Standard install and advanced mode (notes/59)
+
+The Mods tab opens on the standard install (`#std-pane`, `renderStandard()`): every card of `MC_TWEAKS.standard`
+ticked, nothing to choose. The `#adv-switch` switch shows the picker (`#adv-pane`): it starts from the standard cards,
+and going back to the standard install keeps the advanced choice aside for the next switch. The page remembers the
+mode (`mc-mods-mode`). `tools/webflash_smoke.js` opens the page in the advanced mode with nothing ticked (`load()`),
+except `load({ std: true })` for the checks of the standard install (§1d, §6b).
 
 ## Checks
 

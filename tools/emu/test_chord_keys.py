@@ -29,6 +29,33 @@ from probe_chord_storage import run_storage_checks
 DIRECTORY = HERE.parents[1] / "tweaks/model-cycles_OS1.13"
 
 
+def runtime_payload(chosen, stock, syntakt_path):
+    """Charge utile ajoutée après l'OS telle qu'en mémoire après le démarrage, à PAYLOAD_DST, où les bancs la placent :
+    MACRO est rangée compressée ou en morceaux (notes/43, 50) et le crochet de démarrage la déplie ; avec les moteurs du
+    Syntakt et MACRO, il y recopie aussi les tables de CHORD. Comme tools/emu/test_track_filter.py."""
+    apps = [t for t in chosen if t.get("append")]
+    if not apps:
+        return b""
+    if len(apps) > 1:
+        raise ValueError("une seule charge utile attendue avec chord-keys (Model-TG est exclu)")
+    t = apps[0]
+    st_img = None
+    if t["append"].get("syntakt"):
+        import syntakt
+        st_img = syntakt.dsp_image(syntakt_path)
+    dest = int(t["append"]["dest"], 16)
+    import mcengine
+    if dest != mcengine.PAYLOAD_DST:
+        raise ValueError(f"{t['id']} : charge utile à {dest:#x}, les bancs la placent à {mcengine.PAYLOAD_DST:#x}")
+    rt = bytearray(build.payload_runtime(t, stock, st_img))
+    if t["append"].get("compress") and st_img is not None:
+        import test_macro_syntakt as tms
+        ctx = dict(st_img=st_img, chord=tms.chord_tables(stock))
+        at = tms.chord_at(t, ctx)
+        rt[at - dest:at - dest + len(ctx["chord"])] = ctx["chord"]
+    return bytes(rt)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cycles", required=True)
@@ -48,7 +75,8 @@ def main():
     build.check_conflicts(chosen + [tweak])
     build.check_caves(stock, chosen + [tweak], False, dirty, patched,
                       json.loads((DIRECTORY / "device.json").read_text()).get("cave_refs_ok"))
-    payload, _ = build.build_payload(chosen, stock, args.syntakt)
+    build.build_payload(chosen, stock, args.syntakt)      # vérifie la chaîne des charges utiles, comme build.py
+    payload = runtime_payload(chosen, stock, args.syntakt)
     reference, patched = bytes(reference) + payload, bytes(patched) + payload
     failures = []
 
@@ -74,7 +102,9 @@ def main():
           f"aucun pointeur ni branchement vers l'intérieur des instructions détournées : {sure + branches}")
     overlap = []
     for other in by_id.values():
-        if other["id"] in (tweak["id"], *tweak["conflicts"]):
+        # un tweak qui demande (requires) un tweak en conflit ne se coche jamais avec chord-keys (sample-preview demande
+        # Model-TG), comme le compte tools/check_overlaps.py
+        if other["id"] in (tweak["id"], *tweak["conflicts"]) or set(other.get("requires", [])) & set(tweak["conflicts"]):
             continue
         for a in tweak["writes"]:
             for b in other.get("writes", []):

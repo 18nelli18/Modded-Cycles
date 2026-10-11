@@ -845,6 +845,8 @@ const REF_MAINOS = {
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+chord-keys+track-filter+syntakt-sd-toy-bits-swarm-macro": "91d0bde4c5660757d49039c2e708b2b8be687698efdf471e9a60fa57f00b3005",
   "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-both+syntakt-tg-cp-toy-bits-swarm-macro": "1255c5da1f5174066bba50b3fd4629cc9139e65cc2f0fd4ab4c7021efcfcfb38",
   "6ch-usbup+latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+chord-keys+track-filter+syntakt-cp-toy-bits-swarm-macro": "449b81fecb66d280cfa0f0c57caffbaebd7db04180c39c07f3364480367d17cb",
+  // the standard install, what the page flashes by default (STANDARD in tools/gen_flasher_tweaks.py)
+  "latching-mute+trig-preview+browser-scroll+trig-hold+arp+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+macro+chord-keys+track-filter": "ffe398996b74a8d8d7960d2be259a1f86e6d9a4cada6b69014bec4e9b7d8117c",
 };
 const REF_MODS = {
   "6ch-usbup": {"w": "9e4a546894a480c25a8bac2b283d4f6dd81d8b5c2b39f321256ae42016ad5009"},
@@ -1133,6 +1135,28 @@ const T = {
     found: "<b>{n}</b> of {total} mods for “{q}” · ",
     show_all: "show all",
     found_none: `No mod for “{q}”. An idea for a mod? <a href="${DISCORD}" target="_blank" rel="noopener">Suggest it on Discord</a>. · `,
+    // standard install (notes/59): what the Mods tab installs by default; the switch opens the picker
+    adv_switch: "Advanced mode",
+    adv_hint: "choose each mod yourself",
+    std_title: "Modded Cycles, standard install",
+    std_lede: "Every mod tested on a real Model:Cycles that goes with all the others: {n} mods in one firmware. Nothing to tick: load your OS file in step 2, then flash.",
+    std_item: "<b>{name}</b>: {text}",
+    std_sep: "; ",
+    std_know: "Good to know ({n})",
+    std_out: "Not in the standard install ({n})",
+    std_out_lede: "Each one can be added in the advanced mode, where you choose every mod. Add opens it with the standard install and that mod ticked.",
+    std_add: "Add",
+    std_add_of: "Add {name} (opens the advanced mode)",
+    std_why_file: "needs your Syntakt OS file",
+    std_why_req: "works with {name} only",
+    std_why_clash: "doesn't go with {names}, which the standard install has",
+    std_why_exp: "still marked experimental",
+    std_why_tg: "tested on a Model:Cycles with Model-TG only",
+    std_why_other: "not in the standard install yet",
+    std_fw: "Modded Cycles standard ({n} mods)",
+    std_part: "Each of these mods is tested on a real Model:Cycles; this exact set, all together, is checked in the emulator, not yet on the machine.",
+    std_smp: "On a Model:Samples: the standard install has no Sampler machine, so your samples won't play. The Sampler comes with Model-TG, which is still experimental.",
+    std_smp_clash: "Model-TG doesn't go with {names}: adding it takes them out.",
     restore_text: "Sends your official OS file <b>unchanged</b>, to go back to the stock firmware. It is also a good first rehearsal: it checks your cable and your setup without changing anything.",
     tab_samples: "Samples OS",
     samples_title: "Turn your Model:Cycles into a Model:Samples",
@@ -1410,6 +1434,27 @@ const T = {
     found: "<b>{n}</b> mods sur {total} pour « {q} » · ",
     show_all: "tout afficher",
     found_none: `Aucun mod pour « {q} ». Une idée de mod ? <a href="${DISCORD}" target="_blank" rel="noopener">Proposez-la sur Discord</a>. · `,
+    adv_switch: "Mode avancé",
+    adv_hint: "choisissez chaque mod vous-même",
+    std_title: "Modded Cycles, installation standard",
+    std_lede: "Tous les mods testés sur un vrai Model:Cycles qui vont avec tous les autres : {n} mods dans un seul firmware. Rien à cocher : chargez votre fichier d'OS à l'étape 2, puis flashez.",
+    std_item: "<b>{name}</b> : {text}",
+    std_sep: " ; ",
+    std_know: "Bon à savoir ({n})",
+    std_out: "Hors de l'installation standard ({n})",
+    std_out_lede: "Chacun s'ajoute en mode avancé, où vous choisissez chaque mod. Ajouter l'ouvre avec l'installation standard et ce mod cochés.",
+    std_add: "Ajouter",
+    std_add_of: "Ajouter {name} (ouvre le mode avancé)",
+    std_why_file: "demande votre fichier d'OS du Syntakt",
+    std_why_req: "ne marche qu'avec {name}",
+    std_why_clash: "ne va pas avec {names}, de l'installation standard",
+    std_why_exp: "encore marqué expérimental",
+    std_why_tg: "testés sur un Model:Cycles avec Model-TG seulement",
+    std_why_other: "pas encore dans l'installation standard",
+    std_fw: "Modded Cycles standard ({n} mods)",
+    std_part: "Chacun de ces mods est testé sur un vrai Model:Cycles ; cet ensemble précis, tous ensemble, est vérifié en émulation, pas encore sur la machine.",
+    std_smp: "Sur un Model:Samples : l'installation standard n'a pas de machine Sampler, vos samples ne joueront donc pas. Le Sampler vient avec Model-TG, encore expérimental.",
+    std_smp_clash: "Model-TG ne va pas avec {names} : l'ajouter les retire.",
     restore_text: "Envoie votre fichier d'OS officiel <b>sans le modifier</b>, pour revenir au firmware d'origine. C'est aussi une bonne répétition avant un mod : elle vérifie le câble et l'installation sans rien changer.",
     tab_samples: "OS Samples",
     samples_title: "Transformer le Model:Cycles en Model:Samples",
@@ -1628,6 +1673,7 @@ const FEAT = {
   en: {
     usb6: { label: "6-channel USB audio",
       short: "Each track on its own USB channel. No stereo mix over USB any more.",
+      std_out: "replaces the stereo mix over USB with six separate channels: handy in a DAW, but a phone and some apps can't play it",
       desc: "Each track gets its own USB channel (48 kHz / 32-bit): record the 6 tracks separately in your DAW. The stereo mix is no longer sent over USB. OS updates over USB keep working." },
     "model-tg": { label: "Model-TG",
       short: "TinyGregAudio's big pack: a 7th Sampler machine and many additions.",
@@ -1681,6 +1727,7 @@ const FEAT = {
       note: "The key is dimmed by lighting it for one millisecond out of every three, 333 times a second, so it looks steady." },
     "midi-both": { label: "MIDI OUT while in THRU",
       short: "With THR selected, the Cycles forwards incoming MIDI and sends its own MIDI too.",
+      std_out: "an alternative to Live MIDI OUT + THRU toggle, which the standard install has: that one keeps THRU as it was until you switch it",
       clash: "both change what THR does with the Cycles' own MIDI",
       desc: "In CONFIG › MIDI › PORTS, set OUT/THRU to THR: the Cycles keeps forwarding what arrives on its MIDI IN, and also sends its own clock, notes and parameter changes on its MIDI OUT. OUT works as before, and the menu doesn't change.",
       note: "Best when only one side plays notes. The Cycles passes on what it receives as it comes in, without waiting for whole messages like a MIDI merger box: if the device on MIDI IN and the Cycles both send notes or knob moves, some can reach the next device wrong (a wrong or stuck note). Clock and start/stop are not affected." },
@@ -1706,6 +1753,7 @@ const FEAT = {
   fr: {
     usb6: { label: "Audio USB 6 canaux",
       short: "Chaque piste sur son propre canal USB. Plus de mix stéréo en USB.",
+      std_out: "remplace le mix stéréo USB par six canaux séparés : pratique dans un logiciel, mais un téléphone et certaines applis ne savent pas le lire",
       desc: "Chaque piste a son propre canal USB (48 kHz / 32 bits) : enregistrez les 6 pistes séparément dans votre logiciel. Le mix stéréo n'est plus envoyé en USB. La mise à jour de l'OS par USB continue de fonctionner." },
     "model-tg": { label: "Model-TG",
       short: "Le grand pack de TinyGregAudio : une 7e machine Sampler et de nombreux ajouts.",
@@ -1759,6 +1807,7 @@ const FEAT = {
       note: "La touche est atténuée en l'allumant une milliseconde sur trois, 333 fois par seconde : elle paraît stable." },
     "midi-both": { label: "MIDI OUT pendant THRU",
       short: "Sur THR, le Cycles relaie le MIDI reçu et envoie aussi son propre MIDI.",
+      std_out: "une variante de Basculer MIDI OUT + THRU en direct, que l'installation standard contient : celui-ci garde le THRU d'origine tant que vous ne le basculez pas",
       clash: "les deux changent ce que THR fait du MIDI du Cycles",
       desc: "Dans CONFIG › MIDI › PORTS, réglez OUT/THRU sur THR : le Cycles continue de relayer ce qui arrive sur son MIDI IN, et envoie aussi son horloge, ses notes et ses changements de paramètres sur sa sortie MIDI. OUT marche comme avant, et le menu ne change pas.",
       note: "Le mieux est qu'un seul côté joue des notes. Le Cycles fait suivre ce qu'il reçoit au fil de l'eau, sans attendre les messages entiers comme un boîtier de fusion MIDI : si l'appareil branché sur le MIDI IN et le Cycles envoient tous les deux des notes ou des mouvements de potards, certains peuvent arriver faussés à l'appareil suivant (note fausse ou bloquée). L'horloge et start/stop ne sont pas touchés." },
@@ -1899,8 +1948,11 @@ function applyLang(lang) {
 // ---------------------------------------------------------------------------
 // feature id -> { on: bool, variant: id } ; engine cards (real Syntakt engines): { on: bool, engines: [codes] }
 const selection = {};
-// display-only state of the picker (never saved): open Details drawers, folded sections, search, last swap (Undo)
-const pick = { open: new Set(), folded: new Set(), q: "", swap: null, selOpen: false };
+// display-only state of the picker (never saved): open Details drawers, folded sections, search, last swap (Undo);
+// mode: "standard" (the default, notes/59) or "advanced" (the picker), the one choice the page remembers (mc-mods-mode);
+// saved: the advanced choice kept aside while the standard install is shown; stdKey: the standard install's REF_MAINOS key
+const pick = { open: new Set(), folded: new Set(), q: "", swap: null, selOpen: false,
+  mode: "standard", saved: null, stdKey: "", stdOpen: new Set() };
 
 // Engine card: the combination of ticked engines (kept in catalog order) and its tweak.
 // Two cards that can't be ticked together (Model-TG and the tweaks it already holds, or the Syntakt engines).
@@ -2045,6 +2097,85 @@ function undo() {
   return by;
 }
 
+// Standard install (notes/59): the Mods tab's default, every card of MC_TWEAKS.standard ticked, nothing to choose
+// (tools/gen_flasher_tweaks.py checks that they are all tested and go together; REF_MAINOS holds the combination). The
+// switch turns on the advanced mode, the picker. Both work on `selection`: the advanced mode starts from the standard
+// cards; going back to the standard install keeps the advanced choice aside, and the switch gives it back.
+const standardIds = () => ((window.MC_TWEAKS && window.MC_TWEAKS.standard) || []).filter((id) => featById(id));
+const standardCards = () => standardIds().map(featById);
+const advanced = () => pick.mode === "advanced" || !standardIds().length;
+function selectStandard() {
+  features().forEach(selOf);
+  for (const f of features()) selection[f.id].on = false;
+  for (const f of standardCards()) selection[f.id].on = true;
+  dropOrphans();
+}
+// on: the advanced mode; add: a card to tick in it ("Add" in the standard install: from the standard cards, with its
+// own exclusions and Undo, as if ticked in the picker)
+function setAdvanced(on, add) {
+  if (add) pick.saved = null;
+  if (!on && advanced()) { pick.saved = JSON.parse(JSON.stringify(selection)); selectStandard(); }
+  else if (on && !advanced() && pick.saved) { for (const id in pick.saved) selection[id] = pick.saved[id]; pick.saved = null; }
+  pick.mode = on ? "advanced" : "standard";
+  pick.swap = null;
+  try { localStorage.setItem("mc-mods-mode", pick.mode); } catch (e) { /* private mode */ }
+  if (on && add) setOn(add, true);
+}
+// Why a card is not in the standard install: its own reason (FEAT std_out), else the rule that keeps it out.
+function stdWhy(f) {
+  const own = featText(f.id, "std_out", "");
+  if (own) return own;
+  const std = standardIds(), why = [];
+  if (f.needs === "syntakt") why.push(t("std_why_file"));
+  const req = f.requires && featById(f.requires);
+  if (req && !std.includes(req.id)) why.push(t("std_why_req", { name: label(req) }));
+  const clash = standardCards().filter((g) => clashOnly(f, g));
+  if (clash.length) why.push(t("std_why_clash", { names: clash.map(label).join(", ") }));
+  if (f.status !== "tested") why.push(t("std_why_exp"));
+  else if (f.engines && !f.combos.some((c) => c.tested)) why.push(t("std_why_tg"));
+  return why.join(t("std_sep")) || t("std_why_other");
+}
+// The standard install: what it holds by section (each name links to its guide page), the notes of its mods, and
+// what it leaves out with the reason and an Add button.
+function renderStandard() {
+  const box = $("std-pane");
+  if (!box) return;
+  const std = standardCards(), ids = standardIds();
+  const icon = (c) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CAT_ICON[c]}</svg>`;
+  const name = (f) => GUIDE_OF[f.id] ? `<a class="std-nm" href="${GUIDE}#${GUIDE_OF[f.id]}">${esc(label(f))}</a>` : `<span class="std-nm">${esc(label(f))}</span>`;
+  const groups = CATS.map((c) => [c, std.filter((f) => catOf(f) === c)]).filter(([, l]) => l.length);
+  const notes = std.filter((f) => featText(f.id, "note", ""));
+  const out = order().filter((f) => !ids.includes(f.id));
+  const det = (id, sum, body) => `<details id="${id}"${pick.stdOpen.has(id) ? " open" : ""}><summary>${esc(sum)}</summary>${body}</details>`;
+  // on a Model:Samples (notes/57), the Model:Cycles OS plays samples only with Model-TG's Sampler (render() shows it)
+  const tg = featById("model-tg"), tgClash = tg ? std.filter((g) => clashOnly(tg, g)) : [];
+  const smp = tg && !ids.includes(tg.id) ? `<p class="std-smp" id="std-smp"${st.machine === "cyc" ? " hidden" : ""}>` +
+    esc(t("std_smp")) + (tgClash.length ? " " + esc(t("std_smp_clash", { names: tgClash.map(label).join(", ") })) : "") +
+    `<button type="button" class="lnk" data-add="${tg.id}">${esc(t("std_add_of", { name: label(tg) }))}</button></p>` : "";
+  const tested = !!window.MC_TWEAKS.standard_tested;   // this exact set tried on the machine (STANDARD_TESTED)
+  box.innerHTML = `<p class="std-t"><span>${esc(t("std_title"))}</span>${tagHtml(tested ? "tested" : "part")}</p>` +
+    `<p class="std-lede">${esc(t("std_lede", { n: std.length }))}${tested ? "" : " " + esc(t("std_part"))}</p>` + smp +
+    `<div class="std-grid">${groups.map(([c, l]) => `<section class="std-grp" id="std-${c}"><h3>${icon(c)}${esc(t("cat_" + c))}</h3>` +
+      `<ul>${l.map((f) => `<li id="std-mod-${f.id}">${name(f)}${esc(shortOf(f))}</li>`).join("")}</ul></section>`).join("")}</div>` +
+    (notes.length ? det("std-know", t("std_know", { n: notes.length }),
+      `<ul>${notes.map((f) => `<li>${t("std_item", { name: esc(label(f)), text: esc(featText(f.id, "note", "")) })}</li>`).join("")}</ul>`) : "") +
+    (out.length ? det("std-out", t("std_out", { n: out.length }),
+      `<ul>${out.map((f) => `<li id="std-out-${f.id}">${t("std_item", { name: esc(label(f)), text: esc(stdWhy(f)) })}` +
+        `<button type="button" class="lnk" data-add="${f.id}" aria-label="${esc(t("std_add_of", { name: label(f) }))}">${esc(t("std_add"))}</button></li>`).join("")}</ul>` +
+      `<p>${esc(t("std_out_lede"))}</p>`) : "") +
+    `<p class="std-next"><a class="btn sel-next" href="#step-file">${esc(t("sel_next"))} <span aria-hidden="true">↓</span></a></p>`;
+}
+// The switch, and which of the two shows.
+function renderMode() {
+  const adv = advanced();
+  if (!$("adv-switch")) return;
+  $("mods-mode").hidden = !standardIds().length;
+  $("adv-switch").setAttribute("aria-checked", String(adv));
+  $("std-pane").hidden = adv;
+  $("adv-pane").hidden = !adv;
+  if (!adv) renderStandard();
+}
+
 // Search (shown from SEARCH_FROM mods): accent- and case-insensitive, in both languages, every word must match.
 const fold = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 const hay = {};
@@ -2069,6 +2200,7 @@ function renderFeatures() {
   features().forEach(selOf);
   box.innerHTML = "";
   dropOrphans();                                   // a card without the card it requires goes off
+  renderMode();                                    // standard install or advanced mode (notes/59)
   for (const c of CATS) {
     const mods = features().filter((f) => catOf(f) === c);
     if (!mods.length) continue;
@@ -2379,6 +2511,23 @@ function wirePicker() {
     else return;
     changed();
   });
+  $("adv-switch").addEventListener("click", () => {
+    setAdvanced(!advanced());
+    changed();
+    $("adv-switch").focus({ preventScroll: true });
+  });
+  $("std-pane").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-add]");
+    if (!b || !featById(b.dataset.add)) return;
+    setAdvanced(true, featById(b.dataset.add));
+    changed();
+    if ($("feat-" + b.dataset.add)) $("feat-" + b.dataset.add).focus();
+  });
+  // an open "Good to know" or "Not in the standard install" stays open when the pane is drawn again (language)
+  $("std-pane").addEventListener("toggle", (e) => {
+    const d = e.target;
+    if (d.id) { if (d.open) pick.stdOpen.add(d.id); else pick.stdOpen.delete(d.id); }
+  }, true);
   $("mod-q").addEventListener("input", (e) => { pick.q = e.target.value; renderFeatures(); });
   $("mod-q").addEventListener("keydown", (e) => { if (e.key === "Escape") { pick.q = ""; renderFeatures(); } });
   $("mod-q-clr").addEventListener("click", () => { pick.q = ""; renderFeatures(); $("mod-q").focus(); });
@@ -2642,6 +2791,8 @@ function prepareFirmware() {
   if (sdv && !st.syntakt) { st.fw = null; st.fwError = "needs_syntakt"; return; }
   const key = tweaks.map((x) => x.id).join("+");
   const labels = chosenLabels();
+  const std = key === pick.stdKey;                 // the standard install (also when ticked by hand in the advanced mode)
+  const ver = (window.MC_RELEASES && window.MC_RELEASES[0] && window.MC_RELEASES[0].version) || "";
   const syntakt = sdv ? st.syntakt.raw : null;     // only official files, all with the same section 7: same bytes for every key
   const makeCycles = (raw) => {
     const opts = {};
@@ -2650,7 +2801,8 @@ function prepareFirmware() {
     if (syntakt) opts.syntakt = syntakt;
     const r = window.MCBuilder.build(raw, window.MC_TWEAKS.device, tweaks, opts);
     log(`Built ${key}: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.patchedBytes} bytes patched, ${r.raw.length} bytes.`, "is-ok");
-    return { raw: r.raw, name: `model-cycles_OS1.13_${key}.syx`, kind: "built", mods: labels, sha: r.mainOsSha,
+    return { raw: r.raw, name: std ? `model-cycles_OS1.13_modded-standard${ver ? "-" + ver : ""}.syx` : `model-cycles_OS1.13_${key}.syx`,
+      kind: "built", mods: labels, std, sha: r.mainOsSha,
       ref: !!REF_MAINOS[key], modsRef: r.modsChecked, sixch: tweaks.some((x) => x.id.startsWith("6ch")),
       sdv: sdv && (tweaks.find((x) => x.append && x.append.syntakt) || {}).id, engines: sdv ? chosenEngines() : [] };
   };
@@ -2667,7 +2819,7 @@ function prepareFirmware() {
     log(`Packed ${key} for a Model:Samples (${into === "samples" ? "Samples OS" : "Cycles OS"} running): ` +
       `MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.raw.length} bytes.`, "is-ok");
     return Object.assign({}, base, { raw: r.raw, machine: st.machine,
-      name: `model-cycles_OS1.13_${key}_for-samples_${st.machine === "smp" ? "smp-os" : "cyc-os"}.syx` });
+      name: `${base.name.replace(/\.syx$/, "")}_for-samples_${st.machine === "smp" ? "smp-os" : "cyc-os"}.syx` });
   });
 }
 
@@ -2982,6 +3134,7 @@ function render() {
   $("mach-w-cos").hidden = st.machine !== "cos";
   $("mach-w-only").hidden = st.machine !== "smp";
   for (const m of ["cyc", "smp", "cos"]) $("mach-" + m).setAttribute("aria-checked", String(st.machine === m));
+  if ($("std-smp")) $("std-smp").hidden = st.machine === "cyc";
   if (st.os && st.mode === "samples" && !st.os.stock)
     setStatus("file-status", [["is-bad", t(st.smpDir === "cyc" ? "samples_needs_cycles" : "cos_needs_cycles")]]);
   else if (st.os) {
@@ -2998,7 +3151,7 @@ function render() {
     else if (st.building) rows.push(["is-busy", esc(t("building"))]);
     else if (st.fwError) rows.push(["is-bad", esc(t("build_failed", { err: st.fwError }))]);
     else if (st.fw && st.fw.kind === "built")
-      rows.push(["is-ok", esc(t("built", { mods: st.fw.mods.join(" + ") })) + (st.fw.ref ? " " + esc(t("built_ref")) : st.fw.modsRef ? " " + esc(t("built_ref_mods")) : "") +
+      rows.push(["is-ok", esc(t("built", { mods: builtName(st.fw) })) + (st.fw.ref ? " " + esc(t("built_ref")) : st.fw.modsRef ? " " + esc(t("built_ref_mods")) : "") +
         ` <span class="hash">MAIN OS ${esc(st.fw.sha.slice(0, 8))}</span>` +
         (st.fw.machine ? " " + esc(t(st.fw.machine === "smp" ? "built_smp" : "built_cos")) : "")]);
     else if (st.fw && st.fw.kind === "stock") rows.push(["is-ok", esc(t("stock_ready"))]);
@@ -3040,7 +3193,7 @@ function render() {
   // summary
   const sum = $("summary");
   if (st.fw) {
-    const what = st.fw.kind === "built" ? st.fw.mods.join(" + ") + (st.fw.machine ? ` (${t("for_samples")})` : "")
+    const what = st.fw.kind === "built" ? builtName(st.fw) + (st.fw.machine ? ` (${t("for_samples")})` : "")
       : st.fw.kind === "stock" ? t("mods_list_restore")
       : st.fw.kind === "samples" ? t("mods_list_samples")
       : st.fw.kind === "cos" ? t("mods_list_cos")
@@ -3061,6 +3214,11 @@ function render() {
     : t(st.method === "fast" ? "miss_ready_fast" : "miss_ready", { m: hardware() });
   $("stop").hidden = !st.sending;
   renderAfter();
+}
+
+// What a built firmware holds, as step 2 and step 4 say it: the standard install by its name, else the mods.
+function builtName(fw) {
+  return fw.std ? t("std_fw", { n: standardIds().length }) : fw.mods.join(" + ");
 }
 
 // Fast method, once the firmware is sent: confirm on the machine, then it restarts.
@@ -3292,6 +3450,10 @@ function init() {
   });
 
   $("build-stamp").textContent = "· build " + (window.MC_BUILD || "?");
+  // the standard install is ticked first, whatever the mode: the advanced mode starts from it (notes/59)
+  selectStandard();
+  pick.stdKey = standardIds().length ? chosenTweaks().map((x) => x.id).join("+") : "";
+  try { pick.mode = localStorage.getItem("mc-mods-mode") === "advanced" ? "advanced" : "standard"; } catch (e) { /* private mode */ }
   wirePicker();
   applyLang(st.lang);
   update();
@@ -3307,7 +3469,7 @@ function init() {
 // test hooks (tools/webflash_smoke.js)
 window.MCFlasherApp = { state: st, REF_MAINOS, REF_MODS, REF_SAMPLES_ON_CYCLES, REF_CYCLES_ON_SAMPLES, REF_SAMPLES_BACK, loadOs,
   loadSamples, loadSyntakt, setMode, setSmpDir, setMachine, setMethod, applyLang, render,
-  chosenTweaks, chosenLabels, CATS };
+  chosenTweaks, chosenLabels, CATS, setAdvanced, standardIds, standardKey: () => pick.stdKey };
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
 else init();

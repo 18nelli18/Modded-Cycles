@@ -141,7 +141,9 @@ function fakeDevice(opts, reply) {
   return dev;
 }
 
-async function load({ midi = true, ports = true, inputs = true, busy = false, secure = true, lang = "en", devName = "Elektron Model:Cycles", device = {} } = {}) {
+// std: stay on the standard install, the page's default (notes/59); otherwise the advanced mode, nothing ticked, where
+// the checks written for the mod picker start (the page remembers the mode: set it either way)
+async function load({ midi = true, ports = true, inputs = true, busy = false, secure = true, lang = "en", devName = "Elektron Model:Cycles", device = {}, std = false } = {}) {
   const errors = [];
   const vc = new VirtualConsole();
   vc.on("jsdomError", (e) => errors.push("jsdomError: " + ((e.detail && e.detail.message) || e.message || e)));
@@ -180,6 +182,13 @@ async function load({ midi = true, ports = true, inputs = true, busy = false, se
   await wait(300);
   // tweaks.js fait plus d'1 Mo : sur une machine occupée, les scripts peuvent mettre plus de 300 ms à se charger
   for (let i = 0; i < 200 && !(dom.window.MCFlasherApp && dom.window.MC_TWEAKS && dom.window.MCBuilder); i++) await wait(50);
+  const sw = dom.window.document.getElementById("adv-switch");
+  if (sw && dom.window.MCFlasherApp) {
+    if ((sw.getAttribute("aria-checked") === "true") === std) sw.click();
+    const clr = !std && dom.window.document.querySelector("#mod-sel [data-clear]");
+    if (clr) clr.click();
+    await wait(20);
+  }
   return { dom, w: dom.window, doc: dom.window.document, errors, sent, dev, listeners,
     access: () => access, devOut: () => devOut, devIn: () => devIn };
 }
@@ -616,6 +625,64 @@ async function main() {
     check(errors.length === 0, "no JS error in the mod picker " + (errors.length ? JSON.stringify(errors) : ""));
   }
 
+  // 1d. Standard install (notes/59): the Mods tab's default, every card of MC_TWEAKS.standard ticked, nothing to choose;
+  // the switch opens the advanced mode (the picker) from it and gives the advanced choice back; Add opens it with one
+  // more mod; on a Model:Samples it says that it has no Sampler
+  if (MAIN) {
+    const { w, doc, errors } = await load({ std: true });
+    const app = w.MCFlasherApp, box = (id) => doc.getElementById(id);
+    const std = w.MC_TWEAKS.standard || [], feats = w.MC_TWEAKS.features;
+    const chosen = () => app.chosenTweaks().map((x) => x.id).join("+");
+    const on = (id) => box("adv-switch").getAttribute("aria-checked") === String(id);
+    check(std.length >= 10 && std.every((id) => feats.some((f) => f.id === id && f.status === "tested"))
+      && app.standardKey() === chosen() && !!app.REF_MAINOS[app.standardKey()],
+      `standard install by default: the ${std.length} cards of MC_TWEAKS.standard ticked, all tested, a REF_MAINOS combination`);
+    check(on(false) && !box("std-pane").hidden && box("adv-pane").hidden && !box("mods-mode").hidden
+      && /Modded Cycles, standard install/.test(text(doc, "std-pane"))
+      && (w.MC_TWEAKS.standard_tested ? /Tested$/.test(textOf(doc, "#std-pane .std-t")) && !/not yet on the machine/.test(text(doc, "std-pane"))
+        : /Partly tested$/.test(textOf(doc, "#std-pane .std-t")) && /this exact set, all together, is checked in the emulator, not yet on the machine/.test(text(doc, "std-pane")))
+      && /Advanced mode/.test(text(doc, "mods-mode")), "the standard pane shows, tagged tested only once this exact set was tried on the machine; the picker waits behind the Advanced mode switch");
+    const listed = [...doc.querySelectorAll("#std-pane [id^=std-mod-]")].map((e) => e.id.slice(8));
+    check(listed.slice().sort().join() === std.slice().sort().join()
+      && [...doc.querySelectorAll("#std-pane a.std-nm")].every((a) => a.getAttribute("href").startsWith("../guide/#")),
+      "it lists every standard mod by section, each name linked to its guide section: " + listed.join());
+    const out = [...doc.querySelectorAll("#std-out li")].map((e) => e.id.slice(8));
+    check(out.length === feats.length - std.length && out.every((id) => !std.includes(id) && feats.some((f) => f.id === id))
+      && /a phone/.test(text(doc, "std-out-usb6")) && /experimental/.test(text(doc, "std-out-model-tg"))
+      && /Syntakt OS file/.test(text(doc, "std-out-syntakt")) && /works with Model-TG only/.test(text(doc, "std-out-sample-preview"))
+      && /alternative/.test(text(doc, "std-out-midi-both")) && doc.querySelectorAll("#std-out [data-add]").length === out.length,
+      "“Not in the standard install” gives every other mod, its reason and an Add button: " + out.join());
+    box("adv-switch").click(); await wait(20);
+    check(on(true) && box("std-pane").hidden && !box("adv-pane").hidden && chosen() === app.standardKey()
+      && std.every((id) => box("feat-" + id).checked), "Advanced mode: the picker, starting from the standard mods");
+    box("feat-usb6").click(); await wait(20);
+    const withUsb = chosen();
+    box("adv-switch").click(); await wait(20);
+    const backStd = chosen();
+    box("adv-switch").click(); await wait(20);
+    check(withUsb.startsWith("6ch-usbup+") && backStd === app.standardKey() && chosen() === withUsb && box("feat-usb6").checked,
+      "6-channel USB ticked in the advanced mode; the standard install leaves it out, the switch gives it back");
+    box("adv-switch").click(); await wait(20);
+    doc.querySelector('#std-out [data-add="model-tg"]').click(); await wait(20);
+    const tg = chosen();
+    check(on(true) && box("feat-model-tg").checked && !box("feat-chord-keys").checked && !box("feat-track-filter").checked
+      && !box("feat-usb6").checked && /model-tg/.test(tg) && !!doc.querySelector("#mod-sel [data-undo]"),
+      "Add Model-TG: the advanced mode with the standard mods and Model-TG, which takes Chord Keys and the filter out (Undo): " + tg);
+    box("adv-switch").click(); await wait(20);
+    check(on(false) && chosen() === app.standardKey() && box("std-smp").hidden, "standard install again; no Model:Samples note on a Model:Cycles");
+    box("mach-smp").click(); await wait(20);
+    check(!box("std-smp").hidden && /no Sampler machine/.test(text(doc, "std-smp")) && /Chord Keys/.test(text(doc, "std-smp"))
+      && box("std-smp").querySelector('[data-add="model-tg"]') && chosen() === app.standardKey(),
+      "Model:Samples: the standard install says it has no Sampler and offers Model-TG: " + text(doc, "std-smp").slice(0, 90));
+    doc.querySelector('.lang button[data-lang="fr"]').click(); await wait(20);
+    check(/Mode avancé/.test(text(doc, "mods-mode")) && /installation standard/.test(text(doc, "std-pane"))
+      && /Hors de l'installation standard/.test(text(doc, "std-pane")) && /téléphone/.test(text(doc, "std-out-usb6"))
+      && /pas de machine Sampler/.test(text(doc, "std-smp")), "FR: the switch and the standard pane are translated");
+    doc.querySelector('.lang button[data-lang="en"]').click();
+    app.setMachine("cyc");                                         // remembered by the page: leave the default for the next sections
+    check(errors.length === 0, "no JS error in the standard install " + (errors.length ? JSON.stringify(errors) : ""));
+  }
+
   // 1c. Fast method: a machine that doesn't answer (CONFIG > UPGRADE open, Transfer running), no MIDI input
   if (MAIN) {
     const { doc, dev } = await load({ device: { silent: true } });
@@ -914,6 +981,44 @@ async function main() {
     app.REF_MODS["tempo-max"].w = tm;
     app.REF_MODS["model-tg"].p = tg;
     check(errors.length === 0, "no JS error when a mod is refused");
+  }
+
+  // 6b. The standard install with the real OS: built as the page opens, nothing ticked, its reference hash and file
+  // name, sent byte for byte; on a Model:Samples (notes/57), the same MAIN OS in both packings
+  if (REAL_OS && MAIN) {
+    const env = await load({ std: true });
+    const { w, doc, errors } = env;
+    const app = w.MCFlasherApp;
+    noRest(w);
+    app.loadOs(new Uint8Array(fs.readFileSync(REAL_OS)), "model-cycles_OS1.13.syx");
+    await settle(w);
+    const f = app.state.fw, ver = w.MC_RELEASES[0].version, n = w.MC_TWEAKS.standard.length;
+    check(f && f.kind === "built" && f.std && f.ref && f.modsRef && app.state.buildKey === app.standardKey()
+      && f.sha === app.REF_MAINOS[app.standardKey()] && f.name === `model-cycles_OS1.13_modded-standard-${ver}.syx`
+      && text(doc, "file-status").includes(`Firmware ready: Modded Cycles standard (${n} mods).`),
+      "real OS, nothing ticked: the standard install builds and matches its reference hash: " + (f && f.name));
+    doc.getElementById("allow").click(); await wait(150);
+    doc.getElementById("ack").click(); await wait(20);
+    check(!doc.getElementById("flash").disabled && text(doc, "summary").startsWith(`Modded Cycles standard (${n} mods)`),
+      "ready: " + text(doc, "summary"));
+    doc.getElementById("flash").click();
+    await untilSent(w);
+    check(app.state.finished === "ok" && same(env.dev.received, f.raw), "fast: the standard install reaches the machine byte for byte");
+    if (REAL_SMP) {
+      doc.getElementById("mach-smp").click();
+      app.loadSamples(new Uint8Array(fs.readFileSync(REAL_SMP)), "model-samples_OS1.13.syx");
+      await settle(w);
+      const s1 = app.state.fw;
+      doc.getElementById("mach-cos").click();
+      await settle(w);
+      const s2 = app.state.fw, base = `model-cycles_OS1.13_modded-standard-${ver}_for-samples_`;
+      check(s1 && s1.std && s1.machine === "smp" && s1.raw[4] === 0x0f && s1.sha === f.sha && s1.name === base + "smp-os.syx"
+        && s2 && s2.std && s2.machine === "cos" && s2.raw[4] === 0x11 && s2.sha === f.sha && s2.name === base + "cyc-os.syx"
+        && !doc.getElementById("std-smp").hidden,
+        `Model:Samples: the same standard MAIN OS, packed for its own OS and for the Cycles OS: ${s1 && s1.name}, ${s2 && s2.name}`);
+      app.setMachine("cyc");
+    }
+    check(errors.length === 0, "no JS error with the standard install " + (errors.length ? JSON.stringify(errors) : ""));
   }
 
   // 7. "Samples OS" tab with both official files

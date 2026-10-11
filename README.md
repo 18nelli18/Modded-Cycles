@@ -59,6 +59,7 @@ Going back to the official firmware is one click away.
 | **Scrolling names** | Sound names too long for the screen scroll in the sound browser. By drumkilla. | ✅ Tested |
 | **Samples OS** | Turns the Model:Cycles into a Model:Samples, built from both official OS files. Coming back needs a MIDI interface. | ✅ Tested |
 | **Cycles OS for Model:Samples** | The other way round: turns a Model:Samples into a Model:Cycles, over USB, from both official OS files. Going back to the Model:Samples OS works over USB too, from the same tab. | 🧪 Experimental |
+| **Standard install** | What the flasher installs by default: every mod tested on a real Model:Cycles that goes with all the others, in one firmware, with nothing to tick. The page lists what it holds and what it leaves out, and why. An *Advanced mode* switch opens the full list to choose each mod. | 🧪 Experimental (each mod tested; the full set not yet) |
 | **Mods on a Model:Samples** | Pick your machine in the Mods tab: a Model:Samples gets the Model:Cycles OS with the mods you tick (Model-TG's Sampler plays your samples), over USB, and can change mods later. The flasher always installs the Model:Cycles OS, whatever the machine. Original flasher by RDS (AIM), integrated into Modded Cycles by DaftMaple. | ✅ Tested |
 
 The mods can be combined freely (the two MIDI THRU mods are alternatives; Samples OS and Cycles OS for Model:Samples are separate installs; Chord Keys and Model-TG not together). Each one is explained step by step, with the buttons to press, in the
@@ -74,7 +75,8 @@ The mods can be combined freely (the two MIDI THRU mods are alternatives; Sample
 <img src="docs/images/readme/flasher.png" alt="The web flasher, step 1: a list of mods with checkboxes, 6-channel USB audio ticked" width="100%">
 
 1. **Open the [web flasher](https://18nelli18.github.io/Modded-Cycles/flasher/)** in Chrome, Edge or Opera on a desktop computer (it needs Web MIDI).
-2. **Tick the mods you want.**
+2. **Keep the standard install, or choose your mods.** The flasher opens on the standard install: every tested mod
+   that goes with the others, nothing to tick. Turn on *Advanced mode* to tick each mod yourself.
 3. **Drop your official OS file**, `model-cycles_OS1.13.syx`, from the [Elektron download](https://www.elektron.se/support-downloads/modelcycles) (unzip it first).
    For the Syntakt engines, also drop `Syntakt_OS1.42.syx` ([download](https://www.elektron.se/support-downloads/syntakt); 1.41 works too).
 4. **Connect the Model:Cycles over USB and press Flash.** Close Elektron Transfer first and leave the machine on its usual screen.

@@ -11,7 +11,8 @@ tools/build.py (conflits, zones 0xFF, charges utiles enchaînées) :
   - chaque carte seule (chaque variante ; pour les vrais moteurs du Syntakt, chaque combinaison de moteurs) ;
   - chaque paire de cartes que la page laisse cocher ensemble ;
   - les plus grandes combinaisons : toutes les cartes compatibles cochées, à partir de chaque carte, dans l'ordre des
-    cartes puis dans l'ordre inverse, avec et sans les cartes qui demandent un autre fichier (les moteurs du Syntakt).
+    cartes puis dans l'ordre inverse, avec et sans les cartes qui demandent un autre fichier (les moteurs du Syntakt) ;
+  - le paquet standard, ce que la page installe par défaut (STANDARD de gen_flasher_tweaks.py, notes/59).
 La page compare le MAIN OS de ces combinaisons à leur empreinte et refuse s'il diffère. Avec tools/check_overlaps.py
 (deux mods qu'on peut cocher ensemble n'écrivent jamais aux mêmes octets, sauf écriture identique ou mod posé par-dessus
 l'autre), cet échantillon suffit : il grandit d'une quarantaine d'entrées par nouvelle carte, au lieu de doubler. Les
@@ -72,10 +73,11 @@ def writes_bytes(t):
 
 # --- les cartes de la page (docs/flasher/app.js : excludes(), includedBy(), chosenTweaks()) ---------------------
 class Cards:
-    def __init__(self, features, tweaks):
+    def __init__(self, features, tweaks, standard=()):
         self.features = features
         self.by_id = {f["id"]: f for f in features}
         self.tweaks = {t["id"]: t for t in tweaks}
+        self.standard = list(standard)
 
     def options(self, f):
         """Choix d'une carte : ses variantes (ids de tweaks), ou ses combinaisons de moteurs."""
@@ -131,8 +133,15 @@ class Cards:
             out.append(tid)
         return out
 
+    def standard_sel(self):
+        """Le paquet standard (notes/59) : ses cartes, chacune à sa 1re variante, comme la page les coche."""
+        sel = {i: self.options(self.by_id[i])[0] for i in self.standard}
+        if not self.valid(self.close(sel)) or self.close(sel) != sel:
+            raise SystemExit("!! le paquet standard n'est pas une sélection que la page accepte telle quelle")
+        return sel
+
     def sample(self):
-        """[(groupe, sélection)] : chaque carte seule, chaque paire, les plus grandes combinaisons."""
+        """[(groupe, sélection)] : chaque carte seule, chaque paire, les plus grandes combinaisons, le paquet standard."""
         picks = [(f["id"], o) for f in self.features for o in self.options(f)]
         out = [("single", {c: o}) for c, o in picks]
         out += [("pair", {c: o, d: p}) for (c, o), (d, p) in itertools.combinations(picks, 2) if c != d]
@@ -148,6 +157,8 @@ class Cards:
                         if self.valid(trial):
                             sel = trial
                 out.append(("largest", sel))
+        if self.standard:
+            out.append(("standard", self.standard_sel()))
         res = []
         for group, sel in out:
             sel = self.close(sel)
@@ -156,11 +167,22 @@ class Cards:
         return res
 
 
+def standard_ids():
+    """Les tweaks du paquet standard (notes/59), lus dans tweaks.js comme la page : sa clé de REF_MAINOS est
+    « + ».join(standard_ids())."""
+    tw = mc_tweaks()
+    cards = Cards(tw["features"], tw["tweaks"], tw.get("standard", ()))
+    if not cards.standard:
+        raise SystemExit("!! tweaks.js n'a pas de paquet standard : relance tools/gen_flasher_tweaks.py")
+    return cards.ids(cards.standard_sel())
+
+
 GROUPS = {
     "single": "each card alone: each variant, each combination of real Syntakt engines",
     "pair": "every pair of cards the page lets you tick together",
     "largest": "the largest combinations: every compatible card ticked, from each card, both ways, with and without "
                "the Syntakt engines",
+    "standard": "the standard install, what the page flashes by default (STANDARD in tools/gen_flasher_tweaks.py)",
 }
 
 
@@ -186,7 +208,7 @@ def blocks(cycles, syntakt):
             ref["p"] = hashlib.sha256(build.payload_image(t, build.payload_runtime(t, stock, st_img))).hexdigest()
         mods.append(f'  "{t["id"]}": {json.dumps(ref, separators=(", ", ": "))},')
 
-    cards = Cards(tw["features"], tw["tweaks"])
+    cards = Cards(tw["features"], tw["tweaks"], tw.get("standard", ()))
     lines, seen, payloads = [], set(), {}
     last_group = None
     for group, sel in cards.sample():
