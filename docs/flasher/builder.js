@@ -9,6 +9,9 @@
  * tools/webbuild_check.sh le verifie contre tools/build.py sur des images
  * synthetiques (pipeline complet, HMAC compris).
  *
+ * Licence : MIT (LICENSE du depot). mtlib est de drumkilla, MIT (LICENSE-elektron-model-tweaks.txt),
+ * d'apres elektron-firmware-tool de Marcel Bierling, MIT (LICENSE-elektron-firmware-tool.txt).
+ *
  * Enveloppe dans une IIFE : en <script> classique, les declarations de premier
  * niveau sont globales et entreraient en collision avec flasher.js.
  */
@@ -95,6 +98,9 @@ function hex(bytes) {
   return s;
 }
 function fromHex(s) {
+  // comme bytes.fromhex de Python, mais sans espace : deux chiffres hexadécimaux par octet, sinon refus
+  if (typeof s !== "string" || s.length % 2 || /[^0-9a-fA-F]/.test(s))
+    throw new Error(`hexadecimal invalide : ${String(s).slice(0, 24)}`);
   const out = new Uint8Array(s.length / 2);
   for (let i = 0; i < out.length; i++) out[i] = parseInt(s.substr(i * 2, 2), 16);
   return out;
@@ -316,6 +322,15 @@ function aplibTail(w, data, start, lastOff) {
   return lastOff;
 }
 
+// Charge utile rangée compressée dans l'image (append.compress === "aplib", notes/50) : flux aPLib sans l'en-tête de
+// 8 o, même compresseur que la partie ajoutée (tools/aplib_grow.py pack), décompressé au démarrage (stub.S, APLIB).
+function aplibPack(data) {
+  const w = new _Writer();
+  aplibTail(w, data, 0, 1);
+  w.end();
+  return Uint8Array.from(w.o.slice(SECT_HDR));
+}
+
 // origLen < data.length : section agrandie, la fin est compressée par aplibTail.
 function aplibRepack(data, ops, dirty, origLen = data.length) {
   const w = new _Writer();
@@ -446,6 +461,8 @@ function applyWrites(mainOs, tweaks) {
   for (const t of tweaks) {
     for (const w of t.writes) {
       const off = w.off, old = fromHex(w.old), nw = fromHex(w.new);
+      if (!Number.isInteger(off) || off < 0 || off + old.length > data.length)
+        throw new Error(`${t.id} : ecriture hors de la section 3 (off ${off})`);
       // the same write, already made by another tweak (a sprite mask both free, notes/32): nothing to do
       if (nw.length === old.length && nw.every((b, k) => data[off + k] === b) && !old.every((b, k) => data[off + k] === b))
         continue;
@@ -458,6 +475,18 @@ function applyWrites(mainOs, tweaks) {
     }
   }
   return { data, dirty };
+}
+
+// Les ecritures d'un tweak a la suite, pour son empreinte (REF_MODS de app.js) : off (4 o), len(old) (4 o), old,
+// len(new) (4 o), new. Meme calcul que writes_bytes() de tools/ref_mainos.py.
+function writesBytes(t) {
+  const parts = [];
+  const u32 = (x) => Uint8Array.of(x >>> 24, (x >>> 16) & 255, (x >>> 8) & 255, x & 255);
+  for (const w of t.writes) {
+    const old = fromHex(w.old), nw = fromHex(w.new);
+    parts.push(u32(w.off), u32(old.length), old, u32(nw.length), nw);
+  }
+  return concat(...parts);
 }
 
 function checkConflicts(chosen) {
@@ -588,8 +617,9 @@ function syntaktVersion(ap, syntaktRaw) {
 
 /* Charge utile d'un tweak « append » : plages copiées du programme audio du Syntakt (section 7, chargée
  * à 0x40000400) ou du MAIN OS Cycles d'origine (mainOs), notre code, puis la table de relocalisation
- * (ancienne valeur vérifiée à chaque fois). Rend ce qui va dans l'image : la charge utile entière, ou rangée en
- * morceaux (ap.pack : [adresse, taille], tools/build.py payload_image ; hors des morceaux, tout doit être à zéro). */
+ * (ancienne valeur vérifiée à chaque fois). Rend ce qui va dans l'image : la charge utile entière, rangée en
+ * morceaux (ap.pack : [adresse, taille], tools/build.py payload_image ; hors des morceaux, tout doit être à zéro),
+ * ou compressée (ap.compress === "aplib" : aplibPack). */
 function buildPayload(ap, syntaktRaw, mainOs) {
   let img = null;                               // section 7 du Syntakt, si le tweak en copie des morceaux
   if (ap.syntakt) {
@@ -600,6 +630,10 @@ function buildPayload(ap, syntaktRaw, mainOs) {
     if (hex(sha256(img)) !== ap.syntakt.section_sha256) throw new Error("section 7 du Syntakt inattendue");
   }
   const out = payloadRuntime(ap, img, mainOs);
+  if (ap.compress) {
+    if (ap.compress !== "aplib") throw new Error(`charge utile : compression ${ap.compress} inconnue`);
+    return aplibPack(out);
+  }
   if (!ap.pack) return out;
   const dest = parseInt(ap.dest, 16), kept = Uint8Array.from(out), parts = [];
   for (const [a, n] of ap.pack) {
@@ -622,18 +656,22 @@ function payloadRuntime(ap, img, mainOs) {
     out.set(chunk, at);
   }
   for (const [va, old, nw] of ap.reloc) {
-    const at = parseInt(va, 16) - dest;
-    if (hex(out.subarray(at, at + 4)) !== old) throw new Error(`relocalisation ${va} : ${old} attendu`);
-    out.set(fromHex(nw), at);
+    const at = parseInt(va, 16) - dest, o = fromHex(old), n = fromHex(nw);
+    if (o.length !== 4 || n.length !== 4 || !(at >= 0 && at <= out.length - 4))
+      throw new Error(`relocalisation ${va} : 4 octets attendus dans la charge utile`);
+    if (hex(out.subarray(at, at + 4)) !== hex(o)) throw new Error(`relocalisation ${va} : ${old} attendu`);
+    out.set(n, at);
   }
   return out;
 }
 
 /* Construit le .syx modifie.
  * raw = Uint8Array du .syx officiel ; device = device.json ; chosen = [tweak] ;
- * opts = { expectMainOsSha, force, syntakt } ; syntakt = Uint8Array du Syntakt_OS1.42.syx, exigé par un tweak « append »
- * qui en copie des morceaux (ap.syntakt) ; Model-TG n'en a pas besoin.
- * Renvoie { raw, mainOsSha, patchedBytes, caves, product, name }. */
+ * opts = { expectMainOsSha, refMods, force, syntakt } ; syntakt = Uint8Array du Syntakt_OS1.42.syx, exigé par un tweak
+ * « append » qui en copie des morceaux (ap.syntakt) ; Model-TG n'en a pas besoin. refMods = REF_MODS de app.js
+ * (notes/49) : l'empreinte des ecritures (w) et de la charge utile (p) de chaque tweak, comparees ici ; un tweak
+ * dont l'empreinte differe est refuse. modsChecked : chaque tweak choisi avait son empreinte, et elle correspond.
+ * Renvoie { raw, mainOsSha, patchedBytes, caves, modsChecked, product, name }. */
 function build(raw, device, chosen, opts = {}) {
   const { stream, product, name, start_seq } = unwrap(raw);
   const c = parseContainer(stream);
@@ -646,6 +684,12 @@ function build(raw, device, chosen, opts = {}) {
 
   checkConflicts(chosen);
   chosen = [...chosen].sort((a, b) => a.order - b.order);   // l'un peut s'appliquer sur l'autre (notes/31)
+  const refOf = (t) => (opts.refMods && opts.refMods[t.id]) || null;
+  let modsChecked = !!opts.refMods && chosen.length > 0;
+  for (const t of chosen) {                      // chaque mod, octet pour octet celui de tools/build.py (notes/49)
+    if (!refOf(t)) { modsChecked = false; continue; }
+    if (hex(sha256(writesBytes(t))) !== refOf(t).w) throw new Error(`${t.id} : ecritures differentes de la reference`);
+  }
   const { data: patched, dirty } = applyWrites(mainOs, chosen);
   const caves = checkCaves(mainOs, chosen, opts.force, dirty, patched, device.cave_refs_ok);
   const apps = chosen.filter((t) => t.append);       // l'un après l'autre : Model-TG, puis nos moteurs
@@ -654,6 +698,7 @@ function build(raw, device, chosen, opts = {}) {
     const ap = t.append;
     if (BASE + full.length !== parseInt(ap.at, 16)) throw new Error("l'image ne finit pas où le tweak l'attend");
     const payload = buildPayload(ap, opts.syntakt, mainOs);
+    if (refOf(t) && hex(sha256(payload)) !== refOf(t).p) throw new Error(`${t.id} : charge utile differente de la reference`);
     full = concat(full, payload);
     fullDirty = concat(fullDirty, new Uint8Array(payload.length).fill(1));
   }
@@ -676,7 +721,7 @@ function build(raw, device, chosen, opts = {}) {
   const outStream = buildStream(blob, BYTES_PER_MSG);
   const outRaw = wrap(outStream, product, start_seq);
   return { raw: outRaw, mainOsSha: patchedSha, patchedBytes: fullDirty.reduce((a, b) => a + b, 0),
-           caves, product, name };
+           caves, modsChecked, product, name };
 }
 
 /* Cross-flash (tools/crossflash.py) : le MAIN OS de guestRaw dans le conteneur de hostRaw.
@@ -736,13 +781,11 @@ function keyOf(c) {
   return key;
 }
 
-function cyclesForSamples(cycRaw, smpRaw) {
-  const cy = unwrap(cycRaw), sm = unwrap(smpRaw);
-  if (cy.product !== 0x11 || sm.product !== 0x0f) throw new Error("il faut l'OS Model:Cycles puis l'OS Model:Samples");
-  const cc = parseContainer(cy.stream), sc = parseContainer(sm.stream);
-  const cKey = keyOf(cc), sKey = keyOf(sc);
-  const c3 = cc.sections.find((s) => s.id === 3);
-  const { data: main, ops } = aplibDepack(cc.blob.subarray(c3.off, c3.off + c3.size));
+/* Le MAIN OS Cycles de la section 3 `c3` (officiel ou avec mods), sa constante de cle recalculee pour la cle du Samples,
+ * dans le conteneur officiel du Samples `sc`, signe avec sKey. Renvoie { blob, main, mods, co } : main = l'OS installe,
+ * mods = l'OS avant les 32 octets, co = leur offset. */
+function cyclesOsInSamples(c3, cKey, sc, sKey) {
+  const { data: main, ops } = aplibDepack(c3);
   for (const [va, want] of CYC_KEY_CODE)
     if (hex(main.subarray(va - BASE, va - BASE + 6)) !== want) throw new Error("code de verification inattendu");
   const text = main.subarray(CYC_KEY_STR - BASE, CYC_KEY_STR - BASE + 12);
@@ -752,14 +795,22 @@ function cyclesForSamples(cycRaw, smpRaw) {
   if (!eq(old.map((b, i) => b ^ h[i] ^ hr[i]), cKey)) throw new Error("la cle du MAIN OS Cycles differe de celle du bootstrap");
   const patched = Uint8Array.from(main), dirty = new Uint8Array(main.length);
   for (let i = 0; i < 32; i++) { patched[co + i] = sKey[i] ^ h[i] ^ hr[i]; dirty[co + i] = 1; }
+  if (BASE + patched.length > END_LIMIT) throw new Error("OS agrandi au-delà de 0x40200000");
   const newS3 = aplibRepack(patched, ops, dirty);
   if (!eq(aplibDepack(newS3).data, patched)) throw new Error("recompression du MAIN OS : relecture differente");
   const blob = rebuildContainer(sc, { 3: newS3 }, sKey);
-  const raw = wrap(buildStream(blob, BYTES_PER_MSG), sm.product, sm.start_seq);
+  if (blob.length > SMP_CONTAINER_MAX) throw new Error("conteneur trop grand pour la flash du Samples");
+  return { blob, main: patched, mods: main, co };
+}
+const SMP_CONTAINER_MAX = 0x1c0000;      // ecrit en flash 0x20000, doit finir avant 0x1e0000 (notes/41 §8)
 
-  // relecture complete
+/* Relecture d'un OS Cycles emballe pour le Samples : produit et octet appareil du transport, en-tete et sections 2/4/5
+ * du Samples officiel, section 3 = main, ecart avec mods limite aux 32 octets de la cle, HMAC Samples (pas Cycles). */
+function checkForSamples(raw, product, sc, sKey, cKey, r) {
   const back = unwrap(raw), bc = parseContainer(back.stream);
-  if (back.product !== 0x0f || !eq(bc.blob.subarray(0, 0x20), sc.blob.subarray(0, 0x20))) throw new Error("relecture : en-tete");
+  if (back.product !== product || raw[8] !== PRODUCTS[product][1]) throw new Error("relecture : transport");
+  if (!eq(bc.blob.subarray(0, 0x20), sc.blob.subarray(0, 0x20))) throw new Error("relecture : en-tete");
+  if (be32(back.stream, 4) !== contentChecksum(bc.blob)) throw new Error("relecture : checksum de contenu");
   for (const x of sc.sections) {
     const b = bc.sections.find((y) => y.id === x.id);
     if (!b) throw new Error(`relecture : section ${x.id} absente`);
@@ -768,10 +819,54 @@ function cyclesForSamples(cycRaw, smpRaw) {
   }
   const b3 = bc.sections.find((y) => y.id === 3);
   const m = aplibDepack(bc.blob.subarray(b3.off, b3.off + b3.size)).data;
-  if (!eq(m, patched)) throw new Error("relecture : MAIN OS different");
-  if (!eq(hmacSha256(sKey, bc.blob.subarray(0, bc.blob.length - DIGEST_LEN)), bc.blob.subarray(bc.blob.length - DIGEST_LEN)))
-    throw new Error("relecture : HMAC invalide avec la cle Samples");
+  if (!eq(m, r.main) || m.length !== r.mods.length) throw new Error("relecture : MAIN OS different");
+  for (let i = 0; i < m.length; i++)
+    if (m[i] !== r.mods[i] && !(i >= r.co && i < r.co + 32)) throw new Error("relecture : MAIN OS modifie hors de la cle");
+  const body = bc.blob.subarray(0, bc.blob.length - DIGEST_LEN), dig = bc.blob.subarray(bc.blob.length - DIGEST_LEN);
+  if (!eq(hmacSha256(sKey, body), dig)) throw new Error("relecture : HMAC invalide avec la cle Samples");
+  if (eq(hmacSha256(cKey, body), dig)) throw new Error("relecture : HMAC valide aussi avec la cle Cycles");
+  return m;
+}
+
+function cyclesForSamples(cycRaw, smpRaw) {
+  const cy = unwrap(cycRaw), sm = unwrap(smpRaw);
+  if (cy.product !== 0x11 || sm.product !== 0x0f) throw new Error("il faut l'OS Model:Cycles puis l'OS Model:Samples");
+  const cc = parseContainer(cy.stream), sc = parseContainer(sm.stream);
+  const cKey = keyOf(cc), sKey = keyOf(sc);
+  const c3 = cc.sections.find((s) => s.id === 3);
+  const r = cyclesOsInSamples(cc.blob.subarray(c3.off, c3.off + c3.size), cKey, sc, sKey);
+  const raw = wrap(buildStream(r.blob, BYTES_PER_MSG), sm.product, sm.start_seq);
+  const m = checkForSamples(raw, 0x0f, sc, sKey, cKey, r);         // relecture complete
   return { raw, mainOsSha: hex(sha256(m)) };
+}
+
+/* OS Cycles AVEC MODS pour Model:Samples (tools/mods_for_samples.py, notes/57) : builtRaw = le .syx Model:Cycles construit
+ * par build() depuis cycRaw (officiel), dont seule la section 3 differe. Toujours l'OS Cycles, quelle que soit la machine ;
+ * le correctif de cle de cyclesForSamples est toujours applique. into = l'OS qui tourne sur le Model:Samples :
+ * "samples" (OS Samples officiel : transport 0x0F, octet appareil 0x0A) ou "cycles" (un OS Cycles de la page, cle
+ * Samples : transport 0x11, octet appareil 0x0C). Relu en entier. Renvoie { raw, mainOsSha } (l'OS installe). */
+function modsForSamples(builtRaw, cycRaw, smpRaw, into) {
+  if (into !== "samples" && into !== "cycles") throw new Error("transport inconnu : " + into);
+  const bu = unwrap(builtRaw), cy = unwrap(cycRaw), sm = unwrap(smpRaw);
+  if (bu.product !== 0x11 || cy.product !== 0x11 || sm.product !== 0x0f)
+    throw new Error("il faut un build Model:Cycles, l'OS Model:Cycles et l'OS Model:Samples");
+  const bc = parseContainer(bu.stream), cc = parseContainer(cy.stream), sc = parseContainer(sm.stream);
+  if (bc.sections.length !== cc.sections.length) throw new Error("build : sections differentes de l'OS Cycles officiel");
+  for (const x of cc.sections) {
+    const b = bc.sections.find((y) => y.id === x.id);
+    if (!b) throw new Error(`build : section ${x.id} absente`);
+    if (x.id !== 3 && !eq(bc.blob.subarray(b.off, b.off + b.size), cc.blob.subarray(x.off, x.off + x.size)))
+      throw new Error(`build : section ${x.id} differente de l'OS Cycles officiel`);
+  }
+  const cKey = keyOf(cc), sKey = keyOf(sc);
+  if (!eq(hmacSha256(cKey, bc.blob.subarray(0, bc.blob.length - DIGEST_LEN)), bc.blob.subarray(bc.blob.length - DIGEST_LEN)))
+    throw new Error("build : HMAC invalide avec la cle Cycles");
+  const b3 = bc.sections.find((s) => s.id === 3);
+  const r = cyclesOsInSamples(bc.blob.subarray(b3.off, b3.off + b3.size), cKey, sc, sKey);
+  const host = into === "samples" ? sm : cy;
+  const raw = wrap(buildStream(r.blob, BYTES_PER_MSG), host.product, host.start_seq);
+  const m = checkForSamples(raw, host.product, sc, sKey, cKey, r);
+  return { raw, mainOsSha: hex(sha256(m)), modsSha: hex(sha256(r.mods)) };
 }
 
 /* Retour (tools/crossflash.py --back-samples) : l'OS Samples officiel, meme contenu et meme signature, dans le
@@ -786,9 +881,9 @@ function samplesBack(cycRaw, smpRaw) {
 }
 
 // ---- Export node / navigateur ---------------------------------------------
-const API = { sha256, hmacSha256, unwrap, wrap, aplibDepack, aplibRepack, parseContainer, findKey,
+const API = { sha256, hmacSha256, writesBytes, unwrap, wrap, aplibDepack, aplibRepack, aplibPack, parseContainer, findKey,
               rebuildContainer, buildStream, contentChecksum, applyWrites, checkConflicts, checkCaves,
-              build, crossflash, cyclesForSamples, samplesBack, syntaktSection, syntaktVersion, buildPayload,
+              build, crossflash, cyclesForSamples, modsForSamples, samplesBack, syntaktSection, syntaktVersion, buildPayload,
               hex, fromHex, PRODUCTS, BASE };
 if (typeof module !== "undefined" && module.exports) module.exports = API;
 if (typeof window !== "undefined") window.MCBuilder = API;

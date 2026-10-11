@@ -254,3 +254,10 @@ charge des samples en identité SMP.
   `0x80003d2c`). Le menu de démarrage du Samples n'écoute que le transport Samples (`0x0F`/`0x0A`) et vérifie avec la
   clé du Samples : il ignore les `.syx` Cycles. Seul risque : un OS Cycles officiel futur au bootstrap plus récent,
   que son OS Cycles (clé d'origine) accepterait.
+
+## 9. Suite : l'OS Cycles avec mods pour Model:Samples (10/10/2026)
+
+La piste du §8 est faite en [57](57-os-cycles-quelle-que-soit-la-machine.md) : le choix de la machine dans l'onglet Mods,
+`tools/mods_for_samples.py` (flasher d'origine de RDS (AIM), intégré par DaftMaple) et le nouveau type de fichier (conteneur signé
+Samples dans le transport Cycles) pour changer de mods. Décision prise à cette occasion : le flasher installe toujours
+l'OS du Model:Cycles, quelle que soit la machine.
