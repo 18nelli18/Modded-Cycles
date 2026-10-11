@@ -472,3 +472,10 @@ un coude) reste possible ici si cela ne siffle toujours pas assez, au prix d'un 
   144 dB de décroissance) : LP 947 Hz (Q 800) et HP 2,7 kHz (Q 953), sortie saturée à 1 FS sans repli, puis
   décroissance à 3,23 et 7,60 dB par 100 ms (loi 3,23 et 7,74) jusqu'à zéro exactement, en 4,4 et 1,8 s au plus :
   pas d'oscillation entretenue, même à Q 950.
+- Après la fusion de main (11/10/2026), sur la branche fusionnée : essai complet seul et avec
+  `model-tg,6ch-usbup,sample-preview,arp,trig-hold,tempo-max,boot-anim,level-pan-values,trigless-dim,multiline-browser`
+  (coût remesuré, §9 et §11.3) ; `--quick` avec `model-tg-st` et `syntakt-tg-sd-cp-toy-bits-swarm`, puis
+  `…-macro` (avec `sample-preview-st`, `6ch-usbup`, `arp`, `trig-hold`, `tempo-max`, `boot-anim`), et sans Model-TG
+  avec `syntakt-sd-cp-toy-bits-swarm-macro` (avec `6ch-usbup`, `arp`, `trig-hold`, `tempo-max`, `boot-anim`,
+  `latching-mute`, `trig-preview`, `browser-scroll`) : TOUT OK. Test du flasher sur les vrais OS : les 818
+  combinaisons de REF_MAINOS construites, TOUT OK.
