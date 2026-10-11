@@ -43,3 +43,5 @@ d'aveycole ; `tools/gen_seq_gen.py`, sources `tools/machines/seq_gen/`, note 53.
 Statut expérimental, aucune validation matérielle ; seulement dans `docs/flasher-test/`.
 
 Variante de test `experimental/scroll/49-scale-gen*.json` : même origine TinyGregAudio/Model-TG (MIT), mise en page à quatre lignes défilantes dans les mêmes masques, générée par `tools/gen_seq_gen.py --scroll` (notes/53 §10). Réservée au flasher de test ; affichage matériel en attente.
+
+Le 10/10/2026, AveyCole confirme le menu défilant sur machine. Les variantes de `experimental/scroll/` sont promues dans `49-scale-gen*.json` ; le générateur assemble ce menu par défaut. Voir notes/53 §11.

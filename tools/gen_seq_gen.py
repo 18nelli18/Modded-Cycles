@@ -120,7 +120,7 @@ def main():
     ap.add_argument("--model-tg", type=pathlib.Path, required=True)
     ap.add_argument("--cross", default=os.environ.get("M68K_CROSS", "m68k-elf-"))
     ap.add_argument("--check", action="store_true")
-    ap.add_argument("--scroll", action="store_true", help="variante de test à quatre lignes défilantes")
+    ap.add_argument("--scroll", action="store_true", default=True, help="variante de test à quatre lignes défilantes")
     args = ap.parse_args()
     assert subprocess.check_output(["git", "-C", str(args.model_tg), "rev-parse", "HEAD"], text=True).strip() == COMMIT
     subprocess.run(["git", "-C", str(args.model_tg), "diff", "--quiet", "HEAD"], check=True)
@@ -128,14 +128,14 @@ def main():
     assert hashlib.sha256(stock).hexdigest() == STOCK, "OS officiel 1.13 requis"
     tg = symbols(args.cross, args.model_tg / "build/_b.elf")
     blobs, syms = compile_code(args.cross, tg, args.scroll)
-    out = OUT / "experimental/scroll" if args.scroll else OUT
+    out = OUT
     out.mkdir(parents=True, exist_ok=True)
     for name in ("model-tg", "model-tg-st"):
         base = json.loads((HERE.parent / f"tweaks/model-cycles_OS1.13/30-{name}.json").read_text())
         tweak = generate(stock, base, blobs, syms, tg)
         if args.scroll:
-            tweak["name"] = "Générateur en gamme — menu défilant (test)"
-            tweak["description"][2] = "Menu de test : quatre lignes défilantes, police conservée et marges renforcées."
+            tweak["name"] = "Générateur en gamme — menu défilant"
+            tweak["description"][2] = "Quatre lignes défilantes, police conservée et marges renforcées. Testé sur machine par AveyCole le 10/10/2026."
         build.apply_writes(stock, [base, tweak])
         path = out / ("49-" + tweak["id"] + ".json")
         text = json.dumps(tweak, indent=1, ensure_ascii=False) + "\n"
@@ -143,7 +143,7 @@ def main():
             assert path.read_text() == text, f"{path} n'est pas à jour"
         else:
             path.write_text(text)
-        print(f"ok : {path.name}, {sum(map(len, blobs))} octets, 13 masques vérifiés ; " + ("menu défilant de test" if args.scroll else "menu principal"))
+        print(f"ok : {path.name}, {sum(map(len, blobs))} octets, 13 masques vérifiés ; " + ("menu défilant" if args.scroll else "menu principal"))
 
 
 if __name__ == "__main__":

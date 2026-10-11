@@ -155,10 +155,10 @@ class Rig:
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--cycles", required=True)
-    ap.add_argument("--scroll", action="store_true")
+    ap.add_argument("--scroll", action="store_true", default=True)
     args = ap.parse_args()
     stock = main_os_from_syx(args.cycles)
-    folder = "experimental/scroll/" if args.scroll else ""
+    folder = ""
     for variant, dep in (("scale-gen", "model-tg"), ("scale-gen-st", "model-tg-st")):
         base = json.loads((ROOT / f"tweaks/model-cycles_OS1.13/30-{dep}.json").read_text())
         tweak = json.loads((ROOT / f"tweaks/model-cycles_OS1.13/{folder}49-{variant}.json").read_text())

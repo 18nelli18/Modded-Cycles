@@ -18,7 +18,7 @@
 
 ---
 
-Scale sequence generator: **hardware tested by AveyCole (10 October 2026)**. Requires Model-TG. With playback stopped, press **SETTINGS + PAGE** to choose scale, root, note range and density, then Generate. Undo lasts while the page stays open.
+Scale sequence generator: **hardware tested by AveyCole (10 October 2026)**. Requires Model-TG. With playback stopped, press **SETTINGS + PAGE** to choose scale, root, note range and density, then Generate. The four-row menu scrolls as you turn DATA. Undo lasts while the page stays open.
 
 ## Why
 
