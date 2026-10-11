@@ -62,7 +62,8 @@ lf2l_widgets:
     movel %d1,%a3@(12)
     moveq #1,%d0
     movel %d0,%a3@(20)
-    movel #lf2l_label,%d0
+    lea.l lf2l_label_callbacks,%a0
+    movel %a0@(0,%d1:l:4),%d0
     movel %d0,%a3@(24)
     movel %d1,%a3@(44)
     moveq #1,%d0
@@ -135,6 +136,7 @@ lf2l_vt:
     .globl lf2l_order,lf2l_inverse
 lf2l_order: .long 5,2,4,8,1,3,6,7,0
 lf2l_inverse: .long 8,4,1,5,2,0,6,7,3
+lf2l_label_callbacks: .long lf2l_label,lf2l_label,0x40024c7a,lf2l_label,0x40024ca2,0x40024c52,lf2l_label,lf2l_label,0x40024cca
 lf2l_labels: .long lf2l_trk,lf2l_spd,lf2l_mul,lf2l_fad,lf2l_dst,lf2l_wav,lf2l_sph,lf2l_rst,lf2l_dep
     .section .rodata.lf2l_strings,"a"
     .balign 4

@@ -367,12 +367,14 @@ lf2l_value_start:
     cmpil #4,%d2
     bne .Lpr_not_dest
     cmpil #127,%d0
-    bne .Lpr_not_dest
+    bne lf2p_dest_name
     pea lf2p_off
     pea lf2p_fmt_s
     bra .Lpr_value
     .section .text.lf2p_render_tail,"ax"
 .Lpr_not_dest:
+    cmpil #2,%d2
+    beq lf2p_multiplier
     cmpil #1,%d2
     beq .Lpr_signed
     cmpil #3,%d2
@@ -397,8 +399,85 @@ lf2l_value_start:
     movel %d6,%sp@-
     jsr 0x40071a04
     lea.l %sp@(28),%sp
+    bra .Lpr_restore
+.Lpr_restore:
     movem.l %sp@,%d2/%d4/%d6/%a2
     lea.l %sp@(16),%sp
+    rts
+
+    .section .text.lf2p_dest_name,"ax"
+lf2p_dest_name:
+    movel %d0,%sp@-
+    jsr lf2p_destination_name
+    addql #4,%sp
+    movel %d0,%sp@-
+    pea lf2p_fmt_s
+    jmp .Lpr_value
+
+    .section .text.lf2p_multiplier,"ax"
+lf2p_multiplier:
+    | Même représentation que 0x400459f4 : *1..*2k puis 1..2k.
+    moveq #42,%d1
+    cmpil #12,%d0
+    bcs .Lmul_index
+    subil #12,%d0
+    moveq #32,%d1
+.Lmul_index:
+    moveq #1,%d2
+    lsll %d0,%d2
+    cmpil #10,%d0
+    bcs .Lmul_small
+    lsrl #8,%d2
+    lsrl #2,%d2
+    movel %d2,%sp@-
+    movel %d1,%sp@-
+    pea 0x40128627
+    jmp lf2p_multiplier_draw
+.Lmul_small:
+    movel %d2,%sp@-
+    movel %d1,%sp@-
+    pea 0x4012fe63
+    jmp lf2p_multiplier_draw
+
+    .section .text.lf2p_multiplier_draw,"ax"
+lf2p_multiplier_draw:
+    pea 0x14
+    movel %d4,%sp@-
+    pea 120
+    pea 0x40ea14cc
+    movel %d6,%sp@-
+    jsr 0x40071a04
+    lea.l %sp@(32),%sp
+    jmp .Lpr_restore
+
+    .section .text.lf2p_destination_name,"ax"
+    .globl lf2p_destination_name
+lf2p_destination_name:
+    | Même route de nom court que LFO 1 (0x400264fc..0x4002650e).
+    lea.l %sp@(-8),%sp
+    movem.l %d2/%a2,%sp@
+    movel %sp@(12),%d2
+    jsr 0x400cf866
+    movel %d0,%sp@-
+    jsr 0x4000eb9c
+    addql #4,%sp
+    movel lf2p_track,%sp@-
+    movel %d0,%sp@-
+    jsr 0x400097f0
+    addql #8,%sp
+    moveal %d0,%a2
+    moveal %a2@,%a0
+    moveal %a0@(52),%a0
+    movel %d2,%sp@-
+    movel %a2,%sp@-
+    jsr %a0@
+    addql #8,%sp
+    movel %d0,%sp@-
+    movel %a2,%sp@-
+    jsr 0x4000b208
+    addql #8,%sp
+    movem.l %sp@,%d2/%a2
+    lea.l %sp@(8),%sp
     rts
 
     .section .data.lf2p_state,"aw"

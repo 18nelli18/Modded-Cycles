@@ -73,7 +73,7 @@ def make(stock, real=True):
     if not real:r.u.hook_add(UC_HOOK_CODE,r.stub,begin=0x400802ec,end=0x400802ec)
     def formatted(a):
         f=r.string(a[5])
-        r.texts.append((a[2],a[3],r.string(a[6]) if f=='%s' else str(a[6]) if f=='%d' else f))
+        r.texts.append((a[2],a[3],r.string(a[6]) if f=='%s' else str(a[6]) if f=='%d' else chr(a[6])+str(a[7])+('k' if f.endswith('k') else '') if f in ('%c%d','%c%dk') else f))
     native_stubs={
         0x40070f6e:lambda a:0,0x40071da4:lambda a:0,
         0x4007199c:lambda a:r.texts.append((a[2],a[3],r.string(a[5]))) or 0,
@@ -98,6 +98,19 @@ def make(stock, real=True):
     r.w32(0x93005128,0x93005200)
     r.u.mem_write(0x93005200,b'\x20\x3c'+struct.pack('>I',0x93005300)+b'\x4e\x75')
     r.w32(0x93005304,5)
+    # Contexte des noms : tables boot et backend sonore réels, getters simulés.
+    kit=0x93090000;vt=0x93098000;getter=0x93099000
+    r.stubs[0x400cf866]=lambda a:kit
+    r.w32(kit+48,0x93005100)
+    r.w32(vt+40,getter)
+    r.u.mem_write(getter,b'\x20\x6f\x00\x04\x20\x28\x00\x04\x4e\x75')
+    for track in range(6):
+        handle=kit+212+68*track;raw=0x930a0000+track*128
+        owner=kit+116+8*(63+track)
+        r.w32(owner,0x400fd134);r.w32(owner+4,handle)
+        r.w32(handle,vt);r.w32(handle+4,raw)
+        r.u.mem_write(raw,bytes(100));r.u.mem_write(raw+38,bytes([track]))
+    r.call(0x4005a274)
     return r
 
 
@@ -132,6 +145,7 @@ def main():
     # Régression : l'ancien retour statique doit être refusé par le heap simulé.
     bad=make(stock)
     assert bad.call('lf2p_open') == 1
+    bad.w32(bad.s['lf2p_row'],1)
     borrowed=bad.r32(bad.s['lf2l_labels'])
     bad.u.mem_write(bad.s['lf2l_label'],b'\x20\xbc'+struct.pack('>I',borrowed)+b'\x4e\x75')
     try:
@@ -234,6 +248,9 @@ def main():
         r.texts.clear(); r.rects.clear()
         r.call('lf2p_render', obj, 0x93006000)
         assert len(r.texts) == 9 and r.texts[0][2] == 'LFO 2'
+        labels=('Trk','Spd','Mul','Fad','Dst','Wav','SPH','Rst','Dep')
+        order=(5,2,4,8,1,3,6,7,0);scroll=max(0,min(5,order.index(row)-1))
+        assert [text for x,y,text in r.texts if x==72]==[labels[i] for i in order[scroll:scroll+4]]
         assert all(0 <= x <= 127 and 0 <= y <= 55 for x, y, _ in r.texts)
         assert sorted(set(y for _, y, _ in r.texts)) == [8, 21, 34, 47]
         assert len(r.rects) == 3
@@ -252,6 +269,23 @@ def main():
             r.call('lf2p_render',obj,0x93006000)
             assert any(x==120 and text==name for x,y,text in r.texts)
     print('ok : noms des sept formes et cinq modes lus dans les tables natives')
+
+    for track in range(6):
+        r.w32(r.s['lf2p_track'],track);r.w32(r.s['lf2p_row'],4)
+        for destination in (*range(33),127):
+            assert r.call('lf2_edit',CTX,track,3,destination)==1
+            r.texts.clear();r.call('lf2p_render',obj,0x93006000)
+            descriptor=r.call(0x4005a692,destination,track) if destination!=127 else 0
+            expected='OFF' if destination==127 else r.string(r.r32(0x4010dce0+56*descriptor+52))
+            assert any(x==120 and text==expected for x,y,text in r.texts),(track,destination,expected,r.texts)
+    r.w32(r.s['lf2p_track'],0);r.w32(r.s['lf2p_row'],2)
+    for index in range(24):
+        assert r.call('lf2_edit',CTX,0,1,index)==1
+        r.texts.clear();r.call('lf2p_render',obj,0x93006000)
+        r.call(0x400459f4,0,index<<8,0x930b0000)
+        expected=r.string(0x930b0000)
+        assert any(x==120 and text==expected for x,y,text in r.texts),(index,expected,r.texts)
+    print('ok : noms natifs des 33 destinations + OFF sur six machines ; 24 multiplicateurs musicaux, libellés à gauche des valeurs')
 
     maximum = (32767, 23, 32767, 127, 6, 32767, 4, 32767)
     for track in range(6):
@@ -320,7 +354,7 @@ def main():
         if reason=='manager':b.w32(0x40fe4178,0)
         assert b.call('lf2p_open') == 0 and not page(b) and b.new_count == 0
     print('ok : allocations refusées et gardes IPL/contexte/gestionnaire sans page pendante')
-    print('NOTE : interface en émulation, dessin/présentation simulés ; libellés destinations/multiplicateurs, persistance, budget audio combiné et catalogue flasher restent à finaliser')
+    print('NOTE : interface en émulation, dessin/présentation simulés ; persistance et budget audio matériel combiné restent à finaliser')
 
 
 if __name__ == '__main__':

@@ -278,3 +278,26 @@ statique : le renderer doit provoquer une erreur « invalid free ».
 Le parcours corrigé vérifie les vrais octets placés, ouverture/rendu,
 édition, fermeture et réouverture. Les primitives de dessin et allocations
 restent simulées ; aucun nouveau succès matériel n'est revendiqué.
+
+
+## 14. Libellés et destinations du LFO natif (11/10/2026)
+
+[FAIT matériel, rapport AveyCole] La correction de propriété des chaînes
+fonctionne sur sa machine : « LFO 2 works now ». Il demande les libellés
+à gauche des valeurs et les noms des destinations du premier LFO.
+
+Le rendu conserve ses quatre lignes natives. Les callbacks stock de
+Wav/Mul/Dst/Dep (`0x40024c52/7a/a2/ca`) fournissent désormais directement
+leurs chaînes possédées. Spd/Fad/SPH/Rst/Trk conservent leur libellé court.
+`lf2p_destination_name` reprend la route du premier LFO : contexte de la
+piste choisie, méthode virtuelle +52 pour convertir k en descripteur,
+puis nom court `0x4000b208`. Il lit donc les tables actives et leurs noms
+modifiés par les mods, sans table de noms parallèle. OFF 127 reste explicite.
+Les 24 multiplicateurs affichent *1..*2k puis 1..2k comme le formateur stock.
+
+[FAIT en émulation] La preuve vérifie les libellés à x=72 avant les valeurs
+à x=120 pour les 108 présentations, les 33 destinations et OFF sur les six
+machines natives, ainsi que les 24 multiplicateurs comparés au vrai
+formateur `0x400459f4`. Tables boot et backend de mapping natifs exécutés,
+getters de contexte/son et primitives de dessin simulés. La nouvelle
+révision d'affichage reste expérimentale, sans succès matériel revendiqué.
