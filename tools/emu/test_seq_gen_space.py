@@ -23,7 +23,7 @@ def main():
     ap.add_argument("--git", action="append", default=[])
     ap.add_argument("--dynamics", action="store_true")
     args = ap.parse_args()
-    folder = "experimental/dynamics/" if args.dynamics else ""
+    folder = ""
     prototypes = [json.loads((ROOT / f"tweaks/model-cycles_OS1.13/{folder}49-{n}.json").read_text())
                   for n in ("scale-gen", "scale-gen-st")]
     dev, tweaks = audit.load_dir(ROOT)

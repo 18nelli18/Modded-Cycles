@@ -99,7 +99,7 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
 | [15-demandes-reddit.md](15-demandes-reddit.md) | **Demandes de la communauté (Reddit)** : mute verrouillé et écoute d'un pas (tweaks drumkilla, livrés), OS Model:Samples / machine « samples » et machines du Syntakt (plans de recherche) |
 | [21-architecture-materielle.md](21-architecture-materielle.md) | **Architecture matérielle, d'après les photos du PCB** : CPU MCF54415CMJ250, DDR2 128 Mo, flash SPI 2 Mo, eMMC 4 Go, PHY USB3300, DRV632, optocoupleurs MIDI, verrous des touches et des LED ; recoupement avec les périphériques que le firmware adresse (`tools/hw_periph_refs.py`) ; grille de debug, code « BOM » |
 
-| [53-generateur-sequence.md](53-generateur-sequence.md) | **Générateur en gamme, SETTINGS + PAGE** : prototype Model-TG, notes/trigs sur la piste courante, bornes et densité, Undo ; 13 masques 34×34, vraie synchronisation OS vers le format séquenceur prouvée ; **hors flasher, pas de test matériel** |
+| [53-generateur-sequence.md](53-generateur-sequence.md) | **Générateur en gamme, SETTINGS + PAGE** : prototype Model-TG, notes/trigs sur la piste courante, bornes et densité, Undo ; 17 masques, PLAY/STOP dans le menu, velocity/decay/pan optionnels et Undo complet ; **testé sur machine par AveyCole le 10/10/2026, flasher principal 1.45** |
 
 ## Chiffres clés (OS 1.13)
 

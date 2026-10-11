@@ -18,7 +18,7 @@
 
 ---
 
-Scale sequence generator: **hardware tested by AveyCole (10 October 2026)**. Requires Model-TG. With playback stopped, press **SETTINGS + PAGE** to choose scale, root, note range and density, then Generate. The four-row menu scrolls as you turn DATA. Undo lasts while the page stays open.
+Scale sequence generator: **hardware tested by AveyCole (10 October 2026)**. Requires Model-TG. With playback stopped, press **SETTINGS + PAGE** to choose scale, root, note range and density, then Generate. The four-row menu scrolls as you turn DATA. Optional velocity, decay and pan randomization defaults Off. PLAY/STOP previews the sequence inside the menu; stop before Generate or Undo. Undo restores notes, velocity and parameter locks while the page stays open. Preview and randomization also hardware tested by AveyCole.
 
 ## Why
 

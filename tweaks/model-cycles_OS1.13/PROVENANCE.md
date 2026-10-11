@@ -51,3 +51,5 @@ velocity/decay/pan optionnels. Code original de ce fork ; construction de page
 adaptée de Model-TG (TinyGregAudio, MIT, pin inchangé). Générateur
 `tools/gen_seq_gen.py --dynamics`, preuve `tools/emu/test_seq_gen_dynamics.py`,
 notes/53 §12. Test flasher seulement, résultat matériel attendu.
+
+Transport et variations du générateur : test matériel confirmé par AveyCole le 10/10/2026, promus au catalogue principal 1.45 sans changement des écritures validées.

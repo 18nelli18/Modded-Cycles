@@ -400,17 +400,22 @@ python3 tools/gen_seq_gen.py --help
 python3 tools/gen_flasher_tweaks.py --check
 ```
 
-### Générateur : transport et variations expérimentaux (test flasher)
+### Générateur : transport et variations validés (flasher 1.45)
 
 ```sh
-python3 tools/gen_seq_gen.py --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --dynamics --check
+python3 tools/gen_seq_gen.py --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --check
 python3 tools/emu/test_seq_gen_dynamics.py --cycles firmware/model-cycles_OS1.13.syx
 python3 tools/emu/test_seq_gen_space.py --dynamics
 python3 tools/gen_test_flasher.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --check
 MC_TEST_PAGE=docs/flasher-test node tools/webflash_seq_gen_check.js firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42.syx
 ```
 
-La version principale reste inchangée ; les deux JSON de test se trouvent dans
-`tweaks/model-cycles_OS1.13/experimental/dynamics/`. Empreintes du catalogue
-complet et de 767 combinaisons recalculées dans le flasher de test. Essai matériel
-attendu avant promotion ; réglages et limites dans notes/53 §12.
+Les deux JSON canoniques reproduisent les écritures du test validé par AveyCole
+le 10/10/2026. Les 767 références sont communes aux deux flashers. Réglages et
+limites dans notes/53 §12–13.
+
+Validation de promotion 1.45 : écritures/symboles identiques au test matériel,
+preuve dynamique et menu OS, 767 références recalculées identiques, builds
+navigateur et audit de chevauchements validés. `relocate_6ch.py --check` présente
+un écart préexistant dans les écritures de `11-6ch-usbup.json` ; le fichier
+est vérifié identique à HEAD et reste inchangé dans cette promotion.

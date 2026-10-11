@@ -172,11 +172,11 @@ def main():
         r.call(0x4007240c, r.event(15, 16, 3))
         r.call(0x4007240c, r.event(13, 16, 4))
         r.call("sg_render", obj, 0x93006000)
-        labels = ["Scale", "Root", "Low note", "High note", "Density %", "Generate", "Undo"]
+        labels = ["Scale", "Root", "Low note", "High note", "Density %", "Rand velocity", "Rand decay", "Rand pan", "Generate", "Undo"]
         assert len(r.texts) == (8 if args.scroll else 13), r.texts
         assert [t[2] for t in r.texts if t[0] == 2] == labels[:4 if args.scroll else 7]
         if args.scroll:
-            for row in range(7):
+            for row in range(10):
                 for editing in (0, 1):
                     r.w32(r.s["sg_row"], row)
                     r.w32(r.s["sg_edit"], editing)
@@ -184,7 +184,7 @@ def main():
                     r.texts.clear(); r.rects.clear()
                     r.call("sg_render", obj, 0x93006000)
                     assert r.u.reg_read(mk.UC_M68K_REG_D5) == 0x12345678
-                    first = min(3, max(0, row - 2))
+                    first = min(6, max(0, row - 2))
                     shown = [t for t in r.texts if t[0] == 2]
                     assert [t[2] for t in shown] == labels[first:first + 4]
                     assert [t[1] for t in shown] == [49, 34, 19, 4]
@@ -194,7 +194,7 @@ def main():
                     assert top == 62 - 15 * (row - first) and bottom == top - 13
                     assert 4 <= bottom < top <= 62
             r.w32(r.s["sg_row"], 0); r.w32(r.s["sg_edit"], 0)
-            print(f"ok : {variant}, quatre lignes, sept sélections, édition, marges et registre D5 conservé")
+            print(f"ok : {variant}, quatre lignes, dix sélections, édition, marges et registre D5 conservé")
         r.knob(1)
         assert r.r32(r.s["sg_row"]) == 1
         r.knob(-1)
@@ -203,9 +203,9 @@ def main():
         assert r.r32(r.s["sg_edit"]) == 1
         r.knob(1)
         r.click()
-        for _ in range(5):
+        for _ in range(8):
             r.knob(1)
-        assert r.r32(r.s["sg_row"]) == 5
+        assert r.r32(r.s["sg_row"]) == 8
         r.click()
         generated = bytes(r.u.mem_read(RAW, 722))
         assert generated != r.original

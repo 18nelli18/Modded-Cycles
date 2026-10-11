@@ -140,7 +140,7 @@ def main():
     ap.add_argument("--cross", default=os.environ.get("M68K_CROSS", "m68k-elf-"))
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--scroll", action="store_true", default=True, help="variante de test à quatre lignes défilantes")
-    ap.add_argument("--dynamics", action="store_true", help="transport et variations, flasher de test uniquement")
+    ap.add_argument("--dynamics", action="store_true", default=True, help="transport et variations validés sur machine")
     args = ap.parse_args()
     assert subprocess.check_output(["git", "-C", str(args.model_tg), "rev-parse", "HEAD"], text=True).strip() == COMMIT
     subprocess.run(["git", "-C", str(args.model_tg), "diff", "--quiet", "HEAD"], check=True)
@@ -148,7 +148,7 @@ def main():
     assert hashlib.sha256(stock).hexdigest() == STOCK, "OS officiel 1.13 requis"
     tg = symbols(args.cross, args.model_tg / "build/_b.elf")
     blobs, syms = compile_code(args.cross, tg, args.scroll, args.dynamics)
-    out = OUT / "experimental/dynamics" if args.dynamics else OUT
+    out = OUT
     out.mkdir(parents=True, exist_ok=True)
     for name in ("model-tg", "model-tg-st"):
         base = json.loads((HERE.parent / f"tweaks/model-cycles_OS1.13/30-{name}.json").read_text())
@@ -157,10 +157,10 @@ def main():
             tweak["name"] = "Générateur en gamme — menu défilant"
             tweak["description"][2] = "Quatre lignes défilantes, police conservée et marges renforcées. Testé sur machine par AveyCole le 10/10/2026."
         if args.dynamics:
-            tweak["name"] = "Générateur — transport et variations (expérimental)"
+            tweak["name"] = "Générateur — transport et variations"
             tweak["description"][0] += " Trois options : velocity, decay et pan."
             tweak["description"][1] = "PLAY/STOP dans la page ; édition arrêtée. Undo restaure notes, velocity et p-locks."
-            tweak["description"][2] = "Preuve en émulation requise ; aucun test matériel annoncé."
+            tweak["description"][2] = "Transport et variations testés sur machine par AveyCole le 10/10/2026."
         build.apply_writes(stock, [base, tweak])
         path = out / ("49-" + tweak["id"] + ".json")
         text = json.dumps(tweak, indent=1, ensure_ascii=False) + "\n"

@@ -79,7 +79,7 @@ def main():
     stock=main_os_from_syx(a.cycles)
     for variant,dep in [('scale-gen','model-tg'),('scale-gen-st','model-tg-st')]:
         base=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/30-{dep}.json').read_text())
-        tweak=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/experimental/dynamics/49-{variant}.json').read_text())
+        tweak=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/49-{variant}.json').read_text())
         for bits,length in itertools.product(range(8),(1,16,64)):
             r=fixture(stock,base,tweak)
             r.u.mem_write(RAW+713,struct.pack('>H',length))

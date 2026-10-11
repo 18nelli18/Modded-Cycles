@@ -325,3 +325,12 @@ pattern, comparaison avant/après des locks existants. Cette variante reste
 expérimentale ; le résultat matériel de la version précédente ne la valide pas.
 
 Protection Undo : identité du bloc de piste (+996), du pool et de son bloc par index vérifiée avant toute restauration. Changement de pattern pendant audition : refus sans écriture si ces identités changent. Preuve : même objet avec données remplacées et même pool avec stockage remplacé.
+
+## 13. Testé sur la machine et publié (10/10/2026)
+
+AveyCole confirme dans la conversation : « Tested on hardware, publish to main. »
+Transport PLAY/STOP et trois options velocity/decay/pan promus dans le flasher
+principal 1.45. Les écritures des deux variantes sont identiques à celles du
+flasher de test validé ; seules les métadonnées et la documentation changent.
+Tous les mods restent proposés. La page de test partage désormais ce catalogue.
+Aucune précision supplémentaire de configuration ou de mesure n’a été fournie.

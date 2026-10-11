@@ -974,7 +974,7 @@ const CREDITS = [
 ];
 
 const FLASH_GUIDE = `${REPO}/blob/main/FLASH.md`;
-const GUIDE = "guide.html";                      // the site's guide (docs/guide/)
+const GUIDE = "../guide/";                      // the site's guide (docs/guide/)
 // mod id -> anchor of its section in the guide (one line per mod)
 const GUIDE_OF = {
   "scale-gen": "scale-gen",
@@ -1523,7 +1523,7 @@ const T = {
 // Feature texts shown in the UI (fallback: labels from tweaks.js).
 const FEAT = {
   en: {
-    "scale-gen": {"label": "Scale sequence generator", "short": "Preview with PLAY/STOP; optional velocity, decay and pan variation.", "desc": "Hold SETTINGS and press PAGE. Turn DATA to select a row, press to edit a field or switch Rand velocity, Rand decay and Rand pan On/Off. All three default Off. Generate writes the active track. PLAY/STOP audition it without leaving the menu. Stop before Generate or Undo; Undo restores the previous notes, trigs, velocity and parameter locks. Requires Model-TG; works with the available machines.", "note": "Experimental additions: hardware test pending. Velocity 1–127, decay 0–127, pan 0–127 (64 centre), per generated note trig only. Disabled options retain existing values and locks. Closing the page discards Undo. Existing conditions/retrig can affect playback."},
+    "scale-gen": {"label": "Scale sequence generator", "short": "Preview with PLAY/STOP; optional velocity, decay and pan variation.", "desc": "Hold SETTINGS and press PAGE. Turn DATA to select a row, press to edit a field or switch Rand velocity, Rand decay and Rand pan On/Off. All three default Off. Generate writes the active track. PLAY/STOP audition it without leaving the menu. Stop before Generate or Undo; Undo restores the previous notes, trigs, velocity and parameter locks. Requires Model-TG; works with the available machines.", "note": "Preview and randomization hardware tested by AveyCole on 10 October 2026. Velocity 1–127, decay 0–127, pan 0–127 (64 centre), per generated note trig only. Disabled options retain existing values and locks. Closing the page discards Undo. Existing conditions/retrig can affect playback."},
     usb6: { label: "6-channel USB audio",
       short: "Each track on its own USB channel. No stereo mix over USB any more.",
       desc: "Each track gets its own USB channel (48 kHz / 32-bit): record the 6 tracks separately in your DAW. The stereo mix is no longer sent over USB. OS updates over USB keep working." },
@@ -1585,7 +1585,7 @@ const FEAT = {
       note: "About twice as heavy on the processor as an original machine. On its own it has no load governor: several MACRO tracks playing at once can make the sound crackle, so start with one or two. With the Syntakt engines, their load governor looks after MACRO tracks too. A project using MACRO needs a firmware with MACRO at the same place: it is the last machine, so its number depends on Model-TG and on the ticked Syntakt engines." },
   },
   fr: {
-    "scale-gen": {"label": "Générateur de séquence en gamme", "short": "Écoutez avec PLAY/STOP ; velocity, decay et pan aléatoires en option.", "desc": "Maintenez SETTINGS et appuyez sur PAGE. Tournez DATA pour choisir une ligne ; appuyez pour éditer ou activer Rand velocity, Rand decay et Rand pan. Les trois sont désactivés au départ. Generate écrit la piste active. PLAY/STOP permet de l’écouter sans fermer le menu. Arrêtez avant Generate ou Undo ; Undo restaure notes, trigs, velocity et p-locks. Demande Model-TG ; fonctionne avec les machines disponibles.", "note": "Ajouts expérimentaux : essai sur machine attendu. Velocity 1–127, decay 0–127, pan 0–127 (64 au centre), uniquement sur les trigs générés. Les options désactivées conservent les valeurs/verrous existants. Fermer la page efface Undo. Conditions/retrig existants peuvent influencer la lecture."},
+    "scale-gen": {"label": "Générateur de séquence en gamme", "short": "Écoutez avec PLAY/STOP ; velocity, decay et pan aléatoires en option.", "desc": "Maintenez SETTINGS et appuyez sur PAGE. Tournez DATA pour choisir une ligne ; appuyez pour éditer ou activer Rand velocity, Rand decay et Rand pan. Les trois sont désactivés au départ. Generate écrit la piste active. PLAY/STOP permet de l’écouter sans fermer le menu. Arrêtez avant Generate ou Undo ; Undo restaure notes, trigs, velocity et p-locks. Demande Model-TG ; fonctionne avec les machines disponibles.", "note": "Écoute et variations testées sur machine par AveyCole le 10/10/2026. Velocity 1–127, decay 0–127, pan 0–127 (64 au centre), uniquement sur les trigs générés. Les options désactivées conservent les valeurs/verrous existants. Fermer la page efface Undo. Conditions/retrig existants peuvent influencer la lecture."},
     usb6: { label: "Audio USB 6 canaux",
       short: "Chaque piste sur son propre canal USB. Plus de mix stéréo en USB.",
       desc: "Chaque piste a son propre canal USB (48 kHz / 32 bits) : enregistrez les 6 pistes séparément dans votre logiciel. Le mix stéréo n'est plus envoyé en USB. La mise à jour de l'OS par USB continue de fonctionner." },
