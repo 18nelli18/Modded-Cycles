@@ -918,7 +918,7 @@ const DISCORD = "https://discord.gg/hWegtJZcmm";
 const T = {
   en: {
     title: "Model:Cycles Flasher",
-    tagline: "Install mods on your Elektron Model:Cycles, right from your browser.",
+    tagline: "Install mods on your Elektron Model:Cycles or Model:Samples, right from your browser.",
     s1: "What do you want to install?",
     tab_mods: "Mods",
     tab_restore: "Official firmware",
@@ -1008,30 +1008,30 @@ const T = {
     drop3_sub: "the official Syntakt OS, for its engines, or click to choose it",
     get_os_syntakt: `Don't have it? <a href="${ELEKTRON_ST_DL}" target="_blank" rel="noopener">Download Syntakt OS 1.42 from elektron.se</a>, then unzip it. The page reads the engines from it, on your computer: no Syntakt needed.`,
     s3: "Connect your Model:Cycles over USB",
-    hu1: "Connect the Model:Cycles to the computer with a USB cable and turn it on normally.",
-    hu2: "On the Model:Cycles, press <b>SETTINGS</b>, open <b>CONFIG › UPGRADE</b> and confirm with <b>YES</b>. It now waits for the firmware.",
-    hu3: "Allow MIDI access below: the port named “Model:Cycles” is selected automatically.",
+    hu1: "Connect the {dev} to the computer with a USB cable and turn it on normally.",
+    hu2: "On the {dev}, press <b>SETTINGS</b>, open <b>CONFIG › UPGRADE</b> and confirm with <b>YES</b>. It now waits for the firmware.",
+    hu3: "Allow MIDI access below: the port named “{port}” is selected automatically.",
     m_fast: "Fast (USB)",
     m_slow: "Classic (CONFIG › UPGRADE)",
     method_fast: "The update protocol of Elektron Transfer, straight from this page: about 30 seconds. At the end, the Model:Cycles asks you to confirm (YES or NO).",
     method_slow: "The firmware is sent at MIDI speed while CONFIG › UPGRADE waits for it: 5 to 10 minutes. The fallback if the fast method doesn't work.",
-    hf1: "Connect the Model:Cycles to the computer with a USB cable and turn it on normally. Stay on its usual screen: no menu to open.",
-    hf2: "Close <b>Elektron Transfer</b> and any music software that uses the Model:Cycles: they hold its USB port.",
-    hf3: "Allow MIDI access below: the page finds the Model:Cycles and shows its OS version.",
+    hf1: "Connect the {dev} to the computer with a USB cable and turn it on normally. Stay on its usual screen: no menu to open.",
+    hf2: "Close <b>Elektron Transfer</b> and any music software that uses the {dev}: they hold its USB port.",
+    hf3: "Allow MIDI access below: the page finds the {dev} and shows its OS version.",
     allow: "Allow MIDI access",
     refresh: "Refresh",
     s4: "Flash",
     ack: "I've backed up my projects (Elektron Transfer) and I understand that flashing is at my own risk.",
-    flash_btn: "Flash the Model:Cycles",
+    flash_btn: "Flash the {dev}",
     flashing: "Flashing…",
     stop: "Stop",
     trouble: "Something went wrong?",
-    t1q: "Nothing happens on the Model:Cycles screen",
-    t1a: "Fast method: step 3 must say that the Model:Cycles was found. Classic method: check that <b>CONFIG › UPGRADE</b> is open and waiting. Either way, pick the port named “Model:Cycles” in step 3 and close Elektron Transfer, Overbridge and your music software (on Windows they lock the port), then try again.",
+    t1q: "Nothing happens on the {dev} screen",
+    t1a: "Fast method: step 3 must say that the {dev} was found. Classic method: check that <b>CONFIG › UPGRADE</b> is open and waiting. Either way, pick the port named “{port}” in step 3 and close Elektron Transfer, Overbridge and your music software (on Windows they lock the port), then try again.",
     t2q: "The transfer stops, or the Model:Cycles shows an error",
     t2a: "Turn the Model:Cycles off and on and flash again. With the classic method, open <b>CONFIG › UPGRADE</b> again and set <b>Advanced › Send speed margin</b> to 2.0 first.",
     t3q: "No MIDI port in the list",
-    t3a: "Connect the Model:Cycles with a USB cable that carries data (some cables only charge), turn it on, then click <b>Refresh</b>. Some systems only show a new device after the browser is restarted.",
+    t3a: "Connect the {dev} with a USB cable that carries data (some cables only charge), turn it on, then click <b>Refresh</b>. Some systems only show a new device after the browser is restarted.",
     t5q: "The fast method doesn't find the Model:Cycles, or stops",
     t5a: "Turn the Model:Cycles on normally (not in CONFIG › UPGRADE), close Elektron Transfer, then click <b>Refresh</b> in step 3. If it still fails, choose <b>Classic</b> in step 3: slower, but it doesn't need answers from the machine. Elektron Transfer works too: download the .syx (step 4) and drop it onto Transfer's window.",
     t4q: "The update over USB is refused, or the Model:Cycles doesn't start any more",
@@ -1140,10 +1140,10 @@ const T = {
     midi_asking: "Asking for MIDI access…",
     midi_wait: "Waiting for your permission: Chrome shows a prompt near the address bar. Click “Allow”. If you blocked it before, click the icon left of the address and allow MIDI.",
     midi_denied: "MIDI access was refused. Click the icon left of the address, allow MIDI, reload the page and try again.",
-    midi_none: "No MIDI output found. Connect the Model:Cycles over USB, turn it on, then click Refresh.",
-    midi_pick_dev: "The Model:Cycles USB port is selected.",
-    midi_no_dev: "The Model:Cycles doesn't appear over USB. Connect it, turn it on and click Refresh.",
-    warn_not_dev: "This doesn't look like the Model:Cycles: pick the port named “Model:Cycles”.",
+    midi_none: "No MIDI output found. Connect the {dev} over USB, turn it on, then click Refresh.",
+    midi_pick_dev: "The {dev} USB port is selected.",
+    midi_no_dev: "The {dev} doesn't appear over USB. Connect it, turn it on and click Refresh.",
+    warn_not_dev: "This doesn't look like the {dev}: pick the port named “{port}”.",
     choose_port: "Choose a MIDI output",
     via: "via",
     minutes: "about {m} min",
@@ -1161,11 +1161,11 @@ const T = {
     miss_probe: "Waiting for the Model:Cycles to answer (step 3).",
     miss_dev: "The Model:Cycles must answer first (step 3).",
     miss_dev_mismatch: "This machine can't take this firmware (step 3).",
-    dev_probing: "Looking for the Model:Cycles…",
+    dev_probing: "Looking for the {dev}…",
     dev_ok: "{device} found: OS {v}.",
-    dev_none: "The Model:Cycles doesn't answer. If CONFIG › UPGRADE is open, leave it (NO); close Elektron Transfer, then click Refresh. Or choose the classic method.",
+    dev_none: "The {dev} doesn't answer. If CONFIG › UPGRADE is open, leave it (NO); close Elektron Transfer, then click Refresh. Or choose the classic method.",
     dev_busy: "Its USB port is in use by another program: close Elektron Transfer, Overbridge and your music software, then click Refresh.",
-    dev_noinput: "The page sees no MIDI input from the Model:Cycles, and the fast method needs both directions. Click Refresh, or choose the classic method.",
+    dev_noinput: "The page sees no MIDI input from the {dev}, and the fast method needs both directions. Click Refresh, or choose the classic method.",
     dev_samples: `This machine answers as a Model:Samples, so it would refuse this firmware. With Model-TG, set Device Config › Transfer back to CYC (or turn it off and on). Under the Samples OS, the way back is in the <a href="${GUIDE}#recovery">guide</a>. A real Model:Samples: choose it in step 1.`,
     dev_other: "This Elektron machine ({name}) is not a Model:Cycles: nothing will be sent.",
     dev_wrong_file: "This firmware is for a Model:Samples, and this machine is a Model:Cycles: nothing will be sent.",
@@ -1177,7 +1177,7 @@ const T = {
     after_back_plain: "The {m} is back.",
     fast_timeout: "The Model:Cycles stopped answering. Turn it off and on, then flash again. If it happens again, choose the classic method in step 3.",
     fast_refused: "The Model:Cycles refused the update{why}. Turn it off and on and try again, or choose the classic method in step 3.",
-    fast_write: "The Model:Cycles reported an error while receiving{why}. Turn it off and on and try again, or choose the classic method in step 3.",
+    fast_write: "The {dev} reported an error while receiving{why}. Turn it off and on and try again, or choose the classic method in step 3.",
     stopped_fast: "Stopped before the end: the Model:Cycles hasn't received the whole firmware. Turn it off and on, then flash again.",
     log_start_fast: "Fast upgrade: {kb} KB in {n} blocks to “{port}” ({device} OS {v}).",
     watch: "Watch the Model:Cycles screen: it should show that it is receiving. If nothing happens within a few seconds, press <b>Stop</b>.",
@@ -1194,7 +1194,7 @@ const T = {
   },
   fr: {
     title: "Flasher Model:Cycles",
-    tagline: "Installez des mods sur votre Elektron Model:Cycles, depuis votre navigateur.",
+    tagline: "Installez des mods sur votre Elektron Model:Cycles ou Model:Samples, depuis votre navigateur.",
     s1: "Que voulez-vous installer ?",
     tab_mods: "Mods",
     tab_restore: "Firmware officiel",
@@ -1284,30 +1284,30 @@ const T = {
     drop3_sub: "l'OS officiel du Syntakt, pour ses moteurs, ou cliquez pour le choisir",
     get_os_syntakt: `Vous ne l'avez pas ? <a href="${ELEKTRON_ST_DL}" target="_blank" rel="noopener">Téléchargez l'OS Syntakt 1.42 sur elektron.se</a>, puis dézippez-le. La page y lit les moteurs, sur votre ordinateur : pas besoin d'avoir un Syntakt.`,
     s3: "Branchez le Model:Cycles en USB",
-    hu1: "Reliez le Model:Cycles à l'ordinateur avec un câble USB et allumez-le normalement.",
-    hu2: "Sur le Model:Cycles, appuyez sur <b>SETTINGS</b>, ouvrez <b>CONFIG › UPGRADE</b> et confirmez avec <b>YES</b>. Il attend alors le firmware.",
-    hu3: "Autorisez le MIDI ci-dessous : le port nommé « Model:Cycles » est choisi automatiquement.",
+    hu1: "Reliez le {dev} à l'ordinateur avec un câble USB et allumez-le normalement.",
+    hu2: "Sur le {dev}, appuyez sur <b>SETTINGS</b>, ouvrez <b>CONFIG › UPGRADE</b> et confirmez avec <b>YES</b>. Il attend alors le firmware.",
+    hu3: "Autorisez le MIDI ci-dessous : le port nommé « {port} » est choisi automatiquement.",
     m_fast: "Rapide (USB)",
     m_slow: "Classique (CONFIG › UPGRADE)",
     method_fast: "Le protocole de mise à jour d'Elektron Transfer, directement depuis cette page : une trentaine de secondes. À la fin, le Model:Cycles demande de confirmer (YES ou NO).",
     method_slow: "Le firmware est envoyé à la vitesse du MIDI pendant que CONFIG › UPGRADE l'attend : 5 à 10 minutes. La solution de secours si la méthode rapide ne marche pas.",
-    hf1: "Reliez le Model:Cycles à l'ordinateur avec un câble USB et allumez-le normalement. Restez sur son écran habituel : aucun menu à ouvrir.",
-    hf2: "Fermez <b>Elektron Transfer</b> et tout logiciel de musique qui utilise le Model:Cycles : ils occupent son port USB.",
-    hf3: "Autorisez le MIDI ci-dessous : la page trouve le Model:Cycles et affiche sa version d'OS.",
+    hf1: "Reliez le {dev} à l'ordinateur avec un câble USB et allumez-le normalement. Restez sur son écran habituel : aucun menu à ouvrir.",
+    hf2: "Fermez <b>Elektron Transfer</b> et tout logiciel de musique qui utilise le {dev} : ils occupent son port USB.",
+    hf3: "Autorisez le MIDI ci-dessous : la page trouve le {dev} et affiche sa version d'OS.",
     allow: "Autoriser le MIDI",
     refresh: "Rafraîchir",
     s4: "Flasher",
     ack: "J'ai sauvegardé mes projets (Elektron Transfer) et je comprends que je flashe à mes risques.",
-    flash_btn: "Flasher le Model:Cycles",
+    flash_btn: "Flasher le {dev}",
     flashing: "Flash en cours…",
     stop: "Arrêter",
     trouble: "Un problème ?",
-    t1q: "Rien ne se passe sur l'écran du Model:Cycles",
-    t1a: "Méthode rapide : l'étape 3 doit indiquer que le Model:Cycles a été trouvé. Méthode classique : vérifiez que <b>CONFIG › UPGRADE</b> est ouvert et en attente. Dans les deux cas, choisissez le port nommé « Model:Cycles » à l'étape 3 et fermez Elektron Transfer, Overbridge et votre logiciel de musique (sous Windows, ils bloquent le port), puis réessayez.",
+    t1q: "Rien ne se passe sur l'écran du {dev}",
+    t1a: "Méthode rapide : l'étape 3 doit indiquer que le {dev} a été trouvé. Méthode classique : vérifiez que <b>CONFIG › UPGRADE</b> est ouvert et en attente. Dans les deux cas, choisissez le port nommé « {port} » à l'étape 3 et fermez Elektron Transfer, Overbridge et votre logiciel de musique (sous Windows, ils bloquent le port), puis réessayez.",
     t2q: "Le transfert s'arrête, ou le Model:Cycles affiche une erreur",
     t2a: "Éteignez puis rallumez le Model:Cycles et relancez. Avec la méthode classique, rouvrez d'abord <b>CONFIG › UPGRADE</b> et réglez <b>Options avancées › Marge de vitesse</b> sur 2.0.",
     t3q: "Aucun port MIDI dans la liste",
-    t3a: "Branchez le Model:Cycles avec un câble USB qui transporte les données (certains câbles ne font que charger), allumez-le, puis cliquez sur <b>Rafraîchir</b>. Certains systèmes n'affichent un nouvel appareil qu'après un redémarrage du navigateur.",
+    t3a: "Branchez le {dev} avec un câble USB qui transporte les données (certains câbles ne font que charger), allumez-le, puis cliquez sur <b>Rafraîchir</b>. Certains systèmes n'affichent un nouvel appareil qu'après un redémarrage du navigateur.",
     t5q: "La méthode rapide ne trouve pas le Model:Cycles, ou s'arrête",
     t5a: "Allumez le Model:Cycles normalement (pas dans CONFIG › UPGRADE), fermez Elektron Transfer, puis cliquez sur <b>Rafraîchir</b> à l'étape 3. Si ça échoue encore, choisissez <b>Classique</b> à l'étape 3 : plus lent, mais sans besoin de réponse de la machine. Elektron Transfer marche aussi : téléchargez le .syx (étape 4) et déposez-le sur la fenêtre de Transfer.",
     t4q: "La mise à jour par USB est refusée, ou le Model:Cycles ne démarre plus",
@@ -1414,10 +1414,10 @@ const T = {
     midi_asking: "Demande d'accès MIDI…",
     midi_wait: "En attente de votre autorisation : Chrome affiche une demande près de la barre d'adresse. Cliquez sur « Autoriser ». Si vous l'avez bloquée, cliquez sur l'icône à gauche de l'adresse et autorisez le MIDI.",
     midi_denied: "Accès MIDI refusé. Cliquez sur l'icône à gauche de l'adresse, autorisez le MIDI, rechargez la page et réessayez.",
-    midi_none: "Aucune sortie MIDI. Branchez le Model:Cycles en USB, allumez-le, puis cliquez sur Rafraîchir.",
-    midi_pick_dev: "Le port USB du Model:Cycles est sélectionné.",
-    midi_no_dev: "Le Model:Cycles n'apparaît pas en USB. Branchez-le, allumez-le et cliquez sur Rafraîchir.",
-    warn_not_dev: "Ce port ne semble pas être le Model:Cycles : choisissez le port nommé « Model:Cycles ».",
+    midi_none: "Aucune sortie MIDI. Branchez le {dev} en USB, allumez-le, puis cliquez sur Rafraîchir.",
+    midi_pick_dev: "Le port USB du {dev} est sélectionné.",
+    midi_no_dev: "Le {dev} n'apparaît pas en USB. Branchez-le, allumez-le et cliquez sur Rafraîchir.",
+    warn_not_dev: "Ce port ne semble pas être le {dev} : choisissez le port nommé « {port} ».",
     choose_port: "Choisissez une sortie MIDI",
     via: "via",
     minutes: "environ {m} min",
@@ -1435,11 +1435,11 @@ const T = {
     miss_probe: "En attente d'une réponse du Model:Cycles (étape 3).",
     miss_dev: "Le Model:Cycles doit d'abord répondre (étape 3).",
     miss_dev_mismatch: "Cette machine ne peut pas recevoir ce firmware (étape 3).",
-    dev_probing: "Recherche du Model:Cycles…",
+    dev_probing: "Recherche du {dev}…",
     dev_ok: "{device} trouvé : OS {v}.",
-    dev_none: "Le Model:Cycles ne répond pas. Si CONFIG › UPGRADE est ouvert, quittez-le (NO) ; fermez Elektron Transfer, puis cliquez sur Rafraîchir. Ou choisissez la méthode classique.",
+    dev_none: "Le {dev} ne répond pas. Si CONFIG › UPGRADE est ouvert, quittez-le (NO) ; fermez Elektron Transfer, puis cliquez sur Rafraîchir. Ou choisissez la méthode classique.",
     dev_busy: "Son port USB est occupé par un autre programme : fermez Elektron Transfer, Overbridge et votre logiciel de musique, puis cliquez sur Rafraîchir.",
-    dev_noinput: "La page ne voit pas d'entrée MIDI venant du Model:Cycles, or la méthode rapide a besoin des deux sens. Cliquez sur Rafraîchir, ou choisissez la méthode classique.",
+    dev_noinput: "La page ne voit pas d'entrée MIDI venant du {dev}, or la méthode rapide a besoin des deux sens. Cliquez sur Rafraîchir, ou choisissez la méthode classique.",
     dev_samples: `Cette machine répond comme un Model:Samples : elle refuserait ce firmware. Avec Model-TG, remettez Device Config › Transfer sur CYC (ou éteignez-la et rallumez-la). Sous l'OS Samples, le retour est expliqué dans le <a href="${GUIDE}#recovery">guide</a>. Un vrai Model:Samples : choisissez-le à l'étape 1.`,
     dev_other: "Cette machine Elektron ({name}) n'est pas un Model:Cycles : rien ne sera envoyé.",
     dev_wrong_file: "Ce firmware est pour un Model:Samples, et cette machine est un Model:Cycles : rien ne sera envoyé.",
@@ -1451,7 +1451,7 @@ const T = {
     after_back_plain: "Le {m} est de retour.",
     fast_timeout: "Le Model:Cycles ne répond plus. Éteignez-le puis rallumez-le, et relancez. Si ça recommence, choisissez la méthode classique à l'étape 3.",
     fast_refused: "Le Model:Cycles a refusé la mise à jour{why}. Éteignez-le puis rallumez-le et réessayez, ou choisissez la méthode classique à l'étape 3.",
-    fast_write: "Le Model:Cycles a signalé une erreur pendant la réception{why}. Éteignez-le puis rallumez-le et réessayez, ou choisissez la méthode classique à l'étape 3.",
+    fast_write: "Le {dev} a signalé une erreur pendant la réception{why}. Éteignez-le puis rallumez-le et réessayez, ou choisissez la méthode classique à l'étape 3.",
     stopped_fast: "Arrêté avant la fin : le Model:Cycles n'a pas reçu tout le firmware. Éteignez-le puis rallumez-le, et relancez.",
     log_start_fast: "Mise à jour rapide : {kb} Ko en {n} blocs vers « {port} » ({device} OS {v}).",
     watch: "Regardez l'écran du Model:Cycles : il doit indiquer qu'il reçoit. S'il ne se passe rien en quelques secondes, cliquez sur <b>Arrêter</b>.",
@@ -1637,7 +1637,27 @@ const st = {
 function t(key, vars) {
   let s = (T[st.lang] && T[st.lang][key]) || T.en[key] || key;
   if (vars) for (const k in vars) s = s.split("{" + k + "}").join(vars[k]);
-  return s;
+  return s.split("{dev}").join(deviceName()).split("{port}").join(portName());
+}
+
+// The machine being flashed, as the connection messages name it: a Model:Samples for the Mods tab's two Model:Samples
+// choices and for the Samples OS tab's last two (notes/53); otherwise the Model:Cycles.
+function deviceName() {
+  const smp = st.mode === "mods" ? st.machine !== "cyc" : st.mode === "samples" && st.smpDir !== "cyc";
+  return smp ? "Model:Samples" : "Model:Cycles";
+}
+// Its USB port is named after the OS it runs: Model:Samples only while it still runs its own OS.
+function portName() {
+  const smp = st.mode === "mods" ? st.machine === "smp" : st.mode === "samples" && st.smpDir === "smp";
+  return smp ? "Model:Samples" : "Model:Cycles";
+}
+// Step 3 texts that name the machine follow the tab and the machine chosen.
+function refreshDevTexts() {
+  document.querySelectorAll("[data-i18n],[data-i18n-html]").forEach((el) => {
+    const key = el.dataset.i18n || el.dataset.i18nHtml;
+    if (!/\{(dev|port)\}/.test(T.en[key] || "")) return;
+    if (el.dataset.i18n) el.textContent = t(key); else el.innerHTML = t(key);
+  });
 }
 function esc(s) {
   return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -2768,6 +2788,7 @@ function missingReason() {
 }
 
 function render() {
+  refreshDevTexts();
   // step 2 status
   $("h2s").textContent = t(needsSamplesFile() ? "s2_samples" : "s2");
   $("drop2-wrap").hidden = !needsSamplesFile();

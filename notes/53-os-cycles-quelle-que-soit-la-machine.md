@@ -86,6 +86,12 @@ Ce que la page ne peut pas distinguer (même raisonnement que [41 §6](41-os-cyc
 - Méthode rapide : `devProblem` compare le produit du fichier à celui qui répond (`dev_mach_smp_on_cycles`,
   `dev_mach_cos_on_samples`) ; méthode classique : le transport suffit (l'OS qui tourne ignore un autre produit).
 - Nom du fichier téléchargé : `model-cycles_OS1.13_<mods>_for-samples_smp-os.syx` / `_cyc-os.syx`.
+- Étape 3 (11/10/2026, remarque de DaftMaple : avec *déjà sous l'OS Cycles*, la page disait « The Model:Cycles doesn't
+  appear over USB ») : les textes de connexion nomment la machine qu'on flashe, `{dev}` (`deviceName`) : Model:Samples
+  pour les deux choix Model:Samples de l'onglet Mods et les deux derniers de l'onglet Samples OS, Model:Cycles sinon ;
+  et le port d'après l'OS qui tourne, `{port}` (`portName`) : « Model:Samples » seulement sous son propre OS. Les
+  consignes fixes de l'étape 3 suivent le choix (`refreshDevTexts`). Accroche de la page : « Model:Cycles or
+  Model:Samples ». Vérifié par `tools/webflash_smoke.js` §7b-bis (les cinq choix, en anglais et en français).
 - `tools/webflash_smoke.js` §7c : le parcours complet, et les deux fichiers de la page identiques octet pour octet à ceux
   de `tools/mods_for_samples.py` pour Model-TG.
 

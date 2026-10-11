@@ -1012,6 +1012,41 @@ async function main() {
     check(errors.length === 0, "no JS error in the Model:Samples flow " + (errors.length ? JSON.stringify(errors) : ""));
   }
 
+  // 7b-bis. Step 3 names the machine being flashed (the tab and machine chosen), and the port after the OS it runs
+  {
+    const { w, doc, errors } = await load({ devName: "Acme Synth" });
+    const app = w.MCFlasherApp;
+    noRest(w);
+    doc.getElementById("allow").click();
+    await wait(150);
+    const seen = () => [text(doc, "flash"), text(doc, "midi-status"), doc.querySelector('[data-i18n-html="hf1"]').textContent,
+      doc.querySelector('[data-i18n-html="hu3"]').textContent].join(" | ");
+    check(/Flash the Model:Cycles/.test(seen()) && /Connect the Model:Cycles/.test(seen()) && /port named “Model:Cycles”/.test(seen())
+      && !/Model:Samples/.test(seen()), "Mods tab, Model:Cycles: step 3 names the Model:Cycles: " + text(doc, "midi-status"));
+    for (const [m, port] of [["smp", "Model:Samples"], ["cos", "Model:Cycles"]]) {
+      doc.getElementById("mach-" + m).click();
+      await wait(20);
+      check(/Flash the Model:Samples/.test(seen()) && /Connect the Model:Samples/.test(seen()) && /the Model:Samples/i.test(text(doc, "midi-status"))
+        && !/the Model:Cycles/i.test(text(doc, "midi-status")) && new RegExp("port named “" + port + "”").test(seen()),
+        `Mods tab, ${m}: step 3 names the Model:Samples, port “${port}”: ` + seen());
+    }
+    app.setMode("samples");
+    for (const [d, dev, port] of [["cyc", "Model:Cycles", "Model:Cycles"], ["smp", "Model:Samples", "Model:Samples"], ["back", "Model:Samples", "Model:Cycles"]]) {
+      doc.getElementById("smp-dir-" + d).click();
+      await wait(20);
+      check(new RegExp("Flash the " + dev).test(seen()) && new RegExp("the " + dev, "i").test(text(doc, "midi-status"))
+        && new RegExp("port named “" + port + "”").test(seen()), `Samples OS tab, ${d}: names the ${dev}, port “${port}”`);
+    }
+    app.applyLang("fr");
+    await wait(20);
+    check(/Flasher le Model:Samples/.test(text(doc, "flash")) && /le Model:Samples/i.test(text(doc, "midi-status")), "in French too: " + text(doc, "midi-status"));
+    app.applyLang("en");
+    app.setMode("mods");
+    doc.getElementById("mach-cyc").click();
+    await wait(20);
+    check(/Flash the Model:Cycles/.test(seen()) && !errors.length, "back to the Model:Cycles, no JS error " + errors.join(" "));
+  }
+
   // 7c. Mods tab on a Model:Samples (notes/53): always the Model:Cycles OS, packed for the machine. The two files must be
   // byte for byte those of tools/mods_for_samples.py for the same Model-TG build (SHA-256 below, printed by
   // tools/emu/test_mods_for_samples.py).
