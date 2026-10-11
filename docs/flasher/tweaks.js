@@ -98068,7 +98068,7 @@ window.MC_TWEAKS = {
    "id": "midi-both",
    "label": "MIDI OUT pendant THRU",
    "desc": "Avec THR choisi dans CONFIG > MIDI > PORTS > OUT/THRU, le Cycles relaie le MIDI recu et envoie aussi son horloge, ses notes et ses parametres. OUT ne change pas, le menu non plus.",
-   "status": "experimental",
+   "status": "tested",
    "credit": {
     "kind": "by",
     "who": "AveyCole",
@@ -98089,7 +98089,7 @@ window.MC_TWEAKS = {
    "id": "midi-live-both",
    "label": "Basculer MIDI OUT + THRU en direct",
    "desc": "Sur la ligne OUT/THRU qui affiche THR, FUNC + appui sur le potard LEVEL/DATA ajoute au relais l'envoi de l'horloge, des notes et des parametres du Cycles, ou le retire. L'ecran reste sur THR.",
-   "status": "experimental",
+   "status": "tested",
    "credit": {
     "kind": "by",
     "who": "AveyCole",

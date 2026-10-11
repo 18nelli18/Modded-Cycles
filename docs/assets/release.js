@@ -8,8 +8,8 @@ window.MC_RELEASES = [
       fr: "Deux nouveaux mods MIDI d'AveyCole, dans USB et MIDI. Avec THR choisi (SETTINGS, CONFIG › MIDI › PORTS › OUT/THRU), le Model:Cycles relaie ce qui arrive sur son MIDI IN et envoie aussi son horloge, ses notes et ses changements de paramètres. MIDI OUT pendant THRU le fait tout le temps ; Basculer MIDI OUT + THRU en direct l'active et le coupe avec FUNC + un appui sur le potard LEVEL/DATA, l'écran restant sur THR" },
     { en: "Pick one of the two; each goes with every other mod. The original OUT/THR menu doesn't change, and OUT works as before. Best when only the Cycles or only the device on its MIDI IN plays notes: the Cycles passes on what it receives as it comes in, so notes sent by both can get mixed up (see the guide)",
       fr: "Choisissez l'un des deux ; chacun se combine avec tous les autres mods. Le menu OUT/THR d'origine ne change pas, et OUT marche comme avant. Le mieux est que seul le Cycles ou seul l'appareil branché sur son MIDI IN joue des notes : le Cycles fait suivre ce qu'il reçoit au fil de l'eau, et des notes envoyées par les deux peuvent se mélanger (voir le guide)" },
-    { en: "Experimental here: checked in the emulator on the OS's own MIDI code, alone and with the other mods",
-      fr: "Expérimentaux ici : vérifiés en émulation sur le code MIDI de l'OS, seuls et avec les autres mods" },
+    { en: "Tested on a Model:Cycles by AveyCole, and checked here in the emulator on the OS's own MIDI code, alone and with the other mods",
+      fr: "Testés sur un Model:Cycles par AveyCole, et vérifiés ici en émulation sur le code MIDI de l'OS, seuls et avec les autres mods" },
   ] },
   { version: "1.38", date: "2026-10-10", changes: [
     { en: "New mod by djd_oz, Volume and pan as numbers: on the main screen, turning LEVEL/DATA shows the selected track's volume (0 to 127) in small digits in place of the loudspeaker; with FUNC held, its pan (-64 to 63) in place of the “R” of the pan bar. The number goes away 3 to 4 seconds after you stop turning. On the main screen, LEVEL/DATA now moves in steps of 1 instead of 2, so the number goes through every value",
