@@ -2,6 +2,7 @@
 
 | Fichier | Auteur | Origine |
 |---|---|---|
+| `experimental/lfo-secondary/52-lfo-secondary.json` | ce projet, page adaptée de TinyGregAudio | Assembleur original `tools/machines/lfo_secondary/`, généré par `tools/gen_lfo_secondary.py` ([note 58](../../notes/58-second-lfo.md)). Construction/destruction de page adaptée de Model-TG commit `70b39dd` (MIT, [licence](LICENSE-Model-TG)). Appelle le LFO natif sans distribuer son code. Prototype RAM, non proposé au flasher. |
 | `01-latching-mute.json`, `02-trig-preview.json`, `03-browser-scroll.json` | drumkilla | [drumkilla/elektron-model-tweaks](https://github.com/drumkilla/elektron-model-tweaks), commit `6e0b4df`, `tweaks/model-cycles_OS1.13/`. Repris **sans modification** (licence MIT, texte dans [`tools/mtlib/LICENSE`](../../tools/mtlib/LICENSE)), sauf `02-trig-preview.json` : une retouche de ce projet, 3 octets en `0x40148a30` (`tst.l d0 ; bne.w` devient `lsr.l #1,d0 ; bcs.w`, l'écoute accepte le séquenceur en pause) et une ligne de description ([note 34](../../notes/34-ecoute-en-pause.md)). |
 | `10-6ch-multiout.json` | d'après scottmetoyer | Table de patchs de [scottmetoyer/ms-multi-output](https://github.com/scottmetoyer/ms-multi-output) (MIT), cible Cycles, mise au format tweak ([note 01](../../notes/01-ms-multi-output.md)). |
 | `11-6ch-usbup.json` | ce projet | Dérivé de `10-6ch-multiout` par `tools/relocate_6ch.py` ([note 13](../../notes/13-6ch-upgrade-usb.md)). |

@@ -93,3 +93,126 @@ restent à intégrer ; aucune nouvelle voie dans le firmware publié.
 Maximum observé dans cette preuve : 157 instructions pour `ml_step`, 37 pour
 `ml_stop`, 18 pour `ml_take`. Ce sont des comptages d'émulation, pas des mesures
 de durée matérielle ni de charge de l'interruption complète.
+
+## 6. Données de pas et canaux fixes (11/10/2026)
+
+Nouvelle consigne d'AveyCole : six voies MIDI Out seulement, canaux 7..12
+immuables pour pads 1..6. Le prototype `pattern.s` dérive le canal de l'index
+de voie ; le setter refuse tout changement de canal. Les pistes sonores ne
+sont jamais consultées pour ce choix. Port USB/DIN/both reste indépendant.
+
+[FAIT en émulation] Six blocs de 264 octets : configuration de 8 octets puis
+64 pas note/velocity/gate/enabled. `ml_edit`/`ml_config` valident les bornes et
+écrivent un octet ; `ml_pattern_tick` relie ce modèle au runtime réservé aux
+notes MIDI. Init : voies actives, canaux fixes 7..12, 16 pas, notes désactivées.
+Mute/désactivation libèrent les anciennes notes sur leur ancien canal/port.
+Les six voies × 64 pas, champs invalides, intégrité des autres champs et
+notes off sont éprouvés en assembleur ; SR/pile/registres conservés.
+
+[À FAIRE] Horloge native, bascule/édition physique, sortie physique bornée,
+changement/copie/sauvegarde de pattern. Ces 1584 octets sont une structure
+privée du prototype, pas un emplacement persistant libre revendiqué.
+
+## 7. Service vers le routeur natif (11/10/2026)
+
+[FAIT en émulation] `service.s` relie `ml_take` au routeur OS `0x400826b0`
+(trois octets et port résolu). Il refuse tout IPL non nul et un singleton
+MIDI absent (`0x40fe4228`) sans retirer de paquet. Budget plafonné à huit
+messages ; aucun verrou privé conservé pendant l'appel natif. La sortie DIN
+peut attendre : cette fonction est réservée au contexte UI, jamais audio.
+Le plafond borne le nombre de messages, pas leur durée physique.
+
+`test_midi_lane_service.py` exécute l'assembleur et le vrai routeur, ses portes
+OUT/THRU stock puis modifiées. Seuls writers physiques et verrous USB sont
+simulés. Canaux 7..12, ports USB/DIN/both, messages on/off exacts, budgets
+0/1/7/8/9/0xffffffff, refus IPL 1/3/5/7, singleton absent, file restante,
+pile/SR/registres vérifiés. Le test interdit les chemins de voix internes.
+
+[À FAIRE] Installer le service dans une boucle UI adaptée, raccorder
+l'horloge exacte (pas le lecteur anticipé de patterns), interface physique,
+persistance et vérification matérielle. Aucune nouvelle banque flashable livrée.
+
+## 8. Ordonnanceur indépendant et heure audio native (11/10/2026)
+
+[FAIT] L'heure musicale `0x8000184c` avance de deux fois le tempo (en 1/120
+de BPM) par bloc audio. Une noire vaut 21 600 000 unités ; un pas de double
+croche vaut 5 400 000 (note 38). `0x400593ec..0x40059490` est le chemin natif
+qui avance cette heure ; ce n'est pas le prélecteur `0x400550da`.
+
+[FAIT en émulation] `clock.s` reçoit explicitement now et playing, six
+configurations privées et un état de 52 octets (running, six couples
+deadline/next-step). Il appelle `ml_pattern_tick` au maximum une fois par
+voie/bloc et ne transmet jamais directement au MIDI. Sept vitesses privées
+sont définies : 1/4, 1/2, 1, 3/2, 2, 3, 4 (index 2 = 1×). Elles ne lisent ni
+ne modifient longueur/vitesse des six pistes sonores. Six longueurs séparées,
+rebouclage 32 bits, mute immédiat gardant la phase, changement de longueur
+sans répétition du premier pas, Stop appariant les notes actives. Un appel
+tardif resynchronise l'échéance sans rafale de rattrapage non bornée.
+
+`test_midi_lane_clock.py` assemble et exécute ce code, vérifie six vitesses
+et longueurs simultanément, puis exécute la vraie avance horaire native à
+30/120/300/546 BPM. Seize pas par mesure, décalage de déclenchement inférieur
+à un bloc audio ; registres, pile et SR conservés. Maximum observé 1608
+instructions pour les six pas, pas une mesure de charge matérielle.
+
+[À FAIRE] Identifier le point exact de démarrage/arrêt audible et installer
+le hook après l'avance audio ; ne pas confondre transport anticipé et première
+note audible. Budget audio combiné aux moteurs/LFO, service UI, page et
+sauvegarde restent à intégrer. Ces résultats ne prouvent pas encore la synchro
+physique d'un firmware de banque MIDI.
+
+## 9. Piste de persistance à vérifier
+
+[FAIT dans la source Model-TG] Les slices manuelles utilisent des fichiers
+annexes `/Slices/<hash>` via les petites API natives : open `0x4007bc5e`,
+read `0x4007baaa`, write `0x4007bb0a`, close `0x4007bc1c`. Leur écriture est
+différée dans un message de tâche UI (`mk_post/mk_sv_run`), car écrire depuis
+le callback LED a déjà gelé l'audio. Source pinned `70b39dd`, `model_tg.s`,
+section manual slices. Cela ouvre une piste sans occuper les données natives
+des patterns, mais ne prouve ni un format, ni un emplacement libre pour nous.
+
+[À FAIRE] Identité stable projet/pattern, copie/Save As, namespace réservé,
+vérification des erreurs et écriture atomique avant toute intégration de
+fichiers annexes. Aucun fichier utilisateur écrit par ces prototypes.
+
+## 10. Page d'édition privée (11/10/2026)
+
+[FAIT en émulation] `midi_lanes/page.s` construit une vue avec le vrai
+constructeur MACHINES et un groupe de vtables privé. Les six pads choisissent
+la voie MIDI sans jouer ni modifier la sélection sonore native. FUNC+pad
+bascule le mute une seule fois par pression ; une note active reçoit son
+note-off sur son ancien port. Les canaux affichés 7..12 ne sont pas éditables.
+
+DATA choisit/édite sortie USB/DIN/both, longueur, vitesse, pas, trig, note,
+vélocité, gate et mute. Les seize touches de grille basculent les pas de la
+page courante ; PAGE parcourt les quatre pages. Les bornes d'un paramètre
+ne provoquent pas de coupure de note quand la valeur reste identique.
+
+`test_midi_lane_page.py` vérifie 132 rendus, huit champs sur six voies,
+64 pas, répétitions/releases, canaux immuables, mute et changement de port,
+transport simple, destruction native et réouverture conservant les données
+RAM. Gardes IPL, contextes absents et gestionnaire absent : aucune allocation
+ni modification. Refus d'allocation de page/détenteur nettoyés. Les writers de
+dessin, allocations et présentation sont simulés ; constructeur, destructeur
+et lecteurs de sélection exécutent le code OS. Les données sonores restent
+identiques et les points d'entrée de voix internes sont interdits au test.
+
+[À FAIRE] Raccourci global, LED de grille, persistance, allocation des
+contextes et hooks firmware réels. Une réouverture conservant la RAM ne
+constitue pas une sauvegarde de projet/pattern. Cette page n'est pas encore
+disponible dans un firmware flashable.
+
+## 11. Préparation du contexte de banque (11/10/2026)
+
+[FAIT en émulation] `prepare.s`, `ml_prepare()`, alloue un seul bloc de
+1956 octets dans la tâche UI : pattern 1584, file/gates 320, ordonnanceur 52.
+Le pattern reçoit `ml_init` ; file et horloge sont entièrement remises à zéro.
+Les pointeurs UI sont établis, puis `ml_context` est publié en dernier.
+Le futur hook audio doit lire cette publication unique et dériver les trois
+sous-structures ; les pointeurs UI intermédiaires ne prouvent pas readiness.
+
+La preuve de page observe l'initialisation avant publication, vérifie chaque
+octet et les offsets, conserve les modifications lors d'un second appel,
+refuse IPL non nul/réentrance, puis retente après un échec d'allocation.
+Cette préparation n'installe toujours aucun hook de transport ou de sortie.
+Allocation persistante en RAM seulement ; sauvegarde sur disque à faire.

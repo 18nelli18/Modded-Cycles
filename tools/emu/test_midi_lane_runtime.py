@@ -25,7 +25,10 @@ def load(rig):
     with tempfile.TemporaryDirectory() as tmp:
         p=pathlib.Path(tmp)
         subprocess.run([cross+'as','-march=cfv4e','-o',str(p/'r.o'),str(root/'tools/machines/midi_lanes/runtime.s')],check=True)
-        subprocess.run([cross+'ld','-Ttext='+hex(ENTRY),'-e','ml_step','-o',str(p/'r.elf'),str(p/'r.o')],check=True)
+        subprocess.run([cross+'as','-march=cfv4e','-o',str(p/'pattern.o'),str(root/'tools/machines/midi_lanes/pattern.s')],check=True)
+        subprocess.run([cross+'as','-march=cfv4e','-o',str(p/'service.o'),str(root/'tools/machines/midi_lanes/service.s')],check=True)
+        subprocess.run([cross+'as','-march=cfv4e','-o',str(p/'clock.o'),str(root/'tools/machines/midi_lanes/clock.s')],check=True)
+        subprocess.run([cross+'ld','-Ttext='+hex(ENTRY),'-e','ml_step','-o',str(p/'r.elf'),str(p/'r.o'),str(p/'pattern.o'),str(p/'service.o'),str(p/'clock.o')],check=True)
         subprocess.run([cross+'objcopy','-O','binary','--only-section=.text',str(p/'r.elf'),str(p/'r.bin')],check=True)
         rig.uc.mem_write(ENTRY,(p/'r.bin').read_bytes())
         return {line.split()[2]:int(line.split()[0],16) for line in subprocess.check_output([cross+'nm',str(p/'r.elf')],text=True).splitlines() if len(line.split())==3}
@@ -57,6 +60,46 @@ def main():
     def packet(channel,note,velocity=100,port=4):return ((0x90|channel)<<24)|(note<<16)|(velocity<<8)|port
     def off(p):return p&0xefff00ff
     def take():return call('ml_take',BANK)
+    pattern=0x93010000
+    u.mem_write(pattern,b'\xa5'*(6*264))
+    assert call('ml_init',pattern)==1
+    for lane in range(6):
+        for field,value in enumerate((1,0,lane+6,2+lane%3,64,2)):
+            assert call('ml_config',pattern,lane,field,value)==(0 if field==2 else 1)
+        for step in range(64):
+            for field,value in enumerate((36+lane+step%12,50+step,1+step%4,int(step%4==0))):
+                assert call('ml_edit',pattern,lane,step,field,value)==1
+    expected_pattern=bytes(u.mem_read(pattern,6*264))
+    for lane in range(6):
+        reset()
+        for step in range(64):
+            assert call('ml_pattern_tick',BANK,pattern,lane,step)==1
+            messages=[]
+            while (p:=take()):messages.append(p)
+            note=36+lane+step%12
+            if step%4==0:
+                assert messages==[packet(lane+6,note,50+step,2+lane%3)],(lane,step,messages)
+            elif step%4==1:
+                assert messages==[off(packet(lane+6,note-1,49+step,2+lane%3))]
+            else:assert not messages
+        assert bytes(u.mem_read(pattern,6*264))==expected_pattern
+    # Changer route/canal et muter doit libérer la note sur son ancien port.
+    reset();assert call('ml_pattern_tick',BANK,pattern,0,0)==1
+    original=take()
+    assert call('ml_config',pattern,0,2,15)==0
+    assert call('ml_config',pattern,0,3,4)==1
+    assert call('ml_config',pattern,0,1,1)==1
+    call('ml_pattern_tick',BANK,pattern,0,1)
+    assert take()==off(original) and take()==0
+    for args in [(6,0,0,60),(0,64,0,60),(0,0,4,1),(0,0,0,128),(0,0,1,0),(0,0,2,65),(0,0,3,2)]:
+        before=bytes(u.mem_read(pattern,6*264))
+        assert call('ml_edit',pattern,*args)==0
+        assert bytes(u.mem_read(pattern,6*264))==before
+    for field,value in [(0,2),(1,2),(2,0),(2,6),(2,16),(3,1),(4,0),(4,65),(5,7),(6,0)]:
+        before=bytes(u.mem_read(pattern,6*264))
+        assert call('ml_config',pattern,0,field,value)==0
+        assert bytes(u.mem_read(pattern,6*264))==before
+    print('ok : édition six voies × 64 pas, réglages indépendants, lecture note/gate et mute avec ancien port ; valeurs invalides sans écriture')
     for channel in range(16):
       for port in (2,3,4):
         reset();p=packet(channel,60,port=port)
