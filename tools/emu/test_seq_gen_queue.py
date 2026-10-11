@@ -76,9 +76,12 @@ def run(stock,base,tweak):
     assert bytes(r.u.mem_read(RAW+713,2))==struct.pack('>H',64)
     r.call('sg_q_service');assert r.signals==list(range(16))
     print('ok : longueur effective native 16 avec longueur masquée piste 64 ; staging et commit')
-    for fault,expected in [('mode','Queue: mode'),('chain','Queue: chain'),('audio','Queue: audio'),('data','Queue: data'),('locks','Queue: locks')]:
+    for fault,expected in [('mode','Q mod 00001'),('length','Q len 00000'),('speed','Q spd 00007'),('running','Q run 00000'),('chain','Queue: chain'),('audio','Queue: audio'),('data','Queue: data'),('locks','Queue: locks')]:
         r=setup(stock,base,tweak,index=5,length=16)
         if fault=='mode':r.u.mem_write(PAT+30667,b'\x01')
+        elif fault=='length':r.u.mem_write(PAT+30662,b'\0\0')
+        elif fault=='speed':r.u.mem_write(PAT+30668,b'\x07')
+        elif fault=='running':r.w32(0x40a78848,0)
         elif fault=='chain':r.w32(0x40a78638,2)
         elif fault=='audio':r.w32(OBJ+32,0)
         elif fault=='data':r.w32(OBJ+16,0)
@@ -86,7 +89,7 @@ def run(stock,base,tweak):
         audio_before=bytes(r.u.mem_read(PAT,30710))
         r.call('sg_action_generate');assert r.r32(r.s['sg_error'])
         r.u.reg_write(mk.UC_M68K_REG_D3,20);r.call('sg_q_label')
-        assert r.string(r.u.reg_read(mk.UC_M68K_REG_A2))==expected,(fault,expected)
+        assert r.string(r.u.reg_read(mk.UC_M68K_REG_A2))==expected,(fault,expected,r.string(r.u.reg_read(mk.UC_M68K_REG_A2)))
         assert bytes(r.u.mem_read(PAT,30710))==audio_before
     print('ok : piste 6, refus ciblés mode/chaîne/audio/données/locks, aucun changement audio')
     worst=0

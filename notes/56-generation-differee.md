@@ -105,3 +105,17 @@ Les refus mode/chain/audio/data/locks sont provoqués en émulation sur piste 6,
 et leur texte et absence d’écriture audio sont contrôlés. Les validations
 restent actives. Ce build sert à identifier la cause matérielle, pas à annoncer
 un correctif confirmé. Taille différée : 8 632 octets, 61 masques.
+
+## 7. Diagnostic des valeurs de mode (11/10/2026)
+
+AveyCole obtient « Queue: mode ». Ce motif englobait encore quatre contrôles :
+mode brut +30667, longueur commune +30662, vitesse +30668 et état de lecture
+piste 0 à `0x40a78848`. Le rapport ne permet pas de choisir lequel échoue.
+Test 2 affiche désormais le contrôle et sa valeur exacte sur cinq chiffres :
+`Q mod 00001`, `Q len 00000`, `Q spd 00007`, `Q run 00000`, par exemple.
+Formatter UI borné à cinq divisions, aucune API OS et aucun changement ISR.
+Les quatre refus sont provoqués séparément dans la preuve et leur texte exact
+est vérifié ; les validations restent inchangées. Cause matérielle à déterminer
+avec la valeur remontée, aucun correctif de lecture revendiqué.
+
+Build valeurs : 8 762 octets dans 62 masques ; interface principale inchangée.

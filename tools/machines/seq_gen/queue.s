@@ -12,6 +12,8 @@
     .equ Q_AUDIO,10832
     .equ Q_OLD_AUDIO,11556
     .section .data.sg_queue,"aw"
+sg_q_detail: .asciz "Q mod 00000"
+    .balign 4
 sg_q_reason: .long 0
 sg_q_state: .long 0              | 0 libre, 1 préparé, 2 appliqué, 3 annulé
 sg_q_building: .long 0           | UI uniquement, jamais utilisé par l'ISR
@@ -120,6 +122,30 @@ sq_pool: .asciz "Queue: locks"
 sq_build: .asciz "Queue: build"
 sg_q_wait: .asciz "Queued"
 sg_q_cancel_text: .asciz "Cancel queue"
+    .section .text.sg_q_detail,"ax"
+| UI seulement : d0 valeur non signée 16 bits, d1 étiquette de quatre octets.
+| Retour d0 inchangé ; d2 préservé ; d1/a0/a1 temporaires.
+sg_q_format:
+    lea.l %sp@(-8),%sp
+    movem.l %d0/%d2,%sp@
+    lea.l sg_q_detail,%a0
+    movel %d1,%a0@(2)
+    movel %a0,sg_q_reason
+    lea.l %a0@(11),%a1
+    andil #65535,%d0
+    moveq #4,%d2
+sqf_digit:
+    divuw #10,%d0
+    movel %d0,%d1
+    swap %d1
+    addil #48,%d1
+    moveb %d1,%a1@-
+    andil #65535,%d0
+    subql #1,%d2
+    bplw sqf_digit
+    movem.l %sp@,%d0/%d2
+    lea.l %sp@(8),%sp
+    rts
     .section .text.sg_q_stage,"ax"
 sg_q_stage:
     lea.l %sp@(-32),%sp
@@ -140,12 +166,17 @@ sg_q_stage:
     moveal 0x40a7887c,%a4
     tstl %a4
     beqw sqs_fail
-    lea.l sq_mode,%a0
-    movel %a0,sg_q_reason
-    tstb %a4@(30667)             | modes de longueur par piste refusés
+    moveq #0,%d0
+    moveb %a4@(30667),%d0
+    movel #0x6d6f6420,%d1        | "mod "
+    jsr sg_q_format
+    tstl %d0                    | modes de longueur par piste refusés
     bnew sqs_fail
     moveq #0,%d2
     movew %a4@(30662),%d2
+    movel %d2,%d0
+    movel #0x6c656e20,%d1        | "len "
+    jsr sg_q_format
     cmpil #1,%d2
     bltw sqs_fail
     cmpil #64,%d2
@@ -153,10 +184,14 @@ sg_q_stage:
     movel %d2,sg_q_length
     moveq #0,%d0
     moveb %a4@(30668),%d0
+    movel #0x73706420,%d1        | "spd "
+    jsr sg_q_format
     cmpil #6,%d0
     bhiw sqs_fail
     movel %d0,sg_q_speed
     movel 0x40a78848,%d0
+    movel #0x72756e20,%d1        | "run "
+    jsr sg_q_format
     cmpil #1,%d0
     bnew sqs_fail
     lea.l sq_chain,%a0
