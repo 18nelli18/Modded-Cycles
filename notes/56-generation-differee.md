@@ -88,3 +88,20 @@ longueur effective 16 et longueur masquée 64 : l’ancien build refuse, le
 correctif doit préparer, appliquer seize pas et garder la longueur masquée.
 Cette cause reproduite peut expliquer le rapport ; confirmation matérielle
 du correctif encore attendue.
+
+## 6. Refus persistant et diagnostic ciblé (11/10/2026)
+
+AveyCole confirme que le correctif précédent refuse encore Generate en lecture,
+« Check range/stop », sans produire de séquence. Option différée cochée,
+longueur/vitesse communes, sans chaîne ; 16 pas, d’abord piste 6, puis
+confirmation que toutes les pistes sont concernées. Generate fonctionne arrêté.
+La régression longueur masquée est réelle, mais n’explique donc pas à elle seule
+le comportement matériel signalé. Cause restante non établie.
+
+Test 2 : chaque groupe de validations UI garde un motif précis, affiché sur
+la ligne Generate en cas de refus : transport, mode, chain, track, audio, data,
+locks, build ou Queue pending. Aucun journal ni notification ajouté à l’ISR.
+Les refus mode/chain/audio/data/locks sont provoqués en émulation sur piste 6,
+et leur texte et absence d’écriture audio sont contrôlés. Les validations
+restent actives. Ce build sert à identifier la cause matérielle, pas à annoncer
+un correctif confirmé. Taille différée : 8 632 octets, 61 masques.

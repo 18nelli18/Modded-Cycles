@@ -58,3 +58,10 @@ huit ne subsiste dans SCRAMBLE. Taille : 783 octets, sept masques. Le générate
 contrôle le désassemblage compilé et refuse les index mots ou facteur huit ;
 la preuve conserve l’instruction fautive comme cas de régression refusé.
 Le correctif reste expérimental, à retester sur matériel.
+
+## 5. Testé sur la machine (11/10/2026)
+
+AveyCole : « Scramble is now functional », avec demande explicite de publication
+au flasher principal. Promotion de SCRAMBLE seul ; génération différée toujours
+expérimentale, nouveau refus « Check range/stop » signalé. Les variantes
+principales chaînent le générateur principal, pas celui du test 2.

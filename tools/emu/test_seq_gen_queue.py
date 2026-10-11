@@ -76,6 +76,19 @@ def run(stock,base,tweak):
     assert bytes(r.u.mem_read(RAW+713,2))==struct.pack('>H',64)
     r.call('sg_q_service');assert r.signals==list(range(16))
     print('ok : longueur effective native 16 avec longueur masquée piste 64 ; staging et commit')
+    for fault,expected in [('mode','Queue: mode'),('chain','Queue: chain'),('audio','Queue: audio'),('data','Queue: data'),('locks','Queue: locks')]:
+        r=setup(stock,base,tweak,index=5,length=16)
+        if fault=='mode':r.u.mem_write(PAT+30667,b'\x01')
+        elif fault=='chain':r.w32(0x40a78638,2)
+        elif fault=='audio':r.w32(OBJ+32,0)
+        elif fault=='data':r.w32(OBJ+16,0)
+        elif fault=='locks':r.w32(POOL+16,0)
+        audio_before=bytes(r.u.mem_read(PAT,30710))
+        r.call('sg_action_generate');assert r.r32(r.s['sg_error'])
+        r.u.reg_write(mk.UC_M68K_REG_D3,20);r.call('sg_q_label')
+        assert r.string(r.u.reg_read(mk.UC_M68K_REG_A2))==expected,(fault,expected)
+        assert bytes(r.u.mem_read(PAT,30710))==audio_before
+    print('ok : piste 6, refus ciblés mode/chaîne/audio/données/locks, aucun changement audio')
     worst=0
     for index in range(6):
       for length in (1,16,64):

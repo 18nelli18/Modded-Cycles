@@ -24,7 +24,7 @@ def main():
     global OUT, STAMP
     if a.second:
         OUT=ROOT/"docs/flasher-test-2"
-        STAMP="2026-10-11-test-2-scramble-fix"
+        STAMP="2026-10-11-test-2-queue-diagnostics"
     else:
         STAMP="2026-10-10-generator-sequence-only-test"
     OUT.mkdir(parents=True,exist_ok=True)
@@ -41,6 +41,8 @@ def main():
         print("ok : extensions retirées, catalogue principal testé restauré")
         return
     tw=catalog.read_js((PROD/"tweaks.js").read_text())
+    tw["tweaks"]=[t for t in tw["tweaks"] if not t["id"].startswith("scramble")]
+    tw["features"]=[f for f in tw["features"] if f["id"]!="scramble"]
     for i,t in enumerate(tw["tweaks"]):
         if t["id"] in ("scale-gen","scale-gen-st"):
             advanced=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/experimental/sequence-only/49-{t["id"]}.json').read_text())
@@ -80,7 +82,7 @@ def main():
             def ids(self,sel):
                 out=super().ids(sel)
                 queued=sel.get("scale-gen","").endswith("-queued")
-                return [(i+"-queued" if queued and not i.endswith("-queued") else i) if i.startswith("scale-gen") else (("scramble-st" if "syntakt" in sel or "macro" in sel else "scramble")+("-gen" if "scale-gen" in sel else "")+("-queued" if "scale-gen" in sel and queued else "")) if i=="scramble" else i for i in out]
+                return [(i+"-queued" if queued and not i.endswith("-queued") else i) if i.startswith("scale-gen") else (("scramble-st" if "syntakt" in sel or "macro" in sel else "scramble")+("-gen" if "scale-gen" in sel else "")+("-queued" if "scale-gen" in sel and queued else "")) if i.startswith("scramble") else i for i in out]
         ref_mainos.Cards=SecondCards
     try: refs,mods,n=ref_mainos.blocks(a.cycles,a.syntakt)
     finally:
@@ -103,7 +105,7 @@ def main():
     entries=iter(descriptions)
     files["app.js"]=re.sub(r'    "scale-gen": \{[^\n]+\},',lambda m:'    "scale-gen": '+json.dumps(next(entries),ensure_ascii=False)+',',files["app.js"])
     for name in ("index.html",):
-        files[name]=re.sub(r"2026-10-10-scale-gen-dynamics-main",STAMP,files[name])
+        files[name]=re.sub(r"2026-10-10-scale-gen-dynamics-main|2026-10-11-scramble-main",STAMP,files[name])
     notice='<p id="test-build-notice" role="note"><span data-l="en">Experimental expanded generator: ranges, rhythm/notes, mutation, Euclidean rhythm and a larger rounded SEQ. GEN. popup. Sound randomization has been removed. Hardware testing required. Generate and Undo require stopped playback.</span><span data-l="fr">Générateur étendu expérimental : plages, rythme/notes, mutation, rythme euclidien et cartouche SEQ. GEN. agrandi arrondi. Tirage du son retiré. À tester sur la machine. Generate et Undo demandent la lecture arrêtée.</span></p>'
     files["index.html"]=files["index.html"].replace('<main',notice+'\n<main',1)
     if a.second:

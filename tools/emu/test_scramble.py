@@ -57,7 +57,8 @@ def setup(stock,base,tweak,index=0, extras=None, syntakt_path=None):
     return r
 
 def main():
-    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--syntakt');a=ap.parse_args()
+    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--syntakt');ap.add_argument('--main',action='store_true');a=ap.parse_args()
+    folder='' if a.main else 'experimental/scramble/'
     try:check_index_modes("4018b1c6: 2980 2e00 movel %d0,%a4@(0,%d2:l:8)")
     except AssertionError:pass
     else:raise AssertionError("la régression matérielle v03 doit être refusée")
@@ -66,7 +67,7 @@ def main():
     stock=main_os_from_syx(a.cycles)
     for dep,suffix in [('model-tg',''),('model-tg-st','-st')]:
         base=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/30-{dep}.json').read_text())
-        tweak=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/experimental/scramble/50-scramble{suffix}.json').read_text())
+        tweak=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/{folder}50-scramble{suffix}.json').read_text())
         for index in range(6):
             r=setup(stock,base,tweak,index)
             for machine in range(6):
@@ -98,11 +99,11 @@ def main():
         r.w32(r.tg['set_held'],0);r.call(0x4007240c,r.event(2,16,3));assert r.r32(r.s['sc_taken'])==0
         print('ok :',dep,'6 pistes × 6 machines, vrai setter OS quatre valeurs seulement, bornes, Sampler refusé, combo idempotent sans menu')
     if a.syntakt:
-        tw=catalog.read_js((ROOT/'docs/flasher-test/tweaks.js').read_text())
+        tw=catalog.read_js((ROOT/('docs/flasher/tweaks.js' if a.main else 'docs/flasher-test/tweaks.js')).read_text())
         ids='6ch-usbup model-tg-st sample-preview-st trig-hold arp tempo-max boot-anim multiline-browser midi-live-both level-pan-values trigless-dim syntakt-tg-sd-cp-toy-bits-swarm-macro scale-gen-st'.split()
         extras=[next(t for t in tw['tweaks'] if t['id']==i) for i in ids]
         base=next(t for t in extras if t['id']=='model-tg-st')
-        tweak=json.loads((ROOT/'tweaks/model-cycles_OS1.13/experimental/scramble/50-scramble-st-gen.json').read_text())
+        tweak=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/{folder}50-scramble-st-gen.json').read_text())
         for index in range(6):
             r=setup(stock,base,tweak,index,extras,a.syntakt)
             for machine in [0,1,2,3,4,5,7,8,9,10,11,12]:

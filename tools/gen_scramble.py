@@ -18,6 +18,7 @@ def compile_code(cross,tg,next_hook):
     paths=list((ROOT/'tweaks/model-cycles_OS1.13').glob('*.json'))+list((ROOT/'tweaks/model-cycles_OS1.13/experimental/sequence-only').glob('*.json'))+list((ROOT/'tweaks/model-cycles_OS1.13/experimental/queued').glob('*.json'))
     for p in paths:
         t=json.loads(p.read_text())
+        if t.get('id','').startswith('scramble'):continue
         occupied.extend((build.BASE+w['off'],build.BASE+w['off']+len(bytes.fromhex(w['new']))) for w in t.get('writes',[]))
     free=[(va,row) for va,row in sprites.MASKS.items() if len(row)==4 and not any(va<hi and lo<va+row[0] for lo,hi in occupied)]
     body=(ROOT/'tools/machines/scramble/scramble.s').read_text()
@@ -59,19 +60,19 @@ def compile_code(cross,tg,next_hook):
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--cycles',required=True);ap.add_argument('--model-tg',type=pathlib.Path,required=True)
-    ap.add_argument('--cross',default='m68k-elf-');ap.add_argument('--check',action='store_true');a=ap.parse_args()
+    ap.add_argument('--main',action='store_true',help='variantes du générateur principal testé');ap.add_argument('--cross',default='m68k-elf-');ap.add_argument('--check',action='store_true');a=ap.parse_args()
     assert subprocess.check_output(['git','-C',str(a.model_tg),'rev-parse','HEAD'],text=True).strip()==sg.COMMIT
     subprocess.run(['git','-C',str(a.model_tg),'diff','--quiet','HEAD'],check=True)
     stock=sg.main_os_from_syx(a.cycles);assert hashlib.sha256(stock).hexdigest()==sg.STOCK
-    tg=sg.symbols(a.cross,a.model_tg/'build/_b.elf');OUT.mkdir(parents=True,exist_ok=True)
+    tg=sg.symbols(a.cross,a.model_tg/'build/_b.elf');out=ROOT/'tweaks/model-cycles_OS1.13' if a.main else OUT;out.mkdir(parents=True,exist_ok=True)
     for st in (False,True):
         dep='model-tg-st' if st else 'model-tg'
         base=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/30-{dep}.json').read_text())
-        for gen in (False,True,"queued"):
+        for gen in ((False,True) if a.main else (False,True,"queued")):
             seqname='scale-gen-st' if st else 'scale-gen'
             folder='queued' if gen=='queued' else 'sequence-only'
             if gen=='queued':seqname+='-queued'
-            seq=json.loads((ROOT/f'tweaks/model-cycles_OS1.13/experimental/{folder}/49-{seqname}.json').read_text())
+            seq=json.loads((ROOT/(f'tweaks/model-cycles_OS1.13/49-{seqname}.json' if a.main else f'tweaks/model-cycles_OS1.13/experimental/{folder}/49-{seqname}.json')).read_text())
             next_hook=int(seq['symbols']['sg_key'],16) if gen else tg['key_hook']
             slots,blobs,syms=compile_code(a.cross,tg,next_hook)
             writes=[]
@@ -86,7 +87,10 @@ def main():
             write(0x4007240c,b'\x4e\xf9'+struct.pack('>I',next_hook),b'\x4e\xf9'+struct.pack('>I',syms['sc_key']))
             name='scramble'+('-st' if st else '')+('-gen' if gen else '')+('-queued' if gen=='queued' else '')
             t=dict(id=name,order=50,name='SCRAMBLE — quatre paramètres (expérimental)',description=['SETTINGS + TRACK : popup SCRAMBLE et tirage des quatre contrôles machine.','Sans menu ni état du générateur ; Sampler exclu. Vérification matérielle attendue.','Code original ; dépend de Model-TG (TinyGregAudio, MIT). tools/gen_scramble.py, notes/55.'],device='Model:Cycles',os='1.13',section=3,requires=[dep]+([seqname] if gen else []),conflicts=[n for n in ['scramble','scramble-st','scramble-gen','scramble-st-gen','scramble-gen-queued','scramble-st-gen-queued'] if n!=name]+([] if gen else ['scale-gen','scale-gen-st','scale-gen-queued','scale-gen-st-queued']),writes=writes,symbols={n:hex(v) for n,v in syms.items() if n.startswith('sc_')})
-            text=json.dumps(t,ensure_ascii=False,indent=1)+'\n';p=OUT/f'50-{name}.json'
+            if a.main:
+                t['name']='SCRAMBLE — quatre paramètres'
+                t['description'][1]='Sans menu ni état du générateur ; Sampler exclu. Testé sur machine par AveyCole le 11/10/2026.'
+            text=json.dumps(t,ensure_ascii=False,indent=1)+'\n';p=out/f'50-{name}.json'
             if a.check:assert p.read_text()==text,p
             else:p.write_text(text)
             print('ok :',name,sum(len(b) for b in blobs),'octets,',len(slots),'masques')

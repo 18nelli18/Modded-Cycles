@@ -34,6 +34,7 @@ async function main() {
   const old = production.window.MC_TWEAKS, tw = w.MC_TWEAKS, app = w.MCFlasherApp;
   const isTest = test !== path.join(root, "docs/flasher");
   const second = test.endsWith("flasher-test-2");
+  if (isTest) { old.features = old.features.filter(f=>f.id!=="scramble"); old.tweaks=old.tweaks.filter(t=>!t.id.startsWith("scramble")); }
   for (const f of old.features) {
     const want = isTest && f.id === "scale-gen" ? {...f, status: "experimental"} : f;
     if (second && f.id === "scale-gen") want.queued = {"scale-gen":"scale-gen-queued","scale-gen-st":"scale-gen-st-queued"};
@@ -49,6 +50,13 @@ async function main() {
   click("scale-gen");
   assert.ok(doc.getElementById("feat-model-tg").checked);
   assert.ok(app.chosenTweaks().some(t=>t.id==="scale-gen"));
+  if (!isTest) {
+    click("scramble");
+    assert.ok(app.chosenTweaks().some(t=>t.id==="scramble-gen"));
+    click("scale-gen");
+    assert.ok(app.chosenTweaks().some(t=>t.id==="scramble"));
+    click("scale-gen");
+  }
   if (second) {
     assert.match(doc.getElementById("mod-scale-gen").textContent,/Sequence Generator/);
     const q=doc.getElementById("queue-scale-gen");
@@ -63,6 +71,10 @@ async function main() {
   click("macro");
   assert.ok(app.chosenTweaks().some(t=>t.id==="scale-gen-st"));
   assert.ok(app.chosenTweaks().some(t=>t.id==="model-tg-st"));
+  if (!isTest) {
+    assert.ok(app.chosenTweaks().some(t=>t.id==="scramble-st-gen"));
+    click("scramble");
+  }
   if (second) {
     doc.getElementById("queue-scale-gen").click();
     assert.ok(app.chosenTweaks().some(t=>t.id==="scale-gen-st-queued"));
@@ -97,6 +109,10 @@ async function main() {
     keys.filter(k=>k.includes("macro") && k.includes("syntakt-tg-")).sort((a,b)=>b.length-a.length)[0],
     keys.filter(k=>!k.includes("syntakt") && !k.includes("macro")).sort((a,b)=>b.length-a.length)[0]
   ]);
+  if (!isTest) {
+    chosenKeys.add(keys.find(k=>k==="model-tg+scale-gen+scramble-gen"));
+    chosenKeys.add(keys.filter(k=>k.includes("scramble-st-gen")).sort((a,b)=>b.length-a.length)[0]);
+  }
   for (const key of chosenKeys) {
     assert.ok(key, "reference case missing");
     const chosen = key.split("+").map(id=>tw.tweaks.find(t=>t.id===id));

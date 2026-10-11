@@ -12,6 +12,7 @@
     .equ Q_AUDIO,10832
     .equ Q_OLD_AUDIO,11556
     .section .data.sg_queue,"aw"
+sg_q_reason: .long 0
 sg_q_state: .long 0              | 0 libre, 1 préparé, 2 appliqué, 3 annulé
 sg_q_building: .long 0           | UI uniquement, jamais utilisé par l'ISR
 sg_q_track: .long 0
@@ -85,6 +86,15 @@ sqequal_no:
     moveq #1,%d0
     rts
 sg_q_label:
+    cmpil #20,%d3
+    bnew sql_state
+    tstl sg_error
+    beqw sql_state
+    movel sg_q_reason,%d0
+    beqw sql_state
+    moveal %d0,%a2
+    rts
+sql_state:
     movel sg_q_state,%d0
     cmpil #1,%d0
     bnew sql_done
@@ -99,24 +109,39 @@ sql_undo:
 sql_done:
     rts
     .section .rodata.sg_queue,"a"
+sq_pending: .asciz "Queue pending"
+sq_transport: .asciz "Queue: transport"
+sq_mode: .asciz "Queue: mode"
+sq_chain: .asciz "Queue: chain"
+sq_track: .asciz "Queue: track"
+sq_audio: .asciz "Queue: audio"
+sq_data: .asciz "Queue: data"
+sq_pool: .asciz "Queue: locks"
+sq_build: .asciz "Queue: build"
 sg_q_wait: .asciz "Queued"
 sg_q_cancel_text: .asciz "Cancel queue"
     .section .text.sg_q_stage,"ax"
 sg_q_stage:
     lea.l %sp@(-32),%sp
     movem.l %d2-%d5/%a2-%a5,%sp@
+    lea.l sq_pending,%a0
+    movel %a0,sg_q_reason
     tstl sg_q_state
     bnew sqs_fail
     clrl sg_undo_valid
     moveal sg_obj,%a2
     tstl %a2
     beqw sqs_fail
+    lea.l sq_transport,%a0
+    movel %a0,sg_q_reason
     movel 0x40a7883c,%d0
     cmpil #1,%d0
     bnew sqs_fail
     moveal 0x40a7887c,%a4
     tstl %a4
     beqw sqs_fail
+    lea.l sq_mode,%a0
+    movel %a0,sg_q_reason
     tstb %a4@(30667)             | modes de longueur par piste refusés
     bnew sqs_fail
     moveq #0,%d2
@@ -134,6 +159,8 @@ sg_q_stage:
     movel 0x40a78848,%d0
     cmpil #1,%d0
     bnew sqs_fail
+    lea.l sq_chain,%a0
+    movel %a0,sg_q_reason
     jsr sg_q_chain_ok
     tstl %d0
     beqw sqs_fail
@@ -141,6 +168,8 @@ sg_q_stage:
     jmp sqs_identity
     .section .text.sg_q_identity,"ax"
 sqs_identity:
+    lea.l sq_track,%a0
+    movel %a0,sg_q_reason
     jsr 0x400cf866
     movel %d0,%sp@-
     jsr 0x4000f23e
@@ -153,12 +182,16 @@ sqs_identity:
     cmpil #5,%d3
     bhiw sqs_fail
     movel %d3,sg_q_index
+    lea.l sq_audio,%a0
+    movel %a0,sg_q_reason
     movel %d3,%d0
     muluw #722,%d0
     addl %a4,%d0
     cmpl %a3@(32),%d0            | véritable destination audio de cette piste
     bnew sqs_fail
     movel %d0,sg_q_audio
+    lea.l sq_data,%a0
+    movel %a0,sg_q_reason
     movel %a3,%sp@-
     moveal %a3@,%a0
     moveal %a0@(40),%a0
@@ -170,6 +203,8 @@ sqs_identity:
     bnew sqs_fail
     movel %d0,sg_q_raw
     | Longueur effective via parent +60 ; +713 peut rester différente en mode commun.
+    lea.l sq_pool,%a0
+    movel %a0,sg_q_reason
     moveal %a3@(44),%a5
     tstl %a5
     beqw sqs_fail
@@ -220,6 +255,8 @@ sqs_shadow:
     jsr sg_q_copy
     moveq #1,%d0
     movel %d0,sg_q_building
+    lea.l sq_build,%a0
+    movel %a0,sg_q_reason
     jsr sg_action_generate
     clrl sg_q_building
     clrl sg_undo_valid

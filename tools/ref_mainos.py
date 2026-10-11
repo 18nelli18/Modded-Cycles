@@ -128,6 +128,7 @@ class Cards:
             for g, alt in (f.get("with") or {}).items():
                 if g in sel:
                     tid = alt
+            if f["id"]=="scramble" and "scale-gen" in sel:tid += "-gen"
             out.append(tid)
         return out
 

@@ -472,5 +472,16 @@ Statut expérimental : le timing maximal et le démarrage complet doivent encore
 
 Empreintes MAIN OS du test 2 :
 
-- `model-tg+scale-gen-queued+scramble-gen-queued` : `a91a7a085a61c7e30db970f114ff1765e13b0e8b3489caae78884043046e75a7`.
-- `6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+multiline-browser+midi-live-both+level-pan-values+trigless-dim+syntakt-tg-sd-cp-toy-bits-swarm-macro+scale-gen-st-queued+scramble-st-gen-queued` : `b2cfd9596af6a0fbb41bdaf37a77731cb751f3080825c818ace4d517971d8feb`.
+- `model-tg+scale-gen-queued+scramble-gen-queued` : `8effc81f904e1150af6c8c83271230eae7621b9ace382ead3508862c3f349bdd`.
+- `6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+multiline-browser+midi-live-both+level-pan-values+trigless-dim+syntakt-tg-sd-cp-toy-bits-swarm-macro+scale-gen-st-queued+scramble-st-gen-queued` : `e62d6458473a73257f96a9f420966629c038efa6425ecd03c603af5b37c0cb50`.
+
+### SCRAMBLE principal confirmé (11/10/2026)
+
+Variantes principales sans génération différée. Génération et preuve :
+
+```sh
+python3 tools/gen_scramble.py --main --cycles firmware/model-cycles_OS1.13.syx --model-tg ../model-tg --cross m68k-elf- --check
+python3 tools/emu/test_scramble.py --main --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+```
+
+Empreinte principale `model-tg+scale-gen+scramble-gen` : `2e5b580a5451f993b4c1ab3dc79325cf56156a96addab8fdd65a51476e9db950`.
