@@ -283,13 +283,13 @@ Instructions exécutées dans le code du filtre, par bloc, 6 pistes ; part d'un 
 | Cas | Instructions par bloc | Part d'un bloc |
 |---|---|---|
 | 6 pistes au centre (OFF) | 350 | 0,32 % |
-| 1 piste filtrée, 5 au centre | 993 | 0,92 % |
-| 6 pistes filtrées, réglages fixes | 4 208 | 3,9 % |
-| 6 pistes filtrées, enveloppe en cours | 4 949 (max 5 114) | 4,7 % |
-| 6 pistes filtrées, réglages changés à chaque bloc | 5 197 (max 5 220) | 4,8 % |
-| 6 pistes filtrées, notes finies (Decay 10) | 3 983 | 3,7 % |
+| 1 piste filtrée, 5 au centre | 998 | 0,92 % |
+| 6 pistes filtrées, réglages fixes | 4 247 | 3,9 % |
+| 6 pistes filtrées, enveloppe en cours | 4 979 (max 5 144) | 4,8 % |
+| 6 pistes filtrées, réglages changés à chaque bloc | 5 226 (max 5 258) | 4,9 % |
+| 6 pistes filtrées, notes finies (Decay 10) | 4 022 | 3,7 % |
 
-Une piste filtrée coûte 643 instructions de plus qu'au centre (0,6 % d'un bloc), jusqu'à 812 (0,75 %) quand les
+Une piste filtrée coûte 648 instructions de plus qu'au centre (0,6 % d'un bloc), jusqu'à 818 (0,76 %) quand les
 coefficients sont recalculés à chaque bloc (enveloppe, LFO, potard qui tourne). Pour comparer, la charge lourde
 mesurée en note 36 (moteurs Syntakt, Model-TG, régulateur) prend environ 44 % d'un bloc : six pistes filtrées et
 modulées y ajoutent moins de 5 %, borne vérifiée par l'essai.
@@ -399,7 +399,7 @@ les essais du §8 sur la boucle des voix de Model-TG (gains du mixeur et Attack 
 Tous les essais du §8 donnent les mêmes résultats sur la boucle des voix de Model-TG : au centre, les 6 pistes
 identiques bit pour bit à Model-TG sans le filtre (Volume + Dist 64 et 108) ; écarts au modèle flottant, lois,
 résonance au maximum, potards, affichage, tables, sauvegarde, p-locks comme seul ; coût : 416 instructions par bloc
-pour 6 pistes au centre, 1 063 pour une piste filtrée, 5 310 au pire (6 pistes modulées, 4,9 % d'un bloc). Faits avec
+pour 6 pistes au centre, 1 068 pour une piste filtrée, 5 348 au pire (6 pistes modulées, 4,9 % d'un bloc). Faits avec
 `model-tg,6ch-usbup,sample-preview,arp,trig-hold,tempo-max,boot-anim,level-pan-values,trigless-dim,multiline-browser`
 (complet), puis avec `model-tg-st` et `syntakt-tg-sd-cp-toy-bits-swarm` (complet), `macro-tg` et
 `syntakt-tg-sd-cp-toy-bits-swarm-macro` (`--quick`), chacun avec `sample-preview-st` et les mêmes autres mods. Chord
