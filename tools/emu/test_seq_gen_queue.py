@@ -64,6 +64,17 @@ def boundary(r,step=0,phase=0,tick=0):
     return r.count
 
 def run(stock,base,tweak):
+    # Le lecteur peut différer de sa reconstruction UI avant la demande.
+    for index in range(6):
+        r=setup(stock,base,tweak,index=index)
+        r.u.mem_write(PAT+index*722+192,bytes([73]))
+        audio=bytes(r.u.mem_read(PAT+index*722,722))
+        r.call('sg_action_generate')
+        obj=r.r32(r.s['sg_obj'])
+        assert bytes(r.u.mem_read(obj+11556,722))==audio
+        assert r.r32(r.s['sg_q_state'])==1
+        boundary(r);assert r.r32(r.s['sg_q_state'])==2
+    print('ok : six pistes, lecteur différent de la conversion UI avant staging ; snapshot réel et commit')
     # Mode commun natif : longueur masquée de piste 64, longueur effective 16.
     r=setup(stock,base,tweak,length=16)
     parent,pvt,pget,praw=0x931e0000,0x931e1000,0x931e2000,0x931e3000

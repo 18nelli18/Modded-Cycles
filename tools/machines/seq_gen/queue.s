@@ -263,6 +263,14 @@ sqs_identity:
     muluw #4385,%d3
     addl %d3,%d0
     movel %d0,sg_q_pool
+    jmp sqs_snapshot
+    .section .text.sg_q_snapshot,"ax"
+sqs_snapshot:
+    | Snapshot du lecteur réel : la conversion UI n'est pas son état courant.
+    moveal sg_q_audio,%a0
+    lea.l %a2@(Q_OLD_AUDIO),%a1
+    movel #722,%d0
+    jsr sg_q_copy
     jmp sqs_shadow
     .section .text.sg_q_shadow,"ax"
 sqs_shadow:
@@ -315,19 +323,17 @@ sqs_shadow:
     jmp sqs_convert
     .section .text.sg_q_convert,"ax"
 sqs_convert:
+    | Initialiser la cible depuis le lecteur, indépendamment du contenu du tas.
+    lea.l %a2@(Q_OLD_AUDIO),%a0
+    lea.l %a2@(Q_AUDIO),%a1
+    movel #722,%d0
+    jsr sg_q_copy
     | Conversion native complète avant publication, jamais dans l'ISR.
     pea -1
     pea -1
     clrl %sp@-
     pea %a2@(Q_RAW)
     pea %a2@(Q_AUDIO)
-    jsr 0x4005b642
-    lea.l %sp@(20),%sp
-    pea -1
-    pea -1
-    clrl %sp@-
-    pea %a2@(208)
-    pea %a2@(Q_OLD_AUDIO)
     jsr 0x4005b642
     lea.l %sp@(20),%sp
     moveq #1,%d0

@@ -171,3 +171,22 @@ maximale ; registres/SR, absence d'écriture tardive, modes 0/1/2 et lecteur
 natif conservés. Catalogue test : 861 références, 153 tweaks, audit des caves
 et équivalence navigateur/Python réussis. Build de diagnostic destiné au
 matériel, pas un correctif confirmé de la cause de l'annulation.
+
+## 10. Snapshot du lecteur réel (11/10/2026)
+
+Retour matériel : `q: play data`. Le refus correspond à la comparaison des
+722 octets audio, avant toute écriture. [FAIT] Le code reconstruisait ce
+snapshot à partir des données UI avec `0x4005b642`, au lieu de copier le
+lecteur actif. Une différence préexistante entre les deux représentations
+annulait donc la demande même sans édition concurrente.
+
+Le staging copie maintenant les 722 octets réellement lus à la demande,
+avant la construction privée. Le résultat audio part de cette copie, puis
+subit la conversion native de la nouvelle séquence. Les quatre gardes de
+comparaison restent actives : une modification postérieure annule toujours
+la demande. Aucun travail supplémentaire dans l'interruption ; la copie
+supplémentaire se fait dans le service UI.
+
+La preuve ajoute six cas dont la vélocité du lecteur diffère déjà de celle
+de l'UI : le snapshot doit être identique au lecteur et le commit doit
+réussir. Ce correctif vise le refus observé ; validation matérielle requise.
