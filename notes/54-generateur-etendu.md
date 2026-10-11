@@ -35,3 +35,15 @@ Le catalogue de test remplace seulement les deux variantes du générateur, cons
 `tools/emu/test_seq_gen_advanced.py` : longueurs 1/7/16/31/64, trois modes, mutation 0/25/100, plages, Euclid/rotation, restauration exacte, 24 lignes, preview/Undo, mutes sans répétition et cartouche temporisé. Les frontières allocation/dessin/observateurs restent simulées ; le getter, toggle et setter mute stock sont exécutés, bitmap vérifié en lecture active, observateur et frontières MIDI simulés. Ne pas assimiler ces preuves à un boot complet ou un essai matériel.
 
 [FAIT en émulation] Lecteur de touches réel SETTINGS + TRACK/PAGE, idempotence et relâchements ; vrai chemin FUNC + pads, mute/unmute pendant la lecture. [FAIT] Audit avec origin/main upstream : aucun conflit nouveau (154 tweaks). Preuve navigateur : 18 cartes conservées, fichiers officiels, quatre builds dont la plus grande combinaison, empreintes intégrales/par mod et rejet volontaire d’une empreinte altérée. [À FAIRE] Essais des machines ajoutées et validation matérielle. La génération en lecture, avec application en début de boucle, relève d’un autre prototype et n’est pas activée ici.
+
+## 6. Incident matériel signalé le 10/10/2026
+
+AveyCole : « the random sound feature crashed my model cycles ». Le tirage du son
+reste non validé ; les preuves précédentes interceptaient les observateurs et ne
+couvraient pas l’environnement matériel complet. Cause non établie. Retrait
+temporaire des extensions du flasher de test, remplacé par le catalogue principal
+déjà testé. Aucun changement du principal. Les sources/JSON expérimentaux restent
+disponibles pour l’investigation, sans nouveau résultat matériel positif.
+
+Nouvelle demande : mod son indépendant, combo direct sans menu, cartouche
+« SCRAMBLE ». Génération pendant la lecture conservée comme travail distinct.

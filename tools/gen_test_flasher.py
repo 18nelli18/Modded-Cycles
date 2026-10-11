@@ -18,7 +18,20 @@ def main():
     ap.add_argument("--cycles",required=True)
     ap.add_argument("--syntakt",required=True)
     ap.add_argument("--check",action="store_true")
+    ap.add_argument("--quarantine",action="store_true",help="retirer les extensions après incident matériel")
     a=ap.parse_args()
+    if a.quarantine:
+        files={p.name:p.read_text() for p in PROD.iterdir() if p.is_file() and p.suffix in (".js",".css",".txt",".html")}
+        files["guide.html"]=(ROOT/"docs/guide/index.html").read_text()
+        files["index.html"]=files["index.html"].replace("2026-10-10-scale-gen-dynamics-main","2026-10-10-sound-withdrawn")
+        notice='<p id="sound-withdrawn" role="alert"><span data-l="en">Sound randomization withdrawn after a reported hardware crash. This page temporarily uses the hardware-tested main catalog. Expanded experimental features will return in a separate build after investigation.</span><span data-l="fr">Tirage du son retiré après un plantage matériel signalé. Cette page utilise temporairement le catalogue principal testé sur machine. Les extensions expérimentales reviendront dans un build distinct après investigation.</span></p>'
+        files["index.html"]=files["index.html"].replace('<main',notice+'\n<main',1)
+        for name,text in files.items():
+            text=text.rstrip()+"\n"
+            if a.check:assert (OUT/name).read_text()==text,str(OUT/name)
+            else:(OUT/name).write_text(text)
+        print("ok : extensions retirées, catalogue principal testé restauré")
+        return
     tw=catalog.read_js((PROD/"tweaks.js").read_text())
     for i,t in enumerate(tw["tweaks"]):
         if t["id"] in ("scale-gen","scale-gen-st"):
