@@ -25,7 +25,8 @@ Syntakt 1.42, Model-TG v1.1.0) dans `/mnt/project-files/filtre-piste/faisabilite
 - Corrige au passage la sauvegarde des **p-locks des paramètres k ≥ 23** dans le pattern : l'OS d'origine les rangeait
   sur LFO Speed, LFO Multiplier… ou les perdait (§4.3).
 - Place : 3 001 o de code, tables et état dans **quinze masques de sprites 35×35** libérés (§6). Coût : §9.
-- **Incompatible avec Model-TG** pour l'instant (même geste, mêmes accroches de sauvegarde) : étape 2 (§11).
+- **Avec Model-TG** (étape 2, §11) : le filtre de piste de Model-TG est retiré, ce filtre prend sa place (versions
+  `48-track-filter-tg*.json`), côté stéréo du Sampler compris. Expérimental avec Model-TG.
 
 ## 1. Sur la machine
 
@@ -314,10 +315,89 @@ Maxime, builds `-v2` : « ça marche nickel sur la machine ». Le mod passe de �
 - Un son relu sur l'OS d'origine (ou un autre firmware) perd son filtre, sans autre effet ; ses p-locks k ≥ 23 y
   tombent sur k 0, inutilisé.
 
-## 11. Suite : Model-TG (étape 2)
+## 11. Avec Model-TG (étape 2, 11/10/2026)
 
-Après le test de Maxime : retirer le filtre par piste de Model-TG (13 retouches de sa source dans
-`tools/gen_model_tg.py`, déjà construites et vérifiées en émulation pendant l'étude ; Attack, le filtre du Sampler et
-le filtre des effets master restent), puis faire tourner ce filtre avec Model-TG : côté stéréo du Sampler
-(`sx_on`, `sx_side`), destinations 23..31 dans l'emplacement 27 partagé, accroches de sauvegarde chaînées. La
-correction des p-locks (§4.3) répare alors aussi ceux de l'Attack de Model-TG.
+Maxime, après le second essai (11/10/2026) : « fusionne et attaque l'étape 2 ». Le filtre de piste de Model-TG
+s'en va, celui-ci prend sa place et les deux se cochent ensemble.
+
+### 11.1 Model-TG sans son filtre de piste `[FAIT]`
+
+`RM_PATCHES` de `tools/gen_model_tg.py`, ajoutés à `MC_PATCHES` (les deux builds, `30-model-tg.json` et
+`30-model-tg-st.json`) : des retouches **à taille constante** de sa source. Chaque symbole global garde son adresse
+(comparé symbole par symbole aux builds d'avant ; seules deux étiquettes locales de `snd_load_post` bougent), donc
+les tweaks posés sur Model-TG (`33-sample-preview*`, `32-macro-tg`, `31-syntakt-tg-*`) et leurs octets « old »
+restent valables.
+
+| Endroit | Avant | Après |
+|---|---|---|
+| `ap_done` (fin du paramètre Attack, par bloc) | `jsr gflt_coef` : coefficients du filtre de piste | trois `nop` |
+| `ah_mid` (le filtre dans le rendu de la piste) | `movel %d3,%sp@-` … appel du filtre | `bras ah_nofl`, le filtre n'est plus appelé |
+| `dh_pass` (descripteurs tenus avec MACHINES) | SWEEP → 0x0c (Filtre), CONTOUR → 0x0b (Résonance) | six `nop` : SWEEP et CONTOUR gardent la machine ; seul DECAY → 0x0d (Attack) |
+| `snd_save_post` | Filtre et Résonance rangés avec le son | `bras ss_nofl` par-dessus, onze `nop` |
+| `snd_load_post` | Filtre et Résonance relus | non relus ; une destination de LFO ou de vélocité autre qu'Attack (23) est remise à 0 |
+| `build.py` (de Model-TG) | lignes 0x0c et 0x0b de la table des paramètres, `jmp` en `0x4005a6d0` (`sampler_com_gate`) | rien : les lignes « Error » et l'instruction d'origine restent |
+
+Restent : Attack (k 23, DECAY avec MACHINES), le filtre du Sampler (ses propres paramètres de page) et le filtre des
+effets master (page de retrig). Les mots k 24 et 25 des pistes ne servent plus (32 512 et 0). Les moteurs du Syntakt
+avec Model-TG (`gen_syntakt_engines.py`, `tg_records`) et MACRO avec Model-TG (`gen_macro.py`, qui reprend
+`tg_records`) ne posent plus que l'Attack dans leurs descripteurs tenus : les 31 `31-syntakt-tg-*`, les
+31 `31-syntakt-tg-*-macro`, `32-macro-tg` et les firmwares de diagnostic `91`/`92` sont régénérés. Un projet fait avec
+l'ancien filtre s'ouvre sans lui : la piste joue sans filtre.
+
+`TF_SYMBOLS` : Model-TG exporte aussi `snd_save2_hook`, `snd_save1_hook`, `snd_load_hook`, `sx_on` et `sx_side`
+(mêmes adresses dans les deux builds : `0x401b3c0e`, `0x401b3c28`, `0x401b3ca6`, `0x401b9b00`, `0x401b9f10`).
+
+### 11.2 Le filtre par-dessus Model-TG `[FAIT]`
+
+Deux tweaks de plus, aux écritures identiques, l'un sur `model-tg` (`48-track-filter-tg.json`), l'autre sur
+`model-tg-st` (`48-track-filter-tg-st.json`, avec les moteurs du Syntakt ou MACRO) ; `48-track-filter.json` reste
+octet pour octet le même, testé, et déclare toujours `conflicts` avec Model-TG. Le flasher prend la bonne version
+(clés « with » `model-tg`, `model-tg+syntakt`, `model-tg+macro`) ; la carte se dit expérimentale quand une version
+avec Model-TG s'applique (`with_exp`).
+
+- **Sauvegarde chaînée.** Model-TG accroche les trois mêmes sites que nous (`0x4005aecc` chargement,
+  `0x4005afa0` et `0x4005b054` sauvegarde v2 et v1), par un `jmp` vers ses propres accroches. Notre version TG
+  (`-DWITH_TG`, `tf_ui.S`) remplace ces `jmp` (les octets « old » sont ceux de Model-TG) : elle empile les arguments
+  et l'adresse de notre suite, puis saute dans l'accroche de Model-TG, qui rejoue le prologue d'origine. Sa suite
+  tourne d'abord (Attack), puis la nôtre (nos 7 octets, emplacements 30, 31, 18). L'emplacement 27 (+82/+83 :
+  destinations du LFO et de la vélocité) est partagé : notre suite n'y écrit que si la destination est l'une des
+  nôtres (28..31), sinon celle d'Attack reste.
+- **Sampler stéréo.** Model-TG calcule le côté droit d'un sample stéréo à part (`sx_side`, 6 × 128 o, drapeau
+  `sx_on` par piste) et le mélange après notre accroche. `tf_side` (220 o, dans le masque de réserve `0x40167c50`,
+  le seizième) filtre ce côté avec les mêmes coefficients que la piste et son propre état (`tf_sst`, 16 o par piste :
+  ic1, ic2, actif). À la première utilisation, l'état démarre comme celui de la piste ; quand le côté s'arrête ou que
+  le filtre est à OFF, l'état est oublié.
+- **Place** : 3 209 o dans seize masques 35×35 (le seizième, `0x40167c50`, était une réserve, §6) ; 42 écritures.
+- **Slide trigs** : ceux de Model-TG font glisser les mots 1 à 25 (`SLD_ELIG`) ; nos paramètres (k 28..31) sautent à
+  la valeur du slide trig, sans glisser.
+
+### 11.3 Preuve
+
+`tools/emu/test_track_filter.py --with model-tg,…` choisit la version TG, charge le bloc de Model-TG et fait tous
+les essais du §8 sur la boucle des voix de Model-TG (gains du mixeur et Attack à 0 fournis par le banc), plus :
+
+| Essai | Résultat |
+|---|---|
+| Côté stéréo du Sampler (`sx_on`, `sx_side`) | à OFF, les six côtés laissés tels quels ; filtrés (SNARE HP résonant, TONE LP enveloppe montante), bit pour bit comme une piste nourrie du même signal (mêmes coefficients, même départ, son propre état) ; pistes mono et blocs sans `sx_on` : côté intact ; les 6 pistes identiques avec ou sans côtés filtrés |
+| Descripteurs tenus (vraie fonction `0x4004df5c`, MACHINES tenu) | lignes 0x0b et 0x0c à « Error » (-1), DECAY → Attack (0x0d) ; `0x4005a6d0` d'origine |
+| Sauvegarde et chargement chaînés | LFO → Attack et vélocité → Filter Env, puis LFO → Filter Cutoff et vélocité → Attack : Attack (emplacement 24), nos réglages et les deux destinations (emplacement 27) reviennent, tout le reste comme Model-TG seul ; un son sauvé avec l'ancien filtre de Model-TG se charge sans lui (k 24 / 25 à zéro, destinations qui le visaient à zéro), notre filtre OFF |
+| Model-TG lui-même | `test_model_tg.py`, `test_model_tg_syntakt.py` (descripteurs : seulement Attack), `test_sample_preview.py`, `test_macro_syntakt.py --only tg` |
+
+Tous les essais du §8 donnent les mêmes résultats sur la boucle des voix de Model-TG : au centre, les 6 pistes
+identiques bit pour bit à Model-TG sans le filtre (Volume + Dist 64 et 108) ; écarts au modèle flottant, lois,
+résonance au maximum, potards, affichage, tables, sauvegarde, p-locks comme seul ; coût : 416 instructions par bloc
+pour 6 pistes au centre, 1 063 pour une piste filtrée, 5 310 au pire (6 pistes modulées, 4,9 % d'un bloc). Faits avec
+`model-tg,6ch-usbup,sample-preview,arp,trig-hold,tempo-max,boot-anim,level-pan-values,trigless-dim,multiline-browser`
+(complet), puis avec `model-tg-st` et `syntakt-tg-sd-cp-toy-bits-swarm` (complet), `macro-tg` et
+`syntakt-tg-sd-cp-toy-bits-swarm-macro` (`--quick`), chacun avec `sample-preview-st` et les mêmes autres mods. Chord
+Keys et les trois tweaks de drumkilla n'en sont pas : le premier exclut Model-TG, les autres y sont déjà.
+
+Model-TG lui-même, après le retrait : `test_model_tg.py` (machines d'origine identiques, note mutée), 
+`test_model_tg_syntakt.py --engines sd,cp,toy,bits,swarm` (enregistrements tenus : seulement l'Attack),
+`test_sample_preview.py --with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold`,
+`test_macro_syntakt.py --only tg` : TOUT OK. Les générateurs (`gen_model_tg`, `gen_syntakt_engines --tg` combinaison par
+combinaison et `--meter`, `gen_macro`, `gen_macro_syntakt`, `gen_sample_preview`, `gen_track_filter`) sont à jour.
+
+**À essayer sur la machine** (expérimental avec Model-TG) : le geste MACHINES tenu (DECAY = Attack, SWEEP / CONTOUR
+/ COLOR / SHAPE = notre filtre), le filtre sur une piste Sampler en stéréo, la sauvegarde d'un son avec Attack et
+filtre, un projet fait avec l'ancien filtre de Model-TG.

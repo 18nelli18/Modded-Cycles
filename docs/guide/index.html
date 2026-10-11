@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-11-02">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-11-02">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-11-08">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-11-08">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -302,7 +302,7 @@
       <section id="model-tg">
         <h2><span class="n">9</span>Model-TG</h2>
         <p class="by"><span data-l="en">By</span><span data-l="fr">Par</span> <a href="https://github.com/TinyGregAudio/Model-TG" target="_blank" rel="noopener">TinyGregAudio</a> · <span data-l="en">MIT license</span><span data-l="fr">licence MIT</span> · <a href="https://github.com/TinyGregAudio/Model-TG/blob/70b39dd6787770ebefc7a2d78dea1678ec012679/docs/USER_GUIDE.md" target="_blank" rel="noopener"><span data-l="en">full guide</span><span data-l="fr">guide complet (en anglais)</span></a></p>
-        <p class="lede"><span data-l="en">A Sampler machine, resampling, a retrig page with master effects, slide trigs, and Attack, Filter and Resonance on every machine. Built by its author's own build (version 1.1), with one change: in mute mode, each track key mutes at once.</span><span data-l="fr">Une machine Sampler, le rééchantillonnage, une page de retrig avec des effets master, des slide trigs, et Attack, Filtre et Résonance sur toutes les machines. Il est construit par le build de son auteur (version 1.1), avec une retouche : en mode mute, chaque touche de piste mute tout de suite.</span></p>
+        <p class="lede"><span data-l="en">A Sampler machine, resampling, a retrig page with master effects, slide trigs, and Attack on every machine. Built by its author's own build (version 1.1), with one change: in mute mode, each track key mutes at once.</span><span data-l="fr">Une machine Sampler, le rééchantillonnage, une page de retrig avec des effets master, des slide trigs, et l'Attack sur toutes les machines. Il est construit par le build de son auteur (version 1.1), avec une retouche : en mode mute, chaque touche de piste mute tout de suite.</span></p>
 
         <h3><span data-l="en">Loading a sample</span><span data-l="fr">Charger un échantillon</span></h3>
         <figure class="fig">
@@ -350,18 +350,19 @@
         </div>
         <p><span data-l="en">Start above End plays backwards. Stereo (option <b>CHN</b>) costs about twice the processor.</span><span data-l="fr">Start au-dessus de End joue à l'envers. La stéréo (option <b>CHN</b>) demande environ deux fois plus de processeur.</span></p>
 
-        <h3><span data-l="en">Attack, Filter and Resonance</span><span data-l="fr">Attack, Filtre et Résonance</span></h3>
+        <h3><span data-l="en">Attack</span><span data-l="fr">Attack</span></h3>
         <figure class="fig">
-          <div data-device data-scenes="machines @logo | machines,decay @ATTACK | machines,sweep @FILTER | machines,contour @RESONANCE" data-ms="1100"></div>
+          <div data-device data-scenes="machines @logo | machines,decay @ATTACK" data-ms="1100"></div>
         </figure>
-        <p><span data-l="en">Hold <b>MACHINES</b> and turn <b>DECAY</b> for Attack (up to about 2 s), <b>SWEEP</b> for the filter, <b>CONTOUR</b> for its resonance. On every machine, the Syntakt engines included. They are real parameters: p-locks, LFO destinations, saved with the project.</span><span data-l="fr">Maintenez <b>MACHINES</b> et tournez <b>DECAY</b> pour l'Attack (jusqu'à 2 s environ), <b>SWEEP</b> pour le filtre, <b>CONTOUR</b> pour sa résonance. Sur toutes les machines, moteurs du Syntakt compris. Ce sont de vrais paramètres : p-locks, destinations du LFO, sauvegardés avec le projet.</span></p>
+        <p><span data-l="en">Hold <b>MACHINES</b> and turn <b>DECAY</b> for Attack (up to about 2 s). On every machine, the Syntakt engines included. It is a real parameter: p-locks, LFO destination, saved with the project.</span><span data-l="fr">Maintenez <b>MACHINES</b> et tournez <b>DECAY</b> pour l'Attack (jusqu'à 2 s environ). Sur toutes les machines, moteurs du Syntakt compris. C'est un vrai paramètre : p-locks, destination du LFO, sauvegardé avec le projet.</span></p>
+        <p class="note"><span data-l="en">Model-TG's own track filter (<b>SWEEP</b> and <b>CONTOUR</b> with MACHINES held) is gone: tick <a href="#track-filter">Per-track filter</a> with Model-TG instead, on the same knobs, with a high-pass and an envelope too. A project made with the old filter opens without it (the track plays unfiltered); set the new one on those tracks. The Sampler's own filter and the master FX filter stay.</span><span data-l="fr">Le filtre de piste propre à Model-TG (<b>SWEEP</b> et <b>CONTOUR</b> avec MACHINES tenu) est retiré : cochez plutôt <a href="#track-filter">Filtre par piste</a> avec Model-TG, sur les mêmes potards, avec en plus un passe-haut et une enveloppe. Un projet fait avec l'ancien filtre s'ouvre sans lui (la piste joue sans filtre) ; réglez le nouveau sur ces pistes. Le filtre propre au Sampler et le filtre des effets master restent.</span></p>
 
         <h3><span data-l="en">Slide trigs</span><span data-l="fr">Slide trigs</span></h3>
         <figure class="fig">
           <div data-device data-scenes="settings @logo | settings,s5 @Slide on | s1,s5 @logo" data-ms="1300"></div>
         </figure>
         <p><span data-l="en">Hold <b>SETTINGS</b> and press a trig key: that step becomes a slide trig (<b>Slide on</b>), or an ordinary trig again (<b>Slide off</b>). On an empty step, it places a trig that is already a slide trig. Slide trigs double-blink on the trig keys.</span><span data-l="fr">Maintenez <b>SETTINGS</b> et appuyez sur une touche de pas : ce pas devient un slide trig (<b>Slide on</b>), ou redevient un trig normal (<b>Slide off</b>). Sur un pas vide, la combinaison pose directement un slide trig. Les slide trigs clignotent deux fois sur les touches de pas.</span></p>
-        <p><span data-l="en">Every parameter that differs between the trig before and the slide trig glides from one value to the other over the whole gap, and gets there as the slide trig plays. A value is the step's p-lock, or the sound's own. What glides: the machine's parameters, fine tune, Amp Decay, volume, pan, the delay and reverb sends, the LFO's speed, fade, phase and depth, and Attack, Filter and Resonance. The machine, Gate and the LFO's other settings jump as usual.</span><span data-l="fr">Chaque paramètre qui diffère entre le trig précédent et le slide trig glisse d'une valeur à l'autre pendant tout l'intervalle, et l'atteint quand le slide trig joue. La valeur est celle du p-lock du pas, ou celle du son. Ce qui glisse : les paramètres de la machine, le fine tune, l'Amp Decay, le volume, le pan, les envois vers le delay et la reverb, la vitesse, le fade, la phase et la profondeur du LFO, et Attack, Filtre et Résonance. La machine, le Gate et les autres réglages du LFO sautent comme avant.</span></p>
+        <p><span data-l="en">Every parameter that differs between the trig before and the slide trig glides from one value to the other over the whole gap, and gets there as the slide trig plays. A value is the step's p-lock, or the sound's own. What glides: the machine's parameters, fine tune, Amp Decay, volume, pan, the delay and reverb sends, the LFO's speed, fade, phase and depth, and Attack. The machine, Gate and the LFO's other settings jump as usual.</span><span data-l="fr">Chaque paramètre qui diffère entre le trig précédent et le slide trig glisse d'une valeur à l'autre pendant tout l'intervalle, et l'atteint quand le slide trig joue. La valeur est celle du p-lock du pas, ou celle du son. Ce qui glisse : les paramètres de la machine, le fine tune, l'Amp Decay, le volume, le pan, les envois vers le delay et la reverb, la vitesse, le fade, la phase et la profondeur du LFO, et l'Attack. La machine, le Gate et les autres réglages du LFO sautent comme avant.</span></p>
         <p><span data-l="en">It works on every machine, the Syntakt engines included, and the trig before can be a trigless trig. The glide follows the tempo and the track's speed. The mark is saved with the pattern and copied with its step; removing the trig removes it.</span><span data-l="fr">Ça marche sur toutes les machines, moteurs du Syntakt compris, et le trig précédent peut être un trigless trig. Le glissement suit le tempo et la vitesse de la piste. La marque est sauvegardée avec le pattern et copiée avec son pas ; effacer le trig l'efface aussi.</span></p>
 
         <h3 id="retrig-fx"><span data-l="en">Retrig page, master effects, sidechain</span><span data-l="fr">Page de retrig, effets master, sidechain</span></h3>
@@ -409,7 +410,7 @@
               <tr><th>SETTINGS + RETRIG</th><td><a href="#retrig-fx"><span data-l="en">retrig page</span><span data-l="fr">page de retrig</span></a><span data-l="en">: repeats on the trig keys, 12 master effects on the knobs, sidechain</span><span data-l="fr"> : répétitions sur les touches de pas, 12 effets master sur les potards, sidechain</span></td></tr>
               <tr><th>SETTINGS + BACK</th><td><span data-l="en">master effects off</span><span data-l="fr">coupe les effets master</span></td></tr>
               <tr><th><span data-l="en">SETTINGS + trig key</span><span data-l="fr">SETTINGS + touche de pas</span></th><td><span data-l="en">slide trig on or off</span><span data-l="fr">slide trig ou trig normal</span></td></tr>
-              <tr><th>MACHINES + DECAY · SWEEP · CONTOUR</th><td>Attack · <span data-l="en">Filter · Resonance</span><span data-l="fr">Filtre · Résonance</span></td></tr>
+              <tr><th>MACHINES + DECAY</th><td>Attack <span data-l="en">(the track filter on SWEEP · CONTOUR comes with <a href="#track-filter">Per-track filter</a>)</span><span data-l="fr">(le filtre de piste sur SWEEP · CONTOUR vient avec <a href="#track-filter">Filtre par piste</a>)</span></td></tr>
               <tr><th>FUNC + PAGE</th><td><span data-l="en">Scale Lock: <b>Scl</b> and <b>Key</b> in the Scale menu</span><span data-l="fr">Scale Lock : <b>Scl</b> et <b>Key</b> dans le menu Scale</span></td></tr>
             </tbody>
           </table>
@@ -433,7 +434,7 @@
               <li><span>09</span>CPVtg</li>
             </ol>
           </div>
-          <p style="margin:0"><span data-l="en">Tick both cards in the flasher. The Sampler stays the 7th machine and the engines follow from the 8th. They get Attack, Filter and Resonance and slide trigs too, and their time shows on the System page.</span><span data-l="fr">Cochez les deux cartes dans le flasher. Le Sampler reste la 7<sup>e</sup> machine et les moteurs le suivent à partir de la 8<sup>e</sup>. Ils ont aussi l'Attack, le filtre, la résonance et les slide trigs, et leur temps s'affiche sur la page System.</span></p>
+          <p style="margin:0"><span data-l="en">Tick both cards in the flasher. The Sampler stays the 7th machine and the engines follow from the 8th. They get Attack and slide trigs too, and their time shows on the System page.</span><span data-l="fr">Cochez les deux cartes dans le flasher. Le Sampler reste la 7<sup>e</sup> machine et les moteurs le suivent à partir de la 8<sup>e</sup>. Ils ont aussi l'Attack et les slide trigs, et leur temps s'affiche sur la page System.</span></p>
         </div>
         <dl class="facts">
           <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">Model-TG 1.1 with the 5 engines and 6-channel audio, on a Model:Cycles. Other choices are still marked experimental.</span><span data-l="fr">Model-TG 1.1 avec les 5 moteurs et l'audio 6 canaux, sur un Model:Cycles. Les autres choix restent marqués expérimentaux.</span></dd></div>
@@ -697,7 +698,7 @@
           <div><dt><span data-l="en">Processor</span><span data-l="fr">Processeur</span></dt><dd><span data-l="en">about 0.6 % of the audio time per filtered track, up to 0.75 % while its envelope or an LFO moves it; almost nothing at OFF. With many Syntakt engines, the load governor may fade a voice out a little sooner.</span><span data-l="fr">environ 0,6 % du temps audio par piste filtrée, jusqu'à 0,75 % quand son enveloppe ou un LFO le fait bouger ; presque rien sur OFF. Avec beaucoup de moteurs du Syntakt, le régulateur de charge peut éteindre une voix un peu plus tôt.</span></dd></div>
           <div><dt><span data-l="en">Centre</span><span data-l="fr">Centre</span></dt><dd><span data-l="en">at OFF the track is exactly as before, even with resonance or envelope set, and the filter costs almost nothing. Between OFF and L1 or H1 the filter fades in, so that turning the knob or sweeping an LFO through the centre doesn't click.</span><span data-l="fr">sur OFF la piste est exactement comme avant, même avec une résonance ou une enveloppe réglée, et le filtre ne coûte presque rien. Entre OFF et L1 ou H1, le filtre entre en fondu, pour qu'un potard ou un LFO qui passe par le centre ne claque pas.</span></dd></div>
           <div><dt><span data-l="en">Projects</span><span data-l="fr">Projets</span></dt><dd><span data-l="en">your sounds and projects open with the filter OFF. On another firmware, a sound plays without its filter, nothing else changes. The mod also fixes the original OS's saving of p-locks on added parameters, which came back on LFO Speed or not at all.</span><span data-l="fr">vos sons et projets s'ouvrent filtre sur OFF. Sur un autre firmware, un son joue sans son filtre, rien d'autre ne change. Le mod corrige aussi la sauvegarde par l'OS d'origine des p-locks des paramètres ajoutés, qui revenaient sur LFO Speed ou se perdaient.</span></dd></div>
-          <div><dt>Model-TG</dt><dd><span data-l="en">not together for now: both use MACHINES + SWEEP and CONTOUR. Once this filter is tested, Model-TG's own filter will make way for it and the two will go together. Goes with every other mod.</span><span data-l="fr">pas ensemble pour l'instant : les deux utilisent MACHINES + SWEEP et CONTOUR. Une fois ce filtre testé, celui de Model-TG lui laissera la place et les deux se combineront. Se combine avec tous les autres mods.</span></dd></div>
+          <div><dt>Model-TG</dt><dd><span data-l="en">goes with it: Model-TG no longer has its own track filter, this one takes its place on the same knobs, next to Model-TG's Attack (DECAY). On a Sampler track it filters after the Sampler's own filter, both sides of a stereo sample. Slide trigs don't glide it: it jumps to the slide trig's value. Experimental with Model-TG (tried in the emulator, not yet on the machine). Goes with every other mod.</span><span data-l="fr">ils se combinent : Model-TG n'a plus son propre filtre de piste, celui-ci prend sa place sur les mêmes potards, à côté de l'Attack de Model-TG (DECAY). Sur une piste Sampler, il filtre après le filtre propre au Sampler, les deux côtés d'un sample stéréo. Les slide trigs ne le font pas glisser : il saute à la valeur du slide trig. Expérimental avec Model-TG (essayé en émulation, pas encore sur la machine). Se combine avec tous les autres mods.</span></dd></div>
           <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">on a Model:Cycles, and in the emulator on the OS's own code: sound identical at the centre, filter, envelope, knobs, display, sound and pattern saving, MIDI CC.</span><span data-l="fr">sur un Model:Cycles, et en émulation sur le code même de l'OS : son identique au centre, filtre, enveloppe, potards, affichage, sauvegarde du son et du pattern, CC MIDI.</span></dd></div>
         </dl>
       </section>
@@ -821,8 +822,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-11-02"></script>
-<script src="../assets/cycles.js?v=2026-10-11-02"></script>
-<script src="../assets/site.js?v=2026-10-11-02"></script>
+<script src="../assets/release.js?v=2026-10-11-08"></script>
+<script src="../assets/cycles.js?v=2026-10-11-08"></script>
+<script src="../assets/site.js?v=2026-10-11-08"></script>
 </body>
 </html>

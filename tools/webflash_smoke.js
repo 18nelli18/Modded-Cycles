@@ -212,8 +212,8 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 22).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-both,midi-live-both,macro,macro-tg,chord-keys,track-filter,syntakt-sd"
-      && ids.length === 21 + 4 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+    check(ids.slice(0, 24).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-both,midi-live-both,macro,macro-tg,chord-keys,track-filter,track-filter-tg,track-filter-tg-st,syntakt-sd"
+      && ids.length === 23 + 4 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
       && ids.includes("syntakt-sd-macro") && ids.includes("syntakt-tg-sd-cp-toy-bits-swarm-macro")
       && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 19,
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG, with and without MACRO: ${ids.length} tweaks`);
@@ -426,12 +426,21 @@ async function main() {
       "FR: chord keyboard translated, with its guide link");
     check(/Filtre par piste \(LP \/ OFF \/ HP\)/.test(text(doc, "features")) && doc.querySelector('#features a[href$="#track-filter"]'),
       "FR: per-track filter card translated, with its guide link");
+    // the per-track filter with Model-TG (notes/47 §11): its version on top of Model-TG, model-tg-st's with MACRO,
+    // experimental while it applies; alone, the card keeps its own status
+    const tfTag = () => doc.querySelector("label[for=feat-track-filter] .tag").textContent;
+    const tfAlone = tfTag();
     doc.getElementById("feat-model-tg").click(); await wait(5);
     doc.getElementById("feat-track-filter").click(); await wait(5);
-    const tfOn = doc.getElementById("feat-track-filter").checked, tgOff = !doc.getElementById("feat-model-tg").checked;
-    doc.getElementById("feat-model-tg").click(); await wait(5);
-    check(tfOn && tgOff && doc.getElementById("feat-model-tg").checked && !doc.getElementById("feat-track-filter").checked,
-      "per-track filter and Model-TG can't be ticked together: ticking one unticks the other");
+    const tfBoth = doc.getElementById("feat-track-filter").checked && doc.getElementById("feat-model-tg").checked;
+    const tfIds = w.MCFlasherApp.chosenTweaks().map((x) => x.id).join(), tfExp = tfTag();
+    doc.getElementById("feat-macro").click(); await wait(5);
+    const tfMacro = w.MCFlasherApp.chosenTweaks().map((x) => x.id).join();
+    doc.getElementById("feat-macro").click(); await wait(5);
+    doc.getElementById("feat-track-filter").click(); await wait(5);
+    check(tfBoth && tfIds === "model-tg,track-filter-tg" && tfMacro === "model-tg-st,macro-tg,track-filter-tg-st"
+      && tfExp === "Expérimental" && tfAlone === "Testé" && tfTag() === tfAlone && doc.getElementById("feat-model-tg").checked,
+      `per-track filter with Model-TG: ${tfIds}, with MACRO ${tfMacro}, ${tfExp} (alone ${tfAlone})`);
     doc.getElementById("feat-model-tg").click(); await wait(5);
     doc.getElementById("feat-chord-keys").click(); await wait(5);
     check(doc.getElementById("feat-chord-keys").checked && !doc.getElementById("feat-model-tg").checked,

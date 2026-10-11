@@ -22,7 +22,12 @@
  *   a1 = 1/(1 + g (g + k)), a2 = g a1, a3 = g a2, g = tan(pi fc / 48000), k = 1/Q.
  *   LP : gx = 0, hl = 1/2, hb = 0 ; HP = x - k BP - LP : gx = 1, hl = -1/2, hb = -k/2.
  * Sur le pas de potard voisin du centre, la sortie passe de l'entrée au filtre (w de 0 à 1, dans gx/hl/hb : rien de
- * plus par trame) ; au centre exact, la piste n'est pas touchée (bit pour bit) et l'état est oublié. */
+ * plus par trame) ; au centre exact, la piste n'est pas touchée (bit pour bit) et l'état est oublié.
+ *
+ * Avec Model-TG (WITH_TG) : une prise stéréo du Sampler garde son milieu dans la piste et son côté dans SX_SIDE
+ * (6 x 128 o, rangés comme les pistes ; SX_ON[t] dit que la piste est stéréo dans ce bloc). tf_side filtre aussi le
+ * côté, avec les mêmes coefficients et son propre état : le filtre est linéaire, filtrer M et S revient à filtrer
+ * G et D. */
 
 	.equ	TRK, 0x80001858			/* 6 x 32 x int32, sortie des voix */
 	.equ	VOLDIST, 0x40056f58		/* Volume + Dist de l'OS (TRK, paramètres lissés) */
@@ -75,6 +80,9 @@ tf_post:
 1:	move.l	%a0, -(%sp)
 	jsr	tf_track
 	movea.l	(%sp)+, %a0
+#ifdef WITH_TG
+	jsr	tf_side
+#endif
 	lea	128(%a0), %a0
 	lea	KSZ(%a4), %a4
 	lea	CSZ(%a6), %a6
@@ -340,6 +348,58 @@ tf_coef2:
 	neg.l	%d0
 	move.l	%d0, K_HB(%a4)
 	rts
+
+#ifdef WITH_TG
+/* ---- Model-TG : le côté stéréo de la piste (SX_SIDE + 128 t, quand SX_ON[t]) ------------------------------------
+ * Appelé après tf_track, a0 = le bloc de la piste, a4 / a6 = son état et sa commande. L'état de la piste (ic1, ic2)
+ * est mis de côté, celui du côté (tf_sst) prend sa place le temps de tf_kern, puis chacun retrouve le sien. Le côté
+ * part comme la piste : au repos, ou avec le niveau continu de son entrée pour un passe-bas. Garde a0, a4-a6. */
+	.section .text.side, "ax"
+tf_side:
+	move.l	%a0, %d0
+	subi.l	#TRK, %d0			/* 128 t */
+	move.l	%d0, %d1
+	lsr.l	#3, %d1
+	lea	tf_sst, %a3
+	adda.l	%d1, %a3			/* 16 t : ic1, ic2, en marche */
+	tst.l	C_ON(%a6)
+	beq.s	8f				/* filtre au centre */
+	lsr.l	#5, %d0
+	lea	SX_ON, %a1
+	tst.l	(%a1,%d0.l)
+	beq.s	8f				/* piste mono dans ce bloc */
+	move.l	%a0, -(%sp)
+	adda.l	#SX_SIDE-TRK, %a0		/* le côté de cette piste */
+	move.l	(%a4), -(%sp)			/* l'état de la piste, mis de côté */
+	move.l	4(%a4), -(%sp)
+	tst.l	8(%a3)
+	bne.s	2f
+	moveq	#1, %d0				/* départ */
+	move.l	%d0, 8(%a3)
+	clr.l	(%a3)
+	moveq	#0, %d0
+	tst.l	C_MODE(%a6)
+	bne.s	1f
+	move.l	(%a0), %d0
+1:	move.l	%d0, 4(%a3)
+2:	move.l	(%a3), (%a4)
+	move.l	4(%a3), 4(%a4)
+	move.l	%a3, -(%sp)
+	jsr	tf_kern
+	movea.l	(%sp)+, %a3
+	move.l	(%a4), (%a3)
+	move.l	4(%a4), 4(%a3)
+	move.l	(%sp)+, 4(%a4)
+	move.l	(%sp)+, (%a4)
+	movea.l	(%sp)+, %a0
+	rts
+8:	clr.l	8(%a3)				/* au repos : le côté repartira de son départ */
+	rts
+
+	.section .data.sst, "aw"
+	.balign	4
+tf_sst:	.space	6*16
+#endif
 
 /* ---- tables (tools/gen_track_filter.py) et état -------------------------------------------------------------- */
 	.section .rodata.gtab, "a"

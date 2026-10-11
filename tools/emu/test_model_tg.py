@@ -5,8 +5,8 @@
 Ce que le banc fournit, que la machine met en place hors de la boucle des voix :
   - les gains du mixeur : le dispatch de Model-TG ne calcule pas une piste que le mixeur joue à moins de -90 dB
     (voice_quiet lit les gains 0x40a78c08.. que le mix d'origine met à jour à chaque bloc) ;
-  - Attack, Filtre et Résonance (paramètres k = 23, 24, 25 de chaque piste) à leurs valeurs par défaut : 0, grand
-    ouvert (32 512), 0 ;
+  - Attack (paramètre k = 23 de chaque piste) à sa valeur par défaut, 0 ; les anciens Filtre et Résonance (k = 24, 25,
+    retirés de Model-TG, notes/47 §11) n'ont plus d'effet : leurs mots restent à 32 512 et 0 ;
   - l'émulation de l'EMAC dans son bloc de code (0x401ab750..), et la mémoire qu'il lit (BSS, minuteur 1).
 
 Vérifications :
@@ -61,7 +61,7 @@ def engine(img, end=None, payload=None):
     e.uc.mem_map(0xfc078000, 0x1000)              # minuteur DMA 1 : mesure par piste de la page System
     for t in range(6):
         e.uc.mem_write(MIX_GAIN + 4 * t, struct.pack(">I", 0x20000000))
-        e.uc.mem_write(E.PARAMS + 0xe + t * 0x42 + 46, struct.pack(">hhh", 0, 32512, 0))   # Attack, Filtre, Résonance
+        e.uc.mem_write(E.PARAMS + 0xe + t * 0x42 + 46, struct.pack(">hhh", 0, 32512, 0))   # Attack ; k 24, 25
     return e
 
 

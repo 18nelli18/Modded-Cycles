@@ -25,7 +25,8 @@ Source : dépôt [TinyGregAudio/Model-TG](https://github.com/TinyGregAudio/Model
 - **Ce qu'il ajoute** :
   - une machine **Sampler** (index 6, la 7ᵉ) à sept modes de lecture ;
   - le rééchantillonnage, une page de retrig avec 12 effets master ;
-  - Attack, Filtre et Résonance sur les machines d'origine ;
+  - Attack, Filtre et Résonance sur les machines d'origine (Filtre et Résonance retirés le 11/10/2026 au profit du
+    filtre par piste `track-filter`, [note 47 §11](47-filtre-piste.md)) ;
   - Scale Lock, l'envoi d'échantillons par Elektron Transfer, une page System (charge processeur) ;
   - une charge processeur plus basse.
 - **Licence MIT**. Aucun octet Elektron dans le dépôt : l'image se construit depuis l'OS de l'utilisateur, comme ici.

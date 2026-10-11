@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.47", date: "2026-10-11", changes: [
+    { en: "Per-track filter and Model-TG now go together. Model-TG's own track filter (SWEEP and CONTOUR with MACHINES held) is removed, and the Per-track filter takes its place on the same knobs, with its high-pass, its envelope and its saving fixes. Model-TG keeps its Attack (DECAY), the Sampler's own filter and the master FX",
+      fr: "Le Filtre par piste et Model-TG se combinent maintenant. Le filtre de piste propre à Model-TG (SWEEP et CONTOUR avec MACHINES tenu) est retiré, et le Filtre par piste prend sa place sur les mêmes potards, avec son passe-haut, son enveloppe et ses corrections de sauvegarde. Model-TG garde son Attack (DECAY), le filtre propre au Sampler et les effets master" },
+    { en: "With Model-TG, the Per-track filter also works on the Sampler, after the Sampler's own filter, on both sides of a stereo sample, and with the Syntakt engines and MACRO. A project made with Model-TG's old filter opens without it: the track plays unfiltered until you set the new one",
+      fr: "Avec Model-TG, le Filtre par piste marche aussi sur le Sampler, après le filtre propre au Sampler, sur les deux côtés d'un sample stéréo, et avec les moteurs du Syntakt et MACRO. Un projet fait avec l'ancien filtre de Model-TG s'ouvre sans lui : la piste joue sans filtre jusqu'à ce que vous régliez le nouveau" },
+    { en: "Checked in the emulator on the OS's own code, with Model-TG alone, with the Syntakt engines and with MACRO. Experimental with Model-TG until it is tried on a Model:Cycles; without Model-TG the filter is unchanged and stays tested",
+      fr: "Vérifié en émulation sur le code même de l'OS, avec Model-TG seul, avec les moteurs du Syntakt et avec MACRO. Expérimental avec Model-TG tant qu'il n'est pas essayé sur un Model:Cycles ; sans Model-TG le filtre ne change pas et reste testé" },
+  ] },
   { version: "1.45", date: "2026-10-11", changes: [
     { en: "New mod, Per-track filter: hold MACHINES and turn SWEEP for a filter on the track, low-pass to the left, off in the centre, high-pass to the right, like a DJ mixer, with the Model:Samples' range (5 Hz to 20 kHz). CONTOUR sets the resonance, COLOR and SHAPE a filter envelope (amount up or down, decay) restarted by each note",
       fr: "Nouveau mod, Filtre par piste : maintenez MACHINES et tournez SWEEP pour un filtre sur la piste, passe-bas à gauche, rien au centre, passe-haut à droite, comme sur une table de mixage DJ, avec la plage du Model:Samples (5 Hz à 20 kHz). CONTOUR règle la résonance, COLOR et SHAPE une enveloppe du filtre (quantité vers le haut ou le bas, decay) relancée à chaque note" },

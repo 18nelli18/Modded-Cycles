@@ -125,8 +125,8 @@ class Cards:
                 tid = o["tg"] if "model-tg" in sel else o["id"]
             else:
                 tid = o
-            for g, alt in (f.get("with") or {}).items():
-                if g in sel:
+            for g, alt in (f.get("with") or {}).items():     # « a+b » : toutes ces cartes ; la dernière clé gagne
+                if all(p in sel for p in g.split("+")):
                     tid = alt
             out.append(tid)
         return out
