@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Génère 45-chord-keys.json : accords diatoniques sur TRIG 1–16 (notes/42).
 
-Compile les sources ColdFire, les répartit dans des masques 47x47 identiques
+Compile les sources ColdFire, les répartit dans des masques de sprites identiques
 redirigés vers leur exemplaire conservé, puis vérifie chaque écriture sur l'OS
 officiel. Aucun code Elektron n'est incorporé hors des octets attendus des
 écritures. Aucun firmware n'est exporté par ce générateur.
@@ -14,7 +14,6 @@ import json
 import os
 from pathlib import Path
 import re
-import shutil
 import struct
 import subprocess
 import tempfile
@@ -29,28 +28,77 @@ ROOT = HERE.parent
 SRC = HERE / "machines/chord_keys"
 OUT = ROOT / "tweaks/model-cycles_OS1.13/45-chord-keys.json"
 BASE = 0x40000400
-# m68k-elf uniquement : m68k-linux-gnu-gcc (ABI SVR4) lit dans a0 le pointeur rendu par une fonction, alors que
-# l'OS le rend dans d0 (0x4000eb90 par exemple) ; ses appels à l'OS seraient faux (notes/42 §6).
+# L'ABI Linux attend les retours de pointeur dans a0, l'OS dans d0.
+# Ne jamais choisir silencieusement un compilateur Linux pour ces appels C.
 CROSS = os.environ.get("M68K_CROSS") or "m68k-elf-"
 CFLAGS = ["-mcpu=54418", "-Os", "-ffreestanding", "-fno-builtin", "-nostdlib", "-fno-pic", "-fno-common",
           "-ffunction-sections", "-fdata-sections", "-fomit-frame-pointer", "-fno-stack-protector",
           "-Wall", "-Wextra", "-Werror"]
-# Les quatorze masques réservés à chord-keys (tools/AGENTS.md) ; les autres masques 47x47 libérés appartiennent à
-# d'autres mods. Le placement remplit les masques dans cet ordre : un code plus gros échoue au lieu de déborder.
-MASKS = (0x4016b6f8, 0x4016b9e8, 0x40171f30, 0x40172608, 0x40179730,
-         0x40182b38, 0x40182e28, 0x40183118, 0x40185018, 0x40185968,
-         0x40185c58, 0x4018cd48, 0x4018d1b8, 0x4018d4a8)
+# Masques libérés pris par chord-keys, dans l'ordre de remplissage (du plus grand au plus petit). Tous sont libres
+# dans tweaks/model-cycles_OS1.13/REGISTRY.md (notes/52), y compris pour les PR ouvertes au 11/10/2026 ; les réserves
+# annoncées par d'autres mods sont laissées de côté (trois 48x22 de l'écoute au casque). Vingt sections dépassent
+# 192 o : il faut vingt masques d'au moins 208 o, d'où les deux 35x35 encore libres.
+# Les dix 47x47 de la première version, sans les quatre que l'écoute des samples partage : depuis que Chord Keys se
+# combine avec Model-TG, les deux mods doivent pouvoir s'installer ensemble (notes/42 §33).
+MASKS = (
+    # 47x47, 376 o
+    0x4016b6f8, 0x4016b9e8, 0x40171f30, 0x40172608, 0x40179730, 0x40182b38, 0x40182e28, 0x4018cd48, 0x4018d1b8,
+    0x4018d4a8,
+    # 41x41, 328 o
+    0x4018d918,
+    # 35x35, 280 o (0x4016aa28 reste au filtre par piste, qui y relie ses sections orphelines)
+    0x401696a0, 0x401699a8,
+    # 34x34, 272 o
+    0x40185f48, 0x40186238, 0x40189618, 0x4018af88, 0x4018b1a8, 0x4018ff64,
+    # 52x22, 208 o
+    0x4016ea78,
+    # 48x22, 192 o
+    0x4016dab8, 0x4016fae8, 0x40170c48, 0x40171a48, 0x40172a68, 0x40172be8, 0x401736c8, 0x40177f28, 0x40178708,
+    0x40178fc0, 0x401792b0, 0x40179430, 0x401795b0, 0x40179b18, 0x4017c97c, 0x401829b8, 0x40183408, 0x40184808,
+    0x40184af8, 0x40184c78, 0x40187528, 0x401876a8, 0x40188f98, 0x4018a608, 0x40190334, 0x4019089c, 0x40192a24,
+    # 46x31, 184 o
+    0x40170ad8, 0x40171bc8, 0x401728f8, 0x40179140, 0x40184988, 0x40185648, 0x401857f8,
+    # 31x22, 124 o
+    0x4016f7d0, 0x4016fd60, 0x40172510, 0x40178888, 0x40179a20, 0x4017a4d4, 0x401837d8, 0x401871a0, 0x40189838,
+    0x4018a510, 0x4018bcc8, 0x4018f98c, 0x4018fa84, 0x4018fb7c, 0x401907a4, 0x40190a1c, 0x40194ad4, 0x40195a7c,
+)
+# (largeur, hauteur) de chaque masque, pour vérifier son constructeur (tools/sprites.py, GROUPS).
+SIZES = {va: wh for wh, (_, _, rows) in sprites.GROUPS.items() for va, _ in rows}
 # Adresse, contrat attendu, symbole, opcode (None = pointeur de vtable).
 HOOKS = (
+    (0x400075f0, "4eb940076be4", "ck_chord_display_dirty", 0x4eb9),
+    (0x4008e622, "4fefffd848d71c7c", "ck_chord_display_hook", 0x4ef9),
+    (0x4007746c, "4fefffc048d70c04", "ck_ui_pad_dispatch_hook", 0x4ef9),
     (0x400aae88, "4fefffe448d71c3c", "chord_audio_update", 0x4ef9),
     (0x400ab0e4, "d1fc4012142c", "chord_audio_ratios", 0x4ef9),
-    (0x400ff9cc, "4001a0d2", "ck_ui_key", None),
+    (0x4001a0d2, "4fefffd448d77cfc", "ck_ui_key", 0x4ef9),
+    (0x40081734, "2e2e001c2c2e0020", "ck_tg_note_on_hook", 0x4ef9),
+    (0x4008146c, "262e000c2a2e0010", "ck_tg_note_off_hook", 0x4ef9),
+    (0x4010025c, "4001d180", "ck_ui_pad", None),
+    (0x401002b0, "4001d3d4", "ck_ui_pad_thunk", None),
     (0x400fd170, "4000a70e", "ck_shape_format", None),
     (0x400fd174, "4000a66a", "ck_shape_draw", None),
     (0x4001e4ca, "4eb94000b22a", "ck_shape_name", 0x4eb9),
     (0x4001cb3e, "4eb94002d138", "ck_ui_menu_ctor", 0x4eb9),
     (0x4005b4a8, "7001156b001c001c", "ck_storage_load_hook", 0x4ef9),
     (0x40061564, "1140001b48780010", "ck_storage_init_hook", 0x4ef9),
+    (0x4005b9c6, "16b5480317420001", "ck_plock_save_hook", 0x4ef9),
+    (0x4005bad2, "28713c0070ff", "ck_plock_partial_hook", 0x4ef9),
+    (0x4005aa1a, "2f027406222f0008", "ck_plock_decode_hook", 0x4ef9),
+    (0x40012274, "4eb9400cfd0e", "ck_plock_note_hook", 0x4ef9),
+    (0x40058ec6, "222a0028028100000081", "ck_plock_sequence_hook", 0x4ef9),
+    (0x40019ee2, "4e922f004eb94000f208", "ck_midi_key_on_hook", 0x4ef9),
+    (0x40019cba, "2f044eb940016e90", "ck_midi_key_off_hook", 0x4ef9),
+    (0x4001d094, "45f9400cf866", "ck_midi_pad_on_hook", 0x4ef9),
+    (0x4001d120, "45f9400cf866", "ck_midi_pad_off_hook", 0x4ef9),
+    (0x4005919e, "42b940a78e18", "ck_midi_sequence_hook", 0x4ef9),
+)
+# Le chargeur stock ignore les identifiants >32 : HARMONY utilise 33 pour
+# qu'un retour au firmware officiel ignore ce lock au lieu de modifier LEVEL.
+PATCHES = (
+    (0x4005b816, "7a20", "7a21"),
+    # Diffère le message MIDI jusqu'après les P-locks ; reprise native exacte.
+    (0x40058fac, "4a2a00146738", "4ef940058fea"),
 )
 
 
@@ -85,9 +133,16 @@ def sections(path):
 
 def compile_code():
     """Placement déterministe par section, sans casser une fonction entre deux masques."""
-    if "linux" in CROSS or not shutil.which(CROSS + "gcc"):
-        raise ValueError(f"{CROSS}gcc refusé ou introuvable : il faut m68k-elf-gcc (16.2.0 et binutils 2.47 pour "
-                         "reproduire le JSON) ; m68k-linux-gnu-gcc lit dans a0 les pointeurs que l'OS rend dans d0")
+    target = run([CROSS + "gcc", "-dumpmachine"]).strip()
+    if target != "m68k-elf":
+        raise ValueError(
+            f"Chord Keys exige la cible m68k-elf (trouvé {target}) : "
+            "l'OS renvoie les pointeurs dans d0, voir notes/42 et M68K_CROSS")
+    version = run([CROSS + "gcc", "-dumpfullversion"]).strip()
+    if version != "16.2.0":
+        raise ValueError(
+            f"Chord Keys exige m68k-elf-gcc 16.2.0 (trouvé {target} {version}) : "
+            "ABI de retour des pointeurs dans d0 et génération reproductible, voir notes/42")
     with tempfile.TemporaryDirectory(prefix="chord-keys-build-") as directory:
         tmp = Path(directory)
         objects, inputs = [], []
@@ -102,11 +157,12 @@ def compile_code():
                     # les aligner évite de confondre leurs symboles avec du code impair.
                     align = max(align, 2)
                     inputs.append((obj, name, size, align))
-        bins = [{"at": va, "size": 0, "parts": []} for va in MASKS]
+        bins = [{"at": va, "size": 0, "capacity": sprites.MASKS[va][0], "parts": []}
+                for va in MASKS]
         for obj, name, size, align in sorted(inputs, key=lambda s: (-s[2], s[0].name, s[1])):
             for block in bins:
                 offset = (block["size"] + align - 1) & -align
-                if offset + size <= 376:
+                if offset + size <= block["capacity"]:
                     block["parts"].append((obj, name, align))
                     block["size"] = offset + size
                     break
@@ -138,7 +194,7 @@ def compile_code():
         for name, size, address, _ in sections(elf):
             if not name.startswith(".ck"):
                 raise ValueError(f"Section imprévue : {name}")
-            if address not in MASKS or size > 376:
+            if address not in MASKS or size > sprites.MASKS[address][0]:
                 raise ValueError(f"Section hors masque : {name}, {address:#x}, {size} o")
             binary = tmp / (name + ".bin")
             run([CROSS + "objcopy", "-O", "binary", "-j", name, str(elf), str(binary)])
@@ -154,19 +210,24 @@ def build_tweak(stock):
     compiled, symbols = compile_code()
     writes = []
     for address, code in compiled:
-        _, pointer, _, shared = sprites.MASKS[address]
-        old = stock[address - BASE:address - BASE + 376]
-        if old != stock[shared - BASE:shared - BASE + 376]:
+        capacity, pointer, _, shared = sprites.MASKS[address]
+        old = stock[address - BASE:address - BASE + capacity]
+        if old != stock[shared - BASE:shared - BASE + capacity]:
             raise ValueError(f"Masque {address:#x} différent de l'exemplaire conservé")
         encoded = struct.pack(">I", address)
         locations = [m.start() for m in re.finditer(re.escape(encoded), stock)]
         if locations != [pointer - BASE]:
             raise ValueError(f"Références imprévues vers le masque {address:#x}")
         at = pointer - BASE
+        width, height = SIZES[address]
+        # Le constructeur empile la hauteur, puis la largeur (pea.w), avant l'adresse du Bitmap.
+        dimensions = struct.pack(">HHHH", 0x4878, height, 0x4878, width)
         if (stock[at - 2:at] not in (b"\x48\x79", b"\x2e\xbc") or
                 stock[at + 4:at + 6] != b"\x48\x79" or
-                stock[at + 10:at + 18] != bytes.fromhex("4878002f4878002f")):
+                stock[at + 10:at + 18] != dimensions):
             raise ValueError(f"Le constructeur du sprite {address:#x} a changé")
+        # Pas de build.refs_into ici : sur les plans de sprites et sur des instructions lues à cheval, il signale des
+        # « références » de hasard (notes/42 §33). Le relevé des masques est vérifié par tools/registry.py --cycles.
         writes.extend(({"off": address - BASE, "old": old[:len(code)].hex(), "new": code.hex()},
                        sprites.redirect_write(address)))
     for address, expected, symbol, opcode in HOOKS:
@@ -176,30 +237,48 @@ def build_tweak(stock):
         new = struct.pack(">I", symbols[symbol]) if opcode is None else struct.pack(">HI", opcode, symbols[symbol])
         new += b"\x4e\x71" * ((len(old) - len(new)) // 2)
         writes.append({"off": address - BASE, "old": old.hex(), "new": new.hex()})
+    for address, expected, replacement in PATCHES:
+        old = stock[address - BASE:address - BASE + len(bytes.fromhex(expected))]
+        if old.hex() != expected:
+            raise ValueError(f"Instruction stock inattendue à {address:#x}")
+        writes.append({"off": address - BASE, "old": old.hex(), "new": replacement})
     tweak = {
         "id": "chord-keys", "order": 45, "name": "Accords de gamme sur TRIG 1–16",
         "description": [
             "Mode Keys dans FUNC + RETRIG : une piste CHORD, gamme et tonique, extensions par degré.",
             "TRIG 1–7 jouent I–VII, 8–14 les mêmes degrés une octave plus haut, 15–16 I–II deux octaves plus haut.",
-            "Les grands pads T1–T6 gardent leur sélection et leur jeu stock. L'édition des pas reste disponible.",
-            "Sept modes ; triades, septièmes, neuvièmes, onzièmes ou treizièmes diatoniques, quatre voix au plus.",
-            "Les accords 9/11/13 omettent la quinte (et les extensions intermédiaires pour 11/13).",
-            "SHAPE choisit BASE, CLS0–3 ou OPN0–3 ; COLOR règle le mélange sans déplacer les octaves.",
-            "I–VII restent seuls responsables des extensions.",
+            "COLOR choisit DIATONIC, JAZZ ou TENSION ; SHAPE dispose et équilibre les voix, sans ancien mode.",
+            "Keys actif : T1–T6 transforment temporairement l'accord en HARMONY sans changer de piste.",
+            "T1/T2/T3 : 9/11/13 ; T4 : 7sus4 ; T5 : parallèle majeur/mineur ; T6 : dominante V7 de la cible.",
+            "TRIG tenu : chaque nouvel appui de pad disponible rejoue l'accord entier à sa vélocité, sans répétition de maintien.",
+            "Dernier pad prioritaire ; le relâchement conserve l'accord modifié. Sans préparation, le prochain TRIG retrouve son extension.",
+            "Sept modes et quatre voix au plus : 9/11/13 omettent la quinte et les tensions intermédiaires.",
+            "Exception m7♭5 étendu : fondamentale, quinte diminuée, septième, tension ; sans tierce. T5/T6 indisponibles.",
+            "SHAPE : BASE, CLS0–3, OPN0–3. Les options Controls et Pads sont supprimées.",
+            "Anciens et nouveaux patterns utilisent les mêmes contrôles ; gamme et extensions sauvegardées conservées.",
+            "L'écran nomme l'accord tenu selon les intervalles audio, les transformations et la basse du voicing.",
+            "Les gestes HARMONY s'enregistrent en P-locks natifs : live rec ou pas tenus en grille, puis sauvegarde du pattern.",
+            "Chaque attaque reçoit son lock sur le pas choisi par le recorder ; la relecture retrouve chaque accord sans garder le dernier pad.",
+            "Sans TRIG tenu, T prépare le prochain TRIG sans toucher la queue ni écrire de lock ; relâcher T annule la préparation.",
+            "Un pad T1–T6 encore tenu s'applique à chaque nouveau TRIG de cette piste, jusqu'à son relâchement.",
+            "MIDI ROOT conserve la sortie d'origine ; MIDI CHORD émet les trois ou quatre notes disposées, en jeu et au séquenceur.",
+            "La sortie CHORD respecte MOut, le canal et la destination natifs ; chaque voix garde sa vélocité et sa fin de note.",
+            "Palette, SHAPE et HARMONY sont capturés à l'attaque ; PITCH/FINE et balance restent audio. Notes MIDI au-delà de 127 omises.",
             "Réglages par piste sauvegardés avec le pattern. Dernière touche prioritaire, sans retour à la précédente.",
-            "Model-TG incompatible : son Scale Lock transforme les notes avant le moteur. Expérimental.",
-            f"Code et état dans {len(compiled)} masques 47×47 redirigés, {sum(len(c) for _, c in compiled)} octets.",
+            "Compatible avec les autres mods, dont Model-TG : Keys garde sa gamme sur CHORD ; Scale Lock reste actif ailleurs.",
+            "HARMONY utilise le dernier slot libre, distinct de ceux de Model-TG et du filtre par piste. Aucun essai matériel de cette révision.",
+            f"Code et état dans {len(compiled)} masques de sprites redirigés, {sum(len(c) for _, c in compiled)} octets.",
             "Généré par tools/gen_chord_keys.py ; sources tools/machines/chord_keys/ ; notes/42.",
         ],
         "device": "Model:Cycles", "os": "1.13", "section": 3,
-        "conflicts": ["model-tg", "model-tg-st"],
+        "conflicts": [],
         "symbols": {name: f"{value:#x}" for name, value in sorted(symbols.items())},
         "writes": sorted(writes, key=lambda w: w["off"]),
     }
     build.apply_writes(stock, [tweak])
     for path in OUT.parent.glob("*.json"):
         other = json.loads(path.read_text())
-        # un conflit déclaré d'un côté ou de l'autre (sample-preview partage quatre masques) : jamais construits ensemble
+        # un conflit déclaré d'un côté ou de l'autre : jamais construits ensemble
         if other.get("id") in (tweak["id"], *tweak["conflicts"]) or tweak["id"] in other.get("conflicts", []):
             continue
         for a in tweak["writes"]:

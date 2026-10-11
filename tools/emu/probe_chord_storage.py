@@ -30,6 +30,8 @@ H1, H2, H3 = 0x92000000, 0x92001000, 0x92002000
 B1, B2, SERIAL = 0x92010000, 0x92020000, 0x92030000
 PROJECT = 0x92100000
 TAG, DEFAULT = 0x434B01A7, 48 << 21
+TAG_NEW = 0x434B0200
+TAG_MIDI = 0x434B0300
 RESERVED = set(range(32, 36)) | set(range(40, 64))
 HOOKS = ((0x4005B4A8, "ck_storage_load_hook"), (0x40061564, "ck_storage_init_hook"))
 
@@ -134,6 +136,27 @@ def configuration(track):
         ((track + degree) % 5) << (3 * degree) for degree in range(7))
 
 
+def configuration_validation(rig):
+    """Frontières des champs du validateur réellement compilé en ColdFire."""
+    extensions = sum((degree % 5) << (3 * degree) for degree in range(7))
+    for enabled in (0, 0x80000000):
+        for root in range(128):
+            for mode in range(8):
+                word = enabled | (mode << 28) | (root << 21) | extensions
+                expected = int(24 <= root <= 48 and mode < 7)
+                require(rig.call("ck_storage_valid", word) == expected,
+                        f"Validation racine/mode incorrecte : {word:#010x}")
+        # Un champ haut ne doit ni masquer le voisin ni polluer sa validation.
+        for fill in (0, 4):
+            base = enabled | (48 << 21) | (6 << 28)
+            base |= sum(fill << (3 * degree) for degree in range(7))
+            for degree in range(7):
+                for extension in range(8):
+                    word = (base & ~(7 << (3 * degree))) | (extension << (3 * degree))
+                    require(rig.call("ck_storage_valid", word) == int(extension < 5),
+                            f"Validation extension incorrecte : {word:#010x}")
+
+
 def install_config_fixture(uc, words, pattern=0, root=PROJECT, header=H1, active=B1):
     """Relie un pattern factice aux vrais lecteurs ; les adresses doivent être mappées.
 
@@ -188,9 +211,10 @@ def patched_headers(rig, stock_result):
     rig.call(0x40061526, H2, 1)
     require(rig.bytes(H2) == before, "Init avec conservation perd les réglages")
     rig.call(0x40061526, H2, 0)
+    require(rig.word(H2 + 32) == TAG_MIDI, "Nouveau pattern hors format v3 / MIDI ROOT")
     require(all(rig.call("ck_storage_read", H2, track) == DEFAULT for track in range(6)),
             "Init ne désactive pas les accords")
-    for signature in (0, 0xFFFFFFFF, TAG ^ 1):
+    for signature in (0, 0xFFFFFFFF, TAG ^ 1, TAG_NEW | 64, TAG_MIDI | 64):
         rig.word(H1 + 32, signature)
         rig.call(0x4005B3B4, H2, H1)
         require(all(rig.call("ck_storage_read", H2, track) == DEFAULT for track in range(6)),
@@ -200,6 +224,79 @@ def patched_headers(rig, stock_result):
     rig.call(0x4005B3B4, H2, H1)
     require(all(rig.call("ck_storage_read", H2, track) == DEFAULT for track in range(6)),
             "Configuration corrompue acceptée")
+
+
+def revisions(rig):
+    """Anciens schémas lisibles, contrôles permanents, réglages et locks intacts."""
+    words = [configuration(track) for track in range(6)]
+    for tag in (TAG, TAG_NEW, TAG_NEW | 0x15, TAG_NEW | 0x3f,
+                TAG_MIDI, TAG_MIDI | 0x15, TAG_MIDI | 0x3f):
+        rig.header(H1, words)
+        rig.word(H1 + 32, tag)
+        rig.call(0x4005B3B4, H2, H1)
+        require(rig.word(H2 + 32) == tag, "Le chargeur migre un schéma implicitement")
+        require([rig.call("ck_storage_read", H2, t) for t in range(6)] == words,
+                "Schéma v1/v2/v3 : configuration perdue au chargement")
+        rig.selected = 0
+        install_config_fixture(rig.uc, words)
+        rig.word(H1 + 32, tag)
+        before = rig.bytes(H1)
+        require(rig.call("ck_ui_revision_get") == 1,
+                "Les contrôles améliorés dépendent encore de l'ancien schéma")
+        require(all(rig.call("ck_audio_controls", t) == 1 for t in range(6)),
+                "HARMONY permanent sans geste doit conserver l'accord au repos")
+        expected_midi = [(tag >> track) & 1 if (tag & ~63) == TAG_MIDI else 0
+                         for track in range(6)]
+        require([rig.call("ck_ui_midi_get", track) for track in range(6)] == expected_midi,
+                "Les anciens bits Pads activent MIDI CHORD, ou v3 mal lu par l'UI")
+        require([rig.call("ck_audio_midi_get", track) for track in range(6)] == expected_midi,
+                "Le lecteur audio MIDI diffère du schéma persistant")
+        require(rig.bytes(H1) == before,
+                "Les lecteurs réécrivent les valeurs ou l'ancienne signature")
+    require(rig.call("ck_audio_controls", 6) == 0, "Piste invalide acceptée")
+
+
+def midi_settings(rig):
+    """Opt-in indépendant par piste, migration non destructive et invalides inertes."""
+    words = [configuration(track) for track in range(6)]
+    rig.selected = 0
+    rig.protected_headers.add(H1)
+    for old in (TAG, TAG_NEW | 0x3f, TAG_MIDI | 0x15):
+        install_config_fixture(rig.uc, words)
+        rig.word(H1 + 32, old)
+        before = rig.bytes(H1)
+        notifications = rig.notifications
+        rig.call("ck_ui_midi_set", 1, 1)
+        expected = (old & 63 if (old & ~63) == TAG_MIDI else 0) | 2
+        require(rig.word(H1 + 32) == TAG_MIDI | expected,
+                "La migration MIDI conserve des bits Pads ou efface une autre piste")
+        require(all(rig.bytes(H1)[i] == before[i] for i in range(64) if i not in range(32, 36)),
+                "Changer MIDI altère les champs musicaux ou stock")
+        require(rig.notifications == notifications + 1, "MIDI sans notification stock")
+        rig.call("ck_ui_config_set", 2, configuration(5))
+        require(rig.word(H1 + 32) == TAG_MIDI | expected,
+                "Éditer l'harmonie écrase les modes MIDI")
+        rig.call("ck_ui_midi_set", 1, 0)
+        require(rig.word(H1 + 32) == TAG_MIDI | (expected & ~2),
+                "MIDI ROOT efface une autre piste")
+        before, notifications = rig.bytes(H1), rig.notifications
+        for track, enabled in ((6, 1), (0xFFFFFFFF, 1), (1, 2), (1, 0xFFFFFFFF)):
+            rig.call("ck_ui_midi_set", track, enabled)
+        require(rig.bytes(H1) == before and rig.notifications == notifications,
+                "Entrée MIDI invalide modifie le pattern")
+    rig.word(H1 + 32, 0)
+    rig.call("ck_ui_midi_set", 5, 1)
+    require(rig.word(H1 + 32) == TAG_MIDI | 32 and
+            all(rig.call("ck_storage_read", H1, track) == DEFAULT for track in range(6)),
+            "MIDI sur ancien pattern sans signature ne remet pas les mots au défaut")
+    rig.call("ck_storage_reset", H1)
+    require(all(rig.call("ck_ui_midi_get", track) == 0 for track in range(6)),
+            "Réinitialiser le pattern laisse MIDI CHORD actif")
+    require(rig.call("ck_ui_midi_get", 6) == rig.call("ck_audio_midi_get", 6) == 0,
+            "Lecteur MIDI accepte une piste invalide")
+    require(not rig.unprotected, f"Écritures MIDI non atomiques : {rig.unprotected}")
+    require(rig.uc.reg_read(mk.UC_M68K_REG_SR) & 0x2700 == 0x2000,
+            "Le setter MIDI ne restaure pas le niveau d'interruption")
 
 
 def stock_accessors(rig):
@@ -234,6 +331,7 @@ def full_roundtrip(rig):
     rig.uc.mem_write(B1, bytes(30710))
     rig.call(0x400615E8, B1, 0)
     header = B1 + 30642
+    rig.word(header + 32, TAG_MIDI | 0x15)
     for track in range(6):
         rig.word(header + 40 + 4 * track, configuration(track))
     rig.uc.mem_write(SERIAL, bytes(14800))
@@ -242,6 +340,8 @@ def full_roundtrip(rig):
     rig.uc.mem_write(B2, b"\xa5" * 30710)
     require(rig.call(0x4005B894, B2, SERIAL, 73) == 1, "Chargement pattern refusé")
     require(rig.word(B2 + 30706) == 73, "Identité du pattern changée")
+    require(rig.word(B2 + 30642 + 32) == TAG_MIDI | 0x15,
+            "Aller-retour pattern perd les modes MIDI des six pistes")
     for track in range(6):
         require(rig.call("ck_storage_read", B2 + 30642, track) == configuration(track),
                 "Aller-retour pattern perd un réglage")
@@ -287,18 +387,29 @@ def live_headers(rig):
         require(rig.call("ck_ui_config_get", track) == configuration(track), "Lecture UI différente")
         require(rig.call("ck_audio_config", track) == configuration(track), "L'audio lit une ancienne copie")
     require(rig.notifications == notifications + 6, "Notification stock manquante")
+    rig.call("ck_ui_midi_set", 0, 1)
+    require(rig.call("ck_audio_midi_get", 0) == 1, "L'audio ne lit pas MIDI CHORD immédiatement")
     rig.selected = 1
+    require(rig.call("ck_ui_midi_get", 0) == 0 and rig.call("ck_audio_midi_get", 0) == 1,
+            "Les lecteurs MIDI confondent patterns UI et audio")
     rig.call("ck_ui_config_set", 0, configuration(5))
     require(rig.call("ck_audio_config", 0) == configuration(0), "Éditer un autre pattern change l'audio")
     rig.word(B1 + 30706, 1)
     require(rig.call("ck_audio_config", 0) == configuration(5), "Changement de pattern audio non suivi")
+    require(rig.call("ck_audio_midi_get", 0) == 0, "Changement de mode MIDI du pattern audio non suivi")
+    rig.call("ck_ui_midi_set", 0, 1)
     rig.word(PROJECT + 5192 + 732 + 60, H3)
     require(rig.call("ck_audio_config", 0) == DEFAULT, "Ancienne adresse d'en-tête gardée en cache")
+    require(rig.call("ck_audio_midi_get", 0) == 0, "Mode MIDI de l'ancien buffer gardé en cache")
     rig.call("ck_storage_reset", H3)
     rig.word(B1 + 30706, 96)
     require(rig.call("ck_audio_config", 0) == DEFAULT, "Indice pattern invalide accepté")
+    require(rig.call("ck_audio_midi_get", 0) == 0, "Indice pattern MIDI invalide accepté")
     rig.word(0x40FE4228, 0)
     require(rig.call("ck_audio_config", 0) == DEFAULT, "Singleton nul non protégé")
+    require(rig.call("ck_audio_midi_get", 0) == rig.call("ck_ui_midi_get", 0) == 0,
+            "Lecteur MIDI sans singleton non protégé")
+    rig.call("ck_ui_midi_set", 0, 1)
     require(not rig.unprotected, f"Écritures partielles exposées à l'audio : {rig.unprotected}")
     require(rig.uc.reg_read(mk.UC_M68K_REG_SR) & 0x2700 == 0x2000,
             "Le niveau d'interruption initial n'est pas rétabli")
@@ -307,10 +418,16 @@ def live_headers(rig):
 def run_storage_checks(stock, patched, symbols):
     """Preuve réutilisable sur les octets et adresses exacts du JSON final."""
     rig = Rig(stock, patched, symbols)
+    configuration_validation(rig)
+    print("ok validation ColdFire : 128 racines, huit modes, sept champs d'extension et Keys ON/OFF", flush=True)
     baseline = stock_reserved(rig)
     print("ok stock : réserves non lues au chargement, 64 octets conservés à la copie", flush=True)
     patched_headers(rig, baseline)
     print("ok hooks ColdFire : stock intact, réglages chargés, initialisation et fichiers anciens désactivés", flush=True)
+    revisions(rig)
+    print("ok schémas v1/v2/v3 : chargement fidèle, anciens patterns MIDI ROOT, bits MIDI par piste", flush=True)
+    midi_settings(rig)
+    print("ok MIDI ROOT/CHORD : migration explicite, mots intacts, six pistes indépendantes et écritures atomiques", flush=True)
     stock_accessors(rig)
     print("ok accesseurs stock : aucun champ réservé lu, réglages conservés par les setters", flush=True)
     full_roundtrip(rig)

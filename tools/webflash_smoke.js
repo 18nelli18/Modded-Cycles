@@ -441,11 +441,10 @@ async function main() {
       "per-track filter and Model-TG can't be ticked together: ticking one unticks the other");
     doc.getElementById("feat-model-tg").click(); await wait(5);
     doc.getElementById("feat-chord-keys").click(); await wait(5);
-    check(doc.getElementById("feat-chord-keys").checked && !doc.getElementById("feat-model-tg").checked,
-      "Chord Keys selection excludes Model-TG");
     doc.getElementById("feat-model-tg").click(); await wait(5);
-    check(!doc.getElementById("feat-chord-keys").checked,
-      "Model-TG selection excludes Chord Keys in the other direction");
+    check(doc.getElementById("feat-chord-keys").checked && doc.getElementById("feat-model-tg").checked,
+      "Chord Keys and Model-TG can be ticked together (Chord Keys v2, notes/42 §33)");
+    doc.getElementById("feat-chord-keys").click(); await wait(5);
     check(/\(inclus avec Model-TG\)/.test(doc.querySelector("label[for=feat-browser-scroll] .ttl").textContent),
       "FR: the tweaks Model-TG holds say « (inclus avec Model-TG) »");
     doc.getElementById("feat-model-tg").click(); await wait(5);

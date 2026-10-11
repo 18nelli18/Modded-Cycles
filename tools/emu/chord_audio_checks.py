@@ -26,6 +26,16 @@ POSITIONS = ((0, 2, 4), (0, 2, 4, 6), (0, 2, 6, 8),
              (0, 2, 6, 10), (0, 2, 6, 12))
 
 
+def diatonic_notes(mode, degree, extension):
+    """Référence musicale : garder la quinte diminuée des accords étendus."""
+    scale = SCALES[mode]
+    interval = lambda p: 12 * ((degree + p) // 7) + scale[(degree + p) % 7] - scale[degree]
+    notes = [interval(p) for p in POSITIONS[extension]]
+    if extension >= 2 and interval(4) == 6:
+        notes[1] = 6
+    return tuple(notes)
+
+
 def config_word(root=48, mode=0, extensions=(0,) * 7, enabled=True):
     return ((int(enabled) << 31) | (mode << 28) | (root << 21)
             | sum(ext << (3 * degree) for degree, ext in enumerate(extensions)))
@@ -38,6 +48,9 @@ class AudioRunner:
             setup(self.engine)
         self.configs = [0] * 6
         if config_address is not None:
+            # Le getter musical est instrumenté ; sans projet réel, aucun
+            # geste temporaire ne peut être actif, mais les palettes le restent.
+            self.engine.uc.mem_map(0x40800000, 0x00800000)
             self.engine.uc.hook_add(UC_HOOK_CODE, self._config,
                                     begin=config_address, end=config_address)
 
@@ -101,6 +114,90 @@ class NativeAudioConfig:
             self.write(header + 40 + track * 4, word)
 
 
+def run_audio_midi_checks(stock, patched, symbols, extra_code=()):
+    """Notes MIDI aiguës : même racine bornée pour le DSP et son instantané.
+
+    Exécute les deux updates OS et les vrais getters depuis le JSON final.
+    L'entrée est celle du DSP après réception de la note ; ce banc ne prétend
+    pas exercer le transport MIDI USB/DIN ni afficher un bandeau pour le MIDI.
+    """
+    a = AudioRunner(stock)
+    b = AudioRunner(patched, extra_code=extra_code)
+    config = NativeAudioConfig(b.engine)
+    failures = 0
+
+    def check(ok, label):
+        nonlocal failures
+        failures += not ok
+        print(("ok    " if ok else "FAIL  ") + label, flush=True)
+
+    def snapshot(track):
+        return int.from_bytes(b.engine.uc.mem_read(
+            symbols["ck_chord_live"] + track * 4, 4), "big")
+
+    # Conserver explicitement le comportement stock qui impose la correction.
+    # PITCH 32 remet les quatre opérateurs dans une plage audible : un mauvais
+    # degré ne doit pas être masqué par les coupures de protection dans l'aigu.
+    stock_clamps = inactive = True
+    config.configure([config_word(enabled=False)] * 6)
+    for track in range(6):
+        for pitch in (32, 64):
+            reference = a.update(track=track, root=96, shape=24, pitch=pitch)
+            for note in range(96, 128):
+                observed = a.update(track=track, root=note, shape=24, pitch=pitch)
+                stock_clamps &= observed == reference
+                inactive &= b.update(track=track, root=note, shape=24,
+                                     pitch=pitch) == observed and snapshot(track) == 0
+    check(stock_clamps, "MIDI stock : notes 96..127 ramenées à 96, PITCH 32/64 sur six pistes")
+    check(inactive, "MIDI Keys OFF : notes 96..127 identiques au stock, aucun instantané d'accord")
+
+    active, outside, count, first = True, True, 0, None
+    extensions = (0, 1, 2, 3, 4, 0, 1)
+    for mode, scale in enumerate(SCALES):
+        for tonic in range(24, 36):
+            track = (mode + tonic) % 6
+            shape = (3, 8, 32)[(mode + tonic) % 3]
+            word = config_word(root=tonic, mode=mode, extensions=extensions)
+            config.configure([word] * 6)
+            relative = (96 - tonic) % 12
+            for pitch in (32, 64):
+                reference = b.update(track=track, root=96, shape=shape, pitch=pitch)
+                packet = snapshot(track)
+                if relative in scale:
+                    degree = scale.index(relative)
+                    notes = diatonic_notes(mode, degree, extensions[degree])
+                    # SHAPE peut déplacer la basse, mais le packet doit garder
+                    # le degré de do réellement joué et ses intervalles bruts.
+                    harmonic = 0x80000000 | 96 | sum(
+                        interval << (7 + 5 * index)
+                        for index, interval in enumerate(notes))
+                    active &= (packet & ~0x78000400) == harmonic
+                    for note in range(96, 128):
+                        observed = b.update(track=track, root=note, shape=shape, pitch=pitch)
+                        ok = observed == reference and snapshot(track) == packet
+                        active &= ok
+                        count += 1
+                        if not ok and first is None:
+                            first = (mode, tonic, track, note, shape, pitch)
+                else:
+                    # Même si la note reçue est dans la gamme, son do borné
+                    # peut en sortir : SHAPE stock et instantané vide exigés.
+                    stock_reference = a.update(track=track, root=96,
+                                               shape=shape, pitch=pitch)
+                    outside &= reference == stock_reference and packet == 0
+                    for note in range(96, 128):
+                        outside &= b.update(track=track, root=note, shape=shape,
+                                            pitch=pitch) == stock_reference
+                        outside &= snapshot(track) == 0
+                        count += 1
+    check(active, "MIDI Keys ON : 97..127 utilisent le degré, l'extension et l'instantané de 96"
+          + (f" ; premier écart {first}" if first else ""))
+    check(outside, "MIDI Keys ON : racine bornée hors gamme, SHAPE stock même si la note reçue était diatonique")
+    check(count == 5376 and not a.engine.unmapped and not b.engine.unmapped,
+          f"MIDI aigu : {count} updates, 7 modes × 12 toniques × 32 notes × 2 PITCH, sans accès hors mémoire")
+    return failures
+
+
 def run_audio_storage_checks(stock, patched, extra_code=(), setup=None):
     """Vrai getter + DSP : patterns, isolation, cas invalides et coût complet."""
     a = AudioRunner(stock)
@@ -133,7 +230,7 @@ def run_audio_storage_checks(stock, patched, extra_code=(), setup=None):
         config.select(pattern)
         for track in range(6):
             mode, extension = (track + pattern) % 7, (track + pattern) % 5
-            notes = tuple(12 * (p // 7) + SCALES[mode][p % 7] for p in POSITIONS[extension])
+            notes = diatonic_notes(mode, 0, extension)
             expected = frequency_ratios(notes + ((0,) if len(notes) == 3 else ()))
             ratios, _, gains = b.update(track=track)
             valid &= ratios == expected and (bool(gains[-1]) == (len(notes) == 4))
@@ -242,7 +339,7 @@ def run_audio_storage_checks(stock, patched, extra_code=(), setup=None):
     return failures
 
 
-def run_audio_governor_checks(image, governor_tweak, extra_code=()):
+def run_audio_governor_checks(image, governor_tweak, extra_code=(), new_controls=False):
     """CHORD actif + vrai régulateur Syntakt ; minuteur de charge simulé.
 
     image inclut la charge utile construite à partir du Syntakt officiel.
@@ -267,9 +364,12 @@ def run_audio_governor_checks(image, governor_tweak, extra_code=()):
         engine = E.Engine(image, extra_code=extra_code)
         config = NativeAudioConfig(engine)
         config.configure([config_word(extensions=(2,) * 7)] * 6)
+        if new_controls:
+            config.write(config.HEADERS + 32, 0x434b0200)
         for track, note in enumerate((48, 50, 52, 53, 55, 57)):
             engine.machine_defaults(track, "CHORD")
-            engine.set(track, note=note, shape=7, color=32, decay=100)
+            engine.set(track, note=note, shape=32 if new_controls else 7,
+                       color=110 if new_controls else 32, decay=100)
             for address in GAINS:
                 engine.uc.mem_write(address + 4 * track, struct.pack(">I", FULL))
         clock = {"now": 10_000_000, "fixed": None}
@@ -295,6 +395,7 @@ def run_audio_governor_checks(image, governor_tweak, extra_code=()):
         return np.stack(output), fading, stolen, engine.unmapped
 
     reference, _, _, unmapped = play(None)
+    print('info  régulateur : ' + ('TENSION / OPN3 / signature v2' if new_controls else 'DIATONIC / CLS0 / signature v1'), flush=True)
     check(not unmapped and reference.any(), "régulateur + CHORD : six accords natifs audibles dans le dispatch Syntakt")
     normal, _, stolen, unmapped = play(lambda block: 50)
     check(np.array_equal(reference, normal) and not any(map(any, stolen)) and not unmapped,
@@ -356,8 +457,8 @@ def run_audio_checks(stock, patched, config_address, extra_code=(), setup=None):
             for tonic in range(24, 49):
                 b.configs[0] = config_word(tonic, mode, (extension,) * 7)
                 for slot in range(16):
-                    notes = tuple(tonic + 12 * ((slot + pos) // 7)
-                                  + scale[(slot + pos) % 7] for pos in positions)
+                    fundamental = tonic + 12 * (slot // 7) + scale[slot % 7]
+                    notes = tuple(fundamental + n for n in diatonic_notes(mode, slot % 7, extension))
                     intervals = tuple(n - notes[0] for n in notes)
                     expected = frequency_ratios(intervals + ((0,) if len(notes) == 3 else ()))
                     ratios, phases, gains = b.update(root=notes[0])
@@ -383,8 +484,8 @@ def run_audio_checks(stock, patched, config_address, extra_code=(), setup=None):
         b.configs[0] = config_word(mode=mode, extensions=mixed)
         for slot in range(16):
             positions = POSITIONS[mixed[slot % 7]]
-            notes = tuple(48 + 12 * ((slot + pos) // 7) + scale[(slot + pos) % 7]
-                          for pos in positions)
+            fundamental = 48 + 12 * (slot // 7) + scale[slot % 7]
+            notes = tuple(fundamental + n for n in diatonic_notes(mode, slot % 7, mixed[slot % 7]))
             expected = frequency_ratios(tuple(n - notes[0] for n in notes)
                                         + ((0,) if len(notes) == 3 else ()))
             ratios, _, gains = b.update(root=notes[0])
@@ -450,8 +551,7 @@ def run_audio_checks(stock, patched, config_address, extra_code=(), setup=None):
             b.configs[0] = config_word(root=24, mode=mode, extensions=(extension,) * 7)
             for degree in range(7):
                 root = 24 + scale[degree]
-                base_notes = tuple(12 * ((degree + p) // 7)
-                                   + scale[(degree + p) % 7] - scale[degree] for p in positions)
+                base_notes = diatonic_notes(mode, degree, extension)
                 closed = sorted(n % 12 for n in base_notes)
                 for state, shape in enumerate(shapes):
                     if state == 0:
@@ -479,18 +579,22 @@ def run_audio_checks(stock, patched, config_address, extra_code=(), setup=None):
           f"SHAPE : {voicing_count} accords, 7 modes × 5 extensions × 7 degrés × 9 états, "
           f"classes de notes conservées, écart maximal {worst_voicing:.3f} cent")
 
-    # COLOR n'agit plus sur les octaves. Comparaison des gains à une fondamentale
-    # grave : les coupures anti-alias stock dépendent sinon des notes du voicing.
+    # La palette ne change pas C ou Cmaj9. SHAPE applique sa balance au gain
+    # natif obtenu à COLOR 32, quelles que soient les anciennes signatures.
+    weights = ((32,32,32), (30,26,28), (26,32,28), (28,26,32),
+               (32,28,26), (22,28,32), (28,22,32), (32,22,28), (28,32,22))
     color_ok = True
     for extension in (0, 2):
         b.configs[0] = config_word(root=24, extensions=(extension,) * 7)
-        for shape, intervals in zip(shapes, examples[extension]):
+        for index, (shape, intervals) in enumerate(zip(shapes, examples[extension])):
             for color in range(128):
                 ratios, _, gains = b.update(root=24, shape=shape, color=color)
-                _, _, stock_gains = a.update(root=24, shape=7, color=color)
-                expected_gains = stock_gains if extension else stock_gains[:2] + (0,)
+                _, _, stock_gains = a.update(root=24, shape=7, color=32)
+                balanced = tuple(g if w == 32 else (g >> 15) * (w << 10)
+                                 for g, w in zip(stock_gains, weights[index]))
+                expected_gains = balanced if extension else balanced[:2] + (0,)
                 color_ok &= ratios_match(ratios, intervals) and gains == expected_gains
-    check(color_ok, "COLOR : 128 positions × 9 dispositions × triade/neuvième, gains stock et hauteurs fixes")
+    check(color_ok, "COLOR : 128 positions × 9 dispositions × triade/neuvième, balance SHAPE et hauteurs fixes")
 
     # Le même buffer effectif est fourni à chaque update, comme après modulation
     # ou parameter lock ; il ne s'agit pas d'un test du séquenceur de locks.

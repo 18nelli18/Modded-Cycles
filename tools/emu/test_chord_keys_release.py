@@ -8,7 +8,8 @@ Chord Keys garde alors held[touche] valide. Au prochain appui de la même touche
 (held[touche] encore valide) : la fin de note stock 0x40019d00, le seul chemin qui coupe une note jouée au clavier,
 n'est jamais atteinte.
 
-On appelle la cible du pointeur de KeyboardView::consumeKeyEvent (0x400ff9cc), lue dans chaque image, avec une
+On appelle la cible du pointeur de KeyboardView::consumeKeyEvent (0x400ff9cc), lue dans chaque image (la v2 de
+Chord Keys détourne l'entrée 0x4001a0d2 elle-même : « stock » veut dire son corps 0x4001a0da atteint), avec une
 vraie KeyEvent (constructeur 0x4007238c) et une vue factice (liste des notes jouées en +0x94/+0x98/+0x9c).
 Exécutés pour de vrai : ck_ui_key, handle_press, release_key, play_key, ck_ui_cancel_track, ck_ui_item_change,
 ck_ui_config_get/set (le code compilé du JSON), et dans l'OS : 0x4001a0d2, 0x40019f44, 0x40019e7a, 0x40019d00,
@@ -66,6 +67,7 @@ EMU_ERRORS = []                     # accès hors mémoire ou arrêt imprévu, d
 # --- l'OS 1.13 --------------------------------------------------------------------------------------------------
 SLOT = 0x400ff9cc                   # KeyboardView : pointeur de consumeKeyEvent (vtable 0x400ff9c4, entrée 2)
 KB_KEY = 0x4001a0d2                 # KeyboardView::consumeKeyEvent d'origine
+KB_BODY = KB_KEY + 8                # son corps, après le prologue de 8 o (lea, movem) que la v2 détourne (jmp)
 KB_END = 0x40019d00                 # (vue, touche) : fin de toutes les notes de la liste jouées par cette touche
 VIEW_KEY = 0x40075f3c               # View::consumeKeyEvent de base (touches hors TRIG 1..16)
 KEYEV_CTOR = 0x4007238c             # KeyEvent(objet, code, indicateurs, heure, vélocité)
@@ -152,7 +154,7 @@ class Rig:
                  VIEW_KEY: self._view_key, NEW: self._new, DELETE: lambda a: 0}
         for addr, fn in stubs.items():
             uc.hook_add(UC_HOOK_CODE, self._stub(fn), begin=addr, end=addr)
-        probes = {KB_KEY: lambda a: ("stock",), KB_END: lambda a: ("fin", a[1]), F_NOTIFY: lambda a: ("signal",)}
+        probes = {KB_BODY: lambda a: ("stock",), KB_END: lambda a: ("fin", a[1]), F_NOTIFY: lambda a: ("signal",)}
         for addr, fn in probes.items():                        # observés seulement : l'exécution continue
             uc.hook_add(UC_HOOK_CODE, self._probe(fn), begin=addr, end=addr)
         self._objects()
@@ -389,12 +391,24 @@ def held_info(r, key):
 
 # --- 1. le pointeur de KeyboardView ---------------------------------------------------------------------------
 def slot_tests(base, img, syms):
+    """Première version : le pointeur de la vtable vise ck_ui_key. Depuis la v2 (notes/42 §33), le pointeur n'est
+    plus touché et l'entrée 0x4001a0d2 commence par jmp ck_ui_key ; ck_ui_key_original rejoue le prologue et saute
+    au corps (KB_BODY). Dans les deux cas, « stock » = le corps de 0x4001a0d2 atteint. Model-TG prend lui-même ce
+    pointeur (Scale Lock, dans sa charge utile) et rejoint 0x4001a0d2 : on appelle alors son enveloppe."""
     a = struct.unpack(">I", base[SLOT - BASE:SLOT - BASE + 4])[0]
     b = struct.unpack(">I", img[SLOT - BASE:SLOT - BASE + 4])[0]
-    check("accroche", a == KB_KEY, f"{SLOT:#x} : {a:#x} sans Chord Keys (KeyboardView::consumeKeyEvent d'origine)")
     want = syms.get("ck_ui_key")
-    check("accroche", b != KB_KEY and (want is None or b == want),
-          f"{SLOT:#x} : {b:#x} avec Chord Keys" + (f" (ck_ui_key des symboles du JSON : {want:#x})" if want else ""))
+    entry = img[KB_KEY - BASE:KB_KEY - BASE + 6]
+    if a != KB_KEY:
+        print(f"    {SLOT:#x} : {a:#x} sans Chord Keys (un autre mod de la combinaison enveloppe la vue)")
+    if b == a:
+        check("accroche", want is not None and entry == struct.pack(">HI", 0x4EF9, want),
+              f"{SLOT:#x} : {b:#x} inchangé par Chord Keys, et {KB_KEY:#x} commence par {entry.hex()} "
+              f"(jmp ck_ui_key {want if want is None else hex(want)})")
+    else:
+        check("accroche", a == KB_KEY, f"{SLOT:#x} : {a:#x} sans Chord Keys (KeyboardView::consumeKeyEvent d'origine)")
+        check("accroche", want is None or b == want,
+              f"{SLOT:#x} : {b:#x} avec Chord Keys" + (f" (ck_ui_key des symboles du JSON : {want:#x})" if want else ""))
 
 
 # --- 2. S1 : relâchement perdu, puis la même touche sur une piste non CHORD -------------------------------------
