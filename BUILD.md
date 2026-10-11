@@ -730,8 +730,8 @@ Le build principal ne contient pas ce prototype. Reproduction :
 
 ```sh
 python3 tools/gen_lfo_secondary.py --cycles firmware/model-cycles_OS1.13.syx --check
-python3 tools/emu/test_lfo_secondary_page.py --cycles firmware/model-cycles_OS1.13.syx --tweak tweaks/model-cycles_OS1.13/experimental/lfo-secondary/52-lfo-secondary.json
-python3 tools/emu/test_lfo_secondary_state.py --cycles firmware/model-cycles_OS1.13.syx --tweak tweaks/model-cycles_OS1.13/experimental/lfo-secondary/52-lfo-secondary.json
+python3 tools/emu/test_lfo_secondary_page.py --cycles firmware/model-cycles_OS1.13.syx --tweak tweaks/model-cycles_OS1.13/52-lfo-secondary.json
+python3 tools/emu/test_lfo_secondary_state.py --cycles firmware/model-cycles_OS1.13.syx --tweak tweaks/model-cycles_OS1.13/52-lfo-secondary.json
 python3 tools/gen_lfo_test_flasher.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --check
 node tools/test_lfo_flasher.js
 ```
