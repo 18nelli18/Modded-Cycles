@@ -484,11 +484,19 @@ mlp_menu_key:
 .Lmk_data:
     btst #4,%d3
     beq .Lmk_used
-    tstl mlp_held
-    bne .Lmk_used
     tstl mlp_setup
     bne .Lmk_data_setup
-    bra .Lmk_used
+    tstl mlp_held
+    beq .Lmk_used
+    | Clic tenu : Note -> Vel -> Len -> Note ; aucune écriture au clic.
+    movel mlp_row,%d0
+    addql #1,%d0
+    cmpil #9,%d0
+    bls .Lmk_data_step_row
+    moveq #7,%d0
+.Lmk_data_step_row:
+    movel %d0,mlp_row
+    bra .Lmk_redraw
 .Lmk_data_setup:
     movel mlp_row,%d2
     cmpil #6,%d2
@@ -699,9 +707,15 @@ mlp_enc:
     jsr mlp_store
     bra .Lme_redraw
 .Lme_held:
-    | DATA transpose tous les pas tenus ; aucune modification des pistes audio.
+    | DATA édite Note/Vel/Len des pas tenus, sans toucher aux pistes audio.
     movel mlp_step,%sp@-
     moveq #0,%d4
+    movel mlp_row,%d2
+    cmpil #7,%d2
+    bcs .Lme_held_note
+    cmpil #9,%d2
+    bls .Lme_held_loop
+.Lme_held_note:
     moveq #7,%d2
 .Lme_held_loop:
     movel mlp_held,%d0
@@ -713,13 +727,19 @@ mlp_enc:
     movel %d0,mlp_step
     jsr mlp_raw_value
     addl %d3,%d0
-    tstl %d0
-    bpl .Lme_held_min
-    moveq #0,%d0
+    lea.l mlp_min,%a0
+    moveq #0,%d1
+    moveb %a0@(0,%d2:l),%d1
+    cmpl %d1,%d0
+    bge .Lme_held_min
+    movel %d1,%d0
 .Lme_held_min:
-    cmpil #127,%d0
+    lea.l mlp_max,%a0
+    moveq #0,%d1
+    moveb %a0@(0,%d2:l),%d1
+    cmpl %d1,%d0
     ble .Lme_held_max
-    moveq #127,%d0
+    movel %d1,%d0
 .Lme_held_max:
     jsr mlp_store
     movel mlp_changed,%d0

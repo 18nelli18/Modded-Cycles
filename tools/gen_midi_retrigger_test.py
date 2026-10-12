@@ -7,8 +7,8 @@ La page de base est celle du commit7abbe84a9fae9c57a44128e4ed4dcbb0a48f0aa4.
 """
 import argparse,hashlib,json,pathlib,re,html as html_lib
 import build,gen_midi_bank_bundle as bank,ref_mainos
-STAMP='2026-10-12-test-3-retrigger-step-fix'
-EN=('FUNC + RETRIG opens B-side Retrig Setup. Turn DATA to select a row, click to edit, '
+STAMP='2026-10-12-test-3-step-data'
+EN=('Hold a B-side trig and press DATA to cycle Note, Velocity and Length; turn DATA to edit. FUNC + RETRIG opens B-side Retrig Setup. Turn DATA to select a row, click to edit, '
     'then turn to change it. A.On enables sequenced repeats; Rte selects their rate and Len '
     'their duration (127 = INF). Arp selects UP, DOWN, UPDN, RAND, PLAY or OFF; Oct selects '
     '1–4 octaves. With REC enabled, hold a step and press RETRIG twice to enable its retrigger; edit its settings there, then release the trig '
@@ -21,7 +21,7 @@ EN=('FUNC + RETRIG opens B-side Retrig Setup. Turn DATA to select a row, click t
     'settings remain RAM only; restart before changing projects. Existing B-side controls, '
     'Sequence Genie and LFO-to-CC remain included. 6-channel USB audio is optional. '
     'New retrigger/arp behavior is experimental and needs hardware testing.')
-FR=('FUNC + RETRIG ouvre Retrig Setup côté B. Tournez DATA pour choisir une ligne, cliquez '
+FR=('Maintenez un trig côté B et cliquez DATA pour choisir Note, Vel ou Len ; tournez DATA pour éditer. FUNC + RETRIG ouvre Retrig Setup côté B. Tournez DATA pour choisir une ligne, cliquez '
     'pour éditer puis tournez pour changer la valeur. A.On active les répétitions séquencées ; '
     'Rte règle leur vitesse et Len leur durée (127 = INF). Arp choisit UP, DOWN, UPDN, RAND, '
     'PLAY ou OFF ; Oct règle 1–4 octaves. REC actif : maintenez un pas et appuyez deux fois sur RETRIG pour activer son retrigger et éditer ses réglages, '

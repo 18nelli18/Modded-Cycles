@@ -197,6 +197,22 @@ def main():
                 key(r,16+trig,0);assert raw(r,6)==1
                 assert bytes(r.u.mem_read(RAW,722))==before
                 key(r,16+trig);key(r,16+trig,0);assert raw(r,6)==0
+    # Clic DATA tenu : Note/Vel/Len, bornes audibles et aucune suppression.
+    r.w32(r.s['mlp_track'],0);r.w32(r.s['mlp_step'],0)
+    r.u.mem_write(PAT+8,bytes((60,100,1,1)));before=bytes(r.u.mem_read(RAW,722))
+    key(r,16);key(r,32,16)
+    assert r.r32(r.s['mlp_row'])==8
+    knob(r,1);assert raw(r,8)==101 and raw(r,7)==60
+    for _ in range(140):knob(r,-1)
+    assert raw(r,8)==1
+    key(r,32,16);assert r.r32(r.s['mlp_row'])==9
+    knob(r,1);assert raw(r,9)==2
+    for _ in range(140):knob(r,1)
+    assert raw(r,9)==64
+    key(r,32,16);assert r.r32(r.s['mlp_row'])==7
+    key(r,16,0);assert raw(r,6)==1
+    assert bytes(r.u.mem_read(RAW,722))==before
+    print('ok : clic DATA tenu sélectionne Note/Vel/Len, bornes1..127/1..64 et trig conservé')
     # Recréation après suppression : C5, jamais la hauteur supprimée.
     for lane in range(6):
         r.w32(r.s['mlp_track'],lane)
