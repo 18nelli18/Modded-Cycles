@@ -632,6 +632,12 @@ function buildPayload(ap, syntaktRaw, mainOs) {
   const out = payloadRuntime(ap, img, mainOs);
   if (ap.compress) {
     if (ap.compress !== "aplib") throw new Error(`charge utile : compression ${ap.compress} inconnue`);
+    if (ap.compressed_hex !== undefined) {
+      const packed = fromHex(ap.compressed_hex);
+      const restored = aplibDepack(concat(new Uint8Array(8), packed)).data;
+      if (!eq(restored, out)) throw new Error("charge precompressee differente");
+      return packed;
+    }
     return aplibPack(out);
   }
   if (!ap.pack) return out;

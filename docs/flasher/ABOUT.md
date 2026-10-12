@@ -70,3 +70,9 @@ Sauvegarde et LFO CC non inclus. Voir [note technique](../../notes/60-fusion-mid
 
 Hardware result, 12 October 2026: AveyCole reports the CC/note-off merger worked and authorizes main publication. This confirmation concerns the merger; saving and B-side LFO CC remain uninstalled.
 Résultat matériel du12/10/2026 : AveyCole confirme la fusion CC/note-off et demande la publication principale. Sauvegarde et LFO CC non raccordés.
+
+## 2026-10-12-main-stock-chance
+
+Chance popup and conditions promoted from the hardware-tested Test3 build. Musical writes and MAIN OS references are unchanged. Settings remain RAM only; saving is unfinished.
+
+Fenêtre et conditions Chance promues depuis Test3 validé sur matériel. Écritures et références MAIN OS identiques ; réglages en RAM, sauvegarde inachevée.
