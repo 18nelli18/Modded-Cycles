@@ -94,7 +94,7 @@ HW_TESTED = set()
 # l'arpégiateur, construite par build.py (même MAIN OS que le flasher), « c bon ça fonctionne nickel » ; l'utilisateur
 # a demandé l'étiquette sans attendre un essai depuis le flasher.
 HW_TESTED_TG = {("sd", "cp", "toy", "bits", "swarm")}
-MAX_EXTRA = 6
+MAX_EXTRA = 7                # 5 moteurs, MACRO et ACID (notes/54 §11)
 
 # --- Syntakt : fermeture et plages copiées -----------------------------------------------------------------
 # La copie dépend du DERNIER moteur coché (ordre du catalogue) : elle contient tout ce qu'il faut aux moteurs du
@@ -164,7 +164,7 @@ def sram_init(image, init, a, n):
             return bytes(image[lo - BASE + a - dst:][:n])
     return None
 
-# --- charge utile (adresses fixes, jusqu'à 6 machines ajoutées) --------------------------------------------
+# --- charge utile (adresses fixes, jusqu'à 7 machines ajoutées) --------------------------------------------
 # Adresse d'exécution PAY : seule, au-dessus du BSS du Cycles (notes/17) ; avec Model-TG, le haut de sa zone
 # d'échantillons, qu'il nous laisse (notes/31). Tout le reste est à un décalage fixe de PAY.
 PAY_ALONE = 0x43000000
@@ -177,13 +177,20 @@ LAYOUT = dict(
     DST_END=0x33000,
     STUBS=0x33000,
     DATA=0x33800,            # noms, update/render, VEC, table machine -> moteur, chaînes
-    DESCN=0x34000,           # 76 + 5 x N descripteurs (au plus 106 x 0x38 = 0x1730)
+    DESCN=0x34000,           # 76 + 5 x N descripteurs (106 x 0x38 = 0x1730 pour 6 ; 7 : ROWS7)
     ROWSN=0x35800,           # (6 + N) x 32 o, (7 + N) avec Model-TG
     CCROWSN=0x35a00,         # idem
     RECS=0x35c00,            # enregistrement par machine ajoutée : 0x60 o chacun (76 o + drapeau)
     REC_ATK=0x35f00,         # avec Model-TG : copie d'un enregistrement, Attack sur le potard DECAY (76 o)
     TABLES_AT=0x36000,       # tables_high des moteurs
 )
+
+
+# 7 machines ajoutées (les 5 moteurs, MACRO et ACID, notes/54 §11) : 111 descripteurs (0x1848 o) dépasseraient
+# DESCN..ROWSN (0x1800 o), et l'OS réécrit les rangées au démarrage. Les rangées passent alors juste après les
+# descripteurs (14 x 32 o chacune avec Model-TG, jusqu'à 0x35be0 < RECS). Jusqu'à 6 machines, rien ne bouge : les
+# firmwares déjà testés gardent leurs octets.
+ROWS7 = dict(ROWSN=0x35860, CCROWSN=0x35a20)
 
 
 def set_base(pay):
@@ -193,6 +200,23 @@ def set_base(pay):
     for k, off in LAYOUT.items():
         globals()[k] = pay + off
     gx.DST_CODE, gx.DST_SRAM, gx.DST_BRIDGE, gx.DST_END = pay, DST_SRAM, DST_BRIDGE, DST_END
+
+
+def set_rows(n):
+    """Rangées de l'écran des paramètres pour n machines ajoutées (ROWS7 au-delà de 6)."""
+    for k in ROWS7:
+        globals()[k] = PAY + (ROWS7[k] if n > 6 else LAYOUT[k])
+
+
+def check_room(n, nm):
+    """Les tables de n machines ajoutées (nm machines en tout) tiennent à leur place."""
+    ndesc = g7.NDESC + 5 * n
+    for what, end, limit in (("descripteurs", DESCN + ndesc * g7.DSTRIDE, ROWSN), ("rangées", ROWSN + 32 * nm, CCROWSN),
+                             ("rangées CC", CCROWSN + 32 * nm, RECS), ("enregistrements", RECS + 0x60 * n, REC_ATK)):
+        if end > limit:
+            raise SystemExit(f"!! {what} jusqu'à {end:#x}, au-delà de {limit:#x}")
+    if nm > 2 * MARKS_ROW:
+        raise SystemExit(f"!! {nm} machines : les repères de l'écran MACHINES n'ont que 2 lignes de {MARKS_ROW}")
 
 
 set_base(PAY_ALONE)
@@ -465,10 +489,11 @@ def marks_asm(a, ins, lab, nm):
     ins("bne.s 1b"); ins("jmp 0x400a26f2")
 
 
-def detours_asm(n, images, firsts, tg=None):
+def detours_asm(n, images, firsts, tg=None, lofi=None):
     """Détours pour n machines ajoutées (index 6..5+n), descripteurs firsts[i]..firsts[i]+4 (5 par machine).
     Avec Model-TG (tg : ses symboles), les machines ajoutées vont de 7 à 6+n (6 est son Sampler) et nos détours
-    passent la main aux siens pour le reste (notes/31)."""
+    passent la main aux siens pour le reste (notes/31). lofi : rang de MACRO parmi les machines ajoutées (None
+    sans MACRO) ; FUNC + PITCH y règle FINE, son lo-fi (lofi_asm, notes/55 §8)."""
     last = 76 + 5 * n                                    # 1er descripteur après ceux des machines ajoutées
     first = TG_FIRST if tg else 6                        # index de la 1re machine ajoutée
     top = first + n - 1                                  # plus grand index de machine
@@ -559,7 +584,12 @@ def detours_asm(n, images, firsts, tg=None):
     lab("2"); ins("move.l %d0, (%a1)+"); ins("subq.l #1, (%sp)"); ins("bpl.s 1b"); ins("addq.l #4, %sp")
     ins("moveq #1, %d0"); ins("move.b %d0, 76(%a2)"); ins("movea.l %a2, %a0"); ins("move.l (%sp)+, %a2")
     ins("move.l (%sp)+, %d2")
-    lab("9"); ins("move.l %a0, %d0"); ins("rts")
+    lab("9")
+    if lofi is not None:                                 # MACRO : son entrée 16 (jamais lue par l'OS) = FINE
+        ins(f"cmpa.l #{RECS + 0x60 * lofi:#x}, %a0"); ins("bne.s 8f"); ins(f"moveq #{FTUN}, %d1")
+        ins("move.l %d1, 72(%a0)")
+        lab("8")
+    ins("move.l %a0, %d0"); ins("rts")
     # potard -> descripteur : table machine -> enregistrement [1..6+n]
     if first + n > MARKS_ROW:
         marks_asm(a, ins, lab, first + n)
@@ -568,7 +598,20 @@ def detours_asm(n, images, firsts, tg=None):
     ins("bcc.s 1f"); ins("moveq #0, %d0"); ins("rts")                    # hors limites : les potards de KICK
     lab("1"); ins(f"moveq #{first}, %d1"); ins("cmp.l %d1, %d0")
     ins("blt.s 2f"); ins(f"lea {DATA + 12 * (first + n):#x}, %a1")
+    if lofi is not None:
+        # MACRO, FUNC tenu, potard PITCH (d5 : FUNC, d2 : potard, d3 = potard - 2 : l'entrée lue) : l'entrée 16 de
+        # son enregistrement, FINE (0x4001e8e2 : avec FUNC, seuls les potards 14 et 15 lisent une autre entrée).
+        # L'OS applique un tour de potard avec FUNC par la fonction de l'objet d'interface du descripteur (+0x50) :
+        # pour FINE, elle rend le défaut (0x4000) ; son texte (+0x20) dit -64..63 ; et la fenêtre de valeur
+        # (0x4001d818) le dessine en jauge (+0x30, un sprite) au lieu du texte. Les nôtres à la place.
+        ins(f"moveq #{first + lofi}, %d1"); ins("cmp.l %d1, %d0"); ins("bne.s 2f"); ins("tst.b %d5"); ins("beq.s 2f")
+        ins("moveq #2, %d1"); ins("cmp.l %d1, %d2"); ins("bne.s 2f"); ins("moveq #16, %d3")
+        ins("move.l #lofi_step, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x50:#x}")
+        ins("move.l #lofi_fmt, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x20:#x}")
+        ins("move.l #lofi_draw, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x30:#x}")
     lab("2"); ins("rts")
+    if lofi is not None:
+        a.append(lofi_asm())
     # machine d'un descripteur (applicabilité) et rangée du constructeur : descripteurs ajoutés -> leur machine
     a.append("\t.globl\tdesc_machine"); lab("desc_machine")
     ins("move.l 4(%sp), %d0")
@@ -605,6 +648,121 @@ def detours_asm(n, images, firsts, tg=None):
         ins("lsl.l #5, %d2"); ins(f"lea {ROWSN:#x}, %a0"); ins("move.l (%a0,%d2.l), %d0"); ins("jmp 0x4005a6fc")
         lab("1"); ins(f"jmp {tg['sampler_amp_gate']:#x}")
     return "\n".join(a) + "\n"
+
+
+FTUN = 43                    # descripteur FINE (Pitch, FTUN) : p+0x22, 0..0x7f00, sans potard dans l'OS
+UI_REC = 0x40a71754          # objets d'interface des descripteurs (0x4004df40), 100 o chacun
+
+
+def lofi_khz(r):
+    """Fréquence d'échantillonnage du pas r (1..64) de RATE, en kHz arrondis (macro.cc : RATE_STEP)."""
+    return round(48 * 2 ** (-86 * r / 1536))
+
+
+def lofi_asm():
+    """FINE de MACRO sous FUNC + PITCH (notes/55 §8) : le pas d'un tour de potard et le texte de la valeur.
+    lofi_step(fonction, valeur, delta, min, max, défaut) : la valeur arrondie à un pas (0x100), plus delta arrondi
+    vers le haut à des pas entiers (un cran = un pas au moins, l'accélération de l'OS conservée), bornée.
+    lofi_fmt(fonction, valeur, tampon) : « OFF » au centre, la fréquence à gauche (« 46K » .. « 4K », RATE), les
+    bits à droite (« 12B » .. « 2B », BITS) : trois caractères au plus, comme macro.cc les calcule ; en majuscules,
+    la grande police de la fenêtre de valeur n'ayant pas de minuscules (sauf m).
+    lofi_draw(fonction, valeur, bitmap, x, y, drapeau) : le dessin de la valeur dans la fenêtre de valeur
+    (0x4001d818 par 0x4000a66a ; en (0x60, 0x22)) : ce texte, dessiné comme l'OS y dessine le texte des paramètres
+    sans dessin (0x40071a04, grande police 0x401429ec, alignement 2, « %s »), à la place de la jauge de FINE."""
+    khz = ", ".join(str(lofi_khz(r)) for r in range(1, 65))
+    return f"""
+	.globl	lofi_step, lofi_fmt, lofi_draw
+lofi_step:
+	move.l	8(%sp), %d0
+	addi.l	#0x80, %d0
+	andi.l	#0xffffff00, %d0
+	move.l	12(%sp), %d1
+	bpl.s	1f
+	neg.l	%d1
+	addi.l	#0xff, %d1
+	andi.l	#0xffffff00, %d1
+	sub.l	%d1, %d0
+	bra.s	2f
+1:	addi.l	#0xff, %d1
+	andi.l	#0xffffff00, %d1
+	add.l	%d1, %d0
+2:	cmp.l	16(%sp), %d0
+	bge.s	3f
+	move.l	16(%sp), %d0
+3:	cmp.l	20(%sp), %d0
+	ble.s	4f
+	move.l	20(%sp), %d0
+4:	rts
+lofi_fmt:
+	move.l	8(%sp), %d0
+	addi.l	#0x80, %d0
+	asr.l	#8, %d0
+	bpl.s	1f
+	moveq	#0, %d0
+1:	moveq	#127, %d1
+	cmp.l	%d1, %d0
+	ble.s	2f
+	move.l	%d1, %d0
+2:	moveq	#64, %d1
+	sub.l	%d0, %d1
+	beq.s	5f
+	bmi.s	3f
+	lea	lofi_khz, %a0
+	mvz.b	-1(%a0,%d1.l), %d0
+	lea	lofi_s_k, %a0
+	bra.s	4f
+3:	moveq	#65, %d1
+	sub.l	%d1, %d0
+	moveq	#10, %d1
+	muls.l	%d1, %d0
+	moveq	#62, %d1
+	divs.l	%d1, %d0
+	moveq	#12, %d1
+	sub.l	%d0, %d1
+	move.l	%d1, %d0
+	lea	lofi_s_b, %a0
+4:	move.l	%d0, -(%sp)
+	move.l	%a0, -(%sp)
+	move.l	20(%sp), -(%sp)
+	jsr	0x40000e6e
+	lea	12(%sp), %sp
+	rts
+5:	pea	0x40124b67
+	move.l	16(%sp), -(%sp)
+	jsr	0x40000e6e
+	addq.l	#8, %sp
+	rts
+lofi_draw:
+	lea	-24(%sp), %sp
+	move.l	%sp, %d0
+	move.l	%d0, -(%sp)
+	move.l	36(%sp), -(%sp)
+	clr.l	-(%sp)
+	bsr.w	lofi_fmt
+	lea	12(%sp), %sp
+	pea	0x401429ec
+	pea	20(%sp)
+	jsr	0x40072260
+	addq.l	#8, %sp
+	move.l	%sp, %d0
+	move.l	%d0, -(%sp)
+	pea	0x40124b58
+	pea	2
+	move.l	56(%sp), -(%sp)
+	move.l	56(%sp), -(%sp)
+	pea	36(%sp)
+	move.l	60(%sp), -(%sp)
+	jsr	0x40071a04
+	lea	28(%sp), %sp
+	pea	16(%sp)
+	jsr	0x40072080
+	lea	28(%sp), %sp
+	rts
+lofi_s_k:	.asciz	"%dK"
+lofi_s_b:	.asciz	"%dB"
+lofi_khz:	.byte	{khz}
+	.balign	2
+"""
 
 
 def tg_records(a, ins, lab, n, firsts, first, top, tg):
@@ -918,7 +1076,8 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, ru
         if len(f) > 2 and f[1].startswith(".data") and int(f[2], 16):
             raise SystemExit(f"!! passerelle : données initialisées ({f[1]}), non recopiées dans la charge utile")
     src, o, e, b = tmp / "det.S", tmp / "det.o", tmp / "det.elf", tmp / "det.bin"
-    src.write_text(detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))], tg)
+    src.write_text(detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))], tg,
+                        lofi=lofi_index(machines))
                    + probe_asm(syms, prof_sites(tg) if PROFILE and tg and meter else None)
                    + (dispatch_tg_asm(syms, rnd_at, tg) if tg else dispatch_asm(syms, rnd_at)))
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(src), "-o", str(o)])
@@ -965,9 +1124,18 @@ def own_code(tmp, machines, rnd_at, lay, tg, own):
     return blobs, br["syms"], stubs, ssyms
 
 
+def lofi_index(machines):
+    """Rang de MACRO (lofi) parmi les machines ajoutées, pour detours_asm ; None sans elle (ACID peut la suivre)."""
+    lofi = [i for i, m in enumerate(machines) if m.get("lofi")]
+    if len(lofi) > 1:
+        raise SystemExit("!! une seule machine lo-fi")
+    return lofi[0] if lofi else None
+
+
 def detours_text(machines, syms, rnd_at, tg):
     """Texte des détours (à STUBS) pour ces machines ajoutées, comme compile_code."""
-    return (detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))], tg)
+    return (detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))], tg,
+                        lofi=lofi_index(machines))
             + probe_asm(syms) + (dispatch_tg_asm(syms, rnd_at, tg) if tg else dispatch_asm(syms, rnd_at)))
 
 
@@ -1064,6 +1232,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None, own=Non
     n = len(machines)
     if not 1 <= n <= MAX_EXTRA:
         raise SystemExit("!! nombre de moteurs")
+    set_rows(n)
     cur = tg["img"] if tg else img              # l'image telle que nos écritures la trouvent
     u32 = lambda va: struct.unpack_from(">I", cur, va - BASE)[0]
     check_sram_map(img, st_img)
@@ -1129,6 +1298,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None, own=Non
         e[0x10:0x14] = g7.be32(m["decay"] << 8)
         new += e
     ndesc = g7.NDESC + 5 * n
+    check_room(n, nm)
 
     writes = []
 

@@ -44,12 +44,15 @@ BASE = co.BASE
 END_LIMIT = co.END_LIMIT
 OUT = ROOT / "tweaks" / co.DEV / "REGISTRY.md"
 DETOURS = {0x4EB9: "jsr", 0x4EF9: "jmp", 0x61FF: "bsr.l", 0x60FF: "bra.l"}
-ENGINE = re.compile(r"^(syntakt-(?:tg-)?)(?:sd|cp|toy|bits|swarm|meter|profile)(?:-(?:sd|cp|toy|bits|swarm))*(-macro)?$")
+ENGINE = re.compile(r"^(syntakt-(?:tg-)?)(?:sd|cp|toy|bits|swarm|meter|profile)(?:-(?:sd|cp|toy|bits|swarm))*"
+                    r"((?:-macro)?(?:-acid)?)$")
 
 # Déclaré à la main, d'après les notes : ce que les écritures ne montrent pas (octets des structures sauvegardées).
 DECLARED = (
     ("arp", "octet +512 de chaque piste dans le pattern : sens de l'arpège et octaves (inutilisé par l'OS, sauvegardé "
             "avec le pattern)", "notes/32 §4"),
+    ("lfo-plus", "octets +88..+91 de l'enregistrement d'un son : LFO 2 empaqueté (format de DavidCaruso) ; mémoire "
+                 "0x4233f000..0x4233f49b, au-dessus du BSS de l'OS, remise à zéro au premier usage", "notes/56 §3"),
 )
 
 
@@ -59,8 +62,8 @@ def fmt(n):
 
 
 def family(tid):
-    """Les combinaisons de moteurs du Syntakt se résument à quatre familles : syntakt-*, syntakt-tg-* et, avec la
-    machine MACRO (notes/50), syntakt-*-macro, syntakt-tg-*-macro."""
+    """Les combinaisons de moteurs du Syntakt se résument à huit familles : syntakt-*, syntakt-tg-* et, avec la
+    machine MACRO (notes/50), ACID (notes/54 §11) ou les deux, syntakt-*-macro, -acid, -macro-acid et leurs -tg."""
     m = ENGINE.match(tid)
     return m[1] + "*" + (m[2] or "") if m else tid
 

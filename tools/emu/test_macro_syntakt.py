@@ -12,7 +12,8 @@ seule (25-macro.json, 32-macro-tg.json).
      Model-TG : boot_extra_hook), pile et registres intacts. La charge utile en mémoire est celle des moteurs seuls
      octet pour octet (sauf les tables, détours, données et descripteurs, qui comptent MACRO), plus MACRO.
   2. Interface : les vérifications de test_syntakt_machines.py (seul) et de test_model_tg_syntakt.py (avec
-     Model-TG), pour les moteurs et MACRO après eux.
+     Model-TG), pour les moteurs et MACRO après eux ; le lo-fi de MACRO sous FUNC + PITCH (lofi_ui.py, notes/55 §8),
+     aussi avec les autres mods.
   3. Son :
      - avant la chaîne d'ampli, MACRO est exactement Braids compilé pour l'ordinateur (test_macro.py) : quelques
        modèles et variantes ;
@@ -48,6 +49,7 @@ import build                        # noqa: E402
 import gen_macro as gm              # noqa: E402
 import gen_macro_syntakt as gms     # noqa: E402
 import gen_syntakt_engines as gs    # noqa: E402
+import lofi_ui                      # noqa: E402
 import mcengine as E                # noqa: E402
 import syntakt                      # noqa: E402
 import test_macro as tm             # noqa: E402
@@ -157,8 +159,9 @@ def icache_watch(uc, fw, dst):
     return faults, inval
 
 
-def boot(fw, ref, tg=None):
-    """Le crochet de démarrage, exécuté pour de vrai (comme test_macro.boot)."""
+def boot(fw, ref, tg=None, allowed=None):
+    """Le crochet de démarrage, exécuté pour de vrai (comme test_macro.boot). allowed : [(début, fin)] (décalages)
+    où la charge utile peut différer de celle des moteurs seuls (défaut : détours, données, descripteurs)."""
     uc = Uc(UC_ARCH_M68K, UC_MODE_BIG_ENDIAN)
     uc.ctl_set_cpu_model(mk.UC_CPU_M68K_ANY)
     uc.mem_map(0x40000000, 0x02400000)
@@ -215,7 +218,7 @@ def boot(fw, ref, tg=None):
     # descripteurs, rangées) ; les tables d'ondes de CHORD aux mêmes adresses, mêmes octets
     rref = ref.runtime
     diff = [k for k in range(0, len(rref), 4) if rref[k:k + 4] != got[k:k + 4]]
-    allowed = [(gs.LAYOUT["STUBS"], gs.LAYOUT["DESCN"] + 0x1730)]
+    allowed = allowed or [(gs.LAYOUT["STUBS"], gs.LAYOUT["DESCN"] + 0x1730)]
     off = [k for k in diff if not any(lo <= k < hi for lo, hi in allowed)]
     c0 = fw.chord_at - dst
     check(not off and rref[c0:c0 + 0x7878] == got[c0:c0 + 0x7878],
@@ -455,6 +458,10 @@ def run_set(stock, ctx, codes, tg_ctx, others, label_extra=""):
             tms.interface(tref, fw, codes + ["macro"], tgs)
         else:
             interface_alone(stock, fw, tw)
+    else:
+        print("interface")
+    lofi_ui.check_lofi(ref.img, fw.img, fw.payload, fw.index, f"MACRO avec {names}{label_extra}", check,
+                       end=fw.blob_end, base_end=ref.blob_end, base_payload=ref.payload, base="les moteurs sans MACRO")
     print("son")
     gs.set_base(fw.dest)
     if not others:
