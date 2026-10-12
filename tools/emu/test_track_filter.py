@@ -27,8 +27,17 @@ L'interface et la sauvegarde, fonction par fonction (image + BSS) :
   - les p-locks du pattern (sauvegarde 0x4005b95c, mise à jour 0x4005ba90, chargement 0x4005b766) : k 23..31
     reviennent sur eux-mêmes ; les autres fichiers identiques à l'OS sans le filtre.
 
+Avec Model-TG dans --with (model-tg, ou model-tg-st et ses ajouts), le banc prend la version du filtre faite pour lui
+(48-track-filter-tg, 48-track-filter-tg-st) et compare à Model-TG sans le filtre ; en plus (notes/47 §11) :
+  - le côté stéréo d'une piste du Sampler (sx_side, quand sx_on) filtré comme la piste, avec son propre état, sans
+    toucher à la piste ; au centre ou en mono, laissé tel quel ;
+  - Model-TG n'a plus de filtre : MACHINES tenu, seul DECAY devient Attack (enregistrements des machines) ;
+  - un son sauvegardé puis rechargé garde l'Attack de Model-TG et nos réglages, et la destination du LFO de l'un ou de
+    l'autre ; un son sauvé avec l'ancien filtre de Model-TG se charge sans lui (LFO qui le visait : None).
+
     python3 tools/emu/test_track_filter.py --cycles model-cycles_OS1.13.syx
         [--with 6ch-usbup,syntakt-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max,boot-anim --syntakt Syntakt_OS1.42.syx]
+        [--with model-tg,6ch-usbup,sample-preview]
 """
 import argparse
 import json
@@ -61,6 +70,8 @@ NAMES = ["KICK", "SNARE", "METAL", "PERC", "TONE", "CHORD"]
 SAVED = [mk.UC_M68K_REG_D2, mk.UC_M68K_REG_D3, mk.UC_M68K_REG_D4, mk.UC_M68K_REG_D5, mk.UC_M68K_REG_D6,
          mk.UC_M68K_REG_D7, mk.UC_M68K_REG_A4, mk.UC_M68K_REG_A5, mk.UC_M68K_REG_A6]
 FAIL = []
+TG = {}                             # avec Model-TG : fin de son bloc de code, ses symboles (main)
+MIX_GAIN = 0x40a78c08               # gains du mixeur par piste : Model-TG ne calcule pas une piste à moins de -90 dB
 
 
 def check(ok, msg):
@@ -77,8 +88,18 @@ def db(err, peak):
 # ---- le son : boucle des voix puis le site H3 ---------------------------------------------------------------------
 class Audio:
     def __init__(self, img, payload=None, count=False):
-        e = self.e = E.Engine(img, extra_code=CODE, payload=payload)
+        tg = TG and len(img) > E.IMAGE_LEN
+        code = CODE + ([(TG["blob"], TG["end"] - TG["blob"])] if tg else [])
+        e = self.e = E.Engine(img, extra_code=code, payload=payload)
         e.uc.mem_map(0x40800000, 0x01800000)          # BSS de l'OS
+        if tg:                                        # comme tools/emu/test_model_tg.py
+            e.uc.mem_map(0x42400000, 0x00c00000)
+            e.uc.mem_map(0x48000000, 0x08000000)
+            e.uc.mem_map(0xfc078000, 0x1000)
+            for t in range(6):
+                e.uc.mem_write(MIX_GAIN + 4 * t, struct.pack(">I", 0x20000000))
+                e.uc.mem_write(E.PARAMS + 0xe + t * 0x42 + 46, struct.pack(">h", 0))       # Attack
+        self.pre_h3 = None                            # appelé entre la boucle des voix et le site H3
         self.contract = True
         self.instr = 0
         if count:
@@ -97,6 +118,8 @@ class Audio:
     def block(self, trig=0):
         e, uc = self.e, self.e.uc
         e.block(trig)
+        if self.pre_h3:
+            self.pre_h3(self)
         uc.mem_write(CTX + 16, struct.pack(">I", trig))
         sp0 = E.STACK - 0x300
         uc.mem_write(sp0, struct.pack(">I", 0xdeadbeef))
@@ -170,8 +193,8 @@ class Model:
         self.mode, idx = (0, c) if d < 0 else (1, d)
         w = 1.0 if abs(d) >= 0x100 else abs(d) / 256
         i = min(max(idx + d6, 0), 0x3fff)
-        g = 4 * interp("TABLE_G", i, 8) / 2 ** 31
-        reff = (max(r, 0) * interp("TABLE_N", i, 8)) >> 31
+        g = 4 * interp("TABLE_GH" if self.mode else "TABLE_G", i, 8) / 2 ** 31
+        reff = (max(r, 0) * interp("TABLE_NH" if self.mode else "TABLE_N", i, 8)) >> 31
         k = 2 * interp("TABLE_K", reff, 9) / 2 ** 31
         a1 = 1 / (1 + g * (g + k))
         a2 = g * a1
@@ -274,7 +297,8 @@ def model_tests(base, img, payload):
                   f"({peak / 2 ** 31:.2f} FS){f', {int((~ok).sum())} blocs saturés exclus' if (~ok).any() else ''}")
         if not per_block:
             dry = [db(np.abs(y[:, t] - x[:, t]).max(), np.abs(x[:, t]).max()) for t in range(6)]
-            check(min(dry[:2]) > -15, f"{name} : KICK (LP 332 Hz) et SNARE (HP 332 Hz) nettement changés ; écart à la "
+            lp, hp = G.cutoff_hz(SETTINGS[0][0]), G.cutoff_hz(SETTINGS[1][0] - 0x4000, True)
+            check(min(dry[:2]) > -15, f"{name} : KICK (LP {lp:.0f} Hz) et SNARE (HP {hp:.0f} Hz) nettement changés ; écart à la "
                                       f"piste d'origine par piste : {', '.join(f'{v:.0f}' for v in dry)} dB")
 
 
@@ -311,16 +335,42 @@ def envelope_tests(img, payload):
               f"enveloppe (±{exact_d6:.0f}) ; relance au bloc 400 {'oui' if trigs[400] >> t & 1 else 'non (pas de note)'}")
 
 
+def fade_tests(img, payload):
+    """Près du centre, l'enveloppe n'arrive que peu à peu : quantité x (|d| / 0x800)², pleine à partir de L8 / H8."""
+    print("enveloppe près du centre : elle arrive sur les 8 premiers pas de chaque côté")
+    cuts = (0x4100, 0x4200, 0x4400, 0x4800, 0x3e00, 0x3a00)          # H1 H2 H4 H8 L2 L6
+    amts = (0x7f00, 0x7f00, 0x7f00, 0x7f00, 0x0000, 0x0000)          # vers l'aigu pour le HP, vers le grave pour le LP
+
+    def setup(a):
+        for t in range(6):
+            a.filt(t, c=cuts[t], r=0x4000, a=amts[t], d=0x6000)
+    _, env, _, _ = run(img, payload, 40, {1: 0x3f}, setup)
+    worst, rows = 0, []
+    for t in range(6):
+        f = min(abs(cuts[t] - 0x4000) / 0x800, 1.0) ** 2
+        got = np.array([v[1] for v in env[t]])
+        want = np.array([math.floor(math.floor((amts[t] - 0x4000) * v[0] / 2 ** 31) * f) for v in env[t]])
+        worst = max(worst, int(np.abs(got - want).max()))
+        rows.append(f"{'H' if cuts[t] > 0x4000 else 'L'}{abs(cuts[t] - 0x4000) >> 8} {f * 100:.1f} %")
+    check(worst <= 2, f"décalage de l'enveloppe = quantité x enveloppe x (|d| / 8 pas)², à {worst} pas d'index près, "
+                      f"sur 40 blocs : {', '.join(rows)}")
+
+
 def ringdown_tests(img, payload):
-    """Q 50 sur un signal plein échelle : les états saturent (EMAC en mode saturé) au lieu de se replier, et le filtre
-    retombe au silence à la vitesse de sa loi, sans oscillation entretenue (notes/47 §5.2)."""
-    print("résonance au maximum (Q 50) sur un signal plein échelle (après Volume + Dist 108), puis silence")
-    on, off, w = 120, 400, 50                                   # 80 ms de signal, 267 ms de silence, fenêtres de 33 ms
+    """Résonance au maximum sur un signal plein échelle : les états saturent (EMAC en mode saturé) au lieu de se
+    replier, et le filtre retombe au silence à la vitesse de sa loi, sans oscillation entretenue (notes/47 §5.2)."""
+    print("résonance au maximum sur un signal plein échelle (après Volume + Dist 108), puis silence")
+    on = 120                                                    # 80 ms de signal, puis le silence jusqu'au zéro
     rng = np.random.default_rng(1)
-    n = np.arange(on * 32)
-    for name, c, r in (("LP 947 Hz", 0x2800, 0x7f00), ("HP 2,7 kHz", 0x7000, 0x7f00)):
-        idx = c if c < 0x4000 else c - 0x4000
-        fc = G.cutoff_hz(idx)
+    for c, r in ((0x1900, 0x7f00), (0x7600, 0x7f00)):                # L39 et H54
+        idx, hp = (c, False) if c < 0x4000 else (c - 0x4000, True)
+        fc = G.cutoff_hz(idx, hp)
+        q = G.q_of(r * G.reso_scale(idx, hp))
+        name = f"{'HP' if hp else 'LP'} {fc:.0f} Hz"
+        law = 20 * math.log10(math.e) * math.pi * fc / q * 0.1     # dB par 100 ms
+        w = int(G.BLOCK_HZ * 1.2 / law) // 10 * 10                  # fenêtres : 12 dB de la loi
+        off = 12 * w                                                # 144 dB : jusqu'au zéro (état sous 2^-19)
+        n = np.arange(on * 32)
         sig = (np.sign(np.sin(2 * np.pi * 110 * n / G.FS) + 1e-9),           # carré 110 Hz
                np.sin(2 * np.pi * fc * n / G.FS),                             # sinus à la coupure
                rng.uniform(-1, 1, n.size),                                    # bruit blanc
@@ -343,19 +393,18 @@ def ringdown_tests(img, payload):
         a.e.block = synth
         y = np.stack([a.block(0x3f if b == 0 else 0) for b in range(on + off)])
         pk = np.abs(y[on:]).reshape(off // w, w, 6, 32).max(axis=(1, 3)) / 2 ** 31
-        law = 20 * math.log10(math.e) * math.pi * fc / G.q_of(r * G.reso_scale(idx)) * 0.1   # dB par 100 ms
         rates = []
         for t in range(6):
             nz = [k for k in range(len(pk)) if pk[k, t] > 1e-7]
             if len(nz) >= 3:
                 rates.append(20 * math.log10(pk[nz[0], t] / pk[nz[-1], t]) / ((nz[-1] - nz[0]) * w / G.BLOCK_HZ) * 0.1)
         mono = all(pk[k + 1, t] <= pk[k, t] * 1.05 for k in range(len(pk) - 1) for t in range(6))
-        check(a.contract and not a.e.unmapped, f"{name} : contrat de l'appel tenu à chaque bloc, crête "
+        check(a.contract and not a.e.unmapped, f"{name} : Q {q:.0f}, contrat de l'appel tenu à chaque bloc, crête "
                                                f"{np.abs(y).max() / 2 ** 31:.2f} FS (saturée, sans repli)")
         check(mono and not pk[-1].any() and all(abs(v / law - 1) < 0.03 for v in rates),
-              f"{name} : après le signal, les 6 pistes décroissent à {min(rates):.1f}..{max(rates):.1f} dB/100 ms "
-              f"(loi analogique {law:.1f}, à 3 % près : la transformée bilinéaire amortit un peu moins dans l'aigu) "
-              f"jusqu'à zéro exactement")
+              f"{name} : après le signal, les 6 pistes décroissent à {min(rates):.2f}..{max(rates):.2f} dB/100 ms "
+              f"(loi analogique {law:.2f}, à 3 % près : la transformée bilinéaire amortit un peu moins dans l'aigu) "
+              f"jusqu'à zéro exactement, en {off / G.BLOCK_HZ:.1f} s au plus")
         if c < 0x4000:
             jumps = int((np.abs(np.diff(y.transpose(1, 0, 2).reshape(6, -1), axis=1)) > 1.5 * 2 ** 31).sum())
             check(jumps == 0, f"{name} : aucun saut de plus de 1,5 FS d'une trame à l'autre (un repli de signe en ferait)")
@@ -379,15 +428,15 @@ def law_tests(img, payload):
             g = (b2 / 2 ** 31 / 2) / a1
             k = (1 / a1 - 1 - g * g) / g
             fc, q = math.atan(g) * G.FS / math.pi, 1 / k
-            idx = c if c < 0x4000 else c - 0x4000
-            fl = G.cutoff_hz(idx)
-            ql = G.q_of(r * G.reso_scale(idx))
+            idx, hp = (c, False) if c < 0x4000 else (c - 0x4000, True)
+            fl = G.cutoff_hz(idx, hp)
+            ql = G.q_of(r * G.reso_scale(idx, hp))
             cents = 1200 * math.log2(fc / fl)
             qerr = q / ql - 1
             worst_c, worst_q = max(worst_c, abs(cents)), max(worst_q, abs(qerr))
             rows.append((c, r, fc, fl, q, ql))
     check(worst_c < 5 and worst_q < 0.01,
-          f"{len(pts)} réglages, 5 Hz à 20 kHz des deux côtés, Q {G.Q_MIN:g} à {G.Q_MAX:g} : fréquence à {worst_c:.2f} cent près, "
+          f"{len(pts)} réglages, LP {G.LP_TOP / 1000:g} kHz à {G.LP_BOT:g} Hz, HP {G.HP_BOT:g} Hz à {G.HP_TOP / 1000:g} kHz, Q {G.Q_MIN:g} à {G.Q_MAX:g} : fréquence à {worst_c:.2f} cent près, "
           f"Q à {worst_q * 100:.2f} % près")
     for c, r, fc, fl, q, ql in rows:
         if (c, r) in ((0x0000, 0), (0x2000, 0x4000), (0x3f00, 0x7f00), (0x4100, 0x7f00), (0x6000, 0x2000),
@@ -436,7 +485,7 @@ class UI:
         uc = self.uc = Uc(UC_ARCH_M68K, UC_MODE_BIG_ENDIAN)
         uc.ctl_set_cpu_model(mk.UC_CPU_M68K_ANY)
         uc.mem_map(0x40000000, 0x02400000)
-        uc.mem_write(BASE, img[:E.IMAGE_LEN])
+        uc.mem_write(BASE, img)                       # avec Model-TG, son bloc de code s'exécute en place après l'OS
         if payload:
             dst, data = payload
             uc.mem_map(dst, (len(data) + 0xfffff) & ~0xfffff)
@@ -595,7 +644,7 @@ def table_tests(base, img, syms, payload, nm):
     check(diff_nr == {0x94: (0, 1), 0x95: (0, 2)}, f"NRPN 1:20 -> Filter Cutoff, 1:21 -> Filter Reso, rien d'autre "
                                                    f"({diff_nr})")
     # un son initialisé (nouveau projet, son effacé, changement de machine : 0x400618f2 -> 0x40061866) prend les
-    # défauts des descripteurs : Filter Cutoff au centre, pas à zéro (qui serait un passe-bas fermé à 5 Hz)
+    # défauts des descripteurs : Filter Cutoff au centre, pas à zéro (qui serait un passe-bas fermé à 30 Hz)
     same, ours = True, set()
     for m in range(nm):
         for u in (a, b):
@@ -750,6 +799,130 @@ def plock_tests(base, img):
     check(files[0] == files[1], "p-locks des paramètres d'origine : fichier identique octet pour octet")
 
 
+# ---- avec Model-TG (notes/47 §11) ------------------------------------------------------------------------------
+def side_tests(img, payload):
+    """Le côté stéréo d'une piste du Sampler : Model-TG le range dans sx_side (6 x 128 o) quand sx_on[t]. Le banc
+    remplace la boucle des voix par des signaux connus, pour la piste et pour son côté."""
+    print("Model-TG : le côté stéréo des pistes du Sampler (sx_side, quand sx_on) filtré comme la piste")
+    nb_, rng = 160, np.random.default_rng(11)
+    n = np.arange(nb_ * 32)
+    sq = lambda f: np.sign(np.sin(2 * np.pi * f * n / G.FS) + 1e-9)      # noqa: E731
+    mid = np.round(0.45 * 2 ** 31 * np.stack([sq(55 * (t + 1)) for t in range(6)])).astype(np.int64)
+    side = np.round(0.3 * 2 ** 31 * np.stack([rng.uniform(-1, 1, n.size) * (0.5 + 0.5 * np.sin(n / (300 + 40 * t)))
+                                              for t in range(6)])).astype(np.int64)
+    trigs = {0: 0x3f, 80: 0x3f}
+
+    def play(feed_mid, feed_side, stereo, settings=SETTINGS, novol=False):
+        a = Audio(img, payload)
+        voices(a)
+        if novol:                                   # Volume + Dist sauté : le filtre de la piste reçoit feed_mid tel quel,
+            def ret(uc, addr, size, ud):            # comme celui du côté (Model-TG ne passe pas les côtés par lui)
+                sp = uc.reg_read(mk.UC_M68K_REG_A7)
+                uc.reg_write(mk.UC_M68K_REG_PC, struct.unpack(">I", uc.mem_read(sp, 4))[0])
+                uc.reg_write(mk.UC_M68K_REG_A7, sp + 4)
+            a.e.uc.hook_add(UC_HOOK_CODE, ret, begin=0x40056f58, end=0x40056f58)
+        for t in range(6):
+            a.filt(t, *settings[t])
+        nb = [0]
+
+        def synth(trig=0, release_mask=0):
+            b = nb[0]
+            a.e.uc.mem_write(E.TRACK_BASE, feed_mid[:, b * 32:(b + 1) * 32].astype(">i4").tobytes())
+            if feed_side is not None:
+                a.e.uc.mem_write(TG["sx_side"], feed_side[:, b * 32:(b + 1) * 32].astype(">i4").tobytes())
+            a.e.uc.mem_write(TG["sx_on"], struct.pack(">7I", *[int(t in stereo(b)) for t in range(7)]))
+            nb[0] += 1
+        a.e.block = synth
+        ys, ss = [], []
+        for b in range(nb_):
+            ys.append(a.block(trigs.get(b, 0)))
+            ss.append(np.frombuffer(bytes(a.e.uc.mem_read(TG["sx_side"], 6 * 128)), dtype=">i4").reshape(6, 32)
+                      .astype(np.int64))
+        return np.stack(ys), np.stack(ss), a
+
+    st = {1, 4}
+    y_a, s_a, a = play(mid, side, lambda b: st)
+    y_b, _, b_ = play(mid, None, lambda b: set())
+    y_c, _, _ = play(side, None, lambda b: set(), novol=True)
+    check(a.contract and b_.contract and not a.e.unmapped and not b_.e.unmapped,
+          "contrat de l'appel tenu à chaque bloc, aucun accès hors mémoire")
+    check(np.array_equal(y_a, y_b), "les 6 pistes identiques bit pour bit avec ou sans côtés stéréo filtrés")
+    check(all(np.array_equal(s_a[:, t], y_c[:, t]) for t in st) and not np.array_equal(s_a[:, 1], side[:, :nb_ * 32]
+                                                                                        .reshape(6, nb_, 32)[1]),
+          "SNARE (HP résonant) et TONE (LP, enveloppe montante) stéréo : leur côté filtré bit pour bit comme une piste "
+          "nourrie du même signal sans Volume + Dist (mêmes coefficients, même départ, son propre état)")
+    raw = side.reshape(6, nb_, 32).transpose(1, 0, 2)
+    check(all(np.array_equal(s_a[:, t], raw[:, t]) for t in range(6) if t not in st),
+          "les pistes mono : leur côté laissé tel quel")
+    centre = [(0x4000,) + x[1:] for x in SETTINGS]
+    _, s_d, d_ = play(mid, side, lambda b: set(range(6)), centre)
+    check(np.array_equal(s_d, raw) and d_.contract, "filtre au centre (OFF) : les 6 côtés stéréo laissés tels quels")
+    win = lambda b: {1} if 40 <= b < 100 else set()                       # noqa: E731
+    _, s_e, e_ = play(mid, side, win)
+    outside = [b for b in range(nb_) if not 40 <= b < 100]
+    check(e_.contract and not e_.e.unmapped and np.array_equal(s_e[outside, 1], raw[outside, 1])
+          and not np.array_equal(s_e[40:100, 1], raw[40:100, 1]),
+          "SNARE stéréo des blocs 40 à 99 seulement : côté filtré pendant, laissé tel quel avant et après")
+
+
+def tg_descr_tests(stock, img, payload=None):
+    print("Model-TG : plus de filtre par piste ; MACHINES tenu, seul DECAY devient Attack")
+    s, u = UI(stock), UI(img, payload)         # avec les moteurs ou MACRO, leurs enregistrements (tg_records)
+    ok = True
+    for held in (0, 1):
+        u.uc.mem_write(TG["mod_held"], struct.pack(">I", held))
+        for m in range(6):
+            r0 = struct.unpack(">19I", s.uc.mem_read(s.call(0x4004df5c, m + 1), 76))
+            r1 = struct.unpack(">19I", u.uc.mem_read(u.call(0x4004df5c, m + 1), 76))
+            want = list(r0)
+            if held:
+                want[3] = 0x0d
+            ok &= list(r1) == want and u.sp_ok and not u.bad
+    check(ok, "enregistrements des 6 machines d'origine (0x4004df5c) : comme l'OS d'origine, et MACHINES tenu, DECAY "
+              "-> Attack (0x0d) ; SWEEP et CONTOUR restent ceux de la machine")
+    rows = [struct.unpack(">2i", u.uc.mem_read(G.DESC + 0x38 * i, 8)) for i in (0x0b, 0x0c)]
+    att = struct.unpack(">2i", u.uc.mem_read(G.DESC + 0x38 * 0x0d, 8))
+    check(rows == [(-1, -1), (-1, -1)] and att == (7, 23),
+          "paramètres 0x0b et 0x0c : les emplacements « Error » d'origine (plus de Filter / Resonance) ; 0x0d : Attack, "
+          "k 23")
+    site = bytes(u.uc.mem_read(0x4005a6d0, 6))
+    check(site == bytes(s.uc.mem_read(0x4005a6d0, 6)), "0x4005a6d0 d'origine : rien de caché au LFO du Sampler")
+
+
+def tg_save_tests(base, img):
+    print("Model-TG : son sauvegardé puis rechargé, son Attack et notre filtre ensemble")
+    rng = np.random.default_rng(23)
+    a, b = UI(base), UI(img)
+    for lfo, vel, what in ((23, 30, "LFO -> Attack (Model-TG), vélocité -> Filter Env"),
+                           (28, 23, "LFO -> Filter Cutoff, vélocité -> Attack (Model-TG)")):
+        snd = bytearray(sound_bytes(rng, lfo=lfo, vel=vel))
+        struct.pack_into(">H", snd, 20 + 2 * 23, 0x3a00)                 # Attack
+        _, reca, _, back_a = save_load(a, bytes(snd))
+        _, rec, _, back = save_load(b, bytes(snd))
+        check(rec[76:78] == b"\x3a\x00" and rec[82] == lfo and rec[83] == vel and reca[76:78] == rec[76:78]
+              and b.sp_ok and not b.bad,
+              f"{what} : sauvegarde, Attack à l'emplacement 24 (+76), les deux destinations à l'emplacement 27 "
+              f"(+82 = {rec[82]}, +83 = {rec[83]})")
+        check(kw(back, 23) == 0x3a00 and back[28] == lfo and struct.unpack_from(">I", back, 88)[0] == vel
+              and (kw(back, 28), kw(back, 29), kw(back, 30), kw(back, 31)) == (0x1234, 0x5600, 0x2a00, 0x7100),
+              f"{what} : rechargé, Attack, nos quatre réglages et les deux destinations reviennent")
+        same = [k for k in range(28) if k not in (0, 4) and kw(back, k) == kw(back_a, k)]
+        check(len(same) == 26, "rechargé : tous les autres paramètres comme Model-TG sans le filtre")
+    # un son sauvé par Model-TG avec son ancien filtre : Filter 40 (rangé inversé), Res 90, LFO -> Filter, vélocité ->
+    # Res (l'octet d'origine : LFO Speed, Multiplier)
+    _, rec, _, _ = save_load(a, sound_bytes(rng, lfo=13, vel=17))
+    rec = bytearray(rec)
+    struct.pack_into(">HH", rec, 78, 32512 - (40 << 8), 90 << 8)
+    rec[82], rec[83], rec[36], rec[94] = 24, 25, 1, 2
+    b.uc.mem_write(RECORD, bytes(rec))
+    b.call(0x4005aecc, SOUND, RECORD)
+    old = bytes(b.uc.mem_read(SOUND, 100))
+    check(kw(old, 24) == 0 and kw(old, 25) == 0 and old[28] == 0 and struct.unpack_from(">I", old, 88)[0] == 0
+          and (kw(old, 28), kw(old, 29), kw(old, 30), kw(old, 31)) == (0x4000, 0, 0x4000, 0x4000),
+          "son sauvé avec l'ancien filtre de Model-TG : chargé sans lui (k 24 / 25 à zéro), LFO et vélocité qui le "
+          "visaient sur None, notre filtre OFF")
+
+
 # ---- programme ----------------------------------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -758,12 +931,23 @@ def main():
                     help="autres tweaks appliqués aussi (ex. 6ch-usbup,syntakt-sd-cp-toy-bits-swarm,arp,trig-hold)")
     ap.add_argument("--syntakt", help="Syntakt_OS1.42.syx (ou 1.41), pour les moteurs du Syntakt")
     ap.add_argument("--quick", action="store_true", help="sans la mesure du coût (lente)")
+    ap.add_argument("--only-tg", action="store_true", help="avec Model-TG : seulement les contrôles qui lui sont propres")
     args = ap.parse_args()
     stock = T.main_os_from_syx(args.cycles)
     dev = TWEAK.parent
     by_id = {json.loads(f.read_text(encoding="utf-8"))["id"]: f for f in dev.glob("*.json") if f.name != "device.json"}
     others = [json.loads(by_id[i].read_text(encoding="utf-8")) for i in args.others.split(",") if i]
-    tw = json.loads(TWEAK.read_text(encoding="utf-8"))
+    path = TWEAK
+    mtg = next((t for t in others if t["id"] in ("model-tg", "model-tg-st")), None)
+    if mtg:                                     # la version faite pour Model-TG (notes/47 §11)
+        path = G.DEV / next(f for f, _, m in G.TG_OUTS if json.loads((G.DEV / m).read_text())["id"] == mtg["id"])
+        st = json.loads((G.DEV / "30-model-tg-st.json").read_text(encoding="utf-8"))["symbols"]
+        if any(st[k] != mtg["symbols"][k] for k in G.TG_DEFS.values()):
+            raise SystemExit("!! model-tg et model-tg-st n'ont plus les mêmes adresses")
+        TG.update(blob=0x401ab750, end=BASE + len(stock) + mtg["append"]["size"], mod_held=int(st["mod_held"], 16),
+                  sx_on=int(mtg["symbols"]["sx_on"], 16), sx_side=int(mtg["symbols"]["sx_side"], 16))
+        CODE.append((G.CAVES_TG[".tf_side"], 280))
+    tw = json.loads(path.read_text(encoding="utf-8"))
     syms = {k: int(v, 16) for k, v in tw["symbols"].items()}
     p0, _ = build.apply_writes(stock, others)
     pl0, _ = build.build_payload(others, stock, args.syntakt)
@@ -787,11 +971,23 @@ def main():
             at = tms.chord_at(t, ctx)
             rt[at - dest:at - dest + len(ctx["chord"])] = ctx["chord"]
         payload = (dest, bytes(rt))
-        nm = 6 + len(t["id"].split("-")) - 1 if st_img else 7       # syntakt-sd-…[-macro] ; macro : 7 machines
+    nm = 6 + bool(mtg)                          # machines : les 6 d'origine, le Sampler de Model-TG,
+    for t in others:                            # les moteurs du Syntakt, MACRO
+        if t["id"] in ("macro", "macro-tg"):
+            nm += 1
+        elif t["id"].startswith("syntakt-") and t.get("append"):
+            nm += len([x for x in t["id"].split("-")[1:] if x != "tg"])
     print(f"firmware : {', '.join(t['id'] for t in others + [tw])}")
+    if mtg and args.only_tg:
+        side_tests(img, payload)
+        tg_descr_tests(stock, img, payload)
+        tg_save_tests(base, img)
+        print("\nTOUT OK" if not FAIL else f"\n{len(FAIL)} ÉCHEC(S)")
+        return 1 if FAIL else 0
     centre_tests(base, img, payload)
     model_tests(base, img, payload)
     envelope_tests(img, payload)
+    fade_tests(img, payload)
     law_tests(img, payload)
     ringdown_tests(img, payload)
     if not args.quick:
@@ -801,6 +997,10 @@ def main():
     table_tests(base, img, syms, payload, nm)
     save_tests(base, img)
     plock_tests(base, img)
+    if mtg:
+        side_tests(img, payload)
+        tg_descr_tests(stock, img, payload)
+        tg_save_tests(base, img)
     print("\nTOUT OK" if not FAIL else f"\n{len(FAIL)} ÉCHEC(S)")
     return 1 if FAIL else 0
 

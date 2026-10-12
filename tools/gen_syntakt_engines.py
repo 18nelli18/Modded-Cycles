@@ -769,9 +769,10 @@ def tg_records(a, ins, lab, n, firsts, first, top, tg):
     """Avec Model-TG : enregistrements par machine (0x4004df5c : index machine + 1 ; 0x4004df76 : index machine).
     Les machines ajoutées ont les leurs (construits comme seuls, rec_build) ; les autres passent par les détours de
     Model-TG (descr_hook, descr_b_hook : le Sampler, et Attack sur le potard DECAY tant que la touche est tenue).
-    Comme lui, a0 et a1 sont gardés ; et comme lui, Attack, Filtre et Résonance prennent les potards DECAY, SWEEP et
-    CONTOUR des machines ajoutées tant que la touche est tenue (mod_held). Ses libellés propres au Sampler sont
-    écrits par apply_names dans la table d'origine (param_table) : recopiés ensuite dans DESCN, que l'OS lit."""
+    Comme lui, a0 et a1 sont gardés ; et comme lui, Attack prend le potard DECAY des machines ajoutées tant que la
+    touche est tenue (mod_held). Model-TG n'a plus de Filtre ni de Résonance par piste (notes/47 §11) : SWEEP et
+    CONTOUR restent ceux de la machine (le filtre par piste track-filter les prend, MACHINES tenu). Ses libellés
+    propres au Sampler sont écrits par apply_names dans la table d'origine (param_table) : recopiés ensuite dans DESCN, que l'OS lit."""
     for name, hook, base, oob in (("record_at", "descr_hook", first + 1, (top + 1, 1)),
                                   ("record_of", "descr_b_hook", first, (top, 0))):
         a.append(f"\t.globl\t{name}"); lab(name)
@@ -793,7 +794,6 @@ def tg_records(a, ins, lab, n, firsts, first, top, tg):
     ins("movea.l %d0, %a0"); ins(f"lea {REC_ATK:#x}, %a1"); ins("moveq #18, %d1")
     lab("1"); ins("move.l (%a0)+, (%a1)+"); ins("subq.l #1, %d1"); ins("bpl.s 1b")
     ins(f"lea {REC_ATK:#x}, %a0"); ins("moveq #0x0d, %d1"); ins("move.l %d1, 12(%a0)")      # Attack
-    ins("moveq #0x0c, %d1"); ins("move.l %d1, 24(%a0)"); ins("moveq #0x0b, %d1"); ins("move.l %d1, 28(%a0)")
     ins("move.l %a0, %d0")
     lab("tg_sync")
     ins(f"lea {tg['param_table'] + 44:#x}, %a0"); ins(f"lea {DESCN + 44:#x}, %a1"); ins(f"moveq #{g7.NDESC - 1}, %d1")
@@ -907,7 +907,7 @@ def dispatch_tg_asm(syms, rnd_at, tg):
     """Avec Model-TG : le même détour (0x400a7dfe), mais les machines d'origine et le Sampler (index < 7) passent
     par le dispatch de Model-TG (sampler_dispatch : ses voix muettes, sa mesure par piste, son Sampler), qui finit
     en 0x400a7e24 ; nos moteurs passent par la passerelle, puis par la fin de son étage d'amplitude (ah_noenv :
-    Attack, Filtre/Résonance, rééchantillonnage de la piste), et leur temps va sur sa page System (prof_trk).
+    Attack, rééchantillonnage de la piste), et leur temps va sur sa page System (prof_trk).
     Toutes les pistes finissent en 0x400a7e24, où tg_after appelle voice_done (régulateur) puis refait les trois
     instructions remplacées."""
     g = lambda n: f"{syms[n]:#x}"
@@ -1402,7 +1402,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None, own=Non
     ] + (own["parts"] + [{"dest": f"{own['boot2'][0]:#x}", "hex": blobs[".boot2"].hex()}] if own else [])
     reloc = [[f"{at_:#x}", old.hex(), new_.hex()] for at_, old, new_ in an["patches"]]
     # descripteurs : copie de ceux de TON MAIN OS, puis ce qui change (mots de 4 o) : le max d'Algorithm (choix de la
-    # machine) et, avec Model-TG, ses retouches (Attack, Filtre, Résonance sur toutes les machines)
+    # machine) et, avec Model-TG, ses retouches (Attack sur toutes les machines)
     lo_, hi_ = g7.DESC - BASE, g7.DESC - BASE + g7.NDESC * g7.DSTRIDE
     final, orig = bytearray(cur[lo_:hi_]), img[lo_:hi_]
     alg = g7.ALG_DESC * g7.DSTRIDE + 0x0c

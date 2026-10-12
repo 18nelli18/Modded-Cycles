@@ -7,7 +7,9 @@
  *   tf_save*, tf_load : les quatre réglages dans l'enregistrement du son (emplacements 30, 31 et 18), et les
  *               destinations du LFO et de la vélocité vers eux (emplacement 27, comme Model-TG) ;
  *   tf_ptab, tf_conv : leurs p-locks dans le pattern (l'OS d'origine les range sur d'autres paramètres) ;
- *   tf_boot   : recopie nos descripteurs dans la table active quand un tweak l'a déplacée (moteurs du Syntakt). */
+ *   tf_boot   : recopie nos descripteurs dans la table active quand un tweak l'a déplacée (moteurs du Syntakt).
+ * Avec Model-TG (WITH_TG, tweaks track-filter-tg*) : nos accroches de sauvegarde et de chargement passent par les
+ * siennes (TG_SAVE2, TG_SAVE1, TG_LOAD), qui refont le prologue ; sa suite revient dans la nôtre (notes/47 §11). */
 
 	.equ	KNOB_LOOKUP, 0x4001e814		/* vt[124] de ParameterPageView : descripteur sous un potard */
 	.equ	KEY_HELD, 0x4007faf4		/* (code) -> 1 si la touche est tenue */
@@ -129,16 +131,24 @@ tf_save2:
 	move.l	8(%sp), -(%sp)			/* (enregistrement, son) */
 	move.l	8(%sp), -(%sp)
 	pea	tf_save_post
+#ifdef WITH_TG
+	jmp	TG_SAVE2			/* l'accroche de Model-TG, vue comme l'appel d'origine ; sa suite revient ici */
+#else
 	lea	-12(%sp), %sp
 	movem.l	%a2-%a4, (%sp)
 	jmp	0x4005afa8
+#endif
 tf_save1:
 	move.l	8(%sp), -(%sp)
 	move.l	8(%sp), -(%sp)
 	pea	tf_save_post
+#ifdef WITH_TG
+	jmp	TG_SAVE1
+#else
 	lea	-12(%sp), %sp
 	movem.l	%a2-%a4, (%sp)
 	jmp	0x4005b05c
+#endif
 
 tf_save_post:
 	movea.l	(%sp), %a0			/* enregistrement */
@@ -158,11 +168,19 @@ tf_save_post:
 	move.w	%d1, 64(%a0)
 	mvz.b	28(%a1), %d0
 	bsr.s	tf_dst
+#ifdef WITH_TG
+	tst.l	%d0				/* Model-TG vient d'y ranger les siennes (Attack, k 23) : */
+	beq.s	1f				/* on n'écrit que les nôtres */
+#endif
 	move.b	%d0, 82(%a0)
-	move.l	88(%a1), %d0
+1:	move.l	88(%a1), %d0
 	bsr.s	tf_dst
+#ifdef WITH_TG
+	tst.l	%d0
+	beq.s	2f
+#endif
 	move.b	%d0, 83(%a0)
-	move.l	(%sp), %d0
+2:	move.l	(%sp), %d0
 	addq.l	#8, %sp
 	rts
 
@@ -184,9 +202,13 @@ tf_load:
 	move.l	8(%sp), -(%sp)			/* (son, enregistrement) */
 	move.l	8(%sp), -(%sp)
 	pea	tf_load_post
+#ifdef WITH_TG
+	jmp	TG_LOAD
+#else
 	lea	-12(%sp), %sp
 	movem.l	%a2-%a4, (%sp)
 	jmp	0x4005aed4
+#endif
 
 tf_load_post:
 	movea.l	(%sp), %a1			/* son */

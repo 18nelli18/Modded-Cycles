@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Génère tweaks/model-cycles_OS1.13/30-model-tg.json : Model-TG de TinyGregAudio (licence MIT), tel que son
 propre build l'exporte pour ce flasher (docs/PAYLOAD.md de Model-TG), depuis un clone de son dépôt au commit
-épinglé (MODEL_TG_COMMIT), avec une retouche de sa source (MC_PATCHES : les mutes tout de suite). Notes : notes/31.
+épinglé (MODEL_TG_COMMIT), avec des retouches de sa source (MC_PATCHES : les mutes tout de suite ; plus de Filtre ni
+de Résonance sur les machines d'origine, notes/47 §11). Notes : notes/31.
 
 Model-TG est un tweak « append » sans Syntakt : ses écritures sur le MAIN OS d'origine, et un seul morceau
 ajouté après l'image (l'espace vide jusqu'à 0x401ab750 et son code, qui s'exécute en place, dans des blocs du
@@ -118,6 +119,87 @@ vq_nop:
     bnes    vq_envf               | stems are taken before the mixer: never its gains
     movel   %d2,%sp@-             | the mixer's gains for this track
 '''
+# Dans les deux tweaks (demande de Maxime, 06/10/2026 ; notes/47 §11) : plus de Filtre ni de Résonance par piste sur
+# les machines d'origine (MACHINES tenu + SWEEP / CONTOUR, k 24 / 25). Le filtre par piste de ce dépôt (track-filter)
+# les remplace et s'installe maintenant avec Model-TG. Attack (MACHINES tenu + DECAY), le filtre de la machine Sampler et
+# celui des effets master restent. Retouches de même taille : le code mort (gflt_coef, gflt_run) reste en place et
+# aucune adresse de Model-TG ne bouge (les tweaks qui s'ajoutent à lui gardent les leurs). Les deux paramètres
+# (identifiants 0x0c et 0x0b) redeviennent les emplacements « Error » d'origine ; le saut de 0x4005a6d0 qui les cachait
+# du LFO du Sampler n'a plus lieu d'être. Un son sauvé avec l'ancien filtre se charge sans lui, et un LFO qui le visait
+# revient sur None (avant : LFO Speed / Multiplier, le décodage de l'octet d'origine).
+NOPS = lambda n: "".join("    nop\n" for _ in range(n))              # noqa: E731
+RM_PATCHES = (
+    ("src/model_tg.s",
+     "ap_done:\n    jsr     gflt_coef             | Filter/Res for the stock machines (jsr:\n"
+     "                                  | a bsr.w wrapped once the blob passed 32 KiB\n"
+     "                                  | between the two - samplerGI's boot crash)\n",
+     "ap_done:\n" + NOPS(3).replace("    nop\n", "    nop                           | Modded-Cycles: no stock-machine Filter/Res\n", 1),
+     "plus de coefficients pour le filtre des machines d'origine (jsr gflt_coef -> 3 nop)"),
+    ("src/model_tg.s",
+     "ah_mid:\n    movel   %d3,%sp@-             | then Filter/Res, stock machines only\n"
+     "    movel   %sp@(32),%sp@-        | outBuf again: the attack loop moved a2\n"
+     "    bsr     gflt_run\n    addql   #8,%sp\n",
+     "ah_mid:\n    bras    ah_nofl               | Modded-Cycles: no Filter/Res after the\n"
+     "    movel   %sp@(32),%sp@-        | amp stage (Attack and resampling stay)\n"
+     "    bsr     gflt_run\n    addql   #8,%sp\nah_nofl:\n",
+     "plus de filtre après l'étage d'amplitude (gflt_run sauté) ; Attack et rééchantillonnage restent"),
+    ("src/model_tg.s",
+     "    moveq   #0x0c,%d1\n    movel   %d1,%a0@(24)          | position 4: Filter, not Sweep\n"
+     "    moveq   #0x0b,%d1\n    movel   %d1,%a0@(28)          | position 5: Resonance, not Contour\n",
+     "    nop                           | Modded-Cycles: SWEEP and CONTOUR stay the\n"
+     "    nop                           | machine's (no Filter/Resonance)\n" + NOPS(4),
+     "MACHINES tenu : seul DECAY devient Attack, SWEEP et CONTOUR restent ceux de la machine"),
+    ("src/model_tg.s",
+     "    movel   %d0,%sp@              | storage pointer is in a0 now: its stack\n"
+     "    mvsw    %a1@(68),%d0          | slot holds d0 meanwhile. Filter is stored\n"
+     "    movel   #32512,%d1            | inverted, so the zero every older record\n"
+     "    subl    %d0,%d1               | has there reads back wide open\n"
+     "    movew   %d1,%a0@(78)\n"
+     "    movew   %a1@(70),%d1          | Resonance: zero is its default anyway\n"
+     "    movew   %d1,%a0@(80)\n",
+     "    movel   %d0,%sp@              | storage pointer is in a0 now: its stack\n"
+     "    bras    ss_nofl               | slot holds d0 meanwhile. Modded-Cycles:\n"
+     "    nop                           | no Filter/Resonance, slots 25/26 (+78/+80)\n"
+     + NOPS(10) + "ss_nofl:\n",
+     "sauvegarde du son : plus de Filtre ni de Résonance (emplacements 25 et 26 laissés à zéro)"),
+    ("src/model_tg.s",
+     "    movel   %d0,%sp@              | as in snd_save_post: d0 survives\n"
+     "    mvsw    %a0@(78),%d0\n    movel   #32512,%d1\n    subl    %d0,%d1\n    movew   %d1,%a1@(68)\n"
+     "    movew   %a0@(80),%d1\n    movew   %d1,%a1@(70)\n"
+     "    moveq   #0,%d0                | our destinations, if saved (snd_save_post)\n"
+     "    moveb   %a0@(82),%d0\n    bsr     dst_ours\n    tstl    %d0\n    beqs    lp_d2\n    lsll    #8,%d0\n",
+     "    movel   %d0,%sp@              | as in snd_save_post: d0 survives\n"
+     "    moveq   #0,%d0                | our destinations, if saved (snd_save_post)\n"
+     "    moveb   %a0@(82),%d0\n    bsr     dst_ours\n    tstl    %d0\n    beqs    lp_d2\n"
+     "    cmpil   #23,%d0               | Modded-Cycles: Filter/Res (24/25) are gone,\n"
+     "    beqs    lp_d1a                | an LFO aimed at them comes back as None\n"
+     "    moveq   #0,%d0\nlp_d1a:\n    lsll    #8,%d0\n",
+     "chargement du son : Filtre et Résonance des projets plus anciens ignorés ; un LFO qui les visait revient sur None"),
+    ("src/model_tg.s",
+     "    moveb   %a0@(83),%d0\n    bsr     dst_ours\n    tstl    %d0\n    beqs    lp_done\n    movel   %d0,%a1@(0x58)\n"
+     "lp_done:\n    movel   %a0@(84),%d1          | packed state; zero in older records, which\n"
+     "    movel   %d1,%a1@(72)          | then fall back to the name token\n"
+     "    movel   %sp@,%d0\n    addql   #8,%sp\n    rts\n",
+     "    moveb   %a0@(83),%d0\n    bsr     dst_ours\n    tstl    %d0\n    beqs    lp_done\n"
+     "    cmpil   #23,%d0               | the same for the second field\n    beqs    lp_d2a\n    moveq   #0,%d0\n"
+     "lp_d2a:\n    movel   %d0,%a1@(0x58)\n"
+     "lp_done:\n    movel   %a0@(84),%d1          | packed state; zero in older records, which\n"
+     "    movel   %d1,%a1@(72)          | then fall back to the name token\n"
+     "    movel   %sp@,%d0\n    addql   #8,%sp\n    rts\n"
+     "    nop                           | Modded-Cycles: same size as before\n    nop\n",
+     "idem pour le second champ de destination (la fonction garde sa taille)"),
+    ("build.py",
+     "for _id,_k,_dflt,_sort,_ln,_sn in ((0x0c,24,32512,36,'str_gfilter','str_gflt'),\n"
+     "                                   (0x0b,25,0,    37,'str_greso','str_gres')):\n",
+     "for _id,_k,_dflt,_sort,_ln,_sn in ():  # Modded-Cycles: no Filter/Resonance, 0x0c/0x0b stay stock\n",
+     "build : les identifiants 0x0c et 0x0b restent les « Error » d'origine"),
+    ("build.py",
+     "    bytes(d[0x4005a6d0-BASE:0x4005a6d0-BASE+12]).hex()\njmp(0x4005a6d0, sym['sampler_com_gate'])\n",
+     "    bytes(d[0x4005a6d0-BASE:0x4005a6d0-BASE+12]).hex()\n",
+     "build : 0x4005a6d0 reste d'origine (sampler_com_gate n'a plus rien à cacher au LFO du Sampler)"),
+    ("build.py", "assert len(_ids)==9, f\"expected 9 distinct", "assert len(_ids)==7, f\"expected 7 distinct",
+     "build : 7 identifiants de page distincts au lieu de 9"),
+)
 MC_PATCHES = (
     ("src/model_tg.s", "mq_toggle:\n    movel   %sp@(8),%d0\n    cmpil   #MAX_TRK,%d0\n",
      "mq_toggle:\n    jmp     0x40013904            | Modded-Cycles: the stock toggle, at once\n    nop\n    nop\n",
@@ -126,7 +208,7 @@ MC_PATCHES = (
      "écoute d'un pas : aussi séquenceur en pause (un Stop MIDI le met en pause ; PAGE tournait la page), notes/34"),
     ("src/model_tg.s", VQ_OLD, VQ_NEW,
      "audio USB multipiste : une piste mutée ou au volume 0 n'est plus coupée net sur sa piste USB (voice_quiet)"),
-)
+) + RM_PATCHES
 # --- version combinée (notes/31 §4) ---
 # Une seule : sa zone d'échantillons (0x4a800000..0x4e800000, vue sans cache des 64 Mo 0x42800000..0x46800000)
 # s'arrête 1 Mo plus bas, pour nos moteurs du Syntakt (gen_syntakt_engines.PAY_TG = 0x46700000). Tout ce qu'il y
@@ -146,6 +228,10 @@ ST_SYMBOLS = ("blob_start", "reserved_end", "REGION_END", "param_table", "boot_e
 # Symboles dont l'écoute des samples a besoin (tools/gen_sample_preview.py, notes/46), dans les deux tweaks : son code
 # appelle ces fonctions et lit ces variables de Model-TG, aux mêmes adresses dans les deux builds.
 PV_SYMBOLS = ("tok_of", "sound_obj", "ensure_loaded", "slot_hash", "pd_mode", "ld_busy", "pad_load_hook")
+# Symboles dont le filtre par piste a besoin avec Model-TG (tools/gen_track_filter.py, notes/47 §11), dans les deux
+# tweaks : ses accroches de sauvegarde et de chargement d'un son, que les nôtres chaînent, et le côté stéréo des pistes
+# du Sampler (sx_on : la piste est stéréo dans ce bloc ; sx_side : 6 x 128 o, rangés comme les pistes).
+TF_SYMBOLS = ("snd_save2_hook", "snd_save1_hook", "snd_load_hook", "sx_on", "sx_side")
 
 
 def export(cycles, repo, patches=()):
@@ -219,14 +305,15 @@ def adapt_st(tw, stock, syms):
             "syntakt-tg-…, qui s'ajoute après lui et chaîne ses détours.",
         ],
         "conflicts": others,
-        "symbols": {n: f"{syms[n]:#x}" for n in ST_SYMBOLS + tuple(n for n in PV_SYMBOLS if n not in ST_SYMBOLS)},
+        "symbols": {n: f"{syms[n]:#x}" for n in ST_SYMBOLS + tuple(n for n in PV_SYMBOLS + TF_SYMBOLS
+                                                                   if n not in ST_SYMBOLS)},
     })
     return out
 
 
 def adapt(tw, stock, syms):
     """Format et métadonnées de ce dépôt ; vérifie que le tweak redonne l'image exportée."""
-    missing = [n for n in PV_SYMBOLS if n not in syms]
+    missing = [n for n in PV_SYMBOLS + TF_SYMBOLS if n not in syms]
     if missing:
         raise SystemExit(f"!! symboles absents du build de Model-TG : {missing}")
     patched, _ = build.apply_writes(stock, [tw])
@@ -254,11 +341,12 @@ def adapt(tw, stock, syms):
         "description": [
             f"Model-TG de TinyGregAudio, https://github.com/{MODEL_TG_REPO} (licence MIT, texte dans",
             "LICENSE-Model-TG), commit " + MODEL_TG_COMMIT[:7] + ", construit par son propre build pour ce flasher, depuis",
-            "une copie de sa source avec cette retouche (tools/gen_model_tg.py, MC_PATCHES) :",
+            "une copie de sa source avec ces retouches (tools/gen_model_tg.py, MC_PATCHES) :",
             *[f"  - {f} : {why}" for f, _, _, why in MC_PATCHES],
-            "Machine Sampler (7e machine), rééchantillonnage, retrig et effets master, Attack / Filtre / Résonance sur",
-            "les machines d'origine, slide trigs (v1.1.0), Scale Lock, envoi d'échantillons par Elektron Transfer, page",
-            "System, et moins de charge processeur. Contient déjà les tweaks de drumkilla (mute verrouillé modifié,",
+            "Machine Sampler (7e machine), rééchantillonnage, retrig et effets master, Attack sur les machines",
+            "d'origine (leur Filtre et leur Résonance sont retirés : le filtre par piste track-filter les remplace),",
+            "slide trigs (v1.1.0), Scale Lock, envoi d'échantillons par Elektron Transfer, page System, et moins de",
+            "charge processeur. Contient déjà les tweaks de drumkilla (mute verrouillé modifié,",
             "écoute d'un pas, défilement des noms). Avec les moteurs du Syntakt, le flasher prend model-tg-st (notes/31).",
             "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup,",
             "et la division des pistes par 2 plus courte de la boucle des voix (tools/voice_loop.py, notes/36).",
@@ -273,7 +361,7 @@ def adapt(tw, stock, syms):
         "conflicts": others,
         "writes": writes,
         "append": tw["append"],
-        "symbols": {n: f"{syms[n]:#x}" for n in PV_SYMBOLS},
+        "symbols": {n: f"{syms[n]:#x}" for n in PV_SYMBOLS + TF_SYMBOLS},
     }
 
 

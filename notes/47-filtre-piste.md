@@ -8,12 +8,22 @@ celui-ci remplace. Tweak `48-track-filter.json`, généré par `tools/gen_track_
 `track_filter.ld`), preuve `tools/emu/test_track_filter.py`. Étude préalable (OS Cycles 1.13, Samples 1.13,
 Syntakt 1.42, Model-TG v1.1.0) dans `/mnt/project-files/filtre-piste/faisabilite.md`. Adresses : VA de l'OS 1.13.
 
+**Crédit.** Idée créditée à **Kevin Shallvari** ([Kevin-Shallvari](https://github.com/Kevin-Shallvari)), à la
+demande de Maxime (11/10/2026) : sa machine Acid (PR #65 de ce dépôt, 08/10/2026, non fusionnée) a le même filtre
+DJ sur un seul potard (passe-bas d'un côté, rien au centre, passe-haut de l'autre), avec une résonance qui peut
+auto-osciller. La demande sur Discord vient de Tom (05/10/2026), Simone y cite le filtre du Model:Samples. Aucun code
+de Kevin n'est repris ici : le filtre de ce mod est écrit pour ce projet (§5).
+
 ## En bref
 
-**Testé sur la machine (11/10/2026)**, après une correction de l'affichage et de la résonance (§10).
+Testé sur la machine (11/10/2026) dans sa deuxième version (§10). **De nouveau expérimental** : résonance bien plus
+forte en haut de course et enveloppe qui arrive en douceur près du centre, après l'essai de Maxime avec Model-TG
+(§12). **Quatrième version, expérimentale** : la course du potard suit le filtre master FX de Model-TG, après un
+message du Discord relayé par Maxime (12/10/2026, §13).
 
-- **MACHINES tenu + SWEEP = Filter Cutoff** : L64 … L1, **OFF**, H1 … H63. Passe-bas à gauche (5 Hz à 20 kHz),
-  passe-haut à droite (5 Hz à 19 kHz), la loi du potard du Model:Samples. **+ CONTOUR = Filter Reso** (Q 0,5 à 50),
+- **MACHINES tenu + SWEEP = Filter Cutoff** : L64 … L1, **OFF**, H1 … H63. Passe-bas à gauche (20 kHz à 30 Hz),
+  passe-haut à droite (20 Hz à 10 kHz) : les plages du filtre master FX de Model-TG, avec des pas fins près du centre
+  (§13). **+ CONTOUR = Filter Reso** (Q 0,5 à 1 000, sifflante en haut de course),
   **+ COLOR = Filter Env** (quantité d'une enveloppe, bipolaire), **+ SHAPE = Env Decay** (5 ms à 10 s). L'enveloppe
   repart à chaque note de la piste.
 - Quatre **vrais paramètres de toutes les machines** (k 28 à 31, descripteurs 1 à 4 de l'OS, des emplacements
@@ -24,8 +34,9 @@ Syntakt 1.42, Model-TG v1.1.0) dans `/mnt/project-files/filtre-piste/faisabilite
 - **Au centre, la piste n'est pas touchée, bit pour bit** (prouvé sur le vrai code, avec les autres mods).
 - Corrige au passage la sauvegarde des **p-locks des paramètres k ≥ 23** dans le pattern : l'OS d'origine les rangeait
   sur LFO Speed, LFO Multiplier… ou les perdait (§4.3).
-- Place : 3 001 o de code, tables et état dans **quinze masques de sprites 35×35** libérés (§6). Coût : §9.
-- **Incompatible avec Model-TG** pour l'instant (même geste, mêmes accroches de sauvegarde) : étape 2 (§11).
+- Place : 3 333 o de code, tables et état dans **seize masques de sprites 35×35** libérés (§6). Coût : §9.
+- **Avec Model-TG** (étape 2, §11) : le filtre de piste de Model-TG est retiré, ce filtre prend sa place (versions
+  `48-track-filter-tg*.json`), côté stéréo du Sampler compris. Expérimental avec Model-TG.
 
 ## 1. Sur la machine
 
@@ -37,8 +48,8 @@ Syntakt 1.42, Model-TG v1.1.0) dans `/mnt/project-files/filtre-piste/faisabilite
 | MACHINES tenu + SHAPE | Env Decay (FDEC) | 0 … 127 | 64 |
 
 C'est le geste de l'Attack de Model-TG, et la place des potards CUTOFF / RESONANCE du Model:Samples. MACHINES appuyé
-seul ouvre toujours le menu des machines. Un pas de potard (256 en 8.8) vaut environ 2 demi-tons de fréquence (64 pas
-de chaque côté). Entre OFF et le pas voisin (L1, H1), la sortie passe de l'entrée au filtre (w = |C − centre| / 256,
+seul ouvre toujours le menu des machines. Un pas de potard vaut 256 (8.8), 64 pas de chaque côté : moins d'un
+demi-ton près du centre, jusqu'à 2,6 demi-tons au bout (§13). Entre OFF et le pas voisin (L1, H1), la sortie passe de l'entrée au filtre (w = |C − centre| / 256,
 pour les valeurs fines du lissage des paramètres, d'un NRPN ou d'un LFO ; elles s'affichent `L0` / `H0`) : le
 passage par le centre ne claque pas.
 
@@ -163,19 +174,27 @@ Model-TG, qui reste avec le projet. `[HYP]` à confirmer sur la machine (§10).
 
 ### 5.1 Lois
 
-- Fréquence : index i = C pour le passe-bas (C < 0x4000), i = C − 0x4000 pour le passe-haut ;
-  fc = 5 Hz × 4 400^(i / 16 384), plafonnée à 20 kHz (L1 : 19,3 kHz ; H63 : 19,3 kHz). Celle du Model:Samples.
-- Résonance : Q = 0,5 × 100^(R′ / 32 512), de 0,5 à 50, avec R′ = R × réduction(i) : rien sous 10 Hz (pas de bosse
-  subsonique, un défaut du Model:Samples), tout à 30 Hz, moins vers 20 kHz (1 − (fc / 24 000)^2,5). La bosse à fc
-  (gain Q) monte d'environ 10 dB par quart de tour : +4 dB à 32, +14 dB à 64, +24 dB à 96, +34 dB à 127. La
-  première version suivait le Model:Samples (Q 0,501 × (22,36 / 0,501)^(R′ / 32 512), +11 dB à 64, +27 dB à 127) :
-  trop discrète à l'essai (§10.1).
+- Fréquence (quatrième version, §13) : index i = C pour le passe-bas (C < 0x4000), i = C − 0x4000 pour le
+  passe-haut. Passe-bas : fc = 20 000 × (30 / 20 000)^(u^1,5), u = (0x3f00 − i) / 0x3f00 (L1 20 kHz, L64 30 Hz) ;
+  passe-haut : fc = 20 × 500^(u^1,5), u = (i − 0x100) / 0x3e00 (H1 20 Hz, H63 10 kHz) ; u borné à 0 entre le centre
+  et le premier pas. Les trois premières versions suivaient le Model:Samples : 5 Hz × 4 400^(i / 16 384) des deux
+  côtés.
+- Résonance (troisième version, §12) : Q = 0,5 × 2 000^((R′ / 32 512)^1,5), de 0,5 à 1 000, avec R′ = R ×
+  réduction(i). Réduction : rien sous 10 Hz (pas de bosse subsonique, un défaut du Model:Samples), tout à 30 Hz,
+  moins vers 20 kHz (1 − (fc / 24 000)^2,5), et bornée pour qu'un coup ne sonne pas plus de 2 s (60 dB en
+  ln(1 000) Q / (π fc)) : Q au plus 0,9 fc, soit 37 à 100 Hz, 155 à 300 Hz, 1 000 au-dessus de 1,1 kHz. À 1 kHz :
+  Q 1,3 à 32, 7 à 64, 67 à 96, 240 à 112, 870 à 127 ; un coup y sonne 16 ms à 64, 0,15 s à 96, 0,5 s à 112, 1,9 s à
+  127. La première version suivait le Model:Samples (Q 0,501 × (22,36 / 0,501)^(R′ / 32 512)), la deuxième allait de
+  0,5 à 50 (0,5 × 100^(R′ / 32 512)) : trop discrètes à l'essai (§10.1, §12).
 - Enveloppe : e = 1 à la note (bit t de a3+16), puis e × exp(−1 / (1 500 τ)) par bloc, τ = 5 ms × 2 000^(D / 32 512) ;
-  arrêtée sous 2⁻¹⁵. Décalage d'index = (A − 0x4000) × e, ajouté à i et borné au côté choisi (0..0x3fff) : la
-  quantité monte ou baisse la fréquence, sans changer de côté.
+  arrêtée sous 2⁻¹⁵. Décalage d'index = (A − 0x4000) × e × f², ajouté à i et borné au côté choisi (0..0x3fff) : la
+  quantité monte ou baisse la fréquence, sans changer de côté. f = |C − 0x4000| / 0x800, borné à 1 : l'enveloppe
+  arrive sur les 8 premiers pas de chaque côté (1,6 % à H1, 6 % à H2, 25 % à H4, entière à L8 / H8), pour qu'en
+  quittant OFF avec une enveloppe réglée le filtre ne saute pas d'un coup (§12).
 
-Quatre tables de 65 points (Q31) calculées par le générateur et interpolées linéairement : G = tan(π fc / 48 000) / 4
-(i = 256 j), réduction de la résonance (i = 256 j), K = 1 / (2Q) (R′ = 512 j), décroissance par bloc (D = 512 j).
+Six tables de 65 points (Q31) calculées par le générateur et interpolées linéairement : G = tan(π fc / 48 000) / 4 et
+la réduction de la résonance, une de chaque pour chaque côté (i = 256 j), K = 1 / (2Q) (R′ = 512 j), décroissance par
+bloc (D = 512 j).
 
 ### 5.2 Le SVF en espace d'état
 
@@ -192,14 +211,14 @@ LP : gx = 1 − w, hl = w / 2, hb = 0          HP = x − k BP − LP : gx = 1, 
 18 instructions par trame (11 `mac`/`msac`, 3 `movclr`). Les coefficients sont recalculés quand (C, R, décalage de
 l'enveloppe) change, une fois par bloc au plus : 1 / (1 + g (g + k)) par normalisation et trois pas de Newton. Au
 premier bloc filtré, le passe-bas part du niveau de l'entrée (pas de clic), le passe-haut du repos ; un bloc nul avec
-un état retombé (< 2⁻¹⁹) ne coûte presque rien. Saturation par l'EMAC (MACSR 0xa0) : à Q 50 une sinusoïde à fc
-monte de 34 dB, sans repli du signe (le défaut du Model:Samples). Les états (Q31) saturent aussi : sur un son fort à
+un état retombé (< 2⁻¹⁹) ne coûte presque rien. Saturation par l'EMAC (MACSR 0xa0) : à Q 870 une sinusoïde à fc
+monterait de 59 dB, elle sature sans repli du signe (le défaut du Model:Samples). Les états (Q31) saturent aussi : sur un son fort à
 forte résonance, le filtre écrête (il distord) au lieu de suivre le modèle linéaire, puis retombe au silence à la
 vitesse de sa loi, sans oscillation entretenue (§8).
 
 Au centre exact (C = 0x4000), la piste reste telle quelle et l'état est oublié ; l'enveloppe continue de tourner.
 
-## 6. Place : quinze masques 35×35 `[FAIT]`
+## 6. Place : seize masques 35×35 `[FAIT]`
 
 Dix-neuf sprites 35×35 ont des masques identiques de 280 o (35 colonnes opaques, `ff ff ff ff e0 00 00 00` par ligne).
 On garde celui de `0x4014a660` ; `tools/sprites.py` les déclare (`SHARED_35`) et chaque masque utilisé est redirigé
@@ -208,19 +227,21 @@ On garde celui de `0x4014a660` ; `tools/sprites.py` les déclare (`SHARED_35`) e
 | Section | Masque | Octets | Contenu |
 |---|---|---|---|
 | `.tf_post` | `0x4014ab5c` | 152 | accroche H3, boucle des 6 pistes |
-| `.tf_track` | `0x4014b85c` | 148 | enveloppe, clé des coefficients |
+| `.tf_track` | `0x4014b85c` | 178 | enveloppe, son arrivée près du centre, clé des coefficients |
 | `.tf_kern` | `0x4014d74c` | 164 | départ, repos, boucle des 32 trames |
-| `.tf_coef1` | `0x401542f8` | 162 | index, G, résonance, K ; `tf_interp` |
+| `.tf_coef1` | `0x401542f8` | 206 | index, tables du côté, G, résonance, K ; `tf_interp`, `tf_interpw` (tables en mots) |
 | `.tf_coef2` | `0x401548b4` | 206 | réciproque, b1 b2 c2 a3, gx hl hb |
-| `.tf_gtab` … `.tf_dtab` | `0x4015b8f8`, `0x4015f50c`, `0x401601fc`, `0x40160864` | 4 × 260 | tables |
+| `.tf_gtab` … `.tf_dtab` | `0x4015b8f8`, `0x4015f50c`, `0x401601fc`, `0x40160864` | 4 × 260 | tables (`.tf_ntab` : les réductions de la résonance des deux côtés, 2 × 65 mots) |
 | `.tf_kst` | `0x40160b6c` | 216 | état et coefficients, 6 × 36 o |
 | `.tf_cst` | `0x40160e6c` | 256 | commande, 6 × 20 o, `tf_trig`, `tf_ptab` |
 | `.tf_knob` | `0x401625bc` | 136 | `tf_knob`, `tf_objs` |
-| `.tf_fmt` | `0x40163fb8` | 149 | `tf_fmt_cut`, chaînes |
+| `.tf_fmt` | `0x40163fb8` | 147 | `tf_fmt_cut`, chaînes |
 | `.tf_save` | `0x4016616c` | 164 | `tf_save1/2`, `tf_save_post` |
 | `.tf_load` | `0x40166760` | 208 | `tf_load`, `tf_conv`, `tf_boot` |
+| `.tf_gtabh` | `0x4016aa28` | 260 | G du passe-haut (quatrième version, §13) |
 
-Encore libres : `0x40167c50`, `0x401696a0`, `0x401699a8`, `0x4016aa28`. L'état (`.data`) est écrit dans l'image avec
+Plus aucun masque 35×35 libre : `0x40167c50` est `tf_side` avec Model-TG (§11), `0x401696a0` et `0x401699a8` sont à la
+seconde version de Chord Keys (PR #87, §13.2). L'état (`.data`) est écrit dans l'image avec
 ses valeurs de départ : rien n'efface ces zones au démarrage.
 
 ## 7. Le tweak
@@ -248,11 +269,12 @@ TONE CHORD, trois séries de notes aux blocs 1, 100 et 180) :
 |---|---|
 | Centre (Filter Cutoff OFF), Volume + Dist 64 et 108, enveloppe et résonance réglées | les 6 pistes identiques bit pour bit à l'OS d'origine sur 240 blocs |
 | Contrat de l'appel, à chaque bloc | d2-d7/a2-a6 gardés, `0x80001858` et a2 laissés sur la pile comme l'appel d'origine, MACSR rendu à 0x20, accumulateurs à zéro, aucun accès hors de la mémoire émulée |
-| Six réglages fixes (LP 332 Hz, HP 332 Hz, LP près de 20 kHz, HP 41 Hz enveloppe −32, LP 116 Hz résonance 112 enveloppe +63, HP 5 Hz) | sortie comparée à un modèle flottant (SVF en double, mêmes lois) : écart max −111 à −167 dB sous la crête ; KICK et SNARE nettement changés |
+| Six réglages fixes (LP 2,1 kHz, HP 180 Hz, LP près de 20 kHz, HP 42 Hz enveloppe −32, LP 843 Hz résonance 112 enveloppe +63, HP 20 Hz ; v3 : LP 332 Hz, HP 332 Hz, …, LP 116 Hz, HP 5 Hz) | sortie comparée à un modèle flottant (SVF en double, mêmes lois) : écart max −111 à −167 dB sous la crête ; KICK et SNARE nettement changés |
 | Balayage à chaque bloc, de LP à HP en passant par le centre | écart au modèle −110 à −120 dB sous la crête |
 | Enveloppe, Decay 0 à 127 | relancée à chaque note (bit t de a3+16), τ de 5 ms à 10 s, écart à la loi < 10⁻⁷, décalage = quantité × enveloppe exactement |
-| Résonance au maximum (Q 50) : signal plein échelle (carré, sinus à fc, bruit, impulsions, balayage, échelon) après Volume + Dist 108, puis silence ; LP 947 Hz et HP 2,7 kHz | contrat tenu, sortie saturée à 1 FS sans repli (LP : aucun saut de plus de 1,5 FS d'une trame à l'autre) ; après le signal, décroissance régulière à la vitesse de la loi (51,7 et 147,4 dB par 100 ms, à 3 % près) jusqu'à zéro exactement |
-| Lois | 170 réglages, 5 Hz à 20 kHz des deux côtés, Q 0,5 à 50 : fréquence à 0,01 cent près, Q à 0,08 % près (tirés des coefficients calculés par le code) |
+| Résonance au maximum (Q 800 et 953 depuis le §12) : signal plein échelle (carré, sinus à fc, bruit, impulsions, balayage, échelon) après Volume + Dist 108, puis silence ; LP 947 Hz et HP 2,7 kHz | contrat tenu, sortie saturée à 1 FS sans repli (LP : aucun saut de plus de 1,5 FS d'une trame à l'autre) ; après le signal, décroissance régulière à la vitesse de la loi (3,23 et 7,60 dB par 100 ms, loi 3,23 et 7,74, à 3 % près) jusqu'à zéro exactement, en 4,4 et 1,8 s au plus |
+| Lois | 170 réglages, passe-bas 20 kHz à 30 Hz, passe-haut 20 Hz à 10 kHz (5 Hz à 20 kHz jusqu'à la v3), Q 0,5 à 1 000 : fréquence à 0,01 cent près, Q à 0,39 % près (tirés des coefficients calculés par le code) |
+| Enveloppe près du centre (§12) | H1, H2, H4, H8, L2, L6, Filter Env au maximum, 40 blocs : décalage = quantité × enveloppe × (\|d\| / 0x800)², au pas d'index près |
 | Potards | MACHINES tenu : SWEEP, CONTOUR, COLOR, SHAPE → paramètres 1 à 4 ; les 8 autres potards et tout sans MACHINES : la recherche d'origine, mêmes arguments |
 | Affichage (vrai constructeur, vrai `sprintf`) | les 128 pas : `L64` … `L1`, `OFF` au centre, `H1` … `H63`, trois caractères au plus ; Reso et Decay 0..127 ; Env −64..OFF..+63 ; l'image « Error » n'est plus dessinée |
 | Tables construites au démarrage | descripteurs 1 à 4, k 28..31 sur les 6 machines, CC 74/71 sur les pistes 1 à 6, NRPN 1:20 et 1:21, rien d'autre ; un son neuf : Cutoff OFF, Reso 0, Env OFF, Decay 64, le reste comme sans le filtre |
@@ -269,16 +291,17 @@ Instructions exécutées dans le code du filtre, par bloc, 6 pistes ; part d'un 
 | Cas | Instructions par bloc | Part d'un bloc |
 |---|---|---|
 | 6 pistes au centre (OFF) | 350 | 0,32 % |
-| 1 piste filtrée, 5 au centre | 993 | 0,92 % |
-| 6 pistes filtrées, réglages fixes | 4 208 | 3,9 % |
-| 6 pistes filtrées, enveloppe en cours | 4 949 (max 5 114) | 4,7 % |
-| 6 pistes filtrées, réglages changés à chaque bloc | 5 197 (max 5 220) | 4,8 % |
-| 6 pistes filtrées, notes finies (Decay 10) | 3 983 | 3,7 % |
+| 1 piste filtrée, 5 au centre | 998 | 0,92 % |
+| 6 pistes filtrées, réglages fixes | 4 247 | 3,9 % |
+| 6 pistes filtrées, enveloppe en cours | 5 023 (max 5 198) | 4,8 % |
+| 6 pistes filtrées, réglages changés à chaque bloc | 5 293 (max 5 319) | 4,9 % |
+| 6 pistes filtrées, notes finies (Decay 10) | 4 022 | 3,7 % |
 
-Une piste filtrée coûte 643 instructions de plus qu'au centre (0,6 % d'un bloc), jusqu'à 812 (0,75 %) quand les
-coefficients sont recalculés à chaque bloc (enveloppe, LFO, potard qui tourne). Pour comparer, la charge lourde
-mesurée en note 36 (moteurs Syntakt, Model-TG, régulateur) prend environ 44 % d'un bloc : six pistes filtrées et
-modulées y ajoutent moins de 5 %, borne vérifiée par l'essai.
+Une piste filtrée coûte 648 instructions de plus qu'au centre (0,6 % d'un bloc), jusqu'à 828 (0,77 %) quand les
+coefficients sont recalculés à chaque bloc (enveloppe, LFO, potard qui tourne ; 10 de plus qu'en troisième version : les
+tables du côté et la lecture en mots, §13.2). Pour comparer, la charge lourde mesurée en note 36 (moteurs Syntakt,
+Model-TG, régulateur) prend environ 44 % d'un bloc : six pistes filtrées et modulées y ajoutent moins de 5 %, borne
+vérifiée par l'essai.
 
 ## 10. Sur la machine
 
@@ -301,9 +324,9 @@ Maxime, builds `-v2` : « ça marche nickel sur la machine ». Le mod passe de �
 
 - Le geste : MACHINES tenu + SWEEP / CONTOUR / COLOR / SHAPE, l'affichage (`L32`, `OFF`, `H20`…), le menu des
   machines qui s'ouvre toujours sur un appui seul.
-- Le son : passe-bas, passe-haut, résonance (Q 50 près de fc : +34 dB ; sur un son fort, au-dessus de 100, la piste
-  sature : à écouter, sinon une marge interne ou un Q plus bas), l'enveloppe à chaque note, le passage
-  par le centre sans clic, un LFO qui balaie de LP à HP.
+- Le son : passe-bas, passe-haut, résonance (jusqu'à Q 1 000 depuis le §12 : un son fort pile sur fc sature le
+  filtre, à écouter ; sinon une marge interne ou un Q plus bas), l'enveloppe à chaque note, le passage par le centre
+  sans clic, un LFO qui balaie de LP à HP.
 - La sauvegarde : son (kit), projet rechargé, réserve de sons, copier-coller d'un son, p-locks rechargés ; le
   récepteur des changements (§4.4) ne range pas k ≥ 23 : si un chemin de l'OS recharge un son depuis cette copie
   plutôt que par la sauvegarde complète, nos réglages y reviendraient à leur dernière sauvegarde. `[HYP]`
@@ -314,10 +337,236 @@ Maxime, builds `-v2` : « ça marche nickel sur la machine ». Le mod passe de �
 - Un son relu sur l'OS d'origine (ou un autre firmware) perd son filtre, sans autre effet ; ses p-locks k ≥ 23 y
   tombent sur k 0, inutilisé.
 
-## 11. Suite : Model-TG (étape 2)
+## 11. Avec Model-TG (étape 2, 11/10/2026)
 
-Après le test de Maxime : retirer le filtre par piste de Model-TG (13 retouches de sa source dans
-`tools/gen_model_tg.py`, déjà construites et vérifiées en émulation pendant l'étude ; Attack, le filtre du Sampler et
-le filtre des effets master restent), puis faire tourner ce filtre avec Model-TG : côté stéréo du Sampler
-(`sx_on`, `sx_side`), destinations 23..31 dans l'emplacement 27 partagé, accroches de sauvegarde chaînées. La
-correction des p-locks (§4.3) répare alors aussi ceux de l'Attack de Model-TG.
+Maxime, après le second essai (11/10/2026) : « fusionne et attaque l'étape 2 ». Le filtre de piste de Model-TG
+s'en va, celui-ci prend sa place et les deux se cochent ensemble.
+
+### 11.1 Model-TG sans son filtre de piste `[FAIT]`
+
+`RM_PATCHES` de `tools/gen_model_tg.py`, ajoutés à `MC_PATCHES` (les deux builds, `30-model-tg.json` et
+`30-model-tg-st.json`) : des retouches **à taille constante** de sa source. Chaque symbole global garde son adresse
+(comparé symbole par symbole aux builds d'avant ; seules deux étiquettes locales de `snd_load_post` bougent), donc
+les tweaks posés sur Model-TG (`33-sample-preview*`, `32-macro-tg`, `31-syntakt-tg-*`) et leurs octets « old »
+restent valables.
+
+| Endroit | Avant | Après |
+|---|---|---|
+| `ap_done` (fin du paramètre Attack, par bloc) | `jsr gflt_coef` : coefficients du filtre de piste | trois `nop` |
+| `ah_mid` (le filtre dans le rendu de la piste) | `movel %d3,%sp@-` … appel du filtre | `bras ah_nofl`, le filtre n'est plus appelé |
+| `dh_pass` (descripteurs tenus avec MACHINES) | SWEEP → 0x0c (Filtre), CONTOUR → 0x0b (Résonance) | six `nop` : SWEEP et CONTOUR gardent la machine ; seul DECAY → 0x0d (Attack) |
+| `snd_save_post` | Filtre et Résonance rangés avec le son | `bras ss_nofl` par-dessus, onze `nop` |
+| `snd_load_post` | Filtre et Résonance relus | non relus ; une destination de LFO ou de vélocité autre qu'Attack (23) est remise à 0 |
+| `build.py` (de Model-TG) | lignes 0x0c et 0x0b de la table des paramètres, `jmp` en `0x4005a6d0` (`sampler_com_gate`) | rien : les lignes « Error » et l'instruction d'origine restent |
+
+Restent : Attack (k 23, DECAY avec MACHINES), le filtre du Sampler (ses propres paramètres de page) et le filtre des
+effets master (page de retrig). Les mots k 24 et 25 des pistes ne servent plus (32 512 et 0). Les moteurs du Syntakt
+avec Model-TG (`gen_syntakt_engines.py`, `tg_records`) et MACRO avec Model-TG (`gen_macro.py`, qui reprend
+`tg_records`) ne posent plus que l'Attack dans leurs descripteurs tenus : les 31 `31-syntakt-tg-*`, les
+31 `31-syntakt-tg-*-macro`, `32-macro-tg` et les firmwares de diagnostic `91`/`92` sont régénérés. Un projet fait avec
+l'ancien filtre s'ouvre sans lui : la piste joue sans filtre.
+
+`TF_SYMBOLS` : Model-TG exporte aussi `snd_save2_hook`, `snd_save1_hook`, `snd_load_hook`, `sx_on` et `sx_side`
+(mêmes adresses dans les deux builds : `0x401b3c0e`, `0x401b3c28`, `0x401b3ca6`, `0x401b9b00`, `0x401b9f10`).
+
+### 11.2 Le filtre par-dessus Model-TG `[FAIT]`
+
+Deux tweaks de plus, aux écritures identiques, l'un sur `model-tg` (`48-track-filter-tg.json`), l'autre sur
+`model-tg-st` (`48-track-filter-tg-st.json`, avec les moteurs du Syntakt ou MACRO) ; `48-track-filter.json` restait
+octet pour octet le même, testé (jusqu'au §12), et déclare toujours `conflicts` avec Model-TG. Le flasher prend la bonne version
+(clés « with » `model-tg`, `model-tg+syntakt`, `model-tg+macro`) ; la carte se dit expérimentale quand une version
+avec Model-TG s'applique (`with_exp`).
+
+- **Sauvegarde chaînée.** Model-TG accroche les trois mêmes sites que nous (`0x4005aecc` chargement,
+  `0x4005afa0` et `0x4005b054` sauvegarde v2 et v1), par un `jmp` vers ses propres accroches. Notre version TG
+  (`-DWITH_TG`, `tf_ui.S`) remplace ces `jmp` (les octets « old » sont ceux de Model-TG) : elle empile les arguments
+  et l'adresse de notre suite, puis saute dans l'accroche de Model-TG, qui rejoue le prologue d'origine. Sa suite
+  tourne d'abord (Attack), puis la nôtre (nos 7 octets, emplacements 30, 31, 18). L'emplacement 27 (+82/+83 :
+  destinations du LFO et de la vélocité) est partagé : notre suite n'y écrit que si la destination est l'une des
+  nôtres (28..31), sinon celle d'Attack reste.
+- **Sampler stéréo.** Model-TG calcule le côté droit d'un sample stéréo à part (`sx_side`, 6 × 128 o, drapeau
+  `sx_on` par piste) et le mélange après notre accroche. `tf_side` (220 o, dans le masque de réserve `0x40167c50`,
+  le seizième) filtre ce côté avec les mêmes coefficients que la piste et son propre état (`tf_sst`, 16 o par piste :
+  ic1, ic2, actif). À la première utilisation, l'état démarre comme celui de la piste ; quand le côté s'arrête ou que
+  le filtre est à OFF, l'état est oublié.
+- **LFO 2, 3, 4** (`lfo-plus`, PR #79, notes/56 §3.6) range ses réglages dans les mêmes paramètres k 28..31 et
+  octets +88..+91 du son. Il déclare `conflicts` avec `track-filter` ; les deux versions TG le déclarent envers
+  `lfo-plus` (vers un tweak absent du dépôt, `tools/check_overlaps.py` le signale seulement).
+- **Place** : 3 239 o dans seize masques 35×35 (le seizième, `0x40167c50`, était une réserve, §6) ; 42 écritures.
+- **Slide trigs** : ceux de Model-TG font glisser les mots 1 à 25 (`SLD_ELIG`) ; nos paramètres (k 28..31) sautent à
+  la valeur du slide trig, sans glisser.
+
+### 11.3 Preuve
+
+`tools/emu/test_track_filter.py --with model-tg,…` choisit la version TG, charge le bloc de Model-TG et fait tous
+les essais du §8 sur la boucle des voix de Model-TG (gains du mixeur et Attack à 0 fournis par le banc), plus :
+
+| Essai | Résultat |
+|---|---|
+| Côté stéréo du Sampler (`sx_on`, `sx_side`) | à OFF, les six côtés laissés tels quels ; filtrés (SNARE HP résonant, TONE LP enveloppe montante), bit pour bit comme une piste nourrie du même signal (mêmes coefficients, même départ, son propre état) ; pistes mono et blocs sans `sx_on` : côté intact ; les 6 pistes identiques avec ou sans côtés filtrés |
+| Descripteurs tenus (vraie fonction `0x4004df5c`, MACHINES tenu) | lignes 0x0b et 0x0c à « Error » (-1), DECAY → Attack (0x0d) ; `0x4005a6d0` d'origine |
+| Sauvegarde et chargement chaînés | LFO → Attack et vélocité → Filter Env, puis LFO → Filter Cutoff et vélocité → Attack : Attack (emplacement 24), nos réglages et les deux destinations (emplacement 27) reviennent, tout le reste comme Model-TG seul ; un son sauvé avec l'ancien filtre de Model-TG se charge sans lui (k 24 / 25 à zéro, destinations qui le visaient à zéro), notre filtre OFF |
+| Model-TG lui-même | `test_model_tg.py`, `test_model_tg_syntakt.py` (descripteurs : seulement Attack), `test_sample_preview.py`, `test_macro_syntakt.py --only tg` |
+
+Tous les essais du §8 donnent les mêmes résultats sur la boucle des voix de Model-TG : au centre, les 6 pistes
+identiques bit pour bit à Model-TG sans le filtre (Volume + Dist 64 et 108) ; écarts au modèle flottant, lois,
+résonance au maximum, potards, affichage, tables, sauvegarde, p-locks comme seul ; coût : 416 instructions par bloc
+pour 6 pistes au centre, 1 068 pour une piste filtrée, 5 409 au pire (6 pistes modulées, 5,0 % d'un bloc, juste sous
+la borne de 5 % de l'essai ; 5 348 en troisième version). Faits avec
+`model-tg,6ch-usbup,sample-preview,arp,trig-hold,tempo-max,boot-anim,level-pan-values,trigless-dim,multiline-browser`
+(complet), puis avec `model-tg-st` et `syntakt-tg-sd-cp-toy-bits-swarm` (complet), `macro-tg` et
+`syntakt-tg-sd-cp-toy-bits-swarm-macro` (`--quick`), chacun avec `sample-preview-st` et les mêmes autres mods. Chord
+Keys et les trois tweaks de drumkilla n'en sont pas : le premier exclut Model-TG, les autres y sont déjà.
+
+Model-TG lui-même, après le retrait : `test_model_tg.py` (machines d'origine identiques, note mutée), 
+`test_model_tg_syntakt.py --engines sd,cp,toy,bits,swarm` (enregistrements tenus : seulement l'Attack),
+`test_sample_preview.py --with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold`,
+`test_macro_syntakt.py --only tg` : TOUT OK. Les générateurs (`gen_model_tg`, `gen_syntakt_engines --tg` combinaison par
+combinaison et `--meter`, `gen_macro`, `gen_macro_syntakt`, `gen_sample_preview`, `gen_track_filter`) sont à jour.
+
+**À essayer sur la machine** (expérimental avec Model-TG) : le geste MACHINES tenu (DECAY = Attack, SWEEP / CONTOUR
+/ COLOR / SHAPE = notre filtre), le filtre sur une piste Sampler en stéréo, la sauvegarde d'un son avec Attack et
+filtre, un projet fait avec l'ancien filtre de Model-TG.
+
+## 12. Troisième essai, avec Model-TG : progressivité et résonance (11/10/2026)
+
+**Source : Maxime, dans le fil du projet (11/10/2026, 16:26 UTC), build de l'étape 2 avec Model-TG** : « il est très
+peu progressif. Genre on observe une grosse différence de volume et de filtre entre le OFF et H2 par exemple. Et la
+résonance est vraiment trop subtile, on peut à peine la faire siffler. »
+
+### 12.1 OFF → H2 : mesuré en émulation `[FAIT]`
+
+Sur la vraie boucle des voix (6 pistes, Volume + Dist 64 et 127, Reso 0 et 127, enveloppe au centre), écart de
+niveau RMS avec OFF : H1 −0,12 dB, H2 −0,14 dB, H4 −0,23 dB au plus (le KICK, que H4 = 8,6 Hz entame à peine) ;
+L1 +1,0 dB, L2 +2,8 dB sur METAL à Reso 127 (la bosse vers 19 kHz), moins de 0,3 dB ailleurs. Sans enveloppe, le
+filtre ne saute donc pas entre OFF et H2 : H1 à H8 sont des passe-haut de 5,7 à 14 Hz.
+
+`[HYP]` Ce qui saute : **l'enveloppe** (COLOR avec MACHINES). Son décalage s'ajoutait entier dès H1 : avec Filter
+Env à +32, chaque note mettait le passe-haut à environ 330 Hz à H1 comme à H20, d'où un grand écart de volume et de
+filtre entre OFF et H1/H2. Un LFO ou la vélocité vers FREQ feraient le même effet ; à demander à Maxime.
+
+**Changement** : le décalage de l'enveloppe est multiplié par f² (f = |C − 0x4000| / 0x800, borné à 1) : elle arrive
+sur les 8 premiers pas de chaque côté (1,6 % à H1, 6 % à H2, 25 % à H4, 56 % à H6, entière à L8 / H8), sans changer
+la loi de la fréquence ni le fondu du premier pas. `tf_track` (178 o, masque `0x4014b85c`) fait quatre ou cinq
+instructions de plus par piste filtrée et par bloc, onze sur les 8 premiers pas. Ce qui est perdu : une enveloppe entière depuis H1 à H7 (5,7 à 12 Hz, inaudibles) ou depuis L1 à L7
+(19 à 9 kHz) ; une enveloppe qui part du tout en bas ou du tout en haut se règle à H8 ou L8.
+
+### 12.2 La résonance `[FAIT]`
+
+À Q 50 (deuxième version), la bosse fait +34 dB, mais un coup ne sonne que 0,1 s à 1 kHz (60 dB en
+ln(1 000) Q / (π fc)) : sur des sons de batterie, la résonance « pique » sans siffler. Pour siffler, il faut que la
+résonance sonne longtemps après le coup, donc un Q de plusieurs centaines. Nouvelle loi (§5.1) : Q = 0,5 ×
+2 000^((R′ / 32 512)^1,5), de 0,5 à 1 000, la course en puissance 1,5 pour garder la première moitié douce, et une
+borne qui limite la durée d'un coup à 2 s (Q ≤ 0,9 fc) pour que le grave ne bourdonne pas des dizaines de secondes.
+
+| Reso | Q à 100 Hz | Q à 300 Hz | Q à 1 kHz | Q à 3 kHz | Q à 8 kHz | un coup sonne (1 kHz) |
+|---|---|---|---|---|---|---|
+| 32 | 0,9 | 1,0 | 1,3 | 1,3 | 1,2 | 3 ms |
+| 64 | 2,3 | 3,9 | 7,2 | 7,4 | 5,9 | 16 ms |
+| 96 | 8,5 | 22 | 67 | 71 | 46 | 0,15 s |
+| 112 | 18 | 58 | 241 | 257 | 149 | 0,53 s |
+| 127 | 37 | 155 | 868 | 939 | 487 | 1,9 s |
+
+Pas d'auto-oscillation : le filtre est après le Volume + Dist de la piste, une résonance qui s'entretient sifflerait
+sans fin entre les notes. Au maximum, un son fort pile sur fc ferait +59 dB : les états saturent (EMAC en mode saturé),
+le filtre écrête comme un filtre analogique poussé, sans repli du signe, puis retombe au silence à la vitesse de sa
+loi (§12.3). Ce que Kevin Shallvari fait dans sa machine Acid (PR #65 : échelle 4 pôles qui auto-oscille, bornée par
+un coude) reste possible ici si cela ne siffle toujours pas assez, au prix d'un étage non linéaire.
+
+### 12.3 Preuve `[FAIT]`
+
+- `fade_tests` (nouveau) : H1, H2, H4, H8, L2, L6 avec Filter Env au maximum, sur 40 blocs : décalage = quantité ×
+  enveloppe × f², au pas d'index près.
+- `law_tests` : 170 réglages, Q 0,5 à 1 000 : fréquence à 0,01 cent près, Q à 0,39 % près.
+- `ringdown_tests` : résonance au maximum sur un signal plein échelle, la fenêtre d'observation suit la loi (jusqu'à
+  144 dB de décroissance) : LP 947 Hz (Q 800) et HP 2,7 kHz (Q 953), sortie saturée à 1 FS sans repli, puis
+  décroissance à 3,23 et 7,60 dB par 100 ms (loi 3,23 et 7,74) jusqu'à zéro exactement, en 4,4 et 1,8 s au plus :
+  pas d'oscillation entretenue, même à Q 950.
+- Après la fusion de main (11/10/2026), sur la branche fusionnée : essai complet seul et avec
+  `model-tg,6ch-usbup,sample-preview,arp,trig-hold,tempo-max,boot-anim,level-pan-values,trigless-dim,multiline-browser`
+  (coût remesuré, §9 et §11.3) ; `--quick` avec `model-tg-st` et `syntakt-tg-sd-cp-toy-bits-swarm`, puis
+  `…-macro` (avec `sample-preview-st`, `6ch-usbup`, `arp`, `trig-hold`, `tempo-max`, `boot-anim`), et sans Model-TG
+  avec `syntakt-sd-cp-toy-bits-swarm-macro` (avec `6ch-usbup`, `arp`, `trig-hold`, `tempo-max`, `boot-anim`,
+  `latching-mute`, `trig-preview`, `browser-scroll`) : TOUT OK. Test du flasher sur les vrais OS : les 818
+  combinaisons de REF_MAINOS construites, TOUT OK.
+
+## 13. Quatrième version : la course du filtre master FX de Model-TG (12/10/2026)
+
+**Source : Maxime, dans le fil du projet (12/10/2026, 17:48 UTC).** Sur la troisième version : « ça marche sur ma
+machine nickel ». Puis il relaie un message du Discord sur la 1.45 (en anglais) : la fréquence est beaucoup trop
+grossière au potard, le passe-bas se ferme bien trop vite ; entre OFF et le passe-bas, une baisse de volume par
+marches ; la résonance ne sonne pas comme celle d'un filtre résonant ; un filtre LP/HP par piste serait utile s'il
+sonnait et se jouait comme le LP/HP du master FX de Model-TG. Maxime : « Je suis d'accord avec lui. La résonance du
+filtre de Model-TG s'entend au moins. »
+
+### 13.1 Le filtre master FX de Model-TG `[FAIT]`
+
+Lu dans sa source (`src/model_tg.s` au commit épinglé `70b39dd`, `mfx_knob`, `mfx_coef`, tables `mfx_glp` et
+`mfx_ghp`) :
+
+- le même filtre que le nôtre : SVF 2 pôles trapézoïdal (Zavalishin) sur l'EMAC, fractionnaire et saturé ;
+- un potard relatif de −127 à +127 : **127 crans de chaque côté**, centre OFF ;
+- passe-bas de 20 kHz à 30 Hz, passe-haut de 20 Hz à 10 kHz, en exponentielle : **0,074 octave par cran** ;
+- résonance k = 2 − 1,9 R / 127, soit Q de 0,5 à 10 (Q 1 à la moitié, 2 à 100, 4,9 à 120) ;
+- le signal au quart de l'échelle dans le filtre (12 dB de marge pour la résonance) ; coefficients recalculés quand
+  un potard bouge, sans lissage.
+
+Un paramètre de l'OS n'a que 128 pas de potard en tout : nous n'avons que **64 pas de chaque côté**. Les trois
+premières versions mettaient sur ces 64 pas la loi du Model:Samples (5 Hz à 20 kHz, 12 octaves, **0,19 octave par
+pas**) : L32 tombait à 330 Hz, L48 à 41 Hz, et les 8 derniers pas du passe-bas comme les 8 premiers du passe-haut
+étaient sous 15 Hz, inaudibles.
+
+### 13.2 La nouvelle course `[FAIT]`
+
+Les plages de Model-TG, et une course en u^1,5 dans le logarithme de la fréquence (§5.1) : les **16 premiers pas** de
+chaque côté du centre font ce que font les **16 premiers crans** de Model-TG ; plus loin, les pas sont plus larges
+(le dernier du passe-bas fait 0,22 octave). En fréquence de coupure (Hz) :
+
+| Pas / cran | Model-TG LP | v3 LP | v4 LP | Model-TG HP | v3 HP | v4 HP |
+|---|---|---|---|---|---|---|
+| 1 | 20 000 | 19 297 | 20 000 | 20 | 5,7 | 20 |
+| 2 | 18 994 | 16 926 | 19 742 | 21 | 6,5 | 20,3 |
+| 4 | 17 131 | 13 023 | 18 693 | 23 | 8,4 | 21,4 |
+| 8 | 13 936 | 7 709 | 15 720 | 28 | 14 | 25 |
+| 16 | 9 223 | 2 701 | 9 396 | 42 | 41 | 42 |
+| 24 | 6 103 | 947 | 4 766 | 62 | 116 | 81 |
+| 32 | 4 039 | 332 | 2 120 | 92 | 332 | 180 |
+| 48 | 1 769 | 41 | 303 | 203 | 2 701 | 1 209 |
+| 63 / 64 | 816 / 775 | 6 / 5 | 35 / 30 | 426 | 19 297 | 10 000 |
+
+La « baisse de volume par marches » en quittant OFF vient de la taille des pas : de L1 à L8, l'ancienne course
+descendait de 19,3 à 7,7 kHz (plus d'une octave), la nouvelle de 20 à 15,7 kHz. Entre OFF et L1 / H1, rien ne
+change : le filtre entre en fondu (w, §1) à la fréquence du premier pas, et l'OS fait glisser les potards (mots
+lissés, §2). L'enveloppe arrive toujours sur les 8 premiers pas (§12).
+
+Code : deux tables de plus, G et réduction de la résonance du passe-haut. Les deux masques de réserve `0x401696a0` et
+`0x401699a8` sont pris par la seconde version de Chord Keys (PR #87, poussée avant celle-ci) : G du passe-haut (65
+longs) va dans le dernier masque libre, `0x4016aa28`, et les deux tables de réduction de la résonance passent en mots
+Q15 (2 × 130 o) dans le masque de l'ancienne (`tf_interpw` les lit, +22 o ; à 2^-15 près, Q change de moins de
+0,02 %). `tf_coef` prend les tables du côté (+22 o). 3 333 o dans seize masques seul, 3 543 o dans dix-sept avec
+Model-TG.
+
+**Ce qui ne change pas.** La résonance de la troisième version (§12), déjà bien plus forte que celle de Model-TG à
+chaque position du potard (Q 7 à la moitié contre 1, 870 en haut contre 10), et l'enveloppe. `[HYP]` Le message du
+Discord parle de la 1.45, dont la résonance s'arrêtait à Q 50 ; à confirmer par Maxime sur la troisième version. Nous
+ne gardons pas de marge sous la pleine échelle comme Model-TG : un son fort à forte résonance sature plus tôt (§5.2).
+
+### 13.3 Preuve `[FAIT]`
+
+`tools/emu/test_track_filter.py` (lois par côté, `TABLE_GH` et `TABLE_NH` dans le modèle) : 170 réglages, fréquence à
+0,01 cent près de la nouvelle loi, Q à 0,39 % près ; extinction à L39 (951 Hz, Q 805) et H54 (2,7 kHz, Q 952) ; le
+reste comme au §12.
+
+Après la fusion de main (1.54, 12/10/2026) et le déplacement des tables (§13.2), sur la branche fusionnée : essai
+complet seul et avec `model-tg,6ch-usbup,sample-preview,arp,trig-hold,tempo-max,boot-anim,level-pan-values,trigless-dim,
+multiline-browser` (coût remesuré, §9 et §11.3) ; `--quick` avec `model-tg-st`, `syntakt-tg-sd-cp-toy-bits-swarm-macro`,
+`sample-preview-st`, `6ch-usbup`, `arp`, `trig-hold`, `tempo-max`, `boot-anim`, et sans Model-TG avec
+`syntakt-sd-cp-toy-bits-swarm-macro-acid` (avec `6ch-usbup`, `arp`, `trig-hold`, `tempo-max`, `boot-anim`,
+`latching-mute`, `trig-preview`, `browser-scroll`) : TOUT OK. Test du flasher sur les vrais OS : les 1 151 combinaisons
+de REF_MAINOS construites, TOUT OK.
+
+### 13.4 Textes d'autres mods `[FAIT]`
+
+Model-TG n'a plus de Filtre ni de Résonance de piste (§11.1) : les textes de LFO 2, 3, 4 (carte du flasher, guide)
+ne citent plus que l'Attack parmi les p-locks de Model-TG qu'il corrige. Ses rangées k = 24 et 25 (notes/56 §3)
+restent : aucun potard n'atteint plus ces paramètres avec notre Model-TG, elles ne servent donc plus `[HYP]`.

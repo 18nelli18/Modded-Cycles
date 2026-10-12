@@ -25,6 +25,7 @@ const ST_VERSION = (/OS(\d+\.\d+)/.exec(ST_NAME) || [])[1];   // "1.42" or "1.41
 const REAL_SMP = REAL.find((f) => /samples/i.test(path.basename(f)));
 const REAL_OS = REAL.find((f) => f !== REAL_ST && f !== REAL_SMP);
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const until = async (cond, ms) => { for (let t = 0; t < ms && !cond(); t += 50) await wait(50); };
 // SMOKE_SHARD=k/n (tools/webflash_smoke.sh with SMOKE_JOBS=n): part k of the combinations of section 6; the other
 // sections run in part 0 only; each part writes what it built to SMOKE_SEEN and the script checks the coverage
 const [SHARD_K, SHARD_N] = (process.env.SMOKE_SHARD || "0/1").split("/").map(Number);
@@ -218,8 +219,8 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 27).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-both,midi-live-both,macro,macro-tg,macro-acid,macro-acid-tg,acid,acid-tg,chord-keys,track-filter,lfo-plus,syntakt-sd"
-      && ids.length === 26 + 8 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+    check(ids.slice(0, 29).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-both,midi-live-both,macro,macro-tg,macro-acid,macro-acid-tg,acid,acid-tg,chord-keys,track-filter,track-filter-tg,track-filter-tg-st,lfo-plus,syntakt-sd"
+      && ids.length === 28 + 8 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
       && ids.includes("syntakt-sd-acid") && ids.includes("syntakt-tg-sd-cp-toy-bits-swarm-macro-acid")
       && ids.includes("syntakt-sd-macro") && ids.includes("syntakt-tg-sd-cp-toy-bits-swarm-macro")
       && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 21,
@@ -265,7 +266,7 @@ async function main() {
       && doc.getElementById("drop3-wrap").hidden, "last engine unticked -> the card turns off");
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
     const creditOf = (id) => [...doc.querySelectorAll(`label[for=feat-${id}] .credit a`)].map((a) => a.href);
-    check(credits.length === 19 && creditOf("usb6")[0] === "https://github.com/scottmetoyer/ms-multi-output"
+    check(credits.length === 20 && creditOf("usb6")[0] === "https://github.com/scottmetoyer/ms-multi-output"
       && /\/LICENSE-ms-multi-output\.txt$/.test(creditOf("usb6")[1])
       && creditOf("model-tg")[0] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(creditOf("model-tg")[1])
       && creditOf("sample-preview")[0] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(creditOf("sample-preview")[1])
@@ -276,8 +277,9 @@ async function main() {
       && creditOf("chord-keys").join() === "https://github.com/byNicoHeuser"
       && ["midi-both", "midi-live-both"].every((id) => creditOf(id).join() === "https://github.com/AveyCole/Modded-Cycles")
       && creditOf("lfo-plus").length === 0
-      && /based on a mod by DavidCaruso/.test((doc.querySelector("label[for=feat-lfo-plus] .credit") || {}).textContent || ""),
-      "each row credits its author, with a link to the MIT license of the code it carries, Chord Keys by Nico Heuser, the MIDI THRU mods by AveyCole: " + JSON.stringify(credits));
+      && /based on a mod by DavidCaruso/.test((doc.querySelector("label[for=feat-lfo-plus] .credit") || {}).textContent || "")
+      && creditOf("track-filter").join() === "https://github.com/Kevin-Shallvari",
+      "each row credits its author, with a link to the MIT license of the code it carries, Chord Keys by Nico Heuser, the MIDI THRU mods by AveyCole, the track filter's idea by Kevin Shallvari: " + JSON.stringify(credits));
     const djd = ["level-pan-values", "trigless-dim"].map((id) => doc.querySelector(`label[for=feat-${id}] .credit`));
     check(djd.every((c) => c && c.textContent === "based on a mod by djd_oz" && !c.querySelector("a")),
       "djd_oz's two mods: “based on a mod by djd_oz”, no link (no public repository)");
@@ -479,12 +481,22 @@ async function main() {
       "FR: chord keyboard translated, with its guide link");
     check(/Filtre par piste \(LP \/ OFF \/ HP\)/.test(text(doc, "features")) && doc.querySelector('#features a[href$="#track-filter"]'),
       "FR: per-track filter card translated, with its guide link");
+    // the per-track filter with Model-TG (notes/47 §11): its version on top of Model-TG, model-tg-st's with MACRO,
+    // experimental while it applies; alone, the card keeps its own status (experimental too since notes/47 §12)
+    const tfTag = () => doc.querySelector("label[for=feat-track-filter] .tag").textContent;
+    const tfAlone = tfTag();
     doc.getElementById("feat-model-tg").click(); await wait(5);
     doc.getElementById("feat-track-filter").click(); await wait(5);
-    const tfOn = doc.getElementById("feat-track-filter").checked, tgOff = !doc.getElementById("feat-model-tg").checked;
-    doc.getElementById("feat-model-tg").click(); await wait(5);
-    check(tfOn && tgOff && doc.getElementById("feat-model-tg").checked && !doc.getElementById("feat-track-filter").checked,
-      "per-track filter and Model-TG can't be ticked together: ticking one unticks the other");
+    const tfBoth = doc.getElementById("feat-track-filter").checked && doc.getElementById("feat-model-tg").checked;
+    const tfPicked = () => w.MCFlasherApp.chosenTweaks().map((x) => x.id).filter((x) => x !== "6ch-usbup").join();
+    const tfIds = tfPicked(), tfExp = tfTag();
+    doc.getElementById("feat-macro").click(); await wait(5);
+    const tfMacro = tfPicked();
+    doc.getElementById("feat-macro").click(); await wait(5);
+    doc.getElementById("feat-track-filter").click(); await wait(5);
+    check(tfBoth && tfIds === "model-tg,track-filter-tg" && tfMacro === "model-tg-st,macro-tg,track-filter-tg-st"
+      && tfExp === "Expérimental" && tfAlone === "Expérimental" && tfTag() === tfAlone && doc.getElementById("feat-model-tg").checked,
+      `per-track filter with Model-TG: ${tfIds}, with MACRO ${tfMacro}, ${tfExp} (alone ${tfAlone})`);
     doc.getElementById("feat-model-tg").click(); await wait(5);
     doc.getElementById("feat-chord-keys").click(); await wait(5);
     check(doc.getElementById("feat-chord-keys").checked && !doc.getElementById("feat-model-tg").checked,
@@ -507,6 +519,8 @@ async function main() {
       "fast method by default: its steps (close Transfer, no menu to open)");
     doc.getElementById("allow").click();
     await wait(150);
+    // with the real OS, the builds queued by the card checks above (Model-TG, MACRO, filter) delay the answer
+    await until(() => !/Looking for/.test(text(doc, "midi-status")), 60000);
     const sel = doc.getElementById("port");
     check(!sel.hidden && sel.value === "dev", "Allow MIDI -> Model:Cycles port preselected (" + sel.value + ")");
     check(/Model:Cycles found: OS 1\.13/.test(text(doc, "midi-status")) && doc.getElementById("step-connect").classList.contains("done"),

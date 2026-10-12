@@ -37,10 +37,13 @@ OUT = ROOT / "docs" / "flasher" / "tweaks.js"
 # les exclusions de l'autre, comme si on l'avait cochee) ; decocher l'autre la decoche. ref_mainos.py ne compte que
 # les combinaisons ou l'autre carte est cochee. Elle a les memes cles « with » que l'autre carte, et chacun de ses
 # tweaks demande (« requires » de son JSON) le tweak correspondant de l'autre : check_requires le verifie.
+# with : autre tweak quand une autre carte est cochee aussi ; une cle « a+b » demande toutes ces cartes, la derniere
+# cle qui s'applique gagne. with_exp : les cles dont le tweak n'est pas encore teste (la carte se dit alors experimentale).
 # Les moteurs s'ajoutent en machines supplementaires : sdvintage-exact (a la place de SNARE) reste dans build.py.
 # status : "tested" (flashe sur un vrai Model:Cycles) ou "experimental".
 # credit : auteur du travail d'origine, affiche sur la carte (voir aussi les credits de la page) ; sans « repo »
-# (un mod recu sans depot public), la carte dit « d'apres un mod de … », sans lien.
+# (un mod recu sans depot public), la carte dit « d'apres un mod de … », sans lien. kind « idea » : « idee de … »,
+# pour l'auteur de l'idee, sans code repris de lui.
 # license : fichier de licence (dans tweaks/model-cycles_OS1.13/) du code tiers que la carte embarque ; servi a cote
 # de la page (docs/flasher/<license>.txt) et lie depuis la carte.
 # cat : rubrique du flasher, une de CATS (meme liste que CATS dans docs/flasher/app.js, plus « other »). Sans cat,
@@ -316,13 +319,19 @@ FEATURES = [
         "label": "Filtre par piste (LP / OFF / HP)",
         "desc": "MACHINES tenu + SWEEP : un filtre par piste, passe-bas a gauche, rien au centre, passe-haut a droite. "
                 "CONTOUR : resonance ; COLOR et SHAPE : enveloppe du filtre (quantite, decay). P-locks, LFO, CC 74 / 71.",
-        "status": "tested",
-        "credit": None,
-        # meme geste que le filtre de Model-TG (MACHINES + SWEEP / CONTOUR) : pas ensemble pour l'instant (notes/47 §7, §11)
-        "excludes": ["model-tg"],
+        "status": "experimental",       # resonance et enveloppe pres du centre revues (notes/47 §12), a reessayer
+        # idee : le filtre DJ d'un seul potard de la machine Acid de Kevin Shallvari (PR #65), notes/47
+        "credit": {"kind": "idea", "who": "Kevin Shallvari", "repo": "Kevin-Shallvari"},
         "variants": [
             {"file": "48-track-filter", "label": None},
         ],
+        # avec Model-TG (qui n'a plus son filtre par piste, notes/47 §11) : la version qui s'ajoute apres lui ;
+        # cles « a+b » : toutes ces cartes cochees, la derniere cle qui s'applique gagne (Model-TG prend
+        # model-tg-st avec les moteurs du Syntakt ou MACRO)
+        "with": {"model-tg": "48-track-filter-tg", "model-tg+syntakt": "48-track-filter-tg-st",
+                 "model-tg+macro": "48-track-filter-tg-st"},
+        # versions « with » pas encore essayees sur la machine : la carte se dit experimentale quand elles s'appliquent
+        "with_exp": ["model-tg", "model-tg+syntakt", "model-tg+macro"],
     },
     {
         "id": "lfo-plus",
@@ -548,6 +557,10 @@ def render():
         if f.get("with"):                       # autre tweak quand une autre carte est cochee aussi
             feat["with"] = {g: load(json.loads((DEV_DIR / f"{v}.json").read_text(encoding="utf-8"))["id"])["id"]
                             for g, v in f["with"].items()}
+        if f.get("with_exp"):                   # versions « with » encore experimentales (statusOf)
+            if set(f["with_exp"]) - set(f.get("with", {})):
+                sys.exit(f"!! {f['id']} : with_exp {f['with_exp']} hors des cles « with »")
+            feat["with_exp"] = f["with_exp"]
         if f.get("versions"):                   # carte a variante qui en heberge d'autres (MACRO avec ACID)
             import gen_acid_combos as gac
             if sorted(f["versions"]) != sorted(join_keys(f)):

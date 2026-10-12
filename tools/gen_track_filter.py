@@ -7,10 +7,16 @@ Cutoff (L64..OFF..H63), + CONTOUR = Filter Reso, + COLOR = Filter Env (quantité
 paramètres de toutes les machines : p-locks, LFO, vélocité, CC 74 et 71, sauvegardés avec le son et le pattern.
 
 tools/machines/track_filter/ : track_filter.S (le filtre, appelé une fois par bloc après Volume + Dist) et tf_ui.S
-(potards, affichage, sauvegarde), liés par track_filter.ld dans quinze masques de sprites 35x35 libérés
+(potards, affichage, sauvegarde), liés par track_filter.ld dans seize masques de sprites 35x35 libérés
 (tools/sprites.py). Les tables sont calculées ici (TABLES) et passées à l'assembleur dans tables.inc. Les accroches
 sur l'OS sont HOOKS et POINTERS ; les quatre descripteurs remplacent les emplacements « Error » 1 à 4 (DESCRIPTORS).
 Chaque écriture porte ses octets d'origine, vérifiés sur le MAIN OS officiel.
+
+Avec Model-TG (notes/47 §11), deux autres tweaks, construits avec WITH_TG : 48-track-filter-tg (par-dessus model-tg) et
+48-track-filter-tg-st (par-dessus model-tg-st, la base de Model-TG avec les moteurs du Syntakt ou MACRO). Les mêmes
+écritures, sauf les trois accroches de sauvegarde et de chargement d'un son, que Model-TG prend déjà : les nôtres y
+remplacent son saut et passent par ses accroches (chaînées), et le côté stéréo des pistes du Sampler est filtré aussi
+(tf_side, dans un masque de plus). Les adresses de Model-TG viennent du champ « symbols » de son tweak.
 
     python3 tools/gen_track_filter.py --cycles model-cycles_OS1.13.syx [--check]
 """
@@ -33,7 +39,11 @@ import sprites                     # noqa: E402
 import test_sdvintage as T         # noqa: E402
 
 SRC = HERE / "machines" / "track_filter"
-OUT = HERE.parent / "tweaks" / "model-cycles_OS1.13" / "48-track-filter.json"
+DEV = HERE.parent / "tweaks" / "model-cycles_OS1.13"
+OUT = DEV / "48-track-filter.json"
+# avec Model-TG : (fichier, id, tweak de Model-TG demandé)
+TG_OUTS = (("48-track-filter-tg.json", "track-filter-tg", "30-model-tg.json"),
+           ("48-track-filter-tg-st.json", "track-filter-tg-st", "30-model-tg-st.json"))
 BASE = gx.BASE
 FS = 48000                                             # trames par seconde
 BLOCK_HZ = FS / 32                                     # blocs par seconde (le filtre lit ses réglages une fois par bloc)
@@ -43,8 +53,13 @@ CAVES = {
     ".tf_post": 0x4014ab5c, ".tf_track": 0x4014b85c, ".tf_kern": 0x4014d74c, ".tf_coef1": 0x401542f8,
     ".tf_coef2": 0x401548b4, ".tf_gtab": 0x4015b8f8, ".tf_ntab": 0x4015f50c, ".tf_ktab": 0x401601fc,
     ".tf_dtab": 0x40160864, ".tf_kst": 0x40160b6c, ".tf_cst": 0x40160e6c, ".tf_knob": 0x401625bc,
-    ".tf_fmt": 0x40163fb8, ".tf_save": 0x4016616c, ".tf_load": 0x40166760,
+    ".tf_fmt": 0x40163fb8, ".tf_save": 0x4016616c, ".tf_load": 0x40166760, ".tf_gtabh": 0x4016aa28,
 }
+CAVES_TG = dict(CAVES, **{".tf_side": 0x40167c50})      # avec Model-TG : le côté stéréo du Sampler (tf_side, tf_sst)
+# accroches de Model-TG que les nôtres chaînent (les mêmes sites que HOOKS) : site -> (symbole de Model-TG, -D)
+TG_CHAIN = {0x4005aecc: ("snd_load_hook", "TG_LOAD"), 0x4005afa0: ("snd_save2_hook", "TG_SAVE2"),
+            0x4005b054: ("snd_save1_hook", "TG_SAVE1")}
+TG_DEFS = {"SX_ON": "sx_on", "SX_SIDE": "sx_side"}      # le côté stéréo des pistes du Sampler
 # (adresse, octets d'origine, instruction, symbole, rôle)
 HOOKS = (
     (0x40059852, "4eb940056f58", 0x4eb9, "tf_post",
@@ -77,25 +92,46 @@ SYMBOLS = ("tf_post", "tf_knob", "tf_objs", "tf_fmt_cut", "tf_boot", "tf_load", 
            "tf_ptab", "tf_kst", "tf_cst", "tf_trig")   # pour tools/emu/test_track_filter.py
 
 
-def cutoff_hz(i):
-    """Fréquence du filtre pour l'index i = |C - 0x4000| (LP : C ; HP : C - 0x4000), loi du Model:Samples."""
-    return min(5.0 * 4400 ** (i / 16384), 20000.0)
+# Course de la fréquence (quatrième version, notes/47 §13) : les plages du filtre master FX de Model-TG (passe-bas
+# 20 kHz -> 30 Hz, passe-haut 20 Hz -> 10 kHz), sur nos 64 pas de chaque côté (127 crans chez Model-TG). La position u
+# (0 au premier pas, 1 au dernier) va en u^F_CURVE dans le logarithme de la fréquence : les 16 premiers pas de chaque
+# côté font ce que font les 16 premiers crans de Model-TG (L16 9,4 kHz, H16 44 Hz), les pas du bas sont plus larges.
+LP_TOP, LP_BOT = 20000.0, 30.0                          # L1, L64
+HP_BOT, HP_TOP = 20.0, 10000.0                          # H1, H63
+F_CURVE = 1.5
 
 
-Q_MIN, Q_MAX = 0.5, 50.0
+def cutoff_hz(i, hp=False):
+    """Fréquence du filtre pour l'index i (passe-bas : i = C, L1 = 0x3f00, L64 = 0 ; passe-haut : i = C - 0x4000,
+    H1 = 0x100, H63 = 0x3f00). Entre le centre et le premier pas (valeurs fines), la fréquence du premier pas."""
+    if hp:
+        u = max(i - 0x100, 0) / 0x3e00
+        return HP_BOT * (HP_TOP / HP_BOT) ** (u ** F_CURVE)
+    u = max(0x3f00 - i, 0) / 0x3f00
+    return LP_TOP * (LP_BOT / LP_TOP) ** (u ** F_CURVE)
+
+
+Q_MIN, Q_MAX = 0.5, 1000.0
+Q_CURVE = 1.5                                           # exposant de la course de Filter Reso (1 : exponentielle)
+RING_MAX = 2.0                                          # s : au plus, la résonance sonne 2 s (60 dB) après un coup
 
 
 def q_of(r):
-    """Q pour Filter Reso r (0..32512) : exponentielle de Q_MIN à Q_MAX, environ 10 dB de bosse de plus par quart de
-    tour. Plus forte que celle du Model:Samples (0,5 à 22, la première version), trop discrète à l'essai de Maxime
-    (10/10/2026, notes/47 §5.1)."""
-    return Q_MIN * (Q_MAX / Q_MIN) ** (r / 32512)
+    """Q pour Filter Reso r (0..32512) : de Q_MIN à Q_MAX, doucement sur la première moitié, puis la résonance siffle
+    sur le dernier quart (à 1 kHz : Q 7 à 64, 67 à 96, 870 à 127). Q 0,5 à 50 (exponentielle, deuxième version)
+    restait trop discrète à l'essai de Maxime (11/10/2026, notes/47 §12) : à Q 50, un coup ne sonne que 0,1 s à
+    1 kHz."""
+    return Q_MIN * (Q_MAX / Q_MIN) ** ((r / 32512) ** Q_CURVE)
 
 
-def reso_scale(i):
-    """Part de la résonance gardée : rien sous 10 Hz (pas de bosse subsonique), tout à 30 Hz, moins vers 20 kHz."""
-    fc = cutoff_hz(i)
-    return (1 - (fc / 24000) ** 2.5) * min(max((fc - 10) / 20, 0.0), 1.0)
+def reso_scale(i, hp=False):
+    """Part de la résonance gardée : rien sous 10 Hz (pas de bosse subsonique), tout à 30 Hz, moins vers 20 kHz ;
+    et bornée pour qu'un coup ne sonne pas plus de RING_MAX (60 dB en ln(1000) Q / (pi fc)) : Q au plus 0,9 fc,
+    37 à 100 Hz, 155 à 300 Hz, Q_MAX au-dessus de 1,1 kHz."""
+    fc = cutoff_hz(i, hp)
+    s = (1 - (fc / 24000) ** 2.5) * min(max((fc - 10) / 20, 0.0), 1.0)
+    qcap = math.pi * fc * RING_MAX / math.log(1000)
+    return min(s, math.log(max(qcap, Q_MIN) / Q_MIN) / math.log(Q_MAX / Q_MIN))
 
 
 def decay_tau(d):
@@ -107,9 +143,18 @@ def q31(x):
     return max(min(round(x * 2 ** 31), 0x7fffffff), -0x80000000)
 
 
+def q15w(x):
+    """x dans [0, 1] en mot Q15, rendu comme le long que le code en tire (le mot dans la moitié haute)."""
+    return min(max(round(x * 2 ** 15), 0), 0x7fff) << 16
+
+
+# Les tables de la réduction de la résonance (N, NH) sont en mots : les deux tiennent dans un masque. Toutes : 65 points.
+WORD_TABLES = ("TABLE_N", "TABLE_NH")
 TABLES = {
     "TABLE_G": [q31(math.tan(math.pi * cutoff_hz(256 * j) / FS) / 4) for j in range(65)],
-    "TABLE_N": [q31(reso_scale(256 * j)) for j in range(65)],
+    "TABLE_GH": [q31(math.tan(math.pi * cutoff_hz(256 * j, True) / FS) / 4) for j in range(65)],
+    "TABLE_N": [q15w(reso_scale(256 * j)) for j in range(65)],
+    "TABLE_NH": [q15w(reso_scale(256 * j, True)) for j in range(65)],
     "TABLE_K": [q31(1 / (2 * q_of(512 * j))) for j in range(65)],
     "TABLE_D": [q31(math.exp(-1 / (BLOCK_HZ * decay_tau(512 * j)))) for j in range(65)],
 }
@@ -120,20 +165,28 @@ def tables_inc():
     for name, vals in TABLES.items():
         out.append(f".macro {name}")
         for k in range(0, len(vals), 8):
-            out.append("\t.long\t" + ", ".join(f"{v & 0xffffffff:#010x}" for v in vals[k:k + 8]))
+            if name in WORD_TABLES:
+                out.append("\t.word\t" + ", ".join(f"{v >> 16:#06x}" for v in vals[k:k + 8]))
+            else:
+                out.append("\t.long\t" + ", ".join(f"{v & 0xffffffff:#010x}" for v in vals[k:k + 8]))
         out.append(".endm")
     return "\n".join(out) + "\n"
 
 
-def compile_filter():
-    """Code lié (ELF) : {section: (adresse, octets)}, symboles."""
+def compile_filter(tg=None):
+    """Code lié (ELF) : {section: (adresse, octets)}, symboles. tg : symboles de Model-TG (la version WITH_TG)."""
+    caves = CAVES_TG if tg else CAVES
+    defs = []
+    if tg:
+        defs = ["-DWITH_TG"] + [f"-D{d}={int(tg[n], 16):#x}" for n, d in TG_CHAIN.values()]
+        defs += [f"-D{d}={int(tg[n], 16):#x}" for d, n in TG_DEFS.items()]
     with tempfile.TemporaryDirectory() as d:
         d = pathlib.Path(d)
         (d / "tables.inc").write_text(tables_inc(), encoding="ascii")
         objs = []
         for src in ("track_filter.S", "tf_ui.S"):
             obj = d / (src[:-2] + ".o")
-            gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-Wa,-I" + str(d), "-c", str(SRC / src), "-o", str(obj)])
+            gx.run([gx.CROSS + "gcc", "-mcpu=54418", *defs, "-Wa,-I" + str(d), "-c", str(SRC / src), "-o", str(obj)])
             objs.append(str(obj))
         elf = d / "tf.elf"
         gx.run([gx.CROSS + "ld", "-T", str(SRC / "track_filter.ld"), "--no-warn-rwx-segments", "-o", str(elf), *objs])
@@ -150,9 +203,9 @@ def compile_filter():
                 secs[p[1]] = (int(p[3], 16), int(p[2], 16))
         out = {}
         for name in secs:
-            if name not in CAVES and secs[name][1]:
+            if name not in caves and secs[name][1]:
                 raise SystemExit(f"!! section {name} ({secs[name][1]} o) hors des masques prévus")
-        for name in CAVES:
+        for name in caves:
             b = d / (name.strip(".") + ".bin")
             gx.run([gx.CROSS + "objcopy", "-O", "binary", "-j", name, str(elf), str(b)])
             out[name] = (secs[name][0], b.read_bytes())
@@ -166,11 +219,13 @@ def descriptor_rows(syms):
     return rows
 
 
-def build_tweak(stock):
-    secs, syms = compile_filter()
+def build_tweak(stock, mtg=None, tid=None):
+    """Le tweak seul, ou, avec mtg (le tweak de Model-TG, dictionnaire), sa version tid par-dessus Model-TG."""
+    secs, syms = compile_filter(mtg and mtg["symbols"])
+    base = bytes(build.apply_writes(stock, [mtg])[0]) if mtg else stock     # les octets que nos écritures trouvent
     writes = []
     used = {}
-    for name, mask in CAVES.items():
+    for name, mask in (CAVES_TG if mtg else CAVES).items():
         addr, code = secs[name]
         size, shared = sprites.MASKS[mask][0], sprites.MASKS[mask][3]
         if addr != mask or len(code) > size:
@@ -184,19 +239,28 @@ def build_tweak(stock):
         old = bytes.fromhex(old_hex)
         if stock[va - BASE:va - BASE + len(old)] != old:
             raise SystemExit(f"!! octets d'origine inattendus en {va:#x}")
+        if mtg and va in TG_CHAIN:                       # Model-TG y saute déjà vers son accroche, que la nôtre chaîne
+            old = struct.pack(">HI", 0x4ef9, int(mtg["symbols"][TG_CHAIN[va][0]], 16))
+            old_hex = old.hex()
+        if base[va - BASE:va - BASE + len(old)] != old:
+            raise SystemExit(f"!! octets inattendus en {va:#x} (Model-TG a changé ?)")
         writes.append({"off": va - BASE, "old": old_hex, "new": struct.pack(">HI", op, syms[sym]).hex()})
     for va, old_val, sym, _ in POINTERS:
         old = struct.pack(">I", old_val)
-        if stock[va - BASE:va - BASE + 4] != old:
+        if base[va - BASE:va - BASE + 4] != old:
             raise SystemExit(f"!! pointeur d'origine inattendu en {va:#x}")
         writes.append({"off": va - BASE, "old": old.hex(), "new": struct.pack(">I", syms[sym]).hex()})
     lo = DESC + DSTRIDE                                 # entrées 1..4
-    old = stock[lo - BASE:lo - BASE + DSTRIDE * len(DESCRIPTORS)]
+    old = base[lo - BASE:lo - BASE + DSTRIDE * len(DESCRIPTORS)]
     for i in range(len(DESCRIPTORS)):
         if struct.unpack_from(">i", old, DSTRIDE * i)[0] != -1:
             raise SystemExit(f"!! le descripteur {i + 1} n'est pas un emplacement libre (groupe -1)")
     writes.append({"off": lo - BASE, "old": old.hex(), "new": descriptor_rows(syms).hex()})
     writes.sort(key=lambda w: w["off"])
+    for w in writes:                                     # rien d'autre que les accroches chaînées ne touche Model-TG
+        o = bytes.fromhex(w["old"])
+        if base[w["off"]:w["off"] + len(o)] != o:
+            raise SystemExit(f"!! écriture en {w['off'] + BASE:#x} : octets inattendus")
     total = sum(used.values())
     tweak = {
         "id": "track-filter",
@@ -206,15 +270,16 @@ def build_tweak(stock):
             "Un filtre 2 pôles par piste, après Volume + Dist et avant le panoramique, les envois et le mixage (comme "
             "sur le Model:Samples) :",
             "MACHINES tenu + SWEEP = Filter Cutoff (L64..OFF..H63 : passe-bas à gauche, rien au centre, passe-haut à "
-            "droite, 5 Hz à 20 kHz), + CONTOUR = Filter Reso (Q 0,5 à 50),",
-            "+ COLOR = Filter Env (l'enveloppe, relancée à chaque note, monte ou descend la fréquence), + SHAPE = Env "
-            "Decay (5 ms à 10 s).",
+            "droite, les plages du master FX de Model-TG : LP 20 kHz à 30 Hz, HP 20 Hz à 10 kHz, pas fins près du centre),",
+            "+ CONTOUR = Filter Reso (Q 0,5 à 1 000, qui siffle en haut de course),",
+            "+ COLOR = Filter Env (l'enveloppe, relancée à chaque note, monte ou descend la fréquence ; elle arrive sur "
+            "les 8 premiers pas de chaque côté du centre), + SHAPE = Env Decay (5 ms à 10 s).",
             "Quatre paramètres de toutes les machines (descripteurs 1 à 4, k 28 à 31) : p-locks, LFO, vélocité, CC 74 "
             "et 71 ; sauvegardés avec le son (emplacements 30, 31, 18) et le pattern.",
             "Corrige au passage les p-locks des paramètres k >= 23 dans le pattern (ils revenaient sur LFO Speed).",
             "Au centre, la piste n'est pas touchée (bit pour bit) ; environ 640 instructions par bloc et par piste "
             "filtrée (0,6 % d'un bloc).",
-            f"Code, tables et état dans quinze masques de sprites 35x35 libérés (tools/sprites.py) : {total} o. "
+            f"Code, tables et état dans seize masques de sprites 35x35 libérés (tools/sprites.py) : {total} o. "
             "Généré par tools/gen_track_filter.py, notes/47.",
         ],
         "device": "Model:Cycles",
@@ -224,6 +289,23 @@ def build_tweak(stock):
         "symbols": {n: f"{syms[n]:#x}" for n in SYMBOLS},
         "writes": writes,
     }
+    if mtg:
+        tweak["description"][-1] = (
+            f"Code, tables et état dans dix-sept masques de sprites 35x35 libérés (tools/sprites.py) : {total} o. "
+            "Généré par tools/gen_track_filter.py, notes/47.")
+        tweak["description"] += [
+            f"Version par-dessus {mtg['id']} (notes/47 §11), qui n'a plus de filtre par piste (MC_PATCHES de "
+            "tools/gen_model_tg.py) : nos accroches de sauvegarde et de chargement",
+            "d'un son passent par les siennes (Attack et nos réglages, chacun ses emplacements ; l'emplacement 27 garde "
+            "la destination du LFO de l'un ou de l'autre),",
+            "et le côté stéréo des pistes du Sampler est filtré aussi, avec son propre état (tf_side).",
+        ]
+        others = [t for _, t, _ in TG_OUTS if t != tid]
+        tweak.update({"id": tid, "name": tweak["name"] + " (avec Model-TG)",
+                      # lfo-plus (LFO 2, 3, 4) range ses réglages dans les mêmes k 28..31 et octets +88..+91 du son
+                      # (notes/56 §3.6) ; il ne déclare son conflit qu'envers track-filter
+                      "conflicts": ["track-filter", "lfo-plus"] + others, "requires": [mtg["id"]]})
+        tweak["symbols"]["tf_side"] = f"{syms['tf_side']:#x}"
     return tweak, syms, used
 
 
@@ -235,16 +317,21 @@ def main():
     stock = T.main_os_from_syx(args.cycles)
     if build.sha(stock) != json.loads((OUT.parent / "device.json").read_text(encoding="utf-8"))["section_sha256"]:
         raise SystemExit("!! ce n'est pas le MAIN OS 1.13 officiel")
-    tweak, syms, used = build_tweak(stock)
-    build.apply_writes(stock, [tweak])                # les octets d'origine collent
-    text = json.dumps(tweak, indent=1) + "\n"
-    print("  " + ", ".join(f"{n.strip('.')} {u} o" for n, u in used.items()))
-    if args.check:
-        ok = OUT.exists() and OUT.read_text(encoding="utf-8") == text
-        print(f"  {OUT.name} {'est à jour' if ok else 'NE CORRESPOND PAS (autre binutils ?)'}")
-        raise SystemExit(0 if ok else 1)
-    OUT.write_text(text, encoding="utf-8")
-    print(f"  écrit : {OUT.relative_to(HERE.parent)} ({len(tweak['writes'])} écritures)")
+    bad = 0
+    for out, tid, mtg_file in ((OUT, "track-filter", None),) + tuple((DEV / f, t, m) for f, t, m in TG_OUTS):
+        mtg = json.loads((DEV / mtg_file).read_text(encoding="utf-8")) if mtg_file else None
+        tweak, syms, used = build_tweak(stock, mtg, tid)
+        build.apply_writes(bytes(build.apply_writes(stock, [mtg])[0]) if mtg else stock, [tweak])   # les octets collent
+        text = json.dumps(tweak, indent=1) + "\n"
+        print(f"  {tid} : " + ", ".join(f"{n.strip('.')} {u} o" for n, u in used.items()))
+        if args.check:
+            ok = out.exists() and out.read_text(encoding="utf-8") == text
+            print(f"  {out.name} {'est à jour' if ok else 'NE CORRESPOND PAS (autre binutils ?)'}")
+            bad += not ok
+            continue
+        out.write_text(text, encoding="utf-8")
+        print(f"  écrit : {out.relative_to(HERE.parent)} ({len(tweak['writes'])} écritures)")
+    raise SystemExit(1 if bad else 0)
 
 
 if __name__ == "__main__":

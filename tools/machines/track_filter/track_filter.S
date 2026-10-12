@@ -1,13 +1,16 @@
 /* Filtre par piste (notes/47) : un filtre 2 pôles bipolaire, passe-bas à gauche, rien au centre, passe-haut à droite,
  * avec résonance et une enveloppe (quantité, decay) relancée à chaque note. Lié par track_filter.ld dans des masques de
  * sprites 35x35 libérés (tools/sprites.py) ; les écritures sur l'OS sont dans tools/gen_track_filter.py (HOOKS). Les
- * tables (tf_gtab, tf_ntab, tf_ktab, tf_dtab) sont calculées par le générateur et incluses depuis tables.inc.
+ * tables (tf_gtab, tf_gtabh, tf_ntab, tf_ntabh, tf_ktab, tf_dtab) sont calculées par le générateur et incluses depuis
+ * tables.inc ; tf_ntab et tf_ntabh sont en mots (lues par tf_interpw), pour tenir ensemble dans un masque.
  *
  * Paramètres : quatre descripteurs (1 à 4, des emplacements « Error » inutilisés) du groupe 7, donc de toutes les
  * machines, sur les mots k = 28 à 31 de chaque piste :
- *   k28 Filter Cutoff  0..0x7f00, centre 0x4000 = OFF ; à gauche LP, à droite HP, fréquence 5 Hz x 4400^(|C-centre|/0x4000)
- *                      (la loi du Model:Samples), plafonnée à 20 kHz ;
- *   k29 Filter Reso    Q = 0,5 x 100^(R/32512), de 0,5 à 50 (tf_ktab), réduit sous 30 Hz et vers 20 kHz (tf_ntab) ;
+ *   k28 Filter Cutoff  0..0x7f00, centre 0x4000 = OFF ; à gauche LP de 20 kHz (L1) à 30 Hz (L64) (tf_gtab), à droite
+ *                      HP de 20 Hz (H1) à 10 kHz (H63) (tf_gtabh) : les plages du master FX de Model-TG, pas fins
+ *                      près du centre ;
+ *   k29 Filter Reso    Q = 0,5 x 2000^((R/32512)^1,5), de 0,5 à 1 000 (tf_ktab), réduit sous 30 Hz, vers 20 kHz et
+ *                      pour qu'un coup ne sonne pas plus de 2 s (tf_ntab, tf_ntabh) ;
  *   k30 Filter Env     quantité de l'enveloppe, bipolaire (centre = 0) : déplace la fréquence vers le haut ou le bas,
  *                      sans changer de côté ;
  *   k31 Env Decay      constante de temps de 5 ms à 10 s.
@@ -22,7 +25,12 @@
  *   a1 = 1/(1 + g (g + k)), a2 = g a1, a3 = g a2, g = tan(pi fc / 48000), k = 1/Q.
  *   LP : gx = 0, hl = 1/2, hb = 0 ; HP = x - k BP - LP : gx = 1, hl = -1/2, hb = -k/2.
  * Sur le pas de potard voisin du centre, la sortie passe de l'entrée au filtre (w de 0 à 1, dans gx/hl/hb : rien de
- * plus par trame) ; au centre exact, la piste n'est pas touchée (bit pour bit) et l'état est oublié. */
+ * plus par trame) ; au centre exact, la piste n'est pas touchée (bit pour bit) et l'état est oublié.
+ *
+ * Avec Model-TG (WITH_TG) : une prise stéréo du Sampler garde son milieu dans la piste et son côté dans SX_SIDE
+ * (6 x 128 o, rangés comme les pistes ; SX_ON[t] dit que la piste est stéréo dans ce bloc). tf_side filtre aussi le
+ * côté, avec les mêmes coefficients et son propre état : le filtre est linéaire, filtrer M et S revient à filtrer
+ * G et D. */
 
 	.equ	TRK, 0x80001858			/* 6 x 32 x int32, sortie des voix */
 	.equ	VOLDIST, 0x40056f58		/* Volume + Dist de l'OS (TRK, paramètres lissés) */
@@ -39,11 +47,12 @@
 	.equ	C_ON, 8
 	.equ	C_ENV, 12
 	.equ	C_MODE, 16
+	.equ	ENV_FADE, 0x800			/* 8 pas de chaque côté du centre (lsl #20 : Q31) */
 
-	.globl	tf_post, tf_track, tf_kern, tf_coef, tf_coef2, tf_interp
-	.globl	tf_kst, tf_cst, tf_trig, tf_gtab, tf_ntab, tf_ktab, tf_dtab
+	.globl	tf_post, tf_track, tf_kern, tf_coef, tf_coef2, tf_interp, tf_interpw
+	.globl	tf_kst, tf_cst, tf_trig, tf_gtab, tf_gtabh, tf_ntab, tf_ntabh, tf_ktab, tf_dtab
 
-	.include "tables.inc"			/* macros TABLE_G, TABLE_N, TABLE_K, TABLE_D (65 longs chacune) */
+	.include "tables.inc"			/* macros TABLE_G, TABLE_GH, TABLE_K, TABLE_D (65 longs chacune), TABLE_N, TABLE_NH (65 mots) */
 
 /* ---- 0x40059852 : jsr tf_post à la place de jsr 0x40056f58 (Volume + Dist) -------------------------------------
  * Pile : 4(sp) = TRK, 8(sp) = a2 (paramètres lissés, 0x8000100c), comme pour l'appel remplacé. a3 = le contexte de la
@@ -75,6 +84,9 @@ tf_post:
 1:	move.l	%a0, -(%sp)
 	jsr	tf_track
 	movea.l	(%sp)+, %a0
+#ifdef WITH_TG
+	jsr	tf_side
+#endif
 	lea	128(%a0), %a0
 	lea	KSZ(%a4), %a4
 	lea	CSZ(%a6), %a6
@@ -128,7 +140,18 @@ tf_track:
 	bne.s	6f
 	clr.l	C_ON(%a6)			/* centre : la piste reste telle quelle, l'état est oublié */
 	rts
-6:	mvs.w	OFF_R(%a5), %d1
+6:	move.l	%d2, %d1			/* l'enveloppe arrive sur les 8 premiers pas : quantité x (|d| / 0x800)² */
+	bpl.s	61f
+	neg.l	%d1
+61:	cmpi.l	#ENV_FADE, %d1
+	bcc.s	62f
+	moveq	#20, %d3
+	lsl.l	%d3, %d1			/* f = |d| / 0x800, Q31 */
+	mac.l	%d1, %d1, %acc0
+	movclr.l %acc0, %d1
+	mac.l	%d1, %d6, %acc0
+	movclr.l %acc0, %d6
+62:	mvs.w	OFF_R(%a5), %d1
 	swap	%d0
 	move.w	%d1, %d0			/* clé = C << 16 | R */
 	cmp.l	(%a6), %d0
@@ -230,14 +253,20 @@ tf_coef:
 	ble.s	5f
 	move.l	#0x3fff, %d0
 5:	move.l	%d0, %d6
-	lea	tf_gtab, %a1
-	moveq	#8, %d1
+	lea	tf_gtab, %a1			/* les tables du côté : LP, ou HP */
+	tst.l	%d5
+	beq.s	51f
+	lea	tf_gtabh, %a1
+51:	moveq	#8, %d1
 	bsr.s	tf_interp
 	movea.l	%d0, %a2			/* G = g/4 */
 	move.l	%d6, %d0
 	lea	tf_ntab, %a1
-	moveq	#8, %d1
-	bsr.s	tf_interp			/* réduction de la résonance aux deux bouts */
+	tst.l	%d5
+	beq.s	52f
+	lea	tf_ntabh, %a1
+52:	moveq	#8, %d1
+	bsr.s	tf_interpw			/* réduction de la résonance aux deux bouts */
 	tst.l	%d7
 	bpl.s	6f
 	moveq	#0, %d7
@@ -245,18 +274,28 @@ tf_coef:
 	movclr.l %acc0, %d0
 	lea	tf_ktab, %a1
 	moveq	#9, %d1
-	bsr.s	tf_interp
+	bsr.w	tf_interp
 	movea.l	%d0, %a3			/* K = k/2 = 1/(2Q) */
 	jmp	tf_coef2
 
 /* a1 = table de 65 longs, d0 = index >= 0, d1 = s : rend T[j] + (T[j+1] - T[j]) f, j = d0 >> s, f = les s bits du bas.
- * Détruit d1-d3. */
+ * tf_interpw : la même sur une table de 65 mots, lus comme des longs (mot << 16). Détruit d1-d3. */
+tf_interpw:
+	move.l	%d0, %d2
+	asr.l	%d1, %d2
+	move.w	(%a1,%d2.l*2), %d3
+	swap	%d3
+	clr.w	%d3				/* T[j] << 16 */
+	move.w	2(%a1,%d2.l*2), %d2
+	swap	%d2
+	clr.w	%d2				/* T[j+1] << 16 */
+	bra.s	1f
 tf_interp:
 	move.l	%d0, %d2
 	asr.l	%d1, %d2
 	move.l	(%a1,%d2.l*4), %d3
 	move.l	4(%a1,%d2.l*4), %d2
-	sub.l	%d3, %d2
+1:	sub.l	%d3, %d2
 	neg.l	%d1
 	addi.l	#31, %d1
 	lsl.l	%d1, %d0
@@ -341,13 +380,69 @@ tf_coef2:
 	move.l	%d0, K_HB(%a4)
 	rts
 
+#ifdef WITH_TG
+/* ---- Model-TG : le côté stéréo de la piste (SX_SIDE + 128 t, quand SX_ON[t]) ------------------------------------
+ * Appelé après tf_track, a0 = le bloc de la piste, a4 / a6 = son état et sa commande. L'état de la piste (ic1, ic2)
+ * est mis de côté, celui du côté (tf_sst) prend sa place le temps de tf_kern, puis chacun retrouve le sien. Le côté
+ * part comme la piste : au repos, ou avec le niveau continu de son entrée pour un passe-bas. Garde a0, a4-a6. */
+	.section .text.side, "ax"
+tf_side:
+	move.l	%a0, %d0
+	subi.l	#TRK, %d0			/* 128 t */
+	move.l	%d0, %d1
+	lsr.l	#3, %d1
+	lea	tf_sst, %a3
+	adda.l	%d1, %a3			/* 16 t : ic1, ic2, en marche */
+	tst.l	C_ON(%a6)
+	beq.s	8f				/* filtre au centre */
+	lsr.l	#5, %d0
+	lea	SX_ON, %a1
+	tst.l	(%a1,%d0.l)
+	beq.s	8f				/* piste mono dans ce bloc */
+	move.l	%a0, -(%sp)
+	adda.l	#SX_SIDE-TRK, %a0		/* le côté de cette piste */
+	move.l	(%a4), -(%sp)			/* l'état de la piste, mis de côté */
+	move.l	4(%a4), -(%sp)
+	tst.l	8(%a3)
+	bne.s	2f
+	moveq	#1, %d0				/* départ */
+	move.l	%d0, 8(%a3)
+	clr.l	(%a3)
+	moveq	#0, %d0
+	tst.l	C_MODE(%a6)
+	bne.s	1f
+	move.l	(%a0), %d0
+1:	move.l	%d0, 4(%a3)
+2:	move.l	(%a3), (%a4)
+	move.l	4(%a3), 4(%a4)
+	move.l	%a3, -(%sp)
+	jsr	tf_kern
+	movea.l	(%sp)+, %a3
+	move.l	(%a4), (%a3)
+	move.l	4(%a4), 4(%a3)
+	move.l	(%sp)+, 4(%a4)
+	move.l	(%sp)+, (%a4)
+	movea.l	(%sp)+, %a0
+	rts
+8:	clr.l	8(%a3)				/* au repos : le côté repartira de son départ */
+	rts
+
+	.section .data.sst, "aw"
+	.balign	4
+tf_sst:	.space	6*16
+#endif
+
 /* ---- tables (tools/gen_track_filter.py) et état -------------------------------------------------------------- */
 	.section .rodata.gtab, "a"
 	.balign	4
-tf_gtab:	TABLE_G				/* G = tan(pi fc / 48000) / 4, index i = 256 j */
+tf_gtab:	TABLE_G				/* LP : G = tan(pi fc / 48000) / 4, index i = 256 j */
+	.section .rodata.gtabh, "a"
+	.balign	4
+tf_gtabh:	TABLE_GH			/* HP : G = tan(pi fc / 48000) / 4, index i = 256 j */
 	.section .rodata.ntab, "a"
 	.balign	4
-tf_ntab:	TABLE_N				/* réduction de la résonance, index i = 256 j */
+tf_ntab:	TABLE_N				/* LP : réduction de la résonance (Q15), index i = 256 j */
+tf_ntabh:	TABLE_NH			/* HP : réduction de la résonance (Q15), index i = 256 j */
 	.section .rodata.ktab, "a"
 	.balign	4
 tf_ktab:	TABLE_K				/* K = 1/(2Q), résonance R = 512 j */
