@@ -16,7 +16,7 @@ import ref_mainos
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 PROD=ROOT/'docs/flasher'
 OUT=ROOT/'docs/flasher-midi-test'
-STAMP='2026-10-12-midi-bank-stock-patterns'
+STAMP='2026-10-12-midi-bank-tested'
 
 
 def files_for(tweak,chosen,image):
@@ -32,13 +32,13 @@ def files_for(tweak,chosen,image):
             item['p']=hashlib.sha256(image[lo:hi]).hexdigest()
         mods[t['id']]=item
     texts={
-      'en': {'label':'MIDI OUT Bank','short':'Six MIDI-only lanes on channels 7–12. Experimental; RAM only.',
-             'desc':'FUNC + SETTINGS + PAGE switches between the audio tracks and six independent MIDI-only lanes on channels 7–12. FUNC + pad toggles the lane MIDI OUT. Tap a trig to add/remove it; hold a trig and turn DATA to choose its note. Several held trigs transpose together. The stock-style display shows a B indicator and TR7–TR12 for the MIDI channels; hold a trig to see its note and velocity. DATA selects a step when no trig is held; click DATA for settings and EXIT to return. PAGE changes step page. The trig lights show the MIDI lane steps and its playback position; returning to audio restores the audio-track lights. Stop playback before first opening after boot. Each pattern has its own MIDI sequences in RAM, switching at the active pattern change. They are lost on restart. Disk saving and project isolation are unfinished: use this test within one project and restart before changing projects. Selecting this mod selects its validated compatible Select All bundle with Model-TG, Live MIDI OUT + THRU, LFO 2, queued Sequence Generator and SCRAMBLE. If you change its required mods, uncheck MIDI OUT Bank or use Select all again. This editing update awaits hardware verification.'},
-      'fr': {'label':'Banque MIDI OUT','short':'Six voies MIDI seules sur les canaux 7–12. Expérimental ; RAM seulement.',
-             'desc':'FUNC + SETTINGS + PAGE bascule entre les pistes audio et six voies MIDI indépendantes sur les canaux 7–12. FUNC + pad bascule MIDI OUT de la voie. Appuyez brièvement sur un trig pour ajouter/retirer le pas ; maintenez-le et tournez DATA pour choisir sa note. Plusieurs trigs tenus sont transposés ensemble. La vue stock affiche B et TR7–TR12 pour les canaux MIDI ; maintenez un trig pour voir sa note et sa vélocité. DATA sélectionne un pas sans trig tenu ; cliquez DATA pour les réglages, EXIT pour revenir. PAGE change la page. Les LED affichent les pas MIDI et leur position de lecture ; revenir aux pistes audio rétablit leurs LED. Arrêtez la lecture avant la première ouverture après démarrage. Chaque pattern possède ses séquences MIDI en RAM, suivant le changement de pattern actif. Elles sont perdues au redémarrage. Sauvegarde disque et isolation des projets inachevées : testez dans un seul projet et redémarrez avant de changer de projet. Ce mod sélectionne son bundle Tout sélectionner compatible validé avec Model-TG, MIDI OUT + THRU en direct, LFO 2, génération différée et SCRAMBLE. Si vous modifiez ses mods requis, décochez la banque MIDI OUT ou cliquez de nouveau sur Tout sélectionner. Cette nouvelle édition attend une validation matérielle.'}}
+      'en': {'label':'MIDI OUT Bank','short':'Six MIDI-only lanes on channels 7–12. Hardware tested; RAM only.',
+             'desc':'FUNC + SETTINGS + PAGE switches between the audio tracks and six independent MIDI-only lanes on channels 7–12. FUNC + pad toggles the lane MIDI OUT. Tap a trig to add/remove it; hold a trig and turn DATA to choose its note. Several held trigs transpose together. The stock-style display shows a B indicator and TR7–TR12 for the MIDI channels; hold a trig to see its note and velocity. DATA selects a step when no trig is held; click DATA for settings and EXIT to return. PAGE changes step page. The trig lights show the MIDI lane steps and its playback position; returning to audio restores the audio-track lights. Stop playback before first opening after boot. Each pattern has its own MIDI sequences in RAM, switching at the active pattern change. They are lost on restart. Disk saving and project isolation are unfinished: use this test within one project and restart before changing projects. Selecting this mod selects its validated compatible Select All bundle with Model-TG, Live MIDI OUT + THRU, LFO 2, queued Sequence Generator and SCRAMBLE. If you change its required mods, uncheck MIDI OUT Bank or use Select all again. This RAM-only MIDI Bank build was hardware tested on 12 October 2026. Saving remains unfinished.'},
+      'fr': {'label':'Banque MIDI OUT','short':'Six voies MIDI seules sur les canaux 7–12. Testé sur machine ; RAM seulement.',
+             'desc':'FUNC + SETTINGS + PAGE bascule entre les pistes audio et six voies MIDI indépendantes sur les canaux 7–12. FUNC + pad bascule MIDI OUT de la voie. Appuyez brièvement sur un trig pour ajouter/retirer le pas ; maintenez-le et tournez DATA pour choisir sa note. Plusieurs trigs tenus sont transposés ensemble. La vue stock affiche B et TR7–TR12 pour les canaux MIDI ; maintenez un trig pour voir sa note et sa vélocité. DATA sélectionne un pas sans trig tenu ; cliquez DATA pour les réglages, EXIT pour revenir. PAGE change la page. Les LED affichent les pas MIDI et leur position de lecture ; revenir aux pistes audio rétablit leurs LED. Arrêtez la lecture avant la première ouverture après démarrage. Chaque pattern possède ses séquences MIDI en RAM, suivant le changement de pattern actif. Elles sont perdues au redémarrage. Sauvegarde disque et isolation des projets inachevées : testez dans un seul projet et redémarrez avant de changer de projet. Ce mod sélectionne son bundle Tout sélectionner compatible validé avec Model-TG, MIDI OUT + THRU en direct, LFO 2, génération différée et SCRAMBLE. Si vous modifiez ses mods requis, décochez la banque MIDI OUT ou cliquez de nouveau sur Tout sélectionner. Cette banque MIDI en RAM a été testée sur machine le 12 octobre 2026. La sauvegarde reste inachevée.'}}
     html=(PROD/'index.html').read_text()
     html=re.sub(r'<script src="../flasher-midi-test/bundle\.js[^"]*"></script>\n?', '', html)
-    html=re.sub(r'2026-\d\d-\d\d-(?:lfo2-main|midi-bank-main)',STAMP,html)
+    html=re.sub(r'2026-\d\d-\d\d-(?:lfo2-main|midi-bank-(?:tested-)?main)',STAMP,html)
     for filename in ('style.css','builder.js','flasher.js','tweaks.js','app.js'):
         html=html.replace('"'+filename+'?v=','"../flasher/'+filename+'?v=')
     # Le script principal exporte les références avant DOMContentLoaded ;
@@ -47,7 +47,7 @@ def files_for(tweak,chosen,image):
     bundle='/* Généré par tools/gen_midi_test_flasher.py ; aucune image firmware. */\n'
     bundle+='window.MC_BUNDLE_IDS = '+json.dumps(ids)+';\n'
     bundle+='window.MC_TWEAKS.tweaks.push('+json.dumps(tweak,ensure_ascii=False,indent=1)+');\n'
-    feature={'id':'midi-bank-bundle','cat':'seq','status':'experimental','label':'MIDI OUT Bank',
+    feature={'id':'midi-bank-bundle','cat':'seq','status':'tested','label':'MIDI OUT Bank',
              'desc':texts['fr']['desc'],'requires':'model-tg',
              'credit':{'kind':'based','who':'TinyGregAudio','repo':'TinyGregAudio/Model-TG'},
              'license':'LICENSE-Model-TG','variants':[{'id':tweak['id'],'label':None}]}

@@ -17,11 +17,13 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
  await wait(25);
  const app=w.MCFlasherApp,tw=w.MC_TWEAKS;
  assert(app&&tw);
+ assert.strictEqual(tw.features.find(f=>f.id==='midi-bank-bundle').status,'tested');
+ assert.strictEqual(tw.tweaks.find(t=>t.id==='midi-bank-bundle').status,'tested');
  assert.strictEqual(app.state.method,'slow');app.setMethod('fast');assert.strictEqual(app.state.method,'fast');
  assert.notStrictEqual(w.getComputedStyle(doc.getElementById('step-choose')).display,'none');
  assert.notStrictEqual(w.getComputedStyle(doc.getElementById('m-slow')).display,'none');
  for(const id of ['file','file3','allow','port','flash'])assert(doc.getElementById(id),id);
- assert(html.includes('bundle.js?v=2026-10-12-midi-bank-stock-patterns'));
+ assert(html.includes('bundle.js?v=2026-10-12-midi-bank-tested'));
  // Identité du transport avec main, sans copie expérimentale ni réglage spécial.
  assert(html.includes('../flasher/flasher.js?v='));
  assert(!fs.existsSync(path.join(dir,'flasher.js')));

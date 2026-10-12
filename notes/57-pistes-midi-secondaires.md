@@ -745,3 +745,12 @@ Aucune sauvegarde disque ajoutée. Les données disparaissent au redémarrage.
 L'isolation entre projets est inachevée : la carte EN/FR demande de tester
 sur un seul projet et de redémarrer avant d'en changer. Cette restriction
 reste à lever avec le stockage et le raccordement des chargements.
+
+## 31. Testé sur la machine (12/10/2026)
+
+AveyCole confirme dans cette conversation : « MIDI Out Bank is hardware tested btw ».
+Le retour concerne le build RAM courant : rendu stock B/TR7..TR12, édition et
+banques par pattern. La carte et le tweak passent à tested. Aucun octet
+firmware ne change ; SHA MAIN OS b803b3b2c4b48bbd5d10173846a715f9060af444dc7f14f014ed459fb068551f.
+La sauvegarde et l'isolation entre projets restent inachevées et ne sont pas
+couvertes par ce statut. Redémarrer avant de changer de projet reste requis.

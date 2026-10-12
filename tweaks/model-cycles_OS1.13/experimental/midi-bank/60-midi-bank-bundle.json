@@ -9,7 +9,7 @@
  "device": "Model:Cycles",
  "os": "1.13",
  "section": 3,
- "status": "experimental",
+ "status": "tested",
  "requires": [
   "6ch-usbup",
   "model-tg-st",

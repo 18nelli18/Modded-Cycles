@@ -131,7 +131,7 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     tweak=dict(id='midi-bank-bundle',order=60,name='Banque MIDI : bundle candidat',
                description=['Six voies MIDI indépendantes, canaux fixes 7..12 ; réglages en RAM seulement.',
                             'Placement candidat TG-ST Select All ; tools/gen_midi_bank_bundle.py, note 57.'],
-               device='Model:Cycles',os='1.13',section=3,status='experimental',
+               device='Model:Cycles',os='1.13',section=3,status='tested',
                requires=list(IDS),conflicts=[],writes=writes,
                append=dict(at=hex(source),dest=hex(start),size=len(blob),
                            parts=[dict(dest=hex(start),hex=blob.hex())],reloc=[]),
