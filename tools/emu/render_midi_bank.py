@@ -77,6 +77,8 @@ def main():
     ap.add_argument('--output', required=True)
     ap.add_argument('--stock', action='store_true')
     ap.add_argument('--held', action='store_true')
+    ap.add_argument('--scale-setup', action='store_true')
+    ap.add_argument('--track-setup', action='store_true')
     ap.add_argument('--lane', type=int, choices=range(1, 7), default=1)
     args = ap.parse_args()
     r = DrawingRig(main_os_from_syx(args.cycles), {'writes': []},
@@ -92,6 +94,14 @@ def main():
     r.w32(r.s['mlp_track'], args.lane-1)
     r.u.mem_write(pattern+264*(args.lane-1)+8, bytes([60, 100, 1, 1]))
     r.w32(r.s['mlp_held'], int(args.held))
+    if args.scale_setup:
+        assert args.stock
+        r.w32(r.s['mlp_setup'],2)
+        r.w32(r.s['mlp_row'],1)
+        r.w32(r.s['mlp_edit'],1)
+    if args.track_setup:
+        r.w32(r.s['mlp_setup'],3)
+        r.w32(r.s['mlp_row'],0)
     # Préfixe d'initialisation des quatre polices utilisées, sans approximation.
     r.call(0x400e7dbc)
     r.u.mem_write(framebuffer, bytes(1024))

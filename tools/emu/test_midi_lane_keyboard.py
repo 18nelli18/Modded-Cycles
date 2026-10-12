@@ -79,6 +79,23 @@ def main():
     key(r,18);assert [take(),take()]==[0x8b480004,0x9b3e6404]
     r.call('mlp_pad_note',5,0);assert take()==0
     key(r,18,0);assert take()==0x8b3e0004
+    # Track Setup reste clavier, même REC actif, canal assigné et KbT privés.
+    r.w32(r.s['mlp_setup'],3)
+    r.u.mem_write(state+357,b'\x01\x01')
+    r.u.mem_write(PAT+264*5+2,bytes([12]))
+    before_menu=bytes(r.u.mem_read(PAT,1584))
+    key(r,19);assert take()==0x9c3f6404
+    key(r,19,0);assert take()==0x8c3f0004 and take()==0
+    for channel in range(16):
+        r.u.mem_write(PAT+264*5+2,bytes([channel]))
+        key(r,19);assert take()==((0x90|channel)<<24)|0x3f6404
+        key(r,19,0);assert take()==((0x80|channel)<<24)|0x3f0004
+        assert take()==0
+    r.u.mem_write(PAT+264*5+2,bytes([12]))
+    assert bytes(r.u.mem_read(PAT,1584))==before_menu
+    assert r.r32(r.s['mlp_setup'])==3
+    key(r,12);assert r.r32(r.s['mlp_setup'])==0
+    print('ok : clavier actif derrière Track Setup avec REC actif, canal assigné13, aucun trig écrit')
     print('ok : 6 voies × 16 touches, REC natif, notes chromatiques, releases/taps/sortie, aucune écriture audio ou pattern hors REC')
     print('ok : file clavier indépendante, worker réveille/consomme sans file séquence, Note Off conservés')
     print('Limites : octave/environnement simulés ; gamme musicale et chemin global REC à raccorder/valider')

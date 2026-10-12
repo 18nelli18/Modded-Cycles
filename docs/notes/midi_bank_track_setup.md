@@ -31,3 +31,19 @@ et des Note Off réservés lors des répétitions. Le format courant n'a que
 note/velocity/gate/flags par pas. Ne pas réinterpréter les octets gate ou
 slide pour y cacher ces paramètres : prévoir une extension versionnée et
 compatible au stockage. Cette partie n'est pas encore implémentée.
+
+## Menu stock et clavier derrière la vue (12/10/2026)
+
+Le rendu appelle maintenant TrackMenuView::draw (0x400423e4) avec un
+modèle et trois lignes privés : KbT, MOut et Pad. Aucun constructeur,
+observer ou setter de piste A n'est employé. Le panneau arrondi Track /
+Setup, les polices, labels et surbrillance sont dessinés par le code natif.
+MOut reprend le commutateur de sortie/mute de la voie B.
+
+Dans Track Setup, les touches TRIG jouent le clavier même lorsque REC est
+actif ; elles ne placent pas de pas. Le canal vient du header2 de la voie
+(0..15), et non plus de 7+index. Les releases restent attachées au message
+accepté, même si le menu ou la sélection change.
+
+Preuves : test_midi_lane_track_setup.py, test_midi_lane_keyboard.py et
+render_midi_bank.py --track-setup. Pas encore testé sur matériel.

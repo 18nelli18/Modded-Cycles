@@ -9,22 +9,24 @@ def main():
  ap=argparse.ArgumentParser();ap.add_argument('--cycles',required=True);a=ap.parse_args()
  r=make(main_os_from_syx(a.cycles));assert r.call('mlp_open')==1
  obj=r.r32(r.s['mlp_obj']);r.w32(r.s['mlp_track'],2)
+ r.call(0x400e7dbc)
+ r.call(0x40070172,0x93006000,128,64,0x93090000,0)
  before=bytes(r.u.mem_read(RAW,722));original=bytes(r.u.mem_read(PAT,1584))
  assert key(r,1)==1 and key(r,2)==1
  assert r.r32(r.s['mlp_setup'])==3
  key(r,2,0);key(r,1,0)
  r.call('ml_toggle');assert r.r32(r.s['mlp_obj'])==obj and r.r32(r.s['mlp_setup'])==3
  r.texts.clear();r.call('mlp_render',obj,0x93006000)
- assert [t[2] for t in r.texts]==['TRACK','KbT','0','Pad','C5','>'],r.texts
+ assert [t[2] for t in r.texts[-3:]]==['0','ON','C5'],r.texts
  assert key(r,32,16)==1
  for i in range(70):knob(r,1)
  assert r.u.mem_read(PAT+264*2+6,1)==b'\x3c'
  for i in range(130):knob(r,-1)
  assert r.u.mem_read(PAT+264*2+6,1)==b'\xc4'
- key(r,32,16);knob(r,1);key(r,32,16)
+ key(r,32,16);knob(r,1);knob(r,1);key(r,32,16)
  knob(r,1);assert r.u.mem_read(PAT+264*2+7,1)==bytes([73^72])
  r.texts.clear();r.call('mlp_render',obj,0x93006000)
- assert r.texts[-2][2]=='C#5',r.texts
+ assert r.texts[-1][2]=='C#5',r.texts
  for i in range(140):knob(r,-1)
  assert r.u.mem_read(PAT+264*2+7,1)==bytes([72])
  for i in range(140):knob(r,1)

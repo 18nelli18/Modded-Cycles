@@ -16,7 +16,7 @@ mlp_track_setup_enc:
     tstl mlp_edit
     bne .Ltse_edit
     addl %d1,%d0
-    cmpil #1,%d0
+    cmpil #2,%d0
     bhi .Ltse_done
     movel %d0,mlp_row
     rts
@@ -30,7 +30,10 @@ mlp_track_setup_enc:
     muluw #264,%d0
     moveal ml_pattern,%a0
     addal %d0,%a0
-    tstl mlp_row
+    movel mlp_row,%d0
+    cmpil #1,%d0
+    beq .Ltse_mout
+    tstl %d0
     bne .Ltse_pad
     moveq #0,%d0
     moveb %a0@(6),%d0
@@ -41,6 +44,12 @@ mlp_track_setup_enc:
     cmpil #60,%d0
     bgt .Ltse_done
     moveb %d0,%a0@(6)
+    rts
+.Ltse_mout:
+    moveq #0,%d0
+    moveb %a0@(1),%d0
+    eoril #1,%d0
+    moveb %d0,%a0@(1)
     rts
 .Ltse_pad:
     moveq #0,%d0
@@ -53,111 +62,139 @@ mlp_track_setup_enc:
     moveb %d0,%a0@(7)
 .Ltse_done:
     rts
-| Dessin borné : deux lignes, panneau noir à gauche comme les menus stock.
+| Rendu MenuView natif avec modèle et lignes privés : géométrie, polices,
+| surbrillance et titre stock ; aucun constructeur/observer de piste audio.
 mlp_track_setup_render:
+    lea.l %sp@(-584),%sp
+    moveml %d2/%a2-%a3,%sp@
+    lea.l %sp@(16),%a2
+    moveal %a2,%a0
+    movel #140,%d0
+.Lts_zero:
+    clrl %a0@+
+    subql #1,%d0
+    bpl .Lts_zero
+    lea.l .Lts_vtable,%a0
+    movel %a0,%a2@
+    lea.l .Lts_title_data,%a0
+    movel %a0,%a2@(148)
+    movel 0x40ea14d0,%d0
+    movel %d0,%a2@(156)
+    movel %d0,%a2@(160)
+    lea.l .Lts_subtitle_data,%a0
+    movel %a0,%a2@(556)
+    movel %sp@(592),%sp@-
+    movel %a2,%sp@-
+    jsr 0x400423e4
+    addql #8,%sp
+    moveml %sp@,%d2/%a2-%a3
+    lea.l %sp@(584),%sp
+    rts
+.Lts_count:
+    moveq #3,%d0
+    rts
+.Lts_zero_value:
+    moveq #0,%d0
+    rts
+.Lts_row_value:
+    movel mlp_row,%d0
+    rts
+.Lts_item:
+    movel %sp@(8),%d0
+    muluw #84,%d0
+    lea.l .Lts_rows,%a1
+    addal %d0,%a1
+    movel %a1,%a0@
+    clrl %a0@(4)
+    rts
+.Lts_label:
+    lea.l %sp@(-8),%sp
+    movel %a0,%sp@
+    moveal %sp@(12),%a1
+    movel %a1@,%sp@-
+    pea .Lallocator
+    | std::string(this,texte,allocator), même routine que le label stock.
+    movel %sp@+,%d0
+    movel %sp@+,%d1
+    movel %d0,%sp@-
+    movel %d1,%sp@-
+    movel %a0,%sp@-
+    jsr 0x400f980c
+    lea.l %sp@(12),%sp
+    movel %sp@,%d0
+    addql #8,%sp
+    rts
+.Lts_value:
     lea.l %sp@(-16),%sp
-    moveml %d2-%d3/%a2-%a3,%sp@
-    moveal %sp@(24),%a2
-    clrl %sp@-
-    pea 63
-    pea 127
-    clrl %sp@-
-    clrl %sp@-
-    movel %a2,%sp@-
-    jsr 0x40070dea
-    lea.l %sp@(24),%sp
-    pea 1
-    pea 63
-    pea 40
-    clrl %sp@-
-    clrl %sp@-
-    movel %a2,%sp@-
-    jsr 0x40070dea
-    lea.l %sp@(24),%sp
-    pea .Ltitle
-    pea .Lfmt_s
-    pea 0x10
-    pea 46
-    pea 2
-    pea 0x40ea14cc
-    movel %a2,%sp@-
-    jsr 0x40071a04
-    lea.l %sp@(28),%sp
+    moveml %d2/%a2-%a3,%sp@
+    moveal %sp@(24),%a3
+    moveal %sp@(28),%a2
     movel mlp_track,%d0
     muluw #264,%d0
-    moveal ml_pattern,%a3
-    addal %d0,%a3
-    moveq #0,%d2
-.Ltsr_loop:
-    lea.l .Llabels,%a0
-    movel %a0@(0,%d2:l:4),%sp@-
-    pea .Lfmt_s
-    pea 0x10
-    movel %d2,%d3
-    muluw #18,%d3
-    addil #16,%d3
-    movel %d3,%sp@-
-    pea 52
-    pea 0x40ea14cc
-    movel %a2,%sp@-
-    jsr 0x40071a04
-    lea.l %sp@(28),%sp
-    moveq #0,%d0
+    moveal ml_pattern,%a0
+    addal %d0,%a0
+    movel %a3@(80),%d2
+    cmpil #1,%d2
+    beq .Lts_out_text
     tstl %d2
-    bne .Ltsr_pad
-    moveb %a3@(6),%d0
+    bne .Lts_pad_text
+    moveq #0,%d0
+    moveb %a0@(6),%d0
     extbl %d0
-    bra .Ltsr_number
-.Ltsr_pad:
-    moveb %a3@(7),%d0
-    eoril #72,%d0
-    bsr mlp_pad_note_text
-    movel %a0,%sp@-
-    pea .Lfmt_s
-    bra .Ltsr_value
-.Ltsr_number:
     movel %d0,%sp@-
     pea .Lfmt_d
-.Ltsr_value:
-    pea 0x14
-    movel %d3,%sp@-
-    pea 125
-    pea 0x40ea14cc
-    movel %a2,%sp@-
-    jsr 0x40071a04
-    lea.l %sp@(28),%sp
-    addql #1,%d2
-    cmpil #2,%d2
-    bcs .Ltsr_loop
-    lea.l .Lcursor,%a0
-    tstl mlp_edit
-    beq .Ltsr_cursor
-    lea.l .Lediting,%a0
-.Ltsr_cursor:
-    movel %a0,%sp@-
+    bra .Lts_draw_value
+.Lts_out_text:
+    lea.l .Lon,%a1
+    tstb %a0@(1)
+    beq .Lts_string
+    lea.l .Loff,%a1
+    bra .Lts_string
+.Lts_pad_text:
+    moveq #0,%d0
+    moveb %a0@(7),%d0
+    eoril #72,%d0
+    jsr mlp_pad_note_text
+    moveal %a0,%a1
+.Lts_string:
+    movel %a1,%sp@-
     pea .Lfmt_s
-    pea 0x10
-    movel mlp_row,%d0
-    muluw #18,%d0
-    addil #16,%d0
+.Lts_draw_value:
+    pea 4
+    movel %sp@(48),%sp@-
+    movel %sp@(48),%d0
+    addil #24,%d0
     movel %d0,%sp@-
-    pea 43
     pea 0x40ea14cc
     movel %a2,%sp@-
     jsr 0x40071a04
     lea.l %sp@(28),%sp
-    moveml %sp@,%d2-%d3/%a2-%a3
+    moveml %sp@,%d2/%a2-%a3
     lea.l %sp@(16),%sp
     rts
     .section .rodata
-.Ltitle: .asciz "TRACK"
+    .balign 4
+.Lts_vtable:
+    .long 0,0,0,.Lts_count,.Lts_item,0,0,0,0,0,0,0,0,0
+    .long .Lts_zero_value,.Lts_row_value,.Lts_count,0,.Lts_zero_value
+.Lts_title_header: .long 5,5,0
+.Lts_title_data: .asciz "Track"
+    .balign 4
+.Lts_subtitle_header: .long 5,5,0
+.Lts_subtitle_data: .asciz "Setup"
 .Lfmt_s: .asciz "%s"
 .Lfmt_d: .asciz "%d"
-.Llabels: .long .Lkbt,.Lpad
-.Lcursor: .asciz ">"
-.Lediting: .asciz "*"
 .Lkbt: .asciz "KbT"
+.Lmout: .asciz "MOut"
 .Lpad: .asciz "Pad"
+.Lon: .asciz "ON"
+.Loff: .asciz "OFF"
+.Lallocator: .byte 0
+    .balign 4
+.Lts_rows:
+    .long 0,0,0,.Lkbt,0,1,.Lts_label,0,0,0,0,0,0,1,.Lts_value,0,0,0,0,0,0
+    .long 0,0,0,.Lmout,0,1,.Lts_label,0,0,0,0,0,0,1,.Lts_value,0,0,0,0,0,1
+    .long 0,0,0,.Lpad,0,1,.Lts_label,0,0,0,0,0,0,1,.Lts_value,0,0,0,0,0,2
 
     .text
 | Nom MIDI stock : note72=C5 ; buffer UI, jamais appelé depuis IRQ.
@@ -229,6 +266,7 @@ mlp_pad_note:
     addal %d0,%a2
     tstb %a2@
     beq .Lpad_done
+
     moveq #0,%d3
     moveb %a2@(2),%d3
     cmpil #15,%d3

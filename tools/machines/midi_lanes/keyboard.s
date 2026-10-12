@@ -28,11 +28,17 @@ mlp_keyboard:
     tstl mlccp_obj
     bne .Lkb_live_menu
     .endif
+    movel mlp_setup,%d1
+    cmpil #3,%d1
+    beq .Lkb_live_menu
     tstb %d0
     bne .Lkb_grid
 .Lkb_live_menu:
-    tstl mlp_setup
+    movel mlp_setup,%d0
+    beq .Lkb_menu_ready
+    cmpil #3,%d0
     bne .Lkb_used
+.Lkb_menu_ready:
     andil #11,%d3
     cmpil #1,%d3
     bne .Lkb_used
@@ -49,6 +55,7 @@ mlp_keyboard:
     addal %d0,%a2
     tstb %a2@
     beq .Lkb_used
+
     | Même décalage clavier que KeyboardView : touche + 52 + octave stock.
     moveq #0,%d0
     moveb %a2@(6),%d0
@@ -66,8 +73,11 @@ mlp_keyboard:
     moveq #0,%d0
     moveb %a2@(3),%d0
     orl %d0,%d3
-    movel %d4,%d0
-    addil #0x96,%d0
+    moveq #0,%d0
+    moveb %a2@(2),%d0
+    cmpil #15,%d0
+    bhi .Lkb_used
+    oril #0x90,%d0
     swap %d0
     lsll #8,%d0
     orl %d0,%d3
