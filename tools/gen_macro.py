@@ -244,7 +244,8 @@ def added_machine(img, tg, machines, tmp, blobs, bss_end):
     u32 = lambda va: struct.unpack_from(">I", cur, va - BASE)[0]
     names_at, upd_at, rnd_at, map_at = gs.DATA, gs.DATA + 4 * nm, gs.DATA + 8 * nm, gs.DATA + 16 * nm
     stubs, ssyms = assemble(tmp, "det", gs.detours_asm(n, [m["image"] for m in machines],
-                                                       [76 + 5 * i for i in range(n)], tg, lofi=gs.lofi_index(machines))
+                                                       [76 + 5 * i for i in range(n)], tg, lofi=gs.lofi_index(machines),
+                                                       fenv=gs.fenv_index(machines))
                             + (dispatch_tg_asm(None, rnd_at, tg) if tg else ""), gs.STUBS)
     if gs.STUBS + len(stubs) > gs.DATA:
         raise SystemExit("!! détours trop grands")

@@ -275,7 +275,9 @@ FEATURES = [
         # avec Model-TG : la version qui s'ajoute apres model-tg-st (Model-TG prend cette base, « with » ci-dessus)
         "with": {"model-tg": "32-macro-tg"},
         # avec ACID, sans les moteurs : MACRO puis ACID (notes/54 §11 ; « tested » : gen_acid_combos.HW_TESTED)
-        "versions": {"acid": {"file": "25-macro-acid", "tg": "32-macro-acid-tg"}},
+        "versions": {"acid": {"file": "25-macro-acid", "tg": "32-macro-acid-tg"},
+                     "wave": {"file": "25-macro-wave", "tg": None},
+                     "acid+wave": {"file": "25-macro-acid-wave", "tg": None}},
     },
     {
         "id": "acid",
@@ -297,6 +299,27 @@ FEATURES = [
         ],
         # avec Model-TG : la version qui s'ajoute apres model-tg-st (Model-TG prend cette base, « with » ci-dessus)
         "with": {"model-tg": "35-acid-tg"},
+        # avec Wave (sans moteurs ni MACRO) : sa version avec Wave en derniere machine (gen_wave_combos.py, notes/62)
+        "versions": {"wave": {"file": "26-acid-wave", "tg": None}},
+    },
+    {
+        "id": "wave",
+        "cat": "sound",
+        "label": "Machine Wave",
+        "desc": "Une machine ajoutee apres Chord (toujours la derniere) : elle joue une de tes tables d'ondes "
+                "rangee dans /Wavetables. La table se convertit sur le site (rubrique Convert) et s'envoie a la "
+                "machine depuis la meme page ; sur la piste Wave, FUNC + MACHINES puis YES la charge, et la piste la "
+                "retient. COLOR = position, SHAPE = enveloppe vers la position, SWEEP / CONTOUR = passe-bas, "
+                "FUNC + SWEEP = enveloppe vers la coupure.",
+        "status": "experimental",
+        "credit": None,
+        # sa propre lecture du fichier (notes/60) : jamais avec Model-TG ; avec les moteurs du Syntakt, MACRO et
+        # ACID, leurs versions avec Wave en derniere machine (gen_wave_combos.py, notes/62)
+        "excludes": ["model-tg"],
+        "joins": ["syntakt", "macro", "acid"],
+        "variants": [
+            {"file": "36-wavetable", "label": None},
+        ],
     },
     {
         "id": "chord-keys",
@@ -369,12 +392,19 @@ def engine_versions():
     """Versions d'une combinaison de moteurs avec les cartes jointes : cle -> (codes, tg) -> (id, teste)."""
     import gen_acid_combos as gac
     import gen_macro_syntakt as gms
+    import gen_wave_combos as gwc
+    import gen_wavetable as gw
     return {
         "macro": lambda codes, tg: (gms.tweak_id(codes, tg=tg), tuple(codes) in (gms.HW_TESTED_TG if tg else gms.HW_TESTED)),
         "acid": lambda codes, tg: (gac.tweak_id(codes, tg, macro=False),
                                    (tuple(codes), False) in (gac.HW_TESTED_TG if tg else gac.HW_TESTED)),
         "macro+acid": lambda codes, tg: (gac.tweak_id(codes, tg, macro=True),
                                          (tuple(codes), True) in (gac.HW_TESTED_TG if tg else gac.HW_TESTED)),
+        # Wave : sans Model-TG seulement (gen_wave_combos.py, notes/62)
+        **{k: (lambda m, a: lambda codes, tg: (None, False) if tg else (
+            gw.combo_id(tuple(codes), m, a), (tuple(codes), m, a) in gwc.HW_TESTED))(m, a)
+           for k, m, a in (("wave", False, False), ("macro+wave", True, False), ("acid+wave", False, True),
+                           ("macro+acid+wave", True, True))},
     }
 
 
@@ -395,7 +425,8 @@ def engine_feature(f, load):
              "tg_tested": tuple(codes) in gs.HW_TESTED_TG}
         for k in keys:                                           # avec MACRO (notes/50), ACID (notes/54 §11)
             (tid, ok), (tid_tg, ok_tg) = known[k](codes, False), known[k](codes, True)
-            c[k] = {"id": load(tid)["id"], "tg": load(tid_tg)["id"], "tested": ok, "tg_tested": ok_tg}
+            c[k] = {"id": load(tid)["id"], "tg": load(tid_tg)["id"] if tid_tg else None, "tested": ok,
+                    "tg_tested": ok_tg}
         combos.append(c)
     return engines, combos, keys
 
@@ -553,8 +584,11 @@ def render():
             if sorted(f["versions"]) != sorted(join_keys(f)):
                 sys.exit(f"!! {f['id']} : versions {sorted(f['versions'])} au lieu de {join_keys(f)}")
             fid = lambda v: json.loads((DEV_DIR / f"{v}.json").read_text(encoding="utf-8"))["id"]
-            feat["versions"] = {k: {"id": load(fid(v["file"]))["id"], "tg": load(fid(v["tg"]))["id"],
-                                    "tested": ((), True) in gac.HW_TESTED, "tg_tested": ((), True) in gac.HW_TESTED_TG}
+            # testee : ce que gen_acid_combos.py note pour MACRO + ACID ; une version avec Wave, jamais pour l'instant
+            feat["versions"] = {k: {"id": load(fid(v["file"]))["id"],
+                                    "tg": load(fid(v["tg"]))["id"] if v["tg"] else None,
+                                    "tested": "wave" not in k and ((), True) in gac.HW_TESTED,
+                                    "tg_tested": "wave" not in k and ((), True) in gac.HW_TESTED_TG}
                                 for k, v in f["versions"].items()}
             feat["joined"] = join_keys(f)
         if f.get("license"):                    # texte de la licence, servi a cote de la page (licenses())

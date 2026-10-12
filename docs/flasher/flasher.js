@@ -324,10 +324,144 @@ function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+// ---------------------------------------------------------------------------
+// Sample / file transfer over the same Transfer protocol (notes/59). The Wave machine reads its tables from the
+// +Drive, where they sit as Model:Samples "sample" files, so the machine must answer id 25 (Wave's SMP
+// identity, switched by setSmpMode, notes/61). The protocol as Elektroid documents it (commands, bodies, the
+// 64-byte header; src/connectors/elektron.c, FS_SAMPLE_*); numbers in a body are big-endian.
+// ---------------------------------------------------------------------------
+const DATA_BLOCK = 0x2000;             // DATA_TRANSF_BLOCK_BYTES
+const ALSA_BLOCK = 0x800;              // Chrome on Linux / ChromeOS (ALSA) loses 8 KB SysEx (notes/59 §12)
+
+/* Upload block size for this browser: 8 KB as Elektroid, 2 KB where Web MIDI goes through ALSA. */
+function sampleBlock() {
+  const nav = typeof navigator !== "undefined" ? navigator : null;
+  const p = nav ? ((nav.userAgentData && nav.userAgentData.platform) || nav.platform || nav.userAgent || "") : "";
+  return /linux|chrome ?os|cros/i.test(p) ? ALSA_BLOCK : DATA_BLOCK;
+}
+const SAMPLE_HEADER_LEN = 64;          // struct elektron_sample_header
+const ELEKTRON_SAMPLE_RATE = 48000;
+
+function be32(v) { return [(v >>> 24) & 0xff, (v >>> 16) & 0xff, (v >>> 8) & 0xff, v & 0xff]; }
+function u32be(b, o) { return ((b[o] << 24) | (b[o + 1] << 16) | (b[o + 2] << 8) | b[o + 3]) >>> 0; }
+
+/* cp1252 (Latin-1) path, NUL-terminated. */
+function pathBytes(path) {
+  const out = [];
+  for (let i = 0; i < path.length; i++) out.push(path.charCodeAt(i) & 0xff);
+  out.push(0);
+  return out;
+}
+
+/* List a folder (0x10): [{ hash, size, writeProtected, type, name }]. type 1 = directory. */
+async function sampleReadDir(session, path) {
+  const msg = await session.request([0x10, ...pathBytes(path)]);
+  const out = [];
+  let p = 5;
+  while (p + 10 <= msg.length) {
+    const hash = u32be(msg, p); p += 4;
+    const size = u32be(msg, p); p += 4;
+    const writeProtected = msg[p]; p += 1;
+    const type = msg[p]; p += 1;
+    let name = "";
+    while (p < msg.length && msg[p]) { name += String.fromCharCode(msg[p]); p++; }
+    p += 1;
+    out.push({ hash, size, writeProtected, type, name });
+  }
+  return out;
+}
+
+/* Create a folder (0x11). true if created, false if it already existed (harmless). */
+async function sampleMakeDir(session, path) {
+  const msg = await session.request([0x11, ...pathBytes(path)]);
+  return msg[5] === 1;
+}
+
+/* Upload mono 16-bit samples (Int16Array) to `path` on the sample filesystem. Elektroid's
+ * elektron_upload_sample: open writer, 8 KB blocks (the first carries the 64-byte header), close writer.
+ * opts.blockBytes (sampleBlock() by default): each write carries its byte offset in the file.
+ * Pacing: starts at opts.restMs (0 by default), then backs off (opts.stepMs, up to opts.maxRestMs) and
+ * resends the block whenever one is refused or times out (opts.maxRetry) — the ack already gates the flow,
+ * the pause is only a margin. opts.onSpeed(s) reports each block's round-trip. */
+async function uploadSample(session, path, samples, opts = {}) {
+  const pcmLen = samples.length * 2;
+  const total = pcmLen + SAMPLE_HEADER_LEN;
+  const t0 = Date.now();
+  const maxRetry = Number.isFinite(opts.maxRetry) ? opts.maxRetry : 5;
+  const step = Number.isFinite(opts.stepMs) ? opts.stepMs : 10;
+  const maxRest = Number.isFinite(opts.maxRestMs) ? opts.maxRestMs : 200;
+  let rest = Number.isFinite(opts.restMs) ? opts.restMs : 0;
+  const blockBytes = Number.isFinite(opts.blockBytes) && opts.blockBytes > SAMPLE_HEADER_LEN ? opts.blockBytes : sampleBlock();
+
+  const header = new Uint8Array(SAMPLE_HEADER_LEN);
+  const hv = new DataView(header.buffer);
+  hv.setUint8(0, 0);                            // type
+  hv.setUint8(1, 0);                            // stereo: 0 = mono
+  hv.setUint32(4, pcmLen, false);               // size (bytes of PCM)
+  hv.setUint32(8, ELEKTRON_SAMPLE_RATE, false); // rate
+  hv.setUint32(12, 0, false);                   // loop start
+  hv.setUint32(16, 0, false);                   // loop end
+  hv.setUint8(20, 0x7f);                        // loop type: none
+
+  const r0 = await session.request([0x40, ...be32(total), ...pathBytes(path)]);
+  if (r0[5] !== 1) throw new XferError("refused", xferString(r0, 6));
+  const id = u32be(r0, 6);
+
+  let sent = 0, seq = 0, pos = 0, blockMs = 0, retries = 0;
+  for (;;) {
+    const block = [];
+    let consumed = 0;
+    if (seq === 0) { for (let i = 0; i < SAMPLE_HEADER_LEN; i++) block.push(header[i]); consumed += SAMPLE_HEADER_LEN; }
+    let n = Math.min(blockBytes - consumed, pcmLen - sent);
+    n -= n & 1;                                 // whole 16-bit samples
+    for (let i = 0; i < n; i += 2) {
+      const v = samples[(sent + i) >> 1];       // 16-bit big-endian on the wire
+      block.push((v >> 8) & 0xff, v & 0xff);
+    }
+    consumed += n;
+
+    const bt = performance.now();
+    let r;
+    try {
+      r = await session.request([0x42, ...be32(id), ...be32(consumed), ...be32(pos), ...block]);
+    } catch (e) {
+      if (retries++ < maxRetry) { rest = Math.min(maxRest, Math.max(rest + step, Math.round(blockMs) + step)); if (opts.onRetry) opts.onRetry({ blockMs, rest, tries: retries, reason: "timeout" }); continue; }
+      throw e;
+    }
+    blockMs = performance.now() - bt;
+    if (r[5] !== 1) {
+      if (retries++ < maxRetry) { rest = Math.min(maxRest, Math.max(rest + step, Math.round(blockMs) + step)); if (opts.onRetry) opts.onRetry({ blockMs, rest, tries: retries, reason: "refused" }); continue; }
+      throw new XferError("write", xferString(r, 6));
+    }
+    sent += n; seq++; pos += consumed;
+    if (opts.onProgress) opts.onProgress(sent, pcmLen);
+    if (opts.onSpeed) opts.onSpeed({ sent, total: pcmLen, blockMs, rest, blocks: seq, seconds: (Date.now() - t0) / 1000 });
+    if (sent >= pcmLen) break;
+    if (rest > 0) await sleep(rest);
+  }
+
+  const rc = await session.request([0x41, ...be32(id), ...be32(total)]);
+  if (rc[5] !== 1) throw new XferError("close", xferString(rc, 6));
+  return { bytes: total, blocks: seq, seconds: (Date.now() - t0) / 1000, rest };
+}
+
+/* Wave's identity switch (notes/61): F0 00 20 3C 0F 00 <m> F7, 1 = Model:Samples, 0 = Model:Cycles. No reply;
+ * resolves to the new xferIdentify answer. Not kept across a restart (back to Model:Cycles). */
+function smpModeMessage(on) {
+  return new Uint8Array([0xf0, 0x00, 0x20, 0x3c, 0x0f, 0x00, on ? 1 : 0, 0xf7]);
+}
+async function setSmpMode(session, output, on) {
+  output.send(smpModeMessage(on));
+  await sleep(REST_MS);
+  return xferIdentify(session);
+}
+
 const API = { splitMessages, verify, packetChecksum, transferSeconds, sendSysex,
               PRODUCTS, DEFAULT_PACE, DIN_BYTES_PER_SEC,
               encode7, decode7, crc32, xferFrame, xferParse, xferString, xferOpen, xferIdentify, upgradeFast,
-              fastSeconds, XferError, XFER_IDS, XFER_PRODUCT, OS_BLOCK };
+              fastSeconds, XferError, XFER_IDS, XFER_PRODUCT, OS_BLOCK,
+              DATA_BLOCK, ALSA_BLOCK, sampleBlock, SAMPLE_HEADER_LEN, ELEKTRON_SAMPLE_RATE, be32, pathBytes, sampleReadDir, sampleMakeDir, uploadSample,
+              smpModeMessage, setSmpMode };
 if (typeof module !== "undefined" && module.exports) module.exports = API;
 if (typeof window !== "undefined") window.MCFlasher = API;
 })();

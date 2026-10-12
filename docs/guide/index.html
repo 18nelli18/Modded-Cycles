@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-12-08">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-12-08">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-12-10">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-12-10">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -22,6 +22,7 @@
   <nav aria-label="Site">
     <a href="../flasher/">Flasher</a>
     <a href="./" aria-current="page">Guide</a>
+    <a href="../convert/">Convert</a>
     <a href="https://github.com/18nelli18/Modded-Cycles" target="_blank" rel="noopener">GitHub</a>
     <a href="https://discord.gg/hWegtJZcmm" target="_blank" rel="noopener">Discord</a>
     <a href="https://ko-fi.com/18nelli" target="_blank" rel="noopener">Ko-fi</a>
@@ -60,6 +61,7 @@
         <li><a href="#midi-live-both"><span data-l="en">Live MIDI OUT + THRU toggle</span><span data-l="fr">Basculer MIDI OUT + THRU en direct</span></a></li>
         <li><a href="#track-filter"><span data-l="en">Per-track filter</span><span data-l="fr">Filtre par piste</span></a></li>
         <li><a href="#acid"><span data-l="en">ACID machine</span><span data-l="fr">Machine ACID</span></a></li>
+        <li><a href="#wave"><span data-l="en">Wave machine</span><span data-l="fr">Machine Wave</span></a></li>
         <li><a href="#lfo-plus">LFO 2, 3, 4</a></li>
         <li><a href="#mods-on-samples"><span data-l="en">Mods on a Model:Samples</span><span data-l="fr">Des mods sur un Model:Samples</span></a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
@@ -744,8 +746,28 @@
         <p class="note"><span data-l="en"><b>Before flashing another choice or the official firmware,</b> set your ACID tracks back to an original machine (Kick to Chord): ACID is the last added machine, so its number depends on Model-TG, the Syntakt engines and MACRO, and the official OS doesn't have it.</span><span data-l="fr"><b>Avant de flasher un autre choix ou le firmware officiel,</b> remettez vos pistes ACID sur une machine d'origine (de Kick à Chord) : ACID est la dernière machine ajoutée, son numéro dépend donc de Model-TG, des moteurs du Syntakt et de MACRO, et l'OS officiel ne l'a pas.</span></p>
       </section>
 
+      <section id="wave">
+        <h2><span class="n">22</span><span data-l="en">Wave machine</span><span data-l="fr">Machine Wave</span></h2>
+        <p class="lede"><span data-l="en">One extra machine, Wave: it plays your own wavetables. Convert the table on the site, send it to the machine, then play it like any machine.</span><span data-l="fr">Une machine ajoutée, Wave : elle joue vos propres tables d'ondes. Convertissez la table sur le site, envoyez-la sur la machine, puis jouez-la comme n'importe quelle machine.</span></p>
+        <ol>
+          <li><span data-l="en">On this site, open the <a href="../convert/">Convert</a> tab and drop your wavetable (a mono WAV whose length is a whole number of 2048-point frames: Serum, Vital, most packs). It gives a file the machine reads directly, anti-fold-back copies already baked in.</span><span data-l="fr">Sur ce site, ouvrez la rubrique <a href="../convert/">Convert</a> et déposez votre table d'ondes (un WAV mono dont la longueur est un nombre entier de trames de 2048 points : Serum, Vital, la plupart des packs). Vous recevez un fichier que la machine lit directement, les copies anti-repliement déjà gravées.</span></li>
+          <li><span data-l="en">To send it from the page: plug the machine in over USB, close Elektron Transfer and the site's other tabs (they hold the port or talk to the machine), then click <b>Send to the machine</b> and pick a pace. For the transfer the page makes the machine answer as a Model:Samples, then switches it back to Model:Cycles. If a transfer gets cut off, click <b>switch it back to Model:Cycles</b> under the drop zone, or restart the machine.</span><span data-l="fr">Pour l'envoyer depuis la page : branchez la machine en USB, fermez Elektron Transfer et les autres onglets du site (ils bloquent le port ou parlent à la machine), puis cliquez sur <b>Envoyer à la machine</b> et choisissez une cadence. Pour l'envoi, la page fait répondre la machine comme un Model:Samples, puis la remet en Model:Cycles. Si un envoi est interrompu, cliquez sur <b>la remettre en Model:Cycles</b> sous la zone de dépôt, ou redémarrez la machine.</span></li>
+          <li><span data-l="en">Press <b>MACHINES</b> and pick <b>Wave</b>: the last machine, after Chord (and after the Syntakt engines, MACRO and ACID if you ticked them). Then <b>FUNC + MACHINES</b> on the Wave track: the browser is locked in <code>/Wavetables</code>. Pick your table and press <b>YES</b>: the screen says <b>Table loaded to track N</b> and the pad plays it. If it says <b>Table not converted</b>, convert the file on this site first.</span><span data-l="fr">Appuyez sur <b>MACHINES</b> et choisissez <b>Wave</b> : la dernière machine, après Chord (et après les moteurs du Syntakt, MACRO et ACID si vous les avez cochés). Puis <b>FUNC + MACHINES</b> sur la piste Wave : le navigateur est bloqué dans <code>/Wavetables</code>. Choisissez votre table et appuyez sur <b>YES</b> : l'écran affiche <b>Table loaded to track N</b> et le pad la joue. S'il affiche <b>Table not converted</b>, convertissez d'abord le fichier sur ce site.</span></li>
+          <li><span data-l="en"><b>COLOR</b> (Position) moves through the table: low is the start, high the end. <b>SHAPE</b> (Env Pos) makes each note start further into the table and glide back to COLOR: 0 is off.</span><span data-l="fr"><b>COLOR</b> (Position) parcourt la table : bas le début, haut la fin. <b>SHAPE</b> (Env Pos) fait partir chaque note plus loin dans la table, puis revenir vers COLOR : 0, rien.</span></li>
+          <li><span data-l="en"><b>SWEEP</b> (Cutoff) is the low-pass, <b>CONTOUR</b> (Reso) its resonance. Hold <b>FUNC</b> and turn <b>SWEEP</b> to send the filter envelope up or down: the screen shows OFF in the middle, -64 to +63 on either side. <b>DECAY</b> sets how fast the envelope falls (filter, position and volume); <b>GATE</b> and <b>PUNCH</b> work as on the original machines.</span><span data-l="fr"><b>SWEEP</b> (Cutoff) est le passe-bas, <b>CONTOUR</b> (Reso) sa résonance. Maintenez <b>FUNC</b> et tournez <b>SWEEP</b> pour envoyer l'enveloppe de coupure vers le haut ou vers le bas : l'écran affiche OFF au milieu, de -64 à +63 de part et d'autre. <b>DECAY</b> règle la vitesse de l'enveloppe (coupure, position et volume) ; <b>GATE</b> et <b>PUNCH</b> marchent comme sur les machines d'origine.</span></li>
+        </ol>
+        <dl class="facts">
+          <div><dt><span data-l="en">The file</span><span data-l="fr">Le fichier</span></dt><dd><span data-l="en">the Convert page writes a 48 kHz mono file that already carries the anti-fold-back copies, so nothing is computed on the machine. Keep it in <code>/Wavetables</code>; Elektron Transfer leaves a 48 kHz file untouched.</span><span data-l="fr">la page Convert écrit un fichier 48 kHz mono qui porte déjà les copies anti-repliement : rien n'est calculé sur la machine. Gardez-le dans <code>/Wavetables</code> ; Elektron Transfer ne touche pas un fichier 48 kHz.</span></dd></div>
+          <div><dt><span data-l="en">Remembered</span><span data-l="fr">Retenue</span></dt><dd><span data-l="en">the track keeps its table: it comes back when you reload the project or switch the machine back on. The track's sound name then shows a code starting with <b>W</b> (that is where the table is remembered): leave it as it is. If you move or rename the file, pick it again with YES.</span><span data-l="fr">la piste garde sa table : elle revient quand vous rechargez le projet ou rallumez la machine. Le nom du son de la piste montre alors un code qui commence par <b>W</b> (c'est là que la table est retenue) : laissez-le tel quel. Si vous déplacez ou renommez le fichier, rechoisissez-le avec YES.</span></dd></div>
+          <div><dt><span data-l="en">Processor</span><span data-l="fr">Processeur</span></dt><dd><span data-l="en">about 1.5 Tone voices per Wave voice: a few Wave tracks are fine, six would be heavy. A silent Wave track is not computed.</span><span data-l="fr">environ 1,5 voix TONE par voix Wave : quelques pistes Wave passent, six seraient lourdes. Une piste Wave muette n'est pas calculée.</span></dd></div>
+          <div><dt><span data-l="en">Limits</span><span data-l="fr">Limites</span></dt><dd><span data-l="en">one table per track, and it must be converted on the site first (a raw wavetable is not read). No load governor yet.</span><span data-l="fr">une table par piste, et elle doit d'abord être convertie sur le site (une table brute n'est pas lue). Pas encore de régulateur de charge.</span></dd></div>
+          <div><dt><span data-l="en">Other mods</span><span data-l="fr">Autres mods</span></dt><dd><span data-l="en">goes with every mod except Model-TG (Wave reads its own files) and SD VINTAGE. With the Syntakt engines, MACRO and ACID, Wave comes last: tick them together and the flasher builds the combined version.</span><span data-l="fr">se combine avec tous les mods sauf Model-TG (Wave lit elle-même ses fichiers) et SD VINTAGE. Avec les moteurs du Syntakt, MACRO et ACID, Wave vient en dernier : cochez-les ensemble et le flasher construit la version combinée.</span></dd></div>
+          <div><dt><span data-l="en">Experimental</span><span data-l="fr">Expérimental</span></dt><dd><span data-l="en">checked in the emulator on the OS's own code: the converter is well formed and in band, notes play without reading outside memory, and the machine reads the file. Tried on a contributor's Model:Cycles (the locked browser, YES loading a table, the table coming back after a restart or a project reload, sending from the Convert page); not yet tested by Maxime.</span><span data-l="fr">vérifiée en émulation sur le code même de l'OS : le convertisseur est bien formé et borné en bande, les notes jouent sans lecture hors mémoire, et la machine lit le fichier. Essayée sur le Model:Cycles d'un contributeur (le navigateur bloqué, le chargement par YES, la table qui revient après un redémarrage ou un rechargement du projet, l'envoi depuis la page Convert) ; pas encore testée par Maxime.</span></dd></div>
+        </dl>
+        <p class="note"><span data-l="en"><b>Before flashing another choice or the official firmware,</b> set your Wave tracks back to an original machine: Wave's number depends on the engines, MACRO and ACID you ticked, and the official OS doesn't have it.</span><span data-l="fr"><b>Avant de flasher un autre choix ou le firmware officiel,</b> remettez vos pistes Wave sur une machine d'origine : le numéro de Wave dépend des moteurs, de MACRO et d'ACID cochés, et l'OS officiel ne l'a pas.</span></p>
+      </section>
       <section id="lfo-plus">
-        <h2><span class="n">22</span><span data-l="en">LFO 2, 3, 4</span><span data-l="fr">LFO 2, 3, 4</span></h2>
+        <h2><span class="n">23</span><span data-l="en">LFO 2, 3, 4</span><span data-l="fr">LFO 2, 3, 4</span></h2>
         <p class="by"><span data-l="en">Idea and first version by DavidCaruso (Model-TG-VA-DR-v1), rewritten for this project</span><span data-l="fr">Idée et première version de DavidCaruso (Model-TG-VA-DR-v1), réécrit pour ce projet</span></p>
         <p class="lede"><span data-l="en">Each track gets three more LFOs next to the original one, so up to four LFOs modulate a track at once. With or without Model-TG.</span><span data-l="fr">Chaque piste reçoit trois LFO de plus à côté de celui d'origine : jusqu'à quatre LFO modulent une piste en même temps. Avec ou sans Model-TG.</span></p>
         <ol>
@@ -766,7 +788,7 @@
       </section>
 
       <section id="mods-on-samples">
-        <h2><span class="n">23</span><span data-l="en">Mods on a Model:Samples</span><span data-l="fr">Des mods sur un Model:Samples</span></h2>
+        <h2><span class="n">24</span><span data-l="en">Mods on a Model:Samples</span><span data-l="fr">Des mods sur un Model:Samples</span></h2>
         <p class="lede"><span data-l="en">A Model:Samples can run the Model:Cycles OS with the same mods as a Model:Cycles. Whatever the machine, the flasher always installs the Model:Cycles OS; on a Model:Samples, <a href="#model-tg">Model-TG</a>'s Sampler plays your samples.</span><span data-l="fr">Un Model:Samples peut tourner sous l'OS du Model:Cycles avec les mêmes mods qu'un Model:Cycles. Quelle que soit la machine, le flasher installe toujours l'OS du Model:Cycles ; sur un Model:Samples, le Sampler de <a href="#model-tg">Model-TG</a> joue vos samples.</span></p>
         <ol>
           <li><span data-l="en">Back up your samples and projects with Elektron Transfer, then close Transfer.</span><span data-l="fr">Sauvegardez vos samples et vos projets avec Elektron Transfer, puis fermez Transfer.</span></li>
@@ -790,7 +812,7 @@
       </section>
 
       <section id="samples">
-        <h2><span class="n">24</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">25</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -824,13 +846,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">25</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">26</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">With Syntakt engines, the MACRO or ACID machine or Model-TG's Sampler, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt, la machine MACRO ou ACID ou le Sampler de Model-TG, remettez d'abord vos pistes sur une machine d'origine.</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">26</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">27</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -844,7 +866,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">27</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">28</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -910,8 +932,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-12-08"></script>
-<script src="../assets/cycles.js?v=2026-10-12-08"></script>
-<script src="../assets/site.js?v=2026-10-12-08"></script>
+<script src="../assets/release.js?v=2026-10-12-10"></script>
+<script src="../assets/cycles.js?v=2026-10-12-10"></script>
+<script src="../assets/site.js?v=2026-10-12-10"></script>
 </body>
 </html>

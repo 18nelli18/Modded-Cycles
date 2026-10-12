@@ -125,16 +125,17 @@ def compile_macro(repo, pay):
     return _MACRO[repo, pay]
 
 
-def build_tweak(img, st_img, repo, codes, tg=None, macro=True, acid=None):
+def build_tweak(img, st_img, repo, codes, tg=None, macro=True, acid=None, wave=None):
     """Tweak des moteurs codes avec MACRO après eux. tg : Model-TG (gs.tg_context), avec set_base(PAY_TG).
     acid : la machine ACID en plus, après MACRO (ou sans MACRO, macro=False), déjà liée à sa place
-    (gen_acid_combos.py : dict(machine, at, blob, end), notes/54 §11)."""
+    (gen_acid_combos.py : dict(machine, at, blob, end), notes/54 §11). wave : la machine Wave en dernier
+    (gen_wave_combos.py : dict(machine, at, blobs, end, post), notes/62) ; post(out) ajoute ses écritures."""
     pay = gs.PAY_TG if tg else gs.PAY_ALONE
     gs.set_base(pay)
     tw = versioned(codes, bool(tg))
     an = gs.analyse(st_img, gs.generation(codes))
     lay = an["lay"]
-    low = pay + MACRO_AT if macro else acid["at"]          # le plus bas de nos machines
+    low = pay + MACRO_AT if macro else (acid or wave)["at"]          # le plus bas de nos machines
     if lay["end"] > low:
         raise SystemExit(f"!! moteurs jusqu'à {lay['end']:#x} : nos machines commencent à {low:#x}")
     br = bridge_of(tw, codes, tg, lay)
@@ -149,6 +150,12 @@ def build_tweak(img, st_img, repo, codes, tg=None, macro=True, acid=None):
         machines.append(acid["machine"])
         parts.append({"dest": f"{acid['at']:#x}", "hex": acid["blob"].hex()})
         end = acid["end"]
+    if wave:
+        if end > wave["at"]:
+            raise SystemExit(f"!! nos machines jusqu'à {end:#x} : Wave commence à {wave['at']:#x}")
+        machines.append(wave["machine"])
+        parts += [{"dest": f"{a:#x}", "hex": b.hex()} for a, b in wave["blobs"]]
+        end = wave["end"]
     bss_end = end
     if tg and bss_end > pay + TG_ROOM:
         raise SystemExit(f"!! charge utile jusqu'à {bss_end:#x} : au-delà de la place laissée par Model-TG")
@@ -190,6 +197,8 @@ def build_tweak(img, st_img, repo, codes, tg=None, macro=True, acid=None):
     out["description"] += [d for d in tw["description"] if d == gov_asm.NOTE]
     out["symbols"] = {k: f"{syms[n]:#x}" for k, n in (("macro_update", "macro_update"), ("macro_render", "macro_render"),
                                                        ("braids_render", gm.BRAIDS_RENDER))} if macro else {}
+    if wave:
+        wave["post"](out)
     # taille rangée : la charge utile telle qu'au démarrage, compressée comme par build.py et le flasher
     rt = build.payload_runtime(out, img, st_img)
     packed = len(aplib_grow.pack(rt))

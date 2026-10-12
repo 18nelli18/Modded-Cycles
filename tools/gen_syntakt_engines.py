@@ -94,7 +94,7 @@ HW_TESTED = set()
 # l'arpégiateur, construite par build.py (même MAIN OS que le flasher), « c bon ça fonctionne nickel » ; l'utilisateur
 # a demandé l'étiquette sans attendre un essai depuis le flasher.
 HW_TESTED_TG = {("sd", "cp", "toy", "bits", "swarm")}
-MAX_EXTRA = 7                # 5 moteurs, MACRO et ACID (notes/54 §11)
+MAX_EXTRA = 8                # 5 moteurs, MACRO, ACID (notes/54 §11) et Wave (notes/62)
 
 # --- Syntakt : fermeture et plages copiées -----------------------------------------------------------------
 # La copie dépend du DERNIER moteur coché (ordre du catalogue) : elle contient tout ce qu'il faut aux moteurs du
@@ -191,6 +191,10 @@ LAYOUT = dict(
 # descripteurs (14 x 32 o chacune avec Model-TG, jusqu'à 0x35be0 < RECS). Jusqu'à 6 machines, rien ne bouge : les
 # firmwares déjà testés gardent leurs octets.
 ROWS7 = dict(ROWSN=0x35860, CCROWSN=0x35a20)
+# 8 machines ajoutées (les 5 moteurs, MACRO, ACID et Wave, sans Model-TG : 14 machines, notes/62) : 116 descripteurs
+# jusqu'à 0x35960, puis les rangées et les rangées CC (14 x 32 o chacune), puis les 8 enregistrements jusqu'à 0x35fe0 ;
+# REC_ATK (Model-TG seulement) n'existe pas ici, sa place sert aux enregistrements.
+ROWS8 = dict(ROWSN=0x35960, CCROWSN=0x35b20, RECS=0x35ce0, REC_ATK=0x36000)
 
 
 def set_base(pay):
@@ -203,9 +207,10 @@ def set_base(pay):
 
 
 def set_rows(n):
-    """Rangées de l'écran des paramètres pour n machines ajoutées (ROWS7 au-delà de 6)."""
-    for k in ROWS7:
-        globals()[k] = PAY + (ROWS7[k] if n > 6 else LAYOUT[k])
+    """Rangées de l'écran des paramètres pour n machines ajoutées (ROWS7 au-delà de 6, ROWS8 au-delà de 7)."""
+    for k in ROWS8:
+        lay = ROWS8 if n > 7 else ROWS7 if n > 6 else {}
+        globals()[k] = PAY + lay.get(k, LAYOUT[k])
 
 
 def check_room(n, nm):
@@ -489,11 +494,12 @@ def marks_asm(a, ins, lab, nm):
     ins("bne.s 1b"); ins("jmp 0x400a26f2")
 
 
-def detours_asm(n, images, firsts, tg=None, lofi=None):
+def detours_asm(n, images, firsts, tg=None, lofi=None, fenv=None):
     """Détours pour n machines ajoutées (index 6..5+n), descripteurs firsts[i]..firsts[i]+4 (5 par machine).
     Avec Model-TG (tg : ses symboles), les machines ajoutées vont de 7 à 6+n (6 est son Sampler) et nos détours
     passent la main aux siens pour le reste (notes/31). lofi : rang de MACRO parmi les machines ajoutées (None
-    sans MACRO) ; FUNC + PITCH y règle FINE, son lo-fi (lofi_asm, notes/55 §8)."""
+    sans MACRO) ; FUNC + PITCH y règle FINE, son lo-fi (lofi_asm, notes/55 §8). fenv : rang de Wave (None sans
+    elle) ; FUNC + SWEEP y règle FINE, son enveloppe de coupure (fenv_asm, notes/62)."""
     last = 76 + 5 * n                                    # 1er descripteur après ceux des machines ajoutées
     first = TG_FIRST if tg else 6                        # index de la 1re machine ajoutée
     top = first + n - 1                                  # plus grand index de machine
@@ -589,6 +595,10 @@ def detours_asm(n, images, firsts, tg=None, lofi=None):
         ins(f"cmpa.l #{RECS + 0x60 * lofi:#x}, %a0"); ins("bne.s 8f"); ins(f"moveq #{FTUN}, %d1")
         ins("move.l %d1, 72(%a0)")
         lab("8")
+    if fenv is not None:                                 # Wave : de même
+        ins(f"cmpa.l #{RECS + 0x60 * fenv:#x}, %a0"); ins("bne.s 8f"); ins(f"moveq #{FTUN}, %d1")
+        ins("move.l %d1, 72(%a0)")
+        lab("8")
     ins("move.l %a0, %d0"); ins("rts")
     # potard -> descripteur : table machine -> enregistrement [1..6+n]
     if first + n > MARKS_ROW:
@@ -604,14 +614,29 @@ def detours_asm(n, images, firsts, tg=None, lofi=None):
         # L'OS applique un tour de potard avec FUNC par la fonction de l'objet d'interface du descripteur (+0x50) :
         # pour FINE, elle rend le défaut (0x4000) ; son texte (+0x20) dit -64..63 ; et la fenêtre de valeur
         # (0x4001d818) le dessine en jauge (+0x30, un sprite) au lieu du texte. Les nôtres à la place.
-        ins(f"moveq #{first + lofi}, %d1"); ins("cmp.l %d1, %d0"); ins("bne.s 2f"); ins("tst.b %d5"); ins("beq.s 2f")
-        ins("moveq #2, %d1"); ins("cmp.l %d1, %d2"); ins("bne.s 2f"); ins("moveq #16, %d3")
+        nx = "3f" if fenv is not None else "2f"          # sans Wave : les octets d'avant
+        ins(f"moveq #{first + lofi}, %d1"); ins("cmp.l %d1, %d0"); ins(f"bne.s {nx}"); ins("tst.b %d5")
+        ins(f"beq.s {nx}")
+        ins("moveq #2, %d1"); ins("cmp.l %d1, %d2"); ins(f"bne.s {nx}"); ins("moveq #16, %d3")
         ins("move.l #lofi_step, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x50:#x}")
         ins("move.l #lofi_fmt, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x20:#x}")
         ins("move.l #lofi_draw, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x30:#x}")
+        if fenv is not None:
+            ins("rts")
+            lab("3")
+    if fenv is not None:
+        # Wave, FUNC tenu, potard SWEEP (d2 = 6) : l'entrée 16 de son enregistrement, FINE, comme MACRO ; ses
+        # fonctions de pas, de texte et de dessin (fenv_asm)
+        ins(f"moveq #{first + fenv}, %d1"); ins("cmp.l %d1, %d0"); ins("bne.s 2f"); ins("tst.b %d5"); ins("beq.s 2f")
+        ins("moveq #6, %d1"); ins("cmp.l %d1, %d2"); ins("bne.s 2f"); ins("moveq #16, %d3")
+        ins("move.l #fenv_step, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x50:#x}")
+        ins("move.l #fenv_fmt, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x20:#x}")
+        ins("move.l #fenv_draw, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x30:#x}")
     lab("2"); ins("rts")
     if lofi is not None:
-        a.append(lofi_asm())
+        a.append(lofi_asm(shared=fenv is not None))
+    if fenv is not None:
+        a.append(fenv_asm(shared=lofi is not None))
     # machine d'un descripteur (applicabilité) et rangée du constructeur : descripteurs ajoutés -> leur machine
     a.append("\t.globl\tdesc_machine"); lab("desc_machine")
     ins("move.l 4(%sp), %d0")
@@ -659,7 +684,7 @@ def lofi_khz(r):
     return round(48 * 2 ** (-86 * r / 1536))
 
 
-def lofi_asm():
+def lofi_asm(shared=False):
     """FINE de MACRO sous FUNC + PITCH (notes/55 §8) : le pas d'un tour de potard et le texte de la valeur.
     lofi_step(fonction, valeur, delta, min, max, défaut) : la valeur arrondie à un pas (0x100), plus delta arrondi
     vers le haut à des pas entiers (un cran = un pas au moins, l'accélération de l'OS conservée), bornée.
@@ -670,6 +695,15 @@ def lofi_asm():
     (0x4001d818 par 0x4000a66a ; en (0x60, 0x22)) : ce texte, dessiné comme l'OS y dessine le texte des paramètres
     sans dessin (0x40071a04, grande police 0x401429ec, alignement 2, « %s »), à la place de la jauge de FINE."""
     khz = ", ".join(str(lofi_khz(r)) for r in range(1, 65))
+    text = lofi_text(khz)
+    if shared:                  # avec Wave : un seul dessin (fine_draw), le formateur passé dans a1
+        text = text.replace("lofi_draw:\n\tlea\t-24(%sp), %sp", "lofi_draw:\n\tlea\tlofi_fmt, %a1\n"
+                            "\t.globl\tfine_draw\nfine_draw:\n\tlea\t-24(%sp), %sp")
+        text = text.replace("\tbsr.w\tlofi_fmt\n", "\tjsr\t(%a1)\n")
+    return text
+
+
+def lofi_text(khz):
     return f"""
 	.globl	lofi_step, lofi_fmt, lofi_draw
 lofi_step:
@@ -763,6 +797,108 @@ lofi_s_b:	.asciz	"%dB"
 lofi_khz:	.byte	{khz}
 	.balign	2
 """
+
+
+FENV_FMT = """
+fenv_fmt:
+	move.l	8(%sp), %d0
+	addi.l	#0x80, %d0
+	asr.l	#8, %d0
+	bpl.s	1f
+	moveq	#0, %d0
+1:	moveq	#127, %d1
+	cmp.l	%d1, %d0
+	ble.s	2f
+	move.l	%d1, %d0
+2:	moveq	#64, %d1
+	sub.l	%d1, %d0
+	beq.s	5f
+	lea	fenv_s_n, %a0
+	bmi.s	4f
+	lea	fenv_s_p, %a0
+4:	move.l	%d0, -(%sp)
+	move.l	%a0, -(%sp)
+	move.l	20(%sp), -(%sp)
+	jsr	0x40000e6e
+	lea	12(%sp), %sp
+	rts
+5:	pea	0x40124b67
+	move.l	16(%sp), -(%sp)
+	jsr	0x40000e6e
+	addq.l	#8, %sp
+	rts
+"""
+FENV_STR = """
+fenv_s_p:	.asciz	"+%d"
+fenv_s_n:	.asciz	"%d"
+	.balign	2
+"""
+
+
+def fenv_asm(shared=False):
+    """FINE de Wave sous FUNC + SWEEP (notes/62) : l'enveloppe de coupure, 64 = rien. fenv_step comme lofi_step (un
+    cran = un pas) ; fenv_fmt(fonction, valeur, tampon) : « OFF » au centre, sinon « -64 » .. « +63 » ; fenv_draw comme
+    lofi_draw, avec ce texte. shared : MACRO est là aussi, son pas et son dessin servent (la place des détours)."""
+    if shared:
+        return """
+	.globl	fenv_step, fenv_fmt, fenv_draw
+	.set	fenv_step, lofi_step
+""" + FENV_FMT + """
+fenv_draw:
+	lea	fenv_fmt, %a1
+	bra.w	fine_draw
+""" + FENV_STR
+    return """
+	.globl	fenv_step, fenv_fmt, fenv_draw
+fenv_step:
+	move.l	8(%sp), %d0
+	addi.l	#0x80, %d0
+	andi.l	#0xffffff00, %d0
+	move.l	12(%sp), %d1
+	bpl.s	1f
+	neg.l	%d1
+	addi.l	#0xff, %d1
+	andi.l	#0xffffff00, %d1
+	sub.l	%d1, %d0
+	bra.s	2f
+1:	addi.l	#0xff, %d1
+	andi.l	#0xffffff00, %d1
+	add.l	%d1, %d0
+2:	cmp.l	16(%sp), %d0
+	bge.s	3f
+	move.l	16(%sp), %d0
+3:	cmp.l	20(%sp), %d0
+	ble.s	4f
+	move.l	20(%sp), %d0
+4:	rts
+""" + FENV_FMT + """
+fenv_draw:
+	lea	-24(%sp), %sp
+	move.l	%sp, %d0
+	move.l	%d0, -(%sp)
+	move.l	36(%sp), -(%sp)
+	clr.l	-(%sp)
+	bsr.w	fenv_fmt
+	lea	12(%sp), %sp
+	pea	0x401429ec
+	pea	20(%sp)
+	jsr	0x40072260
+	addq.l	#8, %sp
+	move.l	%sp, %d0
+	move.l	%d0, -(%sp)
+	pea	0x40124b58
+	pea	2
+	move.l	56(%sp), -(%sp)
+	move.l	56(%sp), -(%sp)
+	pea	36(%sp)
+	move.l	60(%sp), -(%sp)
+	jsr	0x40071a04
+	lea	28(%sp), %sp
+	pea	16(%sp)
+	jsr	0x40072080
+	lea	28(%sp), %sp
+	rts
+""" + FENV_STR
 
 
 def tg_records(a, ins, lab, n, firsts, first, top, tg):
@@ -1077,7 +1213,7 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, ru
             raise SystemExit(f"!! passerelle : données initialisées ({f[1]}), non recopiées dans la charge utile")
     src, o, e, b = tmp / "det.S", tmp / "det.o", tmp / "det.elf", tmp / "det.bin"
     src.write_text(detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))], tg,
-                        lofi=lofi_index(machines))
+                        lofi=lofi_index(machines), fenv=fenv_index(machines))
                    + probe_asm(syms, prof_sites(tg) if PROFILE and tg and meter else None)
                    + (dispatch_tg_asm(syms, rnd_at, tg) if tg else dispatch_asm(syms, rnd_at)))
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(src), "-o", str(o)])
@@ -1124,6 +1260,14 @@ def own_code(tmp, machines, rnd_at, lay, tg, own):
     return blobs, br["syms"], stubs, ssyms
 
 
+def fenv_index(machines):
+    """Rang de Wave (fenv : FUNC + SWEEP) parmi les machines ajoutées, pour detours_asm ; None sans elle."""
+    fenv = [i for i, m in enumerate(machines) if m.get("fenv")]
+    if len(fenv) > 1:
+        raise SystemExit("!! une seule machine Wave")
+    return fenv[0] if fenv else None
+
+
 def lofi_index(machines):
     """Rang de MACRO (lofi) parmi les machines ajoutées, pour detours_asm ; None sans elle (ACID peut la suivre)."""
     lofi = [i for i, m in enumerate(machines) if m.get("lofi")]
@@ -1135,7 +1279,7 @@ def lofi_index(machines):
 def detours_text(machines, syms, rnd_at, tg):
     """Texte des détours (à STUBS) pour ces machines ajoutées, comme compile_code."""
     return (detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))], tg,
-                        lofi=lofi_index(machines))
+                        lofi=lofi_index(machines), fenv=fenv_index(machines))
             + probe_asm(syms) + (dispatch_tg_asm(syms, rnd_at, tg) if tg else dispatch_asm(syms, rnd_at)))
 
 
@@ -1149,7 +1293,7 @@ def assemble_detours(tmp, machines, syms, rnd_at, tg, text=None):
     ssyms = {p[-1]: int(p[0], 16) for p in (l.split() for l in gx.run([gx.CROSS + "nm", str(e)]).splitlines()) if len(p) == 3}
     stubs = b.read_bytes()
     if STUBS + len(stubs) > DATA:
-        raise SystemExit("!! détours trop grands")
+        raise SystemExit(f"!! détours trop grands : {len(stubs)} o, place {DATA - STUBS} o")
     return stubs, ssyms
 
 

@@ -466,6 +466,51 @@ python3 tools/emu/test_acid_combos.py --cycles model-cycles_OS1.13.syx --syntakt
 | `6ch-usbup,model-tg-st,sample-preview-st,syntakt-tg-sd-cp-toy-bits-swarm-macro-acid,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim` | `d823ff90f8cf8ab0a2654bb61a15717eba325687d6fdf4cb356add8dd75f058b` |
 | `6ch-usbup,syntakt-sd-cp-toy-bits-swarm-macro-acid,track-filter,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim` | `851397735f5eecd17d0988e785dfeb65e0e6a0a638f59a95408f76c46be1434f` |
 
+### Machine Wave (joue tes tables d'ondes)
+
+`tweaks/model-cycles_OS1.13/36-wavetable.json` est produit par `tools/gen_wavetable.py` : notre moteur en entiers
+(`tools/machines/wavetable/wt.c`, passe-bas repris de la première machine Acid de Kevin) joue la table pré-travaillée
+par l'outil web (`docs/convert/`, référence `tools/wt_convert.py`), lue telle quelle — les copies anti-repliement sont
+déjà gravées, rien n'est calculé sur la machine. Wave est la 7e machine, par la mécanique de MACRO et ACID
+(`gen_macro.added_machine`), sans Model-TG ([note 60](notes/60-wave-autonome.md)) : sa propre lecture du fichier
+(navigateur bloqué dans `/Wavetables`, YES qui charge la table, table retenue dans le nom du son) remplace le Sampler
+de Model-TG. Le fichier se range dans `/Wavetables` par le protocole de Transfer ; pour l'envoi, la page de conversion
+fait répondre la machine en Model:Samples par une commande SysEx que Wave ajoute (`F0 00 20 3C 0F 00 <m> F7`,
+[note 61](notes/61-smp-sans-model-tg.md) ; [notes 58](notes/58-etude-tables-d-ondes.md) et
+[59](notes/59-envoi-des-tables-depuis-l-outil-web.md)).
+```sh
+python3 tools/gen_wavetable.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/emu/test_wavetable.py --cycles model-cycles_OS1.13.syx
+```
+Incompatible avec Model-TG et SD VINTAGE ; avec les moteurs du Syntakt, MACRO et ACID, voir la section suivante. Le JSON versionné vient de `m68k-linux-gnu-gcc` 13.3 (Ubuntu 24.04), comme ACID : un autre GCC donne
+d'autres octets, et `--check` le dit. La preuve a besoin d'`unicorn` et `numpy` (environ 6 minutes).
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `wavetable` | `8730481066293379a183aa5ebd8d6f1919a0ffaf5363d472f21168323d92c652` |
+| `6ch-usbup,wavetable` | `de625a2cc7cd5ed795f22d9db37d33832d82766618d1c7a8cab64678a276dbff` |
+| `wavetable,trig-hold,arp,tempo-max,boot-anim` | `7102b846974649e8711b6c802739ab763d2277c655f30d38350ecb38e7229303` |
+
+### Wave avec les moteurs du Syntakt, MACRO et ACID
+
+Les 127 tweaks `24-syntakt-<moteurs>[-macro][-acid]-wave.json`, `25-macro-wave.json`, `26-acid-wave.json` et
+`25-macro-acid-wave.json` sont produits par `tools/gen_wave_combos.py` ([note 62](notes/62-wave-avec-les-moteurs.md)) :
+Wave en dernière machine, après les moteurs, MACRO et ACID, jamais avec Model-TG. Comme `gen_acid_combos.py`, il lit
+le Syntakt OS et le clone de Braids :
+```sh
+python3 tools/gen_wave_combos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \
+    --eurorack vendor/eurorack [--engines sd,cp | --engines none] [--macro yes|no|both] [--acid yes|no|both] [--check]
+python3 tools/emu/test_wave_combos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \
+    [--engines sd,cp,toy,bits,swarm | --engines none] [--macro yes|no|both] [--acid yes|no|both]
+```
+Compilés par `m68k-linux-gnu-gcc`/`g++` 13.3, comme MACRO et ACID.
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `macro-acid-wave` | `0f2922694e7ab12b99355c359e42275d74f68316fe31a64e69cfb48c327b9016` |
+| `syntakt-sd-wave` | `d3b767f3875c6743790c287af006f23d65463fcdc902a2587baf189c8f3bd30d` |
+| `syntakt-sd-cp-toy-bits-swarm-macro-acid-wave` | `f54d58850513c29a6cbb0b45450376a7b2600e05724cbe9babe85f603ca8d033` |
+
 ### Navigateur sur plusieurs lignes
 
 `tweaks/model-cycles_OS1.13/44-multiline-browser.json` est produit par `tools/gen_multiline_browser.py`, qui assemble
