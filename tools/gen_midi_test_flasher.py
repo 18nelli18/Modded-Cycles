@@ -37,7 +37,8 @@ def files_for(tweak,chosen,image):
       'fr': {'label':'Banque MIDI OUT','short':'Six voies MIDI seules sur les canaux 7–12. Expérimental ; RAM seulement.',
              'desc':'FUNC + SETTINGS + PAGE bascule entre les pistes audio et six voies MIDI indépendantes sur les canaux 7–12. FUNC + pad bascule MIDI OUT de la voie. Appuyez brièvement sur un trig pour ajouter/retirer le pas ; maintenez-le et tournez DATA pour choisir sa note. Plusieurs trigs tenus sont transposés ensemble. La vue stock affiche B et TR7–TR12 pour les canaux MIDI ; maintenez un trig pour voir sa note et sa vélocité. DATA sélectionne un pas sans trig tenu ; cliquez DATA pour les réglages, EXIT pour revenir. PAGE change la page. Les LED affichent les pas MIDI et leur position de lecture ; revenir aux pistes audio rétablit leurs LED. Arrêtez la lecture avant la première ouverture après démarrage. Chaque pattern possède ses séquences MIDI en RAM, suivant le changement de pattern actif. Elles sont perdues au redémarrage. Sauvegarde disque et isolation des projets inachevées : testez dans un seul projet et redémarrez avant de changer de projet. Ce mod sélectionne son bundle Tout sélectionner compatible validé avec Model-TG, MIDI OUT + THRU en direct, LFO 2, génération différée et SCRAMBLE. Si vous modifiez ses mods requis, décochez la banque MIDI OUT ou cliquez de nouveau sur Tout sélectionner. Cette nouvelle édition attend une validation matérielle.'}}
     html=(PROD/'index.html').read_text()
-    html=re.sub(r'2026-\d\d-\d\d-lfo2-main',STAMP,html)
+    html=re.sub(r'<script src="../flasher-midi-test/bundle\.js[^"]*"></script>\n?', '', html)
+    html=re.sub(r'2026-\d\d-\d\d-(?:lfo2-main|midi-bank-main)',STAMP,html)
     for filename in ('style.css','builder.js','flasher.js','tweaks.js','app.js'):
         html=html.replace('"'+filename+'?v=','"../flasher/'+filename+'?v=')
     # Le script principal exporte les références avant DOMContentLoaded ;
