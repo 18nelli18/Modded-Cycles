@@ -2,6 +2,7 @@
 """Page LFO MIDI : construction native et isolation des réglages audio."""
 import argparse,pathlib,subprocess,tempfile,json
 import build
+from unicorn import UC_HOOK_CODE
 from test_lfo_secondary_page import make,event,CTX,FRAME
 from test_seq_gen_menu import EVENT
 from test_sdvintage import main_os_from_syx
@@ -27,10 +28,12 @@ def main():
    for name in ('settings','names'):
     obj=p/(name+'.o');objects.append(str(obj))
     subprocess.run([cross+'as','-march=cfv4e','-o',str(obj),str(root/'tools/machines/midi_lanes'/('lfo_cc_'+name+'.s'))],check=True)
-   (p/'link.ld').write_text('mlp_obj = 0x930d1000; mlp_track = 0x930d1004; SECTIONS { .text 0x930e0000 : { *(.text*) } .data : { *(.data*) *(.rodata*) } }')
+   (p/'link.ld').write_text('mlp_obj = 0x930d1000; mlp_track = 0x930d1004; TG_blk_clk = 0x930d1010; mlp_keyboard = 0x930d1020; mlp_keyboard_cancel = 0x930d1024; SECTIONS { .text 0x930e0000 : { *(.text*) } .data : { *(.data*) *(.rodata*) } }')
    subprocess.run([cross+'ld','-T',str(p/'link.ld'),'-e','mlccp_open','-o',str(p/'e.elf'),*objects],check=True)
    subprocess.run([cross+'objcopy','-O','binary',str(p/'e.elf'),str(p/'e.bin')],check=True)
    r.u.mem_write(0x930e0000,(p/'e.bin').read_bytes());r.s.update(symbols(cross,p/'e.elf'))
+ r.stubs[r.s['mlp_keyboard_cancel']]=lambda args:0
+ r.u.hook_add(UC_HOOK_CODE,r.stub,begin=r.s['mlp_keyboard_cancel'],end=r.s['mlp_keyboard_cancel'])
  audio=bytes(r.u.mem_read(CTX,1240));frame=bytes(r.u.mem_read(FRAME,476))
  assert r.call('mlcc_cfg_init',cfg)==1
  r.w32(r.s['mlcc_settings'],cfg);r.w32(r.s['mlp_obj'],0x930d2000);r.w32(r.s['mlp_track'],1)
@@ -65,6 +68,46 @@ def main():
    assert r.call('mlcc_cfg_get',cfg,1,lfo,3)==cc
   r.delta=1;event(r,1);r.call('mlccp_enc',obj,EVENT)
   assert r.call('mlcc_cfg_get',cfg,1,lfo,3)==128
+ # Fenêtre bornée, pauses aux extrémités et retour complet des noms.
+ name=r.call('mlcc_name',74);clock=r.s['TG_blk_clk']
+ def window(t):
+  r.w32(clock,t);ptr=r.call('mlccp_window',name)
+  return bytes(r.u.mem_read(ptr,7)).split(b'\0')[0].decode()
+ assert window(0)=='CC74 C'
+ assert window(1499)=='CC74 C'
+ assert window(1500)=='C74 Cu'
+ assert window(1875)=='74 Cut'
+ assert window(2250)=='4 Cuto'
+ assert window(2625)==' Cutof'
+ assert window(3000)=='Cutoff'
+ assert window(4499)=='Cutoff'
+ assert window(4500)==' Cutof'
+ assert len(window(4875))==6
+ short=r.call('mlcc_name',128)
+ assert r.call('mlccp_window',short)==short
+ # Clavier réel sous le menu, même REC actif : Note On/Off, sans édition.
+ if a.tweak:
+  state=0x930a0000
+  for addr,fn in ((0x400cf9a8,lambda a:state),(0x4000f208,lambda a:0x930a1000),
+                  (0x4000cfcc,lambda a:0x930a2000),(0x40016da6,lambda a:8)):
+   r.stubs[addr]=fn;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
+  r.u.mem_write(state+357,b'\x01\x01')
+  r.w32(r.s['mlp_setup'],0);r.w32(r.s['mlp_func'],0);r.w32(r.s['TG_set_held'],0)
+  lane=r.r32(r.s['mlp_track']);pattern=r.r32(r.s['ml_pattern'])
+  before=bytes(r.u.mem_read(pattern,1584));live=r.s['ml_live_runtime']
+  r.u.mem_write(r.s['TG_snap_note'],b'\x4e\x75') # Gamme OFF ; TG testé dans le boot complet.
+  event(r,16,1);assert r.call('mlccp_menu_key',obj,EVENT)==1
+  assert r.call('ml_take',live)==((0x96+lane)<<24)|(60<<16)|(100<<8)|4
+  event(r,16,0);assert r.call('mlccp_menu_key',obj,EVENT)==1
+  assert r.call('ml_take',live)==((0x86+lane)<<24)|(60<<16)|4
+  assert bytes(r.u.mem_read(pattern,1584))==before
+ # Les appuis ET relâchements trigs vont au clavier B, jamais à la grille A.
+ routed=[]
+ r.stubs[r.s['mlp_keyboard']]=lambda args:routed.append(tuple(args[:2])) or 1
+ r.u.hook_add(UC_HOOK_CODE,r.stub,begin=r.s['mlp_keyboard'],end=r.s['mlp_keyboard'])
+ for flags in (1,0):
+  event(r,19,flags);assert r.call('mlccp_menu_key',obj,EVENT)==1
+ assert routed==[(19,1),(19,0)],routed
  # Le pad change uniquement la voie MIDI sélectionnée.
  r.w32(EVENT+20,6);event(r,0,1);r.call('mlccp_pad',obj+16,EVENT)
  assert r.r32(r.s['mlp_track'])==5 and r.r32(r.s['mlccp_track'])==5

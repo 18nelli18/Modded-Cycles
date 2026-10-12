@@ -24,8 +24,13 @@ mlp_keyboard:
     movel %d0,%sp@-
     jsr 0x4006b978
     addql #4,%sp
+    .ifdef ML_LFO_CC
+    tstl mlccp_obj
+    bne .Lkb_live_menu
+    .endif
     tstb %d0
     bne .Lkb_grid
+.Lkb_live_menu:
     tstl mlp_setup
     bne .Lkb_used
     andil #11,%d3

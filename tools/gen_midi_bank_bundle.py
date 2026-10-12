@@ -118,7 +118,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
 TG_scale_state = {tg['scale_state']:#x}; TG_key_state = {tg['key_state']:#x};
 ML_original_key = {tg['key_hook']:#x};
 TG_set_held = {tg['set_held']:#x}; TG_mod_used = {tg['mod_used']:#x};
-TG_snap_note = {tg['snap_note']:#x};
+TG_snap_note = {tg['snap_note']:#x}; TG_blk_clk = {tg['blk_clk']:#x};
 ml_key_next = {next_key:#x}; ML_BANK_START = {start:#x};
 ML_TG_START = {tg['blob_start']:#x}; ML_PAYLOAD_SRC = {source:#x};
 SECTIONS {{

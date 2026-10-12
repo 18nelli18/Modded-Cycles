@@ -53,6 +53,7 @@ ml_ui_drain:
     .ifdef ML_LFO_CC
     jsr mlcc_prepare
     jsr mlcc_refresh
+    jsr mlccp_tick
     .endif
     .ifdef ML_PATTERN_BANKS
     jsr ml_bank_ui_sync

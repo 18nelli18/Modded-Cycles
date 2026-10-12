@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Prototype page LFO MIDI dérivée du rendu LFO2 stock du fork.
+"""Page LFO MIDI dérivée du rendu LFO2 stock du fork.
 
-Sources privées, pas de tweak/flasher généré. Garde la banque B sous la page,
+Garde la banque B sous la page,
 LFO bascule1/2, destination CC0–127/OFF indépendante des paramètres audio.
 """
 import pathlib
@@ -46,6 +46,21 @@ def sources():
  page=page[:a]+'mlccp_destination_name:\n    jmp mlcc_name\n\n'+page[b:]
  page=page.replace('.word 32767,23,32767,33,6,32767,4,32767','.word 32767,23,32767,128,6,32767,4,32767')
  page=page.replace('    movel %d0,mlccp_track\n    moveal %sp@(4)', '    movel %d0,mlccp_track\n    movel %d0,mlp_track\n    moveal %sp@(4)')
+ page=page.replace('    lea.l   mlccp_obj,%a0\n    clrl    %a0@', '    jsr mlp_keyboard_cancel\n    lea.l   mlccp_obj,%a0\n    clrl    %a0@')
+ # Les touches clavier gardent le routage MIDI B, même sous la page LFO.
+ page=page.replace('    cmpil #10,%d0\n    beq .Lpk_transport', """    cmpil #16,%d0
+    bcs .Lcc_not_trig
+    cmpil #31,%d0
+    bhi .Lcc_not_trig
+    movel %d2,%sp@-
+    movel %d0,%sp@-
+    jsr mlp_keyboard
+    addql #8,%sp
+    bra .Lpk_used
+.Lcc_not_trig:
+    cmpil #10,%d0
+    beq .Lpk_transport""")
+ page=page.replace('    movel %d0,%sp@-\n    pea mlccp_fmt_s\n    jmp .Lpr_value', '    movel %d0,%sp@-\n    jsr mlccp_window\n    addql #4,%sp\n    movel %d0,%sp@-\n    pea mlccp_fmt_s\n    jmp .Lpr_value')
  # Le titre change dans le descripteur privé avant chaque rendu natif.
  layout=layout.replace('    lea.l %a2@(0x500),%a2\n    movel mlccp_row', '''    lea.l %a2@(0x500),%a2
     lea mlccl_title,%a0
@@ -82,4 +97,4 @@ mlccp_present:
     lea %sp@(8),%sp
     rts
 '''
- return {'page':page,'layout':layout,'support':extra}
+ return {'page':page,'layout':layout,'support':extra,'scroll':(ROOT/'tools/machines/midi_lanes/lfo_cc_scroll.s').read_text()}
