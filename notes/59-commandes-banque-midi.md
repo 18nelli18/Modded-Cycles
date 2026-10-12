@@ -89,3 +89,30 @@ Cette validation porte sur le candidat publié d6afc841, MAIN OS SHA-256
 Promotion du statut de ce candidat uniquement, sans changement de code
 firmware. Sauvegarde persistante et Sequence Genie B-side ne sont ni inclus
 ni validés par ce résultat. La page principale garde son bundle existant.
+
+## 7. Adaptateur Genie B en préparation, non publié
+
+`genie.s` / `test_midi_lane_genie.py` : conversion d'un tableau de notes
+Genie vers une voie candidate privée de 264 octets. Longueur 1..64 égale à
+celle de la voie ; 254 conserve, 255 repose, nouvelles notes 36..96. Note
+active conserve slide mais force bit note ; vélocité invalide devient 100,
+gate invalide devient 1. Source et pas hors longueur restent intacts.
+Validation complète avant écriture ; buffers superposés et IPL>0 refusés.
+Preuve ColdFire sur longueurs 1/16/17/32/48/64 et erreurs au dernier pas.
+Aucune entrée audio, p-lock natif ou file MIDI n'est touchée. Non raccordé au
+menu/bundle ; publication, undo, queue et options avancées restent à faire.
+
+## 8. Régression FUNC + pad signalée après validation
+
+AveyCole rapporte que FUNC + pad côté B coupe les pistes audio A au lieu
+MIDI OUT B. La promotion de main demandée juste avant ce signalement reste
+en attente de correction : aucune nouvelle sélection firmware dans main.
+
+[HYP confirmée par contrat de callback] FUNC retournait 0, laissant ouvrir
+QuickMuteMenu audio au-dessus de la banque. Le candidat consomme maintenant
+appui/release FUNC B ; seul le release initial d'un FUNC tenu en A lors de
+l'entrée est transmis une fois. Désactivation MIDI OUT libère la file de
+séquence ET celle du clavier et réveille le worker. La preuve focalisée
+exécute les callbacks sur les six voies : répétition idempotente, notes-off
+et données audio intactes. Le dispatch supérieur réel et le résultat
+matériel restent à vérifier, donc le candidat corrigé est expérimental.

@@ -114,6 +114,8 @@ mlp_o_holder:
     clrl mlp_row
     clrl mlp_edit
     clrl mlp_func
+    moveq #1,%d0
+    movel %d0,mlp_func_inherited
     clrl mlp_pads
     clrl mlp_held
     clrl mlp_remove
@@ -367,10 +369,19 @@ mlp_menu_key:
 .Lmk_func:
     andil #1,%d3
     movel %d3,mlp_func
-    | Laisser aussi passer appui ET relâchement au gestionnaire global.
-    | Une fermeture entre les deux ne doit pas déséquilibrer son état FUNC.
+    | Consommer FUNC dans B : sinon QuickMuteMenu recouvre la banque et
+    | les pads suivants coupent les pistes audio avant notre callback.
+    tstl %d3
+    bne .Lmk_func_down
+    tstl mlp_func_inherited
+    beq .Lmk_used
+    | Seul le release du FUNC déjà pressé en A avant l'entrée est transmis.
+    clrl mlp_func_inherited
     moveq #0,%d0
     bra .Lmk_return
+.Lmk_func_down:
+    clrl mlp_func_inherited
+    bra .Lmk_used
 .Lmk_global:
     | Une page native peut capter les releases suivantes : couper le clavier
     | avant TEMPO/LFO/REC, sans toucher aux notes du séquenceur.
@@ -492,6 +503,13 @@ mlp_pad:
     movel ml_runtime,%sp@-
     jsr ml_quiet
     addql #8,%sp
+    movel %d2,%sp@-
+    pea ml_live_runtime
+    jsr ml_quiet
+    addql #8,%sp
+    .ifdef ML_WORKER
+    jsr ml_worker_kick
+    .endif
 .Lmp_redraw:
     movel %a3,%sp@-
     jsr mlp_redraw
@@ -999,6 +1017,7 @@ mlp_edit: .long 0
 mlp_track: .long 0
 mlp_step: .long 0
 mlp_func: .long 0
+mlp_func_inherited: .long 0
 mlp_pads: .long 0
 mlp_held: .long 0
 mlp_remove: .long 0
