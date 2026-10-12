@@ -13,6 +13,19 @@ ml_audio_tick:
     .ifdef ML_PATTERN_BANKS
     jsr ml_bank_follow
     .endif
+    .ifdef ML_REPEAT
+    | Service infra-pas avant le pas suivant ; nouveau pattern annule l'ancien.
+    movel %sp@(16),%sp@-
+    movel %sp@(16),%sp@-
+    .ifdef ML_PATTERN_BANKS
+    movel ml_play_pattern,%sp@-
+    .else
+    movel %a2,%sp@-
+    .endif
+    pea %a2@(1584)
+    jsr ml_repeat_audio
+    lea.l %sp@(16),%sp
+    .endif
     movel %sp@(16),%sp@-
     movel %sp@(16),%sp@-
     pea %a2@(1904)
@@ -50,6 +63,9 @@ ml_ui_drain:
     tstl %a0
     beq .Lud_done
 .Lud_ready:
+    .ifdef ML_STORAGE
+    jsr ml_store_service
+    .endif
     .ifdef ML_LFO_CC
     jsr mlcc_prepare
     jsr mlcc_refresh
@@ -57,6 +73,10 @@ ml_ui_drain:
     .endif
     .ifdef ML_PATTERN_BANKS
     jsr ml_bank_ui_sync
+    moveal ml_context,%a0
+    .endif
+    .ifdef ML_REPEAT
+    jsr ml_repeat_prepare_ui
     moveal ml_context,%a0
     .endif
     .ifdef ML_GENIE

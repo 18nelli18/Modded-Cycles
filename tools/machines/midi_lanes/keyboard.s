@@ -29,6 +29,10 @@ mlp_keyboard:
     bne .Lkb_live_menu
     .endif
     movel mlp_setup,%d1
+    .ifdef ML_REPEAT
+    cmpil #4,%d1
+    beq .Lkb_live_menu
+    .endif
     cmpil #3,%d1
     beq .Lkb_live_menu
     tstb %d0
@@ -36,6 +40,10 @@ mlp_keyboard:
 .Lkb_live_menu:
     movel mlp_setup,%d0
     beq .Lkb_menu_ready
+    .ifdef ML_REPEAT
+    cmpil #4,%d0
+    beq .Lkb_menu_ready
+    .endif
     cmpil #3,%d0
     bne .Lkb_used
 .Lkb_menu_ready:

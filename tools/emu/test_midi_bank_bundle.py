@@ -26,10 +26,16 @@ def main():
     ap.add_argument('--stereo-usb',action='store_true')
     ap.add_argument('--cache-blocks',type=int,choices=(6,7),default=6)
     ap.add_argument('--lfo-cc',action='store_true')
+    ap.add_argument('--storage',action='store_true',help='Raccordement stockage prototype non publié')
+    ap.add_argument('--retrigger',action='store_true',help='Raccordement retrigger/arp B prototype')
     args=ap.parse_args()
     if args.lfo_cc:args.cache_blocks=7
     stock=gen.main_os_from_syx(args.cycles)
-    tweak,chosen,image=gen.generate(stock,args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display,not args.stereo_usb,args.cache_blocks,args.lfo_cc)
+    tweak,chosen,image=gen.generate(stock,args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display,not args.stereo_usb,args.cache_blocks,args.lfo_cc,args.storage,args.retrigger)
+    if args.storage or args.retrigger:
+        import build
+        assert build.payload_image(tweak,bytes.fromhex(tweak['append']['parts'][0]['hex']))==bytes.fromhex(tweak['append']['compressed_hex'])
+        print('ok : stockage précompressé vérifié, marge image',build.END_LIMIT-build.BASE-len(image),'octets')
     s={k:int(v,16) for k,v in tweak['symbols'].items()}
     r=Rig(stock,{'writes':[]},{'writes':[],'symbols':tweak['symbols']});u=r.u
     lo=0x4019b590;hi=0x423380b0;start=s['ML_BANK_START'];end=s['ML_BANK_END']

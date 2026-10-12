@@ -246,6 +246,10 @@ mlp_menu_key:
     bne .Lmk_used
     cmpil #2,%d2
     beq .Lmk_track_setup
+    .ifdef ML_REPEAT
+    cmpil #4,%d2
+    beq .Lmk_retrigger_setup
+    .endif
     cmpil #12,%d2
     beq .Lmk_close
     cmpil #15,%d2
@@ -343,6 +347,9 @@ mlp_menu_key:
     moveq #6,%d2
     moveq #0,%d0
     jsr mlp_store
+    .ifdef ML_REPEAT
+    jsr ml_repeat_delete_selected
+    .endif
     movel %sp@+,%d2
     movel %sp@+,mlp_step
 .Lmk_trig_clear:
@@ -360,6 +367,15 @@ mlp_menu_key:
     bne .Lmk_used
     jsr mlp_track_setup_open
     bra .Lmk_redraw
+    .ifdef ML_REPEAT
+.Lmk_retrigger_setup:
+    tstl mlp_func
+    beq .Lmk_used
+    tstl TG_set_held
+    bne .Lmk_used
+    jsr mlp_retrigger_open
+    bra .Lmk_redraw
+    .endif
 .Lmk_page:
     .ifdef ML_GENIE
     tstl ml_genie_settings
@@ -618,6 +634,15 @@ mlp_enc:
     moveq #-1,%d3
 .Lme_sign:
     movel mlp_setup,%d0
+    .ifdef ML_REPEAT
+    cmpil #4,%d0
+    bne .Lme_not_retrigger
+    movel %d3,%sp@-
+    jsr mlp_retrigger_enc
+    addql #4,%sp
+    bra .Lme_redraw
+.Lme_not_retrigger:
+    .endif
     cmpil #3,%d0
     bne .Lme_not_track_setup
     movel %d3,%sp@-
@@ -866,6 +891,10 @@ mlp_value:
 
 mlp_render:
     movel mlp_setup,%d0
+    .ifdef ML_REPEAT
+    cmpil #4,%d0
+    beq mlp_retrigger_render
+    .endif
     cmpil #3,%d0
     beq mlp_track_setup_render
     .ifdef ML_STOCK_DISPLAY

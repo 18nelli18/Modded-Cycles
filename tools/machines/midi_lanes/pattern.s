@@ -71,12 +71,20 @@ ml_pattern_tick:
 .Ltick_rest:
     moveq #0,%d0
 .Ltick_run:
+    .ifdef ML_REPEAT
+    movel %sp@(36),%sp@-
+    .endif
     movel %d3,%sp@-
     movel %d0,%sp@-
     movel %d2,%sp@-
     movel %a2,%sp@-
+    .ifdef ML_REPEAT
+    jsr ml_repeat_locked_step
+    lea.l %sp@(20),%sp
+    .else
     jsr ml_step
     lea.l %sp@(16),%sp
+    .endif
     tstl %d0
     beq .Ltick_done
     tstl %d3

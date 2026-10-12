@@ -18,14 +18,14 @@ from test_sdvintage import main_os_from_syx
 ENTRY, DATA, PAT, RUNTIME = 0x93050000,0x93060000,0x93070000,0x93071000
 
 
-def load(r,worker=False,pattern_banks=False,stock_display=False,clipboard=False):
+def load(r,worker=False,pattern_banks=False,stock_display=False,clipboard=False,repeat=False):
     root=pathlib.Path(__file__).resolve().parents[2]
     cross=str(root.parent/'toolchain/bin/m68k-elf-')
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[]
-        for name in ('runtime','pattern','clock','service','prepare','page','integration','key','led','ui_hook','transport','worker','banks','keyboard','track_setup',*(['stock_display'] if stock_display else []),*(['clipboard'] if clipboard else [])):
+        for name in ('runtime','pattern','clock','service','prepare','page','integration','key','led','ui_hook','transport','worker','banks','keyboard','track_setup',*(['stock_display'] if stock_display else []),*(['clipboard'] if clipboard else []),*(['retrigger','retrigger_locks','retrigger_service','retrigger_patterns','retrigger_step','retrigger_menu','arp','arp_tick'] if repeat else [])):
             obj=p/(name+'.o')
-            subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_CLIPBOARD=1'] if clipboard else []),*(['--defsym','ML_WORKER=1'] if worker else []),*(['--defsym','ML_PATTERN_BANKS=1'] if pattern_banks else []),*(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
+            subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_REPEAT=1'] if repeat else []),*(['--defsym','ML_CLIPBOARD=1'] if clipboard else []),*(['--defsym','ML_WORKER=1'] if worker else []),*(['--defsym','ML_PATTERN_BANKS=1'] if pattern_banks else []),*(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
             objects.append(str(obj))
         (p/'link.ld').write_text('SECTIONS { .text '+hex(ENTRY)+' : { *(.text*) } .data '+hex(DATA)+' : { *(.data*) *(.rodata*) } } TG_set_held = 0x93082000; TG_mod_used = 0x93082004; ml_key_next = 0x4007240c; TG_snap_note = 0x930b0000;' )
         subprocess.run([cross+'ld','-T',str(p/'link.ld'),'-e','mlp_open','-o',str(p/'page.elf'),*objects],check=True)
@@ -35,9 +35,9 @@ def load(r,worker=False,pattern_banks=False,stock_display=False,clipboard=False)
         r.s={line.split()[2]:int(line.split()[0],16) for line in subprocess.check_output([cross+'nm',str(p/'page.elf')],text=True).splitlines() if len(line.split())==3}
 
 
-def make(stock,real=True):
+def make(stock,real=True,repeat=False):
     r=Rig(stock,{'writes':[]},{'writes':[],'symbols':{}},real_ui=real)
-    load(r)
+    load(r,repeat=repeat)
     assert r.call('ml_init',PAT)==1
     r.u.mem_write(RUNTIME,bytes(320))
     r.w32(r.s['ml_pattern'],PAT);r.w32(r.s['ml_runtime'],RUNTIME)

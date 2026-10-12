@@ -20,17 +20,24 @@ from gen_seq_gen import COMMIT, STOCK, symbols, main_os_from_syx
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'tweaks/model-cycles_OS1.13/experimental/midi-bank/60-midi-bank-bundle.json'
 SOURCES=('runtime','pattern','clock','service','prepare','page','integration',
-         'key','led','ui_hook','transport','worker','boot','banks','stock_display','keyboard','genie','genie_router','clipboard','track_setup')
+         'key','led','ui_hook','transport','worker','boot','banks','stock_display','keyboard','genie','genie_router','clipboard', 'track_setup')
+STORAGE_SOURCES=tuple('storage_'+name for name in (
+    'prepare','guard','checked','directory','codec','io','path','verify','load',
+    'commit','initial','snapshot','session','project','save_hook','load_hook',
+    'restore_step','publish','retire','ui_cancel','service'))
+REPEAT_SOURCES=('retrigger','retrigger_locks','retrigger_service','retrigger_patterns',
+                'retrigger_step','retrigger_menu','arp','arp_tick')
+
 IDS=('6ch-usbup','model-tg-st','sample-preview-st','trig-hold','arp','tempo-max',
      'boot-anim','multiline-browser','level-pan-values','trigless-dim',
      'midi-live-both','syntakt-tg-sd-cp-toy-bits-swarm-macro-acid',
      'scale-gen-st-queued','lfo-secondary','scramble-st-gen-queued')
 
 
-def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False):
+def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False):
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[]
-        for name in SOURCES:
+        for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (REPEAT_SOURCES if repeat else ()):
             if name == 'banks' and not pattern_banks:
                 continue
             if name == 'stock_display' and not stock_display:
@@ -40,6 +47,8 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
                             *(['--defsym','ML_PATTERN_BANKS=1'] if pattern_banks else []),
                             *(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),
                             *(['--defsym','ML_LFO_CC=1'] if lfo_cc else []),
+                            *(['--defsym','ML_STORAGE=1'] if storage else []),
+                            *(['--defsym','ML_REPEAT=1'] if repeat else []),
                             '-o',str(obj),str(ROOT/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
         if lfo_cc:
             from gen_midi_lfo_cc_page import sources
@@ -147,7 +156,9 @@ SECTIONS {{
         return *blobs,fragments,symbols(cross,elf)
 
 
-def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False):
+def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False):
+    if storage:assert pattern_banks and lfo_cc, 'prototype stockage requiert banques et compression LFO CC'
+    if repeat:assert pattern_banks and lfo_cc, 'prototype retrigger requiert banques et compression LFO CC'
     assert hashlib.sha256(stock).hexdigest()==STOCK,'OS Cycles non officiel'
     assert subprocess.check_output(['git','-C',str(model_tg),'rev-parse','HEAD'],text=True).strip()==COMMIT
     subprocess.run(['git','-C',str(model_tg),'diff','--quiet','HEAD'],check=True)
@@ -185,12 +196,16 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     needle=struct.pack('>I',loader)
     assert [build.BASE+i for i in range(0,len(stock)-3,2) if stock[i:i+4]==needle]==[ptr]
     merge_masks=[va for va in free if va!=loader]
-    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc)
+    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat)
     if lfo_cc:
         import aplib_grow
-        packed=aplib_grow.pack(blob)
+        if storage or repeat:
+            import aplib_dense
+            packed=aplib_dense.pack(blob)
+        else:packed=aplib_grow.pack(blob)
     else:packed=blob
-    assert source>=start+len(blob) and source+len(packed)<=build.END_LIMIT
+    assert source>=start+len(blob), ("source/payload overlap",source,start,len(blob))
+    assert source+len(packed)<=build.END_LIMIT, ("image overflow",source+len(packed)-build.END_LIMIT,"raw",len(blob),"packed",len(packed),"source",hex(source))
     st=catalog['syntakt-tg-sd-cp-toy-bits-swarm-macro']
     target=b'\x4e\xf9'+struct.pack('>I',int(tg_tweak['symbols']['boot_extra_hook'],16))
     chain=[]
@@ -204,6 +219,22 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
         old=patched[at-build.BASE:at-build.BASE+len(new)]
         assert len(old)==len(new)
         writes.append(dict(off=at-build.BASE,old=old.hex(),new=new.hex()))
+    assert not (storage and repeat), "raccordement Load commun à unifier avant stockage+retrigger"
+    if repeat:
+        at=0x4006a660
+        assert image[at-build.BASE:at-build.BASE+8].hex()=="4cd7040c4fef0020"
+        write(at,b"\x4e\xf9"+struct.pack(">I",syms["ml_repeat_project_hook"])+b"\x4e\x71")
+    if storage:
+        # Cibles natives exactes ; ordre boot/cache à valider avant publication.
+        for at,old,name in (
+            (0x400798c8,'4eb94008b24a','ml_store_disk_read'),
+            (0x4000f850,'4cd77c1c4fef0034','ml_store_save_hook'),
+            (0x4006a660,'4cd7040c4fef0020','ml_store_load_hook')):
+            assert image[at-build.BASE:at-build.BASE+len(bytes.fromhex(old))].hex()==old
+            op=b'\x4e\xb9' if name=='ml_store_disk_read' else b'\x4e\xf9'
+            replacement=op+struct.pack('>I',syms[name])
+            if len(bytes.fromhex(old))==8:replacement+=b'\x4e\x71'
+            write(at,replacement)
     # Réserve optionnelle d'un septième bloc, neuf blocs disque restent liés.
     if cache_blocks != blocks:
         write(0x400792f2,struct.pack('>I',0x401eb750+20*cache_blocks))
@@ -265,6 +296,7 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
                            parts=[dict(dest=hex(start),hex=blob.hex())],reloc=[]),
                symbols={k:hex(v) for k,v in syms.items()})
     if lfo_cc:tweak['append']['compress']='aplib'
+    if storage or repeat:tweak['append']['compressed_hex']=packed.hex()
     final,_=build.apply_writes(stock,chosen+[tweak])
     return tweak,chosen,final+payload+packed
 
@@ -278,8 +310,9 @@ def main():
     ap.add_argument('--stock-display',action='store_true',default=True,help='Rendu stock du candidat test')
     ap.add_argument('--cache-blocks',type=int,choices=(6,7),default=6,help='Réserve expérimentale pour LFO CC ; neuf blocs disque au minimum')
     ap.add_argument('--lfo-cc',action='store_true',help='Candidat LFO CC privé ; réserve sept blocs')
+    ap.add_argument('--retrigger',action='store_true',help='Prototype retrigger/arp B intégré, non publié')
     args=ap.parse_args()
-    tweak,_,image=generate(main_os_from_syx(args.cycles),args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display,cache_blocks=args.cache_blocks,lfo_cc=args.lfo_cc)
+    tweak,_,image=generate(main_os_from_syx(args.cycles),args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display,cache_blocks=args.cache_blocks,lfo_cc=args.lfo_cc,repeat=args.retrigger)
     body=json.dumps(tweak,indent=1,ensure_ascii=False)+'\n'
     if args.check:
         assert args.output and args.output.read_text()==body,'JSON candidat différent'

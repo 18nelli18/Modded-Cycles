@@ -166,4 +166,6 @@ ml_clock:
     rts
     .balign 4
 .Lclock_durations:
+    .globl ml_clock_durations
+ml_clock_durations:
     .long 21600000,10800000,5400000,3600000,2700000,1800000,1350000

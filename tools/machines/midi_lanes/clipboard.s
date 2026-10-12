@@ -51,6 +51,14 @@ mlp_clip_key:
     movel %d4,%d0
     muluw #264,%d0
     addal %d0,%a2
+    .ifdef ML_REPEAT
+    jsr ml_repeat_prepare_ui
+    tstl ml_repeat_edit_settings
+    beq .Lclip_used
+    jsr ml_repeat_clip_prepare
+    tstl %d0
+    beq .Lclip_used
+    .endif
     tstl %d2
     beq .Lclip_copy
     cmpil #2,%d2
@@ -71,8 +79,16 @@ mlp_clip_key:
     bne .Lclip_new_undo
     clrl mlp_clip_undo_op
     clrl mlp_clip_undo_lane
+    .ifdef ML_REPEAT
+    moveq #2,%d0
+    jsr ml_repeat_clip
+    .endif
     bra .Lclip_apply
 .Lclip_new_undo:
+    .ifdef ML_REPEAT
+    moveq #1,%d0
+    jsr ml_repeat_clip
+    .endif
     movel %a2,mlp_clip_undo_lane
     movel %d2,mlp_clip_undo_op
     moveal %a2,%a0
@@ -85,6 +101,10 @@ mlp_clip_key:
     cmpil #1,%d2
     beq .Lclip_clear
     lea mlp_clip_buffer,%a3
+    .ifdef ML_REPEAT
+    moveq #3,%d0
+    jsr ml_repeat_clip
+    .endif
 .Lclip_apply:
     movew %a3@(4),%d0
     movew %d0,%a2@(4)
@@ -97,6 +117,10 @@ mlp_clip_key:
     bpl .Lclip_apply_loop
     bra .Lclip_changed
 .Lclip_clear:
+    .ifdef ML_REPEAT
+    moveq #4,%d0
+    jsr ml_repeat_clip
+    .endif
     lea %a2@(8),%a0
     moveq #63,%d0
     movel #0x48640100,%d1
@@ -116,6 +140,10 @@ mlp_clip_key:
     bra .Lclip_used
 .Lclip_copy:
     movew #0x2700,%sr
+    .ifdef ML_REPEAT
+    moveq #0,%d0
+    jsr ml_repeat_clip
+    .endif
     moveal %a2,%a0
     lea mlp_clip_buffer,%a1
     moveq #65,%d0

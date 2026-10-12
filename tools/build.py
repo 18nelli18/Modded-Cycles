@@ -27,6 +27,7 @@ import json
 import pathlib
 import re
 import sys
+import struct
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -289,6 +290,13 @@ def payload_image(t, runtime):
     if "compress" in ap_:
         if ap_["compress"] != "aplib":
             raise SystemExit(f"!! {t['id']} : compression {ap_['compress']!r} inconnue")
+        if "compressed_hex" in ap_:
+            from mtlib import aplib
+            packed = bytes.fromhex(ap_["compressed_hex"])
+            restored, _ = aplib.depack(struct.pack(">II", len(packed), sum(packed) & 0xffffffff) + packed)
+            if bytes(restored) != bytes(runtime):
+                raise SystemExit(f"!! {t['id']} : charge précompressée différente")
+            return packed
         import aplib_grow                               # noqa: E402
         return aplib_grow.pack(runtime)
     if "pack" not in ap_:
