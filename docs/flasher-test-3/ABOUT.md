@@ -40,3 +40,9 @@ are preserved. Six-lane/four-page editing checks pass emulation.
 
 Les nouveaux trigs MIDI manuels repartent de C5 (MIDI72), même après
 suppression. Notes actives et édition trig tenu + DATA conservées.
+
+B-side pad pulse isolation: audio-track pulses are filtered while the
+B-side sequencer is open. MIDI-note pulses and selected-pad indication
+remain. A-side pulses return when B closes. Emulation passed; hardware
+verification needed. / Pulses audio filtrés dans B ; pulses MIDI et pad
+sélectionné conservés, retour A natif à la fermeture. À tester sur matériel.
