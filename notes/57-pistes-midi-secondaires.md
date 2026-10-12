@@ -554,3 +554,32 @@ Même sélection, fichiers officiels, application et sortie `.syx` identiques
 octet pour octet. L'envoi UI complet des deux fichiers vers le récepteur
 simulé passe encore : 670 et 667 blocs, CRC, positions et contenu vérifiés.
 [À FAIRE] Nouveau transfert physique ; pas de réussite matérielle affirmée.
+
+## 24. Trig tenu + DATA et vue musicale (11/10/2026)
+
+AveyCole rapporte « it works », puis demande la saisie des notes comme sur
+le séquenceur natif. Il précise « Hold trig + DATA ». Pour le centre de
+l'écran, il choisit « Show note velocity as volume », sans nouveaux CC de
+panoramique ou volume. Ce retour porte sur le test précédent, pas sur cette
+nouvelle interface.
+
+[FAIT en émulation] Un appui bref ajoute/retire un trig. Sur un trig existant,
+la suppression attend le relâchement ; un mouvement de DATA annule cette
+suppression et édite directement la note. Plusieurs trigs tenus reçoivent
+ensemble le même déplacement, borné à 0..127. Les répétitions sont ignorées.
+PAGE et le changement de voie sont bloqués tant qu'un trig est tenu, pour
+ne pas appliquer le relâchement à une autre page/piste.
+
+La vue principale affiche la note chromatique dans un rectangle inversé
+à gauche, Vol/vélocité au centre, canal et pas à droite, MIDI OUT en bas.
+Sans trig tenu, DATA sélectionne le pas. Un clic DATA ouvre le menu existant ;
+EXIT revient à la vue principale. Les réglages de routage, longueur, vitesse,
+vélocité et gate restent dans ce menu. Aucun réglage de son audio n'est touché.
+
+Preuve : `test_midi_lane_page.py`, six voies × quatre pages, appuis/relâchements,
+édition multiple, conservation des pistes audio, noms C-1/C4/C#4/G9, cadre
+inversé et accès/retour au menu. Présentation et dessin interceptés : le rendu
+physique et le confort de l'interface restent à vérifier sur machine.
+
+Le bundle reste expérimental, en RAM partagée entre patterns. Seul le test
+MIDI est mis à jour ; aucun changement au transfert principal.

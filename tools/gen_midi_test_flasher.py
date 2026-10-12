@@ -16,7 +16,7 @@ import ref_mainos
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 PROD=ROOT/'docs/flasher'
 OUT=ROOT/'docs/flasher-midi-test'
-STAMP='2026-10-11-midi-bank-shared-main'
+STAMP='2026-10-11-midi-bank-trig-notes'
 
 
 def files_for(tweak,chosen,image):
@@ -33,9 +33,9 @@ def files_for(tweak,chosen,image):
         mods[t['id']]=item
     texts={
       'en': {'label':'MIDI OUT Bank','short':'Six MIDI-only lanes on channels 7–12. Experimental; RAM only.',
-             'desc':'FUNC + SETTINGS + PAGE switches between the audio tracks and six independent MIDI-only lanes on channels 7–12. FUNC + pad toggles the lane MIDI OUT. Trigs edit steps; PAGE changes step page; DATA chooses a setting, click to edit. Stop playback before first opening after boot. This experimental version uses one RAM bank shared across patterns, lost on restart; pattern/project saving is unfinished. Selecting this mod selects its validated compatible Select All bundle with Model-TG, Live MIDI OUT + THRU, LFO 2, queued Sequence Generator and SCRAMBLE. If you change its required mods, uncheck MIDI OUT Bank or use Select all again. Hardware verification is pending.'},
+             'desc':'FUNC + SETTINGS + PAGE switches between the audio tracks and six independent MIDI-only lanes on channels 7–12. FUNC + pad toggles the lane MIDI OUT. Tap a trig to add/remove it; hold a trig and turn DATA to choose its note. Several held trigs transpose together. The main display shows the note on the left and Vol (note velocity) in the middle. DATA selects a step when no trig is held; click DATA for settings and EXIT to return. PAGE changes step page. Stop playback before first opening after boot. This experimental version uses one RAM bank shared across patterns, lost on restart; pattern/project saving is unfinished. Selecting this mod selects its validated compatible Select All bundle with Model-TG, Live MIDI OUT + THRU, LFO 2, queued Sequence Generator and SCRAMBLE. If you change its required mods, uncheck MIDI OUT Bank or use Select all again. This editing update awaits hardware verification.'},
       'fr': {'label':'Banque MIDI OUT','short':'Six voies MIDI seules sur les canaux 7–12. Expérimental ; RAM seulement.',
-             'desc':'FUNC + SETTINGS + PAGE bascule entre les pistes audio et six voies MIDI indépendantes sur les canaux 7–12. FUNC + pad bascule MIDI OUT de la voie. Les trigs éditent les pas ; PAGE change la page ; DATA choisit un réglage, clic pour éditer. Arrêtez la lecture avant la première ouverture après démarrage. Une banque RAM partagée entre patterns, perdue au redémarrage ; sauvegarde pattern/projet inachevée. Ce mod sélectionne son bundle Tout sélectionner compatible validé avec Model-TG, MIDI OUT + THRU en direct, LFO 2, génération différée et SCRAMBLE. Si vous modifiez ses mods requis, décochez la banque MIDI OUT ou cliquez de nouveau sur Tout sélectionner. Validation matérielle en attente.'}}
+             'desc':'FUNC + SETTINGS + PAGE bascule entre les pistes audio et six voies MIDI indépendantes sur les canaux 7–12. FUNC + pad bascule MIDI OUT de la voie. Appuyez brièvement sur un trig pour ajouter/retirer le pas ; maintenez-le et tournez DATA pour choisir sa note. Plusieurs trigs tenus sont transposés ensemble. La vue principale affiche la note à gauche et Vol (vélocité) au centre. DATA sélectionne un pas sans trig tenu ; cliquez DATA pour les réglages, EXIT pour revenir. PAGE change la page. Arrêtez la lecture avant la première ouverture après démarrage. Une banque RAM partagée entre patterns, perdue au redémarrage ; sauvegarde pattern/projet inachevée. Ce mod sélectionne son bundle Tout sélectionner compatible validé avec Model-TG, MIDI OUT + THRU en direct, LFO 2, génération différée et SCRAMBLE. Si vous modifiez ses mods requis, décochez la banque MIDI OUT ou cliquez de nouveau sur Tout sélectionner. Cette nouvelle édition attend une validation matérielle.'}}
     html=(PROD/'index.html').read_text()
     html=re.sub(r'2026-\d\d-\d\d-lfo2-main',STAMP,html)
     for filename in ('style.css','builder.js','flasher.js','tweaks.js','app.js'):

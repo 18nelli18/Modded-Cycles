@@ -100,6 +100,10 @@ mlp_o_holder:
     clrl mlp_edit
     clrl mlp_func
     clrl mlp_pads
+    clrl mlp_held
+    clrl mlp_remove
+    clrl mlp_changed
+    clrl mlp_setup
     moveq   #1,%d1
     movel   #0x401000c4,%d0
     movel   %d0,%a0@
@@ -133,12 +137,14 @@ mlp_o_done:
     .section .text.mlp_dtor,"ax"
 | ---- destructeurs : oublier la page, puis appeler ceux de l’OS ----
 mlp_dtor0:
+    clrl mlp_held
     clrl mlp_func
     clrl mlp_pads
     lea.l   mlp_obj,%a0
     clrl    %a0@
     jmp     0x400f43ca
 mlp_dtor1:
+    clrl mlp_held
     clrl mlp_func
     clrl mlp_pads
     lea.l   mlp_obj,%a0
@@ -164,6 +170,14 @@ mlp_menu_key:
     beq .Lmk_transport
     cmpil #32,%d2
     beq .Lmk_data
+    | Relâchement des trigs traité avant le filtre des appuis.
+    cmpil #16,%d2
+    bcs .Lmk_nontrig
+    cmpil #31,%d2
+    bhi .Lmk_nontrig
+    btst #0,%d3
+    beq .Lmk_trig_release
+.Lmk_nontrig:
     movel %d3,%d0
     andil #9,%d0
     cmpil #1,%d0
@@ -185,6 +199,11 @@ mlp_menu_key:
     subil #16,%d2
     cmpil #15,%d2
     bhi .Lmk_used
+    movel mlp_held,%d0
+    btst %d2,%d0
+    bne .Lmk_used
+    bset %d2,%d0
+    movel %d0,mlp_held
     movel mlp_step,%d0
     andil #48,%d0
     addl %d2,%d0
@@ -193,11 +212,60 @@ mlp_menu_key:
     movel %d2,mlp_row
     clrl mlp_edit
     jsr mlp_raw_value
-    moveq #1,%d1
-    eorl %d1,%d0
+    tstl %d0
+    beq .Lmk_trig_new
+    | d2 est la ligne 6 : retrouver l'index physique depuis le pas.
+    movel mlp_step,%d1
+    andil #15,%d1
+    movel mlp_remove,%d0
+    bset %d1,%d0
+    movel %d0,mlp_remove
+    bra .Lmk_trig_note
+.Lmk_trig_new:
+    moveq #1,%d0
     jsr mlp_store
+.Lmk_trig_note:
+    clrl mlp_setup
+    moveq #7,%d0
+    movel %d0,mlp_row
+    moveq #1,%d0
+    movel %d0,mlp_edit
+    bra .Lmk_redraw
+.Lmk_trig_release:
+    subil #16,%d2
+    movel mlp_held,%d0
+    btst %d2,%d0
+    beq .Lmk_used
+    bclr %d2,%d0
+    movel %d0,mlp_held
+    movel mlp_remove,%d0
+    btst %d2,%d0
+    beq .Lmk_trig_clear
+    movel mlp_changed,%d1
+    btst %d2,%d1
+    bne .Lmk_trig_clear
+    movel mlp_step,%sp@-
+    movel mlp_step,%d0
+    andil #48,%d0
+    addl %d2,%d0
+    movel %d0,mlp_step
+    movel %d2,%sp@-
+    moveq #6,%d2
+    moveq #0,%d0
+    jsr mlp_store
+    movel %sp@+,%d2
+    movel %sp@+,mlp_step
+.Lmk_trig_clear:
+    movel mlp_remove,%d0
+    bclr %d2,%d0
+    movel %d0,mlp_remove
+    movel mlp_changed,%d0
+    bclr %d2,%d0
+    movel %d0,mlp_changed
     bra .Lmk_redraw
 .Lmk_page:
+    tstl mlp_held
+    bne .Lmk_used
     movel mlp_step,%d0
     addil #16,%d0
     andil #63,%d0
@@ -210,6 +278,16 @@ mlp_menu_key:
 .Lmk_data:
     btst #4,%d3
     beq .Lmk_used
+    tstl mlp_held
+    bne .Lmk_used
+    tstl mlp_setup
+    bne .Lmk_data_setup
+    moveq #1,%d0
+    movel %d0,mlp_setup
+    clrl mlp_row
+    clrl mlp_edit
+    bra .Lmk_redraw
+.Lmk_data_setup:
     movel mlp_row,%d2
     cmpil #1,%d2
     beq .Lmk_used
@@ -227,6 +305,11 @@ mlp_menu_key:
     jsr mlp_store
     bra .Lmk_redraw
 .Lmk_close:
+    tstl mlp_setup
+    beq .Lmk_close_page
+    clrl mlp_setup
+    bra .Lmk_redraw
+.Lmk_close_page:
     moveal %a2@,%a0
     moveal %a0@(0x28),%a0
     movel %a2,%sp@-
@@ -271,6 +354,8 @@ mlp_pad:
     movel %d1,mlp_pads
     tstl mlp_func
     bne .Lmp_output
+    tstl mlp_held
+    bne .Lmp_done
     movel %d2,mlp_track
     bra .Lmp_redraw
 .Lmp_output:
@@ -332,6 +417,17 @@ mlp_enc:
     bpl .Lme_sign
     moveq #-1,%d3
 .Lme_sign:
+    tstl mlp_held
+    bne .Lme_held
+    tstl mlp_setup
+    bne .Lme_setup
+    movel mlp_step,%d0
+    addl %d3,%d0
+    cmpil #63,%d0
+    bhi .Lme_out
+    movel %d0,mlp_step
+    bra .Lme_redraw
+.Lme_setup:
     movel mlp_row,%d2
     tstl mlp_edit
     bne .Lme_value
@@ -360,6 +456,39 @@ mlp_enc:
     movel %d1,%d0
 .Lme_max_ok:
     jsr mlp_store
+    bra .Lme_redraw
+.Lme_held:
+    | DATA transpose tous les pas tenus ; aucune modification des pistes audio.
+    movel mlp_step,%sp@-
+    moveq #0,%d4
+    moveq #7,%d2
+.Lme_held_loop:
+    movel mlp_held,%d0
+    btst %d4,%d0
+    beq .Lme_held_next
+    movel %sp@,%d0
+    andil #48,%d0
+    addl %d4,%d0
+    movel %d0,mlp_step
+    jsr mlp_raw_value
+    addl %d3,%d0
+    tstl %d0
+    bpl .Lme_held_min
+    moveq #0,%d0
+.Lme_held_min:
+    cmpil #127,%d0
+    ble .Lme_held_max
+    moveq #127,%d0
+.Lme_held_max:
+    jsr mlp_store
+    movel mlp_changed,%d0
+    bset %d4,%d0
+    movel %d0,mlp_changed
+.Lme_held_next:
+    addql #1,%d4
+    cmpil #16,%d4
+    bcs .Lme_held_loop
+    movel %sp@+,mlp_step
 .Lme_redraw:
     movel %a2,%sp@-
     jsr 0x40076082
@@ -508,6 +637,8 @@ mlp_value:
     rts
 
 mlp_render:
+    tstl mlp_setup
+    beq mlp_overview
     lea.l %sp@(-24),%sp
     movem.l %d2-%d6/%a2,%sp@
     movel %sp@(32),%d6
@@ -597,9 +728,119 @@ mlp_render:
     lea.l %sp@(24),%sp
     rts
 
+| Vue musicale : note inversée à gauche, vélocité au centre, voie à droite.
+| Vol représente la vélocité du pas, pas un CC ni un niveau du moteur audio.
+mlp_overview:
+    lea.l %sp@(-24),%sp
+    movem.l %d2-%d6/%a2,%sp@
+    movel %sp@(32),%d6
+    clrl %sp@-
+    pea 63
+    pea 127
+    clrl %sp@-
+    clrl %sp@-
+    movel %d6,%sp@-
+    jsr 0x40070dea
+    lea.l %sp@(24),%sp
+    moveq #7,%d2
+    jsr mlp_raw_value
+    moveq #-1,%d4
+.Lov_octave:
+    addql #1,%d4
+    subil #12,%d0
+    bpl .Lov_octave
+    addil #12,%d0
+    subql #1,%d4
+    lea.l mlp_note_names,%a0
+    movel %d4,%sp@-
+    movel %a0@(0,%d0:l:4),%sp@-
+    pea mlp_note_fmt
+    pea 0x10
+    pea 24
+    pea 5
+    pea 0x40ea14cc
+    movel %d6,%sp@-
+    jsr 0x40071a04
+    lea.l %sp@(32),%sp
+    | Inverser après le texte : note blanche dans le rectangle noir.
+    pea -1
+    pea 43
+    pea 42
+    pea 15
+    pea 1
+    movel %d6,%sp@-
+    jsr 0x40070dea
+    lea.l %sp@(24),%sp
+    | Petite routine commune : a0 texte, d0=x, d1=y, d6 cible.
+    lea.l mlp_note,%a0
+    moveq #5,%d0
+    moveq #47,%d1
+    bsr mlp_over_text
+    lea.l mlp_vol,%a0
+    moveq #51,%d0
+    moveq #47,%d1
+    bsr mlp_over_text
+    moveq #8,%d2
+    jsr mlp_raw_value
+    movel %d0,%sp@-
+    pea mlp_fmt_d
+    pea 0x10
+    pea 24
+    pea 54
+    pea 0x40ea14cc
+    movel %d6,%sp@-
+    jsr 0x40071a04
+    lea.l %sp@(28),%sp
+    moveq #1,%d2
+    jsr mlp_raw_value
+    movel %d0,%sp@-
+    pea mlp_ch_fmt
+    pea 0x10
+    pea 47
+    pea 91
+    pea 0x40ea14cc
+    movel %d6,%sp@-
+    jsr 0x40071a04
+    lea.l %sp@(28),%sp
+    movel mlp_step,%d0
+    addql #1,%d0
+    movel %d0,%sp@-
+    pea mlp_step_fmt
+    pea 0x10
+    pea 24
+    pea 91
+    pea 0x40ea14cc
+    movel %d6,%sp@-
+    jsr 0x40071a04
+    lea.l %sp@(28),%sp
+    moveq #10,%d2
+    jsr mlp_raw_value
+    lea.l mlp_over_off,%a0
+    tstl %d0
+    beq .Lov_output
+    lea.l mlp_over_on,%a0
+.Lov_output:
+    moveq #2,%d0
+    moveq #2,%d1
+    bsr mlp_over_text
+    movem.l %sp@,%d2-%d6/%a2
+    lea.l %sp@(24),%sp
+    rts
+mlp_over_text:
+    movel %a0,%sp@-
+    pea mlp_fmt_s
+    pea 0x10
+    movel %d1,%sp@-
+    movel %d0,%sp@-
+    pea 0x40ea14cc
+    movel %d6,%sp@-
+    jsr 0x40071a04
+    lea.l %sp@(28),%sp
+    rts
+
     .data
     .balign 4
-    .globl ml_pattern,ml_runtime,mlp_obj,mlp_opened,mlp_row,mlp_edit,mlp_track,mlp_step,mlp_func,mlp_pads,mlp_vt
+    .globl ml_pattern,ml_runtime,mlp_obj,mlp_opened,mlp_row,mlp_edit,mlp_track,mlp_step,mlp_func,mlp_pads,mlp_vt,mlp_held,mlp_remove,mlp_changed
 ml_pattern: .long 0
 ml_runtime: .long 0
 mlp_obj: .long 0
@@ -610,6 +851,11 @@ mlp_track: .long 0
 mlp_step: .long 0
 mlp_func: .long 0
 mlp_pads: .long 0
+mlp_held: .long 0
+mlp_remove: .long 0
+mlp_changed: .long 0
+    .globl mlp_setup
+mlp_setup: .long 0
 mlp_vt: .space 0xb0
 mlp_labels: .long mlp_track_label,mlp_channel,mlp_port,mlp_length,mlp_speed,mlp_step_label,mlp_trig,mlp_note,mlp_velocity,mlp_gate,mlp_output
 mlp_ports: .long mlp_usb,mlp_din,mlp_both
@@ -643,4 +889,24 @@ mlp_triple: .asciz "3x"
 mlp_four: .asciz "4x"
 mlp_fmt_s: .asciz "%s"
 mlp_fmt_d: .asciz "%d"
+mlp_vol: .asciz "Vol"
+mlp_note_fmt: .asciz "%s%d"
+mlp_ch_fmt: .asciz "Ch%d"
+mlp_step_fmt: .asciz "S%02d"
+mlp_over_on: .asciz "MIDI OUT On"
+mlp_over_off: .asciz "MIDI OUT Off"
+    .balign 4
+mlp_note_names: .long mlp_c,mlp_cs,mlp_d,mlp_ds,mlp_e,mlp_f,mlp_fs,mlp_g,mlp_gs,mlp_a,mlp_as,mlp_b
+mlp_c: .asciz "C"
+mlp_cs: .asciz "C#"
+mlp_d: .asciz "D"
+mlp_ds: .asciz "D#"
+mlp_e: .asciz "E"
+mlp_f: .asciz "F"
+mlp_fs: .asciz "F#"
+mlp_g: .asciz "G"
+mlp_gs: .asciz "G#"
+mlp_a: .asciz "A"
+mlp_as: .asciz "A#"
+mlp_b: .asciz "B"
 

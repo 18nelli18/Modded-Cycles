@@ -118,6 +118,7 @@ def main():
     assert r.call('mlp_open')==0 and r.new_count==allocs
     print('ok : constructeur OS réel, vtables privées, sélection initiale et ouverture doublée refusée')
 
+    r.w32(r.s['mlp_setup'],1)
     for track in range(6):
       r.w32(r.s['mlp_track'],track)
       for row in range(11):
@@ -170,9 +171,63 @@ def main():
         key(r,15)
     assert r.r32(r.s['mlp_step'])==15
     assert all(r.u.mem_read(PAT+8+4*step+3,1)==b'\x01' for step in range(64))
-    key(r,31);assert raw(r,6)==0
+    key(r,31);assert raw(r,6)==1
+    key(r,31,0);assert raw(r,6)==0
+    r.w32(r.s['mlp_setup'],1)
     r.w32(r.s['mlp_row'],6);key(r,32,16);assert raw(r,6)==1
     print('ok : saisie des 64 pas par quatre pages, sélection/toggle, releases/répétitions consommées et clic booléen')
+
+    # Tenir un trig et tourner DATA : notes directes, sans éteindre le trig.
+    for page in range(4):
+        r.w32(r.s['mlp_step'],page*16)
+        for lane in range(6):
+            r.w32(r.s['mlp_track'],lane)
+            for trig in (0, 7, 15):
+                step=page*16+trig
+                r.u.mem_write(PAT+lane*264+8+step*4,bytes([60,100,1,1]))
+                before=bytes(r.u.mem_read(RAW,722))
+                key(r,16+trig)
+                assert raw(r,6)==1 and r.r32(r.s['mlp_row'])==7
+                knob(r,1);assert raw(r,7)==61
+                key(r,16+trig,0);assert raw(r,6)==1
+                assert bytes(r.u.mem_read(RAW,722))==before
+                key(r,16+trig);key(r,16+trig,0);assert raw(r,6)==0
+    r.w32(r.s['mlp_step'],0)
+    key(r,16);key(r,17)
+    n0,n1=raw(r,7,step=0),raw(r,7,step=1)
+    knob(r,1)
+    assert raw(r,7,step=0)==min(127,n0+1)
+    assert raw(r,7,step=1)==min(127,n1+1)
+    key(r,16,0);key(r,17,0)
+    assert raw(r,6,step=0)==raw(r,6,step=1)==1
+    print('ok : trig tenu + DATA, six voies × quatre pages ; notes directes, maintien actif, tap pour retirer, deux trigs tenus, piste audio intacte')
+
+    # Vue musicale par défaut et accès/retour au menu sans fermer la banque.
+    original_draw=r.stubs[0x40071a04]
+    def overview_text(args):
+        ctx,font,x,y,flags,fmt,value,last=args
+        f=r.string(fmt)
+        if f=='%s%d':text=r.string(value)+str(last if last<0x80000000 else last-0x100000000)
+        elif f=='Ch%d':text='Ch'+str(value)
+        elif f=='S%02d':text='S'+str(value).zfill(2)
+        else:return original_draw(args)
+        r.texts.append((x,y,text));return 0
+    r.stubs[0x40071a04]=overview_text
+    r.w32(r.s['mlp_setup'],0)
+    r.w32(r.s['mlp_step'],0)
+    for note,name in ((0,'C-1'),(60,'C4'),(61,'C#4'),(127,'G9')):
+        lane=r.r32(r.s['mlp_track'])
+        r.u.mem_write(PAT+lane*264+8,bytes([note,100,1,1]))
+        r.texts.clear();r.rects.clear()
+        r.call('mlp_render',obj,0x93006000)
+        assert (5,24,name) in r.texts and (51,47,'Vol') in r.texts
+        assert (54,24,'100') in r.texts
+        assert any(rect[1:]==(1,15,42,43,0xffffffff) for rect in r.rects)
+    key(r,32,16);assert r.r32(r.s['mlp_setup'])==1
+    key(r,12);assert r.r32(r.s['mlp_setup'])==0 and r.r32(r.s['mlp_obj'])==obj
+    r.stubs[0x40071a04]=original_draw
+    r.w32(r.s['mlp_setup'],1)
+    print('ok : vue musicale, note inversée gauche C-1/C4/C#4/G9, Vol/vélocité centre, DATA ouvre les réglages et EXIT revient')
 
     def pad(index,state):
         r.w32(EVENT+20,index);r.w32(EVENT+16,state)
