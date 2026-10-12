@@ -219,3 +219,15 @@ son muet/mute de piste. Correctif non confirmé sur matériel.
 ## 12. Validation matérielle et passage au principal (11/10/2026)
 
 [FAIT] AveyCole confirme que le flasher `2026-10-11-test-2-queue-format-velocity` fonctionne sur son Model:Cycles : plus de trigs corrompus. Il demande explicitement de marquer la génération différée comme testée et de la publier au principal. Le catalogue principal conserve une sous-option séparée, les plages et Euclid ainsi que le cartouche SEQUENCE GENIE. Le format B reste B ; les nouvelles notes ont une vélocité explicite non nulle. Les caves occupées par chord-keys/track-filter peuvent être partagées puisque ces deux mods excluent les deux bases Model-TG requises. Les modulations LFO2 et pistes MIDI supplémentaires restent en développement.
+
+## Génération différée incluse — 12/10/2026
+
+À la demande d'AveyCole, Sequence Generator sélectionne automatiquement
+la variante queued déjà testée, avec ou sans moteurs Syntakt. La sous-case
+est supprimée ; SCRAMBLE choisit toujours la variante compatible queued
+quand le générateur est présent. Aucun octet firmware modifié.
+La sélection ne dépend plus de l'ancien état queued éventuellement faux.
+`test_sequence_queue_included.js` couvre activation/réactivation, EN/FR,
+SCRAMBLE et Select All/ST ; `test_midi_flasher.js` couvre les builds et les
+transferts simulés intégraux. Les références existantes des variantes queued
+restent utilisées. La sauvegarde MIDI n'est pas incluse dans ce changement.
