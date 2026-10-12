@@ -155,6 +155,9 @@ mlp_o_done:
 | ---- destructeurs : oublier la page, puis appeler ceux de l’OS ----
 mlp_dtor0:
     jsr mlp_keyboard_cancel
+    .ifdef ML_CONDITIONS
+    clrl ml_cond_fill
+    .endif
     clrl mlp_held
     clrl mlp_func
     clrl mlp_pads
@@ -163,6 +166,9 @@ mlp_dtor0:
     jmp     0x400f43ca
 mlp_dtor1:
     jsr mlp_keyboard_cancel
+    .ifdef ML_CONDITIONS
+    clrl ml_cond_fill
+    .endif
     clrl mlp_held
     clrl mlp_func
     clrl mlp_pads
@@ -186,6 +192,14 @@ mlp_menu_key:
     moveal %sp@(20),%a0
     movel %a0@(12),%d2
     movel %a0@(16),%d3
+    .ifdef ML_CONDITIONS
+    cmpil #15,%d2
+    bne .Lmk_fill_done
+    movel %d3,%d0
+    andil #1,%d0
+    movel %d0,ml_cond_fill
+.Lmk_fill_done:
+    .endif
     .ifdef ML_CLIPBOARD
     movel %d3,%sp@-
     movel %d2,%sp@-
@@ -636,6 +650,10 @@ mlp_enc:
     moveal %sp@(20),%a2
     moveal %sp@(24),%a0
     movel %a0@(12),%d0
+    .ifdef ML_CONDITIONS
+    cmpil #13,%d0
+    beq .Lme_chance_knob
+    .endif
     cmpil #1,%d0
     bne .Lme_out
     pea 1
@@ -651,6 +669,10 @@ mlp_enc:
     moveq #-1,%d3
 .Lme_sign:
     movel mlp_setup,%d0
+    .ifdef ML_CONDITIONS
+    cmpil #5,%d0
+    beq .Lme_chance_delta
+    .endif
     .ifdef ML_REPEAT
     cmpil #4,%d0
     bne .Lme_not_retrigger
@@ -918,8 +940,27 @@ mlp_value:
     lea.l mlp_on,%a0
     rts
 
+    .ifdef ML_CONDITIONS
+.Lme_chance_knob:
+    pea 1
+    pea 1
+    movel %a0,%sp@-
+    jsr 0x4006f73a
+    lea.l %sp@(12),%sp
+    movel %d0,%d3
+.Lme_chance_delta:
+    movel %d3,%sp@-
+    jsr mlp_chance_enc
+    addql #4,%sp
+    bra .Lme_redraw
+    .endif
+
 mlp_render:
     movel mlp_setup,%d0
+    .ifdef ML_CONDITIONS
+    cmpil #5,%d0
+    beq mlp_chance_render
+    .endif
     .ifdef ML_REPEAT
     cmpil #4,%d0
     beq mlp_retrigger_render

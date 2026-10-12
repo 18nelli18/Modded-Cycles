@@ -33,6 +33,98 @@ ml_repeat_locked_step:
     movel %d2,%d0
     muluw #520,%d0
     addal %d0,%a4
+    .ifdef ML_CHANCE
+    | Décision unique par trig, avant armement ; jamais à chaque répétition.
+    lea.l ml_chance_seeds,%a0
+    movel %d2,%d0
+    lsll #2,%d0
+    addal %d0,%a0
+    movel %a0,%sp@-
+    jsr ml_chance_sample
+    addql #4,%sp
+    .ifdef ML_CONDITIONS
+    movel %d0,%d5
+    movel %sp@(76),%d0
+    lsll #3,%d0
+    lea.l %a4@(8),%a0
+    clrl %sp@(48)
+    moveq #0,%d1
+    moveb %a0@(7,%d0:l),%d1
+    beq .Lstep_condition_default
+    moveq #1,%d0
+    movel %d0,%sp@(48)
+    bra .Lstep_condition_value
+.Lstep_condition_default:
+    moveb %a4@(7),%d1
+.Lstep_condition_value:
+    cmpil #102,%d1
+    bcs .Lstep_percent
+    cmpil #165,%d1
+    bhi .Lstep_percent
+    subil #102,%d1
+    | FILL momentané B et latch/état natifs lus sans effet sur les pistes A.
+    lea.l 0x40fde812,%a0
+    moveq #0,%d0
+    moveb %a0@(0,%d2:l),%d0
+    moveq #0,%d4
+    moveb 0x40fde818,%d4
+    orl %d4,%d0
+    orl ml_cond_fill,%d0
+    movel %sp@(72),%d4
+    movel %d5,%sp@-
+    movel %d0,%sp@-
+    movel %d1,%sp@-
+    movel %d2,%sp@-
+    pea ml_cond_history
+    jsr ml_condition_run
+    lea.l %sp@(20),%sp
+    bra .Lstep_decided
+.Lstep_percent:
+    .ifdef ML_CONDITION_COMPACT
+    moveq #1,%d0
+    tstl %d1
+    beq .Lstep_percent_done
+    subql #1,%d1
+    cmpl %d1,%d5
+    scs %d0
+    andil #1,%d0
+.Lstep_percent_done:
+    bra .Lstep_percent_ready
+    .endif
+    movel %d5,%d0
+    .endif
+    .ifndef ML_CONDITION_COMPACT
+    movel %d0,%sp@-
+    movel %sp@(80),%sp@-
+    pea %a4@(8)
+    movel %a4,%sp@-
+    jsr ml_chance_accept
+    lea.l %sp@(16),%sp
+    .endif
+    .ifdef ML_CONDITION_COMPACT
+.Lstep_percent_ready:
+    .endif
+    .ifdef ML_CONDITIONS
+    | Une probabilité explicitement verrouillée nourrit PRE/NEI ; pas l'héritage.
+    tstl %sp@(48)
+    beq .Lstep_decided
+    movel %d0,%d5
+    movel %d5,%sp@-
+    clrl %sp@-
+    movel %d2,%sp@-
+    pea ml_cond_history
+    jsr ml_cond_remember
+    lea.l %sp@(16),%sp
+    movel %d5,%d0
+    .endif
+.Lstep_decided:
+    tstl %d0
+    bne .Lstep_chance_yes
+    | Un refus termine l'ancien repeat, mais ne crée aucun nouveau Note On.
+    moveq #0,%d3
+    bra .Lstep_cancel_normal
+.Lstep_chance_yes:
+    .endif
     pea %sp@(36)
     movel %sp@(80),%sp@-
     pea %a4@(8)
@@ -143,3 +235,10 @@ ml_repeat_locked_step:
     lea.l %sp@(56),%sp
     movew %d1,%sr
     rts
+
+    .ifdef ML_CHANCE
+    .data
+    .balign 4
+ml_chance_seeds:
+    .long 0x13579bdf,0x2468ace1,0x31415927,0x27182819,0xabcdef01,0x10203041
+    .endif

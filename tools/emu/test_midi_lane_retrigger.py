@@ -10,20 +10,21 @@ BANK=0x93000000
 STATE=0x93001000
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--cycles',required=True);a=ap.parse_args()
+ ap=argparse.ArgumentParser();ap.add_argument('--cycles',required=True);ap.add_argument('--chance',action='store_true');ap.add_argument('--conditions',action='store_true');a=ap.parse_args();a.chance=a.chance or a.conditions
  root=pathlib.Path(__file__).resolve().parents[2]
  cross=str(root.parent/'toolchain/bin/m68k-elf-')
  r=Rig(main_os_from_syx(a.cycles),0);u=r.uc
  with tempfile.TemporaryDirectory() as tmp:
   p=pathlib.Path(tmp);objects=[]
-  for name in ('runtime','pattern','retrigger','retrigger_locks','retrigger_service','integration','arp','arp_tick','retrigger_patterns','retrigger_step'):
+  for name in ('runtime','pattern','retrigger','retrigger_locks','retrigger_service','integration','arp','arp_tick','retrigger_patterns','retrigger_step') + (('chance',) if a.chance else ()) + (('conditions','condition_history','condition_decode','condition_run') if a.conditions else ()):
    obj=p/(name+'.o');objects.append(str(obj))
-   subprocess.run([cross+'as','-march=cfv4e','--defsym','ML_REPEAT=1','--defsym','ML_PATTERN_BANKS=1','-o',str(obj),str(root/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
+   subprocess.run([cross+'as','-march=cfv4e','--defsym','ML_REPEAT=1','--defsym','ML_PATTERN_BANKS=1',*(['--defsym','ML_CHANCE=1'] if a.chance else []),*(['--defsym','ML_CONDITIONS=1'] if a.conditions else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
   elf=p/'r.elf';binary=p/'r.bin'
   bindings={'mlp_track':0x93006010,'mlp_step':0x93006014,'ml_runtime':0x93006018,'ml_context':0x93006000,'ml_play_pattern':0x93006004,'ml_pattern':0x93006008,
             'ml_clock_durations':0x93006100,'ml_pad_serial':0x93006200,'ml_live_runtime':0x93007000,
             'ml_bank_ui_sync':0x93018000,'ml_bank_follow':0x93018000,'ml_clock':0x93018002,'ml_prepare':0x93018000,
             'ml_service':0x93018000,'mlp_led_poll':0x93018000}
+  if a.conditions:bindings.update(ml_cond_history=0x93006400,ml_cond_fill=0x93006480)
   subprocess.run([cross+'ld','-Ttext='+hex(ENTRY),'-e','ml_repeat_tick',
                   *['--defsym='+name+'='+hex(value) for name,value in bindings.items()],
                   '-o',str(elf),*objects],check=True)
@@ -472,6 +473,41 @@ def main():
  assert [take(),take()]==[0x86540003,0x96436403] and take()==0
  assert u.mem_read(private,4)==bytes(4)
  assert call('ml_repeat_service',BANK,pattern,private,2160000,1)==0 and take()==0
+ if a.chance:
+  # Refus explicite : Off de l'ancienne note, pas de nouvelle note/repeat.
+  call('ml_chance_set',first+8,0,0)
+  assert call('ml_pattern_tick',BANK,pattern,0,0)==1
+  assert take()==0x86430003 and take()==0
+  assert u.mem_read(private,4)==bytes(4)
+  call('ml_chance_set',first+8,0,100)
+  assert call('ml_pattern_tick',BANK,pattern,0,0)==1
+  assert take()==0x96486403 and take()==0
+  assert u.mem_read(private,4)==struct.pack('>I',1)
+  print('ok : chance dans le vrai pattern_tick, refus libère Off, 100 % arme retrigger, aucun On refusé')
+ if a.conditions:
+  hist=symbols['ml_cond_history'];call('ml_cond_init',hist)
+  u.mem_write(first+15,bytes((102,)))
+  u.mem_write(symbols['ml_cond_fill'],bytes(4))
+  call('ml_pattern_tick',BANK,pattern,0,0)
+  assert take()==0x86480003 and take()==0
+  u.mem_write(symbols['ml_cond_fill'],struct.pack('>I',1))
+  call('ml_pattern_tick',BANK,pattern,0,0)
+  assert take()==0x96486403 and take()==0
+  u.mem_write(first+15,bytes((104,)))
+  call('ml_pattern_tick',BANK,pattern,0,0)
+  assert [take(),take()]==[0x86480003,0x96486403] and take()==0
+  u.mem_write(first+15,bytes((105,)))
+  call('ml_pattern_tick',BANK,pattern,0,0)
+  assert take()==0x86480003 and take()==0
+  assert call('ml_cond_previous',hist,0)==1
+  assert u.mem_read(private,4)==bytes(4)
+  call('ml_chance_set',first+8,0,0)
+  call('ml_pattern_tick',BANK,pattern,0,0)
+  assert take()==0 and call('ml_cond_previous',hist,0)==0
+  u.mem_write(first+15,bytes((104,)))
+  call('ml_pattern_tick',BANK,pattern,0,0)
+  assert take()==0 and call('ml_cond_previous',hist,0)==0
+  print('ok : conditions stock pilotent vrai pattern_tick, FILL/PRE/inverse, Off conservés sans On refusé')
  u.mem_write(symbols['ml_repeat_play_settings'],bytes(4));u.mem_write(symbols['ml_repeat_arp_bank'],bytes(4))
  print('ok : vrai pattern_tick -> locks -> retrigger/arp, Len sur repos, lock OFF et retour au chemin MIDI normal')
  print('ok : service six voies, répétitions bornées, mute/stop/pause/changement canal-port sans note résiduelle')

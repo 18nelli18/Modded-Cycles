@@ -28,6 +28,11 @@ ml_clock:
     beq .Lclock_resume
     tstl %a4@
     bne .Lclock_running
+    .ifdef ML_CONDITIONS
+    pea ml_cond_history
+    jsr ml_cond_init
+    addql #4,%sp
+    .endif
     moveq #1,%d0
     movel %d0,%a4@
     lea.l %a4@(4),%a0
@@ -94,6 +99,12 @@ ml_clock:
     addql #1,%d0
     cmpl %d3,%d0
     bls .Lclock_save_step
+    .ifdef ML_CONDITIONS
+    movel %d2,%sp@-
+    pea ml_cond_history
+    jsr ml_cond_advance
+    addql #8,%sp
+    .endif
     moveq #0,%d0
 .Lclock_save_step:
     movel %d0,%a5@(4)

@@ -27,11 +27,12 @@ def main():
     ap.add_argument('--cache-blocks',type=int,choices=(6,7),default=6)
     ap.add_argument('--lfo-cc',action='store_true')
     ap.add_argument('--storage',action='store_true',help='Raccordement stockage prototype non publié')
+    ap.add_argument('--conditions',action='store_true')
     ap.add_argument('--retrigger',action='store_true',help='Raccordement retrigger/arp B prototype')
     args=ap.parse_args()
-    if args.lfo_cc:args.cache_blocks=7
+    if args.lfo_cc:args.cache_blocks=8 if args.conditions else 7
     stock=gen.main_os_from_syx(args.cycles)
-    tweak,chosen,image=gen.generate(stock,args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display,not args.stereo_usb,args.cache_blocks,args.lfo_cc,args.storage,args.retrigger)
+    tweak,chosen,image=gen.generate(stock,args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display,not args.stereo_usb,args.cache_blocks,args.lfo_cc,args.storage,args.retrigger,args.conditions)
     if args.storage or args.retrigger:
         import build
         assert build.payload_image(tweak,bytes.fromhex(tweak['append']['parts'][0]['hex']))==bytes.fromhex(tweak['append']['compressed_hex'])
@@ -266,6 +267,34 @@ def main():
         r.call('ml_worker_once',worker)
         assert r.call('ml_bank_ui_sync')==1 and r.r32(s['ml_pattern'])==ctx
         print('ok : banques par pattern dans le bundle placé, changement au site natif, ordre DIN/USB exact')
+    if args.conditions:
+        # Exécuter le chemin compact publié et le helper placé dans le masque.
+        assert s['ml_condition_eval'] < s['ML_BANK_START']
+        at=s['ml_condition_eval']
+        assert bytes(u.mem_read(at,16))==image[at-gen.build.BASE:at-gen.build.BASE+16]
+        private=0x930e1000;runtime=0x930e0000
+        r.call('ml_init',private);r.call('ml_edit',private,0,0,3,1)
+        settings=r.call('ml_repeat_pattern_prepare',private)
+        assert settings
+        r.w32(s['ml_repeat_play_settings'],settings)
+        for encoded,fill,expected in ((0,0,1),(1,0,0),(101,0,1),(102,0,0),(102,1,1),(103,0,1),(103,1,0)):
+            u.mem_write(runtime,bytes(320));u.mem_write(s['ml_repeat_states'],bytes(120))
+            u.mem_write(settings+15,bytes((encoded,)))
+            r.w32(s['ml_cond_fill'],fill)
+            u.mem_write(0x40fde812,bytes(6));u.mem_write(0x40fde818,b'\0')
+            u.reg_write(mk.UC_M68K_REG_SR,0x2500)
+            r.call('ml_pattern_tick',runtime,private,0,0)
+            assert bool(r.r32(runtime))==bool(expected),(encoded,fill,r.r32(runtime))
+        # FILL latch natif et état momentané natif de la voie sont lus sans écriture.
+        for addr in (0x40fde818,0x40fde812):
+            u.mem_write(runtime,bytes(320));u.mem_write(s['ml_repeat_states'],bytes(120))
+            r.w32(s['ml_cond_fill'],0);u.mem_write(settings+15,b'\x66')
+            u.mem_write(addr,b'\1');r.call('ml_pattern_tick',runtime,private,0,0)
+            assert r.r32(runtime)==1
+            assert u.mem_read(addr,1)[0]==1
+            u.mem_write(addr,b'\0')
+        print('ok : vrai build compact, helper après boot, chance/héritage/FILL et inverse, latch natif, aucun état audio modifié')
+    u.reg_write(mk.UC_M68K_REG_SR,0x2000)
     # Réexécuter la preuve wait/post/scheduler avec le CODE placé du bundle.
     prove_scheduler(r)
     print('NOTE : TRAP/RTE adaptés ; timing physique, chemin Play complet et sauvegarde restent à valider')

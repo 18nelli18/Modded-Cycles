@@ -10,7 +10,7 @@ from test_sdvintage import main_os_from_syx
 def main():
  ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);a=ap.parse_args()
  stock=main_os_from_syx(a.cycles)
- for reserved in (0,6,7):
+ for reserved in (0,6,7,8):
   r=Rig(stock,{'writes':[]},{'writes':[],'symbols':{}})
   base=0x401eb750;r.u.mem_write(base,bytes(0x160))
   r.w32(0x400792f2,base+20*reserved)

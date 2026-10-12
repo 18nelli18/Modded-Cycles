@@ -19,8 +19,9 @@ DURATIONS = (21600000,10800000,5400000,3600000,2700000,1800000,1350000)
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--cycles',required=True)
+    ap.add_argument('--conditions',action='store_true')
     args=ap.parse_args()
-    r=Rig(main_os_from_syx(args.cycles),0);u=r.uc;symbols=load(r)
+    r=Rig(main_os_from_syx(args.cycles),0);u=r.uc;symbols=load(r,conditions=args.conditions)
     u.mem_map(0x80000000,0x20000)
     counts=[0];worst={}
     def tick(u,a,s,d):counts[0]+=1
@@ -38,7 +39,8 @@ def main():
         worst[name]=max(worst.get(name,0),counts[0])
         assert u.reg_read(mk.UC_M68K_REG_PC)==STOP
         assert u.reg_read(mk.UC_M68K_REG_A7)==STACK+4
-        assert u.reg_read(mk.UC_M68K_REG_SR)==0x2505
+        if not name.startswith('ml_cond_'):assert u.reg_read(mk.UC_M68K_REG_SR)==0x2505
+        else:assert u.reg_read(mk.UC_M68K_REG_SR)&0xffe0==0x2500
         assert all(u.reg_read(reg)==value for reg,value in saved.items())
         return u.reg_read(mk.UC_M68K_REG_D0)
     def drain():
@@ -65,6 +67,29 @@ def main():
         now=struct.unpack('>I',u.mem_read(0x8000184c,4))[0]
         assert now==(before+2*tempo)&0xffffffff
         return now
+
+    if args.conditions:
+        hist=symbols['ml_cond_history']
+        reset(length=2)
+        u.mem_write(hist,b'\xff'*96)
+        assert clock(0)==6;drain()
+        assert bytes(u.mem_read(hist,96))==bytes(96)
+        call('ml_cond_remember',hist,0,0,1)
+        assert clock(DURATIONS[2],2)==0;drain()
+        assert struct.unpack('>I',u.mem_read(hist,4))[0]==1
+        assert clock(DURATIONS[2],1)==6;drain()
+        assert struct.unpack('>I',u.mem_read(hist+4,4))[0]==1
+        assert u.mem_read(hist+8,8)==bytes((0,1,1,1,1,1,1,1))
+        assert clock(DURATIONS[2],0)==0;drain()
+        assert clock(DURATIONS[2]*2,1)==6;drain()
+        assert bytes(u.mem_read(hist,96))==bytes(96)
+        reset()
+        for lane in range(6):call('ml_config',PAT,lane,4,lane+1)
+        assert clock(0)==6;drain()
+        for lane in range(6):
+            first=struct.unpack('>I',u.mem_read(hist+lane*16+4,4))[0]
+            assert first==int(lane==0)
+        print('ok : historique raccordé au vrai clock, Start réinitialise, pause conserve, wraps par voie indépendants')
 
     for speed,duration in enumerate(DURATIONS):
       reset(length=5,speed=speed)

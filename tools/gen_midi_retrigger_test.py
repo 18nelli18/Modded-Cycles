@@ -7,8 +7,8 @@ La page de base est celle du commit7abbe84a9fae9c57a44128e4ed4dcbb0a48f0aa4.
 """
 import argparse,hashlib,json,pathlib,re,html as html_lib
 import build,gen_midi_bank_bundle as bank,ref_mainos
-STAMP='2026-10-12-test-3-step-data'
-EN=('Hold a B-side trig and press DATA to cycle Note, Velocity and Length; turn DATA to edit. FUNC + RETRIG opens B-side Retrig Setup. Turn DATA to select a row, click to edit, '
+STAMP='2026-10-12-test-3-chance-locks'
+EN=('Hold a B-side trig and turn CHANCE to set its stock condition; DATA also edits the open Chance page. BACK returns to the MIDI bank. Native probability, FILL, PRE, NEI, 1st and A:B choices are included. Hold PAGE for momentary FILL; native latched FILL is also read. Conditions apply only to B-side notes. An inherited condition uses 100 percent by default. Chance settings are RAM only. Hold a B-side trig and press DATA to cycle Note, Velocity and Length; turn DATA to edit. FUNC + RETRIG opens B-side Retrig Setup. Turn DATA to select a row, click to edit, '
     'then turn to change it. A.On enables sequenced repeats; Rte selects their rate and Len '
     'their duration (127 = INF). Arp selects UP, DOWN, UPDN, RAND, PLAY or OFF; Oct selects '
     '1–4 octaves. With REC enabled, hold a step and press RETRIG twice to enable its retrigger; edit its settings there, then release the trig '
@@ -20,8 +20,8 @@ EN=('Hold a B-side trig and press DATA to cycle Note, Velocity and Length; turn 
     'Retrigger settings reset on project load and are not saved. Sequences and MIDI LFO '
     'settings remain RAM only; restart before changing projects. Existing B-side controls, '
     'Sequence Genie and LFO-to-CC remain included. 6-channel USB audio is optional. '
-    'New retrigger/arp behavior is experimental and needs hardware testing.')
-FR=('Maintenez un trig côté B et cliquez DATA pour choisir Note, Vel ou Len ; tournez DATA pour éditer. FUNC + RETRIG ouvre Retrig Setup côté B. Tournez DATA pour choisir une ligne, cliquez '
+    'New chance/retrigger/arp behavior is experimental and needs hardware testing.')
+FR=('Maintenez un trig B et tournez CHANCE pour choisir sa condition native ; DATA édite aussi la page Chance. BACK revient à B. Probabilités, FILL, PRE, NEI, 1st et rapports A:B natifs inclus. PAGE maintenu active FILL momentané ; le latch FILL natif est lu aussi. Conditions limitées aux notes B ; héritage à 100 pour cent par défaut. Réglages en RAM seulement. Maintenez un trig côté B et cliquez DATA pour choisir Note, Vel ou Len ; tournez DATA pour éditer. FUNC + RETRIG ouvre Retrig Setup côté B. Tournez DATA pour choisir une ligne, cliquez '
     'pour éditer puis tournez pour changer la valeur. A.On active les répétitions séquencées ; '
     'Rte règle leur vitesse et Len leur durée (127 = INF). Arp choisit UP, DOWN, UPDN, RAND, '
     'PLAY ou OFF ; Oct règle 1–4 octaves. REC actif : maintenez un pas et appuyez deux fois sur RETRIG pour activer son retrigger et éditer ses réglages, '
@@ -33,7 +33,7 @@ FR=('Maintenez un trig côté B et cliquez DATA pour choisir Note, Vel ou Len ; 
     'à raccorder. Les réglages retrigger sont réinitialisés au chargement du projet et ne sont '
     'pas sauvegardés. Séquences et réglages LFO MIDI restent en RAM ; redémarrez avant de '
     'changer de projet. Commandes B, Sequence Genie et LFO vers CC restent inclus. Audio USB '
-    '6 canaux facultatif. Nouveau retrigger/arp expérimental, à tester sur matériel.')
+    '6 canaux facultatif. Nouvelles conditions/retrigger/arp expérimentaux, à tester sur matériel.')
 
 def replace_json(text,prefix,value):
  start=text.index(prefix)+len(prefix)
@@ -46,7 +46,7 @@ def main():
  ap.add_argument('--cross',default='m68k-elf-');ap.add_argument('--check',action='store_true');a=ap.parse_args()
  base=pathlib.Path(a.base_page);out=pathlib.Path(a.output_dir)
  stock=bank.main_os_from_syx(a.cycles)
- tweak,chosen,image=bank.generate(stock,a.syntakt,a.model_tg,a.cross,True,True,True,7,True,False,True)
+ tweak,chosen,image=bank.generate(stock,a.syntakt,a.model_tg,a.cross,True,True,True,7,True,False,True,True)
  tweak['requires']=[x for x in tweak['requires'] if x!='6ch-usbup']
  tweak['description']=['Retrigger/arp séquencé B, réglages et locks privés par pattern ; RAM seulement.',
                        'Candidat Test3 ; live retrigger, courbe de vélocité et sauvegarde inachevés.']
@@ -61,8 +61,8 @@ def main():
       'p':hashlib.sha256(image[int(tweak['append']['at'],16)-build.BASE:]).hexdigest()}
  bundle=(base/'bundle.js').read_text()
  bundle=replace_json(bundle,'window.MC_TWEAKS.tweaks.push(',tweak)
- texts={'en':{'label':'MIDI OUT Bank — retrigger test','short':'Sequenced retrigger/arp locks, copy/clear/undo. Experimental; RAM only.','desc':EN},
-        'fr':{'label':'Banque MIDI OUT — test retrigger','short':'Locks retrigger/arp séquencés, copie/clear/undo. Expérimental ; RAM seulement.','desc':FR}}
+ texts={'en':{'label':'MIDI OUT Bank — chance test','short':'Stock chance conditions and retrigger/arp locks. Experimental; RAM only.','desc':EN},
+        'fr':{'label':'Banque MIDI OUT — test chance','short':'Conditions chance natives et locks retrigger/arp. Expérimental ; RAM seulement.','desc':FR}}
  bundle=replace_json(bundle,'const bankTexts = ',texts)
  bundle=replace_json(bundle,'Object.assign(window.MCFlasherApp.REF_MODS, ',{tweak['id']:mod})
  bundle=replace_json(bundle,'Object.assign(window.MCFlasherApp.REF_MAINOS, ',refs)

@@ -25,6 +25,7 @@ STORAGE_SOURCES=tuple('storage_'+name for name in (
     'prepare','guard','checked','directory','codec','io','path','verify','load',
     'commit','initial','snapshot','session','project','save_hook','load_hook',
     'restore_step','publish','retire','ui_cancel','service'))
+CONDITION_SOURCES=('chance','conditions','condition_history','condition_decode','condition_run','chance_menu')
 REPEAT_SOURCES=('retrigger','retrigger_locks','retrigger_service','retrigger_patterns',
                 'retrigger_step','retrigger_menu','arp','arp_tick')
 
@@ -34,10 +35,10 @@ IDS=('6ch-usbup','model-tg-st','sample-preview-st','trig-hold','arp','tempo-max'
      'scale-gen-st-queued','lfo-secondary','scramble-st-gen-queued')
 
 
-def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False):
+def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False):
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[]
-        for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (REPEAT_SOURCES if repeat else ()):
+        for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (REPEAT_SOURCES if repeat else ()) + (CONDITION_SOURCES if conditions else ()):
             if name == 'banks' and not pattern_banks:
                 continue
             if name == 'stock_display' and not stock_display:
@@ -49,6 +50,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
                             *(['--defsym','ML_LFO_CC=1'] if lfo_cc else []),
                             *(['--defsym','ML_STORAGE=1'] if storage else []),
                             *(['--defsym','ML_REPEAT=1'] if repeat else []),
+                            *(['--defsym','ML_CHANCE=1','--defsym','ML_CONDITIONS=1','--defsym','ML_CONDITION_COMPACT=1'] if conditions else []),
                             '-o',str(obj),str(ROOT/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
         if lfo_cc:
             from gen_midi_lfo_cc_page import sources
@@ -94,7 +96,16 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
         if lfo_cc:
             decoder=next(va for va in sorted(available) if sprites.MASKS[va][0]>=240)
             available.remove(decoder);placements.append(('.text.ml_depack',decoder))
+        if conditions:
+            # Helper de décision dans un masque libre vérifié, hors image compressée.
+            listing=subprocess.check_output([cross+'objdump','-h',str(p/'conditions.o')],text=True)
+            match=re.search(r'\s+\d+\s+\.text.ml_condition_eval\s+([0-9a-fA-F]+)',listing)
+            size=int(match.group(1),16)
+            mask=next((va for va in sorted(available,key=lambda va:(sprites.MASKS[va][0],va)) if sprites.MASKS[va][0]>=size),None)
+            assert mask is not None,('condition helper',size,'aucun masque libre')
+            available.remove(mask);placements.append(('.text.ml_condition_eval',mask))
         for section,size in sorted(sections,key=lambda x:-x[1]):
+            if conditions and section=='.data.mm_merge':continue
             mask=next((va for va in sorted(available,key=lambda va:(sprites.MASKS[va][0],va)) if sprites.MASKS[va][0]>=size),None)
             assert mask is not None,(section,size,'aucun masque merger libre')
             available.remove(mask);placements.append((section,mask))
@@ -156,7 +167,8 @@ SECTIONS {{
         return *blobs,fragments,symbols(cross,elf)
 
 
-def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False):
+def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False,conditions=False):
+    if conditions:assert repeat, 'conditions requièrent les réglages privés'
     if storage:assert pattern_banks and lfo_cc, 'prototype stockage requiert banques et compression LFO CC'
     if repeat:assert pattern_banks and lfo_cc, 'prototype retrigger requiert banques et compression LFO CC'
     assert hashlib.sha256(stock).hexdigest()==STOCK,'OS Cycles non officiel'
@@ -177,8 +189,8 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     def word(at):return struct.unpack('>I',image[at-build.BASE:at-build.BASE+4])[0]
     assert word(0x400792f2)==0x401eb7c8 and word(0x400792bc)==0x401eb7ec
     blocks=(word(0x400792f2)-0x401eb750)//20
-    if lfo_cc:cache_blocks=7
-    assert blocks==6 and cache_blocks in (6,7)
+    if lfo_cc:cache_blocks=max(cache_blocks,8 if conditions else 7)
+    assert blocks==6 and cache_blocks in (6,7,8)
     limit=tg['blob_start']+cache_blocks*16384
     assert start<limit
     oldkey=image[0x4007240c-build.BASE:0x40072412-build.BASE]
@@ -196,12 +208,12 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     needle=struct.pack('>I',loader)
     assert [build.BASE+i for i in range(0,len(stock)-3,2) if stock[i:i+4]==needle]==[ptr]
     merge_masks=[va for va in free if va!=loader]
-    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat)
+    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat,conditions)
     if lfo_cc:
         import aplib_grow
         if storage or repeat:
             import aplib_dense
-            packed=aplib_dense.pack(blob)
+            packed=min((aplib_dense.pack(blob,depth=d) for d in ((32,128,512) if conditions else (32,))),key=len)
         else:packed=aplib_grow.pack(blob)
     else:packed=blob
     assert source>=start+len(blob), ("source/payload overlap",source,start,len(blob))
@@ -235,7 +247,7 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
             replacement=op+struct.pack('>I',syms[name])
             if len(bytes.fromhex(old))==8:replacement+=b'\x4e\x71'
             write(at,replacement)
-    # Réserve optionnelle d'un septième bloc, neuf blocs disque restent liés.
+    # Réserve optionnelle : sept blocs pour CC, huit pour conditions ; au moins huit blocs disque liés.
     if cache_blocks != blocks:
         write(0x400792f2,struct.pack('>I',0x401eb750+20*cache_blocks))
         write(0x400792bc,struct.pack('>I',0x401eb750+20*(cache_blocks+1)+16))
@@ -308,7 +320,7 @@ def main():
     ap.add_argument('--output',type=pathlib.Path,default=OUT);ap.add_argument('--check',action='store_true')
     ap.add_argument('--pattern-banks',action='store_true',default=True,help='Banques RAM par pattern du candidat test')
     ap.add_argument('--stock-display',action='store_true',default=True,help='Rendu stock du candidat test')
-    ap.add_argument('--cache-blocks',type=int,choices=(6,7),default=6,help='Réserve expérimentale pour LFO CC ; neuf blocs disque au minimum')
+    ap.add_argument('--cache-blocks',type=int,choices=(6,7,8),default=6,help='Réserve expérimentale ; huit blocs disque au minimum')
     ap.add_argument('--lfo-cc',action='store_true',help='Candidat LFO CC privé ; réserve sept blocs')
     ap.add_argument('--retrigger',action='store_true',help='Prototype retrigger/arp B intégré, non publié')
     args=ap.parse_args()
