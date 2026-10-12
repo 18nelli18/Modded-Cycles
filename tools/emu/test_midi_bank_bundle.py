@@ -20,9 +20,11 @@ def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--cycles',required=True);ap.add_argument('--syntakt',required=True)
     ap.add_argument('--model-tg',required=True);ap.add_argument('--cross',default='m68k-elf-')
+    ap.add_argument('--pattern-banks',action='store_true')
+    ap.add_argument('--stock-display',action='store_true')
     args=ap.parse_args()
     stock=gen.main_os_from_syx(args.cycles)
-    tweak,chosen,image=gen.generate(stock,args.syntakt,args.model_tg,args.cross)
+    tweak,chosen,image=gen.generate(stock,args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display)
     s={k:int(v,16) for k,v in tweak['symbols'].items()}
     r=Rig(stock,{'writes':[]},{'writes':[],'symbols':tweak['symbols']});u=r.u
     lo=0x4019b590;hi=0x423380b0;start=s['ML_BANK_START'];end=s['ML_BANK_END']
@@ -83,6 +85,9 @@ def main():
     assert r.call('ml_worker_prepare')==1
     ctx=r.r32(s['ml_context']);worker=r.r32(s['ml_worker_context'])
     assert ctx and worker
+    if args.pattern_banks:
+        r.w32(0x40a7887c,0x93090000)
+        r.w32(0x93090000+30706,0)
     assert bytes(u.mem_read(ctx,8))==bytes([1,0,6,4,16,2,0,0])
     assert all(u.mem_read(ctx+264*lane+2,1)[0]==lane+6 for lane in range(6))
     assert r.r32(worker+12)==ctx+1584
@@ -170,6 +175,32 @@ def main():
     assert output[12:]==[(port,bytes([0x86+i,60,0])) for i in range(6) for port in ('DIN','USB')]
     assert bytes(u.mem_read(RAW,722))==saved
     print('ok : sites Start/audio placés, attente échéance, six voies et Stop ; aucun writer IRQ, consommateur IPL0')
+    if args.pattern_banks:
+        # Le code placé doit suivre l'identité au vrai site audio, sans
+        # confondre la banque affichée avec celle en lecture.
+        r.w32(0x93090000+30706,1)
+        assert r.call('ml_bank_ui_sync') == 1
+        bank_b=r.r32(s['ml_pattern'])
+        assert bank_b != ctx
+        assert r.call('ml_edit',bank_b,0,0,0,77)==1
+        assert r.call('ml_edit',bank_b,0,0,3,1)==1
+        output.clear()
+        tick(due+2,1)
+        assert r.r32(s['ml_play_pattern'])==bank_b
+        u.reg_write(mk.UC_M68K_REG_SR,0x2000)
+        r.call('ml_worker_once',worker)
+        assert output==[(port,bytes([0x96,77,100])) for port in ('DIN','USB')]
+        r.w32(0x93090000+30706,0)
+        tick(due+3,1)
+        assert r.r32(s['ml_play_pattern'])==ctx
+        u.reg_write(mk.UC_M68K_REG_SR,0x2000)
+        r.call('ml_worker_once',worker)
+        assert output[2:4]==[(port,bytes([0x86,77,0])) for port in ('DIN','USB')]
+        tick(due+4,0)
+        u.reg_write(mk.UC_M68K_REG_SR,0x2000)
+        r.call('ml_worker_once',worker)
+        assert r.call('ml_bank_ui_sync')==1 and r.r32(s['ml_pattern'])==ctx
+        print('ok : banques par pattern dans le bundle placé, changement au site natif, ordre DIN/USB exact')
     # Réexécuter la preuve wait/post/scheduler avec le CODE placé du bundle.
     prove_scheduler(r)
     print('NOTE : TRAP/RTE adaptés ; timing physique, chemin Play complet et sauvegarde restent à valider')

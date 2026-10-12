@@ -13,6 +13,11 @@ mlp_open:
     movew   %sr,%d0
     andil   #0x0700,%d0
     bnew    mlp_o_done
+    .ifdef ML_PATTERN_BANKS
+    jsr ml_bank_ui_sync
+    tstl %d0
+    beqw mlp_o_done
+    .endif
     tstl ml_runtime
     beqw mlp_o_done
     tstl ml_pattern
@@ -168,6 +173,11 @@ mlp_dtor1:
 mlp_menu_key:
     lea.l %sp@(-12),%sp
     movem.l %d2-%d3/%a2,%sp@
+    .ifdef ML_PATTERN_BANKS
+    jsr ml_bank_ui_sync
+    tstl %d0
+    beq .Lmk_used
+    .endif
     moveal %sp@(16),%a2
     moveal %sp@(20),%a0
     movel %a0@(12),%d2
@@ -345,6 +355,11 @@ mlp_menu_key:
 mlp_pad:
     lea.l %sp@(-12),%sp
     movem.l %d2/%a2-%a3,%sp@
+    .ifdef ML_PATTERN_BANKS
+    jsr ml_bank_ui_sync
+    tstl %d0
+    beq .Lmp_done
+    .endif
     moveal %sp@(16),%a3
     lea.l %a3@(-16),%a3
     moveal %sp@(20),%a2
@@ -410,6 +425,11 @@ mlp_enc_th:
 mlp_enc:
     lea.l %sp@(-16),%sp
     movem.l %d2-%d4/%a2,%sp@
+    .ifdef ML_PATTERN_BANKS
+    jsr ml_bank_ui_sync
+    tstl %d0
+    beq .Lme_out
+    .endif
     moveal %sp@(20),%a2
     moveal %sp@(24),%a0
     movel %a0@(12),%d0
@@ -648,7 +668,11 @@ mlp_value:
 
 mlp_render:
     tstl mlp_setup
+    .ifdef ML_STOCK_DISPLAY
+    beq mlp_stock_render
+    .else
     beq mlp_overview
+    .endif
     lea.l %sp@(-24),%sp
     movem.l %d2-%d6/%a2,%sp@
     movel %sp@(32),%d6

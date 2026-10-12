@@ -81,6 +81,11 @@ mlp_led:
 | Dernier pas émis, relatif à la page affichée ; -1 hors page/à l'arrêt.
     .globl mlp_cursor
 mlp_cursor:
+    .ifdef ML_PATTERN_BANKS
+    movel ml_pattern,%d0
+    cmpl ml_play_pattern,%d0
+    bne .Lcursor_none
+    .endif
     moveal ml_clock_state,%a0
     tstl %a0
     beq .Lcursor_none

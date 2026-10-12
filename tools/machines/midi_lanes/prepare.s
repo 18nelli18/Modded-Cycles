@@ -21,7 +21,11 @@ ml_prepare:
     bne .Lmp_refuse
     moveq #1,%d0
     movel %d0,ml_preparing
+    .ifdef ML_PATTERN_BANKS
+    pea 3924                    | contexte + table 96 pointeurs + banque vide
+    .else
     pea 1956
+    .endif
     jsr 0x400802e0
     addql #4,%sp
     moveal %d0,%a2
@@ -38,6 +42,23 @@ ml_prepare:
     clrl %a0@+
     subql #1,%d0
     bpl .Lmp_clear
+    .ifdef ML_PATTERN_BANKS
+    lea.l %a2@(1956),%a0
+    moveq #95,%d0
+.Lmp_banks_zero:
+    clrl %a0@+
+    subql #1,%d0
+    bpl .Lmp_banks_zero
+    pea %a2@(2340)
+    jsr ml_init
+    addql #4,%sp
+    lea.l %a2@(2340),%a0
+    movel %a0,ml_bank_empty
+    lea.l %a2@(1956),%a0
+    movel %a2,%a0@              | pattern 0 utilise le bloc initial
+    movel %a0,ml_bank_table
+    movel %a2,ml_play_pattern
+    .endif
     movel %a2,ml_pattern
     lea.l %a2@(1584),%a0
     movel %a0,ml_runtime

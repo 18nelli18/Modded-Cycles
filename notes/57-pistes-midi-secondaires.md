@@ -620,12 +620,15 @@ pattern ; avec LFO 2, 1 680 octets. Pour 96 patterns : 161 280 octets,
 hors en-têtes/identités/contrôles d'intégrité. Le runtime, la file de sortie,
 les notes tenues et les deadlines ne doivent pas être sérialisés.
 
-[FAIT dans l'OS officiel] Le namespace projet est `/projects/` (référence
+[FAIT dans l'OS officiel] Le routage des ressources utilise `/projects/` (référence
 `0x4012ad53`). `0x40064128` compose ce préfixe avec une chaîne passée en
-argument, puis ouvre la ressource associée. L'énumération des métadonnées
+argument, puis résout la ressource associée. L'énumération des métadonnées
 utilise `/projects/*/.metadata` en `0x400649b6`. Ces points sont des pistes
 pour retrouver l'identité durable ; ils ne constituent pas encore des
-hooks de sauvegarde vérifiés.
+hooks de sauvegarde vérifiés. Les chaînes voisines `RouteTypeHandler` et
+`ProjectHandler` indiquent un routage virtuel : aucun répertoire physique
+`/projects/` n'est démontré, et ces chemins ne doivent pas être utilisés
+directement pour écrire un fichier annexe.
 
 [HYP] Un fichier annexe versionné, rattaché à l'identité native du projet
 et contenant des entrées par pattern, éviterait d'écraser les structures
@@ -639,3 +642,106 @@ fichier annexe seul ne ferait pas partie du backup stock.
 et rechargement de pattern, Save/Save As projet, écritures atomiques et
 erreurs disque, puis preuve de round-trip avec LFO 2 et compatibilité TG.
 Aucune nouvelle écriture disque ni persistance livrée dans le test LED.
+
+## 27. Affichage stock avec indicateur B (11/10/2026)
+
+[DEMANDE] Pendant l'édition des voies MIDI, conserver l'affichage du
+séquenceur stock ; seul un `B` doit distinguer la banque. Cette demande
+remplace la vue personnalisée de la section 24. La vélocité reste la valeur
+de volume des notes MIDI ; ne pas ajouter de CC de volume/pan implicite.
+
+[FAIT] La vue actuelle `mlp_overview` dessine encore une disposition privée.
+Le rendu natif `MainScreenView::draw` commence en `0x4001b22a` et lit le
+projet, la piste sélectionnée et les paramètres du kit via des singletons.
+L'appeler directement afficherait les données audio, pas les données MIDI.
+
+[À FAIRE] Réutiliser les primitives et la disposition natives avec les
+données MIDI, y compris la vue de note pendant maintien d'un trig, puis
+ajouter le B et comparer les images rendues. Ne pas remplacer temporairement
+les pointeurs globaux du projet/kit : le moteur audio pourrait les lire.
+Ce changement visuel n'est pas encore implémenté ni publié.
+
+## 28. Banques par pattern : premier prototype (11/10/2026)
+
+[DEMANDE] Les six voies MIDI doivent changer avec le pattern et retrouver
+leurs notes/réglages lorsqu'on revient au pattern précédent.
+
+[FAIT en émulation] `banks.s` résout 96 blocs indépendants de 1 584 octets
+(152 064 octets), refuse les indices invalides et relit l'identité audio
+native à `(*0x40a7887c)+30706`. `test_midi_lane_banks.py` exécute ce code
+ColdFire et les vrais setters `ml_init/ml_edit` : notes, vélocités et trigs
+distincts pour les patterns 0, 1 et 95, puis retours répétés sans mélange.
+Les objets actifs sont synthétiques ; le changement natif complet n'est
+pas encore exécuté. Le prototype n'est pas inclus dans le générateur.
+
+[À FAIRE] Séparer pointeurs d'édition et lecture, raccorder le changement
+effectif (pas la simple demande de prochain pattern), supprimer les note-on
+en attente de l'ancien pattern et garantir ses note-off avant le nouveau,
+réinitialiser l'horloge au bon temps, gérer projet/copie/effacement puis
+sauvegarde disque. Une table RAM par index ne suffit pas pour la persistance
+et ne doit pas réutiliser les données d'un autre projet.
+
+[FAIT en émulation, suite] `ml_bank_activate(slot,runtime,clock,bank)`
+utilise un slot de lecture indépendant de l'édition. Sous IPL7, un seul
+parcours borné à 64 paquets convertit les note-on des canaux 7..12 en
+note-off, puis les six notes tenues sont libérées, les 52 octets d'horloge
+sont remis à zéro et le pointeur de lecture est publié. Aucun writer
+physique n'est appelé. La preuve couvre 58 paquets en file et six places
+réservées, conservation des données des patterns, banque inchangée/nulle
+sans effet, et les note-off précédant les six notes du nouveau pattern.
+La remise à zéro prépare un départ au prochain appel `ml_clock` ; son
+alignement sur le véritable changement natif reste à raccorder et prouver.
+Le prototype reste hors du flasher.
+
+## 29. Rendu stock et banques par pattern — 11/10/2026
+
+[FAIT en émulation] Le générateur propose deux variantes privées,
+`--pattern-banks` et `--stock-display`, avec sortie explicite hors du JSON
+publié. Sans ces options, les nouvelles branches restent absentes.
+Le bundle composé TG-ST/LFO 2/MIDI passe boot, décompression, ordonnanceur,
+writers DIN/USB simulés et basculement A/B au site audio natif. Une demande
+de prochain pattern ne bascule pas prématurément ; l'identité active le fait.
+Les banques des patterns 0, 1 et 95 sont distinctes et retenues en RAM.
+L'allocation est paresseuse côté UI, jamais depuis le hook audio.
+
+[FAIT en émulation] `stock_display.s` réutilise les corps natifs de
+MainScreenView et NoteVelocityView sur un objet privé de pile. Les trois
+getters de dessin sont détournés à leurs seuls sites d'appel : index de
+voie MIDI, vélocité et pan centré. Aucun projet ni kit sonore n'est remplacé.
+Le libellé TR reçoit le canal MIDI fixe 7..12 sans modifier l'index interne
+0..5 utilisé par les getters. Un B marque la banque. Le menu de réglages
+reste disponible séparément. `test_midi_lane_stock_display.py` exécute les
+polices/sprites/primitives natifs, au repos et trig tenu sur six voies,
+vérifie TR7..TR12 et l'absence de modification des données musicales.
+L'utilisateur a approuvé l'aperçu ; cela n'est pas un test matériel.
+
+[FAIT en émulation] `audit_midi_project_identity.py` confirme que le getter
+Project lit raw+8, le convertisseur sauvegarde en v6+24 et le préfixe de
+chargement restaure raw+8. L'identité nulle est générée une seule fois par
+`0x4000eb72`. `0x4000eb12` la renouvelle explicitement avec notification
+0x20. Des chemins natifs de chargement/remplacement appellent ce dernier :
+un nom de fichier fondé seulement sur cette identité ne doit donc pas être
+considéré stable sans raccordement au slot et au cycle de chargement.
+
+[À FAIRE] Persistance disque, séparation entre projets, copie/effacement,
+validation complète du rendu placé et coût matériel. Les variantes privées
+ne sont pas encore publiées dans le flasher et ne sont pas marquées testées.
+
+## 30. Candidat public sans sauvegarde — 12/10/2026
+
+L'utilisateur demande de publier le candidat complet sans sauvegarde disque.
+`flasher-midi-test` utilise maintenant les variantes RAM par pattern et rendu
+stock de la section 29. L'intitulé est TR7..TR12 selon le canal, avec B.
+Le catalogue et le transport du flasher principal restent identiques.
+
+[FAIT en émulation/navigateur] Boot/scheduler du bundle composé validés ;
+dessin natif repos et trig tenu sur les six voies ; basculement de pattern
+sans allocation IRQ ; transferts UI simulés intégraux avec et sans banque,
+CRC/positions et conteneur signé vérifiés. Sans banque, le firmware produit
+est identique octet pour octet au build de la sélection dans main.
+
+[À FAIRE sur matériel] Nouveau rendu, LED et basculement par pattern.
+Aucune sauvegarde disque ajoutée. Les données disparaissent au redémarrage.
+L'isolation entre projets est inachevée : la carte EN/FR demande de tester
+sur un seul projet et de redémarrer avant d'en changer. Cette restriction
+reste à lever avec le stockage et le raccordement des chargements.

@@ -19,19 +19,25 @@ from gen_seq_gen import COMMIT, STOCK, symbols, main_os_from_syx
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'tweaks/model-cycles_OS1.13/experimental/midi-bank/60-midi-bank-bundle.json'
 SOURCES=('runtime','pattern','clock','service','prepare','page','integration',
-         'key','led','ui_hook','transport','worker','boot')
+         'key','led','ui_hook','transport','worker','boot','banks','stock_display')
 IDS=('6ch-usbup','model-tg-st','sample-preview-st','trig-hold','arp','tempo-max',
      'boot-anim','multiline-browser','level-pan-values','trigless-dim',
      'midi-live-both','syntakt-tg-sd-cp-toy-bits-swarm-macro',
      'scale-gen-st-queued','lfo-secondary','scramble-st-gen-queued')
 
 
-def compile_code(cross,tg,next_key,start,limit,source,loader):
+def compile_code(cross,tg,next_key,start,limit,source,loader,pattern_banks=False,stock_display=False):
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[]
         for name in SOURCES:
+            if name == 'banks' and not pattern_banks:
+                continue
+            if name == 'stock_display' and not stock_display:
+                continue
             obj=p/(name+'.o');objects.append(str(obj))
             subprocess.run([cross+'as','-march=cfv4e','--defsym','ML_WORKER=1',
+                            *(['--defsym','ML_PATTERN_BANKS=1'] if pattern_banks else []),
+                            *(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),
                             '-o',str(obj),str(ROOT/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
         script=f'''TG_set_held = {tg['set_held']:#x}; TG_mod_used = {tg['mod_used']:#x};
 ml_key_next = {next_key:#x}; ML_BANK_START = {start:#x};
@@ -56,7 +62,7 @@ SECTIONS {{
         return *blobs,symbols(cross,elf)
 
 
-def generate(stock,syntakt_path,model_tg,cross):
+def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False):
     assert hashlib.sha256(stock).hexdigest()==STOCK,'OS Cycles non officiel'
     assert subprocess.check_output(['git','-C',str(model_tg),'rev-parse','HEAD'],text=True).strip()==COMMIT
     subprocess.run(['git','-C',str(model_tg),'diff','--quiet','HEAD'],check=True)
@@ -91,7 +97,7 @@ def generate(stock,syntakt_path,model_tg,cross):
     assert stock[loader-build.BASE:loader-build.BASE+size]==stock[kept-build.BASE:kept-build.BASE+size]
     needle=struct.pack('>I',loader)
     assert [build.BASE+i for i in range(0,len(stock)-3,2) if stock[i:i+4]==needle]==[ptr]
-    blob,stub,syms=compile_code(cross,tg,next_key,start,limit,source,loader)
+    blob,stub,syms=compile_code(cross,tg,next_key,start,limit,source,loader,pattern_banks,stock_display)
     assert source>=start+len(blob) and source+len(blob)<=build.END_LIMIT
     st=catalog['syntakt-tg-sd-cp-toy-bits-swarm-macro']
     target=b'\x4e\xf9'+struct.pack('>I',int(tg_tweak['symbols']['boot_extra_hook'],16))
@@ -114,6 +120,14 @@ def generate(stock,syntakt_path,model_tg,cross):
     write(0x40054686,b'\x4e\xf9'+struct.pack('>I',syms['ml_start_hook']))
     write(0x400594a8,b'\x4e\xb9'+struct.pack('>I',syms['ml_audio_hook']))
     write(0x40006a4a,b'\x4e\xf9'+struct.pack('>I',syms['ml_ui_hook'])+b'\x4e\x71')
+    if stock_display:
+        for at,expected,name in ((0x4001b28a,'4eb940012412','mlp_stock_track'),
+                                 (0x4001b774,'4eb940009c5a','mlp_stock_volume'),
+                                 (0x4001b722,'2068001c4e90','mlp_stock_pan')):
+            assert image[at-build.BASE:at-build.BASE+6].hex()==expected
+            write(at,b'\x4e\xb9'+struct.pack('>I',syms[name]))
+        assert image[0x4001b6ba-build.BASE:0x4001b6c4-build.BASE].hex()=='486a0001283c401117e0'
+        write(0x4001b6ba,b'\x4e\xf9'+struct.pack('>I',syms['mlp_stock_track_label'])+b'\x4e\x71'*2)
     tweak=dict(id='midi-bank-bundle',order=60,name='Banque MIDI : bundle candidat',
                description=['Six voies MIDI indépendantes, canaux fixes 7..12 ; réglages en RAM seulement.',
                             'Placement candidat TG-ST Select All ; tools/gen_midi_bank_bundle.py, note 57.'],
@@ -131,8 +145,10 @@ def main():
     ap.add_argument('--cycles',required=True);ap.add_argument('--syntakt',required=True)
     ap.add_argument('--model-tg',required=True);ap.add_argument('--cross',default='m68k-elf-')
     ap.add_argument('--output',type=pathlib.Path,default=OUT);ap.add_argument('--check',action='store_true')
+    ap.add_argument('--pattern-banks',action='store_true',default=True,help='Banques RAM par pattern du candidat test')
+    ap.add_argument('--stock-display',action='store_true',default=True,help='Rendu stock du candidat test')
     args=ap.parse_args()
-    tweak,_,image=generate(main_os_from_syx(args.cycles),args.syntakt,args.model_tg,args.cross)
+    tweak,_,image=generate(main_os_from_syx(args.cycles),args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display)
     body=json.dumps(tweak,indent=1,ensure_ascii=False)+'\n'
     if args.check:
         assert args.output and args.output.read_text()==body,'JSON candidat différent'

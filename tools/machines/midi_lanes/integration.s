@@ -10,10 +10,17 @@ ml_audio_tick:
     moveal ml_context,%a2
     tstl %a2
     beq .Lat_done
+    .ifdef ML_PATTERN_BANKS
+    jsr ml_bank_follow
+    .endif
     movel %sp@(16),%sp@-
     movel %sp@(16),%sp@-
     pea %a2@(1904)
+    .ifdef ML_PATTERN_BANKS
+    movel ml_play_pattern,%sp@-
+    .else
     movel %a2,%sp@-
+    .endif
     pea %a2@(1584)
     jsr ml_clock
     lea.l %sp@(20),%sp
@@ -43,6 +50,10 @@ ml_ui_drain:
     tstl %a0
     beq .Lud_done
 .Lud_ready:
+    .ifdef ML_PATTERN_BANKS
+    jsr ml_bank_ui_sync
+    moveal ml_context,%a0
+    .endif
     .ifdef ML_WORKER
     jsr ml_worker_prepare
     jsr ml_worker_kick
