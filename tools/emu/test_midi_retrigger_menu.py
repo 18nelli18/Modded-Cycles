@@ -57,6 +57,20 @@ def main():
  assert bytes(r.u.mem_read(PAT+11,1))==b'\x01'
  assert bytes(r.u.mem_read(settings+8,8))==bytes((1,0,0,0,0,1,1,0))
  assert key(r,12)==1 and r.r32(r.s['mlp_setup'])==0
+ # TRIG + deux appuis RETRIG ouvre puis active ce seul pas.
+ r.u.mem_write(settings+8,bytes((0,0,0,0,0,1,0,0)))
+ assert key(r,16)==1
+ assert key(r,4)==1 and r.r32(r.s['mlp_setup'])==4
+ assert r.call('mlp_retrigger_value',3)==0
+ key(r,4,0)
+ assert key(r,4)==1 and r.call('mlp_retrigger_value',3)==1
+ key(r,4,0)
+ r.w32(r.s['mlp_row'],0);r.w32(r.s['mlp_edit'],1);knob(r,-1)
+ assert r.call('mlp_retrigger_value',0)==15
+ assert bytes(r.u.mem_read(settings+1,1))==b'\x10'
+ assert bytes(r.u.mem_read(settings,1))==b'\0'
+ assert key(r,16,0)==1 and bytes(r.u.mem_read(PAT+11,1))==b'\x01'
+ assert key(r,12)==1
  # Supprimer ensuite ce trig retire son lock sans modifier les défauts.
  assert key(r,16)==1 and key(r,16,0)==1
  assert bytes(r.u.mem_read(settings+8,8))==bytes((0,0,0,0,0,1,0,0))

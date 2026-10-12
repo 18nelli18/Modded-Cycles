@@ -7,11 +7,11 @@ La page de base est celle du commit7abbe84a9fae9c57a44128e4ed4dcbb0a48f0aa4.
 """
 import argparse,hashlib,json,pathlib,re,html as html_lib
 import build,gen_midi_bank_bundle as bank,ref_mainos
-STAMP='2026-10-12-test-3-retrigger-locks'
+STAMP='2026-10-12-test-3-retrigger-step-fix'
 EN=('FUNC + RETRIG opens B-side Retrig Setup. Turn DATA to select a row, click to edit, '
     'then turn to change it. A.On enables sequenced repeats; Rte selects their rate and Len '
     'their duration (127 = INF). Arp selects UP, DOWN, UPDN, RAND, PLAY or OFF; Oct selects '
-    '1–4 octaves. With REC enabled, hold a step before pressing FUNC + RETRIG to lock it; release the trig '
+    '1–4 octaves. With REC enabled, hold a step and press RETRIG twice to enable its retrigger; edit its settings there, then release the trig '
     'after editing to retain it. Copy/paste carries these settings and locks; clear removes '
     'step locks while retaining lane defaults, and repeating clear/paste restores Undo. '
     'Deleting a step removes its locks. BACK retains the B-side and the keyboard stays active '
@@ -24,7 +24,7 @@ EN=('FUNC + RETRIG opens B-side Retrig Setup. Turn DATA to select a row, click t
 FR=('FUNC + RETRIG ouvre Retrig Setup côté B. Tournez DATA pour choisir une ligne, cliquez '
     'pour éditer puis tournez pour changer la valeur. A.On active les répétitions séquencées ; '
     'Rte règle leur vitesse et Len leur durée (127 = INF). Arp choisit UP, DOWN, UPDN, RAND, '
-    'PLAY ou OFF ; Oct règle 1–4 octaves. REC actif : maintenez un pas puis ouvrez FUNC + RETRIG pour le verrouiller, '
+    'PLAY ou OFF ; Oct règle 1–4 octaves. REC actif : maintenez un pas et appuyez deux fois sur RETRIG pour activer son retrigger et éditer ses réglages, '
     'puis relâchez-le après édition pour le conserver. Copier/coller transporte ces réglages '
     'et locks ; clear retire les locks de pas en conservant les défauts de voie. Répéter '
     'clear/paste restaure Undo. Supprimer un pas retire ses locks. BACK conserve B et le '

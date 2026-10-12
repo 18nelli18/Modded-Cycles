@@ -11,6 +11,35 @@ mlp_retrigger_open:
     clrl mlp_edit
 .Lrt_open_done:
     rts
+| Basculer uniquement le lock d'activation du pas, jamais le défaut de voie.
+    .globl mlp_retrigger_toggle_step
+mlp_retrigger_toggle_step:
+    lea.l %sp@(-8),%sp
+    moveml %d2/%a2,%sp@
+    pea 3
+    jsr mlp_retrigger_value
+    addql #4,%sp
+    moveq #1,%d2
+    eorl %d0,%d2
+    jsr .Lrt_record
+    tstl %a0
+    beq .Lrt_toggle_done
+    lea.l %a0@(8),%a2
+    movel %d2,%sp@-
+    clrl %sp@-
+    movel mlp_step,%sp@-
+    movel %a2,%sp@-
+    jsr ml_repeat_lock
+    lea.l %sp@(16),%sp
+    tstl %d0
+    beq .Lrt_toggle_done
+    movel mlp_held,%d0
+    orl mlp_changed,%d0
+    movel %d0,mlp_changed
+.Lrt_toggle_done:
+    moveml %sp@,%d2/%a2
+    addql #8,%sp
+    rts
 | a0 = défauts de la voie, ou NULL. Aucun objet audio natif.
 .Lrt_record:
     moveal ml_repeat_edit_settings,%a0

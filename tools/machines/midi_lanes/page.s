@@ -369,10 +369,19 @@ mlp_menu_key:
     bra .Lmk_redraw
     .ifdef ML_REPEAT
 .Lmk_retrigger_setup:
-    tstl mlp_func
-    beq .Lmk_used
     tstl TG_set_held
     bne .Lmk_used
+    tstl mlp_func
+    bne .Lmk_retrigger_open
+    tstl mlp_held
+    beq .Lmk_used
+    movel mlp_setup,%d0
+    cmpil #4,%d0
+    bne .Lmk_retrigger_open
+    | Second appui RETRIG avec trig maintenu : activation privée du pas.
+    jsr mlp_retrigger_toggle_step
+    bra .Lmk_redraw
+.Lmk_retrigger_open:
     jsr mlp_retrigger_open
     bra .Lmk_redraw
     .endif

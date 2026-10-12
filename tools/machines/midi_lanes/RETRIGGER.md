@@ -101,3 +101,12 @@ Le générateur `gen_midi_retrigger_test.py` part de la page Test3 du commit
 7abbe84a9fae9c57a44128e4ed4dcbb0a48f0aa4, conserve son transport et ajoute la
 recette retrig ainsi que le décodage/contrôle du flux précompressé côté navigateur.
 La sauvegarde, le retrig live et V.Crv restent explicitement inachevés.
+
+## Correction du raccourci de pas
+
+REC actif : maintenir un trig et appuyer deux fois sur RETRIG. Le premier
+appui ouvre le menu ; le second bascule uniquement le lock enabled du pas.
+Les éditions suivantes ciblent ce pas tant que le trig reste maintenu.
+FUNC+RETRIG conserve son accès au menu de voie. La preuve des événements
+clavier vérifie le défaut inchangé, le rate privé et la conservation du trig
+au relâchement. Correction expérimentale, non testée sur matériel.
