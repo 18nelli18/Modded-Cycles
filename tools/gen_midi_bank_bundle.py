@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import json
 import pathlib
+import re
 import struct
 import subprocess
 import tempfile
@@ -43,6 +44,23 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,pattern_banks=False
         bindings='\n'.join(f"SG_{name[3:]} = {sg[name]};" for name in (
             'sg_action_generate','sg_action_undo','sg_config','sg_error','sg_generate',
             'sg_advanced_steps','sg_options','sg_advanced','sg_random','sg_random_range','sg_func','sg_pad','sg_undo_valid','sg_obj','sg_menu_key','sg_open'))
+        # Même source que l'aperçu natif ; garder ses branches locales hors des masques.
+        ui=p/'genie_stock.s'
+        body=(ROOT/'tools/machines/seq_gen/stock_ui.s').read_text()
+        inverse={'ne':'eq','eq':'ne','lt':'ge','gt':'le','le':'gt','ge':'lt','hi':'ls','ls':'hi','cc':'cs','cs':'cc','mi':'pl','pl':'mi'}
+        serial=[0]
+        def far(m):
+            kind,target=m.groups()
+            if kind=='ra':return '    jmp '+target
+            serial[0]+=1;label='.Lstock_far_'+str(serial[0])
+            return '    b'+inverse[kind]+'s '+label+'\n    jmp '+target+'\n'+label+':'
+        ui.write_text(re.sub(r'^[ \t]*b(ra|ne|eq|lt|gt|le|ge|hi|ls|cc|cs|mi|pl)w[ \t]+(\w+)[ \t]*(?:\|[^\n]*)?$',far,body,flags=re.M))
+        obj=p/'genie_stock.o';objects.append(str(obj))
+        subprocess.run([cross+'as','-march=cfv4e',*sum((['--defsym',x+'=1'] for x in ('SG_SCROLL','SG_DYNAMICS','SG_ADVANCED','SG_SEQUENCE_ONLY','SG_QUEUE')),[]),'-o',str(obj),str(ui)],check=True)
+        undefined=subprocess.check_output([cross+'nm','-u',str(obj)],text=True)
+        for line in undefined.splitlines():
+            name=line.split()[-1]
+            if name.startswith('sg_'):bindings+='\n'+name+' = '+sg[name]+';'
         script=f'''{bindings}
 TG_scale_state = {tg['scale_state']:#x}; TG_key_state = {tg['key_state']:#x};
 ML_original_key = {tg['key_hook']:#x};
@@ -137,7 +155,7 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
                if patched[at-build.BASE:at-build.BASE+6]==target]
         assert len(sites)==1,(native,sites)
         write(sites[0],b'\x4e\xb9'+struct.pack('>I',syms[ours]))
-    for native,ours in (('sg_pad','ml_genie_pad'),('sg_menu_key','ml_genie_menu_key')):
+    for native,ours in (('sg_pad','ml_genie_pad'),('sg_menu_key','ml_genie_menu_key'),('sg_render','sg_render')):
         target=b'\x20\x3c'+struct.pack('>I',int(sg[native],16))
         sites=[build.BASE+i for i in range(0,len(patched)-5,2) if patched[i:i+6]==target]
         assert len(sites)==1,sites

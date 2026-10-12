@@ -182,3 +182,17 @@ Genie réel, query de groupe native, Generate/Undo B, destructeur Genie
 réel. La destruction de Genie conserve B, TR12 et le pattern. Ce test
 ne simule pas tout le gestionnaire de vues ; confirmation matérielle
 encore nécessaire. Sauvegarde persistante toujours inachevée.
+
+## 12. Cartouche S.G. et menu stock (12/10/2026)
+
+AveyCole approuve l'aperçu natif et demande son intégration au dernier test
+MIDI. `seq_gen/stock_ui.s` conserve les getters de valeurs, le mapping des
+21 lignes, le défilement quatre lignes et l'intro Sequence Genie. Panneau
+fixe arrondi avec lampe originale et S.G., libellés compacts à droite.
+Les setters, Generate/Undo et frontière de voie restent inchangés.
+Le bundle compile le renderer dans son espace RAM déjà réservé et ne
+change que le pointeur de rendu construit par Genie. Aucun masque ou
+hook supplémentaire ; main non modifié. L'ouverture superposée B reste
+le wrapper précédent. `render_seq_gen_stock.py --bundle` vérifie la vtable
+construite puis exécute ce renderer placé avec primitives/polices OS.
+[À FAIRE] vérification matérielle du nouveau menu et de la superposition.
