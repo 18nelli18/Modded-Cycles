@@ -54,3 +54,9 @@ Sauvegarde et LFO CC côté B ne sont pas raccordés.
 Même clavier/cutoff CC en OUT/THRU combiné, six voies B en lecture DIN, puis Stop.
 Vérifier absence de notes bloquées et fonctionnement du CC, puis comparer OUT et
 THRU pur. Ne pas marquer cette correction testée avant retour d'AveyCole.
+
+## Test matériel du12/10/2026
+
+AveyCole : « Publish cc fix to main as hardware tested, it worked. »
+La fusion DIN CC/note-off est donc testée sur sa machine et promue au flasher
+principal à sa demande. Cette confirmation ne concerne pas sauvegarde ou LFO CC.

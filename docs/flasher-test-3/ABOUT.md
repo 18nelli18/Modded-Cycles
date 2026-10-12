@@ -67,3 +67,6 @@ realtime immédiat ; uniquement le mode combiné2. Nécessite la sélection Banq
 MIDI OUT — Test3. Sept messages en attente, SysEx1024 octets maximum ; surcharge
 jetée entière et comptée. Test clavier cutoff CC + lecture B requis.
 Sauvegarde et LFO CC non inclus. Voir [note technique](../../notes/60-fusion-midi-din.md).
+
+Hardware result, 12 October 2026: AveyCole reports the CC/note-off merger worked and authorizes main publication. This confirmation concerns the merger; saving and B-side LFO CC remain uninstalled.
+Résultat matériel du12/10/2026 : AveyCole confirme la fusion CC/note-off et demande la publication principale. Sauvegarde et LFO CC non raccordés.
