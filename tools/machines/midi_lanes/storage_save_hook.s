@@ -6,7 +6,11 @@
 ml_store_save_hook:
     tstb %d0
     beq .Lsave_restore
+    .ifdef ML_WORKING
+    cmpil #96,%d3
+    .else
     cmpil #95,%d3
+    .endif
     bhi .Lsave_restore
     movel %d0,%sp@-
     moveq #0,%d0
@@ -18,6 +22,10 @@ ml_store_save_hook:
     jsr ml_store_save_notice
     addql #8,%sp
     .ifdef ML_STORAGE2
+    .ifdef ML_WORKING
+    cmpil #96,%d3
+    beq .Lsave_result
+    .endif
     jsr ml_store_save_feedback
     .endif
 .Lsave_result:

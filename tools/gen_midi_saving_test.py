@@ -41,7 +41,7 @@ FR=('Sauvegarde expérimentale des patterns B. MACRO exclu ; ACID et Model-TG co
 def main():
  ap=argparse.ArgumentParser(description=__doc__)
  for name in ('base-page','output-dir','cycles','syntakt','model-tg'):ap.add_argument('--'+name,required=True)
- ap.add_argument('--audio-lfo',action='store_true');ap.add_argument('--engines',choices=('both','acid','macro'),default='both');ap.add_argument('--cross',default='m68k-elf-');a=ap.parse_args();base=pathlib.Path(a.base_page);out=pathlib.Path(a.output_dir)
+ ap.add_argument('--audio-lfo',action='store_true');ap.add_argument('--working',action='store_true');ap.add_argument('--engines',choices=('both','acid','macro'),default='both');ap.add_argument('--cross',default='m68k-elf-');a=ap.parse_args();base=pathlib.Path(a.base_page);out=pathlib.Path(a.output_dir)
  if a.engines!='both':
   bank.IDS=tuple(x.replace('syntakt-tg-sd-cp-toy-bits-swarm-macro-acid','syntakt-tg-sd-cp-toy-bits-swarm-'+a.engines) for x in bank.IDS)
  excluded=[] if a.engines=='both' else ['macro' if a.engines=='acid' else 'acid']
@@ -61,8 +61,13 @@ def main():
   fr=fr.replace('La sauvegarde du LFO2 audio reste absente.', 'Les réglages LFO2 audio sont aussi sauvegardés par pattern. Le LFO1 audio garde sa sauvegarde native. Les fichiers MBK2 précédents sont lus avec LFO2 audio désactivé.')
   global STAMP
   STAMP='2026-10-12-test-3-a-b-lfo-saving'
+ if a.working:
+  if not a.audio_lfo:raise ValueError('--working exige --audio-lfo')
+  STAMP='2026-10-12-test-3-working-autosave'
+  en+=' Working-state recovery is experimental: B-side sequences and added LFO settings checkpoint automatically after changes settle. Allow up to 20 seconds before switching power off. Restart restores working checkpoints; Reload Project restores the explicit Save Project copy. Save Project remains available. Do not interrupt a disk write. Both ACID and MACRO remain available.'
+  fr+=' Reprise de travail expérimentale : séquences B et LFO ajoutés sont enregistrés automatiquement après stabilisation. Attendez jusqu’à 20 secondes avant extinction. Le redémarrage reprend les checkpoints ; Reload Project reprend le Save explicite. Save Project reste disponible. Ne coupez pas pendant une écriture disque. ACID et MACRO restent disponibles.'
  stock=bank.main_os_from_syx(a.cycles)
- tweak,chosen,image=bank.generate(stock,a.syntakt,a.model_tg,a.cross,True,True,True,8,True,True,True,True,True,a.audio_lfo)
+ tweak,chosen,image=bank.generate(stock,a.syntakt,a.model_tg,a.cross,True,True,True,8,True,True,True,True,True,a.audio_lfo,a.working)
  tweak['requires']=[x for x in tweak['requires'] if x!='6ch-usbup'];tweak['status']='experimental'
  tweak['name']='Banque MIDI OUT — sauvegarde expérimentale'
  tweak['description']=[fr]

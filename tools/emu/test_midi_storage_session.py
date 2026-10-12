@@ -7,19 +7,19 @@ from test_sdvintage import main_os_from_syx
 from gen_seq_gen import symbols
 
 def main():
- ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--extended',action='store_true');ap.add_argument('--tweak');ap.add_argument('--audio-lfo',action='store_true');a=ap.parse_args();data_size=4992 if a.audio_lfo else (4896 if a.extended else 1584)
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--extended',action='store_true');ap.add_argument('--working',action='store_true');ap.add_argument('--tweak');ap.add_argument('--audio-lfo',action='store_true');a=ap.parse_args();data_size=4992 if a.audio_lfo else (4896 if a.extended else 1584)
  if a.audio_lfo:assert a.extended and a.tweak
  root=pathlib.Path(__file__).resolve().parents[2];cross=str(root.parent/'toolchain/bin/m68k-elf-')
  with tempfile.TemporaryDirectory() as tmp:
   p=pathlib.Path(tmp);objs=[]
   for name in ('presence','working_slot','ui_cancel','service','retire','prepare','publish','load_hook','restore_step','restore','project','save_hook','session','directory','initial','guard','checked','codec','verify','io','path','snapshot','load','commit'):
-   obj=p/(name+'.o');objs.append(str(obj));subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_STORAGE2=1'] if a.extended else []),*(['--defsym','ML_STORAGE=1'] if name=='project' else []),*(['--defsym','ML_GENIE=1','--defsym','ML_CLIPBOARD=1'] if name=='ui_cancel' else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/('storage_'+name+'.s'))],check=True)
+   obj=p/(name+'.o');objs.append(str(obj));subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_STORAGE2=1'] if a.extended else []),*(['--defsym','ML_WORKING=1'] if a.working else []),*(['--defsym','ML_STORAGE=1'] if name=='project' else []),*(['--defsym','ML_GENIE=1','--defsym','ML_CLIPBOARD=1'] if name=='ui_cancel' else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/('storage_'+name+'.s'))],check=True)
   for name in ('banks','runtime'):
    obj=p/(name+'.o');objs.append(str(obj));subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_STORAGE2=1'] if a.extended else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
   (p/'link.ld').write_text('SECTIONS { .text 0x93050000 : { *(.text*) *(.rodata*) *(.data*) } } ml_runtime = 0x93079008; ml_clock_state = 0x9307900c; ml_pattern = 0x93079014; ml_context = 0x93079024; mlp_keyboard_cancel = 0x93079028; mlp_held = 0x9307902c; mlp_remove = 0x93079030; mlp_changed = 0x93079034; ml_gq_state = 0x93079038; ml_gu_valid = 0x9307903c; SG_undo_valid = 0x93079040; mlp_clip_invalidate = 0x93079044; ml_store_save_feedback = 0x93079048; ml_store_load_feedback = 0x9307904c;')
   subprocess.run([cross+'ld','-T',str(p/'link.ld'),'-e','ml_store_session_save','-o',str(p/'e.elf'),*objs],check=True)
   subprocess.run([cross+'objcopy','-O','binary',str(p/'e.elf'),str(p/'e.bin')],check=True);code=(p/'e.bin').read_bytes();syms=symbols(cross,p/'e.elf')
- r=Rig(main_os_from_syx(a.cycles),{'writes':[]},{'writes':[],'symbols':{}});r.s=syms;r.u.mem_write(0x93050000,code)
+ r=Rig(main_os_from_syx(a.cycles),{'writes':[]},{'writes':[],'symbols':{}});r.s=syms;fixture_syms=dict(syms);r.u.mem_write(0x93050000,code)
  r.u.mem_write(0x93079048,b'\x4e\x75');r.u.mem_write(0x9307904c,b'\x4e\x75')
  if a.tweak:
   tweak=json.loads(pathlib.Path(a.tweak).read_text())
@@ -96,7 +96,7 @@ def main():
   assert load(0x12345678,3,5)==3 and dirs=={'/':2} and not files
  if a.audio_lfo:
   r.u.mem_write(bank,payload(67))
-  assert r.call('ml_record_encode_v2',recA,4928,bank,3,4,7)==1
+  assert r.call(fixture_syms['ml_record_encode'] if a.working else 'ml_record_encode_v2',recA,4928,bank,3,4,7)==1
   dirs['/ModdedCycles']=3;dirs['/ModdedCycles/03-12345678']=4
   legacy='/ModdedCycles/03-12345678/SEQ-04-'
   files[legacy+'A']=bytes(r.u.mem_read(recA,4928))
@@ -350,8 +350,32 @@ def main():
  for pat,note in ((5,76),(6,81)):
   ptr=r.r32(workingtable+pat*4)
   assert ptr and bytes(r.u.mem_read(ptr,data_size))==payload(note)
+ if a.working:
+  # Working96 sans WRK : hérite de SEQ, puis checkpoint séparé du Save.
+  seq_before={k:v for k,v in files.items() if '/SEQ-' in k}
+  assert r.r32(syms['ml_store_namespace'])==2
+  ptr=r.r32(workingtable+5*4);r.u.mem_write(ptr,payload(92))
+  if a.audio_lfo:
+   # Cette fixture FS n'a pas l'objet UI natif complet. Le test bank couvre
+   # séparément le vrai ui_sync/LFO2 ; ici préserver la banque restaurée.
+   at=syms['ml_bank_ui_sync'];r.stubs[at]=lambda args:1
+   r.u.hook_add(UC_HOOK_CODE,r.stub,begin=at,end=at)
+  r.call('ml_store_save_notice',OBJ,96);assert r.r32(syms['ml_store_save_status'])==1
+  assert {k:v for k,v in files.items() if '/SEQ-' in k}==seq_before
+  assert any('/WRK-05-' in k for k in files)
+  r.w32(syms['ml_store_load_serial'],11)
+  for index in range(96):r.call('ml_store_service')
+  workingtable=r.r32(syms['ml_bank_table'])
+  assert bytes(r.u.mem_read(r.r32(workingtable+5*4),data_size))==payload(92)
+  # Reload explicite ignore WRK et retrouve SEQ.
+  r.w32(syms['ml_store_load_pending_slot'],3)
+  r.w32(syms['ml_store_load_serial'],12)
+  for index in range(96):r.call('ml_store_service')
+  workingtable=r.r32(syms['ml_bank_table'])
+  assert bytes(r.u.mem_read(r.r32(workingtable+5*4),data_size))==payload(76)
+  print('ok : WRK isolé de SEQ, restauration working96 et Reload explicite distincts')
  # Mauvaise identité : aucune lecture disque, ancienne table conservée.
- metadata['id']=99;r.w32(syms['ml_store_load_serial'],10)
+ metadata['id']=99;r.w32(syms['ml_store_load_pending_slot'],96);r.w32(syms['ml_store_load_serial'],13)
  before_log=len(log);r.call('ml_store_service')
  assert len(log)==before_log and r.r32(syms['ml_bank_table'])==workingtable
  assert r.r32(syms['ml_store_load_status'])==0xffffffff

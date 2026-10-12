@@ -14,6 +14,12 @@
     .equ ML_RECORD_BYTES,1616
     .endif
     .endif
+    .ifdef ML_WORKING
+    .data
+    .balign 4
+    .globl ml_store_namespace
+ml_store_namespace: .long 0
+    .endif
     .text
     .globl ml_store_session_save,ml_store_session_load
 ml_store_session_save:
@@ -128,7 +134,11 @@ ml_store_session_load:
     movel %a2@(4),%a4
 .Lpaths_next:
     movel %a2@(24),%sp@-
+    .ifdef ML_WORKING
+    movel ml_store_namespace,%sp@-
+    .else
     clrl %sp@-
+    .endif
     movel %d0,%sp@-
     movel %a2@(28),%sp@-
     movel %d2,%sp@-

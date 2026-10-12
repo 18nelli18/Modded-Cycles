@@ -28,7 +28,11 @@ ml_store_save_notice:
     tstl %a3
     beq .Lproject_done
     movel %sp@(28),%d3
+    .ifdef ML_WORKING
+    cmpil #96,%d3
+    .else
     cmpil #95,%d3
+    .endif
     bhi .Lproject_done
     movel %sp@(24),%sp@-
     jsr 0x4000eae2
@@ -38,6 +42,21 @@ ml_store_save_notice:
     cmpl ml_store_owner_id,%d0
     bne .Lproject_done
     movel %d0,%d4
+    .ifdef ML_WORKING
+    clrl ml_store_namespace
+    cmpil #96,%d3
+    bne .Lproject_namespace_ready
+    movel %d3,%sp@-
+    movel %d4,%sp@-
+    jsr ml_store_resolve_slot
+    addql #8,%sp
+    tstl %d0
+    bmi .Lproject_done
+    movel %d0,%d3
+    moveq #2,%d0
+    movel %d0,ml_store_namespace
+.Lproject_namespace_ready:
+    .endif
     .ifdef ML_STORAGE3
     jsr ml_bank_ui_sync
     tstl %d0

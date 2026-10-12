@@ -56,6 +56,23 @@ ml_store_restore_step:
     lea.l %sp@(16),%sp
     tstl ml_store_io_poison
     bne .Lstep_fail
+    .ifdef ML_WORKING
+    | Un checkpoint absent hérite du Save explicite ; corruption jamais masquée.
+    cmpil #3,%d0
+    bne .Lstep_working_checked
+    tstl ml_store_namespace
+    beq .Lstep_working_checked
+    clrl ml_store_namespace
+    movel %d2,%sp@-
+    movel %d4,%sp@-
+    movel %d3,%sp@-
+    movel %a2,%sp@-
+    jsr ml_store_session_load
+    lea.l %sp@(16),%sp
+    moveq #2,%d1
+    movel %d1,ml_store_namespace
+.Lstep_working_checked:
+    .endif
     .ifdef ML_STORAGE2
     cmpil #3,%d0
     beq .Lstep_ok

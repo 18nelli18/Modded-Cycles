@@ -48,6 +48,15 @@ ml_store_service:
     tstl %d0
     bmi .Lservice_abort
     movel %d0,.Lslot
+    .ifdef ML_WORKING
+    clrl ml_store_namespace
+    movel ml_store_load_pending_slot,%d0
+    cmpil #96,%d0
+    bne .Lservice_namespace_ready
+    moveq #2,%d0
+    movel %d0,ml_store_namespace
+.Lservice_namespace_ready:
+    .endif
     movel %d2,.Lserial
     jsr .Lservice_matches
     tstl %d0

@@ -1,6 +1,6 @@
 | Chemin annexe commun MIDI/LFO : /ModdedCycles/00-XXXXXXXX/SEQ-00-A.
-| ml_store_path(out,cap>=35,identité non nulle,pattern0..95,copie0..1,type0..1,slot0..95).
-| type0=SEQ, type1=LFO. Construction privée ; arguments invalides sans écriture.
+| ml_store_path(out,cap>=35,identité non nulle,pattern0..95,copie0..1,type0..2,slot0..95).
+| type0=SEQ, type1=LFO, type2=WRK (checkpoint non validé). Construction privée ; arguments invalides sans écriture.
 | Ne crée aucun dossier, ne lit aucun projet, aucune entrée disque.
     .text
     .globl ml_store_path
@@ -23,7 +23,7 @@ ml_store_path:
     cmpil #1,%d4
     bhi .Lpath_done
     movel %sp@(88),%d0
-    cmpil #1,%d0
+    cmpil #2,%d0
     bhi .Lpath_done
     movel %sp@(92),%d0
     cmpil #95,%d0
@@ -63,6 +63,10 @@ ml_store_path:
     tstl %sp@(88)
     beq .Lpath_kind
     lea.l .Llfo,%a0
+    movel %sp@(88),%d0
+    cmpil #2,%d0
+    bne .Lpath_kind
+    lea.l .Lworking,%a0
 .Lpath_kind:
     moveb %a0@+,%a3@+
     moveb %a0@+,%a3@+
@@ -97,3 +101,4 @@ ml_store_path:
 .Lhex: .ascii "0123456789ABCDEF"
 .Lsequence: .ascii "SEQ"
 .Llfo: .ascii "LFO"
+.Lworking: .ascii "WRK"

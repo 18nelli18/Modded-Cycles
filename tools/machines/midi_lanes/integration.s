@@ -106,6 +106,9 @@ ml_ui_drain:
     jsr ml_service
     addql #8,%sp
     .endif
+    .ifdef ML_WORKING
+    jsr ml_store_autosave
+    .endif
     jsr mlp_led_poll
 .Lud_done:
     movel %sp@,%d1
