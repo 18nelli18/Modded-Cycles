@@ -10,6 +10,10 @@ ml_audio_tick:
     moveal ml_context,%a2
     tstl %a2
     beq .Lat_done
+    .ifdef ML_STORAGE2
+    tstl ml_store_load_ready
+    beq .Lat_done
+    .endif
     .ifdef ML_PATTERN_BANKS
     jsr ml_bank_follow
     .endif
@@ -65,6 +69,9 @@ ml_ui_drain:
 .Lud_ready:
     .ifdef ML_STORAGE
     jsr ml_store_service
+    .endif
+    .ifdef ML_STORAGE2
+    jsr ml_bank_ui_sync
     .endif
     .ifdef ML_LFO_CC
     jsr mlcc_prepare

@@ -111,7 +111,7 @@ mlp_led:
     movel %d0,%a0@(0,%d2:l:4)
     pea 6
     movel %d3,%sp@-
-    jsr 0x4008e8c4
+    jsr mlp_pad_pulse
     addql #8,%sp
 .Lpad_next:
     addql #1,%d2
@@ -220,3 +220,22 @@ mlp_led_poll:
 mlp_led_last: .long -2
 ml_pad_drawn: .space 24
 ml_pad_polled: .space 24
+
+    .text
+| Filtrer les pulses audio des seuls pads48..53 pendant la vue B.
+| Les notes B contournent ce filtre sans flag global partagé avec les IRQ.
+    .globl mlp_pulse_guard,mlp_pad_pulse
+mlp_pulse_guard:
+    movel %sp@(4),%d0
+    tstl mlp_obj
+    beq .Lpulse_native
+    cmpil #48,%d0
+    bcs .Lpulse_native
+    cmpil #53,%d0
+    bhi .Lpulse_native
+    rts
+mlp_pad_pulse:
+    movel %sp@(4),%d0
+.Lpulse_native:
+    lea.l 0x4010abf8,%a0
+    jmp 0x4008e8ce

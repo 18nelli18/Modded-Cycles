@@ -26,13 +26,22 @@ def main():
     ap.add_argument('--stereo-usb',action='store_true')
     ap.add_argument('--cache-blocks',type=int,choices=(6,7),default=6)
     ap.add_argument('--lfo-cc',action='store_true')
+    ap.add_argument('--extended-storage',action='store_true',help='MBK2 avec moteurs compressés, ACID et MACRO conservés')
     ap.add_argument('--storage',action='store_true',help='Raccordement stockage prototype non publié')
     ap.add_argument('--conditions',action='store_true')
     ap.add_argument('--retrigger',action='store_true',help='Raccordement retrigger/arp B prototype')
     args=ap.parse_args()
     if args.lfo_cc:args.cache_blocks=8 if args.conditions else 7
+    if args.extended_storage:
+        assert args.storage and args.retrigger and args.lfo_cc
+        original=gen.build.load_catalog
+        def dense_catalog():
+            cat=original()
+            cat['model-cycles_OS1.13'][1]['syntakt-tg-sd-cp-toy-bits-swarm-macro-acid']['append']['compress_depth']=32
+            return cat
+        gen.build.load_catalog=dense_catalog
     stock=gen.main_os_from_syx(args.cycles)
-    tweak,chosen,image=gen.generate(stock,args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display,not args.stereo_usb,args.cache_blocks,args.lfo_cc,args.storage,args.retrigger,args.conditions)
+    tweak,chosen,image=gen.generate(stock,args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display,not args.stereo_usb,args.cache_blocks,args.lfo_cc,args.storage,args.retrigger,args.conditions,args.extended_storage)
     if args.storage or args.retrigger:
         import build
         assert build.payload_image(tweak,bytes.fromhex(tweak['append']['parts'][0]['hex']))==bytes.fromhex(tweak['append']['compressed_hex'])
@@ -138,6 +147,7 @@ def main():
     assert r.call('ml_worker_prepare')==1
     ctx=r.r32(s['ml_context']);worker=r.r32(s['ml_worker_context'])
     assert ctx and worker
+    initial_bank=r.r32(s['ml_pattern'])
     if args.pattern_banks:
         r.w32(0x40a7887c,0x93090000)
         r.w32(0x93090000+30706,0)
@@ -219,7 +229,7 @@ def main():
     # Les sites Start/audio placés exécutent leurs instructions stock ;
     # l'état Play et l'heure restent fournis, pas le chemin Play complet.
     output.clear()
-    for lane in range(6):assert r.call('ml_edit',ctx,lane,0,3,1)==1
+    for lane in range(6):assert r.call('ml_edit',initial_bank,lane,0,3,1)==1
     due=123456;r.w32(0x40a78628,due)
     u.reg_write(mk.UC_M68K_REG_A0,0x40a78628)
     u.reg_write(mk.UC_M68K_REG_D6,0);u.reg_write(mk.UC_M68K_REG_SR,0x2700)
@@ -258,14 +268,14 @@ def main():
         assert output==[(port,bytes([0x96,77,100])) for port in ('DIN','USB')]
         r.w32(0x93090000+30706,0)
         tick(due+3,1)
-        assert r.r32(s['ml_play_pattern'])==ctx
+        assert r.r32(s['ml_play_pattern'])==initial_bank
         u.reg_write(mk.UC_M68K_REG_SR,0x2000)
         r.call('ml_worker_once',worker)
         assert output[2:4]==[(port,bytes([0x86,77,0])) for port in ('DIN','USB')]
         tick(due+4,0)
         u.reg_write(mk.UC_M68K_REG_SR,0x2000)
         r.call('ml_worker_once',worker)
-        assert r.call('ml_bank_ui_sync')==1 and r.r32(s['ml_pattern'])==ctx
+        assert r.call('ml_bank_ui_sync')==1 and r.r32(s['ml_pattern'])==initial_bank
         print('ok : banques par pattern dans le bundle placé, changement au site natif, ordre DIN/USB exact')
     if args.conditions:
         # Exécuter le chemin compact publié et le helper placé dans le masque.
@@ -273,7 +283,7 @@ def main():
         at=s['ml_condition_eval']
         assert bytes(u.mem_read(at,16))==image[at-gen.build.BASE:at-gen.build.BASE+16]
         private=0x930e1000;runtime=0x930e0000
-        r.call('ml_init',private);r.call('ml_edit',private,0,0,3,1)
+        r.call('ml_store_bank_init' if args.extended_storage else 'ml_init',private);r.call('ml_edit',private,0,0,3,1)
         settings=r.call('ml_repeat_pattern_prepare',private)
         assert settings
         r.w32(s['ml_repeat_play_settings'],settings)

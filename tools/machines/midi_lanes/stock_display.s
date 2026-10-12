@@ -68,6 +68,7 @@ mlp_stock_render:
     bsr mlp_stock_note_view
     addql #8,%sp
 .Lstock_badge:
+    bsr mlp_stock_velocity
     pea mlp_stock_b
     pea mlp_stock_fmt
     pea 0x10
@@ -79,6 +80,46 @@ mlp_stock_render:
     lea.l %sp@(28),%sp
     movem.l %sp@,%d2-%d4/%a2-%a3
     lea.l %sp@(308),%sp
+    rts
+
+
+| Dessin B : numéro M centré, canal MIDI courant dessous, sans pan/volume.
+mlp_stock_velocity:
+    clrl %sp@-
+    pea 63
+    pea 127
+    clrl %sp@-
+    pea 64
+    movel %a3,%sp@-
+    jsr 0x40070dea
+    lea.l %sp@(24),%sp
+    movel mlp_track,%d0
+    addql #1,%d0
+    movel %d0,%sp@-
+    pea mlp_stock_m_fmt
+    pea 2
+    pea 20
+    pea 96
+    pea 0x40ea14e4
+    movel %a3,%sp@-
+    jsr 0x40071a04
+    lea.l %sp@(28),%sp
+    movel mlp_track,%d0
+    muluw #264,%d0
+    moveal ml_pattern,%a0
+    addal %d0,%a0
+    moveq #0,%d0
+    moveb %a0@(2),%d0
+    addql #1,%d0
+    movel %d0,%sp@-
+    pea mlp_stock_channel_fmt
+    pea 2
+    pea 8
+    pea 96
+    pea 0x40ea14cc
+    movel %a3,%sp@-
+    jsr 0x40071a04
+    lea.l %sp@(28),%sp
     rts
 
 | Prologues natifs ; les épilogues stock restaurent exactement ces cadres.
@@ -189,22 +230,15 @@ mlp_stock_names: .long .LnC,.LnCs,.LnD,.LnDs,.LnE,.LnF,.LnFs,.LnG,.LnGs,.LnA,.Ln
 mlp_stock_track_label:
     movel %a2,%d4
     addql #1,%d4
-    tstl mlp_stock_drawing
-    beq .Lstock_track_label_push
-    addql #6,%d4
-.Lstock_track_label_push:
     movel %d4,%sp@-
-    cmpil #10,%d4
-    bcs .Lstock_track_label_native
     tstl mlp_stock_drawing
     beq .Lstock_track_label_native
-    | Deux chiffres : police stock compacte, même centre et zone réservée.
-    movel #0x401117e0,%d4
-    pea 0x40125f0a
+    | M1..M6 centré dans la moitié droite, badge B indépendant.
+    pea mlp_stock_m_fmt
     pea 2
-    pea 34
+    pea 20
     pea 96
-    lea.l 0x40ea14d4,%a0
+    lea.l 0x40ea14e4,%a0
     movel %d3,%sp@-
     movel %d2,%sp@-
     movel %a0@,%a6@(-8)
@@ -355,6 +389,11 @@ mlp_scale_draw:
     bra .Lscale_draw_args
 .Lscale_draw_number:
     movel %d0,%sp@-
+    tstl %d2
+    bne .Lscale_draw_plain
+    pea mlp_stock_m_fmt
+    bra .Lscale_draw_args
+.Lscale_draw_plain:
     pea mlp_scale_fmt_d
 .Lscale_draw_args:
     pea 0x14
@@ -396,3 +435,11 @@ mlp_scale_ports: .long .LsUSB,.LsDIN,.LsBoth
 .LsUSB: .asciz "USB"
 .LsDIN: .asciz "DIN"
 .LsBoth: .asciz "Both"
+
+    .data
+mlp_stock_m_fmt: .asciz "M%d"
+    .balign 4
+
+    .data
+mlp_stock_channel_fmt: .asciz "CH %d"
+    .balign 4

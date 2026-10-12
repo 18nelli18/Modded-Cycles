@@ -24,7 +24,7 @@ SOURCES=('runtime','pattern','clock','service','prepare','page','integration',
 STORAGE_SOURCES=tuple('storage_'+name for name in (
     'prepare','guard','checked','directory','codec','io','path','verify','load',
     'commit','initial','snapshot','session','project','save_hook','load_hook',
-    'restore_step','publish','retire','ui_cancel','service','working_slot'))
+    'restore','restore_step','publish','retire','ui_cancel','service','working_slot','bank','feedback','presence'))
 CONDITION_SOURCES=('chance','conditions','condition_history','condition_decode','condition_run','chance_menu')
 REPEAT_SOURCES=('retrigger','retrigger_locks','retrigger_service','retrigger_patterns',
                 'retrigger_step','retrigger_menu','arp','arp_tick')
@@ -35,7 +35,7 @@ IDS=('6ch-usbup','model-tg-st','sample-preview-st','trig-hold','arp','tempo-max'
      'scale-gen-st-queued','lfo-secondary','scramble-st-gen-queued')
 
 
-def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False):
+def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False):
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[]
         for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (REPEAT_SOURCES if repeat else ()) + (CONDITION_SOURCES if conditions else ()):
@@ -49,6 +49,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
                             *(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),
                             *(['--defsym','ML_LFO_CC=1'] if lfo_cc else []),
                             *(['--defsym','ML_STORAGE=1'] if storage else []),
+                            *(['--defsym','ML_STORAGE2=1'] if extended_storage else []),
                             *(['--defsym','ML_REPEAT=1'] if repeat else []),
                             *(['--defsym','ML_CHANCE=1','--defsym','ML_CONDITIONS=1','--defsym','ML_CONDITION_COMPACT=1'] if conditions else []),
                             '-o',str(obj),str(ROOT/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
@@ -61,7 +62,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
             for name,body in extras.items():
                 asm=p/(name+'.s');asm.write_text(body)
                 obj=p/(name+'.o');objects.append(str(obj))
-                subprocess.run([cross+'as','-march=cfv4e','-o',str(obj),str(asm)],check=True)
+                subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_STORAGE2=1'] if extended_storage else []),'-o',str(obj),str(asm)],check=True)
         # Petits fragments à sauts absolus : aucun masque libre ne dépasse280o.
         raw=(ROOT/'tools/machines/midi_thru/merge.s').read_text()
         inverse={'ne':'eq','eq':'ne','hi':'ls','ls':'hi','cc':'cs','cs':'cc','pl':'mi','mi':'pl','ge':'lt','lt':'ge'}
@@ -183,7 +184,8 @@ SECTIONS {{
         return *blobs,fragments,symbols(cross,elf)
 
 
-def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False,conditions=False):
+def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False):
+    if extended_storage:assert storage and repeat and lfo_cc
     if conditions:assert repeat, 'conditions requièrent les réglages privés'
     if storage:assert pattern_banks and lfo_cc, 'prototype stockage requiert banques et compression LFO CC'
     if repeat:assert pattern_banks and lfo_cc, 'prototype retrigger requiert banques et compression LFO CC'
@@ -224,7 +226,7 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     needle=struct.pack('>I',loader)
     assert [build.BASE+i for i in range(0,len(stock)-3,2) if stock[i:i+4]==needle]==[ptr]
     merge_masks=[va for va in free if va!=loader]
-    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat,conditions)
+    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat,conditions,extended_storage)
     if lfo_cc:
         import aplib_grow
         if storage or repeat:
@@ -253,12 +255,13 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
         write(at,b"\x4e\xf9"+struct.pack(">I",syms["ml_repeat_project_hook"])+b"\x4e\x71")
     if storage:
         # Cibles natives exactes ; ordre boot/cache à valider avant publication.
-        for at,old,name in (
-            (0x400798c8,'4eb94008b24a','ml_store_disk_read'),
+        disk_hooks = [(0x4008b24a,'4fefffec48d7043c','ml_store_disk_read'),
+                      (0x4008b3f6,'4fefffec48d7043c','ml_store_disk_write')] if extended_storage else [(0x400798c8,'4eb94008b24a','ml_store_disk_read')]
+        for at,old,name in disk_hooks + [
             (0x4000f850,'4cd77c1c4fef0034','ml_store_save_hook'),
-            (0x4006a660,'4cd7040c4fef0020','ml_store_load_hook')):
+            (0x4006a660,'4cd7040c4fef0020','ml_store_load_hook')]:
             assert image[at-build.BASE:at-build.BASE+len(bytes.fromhex(old))].hex()==old
-            op=b'\x4e\xb9' if name=='ml_store_disk_read' else b'\x4e\xf9'
+            op=b'\x4e\xb9' if at==0x400798c8 else b'\x4e\xf9'
             replacement=op+struct.pack('>I',syms[name])
             if len(bytes.fromhex(old))==8:replacement+=b'\x4e\x71'
             write(at,replacement)

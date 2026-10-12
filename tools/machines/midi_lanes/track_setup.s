@@ -233,6 +233,10 @@ mlp_live_pad_held: .long 0
 mlp_pad_note:
     lea.l %sp@(-12),%sp
     moveml %d2-%d3/%a2,%sp@
+    .ifdef ML_STORAGE2
+    tstl ml_store_load_ready
+    beq .Lpad_done
+    .endif
     movel %sp@(16),%d2
     cmpil #5,%d2
     bhi .Lpad_done

@@ -34,6 +34,10 @@ ml_bank_ui_sync:
     movel %d0,%sp@(12)
     andil #0x0700,%d0
     bne .Lsync_fail
+    .ifdef ML_STORAGE2
+    tstl ml_store_load_ready
+    beq .Lsync_fail
+    .endif
     moveal ml_bank_table,%a2
     tstl %a2
     beq .Lsync_fail
@@ -45,14 +49,22 @@ ml_bank_ui_sync:
     moveal %a2@,%a3
     tstl %a3
     bne .Lsync_publish
+    .ifdef ML_STORAGE2
+    pea 4896
+    .else
     pea 1584
+    .endif
     jsr 0x400802e0
     addql #4,%sp
     moveal %d0,%a3
     tstl %a3
     beq .Lsync_fail
     movel %a3,%sp@-
+    .ifdef ML_STORAGE2
+    jsr ml_store_bank_init
+    .else
     jsr ml_init
+    .endif
     addql #4,%sp
     movel %a3,%a2@
 .Lsync_publish:
@@ -159,9 +171,17 @@ ml_bank_activate:
     lea.l %a0@(0,%d1:l:4),%a1
     moveq #0,%d2
     moveb %a1@,%d2
+    .ifdef ML_STORAGE2
+    cmpil #0x90,%d2
+    .else
     cmpil #0x96,%d2
+    .endif
     bcs .Lactivate_next
+    .ifdef ML_STORAGE2
+    cmpil #0x9f,%d2
+    .else
     cmpil #0x9b,%d2
+    .endif
     bhi .Lactivate_next
     movel %a1@,%d2
     andil #0xefff00ff,%d2

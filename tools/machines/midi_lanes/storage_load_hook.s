@@ -7,6 +7,10 @@
 ml_store_load_pending_id: .long 0
 ml_store_load_pending_slot: .long 0
 ml_store_load_serial: .long 0
+    .ifdef ML_STORAGE2
+    .globl ml_store_load_ready
+ml_store_load_ready: .long 1
+    .endif
     .text
     .globl ml_store_load_hook
 ml_store_load_hook:
@@ -30,6 +34,9 @@ ml_store_load_hook:
     movel %d0,ml_store_load_pending_id
     movel %d3,ml_store_load_pending_slot
     addql #1,ml_store_load_serial
+    .ifdef ML_STORAGE2
+    jsr ml_store_suspend
+    .endif
 .Lload_result:
     movel %sp@+,%a0
     movel %sp@+,%d0
@@ -37,3 +44,27 @@ ml_store_load_hook:
     moveml %sp@,%d2-%d3/%a2
     lea.l %sp@(32),%sp
     rts
+
+| Retirer immédiatement l'ancien projet du chemin de lecture, sans I/O.
+    .ifdef ML_STORAGE2
+    .globl ml_store_suspend
+ml_store_suspend:
+    clrl ml_store_load_ready
+    jsr ml_store_ui_cancel
+    tstl ml_runtime
+    beq .Lsuspend_done
+    tstl ml_clock_state
+    beq .Lsuspend_done
+    tstl ml_bank_empty
+    beq .Lsuspend_done
+    movel ml_bank_empty,%sp@-
+    movel ml_clock_state,%sp@-
+    movel ml_runtime,%sp@-
+    pea ml_play_pattern
+    jsr ml_bank_activate
+    lea.l %sp@(16),%sp
+    movel ml_bank_empty,%d0
+    movel %d0,ml_pattern
+.Lsuspend_done:
+    rts
+    .endif

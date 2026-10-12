@@ -192,6 +192,14 @@ mlp_menu_key:
     moveal %sp@(20),%a0
     movel %a0@(12),%d2
     movel %a0@(16),%d3
+    .ifdef ML_STORAGE2
+    tstl ml_store_load_ready
+    bne .Lmk_storage_ready
+    cmpil #12,%d2
+    beq .Lmk_close
+    bra .Lmk_used
+.Lmk_storage_ready:
+    .endif
     .ifdef ML_CONDITIONS
     cmpil #15,%d2
     bne .Lmk_fill_done
@@ -653,6 +661,10 @@ mlp_enc:
     .ifdef ML_PATTERN_BANKS
     jsr ml_bank_ui_sync
     tstl %d0
+    beq .Lme_out
+    .endif
+    .ifdef ML_STORAGE2
+    tstl ml_store_load_ready
     beq .Lme_out
     .endif
     moveal %sp@(20),%a2

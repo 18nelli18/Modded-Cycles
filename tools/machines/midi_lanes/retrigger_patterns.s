@@ -43,6 +43,14 @@ ml_repeat_prepare_ui:
     moveal %sp@+,%a2
     rts
 ml_repeat_pattern_lookup:
+    .ifdef ML_STORAGE2
+    tstl ml_repeat_reset_pending
+    bne .Llookup_bad
+    movel %sp@(4),%d0
+    beq .Llookup_bad
+    addil #1584,%d0
+    rts
+    .endif
     tstl ml_repeat_reset_pending
     bne .Llookup_bad
     movel %sp@(4),%d1
@@ -62,6 +70,12 @@ ml_repeat_pattern_lookup:
     movel %a0@(4),%d0
     rts
 ml_repeat_pattern_prepare:
+    .ifdef ML_STORAGE2
+    movew %sr,%d0
+    andil #0x700,%d0
+    bne .Llookup_bad
+    bra ml_repeat_pattern_lookup
+    .endif
     lea.l %sp@(-24),%sp
     movem.l %d2-%d3/%a2-%a4,%sp@
     movew %sr,%d0

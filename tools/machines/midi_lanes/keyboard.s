@@ -7,6 +7,10 @@
 mlp_keyboard:
     lea.l %sp@(-24),%sp
     movem.l %d2-%d4/%a2-%a4,%sp@
+    .ifdef ML_STORAGE2
+    tstl ml_store_load_ready
+    beq .Lkb_used
+    .endif
     movel %sp@(28),%d2
     subil #16,%d2
     cmpil #15,%d2

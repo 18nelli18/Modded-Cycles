@@ -6,6 +6,9 @@
     .globl mlcc_context,mlcc_triggers
 mlcc_context: .long 0
 mlcc_triggers: .long 0
+    .ifdef ML_STORAGE2
+mlcc_cfg_owner: .long 0
+    .endif
     .text
     .globl mlcc_prepare,mlcc_refresh,mlcc_audio,mlcc_ready,mlcc_worker
 mlcc_prepare:
@@ -47,7 +50,15 @@ mlcc_refresh:
     bne .Lrefresh_copy
     lea %a2@(1336),%a3
 .Lrefresh_copy:
+    .ifdef ML_STORAGE2
+    moveal ml_pattern,%a0
+    tstl %a0
+    beq .Lrefresh_done
+    lea %a0@(4704),%a0
+    movel %a0,mlcc_settings
+    .else
     moveal %a2,%a0
+    .endif
     moveal %a3,%a1
     moveq #47,%d0
 .Lrefresh_cfg:
@@ -69,6 +80,10 @@ mlcc_refresh:
     tstl %d0
     beq .Lrefresh_done
     movel %a3,%a2@(3016)
+    .ifdef ML_STORAGE2
+    movel ml_pattern,%d0
+    movel %d0,mlcc_cfg_owner
+    .endif
 .Lrefresh_done:
     moveml %sp@,%a2-%a4
     lea %sp@(12),%sp
@@ -91,6 +106,10 @@ mlcc_audio:
     moveal ml_play_pattern,%a5
     tstl %a5
     beq .Laudio_done
+    .ifdef ML_STORAGE2
+    cmpal mlcc_cfg_owner,%a5
+    bne .Laudio_done
+    .endif
     movel mlcc_triggers,%d5
     clrl mlcc_triggers
     moveq #0,%d2

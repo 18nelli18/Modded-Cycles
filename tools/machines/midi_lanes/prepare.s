@@ -22,7 +22,11 @@ ml_prepare:
     moveq #1,%d0
     movel %d0,ml_preparing
     .ifdef ML_PATTERN_BANKS
+    .ifdef ML_STORAGE2
+    pea 12132                   | contexte/table + deux banques4896
+    .else
     pea 3924                    | contexte + table 96 pointeurs + banque vide
+    .endif
     .else
     pea 1956
     .endif
@@ -49,6 +53,21 @@ ml_prepare:
     clrl %a0@+
     subql #1,%d0
     bpl .Lmp_banks_zero
+    .ifdef ML_STORAGE2
+    pea %a2@(2340)
+    jsr ml_store_bank_init
+    addql #4,%sp
+    pea %a2@(7236)
+    jsr ml_store_bank_init
+    addql #4,%sp
+    lea.l %a2@(7236),%a0
+    movel %a0,ml_bank_empty
+    lea.l %a2@(1956),%a0
+    lea.l %a2@(2340),%a1
+    movel %a1,%a0@
+    movel %a0,ml_bank_table
+    movel %a1,ml_play_pattern
+    .else
     pea %a2@(2340)
     jsr ml_init
     addql #4,%sp
@@ -59,7 +78,13 @@ ml_prepare:
     movel %a0,ml_bank_table
     movel %a2,ml_play_pattern
     .endif
+    .endif
+    .ifdef ML_STORAGE2
+    lea.l %a2@(2340),%a0
+    movel %a0,ml_pattern
+    .else
     movel %a2,ml_pattern
+    .endif
     lea.l %a2@(1584),%a0
     movel %a0,ml_runtime
     lea.l %a2@(1904),%a0

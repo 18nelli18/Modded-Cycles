@@ -57,19 +57,32 @@ ml_genie_key:
     jmp ml_key_next
     .globl ml_genie_generate,ml_genie_undo,ml_genie_boundary,ml_genie_pad,ml_genie_service,ml_genie_menu_key
 ml_genie_generate:
-    tstl mlp_obj
+    bsr ml_genie_is_b
+    tstl %d0
     beq .Lgg_audio
     lea.l %sp@(-832),%sp
     movem.l %d2-%d7/%a2-%a5,%sp@
     movew %sr,%d0
     andil #0x700,%d0
     bne .Lgg_error
+    .ifdef ML_STORAGE2
+    tstl ml_store_load_ready
+    beq .Lgg_error
+    .endif
     tstl ml_gq_state
     bne .Lgg_error
     moveal ml_pattern,%a2
+    movel mlp_track,%d2
+    tstl mlp_obj
+    bne .Lgg_target_ready
+    | L'objet UI peut disparaître sous un overlay : ne jamais tomber vers A.
+    moveal ml_genie_b_pattern,%a2
+    movel ml_genie_b_track,%d2
+    cmpal ml_pattern,%a2
+    bne .Lgg_error
+.Lgg_target_ready:
     tstl %a2
     beq .Lgg_error
-    movel mlp_track,%d2
     cmpil #5,%d2
     bhi .Lgg_error
     muluw #264,%d2
@@ -239,7 +252,8 @@ ml_genie_service:
     rts
 
 ml_genie_undo:
-    tstl mlp_obj
+    bsr ml_genie_is_b
+    tstl %d0
     beq .Lgu_audio
     movew %sr,%d0
     andil #0x700,%d0
@@ -356,7 +370,14 @@ ml_genie_boundary:
 
 ml_genie_pad:
     tstl mlp_obj
+    bne .Lgp_b_present
+    bsr ml_genie_is_b
+    tstl %d0
     beq .Lgp_audio
+    | Un overlay B sans objet sous-jacent ne joue jamais les pads audio.
+    moveq #1,%d0
+    rts
+.Lgp_b_present:
     | La vue Genie est au-dessus de B ; utiliser son état FUNC, ses pads B.
     movel SG_func,%d0
     movel %d0,mlp_func
@@ -412,12 +433,18 @@ ml_gu_data: .space 264
 | masquer ce vecteur pendant l'appel natif conserve l'éditeur sous Genie.
 | Restaurer immédiatement le vecteur : son allocation appartient à l'OS.
 ml_genie_present:
-    tstl mlp_obj
-    beq .Lgpr_native
     moveal %sp@(8),%a0
     moveal %a0@,%a0
     cmpal SG_obj,%a0
     bne .Lgpr_native
+    clrl ml_genie_b_owner
+    tstl mlp_obj
+    beq .Lgpr_native
+    movel %a0,ml_genie_b_owner
+    movel ml_pattern,%d0
+    movel %d0,ml_genie_b_pattern
+    movel mlp_track,%d0
+    movel %d0,ml_genie_b_track
     lea.l %sp@(-8),%sp
     moveml %d2/%a2,%sp@
     moveal %a0,%a2
@@ -435,3 +462,23 @@ ml_genie_present:
     rts
 .Lgpr_native:
     jmp 0x4007700e
+
+| Le contexte appartient à cet objet Genie, jamais à une prochaine ouverture A.
+    .globl ml_genie_is_b
+ml_genie_is_b:
+    moveq #1,%d0
+    tstl mlp_obj
+    bne .Lgb_yes
+    movel SG_obj,%d0
+    beq .Lgb_yes
+    cmpl ml_genie_b_owner,%d0
+    seq %d0
+    andil #1,%d0
+.Lgb_yes:
+    rts
+    .data
+    .balign 4
+    .globl ml_genie_b_owner,ml_genie_b_pattern,ml_genie_b_track
+ml_genie_b_owner: .long 0
+ml_genie_b_pattern: .long 0
+ml_genie_b_track: .long 0
