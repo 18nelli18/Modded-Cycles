@@ -65,3 +65,14 @@ Le transport physique et la charge disque/audio restent à tester sur matériel.
 Les séquences, locks et LFO B restent en RAM ; sauvegarde non implémentée.
 La saisie live quantifiée/non quantifiée, nudge et clipboard par pas sont
 encore à faire. Le flasher principal n'est pas modifié par ce candidat.
+
+## Fenêtre native et relâchement (12/10/2026)
+
+[FAIT en émulation] Le rendu appelle ParameterPageView `4001d818` avec
+le descripteur19 (condition de trig), une vue privée et un objet de dessin
+en lecture seule. Il reprend le titre, les indicateurs et le formatter stock,
+sans setter ni observer audio. Le dernier trig relâché ferme la fenêtre ;
+un autre trig encore maintenu la conserve. Les locks restent inchangés.
+Test3 `2026-10-12-test-3-stock-chance` : preuves UI64choix, boot combiné,
+références MAIN OS avec/sans USB6 et transfert simulé685blocs validés.
+Validation physique encore attendue.

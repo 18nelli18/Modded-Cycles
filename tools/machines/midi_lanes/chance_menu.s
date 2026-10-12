@@ -95,7 +95,8 @@ mlp_chance_enc:
     moveml %sp@,%d2-%d4/%a2
     lea.l %sp@(16),%sp
     rts
-| Le formatter stock garde les marqueurs inversés et les libellés exacts.
+| Fenêtre ParameterPageView stock, descripteur19 (condition de trig).
+| Vue/objet factices en lecture seule : aucun accès aux paramètres audio.
 mlp_chance_render:
     movel %a2,%sp@-
     moveal %sp@(12),%a2
@@ -107,26 +108,25 @@ mlp_chance_render:
     movel %a2,%sp@-
     jsr 0x40070dea
     lea.l %sp@(24),%sp
-    pea .Lchance_title
-    pea .Lchance_fmt
-    pea 0x10
-    pea 49
-    pea 2
-    pea 0x40ea14cc
-    movel %a2,%sp@-
-    jsr 0x40071a04
-    lea.l %sp@(28),%sp
     jsr mlp_chance_value
     lsll #8,%d0
-    pea 20
-    pea 64
-    movel %a2,%sp@-
-    movel %d0,%sp@-
+    pea 1
     clrl %sp@-
-    jsr 0x40050046
-    lea.l %sp@(20),%sp
+    movel %d0,%sp@-
+    pea 19
+    movel %a2,%sp@-
+    pea .Lchance_view
+    jsr 0x4001d818
+    lea.l %sp@(24),%sp
     moveal %sp@+,%a2
     rts
+.Lchance_object:
+    movel #.Lchance_param,%d0
+    rts
     .section .rodata
-.Lchance_title: .asciz "Chance"
-.Lchance_fmt: .asciz "%s"
+    .balign 4
+.Lchance_param: .long 0x400fd134
+.Lchance_view: .long .Lchance_vtable
+| Seul le slot128 est lu par le renderer natif.
+.Lchance_vtable = .-128
+    .long .Lchance_object

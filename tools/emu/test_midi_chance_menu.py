@@ -34,13 +34,19 @@ def main():
  for _ in range(64):knob(r,-1)
  assert r.call('mlp_chance_value')==0xffffffff,(r.call('mlp_chance_value'),bytes(r.u.mem_read(settings,24)).hex())
  chance(19);assert r.call('mlp_chance_value')==18
- key(r,16,0);key(r,17,0)
+ key(r,16,0);assert r.r32(r.s['mlp_setup'])==5
+ key(r,17,0);assert r.r32(r.s['mlp_setup'])==0
  assert bytes(r.u.mem_read(PAT+11,1))==b'\x01'
  assert bytes(r.u.mem_read(PAT+15,1))==b'\x01'
- key(r,12);assert r.r32(r.s['mlp_setup'])==0 and r.r32(r.s['mlp_obj'])==obj
+ chance(0);key(r,12);assert r.r32(r.s['mlp_setup'])==0 and r.r32(r.s['mlp_obj'])==obj
  key(r,15);assert r.r32(r.s['ml_cond_fill'])==1
  key(r,15,0);assert r.r32(r.s['ml_cond_fill'])==0
  # Valeurs/écran réellement dessinés par l'OS avec tous les choix.
+ r.call(0x400de244)
+ # Les sprites natifs sont construits au boot ; cette fixture note leur dessin.
+ sprites=[]
+ r.stubs[0x40071da4]=lambda args:sprites.append(args) or 0
+ r.u.hook_add(UC_HOOK_CODE,r.stub,begin=0x40071da4,end=0x40071da4)
  r.call(0x400e7dbc);r.call(0x40070172,0x93006000,128,64,0x93090000,0)
  r.w32(r.s['mlp_setup'],5);r.w32(r.s['mlp_held'],1);r.w32(r.s['mlp_step'],0)
  for code in range(64):

@@ -373,6 +373,14 @@ mlp_menu_key:
     movel mlp_changed,%d0
     bclr %d2,%d0
     movel %d0,mlp_changed
+    .ifdef ML_CONDITIONS
+    tstl mlp_held
+    bne .Lmk_redraw
+    movel mlp_setup,%d0
+    subql #5,%d0
+    bne .Lmk_redraw
+    clrl mlp_setup
+    .endif
     bra .Lmk_redraw
 .Lmk_track_setup:
     tstl mlp_func
