@@ -17,13 +17,13 @@ def main():
  key(r,2,0);key(r,1,0)
  r.call('ml_toggle');assert r.r32(r.s['mlp_obj'])==obj and r.r32(r.s['mlp_setup'])==3
  r.texts.clear();r.call('mlp_render',obj,0x93006000)
- assert [t[2] for t in r.texts[-3:]]==['0','ON','C5'],r.texts
+ assert [t[2] for t in r.texts[-2:]]==['0','C5'],r.texts
  assert key(r,32,16)==1
  for i in range(70):knob(r,1)
  assert r.u.mem_read(PAT+264*2+6,1)==b'\x3c'
  for i in range(130):knob(r,-1)
  assert r.u.mem_read(PAT+264*2+6,1)==b'\xc4'
- key(r,32,16);knob(r,1);knob(r,1);key(r,32,16)
+ key(r,32,16);knob(r,1);key(r,32,16)
  knob(r,1);assert r.u.mem_read(PAT+264*2+7,1)==bytes([73^72])
  r.texts.clear();r.call('mlp_render',obj,0x93006000)
  assert r.texts[-1][2]=='C#5',r.texts

@@ -16,7 +16,7 @@ mlp_track_setup_enc:
     tstl mlp_edit
     bne .Ltse_edit
     addl %d1,%d0
-    cmpil #2,%d0
+    cmpil #1,%d0
     bhi .Ltse_done
     movel %d0,mlp_row
     rts
@@ -31,8 +31,6 @@ mlp_track_setup_enc:
     moveal ml_pattern,%a0
     addal %d0,%a0
     movel mlp_row,%d0
-    cmpil #1,%d0
-    beq .Ltse_mout
     tstl %d0
     bne .Ltse_pad
     moveq #0,%d0
@@ -44,12 +42,6 @@ mlp_track_setup_enc:
     cmpil #60,%d0
     bgt .Ltse_done
     moveb %d0,%a0@(6)
-    rts
-.Ltse_mout:
-    moveq #0,%d0
-    moveb %a0@(1),%d0
-    eoril #1,%d0
-    moveb %d0,%a0@(1)
     rts
 .Ltse_pad:
     moveq #0,%d0
@@ -91,7 +83,7 @@ mlp_track_setup_render:
     lea.l %sp@(584),%sp
     rts
 .Lts_count:
-    moveq #3,%d0
+    moveq #2,%d0
     rts
 .Lts_zero_value:
     moveq #0,%d0
@@ -134,8 +126,6 @@ mlp_track_setup_render:
     moveal ml_pattern,%a0
     addal %d0,%a0
     movel %a3@(80),%d2
-    cmpil #1,%d2
-    beq .Lts_out_text
     tstl %d2
     bne .Lts_pad_text
     moveq #0,%d0
@@ -144,12 +134,6 @@ mlp_track_setup_render:
     movel %d0,%sp@-
     pea .Lfmt_d
     bra .Lts_draw_value
-.Lts_out_text:
-    lea.l .Lon,%a1
-    tstb %a0@(1)
-    beq .Lts_string
-    lea.l .Loff,%a1
-    bra .Lts_string
 .Lts_pad_text:
     moveq #0,%d0
     moveb %a0@(7),%d0
@@ -185,16 +169,12 @@ mlp_track_setup_render:
 .Lfmt_s: .asciz "%s"
 .Lfmt_d: .asciz "%d"
 .Lkbt: .asciz "KbT"
-.Lmout: .asciz "MOut"
 .Lpad: .asciz "Pad"
-.Lon: .asciz "ON"
-.Loff: .asciz "OFF"
 .Lallocator: .byte 0
     .balign 4
 .Lts_rows:
     .long 0,0,0,.Lkbt,0,1,.Lts_label,0,0,0,0,0,0,1,.Lts_value,0,0,0,0,0,0
-    .long 0,0,0,.Lmout,0,1,.Lts_label,0,0,0,0,0,0,1,.Lts_value,0,0,0,0,0,1
-    .long 0,0,0,.Lpad,0,1,.Lts_label,0,0,0,0,0,0,1,.Lts_value,0,0,0,0,0,2
+    .long 0,0,0,.Lpad,0,1,.Lts_label,0,0,0,0,0,0,1,.Lts_value,0,0,0,0,0,1
 
     .text
 | Nom MIDI stock : note72=C5 ; buffer UI, jamais appelé depuis IRQ.
