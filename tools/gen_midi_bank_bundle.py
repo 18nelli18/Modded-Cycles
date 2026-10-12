@@ -20,7 +20,7 @@ from gen_seq_gen import COMMIT, STOCK, symbols, main_os_from_syx
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'tweaks/model-cycles_OS1.13/experimental/midi-bank/60-midi-bank-bundle.json'
 SOURCES=('runtime','pattern','clock','service','prepare','page','integration',
-         'key','led','ui_hook','transport','worker','boot','banks','stock_display','keyboard','genie','genie_router')
+         'key','led','ui_hook','transport','worker','boot','banks','stock_display','keyboard','genie','genie_router','clipboard')
 IDS=('6ch-usbup','model-tg-st','sample-preview-st','trig-hold','arp','tempo-max',
      'boot-anim','multiline-browser','level-pan-values','trigless-dim',
      'midi-live-both','syntakt-tg-sd-cp-toy-bits-swarm-macro-acid',
@@ -36,7 +36,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
             if name == 'stock_display' and not stock_display:
                 continue
             obj=p/(name+'.o');objects.append(str(obj))
-            subprocess.run([cross+'as','-march=cfv4e','--defsym','ML_WORKER=1','--defsym','ML_GENIE=1','--defsym','ML_MERGE=1',
+            subprocess.run([cross+'as','-march=cfv4e','--defsym','ML_CLIPBOARD=1','--defsym','ML_WORKER=1','--defsym','ML_GENIE=1','--defsym','ML_MERGE=1',
                             *(['--defsym','ML_PATTERN_BANKS=1'] if pattern_banks else []),
                             *(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),
                             *(['--defsym','ML_LFO_CC=1'] if lfo_cc else []),

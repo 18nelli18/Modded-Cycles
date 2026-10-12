@@ -18,14 +18,14 @@ from test_sdvintage import main_os_from_syx
 ENTRY, DATA, PAT, RUNTIME = 0x93050000,0x93060000,0x93070000,0x93071000
 
 
-def load(r,worker=False,pattern_banks=False,stock_display=False):
+def load(r,worker=False,pattern_banks=False,stock_display=False,clipboard=False):
     root=pathlib.Path(__file__).resolve().parents[2]
     cross=str(root.parent/'toolchain/bin/m68k-elf-')
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[]
-        for name in ('runtime','pattern','clock','service','prepare','page','integration','key','led','ui_hook','transport','worker','banks','keyboard',*(['stock_display'] if stock_display else [])):
+        for name in ('runtime','pattern','clock','service','prepare','page','integration','key','led','ui_hook','transport','worker','banks','keyboard',*(['stock_display'] if stock_display else []),*(['clipboard'] if clipboard else [])):
             obj=p/(name+'.o')
-            subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_WORKER=1'] if worker else []),*(['--defsym','ML_PATTERN_BANKS=1'] if pattern_banks else []),*(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
+            subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_CLIPBOARD=1'] if clipboard else []),*(['--defsym','ML_WORKER=1'] if worker else []),*(['--defsym','ML_PATTERN_BANKS=1'] if pattern_banks else []),*(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
             objects.append(str(obj))
         (p/'link.ld').write_text('SECTIONS { .text '+hex(ENTRY)+' : { *(.text*) } .data '+hex(DATA)+' : { *(.data*) *(.rodata*) } } TG_set_held = 0x93082000; TG_mod_used = 0x93082004; ml_key_next = 0x4007240c; TG_snap_note = 0x930b0000;' )
         subprocess.run([cross+'ld','-T',str(p/'link.ld'),'-e','mlp_open','-o',str(p/'page.elf'),*objects],check=True)
@@ -61,9 +61,8 @@ def raw(r,row,track=None,step=None):
     track=r.r32(r.s['mlp_track']) if track is None else track
     step=r.r32(r.s['mlp_step']) if step is None else step
     if row==0:return track
-    if row==1:return track+7
     if row==5:return step
-    field={2:3,3:4,4:5,6:3,7:0,8:1,9:2,10:0}[row]
+    field={1:2,2:3,3:4,4:5,6:3,7:0,8:1,9:2,10:0}[row]
     addr=PAT+264*track+field+(8+4*step if row in (6,7,8,9) else 0)
     return r.u.mem_read(addr,1)[0]
 
@@ -131,12 +130,12 @@ def main():
         assert sorted(set(y for _,y,_ in r.texts))==[7,21,35,49]
         for _,x1,y1,x2,y2,mode in r.rects:assert 0<=x1<=x2<=127 and 0<=y1<=y2<=63
         if row in (0,1,2):assert any(x==125 and text==str(track+7) for x,y,text in r.texts)
-    print('ok : 132 vues de rendu, titre/trois lignes, canaux affichés immuables 7..12')
+    print('ok : 132 vues de rendu, titre/trois lignes, canaux initiaux affichés 7..12')
 
-    minimum=(0,7,2,1,0,0,0,0,1,1,0)
-    maximum=(5,12,4,64,6,63,1,127,127,64,1)
+    minimum=(0,0,2,1,0,0,0,0,1,1,0)
+    maximum=(5,15,4,64,6,63,1,127,127,64,1)
     for track in range(6):
-      for row in (2,3,4,6,7,8,9,10):
+      for row in (1,2,3,4,6,7,8,9,10):
         r.w32(r.s['mlp_track'],track);r.w32(r.s['mlp_step'],track*10)
         r.w32(r.s['mlp_row'],row);r.w32(r.s['mlp_edit'],1)
         before=bytearray(r.u.mem_read(PAT,1584))
@@ -144,19 +143,18 @@ def main():
         assert raw(r,row)==minimum[row],(track,row,raw(r,row))
         for _ in range(140):knob(r,1,thunk=bool(row%2))
         assert raw(r,row)==maximum[row],(track,row,raw(r,row))
-        field={2:3,3:4,4:5,6:3,7:0,8:1,9:2,10:0}[row]
+        field={1:2,2:3,3:4,4:5,6:3,7:0,8:1,9:2,10:0}[row]
         offset=264*track+field+(8+4*track*10 if row in (6,7,8,9) else 0)
         before[offset]=maximum[row]
         assert bytes(r.u.mem_read(PAT,1584))==bytes(before)
-    # Le canal ne devient pas éditable, même en forçant le flag d'édition.
-    for track in range(6):
-        r.w32(r.s['mlp_track'],track);r.w32(r.s['mlp_row'],1);r.w32(r.s['mlp_edit'],0)
-        key(r,32,16);assert r.r32(r.s['mlp_edit'])==0
-        r.w32(r.s['mlp_edit'],1)
-        before=bytes(r.u.mem_read(PAT,1584))
-        knob(r,-1);knob(r,1)
-        assert bytes(r.u.mem_read(PAT,1584))==before and raw(r,1)==track+7
-    print('ok : huit champs × six voies, clamps, vitesse/port/longueur et pas ; canal non éditable, autres données intactes')
+    # DATA ouvre aussi l'édition du canal ; défaut 7..12 à l'initialisation.
+    r.w32(r.s['mlp_row'],1);r.w32(r.s['mlp_edit'],0)
+    key(r,32,16);assert r.r32(r.s['mlp_edit'])==1
+    assert r.call('ml_config',PAT,0,2,16)==0
+    assert r.call('ml_config',PAT,0,2,0xffffffff)==0
+    r.call('ml_init',PAT)
+    assert [raw(r,1,track=t) for t in range(6)]==list(range(6,12))
+    print('ok : neuf champs × six voies, canal 1..16 éditable, défauts 7..12 et autres données intactes')
 
     # Nouvelle banque pour saisie des pas : trigs et pages 16 pas, aucune voix.
     # Cette section vérifie la grille REC, et non le clavier hors REC.
@@ -199,6 +197,22 @@ def main():
                 key(r,16+trig,0);assert raw(r,6)==1
                 assert bytes(r.u.mem_read(RAW,722))==before
                 key(r,16+trig);key(r,16+trig,0);assert raw(r,6)==0
+    # Recréation après suppression : C5, jamais la hauteur supprimée.
+    for lane in range(6):
+        r.w32(r.s['mlp_track'],lane)
+        for step in (0,15,16,31,32,47,48,63):
+            r.w32(r.s['mlp_step'],step)
+            addr=PAT+lane*264+8+step*4
+            r.u.mem_write(addr,bytes([91,100,1,0]))
+            key(r,16+step%16)
+            assert raw(r,7)==72 and raw(r,6)==1
+            knob(r,1);key(r,16+step%16,0)
+            assert raw(r,7)==73 and raw(r,6)==1
+            key(r,16+step%16);key(r,16+step%16,0)
+            assert raw(r,6)==0
+            key(r,16+step%16);key(r,16+step%16,0)
+            assert raw(r,7)==72 and raw(r,6)==1
+    print('ok : six voies × quatre pages, nouveau trig/recréation C5 MIDI72, DATA conserve édition')
     r.w32(r.s['mlp_step'],0)
     key(r,16);key(r,17)
     n0,n1=raw(r,7,step=0),raw(r,7,step=1)

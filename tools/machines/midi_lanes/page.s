@@ -186,6 +186,14 @@ mlp_menu_key:
     moveal %sp@(20),%a0
     movel %a0@(12),%d2
     movel %a0@(16),%d3
+    .ifdef ML_CLIPBOARD
+    movel %d3,%sp@-
+    movel %d2,%sp@-
+    jsr mlp_clip_key
+    addql #8,%sp
+    tstl %d0
+    bne .Lmk_used
+    .endif
     .ifdef ML_GENIE
     | Cette vue lit les événements bruts, sans forcément appeler le getter.
     cmpil #13,%d2
