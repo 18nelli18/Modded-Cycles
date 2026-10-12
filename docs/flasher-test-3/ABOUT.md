@@ -9,3 +9,17 @@ The MIDI bank candidate includes the simplified velocity display and uniform TR7
 MIDI bank sequences and the fork's Second LFO settings remain RAM-only. Native persistence and B-side LFO-to-CC routing are not included. No firmware is supplied. Licenses and author credits accompany the page.
 
 Whole-image reference hashes cover upstream's published sample and this exact MIDI-bank bundle; other fork combinations retain per-mod verification.
+
+
+2026-10-12 update: MIDI Bank no longer requires 6-channel USB audio. Select
+All still selects it; uncheck that card to build without it. Both choices
+have full MAIN-OS references and pass browser build checks.
+
+Sequence Genie now captures its B-side bank/track when opening, preserving
+that target even if the underlying B-side UI object disappears. Generate
+and Undo isolation passes emulation; this candidate still needs hardware
+confirmation of the reported A-side targeting failure.
+
+Mise à jour : audio USB6 facultatif (décocher après Tout sélectionner).
+Genie conserve explicitement sa destination B ; isolation Generate/Undo
+prouvée en émulation, confirmation matérielle encore nécessaire.

@@ -35,7 +35,7 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
  assert.notStrictEqual(w.getComputedStyle(doc.getElementById('step-choose')).display,'none');
  assert.notStrictEqual(w.getComputedStyle(doc.getElementById('m-slow')).display,'none');
  for(const id of ['file','file3','allow','port','flash'])assert(doc.getElementById(id),id);
- assert(html.includes('bundle.js?v=2026-10-12-test-3-startup-fix'));
+ assert(html.includes('bundle.js?v=2026-10-12-test-3-b-target-usb'));
  // Identité du transport avec main, sans copie expérimentale ni réglage spécial.
  assert(html.includes('src="flasher.js?v='));
 
@@ -63,6 +63,18 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
  assert.strictEqual(app.state.fw.sha,app.REF_MAINOS[selected.join('+')]);
  const verified=w.MCFlasher.verify(app.state.fw.raw);assert(verified.count>0);
  // Les choix modifient réellement le build ; banque seulement pour son bundle validé.
+ // Audio USB6 facultatif : vrai build stéréo, référence complète et conteneur valide.
+ const usb=doc.getElementById('feat-usb6');assert(usb&&usb.checked);
+ usb.checked=false;usb.dispatchEvent(new w.Event('change',{bubbles:true}));
+ for(let n=0;n<100&&app.state.building;n++)await wait(100);
+ assert(app.state.fw,app.state.fwError);
+ assert(!app.chosenTweaks().some(t=>t.id==='6ch-usbup'));
+ assert(app.chosenTweaks().some(t=>t.id==='midi-bank-bundle'));
+ assert.strictEqual(app.state.fw.sha,app.REF_MAINOS[app.chosenTweaks().map(t=>t.id).join('+')]);
+ assert(w.MCFlasher.verify(app.state.fw.raw).count>0);
+ const usbAgain=doc.getElementById('feat-usb6');usbAgain.checked=true;usbAgain.dispatchEvent(new w.Event('change',{bubbles:true}));
+ for(let n=0;n<100&&app.state.building;n++)await wait(100);
+ assert(app.state.fw,app.state.fwError);
  const initial=app.state.fw;
  // Exécuter l'envoi UI complet avec un récepteur indépendant du flasher.
  const vm=require('vm');
