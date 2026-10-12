@@ -1,4 +1,4 @@
-/* Filtre par piste (notes/47), dans dix-sept masques de sprites 35x35 libérés (tools/sprites.py, gardé : 0x4014a660).
+/* Filtre par piste (notes/47), dans seize masques de sprites 35x35 libérés (tools/sprites.py, gardé : 0x4014a660).
  * Chaque masque fait 280 o et n'est pas contigu au suivant (l'image du sprite est entre les deux) : une section par
  * masque, appels absolus de l'une à l'autre. L'état (.data) est écrit dans l'image avec ses valeurs de départ : ces
  * zones ne sont pas remises à zéro au démarrage. tools/gen_track_filter.py vérifie que chaque section tient.
@@ -21,8 +21,6 @@ SECTIONS
   .tf_save  0x4016616c : { *(.text.save) }
   .tf_load  0x40166760 : { *(.text.load) }
   .tf_side  0x40167c50 : { *(.text.side) . = ALIGN(4); *(.data.sst) }
-  .tf_gtabh 0x401696a0 : { *(.rodata.gtabh) }
-  .tf_ntabh 0x401699a8 : { *(.rodata.ntabh) }
-  .text 0x4016aa28 : { *(.text) *(.data) *(.bss) *(COMMON) }
+  .tf_gtabh 0x4016aa28 : { *(.rodata.gtabh) *(.text) *(.data) *(.bss) *(COMMON) }
   /DISCARD/ : { *(.comment) *(.note*) *(.eh_frame*) }
 }

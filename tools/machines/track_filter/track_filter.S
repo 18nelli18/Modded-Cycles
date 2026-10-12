@@ -2,7 +2,7 @@
  * avec résonance et une enveloppe (quantité, decay) relancée à chaque note. Lié par track_filter.ld dans des masques de
  * sprites 35x35 libérés (tools/sprites.py) ; les écritures sur l'OS sont dans tools/gen_track_filter.py (HOOKS). Les
  * tables (tf_gtab, tf_gtabh, tf_ntab, tf_ntabh, tf_ktab, tf_dtab) sont calculées par le générateur et incluses depuis
- * tables.inc.
+ * tables.inc ; tf_ntab et tf_ntabh sont en mots (lues par tf_interpw), pour tenir ensemble dans un masque.
  *
  * Paramètres : quatre descripteurs (1 à 4, des emplacements « Error » inutilisés) du groupe 7, donc de toutes les
  * machines, sur les mots k = 28 à 31 de chaque piste :
@@ -49,10 +49,10 @@
 	.equ	C_MODE, 16
 	.equ	ENV_FADE, 0x800			/* 8 pas de chaque côté du centre (lsl #20 : Q31) */
 
-	.globl	tf_post, tf_track, tf_kern, tf_coef, tf_coef2, tf_interp
+	.globl	tf_post, tf_track, tf_kern, tf_coef, tf_coef2, tf_interp, tf_interpw
 	.globl	tf_kst, tf_cst, tf_trig, tf_gtab, tf_gtabh, tf_ntab, tf_ntabh, tf_ktab, tf_dtab
 
-	.include "tables.inc"			/* macros TABLE_G, TABLE_GH, TABLE_N, TABLE_NH, TABLE_K, TABLE_D (65 longs chacune) */
+	.include "tables.inc"			/* macros TABLE_G, TABLE_GH, TABLE_K, TABLE_D (65 longs chacune), TABLE_N, TABLE_NH (65 mots) */
 
 /* ---- 0x40059852 : jsr tf_post à la place de jsr 0x40056f58 (Volume + Dist) -------------------------------------
  * Pile : 4(sp) = TRK, 8(sp) = a2 (paramètres lissés, 0x8000100c), comme pour l'appel remplacé. a3 = le contexte de la
@@ -266,7 +266,7 @@ tf_coef:
 	beq.s	52f
 	lea	tf_ntabh, %a1
 52:	moveq	#8, %d1
-	bsr.s	tf_interp			/* réduction de la résonance aux deux bouts */
+	bsr.s	tf_interpw			/* réduction de la résonance aux deux bouts */
 	tst.l	%d7
 	bpl.s	6f
 	moveq	#0, %d7
@@ -279,13 +279,23 @@ tf_coef:
 	jmp	tf_coef2
 
 /* a1 = table de 65 longs, d0 = index >= 0, d1 = s : rend T[j] + (T[j+1] - T[j]) f, j = d0 >> s, f = les s bits du bas.
- * Détruit d1-d3. */
+ * tf_interpw : la même sur une table de 65 mots, lus comme des longs (mot << 16). Détruit d1-d3. */
+tf_interpw:
+	move.l	%d0, %d2
+	asr.l	%d1, %d2
+	move.w	(%a1,%d2.l*2), %d3
+	swap	%d3
+	clr.w	%d3				/* T[j] << 16 */
+	move.w	2(%a1,%d2.l*2), %d2
+	swap	%d2
+	clr.w	%d2				/* T[j+1] << 16 */
+	bra.s	1f
 tf_interp:
 	move.l	%d0, %d2
 	asr.l	%d1, %d2
 	move.l	(%a1,%d2.l*4), %d3
 	move.l	4(%a1,%d2.l*4), %d2
-	sub.l	%d3, %d2
+1:	sub.l	%d3, %d2
 	neg.l	%d1
 	addi.l	#31, %d1
 	lsl.l	%d1, %d0
@@ -431,10 +441,8 @@ tf_gtab:	TABLE_G				/* LP : G = tan(pi fc / 48000) / 4, index i = 256 j */
 tf_gtabh:	TABLE_GH			/* HP : G = tan(pi fc / 48000) / 4, index i = 256 j */
 	.section .rodata.ntab, "a"
 	.balign	4
-tf_ntab:	TABLE_N				/* LP : réduction de la résonance, index i = 256 j */
-	.section .rodata.ntabh, "a"
-	.balign	4
-tf_ntabh:	TABLE_NH			/* HP : réduction de la résonance, index i = 256 j */
+tf_ntab:	TABLE_N				/* LP : réduction de la résonance (Q15), index i = 256 j */
+tf_ntabh:	TABLE_NH			/* HP : réduction de la résonance (Q15), index i = 256 j */
 	.section .rodata.ktab, "a"
 	.balign	4
 tf_ktab:	TABLE_K				/* K = 1/(2Q), résonance R = 512 j */

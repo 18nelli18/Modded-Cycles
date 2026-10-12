@@ -6,8 +6,8 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 284 tweaks, 31 821 écritures.
-- Masques de sprites libérables : 164 (35 960 o), dont 50 pris (17 880 o) et **114 libres (18 080 o)**.
+- 284 tweaks, 31 815 écritures.
+- Masques de sprites libérables : 164 (35 960 o), dont 49 pris (17 600 o) et **115 libres (18 360 o)**.
 - Crochets sur l'OS : 100 adresses détournées, dont 62 à l'identique par des mods de familles différentes.
 - Pointeurs réécrits : 61 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 262 tweaks ; place restante au §3.
@@ -89,14 +89,14 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x4019089c` | `0x400ac748` | libre | |
 | `0x40192a24` | `0x400ac292` | libre | |
 
-### 35×35 : 19 masques de 280 o (copie gardée `0x4014a660`) : 18 pris, 1 libres (280 o)
+### 35×35 : 19 masques de 280 o (copie gardée `0x4014a660`) : 17 pris, 2 libres (560 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
 | `0x4014ab5c` | `0x400bb120` | pris (158/280 o) | track-filter (152 o), track-filter-tg (158 o), track-filter-tg-st (158 o) |
 | `0x4014b85c` | `0x400bae4e` | pris (178/280 o) | track-filter (178 o), track-filter-tg (178 o), track-filter-tg-st (178 o) |
 | `0x4014d74c` | `0x400bac28` | pris (164/280 o) | track-filter (164 o), track-filter-tg (164 o), track-filter-tg-st (164 o) |
-| `0x401542f8` | `0x400b91d8` | pris (184/280 o) | track-filter (184 o), track-filter-tg (184 o), track-filter-tg-st (184 o) |
+| `0x401542f8` | `0x400b91d8` | pris (206/280 o) | track-filter (206 o), track-filter-tg (206 o), track-filter-tg-st (206 o) |
 | `0x401548b4` | `0x400b903a` | pris (206/280 o) | track-filter (206 o), track-filter-tg (206 o), track-filter-tg-st (206 o) |
 | `0x4015b8f8` | `0x400b668c` | pris (260/280 o) | track-filter (260 o), track-filter-tg (260 o), track-filter-tg-st (260 o) |
 | `0x4015f50c` | `0x400b5028` | pris (260/280 o) | track-filter (260 o), track-filter-tg (260 o), track-filter-tg-st (260 o) |
@@ -109,9 +109,9 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x4016616c` | `0x400b2898` | pris (164/280 o) | track-filter (164 o), track-filter-tg (156 o), track-filter-tg-st (156 o) |
 | `0x40166760` | `0x400b272e` | pris (208/280 o) | track-filter (208 o), track-filter-tg (200 o), track-filter-tg-st (200 o) |
 | `0x40167c50` | `0x400b211e` | pris (220/280 o) | track-filter-tg (220 o), track-filter-tg-st (220 o) |
-| `0x401696a0` | `0x400b1540` | pris (260/280 o) | track-filter (260 o), track-filter-tg (260 o), track-filter-tg-st (260 o) |
-| `0x401699a8` | `0x400b1500` | pris (260/280 o) | track-filter (260 o), track-filter-tg (260 o), track-filter-tg-st (260 o) |
-| `0x4016aa28` | `0x400b1480` | libre | |
+| `0x401696a0` | `0x400b1540` | libre | |
+| `0x401699a8` | `0x400b1500` | libre | |
+| `0x4016aa28` | `0x400b1480` | pris (260/280 o) | track-filter (260 o), track-filter-tg (260 o), track-filter-tg-st (260 o) |
 
 ### 34×34 : 14 masques de 272 o (copie gardée `0x4016bfc8`) : 8 pris, 6 libres (1 632 o)
 
@@ -774,9 +774,9 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | chord-keys | 37 | 0 | 6 | 3 | 14 | 14 | 0 |  | notes/42 |
 | level-pan-values | 8 | 1 | 3 | 0 | 2 | 2 | 0 |  | notes/44 |
 | trigless-dim | 8 | 1 | 3 | 0 | 2 | 2 | 0 |  | notes/45 |
-| track-filter | 44 | 1 | 6 | 3 | 17 | 17 | 0 |  | notes/47 |
-| track-filter-tg | 46 | 1 | 6 | 3 | 18 | 18 | 0 |  | notes/47 |
-| track-filter-tg-st | 46 | 1 | 6 | 3 | 18 | 18 | 0 |  | notes/47 |
+| track-filter | 42 | 1 | 6 | 3 | 16 | 16 | 0 |  | notes/47 |
+| track-filter-tg | 44 | 1 | 6 | 3 | 17 | 17 | 0 |  | notes/47 |
+| track-filter-tg-st | 44 | 1 | 6 | 3 | 17 | 17 | 0 |  | notes/47 |
 | midi-both | 3 | 3 | 0 | 0 | 0 | 0 | 0 |  | notes/53 |
 | midi-live-both | 6 | 0 | 4 | 0 | 1 | 1 | 0 |  | notes/53 |
 | lfo-plus | 30 | 0 | 12 | 4 | 7 | 7 | 0 |  | notes/56 |

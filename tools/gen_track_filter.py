@@ -7,7 +7,7 @@ Cutoff (L64..OFF..H63), + CONTOUR = Filter Reso, + COLOR = Filter Env (quantité
 paramètres de toutes les machines : p-locks, LFO, vélocité, CC 74 et 71, sauvegardés avec le son et le pattern.
 
 tools/machines/track_filter/ : track_filter.S (le filtre, appelé une fois par bloc après Volume + Dist) et tf_ui.S
-(potards, affichage, sauvegarde), liés par track_filter.ld dans dix-sept masques de sprites 35x35 libérés
+(potards, affichage, sauvegarde), liés par track_filter.ld dans seize masques de sprites 35x35 libérés
 (tools/sprites.py). Les tables sont calculées ici (TABLES) et passées à l'assembleur dans tables.inc. Les accroches
 sur l'OS sont HOOKS et POINTERS ; les quatre descripteurs remplacent les emplacements « Error » 1 à 4 (DESCRIPTORS).
 Chaque écriture porte ses octets d'origine, vérifiés sur le MAIN OS officiel.
@@ -53,8 +53,7 @@ CAVES = {
     ".tf_post": 0x4014ab5c, ".tf_track": 0x4014b85c, ".tf_kern": 0x4014d74c, ".tf_coef1": 0x401542f8,
     ".tf_coef2": 0x401548b4, ".tf_gtab": 0x4015b8f8, ".tf_ntab": 0x4015f50c, ".tf_ktab": 0x401601fc,
     ".tf_dtab": 0x40160864, ".tf_kst": 0x40160b6c, ".tf_cst": 0x40160e6c, ".tf_knob": 0x401625bc,
-    ".tf_fmt": 0x40163fb8, ".tf_save": 0x4016616c, ".tf_load": 0x40166760,
-    ".tf_gtabh": 0x401696a0, ".tf_ntabh": 0x401699a8,
+    ".tf_fmt": 0x40163fb8, ".tf_save": 0x4016616c, ".tf_load": 0x40166760, ".tf_gtabh": 0x4016aa28,
 }
 CAVES_TG = dict(CAVES, **{".tf_side": 0x40167c50})      # avec Model-TG : le côté stéréo du Sampler (tf_side, tf_sst)
 # accroches de Model-TG que les nôtres chaînent (les mêmes sites que HOOKS) : site -> (symbole de Model-TG, -D)
@@ -144,11 +143,18 @@ def q31(x):
     return max(min(round(x * 2 ** 31), 0x7fffffff), -0x80000000)
 
 
+def q15w(x):
+    """x dans [0, 1] en mot Q15, rendu comme le long que le code en tire (le mot dans la moitié haute)."""
+    return min(max(round(x * 2 ** 15), 0), 0x7fff) << 16
+
+
+# Les tables de la réduction de la résonance (N, NH) sont en mots : les deux tiennent dans un masque. Toutes : 65 points.
+WORD_TABLES = ("TABLE_N", "TABLE_NH")
 TABLES = {
     "TABLE_G": [q31(math.tan(math.pi * cutoff_hz(256 * j) / FS) / 4) for j in range(65)],
     "TABLE_GH": [q31(math.tan(math.pi * cutoff_hz(256 * j, True) / FS) / 4) for j in range(65)],
-    "TABLE_N": [q31(reso_scale(256 * j)) for j in range(65)],
-    "TABLE_NH": [q31(reso_scale(256 * j, True)) for j in range(65)],
+    "TABLE_N": [q15w(reso_scale(256 * j)) for j in range(65)],
+    "TABLE_NH": [q15w(reso_scale(256 * j, True)) for j in range(65)],
     "TABLE_K": [q31(1 / (2 * q_of(512 * j))) for j in range(65)],
     "TABLE_D": [q31(math.exp(-1 / (BLOCK_HZ * decay_tau(512 * j)))) for j in range(65)],
 }
@@ -159,7 +165,10 @@ def tables_inc():
     for name, vals in TABLES.items():
         out.append(f".macro {name}")
         for k in range(0, len(vals), 8):
-            out.append("\t.long\t" + ", ".join(f"{v & 0xffffffff:#010x}" for v in vals[k:k + 8]))
+            if name in WORD_TABLES:
+                out.append("\t.word\t" + ", ".join(f"{v >> 16:#06x}" for v in vals[k:k + 8]))
+            else:
+                out.append("\t.long\t" + ", ".join(f"{v & 0xffffffff:#010x}" for v in vals[k:k + 8]))
         out.append(".endm")
     return "\n".join(out) + "\n"
 
@@ -270,7 +279,7 @@ def build_tweak(stock, mtg=None, tid=None):
             "Corrige au passage les p-locks des paramètres k >= 23 dans le pattern (ils revenaient sur LFO Speed).",
             "Au centre, la piste n'est pas touchée (bit pour bit) ; environ 640 instructions par bloc et par piste "
             "filtrée (0,6 % d'un bloc).",
-            f"Code, tables et état dans dix-sept masques de sprites 35x35 libérés (tools/sprites.py) : {total} o. "
+            f"Code, tables et état dans seize masques de sprites 35x35 libérés (tools/sprites.py) : {total} o. "
             "Généré par tools/gen_track_filter.py, notes/47.",
         ],
         "device": "Model:Cycles",
@@ -282,7 +291,7 @@ def build_tweak(stock, mtg=None, tid=None):
     }
     if mtg:
         tweak["description"][-1] = (
-            f"Code, tables et état dans dix-huit masques de sprites 35x35 libérés (tools/sprites.py) : {total} o. "
+            f"Code, tables et état dans dix-sept masques de sprites 35x35 libérés (tools/sprites.py) : {total} o. "
             "Généré par tools/gen_track_filter.py, notes/47.")
         tweak["description"] += [
             f"Version par-dessus {mtg['id']} (notes/47 §11), qui n'a plus de filtre par piste (MC_PATCHES de "

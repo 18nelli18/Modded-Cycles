@@ -439,7 +439,7 @@ combinées, ci-dessous.
 | `6ch-usbup,model-tg-st,acid-tg,trig-hold,arp,tempo-max,boot-anim` | `e856ae147380584717f5c95d92280a9bb3a8441f4addd8a199fd6d78d9d8b289` |
 | `6ch-usbup,model-tg-st,sample-preview-st,acid-tg,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim` | `b7a569869784411fecb45a6198b28e0acfcf01c4167ff7845d860f6dacec76bd` |
 | `6ch-usbup,acid,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim` | `6fe2cf2ba1450f92f7e2e91e2403fd2a817bae7df2cfd2eb9fcfa72392636d56` |
-| `6ch-usbup,acid,track-filter,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim` | `7476aa2ec2a67bdfc06c081fbbad7d97e7a5cb4e1c7c0d5b8ee1da1c0d076006` |
+| `6ch-usbup,acid,track-filter,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim` | `9095dc52db76c34e99dbefb08e550b6888bc9cfad6a09a14040686df67aa5b06` |
 
 ACID avec MACRO et les moteurs du Syntakt ([note 54 §11](notes/54-machine-acid.md)) : `tools/gen_acid_combos.py`
 produit `25-macro-acid.json` et `32-macro-acid-tg.json` (MACRO puis ACID), et `24-syntakt-<moteurs>[-macro]-acid.json`
@@ -465,7 +465,7 @@ python3 tools/emu/test_acid_combos.py --cycles model-cycles_OS1.13.syx --syntakt
 | `syntakt-sd-cp-toy-bits-swarm-macro-acid` | `31803df3f7ac5e080a855798b3452f9e78928cc96d2b84ef91d8f3db0a55b6b9` |
 | `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm-macro-acid` | `49453acf5ff01b30ae3b65721efc332d25581a7eb9bdc613fa90f6ca38f131c4` |
 | `6ch-usbup,model-tg-st,sample-preview-st,syntakt-tg-sd-cp-toy-bits-swarm-macro-acid,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim` | `d81f2075823dad9c8b7e19d36cd384ad1e4d57b8c710a2d9808257b798e20ea5` |
-| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm-macro-acid,track-filter,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim` | `91754982f57d280209fe630ac137829e17ddda24758a71973fed8740e97bef2f` |
+| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm-macro-acid,track-filter,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim` | `c1ac0e7a1c1934f3d7bd029d5e6bdde4d42814284ed4cd8d374c678c55454bc6` |
 
 ### Navigateur sur plusieurs lignes
 
@@ -568,11 +568,11 @@ python3 tools/emu/test_midi_thru.py --cycles model-cycles_OS1.13.syx \
 
 `tweaks/model-cycles_OS1.13/48-track-filter.json` est produit par `tools/gen_track_filter.py` : le filtre (`track_filter.S`), les
 potards, l'affichage et la sauvegarde (`tf_ui.S`) sont assemblés depuis `tools/machines/track_filter/` et liés par
-`track_filter.ld` dans dix-sept masques de sprites 35×35 libérés (3 571 o) ; les tables sont calculées par le générateur (course du
+`track_filter.ld` dans seize masques de sprites 35×35 libérés (3 333 o) ; les tables sont calculées par le générateur (course du
 filtre master de Model-TG depuis la v4, [note 47 §13](notes/47-filtre-piste.md)). Quatre
 paramètres de toutes les machines sur les descripteurs « Error » 1 à 4, accroche après Volume + Dist ([note 47](notes/47-filtre-piste.md)).
 Le même script écrit `48-track-filter-tg.json` et `48-track-filter-tg-st.json`, le filtre par-dessus `model-tg` ou
-`model-tg-st` (sans son filtre de piste) : sauvegarde chaînée avec celle de Model-TG, côté stéréo du Sampler filtré, dix-huit
+`model-tg-st` (sans son filtre de piste) : sauvegarde chaînée avec celle de Model-TG, côté stéréo du Sampler filtré, dix-sept
 masques ([note 47 §11](notes/47-filtre-piste.md)). La preuve fait tourner la vraie boucle des voix et le vrai site de l'accroche, l'OS sans
 le filtre à côté, puis l'interface et la sauvegarde fonction par fonction :
 ```sh
@@ -586,10 +586,10 @@ python3 tools/emu/test_track_filter.py --cycles model-cycles_OS1.13.syx [--quick
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `track-filter` | `07983dfd5acc1c5c62f2638ef3fdc4a38fc7a0b7d2391b807cacb933a4303c6a` |
-| `6ch-usbup,track-filter` | `9707f1aab5cd51c6a4eb7eadaf7ca247f03905a27bdfea74cd64f13030f9ef89` |
-| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,track-filter` | `46aeffdce6a6bb83798ff6e1ca6f3c7dac645cebd81d1476be6497b9e2607013` |
-| `macro,track-filter` | `9e35e2537abd74412292bfa83418086d2022dfe9455a99887c7c9311be9d8b0f` |
+| `track-filter` | `2e45768f092b75e0aff9d17703ad7980efe5bc6c0ee1d818b89ca9590e53446f` |
+| `6ch-usbup,track-filter` | `c6bd2cde4c4060f4040a58949b471505dfd880a23526794cb4c80026bbbf9813` |
+| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,track-filter` | `2fefda20f0aa788c271f478d2829c698237e841aba6a71e6ec861822c719e412` |
+| `macro,track-filter` | `ae95a9a96b9f1c6706e85b508ca7493937e0845261cc9e67549f3a1911581761` |
 
 ### LFO 2, 3, 4 (d'après DavidCaruso)
 

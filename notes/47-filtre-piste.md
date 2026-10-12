@@ -34,7 +34,7 @@ message du Discord relayé par Maxime (12/10/2026, §13).
 - **Au centre, la piste n'est pas touchée, bit pour bit** (prouvé sur le vrai code, avec les autres mods).
 - Corrige au passage la sauvegarde des **p-locks des paramètres k ≥ 23** dans le pattern : l'OS d'origine les rangeait
   sur LFO Speed, LFO Multiplier… ou les perdait (§4.3).
-- Place : 3 571 o de code, tables et état dans **dix-sept masques de sprites 35×35** libérés (§6). Coût : §9.
+- Place : 3 333 o de code, tables et état dans **seize masques de sprites 35×35** libérés (§6). Coût : §9.
 - **Avec Model-TG** (étape 2, §11) : le filtre de piste de Model-TG est retiré, ce filtre prend sa place (versions
   `48-track-filter-tg*.json`), côté stéréo du Sampler compris. Expérimental avec Model-TG.
 
@@ -218,7 +218,7 @@ vitesse de sa loi, sans oscillation entretenue (§8).
 
 Au centre exact (C = 0x4000), la piste reste telle quelle et l'état est oublié ; l'enveloppe continue de tourner.
 
-## 6. Place : dix-sept masques 35×35 `[FAIT]`
+## 6. Place : seize masques 35×35 `[FAIT]`
 
 Dix-neuf sprites 35×35 ont des masques identiques de 280 o (35 colonnes opaques, `ff ff ff ff e0 00 00 00` par ligne).
 On garde celui de `0x4014a660` ; `tools/sprites.py` les déclare (`SHARED_35`) et chaque masque utilisé est redirigé
@@ -229,18 +229,19 @@ On garde celui de `0x4014a660` ; `tools/sprites.py` les déclare (`SHARED_35`) e
 | `.tf_post` | `0x4014ab5c` | 152 | accroche H3, boucle des 6 pistes |
 | `.tf_track` | `0x4014b85c` | 178 | enveloppe, son arrivée près du centre, clé des coefficients |
 | `.tf_kern` | `0x4014d74c` | 164 | départ, repos, boucle des 32 trames |
-| `.tf_coef1` | `0x401542f8` | 184 | index, tables du côté, G, résonance, K ; `tf_interp` |
+| `.tf_coef1` | `0x401542f8` | 206 | index, tables du côté, G, résonance, K ; `tf_interp`, `tf_interpw` (tables en mots) |
 | `.tf_coef2` | `0x401548b4` | 206 | réciproque, b1 b2 c2 a3, gx hl hb |
-| `.tf_gtab` … `.tf_dtab` | `0x4015b8f8`, `0x4015f50c`, `0x401601fc`, `0x40160864` | 4 × 260 | tables |
+| `.tf_gtab` … `.tf_dtab` | `0x4015b8f8`, `0x4015f50c`, `0x401601fc`, `0x40160864` | 4 × 260 | tables (`.tf_ntab` : les réductions de la résonance des deux côtés, 2 × 65 mots) |
 | `.tf_kst` | `0x40160b6c` | 216 | état et coefficients, 6 × 36 o |
 | `.tf_cst` | `0x40160e6c` | 256 | commande, 6 × 20 o, `tf_trig`, `tf_ptab` |
 | `.tf_knob` | `0x401625bc` | 136 | `tf_knob`, `tf_objs` |
 | `.tf_fmt` | `0x40163fb8` | 147 | `tf_fmt_cut`, chaînes |
 | `.tf_save` | `0x4016616c` | 164 | `tf_save1/2`, `tf_save_post` |
 | `.tf_load` | `0x40166760` | 208 | `tf_load`, `tf_conv`, `tf_boot` |
-| `.tf_gtabh`, `.tf_ntabh` | `0x401696a0`, `0x401699a8` | 2 × 260 | tables du passe-haut (quatrième version, §13) |
+| `.tf_gtabh` | `0x4016aa28` | 260 | G du passe-haut (quatrième version, §13) |
 
-Encore libre : `0x4016aa28` (`0x40167c50` est `tf_side` avec Model-TG, §11). L'état (`.data`) est écrit dans l'image avec
+Plus aucun masque 35×35 libre : `0x40167c50` est `tf_side` avec Model-TG (§11), `0x401696a0` et `0x401699a8` sont à la
+seconde version de Chord Keys (PR #87, §13.2). L'état (`.data`) est écrit dans l'image avec
 ses valeurs de départ : rien n'efface ces zones au démarrage.
 
 ## 7. Le tweak
@@ -536,9 +537,12 @@ descendait de 19,3 à 7,7 kHz (plus d'une octave), la nouvelle de 20 à 15,7 kHz
 change : le filtre entre en fondu (w, §1) à la fréquence du premier pas, et l'OS fait glisser les potards (mots
 lissés, §2). L'enveloppe arrive toujours sur les 8 premiers pas (§12).
 
-Code : deux tables de plus (G et réduction de la résonance du passe-haut, 260 o chacune) dans les masques de réserve
-`0x401696a0` et `0x401699a8` ; `tf_coef` prend les tables du côté (+22 o). 3 571 o dans dix-sept masques seul,
-3 781 o dans dix-huit avec Model-TG.
+Code : deux tables de plus, G et réduction de la résonance du passe-haut. Les deux masques de réserve `0x401696a0` et
+`0x401699a8` sont pris par la seconde version de Chord Keys (PR #87, poussée avant celle-ci) : G du passe-haut (65
+longs) va dans le dernier masque libre, `0x4016aa28`, et les deux tables de réduction de la résonance passent en mots
+Q15 (2 × 130 o) dans le masque de l'ancienne (`tf_interpw` les lit, +22 o ; à 2^-15 près, Q change de moins de
+0,02 %). `tf_coef` prend les tables du côté (+22 o). 3 333 o dans seize masques seul, 3 543 o dans dix-sept avec
+Model-TG.
 
 **Ce qui ne change pas.** La résonance de la troisième version (§12), déjà bien plus forte que celle de Model-TG à
 chaque position du potard (Q 7 à la moitié contre 1, 870 en haut contre 10), et l'enveloppe. `[HYP]` Le message du
