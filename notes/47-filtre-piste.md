@@ -293,14 +293,15 @@ Instructions exécutées dans le code du filtre, par bloc, 6 pistes ; part d'un 
 | 6 pistes au centre (OFF) | 350 | 0,32 % |
 | 1 piste filtrée, 5 au centre | 998 | 0,92 % |
 | 6 pistes filtrées, réglages fixes | 4 247 | 3,9 % |
-| 6 pistes filtrées, enveloppe en cours | 4 979 (max 5 144) | 4,8 % |
-| 6 pistes filtrées, réglages changés à chaque bloc | 5 226 (max 5 258) | 4,9 % |
+| 6 pistes filtrées, enveloppe en cours | 5 023 (max 5 198) | 4,8 % |
+| 6 pistes filtrées, réglages changés à chaque bloc | 5 293 (max 5 319) | 4,9 % |
 | 6 pistes filtrées, notes finies (Decay 10) | 4 022 | 3,7 % |
 
-Une piste filtrée coûte 648 instructions de plus qu'au centre (0,6 % d'un bloc), jusqu'à 818 (0,76 %) quand les
-coefficients sont recalculés à chaque bloc (enveloppe, LFO, potard qui tourne). Pour comparer, la charge lourde
-mesurée en note 36 (moteurs Syntakt, Model-TG, régulateur) prend environ 44 % d'un bloc : six pistes filtrées et
-modulées y ajoutent moins de 5 %, borne vérifiée par l'essai.
+Une piste filtrée coûte 648 instructions de plus qu'au centre (0,6 % d'un bloc), jusqu'à 828 (0,77 %) quand les
+coefficients sont recalculés à chaque bloc (enveloppe, LFO, potard qui tourne ; 10 de plus qu'en troisième version : les
+tables du côté et la lecture en mots, §13.2). Pour comparer, la charge lourde mesurée en note 36 (moteurs Syntakt,
+Model-TG, régulateur) prend environ 44 % d'un bloc : six pistes filtrées et modulées y ajoutent moins de 5 %, borne
+vérifiée par l'essai.
 
 ## 10. Sur la machine
 
@@ -410,7 +411,8 @@ les essais du §8 sur la boucle des voix de Model-TG (gains du mixeur et Attack 
 Tous les essais du §8 donnent les mêmes résultats sur la boucle des voix de Model-TG : au centre, les 6 pistes
 identiques bit pour bit à Model-TG sans le filtre (Volume + Dist 64 et 108) ; écarts au modèle flottant, lois,
 résonance au maximum, potards, affichage, tables, sauvegarde, p-locks comme seul ; coût : 416 instructions par bloc
-pour 6 pistes au centre, 1 068 pour une piste filtrée, 5 348 au pire (6 pistes modulées, 4,9 % d'un bloc). Faits avec
+pour 6 pistes au centre, 1 068 pour une piste filtrée, 5 409 au pire (6 pistes modulées, 5,0 % d'un bloc, juste sous
+la borne de 5 % de l'essai ; 5 348 en troisième version). Faits avec
 `model-tg,6ch-usbup,sample-preview,arp,trig-hold,tempo-max,boot-anim,level-pan-values,trigless-dim,multiline-browser`
 (complet), puis avec `model-tg-st` et `syntakt-tg-sd-cp-toy-bits-swarm` (complet), `macro-tg` et
 `syntakt-tg-sd-cp-toy-bits-swarm-macro` (`--quick`), chacun avec `sample-preview-st` et les mêmes autres mods. Chord
@@ -554,6 +556,14 @@ ne gardons pas de marge sous la pleine échelle comme Model-TG : un son fort à 
 `tools/emu/test_track_filter.py` (lois par côté, `TABLE_GH` et `TABLE_NH` dans le modèle) : 170 réglages, fréquence à
 0,01 cent près de la nouvelle loi, Q à 0,39 % près ; extinction à L39 (951 Hz, Q 805) et H54 (2,7 kHz, Q 952) ; le
 reste comme au §12.
+
+Après la fusion de main (1.54, 12/10/2026) et le déplacement des tables (§13.2), sur la branche fusionnée : essai
+complet seul et avec `model-tg,6ch-usbup,sample-preview,arp,trig-hold,tempo-max,boot-anim,level-pan-values,trigless-dim,
+multiline-browser` (coût remesuré, §9 et §11.3) ; `--quick` avec `model-tg-st`, `syntakt-tg-sd-cp-toy-bits-swarm-macro`,
+`sample-preview-st`, `6ch-usbup`, `arp`, `trig-hold`, `tempo-max`, `boot-anim`, et sans Model-TG avec
+`syntakt-sd-cp-toy-bits-swarm-macro-acid` (avec `6ch-usbup`, `arp`, `trig-hold`, `tempo-max`, `boot-anim`,
+`latching-mute`, `trig-preview`, `browser-scroll`) : TOUT OK. Test du flasher sur les vrais OS : les 1 151 combinaisons
+de REF_MAINOS construites, TOUT OK.
 
 ### 13.4 Textes d'autres mods `[FAIT]`
 
