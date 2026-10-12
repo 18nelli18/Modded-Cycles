@@ -2,12 +2,17 @@
 | ml_store_load(dest,pathA,pathB,recordA,recordB,slot,pattern) -> 0/1/2.
 | Dest = staging privé 1584, records = 1616 chacun, alignés et disjoints.
 | Jamais de publication dans une banque active ni d'E/S en IRQ.
+    .ifdef ML_STORAGE3
+    .equ ML_DATA_BYTES,4992
+    .equ ML_RECORD_BYTES,5024
+    .else
     .ifdef ML_STORAGE2
     .equ ML_DATA_BYTES,4896
     .equ ML_RECORD_BYTES,4928
     .else
     .equ ML_DATA_BYTES,1584
     .equ ML_RECORD_BYTES,1616
+    .endif
     .endif
     .text
     .globl ml_store_load

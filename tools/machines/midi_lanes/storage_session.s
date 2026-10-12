@@ -2,12 +2,17 @@
 | ctx44 = contexte storage_initial, tampons privés et chemins >=35 octets.
 | save(ctx,id,slot,pattern,bank) / load(ctx,id,slot,pattern) -> bool/copie.
 | load remplit ctx.payload privé ; publication musicale séparée obligatoire.
+    .ifdef ML_STORAGE3
+    .equ ML_DATA_BYTES,4992
+    .equ ML_RECORD_BYTES,5024
+    .else
     .ifdef ML_STORAGE2
     .equ ML_DATA_BYTES,4896
     .equ ML_RECORD_BYTES,4928
     .else
     .equ ML_DATA_BYTES,1584
     .equ ML_RECORD_BYTES,1616
+    .endif
     .endif
     .text
     .globl ml_store_session_save,ml_store_session_load

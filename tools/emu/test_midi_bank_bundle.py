@@ -26,6 +26,7 @@ def main():
     ap.add_argument('--stereo-usb',action='store_true')
     ap.add_argument('--cache-blocks',type=int,choices=(6,7),default=6)
     ap.add_argument('--lfo-cc',action='store_true')
+    ap.add_argument('--audio-storage',action='store_true')
     ap.add_argument('--extended-storage',action='store_true',help='MBK2 avec moteurs compressés, ACID et MACRO conservés')
     ap.add_argument('--storage',action='store_true',help='Raccordement stockage prototype non publié')
     ap.add_argument('--conditions',action='store_true')
@@ -41,7 +42,7 @@ def main():
             return cat
         gen.build.load_catalog=dense_catalog
     stock=gen.main_os_from_syx(args.cycles)
-    tweak,chosen,image=gen.generate(stock,args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display,not args.stereo_usb,args.cache_blocks,args.lfo_cc,args.storage,args.retrigger,args.conditions,args.extended_storage)
+    tweak,chosen,image=gen.generate(stock,args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display,not args.stereo_usb,args.cache_blocks,args.lfo_cc,args.storage,args.retrigger,args.conditions,args.extended_storage,args.audio_storage)
     if args.storage or args.retrigger:
         import build
         assert build.payload_image(tweak,bytes.fromhex(tweak['append']['parts'][0]['hex']))==bytes.fromhex(tweak['append']['compressed_hex'])

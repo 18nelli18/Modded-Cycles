@@ -2,12 +2,17 @@
 | ml_store_snapshot(pattern,out,1584). L'appelant UI sérialise les éditions
 | et changements de pattern ; les IRQ ne doivent que lire cette banque.
 | Source/destination alignées, disjointes, sans débordement ; non raccordé.
+    .ifdef ML_STORAGE3
+    .equ ML_DATA_BYTES,4992
+    .equ ML_RECORD_BYTES,5024
+    .else
     .ifdef ML_STORAGE2
     .equ ML_DATA_BYTES,4896
     .equ ML_RECORD_BYTES,4928
     .else
     .equ ML_DATA_BYTES,1584
     .equ ML_RECORD_BYTES,1616
+    .endif
     .endif
     .text
     .globl ml_store_snapshot

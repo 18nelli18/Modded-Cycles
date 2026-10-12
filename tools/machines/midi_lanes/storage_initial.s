@@ -1,12 +1,17 @@
 | Première copie A uniquement après deux absences vérifiées. Prototype UI.
 | ctx44 : ctx commit32 + parent validé, nomA, nomB. Ne remplace jamais B.
 | Garde I/O installée dès boot, dossiers/chemins validés, un seul propriétaire.
+    .ifdef ML_STORAGE3
+    .equ ML_DATA_BYTES,4992
+    .equ ML_RECORD_BYTES,5024
+    .else
     .ifdef ML_STORAGE2
     .equ ML_DATA_BYTES,4896
     .equ ML_RECORD_BYTES,4928
     .else
     .equ ML_DATA_BYTES,1584
     .equ ML_RECORD_BYTES,1616
+    .endif
     .endif
     .text
     .globl ml_store_initial

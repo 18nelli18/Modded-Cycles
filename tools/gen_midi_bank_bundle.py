@@ -35,10 +35,10 @@ IDS=('6ch-usbup','model-tg-st','sample-preview-st','trig-hold','arp','tempo-max'
      'scale-gen-st-queued','lfo-secondary','scramble-st-gen-queued')
 
 
-def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False):
+def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False):
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[]
-        for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (REPEAT_SOURCES if repeat else ()) + (CONDITION_SOURCES if conditions else ()):
+        for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (('storage_audio_lfo',) if audio_storage else ()) + (REPEAT_SOURCES if repeat else ()) + (CONDITION_SOURCES if conditions else ()):
             if name == 'banks' and not pattern_banks:
                 continue
             if name == 'stock_display' and not stock_display:
@@ -50,6 +50,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
                             *(['--defsym','ML_LFO_CC=1'] if lfo_cc else []),
                             *(['--defsym','ML_STORAGE=1'] if storage else []),
                             *(['--defsym','ML_STORAGE2=1'] if extended_storage else []),
+                            *(['--defsym','ML_STORAGE3=1'] if audio_storage else []),
                             *(['--defsym','ML_REPEAT=1'] if repeat else []),
                             *(['--defsym','ML_CHANCE=1','--defsym','ML_CONDITIONS=1','--defsym','ML_CONDITION_COMPACT=1'] if conditions else []),
                             '-o',str(obj),str(ROOT/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
@@ -63,6 +64,13 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
                 asm=p/(name+'.s');asm.write_text(body)
                 obj=p/(name+'.o');objects.append(str(obj))
                 subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_STORAGE2=1'] if extended_storage else []),'-o',str(obj),str(asm)],check=True)
+        if audio_storage:
+            legacy=(ROOT/'tools/machines/midi_lanes/storage_codec.s').read_text()
+            for name in ('ml_record_crc','ml_record_encode','ml_record_decode','ml_record_select'):
+                legacy=legacy.replace(name,name+'_v2')
+            asm=p/'codec_v2.s';asm.write_text(legacy)
+            obj=p/'codec_v2.o';objects.append(str(obj))
+            subprocess.run([cross+'as','-march=cfv4e','--defsym','ML_STORAGE2=1','-o',str(obj),str(asm)],check=True)
         # Petits fragments à sauts absolus : aucun masque libre ne dépasse280o.
         raw=(ROOT/'tools/machines/midi_thru/merge.s').read_text()
         inverse={'ne':'eq','eq':'ne','hi':'ls','ls':'hi','cc':'cs','cs':'cc','pl':'mi','mi':'pl','ge':'lt','lt':'ge'}
@@ -128,6 +136,8 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
         if lfo_cc:
             lf=build.load_catalog()['model-cycles_OS1.13'][1]['lfo-secondary']['symbols']
             bindings+='\nMLCC_audio_next = '+lf['lf2_dispatch']+';'
+            if audio_storage:
+                bindings+='\nLF2_context = '+lf['lf2_context']+';\nLF2_prepare = '+lf['lf2_prepare']+';'
         # Même source que l'aperçu natif ; garder ses branches locales hors des masques.
         ui=p/'genie_stock.s'
         body=(ROOT/'tools/machines/seq_gen/stock_ui.s').read_text()
@@ -184,7 +194,8 @@ SECTIONS {{
         return *blobs,fragments,symbols(cross,elf)
 
 
-def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False):
+def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False):
+    if audio_storage:assert extended_storage
     if extended_storage:assert storage and repeat and lfo_cc
     if conditions:assert repeat, 'conditions requièrent les réglages privés'
     if storage:assert pattern_banks and lfo_cc, 'prototype stockage requiert banques et compression LFO CC'
@@ -226,7 +237,7 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     needle=struct.pack('>I',loader)
     assert [build.BASE+i for i in range(0,len(stock)-3,2) if stock[i:i+4]==needle]==[ptr]
     merge_masks=[va for va in free if va!=loader]
-    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat,conditions,extended_storage)
+    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat,conditions,extended_storage,audio_storage)
     if lfo_cc:
         import aplib_grow
         if storage or repeat:

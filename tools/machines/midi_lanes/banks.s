@@ -50,7 +50,11 @@ ml_bank_ui_sync:
     tstl %a3
     bne .Lsync_publish
     .ifdef ML_STORAGE2
+    .ifdef ML_STORAGE3
+    pea 4992
+    .else
     pea 4896
+    .endif
     .else
     pea 1584
     .endif
@@ -81,6 +85,9 @@ ml_bank_ui_sync:
     jsr mlp_redraw
     addql #4,%sp
 .Lsync_ready:
+    .ifdef ML_STORAGE3
+    jsr ml_audio_lfo_sync
+    .endif
     moveq #1,%d2
     bra .Lsync_out
 .Lsync_fail:

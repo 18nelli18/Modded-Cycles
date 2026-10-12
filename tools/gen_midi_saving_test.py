@@ -41,7 +41,7 @@ FR=('Sauvegarde expérimentale des patterns B. MACRO exclu ; ACID et Model-TG co
 def main():
  ap=argparse.ArgumentParser(description=__doc__)
  for name in ('base-page','output-dir','cycles','syntakt','model-tg'):ap.add_argument('--'+name,required=True)
- ap.add_argument('--engines',choices=('both','acid','macro'),default='both');ap.add_argument('--cross',default='m68k-elf-');a=ap.parse_args();base=pathlib.Path(a.base_page);out=pathlib.Path(a.output_dir)
+ ap.add_argument('--audio-lfo',action='store_true');ap.add_argument('--engines',choices=('both','acid','macro'),default='both');ap.add_argument('--cross',default='m68k-elf-');a=ap.parse_args();base=pathlib.Path(a.base_page);out=pathlib.Path(a.output_dir)
  if a.engines!='both':
   bank.IDS=tuple(x.replace('syntakt-tg-sd-cp-toy-bits-swarm-macro-acid','syntakt-tg-sd-cp-toy-bits-swarm-'+a.engines) for x in bank.IDS)
  excluded=[] if a.engines=='both' else ['macro' if a.engines=='acid' else 'acid']
@@ -56,10 +56,15 @@ def main():
     tweak['append']['compress_depth']=32
   return catalog
  build.load_catalog=saving_catalog
+ if a.audio_lfo:
+  en=en.replace('Experimental B-side pattern saving.', 'Experimental pattern saving for B-side notes and A/B LFO settings.').replace('Audio-side LFO2 saving is not included.', 'Audio-side LFO2 settings are also stored per pattern. Audio-side LFO1 keeps its normal stock saving. Existing MBK2 MIDI records are accepted; their audio LFO2 starts disabled.')
+  fr=fr.replace('La sauvegarde du LFO2 audio reste absente.', 'Les réglages LFO2 audio sont aussi sauvegardés par pattern. Le LFO1 audio garde sa sauvegarde native. Les fichiers MBK2 précédents sont lus avec LFO2 audio désactivé.')
+  global STAMP
+  STAMP='2026-10-12-test-3-a-b-lfo-saving'
  stock=bank.main_os_from_syx(a.cycles)
- tweak,chosen,image=bank.generate(stock,a.syntakt,a.model_tg,a.cross,True,True,True,8,True,True,True,True,True)
+ tweak,chosen,image=bank.generate(stock,a.syntakt,a.model_tg,a.cross,True,True,True,8,True,True,True,True,True,a.audio_lfo)
  tweak['requires']=[x for x in tweak['requires'] if x!='6ch-usbup'];tweak['status']='experimental'
- tweak['name']='Banque MIDI OUT — sauvegarde MBK2 expérimentale'
+ tweak['name']='Banque MIDI OUT — sauvegarde expérimentale'
  tweak['description']=[fr]
  without=[t for t in chosen if t['id']!='6ch-usbup'];alternate,_=build.apply_writes(stock,without+[tweak]);alternate+=image[len(stock):]
  refs={'+'.join([name for name in bank.IDS if name in {t['id'] for t in ts}]+[tweak['id']]):hashlib.sha256(img).hexdigest() for ts,img in ((chosen,image),(without,alternate))}
@@ -69,7 +74,7 @@ def main():
  engine_ref={'w':hashlib.sha256(ref_mainos.writes_bytes(engine)).hexdigest(),'p':hashlib.sha256(build.payload_image(engine,build.payload_runtime(engine,stock,syntakt.dsp_image(a.syntakt)))).hexdigest()}
  bundle=(base/'bundle.js').read_text();bundle='const savingOriginalEngineRef = window.MCFlasherApp.REF_MODS['+json.dumps(engine['id'])+'].p;\n'+bundle;bundle+='\n{ const engine=window.MC_TWEAKS.tweaks.find(t=>t.id==='+json.dumps(engine['id'])+'); const ref=window.MCFlasherApp.REF_MODS[engine.id], dense='+json.dumps(engine_ref['p'])+'; const enabled=()=>!!document.getElementById("feat-midi-bank-bundle")?.checked; Object.defineProperty(engine.append,"compress_depth",{get:()=>enabled()?32:undefined}); Object.defineProperty(ref,"p",{get:()=>enabled()?dense:savingOriginalEngineRef}); }\n';bundle=replace_json(bundle,'window.MC_BUNDLE_IDS = ',list(bank.IDS)+[tweak['id']])
  bundle=replace_json(bundle,'window.MC_TWEAKS.tweaks.push(',tweak)
- bundle=replace_json(bundle,'const bankTexts = ',{'en':{'label':'MIDI OUT Bank — Pattern Saving Test','short':'Saves notes, locks and MIDI LFO settings by pattern. Experimental.','desc':en},'fr':{'label':'Banque MIDI OUT — test sauvegarde','short':'Notes, locks et LFO MIDI sauvegardés par pattern. Expérimental.','desc':fr}})
+ bundle=replace_json(bundle,'const bankTexts = ',{'en':{'label':'MIDI OUT Bank — Pattern Saving Test','short':('Saves notes, locks and A/B LFO settings by pattern. Experimental.' if a.audio_lfo else 'Saves notes, locks and MIDI LFO settings by pattern. Experimental.'),'desc':en},'fr':{'label':'Banque MIDI OUT — test sauvegarde','short':('Notes, locks et LFO audio/MIDI sauvegardés par pattern. Expérimental.' if a.audio_lfo else 'Notes, locks et LFO MIDI sauvegardés par pattern. Expérimental.'),'desc':fr}})
  start=bundle.index('const bankFeature = ')+len('const bankFeature = ');feature,_=json.JSONDecoder().raw_decode(bundle[start:]);feature.update(status='experimental',excludes=excluded,desc=fr)
  bundle=replace_json(bundle,'const bankFeature = ',feature)
  bundle=replace_json(bundle,'Object.assign(window.MCFlasherApp.REF_MODS, ',{tweak['id']:mod,engine['id']:engine_ref});bundle=replace_json(bundle,'Object.assign(window.MCFlasherApp.REF_MAINOS, ',refs)

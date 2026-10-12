@@ -1,12 +1,17 @@
 | Restauration incrémentale UI : un seul pattern par appel.
 | step(ctx,id,slot,table384 privée vide,index) ->0 erreur,1 suite,2 terminé.
 | Le demandeur libère toute la table sur0 ; aucune publication audio ici.
+    .ifdef ML_STORAGE3
+    .equ ML_DATA_BYTES,4992
+    .equ ML_RECORD_BYTES,5024
+    .else
     .ifdef ML_STORAGE2
     .equ ML_DATA_BYTES,4896
     .equ ML_RECORD_BYTES,4928
     .else
     .equ ML_DATA_BYTES,1584
     .equ ML_RECORD_BYTES,1616
+    .endif
     .endif
     .text
     .globl ml_store_restore_step

@@ -7,7 +7,8 @@ from test_sdvintage import main_os_from_syx
 from gen_seq_gen import symbols
 
 def main():
- ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--extended',action='store_true');ap.add_argument('--tweak');a=ap.parse_args();data_size=4896 if a.extended else 1584
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--extended',action='store_true');ap.add_argument('--tweak');ap.add_argument('--audio-lfo',action='store_true');a=ap.parse_args();data_size=4992 if a.audio_lfo else (4896 if a.extended else 1584)
+ if a.audio_lfo:assert a.extended and a.tweak
  root=pathlib.Path(__file__).resolve().parents[2];cross=str(root.parent/'toolchain/bin/m68k-elf-')
  with tempfile.TemporaryDirectory() as tmp:
   p=pathlib.Path(tmp);objs=[]
@@ -29,6 +30,7 @@ def main():
   for w in tweak['writes']:
    at=0x40000400+w['off']
    if 0x40100000<=at<0x401ab750:r.u.mem_write(at,bytes.fromhex(w['new']))
+ if a.audio_lfo:r.w32(syms['LF2_context'],0) # fixture sans le tweak LFO2 natif
  if a.extended:
   def extended_call(name,*args):
    fn=r.s[name] if isinstance(name,str) else name
@@ -84,6 +86,7 @@ def main():
   if a.extended:
    data.extend(bytes((0,8,0,0,5,1,0,0))*390)
    data.extend(struct.pack('>8H',16384,9,16384,128,0,0,0,16384)*12)
+  if a.audio_lfo:data.extend(struct.pack('>8H',16384,9<<8,16384,127<<8,0,0,0,16384)*6)
   return bytes(data)
  def save(id,slot,pat,note):
   r.u.mem_write(bank,payload(note));return r.call('ml_store_session_save',ctx,id,slot,pat,bank)
@@ -91,10 +94,24 @@ def main():
   return r.call('ml_store_session_load',ctx,id,slot,pat)
  if a.extended:
   assert load(0x12345678,3,5)==3 and dirs=={'/':2} and not files
+ if a.audio_lfo:
+  r.u.mem_write(bank,payload(67))
+  assert r.call('ml_record_encode_v2',recA,4928,bank,3,4,7)==1
+  dirs['/ModdedCycles']=3;dirs['/ModdedCycles/03-12345678']=4
+  legacy='/ModdedCycles/03-12345678/SEQ-04-'
+  files[legacy+'A']=bytes(r.u.mem_read(recA,4928))
+  assert load(0x12345678,3,4)==1
+  assert bytes(r.u.mem_read(snapshot,data_size))==payload(67)
+  assert save(0x12345678,3,4,68)==1
+  assert files[legacy+'B'][:4]==b'MBK3'
+  assert load(0x12345678,3,4)==2
+  assert bytes(r.u.mem_read(snapshot,data_size))==payload(68)
+  print('ok : migration MBK2 -> MBK3 avec LFO2 audio désactivé, génération et copies A/B conservées')
+  del files[legacy+'A'];del files[legacy+'B']
  assert save(0x12345678,3,5,60)==1,log
  assert '/ModdedCycles/03-12345678' in dirs
  path='/ModdedCycles/03-12345678/SEQ-05-'
- assert files[path+'A'][:4]==(b'MBK2' if a.extended else b'MBK1') and path+'B' not in files
+ assert files[path+'A'][:4]==(b'MBK3' if a.audio_lfo else (b'MBK2' if a.extended else b'MBK1')) and path+'B' not in files
  assert save(0x12345678,3,5,72)==1
  assert struct.unpack('>I',files[path+'B'][20:24])[0]==1
  r.u.mem_write(snapshot,bytes(data_size));assert load(0x12345678,3,5)==2

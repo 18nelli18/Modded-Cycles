@@ -34,6 +34,11 @@ ml_store_bank_init:
     pea %a2@(4704)
     jsr mlcc_cfg_init
     addql #4,%sp
+    .ifdef ML_STORAGE3
+    pea %a2@(4896)
+    jsr ml_audio_lfo_init
+    addql #4,%sp
+    .endif
     bra .Lbank_init_done
 .Lbank_init_fail:
     moveq #0,%d0

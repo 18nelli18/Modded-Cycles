@@ -1,12 +1,17 @@
 | Allocation UI du contexte sidecar et de ses quatre buffers1616 privés.
 | 44 contexte + deux chemins36 + quatre buffers1616 =6580 octets.
 | Aucun accès disque ; publication du pointeur seulement après initialisation.
+    .ifdef ML_STORAGE3
+    .equ ML_DATA_BYTES,4992
+    .equ ML_RECORD_BYTES,5024
+    .else
     .ifdef ML_STORAGE2
     .equ ML_DATA_BYTES,4896
     .equ ML_RECORD_BYTES,4928
     .else
     .equ ML_DATA_BYTES,1584
     .equ ML_RECORD_BYTES,1616
+    .endif
     .endif
     .text
     .globl ml_store_prepare

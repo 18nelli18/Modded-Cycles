@@ -5,6 +5,9 @@ ml_store_ui_cancel:
     movew %sr,%d0
     andil #0x700,%d0
     bne .Lcancel_done
+    .ifdef ML_STORAGE3
+    jsr ml_audio_lfo_reset
+    .endif
     jsr mlp_keyboard_cancel
     subql #4,%sp
     movew %sr,%d0

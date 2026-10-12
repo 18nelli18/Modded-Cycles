@@ -1,12 +1,17 @@
 | Copie inactive uniquement : écriture puis relecture et comparaison intégrale.
 | ml_store_verified(path,record,scratch,1616) -> 1 si identiques.
 | Scratch privé, disjoint ; aucune publication de génération ni hook Save.
+    .ifdef ML_STORAGE3
+    .equ ML_DATA_BYTES,4992
+    .equ ML_RECORD_BYTES,5024
+    .else
     .ifdef ML_STORAGE2
     .equ ML_DATA_BYTES,4896
     .equ ML_RECORD_BYTES,4928
     .else
     .equ ML_DATA_BYTES,1584
     .equ ML_RECORD_BYTES,1616
+    .endif
     .endif
     .text
     .globl ml_store_verified

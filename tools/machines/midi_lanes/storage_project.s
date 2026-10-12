@@ -38,6 +38,12 @@ ml_store_save_notice:
     cmpl ml_store_owner_id,%d0
     bne .Lproject_done
     movel %d0,%d4
+    .ifdef ML_STORAGE3
+    jsr ml_bank_ui_sync
+    tstl %d0
+    beq .Lproject_done
+    jsr ml_audio_lfo_capture
+    .endif
     moveq #0,%d2
 .Lproject_next:
     movel %a3@(0,%d2:l:4),%d0

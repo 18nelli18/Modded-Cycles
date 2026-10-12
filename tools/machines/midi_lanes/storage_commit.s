@@ -5,12 +5,17 @@
 | Sans copie valide : refus, même si les deux lectures échouent.
 | La création initiale exige une preuve distincte d’absence, pas un booléen lecture.
 | Ne publie aucune banque, n'intercepte aucun Save, ne crée aucun dossier.
+    .ifdef ML_STORAGE3
+    .equ ML_DATA_BYTES,4992
+    .equ ML_RECORD_BYTES,5024
+    .else
     .ifdef ML_STORAGE2
     .equ ML_DATA_BYTES,4896
     .equ ML_RECORD_BYTES,4928
     .else
     .equ ML_DATA_BYTES,1584
     .equ ML_RECORD_BYTES,1616
+    .endif
     .endif
     .text
     .globl ml_store_commit

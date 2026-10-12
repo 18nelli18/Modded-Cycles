@@ -2,12 +2,17 @@
 | ml_store_read(path,staging,taille=1616) -> 1 si lecture/fermeture complètes.
 | Aucune donnée musicale active modifiée ; le décodeur valide ensuite.
 | Refuse IPL>0 avant tout appel fichier. Aucun raccordement au flasher.
+    .ifdef ML_STORAGE3
+    .equ ML_DATA_BYTES,4992
+    .equ ML_RECORD_BYTES,5024
+    .else
     .ifdef ML_STORAGE2
     .equ ML_DATA_BYTES,4896
     .equ ML_RECORD_BYTES,4928
     .else
     .equ ML_DATA_BYTES,1584
     .equ ML_RECORD_BYTES,1616
+    .endif
     .endif
     .text
     .globl ml_store_read
@@ -49,8 +54,22 @@ ml_store_read:
     addql #4,%sp
     tstl %d0
     bne .Lread_out
+    .ifdef ML_STORAGE3
+    cmpil #4928,%d3
+    bne .Lread_full
+    moveal %d2,%a0
+    movel %a0@,%d0
+    cmpil #0x4d424b32,%d0
+    bne .Lread_out
+    movel %a0@(4),%d0
+    cmpil #2,%d0
+    bne .Lread_out
+    bra .Lread_success
+.Lread_full:
+    .endif
     cmpil #ML_RECORD_BYTES,%d3
     bne .Lread_out
+.Lread_success:
     moveq #1,%d4
 .Lread_out:
     movel %d4,%d0

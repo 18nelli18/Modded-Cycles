@@ -1,6 +1,12 @@
 | Codec MBK1 ColdFire : équivalent du format C hôte, sans libc/alloc/E/S.
 | Buffers non chevauchants, alignés sur 4 ; snapshots/staging privés UI.
 | MBK2 ajoute locks retrigger/chance3120 et configurations LFO MIDI192.
+    .ifdef ML_STORAGE3
+    .equ ML_DATA_BYTES,4992
+    .equ ML_RECORD_BYTES,5024
+    .equ ML_RECORD_MAGIC,0x4d424b33
+    .equ ML_RECORD_VERSION,3
+    .else
     .ifdef ML_STORAGE2
     .equ ML_DATA_BYTES,4896
     .equ ML_RECORD_BYTES,4928
@@ -11,6 +17,7 @@
     .equ ML_RECORD_BYTES,1616
     .equ ML_RECORD_MAGIC,0x4d424b31
     .equ ML_RECORD_VERSION,1
+    .endif
     .endif
     .text
     .globl ml_record_crc,ml_record_encode,ml_record_decode
@@ -158,6 +165,40 @@ ml_record_crc:
     bpl .Lvalid_lfo_word
     subql #1,%d2
     bpl .Lvalid_lfo
+    .ifdef ML_STORAGE3
+    moveq #5,%d2
+.Lvalid_audio_lfo:
+    lea .Laudio_lfo_max,%a1
+    moveq #7,%d3
+.Lvalid_audio_word:
+    moveq #0,%d0
+    movew %a0@+,%d0
+    moveq #0,%d1
+    movew %a1@+,%d1
+    cmpil #4,%d3
+    bne .Laudio_bound
+    cmpil #0x7f00,%d0
+    beq .Laudio_enum
+.Laudio_bound:
+    cmpl %d1,%d0
+    bhi .Lvalid_bad
+    cmpil #6,%d3
+    beq .Laudio_enum
+    cmpil #4,%d3
+    beq .Laudio_enum
+    cmpil #3,%d3
+    beq .Laudio_enum
+    cmpil #1,%d3
+    bne .Laudio_next
+.Laudio_enum:
+    andil #255,%d0
+    bne .Lvalid_bad
+.Laudio_next:
+    subql #1,%d3
+    bpl .Lvalid_audio_word
+    subql #1,%d2
+    bpl .Lvalid_audio_lfo
+    .endif
     .endif
     moveq #1,%d0
     bra .Lvalid_exit
@@ -238,6 +279,10 @@ ml_record_decode:
     tstl %d0
     beq .Lenc_bad
     movel %a2@,%d0
+    .ifdef ML_STORAGE3
+    cmpil #0x4d424b32,%d0
+    beq .Ldecode_v2
+    .endif
     cmpil #ML_RECORD_MAGIC,%d0
     bne .Lenc_bad
     movel %a2@(4),%d0
@@ -271,6 +316,26 @@ ml_record_decode:
     bsr .Lcopy
     moveq #1,%d0
     bra .Lcodec_done
+    .ifdef ML_STORAGE3
+.Ldecode_v2:
+    movel %d3,%sp@-
+    movel %d2,%sp@-
+    pea 4928
+    movel %a2,%sp@-
+    movel %a3,%sp@-
+    jsr ml_record_decode_v2
+    lea %sp@(20),%sp
+    tstl %d0
+    beq .Lenc_bad
+    pea %a3@(4896)
+    jsr ml_audio_lfo_init
+    addql #4,%sp
+    moveq #1,%d0
+    bra .Lcodec_done
+    .section .rodata
+.Laudio_lfo_max: .word 32767,5888,32767,8192,1536,32767,1024,32767
+    .text
+    .endif
 .Lcopy:
     movel #(ML_DATA_BYTES/4-1),%d0
 .Lcopy_loop:

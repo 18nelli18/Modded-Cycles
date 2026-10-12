@@ -23,7 +23,11 @@ ml_prepare:
     movel %d0,ml_preparing
     .ifdef ML_PATTERN_BANKS
     .ifdef ML_STORAGE2
+    .ifdef ML_STORAGE3
+    pea 12324
+    .else
     pea 12132                   | contexte/table + deux banques4896
+    .endif
     .else
     pea 3924                    | contexte + table 96 pointeurs + banque vide
     .endif
@@ -57,10 +61,18 @@ ml_prepare:
     pea %a2@(2340)
     jsr ml_store_bank_init
     addql #4,%sp
+    .ifdef ML_STORAGE3
+    pea %a2@(7332)
+    .else
     pea %a2@(7236)
+    .endif
     jsr ml_store_bank_init
     addql #4,%sp
+    .ifdef ML_STORAGE3
+    lea.l %a2@(7332),%a0
+    .else
     lea.l %a2@(7236),%a0
+    .endif
     movel %a0,ml_bank_empty
     lea.l %a2@(1956),%a0
     lea.l %a2@(2340),%a1
