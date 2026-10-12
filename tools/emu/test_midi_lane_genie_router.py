@@ -82,6 +82,16 @@ def main():
     for addr in (s['ml_key_next'],s['ML_original_key']):
         r.stubs[addr]=lambda a:r.r32(a[0]+12)
         r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
+    # Le menu B reçoit aussi les événements bruts sans passer par ml_key.
+    addr=s['ml_bank_ui_sync'];r.stubs[addr]=lambda a:1
+    r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
+    r.event(13,1,90);r.call('mlp_menu_key',0x93075000,EVENT)
+    assert r.r32(s['ml_genie_settings'])==1
+    r.event(15,1,91);assert r.call('mlp_menu_key',0x93075000,EVENT)==1
+    assert r.r32(s['SG_obj']) and r.new_count==2
+    r.w32(s['SG_obj'],0)
+    r.event(13,0,92);r.call('mlp_menu_key',0x93075000,EVENT)
+    assert r.r32(s['ml_genie_settings'])==0
     r.w32(s['TG_set_held'],0)
     r.event(3,1,100);assert r.call('ml_key',EVENT)==3
     r.event(15,1,101);assert r.call('ml_key',EVENT)==15
@@ -94,7 +104,7 @@ def main():
     r.w32(s['mlp_func'],0)
     r.event(15,1,104)
     for _ in range(3):assert r.call('ml_key',EVENT)==0
-    obj=r.r32(int(sg['sg_obj'],16));assert obj and r.new_count==2
+    obj=r.r32(int(sg['sg_obj'],16));assert obj and r.new_count==4
     r.event(15,0,105)
     for _ in range(3):assert r.call('ml_key',EVENT)==0
     r.event(13,0,106);r.call('ml_key',EVENT)
@@ -108,8 +118,7 @@ def main():
     assert bytes(r.u.mem_read(RAW,722))==audio
     # Le callback supérieur route FUNC+pad vers B et synchronise le release.
     redraw=[]
-    for addr,fn in ((s['ml_bank_ui_sync'],lambda a:1),
-                    (0x400760ba,lambda a:redraw.append(a[0]) or 0),
+    for addr,fn in ((0x400760ba,lambda a:redraw.append(a[0]) or 0),
                     (0x40013904,lambda a:(_ for _ in ()).throw(AssertionError('mute audio')))):
         r.stubs[addr]=fn;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
     r.event(1,1);r.call('ml_genie_menu_key',obj,EVENT)
@@ -139,6 +148,7 @@ def main():
     print('ok : six voies B isolées, Generate/Undo arrêtés et en lecture, frontière de voie, annulation après édition, SR conservé')
     print('ok : algorithmes Genie natifs, Euclide 4/16, vélocité positive 80..110 ; aucune donnée audio modifiée')
     print('ok : ouverture/menu natifs, clic Generate/Undo vers B ; getter de touche synthétique')
+    print('ok : callback brut B SETTINGS+PAGE sans getter : construction du menu natif')
     print('ok : getter B SETTINGS+PAGE sans PATTERN ni état TG ; FUNC+PAGE reste natif, lectures répétées/release idempotents')
     print('ok : Stop applique, changement de pattern annule ; actions A déléguées sans changement de pile')
 

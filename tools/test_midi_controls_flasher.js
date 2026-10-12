@@ -23,7 +23,7 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
  assert.notStrictEqual(w.getComputedStyle(doc.getElementById('step-choose')).display,'none');
  assert.notStrictEqual(w.getComputedStyle(doc.getElementById('m-slow')).display,'none');
  for(const id of ['file','file3','allow','port','flash'])assert(doc.getElementById(id),id);
- assert(html.includes('bundle.js?v=2026-10-12-midi-bank-genie-key-fix'));
+ assert(html.includes('bundle.js?v=2026-10-12-midi-bank-genie-menu-fix'));
  // Identité du transport avec main, sans copie expérimentale ni réglage spécial.
  assert(html.includes('../flasher/flasher.js?v='));
  assert(!fs.existsSync(path.join(dir,'flasher.js')));

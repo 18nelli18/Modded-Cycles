@@ -159,3 +159,10 @@ Scale Setup, PATTERN seul ne déclenche rien. Événements répétés et release
 PAGE consommés de façon idempotente. La preuve exécute le getter B avec
 TG_set_held=0, puis le vrai constructeur/menu Genie et les actions MIDI.
 Raccourci et ouverture B restent à vérifier sur matériel.
+
+Le test matériel du premier correctif échoue encore. La vue B lit aussi
+les événements bruts dans `mlp_menu_key`, sans appeler le getter global.
+Ce callback suit désormais SETTINGS et ouvre Genie sur PAGE directement.
+La preuve appelle ce callback sans `ml_key`, vérifie la construction du
+menu natif, puis conserve les tests getter, Generate/Undo et mute B.
+Cette correction supplémentaire reste à vérifier sur matériel.

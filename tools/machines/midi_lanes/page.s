@@ -186,6 +186,17 @@ mlp_menu_key:
     moveal %sp@(20),%a0
     movel %a0@(12),%d2
     movel %a0@(16),%d3
+    .ifdef ML_GENIE
+    | Cette vue lit les événements bruts, sans forcément appeler le getter.
+    cmpil #13,%d2
+    bne .Lmk_settings_done
+    btst #5,%d3
+    bne .Lmk_settings_done
+    movel %d3,%d0
+    andil #1,%d0
+    movel %d0,ml_genie_settings
+.Lmk_settings_done:
+    .endif
     cmpil #1,%d2
     beq .Lmk_func
     cmpil #10,%d2
@@ -324,6 +335,19 @@ mlp_menu_key:
     movel %d0,mlp_changed
     bra .Lmk_redraw
 .Lmk_page:
+    .ifdef ML_GENIE
+    tstl ml_genie_settings
+    beq .Lmk_page_normal
+    tstl mlp_func
+    bne .Lmk_page_normal
+    btst #1,%d3
+    bne .Lmk_page_normal
+    moveq #1,%d0
+    movel %d0,TG_mod_used
+    jsr SG_open
+    bra .Lmk_used
+.Lmk_page_normal:
+    .endif
     tstl mlp_held
     bne .Lmk_used
     movel mlp_setup,%d0
