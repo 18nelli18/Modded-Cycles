@@ -503,12 +503,14 @@ python3 tools/emu/test_track_filter.py --cycles model-cycles_OS1.13.syx [--quick
 
 ### Machine Acid (basse façon 303)
 
-`tweaks/model-cycles_OS1.13/26-acid.json` (7e machine) est produit par `tools/gen_acid.py` : notre moteur en entiers
-(`tools/machines/acid/acid.c`, dent de scie -> carré, filtre en échelle à 4 pôles sans retard, passe-bas ou passe-haut,
-résonance écrasée par un coude), ses tables et ses images (smiley, fiche « STYLE:ACID » tirée au build de celle de
+`26-acid.json` (7e machine) est produit par `tools/gen_acid.py` : notre moteur en entiers
+(`tools/machines/acid/acid.c`, dent de scie polyBLEP -> carré) autour du filtre en échelle à 4 pôles du modèle libre
+Open303 (Robin Schmidt, MIT, `rosic_Open303.cpp`/`rosic_TeeBeeFilter.h`) : coefficients `b0` et `k` des 4 étages
+tables (`acid303_tables.h`), passe-haut 150 Hz de la contre-réaction, lois de résonance et de gain d'Open303 ;
+les tables communes (coupure, enveloppe, hauteur) et ses images (smiley, fiche « STYLE:ACID » tirée au build de celle de
 TONE dans TON OS) calculées par le générateur, en charge utile rangée après l'image et
 reconstituée au démarrage à `0x43000000`, avec la mécanique des machines ajoutées de MACRO
-([note 51](notes/51-machine-acid.md)). Le JSON versionné vient de `m68k-linux-gnu-gcc` 13.3 (Ubuntu 24.04) ; la preuve
+([note 51](notes/51-machine-acid.md)). Le JSON versionné vient de `m68k-linux-gnu-gcc` 15.2 (Ubuntu 24.04) ; la preuve
 compile aussi le moteur pour l'ordinateur avec `gcc`, la référence :
 ```sh
 python3 tools/gen_acid.py --cycles model-cycles_OS1.13.syx [--check]
@@ -519,9 +521,9 @@ version combinée pour l'instant).
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `acid` | `bb28ccac59411120b4791a83e15bc7337a04ed6b092d35de0047e4c78cf3efcf` |
-| `6ch-usbup,acid` | `28841d83214df58e19ebdfe137ccb32d86f0d82ddc1a3d6582a1b149d7d18575` |
-| `6ch-usbup,acid,trig-hold,arp,tempo-max,boot-anim` | `1cdf8ad7e99ee83ac80ee9495d2751f337cf3f1e0710820c8f8626b206336329` |
+| `acid` | `32a42726a454adb54a794c27a64e1358012eada08838cc5ee82fa95450bdc4d2` |
+| `6ch-usbup,acid` | `e2df6c99fe73ff429902a61a3224976f4f8e03c53e29c534e1eadaf85c2369f1` |
+| `6ch-usbup,acid,trig-hold,arp,tempo-max,boot-anim` | `c99a0928d3ece203ca88775a88e584031b181057f488cdd42524cb5aafa79f50` |
 
 ### Écoute d'un pas en pause
 

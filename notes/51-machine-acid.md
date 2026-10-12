@@ -245,10 +245,39 @@ instructions, pas des cycles (caches de 8 Ko, attentes de l'EMAC) : le compteur 
 1. Le Cycles démarre ; MACHINES montre « Acid » après Chord, avec sa fiche (« STYLE:ACID ») et son smiley, le smiley
    aussi sur les autres écrans qui montrent l'image de la machine ; la molette y va et en revient.
 2. Les noms des potards (Cutoff, Wave, Reso, Env Mod) tiennent à l'écran ; leurs défauts au changement de machine.
-3. COLOR : passe-bas de sombre à ouvert, rien à 64, passe-haut de plein à fin, sans saut de volume de 63 à 65 ; SWEEP qui couine puis siffle seul en
-   haut de course ; CONTOUR dans les deux sens ; PUNCH sur quelques pas (accent).
+3. COLOR : passe-bas de sombre à ouvert, rien à 64, passe-haut de plein à fin, le volume qui reste du même ordre de
+   grandeur de 63 à 65 (la loi du filtre, § 9bis) ; SWEEP qui couine puis reste borné ; CONTOUR dans les deux sens ;
+   PUNCH sur quelques pas (accent).
 4. Six pistes Acid ensemble, et Acid avec les machines d'origine : pas de craquement.
 5. `CONFIG › UPGRADE` par USB revient toujours à l'OS officiel.
+
+## 9bis. Le filtre échangé contre celui d'Open303 (11/10/2026)
+
+À la demande de Kevin : reprendre le filtre du modèle libre Open303 (Robin Schmidt, MIT,
+[`RobinSchmidt/Open303`](https://github.com/RobinSchmidt/Open303), commit `313bf0d9`, 17/03/2024) à la place du
+coude à 3 segments qui amortissait la contre-réaction de la première version (§ 2). Le moteur garde son squelette
+(échelle TPT à 4 pôles, un pôle par étage) et gagne le modèle d'Open303 : le passe-haut 150 Hz de la contre-réaction,
+la table des coefficients `b0`/`k` à 1/16 d'octave (`tools/gen_acid.py`, d'après les formules mesurées d'Open303 voc:
+`b0f`, `kfull`), la table de la résonance (écrasée, 13 ×), la loi de gain `((k/17-1)r+1)(1+r)`. Le tout en entiers :
+la sortie du filtre, rendue par le modèle 256 fois plus petite que la nôtre, est remise à l'échelle par un décalage
+de 8 borné par l'EMAC saturé (à la place du coude de sortie d'Open303). Le reste du moteur ne change pas : oscillateur
+polyBLEP (notre dent de scie), COLOR façon DJ (le passe-bas de l'échelle jusqu'à 64, notre passe-haut au-delà),
+enveloppe bipolaire, accent sur PUNCH, chaîne d'ampli de TONE.
+
+Différences visibles avec la première version :
+
+- Le niveau en haut de course : la loi d'Open303 rend un passe-bas Sur 63 jusqu'à ~9 dB sous le filtre ouvert quand
+  la résonance monte (son gain accentue le creux) ; dans la 1re version, le coude gardait tout à 2 dB. Le flasher et
+  le guide documentent la loi ; la preuve la note.
+- Le poids : une voix coûte 2378 à 4177 instructions par bloc (0,45 à 0,79 fois TONE, TONE 5291), contre 0,45 à 1,06
+  avant : le filtre d'Open303 fait plus de calculs par échantillon.
+- Le JSON versionné vient de `m68k-linux-gnu-gcc` 15.2 (Ubuntu 24.04).
+
+Preuve (`tools/emu/test_acid.py`, le code même de l'OS) : `TOUT OK` seul, et avec `6ch-usbup, trig-hold, arp,
+tempo-max, boot-anim` les 23 cas identiques échantillon par échantillon à la référence compilée pour l'ordinateur
+(`gcc`), voix muettes pas calculées et sortie nulle, chaîne d'ampli = TONE, machines d'origine et leurs blocs sans une
+instruction, machine locks, six pistes Acid ensemble, pistes mélangées, centre du spectre qui monte avec COLOR des deux
+côtés, loi de niveau en haut du passe-bas, auto-oscillation bornée (à l'EMAC saturé) sans craquement.
 
 ## 10. Slide façon 303 : étude `[EN COURS]`
 

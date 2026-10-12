@@ -292,13 +292,15 @@ FEATURES = [
         "id": "acid",
         "cat": "sound",
         "label": "Machine Acid",
-        "desc": "Une machine ajoutee apres Chord : une basse facon 303. COLOR = filtre facon DJ (passe-bas, ouvert a "
-                "64, passe-haut), SHAPE = scie vers carre, SWEEP = resonance, CONTOUR = enveloppe du filtre, "
-                "PUNCH = accent.",
+        "desc": "Une machine ajoutee apres Chord : une basse facon 303, avec le filtre en echelle du modele libre "
+                "Open303 (Robin Schmidt, MIT). COLOR = filtre facon DJ (passe-bas, ouvert a 64, passe-haut), "
+                "SHAPE = scie vers carre, SWEEP = resonance, CONTOUR = enveloppe du filtre, PUNCH = accent.",
         "status": "experimental",
         "credit": None,
-        # meme place que MACRO et les moteurs du Syntakt ; pas de version Model-TG pour l'instant (notes/51)
+        # le filtre est celui d'Open303 (Robin Schmidt, MIT) ; meme place que MACRO et les moteurs du Syntakt ;
+        # pas de version Model-TG pour l'instant (notes/51)
         "excludes": ["syntakt", "macro", "model-tg"],
+        "license": "LICENSE-Open303",
         "variants": [
             {"file": "26-acid", "label": None},
         ],
