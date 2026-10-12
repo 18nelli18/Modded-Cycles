@@ -190,7 +190,10 @@ Points ouverts sur Env Pos (`k` = 27), d'avant le portage (Wave autonome) `[HYP]
 - **p-lock** : sur l'OS d'origine, l'identifiant de rangée vient de `0x4010ee4c[k]`, qui n'a que 23 entrées ; pour
   `k` = 23..32 il lit la table voisine et retombe sur une rangée de `k` = 0..9 ([note 56](56-ajouts-davidcaruso.md)
   §3.1). Un p-lock d'Env Pos écraserait donc celui d'un autre paramètre ; LFO 2, 3, 4 corrige cette table.
-- **enregistrement** : du temps de Model-TG, Env Pos vivait dans un mot que Model-TG enregistre ; seule, Wave dépend de
-  ce que l'OS garde de `k` = 27 au chargement (`0x4005aecc`, format 2). Env Pos pourrait revenir à 0 après un
-  rechargement du projet.
+- **enregistrement** `[FAIT : désassemblage de 0x4005afa0]` : la sauvegarde du son (format 2) remet l'enregistrement
+  de 100 o à zéro, recopie l'en-tête et le nom, puis **23 mots de paramètres seulement** (boucle de 0 à 46 o, place de
+  chaque mot lue dans `0x4010ee4c`, 23 entrées). Le mot `k` = 27 d'Env Pos n'est pas écrit ; au chargement
+  (`0x4005aecc`) les mots sont remis à zéro puis recopiés de l'enregistrement : Env Pos revient à 0. Du temps de
+  Model-TG, ses crochets de sauvegarde (`snd_save_post`, `snd_load_post`) gardaient ses mots en plus ; Wave seule n'en a
+  pas. Piste retenue : porter Env Pos dans le jeton du nom (« W » + clé + empreinte 16 bits + Env Pos).
 
