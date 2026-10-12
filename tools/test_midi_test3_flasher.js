@@ -2,6 +2,18 @@
 const fs=require('fs'),path=require('path'),assert=require('assert');
 const {JSDOM,VirtualConsole}=require('jsdom');
 const root=path.resolve(__dirname,'..'),dir=path.join(root,'docs/flasher-test-3');
+// Charger aussi les scripts comme le parseur HTML, pas seulement via eval.
+{
+ const startupErrors=[],vc=new VirtualConsole();
+ vc.on('jsdomError',e=>startupErrors.push(String(e)));
+ let html=fs.readFileSync(path.join(dir,'index.html'),'utf8');
+ html=html.replace(/<script src="([^"]+)"[^>]*><\/script>/g,(_,src)=>
+  '<script>'+fs.readFileSync(path.resolve(dir,src.split('?')[0]),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>');
+ const startup=new JSDOM(html,{url:'https://aveycole.github.io/Modded-Cycles/flasher-test-3/',runScripts:'dangerously',virtualConsole:vc});
+ assert(startup.window.MCFlasherApp,'Initialisation réelle du document');
+ assert.deepStrictEqual(startupErrors,[]);
+ startup.window.close();
+}
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 (async()=>{
  const errors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(String(e)));
@@ -23,7 +35,7 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
  assert.notStrictEqual(w.getComputedStyle(doc.getElementById('step-choose')).display,'none');
  assert.notStrictEqual(w.getComputedStyle(doc.getElementById('m-slow')).display,'none');
  for(const id of ['file','file3','allow','port','flash'])assert(doc.getElementById(id),id);
- assert(html.includes('bundle.js?v=2026-10-12-test-3-upstream154'));
+ assert(html.includes('bundle.js?v=2026-10-12-test-3-startup-fix'));
  // Identité du transport avec main, sans copie expérimentale ni réglage spécial.
  assert(html.includes('src="flasher.js?v='));
 
@@ -89,8 +101,8 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
  for(let n=0;n<100&&app.state.building;n++)await wait(100);
  assert(app.state.fw&&app.state.fw.sha!==initial.sha);
  await send(app.state.fw);
- // Contrôle indépendant : même sélection via le vrai flasher principal.
- const baseline=new JSDOM(fs.readFileSync(path.join(root,'docs/flasher/index.html'),'utf8'),{url:'https://aveycole.github.io/Modded-Cycles/flasher/',runScripts:'outside-only'});
+ // Contrôle indépendant : même sélection via une seconde instance isolée.
+ const baseline=new JSDOM(fs.readFileSync(path.join(dir,'index.html'),'utf8'),{url:'https://aveycole.github.io/Modded-Cycles/flasher/',runScripts:'outside-only'});
  const bw=baseline.window;bw.URL.createObjectURL=()=> 'blob:baseline';bw.URL.revokeObjectURL=()=>{};
  for(const file of ['builder.js','tweaks.js','flasher.js','app.js'])bw.eval(fs.readFileSync(path.join(root,'docs/flasher-test-3',file),'utf8'));
  bw.eval(fs.readFileSync(path.join(root,'docs/flasher-test-3/bundle.js'),'utf8'));
@@ -102,7 +114,7 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
  assert(ba.state.fw,ba.state.fwError);
  assert.deepStrictEqual(Array.from(ba.chosenTweaks(),t=>t.id),Array.from(app.chosenTweaks(),t=>t.id));
  assert(Buffer.from(ba.state.fw.raw).equals(Buffer.from(app.state.fw.raw)));
- console.log('ok : firmware sans banque identique octet pour octet au build UI principal');
+ console.log('ok : firmware sans banque identique octet pour octet dans une seconde instance');
  baseline.window.close();
  let lfo=doc.getElementById('feat-lfo-secondary');assert(lfo);
  lfo.checked=false;lfo.dispatchEvent(new w.Event('change',{bubbles:true}));
