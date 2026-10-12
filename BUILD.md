@@ -568,10 +568,11 @@ python3 tools/emu/test_midi_thru.py --cycles model-cycles_OS1.13.syx \
 
 `tweaks/model-cycles_OS1.13/48-track-filter.json` est produit par `tools/gen_track_filter.py` : le filtre (`track_filter.S`), les
 potards, l'affichage et la sauvegarde (`tf_ui.S`) sont assemblés depuis `tools/machines/track_filter/` et liés par
-`track_filter.ld` dans quinze masques de sprites 35×35 libérés (3 001 o) ; les tables sont calculées par le générateur. Quatre
+`track_filter.ld` dans dix-sept masques de sprites 35×35 libérés (3 571 o) ; les tables sont calculées par le générateur (course du
+filtre master de Model-TG depuis la v4, [note 47 §13](notes/47-filtre-piste.md)). Quatre
 paramètres de toutes les machines sur les descripteurs « Error » 1 à 4, accroche après Volume + Dist ([note 47](notes/47-filtre-piste.md)).
 Le même script écrit `48-track-filter-tg.json` et `48-track-filter-tg-st.json`, le filtre par-dessus `model-tg` ou
-`model-tg-st` (sans son filtre de piste) : sauvegarde chaînée avec celle de Model-TG, côté stéréo du Sampler filtré, seize
+`model-tg-st` (sans son filtre de piste) : sauvegarde chaînée avec celle de Model-TG, côté stéréo du Sampler filtré, dix-huit
 masques ([note 47 §11](notes/47-filtre-piste.md)). La preuve fait tourner la vraie boucle des voix et le vrai site de l'accroche, l'OS sans
 le filtre à côté, puis l'interface et la sauvegarde fonction par fonction :
 ```sh

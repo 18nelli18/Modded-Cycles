@@ -268,11 +268,11 @@ TONE CHORD, trois séries de notes aux blocs 1, 100 et 180) :
 |---|---|
 | Centre (Filter Cutoff OFF), Volume + Dist 64 et 108, enveloppe et résonance réglées | les 6 pistes identiques bit pour bit à l'OS d'origine sur 240 blocs |
 | Contrat de l'appel, à chaque bloc | d2-d7/a2-a6 gardés, `0x80001858` et a2 laissés sur la pile comme l'appel d'origine, MACSR rendu à 0x20, accumulateurs à zéro, aucun accès hors de la mémoire émulée |
-| Six réglages fixes (LP 332 Hz, HP 332 Hz, LP près de 20 kHz, HP 41 Hz enveloppe −32, LP 116 Hz résonance 112 enveloppe +63, HP 5 Hz) | sortie comparée à un modèle flottant (SVF en double, mêmes lois) : écart max −111 à −167 dB sous la crête ; KICK et SNARE nettement changés |
+| Six réglages fixes (LP 2,1 kHz, HP 180 Hz, LP près de 20 kHz, HP 42 Hz enveloppe −32, LP 843 Hz résonance 112 enveloppe +63, HP 20 Hz ; v3 : LP 332 Hz, HP 332 Hz, …, LP 116 Hz, HP 5 Hz) | sortie comparée à un modèle flottant (SVF en double, mêmes lois) : écart max −111 à −167 dB sous la crête ; KICK et SNARE nettement changés |
 | Balayage à chaque bloc, de LP à HP en passant par le centre | écart au modèle −110 à −120 dB sous la crête |
 | Enveloppe, Decay 0 à 127 | relancée à chaque note (bit t de a3+16), τ de 5 ms à 10 s, écart à la loi < 10⁻⁷, décalage = quantité × enveloppe exactement |
 | Résonance au maximum (Q 800 et 953 depuis le §12) : signal plein échelle (carré, sinus à fc, bruit, impulsions, balayage, échelon) après Volume + Dist 108, puis silence ; LP 947 Hz et HP 2,7 kHz | contrat tenu, sortie saturée à 1 FS sans repli (LP : aucun saut de plus de 1,5 FS d'une trame à l'autre) ; après le signal, décroissance régulière à la vitesse de la loi (3,23 et 7,60 dB par 100 ms, loi 3,23 et 7,74, à 3 % près) jusqu'à zéro exactement, en 4,4 et 1,8 s au plus |
-| Lois | 170 réglages, 5 Hz à 20 kHz des deux côtés, Q 0,5 à 1 000 : fréquence à 0,01 cent près, Q à 0,39 % près (tirés des coefficients calculés par le code) |
+| Lois | 170 réglages, passe-bas 20 kHz à 30 Hz, passe-haut 20 Hz à 10 kHz (5 Hz à 20 kHz jusqu'à la v3), Q 0,5 à 1 000 : fréquence à 0,01 cent près, Q à 0,39 % près (tirés des coefficients calculés par le code) |
 | Enveloppe près du centre (§12) | H1, H2, H4, H8, L2, L6, Filter Env au maximum, 40 blocs : décalage = quantité × enveloppe × (\|d\| / 0x800)², au pas d'index près |
 | Potards | MACHINES tenu : SWEEP, CONTOUR, COLOR, SHAPE → paramètres 1 à 4 ; les 8 autres potards et tout sans MACHINES : la recherche d'origine, mêmes arguments |
 | Affichage (vrai constructeur, vrai `sprintf`) | les 128 pas : `L64` … `L1`, `OFF` au centre, `H1` … `H63`, trois caractères au plus ; Reso et Decay 0..127 ; Env −64..OFF..+63 ; l'image « Error » n'est plus dessinée |
@@ -550,3 +550,9 @@ ne gardons pas de marge sous la pleine échelle comme Model-TG : un son fort à 
 `tools/emu/test_track_filter.py` (lois par côté, `TABLE_GH` et `TABLE_NH` dans le modèle) : 170 réglages, fréquence à
 0,01 cent près de la nouvelle loi, Q à 0,39 % près ; extinction à L39 (951 Hz, Q 805) et H54 (2,7 kHz, Q 952) ; le
 reste comme au §12.
+
+### 13.4 Textes d'autres mods `[FAIT]`
+
+Model-TG n'a plus de Filtre ni de Résonance de piste (§11.1) : les textes de LFO 2, 3, 4 (carte du flasher, guide)
+ne citent plus que l'Attack parmi les p-locks de Model-TG qu'il corrige. Ses rangées k = 24 et 25 (notes/56 §3)
+restent : aucun potard n'atteint plus ces paramètres avec notre Model-TG, elles ne servent donc plus `[HYP]`.
