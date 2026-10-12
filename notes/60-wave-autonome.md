@@ -186,7 +186,8 @@ Preuve : `tools/emu/test_wavetable.py` TOUT OK sur ce firmware ; `tools/check_ov
 entre mods installables ensemble) ; `REGISTRY.md` régénéré. À essayer sur la machine : ce firmware-ci (compilateur et
 mécanique changés).
 
-Points ouverts sur Env Pos (`k` = 27), d'avant le portage (Wave autonome) `[HYP]`, à vérifier :
+**Réglé le 12/10/2026 ([62 §4](62-wave-avec-les-moteurs.md))** : Env Pos passe sur SHAPE, l'enveloppe de coupure sous
+FUNC + SWEEP (dans FINE) ; plus de paramètre caché. Pour mémoire, les points relevés sur Env Pos (`k` = 27) :
 - **p-lock** : sur l'OS d'origine, l'identifiant de rangée vient de `0x4010ee4c[k]`, qui n'a que 23 entrées ; pour
   `k` = 23..32 il lit la table voisine et retombe sur une rangée de `k` = 0..9 ([note 56](56-ajouts-davidcaruso.md)
   §3.1). Un p-lock d'Env Pos écraserait donc celui d'un autre paramètre ; LFO 2, 3, 4 corrige cette table.

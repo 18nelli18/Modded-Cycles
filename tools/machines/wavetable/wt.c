@@ -3,16 +3,15 @@
  * Moteur en virgule fixe.
  *
  * Le fichier choisi dans le navigateur (limite a /Wavetables) est lu par notre chargeur (glue, gen_wavetable.py) :
- * la piste enregistre l'entree de navigateur (16 o), puis un appui sur le pad lit le fichier entier (conteneur
- * d'echantillon : en-tete de 64 o, PCM 16 bits gros-boutiens, fin de 16 o) dans 0x46800000 + 0x300000*t et pose
- * WT_BASE[t] = debut du PCM (buffer + 64) et WT_COUNT[t] = (taille - 80) / 2. Le fichier est une table convertie
+ * YES ou un appui sur le pad lit le fichier entier (en-tete de 64 o, PCM 16 bits gros-boutiens) dans
+ * 0x46800000 + 0x300000*t et pose WT_BASE[t] = debut du PCM et WT_COUNT[t] = octets de PCM de l'en-tete / 2. Le fichier est une table convertie
  * par l'outil web : la table entiere, puis les copies adoucies par octave plus courtes que la table (LGC, OFF).
  * Rien n'est calcule ici : les copies sont lues telles quelles. Un fichier non converti (WT_COUNT[t] non multiple
  * de S_TOTAL) ne joue rien.
  *
- * Potards : COLOR = position dans la table ; MACHINE tenue + COLOR = enveloppe -> position (0 : rien ; param 0x0a,
- * k = 27) ; SHAPE = enveloppe -> coupure (64 : rien) ; SWEEP = coupure du passe-bas d'Acid (20 Hz -> 20 kHz) ;
- * CONTOUR = resonance ; DECAY = duree de l'enveloppe et chaine d'ampli d'origine (comme Acid) ; PUNCH = accent.
+ * Potards : COLOR = position dans la table ; SHAPE = enveloppe -> position (0 : rien) ; SWEEP = coupure du passe-bas
+ * d'Acid (20 Hz -> 20 kHz) ; FUNC + SWEEP = FINE = enveloppe -> coupure (64 : rien, notes/62) ; CONTOUR = resonance ;
+ * DECAY = duree de l'enveloppe et chaine d'ampli d'origine (comme Acid) ; PUNCH = accent. FINE n'accorde pas Wave.
  *
  * Contrat de la boucle des voix (notes/14) : update(pmod, v, p) puis render(out, v), une fois par bloc de 32 trames.
  */
@@ -154,7 +153,7 @@ void wt_update(s32 pmod, char *v, const char *p)
 	struct wt *a = track_of(v);
 	int t = a - tracks;
 	s32 acc = P16(0x1e) != 0, dec = knob(P16(0x24));
-	s32 col8 = P16(0x16), shape = knob(P16(0x18)), cut8 = P16(0x1a), res = knob(P16(0x1c)), epos = knob(P16(0x36));
+	s32 col8 = P16(0x16), epos = knob(P16(0x18)), cut8 = P16(0x1a), res = knob(P16(0x1c)), fenv = knob(P16(0x22));
 	s32 n, oct, r, i, fr, pf, mod;
 	u32 d;
 
@@ -195,7 +194,7 @@ void wt_update(s32 pmod, char *v, const char *p)
 	}
 
 	/* note (comme Acid) */
-	n = ((s32)P16(0x14) << 8) + (((s32)P16(0x22) - 0x4000) << 3) - (64 << 16) + pmod;
+	n = ((s32)P16(0x14) << 8) - (64 << 16) + pmod;
 	n = n < 0 ? 0 : n > (127 << 16) ? (127 << 16) : n;
 	oct = n / (12 << 16);
 	r = n - oct * (12 << 16);
@@ -216,7 +215,7 @@ void wt_update(s32 pmod, char *v, const char *p)
 	a->pos = a->frames > 1 ? pf * (a->frames - 1) * 2 : 0;
 	if (V32(0x38) || a->pprev >= (a->frames << 16))
 		a->pprev = a->pos;                      /* ...sauf a la note */
-	mod = ((shape - 64) * 24576 / 63 * (a->env >> 16)) >> 15;   /* enveloppe -> coupure : +-6 octaves */
+	mod = ((fenv - 64) * 24576 / 63 * (a->env >> 16)) >> 15;    /* enveloppe -> coupure (FINE) : +-6 octaves */
 	a->env = qmul(a->env, FDEC_TAB[dec]);
 
 	/* passe-bas d'Acid : SWEEP 0..127 = 20 Hz -> 20 kHz (pas de 1/16 d'octave au-dessus de 10 Hz, Q8) */

@@ -57,10 +57,9 @@ CFLAGS = ["-mcpu=54418", "-O2", "-U_FORTIFY_SOURCE", "-ffreestanding", "-fno-bui
 FS, BLOCK = 48000, 32
 FDEC_ACCENT_MAX = 57             # accent : décroissance du filtre bornée à ~200 ms (DECAY 57)
 
-MACHINE = dict(name="Wave", image=4, decay=60,
-               knobs=(("Position", "POS", 0), ("Flt Env", "FENV", 64), ("Cutoff", "CUT", 127), ("Reso", "RES", 0)))
-EPOS_ID, EPOS_K = 0x0a, 27        # MACHINE tenue + COLOR : enveloppe -> position (place libre 0x0a, k = 27)
-EPOS_NAMES = ("Env Pos", "EPOS")
+# SHAPE = enveloppe -> position ; FUNC + SWEEP = enveloppe -> coupure, dans FINE (fenv, notes/62)
+MACHINE = dict(name="Wave", image=4, decay=60, fenv=True,
+               knobs=(("Position", "POS", 0), ("Env Pos", "EPOS", 0), ("Cutoff", "CUT", 127), ("Reso", "RES", 0)))
 WT_MACH = 6                       # 7e machine, apres les 6 d'origine
 NCOPY = 11                        # copies, une par octave : 1024 / 2^c harmoniques
 FOLD_OK = 28000.0                 # repli au-dessus de 20 kHz : inaudible
@@ -163,7 +162,7 @@ def tables_h():
     ]) + "\n"
 
 
-def glue_asm(syms):
+def glue_asm(syms, mach=6):
     """Notre code en assembleur : navigateur bloqué dans /Wavetables, chargeur (choix du fichier puis lecture
     à l'appui d'un pad). Registre et pile de l'OS intacts autour des deux accroches."""
     return f"""
@@ -188,7 +187,7 @@ wt_is_ours:
 	adda.l	%d1, %a0
 	moveq	#0, %d0
 	move.b	{MACH_OFF}(%a0), %d2
-	cmpi.l	#{WT_MACH}, %d2
+	cmpi.l	#{mach}, %d2
 	bne.s	1f
 	moveq	#1, %d0
 1:	movem.l	(%sp), %d1-%d2/%a0
@@ -725,10 +724,6 @@ wt_root:	.long	0
 wt_h:	.space	96				/* entrées de navigateur des 6 pistes */
 wt_h_dir:	.long	0, 0, 0, 0
 wt_path:	.asciz	"/Wavetables"
-	.globl	wt_epos_l
-wt_epos_l:	.asciz	"{EPOS_NAMES[0]}"
-	.globl	wt_epos_s
-wt_epos_s:	.asciz	"{EPOS_NAMES[1]}"
 	.align	2
 wt_msgs:	.long	wt_m0, wt_m1, wt_m2, wt_m3, wt_m4
 wt_m0:	.asciz	"Table loaded\\nto track "
@@ -892,13 +887,13 @@ LINK = """SECTIONS
 """
 
 
-def compile_machine(tmp, pay):
-    """Le moteur, lié à pay (code, tables) et pay + gm.BSS_OFF (états et wt_base/wt_count). Renvoie (octets, symboles,
-    fin du BSS)."""
+def compile_machine(tmp, at, bss_at):
+    """Le moteur, lié à at (code, tables) et bss_at (états et wt_base/wt_count). Renvoie (octets, symboles, fin du
+    BSS)."""
     (tmp / "wt_tables.h").write_text(tables_h())
     o, ld, elf, out = tmp / "wt.o", tmp / "link.ld", tmp / "wt.elf", tmp / "wt.bin"
     gx.run([gx.CROSS + "gcc", *CFLAGS, f"-I{tmp}", "-c", str(SRC / "wt.c"), "-o", str(o)])
-    ld.write_text(LINK.format(code=pay, bss=pay + gm.BSS_OFF))
+    ld.write_text(LINK.format(code=at, bss=bss_at))
     warn = ["--no-warn-rwx-segments"] if "no-warn-rwx" in gx.run([gx.CROSS + "ld", "--help"]) else []
     gx.run([gx.CROSS + "ld", "-T", str(ld), "--gc-sections", *warn, "-e", "wt_update",
             "-u", "wt_render", "-o", str(elf), str(o)])
@@ -917,8 +912,8 @@ def compile_machine(tmp, pay):
         p_ = line.split()
         if len(p_) == 3:
             syms[p_[2]] = int(p_[0], 16)
-    bss = secs.get(".bss", (pay + gm.BSS_OFF, 0))
-    if bss[0] != pay + gm.BSS_OFF:
+    bss = secs.get(".bss", (bss_at, 0))
+    if bss[0] != bss_at:
         raise SystemExit("!! BSS")
     for need in ("wt_base", "wt_count"):
         if need not in syms:
@@ -926,21 +921,57 @@ def compile_machine(tmp, pay):
     return blob, syms, (bss[0] + bss[1] + 3) & ~3
 
 
-def build_tweak(img):
-    """Le tweak de la machine Wave seule : la mécanique de gen_macro.added_machine (comme ACID), plus notre code
-    (navigateur, chargeur, YES, table retenue, identité Transfer) et le paramètre Env Pos."""
-    pay = gs.PAY_ALONE
-    gs.set_base(pay)
+DESCRIPTION = [
+    "Machine Wave en 7e machine, après les 6 d'origine (notes/58, notes/60) : elle joue une de tes tables",
+    "d'ondes, un fichier de /Wavetables (créé s'il manque) converti par l'outil web (table entière puis copies",
+    "adoucies par octave), choisi dans le navigateur sur la piste de Wave et chargé par YES (message « Table",
+    "loaded »), retenu dans le nom du son et rechargé avec le projet. Pas de repliement, rien de calculé sur la",
+    "machine. Pour l'envoi, la commande SysEx 0x0F la fait répondre en Model:Samples (notes/61), sans Model-TG.",
+    "COLOR = position dans la table, SHAPE = enveloppe -> position (Env Pos, 0 : rien), SWEEP = coupure du passe-bas",
+    "(20 Hz -> 20 kHz), FUNC + SWEEP = enveloppe -> coupure (dans FINE, 64 : rien ; notes/62), CONTOUR = résonance,",
+    "DECAY = enveloppe et chaîne d'ampli d'origine, PUNCH = accent. Code : tools/machines/wavetable/wt.c. Généré par tools/gen_wavetable.py. De",
+    "l'OS, seuls les octets d'origine (old) qui vérifient le fichier officiel ; la table des descripteurs est",
+    "recopiée au build (recette cycles).",
+]
+
+
+def combo_id(codes, macro, acid):
+    """syntakt-<moteurs>[-macro][-acid]-wave avec des moteurs ; macro-wave, acid-wave, macro-acid-wave sans."""
+    tail = "-".join(x for x, on in (("macro", macro), ("acid", acid)) if on)
+    return "-".join(x for x in (gs.subset_id(codes) if codes else "", tail, "wave") if x)
+
+
+def combos():
+    """(moteurs, macro, acid) de chaque combinaison avec Wave, toujours sans Model-TG (notes/62)."""
+    return ([((), m, a) for m, a in ((True, False), (False, True), (True, True))]
+            + [(tuple(c), m, a) for c in gs.subsets() for m in (False, True) for a in (False, True)])
+
+
+def all_ids():
+    """Les tweaks de machines ajoutées, avec ou sans Wave, et Model-TG avec sa base : jamais deux ensemble."""
+    return gac.all_ids(False) | {"wavetable"} | {combo_id(*c) for c in combos()}
+
+
+def wave_part(at, bss_at, mach, limit):
+    """Wave liée à at (moteur puis notre code) et bss_at (variables du moteur), 7e machine ou plus (mach : son index,
+    que notre code compare au son de la piste) ; le tout doit finir avant limit. Rend dict(machine, blobs, end, syms,
+    gsyms, code, glue)."""
     with tempfile.TemporaryDirectory() as d:
         tmp = pathlib.Path(d)
-        blob, syms, bss_end = compile_machine(tmp, pay)
-        glue_at = pay + ((len(blob) + 15) & ~15)
-        glue, gsyms = gm.assemble(tmp, "glue", glue_asm(syms) + smp_glue_asm(), glue_at)
-        if glue_at + len(glue) > gs.STUBS:
-            raise SystemExit(f"!! code trop grand : {glue_at + len(glue) - pay} o")
-        writes, append = gm.added_machine(img, None, [dict(MACHINE, update=syms["wt_update"],
-                                                           render=syms["wt_render"])],
-                                          tmp, [(pay, blob), (glue_at, glue)], bss_end)
+        blob, syms, end = compile_machine(tmp, at, bss_at)
+        glue_at = at + ((len(blob) + 15) & ~15)
+        glue, gsyms = gm.assemble(tmp, "glue", glue_asm(syms, mach) + smp_glue_asm(), glue_at)
+    if glue_at + len(glue) > limit:
+        raise SystemExit(f"!! code de Wave jusqu'à {glue_at + len(glue):#x} : au-delà de {limit:#x}")
+    machine = dict(MACHINE, label="Wave", update=syms["wt_update"], render=syms["wt_render"])
+    return dict(machine=machine, blobs=[(at, blob), (glue_at, glue)], end=end, syms=syms, gsyms=gsyms,
+                code=len(blob), glue=len(glue))
+
+
+def wave_writes(img, gsyms):
+    """Nos écritures dans l'OS : navigateur bloqué (notes/58 §3quater), chargeur, YES et table retenue (notes/60),
+    identité Transfer CYC/SMP (notes/61). Vérifie les octets d'origine dans img."""
+    writes = []
 
     def w(va, old, new_):
         if img[va - BASE:va - BASE + len(old)] != old:
@@ -953,12 +984,10 @@ def build_tweak(img):
     def call(va):
         return bytes.fromhex("4eb9") + g7.be32(va)
 
-    # navigateur bloqué dans /Wavetables (notes/58 §3quater)
     for va, old, sym in BROWSER:
         old = bytes.fromhex(old)
         new_ = call(gsyms[sym]) if sym == "wt_home" else jmp(gsyms[sym]) + bytes.fromhex("4e71") * ((len(old) - 6) // 2)
         w(va, old, new_)
-    # chargeur, YES, table retenue (notes/60)
     w(PARSE_SITE, bytes.fromhex(PARSE_OLD), call(gsyms["wt_parse"]))
     w(PARSE_SITE2, bytes.fromhex(PARSE_OLD), call(gsyms["wt_parse"]))
     w(YES_SITE, bytes.fromhex(YES_OLD), call(gsyms["wt_yes"]))
@@ -966,7 +995,6 @@ def build_tweak(img):
     for slot in LED_SLOTS:
         w(slot, g7.be32(LED_EMPTY), g7.be32(gsyms["wt_tick"]))
     w(NOTE_SITE, bytes.fromhex(NOTE_OLD), jmp(gsyms["wt_note"]))
-    # identité Transfer CYC/SMP sans Model-TG (notes/61)
     w(ID_HOOK_SITE, bytes.fromhex(ID_HOOK_OLD), jmp(gsyms["smp_id_hook"]))
     w(ID_HOOK2_SITE, bytes.fromhex(ID_HOOK2_OLD), jmp(gsyms["smp_id_hook2"]))
     w(ID_NAME_SITE, bytes.fromhex(ID_NAME_OLD), g7.be32(gsyms["smp_namebuf"]))
@@ -975,56 +1003,56 @@ def build_tweak(img):
     if not 0 <= SYSEX_SLOT < SYSEX_N:
         raise SystemExit("!! place SysEx hors table")
     w(SYSEX_TBL + 4 * SYSEX_SLOT, b"\0\0\0\0", g7.be32(gsyms["smp_desc"]))
-    writes.sort(key=lambda x: x["off"])
-    for a_, b_ in zip(writes, writes[1:]):
+    return writes
+
+
+def merge_writes(writes, extra):
+    """Les écritures d'un tweak et les nôtres, triées ; refuse un chevauchement."""
+    out = sorted(writes + extra, key=lambda x: x["off"])
+    for a_, b_ in zip(out, out[1:]):
         if a_["off"] + len(a_["new"]) // 2 > b_["off"]:
             raise SystemExit(f"!! écritures qui se chevauchent en {BASE + b_['off']:#x}")
+    return out
 
-    # Env Pos : paramètre commun (groupe 7) à la place libre 0x0a de la table des descripteurs déplacée, comme
-    # Attack / Filtre / Résonance de Model-TG ; ses noms vivent dans notre code
-    e_at = EPOS_ID * g7.DSTRIDE
-    orig = img[g7.DESC + e_at - BASE:g7.DESC + e_at + g7.DSTRIDE - BASE]
-    if orig[:8] != b"\xff" * 8 or any(int(r[0], 16) - gs.DESCN in range(e_at, e_at + g7.DSTRIDE) for r in append["reloc"]):
-        raise SystemExit("!! place 0x0a déjà prise")
-    final = struct.pack(">14I", 7, EPOS_K, 0, 32512, 0, 0, 0xffffffff, 0xffffffff, 0, 0x600, 38,
-                        gsyms["wt_epos_l"], 0x40129882, gsyms["wt_epos_s"])
-    append["reloc"] += [[f"{gs.DESCN + e_at + k:#x}", orig[k:k + 4].hex(), final[k:k + 4].hex()]
-                        for k in range(0, g7.DSTRIDE, 4) if final[k:k + 4] != orig[k:k + 4]]
 
-    ids = gac.all_ids(False)
+def wave_symbols(syms, gsyms):
+    """Pour les preuves (tools/emu/test_wavetable.py)."""
+    return dict({k: f"{syms[k]:#x}" for k in ("wt_update", "wt_render", "wt_base", "wt_count")},
+                **{k: f"{gsyms[k]:#x}" for k in ("wt_parse", "wt_note", "wt_load", "wt_yes", "wt_msg", "wt_snd",
+                                                "wt_stamp", "wt_tokof", "wt_tick", "wt_tok", "wt_open", "wt_close",
+                                                "smp_id_hook", "smp_id_hook2", "smp_rpc_type", "smp_rpc_ot",
+                                                "smp_trig", "smp_mode", "smp_desc", "smp_list", "smp_map",
+                                                "smp_namebuf")})
+
+
+def build_tweak(img):
+    """Le tweak de la machine Wave seule : la mécanique de gen_macro.added_machine (comme ACID), plus notre code
+    (navigateur, chargeur, YES, table retenue, identité Transfer) et le paramètre Env Pos."""
+    pay = gs.PAY_ALONE
+    gs.set_base(pay)
+    wv = wave_part(pay, pay + gm.BSS_OFF, 6, gs.STUBS)
+    with tempfile.TemporaryDirectory() as d:
+        writes, append = gm.added_machine(img, None, [wv["machine"]], pathlib.Path(d), wv["blobs"], wv["end"])
+    writes = merge_writes(writes, wave_writes(img, wv["gsyms"]))
+
+    ids = all_ids() - {"wavetable"}
     out = {
         "id": "wavetable",
         "order": 36,
         "name": "Machine Wave : joue tes tables d'ondes (dossier /Wavetables)",
-        "description": [
-            "Machine Wave en 7e machine, après les 6 d'origine (notes/58, notes/60) : elle joue une de tes tables",
-            "d'ondes, un fichier de /Wavetables (créé s'il manque) converti par l'outil web (table entière puis copies",
-            "adoucies par octave), choisi dans le navigateur sur la piste de Wave et chargé par YES (message « Table",
-            "loaded »), retenu dans le nom du son et rechargé avec le projet. Pas de repliement, rien de calculé sur la",
-            "machine. Pour l'envoi, la commande SysEx 0x0F la fait répondre en Model:Samples (notes/61), sans Model-TG.",
-            "COLOR = position dans la table, SHAPE = enveloppe -> position (64 : rien), MACHINE tenue + COLOR = Env Pos,",
-            "SWEEP = coupure du passe-bas (20 Hz -> 20 kHz), CONTOUR = résonance, DECAY = enveloppe et chaîne d'ampli",
-            "d'origine, PUNCH = accent. Code : tools/machines/wavetable/wt.c. Généré par tools/gen_wavetable.py. De",
-            "l'OS, seuls les octets d'origine (old) qui vérifient le fichier officiel ; la table des descripteurs est",
-            "recopiée au build (recette cycles).",
-        ],
+        "description": DESCRIPTION,
         "device": "Model:Cycles",
         "os": "1.13",
         "section": 3,
         "conflicts": sorted(ids),
         "writes": writes,
         "append": append,
-        "symbols": dict({k: f"{syms[k]:#x}" for k in ("wt_update", "wt_render", "wt_base", "wt_count")},
-                        **{k: f"{gsyms[k]:#x}" for k in ("wt_parse", "wt_note", "wt_load", "wt_yes", "wt_msg", "wt_snd",
-                                                        "wt_stamp", "wt_tokof", "wt_tick", "wt_tok", "wt_open",
-                                                        "wt_close", "smp_id_hook", "smp_id_hook2", "smp_rpc_type",
-                                                        "smp_rpc_ot", "smp_trig", "smp_mode", "smp_desc", "smp_list",
-                                                        "smp_map", "smp_namebuf")}),
+        "symbols": wave_symbols(wv["syms"], wv["gsyms"]),
     }
     out = usb_steady.add_to(out)
     out = voice_loop.add_to(out)
     segs = sum(n_ for _, n_ in append["pack"])
-    return out, dict(code=len(blob), glue=len(glue), bss=bss_end - pay - gm.BSS_OFF, image=segs)
+    return out, dict(code=wv["code"], glue=wv["glue"], bss=wv["end"] - pay - gm.BSS_OFF, image=segs)
 
 
 def main():

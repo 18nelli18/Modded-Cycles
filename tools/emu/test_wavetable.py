@@ -37,6 +37,7 @@ sys.path.insert(0, str(HERE.parent))
 
 import build                        # noqa: E402
 import gen_wavetable as GW          # noqa: E402
+import fenv_ui                       # noqa: E402
 import mcengine as E                # noqa: E402
 import test_sdvintage as T          # noqa: E402
 import wt_convert as WC             # noqa: E402
@@ -47,6 +48,7 @@ KIT, ACTIVE = GW.KIT, GW.ACTIVE
 BUF, BUF_STRIDE = GW.BUF, GW.BUF_STRIDE
 OPEN, READ, CLOSE, PARSE_CALL = GW.OPEN, GW.READ, GW.CLOSE, GW.PARSE_CALL
 OFF = 9                             # machine hors limites : la voix n'est pas calculee
+MACH = GW.WT_MACH                          # index de Wave (test_wave_combos.py le change)
 BWRITE, BREAD = 0x90004000, 0x90005000      # zone d'essai (kit simule, entree de navigateur)
 KITPTR = 0x90006000
 
@@ -146,7 +148,7 @@ class Host:
         self.base[0] = 64
         self.count[0] = len(data)
 
-    def knobs(self, note=60, color=0, shape=64, sweep=127, contour=0, decay=127):
+    def knobs(self, note=60, color=0, shape=0, sweep=127, contour=0, decay=127):
         for off, val in ((0x14, 64 << 8), (0x16, color << 8), (0x18, shape << 8), (0x1a, sweep << 8),
                          (0x1c, contour << 8), (0x1e, 0), (0x22, 0x4000), (0x24, decay << 8)):
             struct.pack_into("<h", self.p, off, val)
@@ -319,7 +321,7 @@ def loader(uc, fw, track, handle, cont, inode):
     log = []
     os_stubs(uc, {inode: cont}, log)
 
-    kit(uc, [GW.WT_MACH] * 6, track)                # machine = Wave pour toutes les pistes
+    kit(uc, [MACH] * 6, track)                # machine = Wave pour toutes les pistes
     project(uc, ["Pad"] * 6, {})
     uc.mem_write(BWRITE, handle)
 
@@ -397,7 +399,7 @@ def yes_tests(fw, data):
         run.names = [name_of(uc, t) for t in range(6)]
         return uc.reg_read(D0), msg, cnt, stack, err, pea
 
-    wave = [GW.WT_MACH] * 6
+    wave = [MACH] * 6
     d0, msg, cnt, stack, err, pea = run(wave, 1, 1, 1, (handle, cont))
     check(d0 == 1 and msg == "Table loaded\nto track 2" and cnt[1] == len(data) and stack and pea,
           f"piste Wave : preset refuse -> table chargee ({cnt[1]} echantillons), message « {msg!r} » a la place de "
@@ -429,7 +431,7 @@ def tick_tests(fw, data):
     uc = fw.boot()
     log = []
     os_stubs(uc, {inode: cont}, log)
-    kit(uc, [0, GW.WT_MACH, GW.WT_MACH, GW.WT_MACH, GW.WT_MACH, GW.WT_MACH], 0)
+    kit(uc, [0, MACH, MACH, MACH, MACH, MACH], 0)
     project(uc, [tok, tok, "Pad", "W0001A2B3BADBAD", tok[:-1] + "G", tok], entries)
 
     def tick(blocks, sr=0x2000):
@@ -572,7 +574,7 @@ def set_table(e, fw, t, data, note, color, decay=127):
     e.uc.mem_write(BUF + 64 + BUF_STRIDE * t, pcm(data))
     e.uc.mem_write(fw.sym["wt_base"] + 4 * t, struct.pack(">i", BUF + BUF_STRIDE * t + 64))
     e.uc.mem_write(fw.sym["wt_count"] + 4 * t, struct.pack(">i", len(data)))
-    e.set(t, machine=GW.WT_MACH, note=note, color=color, shape=64, sweep=127, contour=0, punch=0, gate=0,
+    e.set(t, machine=MACH, note=note, color=color, shape=0, sweep=127, contour=0, punch=0, gate=0,
           finetune=64, decay=decay)
 
 
@@ -658,6 +660,8 @@ def main():
     fw, uc = fw_tests(stock, data)
     yes_tests(fw, data)
     tick_tests(fw, data)
+    print("2quater. FUNC + SWEEP : enveloppe de coupure dans FINE (interface de l'OS)")
+    fenv_ui.check_fenv(stock, fw.img, (fw.pay, fw.runtime), MACH, "Wave seule", check, "l'OS d'origine")
     smp_tests(fw, uc)
     del uc
     playback(fw, data)

@@ -482,15 +482,34 @@ fait répondre la machine en Model:Samples par une commande SysEx que Wave ajout
 python3 tools/gen_wavetable.py --cycles model-cycles_OS1.13.syx [--check]
 python3 tools/emu/test_wavetable.py --cycles model-cycles_OS1.13.syx
 ```
-Seule pour l'instant : incompatible avec Model-TG, MACRO, ACID, SD VINTAGE et les moteurs du Syntakt (même place, même
-machine). Le JSON versionné vient de `m68k-linux-gnu-gcc` 13.3 (Ubuntu 24.04), comme ACID : un autre GCC donne
+Incompatible avec Model-TG et SD VINTAGE ; avec les moteurs du Syntakt, MACRO et ACID, voir la section suivante. Le JSON versionné vient de `m68k-linux-gnu-gcc` 13.3 (Ubuntu 24.04), comme ACID : un autre GCC donne
 d'autres octets, et `--check` le dit. La preuve a besoin d'`unicorn` et `numpy` (environ 6 minutes).
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `wavetable` | `0b1c240cb93183e2189ca08070ae42f6f505dd0fbd6fe4637ae36980cdbdff26` |
-| `6ch-usbup,wavetable` | `b5635e70197e4181818228b8bbb508f572cbdfa456b891dbd0c01f74f55b43b2` |
-| `wavetable,trig-hold,arp,tempo-max,boot-anim` | `057ef196c90d18cda84a28f78c0e807bf9b745140ab1591ebf777e31bfaa6ef4` |
+| `wavetable` | `8730481066293379a183aa5ebd8d6f1919a0ffaf5363d472f21168323d92c652` |
+| `6ch-usbup,wavetable` | `de625a2cc7cd5ed795f22d9db37d33832d82766618d1c7a8cab64678a276dbff` |
+| `wavetable,trig-hold,arp,tempo-max,boot-anim` | `7102b846974649e8711b6c802739ab763d2277c655f30d38350ecb38e7229303` |
+
+### Wave avec les moteurs du Syntakt, MACRO et ACID
+
+Les 127 tweaks `24-syntakt-<moteurs>[-macro][-acid]-wave.json`, `25-macro-wave.json`, `26-acid-wave.json` et
+`25-macro-acid-wave.json` sont produits par `tools/gen_wave_combos.py` ([note 62](notes/62-wave-avec-les-moteurs.md)) :
+Wave en dernière machine, après les moteurs, MACRO et ACID, jamais avec Model-TG. Comme `gen_acid_combos.py`, il lit
+le Syntakt OS et le clone de Braids :
+```sh
+python3 tools/gen_wave_combos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \
+    --eurorack vendor/eurorack [--engines sd,cp | --engines none] [--macro yes|no|both] [--acid yes|no|both] [--check]
+python3 tools/emu/test_wave_combos.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \
+    [--engines sd,cp,toy,bits,swarm | --engines none] [--macro yes|no|both] [--acid yes|no|both]
+```
+Compilés par `m68k-linux-gnu-gcc`/`g++` 13.3, comme MACRO et ACID.
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `macro-acid-wave` | `0f2922694e7ab12b99355c359e42275d74f68316fe31a64e69cfb48c327b9016` |
+| `syntakt-sd-wave` | `d3b767f3875c6743790c287af006f23d65463fcdc902a2587baf189c8f3bd30d` |
+| `syntakt-sd-cp-toy-bits-swarm-macro-acid-wave` | `f54d58850513c29a6cbb0b45450376a7b2600e05724cbe9babe85f603ca8d033` |
 
 ### Navigateur sur plusieurs lignes
 
