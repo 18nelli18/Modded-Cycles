@@ -52,6 +52,7 @@ ml_ui_drain:
     jsr ml_service
     addql #8,%sp
     .endif
+    jsr mlp_led_poll
 .Lud_done:
     movel %sp@,%d1
     movew %d1,%sr

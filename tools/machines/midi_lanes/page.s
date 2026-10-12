@@ -30,6 +30,16 @@ mlp_o_cp:
     movel   %a0@+,%a1@+
     subql   #1,%d0
     bplw    mlp_o_cp
+    | DrumSelect n'hérite pas de LedHandler. Ajouter une vraie base dédiée,
+    | reconnue par le dynamic_cast du gestionnaire ; conserver MidiHandler +8.
+    lea.l mlp_vt,%a0
+    movel #mlp_typeinfo,%d0
+    movel %d0,%a0@(4)
+    movel %d0,%a0@(0x54)
+    movel %d0,%a0@(0x68)
+    movel %d0,%a0@(0x7c)
+    movel %d0,%a0@(0x90)
+    movel %d0,%a0@(0xa4)
     lea.l   mlp_vt,%a1
     movel   #mlp_dtor0,%d0
     movel   %d0,%a1@(0x08)
@@ -43,8 +53,6 @@ mlp_o_cp:
     movel   %d0,%a1@(0x4c)
     movel   #mlp_enc_th,%d0
     movel   %d0,%a1@(0x60)
-    movel #mlp_led,%d0
-    movel %d0,%a1@(0x74)
     movel #mlp_pad,%d0
     movel %d0,%a1@(0x9c)
     jmp mlp_o_allocate
@@ -66,7 +74,7 @@ mlp_o_default_track:
 mlp_o_track_ready:
     movel %d0,mlp_track
     lea.l   0x400802e0,%a3        | operator new
-    pea     0x500
+    pea     0x510
     jsr     %a3@
     addql   #4,%sp
     tstl    %d0
@@ -80,8 +88,10 @@ mlp_o_track_ready:
     movel   %a0,%a4@              | vptr principal
     lea.l   %a1@(0x58),%a0
     movel   %a0,%a4@(4)           | base +4 (événements encodeur)
-    lea.l mlp_vt+0x6c,%a0
-    movel %a0,%a4@(8)
+    lea.l mlp_led_vt+8,%a0
+    movel %a0,%a4@(0x500)
+    clrl %a4@(0x504)
+    clrl %a4@(0x508)
     lea.l mlp_vt+0x94,%a0
     movel %a0,%a4@(16)
     pea     0x10                  | détenteur de référence, comme l’ouverture OS
@@ -323,7 +333,7 @@ mlp_menu_key:
     bra .Lmk_return
 .Lmk_redraw:
     movel %a2,%sp@-
-    jsr 0x40076082
+    jsr mlp_redraw
     addql #4,%sp
 .Lmk_used:
     moveq #1,%d0
@@ -383,7 +393,7 @@ mlp_pad:
     addql #8,%sp
 .Lmp_redraw:
     movel %a3,%sp@-
-    jsr 0x40076082
+    jsr mlp_redraw
     addql #4,%sp
     bra .Lmp_done
 .Lmp_release:
@@ -491,7 +501,7 @@ mlp_enc:
     movel %sp@+,mlp_step
 .Lme_redraw:
     movel %a2,%sp@-
-    jsr 0x40076082
+    jsr mlp_redraw
     addql #4,%sp
 .Lme_out:
     moveq #1,%d0
@@ -857,6 +867,14 @@ mlp_changed: .long 0
     .globl mlp_setup
 mlp_setup: .long 0
 mlp_vt: .space 0xb0
+    .balign 4
+mlp_typeinfo:
+    .long 0x40123f20,mlp_typename,0,2
+    .long 0x401178f8,2,0x400ff970,0x50002
+mlp_typename: .asciz "12MidiBankView"
+    .balign 4
+mlp_led_vt:
+    .long -0x500,mlp_typeinfo,mlp_led_dtor0,mlp_led_dtor1,mlp_led
 mlp_labels: .long mlp_track_label,mlp_channel,mlp_port,mlp_length,mlp_speed,mlp_step_label,mlp_trig,mlp_note,mlp_velocity,mlp_gate,mlp_output
 mlp_ports: .long mlp_usb,mlp_din,mlp_both
 mlp_speeds: .long mlp_quarter,mlp_half,mlp_normal,mlp_threehalf,mlp_double,mlp_triple,mlp_four

@@ -583,3 +583,59 @@ physique et le confort de l'interface restent à vérifier sur machine.
 
 Le bundle reste expérimental, en RAM partagée entre patterns. Seul le test
 MIDI est mis à jour ; aucun changement au transfert principal.
+
+## 25. LED reconnues par le vrai gestionnaire (11/10/2026)
+
+AveyCole demande que la grille bascule vers les trigs de la banque MIDI,
+comme les pistes audio. [FAIT en émulation] Le précédent callback placé dans
+le sous-objet +8 n'était jamais reconnu : `DrumSelect` hérite de `View` et
+`Observer`, pas de `LedHandler`. Le cast natif `0x400f4cec(obj, View,
+LedHandler, -2)` rendait zéro. La preuve précédente appelait le slot
+directement et ne détectait pas ce défaut ; +8 appartient à `MidiHandler`.
+
+La page réserve maintenant 0x510 octets et ajoute une vraie base LedHandler
+à +0x500, avec RTTI privée et destructeurs ajustant le pointeur. MidiHandler
+reste intact. Le masque de revendication est corrigé au format big-endian
+64 bits (IDs 0..31 dans le second long). Le trig actif reçoit l'état natif 3,
+et non 2. La position de lecture vient du dernier pas de la voie MIDI et
+utilise l'overlay natif mode 6 ; aucun curseur hors page ou à l'arrêt.
+
+Les actions d'édition signalent désormais aussi la saleté LED par
+`0x400760ba`. Le service UI compare le curseur et ne réveille le gestionnaire
+qu'en cas de changement ; 100 polls identiques n'entraînent aucun redessin.
+Aucun writer MIDI ni allocation dans le callback LED.
+
+`test_midi_lane_led.py` reproduit le cast nul de l'ancien RTTI, puis exécute
+le vrai dispatcher `0x40076ca2` et le writer natif sur six voies × quatre
+pages. Il couvre revendication, priorité MIDI, pose/retrait de trigs et
+retour à une vue audio sous-jacente simulée après retrait de la vue MIDI.
+Le périphérique LED et le backend de la vue audio sont simulés ; essai
+physique de cette correction encore nécessaire.
+
+## 26. Sauvegarde avec les patterns : recherche (11/10/2026)
+
+AveyCole demande aussi de sauvegarder les séquences MIDI supplémentaires
+avec les patterns. Les données actuelles représentent 1 584 octets par
+pattern ; avec LFO 2, 1 680 octets. Pour 96 patterns : 161 280 octets,
+hors en-têtes/identités/contrôles d'intégrité. Le runtime, la file de sortie,
+les notes tenues et les deadlines ne doivent pas être sérialisés.
+
+[FAIT dans l'OS officiel] Le namespace projet est `/projects/` (référence
+`0x4012ad53`). `0x40064128` compose ce préfixe avec une chaîne passée en
+argument, puis ouvre la ressource associée. L'énumération des métadonnées
+utilise `/projects/*/.metadata` en `0x400649b6`. Ces points sont des pistes
+pour retrouver l'identité durable ; ils ne constituent pas encore des
+hooks de sauvegarde vérifiés.
+
+[HYP] Un fichier annexe versionné, rattaché à l'identité native du projet
+et contenant des entrées par pattern, éviterait d'écraser les structures
+stock. Les primitives de petits fichiers déjà utilisées par Model-TG sont
+identifiées (note 57 §9). L'index ne doit pas être le nom affiché seulement :
+renommage, suppression/réutilisation d'un slot et Save As doivent être traités.
+L'export projet SysEx devra transporter ces données explicitement ; un
+fichier annexe seul ne ferait pas partie du backup stock.
+
+[À FAIRE] Identité, notification de changement/copie/effacement, sauvegarde
+et rechargement de pattern, Save/Save As projet, écritures atomiques et
+erreurs disque, puis preuve de round-trip avec LFO 2 et compatibilité TG.
+Aucune nouvelle écriture disque ni persistance livrée dans le test LED.
