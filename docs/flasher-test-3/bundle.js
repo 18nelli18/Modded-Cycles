@@ -1,3 +1,4 @@
+const savingOriginalEngineRef = window.MCFlasherApp.REF_MODS["syntakt-tg-sd-cp-toy-bits-swarm-macro-acid"].p;
 /* Généré par tools/gen_midi_test_flasher.py ; aucune image firmware. */
 window.MC_BUNDLE_IDS = [
  "6ch-usbup",
@@ -959,4 +960,4 @@ document.addEventListener("change", event => {
   }
 }, true);
 
-window.MC_TWEAKS.tweaks.find(t=>t.id==="syntakt-tg-sd-cp-toy-bits-swarm-macro-acid").append.compress_depth=32;
+{ const engine=window.MC_TWEAKS.tweaks.find(t=>t.id==="syntakt-tg-sd-cp-toy-bits-swarm-macro-acid"); const ref=window.MCFlasherApp.REF_MODS[engine.id], dense="b10f0591c87bfe9a029e67722503f18d158a3ad11509c09d7e784544b2057c56"; const enabled=()=>!!document.getElementById("feat-midi-bank-bundle")?.checked; Object.defineProperty(engine.append,"compress_depth",{get:()=>enabled()?32:undefined}); Object.defineProperty(ref,"p",{get:()=>enabled()?dense:savingOriginalEngineRef}); }

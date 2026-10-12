@@ -7,7 +7,7 @@ Construire depuis les deux OS officiels ; aucun firmware distribué.
 import argparse,pathlib,json,hashlib,re,html,shutil
 import build,gen_midi_bank_bundle as bank,ref_mainos
 from gen_midi_retrigger_test import replace_json
-STAMP='2026-10-12-test-3-pattern-saving'
+STAMP='2026-10-12-test-3-pattern-saving-both-engines'
 EN=('Experimental B-side pattern saving. MACRO is excluded; ACID and Model-TG remain included. '
     'Use a project saved to a normal project slot, and reload it after installing this build. '
     'Use the normal Save Project command to save all visited B-side patterns. MIDI SAVED confirms '
@@ -67,7 +67,7 @@ def main():
  engine=next(t for t in chosen if t['id'].startswith('syntakt-tg-sd-cp-toy-bits-swarm'))
  import syntakt
  engine_ref={'w':hashlib.sha256(ref_mainos.writes_bytes(engine)).hexdigest(),'p':hashlib.sha256(build.payload_image(engine,build.payload_runtime(engine,stock,syntakt.dsp_image(a.syntakt)))).hexdigest()}
- bundle=(base/'bundle.js').read_text();bundle+='\nwindow.MC_TWEAKS.tweaks.find(t=>t.id==='+json.dumps(engine['id'])+').append.compress_depth=32;\n';bundle=replace_json(bundle,'window.MC_BUNDLE_IDS = ',list(bank.IDS)+[tweak['id']])
+ bundle=(base/'bundle.js').read_text();bundle='const savingOriginalEngineRef = window.MCFlasherApp.REF_MODS['+json.dumps(engine['id'])+'].p;\n'+bundle;bundle+='\n{ const engine=window.MC_TWEAKS.tweaks.find(t=>t.id==='+json.dumps(engine['id'])+'); const ref=window.MCFlasherApp.REF_MODS[engine.id], dense='+json.dumps(engine_ref['p'])+'; const enabled=()=>!!document.getElementById("feat-midi-bank-bundle")?.checked; Object.defineProperty(engine.append,"compress_depth",{get:()=>enabled()?32:undefined}); Object.defineProperty(ref,"p",{get:()=>enabled()?dense:savingOriginalEngineRef}); }\n';bundle=replace_json(bundle,'window.MC_BUNDLE_IDS = ',list(bank.IDS)+[tweak['id']])
  bundle=replace_json(bundle,'window.MC_TWEAKS.tweaks.push(',tweak)
  bundle=replace_json(bundle,'const bankTexts = ',{'en':{'label':'MIDI OUT Bank — Pattern Saving Test','short':'Saves notes, locks and MIDI LFO settings by pattern. Experimental.','desc':en},'fr':{'label':'Banque MIDI OUT — test sauvegarde','short':'Notes, locks et LFO MIDI sauvegardés par pattern. Expérimental.','desc':fr}})
  start=bundle.index('const bankFeature = ')+len('const bankFeature = ');feature,_=json.JSONDecoder().raw_decode(bundle[start:]);feature.update(status='experimental',excludes=excluded,desc=fr)
