@@ -27,10 +27,11 @@ def load(r,worker=False,pattern_banks=False,stock_display=False,clipboard=False,
             obj=p/(name+'.o')
             subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_REPEAT=1'] if repeat else []),*(['--defsym','ML_CONDITIONS=1','--defsym','ML_CHANCE=1'] if conditions else []),*(['--defsym','ML_CLIPBOARD=1'] if clipboard else []),*(['--defsym','ML_WORKER=1'] if worker else []),*(['--defsym','ML_PATTERN_BANKS=1'] if pattern_banks else []),*(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
             objects.append(str(obj))
-        (p/'link.ld').write_text('SECTIONS { .text '+hex(ENTRY)+' : { *(.text*) } .data '+hex(DATA)+' : { *(.data*) *(.rodata*) } } TG_set_held = 0x93082000; TG_mod_used = 0x93082004; ml_key_next = 0x4007240c; TG_snap_note = 0x930b0000;' )
+        (p/'link.ld').write_text('SECTIONS { .text '+hex(ENTRY)+' : { *(.text*) } .data '+hex(DATA)+' : { *(.data*) *(.rodata*) } } TG_set_held = 0x93082000; TG_mod_used = 0x93082004; ml_key_next = 0x4007240c; TG_snap_note = 0x930b0000; TG_show_popup = 0x930b0010;' )
         subprocess.run([cross+'ld','-T',str(p/'link.ld'),'-e','mlp_open','-o',str(p/'page.elf'),*objects],check=True)
         subprocess.run([cross+'objcopy','-O','binary',str(p/'page.elf'),str(p/'page.bin')],check=True)
         r.u.mem_write(ENTRY,(p/'page.bin').read_bytes())
+        r.u.mem_write(0x930b0010,b'\x4e\x75')
         r.u.mem_write(0x930b0000,b'\x4e\x75') # Gamme OFF pour les fixtures UI.
         r.s={line.split()[2]:int(line.split()[0],16) for line in subprocess.check_output([cross+'nm',str(p/'page.elf')],text=True).splitlines() if len(line.split())==3}
 

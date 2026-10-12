@@ -124,8 +124,13 @@ ml_repeat_pattern_prepare:
 
 | Après chargement natif réussi : bloquer les réglages et annuler les notes.
 | Rejoue exactement l'épilogue déplacé ; résultat D0 et SR conservés.
-    .globl ml_repeat_project_hook,ml_repeat_project_reset
+    .globl ml_repeat_project_hook,ml_repeat_project_reset,ml_repeat_project_notice
 ml_repeat_project_hook:
+    jsr ml_repeat_project_notice
+    moveml %sp@,%d2-%d3/%a2
+    lea.l %sp@(32),%sp
+    rts
+ml_repeat_project_notice:
     lea.l %sp@(-20),%sp
     moveml %d0-%d1/%a0-%a1,%sp@
     movew %sr,%d1
@@ -149,8 +154,6 @@ ml_repeat_project_hook:
     movew %d1,%sr
     moveml %sp@,%d0-%d1/%a0-%a1
     lea.l %sp@(20),%sp
-    moveml %sp@,%d2-%d3/%a2
-    lea.l %sp@(32),%sp
     rts
 | UI : retirer chaque entrée avant free ; l'audio ne consulte plus la table.
 ml_repeat_project_reset:

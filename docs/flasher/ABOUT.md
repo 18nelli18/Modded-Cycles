@@ -76,3 +76,9 @@ Résultat matériel du12/10/2026 : AveyCole confirme la fusion CC/note-off et de
 Chance popup and conditions promoted from the hardware-tested Test3 build. Musical writes and MAIN OS references are unchanged. Settings remain RAM only; saving is unfinished.
 
 Fenêtre et conditions Chance promues depuis Test3 validé sur matériel. Écritures et références MAIN OS identiques ; réglages en RAM, sauvegarde inachevée.
+
+## 2026-10-12-step-copy-popup
+
+B-side held-trig + RECORD/STOP copies/pastes one step and its locks, with native COPY/PASTE confirmations. Emulation verified; new addition awaits hardware confirmation. Saving remains unfinished.
+
+TRIG B maintenu + RECORD/STOP copie/colle un pas et ses locks, avec confirmations natives COPY/PASTE. Émulation vérifiée ; confirmation matérielle attendue. Sauvegarde inachevée.

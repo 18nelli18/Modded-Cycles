@@ -106,7 +106,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
             available.remove(mask);placements.append(('.text.ml_condition_eval',mask))
         if repeat:
             listing=subprocess.check_output([cross+'objdump','-h',str(p/'clipboard.o')],text=True)
-            sections += [(m.group(1),int(m.group(2),16)) for m in re.finditer(r'^\s*\d+\s+(\.text\.ml_step_clip_[abc])\s+([0-9a-fA-F]+)',listing,re.M)]
+            sections += [(m.group(1),int(m.group(2),16)) for m in re.finditer(r'^\s*\d+\s+(\.text\.ml_step_clip_[abcd])\s+([0-9a-fA-F]+)',listing,re.M)]
         # Plusieurs fragments peuvent partager les queues libres d'un masque.
         spans=[(va,va,sprites.MASKS[va][0]) for va in available]
         owners={va:va for _,va in placements}
@@ -148,6 +148,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
 TG_scale_state = {tg['scale_state']:#x}; TG_key_state = {tg['key_state']:#x};
 ML_original_key = {tg['key_hook']:#x};
 TG_set_held = {tg['set_held']:#x}; TG_mod_used = {tg['mod_used']:#x};
+TG_show_popup = {tg['show_popup']:#x};
 TG_snap_note = {tg['snap_note']:#x}; TG_blk_clk = {tg['blk_clk']:#x};
 ml_key_next = {next_key:#x}; ML_BANK_START = {start:#x};
 ML_TG_START = {tg['blob_start']:#x}; ML_PAYLOAD_SRC = {source:#x};
@@ -246,8 +247,7 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
         old=patched[at-build.BASE:at-build.BASE+len(new)]
         assert len(old)==len(new)
         writes.append(dict(off=at-build.BASE,old=old.hex(),new=new.hex()))
-    assert not (storage and repeat), "raccordement Load commun à unifier avant stockage+retrigger"
-    if repeat:
+    if repeat and not storage:
         at=0x4006a660
         assert image[at-build.BASE:at-build.BASE+8].hex()=="4cd7040c4fef0020"
         write(at,b"\x4e\xf9"+struct.pack(">I",syms["ml_repeat_project_hook"])+b"\x4e\x71")

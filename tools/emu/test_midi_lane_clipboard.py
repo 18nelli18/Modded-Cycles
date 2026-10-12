@@ -69,14 +69,22 @@ def main():
  assert key(r,10,1)==0 and key(r,11,1)==0 # transport normal sans FUNC
  r.stubs[0x400cf9a8]=lambda args:0
  r.u.hook_add(UC_HOOK_CODE,r.stub,begin=0x400cf9a8,end=0x400cf9a8)
+ popups=[]
+ def popup(args):
+  from unicorn import m68k_const as mk
+  assert r.u.reg_read(mk.UC_M68K_REG_SR)&0x700==0
+  popups.append(r.string(args[0]));return 0
+ address=r.s['TG_show_popup'];r.stubs[address]=popup
+ r.u.hook_add(UC_HOOK_CODE,r.stub,begin=address,end=address)
  # Clipboard par pas indépendant : tenir TRIG, REC copie, STOP colle.
  r.w32(r.s['mlp_track'],0);r.w32(r.s['mlp_step'],0)
  key(r,16,1);assert key(r,9,1)==1;key(r,9,0);key(r,16,0)
- assert lane(0)==original[0]
+ assert lane(0)==original[0] and popups==['COPY']
  r.w32(r.s['mlp_track'],5);r.w32(r.s['mlp_step'],48)
  before=[lane(n) for n in range(6)]
  key(r,31,1);assert r.r32(r.s['mlp_step'])==63
  assert key(r,11,1)==1;key(r,11,0);key(r,31,0)
+ assert popups==['COPY','PASTE']
  assert lane(5)[8+63*4:12+63*4]==original[0][8:12]
  assert lane(5)[:8+63*4]==before[5][:8+63*4]
  assert all(lane(n)==before[n] for n in range(5))

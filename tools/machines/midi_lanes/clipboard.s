@@ -227,6 +227,9 @@ mlp_clip_key:
     movel ml_runtime,%sp@-
     jsr ml_stop
     addql #8,%sp
+    .ifdef ML_REPEAT
+    jsr ml_repeat_delete_selected
+    .endif
     movew #0x2700,%sr
     movel mlp_step_clip,%d0
     movel %d0,%a2@
@@ -259,6 +262,9 @@ mlp_clip_key:
     movel mlp_obj,%sp@-
     jsr mlp_redraw
     addql #4,%sp
+    movel %d2,%sp@-
+    jsr mlp_step_clip_popup
+    addql #4,%sp
     jmp .Lclip_used
 
     .text
@@ -274,9 +280,25 @@ mlp_clip_key:
 
 | Projet remplacé : copie privée conservée, undo ancien pointeur invalidé.
 | Garder les releases consommés évite leur fuite vers le transport natif.
-    .text
+    .section .text.ml_step_clip_d,"ax"
     .globl mlp_clip_invalidate
 mlp_clip_invalidate:
     clrl mlp_clip_undo_op
     clrl mlp_clip_undo_lane
     rts
+
+| Confirmation via la fenêtre native utilisée par Model-TG.
+    .section .text.ml_step_clip_d,"ax"
+mlp_step_clip_popup:
+    lea .Lstep_copy_text,%a0
+    tstl %sp@(4)
+    beq .Lstep_popup_show
+    lea .Lstep_paste_text,%a0
+.Lstep_popup_show:
+    movel %a0,%sp@-
+    jsr TG_show_popup
+    addql #4,%sp
+    rts
+.Lstep_copy_text: .asciz "COPY"
+.Lstep_paste_text: .asciz "PASTE"
+    .balign 2
