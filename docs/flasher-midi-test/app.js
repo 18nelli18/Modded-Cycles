@@ -2059,6 +2059,10 @@ const tagHtml = (s) => s === "tested" ? `<span class="tag ok">${esc(t("tested"))
 // (f.requires: sample preview needs Model-TG) ticks that one first, with that card's own exclusions, as if the user
 // had ticked it; a card left without the card it requires goes off too (dropOrphans), said with the others.
 function setOn(f, on) {
+  if (f.id === "midi-bank-bundle" && on) {
+    selectAllCompatible();
+    return;
+  }
   if (includedBy(f)) return;                           // locked while the card holding it is ticked
   const before = JSON.parse(JSON.stringify(selection));
   pick.swap = null;
@@ -2383,11 +2387,12 @@ function selectAllCompatible() {
   const preferred = ["model-tg", "midi-live-both"].map(featById).filter(Boolean);
   for (const f of preferred) setOn(f, true);
   for (const f of features()) {
-    if (preferred.includes(f) || includedBy(f)) continue;
+    if (f.id === "midi-bank-bundle" || preferred.includes(f) || includedBy(f)) continue;
     if (features().some(g => isOn(g.id) && (excludes(f, g) || clashVia(f, g)))) continue;
     setOn(f, true);
     if (f.engines) selOf(f).engines = f.engines.map(e => e.code);
   }
+  selOf(featById("midi-bank-bundle")).on = true;
   const generator = featById("scale-gen");
   if (generator && generator.queued && isOn("scale-gen")) selOf(generator).queued = true;
   pick.swap = null;
@@ -2405,13 +2410,6 @@ Object.assign(T.fr, {
 
 function wirePicker() {
   $("select-all").addEventListener("click", selectAllCompatible);
-  $("midi-bank-enable").addEventListener("change", event => {
-    const on = event.target.checked;
-    bankEnabled = false;
-    if (on) selectAllCompatible();
-    bankEnabled = on;
-    update();
-  });
   const changed = () => { renderFeatures(); update(); };
   $("features").addEventListener("change", (e) => {
     const el = e.target, f = (id) => featById(id);
@@ -2528,14 +2526,16 @@ function baseChosenTweaks() {
   }
   return out;
 }
-let bankEnabled = true;
 function chosenTweaks() {
   const out = baseChosenTweaks();
-  const compatible = out.map(t => t.id).join("+") === window.MC_BUNDLE_IDS.slice(0,-1).join("+");
-  if (bankEnabled && !compatible) bankEnabled = false;
-  const box = document.getElementById("midi-bank-enable");
-  if (box) box.checked = bankEnabled;
-  return bankEnabled ? out.concat(window.MC_TWEAKS.tweaks.find(t => t.id === "midi-bank-bundle")) : out;
+  if (!isOn("midi-bank-bundle")) return out;
+  const base = out.filter(t => t.id !== "midi-bank-bundle");
+  if (base.map(t => t.id).join("+") !== window.MC_BUNDLE_IDS.slice(0,-1).join("+")) {
+    selOf(featById("midi-bank-bundle")).on = false;
+    renderFeatures();
+    return base;
+  }
+  return out;
 }
 function chosenLabels() {
   const tw = window.MC_TWEAKS, out = [];
@@ -2548,7 +2548,7 @@ function chosenLabels() {
     if (f.queued && sel.queued) l += " — " + t("queued_generation");
     out.push(l);
   }
-  return bankEnabled ? out.concat(t("bank_label")) : out;
+  return out;
 }
 
 // A mod whose engines are copied from the Syntakt OS (tweak "append", notes/17).
@@ -2615,7 +2615,6 @@ function loadOs(raw, name) {
     const info = window.MCFlasher.verify(raw);
     const sha = window.MCBuilder.hex(window.MCBuilder.sha256(raw));
     const stock = !!(window.MC_TWEAKS && sha === window.MC_TWEAKS.device.stock_syx_sha256);
-    if (!stock) throw new Error(st.lang === "fr" ? "Chargez le fichier officiel Model:Cycles OS 1.13." : "Load the official Model:Cycles OS 1.13 file.");
     st.os = { raw, name, info, sha, stock };
     st.osError = null;
     log(`${name}: ${info.name}, ${info.count} packets, checksums OK${stock ? ", official OS 1.13" : ""}.`, "is-ok");
@@ -3234,7 +3233,7 @@ async function flash() {
     log(fast ? `Firmware sent in ${Math.round(res.seconds)} s (${res.blocks} blocks): waiting for the confirmation on the machine.`
       : `Transfer complete in ${Math.round(res.seconds)} s.`, "is-ok");
   }
-  $("progress").hidden = false;
+  $("progress").hidden = st.finished !== "ok";
   render();
 }
 
@@ -3250,7 +3249,7 @@ async function flashFast(out, fw, onProgress, gone) {
     if (devProblem()) throw new F.XferError("mismatch", info.name);
     log(t("log_start_fast", { kb: Math.round(fw.raw.length / 1024), n: Math.ceil(fw.raw.length / F.OS_BLOCK),
       port: out.name, device: info.device, v: info.version }));
-    return await F.upgradeFast(session, fw.raw, { onProgress, isCancelled: () => st.cancel || gone(), restMs: 100, onBlock: (n, total) => log(`Transfer block ${n}/${total}`) });
+    return await F.upgradeFast(session, fw.raw, { onProgress, isCancelled: () => st.cancel || gone() });
   } finally {
     session.close();
   }
@@ -3260,7 +3259,7 @@ function fastError(err) {
   const q = st.lang === "fr" ? ["« ", " »"] : ["“", "”"];
   const why = err.detail ? ` (${q[0]}${esc(err.detail)}${q[1]})` : "";
   switch (err.code) {
-    case "timeout": return esc(t("fast_timeout")) + (err.detail ? "<br>" + esc(err.detail) : "");
+    case "timeout": return esc(t("fast_timeout"));
     case "refused": return t("fast_refused", { why });
     case "write": return t("fast_write", { why });
     case "busy": return esc(t("dev_busy"));
@@ -3281,8 +3280,8 @@ function setMethod(m) {
 // ---------------------------------------------------------------------------
 // Wiring
 // ---------------------------------------------------------------------------
-Object.assign(T.en, {title:"MIDI Bank test flasher", tagline:"Choose your mods. MIDI Bank uses its validated Model-TG bundle.", bank_label:"MIDI Bank (experimental, RAM only)"});
-Object.assign(T.fr, {title:"Flasher essai banque MIDI", tagline:"Choisissez vos mods. La banque MIDI utilise son bundle Model-TG validé.", bank_label:"Banque MIDI (expérimentale, RAM seulement)"});
+FEAT.en["midi-bank-bundle"] = {"label": "MIDI OUT Bank", "short": "Six MIDI-only lanes on channels 7–12. Experimental; RAM only.", "desc": "FUNC + SETTINGS + PAGE switches between the audio tracks and six independent MIDI-only lanes on channels 7–12. FUNC + pad toggles the lane MIDI OUT. Trigs edit steps; PAGE changes step page; DATA chooses a setting, click to edit. Stop playback before first opening after boot. This experimental version uses one RAM bank shared across patterns, lost on restart; pattern/project saving is unfinished. Selecting this mod selects its validated compatible Select All bundle with Model-TG, Live MIDI OUT + THRU, LFO 2, queued Sequence Generator and SCRAMBLE. Changing that combination removes MIDI OUT Bank. Hardware verification is pending."};
+FEAT.fr["midi-bank-bundle"] = {"label": "Banque MIDI OUT", "short": "Six voies MIDI seules sur les canaux 7–12. Expérimental ; RAM seulement.", "desc": "FUNC + SETTINGS + PAGE bascule entre les pistes audio et six voies MIDI indépendantes sur les canaux 7–12. FUNC + pad bascule MIDI OUT de la voie. Les trigs éditent les pas ; PAGE change la page ; DATA choisit un réglage, clic pour éditer. Arrêtez la lecture avant la première ouverture après démarrage. Une banque RAM partagée entre patterns, perdue au redémarrage ; sauvegarde pattern/projet inachevée. Ce mod sélectionne son bundle Tout sélectionner compatible validé avec Model-TG, MIDI OUT + THRU en direct, LFO 2, génération différée et SCRAMBLE. Modifier la combinaison retire la banque MIDI OUT. Validation matérielle en attente."};
 function init() {
   let lang = "en";
   try { lang = localStorage.getItem("mc-lang") || ""; } catch (e) { lang = ""; }
@@ -3343,10 +3342,7 @@ function init() {
 
   $("build-stamp").textContent = "· build " + (window.MC_BUILD || "?");
   wirePicker();
-  bankEnabled = false;
   applyLang(st.lang);
-  selectAllCompatible();
-  bankEnabled = true;
   update();
 
   // Start MIDI access only after the user clicks “Allow MIDI access”. On some

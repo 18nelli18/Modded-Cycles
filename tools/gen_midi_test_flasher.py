@@ -16,7 +16,7 @@ import ref_mainos
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 PROD=ROOT/'docs/flasher'
 OUT=ROOT/'docs/flasher-midi-test'
-STAMP='2026-10-11-midi-bank-transfer-fix'
+STAMP='2026-10-11-midi-bank-main-flasher'
 
 
 def files_for(tweak,chosen,image):
@@ -36,79 +36,53 @@ def files_for(tweak,chosen,image):
         m=ref_mainos.BLOCKS[name].search(app);assert m,name
         text=m.group(2).rstrip()+'\n'+'\n'.join('  '+json.dumps(k)+': '+json.dumps(v)+',' for k,v in values.items())
         app=app[:m.start(2)]+text+app[m.end(2):]
+    # Seule extension de la logique principale : la carte banque MIDI et
+    # sa sélection du bundle compatible. Aucun changement de transport.
     app=app.replace('function chosenTweaks() {','function baseChosenTweaks() {',1)
     a=app.index('function chosenLabels()')
-    app=app[:a]+'''let bankEnabled = true;
-function chosenTweaks() {
+    app=app[:a]+'''function chosenTweaks() {
   const out = baseChosenTweaks();
-  const compatible = out.map(t => t.id).join("+") === window.MC_BUNDLE_IDS.slice(0,-1).join("+");
-  if (bankEnabled && !compatible) bankEnabled = false;
-  const box = document.getElementById("midi-bank-enable");
-  if (box) box.checked = bankEnabled;
-  return bankEnabled ? out.concat(window.MC_TWEAKS.tweaks.find(t => t.id === "midi-bank-bundle")) : out;
+  if (!isOn("midi-bank-bundle")) return out;
+  const base = out.filter(t => t.id !== "midi-bank-bundle");
+  if (base.map(t => t.id).join("+") !== window.MC_BUNDLE_IDS.slice(0,-1).join("+")) {
+    selOf(featById("midi-bank-bundle")).on = false;
+    renderFeatures();
+    return base;
+  }
+  return out;
 }
 '''+app[a:]
-    a=app.index('function chosenLabels()');b=app.index('// A mod whose engines',a)
-    app=app[:a]+app[a:b].replace('return out;','return bankEnabled ? out.concat(t("bank_label")) : out;')+app[b:]
-    app=app.replace('  applyLang(st.lang);\n  update();','  bankEnabled = false;\n  applyLang(st.lang);\n  selectAllCompatible();\n  bankEnabled = true;\n  update();')
-    app=app.replace('  $("select-all").addEventListener("click", selectAllCompatible);','''  $("select-all").addEventListener("click", selectAllCompatible);
-  $("midi-bank-enable").addEventListener("change", event => {
-    const on = event.target.checked;
-    bankEnabled = false;
-    if (on) selectAllCompatible();
-    bankEnabled = on;
-    update();
-  });''')
-    app=app.replace('function init() {',
-        'Object.assign(T.en, {title:"MIDI Bank test flasher", tagline:"Choose your mods. MIDI Bank uses its validated Model-TG bundle.", bank_label:"MIDI Bank (experimental, RAM only)"});\n'
-        'Object.assign(T.fr, {title:"Flasher essai banque MIDI", tagline:"Choisissez vos mods. La banque MIDI utilise son bundle Model-TG validé.", bank_label:"Banque MIDI (expérimentale, RAM seulement)"});\n'
-        'function init() {')
-    app=app.replace('isCancelled: () => st.cancel || gone() });',
-        'isCancelled: () => st.cancel || gone(), restMs: 100, onBlock: (n, total) => log(`Transfer block ${n}/${total}`) });')
-    # Conserver le dernier bloc visible après une erreur de transfert.
-    app=app.replace('$("progress").hidden = st.finished !== "ok";', '$("progress").hidden = false;')
-    app=app.replace('case "timeout": return esc(t("fast_timeout"));', 'case "timeout": return esc(t("fast_timeout")) + (err.detail ? "<br>" + esc(err.detail) : "");')
-    # Le bundle exige toujours les deux fichiers officiels ; aucun passage
-    # transparent d'un OS déjà modifié qui pourrait masquer l'absence du mod.
-    app=app.replace('    st.os = { raw, name, info, sha, stock };',
-        '    if (!stock) throw new Error(st.lang === "fr" ? "Chargez le fichier officiel Model:Cycles OS 1.13." : "Load the official Model:Cycles OS 1.13 file.");\n'
-        '    st.os = { raw, name, info, sha, stock };')
+    app=app.replace('function setOn(f, on) {','''function setOn(f, on) {
+  if (f.id === "midi-bank-bundle" && on) {
+    selectAllCompatible();
+    return;
+  }''',1)
+    app=app.replace('if (preferred.includes(f) || includedBy(f)) continue;',
+                    'if (f.id === "midi-bank-bundle" || preferred.includes(f) || includedBy(f)) continue;',1)
+    app=app.replace('  const generator = featById("scale-gen");',
+                    '  selOf(featById("midi-bank-bundle")).on = true;\n  const generator = featById("scale-gen");',1)
+    texts={
+      'en': {'label':'MIDI OUT Bank','short':'Six MIDI-only lanes on channels 7–12. Experimental; RAM only.',
+             'desc':'FUNC + SETTINGS + PAGE switches between the audio tracks and six independent MIDI-only lanes on channels 7–12. FUNC + pad toggles the lane MIDI OUT. Trigs edit steps; PAGE changes step page; DATA chooses a setting, click to edit. Stop playback before first opening after boot. This experimental version uses one RAM bank shared across patterns, lost on restart; pattern/project saving is unfinished. Selecting this mod selects its validated compatible Select All bundle with Model-TG, Live MIDI OUT + THRU, LFO 2, queued Sequence Generator and SCRAMBLE. Changing that combination removes MIDI OUT Bank. Hardware verification is pending.'},
+      'fr': {'label':'Banque MIDI OUT','short':'Six voies MIDI seules sur les canaux 7–12. Expérimental ; RAM seulement.',
+             'desc':'FUNC + SETTINGS + PAGE bascule entre les pistes audio et six voies MIDI indépendantes sur les canaux 7–12. FUNC + pad bascule MIDI OUT de la voie. Les trigs éditent les pas ; PAGE change la page ; DATA choisit un réglage, clic pour éditer. Arrêtez la lecture avant la première ouverture après démarrage. Une banque RAM partagée entre patterns, perdue au redémarrage ; sauvegarde pattern/projet inachevée. Ce mod sélectionne son bundle Tout sélectionner compatible validé avec Model-TG, MIDI OUT + THRU en direct, LFO 2, génération différée et SCRAMBLE. Modifier la combinaison retire la banque MIDI OUT. Validation matérielle en attente.'}}
+    extra='\n'.join('FEAT.'+lang+'["midi-bank-bundle"] = '+json.dumps(value,ensure_ascii=False)+';' for lang,value in texts.items())
+    app=app.replace('function init() {',extra+'\nfunction init() {',1)
     html=(PROD/'index.html').read_text()
     html=re.sub(r'2026-\d\d-\d\d-lfo2-main',STAMP,html)
-    html=html.replace('<title>Model:Cycles Flasher</title>','<title>Model:Cycles — MIDI Bank + Model-TG Test</title>')
-    for filename in ('style.css','builder.js','tweaks.js'):
+    for filename in ('style.css','builder.js','flasher.js','tweaks.js'):
         html=html.replace('"'+filename+'?v=','"../flasher/'+filename+'?v=')
     html=html.replace('<script src="app.js?', '<script src="bundle.js?v='+STAMP+'"></script>\n<script src="app.js?')
-    css='<style>#midi-bank-notice{margin-block:1.5rem} #midi-bank-notice p:last-child{margin-bottom:0}</style>'
-    html=html.replace('</head>',css+'\n</head>')
-    notice='''<section class="alert" id="midi-bank-notice">
-<h2><span data-l="en">Experimental MIDI Bank — Model-TG retained</span><span data-l="fr">Banque MIDI expérimentale — Model-TG conservé</span></h2>
-<label><input type="checkbox" id="midi-bank-enable" checked> <span data-l="en">Enable MIDI Bank test bundle</span><span data-l="fr">Activer le bundle d’essai banque MIDI</span></label>
-<p data-l="en">All mod selections are available below. Enabling MIDI Bank selects its compatible Model-TG bundle, including LFO 2, Sequence Genie, SCRAMBLE and Live MIDI OUT + THRU. Changing that combination disables MIDI Bank. Load the official Cycles OS and, when requested, Syntakt OS. Fast transfer uses conservative pacing; classic transfer and firmware download are also available. If an upgrade is stalled, restart the Cycles before retrying.</p>
-<p data-l="fr">Tous les choix de mods sont disponibles ci-dessous. Activer la banque MIDI sélectionne son bundle Model-TG compatible, avec LFO 2, Sequence Genie, SCRAMBLE et MIDI OUT + THRU en direct. Modifier cette combinaison désactive la banque MIDI. Chargez l’OS officiel Cycles et, si demandé, Syntakt. Transfert rapide temporisé, transfert classique et téléchargement disponibles. Si la mise à jour est bloquée, redémarrez le Cycles avant de réessayer.</p>
-<p data-l="en"><b>FUNC + SETTINGS + PAGE</b> switches pads 1–6 to the MIDI Bank; repeat to return to the audio tracks. Channels are fixed at 7–12. Trig keys toggle steps; PAGE moves through four pages. DATA chooses a row; click, turn to edit, then click to finish. FUNC + pad toggles that lane’s MIDI OUT. Both banks play independently; PLAY/STOP remains available. Stop playback before first opening the bank after boot.</p>
-<p data-l="fr"><b>FUNC + SETTINGS + PAGE</b> bascule les pads 1–6 vers la banque MIDI ; répétez pour revenir aux pistes audio. Canaux fixes 7–12. Les trigs activent les pas ; PAGE parcourt quatre pages. DATA choisit une ligne ; clic, rotation pour éditer, puis clic pour terminer. FUNC + pad bascule MIDI OUT pour cette voie. Les deux banques jouent indépendamment ; PLAY/STOP reste disponible. Arrêtez la lecture avant la première ouverture après démarrage.</p>
-<p data-l="en"><b>RAM only:</b> one MIDI Bank shared across pattern changes. Page changes retain it; restart clears it. Pattern/project saving is unfinished. MIDI Bank has passed emulation checks; this combined firmware still needs your hardware test.</p>
-<p data-l="fr"><b>RAM seulement :</b> une banque MIDI commune aux changements de pattern. Elle reste entre les pages mais disparaît au redémarrage. Sauvegarde pattern/projet inachevée. Banque MIDI vérifiée en émulation ; ce firmware combiné attend encore votre essai matériel.</p>
-</section>'''
-    html=html.replace('<div id="errbar"',notice+'\n<div id="errbar"',1)
     bundle='/* Généré par tools/gen_midi_test_flasher.py ; aucune image firmware. */\n'
     bundle+='window.MC_BUNDLE_IDS = '+json.dumps(ids)+';\n'
     bundle+='window.MC_TWEAKS.tweaks.push('+json.dumps(tweak,ensure_ascii=False,indent=1)+');\n'
-    core=(PROD/'flasher.js').read_text().replace('const REST_MS = 50;', 'const REST_MS = 100;')
-    core=core.replace('  let offset = 0, blocks = 0;', '  if (rest > 0) await sleep(rest);\n  let offset = 0, blocks = 0;')
-    core=core.replace('    const r = await session.request(body);', '''    if (opts.onBlock) opts.onBlock(blocks + 1, Math.ceil(raw.length / OS_BLOCK));
-    let r;
-    try { r = await session.request(body); }
-    catch (error) {
-      throw new XferError(error.code || "write", `block ${blocks + 1}, ${offset}/${raw.length} bytes: ${error.message || error}`);
-    }
-    if (r.length < 10) throw new XferError("write", `Short acknowledgement at block ${blocks + 1}`);''')
-    core=core.replace('    if (op === 1) break;', '''    if (op === 1) {
-      if (offset !== raw.length) throw new XferError("write", `Premature completion at ${offset}/${raw.length} bytes`);
-      break;
-    }''')
-    return {'index.html':html,'app.js':app,'bundle.js':bundle,'flasher.js':core}
+    feature={'id':'midi-bank-bundle','cat':'seq','status':'experimental','label':'MIDI OUT Bank',
+             'desc':texts['fr']['desc'],'requires':'model-tg',
+             'credit':{'kind':'based','who':'TinyGregAudio','repo':'TinyGregAudio/Model-TG'},
+             'license':'LICENSE-Model-TG','variants':[{'id':tweak['id'],'label':None}]}
+    bundle+='window.MC_TWEAKS.features.push('+json.dumps(feature,ensure_ascii=False)+');\n'
+    return {'index.html':html,'app.js':app,'bundle.js':bundle}
+
 
 
 def main():

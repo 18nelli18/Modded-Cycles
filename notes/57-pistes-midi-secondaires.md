@@ -490,3 +490,27 @@ vérifie les vrais builds avec/sans banque et LFO 2, activation du bundle,
 désactivation incompatible, références, téléchargements et choix de méthode.
 [À FAIRE] Vérifier matériellement le transfert et identifier le dernier
 bloc en cas de récidive ; aucune réussite matérielle revendiquée.
+
+
+## 21. Retour au transfert principal exact (11/10/2026)
+
+AveyCole signale que la variante temporisée ne dépasse plus 0 %. À sa
+demande, tous les changements de transport du §20 sont retirés : le test
+charge directement `../flasher/flasher.js`, le même script que main.
+Les fonctions UI de connexion, flash, erreurs, choix de méthode et upload
+restent celles de main sans modification. La copie de transfert et son
+test spécifique sont supprimés. Aucun correctif de transport hypothétique
+n'est conservé ; l'essai matériel reste à refaire.
+
+La seule extension visible est la carte expérimentale « MIDI OUT Bank »
+dans Sequencer, avec détails EN/FR, initialement décochée. Aucun bandeau,
+case externe, sélection forcée au chargement ni méthode masquée. Cocher
+la carte sélectionne son bundle validé ; changer cette combinaison retire
+la carte et rafraîchit le picker. Les limites RAM et commandes figurent
+dans ses détails. Les références de build sont conservées avec l'ajout
+banque, sans modifier le MAIN OS de cette dernière.
+
+`test_midi_flasher.js` vérifie l'identité textuelle des fonctions de flash
+avec main et l'URL du script de transport partagé, ainsi que les vrais
+builds avec/sans banque, l'état initial et les choix. Le test ne prouve pas
+un transfert physique réussi. LFO 2 reste dans main, testé par AveyCole.
