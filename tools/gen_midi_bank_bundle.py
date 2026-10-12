@@ -27,7 +27,7 @@ IDS=('6ch-usbup','model-tg-st','sample-preview-st','trig-hold','arp','tempo-max'
      'scale-gen-st-queued','lfo-secondary','scramble-st-gen-queued')
 
 
-def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False):
+def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False):
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[]
         for name in SOURCES:
@@ -39,7 +39,18 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
             subprocess.run([cross+'as','-march=cfv4e','--defsym','ML_WORKER=1','--defsym','ML_GENIE=1','--defsym','ML_MERGE=1',
                             *(['--defsym','ML_PATTERN_BANKS=1'] if pattern_banks else []),
                             *(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),
+                            *(['--defsym','ML_LFO_CC=1'] if lfo_cc else []),
                             '-o',str(obj),str(ROOT/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
+        if lfo_cc:
+            from gen_midi_lfo_cc_page import sources
+            extras={"cc_"+k:v for k,v in sources().items()}
+            for name in ('frame','settings','queue','lane','rate','service','names','integration','depack'):
+                extras['cc_'+name]=(ROOT/'tools/machines/midi_lanes'/('lfo_cc_'+name+'.s')).read_text()
+            extras['cc_update']=(ROOT/'tools/machines/lfo_secondary/update.s').read_text()
+            for name,body in extras.items():
+                asm=p/(name+'.s');asm.write_text(body)
+                obj=p/(name+'.o');objects.append(str(obj))
+                subprocess.run([cross+'as','-march=cfv4e','-o',str(obj),str(asm)],check=True)
         # Petits fragments à sauts absolus : aucun masque libre ne dépasse280o.
         raw=(ROOT/'tools/machines/midi_thru/merge.s').read_text()
         inverse={'ne':'eq','eq':'ne','hi':'ls','ls':'hi','cc':'cs','cs':'cc','pl':'mi','mi':'pl','ge':'lt','lt':'ge'}
@@ -71,6 +82,9 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
         listing=subprocess.check_output([cross+'objdump','-h',str(merge)],text=True)
         sections=[(m.group(1),int(m.group(2),16)) for m in re.finditer(r'^\s*\d+\s+(\.(?:text\.mm_part\d+|data\.mm_merge))\s+([0-9a-fA-F]+)',listing,re.M) if int(m.group(2),16)]
         available=list(merge_masks);placements=[]
+        if lfo_cc:
+            decoder=next(va for va in sorted(available) if sprites.MASKS[va][0]>=240)
+            available.remove(decoder);placements.append(('.text.ml_depack',decoder))
         for section,size in sorted(sections,key=lambda x:-x[1]):
             mask=next((va for va in sorted(available,key=lambda va:(sprites.MASKS[va][0],va)) if sprites.MASKS[va][0]>=size),None)
             assert mask is not None,(section,size,'aucun masque merger libre')
@@ -80,6 +94,9 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
         bindings='\n'.join(f"SG_{name[3:]} = {sg[name]};" for name in (
             'sg_action_generate','sg_action_undo','sg_config','sg_error','sg_generate',
             'sg_advanced_steps','sg_options','sg_advanced','sg_random','sg_random_range','sg_func','sg_pad','sg_undo_valid','sg_obj','sg_menu_key','sg_open'))
+        if lfo_cc:
+            lf=build.load_catalog()['model-cycles_OS1.13'][1]['lfo-secondary']['symbols']
+            bindings+='\nMLCC_audio_next = '+lf['lf2_dispatch']+';'
         # Même source que l'aperçu natif ; garder ses branches locales hors des masques.
         ui=p/'genie_stock.s'
         body=(ROOT/'tools/machines/seq_gen/stock_ui.s').read_text()
@@ -130,7 +147,7 @@ SECTIONS {{
         return *blobs,fragments,symbols(cross,elf)
 
 
-def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True):
+def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False):
     assert hashlib.sha256(stock).hexdigest()==STOCK,'OS Cycles non officiel'
     assert subprocess.check_output(['git','-C',str(model_tg),'rev-parse','HEAD'],text=True).strip()==COMMIT
     subprocess.run(['git','-C',str(model_tg),'diff','--quiet','HEAD'],check=True)
@@ -149,8 +166,10 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     def word(at):return struct.unpack('>I',image[at-build.BASE:at-build.BASE+4])[0]
     assert word(0x400792f2)==0x401eb7c8 and word(0x400792bc)==0x401eb7ec
     blocks=(word(0x400792f2)-0x401eb750)//20
-    limit=tg['blob_start']+blocks*16384
-    assert blocks==6 and start<limit
+    if lfo_cc:cache_blocks=7
+    assert blocks==6 and cache_blocks in (6,7)
+    limit=tg['blob_start']+cache_blocks*16384
+    assert start<limit
     oldkey=image[0x4007240c-build.BASE:0x40072412-build.BASE]
     assert oldkey[:2]==b'\x4e\xf9'
     next_key=struct.unpack('>I',oldkey[2:])[0]
@@ -166,8 +185,12 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     needle=struct.pack('>I',loader)
     assert [build.BASE+i for i in range(0,len(stock)-3,2) if stock[i:i+4]==needle]==[ptr]
     merge_masks=[va for va in free if va!=loader]
-    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display)
-    assert source>=start+len(blob) and source+len(blob)<=build.END_LIMIT
+    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc)
+    if lfo_cc:
+        import aplib_grow
+        packed=aplib_grow.pack(blob)
+    else:packed=blob
+    assert source>=start+len(blob) and source+len(packed)<=build.END_LIMIT
     st=catalog['syntakt-tg-sd-cp-toy-bits-swarm-macro']
     target=b'\x4e\xf9'+struct.pack('>I',int(tg_tweak['symbols']['boot_extra_hook'],16))
     chain=[]
@@ -181,6 +204,10 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
         old=patched[at-build.BASE:at-build.BASE+len(new)]
         assert len(old)==len(new)
         writes.append(dict(off=at-build.BASE,old=old.hex(),new=new.hex()))
+    # Réserve optionnelle d'un septième bloc, neuf blocs disque restent liés.
+    if cache_blocks != blocks:
+        write(0x400792f2,struct.pack('>I',0x401eb750+20*cache_blocks))
+        write(0x400792bc,struct.pack('>I',0x401eb750+20*(cache_blocks+1)+16))
     redirect=sprites.redirect_write(loader)
     write(build.BASE+redirect['off'],bytes.fromhex(redirect['new']))
     write(loader,stub)
@@ -193,6 +220,10 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     write(0x4008e8c4,b'\x4e\xf9'+struct.pack('>I',syms['mlp_pulse_guard'])+b'\x4e\x71'*2)
     assert image[0x400012cc-build.BASE:0x400012d2-build.BASE].hex()=='2f02242f0008'
     write(0x400012cc,b'\x4e\xf9'+struct.pack('>I',syms['mm_rx']))
+    if lfo_cc:
+        expected=b'\x4e\xb9'+struct.pack('>I',int(catalog['lfo-secondary']['symbols']['lf2_dispatch'],16))
+        assert image[0x400597c6-build.BASE:0x400597cc-build.BASE]==expected
+        write(0x400597c6,b'\x4e\xb9'+struct.pack('>I',syms['mlcc_audio']))
     write(0x4007240c,b'\x4e\xf9'+struct.pack('>I',syms['ml_key']))
     write(0x40054686,b'\x4e\xf9'+struct.pack('>I',syms['ml_start_hook']))
     write(0x400594a8,b'\x4e\xb9'+struct.pack('>I',syms['ml_audio_hook']))
@@ -233,8 +264,9 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
                append=dict(at=hex(source),dest=hex(start),size=len(blob),
                            parts=[dict(dest=hex(start),hex=blob.hex())],reloc=[]),
                symbols={k:hex(v) for k,v in syms.items()})
+    if lfo_cc:tweak['append']['compress']='aplib'
     final,_=build.apply_writes(stock,chosen+[tweak])
-    return tweak,chosen,final+payload+blob
+    return tweak,chosen,final+payload+packed
 
 
 def main():
@@ -244,8 +276,10 @@ def main():
     ap.add_argument('--output',type=pathlib.Path,default=OUT);ap.add_argument('--check',action='store_true')
     ap.add_argument('--pattern-banks',action='store_true',default=True,help='Banques RAM par pattern du candidat test')
     ap.add_argument('--stock-display',action='store_true',default=True,help='Rendu stock du candidat test')
+    ap.add_argument('--cache-blocks',type=int,choices=(6,7),default=6,help='Réserve expérimentale pour LFO CC ; neuf blocs disque au minimum')
+    ap.add_argument('--lfo-cc',action='store_true',help='Candidat LFO CC privé ; réserve sept blocs')
     args=ap.parse_args()
-    tweak,_,image=generate(main_os_from_syx(args.cycles),args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display)
+    tweak,_,image=generate(main_os_from_syx(args.cycles),args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display,cache_blocks=args.cache_blocks,lfo_cc=args.lfo_cc)
     body=json.dumps(tweak,indent=1,ensure_ascii=False)+'\n'
     if args.check:
         assert args.output and args.output.read_text()==body,'JSON candidat différent'

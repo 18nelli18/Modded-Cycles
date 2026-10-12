@@ -24,9 +24,12 @@ def main():
     ap.add_argument('--pattern-banks',action='store_true')
     ap.add_argument('--stock-display',action='store_true')
     ap.add_argument('--stereo-usb',action='store_true')
+    ap.add_argument('--cache-blocks',type=int,choices=(6,7),default=6)
+    ap.add_argument('--lfo-cc',action='store_true')
     args=ap.parse_args()
+    if args.lfo_cc:args.cache_blocks=7
     stock=gen.main_os_from_syx(args.cycles)
-    tweak,chosen,image=gen.generate(stock,args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display,not args.stereo_usb)
+    tweak,chosen,image=gen.generate(stock,args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display,not args.stereo_usb,args.cache_blocks,args.lfo_cc)
     s={k:int(v,16) for k,v in tweak['symbols'].items()}
     r=Rig(stock,{'writes':[]},{'writes':[],'symbols':tweak['symbols']});u=r.u
     lo=0x4019b590;hi=0x423380b0;start=s['ML_BANK_START'];end=s['ML_BANK_END']
@@ -88,6 +91,18 @@ def main():
     assert bytes(u.mem_read(int(st['append']['dest'],16),len(expected)))==expected
     print('ok : vrai boot ST puis MIDI, décompression exacte, copie après décompression, TG et banque conservés')
     print('ok : tampon nul/disque et reste BSS remis à zéro, invalidation cache avant exécution, registres/pile et reprise natifs')
+    # Réinitialisation réelle du cache après boot : seules les voies disque
+    # non réservées doivent être atteignables depuis sa tête LRU.
+    before=bytes(u.mem_read(tgstart,end-tgstart))
+    r.call(0x4007929c)
+    node=r.r32(0x401eb894);nodes=[]
+    while node:
+        assert node not in nodes
+        nodes.append(node);node=r.r32(node+12)
+    assert nodes==[0x401eb750+20*i for i in range(args.cache_blocks,16)]
+    assert bytes(u.mem_read(tgstart,end-tgstart))==before
+    print('ok : réserve cache',args.cache_blocks,'blocs, liste native',len(nodes),'blocs après boot, payload intact')
+
     # Pliage réel TG dans le bundle : toutes gammes/tonalités/notes, ABI.
     tg=gen.symbols(args.cross,pathlib.Path(args.model_tg)/'build/_b.elf')
     scales=(None,(0,2,4,5,7,9,11),(0,2,3,5,7,8,10),

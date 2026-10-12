@@ -39,6 +39,12 @@ ml_worker_notify:
     bne .Lwn_ready
 .Lwn_no_merge:
     .endif
+    .ifdef ML_LFO_CC
+    jsr mlcc_ready
+    tstl %d0
+    bne .Lwn_ready
+    moveal %a2@(12),%a0
+    .endif
     tstl %a0@
     bne .Lwn_ready
     tstl ml_live_runtime
@@ -79,6 +85,9 @@ ml_worker_once:
     jsr ml_service
     addql #8,%sp
     addl %d0,%d2
+    .ifdef ML_LFO_CC
+    jsr mlcc_worker
+    .endif
     movew #0x2700,%sr
     clrl %a2@(8)
     | Réarmer si huit paquets n'ont pas suffi, sans fenêtre de réveil perdu.

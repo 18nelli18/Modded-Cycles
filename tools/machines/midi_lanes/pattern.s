@@ -81,6 +81,11 @@ ml_pattern_tick:
     beq .Ltick_done
     tstl %d3
     beq .Ltick_done
+    .ifdef ML_LFO_CC
+    movel mlcc_triggers,%d1
+    bset %d2,%d1
+    movel %d1,mlcc_triggers
+    .endif
     lea.l ml_pad_serial,%a0
     addql #1,%a0@(0,%d2:l:4)
     bra .Ltick_done

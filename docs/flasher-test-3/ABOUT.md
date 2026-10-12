@@ -1,3 +1,9 @@
+# Current candidate: B-side LFO-to-CC
+
+Build `2026-10-12-test-3-lfo-cc-first-test`. Experimental, not hardware tested. In B-side, LFO opens MIDI LFO1; a second press switches LFO1/2; BACK returns to the B-side. Destination CC0–127/OFF, common names, lane channel/port, separate audio settings. Depth starts at zero; destinations start OFF. Saving is not included; MIDI LFO settings are RAM-only and shared across patterns.
+
+Uses one additional 16 KiB cache reservation (nine disk cache blocks remain) and aPLib compression of the MIDI payload. Native boot, cache lists, placed LFO output, rate limit and menu tests pass emulation. Physical timing/load still requires hardware testing.
+
 # Test Flasher 3
 
 Upstream: [18nelli18/Modded-Cycles release 1.54](https://github.com/18nelli18/Modded-Cycles/commit/d89267af1e3ae9b54f54572a8401c4f8c2fe3e78). Fork baseline: aa9c9d5.
@@ -6,7 +12,7 @@ Includes ACID, MACRO lo-fi fix, Model:Samples installer support and optional ups
 
 The MIDI bank candidate includes the simplified velocity display and uniform TR7–TR12 labels. Its combined boot, worker and browser-transfer checks pass emulation. This combined firmware requires hardware verification.
 
-MIDI bank sequences and the fork's Second LFO settings remain RAM-only. Native persistence and B-side LFO-to-CC routing are not included. No firmware is supplied. Licenses and author credits accompany the page.
+MIDI bank sequences and the fork's Second LFO settings remain RAM-only. Native persistence is not included. B-side LFO-to-CC is included in the current candidate described above. No firmware is supplied. Licenses and author credits accompany the page.
 
 Whole-image reference hashes cover upstream's published sample and this exact MIDI-bank bundle; other fork combinations retain per-mod verification.
 

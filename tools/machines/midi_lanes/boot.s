@@ -8,11 +8,19 @@
 ml_boot_copy:
     lea.l ML_PAYLOAD_SRC,%a0
     lea.l ML_BANK_START,%a1
+    .ifdef ML_LFO_CC
+    lea %sp@(-24),%sp
+    moveml %d2-%d6/%a2,%sp@
+    jsr ml_depack
+    moveml %sp@,%d2-%d6/%a2
+    lea %sp@(24),%sp
+    .else
     movel #ML_BANK_SIZE,%d0
 .Lcopy:
     moveb %a0@+,%a1@+
     subql #1,%d0
     bne .Lcopy
+    .endif
     nop
     movel #0x000cc100,%d0
     movec %d0,%cacr

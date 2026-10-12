@@ -50,6 +50,10 @@ ml_ui_drain:
     tstl %a0
     beq .Lud_done
 .Lud_ready:
+    .ifdef ML_LFO_CC
+    jsr mlcc_prepare
+    jsr mlcc_refresh
+    .endif
     .ifdef ML_PATTERN_BANKS
     jsr ml_bank_ui_sync
     moveal ml_context,%a0

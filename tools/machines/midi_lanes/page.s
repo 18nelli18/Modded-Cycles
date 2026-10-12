@@ -209,7 +209,11 @@ mlp_menu_key:
     cmpil #3,%d2
     beq .Lmk_global
     cmpil #8,%d2
+    .ifdef ML_LFO_CC
+    beq .Lmk_cc_lfo
+    .else
     beq .Lmk_global
+    .endif
     cmpil #9,%d2
     beq .Lmk_global
     cmpil #13,%d2
@@ -266,6 +270,11 @@ mlp_menu_key:
     movel %d0,mlp_remove
     bra .Lmk_trig_note
 .Lmk_trig_new:
+    | Nouveau trig : C5 (MIDI72), même après suppression d’une autre note.
+    moveq #7,%d2
+    moveq #72,%d0
+    jsr mlp_store
+    moveq #6,%d2
     moveq #1,%d0
     jsr mlp_store
 .Lmk_trig_note:
@@ -406,6 +415,16 @@ mlp_menu_key:
 .Lmk_func_down:
     clrl mlp_func_inherited
     bra .Lmk_used
+    .ifdef ML_LFO_CC
+.Lmk_cc_lfo:
+    movel %d3,%d0
+    andil #3,%d0
+    bne .Lmk_used
+    jsr mlp_keyboard_cancel
+    clrl mlccp_index
+    jsr mlccp_open
+    bra .Lmk_used
+    .endif
 .Lmk_global:
     | Une page native peut capter les releases suivantes : couper le clavier
     | avant TEMPO/LFO/REC, sans toucher aux notes du séquenceur.
@@ -430,8 +449,6 @@ mlp_menu_key:
     bra .Lmk_used
 .Lmk_data_setup:
     movel mlp_row,%d2
-    cmpil #1,%d2
-    beq .Lmk_used
     cmpil #6,%d2
     beq .Lmk_toggle
     cmpil #10,%d2
@@ -596,8 +613,6 @@ mlp_enc:
     movel %d2,mlp_row
     bra .Lme_redraw
 .Lme_value:
-    cmpil #1,%d2
-    beq .Lme_out
     jsr mlp_raw_value
     addl %d3,%d0
     lea.l mlp_min,%a0
@@ -670,8 +685,6 @@ mlp_store:
     movel %d0,mlp_step
     rts
 .Lms_not_step:
-    cmpil #1,%d2
-    beq .Lms_done
     movel %d0,%sp@-
     jsr mlp_raw_value
     cmpl %sp@,%d0
@@ -716,6 +729,8 @@ mlp_store:
     movel %d0,mlp_step
     bra .Lms_done
 .Lms_not_length:
+    cmpil #1,%d2
+    beq .Lms_channel_release
     cmpil #2,%d2
     beq .Lms_release
     cmpil #10,%d2
@@ -728,6 +743,8 @@ mlp_store:
     jsr ml_quiet
     addql #8,%sp
     rts
+.Lms_channel_release:
+    jsr mlp_keyboard_cancel
 .Lms_release:
     movel mlp_track,%sp@-
     movel ml_runtime,%sp@-
@@ -745,12 +762,6 @@ mlp_raw_value:
     movel mlp_track,%d0
     rts
 .Lmv_not_track:
-    cmpil #1,%d2
-    bne .Lmv_not_channel
-    movel mlp_track,%d0
-    addql #7,%d0
-    rts
-.Lmv_not_channel:
     cmpil #5,%d2
     bne .Lmv_data
     movel mlp_step,%d0
@@ -782,6 +793,8 @@ mlp_value:
     jsr mlp_raw_value
     moveal #0,%a0
     tstl %d2
+    beq .Lmv_one_based
+    cmpil #1,%d2
     beq .Lmv_one_based
     cmpil #5,%d2
     beq .Lmv_one_based
@@ -1061,8 +1074,8 @@ mlp_led_vt:
 mlp_labels: .long mlp_track_label,mlp_channel,mlp_port,mlp_length,mlp_speed,mlp_step_label,mlp_trig,mlp_note,mlp_velocity,mlp_gate,mlp_output
 mlp_ports: .long mlp_usb,mlp_din,mlp_both
 mlp_speeds: .long mlp_quarter,mlp_half,mlp_normal,mlp_threehalf,mlp_double,mlp_triple,mlp_four
-mlp_min: .byte 0,7,2,1,0,0,0,0,1,1,0
-mlp_max: .byte 5,12,4,64,6,63,1,127,127,64,1
+mlp_min: .byte 0,0,2,1,0,0,0,0,1,1,0
+mlp_max: .byte 5,15,4,64,6,63,1,127,127,64,1
 mlp_fields: .byte 0,2,3,4,5,0,3,0,1,2,0
 mlp_title: .asciz "MIDI BANK"
 mlp_track_label: .asciz "Track"

@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+"""Prototype page LFO MIDI dérivée du rendu LFO2 stock du fork.
+
+Sources privées, pas de tweak/flasher généré. Garde la banque B sous la page,
+LFO bascule1/2, destination CC0–127/OFF indépendante des paramètres audio.
+"""
+import pathlib
+ROOT=pathlib.Path(__file__).resolve().parents[1]
+
+
+def sources():
+ page=(ROOT/'tools/machines/lfo_secondary/page.s').read_text()
+ layout=(ROOT/'tools/machines/lfo_secondary/layout.s').read_text()
+ def rename(s):return s.replace('lf2p','mlccp').replace('lf2l','mlccl').replace('lf2_context','mlcc_settings')
+ page=rename(page);layout=rename(layout)
+ a=page.index('    | Même sélection de piste');b=page.index('    lea.l   0x400802e0',a)
+ page=page[:a]+'''    movel mlp_track,%d0
+    movel %d0,mlccp_track
+'''+page[b:]
+ page=page.replace('    tstl mlcc_settings\n    beqw mlccp_o_done','    tstl mlcc_settings\n    beqw mlccp_o_done\n    tstl mlp_obj\n    beqw mlccp_o_done')
+ page=page.replace('jsr     0x4007700e            | présenter','jsr     mlccp_present        | garder la banque B')
+ page=page.replace('    bra .Lpk_close\n.Lpk_close_down:', '    moveq #1,%d0\n    eorl %d0,mlccp_index\n    bra .Lpk_redraw\n.Lpk_close_down:')
+ a=page.index('    cmpil #33,%d4');b=page.index('    cmpil #32767,%d4',a);page=page[:a]+page[b:]
+ a=page.index('.Lpe_high_ok:');b=page.index('.Lpe_set:',a);page=page[:a]+'.Lpe_high_ok:\n'+page[b:]
+ page=page.replace('    movel mlccp_track,%sp@-\n    movel mlcc_settings,%sp@-\n    jsr lf2_edit\n    lea.l %sp@(16),%sp','    movel mlccp_index,%sp@-\n    movel mlccp_track,%sp@-\n    movel mlcc_settings,%sp@-\n    jsr mlcc_cfg_edit\n    lea.l %sp@(20),%sp')
+ a=page.index('mlccp_raw_value:');b=page.index('    .section .text.mlccp_value',a)
+ page=page[:a]+'''mlccp_raw_value:
+    movel %d2,%d0
+    subql #1,%d0
+    movel %d0,%sp@-
+    movel mlccp_index,%sp@-
+    movel mlccp_track,%sp@-
+    movel mlcc_settings,%sp@-
+    jsr mlcc_cfg_get
+    lea.l %sp@(16),%sp
+    rts
+
+'''+page[b:]
+ a=page.index('.Lpr_dest:');b=page.index('    .section .text.mlccp_render_tail',a)
+ page=page[:a]+'''.Lpr_dest:
+    cmpil #4,%d2
+    beq mlccp_dest_name
+    bra .Lpr_not_dest
+'''+page[b:]
+ a=page.index('mlccp_destination_name:');b=page.index('    .section .data.mlccp_state',a)
+ page=page[:a]+'mlccp_destination_name:\n    jmp mlcc_name\n\n'+page[b:]
+ page=page.replace('.word 32767,23,32767,33,6,32767,4,32767','.word 32767,23,32767,128,6,32767,4,32767')
+ page=page.replace('    movel %d0,mlccp_track\n    moveal %sp@(4)', '    movel %d0,mlccp_track\n    movel %d0,mlp_track\n    moveal %sp@(4)')
+ # Le titre change dans le descripteur privé avant chaque rendu natif.
+ layout=layout.replace('    lea.l %a2@(0x500),%a2\n    movel mlccp_row', '''    lea.l %a2@(0x500),%a2
+    lea mlccl_title,%a0
+    tstl mlccp_index
+    beq .Lcc_title_ready
+    lea mlccl_title2,%a0
+.Lcc_title_ready:
+    movel %a0,%a2@(148)
+    movel mlccp_row''')
+ layout=layout.replace('.long 5,5,-1\nmlccl_title: .asciz "LFO 2"','.long 7,7,-1\nmlccl_title: .asciz "M LFO 1"\n    .balign 4\n    .long 7,7,-1\nmlccl_title2: .asciz "M LFO 2"')
+ extra='''
+    .data
+    .balign 4
+    .globl mlcc_settings,mlccp_index
+mlcc_settings: .long 0
+mlccp_index: .long 0
+    .text
+    .globl mlccp_present
+mlccp_present:
+    lea %sp@(-8),%sp
+    moveml %d2/%a2,%sp@
+    moveal %sp@(16),%a0
+    moveal %a0@,%a2
+    movel %a2@(32),%d2
+    movel %a2@(28),%d0
+    movel %d0,%a2@(32)
+    movel %sp@(20),%sp@-
+    movel %sp@(20),%sp@-
+    movel %sp@(20),%sp@-
+    jsr 0x4007700e
+    lea %sp@(12),%sp
+    movel %d2,%a2@(32)
+    moveml %sp@,%d2/%a2
+    lea %sp@(8),%sp
+    rts
+'''
+ return {'page':page,'layout':layout,'support':extra}
