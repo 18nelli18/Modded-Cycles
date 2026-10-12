@@ -51,3 +51,19 @@ Channel readout: smaller CH1–16 below M1–M6 follows the Scale Setup setting.
 Native rendering tested on all six lanes and sixteen channels. / Petit
 indicateur CH1–16 sous M1–M6, lié au canal choisi dans Scale Setup.
 Saving and LFO CC remain unfinished and are not included in this build.
+
+
+2026-10-12: Experimental DIN OUT/THRU message merger. Incoming channel messages
+are queued whole, with explicit running status restored. Realtime bytes remain
+immediate. Only combined mode2 changes; OUT and pure THRU keep their native paths.
+Requires the MIDI OUT Bank — Test3 selection. Buffer: seven completed messages,
+SysEx maximum1024 bytes; overflow drops a whole incoming message and increments
+a counter. This candidate needs the keyboard-cutoff-CC + B-side playback hardware
+test. It also fixes edited playback channels and rejected-note gate aging.
+Saving and B-side LFO-to-CC are not installed.
+
+Fusion DIN OUT/THRU expérimentale par messages complets, running status restauré,
+realtime immédiat ; uniquement le mode combiné2. Nécessite la sélection Banque
+MIDI OUT — Test3. Sept messages en attente, SysEx1024 octets maximum ; surcharge
+jetée entière et comptée. Test clavier cutoff CC + lecture B requis.
+Sauvegarde et LFO CC non inclus. Voir [note technique](../../notes/60-fusion-midi-din.md).

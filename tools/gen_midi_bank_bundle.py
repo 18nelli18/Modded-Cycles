@@ -23,11 +23,11 @@ SOURCES=('runtime','pattern','clock','service','prepare','page','integration',
          'key','led','ui_hook','transport','worker','boot','banks','stock_display','keyboard','genie','genie_router')
 IDS=('6ch-usbup','model-tg-st','sample-preview-st','trig-hold','arp','tempo-max',
      'boot-anim','multiline-browser','level-pan-values','trigless-dim',
-     'midi-live-both','syntakt-tg-sd-cp-toy-bits-swarm-macro',
+     'midi-live-both','syntakt-tg-sd-cp-toy-bits-swarm-macro-acid',
      'scale-gen-st-queued','lfo-secondary','scramble-st-gen-queued')
 
 
-def compile_code(cross,tg,next_key,start,limit,source,loader,pattern_banks=False,stock_display=False):
+def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False):
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[]
         for name in SOURCES:
@@ -36,10 +36,46 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,pattern_banks=False
             if name == 'stock_display' and not stock_display:
                 continue
             obj=p/(name+'.o');objects.append(str(obj))
-            subprocess.run([cross+'as','-march=cfv4e','--defsym','ML_WORKER=1','--defsym','ML_GENIE=1',
+            subprocess.run([cross+'as','-march=cfv4e','--defsym','ML_WORKER=1','--defsym','ML_GENIE=1','--defsym','ML_MERGE=1',
                             *(['--defsym','ML_PATTERN_BANKS=1'] if pattern_banks else []),
                             *(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),
                             '-o',str(obj),str(ROOT/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
+        # Petits fragments à sauts absolus : aucun masque libre ne dépasse280o.
+        raw=(ROOT/'tools/machines/midi_thru/merge.s').read_text()
+        inverse={'ne':'eq','eq':'ne','hi':'ls','ls':'hi','cc':'cs','cs':'cc','pl':'mi','mi':'pl','ge':'lt','lt':'ge'}
+        lines=[];part=0;count=0;serial=0;in_text=False
+        for line in raw.splitlines():
+            if '.section .text.mm_merge' in line:
+                line='    .section .text.mm_part'+str(part)+',"ax"'
+                in_text=True
+            elif '.section .data.mm_merge' in line:
+                in_text=False
+            stripped=line.strip()
+            instruction=in_text and stripped and not stripped.startswith(('|','.')) and not stripped.endswith(':')
+            if instruction and count>=20:
+                part+=1
+                lines+=['    jmp MM_part'+str(part),'    .section .text.mm_part'+str(part)+',"ax"','MM_part'+str(part)+':']
+                count=0
+            match=re.match(r'^(\s*)b(ra|sr|eq|ne|hi|ls|cc|cs|pl|mi|ge|lt)\s+(\.L\w+)\s*$',line)
+            if match:
+                pad,kind,target=match.groups()
+                if kind in ('ra','sr'):line=pad+('jmp ' if kind=='ra' else 'jsr ')+target
+                else:
+                    serial+=1;skip='.Lmm_far_'+str(serial)
+                    line=pad+'b'+inverse[kind]+'.s '+skip+'\n'+pad+'jmp '+target+'\n'+skip+':'
+            lines.append(line)
+            if instruction:count+=1
+        asm=p/'merge.s';asm.write_text('\n'.join(lines)+'\n')
+        merge=p/'merge.o';objects.append(str(merge))
+        subprocess.run([cross+'as','-march=cfv4e','--defsym','ML_MERGE=1','-o',str(merge),str(asm)],check=True)
+        listing=subprocess.check_output([cross+'objdump','-h',str(merge)],text=True)
+        sections=[(m.group(1),int(m.group(2),16)) for m in re.finditer(r'^\s*\d+\s+(\.(?:text\.mm_part\d+|data\.mm_merge))\s+([0-9a-fA-F]+)',listing,re.M) if int(m.group(2),16)]
+        available=list(merge_masks);placements=[]
+        for section,size in sorted(sections,key=lambda x:-x[1]):
+            mask=next((va for va in sorted(available,key=lambda va:(sprites.MASKS[va][0],va)) if sprites.MASKS[va][0]>=size),None)
+            assert mask is not None,(section,size,'aucun masque merger libre')
+            available.remove(mask);placements.append((section,mask))
+        merge_script='\n'.join(f' {name} {mask:#x} : {{ *({name}) }}' for name,mask in placements)
         sg=build.load_catalog()['model-cycles_OS1.13'][1]['scale-gen-st-queued']['symbols']
         bindings='\n'.join(f"SG_{name[3:]} = {sg[name]};" for name in (
             'sg_action_generate','sg_action_undo','sg_config','sg_error','sg_generate',
@@ -70,6 +106,7 @@ ml_key_next = {next_key:#x}; ML_BANK_START = {start:#x};
 ML_TG_START = {tg['blob_start']:#x}; ML_PAYLOAD_SRC = {source:#x};
 SECTIONS {{
  .loader {loader:#x} : {{ *(.text.ml_loader) }}
+{merge_script}
  .bank {start:#x} : {{ *(.text*) *(.rodata*) *(.data*) *(.bss*) . = ALIGN(16); }}
  ML_BANK_END = ADDR(.bank) + SIZEOF(.bank); ML_BANK_SIZE = SIZEOF(.bank);
  ASSERT(ML_BANK_END <= {limit:#x}, "banque hors des blocs TG retires")
@@ -85,15 +122,20 @@ SECTIONS {{
             out=p/(section[1:]+'.bin')
             subprocess.run([cross+'objcopy','-O','binary','--only-section='+section,str(elf),str(out)],check=True)
             blobs.append(out.read_bytes())
-        return *blobs,symbols(cross,elf)
+        fragments=[]
+        for section,mask in placements:
+            out=p/'fragment.bin'
+            subprocess.run([cross+'objcopy','-O','binary','--only-section='+section,str(elf),str(out)],check=True)
+            fragments.append((mask,out.read_bytes()))
+        return *blobs,fragments,symbols(cross,elf)
 
 
-def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False):
+def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True):
     assert hashlib.sha256(stock).hexdigest()==STOCK,'OS Cycles non officiel'
     assert subprocess.check_output(['git','-C',str(model_tg),'rev-parse','HEAD'],text=True).strip()==COMMIT
     subprocess.run(['git','-C',str(model_tg),'diff','--quiet','HEAD'],check=True)
     catalog=build.load_catalog()['model-cycles_OS1.13'][1]
-    chosen=sorted((catalog[x] for x in IDS),key=lambda t:t['order'])
+    chosen=sorted((catalog[x] for x in IDS if usb6 or x!='6ch-usbup'),key=lambda t:t['order'])
     build.check_conflicts(chosen)
     patched,_=build.apply_writes(stock,chosen)
     payload,_=build.build_payload(chosen,stock,syntakt_path)
@@ -123,7 +165,8 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     assert stock[loader-build.BASE:loader-build.BASE+size]==stock[kept-build.BASE:kept-build.BASE+size]
     needle=struct.pack('>I',loader)
     assert [build.BASE+i for i in range(0,len(stock)-3,2) if stock[i:i+4]==needle]==[ptr]
-    blob,stub,syms=compile_code(cross,tg,next_key,start,limit,source,loader,pattern_banks,stock_display)
+    merge_masks=[va for va in free if va!=loader]
+    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display)
     assert source>=start+len(blob) and source+len(blob)<=build.END_LIMIT
     st=catalog['syntakt-tg-sd-cp-toy-bits-swarm-macro']
     target=b'\x4e\xf9'+struct.pack('>I',int(tg_tweak['symbols']['boot_extra_hook'],16))
@@ -141,7 +184,15 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     redirect=sprites.redirect_write(loader)
     write(build.BASE+redirect['off'],bytes.fromhex(redirect['new']))
     write(loader,stub)
+    for merge_mask,fragment in merge_code:
+        redirect=sprites.redirect_write(merge_mask)
+        write(build.BASE+redirect['off'],bytes.fromhex(redirect['new']))
+        write(merge_mask,fragment)
     write(chain[0],b'\x4e\xf9'+struct.pack('>I',syms['ml_boot_copy']))
+    assert image[0x4008e8c4-build.BASE:0x4008e8ce-build.BASE].hex()=='202f000441f94010abf8'
+    write(0x4008e8c4,b'\x4e\xf9'+struct.pack('>I',syms['mlp_pulse_guard'])+b'\x4e\x71'*2)
+    assert image[0x400012cc-build.BASE:0x400012d2-build.BASE].hex()=='2f02242f0008'
+    write(0x400012cc,b'\x4e\xf9'+struct.pack('>I',syms['mm_rx']))
     write(0x4007240c,b'\x4e\xf9'+struct.pack('>I',syms['ml_key']))
     write(0x40054686,b'\x4e\xf9'+struct.pack('>I',syms['ml_start_hook']))
     write(0x400594a8,b'\x4e\xb9'+struct.pack('>I',syms['ml_audio_hook']))
@@ -178,7 +229,7 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
                description=['Six voies MIDI indépendantes, canaux fixes 7..12 ; réglages en RAM seulement.',
                             'Placement candidat TG-ST Select All ; tools/gen_midi_bank_bundle.py, note 57.'],
                device='Model:Cycles',os='1.13',section=3,status='experimental',
-               requires=list(IDS),conflicts=[],writes=writes,
+               requires=[x for x in IDS if x!='6ch-usbup'],conflicts=[],writes=writes,
                append=dict(at=hex(source),dest=hex(start),size=len(blob),
                            parts=[dict(dest=hex(start),hex=blob.hex())],reloc=[]),
                symbols={k:hex(v) for k,v in syms.items()})

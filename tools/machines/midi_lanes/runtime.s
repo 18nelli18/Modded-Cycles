@@ -19,6 +19,7 @@ ml_step:
     | Bit 31 interne : legato, nouvelle note avant la fin de l'ancienne.
     andil #0x7fffffff,%d3
     moveq #0,%d6
+    moveq #0,%d7
     cmpil #5,%d4
     bhi .Lstep_out
     movel %d4,%d0
@@ -57,12 +58,18 @@ ml_step:
     movel %a4@,%d0
     andil #0xffff0000,%d0
     cmpl %d7,%d0
-    beq .Lstep_out
+    beq .Lcollision_reject
 .Lcollision_next:
     lea.l %a4@(8),%a4
     addql #1,%d5
     cmpil #6,%d5
     bne .Lcollision
+    moveq #0,%d7
+    bra .Lgate_ready
+.Lcollision_reject:
+    | Refuser le nouveau On ne suspend jamais le gate de la note tenue.
+    moveq #0,%d2
+    moveq #-1,%d7
 .Lgate_ready:
     tstl %a3@
     beq .Lnew_note
@@ -115,6 +122,8 @@ ml_step:
     addql #1,%d0
     movel %d0,%a2@(12)
 .Laccepted:
+    tstl %d7
+    bmi .Lstep_out
     moveq #1,%d6
 .Lstep_out:
     movel %d6,%d0

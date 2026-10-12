@@ -23,9 +23,10 @@ def main():
     ap.add_argument('--model-tg',required=True);ap.add_argument('--cross',default='m68k-elf-')
     ap.add_argument('--pattern-banks',action='store_true')
     ap.add_argument('--stock-display',action='store_true')
+    ap.add_argument('--stereo-usb',action='store_true')
     args=ap.parse_args()
     stock=gen.main_os_from_syx(args.cycles)
-    tweak,chosen,image=gen.generate(stock,args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display)
+    tweak,chosen,image=gen.generate(stock,args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display,not args.stereo_usb)
     s={k:int(v,16) for k,v in tweak['symbols'].items()}
     r=Rig(stock,{'writes':[]},{'writes':[],'symbols':tweak['symbols']});u=r.u
     lo=0x4019b590;hi=0x423380b0;start=s['ML_BANK_START'];end=s['ML_BANK_END']
@@ -62,6 +63,15 @@ def main():
     assert all(u.reg_read(reg)==value for reg,value in keep.items())
     assert invals and not faults and copied[0]==end-start
     for handle in handles:u.hook_del(handle)
+    # Les detours Genie doivent survivre au vrai boot TG/Syntakt.
+    catalog=gen.build.load_catalog()['model-cycles_OS1.13'][1]
+    sg=catalog['scale-gen-st-queued']['symbols'];menu=int(sg['sg_menu_key'],16)
+    for ours in ('ml_genie_generate','ml_genie_undo'):
+        call=b'\x4e\xb9'+struct.pack('>I',s[ours])
+        sites=[at for at in range(menu,menu+0x400,2) if image[at-gen.build.BASE:at-gen.build.BASE+6]==call]
+        assert len(sites)==1,(ours,sites)
+        assert bytes(u.mem_read(sites[0],6))==call,('detour Genie perdu au boot',ours)
+    print('ok : detours Generate/Undo B présents après le vrai boot TG/Syntakt')
     bank=bytes.fromhex(tweak['append']['parts'][0]['hex'])
     assert bytes(u.mem_read(start,len(bank)))==bank
     tgstart=s['ML_TG_START']
@@ -99,6 +109,9 @@ def main():
     # État scheduler UI fourni : son initialisation OS complète reste hors preuve.
     r.w32(0x4049fd60,0x422feec8+24)
     u.reg_write(mk.UC_M68K_REG_SR,0x2000)
+    assert r.call('mm_prepare')==1
+    merge_ctx=r.r32(s['mm_context'])
+    assert merge_ctx and bytes(u.mem_read(merge_ctx,8256))==bytes(8256)
     assert r.call('ml_prepare')==1
     assert r.call('ml_worker_prepare')==1
     ctx=r.r32(s['ml_context']);worker=r.r32(s['ml_worker_context'])
@@ -157,6 +170,19 @@ def main():
     for at in (0x4005894a,0x400548ce,0x40058e28):
         u.hook_add(UC_HOOK_CODE,forbidden,begin=at,end=at)
     r.w32(0x40fe4228,1)
+    # Un CC reçu seul doit réveiller la tâche, sans notes en attente.
+    u.reg_write(mk.UC_M68K_REG_SR,0x2400)
+    assert r.call('mm_feed',merge_ctx,0xb6)==0
+    assert r.call('mm_feed',merge_ctx,74)==0
+    assert r.call('mm_feed',merge_ctx,100)==1
+    r.w32(worker+8,0)
+    r.call('ml_worker_kick')
+    assert r.r32(worker+8)==1
+    u.reg_write(mk.UC_M68K_REG_SR,0x2000)
+    r.call('ml_worker_once',worker)
+    assert output==[('DIN',bytes([0xb6,74,100]))]
+    assert r.r32(merge_ctx+16)==0 and r.r32(worker+8)==0
+    print('ok : allocation merger après boot, CC seul réveille le worker, sortie DIN hors IRQ')
     for thru in (0,1):
         mode[0]=thru;output.clear()
         for lane in range(6):

@@ -37,9 +37,11 @@ ml_pattern_tick:
     movel %sp@(36),%d3
     cmpl %d0,%d3
     bhi .Ltick_stop
-    | Canaux 7..12 immuables, indépendants du routage des pistes sonores.
-    movel %d2,%d0
-    addql #6,%d0
+    | Canal propre à la voie B, indépendant des pistes audio.
+    moveq #0,%d0
+    moveb %a3@(2),%d0
+    cmpil #15,%d0
+    bhi .Ltick_stop
     moveq #0,%d1
     moveb %a3@(3),%d1
     subql #2,%d1
@@ -163,12 +165,16 @@ ml_config:
     cmpil #1,%d0
     bls .Lconfig_bool
     cmpil #2,%d0
-    beq .Ledit_bad
+    beq .Lconfig_channel
     cmpil #3,%d0
     beq .Lconfig_port
     cmpil #4,%d0
     beq .Ledit_gate
     cmpil #6,%d1
+    bhi .Ledit_bad
+    bra .Ledit_write
+.Lconfig_channel:
+    cmpil #15,%d1
     bhi .Ledit_bad
     bra .Ledit_write
 .Lconfig_bool:
@@ -182,7 +188,7 @@ ml_config:
     bhi .Ledit_bad
     bra .Ledit_write
 
-| Initialiser une banque vide : MIDI actif, canaux fixes 7..12, port both.
+| Initialiser une banque vide : MIDI actif, canaux par défaut 7..12, port both.
 ml_init:
     lea.l %sp@(-4),%sp
     movew %sr,%d0

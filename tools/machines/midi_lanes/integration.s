@@ -59,6 +59,9 @@ ml_ui_drain:
     moveal ml_context,%a0
     .endif
     .ifdef ML_WORKER
+    .ifdef ML_MERGE
+    jsr mm_prepare
+    .endif
     jsr ml_worker_prepare
     jsr ml_worker_kick
     .else

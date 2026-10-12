@@ -31,6 +31,14 @@ ml_worker_notify:
     tstl %a2@(8)
     bne .Lwn_done
     moveal %a2@(12),%a0
+    .ifdef ML_MERGE
+    moveal mm_context,%a1
+    tstl %a1
+    beq .Lwn_no_merge
+    tstl %a1@(16)
+    bne .Lwn_ready
+.Lwn_no_merge:
+    .endif
     tstl %a0@
     bne .Lwn_ready
     tstl ml_live_runtime
@@ -55,6 +63,12 @@ ml_worker_once:
     andil #0x0700,%d0
     bne .Lwo_refuse
     moveal %sp@(16),%a2
+    .ifdef ML_MERGE
+    pea 8
+    movel mm_context,%sp@-
+    jsr mm_service
+    addql #8,%sp
+    .endif
     pea 8
     movel %a2@(12),%sp@-
     jsr ml_service

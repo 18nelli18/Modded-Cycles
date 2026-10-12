@@ -15,16 +15,23 @@ from test_sdvintage import main_os_from_syx
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--cycles',required=True);ap.add_argument('--model-tg',required=True)
+    ap.add_argument('--syntakt',help='Tester les callbacks du bundle réellement placé')
     a=ap.parse_args();root=pathlib.Path(__file__).resolve().parents[2]
     cross=str(root.parent/'toolchain/bin/m68k-elf-')
     stock=main_os_from_syx(a.cycles);catalog=build.load_catalog()['model-cycles_OS1.13'][1]
     chosen=sorted((catalog[x] for x in gen.IDS),key=lambda t:t['order'])
     patched,_=build.apply_writes(stock,chosen)
     tg=gen.symbols(cross,pathlib.Path(a.model_tg)/'build/_b.elf')
-    blob,_,s=gen.compile_code(cross,tg,int(catalog['scramble-st-gen-queued']['symbols']['sc_key'],16),
-                            0x93050000,0x93060000,0x40200000,int(json.loads(gen.OUT.read_text())['symbols']['ml_boot_copy'],16),True,True)
+    placed=json.loads(gen.OUT.read_text())
+    s={k:int(v,16) for k,v in placed['symbols'].items()}
+    blob=bytes.fromhex(placed['append']['parts'][0]['hex'])
+    patched,_=build.apply_writes(stock,chosen+[placed])
+    if a.syntakt:
+        placed,_,image=gen.generate(stock,a.syntakt,a.model_tg,cross,True,True)
+        s={k:int(v,16) for k,v in placed['symbols'].items()}
+        blob=bytes.fromhex(placed['append']['parts'][0]['hex']);patched=image
     r=Rig(stock,{'writes':[]},{'writes':[],'symbols':{}})
-    r.u.mem_write(build.BASE,patched);r.u.mem_write(0x93050000,blob);r.s=s
+    r.u.mem_write(build.BASE,patched);r.u.mem_write(s['ML_BANK_START'],blob);r.s=s
     pattern,other,runtime=0x93070000,0x93072000,0x93074000
     r.call('ml_init',pattern);r.call('ml_init',other)
     r.w32(s['ml_pattern'],pattern);r.w32(s['ml_play_pattern'],pattern)
@@ -71,7 +78,7 @@ def main():
     # Le vrai menu appelle les adaptateurs, pas les setters de piste audio.
     sg=catalog['scale-gen-st-queued']['symbols']
     for native,ours in (('sg_action_generate','ml_genie_generate'),('sg_action_undo','ml_genie_undo')):
-        needle=b'\x4e\xb9'+struct.pack('>I',int(sg[native],16))
+        needle=b'\x4e\xb9'+struct.pack('>I',s[ours] if a.syntakt else int(sg[native],16))
         menu=int(sg['sg_menu_key'],16)
         sites=[at for at in range(menu,menu+0x400,2) if bytes(r.u.mem_read(at,6))==needle]
         assert len(sites)==1
@@ -92,7 +99,7 @@ def main():
         return r.show(args)
     r.stubs[0x4007700e]=grouped_show
     lo=int(sg['sg_o_allocate'],16);hi=int(sg['sg_o_done'],16)
-    target=b'\x4e\xb9'+struct.pack('>I',0x4007700e)
+    target=b'\x4e\xb9'+struct.pack('>I',s['ml_genie_present'] if a.syntakt else 0x4007700e)
     sites=[at for at in range(lo,hi,2) if bytes(r.u.mem_read(at,6))==target]
     assert len(sites)==1
     r.u.mem_write(sites[0],b'\x4e\xb9'+struct.pack('>I',s['ml_genie_present']))
@@ -141,6 +148,18 @@ def main():
     r.call('ml_genie_menu_key',obj,EVENT)
     assert bytes(r.u.mem_read(pattern,1584))==before
     assert bytes(r.u.mem_read(RAW,722))==audio
+    # Perte de l'objet UI sous overlay : conserver explicitement la destination B.
+    assert r.r32(s['ml_genie_b_owner'])==obj
+    saved_b=r.r32(s['mlp_obj']);r.w32(s['mlp_obj'],0)
+    before=bytes(r.u.mem_read(pattern,1584));r.w32(int(sg['sg_row'],16),19)
+    r.event(32,16);r.call('ml_genie_menu_key',obj,EVENT)
+    assert bytes(r.u.mem_read(pattern,1584))!=before
+    assert bytes(r.u.mem_read(RAW,722))==audio
+    r.w32(int(sg['sg_row'],16),20);r.event(32,16)
+    r.call('ml_genie_menu_key',obj,EVENT)
+    assert bytes(r.u.mem_read(pattern,1584))==before
+    assert bytes(r.u.mem_read(RAW,722))==audio
+    r.w32(s['mlp_obj'],saved_b)
     # Le callback supérieur route FUNC+pad vers B et synchronise le release.
     redraw=[]
     for addr,fn in ((0x400760ba,lambda a:redraw.append(a[0]) or 0),

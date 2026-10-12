@@ -66,7 +66,7 @@ def main():
     assert call('ml_init',pattern)==1
     for lane in range(6):
         for field,value in enumerate((1,0,lane+6,2+lane%3,64,2)):
-            assert call('ml_config',pattern,lane,field,value)==(0 if field==2 else 1)
+            assert call('ml_config',pattern,lane,field,value)==1
         for step in range(64):
             for field,value in enumerate((36+lane+step%12,50+step,1+step%4,int(step%4==0))):
                 assert call('ml_edit',pattern,lane,step,field,value)==1
@@ -101,7 +101,7 @@ def main():
     # Changer route/canal et muter doit libérer la note sur son ancien port.
     reset();assert call('ml_pattern_tick',BANK,pattern,0,0)==1
     original=take()
-    assert call('ml_config',pattern,0,2,15)==0
+    assert call('ml_config',pattern,0,2,15)==1
     assert call('ml_config',pattern,0,3,4)==1
     assert call('ml_config',pattern,0,1,1)==1
     call('ml_pattern_tick',BANK,pattern,0,1)
@@ -110,7 +110,7 @@ def main():
         before=bytes(u.mem_read(pattern,6*264))
         assert call('ml_edit',pattern,*args)==0
         assert bytes(u.mem_read(pattern,6*264))==before
-    for field,value in [(0,2),(1,2),(2,0),(2,6),(2,16),(3,1),(4,0),(4,65),(5,7),(6,0)]:
+    for field,value in [(0,2),(1,2),(2,16),(3,1),(4,0),(4,65),(5,7),(6,0)]:
         before=bytes(u.mem_read(pattern,6*264))
         assert call('ml_config',pattern,0,field,value)==0
         assert bytes(u.mem_read(pattern,6*264))==before
@@ -140,6 +140,24 @@ def main():
     for bad in (packet(0,128),packet(0,60,0),packet(0,60,port=1),packet(0,60,port=5),0x803c6404):
         before=bytes(u.mem_read(BANK,SIZE));assert call('ml_step',BANK,1,bad,2)==0
         assert bytes(u.mem_read(BANK,SIZE))==before
+    # Collision répétée : l'ancienne note doit quand même arriver à son Off.
+    reset();first,blocked=packet(0,60),packet(0,62)
+    assert call('ml_step',BANK,0,first,2)==1
+    assert call('ml_step',BANK,1,blocked,64)==1
+    assert [take(),take()]==[first,blocked]
+    assert call('ml_step',BANK,0,blocked,1)==0 and take()==0
+    assert call('ml_step',BANK,0,blocked,1)==0 and take()==off(first)
+    assert take()==0
+    call('ml_stop',BANK,1);assert take()==off(blocked)
+    # Le tick utilise réellement le canal modifié, pas le canal par défaut.
+    for channel in range(16):
+        reset()
+        assert call('ml_config',pattern,0,1,0)==1
+        assert call('ml_config',pattern,0,2,channel)==1
+        assert call('ml_pattern_tick',BANK,pattern,0,0)==1
+        emitted=take();assert emitted>>24==0x90+channel
+        call('ml_stop',BANK,0);assert take()==off(emitted) and take()==0
+    print('ok : collision ne retarde plus Off, seize canaux édités vérifiés au tick/Stop')
     print('ok : collision canal/note refusée, messages invalides refusés sans modifier les voies')
     reset();accepted=[]
     for tick in range(100):
