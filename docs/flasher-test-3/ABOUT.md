@@ -23,3 +23,13 @@ confirmation of the reported A-side targeting failure.
 Mise à jour : audio USB6 facultatif (décocher après Tout sélectionner).
 Genie conserve explicitement sa destination B ; isolation Generate/Undo
 prouvée en émulation, confirmation matérielle encore nécessaire.
+
+2026-10-12: AveyCole confirmed B-side Genie targeting works on hardware.
+New candidate: centered M1–M6 labels, no duplicate velocity slider, and MIDI
+channel 1–16 editable in FUNC + PAGE Scale Setup, defaulting to 7–12.
+Display/editing/codec checks pass emulation; this layout/channel change still
+needs hardware verification. Saving and B-side LFO CC remain uninstalled.
+
+AveyCole confirme le ciblage Genie B sur matériel. Nouveau candidat :
+M1–M6 centré, sans curseur de vélocité dupliqué ; canal 1–16 dans Scale Setup,
+défaut 7–12. Sauvegarde et LFO CC non raccordés.
