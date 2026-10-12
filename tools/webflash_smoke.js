@@ -118,7 +118,11 @@ const cstr = (str) => [...Buffer.from(str, "latin1"), 0];
 function fakeDevice(opts, reply) {
   const dev = Object.assign({ id: 27, name: "Model Cycles", version: "1.13", startStatus: 0, writeError: -1, silent: false,
     pings: 0, starts: 0, blocks: 0, received: null, size: 0, next: 0, bad: [] }, opts);
+  dev.sample = null;
   dev.handle = (d) => {
+    if (dev.wave && d.length === 8 && d[4] === 0x0f && XHEAD.slice(0, 4).every((b, k) => d[k] === b)) {   // Wave's 0x0F (notes/61)
+      dev.id = d[6] ? 25 : 27; dev.name = d[6] ? "Model Samples" : "Model Cycles"; return;
+    }
     if (d.length < 8 || XHEAD.some((b, k) => d[k] !== b)) return;           // not for the Transfer protocol
     const m = unpack(d.subarray(6, d.length - 1));
     const head = [0, 0, m[0], m[1], m[4] | 0x80];
@@ -140,7 +144,18 @@ function fakeDevice(opts, reply) {
       const op = dev.blocks === dev.writeError ? 2 : dev.next >= dev.size ? 1 : 0;
       dev.blocks++;
       r = [...head, 0, 0, 0, 0, op];
-    }
+    } else if (m[4] === 0x10) r = [...head];                            // read dir (sample fs): empty
+    else if (m[4] === 0x11) r = [...head, 1];                           // create dir: ok
+    else if (m[4] === 0x40) {                                           // open writer: size at [5..8] BE
+      const total = be(m, 5);
+      dev.sample = { id: 0x2a, total, buf: new Uint8Array(total), blocks: 0 };
+      r = [...head, 1, 0, 0, 0, dev.sample.id, 0, 0, 0, 0];
+    } else if (m[4] === 0x42) {                                         // write: id, consumed, offset, data
+      const id = be(m, 5), len = be(m, 9), off = be(m, 13), data = m.subarray(17);
+      if (!dev.sample || id !== dev.sample.id || data.length !== len) dev.bad.push("sample write: bad id/len");
+      else { dev.sample.buf.set(data, off); dev.sample.blocks++; }
+      r = [...head, 1];
+    } else if (m[4] === 0x41) r = [...head, 1];                         // close writer
     if (r && !dev.silent) setTimeout(() => reply(pack(r)), 1);
   };
   return dev;
@@ -218,11 +233,11 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 27).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-both,midi-live-both,macro,macro-tg,macro-acid,macro-acid-tg,acid,acid-tg,chord-keys,track-filter,lfo-plus,syntakt-sd"
-      && ids.length === 26 + 8 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+    check(ids.slice(0, 28).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-both,midi-live-both,macro,macro-tg,macro-acid,macro-acid-tg,acid,acid-tg,wavetable,chord-keys,track-filter,lfo-plus,syntakt-sd"
+      && ids.length === 27 + 8 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
       && ids.includes("syntakt-sd-acid") && ids.includes("syntakt-tg-sd-cp-toy-bits-swarm-macro-acid")
       && ids.includes("syntakt-sd-macro") && ids.includes("syntakt-tg-sd-cp-toy-bits-swarm-macro")
-      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 21,
+      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 22,
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG, with and without MACRO and ACID: ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
@@ -232,8 +247,8 @@ async function main() {
     // display order: by section (Packs, Sounds & machines, Sequencer, Live playing, Screen & browsing, USB & MIDI),
     // FEATURES order inside a section; the build keeps FEATURES order (checked in 1b)
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-model-tg,feat-macro,feat-acid,feat-track-filter,feat-lfo-plus,feat-syntakt,feat-trig-preview,feat-trig-hold,feat-arp,feat-tempo-max,feat-trigless-dim,feat-latching-mute,feat-chord-keys,feat-sample-preview,feat-browser-scroll,feat-boot-anim,feat-multiline-browser,feat-level-pan-values,feat-usb6,feat-midi-both,feat-midi-live-both",
-      "21 feature rows, by section: " + JSON.stringify(feats));
+    check(feats.join() === "feat-model-tg,feat-macro,feat-acid,feat-wave,feat-track-filter,feat-lfo-plus,feat-syntakt,feat-trig-preview,feat-trig-hold,feat-arp,feat-tempo-max,feat-trigless-dim,feat-latching-mute,feat-chord-keys,feat-sample-preview,feat-browser-scroll,feat-boot-anim,feat-multiline-browser,feat-level-pan-values,feat-usb6,feat-midi-both,feat-midi-live-both",
+      "22 feature rows, by section: " + JSON.stringify(feats));
     check(w.MC_TWEAKS.features.every((f) => doc.querySelector(`#cat-${f.cat || "other"} #mod-${f.id} #feat-${f.id}`)),
       "every feature has a row in its section (cat)");
     const tagOfFeat = (f) => (f.status === "tested" ? "Tested" : "Experimental");
@@ -343,6 +358,19 @@ async function main() {
       && !chosen().length && doc.querySelector('#features a[href$="#acid"]'),
       `ACID: alone ${acidAlone}, with Model-TG ${acidTg}; with MACRO ${macroAcidTg}; with the Syntakt engines ${allFour}, `
       + `${engMacroAcid}, ${engAcid}; Experimental together, its note and details shown`);
+    // Wave (notes/60): alone for now; ACID, MACRO, the Syntakt engines and Model-TG turn it off, and it turns them off
+    box("feat-wave").click(); await wait(5);
+    const waveAlone = chosen(), waveTag = tagAt("wave");
+    box("feat-acid").click(); await wait(5);
+    const waveOffByAcid = !box("feat-wave").checked && chosen() === "acid";
+    box("feat-wave").click(); await wait(5);
+    const acidOffByWave = !box("feat-acid").checked && chosen() === "wavetable";
+    box("feat-model-tg").click(); await wait(5);
+    const waveOffByTg = !box("feat-wave").checked;
+    box("feat-model-tg").click(); await wait(5);
+    check(waveAlone === "wavetable" && waveTag === "Experimental" && waveOffByAcid && acidOffByWave && waveOffByTg
+      && !chosen().length && doc.querySelector('#features a[href$="#wave"]'),
+      `Wave: alone ${waveAlone} (${waveTag}); ACID and Model-TG turn it off, and Wave turns ACID off`);
     // Model-TG holds drumkilla's tweaks: ticked, it shows them ticked and locked, "(included with Model-TG)", and
     // builds without them; unticked, they are free again. With the Syntakt engines it makes the combined version
     // (notes/31): its base, then the engines' tweak built on top of it
@@ -1288,6 +1316,39 @@ async function main() {
     check(!app.state.fw && app.state.fwError === "pick_one" && !doc.getElementById("feat-syntakt").checked,
       "every engine unticked -> no mod left to build");
     check(errors.length === 0, "no JS error in the Syntakt engines flow " + (errors.length ? JSON.stringify(errors) : ""));
+  }
+
+  // --- sample transfer (notes/59): uploadSample round-trip against the fake device ---
+  {
+    const L = await load();
+    const dev2 = L.dev;
+    const samples = Int16Array.from([0, 100, -100, 32767, -32768, 12345, -12345]);
+    const session = await L.w.MCFlasher.xferOpen(L.devIn(), L.devOut());
+    const res = await L.w.MCFlasher.uploadSample(session, "/Wavetables/x", samples, { restMs: 0 });
+    session.close();
+    const want = new Uint8Array(64 + samples.length * 2);
+    const dv = new DataView(want.buffer);
+    dv.setUint32(4, samples.length * 2, false);                 // size (bytes)
+    dv.setUint32(8, 48000, false);                              // rate
+    want[20] = 0x7f;                                            // loop type: none
+    for (let i = 0; i < samples.length; i++) dv.setInt16(64 + 2 * i, samples[i], false);
+    check(same(dev2.sample && dev2.sample.buf, want),
+      "uploadSample: the machine gets the 64-byte header + 16-bit big-endian PCM, byte for byte");
+    check(res.bytes === want.length && dev2.sample.blocks === 1,
+      "uploadSample: size = PCM + 64, one block for a tiny table");
+    check(dev2.bad.length === 0, "uploadSample: no malformed message " + dev2.bad.slice(0, 2).join("; "));
+  }
+
+  // --- Wave's CYC/SMP switch (notes/61): setSmpMode flips the identity, a firmware without Wave stays a Cycles ---
+  for (const wave of [true, false]) {
+    const L = await load({ device: { wave } });
+    const session = await L.w.MCFlasher.xferOpen(L.devIn(), L.devOut());
+    const on = await L.w.MCFlasher.setSmpMode(session, L.devOut(), true);
+    const off = await L.w.MCFlasher.setSmpMode(session, L.devOut(), false);
+    session.close();
+    check(wave ? on.id === 25 && on.device === "Model:Samples" && off.id === 27 : on.id === 27 && off.id === 27,
+      wave ? "setSmpMode: Wave firmware answers Model:Samples, then Model:Cycles again"
+           : "setSmpMode: a firmware without Wave keeps answering Model:Cycles");
   }
 
   console.log(fail ? `\nFAILED (${fail})` : "\nALL OK");

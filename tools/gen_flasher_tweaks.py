@@ -299,6 +299,23 @@ FEATURES = [
         "with": {"model-tg": "35-acid-tg"},
     },
     {
+        "id": "wave",
+        "cat": "sound",
+        "label": "Machine Wave",
+        "desc": "Une machine ajoutee apres Chord : elle joue une de tes tables d'ondes rangee dans /Wavetables. La "
+                "table se convertit sur le site (rubrique Convert) et s'envoie a la machine depuis la meme page ; "
+                "sur la piste Wave, FUNC + MACHINES puis YES la charge, et la piste la retient. COLOR = position "
+                "dans la table, SHAPE = enveloppe de coupure, SWEEP / CONTOUR = passe-bas.",
+        "status": "experimental",
+        "credit": None,
+        # sa propre lecture du fichier et la meme place que MACRO, ACID et les moteurs du Syntakt (notes/60) ; seule
+        # pour l'instant (les versions combinees viendront avec le jalon 3)
+        "excludes": ["model-tg", "syntakt", "macro", "acid"],
+        "variants": [
+            {"file": "36-wavetable", "label": None},
+        ],
+    },
+    {
         "id": "chord-keys",
         "cat": "live",
         "label": "Accords de gamme sur TRIG 1–16",
