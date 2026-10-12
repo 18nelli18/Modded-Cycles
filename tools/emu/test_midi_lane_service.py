@@ -19,6 +19,7 @@ def prove(image, combined, thru):
     r = Rig(image, thru)
     u = r.uc
     symbols = load(r)
+    u.mem_map(0xfc050000,0x1000)
     output = []
     locks = []
 
@@ -71,6 +72,53 @@ def prove(image, combined, thru):
             call('ml_stop', BANK, lane)
         return packets + [p & 0xefff00ff for p in packets]
 
+    # Réveil coalescé : vrai sémaphore natif, chemin sans tâche en attente.
+    worker=BANK+0x1000
+    seed();call('ml_worker_init',worker,BANK)
+    assert bytes(u.mem_read(worker,12))==bytes(12)
+    call('ml_worker_notify',worker,sr=0x2505)
+    assert struct.unpack('>3I',u.mem_read(worker,12))==(1,0,1)
+    for _ in range(100):call('ml_worker_notify',worker,sr=0x2505)
+    assert struct.unpack('>3I',u.mem_read(worker,12))==(1,0,1)
+    # Simuler uniquement la consommation du sémaphore par la future tâche.
+    u.mem_write(worker,bytes(4))
+    assert call('ml_worker_once',worker)==8
+    assert struct.unpack('>3I',u.mem_read(worker,12))==(1,0,1)
+    u.mem_write(worker,bytes(4))
+    assert call('ml_worker_once',worker)==4
+    assert struct.unpack('>3I',u.mem_read(worker,12))==(0,0,0)
+    before=bytes(u.mem_read(worker,16))
+    assert call('ml_worker_once',worker,sr=0x2505)==0
+    assert bytes(u.mem_read(worker,16))==before
+    call('ml_worker_notify',worker,sr=0x2505)
+    assert bytes(u.mem_read(worker,16))==before
+
+    # Vrai post avec waiter : liste prête native, requête de scheduling ;
+    # pas d'exécution du scheduler ni des périphériques ici.
+    task=BANK+0x1100; ready=BANK+0x1200
+    seed();call('ml_worker_init',worker,BANK)
+    for occupied in (False,True):
+        call('ml_worker_init',worker,BANK)
+        u.mem_write(task,bytes(84));u.mem_write(ready,bytes(4))
+        u.mem_write(task+8,struct.pack('>I',ready))
+        u.mem_write(worker+4,struct.pack('>I',task))
+        u.mem_write(0x4049fd60,struct.pack('>I',ready-4))
+        u.mem_write(0xfc050014,struct.pack('>I',0x42))
+        if occupied:
+            other=BANK+0x1300
+            u.mem_write(other,struct.pack('>2I',other,other))
+            u.mem_write(ready,struct.pack('>I',other))
+        call('ml_worker_notify',worker,sr=0x2505)
+        assert struct.unpack('>3I',u.mem_read(worker,12))==(0,0,1)
+        assert struct.unpack('>I',u.mem_read(0x4049fd60,4))[0]==ready
+        assert struct.unpack('>I',u.mem_read(0xfc050014,4))[0]==0x2042
+        if occupied:
+            assert struct.unpack('>2I',u.mem_read(task,8))==(other,other)
+            assert struct.unpack('>2I',u.mem_read(other,8))==(task,task)
+        else:
+            assert struct.unpack('>I',u.mem_read(ready,4))[0]==task
+            assert struct.unpack('>2I',u.mem_read(task,8))==(task,task)
+
     for sr in (0x2105, 0x2300, 0x2505, 0x2700):
         seed()
         before = bytes(u.mem_read(BANK, SIZE))
@@ -119,6 +167,7 @@ def main():
             prove(image, combined, thru)
     print('ok : pont file→routeur natif, six canaux 7..12, USB/DIN/both, OUT/THRU stock et modifié')
     print('ok : budget 0/1/7/8/plafond, refus IPL/singleton absent sans retrait, note-offs, pile/SR/registres')
+    print('ok : consommateur dédié prototype, réveils IRQ coalescés avec sémaphore natif ; réarmement huit puis quatre paquets, refus IPL')
     print('NOTE : sorties physiques simulées ; horloge, pages, sauvegarde et hook UI restent à intégrer')
 
 

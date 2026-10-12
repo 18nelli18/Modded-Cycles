@@ -98,6 +98,36 @@ def main():
     assert bytes(u.mem_read(PAT,1584))==pattern_before
     print('ok : six vitesses et longueurs distinctes simultanées, données des patterns inchangées')
 
+    # Pause : relâcher les notes, garder le prochain pas et son délai restant.
+    for start in (0,0xfffffff0):
+      reset()
+      for lane in range(6):call('ml_config',PAT,lane,5,lane)
+      assert clock(start)==6
+      drain()
+      elapsed=500000
+      assert clock(start+elapsed,2)==0
+      assert len(drain())==6
+      paused=bytes(u.mem_read(STATE,52))
+      assert struct.unpack('>I',paused[:4])[0]==2
+      for lane in range(6):
+          assert struct.unpack('>II',paused[4+8*lane:12+8*lane])==(DURATIONS[lane]-elapsed,1)
+      assert clock(start+99999999,2)==0 and not drain()
+      assert bytes(u.mem_read(STATE,52))==paused
+      resumed=(start+100000000)&0xffffffff
+      assert clock(resumed)==0 and not drain()
+      for lane in reversed(range(6)):
+          due=resumed+DURATIONS[lane]-elapsed
+          # Les autres voies peuvent avancer ; vérifier la voie visée seulement.
+          clock(due-1)
+          assert not [p for p in drain() if p>>24==0x96+lane]
+          clock(due)
+          assert [((p>>16)&127) for p in drain() if p>>24==0x96+lane]==[37]
+      clock(resumed+21600000,2);drain()
+      assert clock(resumed+21600001,0)==0 and not drain()
+      assert clock(resumed+21600002)==6
+      assert all((p>>16)&127==36 for p in drain() if p>>28==9)
+    print('ok : Pause/Continue conserve six délais/vitesses et prochains pas, relâche les notes une fois ; Stop réinitialise, y compris au rebouclage 32 bits')
+
     reset(length=16)
     for lane in range(6):call('ml_config',PAT,lane,4,lane+1)
     for i in range(20):
@@ -113,10 +143,19 @@ def main():
     assert clock(20*5400000+1)==0 and not drain()
     clock(21*5400000)
     assert [((p>>16)&127) for p in drain() if p>>24==0x9b]==[39]
+    # MIDI OUT utilise enabled, même continuité sans changer mute (+1).
+    call('ml_config',PAT,5,0,0)
+    clock(21*5400000+1);drain()
+    clock(22*5400000);drain()
+    call('ml_config',PAT,5,0,1)
+    assert clock(22*5400000+1)==0 and not drain()
+    clock(23*5400000)
+    assert [((p>>16)&127) for p in drain() if p>>24==0x9b]==[41]
+    assert bytes(u.mem_read(PAT+5*264+1,1))==b'\x00'
     # Raccourcir un pattern normalise le prochain pas, sans le dupliquer.
     call('ml_config',PAT,5,4,2)
-    clock(22*5400000);drain()
-    clock(23*5400000)
+    clock(24*5400000);drain()
+    clock(25*5400000)
     assert [((p>>16)&127) for p in drain() if p>>24==0x9b]==[37]
     # Appel tardif : aucun rattrapage non borné ni répétition au même timestamp.
     assert clock(200*5400000)==6

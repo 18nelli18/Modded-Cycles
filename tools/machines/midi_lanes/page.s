@@ -43,6 +43,8 @@ mlp_o_cp:
     movel   %d0,%a1@(0x4c)
     movel   #mlp_enc_th,%d0
     movel   %d0,%a1@(0x60)
+    movel #mlp_led,%d0
+    movel %d0,%a1@(0x74)
     movel #mlp_pad,%d0
     movel %d0,%a1@(0x9c)
     jmp mlp_o_allocate
@@ -78,6 +80,8 @@ mlp_o_track_ready:
     movel   %a0,%a4@              | vptr principal
     lea.l   %a1@(0x58),%a0
     movel   %a0,%a4@(4)           | base +4 (événements encodeur)
+    lea.l mlp_vt+0x6c,%a0
+    movel %a0,%a4@(8)
     lea.l mlp_vt+0x94,%a0
     movel %a0,%a4@(16)
     pea     0x10                  | détenteur de référence, comme l’ouverture OS
@@ -167,7 +171,11 @@ mlp_menu_key:
     cmpil #12,%d2
     beq .Lmk_close
     cmpil #13,%d2
-    beq .Lmk_close
+    bne .Lmk_not_settings
+    btst #1,%d3
+    bne .Lmk_used
+    bra .Lmk_close
+.Lmk_not_settings:
     cmpil #3,%d2
     beq .Lmk_close
     tstl mlp_func
@@ -262,26 +270,31 @@ mlp_pad:
     bset %d2,%d1
     movel %d1,mlp_pads
     tstl mlp_func
-    bne .Lmp_mute
+    bne .Lmp_output
     movel %d2,mlp_track
     bra .Lmp_redraw
-.Lmp_mute:
+.Lmp_output:
     movel %d2,%d0
     muluw #264,%d0
     moveal ml_pattern,%a0
     moveq #0,%d1
-    moveb %a0@(1,%d0:l),%d1
+    moveb %a0@(0,%d0:l),%d1
     moveq #1,%d0
     eorl %d0,%d1
     movel %d1,%sp@-
-    pea 1
+    pea 0
     movel %d2,%sp@-
     movel %a0,%sp@-
     jsr ml_config
     lea.l %sp@(16),%sp
+    movel %d2,%d0
+    muluw #264,%d0
+    moveal ml_pattern,%a0
+    tstb %a0@(0,%d0:l)
+    bne .Lmp_redraw
     movel %d2,%sp@-
     movel ml_runtime,%sp@-
-    jsr ml_stop
+    jsr ml_quiet
     addql #8,%sp
 .Lmp_redraw:
     movel %a3,%sp@-
@@ -401,6 +414,14 @@ mlp_store:
     beq .Lms_release
     cmpil #10,%d2
     bne .Lms_done
+    jsr mlp_raw_value
+    tstl %d0
+    bne .Lms_done
+    movel mlp_track,%sp@-
+    movel ml_runtime,%sp@-
+    jsr ml_quiet
+    addql #8,%sp
+    rts
 .Lms_release:
     movel mlp_track,%sp@-
     movel ml_runtime,%sp@-
@@ -590,12 +611,12 @@ mlp_step: .long 0
 mlp_func: .long 0
 mlp_pads: .long 0
 mlp_vt: .space 0xb0
-mlp_labels: .long mlp_track_label,mlp_channel,mlp_port,mlp_length,mlp_speed,mlp_step_label,mlp_trig,mlp_note,mlp_velocity,mlp_gate,mlp_mute
+mlp_labels: .long mlp_track_label,mlp_channel,mlp_port,mlp_length,mlp_speed,mlp_step_label,mlp_trig,mlp_note,mlp_velocity,mlp_gate,mlp_output
 mlp_ports: .long mlp_usb,mlp_din,mlp_both
 mlp_speeds: .long mlp_quarter,mlp_half,mlp_normal,mlp_threehalf,mlp_double,mlp_triple,mlp_four
 mlp_min: .byte 0,7,2,1,0,0,0,0,1,1,0
 mlp_max: .byte 5,12,4,64,6,63,1,127,127,64,1
-mlp_fields: .byte 0,2,3,4,5,0,3,0,1,2,1
+mlp_fields: .byte 0,2,3,4,5,0,3,0,1,2,0
 mlp_title: .asciz "MIDI BANK"
 mlp_track_label: .asciz "Track"
 mlp_channel: .asciz "MIDI Ch."
@@ -607,7 +628,7 @@ mlp_trig: .asciz "Trig"
 mlp_note: .asciz "Note"
 mlp_velocity: .asciz "Velocity"
 mlp_gate: .asciz "Gate steps"
-mlp_mute: .asciz "Mute"
+mlp_output: .asciz "MIDI OUT"
 mlp_on: .asciz "On"
 mlp_off: .asciz "Off"
 mlp_usb: .asciz "USB"

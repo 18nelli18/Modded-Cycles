@@ -94,3 +94,17 @@ Origine : 18nelli18/Modded-Cycles, commit `03941fd029e1730125463946b6d91f7ce8e28
 | `45-chord-keys.json` | Nico Heuser ([byNicoHeuser](https://github.com/byNicoHeuser)), [PR #46](https://github.com/18nelli18/Modded-Cycles/pull/46) | Clavier d'accords diatoniques sur une piste CHORD : TRIG 1–7 jouent I–VII, 8–14 les mêmes une octave plus haut, 15–16 I–II deux octaves plus haut ; T1–T6 gardent leurs commandes d'origine. Menu FUNC + RETRIG (Keys, Root, Scale, extension par degré), réglages dans les octets réservés de l'en-tête du pattern ; SHAPE choisit la disposition (BASE, CLS0–3, OPN0–3), COLOR le mélange des voix. Sources originales `tools/machines/chord_keys/`, générateur `tools/gen_chord_keys.py` (m68k-elf-gcc 16.2), code ColdFire dans quatorze masques 47×47 identiques redirigés. Aucune source tierce ajoutée. [Note 42](../../notes/42-clavier-accords-diatoniques.md), preuve `tools/emu/test_chord_keys.py`. Correction du relâchement avalé par ce projet (07/10/2026, note 42 §16, preuve `tools/emu/test_chord_keys_release.py`). Testé : par Nico seul (06/10/2026), puis par Maxime seul et avec six mods (07/10/2026), version corrigée comprise (10/10/2026). |
 | `48-track-filter.json` | ce projet | Filtre par piste passe-bas / OFF / passe-haut, demandé sur le serveur Discord (forum feature-requests, 05/10/2026) : assemblé depuis `tools/machines/track_filter/` (`track_filter.S`, `tf_ui.S`, `track_filter.ld`) par `tools/gen_track_filter.py`, dans quinze masques de sprites 35×35 libérés (`tools/sprites.py`) ; lois de fréquence et de résonance du Model:Samples, recalculées par formule (aucun octet de son OS) ([note 47](../../notes/47-filtre-piste.md)). |
 | `50-midi-both.json`, `51-midi-live-both.json` | AveyCole | [AveyCole/Modded-Cycles](https://github.com/AveyCole/Modded-Cycles), commit `ba5f8bb` (`tools/gen_midi_both.py`, `tools/gen_midi_live_both.py`, `tools/machines/midi_live_both/`), testés par AveyCole sur son Model:Cycles le 10/10/2026. Le fork n'indique pas de licence : à confirmer avec AveyCole avant la fusion. `midi-both` est repris octet pour octet (les trois portes de sortie MIDI du mode THR). `midi-live-both` : mêmes écritures et même code (132 o, identique octet pour octet), mais lié dans le masque de sprite 34x34 libéré `0x40192ba4` au lieu de `0x40167c50` (un des masques 35×35 restés libres dans le groupe qu'occupe le filtre par piste de la PR #55) ; source réécrite dans `tools/machines/midi_thru/`, générés par `tools/gen_midi_thru.py`, preuve `tools/emu/test_midi_thru.py` qui compare aussi avec la version du fork ([note 53](../../notes/53-midi-thru-aveycole.md)). |
+
+
+## Banque MIDI expérimentale (11/10/2026)
+
+`experimental/midi-bank/60-midi-bank-bundle.json` : code original de ce
+projet dans `tools/machines/midi_lanes/`, généré par
+`tools/gen_midi_bank_bundle.py`. Le chargeur/remise à zéro dans `boot.s`
+est adapté du boot Model-TG de TinyGregAudio, MIT (`LICENSE-Model-TG`),
+commit `70b39dd6787770ebefc7a2d78dea1678ec012679` ; le payload TG reste
+inchangé. Installateur séparé `docs/flasher-midi-test/`, générateur
+`tools/gen_midi_test_flasher.py`, preuves `tools/emu/test_midi_lane_*.py`,
+`test_midi_bank_bundle.py` et `tools/test_midi_flasher.js`. Voir note 57 §19.
+Aucun firmware Elektron distribué ; sources OS locales exigées. Banque RAM
+seulement, expérimental, non testé sur matériel à cette date.

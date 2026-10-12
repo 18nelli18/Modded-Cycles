@@ -18,16 +18,16 @@ from test_sdvintage import main_os_from_syx
 ENTRY, DATA, PAT, RUNTIME = 0x93050000,0x93060000,0x93070000,0x93071000
 
 
-def load(r):
+def load(r,worker=False):
     root=pathlib.Path(__file__).resolve().parents[2]
     cross=str(root.parent/'toolchain/bin/m68k-elf-')
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[]
-        for name in ('runtime','pattern','clock','service','prepare','page'):
+        for name in ('runtime','pattern','clock','service','prepare','page','integration','key','led','ui_hook','transport','worker'):
             obj=p/(name+'.o')
-            subprocess.run([cross+'as','-march=cfv4e','-o',str(obj),str(root/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
+            subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_WORKER=1'] if worker else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
             objects.append(str(obj))
-        (p/'link.ld').write_text('SECTIONS { .text '+hex(ENTRY)+' : { *(.text*) } .data '+hex(DATA)+' : { *(.data*) *(.rodata*) } }')
+        (p/'link.ld').write_text('SECTIONS { .text '+hex(ENTRY)+' : { *(.text*) } .data '+hex(DATA)+' : { *(.data*) *(.rodata*) } } TG_set_held = 0x93082000; TG_mod_used = 0x93082004; ml_key_next = 0x4007240c;' )
         subprocess.run([cross+'ld','-T',str(p/'link.ld'),'-e','mlp_open','-o',str(p/'page.elf'),*objects],check=True)
         subprocess.run([cross+'objcopy','-O','binary',str(p/'page.elf'),str(p/'page.bin')],check=True)
         r.u.mem_write(ENTRY,(p/'page.bin').read_bytes())
@@ -62,7 +62,7 @@ def raw(r,row,track=None,step=None):
     if row==0:return track
     if row==1:return track+7
     if row==5:return step
-    field={2:3,3:4,4:5,6:3,7:0,8:1,9:2,10:1}[row]
+    field={2:3,3:4,4:5,6:3,7:0,8:1,9:2,10:0}[row]
     addr=PAT+264*track+field+(8+4*step if row in (6,7,8,9) else 0)
     return r.u.mem_read(addr,1)[0]
 
@@ -142,7 +142,7 @@ def main():
         assert raw(r,row)==minimum[row],(track,row,raw(r,row))
         for _ in range(140):knob(r,1,thunk=bool(row%2))
         assert raw(r,row)==maximum[row],(track,row,raw(r,row))
-        field={2:3,3:4,4:5,6:3,7:0,8:1,9:2,10:1}[row]
+        field={2:3,3:4,4:5,6:3,7:0,8:1,9:2,10:0}[row]
         offset=264*track+field+(8+4*track*10 if row in (6,7,8,9) else 0)
         before[offset]=maximum[row]
         assert bytes(r.u.mem_read(PAT,1584))==bytes(before)
@@ -186,14 +186,28 @@ def main():
     assert r.call('ml_take',RUNTIME)==packet
     key(r,1,1)
     pad(3,1)
-    assert r.u.mem_read(PAT+264*2+1,1)==b'\x01'
+    assert r.u.mem_read(PAT+264*2,1)==b'\x00'
     assert r.r32(r.s['mlp_track'])==0
     assert r.call('ml_take',RUNTIME)==0x883c0004
-    pad(3,1);assert r.u.mem_read(PAT+264*2+1,1)==b'\x01'
-    pad(3,2);assert r.u.mem_read(PAT+264*2+1,1)==b'\x01'
+    pad(3,1);assert r.u.mem_read(PAT+264*2,1)==b'\x00'
+    pad(3,2);assert r.u.mem_read(PAT+264*2,1)==b'\x00'
     pad(3,0);pad(3,1)
-    assert r.u.mem_read(PAT+264*2+1,1)==b'\x00'
+    assert r.u.mem_read(PAT+264*2,1)==b'\x01'
     key(r,1,0);pad(3,0)
+    # Couper avant livraison retire les note-ons de cette voie seulement.
+    assert r.call('ml_step',RUNTIME,2,0x983d6402,8)==1
+    assert r.call('ml_step',RUNTIME,3,0x993e6403,8)==1
+    key(r,1,1);pad(3,1);key(r,1,0);pad(3,0)
+    assert r.call('ml_take',RUNTIME)==0x883d0002
+    assert r.call('ml_take',RUNTIME)==0x993e6403
+    assert r.call('ml_take',RUNTIME)==0x883d0002
+    assert r.call('ml_take',RUNTIME)==0
+    assert r.u.mem_read(PAT+264*2+1,1)==b'\x00'
+    # Même commande dans la page, sans changer le drapeau mute réservé.
+    r.w32(r.s['mlp_track'],2);r.w32(r.s['mlp_row'],10);r.w32(r.s['mlp_edit'],1)
+    knob(r,1);assert raw(r,10)==1
+    knob(r,-1);assert raw(r,10)==0
+    assert r.u.mem_read(PAT+264*2+1,1)==b'\x00'
     # Changer de port libère sur l'ancien port, mais tourner à la borne ne coupe pas.
     r.w32(r.s['mlp_track'],0);r.w32(r.s['mlp_row'],2);r.w32(r.s['mlp_edit'],1)
     assert r.call('ml_step',RUNTIME,0,0x963c6404,8)==1
@@ -205,7 +219,7 @@ def main():
         assert key(r,code,1)==0 and key(r,code,3)==1
     assert bytes(r.u.mem_read(RAW,722))==original_sound and not forbidden
     assert r.r32(0x93005304)==5
-    print('ok : pads, FUNC+pad mute idempotent et note-off immédiat, ancien port conservé, Play/Stop ; piste sonore et sélection natives intactes')
+    print('ok : pads, FUNC+pad MIDI OUT idempotent et note-off immédiat, ancien port conservé, Play/Stop ; piste sonore et sélection natives intactes')
 
     before=bytes(r.u.mem_read(PAT,1584))
     r.call('mlp_dtor1',obj)
@@ -229,7 +243,7 @@ def main():
         assert b.new_count==0 and not b.present
         assert bytes(b.u.mem_read(PAT,1584))==before
     print('ok : gardes IPL/pattern/runtime/gestionnaire sans allocation ni modification des données')
-    print('NOTE : pages en émulation, dessin/présentation simulés ; LED de grille, raccourci global, persistance et intégration firmware restent à faire')
+    print('NOTE : pages en émulation, dessin/présentation simulés ; LED/raccourci couverts séparément ; persistance et installation globale des hooks restent à faire')
 
 
 if __name__=='__main__':main()

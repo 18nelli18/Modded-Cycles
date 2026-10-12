@@ -28,7 +28,8 @@ def load(rig):
         subprocess.run([cross+'as','-march=cfv4e','-o',str(p/'pattern.o'),str(root/'tools/machines/midi_lanes/pattern.s')],check=True)
         subprocess.run([cross+'as','-march=cfv4e','-o',str(p/'service.o'),str(root/'tools/machines/midi_lanes/service.s')],check=True)
         subprocess.run([cross+'as','-march=cfv4e','-o',str(p/'clock.o'),str(root/'tools/machines/midi_lanes/clock.s')],check=True)
-        subprocess.run([cross+'ld','-Ttext='+hex(ENTRY),'-e','ml_step','-o',str(p/'r.elf'),str(p/'r.o'),str(p/'pattern.o'),str(p/'service.o'),str(p/'clock.o')],check=True)
+        subprocess.run([cross+'as','-march=cfv4e','-o',str(p/'worker.o'),str(root/'tools/machines/midi_lanes/worker.s')],check=True)
+        subprocess.run([cross+'ld','-Ttext='+hex(ENTRY),'-e','ml_step','-o',str(p/'r.elf'),str(p/'r.o'),str(p/'pattern.o'),str(p/'service.o'),str(p/'clock.o'),str(p/'worker.o')],check=True)
         subprocess.run([cross+'objcopy','-O','binary','--only-section=.text',str(p/'r.elf'),str(p/'r.bin')],check=True)
         rig.uc.mem_write(ENTRY,(p/'r.bin').read_bytes())
         return {line.split()[2]:int(line.split()[0],16) for line in subprocess.check_output([cross+'nm',str(p/'r.elf')],text=True).splitlines() if len(line.split())==3}

@@ -1,6 +1,7 @@
 | Note 57 : ordonnanceur privé, appelé une fois par bloc audio après le temps
 | musical natif. ml_clock(runtime,pattern,state,now,playing) -> pas traités.
-| State 52 octets : running, puis six couples deadline/next-step (longs).
+| State 52 octets : mode (0 arrêt, 1 lecture, 2 pause), puis six couples
+| deadline/next-step (longs). En pause, deadline devient un délai restant.
 | now = heure native 0x8000184c, noire = 21 600 000 unités ; aucun préfetch.
 | Vitesses privées 1/4, 1/2, 1, 3/2, 2, 3, 4 ; index 2 = pas de double croche.
 | Un pas maximum par voie/appel ; saut tardif resynchronisé sans rafale.
@@ -19,6 +20,12 @@ ml_clock:
     moveq #0,%d6
     tstl %sp@(60)
     beq .Lclock_stop
+    movel %sp@(60),%d0
+    cmpil #2,%d0
+    beq .Lclock_pause
+    movel %a4@,%d0
+    cmpil #2,%d0
+    beq .Lclock_resume
     tstl %a4@
     bne .Lclock_running
     moveq #1,%d0
@@ -30,6 +37,17 @@ ml_clock:
     clrl %a0@+
     subql #1,%d0
     bpl .Lclock_start
+    bra .Lclock_running
+.Lclock_resume:
+    lea.l %a4@(4),%a0
+    moveq #5,%d0
+.Lclock_resume_loop:
+    addl %d4,%a0@
+    lea.l %a0@(8),%a0
+    subql #1,%d0
+    bpl .Lclock_resume_loop
+    moveq #1,%d0
+    movel %d0,%a4@
 .Lclock_running:
     lea.l %a4@(4),%a5
     moveq #0,%d2
@@ -101,6 +119,30 @@ ml_clock:
     addql #1,%d2
     cmpil #6,%d2
     bne .Lclock_lane
+    bra .Lclock_done
+.Lclock_pause:
+    movel %a4@,%d0
+    cmpil #1,%d0
+    bne .Lclock_done
+    moveq #2,%d0
+    movel %d0,%a4@
+    lea.l %a4@(4),%a5
+    moveq #0,%d2
+.Lclock_pause_loop:
+    movel %a5@,%d0
+    subl %d4,%d0
+    bpl .Lclock_remaining
+    moveq #0,%d0
+.Lclock_remaining:
+    movel %d0,%a5@
+    movel %d2,%sp@-
+    movel %a2,%sp@-
+    jsr ml_stop
+    addql #8,%sp
+    lea.l %a5@(8),%a5
+    addql #1,%d2
+    cmpil #6,%d2
+    bne .Lclock_pause_loop
     bra .Lclock_done
 .Lclock_stop:
     tstl %a4@

@@ -4,7 +4,7 @@ Demande d'AveyCole dans cette conversation, le 11/10/2026 : ajouter à chacune d
 
 ## Réponse courte
 
-[HYP] Le moteur peut probablement cadencer six séquences supplémentaires et transmettre leurs notes. La faisabilité complète reste à établir : données persistantes, édition, messages de sortie et charge doivent être prouvés ensemble. Aucun tweak ni firmware de cette fonction n'est encore proposé.
+[FAIT en émulation] Six voies MIDI indépendantes sont intégrées au bundle expérimental avec Model-TG et Live MIDI Out+Thru. Le test dédié est `docs/flasher-midi-test/` ; voir §19 pour les preuves et les limites. La banque reste en RAM, partagée entre patterns, sans sauvegarde projet. La charge et les sorties physiques restent à vérifier sur machine.
 
 ## 1. Points d'appui existants
 
@@ -216,3 +216,247 @@ octet et les offsets, conserve les modifications lors d'un second appel,
 refuse IPL non nul/réentrance, puis retente après un échec d'allocation.
 Cette préparation n'installe toujours aucun hook de transport ou de sortie.
 Allocation persistante en RAM seulement ; sauvegarde sur disque à faire.
+
+
+## 12. Raccourci de banque et contexte audio/UI (11/10/2026)
+
+Demande AveyCole : FUNC + SETTINGS + PAGE bascule pads 1..6 entre les pistes
+sonores existantes et six voies MIDI privées sur canaux 7..12, sans interrompre
+la lecture de l'autre banque. Le raccourci simple SETTINGS + PAGE reste réservé
+à Sequence Genie.
+
+[FAIT en émulation] `key.s` adapte le getter avant la chaîne existante :
+les événements SETTINGS restent transmis, afin de ne pas bloquer l'état
+maintenu Model-TG. PAGE avec FUNC et SETTINGS ouvre/ferme la vue privée,
+les lectures multiples, répétitions et relâchements ne doublent pas la bascule.
+La vue ne se ferme plus dès l'appui FUNC+SETTINGS. `ml_key_next` et les
+symboles TG sont fournis explicitement par le futur générateur ; la preuve
+utilise le vrai getter natif comme cible suivante et des états TG en fixture.
+La chaîne complète SCRAMBLE/Sequence Genie/Model-TG reste à prouver.
+
+`integration.s` lit uniquement le contexte publié : `ml_audio_tick(now,playing)`
+appelle l'ordonnanceur sans accéder aux ports ; `ml_ui_drain()` refuse IPL>0
+et transmet au plus huit messages via le service natif. SR et registres
+préservés restent intacts. La preuve ferme la vue puis enchaîne horloge IPL5,
+file six canaux 7..12, drain UI et Stop avec six note-off. Les six données
+sonores et la sélection audio native restent inchangées. Le routeur physique
+est simulé ici, ses chemins natifs étant couverts par la preuve service.
+
+## 13. LED des pas par callback natif (11/10/2026)
+
+[FAIT en émulation] `led.s`, vtable LedHandler privée au sous-objet +8,
+remplace uniquement le callback +8, sans écrire les LED des pads/transport.
+Mapping `0x4000608c` (table `0x404a8bdc`), singleton `0x400cfaf4`, writer
+first-wins `0x40005f86` et masque de revendication 64 bits. Les seize pas
+courants reçoivent état 1 (éteint) ou 2 (actif), les autres LED sont intactes.
+`test_midi_lane_led.py` couvre six voies × quatre pages, données de pattern
+inchangées et conservation d'un état LED déjà attribué par le gestionnaire.
+Getter/mapping/writer natifs exécutés ; périphérique LED et gestionnaire
+complet simulés. Aucun MIDI, allocation ou appel audio depuis ce callback.
+
+[À FAIRE] Raccordement global touches, service UI et horloge au transport
+réel, synchronisation audible, placement compatible, persistance et catalogue
+expérimental. Aucun flasher MIDI livré ni test matériel revendiqué.
+
+
+## 14. Service UI indépendant du dessin (11/10/2026)
+
+[FAIT en émulation] Prototype `ui_hook.s` pour l'entrée du gestionnaire
+`0x40006a4a`, avant le test de vue sale `0x40076bfa`. Il sauvegarde
+les registres volatils/SR, appelle le drain privé puis rejoue les huit
+octets déplacés et reprend à `0x40006a52`. Le chemin sans dessin
+continue donc à transmettre la file même lorsque la vue MIDI est fermée.
+
+`test_midi_lane_ui_hook.py` applique le detour en mémoire, exécute les
+branches natives propre/sale, vérifie huit puis quatre paquets (six
+note-on, six note-off), argument du gestionnaire et registres conservés.
+Sans contexte, registres/SR/pile et callbacks correspondent au stock pour
+IPL0/IPL5. Routeur physique et callbacks LED simulés ; la présence de ce
+point d'appel dans chaque cycle UI réel reste à confirmer. Aucun hook
+audio/transport ou placement flashable n'est déduit de cette seule preuve.
+
+## 15. Pause et reprise des voies privées (11/10/2026)
+
+[FAIT en émulation] `ml_clock` accepte maintenant les trois modes du
+transport natif : arrêt 0, lecture 1, pause 2. La première pause relâche
+les six notes et transforme chaque échéance en délai restant, sans changer
+le prochain pas. Les appels suivants en pause ne changent rien. La reprise
+reconstitue les échéances depuis l'heure fournie ; un arrêt réinitialise
+la lecture au pas 1, même après une pause. Aucune allocation ni sortie
+physique n'est ajoutée, la structure reste de 52 octets.
+
+La preuve horloge couvre six vitesses distinctes, délais restants,
+relâchements uniques, Stop après pause et rebouclage 32 bits, en plus
+de l'avance musicale OS à quatre tempos. Les modes sont encore fournis
+par la fixture : cela ne prouve pas le raccordement au transport réel.
+
+[À FAIRE] Armer le premier pas à l'échéance audible native, traiter une
+première ouverture pendant la lecture, vérifier Start/Continue MIDI et
+les redémarrages rapides. Le point `0x40054686` copie l'échéance native
+vers `0x80001848` dans le chemin Play ; c'est un candidat à étudier,
+pas un hook installé. Le budget du drain UI et la charge audio combinée
+restent à mesurer avant tout flasher MIDI.
+
+## 16. Prototypes aux sites natifs Start et audio (11/10/2026)
+
+[FAIT en émulation] `transport.s` détourne en mémoire les six octets de
+`0x40054686` : il capture échéance, contexte présent et indicateur Continue
+`d6`, puis rejoue le move vers `0x80001848`. Un numéro d'armement distingue
+les nouveaux Start, même si le Stop intermédiaire tombe entre deux ticks.
+Le prototype d'appel `0x400594a8` conserve d'abord le vrai `0x40053330`,
+puis appelle l'horloge privée en conservant ses résultats et SR. Aucun
+routeur MIDI ni allocation depuis ce chemin audio.
+
+`test_midi_lane_transport.py` vérifie le contrat des deux sites, l'attente
+avant échéance, l'ancrage des échéances suivantes malgré 100 unités de
+retard, six canaux, Pause/Continue, redémarrage, Stop et rebouclage 32 bits.
+Les modes/heure/d6 sont des fixtures ; seul le move et la branche inactive
+du vrai appel audio sont exécutés. Ce n'est pas une preuve du chemin Play
+complet, ni de l'alignement audible matériel, ni de la charge audio totale.
+
+La preuve invalide explicitement le cache de traduction après chaque
+réécriture d'instruction et vérifie l'incrément d'armement : sans cette
+invalidation, Unicorn peut continuer à exécuter l'ancien code. Même
+correction appliquée aux comparaisons stock/detour de la preuve UI.
+Les flags sont observés par branches avant la sortie d'émulation.
+
+Le premier service UI prépare désormais le contexte, sans ouvrir la vue.
+Les voies vides peuvent tourner avant la première ouverture de l'éditeur.
+Échec d'allocation réessayé au prochain service ; aucune allocation IPL>0.
+Si Play arrive avant toute préparation, le prototype reste fermé jusqu'au
+prochain Play : la synchronisation d'une allocation tardive reste à finir.
+
+[FAIT, note 45 §2] Le gestionnaire UI retenu tourne à 30 Hz. Huit messages
+par service représentent donc seulement 240 messages/s, avec jusqu'à une
+image UI de latence : ce drain est un prototype, pas un service final
+assez précis pour un séquenceur MIDI. [À FAIRE] Choisir un service plus
+rapide sans attente depuis l'audio, éprouver saturation et jitter USB/DIN,
+puis le placement, la chaîne complète de touches et la persistance.
+Aucun flasher MIDI publié par ces preuves.
+
+## 17. MIDI OUT par voie et service dédié (11/10/2026)
+
+Demande AveyCole : FUNC + pad active/coupe MIDI OUT plutôt que le mute audio.
+La page propose « MIDI OUT » sur enabled (+0), sans toucher le mute privé
+réservé (+1) ni les pistes sonores. Couper appelle `ml_quiet` : au plus 64
+paquets inspectés sous IPL7, les note-ons en file sur le canal fixe sont
+remplacés par leurs note-offs, puis la note tenue est libérée sur son ancien
+port. Autres canaux/ports conservés. Réactiver conserve la phase du séquenceur.
+Répétitions et releases des pads ne basculent pas à nouveau.
+`test_midi_lane_page.py` couvre commande, menu, note livrée et encore en file,
+autre canal, mute réservé et données audio intactes. `[FAIT en émulation]`.
+
+Le service actuel UI est limité à 30 Hz × huit messages = 240 messages/s et
+une latence maximale d'une image. Monter le budget ne retire pas les attentes
+physiques de la tâche UI. `worker.s` propose un consommateur dédié : contexte
+privé 16 octets, sémaphore natif 8 octets, réveil coalescé, runtime. Le post
+`0x40001bb0`, également appelé par l'IRQ native `0x400020d4`, est borné et
+arme un pend logiciel (`fc050014`, bit 13) si une tâche attend. Il ne bloque
+pas et ne fait pas de trap, contrairement à l'attente `0x40001aca`.
+`ml_worker_once` refuse IPL non nul, draine huit messages puis réarme
+atomiquement si la file reste non vide. Les writers restent hors IRQ et
+hors verrou privé.
+
+`[FAIT en émulation]` : vrai post natif sans waiter, cent notifications IRQ
+coalescées en un signal, huit puis quatre messages, réarmement et refus IPL ;
+routeur OS réel, sorties physiques simulées. Post natif avec waiter rejoué : listes prêtes vide/occupée et bit de pend logiciel exact, sans exécution du scheduler. `[À FAIRE]` : création de tâche,
+publication du contexte, scheduling réel, IRQ pendant le service et
+coupure pendant un paquet en vol. Prototype pas encore branché dans le
+firmware ; aucun gain UI mesuré. Ne pas drainer simultanément depuis UI et
+tâche dédiée. Sauvegarde et placement du mod restent à intégrer.
+
+## 18. Création native du consommateur et première mesure de place (11/10/2026)
+
+[FAIT en émulation] La variante `ML_WORKER` crée maintenant le consommateur
+depuis le service UI, avant publication : allocation réessayable de 16 484
+octets (contexte 16, TCB natif 84, pile 16 KiB), initialisation native
+`0x400019ec`, ajout aux listes prêtes par `0x40001a38`. Priorité 5, sous
+l'UI à 6. L'IRQ audio poste seulement le sémaphore ; la tâche attend
+`0x40001aca` puis consomme huit paquets au plus avant de réarmer ou dormir.
+Dans cette variante, l'UI ne consomme aucun paquet. La coupure MIDI OUT
+réveille également le consommateur pour les note-offs en attente.
+
+`test_midi_lane_worker.py` exécute les initialiseurs TCB/listes et le chemin
+d'attente non bloquant natifs. Il vérifie allocation unique, refus IPL,
+réessai après échec, publication, pile, priorité, réveil depuis IRQ,
+absence de consommation UI et sortie des douze messages en deux passages.
+Quand le singleton MIDI est absent, la file reste intacte et le consommateur
+ne se réarme pas en boucle ; les producteurs et le service UI réessaient
+le réveil après publication du singleton. Les writers et l'allocation
+restent simulés, le changement de contexte scheduler complet n'est pas
+exécuté et aucun gain de durée matériel n'est encore mesuré.
+
+[FAIT] Une liaison contiguë du prototype avec consommateur dédié occupait
+5 904 octets avant l'ajout du garde singleton. La variante
+Model-TG ST réserve déjà six blocs cache de 16 KiB : ses pointeurs natifs
+de premier élément et de fin de boucle sont `0x401eb7c8` et `0x401eb7ec`,
+soit six entrées de 20 octets retirées depuis `0x401eb750`. Le bloc TG
+finit à `0x401bf8c0` ; la limite des six blocs est `0x401c3750`, laissant
+16 016 octets candidats. Ce constat de taille ne prouve pas un placement
+exécutable : la remise à zéro TG s'arrête actuellement à son propre bloc.
+
+[FAIT] Le bundle Select All compatible, LFO 2 inclus, finit à `0x401fa98d`
+après ajout du flux Syntakt compressé, soit 22 131 octets sous la limite
+d'image `0x40200000`. Les six voies semblent donc pouvoir tenir avec TG,
+sans réduire davantage le cache. [HYP] Copier leur code après la
+décompression Syntakt dans la fin des blocs déjà retirés et étendre la
+plage préservée au démarrage. Ne jamais occuper le tampon disque nul
+`0x401a7750..0x401ab750` ; ne jamais écraser le flux Syntakt avant sa
+décompression. Aucune adresse candidate n'est encore utilisée par un
+firmware publié. Le retrait de TG fournirait une autre réserve de code,
+mais exigerait de remplacer les hooks partagés avec TG.
+
+[À FAIRE] Prouver boot/cache et chaîne complète, scheduler/préemption,
+transport réel et première ouverture pendant lecture, puis stockage
+persistant par pattern/projet. Pas de flasher MIDI nouveau à ce stade.
+
+
+## 19. Bundle TG et installateur expérimental (11/10/2026)
+
+[FAIT en émulation] `gen_midi_bank_bundle.py` lie 6 016 octets à
+`0x401bf8c0..0x401c1040`, sous la limite des six blocs cache déjà retirés
+par TG (`0x401c3750`). Le tampon disque nul reste intact. Le chargeur dans
+un masque libre copie le code après décompression Syntakt, invalide les
+caches instruction/branchement et étend la plage préservée par le boot TG.
+Le payload TG reste identique ; aucune réduction supplémentaire du cache.
+L'image finale finit à `0x401fc10d`, sous `0x40200000`.
+
+Le JSON reste isolé sous `experimental/midi-bank/`, hors du catalogue
+principal. Ses dépendances imposent exactement le Select All compatible :
+Model-TG, Live MIDI Out+Thru (prioritaire sur MIDI Out en THRU), moteurs
+Syntakt/MACRO, Sequence Generator avec génération différée, SCRAMBLE par
+pas, LFO 2 et les autres mods compatibles. SHA-256 MAIN OS :
+`eea78b8b67025e29f59e622fb09ad495f0f8ef5d99057c858d39be6368157f0e`.
+
+`test_midi_bank_bundle.py` exécute le démarrage avec vraie décompression
+Syntakt, copie de banque, remise à zéro et conservation TG. Il vérifie
+les hooks placés, la chaîne de touches complète, le service UI, les appels
+Start/audio et douze sorties USB/DIN en OUT puis THRU. Le bootstrap relit
+également à l'identique le MAIN OS repaqueté et agrandi.
+
+`test_midi_lane_scheduler.py` exécute les listes natives et le handler de
+changement de contexte : UI priorité 6, consommateur 5, idle 0. Vingt
+réveils depuis IRQ donnent quarante messages depuis la pile propre du
+consommateur, IPL 0, puis attente sans boucle active. TRAP/RTE ColdFire
+sont adaptés par le banc Unicorn ; les writers physiques et l'allocation
+restent simulés. Le cache est modélisé, pas mesuré matériellement.
+Le chemin Play complet, la préemption physique et le débit réel ne sont
+pas validés par ces preuves.
+
+`gen_midi_test_flasher.py` produit un installateur fixe séparé, avec les
+uploaders OS Cycles/Syntakt, sélection MIDI et transfert rapide uniquement.
+`test_midi_flasher.js` charge les vrais scripts et les deux OS officiels :
+hashes de chaque mod, hash MAIN OS et signature du conteneur vérifiés.
+Le sélecteur de mods est masqué ; les limites RAM sont visibles en EN/FR.
+
+Commandes : FUNC + SETTINGS + PAGE bascule l'éditeur ; FUNC + pad active
+ou coupe MIDI OUT de la voie. Les canaux 7–12 sont fixes. DATA choisit un
+réglage, clic DATA édite ; les seize trigs et PAGE éditent les pas.
+Les deux banques jouent ensemble. Arrêter avant la première ouverture
+après démarrage ; le contexte créé après Play attend le prochain Start.
+
+[À FAIRE] Essai matériel avec TG et Select All, charge UI et absence de
+notes bloquées ; sauvegarde par pattern/projet et première ouverture en
+lecture. La banque RAM unique persiste entre changements de pattern,
+mais disparaît au redémarrage. Si la vérification matérielle avec TG
+échoue, AveyCole autorise une variante sans TG ; aucun retrait préventif.

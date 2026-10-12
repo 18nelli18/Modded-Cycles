@@ -127,7 +127,7 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [54 — Générateur étendu](54-generateur-etendu.md) | **Expérimental** : plages, modes, mutation, Euclid, son indépendant, mutes et cartouche ; preuves émulation, matériel à tester. |
 | [55 — SCRAMBLE indépendant](55-scramble.md) | **Testé sur machine par AveyCole le 11/10/2026, principal** : SETTINGS + TRACK, quatre paramètres seuls, sans menu ; SCRAMBLE par pas également testé, valeurs fraîches à chaque passage ; setter natif et combinaison maximale vérifiés en émulation. |
 | [56 — Génération différée](56-generation-differee.md) | **Expérimental** : staging privé, commit avant le premier trig, sous-option distincte ; correctif local des modes commun/par piste et banque de lecture prouvé en émulation, sans chaîne. |
-| [57 — Séquences MIDI secondaires](57-pistes-midi-secondaires.md) | **Recherche** : six voies MIDI indépendantes ; routage, gates/file, horloge et page privée prouvés en émulation. Hooks, LED, stockage et sortie physique restent à intégrer. Aucun flasher proposé. |
+| [57 — Séquences MIDI secondaires](57-pistes-midi-secondaires.md) | **Test expérimental avec TG** : six voies MIDI, éditeur, hooks et consommateur dédié prouvés en émulation ; installateur séparé. Banque RAM partagée entre patterns ; sauvegarde et sorties physiques à valider. |
 | [58 — Second LFO](58-second-lfo.md) | **LFO 2 testé sur machine par AveyCole le 11/10/2026, flasher principal** : rendu de menu natif, phases indépendantes, mélange et publication audio prouvés ; 33 masques sans chevauchement des mods principaux. Réglages RAM seulement ; sauvegarde et coût audio matériel restent à établir. |
 
 - [42 — Clavier d’accords diatoniques](42-clavier-accords-diatoniques.md) — upstream 1.46.

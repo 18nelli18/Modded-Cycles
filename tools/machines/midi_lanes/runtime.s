@@ -160,3 +160,53 @@ ml_take:
 .Ltake_out:
     movew %d1,%sr
     rts
+
+| ml_quiet(bank,lane) : annule les note-ons encore en file, puis libère la
+| note tenue. Les note-offs, autres canaux et ports sont conservés. Au plus
+| 64 paquets inspectés ; aucun appel de sortie sous IPL7.
+    .globl ml_quiet
+ml_quiet:
+    lea.l %sp@(-20),%sp
+    movem.l %d2-%d4/%a2,%sp@
+    movew %sr,%d0
+    movel %d0,%sp@(16)
+    movew #0x2700,%sr
+    moveal %sp@(24),%a2
+    movel %sp@(28),%d4
+    cmpil #5,%d4
+    bhi .Lquiet_done
+    movel %d4,%d2
+    addil #0x96,%d2
+    movel %a2@,%d3
+    movel %a2@(4),%d1
+    lea.l %a2@(16),%a0
+.Lquiet_scan:
+    tstl %d3
+    beq .Lquiet_release
+    lea.l %a0@(0,%d1:l:4),%a1
+    moveq #0,%d0
+    moveb %a1@,%d0
+    cmpl %d2,%d0
+    bne .Lquiet_next
+    movel %a1@,%d0
+    andil #0xefff00ff,%d0
+    movel %d0,%a1@
+.Lquiet_next:
+    addql #1,%d1
+    andil #63,%d1
+    subql #1,%d3
+    bra .Lquiet_scan
+.Lquiet_release:
+    movel %d4,%sp@-
+    movel %a2,%sp@-
+    jsr ml_stop
+    addql #8,%sp
+    .ifdef ML_WORKER
+    jsr ml_worker_kick
+    .endif
+.Lquiet_done:
+    movel %sp@(16),%d0
+    movew %d0,%sr
+    movem.l %sp@,%d2-%d4/%a2
+    lea.l %sp@(20),%sp
+    rts
