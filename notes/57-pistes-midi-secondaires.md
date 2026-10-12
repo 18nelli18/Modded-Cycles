@@ -514,3 +514,43 @@ banque, sans modifier le MAIN OS de cette dernière.
 avec main et l'URL du script de transport partagé, ainsi que les vrais
 builds avec/sans banque, l'état initial et les choix. Le test ne prouve pas
 un transfert physique réussi. LFO 2 reste dans main, testé par AveyCole.
+
+
+## 22. Arrêt également sans banque MIDI (11/10/2026)
+
+AveyCole confirme que le transfert bloque avec et sans la carte banque MIDI.
+Ce constat exclut son payload comme seule cause, sans établir la cause
+réelle. La comparaison matérielle avec main, même sélection après
+redémarrage, reste demandée ; aucun nouveau correctif spéculatif publié.
+
+Le test navigateur exécute maintenant aussi le bouton Flash réel avec le
+récepteur indépendant du test principal : handshake, départ, CRC et
+positions des blocs, réception complète comparée octet pour octet.
+Résultats simulés : banque 1 371 040 octets / 670 blocs ; contrôle sans
+banque 1 365 280 octets / 667 blocs. Pauses supprimées uniquement dans le
+banc de test. Les fichiers du navigateur passent aussi les vérifications
+Python des paquets, checksum conteneur et HMAC ; les sections autres que
+MAIN OS sont identiques à l'officiel. Ces preuves ne valent pas essai
+physique et ne justifient pas de déclarer le problème résolu.
+
+
+## 23. Main fonctionne ; application entièrement partagée (11/10/2026)
+
+AveyCole confirme « Main just worked » après le signalement d'échec avec
+et sans banque sur le test. La cause physique précise reste inconnue.
+Pour supprimer toute divergence de l'application, le test charge
+maintenant directement les quatre scripts main : builder, catalogue,
+flasher et app. La copie générée `flasher-midi-test/app.js` est supprimée.
+Aucun fichier ni comportement de l'application principale n'est modifié.
+
+Seul `bundle.js`, chargé après app et avant DOMContentLoaded, ajoute la
+recette, une carte bilingue et ses deux références aux objets exportés.
+Cocher la banque utilise le vrai bouton Select all pour sélectionner ses
+dépendances ; le builder natif refuse une combinaison incomplète. Aucun
+remplacement des fonctions de sélection, upload, ports, erreurs ou flash.
+
+Le test ouvre deux DOM indépendants : vrai main et test avec banque retirée.
+Même sélection, fichiers officiels, application et sortie `.syx` identiques
+octet pour octet. L'envoi UI complet des deux fichiers vers le récepteur
+simulé passe encore : 670 et 667 blocs, CRC, positions et contenu vérifiés.
+[À FAIRE] Nouveau transfert physique ; pas de réussite matérielle affirmée.
