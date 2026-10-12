@@ -24,7 +24,7 @@ SOURCES=('runtime','pattern','clock','service','prepare','page','integration',
 STORAGE_SOURCES=tuple('storage_'+name for name in (
     'prepare','guard','checked','directory','codec','io','path','verify','load',
     'commit','initial','snapshot','session','project','save_hook','load_hook',
-    'restore_step','publish','retire','ui_cancel','service'))
+    'restore_step','publish','retire','ui_cancel','service','working_slot'))
 CONDITION_SOURCES=('chance','conditions','condition_history','condition_decode','condition_run','chance_menu')
 REPEAT_SOURCES=('retrigger','retrigger_locks','retrigger_service','retrigger_patterns',
                 'retrigger_step','retrigger_menu','arp','arp_tick')
@@ -104,11 +104,21 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
             mask=next((va for va in sorted(available,key=lambda va:(sprites.MASKS[va][0],va)) if sprites.MASKS[va][0]>=size),None)
             assert mask is not None,('condition helper',size,'aucun masque libre')
             available.remove(mask);placements.append(('.text.ml_condition_eval',mask))
+        if repeat:
+            listing=subprocess.check_output([cross+'objdump','-h',str(p/'clipboard.o')],text=True)
+            sections += [(m.group(1),int(m.group(2),16)) for m in re.finditer(r'^\s*\d+\s+(\.text\.ml_step_clip_[abc])\s+([0-9a-fA-F]+)',listing,re.M)]
+        # Plusieurs fragments peuvent partager les queues libres d'un masque.
+        spans=[(va,va,sprites.MASKS[va][0]) for va in available]
+        owners={va:va for _,va in placements}
         for section,size in sorted(sections,key=lambda x:-x[1]):
             if conditions and section=='.data.mm_merge':continue
-            mask=next((va for va in sorted(available,key=lambda va:(sprites.MASKS[va][0],va)) if sprites.MASKS[va][0]>=size),None)
-            assert mask is not None,(section,size,'aucun masque merger libre')
-            available.remove(mask);placements.append((section,mask))
+            fits=[span for span in spans if span[2]>=size]
+            assert fits,(section,size,'aucun masque merger libre')
+            base,at,capacity=min(fits,key=lambda span:(span[2],span[1]))
+            spans.remove((base,at,capacity))
+            used=(size+1)&~1
+            if capacity>used:spans.append((base,at+used,capacity-used))
+            placements.append((section,at));owners[at]=base
         merge_script='\n'.join(f' {name} {mask:#x} : {{ *({name}) }}' for name,mask in placements)
         sg=build.load_catalog()['model-cycles_OS1.13'][1]['scale-gen-st-queued']['symbols']
         bindings='\n'.join(f"SG_{name[3:]} = {sg[name]};" for name in (
@@ -159,11 +169,16 @@ SECTIONS {{
             out=p/(section[1:]+'.bin')
             subprocess.run([cross+'objcopy','-O','binary','--only-section='+section,str(elf),str(out)],check=True)
             blobs.append(out.read_bytes())
-        fragments=[]
+        collected={}
         for section,mask in placements:
             out=p/'fragment.bin'
             subprocess.run([cross+'objcopy','-O','binary','--only-section='+section,str(elf),str(out)],check=True)
-            fragments.append((mask,out.read_bytes()))
+            code=out.read_bytes();base=owners[mask];offset=mask-base
+            buf=collected.setdefault(base,bytearray())
+            if len(buf)<offset+len(code):buf.extend(bytes(offset+len(code)-len(buf)))
+            buf[offset:offset+len(code)]=code
+            assert len(buf)<=sprites.MASKS[base][0]
+        fragments=[(base,bytes(buf)) for base,buf in collected.items()]
         return *blobs,fragments,symbols(cross,elf)
 
 

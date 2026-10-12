@@ -15,7 +15,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
  Object.defineProperty(w,'isSecureContext',{value:true});
  for(const f of ['builder.js','tweaks.js','flasher.js','app.js','bundle.js'])w.eval(fs.readFileSync(path.join(page,f),'utf8'));
  await wait(30);const app=w.MCFlasherApp;
- assert.strictEqual(w.MC_BUILD,'2026-10-12-test-3-stock-chance');
+ assert.strictEqual(w.MC_BUILD,'2026-10-12-test-3-step-copy');
  assert(html.includes('builder.js?v='+w.MC_BUILD)&&html.includes('bundle.js?v='+w.MC_BUILD));
  assert.strictEqual(app.chosenTweaks().length,0);
  const change=(id,checked)=>{const box=d.getElementById('feat-'+id);assert(box,id);box.checked=checked;box.dispatchEvent(new w.Event('change',{bubbles:true}));};

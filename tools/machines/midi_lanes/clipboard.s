@@ -3,6 +3,8 @@
 | Deuxième clear/paste même lane : undo. Aucune donnée audio ni clipboard stock.
     .data
     .balign 4
+mlp_step_clip_ready: .long 0
+mlp_step_clip: .space 12
 mlp_clip_ready: .long 0
 mlp_clip_keys: .long 0
 mlp_clip_undo_op: .long 0
@@ -36,6 +38,10 @@ mlp_clip_key:
     movel mlp_clip_keys,%d0
     btst %d2,%d0
     bne .Lclip_used
+    tstl mlp_held
+    beq .Lclip_track
+    jmp .Lclip_step
+.Lclip_track:
     tstl mlp_func
     beq .Lclip_pass
     btst #5,%d3
@@ -155,6 +161,107 @@ mlp_clip_key:
     movel %d0,mlp_clip_ready
     movel %sp@(20),%d0
     movew %d0,%sr
+| TRIG maintenu + REC/STOP : un pas et ses locks privés, jamais le transport.
+    .section .text.ml_step_clip_a,"ax"
+.Lclip_step:
+    cmpil #1,%d2
+    bne.s .Lstep_far1
+    jmp .Lclip_pass
+.Lstep_far1:
+    btst #5,%d3
+    beq.s .Lstep_far2
+    jmp .Lclip_used
+.Lstep_far2:
+    bset %d2,%d0
+    movel %d0,mlp_clip_keys
+    movel mlp_track,%d4
+    cmpil #5,%d4
+    bls.s .Lstep_far3
+    jmp .Lclip_used
+.Lstep_far3:
+    movel mlp_step,%d3
+    cmpil #63,%d3
+    bls.s .Lstep_far4
+    jmp .Lclip_used
+.Lstep_far4:
+    moveal ml_pattern,%a2
+    tstl %a2
+    bne.s .Lstep_far5
+    jmp .Lclip_used
+.Lstep_far5:
+    movel %d4,%d0
+    muluw #264,%d0
+    addal %d0,%a2
+    movel %d3,%d0
+    lsll #2,%d0
+    addal %d0,%a2
+    addql #8,%a2
+    jmp .Lclip_step_locks
+    .section .text.ml_step_clip_c,"ax"
+.Lclip_step_locks:
+    .ifdef ML_REPEAT
+    jsr ml_repeat_prepare_ui
+    moveal ml_repeat_edit_settings,%a3
+    tstl %a3
+    bne.s .Lstep_far6
+    jmp .Lclip_used
+.Lstep_far6:
+    movel %d4,%d0
+    muluw #520,%d0
+    addal %d0,%a3
+    movel %d3,%d0
+    lsll #3,%d0
+    addal %d0,%a3
+    addql #8,%a3
+    .endif
+    tstl %d2
+    bne.s .Lstep_far7
+    jmp .Lclip_step_copy
+.Lstep_far7:
+    tstl mlp_step_clip_ready
+    bne.s .Lstep_far8
+    jmp .Lclip_used
+.Lstep_far8:
+    jsr mlp_keyboard_cancel
+    movel %d4,%sp@-
+    movel ml_runtime,%sp@-
+    jsr ml_stop
+    addql #8,%sp
+    movew #0x2700,%sr
+    movel mlp_step_clip,%d0
+    movel %d0,%a2@
+    .ifdef ML_REPEAT
+    movel mlp_step_clip+4,%d0
+    movel %d0,%a3@
+    movel mlp_step_clip+8,%d0
+    movel %d0,%a3@(4)
+    .endif
+    jmp .Lclip_step_changed
+    .section .text.ml_step_clip_b,"ax"
+.Lclip_step_copy:
+    movew #0x2700,%sr
+    movel %a2@,%d0
+    movel %d0,mlp_step_clip
+    .ifdef ML_REPEAT
+    movel %a3@,%d0
+    movel %d0,mlp_step_clip+4
+    movel %a3@(4),%d0
+    movel %d0,mlp_step_clip+8
+    .endif
+    moveq #1,%d0
+    movel %d0,mlp_step_clip_ready
+.Lclip_step_changed:
+    | La libération du trig ne doit pas effacer le pas copié/collé.
+    movel mlp_held,%d0
+    orl %d0,mlp_changed
+    movel %sp@(20),%d0
+    movew %d0,%sr
+    movel mlp_obj,%sp@-
+    jsr mlp_redraw
+    addql #4,%sp
+    jmp .Lclip_used
+
+    .text
 .Lclip_used:
     moveq #1,%d0
     bra .Lclip_out

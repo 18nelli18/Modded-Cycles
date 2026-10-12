@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Shortcuts B compilés : copie, collage, clear/undo ; isolation audio/routage."""
 import argparse,struct,json,pathlib
+from unicorn import UC_HOOK_CODE
 import build
 from test_midi_lane_page import make,load,key
 from test_sdvintage import main_os_from_syx
@@ -66,5 +67,22 @@ def main():
  key(r,1,0);assert key(r,11,0)==1
  assert bytes(r.u.mem_read(RAW,722))==audio
  assert key(r,10,1)==0 and key(r,11,1)==0 # transport normal sans FUNC
+ r.stubs[0x400cf9a8]=lambda args:0
+ r.u.hook_add(UC_HOOK_CODE,r.stub,begin=0x400cf9a8,end=0x400cf9a8)
+ # Clipboard par pas indépendant : tenir TRIG, REC copie, STOP colle.
+ r.w32(r.s['mlp_track'],0);r.w32(r.s['mlp_step'],0)
+ key(r,16,1);assert key(r,9,1)==1;key(r,9,0);key(r,16,0)
+ assert lane(0)==original[0]
+ r.w32(r.s['mlp_track'],5);r.w32(r.s['mlp_step'],48)
+ before=[lane(n) for n in range(6)]
+ key(r,31,1);assert r.r32(r.s['mlp_step'])==63
+ assert key(r,11,1)==1;key(r,11,0);key(r,31,0)
+ assert lane(5)[8+63*4:12+63*4]==original[0][8:12]
+ assert lane(5)[:8+63*4]==before[5][:8+63*4]
+ assert all(lane(n)==before[n] for n in range(5))
+ if settings:
+  assert bytes(r.u.mem_read(settings+5*520+8+63*8,8))==saved[8:16]
+ assert bytes(r.u.mem_read(RAW,722))==audio
+ print('ok : TRIG+REC/STOP copie un pas avec locks, page4/pas64, release sans suppression, A-side intact')
  print('ok : clavier B copy/paste/clear/undo,64pas, lane sélectionnée seule, routage/audio intacts, releases et transport')
 if __name__=='__main__':main()
