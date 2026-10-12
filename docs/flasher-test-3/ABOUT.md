@@ -46,3 +46,8 @@ B-side sequencer is open. MIDI-note pulses and selected-pad indication
 remain. A-side pulses return when B closes. Emulation passed; hardware
 verification needed. / Pulses audio filtrés dans B ; pulses MIDI et pad
 sélectionné conservés, retour A natif à la fermeture. À tester sur matériel.
+
+Channel readout: smaller CH1–16 below M1–M6 follows the Scale Setup setting.
+Native rendering tested on all six lanes and sixteen channels. / Petit
+indicateur CH1–16 sous M1–M6, lié au canal choisi dans Scale Setup.
+Saving and LFO CC remain unfinished and are not included in this build.

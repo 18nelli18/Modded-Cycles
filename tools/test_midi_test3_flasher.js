@@ -35,7 +35,7 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
  assert.notStrictEqual(w.getComputedStyle(doc.getElementById('step-choose')).display,'none');
  assert.notStrictEqual(w.getComputedStyle(doc.getElementById('m-slow')).display,'none');
  for(const id of ['file','file3','allow','port','flash'])assert(doc.getElementById(id),id);
- assert(html.includes('bundle.js?v=2026-10-12-test-3-b-pad-pulses'));
+ assert(html.includes('bundle.js?v=2026-10-12-test-3-channel-readout'));
  // Identité du transport avec main, sans copie expérimentale ni réglage spécial.
  assert(html.includes('src="flasher.js?v='));
 

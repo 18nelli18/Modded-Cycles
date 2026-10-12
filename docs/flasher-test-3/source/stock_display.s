@@ -83,7 +83,7 @@ mlp_stock_render:
     rts
 
 
-| Dessin B seulement : supprimer pan/volume, afficher la vélocité du pas.
+| Dessin B : numéro M centré, canal MIDI courant dessous, sans pan/volume.
 mlp_stock_velocity:
     clrl %sp@-
     pea 63
@@ -101,6 +101,22 @@ mlp_stock_velocity:
     pea 20
     pea 96
     pea 0x40ea14e4
+    movel %a3,%sp@-
+    jsr 0x40071a04
+    lea.l %sp@(28),%sp
+    movel mlp_track,%d0
+    muluw #264,%d0
+    moveal ml_pattern,%a0
+    addal %d0,%a0
+    moveq #0,%d0
+    moveb %a0@(2),%d0
+    addql #1,%d0
+    movel %d0,%sp@-
+    pea mlp_stock_channel_fmt
+    pea 2
+    pea 8
+    pea 96
+    pea 0x40ea14cc
     movel %a3,%sp@-
     jsr 0x40071a04
     lea.l %sp@(28),%sp
@@ -422,4 +438,8 @@ mlp_scale_ports: .long .LsUSB,.LsDIN,.LsBoth
 
     .data
 mlp_stock_m_fmt: .asciz "M%d"
+    .balign 4
+
+    .data
+mlp_stock_channel_fmt: .asciz "CH %d"
     .balign 4
