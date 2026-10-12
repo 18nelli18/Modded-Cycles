@@ -54,6 +54,10 @@ ml_ui_drain:
     jsr ml_bank_ui_sync
     moveal ml_context,%a0
     .endif
+    .ifdef ML_GENIE
+    jsr ml_genie_service
+    moveal ml_context,%a0
+    .endif
     .ifdef ML_WORKER
     jsr ml_worker_prepare
     jsr ml_worker_kick

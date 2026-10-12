@@ -44,7 +44,9 @@ def main():
     r.stubs[close]=lambda a:closed.append(a[0]) or 0
     r.u.hook_add(UC_HOOK_CODE,r.stub,begin=close,end=close)
     private=bytes(r.u.mem_read(context,1956))
-    assert key(2,3)==0 and closed==[obj]
+    # FUNC B consommé : le getter reçoit TRACK sans bit FUNC natif.
+    r.w32(r.s['mlp_func'],1)
+    assert key(2,1)==0 and closed==[obj]
     r.call('mlp_dtor1',obj)
     assert not r.r32(r.s['mlp_obj'])
     assert bytes(r.u.mem_read(context,1956))==private

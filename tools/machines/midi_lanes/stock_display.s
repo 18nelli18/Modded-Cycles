@@ -194,6 +194,23 @@ mlp_stock_track_label:
     addql #6,%d4
 .Lstock_track_label_push:
     movel %d4,%sp@-
+    cmpil #10,%d4
+    bcs .Lstock_track_label_native
+    tstl mlp_stock_drawing
+    beq .Lstock_track_label_native
+    | Deux chiffres : police stock compacte, même centre et zone réservée.
+    movel #0x401117e0,%d4
+    pea 0x40125f0a
+    pea 2
+    pea 34
+    pea 96
+    lea.l 0x40ea14d4,%a0
+    movel %d3,%sp@-
+    movel %d2,%sp@-
+    movel %a0@,%a6@(-8)
+    movel %a0@(4),%a6@(-4)
+    jmp 0x4001b6e8
+.Lstock_track_label_native:
     movel #0x401117e0,%d4
     jmp 0x4001b6c4
 

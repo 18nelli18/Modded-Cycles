@@ -19,7 +19,7 @@ from gen_seq_gen import COMMIT, STOCK, symbols, main_os_from_syx
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'tweaks/model-cycles_OS1.13/experimental/midi-bank/60-midi-bank-bundle.json'
 SOURCES=('runtime','pattern','clock','service','prepare','page','integration',
-         'key','led','ui_hook','transport','worker','boot','banks','stock_display','keyboard')
+         'key','led','ui_hook','transport','worker','boot','banks','stock_display','keyboard','genie','genie_router')
 IDS=('6ch-usbup','model-tg-st','sample-preview-st','trig-hold','arp','tempo-max',
      'boot-anim','multiline-browser','level-pan-values','trigless-dim',
      'midi-live-both','syntakt-tg-sd-cp-toy-bits-swarm-macro',
@@ -35,11 +35,17 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,pattern_banks=False
             if name == 'stock_display' and not stock_display:
                 continue
             obj=p/(name+'.o');objects.append(str(obj))
-            subprocess.run([cross+'as','-march=cfv4e','--defsym','ML_WORKER=1',
+            subprocess.run([cross+'as','-march=cfv4e','--defsym','ML_WORKER=1','--defsym','ML_GENIE=1',
                             *(['--defsym','ML_PATTERN_BANKS=1'] if pattern_banks else []),
                             *(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),
                             '-o',str(obj),str(ROOT/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
-        script=f'''TG_set_held = {tg['set_held']:#x}; TG_mod_used = {tg['mod_used']:#x};
+        sg=build.load_catalog()['model-cycles_OS1.13'][1]['scale-gen-st-queued']['symbols']
+        bindings='\n'.join(f"SG_{name[3:]} = {sg[name]};" for name in (
+            'sg_action_generate','sg_action_undo','sg_config','sg_error','sg_generate',
+            'sg_advanced_steps','sg_options','sg_advanced','sg_random','sg_random_range','sg_func','sg_pad','sg_undo_valid','sg_obj','sg_menu_key'))
+        script=f'''{bindings}
+TG_scale_state = {tg['scale_state']:#x}; TG_key_state = {tg['key_state']:#x};
+TG_set_held = {tg['set_held']:#x}; TG_mod_used = {tg['mod_used']:#x};
 TG_snap_note = {tg['snap_note']:#x};
 ml_key_next = {next_key:#x}; ML_BANK_START = {start:#x};
 ML_TG_START = {tg['blob_start']:#x}; ML_PAYLOAD_SRC = {source:#x};
@@ -121,6 +127,20 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     write(0x40054686,b'\x4e\xf9'+struct.pack('>I',syms['ml_start_hook']))
     write(0x400594a8,b'\x4e\xb9'+struct.pack('>I',syms['ml_audio_hook']))
     write(0x40006a4a,b'\x4e\xf9'+struct.pack('>I',syms['ml_ui_hook'])+b'\x4e\x71')
+    # Rediriger seulement les appels du menu ; les actions audio restent intactes.
+    sg=catalog['scale-gen-st-queued']['symbols']
+    for native,ours in (('sg_action_generate','ml_genie_generate'),('sg_action_undo','ml_genie_undo')):
+        target=b'\x4e\xb9'+struct.pack('>I',int(sg[native],16))
+        menu=int(sg['sg_menu_key'],16)
+        sites=[at for at in range(menu,menu+0x400,2)
+               if patched[at-build.BASE:at-build.BASE+6]==target]
+        assert len(sites)==1,(native,sites)
+        write(sites[0],b'\x4e\xb9'+struct.pack('>I',syms[ours]))
+    for native,ours in (('sg_pad','ml_genie_pad'),('sg_menu_key','ml_genie_menu_key')):
+        target=b'\x20\x3c'+struct.pack('>I',int(sg[native],16))
+        sites=[build.BASE+i for i in range(0,len(patched)-5,2) if patched[i:i+6]==target]
+        assert len(sites)==1,sites
+        write(sites[0],b'\x20\x3c'+struct.pack('>I',syms[ours]))
     if stock_display:
         for at,expected,name in ((0x4001b28a,'4eb940012412','mlp_stock_track'),
                                  (0x4001b774,'4eb940009c5a','mlp_stock_volume'),

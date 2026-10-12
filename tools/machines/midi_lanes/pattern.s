@@ -19,6 +19,12 @@ ml_pattern_tick:
     movel %d2,%d0
     muluw #264,%d0
     addal %d0,%a3
+    .ifdef ML_GENIE
+    moveal %a3,%a0
+    movel %d2,%d0
+    movel %sp@(36),%d1
+    jsr ml_genie_boundary
+    .endif
     tstb %a3@
     beq .Ltick_stop
     tstb %a3@(1)

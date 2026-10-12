@@ -30,9 +30,19 @@ ml_key:
 .Ldown:
     tstl ml_key_taken
     bne .Lrecord
+    | FUNC consommé par B n'atteint plus le modificateur natif.
+    | Utiliser notre état local pour quitter avec le même accord.
+    btst #3,%d1
+    bne .Lchain
+    tstl mlp_obj
+    beq .Lnative_modifiers
+    tstl mlp_func
+    bne .Lsettings_check
+.Lnative_modifiers:
     andil #11,%d1
     cmpil #3,%d1
     bne .Lchain
+.Lsettings_check:
     tstl TG_set_held
     beq .Lchain
     movew %sr,%d0

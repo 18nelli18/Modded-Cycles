@@ -108,3 +108,14 @@ inchangé. Installateur séparé `docs/flasher-midi-test/`, générateur
 `test_midi_bank_bundle.py` et `tools/test_midi_flasher.js`. Voir note 57 §19.
 Aucun firmware Elektron distribué ; sources OS locales exigées. Banque RAM
 seulement, expérimental, non testé sur matériel à cette date.
+
+
+### Extension Genie côté B (12/10/2026)
+
+`genie.s` et `genie_router.s` : adaptateurs originaux de ce fork autour
+des algorithmes de Sequence Genie déjà présents, pour les six voies MIDI.
+Aucune donnée ni routine Elektron copiée : appels résolus depuis la recette
+existante et génération depuis les OS locaux. Candidat expérimental dans
+`docs/flasher-midi-controls-test/` ; voir note 59 §9. Le mute MIDI seul a
+été validé sur matériel par AveyCole ; Genie B et sortie rétablie restent
+à tester. Sauvegarde persistante non incluse.

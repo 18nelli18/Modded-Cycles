@@ -134,3 +134,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [47 — Filtre de piste](47-filtre-piste.md) — upstream 1.46.
 - [53 — MIDI THRU AveyCole](53-midi-thru-aveycole.md) — déplacement compatible du code MIDI.
 - [55 — MACRO allégée et lo-fi](55-macro-allegee-et-lofi.md) — upstream 1.46.
+
+- [59 — Commandes banque MIDI](59-commandes-banque-midi.md) — mute MIDI validé sur matériel ; candidat Genie B, undo différé et affichage TR10–TR12, sauvegarde persistante en préparation.

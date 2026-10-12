@@ -116,3 +116,34 @@ séquence ET celle du clavier et réveille le worker. La preuve focalisée
 exécute les callbacks sur les six voies : répétition idempotente, notes-off
 et données audio intactes. Le dispatch supérieur réel et le résultat
 matériel restent à vérifier, donc le candidat corrigé est expérimental.
+
+
+## 9. Genie côté B et affichage, candidat du 12/10/2026
+
+AveyCole confirme la correction mute sur matériel, mais signale la perte
+de sortie FUNC + SETTINGS + TRACK. Le getter de banque accepte désormais
+son état FUNC privé, sans dépendre du bit natif consommé par le correctif.
+TR10–TR12 utilisent la police stock compacte au même centre : le grand
+texte dépassait la zone droite. Le rendu bitmap natif est vérifié.
+
+[FAIT en émulation] `genie_router.s` redirige uniquement les deux appels
+Generate/Undo du menu et son callback pad. Les actions natives audio et
+l'appel interne de génération audio différée restent inchangés. En B,
+les algorithmes natifs de gamme/notes, mutation, cible rythme/notes et
+Euclide lisent une façade privée, puis `genie.s` crée une voie candidate.
+La vélocité aléatoire suit les bornes ; aucun p-lock audio n'est écrit.
+Decay/pan ne sont pas représentés dans les voies MIDI et restent audio.
+
+À l'arrêt, copie atomique de 264 octets. En lecture, un seul candidat
+attend le pas zéro de sa voie/pattern. Avant copie, comparaison complète
+avec le snapshot : toute différence annule le candidat. Undo annule une
+demande en attente ou prépare la restauration au prochain tour. Stop
+applique la demande via service UI ; changement de pattern l'annule.
+L'IRQ ne génère aucune note aléatoire et n'appelle ni OS ni MIDI physique.
+Sauvegarde persistante toujours non raccordée ; les données restent RAM.
+
+`test_midi_lane_genie_router.py` exécute les vrais algorithmes et le menu
+avec getter événement synthétique : six voies isolées, Generate/Undo
+arrêtés/différés, erreurs concurrentes, Euclide 4/16, vélocités 80..110,
+SR conservé, aucune donnée audio modifiée. Les nouveaux raccordements
+restent expérimentaux, à tester sur la machine.
