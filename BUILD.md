@@ -466,6 +466,32 @@ python3 tools/emu/test_acid_combos.py --cycles model-cycles_OS1.13.syx --syntakt
 | `6ch-usbup,model-tg-st,sample-preview-st,syntakt-tg-sd-cp-toy-bits-swarm-macro-acid,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim` | `d823ff90f8cf8ab0a2654bb61a15717eba325687d6fdf4cb356add8dd75f058b` |
 | `6ch-usbup,syntakt-sd-cp-toy-bits-swarm-macro-acid,track-filter,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim` | `851397735f5eecd17d0988e785dfeb65e0e6a0a638f59a95408f76c46be1434f` |
 
+### Machine Wave (joue tes tables d'ondes)
+
+`tweaks/model-cycles_OS1.13/36-wavetable.json` est produit par `tools/gen_wavetable.py` : notre moteur en entiers
+(`tools/machines/wavetable/wt.c`, passe-bas repris de la première machine Acid de Kevin) joue la table pré-travaillée
+par l'outil web (`docs/convert/`, référence `tools/wt_convert.py`), lue telle quelle — les copies anti-repliement sont
+déjà gravées, rien n'est calculé sur la machine. Wave est la 7e machine, par la mécanique de MACRO et ACID
+(`gen_macro.added_machine`), sans Model-TG ([note 60](notes/60-wave-autonome.md)) : sa propre lecture du fichier
+(navigateur bloqué dans `/Wavetables`, YES qui charge la table, table retenue dans le nom du son) remplace le Sampler
+de Model-TG. Le fichier se range dans `/Wavetables` par le protocole de Transfer ; pour l'envoi, la page de conversion
+fait répondre la machine en Model:Samples par une commande SysEx que Wave ajoute (`F0 00 20 3C 0F 00 <m> F7`,
+[note 61](notes/61-smp-sans-model-tg.md) ; [notes 58](notes/58-etude-tables-d-ondes.md) et
+[59](notes/59-envoi-des-tables-depuis-l-outil-web.md)).
+```sh
+python3 tools/gen_wavetable.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/emu/test_wavetable.py --cycles model-cycles_OS1.13.syx
+```
+Seule pour l'instant : incompatible avec Model-TG, MACRO, ACID, SD VINTAGE et les moteurs du Syntakt (même place, même
+machine). Le JSON versionné vient de `m68k-linux-gnu-gcc` 13.3 (Ubuntu 24.04), comme ACID : un autre GCC donne
+d'autres octets, et `--check` le dit. La preuve a besoin d'`unicorn` et `numpy` (environ 6 minutes).
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `wavetable` | `0b1c240cb93183e2189ca08070ae42f6f505dd0fbd6fe4637ae36980cdbdff26` |
+| `6ch-usbup,wavetable` | `b5635e70197e4181818228b8bbb508f572cbdfa456b891dbd0c01f74f55b43b2` |
+| `wavetable,trig-hold,arp,tempo-max,boot-anim` | `057ef196c90d18cda84a28f78c0e807bf9b745140ab1591ebf777e31bfaa6ef4` |
+
 ### Navigateur sur plusieurs lignes
 
 `tweaks/model-cycles_OS1.13/44-multiline-browser.json` est produit par `tools/gen_multiline_browser.py`, qui assemble
