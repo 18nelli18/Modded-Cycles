@@ -39,6 +39,20 @@ def main():
             assert r.r32(r.s['mlp_stock_drawing']) == 0
             assert before == bytes(r.u.mem_read(pattern, 1584))
     print('ok : dessin natif repos/trig tenu, TR7..TR12, badge B, données MIDI intactes')
+    r.w32(r.s['mlp_held'],0)
+    r.w32(r.s['mlp_setup'],2)
+    for row in range(11):
+        for edit in (0,1):
+            r.w32(r.s['mlp_row'],row);r.w32(r.s['mlp_edit'],edit)
+            r.texts.clear()
+            before=bytes(r.u.mem_read(pattern,1584))
+            r.call('mlp_render',0,bitmap)
+            assert any(fmt=='Scale' for fmt,value in r.texts),r.texts
+            assert any(fmt=='Setup' for fmt,value in r.texts),r.texts
+            if row in (2,3,4):
+                assert any(fmt=='%d' and value==16 for fmt,value in r.texts),r.texts
+            assert before==bytes(r.u.mem_read(pattern,1584))
+    print('ok : Scale Setup stock, onze réglages, défilement, sélection/édition, aucune écriture musicale')
 
 
 if __name__ == '__main__':

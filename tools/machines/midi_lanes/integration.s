@@ -62,6 +62,10 @@ ml_ui_drain:
     pea %a0@(1584)
     jsr ml_service
     addql #8,%sp
+    pea 8
+    pea ml_live_runtime
+    jsr ml_service
+    addql #8,%sp
     .endif
     jsr mlp_led_poll
 .Lud_done:

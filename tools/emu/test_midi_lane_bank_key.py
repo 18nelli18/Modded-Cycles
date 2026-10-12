@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Note 57 : bascule FUNC + SETTINGS + PAGE, contexte indépendant.
+"""Note 57 : bascule FUNC + SETTINGS + TRACK, contexte indépendant.
 
 Exécute adaptateur ColdFire, constructeur OS et getter natif. Fermeture,
 allocation, affichage et sortie physique simulés. Aucun hook installé ici.
@@ -25,31 +25,31 @@ def main():
         assert len(set(results))==1,results
         return results[0]
     for code in range(33):
-        if code!=15:assert key(code,3)==code
-    for flags in (0,1,2,9,11):assert key(15,flags)==15
+        if code!=2:assert key(code,3)==code
+    for flags in (0,1,2,9,11):assert key(2,flags)==2
     r.w32(0x93082000,0)
-    assert key(15,3)==15 and not r.r32(r.s['mlp_obj'])
+    assert key(2,3)==2 and not r.r32(r.s['mlp_obj'])
     r.w32(0x93082000,1)
-    assert key(15,3)==0
+    assert key(2,3)==0
     obj=r.r32(r.s['mlp_obj']);context=r.r32(r.s['ml_context'])
     assert obj and context and r.r32(0x93082004)==1
     assert r.r32(r.s['ml_key_taken'])==1
-    assert key(15,11)==0 and r.r32(r.s['mlp_obj'])==obj
-    assert key(15,2)==0 and not r.r32(r.s['ml_key_taken'])
+    assert key(2,11)==0 and r.r32(r.s['mlp_obj'])==obj
+    assert key(2,2)==0 and not r.r32(r.s['ml_key_taken'])
     # SETTINGS+FUNC ne ferme pas la vue avant le troisième bouton.
     r.event(13,3,stamp+1)
-    assert r.call('mlp_menu_key',obj,EVENT)==1 and r.r32(r.s['mlp_obj'])==obj
+    assert r.call('mlp_menu_key',obj,EVENT)==0 and r.r32(r.s['mlp_obj'])==obj
     close=r.r32(r.r32(obj)+0x28);closed=[]
     # Le stub doit garder sa pile : le destructeur s'exécute séparément ensuite.
     r.stubs[close]=lambda a:closed.append(a[0]) or 0
     r.u.hook_add(UC_HOOK_CODE,r.stub,begin=close,end=close)
     private=bytes(r.u.mem_read(context,1956))
-    assert key(15,3)==0 and closed==[obj]
+    assert key(2,3)==0 and closed==[obj]
     r.call('mlp_dtor1',obj)
     assert not r.r32(r.s['mlp_obj'])
     assert bytes(r.u.mem_read(context,1956))==private
-    assert key(15,0)==0
-    assert key(15,3)==0 and r.r32(r.s['mlp_obj'])
+    assert key(2,0)==0
+    assert key(2,3)==0 and r.r32(r.s['mlp_obj'])
     assert r.r32(r.s['ml_context'])==context
     assert bytes(r.u.mem_read(context,1956))==private
     assert bytes(r.u.mem_read(RAW,722))==saved and r.r32(0x93005304)==5

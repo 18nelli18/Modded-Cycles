@@ -1,6 +1,6 @@
-| Note 57 : FUNC + SETTINGS + PAGE, avant le getter Sequence Genie/Model-TG.
+| Note 57 : FUNC + SETTINGS + TRACK, avant le getter Sequence Genie/Model-TG.
 | Les événements SETTINGS continuent vers la chaîne pour ne jamais bloquer
-| TG_set_held. PAGE est consommé jusqu'au relâchement, lectures idempotentes.
+| TG_set_held. TRACK est consommé jusqu'au relâchement, lectures idempotentes.
 | ml_key_next est la cible de chaîne fournie par le futur générateur.
     .data
     .globl ml_key_event,ml_key_time,ml_key_taken
@@ -12,7 +12,7 @@ ml_key_taken: .long 0
 ml_key:
     moveal %sp@(4),%a0
     movel %a0@(12),%d0
-    cmpil #15,%d0
+    cmpil #2,%d0
     bne .Lchain
     cmpal ml_key_event,%a0
     bne .Lfresh

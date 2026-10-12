@@ -84,6 +84,20 @@ def main():
                 assert messages==[off(packet(lane+6,note-1,49+step,2+lane%3))]
             else:assert not messages
         assert bytes(u.mem_read(pattern,6*264))==expected_pattern
+    # Slide : note suivante avant note-off, sans changer le gate ni la réserve.
+    for lane in range(6):
+        reset()
+        first,second=packet(lane+6,60),packet(lane+6,64)
+        assert call('ml_step',BANK,lane,first,1)==1 and take()==first
+        assert call('ml_step',BANK,lane,second,0x80000001)==1
+        assert [take(),take(),take()]==[second,off(first),0]
+        call('ml_stop',BANK,lane)
+        assert take()==off(second) and take()==0
+        reset()
+        assert call('ml_step',BANK,lane,first,1)==1 and take()==first
+        assert call('ml_step',BANK,lane,first,0x80000001)==1
+        assert [take(),take(),take()]==[off(first),first,0]
+    print('ok : slide six canaux, Note On avant ancien Note Off ; même hauteur retrigger, Stop libère la note')
     # Changer route/canal et muter doit libérer la note sur son ancien port.
     reset();assert call('ml_pattern_tick',BANK,pattern,0,0)==1
     original=take()
@@ -92,7 +106,7 @@ def main():
     assert call('ml_config',pattern,0,1,1)==1
     call('ml_pattern_tick',BANK,pattern,0,1)
     assert take()==off(original) and take()==0
-    for args in [(6,0,0,60),(0,64,0,60),(0,0,4,1),(0,0,0,128),(0,0,1,0),(0,0,2,65),(0,0,3,2)]:
+    for args in [(6,0,0,60),(0,64,0,60),(0,0,4,1),(0,0,0,128),(0,0,1,0),(0,0,2,65),(0,0,3,4)]:
         before=bytes(u.mem_read(pattern,6*264))
         assert call('ml_edit',pattern,*args)==0
         assert bytes(u.mem_read(pattern,6*264))==before

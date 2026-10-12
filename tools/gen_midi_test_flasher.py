@@ -15,8 +15,8 @@ import ref_mainos
 
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 PROD=ROOT/'docs/flasher'
-OUT=ROOT/'docs/flasher-midi-test'
-STAMP='2026-10-12-midi-bank-tested'
+OUT=ROOT/'docs/flasher-midi-controls-test'
+STAMP='2026-10-12-midi-bank-controls'
 
 
 def files_for(tweak,chosen,image):
@@ -32,22 +32,25 @@ def files_for(tweak,chosen,image):
             item['p']=hashlib.sha256(image[lo:hi]).hexdigest()
         mods[t['id']]=item
     texts={
-      'en': {'label':'MIDI OUT Bank','short':'Six MIDI-only lanes on channels 7–12. Hardware tested; RAM only.',
-             'desc':'FUNC + SETTINGS + PAGE switches between the audio tracks and six independent MIDI-only lanes on channels 7–12. FUNC + pad toggles the lane MIDI OUT. Tap a trig to add/remove it; hold a trig and turn DATA to choose its note. Several held trigs transpose together. The stock-style display shows a B indicator and TR7–TR12 for the MIDI channels; hold a trig to see its note and velocity. DATA selects a step when no trig is held; click DATA for settings and EXIT to return. PAGE changes step page. The trig lights show the MIDI lane steps and its playback position; returning to audio restores the audio-track lights. Stop playback before first opening after boot. Each pattern has its own MIDI sequences in RAM, switching at the active pattern change. They are lost on restart. Disk saving and project isolation are unfinished: use this test within one project and restart before changing projects. Selecting this mod selects its validated compatible Select All bundle with Model-TG, Live MIDI OUT + THRU, LFO 2, queued Sequence Generator and SCRAMBLE. If you change its required mods, uncheck MIDI OUT Bank or use Select all again. This RAM-only MIDI Bank build was hardware tested on 12 October 2026. Saving remains unfinished.'},
-      'fr': {'label':'Banque MIDI OUT','short':'Six voies MIDI seules sur les canaux 7–12. Testé sur machine ; RAM seulement.',
-             'desc':'FUNC + SETTINGS + PAGE bascule entre les pistes audio et six voies MIDI indépendantes sur les canaux 7–12. FUNC + pad bascule MIDI OUT de la voie. Appuyez brièvement sur un trig pour ajouter/retirer le pas ; maintenez-le et tournez DATA pour choisir sa note. Plusieurs trigs tenus sont transposés ensemble. La vue stock affiche B et TR7–TR12 pour les canaux MIDI ; maintenez un trig pour voir sa note et sa vélocité. DATA sélectionne un pas sans trig tenu ; cliquez DATA pour les réglages, EXIT pour revenir. PAGE change la page. Les LED affichent les pas MIDI et leur position de lecture ; revenir aux pistes audio rétablit leurs LED. Arrêtez la lecture avant la première ouverture après démarrage. Chaque pattern possède ses séquences MIDI en RAM, suivant le changement de pattern actif. Elles sont perdues au redémarrage. Sauvegarde disque et isolation des projets inachevées : testez dans un seul projet et redémarrez avant de changer de projet. Ce mod sélectionne son bundle Tout sélectionner compatible validé avec Model-TG, MIDI OUT + THRU en direct, LFO 2, génération différée et SCRAMBLE. Si vous modifiez ses mods requis, décochez la banque MIDI OUT ou cliquez de nouveau sur Tout sélectionner. Cette banque MIDI en RAM a été testée sur machine le 12 octobre 2026. La sauvegarde reste inachevée.'}}
+      'en': {'label':'MIDI OUT Bank — controls test',
+             'short':'Scale-aware keyboard, slide steps and pad lights. Experimental; RAM only.',
+             'desc':'FUNC + SETTINGS + TRACK enters or leaves the B-side. Pads select lanes TR7–TR12 on MIDI channels 7–12; FUNC + pad toggles lane MIDI OUT. With REC enabled, tap a trig to add or remove a step, or hold it and turn DATA to choose its note. With REC disabled, trigs play the Model-TG scale/key keyboard. SETTINGS + trig toggles slide: the next note overlaps the previous note for synth legato. PAGE visits only pages within the lane length. FUNC + PAGE opens stock-style Scale Setup with all lane settings; DATA chooses a step outside that menu. Selected pads light and sequenced notes pulse their pads. TEMPO, REC and LFO keys are forwarded to their native handlers; complete behavior needs hardware verification. Stop playback before first opening after boot. Sequences follow active pattern changes in RAM and are lost on restart. Saving, project isolation, B-side LFO-to-CC routing and Sequence Genie access remain unfinished. Use one project and restart before changing projects. This experimental build includes the compatible Select All bundle with Model-TG and Syntakt engines. The new controls are emulation-tested only.'},
+      'fr': {'label':'Banque MIDI OUT — test commandes',
+             'short':'Clavier selon gamme, slides et LED pads. Expérimental ; RAM seulement.',
+             'desc':'FUNC + SETTINGS + TRACK ouvre ou ferme la face B. Les pads sélectionnent TR7–TR12 sur les canaux MIDI 7–12 ; FUNC + pad bascule MIDI OUT. REC actif : appuyez sur un trig pour ajouter ou retirer un pas, ou maintenez-le et tournez DATA pour choisir sa note. REC inactif : les trigs jouent le clavier selon gamme et tonalité Model-TG. SETTINGS + trig bascule le slide : la note suivante chevauche la précédente pour le legato du synthé. PAGE visite seulement les pages de la longueur de voie. FUNC + PAGE ouvre Scale Setup de style stock avec tous les réglages de voie ; DATA choisit un pas hors menu. Le pad sélectionné est allumé et les notes séquencées font pulser les pads. TEMPO, REC et LFO sont transmis aux handlers natifs ; leur comportement complet reste à vérifier sur matériel. Arrêtez la lecture avant la première ouverture après démarrage. Les séquences suivent le pattern actif en RAM et disparaissent au redémarrage. Sauvegarde, isolation des projets, routage LFO vers CC et accès Sequence Genie restent inachevés. Utilisez un seul projet et redémarrez avant de changer de projet. Ce test inclut le bundle Tout sélectionner compatible avec Model-TG et les moteurs Syntakt. Les nouvelles commandes sont validées en émulation seulement.'}}
     html=(PROD/'index.html').read_text()
     html=re.sub(r'<script src="../flasher-midi-test/bundle\.js[^"]*"></script>\n?', '', html)
     html=re.sub(r'2026-\d\d-\d\d-(?:lfo2-main|midi-bank-(?:tested-)?main|sequence-queue-included)',STAMP,html)
     for filename in ('style.css','builder.js','flasher.js','tweaks.js','app.js'):
         html=html.replace('"'+filename+'?v=','"../flasher/'+filename+'?v=')
+    html=re.sub(r'window.MC_BUILD\s*=\s*[^;]+;', 'window.MC_BUILD = '+json.dumps(STAMP)+';', html)
     # Le script principal exporte les références avant DOMContentLoaded ;
     # l'extension ajoute seulement carte/recette/références avant init.
     html=html.replace('</body>', '<script src="bundle.js?v='+STAMP+'"></script>\n</body>')
     bundle='/* Généré par tools/gen_midi_test_flasher.py ; aucune image firmware. */\n'
     bundle+='window.MC_BUNDLE_IDS = '+json.dumps(ids)+';\n'
     bundle+='window.MC_TWEAKS.tweaks.push('+json.dumps(tweak,ensure_ascii=False,indent=1)+');\n'
-    feature={'id':'midi-bank-bundle','cat':'seq','status':'tested','label':'MIDI OUT Bank',
+    feature={'id':'midi-bank-bundle','cat':'seq','status':'experimental','label':'MIDI OUT Bank',
              'desc':texts['fr']['desc'],'requires':'model-tg',
              'credit':{'kind':'based','who':'TinyGregAudio','repo':'TinyGregAudio/Model-TG'},
              'license':'LICENSE-Model-TG','variants':[{'id':tweak['id'],'label':None}]}

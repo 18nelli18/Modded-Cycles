@@ -152,6 +152,7 @@ mlp_o_done:
     .section .text.mlp_dtor,"ax"
 | ---- destructeurs : oublier la page, puis appeler ceux de l’OS ----
 mlp_dtor0:
+    jsr mlp_keyboard_cancel
     clrl mlp_held
     clrl mlp_func
     clrl mlp_pads
@@ -159,6 +160,7 @@ mlp_dtor0:
     clrl    %a0@
     jmp     0x400f43ca
 mlp_dtor1:
+    jsr mlp_keyboard_cancel
     clrl mlp_held
     clrl mlp_func
     clrl mlp_pads
@@ -190,11 +192,26 @@ mlp_menu_key:
     beq .Lmk_transport
     cmpil #32,%d2
     beq .Lmk_data
+    | Ces touches gardent leurs handlers globaux, appuis et relâchements.
+    cmpil #3,%d2
+    beq .Lmk_global
+    cmpil #8,%d2
+    beq .Lmk_global
+    cmpil #9,%d2
+    beq .Lmk_global
+    cmpil #13,%d2
+    beq .Lmk_global
     | Relâchement des trigs traité avant le filtre des appuis.
     cmpil #16,%d2
     bcs .Lmk_nontrig
     cmpil #31,%d2
     bhi .Lmk_nontrig
+    movel %d3,%sp@-
+    movel %d2,%sp@-
+    jsr mlp_keyboard
+    addql #8,%sp
+    tstl %d0
+    bne .Lmk_used
     btst #0,%d3
     beq .Lmk_trig_release
 .Lmk_nontrig:
@@ -204,18 +221,10 @@ mlp_menu_key:
     bne .Lmk_used
     cmpil #12,%d2
     beq .Lmk_close
-    cmpil #13,%d2
-    bne .Lmk_not_settings
-    btst #1,%d3
-    bne .Lmk_used
-    bra .Lmk_close
-.Lmk_not_settings:
-    cmpil #3,%d2
-    beq .Lmk_close
-    tstl mlp_func
-    bne .Lmk_used
     cmpil #15,%d2
     beq .Lmk_page
+    tstl mlp_func
+    bne .Lmk_used
     subil #16,%d2
     cmpil #15,%d2
     bhi .Lmk_used
@@ -228,6 +237,8 @@ mlp_menu_key:
     andil #48,%d0
     addl %d2,%d0
     movel %d0,mlp_step
+    tstl TG_set_held
+    bne .Lmk_slide
     moveq #6,%d2
     movel %d2,mlp_row
     clrl mlp_edit
@@ -251,6 +262,33 @@ mlp_menu_key:
     moveq #1,%d0
     movel %d0,mlp_edit
     bra .Lmk_redraw
+.Lmk_slide:
+    | SETTINGS + TRIG bascule le legato et garde un vrai trig note.
+    movel mlp_track,%d0
+    muluw #264,%d0
+    moveal ml_pattern,%a0
+    addal %d0,%a0
+    movel mlp_step,%d0
+    lsll #2,%d0
+    lea.l %a0@(8,%d0:l),%a0
+    moveq #0,%d0
+    moveb %a0@(3),%d0
+    moveq #2,%d1
+    eorl %d1,%d0
+    oril #1,%d0
+    movel %d0,%sp@-
+    pea 3
+    movel mlp_step,%sp@-
+    movel mlp_track,%sp@-
+    movel ml_pattern,%sp@-
+    jsr ml_edit
+    lea.l %sp@(20),%sp
+    moveq #1,%d0
+    movel %d0,TG_mod_used
+    movel mlp_changed,%d0
+    bset %d2,%d0
+    movel %d0,mlp_changed
+    bra .Lmk_trig_note
 .Lmk_trig_release:
     subil #16,%d2
     movel mlp_held,%d0
@@ -286,15 +324,67 @@ mlp_menu_key:
 .Lmk_page:
     tstl mlp_held
     bne .Lmk_used
-    movel mlp_step,%d0
+    movel mlp_setup,%d0
+    cmpil #2,%d0
+    beq .Lmk_scale_page
+    tstl mlp_func
+    bne .Lmk_length
+    btst #1,%d3
+    bne .Lmk_length
+    | PAGE parcourt uniquement les pages de la longueur de la voie.
+    movel mlp_step,%d3
+    andil #48,%d3
+    addil #16,%d3
+    moveq #3,%d2
+    jsr mlp_raw_value
+    cmpl %d0,%d3
+    bcs .Lmk_page_set
+    moveq #0,%d3
+.Lmk_page_set:
+    movel %d3,mlp_step
+    bra .Lmk_redraw
+.Lmk_scale_page:
+    | PAGE dans Scale Setup avance Len au multiple de seize suivant.
+    moveq #3,%d2
+    jsr mlp_raw_value
     addil #16,%d0
-    andil #63,%d0
-    movel %d0,mlp_step
+    andil #112,%d0
+    cmpil #64,%d0
+    bls .Lmk_scale_store
+    moveq #16,%d0
+.Lmk_scale_store:
+    jsr mlp_store
+    bra .Lmk_redraw
+.Lmk_length:
+    | Vue Scale Setup privée, distincte du menu général de la banque.
+    moveq #2,%d0
+    movel %d0,mlp_setup
+    moveq #1,%d0
+    movel %d0,mlp_edit
+    moveq #3,%d0
+    movel %d0,mlp_row
     bra .Lmk_redraw
 .Lmk_func:
     andil #1,%d3
     movel %d3,mlp_func
-    bra .Lmk_used
+    | Laisser aussi passer appui ET relâchement au gestionnaire global.
+    | Une fermeture entre les deux ne doit pas déséquilibrer son état FUNC.
+    moveq #0,%d0
+    bra .Lmk_return
+.Lmk_global:
+    | Une page native peut capter les releases suivantes : couper le clavier
+    | avant TEMPO/LFO/REC, sans toucher aux notes du séquenceur.
+    btst #0,%d3
+    beq .Lmk_global_done
+    cmpil #13,%d2
+    beq .Lmk_global_done
+    jsr mlp_keyboard_cancel
+    .ifdef ML_WORKER
+    jsr ml_worker_kick
+    .endif
+.Lmk_global_done:
+    moveq #0,%d0
+    bra .Lmk_return
 .Lmk_data:
     btst #4,%d3
     beq .Lmk_used
@@ -302,11 +392,7 @@ mlp_menu_key:
     bne .Lmk_used
     tstl mlp_setup
     bne .Lmk_data_setup
-    moveq #1,%d0
-    movel %d0,mlp_setup
-    clrl mlp_row
-    clrl mlp_edit
-    bra .Lmk_redraw
+    bra .Lmk_used
 .Lmk_data_setup:
     movel mlp_row,%d2
     cmpil #1,%d2
@@ -464,6 +550,7 @@ mlp_enc:
     addl %d3,%d2
     cmpil #10,%d2
     bhi .Lme_out
+.Lme_store_row:
     movel %d2,mlp_row
     bra .Lme_redraw
 .Lme_value:
@@ -550,6 +637,13 @@ mlp_store:
     addql #4,%sp
     rts
 .Lms_changed:
+    cmpil #6,%d2
+    bne .Lms_flags_ready
+    moveq #0,%d0
+    moveb %a0@(3),%d0
+    andil #2,%d0
+    orl %d0,%sp@
+.Lms_flags_ready:
     lea.l mlp_fields,%a0
     moveq #0,%d0
     moveb %a0@(0,%d2:l),%d0
@@ -569,6 +663,17 @@ mlp_store:
     movel ml_pattern,%sp@-
     jsr ml_config
     lea.l %sp@(16),%sp
+    cmpil #3,%d2
+    bne .Lms_not_length
+    | Réduire la longueur replace la sélection sur le dernier pas actif.
+    | Les pas masqués restent en mémoire pour une extension ultérieure.
+    jsr mlp_raw_value
+    cmpl mlp_step,%d0
+    bhi .Lms_done
+    subql #1,%d0
+    movel %d0,mlp_step
+    bra .Lms_done
+.Lms_not_length:
     cmpil #2,%d2
     beq .Lms_release
     cmpil #10,%d2
@@ -590,6 +695,7 @@ mlp_store:
     rts
 
 mlp_raw_value:
+    .globl mlp_raw_value,mlp_value
     moveq #0,%d0
     moveal ml_pattern,%a0
     tstl %d2
@@ -623,6 +729,10 @@ mlp_raw_value:
     moveb %a1@(0,%d2:l),%d1
     andil #255,%d1
     moveb %a0@(0,%d1:l),%d0
+    cmpil #6,%d2
+    bne .Lmv_raw_return
+    andil #1,%d0
+.Lmv_raw_return:
     rts
 
 | d0 valeur numérique, a0 chaîne si énumération ; d2 ligne conservée.
@@ -667,6 +777,11 @@ mlp_value:
     rts
 
 mlp_render:
+    .ifdef ML_STOCK_DISPLAY
+    movel mlp_setup,%d0
+    cmpil #2,%d0
+    beq mlp_scale_render
+    .endif
     tstl mlp_setup
     .ifdef ML_STOCK_DISPLAY
     beq mlp_stock_render
@@ -899,6 +1014,7 @@ mlp_typename: .asciz "12MidiBankView"
     .balign 4
 mlp_led_vt:
     .long -0x500,mlp_typeinfo,mlp_led_dtor0,mlp_led_dtor1,mlp_led
+    .globl mlp_labels
 mlp_labels: .long mlp_track_label,mlp_channel,mlp_port,mlp_length,mlp_speed,mlp_step_label,mlp_trig,mlp_note,mlp_velocity,mlp_gate,mlp_output
 mlp_ports: .long mlp_usb,mlp_din,mlp_both
 mlp_speeds: .long mlp_quarter,mlp_half,mlp_normal,mlp_threehalf,mlp_double,mlp_triple,mlp_four

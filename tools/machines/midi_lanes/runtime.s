@@ -16,6 +16,8 @@ ml_step:
     movel %sp@(52),%d4
     movel %sp@(56),%d2
     movel %sp@(60),%d3
+    | Bit 31 interne : legato, nouvelle note avant la fin de l'ancienne.
+    andil #0x7fffffff,%d3
     moveq #0,%d6
     cmpil #5,%d4
     bhi .Lstep_out
@@ -64,6 +66,28 @@ ml_step:
 .Lgate_ready:
     tstl %a3@
     beq .Lnew_note
+    tstl %d2
+    beq .Lgate_countdown
+    movel %sp@(60),%d0
+    btst #31,%d0
+    beq .Lgate_countdown
+    movel %d2,%d0
+    andil #0xefff0000,%d0
+    movel %a3@,%d1
+    andil #0xffff0000,%d1
+    cmpl %d1,%d0
+    beq .Lgate_countdown
+    movel %a2@,%d0
+    addl %a2@(12),%d0
+    addql #2,%d0
+    cmpil #64,%d0
+    bhi .Lgate_countdown
+    | Capacité vérifiée avant le premier message, réserve note-off conservée.
+    movel %d2,%d0
+    bsr ml_push
+    bsr ml_release
+    bra .Lnew_hold
+.Lgate_countdown:
     movel %a3@(4),%d0
     subql #1,%d0
     movel %d0,%a3@(4)
@@ -82,6 +106,7 @@ ml_step:
     bhi .Lstep_out
     movel %d2,%d0
     bsr ml_push
+.Lnew_hold:
     movel %d2,%d0
     andil #0xefff00ff,%d0
     movel %d0,%a3@
@@ -210,3 +235,9 @@ ml_quiet:
     movem.l %sp@,%d2-%d4/%a2
     lea.l %sp@(20),%sp
     rts
+
+    .data
+    .balign 4
+    .globl ml_live_runtime
+| File et propriétaires clavier séparés de ceux de la lecture du pattern.
+ml_live_runtime: .space 320

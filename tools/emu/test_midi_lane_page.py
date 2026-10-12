@@ -23,14 +23,15 @@ def load(r,worker=False,pattern_banks=False,stock_display=False):
     cross=str(root.parent/'toolchain/bin/m68k-elf-')
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[]
-        for name in ('runtime','pattern','clock','service','prepare','page','integration','key','led','ui_hook','transport','worker','banks',*(['stock_display'] if stock_display else [])):
+        for name in ('runtime','pattern','clock','service','prepare','page','integration','key','led','ui_hook','transport','worker','banks','keyboard',*(['stock_display'] if stock_display else [])):
             obj=p/(name+'.o')
             subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_WORKER=1'] if worker else []),*(['--defsym','ML_PATTERN_BANKS=1'] if pattern_banks else []),*(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
             objects.append(str(obj))
-        (p/'link.ld').write_text('SECTIONS { .text '+hex(ENTRY)+' : { *(.text*) } .data '+hex(DATA)+' : { *(.data*) *(.rodata*) } } TG_set_held = 0x93082000; TG_mod_used = 0x93082004; ml_key_next = 0x4007240c;' )
+        (p/'link.ld').write_text('SECTIONS { .text '+hex(ENTRY)+' : { *(.text*) } .data '+hex(DATA)+' : { *(.data*) *(.rodata*) } } TG_set_held = 0x93082000; TG_mod_used = 0x93082004; ml_key_next = 0x4007240c; TG_snap_note = 0x930b0000;' )
         subprocess.run([cross+'ld','-T',str(p/'link.ld'),'-e','mlp_open','-o',str(p/'page.elf'),*objects],check=True)
         subprocess.run([cross+'objcopy','-O','binary',str(p/'page.elf'),str(p/'page.bin')],check=True)
         r.u.mem_write(ENTRY,(p/'page.bin').read_bytes())
+        r.u.mem_write(0x930b0000,b'\x4e\x75') # Gamme OFF pour les fixtures UI.
         r.s={line.split()[2]:int(line.split()[0],16) for line in subprocess.check_output([cross+'nm',str(p/'page.elf')],text=True).splitlines() if len(line.split())==3}
 
 
@@ -158,7 +159,13 @@ def main():
     print('ok : huit champs × six voies, clamps, vitesse/port/longueur et pas ; canal non éditable, autres données intactes')
 
     # Nouvelle banque pour saisie des pas : trigs et pages 16 pas, aucune voix.
+    # Cette section vérifie la grille REC, et non le clavier hors REC.
+    rec_state=0x930a0000
+    r.u.mem_write(rec_state+357,b'\x01\x01')
+    r.stubs[0x400cf9a8]=lambda args:rec_state
+    r.u.hook_add(UC_HOOK_CODE,r.stub,begin=0x400cf9a8,end=0x400cf9a8)
     r.call('ml_init',PAT);r.w32(r.s['mlp_track'],0);r.w32(r.s['mlp_step'],0)
+    assert r.call('ml_config',PAT,0,4,64)==1
     for bank in range(4):
         for trig in range(16):
             key(r,16+trig)
@@ -169,7 +176,7 @@ def main():
             key(r,16+trig,9)
             assert raw(r,6)==1
         key(r,15)
-    assert r.r32(r.s['mlp_step'])==15
+    assert r.r32(r.s['mlp_step'])==0
     assert all(r.u.mem_read(PAT+8+4*step+3,1)==b'\x01' for step in range(64))
     key(r,31);assert raw(r,6)==1
     key(r,31,0);assert raw(r,6)==0
@@ -223,11 +230,13 @@ def main():
         assert (5,24,name) in r.texts and (51,47,'Vol') in r.texts
         assert (54,24,'100') in r.texts
         assert any(rect[1:]==(1,15,42,43,0xffffffff) for rect in r.rects)
-    key(r,32,16);assert r.r32(r.s['mlp_setup'])==1
+    key(r,32,16);assert r.r32(r.s['mlp_setup'])==0
+    key(r,1);key(r,15,3);key(r,1,0)
+    assert r.r32(r.s['mlp_setup'])==2
     key(r,12);assert r.r32(r.s['mlp_setup'])==0 and r.r32(r.s['mlp_obj'])==obj
     r.stubs[0x40071a04]=original_draw
     r.w32(r.s['mlp_setup'],1)
-    print('ok : vue musicale, note inversée gauche C-1/C4/C#4/G9, Vol/vélocité centre, DATA ouvre les réglages et EXIT revient')
+    print('ok : vue musicale, note inversée gauche C-1/C4/C#4/G9, Vol/vélocité centre, FUNC+PAGE ouvre les réglages, DATA hors menu ne les ouvre plus, EXIT revient')
 
     def pad(index,state):
         r.w32(EVENT+20,index);r.w32(EVENT+16,state)

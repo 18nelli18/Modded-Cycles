@@ -196,3 +196,186 @@ mlp_stock_track_label:
     movel %d4,%sp@-
     movel #0x401117e0,%d4
     jmp 0x4001b6c4
+
+| Scale Setup : moteur de dessin stock, objet et onze MenuItem privés sur pile.
+| Ni constructeur ScaleMenuView, ni observer projet, ni setter audio.
+| La vue expose tous les réglages B avec les mêmes polices/positions/cadre de sélection.
+    .globl mlp_scale_render
+mlp_scale_render:
+    lea.l %sp@(-1576),%sp
+    movem.l %d2-%d4/%a2-%a3,%sp@
+    moveal %sp@(1584),%a3
+    lea.l %sp@(20),%a2
+    moveal %a2,%a0
+    moveq #0,%d0
+    movel #388,%d1
+.Lscale_zero:
+    movel %d0,%a0@+
+    subql #1,%d1
+    bpl .Lscale_zero
+    lea.l %a2@(564),%a1
+    movel %a1,%a2@
+    lea.l 0x40103f34,%a0
+    moveq #16,%d0
+.Lscale_vt_copy:
+    movel %a0@+,%a1@+
+    subql #1,%d0
+    bpl .Lscale_vt_copy
+    lea.l %a2@(564),%a1
+    movel #mlp_scale_count,%d1
+    movel %d1,%a1@(12)
+    movel #mlp_scale_item,%d1
+    movel %d1,%a1@(16)
+    movel #mlp_scale_start,%d1
+    movel %d1,%a1@(56)
+    movel #mlp_scale_selected,%d1
+    movel %d1,%a1@(60)
+    movel #mlp_scale_visible,%d1
+    movel %d1,%a1@(64)
+    movel #mlp_scale_title,%d1
+    movel %d1,%a2@(148)
+    movel #mlp_scale_subtitle,%d1
+    movel %d1,%a2@(556)
+    movel #0x40140ab0,%d1
+    movel %d1,%a2@(160)
+    moveq #1,%d0
+    moveb %d0,%a2@(560)
+    lea.l %a2@(632),%a0
+    moveq #0,%d2
+.Lscale_items:
+    movel #0x40103470,%a0@
+    movel %d2,%a0@(12)
+    movel %d2,%a0@(44)
+    movel #1,%d1
+    movel %d1,%a0@(20)
+    movel #mlp_scale_label,%d1
+    movel %d1,%a0@(24)
+    movel #1,%d1
+    movel %d1,%a0@(52)
+    movel #mlp_scale_draw,%d1
+    movel %d1,%a0@(56)
+    cmpl mlp_row,%d2
+    bne .Lscale_item_next
+    movel mlp_edit,%d0
+    moveb %d0,%a0@(80)
+.Lscale_item_next:
+    lea.l %a0@(84),%a0
+    addql #1,%d2
+    cmpil #10,%d2
+    bls .Lscale_items
+    movel %a3,%sp@-
+    movel %a2,%sp@-
+    jsr 0x400423e4
+    addql #8,%sp
+    movem.l %sp@,%d2-%d4/%a2-%a3
+    lea.l %sp@(1576),%sp
+    rts
+mlp_scale_count:
+    moveq #11,%d0
+    rts
+mlp_scale_visible:
+    moveq #4,%d0
+    rts
+mlp_scale_start:
+    movel mlp_row,%d0
+    subql #1,%d0
+    bpl .Lscale_start_max
+    moveq #0,%d0
+.Lscale_start_max:
+    cmpil #7,%d0
+    bls .Lscale_start_done
+    moveq #7,%d0
+.Lscale_start_done:
+    rts
+mlp_scale_selected:
+    bsr mlp_scale_start
+    movel mlp_row,%d1
+    subl %d0,%d1
+    movel %d1,%d0
+    rts
+mlp_scale_item:
+    moveal %sp@(4),%a1
+    movel %sp@(8),%d0
+    muluw #84,%d0
+    lea.l %a1@(632),%a1
+    addal %d0,%a1
+    movel %a1,%a0@
+    clrl %a0@(4)
+    movel %a0,%d0
+    rts
+mlp_scale_label:
+    moveal %sp@(4),%a1
+    movel %a1@,%d0
+    lea.l mlp_scale_labels,%a1
+    moveal %a1@(0,%d0:l:4),%a1
+.Lscale_label_string:
+    | std::string résultat caché dans a0, constructeur avec copie normale.
+    clrl %sp@-
+    movel %a1,%sp@-
+    movel %a0,%sp@-
+    jsr 0x400f980c
+    lea.l %sp@(12),%sp
+    rts
+mlp_scale_draw:
+    movel %d2,%sp@-
+    lea.l %sp@(-8),%sp
+    movel #0x401117e0,%d0
+    movel %d0,%sp@
+    movel #0x40140ab0,%d0
+    movel %d0,%sp@(4)
+    moveal %sp@(16),%a0
+    movel %a0@,%d2
+    jsr mlp_value
+    cmpil #2,%d2
+    bne .Lscale_draw_kind
+    lea.l mlp_scale_ports,%a0
+    moveal %a0@(0,%d0:l:4),%a0
+.Lscale_draw_kind:
+    tstl %a0
+    beq .Lscale_draw_number
+    movel %a0,%sp@-
+    pea mlp_scale_fmt_s
+    bra .Lscale_draw_args
+.Lscale_draw_number:
+    movel %d0,%sp@-
+    pea mlp_scale_fmt_d
+.Lscale_draw_args:
+    pea 0x14
+    movel %sp@(44),%sp@-
+    pea 121
+    pea %sp@(20)
+    movel %sp@(48),%sp@-
+    jsr 0x40071a04
+    lea.l %sp@(36),%sp
+    movel %sp@+,%d2
+    rts
+    .data
+    .balign 4
+    .long 5,5,-1
+mlp_scale_title: .asciz "Scale"
+    .balign 4
+    .long 5,5,-1
+mlp_scale_subtitle: .asciz "Setup"
+    .balign 4
+    .long 0,0,-1
+mlp_scale_empty: .asciz ""
+mlp_scale_len: .asciz "Len"
+mlp_scale_scl: .asciz "Scl"
+mlp_scale_fmt_s: .asciz "%s"
+mlp_scale_fmt_d: .asciz "%d"
+
+    .balign 4
+mlp_scale_labels: .long .LsTrk,.LsChn,.LsOut,mlp_scale_len,mlp_scale_scl,.LsStp,.LsTrg,.LsNot,.LsVel,.LsGat,.LsOn
+mlp_scale_ports: .long .LsUSB,.LsDIN,.LsBoth
+.LsTrk: .asciz "Trk"
+.LsChn: .asciz "Chn"
+.LsOut: .asciz "Out"
+.LsStp: .asciz "Stp"
+.LsTrg: .asciz "Trg"
+.LsNot: .asciz "Not"
+.LsVel: .asciz "Vel"
+.LsGat: .asciz "Gat"
+.LsOn: .asciz "On"
+.LsUSB: .asciz "USB"
+.LsDIN: .asciz "DIN"
+.LsBoth: .asciz "Both"

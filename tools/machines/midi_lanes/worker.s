@@ -32,7 +32,10 @@ ml_worker_notify:
     bne .Lwn_done
     moveal %a2@(12),%a0
     tstl %a0@
+    bne .Lwn_ready
+    tstl ml_live_runtime
     beq .Lwn_done
+.Lwn_ready:
     moveq #1,%d0
     movel %d0,%a2@(8)
     movel %a2,%sp@-
@@ -57,6 +60,11 @@ ml_worker_once:
     jsr ml_service
     addql #8,%sp
     movel %d0,%d2
+    pea 8
+    pea ml_live_runtime
+    jsr ml_service
+    addql #8,%sp
+    addl %d0,%d2
     movew #0x2700,%sr
     clrl %a2@(8)
     | Réarmer si huit paquets n'ont pas suffi, sans fenêtre de réveil perdu.

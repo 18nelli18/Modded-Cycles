@@ -6,6 +6,7 @@ Les caches sont observés par modèle, Unicorn n'émule pas leur cohérence.
 Pas encore de preuve du scheduler complet ou de persistance sur disque.
 """
 import argparse
+import pathlib
 import struct
 from unicorn import UC_HOOK_CODE,UC_HOOK_MEM_WRITE,UC_HOOK_BLOCK,m68k_const as mk
 import gen_midi_bank_bundle as gen
@@ -77,6 +78,23 @@ def main():
     assert bytes(u.mem_read(int(st['append']['dest'],16),len(expected)))==expected
     print('ok : vrai boot ST puis MIDI, décompression exacte, copie après décompression, TG et banque conservés')
     print('ok : tampon nul/disque et reste BSS remis à zéro, invalidation cache avant exécution, registres/pile et reprise natifs')
+    # Pliage réel TG dans le bundle : toutes gammes/tonalités/notes, ABI.
+    tg=gen.symbols(args.cross,pathlib.Path(args.model_tg)/'build/_b.elf')
+    scales=(None,(0,2,4,5,7,9,11),(0,2,3,5,7,8,10),
+            (0,2,3,5,7,9,10),(0,2,4,7,9))
+    for scale,table in enumerate(scales):
+      u.mem_write(tg['scale_state'],bytes([scale]))
+      for root in range(12):
+        u.mem_write(tg['key_state'],bytes([root]))
+        for note in range(128):
+          expected=note
+          if table is not None and note!=127:
+            octave,degree=divmod(note-52,len(table))
+            expected=48+12*octave+table[degree]+root
+          u.reg_write(mk.UC_M68K_REG_D0,note)
+          assert r.call('mlp_scale_note')==expected&0xffffffff,(scale,root,note)
+    u.mem_write(tg['scale_state'],b'\0');u.mem_write(tg['key_state'],b'\0')
+    print('ok : pliage clavier TG réel, cinq gammes × douze tonalités × 128 notes')
     # Contexte créé depuis la même image après boot, pas de relocation de fixture.
     # État scheduler UI fourni : son initialisation OS complète reste hors preuve.
     r.w32(0x4049fd60,0x422feec8+24)
@@ -109,24 +127,24 @@ def main():
         assert key(code)==code
     r.w32(s['TG_set_held'],0)
     assert key(13,3)==13 and r.r32(s['TG_set_held'])==1
-    assert key(15,3)==0
+    assert key(2,3)==0
     obj=r.r32(s['mlp_obj']);assert obj and r.r32(s['mlp_track'])==5
     assert r.r32(s['TG_mod_used'])==1
-    assert key(15,11)==0 and r.r32(s['mlp_obj'])==obj
-    assert key(15,2)==0 and key(13,2)==0
+    assert key(2,11)==0 and r.r32(s['mlp_obj'])==obj
+    assert key(2,2)==0 and key(13,2)==0
     assert not r.r32(s['TG_set_held'])
     assert key(13,3)==13
     r.event(13,3,stamp)
-    assert r.call('mlp_menu_key',obj,EVENT)==1 and r.r32(s['mlp_obj'])==obj
+    assert r.call('mlp_menu_key',obj,EVENT)==0 and r.r32(s['mlp_obj'])==obj
     # La fermeture native marque +48 ; la destruction vient du gestionnaire
     # UI, qui n'est pas exécuté dans cette fixture de présentation.
-    assert key(15,3)==0 and u.mem_read(obj+48,1)[0]==1
+    assert key(2,3)==0 and u.mem_read(obj+48,1)[0]==1
     r.call('mlp_dtor1',obj)
     assert not r.r32(s['mlp_obj'])
-    assert key(15,2)==0 and key(13,2)==0
+    assert key(2,2)==0 and key(13,2)==0
     assert r.r32(s['ml_context'])==ctx
     assert bytes(u.mem_read(RAW,722))==saved and r.r32(0x93005304)==5
-    print('ok : chaîne complète des getters, combo FUNC+SETTINGS+PAGE idempotent, demande fermeture native et contexte conservé')
+    print('ok : chaîne complète des getters, combo FUNC+SETTINGS+TRACK idempotent, demande fermeture native et contexte conservé')
     # Routeur OS réel de cette image, verrous et writers physiques simulés.
     output=[];mode=[0]
     def install(at,fn):

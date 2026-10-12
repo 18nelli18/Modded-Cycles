@@ -1,5 +1,5 @@
 | Note 57 : vraie base LedHandler privée ajoutée à +0x500.
-| Écrit uniquement les 16 LED des pas via le writer natif first-wins.
+| LED des pas et pads MIDI via le writer natif first-wins.
 | Aucun port MIDI, aucune allocation et aucune sélection audio modifiée.
     .text
     .globl mlp_led
@@ -51,7 +51,7 @@ mlp_led:
     lsll %d1,%d0
     orl %d0,%a0@
     moveq #1,%d4
-    tstb %a2@(3)
+    btst #0,%a2@(3)
     beq .Lled_write
     moveq #3,%d4
 .Lled_write:
@@ -72,6 +72,51 @@ mlp_led:
     addql #1,%d2
     cmpil #16,%d2
     bcs .Lled_loop
+    moveq #0,%d2
+.Lpad_loop:
+    movel %d2,%sp@-
+    jsr 0x400060bc
+    addql #4,%sp
+    movel %d0,%d3
+    cmpil #53,%d3
+    bhi .Lpad_next
+    movel %d3,%d0
+    lsrl #5,%d0
+    moveq #1,%d1
+    eorl %d1,%d0
+    lsll #2,%d0
+    moveal %sp@(36),%a0
+    addal %d0,%a0
+    movel %d3,%d1
+    andil #31,%d1
+    moveq #1,%d0
+    lsll %d1,%d0
+    orl %d0,%a0@
+    moveq #1,%d4
+    cmpl mlp_track,%d2
+    bne .Lpad_write
+    moveq #3,%d4
+.Lpad_write:
+    pea 0x404a8cb8
+    movel %d4,%sp@-
+    movel %d3,%sp@-
+    movel %a3,%sp@-
+    jsr 0x40005f86
+    lea.l %sp@(16),%sp
+    lea.l ml_pad_serial,%a0
+    movel %a0@(0,%d2:l:4),%d0
+    lea.l ml_pad_drawn,%a0
+    cmpl %a0@(0,%d2:l:4),%d0
+    beq .Lpad_next
+    movel %d0,%a0@(0,%d2:l:4)
+    pea 6
+    movel %d3,%sp@-
+    jsr 0x4008e8c4
+    addql #8,%sp
+.Lpad_next:
+    addql #1,%d2
+    cmpil #6,%d2
+    bcs .Lpad_loop
 .Lled_done:
     moveq #1,%d0
     movem.l %sp@,%d2-%d5/%a2-%a3
@@ -144,7 +189,27 @@ mlp_led_poll:
     beq .Lpoll_done
     jsr mlp_cursor
     cmpl mlp_led_last,%d0
-    beq .Lpoll_done
+    bne .Lpoll_changed
+    lea.l ml_pad_serial,%a0
+    lea.l ml_pad_polled,%a1
+    moveq #5,%d1
+.Lpoll_pad:
+    movel %a0@+,%d0
+    cmpl %a1@+,%d0
+    bne .Lpoll_serial
+    subql #1,%d1
+    bpl .Lpoll_pad
+    bra .Lpoll_done
+.Lpoll_serial:
+    lea.l ml_pad_serial,%a0
+    lea.l ml_pad_polled,%a1
+    moveq #5,%d1
+.Lpoll_copy:
+    movel %a0@+,%a1@+
+    subql #1,%d1
+    bpl .Lpoll_copy
+    jsr mlp_cursor
+.Lpoll_changed:
     movel %d0,mlp_led_last
     movel mlp_obj,%sp@-
     jsr 0x400760ba
@@ -153,3 +218,5 @@ mlp_led_poll:
     rts
     .data
 mlp_led_last: .long -2
+ml_pad_drawn: .space 24
+ml_pad_polled: .space 24

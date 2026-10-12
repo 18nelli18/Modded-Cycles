@@ -19,7 +19,7 @@ from gen_seq_gen import COMMIT, STOCK, symbols, main_os_from_syx
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'tweaks/model-cycles_OS1.13/experimental/midi-bank/60-midi-bank-bundle.json'
 SOURCES=('runtime','pattern','clock','service','prepare','page','integration',
-         'key','led','ui_hook','transport','worker','boot','banks','stock_display')
+         'key','led','ui_hook','transport','worker','boot','banks','stock_display','keyboard')
 IDS=('6ch-usbup','model-tg-st','sample-preview-st','trig-hold','arp','tempo-max',
      'boot-anim','multiline-browser','level-pan-values','trigless-dim',
      'midi-live-both','syntakt-tg-sd-cp-toy-bits-swarm-macro',
@@ -40,6 +40,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,pattern_banks=False
                             *(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),
                             '-o',str(obj),str(ROOT/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
         script=f'''TG_set_held = {tg['set_held']:#x}; TG_mod_used = {tg['mod_used']:#x};
+TG_snap_note = {tg['snap_note']:#x};
 ml_key_next = {next_key:#x}; ML_BANK_START = {start:#x};
 ML_TG_START = {tg['blob_start']:#x}; ML_PAYLOAD_SRC = {source:#x};
 SECTIONS {{
@@ -131,7 +132,7 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     tweak=dict(id='midi-bank-bundle',order=60,name='Banque MIDI : bundle candidat',
                description=['Six voies MIDI indépendantes, canaux fixes 7..12 ; réglages en RAM seulement.',
                             'Placement candidat TG-ST Select All ; tools/gen_midi_bank_bundle.py, note 57.'],
-               device='Model:Cycles',os='1.13',section=3,status='tested',
+               device='Model:Cycles',os='1.13',section=3,status='experimental',
                requires=list(IDS),conflicts=[],writes=writes,
                append=dict(at=hex(source),dest=hex(start),size=len(blob),
                            parts=[dict(dest=hex(start),hex=blob.hex())],reloc=[]),

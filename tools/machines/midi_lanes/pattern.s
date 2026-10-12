@@ -42,9 +42,13 @@ ml_pattern_tick:
     lsll #2,%d3
     lea.l %a3@(8,%d3:l),%a0
     moveq #0,%d3
-    tstb %a0@(3)
+    btst #0,%a0@(3)
     beq .Ltick_rest
     moveb %a0@(2),%d3
+    btst #1,%a0@(3)
+    beq .Ltick_packet
+    bset #31,%d3
+.Ltick_packet:
     movel %a0@,%d1
     andil #0xffff0000,%d1
     lsrl #8,%d1
@@ -65,6 +69,12 @@ ml_pattern_tick:
     movel %a2,%sp@-
     jsr ml_step
     lea.l %sp@(16),%sp
+    tstl %d0
+    beq .Ltick_done
+    tstl %d3
+    beq .Ltick_done
+    lea.l ml_pad_serial,%a0
+    addql #1,%a0@(0,%d2:l:4)
     bra .Ltick_done
 .Ltick_stop:
     movel %d2,%sp@-
@@ -104,7 +114,7 @@ ml_edit:
     beq .Ledit_velocity
     cmpil #2,%d0
     beq .Ledit_gate
-    cmpil #1,%d1
+    cmpil #3,%d1
     bhi .Ledit_bad
     bra .Ledit_write
 .Ledit_gate:
@@ -195,3 +205,8 @@ ml_init:
     movew %d1,%sr
     lea.l %sp@(4),%sp
     rts
+
+    .data
+    .balign 4
+    .globl ml_pad_serial
+ml_pad_serial: .space 24
