@@ -142,6 +142,12 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
         sites=[build.BASE+i for i in range(0,len(patched)-5,2) if patched[i:i+6]==target]
         assert len(sites)==1,sites
         write(sites[0],b'\x20\x3c'+struct.pack('>I',syms[ours]))
+    # Le constructeur MACHINES ajoute le groupe de fermeture 2 ; garder B dessous.
+    lo=int(sg['sg_o_allocate'],16);hi=int(sg['sg_o_done'],16)
+    target=b'\x4e\xb9'+struct.pack('>I',0x4007700e)
+    sites=[at for at in range(lo,hi,2) if patched[at-build.BASE:at-build.BASE+6]==target]
+    assert len(sites)==1,sites
+    write(sites[0],b'\x4e\xb9'+struct.pack('>I',syms['ml_genie_present']))
     if stock_display:
         for at,expected,name in ((0x4001b28a,'4eb940012412','mlp_stock_track'),
                                  (0x4001b774,'4eb940009c5a','mlp_stock_volume'),

@@ -405,3 +405,33 @@ ml_gu_track: .long 0
 ml_gq_before: .space 264
 ml_gq_after: .space 264
 ml_gu_data: .space 264
+
+    .text
+    .globl ml_genie_present
+| La page MACHINES ferme le groupe 2 à la présentation. En B seulement,
+| masquer ce vecteur pendant l'appel natif conserve l'éditeur sous Genie.
+| Restaurer immédiatement le vecteur : son allocation appartient à l'OS.
+ml_genie_present:
+    tstl mlp_obj
+    beq .Lgpr_native
+    moveal %sp@(8),%a0
+    moveal %a0@,%a0
+    cmpal SG_obj,%a0
+    bne .Lgpr_native
+    lea.l %sp@(-8),%sp
+    moveml %d2/%a2,%sp@
+    moveal %a0,%a2
+    movel %a2@(32),%d2
+    movel %a2@(28),%d0
+    movel %d0,%a2@(32)
+    movel %sp@(20),%sp@-
+    movel %sp@(20),%sp@-
+    movel %sp@(20),%sp@-
+    jsr 0x4007700e
+    lea.l %sp@(12),%sp
+    movel %d2,%a2@(32)
+    moveml %sp@,%d2/%a2
+    lea.l %sp@(8),%sp
+    rts
+.Lgpr_native:
+    jmp 0x4007700e

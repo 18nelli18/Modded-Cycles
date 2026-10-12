@@ -76,6 +76,26 @@ def main():
         sites=[at for at in range(menu,menu+0x400,2) if bytes(r.u.mem_read(at,6))==needle]
         assert len(sites)==1
         r.u.mem_write(sites[0],b'\x4e\xb9'+struct.pack('>I',s[ours]))
+    # Reproduire le groupe 2 ajouté par le constructeur natif MACHINES.
+    construct=r.construct
+    def grouped_construct(args):
+        obj=construct(args);vec=obj+0x200
+        r.w32(vec,2);r.w32(obj+28,vec);r.w32(obj+32,vec+4);r.w32(obj+36,vec+4)
+        return obj
+    r.stubs[0x400a22b0]=grouped_construct
+    def grouped_show(args):
+        obj=r.r32(args[1])
+        # Présentation simulée : un groupe 2 non masqué détruirait la vue B.
+        lo,hi=r.r32(obj+28),r.r32(obj+32)
+        if any(r.r32(at)==2 for at in range(lo,hi,4)):
+            r.w32(s['mlp_obj'],0)
+        return r.show(args)
+    r.stubs[0x4007700e]=grouped_show
+    lo=int(sg['sg_o_allocate'],16);hi=int(sg['sg_o_done'],16)
+    target=b'\x4e\xb9'+struct.pack('>I',0x4007700e)
+    sites=[at for at in range(lo,hi,2) if bytes(r.u.mem_read(at,6))==target]
+    assert len(sites)==1
+    r.u.mem_write(sites[0],b'\x4e\xb9'+struct.pack('>I',s['ml_genie_present']))
     r.stubs[0x4007240c]=lambda a:r.r32(a[0]+12)
     r.u.hook_add(UC_HOOK_CODE,r.stub,begin=0x4007240c,end=0x4007240c)
     # Raccourci réel B : SETTINGS+PAGE, sans état TG ni touche PATTERN.
@@ -89,6 +109,11 @@ def main():
     assert r.r32(s['ml_genie_settings'])==1
     r.event(15,1,91);assert r.call('mlp_menu_key',0x93075000,EVENT)==1
     assert r.r32(s['SG_obj']) and r.new_count==2
+    assert r.r32(s['mlp_obj'])==0x93075000
+    opened=r.r32(s['SG_obj'])
+    assert r.r32(opened+32)==r.r32(opened+28)+4
+    r.s['native_group_contains']=0x40076102
+    assert r.call('native_group_contains',opened,2)==1
     r.w32(s['SG_obj'],0)
     r.event(13,0,92);r.call('mlp_menu_key',0x93075000,EVENT)
     assert r.r32(s['ml_genie_settings'])==0
@@ -138,6 +163,11 @@ def main():
     r.w32(s['ml_pattern'],other);r.call('ml_genie_service')
     assert r.r32(s['ml_gq_state'])==0 and r.r32(s['SG_undo_valid'])==0
     r.w32(s['ml_pattern'],pattern)
+    # Fermer Genie ne détruit pas l'éditeur B ni sa voie sélectionnée.
+    r.s['native_genie_dtor']=int(sg['sg_dtor0'],16)
+    r.call('native_genie_dtor',obj)
+    assert r.r32(s['SG_obj'])==0 and r.r32(s['mlp_obj'])==0x93075000
+    assert r.r32(s['mlp_track'])==5 and r.r32(s['ml_pattern'])==pattern
     # Sans B, les actions originales sont déléguées avec la pile inchangée.
     calls=[];r.w32(s['mlp_obj'],0)
     for native,router in (('SG_action_generate','ml_genie_generate'),('SG_action_undo','ml_genie_undo'),('SG_pad','ml_genie_pad')):
@@ -150,6 +180,7 @@ def main():
     print('ok : ouverture/menu natifs, clic Generate/Undo vers B ; getter de touche synthétique')
     print('ok : callback brut B SETTINGS+PAGE sans getter : construction du menu natif')
     print('ok : getter B SETTINGS+PAGE sans PATTERN ni état TG ; FUNC+PAGE reste natif, lectures répétées/release idempotents')
+    print('ok : groupe de fermeture masqué pendant présentation seulement ; fermeture Genie conserve B et voie TR12')
     print('ok : Stop applique, changement de pattern annule ; actions A déléguées sans changement de pile')
 
 

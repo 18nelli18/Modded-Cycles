@@ -166,3 +166,19 @@ Ce callback suit désormais SETTINGS et ouvre Genie sur PAGE directement.
 La preuve appelle ce callback sans `ml_key`, vérifie la construction du
 menu natif, puis conserve les tests getter, Generate/Undo et mute B.
 Cette correction supplémentaire reste à vérifier sur matériel.
+
+## 11. Genie conserve la vue B (12/10/2026)
+
+Matériel : le raccourci ouvre Genie, mais ferme la vue B. Le constructeur
+MACHINES `400a2362` ajoute le groupe 2 via `4007649e`. La présentation
+`4007700e` parcourt le vecteur +28/+32, appelle `40076102` et ferme les
+vues correspondantes via vtable +40. Le nouveau wrapper ne masque ce
+vecteur que pendant la présentation de Genie avec une vue B existante.
+Il restaure le pointeur de fin immédiatement ; aucune allocation perdue
+et aucun changement au chemin A. B et sa sélection restent vivants.
+
+Preuve : constructeur/présentation simulés avec groupe 2, constructeur
+Genie réel, query de groupe native, Generate/Undo B, destructeur Genie
+réel. La destruction de Genie conserve B, TR12 et le pattern. Ce test
+ne simule pas tout le gestionnaire de vues ; confirmation matérielle
+encore nécessaire. Sauvegarde persistante toujours inachevée.
