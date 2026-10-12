@@ -136,3 +136,12 @@ mlp_clip_key:
     moveml %sp@,%d2-%d4/%a2-%a3
     lea.l %sp@(24),%sp
     rts
+
+| Projet remplacé : copie privée conservée, undo ancien pointeur invalidé.
+| Garder les releases consommés évite leur fuite vers le transport natif.
+    .text
+    .globl mlp_clip_invalidate
+mlp_clip_invalidate:
+    clrl mlp_clip_undo_op
+    clrl mlp_clip_undo_lane
+    rts

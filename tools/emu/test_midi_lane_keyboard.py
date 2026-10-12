@@ -19,6 +19,7 @@ def main():
         r.stubs[addr]=fn;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
     live=r.s['ml_live_runtime'];sound=bytes(r.u.mem_read(0x93002000,722))
     def take():return r.call('ml_take',live)
+    for lane in range(6):r.u.mem_write(PAT+264*lane+6,b'\x08')
     before=bytes(r.u.mem_read(PAT,1584));runtime=bytes(r.u.mem_read(RUNTIME,320))
     for lane in range(6):
         r.w32(r.s['mlp_track'],lane)
@@ -69,6 +70,15 @@ def main():
     assert r.call('ml_worker_once',worker)==1 and sent==[b'\x9b\x3e\x64']
     key(r,18,0);r.call('ml_worker_once',worker)
     assert sent[-1]==b'\x8b\x3e\x00'
+    # Pad et clavier : seule la dernière source possède le Note Off de la voie.
+    key(r,18);assert take()==0x9b3e6404
+    r.call('mlp_pad_note',5,1);assert [take(),take()]==[0x8b3e0004,0x9b486404]
+    key(r,18,0);assert take()==0
+    r.call('mlp_pad_note',5,0);assert take()==0x8b480004
+    r.call('mlp_pad_note',5,1);assert take()==0x9b486404
+    key(r,18);assert [take(),take()]==[0x8b480004,0x9b3e6404]
+    r.call('mlp_pad_note',5,0);assert take()==0
+    key(r,18,0);assert take()==0x8b3e0004
     print('ok : 6 voies × 16 touches, REC natif, notes chromatiques, releases/taps/sortie, aucune écriture audio ou pattern hors REC')
     print('ok : file clavier indépendante, worker réveille/consomme sans file séquence, Note Off conservés')
     print('Limites : octave/environnement simulés ; gamme musicale et chemin global REC à raccorder/valider')

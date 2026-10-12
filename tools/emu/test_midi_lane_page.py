@@ -23,7 +23,7 @@ def load(r,worker=False,pattern_banks=False,stock_display=False,clipboard=False)
     cross=str(root.parent/'toolchain/bin/m68k-elf-')
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[]
-        for name in ('runtime','pattern','clock','service','prepare','page','integration','key','led','ui_hook','transport','worker','banks','keyboard',*(['stock_display'] if stock_display else []),*(['clipboard'] if clipboard else [])):
+        for name in ('runtime','pattern','clock','service','prepare','page','integration','key','led','ui_hook','transport','worker','banks','keyboard','track_setup',*(['stock_display'] if stock_display else []),*(['clipboard'] if clipboard else [])):
             obj=p/(name+'.o')
             subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_CLIPBOARD=1'] if clipboard else []),*(['--defsym','ML_WORKER=1'] if worker else []),*(['--defsym','ML_PATTERN_BANKS=1'] if pattern_banks else []),*(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
             objects.append(str(obj))

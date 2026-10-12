@@ -20,7 +20,7 @@ from gen_seq_gen import COMMIT, STOCK, symbols, main_os_from_syx
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'tweaks/model-cycles_OS1.13/experimental/midi-bank/60-midi-bank-bundle.json'
 SOURCES=('runtime','pattern','clock','service','prepare','page','integration',
-         'key','led','ui_hook','transport','worker','boot','banks','stock_display','keyboard','genie','genie_router','clipboard')
+         'key','led','ui_hook','transport','worker','boot','banks','stock_display','keyboard','genie','genie_router','clipboard','track_setup')
 IDS=('6ch-usbup','model-tg-st','sample-preview-st','trig-hold','arp','tempo-max',
      'boot-anim','multiline-browser','level-pan-values','trigless-dim',
      'midi-live-both','syntakt-tg-sd-cp-toy-bits-swarm-macro-acid',

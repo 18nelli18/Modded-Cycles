@@ -244,6 +244,8 @@ mlp_menu_key:
     andil #9,%d0
     cmpil #1,%d0
     bne .Lmk_used
+    cmpil #2,%d2
+    beq .Lmk_track_setup
     cmpil #12,%d2
     beq .Lmk_close
     cmpil #15,%d2
@@ -350,6 +352,13 @@ mlp_menu_key:
     movel mlp_changed,%d0
     bclr %d2,%d0
     movel %d0,mlp_changed
+    bra .Lmk_redraw
+.Lmk_track_setup:
+    tstl mlp_func
+    beq .Lmk_used
+    tstl TG_set_held
+    bne .Lmk_used
+    jsr mlp_track_setup_open
     bra .Lmk_redraw
 .Lmk_page:
     .ifdef ML_GENIE
@@ -528,6 +537,10 @@ mlp_pad:
     tstl mlp_held
     bne .Lmp_done
     movel %d2,mlp_track
+    pea 1
+    movel %d2,%sp@-
+    jsr mlp_pad_note
+    addql #8,%sp
     bra .Lmp_redraw
 .Lmp_output:
     movel %d2,%d0
@@ -567,6 +580,10 @@ mlp_pad:
 .Lmp_release:
     bclr %d2,%d1
     movel %d1,mlp_pads
+    clrl %sp@-
+    movel %d2,%sp@-
+    jsr mlp_pad_note
+    addql #8,%sp
 .Lmp_done:
     moveq #1,%d0
     movem.l %sp@,%d2/%a2-%a3
@@ -600,6 +617,14 @@ mlp_enc:
     bpl .Lme_sign
     moveq #-1,%d3
 .Lme_sign:
+    movel mlp_setup,%d0
+    cmpil #3,%d0
+    bne .Lme_not_track_setup
+    movel %d3,%sp@-
+    jsr mlp_track_setup_enc
+    addql #4,%sp
+    bra .Lme_redraw
+.Lme_not_track_setup:
     tstl mlp_held
     bne .Lme_held
     tstl mlp_setup
@@ -840,6 +865,9 @@ mlp_value:
     rts
 
 mlp_render:
+    movel mlp_setup,%d0
+    cmpil #3,%d0
+    beq mlp_track_setup_render
     .ifdef ML_STOCK_DISPLAY
     movel mlp_setup,%d0
     cmpil #2,%d0

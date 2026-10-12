@@ -88,6 +88,17 @@ ml_toggle:
     beq .Ltoggle_done
     jmp mlp_open
 .Lclose:
+    | Sortir de B uniquement depuis sa vue principale, jamais derrière un menu.
+    tstl mlp_setup
+    bne .Ltoggle_done
+    .ifdef ML_GENIE
+    tstl SG_obj
+    bne .Ltoggle_done
+    .endif
+    .ifdef ML_LFO_CC
+    tstl mlccp_obj
+    bne .Ltoggle_done
+    .endif
     movel %a0,%sp@-
     moveal %a0@,%a1
     moveal %a1@(0x28),%a1

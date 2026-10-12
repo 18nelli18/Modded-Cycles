@@ -50,16 +50,9 @@ mlp_keyboard:
     tstb %a2@
     beq .Lkb_used
     | Même décalage clavier que KeyboardView : touche + 52 + octave stock.
-    jsr 0x400cf866
-    movel %d0,%sp@-
-    jsr 0x4000f208
-    movel %d4,%sp@-
-    movel %d0,%sp@-
-    jsr 0x4000cfcc
-    lea.l %sp@(12),%sp
-    movel %d0,%sp@-
-    jsr 0x40016da6
-    addql #4,%sp
+    moveq #0,%d0
+    moveb %a2@(6),%d0
+    extbl %d0
     addl %d2,%d0
     addil #52,%d0
     jsr mlp_scale_note
@@ -86,6 +79,9 @@ mlp_keyboard:
     lea.l %sp@(16),%sp
     tstl %d0
     beq .Lkb_used
+    movel mlp_live_pad_held,%d0
+    bclr %d4,%d0
+    movel %d0,mlp_live_pad_held
     lea.l mlp_live_owner,%a0
     moveb %d4,%a0@(0,%d2:l)
     lea.l mlp_live_key,%a0
@@ -151,6 +147,7 @@ mlp_keyboard_cancel:
     addql #1,%d2
     cmpil #6,%d2
     bcs .Lkbc_lane
+    clrl mlp_live_pad_held
     clrl mlp_live_held
     lea.l mlp_live_key,%a0
     clrl %a0@
@@ -162,4 +159,5 @@ mlp_keyboard_cancel:
     .globl mlp_live_held
 mlp_live_held: .long 0
 mlp_live_owner: .space 16
+    .globl mlp_live_key
 mlp_live_key: .space 6
