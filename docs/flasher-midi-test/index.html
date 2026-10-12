@@ -11,15 +11,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-11-midi-bank-tg-first-test">
-<link rel="stylesheet" href="../flasher/style.css?v=2026-10-11-midi-bank-tg-first-test">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-11-midi-bank-transfer-fix">
+<link rel="stylesheet" href="../flasher/style.css?v=2026-10-11-midi-bank-transfer-fix">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
-<style>#step-choose,#advanced,#m-slow,#alt{display:none!important} #midi-bank-notice{margin-block:1.5rem} #midi-bank-notice p:last-child{margin-bottom:0}</style>
+<style>#midi-bank-notice{margin-block:1.5rem} #midi-bank-notice p:last-child{margin-bottom:0}</style>
 </head>
 <body data-page="flasher">
 <script>
   // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-  window.MC_BUILD = "2026-10-11-midi-bank-tg-first-test";
+  window.MC_BUILD = "2026-10-11-midi-bank-transfer-fix";
   window.addEventListener("error", function (e) {
     var b = document.getElementById("errbar");
     if (!b) return;
@@ -53,8 +53,9 @@
 
   <section class="alert" id="midi-bank-notice">
 <h2><span data-l="en">Experimental MIDI Bank — Model-TG retained</span><span data-l="fr">Banque MIDI expérimentale — Model-TG conservé</span></h2>
-<p data-l="en">This fixed test includes the compatible Select All mods, Model-TG, LFO 2, Sequence Genie, SCRAMBLE and Live MIDI OUT + THRU. Load your official Cycles and Syntakt OS files below, select the Model:Cycles MIDI port, then use fast transfer.</p>
-<p data-l="fr">Cet essai fixe inclut les mods compatibles de Tout sélectionner, Model-TG, LFO 2, Sequence Genie, SCRAMBLE et MIDI OUT + THRU en direct. Chargez vos OS officiels Cycles et Syntakt ci-dessous, choisissez le port MIDI Model:Cycles puis le transfert rapide.</p>
+<label><input type="checkbox" id="midi-bank-enable" checked> <span data-l="en">Enable MIDI Bank test bundle</span><span data-l="fr">Activer le bundle d’essai banque MIDI</span></label>
+<p data-l="en">All mod selections are available below. Enabling MIDI Bank selects its compatible Model-TG bundle, including LFO 2, Sequence Genie, SCRAMBLE and Live MIDI OUT + THRU. Changing that combination disables MIDI Bank. Load the official Cycles OS and, when requested, Syntakt OS. Fast transfer uses conservative pacing; classic transfer and firmware download are also available. If an upgrade is stalled, restart the Cycles before retrying.</p>
+<p data-l="fr">Tous les choix de mods sont disponibles ci-dessous. Activer la banque MIDI sélectionne son bundle Model-TG compatible, avec LFO 2, Sequence Genie, SCRAMBLE et MIDI OUT + THRU en direct. Modifier cette combinaison désactive la banque MIDI. Chargez l’OS officiel Cycles et, si demandé, Syntakt. Transfert rapide temporisé, transfert classique et téléchargement disponibles. Si la mise à jour est bloquée, redémarrez le Cycles avant de réessayer.</p>
 <p data-l="en"><b>FUNC + SETTINGS + PAGE</b> switches pads 1–6 to the MIDI Bank; repeat to return to the audio tracks. Channels are fixed at 7–12. Trig keys toggle steps; PAGE moves through four pages. DATA chooses a row; click, turn to edit, then click to finish. FUNC + pad toggles that lane’s MIDI OUT. Both banks play independently; PLAY/STOP remains available. Stop playback before first opening the bank after boot.</p>
 <p data-l="fr"><b>FUNC + SETTINGS + PAGE</b> bascule les pads 1–6 vers la banque MIDI ; répétez pour revenir aux pistes audio. Canaux fixes 7–12. Les trigs activent les pas ; PAGE parcourt quatre pages. DATA choisit une ligne ; clic, rotation pour éditer, puis clic pour terminer. FUNC + pad bascule MIDI OUT pour cette voie. Les deux banques jouent indépendamment ; PLAY/STOP reste disponible. Arrêtez la lecture avant la première ouverture après démarrage.</p>
 <p data-l="en"><b>RAM only:</b> one MIDI Bank shared across pattern changes. Page changes retain it; restart clears it. Pattern/project saving is unfinished. MIDI Bank has passed emulation checks; this combined firmware still needs your hardware test.</p>
@@ -135,7 +136,7 @@
 
   <!-- 2. OS file -->
   <section class="step" id="step-file" aria-labelledby="h2s">
-    <header><span class="num">1</span><h2 id="h2s" data-i18n="s2">Load your official OS file</h2></header>
+    <header><span class="num">2</span><h2 id="h2s" data-i18n="s2">Load your official OS file</h2></header>
     <div class="step-body">
       <label class="drop" id="drop" tabindex="0">
         <span class="drop-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path class="arrow" d="M12 11v6M9.5 14.5 12 17l2.5-2.5"/></svg></span>
@@ -170,7 +171,7 @@
 
   <!-- 3. Connect -->
   <section class="step" id="step-connect" aria-labelledby="h3s">
-    <header><span class="num">2</span><h2 id="h3s" data-i18n="s3">Connect your Model:Cycles over USB</h2></header>
+    <header><span class="num">3</span><h2 id="h3s" data-i18n="s3">Connect your Model:Cycles over USB</h2></header>
     <div class="step-body">
       <div class="seg" role="radiogroup" aria-label="Method">
         <button type="button" role="radio" id="m-fast" aria-checked="true" data-i18n="m_fast">Fast (USB)</button>
@@ -198,7 +199,7 @@
 
   <!-- 4. Flash -->
   <section class="step" id="step-flash" aria-labelledby="h4s">
-    <header><span class="num">3</span><h2 id="h4s" data-i18n="s4">Flash</h2></header>
+    <header><span class="num">4</span><h2 id="h4s" data-i18n="s4">Flash</h2></header>
     <div class="step-body">
       <div class="summary" id="summary" hidden></div>
       <label class="check"><input id="ack" type="checkbox"><span data-i18n="ack">I've backed up my projects (Elektron Transfer) and I understand that flashing is at my own risk.</span></label>
@@ -254,12 +255,12 @@
 </footer>
 
 <!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
-<script src="../assets/release.js?v=2026-10-11-midi-bank-tg-first-test"></script>
-<script src="../assets/site.js?v=2026-10-11-midi-bank-tg-first-test"></script>
-<script src="../flasher/builder.js?v=2026-10-11-midi-bank-tg-first-test"></script>
-<script src="../flasher/tweaks.js?v=2026-10-11-midi-bank-tg-first-test"></script>
-<script src="../flasher/flasher.js?v=2026-10-11-midi-bank-tg-first-test"></script>
-<script src="bundle.js?v=2026-10-11-midi-bank-tg-first-test"></script>
-<script src="app.js?v=2026-10-11-midi-bank-tg-first-test"></script>
+<script src="../assets/release.js?v=2026-10-11-midi-bank-transfer-fix"></script>
+<script src="../assets/site.js?v=2026-10-11-midi-bank-transfer-fix"></script>
+<script src="../flasher/builder.js?v=2026-10-11-midi-bank-transfer-fix"></script>
+<script src="../flasher/tweaks.js?v=2026-10-11-midi-bank-transfer-fix"></script>
+<script src="flasher.js?v=2026-10-11-midi-bank-transfer-fix"></script>
+<script src="bundle.js?v=2026-10-11-midi-bank-transfer-fix"></script>
+<script src="app.js?v=2026-10-11-midi-bank-transfer-fix"></script>
 </body>
 </html>

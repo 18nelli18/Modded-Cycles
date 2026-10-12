@@ -1,4 +1,4 @@
-// Note 57 : installateur fixe, fichiers OS locaux et build navigateur exact.
+// Note 57 : installateur sélectionnable, fichiers OS locaux et build navigateur exact.
 const fs=require('fs'),path=require('path'),assert=require('assert');
 const {JSDOM,VirtualConsole}=require('jsdom');
 const root=path.resolve(__dirname,'..'),dir=path.join(root,'docs/flasher-midi-test');
@@ -11,16 +11,16 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
  Object.defineProperty(w,'isSecureContext',{value:true});
  w.localStorage.setItem('mc-method','slow');
  w.URL.createObjectURL=()=> 'blob:test';w.URL.revokeObjectURL=()=>{};
- for(const file of ['builder.js','tweaks.js','flasher.js'])w.eval(fs.readFileSync(path.join(root,'docs/flasher',file),'utf8'));
- for(const file of ['bundle.js','app.js'])w.eval(fs.readFileSync(path.join(dir,file),'utf8'));
+ for(const file of ['builder.js','tweaks.js'])w.eval(fs.readFileSync(path.join(root,'docs/flasher',file),'utf8'));
+ for(const file of ['flasher.js','bundle.js','app.js'])w.eval(fs.readFileSync(path.join(dir,file),'utf8'));
  await wait(25);
  const app=w.MCFlasherApp,tw=w.MC_TWEAKS;
  assert(app&&tw);
- assert.strictEqual(app.state.method,'fast');app.setMethod('slow');assert.strictEqual(app.state.method,'fast');
- assert.strictEqual(w.getComputedStyle(doc.getElementById('step-choose')).display,'none');
- assert.strictEqual(w.getComputedStyle(doc.getElementById('m-slow')).display,'none');
+ assert.strictEqual(app.state.method,'slow');app.setMethod('fast');assert.strictEqual(app.state.method,'fast');
+ assert.notStrictEqual(w.getComputedStyle(doc.getElementById('step-choose')).display,'none');
+ assert.notStrictEqual(w.getComputedStyle(doc.getElementById('m-slow')).display,'none');
  for(const id of ['file','file3','allow','port','flash'])assert(doc.getElementById(id),id);
- assert(html.includes('bundle.js?v=2026-10-11-midi-bank-tg-first-test'));
+ assert(html.includes('bundle.js?v=2026-10-11-midi-bank-transfer-fix'));
  const selected=Array.from(app.chosenTweaks(),t=>t.id);
  assert.deepStrictEqual(selected,Array.from(w.MC_BUNDLE_IDS));
  for(const id of ['model-tg-st','midi-live-both','lfo-secondary','scale-gen-st-queued','scramble-st-gen-queued','midi-bank-bundle'])assert(selected.includes(id),id);
@@ -40,10 +40,33 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
  assert(app.state.fw.ref&&app.state.fw.modsRef);
  assert.strictEqual(app.state.fw.sha,app.REF_MAINOS[selected.join('+')]);
  const verified=w.MCFlasher.verify(app.state.fw.raw);assert(verified.count>0);
+ // Les choix modifient réellement le build ; banque seulement pour son bundle validé.
+ const initial=app.state.fw;
+ const box=doc.getElementById('midi-bank-enable');
+ box.checked=false;box.dispatchEvent(new w.Event('change',{bubbles:true}));
+ assert(!app.chosenTweaks().some(t=>t.id==='midi-bank-bundle'));
+ for(let n=0;n<100&&app.state.building;n++)await wait(100);
+ assert(app.state.fw&&app.state.fw.sha!==initial.sha);
+ let lfo=doc.getElementById('feat-lfo-secondary');assert(lfo);
+ lfo.checked=false;lfo.dispatchEvent(new w.Event('change',{bubbles:true}));
+ assert(!app.chosenTweaks().some(t=>t.id==='lfo-secondary'));
+ box.checked=true;box.dispatchEvent(new w.Event('change',{bubbles:true}));
+ assert.deepStrictEqual(Array.from(app.chosenTweaks(),t=>t.id),selected);
+ for(let n=0;n<100&&app.state.building;n++)await wait(100);
+ assert.strictEqual(app.state.fw.sha,initial.sha);
+ // Un changement incompatible enlève automatiquement la banque.
+ lfo=doc.getElementById('feat-lfo-secondary');
+ lfo.checked=false;lfo.dispatchEvent(new w.Event('change',{bubbles:true}));
+ assert(!app.chosenTweaks().some(t=>t.id==='midi-bank-bundle'));
+ assert(!box.checked);
+ for(let n=0;n<100&&(!app.state.fw||app.state.building);n++)await wait(100);
+ assert(app.state.fw,app.state.fwError);
+ app.setMethod('slow');assert.strictEqual(app.state.method,'slow');
+ assert.notStrictEqual(w.getComputedStyle(doc.getElementById('alt')).display,'none');
  // Une image déjà modifiée ne doit pas contourner le build fixe.
- app.loadOs(app.state.fw.raw,'already-modded.syx');assert(!app.state.os&&app.state.osError);
+ app.loadOs(initial.raw,'already-modded.syx');assert(!app.state.os&&app.state.osError);
  assert.strictEqual(errors.length,0,errors.join('\n'));
- console.log('ok : bundle fixe avec TG/Live MIDI/LFO 2, EN/FR et limites RAM ; uploads Cycles/Syntakt et transfert rapide seuls');
+ console.log('ok : sélections effectives, banque optionnelle validée avec TG/Live MIDI/LFO 2, EN/FR et limites RAM ; transferts rapide/classique et téléchargement');
  console.log('ok : vrai build navigateur, chaque mod et SHA MAIN OS vérifiés, conteneur signé valide ; OS déjà modifié refusé');
  dom.window.close();
 })().catch(error=>{console.error(error);process.exitCode=1;});

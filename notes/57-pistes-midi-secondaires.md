@@ -460,3 +460,33 @@ notes bloquées ; sauvegarde par pattern/projet et première ouverture en
 lecture. La banque RAM unique persiste entre changements de pattern,
 mais disparaît au redémarrage. Si la vérification matérielle avec TG
 échoue, AveyCole autorise une variante sans TG ; aucun retrait préventif.
+
+
+## 20. Transfert interrompu et choix restaurés (11/10/2026)
+
+AveyCole signale un arrêt de progression après environ deux secondes :
+le Cycles reste sur sa barre de mise à jour arrêtée. Aucun message de refus
+ni dernier bloc reçu n'est disponible. [HYP] Blocage transport ; la cause
+matérielle précise n'est pas établie. Ne pas déclarer la panne corrigée
+sur machine avant son nouvel essai.
+
+Le flasher d'essai restaure tous les choix, méthodes rapide/classique et
+le téléchargement pour Elektron Transfer. La banque MIDI devient une case
+indépendante : l'activer sélectionne son bundle TG validé ; modifier cette
+combinaison la désactive explicitement. Les autres sélections construisent
+réellement leur propre firmware, avec les références du flasher principal.
+Le payload firmware de la banque est inchangé.
+
+Le cœur de transfert est une copie générée propre à cette page : pauses
+100 ms après départ et entre blocs (au lieu de 50 ms), journal du bloc en
+cours, réponse trop courte et fin prématurée refusées. Une erreur conserve
+la progression et donne bloc/offset pour les timeouts. Aucun renvoi de bloc
+sans acquittement ni reprise automatique d'une mise à jour partielle.
+Redémarrer le Cycles après un blocage avant une nouvelle tentative.
+
+`test_midi_transfer.js` simule succès intégral, fin prématurée, réponse
+courte, timeout, refus, annulation et chemin classique. Le test navigateur
+vérifie les vrais builds avec/sans banque et LFO 2, activation du bundle,
+désactivation incompatible, références, téléchargements et choix de méthode.
+[À FAIRE] Vérifier matériellement le transfert et identifier le dernier
+bloc en cas de récidive ; aucune réussite matérielle revendiquée.
