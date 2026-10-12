@@ -137,6 +137,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 
 - [59 — Commandes banque MIDI](59-commandes-banque-midi.md) — mute MIDI validé sur matériel ; candidat Genie B, undo différé et affichage TR10–TR12, sauvegarde persistante en préparation.
 
-| [62 — Sauvegarde MBK3 des LFO2 audio et des LFO MIDI par pattern](62-sauvegarde-lfs-ab.md) | Sauvegarde MBK3 des LFO2 audio et des LFO MIDI par pattern ; émulation validée, test matériel à faire. |
-
-| [63 — Checkpoints WRK séparés de SEQ : reprise B/LFO sans Save explicite](63-reprise-automatique-midi-lfo.md) | Checkpoints WRK séparés de SEQ : reprise B/LFO sans Save explicite ; candidat expérimental, matériel à tester. |
+- [62 — Sauvegarde des LFO audio et MIDI](62-sauvegarde-lfs-ab.md) — format MBK3 par pattern ; émulation validée, matériel à tester.
+- [63 — Reprise automatique MIDI et LFO](63-reprise-automatique-midi-lfo.md) — checkpoints WRK séparés du Save explicite SEQ ; candidat expérimental sur Test3.
