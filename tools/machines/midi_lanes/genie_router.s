@@ -1,6 +1,60 @@
 | Genie B : candidat privé UI, publication au pas zéro de la voie ciblée.
 | Aucun objet audio ni p-lock natif ; appels A délégués sans changement.
     .text
+    .globl ml_genie_key,ml_genie_settings
+| Getter PAGE côté B : SETTINGS local, sans les gardes de vue audio de SG.
+ml_genie_key:
+    tstl mlp_obj
+    beq .Lgk_chain
+    cmpal ml_gk_event,%a0
+    bne .Lgk_fresh
+    movel %a0@(8),%d0
+    cmpl ml_gk_time,%d0
+    beq .Lgk_eat
+.Lgk_fresh:
+    movel %a0@(16),%d1
+    btst #0,%d1
+    bne .Lgk_down
+    tstl ml_gk_taken
+    beq .Lgk_native
+    clrl ml_gk_taken
+    bra .Lgk_record
+.Lgk_down:
+    tstl ml_gk_taken
+    bne .Lgk_record
+    btst #3,%d1
+    bne .Lgk_native
+    tstl ml_genie_settings
+    beq .Lgk_native
+    tstl mlp_func
+    bne .Lgk_native
+    btst #1,%d1
+    bne .Lgk_native
+    tstl SG_obj
+    bne .Lgk_native
+    movew %sr,%d0
+    andil #0x700,%d0
+    bne .Lgk_native
+    moveq #1,%d0
+    movel %d0,TG_mod_used
+    movel %d0,ml_gk_taken
+    movel %a0,%sp@-
+    jsr SG_open
+    moveal %sp@+,%a0
+.Lgk_record:
+    movel %a0,ml_gk_event
+    movel %a0@(8),%d0
+    movel %d0,ml_gk_time
+.Lgk_eat:
+    movel %a0@(16),%d1
+    oril #8,%d1
+    movel %d1,%a0@(16)
+    moveq #0,%d0
+    rts
+.Lgk_native:
+    jmp ML_original_key
+.Lgk_chain:
+    jmp ml_key_next
     .globl ml_genie_generate,ml_genie_undo,ml_genie_boundary,ml_genie_pad,ml_genie_service,ml_genie_menu_key
 ml_genie_generate:
     tstl mlp_obj
@@ -334,6 +388,10 @@ ml_genie_menu_key:
     rts
     .data
     .balign 4
+ml_genie_settings: .long 0
+ml_gk_taken: .long 0
+ml_gk_event: .long 0
+ml_gk_time: .long 0
     .globl ml_gq_state,ml_gq_lane,ml_gq_track,ml_gq_pattern,ml_gq_before,ml_gq_after,ml_gu_valid
 ml_gq_state: .long 0
 ml_gq_lane: .long 0

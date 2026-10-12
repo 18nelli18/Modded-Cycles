@@ -147,3 +147,15 @@ avec getter événement synthétique : six voies isolées, Generate/Undo
 arrêtés/différés, erreurs concurrentes, Euclide 4/16, vélocités 80..110,
 SR conservé, aucune donnée audio modifiée. Les nouveaux raccordements
 restent expérimentaux, à tester sur la machine.
+
+
+## 10. Raccourci SETTINGS + PAGE côté B (12/10/2026)
+
+AveyCole confirme SETTINGS + PAGE, sans FUNC, et signale que Genie ne
+s'ouvre pas en B. Le getter B suit désormais SETTINGS localement et
+ouvre le menu directement avec PAGE, sans les gardes de vue audio/TG du
+getter historique. A conserve sa chaîne existante. FUNC + PAGE conserve
+Scale Setup, PATTERN seul ne déclenche rien. Événements répétés et release
+PAGE consommés de façon idempotente. La preuve exécute le getter B avec
+TG_set_held=0, puis le vrai constructeur/menu Genie et les actions MIDI.
+Raccourci et ouverture B restent à vérifier sur matériel.

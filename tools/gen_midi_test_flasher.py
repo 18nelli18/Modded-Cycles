@@ -16,7 +16,7 @@ import ref_mainos
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 PROD=ROOT/'docs/flasher'
 OUT=ROOT/'docs/flasher-midi-controls-test'
-STAMP='2026-10-12-midi-bank-genie-test'
+STAMP='2026-10-12-midi-bank-genie-key-fix'
 
 
 def files_for(tweak,chosen,image):

@@ -78,7 +78,27 @@ def main():
         r.u.mem_write(sites[0],b'\x4e\xb9'+struct.pack('>I',s[ours]))
     r.stubs[0x4007240c]=lambda a:r.r32(a[0]+12)
     r.u.hook_add(UC_HOOK_CODE,r.stub,begin=0x4007240c,end=0x4007240c)
-    r.call(int(sg['sg_open'],16));obj=r.r32(int(sg['sg_obj'],16));assert obj
+    # Raccourci réel B : SETTINGS+PAGE, sans état TG ni touche PATTERN.
+    for addr in (s['ml_key_next'],s['ML_original_key']):
+        r.stubs[addr]=lambda a:r.r32(a[0]+12)
+        r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
+    r.w32(s['TG_set_held'],0)
+    r.event(3,1,100);assert r.call('ml_key',EVENT)==3
+    r.event(15,1,101);assert r.call('ml_key',EVENT)==15
+    assert r.r32(int(sg['sg_obj'],16))==0
+    r.event(13,1,102);assert r.call('ml_key',EVENT)==13
+    r.event(13,32,102);r.call('ml_key',EVENT)
+    assert r.r32(s['ml_genie_settings'])==1
+    r.w32(s['mlp_func'],1)
+    r.event(15,1,103);assert r.call('ml_key',EVENT)==15
+    r.w32(s['mlp_func'],0)
+    r.event(15,1,104)
+    for _ in range(3):assert r.call('ml_key',EVENT)==0
+    obj=r.r32(int(sg['sg_obj'],16));assert obj and r.new_count==2
+    r.event(15,0,105)
+    for _ in range(3):assert r.call('ml_key',EVENT)==0
+    r.event(13,0,106);r.call('ml_key',EVENT)
+    assert r.r32(s['ml_genie_settings'])==0
     before=bytes(r.u.mem_read(pattern,1584));r.w32(int(sg['sg_row'],16),19)
     r.event(32,16);r.call('ml_genie_menu_key',obj,EVENT)
     assert bytes(r.u.mem_read(pattern,1584))!=before and r.r32(s['SG_error'])==0
@@ -119,6 +139,7 @@ def main():
     print('ok : six voies B isolées, Generate/Undo arrêtés et en lecture, frontière de voie, annulation après édition, SR conservé')
     print('ok : algorithmes Genie natifs, Euclide 4/16, vélocité positive 80..110 ; aucune donnée audio modifiée')
     print('ok : ouverture/menu natifs, clic Generate/Undo vers B ; getter de touche synthétique')
+    print('ok : getter B SETTINGS+PAGE sans PATTERN ni état TG ; FUNC+PAGE reste natif, lectures répétées/release idempotents')
     print('ok : Stop applique, changement de pattern annule ; actions A déléguées sans changement de pile')
 
 

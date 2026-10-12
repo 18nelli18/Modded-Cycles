@@ -42,9 +42,10 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,pattern_banks=False
         sg=build.load_catalog()['model-cycles_OS1.13'][1]['scale-gen-st-queued']['symbols']
         bindings='\n'.join(f"SG_{name[3:]} = {sg[name]};" for name in (
             'sg_action_generate','sg_action_undo','sg_config','sg_error','sg_generate',
-            'sg_advanced_steps','sg_options','sg_advanced','sg_random','sg_random_range','sg_func','sg_pad','sg_undo_valid','sg_obj','sg_menu_key'))
+            'sg_advanced_steps','sg_options','sg_advanced','sg_random','sg_random_range','sg_func','sg_pad','sg_undo_valid','sg_obj','sg_menu_key','sg_open'))
         script=f'''{bindings}
 TG_scale_state = {tg['scale_state']:#x}; TG_key_state = {tg['key_state']:#x};
+ML_original_key = {tg['key_hook']:#x};
 TG_set_held = {tg['set_held']:#x}; TG_mod_used = {tg['mod_used']:#x};
 TG_snap_note = {tg['snap_note']:#x};
 ml_key_next = {next_key:#x}; ML_BANK_START = {start:#x};
