@@ -1,13 +1,16 @@
 /* Filtre par piste (notes/47) : un filtre 2 pôles bipolaire, passe-bas à gauche, rien au centre, passe-haut à droite,
  * avec résonance et une enveloppe (quantité, decay) relancée à chaque note. Lié par track_filter.ld dans des masques de
  * sprites 35x35 libérés (tools/sprites.py) ; les écritures sur l'OS sont dans tools/gen_track_filter.py (HOOKS). Les
- * tables (tf_gtab, tf_ntab, tf_ktab, tf_dtab) sont calculées par le générateur et incluses depuis tables.inc.
+ * tables (tf_gtab, tf_gtabh, tf_ntab, tf_ntabh, tf_ktab, tf_dtab) sont calculées par le générateur et incluses depuis
+ * tables.inc.
  *
  * Paramètres : quatre descripteurs (1 à 4, des emplacements « Error » inutilisés) du groupe 7, donc de toutes les
  * machines, sur les mots k = 28 à 31 de chaque piste :
- *   k28 Filter Cutoff  0..0x7f00, centre 0x4000 = OFF ; à gauche LP, à droite HP, fréquence 5 Hz x 4400^(|C-centre|/0x4000)
- *                      (la loi du Model:Samples), plafonnée à 20 kHz ;
- *   k29 Filter Reso    Q = 0,5 x 100^(R/32512), de 0,5 à 50 (tf_ktab), réduit sous 30 Hz et vers 20 kHz (tf_ntab) ;
+ *   k28 Filter Cutoff  0..0x7f00, centre 0x4000 = OFF ; à gauche LP de 20 kHz (L1) à 30 Hz (L64) (tf_gtab), à droite
+ *                      HP de 20 Hz (H1) à 10 kHz (H63) (tf_gtabh) : les plages du master FX de Model-TG, pas fins
+ *                      près du centre ;
+ *   k29 Filter Reso    Q = 0,5 x 2000^((R/32512)^1,5), de 0,5 à 1 000 (tf_ktab), réduit sous 30 Hz, vers 20 kHz et
+ *                      pour qu'un coup ne sonne pas plus de 2 s (tf_ntab, tf_ntabh) ;
  *   k30 Filter Env     quantité de l'enveloppe, bipolaire (centre = 0) : déplace la fréquence vers le haut ou le bas,
  *                      sans changer de côté ;
  *   k31 Env Decay      constante de temps de 5 ms à 10 s.
@@ -47,9 +50,9 @@
 	.equ	ENV_FADE, 0x800			/* 8 pas de chaque côté du centre (lsl #20 : Q31) */
 
 	.globl	tf_post, tf_track, tf_kern, tf_coef, tf_coef2, tf_interp
-	.globl	tf_kst, tf_cst, tf_trig, tf_gtab, tf_ntab, tf_ktab, tf_dtab
+	.globl	tf_kst, tf_cst, tf_trig, tf_gtab, tf_gtabh, tf_ntab, tf_ntabh, tf_ktab, tf_dtab
 
-	.include "tables.inc"			/* macros TABLE_G, TABLE_N, TABLE_K, TABLE_D (65 longs chacune) */
+	.include "tables.inc"			/* macros TABLE_G, TABLE_GH, TABLE_N, TABLE_NH, TABLE_K, TABLE_D (65 longs chacune) */
 
 /* ---- 0x40059852 : jsr tf_post à la place de jsr 0x40056f58 (Volume + Dist) -------------------------------------
  * Pile : 4(sp) = TRK, 8(sp) = a2 (paramètres lissés, 0x8000100c), comme pour l'appel remplacé. a3 = le contexte de la
@@ -250,13 +253,19 @@ tf_coef:
 	ble.s	5f
 	move.l	#0x3fff, %d0
 5:	move.l	%d0, %d6
-	lea	tf_gtab, %a1
-	moveq	#8, %d1
+	lea	tf_gtab, %a1			/* les tables du côté : LP, ou HP */
+	tst.l	%d5
+	beq.s	51f
+	lea	tf_gtabh, %a1
+51:	moveq	#8, %d1
 	bsr.s	tf_interp
 	movea.l	%d0, %a2			/* G = g/4 */
 	move.l	%d6, %d0
 	lea	tf_ntab, %a1
-	moveq	#8, %d1
+	tst.l	%d5
+	beq.s	52f
+	lea	tf_ntabh, %a1
+52:	moveq	#8, %d1
 	bsr.s	tf_interp			/* réduction de la résonance aux deux bouts */
 	tst.l	%d7
 	bpl.s	6f
@@ -265,7 +274,7 @@ tf_coef:
 	movclr.l %acc0, %d0
 	lea	tf_ktab, %a1
 	moveq	#9, %d1
-	bsr.s	tf_interp
+	bsr.w	tf_interp
 	movea.l	%d0, %a3			/* K = k/2 = 1/(2Q) */
 	jmp	tf_coef2
 
@@ -416,10 +425,16 @@ tf_sst:	.space	6*16
 /* ---- tables (tools/gen_track_filter.py) et état -------------------------------------------------------------- */
 	.section .rodata.gtab, "a"
 	.balign	4
-tf_gtab:	TABLE_G				/* G = tan(pi fc / 48000) / 4, index i = 256 j */
+tf_gtab:	TABLE_G				/* LP : G = tan(pi fc / 48000) / 4, index i = 256 j */
+	.section .rodata.gtabh, "a"
+	.balign	4
+tf_gtabh:	TABLE_GH			/* HP : G = tan(pi fc / 48000) / 4, index i = 256 j */
 	.section .rodata.ntab, "a"
 	.balign	4
-tf_ntab:	TABLE_N				/* réduction de la résonance, index i = 256 j */
+tf_ntab:	TABLE_N				/* LP : réduction de la résonance, index i = 256 j */
+	.section .rodata.ntabh, "a"
+	.balign	4
+tf_ntabh:	TABLE_NH			/* HP : réduction de la résonance, index i = 256 j */
 	.section .rodata.ktab, "a"
 	.balign	4
 tf_ktab:	TABLE_K				/* K = 1/(2Q), résonance R = 512 j */

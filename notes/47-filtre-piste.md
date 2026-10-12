@@ -18,10 +18,12 @@ de Kevin n'est repris ici : le filtre de ce mod est écrit pour ce projet (§5).
 
 Testé sur la machine (11/10/2026) dans sa deuxième version (§10). **De nouveau expérimental** : résonance bien plus
 forte en haut de course et enveloppe qui arrive en douceur près du centre, après l'essai de Maxime avec Model-TG
-(§12).
+(§12). **Quatrième version, expérimentale** : la course du potard suit le filtre master FX de Model-TG, après un
+message du Discord relayé par Maxime (12/10/2026, §13).
 
-- **MACHINES tenu + SWEEP = Filter Cutoff** : L64 … L1, **OFF**, H1 … H63. Passe-bas à gauche (5 Hz à 20 kHz),
-  passe-haut à droite (5 Hz à 19 kHz), la loi du potard du Model:Samples. **+ CONTOUR = Filter Reso** (Q 0,5 à 1 000, sifflante en haut de course),
+- **MACHINES tenu + SWEEP = Filter Cutoff** : L64 … L1, **OFF**, H1 … H63. Passe-bas à gauche (20 kHz à 30 Hz),
+  passe-haut à droite (20 Hz à 10 kHz) : les plages du filtre master FX de Model-TG, avec des pas fins près du centre
+  (§13). **+ CONTOUR = Filter Reso** (Q 0,5 à 1 000, sifflante en haut de course),
   **+ COLOR = Filter Env** (quantité d'une enveloppe, bipolaire), **+ SHAPE = Env Decay** (5 ms à 10 s). L'enveloppe
   repart à chaque note de la piste.
 - Quatre **vrais paramètres de toutes les machines** (k 28 à 31, descripteurs 1 à 4 de l'OS, des emplacements
@@ -32,7 +34,7 @@ forte en haut de course et enveloppe qui arrive en douceur près du centre, apr�
 - **Au centre, la piste n'est pas touchée, bit pour bit** (prouvé sur le vrai code, avec les autres mods).
 - Corrige au passage la sauvegarde des **p-locks des paramètres k ≥ 23** dans le pattern : l'OS d'origine les rangeait
   sur LFO Speed, LFO Multiplier… ou les perdait (§4.3).
-- Place : 3 029 o de code, tables et état dans **quinze masques de sprites 35×35** libérés (§6). Coût : §9.
+- Place : 3 571 o de code, tables et état dans **dix-sept masques de sprites 35×35** libérés (§6). Coût : §9.
 - **Avec Model-TG** (étape 2, §11) : le filtre de piste de Model-TG est retiré, ce filtre prend sa place (versions
   `48-track-filter-tg*.json`), côté stéréo du Sampler compris. Expérimental avec Model-TG.
 
@@ -46,8 +48,8 @@ forte en haut de course et enveloppe qui arrive en douceur près du centre, apr�
 | MACHINES tenu + SHAPE | Env Decay (FDEC) | 0 … 127 | 64 |
 
 C'est le geste de l'Attack de Model-TG, et la place des potards CUTOFF / RESONANCE du Model:Samples. MACHINES appuyé
-seul ouvre toujours le menu des machines. Un pas de potard (256 en 8.8) vaut environ 2 demi-tons de fréquence (64 pas
-de chaque côté). Entre OFF et le pas voisin (L1, H1), la sortie passe de l'entrée au filtre (w = |C − centre| / 256,
+seul ouvre toujours le menu des machines. Un pas de potard vaut 256 (8.8), 64 pas de chaque côté : moins d'un
+demi-ton près du centre, jusqu'à 2,6 demi-tons au bout (§13). Entre OFF et le pas voisin (L1, H1), la sortie passe de l'entrée au filtre (w = |C − centre| / 256,
 pour les valeurs fines du lissage des paramètres, d'un NRPN ou d'un LFO ; elles s'affichent `L0` / `H0`) : le
 passage par le centre ne claque pas.
 
@@ -172,8 +174,11 @@ Model-TG, qui reste avec le projet. `[HYP]` à confirmer sur la machine (§10).
 
 ### 5.1 Lois
 
-- Fréquence : index i = C pour le passe-bas (C < 0x4000), i = C − 0x4000 pour le passe-haut ;
-  fc = 5 Hz × 4 400^(i / 16 384), plafonnée à 20 kHz (L1 : 19,3 kHz ; H63 : 19,3 kHz). Celle du Model:Samples.
+- Fréquence (quatrième version, §13) : index i = C pour le passe-bas (C < 0x4000), i = C − 0x4000 pour le
+  passe-haut. Passe-bas : fc = 20 000 × (30 / 20 000)^(u^1,5), u = (0x3f00 − i) / 0x3f00 (L1 20 kHz, L64 30 Hz) ;
+  passe-haut : fc = 20 × 500^(u^1,5), u = (i − 0x100) / 0x3e00 (H1 20 Hz, H63 10 kHz) ; u borné à 0 entre le centre
+  et le premier pas. Les trois premières versions suivaient le Model:Samples : 5 Hz × 4 400^(i / 16 384) des deux
+  côtés.
 - Résonance (troisième version, §12) : Q = 0,5 × 2 000^((R′ / 32 512)^1,5), de 0,5 à 1 000, avec R′ = R ×
   réduction(i). Réduction : rien sous 10 Hz (pas de bosse subsonique, un défaut du Model:Samples), tout à 30 Hz,
   moins vers 20 kHz (1 − (fc / 24 000)^2,5), et bornée pour qu'un coup ne sonne pas plus de 2 s (60 dB en
@@ -187,8 +192,9 @@ Model-TG, qui reste avec le projet. `[HYP]` à confirmer sur la machine (§10).
   arrive sur les 8 premiers pas de chaque côté (1,6 % à H1, 6 % à H2, 25 % à H4, entière à L8 / H8), pour qu'en
   quittant OFF avec une enveloppe réglée le filtre ne saute pas d'un coup (§12).
 
-Quatre tables de 65 points (Q31) calculées par le générateur et interpolées linéairement : G = tan(π fc / 48 000) / 4
-(i = 256 j), réduction de la résonance (i = 256 j), K = 1 / (2Q) (R′ = 512 j), décroissance par bloc (D = 512 j).
+Six tables de 65 points (Q31) calculées par le générateur et interpolées linéairement : G = tan(π fc / 48 000) / 4 et
+la réduction de la résonance, une de chaque pour chaque côté (i = 256 j), K = 1 / (2Q) (R′ = 512 j), décroissance par
+bloc (D = 512 j).
 
 ### 5.2 Le SVF en espace d'état
 
@@ -212,7 +218,7 @@ vitesse de sa loi, sans oscillation entretenue (§8).
 
 Au centre exact (C = 0x4000), la piste reste telle quelle et l'état est oublié ; l'enveloppe continue de tourner.
 
-## 6. Place : quinze masques 35×35 `[FAIT]`
+## 6. Place : dix-sept masques 35×35 `[FAIT]`
 
 Dix-neuf sprites 35×35 ont des masques identiques de 280 o (35 colonnes opaques, `ff ff ff ff e0 00 00 00` par ligne).
 On garde celui de `0x4014a660` ; `tools/sprites.py` les déclare (`SHARED_35`) et chaque masque utilisé est redirigé
@@ -223,7 +229,7 @@ On garde celui de `0x4014a660` ; `tools/sprites.py` les déclare (`SHARED_35`) e
 | `.tf_post` | `0x4014ab5c` | 152 | accroche H3, boucle des 6 pistes |
 | `.tf_track` | `0x4014b85c` | 178 | enveloppe, son arrivée près du centre, clé des coefficients |
 | `.tf_kern` | `0x4014d74c` | 164 | départ, repos, boucle des 32 trames |
-| `.tf_coef1` | `0x401542f8` | 162 | index, G, résonance, K ; `tf_interp` |
+| `.tf_coef1` | `0x401542f8` | 184 | index, tables du côté, G, résonance, K ; `tf_interp` |
 | `.tf_coef2` | `0x401548b4` | 206 | réciproque, b1 b2 c2 a3, gx hl hb |
 | `.tf_gtab` … `.tf_dtab` | `0x4015b8f8`, `0x4015f50c`, `0x401601fc`, `0x40160864` | 4 × 260 | tables |
 | `.tf_kst` | `0x40160b6c` | 216 | état et coefficients, 6 × 36 o |
@@ -232,8 +238,9 @@ On garde celui de `0x4014a660` ; `tools/sprites.py` les déclare (`SHARED_35`) e
 | `.tf_fmt` | `0x40163fb8` | 147 | `tf_fmt_cut`, chaînes |
 | `.tf_save` | `0x4016616c` | 164 | `tf_save1/2`, `tf_save_post` |
 | `.tf_load` | `0x40166760` | 208 | `tf_load`, `tf_conv`, `tf_boot` |
+| `.tf_gtabh`, `.tf_ntabh` | `0x401696a0`, `0x401699a8` | 2 × 260 | tables du passe-haut (quatrième version, §13) |
 
-Encore libres : `0x40167c50`, `0x401696a0`, `0x401699a8`, `0x4016aa28`. L'état (`.data`) est écrit dans l'image avec
+Encore libre : `0x4016aa28` (`0x40167c50` est `tf_side` avec Model-TG, §11). L'état (`.data`) est écrit dans l'image avec
 ses valeurs de départ : rien n'efface ces zones au démarrage.
 
 ## 7. Le tweak
@@ -479,3 +486,67 @@ un coude) reste possible ici si cela ne siffle toujours pas assez, au prix d'un 
   avec `syntakt-sd-cp-toy-bits-swarm-macro` (avec `6ch-usbup`, `arp`, `trig-hold`, `tempo-max`, `boot-anim`,
   `latching-mute`, `trig-preview`, `browser-scroll`) : TOUT OK. Test du flasher sur les vrais OS : les 818
   combinaisons de REF_MAINOS construites, TOUT OK.
+
+## 13. Quatrième version : la course du filtre master FX de Model-TG (12/10/2026)
+
+**Source : Maxime, dans le fil du projet (12/10/2026, 17:48 UTC).** Sur la troisième version : « ça marche sur ma
+machine nickel ». Puis il relaie un message du Discord sur la 1.45 (en anglais) : la fréquence est beaucoup trop
+grossière au potard, le passe-bas se ferme bien trop vite ; entre OFF et le passe-bas, une baisse de volume par
+marches ; la résonance ne sonne pas comme celle d'un filtre résonant ; un filtre LP/HP par piste serait utile s'il
+sonnait et se jouait comme le LP/HP du master FX de Model-TG. Maxime : « Je suis d'accord avec lui. La résonance du
+filtre de Model-TG s'entend au moins. »
+
+### 13.1 Le filtre master FX de Model-TG `[FAIT]`
+
+Lu dans sa source (`src/model_tg.s` au commit épinglé `70b39dd`, `mfx_knob`, `mfx_coef`, tables `mfx_glp` et
+`mfx_ghp`) :
+
+- le même filtre que le nôtre : SVF 2 pôles trapézoïdal (Zavalishin) sur l'EMAC, fractionnaire et saturé ;
+- un potard relatif de −127 à +127 : **127 crans de chaque côté**, centre OFF ;
+- passe-bas de 20 kHz à 30 Hz, passe-haut de 20 Hz à 10 kHz, en exponentielle : **0,074 octave par cran** ;
+- résonance k = 2 − 1,9 R / 127, soit Q de 0,5 à 10 (Q 1 à la moitié, 2 à 100, 4,9 à 120) ;
+- le signal au quart de l'échelle dans le filtre (12 dB de marge pour la résonance) ; coefficients recalculés quand
+  un potard bouge, sans lissage.
+
+Un paramètre de l'OS n'a que 128 pas de potard en tout : nous n'avons que **64 pas de chaque côté**. Les trois
+premières versions mettaient sur ces 64 pas la loi du Model:Samples (5 Hz à 20 kHz, 12 octaves, **0,19 octave par
+pas**) : L32 tombait à 330 Hz, L48 à 41 Hz, et les 8 derniers pas du passe-bas comme les 8 premiers du passe-haut
+étaient sous 15 Hz, inaudibles.
+
+### 13.2 La nouvelle course `[FAIT]`
+
+Les plages de Model-TG, et une course en u^1,5 dans le logarithme de la fréquence (§5.1) : les **16 premiers pas** de
+chaque côté du centre font ce que font les **16 premiers crans** de Model-TG ; plus loin, les pas sont plus larges
+(le dernier du passe-bas fait 0,22 octave). En fréquence de coupure (Hz) :
+
+| Pas / cran | Model-TG LP | v3 LP | v4 LP | Model-TG HP | v3 HP | v4 HP |
+|---|---|---|---|---|---|---|
+| 1 | 20 000 | 19 297 | 20 000 | 20 | 5,7 | 20 |
+| 2 | 18 994 | 16 926 | 19 742 | 21 | 6,5 | 20,3 |
+| 4 | 17 131 | 13 023 | 18 693 | 23 | 8,4 | 21,4 |
+| 8 | 13 936 | 7 709 | 15 720 | 28 | 14 | 25 |
+| 16 | 9 223 | 2 701 | 9 396 | 42 | 41 | 42 |
+| 24 | 6 103 | 947 | 4 766 | 62 | 116 | 81 |
+| 32 | 4 039 | 332 | 2 120 | 92 | 332 | 180 |
+| 48 | 1 769 | 41 | 303 | 203 | 2 701 | 1 209 |
+| 63 / 64 | 816 / 775 | 6 / 5 | 35 / 30 | 426 | 19 297 | 10 000 |
+
+La « baisse de volume par marches » en quittant OFF vient de la taille des pas : de L1 à L8, l'ancienne course
+descendait de 19,3 à 7,7 kHz (plus d'une octave), la nouvelle de 20 à 15,7 kHz. Entre OFF et L1 / H1, rien ne
+change : le filtre entre en fondu (w, §1) à la fréquence du premier pas, et l'OS fait glisser les potards (mots
+lissés, §2). L'enveloppe arrive toujours sur les 8 premiers pas (§12).
+
+Code : deux tables de plus (G et réduction de la résonance du passe-haut, 260 o chacune) dans les masques de réserve
+`0x401696a0` et `0x401699a8` ; `tf_coef` prend les tables du côté (+22 o). 3 571 o dans dix-sept masques seul,
+3 781 o dans dix-huit avec Model-TG.
+
+**Ce qui ne change pas.** La résonance de la troisième version (§12), déjà bien plus forte que celle de Model-TG à
+chaque position du potard (Q 7 à la moitié contre 1, 870 en haut contre 10), et l'enveloppe. `[HYP]` Le message du
+Discord parle de la 1.45, dont la résonance s'arrêtait à Q 50 ; à confirmer par Maxime sur la troisième version. Nous
+ne gardons pas de marge sous la pleine échelle comme Model-TG : un son fort à forte résonance sature plus tôt (§5.2).
+
+### 13.3 Preuve `[FAIT]`
+
+`tools/emu/test_track_filter.py` (lois par côté, `TABLE_GH` et `TABLE_NH` dans le modèle) : 170 réglages, fréquence à
+0,01 cent près de la nouvelle loi, Q à 0,39 % près ; extinction à L39 (951 Hz, Q 805) et H54 (2,7 kHz, Q 952) ; le
+reste comme au §12.

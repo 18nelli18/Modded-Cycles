@@ -7,7 +7,7 @@ Cutoff (L64..OFF..H63), + CONTOUR = Filter Reso, + COLOR = Filter Env (quantité
 paramètres de toutes les machines : p-locks, LFO, vélocité, CC 74 et 71, sauvegardés avec le son et le pattern.
 
 tools/machines/track_filter/ : track_filter.S (le filtre, appelé une fois par bloc après Volume + Dist) et tf_ui.S
-(potards, affichage, sauvegarde), liés par track_filter.ld dans quinze masques de sprites 35x35 libérés
+(potards, affichage, sauvegarde), liés par track_filter.ld dans dix-sept masques de sprites 35x35 libérés
 (tools/sprites.py). Les tables sont calculées ici (TABLES) et passées à l'assembleur dans tables.inc. Les accroches
 sur l'OS sont HOOKS et POINTERS ; les quatre descripteurs remplacent les emplacements « Error » 1 à 4 (DESCRIPTORS).
 Chaque écriture porte ses octets d'origine, vérifiés sur le MAIN OS officiel.
@@ -54,6 +54,7 @@ CAVES = {
     ".tf_coef2": 0x401548b4, ".tf_gtab": 0x4015b8f8, ".tf_ntab": 0x4015f50c, ".tf_ktab": 0x401601fc,
     ".tf_dtab": 0x40160864, ".tf_kst": 0x40160b6c, ".tf_cst": 0x40160e6c, ".tf_knob": 0x401625bc,
     ".tf_fmt": 0x40163fb8, ".tf_save": 0x4016616c, ".tf_load": 0x40166760,
+    ".tf_gtabh": 0x401696a0, ".tf_ntabh": 0x401699a8,
 }
 CAVES_TG = dict(CAVES, **{".tf_side": 0x40167c50})      # avec Model-TG : le côté stéréo du Sampler (tf_side, tf_sst)
 # accroches de Model-TG que les nôtres chaînent (les mêmes sites que HOOKS) : site -> (symbole de Model-TG, -D)
@@ -92,9 +93,23 @@ SYMBOLS = ("tf_post", "tf_knob", "tf_objs", "tf_fmt_cut", "tf_boot", "tf_load", 
            "tf_ptab", "tf_kst", "tf_cst", "tf_trig")   # pour tools/emu/test_track_filter.py
 
 
-def cutoff_hz(i):
-    """Fréquence du filtre pour l'index i = |C - 0x4000| (LP : C ; HP : C - 0x4000), loi du Model:Samples."""
-    return min(5.0 * 4400 ** (i / 16384), 20000.0)
+# Course de la fréquence (quatrième version, notes/47 §13) : les plages du filtre master FX de Model-TG (passe-bas
+# 20 kHz -> 30 Hz, passe-haut 20 Hz -> 10 kHz), sur nos 64 pas de chaque côté (127 crans chez Model-TG). La position u
+# (0 au premier pas, 1 au dernier) va en u^F_CURVE dans le logarithme de la fréquence : les 16 premiers pas de chaque
+# côté font ce que font les 16 premiers crans de Model-TG (L16 9,4 kHz, H16 44 Hz), les pas du bas sont plus larges.
+LP_TOP, LP_BOT = 20000.0, 30.0                          # L1, L64
+HP_BOT, HP_TOP = 20.0, 10000.0                          # H1, H63
+F_CURVE = 1.5
+
+
+def cutoff_hz(i, hp=False):
+    """Fréquence du filtre pour l'index i (passe-bas : i = C, L1 = 0x3f00, L64 = 0 ; passe-haut : i = C - 0x4000,
+    H1 = 0x100, H63 = 0x3f00). Entre le centre et le premier pas (valeurs fines), la fréquence du premier pas."""
+    if hp:
+        u = max(i - 0x100, 0) / 0x3e00
+        return HP_BOT * (HP_TOP / HP_BOT) ** (u ** F_CURVE)
+    u = max(0x3f00 - i, 0) / 0x3f00
+    return LP_TOP * (LP_BOT / LP_TOP) ** (u ** F_CURVE)
 
 
 Q_MIN, Q_MAX = 0.5, 1000.0
@@ -110,11 +125,11 @@ def q_of(r):
     return Q_MIN * (Q_MAX / Q_MIN) ** ((r / 32512) ** Q_CURVE)
 
 
-def reso_scale(i):
+def reso_scale(i, hp=False):
     """Part de la résonance gardée : rien sous 10 Hz (pas de bosse subsonique), tout à 30 Hz, moins vers 20 kHz ;
     et bornée pour qu'un coup ne sonne pas plus de RING_MAX (60 dB en ln(1000) Q / (pi fc)) : Q au plus 0,9 fc,
     37 à 100 Hz, 155 à 300 Hz, Q_MAX au-dessus de 1,1 kHz."""
-    fc = cutoff_hz(i)
+    fc = cutoff_hz(i, hp)
     s = (1 - (fc / 24000) ** 2.5) * min(max((fc - 10) / 20, 0.0), 1.0)
     qcap = math.pi * fc * RING_MAX / math.log(1000)
     return min(s, math.log(max(qcap, Q_MIN) / Q_MIN) / math.log(Q_MAX / Q_MIN))
@@ -131,7 +146,9 @@ def q31(x):
 
 TABLES = {
     "TABLE_G": [q31(math.tan(math.pi * cutoff_hz(256 * j) / FS) / 4) for j in range(65)],
+    "TABLE_GH": [q31(math.tan(math.pi * cutoff_hz(256 * j, True) / FS) / 4) for j in range(65)],
     "TABLE_N": [q31(reso_scale(256 * j)) for j in range(65)],
+    "TABLE_NH": [q31(reso_scale(256 * j, True)) for j in range(65)],
     "TABLE_K": [q31(1 / (2 * q_of(512 * j))) for j in range(65)],
     "TABLE_D": [q31(math.exp(-1 / (BLOCK_HZ * decay_tau(512 * j)))) for j in range(65)],
 }
@@ -244,7 +261,8 @@ def build_tweak(stock, mtg=None, tid=None):
             "Un filtre 2 pôles par piste, après Volume + Dist et avant le panoramique, les envois et le mixage (comme "
             "sur le Model:Samples) :",
             "MACHINES tenu + SWEEP = Filter Cutoff (L64..OFF..H63 : passe-bas à gauche, rien au centre, passe-haut à "
-            "droite, 5 Hz à 20 kHz), + CONTOUR = Filter Reso (Q 0,5 à 1 000, qui siffle en haut de course),",
+            "droite, les plages du master FX de Model-TG : LP 20 kHz à 30 Hz, HP 20 Hz à 10 kHz, pas fins près du centre),",
+            "+ CONTOUR = Filter Reso (Q 0,5 à 1 000, qui siffle en haut de course),",
             "+ COLOR = Filter Env (l'enveloppe, relancée à chaque note, monte ou descend la fréquence ; elle arrive sur "
             "les 8 premiers pas de chaque côté du centre), + SHAPE = Env Decay (5 ms à 10 s).",
             "Quatre paramètres de toutes les machines (descripteurs 1 à 4, k 28 à 31) : p-locks, LFO, vélocité, CC 74 "
@@ -252,7 +270,7 @@ def build_tweak(stock, mtg=None, tid=None):
             "Corrige au passage les p-locks des paramètres k >= 23 dans le pattern (ils revenaient sur LFO Speed).",
             "Au centre, la piste n'est pas touchée (bit pour bit) ; environ 640 instructions par bloc et par piste "
             "filtrée (0,6 % d'un bloc).",
-            f"Code, tables et état dans quinze masques de sprites 35x35 libérés (tools/sprites.py) : {total} o. "
+            f"Code, tables et état dans dix-sept masques de sprites 35x35 libérés (tools/sprites.py) : {total} o. "
             "Généré par tools/gen_track_filter.py, notes/47.",
         ],
         "device": "Model:Cycles",
@@ -264,7 +282,7 @@ def build_tweak(stock, mtg=None, tid=None):
     }
     if mtg:
         tweak["description"][-1] = (
-            f"Code, tables et état dans seize masques de sprites 35x35 libérés (tools/sprites.py) : {total} o. "
+            f"Code, tables et état dans dix-huit masques de sprites 35x35 libérés (tools/sprites.py) : {total} o. "
             "Généré par tools/gen_track_filter.py, notes/47.")
         tweak["description"] += [
             f"Version par-dessus {mtg['id']} (notes/47 §11), qui n'a plus de filtre par piste (MC_PATCHES de "

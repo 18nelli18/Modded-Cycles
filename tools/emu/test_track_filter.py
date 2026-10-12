@@ -193,8 +193,8 @@ class Model:
         self.mode, idx = (0, c) if d < 0 else (1, d)
         w = 1.0 if abs(d) >= 0x100 else abs(d) / 256
         i = min(max(idx + d6, 0), 0x3fff)
-        g = 4 * interp("TABLE_G", i, 8) / 2 ** 31
-        reff = (max(r, 0) * interp("TABLE_N", i, 8)) >> 31
+        g = 4 * interp("TABLE_GH" if self.mode else "TABLE_G", i, 8) / 2 ** 31
+        reff = (max(r, 0) * interp("TABLE_NH" if self.mode else "TABLE_N", i, 8)) >> 31
         k = 2 * interp("TABLE_K", reff, 9) / 2 ** 31
         a1 = 1 / (1 + g * (g + k))
         a2 = g * a1
@@ -297,7 +297,8 @@ def model_tests(base, img, payload):
                   f"({peak / 2 ** 31:.2f} FS){f', {int((~ok).sum())} blocs saturés exclus' if (~ok).any() else ''}")
         if not per_block:
             dry = [db(np.abs(y[:, t] - x[:, t]).max(), np.abs(x[:, t]).max()) for t in range(6)]
-            check(min(dry[:2]) > -15, f"{name} : KICK (LP 332 Hz) et SNARE (HP 332 Hz) nettement changés ; écart à la "
+            lp, hp = G.cutoff_hz(SETTINGS[0][0]), G.cutoff_hz(SETTINGS[1][0] - 0x4000, True)
+            check(min(dry[:2]) > -15, f"{name} : KICK (LP {lp:.0f} Hz) et SNARE (HP {hp:.0f} Hz) nettement changés ; écart à la "
                                       f"piste d'origine par piste : {', '.join(f'{v:.0f}' for v in dry)} dB")
 
 
@@ -361,10 +362,11 @@ def ringdown_tests(img, payload):
     print("résonance au maximum sur un signal plein échelle (après Volume + Dist 108), puis silence")
     on = 120                                                    # 80 ms de signal, puis le silence jusqu'au zéro
     rng = np.random.default_rng(1)
-    for name, c, r in (("LP 947 Hz", 0x2800, 0x7f00), ("HP 2,7 kHz", 0x7000, 0x7f00)):
-        idx = c if c < 0x4000 else c - 0x4000
-        fc = G.cutoff_hz(idx)
-        q = G.q_of(r * G.reso_scale(idx))
+    for c, r in ((0x1900, 0x7f00), (0x7600, 0x7f00)):                # L39 et H54
+        idx, hp = (c, False) if c < 0x4000 else (c - 0x4000, True)
+        fc = G.cutoff_hz(idx, hp)
+        q = G.q_of(r * G.reso_scale(idx, hp))
+        name = f"{'HP' if hp else 'LP'} {fc:.0f} Hz"
         law = 20 * math.log10(math.e) * math.pi * fc / q * 0.1     # dB par 100 ms
         w = int(G.BLOCK_HZ * 1.2 / law) // 10 * 10                  # fenêtres : 12 dB de la loi
         off = 12 * w                                                # 144 dB : jusqu'au zéro (état sous 2^-19)
@@ -426,15 +428,15 @@ def law_tests(img, payload):
             g = (b2 / 2 ** 31 / 2) / a1
             k = (1 / a1 - 1 - g * g) / g
             fc, q = math.atan(g) * G.FS / math.pi, 1 / k
-            idx = c if c < 0x4000 else c - 0x4000
-            fl = G.cutoff_hz(idx)
-            ql = G.q_of(r * G.reso_scale(idx))
+            idx, hp = (c, False) if c < 0x4000 else (c - 0x4000, True)
+            fl = G.cutoff_hz(idx, hp)
+            ql = G.q_of(r * G.reso_scale(idx, hp))
             cents = 1200 * math.log2(fc / fl)
             qerr = q / ql - 1
             worst_c, worst_q = max(worst_c, abs(cents)), max(worst_q, abs(qerr))
             rows.append((c, r, fc, fl, q, ql))
     check(worst_c < 5 and worst_q < 0.01,
-          f"{len(pts)} réglages, 5 Hz à 20 kHz des deux côtés, Q {G.Q_MIN:g} à {G.Q_MAX:g} : fréquence à {worst_c:.2f} cent près, "
+          f"{len(pts)} réglages, LP {G.LP_TOP / 1000:g} kHz à {G.LP_BOT:g} Hz, HP {G.HP_BOT:g} Hz à {G.HP_TOP / 1000:g} kHz, Q {G.Q_MIN:g} à {G.Q_MAX:g} : fréquence à {worst_c:.2f} cent près, "
           f"Q à {worst_q * 100:.2f} % près")
     for c, r, fc, fl, q, ql in rows:
         if (c, r) in ((0x0000, 0), (0x2000, 0x4000), (0x3f00, 0x7f00), (0x4100, 0x7f00), (0x6000, 0x2000),
@@ -642,7 +644,7 @@ def table_tests(base, img, syms, payload, nm):
     check(diff_nr == {0x94: (0, 1), 0x95: (0, 2)}, f"NRPN 1:20 -> Filter Cutoff, 1:21 -> Filter Reso, rien d'autre "
                                                    f"({diff_nr})")
     # un son initialisé (nouveau projet, son effacé, changement de machine : 0x400618f2 -> 0x40061866) prend les
-    # défauts des descripteurs : Filter Cutoff au centre, pas à zéro (qui serait un passe-bas fermé à 5 Hz)
+    # défauts des descripteurs : Filter Cutoff au centre, pas à zéro (qui serait un passe-bas fermé à 30 Hz)
     same, ours = True, set()
     for m in range(nm):
         for u in (a, b):
