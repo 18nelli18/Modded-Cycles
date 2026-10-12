@@ -33,3 +33,10 @@ needs hardware verification. Saving and B-side LFO CC remain uninstalled.
 AveyCole confirme le ciblage Genie B sur matériel. Nouveau candidat :
 M1–M6 centré, sans curseur de vélocité dupliqué ; canal 1–16 dans Scale Setup,
 défaut 7–12. Sauvegarde et LFO CC non raccordés.
+
+New manual MIDI-bank steps, including steps re-added after deletion, now
+start at C5 (MIDI72). Existing active notes and hold-trig + DATA editing
+are preserved. Six-lane/four-page editing checks pass emulation.
+
+Les nouveaux trigs MIDI manuels repartent de C5 (MIDI72), même après
+suppression. Notes actives et édition trig tenu + DATA conservées.

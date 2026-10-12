@@ -266,6 +266,11 @@ mlp_menu_key:
     movel %d0,mlp_remove
     bra .Lmk_trig_note
 .Lmk_trig_new:
+    | Nouveau trig : C5 (MIDI72), même après suppression d’une autre note.
+    moveq #7,%d2
+    moveq #72,%d0
+    jsr mlp_store
+    moveq #6,%d2
     moveq #1,%d0
     jsr mlp_store
 .Lmk_trig_note:
