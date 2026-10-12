@@ -74,3 +74,18 @@ création/fermeture durable et reprise après interruption. La banque reste
 RAM seulement : un projet par session, redémarrer avant de changer de projet.
 LFO vers CC cutoff et intégration Sequence Genie B-side restent à faire.
 AveyCole demande explicitement Sequence Genie après ce prochain test.
+
+Suite locale après publication du candidat : le test exécute aussi close
+0x4007bc1c et son helper natif 0x4007ed7c. Ils annulent le drapeau du handle
+et son bit dans 0x40fe8e10, sans flush explicite. Un résultat close=0 ne
+suffit donc pas à conclure à la durabilité : la prochaine preuve doit suivre
+le writer sous-jacent jusqu'au stockage, avant raccordement Save/Save As.
+
+## 6. Testé sur la machine (12/10/2026)
+
+AveyCole demande : « Publish current midi test build as hardware tested. »
+Cette validation porte sur le candidat publié d6afc841, MAIN OS SHA-256
+2c7c7f74fa45cb38719cc60bfa65f70f725ace756ec8003c0e724e2167c7f9c0.
+Promotion du statut de ce candidat uniquement, sans changement de code
+firmware. Sauvegarde persistante et Sequence Genie B-side ne sont ni inclus
+ni validés par ce résultat. La page principale garde son bundle existant.
