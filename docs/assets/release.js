@@ -3,6 +3,20 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+{
+  "version": "1.59",
+  "date": "2026-10-13",
+  "changes": [
+    {
+      "en": "Second LFO now keeps the trig keyboard and pads playable while open. On A-side, ordinary synth knob turns reach the stock controls; hold LFO and turn a knob for quick assignment. B-side MIDI LFO pages keep note input routed to their MIDI lanes. The description belongs to the Second LFO card. Emulation and full browser-transfer checks passed; published at AveyCole's request.",
+      "fr": "Second LFO garde clavier TRIG et pads jouables dans la page. Côté A, les potards ordinaires passent aux contrôles synthé natifs ; LFO maintenu + potard conserve l’assignation rapide. Les pages LFO MIDI B gardent le jeu sur leurs voies MIDI. Description placée sur la carte Second LFO. Émulation et transfert navigateur intégral vérifiés ; publié à la demande d’AveyCole."
+    },
+    {
+      "en": "The existing five-field audio LFO2 sound saving is retained. Unfinished MIDI sequence saving stays on its separate diagnostic page and is excluded from main.",
+      "fr": "Sauvegarde existante des cinq réglages LFO2 audio conservée. Sauvegarde MIDI inachevée limitée à sa page de diagnostic séparée, exclue de main."
+    }
+  ]
+},
 {"version":"1.58","date":"2026-10-12","changes":[{"en":"Sequence Genie now clears per-step chance on the selected MIDI B-side lane in every generation mode, including Notes only, mutation and Euclidean generation. Undo restores the previous chance locks. Queued generation cancels if chance is edited before commit. Verified in emulation; published at AveyCole's request. MIDI saving remains separate and unfinished.","fr":"Sequence Genie efface la chance de pas de la voie MIDI B choisie dans tous les modes, dont Notes seules, mutation et Euclide. Undo restaure les locks chance précédents. Une édition chance avant commit annule la génération en attente. Vérifié en émulation ; publié à la demande d’AveyCole. Sauvegarde MIDI séparée et inachevée."}]},
 {
   "version": "1.57",
@@ -263,5 +277,6 @@ window.MC_RELEASES = [
   ] },
   { version: "1.0", date: "2026-10-01", changes: [] },
 ];
+
 
 
