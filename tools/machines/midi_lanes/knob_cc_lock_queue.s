@@ -100,7 +100,6 @@ mlkcq_take:
     divuw #12,%d1
     andil #65535,%d1
     movel %d1,mlkcq_taken
-    jsr mlkcr_take
     movel %a3@,%d0
     movel %d0,%a3@(4)
     clrl %a3@(8)
@@ -196,19 +195,29 @@ mlkcq_step:
     cmpil #0xffff,%d4
     bne .Lqs_validate
 .Lqs_base:
-    bra .Lqs_next
+    | Restaurer uniquement sur une vraie note sans lock pour ce potard.
+    | Un repos ou un trig de paramètres ne modifie jamais la base.
+    movel %sp@(40),%d0
+    lsll #2,%d0
+    lea %a2@(8,%d0:l),%a0
+    btst #0,%a0@(3)
+    beq .Lqs_next
+    movel %d3,%d0
+    muluw #12,%d0
+    lea .Lqueue,%a0
+    addal %d0,%a0
+    tstl %a0@
+    beq .Lqs_next
+    moveb %a0@(1),%d0
+    cmpb %a4@,%d0
+    bne .Lqs_next
+    movew %a4@,%d4
 .Lqs_validate:
     cmpil #0x7f7f,%d4
     bhi .Lqs_next
     movel %d4,%d0
     andil #128,%d0
     bne .Lqs_next
-    movel %d4,%d0
-    lsrl #8,%d0
-    movel %d0,%sp@-
-    movel %d3,%sp@-
-    jsr mlkcr_remember
-    addql #8,%sp
     moveq #0,%d0
     moveb %a2@(3),%d0
     movel %d0,%sp@-
@@ -290,7 +299,6 @@ mlkcq_worker:
     pea 3
     jsr 0x400826b0
     lea %sp@(12),%sp
-    jsr mlkcr_sent
 .Lqw_next:
     subql #1,%d2
     bpl .Lqw_loop

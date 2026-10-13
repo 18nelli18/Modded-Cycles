@@ -40,7 +40,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
         raise ValueError('working_storage exige MBK3')
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[]
-        for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (('storage_audio_lfo',) if audio_storage else ()) + (('storage_autosave',) if working_storage else ()) + (('live_record_mode','live_record') if live_record else ()) + (('knob_cc','knob_cc_ui','knob_cc_scroll','knob_cc_assignment','knob_cc_scramble') if knob_cc else ()) + (('knob_cc_locks','knob_cc_lock_patterns','knob_cc_lock_edit','knob_cc_lock_queue','knob_cc_restore','knob_cc_lock_clip') if knob_locks else ()) + (REPEAT_SOURCES if repeat else ()) + (CONDITION_SOURCES if conditions else ()):
+        for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (('storage_audio_lfo',) if audio_storage else ()) + (('storage_autosave',) if working_storage else ()) + (('live_record_mode','live_record') if live_record else ()) + (('knob_cc','knob_cc_ui','knob_cc_scroll','knob_cc_assignment','knob_cc_scramble') if knob_cc else ()) + (('knob_cc_locks','knob_cc_lock_patterns','knob_cc_lock_edit','knob_cc_lock_queue','knob_cc_lock_clip') if knob_locks else ()) + (REPEAT_SOURCES if repeat else ()) + (CONDITION_SOURCES if conditions else ()):
             if name == 'banks' and not pattern_banks:
                 continue
             if name == 'stock_display' and not stock_display:
@@ -345,8 +345,8 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     sites=[at for at in range(lo,hi,2) if patched[at-build.BASE:at-build.BASE+6]==target]
     assert len(sites)==1,sites
     write(sites[0],b'\x4e\xb9'+struct.pack('>I',syms['ml_genie_present']))
-    assert image[0x4007700e-build.BASE:0x40077016-build.BASE].hex()=='4fefffd848d77c1c'
-    write(0x4007700e,b'\x4e\xf9'+struct.pack('>I',syms['ml_settings_present'])+b'\x4e\x71')
+    assert image[0x4001c5da-build.BASE:0x4001c5e0-build.BASE].hex()=='4eb940077da8'
+    write(0x4001c5da,b'\x4e\xb9'+struct.pack('>I',syms['ml_settings_toggle']))
     if stock_display:
         for at,expected,name in ((0x4001b28a,'4eb940012412','mlp_stock_track'),
                                  (0x4001b774,'4eb940009c5a','mlp_stock_volume'),

@@ -9,7 +9,7 @@ from gen_seq_gen import symbols
 def main():
  ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--tweak');a=ap.parse_args()
  root=pathlib.Path(__file__).resolve().parents[2];cross=str(root.parent/'toolchain/bin/m68k-elf-')
- names=('knob_cc','knob_cc_ui','knob_cc_scroll','knob_cc_assignment','knob_cc_scramble','knob_cc_locks','knob_cc_lock_patterns','knob_cc_lock_edit','knob_cc_lock_queue','knob_cc_restore','settings_present','runtime','service','knob_cc_lock_clip','lfo_cc_names')
+ names=('knob_cc','knob_cc_ui','knob_cc_scroll','knob_cc_assignment','knob_cc_scramble','knob_cc_locks','knob_cc_lock_patterns','knob_cc_lock_edit','knob_cc_lock_queue','settings_present','runtime','service','knob_cc_lock_clip','lfo_cc_names')
  defs={k:0x9306a000+i*4 for i,k in enumerate(('TG_set_held','TG_mod_used','TG_blk_clk','mlp_track','mlp_step','mlp_held','mlp_changed','ml_pattern','ml_play_pattern','ml_clock_state','mlp_obj','ml_runtime'))}
  defs['ml_runtime']=0x9307a000
  defs['SG_random']=0x9306b000
@@ -67,8 +67,9 @@ def main():
  r.call('mlkcq_step',pat,0,19);r.call('mlkcq_worker')
  assert sent[-1]==b'\xb6\x4a\x45' and len(sent)==3
  # Pas sans lock : aucune destination provisoire ne part pendant/après scroll.
- r.call('mlkcq_step',pat,0,20);r.call('mlkcq_worker');assert len(sent)==3
- r.call('mlkcr_off',0x86480004);assert len(sent)==4 and sent[-1]==b'\xb6\x4a\x40'
+ r.u.mem_write(pat+8+20*4,bytes((72,100,1,1)))
+ r.call('mlkcq_step',pat,0,20);r.call('mlkcq_worker');assert len(sent)==4
+ assert len(sent)==4 and sent[-1]==b'\xb6\x4a\x40'
  r.w32(defs['TG_set_held'],0);r.call('mlkc_assign_sync');r.call('mlkcq_step',pat,0,20);r.call('mlkcq_worker');assert len(sent)==4
  sent[:]=[b'\xb6\x4a\x45']
 
@@ -81,7 +82,8 @@ def main():
  assert r.call('mlkc_lock_get',locks,0,19,0)==0x4a4a and r.call('mlkc_lock_get',locks,0,23,0)==0x4a4a
  r.call('mlkc_clear_selected');assert r.call('mlkc_lock_get',locks,0,19,0)==65535
  assert r.call('mlkc_lock_get',locks,0,23,0)==0x4a4a
- r.call('mlkcq_step',pat,0,19);r.call('mlkcq_worker');r.call('mlkcr_off',0x86480004);assert sent[-1]==b'\xb6\x4a\x40'
+ r.u.mem_write(pat+8+19*4,bytes((72,100,1,1)))
+ r.call('mlkcq_step',pat,0,19);r.call('mlkcq_worker');assert sent[-1]==b'\xb6\x4a\x40'
  r.call('mlkc_step_clip',0,pat,0,23);r.call('mlkc_step_clip',2,pat,1,45)
  assert r.call('mlkc_lock_get',locks,1,45,0)==0x4a4a
  r.w32(defs['mlp_track'],0);r.call('mlkc_lane_clip',0)
@@ -133,6 +135,19 @@ def main():
   r.w32(event+16,0);r.call('mlp_menu_key',0x9307f000,event)
   assert r.u.mem_read(pat+11,1)==b'\x00'
   print('ok : FUNC+TRIG crée un lock trigless, maintien ne crée pas de note, release sans édition efface')
+  # Le writer natif doit recevoir l'état PWM260 et non une simple couleur.
+  obj,claims,led=0x9307f000,0x9307f600,0x9307f700
+  r.w32(syms['mlp_obj'],obj);r.w32(syms['mlp_track'],0);r.w32(syms['mlp_step'],0)
+  r.u.mem_write(pat+8,bytes((72,100,1,2)));ledstates=[]
+  ledstubs=((0x400cfaf4,lambda args:led),(0x4000608c,lambda args:args[0]+1),(0x400060bc,lambda args:args[0]+20),(0x40005f86,lambda args:ledstates.append((args[1],args[2])) or 0))
+  for entry,fn in ledstubs:
+   r.stubs[entry]=fn;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=entry,end=entry)
+  entry=syms['mlp_cursor'];r.stubs[entry]=lambda args:0xffffffff
+  r.u.hook_add(UC_HOOK_CODE,r.stub,begin=entry,end=entry)
+  r.call('mlp_led',obj+0x500,0,claims)
+  assert (1,260) in ledstates,ledstates
+  print('ok : trigless B transmis au writer avec état PWM260 du mod dim')
+
 
  r.call('mlkcq_reset');sent.clear()
  for knob in range(12):assert r.call('mlkc_lock_set',locks,0,7,knob,knob,100)==1
@@ -151,28 +166,22 @@ def main():
   assert r.u.mem_read(syms['mlkc_state']+2,1)[0]==255
   r.call('mlkcq_step',pat,0,19);r.call('mlkcq_worker');assert not sent
  r.w32(defs['TG_set_held'],0);r.call('mlkc_assign_sync');r.call('mlkcq_step',pat,0,19);r.call('mlkcq_worker');assert not sent
- # Note Off réellement routé : restauration même après Stop et reset pending.
+ # Une note sans lock restaure la base ; pas de restauration sur repos.
  r.w32(defs['TG_set_held'],0);r.w32(clock,1)
  r.u.mem_write(syms['mlkc_state'],bytes((74,64)))
- r.w32(0x9307b000+272,0x86480004)
  locks=r.call('mlkc_locks_for',pat,1)
  assert r.call('mlkc_lock_set',locks,0,19,0,74,90)==1
  sent.clear();r.call('mlkcq_reset')
- r.call('mlkcq_step',pat,0,19)
- # Un ancien Off avant l'envoi du nouveau lock ne doit pas l'annuler.
- r.call('mlkcr_off',0x86480004)
- sent.clear();r.call('mlkcq_worker');assert sent==[b'\xb6\x4a\x5a']
+ r.call('mlkcq_step',pat,0,19);r.call('mlkcq_worker')
+ assert sent==[b'\xb6\x4a\x5a']
+ r.u.mem_write(pat+8+20*4,bytes((72,100,1,0)))
  r.call('mlkcq_step',pat,0,20);r.call('mlkcq_worker');assert len(sent)==1
- r.call('mlkcr_off',0x86490004);assert len(sent)==1
- r.call('mlkcr_off',0x86480003);assert len(sent)==1
- r.w32(clock,0);r.call('mlkcq_reset')
- # File native : exactement un Off sur canal7/note72/port BOTH.
- r.w32(0x9307b000,1);r.w32(0x9307b000+4,0)
- r.w32(0x9307b000+8,1);r.w32(0x9307b000+16,0x86480004)
- assert r.call('ml_service',0x9307b000,8)==1
- assert sent==[b'\xb6\x4a\x5a',b'\x86\x48\x00',b'\xb6\x4a\x40'],sent
- r.call('mlkcr_off',0x86480004);assert len(sent)==3
- print('ok : Note Off physique restaure la base une seule fois, même Stop/reset ; note/port différents ignorés')
+ r.u.mem_write(pat+8+20*4,bytes((72,100,1,2)))
+ r.call('mlkcq_step',pat,0,20);r.call('mlkcq_worker');assert len(sent)==1
+ r.u.mem_write(pat+8+20*4,bytes((72,100,1,1)))
+ r.call('mlkcq_step',pat,0,20);r.call('mlkcq_worker')
+ assert sent[-1]==b'\xb6\x4a\x40' and len(sent)==2
+ print('ok : prochaine note sans lock restaure la base ; repos et trigless ne restaurent pas')
  # Scramble ne modifie que les valeurs assignées de la voie sélectionnée.
  r.u.mem_write(syms['mlkc_state'],bytes((255,64))*72)
  r.u.mem_write(syms['mlkc_state']+24*2,bytes((74,30,1,40)))
@@ -195,6 +204,15 @@ def main():
   r.w32(event+8,102);r.w32(event+16,0)
   assert r.call('ml_key',event)==0 and len(sent)==2
   r.w32(defs['TG_set_held'],0)
+  r.w32(syms['ml_genie_settings'],1)
+  r.w32(event+12,2);r.w32(event+16,1);sent.clear()
+  r.call('mlp_menu_key',0x9307f000,event)
+  assert sent==[b'\xb8\x4a\x65',b'\xb8\x01\x65'],sent
+  toggles=[];entry=syms['ml_toggle'];r.stubs[entry]=lambda args:toggles.append(1) or 0
+  r.u.hook_add(UC_HOOK_CODE,r.stub,begin=entry,end=entry)
+  r.w32(syms['mlp_func'],1);r.w32(event+16,1)
+  r.call('mlp_menu_key',0x9307f000,event);assert toggles==[1] and len(sent)==2
+  r.w32(syms['mlp_func'],0);r.w32(syms['ml_genie_settings'],0)
  r.w32(defs['mlp_track'],0)
  print('ok : SCRAMBLE B envoie seulement les CC assignés sur le canal de la voie, données audio/notes inchangées')
  # SETTINGS doit conserver B seulement pour sa vue native spécifique.
@@ -215,6 +233,29 @@ def main():
  r.w32(defs['mlp_obj'],0x9307f000);r.w32(view,0x40107a24)
  r.call('ml_settings_present',0x9307f100,ref,0)
  assert presentations[-1]==0x9307d108
+ # Le vrai chemin SETTINGS utilise toggle et non present : tester les deux sorties.
+ manager,node=0x9307f100,0x9307f200
+ sentinel=manager+20;r.w32(sentinel,sentinel);r.w32(view,0x40107a20)
+ r.w32(defs['mlp_obj'],0x9307f000)
+ def push_settings(args):
+  assert args[0]==manager and args[2]==0
+  assert r.r32(view+32)==r.r32(view+28)
+  r.w32(node,sentinel);r.w32(node+8,view);r.w32(sentinel,node)
+  return 1
+ r.stubs[syms['ml_settings_native']]=push_settings
+ close=r.r32(0x40107a20+40)
+ def close_settings(args):
+  assert args[0]==view;r.w32(sentinel,sentinel);return 1
+ r.stubs[close]=close_settings;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=close,end=close)
+ r.call('ml_settings_toggle',manager,ref,1)
+ assert r.r32(sentinel)==node and r.r32(defs['mlp_obj'])==0x9307f000
+ r.call('ml_settings_toggle',manager,ref,1)
+ assert r.r32(sentinel)==sentinel and r.r32(defs['mlp_obj'])==0x9307f000
+ r.call('ml_settings_toggle',manager,ref,1);r.call(close,view)
+ assert r.r32(sentinel)==sentinel and r.r32(defs['mlp_obj'])==0x9307f000
+ r.call('ml_settings_toggle',manager,ref,1)
+ assert r.r32(sentinel)==node
+ print('ok : chemin toggle SETTINGS empile sans replace ; SETTINGS/Back ferment seulement le menu, B reste actif')
  print('ok : SETTINGS natif conserve B, vecteur restauré ; A et autres menus inchangés')
  # Exécuter maintenant le vrai routeur OS jusqu'à la frontière DIN/USB.
  r.u.hook_del(router_hook);din=[];usb=[]

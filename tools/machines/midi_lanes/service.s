@@ -37,15 +37,6 @@ ml_service:
     movel #3,%sp@-
     jsr 0x400826b0
     lea.l %sp@(12),%sp
-    .ifdef ML_KNOB_LOCKS
-    moveal ml_runtime,%a0
-    cmpal %a0,%a2
-    bne .Lservice_not_sequence
-    movel %sp@(20),%sp@-
-    jsr mlkcr_off
-    addql #4,%sp
-.Lservice_not_sequence:
-    .endif
     addql #1,%d2
     bra .Lservice_loop
 .Lservice_refuse:

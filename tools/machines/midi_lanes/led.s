@@ -56,7 +56,7 @@ mlp_led:
     .ifdef ML_KNOB_LOCKS
     btst #1,%a2@(3)
     beq .Lled_write
-    moveq #2,%d4
+    movel #260,%d4            | état PWM natif trigless-dim
     bra .Lled_write
     .else
     bra .Lled_write

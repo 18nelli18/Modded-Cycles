@@ -450,6 +450,22 @@ mlp_menu_key:
     clrl mlp_edit
     bra .Lmk_redraw
 .Lmk_track_setup:
+    .ifdef ML_KNOB_CC
+    movel TG_set_held,%d0
+    orl ml_genie_settings,%d0
+    beq .Lmk_track_plain
+    moveq #1,%d0
+    movel %d0,TG_mod_used
+    tstl mlp_func
+    bne .Lmk_bank_toggle
+    | Les callbacks bruts B ne passent pas nécessairement par ml_key.
+    jsr mlkc_scramble
+    bra .Lmk_redraw
+.Lmk_bank_toggle:
+    jsr ml_toggle
+    bra .Lmk_used
+.Lmk_track_plain:
+    .endif
     tstl mlp_func
     beq .Lmk_used
     tstl TG_set_held
