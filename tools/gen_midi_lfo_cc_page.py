@@ -18,6 +18,31 @@ def sources():
   page=page[:a]+page[b:]
   page=page.replace('    bne .Lpe_quick','    bne .Lpe_out')
   page=page.replace('    tstl lf2p_assigned\n    beq .Lpk_close\n    clrl lf2p_assigned\n    bra .Lpk_used', '    bra .Lpk_close')
+ # B consomme les potards audio même si A les laisse passer.
+ page=page.replace('    bne .Lpe_quick','    bne .Lpe_out')
+ # La page A laisse le clavier au gestionnaire natif ; B doit le router privé.
+ a=page.index('    | Le clavier natif sous la fenêtre')
+ b=page.index('    cmpil #10,%d0',a)
+ page=page[:a]+page[b:]
+ a=page.index('lf2p_pad:');b=page.index('    .section .text.lf2p_enc_navigation',a)
+ page=page[:a]+'''lf2p_pad:
+    movel %sp@(8),%sp@-
+    moveal mlp_obj,%a0
+    lea %a0@(16),%a0
+    movel %a0,%sp@-
+    jsr mlp_pad
+    addql #8,%sp
+    movel mlp_track,%d0
+    movel %d0,lf2p_track
+    moveal %sp@(4),%a0
+    lea %a0@(-16),%a0
+    movel %a0,%sp@-
+    jsr 0x40076082
+    addql #4,%sp
+    moveq #1,%d0
+    rts
+
+'''+page[b:]
  page=rename(page);layout=rename(layout)
  a=page.index('    | Même sélection de piste');b=page.index('    lea.l   0x400802e0',a)
  page=page[:a]+'''    movel mlp_track,%d0

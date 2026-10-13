@@ -148,6 +148,12 @@ lf2p_menu_key:
     moveal %sp@(16),%a0
     movel %a0@(12),%d0
     movel %a0@(16),%d2
+    | Le clavier natif sous la fenêtre garde les touches trig et releases.
+    cmpil #16,%d0
+    bcs .Lpk_not_keyboard
+    cmpil #31,%d0
+    bls .Lpk_pass
+.Lpk_not_keyboard:
     cmpil #10,%d0
     beq .Lpk_transport
     cmpil #11,%d0
@@ -186,6 +192,7 @@ lf2p_menu_key:
 .Lpk_transport:
     btst #1,%d2
     bne .Lpk_used
+.Lpk_pass:
     moveq #0,%d0
     bra .Lpk_return
 .Lpk_redraw:
@@ -199,7 +206,7 @@ lf2p_menu_key:
     lea.l %sp@(8),%sp
     rts
 
-| Sélection explicite des six LFO secondaires par pads, sans voix sonore.
+| Suivre la sélection par pad, puis laisser le jeu au routage audio natif.
     .section .text.lf2p_pad,"ax"
 lf2p_pad:
     moveal %sp@(8),%a0
@@ -217,7 +224,7 @@ lf2p_pad:
     jsr 0x40076082
     addql #4,%sp
 .Lpp_done:
-    moveq #1,%d0
+    moveq #0,%d0
     rts
 
     .section .text.lf2p_enc_navigation,"ax"
@@ -276,7 +283,7 @@ lf2p_enc:
     jsr 0x4007faf4
     addql #4,%sp
     tstl %d0
-    beq .Lpe_out
+    beq .Lpe_pass
     pea 8
     pea 1
     movel %sp@(32),%sp@-
@@ -352,6 +359,11 @@ lf2p_enc:
     addql #4,%sp
 .Lpe_out:
     moveq #1,%d0
+    bra .Lpe_return
+.Lpe_pass:
+    | Sans LFO maintenu, laisser le gestionnaire natif éditer le synthé A.
+    moveq #0,%d0
+.Lpe_return:
     movem.l %sp@,%d2-%d4/%a2
     lea.l %sp@(16),%sp
     rts

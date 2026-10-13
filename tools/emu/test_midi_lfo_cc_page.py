@@ -28,10 +28,16 @@ def main():
    for name in ('settings','names'):
     obj=p/(name+'.o');objects.append(str(obj))
     subprocess.run([cross+'as','-march=cfv4e','-o',str(obj),str(root/'tools/machines/midi_lanes'/('lfo_cc_'+name+'.s'))],check=True)
-   (p/'link.ld').write_text('mlp_obj = 0x930d1000; mlp_track = 0x930d1004; TG_blk_clk = 0x930d1010; mlp_keyboard = 0x930d1020; mlp_keyboard_cancel = 0x930d1024; SECTIONS { .text 0x930e0000 : { *(.text*) } .data : { *(.data*) *(.rodata*) } }')
+   (p/'link.ld').write_text('mlp_obj = 0x930d1000; mlp_track = 0x930d1004; TG_blk_clk = 0x930d1010; mlp_keyboard = 0x930d1020; mlp_keyboard_cancel = 0x930d1024; mlp_pad = 0x930d1028; SECTIONS { .text 0x930e0000 : { *(.text*) } .data : { *(.data*) *(.rodata*) } }')
    subprocess.run([cross+'ld','-T',str(p/'link.ld'),'-e','mlccp_open','-o',str(p/'e.elf'),*objects],check=True)
    subprocess.run([cross+'objcopy','-O','binary',str(p/'e.elf'),str(p/'e.bin')],check=True)
    r.u.mem_write(0x930e0000,(p/'e.bin').read_bytes());r.s.update(symbols(cross,p/'e.elf'))
+ if not a.tweak:
+  def pad(args):
+   lane=r.r32(args[1]+20)-1
+   if 0<=lane<6:r.w32(r.s['mlp_track'],lane)
+   return 1
+  r.stubs[r.s['mlp_pad']]=pad;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=r.s['mlp_pad'],end=r.s['mlp_pad'])
  r.stubs[r.s['mlp_keyboard_cancel']]=lambda args:0
  r.u.hook_add(UC_HOOK_CODE,r.stub,begin=r.s['mlp_keyboard_cancel'],end=r.s['mlp_keyboard_cancel'])
  audio=bytes(r.u.mem_read(CTX,1240));frame=bytes(r.u.mem_read(FRAME,476))
@@ -97,9 +103,21 @@ def main():
   before=bytes(r.u.mem_read(pattern,1584));live=r.s['ml_live_runtime']
   r.u.mem_write(r.s['TG_snap_note'],b'\x4e\x75') # Gamme OFF ; TG testé dans le boot complet.
   event(r,16,1);assert r.call('mlccp_menu_key',obj,EVENT)==1
-  assert r.call('ml_take',live)==((0x96+lane)<<24)|(60<<16)|(100<<8)|4
+  packet=r.call('ml_take',live)
+  assert packet==((0x96+lane)<<24)|(52<<16)|(100<<8)|4,(hex(packet),lane,hex(pattern),hex(r.r32(r.s['ml_pattern'])))
   event(r,16,0);assert r.call('mlccp_menu_key',obj,EVENT)==1
-  assert r.call('ml_take',live)==((0x86+lane)<<24)|(60<<16)|4
+  assert r.call('ml_take',live)==((0x86+lane)<<24)|(52<<16)|4
+  assert bytes(r.u.mem_read(pattern,1584))==before
+ if a.tweak:
+  for lane in range(6):
+   r.w32(r.s['mlp_pads'],0);r.w32(EVENT+20,lane+1);event(r,0,1)
+   assert r.call('mlccp_pad',obj+16,EVENT)==1
+   assert r.r32(r.s['mlp_track'])==lane and r.r32(r.s['mlccp_track'])==lane
+   assert r.call('ml_take',live)==((0x96+lane)<<24)|(72<<16)|(100<<8)|4
+   event(r,0,0);assert r.call('mlccp_pad',obj+16,EVENT)==1
+   assert r.call('ml_take',live)==((0x86+lane)<<24)|(72<<16)|4
+  for code in range(2,14):
+   event(r,code);assert r.call('mlccp_enc',obj,EVENT)==1
   assert bytes(r.u.mem_read(pattern,1584))==before
  # Les appuis ET relâchements trigs vont au clavier B, jamais à la grille A.
  routed=[]
@@ -108,7 +126,7 @@ def main():
  for flags in (1,0):
   event(r,19,flags);assert r.call('mlccp_menu_key',obj,EVENT)==1
  assert routed==[(19,1),(19,0)],routed
- # Le pad change uniquement la voie MIDI sélectionnée.
+ # Le pad reste routé au clavier/pad MIDI privé, puis synchronise la sélection.
  r.w32(EVENT+20,6);event(r,0,1);r.call('mlccp_pad',obj+16,EVENT)
  assert r.r32(r.s['mlp_track'])==5 and r.r32(r.s['mlccp_track'])==5
  assert bytes(r.u.mem_read(CTX,1240))==audio

@@ -196,7 +196,11 @@ def main():
     event(q,8,0);q.call('lf2p_menu_key',page(q),EVENT)
     assert q.r32(q.s['lf2p_assigned'])==0 and page(q)
     held['value']=0;q.delta=3;event(q,2)
-    before=bytes(q.u.mem_read(CTX,1240));q.call('lf2p_enc',page(q),EVENT)
+    before=bytes(q.u.mem_read(CTX,1240))
+    for code in range(2,14):
+        event(q,code);assert q.call('lf2p_enc',page(q),EVENT)==0
+        assert q.call('lf2p_enc_th',page(q)+4,EVENT)==0
+    q.call('lf2p_enc',page(q),EVENT)
     assert bytes(q.u.mem_read(CTX,1240))==before
     print('ok : quick assign LFO2, douze potards × six pistes, profondeur signée bornée, garde relâchement et LFO1 intact')
     # Régression : l'ancien retour statique doit être refusé par le heap simulé.
@@ -381,9 +385,14 @@ def main():
     event(r, 32, 16)
     r.call('lf2p_menu_key', obj, EVENT)
     assert r.r32(r.s['lf2p_edit']) == 1
+    for code in range(16,32):
+        for flags in (1,0):
+            event(r,code,flags)
+            assert r.call('lf2p_menu_key',obj,EVENT)==0
+            assert r.r32(r.s['lf2p_obj'])==obj
     for pad in range(1, 7):
         r.w32(EVENT+20, pad);r.w32(EVENT+16, 1)
-        assert r.call('lf2p_pad', obj+16, EVENT) == 1
+        assert r.call('lf2p_pad', obj+16, EVENT) == 0
         assert r.r32(r.s['lf2p_track']) == pad-1
     for pad in (0, 7, 0xffffffff):
         r.w32(EVENT+20, pad)
@@ -412,7 +421,7 @@ def main():
     assert r.r32(r.s['lf2_context']) == CTX and bytes(r.u.mem_read(CTX,1240)) == retained
     assert r.call('lf2p_open') == 1
     assert bytes(r.u.mem_read(CTX,1240)) == retained
-    print('ok : navigation/clic, pads sans jeu, transport simple, troisième appui LFO ferme ; destruction OS réelle sans libérer le contexte audio')
+    print('ok : navigation/clic, pads/clavier transmis au routage audio natif, transport simple, troisième appui LFO ferme ; destruction OS réelle sans libérer le contexte audio')
 
     for fail in (1, 2):
         b=make(stock,real=False);b.fail_new=fail
