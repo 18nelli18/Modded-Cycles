@@ -426,5 +426,42 @@ def main():
   assert len(cancelled)==before_cancel+1 and r.r32(syms['ml_store_load_ready'])==0
   r.w32(syms['ml_store_io_busy'],0)
   print('ok : notification différée, Save bloqué avant restauration, annulation uniquement depuis UI')
+ if a.working:
+  # Démarrage sans événement Load : contexte vivant validé, aucun fichier écrit.
+  r.w32(syms['ml_store_load_serial'],0);r.w32(syms['ml_store_suspend_pending'],0)
+  before_files=dict(files);before_log=len(log)
+  r.stubs[0x400cf866]=lambda args:0
+  r.call('ml_store_bootstrap');assert r.r32(syms['ml_store_bootstrap_error'])==1
+  r.stubs[0x400cf866]=lambda args:OBJ
+  r.stubs[0x4000eae2]=lambda args:0
+  r.call('ml_store_bootstrap');assert r.r32(syms['ml_store_bootstrap_error'])==2
+  r.stubs[0x4000eae2]=lambda args:current['id']
+  metadata['id']=99
+  r.call('ml_store_bootstrap')
+  assert r.r32(syms['ml_store_load_serial'])==0
+  metadata['id']=current['id'];metadata['type']=5
+  r.call('ml_store_bootstrap')
+  assert r.r32(syms['ml_store_load_serial'])==0
+  metadata['type']=6
+  ids=iter((current['id'],current['id']+1))
+  r.stubs[0x4000eae2]=lambda args:next(ids)
+  r.call('ml_store_bootstrap')
+  assert r.r32(syms['ml_store_load_serial'])==0 and r.r32(syms['ml_store_bootstrap_error'])==4
+  r.stubs[0x4000eae2]=lambda args:current['id']
+  r.u.reg_write(mk.UC_M68K_REG_SR,0x2500);r.call('ml_store_bootstrap')
+  assert r.r32(syms['ml_store_load_serial'])==0
+  r.u.reg_write(mk.UC_M68K_REG_SR,0x2000);r.call('ml_store_bootstrap')
+  assert r.r32(syms['ml_store_load_serial'])==1
+  assert r.r32(syms['ml_store_load_pending_id'])==current['id']
+  assert r.r32(syms['ml_store_load_pending_slot'])==96
+  assert r.r32(syms['ml_store_suspend_pending'])==1
+  assert r.r32(syms['ml_store_load_ready'])==0
+  r.call('ml_store_bootstrap');assert r.r32(syms['ml_store_load_serial'])==1
+  assert files==before_files and len(log)==before_log
+  for index in range(96):r.call('ml_store_service')
+  assert r.r32(syms['ml_store_load_status'])==1
+  assert r.r32(syms['ml_store_load_ready'])==1
+  assert files==before_files
+  print('ok : bootstrap natif sans Load, slot/type/identité vérifiés, IPL refusé, restauration UI complète sans écriture')
  print('Backend FS simulé, vrai runtime MIDI compilé ; hooks boot/Load non installés dans le flasher.')
 if __name__=='__main__':main()

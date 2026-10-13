@@ -28,7 +28,17 @@ ml_store_save_feedback:
 .Lcontext_detail:
     lea .Lctx_load,%a0
     tstl ml_store_load_serial
+    bne .Lcontext_has_load
+    .ifdef ML_WORKING
+    movel ml_store_bootstrap_error,%d0
     beq .Lfeedback_show
+    cmpil #4,%d0
+    bhi .Lfeedback_show
+    lea .Lbootstrap_errors,%a1
+    moveal %a1@(0,%d0:l:4),%a0
+    .endif
+    bra .Lfeedback_show
+.Lcontext_has_load:
     lea .Lctx_ui,%a0
     tstl ml_store_ui_seen
     beq .Lfeedback_show
@@ -74,6 +84,15 @@ ml_store_load_feedback:
     .long .Lbank,.Lslot,.Lpath,.Lroot,.Ldir,.Lsnapshot
     .long .Lcommit,.Linitial,.Ldata,.Lopen,.Lallocate,.Lwrite,.Lflush,.Lclose
     .long .Lbuffers,.Llookup_a,.Llookup_b,.Lguard
+    .ifdef ML_WORKING
+    .balign 4
+.Lbootstrap_errors:
+    .long .Lctx_load,.Lboot_project,.Lboot_id,.Lboot_slot,.Lboot_changed
+.Lboot_project: .asciz "CTX: PROJECT"
+.Lboot_id: .asciz "CTX: ID"
+.Lboot_slot: .asciz "CTX: SLOT"
+.Lboot_changed: .asciz "CTX: CHANGED"
+    .endif
 .Lctx_load: .asciz "CTX: NO LOAD"
 .Lctx_ui: .asciz "CTX: NO UI"
 .Lctx_ipl: .asciz "CTX: UI IPL"

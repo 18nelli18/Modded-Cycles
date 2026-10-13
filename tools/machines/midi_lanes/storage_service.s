@@ -23,6 +23,12 @@ ml_store_service:
     movew %sr,%d0
     andil #0x700,%d0
     bne .Lservice_out
+    .ifdef ML_WORKING
+    tstl ml_store_load_serial
+    bne .Lservice_notified
+    jsr ml_store_bootstrap
+.Lservice_notified:
+    .endif
     .ifdef ML_STORAGE2
     tstl ml_store_suspend_pending
     beq .Lservice_suspend_ready
@@ -178,3 +184,72 @@ ml_store_service:
 .Lservice_nomatch:
     moveq #0,%d0
     rts
+
+| Le projet de démarrage peut précéder notre hook Load. Récupérer le contexte
+| vivant depuis les getters natifs, uniquement si slot/type/identité concordent.
+| Aucun accès disque ici. Une notification native ultérieure reste prioritaire.
+    .ifdef ML_WORKING
+    .data
+    .balign 4
+    .globl ml_store_bootstrap_error
+ml_store_bootstrap_error: .long 0
+    .text
+    .globl ml_store_bootstrap
+ml_store_bootstrap:
+    lea.l %sp@(-12),%sp
+    moveml %d2-%d3,%sp@
+    movew %sr,%d0
+    movel %d0,%sp@(8)
+    andil #0x700,%d0
+    bne .Lbootstrap_done
+    tstl ml_store_load_serial
+    bne .Lbootstrap_done
+    moveq #1,%d0
+    movel %d0,ml_store_bootstrap_error
+    jsr 0x400cf866
+    tstl %d0
+    beq .Lbootstrap_done
+    movel %d0,%sp@-
+    moveq #2,%d0
+    movel %d0,ml_store_bootstrap_error
+    jsr 0x4000eae2
+    addql #4,%sp
+    movel %d0,%d2
+    beq .Lbootstrap_done
+    moveq #3,%d0
+    movel %d0,ml_store_bootstrap_error
+    pea 96
+    movel %d2,%sp@-
+    jsr ml_store_resolve_slot
+    addql #8,%sp
+    tstl %d0
+    bmi .Lbootstrap_done
+    | Revalider l'identité après les getters de stockage, avant publication.
+    moveq #4,%d0
+    movel %d0,ml_store_bootstrap_error
+    jsr 0x400cf866
+    tstl %d0
+    beq .Lbootstrap_done
+    movel %d0,%sp@-
+    jsr 0x4000eae2
+    addql #4,%sp
+    cmpl %d2,%d0
+    bne .Lbootstrap_done
+    movew #0x2700,%sr
+    tstl ml_store_load_serial
+    bne .Lbootstrap_done
+    movel %d2,ml_store_load_pending_id
+    moveq #96,%d0
+    movel %d0,ml_store_load_pending_slot
+    clrl ml_store_load_ready
+    moveq #1,%d0
+    movel %d0,ml_store_suspend_pending
+    movel %d0,ml_store_load_serial
+    clrl ml_store_bootstrap_error
+.Lbootstrap_done:
+    movel %sp@(8),%d0
+    movew %d0,%sr
+    moveml %sp@,%d2-%d3
+    lea.l %sp@(12),%sp
+    rts
+    .endif
