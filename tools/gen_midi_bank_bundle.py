@@ -35,12 +35,12 @@ IDS=('6ch-usbup','model-tg-st','sample-preview-st','trig-hold','arp','tempo-max'
      'scale-gen-st-queued','lfo-secondary','scramble-st-gen-queued')
 
 
-def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False):
+def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False,knob_locks=False):
     if working_storage and not audio_storage:
         raise ValueError('working_storage exige MBK3')
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[]
-        for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (('storage_audio_lfo',) if audio_storage else ()) + (('storage_autosave',) if working_storage else ()) + (('live_record_mode','live_record') if live_record else ()) + (('knob_cc','knob_cc_ui','knob_cc_scroll') if knob_cc else ()) + (REPEAT_SOURCES if repeat else ()) + (CONDITION_SOURCES if conditions else ()):
+        for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (('storage_audio_lfo',) if audio_storage else ()) + (('storage_autosave',) if working_storage else ()) + (('live_record_mode','live_record') if live_record else ()) + (('knob_cc','knob_cc_ui','knob_cc_scroll') if knob_cc else ()) + (('knob_cc_locks','knob_cc_lock_patterns','knob_cc_lock_edit','knob_cc_lock_queue','knob_cc_lock_clip') if knob_locks else ()) + (REPEAT_SOURCES if repeat else ()) + (CONDITION_SOURCES if conditions else ()):
             if name == 'banks' and not pattern_banks:
                 continue
             if name == 'stock_display' and not stock_display:
@@ -58,6 +58,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
                             *(['--defsym','ML_SAVE_FIRST=1'] if write_first else []),
                             *(['--defsym','ML_RESTORE_SAVED=1'] if restore_saved else []),
                             *(['--defsym','ML_KNOB_CC=1'] if knob_cc else []),
+                            *(['--defsym','ML_KNOB_LOCKS=1'] if knob_locks else []),
                             *(['--defsym','ML_GENIE_CHANCE=1'] if genie_chance else []),
                             *(['--defsym','ML_REPEAT=1'] if repeat else []),
                             *(['--defsym','ML_CHANCE=1','--defsym','ML_CONDITIONS=1','--defsym','ML_CONDITION_COMPACT=1'] if conditions else []),
@@ -212,7 +213,8 @@ SECTIONS {{
         return *blobs,fragments,symbols(cross,elf)
 
 
-def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False):
+def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False,knob_locks=False):
+    if knob_locks:assert knob_cc and storage and extended_storage
     if genie_chance:assert conditions
     if restore_saved:assert write_first
     if write_first:assert storage and extended_storage and not working_storage
@@ -260,7 +262,7 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     needle=struct.pack('>I',loader)
     assert [build.BASE+i for i in range(0,len(stock)-3,2) if stock[i:i+4]==needle]==[ptr]
     merge_masks=[va for va in free if va!=loader]
-    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat,conditions,extended_storage,audio_storage,working_storage,live_record,write_first,genie_chance,restore_saved,knob_cc)
+    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat,conditions,extended_storage,audio_storage,working_storage,live_record,write_first,genie_chance,restore_saved,knob_cc,knob_locks)
     if lfo_cc:
         import aplib_grow
         if storage or repeat:

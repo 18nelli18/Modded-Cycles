@@ -2766,7 +2766,7 @@ function renderDetails(f, sel, open) {
     `<b>${esc(e.name)}</b> (${esc(e.label)})${featText("eng-" + e.code, "note", "") ? " : " + esc(featText("eng-" + e.code, "note", "")) : ""}`).join("<br>"));
   if (!sel.on && featText(f.id, "note", "")) row("d_note", esc(featText(f.id, "note", "")));
   if (GUIDE_OF[f.id]) row("d_guide", `<a class="feat-guide" href="${GUIDE}#${GUIDE_OF[f.id]}">${esc(t("read_guide"))} <span aria-hidden="true">→</span></a>`);
-  return `<div class="det" id="det-${f.id}"${open ? "" : " hidden"}><p>${esc(featText(f.id, "desc", f.desc))}</p><dl class="facts">${rows.join("")}</dl></div>`;
+  return `<div class="det" id="det-${f.id}"${open ? "" : " hidden"}>${f.credit ? `<p class="credit">${creditHtml(f.credit)}</p>` : ""}<p>${esc(featText(f.id, "desc", f.desc))}</p><dl class="facts">${rows.join("")}</dl></div>`;
 }
 
 // Section chips: they jump to a section (never filter); the LED lights when the section holds a ticked mod.

@@ -39,6 +39,12 @@ ml_worker_notify:
     bne .Lwn_ready
 .Lwn_no_merge:
     .endif
+    .ifdef ML_KNOB_LOCKS
+    jsr mlkcq_ready
+    tstl %d0
+    bne .Lwn_ready
+    moveal %a2@(12),%a0
+    .endif
     .ifdef ML_LFO_CC
     jsr mlcc_ready
     tstl %d0
@@ -85,6 +91,9 @@ ml_worker_once:
     jsr ml_service
     addql #8,%sp
     addl %d0,%d2
+    .ifdef ML_KNOB_LOCKS
+    jsr mlkcq_worker
+    .endif
     .ifdef ML_LFO_CC
     jsr mlcc_worker
     .endif

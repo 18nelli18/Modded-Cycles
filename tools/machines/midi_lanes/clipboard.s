@@ -57,6 +57,9 @@ mlp_clip_key:
     movel %d4,%d0
     muluw #264,%d0
     addal %d0,%a2
+    .ifdef ML_KNOB_LOCKS
+    jsr mlkc_clip_prepare
+    .endif
     .ifdef ML_REPEAT
     jsr ml_repeat_prepare_ui
     tstl ml_repeat_edit_settings
@@ -199,6 +202,9 @@ mlp_clip_key:
     jmp .Lclip_step_locks
     .section .text.ml_step_clip_c,"ax"
 .Lclip_step_locks:
+    .ifdef ML_KNOB_LOCKS
+    jsr mlkc_clip_prepare
+    .endif
     .ifdef ML_REPEAT
     jsr ml_repeat_prepare_ui
     moveal ml_repeat_edit_settings,%a3
@@ -239,6 +245,14 @@ mlp_clip_key:
     movel mlp_step_clip+8,%d0
     movel %d0,%a3@(4)
     .endif
+    .ifdef ML_KNOB_LOCKS
+    movel %d3,%sp@-
+    movel %d4,%sp@-
+    movel ml_pattern,%sp@-
+    pea 2
+    jsr mlkc_step_clip
+    lea %sp@(16),%sp
+    .endif
     jmp .Lclip_step_changed
     .section .text.ml_step_clip_b,"ax"
 .Lclip_step_copy:
@@ -253,6 +267,14 @@ mlp_clip_key:
     .endif
     moveq #1,%d0
     movel %d0,mlp_step_clip_ready
+    .ifdef ML_KNOB_LOCKS
+    movel %d3,%sp@-
+    movel %d4,%sp@-
+    movel ml_pattern,%sp@-
+    clrl %sp@-
+    jsr mlkc_step_clip
+    lea %sp@(16),%sp
+    .endif
 .Lclip_step_changed:
     | La libération du trig ne doit pas effacer le pas copié/collé.
     movel mlp_held,%d0

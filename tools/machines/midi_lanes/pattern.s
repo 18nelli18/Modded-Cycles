@@ -94,6 +94,15 @@ ml_pattern_tick:
     bset %d2,%d1
     movel %d1,mlcc_triggers
     .endif
+    .ifdef ML_KNOB_LOCKS
+    movel %d0,%sp@-
+    movel %sp@(40),%sp@-
+    movel %d2,%sp@-
+    movel %sp@(40),%sp@-
+    jsr mlkcq_step
+    lea %sp@(12),%sp
+    movel %sp@+,%d0
+    .endif
     lea.l ml_pad_serial,%a0
     addql #1,%a0@(0,%d2:l:4)
     bra .Ltick_done

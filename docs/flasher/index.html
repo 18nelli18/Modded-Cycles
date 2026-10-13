@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Test Flasher 3 — Model:Cycles Flasher</title>
+<title>Modded Cycles: A.V.'s Supermodel Edition.</title>
 <meta name="description" content="Install mods on the Elektron Model:Cycles or Model:Samples from your browser, over USB in about 30 seconds (Web MIDI). No firmware is provided or uploaded: you bring your own official OS file.">
 <meta name="theme-color" content="#e3e2de" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b1b1b" media="(prefers-color-scheme: dark)">
@@ -11,14 +11,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-13-midi-saving-live-main">
-<link rel="stylesheet" href="style.css?v=2026-10-13-midi-saving-live-main">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-13-supermodel-cc-main">
+<link rel="stylesheet" href="style.css?v=2026-10-13-supermodel-cc-main">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
-<body data-page="flasher">
+<body data-page="flasher" class="supermodel">
 <script>
   // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-  window.MC_BUILD = "2026-10-13-midi-saving-live-main";
+  window.MC_BUILD = "2026-10-13-supermodel-cc-main";
   window.addEventListener("error", function (e) {
     var b = document.getElementById("errbar");
     if (!b) return;
@@ -43,14 +43,14 @@
 
 <main class="wrap fl">
   <div class="fl-head">
-    <h1 data-i18n="title">Model:Cycles Flasher</h1>
+    <p class="edition-eyebrow">A.V.'S SUPERMODEL EDITION</p><h1>Modded Cycles:<br><span>A.V.'s Supermodel Edition.</span></h1>
     <div>
       <p data-i18n="tagline">Install mods on your Elektron Model:Cycles or Model:Samples, right from your browser.</p>
       <p class="ver"><span data-l="en">Version</span><span data-l="fr">Version</span> <span data-rel="version">1.0</span> · <a href="../#version"><span data-l="en">what's new</span><span data-l="fr">nouveautés</span></a> · <a href="../guide/"><span data-l="en">guide</span><span data-l="fr">guide</span></a></p>
     </div>
   </div>
 
-  <div class="alert"><span data-l="en">Hardware tested: LFO 2 saves only five settings—speed, multiplier, waveform, destination and depth. Fade, start phase and mode reset on load. MIDI saving is not included.</span><span data-l="fr">Testé sur matériel : LFO 2 sauve cinq réglages seulement — vitesse, multiplicateur, forme, destination et profondeur. Fondu, phase initiale et mode remis aux défauts au chargement. Sans sauvegarde MIDI.</span></div>
+  <div class="alert"><span data-l="en">Hardware tested: LFO 2 saves only five settings—speed, multiplier, waveform, destination and depth. Fade, start phase and mode reset on load. MIDI Bank sequence saving and live recording are hardware tested. CC assignments remain RAM-only.</span><span data-l="fr">Testé sur matériel : LFO 2 sauve cinq réglages seulement — vitesse, multiplicateur, forme, destination et profondeur. Fondu, phase initiale et mode remis aux défauts au chargement. Sauvegarde MIDI et live-rec testés sur matériel. Assignations CC en RAM seulement.</span></div>
 <div id="errbar" class="alert bad" hidden></div>
   <div id="compat" class="alert bad" role="alert" hidden></div>
 
@@ -269,13 +269,13 @@
 </footer>
 
 <!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
-<script src="../assets/release.js?v=2026-10-13-midi-saving-live-main"></script>
-<script src="../assets/site.js?v=2026-10-13-midi-saving-live-main"></script>
-<script src="builder.js?v=2026-10-13-midi-saving-live-main"></script>
-<script src="tweaks.js?v=2026-10-13-midi-saving-live-main"></script>
-<script src="flasher.js?v=2026-10-13-midi-saving-live-main"></script>
-<script src="app.js?v=2026-10-13-midi-saving-live-main"></script>
-<script src="bundle.js?v=2026-10-13-midi-saving-live-main"></script>
+<script src="../assets/release.js?v=2026-10-13-supermodel-cc-main"></script>
+<script src="../assets/site.js?v=2026-10-13-supermodel-cc-main"></script>
+<script src="builder.js?v=2026-10-13-supermodel-cc-main"></script>
+<script src="tweaks.js?v=2026-10-13-supermodel-cc-main"></script>
+<script src="flasher.js?v=2026-10-13-supermodel-cc-main"></script>
+<script src="app.js?v=2026-10-13-supermodel-cc-main"></script>
+<script src="bundle.js?v=2026-10-13-supermodel-cc-main"></script>
 </body>
 </html>
 

@@ -186,6 +186,13 @@ ml_repeat_delete_selected:
     .text
     .globl ml_repeat_clip
 ml_repeat_clip:
+    .ifdef ML_KNOB_LOCKS
+    movel %d0,%sp@-
+    movel %d0,%sp@-
+    jsr mlkc_lane_clip
+    addql #4,%sp
+    movel %sp@+,%d0
+    .endif
     lea.l %sp@(-16),%sp
     moveml %d2-%d3/%a2-%a3,%sp@
     movel %d0,%d3

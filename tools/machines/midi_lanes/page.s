@@ -374,6 +374,9 @@ mlp_menu_key:
     .ifdef ML_REPEAT
     jsr ml_repeat_delete_selected
     .endif
+    .ifdef ML_KNOB_LOCKS
+    jsr mlkc_clear_selected
+    .endif
     movel %sp@+,%d2
     movel %sp@+,mlp_step
 .Lmk_trig_clear:

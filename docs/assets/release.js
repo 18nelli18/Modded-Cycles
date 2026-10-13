@@ -3,6 +3,7 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+{"version": "1.62", "date": "2026-10-13", "changes": [{"en": "A.V.’s Supermodel Edition: compact mod and engine checklists, with every existing selection retained.", "fr": "Édition Supermodel A.V. : listes compactes de mods et moteurs, sélections existantes conservées."}, {"en": "B-side gray-knob CC assignment and return to B-side are hardware tested by AveyCole. SETTINGS + knob assigns a CC; turning it sends its value. Assignments remain RAM-only.", "fr": "Assignation CC des potards gris B et retour côté B testés par AveyCole. SETTINGS + potard assigne le CC ; tournez pour transmettre sa valeur. Assignations en RAM seulement."}, {"en": "A separate experimental CC step-lock test is available; these new locks are not included in the main firmware.", "fr": "Un test séparé propose les locks CC par pas ; ces nouveaux locks ne sont pas inclus au firmware principal."}]},
 {
   "version": "1.61",
   "date": "2026-10-13",

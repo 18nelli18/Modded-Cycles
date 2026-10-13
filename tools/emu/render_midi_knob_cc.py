@@ -8,7 +8,7 @@ from test_sdvintage import main_os_from_syx
 from gen_seq_gen import symbols
 
 def main():
- ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--output',required=True);ap.add_argument('--tweak');a=ap.parse_args()
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--output',required=True);ap.add_argument('--tweak');ap.add_argument('--lock-preview',action='store_true');a=ap.parse_args()
  root=pathlib.Path(__file__).resolve().parents[2];cross=str(root.parent/'toolchain/bin/m68k-elf-')
  defs={'TG_set_held':0x9306a000,'mlp_track':0x9306a004,'ml_pattern':0x9306a008,'mlp_obj':0x9306a00c,'TG_blk_clk':0x9306a010,'TG_mod_used':0x9306a014}
  with tempfile.TemporaryDirectory() as tmp:
@@ -72,6 +72,9 @@ def main():
  r.u.mem_write(pat+1,b'\x00');r.w32(event+12,3)
  assert r.call('mlkc_enc',event)==0 and len(sent)==1
  r.w32(event+12,2);r.w32(defs['TG_set_held'],1)
+ if a.lock_preview:
+  r.w32(syms['mlp_held'],8);r.w32(syms['mlp_step'],3);r.w32(defs['TG_set_held'],0)
+  r.delta=3;r.call('mlkc_enc',event)
  r.call(0x400e7dbc)
  bitmap,fb=0x93006000,0x93090000;r.u.mem_write(fb,bytes(1024));r.call(0x40070172,bitmap,128,64,fb,0)
  try:r.call('mlkc_render',0,bitmap)

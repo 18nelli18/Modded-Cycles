@@ -1,5 +1,3 @@
-# 2026-10-13-midi-saving-live-main
+# 2026-10-13-supermodel-cc-main
 
-Six separate, parallel MIDI-only sequencing lanes with grid and quantized/unquantized live recording. Save Project stores MIDI patterns, step locks and MIDI LFO settings; loading the saved project or restarting restores them. Hardware tested by AveyCole on existing and new projects, including live recording, 13 October 2026. Unsaved edits are not autosaved. MIDI data is stored in separate files outside normal Elektron project backups and SysEx exports. New saves retain timing offsets and read earlier MIDI save files; older saving builds cannot read the new format.
-
-Six voies MIDI parallèles indépendantes avec enregistrement grille et live quantifié/libre. Save Project conserve patterns MIDI, locks et LFO MIDI ; chargement du projet sauvegardé ou redémarrage les restaure. Testé sur matériel par AveyCole sur projets existants et nouveaux, live-rec inclus, le 13 octobre 2026. Pas d’autosave des éditions. Fichiers MIDI séparés hors backups Elektron et exports SysEx. Les nouveaux fichiers conservent le microtiming et lisent les anciennes sauvegardes ; les anciennes versions ne lisent pas le nouveau format.
+Hardware-tested CC knobs promoted from the published CC test. CC mappings remain RAM-only; step locks are not included. Compact Supermodel checklist approved by AveyCole. Firmware recipe unchanged.
