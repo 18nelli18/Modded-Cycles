@@ -7,6 +7,8 @@
 ml_store_load_pending_id: .long 0
 ml_store_load_pending_slot: .long 0
 ml_store_load_serial: .long 0
+    .globl ml_store_suspend_pending
+ml_store_suspend_pending: .long 0
     .ifdef ML_STORAGE2
     .globl ml_store_load_ready
 ml_store_load_ready: .long 1
@@ -25,19 +27,26 @@ ml_store_load_hook:
     beq .Lload_restore
     movel %d0,%sp@-
     movel %a0,%sp@-
-    movew %sr,%d0
-    andil #0x700,%d0
-    bne .Lload_result
+    movel %d1,%sp@-
+    movew %sr,%d1
+    movel %d1,%sp@-
+    | Publication atomique sans allocation, disque ni callback UI.
+    movew #0x2700,%sr
     moveal %d2,%a0
     movel %a0@(8),%d0
     beq .Lload_result
     movel %d0,ml_store_load_pending_id
     movel %d3,ml_store_load_pending_slot
-    addql #1,ml_store_load_serial
     .ifdef ML_STORAGE2
-    jsr ml_store_suspend
+    clrl ml_store_load_ready
+    moveq #1,%d0
+    movel %d0,ml_store_suspend_pending
     .endif
+    addql #1,ml_store_load_serial
 .Lload_result:
+    movel %sp@+,%d1
+    movew %d1,%sr
+    movel %sp@+,%d1
     movel %sp@+,%a0
     movel %sp@+,%d0
 .Lload_restore:

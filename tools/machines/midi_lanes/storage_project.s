@@ -30,6 +30,10 @@ ml_store_save_notice:
     .endif
     tstl ml_store_load_active
     bne .Lproject_done
+    .ifdef ML_STORAGE2
+    tstl ml_store_load_ready
+    beq .Lproject_done
+    .endif
     .endif
     .ifdef ML_STORAGE2
     moveq #3,%d0

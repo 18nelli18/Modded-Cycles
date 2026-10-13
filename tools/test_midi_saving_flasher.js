@@ -15,7 +15,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
  Object.defineProperty(w,'isSecureContext',{value:true});
  for(const f of ['builder.js','tweaks.js','flasher.js','app.js','bundle.js'])w.eval(fs.readFileSync(path.join(page,f),'utf8'));
  await wait(30);const app=w.MCFlasherApp;
- assert(['2026-10-12-test-3-pattern-saving-both-engines','2026-10-12-test-3-a-b-lfo-saving','2026-10-12-test-3-working-autosave','2026-10-12-test-3-b-live-record','2026-10-12-test-3-tg-save-diagnostics','2026-10-12-test-3-tg-save-details','2026-10-12-test-3-load-context-retry','2026-10-12-test-3-context-path','2026-10-12-test-3-lfo2-quick-assign'].includes(w.MC_BUILD));
+ assert(['2026-10-12-test-3-pattern-saving-both-engines','2026-10-12-test-3-a-b-lfo-saving','2026-10-12-test-3-working-autosave','2026-10-12-test-3-b-live-record','2026-10-12-test-3-tg-save-diagnostics','2026-10-12-test-3-tg-save-details','2026-10-12-test-3-load-context-retry','2026-10-12-test-3-context-path','2026-10-12-test-3-lfo2-quick-assign','2026-10-12-test-3-load-notify-fix'].includes(w.MC_BUILD));
  if(w.MC_BUILD.includes('a-b-lfo')){app.applyLang('en');assert(d.getElementById('mod-midi-bank-bundle').textContent.includes('Audio-side LFO2 settings are also stored per pattern'));}
  assert(html.includes('builder.js?v='+w.MC_BUILD)&&html.includes('bundle.js?v='+w.MC_BUILD));
  assert.strictEqual(app.chosenTweaks().length,0);

@@ -23,6 +23,13 @@ ml_store_service:
     movew %sr,%d0
     andil #0x700,%d0
     bne .Lservice_out
+    .ifdef ML_STORAGE2
+    tstl ml_store_suspend_pending
+    beq .Lservice_suspend_ready
+    clrl ml_store_suspend_pending
+    jsr ml_store_suspend
+.Lservice_suspend_ready:
+    .endif
     tstl ml_store_io_busy
     bne .Lservice_out
     movel ml_store_load_serial,%d2

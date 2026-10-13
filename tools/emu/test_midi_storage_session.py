@@ -414,5 +414,17 @@ def main():
  assert r.r32(syms['ml_store_load_status'])==0xffffffff
  print('ok : working96 résolu via slot/type/identité natifs, restauration correcte ; autre projet refusé avant I/O')
  print('ok : service UI96 ticks, remplacement candidat, publication/nettoyage, contexte natif conservé')
+ if a.extended:
+  # Notification IRQ différée : Save refuse avant restauration, UI seule
+  # annule les anciennes notes même si l'I/O est encore occupée.
+  r.w32(syms['ml_store_load_ready'],0);r.w32(syms['ml_store_suspend_pending'],1)
+  before_files=dict(files);before_cancel=len(cancelled)
+  assert native_save()==1 and files==before_files
+  assert r.r32(syms['ml_store_save_error'])==2
+  r.w32(syms['ml_store_io_busy'],1);r.call('ml_store_service')
+  assert r.r32(syms['ml_store_suspend_pending'])==0
+  assert len(cancelled)==before_cancel+1 and r.r32(syms['ml_store_load_ready'])==0
+  r.w32(syms['ml_store_io_busy'],0)
+  print('ok : notification différée, Save bloqué avant restauration, annulation uniquement depuis UI')
  print('Backend FS simulé, vrai runtime MIDI compilé ; hooks boot/Load non installés dans le flasher.')
 if __name__=='__main__':main()
