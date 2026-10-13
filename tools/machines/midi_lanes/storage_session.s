@@ -120,9 +120,30 @@ ml_store_session_load:
     lea.l %sp@(-16),%sp
     moveml %d2/%a2-%a4,%sp@
     moveal %sp@(20),%a2
+    .ifdef ML_STORAGE2
+    moveq #1,%d0
+    movel %d0,ml_store_read_error
+    .endif
     jsr .Lsession_paths
     tstl %d0
     beq .Lsession_fail
+    .ifdef ML_STORAGE2
+    | Vérifier l'absence avant fopen : aucun chemin inexistant n'est ouvert.
+    moveq #2,%d0
+    movel %d0,ml_store_read_error
+    movel %a2,%sp@-
+    jsr ml_store_presence
+    addql #4,%sp
+    tstl %d0
+    bmi .Lsession_fail
+    bne .Lsession_present
+    clrl ml_store_read_error
+    moveq #3,%d0
+    bra .Lsession_out
+.Lsession_present:
+    moveq #3,%d0
+    movel %d0,ml_store_read_error
+    .endif
     jsr ml_store_io_begin
     tstl %d0
     beq .Lsession_fail
@@ -141,13 +162,12 @@ ml_store_session_load:
     beq .Lsession_fail
     movel %d2,%d0
     .ifdef ML_STORAGE2
-    bne .Lsession_out
-    movel %a2,%sp@-
-    jsr ml_store_presence
-    addql #4,%sp
-    tstl %d0
-    bne .Lsession_fail
-    moveq #3,%d0
+    bne .Lsession_loaded
+    moveq #4,%d0
+    movel %d0,ml_store_read_error
+    bra .Lsession_fail
+.Lsession_loaded:
+    clrl ml_store_read_error
     .endif
     bra .Lsession_out
 .Lsession_fail:
@@ -208,3 +228,10 @@ ml_store_session_load:
     .section .rodata
 .Lroot_name: .asciz "ModdedCycles"
 .Lroot_path: .asciz "/ModdedCycles"
+
+    .ifdef ML_STORAGE2
+    .data
+    .balign 4
+    .globl ml_store_read_error
+ml_store_read_error: .long 0
+    .endif

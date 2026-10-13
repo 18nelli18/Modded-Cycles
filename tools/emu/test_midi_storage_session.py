@@ -107,6 +107,8 @@ def main():
   return r.call('ml_store_session_load',ctx,id,slot,pat)
  if a.extended:
   assert load(0x12345678,3,5)==3 and dirs=={'/':2} and not files
+  assert not any(entry[0]=='open' for entry in log)
+  assert r.r32(syms['ml_store_read_error'])==0
  if a.audio_lfo:
   r.u.mem_write(bank,payload(67))
   assert r.call(fixture_syms['ml_record_encode'] if a.working else 'ml_record_encode_v2',recA,4928,bank,3,4,7)==1
@@ -147,6 +149,7 @@ def main():
   good_a=files[path+'A'];bad_a=bytearray(good_a);bad_a[-1]^=1
   files[path+'A']=bytes(bad_a);before=bytes(r.u.mem_read(snapshot,data_size))
   assert load(0x12345678,3,5)==0
+  assert r.r32(syms['ml_store_read_error'])==4
   assert bytes(r.u.mem_read(snapshot,data_size))==before
   files[path+'A']=good_a
  # Projet absent : pas de publication ; identité zéro et bornes refusées.
@@ -463,5 +466,14 @@ def main():
   assert r.r32(syms['ml_store_load_ready'])==1
   assert files==before_files
   print('ok : bootstrap natif sans Load, slot/type/identité vérifiés, IPL refusé, restauration UI complète sans écriture')
+  # Tout premier démarrage : aucune annexe ; publier une banque vide utilisable.
+  dirs.clear();dirs['/']=2;files.clear();log.clear()
+  # Nouvelle notification native : le compteur ne repart pas à zéro en cours de session.
+  r.w32(syms['ml_store_load_serial'],r.r32(syms['ml_store_load_serial'])+1)
+  for index in range(96):r.call('ml_store_service')
+  assert r.r32(syms['ml_store_load_ready'])==1 and r.r32(syms['ml_store_load_status'])==1
+  table=r.r32(syms['ml_bank_table']);assert bytes(r.u.mem_read(table,384))==bytes(384)
+  assert not files and not any(entry[0] in ('open','mkdir') for entry in log)
+  print('ok : premier démarrage sans sidecars, zéro fopen/mkdir, banque vide publiée et accès B rétabli')
  print('Backend FS simulé, vrai runtime MIDI compilé ; hooks boot/Load non installés dans le flasher.')
 if __name__=='__main__':main()

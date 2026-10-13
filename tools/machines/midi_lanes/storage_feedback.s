@@ -65,6 +65,22 @@ ml_store_load_feedback:
     movel ml_store_load_error,%d0
     cmpil #6,%d0
     bhi .Lfeedback_show
+    cmpil #5,%d0
+    bne .Lload_general
+    tstl ml_store_io_poison
+    bne .Lload_disk
+    movel ml_store_read_error,%d0
+    cmpil #4,%d0
+    bhi .Lload_general_read
+    lea .Lread_errors,%a1
+    moveal %a1@(0,%d0:l:4),%a0
+    bra .Lfeedback_show
+.Lload_disk:
+    lea .Ldisk,%a0
+    bra .Lfeedback_show
+.Lload_general_read:
+    moveq #5,%d0
+.Lload_general:
     lea .Lload_errors,%a1
     moveal %a1@(0,%d0:l:4),%a0
 .Lfeedback_show:
@@ -76,6 +92,8 @@ ml_store_load_feedback:
 .Lsave_failed: .asciz "MIDI SAVE ERR"
 .Lload_failed: .asciz "MIDI LOAD ERR"
     .balign 4
+.Lread_errors:
+    .long .Lload_record,.Lread_path,.Lread_lookup,.Lread_guard,.Lread_invalid
 .Lload_errors:
     .long .Lload_failed,.Lload_context,.Lload_identity,.Lload_slot
     .long .Lload_table,.Lload_record,.Lload_publish
@@ -100,6 +118,10 @@ ml_store_load_feedback:
 .Lctx_busy: .asciz "CTX: BUSY"
 .Lctx_ram: .asciz "CTX: RAM"
 .Lctx_state: .asciz "CTX: STATE"
+.Lread_path: .asciz "MIDI LOAD: PATH"
+.Lread_lookup: .asciz "MIDI LOAD: LOOKUP"
+.Lread_guard: .asciz "MIDI LOAD: BUSY"
+.Lread_invalid: .asciz "MIDI LOAD: INVALID"
 .Lload_context: .asciz "MIDI LOAD: RAM"
 .Lload_identity: .asciz "MIDI LOAD: ID"
 .Lload_slot: .asciz "MIDI LOAD: SLOT"
