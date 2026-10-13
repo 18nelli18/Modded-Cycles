@@ -63,6 +63,14 @@ mlp_led:
     .endif
 .Lled_note:
     moveq #3,%d4
+    .ifdef ML_CC_SLIDES
+    btst #1,%a2@(3)
+    beq .Lled_write
+    jsr TG_slide_phase
+    tstl %d0
+    beq .Lled_write
+    moveq #1,%d4
+    .endif
 .Lled_write:
     pea 0x404a8cb8
     movel %d4,%sp@-

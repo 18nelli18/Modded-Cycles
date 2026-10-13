@@ -31,6 +31,7 @@ def main():
  if a.tweak:
   t=json.loads(pathlib.Path(a.tweak).read_text());syms={k:int(v,16) for k,v in t['symbols'].items()};r.s=syms
   for part in t['append']['parts']:r.u.mem_write(int(part['dest'],16),bytes.fromhex(part['hex']))
+  for w in t['writes']:r.u.mem_write(0x40000400+w['off'],bytes.fromhex(w['new']))
   defs={k:syms[k] for k in defs}
  r.w32(defs['ml_runtime'],0x9307b000)
  pat,event,clock=0x93070000,0x93074000,0x93076000

@@ -294,8 +294,14 @@ mlp_menu_key:
     andil #48,%d0
     addl %d2,%d0
     movel %d0,mlp_step
+    .ifdef ML_CC_SLIDES
+    movel TG_set_held,%d0
+    orl ml_genie_settings,%d0
+    bne .Lmk_slide
+    .else
     tstl TG_set_held
     bne .Lmk_slide
+    .endif
     moveq #6,%d2
     movel %d2,mlp_row
     clrl mlp_edit
@@ -375,6 +381,11 @@ mlp_menu_key:
     movel mlp_step,%d0
     lsll #2,%d0
     lea.l %a0@(8,%d0:l),%a0
+    .ifdef ML_CC_SLIDES
+    movel %a0,%sp@-
+    jsr mlkc_slide_toggle
+    addql #4,%sp
+    .else
     moveq #0,%d0
     moveb %a0@(3),%d0
     moveq #2,%d1
@@ -387,6 +398,7 @@ mlp_menu_key:
     movel ml_pattern,%sp@-
     jsr ml_edit
     lea.l %sp@(20),%sp
+    .endif
     moveq #1,%d0
     movel %d0,TG_mod_used
     movel mlp_changed,%d0

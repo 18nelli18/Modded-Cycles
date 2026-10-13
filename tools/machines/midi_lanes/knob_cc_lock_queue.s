@@ -115,10 +115,15 @@ mlkcq_take:
     .globl mlkcq_owner,mlkcq_taken
 mlkcq_owner: .long 0
 mlkcq_taken: .long 0
+    .globl mlkc_queue
+mlkc_queue:
 .Lqueue: .space 868
     .text
     .globl mlkcq_reset,mlkcq_ready,mlkcq_step,mlkcq_worker
 mlkcq_reset:
+    .ifdef ML_CC_SLIDES
+    jsr mlkc_slide_cancel
+    .endif
     movew %sr,%d0
     movel %d0,%sp@-
     movew #0x2700,%sr
@@ -239,6 +244,13 @@ mlkcq_step:
     subql #1,%d5
     bpl .Lqs_loop
 .Lqs_done:
+    .ifdef ML_CC_SLIDES
+    movel %sp@(40),%sp@-
+    movel %sp@(40),%sp@-
+    movel %sp@(40),%sp@-
+    jsr mlkc_slide_arm
+    lea %sp@(12),%sp
+    .endif
     moveml %sp@,%d2-%d5/%a2-%a4
     lea %sp@(28),%sp
     rts

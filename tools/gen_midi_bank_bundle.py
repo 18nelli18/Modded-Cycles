@@ -35,17 +35,48 @@ IDS=('6ch-usbup','model-tg-st','sample-preview-st','trig-hold','arp','tempo-max'
      'scale-gen-st-queued','lfo-secondary','scramble-st-gen-queued')
 
 
-def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False,knob_locks=False):
+
+def fragment_slide_source(body,tag):
+    """Placer le seul code slide dans les masques libres, branches absolues."""
+    inverse={'ne':'eq','eq':'ne','lt':'ge','gt':'le','le':'gt','ge':'lt','hi':'ls','ls':'hi','cc':'cs','cs':'cc','mi':'pl','pl':'mi'}
+    rows=[];part=0;count=0;serial=0;inside=False
+    for line in body.splitlines():
+        stripped=line.strip()
+        if stripped=='.text' or stripped.startswith('.section .text'):
+            inside=True;line='    .section .text.ms_'+tag+str(part)+',"ax"'
+        elif stripped.startswith(('.data','.section .data','.rodata','.section .rodata')):
+            inside=False
+        instruction=inside and stripped and not stripped.startswith(('|','.')) and not stripped.endswith(':')
+        if instruction and count>=20:
+            part+=1;label='MS_'+tag+'_part'+str(part)
+            rows+=['    jmp '+label,'    .section .text.ms_'+tag+str(part)+',"ax"',label+':'];count=0
+        m=re.match(r'^(\s*)b(ra|sr|eq|ne|hi|ls|cc|cs|pl|mi|ge|lt)(?:[ws])?\s+(\.L\w+)\s*(?:\|.*)?$',line)
+        if inside and m:
+            pad,kind,target=m.groups()
+            if kind in ('ra','sr'):line=pad+('jmp ' if kind=='ra' else 'jsr ')+target
+            else:
+                serial+=1;skip='.Lms_'+tag+'_far'+str(serial)
+                line=pad+'b'+inverse[kind]+'.s '+skip+'\n'+pad+'jmp '+target+'\n'+skip+':'
+        rows.append(line)
+        if instruction:count+=1
+    return '\n'.join(rows)+'\n'
+
+def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False,knob_locks=False,cc_slides=False):
     if working_storage and not audio_storage:
         raise ValueError('working_storage exige MBK3')
     with tempfile.TemporaryDirectory() as temp:
-        p=pathlib.Path(temp);objects=[]
-        for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (('storage_audio_lfo',) if audio_storage else ()) + (('storage_autosave',) if working_storage else ()) + (('live_record_mode','live_record') if live_record else ()) + (('knob_cc','knob_cc_ui','knob_cc_scroll','knob_cc_assignment','knob_cc_scramble') if knob_cc else ()) + (('knob_cc_locks','knob_cc_lock_patterns','knob_cc_lock_edit','knob_cc_lock_queue','knob_cc_lock_clip') if knob_locks else ()) + (REPEAT_SOURCES if repeat else ()) + (CONDITION_SOURCES if conditions else ()):
+        p=pathlib.Path(temp);objects=[];slide_objects=[]
+        for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (('storage_audio_lfo',) if audio_storage else ()) + (('storage_autosave',) if working_storage else ()) + (('live_record_mode','live_record') if live_record else ()) + (('knob_cc','knob_cc_ui','knob_cc_scroll','knob_cc_assignment','knob_cc_scramble') if knob_cc else ()) + (('knob_cc_locks','knob_cc_lock_patterns','knob_cc_lock_edit','knob_cc_lock_queue','knob_cc_lock_clip') if knob_locks else ()) + (REPEAT_SOURCES if repeat else ()) + (CONDITION_SOURCES if conditions else ()) + (('knob_cc_slide_plan','knob_cc_slide_value','knob_cc_slide_arm','knob_cc_slide_tick') if cc_slides else ()):
             if name == 'banks' and not pattern_banks:
                 continue
             if name == 'stock_display' and not stock_display:
                 continue
             obj=p/(name+'.o');objects.append(str(obj))
+            source_file=ROOT/'tools/machines/midi_lanes'/(name+'.s')
+            if cc_slides and name.startswith('knob_cc_slide_'):
+                asm=p/(name+'.s')
+                asm.write_text(fragment_slide_source(source_file.read_text(),name.rsplit('_',1)[-1]))
+                source_file=asm;slide_objects.append(obj)
             subprocess.run([cross+'as','-march=cfv4e','--defsym','ML_CLIPBOARD=1','--defsym','ML_WORKER=1','--defsym','ML_GENIE=1','--defsym','ML_MERGE=1',
                             *(['--defsym','ML_PATTERN_BANKS=1'] if pattern_banks else []),
                             *(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),
@@ -59,10 +90,11 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
                             *(['--defsym','ML_RESTORE_SAVED=1'] if restore_saved else []),
                             *(['--defsym','ML_KNOB_CC=1'] if knob_cc else []),
                             *(['--defsym','ML_KNOB_LOCKS=1'] if knob_locks else []),
+                            *(['--defsym','ML_CC_SLIDES=1'] if cc_slides else []),
                             *(['--defsym','ML_GENIE_CHANCE=1'] if genie_chance else []),
                             *(['--defsym','ML_REPEAT=1'] if repeat else []),
                             *(['--defsym','ML_CHANCE=1','--defsym','ML_CONDITIONS=1','--defsym','ML_CONDITION_COMPACT=1'] if conditions else []),
-                            '-o',str(obj),str(ROOT/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
+                            '-o',str(obj),str(source_file)],check=True)
         if lfo_cc:
             from gen_midi_lfo_cc_page import sources
             extras={"cc_"+k:v for k,v in sources().items()}
@@ -120,6 +152,9 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
         subprocess.run([cross+'as','-march=cfv4e','--defsym','ML_MERGE=1','-o',str(merge),str(asm)],check=True)
         listing=subprocess.check_output([cross+'objdump','-h',str(merge)],text=True)
         sections=[(m.group(1),int(m.group(2),16)) for m in re.finditer(r'^\s*\d+\s+(\.(?:text\.mm_part\d+|data\.mm_merge))\s+([0-9a-fA-F]+)',listing,re.M) if int(m.group(2),16)]
+        for slide_object in slide_objects:
+            listing=subprocess.check_output([cross+'objdump','-h',str(slide_object)],text=True)
+            sections += [(m.group(1),int(m.group(2),16)) for m in re.finditer(r'^\s*\d+\s+(\.text\.ms_[a-z]+\d+)\s+([0-9a-fA-F]+)',listing,re.M) if int(m.group(2),16)]
         available=list(merge_masks);placements=[]
         if lfo_cc:
             decoder=next(va for va in sorted(available) if sprites.MASKS[va][0]>=240)
@@ -178,7 +213,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
 TG_scale_state = {tg['scale_state']:#x}; TG_key_state = {tg['key_state']:#x};
 ML_original_key = {tg['key_hook']:#x};
 TG_set_held = {tg['set_held']:#x}; TG_mod_used = {tg['mod_used']:#x};
-TG_show_popup = {tg['show_popup']:#x};
+TG_show_popup = {tg['show_popup']:#x}; TG_slide_phase = {tg['sld_phase']:#x};
 TG_snap_note = {tg['snap_note']:#x}; TG_blk_clk = {tg['blk_clk']:#x};
 ml_key_next = {next_key:#x}; ML_BANK_START = {start:#x};
 ML_TG_START = {tg['blob_start']:#x}; ML_PAYLOAD_SRC = {source:#x};
@@ -213,7 +248,8 @@ SECTIONS {{
         return *blobs,fragments,symbols(cross,elf)
 
 
-def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False,knob_locks=False):
+def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False,knob_locks=False,cc_slides=False):
+    if cc_slides:assert knob_locks
     if knob_locks:assert knob_cc and storage and extended_storage
     if genie_chance:assert conditions
     if restore_saved:assert write_first
@@ -262,7 +298,7 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     needle=struct.pack('>I',loader)
     assert [build.BASE+i for i in range(0,len(stock)-3,2) if stock[i:i+4]==needle]==[ptr]
     merge_masks=[va for va in free if va!=loader]
-    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat,conditions,extended_storage,audio_storage,working_storage,live_record,write_first,genie_chance,restore_saved,knob_cc,knob_locks)
+    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat,conditions,extended_storage,audio_storage,working_storage,live_record,write_first,genie_chance,restore_saved,knob_cc,knob_locks,cc_slides)
     if lfo_cc:
         import aplib_grow
         if storage or repeat:

@@ -48,6 +48,9 @@ ml_audio_tick:
     pea %a2@(1584)
     jsr ml_clock
     lea.l %sp@(20),%sp
+    .ifdef ML_CC_SLIDES
+    jsr mlkc_slide_tick
+    .endif
     .ifdef ML_WORKER
     jsr ml_worker_kick
     .endif
