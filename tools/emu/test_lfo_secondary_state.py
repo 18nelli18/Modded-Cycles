@@ -201,6 +201,10 @@ def dispatch(rig):
             blob[track*66+22]=dest
             struct.pack_into('>H',blob,track*66+30,28000)
             struct.pack_into('>H',blob,track*66+36,16384)
+    if 'lf2n_sync' in rig.lf2_symbols:
+        # Les cinq réglages persistants viennent maintenant du miroir natif.
+        for track in range(6):
+            struct.pack_into('>5H',first,70+track*66,22000,9<<8,0,11<<8,28000)
     rig.w32(pointer,0)
     rig.uc.mem_write(LFO_PHASE,bytes(BANK_SIZE))
     rig.uc.mem_write(OBJ,bytes(first));rig.call(LFO,OBJ,14400,0)

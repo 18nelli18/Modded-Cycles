@@ -32,6 +32,11 @@ def load(r):
         assert r.r32(0x401016c8)==r.s['lf2_key']
         assert r.r32(0x401016e4)==r.s['lf2_key_sub']
         assert r.r32(r.s['lf2_open_callback'])==r.s['lf2_launch']
+        if 'lf2n_write' in r.s:
+            # Le pont son est éprouvé séparément dans test_lfo_secondary_native_save.
+            # Cette fixture UI ne construit pas les six objets son du projet.
+            at=r.s['lf2n_write'];r.stubs[at]=lambda args:0
+            r.u.hook_add(UC_HOOK_CODE,r.stub,begin=at,end=at)
         return
     root = pathlib.Path(__file__).resolve().parents[2]
     cross = str(root.parent/'toolchain/bin/m68k-elf-')

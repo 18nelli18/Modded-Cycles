@@ -43,6 +43,17 @@ lf2_edit:
 .Lenum:
     lsll #8,%d1
 .Lwrite:
+    .ifdef LF2_NATIVE_SOUND
+    movel %a0,%sp@-
+    movel %d1,%sp@-
+    movel %d1,%sp@-
+    movel %sp@(28),%sp@-
+    movel %sp@(28),%sp@-
+    jsr lf2n_write
+    lea.l %sp@(12),%sp
+    movel %sp@+,%d1
+    moveal %sp@+,%a0
+    .endif
     movew %d1,%a0@
     moveq #1,%d0
     bra .Ldone

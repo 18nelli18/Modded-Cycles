@@ -19,7 +19,11 @@ lf2_dispatch:
     lea.l %a2@(764),%a4
     moveal %d2,%a0
     moveal %a3,%a1
+    .ifdef LF2_NATIVE_SOUND
+    jsr lf2n_copy_frame
+    .else
     bsr lf2_copy_frame
+    .endif
 .Lnative:
     movel %d4,%sp@-
     movel %d3,%sp@-
@@ -63,6 +67,7 @@ lf2_dispatch:
     movem.l %sp@,%d2-%d4/%a2-%a5
     lea.l %sp@(28),%sp
     rts
+    .globl lf2_copy_frame
 lf2_copy_frame:
     movel #118,%d0
 .Lcopy_frame:

@@ -3,7 +3,8 @@
 
 --cycles OS1.13.syx [--cross m68k-elf-] [--check]. Réserve des masques
 sans écriture d'aucun tweak principal, y compris Model-TG et ses variantes.
-Les réglages restent en RAM ; ni carte flasher ni statut matériel créés ici.
+Sans --native-sound, réglages en RAM. Option native : cinq réglages sauvés avec le son,
+les trois autres aux défauts au chargement ; candidat expérimental.
 """
 import argparse
 import hashlib
@@ -21,11 +22,11 @@ ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'tweaks/model-cycles_OS1.13/52-lfo-secondary.json'
 
 
-def compile_code(cross,reserved_masks=(),preserve_main_abi=False):
+def compile_code(cross,reserved_masks=(),preserve_main_abi=False,native_sound=False):
     occupied=[]
     for path in sorted((ROOT/'tweaks/model-cycles_OS1.13').glob('*.json')):
         tweak=json.loads(path.read_text())
-        if tweak.get('id')=='lfo-secondary':continue
+        if tweak.get('id')=='lfo-secondary' or (native_sound and tweak.get('id') in ('lfo-plus','track-filter')):continue
         occupied.extend((build.BASE+w['off'],build.BASE+w['off']+len(bytes.fromhex(w['new']))) for w in tweak.get('writes',[]))
     free=[(va,row) for va,row in sprites.MASKS.items() if len(row)==4 and va not in reserved_masks and not any(va<hi and lo<va+row[0] for lo,hi in occupied)]
     inverse={'ne':'eq','eq':'ne','lt':'ge','ge':'lt','gt':'le','le':'gt','hi':'ls','ls':'hi','mi':'pl','pl':'mi','cs':'cc','cc':'cs'}
@@ -58,7 +59,7 @@ def compile_code(cross,reserved_masks=(),preserve_main_abi=False):
             body='\n'.join(lines)+'\n'
             assembled=p/(source.stem+'.s');assembled.write_text(body)
             obj=p/(source.stem+'.o');objects.append(str(obj))
-            subprocess.run([cross+'as','-march=cfv4e','--defsym','LF2_INTEGRATED=1','-o',str(obj),str(assembled)],check=True)
+            subprocess.run([cross+'as','-march=cfv4e','--defsym','LF2_INTEGRATED=1',*(['--defsym','LF2_NATIVE_SOUND=1'] if native_sound else []),'-o',str(obj),str(assembled)],check=True)
             for line in subprocess.check_output([cross+'objdump','-h',str(obj)],text=True).splitlines():
                 cols=line.split()
                 if len(cols)>3 and cols[0].isdigit() and int(cols[2],16):
@@ -107,9 +108,9 @@ def compile_code(cross,reserved_masks=(),preserve_main_abi=False):
 
 
 
-def generate(stock,cross,reserved_masks=(),preserve_main_abi=False):
+def generate(stock,cross,reserved_masks=(),preserve_main_abi=False,native_sound=False):
     assert hashlib.sha256(stock).hexdigest()==STOCK,'OS non officiel'
-    slots,blobs,syms=compile_code(cross,reserved_masks,preserve_main_abi);writes=[]
+    slots,blobs,syms=compile_code(cross,reserved_masks,preserve_main_abi,native_sound);writes=[]
     def raw(va,size):return stock[va-build.BASE:va-build.BASE+size]
     def write(va,new):writes.append(dict(off=va-build.BASE,old=raw(va,len(new)).hex(),new=new.hex()))
     for (va,row,section),blob in zip(slots,blobs):
@@ -123,16 +124,24 @@ def generate(stock,cross,reserved_masks=(),preserve_main_abi=False):
         write(va,struct.pack('>I',syms[target]))
     assert raw(0x400597c6,6)==bytes.fromhex('4eb940091ab2')
     write(0x400597c6,b'\x4e\xb9'+struct.pack('>I',syms['lf2_dispatch']))
+    if native_sound:
+        for va,old,target in ((0x4005b028,'356b005e005c','lf2n_pack'),(0x4005b0dc,'356b005e005c','lf2n_pack'),(0x4005af1c,'41f94010eea8','lf2n_unpack'),(0x400618e2,'e18b35430026','lf2n_init')):
+            assert raw(va,6)==bytes.fromhex(old)
+            write(va,b'\x4e\xb9'+struct.pack('>I',syms[target]))
     tweak=dict(id='lfo-secondary',order=52,name='Second LFO',
         description=['Deuxième appui LFO : page secondaire, six états indépendants.',
             'Testé sur machine par AveyCole le 11/10/2026 ; réglages RAM uniquement.',
             'Sources et preuve : tools/gen_lfo_secondary.py, notes/58 ; page adaptée de Model-TG (MIT).'],
-        device='Model:Cycles',os='1.13',section=3,requires=[],conflicts=[],writes=writes,
+        device='Model:Cycles',os='1.13',section=3,requires=[],conflicts=['lfo-plus','track-filter'] if native_sound else [],writes=writes,
         symbols={name:hex(value) for name,value in syms.items() if name.startswith('lf2')})
+    if native_sound:
+        tweak['description']=['Sauvegarde native expérimentale de cinq réglages du LFO 2 audio.',
+            'Fade, phase initiale et mode remis aux défauts au chargement.',
+            'Format basé sur 18nelli18 (MIT), idée de DavidCaruso.']
     build.apply_writes(stock,[tweak])
     for path in (ROOT/'tweaks/model-cycles_OS1.13').glob('*.json'):
         other=json.loads(path.read_text())
-        if other.get('id')=='lfo-secondary' or 'lfo-secondary' in other.get('conflicts',[]):continue
+        if other.get('id')=='lfo-secondary' or other.get('id') in tweak['conflicts'] or 'lfo-secondary' in other.get('conflicts',[]):continue
         for ours in writes:
             low=ours['off'];high=low+len(bytes.fromhex(ours['new']))
             for theirs in other.get('writes',[]):
@@ -143,8 +152,8 @@ def generate(stock,cross,reserved_masks=(),preserve_main_abi=False):
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
-    ap.add_argument('--preserve-main-abi',action='store_true');ap.add_argument('--reserve-mask',action='append',type=lambda x:int(x,0),default=[]);ap.add_argument('--cycles',required=True);ap.add_argument('--output',default=str(OUT));ap.add_argument('--cross',default='m68k-elf-');ap.add_argument('--check',action='store_true')
-    args=ap.parse_args();tweak=generate(main_os_from_syx(args.cycles),args.cross,args.reserve_mask,args.preserve_main_abi)
+    ap.add_argument('--native-sound',action='store_true');ap.add_argument('--preserve-main-abi',action='store_true');ap.add_argument('--reserve-mask',action='append',type=lambda x:int(x,0),default=[]);ap.add_argument('--cycles',required=True);ap.add_argument('--output',default=str(OUT));ap.add_argument('--cross',default='m68k-elf-');ap.add_argument('--check',action='store_true')
+    args=ap.parse_args();tweak=generate(main_os_from_syx(args.cycles),args.cross,args.reserve_mask,args.preserve_main_abi,args.native_sound)
     text=json.dumps(tweak,ensure_ascii=False,indent=1)+'\n'
     output=pathlib.Path(args.output)
     if args.check:assert output.read_text()==text,output
