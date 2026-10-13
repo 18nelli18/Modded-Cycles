@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.64",
+  "date": "2026-10-13",
+  "changes": [
+    {
+      "en": "B-side CC slides are hardware tested and included in the main flasher. Hold SETTINGS and press the destination TRIG to toggle Slide on/off, with the Model-TG popup and double-blink. CC values glide into that step following tempo and lane speed.",
+      "fr": "Slides CC B testés sur matériel et inclus dans le flasher principal. SETTINGS + TRIG cible bascule Slide on/off, avec popup et double clignotement Model-TG. Les CC glissent vers ce pas au tempo et à la vitesse de la voie."
+    },
+    {
+      "en": "All existing mods and the Supermodel layout are retained. CC assignments and CC locks remain RAM-only; MIDI note and LFO project saving is unchanged.",
+      "fr": "Mods existants et présentation Supermodel conservés. Assignations et locks CC restent en RAM ; sauvegarde projet des notes MIDI et LFO inchangée."
+    }
+  ]
+},
+{
   "version": "1.63",
   "date": "2026-10-13",
   "changes": [
