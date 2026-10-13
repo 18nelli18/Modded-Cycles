@@ -27,6 +27,11 @@ ml_store_save_feedback:
     bra .Lfeedback_show
 ml_store_load_feedback:
     lea .Lload_failed,%a0
+    movel ml_store_load_error,%d0
+    cmpil #6,%d0
+    bhi .Lfeedback_show
+    lea .Lload_errors,%a1
+    moveal %a1@(0,%d0:l:4),%a0
 .Lfeedback_show:
     movel %a0,%sp@-
     jsr TG_show_popup
@@ -36,11 +41,20 @@ ml_store_load_feedback:
 .Lsave_failed: .asciz "MIDI SAVE ERR"
 .Lload_failed: .asciz "MIDI LOAD ERR"
     .balign 4
+.Lload_errors:
+    .long .Lload_failed,.Lload_context,.Lload_identity,.Lload_slot
+    .long .Lload_table,.Lload_record,.Lload_publish
 .Lerrors:
     .long .Lsave_failed,.Lirq,.Lbusy,.Lcontext,.Lowner,.Lsync
     .long .Lbank,.Lslot,.Lpath,.Lroot,.Ldir,.Lsnapshot
     .long .Lcommit,.Linitial,.Ldata,.Lopen,.Lallocate,.Lwrite,.Lflush,.Lclose
     .long .Lbuffers,.Llookup_a,.Llookup_b,.Lguard
+.Lload_context: .asciz "MIDI LOAD: RAM"
+.Lload_identity: .asciz "MIDI LOAD: ID"
+.Lload_slot: .asciz "MIDI LOAD: SLOT"
+.Lload_table: .asciz "MIDI LOAD: TABLE"
+.Lload_record: .asciz "MIDI LOAD: READ"
+.Lload_publish: .asciz "MIDI LOAD: APPLY"
 .Ldisk: .asciz "MIDI: DISK"
 .Lbuffers: .asciz "MIDI: BUFFERS"
 .Llookup_a: .asciz "MIDI: LOOKUP A"

@@ -314,6 +314,14 @@ def main():
  r.w32(syms['ml_store_io_busy'],1);count=r.new_count
  r.call('ml_store_service');assert r.new_count==count
  r.w32(syms['ml_store_io_busy'],0)
+ # Contexte absent + allocation temporairement impossible : conserver le Load
+ # en attente, puis reprendre sans nouvelle notification native.
+ r.w32(syms['ml_store_project_ctx'],0);r.fail_new=r.new_count+1
+ r.call('ml_store_service')
+ assert r.r32(syms['ml_store_project_ctx'])==0
+ assert r.r32(syms['ml_store_load_active'])==0
+ assert r.r32(syms['ml_store_load_error'])==1
+ r.fail_new=0
  r.call('ml_store_service');r.call('ml_store_service')
  assert r.r32(syms['ml_store_load_active'])==1 and r.r32(syms['ml_bank_table'])==embedded
  before=dict(files);assert native_save()==1 and files==before and r.r32(syms['ml_store_save_status'])==0

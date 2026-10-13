@@ -7,6 +7,8 @@
     .globl ml_store_load_active,ml_store_load_status
 ml_store_load_active: .long 0
 ml_store_load_status: .long 0
+    .globl ml_store_load_error
+ml_store_load_error: .long 0
 .Lseen: .long 0
 .Lserial: .long 0
 .Lid: .long 0
@@ -35,12 +37,18 @@ ml_store_service:
     beq .Lservice_current
     jsr .Lservice_discard
 .Lservice_start:
+    moveq #1,%d0
+    movel %d0,ml_store_load_error
     jsr ml_store_prepare
     tstl %d0
-    beq .Lservice_abort
+    beq .Lservice_out
+    moveq #2,%d0
+    movel %d0,ml_store_load_error
     movel ml_store_load_pending_id,%d0
     beq .Lservice_abort
     movel %d0,.Lid
+    moveq #3,%d0
+    movel %d0,ml_store_load_error
     movel ml_store_load_pending_slot,%sp@-
     movel .Lid,%sp@-
     jsr ml_store_resolve_slot
@@ -61,6 +69,8 @@ ml_store_service:
     jsr .Lservice_matches
     tstl %d0
     beq .Lservice_out
+    moveq #4,%d0
+    movel %d0,ml_store_load_error
     pea 384
     jsr 0x400802e0
     addql #4,%sp
@@ -81,6 +91,8 @@ ml_store_service:
     jsr .Lservice_matches
     tstl %d0
     beq .Lservice_abort
+    moveq #5,%d0
+    movel %d0,ml_store_load_error
     movel .Lcursor,%sp@-
     movel .Ltable,%sp@-
     movel .Lslot,%sp@-
@@ -95,6 +107,8 @@ ml_store_service:
     addql #1,.Lcursor
     bra .Lservice_out
 .Lservice_publish:
+    moveq #6,%d0
+    movel %d0,ml_store_load_error
     jsr ml_store_ui_cancel
     movel .Lserial,%sp@-
     movel .Lid,%sp@-
@@ -116,6 +130,7 @@ ml_store_service:
     .endif
     moveq #1,%d0
     movel %d0,ml_store_load_status
+    clrl ml_store_load_error
     bra .Lservice_out
 .Lservice_abort:
     jsr .Lservice_discard
