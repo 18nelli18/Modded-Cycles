@@ -21,13 +21,13 @@ ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'tweaks/model-cycles_OS1.13/52-lfo-secondary.json'
 
 
-def compile_code(cross):
+def compile_code(cross,reserved_masks=()):
     occupied=[]
     for path in sorted((ROOT/'tweaks/model-cycles_OS1.13').glob('*.json')):
         tweak=json.loads(path.read_text())
         if tweak.get('id')=='lfo-secondary':continue
         occupied.extend((build.BASE+w['off'],build.BASE+w['off']+len(bytes.fromhex(w['new']))) for w in tweak.get('writes',[]))
-    free=[(va,row) for va,row in sprites.MASKS.items() if len(row)==4 and not any(va<hi and lo<va+row[0] for lo,hi in occupied)]
+    free=[(va,row) for va,row in sprites.MASKS.items() if len(row)==4 and va not in reserved_masks and not any(va<hi and lo<va+row[0] for lo,hi in occupied)]
     inverse={'ne':'eq','eq':'ne','lt':'ge','ge':'lt','gt':'le','le':'gt','hi':'ls','ls':'hi','mi':'pl','pl':'mi','cs':'cc','cc':'cs'}
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[];sections=[]
@@ -64,31 +64,41 @@ def compile_code(cross):
                 if len(cols)>3 and cols[0].isdigit() and int(cols[2],16):
                     assert cols[1].startswith(('.text.lf2','.data.lf2','.rodata.lf2')),cols
                     sections.append((cols[1],int(cols[2],16)))
-        slots=[]
+        # Partager les queues des masques ; alignement4 pour code et données.
+        spans=[(va,va,row[0],row) for va,row in free]
+        placed=[]
         for section,size in sorted(sections,key=lambda item:(-item[1],item[0])):
-            fits=[(row[0]-size,va,row) for va,row in free if row[0]>=size]
+            fits=[span for span in spans if span[2]>=size]
             assert fits,('aucun masque disponible',section,size)
-            _,va,row=min(fits);slots.append((va,row,section))
-            free=[(v,r) for v,r in free if v!=va]
+            base,at,capacity,row=min(fits,key=lambda span:(span[2],span[1]))
+            spans.remove((base,at,capacity,row))
+            placed.append((base,at,capacity,row,section))
+            used=(size+3)&~3
+            if capacity>used:spans.append((base,at+used,capacity-used,row))
         script='SECTIONS {\n'
-        for index,(va,row,section) in enumerate(slots):
-            script+=f'.slot{index} {va:#x} : {{ *({section}) }}\nASSERT(SIZEOF(.slot{index}) <= {row[0]}, "masque plein")\n'
+        for index,(base,at,capacity,row,section) in enumerate(placed):
+            script+=f'.slot{index} {at:#x} : {{ *({section}) }}\nASSERT(SIZEOF(.slot{index}) <= {capacity}, "masque plein")\n'
         script+=' .unused : { *(.text) *(.data) *(.bss) }\nASSERT(SIZEOF(.unused) == 0, "section non placee")\n}\n'
         (p/'link.ld').write_text(script)
         elf=p/'lfo.elf'
         subprocess.run([cross+'ld','--orphan-handling=error','-T',str(p/'link.ld'),'-e','lf2_launch','-o',str(elf),*objects],check=True)
         disasm=subprocess.check_output([cross+'objdump','-d',str(elf)],text=True)
         assert not re.search(r'%[da][0-7]:[wl]:8|%[da][0-7]:w',disasm),'index interdit ColdFire'
-        blobs=[]
-        for index in range(len(slots)):
+        grouped={}
+        for index,(base,at,capacity,row,section) in enumerate(placed):
             subprocess.run([cross+'objcopy','-O','binary',f'--only-section=.slot{index}',str(elf),str(p/'slot.bin')],check=True)
-            blobs.append((p/'slot.bin').read_bytes())
+            body=(p/'slot.bin').read_bytes()
+            if base not in grouped:grouped[base]=(row,bytearray(row[0]))
+            grouped[base][1][at-base:at-base+len(body)]=body
+        slots=[(base,row,'packed') for base,(row,body) in sorted(grouped.items())]
+        blobs=[bytes(body) for base,(row,body) in sorted(grouped.items())]
         return slots,blobs,symbols(cross,elf)
 
 
-def generate(stock,cross):
+
+def generate(stock,cross,reserved_masks=()):
     assert hashlib.sha256(stock).hexdigest()==STOCK,'OS non officiel'
-    slots,blobs,syms=compile_code(cross);writes=[]
+    slots,blobs,syms=compile_code(cross,reserved_masks);writes=[]
     def raw(va,size):return stock[va-build.BASE:va-build.BASE+size]
     def write(va,new):writes.append(dict(off=va-build.BASE,old=raw(va,len(new)).hex(),new=new.hex()))
     for (va,row,section),blob in zip(slots,blobs):
@@ -111,7 +121,7 @@ def generate(stock,cross):
     build.apply_writes(stock,[tweak])
     for path in (ROOT/'tweaks/model-cycles_OS1.13').glob('*.json'):
         other=json.loads(path.read_text())
-        if other.get('id')=='lfo-secondary':continue
+        if other.get('id')=='lfo-secondary' or 'lfo-secondary' in other.get('conflicts',[]):continue
         for ours in writes:
             low=ours['off'];high=low+len(bytes.fromhex(ours['new']))
             for theirs in other.get('writes',[]):
@@ -122,11 +132,12 @@ def generate(stock,cross):
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
-    ap.add_argument('--cycles',required=True);ap.add_argument('--cross',default='m68k-elf-');ap.add_argument('--check',action='store_true')
-    args=ap.parse_args();tweak=generate(main_os_from_syx(args.cycles),args.cross)
+    ap.add_argument('--reserve-mask',action='append',type=lambda x:int(x,0),default=[]);ap.add_argument('--cycles',required=True);ap.add_argument('--output',default=str(OUT));ap.add_argument('--cross',default='m68k-elf-');ap.add_argument('--check',action='store_true')
+    args=ap.parse_args();tweak=generate(main_os_from_syx(args.cycles),args.cross,args.reserve_mask)
     text=json.dumps(tweak,ensure_ascii=False,indent=1)+'\n'
-    if args.check:assert OUT.read_text()==text,OUT
-    else:OUT.parent.mkdir(parents=True,exist_ok=True);OUT.write_text(text)
+    output=pathlib.Path(args.output)
+    if args.check:assert output.read_text()==text,output
+    else:output.parent.mkdir(parents=True,exist_ok=True);output.write_text(text)
     print('ok : LFO 2 placé sans chevauchement des mods principaux,',len(tweak['writes']),'écritures')
 
 

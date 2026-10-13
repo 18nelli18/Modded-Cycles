@@ -6,6 +6,7 @@ Les caches sont observés par modèle, Unicorn n'émule pas leur cohérence.
 Pas encore de preuve du scheduler complet ou de persistance sur disque.
 """
 import argparse
+import json
 import pathlib
 import struct
 from unicorn import UC_HOOK_CODE,UC_HOOK_MEM_WRITE,UC_HOOK_BLOCK,m68k_const as mk
@@ -21,6 +22,7 @@ def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--cycles',required=True);ap.add_argument('--syntakt',required=True)
     ap.add_argument('--model-tg',required=True);ap.add_argument('--cross',default='m68k-elf-')
+    ap.add_argument('--lfo-recipe',help='Recette secondaire expérimentale à valider avec le bundle')
     ap.add_argument('--pattern-banks',action='store_true')
     ap.add_argument('--stock-display',action='store_true')
     ap.add_argument('--stereo-usb',action='store_true')
@@ -41,9 +43,11 @@ def main():
         original=gen.build.load_catalog
         def dense_catalog():
             cat=original()
+            if args.lfo_recipe:cat['model-cycles_OS1.13'][1]['lfo-secondary']=json.loads(pathlib.Path(args.lfo_recipe).read_text())
             cat['model-cycles_OS1.13'][1]['syntakt-tg-sd-cp-toy-bits-swarm-macro-acid']['append']['compress_depth']=32
             return cat
         gen.build.load_catalog=dense_catalog
+    if args.lfo_recipe:assert args.extended_storage
     stock=gen.main_os_from_syx(args.cycles)
     tweak,chosen,image=gen.generate(stock,args.syntakt,args.model_tg,args.cross,args.pattern_banks,args.stock_display,not args.stereo_usb,args.cache_blocks,args.lfo_cc,args.storage,args.retrigger,args.conditions,args.extended_storage,args.audio_storage,args.working_storage,args.live_record)
     if args.storage or args.retrigger:

@@ -15,12 +15,15 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
  Object.defineProperty(w,'isSecureContext',{value:true});
  for(const f of ['builder.js','tweaks.js','flasher.js','app.js','bundle.js'])w.eval(fs.readFileSync(path.join(page,f),'utf8'));
  await wait(30);const app=w.MCFlasherApp;
- assert(['2026-10-12-test-3-pattern-saving-both-engines','2026-10-12-test-3-a-b-lfo-saving','2026-10-12-test-3-working-autosave','2026-10-12-test-3-b-live-record','2026-10-12-test-3-tg-save-diagnostics','2026-10-12-test-3-tg-save-details','2026-10-12-test-3-load-context-retry','2026-10-12-test-3-context-path'].includes(w.MC_BUILD));
+ assert(['2026-10-12-test-3-pattern-saving-both-engines','2026-10-12-test-3-a-b-lfo-saving','2026-10-12-test-3-working-autosave','2026-10-12-test-3-b-live-record','2026-10-12-test-3-tg-save-diagnostics','2026-10-12-test-3-tg-save-details','2026-10-12-test-3-load-context-retry','2026-10-12-test-3-context-path','2026-10-12-test-3-lfo2-quick-assign'].includes(w.MC_BUILD));
  if(w.MC_BUILD.includes('a-b-lfo')){app.applyLang('en');assert(d.getElementById('mod-midi-bank-bundle').textContent.includes('Audio-side LFO2 settings are also stored per pattern'));}
  assert(html.includes('builder.js?v='+w.MC_BUILD)&&html.includes('bundle.js?v='+w.MC_BUILD));
  assert.strictEqual(app.chosenTweaks().length,0);
  const change=(id,checked)=>{const box=d.getElementById('feat-'+id);assert(box,id);box.checked=checked;box.dispatchEvent(new w.Event('change',{bubbles:true}));};
+ const lfoBefore=w.MC_TWEAKS.tweaks.find(t=>t.id==='lfo-secondary');
+ const oldLfoWrites=JSON.stringify(lfoBefore.writes),oldLfoHash=app.REF_MODS['lfo-secondary'].w;
  change('midi-bank-bundle',true);
+ if(w.MC_BUILD.includes('quick-assign')){assert(lfoBefore.symbols.lf2p_quick_assign);assert.notStrictEqual(JSON.stringify(lfoBefore.writes),oldLfoWrites);assert.notStrictEqual(app.REF_MODS['lfo-secondary'].w,oldLfoHash);}
  assert.deepStrictEqual(Array.from(app.chosenTweaks(),t=>t.id),Array.from(w.MC_BUNDLE_IDS));
  assert(!app.chosenTweaks().some(t=>t.id==='midi-both'));
  assert(d.getElementById('feat-macro').checked);
@@ -62,6 +65,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
  assert.strictEqual(errors.length,0,errors.join('\n'));
  console.log('ok : transfert UI intégral '+device.blocks+' blocs, CRC/positions/conteneur identiques ; mode classique disponible');
  change('midi-bank-bundle',false);await ready();
+ assert.strictEqual(JSON.stringify(lfoBefore.writes),oldLfoWrites);assert.strictEqual(app.REF_MODS['lfo-secondary'].w,oldLfoHash);
  assert(!app.state.fwError,app.state.fwError);assert(app.state.fw.modsRef);
  const engine=w.MC_TWEAKS.tweaks.find(t=>t.id==='syntakt-tg-sd-cp-toy-bits-swarm-macro-acid');
  assert.strictEqual(engine.append.compress_depth,undefined);

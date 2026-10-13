@@ -41,6 +41,7 @@ FR=('Sauvegarde expérimentale des patterns B. MACRO exclu ; ACID et Model-TG co
 def main():
  ap=argparse.ArgumentParser(description=__doc__)
  for name in ('base-page','output-dir','cycles','syntakt','model-tg'):ap.add_argument('--'+name,required=True)
+ ap.add_argument('--lfo-quick-assign',help='Recette LFO2 expérimentale utilisée avec le bundle MIDI uniquement')
  ap.add_argument('--diagnostics',action='store_true');ap.add_argument('--live-record',action='store_true');ap.add_argument('--audio-lfo',action='store_true');ap.add_argument('--working',action='store_true');ap.add_argument('--engines',choices=('both','acid','macro'),default='both');ap.add_argument('--cross',default='m68k-elf-');a=ap.parse_args();base=pathlib.Path(a.base_page);out=pathlib.Path(a.output_dir)
  if a.engines!='both':
   bank.IDS=tuple(x.replace('syntakt-tg-sd-cp-toy-bits-swarm-macro-acid','syntakt-tg-sd-cp-toy-bits-swarm-'+a.engines) for x in bank.IDS)
@@ -48,9 +49,12 @@ def main():
  en=EN.replace('MACRO is excluded; ACID and Model-TG remain included.', 'ACID, MACRO and Model-TG remain included.' if not excluded else 'Choose ACID or MACRO when space requires it; this candidate includes '+a.engines.upper()+' and Model-TG.')
  fr=FR.replace('MACRO exclu ; ACID et Model-TG conservés.', 'ACID, MACRO et Model-TG conservés.' if not excluded else 'Choix ACID ou MACRO selon place disponible ; candidat '+a.engines.upper()+' avec Model-TG.')
  # Compression sans octets firmware embarqués ; reconstruite depuis l'OS fourni.
+ quick=json.loads(pathlib.Path(a.lfo_quick_assign).read_text()) if a.lfo_quick_assign else None
+ if quick:assert quick['id']=='lfo-secondary'
  original_catalog=build.load_catalog
  def saving_catalog():
   catalog=original_catalog()
+  if quick:catalog['model-cycles_OS1.13'][1]['lfo-secondary']=quick
   for tweak in catalog['model-cycles_OS1.13'][1].values():
    if tweak['id'].startswith('syntakt-tg-sd-cp-toy-bits-swarm'):
     tweak['append']['compress_depth']=32
@@ -75,6 +79,10 @@ def main():
   STAMP='2026-10-12-test-3-context-path'
   en+=' Save diagnostics: full-record read-back verification corrected. A failing save now reports its stage (IRQ, LOADING, CONTEXT, BANK, SLOT, OWNER, SYNC, PATH, ROOT, DIR, SNAP, COMMIT, CREATE, BUFFERS, LOOKUP A/B, GUARD, DATA, OPEN, ALLOC, WRITE, FLUSH, CLOSE or DISK). Hardware persistence is not confirmed. Includes Model-TG and the existing mod selections; standalone core is not used. Context diagnostics now distinguish missing Load notification, missing UI service, UI interrupt mask, busy I/O and allocation failure. LFO2 quick assign is pending combined integration.'
   fr+=' Diagnostic Save : comparaison intégrale corrigée, erreur par étape. Persistance matérielle non confirmée. Model-TG et sélections existantes conservés ; noyau autonome absent. Quick assign LFO2 à intégrer.'
+ if quick:
+  STAMP='2026-10-12-test-3-lfo2-quick-assign'
+  en+=' LFO2 quick assign test: on the second LFO page, hold LFO and turn a parameter knob. The first turn selects a different destination; further turns adjust signed depth. Release LFO to stay on the page. This test is active with the MIDI OUT Bank — Pattern Saving Test bundle. Saving remains diagnostic; CTX: NO LOAD was reported on hardware.'
+  fr+=' Test quick assign LFO2 : sur la deuxième page, maintenez LFO et tournez un potard. Premier mouvement sélectionne la destination ; suivants règlent la profondeur signée. Relâcher conserve la page. Actif avec le bundle MIDI de sauvegarde expérimentale. Sauvegarde encore diagnostique.'
  stock=bank.main_os_from_syx(a.cycles)
  tweak,chosen,image=bank.generate(stock,a.syntakt,a.model_tg,a.cross,True,True,True,8,True,True,True,True,True,a.audio_lfo,a.working,a.live_record)
  tweak['requires']=[x for x in tweak['requires'] if x!='6ch-usbup'];tweak['status']='experimental'
@@ -92,6 +100,9 @@ def main():
  start=bundle.index('const bankFeature = ')+len('const bankFeature = ');feature,_=json.JSONDecoder().raw_decode(bundle[start:]);feature.update(status='experimental',excludes=excluded,desc=fr)
  bundle=replace_json(bundle,'const bankFeature = ',feature)
  bundle=replace_json(bundle,'Object.assign(window.MCFlasherApp.REF_MODS, ',{tweak['id']:mod,engine['id']:engine_ref});bundle=replace_json(bundle,'Object.assign(window.MCFlasherApp.REF_MAINOS, ',refs)
+ if quick:
+  quick_hash=hashlib.sha256(ref_mainos.writes_bytes(quick)).hexdigest()
+  bundle+='\n{ const lfo=window.MC_TWEAKS.tweaks.find(t=>t.id==="lfo-secondary"), ref=window.MCFlasherApp.REF_MODS[lfo.id]; const oldWrites=lfo.writes, oldSymbols=lfo.symbols, oldHash=ref.w, candidate='+json.dumps(quick,ensure_ascii=False)+'; const enabled=()=>!!document.getElementById("feat-midi-bank-bundle")?.checked; Object.defineProperty(lfo,"writes",{get:()=>enabled()?candidate.writes:oldWrites}); Object.defineProperty(lfo,"symbols",{get:()=>enabled()?candidate.symbols:oldSymbols}); Object.defineProperty(ref,"w",{get:()=>enabled()?'+json.dumps(quick_hash)+':oldHash}); }\n'
  page=(base/'index.html').read_text();page=re.sub(r'window.MC_BUILD\s*=\s*[^;]+;','window.MC_BUILD = '+json.dumps(STAMP)+';',page);page=re.sub(r'\?v=[^"\s<]+','?v='+STAMP,page)
  out.mkdir(parents=True,exist_ok=True)
  for name in ('builder.js','app.js','tweaks.js','flasher.js','style.css'):shutil.copyfile(base/name,out/name)
@@ -100,5 +111,6 @@ def main():
  (out/'ABOUT.md').write_text('# '+STAMP+'\n\n'+en+'\n\n'+fr+'\n')
  guide=(base/'guide.html').read_text();guide=re.sub(r'<section id="midi-retrigger-test">.*?</section>','',guide,flags=re.S);guide=guide.replace('</main>','<section id="midi-pattern-saving"><h2>Pattern Saving Test</h2><p data-l="en">'+html.escape(en)+'</p><p data-l="fr">'+html.escape(fr)+'</p></section>\n</main>');(out/'guide.html').write_text(guide)
  (out/'source').mkdir(exist_ok=True);(out/'source/midi-storage.json').write_text(json.dumps(tweak,indent=1,ensure_ascii=False)+'\n')
+ if quick:(out/'source/lfo-quick-assign.json').write_text(json.dumps(quick,ensure_ascii=False,indent=1)+'\n')
  print('ok : candidat MBK2, moteurs '+a.engines+', marge',build.END_LIMIT-build.BASE-len(image));print(refs)
 if __name__=='__main__':main()

@@ -256,6 +256,7 @@ lf2p_enc:
     movel %a0@(0,%d2:l:4),%d2
     movel %d2,lf2p_row
     bra .Lpe_redraw
+    .section .text.lf2p_enc_selection,"ax"
 .Lpe_value:
     tstl %d2
     bne .Lpe_field
