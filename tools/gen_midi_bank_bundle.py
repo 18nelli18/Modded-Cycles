@@ -61,12 +61,14 @@ def fragment_slide_source(body,tag):
         if instruction:count+=1
     return '\n'.join(rows)+'\n'
 
-def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False,knob_locks=False,cc_slides=False,lfo_confirm=False):
+def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False,knob_locks=False,cc_storage=False,cc_slides=False,lfo_confirm=False,cost_compression=False):
+    if cc_storage and not (knob_locks and storage and extended_storage):
+        raise ValueError('cc_storage exige locks CC et stockage MIDI étendu')
     if working_storage and not audio_storage:
         raise ValueError('working_storage exige MBK3')
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[];slide_objects=[]
-        for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (('storage_audio_lfo',) if audio_storage else ()) + (('storage_autosave',) if working_storage else ()) + (('live_record_mode','live_record') if live_record else ()) + (('knob_cc','knob_cc_ui','knob_cc_scroll','knob_cc_assignment','knob_cc_scramble') if knob_cc else ()) + (('knob_cc_locks','knob_cc_lock_patterns','knob_cc_lock_edit','knob_cc_lock_queue','knob_cc_lock_clip') if knob_locks else ()) + (REPEAT_SOURCES if repeat else ()) + (CONDITION_SOURCES if conditions else ()) + (('knob_cc_slide_plan','knob_cc_slide_value','knob_cc_slide_arm','knob_cc_slide_tick') if cc_slides else ()):
+        for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (('storage_audio_lfo',) if audio_storage else ()) + (('storage_autosave',) if working_storage else ()) + (('live_record_mode','live_record') if live_record else ()) + (('knob_cc','knob_cc_ui','knob_cc_scroll','knob_cc_assignment','knob_cc_scramble') if knob_cc else ()) + (('knob_cc_locks','knob_cc_lock_patterns','knob_cc_lock_edit','knob_cc_lock_queue','knob_cc_lock_clip') if knob_locks else ()) + (REPEAT_SOURCES if repeat else ()) + (CONDITION_SOURCES if conditions else ()) + (('knob_cc_slide_plan','knob_cc_slide_value','knob_cc_slide_arm','knob_cc_slide_tick') if cc_slides else ()) + (tuple('knob_cc_storage_'+n for n in ('codec','verify','path','journal','prepare','project','restore')) if cc_storage else ()):
             if name == 'banks' and not pattern_banks:
                 continue
             if name == 'stock_display' and not stock_display:
@@ -90,6 +92,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
                             *(['--defsym','ML_RESTORE_SAVED=1'] if restore_saved else []),
                             *(['--defsym','ML_KNOB_CC=1'] if knob_cc else []),
                             *(['--defsym','ML_KNOB_LOCKS=1'] if knob_locks else []),
+                            *(['--defsym','ML_CC_STORAGE=1'] if cc_storage else []),
                             *(['--defsym','ML_CC_SLIDES=1'] if cc_slides else []),
                             *(['--defsym','ML_GENIE_CHANCE=1'] if genie_chance else []),
                             *(['--defsym','ML_REPEAT=1'] if repeat else []),
@@ -258,7 +261,7 @@ SECTIONS {{
         return *blobs,fragments,symbols(cross,elf)
 
 
-def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False,knob_locks=False,cc_slides=False,lfo_confirm=False):
+def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False,knob_locks=False,cc_storage=False,cc_slides=False,lfo_confirm=False,cost_compression=False):
     if cc_slides:assert knob_locks
     if knob_locks:assert knob_cc and storage and extended_storage
     if genie_chance:assert conditions
@@ -308,10 +311,13 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     needle=struct.pack('>I',loader)
     assert [build.BASE+i for i in range(0,len(stock)-3,2) if stock[i:i+4]==needle]==[ptr]
     merge_masks=[va for va in free if va!=loader]
-    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat,conditions,extended_storage,audio_storage,working_storage,live_record,write_first,genie_chance,restore_saved,knob_cc,knob_locks,cc_slides,lfo_confirm)
+    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat,conditions,extended_storage,audio_storage,working_storage,live_record,write_first,genie_chance,restore_saved,knob_cc,knob_locks,cc_storage,cc_slides,lfo_confirm)
     if lfo_cc:
         import aplib_grow
-        if storage or repeat:
+        if cost_compression:
+            import aplib_cost
+            packed=aplib_cost.pack(blob,depth=128,lazy=True)
+        elif storage or repeat:
             import aplib_dense
             packed=min((aplib_dense.pack(blob,depth=d) for d in ((32,128,512) if conditions else (32,))),key=len)
         else:packed=aplib_grow.pack(blob)

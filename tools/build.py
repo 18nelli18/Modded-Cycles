@@ -298,6 +298,9 @@ def payload_image(t, runtime):
                 raise SystemExit(f"!! {t['id']} : charge précompressée différente")
             return packed
         import aplib_grow                               # noqa: E402
+        if ap_.get("compress_cost"):
+            import aplib_cost
+            return aplib_cost.pack(runtime,depth=int(ap_["compress_cost"]),lazy=True)
         if ap_.get("compress_depth"):
             import aplib_dense
             return aplib_dense.pack(runtime,depth=int(ap_["compress_depth"]))

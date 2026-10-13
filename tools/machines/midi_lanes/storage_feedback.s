@@ -84,6 +84,13 @@ ml_store_save_feedback:
     lea .Lctx_state,%a0
     bra .Lfeedback_show
 .Lfeedback_ok:
+    .ifdef ML_CC_STORAGE
+    tstl mlkcs_save_error
+    beq .Lfeedback_cc_ok
+    lea .Lcc_save_err,%a0
+    bra .Lfeedback_show
+.Lfeedback_cc_ok:
+    .endif
     lea .Lsave_ok,%a0
     bra .Lfeedback_show
 ml_store_load_feedback:
@@ -153,6 +160,9 @@ ml_store_load_feedback:
 .Lctx_ui: .asciz "CTX: NO UI"
 .Lctx_ipl: .asciz "CTX: UI IPL"
 .Lctx_disk: .asciz "CTX: DISK"
+    .ifdef ML_CC_STORAGE
+.Lcc_save_err: .asciz "CC SAVE ERR"
+    .endif
 .Lctx_busy: .asciz "CTX: BUSY"
 .Lctx_ram: .asciz "CTX: RAM"
 .Lctx_state: .asciz "CTX: STATE"

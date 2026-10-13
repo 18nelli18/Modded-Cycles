@@ -41,6 +41,7 @@ FR=('Sauvegarde expérimentale des patterns B. MACRO exclu ; ACID et Model-TG co
 def main():
  ap=argparse.ArgumentParser(description=__doc__)
  for name in ('base-page','output-dir','cycles','syntakt','model-tg'):ap.add_argument('--'+name,required=True)
+ ap.add_argument('--cc-saving',action='store_true');ap.add_argument('--cost-compression',action='store_true')
  ap.add_argument('--engine-compress-depth',type=int,choices=(32,128,512),default=32)
  ap.add_argument('--lfo-quick-assign',help='Recette LFO2 expérimentale utilisée avec le bundle MIDI uniquement')
  ap.add_argument('--write-first',action='store_true');ap.add_argument('--restore-saved',action='store_true');ap.add_argument('--diagnostics',action='store_true');ap.add_argument('--live-record',action='store_true');ap.add_argument('--audio-lfo',action='store_true');ap.add_argument('--working',action='store_true');ap.add_argument('--engines',choices=('both','acid','macro'),default='both');ap.add_argument('--cross',default='m68k-elf-');a=ap.parse_args();base=pathlib.Path(a.base_page);out=pathlib.Path(a.output_dir)
@@ -59,6 +60,7 @@ def main():
   for tweak in catalog['model-cycles_OS1.13'][1].values():
    if tweak['id'].startswith('syntakt-tg-sd-cp-toy-bits-swarm'):
     tweak['append']['compress_depth']=a.engine_compress_depth
+    if a.cost_compression:tweak['append']['compress_cost']=a.engine_compress_depth
   return catalog
  build.load_catalog=saving_catalog
  if a.audio_lfo:
@@ -99,7 +101,7 @@ def main():
   STAMP='2026-10-13-midi-saving-live-record'
   en=en.replace('Grid recording only in this storage diagnostic.', 'Includes B-side live recording: hold RECORD and press PLAY; press PLAY again with RECORD held to switch quantized/unquantized recording. Save Project retains notes, velocity, whole-step lengths and 1/64-step timing offsets. Reads earlier MBK2/MBK3 saves and writes MBK4; earlier saving builds cannot read MBK4. Combined live recording and saving requires hardware testing.')
   fr=fr.replace('Enregistrement grille uniquement pour ce diagnostic.', 'Live-rec B inclus : RECORD + PLAY, puis PLAY avec RECORD maintenu pour changer la quantification. Save conserve notes, vélocité, durées en pas et retards au 1/64 de pas. Lit MBK2/MBK3, écrit MBK4 ; les anciennes versions ne lisent pas MBK4. Intégration live-rec/sauvegarde à tester sur matériel.')
- tweak,chosen,image=bank.generate(stock,a.syntakt,a.model_tg,a.cross,True,True,True,8,True,True,True,True,True,a.audio_lfo,a.working,a.live_record,a.write_first,restore_saved=a.restore_saved)
+ tweak,chosen,image=bank.generate(stock,a.syntakt,a.model_tg,a.cross,True,True,True,8,True,True,True,True,True,a.audio_lfo,a.working,a.live_record,a.write_first,restore_saved=a.restore_saved,cost_compression=a.cost_compression,**({'genie_chance':True,'knob_cc':True,'knob_locks':True,'cc_storage':True,'cc_slides':True,'lfo_confirm':True} if a.cc_saving else {}))
  tweak['requires']=[x for x in tweak['requires'] if x!='6ch-usbup'];tweak['status']='experimental'
  tweak['name']='Banque MIDI OUT — sauvegarde expérimentale'
  tweak['description']=[fr]
@@ -111,6 +113,8 @@ def main():
  engine_ref={'w':hashlib.sha256(ref_mainos.writes_bytes(engine)).hexdigest(),'p':hashlib.sha256(build.payload_image(engine,build.payload_runtime(engine,stock,syntakt.dsp_image(a.syntakt)))).hexdigest()}
  bundle=(base/'bundle.js').read_text();bundle='const savingOriginalEngineRef = window.MCFlasherApp.REF_MODS['+json.dumps(engine['id'])+'].p;\n'+bundle;bundle+='\n{ const engine=window.MC_TWEAKS.tweaks.find(t=>t.id==='+json.dumps(engine['id'])+'); const ref=window.MCFlasherApp.REF_MODS[engine.id], dense='+json.dumps(engine_ref['p'])+'; const enabled=()=>!!document.getElementById("feat-midi-bank-bundle")?.checked; if(!Object.getOwnPropertyDescriptor(engine.append,"compress_depth")?.get) Object.defineProperty(engine.append,"compress_depth",{get:()=>enabled()?32:undefined}); Object.defineProperty(ref,"p",{get:()=>enabled()?dense:savingOriginalEngineRef}); }\n';bundle=replace_json(bundle,'window.MC_BUNDLE_IDS = ',list(bank.IDS)+[tweak['id']])
  bundle=bundle.replace('enabled()?32:undefined','enabled()?'+str(a.engine_compress_depth)+':undefined')
+ if a.cost_compression:
+  bundle+='\n{ const e=window.MC_TWEAKS.tweaks.find(t=>t.id==='+json.dumps(engine['id'])+'); Object.defineProperty(e.append,"compress_cost",{get:()=>document.getElementById("feat-midi-bank-bundle")?.checked?'+str(a.engine_compress_depth)+':undefined}); }\n' 
  bundle=replace_json(bundle,'window.MC_TWEAKS.tweaks.push(',tweak)
  bundle=replace_json(bundle,'const bankTexts = ',{'en':{'label':'MIDI OUT Bank — Pattern Saving Test','short':('Saves notes, locks and A/B LFO settings by pattern. Experimental.' if a.audio_lfo else 'Saves notes, locks and MIDI LFO settings by pattern. Experimental.'),'desc':en},'fr':{'label':'Banque MIDI OUT — test sauvegarde','short':('Notes, locks et LFO audio/MIDI sauvegardés par pattern. Expérimental.' if a.audio_lfo else 'Notes, locks et LFO MIDI sauvegardés par pattern. Expérimental.'),'desc':fr}})
  start=bundle.index('const bankFeature = ')+len('const bankFeature = ');feature,_=json.JSONDecoder().raw_decode(bundle[start:]);feature.update(status='experimental',excludes=excluded,desc=fr)
@@ -123,7 +127,10 @@ def main():
  page=(base/'index.html').read_text();page=re.sub(r'window.MC_BUILD\s*=\s*[^;]+;','window.MC_BUILD = '+json.dumps(STAMP)+';',page);page=re.sub(r'\?v=[^"\s<]+','?v='+STAMP,page)
  out.mkdir(parents=True,exist_ok=True)
  for name in ('builder.js','app.js','tweaks.js','flasher.js','style.css'):shutil.copyfile(base/name,out/name)
- builder=(out/'builder.js').read_text();dense=pathlib.Path(__file__).with_name('aplib_dense.js').read_text();builder=builder.replace('function aplibPack(data) {',dense+'\nfunction aplibPack(data) {').replace('return aplibPack(out);','return ap.compress_depth ? aplibDensePack(out, ap.compress_depth) : aplibPack(out);');(out/'builder.js').write_text(builder)
+ builder=(out/'builder.js').read_text();dense=pathlib.Path(__file__).with_name('aplib_dense.js').read_text();builder=builder.replace('function aplibPack(data) {',dense+'\nfunction aplibPack(data) {').replace('return aplibPack(out);','return ap.compress_depth ? aplibDensePack(out, ap.compress_depth) : aplibPack(out);')
+ if a.cost_compression:
+  cost=pathlib.Path(__file__).with_name('aplib_cost.js').read_text();builder=builder.replace('function aplibPack(data) {',cost+'\nfunction aplibPack(data) {').replace('return ap.compress_depth ?','return ap.compress_cost ? aplibCostPack(out, ap.compress_cost) : ap.compress_depth ?')
+ (out/'builder.js').write_text(builder)
  (out/'index.html').write_text(page);(out/'bundle.js').write_text(bundle)
  (out/'ABOUT.md').write_text('# '+STAMP+'\n\n'+en+'\n\n'+fr+'\n')
  guide=(base/'guide.html').read_text();guide=re.sub(r'<section id="midi-retrigger-test">.*?</section>','',guide,flags=re.S);guide=guide.replace('</main>','<section id="midi-pattern-saving"><h2>Pattern Saving Test</h2><p data-l="en">'+html.escape(en)+'</p><p data-l="fr">'+html.escape(fr)+'</p></section>\n</main>');(out/'guide.html').write_text(guide)

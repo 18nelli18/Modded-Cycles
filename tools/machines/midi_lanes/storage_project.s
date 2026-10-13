@@ -150,6 +150,14 @@ ml_store_save_notice:
     bcs .Lproject_next
     moveq #1,%d0
     movel %d0,ml_store_save_status
+    .ifdef ML_CC_STORAGE
+    | Les notes sont déjà sauvées ; une erreur CC ne ferme jamais B.
+    movel %a3,%sp@-
+    movel %d3,%sp@-
+    movel %d4,%sp@-
+    jsr mlkcs_save_project
+    lea %sp@(12),%sp
+    .endif
     .ifdef ML_STORAGE2
     clrl ml_store_save_error
     .endif

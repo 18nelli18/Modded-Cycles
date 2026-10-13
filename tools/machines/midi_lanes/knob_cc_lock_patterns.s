@@ -92,3 +92,46 @@ mlkc_locks_reset:
     moveml %sp@,%d2/%a2-%a3
     lea %sp@(12),%sp
     rts
+    .ifdef ML_CC_STORAGE
+| Adopter un buffer candidat validé après retrait des anciens locks.
+| UI seule ; publication {buffer,banque} atomique pour le lecteur IRQ.
+    .globl mlkc_locks_adopt
+mlkc_locks_adopt:
+    moveq #0,%d0
+    movew %sr,%d1
+    andil #0x700,%d1
+    bne .Ladopt_done
+    moveal %sp@(4),%a0
+    moveal %sp@(8),%a1
+    tstl %a0
+    beq .Ladopt_done
+    tstl %a1
+    beq .Ladopt_done
+    movel %a0,%d1
+    movel %a1,%d0
+    orl %d0,%d1
+    andil #3,%d1
+    bne .Ladopt_bad
+    lea .Lpatterns,%a0
+    moveq #95,%d1
+.Ladopt_find:
+    tstl %a0@
+    beq .Ladopt_publish
+    addql #8,%a0
+    subql #1,%d1
+    bpl .Ladopt_find
+.Ladopt_bad:
+    moveq #0,%d0
+    rts
+.Ladopt_publish:
+    movew %sr,%d0
+    movel %d0,%sp@-
+    movew #0x2700,%sr
+    movel %a1,%a0@(4)
+    movel %sp@(8),%a0@
+    movel %sp@+,%d0
+    movew %d0,%sr
+    moveq #1,%d0
+.Ladopt_done:
+    rts
+    .endif

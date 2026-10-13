@@ -107,6 +107,9 @@ ml_store_service:
     subql #1,%d0
     bpl .Lservice_zero
     clrl .Lcursor
+    .ifdef ML_CC_STORAGE
+    jsr mlkcs_candidate_reset
+    .endif
     moveq #1,%d0
     movel %d0,ml_store_load_active
     clrl ml_store_load_status
@@ -132,6 +135,18 @@ ml_store_service:
     lea.l %sp@(20),%sp
     tstl %d0
     beq .Lservice_abort
+    .ifdef ML_CC_STORAGE
+    movel %d0,%sp@-
+    movel .Lslot,%sp@-
+    movel .Lid,%sp@-
+    movel .Lcursor,%d0
+    movel %d0,%sp@-
+    moveal .Ltable,%a0
+    movel %a0@(0,%d0:l:4),%sp@-
+    jsr mlkcs_candidate_step
+    lea %sp@(16),%sp
+    movel %sp@+,%d0
+    .endif
     cmpil #2,%d0
     beq .Lservice_publish
     addql #1,.Lcursor
@@ -149,6 +164,11 @@ ml_store_service:
     beq .Lservice_abort
     clrl .Ltable
     movel %d0,%sp@-
+    .ifdef ML_CC_STORAGE
+    movel ml_bank_table,%sp@-
+    jsr mlkcs_candidate_apply
+    addql #4,%sp
+    .endif
     jsr ml_store_retire
     addql #4,%sp
     movel .Lserial,%d0
@@ -188,6 +208,9 @@ ml_store_service:
     lea.l %sp@(12),%sp
     rts
 .Lservice_discard:
+    .ifdef ML_CC_STORAGE
+    jsr mlkcs_candidate_reset
+    .endif
     movel .Ltable,%d0
     beq .Lservice_discarded
     movel %d0,%sp@-

@@ -7,7 +7,7 @@ from test_sdvintage import main_os_from_syx
 from gen_seq_gen import symbols
 
 def main():
- ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--extended',action='store_true');ap.add_argument('--working',action='store_true');ap.add_argument('--write-first',action='store_true');ap.add_argument('--restore-saved',action='store_true');ap.add_argument('--tweak');ap.add_argument('--audio-lfo',action='store_true');ap.add_argument('--live-record',action='store_true');a=ap.parse_args();data_size=4992 if a.audio_lfo else (4896 if a.extended else 1584)
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--cc-storage',action='store_true');ap.add_argument('--extended',action='store_true');ap.add_argument('--working',action='store_true');ap.add_argument('--write-first',action='store_true');ap.add_argument('--restore-saved',action='store_true');ap.add_argument('--tweak');ap.add_argument('--audio-lfo',action='store_true');ap.add_argument('--live-record',action='store_true');a=ap.parse_args();data_size=4992 if a.audio_lfo else (4896 if a.extended else 1584)
  if a.audio_lfo:assert a.extended and a.tweak
  root=pathlib.Path(__file__).resolve().parents[2];cross=str(root.parent/'toolchain/bin/m68k-elf-')
  with tempfile.TemporaryDirectory() as tmp:
@@ -198,6 +198,17 @@ def main():
  assert native_save()==1
  assert r.r32(syms['ml_store_save_status'])==1
  if a.tweak:assert feedback[-1]=='MIDI SAVED'
+ if a.cc_storage:
+  assert a.tweak and a.extended
+  cc_maps=bytearray(bytes((255,64))*72);cc_maps[:4]=bytes((74,77,71,99));r.u.mem_write(syms['mlkc_state'],bytes(cc_maps))
+  cc_locks=r.call('mlkc_locks_for',bank,1);assert cc_locks
+  assert r.call('mlkc_lock_set',cc_locks,0,3,0,74,111)==1
+  assert r.call('mlkc_lock_set',cc_locks,5,63,11,0,0)==1
+  assert native_save()==1 and not r.r32(syms['mlkcs_save_error'])
+  map_files=[v for k,v in files.items() if '/CCM-' in k];lock_files=[v for k,v in files.items() if '/CCL-05-' in k]
+  assert any(v[32:]==bytes(cc_maps) for v in map_files)
+  assert any(v[32:]==bytes(r.u.mem_read(cc_locks,9216)) for v in lock_files)
+  print('ok : Save natif écrit maps CC144 et locks9216 via writer/readback réels, CC0/valeur0 conservés')
  for pat,note in ((5,76),(6,81)):
   assert load(0x12345678,3,pat)>0 and bytes(r.u.mem_read(snapshot,data_size))==payload(note)
  # Échec Save natif : aucune écriture annexe ; identité étrangère : refus.
@@ -367,6 +378,12 @@ def main():
    ptr=r.r32(table+pat*4);assert ptr and bytes(r.u.mem_read(ptr,data_size))==payload(note)
   assert r.r32(syms['ml_store_owner_id'])==current['id']
   assert native_save()==1 and r.r32(syms['ml_store_save_status'])==1
+  if a.cc_storage:
+   assert bytes(r.u.mem_read(syms['mlkc_state'],144))==bytes(cc_maps)
+   cc_table=r.r32(syms['ml_bank_table']);cc_bank=r.r32(cc_table+20);cc_restored=r.call('mlkc_locks_for',cc_bank,0);assert cc_restored
+   assert r.call('mlkc_lock_get',cc_restored,0,3,0)==(74<<8|111)
+   assert r.call('mlkc_lock_get',cc_restored,5,63,11)==0
+   print('ok : restauration service boot réelle adopte maps et locks après notes, anciens buffers séparés')
   if a.live_record:
    # Paquet produit par la capture libre : note/vélocité/durée/retard persistants.
    recorded=r.r32(table+5*4)

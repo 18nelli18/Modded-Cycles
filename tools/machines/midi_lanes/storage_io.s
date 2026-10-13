@@ -30,7 +30,14 @@ ml_store_read:
     beq .Lread_out
     movel %sp@(52),%d0
     cmpil #ML_RECORD_BYTES,%d0
+    .ifdef ML_CC_STORAGE
+    beq .Lread_size_ok
+    cmpil #176,%d0
+    beq .Lread_size_ok
+    cmpil #9248,%d0
+    .endif
     bne .Lread_out
+.Lread_size_ok:
     lea.l %sp@(16),%a2
     clrl %a2@
     clrl %a2@(4)
@@ -48,7 +55,11 @@ ml_store_read:
     tstl %d0
     bne .Lread_out
     movel %a2,%sp@-
+    .ifdef ML_CC_STORAGE
+    movel %sp@(56),%sp@-
+    .else
     pea ML_RECORD_BYTES
+    .endif
     movel %d2,%sp@-
     jsr 0x4007baaa
     lea.l %sp@(12),%sp
@@ -80,7 +91,11 @@ ml_store_read:
     bra .Lread_success
 .Lread_full:
     .endif
+    .ifdef ML_CC_STORAGE
+    cmpl %sp@(52),%d3
+    .else
     cmpil #ML_RECORD_BYTES,%d3
+    .endif
     bne .Lread_out
 .Lread_success:
     .ifdef ML_STORAGE2
@@ -120,7 +135,14 @@ ml_store_write:
     beq .Lwrite_out
     movel %sp@(52),%d0
     cmpil #ML_RECORD_BYTES,%d0
+    .ifdef ML_CC_STORAGE
+    beq .Lwrite_size_ok
+    cmpil #176,%d0
+    beq .Lwrite_size_ok
+    cmpil #9248,%d0
+    .endif
     bne .Lwrite_out
+.Lwrite_size_ok:
     lea.l %sp@(16),%a2
     clrl %a2@
     clrl %a2@(4)
@@ -139,7 +161,11 @@ ml_store_write:
     movel %d0,ml_store_save_error
     movel %sp@+,%d0
     .endif
+    .ifdef ML_CC_STORAGE
+    movel %sp@(52),%sp@-
+    .else
     pea ML_RECORD_BYTES
+    .endif
     clrl %sp@-
     movel %a2,%sp@-
     jsr 0x4007bb76
@@ -155,7 +181,11 @@ ml_store_write:
     .endif
     | Écrire par petits blocs ; une écriture partielle positive avance le handle
     | natif. Zéro/erreur interrompt sans boucle infinie ; relecture entière ensuite.
+    .ifdef ML_CC_STORAGE
+    movel %sp@(52),%d3
+    .else
     movel #ML_RECORD_BYTES,%d3
+    .endif
 .Lwrite_chunk:
     movel %d3,%d0
     cmpil #512,%d0
