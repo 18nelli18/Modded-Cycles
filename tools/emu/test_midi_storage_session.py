@@ -371,6 +371,27 @@ def main():
   for index in range(96):r.call('ml_store_service')
   assert bytes(r.u.mem_read(r.r32(syms['ml_bank_table']),384))==bytes(384)
   assert files==before_files or all(k in files for k in before_files)
+  # Slot introuvable après Load : B reste jouable, Save protégé, notes intactes.
+  r.w32(syms['ml_store_load_pending_slot'],96)
+  r.u.mem_write(0x404e9b4d,b'\xff')
+  r.w32(syms['ml_store_load_ready'],0)
+  r.w32(syms['ml_store_load_serial'],r.r32(syms['ml_store_load_serial'])+1)
+  kept=r.r32(syms['ml_bank_table']);r.w32(kept+5*4,bank)
+  r.u.mem_write(bank,payload(89));before_failed=dict(files)
+  r.call('ml_store_service')
+  assert r.r32(syms['ml_store_load_ready'])==1
+  assert r.r32(syms['ml_store_ram_only'])==1
+  assert r.r32(syms['ml_bank_table'])==kept and bytes(r.u.mem_read(bank,data_size))==payload(89)
+  assert native_save()==1 and r.r32(syms['ml_store_save_status'])==0
+  assert r.r32(syms['ml_store_save_error'])==24 and files==before_failed
+  current['id']=0x66778899;r.w32(RAW+8,current['id'])
+  r.w32(syms['ml_store_load_pending_id'],current['id']);r.w32(syms['ml_store_load_ready'],0)
+  r.w32(syms['ml_store_load_serial'],r.r32(syms['ml_store_load_serial'])+1)
+  r.call('ml_store_service')
+  assert r.r32(syms['ml_store_load_ready'])==1 and r.r32(syms['ml_store_ram_only'])==1
+  assert bytes(r.u.mem_read(r.r32(syms['ml_bank_table']),384))==bytes(384)
+  assert files==before_failed
+  print('ok : association slot refusée conserve accès B et notes du même projet ; nouveau projet RAM vide, Save bloqué')
   print('ok : démarrage sans données MIDI RAM restaure les patterns 5/6 depuis fichiers puis Save fonctionne')
   print('ok : autre projet sans annexes donne banque vide ; aucune écriture pendant restauration')
   print('Limite : fichiers simulés ; persistance physique après extinction à tester')

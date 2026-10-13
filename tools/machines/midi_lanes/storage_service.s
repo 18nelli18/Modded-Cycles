@@ -176,8 +176,11 @@ ml_store_service:
     | Une lecture invalide ne doit pas interdire tout jeu B. Table neuve,
     | aucune écriture annexe permise tant qu'un Reload n'a pas réussi.
     movel ml_store_load_error,%d0
+    cmpil #3,%d0
+    beq .Lservice_ram_recover
     cmpil #5,%d0
     bne .Lservice_out
+.Lservice_ram_recover:
     jsr ml_store_recover_ram
     .endif
 .Lservice_out:
@@ -288,6 +291,16 @@ ml_store_recover_ram:
     beq .Lram_done
     moveq #1,%d0
     movel %d0,ml_store_ram_only
+    | Même projet : garder les notes RAM existantes, sans autoriser le disque.
+    movel .Lid,%d0
+    cmpl ml_store_owner_id,%d0
+    bne .Lram_allocate
+    tstl ml_bank_table
+    beq .Lram_allocate
+    moveq #1,%d0
+    movel %d0,ml_store_load_ready
+    bra .Lram_done
+.Lram_allocate:
     pea 384
     jsr 0x400802e0
     addql #4,%sp
