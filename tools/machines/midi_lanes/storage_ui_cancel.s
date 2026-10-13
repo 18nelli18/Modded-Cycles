@@ -8,6 +8,9 @@ ml_store_ui_cancel:
     .ifdef ML_STORAGE3
     jsr ml_audio_lfo_reset
     .endif
+    .ifdef ML_KNOB_CC
+    jsr mlkc_assign_cancel
+    .endif
     .ifdef ML_KNOB_LOCKS
     jsr mlkcq_reset
     jsr mlkc_locks_reset

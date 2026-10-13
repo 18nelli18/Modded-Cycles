@@ -63,6 +63,14 @@ mlp_stock_render:
     moveb %a0@(2),%d0
     lea.l %a2@(160),%a0
     bsr mlp_stock_decimal
+    | Le champ sélectionné pilote l'inversion native Note/Vel/Len.
+    movel mlp_row,%d0
+    subql #7,%d0
+    cmpil #2,%d0
+    bls .Lstock_field_ok
+    moveq #0,%d0
+.Lstock_field_ok:
+    movel %d0,%a2@(104)
     movel %a3,%sp@-
     movel %a2,%sp@-
     bsr mlp_stock_note_view

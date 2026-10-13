@@ -73,6 +73,7 @@ mlkc_window:
     movel %sp@+,%d2
     rts
 mlkc_tick:
+    jsr mlkc_assign_sync
     tstl mlkc_show
     beq .Lst_done
     tstl mlp_obj

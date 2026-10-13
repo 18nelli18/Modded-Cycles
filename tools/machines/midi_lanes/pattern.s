@@ -88,7 +88,11 @@ ml_pattern_tick:
     tstl %d0
     beq .Ltick_done
     tstl %d3
+    .ifdef ML_KNOB_LOCKS
+    beq .Ltick_trigless
+    .else
     beq .Ltick_done
+    .endif
     .ifdef ML_LFO_CC
     movel mlcc_triggers,%d1
     bset %d2,%d1
@@ -102,6 +106,27 @@ ml_pattern_tick:
     jsr mlkcq_step
     lea %sp@(12),%sp
     movel %sp@+,%d0
+    .endif
+    .ifdef ML_KNOB_LOCKS
+    bra .Ltick_note_pulse
+.Ltick_trigless:
+    movel %sp@(36),%d1
+    lsll #2,%d1
+    lea %a3@(8,%d1:l),%a0
+    moveq #0,%d1
+    moveb %a0@(3),%d1
+    andil #3,%d1
+    cmpil #2,%d1
+    bne .Ltick_done
+    movel %d0,%sp@-
+    movel %sp@(40),%sp@-
+    movel %d2,%sp@-
+    movel %sp@(40),%sp@-
+    jsr mlkcq_step
+    lea %sp@(12),%sp
+    movel %sp@+,%d0
+    bra .Ltick_done
+.Ltick_note_pulse:
     .endif
     lea.l ml_pad_serial,%a0
     addql #1,%a0@(0,%d2:l:4)

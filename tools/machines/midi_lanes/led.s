@@ -52,7 +52,16 @@ mlp_led:
     orl %d0,%a0@
     moveq #1,%d4
     btst #0,%a2@(3)
+    bne .Lled_note
+    .ifdef ML_KNOB_LOCKS
+    btst #1,%a2@(3)
     beq .Lled_write
+    moveq #2,%d4
+    bra .Lled_write
+    .else
+    bra .Lled_write
+    .endif
+.Lled_note:
     moveq #3,%d4
 .Lled_write:
     pea 0x404a8cb8

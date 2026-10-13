@@ -41,6 +41,7 @@ FR=('Sauvegarde expérimentale des patterns B. MACRO exclu ; ACID et Model-TG co
 def main():
  ap=argparse.ArgumentParser(description=__doc__)
  for name in ('base-page','output-dir','cycles','syntakt','model-tg'):ap.add_argument('--'+name,required=True)
+ ap.add_argument('--engine-compress-depth',type=int,choices=(32,128,512),default=32)
  ap.add_argument('--lfo-quick-assign',help='Recette LFO2 expérimentale utilisée avec le bundle MIDI uniquement')
  ap.add_argument('--write-first',action='store_true');ap.add_argument('--restore-saved',action='store_true');ap.add_argument('--diagnostics',action='store_true');ap.add_argument('--live-record',action='store_true');ap.add_argument('--audio-lfo',action='store_true');ap.add_argument('--working',action='store_true');ap.add_argument('--engines',choices=('both','acid','macro'),default='both');ap.add_argument('--cross',default='m68k-elf-');a=ap.parse_args();base=pathlib.Path(a.base_page);out=pathlib.Path(a.output_dir)
  if a.engines!='both':
@@ -57,7 +58,7 @@ def main():
   if quick:catalog['model-cycles_OS1.13'][1]['lfo-secondary']=quick
   for tweak in catalog['model-cycles_OS1.13'][1].values():
    if tweak['id'].startswith('syntakt-tg-sd-cp-toy-bits-swarm'):
-    tweak['append']['compress_depth']=32
+    tweak['append']['compress_depth']=a.engine_compress_depth
   return catalog
  build.load_catalog=saving_catalog
  if a.audio_lfo:
@@ -109,6 +110,7 @@ def main():
  import syntakt
  engine_ref={'w':hashlib.sha256(ref_mainos.writes_bytes(engine)).hexdigest(),'p':hashlib.sha256(build.payload_image(engine,build.payload_runtime(engine,stock,syntakt.dsp_image(a.syntakt)))).hexdigest()}
  bundle=(base/'bundle.js').read_text();bundle='const savingOriginalEngineRef = window.MCFlasherApp.REF_MODS['+json.dumps(engine['id'])+'].p;\n'+bundle;bundle+='\n{ const engine=window.MC_TWEAKS.tweaks.find(t=>t.id==='+json.dumps(engine['id'])+'); const ref=window.MCFlasherApp.REF_MODS[engine.id], dense='+json.dumps(engine_ref['p'])+'; const enabled=()=>!!document.getElementById("feat-midi-bank-bundle")?.checked; if(!Object.getOwnPropertyDescriptor(engine.append,"compress_depth")?.get) Object.defineProperty(engine.append,"compress_depth",{get:()=>enabled()?32:undefined}); Object.defineProperty(ref,"p",{get:()=>enabled()?dense:savingOriginalEngineRef}); }\n';bundle=replace_json(bundle,'window.MC_BUNDLE_IDS = ',list(bank.IDS)+[tweak['id']])
+ bundle=bundle.replace('enabled()?32:undefined','enabled()?'+str(a.engine_compress_depth)+':undefined')
  bundle=replace_json(bundle,'window.MC_TWEAKS.tweaks.push(',tweak)
  bundle=replace_json(bundle,'const bankTexts = ',{'en':{'label':'MIDI OUT Bank — Pattern Saving Test','short':('Saves notes, locks and A/B LFO settings by pattern. Experimental.' if a.audio_lfo else 'Saves notes, locks and MIDI LFO settings by pattern. Experimental.'),'desc':en},'fr':{'label':'Banque MIDI OUT — test sauvegarde','short':('Notes, locks et LFO audio/MIDI sauvegardés par pattern. Expérimental.' if a.audio_lfo else 'Notes, locks et LFO MIDI sauvegardés par pattern. Expérimental.'),'desc':fr}})
  start=bundle.index('const bankFeature = ')+len('const bankFeature = ');feature,_=json.JSONDecoder().raw_decode(bundle[start:]);feature.update(status='experimental',excludes=excluded,desc=fr)

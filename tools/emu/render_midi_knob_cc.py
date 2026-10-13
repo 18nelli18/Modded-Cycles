@@ -13,7 +13,7 @@ def main():
  defs={'TG_set_held':0x9306a000,'mlp_track':0x9306a004,'ml_pattern':0x9306a008,'mlp_obj':0x9306a00c,'TG_blk_clk':0x9306a010,'TG_mod_used':0x9306a014}
  with tempfile.TemporaryDirectory() as tmp:
   p=pathlib.Path(tmp);objs=[]
-  for name in ('knob_cc','knob_cc_ui','knob_cc_scroll','lfo_cc_names'):
+  for name in ('knob_cc','knob_cc_ui','knob_cc_scroll','knob_cc_assignment','lfo_cc_names'):
    obj=p/(name+'.o');objs.append(str(obj));subprocess.run([cross+'as','-march=cfv4e','-o',str(obj),str(root/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
   (p/'link.ld').write_text('\n'.join(k+' = '+hex(v)+';' for k,v in defs.items())+'\nSECTIONS { .text 0x93050000 : { *(.text*) *(.rodata*) *(.data*) } }')
   subprocess.run([cross+'ld','-T',str(p/'link.ld'),'-e','mlkc_enc','-o',str(p/'k.elf'),*objs],check=True)

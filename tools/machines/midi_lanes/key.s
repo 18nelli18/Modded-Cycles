@@ -51,6 +51,20 @@ ml_key:
     beq .Lnative_modifiers
     tstl mlp_func
     bne .Lsettings_check
+    .ifdef ML_KNOB_CC
+    tstl TG_set_held
+    beq .Lchain
+    movew %sr,%d0
+    andil #0x700,%d0
+    bne .Lchain
+    movel %a0,%sp@-
+    jsr mlkc_scramble
+    moveal %sp@+,%a0
+    moveq #1,%d0
+    movel %d0,ml_key_taken
+    movel %d0,TG_mod_used
+    bra .Lrecord
+    .endif
 .Lnative_modifiers:
     andil #11,%d1
     cmpil #3,%d1

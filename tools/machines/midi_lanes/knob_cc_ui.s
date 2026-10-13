@@ -16,6 +16,7 @@ mlkc_locked_value: .long -1
 mlkc_enc:
     lea %sp@(-24),%sp
     moveml %d2-%d4/%a2-%a3,%sp@
+    jsr mlkc_assign_sync
     moveq #0,%d0
     moveal %sp@(28),%a3
     movel %a3@(12),%d2
@@ -85,6 +86,7 @@ mlkc_enc:
     bra .Lku_used
 .Lku_lock_done:
     .endif
+    jsr mlkc_edit_state
     moveq #0,%d0
     moveb %a2@(3),%d0
     movel %d0,%sp@-
@@ -95,7 +97,7 @@ mlkc_enc:
     movel %d4,%sp@-
     movel %d2,%sp@-
     movel %d3,%sp@-
-    pea mlkc_state
+    movel %a1,%sp@-
     jsr mlkc_edit
     lea %sp@(28),%sp
     movel %d0,%sp@(20)
@@ -179,7 +181,8 @@ mlkc_render:
     movel mlkc_selected,%d3
     addl %d3,%d2
     addl %d3,%d2
-    lea mlkc_state,%a2
+    jsr mlkc_edit_state
+    moveal %a1,%a2
     addal %d2,%a2
     moveq #0,%d0
     moveb %a2@,%d0

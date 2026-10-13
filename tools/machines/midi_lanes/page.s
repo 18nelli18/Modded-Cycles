@@ -277,7 +277,11 @@ mlp_menu_key:
     cmpil #15,%d2
     beq .Lmk_page
     tstl mlp_func
+    .ifdef ML_KNOB_LOCKS
+    bne .Lmk_trigless
+    .else
     bne .Lmk_used
+    .endif
     subil #16,%d2
     cmpil #15,%d2
     bhi .Lmk_used
@@ -297,7 +301,13 @@ mlp_menu_key:
     clrl mlp_edit
     jsr mlp_raw_value
     tstl %d0
-    beq .Lmk_trig_new
+    bne .Lmk_trig_existing
+    .ifdef ML_KNOB_LOCKS
+    btst #1,%a0@(3)
+    bne .Lmk_trig_existing
+    .endif
+    bra .Lmk_trig_new
+.Lmk_trig_existing:
     | d2 est la ligne 6 : retrouver l'index physique depuis le pas.
     movel mlp_step,%d1
     andil #15,%d1
@@ -313,6 +323,42 @@ mlp_menu_key:
     moveq #6,%d2
     moveq #1,%d0
     jsr mlp_store
+    .ifdef ML_KNOB_LOCKS
+    bra .Lmk_trig_note
+.Lmk_trigless:
+    subil #16,%d2
+    cmpil #15,%d2
+    bhi .Lmk_used
+    movel mlp_held,%d0
+    btst %d2,%d0
+    bne .Lmk_used
+    bset %d2,%d0
+    movel %d0,mlp_held
+    movel mlp_step,%d0
+    andil #48,%d0
+    addl %d2,%d0
+    movel %d0,mlp_step
+    movel %d2,%sp@-
+    moveq #6,%d2
+    jsr mlp_raw_value
+    moveq #0,%d0
+    moveb %a0@(3),%d0
+    andil #3,%d0
+    movel %sp@+,%d2
+    cmpil #2,%d0
+    bne .Lmk_trigless_create
+    movel mlp_remove,%d0
+    bset %d2,%d0
+    movel %d0,mlp_remove
+    bra .Lmk_trig_note
+.Lmk_trigless_create:
+    | Bit1 sans bit0 = trig de paramètres, jamais une note MIDI.
+    moveq #2,%d0
+    moveb %d0,%a0@(3)
+    movel mlp_changed,%d0
+    bset %d2,%d0
+    movel %d0,mlp_changed
+    .endif
 .Lmk_trig_note:
     clrl mlp_setup
     moveq #7,%d0
