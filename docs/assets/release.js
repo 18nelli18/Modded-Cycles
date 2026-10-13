@@ -3,6 +3,7 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+{"version":"1.58","date":"2026-10-12","changes":[{"en":"Sequence Genie now clears per-step chance on the selected MIDI B-side lane in every generation mode, including Notes only, mutation and Euclidean generation. Undo restores the previous chance locks. Queued generation cancels if chance is edited before commit. Verified in emulation; published at AveyCole's request. MIDI saving remains separate and unfinished.","fr":"Sequence Genie efface la chance de pas de la voie MIDI B choisie dans tous les modes, dont Notes seules, mutation et Euclide. Undo restaure les locks chance précédents. Une édition chance avant commit annule la génération en attente. Vérifié en émulation ; publié à la demande d’AveyCole. Sauvegarde MIDI séparée et inachevée."}]},
 {
   "version": "1.57",
   "date": "2026-10-12",
@@ -262,4 +263,5 @@ window.MC_RELEASES = [
   ] },
   { version: "1.0", date: "2026-10-01", changes: [] },
 ];
+
 

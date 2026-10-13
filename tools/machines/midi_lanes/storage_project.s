@@ -28,6 +28,14 @@ ml_store_save_notice:
     moveq #2,%d0
     movel %d0,ml_store_save_error
     .endif
+    .ifdef ML_STORAGE2
+    tstl ml_store_ram_only
+    beq .Lproject_writable
+    moveq #24,%d0
+    movel %d0,ml_store_save_error
+    bra .Lproject_done
+.Lproject_writable:
+    .endif
     tstl ml_store_load_active
     bne .Lproject_done
     .ifdef ML_STORAGE2

@@ -59,6 +59,10 @@ ml_store_load:
     movel %a5,%sp@-
     jsr ml_store_read
     lea.l %sp@(12),%sp
+    .ifdef ML_STORAGE2
+    movel ml_store_file_error,%d1
+    movel %d1,.Lfile_error_a
+    .endif
     tstl %d0
     beq .Lread_b
     movel #ML_RECORD_BYTES,%d4
@@ -72,6 +76,19 @@ ml_store_load:
     beq .Lselect
     movel #ML_RECORD_BYTES,%d5
 .Lselect:
+    .ifdef ML_STORAGE2
+    movel %d4,%d0
+    orl %d5,%d0
+    bne .Lselect_records
+    movel .Lfile_error_a,%d0
+    cmpil #5,%d0
+    bne .Lselect_file_error
+    movel ml_store_file_error,%d0
+.Lselect_file_error:
+    movel %d0,ml_store_read_error
+    bra .Lfail
+.Lselect_records:
+    .endif
     movel %d3,%sp@-
     movel %d2,%sp@-
     movel %d5,%sp@-
@@ -115,3 +132,9 @@ ml_store_load:
 .Lpair_bad:
     moveq #0,%d0
     rts
+
+    .ifdef ML_STORAGE2
+    .data
+    .balign 4
+.Lfile_error_a: .long 0
+    .endif

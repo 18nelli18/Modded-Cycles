@@ -36,6 +36,10 @@ ml_store_read:
     clrl %a2@(4)
     clrl %a2@(8)
     clrl %a2@(12)
+    .ifdef ML_STORAGE2
+    moveq #5,%d0
+    movel %d0,ml_store_file_error
+    .endif
     movel %a2,%sp@-
     pea .Lread_mode
     movel %a0,%sp@-
@@ -49,11 +53,20 @@ ml_store_read:
     jsr 0x4007baaa
     lea.l %sp@(12),%sp
     movel %d0,%d3
+    .ifdef ML_STORAGE2
+    movel %d0,ml_store_file_count
+    moveq #7,%d0
+    movel %d0,ml_store_file_error
+    .endif
     movel %a2,%sp@-
     jsr 0x4007bc1c
     addql #4,%sp
     tstl %d0
     bne .Lread_out
+    .ifdef ML_STORAGE2
+    moveq #6,%d0
+    movel %d0,ml_store_file_error
+    .endif
     .ifdef ML_STORAGE3
     cmpil #4928,%d3
     bne .Lread_full
@@ -70,6 +83,9 @@ ml_store_read:
     cmpil #ML_RECORD_BYTES,%d3
     bne .Lread_out
 .Lread_success:
+    .ifdef ML_STORAGE2
+    clrl ml_store_file_error
+    .endif
     moveq #1,%d4
 .Lread_out:
     movel %d4,%d0
@@ -184,3 +200,11 @@ ml_store_write:
     rts
     .section .rodata
 .Lwrite_mode: .asciz "w"
+
+    .ifdef ML_STORAGE2
+    .data
+    .balign 4
+    .globl ml_store_file_error,ml_store_file_count
+ml_store_file_error: .long 0
+ml_store_file_count: .long 0
+    .endif

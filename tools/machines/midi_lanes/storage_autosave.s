@@ -17,6 +17,8 @@ ml_store_autosave:
     movew %sr,%d0
     andil #0x700,%d0
     bne .Lauto_done
+    tstl ml_store_ram_only
+    bne .Lauto_done
     tstl ml_store_load_ready
     beq .Lauto_done
     tstl ml_store_load_active

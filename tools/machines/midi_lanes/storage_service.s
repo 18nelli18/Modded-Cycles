@@ -2,6 +2,12 @@
 | Préparation hors IRQ, un pattern/appel, publication après96 succès.
 | Un nouveau serial annule la candidature. Le hook disque doit être installé
 | dès le boot ; l'association du slot working96 reste traitée séparément.
+    .ifdef ML_WORKING
+    .equ ML_BOOT_CONTEXT,1
+    .endif
+    .ifdef ML_SAVE_FIRST
+    .equ ML_BOOT_CONTEXT,1
+    .endif
     .data
     .balign 4
     .globl ml_store_load_active,ml_store_load_status
@@ -9,6 +15,10 @@ ml_store_load_active: .long 0
 ml_store_load_status: .long 0
     .globl ml_store_load_error
 ml_store_load_error: .long 0
+    .ifdef ML_STORAGE2
+    .globl ml_store_ram_only
+ml_store_ram_only: .long 0
+    .endif
 .Lseen: .long 0
 .Lserial: .long 0
 .Lid: .long 0
@@ -23,7 +33,7 @@ ml_store_service:
     movew %sr,%d0
     andil #0x700,%d0
     bne .Lservice_out
-    .ifdef ML_WORKING
+    .ifdef ML_BOOT_CONTEXT
     tstl ml_store_load_serial
     bne .Lservice_notified
     jsr ml_store_bootstrap
@@ -104,6 +114,11 @@ ml_store_service:
     jsr .Lservice_matches
     tstl %d0
     beq .Lservice_abort
+    .ifdef ML_SAVE_FIRST
+    | Diagnostic écriture seule : aucun fichier lu au démarrage/Load.
+    | Une table B vide est publiée ; Save garde sa relecture de vérification.
+    bra .Lservice_publish
+    .endif
     moveq #5,%d0
     movel %d0,ml_store_load_error
     movel .Lcursor,%sp@-
@@ -140,6 +155,7 @@ ml_store_service:
     .ifdef ML_STORAGE2
     moveq #1,%d0
     movel %d0,ml_store_load_ready
+    clrl ml_store_ram_only
     .endif
     moveq #1,%d0
     movel %d0,ml_store_load_status
@@ -155,6 +171,12 @@ ml_store_service:
     tstl ml_store_load_ready
     bne .Lservice_out
     jsr ml_store_load_feedback
+    | Une lecture invalide ne doit pas interdire tout jeu B. Table neuve,
+    | aucune écriture annexe permise tant qu'un Reload n'a pas réussi.
+    movel ml_store_load_error,%d0
+    cmpil #5,%d0
+    bne .Lservice_out
+    jsr ml_store_recover_ram
     .endif
 .Lservice_out:
     moveml %sp@,%d2/%a2-%a3
@@ -188,7 +210,7 @@ ml_store_service:
 | Le projet de démarrage peut précéder notre hook Load. Récupérer le contexte
 | vivant depuis les getters natifs, uniquement si slot/type/identité concordent.
 | Aucun accès disque ici. Une notification native ultérieure reste prioritaire.
-    .ifdef ML_WORKING
+    .ifdef ML_BOOT_CONTEXT
     .data
     .balign 4
     .globl ml_store_bootstrap_error
@@ -251,5 +273,50 @@ ml_store_bootstrap:
     movew %d0,%sr
     moveml %sp@,%d2-%d3
     lea.l %sp@(12),%sp
+    rts
+    .endif
+
+    .ifdef ML_STORAGE2
+    .globl ml_store_recover_ram
+ml_store_recover_ram:
+    lea.l %sp@(-8),%sp
+    moveml %d2/%a2,%sp@
+    jsr .Lservice_matches
+    tstl %d0
+    beq .Lram_done
+    moveq #1,%d0
+    movel %d0,ml_store_ram_only
+    pea 384
+    jsr 0x400802e0
+    addql #4,%sp
+    moveal %d0,%a2
+    tstl %a2
+    beq .Lram_done
+    moveal %a2,%a0
+    moveq #95,%d0
+.Lram_zero:
+    clrl %a0@+
+    subql #1,%d0
+    bpl .Lram_zero
+    movel ml_store_load_serial,%sp@-
+    movel ml_store_load_pending_id,%sp@-
+    movel %a2,%sp@-
+    jsr ml_store_publish
+    lea.l %sp@(12),%sp
+    tstl %d0
+    beq .Lram_free
+    movel %d0,%sp@-
+    jsr ml_store_retire
+    addql #4,%sp
+    moveq #1,%d0
+    movel %d0,ml_store_load_ready
+    bra .Lram_done
+.Lram_free:
+    movel %a2,%sp@-
+    jsr ml_store_retire
+    addql #4,%sp
+.Lram_done:
+    moveml %sp@,%d2/%a2
+    addql #8,%sp
     rts
     .endif

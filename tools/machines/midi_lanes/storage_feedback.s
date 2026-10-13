@@ -1,4 +1,10 @@
 | Résultat explicite des sidecars, distinct du succès du Save audio natif.
+    .ifdef ML_WORKING
+    .equ ML_BOOT_CONTEXT,1
+    .endif
+    .ifdef ML_SAVE_FIRST
+    .equ ML_BOOT_CONTEXT,1
+    .endif
     .ifdef ML_STORAGE2
     .data
     .balign 4
@@ -17,7 +23,7 @@ ml_store_save_feedback:
     bra .Lfeedback_show
 .Lfeedback_stage:
     movel ml_store_save_error,%d0
-    cmpil #23,%d0
+    cmpil #25,%d0
     bhi .Lfeedback_show
     cmpil #3,%d0
     beq .Lcontext_detail
@@ -29,7 +35,7 @@ ml_store_save_feedback:
     lea .Lctx_load,%a0
     tstl ml_store_load_serial
     bne .Lcontext_has_load
-    .ifdef ML_WORKING
+    .ifdef ML_BOOT_CONTEXT
     movel ml_store_bootstrap_error,%d0
     beq .Lfeedback_show
     cmpil #4,%d0
@@ -70,7 +76,7 @@ ml_store_load_feedback:
     tstl ml_store_io_poison
     bne .Lload_disk
     movel ml_store_read_error,%d0
-    cmpil #4,%d0
+    cmpil #7,%d0
     bhi .Lload_general_read
     lea .Lread_errors,%a1
     moveal %a1@(0,%d0:l:4),%a0
@@ -93,7 +99,7 @@ ml_store_load_feedback:
 .Lload_failed: .asciz "MIDI LOAD ERR"
     .balign 4
 .Lread_errors:
-    .long .Lload_record,.Lread_path,.Lread_lookup,.Lread_guard,.Lread_invalid
+    .long .Lload_record,.Lread_path,.Lread_lookup,.Lread_guard,.Lread_invalid,.Lread_open,.Lread_size,.Lread_close
 .Lload_errors:
     .long .Lload_failed,.Lload_context,.Lload_identity,.Lload_slot
     .long .Lload_table,.Lload_record,.Lload_publish
@@ -101,8 +107,8 @@ ml_store_load_feedback:
     .long .Lsave_failed,.Lirq,.Lbusy,.Lcontext,.Lowner,.Lsync
     .long .Lbank,.Lslot,.Lpath,.Lroot,.Ldir,.Lsnapshot
     .long .Lcommit,.Linitial,.Ldata,.Lopen,.Lallocate,.Lwrite,.Lflush,.Lclose
-    .long .Lbuffers,.Llookup_a,.Llookup_b,.Lguard
-    .ifdef ML_WORKING
+    .long .Lbuffers,.Llookup_a,.Llookup_b,.Lguard,.Lram_only,.Lverify
+    .ifdef ML_BOOT_CONTEXT
     .balign 4
 .Lbootstrap_errors:
     .long .Lctx_load,.Lboot_project,.Lboot_id,.Lboot_slot,.Lboot_changed
@@ -111,6 +117,8 @@ ml_store_load_feedback:
 .Lboot_slot: .asciz "CTX: SLOT"
 .Lboot_changed: .asciz "CTX: CHANGED"
     .endif
+.Lverify: .asciz "MIDI: VERIFY"
+.Lram_only: .asciz "MIDI: RAM ONLY"
 .Lctx_load: .asciz "CTX: NO LOAD"
 .Lctx_ui: .asciz "CTX: NO UI"
 .Lctx_ipl: .asciz "CTX: UI IPL"
@@ -121,7 +129,10 @@ ml_store_load_feedback:
 .Lread_path: .asciz "MIDI LOAD: PATH"
 .Lread_lookup: .asciz "MIDI LOAD: LOOKUP"
 .Lread_guard: .asciz "MIDI LOAD: BUSY"
-.Lread_invalid: .asciz "MIDI LOAD: INVALID"
+.Lread_invalid: .asciz "MIDI LOAD: FORMAT"
+.Lread_open: .asciz "MIDI LOAD: OPEN"
+.Lread_size: .asciz "MIDI LOAD: SIZE"
+.Lread_close: .asciz "MIDI LOAD: CLOSE"
 .Lload_context: .asciz "MIDI LOAD: RAM"
 .Lload_identity: .asciz "MIDI LOAD: ID"
 .Lload_slot: .asciz "MIDI LOAD: SLOT"

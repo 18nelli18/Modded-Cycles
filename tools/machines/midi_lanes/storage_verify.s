@@ -52,6 +52,10 @@ ml_store_verified:
     lea.l %sp@(12),%sp
     tstl %d0
     beq .Ldone
+    .ifdef ML_STORAGE2
+    moveq #25,%d0
+    movel %d0,ml_store_save_error
+    .endif
     pea ML_RECORD_BYTES
     movel %a3,%sp@-
     movel %a4,%sp@-

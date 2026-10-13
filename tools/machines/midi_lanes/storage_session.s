@@ -163,6 +163,9 @@ ml_store_session_load:
     movel %d2,%d0
     .ifdef ML_STORAGE2
     bne .Lsession_loaded
+    movel ml_store_read_error,%d0
+    cmpil #5,%d0
+    bcc .Lsession_fail
     moveq #4,%d0
     movel %d0,ml_store_read_error
     bra .Lsession_fail
