@@ -142,4 +142,4 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 
 - [64 — Enregistrement live B](64-enregistrement-live-b.md) : RECORD + PLAY, quantification native, microtiming MBK4 ; expérimental.
 
-- [65 — Noyau performance autonome](65-noyau-performance-autonome.md) — extraction expérimentale slide/Scale Lock sans sampler ; mute verrouillé et écoute de trig autonomes, nouvelle page isolée, preuves boot/cache/audio et seize builds navigateur.
+- [65 — Noyau performance autonome](65-noyau-performance-autonome.md) — extraction slide/Scale Lock sans sampler, bundle MIDI complet sans Model-TG ; quatre blocs réservés, boot/cache/audio, sauvegarde simulée et dix-sept builds navigateur.

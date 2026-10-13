@@ -11,14 +11,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-12-performance-core-test-2">
-<link rel="stylesheet" href="style.css?v=2026-10-12-performance-core-test-2">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-12-performance-midi-core-test">
+<link rel="stylesheet" href="style.css?v=2026-10-12-performance-midi-core-test">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="flasher">
 <script>
   // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-  window.MC_BUILD = "2026-10-12-performance-core-test-2";
+  window.MC_BUILD = "2026-10-12-performance-midi-core-test";
   window.addEventListener("error", function (e) {
     var b = document.getElementById("errbar");
     if (!b) return;
@@ -50,7 +50,7 @@
     </div>
   </div>
 
-  <div class="alert" id="core-test-notice"><span data-l="en">Standalone performance core test. No Model-TG sampler. Main and Test3 are unchanged. Sequence Genie, SCRAMBLE, MIDI Bank and their saving are not included in this first extraction test. LFO2 settings remain in RAM.</span><span data-l="fr">Essai du noyau performance autonome, sans sampler Model-TG. Principal et Test3 inchangés. Sequence Genie, SCRAMBLE, banque MIDI et leur sauvegarde sont absents de ce premier essai d’extraction. LFO2 conserve ses réglages en RAM.</span></div>
+  <div class="alert" id="core-test-notice"><span data-l="en">Experimental standalone core. Choose the MIDI performance bundle for Sequence Genie, SCRAMBLE, MIDI Bank, LFO-to-CC and saving without Model-TG. The smaller core-only selection has no MIDI Bank or saving. Uses stock Cycles machines; extra sound engines are not included. Main and Test3 are unchanged.</span><span data-l="fr">Noyau autonome expérimental. Choisissez le pack MIDI pour Sequence Genie, SCRAMBLE, banque MIDI, LFO CC et sauvegarde sans Model-TG. Le petit noyau seul n’a ni banque MIDI ni sauvegarde. Machines Cycles natives, sans moteurs supplémentaires. Principal et Test3 inchangés.</span></div>
 <div id="errbar" class="alert bad" hidden></div>
   <div id="compat" class="alert bad" role="alert" hidden></div>
 
@@ -269,12 +269,12 @@
 </footer>
 
 <!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
-<script src="../assets/release.js?v=2026-10-12-performance-core-test-2"></script>
-<script src="../assets/site.js?v=2026-10-12-performance-core-test-2"></script>
-<script src="builder.js?v=2026-10-12-performance-core-test-2"></script>
-<script src="tweaks.js?v=2026-10-12-performance-core-test-2"></script>
-<script src="flasher.js?v=2026-10-12-performance-core-test-2"></script>
-<script src="app.js?v=2026-10-12-performance-core-test-2"></script>
+<script src="../assets/release.js?v=2026-10-12-performance-midi-core-test"></script>
+<script src="../assets/site.js?v=2026-10-12-performance-midi-core-test"></script>
+<script src="builder.js?v=2026-10-12-performance-midi-core-test"></script>
+<script src="tweaks.js?v=2026-10-12-performance-midi-core-test"></script>
+<script src="flasher.js?v=2026-10-12-performance-midi-core-test"></script>
+<script src="app.js?v=2026-10-12-performance-midi-core-test"></script>
 
 </body>
 </html>

@@ -28,6 +28,7 @@ const ELEKTRON_ST_DL = "https://www.elektron.se/support-downloads/syntakt";
 const REF_MAINOS = {
   // each card alone: each variant, each combination of real Syntakt engines
   "performance-core": "c09db34f93e43fc74ab2aa34cf8e47f09086f9104bf70c865d5436c4536ec05e",
+  "performance-midi-core": "8ccf0c06957f40a3d72176730ac56231cb38df0495ac76e6aea8891f6698efaa",
   "latching-mute": "6903892ba3119ed161190dee315e41101634d588ce5aff47e4fa99a92b16c078",
   "trig-preview": "b5733f5ddcee498a0e3bb74587979789c76216ef5dc03bbe0771b401a9d01410",
   "lfo-secondary": "5e1d32111a188c3e48558edd7eefe655fe8f4b4351d60c94c0b77f16c7087993",
@@ -43,6 +44,7 @@ const REF_MAINOS = {
 };
 const REF_MODS = {
   "performance-core": {"w": "9db41a822fa2786b0c3dcb7c76ab2c137dcabeacfb1f4f3ea658a60e8d2071db", "p": "89bdc62a8fb5cca56b63795bff4ed163651d607fda54c1c05220fdacc3af41e8"},
+  "performance-midi-core": {"w": "ee9413ea434ccb6f6bdbf72ab831f8006d57d7c47cd43401dfac5b98f8962dd8", "p": "60a4d7b6ec85519e03427f5606cf5c9aaf795ccf12d8da1c8e6bcd184802077d"},
   "latching-mute": {"w": "588e9ff2b7fab80819e79faac560f524641c1cbf4d6327cc169ef0b2b0df76fe"},
   "trig-preview": {"w": "c18ee2dbf1e52d1df85585389c881e8e5116a24665299c15ccf95d794529f2b0"},
   "lfo-secondary": {"w": "591494df91c65ee4b0c13ed3c5f84c0a657e786bdd4489b404b1e967592d61ea"},
@@ -948,10 +950,14 @@ FEAT.fr["lfo-secondary"] = {"label": "Second LFO", "short": "Deuxième appui LFO
 GUIDE_OF["lfo-secondary"] = "lfo-secondary";
 
 T.en.title="Model:Cycles — Standalone Core Test"; T.fr.title="Model:Cycles — Essai noyau autonome";
-T.en.select_all_note="Selects all four options on this standalone core test page."; T.fr.select_all_note="Sélectionne les quatre options de cet essai du noyau autonome.";
+T.en.select_all_note="Selects the complete standalone MIDI bundle; its included features need no extra selections."; T.fr.select_all_note="Sélectionne le pack MIDI autonome complet ; ses fonctions incluses ne demandent aucune sélection supplémentaire.";
 FEAT.en["performance-core"] = {"label": "Slide trigs + Scale Lock — standalone core", "short": "Retained Model-TG performance features, without its sampler.", "desc": "Hold SETTINGS and press a trig to toggle its slide. Scale Lock is available in the keyboard setup menu. This extracted core contains no sampler, master effects or extra Model-TG menus. Latching mute and trig preview are separate selections below. Sequence Genie, SCRAMBLE and MIDI Bank are not connected to this core yet; use the existing flasher for those features.", "note": "Experimental extraction: boot, scale mapping and six-machine audio verified in emulation. Awaiting hardware testing."};
 FEAT.fr["performance-core"] = {"label": "Slides + Scale Lock — noyau autonome", "short": "Fonctions performance de Model-TG, sans son sampler.", "desc": "Maintenez SETTINGS et appuyez sur un trig pour basculer son slide. Scale Lock est disponible dans la configuration du clavier. Ce noyau extrait ne contient ni sampler, ni effets master, ni menus supplémentaires Model-TG. Mute verrouillé et écoute de pas restent deux sélections séparées ci-dessous. Sequence Genie, SCRAMBLE et banque MIDI ne sont pas encore reliés à ce noyau ; utilisez le flasher existant pour ces fonctions.", "note": "Extraction expérimentale : démarrage, gammes et audio des six machines vérifiés en émulation. Essai matériel attendu."};
 GUIDE_OF["performance-core"]="performance-core";
+
+FEAT.en["performance-midi-core"] = {"label": "Standalone MIDI performance bundle", "short": "Sequence Genie, SCRAMBLE, LFO2 and MIDI Bank with saving, without Model-TG.", "desc": "Includes slides, Scale Lock, latching mute, trig preview, arpeggiator and Live MIDI OUT + THRU. FUNC + SETTINGS + TRACK opens the B-side; RETURN leaves it. SETTINGS + PAGE opens Sequence Genie on the active side. MIDI lanes retain the stock-style keyboard, track/scale setup, chance and retrigger menus, step and track clipboard, live recording, editable MIDI channels and LFO-to-CC. LFO opens its first page, then a second press opens LFO2. B-side destinations cover CC 0–127 with common names. The Test3 sidecar saving and working autosave code is included for MIDI patterns, B-side LFOs and A-side LFO2. A-side LFO1 uses its native saving. This test has only the six stock sound machines; Syntakt, ACID, MACRO, sampler and sample preview are absent.", "note": "Experimental new bindings and startup layout: boot, MIDI routing, scheduler and simulated save/load verified. Hardware testing still required. Back up projects before testing persistence. Main and Test3 are unchanged."};
+FEAT.fr["performance-midi-core"] = {"label": "Pack performance MIDI autonome", "short": "Sequence Genie, SCRAMBLE, LFO2 et banque MIDI sauvegardable, sans Model-TG.", "desc": "Inclut slides, Scale Lock, mute verrouillé, écoute de trig, arpégiateur et MIDI OUT + THRU en direct. FUNC + SETTINGS + TRACK ouvre la face B ; RETURN en sort. SETTINGS + PAGE ouvre Sequence Genie du côté actif. Les voies MIDI conservent clavier, réglages piste/gamme, chance, retrigger, presse-papiers pas/piste, enregistrement live, canaux réglables et LFO CC. LFO ouvre sa première page, un second appui LFO2. Destinations B : CC 0–127 avec noms usuels. Le code sidecar et autosave working de Test3 conserve les patterns MIDI, LFO B et LFO2 A ; LFO1 A utilise sa sauvegarde native. Six machines natives seulement ; Syntakt, ACID, MACRO, sampler et préécoute absents.", "note": "Nouveaux bindings et démarrage expérimentaux : boot, routage MIDI, ordonnanceur et sauvegarde simulée vérifiés. Test matériel attendu. Sauvegardez vos projets avant cet essai de persistance. Principal et Test3 inchangés."};
+GUIDE_OF["performance-midi-core"]="performance-midi-core";
 
 function featText(id, key, fallback) {
   const f = (FEAT[st.lang] && FEAT[st.lang][id]) || FEAT.en[id];
@@ -1451,11 +1457,11 @@ function live(text) {
 
 // One listener per zone (delegation): they survive the rebuild that follows every change.
 // Sélection compatible : les deux préférences sont installées en premier.
-Object.assign(T.en, { select_all: "Select all", select_all_note: "Selects all four options on this standalone core test page." });
-Object.assign(T.fr, { select_all: "Tout sélectionner", select_all_note: "Sélectionne les quatre options de cet essai du noyau autonome." });
+Object.assign(T.en, { select_all: "Select all", select_all_note: "Selects the complete standalone MIDI bundle; its included features need no extra selections." });
+Object.assign(T.fr, { select_all: "Tout sélectionner", select_all_note: "Sélectionne le pack MIDI autonome complet ; ses fonctions incluses ne demandent aucune sélection supplémentaire." });
 function selectAllCompatible() {
   for (const f of features()) selOf(f).on = false;
-  const preferred = ["model-tg", "midi-live-both", "scale-gen", "lfo-secondary"].map(featById).filter(Boolean);
+  const preferred = ["performance-midi-core"].map(featById).filter(Boolean);
   for (const f of preferred) setOn(f, true);
   for (const f of features()) {
     if (preferred.includes(f) || includedBy(f)) continue;

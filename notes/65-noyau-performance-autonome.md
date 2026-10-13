@@ -69,3 +69,42 @@ produit n'est publié. Cette extraction reste expérimentale, sans validation ma
 puis leurs chargeurs/sauvegardes et les moteurs optionnels. Vérifier chaque sélection
 et la coexistence avec LFO2 avant d'élargir le catalogue. Les assignations de knobs
 CC et le nudge B-side natif restent à réaliser après cette séparation.
+
+## 5. Raccordement du pack MIDI (12/10/2026)
+
+[FAIT en émulation] `tools/gen_core_midi_bundle.py` raccorde les sources actuelles
+Sequence Genie, SCRAMBLE, LFO2 et banque MIDI au même noyau. Le générateur de banque
+existant est réutilisé pour compiler, sans modifier ses sorties ni les anciennes
+pages. Ses nouveaux bindings sont fournis seulement pendant cette compilation.
+Les sources stock du firmware ne sont jamais embarquées dans la charge publiée.
+
+La banque complète (conditions, retrigger/arp, clipboard, LFO CC, MBK4,
+autosave working et live recording) occupe **44 048 octets**, à `0x401ace40`.
+Avec le noyau, elle réserve **quatre blocs cache**, laissant **douze** blocs natifs,
+contre sept dans le précédent candidat TG à neuf blocs réservés. La source
+compressée se situe après ces quatre blocs, à `0x401bb750`, et ne chevauche pas
+sa destination. Elle fait 21 561 octets ; la marge sous `0x40200000` est 259 191
+octets. Le clear préserve le code noyau + banque et retire le mapping PCM ACR1
+du boot hérité : aucun sampler n'est installé.
+
+Le pack navigateur `performance-midi-core` aplatit les écritures successives et
+les deux charges utiles en une recette unique. Le générateur vérifie que son
+image est identique à la chaîne de composants, octet par octet. Cette recette
+n'a **aucune dépendance Model-TG**, et n'embarque ni Syntakt, ni ACID/MACRO, ni
+sampler/préécoute. Elle inclut aussi les tweaks autonomes mute verrouillé,
+apercu de trig, arpégiateur et Live MIDI OUT + THRU. Le plus petit noyau seul
+reste une autre sélection sur la nouvelle page ; `Select all` choisit le pack.
+
+`tools/emu/test_core_midi_bundle.py` exécute boot/décompression/invalidation,
+cache natif, getters, banque par pattern, transport, conditions et ordonnanceur,
+puis réutilise les preuves Genie B, LFO CC et session de stockage avec **ces**
+adresses. Genie Generate/Undo et Euclide restent limités à B, sans modifier A.
+Les douze LFO MIDI émettent leurs CC sur les six canaux et les mutes purgent les
+messages différés. Le nouveau test `test_core_midi_lfo_cc.py` accepte `--pattern-settings`
+pour initialiser les réglages MBK2/3/4 à leur adresse réelle plutôt que l'ancienne
+configuration RAM seule. Les preuves de session couvrent WRK/SEQ, migration,
+identité de projet, publication protégée et reprise sur erreur ; FS simulé.
+
+[À FAIRE] Validation matérielle du nouveau layout, persistance réelle et timing
+MIDI ; réintégration des moteurs optionnels, puis knobs CC assignables et nudge
+B-side natif. Les anciennes pages principale et Test3 sont inchangées.
