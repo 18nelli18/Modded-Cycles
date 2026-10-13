@@ -49,6 +49,7 @@ def main():
   r.stubs[addr]=popup;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
  if a.tweak:
   expected=['MIDI SAVE ERR','MIDI: IRQ','MIDI: LOADING','CTX: NO LOAD','MIDI: OWNER','MIDI: SYNC','MIDI: BANK','MIDI: SLOT','MIDI: PATH','MIDI: ROOT','MIDI: DIR','MIDI: SNAP','MIDI: COMMIT','MIDI: CREATE','MIDI: DATA','MIDI: OPEN','MIDI: ALLOC','WRITE: ZERO','MIDI: FLUSH','MIDI: CLOSE','MIDI: BUFFERS','MIDI: LOOKUP A','MIDI: LOOKUP B','MIDI: GUARD','MIDI: RAM ONLY','MIDI: VERIFY']
+  if a.cc_storage:expected[2]='LOAD I00/96'
   r.w32(syms['ml_store_save_status'],0);r.w32(syms['ml_store_io_poison'],0)
   for error,message in enumerate(expected):
    r.w32(syms['ml_store_save_error'],error);r.call('ml_store_save_feedback');assert feedback[-1]==message
@@ -384,6 +385,12 @@ def main():
    assert r.call('mlkc_lock_get',cc_restored,0,3,0)==(74<<8|111)
    assert r.call('mlkc_lock_get',cc_restored,5,63,11)==0
    print('ok : restauration service boot réelle adopte maps et locks après notes, anciens buffers séparés')
+   before_rebind=dict(files);r.w32(syms['ml_store_load_pending_id'],0xdeadbeef);r.w32(syms['ml_store_load_pending_slot'],3);r.w32(syms['ml_store_load_ready'],0);r.w32(syms['ml_store_load_serial'],r.r32(syms['ml_store_load_serial'])+1)
+   r.call('ml_store_service');assert r.r32(syms['ml_store_load_pending_id'])==current['id']
+   for index in range(96):r.call('ml_store_service')
+   assert r.r32(syms['ml_store_load_ready'])==1 and r.r32(syms['ml_store_load_status'])==1 and files==before_rebind
+   table=r.r32(syms['ml_bank_table']);assert bytes(r.u.mem_read(r.r32(table+20),data_size))==payload(76)
+   print('ok : notification de boot périmée ne bloque plus MIDI LOADING ; rebind natif vérifié puis restauration, aucune écriture')
   if a.live_record:
    # Paquet produit par la capture libre : note/vélocité/durée/retard persistants.
    recorded=r.r32(table+5*4)

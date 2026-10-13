@@ -23,7 +23,13 @@ ml_store_ram_only: .long 0
 .Lserial: .long 0
 .Lid: .long 0
 .Lslot: .long 0
+    .globl ml_store_restore_cursor
+ml_store_restore_cursor:
 .Lcursor: .long 0
+    .ifdef ML_CC_STORAGE
+    .globl ml_store_restore_phase
+ml_store_restore_phase: .long 0
+    .endif
 .Ltable: .long 0
     .text
     .globl ml_store_service
@@ -91,7 +97,11 @@ ml_store_service:
     movel %d2,.Lserial
     jsr .Lservice_matches
     tstl %d0
+    .ifdef ML_CC_STORAGE
+    beq .Lservice_rebind
+    .else
     beq .Lservice_out
+    .endif
     moveq #4,%d0
     movel %d0,ml_store_load_error
     pea 384
@@ -108,6 +118,9 @@ ml_store_service:
     bpl .Lservice_zero
     clrl .Lcursor
     .ifdef ML_CC_STORAGE
+    clrl ml_store_restore_phase
+    .endif
+    .ifdef ML_CC_STORAGE
     jsr mlkcs_candidate_reset
     .endif
     moveq #1,%d0
@@ -116,13 +129,21 @@ ml_store_service:
 .Lservice_current:
     jsr .Lservice_matches
     tstl %d0
+    .ifdef ML_CC_STORAGE
+    beq .Lservice_stale
+    .else
     beq .Lservice_abort
+    .endif
     .ifdef ML_SAVE_FIRST
     .ifndef ML_RESTORE_SAVED
     | Diagnostic écriture seule : aucun fichier lu au démarrage/Load.
     | Une table B vide est publiée ; Save garde sa relecture de vérification.
     bra .Lservice_publish
     .endif
+    .endif
+    .ifdef ML_CC_STORAGE
+    moveq #1,%d0
+    movel %d0,ml_store_restore_phase
     .endif
     moveq #5,%d0
     movel %d0,ml_store_load_error
@@ -137,6 +158,8 @@ ml_store_service:
     beq .Lservice_abort
     .ifdef ML_CC_STORAGE
     movel %d0,%sp@-
+    moveq #2,%d0
+    movel %d0,ml_store_restore_phase
     movel .Lslot,%sp@-
     movel .Lid,%sp@-
     movel .Lcursor,%d0
@@ -152,6 +175,10 @@ ml_store_service:
     addql #1,.Lcursor
     bra .Lservice_out
 .Lservice_publish:
+    .ifdef ML_CC_STORAGE
+    moveq #3,%d0
+    movel %d0,ml_store_restore_phase
+    .endif
     moveq #6,%d0
     movel %d0,ml_store_load_error
     jsr ml_store_ui_cancel
@@ -202,6 +229,13 @@ ml_store_service:
     bne .Lservice_out
 .Lservice_ram_recover:
     jsr ml_store_recover_ram
+    .endif
+    bra .Lservice_out
+    .ifdef ML_CC_STORAGE
+.Lservice_stale:
+    jsr .Lservice_discard
+.Lservice_rebind:
+    jsr ml_store_rebind_live
     .endif
 .Lservice_out:
     moveml %sp@,%d2/%a2-%a3

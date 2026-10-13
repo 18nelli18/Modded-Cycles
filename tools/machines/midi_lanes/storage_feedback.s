@@ -25,6 +25,14 @@ ml_store_save_feedback:
     movel ml_store_save_error,%d0
     cmpil #25,%d0
     bhi .Lfeedback_show
+    .ifdef ML_CC_STORAGE
+    cmpil #2,%d0
+    bne .Lnot_loading
+    jsr ml_store_loading_message
+    moveal %d0,%a0
+    bra .Lfeedback_show
+.Lnot_loading:
+    .endif
     cmpil #17,%d0
     beq .Lwrite_detail
     cmpil #3,%d0
