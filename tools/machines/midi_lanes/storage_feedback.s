@@ -19,8 +19,33 @@ ml_store_save_feedback:
     movel ml_store_save_error,%d0
     cmpil #23,%d0
     bhi .Lfeedback_show
+    cmpil #3,%d0
+    beq .Lcontext_detail
     lea .Lerrors,%a1
     moveal %a1@(0,%d0:l:4),%a0
+    bra .Lfeedback_show
+| Contexte absent : distinguer notification, service UI et allocation.
+.Lcontext_detail:
+    lea .Lctx_load,%a0
+    tstl ml_store_load_serial
+    beq .Lfeedback_show
+    lea .Lctx_ui,%a0
+    tstl ml_store_ui_seen
+    beq .Lfeedback_show
+    lea .Lctx_ipl,%a0
+    tstl ml_store_ui_ready
+    beq .Lfeedback_show
+    lea .Lctx_disk,%a0
+    tstl ml_store_io_poison
+    bne .Lfeedback_show
+    lea .Lctx_busy,%a0
+    tstl ml_store_io_busy
+    bne .Lfeedback_show
+    lea .Lctx_ram,%a0
+    movel ml_store_load_error,%d0
+    subql #1,%d0
+    beq .Lfeedback_show
+    lea .Lctx_state,%a0
     bra .Lfeedback_show
 .Lfeedback_ok:
     lea .Lsave_ok,%a0
@@ -49,6 +74,13 @@ ml_store_load_feedback:
     .long .Lbank,.Lslot,.Lpath,.Lroot,.Ldir,.Lsnapshot
     .long .Lcommit,.Linitial,.Ldata,.Lopen,.Lallocate,.Lwrite,.Lflush,.Lclose
     .long .Lbuffers,.Llookup_a,.Llookup_b,.Lguard
+.Lctx_load: .asciz "CTX: NO LOAD"
+.Lctx_ui: .asciz "CTX: NO UI"
+.Lctx_ipl: .asciz "CTX: UI IPL"
+.Lctx_disk: .asciz "CTX: DISK"
+.Lctx_busy: .asciz "CTX: BUSY"
+.Lctx_ram: .asciz "CTX: RAM"
+.Lctx_state: .asciz "CTX: STATE"
 .Lload_context: .asciz "MIDI LOAD: RAM"
 .Lload_identity: .asciz "MIDI LOAD: ID"
 .Lload_slot: .asciz "MIDI LOAD: SLOT"

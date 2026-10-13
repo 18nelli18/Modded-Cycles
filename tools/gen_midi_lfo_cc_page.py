@@ -12,6 +12,12 @@ def sources():
  page=(ROOT/'tools/machines/lfo_secondary/page.s').read_text()
  layout=(ROOT/'tools/machines/lfo_secondary/layout.s').read_text()
  def rename(s):return s.replace('lf2p','mlccp').replace('lf2l','mlccl').replace('lf2_context','mlcc_settings')
+ # Le quick assign audio LFO2 ne s'applique pas au menu CC dérivé.
+ if '    .section .text.lf2p_enc_quick,' in page:
+  a=page.index('    .section .text.lf2p_enc_quick,');b=page.index('    .section .text.lf2p_enc_value,',a)
+  page=page[:a]+page[b:]
+  page=page.replace('    bne .Lpe_quick','    bne .Lpe_out')
+  page=page.replace('    tstl lf2p_assigned\n    beq .Lpk_close\n    clrl lf2p_assigned\n    bra .Lpk_used', '    bra .Lpk_close')
  page=rename(page);layout=rename(layout)
  a=page.index('    | Même sélection de piste');b=page.index('    lea.l   0x400802e0',a)
  page=page[:a]+'''    movel mlp_track,%d0

@@ -38,7 +38,7 @@ def load(r):
     with tempfile.TemporaryDirectory() as temp:
         p = pathlib.Path(temp)
         objects = []
-        for name in ('update', 'mix', 'dispatch', 'edit', 'init', 'prepare', 'launch', 'key', 'page', 'layout'):
+        for name in ('update', 'mix', 'dispatch', 'edit', 'init', 'prepare', 'launch', 'key', 'page', 'layout', 'quick_assign'):
             obj = p/(name+'.o')
             subprocess.run([cross+'as', '-march=cfv4e', '-o', str(obj),
                             str(root/'tools/machines/lfo_secondary'/(name+'.s'))], check=True)
@@ -159,6 +159,41 @@ def main():
     args = ap.parse_args()
     PLACED=args.tweak
     stock = main_os_from_syx(args.cycles)
+    # Table native des potards initialisée avec des descripteurs réels ;
+    # vérifier les douze destinations et profondeur signée, sans toucher LFO1.
+    q=make(stock);assert q.call('lf2p_open')==1
+    held={'value':1}
+    q.stubs[0x4007faf4]=lambda a:held['value'] if a[0]==8 else 0
+    q.u.hook_add(UC_HOOK_CODE,q.stub,begin=0x4007faf4,end=0x4007faf4)
+    table=q.call(0x4004df5c,1)
+    descriptors=[]
+    for param in range(76):
+        dest=q.call(0x4005a4e8,param)
+        if dest<=32:descriptors.append((param,dest))
+    assert len(descriptors)>=12
+    for track in range(6):
+        q.w32(q.s['lf2p_track'],track)
+        for knob_id,(param,dest) in enumerate(descriptors[:12]):
+            q.w32(table+8+4*knob_id,param)
+            assert q.call('lf2_edit',CTX,track,3,127)==1
+            before=bytes(q.u.mem_read(FRAME,476))
+            q.delta=2;event(q,knob_id+2)
+            assert q.call('lf2p_enc',page(q),EVENT)==1
+            assert value(q,track,3)==dest and q.r32(q.s['lf2p_assigned'])==1
+            assert bytes(q.u.mem_read(FRAME,476))==before
+            q.call('lf2_edit',CTX,track,7,16384)
+            q.delta=-3;q.call('lf2p_enc_th',page(q)+4,EVENT)
+            assert value(q,track,7)==16384-3*256
+            q.delta=200;q.call('lf2p_enc',page(q),EVENT)
+            assert value(q,track,7)==32767
+            q.delta=-200;q.call('lf2p_enc',page(q),EVENT)
+            assert value(q,track,7)==0
+    event(q,8,0);q.call('lf2p_menu_key',page(q),EVENT)
+    assert q.r32(q.s['lf2p_assigned'])==0 and page(q)
+    held['value']=0;q.delta=3;event(q,2)
+    before=bytes(q.u.mem_read(CTX,1240));q.call('lf2p_enc',page(q),EVENT)
+    assert bytes(q.u.mem_read(CTX,1240))==before
+    print('ok : quick assign LFO2, douze potards × six pistes, profondeur signée bornée, garde relâchement et LFO1 intact')
     # Régression : l'ancien retour statique doit être refusé par le heap simulé.
     bad=make(stock)
     assert bad.call('lf2p_open') == 1

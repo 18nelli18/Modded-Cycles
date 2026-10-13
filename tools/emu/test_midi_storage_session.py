@@ -48,10 +48,16 @@ def main():
    feedback.append(r.string(args[0]));return 0
   r.stubs[addr]=popup;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
  if a.tweak:
-  expected=['MIDI SAVE ERR','MIDI: IRQ','MIDI: LOADING','MIDI: CONTEXT','MIDI: OWNER','MIDI: SYNC','MIDI: BANK','MIDI: SLOT','MIDI: PATH','MIDI: ROOT','MIDI: DIR','MIDI: SNAP','MIDI: COMMIT','MIDI: CREATE','MIDI: DATA','MIDI: OPEN','MIDI: ALLOC','MIDI: WRITE','MIDI: FLUSH','MIDI: CLOSE','MIDI: BUFFERS','MIDI: LOOKUP A','MIDI: LOOKUP B','MIDI: GUARD']
+  expected=['MIDI SAVE ERR','MIDI: IRQ','MIDI: LOADING','CTX: NO LOAD','MIDI: OWNER','MIDI: SYNC','MIDI: BANK','MIDI: SLOT','MIDI: PATH','MIDI: ROOT','MIDI: DIR','MIDI: SNAP','MIDI: COMMIT','MIDI: CREATE','MIDI: DATA','MIDI: OPEN','MIDI: ALLOC','MIDI: WRITE','MIDI: FLUSH','MIDI: CLOSE','MIDI: BUFFERS','MIDI: LOOKUP A','MIDI: LOOKUP B','MIDI: GUARD']
   r.w32(syms['ml_store_save_status'],0);r.w32(syms['ml_store_io_poison'],0)
   for error,message in enumerate(expected):
    r.w32(syms['ml_store_save_error'],error);r.call('ml_store_save_feedback');assert feedback[-1]==message
+  r.w32(syms['ml_store_save_error'],3)
+  r.w32(syms['ml_store_load_serial'],1)
+  for seen,ready,error,busy,message in ((0,0,0,0,'CTX: NO UI'),(1,0,0,0,'CTX: UI IPL'),(1,1,0,1,'CTX: BUSY'),(1,1,1,0,'CTX: RAM'),(1,1,0,0,'CTX: STATE')):
+   for symbol,v in (('ml_store_ui_seen',seen),('ml_store_ui_ready',ready),('ml_store_load_error',error),('ml_store_io_busy',busy)):r.w32(syms[symbol],v)
+   r.call('ml_store_save_feedback');assert feedback[-1]==message
+  for symbol in ('ml_store_load_serial','ml_store_ui_seen','ml_store_ui_ready','ml_store_load_error','ml_store_io_busy'):r.w32(syms[symbol],0)
   r.w32(syms['ml_store_io_poison'],1);r.call('ml_store_save_feedback');assert feedback[-1]=='MIDI: DISK'
   r.w32(syms['ml_store_io_poison'],0);r.w32(syms['ml_store_save_error'],0)
  ctx,pathA,pathB,recA,recB,scratch,snapshot,bank=[0x93090000+i*0x2000 for i in range(8)]
@@ -173,7 +179,7 @@ def main():
   before=dict(files);r.w32(syms['ml_store_project_ctx'],0)
   assert native_save()==1 and files==before
   assert r.r32(syms['ml_store_save_status'])==0 and r.r32(syms['ml_store_save_error'])==3
-  if a.tweak:assert feedback[-1]=='MIDI: CONTEXT'
+  if a.tweak:assert feedback[-1]=='CTX: NO LOAD'
   r.w32(syms['ml_store_project_ctx'],ctx)
  assert native_save()==1
  assert r.r32(syms['ml_store_save_status'])==1

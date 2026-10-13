@@ -97,6 +97,7 @@ lf2p_o_holder:
     moveq #5,%d0
     movel %d0,lf2p_row
     clrl lf2p_edit
+    clrl lf2p_assigned
     moveq   #1,%d1
     movel   #0x401000c4,%d0
     movel   %d0,%a0@
@@ -167,7 +168,10 @@ lf2p_menu_key:
 .Lpk_lfo:
     andil #3,%d2
     bne .Lpk_used
-    bra .Lpk_close
+    tstl lf2p_assigned
+    beq .Lpk_close
+    clrl lf2p_assigned
+    bra .Lpk_used
 .Lpk_close_down:
     andil #9,%d2
     cmpil #1,%d2
@@ -226,7 +230,7 @@ lf2p_enc:
     moveal %sp@(24),%a0
     movel %a0@(12),%d0
     cmpil #1,%d0
-    bne .Lpe_out
+    bne .Lpe_quick
     pea 1
     pea 1
     movel %a0,%sp@-
@@ -260,6 +264,29 @@ lf2p_enc:
     cmpil #5,%d0
     bhi .Lpe_out
     movel %d0,lf2p_track
+    bra .Lpe_redraw
+    .section .text.lf2p_enc_quick,"ax"
+.Lpe_quick:
+    subql #2,%d0
+    cmpil #11,%d0
+    bhi .Lpe_out
+    movel %d0,%d4
+    pea 8
+    jsr 0x4007faf4
+    addql #4,%sp
+    tstl %d0
+    beq .Lpe_out
+    pea 8
+    pea 1
+    movel %sp@(32),%sp@-
+    jsr 0x4006f73a
+    lea.l %sp@(12),%sp
+    tstl %d0
+    beq .Lpe_out
+    movel %d0,%sp@-
+    movel %d4,%sp@-
+    jsr lf2p_quick_assign
+    addql #8,%sp
     bra .Lpe_redraw
     .section .text.lf2p_enc_value,"ax"
 .Lpe_field:
@@ -510,6 +537,8 @@ lf2p_opened: .long 0
 lf2p_row: .long 0
 lf2p_edit: .long 0
 lf2p_track: .long 0
+    .globl lf2p_assigned
+lf2p_assigned: .long 0
     .section .data.lf2p_vtable,"aw"
     .balign 4
 lf2p_vt: .space 0xb0
