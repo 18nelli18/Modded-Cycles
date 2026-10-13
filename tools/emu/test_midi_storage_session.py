@@ -347,6 +347,10 @@ def main():
  current['id']=0x12345678
  if a.restore_saved:
   assert a.write_first and a.extended
+  if a.audio_lfo:
+   # Test FS sans page/LFO natif ; leur sync réel est prouvé par storage_bank.
+   at=syms['ml_bank_ui_sync'];r.stubs[at]=lambda args:1
+   r.u.hook_add(UC_HOOK_CODE,r.stub,begin=at,end=at)
   # Démarrage sans ancien owner/table musical : seules les annexes subsistent.
   r.u.mem_write(0x404e9b4d,b'\x03')
   for addr,fn in ((0x400d0a10,lambda args:0x930a8000),
@@ -363,6 +367,21 @@ def main():
    ptr=r.r32(table+pat*4);assert ptr and bytes(r.u.mem_read(ptr,data_size))==payload(note)
   assert r.r32(syms['ml_store_owner_id'])==current['id']
   assert native_save()==1 and r.r32(syms['ml_store_save_status'])==1
+  if a.live_record:
+   # Paquet produit par la capture libre : note/vélocité/durée/retard persistants.
+   recorded=r.r32(table+5*4)
+   r.u.mem_write(recorded+8,bytes((73,91,4,37)))
+   assert native_save()==1 and r.r32(syms['ml_store_save_status'])==1
+   assert load(current['id'],3,5)>0
+   assert bytes(r.u.mem_read(snapshot+8,4))==bytes((73,91,4,37))
+   r.w32(syms['ml_store_load_pending_id'],current['id'])
+   r.w32(syms['ml_store_load_pending_slot'],3)
+   r.w32(syms['ml_store_load_serial'],r.r32(syms['ml_store_load_serial'])+1)
+   for index in range(96):r.call('ml_store_service')
+   table=r.r32(syms['ml_bank_table']);recorded=r.r32(table+5*4)
+   assert bytes(r.u.mem_read(recorded+8,4))==bytes((73,91,4,37))
+   print('ok : live libre sauvegarde/restaure note73, vélocité91, durée4, retard9/64 dans MBK4')
+   before_files=dict(files)
   # Changer de projet ne doit pas recopier les séquences de l'ancien.
   current['id']=0x55667788;r.w32(RAW+8,current['id'])
   r.w32(syms['ml_store_load_pending_id'],current['id'])
