@@ -115,9 +115,11 @@ ml_store_service:
     tstl %d0
     beq .Lservice_abort
     .ifdef ML_SAVE_FIRST
+    .ifndef ML_RESTORE_SAVED
     | Diagnostic écriture seule : aucun fichier lu au démarrage/Load.
     | Une table B vide est publiée ; Save garde sa relecture de vérification.
     bra .Lservice_publish
+    .endif
     .endif
     moveq #5,%d0
     movel %d0,ml_store_load_error

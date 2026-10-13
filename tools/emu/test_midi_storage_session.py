@@ -7,13 +7,13 @@ from test_sdvintage import main_os_from_syx
 from gen_seq_gen import symbols
 
 def main():
- ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--extended',action='store_true');ap.add_argument('--working',action='store_true');ap.add_argument('--write-first',action='store_true');ap.add_argument('--tweak');ap.add_argument('--audio-lfo',action='store_true');ap.add_argument('--live-record',action='store_true');a=ap.parse_args();data_size=4992 if a.audio_lfo else (4896 if a.extended else 1584)
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--extended',action='store_true');ap.add_argument('--working',action='store_true');ap.add_argument('--write-first',action='store_true');ap.add_argument('--restore-saved',action='store_true');ap.add_argument('--tweak');ap.add_argument('--audio-lfo',action='store_true');ap.add_argument('--live-record',action='store_true');a=ap.parse_args();data_size=4992 if a.audio_lfo else (4896 if a.extended else 1584)
  if a.audio_lfo:assert a.extended and a.tweak
  root=pathlib.Path(__file__).resolve().parents[2];cross=str(root.parent/'toolchain/bin/m68k-elf-')
  with tempfile.TemporaryDirectory() as tmp:
   p=pathlib.Path(tmp);objs=[]
   for name in ('presence','working_slot','ui_cancel','service','retire','prepare','publish','load_hook','restore_step','restore','project','save_hook','session','directory','initial','guard','checked','codec','verify','io','path','snapshot','load','commit'):
-   obj=p/(name+'.o');objs.append(str(obj));subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_STORAGE2=1'] if a.extended else []),*(['--defsym','ML_WORKING=1'] if a.working else []),*(['--defsym','ML_SAVE_FIRST=1'] if a.write_first else []),*(['--defsym','ML_STORAGE=1'] if name=='project' else []),*(['--defsym','ML_GENIE=1','--defsym','ML_CLIPBOARD=1'] if name=='ui_cancel' else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/('storage_'+name+'.s'))],check=True)
+   obj=p/(name+'.o');objs.append(str(obj));subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_STORAGE2=1'] if a.extended else []),*(['--defsym','ML_WORKING=1'] if a.working else []),*(['--defsym','ML_SAVE_FIRST=1'] if a.write_first else []),*(['--defsym','ML_RESTORE_SAVED=1'] if a.restore_saved else []),*(['--defsym','ML_STORAGE=1'] if name=='project' else []),*(['--defsym','ML_GENIE=1','--defsym','ML_CLIPBOARD=1'] if name=='ui_cancel' else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/('storage_'+name+'.s'))],check=True)
   for name in ('banks','runtime'):
    obj=p/(name+'.o');objs.append(str(obj));subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_STORAGE2=1'] if a.extended else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
   (p/'link.ld').write_text('SECTIONS { .text 0x93050000 : { *(.text*) *(.rodata*) *(.data*) } } ml_runtime = 0x93079008; ml_clock_state = 0x9307900c; ml_pattern = 0x93079014; ml_context = 0x93079024; mlp_keyboard_cancel = 0x93079028; mlp_held = 0x9307902c; mlp_remove = 0x93079030; mlp_changed = 0x93079034; ml_gq_state = 0x93079038; ml_gu_valid = 0x9307903c; SG_undo_valid = 0x93079040; mlp_clip_invalidate = 0x93079044; ml_store_save_feedback = 0x93079048; ml_store_load_feedback = 0x9307904c; ml_store_save_error = 0x93079050;')
@@ -177,8 +177,8 @@ def main():
  if a.write_first:
   r.stubs[0x400cf866]=lambda a:OBJ
   r.u.mem_write(0x4000f762,b'\x4e\xf9'+struct.pack('>I',syms['ml_store_save_entry'])+b'\x4e\x71')
- def native_save():
-  r.u.mem_write(STACK,struct.pack('>4I',STOP,OBJ,3,callback))
+ def native_save(slot=3):
+  r.u.mem_write(STACK,struct.pack('>4I',STOP,OBJ,slot,callback))
   r.u.reg_write(mk.UC_M68K_REG_A7,STACK)
   try:r.u.emu_start(0x4000f762,STOP,count=12000000)
   except Exception:
@@ -214,12 +214,13 @@ def main():
   r.stubs[0x400cf866]=lambda a:OBJ
   r.w32(syms['ml_store_load_ready'],1)
   r.stubs[0x4006a4d6]=lambda a:r.w32(RAW+8,0x10203040) or 1
-  assert native_save()==1 and r.r32(syms['ml_store_save_status'])==1
+  assert native_save(8)==1 and r.r32(syms['ml_store_save_status'])==1
+  assert r.r32(syms['ml_store_load_pending_slot'])==8
   assert r.r32(syms['ml_store_owner_id'])==0x10203040
   assert bytes(r.u.mem_read(bank,data_size))==payload(76)
   for pat,note in ((5,76),(6,81)):
-   assert load(0x10203040,3,pat)>0 and bytes(r.u.mem_read(snapshot,data_size))==payload(note)
-  assert native_save()==1 and r.r32(syms['ml_store_save_status'])==1
+   assert load(0x10203040,8,pat)>0 and bytes(r.u.mem_read(snapshot,data_size))==payload(note)
+  assert native_save(8)==1 and r.r32(syms['ml_store_save_status'])==1
   r.stubs[0x4006a4d6]=lambda a:native['save']
   r.w32(RAW+8,0x12345678);r.w32(syms['ml_store_owner_id'],0x12345678)
   r.w32(syms['ml_store_load_pending_id'],0x12345678)
@@ -344,6 +345,36 @@ def main():
  r.w32(runtime,1);r.w32(runtime+8,1);r.w32(runtime+12,1)
  r.w32(runtime+16,0x96486403);r.w32(runtime+272,0x86480003);r.w32(runtime+276,8)
  current['id']=0x12345678
+ if a.restore_saved:
+  assert a.write_first and a.extended
+  # Démarrage sans ancien owner/table musical : seules les annexes subsistent.
+  r.u.mem_write(0x404e9b4d,b'\x03')
+  for addr,fn in ((0x400d0a10,lambda args:0x930a8000),
+                  (0x4008c2c2,lambda args:6),(0x4008c324,lambda args:current['id'])):
+   r.stubs[addr]=fn;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
+  r.w32(syms['ml_store_load_serial'],0);r.w32(syms['ml_store_owner_id'],0)
+  r.u.mem_write(bank,bytes(data_size));r.u.mem_write(bank2,bytes(data_size))
+  before_files=dict(files)
+  for index in range(96):r.call('ml_store_service')
+  assert files==before_files and r.r32(syms['ml_store_load_ready'])==1
+  assert r.r32(syms['ml_store_load_status'])==1
+  table=r.r32(syms['ml_bank_table']);assert table!=embedded
+  for pat,note in ((5,76),(6,81)):
+   ptr=r.r32(table+pat*4);assert ptr and bytes(r.u.mem_read(ptr,data_size))==payload(note)
+  assert r.r32(syms['ml_store_owner_id'])==current['id']
+  assert native_save()==1 and r.r32(syms['ml_store_save_status'])==1
+  # Changer de projet ne doit pas recopier les séquences de l'ancien.
+  current['id']=0x55667788;r.w32(RAW+8,current['id'])
+  r.w32(syms['ml_store_load_pending_id'],current['id'])
+  r.w32(syms['ml_store_load_pending_slot'],4)
+  r.w32(syms['ml_store_load_serial'],r.r32(syms['ml_store_load_serial'])+1)
+  for index in range(96):r.call('ml_store_service')
+  assert bytes(r.u.mem_read(r.r32(syms['ml_bank_table']),384))==bytes(384)
+  assert files==before_files or all(k in files for k in before_files)
+  print('ok : démarrage sans données MIDI RAM restaure les patterns 5/6 depuis fichiers puis Save fonctionne')
+  print('ok : autre projet sans annexes donne banque vide ; aucune écriture pendant restauration')
+  print('Limite : fichiers simulés ; persistance physique après extinction à tester')
+  return
  if a.write_first:
   assert a.extended and not a.working
   # Même association native de slot, mais aucune restauration ne bloque Save.
