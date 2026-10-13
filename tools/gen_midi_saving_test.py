@@ -41,7 +41,7 @@ FR=('Sauvegarde expérimentale des patterns B. MACRO exclu ; ACID et Model-TG co
 def main():
  ap=argparse.ArgumentParser(description=__doc__)
  for name in ('base-page','output-dir','cycles','syntakt','model-tg'):ap.add_argument('--'+name,required=True)
- ap.add_argument('--live-record',action='store_true');ap.add_argument('--audio-lfo',action='store_true');ap.add_argument('--working',action='store_true');ap.add_argument('--engines',choices=('both','acid','macro'),default='both');ap.add_argument('--cross',default='m68k-elf-');a=ap.parse_args();base=pathlib.Path(a.base_page);out=pathlib.Path(a.output_dir)
+ ap.add_argument('--diagnostics',action='store_true');ap.add_argument('--live-record',action='store_true');ap.add_argument('--audio-lfo',action='store_true');ap.add_argument('--working',action='store_true');ap.add_argument('--engines',choices=('both','acid','macro'),default='both');ap.add_argument('--cross',default='m68k-elf-');a=ap.parse_args();base=pathlib.Path(a.base_page);out=pathlib.Path(a.output_dir)
  if a.engines!='both':
   bank.IDS=tuple(x.replace('syntakt-tg-sd-cp-toy-bits-swarm-macro-acid','syntakt-tg-sd-cp-toy-bits-swarm-'+a.engines) for x in bank.IDS)
  excluded=[] if a.engines=='both' else ['macro' if a.engines=='acid' else 'acid']
@@ -71,6 +71,10 @@ def main():
   STAMP='2026-10-12-test-3-b-live-record'
   en+=' Experimental B-side live recording: hold RECORD and press PLAY. Press PLAY again while still holding RECORD to switch quantized/unquantized recording. Keyboard and pad notes record only into the selected MIDI lane. Unquantized timing uses 1/64-step resolution; held-note lengths use whole steps. New MBK4 records retain timing offsets; MBK2/MBK3 records remain readable. Earlier saving builds cannot read MBK4 records. This build reserves one additional Model-TG cache block and requires hardware verification.'
   fr+=' Live-rec B expérimental : RECORD + PLAY, puis PLAY avec RECORD maintenu pour basculer la quantification. Notes clavier/pad limitées à la voie MIDI choisie. Microtiming au 1/64 de pas ; durée en pas entiers. MBK4 conserve les retards et lit MBK2/MBK3 ; les anciennes versions ne lisent pas MBK4. Un bloc cache Model-TG supplémentaire réservé, matériel à valider.'
+ if a.diagnostics:
+  STAMP='2026-10-12-test-3-tg-save-diagnostics'
+  en+=' Save diagnostics: full-record read-back verification corrected. A failing save now reports its stage (INIT, OWNER, SYNC, PATH, ROOT, DIR, SNAP, COMMIT, CREATE, DATA, OPEN, ALLOC, WRITE, FLUSH, CLOSE or DISK). Hardware persistence is not confirmed. Includes Model-TG and the existing mod selections; standalone core is not used. LFO2 quick assign is pending.'
+  fr+=' Diagnostic Save : comparaison intégrale corrigée, erreur par étape. Persistance matérielle non confirmée. Model-TG et sélections existantes conservés ; noyau autonome absent. Quick assign LFO2 à intégrer.'
  stock=bank.main_os_from_syx(a.cycles)
  tweak,chosen,image=bank.generate(stock,a.syntakt,a.model_tg,a.cross,True,True,True,8,True,True,True,True,True,a.audio_lfo,a.working,a.live_record)
  tweak['requires']=[x for x in tweak['requires'] if x!='6ch-usbup'];tweak['status']='experimental'
@@ -88,7 +92,7 @@ def main():
  start=bundle.index('const bankFeature = ')+len('const bankFeature = ');feature,_=json.JSONDecoder().raw_decode(bundle[start:]);feature.update(status='experimental',excludes=excluded,desc=fr)
  bundle=replace_json(bundle,'const bankFeature = ',feature)
  bundle=replace_json(bundle,'Object.assign(window.MCFlasherApp.REF_MODS, ',{tweak['id']:mod,engine['id']:engine_ref});bundle=replace_json(bundle,'Object.assign(window.MCFlasherApp.REF_MAINOS, ',refs)
- page=(base/'index.html').read_text();page=re.sub(r'window.MC_BUILD\s*=\s*[^;]+;','window.MC_BUILD = '+json.dumps(STAMP)+';',page);page=re.sub(r'(bundle\.js|builder\.js)\?v=[^"\s<]+',lambda m:m.group(1)+'?v='+STAMP,page)
+ page=(base/'index.html').read_text();page=re.sub(r'window.MC_BUILD\s*=\s*[^;]+;','window.MC_BUILD = '+json.dumps(STAMP)+';',page);page=re.sub(r'\?v=[^"\s<]+','?v='+STAMP,page)
  out.mkdir(parents=True,exist_ok=True)
  for name in ('builder.js','app.js','tweaks.js','flasher.js','style.css'):shutil.copyfile(base/name,out/name)
  builder=(out/'builder.js').read_text();dense=pathlib.Path(__file__).with_name('aplib_dense.js').read_text();builder=builder.replace('function aplibPack(data) {',dense+'\nfunction aplibPack(data) {').replace('return aplibPack(out);','return ap.compress_depth ? aplibDensePack(out, ap.compress_depth) : aplibPack(out);');(out/'builder.js').write_text(builder)
