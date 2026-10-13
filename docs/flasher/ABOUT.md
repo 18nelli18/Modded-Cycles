@@ -1,5 +1,5 @@
-# 2026-10-13-lfo2-speed-main
+# 2026-10-13-midi-saving-live-main
 
-LFO SPEED edits LFO 2 while its page is open; on B-side it edits the selected MIDI LFO. Hardware tested by AveyCole on 13 October 2026. Quick assignment, keyboard input, other A-side synth controls and native five-field sound saving retained. MIDI storage excluded.
+Six separate, parallel MIDI-only sequencing lanes with grid and quantized/unquantized live recording. Save Project stores MIDI patterns, step locks and MIDI LFO settings; loading the saved project or restarting restores them. Hardware tested by AveyCole on existing and new projects, including live recording, 13 October 2026. Unsaved edits are not autosaved. MIDI data is stored in separate files outside normal Elektron project backups and SysEx exports. New saves retain timing offsets and read earlier MIDI save files; older saving builds cannot read the new format.
 
-LFO SPEED édite LFO 2 dans sa page ; côté B, le LFO MIDI sélectionné. Testé sur matériel par AveyCole le 13 octobre 2026. Quick assign, clavier, autres potards synthé A et sauvegarde native de cinq réglages conservés. Stockage MIDI exclu.
+Six voies MIDI parallèles indépendantes avec enregistrement grille et live quantifié/libre. Save Project conserve patterns MIDI, locks et LFO MIDI ; chargement du projet sauvegardé ou redémarrage les restaure. Testé sur matériel par AveyCole sur projets existants et nouveaux, live-rec inclus, le 13 octobre 2026. Pas d’autosave des éditions. Fichiers MIDI séparés hors backups Elektron et exports SysEx. Les nouveaux fichiers conservent le microtiming et lisent les anciennes sauvegardes ; les anciennes versions ne lisent pas le nouveau format.

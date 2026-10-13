@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.61",
+  "date": "2026-10-13",
+  "changes": [
+    {
+      "en": "MIDI OUT Bank now saves its six parallel MIDI sequencing lanes with Save Project and restores them after project loading or power cycles. Existing and new projects, plus quantized/unquantized live recording, are hardware tested by AveyCole.",
+      "fr": "MIDI OUT Bank sauvegarde désormais ses six voies MIDI parallèles avec Save Project et les restaure au chargement ou après extinction. Projets existants/nouveaux et live-rec quantifié/libre testés sur matériel par AveyCole."
+    },
+    {
+      "en": "Notes, velocity, step lengths, timing offsets, locks and MIDI LFO settings are retained. Unsaved changes are not autosaved; MIDI files are separate from normal Elektron backups and SysEx. All existing mod selections remain available.",
+      "fr": "Notes, vélocité, durées, microtiming, locks et LFO MIDI conservés. Pas d’autosave des éditions ; fichiers MIDI séparés des backups Elektron et SysEx. Sélections de mods existantes conservées."
+    }
+  ]
+},
+{
   "version": "1.60",
   "date": "2026-10-13",
   "changes": [
