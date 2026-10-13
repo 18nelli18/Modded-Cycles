@@ -153,13 +153,31 @@ ml_store_write:
     movel %d0,ml_store_save_error
     movel %sp@+,%d0
     .endif
+    | Écrire par petits blocs ; une écriture partielle positive avance le handle
+    | natif. Zéro/erreur interrompt sans boucle infinie ; relecture entière ensuite.
+    movel #ML_RECORD_BYTES,%d3
+.Lwrite_chunk:
+    movel %d3,%d0
+    cmpil #512,%d0
+    bls .Lwrite_chunk_ready
+    movel #512,%d0
+.Lwrite_chunk_ready:
+    movel %d0,%sp@(32)
     movel %a2,%sp@-
     movel %d2,%sp@-
-    pea ML_RECORD_BYTES
+    movel %d0,%sp@-
     jsr 0x4007bb0a
     lea.l %sp@(12),%sp
-    cmpil #ML_RECORD_BYTES,%d0
-    bne .Lwrite_close
+    .ifdef ML_STORAGE2
+    movel %d0,ml_store_write_count
+    .endif
+    tstl %d0
+    ble .Lwrite_close
+    cmpl %sp@(32),%d0
+    bhi .Lwrite_close
+    addl %d0,%d2
+    subl %d0,%d3
+    bne .Lwrite_chunk
     .ifdef ML_STORAGE2
     movel %d0,%sp@-
     moveq #18,%d0
@@ -204,7 +222,8 @@ ml_store_write:
     .ifdef ML_STORAGE2
     .data
     .balign 4
-    .globl ml_store_file_error,ml_store_file_count
+    .globl ml_store_file_error,ml_store_file_count,ml_store_write_count
 ml_store_file_error: .long 0
 ml_store_file_count: .long 0
+ml_store_write_count: .long 0
     .endif

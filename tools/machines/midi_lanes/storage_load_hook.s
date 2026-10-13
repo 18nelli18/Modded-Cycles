@@ -16,6 +16,29 @@ ml_store_load_ready: .long 1
     .text
     .globl ml_store_load_hook
 ml_store_load_hook:
+    .ifdef ML_SAVE_FIRST
+    | Le diagnostic ne restaure rien : une copie/reprise native du même projet
+    | ne doit pas effacer la table MIDI éditée, même après un Save refusé.
+    tstb %d0
+    beq .Lload_restore
+    tstl %d2
+    beq .Lload_restore
+    movel %a0,%sp@-
+    movel %d1,%sp@-
+    moveal %d2,%a0
+    movel %a0@(8),%d1
+    beq .Lload_keep_check_done
+    cmpl ml_store_owner_id,%d1
+    bne .Lload_keep_check_done
+    tstl ml_store_load_ready
+    beq .Lload_keep_check_done
+    movel %sp@+,%d1
+    moveal %sp@+,%a0
+    bra .Lload_restore
+.Lload_keep_check_done:
+    movel %sp@+,%d1
+    moveal %sp@+,%a0
+    .endif
     .ifdef ML_REPEAT
     jsr ml_repeat_project_notice
     .endif

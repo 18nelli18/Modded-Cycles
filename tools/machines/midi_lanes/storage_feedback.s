@@ -25,10 +25,20 @@ ml_store_save_feedback:
     movel ml_store_save_error,%d0
     cmpil #25,%d0
     bhi .Lfeedback_show
+    cmpil #17,%d0
+    beq .Lwrite_detail
     cmpil #3,%d0
     beq .Lcontext_detail
     lea .Lerrors,%a1
     moveal %a1@(0,%d0:l:4),%a0
+    bra .Lfeedback_show
+.Lwrite_detail:
+    lea .Lwrite_negative,%a0
+    tstl ml_store_write_count
+    bmi .Lfeedback_show
+    lea .Lwrite_zero,%a0
+    beq .Lfeedback_show
+    lea .Lwrite_short,%a0
     bra .Lfeedback_show
 | Contexte absent : distinguer notification, service UI et allocation.
 .Lcontext_detail:
@@ -181,6 +191,9 @@ ml_store_load_feedback:
 .Lopen: .asciz "MIDI: OPEN"
 .Lallocate: .asciz "MIDI: ALLOC"
 .Lwrite: .asciz "MIDI: WRITE"
+.Lwrite_negative: .asciz "WRITE: FAIL"
+.Lwrite_zero: .asciz "WRITE: ZERO"
+.Lwrite_short: .asciz "WRITE: SHORT"
 .Lflush: .asciz "MIDI: FLUSH"
 .Lclose: .asciz "MIDI: CLOSE"
     .balign 2

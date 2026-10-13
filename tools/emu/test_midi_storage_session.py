@@ -48,7 +48,7 @@ def main():
    feedback.append(r.string(args[0]));return 0
   r.stubs[addr]=popup;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
  if a.tweak:
-  expected=['MIDI SAVE ERR','MIDI: IRQ','MIDI: LOADING','CTX: NO LOAD','MIDI: OWNER','MIDI: SYNC','MIDI: BANK','MIDI: SLOT','MIDI: PATH','MIDI: ROOT','MIDI: DIR','MIDI: SNAP','MIDI: COMMIT','MIDI: CREATE','MIDI: DATA','MIDI: OPEN','MIDI: ALLOC','MIDI: WRITE','MIDI: FLUSH','MIDI: CLOSE','MIDI: BUFFERS','MIDI: LOOKUP A','MIDI: LOOKUP B','MIDI: GUARD','MIDI: RAM ONLY','MIDI: VERIFY']
+  expected=['MIDI SAVE ERR','MIDI: IRQ','MIDI: LOADING','CTX: NO LOAD','MIDI: OWNER','MIDI: SYNC','MIDI: BANK','MIDI: SLOT','MIDI: PATH','MIDI: ROOT','MIDI: DIR','MIDI: SNAP','MIDI: COMMIT','MIDI: CREATE','MIDI: DATA','MIDI: OPEN','MIDI: ALLOC','WRITE: ZERO','MIDI: FLUSH','MIDI: CLOSE','MIDI: BUFFERS','MIDI: LOOKUP A','MIDI: LOOKUP B','MIDI: GUARD','MIDI: RAM ONLY','MIDI: VERIFY']
   r.w32(syms['ml_store_save_status'],0);r.w32(syms['ml_store_io_poison'],0)
   for error,message in enumerate(expected):
    r.w32(syms['ml_store_save_error'],error);r.call('ml_store_save_feedback');assert feedback[-1]==message
@@ -62,7 +62,7 @@ def main():
   r.w32(syms['ml_store_io_poison'],0);r.w32(syms['ml_store_save_error'],0)
  ctx,pathA,pathB,recA,recB,scratch,snapshot,bank=[0x93090000+i*0x2000 for i in range(8)]
  r.u.mem_write(ctx,struct.pack('>11I',pathA,pathB,recA,recB,scratch,snapshot,0,0,0,0,0))
- dirs={'/':2};files={};handles={};log=[];fault={'write':False,'read':False,'verify':False}
+ dirs={'/':2};files={};handles={};positions={};log=[];fault={'write':False,'read':False,'verify':False}
  def lookup(args):
   parent,name,out=args[:3];name=r.string(name);prefix=next(k for k,v in dirs.items() if v==parent)
   path=prefix.rstrip('/')+'/'+name;log.append(('lookup',path))
@@ -77,7 +77,7 @@ def main():
   log.append(('open',path,mode))
   if mode=='r' and path not in files:return -1
   if mode=='w':files[path]=b''
-  handles[handle]=path;return 0
+  handles[handle]=path;positions[handle]=0;return 0
  def read(args):
   size,out,handle=args[:3];data=files[handles[handle]]
   if fault['read']:r.w32(syms['ml_store_io_poison'],1)
@@ -85,7 +85,8 @@ def main():
  def write(args):
   size,source,handle=args[:3]
   if fault['write']:return 0
-  files[handles[handle]]=bytes(r.u.mem_read(source,size))
+  at=positions[handle];data=bytes(r.u.mem_read(source,size));old=files[handles[handle]]
+  files[handles[handle]]=old[:at]+data+old[at+size:];positions[handle]=at+size
   if fault['verify']:files[handles[handle]]=files[handles[handle]][:-1]
   return size
  for addr,fn in ((0x4007ad86,lookup),(0x4007ac46,mkdir),(0x4007bc5e,opened),
@@ -355,6 +356,19 @@ def main():
   fault['write']=False
   assert load(current['id'],3,5)>0
   assert bytes(r.u.mem_read(snapshot,data_size))==payload(77)
+  # Reprise native du même projet après Save refusé : garder table et accès B.
+  ready_before=r.r32(syms['ml_store_load_ready']);serial_before=r.r32(syms['ml_store_load_serial'])
+  retained_table=r.r32(syms['ml_bank_table']);retained_notes=bytes(r.u.mem_read(bank,data_size))
+  r.u.mem_write(STACK,struct.pack('>I',STOP));r.u.reg_write(mk.UC_M68K_REG_A7,STACK)
+  r.u.reg_write(mk.UC_M68K_REG_D0,1);r.u.reg_write(mk.UC_M68K_REG_D2,RAW)
+  r.u.reg_write(mk.UC_M68K_REG_D3,96)
+  # Entrer avant le prologue hook avec l'épilogue sauvegardé attendu.
+  saved=bytes(32);r.u.mem_write(STACK-32,saved+struct.pack('>I',STOP));r.u.reg_write(mk.UC_M68K_REG_A7,STACK-32)
+  r.u.emu_start(syms['ml_store_load_hook'],STOP,count=100000)
+  assert r.r32(syms['ml_store_load_serial'])==serial_before and r.r32(syms['ml_store_load_ready'])==ready_before
+  r.call('ml_store_service')
+  assert r.r32(syms['ml_bank_table'])==retained_table and bytes(r.u.mem_read(bank,data_size))==retained_notes
+  print('ok : reprise native du même projet après Save refusé conserve table, notes et accès B')
   # Sans service UI ni Load : le Save natif confirme le propriétaire et le slot.
   r.w32(syms['ml_store_load_serial'],0);r.w32(syms['ml_store_owner_id'],0)
   r.w32(syms['ml_store_load_active'],0);r.w32(syms['ml_store_load_ready'],0)
