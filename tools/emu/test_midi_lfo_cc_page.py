@@ -83,16 +83,17 @@ def main():
  def window(t):
   r.w32(clock,t);ptr=r.call('mlccp_window',name)
   return bytes(r.u.mem_read(ptr,7)).split(b'\0')[0].decode()
- assert window(0)=='CC74 C'
- assert window(1499)=='CC74 C'
- assert window(1500)=='C74 Cu'
- assert window(1875)=='74 Cut'
- assert window(2250)=='4 Cuto'
- assert window(2625)==' Cutof'
- assert window(3000)=='Cutoff'
- assert window(4499)=='Cutoff'
- assert window(4500)==' Cutof'
- assert len(window(4875))==6
+ assert window(0)=='CC74 '
+ assert window(1499)=='CC74 '
+ assert window(1500)=='C74 C'
+ assert window(1875)=='74 Cu'
+ assert window(2250)=='4 Cut'
+ assert window(2625)==' Cuto'
+ assert window(3000)=='Cutof'
+ assert window(3375)=='utoff'
+ assert window(4874)=='utoff'
+ assert window(4875)=='Cutof'
+ assert len(window(5250))==5
  short=r.call('mlcc_name',128)
  assert r.call('mlccp_window',short)==short
  # Clavier réel sous le menu, même REC actif : Note On/Off, sans édition.

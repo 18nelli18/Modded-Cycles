@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.65",
+  "date": "2026-10-13",
+  "changes": [
+    {
+      "en": "B-side LFO1/2 destinations now use DATA to edit and DATA again to confirm. Browsing keeps the last confirmed CC active; BACK cancels the draft. DATA right browses OFF then CC0–127. Long destination names scroll in a narrower five-character window to avoid clipping.",
+      "fr": "Destinations LFO1/2 B : DATA pour éditer, DATA pour confirmer. Parcourir conserve le CC confirmé ; BACK annule le brouillon. DATA vers la droite parcourt OFF puis CC0–127. Les noms longs défilent dans une fenêtre de cinq caractères pour éviter le débordement."
+    },
+    {
+      "en": "CC slides and all existing features are retained. New LFO selection behavior is checked in emulation and awaits hardware verification. CC assignments and CC locks remain RAM-only while saving integration continues.",
+      "fr": "Slides CC et fonctions existantes conservés. Nouvelle sélection LFO vérifiée en émulation, en attente de test matériel. Assignations et locks CC restent en RAM pendant l’intégration de leur sauvegarde."
+    }
+  ]
+},
+{
   "version": "1.64",
   "date": "2026-10-13",
   "changes": [

@@ -6,7 +6,7 @@
 mlccp_draft: .long -1
 mlccp_draft_owner: .long 0,0,0
     .text
-    .globl mlccp_confirm_data,mlccp_confirm_cancel,mlccp_confirm_write
+    .globl mlccp_confirm_data,mlccp_confirm_cancel,mlccp_confirm_write,mlccp_confirm_adjust
 mlccp_confirm_cancel:
 .Lconfirm_cancel:
     moveq #-1,%d0
@@ -72,6 +72,27 @@ mlccp_confirm_write:
 .Lconfirm_other:
     jmp mlcc_cfg_edit
 
+| Enumération UI OFF,CC0..127 ; stockage OFF128 inchangé.
+mlccp_confirm_adjust:
+    movel %sp@(4),%d0
+    cmpil #128,%d0
+    bne .Ladjust_add
+    moveq #-1,%d0
+.Ladjust_add:
+    addl %sp@(8),%d0
+    cmpil #-1,%d0
+    bge .Ladjust_high
+    moveq #-1,%d0
+.Ladjust_high:
+    cmpil #127,%d0
+    ble .Ladjust_off
+    moveq #127,%d0
+.Ladjust_off:
+    tstl %d0
+    bpl .Ladjust_done
+    movel #128,%d0
+.Ladjust_done:
+    rts
     .section .text.mlccp_confirm_validate,"ax"
     .globl mlccp_confirm_validate
 mlccp_confirm_validate:

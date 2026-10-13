@@ -149,6 +149,7 @@ mlccp_present:
   page=page.replace('    jsr mlp_keyboard_cancel\n', '    jsr mlccp_confirm_cancel\n    jsr mlp_keyboard_cancel\n')
   page=page.replace('mlccp_raw_value:\n', 'mlccp_raw_value:\n    jsr mlccp_confirm_validate\n    cmpil #4,%d2\n    bne .Lcc_read_confirmed\n    movel mlccp_draft,%d0\n    bpl .Lcc_read_return\n.Lcc_read_confirmed:\n')
   page=page.replace('    jsr mlcc_cfg_edit', '    jsr mlccp_confirm_write')
+  page=page.replace('.Lpe_add:\n', '.Lpe_add:\n    cmpil #3,%d2\n    bne .Lcc_normal_add\n    movel %d3,%sp@-\n    movel %d0,%sp@-\n    jsr mlccp_confirm_adjust\n    addql #8,%sp\n    bra .Lpe_set\n.Lcc_normal_add:\n')
   page=page.replace('    lea.l %sp@(16),%sp\n    rts\n\n    .section .text.mlccp_value', '    lea.l %sp@(16),%sp\n.Lcc_read_return:\n    rts\n\n    .section .text.mlccp_value')
   extra += (ROOT/'tools/machines/midi_lanes/lfo_cc_confirm.s').read_text()
  return {'page':page,'layout':layout,'support':extra,'scroll':(ROOT/'tools/machines/midi_lanes/lfo_cc_scroll.s').read_text()}

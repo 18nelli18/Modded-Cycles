@@ -34,6 +34,14 @@ def main():
    r.call('mlccp_confirm_data');r.call('mlccp_confirm_write',cfg,lane,lfo,3,71);r.call('mlccp_confirm_cancel');assert r.call('mlcc_cfg_get',cfg,lane,lfo,3)==128
    # Les autres champs ne passent pas dans le brouillon destination.
    r.call('mlccp_confirm_data');assert r.call('mlccp_confirm_write',cfg,lane,lfo,7,8192)==1;assert r.call('mlcc_cfg_get',cfg,lane,lfo,7)==8192;r.call('mlccp_confirm_cancel')
+ # Ordre UI indépendant de OFF128 stocké.
+ value=128
+ for cc in range(128):
+  value=r.call('mlccp_confirm_adjust',value,1);assert value==cc
+ assert r.call('mlccp_confirm_adjust',127,1)==127
+ for cc in list(range(126,-1,-1))+[128]:
+  value=r.call('mlccp_confirm_adjust',value,0xffffffff);assert value==cc
+ assert r.call('mlccp_confirm_adjust',128,0xffffffff)==128
  # Tout changement propriétaire annule la sélection provisoire.
  for name,new in (('mlccp_track',0),('mlccp_index',0),('mlcc_settings',cfg+256)):
   r.w32(syms['mlccp_track'],5);r.w32(syms['mlccp_index'],1);r.w32(syms['mlcc_settings'],cfg)
@@ -73,6 +81,17 @@ def integration(cycles,tweak):
    key(32,16);r.w32(event+12,1);r.call('mlccp_enc',obj,event);key(12,1)
    assert not closed and r.call('mlcc_cfg_get',cfg,lane,lfo,3)==79
    key(16,1);key(16,0);assert keyboard[-2:]==[(16,1),(16,0)]
+ # Même ordre avec le vrai encodeur : OFF puisCC0..127, CFG intacte.
+ r.w32(s['mlccp_row'],4);r.call('mlcc_cfg_edit',cfg,5,1,3,128);key(32,16)
+ for cc in range(128):
+  r.w32(event+12,1);r.call('mlccp_enc',obj,event);assert r.r32(s['mlccp_draft'])==cc
+  assert r.call('mlcc_cfg_get',cfg,5,1,3)==128
+ key(12,1)
+ # La fenêtre réelle reste à cinq caractères pour chaque nom commun.
+ for cc in (0,1,7,10,11,64,71,74,127,128):
+  name=r.call('mlcc_name',cc)
+  for now in range(0,7501,375):
+   r.w32(s['TG_blk_clk'],now);assert len(r.string(r.call('mlccp_window',name)))<=5
  # BACK suivant ferme seulement la fenêtre, LFO change annule le brouillon.
  key(12,1);assert len(closed)==1
  key(32,16);key(8,0);assert r.r32(s['mlccp_draft'])==0xffffffff and not r.r32(s['mlccp_edit'])

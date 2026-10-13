@@ -106,12 +106,13 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
                 page_body=extras['cc_page'];a=page_body.index('    .section .text.mlccp_raw_value,');b=page_body.index('    .section .text.mlccp_value,',a)
                 extras['cc_read']='    .globl mlccp_raw_value\n'+page_body[a:b];extras['cc_page']=page_body[:a]+page_body[b:]
                 support=extras['cc_support'];a=support.index('    .section .text.mlccp_confirm_write,');b=support.index('    .section .text.mlccp_confirm_validate,',a)
-                extras['cc_write']='    .globl mlccp_confirm_write\n'+support[a:b];extras['cc_support']=support[:a]+support[b:]
+                extras['cc_write']='    .globl mlccp_confirm_write,mlccp_confirm_adjust\n'+support[a:b];extras['cc_support']=support[:a]+support[b:]
                 scroll=extras['cc_scroll'];a=scroll.index('mlccp_tick:');extras['cc_tick']='    .text\n    .globl mlccp_tick\n'+scroll[a:];extras['cc_scroll']='    .globl mlccp_scroll_draw\n'+scroll[:a]
+                page_body=extras['cc_page'];a=page_body.index('    .section .text.mlccp_pad,');b=page_body.index('    .section .text.mlccp_enc_navigation,',a);extras['cc_pad']='    .globl mlccp_pad\n'+page_body[a:b];extras['cc_page']=page_body[:a]+page_body[b:]
             for name,body in extras.items():
-                asm=p/(name+'.s');asm.write_text(fragment_slide_source(body,'confirm'+name[3:]) if lfo_confirm and name in ('cc_write','cc_read','cc_tick') else body)
+                asm=p/(name+'.s');asm.write_text(fragment_slide_source(body,'confirm'+name[3:]) if lfo_confirm and name in ('cc_write','cc_read','cc_tick','cc_pad') else body)
                 obj=p/(name+'.o');objects.append(str(obj))
-                if lfo_confirm and name in ('cc_write','cc_read','cc_tick'):slide_objects.append(obj)
+                if lfo_confirm and name in ('cc_write','cc_read','cc_tick','cc_pad'):slide_objects.append(obj)
                 subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_STORAGE2=1'] if extended_storage else []),'-o',str(obj),str(asm)],check=True)
         if audio_storage:
             legacy=(ROOT/'tools/machines/midi_lanes/storage_codec.s').read_text()
@@ -179,7 +180,8 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
             listing=subprocess.check_output([cross+'objdump','-h',str(p/'clipboard.o')],text=True)
             sections += [(m.group(1),int(m.group(2),16)) for m in re.finditer(r'^\s*\d+\s+(\.text\.ml_step_clip_[abcd])\s+([0-9a-fA-F]+)',listing,re.M)]
         # Plusieurs fragments peuvent partager les queues libres d'un masque.
-        spans=[(va,va,sprites.MASKS[va][0]) for va in available]
+        alignment=4 if lfo_confirm else 2
+        spans=[(va,(va+alignment-1)&~(alignment-1),sprites.MASKS[va][0]-(((va+alignment-1)&~(alignment-1))-va)) for va in available]
         owners={va:va for _,va in placements}
         for section,size in sorted(sections,key=lambda x:-x[1]):
             if conditions and section=='.data.mm_merge':continue
@@ -187,7 +189,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
             assert fits,(section,size,'aucun masque merger libre')
             base,at,capacity=min(fits,key=lambda span:(span[2],span[1]))
             spans.remove((base,at,capacity))
-            used=(size+1)&~1
+            used=(size+alignment-1)&~(alignment-1)
             if capacity>used:spans.append((base,at+used,capacity-used))
             placements.append((section,at));owners[at]=base
         merge_script='\n'.join(f' {name} {mask:#x} : {{ *({name}) }}' for name,mask in placements)

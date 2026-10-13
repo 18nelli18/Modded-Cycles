@@ -1,4 +1,4 @@
-| Fenêtre de six caractères (36 px maximum), défilement aller-retour.
+| Fenêtre de cinq caractères (30 px maximum), défilement aller-retour.
 | Horloge audio monotone, mais dessin et tampon exclusivement dans la tâche UI.
     .data
     .balign 4
@@ -30,7 +30,7 @@ mlccp_window:
     addql #1,%d1
     bra .Lsw_len
 .Lsw_length:
-    subql #6,%d1
+    subql #5,%d1
     ble .Lsw_short
     subl mlccp_scroll_time,%d2
     moveq #0,%d0
@@ -61,7 +61,7 @@ mlccp_window:
 .Lsw_copy:
     addal %d0,%a0
     lea mlccp_scroll_buf,%a1
-    moveq #5,%d1
+    moveq #4,%d1
 .Lsw_chars:
     moveb %a0@+,%a1@+
     subql #1,%d1
