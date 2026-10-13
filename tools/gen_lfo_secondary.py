@@ -21,7 +21,7 @@ ROOT=pathlib.Path(__file__).resolve().parents[1]
 OUT=ROOT/'tweaks/model-cycles_OS1.13/52-lfo-secondary.json'
 
 
-def compile_code(cross,reserved_masks=()):
+def compile_code(cross,reserved_masks=(),preserve_main_abi=False):
     occupied=[]
     for path in sorted((ROOT/'tweaks/model-cycles_OS1.13').glob('*.json')):
         tweak=json.loads(path.read_text())
@@ -67,7 +67,18 @@ def compile_code(cross,reserved_masks=()):
         # Partager les queues des masques ; alignement4 pour code et données.
         spans=[(va,va,row[0],row) for va,row in free]
         placed=[]
+        # ABI conservée pour la banque MIDI déjà publiée sur main.
+        fixed={'.data.lf2_dispatch':0x40184808,'.text.lf2_dispatch':0x40168a84,'.text.lf2_prepare':0x401795b0} if preserve_main_abi else {}
+        for section,at in fixed.items():
+            size=dict(sections)[section]
+            span=next(span for span in spans if span[0]==at)
+            base,_,capacity,row=span
+            assert size<=capacity,(section,size,capacity)
+            spans.remove(span);placed.append((base,at,capacity,row,section))
+            used=(size+3)&~3
+            if capacity>used:spans.append((base,at+used,capacity-used,row))
         for section,size in sorted(sections,key=lambda item:(-item[1],item[0])):
+            if section in fixed:continue
             fits=[span for span in spans if span[2]>=size]
             assert fits,('aucun masque disponible',section,size)
             base,at,capacity,row=min(fits,key=lambda span:(span[2],span[1]))
@@ -96,9 +107,9 @@ def compile_code(cross,reserved_masks=()):
 
 
 
-def generate(stock,cross,reserved_masks=()):
+def generate(stock,cross,reserved_masks=(),preserve_main_abi=False):
     assert hashlib.sha256(stock).hexdigest()==STOCK,'OS non officiel'
-    slots,blobs,syms=compile_code(cross,reserved_masks);writes=[]
+    slots,blobs,syms=compile_code(cross,reserved_masks,preserve_main_abi);writes=[]
     def raw(va,size):return stock[va-build.BASE:va-build.BASE+size]
     def write(va,new):writes.append(dict(off=va-build.BASE,old=raw(va,len(new)).hex(),new=new.hex()))
     for (va,row,section),blob in zip(slots,blobs):
@@ -132,8 +143,8 @@ def generate(stock,cross,reserved_masks=()):
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
-    ap.add_argument('--reserve-mask',action='append',type=lambda x:int(x,0),default=[]);ap.add_argument('--cycles',required=True);ap.add_argument('--output',default=str(OUT));ap.add_argument('--cross',default='m68k-elf-');ap.add_argument('--check',action='store_true')
-    args=ap.parse_args();tweak=generate(main_os_from_syx(args.cycles),args.cross,args.reserve_mask)
+    ap.add_argument('--preserve-main-abi',action='store_true');ap.add_argument('--reserve-mask',action='append',type=lambda x:int(x,0),default=[]);ap.add_argument('--cycles',required=True);ap.add_argument('--output',default=str(OUT));ap.add_argument('--cross',default='m68k-elf-');ap.add_argument('--check',action='store_true')
+    args=ap.parse_args();tweak=generate(main_os_from_syx(args.cycles),args.cross,args.reserve_mask,args.preserve_main_abi)
     text=json.dumps(tweak,ensure_ascii=False,indent=1)+'\n'
     output=pathlib.Path(args.output)
     if args.check:assert output.read_text()==text,output
