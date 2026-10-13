@@ -288,7 +288,7 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
         # Cibles natives exactes ; ordre boot/cache à valider avant publication.
         disk_hooks = [(0x4008b24a,'4fefffec48d7043c','ml_store_disk_read'),
                       (0x4008b3f6,'4fefffec48d7043c','ml_store_disk_write')] if extended_storage else [(0x400798c8,'4eb94008b24a','ml_store_disk_read')]
-        for at,old,name in disk_hooks + [
+        for at,old,name in disk_hooks + ([(0x4000f762,'4fefffcc48d77c1c','ml_store_save_entry')] if write_first else []) + [
             (0x4000f850,'4cd77c1c4fef0034','ml_store_save_hook'),
             (0x4006a660,'4cd7040c4fef0020','ml_store_load_hook')]:
             assert image[at-build.BASE:at-build.BASE+len(bytes.fromhex(old))].hex()==old

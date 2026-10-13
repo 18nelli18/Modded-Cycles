@@ -48,8 +48,8 @@ ml_store_read:
     tstl %d0
     bne .Lread_out
     movel %a2,%sp@-
-    movel %d2,%sp@-
     pea ML_RECORD_BYTES
+    movel %d2,%sp@-
     jsr 0x4007baaa
     lea.l %sp@(12),%sp
     movel %d0,%d3
@@ -146,7 +146,7 @@ ml_store_write:
     lea.l %sp@(12),%sp
     tstl %d0
     bne .Lwrite_close
-    | ABI vérifiée par writer natif : taille, tampon, handle.
+    | ABI des appelants OS/TG : tampon, taille, handle.
     .ifdef ML_STORAGE2
     movel %d0,%sp@-
     moveq #17,%d0
@@ -164,8 +164,8 @@ ml_store_write:
 .Lwrite_chunk_ready:
     movel %d0,%sp@(32)
     movel %a2,%sp@-
-    movel %d2,%sp@-
     movel %d0,%sp@-
+    movel %d2,%sp@-
     jsr 0x4007bb0a
     lea.l %sp@(12),%sp
     .ifdef ML_STORAGE2

@@ -79,11 +79,11 @@ def main():
   if mode=='w':files[path]=b''
   handles[handle]=path;positions[handle]=0;return 0
  def read(args):
-  size,out,handle=args[:3];data=files[handles[handle]]
+  out,size,handle=args[:3];data=files[handles[handle]]
   if fault['read']:r.w32(syms['ml_store_io_poison'],1)
   r.u.mem_write(out,data[:size]);return min(size,len(data))
  def write(args):
-  size,source,handle=args[:3]
+  source,size,handle=args[:3]
   if fault['write']:return 0
   at=positions[handle];data=bytes(r.u.mem_read(source,size));old=files[handles[handle]]
   files[handles[handle]]=old[:at]+data+old[at+size:];positions[handle]=at+size
@@ -174,6 +174,9 @@ def main():
   r.stubs[addr]=fn;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
  assert bytes(r.u.mem_read(0x4000f850,8)).hex()=='4cd77c1c4fef0034'
  r.u.mem_write(0x4000f850,b'\x4e\xf9'+struct.pack('>I',syms['ml_store_save_hook'])+b'\x4e\x71')
+ if a.write_first:
+  r.stubs[0x400cf866]=lambda a:OBJ
+  r.u.mem_write(0x4000f762,b'\x4e\xf9'+struct.pack('>I',syms['ml_store_save_entry'])+b'\x4e\x71')
  def native_save():
   r.u.mem_write(STACK,struct.pack('>4I',STOP,OBJ,3,callback))
   r.u.reg_write(mk.UC_M68K_REG_A7,STACK)
@@ -206,6 +209,21 @@ def main():
  if a.tweak:assert feedback[-1]=='MIDI: OWNER'
  if a.extended:assert r.r32(syms['ml_store_save_error'])==4
  r.w32(RAW+8,0x12345678)
+ if a.write_first:
+  # Save As change l'identité pendant le vrai Save, pas avant son entrée.
+  r.stubs[0x400cf866]=lambda a:OBJ
+  r.w32(syms['ml_store_load_ready'],1)
+  r.stubs[0x4006a4d6]=lambda a:r.w32(RAW+8,0x10203040) or 1
+  assert native_save()==1 and r.r32(syms['ml_store_save_status'])==1
+  assert r.r32(syms['ml_store_owner_id'])==0x10203040
+  assert bytes(r.u.mem_read(bank,data_size))==payload(76)
+  for pat,note in ((5,76),(6,81)):
+   assert load(0x10203040,3,pat)>0 and bytes(r.u.mem_read(snapshot,data_size))==payload(note)
+  assert native_save()==1 and r.r32(syms['ml_store_save_status'])==1
+  r.stubs[0x4006a4d6]=lambda a:native['save']
+  r.w32(RAW+8,0x12345678);r.w32(syms['ml_store_owner_id'],0x12345678)
+  r.w32(syms['ml_store_load_pending_id'],0x12345678)
+  print('ok : Save As natif conserve banques, écrit sous nouvelle identité et accepte un second Save')
  # Rechargement dans une nouvelle table RAM, indépendante de la table active.
  restored=0x9307e000;r.u.mem_write(restored,bytes(384));active_before=bytes(r.u.mem_read(table,384))
  def restore(id,slot):

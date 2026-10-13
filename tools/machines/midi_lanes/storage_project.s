@@ -94,6 +94,15 @@ ml_store_save_notice:
     addql #4,%sp
     tstl %d0
     beq .Lproject_done
+    .ifdef ML_SAVE_FIRST
+    movel %d0,%d4
+    movel %d0,%sp@-
+    movel %d3,%sp@-
+    movel %sp@(32),%sp@-
+    jsr ml_store_adopt_saved
+    lea %sp@(12),%sp
+    movel %d4,%d0
+    .endif
     cmpl ml_store_owner_id,%d0
     bne .Lproject_done
     movel %d0,%d4

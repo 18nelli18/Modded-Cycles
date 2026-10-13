@@ -36,7 +36,7 @@ def main():
         assert args[:3]==(42,0,1616),args[:3]
         calls.append('prepare');return state['prepare']
     def written(args):
-        inode,offset,source,size=args[:4]
+        inode,offset,size,source=args[:4]
         assert inode==42 and source==record+offset and 0<size<=512 and offset+size<=1616,args[:4]
         assert bytes(r.u.mem_read(source,size))==data[offset:offset+size]
         calls.append('write');return min(size,state['write']) if state['write']>0 else state['write']
