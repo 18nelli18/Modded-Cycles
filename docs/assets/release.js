@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.60",
+  "date": "2026-10-13",
+  "changes": [
+    {
+      "en": "LFO SPEED knob routing is hardware tested by AveyCole and now included in Second LFO on the main flasher. With LFO 2 open, the knob edits its speed with the stock range and direction; on B-side, it edits the selected MIDI LFO. Quick assign, keyboard playback and other A-side synth controls remain available.",
+      "fr": "Routage LFO SPEED testé sur matériel par AveyCole, désormais inclus dans Second LFO du flasher principal. Page LFO 2 ouverte, le potard édite sa vitesse avec plage et direction natives ; côté B, il édite le LFO MIDI sélectionné. Quick assign, clavier jouable et autres potards synthé A conservés."
+    },
+    {
+      "en": "Only five audio LFO 2 settings are saved with the sound: speed, multiplier, waveform, destination and depth. Fade, start phase and mode reset on load. Unfinished MIDI saving remains on its separate test page and is excluded from main.",
+      "fr": "Cinq réglages LFO 2 audio sauvés avec le son seulement : vitesse, multiplicateur, forme, destination et profondeur. Fondu, phase initiale et mode remis aux défauts au chargement. Sauvegarde MIDI inachevée limitée à sa page test séparée, exclue de main."
+    }
+  ]
+},
+{
   "version": "1.59",
   "date": "2026-10-13",
   "changes": [
@@ -277,6 +291,7 @@ window.MC_RELEASES = [
   ] },
   { version: "1.0", date: "2026-10-01", changes: [] },
 ];
+
 
 
 

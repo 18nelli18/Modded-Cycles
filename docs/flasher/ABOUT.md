@@ -1,7 +1,5 @@
-# 2026-10-13-lfo2-input-main
+# 2026-10-13-lfo2-speed-main
 
-While LFO 2 is open, the trig keyboard and pads remain playable on A-side and MIDI B-side. On A-side, ordinary knob turns edit the stock synth parameters. Hold LFO and turn a knob for quick assignment. MIDI B-side input stays on its MIDI lane and does not edit A-side synth parameters. 
+LFO SPEED edits LFO 2 while its page is open; on B-side it edits the selected MIDI LFO. Hardware tested by AveyCole on 13 October 2026. Quick assignment, keyboard input, other A-side synth controls and native five-field sound saving retained. MIDI storage excluded.
 
-LFO 2 ouvert, clavier TRIG et pads restent jouables côté A et MIDI B. Côté A, les potards ordinaires éditent les paramètres synthé natifs. LFO maintenu + potard conserve l’assignation rapide. Le jeu côté MIDI B reste sur sa voie MIDI, sans éditer le synthé A. 
-
-MIDI storage remains excluded.
+LFO SPEED édite LFO 2 dans sa page ; côté B, le LFO MIDI sélectionné. Testé sur matériel par AveyCole le 13 octobre 2026. Quick assign, clavier, autres potards synthé A et sauvegarde native de cinq réglages conservés. Stockage MIDI exclu.
