@@ -1,0 +1,5 @@
+# 2026-10-13-midi-assignable-cc
+
+Experimental gray-knob CC controls in MIDI B-side. Hold SETTINGS and turn a gray knob to select OFF or CC0-127. Common CC names appear in the stock-style window and long names scroll. Release SETTINGS, then turn the knob to send a value on the selected MIDI lane channel and port. Assignment itself sends nothing. Muted/disabled lanes send nothing; unassigned knobs retain their earlier behavior. A-side controls are unchanged. The first test keeps assignments in RAM only, so they reset after restart. Hardware-tested MIDI sequence saving and live recording remain included.
+
+Test CC des potards gris côté MIDI B. SETTINGS + potard choisit OFF ou CC0-127. Noms courants dans une fenêtre style stock, défilement des noms longs. Relâchez SETTINGS puis tournez pour transmettre sur canal et port de la voie MIDI sélectionnée. Assignation silencieuse, voie muette/désactivée silencieuse, potards OFF inchangés. Côté A inchangé. Ce premier test garde les assignations en RAM seulement, remises à zéro au redémarrage. Sauvegarde des séquences MIDI et live-rec testés sur matériel conservés.

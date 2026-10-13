@@ -185,6 +185,9 @@ mlp_redraw:
     addql #4,%sp
     jmp 0x40076082
 mlp_led_poll:
+    .ifdef ML_KNOB_CC
+    jsr mlkc_tick
+    .endif
     tstl mlp_obj
     beq .Lpoll_done
     jsr mlp_cursor

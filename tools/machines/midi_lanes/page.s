@@ -679,6 +679,14 @@ mlp_enc:
     .endif
     moveal %sp@(20),%a2
     moveal %sp@(24),%a0
+    .ifdef ML_KNOB_CC
+    movel %a0,%sp@-
+    jsr mlkc_enc
+    addql #4,%sp
+    tstl %d0
+    bne .Lme_redraw
+    moveal %sp@(24),%a0
+    .endif
     movel %a0@(12),%d0
     .ifdef ML_CONDITIONS
     cmpil #13,%d0
@@ -986,6 +994,22 @@ mlp_value:
     .endif
 
 mlp_render:
+    .ifdef ML_KNOB_CC
+    tstl mlkc_show
+    beq .Lrender_cc_done
+    tstl TG_set_held
+    bne mlkc_render
+    movel mlkc_show,%d0
+    cmpil #2,%d0
+    bne .Lrender_cc_clear
+    movel TG_blk_clk,%d0
+    subl mlkc_time,%d0
+    cmpil #1500,%d0
+    bcs mlkc_render
+.Lrender_cc_clear:
+    clrl mlkc_show
+.Lrender_cc_done:
+    .endif
     movel mlp_setup,%d0
     .ifdef ML_CONDITIONS
     cmpil #5,%d0
