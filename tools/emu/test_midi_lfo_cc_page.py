@@ -2,7 +2,7 @@
 """Page LFO MIDI : construction native et isolation des réglages audio."""
 import argparse,pathlib,subprocess,tempfile,json
 import build
-from unicorn import UC_HOOK_CODE
+from unicorn import UC_HOOK_CODE,m68k_const as mk
 from test_lfo_secondary_page import make,event,CTX,FRAME
 from test_seq_gen_menu import EVENT
 from test_sdvintage import main_os_from_syx
@@ -13,12 +13,16 @@ def main():
  ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--tweak');a=ap.parse_args()
  root=pathlib.Path(__file__).resolve().parents[2];cross=str(root.parent/'toolchain/bin/m68k-elf-')
  r=make(main_os_from_syx(a.cycles));cfg=0x930d0000
+ native_knob_table=r.call(0x4004df5c,1)
  if a.tweak:
   t=json.loads(pathlib.Path(a.tweak).read_text());cat=build.load_catalog()['model-cycles_OS1.13'][1]
   chosen=sorted([cat[x] for x in t['requires']],key=lambda x:x['order'])
   image,_=build.apply_writes(main_os_from_syx(a.cycles),chosen+[t]);r.u.mem_write(build.BASE,image)
   for part in t['append']['parts']:r.u.mem_write(int(part['dest'],16),bytes.fromhex(part['hex']))
   r.s.update({k:int(v,16) for k,v in t['symbols'].items()})
+  # Le getter redirigé Syntakt dépend de sa charge externe ; table UI native simulée ici.
+  r.stubs[0x4004df5c]=lambda args:native_knob_table
+  r.u.hook_add(UC_HOOK_CODE,r.stub,begin=0x4004df5c,end=0x4004df5c)
  else:
   with tempfile.TemporaryDirectory() as temp:
    p=pathlib.Path(temp);objects=[]
@@ -117,7 +121,11 @@ def main():
    event(r,0,0);assert r.call('mlccp_pad',obj+16,EVENT)==1
    assert r.call('ml_take',live)==((0x86+lane)<<24)|(72<<16)|4
   for code in range(2,14):
-   event(r,code);assert r.call('mlccp_enc',obj,EVENT)==1
+   event(r,code)
+   try:assert r.call('mlccp_enc',obj,EVENT)==1
+   except Exception:
+    print('Encoder PC',hex(r.u.reg_read(mk.UC_M68K_REG_PC)),code,hex(r.u.reg_read(mk.UC_M68K_REG_A7)))
+    raise
   assert bytes(r.u.mem_read(pattern,1584))==before
  # Les appuis ET relâchements trigs vont au clavier B, jamais à la grille A.
  routed=[]
@@ -126,6 +134,18 @@ def main():
  for flags in (1,0):
   event(r,19,flags);assert r.call('mlccp_menu_key',obj,EVENT)==1
  assert routed==[(19,1),(19,0)],routed
+ table=r.call(0x4004df5c,1);knob_index=3;r.w32(table+8+4*knob_index,0x1d)
+ for lane in range(6):
+  r.w32(r.s['mlccp_track'],lane)
+  for index in (0,1):
+   r.w32(r.s['mlccp_index'],index);assert r.call('mlcc_cfg_edit',cfg,lane,index,0,16384)==1
+   old=bytes(r.u.mem_read(cfg,192));r.delta=2;event(r,knob_index+2)
+   assert r.call('mlccp_enc',obj,EVENT)==1
+   assert r.call('mlcc_cfg_get',cfg,lane,index,0)==16896
+   expected=bytearray(old);expected[lane*32+index*16:lane*32+index*16+2]=bytes((0x42,0))
+   assert bytes(r.u.mem_read(cfg,192))==expected
+ r.w32(table+8+4*knob_index,0)
+ print('ok : potard SPEED vers LFO MIDI sélectionné, douze configurations isolées')
  # Le pad reste routé au clavier/pad MIDI privé, puis synchronise la sélection.
  r.w32(EVENT+20,6);event(r,0,1);r.call('mlccp_pad',obj+16,EVENT)
  assert r.r32(r.s['mlp_track'])==5 and r.r32(r.s['mlccp_track'])==5

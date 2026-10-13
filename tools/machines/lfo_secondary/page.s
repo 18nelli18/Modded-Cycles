@@ -361,6 +361,13 @@ lf2p_enc:
     moveq #1,%d0
     bra .Lpe_return
 .Lpe_pass:
+    movel %sp@(24),%sp@-
+    movel %d4,%sp@-
+    jsr lf2p_speed_knob
+    addql #8,%sp
+    tstl %d0
+    bne .Lpe_redraw
+.Lpe_not_speed:
     | Sans LFO maintenu, laisser le gestionnaire natif éditer le synthé A.
     moveq #0,%d0
 .Lpe_return:
@@ -573,3 +580,58 @@ lf2p_off: .asciz "OFF"
 lf2p_fmt_s: .asciz "%s"
 lf2p_fmt_d: .asciz "%d"
 
+
+| Potard SPEED natif (id0x1d dans la table de boutons), page ouverte seulement.
+| index/event ->1 traité,0 laisser passer. Valeur/delta natifs, bornes0..32767.
+    .section .text.lf2p_speed_knob,"ax"
+    .globl lf2p_speed_knob
+lf2p_speed_knob:
+    lea %sp@(-12),%sp
+    moveml %d2-%d3/%a2,%sp@
+    movel %sp@(16),%d2
+    cmpil #11,%d2
+    bhi .Lspeed_other
+    pea 1
+    jsr 0x4004df5c
+    addql #4,%sp
+    moveal %d0,%a0
+    movel %a0@(8,%d2:l:4),%d0
+    cmpil #0x1d,%d0
+    bne .Lspeed_other
+    pea 8
+    pea 1
+    movel %sp@(28),%sp@-
+    jsr 0x4006f73a
+    lea %sp@(12),%sp
+    movel %d0,%d3
+    moveq #1,%d2
+    jsr lf2p_raw_value
+    cmpil #128,%d3
+    bge .Lspeed_max
+    cmpil #-128,%d3
+    ble .Lspeed_min
+    lsll #8,%d3
+    addl %d3,%d0
+    bmi .Lspeed_min
+    cmpil #32767,%d0
+    ble .Lspeed_write
+.Lspeed_max:
+    movel #32767,%d0
+    bra .Lspeed_write
+.Lspeed_min:
+    moveq #0,%d0
+.Lspeed_write:
+    movel %d0,%sp@-
+    clrl %sp@-
+    movel lf2p_track,%sp@-
+    movel lf2_context,%sp@-
+    jsr lf2_edit
+    lea %sp@(16),%sp
+    moveq #1,%d0
+    bra .Lspeed_done
+.Lspeed_other:
+    moveq #0,%d0
+.Lspeed_done:
+    moveml %sp@,%d2-%d3/%a2
+    lea %sp@(12),%sp
+    rts

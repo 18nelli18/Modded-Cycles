@@ -202,6 +202,19 @@ def main():
         assert q.call('lf2p_enc_th',page(q)+4,EVENT)==0
     q.call('lf2p_enc',page(q),EVENT)
     assert bytes(q.u.mem_read(CTX,1240))==before
+    knob_index=3;original_param=q.r32(table+8+4*knob_index);q.w32(table+8+4*knob_index,0x1d)
+    for track in range(6):
+        q.w32(q.s['lf2p_track'],track)
+        for initial,delta,expected in ((16384,2,16896),(10,-2,0),(32760,2,32767),(16384,128,32767),(16384,-128,0)):
+            assert q.call('lf2_edit',CTX,track,0,initial)==1
+            old=bytes(q.u.mem_read(CTX,1240));frame=bytes(q.u.mem_read(FRAME,476))
+            q.delta=delta;event(q,knob_index+2)
+            assert q.call('lf2p_enc',page(q),EVENT)==1
+            assert value(q,track,0)==expected
+            expected_ctx=bytearray(old);struct.pack_into('>H',expected_ctx,192+16*track,expected)
+            assert bytes(q.u.mem_read(CTX,1240))==expected_ctx and bytes(q.u.mem_read(FRAME,476))==frame
+    q.w32(table+8+4*knob_index,original_param)
+    print('ok : potard SPEED natif, six LFO2 isolés, pas de256 et bornes, LFO1 inchangé')
     print('ok : quick assign LFO2, douze potards × six pistes, profondeur signée bornée, garde relâchement et LFO1 intact')
     # Régression : l'ancien retour statique doit être refusé par le heap simulé.
     bad=make(stock)

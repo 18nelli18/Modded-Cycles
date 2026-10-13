@@ -16,7 +16,7 @@ def sources():
  if '    .section .text.lf2p_enc_quick,' in page:
   a=page.index('    .section .text.lf2p_enc_quick,');b=page.index('    .section .text.lf2p_enc_value,',a)
   page=page[:a]+page[b:]
-  page=page.replace('    bne .Lpe_quick','    bne .Lpe_out')
+  page=page.replace('    bne .Lpe_quick','    bne .Lpe_b_knob')
   page=page.replace('    tstl lf2p_assigned\n    beq .Lpk_close\n    clrl lf2p_assigned\n    bra .Lpk_used', '    bra .Lpk_close')
  # B consomme les potards audio même si A les laisse passer.
  page=page.replace('    bne .Lpe_quick','    bne .Lpe_out')
@@ -43,6 +43,16 @@ def sources():
     rts
 
 '''+page[b:]
+ page=page.replace('    | Sans LFO maintenu, laisser le gestionnaire natif éditer le synthé A.\n    moveq #0,%d0','    | Les autres potards restent consommés côté B.\n    moveq #1,%d0')
+ page+='''
+    .text
+.Lpe_b_knob:
+    subql #2,%d0
+    cmpil #11,%d0
+    bhi .Lpe_out
+    movel %d0,%d4
+    bra .Lpe_pass
+'''
  page=rename(page);layout=rename(layout)
  a=page.index('    | Même sélection de piste');b=page.index('    lea.l   0x400802e0',a)
  page=page[:a]+'''    movel mlp_track,%d0
@@ -53,6 +63,7 @@ def sources():
  page=page.replace('    bra .Lpk_close\n.Lpk_close_down:', '    moveq #1,%d0\n    eorl %d0,mlccp_index\n    bra .Lpk_redraw\n.Lpk_close_down:')
  a=page.index('    cmpil #33,%d4');b=page.index('    cmpil #32767,%d4',a);page=page[:a]+page[b:]
  a=page.index('.Lpe_high_ok:');b=page.index('.Lpe_set:',a);page=page[:a]+'.Lpe_high_ok:\n'+page[b:]
+ page=page.replace('    movel mlccp_track,%sp@-\n    movel mlcc_settings,%sp@-\n    jsr lf2_edit\n    lea %sp@(16),%sp','    movel mlccp_index,%sp@-\n    movel mlccp_track,%sp@-\n    movel mlcc_settings,%sp@-\n    jsr mlcc_cfg_edit\n    lea %sp@(20),%sp')
  page=page.replace('    movel mlccp_track,%sp@-\n    movel mlcc_settings,%sp@-\n    jsr lf2_edit\n    lea.l %sp@(16),%sp','    movel mlccp_index,%sp@-\n    movel mlccp_track,%sp@-\n    movel mlcc_settings,%sp@-\n    jsr mlcc_cfg_edit\n    lea.l %sp@(20),%sp')
  a=page.index('mlccp_raw_value:');b=page.index('    .section .text.mlccp_value',a)
  page=page[:a]+'''mlccp_raw_value:
