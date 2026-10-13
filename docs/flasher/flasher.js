@@ -331,3 +331,4 @@ const API = { splitMessages, verify, packetChecksum, transferSeconds, sendSysex,
 if (typeof module !== "undefined" && module.exports) module.exports = API;
 if (typeof window !== "undefined") window.MCFlasher = API;
 })();
+
