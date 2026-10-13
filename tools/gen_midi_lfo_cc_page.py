@@ -8,7 +8,7 @@ import pathlib
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 
 
-def sources():
+def sources(confirm=False):
  page=(ROOT/'tools/machines/lfo_secondary/page.s').read_text()
  layout=(ROOT/'tools/machines/lfo_secondary/layout.s').read_text()
  def rename(s):return s.replace('lf2p','mlccp').replace('lf2l','mlccl').replace('lf2_context','mlcc_settings')
@@ -139,4 +139,16 @@ mlccp_present:
     lea %sp@(8),%sp
     rts
 '''
+ if confirm:
+  # Le brouillon ne remplace jamais la configuration lue par la tâche audio.
+  page=page.replace('    moveq #1,%d0\n    eorl %d0,mlccp_edit', '    jsr mlccp_confirm_data')
+  page=page.replace('.Lpk_close_down:\n', '.Lpk_close_down:\n')
+  page=page.replace('.Lpk_close:\n', '.Lpk_close:\n    tstl mlccp_draft\n    bmi .Lcc_close_real\n    jsr mlccp_confirm_cancel\n    bra .Lpk_redraw\n.Lcc_close_real:\n')
+  page=page.replace('    moveq #1,%d0\n    eorl %d0,mlccp_index', '    jsr mlccp_confirm_cancel\n    moveq #1,%d0\n    eorl %d0,mlccp_index')
+  page=page.replace('mlccp_pad:\n', 'mlccp_pad:\n    jsr mlccp_confirm_cancel\n')
+  page=page.replace('    jsr mlp_keyboard_cancel\n', '    jsr mlccp_confirm_cancel\n    jsr mlp_keyboard_cancel\n')
+  page=page.replace('mlccp_raw_value:\n', 'mlccp_raw_value:\n    jsr mlccp_confirm_validate\n    cmpil #4,%d2\n    bne .Lcc_read_confirmed\n    movel mlccp_draft,%d0\n    bpl .Lcc_read_return\n.Lcc_read_confirmed:\n')
+  page=page.replace('    jsr mlcc_cfg_edit', '    jsr mlccp_confirm_write')
+  page=page.replace('    lea.l %sp@(16),%sp\n    rts\n\n    .section .text.mlccp_value', '    lea.l %sp@(16),%sp\n.Lcc_read_return:\n    rts\n\n    .section .text.mlccp_value')
+  extra += (ROOT/'tools/machines/midi_lanes/lfo_cc_confirm.s').read_text()
  return {'page':page,'layout':layout,'support':extra,'scroll':(ROOT/'tools/machines/midi_lanes/lfo_cc_scroll.s').read_text()}

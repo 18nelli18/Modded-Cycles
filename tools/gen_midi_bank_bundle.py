@@ -61,7 +61,7 @@ def fragment_slide_source(body,tag):
         if instruction:count+=1
     return '\n'.join(rows)+'\n'
 
-def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False,knob_locks=False,cc_slides=False):
+def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False,knob_locks=False,cc_slides=False,lfo_confirm=False):
     if working_storage and not audio_storage:
         raise ValueError('working_storage exige MBK3')
     with tempfile.TemporaryDirectory() as temp:
@@ -97,13 +97,21 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
                             '-o',str(obj),str(source_file)],check=True)
         if lfo_cc:
             from gen_midi_lfo_cc_page import sources
-            extras={"cc_"+k:v for k,v in sources().items()}
+            extras={"cc_"+k:v for k,v in sources(confirm=lfo_confirm).items()}
             for name in ('frame','settings','queue','lane','rate','service','names','integration','depack'):
                 extras['cc_'+name]=(ROOT/'tools/machines/midi_lanes'/('lfo_cc_'+name+'.s')).read_text()
             extras['cc_update']=(ROOT/'tools/machines/lfo_secondary/update.s').read_text()
+            if lfo_confirm:
+                # Déplacer aussi le getter UI dans un masque libre vérifié.
+                page_body=extras['cc_page'];a=page_body.index('    .section .text.mlccp_raw_value,');b=page_body.index('    .section .text.mlccp_value,',a)
+                extras['cc_read']='    .globl mlccp_raw_value\n'+page_body[a:b];extras['cc_page']=page_body[:a]+page_body[b:]
+                support=extras['cc_support'];a=support.index('    .section .text.mlccp_confirm_write,');b=support.index('    .section .text.mlccp_confirm_validate,',a)
+                extras['cc_write']='    .globl mlccp_confirm_write\n'+support[a:b];extras['cc_support']=support[:a]+support[b:]
+                scroll=extras['cc_scroll'];a=scroll.index('mlccp_tick:');extras['cc_tick']='    .text\n    .globl mlccp_tick\n'+scroll[a:];extras['cc_scroll']='    .globl mlccp_scroll_draw\n'+scroll[:a]
             for name,body in extras.items():
-                asm=p/(name+'.s');asm.write_text(body)
+                asm=p/(name+'.s');asm.write_text(fragment_slide_source(body,'confirm'+name[3:]) if lfo_confirm and name in ('cc_write','cc_read','cc_tick') else body)
                 obj=p/(name+'.o');objects.append(str(obj))
+                if lfo_confirm and name in ('cc_write','cc_read','cc_tick'):slide_objects.append(obj)
                 subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_STORAGE2=1'] if extended_storage else []),'-o',str(obj),str(asm)],check=True)
         if audio_storage:
             legacy=(ROOT/'tools/machines/midi_lanes/storage_codec.s').read_text()
@@ -248,7 +256,7 @@ SECTIONS {{
         return *blobs,fragments,symbols(cross,elf)
 
 
-def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False,knob_locks=False,cc_slides=False):
+def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False,knob_locks=False,cc_slides=False,lfo_confirm=False):
     if cc_slides:assert knob_locks
     if knob_locks:assert knob_cc and storage and extended_storage
     if genie_chance:assert conditions
@@ -298,7 +306,7 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     needle=struct.pack('>I',loader)
     assert [build.BASE+i for i in range(0,len(stock)-3,2) if stock[i:i+4]==needle]==[ptr]
     merge_masks=[va for va in free if va!=loader]
-    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat,conditions,extended_storage,audio_storage,working_storage,live_record,write_first,genie_chance,restore_saved,knob_cc,knob_locks,cc_slides)
+    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat,conditions,extended_storage,audio_storage,working_storage,live_record,write_first,genie_chance,restore_saved,knob_cc,knob_locks,cc_slides,lfo_confirm)
     if lfo_cc:
         import aplib_grow
         if storage or repeat:
