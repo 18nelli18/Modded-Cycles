@@ -9,6 +9,14 @@ from test_seq_gen_menu import RAW
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--cycles',required=True);a=ap.parse_args()
  r=make(main_os_from_syx(a.cycles),repeat=True);assert r.call('mlp_open')==1
+ # MenuView dessine aussi des chaînes littérales, sans argument variadique.
+ original_text=r.stubs[0x40071a04]
+ def text(args):
+  fmt=r.string(args[5])
+  if fmt not in ('%s','%d'):
+   r.texts.append((args[2],args[3],fmt));return 0
+  return original_text(args)
+ r.stubs[0x40071a04]=text
  obj=r.r32(r.s['mlp_obj']);r.w32(r.s['mlp_track'],0);r.w32(r.s['ml_play_pattern'],PAT)
  r.call(0x400e7dbc);r.call(0x40070172,0x93006000,128,64,0x93090000,0)
  sound=bytes(r.u.mem_read(RAW,722));notes=bytes(r.u.mem_read(PAT,1584))
@@ -17,9 +25,10 @@ def main():
  key(r,4,0);key(r,1,0)
  settings=r.r32(r.s['ml_repeat_edit_settings']);assert settings
  assert r.r32(r.s['ml_repeat_play_settings'])==settings
- assert [r.call('mlp_retrigger_value',i) for i in range(6)]==[8,0,0,0,5,1]
+ assert [r.call('mlp_retrigger_value',i) for i in range(6)]==[8,46,0,0,5,1]
  r.texts.clear();r.call('mlp_render',obj,0x93006000)
  assert any(t[2]=='1/12' for t in r.texts),r.texts
+ assert any(t[2]=='1/4' for t in r.texts),r.texts
  assert key(r,32,16)==1
  for _ in range(20):knob(r,1)
  assert r.call('mlp_retrigger_value',0)==16
@@ -56,7 +65,7 @@ def main():
  assert key(r,16,0)==1
  assert bytes(r.u.mem_read(PAT+11,1))==b'\x01'
  assert bytes(r.u.mem_read(settings+8,8))==bytes((1,0,0,0,0,1,1,0))
- assert key(r,12)==1 and r.r32(r.s['mlp_setup'])==0
+ assert r.r32(r.s['mlp_setup'])==0 and r.r32(r.s['mlp_obj'])==obj
  # TRIG + deux appuis RETRIG ouvre puis active ce seul pas.
  r.u.mem_write(settings+8,bytes((0,0,0,0,0,1,0,0)))
  assert key(r,16)==1
@@ -64,13 +73,19 @@ def main():
  assert r.call('mlp_retrigger_value',3)==0
  key(r,4,0)
  assert key(r,4)==1 and r.call('mlp_retrigger_value',3)==1
+ r.texts.clear();r.call('mlp_render',obj,0x93006000)
+ assert any(t[2]=='ON' for t in r.texts),r.texts
+ assert key(r,4,0)==1 and key(r,4)==1 and r.call('mlp_retrigger_value',3)==0
+ r.texts.clear();r.call('mlp_render',obj,0x93006000)
+ assert any(t[2]=='OFF' for t in r.texts),r.texts
+ key(r,4,0);key(r,4)
  key(r,4,0)
  r.w32(r.s['mlp_row'],0);r.w32(r.s['mlp_edit'],1);knob(r,-1)
  assert r.call('mlp_retrigger_value',0)==15
  assert bytes(r.u.mem_read(settings+1,1))==b'\x10'
  assert bytes(r.u.mem_read(settings,1))==b'\0'
  assert key(r,16,0)==1 and bytes(r.u.mem_read(PAT+11,1))==b'\x01'
- assert key(r,12)==1
+ assert r.r32(r.s['mlp_setup'])==0 and r.r32(r.s['mlp_obj'])==obj
  # Supprimer ensuite ce trig retire son lock sans modifier les défauts.
  assert key(r,16)==1 and key(r,16,0)==1
  assert bytes(r.u.mem_read(settings+8,8))==bytes((0,0,0,0,0,1,0,0))

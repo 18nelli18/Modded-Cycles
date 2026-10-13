@@ -112,7 +112,7 @@ ml_repeat_pattern_prepare:
     moveq #5,%d3
 .Lprepare_lane:
     | enabled0/Rte8/Len0/curve0/ArpOFF/Oct1/0/0.
-    movel #0x00080000,%d0
+    movel #0x00082e00,%d0
     movel %d0,%a4@
     movel #0x05010000,%d0
     movel %d0,%a4@(4)

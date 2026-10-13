@@ -52,7 +52,7 @@ def main():
   assert len(r.free)==freed+1 and r.free[-1]==settings
   assert r.r32(r.s['ml_repeat_reset_pending'])==0
   settings=r.r32(r.s['ml_repeat_edit_settings']);assert settings
-  assert bytes(r.u.mem_read(settings,8))==bytes((0,8,0,0,5,1,0,0))
+  assert bytes(r.u.mem_read(settings,8))==bytes((0,8,46,0,5,1,0,0))
  print('ok : vrai ProjectCache Load succès/échec/working96, Off avant retrait, lookup bloqué, free UI et nouveaux défauts')
  print('Limite : cache/convertisseur simulés ; ne constitue pas une preuve de sauvegarde')
 if __name__=='__main__':main()

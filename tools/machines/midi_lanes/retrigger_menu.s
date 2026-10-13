@@ -164,6 +164,16 @@ mlp_retrigger_render:
     movel %d0,%a2@(156)
     movel %d0,%a2@(160)
     lea.l .Lrt_subtitle_data,%a0
+    tstl mlp_held
+    beq .Lrt_subtitle_ready
+    pea 3
+    jsr mlp_retrigger_value
+    addql #4,%sp
+    tstl %d0
+    lea.l .Lrt_step_off,%a0
+    beq .Lrt_subtitle_ready
+    lea.l .Lrt_step_on,%a0
+.Lrt_subtitle_ready:
     movel %a0,%a2@(556)
     movel %sp@(592),%sp@-
     movel %a2,%sp@-
@@ -241,9 +251,11 @@ mlp_retrigger_render:
     beq .Lrt_mode
     cmpil #1,%d2
     bne .Lrt_number
+    | Même table de texte que la ligne Len du menu natif, sans copie.
     cmpil #127,%d0
-    bne .Lrt_number
-    lea.l .Lrt_inf,%a1
+    bhi .Lrt_number
+    lea.l 0x40149328,%a0
+    moveal %a0@(0,%d0:l:4),%a1
     bra .Lrt_string
 .Lrt_rate:
     lea.l .Lrt_rates,%a0
@@ -292,6 +304,12 @@ mlp_retrigger_render:
     .balign 4
 .Lrt_subtitle_header: .long 5,5,0
 .Lrt_subtitle_data: .asciz "Setup"
+    .balign 4
+.Lrt_step_on_header: .long 2,2,0
+.Lrt_step_on: .asciz "ON"
+    .balign 4
+.Lrt_step_off_header: .long 3,3,0
+.Lrt_step_off: .asciz "OFF"
 .Lrt_pending: .asciz "---"
 .Lfmt_s: .asciz "%s"
 .Lfmt_d: .asciz "%d"

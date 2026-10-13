@@ -21,7 +21,7 @@ ml_store_bank_init:
     lea.l %a2@(1584),%a3
     moveq #5,%d2
 .Lbank_init_lane:
-    movel #0x00080000,%d0
+    movel #0x00082e00,%d0
     movel %d0,%a3@
     movel #0x05010000,%d0
     movel %d0,%a3@(4)

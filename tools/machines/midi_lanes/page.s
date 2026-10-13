@@ -386,14 +386,22 @@ mlp_menu_key:
     movel mlp_changed,%d0
     bclr %d2,%d0
     movel %d0,mlp_changed
-    .ifdef ML_CONDITIONS
+    | Les fenêtres de lock suivent le maintien du trig, sans quitter B.
     tstl mlp_held
     bne .Lmk_redraw
     movel mlp_setup,%d0
-    subql #5,%d0
-    bne .Lmk_redraw
-    clrl mlp_setup
+    .ifdef ML_REPEAT
+    cmpil #4,%d0
+    beq .Lmk_lock_menu_close
     .endif
+    .ifdef ML_CONDITIONS
+    cmpil #5,%d0
+    beq .Lmk_lock_menu_close
+    .endif
+    bra .Lmk_redraw
+.Lmk_lock_menu_close:
+    clrl mlp_setup
+    clrl mlp_edit
     bra .Lmk_redraw
 .Lmk_track_setup:
     tstl mlp_func
