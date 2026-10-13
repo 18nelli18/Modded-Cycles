@@ -15,23 +15,26 @@ from test_sdvintage import main_os_from_syx
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--cycles',required=True);ap.add_argument('--model-tg',required=True)
-    ap.add_argument('--syntakt',help='Tester les callbacks du bundle réellement placé')
+    ap.add_argument('--tweak');ap.add_argument('--syntakt',help='Tester les callbacks du bundle réellement placé')
     a=ap.parse_args();root=pathlib.Path(__file__).resolve().parents[2]
     cross=str(root.parent/'toolchain/bin/m68k-elf-')
     stock=main_os_from_syx(a.cycles);catalog=build.load_catalog()['model-cycles_OS1.13'][1]
     chosen=sorted((catalog[x] for x in gen.IDS),key=lambda t:t['order'])
     patched,_=build.apply_writes(stock,chosen)
     tg=gen.symbols(cross,pathlib.Path(a.model_tg)/'build/_b.elf')
-    placed=json.loads(gen.OUT.read_text())
+    placed=json.loads(pathlib.Path(a.tweak).read_text() if a.tweak else gen.OUT.read_text())
     s={k:int(v,16) for k,v in placed['symbols'].items()}
     blob=bytes.fromhex(placed['append']['parts'][0]['hex'])
     patched,_=build.apply_writes(stock,chosen+[placed])
-    if a.syntakt:
+    if a.syntakt and not a.tweak:
         placed,_,image=gen.generate(stock,a.syntakt,a.model_tg,cross,True,True)
         s={k:int(v,16) for k,v in placed['symbols'].items()}
         blob=bytes.fromhex(placed['append']['parts'][0]['hex']);patched=image
     r=Rig(stock,{'writes':[]},{'writes':[],'symbols':{}})
     r.u.mem_write(build.BASE,patched);r.u.mem_write(s['ML_BANK_START'],blob);r.s=s
+    if a.tweak:
+        a.syntakt=True
+        for part in placed['append']['parts']:r.u.mem_write(int(part['dest'],16),bytes.fromhex(part['hex']))
     pattern,other,runtime=0x93070000,0x93072000,0x93074000
     r.call('ml_init',pattern);r.call('ml_init',other)
     r.w32(s['ml_pattern'],pattern);r.w32(s['ml_play_pattern'],pattern)
@@ -42,6 +45,42 @@ def main():
     for off,val in ((0,80),(4,110),(24,0),(28,100),(32,0),(36,4),(40,0)):r.w32(adv+off,val)
     for off in (0,4,8):r.w32(opts+off,0)
     audio=bytes(r.u.mem_read(RAW,722))
+    if 'ml_gc_capture' in s:
+        r.call('ml_repeat_prepare_ui');locks=r.r32(s['ml_repeat_edit_settings']);assert locks
+        for lane in range(6):
+            r.w32(s['mlp_track'],lane)
+            for target,mutation,euclid in ((0,100,0),(1,100,0),(2,100,0),(0,25,0),(2,25,0),(0,100,1)):
+                r.w32(adv+24,target);r.w32(adv+28,mutation);r.w32(adv+32,euclid)
+                for i in range(64):r.u.mem_write(locks+lane*520+15+i*8,bytes((102+i,)))
+                before_locks=bytes(r.u.mem_read(locks,3120));before_notes=bytes(r.u.mem_read(pattern,1584))
+                r.call('ml_genie_generate');assert r.r32(s['SG_error'])==0
+                expected=bytearray(before_locks)
+                for i in range(64):expected[lane*520+15+i*8]=0
+                assert bytes(r.u.mem_read(locks,3120))==expected,(lane,target,mutation,euclid)
+                r.call('ml_genie_undo')
+                assert bytes(r.u.mem_read(locks,3120))==before_locks
+                assert bytes(r.u.mem_read(pattern,1584))==before_notes
+            r.w32(0x40a7883c,1);r.call('ml_genie_generate')
+            assert bytes(r.u.mem_read(locks,3120))==before_locks
+            r.u.mem_write(locks+lane*520+15,b'\x65');edited=bytes(r.u.mem_read(locks,3120))
+            # Appel audio avec les registres de la vraie frontière de voie.
+            r.u.reg_write(mk.UC_M68K_REG_A0,pattern+lane*264)
+            r.u.reg_write(mk.UC_M68K_REG_D0,lane);r.u.reg_write(mk.UC_M68K_REG_D1,0)
+            r.call('ml_genie_boundary')
+            assert r.r32(s['ml_gq_state'])==0
+            assert bytes(r.u.mem_read(pattern,1584))==before_notes and bytes(r.u.mem_read(locks,3120))==edited
+            # Nouvelle demande sans édition : commit puis Undo en lecture.
+            r.call('ml_genie_generate')
+            r.u.reg_write(mk.UC_M68K_REG_A0,pattern+lane*264)
+            r.u.reg_write(mk.UC_M68K_REG_D0,lane);r.u.reg_write(mk.UC_M68K_REG_D1,0);r.call('ml_genie_boundary')
+            assert all(r.u.mem_read(locks+lane*520+15+i*8,1)==b'\0' for i in range(64))
+            r.call('ml_genie_undo')
+            r.u.reg_write(mk.UC_M68K_REG_A0,pattern+lane*264)
+            r.u.reg_write(mk.UC_M68K_REG_D0,lane);r.u.reg_write(mk.UC_M68K_REG_D1,0);r.call('ml_genie_boundary')
+            assert bytes(r.u.mem_read(locks,3120))==edited and bytes(r.u.mem_read(pattern,1584))==before_notes
+            r.w32(0x40a7883c,0)
+        r.w32(adv+24,0);r.w32(adv+28,100);r.w32(adv+32,0)
+        print('ok : tous les modes Genie effacent 64 chances, Undo les restaure ; édition chance annule le commit, six voies isolées')
     for lane in range(6):
         r.w32(s['mlp_track'],lane);before=bytes(r.u.mem_read(pattern,1584))
         r.call('ml_genie_generate');assert r.r32(s['SG_error'])==0
@@ -83,6 +122,8 @@ def main():
         sites=[at for at in range(menu,menu+0x400,2) if bytes(r.u.mem_read(at,6))==needle]
         assert len(sites)==1
         r.u.mem_write(sites[0],b'\x4e\xb9'+struct.pack('>I',s[ours]))
+    # Compter seulement les allocations du menu, hors tables de locks privées.
+    r.new_count=0
     # Reproduire le groupe 2 ajouté par le constructeur natif MACHINES.
     construct=r.construct
     def grouped_construct(args):
