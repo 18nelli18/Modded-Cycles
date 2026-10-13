@@ -154,9 +154,6 @@ mlkcq_step:
     moveal %sp@(32),%a2
     movel %sp@(36),%d2
     movel %sp@(40),%d3
-    | Les numéros intermédiaires pendant SETTINGS ne sont jamais joués.
-    tstl TG_set_held
-    bne .Lqs_done
     cmpil #5,%d2
     bhi .Lqs_done
     cmpil #63,%d3
@@ -198,6 +195,9 @@ mlkcq_step:
     cmpil #0xffff,%d4
     bne .Lqs_validate
 .Lqs_base:
+    | SETTINGS masque les valeurs provisoires, jamais les locks figés.
+    tstl TG_set_held
+    bne .Lqs_next
     | Une simple assignation ne joue aucun CC. Restaurer la base seulement
     | après qu'un lock de ce potard a réellement été mis en file.
     movel %d3,%d0
@@ -205,6 +205,11 @@ mlkcq_step:
     lea .Lqueue,%a0
     tstl %a0@(0,%d0:l)
     beq .Lqs_next
+    addal %d0,%a0
+    | Changer de destination ne doit pas envoyer sa base par héritage.
+    moveb %a0@(1),%d0
+    cmpb %a4@,%d0
+    bne .Lqs_next
     movew %a4@,%d4
 .Lqs_validate:
     cmpil #0x7f7f,%d4

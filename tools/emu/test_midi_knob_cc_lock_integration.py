@@ -31,7 +31,7 @@ def main():
  r.w32(clock,1);r.w32(0x40fe4228,1);r.w32(event+12,2)
  sent=[]
  def send(args):sent.append(bytes(r.u.mem_read(args[1],3)));assert args[0]==3 and args[2]==4;return 0
- r.stubs[0x400826b0]=send;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=0x400826b0,end=0x400826b0)
+ r.stubs[0x400826b0]=send;router_hook=r.u.hook_add(UC_HOOK_CODE,r.stub,begin=0x400826b0,end=0x400826b0)
  r.u.mem_write(syms['mlkc_state'],bytes((74,64)))
  # Assignation pendant lecture : aucun CC intermédiaire, même après release
  # sans lock. Un delta nul doit tout de même consommer SETTINGS.
@@ -44,6 +44,10 @@ def main():
  r.call('mlkcq_step',pat,0,19);r.call('mlkcq_worker')
  assert not sent and r.call('mlkcq_ready')==0
  r.u.mem_write(syms['mlkc_state'],bytes((74,64)))
+ r.w32(defs['mlp_held'],0);r.delta=5
+ assert r.call('mlkc_enc',event)==1
+ assert sent==[b'\xb6\x4a\x45'],sent
+ sent.clear();r.u.mem_write(syms['mlkc_state'],bytes((74,64)));r.w32(defs['mlp_held'],8)
  r.delta=5;assert r.call('mlkc_enc',event)==1 and not sent
  assert r.u.mem_read(syms['mlkc_state'],2)==bytes((74,64))
  locks=r.call('mlkc_locks_for',pat,0);assert locks
@@ -51,6 +55,17 @@ def main():
  r.u.reg_write(mk.UC_M68K_REG_SR,0x2700);r.call('mlkcq_step',pat,0,19);assert not sent
  r.u.reg_write(mk.UC_M68K_REG_SR,0x2000);assert r.call('mlkcq_ready')==1
  r.call('mlkcq_worker');assert sent==[b'\xb6\x4a\x45']
+ # Pendant assignation, les locks figés continuent, même déjà en file.
+ r.call('mlkcq_step',pat,0,19);r.w32(defs['TG_set_held'],1);r.delta=1
+ assert r.call('mlkc_enc',event)==1
+ r.call('mlkcq_worker');assert sent[-1]==b'\xb6\x4a\x45' and len(sent)==2
+ r.call('mlkcq_step',pat,0,19);r.call('mlkcq_worker')
+ assert sent[-1]==b'\xb6\x4a\x45' and len(sent)==3
+ # Pas sans lock : aucune destination provisoire ne part pendant/après scroll.
+ r.call('mlkcq_step',pat,0,20);r.call('mlkcq_worker');assert len(sent)==3
+ r.w32(defs['TG_set_held'],0);r.call('mlkcq_step',pat,0,20);r.call('mlkcq_worker');assert len(sent)==3
+ sent[:]=[b'\xb6\x4a\x45']
+
  r.u.mem_write(syms['mlkc_state'],bytes((71,64)))
  r.call('mlkcq_step',pat,0,19);r.call('mlkcq_worker');assert sent[-1]==b'\xb6\x4a\x45' and len(sent)==2
  r.call('mlkcq_step',pat,0,19);r.u.mem_write(pat+1,b'\x01');r.call('mlkcq_worker');assert len(sent)==2
@@ -96,6 +111,19 @@ def main():
   assert r.u.mem_read(syms['mlkc_state']+2,1)[0]==cc
   r.call('mlkcq_step',pat,0,19);r.call('mlkcq_worker');assert not sent
  r.w32(defs['TG_set_held'],0);r.call('mlkcq_step',pat,0,19);r.call('mlkcq_worker');assert not sent
+ # Exécuter maintenant le vrai routeur OS jusqu'à la frontière DIN/USB.
+ r.u.hook_del(router_hook);din=[];usb=[]
+ for addr,fn in ((0x40001584,lambda args:din.append(bytes(r.u.mem_read(args[1],args[0]))) or 0),(0x40003396,lambda args:usb.append(bytes(r.u.mem_read(args[1],args[0]))) or 0),(0x400032ca,lambda args:0),(0x400032da,lambda args:0)):
+  r.stubs[addr]=fn;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
+ r.u.mem_write(syms['mlkc_state']+2,bytes((74,64)));r.delta=1
+ for port in (2,3,4):
+  din.clear();usb.clear();r.u.mem_write(pat+3,bytes((port,)))
+  assert r.call('mlkc_enc',event)==1
+  expected=bytes((0xb6,74,64+port-1))
+  assert din==([expected] if port in (3,4) else []),(port,din)
+  assert usb==([expected] if port in (2,4) else []),(port,usb)
+ print('ok : locks existants et déjà en file continuent pendant SETTINGS ; bases provisoires silencieuses')
+ print('ok : tour normal potard2 passe le vrai routeur OS vers DIN/USB/BOTH, canal7/CC74/valeur exacts')
  print('ok : potard2 CC0..127 pendant lecture et après release, aucune émission avant usage ; SETTINGS delta0 consommé')
  print('ok : TRIG+potard verrouille sans émission/base modifiée, douze CC, destination figée, même valeur réémise à chaque passage')
  print('ok : queue IRQ sans port physique, huit CC/retrait, mute/canal/Stop invalides filtrés, projet reset libéré')

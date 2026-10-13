@@ -42,10 +42,7 @@ mlkc_enc:
     | Un geste d'assignation, même delta nul, consomme SETTINGS.
     moveq #1,%d1
     movel %d1,TG_mod_used
-    .ifdef ML_KNOB_LOCKS
-    | Aucun ancien CC provisoire ne doit sortir après changement de numéro.
-    jsr mlkcq_reset
-    .endif
+    | Les locks déjà en file restent valides : leur CC est figé.
     bra .Lku_read_delta
 .Lku_not_assigning:
     moveq #0,%d1
