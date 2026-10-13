@@ -3,8 +3,8 @@
     .text
     .globl mlkc_scramble
 mlkc_scramble:
-    lea %sp@(-24),%sp
-    moveml %d2-%d4/%a2-%a3,%sp@
+    lea %sp@(-28),%sp
+    moveml %d2-%d4/%d7/%a2-%a3,%sp@
     movew %sr,%d0
     andil #0x700,%d0
     bne .Lscr_done
@@ -36,6 +36,14 @@ mlkc_scramble:
     muluw #24,%d0
     lea mlkc_state,%a3
     addal %d0,%a3
+    | sg_random utilise d7 comme état interne, zéro est un état absorbant.
+    | Seed privé, mélangé à l'horloge, sans modifier le d7 de l'appelant.
+    movel mlkc_scramble_seed,%d7
+    movel TG_blk_clk,%d0
+    eorl %d0,%d7
+    bne .Lscr_seed_ready
+    movel #0x6d2b79f5,%d7
+.Lscr_seed_ready:
     moveq #11,%d3
 .Lscr_loop:
     moveq #0,%d4
@@ -57,8 +65,8 @@ mlkc_scramble:
     moveq #0,%d4
     moveb %a2@(3),%d4
     orl %d4,%d0
-    movel %d0,%sp@(20)
-    lea %sp@(20),%a0
+    movel %d0,%sp@(24)
+    lea %sp@(24),%a0
     movel %d4,%sp@-
     movel %a0,%sp@-
     pea 3
@@ -68,12 +76,17 @@ mlkc_scramble:
     addql #2,%a3
     subql #1,%d3
     bpl .Lscr_loop
+    movel %d7,mlkc_scramble_seed
     pea .Lscr_text
     jsr TG_show_popup
     addql #4,%sp
 .Lscr_done:
-    moveml %sp@,%d2-%d4/%a2-%a3
-    lea %sp@(24),%sp
+    moveml %sp@,%d2-%d4/%d7/%a2-%a3
+    lea %sp@(28),%sp
     rts
 .Lscr_text: .asciz "SCRAMBLE"
     .balign 4
+    .data
+    .balign 4
+    .globl mlkc_scramble_seed
+mlkc_scramble_seed: .long 0x6d2b79f5

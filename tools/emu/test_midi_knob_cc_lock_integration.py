@@ -13,7 +13,7 @@ def main():
  defs={k:0x9306a000+i*4 for i,k in enumerate(('TG_set_held','TG_mod_used','TG_blk_clk','mlp_track','mlp_step','mlp_held','mlp_changed','ml_pattern','ml_play_pattern','ml_clock_state','mlp_obj','ml_runtime'))}
  defs['ml_runtime']=0x9307a000
  defs['SG_random']=0x9306b000
- defs['TG_show_popup']=0x9306b004
+ defs['TG_show_popup']=0x9306b100
  with tempfile.TemporaryDirectory() as tmp:
   p=pathlib.Path(tmp);objs=[]
   for name in names:
@@ -22,6 +22,11 @@ def main():
   subprocess.run([cross+'ld','-T',str(p/'link.ld'),'-e','mlkc_enc','-o',str(p/'k.elf'),*objs],check=True)
   subprocess.run([cross+'objcopy','-O','binary',str(p/'k.elf'),str(p/'k.bin')],check=True)
   code=(p/'k.bin').read_bytes();syms=symbols(cross,p/'k.elf')
+  # Assembler la vraie routine propre du générateur, aucun résultat simulé.
+  subprocess.run([cross+'as','-march=cfv4e','--defsym','SG_DYNAMICS=1','-o',str(p/'random.o'),str(root/'tools/machines/seq_gen/seq_gen.s')],check=True)
+  subprocess.run([cross+'objcopy','-O','binary','--only-section=.text.sg_random',str(p/'random.o'),str(p/'random.bin')],check=True)
+  random_code=(p/'random.bin').read_bytes()
+
  r=Rig(main_os_from_syx(a.cycles),{'writes':[]},{'writes':[],'symbols':{}});r.s=syms;r.u.mem_write(0x93050000,code)
  if a.tweak:
   t=json.loads(pathlib.Path(a.tweak).read_text());syms={k:int(v,16) for k,v in t['symbols'].items()};r.s=syms
@@ -189,7 +194,8 @@ def main():
  before=bytes(r.u.mem_read(pat,1584));popups=[]
  r.stubs[defs['SG_random']]=lambda args:0x123456e5
  r.stubs[defs['TG_show_popup']]=lambda args:popups.append(r.string(args[0])) or 0
- for addr in (defs['SG_random'],defs['TG_show_popup']):r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
+ random_hook=r.u.hook_add(UC_HOOK_CODE,r.stub,begin=defs['SG_random'],end=defs['SG_random'])
+ r.u.hook_add(UC_HOOK_CODE,r.stub,begin=defs['TG_show_popup'],end=defs['TG_show_popup'])
  r.call('mlkc_scramble')
  assert sent==[b'\xb8\x4a\x65',b'\xb8\x01\x65'],sent
  assert bytes(r.u.mem_read(syms['mlkc_state']+48,4))==bytes((74,101,1,101))
@@ -215,6 +221,26 @@ def main():
   r.w32(syms['mlp_func'],0);r.w32(syms['ml_genie_settings'],0)
  r.w32(defs['mlp_track'],0)
  print('ok : SCRAMBLE B envoie seulement les CC assignés sur le canal de la voie, données audio/notes inchangées')
+ r.u.hook_del(random_hook);r.u.mem_write(defs['SG_random'],random_code)
+ r.w32(defs['mlp_track'],2);r.w32(defs['TG_blk_clk'],0)
+ r.w32(syms['mlkc_scramble_seed'],0)
+ r.u.mem_write(syms['mlkc_state']+48,b''.join(bytes((60+k,64)) for k in range(12)))
+ sent.clear();states=[]
+ for iteration in range(32):
+  # Reproduire le d7=0 qui rendait l'ancienne routine toujours silencieuse.
+  r.u.reg_write(mk.UC_M68K_REG_D7,0)
+  r.call('mlkc_scramble')
+  assert r.u.reg_read(mk.UC_M68K_REG_D7)==0
+  states.append(r.r32(syms['mlkc_scramble_seed']))
+ assert len(sent)==384 and len(set(states))==32 and all(states)
+ assert all(p[0]==0xb8 and 60<=p[1]<=71 and p[2]<=127 for p in sent)
+ assert len({p[2] for p in sent})>100 and any(p[2]>100 for p in sent)
+ assert all(len({sent[j*12+k][2] for j in range(32)})>20 for k in range(12))
+ r.u.reg_write(mk.UC_M68K_REG_D7,0xa5a55a5a);r.call('mlkc_scramble')
+ assert r.u.reg_read(mk.UC_M68K_REG_D7)==0xa5a55a5a
+ r.w32(defs['mlp_track'],0)
+ print('ok : vrai PRNG, seed/caller d7 zéro ou non zéro, 384 valeurs variées0..127, douze CC indépendants, d7 préservé')
+
  # SETTINGS doit conserver B seulement pour sa vue native spécifique.
  view,ref=0x9307d000,0x9307e000
  r.w32(ref,view);r.w32(view,0x40107a20)
