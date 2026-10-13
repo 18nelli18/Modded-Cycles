@@ -48,7 +48,7 @@ def main():
    feedback.append(r.string(args[0]));return 0
   r.stubs[addr]=popup;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
  if a.tweak:
-  expected=['MIDI SAVE ERR','MIDI: INIT','MIDI: INIT','MIDI: INIT','MIDI: OWNER','MIDI: SYNC','MIDI SAVE ERR','MIDI SAVE ERR','MIDI: PATH','MIDI: ROOT','MIDI: DIR','MIDI: SNAP','MIDI: COMMIT','MIDI: CREATE','MIDI: DATA','MIDI: OPEN','MIDI: ALLOC','MIDI: WRITE','MIDI: FLUSH','MIDI: CLOSE']
+  expected=['MIDI SAVE ERR','MIDI: IRQ','MIDI: LOADING','MIDI: CONTEXT','MIDI: OWNER','MIDI: SYNC','MIDI: BANK','MIDI: SLOT','MIDI: PATH','MIDI: ROOT','MIDI: DIR','MIDI: SNAP','MIDI: COMMIT','MIDI: CREATE','MIDI: DATA','MIDI: OPEN','MIDI: ALLOC','MIDI: WRITE','MIDI: FLUSH','MIDI: CLOSE','MIDI: BUFFERS','MIDI: LOOKUP A','MIDI: LOOKUP B','MIDI: GUARD']
   r.w32(syms['ml_store_save_status'],0);r.w32(syms['ml_store_io_poison'],0)
   for error,message in enumerate(expected):
    r.w32(syms['ml_store_save_error'],error);r.call('ml_store_save_feedback');assert feedback[-1]==message
@@ -133,7 +133,9 @@ def main():
  # Dernière copie corrompue -> récupération de A ; snapshot musical intact.
  bad=bytearray(files[path+'B']);bad[-1]^=1;files[path+'B']=bytes(bad)
  assert load(0x12345678,3,5)==1 and bytes(r.u.mem_read(snapshot,data_size))==payload(60)
- fault['write']=True;assert save(0x12345678,3,5,80)==0;fault['write']=False
+ fault['write']=True;assert save(0x12345678,3,5,80)==0
+ if a.extended:assert r.r32(syms['ml_store_save_error'])==17
+ fault['write']=False
  assert load(0x12345678,3,5)==1 and bytes(r.u.mem_read(snapshot,data_size))==payload(60)
  if a.extended:
   good_a=files[path+'A'];bad_a=bytearray(good_a);bad_a[-1]^=1
@@ -167,6 +169,12 @@ def main():
   assert r.u.reg_read(mk.UC_M68K_REG_PC)==STOP
   assert r.u.reg_read(mk.UC_M68K_REG_A7)==STACK+4
   return r.u.reg_read(mk.UC_M68K_REG_D0)&255
+ if a.extended:
+  before=dict(files);r.w32(syms['ml_store_project_ctx'],0)
+  assert native_save()==1 and files==before
+  assert r.r32(syms['ml_store_save_status'])==0 and r.r32(syms['ml_store_save_error'])==3
+  if a.tweak:assert feedback[-1]=='MIDI: CONTEXT'
+  r.w32(syms['ml_store_project_ctx'],ctx)
  assert native_save()==1
  assert r.r32(syms['ml_store_save_status'])==1
  if a.tweak:assert feedback[-1]=='MIDI SAVED'
@@ -309,6 +317,8 @@ def main():
  r.call('ml_store_service');r.call('ml_store_service')
  assert r.r32(syms['ml_store_load_active'])==1 and r.r32(syms['ml_bank_table'])==embedded
  before=dict(files);assert native_save()==1 and files==before and r.r32(syms['ml_store_save_status'])==0
+ if a.extended:assert r.r32(syms['ml_store_save_error'])==2
+ if a.tweak:assert feedback[-1]=='MIDI: LOADING'
  prior_freed=len(freed);r.w32(syms['ml_store_load_serial'],5)
  r.call('ml_store_service');assert len(freed)==prior_freed+1
  for index in range(95):r.call('ml_store_service')

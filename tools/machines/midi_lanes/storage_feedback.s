@@ -17,7 +17,7 @@ ml_store_save_feedback:
     bra .Lfeedback_show
 .Lfeedback_stage:
     movel ml_store_save_error,%d0
-    cmpil #19,%d0
+    cmpil #23,%d0
     bhi .Lfeedback_show
     lea .Lerrors,%a1
     moveal %a1@(0,%d0:l:4),%a0
@@ -37,11 +37,20 @@ ml_store_load_feedback:
 .Lload_failed: .asciz "MIDI LOAD ERR"
     .balign 4
 .Lerrors:
-    .long .Lsave_failed,.Lcontext,.Lcontext,.Lcontext,.Lowner,.Lsync
-    .long .Lsave_failed,.Lsave_failed,.Lpath,.Lroot,.Ldir,.Lsnapshot
+    .long .Lsave_failed,.Lirq,.Lbusy,.Lcontext,.Lowner,.Lsync
+    .long .Lbank,.Lslot,.Lpath,.Lroot,.Ldir,.Lsnapshot
     .long .Lcommit,.Linitial,.Ldata,.Lopen,.Lallocate,.Lwrite,.Lflush,.Lclose
+    .long .Lbuffers,.Llookup_a,.Llookup_b,.Lguard
 .Ldisk: .asciz "MIDI: DISK"
-.Lcontext: .asciz "MIDI: INIT"
+.Lbuffers: .asciz "MIDI: BUFFERS"
+.Llookup_a: .asciz "MIDI: LOOKUP A"
+.Llookup_b: .asciz "MIDI: LOOKUP B"
+.Lguard: .asciz "MIDI: GUARD"
+.Lirq: .asciz "MIDI: IRQ"
+.Lbusy: .asciz "MIDI: LOADING"
+.Lbank: .asciz "MIDI: BANK"
+.Lslot: .asciz "MIDI: SLOT"
+.Lcontext: .asciz "MIDI: CONTEXT"
 .Lowner: .asciz "MIDI: OWNER"
 .Lsync: .asciz "MIDI: SYNC"
 .Lpath: .asciz "MIDI: PATH"

@@ -18,6 +18,10 @@
 ml_store_initial:
     lea.l %sp@(-16),%sp
     moveml %d2/%a2-%a4,%sp@
+    .ifdef ML_STORAGE2
+    moveq #20,%d0
+    movel %d0,ml_store_save_error
+    .endif
     movew %sr,%d0
     andil #0x700,%d0
     bne .Lfail
@@ -78,6 +82,10 @@ ml_store_initial:
     beq .Lfail
     tstl %a2@(40)
     beq .Lfail
+    .ifdef ML_STORAGE2
+    moveq #21,%d0
+    movel %d0,ml_store_save_error
+    .endif
     movel %a2@(8),%sp@-
     movel %a2@(36),%sp@-
     movel %a2@(32),%sp@-
@@ -85,6 +93,10 @@ ml_store_initial:
     lea.l %sp@(12),%sp
     tstl %d0
     bne .Lfail
+    .ifdef ML_STORAGE2
+    moveq #22,%d0
+    movel %d0,ml_store_save_error
+    .endif
     movel %a2@(12),%sp@-
     movel %a2@(40),%sp@-
     movel %a2@(32),%sp@-
@@ -92,6 +104,10 @@ ml_store_initial:
     lea.l %sp@(12),%sp
     tstl %d0
     bne .Lfail
+    .ifdef ML_STORAGE2
+    moveq #23,%d0
+    movel %d0,ml_store_save_error
+    .endif
     jsr ml_store_io_begin
     tstl %d0
     beq .Lfail

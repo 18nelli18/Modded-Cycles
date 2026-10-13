@@ -100,6 +100,10 @@ ml_store_session_save:
     tstl %d0
     bne .Lsession_out
     .ifdef ML_STORAGE2
+    | Ne pas masquer une erreur writer par un faux échec de création.
+    movel ml_store_save_error,%d0
+    cmpil #14,%d0
+    bcc .Lsession_fail
     movel %d0,%sp@-
     moveq #13,%d0
     movel %d0,ml_store_save_error

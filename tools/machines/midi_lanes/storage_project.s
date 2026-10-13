@@ -24,15 +24,31 @@ ml_store_save_notice:
     andil #0x700,%d0
     bne .Lproject_done
     .ifdef ML_STORAGE
+    .ifdef ML_STORAGE2
+    moveq #2,%d0
+    movel %d0,ml_store_save_error
+    .endif
     tstl ml_store_load_active
     bne .Lproject_done
+    .endif
+    .ifdef ML_STORAGE2
+    moveq #3,%d0
+    movel %d0,ml_store_save_error
     .endif
     moveal ml_store_project_ctx,%a2
     tstl %a2
     beq .Lproject_done
+    .ifdef ML_STORAGE2
+    moveq #6,%d0
+    movel %d0,ml_store_save_error
+    .endif
     moveal ml_bank_table,%a3
     tstl %a3
     beq .Lproject_done
+    .ifdef ML_STORAGE2
+    moveq #7,%d0
+    movel %d0,ml_store_save_error
+    .endif
     movel %sp@(28),%d3
     .ifdef ML_WORKING
     cmpil #96,%d3
