@@ -5,7 +5,7 @@ const root=path.resolve(__dirname,'..'),dir=path.join(root,'docs/flasher-core-te
 (async()=>{
  const errors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(String(e)));
  const html=fs.readFileSync(path.join(dir,'index.html'),'utf8');
- assert(!html.includes('bundle.js'));assert(html.includes('2026-10-12-performance-core-test'));
+ assert(!html.includes('bundle.js'));assert(html.includes('2026-10-12-performance-core-test-2'));
  const dom=new JSDOM(html,{url:'https://aveycole.github.io/Modded-Cycles/flasher-core-test/',runScripts:'outside-only',virtualConsole:vc});
  const w=dom.window;Object.defineProperty(w,'isSecureContext',{value:true});w.URL.createObjectURL=()=> 'blob:test';w.URL.revokeObjectURL=()=>{};
  for(const f of ['builder.js','tweaks.js','flasher.js','app.js'])w.eval(fs.readFileSync(path.join(dir,f),'utf8'));
@@ -15,7 +15,7 @@ const root=path.resolve(__dirname,'..'),dir=path.join(root,'docs/flasher-core-te
  assert.deepStrictEqual(Array.from(tw.features,f=>f.id),ids);
  assert(!tw.tweaks.some(t=>t.id.startsWith('model-tg')));
  for(const lang of ['en','fr']){
-  app.applyLang(lang);w.document.getElementById('more-performance-core').click();
+  app.applyLang(lang);assert(w.document.getElementById('select-all-note').textContent.includes(lang==='en'?'four options':'quatre options'));w.document.getElementById('more-performance-core').click();
   assert(w.document.getElementById('det-performance-core').textContent.includes(lang==='en'?'sampler':'sampler'));
   w.document.getElementById('more-performance-core').click();
  }

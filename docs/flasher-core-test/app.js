@@ -1451,8 +1451,8 @@ function live(text) {
 
 // One listener per zone (delegation): they survive the rebuild that follows every change.
 // Sélection compatible : les deux préférences sont installées en premier.
-Object.assign(T.en, { select_all: "Select all", select_all_note: "Selects compatible mods, keeping Model-TG and Live MIDI OUT + THRU. Included mods stay part of Model-TG." });
-Object.assign(T.fr, { select_all: "Tout sélectionner", select_all_note: "Sélectionne les mods compatibles en conservant Model-TG et MIDI OUT + THRU en direct. Les mods inclus restent dans Model-TG." });
+Object.assign(T.en, { select_all: "Select all", select_all_note: "Selects all four options on this standalone core test page." });
+Object.assign(T.fr, { select_all: "Tout sélectionner", select_all_note: "Sélectionne les quatre options de cet essai du noyau autonome." });
 function selectAllCompatible() {
   for (const f of features()) selOf(f).on = false;
   const preferred = ["model-tg", "midi-live-both", "scale-gen", "lfo-secondary"].map(featById).filter(Boolean);
