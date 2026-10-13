@@ -73,6 +73,7 @@ mlkc_enc:
     beq .Lku_send
     moveq #1,%d0
     movel %d0,mlkc_show
+    movel %d0,TG_mod_used
     bra .Lku_used
 .Lku_send:
     moveq #2,%d1

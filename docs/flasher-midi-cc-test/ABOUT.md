@@ -1,4 +1,4 @@
-# 2026-10-13-midi-assignable-cc
+# 2026-10-13-midi-cc-stay-b
 
 Experimental gray-knob CC controls in MIDI B-side. Hold SETTINGS and turn a gray knob to select OFF or CC0-127. Common CC names appear in the stock-style window and long names scroll. Release SETTINGS, then turn the knob to send a value on the selected MIDI lane channel and port. Assignment itself sends nothing. Muted/disabled lanes send nothing; unassigned knobs retain their earlier behavior. A-side controls are unchanged. The first test keeps assignments in RAM only, so they reset after restart. Hardware-tested MIDI sequence saving and live recording remain included.
 
