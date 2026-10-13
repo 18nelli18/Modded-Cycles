@@ -360,15 +360,17 @@ mlp_menu_key:
     movel mlp_changed,%d1
     btst %d2,%d1
     bne .Lmk_trig_clear
-    movel mlp_step,%sp@-
     movel mlp_step,%d0
+    movel %d0,%sp@-
     andil #48,%d0
     addl %d2,%d0
     movel %d0,mlp_step
     movel %d2,%sp@-
     moveq #6,%d2
-    moveq #0,%d0
-    jsr mlp_store
+    | Le lecteur de la ligne Trig rend a0 = pas, sans préserver son slide.
+    jsr mlp_raw_value
+    | Publication alignée unique du pas vierge ; recréation C5/100/1.
+    movel #0x3c640100,%a0@
     .ifdef ML_REPEAT
     jsr ml_repeat_delete_selected
     .endif
