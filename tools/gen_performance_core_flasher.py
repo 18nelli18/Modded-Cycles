@@ -7,7 +7,7 @@ principale et Test3 ne sont jamais écrites. Catalogue limité à la preuve du n
 import argparse,copy,json,pathlib,re
 import build,gen_flasher_tweaks as catalog,gen_performance_core as core,ref_mainos
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-STAMP='2026-10-12-performance-core-first-test'
+STAMP='2026-10-12-performance-core-test'
 TEXT={
 'en':dict(label='Slide trigs + Scale Lock — standalone core',short='Retained Model-TG performance features, without its sampler.',desc='Hold SETTINGS and press a trig to toggle its slide. Scale Lock is available in the keyboard setup menu. This extracted core contains no sampler, master effects or extra Model-TG menus. Latching mute and trig preview are separate selections below. Sequence Genie, SCRAMBLE and MIDI Bank are not connected to this core yet; use the existing flasher for those features.',note='Experimental extraction: boot, scale mapping and six-machine audio verified in emulation. Awaiting hardware testing.'),
 'fr':dict(label='Slides + Scale Lock — noyau autonome',short='Fonctions performance de Model-TG, sans son sampler.',desc='Maintenez SETTINGS et appuyez sur un trig pour basculer son slide. Scale Lock est disponible dans la configuration du clavier. Ce noyau extrait ne contient ni sampler, ni effets master, ni menus supplémentaires Model-TG. Mute verrouillé et écoute de pas restent deux sélections séparées ci-dessous. Sequence Genie, SCRAMBLE et banque MIDI ne sont pas encore reliés à ce noyau ; utilisez le flasher existant pour ces fonctions.',note='Extraction expérimentale : démarrage, gammes et audio des six machines vérifiés en émulation. Essai matériel attendu.')}
@@ -28,7 +28,7 @@ def generate(cycles,repo):
  for name,body in (('REF_MAINOS',refs),('REF_MODS',mods)):
   m=ref_mainos.BLOCKS[name].search(files['app.js']);assert m,name
   files['app.js']=files['app.js'][:m.start(2)]+'\n'+body+files['app.js'][m.end(2):]
- injection='\n'.join('FEAT.'+lang+'["performance-core"] = '+json.dumps(text,ensure_ascii=False)+';' for lang,text in TEXT.items())+'\nGUIDE_OF["performance-core"]="performance-core";\n'
+ injection='T.en.title="Model:Cycles — Standalone Core Test"; T.fr.title="Model:Cycles — Essai noyau autonome";\nT.en.select_all_note="Selects all four options on this standalone core test page."; T.fr.select_all_note="Sélectionne les quatre options de cet essai du noyau autonome.";\n'+'\n'.join('FEAT.'+lang+'["performance-core"] = '+json.dumps(text,ensure_ascii=False)+';' for lang,text in TEXT.items())+'\nGUIDE_OF["performance-core"]="performance-core";\n'
  anchor='function featText('
  # Avant le premier rendu des cartes, après la définition des textes et du guide.
  at=files['app.js'].find(anchor)
