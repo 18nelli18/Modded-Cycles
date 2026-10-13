@@ -38,7 +38,16 @@ mlkc_enc:
     lea mlkc_state,%a0
     addal %d1,%a0
     tstl TG_set_held
-    bne .Lku_read_delta
+    beq .Lku_not_assigning
+    | Un geste d'assignation, même delta nul, consomme SETTINGS.
+    moveq #1,%d1
+    movel %d1,TG_mod_used
+    .ifdef ML_KNOB_LOCKS
+    | Aucun ancien CC provisoire ne doit sortir après changement de numéro.
+    jsr mlkcq_reset
+    .endif
+    bra .Lku_read_delta
+.Lku_not_assigning:
     moveq #0,%d1
     moveb %a0@,%d1
     cmpil #255,%d1

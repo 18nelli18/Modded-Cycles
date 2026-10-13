@@ -33,6 +33,17 @@ def main():
  def send(args):sent.append(bytes(r.u.mem_read(args[1],3)));assert args[0]==3 and args[2]==4;return 0
  r.stubs[0x400826b0]=send;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=0x400826b0,end=0x400826b0)
  r.u.mem_write(syms['mlkc_state'],bytes((74,64)))
+ # Assignation pendant lecture : aucun CC intermédiaire, même après release
+ # sans lock. Un delta nul doit tout de même consommer SETTINGS.
+ r.w32(defs['TG_set_held'],1);r.delta=0
+ assert r.call('mlkc_enc',event)==1 and r.r32(defs['TG_mod_used'])==1
+ r.delta=1;assert r.call('mlkc_enc',event)==1
+ r.call('mlkcq_step',pat,0,19);r.call('mlkcq_worker')
+ assert not sent and r.call('mlkcq_ready')==0
+ r.w32(defs['TG_set_held'],0)
+ r.call('mlkcq_step',pat,0,19);r.call('mlkcq_worker')
+ assert not sent and r.call('mlkcq_ready')==0
+ r.u.mem_write(syms['mlkc_state'],bytes((74,64)))
  r.delta=5;assert r.call('mlkc_enc',event)==1 and not sent
  assert r.u.mem_read(syms['mlkc_state'],2)==bytes((74,64))
  locks=r.call('mlkc_locks_for',pat,0);assert locks
@@ -76,6 +87,16 @@ def main():
  r.call('mlkcq_step',pat,0,7);r.w32(clock,0);r.call('mlkcq_worker');assert len(sent)==12 and r.call('mlkcq_ready')==0
  freed=[];r.stubs[0x400802ec]=lambda args:freed.append(args[0]) or 0;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=0x400802ec,end=0x400802ec)
  r.call('mlkc_locks_reset');assert r.call('mlkc_locks_for',pat,0)==0 and locks in freed
+ # Reproduction signalée : potard2 parcourant tous les CC en lecture.
+ r.call('mlkcq_reset');sent.clear();r.w32(clock,1)
+ r.w32(defs['mlp_track'],0);r.w32(defs['mlp_held'],0);r.w32(defs['TG_set_held'],1);r.w32(event+12,3)
+ r.u.mem_write(syms['mlkc_state']+2,bytes((255,64)));r.delta=1
+ for cc in range(128):
+  assert r.call('mlkc_enc',event)==1
+  assert r.u.mem_read(syms['mlkc_state']+2,1)[0]==cc
+  r.call('mlkcq_step',pat,0,19);r.call('mlkcq_worker');assert not sent
+ r.w32(defs['TG_set_held'],0);r.call('mlkcq_step',pat,0,19);r.call('mlkcq_worker');assert not sent
+ print('ok : potard2 CC0..127 pendant lecture et après release, aucune émission avant usage ; SETTINGS delta0 consommé')
  print('ok : TRIG+potard verrouille sans émission/base modifiée, douze CC, destination figée, même valeur réémise à chaque passage')
  print('ok : queue IRQ sans port physique, huit CC/retrait, mute/canal/Stop invalides filtrés, projet reset libéré')
  print('ok : multi-TRIG, clear, step copy/paste, lane copy/paste/clear/undo ; aucune donnée A modifiée')

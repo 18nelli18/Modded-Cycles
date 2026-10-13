@@ -30,12 +30,12 @@ mlkcq_put:
     oril #0xb0,%d2
     lsll #8,%d2
     movel %sp@(32),%d1
-    cmpil #727,%d1
+    cmpil #127,%d1
     bhi .Lput_done
     orl %d1,%d2
     lsll #8,%d2
     movel %sp@(36),%d1
-    cmpil #727,%d1
+    cmpil #127,%d1
     bhi .Lput_done
     orl %d1,%d2
     lsll #8,%d2
@@ -154,6 +154,9 @@ mlkcq_step:
     moveal %sp@(32),%a2
     movel %sp@(36),%d2
     movel %sp@(40),%d3
+    | Les numéros intermédiaires pendant SETTINGS ne sont jamais joués.
+    tstl TG_set_held
+    bne .Lqs_done
     cmpil #5,%d2
     bhi .Lqs_done
     cmpil #63,%d3
@@ -195,6 +198,13 @@ mlkcq_step:
     cmpil #0xffff,%d4
     bne .Lqs_validate
 .Lqs_base:
+    | Une simple assignation ne joue aucun CC. Restaurer la base seulement
+    | après qu'un lock de ce potard a réellement été mis en file.
+    movel %d3,%d0
+    muluw #12,%d0
+    lea .Lqueue,%a0
+    tstl %a0@(0,%d0:l)
+    beq .Lqs_next
     movew %a4@,%d4
 .Lqs_validate:
     cmpil #0x7f7f,%d4
