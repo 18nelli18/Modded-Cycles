@@ -23,6 +23,21 @@ ml_store_save_notice:
     movew %sr,%d0
     andil #0x700,%d0
     bne .Lproject_done
+    .ifdef ML_SAVE_FIRST
+    | Le Save natif réussi fournit self/slot même sans notification Load.
+    tstl ml_store_load_serial
+    bne .Lproject_context_checked
+    tstl ml_store_project_ctx
+    beq .Lproject_bind_save
+    tstl ml_store_owner_id
+    bne .Lproject_context_checked
+.Lproject_bind_save:
+    movel %sp@(28),%sp@-
+    movel %sp@(28),%sp@-
+    jsr ml_store_bind_save
+    addql #8,%sp
+.Lproject_context_checked:
+    .endif
     .ifdef ML_STORAGE
     .ifdef ML_STORAGE2
     moveq #2,%d0

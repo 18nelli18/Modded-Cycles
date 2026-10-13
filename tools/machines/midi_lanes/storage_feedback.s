@@ -32,6 +32,16 @@ ml_store_save_feedback:
     bra .Lfeedback_show
 | Contexte absent : distinguer notification, service UI et allocation.
 .Lcontext_detail:
+    .ifdef ML_SAVE_FIRST
+    movel ml_store_bind_error,%d0
+    beq .Lcontext_no_save_bind
+    cmpil #5,%d0
+    bhi .Lcontext_no_save_bind
+    lea .Lbind_errors,%a1
+    moveal %a1@(0,%d0:l:4),%a0
+    bra .Lfeedback_show
+.Lcontext_no_save_bind:
+    .endif
     lea .Lctx_load,%a0
     tstl ml_store_load_serial
     bne .Lcontext_has_load
@@ -116,6 +126,16 @@ ml_store_load_feedback:
 .Lboot_id: .asciz "CTX: ID"
 .Lboot_slot: .asciz "CTX: SLOT"
 .Lboot_changed: .asciz "CTX: CHANGED"
+    .endif
+    .ifdef ML_SAVE_FIRST
+    .balign 4
+.Lbind_errors:
+    .long .Lctx_load,.Lbind_state,.Lbind_id,.Lbind_owner,.Lbind_ram,.Lbind_changed
+.Lbind_state: .asciz "CTX: SAVE STATE"
+.Lbind_id: .asciz "CTX: SAVE ID"
+.Lbind_owner: .asciz "CTX: SAVE OWNER"
+.Lbind_ram: .asciz "CTX: SAVE RAM"
+.Lbind_changed: .asciz "CTX: SAVE CHANGED"
     .endif
 .Lverify: .asciz "MIDI: VERIFY"
 .Lram_only: .asciz "MIDI: RAM ONLY"

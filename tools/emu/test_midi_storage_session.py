@@ -176,16 +176,21 @@ def main():
  def native_save():
   r.u.mem_write(STACK,struct.pack('>4I',STOP,OBJ,3,callback))
   r.u.reg_write(mk.UC_M68K_REG_A7,STACK)
-  r.u.emu_start(0x4000f762,STOP,count=12000000)
+  try:r.u.emu_start(0x4000f762,STOP,count=12000000)
+  except Exception:
+   print("Save PC",hex(r.u.reg_read(mk.UC_M68K_REG_PC)),"ctx",hex(r.r32(syms["ml_store_project_ctx"])),"owner",hex(r.r32(syms["ml_store_owner_id"])),"serial",r.r32(syms["ml_store_load_serial"]))
+   raise
   assert r.u.reg_read(mk.UC_M68K_REG_PC)==STOP
   assert r.u.reg_read(mk.UC_M68K_REG_A7)==STACK+4
   return r.u.reg_read(mk.UC_M68K_REG_D0)&255
  if a.extended:
   before=dict(files);r.w32(syms['ml_store_project_ctx'],0)
+  if a.write_first:r.w32(syms['ml_store_load_serial'],1)
   assert native_save()==1 and files==before
   assert r.r32(syms['ml_store_save_status'])==0 and r.r32(syms['ml_store_save_error'])==3
-  if a.tweak:assert feedback[-1]=='CTX: NO LOAD'
+  if a.tweak:assert feedback[-1]==('CTX: NO UI' if a.write_first else 'CTX: NO LOAD')
   r.w32(syms['ml_store_project_ctx'],ctx)
+  if a.write_first:r.w32(syms['ml_store_load_serial'],0)
  assert native_save()==1
  assert r.r32(syms['ml_store_save_status'])==1
  if a.tweak:assert feedback[-1]=='MIDI SAVED'
@@ -350,6 +355,42 @@ def main():
   fault['write']=False
   assert load(current['id'],3,5)>0
   assert bytes(r.u.mem_read(snapshot,data_size))==payload(77)
+  # Sans service UI ni Load : le Save natif confirme le propriétaire et le slot.
+  r.w32(syms['ml_store_load_serial'],0);r.w32(syms['ml_store_owner_id'],0)
+  r.w32(syms['ml_store_load_active'],0);r.w32(syms['ml_store_load_ready'],0)
+  r.w32(syms['ml_store_project_ctx'],0)
+  pending_table=r.r32(syms['ml_bank_table']);assert pending_table
+  r.w32(pending_table+5*4,bank);r.u.mem_write(bank,payload(86))
+  old_table=bytes(r.u.mem_read(pending_table,384));old_notes=bytes(r.u.mem_read(bank,data_size))
+  assert native_save()==1 and r.r32(syms['ml_store_save_status'])==1
+  assert r.r32(syms['ml_store_load_serial'])==1 and r.r32(syms['ml_store_load_ready'])==1
+  assert r.r32(syms['ml_bank_table'])==pending_table
+  assert bytes(r.u.mem_read(pending_table,384))==old_table and bytes(r.u.mem_read(bank,data_size))==old_notes
+  r.call('ml_store_service')
+  assert r.r32(syms['ml_bank_table'])==pending_table
+  assert load(current['id'],3,5)>0 and bytes(r.u.mem_read(snapshot,data_size))==payload(86)
+  # Une table appartenant à un autre projet ne peut jamais être adoptée.
+  r.w32(syms['ml_store_load_serial'],0);r.w32(syms['ml_store_owner_id'],99)
+  assert r.call('ml_store_bind_save',OBJ,3)==0
+  assert r.r32(syms['ml_store_load_serial'])==0 and r.r32(syms['ml_store_owner_id'])==99
+  r.w32(syms['ml_store_owner_id'],0);r.w32(syms['ml_store_project_ctx'],0)
+  r.fail_new=r.new_count+1
+  assert r.call('ml_store_bind_save',OBJ,3)==0
+  assert r.r32(syms['ml_store_owner_id'])==0 and r.r32(syms['ml_store_load_serial'])==0
+  assert r.r32(syms['ml_store_bind_error'])==4
+  r.fail_new=0
+  allocator=r.stubs[0x400802e0]
+  def load_during_alloc(args):
+   pointer=allocator(args)
+   r.w32(syms['ml_store_load_serial'],7);r.w32(syms['ml_store_load_ready'],0)
+   return pointer
+  r.stubs[0x400802e0]=load_during_alloc
+  assert r.call('ml_store_bind_save',OBJ,3)==0
+  assert r.r32(syms['ml_store_load_serial'])==7 and r.r32(syms['ml_store_owner_id'])==0
+  assert r.r32(syms['ml_bank_table'])==pending_table and r.r32(syms['ml_store_load_ready'])==0
+  r.stubs[0x400802e0]=allocator
+  print('ok : allocation refusée et Load pendant initialisation refusent adoption sans perdre les notes')
+  print('ok : Save sans Load/service UI initialise le contexte et conserve les séquences éditées ; propriétaire étranger refusé')
   print('ok : contexte natif sans lecture au démarrage, B accessible immédiatement')
   print('ok : vrai Save Project + écriture/relecture MIDI, échec d’écriture refuse succès et conserve copie valide')
   print('Limite : filesystem simulé ; aucune persistance matérielle revendiquée')

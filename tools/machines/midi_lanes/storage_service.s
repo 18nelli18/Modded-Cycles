@@ -320,3 +320,105 @@ ml_store_recover_ram:
     addql #8,%sp
     rts
     .endif
+
+| Diagnostic : adopter la table déjà éditée après un vrai Save natif réussi.
+| self/slot sont ceux du Save ; identité relue sur le projet actif. Aucune
+| lecture sidecar, aucune table vidée, aucune notification Load inventée.
+    .ifdef ML_SAVE_FIRST
+    .text
+    .data
+    .balign 4
+    .globl ml_store_bind_error
+ml_store_bind_error: .long 0
+    .text
+    .globl ml_store_bind_save
+ml_store_bind_save:
+    lea %sp@(-16),%sp
+    moveml %d2-%d3/%a2-%a3,%sp@
+    moveq #1,%d0
+    movel %d0,ml_store_bind_error
+    movew %sr,%d0
+    andil #0x700,%d0
+    bne .Lbind_fail
+    tstl ml_store_load_serial
+    bne .Lbind_fail
+    tstl ml_store_load_active
+    bne .Lbind_fail
+    tstl ml_store_io_busy
+    bne .Lbind_fail
+    tstl ml_store_io_poison
+    bne .Lbind_fail
+    movel %sp@(24),%d3
+    cmpil #95,%d3
+    bhi .Lbind_fail
+    moveal ml_bank_table,%a2
+    tstl %a2
+    beq .Lbind_fail
+    moveq #2,%d0
+    movel %d0,ml_store_bind_error
+    movel %sp@(20),%sp@-
+    jsr 0x4000eae2
+    addql #4,%sp
+    movel %d0,%d2
+    beq .Lbind_fail
+    jsr 0x400cf866
+    tstl %d0
+    beq .Lbind_fail
+    movel %d0,%sp@-
+    jsr 0x4000eae2
+    addql #4,%sp
+    cmpl %d2,%d0
+    bne .Lbind_fail
+    moveq #3,%d0
+    movel %d0,ml_store_bind_error
+    tstl ml_store_owner_id
+    beq .Lbind_owner_ok
+    cmpl ml_store_owner_id,%d2
+    bne .Lbind_fail
+.Lbind_owner_ok:
+    moveq #4,%d0
+    movel %d0,ml_store_bind_error
+    jsr ml_store_prepare
+    tstl %d0
+    beq .Lbind_fail
+    moveq #5,%d0
+    movel %d0,ml_store_bind_error
+    jsr 0x400cf866
+    tstl %d0
+    beq .Lbind_fail
+    movel %d0,%sp@-
+    jsr 0x4000eae2
+    addql #4,%sp
+    cmpl %d2,%d0
+    bne .Lbind_fail
+    movew %sr,%d1
+    movel %d1,%sp@-
+    movew #0x2700,%sr
+    tstl ml_store_load_serial
+    bne .Lbind_stale
+    cmpal ml_bank_table,%a2
+    bne .Lbind_stale
+    movel %d2,ml_store_owner_id
+    movel %d2,ml_store_load_pending_id
+    movel %d3,ml_store_load_pending_slot
+    moveq #1,%d0
+    movel %d0,ml_store_load_serial
+    movel %d0,.Lseen
+    movel %d0,ml_store_load_ready
+    movel %d0,ml_store_load_status
+    clrl ml_store_load_error
+    clrl ml_store_ram_only
+    clrl ml_store_bind_error
+    movel %sp@+,%d1
+    movew %d1,%sr
+    bra .Lbind_out
+.Lbind_stale:
+    movel %sp@+,%d1
+    movew %d1,%sr
+.Lbind_fail:
+    moveq #0,%d0
+.Lbind_out:
+    moveml %sp@,%d2-%d3/%a2-%a3
+    lea %sp@(16),%sp
+    rts
+    .endif
