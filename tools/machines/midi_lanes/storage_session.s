@@ -26,10 +26,22 @@ ml_store_session_save:
     lea.l %sp@(-16),%sp
     moveml %d2/%a2-%a4,%sp@
     moveal %sp@(20),%a2
+    .ifdef ML_STORAGE2
+    movel %d0,%sp@-
+    moveq #8,%d0
+    movel %d0,ml_store_save_error
+    movel %sp@+,%d0
+    .endif
     jsr .Lsession_paths
     tstl %d0
     beq .Lsession_fail
     | Créer/valider racine, puis sous-dossier identité (préfixe des chemins).
+    .ifdef ML_STORAGE2
+    movel %d0,%sp@-
+    moveq #9,%d0
+    movel %d0,ml_store_save_error
+    movel %sp@+,%d0
+    .endif
     movel %a2@(16),%sp@-
     pea .Lroot_path
     pea .Lroot_name
@@ -39,6 +51,12 @@ ml_store_session_save:
     tstl %d0
     beq .Lsession_fail
     moveal %a2@,%a3
+    .ifdef ML_STORAGE2
+    movel %d0,%sp@-
+    moveq #10,%d0
+    movel %d0,ml_store_save_error
+    movel %sp@+,%d0
+    .endif
     clrb %a3@(25)
     movel %a2@(16),%sp@-
     movel %a3,%sp@-
@@ -50,6 +68,12 @@ ml_store_session_save:
     tstl %d0
     beq .Lsession_fail
     movel %d0,%a2@(32)
+    .ifdef ML_STORAGE2
+    movel %d0,%sp@-
+    moveq #11,%d0
+    movel %d0,ml_store_save_error
+    movel %sp@+,%d0
+    .endif
     pea ML_DATA_BYTES
     movel %a2@(20),%sp@-
     movel %sp@(44),%sp@-
@@ -58,6 +82,12 @@ ml_store_session_save:
     tstl %d0
     beq .Lsession_fail
     | Renouvellement valide prioritaire ; initial refuse toute copie existante.
+    .ifdef ML_STORAGE2
+    movel %d0,%sp@-
+    moveq #12,%d0
+    movel %d0,ml_store_save_error
+    movel %sp@+,%d0
+    .endif
     movel %a2,%sp@-
     jsr ml_store_io_begin
     tstl %d0
@@ -69,6 +99,12 @@ ml_store_session_save:
     addql #4,%sp
     tstl %d0
     bne .Lsession_out
+    .ifdef ML_STORAGE2
+    movel %d0,%sp@-
+    moveq #13,%d0
+    movel %d0,ml_store_save_error
+    movel %sp@+,%d0
+    .endif
     movel %a2,%sp@-
     jsr ml_store_initial
     addql #4,%sp

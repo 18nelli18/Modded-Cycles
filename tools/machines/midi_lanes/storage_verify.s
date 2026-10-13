@@ -59,7 +59,7 @@ ml_store_verified:
     lea.l %sp@(12),%sp
     tstl %d0
     beq .Ldone
-    movel #1615,%d1
+    movel #(ML_RECORD_BYTES-1),%d1
 .Lcompare:
     moveb %a2@+,%d0
     cmpb %a3@+,%d0

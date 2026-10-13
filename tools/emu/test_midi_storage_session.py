@@ -16,7 +16,7 @@ def main():
    obj=p/(name+'.o');objs.append(str(obj));subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_STORAGE2=1'] if a.extended else []),*(['--defsym','ML_WORKING=1'] if a.working else []),*(['--defsym','ML_STORAGE=1'] if name=='project' else []),*(['--defsym','ML_GENIE=1','--defsym','ML_CLIPBOARD=1'] if name=='ui_cancel' else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/('storage_'+name+'.s'))],check=True)
   for name in ('banks','runtime'):
    obj=p/(name+'.o');objs.append(str(obj));subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_STORAGE2=1'] if a.extended else []),'-o',str(obj),str(root/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
-  (p/'link.ld').write_text('SECTIONS { .text 0x93050000 : { *(.text*) *(.rodata*) *(.data*) } } ml_runtime = 0x93079008; ml_clock_state = 0x9307900c; ml_pattern = 0x93079014; ml_context = 0x93079024; mlp_keyboard_cancel = 0x93079028; mlp_held = 0x9307902c; mlp_remove = 0x93079030; mlp_changed = 0x93079034; ml_gq_state = 0x93079038; ml_gu_valid = 0x9307903c; SG_undo_valid = 0x93079040; mlp_clip_invalidate = 0x93079044; ml_store_save_feedback = 0x93079048; ml_store_load_feedback = 0x9307904c;')
+  (p/'link.ld').write_text('SECTIONS { .text 0x93050000 : { *(.text*) *(.rodata*) *(.data*) } } ml_runtime = 0x93079008; ml_clock_state = 0x9307900c; ml_pattern = 0x93079014; ml_context = 0x93079024; mlp_keyboard_cancel = 0x93079028; mlp_held = 0x9307902c; mlp_remove = 0x93079030; mlp_changed = 0x93079034; ml_gq_state = 0x93079038; ml_gu_valid = 0x9307903c; SG_undo_valid = 0x93079040; mlp_clip_invalidate = 0x93079044; ml_store_save_feedback = 0x93079048; ml_store_load_feedback = 0x9307904c; ml_store_save_error = 0x93079050;')
   subprocess.run([cross+'ld','-T',str(p/'link.ld'),'-e','ml_store_session_save','-o',str(p/'e.elf'),*objs],check=True)
   subprocess.run([cross+'objcopy','-O','binary',str(p/'e.elf'),str(p/'e.bin')],check=True);code=(p/'e.bin').read_bytes();syms=symbols(cross,p/'e.elf')
  r=Rig(main_os_from_syx(a.cycles),{'writes':[]},{'writes':[],'symbols':{}});r.s=syms;fixture_syms=dict(syms);r.u.mem_write(0x93050000,code)
@@ -47,6 +47,13 @@ def main():
    assert r.u.reg_read(mk.UC_M68K_REG_SR)&0x700==0
    feedback.append(r.string(args[0]));return 0
   r.stubs[addr]=popup;r.u.hook_add(UC_HOOK_CODE,r.stub,begin=addr,end=addr)
+ if a.tweak:
+  expected=['MIDI SAVE ERR','MIDI: INIT','MIDI: INIT','MIDI: INIT','MIDI: OWNER','MIDI: SYNC','MIDI SAVE ERR','MIDI SAVE ERR','MIDI: PATH','MIDI: ROOT','MIDI: DIR','MIDI: SNAP','MIDI: COMMIT','MIDI: CREATE','MIDI: DATA','MIDI: OPEN','MIDI: ALLOC','MIDI: WRITE','MIDI: FLUSH','MIDI: CLOSE']
+  r.w32(syms['ml_store_save_status'],0);r.w32(syms['ml_store_io_poison'],0)
+  for error,message in enumerate(expected):
+   r.w32(syms['ml_store_save_error'],error);r.call('ml_store_save_feedback');assert feedback[-1]==message
+  r.w32(syms['ml_store_io_poison'],1);r.call('ml_store_save_feedback');assert feedback[-1]=='MIDI: DISK'
+  r.w32(syms['ml_store_io_poison'],0);r.w32(syms['ml_store_save_error'],0)
  ctx,pathA,pathB,recA,recB,scratch,snapshot,bank=[0x93090000+i*0x2000 for i in range(8)]
  r.u.mem_write(ctx,struct.pack('>11I',pathA,pathB,recA,recB,scratch,snapshot,0,0,0,0,0))
  dirs={'/':2};files={};handles={};log=[];fault={'write':False,'read':False}
@@ -171,6 +178,8 @@ def main():
  native['save']=1;r.w32(RAW+8,0x87654321)
  assert native_save()==1 and files==before
  assert r.r32(syms['ml_store_save_status'])==0
+ if a.tweak:assert feedback[-1]=='MIDI: OWNER'
+ if a.extended:assert r.r32(syms['ml_store_save_error'])==4
  r.w32(RAW+8,0x12345678)
  # Rechargement dans une nouvelle table RAM, indépendante de la table active.
  restored=0x9307e000;r.u.mem_write(restored,bytes(384));active_before=bytes(r.u.mem_read(table,384))

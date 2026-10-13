@@ -14,6 +14,12 @@ ml_store_save_notice:
     lea.l %sp@(-20),%sp
     moveml %d2-%d4/%a2-%a3,%sp@
     clrl ml_store_save_status
+    .ifdef ML_STORAGE2
+    movel %d0,%sp@-
+    moveq #1,%d0
+    movel %d0,ml_store_save_error
+    movel %sp@+,%d0
+    .endif
     movew %sr,%d0
     andil #0x700,%d0
     bne .Lproject_done
@@ -35,6 +41,12 @@ ml_store_save_notice:
     .endif
     bhi .Lproject_done
     movel %sp@(24),%sp@-
+    .ifdef ML_STORAGE2
+    movel %d0,%sp@-
+    moveq #4,%d0
+    movel %d0,ml_store_save_error
+    movel %sp@+,%d0
+    .endif
     jsr 0x4000eae2
     addql #4,%sp
     tstl %d0
@@ -58,6 +70,10 @@ ml_store_save_notice:
 .Lproject_namespace_ready:
     .endif
     .ifdef ML_STORAGE3
+    movel %d0,%sp@-
+    moveq #5,%d0
+    movel %d0,ml_store_save_error
+    movel %sp@+,%d0
     jsr ml_bank_ui_sync
     tstl %d0
     beq .Lproject_done
@@ -82,6 +98,9 @@ ml_store_save_notice:
     bcs .Lproject_next
     moveq #1,%d0
     movel %d0,ml_store_save_status
+    .ifdef ML_STORAGE2
+    clrl ml_store_save_error
+    .endif
 .Lproject_done:
     moveml %sp@,%d2-%d4/%a2-%a3
     lea.l %sp@(20),%sp

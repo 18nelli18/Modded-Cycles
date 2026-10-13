@@ -88,6 +88,12 @@ ml_store_write:
     lea.l %sp@(-40),%sp
     movem.l %d2-%d4/%a2,%sp@
     moveq #0,%d4
+    .ifdef ML_STORAGE2
+    movel %d0,%sp@-
+    moveq #15,%d0
+    movel %d0,ml_store_save_error
+    movel %sp@+,%d0
+    .endif
     movew %sr,%d0
     andil #0x700,%d0
     bne .Lwrite_out
@@ -111,6 +117,12 @@ ml_store_write:
     lea.l %sp@(12),%sp
     tstl %d0
     bne .Lwrite_out
+    .ifdef ML_STORAGE2
+    movel %d0,%sp@-
+    moveq #16,%d0
+    movel %d0,ml_store_save_error
+    movel %sp@+,%d0
+    .endif
     pea ML_RECORD_BYTES
     clrl %sp@-
     movel %a2,%sp@-
@@ -119,6 +131,12 @@ ml_store_write:
     tstl %d0
     bne .Lwrite_close
     | ABI vérifiée par writer natif : taille, tampon, handle.
+    .ifdef ML_STORAGE2
+    movel %d0,%sp@-
+    moveq #17,%d0
+    movel %d0,ml_store_save_error
+    movel %sp@+,%d0
+    .endif
     movel %a2,%sp@-
     movel %d2,%sp@-
     pea ML_RECORD_BYTES
@@ -126,6 +144,12 @@ ml_store_write:
     lea.l %sp@(12),%sp
     cmpil #ML_RECORD_BYTES,%d0
     bne .Lwrite_close
+    .ifdef ML_STORAGE2
+    movel %d0,%sp@-
+    moveq #18,%d0
+    movel %d0,ml_store_save_error
+    movel %sp@+,%d0
+    .endif
     movel %a2,%sp@-
     jsr 0x4007e2f6
     addql #4,%sp
@@ -133,9 +157,23 @@ ml_store_write:
     bne .Lwrite_close
     moveq #1,%d4
 .Lwrite_close:
+    .ifdef ML_STORAGE2
+    movel ml_store_save_error,%sp@-
+    movel %d0,%sp@-
+    moveq #19,%d0
+    movel %d0,ml_store_save_error
+    movel %sp@+,%d0
+    .endif
     movel %a2,%sp@-
     jsr 0x4007bc1c
     addql #4,%sp
+    .ifdef ML_STORAGE2
+    moveal %sp@+,%a0
+    tstl %d0
+    bne .Lwrite_close_failed
+    movel %a0,ml_store_save_error
+.Lwrite_close_failed:
+    .endif
     tstl %d0
     beq .Lwrite_out
     moveq #0,%d4

@@ -1,11 +1,11 @@
 // Note65 : vraie page isolée, pack MIDI et noyau sans TG et compilation navigateur.
 const fs=require('fs'),path=require('path'),assert=require('assert');
 const {JSDOM,VirtualConsole}=require('jsdom');
-const root=path.resolve(__dirname,'..'),dir=path.join(root,'docs/flasher-core-test');
+const root=path.resolve(__dirname,'..'),dir=path.resolve(root,process.argv[2]||'docs/flasher-core-test');
 (async()=>{
  const errors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(String(e)));
  const html=fs.readFileSync(path.join(dir,'index.html'),'utf8');
- assert(!html.includes('bundle.js'));assert(html.includes('2026-10-12-performance-midi-core-test'));
+ assert(!html.includes('bundle.js'));assert(html.includes(process.argv[3]||'2026-10-12-performance-midi-core-test'));
  const dom=new JSDOM(html,{url:'https://aveycole.github.io/Modded-Cycles/flasher-core-test/',runScripts:'outside-only',virtualConsole:vc});
  const w=dom.window;Object.defineProperty(w,'isSecureContext',{value:true});w.URL.createObjectURL=()=> 'blob:test';w.URL.revokeObjectURL=()=>{};
  for(const f of ['builder.js','tweaks.js','flasher.js','app.js'])w.eval(fs.readFileSync(path.join(dir,f),'utf8'));

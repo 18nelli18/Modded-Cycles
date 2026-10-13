@@ -96,6 +96,12 @@ ml_store_initial:
     tstl %d0
     beq .Lfail
     moveq #0,%d2
+    .ifdef ML_STORAGE2
+    movel %d0,%sp@-
+    moveq #14,%d0
+    movel %d0,ml_store_save_error
+    movel %sp@+,%d0
+    .endif
     clrl %sp@-
     movel %a2@(28),%sp@-
     movel %a2@(24),%sp@-
