@@ -277,6 +277,12 @@ mlp_pad_note:
     lea.l %sp@(16),%sp
     tstl %d0
     beq .Lpad_done
+    .ifdef ML_LIVE_REC
+    movel %d3,%sp@-
+    movel %d2,%sp@-
+    jsr mllr_on
+    addql #8,%sp
+    .endif
     movel mlp_live_pad_held,%d0
     bset %d2,%d0
     movel %d0,mlp_live_pad_held
@@ -289,6 +295,11 @@ mlp_pad_note:
     beq .Lpad_done
     bclr %d2,%d0
     movel %d0,mlp_live_pad_held
+    .ifdef ML_LIVE_REC
+    movel %d2,%sp@-
+    jsr mllr_off
+    addql #4,%sp
+    .endif
     movel %d2,%sp@-
     pea ml_live_runtime
     jsr ml_quiet

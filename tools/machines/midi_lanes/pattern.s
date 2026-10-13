@@ -135,7 +135,11 @@ ml_edit:
     beq .Ledit_velocity
     cmpil #2,%d0
     beq .Ledit_gate
+    .ifdef ML_LIVE_REC
+    cmpil #255,%d1
+    .else
     cmpil #3,%d1
+    .endif
     bhi .Ledit_bad
     bra .Ledit_write
 .Ledit_gate:

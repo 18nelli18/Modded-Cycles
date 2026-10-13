@@ -139,3 +139,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 
 - [62 — Sauvegarde des LFO audio et MIDI](62-sauvegarde-lfs-ab.md) — format MBK3 par pattern ; émulation validée, matériel à tester.
 - [63 — Reprise automatique MIDI et LFO](63-reprise-automatique-midi-lfo.md) — checkpoints WRK séparés du Save explicite SEQ ; candidat expérimental sur Test3.
+
+- [64 — Enregistrement live B](64-enregistrement-live-b.md) : RECORD + PLAY, quantification native, microtiming MBK4 ; expérimental.

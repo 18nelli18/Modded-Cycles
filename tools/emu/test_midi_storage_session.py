@@ -7,7 +7,7 @@ from test_sdvintage import main_os_from_syx
 from gen_seq_gen import symbols
 
 def main():
- ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--extended',action='store_true');ap.add_argument('--working',action='store_true');ap.add_argument('--tweak');ap.add_argument('--audio-lfo',action='store_true');a=ap.parse_args();data_size=4992 if a.audio_lfo else (4896 if a.extended else 1584)
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--extended',action='store_true');ap.add_argument('--working',action='store_true');ap.add_argument('--tweak');ap.add_argument('--audio-lfo',action='store_true');ap.add_argument('--live-record',action='store_true');a=ap.parse_args();data_size=4992 if a.audio_lfo else (4896 if a.extended else 1584)
  if a.audio_lfo:assert a.extended and a.tweak
  root=pathlib.Path(__file__).resolve().parents[2];cross=str(root.parent/'toolchain/bin/m68k-elf-')
  with tempfile.TemporaryDirectory() as tmp:
@@ -103,7 +103,7 @@ def main():
   assert load(0x12345678,3,4)==1
   assert bytes(r.u.mem_read(snapshot,data_size))==payload(67)
   assert save(0x12345678,3,4,68)==1
-  assert files[legacy+'B'][:4]==b'MBK3'
+  assert files[legacy+'B'][:4]==(b'MBK4' if a.live_record else b'MBK3')
   assert load(0x12345678,3,4)==2
   assert bytes(r.u.mem_read(snapshot,data_size))==payload(68)
   print('ok : migration MBK2 -> MBK3 avec LFO2 audio désactivé, génération et copies A/B conservées')
@@ -111,7 +111,7 @@ def main():
  assert save(0x12345678,3,5,60)==1,log
  assert '/ModdedCycles/03-12345678' in dirs
  path='/ModdedCycles/03-12345678/SEQ-05-'
- assert files[path+'A'][:4]==(b'MBK3' if a.audio_lfo else (b'MBK2' if a.extended else b'MBK1')) and path+'B' not in files
+ assert files[path+'A'][:4]==(b'MBK4' if a.live_record else (b'MBK3' if a.audio_lfo else (b'MBK2' if a.extended else b'MBK1'))) and path+'B' not in files
  assert save(0x12345678,3,5,72)==1
  assert struct.unpack('>I',files[path+'B'][20:24])[0]==1
  r.u.mem_write(snapshot,bytes(data_size));assert load(0x12345678,3,5)==2

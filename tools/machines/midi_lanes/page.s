@@ -557,6 +557,14 @@ mlp_menu_key:
 .Lmk_transport:
     btst #1,%d3
     bne .Lmk_used
+    .ifdef ML_LIVE_REC
+    cmpil #11,%d2
+    bne .Lmk_transport_pass
+    btst #0,%d3
+    beq .Lmk_transport_pass
+    jsr mlp_keyboard_cancel
+.Lmk_transport_pass:
+    .endif
     moveq #0,%d0
     bra .Lmk_return
 .Lmk_redraw:

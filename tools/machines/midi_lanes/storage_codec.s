@@ -4,8 +4,13 @@
     .ifdef ML_STORAGE3
     .equ ML_DATA_BYTES,4992
     .equ ML_RECORD_BYTES,5024
+    .ifdef ML_LIVE_REC
+    .equ ML_RECORD_MAGIC,0x4d424b34
+    .equ ML_RECORD_VERSION,4
+    .else
     .equ ML_RECORD_MAGIC,0x4d424b33
     .equ ML_RECORD_VERSION,3
+    .endif
     .else
     .ifdef ML_STORAGE2
     .equ ML_DATA_BYTES,4896
@@ -122,8 +127,10 @@ ml_record_crc:
     bhi .Lvalid_bad
     moveq #0,%d1
     moveb %a0@(3),%d1
+    .ifndef ML_LIVE_REC
     cmpil #3,%d1
     bhi .Lvalid_bad
+    .endif
     addql #4,%a0
     subql #1,%d3
     bpl .Lvalid_step
@@ -283,11 +290,37 @@ ml_record_decode:
     cmpil #0x4d424b32,%d0
     beq .Ldecode_v2
     .endif
+    .ifdef ML_LIVE_REC
+    cmpil #0x4d424b33,%d0
+    bne .Ldecode_current
+    movel %a2@(4),%d0
+    cmpil #3,%d0
+    bne .Lenc_bad
+    | Ancien MBK3 : les bits réservés doivent toujours être zéro.
+    lea %a2@(32),%a0
+    moveq #5,%d0
+.Ldecode_v3_lane:
+    lea %a0@(8),%a0
+    moveq #63,%d1
+.Ldecode_v3_step:
+    moveb %a0@(3),%d2
+    andil #252,%d2
+    bne .Lenc_bad
+    addql #4,%a0
+    subql #1,%d1
+    bpl .Ldecode_v3_step
+    subql #1,%d0
+    bpl .Ldecode_v3_lane
+    movel %sp@(32),%d2
+    bra .Ldecode_payload
+.Ldecode_current:
+    .endif
     cmpil #ML_RECORD_MAGIC,%d0
     bne .Lenc_bad
     movel %a2@(4),%d0
     cmpil #ML_RECORD_VERSION,%d0
     bne .Lenc_bad
+.Ldecode_payload:
     movel %a2@(8),%d0
     cmpil #ML_DATA_BYTES,%d0
     bne .Lenc_bad

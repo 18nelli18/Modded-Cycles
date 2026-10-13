@@ -19,15 +19,15 @@ ENTRY=0x93020000
 SIZE=320
 
 
-def load(rig,conditions=False):
+def load(rig,conditions=False,live_record=False):
     root=pathlib.Path(__file__).resolve().parents[2]
     cross=str(root.parent/'toolchain/bin/m68k-elf-')
     with tempfile.TemporaryDirectory() as tmp:
         p=pathlib.Path(tmp)
         subprocess.run([cross+'as','-march=cfv4e','-o',str(p/'r.o'),str(root/'tools/machines/midi_lanes/runtime.s')],check=True)
-        subprocess.run([cross+'as','-march=cfv4e','-o',str(p/'pattern.o'),str(root/'tools/machines/midi_lanes/pattern.s')],check=True)
+        subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_LIVE_REC=1'] if live_record else []),'-o',str(p/'pattern.o'),str(root/'tools/machines/midi_lanes/pattern.s')],check=True)
         subprocess.run([cross+'as','-march=cfv4e','-o',str(p/'service.o'),str(root/'tools/machines/midi_lanes/service.s')],check=True)
-        subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_CONDITIONS=1'] if conditions else []),'-o',str(p/'clock.o'),str(root/'tools/machines/midi_lanes/clock.s')],check=True)
+        subprocess.run([cross+'as','-march=cfv4e',*(['--defsym','ML_CONDITIONS=1'] if conditions else []),*(['--defsym','ML_LIVE_REC=1'] if live_record else []),'-o',str(p/'clock.o'),str(root/'tools/machines/midi_lanes/clock.s')],check=True)
         subprocess.run([cross+'as','-march=cfv4e','-o',str(p/'worker.o'),str(root/'tools/machines/midi_lanes/worker.s')],check=True)
         extra=[]
         if conditions:

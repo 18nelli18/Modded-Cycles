@@ -76,11 +76,30 @@ ml_clock:
     moveb %a3@(5),%d0
     cmpil #6,%d0
     bhi .Lclock_release
-    movel %d4,%d1
-    subl %a5@,%d1
-    bmi .Lclock_next
     lea.l .Lclock_durations,%a0
     movel %a0@(0,%d0:l:4),%d5
+    .ifdef ML_LIVE_REC
+    | Retard du prochain trig, sans déplacer la grille nominale de la voie.
+    movel %a5@(4),%d0
+    cmpl %d3,%d0
+    bls .Lclock_micro_index
+    moveq #0,%d0
+.Lclock_micro_index:
+    lsll #2,%d0
+    moveq #0,%d1
+    moveb %a3@(11,%d0:l),%d1
+    lsrl #2,%d1
+    movel %d5,%d0
+    lsrl #6,%d0
+    mulsl %d1,%d0
+    addl %a5@,%d0
+    movel %d4,%d1
+    subl %d0,%d1
+    .else
+    movel %d4,%d1
+    subl %a5@,%d1
+    .endif
+    bmi .Lclock_next
     movel %a5@(4),%d0
     cmpl %d3,%d0
     bls .Lclock_step_valid

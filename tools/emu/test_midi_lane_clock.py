@@ -20,8 +20,9 @@ def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--cycles',required=True)
     ap.add_argument('--conditions',action='store_true')
+    ap.add_argument('--live-record',action='store_true')
     args=ap.parse_args()
-    r=Rig(main_os_from_syx(args.cycles),0);u=r.uc;symbols=load(r,conditions=args.conditions)
+    r=Rig(main_os_from_syx(args.cycles),0);u=r.uc;symbols=load(r,conditions=args.conditions,live_record=args.live_record)
     u.mem_map(0x80000000,0x20000)
     counts=[0];worst={}
     def tick(u,a,s,d):counts[0]+=1
@@ -67,6 +68,20 @@ def main():
         now=struct.unpack('>I',u.mem_read(0x8000184c,4))[0]
         assert now==(before+2*tempo)&0xffffffff
         return now
+
+    if args.live_record:
+        for fraction in (1,16,32,63):
+            reset(length=2)
+            assert call('ml_edit',PAT,0,1,3,1|(fraction<<2))==1
+            duration=DURATIONS[2]
+            assert clock(0)==6;drain()
+            assert clock(duration)==5;drain()
+            due=duration+(duration>>6)*fraction
+            assert clock(due-1)==0;drain()
+            assert clock(due)==1
+            assert len([p for p in drain() if p>>28==9])==1
+            assert clock(2*duration)==6;drain()
+        print('ok : microtiming 1/64 indépendant par voie, émission retardée sans dérive au wrap')
 
     if args.conditions:
         hist=symbols['ml_cond_history']

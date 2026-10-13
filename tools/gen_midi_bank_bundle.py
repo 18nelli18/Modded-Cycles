@@ -35,12 +35,12 @@ IDS=('6ch-usbup','model-tg-st','sample-preview-st','trig-hold','arp','tempo-max'
      'scale-gen-st-queued','lfo-secondary','scramble-st-gen-queued')
 
 
-def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False):
+def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False):
     if working_storage and not audio_storage:
         raise ValueError('working_storage exige MBK3')
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[]
-        for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (('storage_audio_lfo',) if audio_storage else ()) + (('storage_autosave',) if working_storage else ()) + (REPEAT_SOURCES if repeat else ()) + (CONDITION_SOURCES if conditions else ()):
+        for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (('storage_audio_lfo',) if audio_storage else ()) + (('storage_autosave',) if working_storage else ()) + (('live_record_mode','live_record') if live_record else ()) + (REPEAT_SOURCES if repeat else ()) + (CONDITION_SOURCES if conditions else ()):
             if name == 'banks' and not pattern_banks:
                 continue
             if name == 'stock_display' and not stock_display:
@@ -54,6 +54,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
                             *(['--defsym','ML_STORAGE2=1'] if extended_storage else []),
                             *(['--defsym','ML_STORAGE3=1'] if audio_storage else []),
                             *(['--defsym','ML_WORKING=1'] if working_storage else []),
+                            *(['--defsym','ML_LIVE_REC=1'] if live_record else []),
                             *(['--defsym','ML_REPEAT=1'] if repeat else []),
                             *(['--defsym','ML_CHANCE=1','--defsym','ML_CONDITIONS=1','--defsym','ML_CONDITION_COMPACT=1'] if conditions else []),
                             '-o',str(obj),str(ROOT/'tools/machines/midi_lanes'/(name+'.s'))],check=True)
@@ -207,7 +208,8 @@ SECTIONS {{
         return *blobs,fragments,symbols(cross,elf)
 
 
-def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False):
+def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display=False,usb6=True,cache_blocks=6,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False):
+    if live_record:assert audio_storage
     if audio_storage:assert extended_storage
     if extended_storage:assert storage and repeat and lfo_cc
     if conditions:assert repeat, 'conditions requièrent les réglages privés'
@@ -232,7 +234,8 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     assert word(0x400792f2)==0x401eb7c8 and word(0x400792bc)==0x401eb7ec
     blocks=(word(0x400792f2)-0x401eb750)//20
     if lfo_cc:cache_blocks=max(cache_blocks,8 if conditions else 7)
-    assert blocks==6 and cache_blocks in (6,7,8)
+    if live_record:cache_blocks=max(cache_blocks,9)
+    assert blocks==6 and cache_blocks in (6,7,8,9)
     limit=tg['blob_start']+cache_blocks*16384
     assert start<limit
     oldkey=image[0x4007240c-build.BASE:0x40072412-build.BASE]
@@ -250,7 +253,7 @@ def generate(stock,syntakt_path,model_tg,cross,pattern_banks=False,stock_display
     needle=struct.pack('>I',loader)
     assert [build.BASE+i for i in range(0,len(stock)-3,2) if stock[i:i+4]==needle]==[ptr]
     merge_masks=[va for va in free if va!=loader]
-    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat,conditions,extended_storage,audio_storage,working_storage)
+    blob,stub,merge_code,syms=compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks,stock_display,lfo_cc,storage,repeat,conditions,extended_storage,audio_storage,working_storage,live_record)
     if lfo_cc:
         import aplib_grow
         if storage or repeat:

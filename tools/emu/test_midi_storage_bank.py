@@ -7,7 +7,7 @@ from test_seq_gen_menu import Rig
 from test_sdvintage import main_os_from_syx
 
 def main():
- ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--tweak',required=True);ap.add_argument('--audio-lfo',action='store_true');a=ap.parse_args()
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--tweak',required=True);ap.add_argument('--audio-lfo',action='store_true');ap.add_argument('--live-record',action='store_true');a=ap.parse_args()
  stock=main_os_from_syx(a.cycles);t=json.loads(pathlib.Path(a.tweak).read_text());cat=build.load_catalog()['model-cycles_OS1.13'][1]
  chosen=sorted([cat[x] for x in t['requires']],key=lambda x:x['order']);image,_=build.apply_writes(stock,chosen+[t])
  r=Rig(stock,{'writes':[]},{'writes':[],'symbols':{}});r.u.mem_write(build.BASE,image)
@@ -77,6 +77,21 @@ def main():
   assert r.call('ml_record_encode',record,5024,bank,3,0,5)==1
   assert r.call('ml_record_decode',out,record,5024,3,0)==1
   assert bytes(r.u.mem_read(out,4992))==bytes(r.u.mem_read(bank,4992))
+  if a.live_record:
+   import zlib
+   assert bytes(r.u.mem_read(record,4))==b'MBK4'
+   # Ancien MBK3 de taille identique : migration sans retard implicite.
+   legacy=bytearray(r.u.mem_read(record,5024));legacy[:4]=b'MBK3';legacy[4:8]=struct.pack('>I',3)
+   legacy[28:32]=struct.pack('>I',zlib.crc32(legacy[:28]))
+   r.u.mem_write(record,bytes(legacy));assert r.call('ml_record_decode',out,record,5024,3,0)==1
+   assert bytes(r.u.mem_read(out,4992))==bytes(r.u.mem_read(bank,4992))
+   legacy[32+11]=65;legacy[24:28]=struct.pack('>I',zlib.crc32(legacy[32:]));legacy[28:32]=struct.pack('>I',zlib.crc32(legacy[:28]))
+   r.u.mem_write(record,bytes(legacy));assert r.call('ml_record_decode',out,record,5024,3,0)==0
+   for lane in range(6):r.u.mem_write(bank+264*lane+11,bytes([1|((lane+1)<<2)]))
+   assert r.call('ml_record_encode',record,5024,bank,3,0,5)==1
+   assert r.call('ml_record_decode',out,record,5024,3,0)==1
+   assert bytes(r.u.mem_read(out,4992))==bytes(r.u.mem_read(bank,4992))
+   print('ok : MBK3 migré, bits réservés MBK3 refusés même CRC valide, six offsets MBK4 conservés')
   before=bytes(r.u.mem_read(record,5024));r.u.mem_write(bank+4896+2,b'\x09\x01')
   assert r.call('ml_record_encode',record,5024,bank,3,0,6)==0
   assert bytes(r.u.mem_read(record,5024))==before

@@ -1,5 +1,5 @@
-| Prototype UI B : lire les modes live-rec/quantification natifs, sans écriture.
-| mode() -> 0 inactif/refus, 1 quantifié, 2 non quantifié. Aucun hook publié.
+| UI B : lire les modes live-rec/quantification natifs, sans écriture.
+| mode() -> 0 inactif/refus, 1 quantifié, 2 non quantifié.
 | UI0 seulement ; les getters natifs restent propriétaires des raccourcis.
     .text
     .globl mllr_mode
