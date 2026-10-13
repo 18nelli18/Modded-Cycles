@@ -1519,7 +1519,7 @@ const GUIDE_OF = {
 
 // Step 1's sections, in display order: the `cat` of each feature (tools/gen_flasher_tweaks.py, same list there
 // without "other"). A feature without a known cat goes to "other", at the end.
-const CATS = ["pack", "sound", "seq", "live", "screen", "io", "other"];
+const CATS = ["seq", "sound", "io", "live", "screen"];
 const CAT_ICON = {
   pack: '<rect x="3" y="7" width="12" height="12" rx="2.5"/><path d="M7 7V5.5A2.5 2.5 0 0 1 9.5 3H18.5A2.5 2.5 0 0 1 21 5.5v9a2.5 2.5 0 0 1-2.5 2.5H15"/>',
   sound: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 7.5v3"/>',
@@ -1547,11 +1547,11 @@ const T = {
     cats_label: "Sections",
     cat_lit: ", with ticked mods",
     cat_pack: "Packs", cat_pack_sub: "several mods in one",
-    cat_sound: "Sounds & machines", cat_sound_sub: "new machines, filters",
-    cat_seq: "Sequencer", cat_seq_sub: "trigs, tempo, arpeggios",
-    cat_live: "Live playing", cat_live_sub: "mutes, chords, mixing",
+    cat_sound: "Sound & firmware", cat_sound_sub: "new machines, filters",
+    cat_seq: "Sequencing & modulation", cat_seq_sub: "trigs, tempo, arpeggios",
+    cat_live: "Performance shortcuts", cat_live_sub: "mutes, chords, mixing",
     cat_screen: "Screen & browsing", cat_screen_sub: "browser, display, startup",
-    cat_io: "USB & MIDI", cat_io_sub: "audio and MIDI in and out",
+    cat_io: "MIDI & USB audio", cat_io_sub: "audio and MIDI in and out",
     cat_other: "Other mods", cat_other_sub: "",
     grp_n: "{n} mods", grp_n1: "1 mod",
     grp_on: "<b>{k}</b> ticked of {n}", grp_on1: "<b>1</b> ticked of {n}",
@@ -1828,11 +1828,11 @@ const T = {
     cats_label: "Rubriques",
     cat_lit: ", avec des mods cochés",
     cat_pack: "Packs", cat_pack_sub: "plusieurs mods en un",
-    cat_sound: "Sons et machines", cat_sound_sub: "nouvelles machines, filtres",
-    cat_seq: "Séquenceur", cat_seq_sub: "trigs, tempo, arpèges",
-    cat_live: "Jeu en live", cat_live_sub: "mutes, accords, mixage",
+    cat_sound: "Sons et firmware", cat_sound_sub: "nouvelles machines, filtres",
+    cat_seq: "Séquenceur et modulation", cat_seq_sub: "trigs, tempo, arpèges",
+    cat_live: "Raccourcis de jeu", cat_live_sub: "mutes, accords, mixage",
     cat_screen: "Écran et navigation", cat_screen_sub: "navigateur, affichage, démarrage",
-    cat_io: "USB et MIDI", cat_io_sub: "audio et MIDI vers l'extérieur",
+    cat_io: "MIDI et audio USB", cat_io_sub: "audio et MIDI vers l'extérieur",
     cat_other: "Autres mods", cat_other_sub: "",
     grp_n: "{n} mods", grp_n1: "1 mod",
     grp_on: "<b>{k}</b> cochés sur {n}", grp_on1: "<b>1</b> coché sur {n}",
@@ -2408,7 +2408,7 @@ const selection = {};
 // display-only state of the picker (never saved): open Details drawers, folded sections, search, last swap (Undo)
 FEAT.en["lfo-plus"].note = "Alternative to Second LFO and Sequence Generator in this fork; choose one LFO setup. Select all keeps Sequence Generator and Second LFO.";
 FEAT.fr["lfo-plus"].note = "Alternative à Second LFO et au générateur dans ce fork ; choisissez une configuration LFO. Tout sélectionner conserve le générateur et Second LFO.";
-const pick = { open: new Set(), folded: new Set(), q: "", swap: null, selOpen: false };
+const pick = { open: new Set(), folded: new Set(["io","live","screen"]), q: "", swap: null, selOpen: false };
 
 // Engine card: the combination of ticked engines (kept in catalog order) and its tweak.
 // Two cards that can't be ticked together (Model-TG and the tweaks it already holds, or the Syntakt engines).
@@ -2485,7 +2485,7 @@ function shortOf(f) {
   const d = featText(f.id, "desc", f.desc);
   return featText(f.id, "short", "") || (d.match(/^.*?[.!?](?=\s|$)/) || [d])[0];
 }
-const catOf = (f) => (f.cat && CATS.includes(f.cat) ? f.cat : "other");
+const catOf = (f) => f.cat === "pack" ? "sound" : (CATS.includes(f.cat) ? f.cat : "screen");
 const order = () => CATS.flatMap((c) => features().filter((f) => catOf(f) === c));    // display order
 // the real "excludes" (explained to the user); excludes() above also counts what a pack includes
 const clashOnly = (f, g) => (f.excludes || []).includes(g.id) || (g.excludes || []).includes(f.id);
@@ -2620,6 +2620,7 @@ function renderFeatures() {
   renderFind();
   renderCats();
   renderSelection();
+  renderSupermodel();
   // keyboard users keep their place: the element that had the focus gets it back after the rebuild
   if (focusId && (!document.activeElement || document.activeElement.id !== focusId) && $(focusId)) $(focusId).focus({ preventScroll: true });
 }
@@ -3853,6 +3854,7 @@ function init() {
 
   $("build-stamp").textContent = "· build " + (window.MC_BUILD || "?");
   wirePicker();
+  wireSupermodel();
   applyLang(st.lang);
   update();
 
@@ -3866,6 +3868,29 @@ window.MCFlasherApp = { state: st, REF_MAINOS, REF_MODS, REF_SAMPLES_ON_CYCLES, 
   loadSamples, loadSyntakt, setMode, setSmpDir, setMachine, setMethod, applyLang, render,
   chosenTweaks, chosenLabels, CATS };
 
+// Présentation seule : sélection et vérifications firmware restent natives.
+function renderSupermodel() {
+  const filter=$("super-category"); if(!filter)return;
+  const previous=filter.value;
+  filter.innerHTML=`<option value="">${st.lang==='fr'?'Toutes catégories':'All categories'}</option>`+CATS.map(c=>`<option value="${c}">${esc(t('cat_'+c))}</option>`).join('');
+  filter.value=CATS.includes(previous)?previous:'';
+  document.querySelectorAll('#features>.grp').forEach(g=>{g.hidden=(!!filter.value&&g.id!=='cat-'+filter.value)||!features().filter(f=>'cat-'+catOf(f)===g.id).some(matches);});
+  $('super-option-count').textContent=features().length+(st.lang==='fr'?' options disponibles':' available options');
+  $('super-machine-name').textContent=st.machine==='cyc'?'Model:Cycles':'Model:Samples';
+}
+function wireSupermodel() {
+  const advanced=document.createElement('details');advanced.className='super-advanced';advanced.innerHTML='<summary><span data-l="en">Machine, official firmware & compatibility options</span><span data-l="fr">Machine, firmware officiel et compatibilité</span></summary>';
+  $('step-choose').appendChild(advanced);
+  const body=$('step-choose').querySelector('.step-body');
+  const firstTabs=body.querySelector(':scope > .seg');if(firstTabs)advanced.appendChild(firstTabs);
+  for(const node of [...$('panel-mods').children]){if(node.classList.contains('mach-q')||node.classList.contains('seg')||node.id==='mach-pane'||node.classList.contains('mods-lede'))advanced.appendChild(node);}
+  const notice=document.querySelector('.super-save-note');if(notice)advanced.appendChild(notice);
+  advanced.appendChild($('select-all-note'));
+
+  $('super-category').addEventListener('change',renderSupermodel);
+  $('super-clear').addEventListener('click',()=>{for(const id in selection)selection[id].on=false;pick.swap=null;renderFeatures();update();});
+  $('super-expand').addEventListener('click',()=>{pick.folded.clear();features().forEach(f=>pick.open.add(f.id));renderFeatures();});
+}
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
 else init();
 })();
