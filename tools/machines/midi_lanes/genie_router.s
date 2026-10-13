@@ -93,6 +93,12 @@ ml_genie_generate:
     cmpil #63,%d4
     bhi .Lgg_error
     addql #1,%d4
+    .ifdef ML_GENIE_CHANCE
+    jsr ml_repeat_prepare_ui
+    jsr ml_gc_capture
+    tstl %d0
+    beq .Lgg_error
+    .endif
     | Copier une image cohérente, pas de génération sous masque IRQ.
     movew %sr,%d3
     movew #0x2700,%sr
@@ -275,6 +281,13 @@ ml_genie_undo:
     movel mlp_track,%d0
     cmpl ml_gu_track,%d0
     bne .Lgu_done
+    .ifdef ML_GENIE_CHANCE
+    jsr ml_repeat_prepare_ui
+    jsr ml_gc_capture
+    tstl %d0
+    beq .Lgu_done
+    jsr ml_gc_restore_candidate
+    .endif
     lea.l %sp@(-12),%sp
     movem.l %d2-%d3/%a2,%sp@
     movew %sr,%d2
@@ -335,6 +348,11 @@ ml_genie_boundary:
     bne .Lgb_cancel
     subql #1,%d2
     bpl .Lgb_compare
+    .ifdef ML_GENIE_CHANCE
+    jsr ml_gc_validate
+    tstl %d0
+    beq .Lgb_cancel
+    .endif
     tstl ml_gq_kind
     beq .Lgb_restore
     moveal %a2,%a0
@@ -347,10 +365,16 @@ ml_genie_boundary:
     movel %d0,ml_gu_track
     moveq #1,%d0
     movel %d0,ml_gu_valid
+    .ifdef ML_GENIE_CHANCE
+    jsr ml_gc_save_undo
+    .endif
     bra .Lgb_write
 .Lgb_restore:
     clrl ml_gu_valid
 .Lgb_write:
+    .ifdef ML_GENIE_CHANCE
+    jsr ml_gc_apply
+    .endif
     lea.l ml_gq_after,%a0
     moveal %a2,%a1
     bsr .Lgg_copy

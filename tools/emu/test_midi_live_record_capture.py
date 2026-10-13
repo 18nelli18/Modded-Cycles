@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Capture B quantifiée/libre : exécution ColdFire et getters natifs OS."""
-import argparse,pathlib,subprocess,tempfile,struct
+import argparse,pathlib,subprocess,tempfile,struct,json
 from unicorn import UC_HOOK_CODE
 from test_seq_gen_menu import Rig,OBJ,RAW,SIGNAL
 from test_sdvintage import main_os_from_syx
 from gen_seq_gen import symbols
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--cycles',required=True);a=ap.parse_args()
+ ap=argparse.ArgumentParser();ap.add_argument('--cycles',required=True);ap.add_argument('--tweak');a=ap.parse_args()
  r=Rig(main_os_from_syx(a.cycles),{'writes':[]},{'writes':[],'symbols':{}})
  r.u.mem_map(0x80000000,0x20000)
  root=pathlib.Path(__file__).resolve().parents[2];cross=str(root.parent/'toolchain/bin/m68k-elf-')
@@ -21,6 +21,14 @@ def main():
   subprocess.run([cross+'ld','-Ttext=0x93050000','-Tdata=0x93058000',*[f'--defsym={k}={v}' for k,v in defs.items()],'-e','mllr_on','-o',str(p/'live.elf'),*objects],check=True)
   subprocess.run([cross+'objcopy','-O','binary',str(p/'live.elf'),str(p/'live.bin')],check=True)
   r.u.mem_write(0x93050000,(p/'live.bin').read_bytes());r.s=symbols(cross,p/'live.elf')
+ if a.tweak:
+  t=json.loads(pathlib.Path(a.tweak).read_text())
+  for part in t['append']['parts']:r.u.mem_write(int(part['dest'],16),bytes.fromhex(part['hex']))
+  for w in t['writes']:
+   at=0x40000400+w['off']
+   if 0x40100000<=at<0x401ab750:r.u.mem_write(at,bytes.fromhex(w['new']))
+  r.s.update({k:int(v,16) for k,v in t['symbols'].items()})
+  defs={k:r.s[k] for k in defs}
  r.stubs[SIGNAL]=lambda args:0
  ui=0x930a0000
  for addr,fn in ((0x400cf9a8,lambda args:ui),(0x4000eb90,lambda args:OBJ)):

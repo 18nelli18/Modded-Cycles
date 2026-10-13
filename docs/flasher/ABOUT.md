@@ -13,3 +13,9 @@ Credits: 18nelli18 MIT implementation, inspired by DavidCaruso.
 Speed/depth use the upstream 8-bit saved precision.
 Incompatible with Track Filter and LFO 2/3/4 (shared sound fields).
 MACRO, ACID, Model-TG and the existing MIDI bank remain available.
+
+## 2026-10-12-midi-live-record-clear-main
+
+A separate, parallel six-track MIDI OUT sequencer alongside the six audio tracks. FUNC + SETTINGS + TRACK opens B-side. Live recording: hold RECORD and press PLAY; press PLAY again while holding RECORD to switch quantized/unquantized recording. Keyboard and pad notes record into the selected MIDI lane. Unquantized timing uses 1/64-step resolution; recorded lengths use whole steps. Live recording was tested on hardware. Clearing a trig removes all its per-step settings and locks; re-adding starts at C5, velocity 100 and length 1. MIDI sequences and MIDI LFO settings remain RAM only. Audio LFO 2 saves its first five settings with the sound. All existing mod selections remain available.
+
+Séquenceur MIDI OUT parallèle de six pistes, indépendant des six pistes audio. FUNC + SETTINGS + TRACK ouvre B. Live-rec : RECORD + PLAY ; PLAY avec RECORD maintenu bascule quantifié/libre. Notes clavier/pad enregistrées dans la voie MIDI choisie. Timing libre au 1/64 de pas ; durées en pas entiers. Live-rec testé sur matériel. Supprimer un trig efface ses réglages et locks ; le recréer donne C5, vélocité 100 et durée 1. Séquences et LFO MIDI en RAM seulement. Le LFO 2 audio sauve ses cinq premiers réglages avec le son. Toutes les sélections existantes restent disponibles.

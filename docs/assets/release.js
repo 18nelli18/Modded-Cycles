@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.57",
+  "date": "2026-10-12",
+  "changes": [
+    {
+      "en": "B-side live recording, hardware tested by AveyCole, is now included in the main MIDI OUT Bank. RECORD + PLAY starts live recording; press PLAY again with RECORD held to switch quantized/unquantized recording.",
+      "fr": "Live-rec côté B testé sur matériel par AveyCole, désormais inclus dans la Banque MIDI OUT principale. RECORD + PLAY démarre le live-rec ; PLAY avec RECORD maintenu bascule quantifié/libre."
+    },
+    {
+      "en": "Deleting a B-side trig now resets its note, velocity, length and all per-step locks. Re-adding starts at C5, velocity 100 and length 1. This clear fix passed emulation. MIDI sequence saving remains unfinished and is excluded.",
+      "fr": "Supprimer un trig B réinitialise note, vélocité, durée et locks de pas. Le recréer donne C5, vélocité 100, durée 1. Correction validée en émulation. Sauvegarde des séquences MIDI inachevée et exclue."
+    }
+  ]
+},
+{
   "version": "1.56",
   "date": "2026-10-12",
   "changes": [
@@ -248,3 +262,4 @@ window.MC_RELEASES = [
   ] },
   { version: "1.0", date: "2026-10-01", changes: [] },
 ];
+

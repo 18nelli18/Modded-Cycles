@@ -85,6 +85,32 @@ ml_clock:
     bls .Lclock_micro_index
     moveq #0,%d0
 .Lclock_micro_index:
+    .ifdef ML_NUDGE
+    | Candidat seulement : masque privé du pas, jamais données A-side.
+    movel %d0,%d1
+    lsll #3,%d1
+    moveal ml_repeat_play_settings,%a0
+    tstl %a0
+    beq .Lclock_nudge_no_mask
+    addal %d1,%a0
+    movel %d2,%d1
+    muluw #520,%d1
+    addal %d1,%a0
+    moveq #0,%d1
+    moveb %a0@(14),%d1
+    bra .Lclock_nudge_mask
+.Lclock_nudge_no_mask:
+    moveq #0,%d1
+.Lclock_nudge_mask:
+    lsll #2,%d0
+    movel %d5,%sp@-
+    movel %d1,%sp@-
+    moveq #0,%d1
+    moveb %a3@(11,%d0:l),%d1
+    movel %d1,%sp@-
+    jsr mln_offset
+    lea %sp@(12),%sp
+    .else
     lsll #2,%d0
     moveq #0,%d1
     moveb %a3@(11,%d0:l),%d1
@@ -92,6 +118,7 @@ ml_clock:
     movel %d5,%d0
     lsrl #6,%d0
     mulsl %d1,%d0
+    .endif
     addl %a5@,%d0
     movel %d4,%d1
     subl %d0,%d1
