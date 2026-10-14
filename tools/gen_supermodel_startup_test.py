@@ -7,7 +7,7 @@ STAMP='2026-10-13-supermodel-startup-save-test'
 def main():
  p=argparse.ArgumentParser(description=__doc__)
  for x in ('base-page','output-dir','cycles','syntakt'):p.add_argument('--'+x,required=True)
- p.add_argument('--node',default='node');a=p.parse_args();base=pathlib.Path(a.base_page);out=pathlib.Path(a.output_dir)
+ p.add_argument('--node',default='node');p.add_argument('--stamp',default=STAMP);a=p.parse_args();base=pathlib.Path(a.base_page);out=pathlib.Path(a.output_dir)
  assert base.resolve()!=out.resolve()
  shutil.copytree(base,out,dirs_exist_ok=True)
  stock=main_os_from_syx(a.cycles);tw=gen_boot_supermodel.generate(stock)
@@ -21,9 +21,10 @@ def main():
  (out/'bundle.js').write_text((out/'bundle.js').read_text()+extra)
  app=(out/'app.js').read_text();needle='const preferred = ["model-tg", "midi-live-both", "scale-gen", "lfo-secondary"]';assert needle in app
  (out/'app.js').write_text(app.replace(needle,needle[:-1]+', "supermodel-startup"]'))
+ previous=json.loads(re.search(r'window\.MC_BUILD\s*=\s*([^;]+);',(out/'index.html').read_text()).group(1))
  for path in out.iterdir():
   if path.is_file() and path.suffix in ('.html','.js','.md'):
-   s=path.read_text().replace('2026-10-13-midi-cc-save-load-recovery',STAMP);path.write_text(s)
+   s=path.read_text().replace(previous,a.stamp);path.write_text(s)
  (out/'ABOUT.md').write_text((out/'ABOUT.md').read_text()+'\n\n'+texts['en']['desc']+'\n\n'+texts['fr']['desc']+'\n')
  guide=out/'guide.html';guide.write_text(guide.read_text().replace('</main>','<section id="supermodel-startup"><h2>SUPERMODEL by A.V.</h2><p data-l="en">'+html.escape(texts['en']['desc'])+'</p><p data-l="fr">'+html.escape(texts['fr']['desc'])+'</p></section></main>'))
  # Exporter les vrais choix du navigateur, y compris getters de compression/LFO.

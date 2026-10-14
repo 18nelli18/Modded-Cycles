@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.66",
+  "date": "2026-10-13",
+  "changes": [
+    {
+      "en": "SUPERMODEL startup animation with a smaller right-aligned by A.V. signature. Select All prefers it; the Modded Cycles animation is mutually exclusive. Normal startup duration is retained.",
+      "fr": "Animation de démarrage SUPERMODEL avec petite signature by A.V. à droite. Tout sélectionner la préfère ; animation Modded Cycles exclusive. Durée normale conservée."
+    },
+    {
+      "en": "Only the animation is added to the existing main firmware. Experimental CC-saving changes are excluded. The CC-saving test is withdrawn after reported failed persistence and a full-device project-load freeze. Animation checked in native emulation; hardware verification pending.",
+      "fr": "Seule l’animation est ajoutée au firmware principal existant. Sauvegarde CC expérimentale exclue. Test CC retiré après perte de persistance et blocage complet au chargement de projet signalés. Animation vérifiée en émulation native ; matériel à tester."
+    }
+  ]
+},
+{
   "version": "1.65",
   "date": "2026-10-13",
   "changes": [

@@ -2858,7 +2858,7 @@ Object.assign(T.en, { select_all: "Select all", select_all_note: "Selects compat
 Object.assign(T.fr, { select_all: "Tout sélectionner", select_all_note: "Sélectionne les mods compatibles en conservant Model-TG et MIDI OUT + THRU en direct. Les mods inclus restent dans Model-TG." });
 function selectAllCompatible() {
   for (const f of features()) selOf(f).on = false;
-  const preferred = ["model-tg", "midi-live-both", "scale-gen", "lfo-secondary"].map(featById).filter(Boolean);
+  const preferred = ["model-tg", "midi-live-both", "scale-gen", "lfo-secondary", "supermodel-startup"].map(featById).filter(Boolean);
   for (const f of preferred) setOn(f, true);
   for (const f of features()) {
     if (preferred.includes(f) || includedBy(f)) continue;
