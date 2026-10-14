@@ -61,14 +61,15 @@ def fragment_slide_source(body,tag):
         if instruction:count+=1
     return '\n'.join(rows)+'\n'
 
-def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False,knob_locks=False,cc_storage=False,cc_slides=False,lfo_confirm=False,cost_compression=False):
+def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern_banks=False,stock_display=False,lfo_cc=False,storage=False,repeat=False,conditions=False,extended_storage=False,audio_storage=False,working_storage=False,live_record=False,write_first=False,genie_chance=False,restore_saved=False,knob_cc=False,knob_locks=False,cc_storage=False,cc_slides=False,lfo_confirm=False,cost_compression=False,genie=True,audio_lfo_next=None,inline_merges=False):
     if cc_storage and not (knob_locks and storage and extended_storage):
         raise ValueError('cc_storage exige locks CC et stockage MIDI étendu')
     if working_storage and not audio_storage:
         raise ValueError('working_storage exige MBK3')
     with tempfile.TemporaryDirectory() as temp:
         p=pathlib.Path(temp);objects=[];slide_objects=[]
-        for name in SOURCES + (STORAGE_SOURCES if storage else ()) + (('storage_audio_lfo',) if audio_storage else ()) + (('storage_autosave',) if working_storage else ()) + (('live_record_mode','live_record') if live_record else ()) + (('knob_cc','knob_cc_ui','knob_cc_scroll','knob_cc_assignment','knob_cc_scramble') if knob_cc else ()) + (('knob_cc_locks','knob_cc_lock_patterns','knob_cc_lock_edit','knob_cc_lock_queue','knob_cc_lock_clip') if knob_locks else ()) + (REPEAT_SOURCES if repeat else ()) + (CONDITION_SOURCES if conditions else ()) + (('knob_cc_slide_plan','knob_cc_slide_value','knob_cc_slide_arm','knob_cc_slide_tick') if cc_slides else ()) + (tuple('knob_cc_storage_'+n for n in ('codec','verify','path','journal','prepare','project','restore','rebind')) if cc_storage else ()):
+        base_sources=SOURCES if genie else tuple(n for n in SOURCES if n not in ('genie','genie_router','genie_chance'))+('random',)
+        for name in base_sources + (STORAGE_SOURCES if storage else ()) + (('storage_audio_lfo',) if audio_storage else ()) + (('storage_autosave',) if working_storage else ()) + (('live_record_mode','live_record') if live_record else ()) + (('knob_cc','knob_cc_ui','knob_cc_scroll','knob_cc_assignment','knob_cc_scramble') if knob_cc else ()) + (('knob_cc_locks','knob_cc_lock_patterns','knob_cc_lock_edit','knob_cc_lock_queue','knob_cc_lock_clip') if knob_locks else ()) + (REPEAT_SOURCES if repeat else ()) + (CONDITION_SOURCES if conditions else ()) + (('knob_cc_slide_plan','knob_cc_slide_value','knob_cc_slide_arm','knob_cc_slide_tick') if cc_slides else ()) + (tuple('knob_cc_storage_'+n for n in ('codec','verify','path','journal','prepare','project','restore','rebind')) if cc_storage else ()):
             if name == 'banks' and not pattern_banks:
                 continue
             if name == 'stock_display' and not stock_display:
@@ -79,7 +80,8 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
                 asm=p/(name+'.s')
                 asm.write_text(fragment_slide_source(source_file.read_text(),name.rsplit('_',1)[-1]))
                 source_file=asm;slide_objects.append(obj)
-            subprocess.run([cross+'as','-march=cfv4e','--defsym','ML_CLIPBOARD=1','--defsym','ML_WORKER=1','--defsym','ML_GENIE=1','--defsym','ML_MERGE=1',
+            subprocess.run([cross+'as','-march=cfv4e','--defsym','ML_CLIPBOARD=1','--defsym','ML_WORKER=1','--defsym','ML_MERGE=1',
+                            *(['--defsym','ML_GENIE=1'] if genie else []),
                             *(['--defsym','ML_PATTERN_BANKS=1'] if pattern_banks else []),
                             *(['--defsym','ML_STOCK_DISPLAY=1'] if stock_display else []),
                             *(['--defsym','ML_LFO_CC=1'] if lfo_cc else []),
@@ -94,7 +96,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
                             *(['--defsym','ML_KNOB_LOCKS=1'] if knob_locks else []),
                             *(['--defsym','ML_CC_STORAGE=1'] if cc_storage else []),
                             *(['--defsym','ML_CC_SLIDES=1'] if cc_slides else []),
-                            *(['--defsym','ML_GENIE_CHANCE=1'] if genie_chance else []),
+                            *(['--defsym','ML_GENIE_CHANCE=1'] if genie_chance and genie else []),
                             *(['--defsym','ML_REPEAT=1'] if repeat else []),
                             *(['--defsym','ML_CHANCE=1','--defsym','ML_CONDITIONS=1','--defsym','ML_CONDITION_COMPACT=1'] if conditions else []),
                             '-o',str(obj),str(source_file)],check=True)
@@ -171,7 +173,7 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
         if lfo_cc:
             decoder=next(va for va in sorted(available) if sprites.MASKS[va][0]>=240)
             available.remove(decoder);placements.append(('.text.ml_depack',decoder))
-        if conditions:
+        if conditions and not inline_merges:
             # Helper de décision dans un masque libre vérifié, hors image compressée.
             listing=subprocess.check_output([cross+'objdump','-h',str(p/'conditions.o')],text=True)
             match=re.search(r'\s+\d+\s+\.text.ml_condition_eval\s+([0-9a-fA-F]+)',listing)
@@ -182,6 +184,10 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
         if repeat:
             listing=subprocess.check_output([cross+'objdump','-h',str(p/'clipboard.o')],text=True)
             sections += [(m.group(1),int(m.group(2),16)) for m in re.finditer(r'^\s*\d+\s+(\.text\.ml_step_clip_[abcd])\s+([0-9a-fA-F]+)',listing,re.M)]
+        if inline_merges:
+            # Après boot, ces callbacks peuvent rester dans le RAW privé.
+            # Seul le décompresseur doit exister AVANT son chargement.
+            sections=[]
         # Plusieurs fragments peuvent partager les queues libres d'un masque.
         alignment=4 if lfo_confirm else 2
         spans=[(va,(va+alignment-1)&~(alignment-1),sprites.MASKS[va][0]-(((va+alignment-1)&~(alignment-1))-va)) for va in available]
@@ -196,13 +202,13 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
             if capacity>used:spans.append((base,at+used,capacity-used))
             placements.append((section,at));owners[at]=base
         merge_script='\n'.join(f' {name} {mask:#x} : {{ *({name}) }}' for name,mask in placements)
-        sg=build.load_catalog()['model-cycles_OS1.13'][1]['scale-gen-st-queued']['symbols']
+        sg=build.load_catalog()['model-cycles_OS1.13'][1]['scale-gen-st-queued']['symbols'] if genie else None
         bindings='\n'.join(f"SG_{name[3:]} = {sg[name]};" for name in (
             'sg_action_generate','sg_action_undo','sg_config','sg_error','sg_generate',
-            'sg_advanced_steps','sg_options','sg_advanced','sg_random','sg_random_range','sg_func','sg_pad','sg_undo_valid','sg_obj','sg_menu_key','sg_open'))
+            'sg_advanced_steps','sg_options','sg_advanced','sg_random','sg_random_range','sg_func','sg_pad','sg_undo_valid','sg_obj','sg_menu_key','sg_open')) if genie else 'SG_random = ml_random;'
         if lfo_cc:
             lf=build.load_catalog()['model-cycles_OS1.13'][1]['lfo-secondary']['symbols']
-            bindings+='\nMLCC_audio_next = '+lf['lf2_dispatch']+';'
+            bindings+='\nMLCC_audio_next = '+(hex(audio_lfo_next) if audio_lfo_next is not None else lf['lf2_dispatch'])+';'
             if audio_storage:
                 bindings+='\nLF2_context = '+lf['lf2_context']+';\nLF2_prepare = '+lf['lf2_prepare']+';'
         # Même source que l'aperçu natif ; garder ses branches locales hors des masques.
@@ -217,8 +223,9 @@ def compile_code(cross,tg,next_key,start,limit,source,loader,merge_masks,pattern
             return '    b'+inverse[kind]+'s '+label+'\n    jmp '+target+'\n'+label+':'
         ui.write_text(re.sub(r'^[ \t]*b(ra|ne|eq|lt|gt|le|ge|hi|ls|cc|cs|mi|pl)w[ \t]+(\w+)[ \t]*(?:\|[^\n]*)?$',far,body,flags=re.M))
         obj=p/'genie_stock.o';objects.append(str(obj))
-        subprocess.run([cross+'as','-march=cfv4e',*sum((['--defsym',x+'=1'] for x in ('SG_SCROLL','SG_DYNAMICS','SG_ADVANCED','SG_SEQUENCE_ONLY','SG_QUEUE')),[]),'-o',str(obj),str(ui)],check=True)
-        undefined=subprocess.check_output([cross+'nm','-u',str(obj)],text=True)
+        if genie:subprocess.run([cross+'as','-march=cfv4e',*sum((['--defsym',x+'=1'] for x in ('SG_SCROLL','SG_DYNAMICS','SG_ADVANCED','SG_SEQUENCE_ONLY','SG_QUEUE')),[]),'-o',str(obj),str(ui)],check=True)
+        else:objects.remove(str(obj))
+        undefined=subprocess.check_output([cross+'nm','-u',str(obj)],text=True) if genie else ''
         for line in undefined.splitlines():
             name=line.split()[-1]
             if name.startswith('sg_'):bindings+='\n'+name+' = '+sg[name]+';'

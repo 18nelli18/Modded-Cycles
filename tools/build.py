@@ -342,6 +342,8 @@ def build_payload(chosen, main_os, syntakt_path):
         end, target = BASE + len(main_os) + len(out), int(ap_["at"], 16)
         # Réserve explicite de Banque MIDI : aucun moteur imposé ni code ajouté.
         if (((t["id"] == "midi-bank-bundle" and ap_.get("zero_pad_from") == "0x401bf8c0" and end >= 0x401bf8c0)
+                or (t["id"] == "midi-bank-bundle" and ap_.get("zero_pad_from") == "0x401aa140"
+                    and ap_["at"] == "0x401f8f76" and end >= 0x401aa140)
                 or (t["id"] == "chord-keys-supermodel" and ap_.get("zero_pad_from") == "0x401aa140"
                     and ap_["at"] == "0x401f8f76" and end >= 0x401aa140))
                 and end < target <= END_LIMIT):

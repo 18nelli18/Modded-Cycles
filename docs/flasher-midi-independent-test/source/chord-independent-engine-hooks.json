@@ -1,0 +1,2288 @@
+{
+ "macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492762,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "ff5d47b0461417f27f6f0398ab6364b4523f40a982299b47d649613c329fd973"
+ },
+ "macro-tg": {
+  "tg": true,
+  "hook": {
+   "off": 1492762,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "297a363749c9dff43b4a1a94f1594f9f21026c300f11958ba81266766d74ada4"
+ },
+ "macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492762,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "ff5d47b0461417f27f6f0398ab6364b4523f40a982299b47d649613c329fd973"
+ },
+ "macro-acid-tg": {
+  "tg": true,
+  "hook": {
+   "off": 1492762,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "297a363749c9dff43b4a1a94f1594f9f21026c300f11958ba81266766d74ada4"
+ },
+ "acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492762,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "ff5d47b0461417f27f6f0398ab6364b4523f40a982299b47d649613c329fd973"
+ },
+ "acid-tg": {
+  "tg": true,
+  "hook": {
+   "off": 1492762,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "297a363749c9dff43b4a1a94f1594f9f21026c300f11958ba81266766d74ada4"
+ },
+ "syntakt-sd": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-sd": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-sd-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-cp": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-cp-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-toy": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-toy": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-toy-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-toy-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-toy-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-toy-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-toy-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-toy-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-bits": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-bits": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-bits-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-bits-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-bits-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-bits-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-bits-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-bits-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-swarm": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-swarm": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-swarm-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-swarm-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-swarm-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-swarm-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-swarm-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-swarm-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-sd-cp": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-sd-cp-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-toy": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-sd-toy": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-sd-toy-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-toy-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-toy-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-toy-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-toy-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-toy-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-bits": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-sd-bits": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-sd-bits-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-bits-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-bits-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-bits-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-bits-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-bits-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-swarm": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-sd-swarm": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-sd-swarm-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-swarm-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-swarm-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-swarm-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-swarm-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-swarm-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-toy": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-cp-toy": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-cp-toy-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-toy-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-toy-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-toy-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-toy-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-toy-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-bits": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-cp-bits": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-cp-bits-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-bits-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-bits-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-bits-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-bits-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-bits-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-swarm": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-cp-swarm": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-cp-swarm-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-swarm-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-swarm-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-swarm-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-swarm-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-swarm-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-toy-bits": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-toy-bits": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-toy-bits-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-toy-bits-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-toy-bits-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-toy-bits-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-toy-bits-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-toy-bits-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-toy-swarm": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-toy-swarm": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-toy-swarm-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-toy-swarm-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-toy-swarm-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-toy-swarm-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-toy-swarm-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-toy-swarm-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-bits-swarm": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-bits-swarm": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-bits-swarm-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-bits-swarm-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-bits-swarm-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-bits-swarm-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-bits-swarm-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-bits-swarm-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-toy": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-sd-cp-toy": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-sd-cp-toy-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-toy-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-toy-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-toy-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-toy-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-toy-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-bits": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-sd-cp-bits": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-sd-cp-bits-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-bits-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-bits-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-bits-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-bits-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-bits-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-swarm": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-sd-cp-swarm": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-sd-cp-swarm-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-swarm-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-swarm-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-swarm-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-swarm-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-swarm-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-toy-bits": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-sd-toy-bits": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-sd-toy-bits-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-toy-bits-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-toy-bits-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-toy-bits-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-toy-bits-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-toy-bits-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-toy-swarm": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-sd-toy-swarm": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-sd-toy-swarm-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-toy-swarm-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-toy-swarm-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-toy-swarm-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-toy-swarm-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-toy-swarm-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-bits-swarm": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-sd-bits-swarm": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-sd-bits-swarm-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-bits-swarm-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-bits-swarm-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-bits-swarm-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-bits-swarm-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-bits-swarm-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-toy-bits": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-cp-toy-bits": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-cp-toy-bits-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-toy-bits-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-toy-bits-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-toy-bits-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-toy-bits-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-toy-bits-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-toy-swarm": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-cp-toy-swarm": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-cp-toy-swarm-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-toy-swarm-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-toy-swarm-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-toy-swarm-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-toy-swarm-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-toy-swarm-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-bits-swarm": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-cp-bits-swarm": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-cp-bits-swarm-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-bits-swarm-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-bits-swarm-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-bits-swarm-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-bits-swarm-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-bits-swarm-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-toy-bits-swarm": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-toy-bits-swarm": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-toy-bits-swarm-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-toy-bits-swarm-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-toy-bits-swarm-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-toy-bits-swarm-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-toy-bits-swarm-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-toy-bits-swarm-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-toy-bits": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-sd-cp-toy-bits": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-sd-cp-toy-bits-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-toy-bits-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-toy-bits-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-toy-bits-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-toy-bits-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-toy-bits-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-toy-swarm": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-sd-cp-toy-swarm": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-sd-cp-toy-swarm-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-toy-swarm-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-toy-swarm-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-toy-swarm-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-toy-swarm-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-toy-swarm-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-bits-swarm": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-sd-cp-bits-swarm": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-sd-cp-bits-swarm-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-bits-swarm-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-bits-swarm-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-bits-swarm-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-bits-swarm-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-bits-swarm-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-toy-bits-swarm": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-sd-toy-bits-swarm": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-sd-toy-bits-swarm-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-toy-bits-swarm-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-toy-bits-swarm-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-toy-bits-swarm-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-toy-bits-swarm-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-toy-bits-swarm-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-toy-bits-swarm": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-cp-toy-bits-swarm": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-cp-toy-bits-swarm-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-toy-bits-swarm-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-toy-bits-swarm-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-toy-bits-swarm-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-cp-toy-bits-swarm-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-cp-toy-bits-swarm-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-toy-bits-swarm": {
+  "tg": false,
+  "hook": {
+   "off": 1492778,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "889b0824dcb4b6040194cfee4c9069af55808a9d0799530a6ba8faf703897155"
+ },
+ "syntakt-tg-sd-cp-toy-bits-swarm": {
+  "tg": true,
+  "hook": {
+   "off": 1492804,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "fe6e71109e4b1ffe62b9321970517b0bb209bf24704e3b88b60ddf9431fc72f3"
+ },
+ "syntakt-sd-cp-toy-bits-swarm-macro": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-toy-bits-swarm-macro": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-toy-bits-swarm-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-toy-bits-swarm-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ },
+ "syntakt-sd-cp-toy-bits-swarm-macro-acid": {
+  "tg": false,
+  "hook": {
+   "off": 1492886,
+   "old": "4feffff048d700f04ef9400004ba",
+   "new": "4ef9401907a44e714e714e714e71"
+  },
+  "w": "9df438836782cc69e3e2de6ba02191bb390c155f9bbc1ee32e313ffd6ccf3348"
+ },
+ "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": {
+  "tg": true,
+  "hook": {
+   "off": 1492886,
+   "old": "4ef9401bf3d8",
+   "new": "4ef9401907a4"
+  },
+  "w": "652fe07d4c080d6cb08c04d16d42df3336bab143f70d66cf553fa4a489483dbd"
+ }
+}

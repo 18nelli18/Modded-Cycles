@@ -12,7 +12,6 @@ ml_key_taken: .long 0
 ml_key:
     moveal %sp@(4),%a0
     movel %a0@(12),%d0
-    .ifdef ML_GENIE
     cmpil #13,%d0
     bne .Lkey_not_settings
     movel %a0@(16),%d1
@@ -22,6 +21,7 @@ ml_key:
     andil #1,%d1
     movel %d1,ml_genie_settings
 .Lkey_not_settings:
+    .ifdef ML_GENIE
     cmpil #15,%d0
     beq ml_genie_key
     .endif
@@ -120,3 +120,8 @@ ml_toggle:
     addql #4,%sp
 .Ltoggle_done:
     rts
+    .ifndef ML_GENIE
+    .data
+    .globl ml_genie_settings
+ml_genie_settings: .long 0
+    .endif

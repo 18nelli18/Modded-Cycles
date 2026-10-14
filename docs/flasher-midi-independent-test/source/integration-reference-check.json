@@ -1,0 +1,34 @@
+{
+  "refs": {
+    "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+supermodel-startup+multiline-browser+level-pan-values+trigless-dim+midi-live-both+chord-keys-supermodel+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid+scale-gen-st-queued+lfo-secondary+scramble-st-gen-queued+midi-bank-bundle": "5c789558946e96d07ac63831f1e55d68b23513ccc1249da924ee2213a5cf6abc",
+    "model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+supermodel-startup+multiline-browser+level-pan-values+trigless-dim+midi-live-both+chord-keys-supermodel+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid+scale-gen-st-queued+lfo-secondary+scramble-st-gen-queued+midi-bank-bundle": "34c0e4dd817d1a24cb8cd8eaff63f0152da7022cbbac9a3a5a60469e9697e91f",
+    "model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+supermodel-startup+multiline-browser+level-pan-values+trigless-dim+midi-live-both+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid+scale-gen-st-queued+lfo-secondary+scramble-st-gen-queued+midi-bank-bundle": "99e200321403a590bcbba4a5807f6d0a075c6cd67c3eb1e0207b4b9535d490db",
+    "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+supermodel-startup+multiline-browser+level-pan-values+trigless-dim+midi-live-both+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid+scale-gen-st-queued+lfo-secondary+scramble-st-gen-queued+midi-bank-bundle": "39eaccd2bd0b8ee59c9c3709932f8c6775d0d2da457b866e643c91ec2ec40550"
+  },
+  "cases": [
+    {
+      "name": "full-with-ChordKeys",
+      "key": "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+supermodel-startup+multiline-browser+level-pan-values+trigless-dim+midi-live-both+chord-keys-supermodel+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid+scale-gen-st-queued+lfo-secondary+scramble-st-gen-queued+midi-bank-bundle",
+      "sha": "5c789558946e96d07ac63831f1e55d68b23513ccc1249da924ee2213a5cf6abc",
+      "size": 1410464
+    },
+    {
+      "name": "full-noUSB6",
+      "key": "model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+supermodel-startup+multiline-browser+level-pan-values+trigless-dim+midi-live-both+chord-keys-supermodel+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid+scale-gen-st-queued+lfo-secondary+scramble-st-gen-queued+midi-bank-bundle",
+      "sha": "34c0e4dd817d1a24cb8cd8eaff63f0152da7022cbbac9a3a5a60469e9697e91f",
+      "size": 1410208
+    },
+    {
+      "name": "full-noChord-noUSB6",
+      "key": "model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+supermodel-startup+multiline-browser+level-pan-values+trigless-dim+midi-live-both+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid+scale-gen-st-queued+lfo-secondary+scramble-st-gen-queued+midi-bank-bundle",
+      "sha": "99e200321403a590bcbba4a5807f6d0a075c6cd67c3eb1e0207b4b9535d490db",
+      "size": 1393824
+    },
+    {
+      "name": "full-noChord-USB6",
+      "key": "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+supermodel-startup+multiline-browser+level-pan-values+trigless-dim+midi-live-both+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid+scale-gen-st-queued+lfo-secondary+scramble-st-gen-queued+midi-bank-bundle",
+      "sha": "39eaccd2bd0b8ee59c9c3709932f8c6775d0d2da457b866e643c91ec2ec40550",
+      "size": 1393952
+    }
+  ]
+}
