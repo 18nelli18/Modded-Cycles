@@ -767,7 +767,7 @@ function build(raw, device, chosen, opts = {}) {
     const target=parseInt(ap.at,16),end=BASE+full.length;
     if(t.id==='chord-keys-supermodel'&&ap.zero_pad_from==='0x401aa140'&&target===0x401f8f76&&end>=0x401aa140&&end<target&&target<=END_LIMIT){const padding=new Uint8Array(target-end);full=concat(full,padding);fullDirty=concat(fullDirty,new Uint8Array(padding.length).fill(1));}
     if(t.id==='supermodel-support-independent'&&ap.zero_pad_from==='0x401aa140'&&ap.at==='0x401f8f76'&&BASE+full.length>=0x401aa140&&BASE+full.length<0x401f8f76){const pad=new Uint8Array(0x401f8f76-BASE-full.length);full=concat(full,pad);fullDirty=concat(fullDirty,pad);}
-    if(t.id==='midi-bank-bundle'&&ap.at==='0x401f8f76'&&['0x401bf8c0','0x401aa140'].includes(ap.zero_pad_from)&&BASE+full.length>=parseInt(ap.zero_pad_from,16)&&BASE+full.length<0x401f8f76){const pad=new Uint8Array(0x401f8f76-BASE-full.length);full=concat(full,pad);fullDirty=concat(fullDirty,pad);}    if (BASE + full.length !== parseInt(ap.at, 16)) throw new Error("l'image ne finit pas où le tweak l'attend");
+    if(t.id==='midi-bank-bundle'&&['0x401f8f76','0x401f8f36'].includes(ap.at)&&['0x401bf8c0','0x401aa140'].includes(ap.zero_pad_from)&&BASE+full.length>=parseInt(ap.zero_pad_from,16)&&BASE+full.length<parseInt(ap.at,16)){const pad=new Uint8Array(parseInt(ap.at,16)-BASE-full.length);full=concat(full,pad);fullDirty=concat(fullDirty,pad);}    if (BASE + full.length !== parseInt(ap.at, 16)) throw new Error("l'image ne finit pas où le tweak l'attend");
     const payload = buildPayload(ap, opts.syntakt, mainOs);
     if (refOf(t) && hex(sha256(payload)) !== refOf(t).p) throw new Error(`${t.id} : charge utile differente de la reference`);
     full = concat(full, payload);
