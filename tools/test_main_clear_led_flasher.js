@@ -4,6 +4,7 @@ const dir=process.argv[2]+'/',vc=new VirtualConsole(),errors=[];vc.on('jsdomErro
 const w=new JSDOM(fs.readFileSync(dir+'index.html','utf8'),{url:'https://aveycole.github.io/Modded-Cycles/flasher/',runScripts:'outside-only',virtualConsole:vc}).window;
 w.URL.createObjectURL=()=>'';w.URL.revokeObjectURL=()=>{};
 for(const f of ['builder.js','tweaks.js','flasher.js','app.js','bundle.js'])w.eval(fs.readFileSync(dir+f,'utf8'));
+assert(w.MC_TWEAKS.features.find(f=>f.id==='midi-bank-bundle').desc.includes('both LFOs'));
 const d=w.document,a=w.MCFlasherApp,os=Uint8Array.from(fs.readFileSync('firmware/model-cycles_OS1.13.syx')),st=Uint8Array.from(fs.readFileSync('firmware/Syntakt_OS1.42.syx')),cases=[];
 function change(id,on){const e=d.getElementById('feat-'+id);assert(e,id);e.checked=on;e.dispatchEvent(new w.Event('change',{bubbles:true}));}
 function build(name){const chosen=a.chosenTweaks(),bank=chosen.find(t=>t.id==='midi-bank-bundle');if(bank){assert(bank.a_clear_lfo_undo&&bank.b_clear_lfo_undo&&bank.play_ui);assert(chosen.some(t=>t.id==='model-tg-st'));assert(!chosen.some(t=>t.id==='performance-core'));}
