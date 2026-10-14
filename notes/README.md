@@ -158,3 +158,6 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [77 — Control All Config dans le test Supermodel](77-control-all-config-supermodel.md)
 
 - [78 — Machines facultatives avec Banque MIDI](78-machines-facultatives-banque-midi.md)
+
+- [79 — ChordKeys indépendant](79-chordkeys-independant-prototype.md) — chargeurs autonomes, TG/machines facultatifs, un bloc cache sans TG ; neuf builds et boot/cache/audio prouvés en émulation. Test matériel attendu, main inchangé.
+

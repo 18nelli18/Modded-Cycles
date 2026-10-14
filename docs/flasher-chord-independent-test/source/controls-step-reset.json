@@ -1,0 +1,35 @@
+{
+ "id": "step-delete-reset",
+ "order": 99,
+ "name": "Suppression complète des locks du pas A",
+ "device": "Model:Cycles",
+ "os": "1.13",
+ "section": 3,
+ "status": "experimental",
+ "requires": [],
+ "conflicts": [],
+ "symbols": {
+  "sc_step_delete": "0x40195a7c"
+ },
+ "writes": [
+  {
+   "off": 141776,
+   "old": "4eb940017c4e",
+   "new": "4eb940195a7c"
+  },
+  {
+   "off": 1660540,
+   "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+   "new": "4feffff448d70404246f0010242f00142f2f00182f022f0a4eb940017c4e4fef000c2f4000080c820000003f6200003c2f0a4eb940016402588fb0826f00002c2f0a2052206800284e90588f4a806700001a204042702a004878ffff2f022f0a4eb9400166424fef000c202f00084cd704044fef000c4e75"
+  },
+  {
+   "off": 702582,
+   "old": "40195a7c",
+   "new": "4016e980"
+  }
+ ],
+ "description": [
+  "Effacer un trig en mode grille réinitialise ses champs/locks et retire SCRAMBLE/slide.",
+  "Le clavier et les conversions note/trigless restent natifs."
+ ]
+}
