@@ -55,8 +55,9 @@ def generate(base,out,catalog,upstream,cycles,stpath):
 def compact_page(base,out,pairs,refs):
  moved={}
  variants=read(base/'source/main-clear-led-variants.json')
- prototype=read(base/'source/chord-tg-optional-machines.json')['recipe']
- for key,t in [(k,v['recipe']) for k,v in variants.items()]+[('prototype',prototype)]:
+ chord=read(base/'source/chord-tg-optional-machines.json');prototype=chord['recipe']
+ full_prototype=copy.deepcopy(prototype);full_prototype['writes']=[w for w in full_prototype['writes'] if w['off']!=306]+[chord['engine_hooks']['syntakt-tg-sd-cp-toy-bits-swarm-macro-acid']['hook']]
+ for key,t in [(k,v['recipe']) for k,v in variants.items()]+[('prototype',prototype),('prototype-full-engine',full_prototype)]:
   t=copy.deepcopy(t);assert t['append']['at']=='0x401f8f76';t['append']['at']='0x401f8f8a';hits=0
   for w in t['writes']:
    if '401f8f76' in w['new']:
