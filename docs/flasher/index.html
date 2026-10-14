@@ -11,14 +11,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-13-supermodel-midi-ram-cc">
-<link rel="stylesheet" href="style.css?v=2026-10-13-supermodel-midi-ram-cc">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-13-supermodel-tested-shortcuts">
+<link rel="stylesheet" href="style.css?v=2026-10-13-supermodel-tested-shortcuts">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
-<body data-page="flasher" class="supermodel"><aside id="midi-ram-rollback" style="border:2px solid #cfaa67;padding:16px;margin:20px 0"><p data-l="en"><strong>MIDI Bank: RAM-only rollback.</strong> CC knobs, locks and slides remain available. MIDI saving and automatic restoration are disabled after reported Save/Load failures. MIDI data is lost on power-off; existing saved files are left untouched.</p><p data-l="fr"><strong>Banque MIDI : retour RAM seul.</strong> Potards, locks et slides CC disponibles. Sauvegarde/restauration MIDI désactivées après échecs Save/Load. Données MIDI perdues à extinction ; fichiers sauvegardés conservés.</p></aside>
+<body data-page="flasher" class="supermodel">
 <script>
   // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-  window.MC_BUILD = "2026-10-13-supermodel-midi-ram-cc";
+  window.MC_BUILD = "2026-10-13-supermodel-tested-shortcuts";
   window.addEventListener("error", function (e) {
     var b = document.getElementById("errbar");
     if (!b) return;
@@ -32,7 +32,7 @@
   <a class="brand" href="../">Modded Cycles</a>
   <nav aria-label="Site" class="site-nav">
     <a href="./" aria-current="page">Flasher</a>
-    <a href="../guide/">Guide</a>
+    <a href="guide.html">Guide</a>
     <a href="https://github.com/aveycole/Modded-Cycles" target="_blank" rel="noopener">GitHub</a>
     <a href="https://discord.gg/hWegtJZcmm" target="_blank" rel="noopener">Discord</a>
     <a href="https://ko-fi.com/18nelli" target="_blank" rel="noopener">Ko-fi</a>
@@ -46,11 +46,12 @@
     <p class="edition-eyebrow">A.V.'S SUPERMODEL EDITION</p><h1>Modded Cycles:<br><span>A.V.'s Supermodel Edition.</span></h1>
     <div>
       <p class="super-tagline"><span data-l="en">Choose your mods. Build your firmware. Make it your machine.</span><span data-l="fr">Choisissez vos mods. Créez votre firmware. Personnalisez votre machine.</span></p>
-      <p class="ver"><span data-l="en">Version</span><span data-l="fr">Version</span> <span data-rel="version">1.0</span> · <a href="../#version"><span data-l="en">what's new</span><span data-l="fr">nouveautés</span></a> · <a href="../guide/"><span data-l="en">guide</span><span data-l="fr">guide</span></a></p>
+      <p class="ver"><span data-l="en">Version</span><span data-l="fr">Version</span> <span data-rel="version">1.0</span> · <a href="../#version"><span data-l="en">what's new</span><span data-l="fr">nouveautés</span></a> · <a href="guide.html"><span data-l="en">guide</span><span data-l="fr">guide</span></a></p>
     </div>
   </div>
 
-  <div class="alert super-save-note"><span data-l="en">Hardware tested: LFO 2 saves only five settings—speed, multiplier, waveform, destination and depth. Fade, start phase and mode reset on load. MIDI Bank sequence saving and live recording are hardware tested. CC assignments remain RAM-only.</span><span data-l="fr">Testé sur matériel : LFO 2 sauve cinq réglages seulement — vitesse, multiplicateur, forme, destination et profondeur. Fondu, phase initiale et mode remis aux défauts au chargement. Sauvegarde MIDI et live-rec testés sur matériel. Assignations CC en RAM seulement.</span></div>
+  <div class="alert super-save-note"><span data-l="en">MIDI Bank data is RAM-only and lost on power-off. A-side LFO 2 saves its first five settings with the sound; fade, start and mode reset on load.</span><span data-l="fr">Les données de la banque MIDI restent en RAM et sont perdues à extinction. Le LFO 2 côté A sauve ses cinq premiers réglages avec le son ; fondu, phase et mode reviennent aux défauts au chargement.</span></div>
+<p class="quick-reference"><a data-l="en" href="quick-reference.md" download>Download the feature and shortcut overview</a><a data-l="fr" href="quick-reference-fr.md" download>Télécharger le résumé des fonctions et raccourcis</a></p>
 <div id="errbar" class="alert bad" hidden></div>
   <div id="compat" class="alert bad" role="alert" hidden></div>
 
@@ -270,13 +271,13 @@
 </footer>
 
 <!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
-<script src="../assets/release.js?v=2026-10-13-supermodel-midi-ram-cc"></script>
-<script src="../assets/site.js?v=2026-10-13-supermodel-midi-ram-cc"></script>
-<script src="builder.js?v=2026-10-13-supermodel-midi-ram-cc"></script>
-<script src="tweaks.js?v=2026-10-13-supermodel-midi-ram-cc"></script>
-<script src="flasher.js?v=2026-10-13-supermodel-midi-ram-cc"></script>
-<script src="app.js?v=2026-10-13-supermodel-midi-ram-cc"></script>
-<script src="bundle.js?v=2026-10-13-supermodel-midi-ram-cc"></script>
+<script src="../assets/release.js?v=2026-10-13-supermodel-tested-shortcuts"></script>
+<script src="../assets/site.js?v=2026-10-13-supermodel-tested-shortcuts"></script>
+<script src="builder.js?v=2026-10-13-supermodel-tested-shortcuts"></script>
+<script src="tweaks.js?v=2026-10-13-supermodel-tested-shortcuts"></script>
+<script src="flasher.js?v=2026-10-13-supermodel-tested-shortcuts"></script>
+<script src="app.js?v=2026-10-13-supermodel-tested-shortcuts"></script>
+<script src="bundle.js?v=2026-10-13-supermodel-tested-shortcuts"></script>
 </body>
 </html>
 

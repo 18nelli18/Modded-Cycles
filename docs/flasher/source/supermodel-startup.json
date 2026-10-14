@@ -6,14 +6,12 @@
  ],
  "name": "Animation SUPERMODEL by A.V.",
  "description": [
-  "SUPERMODEL apparaît lettre par lettre, suivi d’un trait et de la signature by A.V. alignée à droite.",
-  "Même durée1,8s et même contrat natif. Fonte originale. Vérifiée en émulation, test matériel attendu.",
-  "Générateur : tools/gen_boot_supermodel.py."
+  "SUPERMODEL apparaît lettre par lettre au démarrage, suivi d’un trait et de la signature by A.V. alignée à droite."
  ],
  "device": "Model:Cycles",
  "os": "1.13",
  "section": 3,
- "status": "experimental",
+ "status": "tested",
  "writes": [
   {
    "off": 341612,

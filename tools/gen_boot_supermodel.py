@@ -2,7 +2,7 @@
 """Animation SUPERMODEL et signature by A.V., fonte originale5×7 (sans extraction).
 
 Corps natif0x40053a6c..0x40053e74 seulement, même1,8s que l'origine.
---cycles firmware/model-cycles_OS1.13.syx --output work/supermodel-startup/boot-anim.json
+--cycles firmware/model-cycles_OS1.13.syx --output work/supermodel-startup/boot-anim.json [--tested]
 """
 import argparse,hashlib,json,pathlib,struct,tempfile,subprocess
 import build
@@ -73,15 +73,15 @@ def compile_anim():
  assert len(code)<=BODY_END-BODY,(len(code),BODY_END-BODY)
  return code
 
-def generate(stock):
+def generate(stock,tested=False):
  assert hashlib.sha256(stock).hexdigest()==STOCK
  at,old=TASK_PEA;assert stock[at-build.BASE:at-build.BASE+4].hex()==old
  assert stock[BODY-build.BASE:BODY-build.BASE+4].hex()=='4fefff80'
- code=compile_anim();t=dict(id='supermodel-startup',order=43,conflicts=['boot-anim'],name='Animation SUPERMODEL by A.V.',description=['SUPERMODEL apparaît lettre par lettre, suivi d’un trait et de la signature by A.V. alignée à droite.','Même durée1,8s et même contrat natif. Fonte originale. Vérifiée en émulation, test matériel attendu.','Générateur : tools/gen_boot_supermodel.py.'],device='Model:Cycles',os='1.13',section=3,status='experimental',writes=[dict(off=BODY-build.BASE,old=stock[BODY-build.BASE:BODY-build.BASE+len(code)].hex(),new=code.hex())])
+ code=compile_anim();t=dict(id='supermodel-startup',order=43,conflicts=['boot-anim'],name='Animation SUPERMODEL by A.V.',description=['SUPERMODEL apparaît lettre par lettre au démarrage, suivi d’un trait et de la signature by A.V. alignée à droite.'],device='Model:Cycles',os='1.13',section=3,status='tested' if tested else 'experimental',writes=[dict(off=BODY-build.BASE,old=stock[BODY-build.BASE:BODY-build.BASE+len(code)].hex(),new=code.hex())])
  build.apply_writes(stock,[t]);return t
 
 def main():
- ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--output',default='work/supermodel-startup/boot-anim.json');ap.add_argument('--check',action='store_true');a=ap.parse_args();t=generate(main_os_from_syx(a.cycles));p=pathlib.Path(a.output);s=json.dumps(t,ensure_ascii=False,indent=1)+'\n'
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--output',default='work/supermodel-startup/boot-anim.json');ap.add_argument('--check',action='store_true');ap.add_argument('--tested',action='store_true',help='Marquer testé après validation matérielle rapportée.');a=ap.parse_args();t=generate(main_os_from_syx(a.cycles),tested=a.tested);p=pathlib.Path(a.output);s=json.dumps(t,ensure_ascii=False,indent=1)+'\n'
  if a.check:assert p.read_text()==s
  else:p.parent.mkdir(parents=True,exist_ok=True);p.write_text(s)
  print('ok : SUPERMODEL',len(bytes.fromhex(t['writes'][0]['new'])),'octets sur',BODY_END-BODY)

@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.68",
+  "date": "2026-10-13",
+  "changes": [
+    {
+      "en": "RAM-only MIDI OUT Bank and SUPERMODEL startup marked hardware tested following AveyCole’s confirmation. MIDI sequences, CC assignments/locks and MIDI LFO settings remain RAM-only and are lost on power-off.",
+      "fr": "Banque MIDI OUT en RAM et démarrage SUPERMODEL marqués testés sur matériel après confirmation d’AveyCole. Séquences MIDI, assignations/locks CC et réglages LFO MIDI restent en RAM, perdus à extinction."
+    },
+    {
+      "en": "All flasher descriptions now use brief functionality summaries and verified shortcut lists. Added a downloadable quick reference. Firmware behavior is unchanged.",
+      "fr": "Toutes les descriptions du flasher emploient désormais un bref résumé et une liste de raccourcis vérifiés. Ajout d’un mémo téléchargeable. Fonctionnement du firmware inchangé."
+    }
+  ]
+},
+{
   "version": "1.67",
   "date": "2026-10-13",
   "changes": [
