@@ -7,11 +7,11 @@ sys.path.insert(0,'tools');sys.path.insert(0,'tools/emu')
 import build,ref_mainos
 from chord_keys_pr87 import load_stock as main_os_from_syx
 p=argparse.ArgumentParser(description=__doc__)
-p.add_argument('--base-dir',default='docs/flasher');p.add_argument('--source-dir',default='docs/flasher-integration-test/source');p.add_argument('--output',default='docs/flasher-integration-test');p.add_argument('--cycles',required=True);p.add_argument('--check',action='store_true');a=p.parse_args()
+p.add_argument('--base-dir',default='docs/flasher');p.add_argument('--source-dir',default='docs/flasher-integration-test/source');p.add_argument('--output',default='docs/flasher-integration-test');p.add_argument('--cycles',required=True);p.add_argument('--main',action='store_true');p.add_argument('--check',action='store_true');a=p.parse_args()
 BASE=pathlib.Path(a.base_dir);SOURCE=pathlib.Path(a.source_dir);TARGET=pathlib.Path(a.output)
 tmp=tempfile.TemporaryDirectory() if a.check else None
 OUT=pathlib.Path(tmp.name)/'flasher' if tmp else TARGET
-STAMP='2026-10-13-chordkeys-rotero-tg'
+STAMP='2026-10-13-chordkeys-rotero-main' if a.main else '2026-10-13-chordkeys-rotero-tg'
 input_map={'model-tg-rotero.json':'integration-model-tg.json','model-tg-rotero-st.json':'integration-model-tg-st.json','midi-bank-reclaimed-rebased.json':'integration-midi-bank.json','midi-bank-chord-rebased.json':'integration-midi-bank-chord.json','chord-keys-supermodel.json':'integration-chord-keys.json','chord-supermodel-safe-layout.json':'integration-placement.json','chord-engine-compression.json':'integration-engine-compression.json'}
 inputs={old:json.loads((SOURCE/new).read_text()) for old,new in input_map.items()}
 ref_text=(SOURCE/'integration-reference-check.json').read_text() if (SOURCE/'integration-reference-check.json').exists() else None
@@ -86,6 +86,24 @@ et tests antérieurs inchangés.
 ''')
 print('ok : candidat isolé '+str(OUT))
 
+if a.main:
+ # Promotion demandée par le propriétaire : mêmes recettes/références que
+ # le test publié ; seuls la notice, le nom du build et ABOUT changent.
+ path=OUT/'index.html';html=path.read_text().replace('Experimental ChordKeys + roterodamus Model-TG integration. Main flasher unchanged. MIDI Bank remains RAM-only.','ChordKeys + roterodamus Model-TG integration. New integrations remain experimental. MIDI Bank data is held in RAM.').replace('Intégration expérimentale ChordKeys + Model-TG roterodamus. Flasher principal inchangé. Banque MIDI en RAM uniquement.','Intégration ChordKeys + Model-TG roterodamus. Nouveautés encore expérimentales. Données Banque MIDI en RAM.');path.write_text(html)
+ (OUT/'ABOUT.md').write_text('''# Supermodel — ChordKeys / roterodamus integration — 13 October 2026
+
+Promoted to the main flasher at the owner's request. Firmware recipes and full
+build hashes match the published integration test. ChordKeys and the roterodamus
+Slice integration remain experimental pending hardware confirmation. ChordKeys
+uses the MIDI Bank bundle's reclaimed code space. MIDI Bank data remains RAM-only.
+New step-deletion, LFO clear/Undo and performance changes are not included here.
+
+Publié dans le flasher principal à la demande du propriétaire. Recettes et hashes
+intégraux identiques au test d'intégration publié. ChordKeys et Slice roterodamus
+restent expérimentaux avant confirmation matérielle. ChordKeys utilise l'espace
+de code récupéré dans le bundle Banque MIDI. Données Banque MIDI en RAM uniquement.
+Nouveaux correctifs de suppression, Clear/Undo LFO et performance pas encore inclus.
+''')
 if whole_refs:
  with (OUT/'bundle.js').open('a') as f:f.write('\n// Verified integration whole-image references.\nObject.assign(window.MCFlasherApp.REF_MAINOS,'+json.dumps(whole_refs,separators=(',',':'))+');\n')
 (OUT/'source/integration-engine-compression.json').write_text(json.dumps(engine_compress,ensure_ascii=False,indent=1)+'\n')

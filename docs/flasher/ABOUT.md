@@ -1,27 +1,13 @@
-# Modded Cycles: A.V.’s Supermodel Edition
+# Supermodel — ChordKeys / roterodamus integration — 13 October 2026
 
-## Hardware tested
+Promoted to the main flasher at the owner's request. Firmware recipes and full
+build hashes match the published integration test. ChordKeys and the roterodamus
+Slice integration remain experimental pending hardware confirmation. ChordKeys
+uses the MIDI Bank bundle's reclaimed code space. MIDI Bank data remains RAM-only.
+New step-deletion, LFO clear/Undo and performance changes are not included here.
 
-**MIDI OUT Bank** — Six MIDI-only lanes M1–M6 run alongside the audio tracks, with editable notes, live recording, CC locks/slides, two MIDI LFOs and Sequence Genie. Channels default to 7–12 and are assignable. All B-side data is lost on power-off; Save Project saves A-side only.
-
-**Second LFO** — A second LFO with active keyboard/synth controls. On A-side, speed, multiplier, waveform, destination and depth save with the sound; fade, start and mode reset on load. B-side MIDI LFO settings remain RAM-only.
-
-**SUPERMODEL startup** — SUPERMODEL appears letter by letter, with an underline and smaller by A.V. signature. Select All prefers this animation.
-
-Hardware confirmed by AveyCole on a Model:Cycles.
-
-## Testé sur matériel
-
-**Banque MIDI OUT** — Six voies MIDI M1–M6 jouent en parallèle des pistes audio : notes éditables, live-rec, locks/slides CC, deux LFO MIDI et Sequence Genie. Canaux 7–12 par défaut, réassignables. Toutes les données B sont perdues à extinction ; Save Project sauve seulement A.
-
-**Second LFO** — Un second LFO avec clavier/potards synthé actifs. Côté A, vitesse, multiplicateur, forme, destination et profondeur sont sauvés avec le son ; fondu, phase et mode reviennent aux défauts au chargement. Les LFO MIDI B restent en RAM.
-
-**Démarrage SUPERMODEL** — SUPERMODEL apparaît lettre par lettre, avec un trait et la petite signature by A.V. Tout sélectionner privilégie cette animation.
-
-Essais matériels confirmés par AveyCole sur un Model:Cycles.
-
-[Feature and shortcut overview / Fonctions et raccourcis](quick-reference.md)
-
-TEMPO opens the stock global tempo menu from B-side and returns to B when closed. The bank-exit combo acts only from B home. Published on AveyCole’s request; this TEMPO change has emulation/build/transfer verification, with no new hardware result claimed.
-
-TEMPO ouvre le menu global natif depuis B, puis revient à B à sa fermeture. L’accord de sortie B agit uniquement à l’accueil B. Publié à la demande d’AveyCole ; changement TEMPO vérifié en émulation/build/transfert, sans nouvel essai matériel revendiqué.
+Publié dans le flasher principal à la demande du propriétaire. Recettes et hashes
+intégraux identiques au test d'intégration publié. ChordKeys et Slice roterodamus
+restent expérimentaux avant confirmation matérielle. ChordKeys utilise l'espace
+de code récupéré dans le bundle Banque MIDI. Données Banque MIDI en RAM uniquement.
+Nouveaux correctifs de suppression, Clear/Undo LFO et performance pas encore inclus.

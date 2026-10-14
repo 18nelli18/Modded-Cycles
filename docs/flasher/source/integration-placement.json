@@ -1,0 +1,377 @@
+[
+ {
+  "at": "0x401c57c8",
+  "capacity": 1108,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c5048",
+  "capacity": 632,
+  "kind": "bank"
+ },
+ {
+  "at": "0x40182e28",
+  "capacity": 376,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x4018cd48",
+  "capacity": 376,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x4018d1b8",
+  "capacity": 376,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x4018d4a8",
+  "capacity": 376,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x401c383c",
+  "capacity": 364,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c543c",
+  "capacity": 344,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401548b4",
+  "capacity": 280,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x4015b8f8",
+  "capacity": 280,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x4015f50c",
+  "capacity": 280,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x401601fc",
+  "capacity": 280,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x40160864",
+  "capacity": 280,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x40160b6c",
+  "capacity": 280,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x40160e6c",
+  "capacity": 280,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x401625bc",
+  "capacity": 280,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x40163fb8",
+  "capacity": 280,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x4016616c",
+  "capacity": 280,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x40166760",
+  "capacity": 280,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x4016aa28",
+  "capacity": 280,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x401699a8",
+  "capacity": 280,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x401696a0",
+  "capacity": 280,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x401c56b4",
+  "capacity": 274,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c4d44",
+  "capacity": 260,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c4c40",
+  "capacity": 256,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c4e4c",
+  "capacity": 240,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c52c4",
+  "capacity": 208,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c49cc",
+  "capacity": 200,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c5c20",
+  "capacity": 200,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401876a8",
+  "capacity": 192,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x40188f98",
+  "capacity": 192,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x4018a608",
+  "capacity": 192,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x4018b9c8",
+  "capacity": 192,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x4018bb48",
+  "capacity": 192,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x4018f80c",
+  "capacity": 192,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x4018cbc8",
+  "capacity": 192,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x40190184",
+  "capacity": 192,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x40192a24",
+  "capacity": 192,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x4018d038",
+  "capacity": 192,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x4018d798",
+  "capacity": 192,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x40190334",
+  "capacity": 192,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x40187528",
+  "capacity": 192,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x4019089c",
+  "capacity": 192,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x401c4a98",
+  "capacity": 168,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c5398",
+  "capacity": 162,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c4b44",
+  "capacity": 158,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c4f40",
+  "capacity": 156,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c4528",
+  "capacity": 152,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c5598",
+  "capacity": 140,
+  "kind": "bank"
+ },
+ {
+  "at": "0x40190a1c",
+  "capacity": 124,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x40194ad4",
+  "capacity": 124,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x40195a7c",
+  "capacity": 124,
+  "kind": "sprite"
+ },
+ {
+  "at": "0x401c4fe0",
+  "capacity": 100,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c4be4",
+  "capacity": 88,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c4988",
+  "capacity": 64,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c35f8",
+  "capacity": 58,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c3634",
+  "capacity": 48,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c3668",
+  "capacity": 48,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c355c",
+  "capacity": 46,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c35a8",
+  "capacity": 42,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c3d78",
+  "capacity": 40,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c3ebc",
+  "capacity": 40,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c375c",
+  "capacity": 36,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c3be0",
+  "capacity": 36,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c4000",
+  "capacity": 36,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c3538",
+  "capacity": 32,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c35d4",
+  "capacity": 32,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c46b4",
+  "capacity": 32,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c4374",
+  "capacity": 28,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c3a48",
+  "capacity": 20,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c4514",
+  "capacity": 16,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c4808",
+  "capacity": 16,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c358c",
+  "capacity": 12,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c359c",
+  "capacity": 10,
+  "kind": "bank"
+ },
+ {
+  "at": "0x401c352c",
+  "capacity": 8,
+  "kind": "bank"
+ }
+]
