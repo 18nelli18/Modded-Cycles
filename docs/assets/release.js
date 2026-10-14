@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.67",
+  "date": "2026-10-13",
+  "changes": [
+    {
+      "en": "MIDI OUT Bank returns to RAM-only operation while retaining the CC knobs, assignments, step locks, trigless locks, CC slides, base restoration, B-side SCRAMBLE, MIDI LFOs, live recording and editing controls. SUPERMODEL remains preferred by Select All. MIDI sequences and CC settings are lost on power-off; Save Project saves the normal A-side project only.",
+      "fr": "Banque MIDI OUT revenue au fonctionnement RAM seul avec potards/assignations CC, locks par pas et trigless, slides CC, retour de base, SCRAMBLE B, LFO MIDI, live-rec et édition conservés. SUPERMODEL reste prioritaire dans Tout sélectionner. Séquences et CC perdus à extinction ; Save Project sauvegarde uniquement le projet A natif."
+    },
+    {
+      "en": "The MIDI Save/Load hooks, disk guards and automatic restoration are disabled following failed saves, dead transport controls, project-load freezes and screen corruption reported on previous saving builds, including main. Existing MIDI files are untouched. The rollback is verified in emulation; hardware confirmation is pending.",
+      "fr": "Hooks Save/Load MIDI, gardes disque et restauration automatique désactivés après échecs Save, transport inactif, blocages Load et corruption écran signalés sur les builds de sauvegarde, principal compris. Fichiers MIDI existants intacts. Retrait vérifié en émulation, confirmation matérielle attendue."
+    }
+  ]
+},
+{
   "version": "1.66",
   "date": "2026-10-13",
   "changes": [
