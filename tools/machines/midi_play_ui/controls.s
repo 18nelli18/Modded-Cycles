@@ -19,7 +19,14 @@ mpu_led_begin:
 mpu_led_state:
     moveq #1,%d4
     tstl mpu_grid
+    bne .Lstate_grid
+    | Hors REC : les touches live tenues restent visibles, pas le pattern.
+    movel MLP_HELD,%d0
+    btst %d2,%d0
     beq .Lstate_done
+    moveq #3,%d4
+    rts
+.Lstate_grid:
     btst #0,%a2@(3)
     bne .Lstate_note
     btst #1,%a2@(3)
