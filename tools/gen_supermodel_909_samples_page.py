@@ -27,6 +27,7 @@ html=html.replace('<script src="app.js','<script src="samples.js"></script>\n<sc
 html=html.replace('</head>','<link rel="stylesheet" href="909.css?v=2026-10-14-supermodel-909-local-samples"></head>')
 html=html.replace("<h1>Supermodel 909<br><span>A.V.'s Edition</span></h1>","<h1>SUPERMODEL 909<span>by A.V. · 909 EDITION</span></h1>")
 html=re.sub(r'<script src="edition.js\?[^>]+></script>','',html)
+html=html.replace('2026-10-14-supermodel-909-local-samples','2026-10-14-supermodel-909-upload-fixed')
 (out/'index.html').write_text(html)
 app=(base/'app.js').read_text().replace('Model:Cycles Flasher','Supermodel 909 — A.V.’s Edition')
 needle='    const sha = window.MCBuilder.hex(window.MCBuilder.sha256(raw));'
