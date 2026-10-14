@@ -764,6 +764,8 @@ function build(raw, device, chosen, opts = {}) {
   let full = patched, fullDirty = dirty;
   for (const t of apps) {
     const ap = t.append;
+    const end=BASE+full.length, target=parseInt(ap.at,16);
+    if(t.id==='midi-bank-bundle'&&ap.zero_pad_from==='0x401bf8c0'&&end>=0x401bf8c0&&end<target&&target<=END_LIMIT){const pad=new Uint8Array(target-end);full=concat(full,pad);fullDirty=concat(fullDirty,pad);}
     if (BASE + full.length !== parseInt(ap.at, 16)) throw new Error("l'image ne finit pas où le tweak l'attend");
     const payload = buildPayload(ap, opts.syntakt, mainOs);
     if (refOf(t) && hex(sha256(payload)) !== refOf(t).p) throw new Error(`${t.id} : charge utile differente de la reference`);

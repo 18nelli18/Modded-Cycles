@@ -22,3 +22,6 @@ choix et protocoles MIDI. Nouveautés expérimentales :
   et slide vérifiée ; nouveau pas C5, vélocité100, longueur1.
 - Second LFO : traitement publié précédent restauré après ralentissement signalé sur matériel ; copies expérimentales désactivées.
 - Banque MIDI en RAM. Clear piste + Undo LFO encore en développement.
+
+## Optional machines
+Selecting MIDI Bank enables its five required support mods, without Syntakt, MACRO, ACID, ChordKeys or USB6. Machine choices remain optional. A zero-filled flash gap preserves the existing compressed-bank source address; musical RAM code is unchanged. ChordKeys keeps its current full-integration selection. Main remains unchanged.

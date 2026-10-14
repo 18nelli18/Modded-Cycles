@@ -339,6 +339,11 @@ def build_payload(chosen, main_os, syntakt_path):
     out = bytearray()
     for t in apps:
         ap_ = t["append"]
+        end, target = BASE + len(main_os) + len(out), int(ap_["at"], 16)
+        # Réserve explicite de Banque MIDI : aucun moteur imposé ni code ajouté.
+        if (t["id"] == "midi-bank-bundle" and ap_.get("zero_pad_from") == "0x401bf8c0"
+                and 0x401bf8c0 <= end < target <= END_LIMIT):
+            out += bytes(target - end)
         if BASE + len(main_os) + len(out) != int(ap_["at"], 16):
             raise SystemExit(f"!! {t['id']} : l'image ne finit pas à {ap_['at']}")
         rt = payload_runtime(t, main_os, img)

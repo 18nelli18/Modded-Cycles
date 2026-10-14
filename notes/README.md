@@ -156,3 +156,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 
 
 - [77 — Control All Config dans le test Supermodel](77-control-all-config-supermodel.md)
+
+- [78 — Machines facultatives avec Banque MIDI](78-machines-facultatives-banque-midi.md)
