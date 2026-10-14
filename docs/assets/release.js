@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.56", date: "2026-10-14", changes: [
+    { en: "New experimental mod, Keyboard octave shortcuts: hold TRACK and tap TRIG 1 for octave down or TRIG 16 for octave up, during keyboard playing or Live Recording. Changes the active track's KBT by 12 semitones, visible in Track Setup, within −60 to +60. One change per press, no note triggered by the shortcut",
+      fr: "Nouveau mod expérimental, Raccourcis d'octave du clavier : tenez TRACK et appuyez sur TRIG 1 pour descendre d'une octave ou TRIG 16 pour monter, en jeu clavier ou en enregistrement live. Change KBT de la piste active de 12 demi-tons, visible dans Track Setup, entre −60 et +60. Un changement par appui, aucune note déclenchée par le raccourci" },
+    { en: "Grid Recording keeps its normal controls and held notes release normally. No added key illumination. This version does not combine with Model-TG or Chord Keys. By djdoz, under the MIT license",
+      fr: "Le mode grille garde ses commandes et les notes tenues se relâchent normalement. Aucun éclairage ajouté. Cette version ne se combine pas avec Model-TG ni Chord Keys. Par djdoz, sous licence MIT" },
+    { en: "Checked in emulation on the OS's own code, alone and with compatible mods. The contributor reports a successful Model:Cycles test of the stock-firmware prototype; the repository integration remains experimental pending the maintainer's device test",
+      fr: "Vérifié en émulation sur le code même de l'OS, seul et avec les mods compatibles. Le contributeur rapporte un essai réussi du prototype sur firmware stock sur un Model:Cycles ; l'intégration au dépôt reste expérimentale en attendant l'essai du mainteneur" },
+  ] },
   { version: "1.54", date: "2026-10-12", changes: [
     { en: "MACRO machine, lo-fi fixed: on a MACRO track, hold FUNC and turn PITCH to really set the lo-fi. In 1.46 this still changed the note by semitones, and the lo-fi could not be reached from the knobs. The screen now shows OFF in the middle, the sample rate on the left (46K down to 4K, in kHz) and the bit depth on the right (12B down to 2B, in bits), in large letters, one step per click of the knob",
       fr: "Machine MACRO, lo-fi corrigé : sur une piste MACRO, maintenez FUNC et tournez PITCH pour vraiment régler le lo-fi. En 1.46, ce geste changeait encore la note par demi-tons, et le lo-fi n'était joignable par aucun potard. L'écran affiche maintenant OFF au milieu, la fréquence d'échantillonnage à gauche (46K à 4K, en kHz) et la résolution à droite (12B à 2B, en bits), en grand, un pas par cran du potard" },
