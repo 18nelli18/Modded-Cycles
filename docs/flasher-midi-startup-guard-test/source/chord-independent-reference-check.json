@@ -1,0 +1,49 @@
+{
+ "cases": [
+  {
+   "name": "alone",
+   "key": "chord-keys-supermodel",
+   "sha": "eb00d43ac31f9089468a8a8e417a29ab8766887256f8b0c302868e8061f26f4b"
+  },
+  {
+   "name": "tg",
+   "key": "model-tg-st+chord-keys-supermodel",
+   "sha": "20a3cfb8aa0440223450a252343c5fffc9d3bda3dbc9b12fd1ef615d5f9fb8f9"
+  },
+  {
+   "name": "macro",
+   "key": "macro+chord-keys-supermodel",
+   "sha": "9add7c65e14d966b27521133c60de88d369343852186e2fbdb6de02bd9ae4f71"
+  },
+  {
+   "name": "acid",
+   "key": "acid+chord-keys-supermodel",
+   "sha": "3f9619f83e2f8216cd1ac1848acb824603f6f8eca8a93ce63c52ee5c6b0b457e"
+  },
+  {
+   "name": "syntakt",
+   "key": "chord-keys-supermodel+syntakt-sd",
+   "sha": "034193aea99e2c15788328314d5ae0fa92b68ac0b72dea693d651810c4795cd4"
+  },
+  {
+   "name": "bank-core",
+   "key": "model-tg-st+midi-live-both+chord-keys-supermodel+scale-gen-st-queued+lfo-secondary+scramble-st-gen-queued+midi-bank-bundle",
+   "sha": "58f41dab6b44fa5a081df8794de8ef95252996cec0d16133a7d8627db18f8539"
+  },
+  {
+   "name": "bank-full",
+   "key": "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+supermodel-startup+multiline-browser+level-pan-values+trigless-dim+midi-live-both+chord-keys-supermodel+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid+scale-gen-st-queued+lfo-secondary+scramble-st-gen-queued+midi-bank-bundle+control-all-config",
+   "sha": "817364aad06c8082c0a42850c46280073518de3ebcf1b2aec2c34605bb7f2bef"
+  },
+  {
+   "name": "tg-full",
+   "key": "6ch-usbup+model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+supermodel-startup+multiline-browser+level-pan-values+trigless-dim+midi-live-both+chord-keys-supermodel+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid+scale-gen-st-queued+lfo-secondary+scramble-st-gen-queued+control-all-config",
+   "sha": "ee5bd83227024fabd846ec3fdab0cad12eb75f4f8127d6bba41c282c4c412098"
+  },
+  {
+   "name": "full-no-tg",
+   "key": "6ch-usbup+trig-hold+arp+tempo-max+supermodel-startup+multiline-browser+level-pan-values+trigless-dim+midi-live-both+chord-keys-supermodel+syntakt-sd-cp-toy-bits-swarm-macro-acid+lfo-secondary+control-all-config",
+   "sha": "97c654a2ec8b464080208e6aedd2d8cc3bead1020a4fda63a95d117209036739"
+  }
+ ]
+}
