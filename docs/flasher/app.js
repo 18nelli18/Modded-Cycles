@@ -3005,7 +3005,7 @@ function chosenTweaks() {
     const tk = tw.tweaks.find((x) => x.id === id);
     if (tk) out.push(tk);
   }
-  return out;
+  return window.MCMainClearResolve ? window.MCMainClearResolve(out) : out;
 }
 function chosenLabels() {
   const tw = window.MC_TWEAKS, out = [];
@@ -3875,9 +3875,10 @@ function init() {
 // test hooks (tools/webflash_smoke.js)
 for(const L of ["en","fr"])Object.assign(FEAT[L]["chord-keys"],{"en": {"label": "ChordKeys — Model-TG integration", "short": "COLOR, voicings, HARMONY locks and MIDI chords with Model-TG.", "desc": "The current ChordKeys revision by Nico Heuser, integrated with Model-TG and the Supermodel mods. This experimental placement uses the MIDI Bank bundle; selecting it selects the compatible full bundle. MIDI Bank data remains RAM-only.", "shortcuts": ["FUNC + RETRIG: Keys, key/scale, COLOR, SHAPE and MIDI ROOT/CHORD.", "TRIG 1–7: I–VII; 8–14: an octave up; 15–16: I–II another octave up.", "With Keys active, hold T1–T6: 9, 11, 13, 7sus4, parallel major/minor, target V7. Record HARMONY while holding a step or during live recording."]}, "fr": {"label": "ChordKeys — intégration Model-TG", "short": "COLOR, voicings, locks HARMONY et accords MIDI avec Model-TG.", "desc": "Révision récente de ChordKeys par Nico Heuser, intégrée à Model-TG et aux mods Supermodel. Ce placement expérimental utilise le bundle Banque MIDI ; le cocher sélectionne le bundle complet compatible. Les données de Banque MIDI restent en RAM.", "shortcuts": ["FUNC + RETRIG : Keys, tonique/gamme, COLOR, SHAPE et MIDI ROOT/CHORD.", "TRIG 1–7 : I–VII ; 8–14 : une octave plus haut ; 15–16 : I–II encore une octave plus haut.", "Keys actif, tenir T1–T6 : 9, 11, 13, 7sus4, parallèle majeur/mineur, V7 cible. Enregistrer HARMONY en tenant un pas ou en live-rec."]}}[L]);
 for(const L of ["en","fr"])Object.assign(FEAT[L]["model-tg"],{"en": {"short": "Sampler, FX and roterodamus Slice varispeed.", "desc": "Model-TG by TinyGregAudio with roterodamus’s Slice update. A note chooses the slice at its trigger; PITCH changes its playback speed without selecting another slice. Experimental integration.", "shortcuts": ["SETTINGS + PRESET: playback mode. SETTINGS + PUNCH: mode options. In Slice mode, notes select slices; PITCH changes playback speed."]}, "fr": {"short": "Sampler, effets et Slice varispeed de roterodamus.", "desc": "Model-TG de TinyGregAudio avec la mise à jour Slice de roterodamus. La note choisit la tranche au trig ; PITCH règle sa vitesse sans sélectionner une autre tranche. Intégration expérimentale.", "shortcuts": ["SETTINGS + PRESET : mode de lecture. SETTINGS + PUNCH : options. En Slice, les notes choisissent les tranches ; PITCH règle la vitesse."]}}[L]);
+for(const L of ["en","fr"])FEAT[L]["midi-bank-bundle"].desc += " " + {"en": "FUNC + PLAY clears the selected track and both LFOs; press again to undo. In B-side keyboard mode, recorded steps are hidden, held keys light up, and the playhead remains visible. New clear/Undo and light behavior awaits hardware verification.", "fr": "FUNC + PLAY efface la piste sélectionnée et ses deux LFO ; répéter annule. Clavier B : pas enregistrés masqués, touches tenues éclairées, curseur visible. Nouveaux clear/Undo et lumières à vérifier sur machine."}[L];
 window.MCFlasherApp = { state: st, REF_MAINOS, REF_MODS, REF_SAMPLES_ON_CYCLES, REF_CYCLES_ON_SAMPLES, REF_SAMPLES_BACK, loadOs,
   loadSamples, loadSyntakt, setMode, setSmpDir, setMachine, setMethod, applyLang, render,
-  chosenTweaks, chosenLabels, CATS };
+  chosenTweaks, chosenLabels, CATS, isSelected: isOn };
 
 // Présentation seule : sélection et vérifications firmware restent natives.
 function renderSupermodel() {

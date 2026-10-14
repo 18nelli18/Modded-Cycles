@@ -1,13 +1,5 @@
-# Supermodel — ChordKeys / roterodamus integration — 13 October 2026
+# Main-based LFO clear/Undo and MIDI lights
 
-Promoted to the main flasher at the owner's request. Firmware recipes and full
-build hashes match the published integration test. ChordKeys and the roterodamus
-Slice integration remain experimental pending hardware confirmation. ChordKeys
-uses the MIDI Bank bundle's reclaimed code space. MIDI Bank data remains RAM-only.
-New step-deletion, LFO clear/Undo and performance changes are not included here.
+Uses the existing main Model-TG startup and support dependencies. No independent kernel or MIDI saving changes. FUNC + PLAY clear/Undo includes both LFOs on the selected A/B track. B keyboard mode hides recorded steps, lights held keys and preserves the playhead. New behaviors are not yet hardware verified.
 
-Publié dans le flasher principal à la demande du propriétaire. Recettes et hashes
-intégraux identiques au test d'intégration publié. ChordKeys et Slice roterodamus
-restent expérimentaux avant confirmation matérielle. ChordKeys utilise l'espace
-de code récupéré dans le bundle Banque MIDI. Données Banque MIDI en RAM uniquement.
-Nouveaux correctifs de suppression, Clear/Undo LFO et performance pas encore inclus.
+Démarrage et dépendances TG du main conservés. Pas de noyau indépendant ni sauvegarde MIDI. Clear/Undo des deux LFO par piste A/B ; pas masqués hors REC, touches live et curseur conservés. Nouveautés non vérifiées sur matériel.
