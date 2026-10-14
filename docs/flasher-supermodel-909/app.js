@@ -1538,7 +1538,7 @@ const DISCORD = "https://discord.gg/hWegtJZcmm";
 // ---------------------------------------------------------------------------
 const T = {
   en: {
-    title: "Model:Cycles Flasher",
+    title: "Supermodel 909 — A.V.’s Edition",
     tagline: "Install mods on your Elektron Model:Cycles or Model:Samples, right from your browser.",
     s1: "What do you want to install?",
     tab_mods: "Mods",
