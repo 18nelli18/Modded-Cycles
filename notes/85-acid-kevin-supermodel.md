@@ -38,3 +38,8 @@ courtes modifications PACK ; aucun firmware Syntakt extrait n’y est stocké.
 Le code source du DSP et la licence de Kevin accompagnent le test.
 
 WAVE et Model909 sont des intégrations distinctes encore en investigation.
+
+## Vérification matérielle (14/10/2026)
+
+AveyCole : « Push acid fix to main as hardware tested ». Correctif promu sur
+le flasher principal ; test séparé conservé. Aucun ajout WAVE ou Model909 au main.
