@@ -11,7 +11,7 @@ from gen_seq_gen import symbols,main_os_from_syx,STOCK
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 START=0x401ab750
 EXPORTS=('boot_extra_hook','key_hook','led_hook','core_pre','core_audio_end','snap_note','scale_state','key_state','set_held','mod_used','blk_clk','mm_obj','rtg_on','sle_on','show_popup','SLD_BASE','sld_init','sld_seq','sld_reset','sld_led','sld_apply','install_scale_menu_item','blob_start','reserved_end')
-def source(repo):
+def legacy_source(repo):
  if git(repo,'rev-parse','HEAD')!=MODEL_TG_COMMIT:raise ValueError('Model-TG : commit non épinglé')
  if git(repo,'status','--porcelain'):raise ValueError('Model-TG : clone modifié')
  text=pathlib.Path(repo,'src/model_tg.s').read_text()
@@ -20,7 +20,25 @@ def source(repo):
         cut('SLIDE_BIT =','| ================= lo-fi'),cut('show_popup:\n','    .balign 4\npopup_mult:'),
         cut('snap_note:\n','| ---- browser: remember what was selected'),cut('scale_state:','    .balign 4\nfilt_mk:')]
  return '| Copyright (c) 2026 TinyGregAudio, MIT ; voir LICENSE-Model-TG.\nMAX_TRK=6\n'+ '\n'.join(parts)
-def generate(stock,repo,cross=None):
+def source(repo=None):
+ """Modules MIT embarqués ; le clone historique est facultatif, pour comparaison."""
+ folder=ROOT/'tools/machines/supermodel_support'
+ text=(folder/'performance_modules.s').read_text()
+ provenance=json.loads((folder/'PROVENANCE.json').read_text())
+ assert hashlib.sha256(text.encode()).hexdigest()==provenance['sha256']
+ if repo is not None:assert text==legacy_source(repo),'Les modules embarqués diffèrent de la source épinglée'
+ return text
+
+def original_symbols(repo=None):
+ """Anciennes cibles pour relier nos ajouts au support local, pas au sampler."""
+ data=json.loads((ROOT/'tools/machines/supermodel_support/PROVENANCE.json').read_text())
+ saved={k:int(v,16) for k,v in data['legacy_symbols'].items()}
+ if repo is not None:
+  actual=symbols('m68k-elf-',pathlib.Path(repo)/'build/_b.elf')
+  assert all(actual[k]==v for k,v in saved.items()),'Adresses historiques différentes du commit épinglé'
+ return saved
+
+def generate(stock,repo=None,cross=None):
  cross=cross or next((c for c in ("m68k-linux-gnu-","m68k-elf-") if shutil.which(c+"gcc") or shutil.which(c+"as")),"m68k-linux-gnu-")
  assert hashlib.sha256(stock).hexdigest()==STOCK
  with tempfile.TemporaryDirectory() as tmp:
@@ -57,7 +75,7 @@ def generate(stock,repo,cross=None):
  return tweak,blob,syms
 
 def main():
- ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--model-tg',required=True);ap.add_argument('--output',required=True);ap.add_argument('--cross');ap.add_argument('--check',action='store_true');a=ap.parse_args()
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--model-tg',help='Clone épinglé facultatif pour vérifier la provenance, non requis pour construire');ap.add_argument('--output',required=True);ap.add_argument('--cross');ap.add_argument('--check',action='store_true');a=ap.parse_args()
  t,b,s=generate(main_os_from_syx(a.cycles),a.model_tg,a.cross);out=pathlib.Path(a.output);text=json.dumps(t,indent=1,ensure_ascii=False)+'\n'
  if a.check:assert out.read_text()==text
  else:out.parent.mkdir(parents=True,exist_ok=True);out.write_text(text)

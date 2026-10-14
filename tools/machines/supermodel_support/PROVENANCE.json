@@ -1,0 +1,28 @@
+{
+  "repository": "TinyGregAudio/Model-TG",
+  "commit": "70b39dd6787770ebefc7a2d78dea1678ec012679",
+  "license": "MIT",
+  "source": "src/model_tg.s",
+  "modules": [
+    "SETTINGS modifier",
+    "slide trigs",
+    "popup drawing",
+    "scale lock",
+    "scale setup state"
+  ],
+  "sampler_included": false,
+  "sha256": "97aebf740c0b935d211e1998da8bec386a2378d1c1149fa05de9355d496ff68d",
+  "legacy_symbols": {
+    "key_hook": "0x401ae968",
+    "set_held": "0x401b235c",
+    "mod_used": "0x401b2360",
+    "mm_obj": "0x401b2088",
+    "rtg_on": "0x401b6d8c",
+    "sle_on": "0x401bcaec",
+    "scale_state": "0x401bbd78",
+    "key_state": "0x401bbd79",
+    "led_hook": "0x401bb076",
+    "blk_clk": "0x401b1054",
+    "show_popup": "0x401b2284"
+  }
+}

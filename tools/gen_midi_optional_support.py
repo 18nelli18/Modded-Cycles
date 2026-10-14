@@ -10,6 +10,7 @@ from chord_keys_pr87 import load_stock
 
 def generate(stock,repo,catalog,sampler=False,audio_lfo=False,genie=False,scramble=False):
  if sampler:
+  if repo is None:raise ValueError("Le build du sampler sélectionné exige sa source Model-TG ; les autres fonctions sont autonomes")
   core=next(t for t in catalog if t['id']=='model-tg-st')
   syms=mb.symbols('m68k-elf-',pathlib.Path(repo)/'build/_b.elf')
   assert syms['reserved_end']==int(core['symbols']['reserved_end'],16)
@@ -19,7 +20,7 @@ def generate(stock,repo,catalog,sampler=False,audio_lfo=False,genie=False,scramb
  next_key=syms['key_hook']
  if genie:
   sg=copy.deepcopy(next(t for t in catalog if t['id']=='scale-gen-st-queued'))
-  original=mb.symbols('m68k-elf-',pathlib.Path(repo)/'build/_b.elf')
+  original=pc.original_symbols(repo)
   names=('key_hook','set_held','mod_used','mm_obj','rtg_on','sle_on','scale_state','key_state','led_hook','blk_clk')
   mapping={original[n]:syms[n] for n in names}
   for w in sg['writes']:
@@ -34,7 +35,7 @@ def generate(stock,repo,catalog,sampler=False,audio_lfo=False,genie=False,scramb
   supports.append(sg);next_key=int(sg['symbols']['sg_key'],16)
  if scramble:
   sc=copy.deepcopy(next(t for t in catalog if t['id']=='scramble-st-gen-queued'))
-  original=mb.symbols('m68k-elf-',pathlib.Path(repo)/'build/_b.elf')
+  original=pc.original_symbols(repo)
   names=('key_hook','set_held','mod_used','mm_obj','rtg_on','sle_on','scale_state','key_state','led_hook','blk_clk','show_popup')
   mapping={original[n]:syms[n] for n in names}
   old_sg=next(t for t in catalog if t['id']=='scale-gen-st-queued')
@@ -60,7 +61,7 @@ def generate(stock,repo,catalog,sampler=False,audio_lfo=False,genie=False,scramb
  previous=build.load_catalog;build.load_catalog=lambda:{'model-cycles_OS1.13':({},lookup)}
  raw,stub,fragments,bsyms=mb.compile_code('m68k-elf-',syms,next_key,start,limit,0x401f8f76,loader,free,
   pattern_banks=True,stock_display=True,lfo_cc=True,storage=False,repeat=True,conditions=True,
-  live_record=True,knob_cc=True,knob_locks=True,cc_slides=True,lfo_confirm=True,genie=genie,genie_chance=genie,audio_lfo_next=native_lfo,inline_merges=True)
+  live_record=True,knob_cc=True,knob_locks=True,cc_slides=True,lfo_confirm=True,extended_storage=True,ram_layout=True,genie=genie,genie_chance=genie,audio_lfo_next=native_lfo,inline_merges=True)
  build.load_catalog=previous
  # ACR1 spécifique au sampler ne doit pas être installé sans Model-TG.
  offset=bsyms['ml_boot_clear']-start+8
@@ -73,7 +74,7 @@ def generate(stock,repo,catalog,sampler=False,audio_lfo=False,genie=False,scramb
   'pending':['writer_chains','all_optional_profiles','native_boot_ui_audio_midi_proofs','hardware_test']}
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--cycles',required=True);p.add_argument('--model-tg',required=True);p.add_argument('--catalog',required=True);p.add_argument('--output',required=True);p.add_argument('--check',action='store_true');p.add_argument('--sampler',action='store_true');p.add_argument('--audio-lfo',action='store_true');p.add_argument('--genie',action='store_true');p.add_argument('--scramble',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--cycles',required=True);p.add_argument('--model-tg',help='Clone requis seulement si le sampler Model-TG est demandé');p.add_argument('--catalog',required=True);p.add_argument('--output',required=True);p.add_argument('--check',action='store_true');p.add_argument('--sampler',action='store_true');p.add_argument('--audio-lfo',action='store_true');p.add_argument('--genie',action='store_true');p.add_argument('--scramble',action='store_true');a=p.parse_args()
  t=generate(load_stock(a.cycles),a.model_tg,json.loads(pathlib.Path(a.catalog).read_text()),a.sampler,a.audio_lfo,a.genie,a.scramble);text=json.dumps(t,ensure_ascii=False,indent=1)+'\n';out=pathlib.Path(a.output)
  if a.check:assert out.read_text()==text
  else:out.write_text(text)

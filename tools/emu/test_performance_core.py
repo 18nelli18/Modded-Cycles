@@ -11,7 +11,7 @@ from test_model_tg_syntakt import ramp,SL_PND,SL_PDUR,SL_PMSK,SL_PCLK,SL_PFRE,SL
 import mcengine as E
 
 def main():
- ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--model-tg',required=True);a=ap.parse_args()
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--cycles',required=True);ap.add_argument('--model-tg',help='Clone facultatif pour comparaison');a=ap.parse_args()
  stock=main_os_from_syx(a.cycles);t,blob,s=gen.generate(stock,a.model_tg)
  cats=build.load_catalog()['model-cycles_OS1.13'][1]
  selected=[cats[x] for x in ('latching-mute','trig-preview')]+[t]

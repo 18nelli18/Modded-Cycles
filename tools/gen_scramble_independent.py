@@ -11,7 +11,7 @@ from chord_keys_pr87 import load_stock
 
 def generate(stock,repo,catalog):
  core,_,syms=pc.generate(stock,repo,'m68k-elf-')
- original=symbols('m68k-elf-',pathlib.Path(repo)/'build/_b.elf')
+ original=pc.original_symbols(repo)
  sc=copy.deepcopy(next(t for t in catalog if t['id']=='scramble-st-gen-queued'))
  sg=next(t for t in catalog if t['id']=='scale-gen-st-queued')
  names=('key_hook','set_held','mod_used','mm_obj','rtg_on','sle_on','scale_state','key_state','led_hook','blk_clk','show_popup')
@@ -30,7 +30,8 @@ def generate(stock,repo,catalog):
 
 def main():
  p=argparse.ArgumentParser(description=__doc__)
- for name in ('cycles','model-tg','catalog','output'):p.add_argument('--'+name,required=True)
+ for name in ('cycles','catalog','output'):p.add_argument('--'+name,required=True)
+ p.add_argument('--model-tg',help='Clone de référence facultatif')
  p.add_argument('--check',action='store_true');a=p.parse_args()
  result=generate(load_stock(a.cycles),a.model_tg,json.loads(pathlib.Path(a.catalog).read_text()))
  text=json.dumps(result,ensure_ascii=False,indent=1)+'\n';out=pathlib.Path(a.output)

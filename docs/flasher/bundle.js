@@ -1455,3 +1455,6 @@ a.applyLang(document.documentElement.lang||'en');
 
 // Promotion après validation matérielle par A.V., 14/10/2026.
 (()=>{const a=window.MCFlasherApp,tw=window.MC_TWEAKS;for(const id of ['scale-gen','scramble','chord-keys','supermodel-performance']){const f=tw.features.find(x=>x.id===id);if(f)f.status='tested';}a.applyLang(document.documentElement.lang||'en');})();
+
+// Conserver le statut validé lors de chaque nouvelle sélection.
+(()=>{const previous=window.MCMainClearResolve;window.MCMainClearResolve=out=>previous(out).map(t=>t.id==='supermodel-support-independent'?{...t,status:'tested',pending:[]}:t);})();
