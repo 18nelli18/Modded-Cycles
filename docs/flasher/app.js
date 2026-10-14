@@ -2867,9 +2867,10 @@ Object.assign(T.en, { select_all: "Select all", select_all_note: "Selects compat
 Object.assign(T.fr, { select_all: "Tout sélectionner", select_all_note: "Sélectionne les mods compatibles en conservant Model-TG et MIDI OUT + THRU en direct. Les mods inclus restent dans Model-TG." });
 function selectAllCompatible() {
   for (const f of features()) selOf(f).on = false;
-  const preferred = ["model-tg", "midi-live-both", "scale-gen", "lfo-secondary", "supermodel-startup"].map(featById).filter(Boolean);
+  const preferred = ["supermodel-performance", "midi-live-both", "scale-gen", "lfo-secondary", "supermodel-startup"].map(featById).filter(Boolean);
   for (const f of preferred) setOn(f, true);
   for (const f of features()) {
+    if (f.id === "model-tg" || f.requires === "model-tg") continue;
     if (preferred.includes(f) || includedBy(f)) continue;
     if (features().some(g => isOn(g.id) && (excludes(f, g) || clashVia(f, g)))) continue;
     setOn(f, true);
@@ -3878,6 +3879,7 @@ for(const L of ["en","fr"])Object.assign(FEAT[L]["model-tg"],{"en": {"short": "S
 for(const L of ["en","fr"])FEAT[L]["midi-bank-bundle"].desc += " " + {"en": "FUNC + PLAY clears the selected track and both LFOs; press again to undo. In B-side keyboard mode, recorded steps are hidden, held keys light up, and the playhead remains visible. New clear/Undo and light behavior awaits hardware verification.", "fr": "FUNC + PLAY efface la piste sélectionnée et ses deux LFO ; répéter annule. Clavier B : pas enregistrés masqués, touches tenues éclairées, curseur visible. Nouveaux clear/Undo et lumières à vérifier sur machine."}[L];
 for(const L of ["en","fr"])FEAT[L]["control-all-config"]={"en": {"label": "Control All Config", "short": "Choose which audio tracks follow TRACK + knob Control All.", "desc": "Hold TRACK and tap TRIG 1–6 to exclude or include the corresponding A-side track. Lit trigs follow Control All. Any track can be excluded, including the active track. Choices reset after power-off. Hardware-tested integration by durchgemacht.", "shortcuts": ["TRACK + TRIG 1–6: exclude/include a track.", "TRACK + knob: Control All on included tracks. The active track can also be excluded."]}, "fr": {"label": "Control All Config", "short": "Choisir les pistes audio concernées par TRACK + potentiomètre.", "desc": "Tenir TRACK et appuyer sur TRIG 1–6 pour exclure ou inclure la piste A correspondante. Trigs allumés : pistes incluses ; la piste active peut aussi rester exclue. Choix réinitialisés au redémarrage. Intégration vérifiée sur matériel de durchgemacht.", "shortcuts": ["TRACK + TRIG 1–6 : exclure/inclure une piste.", "TRACK + potentiomètre : Control All sur les pistes incluses. La piste active peut aussi rester exclue."]}}[L];
 for(const L of ["en","fr"])FEAT[L].acid.desc={"en": "ACID bass with Kevin Shallvari’s retrigger click fix. Slides are preserved. Retrigger fade-in hardware tested.", "fr": "Basse ACID avec le correctif de clic au retrig de Kevin Shallvari. Slides conservés. Fondu au retrig vérifié sur matériel."}[L];
+FEAT.en['chord-keys'].label='ChordKeys';FEAT.fr['chord-keys'].label='ChordKeys';
 window.MCFlasherApp = { state: st, REF_MAINOS, REF_MODS, REF_SAMPLES_ON_CYCLES, REF_CYCLES_ON_SAMPLES, REF_SAMPLES_BACK, loadOs,
   loadSamples, loadSyntakt, setMode, setSmpDir, setMachine, setMethod, applyLang, render,
   chosenTweaks, chosenLabels, CATS, isSelected: isOn };
