@@ -1,0 +1,1 @@
+window.MC_RELEASES = [{"version": "1.68 · TEMPO test", "date": "2026-10-13", "changes": [{"en": "Stock global TEMPO menu accessible from B-side, with return to B-side when closed. RAM-only MIDI data. Hardware testing pending.", "fr": "Menu TEMPO global natif accessible depuis B, avec retour à B à la fermeture. Données MIDI en RAM seule. Test matériel attendu."}]}];

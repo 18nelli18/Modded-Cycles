@@ -129,6 +129,7 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [56 — Génération différée](56-generation-differee.md) | **Expérimental** : staging privé, commit avant le premier trig, sous-option distincte ; correctif local des modes commun/par piste et banque de lecture prouvé en émulation, sans chaîne. |
 | [57 — Séquences MIDI secondaires](57-pistes-midi-secondaires.md) | **Test expérimental avec TG** : six voies MIDI, éditeur, hooks et consommateur dédié prouvés en émulation ; installateur séparé. Banque RAM partagée entre patterns ; sauvegarde et sorties physiques à valider. |
 | [58 — Second LFO](58-second-lfo.md) | **LFO 2 testé sur machine par AveyCole le 11/10/2026, flasher principal** : rendu de menu natif, phases indépendantes, mélange et publication audio prouvés ; 33 masques sans chevauchement des mods principaux. Réglages RAM seulement ; sauvegarde et coût audio matériel restent à établir. |
+| [74-tempo-global-b.md](74-tempo-global-b.md) | **TEMPO global natif depuis B** : touche14 transmise, menu conservant B, garde du combo à l’accueil ; preuves natives et transfert navigateur validés, test matériel attendu. |
 
 - [42 — Clavier d’accords diatoniques](42-clavier-accords-diatoniques.md) — upstream 1.46.
 - [47 — Filtre de piste](47-filtre-piste.md) — upstream 1.46.
