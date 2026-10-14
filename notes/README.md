@@ -144,3 +144,10 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [64 — Enregistrement live B](64-enregistrement-live-b.md) : RECORD + PLAY, quantification native, microtiming MBK4 ; expérimental.
 
 - [65 — Noyau performance autonome](65-noyau-performance-autonome.md) — extraction slide/Scale Lock sans sampler, bundle MIDI complet sans Model-TG ; quatre blocs réservés, boot/cache/audio, sauvegarde simulée et dix-sept builds navigateur.
+
+## Intégration Supermodel du 13/10/2026
+
+| Note | Résumé |
+|---|---|
+| [75 — ChordKeys et TG dans Supermodel](75-chord-tg-supermodel.md) | Intégration expérimentale PR87 / roterodamus, HARMONY26 isolé de LFO2, banque RAM et espace récupéré sans sauvegarde B. |
+

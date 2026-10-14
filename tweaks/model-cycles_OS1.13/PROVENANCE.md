@@ -119,3 +119,12 @@ existante et génération depuis les OS locaux. Candidat expérimental dans
 `docs/flasher-midi-controls-test/` ; voir note 59 §9. Le mute MIDI seul a
 été validé sur matériel par AveyCole ; Genie B et sortie rétablie restent
 à tester. Sauvegarde persistante non incluse.
+
+## Intégration Supermodel expérimentale du 13/10/2026
+
+| Variante | Auteur | Origine |
+|---|---|---|
+| Variante ChordKeys Supermodel | Nico Heuser ; intégration 18nelli18 ; adaptation A.V. | MIT, PR87 `770369210cab889fd8642184632d7b9853afd33e` (source Nico `c34e7973139ed8f27c46b57666b66ec84c15f8e1`). Recette propre relogée, HARMONY RAM26 / ID disque33 pour isoler LFO2. Variante expérimentale utilisant le chargeur Banque MIDI, sauvegarde B désactivée. [Note 75](../../notes/75-chord-tg-supermodel.md). |
+| Model-TG Slice varispeed | TinyGregAudio ; roterodamus ; adaptation A.V. | MIT, delta roterodamus `0c567d8c9e3d0c61837e1d91ac2f5c747ea9763f` sur base `70b39dd6787770ebefc7a2d78dea1678ec012679`, adresses exportées conservées. Une tranche choisie au trig, PITCH règle sa vitesse. Expérimental ; [Note 75](../../notes/75-chord-tg-supermodel.md). |
+| Récupération / réadressage Banque MIDI RAM | ce projet | Vingt fragments propres relogés dans les corps disque inertes ; source flash réadressée après recompression. Aucun hook Save/Load B réactivé. Générateurs `gen_midi_bank_reclaim.py` / `gen_midi_bank_rebase.py`, preuves natives et [note 75](../../notes/75-chord-tg-supermodel.md). |
+
