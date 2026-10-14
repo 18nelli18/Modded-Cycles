@@ -1,0 +1,27 @@
+{
+ "core": [
+  "model-tg-st",
+  "scale-gen-st-queued",
+  "lfo-secondary",
+  "scramble-st-gen-queued",
+  "midi-live-both"
+ ],
+ "refs": {
+  "plain-direct": "7b7a6916e505beff84946282eeddfd75555a17da53d866728837d688363ed7da",
+  "plain-0x4016cb1a": "fc24499470d456fd00f34ea75876406bd6a67bbfb975e7812066f70fe4e9433c",
+  "plain-0x4016cb44": "110912c16fb99182c95d1c4cd32071cafcb153c9ce12a4b02d03a78f3f6f30a0",
+  "plain-0x4016cb96": "0bc25803b35d57c1dc140a3505402c37487ea583b11694e24ab3ec97f60e4c0f",
+  "plain-moved-direct": "8759efe557ec7d25255aa7f82be008a3e033e8e27eaf617ab379a44d5f65ebad",
+  "plain-moved-0x4016cb1a": "209cdfc86a0456fe84f9a4d7514ac79584e457920584ca83e5efda58d4e888ea",
+  "plain-moved-0x4016cb44": "343c0c6fc72f7e7e7791c66a1fd47a15cbcd3f86c554289941422fa3a7fb1259",
+  "plain-moved-0x4016cb96": "59588aab9bec606e329a85bae683deaf2739dd4afbcb860728a38c6e46de8957",
+  "chord-direct": "7b7a6916e505beff84946282eeddfd75555a17da53d866728837d688363ed7da",
+  "chord-0x4016cb1a": "fc24499470d456fd00f34ea75876406bd6a67bbfb975e7812066f70fe4e9433c",
+  "chord-0x4016cb44": "110912c16fb99182c95d1c4cd32071cafcb153c9ce12a4b02d03a78f3f6f30a0",
+  "chord-0x4016cb96": "0bc25803b35d57c1dc140a3505402c37487ea583b11694e24ab3ec97f60e4c0f",
+  "chord-moved-direct": "8759efe557ec7d25255aa7f82be008a3e033e8e27eaf617ab379a44d5f65ebad",
+  "chord-moved-0x4016cb1a": "209cdfc86a0456fe84f9a4d7514ac79584e457920584ca83e5efda58d4e888ea",
+  "chord-moved-0x4016cb44": "343c0c6fc72f7e7e7791c66a1fd47a15cbcd3f86c554289941422fa3a7fb1259",
+  "chord-moved-0x4016cb96": "59588aab9bec606e329a85bae683deaf2739dd4afbcb860728a38c6e46de8957"
+ }
+}
