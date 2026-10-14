@@ -289,7 +289,7 @@ de la clé) :
 | `model-tg` | `1985e8e703092b768d32aa2c9b446cb0f95c1f944dc3e206f75973337469f686` | `1317199fbc625c38700344b69ce00496cdee0c8be6fae305843e6373e6394d19` |
 | `6ch-usbup,model-tg` | `fdbf4621e291618a98de64c561a39de59852d5a4dfdb58c927e312467557a839` | `a5a21ac6dfe5697b9e39fa80518a53989af4be8edac3cf9cbe6f1ebddb00ce79` |
 | `model-tg-st,sample-preview-st,macro-tg` | `0a525bc98e88f3e7ebcd7ff6a774bd23c65f315d73c6ffce27c1331632e86aee` | `d700dd1186ac68da5c26daa769612d76fbe5f76efd56f9d56c4225dbc5ff15fc` |
-| `6ch-usbup,model-tg-st,sample-preview-st,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-live-both,lfo-plus,syntakt-tg-sd-cp-toy-bits-swarm-macro` | `5fb25f5b1a588c10e52d3d6a5514c1641369034227106bc214786a3b1a6ae47d` | `3682e474204c242b1285be2f74eaa40a03a4b3885473e937c9f6fd64735f2f3f` |
+| `6ch-usbup,model-tg-st,sample-preview-st,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-live-both,lfo-plus,syntakt-tg-sd-cp-toy-bits-swarm-macro` | *à régénérer (fichier Syntakt, LFO 3/4 par pattern)* | *à régénérer (fichier Syntakt, LFO 3/4 par pattern)* |
 
 ### Animation de démarrage modded-cycles
 
@@ -588,8 +588,9 @@ python3 tools/emu/test_track_filter.py --cycles model-cycles_OS1.13.syx [--quick
 ### LFO 2, 3, 4 (d'après DavidCaruso)
 
 LFO 2, 3, 4 du firmware `Model-TG-VA-DR-v1` de DavidCaruso, réécrits sans ses octets ([note 56](notes/56-ajouts-davidcaruso.md)).
-`60-lfo-plus.json` (`lfo-plus`, avec ou sans Model-TG) : `tools/machines/lfo_plus/lfo_plus.S` (1 844 o) dans sept
-masques 34×34 libérés, mémoire de travail `0x4233f000..0x4233f49b` (§3). Son fichier n'est jamais nécessaire : la
+`60-lfo-plus.json` (`lfo-plus`, avec ou sans Model-TG) : `tools/machines/lfo_plus/lfo_plus.S` (2 612 o) dans les dix
+masques 34×34 libérés qui lui sont réservés, mémoire de travail `0x4233f000..0x4233f49b` et blocs LFO 3/4 des 96 kits
+`0x4233c000..0x4233eef3` (§3, §3.11). Son fichier n'est jamais nécessaire : la
 preuve accepte `--david Model-TG-VA-DR-v1.syx` pour comparer à son binaire, sans l'exiger. Incompatible avec
 `track-filter` (mêmes emplacements du son, §3.6) : `build.py` refuse les deux ensemble.
 
@@ -600,11 +601,11 @@ python3 tools/emu/test_lfo_plus.py --cycles model-cycles_OS1.13.syx [--with mode
 
 | `-t` | MAIN OS patché (SHA-256) |
 |---|---|
-| `lfo-plus` | `61c48e85f74bca0387871df4bd82cd8bfa770759fbfab9dc629ec62e4b9dd26c` |
-| `model-tg,lfo-plus` | `32a8bbfe233fb0440f9ef622b9ee5ede0eaf7e8258d63c10aa5fcc70aad07a61` |
-| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,lfo-plus` | `b9d7de91dfa89e973359556098dd6d94eac1e8a60517d8d7a7cfd4135971d881` |
-| `macro,lfo-plus` | `3400211f0037631364435452b5491898d60b5f4473c215cfb7578d889c1e438a` |
-| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,multiline-browser,lfo-plus` | `7717f596492bf1eb375e9800f7901e1769e9d1d51b0036cd8a5f28c57f5de975` |
+| `lfo-plus` | `6709d4ac19c4d7006305d96a8c22c54466a5ce18f5fd32435b04f9fcde9b5ed8` |
+| `model-tg,lfo-plus` | `6abb8068c0def1853d3c2e5519e0120d005047cd40a1075ae2765d0868404bbd` |
+| `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,lfo-plus` | *à régénérer (fichier Syntakt, LFO 3/4 par pattern)* |
+| `macro,lfo-plus` | `4da513815f1dc0efb6e8baf3ff954d5115922ed7844886db7f806f7279cb8274` |
+| `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,multiline-browser,lfo-plus` | *à régénérer (fichier Syntakt, LFO 3/4 par pattern)* |
 
 ### Écoute d'un pas en pause
 

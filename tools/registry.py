@@ -51,8 +51,10 @@ ENGINE = re.compile(r"^(syntakt-(?:tg-)?)(?:sd|cp|toy|bits|swarm|meter|profile)(
 DECLARED = (
     ("arp", "octet +512 de chaque piste dans le pattern : sens de l'arpège et octaves (inutilisé par l'OS, sauvegardé "
             "avec le pattern)", "notes/32 §4"),
-    ("lfo-plus", "octets +88..+91 de l'enregistrement d'un son : LFO 2 empaqueté (format de DavidCaruso) ; mémoire "
-                 "0x4233f000..0x4233f49b, au-dessus du BSS de l'OS, remise à zéro au premier usage", "notes/56 §3"),
+    ("lfo-plus", "octets +88..+91 de l'enregistrement d'un son : LFO 2 empaqueté (format de DavidCaruso) ; octets "
+                 "+648..+699 de l'enregistrement d'un kit (inutilisés par l'OS) : LFO 3/4 du pattern ; mémoire "
+                 "0x4233c000..0x4233eef3 (blocs LFO 3/4 des 96 kits) et 0x4233f000..0x4233f49b, au-dessus du BSS de "
+                 "l'OS, mises aux défauts / à zéro au premier usage", "notes/56 §3"),
 )
 
 
