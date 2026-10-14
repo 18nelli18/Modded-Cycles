@@ -21,3 +21,7 @@ Hardware confirmed by AveyCole on a Model:Cycles.
 Essais matériels confirmés par AveyCole sur un Model:Cycles.
 
 [Feature and shortcut overview / Fonctions et raccourcis](quick-reference.md)
+
+TEMPO opens the stock global tempo menu from B-side and returns to B when closed. The bank-exit combo acts only from B home. Published on AveyCole’s request; this TEMPO change has emulation/build/transfer verification, with no new hardware result claimed.
+
+TEMPO ouvre le menu global natif depuis B, puis revient à B à sa fermeture. L’accord de sortie B agit uniquement à l’accueil B. Publié à la demande d’AveyCole ; changement TEMPO vérifié en émulation/build/transfert, sans nouvel essai matériel revendiqué.

@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.69",
+  "date": "2026-10-13",
+  "changes": [
+    {
+      "en": "TEMPO opens the stock global tempo menu from MIDI B-side and returns to B-side when closed. The bank-exit combo is limited to the B-side home screen. Published on request after emulation, full-build and transfer checks; hardware confirmation of this TEMPO change is pending.",
+      "fr": "TEMPO ouvre le menu tempo global natif depuis B et revient à B à sa fermeture. L’accord de sortie est limité à l’accueil B. Publié sur demande après vérifications émulation, build complet et transfert ; confirmation matérielle de ce changement TEMPO attendue."
+    },
+    {
+      "en": "Removed the redundant MIDI OUT while THRU checklist choice; Live MIDI OUT + THRU remains. Current 18nelli18 release 1.54 was checked: all its selectable mods are already represented.",
+      "fr": "Choix MIDI OUT pendant THRU redondant retiré ; MIDI OUT + THRU en direct reste. Version 1.54 courante de 18nelli18 vérifiée : tous ses mods sélectionnables sont déjà représentés."
+    }
+  ]
+},
+{
   "version": "1.68",
   "date": "2026-10-13",
   "changes": [

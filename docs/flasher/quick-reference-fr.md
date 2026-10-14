@@ -96,11 +96,6 @@ Les LEDs des locks trigless sont atténuées ; les trigs de note gardent leur lu
 
 - FUNC + TRIG : créer/effacer un pas de locks trigless.
 
-## MIDI OUT pendant THRU
-
-THR combine le MIDI reçu et les notes, CC et horloge du Cycles.
-
-- CONFIG → MIDI → PORTS → OUT/THRU = THR.
 
 ## Basculer MIDI OUT + THRU en direct
 
@@ -179,7 +174,7 @@ Tire les quatre paramètres de la machine courante, ou les valeurs de base des C
 Six voies MIDI M1–M6 jouent en parallèle des pistes audio : notes éditables, live-rec, locks/slides CC, deux LFO MIDI et Sequence Genie. Canaux 7–12 par défaut, réassignables. Toutes les données B sont perdues à extinction ; Save Project sauve seulement A.
 
 - FUNC + SETTINGS + TRACK : entrer/quitter B depuis son écran principal. BACK ferme une fenêtre ; BACK à l’accueil quitte B.
-- Pads : sélectionner/jouer une voie ; FUNC + pad : MIDI on/off. TEMPO reste global.
+- Pads : sélectionner/jouer une voie ; FUNC + pad : MIDI on/off. TEMPO ouvre le menu global natif pour les douze pistes ; BACK ou TEMPO ferme et revient à B.
 - REC : enregistrement grille/clavier. REC + PLAY : live-rec ; nouvel appui PLAY avec REC maintenu : quantifié/non quantifié.
 - TRIG maintenu + tournez DATA : éditer la note. Appuyez DATA pour Note → Vel → Len ; le champ actif est surligné.
 - PAGE : prochaine page de 16 pas disponible. FUNC + PAGE : longueur, vitesse, gamme/tonique et canal MIDI ; PAGE dans ce menu change la longueur par 16 pas.

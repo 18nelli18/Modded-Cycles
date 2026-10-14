@@ -2,7 +2,7 @@
 
 ## Quick reference · 13 October 2026
 
-Install the relevant mods first. Hold the first button, then press/turn the next control. **TRIG** = sequencer step; **pad** = track pad; **DATA** = LEVEL/DATA. **PRESET (MACHINES button)** follows Model-TG’s naming below. RAM-only MIDI Bank hardware tested by AveyCole.
+Install the relevant mods first. Hold the first button, then press/turn the next control. **TRIG** = sequencer step; **pad** = track pad; **DATA** = LEVEL/DATA. **PRESET (MACHINES button)** follows Model-TG’s naming below. RAM-only MIDI Bank previously hardware tested by AveyCole; the new stock TEMPO access is checked in emulation.
 
 **Storage:** B-side sequences, MIDI LFOs and CCs are RAM-only: **lost on power-off**. Save Project saves A-side only. A-side Second LFO saves **speed, multiplier, waveform, destination and depth** with the sound; fade, start phase and mode reset when loading a sound.
 
@@ -35,7 +35,7 @@ M1–M6 play alongside the six audio tracks; default channels **7–12**, assign
 | Chance / conditions | Turn **CHANCE** for the lane’s stock-style menu; **hold TRIG + turn CHANCE** to lock a step. Release the TRIG to close. If CHANCE is assigned to a CC, it controls that CC instead. |
 | Lane copy / clear / paste | **FUNC + REC / PLAY / STOP** = copy / clear / paste. Repeat clear/paste on the same lane to undo. |
 | Step copy / paste | **Hold TRIG + REC** copies; **hold destination TRIG + STOP** pastes, including locks. Popup confirms. |
-| Global tempo and windows | **TEMPO** controls all tracks. Closing B-side windows returns to B-side. |
+| Global tempo and windows | **TEMPO** opens the stock global tempo menu for all twelve tracks. Close with BACK or TEMPO to return to B-side. Closing B-side windows returns to B-side. |
 
 ## MIDI CC knobs, locks, slides and LFOs
 
@@ -59,6 +59,6 @@ M1–M6 play alongside the six audio tracks; default channels **7–12**, assign
 | **Arpeggiator / Chord Keys** | **FUNC + RETRIG** edits Arp direction/Oct or Chord Keys setup. Arp plays held notes with **RETRIG held** or A.On. Chord Keys on a CHORD track: TRIG1–7 = I–VII, 8–14 = octave up, 15–16 = I–II two octaves up. |
 | **MACRO / ACID / Syntakt** | MACRO adds 47 Braids models: SHAPE selects; COLOR/SWEEP shape the sound; CONTOUR sets envelope amount; **FUNC + PITCH** adds lo-fi. ACID: COLOR cutoff, SHAPE resonance, SWEEP env mod, CONTOUR drive, DECAY decay; PUNCH switches saw/square. Overlapping ACID note lengths slide. Syntakt engines are added from your own uploaded Syntakt OS. |
 | **Track Filter / LFO 2, 3, 4** | Optional alternatives to Second LFO. **MACHINES + SWEEP** sets LP/OFF/HP filter; CONTOUR resonance, COLOR/SHAPE envelope. Extra-LFO option cycles pages with repeated **LFO** presses; LFO2 saves with the sound, LFO3/4 remain RAM-only. The flasher enforces conflicts. |
-| **USB audio / MIDI routing** | Six-channel USB sends six separate tracks instead of the stereo mix. MIDI OUT while THRU combines outgoing and incoming MIDI. With the live toggle, select **CONFIG → MIDI → PORTS → OUT/THRU: THR**, then **FUNC + click DATA** to enable/disable the Cycles’ own outgoing MIDI. |
+| **USB audio / MIDI routing** | Six-channel USB sends six separate tracks instead of the stereo mix. The MIDI OUT + THRU combo combines outgoing and incoming MIDI. Select **CONFIG → MIDI → PORTS → OUT/THRU: THR**, then **FUNC + click DATA** to enable/disable the Cycles’ own outgoing MIDI. |
 | **Display and editing** | Three-name browser; long names scroll. **DATA** shows volume, **FUNC + DATA** pan. Dim trigless steps; half-second trig-removal grace; 546 BPM maximum. |
-| **Startup / Select All** | SUPERMODEL by A.V. replaces the startup animation. Select All prefers it over the old Modded Cycles animation, and prefers Model-TG plus Live MIDI OUT + THRU over the conflicting MIDI OUT while THRU option. |
+| **Startup / Select All** | SUPERMODEL by A.V. replaces the startup animation. Select All prefers it over the old Modded Cycles animation, and keeps Model-TG plus Live MIDI OUT + THRU. |
