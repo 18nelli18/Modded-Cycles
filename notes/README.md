@@ -151,3 +151,8 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 |---|---|
 | [75 — ChordKeys et TG dans Supermodel](75-chord-tg-supermodel.md) | Intégration expérimentale PR87 / roterodamus, HARMONY26 isolé de LFO2, banque RAM et espace récupéré sans sauvegarde B. |
 
+
+| [76-trigs-frais-et-copies-lfo.md](76-trigs-frais-et-copies-lfo.md) | **Pas frais A/B et copies LFO2 allégées** : locks/SCRAMBLE retirés à la suppression, douze CC B effacés,476 instructions/bloc en moins avec paramètres/phases identiques ; test séparé, matériel à vérifier |
+
+
+- [77 — Control All Config dans le test Supermodel](77-control-all-config-supermodel.md)
