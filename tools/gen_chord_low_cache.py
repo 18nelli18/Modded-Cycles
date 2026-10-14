@@ -9,9 +9,9 @@ from chord_keys_pr87 import load_stock
 from gen_chord_keys_compat import generate as place
 from gen_chord_independent_payload import generate as isolate
 
-def generate(stock,layout,template,prebuilt):
+def generate(stock,layout,template,prebuilt,start=0x401ab750):
  layout=copy.deepcopy(layout);neutral=copy.deepcopy(template)
- old=min(int(r['at'],16) for r in layout if r['kind']=='bank');start=0x401ab750
+ old=min(int(r['at'],16) for r in layout if r['kind']=='bank')
  for row in layout:
   if row['kind']=='bank':row['at']=hex(int(row['at'],16)-old+start)
  neutral['append']['dest']=hex(start);neutral['append']['size']=16384
