@@ -23,7 +23,7 @@ def main():
  for mask in range(64):
   u.mem_write(r.s['cac_mask'],bytes([mask]))
   for active in range(6):
-   expected=[lane for lane in range(6) if not(mask&(1<<lane)) or lane==active]
+   expected=[lane for lane in range(6) if not(mask&(1<<lane))]
    # cac_skip utilise D0, et non un argument de pile.
    for lane in range(6):
     u.reg_write(mk.UC_M68K_REG_D0,lane);assert r.call('cac_skip')==int(lane not in expected)

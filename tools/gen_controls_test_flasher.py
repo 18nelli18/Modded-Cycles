@@ -7,8 +7,8 @@ aucune sauvegarde MIDI réintroduite, aucun geste ChordKeys modifié.
 import argparse,copy,hashlib,json,pathlib,shutil,tempfile
 import build,ref_mainos
 from chord_keys_pr87 import load_stock
-STAMP='2026-10-13-control-all-copy-test'
-def generate(base,lfo,alt,step,control,stock,catalog,out,references=None):
+STAMP='2026-10-13-controls-baseline-lfo'
+def generate(base,lfo,alt,step,control,stock,catalog,out,references=None,baseline_lfo=False):
  shutil.copytree(base,out,dirs_exist_ok=True)
  refs={control['id']:dict(w=hashlib.sha256(ref_mainos.writes_bytes(control)).hexdigest())}
  for key,t in ((lfo['id'],lfo),(lfo['id']+'-without-bank',alt)):refs[key]=dict(w=hashlib.sha256(ref_mainos.writes_bytes(t)).hexdigest())
@@ -24,7 +24,7 @@ def generate(base,lfo,alt,step,control,stock,catalog,out,references=None):
  (out/'source/controls-step-reset.json').write_text(json.dumps(step,ensure_ascii=False,indent=1)+'\n')
  (out/'source/controls-control-all.json').write_text(json.dumps(control,ensure_ascii=False,indent=1)+'\n')
  shutil.copyfile(pathlib.Path(__file__).parent/'machines/control_all_config/LICENSE',out/'LICENSE-Control-All-Config.txt')
- texts={'en':{'label':'Control All Config','short':'Choose which audio tracks follow TRACK + knob Control All.','desc':'Hold TRACK and tap TRIG 1–6 to exclude or include the corresponding A-side track. Lit trigs follow Control All; the active track always follows. Choices reset after power-off. Experimental integration by durchgemacht.','shortcuts':['TRACK + TRIG 1–6: exclude/include a track.','TRACK + knob: Control All on included tracks. The active track always follows.']},'fr':{'label':'Control All Config','short':'Choisir les pistes audio concernées par TRACK + potentiomètre.','desc':'Tenir TRACK et appuyer sur TRIG 1–6 pour exclure ou inclure la piste A correspondante. Trigs allumés : pistes incluses ; la piste active suit toujours. Choix réinitialisés au redémarrage. Intégration expérimentale de durchgemacht.','shortcuts':['TRACK + TRIG 1–6 : exclure/inclure une piste.','TRACK + potentiomètre : Control All sur les pistes incluses. La piste active suit toujours.']}}
+ texts={'en':{'label':'Control All Config','short':'Choose which audio tracks follow TRACK + knob Control All.','desc':'Hold TRACK and tap TRIG 1–6 to exclude or include the corresponding A-side track. Lit trigs follow Control All. Any track can be excluded, including the active track. Choices reset after power-off. Experimental integration by durchgemacht.','shortcuts':['TRACK + TRIG 1–6: exclude/include a track.','TRACK + knob: Control All on included tracks. The active track can also be excluded.']},'fr':{'label':'Control All Config','short':'Choisir les pistes audio concernées par TRACK + potentiomètre.','desc':'Tenir TRACK et appuyer sur TRIG 1–6 pour exclure ou inclure la piste A correspondante. Trigs allumés : pistes incluses ; la piste active peut aussi rester exclue. Choix réinitialisés au redémarrage. Intégration expérimentale de durchgemacht.','shortcuts':['TRACK + TRIG 1–6 : exclure/inclure une piste.','TRACK + potentiomètre : Control All sur les pistes incluses. La piste active peut aussi rester exclue.']}}
  app=(out/'app.js').read_text();at=app.index('window.MCFlasherApp =');app=app[:at]+'for(const L of ["en","fr"])FEAT[L]["control-all-config"]='+json.dumps(texts,ensure_ascii=False)+'[L];\n'+app[at:];(out/'app.js').write_text(app)
  tail='\n// Contrôles expérimentaux : source note76 ; ChordKeys inchangé.\n(()=>{const lfo='+json.dumps(lfo,ensure_ascii=False)+';const alt='+json.dumps(alt,ensure_ascii=False)+';const writes='+json.dumps(banks[0]['writes'])+';const stepSymbols='+json.dumps(step['symbols'])+';const refs='+json.dumps(refs)+';const control='+json.dumps(control,ensure_ascii=False)+';\n'
  tail+='''window.MC_TWEAKS.tweaks.push(control);window.MCFlasherApp.REF_MODS[control.id]=refs[control.id];
@@ -39,6 +39,7 @@ for(const key of Object.keys(window.MCFlasherApp.REF_MAINOS))if(key.split('+').s
 for(const id of ['lfo-secondary','midi-bank-bundle']){const f=window.MC_TWEAKS.features.find(x=>x.id===id);if(f)f.status='experimental';}
 window.MCFlasherApp.applyLang(document.documentElement.lang||'en');
 })();\n'''
+ if baseline_lfo:tail+="\nwindow.MC_TWEAKS.features.find(f=>f.id==='lfo-secondary').status='tested';window.MCFlasherApp.applyLang(document.documentElement.lang||'en');\n"
  (out/'bundle.js').write_text((out/'bundle.js').read_text()+tail)
  if references:
   (out/'source/controls-reference-check.json').write_text(json.dumps(references,ensure_ascii=False,indent=1)+'\n')
@@ -51,7 +52,7 @@ window.MCFlasherApp.applyLang(document.documentElement.lang||'en');
 Includes the published ChordKeys/roterodamus integration, with its original pad
 behavior, all existing choices and MIDI protocols. New experimental changes:
 
-- Control All Config: TRACK + TRIG 1–6 excludes/includes audio tracks; lit trigs follow. The selected track always follows. TRACK + knob applies Control All; choices reset at startup.\n- MIDI Bank selected: removing an A-side grid trig clears all native locks and
+- Control All Config: TRACK + TRIG 1–6 excludes/includes audio tracks; lit trigs follow. The selected track can also be excluded. TRACK + knob applies Control All; choices reset at startup.\n- MIDI Bank selected: removing an A-side grid trig clears all native locks and
   SCRAMBLE/slide markers. B-side deletion verified to clear all twelve CC locks,
   chance/retrig/arp/nudge and slide data; fresh note C5, velocity 100, length1.
 - Second LFO: equivalent frame-copy code uses 476 fewer executed instructions
@@ -64,17 +65,20 @@ pattern used to reproduce timing trouble. Check notes, MIDI and active LFOs.
 Inclut ChordKeys/roterodamus publié, avec ses gestes de pads d’origine, tous les
 choix et protocoles MIDI. Nouveautés expérimentales :
 
-- Control All Config : TRACK + TRIG 1–6 exclut/inclut les pistes audio ; trigs allumés = incluses. Piste active toujours incluse. TRACK + potentiomètre applique Control All ; choix réinitialisés au démarrage.\n- Banque MIDI cochée : effacer un trig grille A supprime ses locks natifs et
+- Control All Config : TRACK + TRIG 1–6 exclut/inclut les pistes audio ; trigs allumés = incluses. Piste active aussi excluable. TRACK + potentiomètre applique Control All ; choix réinitialisés au démarrage.\n- Banque MIDI cochée : effacer un trig grille A supprime ses locks natifs et
   marques SCRAMBLE/slide. En B, suppression des 12 locks CC, chance/retrig/arp/nudge
   et slide vérifiée ; nouveau pas C5, vélocité100, longueur1.
 - Second LFO : copies identiques avec 476 instructions exécutées en moins par
   bloc audio. Aucun pourcentage CPU ni correction complète de surcharge annoncé.
 - Banque MIDI en RAM. Clear piste + Undo LFO encore en développement.
 ''')
+ if baseline_lfo:
+  p=out/'index.html';p.write_text(p.read_text().replace('lighter LFO 2 frame copies','previous LFO 2 processing restored').replace('copies LFO2 allégées','traitement LFO2 précédent restauré'))
+  p=out/'ABOUT.md';text=p.read_text();start=text.index('- Second LFO:');end=text.index('- MIDI Bank remains',start);text=text[:start]+'- Second LFO: previous published processing restored after a hardware slowdown report. The experimental memory-to-memory copies are disabled.\n'+text[end:];start=text.index('- Second LFO :');end=text.index('- Banque MIDI en RAM',start);text=text[:start]+'- Second LFO : traitement publié précédent restauré après ralentissement signalé sur matériel ; copies expérimentales désactivées.\n'+text[end:];p.write_text(text)
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--base-dir',required=True);p.add_argument('--lfo-json',required=True);p.add_argument('--lfo-alt-json',required=True);p.add_argument('--step-json',required=True);p.add_argument('--control-all-json',required=True);p.add_argument('--catalog',required=True);p.add_argument('--references');p.add_argument('--cycles',required=True);p.add_argument('--output',required=True);p.add_argument('--check',action='store_true');a=p.parse_args();base=pathlib.Path(a.base_dir);target=pathlib.Path(a.output);lfo=json.loads(pathlib.Path(a.lfo_json).read_text());alt=json.loads(pathlib.Path(a.lfo_alt_json).read_text());step=json.loads(pathlib.Path(a.step_json).read_text());control=json.loads(pathlib.Path(a.control_all_json).read_text());stock=load_stock(a.cycles);catalog=json.loads(pathlib.Path(a.catalog).read_text())['tweaks'];references=json.loads(pathlib.Path(a.references).read_text()) if a.references else None
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--base-dir',required=True);p.add_argument('--lfo-json',required=True);p.add_argument('--lfo-alt-json',required=True);p.add_argument('--step-json',required=True);p.add_argument('--control-all-json',required=True);p.add_argument('--catalog',required=True);p.add_argument('--references');p.add_argument('--cycles',required=True);p.add_argument('--output',required=True);p.add_argument('--check',action='store_true');p.add_argument('--baseline-lfo',action='store_true');a=p.parse_args();base=pathlib.Path(a.base_dir);target=pathlib.Path(a.output);lfo=json.loads(pathlib.Path(a.lfo_json).read_text());alt=json.loads(pathlib.Path(a.lfo_alt_json).read_text());step=json.loads(pathlib.Path(a.step_json).read_text());control=json.loads(pathlib.Path(a.control_all_json).read_text());stock=load_stock(a.cycles);catalog=json.loads(pathlib.Path(a.catalog).read_text())['tweaks'];references=json.loads(pathlib.Path(a.references).read_text()) if a.references else None
  with tempfile.TemporaryDirectory() as d:
-  out=pathlib.Path(d)/'page' if a.check else target;generate(base,lfo,alt,step,control,stock,catalog,out,references)
+  out=pathlib.Path(d)/'page' if a.check else target;generate(base,lfo,alt,step,control,stock,catalog,out,references,a.baseline_lfo)
   if a.check:
    for f in out.rglob('*'):
     if f.is_file():assert f.read_bytes()==(target/f.relative_to(out)).read_bytes(),str(f)

@@ -11,7 +11,7 @@ sans validation matérielle. Cette intégration reste expérimentale.
 
 - TRACK + TRIG 1–6 exclut/inclut les pistes audio correspondantes.
 - TRACK + potentiomètre conserve Control All sur les pistes incluses.
-- La piste active suit toujours. Les LEDs affichent cette inclusion effective.
+- La piste active peut également être exclue. Les LEDs affichent le masque choisi.
 - Exclusion également pour MACHINES, destination LFO, profondeur, PUNCH/GATE.
 - Choix en RAM, remis à toutes les pistes incluses au démarrage.
 
@@ -34,9 +34,11 @@ handlers de touches et de LEDs. Aucun de ces sept hooks n’est utilisé par
 la sélection actuelle. Les adresses et anciens octets sont contrôlés contre
 l’OS officiel 1.13 fourni par l’utilisateur.
 
-Adaptation visible : le handler LED utilise `cac_skip`, afin que la piste
-active reste allumée même si son bit d’exclusion est défini. Le comportement
-de paramètres amont incluait déjà toujours cette piste.
+Adaptations visibles : à la demande du propriétaire après le premier essai
+matériel, `cac_skip` ne conserve plus l’exception amont qui incluait toujours
+la piste active. Le handler LED utilise ce même filtre, donc une piste active
+exclue reste éteinte. Le helper conserve sa réservation de 52 octets avec du
+padding après RTS ; aucun symbole ou autre placement ne change.
 
 `test_control_all_config.py` exécute les cinq boucles natives et les handlers
 placés pour 64 masques × six pistes actives. Callbacks de paramètres, objets
@@ -48,7 +50,17 @@ et sans ChordKeys/USB6. Le transfert simulé vérifie les blocs et le conteneur.
 
 ## Publication
 
-Page `flasher-controls-test`, build `2026-10-13-control-all-copy-test`.
+Page `flasher-controls-test`, build `2026-10-13-controls-baseline-lfo`.
 Recette et références intégrales publiées dans son dossier `source`.
 Le flasher principal ne change pas. Pas de sauvegarde MIDI réintroduite.
 Le gain CPU réel et le comportement matériel de Control All restent à tester.
+
+Premier test matériel : fonctionnalité confirmée par le propriétaire, hormis
+l’impossibilité d’exclure la piste active. Révision ci-dessus à vérifier sur
+matériel ; toutes les boucles natives, dont le masque toutes pistes exclues,
+sont revérifiées en émulation.
+
+La même révision restaure le traitement LFO publié après le signalement de
+ralentissement du premier test (note76). Cette restauration ne constitue
+pas encore une preuve que les copies LFO étaient la cause ; test matériel
+comparatif et audit des réservations Control All en cours.

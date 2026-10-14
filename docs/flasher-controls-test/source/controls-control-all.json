@@ -9,6 +9,7 @@
  "requires": [],
  "conflicts": [],
  "upstream_commit": "429563bf13feb05edd0c7510efbc9f719b3741ff",
+ "active_track_excludable": true,
  "symbols": {
   "cac_held": "0x4019062b",
   "cac_keys": "0x40192c28",
@@ -110,7 +111,7 @@
   {
    "off": 1465464,
    "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
-   "new": "720012394019062a010167242f004eb9400cf8662f004eb94000eb902e804eb940012412588f221fb280670470014e7570004e75"
+   "new": "720012394019062a0101670470014e7570004e750000000000000000000000000000000000000000000000000000000000000000"
   },
   {
    "off": 1472720,
@@ -205,7 +206,7 @@
   }
  ],
  "description": [
-  "TRACK + TRIG1–6 choisit les pistes Control All ; piste active toujours incluse.",
-  "MIT durchgemacht et Claude ; choix RAM, reset au démarrage ; LED actif corrigé."
+  "TRACK + TRIG1–6 choisit les pistes Control All ; piste active aussi excluable.",
+  "MIT durchgemacht et Claude ; choix RAM, reset au démarrage ; LED selon masque sans exception active."
  ]
 }

@@ -16,7 +16,20 @@ def source():
  text=SRC.read_text().replace('.section .cac_a,"ax"','.section .cac_state,"ax"').replace('.section .cac_b,"ax"','')
  for name in ('cac_skip',*('cac_loop'+str(i) for i in range(1,6)),'cac_keys','cac_leds'):
   text=text.replace('.globl  '+name,'.section .'+name+',"ax"\n        .globl  '+name,1)
- # L'actif suit toujours : son LED doit aussi refléter ce contrat.
+ # Demande A.V. : aucun passe-droit pour la piste active. Garder les adresses.
+ begin=text.index('cac_skip:\n');end=text.index('\n\n\n| Each loop entry',begin)
+ text=text[:begin]+'''cac_skip:
+        moveq   #0,%d1
+        move.b  cac_mask,%d1
+        btst    %d0,%d1
+        beq.s   1f
+        moveq   #1,%d0
+        rts
+1:      moveq   #0,%d0
+        rts
+        .space 52-(.-cac_skip),0
+'''+text[end:]
+ # Le LED reflète l'inclusion, également pour la piste active.
  old='''1:      moveq   #0,%d1
         move.b  cac_mask,%d1
         moveq   #2,%d0
@@ -73,7 +86,7 @@ def generate(stock,catalog):
  for at,old,name in VT:
   assert stock[at-build.BASE:at-build.BASE+4]==struct.pack('>I',old)
   writes.append(dict(off=at-build.BASE,old=struct.pack('>I',old).hex(),new=struct.pack('>I',syms[name]).hex()))
- t=dict(id='control-all-config',order=46,name='Choix des pistes Control All',device='Model:Cycles',os='1.13',section=3,status='experimental',requires=[],conflicts=[],upstream_commit=PIN,symbols={k:hex(v) for k,v in sorted(syms.items()) if k.startswith('cac_')},writes=sorted(writes,key=lambda w:w['off']),placement=[dict(section=n,at=hex(a),size=z,mask=hex(m)) for n,a,z,m in chosen],description=['TRACK + TRIG1–6 choisit les pistes Control All ; piste active toujours incluse.','MIT durchgemacht et Claude ; choix RAM, reset au démarrage ; LED actif corrigé.'])
+ t=dict(id='control-all-config',order=46,name='Choix des pistes Control All',device='Model:Cycles',os='1.13',section=3,status='experimental',requires=[],conflicts=[],upstream_commit=PIN,active_track_excludable=True,symbols={k:hex(v) for k,v in sorted(syms.items()) if k.startswith('cac_')},writes=sorted(writes,key=lambda w:w['off']),placement=[dict(section=n,at=hex(a),size=z,mask=hex(m)) for n,a,z,m in chosen],description=['TRACK + TRIG1–6 choisit les pistes Control All ; piste active aussi excluable.','MIT durchgemacht et Claude ; choix RAM, reset au démarrage ; LED selon masque sans exception active.'])
  build.apply_writes(stock,catalog+[t]);return t
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--cycles',required=True);p.add_argument('--catalog',required=True);p.add_argument('--output',required=True);p.add_argument('--check',action='store_true');a=p.parse_args();stock=load_stock(a.cycles);t=generate(stock,json.loads(pathlib.Path(a.catalog).read_text())['tweaks']);text=json.dumps(t,ensure_ascii=False,indent=1)+'\n';out=pathlib.Path(a.output)

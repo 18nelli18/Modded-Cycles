@@ -74,3 +74,15 @@ avec/sans ChordKeys ; CRC/conteneur et transfert simulé 689 blocs conformes.
 Les références intégrales sont dans `source/controls-reference-check.json`.
 Les nouveautés restent expérimentales. Le Clear piste avec reset des deux
 LFO et Undo commun est encore une tâche séparée.
+
+## Retour matériel et retrait des copies
+
+Le propriétaire signale un ralentissement majeur, même avec les machines
+stock, et une charge culminant au-dessus de109 % sur le premier test.
+Les copies mémoire→mémoire sont donc retirées du test de contrôle ; les deux
+recettes LFO reviennent exactement à leur version publiée antérieure.
+Le compteur d’instructions émulées ne prouvait pas le coût en cycles réel.
+La cause reste à isoler ; ne pas réutiliser l’optimisation ni le candidat OFF
+qui en dépend avant résolution. Le flasher principal n’avait pas reçu ces
+optimisations. La révision du test porte le build
+`2026-10-13-controls-baseline-lfo`.
