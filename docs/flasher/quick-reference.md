@@ -64,3 +64,5 @@ M1–M6 play alongside the six audio tracks; default channels **7–12**, assign
 | **Startup / Select All** | SUPERMODEL by A.V. replaces the startup animation. Select All prefers it over the old Modded Cycles animation, and keeps Model-TG plus Live MIDI OUT + THRU. |
 
 ChordKeys requires Model-TG. MIDI Bank and extra synth machines are optional for ChordKeys; checking it does not select all mods.
+
+Control All Config: hold TRACK + TRIG1–6 to include/exclude each audio track, including the selected track. TRACK + knob changes included tracks. Choices reset on power-off.

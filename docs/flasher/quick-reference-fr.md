@@ -191,3 +191,5 @@ Six voies MIDI M1–M6 jouent en parallèle des pistes audio : notes éditables,
 
 
 ChordKeys nécessite Model-TG. Banque MIDI et machines supplémentaires sont facultatives pour ChordKeys ; sa sélection ne coche plus tous les mods.
+
+Control All Config : TRACK + TRIG1–6 inclut/exclut chaque piste audio, y compris la piste active. TRACK + potentiomètre agit sur les pistes incluses. Choix réinitialisés au redémarrage.
