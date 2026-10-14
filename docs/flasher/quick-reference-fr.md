@@ -189,3 +189,5 @@ Six voies MIDI M1–M6 jouent en parallèle des pistes audio : notes éditables,
 - SETTINGS + PAGE : Sequence Genie. SETTINGS + TRACK : SCRAMBLE des CC assignés.
 - LFO : LFO MIDI 1 ; nouvel appui : LFO MIDI 2. Dst → DATA → parcourir → DATA confirme ; BACK annule. Clavier jouable.
 
+
+ChordKeys nécessite Model-TG. Banque MIDI et machines supplémentaires sont facultatives pour ChordKeys ; sa sélection ne coche plus tous les mods.

@@ -62,3 +62,5 @@ M1–M6 play alongside the six audio tracks; default channels **7–12**, assign
 | **USB audio / MIDI routing** | Six-channel USB sends six separate tracks instead of the stereo mix. The MIDI OUT + THRU combo combines outgoing and incoming MIDI. Select **CONFIG → MIDI → PORTS → OUT/THRU: THR**, then **FUNC + click DATA** to enable/disable the Cycles’ own outgoing MIDI. |
 | **Display and editing** | Three-name browser; long names scroll. **DATA** shows volume, **FUNC + DATA** pan. Dim trigless steps; half-second trig-removal grace; 546 BPM maximum. |
 | **Startup / Select All** | SUPERMODEL by A.V. replaces the startup animation. Select All prefers it over the old Modded Cycles animation, and keeps Model-TG plus Live MIDI OUT + THRU. |
+
+ChordKeys requires Model-TG. MIDI Bank and extra synth machines are optional for ChordKeys; checking it does not select all mods.

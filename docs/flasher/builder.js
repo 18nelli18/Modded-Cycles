@@ -764,6 +764,8 @@ function build(raw, device, chosen, opts = {}) {
   let full = patched, fullDirty = dirty;
   for (const t of apps) {
     const ap = t.append;
+    const target=parseInt(ap.at,16),end=BASE+full.length;
+    if(t.id==='chord-keys-supermodel'&&ap.zero_pad_from==='0x401aa140'&&target===0x401f8f76&&end>=0x401aa140&&end<target&&target<=END_LIMIT){const padding=new Uint8Array(target-end);full=concat(full,padding);fullDirty=concat(fullDirty,new Uint8Array(padding.length).fill(1));}
     if (BASE + full.length !== parseInt(ap.at, 16)) throw new Error("l'image ne finit pas où le tweak l'attend");
     const payload = buildPayload(ap, opts.syntakt, mainOs);
     if (refOf(t) && hex(sha256(payload)) !== refOf(t).p) throw new Error(`${t.id} : charge utile differente de la reference`);
