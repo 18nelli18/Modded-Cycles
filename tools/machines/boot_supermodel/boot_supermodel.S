@@ -85,6 +85,25 @@ ba_task:
     moveq #CREDIT_Y,%d0
     moveq #CREDIT_H,%d3
     bsr .Lblit
+.ifdef EDITION_ENABLED
+    movel %d7,%d0
+    subil #EDITION_START,%d0
+    bmi .Lpresent
+    lsrl #1,%d0
+    addql #1,%d0
+    cmpil #EDITION_COUNT,%d0
+    ble .Ledition_count
+    moveq #EDITION_COUNT,%d0
+.Ledition_count:
+    lea edition_ends,%a0
+    moveq #0,%d5
+    moveb %a0@(-1,%d0:l),%d5
+    lea edition_cols,%a1
+    moveq #EDITION_X,%d1
+    moveq #EDITION_Y,%d0
+    moveq #EDITION_H,%d3
+    bsr .Lblit
+.endif
 .Lpresent:
     pea SEM_TICK
     jsr SEM_WAIT

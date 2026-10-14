@@ -12,7 +12,14 @@ from test_sdvintage import main_os_from_syx
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 W,H,NF=128,64,80
 TITLE='SUPERMODEL';CREDIT='by A.V.'
+EDITION=''
+
 FONT={
+'T':['11111','00100','00100','00100','00100','00100','00100'],
+'9':['01110','10001','10001','01111','00001','00001','01110'],
+'0':['01110','10001','10011','10101','11001','10001','01110'],
+'I':['11111','00100','00100','00100','00100','00100','11111'],
+'N':['10001','11001','11001','10101','10011','10011','10001'],
 'S':['01111','10000','10000','01110','00001','00001','11110'],
 'U':['10001','10001','10001','10001','10001','10001','01110'],
 'P':['11110','10001','10001','11110','10000','10000','10000'],
@@ -55,6 +62,10 @@ def frames():
      for yy in range(height):image[y+yy][x+xx]=text[xx]>>(15-yy)&1
   if f>=LINE_START:
    for x in range(TITLE_X,TITLE_X+min((f-LINE_START)*6+1,len(TC))):image[LINE_Y][x]=1
+  if EDITION and f>=56:
+   ec,ee=columns(EDITION,1);x=(W-len(ec))//2;count=ee[min((f-56)//2+1,len(ee))-1]
+   for xx in range(count):
+    for yy in range(7):image[54+yy][x+xx]=ec[xx]>>(15-yy)&1
   result.append(image)
  return result
 
@@ -64,8 +75,12 @@ def compile_anim():
  with tempfile.TemporaryDirectory() as tmp:
   p=pathlib.Path(tmp);(p/'supermodel.inc').write_text(''.join(f'.equ {k},{v}\n' for k,v in consts.items()))
   data=''
+  if EDITION:
+   ec,ee=columns(EDITION,1);consts.update(EDITION_ENABLED=1,EDITION_X=(W-len(ec))//2,EDITION_Y=54,EDITION_H=7,EDITION_START=56,EDITION_COUNT=len(EDITION))
+   (p/'supermodel.inc').write_text(''.join(f'.equ {k},{v}\n' for k,v in consts.items()))
   for name,cols,ends in (('title',TC,TE),('credit',CC,CE)):
    data+=name+'_ends: .byte '+','.join(map(str,ends))+'\n.balign 2\n'+name+'_cols: .word '+','.join(map(str,cols))+'\n'
+  if EDITION:data+='edition_ends: .byte '+','.join(map(str,ee))+'\n.balign 2\nedition_cols: .word '+','.join(map(str,ec))+'\n'
   (p/'supermodel_data.inc').write_text(data)
   subprocess.run([cross+'as','-march=cfv4e','-I',str(p),str(ROOT/'tools/machines/boot_supermodel/boot_supermodel.S'),'-o',str(p/'a.o')],check=True)
   subprocess.run([cross+'ld','-T',str(ROOT/'tools/machines/boot_anim/boot_anim.ld'),'--no-warn-rwx-segments','-o',str(p/'a.elf'),str(p/'a.o')],check=True)

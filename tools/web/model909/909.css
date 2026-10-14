@@ -1,0 +1,17 @@
+/* Panneau autonome inspiré des couleurs et des commandes TR-909. */
+:root,html[data-theme="dark"]{--bg:#deddd4;--paper:#eeede5;--ink:#282a2b;--muted:#686a67;--line:#b9b9ae;--red:#f26d26;--ctl:#555955;--ctl-ink:#fff;--ctl-edge:#313633;--bad:#a92f25;--ok:#326847}
+body{background:var(--bg)!important;color:var(--ink)!important;font-family:Arial,Helvetica,sans-serif}
+.wrap.fl{max-width:980px;margin:30px auto 50px;padding:30px 38px 36px;background:var(--paper);border:1px solid #b7b7aa;border-radius:7px;box-shadow:0 12px 35px #35362e20,inset 0 2px 0 #fff}
+.top{max-width:980px;padding:16px 0 0}.top .brand,.top nav,.theme-btn,.notice,.ver,.quick-reference,.super-save-note,.edition-eyebrow,.super-tagline,.build-steps,footer,.fl>details,#step-choose{display:none!important}
+.top{justify-content:flex-end}.lang{margin-left:auto}
+.fl-head{display:block!important;padding:0 0 26px!important;border-bottom:7px solid var(--red);margin-bottom:28px}
+.fl-head h1{font-family:Arial,Helvetica,sans-serif;font-size:clamp(30px,5vw,52px)!important;line-height:1!important;letter-spacing:-2px;text-transform:uppercase;margin:0}
+.fl-head h1 span{display:block;font-size:18px!important;letter-spacing:1.4px;color:#6b6d65;margin-top:11px}
+.fl>section{max-width:none}.step{border-top:1px solid var(--line);padding:25px 0 28px}.step>header{margin-bottom:18px}.step h2{font-size:20px;letter-spacing:.3px}
+.num{border-radius:3px;background:#686d65;border:1px solid #373b36;box-shadow:0 3px 0 #363b35;width:30px;height:30px}.step.done .num{background:var(--red);color:white}
+.sample-slots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}.sample-slots label{display:grid;align-content:start;gap:10px;font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:700;padding:16px 12px;border-top:3px solid #72786e;background:#e2e3da;border-radius:3px}
+.sample-slots input{font-size:11px;letter-spacing:0;text-transform:none;max-width:100%;color:#41443d;min-width:0}.sample-slots input::file-selector-button{display:block;margin-bottom:9px;border:1px solid #424840;border-radius:3px;background:#656d60;color:white;padding:9px 11px;cursor:pointer}
+.sample-slots output{font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;min-height:28px;overflow-wrap:anywhere}#samples-status{font-size:13px;line-height:1.5;color:var(--muted);margin:16px 0 0}
+.drop{background:#e2e3da;border:1px dashed #92988a;border-radius:4px;padding:22px}.drop.loaded{border-color:#447052}.btn.primary{background:var(--red)!important;border:1px solid #bf4d11;color:white!important;border-radius:3px;box-shadow:0 3px 0 #c34f11}.btn.secondary{border-radius:3px;background:#d5d8cb;border:1px solid #9fa593;color:#343831}.seg button{font-size:14px}.seg{gap:16px}.hint,.howto,.check,.summary,.missing,.panel-text{font-size:14px}.summary{background:#e2e3da;border-color:#c2c6b7}.check{line-height:1.5}.step-body .portrow{flex-wrap:wrap}
+@media(max-width:700px){.wrap.fl{margin:12px;padding:22px}.sample-slots{grid-template-columns:repeat(2,minmax(0,1fr))}.top{padding:12px 24px 0}.fl-head h1{letter-spacing:-1px}}
+@media(max-width:380px){.sample-slots{grid-template-columns:1fr}.wrap.fl{padding:18px}}

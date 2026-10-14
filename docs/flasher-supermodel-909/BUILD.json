@@ -1,0 +1,7 @@
+{
+  "samples_hosted": false,
+  "sample_capacity_bytes": 180000,
+  "sample_rate": 32000,
+  "voice_hardware_tested": true,
+  "browser_upload_combination_hardware_tested": false
+}
