@@ -40,8 +40,10 @@ image 2091499 octets. Test DOM : quatre uploads, OS officiel, firmware signé, a
 cache invalidé par fichier manquant/invalide. Démarrage : 80 images pixel exact, contrat minuterie/sémaphore
 stock et écritures bornées. Copie/clear complet de la nouvelle charge vérifiés séparément.
 
-[MATÉRIEL] A.V. a validé les voix de la construction privée précédente. La nouvelle combinaison
-avec upload navigateur, Control All Config, affichage des LEDs et animation 909 reste expérimentale.
+[MATÉRIEL — 14 octobre 2026] A.V. confirme cette édition complète testée sur son Model:Cycles et
+demande sa publication comme page officielle dédiée. Upload WAV, profil fixe, Control All Config,
+affichage des LEDs et animation 909 sont marqués testés. La page principale reste inchangée ;
+la page d’accueil donne maintenant accès directement à Supermodel 909.
 
 ## Sources
 
