@@ -328,11 +328,11 @@ FEATURES = [
         "id": "lfo-plus",
         "cat": "sound",
         "label": "LFO 2, 3, 4",
-        "desc": "Trois LFO de plus par piste : sur la page LFO, chaque nouvel appui sur [LFO] passe a LFO 2, 3, 4. "
-                "Vitesse, multiplicateur, forme, destination et profondeur propres ; fondu, phase et mode communs "
-                "avec LFO 1. LFO 2 est sauve avec le son et se p-locke, LFO 3 et 4 servent au live. Avec ou sans "
-                "Model-TG.",
-        "status": "tested",
+        "desc": "Trois LFO de plus par piste : sur la page LFO, chaque appui bref sur [LFO] passe a LFO 2, 3, 4 ; "
+                "[LFO] tenue + un potard regle la destination du LFO affiche. Vitesse, multiplicateur, forme, "
+                "destination et profondeur propres ; fondu, phase et mode communs avec LFO 1. LFO 2 est sauve avec "
+                "le son et se p-locke, LFO 3 et 4 avec le pattern. Avec ou sans Model-TG.",
+        "status": "experimental",       # appui bref / tenue, LFO 3/4 par pattern : a essayer (notes/56 §3.11)
         "credit": {"kind": "based", "who": "DavidCaruso"},
         "excludes": ["track-filter"],   # memes k 28..31 et octets +88..+91 du son (notes/56 §3.6)
         "variants": [
