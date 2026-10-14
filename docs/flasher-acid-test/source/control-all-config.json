@@ -1,0 +1,212 @@
+{
+ "id": "control-all-config",
+ "order": 46,
+ "name": "Choix des pistes Control All",
+ "device": "Model:Cycles",
+ "os": "1.13",
+ "section": 3,
+ "status": "tested",
+ "requires": [],
+ "conflicts": [],
+ "upstream_commit": "429563bf13feb05edd0c7510efbc9f719b3741ff",
+ "active_track_excludable": true,
+ "symbols": {
+  "cac_held": "0x4019062b",
+  "cac_keys": "0x40192c28",
+  "cac_leds": "0x40167cd0",
+  "cac_loop1": "0x401618c6",
+  "cac_loop2": "0x401853f0",
+  "cac_loop3": "0x40186030",
+  "cac_loop4": "0x40168c8c",
+  "cac_loop5": "0x40185ab4",
+  "cac_mask": "0x4019062a",
+  "cac_skip": "0x40166078"
+ },
+ "writes": [
+  {
+   "off": 108666,
+   "old": "2f022f034e92",
+   "new": "4ef940168c8c"
+  },
+  {
+   "off": 119202,
+   "old": "20522f032f02",
+   "new": "4ef9401853f0"
+  },
+  {
+   "off": 119544,
+   "old": "20522668007c",
+   "new": "4ef9401618c6"
+  },
+  {
+   "off": 124882,
+   "old": "205248780020",
+   "new": "4ef940186030"
+  },
+  {
+   "off": 664472,
+   "old": "2f022f054e94",
+   "new": "4ef940185ab4"
+  },
+  {
+   "off": 704118,
+   "old": "40192ba4",
+   "new": "4016bfc8"
+  },
+  {
+   "off": 705412,
+   "old": "401904b4",
+   "new": "40172220"
+  },
+  {
+   "off": 710084,
+   "old": "40185f48",
+   "new": "4016bfc8"
+  },
+  {
+   "off": 710144,
+   "old": "40185968",
+   "new": "40172220"
+  },
+  {
+   "off": 710540,
+   "old": "40185308",
+   "new": "4016bfc8"
+  },
+  {
+   "off": 726912,
+   "old": "40168c4c",
+   "new": "4014b4e4"
+  },
+  {
+   "off": 728350,
+   "old": "40167c50",
+   "new": "4014a660"
+  },
+  {
+   "off": 730292,
+   "old": "40165fec",
+   "new": "4014b364"
+  },
+  {
+   "off": 737126,
+   "old": "40161880",
+   "new": "4014a550"
+  },
+  {
+   "off": 1051368,
+   "old": "40024078",
+   "new": "40192c28"
+  },
+  {
+   "off": 1051544,
+   "old": "40023d8c",
+   "new": "40167cd0"
+  },
+  {
+   "off": 1447110,
+   "old": "ffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0",
+   "new": "20024eb9401660784a80660c20522668007c4ef94001d6fe52827006b08266e04ef94001d754"
+  },
+  {
+   "off": 1465464,
+   "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+   "new": "720012394019062a0101670470014e7570004e750000000000000000000000000000000000000000000000000000000000000000"
+  },
+  {
+   "off": 1472720,
+   "old": "ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffff",
+   "new": "2f2f000c2f2f000c2f2f000c4eb940023d8c4fef000c4feffff448d7040c246f00184eb9400cfaf42600740020024eb9401660784a8067047001600270024879404a8c682f00200252802f002f034eb940005f864fef0010700122025281e3a8819252827006b08266c24cd7040c4fef000c4e75"
+  },
+  {
+   "off": 1476748,
+   "old": "ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffffffc0ffff",
+   "new": "20024eb9401660784a80660c2f022f034e924ef94001ac8052827006b08266e04ef94001ac8a"
+  },
+  {
+   "off": 1593328,
+   "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc000",
+   "new": "20024eb9401660784a80660c20522f032f024ef94001d5a852827006b08266e04ef94001d5d8"
+  },
+  {
+   "off": 1595060,
+   "old": "fffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000",
+   "new": "20024eb9401660784a80660c2f022f054e944ef9400a279e528206840000000c7006b08266da4ef9400a27e2"
+  },
+  {
+   "off": 1596464,
+   "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc000",
+   "new": "200b4eb9401660784a80660c2052487800204ef94001ebd8528b7006b08b66e04ef94001ebfe"
+  },
+  {
+   "off": 1638950,
+   "old": "fffffffe0000",
+   "new": "434143310000"
+  },
+  {
+   "off": 1648680,
+   "old": "c0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc000",
+   "new": "206f00082028000c7202b081660842394019062b606e721090817205b0816264222800100801000067360281000000286642720012394019062a014113c14019062a720012394019062b01c113c14019062b2f2f00044eb9400760ba588f6020720012394019062b0181671813c14019062b600c720012394019062b0101670470014e754ef940024078"
+  }
+ ],
+ "placement": [
+  {
+   "section": ".cac_keys",
+   "at": "0x40192c28",
+   "size": 138,
+   "mask": "0x40192ba4"
+  },
+  {
+   "section": ".cac_leds",
+   "at": "0x40167cd0",
+   "size": 116,
+   "mask": "0x40167c50"
+  },
+  {
+   "section": ".cac_skip",
+   "at": "0x40166078",
+   "size": 52,
+   "mask": "0x40165fec"
+  },
+  {
+   "section": ".cac_loop5",
+   "at": "0x40185ab4",
+   "size": 44,
+   "mask": "0x40185968"
+  },
+  {
+   "section": ".cac_loop1",
+   "at": "0x401618c6",
+   "size": 38,
+   "mask": "0x40161880"
+  },
+  {
+   "section": ".cac_loop2",
+   "at": "0x401853f0",
+   "size": 38,
+   "mask": "0x40185308"
+  },
+  {
+   "section": ".cac_loop3",
+   "at": "0x40186030",
+   "size": 38,
+   "mask": "0x40185f48"
+  },
+  {
+   "section": ".cac_loop4",
+   "at": "0x40168c8c",
+   "size": 38,
+   "mask": "0x40168c4c"
+  },
+  {
+   "section": ".cac_state",
+   "at": "0x40190626",
+   "size": 6,
+   "mask": "0x401904b4"
+  }
+ ],
+ "description": [
+  "TRACK + TRIG1–6 choisit les pistes Control All ; piste active aussi excluable.",
+  "MIT durchgemacht et Claude ; choix RAM, reset au démarrage ; LED selon masque sans exception active."
+ ]
+}
