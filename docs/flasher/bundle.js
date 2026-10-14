@@ -1410,3 +1410,19 @@ window.MCFlasherApp.applyLang(document.documentElement.lang||'en');})();
 const previous=window.MCMainClearResolve,oldRefs={},active={};for(const id of ['midi-bank-bundle','chord-keys-supermodel']){oldRefs[id]=a.REF_MODS[id];const r={};for(const f of ['w','p'])Object.defineProperty(r,f,{get:()=>active[id]?.[f]||oldRefs[id]?.[f]});a.REF_MODS[id]=r;}
 window.MCMainClearResolve=out=>{out=previous?previous(out):out;for(const id of Object.keys(active))delete active[id];if(!out.some(t=>t.id==='syntakt-tg-sd-cp-toy-bits-swarm-macro-acid'))return out;return out.map(t=>{if(!oldRefs[t.id]||t.append?.at!=='0x401f8f76')return t;const n=JSON.parse(JSON.stringify(t));n.append.at='0x401f8f8a';let hits=0;for(const w of n.writes)if(w.new.includes('401f8f76')){if(w.off!==0x1907a4-0x400)throw Error('Unexpected ACID source hook');w.new=w.new.replace('401f8f76','401f8f8a');hits++;}if(hits!==1)throw Error('Missing ACID source hook');const k=t.id==='midi-bank-bundle'?(a.isSelected('chord-keys')?'chord':'plain'):'prototype-full-engine';active[t.id]={...oldRefs[t.id],w:data.moved_refs[k].w,p:oldRefs[t.id].p};return n;});};
 const f=window.MC_TWEAKS.features.find(f=>f.id==='acid');f.status='tested';f.credit={kind:'by',who:'Kevin Shallvari / Modded-Cycles contributors',repo:'Kevin-Shallvari/Modded-Cycles'};f.license='LICENSE-Kevin-Shallvari.txt';a.applyLang(document.documentElement.lang||'en');})();
+
+// Banque MIDI exclusive à l’édition909 : aucune sélection ni charge Banque sur main.
+(()=>{
+ const a=window.MCFlasherApp,tw=window.MC_TWEAKS,box=document.getElementById('feat-midi-bank-bundle');
+ if(box&&box.checked){box.checked=false;box.dispatchEvent(new Event('change',{bubbles:true}));}
+ tw.features=tw.features.filter(f=>f.id!=='midi-bank-bundle');
+ tw.tweaks=tw.tweaks.filter(t=>!t.id.startsWith('midi-bank-bundle'));
+ const previous=window.MCMainClearResolve;
+ window.MCMainClearResolve=out=>(previous?previous(out):out).filter(t=>!t.id.startsWith('midi-bank-bundle'));
+ const f=tw.features.find(f=>f.id==='chord-keys'),d=Object.getOwnPropertyDescriptor(f,'desc');
+ Object.defineProperty(f,'desc',{configurable:true,get:()=>d.get.call(f)
+ .replace('This experimental placement uses the MIDI Bank bundle; selecting it selects the compatible full bundle. MIDI Bank data remains RAM-only.','')
+ .replace('Ce placement expérimental utilise le bundle Banque MIDI ; le cocher sélectionne le bundle complet compatible. Les données de Banque MIDI restent en RAM.','')
+ .replace('The existing MIDI Bank integration is preserved.','').replace('Intégration Banque existante conservée.','')});
+ a.applyLang(document.documentElement.lang||'en');
+})();
