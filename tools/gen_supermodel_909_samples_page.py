@@ -27,9 +27,10 @@ html=html.replace('<script src="app.js','<script src="samples.js"></script>\n<sc
 html=html.replace('</head>','<link rel="stylesheet" href="909.css?v=2026-10-14-supermodel-909-local-samples"></head>')
 html=html.replace("<h1>Supermodel 909<br><span>A.V.'s Edition</span></h1>","<h1>SUPERMODEL 909<span>by A.V. · 909 EDITION</span></h1>")
 html=re.sub(r'<script src="edition.js\?[^>]+></script>','',html)
-html=html.replace('2026-10-14-supermodel-909-local-samples','2026-10-14-supermodel-909-upload-fixed')
+html=html.replace('2026-10-14-supermodel-909-local-samples','2026-10-14-supermodel-909-ready')
 (out/'index.html').write_text(html)
-app=(base/'app.js').read_text().replace('Model:Cycles Flasher','Supermodel 909 — A.V.’s Edition')
+app=(base/'app.js').read_text().replace('Model:Cycles Flasher','Supermodel 909 — A.V.’s Edition').replace('Flasher Model:Cycles','Supermodel 909 — Édition A.V.')
+app=app.replace('Select at least one mod, or switch to “Official firmware”.','Choose all four WAV samples (step 1).').replace('Cochez au moins un mod, ou passez sur « Firmware officiel ».','Choisissez les quatre samples WAV (étape 1).')
 needle='    const sha = window.MCBuilder.hex(window.MCBuilder.sha256(raw));'
 app=app.replace(needle,needle+'''\n    if (sha !== window.MC_TWEAKS.device.stock_syx_sha256) throw new Error(document.documentElement.lang === "fr" ? "Choisissez l’OS officiel Model:Cycles 1.13." : "Choose the official Model:Cycles OS 1.13.");\n    st.machine = "cyc"; st.mode = "mods";''',1)
 app=app.replace('function chosenLabels() {','function chosenLabels() {\n  if (window.MC909Labels) return window.MC909Labels;',1)
