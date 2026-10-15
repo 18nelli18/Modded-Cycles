@@ -2867,7 +2867,7 @@ Object.assign(T.en, { select_all: "Select all", select_all_note: "Selects compat
 Object.assign(T.fr, { select_all: "Tout sélectionner", select_all_note: "Sélectionne les mods compatibles en conservant Model-TG et MIDI OUT + THRU en direct. Les mods inclus restent dans Model-TG." });
 function selectAllCompatible() {
   for (const f of features()) selOf(f).on = false;
-  const preferred = ["supermodel-performance", "midi-live-both", "scale-gen", "lfo-secondary", "supermodel-startup"].map(featById).filter(Boolean);
+  const preferred = ["sample-wizard", "chord-keys", "wave-supermodel", "supermodel-performance", "midi-live-both", "scale-gen", "lfo-secondary", "supermodel-startup"].map(featById).filter(Boolean);
   for (const f of preferred) setOn(f, true);
   for (const f of features()) {
     if (f.id === "model-tg" || f.requires === "model-tg") continue;
@@ -3880,8 +3880,21 @@ for(const L of ["en","fr"])FEAT[L]["midi-bank-bundle"].desc += " " + {"en": "FUN
 for(const L of ["en","fr"])FEAT[L]["control-all-config"]={"en": {"label": "Control All Config", "short": "Choose which audio tracks follow TRACK + knob Control All.", "desc": "Hold TRACK and tap TRIG 1–6 to exclude or include the corresponding A-side track. Lit trigs follow Control All. Any track can be excluded, including the active track. Choices reset after power-off. Hardware-tested integration by durchgemacht.", "shortcuts": ["TRACK + TRIG 1–6: exclude/include a track.", "TRACK + knob: Control All on included tracks. The active track can also be excluded."]}, "fr": {"label": "Control All Config", "short": "Choisir les pistes audio concernées par TRACK + potentiomètre.", "desc": "Tenir TRACK et appuyer sur TRIG 1–6 pour exclure ou inclure la piste A correspondante. Trigs allumés : pistes incluses ; la piste active peut aussi rester exclue. Choix réinitialisés au redémarrage. Intégration vérifiée sur matériel de durchgemacht.", "shortcuts": ["TRACK + TRIG 1–6 : exclure/inclure une piste.", "TRACK + potentiomètre : Control All sur les pistes incluses. La piste active peut aussi rester exclue."]}}[L];
 for(const L of ["en","fr"])FEAT[L].acid.desc={"en": "ACID bass with Kevin Shallvari’s retrigger click fix. Slides are preserved. Retrigger fade-in hardware tested.", "fr": "Basse ACID avec le correctif de clic au retrig de Kevin Shallvari. Slides conservés. Fondu au retrig vérifié sur matériel."}[L];
 FEAT.en['chord-keys'].label='ChordKeys';FEAT.fr['chord-keys'].label='ChordKeys';
+
+FEAT.en['sample-wizard']={"label": "Sample Wizard", "short": "Independent sampler with Slice varispeed; works with the other Supermodel options.", "desc": "Adds Wizard as machine 7. Each machine and feature remains separately selectable. Includes sample playback modes, sample browser and Slice varispeed. Upload your own samples with Elektron Transfer in SMP mode; return to CYC before a firmware upgrade.", "shortcuts": ["FUNC + MACHINES: sample browser.", "SETTINGS + MACHINES: playback mode. SETTINGS + PUNCH: mode options.", "Slice: notes choose the slice; PITCH changes its speed/pitch."]};
+FEAT.fr['sample-wizard']={"label": "Sample Wizard", "short": "Sampler autonome avec Slice varispeed ; compatible avec les options Supermodel.", "desc": "Ajoute Wizard comme machine 7. Machines et fonctions restent s\u00e9lectionnables s\u00e9par\u00e9ment. Modes de lecture, navigateur et Slice varispeed inclus. Transf\u00e9rer vos samples en mode SMP ; revenir \u00e0 CYC avant une mise \u00e0 jour.", "shortcuts": ["FUNC + MACHINES : navigateur.", "SETTINGS + MACHINES : mode de lecture. SETTINGS + PUNCH : options.", "Slice : notes = tranche ; PITCH = vitesse/hauteur."]};
+GUIDE_OF['sample-wizard']='sample-wizard';
+FEAT.en['track-filter']={label:'Per-track filter (Wizard)',short:'Shared four-pole low-pass cutoff and resonance for synth/drum tracks.',desc:'Hold MACHINES and turn SWEEP for cutoff or CONTOUR for resonance. Available with Sample Wizard and Second LFO in Select All. Synth/drum tracks use Wizard’s ladder filter; Wizard tracks retain their own filter. Cutoff fully open with resonance zero bypasses processing. Supports native LFO/CC control, parameter locks and sound saves. This shared version replaces the older LP/OFF/HP filter: it has no high-pass or separate filter-envelope controls.',shortcuts:['MACHINES + SWEEP: cutoff (0–127; 127 = fully open).','MACHINES + CONTOUR: resonance (0–127).','Hold a TRIG while adjusting to parameter-lock the filter. CC74: cutoff; CC71: resonance.']};
+FEAT.fr['track-filter']={label:'Filtre par piste (Wizard)',short:'Passe-bas ladder quatre pôles : coupure et résonance des pistes synth/drum.',desc:'Tenir MACHINES et tourner SWEEP pour la coupure ou CONTOUR pour la résonance. Compatible Wizard et Second LFO dans Tout sélectionner. Les pistes Wizard conservent leur filtre. Coupure maximale et résonance nulle : bypass. Contrôle LFO/CC, locks et sauvegarde du son natifs. Cette variante remplace LP/OFF/HP ; pas de passe-haut ni enveloppe de filtre séparée.',shortcuts:['MACHINES + SWEEP : coupure (0–127 ; 127 = ouvert).','MACHINES + CONTOUR : résonance (0–127).','Tenir un TRIG pour verrouiller le filtre. CC74 : coupure ; CC71 : résonance.']};
+
+FEAT.en['scale-gen'].short='Generate notes now, or queue them for the next page / full loop.';
+FEAT.en['scale-gen'].desc='SETTINGS + PAGE opens Sequence Genie. Generate is the first row; Queue at is directly beneath it. Click DATA to edit Queue at, turn to choose Loop (default) or Page, then click to finish. Loop waits for the selected track to wrap to step 1. Page waits for the next 16-step boundary (17, 33, 49, or step 1). Viewing another page does not trigger it. Stopped generation remains immediate. Works on stock and Sample Wizard tracks; Wizard keeps its sample and playback mode.';
+FEAT.fr['scale-gen'].short='Génération immédiate ou différée à la prochaine page / boucle entière.';
+FEAT.fr['scale-gen'].desc='SETTINGS + PAGE ouvre Genie. Generate est en première ligne, Queue at juste dessous. Cliquer DATA, choisir Loop (défaut) ou Page, puis confirmer. Loop attend le retour au pas 1 de la piste choisie ; Page attend le prochain début de page (17, 33, 49 ou 1). Changer la page affichée ne déclenche rien. À l’arrêt, génération immédiate. Compatible stock et Wizard ; sample et mode conservés.';
+
+FEAT.en['sample-preview'].desc='Preview samples in the Sample Wizard browser. Requires Sample Wizard; uses browser hooks that cannot be combined with WAVE or ChordKeys in this test.'; FEAT.fr['sample-preview'].desc='Préécoute dans le navigateur Sample Wizard. Exige Wizard ; ses hooks navigateur ne se combinent pas à WAVE ou ChordKeys dans ce test.';
 window.MCFlasherApp = { state: st, REF_MAINOS, REF_MODS, REF_SAMPLES_ON_CYCLES, REF_CYCLES_ON_SAMPLES, REF_SAMPLES_BACK, loadOs,
-  loadSamples, loadSyntakt, setMode, setSmpDir, setMachine, setMethod, applyLang, render,
+  loadSamples, loadSyntakt, chosenEngines, setMode, setSmpDir, setMachine, setMethod, applyLang, render,
   chosenTweaks, chosenLabels, CATS, isSelected: isOn };
 
 // Présentation seule : sélection et vérifications firmware restent natives.
@@ -3910,4 +3923,5 @@ function wireSupermodel() {
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
 else init();
 })();
+
 
