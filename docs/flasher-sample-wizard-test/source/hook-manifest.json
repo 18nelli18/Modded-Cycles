@@ -1,0 +1,297 @@
+[
+  {
+    "at": "0x40000530",
+    "size": 6,
+    "purpose": "boot : BSS et tampon filesystem pr\u00e9serv\u00e9s"
+  },
+  {
+    "at": "0x400147a5",
+    "size": 1,
+    "purpose": "septi\u00e8me machine uniquement"
+  },
+  {
+    "at": "0x400148ab",
+    "size": 1,
+    "purpose": "septi\u00e8me machine uniquement"
+  },
+  {
+    "at": "0x400148b3",
+    "size": 1,
+    "purpose": "septi\u00e8me machine uniquement"
+  },
+  {
+    "at": "0x4001bbd3",
+    "size": 1,
+    "purpose": "septi\u00e8me machine uniquement"
+  },
+  {
+    "at": "0x4001bbe5",
+    "size": 1,
+    "purpose": "septi\u00e8me machine uniquement"
+  },
+  {
+    "at": "0x4001bbf3",
+    "size": 1,
+    "purpose": "septi\u00e8me machine uniquement"
+  },
+  {
+    "at": "0x4005a79d",
+    "size": 1,
+    "purpose": "septi\u00e8me machine uniquement"
+  },
+  {
+    "at": "0x400a25e1",
+    "size": 1,
+    "purpose": "septi\u00e8me machine uniquement"
+  },
+  {
+    "at": "0x400a26e9",
+    "size": 1,
+    "purpose": "septi\u00e8me machine uniquement"
+  },
+  {
+    "at": "0x400a7df5",
+    "size": 1,
+    "purpose": "septi\u00e8me machine uniquement"
+  },
+  {
+    "at": "0x4010e5e6",
+    "size": 1,
+    "purpose": "septi\u00e8me machine uniquement"
+  },
+  {
+    "at": "0x400a2615",
+    "size": 3,
+    "purpose": "noms des sept machines"
+  },
+  {
+    "at": "0x40117931",
+    "size": 3,
+    "purpose": "ic\u00f4nes des sept machines"
+  },
+  {
+    "at": "0x4001bbe8",
+    "size": 4,
+    "purpose": "liste des machines"
+  },
+  {
+    "at": "0x4004df5c",
+    "size": 6,
+    "purpose": "descripteur sampler / stock inchang\u00e9"
+  },
+  {
+    "at": "0x4004df76",
+    "size": 6,
+    "purpose": "descripteur sampler / LED param\u00e8tres"
+  },
+  {
+    "at": "0x400a7da8",
+    "size": 8,
+    "purpose": "pr\u00e9traitement sampler, chemin natif stock"
+  },
+  {
+    "at": "0x400a7e02",
+    "size": 30,
+    "purpose": "rendu sampler, chemin natif stock"
+  },
+  {
+    "at": "0x4008171e",
+    "size": 6,
+    "purpose": "rejeu prologue note-on"
+  },
+  {
+    "at": "0x400fd148",
+    "size": 4,
+    "purpose": "Start/End fins sur sampler seulement"
+  },
+  {
+    "at": "0x4001413e",
+    "size": 6,
+    "purpose": "valeurs par d\u00e9faut sampler"
+  },
+  {
+    "at": "0x400081ce",
+    "size": 6,
+    "purpose": "encodeur menu sampler, fallback natif"
+  },
+  {
+    "at": "0x400a2790",
+    "size": 4,
+    "purpose": "restauration machine sauf sampler"
+  },
+  {
+    "at": "0x400a2834",
+    "size": 4,
+    "purpose": "restauration machine sauf sampler"
+  },
+  {
+    "at": "0x4005a6a6",
+    "size": 6,
+    "purpose": "param\u00e8tres LFO sampler born\u00e9s"
+  },
+  {
+    "at": "0x4005a6b6",
+    "size": 6,
+    "purpose": "param\u00e8tres LFO sampler born\u00e9s"
+  },
+  {
+    "at": "0x4005a6d0",
+    "size": 6,
+    "purpose": "param\u00e8tres LFO sampler born\u00e9s"
+  },
+  {
+    "at": "0x4005afa0",
+    "size": 6,
+    "purpose": "codec son : \u00e9tat sampler uniquement"
+  },
+  {
+    "at": "0x4005b054",
+    "size": 6,
+    "purpose": "codec son : \u00e9tat sampler uniquement"
+  },
+  {
+    "at": "0x4005aecc",
+    "size": 6,
+    "purpose": "codec son : \u00e9tat sampler uniquement"
+  },
+  {
+    "at": "0x4010dfb8",
+    "size": 56,
+    "purpose": "Attack du descripteur sampler, invisible dans les listes stock"
+  },
+  {
+    "at": "0x401005bc",
+    "size": 4,
+    "purpose": "forme onde Start/End sampler, fallback natif"
+  },
+  {
+    "at": "0x40059872",
+    "size": 6,
+    "purpose": "sortie native et horloge / capture sampler"
+  },
+  {
+    "at": "0x40056610",
+    "size": 8,
+    "purpose": "st\u00e9r\u00e9o sampler sans FX TG"
+  },
+  {
+    "at": "0x4005982a",
+    "size": 6,
+    "purpose": "gain side sampler sans retrig TG"
+  },
+  {
+    "at": "0x40084b8e",
+    "size": 6,
+    "purpose": "transfert de samples CYC/SMP"
+  },
+  {
+    "at": "0x40084c14",
+    "size": 6,
+    "purpose": "transfert de samples CYC/SMP"
+  },
+  {
+    "at": "0x40032aee",
+    "size": 6,
+    "purpose": "transfert de samples CYC/SMP"
+  },
+  {
+    "at": "0x40084be2",
+    "size": 4,
+    "purpose": "identit\u00e9 du transfert"
+  },
+  {
+    "at": "0x4009249a",
+    "size": 6,
+    "purpose": "r\u00e9ception des messages sample SMP"
+  },
+  {
+    "at": "0x40094c9a",
+    "size": 8,
+    "purpose": "r\u00e9ponse aux messages sample SMP"
+  },
+  {
+    "at": "0x4007240c",
+    "size": 6,
+    "purpose": "raccourcis sampler seulement"
+  },
+  {
+    "at": "0x400551a6",
+    "size": 8,
+    "purpose": "capture note au trig sans slides TG"
+  },
+  {
+    "at": "0x40055bfa",
+    "size": 8,
+    "purpose": "capture note au trig sans slides TG"
+  },
+  {
+    "at": "0x4008173c",
+    "size": 6,
+    "purpose": "capture note live sans Scale Lock TG"
+  },
+  {
+    "at": "0x400a6732",
+    "size": 6,
+    "purpose": "chargement sample depuis navigateur"
+  },
+  {
+    "at": "0x400a6754",
+    "size": 4,
+    "purpose": "r\u00e9sultat chargement sample"
+  },
+  {
+    "at": "0x400a6816",
+    "size": 6,
+    "purpose": "verrou sample via Sound Pool"
+  },
+  {
+    "at": "0x400a659e",
+    "size": 6,
+    "purpose": "entr\u00e9e sample dans navigateur"
+  },
+  {
+    "at": "0x4010e5e6",
+    "size": 1,
+    "purpose": "borne machine sampler du param\u00e8tre Algorithm"
+  },
+  {
+    "at": "0x400ff9cc",
+    "size": 4,
+    "purpose": "service clavier natif puis UI sampler prot\u00e9g\u00e9"
+  },
+  {
+    "at": "0x400ff9b8",
+    "size": 4,
+    "purpose": "service UI sampler prot\u00e9g\u00e9 IPL0"
+  },
+  {
+    "at": "0x400ffa78",
+    "size": 4,
+    "purpose": "service UI sampler prot\u00e9g\u00e9 IPL0"
+  },
+  {
+    "at": "0x40103070",
+    "size": 4,
+    "purpose": "service UI sampler prot\u00e9g\u00e9 IPL0"
+  },
+  {
+    "at": "0x401031b4",
+    "size": 4,
+    "purpose": "service UI sampler prot\u00e9g\u00e9 IPL0"
+  },
+  {
+    "at": "0x40107e18",
+    "size": 4,
+    "purpose": "service UI sampler prot\u00e9g\u00e9 IPL0"
+  },
+  {
+    "at": "0x400792f2",
+    "size": 4,
+    "purpose": "cache : code exclu LRU"
+  },
+  {
+    "at": "0x400792bc",
+    "size": 4,
+    "purpose": "cache : liens pr\u00e9c\u00e9dents s\u00fbrs"
+  }
+]
