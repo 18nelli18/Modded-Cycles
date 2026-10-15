@@ -1,9 +1,9 @@
-# Sample Wizard — full Supermodel integration test
+# Sample Wizard — selectable integration test
 
-Experimental combined profile. Standalone Sample Wizard was verified by the user; the combination awaits hardware testing. The page supplies recipes and MIT code, and requires the user’s official Model:Cycles 1.13 and Syntakt 1.42 files. No user samples or firmware images are supplied.
+Copy of the main flasher checklist, with Sample Wizard added and the Model-TG option removed. All machine choices are independent; Syntakt OS is requested only if a Syntakt voice is selected. Select All picks the compatible choices. Track Filter retains the sampler codec incompatibility inherited from Model-TG. Sample Preview is adapted to Wizard and shares browser/cave space with WAVE and ChordKeys, so those choices remain alternatives.
 
-Sampler source: TinyGregAudio/Model-TG 70b39dd6787770ebefc7a2d78dea1678ec012679 (MIT). Slice varispeed: roterodamus/Model-TG 0c567d8c9e3d0c61837e1d91ac2f5c747ea9763f (MIT). WAVE and ACID fade fix: Kevin Shallvari; see the adjacent WAVE/Kevin licenses. ChordKeys: Nico Heuser; see LICENSE-ChordKeys.txt. MACRO/Braids and ACID/Open303 license texts are included. Control All Config: durchgemacht. Integration and own wizard-hat bitmaps: A.V. fork.
+256 machine combinations are generated and compacted without changing their content. References cover eight clear/performance/ChordKeys states and the UI flag states. The browser composes exact guarded recipes; it does not accept unchecked modified code. No firmware images or user samples are supplied. The private compression fixtures used for emulation are not published.
 
-The assembler retains unused TG routines but installs no Model-TG master FX or replacement stock-voice DSP. Local slide and scale-lock hooks are enabled for the integration profile. The sampler and WAVE share transfer identity/browser routing, while machine buffers remain separate.
+Native proofs cover minimal/full startup, preserving Wizard and ChordKeys code, native cache links and all31 CHORD wavetable pointers. Browser proofs cover real checklist selections, excluding Syntakt/MACRO/ACID/WAVE independently, signed containers and per-recipe references. Hardware verification remains pending for this combined integration.
 
-The ChordKeys bootstrap reserves the new complete Wizard code range; seven filesystem cache blocks are excluded from the LRU. Syntakt code is extracted only in the client from the user's official file. Source scripts reference development fixtures and are supplied for review; the flasher contains generated recipes and guarded hashes.
+Sampler: TinyGregAudio/Model-TG 70b39dd (MIT); Slice varispeed: roterodamus/Model-TG 0c567d8 (MIT). WAVE and ACID fade fix: Kevin Shallvari. ChordKeys: Nico Heuser. MACRO: Braids/pichenettes; ACID: Open303/Robin Schmidt. Control All Config: durchgemacht. See adjacent license files. Integration and upright wizard hat with five-point stars: A.V. fork.

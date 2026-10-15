@@ -11,14 +11,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-15-wizard-full-integration">
-<link rel="stylesheet" href="style.css?v=2026-10-15-wizard-full-integration">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-15-wizard-selectable-options">
+<link rel="stylesheet" href="style.css?v=2026-10-15-wizard-selectable-options">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
-<style>#mach-q,#mach-q+.seg,#tab-samples,#smp-dir-cyc,#smp-dir-smp,#smp-dir-back{display:none!important}.super-save-note{display:none!important}</style></head>
+</head>
 <body data-page="flasher" class="supermodel">
 <script>
   // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-  window.MC_BUILD = "2026-10-15-wizard-full-integration";
+  window.MC_BUILD='2026-10-15-wizard-selectable-options';
   window.addEventListener("error", function (e) {
     var b = document.getElementById("errbar");
     if (!b) return;
@@ -41,18 +41,18 @@
   <button type="button" class="theme-btn" aria-label="Dark mode"><svg class="moon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 12.2A7 7 0 0 1 7.8 3.5a7 7 0 1 0 8.7 8.7z"/></svg><svg class="sun" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="3.6"/><path d="M10 1.8v2M10 16.2v2M1.8 10h2M16.2 10h2M4.2 4.2l1.4 1.4M14.4 14.4l1.4 1.4M4.2 15.8l1.4-1.4M14.4 5.6l1.4-1.4"/></svg></button>
 </header>
 
-
-<main class="wrap fl"><p class="alert"><span data-l="en"><strong>Full integration hardware test · Model-TG not required.</strong> This fixed profile includes Sample Wizard (upright hat and five-point stars), all six stock machines, five Syntakt machines, MACRO, corrected ACID, WAVE, ChordKeys, Second LFO, Sequence Genie, SCRAMBLE, slides/scale lock/mutes/preview and the compatible main-page controls. Main and earlier tests are unchanged. Supply official Cycles OS 1.13 and Syntakt OS 1.42. Samples and wavetables are uploaded separately. <a href="guide.html">Instructions</a>.</span><span data-l="fr"><strong>Test matériel de l'intégration complète · Model-TG non requis.</strong> Profil fixe : Sample Wizard (chapeau droit et étoiles à cinq branches), six machines stock, cinq machines Syntakt, MACRO, ACID corrigée, WAVE, ChordKeys, Second LFO, Sequence Genie, SCRAMBLE, slides/scale lock/mutes/preview et contrôles compatibles de main. Main et anciens tests inchangés. Fournir les OS officiels Cycles 1.13 et Syntakt 1.42. Samples et tables d'ondes transférés séparément. <a href="guide.html">Instructions</a>.</span></p>
+<div class="notice" role="note"><span data-l="en">MIDI OUT Bank is now exclusive to the <a href="../flasher-supermodel-909/">Supermodel 909 edition</a> due to performance issues in the standard Supermodel build.</span><span data-l="fr">La Banque MIDI OUT est désormais exclusive à l’<a href="../flasher-supermodel-909/">édition Supermodel 909</a>, en raison de problèmes de performance dans Supermodel standard.</span></div>
+<main class="wrap fl"><p class="alert"><span data-l="en"><strong>Experimental Sample Wizard integration — full selectable checklist.</strong> Choose Sample Wizard and any compatible options below, or use Select all. Model-TG is omitted. Syntakt is optional: its official OS file is needed only when you select its machines. Main is unchanged.</span><span data-l="fr"><strong>Test expérimental Sample Wizard — checklist complète et sélectionnable.</strong> Choisir Wizard et les options compatibles, ou Tout sélectionner. Model-TG est retiré. Syntakt reste facultatif : son OS officiel n'est demandé que pour ses machines. Main inchangé.</span></p><p class="alert"><span data-l="en">New: <strong>FUNC + PLAY</strong> in grid recording clears the selected track and both its LFOs; outside grid recording it clears the pattern sequencers and both LFOs on all six tracks. Repeat to Undo. Sequence Genie opens with a half-length intro, with Generate as the first row. LFO clear needs Model-TG off, or Model-TG selected together with ChordKeys. The Genie copy/paste fix is hardware tested and works with Model-TG on or off.</span><span data-l="fr">Nouveau : <strong>FUNC + PLAY</strong> en enregistrement grille efface la piste choisie et ses deux LFO ; hors enregistrement grille, il efface les séquenceurs du pattern et les deux LFO des six pistes. Répétez pour annuler. Sequence Genie s’ouvre avec une intro deux fois plus courte, Générer en première ligne. Le clear LFO demande Model-TG décoché, ou Model-TG sélectionné avec ChordKeys. Le correctif copier/coller Genie est testé sur machine, avec ou sans Model-TG.</span></p><p class="alert"><span data-l="en"><strong>WAVE is hardware tested. It makes no sound until you load a wavetable.</strong> <a href="convert.html">Open the wavetable converter / USB uploader</a> · <a href="AV-WAVE-Morph.wav" download>Download the original starter wavetable</a>. Convert the starter WAV, send it to the Cycles, then on your WAVE track press PRESET, choose it and press YES. WAVE and Model-TG cannot be selected together.</span><span data-l="fr"><strong>WAVE est testé sur machine. Aucun son sans table d’ondes chargée.</strong> <a href="convert.html">Ouvrir le convertisseur / envoi USB</a> · <a href="AV-WAVE-Morph.wav" download>Télécharger la table de départ originale</a>. Convertissez ce WAV, envoyez-le au Cycles, puis sur la piste WAVE appuyez sur PRESET, choisissez-le et appuyez sur YES. WAVE et Model-TG ne se combinent pas.</span></p><p class="alert"><span data-l="en">Hardware-tested independent support. Sequence Genie, SCRAMBLE, ChordKeys, slides and Scale Lock work without Model-TG. Select All leaves Model-TG off; the sampler remains optional.</span><span data-l="fr">Support autonome testé sur machine. Genie, SCRAMBLE, ChordKeys, slides et Scale Lock fonctionnent sans Model-TG. Tout sélectionner laisse TG décoché ; le sampler reste facultatif.</span></p>
   <div class="fl-head">
-    <p class="edition-eyebrow">A.V.'S SUPERMODEL EDITION</p><h1>Sample Wizard<br><span>Full Supermodel Test</span></h1>
+    <p class="edition-eyebrow">A.V.'S SUPERMODEL EDITION</p><h1>Modded Cycles:<br><span>A.V.'s Supermodel Edition.</span></h1>
     <div>
-      <p class="super-tagline"><span data-l="en">Independent sampler · Slice varispeed · Your own samples.</span><span data-l="fr">Sampler autonome · Slice varispeed · Vos propres samples.</span></p>
+      <p class="super-tagline"><span data-l="en">Choose your mods. Build your firmware. Make it your machine.</span><span data-l="fr">Choisissez vos mods. Créez votre firmware. Personnalisez votre machine.</span></p>
       <p class="ver"><span data-l="en">Version</span><span data-l="fr">Version</span> <span data-rel="version">1.0</span> · <a href="../#version"><span data-l="en">what's new</span><span data-l="fr">nouveautés</span></a> · <a href="guide.html"><span data-l="en">guide</span><span data-l="fr">guide</span></a></p>
     </div>
   </div>
 
-  
-
+  <div class="alert super-save-note"><span data-l="en">A-side LFO 2 saves its first five settings with the sound; fade, start and mode reset on load.</span><span data-l="fr">Le LFO 2 côté A sauve ses cinq premiers réglages avec le son ; fondu, phase et mode reviennent aux défauts au chargement.</span></div>
+<p class="quick-reference"><a data-l="en" href="quick-reference.md" download>Download the feature and shortcut overview</a><a data-l="fr" href="quick-reference-fr.md" download>Télécharger le résumé des fonctions et raccourcis</a></p>
 <div id="errbar" class="alert bad" hidden></div>
   <div id="compat" class="alert bad" role="alert" hidden></div>
 
@@ -272,14 +272,14 @@
 </footer>
 
 <!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
-<script src="../assets/release.js?v=2026-10-15-wizard-full-integration"></script>
-<script src="../assets/site.js?v=2026-10-15-wizard-full-integration"></script>
-<script src="builder.js?v=2026-10-15-wizard-full-integration"></script>
-<script src="tweaks.js?v=2026-10-15-wizard-full-integration"></script>
-<script src="flasher.js?v=2026-10-15-wizard-full-integration"></script>
-<script src="app.js?v=2026-10-15-wizard-full-integration"></script>
-<script src="bundle.js?v=2026-10-15-wizard-full-integration"></script>
-</body>
+<script src="../assets/release.js?v=2026-10-15-wizard-selectable-options"></script>
+<script src="../assets/site.js?v=2026-10-15-wizard-selectable-options"></script>
+<script src="builder.js?v=2026-10-15-wizard-selectable-options"></script>
+<script src="tweaks_v2.js?v=2026-10-15-wizard-selectable-options"></script>
+<script src="flasher.js?v=2026-10-15-wizard-selectable-options"></script>
+<script src="app_v2.js?v=2026-10-15-wizard-selectable-options"></script>
+<script src="bundle.js?v=2026-10-15-wizard-selectable-options"></script>
+<script src="catalogue.js?v=2026-10-15-wizard-selectable-options"></script><script src="compose.js?v=2026-10-15-wizard-selectable-options"></script><script src="wizard-refs.js?v=2026-10-15-wizard-selectable-options"></script><script src="wizard.js?v=2026-10-15-wizard-selectable-options"></script></body>
 </html>
 
 
