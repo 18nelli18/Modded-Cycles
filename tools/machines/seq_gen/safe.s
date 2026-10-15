@@ -22,9 +22,9 @@ sg_safe_fallback:
     moveq #100,%d0
 sg_safe_velocity:
     moveb %d0,%a1@(0,%d2:l)
-    | 100 est hors des conditions 0..63 : la routine native ne saute pas le trig.
+    | 255 = condition native non définie ; 100 était limité à 63 (8:8) au copier/coller.
     lea.l %a0@(516),%a1
-    moveq #100,%d0
+    moveq #-1,%d0
     moveb %d0,%a1@(0,%d2:l)
     | Aucun preset-lock hérité d'un pas vide/corrompu.
     lea.l %a0@(644),%a1
