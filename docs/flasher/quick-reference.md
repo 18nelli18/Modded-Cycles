@@ -13,6 +13,7 @@ Install the relevant mods first. Hold the first button, then press/turn the next
 | **Sequence Genie** | **SETTINGS + PAGE** opens the current track/lane’s generator. DATA selects; click, turn, click to edit. |
 | Generator options | Scale/root, note range, density, velocity/decay/pan ranges, Both/Rhythm/Notes, mutation and Euclidean hits/rotation. B-side uses relevant MIDI controls. |
 | Preview and queue | **PLAY / STOP** previews; **FUNC + pad** mutes that side. Generate queues the next loop during playback. **Cancel queue** cancels. Stop for **Undo**; closing discards Undo/queue. |
+| Clear track / pattern + LFOs | **FUNC + PLAY** in grid recording clears the selected track and both its LFOs. Outside grid recording it clears the pattern sequencers and both LFOs on all six tracks. Repeat to Undo. Needs Model-TG off, or Model-TG together with ChordKeys. |
 | **Second LFO** | Press **LFO twice**. DATA selects and edits settings. While this page is open, **LFO SPEED** edits LFO 2. A-side synth controls and keyboard playback remain active. |
 | LFO 2 quick assignment | On A-side LFO 2, **hold LFO + turn a parameter knob** to assign its destination; further turning adjusts signed depth. |
 | **A-side SCRAMBLE** | **SETTINGS + TRACK** randomizes four machine controls. **Hold TRIG(s), then SETTINGS + TRACK** toggles fresh values each pass, preserving the base sound. Sampler excluded; no Undo. |

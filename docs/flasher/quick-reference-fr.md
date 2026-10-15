@@ -160,6 +160,7 @@ Un second LFO avec clavier/potards synthé actifs. Côté A, vitesse, multiplica
 
 - Deux appuis LFO : LFO 2. LFO SPEED édite LFO 2 quand sa page est ouverte.
 - Côté A seulement : maintenez LFO + tournez un potard de paramètre pour assignation rapide et profondeur signée.
+- FUNC + PLAY en enregistrement grille : efface la piste choisie et ses deux LFO. Hors enregistrement grille : efface les séquenceurs du pattern et les deux LFO des six pistes. Répétez pour annuler. Demande Model-TG décoché, ou Model-TG avec ChordKeys.
 - Dst côté B : appuyez DATA, parcourez OFF → CC0–127, appuyez DATA pour confirmer ; BACK annule.
 
 ## SCRAMBLE
