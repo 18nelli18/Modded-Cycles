@@ -13,7 +13,7 @@ function composeWizard(c,state,basic,engineSizes){
   if(!v.engine){const route=ck.writes.find(x=>x.new==='4ef9401907a4');if(!route)throw Error('Wizard: missing ChordKeys route');route.off=0x130;route.old='4eb9'+parseInt(w.symbols.boot_extra_hook,16).toString(16);route.new='4eb9401907a4';}
   loader.new='41f9'+source.toString(16).padStart(8,'0')+loader.new.slice(12);ck.append.at='0x'+source.toString(16);cat.push(ck);
  }
- const reserved=t=>t.id.startsWith('model-tg')||t.id.startsWith('scale-gen')||t.id.startsWith('scramble')||t.id==='chord-keys-supermodel'||t.id==='supermodel-performance'||t.id==='supermodel-support-independent'||t.id==='supermodel-wave-support'||t.id==='sample-wizard'||t.id.startsWith('sample-preview')||t.id==='wave-supermodel'||!!t.append;
+ const reserved=t=>t.id.startsWith('model-tg')||t.id.startsWith('scale-gen')||t.id.startsWith('scramble')||t.id==='chord-keys-supermodel'||t.id==='supermodel-performance'||t.id==='supermodel-support-independent'||t.id==='supermodel-wave-support'||t.id==='sample-wizard'||t.id==='tiny'||t.id.startsWith('sample-preview')||t.id==='wave-supermodel'||!!t.append;
  cat.push(...basic.filter(t=>!reserved(t)));return cat.sort((a,b)=>a.order-b.order);
 }
 if(typeof module!=='undefined')module.exports=composeWizard;
