@@ -1,0 +1,1 @@
+Experimental Queue at selector. Loop (default) commits before selected-track step 1; Page also permits 17/33/49. Native phase/timing/snapshot validation and atomic commit remain intact. Uses four verified free tails of existing redirected Genie masks, without enlarging the sampler or changing startup. New code is not hardware tested.
