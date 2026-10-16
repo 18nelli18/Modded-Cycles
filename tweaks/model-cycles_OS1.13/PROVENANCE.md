@@ -133,3 +133,5 @@ existante et génération depuis les OS locaux. Candidat expérimental dans
 | 20-sample-wizard.json | TinyGregAudio, roterodamus, A.V. | Recette Sample Wizard independante du catalogue main existant, extraite par gen_retrosyn.py --wizard-catalog ; licence LICENSE-Sample-Wizard.txt et credits existants conserves. |
 
 | Banque MIDI autonome actuelle (page de test) | Ce projet ; helpers de performance TinyGregAudio | Huit profils RAM sans moteur TG de la matrice note 80, empreinte source et corps epingles ; correctif TEMPO reassemble, compositeur actuel et nouveau chargeur. MIT et credits existants conserves. Aucun firmware Elektron inclus. [Note 97](../../notes/97-banque-midi-actuelle.md). |
+
+| MPI1 — persistance MIDI actuelle | Ce projet ; noyau RAM et helpers MIT credites note 97 | Nouveau codec/journal C et detours ABI propres, lies par relocations ELF aux backends existants. Aucune routine ou image officielle exportee. Sauvegarde sur slot vide et reprise confirmees sur machine par AveyCole le 16/10/2026 ; principal 1.72. Charger le MIDI en entrant cote B, lecture arretee. [Note 98](../../notes/98-persistance-midi-actuelle.md). |

@@ -34,6 +34,14 @@ def main():
         at=int(part['dest'],16);raw=bytes.fromhex(part['hex'])
         if at<=r.s['ml_context']<at+len(raw):expected.append((at,raw))
     assert len(expected)==1
+    if 'mp_api' in r.s:
+        # L'extension de persistance doit aussi survivre au vrai chargeur et
+        # au constructeur cache ; ne pas la recharger artificiellement ici.
+        for part in bank['append']['parts']:
+            if 'hex' not in part:continue
+            at=int(part['dest'],16);raw=bytes.fromhex(part['hex'])
+            if at<=r.s['mp_api']<at+len(raw):expected.append((at,raw))
+        assert len(expected)==2,'extension persistance absente'
     for at,raw in expected:assert bytes(u.mem_read(at,len(raw)))==raw,'code Banque modifie au boot'
     r.call(0x4007929c)
     for at,raw in expected:assert bytes(u.mem_read(at,len(raw)))==raw,'cache disque ecrase Banque'

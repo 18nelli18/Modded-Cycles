@@ -16,7 +16,7 @@ profiles.push({name:'all',all:true},{name:'all-boot',all:true,animation:'boot-an
   assert(overview.closest('p').nextElementSibling.querySelector('a[href="convert.html"]'),'converter below overview');
   assert(!w.document.body.textContent.includes('MIDI OUT Bank is now exclusive'));
   assert.equal(w.MC_TWEAKS.features.find(f=>f.id==='midi-out-bank').status,'tested');
-  for(const lang of ['en','fr']){w.MCFlasherApp.applyLang(lang);assert(w.document.getElementById('det-midi-out-bank').textContent.includes('RAM'));}
+  for(const lang of ['en','fr']){w.MCFlasherApp.applyLang(lang);assert(w.document.getElementById('det-midi-out-bank').textContent.includes('MIDI SAVED'));}
   change(w,'midi-out-bank',true);
   if(p.all)w.document.getElementById('select-all').click();
   for(const id of p.features||[])change(w,id,true);
@@ -30,7 +30,7 @@ profiles.push({name:'all',all:true},{name:'all-boot',all:true,animation:'boot-an
   const built=w.MCBuilder.build(cycles,w.MC_TWEAKS.device,r.tweaks,{syntakt,refMods:r.refMods});
   assert(built.modsChecked);assert(w.MCFlasher.verify(built.raw).count>0);assert.equal(errors.length,0,errors.join('\n'));
   const bank=r.tweaks.find(t=>t.id==='midi-out-bank');
-  assert(!bank.writes.some(w=>[0x4000f762,0x4000f850,0x4008b24a,0x4008b3f6].includes(w.off+0x40000400)),'disk hooks absent');
+  for(const va of [0x4000f762,0x4000f850,0x4008b24a,0x4008b3f6])assert(bank.writes.some(w=>w.off+0x40000400===va),'tested persistence hook present');
   fs.writeFileSync(path.join(dir,p.name+'.syx'),built.raw);fs.writeFileSync(path.join(dir,p.name+'.json'),JSON.stringify({tweaks:r.tweaks,mainOsSha:built.mainOsSha}));
   rows.push({name:p.name,sha:built.mainOsSha,selected,stored:bank.append.stored,cache_blocks:bank.cache_blocks});
   console.log('PASS',p.name,bank.append.stored,'bytes',built.mainOsSha);

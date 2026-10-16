@@ -1,6 +1,6 @@
 # Modded Cycles : édition Supermodel d’A.V.
 
-Toutes les données de la banque MIDI restent en RAM et sont perdues à extinction. Save Project sauvegarde uniquement A.
+**Arretez avant Save Project et attendez MIDI SAVED. Les donnees MIDI sauvegardees se chargent uniquement en entrant cote B et uniquement lorsque la lecture est arretee.** FUNC + SETTINGS + TRACK ouvre B. Fichiers MIDI hors backups et exports SysEx Elektron. Editions non sauvegardees perdues a extinction.
 
 ## Audio USB 6 canaux
 
@@ -171,7 +171,7 @@ Tire les quatre paramètres de la machine courante, ou les valeurs de base des C
 
 ## Banque MIDI OUT
 
-Six voies MIDI M1–M6 jouent en parallèle des pistes audio : notes éditables, live-rec, locks/slides CC, deux LFO MIDI et Sequence Genie. Canaux 7–12 par défaut, réassignables. Toutes les données B sont perdues à extinction ; Save Project sauve seulement A.
+Six voies MIDI M1–M6 jouent en parallèle des pistes audio : notes éditables, live-rec, locks/slides CC, deux LFO MIDI et Sequence Genie. Canaux 7–12 par défaut, réassignables. Save Project sauvegarde B, lecture arretee. Les donnees MIDI sauvegardees se chargent uniquement en entrant cote B, lecture arretee.
 
 - FUNC + SETTINGS + TRACK : entrer/quitter B depuis son écran principal. BACK ferme une fenêtre ; BACK à l’accueil quitte B.
 - Pads : sélectionner/jouer une voie ; FUNC + pad : MIDI on/off. TEMPO ouvre le menu global natif pour les douze pistes ; BACK ou TEMPO ferme et revient à B.
