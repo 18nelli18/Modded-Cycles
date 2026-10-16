@@ -27,8 +27,10 @@ def fixture(prefix,files):
     for off in data['reloc']:struct.pack_into('>I',code,off,struct.unpack_from('>I',code,off)[0]+origin)
     original=dict(r.s);marker=bytes.fromhex('4ef9f0010096');pos=code.index(marker)
     code[pos:pos+6]=bytes.fromhex('4ef9')+struct.pack('>I',original['ml_repeat_project_hook'])
+    built_module=bytes(u.mem_read(origin,len(code))) if 'mp_api' in bank['symbols'] else None
     s={k:v+origin for k,v in data['symbols'].items()};u.mem_write(origin,bytes(code));r.s.update(s)
     for i,name in enumerate(data['api']):r.w32(s['mp_api']+4*i,original.get(name,0) if name!='OLD_LOAD' else original['ml_repeat_project_hook'])
+    if built_module is not None:assert built_module==bytes(u.mem_read(origin,len(code))),'module teste different du build navigateur'
     # Appels longs CRC/records : compter assez d'instructions, verifier le retour.
     def call(name,*args):
         fn=r.s[name] if isinstance(name,str) else name
