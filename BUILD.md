@@ -818,3 +818,8 @@ AveyCole confirme le candidat 2 et demande « push to main as hardware tested! �
 ## Feedback performance experimental
 
 [Note 100](notes/100-feedback-performance.md) : generateur `tools/gen_performance_feedback_flasher.py`, option `--mute-feedback` de `tools/gen_midi_current.py` et `--feedback` du test navigateur beat repeat. Sources et ressources uniquement dans le candidat ; `docs/flasher/` inchange. Verification materielle des deux changements attendue.
+
+
+## Publication principale — 16/10/2026
+
+AveyCole demande « pus the beat repeat and b-side mute fix to main also ». Promotion 1.74 sans changement des octets du test feedback. Cette demande autorise la publication ; aucun resultat de verification physique supplementaire invente. Le renommage ChpHzrd et son icone restent un autre candidat separe.

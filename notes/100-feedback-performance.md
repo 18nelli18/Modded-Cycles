@@ -32,3 +32,8 @@ GCC m68k-linux-gnu 15.2, -mcpu=54418. Onze builds navigateur signes : neuf profi
 ## 4. Essai materiel attendu
 
 Verifier la lisibilite et disparition rapide du popup, les releases TRACK/RETRIG pendant son affichage, changements rapides et dernier TRIG tenu. Dans B, tenir FUNC puis muter/demuter les six pistes, transport lance et arrete : aucun surlignage de selection ; pistes non coupees fixes ; coupees sombres sauf notes B. Relacher FUNC restaure la selection. Tester avec et sans Wizard, Genie, RETROSYN/TINY, et sauvegarde MIDI. Aucun changement principal avant confirmation AveyCole.
+
+
+## Publication principale — 16/10/2026
+
+AveyCole demande « pus the beat repeat and b-side mute fix to main also ». Promotion 1.74 sans changement des octets du test feedback. Cette demande autorise la publication ; aucun resultat de verification physique supplementaire invente. Le renommage ChpHzrd et son icone restent un autre candidat separe.

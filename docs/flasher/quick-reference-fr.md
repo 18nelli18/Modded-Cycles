@@ -197,3 +197,5 @@ Control All Config : TRACK + TRIG1–6 inclut/exclut chaque piste audio, y compr
 ## Beat Repeat collectif (teste sur machine)
 
 Maintenez TRACK + RETRIG pendant tout le geste, puis tenez un TRIG. Relachez un modificateur pour arreter. Control All Config choisit les pistes. Les deux modificateurs tenus, seize divisions remplacent les choix de pistes ; aucun ecran dedie ni FX master. TRIG 3 = 1/32 ; TRIG 5 = 1/16 ; TRIG 7 = 1/8 ; TRIG 10 = 1/4 ; TRIG 16 = une mesure (longues boucles reduites aux tempos lents). Le dernier TRIG tenu gagne. Notes MIDI sortantes non repetees. Teste sur machine par AveyCole.
+
+Beat repeat affiche brievement la division. Cote MIDI B, tenez FUNC : pistes actives fixes, coupees sombres sauf pulses B. Selection visible apres relachement FUNC.

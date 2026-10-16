@@ -1,14 +1,14 @@
 // Note 99 : builds de la carte autonome et des combinaisons du principal.
 const fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
-const main=process.argv.includes('--main'),feedback=process.argv.includes('--feedback');
+const main=process.argv.includes('--main')||process.argv.includes('--feedback-main'),feedback=process.argv.includes('--feedback'),feedbackMain=process.argv.includes('--feedback-main');
 process.env.RETROSYN_PAGE=feedback?'docs/flasher-performance-feedback-test':main?'docs/flasher':'docs/flasher-beat-repeat-test';
-const reference=main?JSON.parse(fs.readFileSync(path.resolve(__dirname,'../build/beat-repeat/cases.json'))):null;
+const reference=main?JSON.parse(fs.readFileSync(path.resolve(__dirname,feedbackMain?'../build/performance-feedback/cases.json':'../build/beat-repeat/cases.json'))):null;
 const {open,change}=require('./test_retrosyn_flasher');
-const dir=path.resolve(__dirname,feedback?'../build/performance-feedback':main?'../build/beat-repeat-main':'../build/beat-repeat');fs.mkdirSync(dir,{recursive:true});
+const dir=path.resolve(__dirname,feedback?'../build/performance-feedback':feedbackMain?'../build/performance-feedback-main':main?'../build/beat-repeat-main':'../build/beat-repeat');fs.mkdirSync(dir,{recursive:true});
 const read=name=>Uint8Array.from(fs.readFileSync(path.resolve(__dirname,'../firmware/'+name)));
 const cycles=read('model-cycles_OS1.13.syx'),syntakt=read('Syntakt_OS1.42.syx');
 const profiles=[{name:'alone'},{name:'supports',features:['control-all-config','lfo-secondary','scale-gen','scramble']},{name:'wizard-chord',features:['sample-wizard','chord-keys']},{name:'midi',features:['midi-out-bank']},{name:'retrosyn',features:['retrosyn']},{name:'tiny',features:['tiny']},{name:'all',all:true},{name:'all-native',all:true,native:true},{name:'all-boot',all:true,animation:true}];
-if(feedback)profiles.push({name:'midi-alone',midiOnly:true,features:['midi-out-bank']},{name:'midi-supports',midiOnly:true,features:['midi-out-bank','scale-gen','lfo-secondary','scramble']});
+if(feedback||feedbackMain)profiles.push({name:'midi-alone',midiOnly:true,features:['midi-out-bank']},{name:'midi-supports',midiOnly:true,features:['midi-out-bank','scale-gen','lfo-secondary','scramble']});
 (async()=>{const rows=[];for(const p of profiles){const {w,errors}=open();await new Promise(r=>setTimeout(r,40));try{
  const id='control-all-beat-repeat',f=w.MC_TWEAKS.features.find(f=>f.id===id);assert.equal(f.status,main?'tested':'experimental');assert.equal(!!f.hardwareTestedByOwner,main);if(!p.midiOnly)change(w,id,true);
  if(p.all)w.document.getElementById('select-all').click();for(const id of p.features||[])change(w,id,true);if(p.native)change(w,'sample-wizard',false);if(p.animation)change(w,'boot-anim',true);
