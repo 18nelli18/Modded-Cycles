@@ -1,9 +1,10 @@
 const fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
 let jsdom;try{jsdom=require('jsdom');}catch{jsdom=require('../build/retrosyn-ui/node_modules/jsdom');}const {JSDOM,VirtualConsole}=jsdom;
-const dir=path.resolve(__dirname,'../docs/flasher'),out=path.resolve(__dirname,'../build');
+const dir=path.resolve(process.env.RETROSYN_PAGE||path.join(__dirname,'../docs/flasher')),out=path.resolve(__dirname,'../build');
 function open(){const errors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(String(e)));const html=fs.readFileSync(path.join(dir,'index.html'),'utf8');const w=new JSDOM(html,{url:'https://aveycole.github.io/Modded-Cycles/flasher/',runScripts:'outside-only',virtualConsole:vc}).window;w.URL.createObjectURL=()=>'';w.URL.revokeObjectURL=()=>{};for(const m of html.matchAll(/<script[^>]+src="([^"]+)"/g))w.eval(fs.readFileSync(path.resolve(dir,m[1].split('?')[0]),'utf8'));return {w,errors};}
 function change(w,id,on){const box=w.document.getElementById('feat-'+id);assert(box,id);box.checked=on;box.dispatchEvent(new w.Event('change',{bubbles:true}));}
 (async()=>{const cases=[[false,false,false],[false,true,false],[true,false,false],[true,true,false]];if(process.argv.includes('--select-all'))cases.push([true,true,true]);for(const [full,wizard,selectAll] of cases){const {w,errors}=open();await new Promise(r=>setTimeout(r,50));try{
+if(w.MCRetrosynTestProfile){w.MCRetrosynTestProfile('solo');change(w,'retrosyn',false);}
 assert(!w.document.getElementById('feat-model-tg'));assert(!w.MC_TWEAKS.features.some(f=>f.id==='model-tg'));
 if(full){change(w,'syntakt',true);for(const code of ['sd','cp','toy','bits','swarm']){const box=w.document.getElementById('eng-'+code);box.checked=true;box.dispatchEvent(new w.Event('change',{bubbles:true}));}for(const id of ['macro','acid','wave-supermodel','tiny'])change(w,id,true);}
 if(wizard)change(w,'sample-wizard',true);change(w,'retrosyn',true);
