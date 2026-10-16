@@ -10,7 +10,7 @@ return unpackCatalogue({"strings":["fffffffffffe0000fffffffffffe0000fffffffffffe
 (()=>{
  const a=window.MCFlasherApp,c=window.MCGenieQueueChoice,old=window.MCMainClearResolve,prior={...a.REF_MODS},cache=new Map();
  const hex=b=>Array.from(b,x=>x.toString(16).padStart(2,'0')).join(''),hash=t=>hex(window.MCBuilder.sha256(window.MCBuilder.writesBytes(t)));
- window.MCMainClearResolve=out=>old(out).map(t=>{
+ window.MCMainClearResolve=out=>{for(const [id,ref] of Object.entries(prior))a.REF_MODS[id]=ref;return old(out).map(t=>{
   if(!a.isSelected('scale-gen')||!t.symbols?.sg_q_hook)return t;
   const ref=prior[t.id];if(!ref||hash(t)!==ref.w)throw Error('Genie queue: original reference mismatch');
   const key=ref.w,hit=cache.get(key);let r;
@@ -28,6 +28,7 @@ return unpackCatalogue({"strings":["fffffffffffe0000fffffffffffe0000fffffffffffe
   }
   a.REF_MODS[t.id]={w:hash(r),...(ref.p?{p:ref.p}:{})};return r;
  });
+ };
  const f=window.MC_TWEAKS.features.find(f=>f.id==='scale-gen');if(f)f.status='experimental';
  a.applyLang(document.documentElement.lang||'en');
 })();
