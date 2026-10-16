@@ -2482,7 +2482,7 @@ const triedWith = (v, tg) => !!(v && (tg ? v.tg_tested : v.tested));
 
 // The mods, shown by section (cat), in FEATURES order inside a section. The build keeps FEATURES order whatever the
 // display order (chosenTweaks, REF_MAINOS keys).
-const features = () => (window.MC_TWEAKS && window.MC_TWEAKS.features) || [];
+const features = () => ((window.MC_TWEAKS && window.MC_TWEAKS.features) || [])  .filter((f) => f.id !== "scale-gen");
 const featById = (id) => features().find((f) => f.id === id);
 function selOf(f) {
   return selection[f.id] ||
@@ -2995,7 +2995,7 @@ function chosenTweaks() {
   const tw = window.MC_TWEAKS;
   if (!tw || !tw.features) return [];
   const out = [];
-  for (const f of tw.features) {
+  for (const f of tw.features) {    if (f.id === "scale-gen") continue;
     const sel = selection[f.id];
     if (!sel || !sel.on) continue;
     if (joinedTo(f)) continue;                    // MACRO, ACID with the engines, ACID with MACRO: in its host's version
