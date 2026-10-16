@@ -3,7 +3,7 @@
 
 Reprend les huit backends sans TG/sans Chord du prototype independant ; les
 fonctions A actuelles fournissent Chord et leurs propres supports. Aucun
-octet de firmware n'est exporte. Note 97, test materiel confirme par AveyCole.
+octet de firmware n'est exporte. --mute-feedback active uniquement le candidat LED experimental. Note 97, test materiel confirme par AveyCole.
 """
 import argparse,copy,hashlib,json,pathlib,shutil,struct,subprocess,sys,tempfile
 HERE=pathlib.Path(__file__).resolve().parent
@@ -48,7 +48,37 @@ def tempo(row,cross):
     b['midi_tempo_native']=True;b['status']='tested';b['hardwareTestedByOwner']=True
     return row
 
-def generate(cross):
+def mute_feedback(row,cross):
+    """Extension propre du backend epingle, activee uniquement pour le test."""
+    b=row['bank'];ap=b['append'];part=ap['parts'][0]
+    raw=bytearray.fromhex(part['hex']);origin=int(part['dest'],16)
+    sy={k:int(v,16) for k,v in b['symbols'].items()}
+    signature=bytes.fromhex('7801b4b9')+struct.pack('>I',sy['mlp_track'])+bytes.fromhex('660000047803')
+    pos=raw.find(signature,sy['mlp_led']-origin)
+    assert pos>=0 and raw.find(signature,pos+1)<0,'etat pad attendu'
+    poll=sy['mlp_led_poll']-origin
+    assert raw[poll:poll+2]==bytes.fromhex('4eb9'),'tick LED attendu'
+    defs=dict(sy);defs['ml_feedback_old_tick']=int.from_bytes(raw[poll+2:poll+6],'big');defs['ml_feedback_poll_return']=origin+poll+6
+    start=(origin+len(raw)+15)&~15
+    with tempfile.TemporaryDirectory() as d:
+        p=pathlib.Path(d)
+        subprocess.run([cross+'as','-march=cfv4e','-o',str(p/'f.o'),str(HERE/'machines/midi_lanes/mute_feedback.s')],check=True)
+        (p/'f.ld').write_text('\n'.join(k+' = '+hex(v)+';' for k,v in defs.items())+'\nSECTIONS { .text '+hex(start)+' : { *(.text) } .data : { *(.data) } }')
+        subprocess.run([cross+'ld','-T',str(p/'f.ld'),'-o',str(p/'f.elf'),str(p/'f.o')],check=True)
+        ns=symbols(cross,p/'f.elf')
+        subprocess.run([cross+'objcopy','-O','binary',str(p/'f.elf'),str(p/'f.bin')],check=True)
+        payload=(p/'f.bin').read_bytes()
+    raw[pos:pos+14]=bytes.fromhex('4eb9')+struct.pack('>I',ns['ml_feedback_pad'])+bytes.fromhex('4e714e714e714e71')
+    raw[poll:poll+6]=bytes.fromhex('4ef9')+struct.pack('>I',ns['ml_feedback_poll'])
+    raw+=bytes(start-origin-len(raw))+payload;raw+=bytes((-len(raw))%16)
+    part['hex']=raw.hex();ap['size']=len(raw);ap.pop('compressed_hex',None)
+    b['symbols'].update({k:hex(v) for k,v in ns.items() if k.startswith('ml_feedback_')})
+    b['symbols']['ML_BANK_END']=hex(origin+len(raw))
+    b['status']='experimental';b.pop('hardwareTestedByOwner',None)
+    return row
+
+
+def generate(cross,feedback=False):
     source=ROOT/'docs/flasher-midi-independent-test/source/midi-independent-matrix.json'
     matrix=restore(json.loads(source.read_text(encoding='utf-8')))
     rows={}
@@ -56,6 +86,7 @@ def generate(cross):
         for lfo in (0,1):
             for sc in (0,1):
                 key=f'0{sg}{lfo}{sc}0';row=tempo(matrix[key],cross)
+                if feedback:row=mute_feedback(row,cross)
                 raw=bytes.fromhex(row['bank']['append']['parts'][0]['hex'])
                 assert not any('store_save' in name or 'store_disk' in name for name in row['bank']['symbols'])
                 row['source_key']=key;row['raw_sha256']=hashlib.sha256(raw).hexdigest()
@@ -71,9 +102,9 @@ def generate(cross):
     return '// Genere par tools/gen_midi_current.py ; aucun firmware.\nwindow.MCMidiCurrent=(()=>{'+JS_DECODER+'return unpackCatalogue('+json.dumps(packed,separators=(',',':'))+');})();\n'
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--output',default='docs/flasher/midi-bank-data.js');p.add_argument('--check',action='store_true');a=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--output',default='docs/flasher/midi-bank-data.js');p.add_argument('--check',action='store_true');p.add_argument('--mute-feedback',action='store_true');a=p.parse_args()
     cross=next((c for c in ('m68k-linux-gnu-','m68k-elf-') if shutil.which(c+'as')),'m68k-linux-gnu-')
-    text=generate(cross);out=pathlib.Path(a.output)
+    text=generate(cross,a.mute_feedback);out=pathlib.Path(a.output)
     if a.check:assert out.read_text(encoding='utf-8')==text
     else:out.parent.mkdir(parents=True,exist_ok=True);out.write_text(text,encoding='utf-8')
     print('ok huit backends RAM sans Model-TG, TEMPO natif et boot commun',flush=True)

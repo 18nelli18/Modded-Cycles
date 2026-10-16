@@ -141,3 +141,8 @@ existante et génération depuis les OS locaux. Candidat expérimental dans
 ## Promotion materielle — 16/10/2026
 
 AveyCole confirme le candidat 2 et demande « push to main as hardware tested! ». Promotion au principal 1.73 ; noyau compile et recettes identiques au test 2, statut et textes seuls modifies. Selection Control All et seize divisions pendant TRACK + RETRIG conserves. Cette confirmation ne mesure pas la charge CPU maximale. `tools/promote_beat_repeat.py --check` et les neuf comparaisons SHA navigateur principal/test verifient cette promotion.
+
+
+## Feedback performance experimental (note 100)
+
+Popup bref : helper propre du support commun Modded-Cycles, adapte sans multiplicateur ; aucune routine OS copiee. LEDs mute B : nouveau wrapper AveyCole / Modded-Cycles autour des backends propres epingles de note 97. Licence MIT du projet, credits beat repeat TinyGregAudio conserves. Sources `tools/machines/beat_repeat/popup.s` et `tools/machines/midi_lanes/mute_feedback.s` ; [note 100](../../notes/100-feedback-performance.md). Publication de test seulement ; principal inchange.

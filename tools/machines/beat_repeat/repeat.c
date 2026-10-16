@@ -36,10 +36,15 @@ static int prepare(void){
  for(u32 i=0;i<count;i++)p[i]=0;
  __asm__ volatile("":::"memory");br_history=p;return 1;
 }
+extern void br_popup(const char *text);
+static const char *const labels[16]={"1/64","1/48","1/32","1/24","1/16","1/12","1/8","1/6","3/16","1/4","1/3","3/8","1/2","2/3","3/4","1 BAR"};
 static void select_held(void){
+ i32 previous=br_requested;
  u32 newest=0;i32 selected=-1;
  for(u32 i=0;i<16;i++)if(br_held[i]>newest){newest=br_held[i];selected=(i32)i;}
  br_requested=selected;
+ /* Feedback UI seulement sur changement actif, jamais depuis le rendu. */
+ if(selected>=0&&selected!=previous&&br_keys==3&&!br_cancel&&!ipl())br_popup(labels[selected]);
 }
 /* Retour 1 : evenement pris. La clef est remplacee par 0 dans le wrapper,
  * donc meme un consommateur lisant directement +12 ne peut editer un pas.

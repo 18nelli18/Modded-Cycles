@@ -25,8 +25,9 @@ def generate(catalogs):
         p=pathlib.Path(tmp);src=ROOT/'tools/machines/beat_repeat'
         subprocess.run([cross+'gcc','-std=gnu99','-mcpu=54418','-Os','-ffreestanding','-fno-builtin','-fno-common','-fno-pic','-fno-stack-protector','-fno-asynchronous-unwind-tables','-fno-inline','-Wall','-Wextra','-Werror','-Wno-misleading-indentation','-c',str(src/'repeat.c'),'-o',str(p/'c.o')],check=True)
         subprocess.run([cross+'gcc','-mcpu=54418','-c',str(src/'hooks.s'),'-o',str(p/'s.o')],check=True)
+        subprocess.run([cross+'gcc','-mcpu=54418','-c',str(src/'popup.s'),'-o',str(p/'popup.o')],check=True)
         (p/'link.ld').write_text('SECTIONS { .text 0 : { *(.text*) *(.rodata*) } . = ALIGN(4); .state : { *(.br_state) *(.data*) *(.bss*) } . = ALIGN(4); br_end = .; }')
-        subprocess.run([cross+'ld','--emit-relocs','-T',str(p/'link.ld'),'-o',str(p/'e.elf'),str(p/'c.o'),str(p/'s.o')],check=True)
+        subprocess.run([cross+'ld','--emit-relocs','-T',str(p/'link.ld'),'-o',str(p/'e.elf'),str(p/'c.o'),str(p/'s.o'),str(p/'popup.o')],check=True)
         subprocess.run([cross+'objcopy','-O','binary',str(p/'e.elf'),str(p/'e.bin')],check=True)
         syms=symbols(cross,p/'e.elf');body=(p/'e.bin').read_bytes();body+=bytes(syms['br_end']-len(body))
         rel=subprocess.check_output([cross+'readelf','-rW',str(p/'e.elf')],text=True)
