@@ -103,26 +103,63 @@ static void install(i32 target,u32 now){
  u32 elapsed=((clock%division)<<4)/tempo;
  br_start=now-elapsed;br_length=length;br_valid=1;
 }
-/* Un echantillon de chacun des six canaux avant gain/envois/mixage. */
-static void frame(u32 now,u32 elapsed,u32 phase,u32 envelope,u32 wet){
- u32 record=!br_valid||elapsed<br_length||((elapsed&MASK)>=br_length);
- for(u32 track=0;track<(br_side?12u:6u);track++){
-  u32 base=0x80001858,lane=track;
-  if(track>=6){lane-=6;if(!((u32 *)br_side_on)[lane])continue;base=br_side;}
-  if(track<6){u32 goal=(br_excluded&(1u<<lane))?0:wet,local=br_lane_wet[lane];
+/* Trajectoire commune aux voies, calculee une seule fois par bloc. */
+struct br_frame {u32 phase,envelope,wet,record;};
+static void render_channel(i32 *channel,i16 *history,u32 now,
+ const struct br_frame *frames,const u32 *mix){
+ u32 valid=br_valid,start=br_start;
+ for(u32 i=0;i<32;i++){
+  i32 live=channel[i];
+  if(frames[i].record){
+   i32 q=live>>15;if(q>32767)q=32767;if(q< -32767)q=-32767;
+   history[(now+i)&MASK]=(i16)q;
+  }
+  if(valid&&mix[i]){
+   i32 repeated=((i32)history[(start+frames[i].phase)&MASK]*(i32)frames[i].envelope)>>1;
+   i32 difference=((repeated>>8)-(live>>8))>>1;
+   channel[i]=(i32)((u32)live+(u32)difference*(mix[i]>>9)*4u);
+  }
+ }
+}
+/* Regimes etablis : ni table de mix par sample, ni multiplication variable.
+ * Le chemin plein conserve exactement les bits bas du live comme auparavant.
+ */
+static void render_full(i32 *channel,i16 *history,u32 now,const struct br_frame *frames){
+ u32 start=br_start;
+ for(u32 i=0;i<32;i++){
+  i32 live=channel[i];
+  if(frames[i].record){i32 q=live>>15;if(q>32767)q=32767;if(q< -32767)q=-32767;history[(now+i)&MASK]=(i16)q;}
+  i32 repeated=((i32)history[(start+frames[i].phase)&MASK]*(i32)frames[i].envelope)>>1;
+  i32 difference=((repeated>>8)-(live>>8))>>1;
+  channel[i]=(i32)((u32)live+((u32)difference<<9));
+ }
+}
+static void render_dry(i32 *channel,i16 *history,u32 now,const struct br_frame *frames){
+ for(u32 i=0;i<32;i++)if(frames[i].record){
+  i32 q=channel[i]>>15;if(q>32767)q=32767;if(q< -32767)q=-32767;history[(now+i)&MASK]=(i16)q;
+ }
+}
+static void render_mode(i32 *channel,i16 *history,u32 now,const struct br_frame *frames,const u32 *mix,u32 mode){
+ if(mode==1)render_full(channel,history,now,frames);
+ else if(mode==2)render_dry(channel,history,now,frames);
+ else render_channel(channel,history,now,frames,mix);
+}
+static void render_tracks(u32 now,const struct br_frame *frames){
+ u32 mix[32];
+ for(u32 lane=0;lane<6;lane++){
+  u32 local=br_lane_wet[lane],excluded=br_excluded&(1u<<lane);
+  u32 mode=local==0&&(excluded||(frames[0].wet==0&&frames[31].wet==0))?2:
+   (local==65536&&!excluded&&frames[0].wet==65536&&br_valid?1:0);
+  if(!mode)for(u32 i=0;i<32;i++){
+   u32 goal=excluded?0:frames[i].wet;
    if(local<goal){local+=1024;if(local>goal)local=goal;}
    else if(local>goal)local=local-goal>1024?local-1024:goal;
-   br_lane_wet[lane]=local;}
-  u32 lane_wet=br_lane_wet[lane];
-  i32 *channel=(i32 *)(base+128*lane+4*(now&31));i32 live=*channel;
-  i16 *history=br_history+N*track;
-  if(record){i32 q=live>>15;if(q>32767)q=32767;if(q< -32767)q=-32767;history[now&MASK]=(i16)q;}
-  if(br_valid&&lane_wet){
-   i32 repeated=((i32)history[(br_start+phase)&MASK]*(i32)envelope)>>1;
-   /* Difference reduite avant multiplication : arithmetique 32 bits bornee. */
-   i32 difference=((repeated>>8)-(live>>8))>>1;
-   *channel=(i32)((u32)live+(u32)difference*(lane_wet>>9)*4u);
+   mix[i]=local;
   }
+  br_lane_wet[lane]=local;
+  render_mode((i32 *)(0x80001858+128*lane),br_history+N*lane,now,frames,mix,mode);
+  if(br_side&&((u32 *)br_side_on)[lane])
+   render_mode((i32 *)(br_side+128*lane),br_history+N*(lane+6),now,frames,mix,mode);
  }
 }
 /* Une fois par bloc, avant le gain natif. Aucun effet sur les retours FX,
@@ -162,14 +199,15 @@ static void render(u32 now,i32 target){
  }
  u32 wet=br_wet,length=br_length,elapsed=now-br_start;
  u32 phase=br_valid?elapsed%length:0,ramp=length/4;if(ramp>32)ramp=32;if(!ramp)ramp=1;
- u32 scale=65536/ramp;
+ u32 scale=65536/ramp;struct br_frame frames[32];
  for(u32 i=0;i<32;i++){
   if(target>=0&&br_valid){wet+=1024;if(wet>65536)wet=65536;}else wet=wet>1024?wet-1024:0;
   u32 envelope=phase*scale,tail=(length-phase)*scale;
   if(envelope>tail)envelope=tail;if(envelope>65536)envelope=65536;
-  frame(now+i,elapsed+i,phase,envelope,wet);
+  frames[i].phase=phase;frames[i].envelope=envelope;frames[i].wet=wet;
+  u32 age=elapsed+i;frames[i].record=!br_valid||age<length||((age&MASK)>=length);
   if(++phase>=length)phase=0;
  }
- br_wet=wet;
+ render_tracks(now,frames);br_wet=wet;
 }
 void br_audio(void){i32 target=target_now();u32 now=br_blocks++<<5;br_excluded=br_mask_address?*(volatile u8 *)br_mask_address:0;if(br_history)render(now,target);}

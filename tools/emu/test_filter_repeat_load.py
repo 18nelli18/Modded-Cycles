@@ -9,11 +9,11 @@ from test_model_tg import engine,MIX_GAIN
 import mcengine as E
 ROOT=HERE.parents[1]
 def main():
- p=argparse.ArgumentParser();p.add_argument('--case',required=True);p.add_argument('--kick-swarms',action='store_true');a=p.parse_args();img,rt,ts=boot(a.case);ws=next(t['symbols'] for t in ts if t['id']=='sample-wizard');fs=next(t['symbols'] for t in ts if t['id']=='wizard-continuous-filter');br=next(t for t in ts if t['id']=='control-all-beat-repeat');bs={k:int(v,16) for k,v in br['symbols'].items()};old=json.loads((ROOT/'docs/flasher/filter-precision-data.js').read_text().split('=',1)[1].strip().rstrip(';'));baseline=bytearray(img);at=old['at']-E.BASE;baseline[at:at+old['size']]=bytes.fromhex(old['hex'])
+ p=argparse.ArgumentParser();p.add_argument('--case',required=True);p.add_argument('--kick-swarms',action='store_true');p.add_argument('--voices',type=int,choices=(4,5,6),action='append');a=p.parse_args();img,rt,ts=boot(a.case);ws=next(t['symbols'] for t in ts if t['id']=='sample-wizard');fs=next(t['symbols'] for t in ts if t['id']=='wizard-continuous-filter');br=next(t for t in ts if t['id']=='control-all-beat-repeat');bs={k:int(v,16) for k,v in br['symbols'].items()};old=json.loads((ROOT/'docs/flasher/filter-precision-data.js').read_text().split('=',1)[1].strip().rstrip(';'));baseline=bytearray(img);at=old['at']-E.BASE;baseline[at:at+old['size']]=bytes.fromhex(old['hex'])
  names=next(t['machine_names'] for t in ts if t.get('machine_names'))
  swarm=next((i for i,n in enumerate(names) if n.upper() in ('SY SWARM','SYSWM')),None)
  if a.kick_swarms:assert swarm is not None,names
- for voices in (5,6):
+ for voices in (a.voices or (4,5,6)):
   for repeat in ('off','armed','repeat'):
    engines=[]
    for image in (bytes(baseline),img):
