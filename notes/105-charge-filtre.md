@@ -46,3 +46,15 @@ Validation candidat 2 elargie a 2 048 blocs comparatifs, identite samples/etats 
 Le seuil cinq/six voies indique par AveyCole est ajoute aux fixtures combinees. Elles couvrent un cycle beat repeat complet a 480 BPM/1-64 (375 samples) sur 16 blocs, avec retriggers, cinq/six vraies voix et comparaison de tous les samples. Mesure limitee aux modules compares pour eviter de ralentir artificiellement les autres boucles de synthese. Aucun tempo utilisateur modifie.
 
 Les quatre fixtures combinees passent : cinq et six voix, avec et sans repeat, 16 blocs/cycle complet identiques au noyau principal. Instructions filtre+repeat observees pour six voix : 144 808 vers 93 148 sans repeat, 453 696 vers 402 036 avec repeat. Les huit builds et preuves Python/native passent. La reduction physique des clicks reste a verifier.
+
+## Retour materiel et candidat 3 (16/10/2026)
+
+AveyCole : test 2 clique encore en tenant TRACK + RETRIG seul, sans pad de division. Six machines filtrees avec Control All cliquent aussi. Configuration indiquee : Kick, quatre SY SWARM, Kick. Aucun resultat physique positif revendique pour ces clicks.
+
+[FAIT] Avec le combo seul et apres allocation, render parcourait chaque sample avec calculs phase/enveloppe et recherche des voies, meme sans repetition active. Candidat 3 : chemin historique seul, pistes contigues, memes conversions signees/clamps et memes samples enregistres ; chemin wet/fondu conserve si un etat de voie reste actif. Aucun buffer supplementaire, meme taille historique, aucun changement filtre face au candidat 2.
+
+[FAIT en emulation] `test_beat_repeat_idle.py` compare principal/candidat sur huit blocs, frontiere circulaire, extremes int32 et voies stereo partiellement actives. Audio, historique integral et etats identiques ; 242 376 vers 55 304 instructions pour ces fixtures, soit -77,2 %. Ce ne sont pas des cycles materiels. La preuve beat repeat existante passe (16 divisions, masques, release, stereo, ABI).
+
+[HYP] Le cout de capture contribue aux clicks du combo seul ; reduction physique a verifier. Le cas six filtres sans combo reste ouvert et ce changement ne pretend pas le corriger. Page test 3 seulement, principal 1.77 inchange.
+
+Reproduction candidat 3 : retirer uniquement le tweak `control-all-beat-repeat` du catalogue de reservation courant, puis `python3 tools/gen_beat_repeat.py --catalog build/beat-idle-catalog.json --output build/beat-idle-data.json`, `python3 tools/gen_filter_load_flasher.py` et leurs `--check`. `test_filter_repeat_load.py --case build/filter-load/all-midi --kick-swarms` couvre Kick / SYSwm x4 / Kick, combo arme sans division et repetition active. Les fixtures ne simulent toujours pas les deadlines/peripheriques physiques.

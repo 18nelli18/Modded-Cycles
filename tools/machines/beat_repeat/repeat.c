@@ -137,10 +137,29 @@ static i32 target_now(void){
  if(!playing)br_cancel=1;
  return br_keys==3&&!br_cancel&&playing?br_requested:-1;
 }
+/* Combo tenu sans division : historique seulement, aucune interpolation.
+ * Ordre piste/sample pour lire chaque bloc contigu ; quantification identique.
+ */
+static void record_block(u32 now){
+ for(u32 track=0;track<(br_side?12u:6u);track++){
+  u32 lane=track,base=0x80001858;
+  if(track>=6){lane-=6;if(!((u32 *)br_side_on)[lane])continue;base=br_side;}
+  i32 *channel=(i32 *)(base+128*lane);
+  i16 *history=br_history+N*track+(now&MASK);
+  for(u32 i=0;i<32;i++){
+   i32 q=channel[i]>>15;if(q>32767)q=32767;if(q< -32767)q=-32767;
+   history[i]=(i16)q;
+  }
+ }
+}
 static void render(u32 now,i32 target){
  if(br_valid&&target!=br_active&&br_wet)target=-1;
  else if(!br_valid||target!=br_active)install(target,now);
  if(br_keys!=3&&!br_wet){br_valid=0;br_active=-1;return;}
+ if(!br_valid&&!br_wet){
+  u32 lanes=0;for(u32 i=0;i<6;i++)lanes|=br_lane_wet[i];
+  if(!lanes){record_block(now);return;}
+ }
  u32 wet=br_wet,length=br_length,elapsed=now-br_start;
  u32 phase=br_valid?elapsed%length:0,ramp=length/4;if(ramp>32)ramp=32;if(!ramp)ramp=1;
  u32 scale=65536/ramp;
