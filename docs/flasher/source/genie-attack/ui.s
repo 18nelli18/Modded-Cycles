@@ -94,7 +94,7 @@ avg_led_loop:
  moveq #3,%d0
  btst %d2,%d4
  beqs 2f
- movel #260,%d0
+ movel #1,%d0
 2: pea 0x404a8cb8
  movel %d0,%sp@-
  movel %d3,%sp@-

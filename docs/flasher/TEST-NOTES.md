@@ -1,3 +1,3 @@
-# Main: Genie lamp and Synth Attack
+# Main — continuous filter
 
-Hardware confirmed by A.V. on 15 October 2026 after the allocation fix. Genie lamp, mute LEDs and Attack work as anticipated. Synth Attack: MACHINES+DECAY, holds TRIG for locks, saves with the sound. Existing mute state is dim while FUNC is held; the requested off-between-trigger-pulses refinement is a subsequent test change. Shared filter withdrawn pending click-fix hardware verification. No MIDI Bank restoration, independent LFO-plus work or 909 changes are included.
+Filter correction hardware confirmed by A.V. on 15 October 2026. Firmware writes and payloads are identical to the separate continuous-history test. Includes the requested off-between-trigger-pulses Genie mute display. Native DSP, sound round-trips, browser builds and startup proofs passed. Sample Preview / ChordKeys compatibility is tested separately and is not promoted here. Stable 909 unchanged.

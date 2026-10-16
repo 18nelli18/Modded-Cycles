@@ -55,11 +55,11 @@ kit=C.FAKE+0x60000;handle=kit+48;vt=kit+0x1000;rawmute=kit+0x2000;code=kit+0x300
 r.w32(handle,vt);r.w32(vt+40,code);r.uc.mem_write(code,b'\x20\x3c'+struct.pack('>I',rawmute)+b'\x4e\x75');r.stub(C.CUR_PROJ,lambda a:kit);r.stub(C.PROJ_SEQ,lambda a:handle);r.stub(0x400cfaf4,lambda a:writer);r.stub(0x400060bc,lambda a:48+a[0]);writes=[];r.stub(0x40005f86,lambda a:writes.append(tuple(a[:4])) or 0)
 for bits in range(64):
  r.w32(rawmute+20,bits);r.w32(ss['sg_func'],1);r.w32(mask,0);r.w32(mask+4,0);writes.clear();r.call(s['avg_led'],C.VIEWOBJ+12,0,mask,check='mute LED ABI');assert len(writes)==6
- for tr,x in enumerate(writes):assert x==(writer,48+tr,260 if bits&(1<<tr) else 3,0x404a8cb8),(bits,tr,x)
+ for tr,x in enumerate(writes):assert x==(writer,48+tr,1 if bits&(1<<tr) else 3,0x404a8cb8),(bits,tr,x)
  assert r.r32(mask)==0x003f0000 and r.r32(mask+4)==0
 r.w32(ss['sg_func'],0);writes.clear();r.call(s['avg_led'],C.VIEWOBJ+12,0,mask);assert not writes
 assert not C.FAIL and not r.bad,(C.FAIL,r.bad)
-print('PASS all64 stock mute masks: dim muted, lit unmuted; only pad mask claimed, native steps/pulses untouched; FUNC release relinquishes LEDs')
+print('PASS all64 stock mute masks: off muted, lit unmuted; only pad mask claimed, native steps/pulses untouched; FUNC release relinquishes LEDs')
 # Vrai gestionnaire LED et RTTI : pads prioritaires, pas de la vue du dessous.
 manager=kit+0x6000;top=kit+0x6100;bottom=kit+0x6200;lower=kit+0x7000;lowvt=kit+0xa000;fake=kit+0xb000
 r.uc.mem_write(lower,r.rd(C.VIEWOBJ,0x2f10));r.uc.mem_write(lowvt,r.rd(s['avg_led_vt'],20));r.w32(lower+0x2f00,lowvt+8);r.w32(lowvt+16,fake);r.w32(ss['sg_func'],1)
@@ -71,6 +71,6 @@ def background(args):
 r.stub(fake,background);r.stub(0x400e8684,lambda a:0);r.stub(0x400d08ce,lambda a:0);r.stub(0x40005f86,None)
 head=manager+20;r.w32(head,bottom);r.w32(head+4,top);r.w32(top,head);r.w32(top+4,bottom);r.w32(top+8,C.VIEWOBJ);r.w32(bottom,top);r.w32(bottom+4,head);r.w32(bottom+8,lower)
 r.w32(rawmute+20,0b101010);r.uc.mem_write(writer,bytes(256));r.call(0x40076ca2,manager)
-assert [r.r32(writer+40+4*(48+i)) for i in range(6)]==[3,260,3,260,3,260]
+assert [r.r32(writer+40+4*(48+i)) for i in range(6)]==[3,1,3,1,3,1]
 assert [r.r32(writer+40+4*i) for i in range(1,17)]==[3 if i%2 else 1 for i in range(1,17)]
 print('PASS actual OS LED manager/RTTI/writer: mute pads owned by Genie, sequencer step lights preserved beneath it')
