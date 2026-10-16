@@ -848,3 +848,7 @@ Correction A/B confirmee sur machine par AveyCole, promotion demandee. `python3 
 ## Principal 1.77 — build sans Banque MIDI
 
 Promotion demandee par AveyCole, packing identique au candidat note 104. `tools/gen_no_midi_capacity_main.py --check`. Six firmwares signes identiques au test. Banque MIDI experimental ; filtre en forte charge encore ouvert avec/sans Banque.
+
+## Charge filtre — candidat note 105
+
+`tools/gen_filter_load.py`, `tools/gen_filter_load_flasher.py`, `tools/test_filter_load_flasher.js`, equivalence `tools/emu/test_filter_load_equivalence.py`. Deux kernels assembles, samples/etats bit exacts ; reduction des instructions, pas de mesure CPU materielle. Principal 1.77 conserve.
