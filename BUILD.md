@@ -794,7 +794,9 @@ Fichiers annexes hors backups Elektron ; ancien format non importé. Voir note 9
 ## Beat Repeat collectif (essai autonome)
 
 Carte experimentale separee. TRACK + RETRIG maintenus pendant tout le geste,
-puis TRIG 1–16 : divisions communes aux six pistes audio. Release d'un des
+puis TRIG 1–16 : divisions communes aux pistes incluses dans Control All Config
+(six pistes si absent). Les choix config cedent la rangee aux seize divisions
+pendant le combo, puis reviennent au relachement. Release d'un des
 modificateurs : retour normal par fondu court. Aucune page/FX master ajoutes,
 aucune dependance Model-TG ; cotes stereo Wizard facultatifs. Principal inchange.
 

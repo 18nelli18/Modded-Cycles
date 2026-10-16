@@ -6,7 +6,8 @@ pendant TRACK + RETRIG maintenus. Adresses : VA OS 1.13.
 
 ## 1. Contrat
 
-Maintenir TRACK + RETRIG puis un TRIG. Les six pistes audio repetent ensemble ;
+Maintenir TRACK + RETRIG puis un TRIG. Les pistes incluses dans Control All
+Config repetent ensemble (six pistes par defaut si cette carte est absente) ;
 le dernier TRIG maintenu choisit la division. Relacher un modificateur ou
 tous les TRIG termine la boucle avec un fondu de 64 echantillons. Pas de
 latch, page propre, popup ou FX master ajoutes. Stop et changement de projet
@@ -76,7 +77,7 @@ Avec `--case`, il execute le vrai bootstrap du SYX navigateur et le
 constructeur natif de cache, puis compare le module octet pour octet.
 Le handler Control All reel conserve son masque pour les gestes captures.
 
-Mesure sur le corps propre a six canaux : environ 12 017 instructions par
+Mesure du candidat 1 sur le corps propre a six canaux : environ 12 017 instructions par
 bloc en repetition, 76 au repos apres allocation. Ce ne sont **pas** des
 cycles ni un pourcentage CPU materiel. Charge, clics, grille et confort du
 clavier physique restent a confirmer sur machine. L'absence de page propre
@@ -103,3 +104,37 @@ python3 tools/check_midi_current_builds.py --cycles firmware/model-cycles_OS1.13
 ```
 
 Les images et exports locaux sont sous `firmware/` et `build/`, ignores.
+
+## 6. Retour materiel et candidat 2 (16/10/2026)
+
+[FAIT materiel rapporte] AveyCole confirme que le premier beat repeat
+fonctionne, mais que le masque Control All Config ne choisit pas les pistes
+repetees et que ses options occupent encore les touches sous TRACK + RETRIG.
+Il demande que ces options disparaissent pendant le combo pour utiliser
+toute la rangee de seize TRIG. Ce retour ne valide pas encore les correctifs.
+
+[FAIT] Le premier moteur traitait toujours six pistes. Le handler `cac_keys`
+lit directement le code evenement avant d'appeler le getter global : le test
+precedent, qui appelait le getter avant `cac_keys`, ne reproduisait pas cet
+ordre. Control All Config affiche ses choix sur les six LEDs TRIG, sans
+page LCD propre.
+
+Le candidat 2 lie `br_mask_address` au vrai octet `cac_mask` selectionne.
+Un bit exclu garde le canal live ; la partie repetee suit un fondu individuel
+par piste, partage avec son cote stereo. Sans Control All Config, les six
+pistes restent incluses par defaut. Les vecteurs TRACK `0x40100ee8` et
+`0x40100f98` passent par des wrappers : interception avant `cac_keys`, LEDs
+1–16 reservees a la division tenue dans le combo, puis retour immediat aux
+handlers precedents en sortie. Les transitions invalident la frame LED via
+le gestionnaire racine natif, sans garder de pointeur de vue potentiellement
+detruit. Aucun choix Control All n'est modifie par le geste de repeat.
+
+[FAIT en emulation] Les 64 masques gardent exactement les echantillons live
+sur les pistes exclues et repetent les autres. Le masque vaut aussi pour
+les cotes stereo. Les press/release arrivent directement au wrapper TRACK,
+sans passage prealable par le getter : seize divisions accessibles ; les
+LEDs de configuration ne sont pas appelees pendant le combo et reviennent
+au relachement. TRACK + TRIG ordinaire continue ensuite a modifier le masque.
+La fixture MIDI remplace son ancien sentinel UI `1` par un objet mappe pour
+permettre l'invalidation LED native. Le principal demeure inchange ; candidat
+2 experimental en attente d'un nouvel essai materiel.

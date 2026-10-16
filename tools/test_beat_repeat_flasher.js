@@ -12,6 +12,9 @@ const profiles=[{name:'alone'},{name:'supports',features:['control-all-config','
  if(p.name==='alone')assert.deepEqual(Array.from(w.MC_TWEAKS.features.filter(f=>w.MCFlasherApp.isSelected(f.id)).map(f=>f.id)),[id]);
  for(const lang of ['en','fr']){w.MCFlasherApp.applyLang(lang);assert(w.document.getElementById('det-'+id).textContent.includes('TRACK + RETRIG'));}
  const prepared=w.MCMidiBankCompose(w.MCFlasherApp.chosenTweaks(),cycles,syntakt),t=prepared.tweaks.find(t=>t.id===id);assert.equal(t.status,'experimental');assert(!t.requires.length);
+ const config=prepared.tweaks.find(t=>t.symbols?.cac_mask),module=w.MCBuilder.fromHex(t.append.parts[0].hex),origin=parseInt(t.append.dest,16);
+ assert.equal(new DataView(module.buffer).getUint32(parseInt(t.symbols.br_mask_address,16)-origin,false),config?parseInt(config.symbols.cac_mask,16):0,'Control All mask binding');
+ for(const at of [0x40100ee8,0x40100f98])assert(t.writes.some(w=>w.off+0x40000400===at),'priority TRACK view hook');
  const built=w.MCBuilder.build(cycles,w.MC_TWEAKS.device,prepared.tweaks,{syntakt,refMods:prepared.refMods});assert(built.modsChecked);assert(w.MCFlasher.verify(built.raw).count>0);
  assert(!w.document.getElementById('feat-model-tg'));assert(!w.document.getElementById('feat-lfo-plus'));assert.equal(errors.length,0,errors.join('\n'));
  fs.writeFileSync(path.join(dir,p.name+'.syx'),built.raw);fs.writeFileSync(path.join(dir,p.name+'.json'),JSON.stringify({tweaks:prepared.tweaks,mainOsSha:built.mainOsSha}));rows.push({name:p.name,sha:built.mainOsSha});console.log('PASS beat repeat browser',p.name,built.mainOsSha);

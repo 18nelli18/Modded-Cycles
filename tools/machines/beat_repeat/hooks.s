@@ -36,3 +36,26 @@ br_gain_hook:
     lea %sp@(16),%sp
     moveal br_old_gain,%a0
     jmp %a0@
+    .section .text.br_track_keys,"ax"
+    .globl br_track_keys,br_track_leds
+br_track_keys:
+    movel %sp@(8),%sp@-
+    jsr br_key
+    addql #4,%sp
+    tstl %d0
+    beq .Ltrack_pass
+    moveal %sp@(8),%a0
+    clrl %a0@(12)
+    moveq #1,%d0
+    rts
+.Ltrack_pass:
+    moveal br_old_track_keys,%a0
+    jmp %a0@
+br_track_leds:
+    movel br_keys,%d0
+    cmpil #3,%d0
+    bne .Lled_pass
+    jmp br_leds
+.Lled_pass:
+    moveal br_old_track_leds,%a0
+    jmp %a0@

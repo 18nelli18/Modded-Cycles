@@ -25,7 +25,7 @@ def main():
     r.s={k:origin+v for k,v in data['symbols'].items()}
     if case:
         expected=bytes.fromhex(tweak['append']['parts'][0]['hex'])
-        for name in ('br_old_key','br_old_gain','br_side','br_side_on'):
+        for name in ('br_old_key','br_old_gain','br_side','br_side_on','br_mask_address','br_old_track_keys','br_old_track_leds'):
             off=data['symbols'][name];code[off:off+4]=expected[off:off+4]
         assert bytes(code)==expected,'module navigateur different du module prouve'
         def cache(uc,pc,size,user):uc.reg_write(mk.UC_M68K_REG_PC,pc+4)
@@ -60,6 +60,7 @@ def main():
         for lane in range(6):u.mem_write(0x80001858+128*lane,struct.pack('>32i',*([value*(lane+1)]*32)))
         call('br_audio')
         return [list(struct.unpack('>32i',bytes(u.mem_read(0x80001858+128*lane,128)))) for lane in range(6)]
+    r.stubs[0x40076c04]=lambda args:0;u.hook_add(UC_HOOK_CODE,r.stub,begin=0x40076c04,end=0x40076c04)
     r.w32(0x40149310,14400);r.w32(0x40a7883c,1)
     # Au repos : aucun buffer, audio bit-identique et aucune allocation.
     before=r.new_count;assert audio(12345)==[[12345*(i+1)]*32 for i in range(6)]
@@ -121,6 +122,7 @@ def main():
                 key(trig,0);call(cs['cac_keys'],0x93000000,EVENT)
             key(4,0);key(2,0)
             assert bytes(u.mem_read(cs['cac_mask'],1))==b'\x15'
+            u.mem_write(cs['cac_mask'],b'\0')
             print('PASS vrais handlers Control All : 16 press/release de repeat sans changer le masque',flush=True)
     # Tempo lent / tres rapide : divisions valides, historiques bornes.
     for tempo in (1,3600,14400,65520):
@@ -131,6 +133,46 @@ def main():
             key(16+step,0)
         key(4,0);key(2,0)
     print('PASS 16 divisions x quatre tempos : tailles dans les bornes, aucun diviseur nul',flush=True)
+    # Regression materielle : les 64 selections Control All filtrent l'audio.
+    old_mask=get('br_mask_address');put('br_mask_address',0x93072000)
+    hist=get('br_history')
+    for lane in range(6):u.mem_write(hist+2*N*lane,struct.pack('>h',1000*(lane+1))*N)
+    r.w32(0x40149310,14400);key(2);key(4);key(18)
+    for mask in range(64):
+        u.mem_write(0x93072000,bytes([mask]));put('br_blocks',8192)
+        put('br_valid',1);put('br_active',2);put('br_length',3000);put('br_start',8192*32-6000)
+        for _ in range(3):out=audio(333)
+        for lane in range(6):
+            wanted=(333 if mask&(1<<lane) else 1000*32768)*(lane+1)
+            assert all(v==wanted if mask&(1<<lane) else abs(v-wanted)<=511 for v in out[lane]),('mask',mask,lane,out[lane][:3],wanted)
+    key(18,0);key(4,0);key(2,0);audio();audio();put('br_mask_address',old_mask)
+    print('PASS 64 masques Control All : exclus restent live, inclus bouclent ; changements avec fondu',flush=True)
+    # Le handler TRACK doit prendre les touches AVANT cac_keys, pas apres.
+    leds=[];old_led_calls=[]
+    for at,fn in ((0x400cfaf4,lambda args:0x93073000),(0x40005f86,lambda args:leds.append(args[:4]) or 0),(0x40023d8c,lambda args:old_led_calls.append(args[:3]) or 0)):
+        r.stubs[at]=fn;u.hook_add(UC_HOOK_CODE,r.stub,begin=at,end=at)
+    if not get('br_old_track_keys'):put('br_old_track_keys',0x40024078);put('br_old_track_leds',0x40023d8c)
+    key(2);key(4)
+    for trig in range(16,32):
+        u.mem_write(EVENT,bytes(24));r.w32(EVENT+12,trig);r.w32(EVENT+16,1)
+        assert call('br_track_keys',0x93000000,EVENT)==1 and get('br_requested')==trig-16
+        leds.clear();r.w32(0x93074000,0x80000000)
+        call('br_track_leds',0x93000068,0xffffffff,0x93074000)
+        assert [(v[1],v[2]) for v in leds]==[(i+1,2 if i==trig-16 else 1) for i in range(16)]
+        assert r.r32(0x93074000)==0x8001fffe
+        r.w32(EVENT+12,trig);r.w32(EVENT+16,0);assert call('br_track_keys',0x93000000,EVENT)==1
+    assert not old_led_calls,'options Control All presentes dans combo'
+    key(4,0);leds.clear();call('br_track_leds',0x93000068,0xffffffff,0x93074000)
+    assert len(old_led_calls)==1
+    if case and cac:
+        assert len(leds)==6,'choix Control All non restaures'
+        assert bytes(u.mem_read(cs['cac_mask'],1))==b'\0'
+        r.w32(EVENT+12,16);r.w32(EVENT+16,1);call('br_track_keys',0x93000000,EVENT)
+        assert bytes(u.mem_read(cs['cac_mask'],1))==b'\x01','config ordinaire TRACK perdue'
+        r.w32(EVENT+12,16);r.w32(EVENT+16,0);call('br_track_keys',0x93000000,EVENT)
+        u.mem_write(cs['cac_mask'],b'\0')
+    key(2,0)
+    print('PASS vue TRACK directe : 16 divisions prioritaires, LEDs de division, options normales restaurees a la release',flush=True)
     # Compter les instructions propres : pas une estimation de cycles CPU.
     count=[0]
     def instruction(uc,pc,size,user):count[0]+=1
@@ -151,9 +193,17 @@ def main():
     for lane in range(6):u.mem_write(0x93070000+128*lane,bytes(128))
     audio()
     for lane in range(6):assert struct.unpack('>32i',bytes(u.mem_read(0x93070000+128*lane,128)))==(300*(lane+1)*32768,)*32
+    put('br_mask_address',0x93072000);u.mem_write(0x93072000,b'\x15')
+    for _ in range(3):
+        for lane in range(6):u.mem_write(0x93070000+128*lane,struct.pack('>32i',*([77*(lane+1)]*32)))
+        audio(333)
+    for lane in range(6):
+        side=struct.unpack('>32i',bytes(u.mem_read(0x93070000+128*lane,128)))
+        assert all(v==77*(lane+1) if 0x15&(1<<lane) else abs(v-300*(lane+1)*32768)<=511 for v in side),('stereo mask',lane,side[:3])
+    put('br_mask_address',old_mask)
     key(4,0);key(2,0);key(18,0);audio();audio()
     put('br_history',old_history);put('br_side',old_side);put('br_side_on',old_on)
-    print('PASS six cotes stereo : captures et boucles distinctes preservees',flush=True)
+    print('PASS six cotes stereo : captures distinctes et masque Control All identique au canal principal',flush=True)
     # Les frontaux gardent les arguments et registres preserves du natif.
     seen=[];gain=get('br_old_gain')
     r.stubs[gain]=lambda args:seen.append(args[0]) or 0x5566
