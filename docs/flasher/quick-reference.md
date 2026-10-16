@@ -66,3 +66,7 @@ M1–M6 play alongside the six audio tracks; default channels **7–12**, assign
 ChordKeys requires Model-TG. MIDI Bank and extra synth machines are optional for ChordKeys; checking it does not select all mods.
 
 Control All Config: hold TRACK + TRIG1–6 to include/exclude each audio track, including the selected track. TRACK + knob changes included tracks. Choices reset on power-off.
+
+## Control All Beat Repeat (hardware tested)
+
+Hold TRACK + RETRIG throughout, then hold a TRIG key. Release either modifier to stop. Control All Config chooses which tracks repeat. Hold both modifiers to replace its track choices with all sixteen repeat divisions; no dedicated screen or master FX. TRIG 3 = 1/32; TRIG 5 = 1/16; TRIG 7 = 1/8; TRIG 10 = 1/4; TRIG 16 = one bar (long slices halve at slow tempos). Newest held TRIG wins. Outgoing MIDI notes are not repeated. Hardware tested by AveyCole.

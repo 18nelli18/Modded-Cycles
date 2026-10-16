@@ -138,3 +138,8 @@ au relachement. TRACK + TRIG ordinaire continue ensuite a modifier le masque.
 La fixture MIDI remplace son ancien sentinel UI `1` par un objet mappe pour
 permettre l'invalidation LED native. Le principal demeure inchange ; candidat
 2 experimental en attente d'un nouvel essai materiel.
+
+
+## Promotion materielle — 16/10/2026
+
+AveyCole confirme le candidat 2 et demande « push to main as hardware tested! ». Promotion au principal 1.73 ; noyau compile et recettes identiques au test 2, statut et textes seuls modifies. Selection Control All et seize divisions pendant TRACK + RETRIG conserves. Cette confirmation ne mesure pas la charge CPU maximale. `tools/promote_beat_repeat.py --check` et les neuf comparaisons SHA navigateur principal/test verifient cette promotion.
