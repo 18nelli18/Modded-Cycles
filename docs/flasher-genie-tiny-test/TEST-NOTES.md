@@ -1,7 +1,6 @@
-# Sequence Genie + TINY test — 16 October 2026
+# Genie + TINY test notes
 
-- Sequence Genie uses the no-Model-TG experimental path and requires Sample Wizard for this build.
-- TINY is an optional machine choice; all other machine options remain selectable subject to their normal compatibility rules.
-- Test page Select All includes the combined Genie + Sample Wizard + TINY path.
-- Native Genie rendering/open and base queue/page-loop checks exist in `work/genie-attack-test` and `work/genie-queue-choice`; TINY build-combination references were generated in `work/tiny-addon`. This is not hardware verified.
-- The page’s hardware-status overlay must leave Sequence Generator, Sample Wizard, and TINY marked Experimental; earlier owner-tested base status must not carry across to these changed integrations.
+- TINY was confirmed by A.V. to work in the previous test build.
+- The queued Genie tick reserves 36 bytes for its register frame and preserves the live registers it uses before chaining to the native LED callback.
+- The lamp subobject now lives at offset `0x3000`; queued playback snapshots occupy offsets `0x2D24..0x2FF5`. The dynamic object allocation grows to `0x3010`, enough for the lamp’s 12 bytes of state.
+- Browser-side recipe/build checks passed for TINY + Genie + Wizard and Select All, including checks of the relocation and allocation bytes. Native ColdFire emulation was unavailable in this environment, so this is still a crash-fix candidate and is not hardware verified. Test first while stopped, then while playing, including another Generate after a queued sequence applies.
