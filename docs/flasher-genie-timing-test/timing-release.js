@@ -1,0 +1,1 @@
+window.MC_RELEASES=[{"version": "1.76-genie-preview.1", "date": "2026-10-16", "changes": [{"en": "Experimental Sequence Genie timing restoration: Queue Loop/Page on A and B, replacing Sound 0/1. Main unchanged.", "fr": "Restauration experimentale timing Genie : Queue Loop/Page sur A et B au lieu de Sound 0/1. Principal inchange."}]}];
