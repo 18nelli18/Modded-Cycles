@@ -848,3 +848,13 @@ Correction A/B confirmee sur machine par AveyCole, promotion demandee. `python3 
 ## Principal 1.77 — build sans Banque MIDI
 
 Promotion demandee par AveyCole, packing identique au candidat note 104. `tools/gen_no_midi_capacity_main.py --check`. Six firmwares signes identiques au test. Banque MIDI experimental ; filtre en forte charge encore ouvert avec/sans Banque.
+
+## Charge filtre — candidat note 105
+
+`tools/gen_filter_load.py`, `tools/gen_filter_load_flasher.py`, `tools/test_filter_load_flasher.js`, equivalence `tools/emu/test_filter_load_equivalence.py`. Deux kernels assembles, samples/etats bit exacts ; reduction des instructions, pas de mesure CPU materielle. Principal 1.77 conserve.
+
+## Principal 1.78 — filtre et beat repeat testes
+
+AveyCole confirme le test 4 sur machine le 16/10/2026 et demande promotion. `python3 tools/gen_filter_load_main.py --check` : memes noyaux filtre/repeat que le candidat confirme. Huit profils principaux doivent donner les memes hashes que `build/filter-load/cases.json`. Banque MIDI reste experimentale ; [note 105](notes/105-charge-filtre.md).
+
+Parite huit profils confirmee. Complet MIDI MAIN OS SHA-256 `2b7768d44d33b9bdcfec1b52f7cabbd6bd738693b93e1107b62ee5ea39dae766` ; complet sans MIDI `a9c4fa7f6c6ac4c233050f758ad8a804aa561750da613e4750805be18789a132`. Firmware genere identique au test 4, seuls statuts/textes et cache web changent.

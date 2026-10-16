@@ -162,3 +162,5 @@ MIDI OUT Bank is hardware tested by AveyCole (16 October 2026) and available in 
 The hardware-tested saving build is now in main. Extra MIDI files remain outside standard Elektron project backups and SysEx exports. Unsaved edits are lost on power-off. See [note 98](notes/98-persistance-midi-actuelle.md).
 
 [Control All Beat Repeat](https://aveycole.github.io/Modded-Cycles/flasher/) is an independent checklist card, hardware tested by AveyCole. Hold **TRACK + RETRIG**, then hold a TRIG key to repeat the audio tracks included in Control All Config at that division (all six if Control All Config is absent). While both modifiers are held, all sixteen TRIGs select repeat divisions and the normal Control All options are hidden. Releasing either modifier stops it. No dedicated page or master FX; no Model-TG dependency. Install alone or alongside your machines. See [note 99](notes/99-beat-repeat-collectif.md).
+
+Main 1.78 uses the filter and beat-repeat workload repairs confirmed on hardware by AveyCole, including multiple Syn Swarms. Same firmware code as filter-load test 4; MIDI OUT Bank remains optional and experimental.

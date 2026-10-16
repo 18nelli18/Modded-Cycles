@@ -177,3 +177,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [103 — Timing Genie](103-genie-timing.md) | **Teste sur machine par AveyCole le 16/10/2026, promu au principal 1.76** : callback A/B Queue Loop/Page, frontiere MIDI partagee. |
 
 | [104 — Capacite sans MIDI](104-capacite-sans-midi.md) | Principal 1.77 a la demande AveyCole : compression commune Wizard/moteurs, complet sans Banque MIDI avec beat repeat, environ 46 Ko de marge ; Banque MIDI experimentale, filtre en charge encore ouvert. |
+
+| [105 — Charge filtre](105-charge-filtre.md) | Candidat : checks redondants retires, samples/etats identiques ; 22–36 % d instructions filtre en moins (candidat 2) ; test 4 confirme sur machine par AveyCole, promu 1.78 ; repeat actif -37 %, combo seul -77 % en instructions emulees. |
