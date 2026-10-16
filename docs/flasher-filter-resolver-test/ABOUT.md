@@ -1,3 +1,5 @@
-# TINY machine visibility test
+# Per-track Filter compatibility test
 
-This separate test page is based on the last working Genie + TINY test. It checks the missing TINY bit in the Sample Wizard machine-combination selector. With TINY and Sample Wizard both selected, the generated machine table should expose TINY as a selectable machine in a new project. Main remains unchanged pending hardware verification.
+This isolated test flasher keeps the Model-TG option out because its separate filter implementation conflicts with Per-track Filter. Per-track Filter is intended to be selectable with Second LFO, Sample Wizard, Sample Preview, and Synth Attack. The filter controls use k24–27 and save bytes +84/+86; Second LFO keeps k28–32 and +88–91.
+
+The page also includes the prior machine-resolver test for Syntakt, MACRO, and TINY. The updated combination has not yet been hardware verified. Main is unchanged.
