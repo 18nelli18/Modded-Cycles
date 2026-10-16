@@ -1,5 +1,5 @@
-# Main — ACID retrigger fade
+# Main — independent MIDI OUT Bank
 
-Kevin Shallvari’s retrigger fade replaces all ACID variants. Hardware-tested by AveyCole on 14 October 2026. Current main MIDI Bank, ChordKeys, TG and other mods retained. No MIDI saving or independent startup code.
+Hardware tested by AveyCole on 16 October 2026. Install alone or alongside the current machines including RETROSYN, TINY, WAVE and ChordKeys. Sample Wizard stays optional. B data remains RAM-only; Save Project saves A only. Model-TG remains blocked. The wavetable converter is linked directly beneath the feature overview download.
 
-Fondu ACID Kevin vérifié par AveyCole le 14/10/2026. Banque MIDI, ChordKeys, TG et autres mods main conservés ; ni sauvegarde MIDI ni démarrage indépendant.
+Banque MIDI autonome testée sur machine par AveyCole le 16/10/2026. Seule ou avec les machines actuelles dont RETROSYN, TINY, WAVE et ChordKeys. Sample Wizard facultatif. B reste en RAM ; Save Project sauvegarde A seulement. Model-TG reste bloqué. Le convertisseur est lié juste sous le téléchargement du résumé.

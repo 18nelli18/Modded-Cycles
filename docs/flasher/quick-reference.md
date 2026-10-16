@@ -2,7 +2,7 @@
 
 ## Quick reference · 13 October 2026
 
-Install the relevant mods first. Hold the first button, then press/turn the next control. **TRIG** = sequencer step; **pad** = track pad; **DATA** = LEVEL/DATA. **PRESET (MACHINES button)** follows Model-TG’s naming below. RAM-only MIDI Bank previously hardware tested by AveyCole; the new stock TEMPO access is checked in emulation.
+Install the relevant mods first. Hold the first button, then press/turn the next control. **TRIG** = sequencer step; **pad** = track pad; **DATA** = LEVEL/DATA. **PRESET (MACHINES button)** follows Model-TG’s naming below. Independent RAM-only MIDI Bank is hardware tested by AveyCole and available alone or alongside your selected machines.
 
 **Storage:** B-side sequences, MIDI LFOs and CCs are RAM-only: **lost on power-off**. Save Project saves A-side only. A-side Second LFO saves **speed, multiplier, waveform, destination and depth** with the sound; fade, start phase and mode reset when loading a sound.
 

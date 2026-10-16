@@ -13,3 +13,6 @@ Choisissez **Banque MIDI OUT** seule ou avec les fonctions du flasheur principal
 Ouvrez B avec **FUNC + SETTINGS + TRACK**. Six voies MIDI utilisent les canaux 7–12 par défaut. Assignations CC, locks, slides, enregistrement live, retrigger, chance et deux LFO CC conservés. Genie et SCRAMBLE agissent sur B si choisis. TEMPO ouvre le menu global natif.
 
 **B reste en RAM : extinction = perte des données B. Save Project sauvegarde A seulement.** Cette intégration est expérimentale ; l'émulation ne valide ni le matériel ni le timing MIDI physique. Le flasheur principal reste inchangé.
+
+
+Hardware confirmation / Confirmation matérielle — 16/10/2026: AveyCole requested promotion as hardware tested. This build is now available in the [main flasher](../flasher/). Version confirmée par AveyCole, désormais dans le [flasheur principal](../flasher/). The earlier pending notes above describe the pre-confirmation state / Les mentions précédentes décrivent l’état avant confirmation.

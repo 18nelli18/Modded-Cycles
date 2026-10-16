@@ -164,3 +164,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [80 — Banque MIDI, supports facultatifs](80-banque-midi-support-facultatif.md) — 32 backends TG/Genie/LFO2/SCRAMBLE/Chord, noyau sans sampler, RAM seulement ; démarrage/clavier/scheduler prouvés en émulation, page de test indépendante. Test matériel attendu.
 
 | [96 — RETROSYN](96-retrosyn.md) | Six oscillateurs retro ; TINY/WAVE conserves ; Sample Wizard facultatif ; Model-TG interdit au main. Experimental, preuves emulation et navigateur. | **RETROSYN teste sur machine par AveyCole le 16/10/2026 ; publie au principal.**
+
+| [97 — Banque MIDI autonome actuelle](97-banque-midi-actuelle.md) | Seule ou avec RETROSYN/TINY/Wizard facultatif ; 21 builds et boots, clavier, locks/slides, Genie/Undo et scheduler en emulation. **Teste sur machine par AveyCole le 16/10/2026 ; publie au principal.** |

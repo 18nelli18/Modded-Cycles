@@ -131,3 +131,5 @@ existante et génération depuis les OS locaux. Candidat expérimental dans
 
 | Recettes RETROSYN 27, 28, 29, 37 | Coeur fourni par AveyCole ; passerelle ce projet | Archive retrosyn-core.tar.gz, sans licence declaree ; note 96. Generateurs tools/gen_retrosyn*.py. Les combinaisons reprennent les corps existants de MACRO, ACID, WAVE et TINY et leurs credits/licences. Aucune image Elektron incluse. |
 | 20-sample-wizard.json | TinyGregAudio, roterodamus, A.V. | Recette Sample Wizard independante du catalogue main existant, extraite par gen_retrosyn.py --wizard-catalog ; licence LICENSE-Sample-Wizard.txt et credits existants conserves. |
+
+| Banque MIDI autonome actuelle (page de test) | Ce projet ; helpers de performance TinyGregAudio | Huit profils RAM sans moteur TG de la matrice note 80, empreinte source et corps epingles ; correctif TEMPO reassemble, compositeur actuel et nouveau chargeur. MIT et credits existants conserves. Aucun firmware Elektron inclus. [Note 97](../../notes/97-banque-midi-actuelle.md). |

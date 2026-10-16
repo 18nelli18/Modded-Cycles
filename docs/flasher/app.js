@@ -3220,7 +3220,9 @@ function prepareFirmware() {
     if (REF_MAINOS[key]) opts.expectMainOsSha = REF_MAINOS[key];
     opts.refMods = REF_MODS;                       // every mod, on every build (notes/49)
     if (syntakt) opts.syntakt = syntakt;
-    const r = window.MCBuilder.build(raw, window.MC_TWEAKS.device, tweaks, opts);
+    const prepared = window.MCMidiBankCompose ? window.MCMidiBankCompose(tweaks, raw, syntakt) : {tweaks, refMods: REF_MODS};
+    opts.refMods = prepared.refMods;
+    const r = window.MCBuilder.build(raw, window.MC_TWEAKS.device, prepared.tweaks, opts);
     log(`Built ${key}: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.patchedBytes} bytes patched, ${r.raw.length} bytes.`, "is-ok");
     return { raw: r.raw, name: `model-cycles_OS1.13_${key}.syx`, kind: "built", mods: labels, sha: r.mainOsSha,
       ref: !!REF_MAINOS[key], modsRef: r.modsChecked, sixch: tweaks.some((x) => x.id.startsWith("6ch")),
