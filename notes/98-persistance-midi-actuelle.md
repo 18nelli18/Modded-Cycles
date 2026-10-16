@@ -1,0 +1,130 @@
+# 98 — Persistance MIDI du noyau RAM actuel, candidat MPI1
+
+Demande directe d’AveyCole le 16/10/2026 : reprendre la sauvegarde au-delà de
+la RAM, expressément dans un build de test avant le principal. Source : cette
+conversation. Générateurs `tools/gen_midi_persistence*.py`, sources propres
+`tools/machines/midi_lanes/persistence.c` et `persistence_hooks.s`, preuve
+`tools/emu/test_midi_persistence.py`. Adresses : VA de l’OS 1.13.
+
+## Réponse courte
+
+[FAIT en émulation] Le candidat sauvegarde les données musicales de la Banque
+actuelle dans deux copies annexes par pattern, puis les retrouve dans une
+nouvelle instance d’émulateur dont la RAM est vide. Notes et timing live,
+retrigger/chance/arp, assignations et locks CC, configurations des deux LFO
+MIDI par voie sont inclus. **Persistance physique non confirmée.** Le flasheur
+principal reste intégralement RAM, testé sur machine ; cette extension reste
+expérimentale, sur une page distincte.
+
+## 1. Pourquoi ne pas réactiver simplement l’ancien stockage
+
+Le noyau confirmé de la note 97 utilise des notes de 1 584 octets par pattern,
+des extensions retrigger de 3 120 octets et des locks CC de 9 216 octets dans
+des tables privées séparées. Les assignations CC de 144 octets et les
+configurations LFO MIDI de 192 octets sont partagées par le projet dans ce
+noyau RAM. L’ancien stockage MBK2/3 attendait une banque contiguë étendue.
+Réactiver ses hooks sur les pointeurs actuels ne suffit donc pas.
+
+[FAIT] L’ancienne garde disque pouvait refuser toute écriture native après
+poison, même hors sauvegarde annexe. La nouvelle garde observe les erreurs
+pendant nos E/S et empêche seulement les prochains saves MIDI ; elle ne bloque
+jamais un writer natif du projet A. Cela élimine un risque identifié dans le
+code, sans établir la cause du défaut matériel historique.
+
+## 2. Format et copies
+
+MPI1 : header 48 + notes 1 584 + retrigger 3 120 + locks CC 9 216 + mappings
+144 + LFO 192 = **14 304 octets par copie**. Le header contient magic/version,
+taille, identité native du projet, slot 0–95, pattern 0–95 et génération,
+CRC du payload et du header. Aucune adresse, phase, file ou état de tâche
+n’est enregistré. Validation des domaines et CRC avant publication.
+
+Chemins distincts : `/ModdedCycles/MPI1-SS-XXXXXXXX-PP-A` et `-B`. Les formats
+anciens MBK/MCC ne sont ni importés ni remplacés. La génération choisit la
+copie inactive ; le demi-cycle ambigu est refusé. La présence de fichiers
+invalides ne compte jamais comme une absence. Sans copie valide, aucune
+écriture automatique ne remplace les deux fichiers.
+
+Un Save Project natif réussi déclenche la sauvegarde des patterns visités,
+uniquement transport arrêté et IPL0. Les mappings/LFO partagés sont capturés
+dans chaque pattern visité au moment du save. Une écriture annexe procède par
+blocs de 512 octets maximum, reprend les écritures partielles positives,
+finalise, ferme, rouvre et compare l’intégralité du record. Chaque pattern a
+ses copies A/B ; le projet entier n’est pas une transaction atomique.
+
+## 3. Raccordements natifs et publication
+
+| VA | Contrat |
+|---|---|
+| `0x4000f762` | Capturer table/série/identité avant Save, rejouer son prologue |
+| `0x4000f850` | Seulement si Save A réussit : annexe, résultat D0/SR/pile conservés |
+| `0x4006a660` | Notification Load avec identité et slot, puis chaîne RAM originale |
+| `0x4008b24a` / `0x4008b3f6` | Trampolines read/write physiques, observer les erreurs sans bloquer A |
+| drain UI existant | Gardes de démarrage de la note 97 conservées ; restauration UI après Stop |
+
+Load retire immédiatement la table B et annule ses notes via le mécanisme
+atomique existant, sans allocation ni fichier. UI remet ensuite une table
+vide, retire les anciens index privés et restaure le pattern actif à la
+demande. Les autres patterns se restaurent lors de leur sélection. Un projet
+non sauvegardé ou sans association de slot reste utilisable en RAM, sans
+deviner un chemin. Le slot transmis par Load/Save réussi est prioritaire ;
+working96 demande encore l’association native validée.
+
+Une série Load nouvelle ou le démarrage de lecture annule l’E/S en cours.
+Les allocations candidates ne sont pas publiées en cas d’échec. Les banques
+remplacées restent vivantes tant que leurs index auxiliaires les référencent,
+puis sont libérées après retrait des index, au changement de projet.
+
+L’extension est ajoutée après la charge RAM actuelle. Les adresses absolues
+internes proviennent exclusivement des relocations ELF, pas d’une recherche
+d’entiers ressemblant à des pointeurs. La table d’API est liée aux symboles
+de la recette réellement choisie. Noyau RAM, DSP, RETROSYN et TINY conservent
+leur code musical. Model-TG reste interdit et Sample Wizard facultatif.
+
+## 4. Vérification et reproduction
+
+```sh
+python3 tools/gen_midi_persistence.py --check
+python3 tools/gen_midi_persistence_flasher.py --check
+node tools/test_midi_persistence_flasher.js
+python3 tools/emu/test_midi_current.py --case build/midi-persistence/all
+python3 tools/emu/test_midi_persistence.py --case build/midi-persistence/all
+python3 tools/check_midi_current_builds.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --directory build/midi-persistence
+```
+
+Compilation : GCC m68k-linux-gnu 15.2, `-mcpu=54418 -Os -std=gnu99`, sans
+runtime C externe. Données officielles et exports de tests exclusivement sous
+`firmware/` et `build/`, ignorés par Git.
+
+Preuves : corps ColdFire réellement relogés ; CRC/corruption en début et fin,
+écritures partielles, refus open/alloc/write/flush/close/lookup/relecture,
+redémarrage à RAM vide, récupération A après corruption B, isolation projets,
+absence d’E/S IPL1–7 et lecture transport. Save et Load natifs sont exécutés
+avec leurs vrais détours et épilogues ; cache/conversion/FS/périphériques
+restent simulés. Cinq sélections : seule, supports, Wizard+ChordKeys, toutes
+machines/options, toutes machines sans Wizard.
+
+## 5. Essai matériel et limites
+
+[À FAIRE matériel] Arrêter la lecture, éditer B, Save Project et relever le
+popup exact. Attendre **MIDI SAVED**, redémarrer, recharger le même projet et
+ouvrir B. Vérifier aussi un autre pattern et un autre projet, puis CC/LFO et
+le build complet. Un `MIDI SAVE E##` ou `MIDI LOAD E##` signifie un échec,
+même si le projet A a été sauvegardé normalement. Garder les projets utiles
+hors de cet essai initial.
+
+Codes : E10 ouverture lecture ; E11 poison disque ; E12 ouverture écriture ;
+E13 écriture/préparation/finalisation/fermeture ; E14 lookup ; E15 allocation
+snapshot ; E16 copies existantes sans récupération ; E17 valeurs snapshot ;
+E18 relecture différente ; E19 dossier ; E20 restauration invalide ; E21/22
+allocation restauration ; E23 restauration précédente échouée, recharger ;
+E24 projet changé pendant save. L’interface indique aussi Stop, mémoire
+insuffisante, propriétaire changé et restauration préalable requise.
+
+Les sidecars sont **hors backup/export SysEx Elektron**. Pas d’autosave à
+l’extinction, ni reprise des anciens formats. Les fichiers de projets
+supprimés ne sont pas nettoyés automatiquement. Une nouvelle identité ou
+Save As non cohérent est refusé au lieu d’attribuer les données à un autre
+projet. La relecture peut venir du cache : elle n’établit pas seule la
+durabilité physique. Coupure pendant écriture, latence et espace disque
+restent à vérifier sur la machine ; aucune mesure matérielle n’est inventée.

@@ -166,3 +166,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [96 — RETROSYN](96-retrosyn.md) | Six oscillateurs retro ; TINY/WAVE conserves ; Sample Wizard facultatif ; Model-TG interdit au main. Experimental, preuves emulation et navigateur. | **RETROSYN teste sur machine par AveyCole le 16/10/2026 ; publie au principal.**
 
 | [97 — Banque MIDI autonome actuelle](97-banque-midi-actuelle.md) | Seule ou avec RETROSYN/TINY/Wizard facultatif ; 21 builds et boots, clavier, locks/slides, Genie/Undo et scheduler en emulation. **Teste sur machine par AveyCole le 16/10/2026 ; publie au principal.** |
+
+| [98 — Persistance MIDI actuelle](98-persistance-midi-actuelle.md) | Candidat MPI1 separe, copies A/B par pattern, noyau RAM actuel ; notes/CC/LFO et redemarrage en emulation. **Experimental, persistance physique non confirmee ; main RAM conserve.** |
