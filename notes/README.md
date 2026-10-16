@@ -169,3 +169,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 
 | [98 — Persistance MIDI actuelle](98-persistance-midi-actuelle.md) | MPI1, copies A/B par pattern, noyau autonome actuel. **Sauvegarde sur slot vide et reprise confirmees sur machine par AveyCole le 16/10/2026 ; promu au principal.** MIDI sauvegarde charge uniquement en entrant cote B, lecture arretee. |
 | [99 — Beat repeat collectif](99-beat-repeat-collectif.md) | Carte autonome **testee sur la machine par AveyCole le 16/10/2026** : TRACK + RETRIG maintenus, TRIG choisit la division ; six pistes et cotes stereo Wizard, sans page ni FX master ajoutes. Preuves ColdFire ; principal 1.73 identique au candidat 2. |
+
+| [100 — Feedback performance](100-feedback-performance.md) | Candidat experimental : popup bref des divisions beat repeat, LEDs mute B selon FUNC sans selection ; principal inchange. |

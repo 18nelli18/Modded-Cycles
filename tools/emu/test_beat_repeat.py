@@ -19,7 +19,7 @@ def main():
         tweak=next(t for t in case['tweaks'] if t['id']=='control-all-beat-repeat')
         stock=main_os_from_syx(str(prefix.with_suffix('.syx')));origin=int(tweak['append']['dest'],16)
     r=Rig(stock,{'writes':[]},{'writes':[],'symbols':{}});u=r.u
-    u.mem_map(0x43000000,0x800000);u.mem_map(0x46700000,0x400000);u.mem_map(0x80000000,0x200000);u.mem_map(0x93200000,0x200000)
+    u.mem_map(0x43000000,0x800000);u.mem_map(0x46700000,0x400000);u.mem_map(0x80000000,0x200000);u.mem_map(0x93200000,0x400000)
     code=bytearray.fromhex(data['hex'])
     for off in data['reloc']:struct.pack_into('>I',code,off,struct.unpack_from('>I',code,off)[0]+origin)
     r.s={k:origin+v for k,v in data['symbols'].items()}
@@ -60,6 +60,14 @@ def main():
         for lane in range(6):u.mem_write(0x80001858+128*lane,struct.pack('>32i',*([value*(lane+1)]*32)))
         call('br_audio')
         return [list(struct.unpack('>32i',bytes(u.mem_read(0x80001858+128*lane,128)))) for lane in range(6)]
+    r.w32(0x40fe4178,0x93005000)
+    popups=[]
+    def make_string(args):r.w32(args[0],args[1]);return args[0]
+    def popup_ctor(args):
+        popups.append(r.string(r.r32(args[1])))
+        return args[0]
+    for at,fn in ((0x400f980c,make_string),(0x400747c0,popup_ctor),(0x400f7d5c,lambda args:0)):
+        r.stubs[at]=fn;u.hook_add(UC_HOOK_CODE,r.stub,begin=at,end=at)
     r.stubs[0x40076c04]=lambda args:0;u.hook_add(UC_HOOK_CODE,r.stub,begin=0x40076c04,end=0x40076c04)
     r.w32(0x40149310,14400);r.w32(0x40a7883c,1)
     # Au repos : aucun buffer, audio bit-identique et aucune allocation.
@@ -74,6 +82,8 @@ def main():
         assert get('br_requested')==code-16
         assert key(code,9)==0 and key(code,0)==0
     assert get('br_requested')==0xffffffff
+    if 'br_popup' in r.s:assert popups==['1/64','1/48','1/32','1/24','1/16','1/12','1/8','1/6','3/16','1/4','1/3','3/8','1/2','2/3','3/4','1 BAR'],popups
+    if 'br_popup' in r.s:print('PASS popup natif : seize divisions exactes, aucun doublon sur repeat/release',flush=True)
     assert key(16)==0;assert key(20)==0;assert get('br_requested')==4
     assert key(20,0)==0 and get('br_requested')==0
     # Un press TRIG reste possede jusqu'a sa release, meme apres le combo.

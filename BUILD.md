@@ -813,3 +813,8 @@ CPU maximal annonce. Validation materielle du candidat 2 confirmee par AveyCole.
 ## Promotion materielle — 16/10/2026
 
 AveyCole confirme le candidat 2 et demande « push to main as hardware tested! ». Promotion au principal 1.73 ; noyau compile et recettes identiques au test 2, statut et textes seuls modifies. Selection Control All et seize divisions pendant TRACK + RETRIG conserves. Cette confirmation ne mesure pas la charge CPU maximale. `tools/promote_beat_repeat.py --check` et les neuf comparaisons SHA navigateur principal/test verifient cette promotion.
+
+
+## Feedback performance experimental
+
+[Note 100](notes/100-feedback-performance.md) : generateur `tools/gen_performance_feedback_flasher.py`, option `--mute-feedback` de `tools/gen_midi_current.py` et `--feedback` du test navigateur beat repeat. Sources et ressources uniquement dans le candidat ; `docs/flasher/` inchange. Verification materielle des deux changements attendue.

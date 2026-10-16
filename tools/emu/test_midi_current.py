@@ -80,6 +80,35 @@ def main():
             assert r.call('ml_take',live)==((0x86+lane)<<24)|((60+key)<<16)|4
     assert bytes(u.mem_read(RAW,722))==saved
     print('ok clavier B : 96 notes et releases sur canaux 7-12 ; A intact',flush=True)
+    if 'ml_feedback_pad' in r.s:
+        leds=[];pulses=[];invalidations=[]
+        for at,fn in ((0x400cfaf4,lambda a:0x930b0000),(0x4000608c,lambda a:a[0]+1),(0x400060bc,lambda a:a[0]+48),(0x40005f86,lambda a:leds.append(a[:4]) or 0),(0x4008e8ce,lambda a:pulses.append(a[:2]) or 0),(0x400760ba,lambda a:invalidations.append(a[0]) or 0)):
+            r.stubs[at]=fn;u.hook_add(UC_HOOK_CODE,r.stub,begin=at,end=at)
+        maskout=0x930b1000
+        original=bytes(u.mem_read(pattern,1584))
+        for muted in range(64):
+            for lane in range(6):u.mem_write(pattern+264*lane,bytes([0 if muted&(1<<lane) else 1,0]))
+            for selected in range(6):
+                r.w32(r.s['mlp_track'],selected);r.w32(r.s['mlp_func'],1);leds.clear()
+                r.call('mlp_led',obj+0x500,0xffffffff,maskout)
+                pads={a[1]:a[2] for a in leds if 48<=a[1]<=53}
+                assert pads=={48+l:1 if muted&(1<<l) else 2 for l in range(6)},(muted,selected,pads)
+        for selected in range(6):
+            r.w32(r.s['mlp_track'],selected);r.w32(r.s['mlp_func'],0);leds.clear()
+            r.call('mlp_led',obj+0x500,0xffffffff,maskout)
+            assert {a[1]:a[2] for a in leds if 48<=a[1]<=53}=={48+l:3 if selected==l else 1 for l in range(6)}
+        r.w32(r.s['mlp_func'],1);pulses.clear()
+        for lane in range(6):r.w32(r.s['ml_pad_serial']+4*lane,r.r32(r.s['ml_pad_drawn']+4*lane)+1)
+        r.call('mlp_led',obj+0x500,0xffffffff,maskout)
+        assert [p[0] for p in pulses]==list(range(48,54)),pulses
+        pulses.clear()
+        for pad in range(48,54):r.call('mlp_pulse_guard',pad,6)
+        assert not pulses,'pulses audio A visibles sur B'
+        for func in (0,1,0):
+            r.w32(r.s['mlp_func'],func);invalidations.clear();r.call('mlp_led_poll')
+            assert obj in invalidations,'changement FUNC sans invalidation LED'
+        u.mem_write(pattern,original);r.w32(r.s['mlp_func'],0)
+        print('ok LEDs B : 64 masques x six selections, FUNC sans surlignage, retour selection, pulses B seuls, invalidation transport arrete',flush=True)
     # Verifier les fonctions relogees, et non une compilation de test separee.
     locks,copy=0x93060000,0x93064000
     assert r.call('mlkc_lock_init',locks)==1 and r.call('mlkc_lock_init',copy)==1
