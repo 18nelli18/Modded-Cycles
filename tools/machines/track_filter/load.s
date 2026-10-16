@@ -68,11 +68,11 @@ precise_filter:
     movel %a4@(84),%d5
     moveal %sp@(48),%a1
     lea %a1@(128),%a2
+    tstl %d1
+    beq .Ldry_sample
 .Lsample:
     movel %a1@,%d6
     asrl #4,%d6
-    tstl %d1
-    beq .Lcascade
     macl %a3,%d6,%acc0
     movclr.l %acc0,%d6
     lsll #2,%d6
@@ -97,9 +97,6 @@ precise_filter:
     movclr.l %acc0,%d6
     addl %d6,\reg
     .if \tag == 1
-    | Sans feedback, entree et etat sont deja bornes : interpolation convexe.
-    tstl %d1
-    beq .Llo\tag
     cmpil #134217728,\reg
     ble .Lhi\tag
     movel #134217728,\reg
@@ -127,6 +124,35 @@ precise_filter:
     movel %d6,%a1@+
     cmpal %a2,%a1
     bne .Lsample
+    bra .Lfinish
+    | Chemin sans feedback choisi une seule fois par bloc ; memes arrondis.
+.Ldry_sample:
+    movel %a1@,%d6
+    asrl #4,%d6
+.macro dry_pole reg
+    subl \reg,%d6
+    macl %d0,%d6,%acc0
+    movclr.l %acc0,%d6
+    addl %d6,\reg
+    movel \reg,%d6
+.endm
+    dry_pole %d2
+    dry_pole %d3
+    dry_pole %d4
+    dry_pole %d5
+    cmpil #134213632,%d6
+    ble .Ldry_hi
+    movel #134213632,%d6
+.Ldry_hi:
+    cmpil #-134213632,%d6
+    bge .Ldry_lo
+    movel #-134213632,%d6
+.Ldry_lo:
+    lsll #4,%d6
+    movel %d6,%a1@+
+    cmpal %a2,%a1
+    bne .Ldry_sample
+.Lfinish:
     movel %d2,%a4@
     movel %d3,%a4@(28)
     movel %d4,%a4@(56)

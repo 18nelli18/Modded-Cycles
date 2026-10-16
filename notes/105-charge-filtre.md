@@ -32,3 +32,15 @@ Six builds signes : filtre seul, filtre+MIDI, selection complete avec/sans MIDI,
 ## 3. Verification machine attendue
 
 Utiliser le meme pattern charge, memes niveaux et resonances que le rapport. Baisser la coupure, relever ticks/distorsion avec Banque MIDI puis sans. Verifier aussi bypass ouvert/resonance nulle et beat repeat. Si le resultat ne change pas, l'hypothese charge reste non confirmee ; poursuivre la vraie chaine de mixage/LFO et les transitions de parametres. Aucun resultat materiel affirme.
+
+## 4. Retour test 1 et candidat 2 — 16/10/2026
+
+AveyCole confirme disparition de la distorsion mais conserve des clicks legers, meme a coupure fixe. Ils semblent partiellement rythmiques sans suivre exactement les triggers. Seuil observe : six machines actives en lecture ordinaire, cinq ou plus avec beat repeat, avec ou sans Banque. Le comportement avec beat repeat est inclus dans la verification suivante.
+
+La trace de la vraie boucle des voix ajoutees ne montre pas de passage du filtre partage avant le post-gain ; le second emplacement historique dans amp_hook ne demontre donc pas un double filtrage du chemin observe. Aucune correction speculative de ces appels appliquee.
+
+Test 2 choisit le chemin sans resonance une fois par bloc plutot que deux tests par sample. Les memes bornes et calculs restent en place. Noyau 522 octets dans la meme region de 678 octets. Sur les 256 blocs comparatifs : -36,2 % d instructions sans resonance, -21,7 % avec resonance face au principal 1.77 ; samples et etats restent bit exacts. Pas de modification beat repeat. Huit profils navigateur, incluant les selections completes avec beat repeat decoche pour isoler la charge. Resultat physique clicks encore attendu.
+
+Validation candidat 2 elargie a 2 048 blocs comparatifs, identite samples/etats conservee. Preuve combinee `tools/emu/test_filter_repeat_load.py` : vraies voix RETROSYN, cinq/six actives, beat repeat et filtre, notes retriggees ; comparaison au noyau principal. Les autres objets/peripheriques et historique sont fixtures, aucune deadline physique simulee.
+
+Le seuil cinq/six voies indique par AveyCole est ajoute aux fixtures combinees. Elles couvrent un cycle beat repeat complet a 480 BPM/1-64 (375 samples) sur 16 blocs, avec retriggers, cinq/six vraies voix et comparaison de tous les samples. Mesure limitee aux modules compares pour eviter de ralentir artificiellement les autres boucles de synthese. Aucun tempo utilisateur modifie.
