@@ -31,3 +31,7 @@ python3 tools/emu/test_beat_repeat.py --data build/feedback-beat-data.json --cas
 Experimental, confirmation machine attendue. Testpage uniquement, principal 1.76 conserve. Verifier boot, TINY/RETROSYN et autres machines, sample Wizard, beat repeat et lecture habituelle.
 
 Le 16/10/2026 AveyCole rapporte que le filtre se quantifie encore en forte activite : lecture chargee ordinaire confirmee, beat repeat probablement aussi. La confirmation de note 102 couvrait le symptome simple piste 6 ; elle ne suffit pas pour ce nouveau cas. Aucun DSP filtre modifie dans ce candidat. Investigation suivante, sans pretendre ce defaut resolu.
+
+## 4. Promotion demandee — 16/10/2026
+
+AveyCole demande de publier la possibilite de retirer Banque MIDI et de marquer cette banque experimentale. Principal 1.77, memes octets de packing que le candidat ; aucune affirmation de test materiel supplementaire inventee. AveyCole precise ensuite que la distorsion reste legerement audible en forte charge sans Banque aussi. Le statut MIDI est donc experimental pendant l enquete, sans attribuer exclusivement le probleme a sa presence. `tools/gen_no_midi_capacity_main.py --check` verifie les fichiers promus.

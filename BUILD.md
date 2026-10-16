@@ -844,3 +844,7 @@ Correction A/B confirmee sur machine par AveyCole, promotion demandee. `python3 
 ## Capacite sans Banque MIDI — test
 
 [Note 104](notes/104-capacite-sans-midi.md). `tools/gen_no_midi_capacity.py`, `tools/gen_no_midi_capacity_flasher.py`, six builds signes `tools/test_no_midi_capacity_flasher.js`, boot/ABI `tools/emu/test_no_midi_capacity.py` et beat repeat existant. Principal 1.76 conserve. Filtre en forte activite encore ouvert.
+
+## Principal 1.77 — build sans Banque MIDI
+
+Promotion demandee par AveyCole, packing identique au candidat note 104. `tools/gen_no_midi_capacity_main.py --check`. Six firmwares signes identiques au test. Banque MIDI experimental ; filtre en forte charge encore ouvert avec/sans Banque.

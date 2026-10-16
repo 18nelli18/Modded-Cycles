@@ -163,3 +163,5 @@ Promotion timing Genie 1.76 : confirmee sur machine et demandee par AveyCole le 
 ## Capacite sans MIDI — note 104
 
 Stage PIC de copie propre AveyCole / Modded-Cycles (MIT), `tools/machines/beat_repeat/capacity_boot.s`, composition `capacity.js`. Reutilise le compresseur et chargeur moteurs existants ; aucun octet OS ajoute. Credits TinyGregAudio conserves pour Wizard et beat repeat. Test uniquement.
+
+Promotion capacite 1.77 demandee par AveyCole le 16/10/2026. Stage et packing inchanges ; Banque MIDI requalifiee experimentale pendant l enquete filtre/charge. Aucun nouveau resultat materiel invente.

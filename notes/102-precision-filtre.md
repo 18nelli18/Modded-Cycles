@@ -40,3 +40,5 @@ AveyCole confirme : « track 6 filter fix worked, push that to main flasher ». 
 ## 6. Nouveau rapport en forte activite — 16/10/2026
 
 Apres confirmation du cas simple piste 6, AveyCole rapporte encore une quantification en lecture ordinaire chargee, probablement aussi avec beat repeat. Investigation ouverte ; ne pas assimiler la premiere confirmation a une validation de toutes charges. Priorite utilisateur : corriger d abord la capacite du build sans Banque MIDI (note 104). DSP filtre inchange dans ce correctif de stockage.
+
+Precision utilisateur : distorsion plus legere possible meme sans Banque MIDI. Ticks audibles uniquement lorsque la coupure est baissee ; pas rapportes au bypass ouvert/resonance nulle. Le facteur Banque MIDI amplifie donc potentiellement le probleme, sans etre une condition necessaire. Investigation toujours ouverte.
