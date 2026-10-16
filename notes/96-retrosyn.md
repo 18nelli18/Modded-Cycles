@@ -100,3 +100,33 @@ et `--check`. Le vieux smoke UI attend encore une carte Model-TG et tombe
 sur son absence voulue ; le test du main sans Model-TG et celui des cinq
 chemins RETROSYN couvrent la nouvelle selection. Le builder synthetique,
 les references strictes, les chevauchements et le registre memoire passent.
+
+## 7. ChordKeys et selection complete — 16/10/2026
+
+AveyCole demande RETROSYN + ChordKeys avec tous les autres choix. Apres
+identification des conflits historiques du pack LFO 2/3/4 avec Genie,
+Attack et Filter, il demande explicitement son retrait de cette page.
+Second LFO reste disponible ; les deux animations restent exclusives entre elles.
+
+[FAIT en emulation] Six configurations navigateur reelles : RETROSYN seul
+et banque complete, sans/avec Wizard, puis Select All avec chacune des
+animations. Toutes gardent ChordKeys et Second LFO ; Select All garde toutes
+les autres cartes. Ecritures, charges utiles, signature et boot verifies.
+
+La banque Wizard etait trop grande avec deux flux comprimes independants.
+Le code propre ChordKeys est donc inclus au runtime RETROSYN +0x2e900,
+dans une reservation controlee disjointe de toutes les parties et tables.
+Le chargeur Chord copie 2 405 longs depuis la SDRAM decompressee ; ses
+adresses et corps fonctionnels restent identiques. Le meme format aPLib
+utilise compress_margin=0 (defaut historique 9 conserve), identique en
+Python et JavaScript. Flux complet Wizard : 258 705 octets ; fin
+0x401ffff1, soit 15 octets sous END_LIMIT. Sans Wizard : 258 461 octets.
+
+Les chemins seuls gardent leur support independant : retour du chargeur
+RETROSYN chaine vers le support, restauration des LEDs et protection du
+cache disque. Wizard seul avec Chord range son flux Chord a 0x401f8f76
+pour eviter de decompresser sur une source qui chevauche sa destination.
+
+Preuves : tools/test_retrosyn_chord_flasher.js et
+emu/test_retrosyn_chord.py (six boot/clear/cache ; corps Chord et callbacks
+RETROSYN exacts). Pas de verification materielle annoncee.

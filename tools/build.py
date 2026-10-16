@@ -300,7 +300,7 @@ def payload_image(t, runtime):
         import aplib_grow                               # noqa: E402
         if ap_.get("compress_cost"):
             import aplib_cost
-            return aplib_cost.pack(runtime,depth=int(ap_["compress_cost"]),lazy=True)
+            return aplib_cost.pack(runtime,depth=int(ap_["compress_cost"]),lazy=True,margin=int(ap_.get("compress_margin",9)))
         if ap_.get("compress_depth"):
             import aplib_dense
             return aplib_dense.pack(runtime,depth=int(ap_["compress_depth"]))

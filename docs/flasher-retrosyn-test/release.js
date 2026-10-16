@@ -3,6 +3,7 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+{version:"1.70-preview.2",date:"2026-10-16",changes:[{en:"RETROSYN test: ChordKeys now works alongside the complete feature selection, TINY and Second LFO. Pick either startup animation. The older LFO 2/3/4 package is removed from this test page. Sample Wizard remains optional. Builds and startup checked in emulation; hardware testing pending.",fr:"Test RETROSYN : ChordKeys fonctionne avec toutes les autres options, TINY et Second LFO. Choisissez une animation de demarrage. Ancien pack LFO 2/3/4 retire de cette page de test. Sample Wizard reste facultatif. Builds et demarrage verifies en emulation ; test materiel attendu."}]},
 {version:"1.70-preview",date:"2026-10-16",changes:[{en:"RETROSYN preview: six retro oscillator types, alone or alongside the complete machine set including WAVE and TINY. Independent Sample Wizard is optional. Hardware testing pending. Main rejects Model-TG recipes and feature registration.",fr:"Apercu RETROSYN : six oscillateurs retro, seuls ou avec toutes les machines dont WAVE et TINY. Sample Wizard independant facultatif. Test materiel attendu. Le main refuse les recettes et la carte Model-TG."}]},
 {
   "version": "1.69",
