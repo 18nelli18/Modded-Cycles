@@ -2511,7 +2511,7 @@ function clashVia(f, g) {
 
 // Tested or experimental, down to the exact engine combination (with Model-TG, the combined version's own tests).
 // "part": an unticked engine card that is tested with some engines only (PARTLY).
-function statusOf(f) { if(f.id==='sample-preview')return 'experimental';
+function statusOf(f) { if(f.id==='sample-preview'||f.id==='scale-gen'||f.id==='sample-wizard'||f.id==='tiny')return 'experimental';
   if (f.hardwareTestedByOwner) return "tested";
   const sel = selOf(f);
   if (f.engines) {
