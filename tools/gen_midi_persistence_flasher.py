@@ -2,7 +2,7 @@
 """Page MPI1 separee du principal ; copie les sources main, sans firmware."""
 import argparse,pathlib,re
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-STAMP='2026-10-16-midi-saving-test-1'
+STAMP='2026-10-16-midi-saving-test-2'
 def files():
     for src in sorted((ROOT/'docs/flasher').iterdir()):
         if not src.is_file() or src.suffix=='.wav' or src.name=='ABOUT.md':continue
@@ -33,7 +33,7 @@ FR : Utilisez un projet de test. Arretez, editez notes B, locks CC et LFO MIDI p
             raw=s.encode()
         if src.suffix in ('.js','.html','.css','.md','.txt'):raw=('\n'.join(line.rstrip() for line in raw.decode('utf-8').splitlines()).rstrip()+'\n').encode()
         yield src.name,raw
-    yield 'release.js',b'''window.MC_RELEASES=[{version:"1.72-saving-preview.1",date:"2026-10-16",changes:[{en:"Experimental MIDI persistence for the independent bank. Stop before Save Project. Two checked recovery copies include notes, retrigger/chance, CC locks and MIDI LFO settings. Hardware persistence unverified; main remains RAM-only.",fr:"Persistance MIDI experimentale pour la Banque autonome. Arreter avant Save Project. Deux copies verifiees : notes, retrigger/chance, locks CC et LFO MIDI. Persistance materielle non verifiee ; principal RAM conserve."}]}];\n'''
+    yield 'release.js',b'''window.MC_RELEASES=[{version:"1.72-saving-preview.2",date:"2026-10-16",changes:[{en:"Fix MIDI loading when the firmware renews the live project identity. Uses the saved project identity for recovery, including the working copy. Blank-slot saving remains under investigation. Hardware persistence unverified; main remains RAM-only.",fr:"Correction du chargement MIDI lorsque le firmware renouvelle l'identite live du projet. Reprise avec l'identite sauvegardee, y compris la copie de travail. Sauvegarde dans un slot vide encore en investigation. Persistance materielle non verifiee ; principal RAM conserve."}]}];\n'''
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--check',action='store_true');a=p.parse_args();out=ROOT/'docs/flasher-midi-save-current-test';out.mkdir(exist_ok=True)
     for name,raw in files():

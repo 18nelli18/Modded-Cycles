@@ -24,8 +24,8 @@ volatile u32 mp_api[33];
 #define PAYLOAD (NOTES+REPEAT+LOCKS+GLOBAL)
 #define HEADER 48u
 #define RECORD (HEADER+PAYLOAD)
-u32 mp_busy,mp_poison,mp_error,mp_owner,mp_slot,mp_serial,mp_loaded[96];
-u32 mp_entry_table,mp_entry_serial,mp_entry_id;
+u32 mp_busy,mp_poison,mp_error,mp_owner,mp_key,mp_slot,mp_serial,mp_loaded[96];
+u32 mp_entry_table,mp_entry_serial,mp_entry_id,mp_saving;
 static u8 *buffer,*verify;
 static u32 seen_serial;
 static u32 operation_serial;
@@ -47,7 +47,9 @@ u32 mp_crc(const u8 *p,u32 n){u32 c=~0u;while(n--){c^=*p++;for(u32 k=0;k<8;k++)c
 static u32 ipl(void){u16 sr;__asm__ volatile("move.w %%sr,%0":"=d"(sr));return sr&0x700;}
 static u32 stopped(void){return *(volatile u32 *)0x40a7883c!=1;}
 static u32 identity(void){u32 p=N(0x400cf866)();return p?N(0x4000eae2)(p):0;}
-static int slot_for(u32 id){u32 s=N(0x40044d74)(),p;if(s>95||!id)return -1;p=N(0x400d0a10)();if(!p||N(0x4008c2c2)(p,s)!=6||N(0x4008c324)(p,s)!=id)return -1;return (int)s;}
+/* L'identite live est renouvelee par Load : seule la fiche sauvegardee
+ * fournit la cle disque. Ne jamais comparer cette cle a l'identite live. */
+static u32 saved_key(u32 s){u32 p;if(s>95)return 0;p=N(0x400d0a10)();if(!p||N(0x4008c2c2)(p,s)!=6)return 0;return N(0x4008c324)(p,s);}
 static int ready(void){
  if(ipl()||!stopped()||!V(CONTEXT)||(!V(TABLE)&&!held_table))return 0;
  if(!buffer)buffer=(u8 *)N(0x400802e0)(RECORD);
@@ -155,8 +157,9 @@ u32 mp_save_pattern(u32 id,u32 slot,u32 pattern,u8 *bank){
  return 1;
 }
 /* Save natif : capture d'entree, puis seulement apres son succes. */
-void mp_save_enter(void){mp_entry_table=0;mp_entry_id=0;if(ipl()||mp_busy||!V(CONTEXT))return;mp_entry_table=V(TABLE);mp_entry_serial=mp_serial;mp_entry_id=identity();}
+void mp_save_enter(void){mp_entry_table=0;mp_entry_id=0;if(ipl()||mp_busy||!V(CONTEXT))return;mp_saving=1;mp_entry_table=V(TABLE);mp_entry_serial=mp_serial;mp_entry_id=identity();}
 void mp_save_finish(u32 self,u32 slot){
+ mp_saving=0;
  if(ipl()||mp_busy||!V(CONTEXT))return;
  if(!stopped()){popup("STOP TO SAVE MIDI");return;}
  if(slot>95)return;
@@ -168,8 +171,13 @@ void mp_save_finish(u32 self,u32 slot){
  if(directory(1)!=1){fail(19);goto done;}
  CALL(ASSIGN_CANCEL)();CALL(BANK_SYNC)();
  for(u32 i=0;i<96;i++){if(!V(TABLE)||mp_serial!=operation_serial){fail(24);goto done;}u8 *bank=((u8 **)V(TABLE))[i];if(mp_loaded[i]==2){fail(23);goto done;}if(bank){if(!mp_save_pattern(id,slot,i,bank))goto done;mp_loaded[i]=1;}}
- mp_owner=id;mp_slot=slot;notice_id=id;notice_slot=slot;seen_serial=mp_serial;
+ mp_owner=id;mp_key=id;mp_slot=slot;notice_id=id;notice_slot=slot;seen_serial=mp_serial;
 done:mp_busy=0;if(mp_error)error_popup(0);else popup("MIDI SAVED");
+}
+/* La sortie echec doit aussi lever la garde du drain UI. */
+void mp_save_result(u32 self,u32 slot,u32 ok){
+ mp_saving=0;if(ok&255)mp_save_finish(self,slot);
+ else if(!ipl()&&!mp_busy&&V(CONTEXT)&&slot<96)popup("MIDI: SAVE A FAILED");
 }
 void mp_load_notice(u32 id,u32 slot){
  notice_id=id;notice_slot=slot;
@@ -209,20 +217,23 @@ u32 mp_restore_pattern(u32 id,u32 slot,u32 pattern){
  CALL(BANK_SYNC)();CALL(LFO_REFRESH)();return 1;
 }
 void mp_ui(void){
- if(ipl()||mp_busy||!stopped()||!V(CONTEXT)||(!V(TABLE)&&!held_table))return;
- u32 id=identity();int slot=(id&&id==notice_id&&notice_slot<96)?(int)notice_slot:slot_for(id);
- if(!id||slot<0){
+ if(ipl()||mp_busy||mp_saving||!stopped()||!V(CONTEXT)||(!V(TABLE)&&!held_table))return;
+ u32 id=identity(),slot=N(0x40044d74)(),key=saved_key(slot);
+ /* Une notification de Load nommee est prioritaire, meme avant le commit
+  * du slot courant ; une working copy 96 utilise la fiche du slot courant. */
+ if(seen_serial!=mp_serial&&notice_id&&notice_slot<96){slot=notice_slot;key=notice_id;}
+ if(!id||!key||slot>95){
   mp_busy=1;if(held_table||mp_owner!=id||seen_serial!=mp_serial)clear_project();
-  mp_owner=id;mp_slot=0xffffffffu;seen_serial=mp_serial;mp_busy=0;return;
+  mp_owner=id;mp_key=0;mp_slot=0xffffffffu;seen_serial=mp_serial;mp_busy=0;return;
  }
  if(!ready())return;
  mp_busy=1;operation_serial=mp_serial;
- if(mp_owner!=id||seen_serial!=mp_serial||held_table){clear_project();mp_owner=id;mp_slot=(u32)slot;seen_serial=mp_serial;}
+ if(mp_owner!=id||mp_key!=key||mp_slot!=slot||seen_serial!=mp_serial||held_table){clear_project();mp_owner=id;mp_key=key;mp_slot=slot;seen_serial=mp_serial;}
  u32 pattern=CALL(ACTIVE_PATTERN)();
  if(pattern<96&&!mp_loaded[pattern]){
   mp_error=0;int found=directory(0);
   if(found==0)mp_loaded[pattern]=1;
-  else if(found<0||!mp_restore_pattern(id,(u32)slot,pattern)){mp_loaded[pattern]=2;if(!mp_error)mp_error=14;error_popup(1);}
+  else if(found<0||!mp_restore_pattern(key,slot,pattern)){mp_loaded[pattern]=2;if(!mp_error)mp_error=14;error_popup(1);}
  }
  mp_busy=0;
 }

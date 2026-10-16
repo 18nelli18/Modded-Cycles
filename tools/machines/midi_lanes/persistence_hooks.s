@@ -16,21 +16,19 @@ mp_save_entry_hook:
     moveml %d2-%d4/%a2-%fp,%sp@
     jmp 0x4000f76a
 mp_save_exit_hook:
-    tstb %d0
-    beq .Lsave_done
     lea %sp@(-20),%sp
     moveml %d0-%d1/%a0-%a1,%sp@
     movew %sr,%d0
     movel %d0,%sp@(16)
+    movel %sp@,%sp@-
     movel %d3,%sp@-
     movel %a4,%sp@-
-    jsr mp_save_finish
-    addql #8,%sp
+    jsr mp_save_result
+    lea %sp@(12),%sp
     movel %sp@(16),%d0
     movew %d0,%sr
     moveml %sp@,%d0-%d1/%a0-%a1
     lea %sp@(20),%sp
-.Lsave_done:
     moveml %sp@,%d2-%d4/%a2-%fp
     lea %sp@(52),%sp
     rts

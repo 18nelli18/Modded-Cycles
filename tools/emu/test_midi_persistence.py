@@ -50,7 +50,7 @@ def fixture(prefix,files):
     stub(0x400cf866,lambda a:OBJ);stub(0x4000eae2,lambda a:state['id'])
     stub(0x400802ec,lambda a:r.free.append(a[0]) or 0)
     stub(0x40044d74,lambda a:state['slot']);stub(0x400d0a10,lambda a:0x93050000)
-    stub(0x4008c2c2,lambda a:6);stub(0x4008c324,lambda a:state['id'])
+    stub(0x4008c2c2,lambda a:6);stub(0x4008c324,lambda a:state.get('saved_id',state['id']))
     stub(original['TG_show_popup'],lambda a:messages.append(r.string(a[0])) or 0)
     stub(original['ml_active_pattern_id'],lambda a:state['pattern'])
     def lookup(a):
@@ -138,6 +138,17 @@ def main():
     restored=[bytes(r2.u.mem_read(at,n)) for at,n in ((got[0],1584),(got[1],3120),(got[2],9216),(r2.s['mlkc_state'],144),(got[3],192))]
     assert restored==expected
     print('PASS redemarrage emulateur : toutes donnees musicales restaurees depuis fichiers',flush=True)
+    # Regression materielle : Load renouvelle l'UUID live apres conversion.
+    st2['saved_id']=st2['id'];r2.call('mp_load_notice',st2['saved_id'],9)
+    st2['id']=0x34567890;r2.call('mp_ui');r2.call('ml_bank_ui_sync')
+    assert bytes(r2.u.mem_read(musical(r2)[0],1584))==expected[0]
+    assert r2.r32(r2.s['mp_owner'])==st2['id'] and r2.r32(r2.s['mp_key'])==st2['saved_id']
+    r2.call('mp_ui');assert bytes(r2.u.mem_read(musical(r2)[0],1584))==expected[0]
+    # Working96 au boot : la fiche disque garde l'ancienne identite.
+    r2.call('mp_load_notice',st2['id'],96);st2['id']=0x45678901
+    r2.call('mp_ui');r2.call('ml_bank_ui_sync')
+    assert bytes(r2.u.mem_read(musical(r2)[0],1584))==expected[0]
+    print('PASS Load UUID live renouvele et working96 : cle sauvegardee stable, B restauree et conservee aux drains suivants',flush=True)
     # La plus recente est corrompue : revenir a l'autre copie valide.
     files[next(k for k in files if k.endswith('-B'))][-1]^=1
     r3,st3,f3,e3,m3=fixture(prefix,files);assert bytes(r3.u.mem_read(musical(r3)[0],1584))==expected[0]
@@ -173,7 +184,8 @@ def main():
         assert messages[-1]=='MIDI SAVED' and len(messages)==before+1
         native['save']=0;count=len(events);before=len(messages)
         assert r.call(0x4000f762,OBJ,9,callback)&255==0
-        assert len(events)==count and len(messages)==before
+        assert len(events)==count and messages[before:]==['MIDI: SAVE A FAILED']
+        assert r.r32(r.s['mp_saving'])==0
         print('PASS vrai Save Project natif : detours entree/epilogue, resultat et pile conserves ; aucun sidecar apres echec A',flush=True)
         dest=0x93011000;loaded={'ok':1}
         def convert(a):r.w32(a[0]+8,state['id']);return loaded['ok']
@@ -187,6 +199,26 @@ def main():
         assert r.call(0x4006a5a0,cache,9,dest,callback)==0
         assert r.r32(r.s['mp_serial'])==serial and len(events)==count
         print('PASS vrai Load Project natif : slot/identite transmis, retrait immediat de B sans E/S, restauration UI ; echec A inerte',flush=True)
+        # Save Project vers destination vide : callbacks UI pendant le Save.
+        fresh={};rs,ss,fs,es,ms=fixture(prefix,fresh)
+        bs=musical(rs)[0];rs.u.mem_write(bs+8,bytes((73,111,3,1)))
+        ss['slot']=10;ss['saved_id']=0
+        rs.u.mem_write(callback,bytes(16))
+        for at,fn in ((0x400cfdaa,lambda a:cache),(0x4006a216,lambda a:serialized),(0x4005d18a,lambda a:1),(0x4006a4d6,lambda a:1),(0x400d0aae,lambda a:0),(0x400cf044,lambda a:0)):rs.persistence_stub(at,fn)
+        # La garde est verifiee avec la vraie fonction de drain pendant les
+        # deux etats des metadonnees d'un slot nouvellement cree.
+        rs.call('mp_save_enter');count=len(es)
+        rs.call('mp_ui');assert len(es)==count and rs.r32(rs.s['ml_bank_table'])!=0
+        ss['saved_id']=ss['id'];rs.call('mp_ui')
+        assert bytes(rs.u.mem_read(bs+8,4))==bytes((73,111,3,1)) and len(es)==count
+        rs.call('mp_save_result',OBJ,10,1)
+        assert ms[-1]=='MIDI SAVED' and any('MPI1-10-' in k for k in fresh)
+        # La vraie entree/sortie native fonctionne egalement sur ce slot neuf.
+        assert rs.call(0x4000f762,OBJ,10,callback)&255==1 and ms[-1]=='MIDI SAVED'
+        rs.call('mp_load_notice',ss['saved_id'],10);ss['id']=0x56789012
+        rs.call('mp_ui');rs.call('ml_bank_ui_sync')
+        assert bytes(rs.u.mem_read(musical(rs)[0]+8,4))==bytes((73,111,3,1))
+        print('PASS Save Project destination vide : garde UI avant/apres creation fiche, hooks natifs, rechargement B sous UUID renouvele',flush=True)
     print('LIMITES : backend fichier et objets OS simules ; persistance physique non prouvee')
 
 if __name__=='__main__':main()

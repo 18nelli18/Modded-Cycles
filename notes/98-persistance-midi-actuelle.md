@@ -128,3 +128,39 @@ Save As non cohérent est refusé au lieu d’attribuer les données à un autre
 projet. La relecture peut venir du cache : elle n’établit pas seule la
 durabilité physique. Coupure pendant écriture, latence et espace disque
 restent à vérifier sur la machine ; aucune mesure matérielle n’est inventée.
+
+## 6. Retour matériel et correction de reprise (16/10/2026)
+
+[FAIT matériel rapporté par AveyCole] Le premier candidat affiche MIDI SAVED
+sur un projet existant, mais B reste vide après Load, sans popup d'erreur.
+Il signale aussi un échec de sauvegarde sur slot vide ; le geste précis et
+le popup de ce second cas restent à confirmer.
+
+[FAIT] Les chemins natifs `0x4000fb06` et `0x4000f872` renouvellent
+l'identité live via `0x4000eb12`. L'égalité ancienne entre identité live
+et fiche sauvegardée pouvait donc classer un projet chargé comme non associé,
+sans tentative de lecture MIDI. Les anciens mocks donnaient la même identité
+aux deux sources et masquaient ce défaut.
+
+Le candidat preview.2 sépare `mp_owner` (garde RAM live) de `mp_key` (clé
+disque). Une notification Load nommée fournit la clé source ; les drains
+suivants et working96 utilisent la fiche native type 6 du slot courant,
+sans égalité avec l'identité live renouvelée. Le format MPI1 reste identique.
+
+[FAIT en émulation] La régression renouvelle l'identité après notification,
+vérifie notes restaurées et gardées au drain suivant, puis charge working96
+avec une autre identité live. Les fichiers seuls conservent la clé d'origine.
+Les API de métadonnées et fichier restent simulées ; ce résultat ne prouve
+pas encore le cycle matériel. Le principal RAM reste inchangé.
+
+Le drain est maintenant suspendu entre entrée et sortie du Save natif :
+il ne peut pas changer de propriétaire pendant que la fiche du nouveau slot
+est absente puis créée. Les deux sorties, succès et échec, lèvent la garde.
+Un échec A sur slot nommé affiche `MIDI: SAVE A FAILED`, sans écriture MIDI.
+La preuve simule ces deux états de métadonnées entre entrée/sortie, exécute
+aussi les vrais hooks Save sur slot 10, puis recharge ses notes après
+renouvellement de l'identité. Cela couvre le geste précisé par AveyCole
+(Save Project puis destination vide), sans prouver sa cause matérielle.
+
+[À FAIRE] Retester ce chargement sur machine et diagnostiquer séparément
+la sauvegarde sur slot vide. Aucun correctif de ce second cas n'est annoncé.
