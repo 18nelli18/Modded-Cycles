@@ -1,5 +1,6 @@
 // Page de test seulement : profils explicites, aucune modification du main.
 (()=>{
+ const tw=window.MC_TWEAKS;tw.features=tw.features.filter(f=>f.id!=='lfo-plus');tw.tweaks=tw.tweaks.filter(t=>t.id!=='lfo-plus');
  const change=(id,on)=>{const e=document.getElementById('feat-'+id);if(e){e.checked=on;e.dispatchEvent(new Event('change',{bubbles:true}));}};
  function profile(mode){
   change('retrosyn',false);
@@ -16,5 +17,3 @@
  document.querySelectorAll('[data-retrosyn-profile]').forEach(e=>e.addEventListener('click',()=>profile(e.dataset.retrosynProfile)));
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>profile('full'),{once:true});else profile('full');
 })();
-
-
