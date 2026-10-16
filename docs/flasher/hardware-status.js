@@ -1,0 +1,1 @@
+(()=>{const t=window.MC_TWEAKS;t.features=t.features.filter(f=>f.id!=='track-filter');for(const f of t.features)f.status='tested';window.MCFlasherApp.applyLang(document.documentElement.lang||'en');})();

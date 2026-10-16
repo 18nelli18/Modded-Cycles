@@ -3,9 +3,9 @@
  const a=window.MCFlasherApp,tw=window.MC_TWEAKS,c=window.MCWizardCatalogue,r=window.MCWizardReferences,prev=window.MCMainClearResolve,on=a.isSelected;
  const tg=document.getElementById('feat-model-tg');if(tg?.checked){tg.checked=false;tg.dispatchEvent(new Event('change',{bubbles:true}));}
  tw.features=tw.features.filter(f=>f.id!=='model-tg');
- tw.features.push({id:'sample-wizard',label:'Sample Wizard',desc:'Independent sampler with Slice varispeed.',status:'tested',cat:'sound',excludes:['track-filter'],variants:[{id:'sample-wizard'}],credit:{kind:'by',who:'TinyGregAudio; roterodamus; A.V.',repo:'TinyGregAudio/Model-TG'},license:'LICENSE-Sample-Wizard.txt'});
+ tw.features.push({id:'sample-wizard',label:'Sample Wizard',desc:'Independent sampler with Slice varispeed.',status:'experimental',cat:'sound',excludes:['track-filter'],variants:[{id:'sample-wizard'}],credit:{kind:'by',who:'TinyGregAudio; roterodamus; A.V.',repo:'TinyGregAudio/Model-TG'},license:'LICENSE-Sample-Wizard.txt'});
  tw.tweaks.push(c.variants[0].wizard);
- const preview=tw.features.find(f=>f.id==='sample-preview');if(preview){preview.status='tested';preview.requires='sample-wizard';preview.with={};preview.excludes=['chord-keys','wave-supermodel'];}
+ const preview=tw.features.find(f=>f.id==='sample-preview');if(preview){preview.status='experimental';preview.requires='sample-wizard';preview.with={};preview.excludes=['chord-keys','wave-supermodel'];}
  for(const id of ['chord-keys','wave-supermodel']){const f=tw.features.find(f=>f.id===id);if(f)f.excludes=[...new Set([...(f.excludes||[]),'sample-preview'])];}
  const filter=tw.features.find(f=>f.id==='track-filter');if(filter)filter.excludes=[...new Set([...(filter.excludes||[]),'sample-wizard'])];
  let active=null;

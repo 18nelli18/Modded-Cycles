@@ -1,7 +1,7 @@
 // Composition des options Wizard ; utilisée identiquement par l'UI et les preuves.
 function composeWizard(c,state,basic,engineSizes){
  const clone=x=>JSON.parse(JSON.stringify(x)),v=c.variants[state.mask],w=clone(v.wizard),cat=[w];
- w.prototype_only=false;w.flashable=true;w.status='tested';
+ w.prototype_only=false;w.flashable=true;w.status='experimental';
  const ap=w.append,part=ap.parts[0],base=parseInt(ap.dest,16),writeLong=(name,value)=>{const off=(parseInt(w.symbols[name],16)-base)*2;part.hex=part.hex.slice(0,off)+value.toString(16).padStart(8,'0')+part.hex.slice(off+8);};
  writeLong('av_perf_on',Number(state.perf));writeLong('av_ui_mods',Number(state.perf||state.genie||state.scramble));
  if(state.perf)w.writes.push(...clone(c.perf));if(state.lfo)w.writes.push(...clone(c.clear));
