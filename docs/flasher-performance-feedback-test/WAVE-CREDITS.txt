@@ -1,0 +1,4 @@
+WAVE: Kevin Shallvari / Modded-Cycles
+Pinned wave-acid-preview commit: 5b6108ee57cdee4767f91bfb894ccefaadf4210d
+Integration: A.V. Supermodel. MIT license: LICENSE-WAVE.txt
+No firmware images or user audio are distributed.
