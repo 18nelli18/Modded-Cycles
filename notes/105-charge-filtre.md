@@ -44,3 +44,5 @@ Test 2 choisit le chemin sans resonance une fois par bloc plutot que deux tests 
 Validation candidat 2 elargie a 2 048 blocs comparatifs, identite samples/etats conservee. Preuve combinee `tools/emu/test_filter_repeat_load.py` : vraies voix RETROSYN, cinq/six actives, beat repeat et filtre, notes retriggees ; comparaison au noyau principal. Les autres objets/peripheriques et historique sont fixtures, aucune deadline physique simulee.
 
 Le seuil cinq/six voies indique par AveyCole est ajoute aux fixtures combinees. Elles couvrent un cycle beat repeat complet a 480 BPM/1-64 (375 samples) sur 16 blocs, avec retriggers, cinq/six vraies voix et comparaison de tous les samples. Mesure limitee aux modules compares pour eviter de ralentir artificiellement les autres boucles de synthese. Aucun tempo utilisateur modifie.
+
+Les quatre fixtures combinees passent : cinq et six voix, avec et sans repeat, 16 blocs/cycle complet identiques au noyau principal. Instructions filtre+repeat observees pour six voix : 144 808 vers 93 148 sans repeat, 453 696 vers 402 036 avec repeat. Les huit builds et preuves Python/native passent. La reduction physique des clicks reste a verifier.

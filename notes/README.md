@@ -178,4 +178,4 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 
 | [104 — Capacite sans MIDI](104-capacite-sans-midi.md) | Principal 1.77 a la demande AveyCole : compression commune Wizard/moteurs, complet sans Banque MIDI avec beat repeat, environ 46 Ko de marge ; Banque MIDI experimentale, filtre en charge encore ouvert. |
 
-| [105 — Charge filtre](105-charge-filtre.md) | Candidat : checks redondants retires, samples/etats identiques ; 16–28 % d instructions filtre en moins en emulation, resultat materiel attendu. |
+| [105 — Charge filtre](105-charge-filtre.md) | Candidat : checks redondants retires, samples/etats identiques ; 22–36 % d instructions filtre en moins en emulation (candidat 2), resultat materiel attendu. |
