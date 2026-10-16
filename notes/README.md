@@ -173,3 +173,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [100 — Feedback performance](100-feedback-performance.md) | Candidat experimental : popup bref des divisions beat repeat, LEDs mute B selon FUNC sans selection ; principal inchange. |
 
 | [102 — Precision du filtre](102-precision-filtre.md) | Ladder EMAC ; **correction piste 6 confirmee sur machine par AveyCole le 16/10/2026, promue au principal 1.75.** |
+
+| [103 — Timing Genie](103-genie-timing.md) | Test : vrai callback A/B Queue Loop/Page au lieu de Sound 0/1, frontiere MIDI partagee ; confirmation materielle attendue. |

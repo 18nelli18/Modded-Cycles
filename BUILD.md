@@ -832,3 +832,7 @@ AveyCole demande « pus the beat repeat and b-side mute fix to main also ». Pro
 ## Filtre principal 1.75 — 16/10/2026
 
 Correction piste 6 confirmee sur machine par AveyCole et promotion demandee. `python3 tools/gen_filter_precision_main.py --check` ; meme DSP et memes hashes MAIN OS que les neuf profils du test precision. Sequence Genie reste hors de cette promotion.
+
+## Timing Sequence Genie — test
+
+[Note 103](notes/103-genie-timing.md) : `tools/gen_genie_timing.py`, `tools/gen_genie_timing_flasher.py`, `tools/test_genie_timing_flasher.js` et preuve `tools/emu/test_genie_timing_current.py`. Page `flasher-genie-timing-test` ; principal 1.75 conserve, code filtre confirme inclus.
