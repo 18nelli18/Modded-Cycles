@@ -2511,7 +2511,7 @@ function clashVia(f, g) {
 
 // Tested or experimental, down to the exact engine combination (with Model-TG, the combined version's own tests).
 // "part": an unticked engine card that is tested with some engines only (PARTLY).
-function statusOf(f) {
+function statusOf(f) { if(f.id==='sample-preview')return 'experimental';
   if (f.hardwareTestedByOwner) return "tested";
   const sel = selOf(f);
   if (f.engines) {
@@ -3896,7 +3896,8 @@ FEAT.en['scale-gen'].desc='SETTINGS + PAGE opens Sequence Genie. Generate is the
 FEAT.fr['scale-gen'].short='Génération immédiate ou différée à la prochaine page / boucle entière.';
 FEAT.fr['scale-gen'].desc='SETTINGS + PAGE ouvre Genie. Generate est en première ligne, Queue at juste dessous. Cliquer DATA, choisir Loop (défaut) ou Page, puis confirmer. Loop attend le retour au pas 1 de la piste choisie ; Page attend le prochain début de page (17, 33, 49 ou 1). Changer la page affichée ne déclenche rien. À l’arrêt, génération immédiate. Compatible stock et Wizard ; sample et mode conservés.';
 
-FEAT.en['sample-preview'].desc='Preview samples in the Sample Wizard browser. Requires Sample Wizard; uses browser hooks that cannot be combined with WAVE or ChordKeys in this test.'; FEAT.fr['sample-preview'].desc='Préécoute dans le navigateur Sample Wizard. Exige Wizard ; ses hooks navigateur ne se combinent pas à WAVE ou ChordKeys dans ce test.';
+FEAT.en['sample-preview'].desc='Preview samples in the Sample Wizard browser while ChordKeys is selected. Requires Sample Wizard; compatible with WAVE and ChordKeys. Select a sample in the browser, then play its track pad or keyboard to audition it.'; FEAT.fr['sample-preview'].desc='Préécoute dans le navigateur Sample Wizard avec ChordKeys sélectionné. Exige Wizard ; compatible avec WAVE et ChordKeys. Choisir un sample puis jouer le pad ou le clavier de sa piste pour l’écouter.';
+FEAT.en['sample-preview'].label='Sample Preview'; FEAT.fr['sample-preview'].label='Préécoute des samples';
 window.MCFlasherApp = { state: st, REF_MAINOS, REF_MODS, REF_SAMPLES_ON_CYCLES, REF_CYCLES_ON_SAMPLES, REF_SAMPLES_BACK, loadOs,
   loadSamples, loadSyntakt, chosenEngines, setMode, setSmpDir, setMachine, setMethod, applyLang, render,
   chosenTweaks, chosenLabels, CATS, isSelected: isOn };

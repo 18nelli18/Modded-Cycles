@@ -1,3 +1,3 @@
-# Main — continuous filter
+# Main — Preview compatibility
 
-Filter correction hardware confirmed by A.V. on 15 October 2026. Firmware writes and payloads are identical to the separate continuous-history test. Includes the requested off-between-trigger-pulses Genie mute display. Native DSP, sound round-trips, browser builds and startup proofs passed. Sample Preview / ChordKeys compatibility is tested separately and is not promoted here. Stable 909 unchanged.
+Promoted at A.V.’s request on 15 October 2026. Sample Preview is compatible with ChordKeys and WAVE together, including Select All. Native browser/pad/ABI and startup checks pass. The filter remains hardware tested. TINY is developed separately.
