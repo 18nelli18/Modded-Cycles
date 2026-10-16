@@ -1610,7 +1610,7 @@ window.MCMainClearResolve=out=>{
  return out.concat([n]).sort((x,y)=>x.order-y.order);
 };
 for(const [id,get] of [['supermodel-support-independent',()=>nr],['supermodel-wave-support',()=>wr]]){const r={};for(const k of ['w','p'])Object.defineProperty(r,k,{get:()=>get()?.[k]});a.REF_MODS[id]=r;}
-for(const id of ['scale-gen','chord-keys','lfo-secondary'])window.MC_TWEAKS.features.find(f=>f.id===id).status='experimental';
+for(const id of ['scale-gen','lfo-secondary'])window.MC_TWEAKS.features.find(f=>f.id===id).status='tested';window.MC_TWEAKS.features.find(f=>f.id==='chord-keys').status='experimental';
 a.applyLang(document.documentElement.lang||'en');
 })();
 
