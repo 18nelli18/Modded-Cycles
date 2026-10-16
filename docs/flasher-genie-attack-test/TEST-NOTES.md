@@ -10,3 +10,7 @@ New test, main and 909 unchanged by this candidate. The shared per-track filter 
 - Existing cards retain the owner's hardware-tested designation. New Attack and this combination still require hardware verification. A badge changing under Select All is a known display issue queued immediately after publication.
 
 Validated in native ColdFire emulation: six-track attack/zero bypass/retriggers, sound and lock codecs, all 64 mute masks, actual LED manager/RTTI/first-wins writer with a background step fixture, native OLED raster, startup/cache/31 CHORD tables with and without extra machines. Browser: nine real selected builds, signed containers/reference checks, EN/FR and actual HTML resource loading. Physical cache and MIDI/audio hardware are not emulated.
+
+## Allocation correction after hardware report
+
+First candidate crashed after the intro (`v03-m0-p24300000`). The private LED subobject was initialized by a pre-allocation vtable hook while A4 did not yet refer to the new Genie object. That write is removed. A separate hook now initializes it only after operator new and the native constructor, beside the original primary-vtable assignment. The full open path is checked with an invalid incoming A4, native constructor, native RTTI and intro/tick/menu transition. New hardware verification is still needed.

@@ -18,10 +18,6 @@ avg_open_led:
  movel %d0,%a1@(0x7c)
  movel %d0,%a1@(0x90)
  movel %d0,%a1@(0xa4)
- lea avg_led_vt+8,%a0
- movel %a0,%a4@(0x2f00)
- clrl %a4@(0x2f04)
- clrl %a4@(0x2f08)
  movel #SG_PAD,%d0
  rts
 .section .text.panel_body,"ax"
@@ -162,3 +158,14 @@ avg_ldtor1:
  movel #-0x2f00,%d0
  addl %d0,%sp@(4)
  jmp SG_DTOR1
+
+.section .text.alloc_led,"ax"
+.globl avg_alloc_led
+avg_alloc_led:
+ lea avg_led_vt+8,%a0
+ movel %a0,%a4@(0x2f00)
+ clrl %a4@(0x2f04)
+ clrl %a4@(0x2f08)
+ lea %a1@(8),%a0
+ movel %a0,%a4@
+ rts

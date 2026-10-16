@@ -59,6 +59,12 @@ needle=b'\x20\x3c'+struct.pack('>I',ss['sg_pad']);hits=[]
 for x in sg['writes']:
  b=bytes.fromhex(x['new']);hits += [build.BASE+x['off']+i for i in range(0,len(b)-5,2) if b[i:i+6]==needle]
 assert len(hits)==1,hits;ch(hits[0],needle,b'\x4e\xb9'+struct.pack('>I',s['avg_open_led']))
+# L'objet n'existe qu'après son allocation et constructeur : initialiser ici seulement.
+needle=bytes.fromhex('41e900082888');hits=[]
+for x in sg['writes']:
+ b=bytes.fromhex(x['new']);hits += [build.BASE+x['off']+i for i in range(0,len(b)-5,2) if b[i:i+6]==needle]
+assert len(hits)==1,hits;ch(hits[0],needle,b'\x4e\xb9'+struct.pack('>I',s['avg_alloc_led']))
+
 # Réutiliser les noms courts de l'UI lamp originale dans une table propre.
 labels=re.search(r'sg_stock_labels:\n(.*)',pathlib.Path('tools/machines/seq_gen/stock_ui.s').read_text(),re.S).group(1)
 # Les noms actuels sont remplacés par leurs préfixes courts avec bourrage NUL (pas de déplacement).

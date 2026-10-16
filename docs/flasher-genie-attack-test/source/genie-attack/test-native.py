@@ -47,7 +47,7 @@ r.stub(C.TEXT,lambda a:texts.append((a[2],a[3],string(r.r32(r.uc.reg_read(C.A[7]
 r.w32(ss['sg_intro'],0);r.w32(ss['sg_row'],0);r.w32(ss['sg_edit'],0);r.call(ss['sg_render'],C.VIEWOBJ,bitmap,check='render ABI');assert (19,46,'S.G.') in texts,(texts,rects);assert any(x[1:]==(2,0,36,63,0xffffffff) for x in rects);assert all(x>=44 or x==19 for x,y,text in texts),texts
 print('PASS actual Genie render: restored S.G./20-rectangle lamp, text in right panel, highlight right of lamp, ABI')
 # Vtable privée LedHandler, aucun changement dans le tableau stock.
-r.call(s['avg_open_led'],regs={C.A[4]:C.VIEWOBJ});assert r.r32(C.VIEWOBJ+0x2f00)==s['avg_led_vt']+8;assert r.uc.reg_read(C.D[0])==ss['sg_pad']
+r.call(s['avg_open_led'],regs={C.A[4]:C.VIEWOBJ});r.call(s['avg_alloc_led'],regs={C.A[4]:C.VIEWOBJ,C.A[1]:ss['sg_vt']});assert r.r32(C.VIEWOBJ+0x2f00)==s['avg_led_vt']+8;assert r.uc.reg_read(C.D[0])==ss['sg_pad']
 r.w32(C.VIEWOBJ,ss['sg_vt']+8);assert r.call(0x400f4cec,C.VIEWOBJ,0x401121c0,0x400ff970,0xfffffffe)==C.VIEWOBJ+0x2f00
 print('PASS actual OS dynamic_cast recognizes private Genie LedHandler; stock vtable unchanged')
 # Mutes : getter réel de bitmap natif, sortie LED remplacée uniquement par collecte.
