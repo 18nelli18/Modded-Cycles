@@ -157,3 +157,5 @@ Promotion 1.75 du 16/10/2026 : correction piste 6 confirmee sur machine par Avey
 ## Timing Genie — note 103
 
 Helper de frontiere MIDI propre AveyCole / Modded-Cycles (MIT), `tools/machines/seq_gen/timing_boundary.s`. Reutilisation du renderer commun existant ; credits Model-TG/TinyGregAudio conserves pour ses bases historiques. Aucun octet Elektron ajoute. Test uniquement, verification materielle attendue.
+
+Promotion timing Genie 1.76 : confirmee sur machine et demandee par AveyCole le 16/10/2026. Memes octets propres, licences et credits ; seuls statuts et textes promus par `tools/gen_genie_timing_main.py`.

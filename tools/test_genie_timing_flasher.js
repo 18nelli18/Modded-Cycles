@@ -1,7 +1,7 @@
 // Note 103 : compositions navigateur signees et absence de modification sans Genie.
 const fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
-process.env.RETROSYN_PAGE=process.env.GENIE_TIMING_BASELINE?'docs/flasher':'docs/flasher-genie-timing-test';
-const {open,change}=require('./test_retrosyn_flasher'),out=path.resolve(__dirname,'../build/genie-timing'+(process.env.GENIE_TIMING_BASELINE?'-baseline':''));fs.mkdirSync(out,{recursive:true});
+process.env.RETROSYN_PAGE=process.env.GENIE_TIMING_PAGE||(process.env.GENIE_TIMING_BASELINE?'docs/flasher':'docs/flasher-genie-timing-test');
+const {open,change}=require('./test_retrosyn_flasher'),out=path.resolve(__dirname,'../build',process.env.GENIE_TIMING_OUT||('genie-timing'+(process.env.GENIE_TIMING_BASELINE?'-baseline':'')));fs.mkdirSync(out,{recursive:true});
 const raw=Uint8Array.from(fs.readFileSync(path.resolve(__dirname,'../firmware/model-cycles_OS1.13.syx'))),st=Uint8Array.from(fs.readFileSync(path.resolve(__dirname,'../firmware/Syntakt_OS1.42.syx')));
 (async()=>{for(const p of [{name:'audio',sg:true},{name:'midi',sg:true,midi:true},{name:'wizard',sg:true,midi:true,wizard:true},{name:'all',all:true,sg:true,midi:true},{name:'no-genie',midi:true}]){
  const {w,errors}=open();await new Promise(r=>setTimeout(r,30));try{

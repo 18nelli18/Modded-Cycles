@@ -30,3 +30,7 @@ Profils navigateur signes : audio seul, Genie+MIDI, Wizard+Genie+MIDI, selection
 ## 3. Materiel
 
 Experimental, non confirme sur machine. Verifier le choix Queue Loop/Page sur A puis B, Generate pendant lecture, application a la bonne frontiere et Undo. Le candidat inclut le filtre principal 1.75 deja confirme par AveyCole ; il ne modifie pas le principal. ChpHzrd reste un autre travail separe.
+
+## 4. Teste sur la machine (16/10/2026)
+
+AveyCole confirme : « sequence genie fix worked, push to main ». Promotion 1.76 avec memes octets que le candidat, seules descriptions/statuts modifies. Le filtre 1.75 reste inclus. Generateur principal `tools/gen_genie_timing_main.py --check` ; candidat historique epingle au principal 1.75. ChpHzrd exclu.
