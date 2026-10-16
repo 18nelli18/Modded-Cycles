@@ -3898,7 +3898,7 @@ FEAT.fr['scale-gen'].desc='SETTINGS + PAGE ouvre Genie. Generate est en premièr
 
 FEAT.en['sample-preview'].desc='Preview samples in the Sample Wizard browser while ChordKeys is selected. Requires Sample Wizard; compatible with WAVE and ChordKeys. Select a sample in the browser, then play its track pad or keyboard to audition it.'; FEAT.fr['sample-preview'].desc='Préécoute dans le navigateur Sample Wizard avec ChordKeys sélectionné. Exige Wizard ; compatible avec WAVE et ChordKeys. Choisir un sample puis jouer le pad ou le clavier de sa piste pour l’écouter.';
 FEAT.en['sample-preview'].label='Sample Preview'; FEAT.fr['sample-preview'].label='Préécoute des samples';
-window.MCFlasherApp = { state: st, REF_MAINOS, REF_MODS, REF_SAMPLES_ON_CYCLES, REF_CYCLES_ON_SAMPLES, REF_SAMPLES_BACK, loadOs,
+window.MCFlasherApp = { registerFeatureTexts(id, texts) { for (const L of ["en", "fr"]) FEAT[L][id] = texts[L]; }, state: st, REF_MAINOS, REF_MODS, REF_SAMPLES_ON_CYCLES, REF_CYCLES_ON_SAMPLES, REF_SAMPLES_BACK, loadOs,
   loadSamples, loadSyntakt, chosenEngines, setMode, setSmpDir, setMachine, setMethod, applyLang, render,
   chosenTweaks, chosenLabels, CATS, isSelected: isOn };
 

@@ -651,7 +651,7 @@ function syntaktVersion(ap, syntaktRaw) {
  * ou compressée (ap.compress === "aplib" : aplibPack). */
 // Même coût en bits et regard d'un octet que tools/aplib_cost.py.
 // Le format et le décompresseur restent inchangés.
-function aplibCostPack(data,depth=128){
+function aplibCostPack(data,depth=128,margin=9){
  const w=new _Writer(),chains=new Map(),n=data.length,key=i=>(data[i]<<16)|(data[i+1]<<8)|data[i+2];
  const gamma=v=>2*(31-Math.clz32(v));let i=0,last=1;
  function match(at,last){
@@ -671,7 +671,7 @@ function aplibCostPack(data,depth=128){
  }
  while(i<n){
   let [score,off,length]=match(i,last);
-  if(length&&i+1<n&&match(i+1,last)[0]>score+9)score=0;
+  if(length&&i+1<n&&match(i+1,last)[0]>score+margin)score=0;
   const count=score>0?length:1;
   if(score>0){w.match(off,length,last);last=off;}else w.literal(data[i]);
   for(let pos=i;pos<Math.min(i+count,n-2);pos++){
@@ -700,7 +700,7 @@ function buildPayload(ap, syntaktRaw, mainOs) {
       if (!eq(restored, out)) throw new Error("charge precompressee differente");
       return packed;
     }
-    return ap.compress_cost ? aplibCostPack(out, ap.compress_cost) : ap.compress_depth ? aplibDensePack(out, ap.compress_depth) : aplibPack(out);
+    return ap.compress_cost ? aplibCostPack(out, ap.compress_cost, ap.compress_margin ?? 9) : ap.compress_depth ? aplibDensePack(out, ap.compress_depth) : aplibPack(out);
   }
   if (!ap.pack) return out;
   const dest = parseInt(ap.dest, 16), kept = Uint8Array.from(out), parts = [];
@@ -959,4 +959,3 @@ const API = { sha256, hmacSha256, writesBytes, unwrap, wrap, aplibDepack, aplibR
 if (typeof module !== "undefined" && module.exports) module.exports = API;
 if (typeof window !== "undefined") window.MCBuilder = API;
 })();
-

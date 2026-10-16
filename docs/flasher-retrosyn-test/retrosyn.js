@@ -1,9 +1,11 @@
 // RETROSYN experimental : seule, ou avec la banque complete, Wizard facultatif.
 (()=>{
  const a=window.MCFlasherApp,b=window.MCBuilder,tw=window.MC_TWEAKS,data=window.MCRetrosyn;
+ // Retrait demande par AveyCole : seul Second LFO reste propose.
+ tw.features=tw.features.filter(f=>f.id!=='lfo-plus');tw.tweaks=tw.tweaks.filter(t=>t.id!=='lfo-plus');
  const clone=x=>JSON.parse(JSON.stringify(x)),previous=window.MCMainClearResolve;
- tw.features.push({id:'retrosyn',label:'RETROSYN',cat:'sound',status:'experimental',
-  desc:'Six retro oscillator types. Preview supports RETROSYN alone or the full added machine set, with or without independent Sample Wizard. Hardware testing pending.',
+ tw.features.push({id:'retrosyn',label:'RETROSYN',cat:'sound',status:'tested',hardwareTestedByOwner:true,
+  desc:'Six retro oscillator types. Preview supports RETROSYN alone or the full added machine set, with or without independent Sample Wizard. Hardware tested by AveyCole on 16 October 2026.',
   excludes:[],variants:[{id:'retrosyn'}],credit:{kind:'by',who:'AveyCole, supplied RETROSYN core'}});
  tw.tweaks.push(clone(data.recipes.s));Object.assign(a.REF_MODS,data.refs);
  window.MCMainClearResolve=out=>{
@@ -59,7 +61,7 @@
   }
   result.push(e);return result.sort((x,y)=>x.order-y.order);
  };
- const text={en:{label:'RETROSYN',short:'Six retro oscillator types; experimental.',desc:'Pulse, stepped triangle, wave tables, two noise types and an SNES-style loop voice. COLOR changes duty/table/noise rate, SWEEP bends pitch and CONTOUR chooses an arpeggio. PUNCH reduces to four bits. This preview supports RETROSYN alone or the complete added machine set including WAVE and TINY, with Sample Wizard optional. ChordKeys is compatible. Second LFO and either startup animation are compatible. Partial engine combinations are not yet supported. Hardware testing pending.'},fr:{label:'RETROSYN',short:'Six oscillateurs retro ; experimental.',desc:'Impulsion, triangle en escalier, tables d’ondes, deux bruits et boucle de style SNES. COLOR choisit rapport/table/cadence, SWEEP balaie la hauteur, CONTOUR choisit un arpege. PUNCH reduit a quatre bits. Cet apercu propose RETROSYN seule ou toutes les machines ajoutees dont WAVE et TINY, avec Sample Wizard facultatif. ChordKeys compatible. Second LFO et une animation de demarrage au choix sont compatibles. Combinaisons partielles pas encore prises en charge. Test materiel attendu.'}};
+ const text={en:{label:'RETROSYN',short:'Six retro oscillator types; hardware tested.',desc:'Pulse, stepped triangle, wave tables, two noise types and an SNES-style loop voice. COLOR changes duty/table/noise rate, SWEEP bends pitch and CONTOUR chooses an arpeggio. PUNCH reduces to four bits. This preview supports RETROSYN alone or the complete added machine set including WAVE and TINY, with Sample Wizard optional. ChordKeys is compatible. Second LFO and either startup animation are compatible. Partial engine combinations are not yet supported. Hardware tested by AveyCole on 16 October 2026.'},fr:{label:'RETROSYN',short:'Six oscillateurs retro ; testes sur machine.',desc:'Impulsion, triangle en escalier, tables dâ€™ondes, deux bruits et boucle de style SNES. COLOR choisit rapport/table/cadence, SWEEP balaie la hauteur, CONTOUR choisit un arpege. PUNCH reduit a quatre bits. Cet apercu propose RETROSYN seule ou toutes les machines ajoutees dont WAVE et TINY, avec Sample Wizard facultatif. ChordKeys compatible. Second LFO et une animation de demarrage au choix sont compatibles. Combinaisons partielles pas encore prises en charge. Teste sur Model:Cycles par AveyCole le 16/10/2026.'}};
  a.registerFeatureTexts('retrosyn',text);
  a.applyLang(document.documentElement.lang||'en');
 })();

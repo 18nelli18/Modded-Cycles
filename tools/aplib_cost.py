@@ -7,7 +7,7 @@ import struct
 from mtlib import aplib
 import aplib_grow
 
-def pack(data,depth=128,lazy=True):
+def pack(data,depth=128,lazy=True,margin=9):
  w=aplib._Writer();chains={};n=len(data);i=0;last=1
  def gamma(v):return 2*(v.bit_length()-1)
  def match(at,last):
@@ -28,7 +28,7 @@ def pack(data,depth=128,lazy=True):
   return best
  while i<n:
   score,off,length=match(i,last)
-  if lazy and length and i+1<n and match(i+1,last)[0]>score+9:score=0
+  if lazy and length and i+1<n and match(i+1,last)[0]>score+margin:score=0
   if score>0:w.match(off,length,last);last=off;count=length
   else:w.literal(data[i]);count=1
   for pos in range(i,min(i+count,n-2)):

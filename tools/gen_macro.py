@@ -226,7 +226,7 @@ def other_ids():
     return ids
 
 
-def build_tweak(img, repo, tg=None):
+def build_tweak(img, repo, tg=None, engine=None):
     """Tweak de la machine MACRO. tg : Model-TG (gs.tg_context) pour la version combinée."""
     pay = gs.PAY_TG if tg else gs.PAY_ALONE
     gs.set_base(pay)
@@ -236,10 +236,10 @@ def build_tweak(img, repo, tg=None):
     n = 1
     cur = tg["img"] if tg else img              # l'image telle que nos écritures la trouvent
     u32 = lambda va: struct.unpack_from(">I", cur, va - BASE)[0]
-    m = MACHINE
+    m = engine["machine"] if engine else MACHINE
     with tempfile.TemporaryDirectory() as d:
         tmp = pathlib.Path(d)
-        blob, syms, bss_end = compile_machine(tmp, repo, pay)
+        blob, syms, bss_end = (engine["compile"](tmp, repo, pay) if engine else compile_machine(tmp, repo, pay))
         names_at, upd_at, rnd_at, map_at = gs.DATA, gs.DATA + 4 * nm, gs.DATA + 8 * nm, gs.DATA + 16 * nm
         stubs, ssyms = assemble(tmp, "det", gs.detours_asm(n, [m["image"]], [76], tg)
                                 + (dispatch_tg_asm(syms, rnd_at, tg) if tg else ""), gs.STUBS)
@@ -422,8 +422,9 @@ def build_tweak(img, repo, tg=None):
         "at": f"{at:#x}", "dest": f"{pay:#x}", "size": size, "parts": parts, "reloc": reloc,
         "pack": [[f"{a_:#x}", n_] for a_, n_ in segs]}})
     # pour la preuve (tools/emu/test_macro.py) : les entrées de la passerelle et le rendu d'un bloc de Braids
-    out["symbols"] = {k: f"{syms[n]:#x}" for k, n in (("macro_update", "macro_update"), ("macro_render", "macro_render"),
-                                                       ("braids_render", BRAIDS_RENDER))}
+    out["symbols"] = ({k: f"{syms[k]:#x}" for k in engine["symbols"]} if engine else
+                      {k: f"{syms[n]:#x}" for k, n in (("macro_update", "macro_update"), ("macro_render", "macro_render"),
+                                                       ("braids_render", BRAIDS_RENDER))})
     if not tg:                    # comme les moteurs du Syntakt seuls : envoi à l'USB à heure fixe (notes/35, la
         out = usb_steady.add_to(out)          # charge varie avec les voix muettes), boucle des voix (notes/36) ;
         out = voice_loop.add_to(out)          # la version combinée les a par model-tg-st

@@ -128,3 +128,6 @@ existante et génération depuis les OS locaux. Candidat expérimental dans
 | Model-TG Slice varispeed | TinyGregAudio ; roterodamus ; adaptation A.V. | MIT, delta roterodamus `0c567d8c9e3d0c61837e1d91ac2f5c747ea9763f` sur base `70b39dd6787770ebefc7a2d78dea1678ec012679`, adresses exportées conservées. Une tranche choisie au trig, PITCH règle sa vitesse. Expérimental ; [Note 75](../../notes/75-chord-tg-supermodel.md). |
 | Récupération / réadressage Banque MIDI RAM | ce projet | Vingt fragments propres relogés dans les corps disque inertes ; source flash réadressée après recompression. Aucun hook Save/Load B réactivé. Générateurs `gen_midi_bank_reclaim.py` / `gen_midi_bank_rebase.py`, preuves natives et [note 75](../../notes/75-chord-tg-supermodel.md). |
 
+
+| Recettes RETROSYN 27, 28, 29, 37 | Coeur fourni par AveyCole ; passerelle ce projet | Archive retrosyn-core.tar.gz, sans licence declaree ; note 96. Generateurs tools/gen_retrosyn*.py. Les combinaisons reprennent les corps existants de MACRO, ACID, WAVE et TINY et leurs credits/licences. Aucune image Elektron incluse. |
+| 20-sample-wizard.json | TinyGregAudio, roterodamus, A.V. | Recette Sample Wizard independante du catalogue main existant, extraite par gen_retrosyn.py --wizard-catalog ; licence LICENSE-Sample-Wizard.txt et credits existants conserves. |
