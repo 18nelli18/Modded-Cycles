@@ -6,6 +6,7 @@ def main():
  for src in (ROOT/'docs/flasher').iterdir():
   if src.is_file() and src.suffix!='.wav':shutil.copyfile(src,out/src.name)
  s=(out/'index.html').read_text(encoding='utf-8');s=re.sub(r'(?<=\?v=)[\w.-]+',STAMP,s);s=re.sub(r"window.MC_BUILD='[^']+'",f"window.MC_BUILD='{STAMP}'",s)
+ s=re.sub(r'<script src="filter-load(?:-data)?\.js[^"]*"></script>','',s)
  s=s.replace('<main class="wrap fl">','<main class="wrap fl"><p class="alert"><span data-l="en"><strong>Busy-playback filter test 4.</strong> Lighter active beat repeat and history recording; filter calculations unchanged from test 3. Compare your busy pattern and cutoff movements with MIDI OUT Bank on and off. Check distortion and ticks. Main unchanged; hardware verification pending.</span><span data-l="fr"><strong>Test filtre en lecture chargee 4.</strong> Beat repeat actif et historique alleges ; calculs filtre identiques au test 3. Comparer votre pattern charge et mouvements de coupure avec Banque MIDI active/inactive. Verifier distorsion et ticks. Principal inchange ; test materiel attendu.</span></p>')
  s=s.replace('../assets/release.js?','load-release.js?').replace('</body>',f'<script src="filter-load-data.js?v={STAMP}"></script><script src="filter-load.js?v={STAMP}"></script></body>');(out/'index.html').write_text(s,encoding='utf-8')
  shutil.copyfile(ROOT/'build/filter-load-data.js',out/'filter-load-data.js');shutil.copyfile(ROOT/'tools/machines/track_filter/load.js',out/'filter-load.js')

@@ -169,3 +169,5 @@ Promotion capacite 1.77 demandee par AveyCole le 16/10/2026. Stage et packing in
 ## Charge filtre — note 105
 
 Optimisation propre de `precision.s` (note 102), `tools/machines/track_filter/load.s` : clamps redondants retires uniquement. Meme algorithme ladder partage TinyGregAudio (MIT), credits conserves. Code AveyCole / Modded-Cycles sous MIT ; aucun octet Elektron ajoute. Test seulement, correction physique des ticks non affirmee.
+
+Principal 1.78 (16/10/2026) : note 105, ladder haute precision et refonte de charge beat repeat propres au projet (algorithme repeat TinyGregAudio MIT deja credite). Code identique au test 4 confirme par AveyCole ; `gen_filter_load_main.py`. Aucun octet OS ajoute aux sources.

@@ -70,3 +70,9 @@ La capture seule optimisee du candidat 3 ne changeait pas le cout du repeat acti
 [FAIT en emulation] `test_beat_repeat_active.py` : 96 blocs mono/stereo, cycle complet initial, seize divisions puis changements de masque et releases. Historique integral, sorties et six fades identiques au principal ; 3 491 152 vers 2 196 248 instructions (-37,1 %). Capture seule conserve -77,2 %. Les fixtures repeat existantes passent aussi : 9 004 instructions pour leur repetition etablie au lieu de 15 899 au principal (hors cycles materiels). Nouveau module propre 3 348 octets, chargeur 104 ; stockage original conserve. Verification physique encore requise.
 
 Validation candidat 4 : huit profils navigateur/Python, filtres avec/sans Banque, MIDI, sauvegarde et repeat passent. Vrai boot/cache complet sans Banque passe. Fixture six voix Kick/SYSwm x4/Kick : off, arme et repeat actif passent sur 16 blocs ; samples identiques entre les noyaux filtre compares. Charge modules en repetition : 294 247 / 242 587 instructions (principal filtre / filtre candidat, meme nouveau repeat), contre 454 193 / 402 533 avant la refonte repeat sur cette fixture. PR 16 publie uniquement trois fichiers du dossier test ; aucun resultat materiel nouveau.
+
+## Teste sur machine et promotion (16/10/2026)
+
+AveyCole confirme le test 4 : « that works, push to main ». Promotion 1.78 avec noyaux filtre/repeat identiques au candidat, statuts testes pour ces reparations. Banque MIDI garde son statut experimental. Verification des huit profils principal/test et des fichiers Pages avant livraison.
+
+Promotion validee : huit hashes principal/test identiques, y compris complet MIDI, complet sans MIDI, animation et repeat decoche. Recettes filtre et repeat `tested`/owner vrai ; Banque `experimental`/owner faux. Generateurs principal/test/packing et diff checks passent.
