@@ -13,7 +13,16 @@ const result=out.filter(t=>t.id!=='synth-attack').map(t=>{
  const ref=a.REF_MODS[t.id];let n=null;
  if(genie&&t.id.startsWith('scale-gen')){
   if(hash(t)!==ref.w)throw Error('Genie UI: trusted reference mismatch');n=clone(t);
-  for(const ch of c.sg){const off=ch.at-0x40000400,w=n.writes.find(w=>w.off<=off&&off+ch.old.length/2<=w.off+w.new.length/2);if(!w)throw Error('Genie UI: missing hook');const i=(off-w.off)*2;if(w.new.slice(i,i+ch.old.length)!==ch.old)throw Error('Genie UI: hook guard');w.new=w.new.slice(0,i)+ch.new+w.new.slice(i+ch.old.length);}
+  // The queued service can use A2/A3. sg_tick must preserve them before it
+  // chains to the stock LED callback, or the first queued Generate may corrupt
+  // the UI return context. Keep exact guards so a changed recipe fails closed.
+  const tick=Number(n.symbols?.sg_tick);if(!Number.isFinite(tick))throw Error('Genie tick: missing symbol');
+  const tickOff=tick-0x40000400,tw=n.writes.find(w=>w.off<=tickOff&&tickOff+0x70<=w.off+w.new.length/2);
+  if(!tw)throw Error('Genie tick: missing hook bytes');const ti=(tickOff-tw.off)*2;
+  const replace=(rel,oldHex,newHex)=>{const i=ti+rel*2;if(tw.new.slice(i,i+oldHex.length)!==oldHex)throw Error('Genie tick: register-save guard');tw.new=tw.new.slice(0,i)+newHex+tw.new.slice(i+oldHex.length);};
+  replace(0,'4fefffec','4fefffe4');replace(4,'48d70307','48d70f07');
+  replace(0x62,'4cd70307','4cd70f07');replace(0x66,'4fef0014','4fef001c');
+  for(const ch of c.sg){const off=ch.at-0x40000400,w=n.writes.find(w=>w.off<=off&&off+ch.old.length/2<=w.off+w.new.length/2);if(!w){if(ch.at===0x4015fb8c&&n.id.endsWith('-queued'))continue;throw Error('Genie UI: missing hook');}const i=(off-w.off)*2,current=w.new.slice(i,i+ch.old.length);if(current===ch.new)continue;if(current!==ch.old)throw Error('Genie UI: hook guard');w.new=w.new.slice(0,i)+ch.new+w.new.slice(i+ch.old.length);}
  }
  if(attack&&t.id==='sample-wizard'){
   if(hash(t)!==ref.w||b.hex(b.sha256(b.buildPayload(t.append,null,null)))!==ref.p)throw Error('Attack: trusted Wizard reference mismatch');n=clone(t);const p=n.append.parts[0];
