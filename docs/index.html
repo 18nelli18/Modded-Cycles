@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Modded Cycles</title>
-<meta name="description" content="Firmware mods for the Elektron Model:Cycles: 6-channel USB audio, Syntakt engines, latching mute, trig preview. Patched in your browser from your own OS file.">
+<meta name="description" content="Firmware mods for the Elektron Model:Cycles: 6-channel USB audio, Syntakt engines, Sample Wizard, ACID and MACRO machines, ChordKeys, extra LFOs, sequence generator. Patched in your browser from your own OS file.">
 <meta name="theme-color" content="#e3e2de" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b1b1b" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
@@ -104,6 +104,41 @@
         <li><a href="guide/#syntakt" data-hl="lcd,machines,synth" data-lcd="menu">
           <b><span data-l="en">Syntakt engines</span><span data-l="fr">Moteurs du Syntakt</span></b>
           <span><span data-l="en">SD VINTAGE, CP VINTAGE, SY TOY, SY BITS and SY SWARM as extra machines, read from your Syntakt OS file.</span><span data-l="fr">SD VINTAGE, CP VINTAGE, SY TOY, SY BITS et SY SWARM en machines supplémentaires, lus dans votre fichier d'OS Syntakt.</span></span></a></li>
+        <li><a href="guide/#sample-wizard" data-hl="lcd,machines,pads" data-lcd="WIZARD/>SAMPLER">
+          <b><span data-l="en">Sample Wizard</span><span data-l="fr">Sample Wizard</span></b>
+          <span><span data-l="en">A seventh machine: an independent sampler with playback modes, a sample browser and Slice varispeed. Upload your own samples with Elektron Transfer.</span><span data-l="fr">Une septième machine : un sampler autonome avec modes de lecture, navigateur de samples et Slice varispeed. Transférez vos samples avec Elektron Transfer.</span></span>
+          <em><span data-l="en">By TinyGregAudio, roterodamus and A.V.</span><span data-l="fr">Par TinyGregAudio, roterodamus et A.V.</span></em></a></li>
+        <li><a href="guide/#macro" data-hl="lcd,machines,synth" data-lcd="MACRO/>BRAIDS">
+          <b><span data-l="en">MACRO machine</span><span data-l="fr">Machine MACRO</span></b>
+          <span><span data-l="en">One extra machine with the 47 synthesis models of Braids: analog waves, FM, vowels, physical models, drums and wavetables.</span><span data-l="fr">Une machine supplémentaire avec les 47 modèles de synthèse de Braids : ondes analogiques, FM, voyelles, modèles physiques, percussions et wavetables.</span></span>
+          <em><span data-l="en">From Émilie Gillet's open-source Braids</span><span data-l="fr">D'après le Braids open source d'Émilie Gillet</span></em></a></li>
+        <li><a href="guide/#acid" data-hl="lcd,machines,synth" data-lcd="ACID/>303 BASS">
+          <b><span data-l="en">ACID machine</span><span data-l="fr">Machine ACID</span></b>
+          <span><span data-l="en">A TB-303-style acid bass with a drive knob. A trig longer than the next one slides into it.</span><span data-l="fr">Une basse acid façon TB-303 avec un potard de drive. Un trig plus long que le suivant glisse vers lui.</span></span>
+          <em><span data-l="en">Open303 by Robin Schmidt</span><span data-l="fr">Open303 de Robin Schmidt</span></em></a></li>
+        <li><a href="guide/#chord-keys" data-hl="trigs" data-lcd="CHORD/>KEYS">
+          <b><span data-l="en">ChordKeys</span><span data-l="fr">ChordKeys</span></b>
+          <span><span data-l="en">On a CHORD track, TRIG 1–16 play the chords of your scale.</span><span data-l="fr">Sur une piste CHORD, les TRIG 1–16 jouent les accords de votre gamme.</span></span>
+          <em><span data-l="en">By Nico Heuser</span><span data-l="fr">Par Nico Heuser</span></em></a></li>
+        <li><a href="guide/#track-filter" data-hl="machines,sweep,contour" data-lcd="FILTER/>CUTOFF">
+          <b><span data-l="en">Per-track filter</span><span data-l="fr">Filtre par piste</span></b>
+          <span><span data-l="en">Hold MACHINES and turn SWEEP for cutoff or CONTOUR for resonance, on every synth and drum track.</span><span data-l="fr">Maintenez MACHINES et tournez SWEEP pour la coupure ou CONTOUR pour la résonance, sur chaque piste synth et drum.</span></span></a></li>
+        <li><a href="guide/#lfo-plus" data-hl="lfo" data-lcd="LFO 2/>LFO 3 LFO 4">
+          <b><span data-l="en">Extra LFOs</span><span data-l="fr">LFO supplémentaires</span></b>
+          <span><span data-l="en">Press LFO again to reach LFO 2, 3 and 4 on every track. Second LFO adds its own speed knob and quick assign.</span><span data-l="fr">Appuyez de nouveau sur LFO pour atteindre LFO 2, 3 et 4 sur chaque piste. Second LFO ajoute son potard de vitesse et l'assignation rapide.</span></span>
+          <em><span data-l="en">Based on the work of DavidCaruso</span><span data-l="fr">D'après le travail de DavidCaruso</span></em></a></li>
+        <li><a href="guide/#scale-gen" data-hl="settings,page" data-lcd="SEQUENCE/>GENIE">
+          <b><span data-l="en">Sequence Generator</span><span data-l="fr">Générateur de séquence</span></b>
+          <span><span data-l="en">SETTINGS + PAGE opens Sequence Genie: scale, ranges, mutation and Euclidean rhythm, queued to the next loop or page.</span><span data-l="fr">SETTINGS + PAGE ouvre Sequence Genie : gamme, plages, mutation et rythme euclidien, lancés à la prochaine boucle ou page.</span></span></a></li>
+        <li><a href="guide/#scramble" data-hl="settings,track" data-lcd="SCRAMBLE">
+          <b><span data-l="en">SCRAMBLE</span><span data-l="fr">SCRAMBLE</span></b>
+          <span><span data-l="en">SETTINGS + TRACK randomizes the machine's four controls, or locks a fresh scramble to held steps.</span><span data-l="fr">SETTINGS + TRACK tire au hasard les quatre contrôles de la machine, ou verrouille un scramble sur les pas tenus.</span></span></a></li>
+        <li><a href="guide/#arp" data-hl="retrig,func" data-lcd="ARP/>UP 2 OCT">
+          <b><span data-l="en">Arpeggiator</span><span data-l="fr">Arpégiateur</span></b>
+          <span><span data-l="en">Hold several notes with RETRIG and they play as an arpeggio; FUNC + RETRIG sets direction and octaves.</span><span data-l="fr">Maintenez plusieurs notes avec RETRIG : elles se jouent en arpège ; FUNC + RETRIG règle le sens et les octaves.</span></span></a></li>
+        <li><a href="guide/#tempo" data-hl="tempo" data-lcd="TEMPO/>546.0 BPM">
+          <b><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></b>
+          <span><span data-l="en">The TEMPO knob, tap tempo and MIDI clock go past 300 BPM.</span><span data-l="fr">Le potard TEMPO, le tap tempo et l'horloge MIDI dépassent 300 BPM.</span></span></a></li>
         <li><a href="guide/#samples" data-hl="lcd,pads" data-lcd="SAMPLES OS/>MODEL:SAMPLES">
           <b><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></b>
           <span><span data-l="en">The Model:Cycles starts as a Model:Samples and plays your own samples.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples et joue vos propres samples.</span></span></a></li>

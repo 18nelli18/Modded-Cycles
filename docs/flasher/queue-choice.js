@@ -24,10 +24,10 @@ return unpackCatalogue({"strings":["fffffffffffe0000fffffffffffe0000fffffffffffe
     if(ch.now.length>ch.was.length)w.old+=ch.guard.slice(ch.was.length);
    }
    for(let i=0;i<r.writes.length;i++)for(let j=i+1;j<r.writes.length;j++){const x=r.writes[i],y=r.writes[j];if(x.off<y.off+y.new.length/2&&y.off<x.off+x.new.length/2)throw Error('Genie queue: overlapping extension');}
-   r.status='experimental';cache.set(key,r);
+   cache.set(key,r);
   }
   a.REF_MODS[t.id]={w:hash(r),...(ref.p?{p:ref.p}:{})};return r;
  });
- const f=window.MC_TWEAKS.features.find(f=>f.id==='scale-gen');if(f)f.status='experimental';
+
  a.applyLang(document.documentElement.lang||'en');
 })();
