@@ -1,0 +1,1 @@
+window.MCNoMidiCapacity={"hex":"4feffff448d70301207a001e227a001e203a001e22d8538066fa4cd703014fef000c4ef9f0010000000000000000000000000000","symbols":{"capacity_count":48,"capacity_dest":44,"capacity_init":34,"capacity_source":40,"capacity_stage":0}};
