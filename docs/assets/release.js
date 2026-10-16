@@ -3,6 +3,7 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+{version:"1.70-preview",date:"2026-10-16",changes:[{en:"RETROSYN preview: six retro oscillator types, alone or alongside the complete machine set including WAVE and TINY. Independent Sample Wizard is optional. Hardware testing pending. Main rejects Model-TG recipes and feature registration.",fr:"Apercu RETROSYN : six oscillateurs retro, seuls ou avec toutes les machines dont WAVE et TINY. Sample Wizard independant facultatif. Test materiel attendu. Le main refuse les recettes et la carte Model-TG."}]},
 {
   "version": "1.69",
   "date": "2026-10-13",
@@ -404,7 +405,3 @@ window.MC_RELEASES = [
   ] },
   { version: "1.0", date: "2026-10-01", changes: [] },
 ];
-
-
-
-

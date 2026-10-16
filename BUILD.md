@@ -743,3 +743,30 @@ LCD et budget audio combiné sur matériel attendus. Voir note 58 §12.
 ## Second LFO — catalogue principal (11/10/2026)
 
 `52-lfo-secondary.json`, généré par `tools/gen_lfo_secondary.py`, identique en code au flasher de test validé par AveyCole. Deuxième appui LFO ; réglages RAM uniquement, sans sauvegarde pattern/projet. Voir note 58.
+
+## RETROSYN experimental (note 96)
+
+Le main propose RETROSYN seule ou avec toutes les machines ajoutees, dont
+WAVE et TINY. Sample Wizard independant est facultatif dans les deux cas.
+Model-TG est interdit dans ce flasheur. Les sous-ensembles partiels et
+ChordKeys avec RETROSYN attendent une integration ulterieure.
+
+Les sources fournies et les preuves sont dans `tools/machines/retrosyn/` et
+`tools/emu/test_retrosyn*.py`. Les catalogues locaux de developpement peuvent
+etre extraits avec `node tools/export_retrosyn_catalogues.js`.
+
+```sh
+python3 tools/gen_retrosyn.py --cycles firmware/model-cycles_OS1.13.syx
+python3 tools/gen_retrosyn.py --cycles firmware/model-cycles_OS1.13.syx --wizard-catalog firmware/wizard-catalogue.json
+python3 tools/gen_retrosyn_combined.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --catalog firmware/tiny-catalogue.json
+python3 tools/gen_retrosyn_combined.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --catalog firmware/tiny-catalogue.json --wizard
+python3 tools/gen_retrosyn_flasher.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+node tools/test_main_no_model_tg.js
+npm install --prefix build/retrosyn-ui jsdom
+node tools/test_retrosyn_flasher.js --build --select-all
+```
+
+Ajouter `--check` aux generateurs pour verifier les sorties versionnees.
+Le test UI utilise jsdom (`NODE_PATH` ou installation locale de test).
+La reference est le GCC ColdFire `m68k-linux-gnu-gcc` 15.2.0 installe pour
+cette compilation ; un autre compilateur peut modifier les octets du coeur.

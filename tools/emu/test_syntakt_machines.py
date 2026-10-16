@@ -131,7 +131,9 @@ def accessors(a, b, stock, patched):
     ok = all(dis(stock, va).startswith(("moveq #76,", "moveq #75,")) and
              dis(patched, va) == dis(stock, va).replace("#76,", f"#{last},").replace("#75,", f"#{last - 1},")
              for va in g7.BOUNDS if va not in {j[0] for j in g8.JUMPS8})
-    ok &= all(dis(patched, va, 6).startswith("jmp 0x4303") for va, _, _ in g7.JUMPS + g8.JUMPS8)
+    ok &= all(patched[va - BASE:va - BASE + 2] == b"\x4e\xf9" and
+              gs.PAY <= struct.unpack_from(">I", patched, va - BASE + 2)[0] < gs.PAY + 0x100000
+              for va, _, _ in g7.JUMPS + g8.JUMPS8)
     check(ok, f"bornes 76/75 -> {last}/{last - 1}, détours = jmp vers la charge utile")
     ok, rows = True, []
     for m in ADDED:
