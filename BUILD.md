@@ -840,3 +840,7 @@ Correction piste 6 confirmee sur machine par AveyCole et promotion demandee. `py
 ## Timing Genie principal 1.76 — 16/10/2026
 
 Correction A/B confirmee sur machine par AveyCole, promotion demandee. `python3 tools/gen_genie_timing_main.py --check`. Les cinq builds signes du principal sont identiques au candidat teste.
+
+## Capacite sans Banque MIDI — test
+
+[Note 104](notes/104-capacite-sans-midi.md). `tools/gen_no_midi_capacity.py`, `tools/gen_no_midi_capacity_flasher.py`, six builds signes `tools/test_no_midi_capacity_flasher.js`, boot/ABI `tools/emu/test_no_midi_capacity.py` et beat repeat existant. Principal 1.76 conserve. Filtre en forte activite encore ouvert.

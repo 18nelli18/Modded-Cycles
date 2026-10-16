@@ -159,3 +159,7 @@ Promotion 1.75 du 16/10/2026 : correction piste 6 confirmee sur machine par Avey
 Helper de frontiere MIDI propre AveyCole / Modded-Cycles (MIT), `tools/machines/seq_gen/timing_boundary.s`. Reutilisation du renderer commun existant ; credits Model-TG/TinyGregAudio conserves pour ses bases historiques. Aucun octet Elektron ajoute. Test uniquement, verification materielle attendue.
 
 Promotion timing Genie 1.76 : confirmee sur machine et demandee par AveyCole le 16/10/2026. Memes octets propres, licences et credits ; seuls statuts et textes promus par `tools/gen_genie_timing_main.py`.
+
+## Capacite sans MIDI — note 104
+
+Stage PIC de copie propre AveyCole / Modded-Cycles (MIT), `tools/machines/beat_repeat/capacity_boot.s`, composition `capacity.js`. Reutilise le compresseur et chargeur moteurs existants ; aucun octet OS ajoute. Credits TinyGregAudio conserves pour Wizard et beat repeat. Test uniquement.

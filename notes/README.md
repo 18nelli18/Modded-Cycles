@@ -175,3 +175,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [102 — Precision du filtre](102-precision-filtre.md) | Ladder EMAC ; **correction piste 6 confirmee sur machine par AveyCole le 16/10/2026, promue au principal 1.75.** |
 
 | [103 — Timing Genie](103-genie-timing.md) | **Teste sur machine par AveyCole le 16/10/2026, promu au principal 1.76** : callback A/B Queue Loop/Page, frontiere MIDI partagee. |
+
+| [104 — Capacite sans MIDI](104-capacite-sans-midi.md) | Test : compression commune Wizard/moteurs, complet sans Banque MIDI avec beat repeat, environ 46 Ko de marge ; principal conserve. |
