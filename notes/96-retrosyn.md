@@ -130,3 +130,15 @@ pour eviter de decompresser sur une source qui chevauche sa destination.
 Preuves : tools/test_retrosyn_chord_flasher.js et
 emu/test_retrosyn_chord.py (six boot/clear/cache ; corps Chord et callbacks
 RETROSYN exacts). Pas de verification materielle annoncee.
+
+## 8. Teste sur la machine (16/10/2026)
+
+AveyCole demande explicitement : « push retrosyn to main as hardware tested ».
+Cette confirmation du proprietaire autorise le passage de RETROSYN a tested
+et sa publication au principal. Aucun detail supplementaire de protocole
+materiel ou de mesure CPU n’a ete fourni ; aucun n’est invente.
+
+Le code DSP, les ecritures et les charges utiles restent ceux du test
+precedent. Seuls statut, documentation, version et retrait de l’ancien
+pack LFO 2/3/4 de la selection principale changent. Sample Wizard reste
+facultatif et Model-TG demeure bloque.

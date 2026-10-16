@@ -106,7 +106,7 @@ def generate(stock,st,catalog,wizard=False,wizard_base=None):
     finally:
         gs.LAYOUT.clear();gs.LAYOUT.update(original);gs.MAX_EXTRA=max_extra;gs.set_base(pay)
         gs.MARKS_ROW=marks_row;gs.MARKS.clear();gs.MARKS.update(marks)
-    out.update(id='retrosyn-all-machines-wizard' if wizard else 'retrosyn-all-machines',order=29 if wizard else 28,status='experimental',requires=['sample-wizard'] if wizard else [],
+    out.update(id='retrosyn-all-machines-wizard' if wizard else 'retrosyn-all-machines',order=29 if wizard else 28,status='tested',hardwareTestedByOwner=True,requires=['sample-wizard'] if wizard else [],
                name='Syntakt, MACRO, ACID, WAVE, TINY et RETROSYN',
                description=['Six machines stock conservees, puis cinq Syntakt, MACRO, ACID, Wave, TINY et RETROSYN.',
                             'Les corps compiles existants restent identiques. Interfaces regenerees pour 16 machines.',

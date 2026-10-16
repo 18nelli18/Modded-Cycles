@@ -54,7 +54,7 @@ def generate(stock, sampler=None):
                        at=int(ap['at'],16)+ap['size'],id='sample-wizard')
     t, info = gm.build_tweak(stock, None, tg=context, engine=engine)
     t.update(id="retrosyn-wizard" if sampler else "retrosyn", order=37 if sampler else 27,
-             status="experimental", name="Machine RETROSYN : six oscillateurs retro",
+             status="tested", hardwareTestedByOwner=True, name="Machine RETROSYN : six oscillateurs retro",
              description=["PULSE, TRI, WAVE, NOISE-L, NOISE-S, SNES ; COLOR : rapport/table/cadence ; SWEEP : hauteur ; CONTOUR : arpege.",
                           "DECAY et GATE : enveloppe TONE ; FINE : accord fin ; PUNCH : quantification quatre bits.",
                           "Niveau et charge six pistes a verifier sur machine. tools/gen_retrosyn.py ; notes/96."])

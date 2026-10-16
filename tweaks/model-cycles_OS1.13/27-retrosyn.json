@@ -823,5 +823,6 @@
   "retrosyn_render": "0x430001e2",
   "tracks": "0x43036000"
  },
- "status": "experimental"
+ "status": "tested",
+ "hardwareTestedByOwner": true
 }

@@ -2404,7 +2404,8 @@
   "compress_cost": 512,
   "stored": 255186
  },
- "status": "experimental",
+ "status": "tested",
+ "hardwareTestedByOwner": true,
  "symbols": {
   "retrosyn_update": "0x46785000",
   "retrosyn_render": "0x467851e2",

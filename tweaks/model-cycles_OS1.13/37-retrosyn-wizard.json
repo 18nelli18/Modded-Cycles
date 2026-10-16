@@ -830,7 +830,8 @@
   "retrosyn_render": "0x467001e2",
   "tracks": "0x46736000"
  },
- "status": "experimental",
+ "status": "tested",
+ "hardwareTestedByOwner": true,
  "sampler_recipe": {
   "id": "sample-wizard",
   "order": 20,
