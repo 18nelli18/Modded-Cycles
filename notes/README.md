@@ -171,3 +171,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [99 — Beat repeat collectif](99-beat-repeat-collectif.md) | Carte autonome **testee sur la machine par AveyCole le 16/10/2026** : TRACK + RETRIG maintenus, TRIG choisit la division ; six pistes et cotes stereo Wizard, sans page ni FX master ajoutes. Preuves ColdFire ; principal 1.73 identique au candidat 2. |
 
 | [100 — Feedback performance](100-feedback-performance.md) | Candidat experimental : popup bref des divisions beat repeat, LEDs mute B selon FUNC sans selection ; principal inchange. |
+
+| [102 — Precision du filtre](102-precision-filtre.md) | Ladder EMAC ; **correction piste 6 confirmee sur machine par AveyCole le 16/10/2026, promue au principal 1.75.** |

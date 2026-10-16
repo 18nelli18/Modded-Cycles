@@ -823,3 +823,12 @@ AveyCole confirme le candidat 2 et demande « push to main as hardware tested! �
 ## Publication principale — 16/10/2026
 
 AveyCole demande « pus the beat repeat and b-side mute fix to main also ». Promotion 1.74 sans changement des octets du test feedback. Cette demande autorise la publication ; aucun resultat de verification physique supplementaire invente. Le renommage ChpHzrd et son icone restent un autre candidat separe.
+
+
+## Precision du filtre continu (test)
+
+[Note 102](notes/102-precision-filtre.md) : `tools/gen_filter_precision.py`, `tools/gen_filter_precision_flasher.py`, `tools/test_filter_precision_flasher.js` et `tools/emu/test_filter_current.py`. Remplacement en place, SHA strict et bypass exact ; principal inchange. ChpHzrd demeure un travail separe suspendu.
+
+## Filtre principal 1.75 — 16/10/2026
+
+Correction piste 6 confirmee sur machine par AveyCole et promotion demandee. `python3 tools/gen_filter_precision_main.py --check` ; meme DSP et memes hashes MAIN OS que les neuf profils du test precision. Sequence Genie reste hors de cette promotion.

@@ -146,3 +146,10 @@ AveyCole confirme le candidat 2 et demande « push to main as hardware tested! �
 ## Feedback performance experimental (note 100)
 
 Popup bref : helper propre du support commun Modded-Cycles, adapte sans multiplicateur ; aucune routine OS copiee. LEDs mute B : nouveau wrapper AveyCole / Modded-Cycles autour des backends propres epingles de note 97. Licence MIT du projet, credits beat repeat TinyGregAudio conserves. Sources `tools/machines/beat_repeat/popup.s` et `tools/machines/midi_lanes/mute_feedback.s` ; [note 100](../../notes/100-feedback-performance.md). Publication de test seulement ; principal inchange.
+
+
+## Precision du filtre — candidat note 102
+
+Nouveau noyau EMAC propre AveyCole / Modded-Cycles pour le ladder partage issu de TinyGregAudio (MIT). Memes coefficients et commandes existants, moins de troncature ; aucun octet Elektron embarque. Source `tools/machines/track_filter/precision.s`, generateur `tools/gen_filter_precision.py`, [note 102](../../notes/102-precision-filtre.md). Publication test uniquement.
+
+Promotion 1.75 du 16/10/2026 : correction piste 6 confirmee sur machine par AveyCole. Memes octets propres et credits MIT ; `tools/gen_filter_precision_main.py` adapte seulement les statuts et textes. Sequence Genie reste separe.
