@@ -790,3 +790,19 @@ python3 tools/check_midi_current_builds.py --cycles firmware/model-cycles_OS1.13
 Arreter la lecture avant Save Project ; attendre MIDI SAVED. Les donnees MIDI
 sauvegardees se chargent uniquement en entrant cote B, lecture arretee.
 Fichiers annexes hors backups Elektron ; ancien format non importé. Voir note 98.
+
+## Beat Repeat collectif (essai autonome)
+
+Carte experimentale separee. TRACK + RETRIG maintenus pendant tout le geste,
+puis TRIG 1–16 : divisions communes aux six pistes audio. Release d'un des
+modificateurs : retour normal par fondu court. Aucune page/FX master ajoutes,
+aucune dependance Model-TG ; cotes stereo Wizard facultatifs. Principal inchange.
+
+Generation et preuves : [note 99](notes/99-beat-repeat-collectif.md),
+`tools/gen_beat_repeat.py`, `tools/gen_beat_repeat_flasher.py`,
+`tools/test_beat_repeat_flasher.js`, `tools/emu/test_beat_repeat.py`.
+Les neuf builds navigateur passent le bootstrap/cache natifs, le module
+ColdFire, puis la parite Python. La regle Python de padding des supports
+independants est alignee sur la regle deja presente dans `builder.js`.
+Le noyau MIDI/save actuel conserve ses preuves natives. Pas de resultat
+CPU/clavier physique annonce : essai materiel encore requis.
