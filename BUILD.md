@@ -773,17 +773,20 @@ cette compilation ; un autre compilateur peut modifier les octets du coeur.
 
 ## Essai de persistance MIDI actuelle (MPI1)
 
-Candidat expérimental séparé ; le principal reste en RAM. Générer les deux
-sources web sans inclure de firmware officiel :
+Sauvegarde et reprise confirmees sur machine par AveyCole le 16/10/2026,
+y compris sauvegarde sur slot vide. Le principal utilise les octets de test 2.
+Generer les sources web sans inclure de firmware officiel :
 
 ```sh
 python3 tools/gen_midi_persistence.py --check
 python3 tools/gen_midi_persistence_flasher.py --check
+python3 tools/promote_midi_persistence.py --check
 node tools/test_midi_persistence_flasher.js
+node tools/test_midi_persistence_flasher.js --main
 python3 tools/emu/test_midi_persistence.py --case build/midi-persistence/all
 python3 tools/check_midi_current_builds.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --directory build/midi-persistence
 ```
 
-Arrêter la lecture avant Save Project ; attendre MIDI SAVED. La reprise après
-redémarrage est prouvée avec backend fichier simulé, pas sur la machine.
+Arreter la lecture avant Save Project ; attendre MIDI SAVED. Les donnees MIDI
+sauvegardees se chargent uniquement en entrant cote B, lecture arretee.
 Fichiers annexes hors backups Elektron ; ancien format non importé. Voir note 98.

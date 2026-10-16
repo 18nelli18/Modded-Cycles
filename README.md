@@ -157,6 +157,6 @@ This project stands on the work of others, all MIT licensed:
 If these mods are useful to you, you can support the project on **[Ko-fi](https://ko-fi.com/18nelli)**.
 Questions, feedback and feature requests are welcome on the **[Discord](https://discord.gg/hWegtJZcmm)**; bug reports also fit in the [issues](https://github.com/18nelli18/Modded-Cycles/issues).
 
-MIDI OUT Bank is hardware tested by AveyCole (16 October 2026) and available in the main flasher, alone or alongside the current machines including RETROSYN and TINY. Sample Wizard is optional. B-side data stays in RAM and is lost at power-off; Save Project saves A only. Model-TG remains blocked.
+MIDI OUT Bank is hardware tested by AveyCole (16 October 2026) and available in the main flasher, alone or alongside the current machines including RETROSYN and TINY. Sample Wizard is optional. MIDI saving is hardware tested, including saving into an empty project slot. Stop playback before Save Project and wait for MIDI SAVED. **Saved MIDI data loads only when you enter B-side and only while playback is stopped.** Model-TG remains blocked.
 
-An experimental [MIDI saving test](https://aveycole.github.io/Modded-Cycles/flasher-midi-save-current-test/) extends the current independent bank with checked recovery copies. Stop playback before Save Project and wait for MIDI SAVED. Hardware persistence remains unverified; main stays RAM-only. The extra MIDI files are outside standard Elektron project backups and SysEx exports. See [note 98](notes/98-persistance-midi-actuelle.md).
+The hardware-tested saving build is now in main. Extra MIDI files remain outside standard Elektron project backups and SysEx exports. Unsaved edits are lost on power-off. See [note 98](notes/98-persistance-midi-actuelle.md).

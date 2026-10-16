@@ -5,7 +5,7 @@ ROOT=pathlib.Path(__file__).resolve().parents[1]
 STAMP='2026-10-16-midi-saving-test-2'
 def files():
     for src in sorted((ROOT/'docs/flasher').iterdir()):
-        if not src.is_file() or src.suffix=='.wav' or src.name=='ABOUT.md':continue
+        if not src.is_file() or src.suffix=='.wav' or src.name in ('ABOUT.md','midi-persistence.js','midi-persistence-data.js'):continue
         raw=src.read_bytes()
         if src.name=='TEST-NOTES.md':
             raw=b'''# MIDI persistence hardware trial / Essai materiel de persistance MIDI
@@ -16,6 +16,8 @@ FR : Utilisez un projet de test. Arretez, editez notes B, locks CC et LFO MIDI p
 '''
         if src.name=='index.html':
             s=raw.decode('utf-8');s=re.sub(r'(?<=\?v=)[\w.-]+',STAMP,s)
+            s=re.sub(r'<script src="midi-persistence(?:-data)?\.js[^\"]*"></script>','',s)
+            s=re.sub(r'<p id="midi-saving-status".*?</p>','',s,flags=re.S)
             s=re.sub(r"window.MC_BUILD='[^']+'",f"window.MC_BUILD='{STAMP}'",s)
             s=s.replace("<title>A.V.'s Supermodel Edition.</title>",'<title>MIDI saving — experimental test</title>')
             s=re.sub(r'<p class="alert"><span data-l="en"><strong>MIDI OUT Bank is hardware tested by AveyCole.*?</p>','',s,flags=re.S)

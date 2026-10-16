@@ -1,5 +1,5 @@
-# Main — independent MIDI OUT Bank
+# MIDI OUT Bank with project saving
 
-Hardware tested by AveyCole on 16 October 2026. Install alone or alongside the current machines including RETROSYN, TINY, WAVE and ChordKeys. Sample Wizard stays optional. B data remains RAM-only; Save Project saves A only. Model-TG remains blocked. The wavetable converter is linked directly beneath the feature overview download.
+MIDI saving is hardware tested by AveyCole, including saving into an empty project slot. Stop playback before Save Project and wait for MIDI SAVED. Saved MIDI data loads only when you enter B-side and only while playback is stopped. FUNC + SETTINGS + TRACK opens B-side. Install alone or with your machines, including RETROSYN and TINY; Sample Wizard stays optional. MIDI files are outside Elektron backups and SysEx exports. Model-TG remains blocked.
 
-Banque MIDI autonome testée sur machine par AveyCole le 16/10/2026. Seule ou avec les machines actuelles dont RETROSYN, TINY, WAVE et ChordKeys. Sample Wizard facultatif. B reste en RAM ; Save Project sauvegarde A seulement. Model-TG reste bloqué. Le convertisseur est lié juste sous le téléchargement du résumé.
+Sauvegarde MIDI testee sur machine par AveyCole, y compris vers un slot projet vide. Arretez avant Save Project et attendez MIDI SAVED. Les donnees MIDI sauvegardees se chargent uniquement en entrant cote B et uniquement lorsque la lecture est arretee. FUNC + SETTINGS + TRACK ouvre B. Seule ou avec vos machines, dont RETROSYN et TINY ; Sample Wizard facultatif. Fichiers MIDI hors backups et exports SysEx Elektron. Model-TG reste bloque.

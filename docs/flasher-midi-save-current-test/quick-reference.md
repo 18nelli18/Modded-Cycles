@@ -2,9 +2,9 @@
 
 ## Quick reference · 13 October 2026
 
-Install the relevant mods first. Hold the first button, then press/turn the next control. **TRIG** = sequencer step; **pad** = track pad; **DATA** = LEVEL/DATA. **PRESET (MACHINES button)** follows Model-TG’s naming below. This MIDI saving candidate is experimental; hardware persistence is unverified.
+Install the relevant mods first. Hold the first button, then press/turn the next control. **TRIG** = sequencer step; **pad** = track pad; **DATA** = LEVEL/DATA. **PRESET (MACHINES button)** follows Model-TG’s naming below. Independent MIDI Bank with project saving is hardware tested by AveyCole and available alone or alongside your selected machines.
 
-**Storage:** In this experimental test, stop playback and use Save Project. Wait for MIDI SAVED. Restart, load the same saved project and open B to test recovery. MIDI files are outside standard Elektron backups. Unsaved edits are lost on power-off. A-side Second LFO saves **speed, multiplier, waveform, destination and depth** with the sound; fade, start phase and mode reset when loading a sound.
+**Storage:** **Stop playback before Save Project and wait for MIDI SAVED. Saved MIDI data loads only when you enter B-side and only while playback is stopped.** FUNC + SETTINGS + TRACK opens B-side. Unsaved edits are lost on power-off. MIDI files are outside Elektron backups and SysEx exports. A-side Second LFO saves **speed, multiplier, waveform, destination and depth** with the sound; fade, start phase and mode reset when loading a sound.
 
 ## Sequence Genie, Second LFO and SCRAMBLE
 

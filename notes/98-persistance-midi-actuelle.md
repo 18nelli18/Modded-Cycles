@@ -164,3 +164,19 @@ renouvellement de l'identité. Cela couvre le geste précisé par AveyCole
 
 [À FAIRE] Retester ce chargement sur machine et diagnostiquer séparément
 la sauvegarde sur slot vide. Aucun correctif de ce second cas n'est annoncé.
+
+## 7. Promotion confirmee par AveyCole (16/10/2026)
+
+[FAIT materiel rapporte] AveyCole confirme que test 2 restaure le MIDI en
+entrant cote B, puis confirme explicitement que le projet a ete sauvegarde
+dans un slot vide via Save Project. Il demande de promouvoir au principal
+avec statut teste et d'indiquer clairement : chargement des donnees MIDI
+uniquement en entrant cote B et uniquement lorsque la lecture est arretee.
+Ce retour remplace les attentes materielles des sections precedentes pour
+ces deux cas. Ne pas l'etendre a des essais de coupure ou de disque plein.
+
+La promotion conserve exactement les octets firmware de test 2. Le script
+`tools/promote_midi_persistence.py` reproduit les fichiers principaux : seuls
+textes et metadonnees de statut changent. Le test navigateur `--main` compare
+les cinq empreintes MAIN avec celles du candidat. Le bandeau, la carte, les
+references rapides et la version 1.72 reprennent la condition de chargement.
