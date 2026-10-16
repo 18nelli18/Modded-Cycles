@@ -828,3 +828,7 @@ AveyCole demande « pus the beat repeat and b-side mute fix to main also ». Pro
 ## Precision du filtre continu (test)
 
 [Note 102](notes/102-precision-filtre.md) : `tools/gen_filter_precision.py`, `tools/gen_filter_precision_flasher.py`, `tools/test_filter_precision_flasher.js` et `tools/emu/test_filter_current.py`. Remplacement en place, SHA strict et bypass exact ; principal inchange. ChpHzrd demeure un travail separe suspendu.
+
+## Filtre principal 1.75 — 16/10/2026
+
+Correction piste 6 confirmee sur machine par AveyCole et promotion demandee. `python3 tools/gen_filter_precision_main.py --check` ; meme DSP et memes hashes MAIN OS que les neuf profils du test precision. Sequence Genie reste hors de cette promotion.

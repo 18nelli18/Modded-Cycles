@@ -32,3 +32,7 @@ Le profil toutes machines + Wizard + beat repeat sans MIDI depasse deja la capac
 ## 4. Essai materiel attendu
 
 Comparer exactement le meme son sur pistes 5 et 6, a meme niveau/volume, en baissant la coupure depuis 127, resonance nulle puis croissante. Verifier les fins de notes et les sons faibles. Revenir a cutoff 127/resonance 0 : bypass exact attendu. Si le probleme reste propre a la piste 6, ne pas conclure a sa correction sur la seule base de cette amelioration numerique. Principal inchange jusqu'a confirmation utilisateur.
+
+## 5. Teste sur la machine (16/10/2026)
+
+AveyCole confirme : « track 6 filter fix worked, push that to main flasher ». Le symptome physique de la piste 6 est donc confirme corrige. Promotion principale 1.75 avec les memes octets DSP et recettes que le candidat ; seuls les textes, statuts et cache stamps changent. Le travail Sequence Genie reste separe et experimental. `tools/gen_filter_precision_main.py --check` verifie les assets promus ; le generateur historique du test reste epingle au principal 1.74 pour sa reproductibilite.

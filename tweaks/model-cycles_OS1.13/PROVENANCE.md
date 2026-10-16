@@ -151,3 +151,5 @@ Popup bref : helper propre du support commun Modded-Cycles, adapte sans multipli
 ## Precision du filtre — candidat note 102
 
 Nouveau noyau EMAC propre AveyCole / Modded-Cycles pour le ladder partage issu de TinyGregAudio (MIT). Memes coefficients et commandes existants, moins de troncature ; aucun octet Elektron embarque. Source `tools/machines/track_filter/precision.s`, generateur `tools/gen_filter_precision.py`, [note 102](../../notes/102-precision-filtre.md). Publication test uniquement.
+
+Promotion 1.75 du 16/10/2026 : correction piste 6 confirmee sur machine par AveyCole. Memes octets propres et credits MIT ; `tools/gen_filter_precision_main.py` adapte seulement les statuts et textes. Sequence Genie reste separe.
