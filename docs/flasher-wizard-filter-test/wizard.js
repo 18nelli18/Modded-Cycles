@@ -12,7 +12,7 @@
  window.MCMainClearResolve=out=>{
   active=null;if(!on('sample-wizard'))return prev(out);
   const codes=a.chosenEngines().map(e=>e.code),all=['sd','cp','toy','bits','swarm'];let mask=all.reduce((n,c,i)=>n+(codes.includes(c)?1<<i:0),0);
-  if(on('macro'))mask|=32;if(on('acid'))mask|=64;if(on('wave-supermodel'))mask|=128;
+  if(on('macro'))mask|=32;if(on('acid'))mask|=64;if(on('wave-supermodel'))mask|=128;if(on('tiny'))mask|=256;
   const state={mask,perf:on('supermodel-performance'),lfo:on('lfo-secondary'),chord:on('chord-keys'),genie:on('scale-gen'),scramble:on('scramble'),preview:on('sample-preview')};
   const bits=Number(state.perf)+2*Number(state.lfo)+4*Number(state.chord),ui=Number(state.perf||state.genie||state.scramble),pk=ui+2*Number(state.perf);
   active={'sample-wizard':{w:r.refs.w[mask+':'+bits],p:r.refs.wp[mask+':'+pk]},...r.refs.mods};

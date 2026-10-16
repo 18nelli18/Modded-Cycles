@@ -6,7 +6,7 @@ window.MCSharedWizardFilter={"recipe":{"id":"wizard-shared-filter","order":49,"n
  window.MCMainClearResolve=out=>{
   a.REF_MODS['sample-wizard']=prior;a.REF_MODS['chord-keys-supermodel']=priorChord;out=prev(out);if(!a.isSelected('track-filter'))return out;
   const w=out.find(t=>t.id==='sample-wizard');if(!w)throw Error('Shared filter requires Sample Wizard support');
-  const ref={w:prior.w,p:prior.p},key=ref.p;let n=cache.get(key);
+  const ref={w:a.REF_MODS['sample-wizard'].w,p:a.REF_MODS['sample-wizard'].p},key=ref.p;let n=cache.get(key);
   if(!n){if(b.hex(b.sha256(b.buildPayload(w.append,null,null)))!==ref.p)throw Error('Shared filter: original payload reference mismatch');
    const ap=JSON.parse(JSON.stringify(w.append)),part=ap.parts[0];for(const ch of c.changes){const i=ch.off*2;if(part.hex.slice(i,i+ch.old.length)!==ch.old)throw Error('Shared filter: codec guard mismatch');part.hex=part.hex.slice(0,i)+ch.new+part.hex.slice(i+ch.old.length);}
    n={append:ap,p:b.hex(b.sha256(b.buildPayload(ap,null,null)))};cache.set(key,n);
