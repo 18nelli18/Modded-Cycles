@@ -54,7 +54,7 @@ def main():
     print('ok callbacks precoces : aucune allocation ni sortie avec UI/MIDI absents',flush=True)
     # Meme fixture que les preuves historiques : seul le materiel et les objets
     # UI exterieurs sont simules ; prepare, hooks, clavier et files sont reels.
-    r.w32(0x40fe4178,1);r.w32(OBJ,VT);r.w32(VT+40,GET);r.w32(VT+16,SIGNAL)
+    r.w32(0x40fe4178,0x93005000);r.w32(OBJ,VT);r.w32(VT+40,GET);r.w32(VT+16,SIGNAL)
     u.mem_write(GET,b'\x20\x3c'+struct.pack('>I',RAW)+b'\x4e\x75')
     r.w32(0x93005030,0x93005100);r.w32(0x93005128,0x93005200)
     u.mem_write(0x93005200,b'\x20\x3c'+struct.pack('>I',0x93005300)+b'\x4e\x75');r.w32(0x93005304,0)

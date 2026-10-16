@@ -790,3 +790,26 @@ python3 tools/check_midi_current_builds.py --cycles firmware/model-cycles_OS1.13
 Arreter la lecture avant Save Project ; attendre MIDI SAVED. Les donnees MIDI
 sauvegardees se chargent uniquement en entrant cote B, lecture arretee.
 Fichiers annexes hors backups Elektron ; ancien format non importé. Voir note 98.
+
+## Beat Repeat collectif (principal 1.73, teste sur machine)
+
+Carte autonome testee sur machine par AveyCole. TRACK + RETRIG maintenus pendant tout le geste,
+puis TRIG 1–16 : divisions communes aux pistes incluses dans Control All Config
+(six pistes si absent). Les choix config cedent la rangee aux seize divisions
+pendant le combo, puis reviennent au relachement. Release d'un des
+modificateurs : retour normal par fondu court. Aucune page/FX master ajoutes,
+aucune dependance Model-TG ; cotes stereo Wizard facultatifs.
+
+Generation et preuves : [note 99](notes/99-beat-repeat-collectif.md),
+`tools/gen_beat_repeat.py`, `tools/gen_beat_repeat_flasher.py`,
+`tools/test_beat_repeat_flasher.js`, `tools/emu/test_beat_repeat.py`.
+Les neuf builds navigateur passent le bootstrap/cache natifs, le module
+ColdFire, puis la parite Python. La regle Python de padding des supports
+independants est alignee sur la regle deja presente dans `builder.js`.
+Le noyau MIDI/save actuel conserve ses preuves natives. Pas de resultat
+CPU maximal annonce. Validation materielle du candidat 2 confirmee par AveyCole.
+
+
+## Promotion materielle — 16/10/2026
+
+AveyCole confirme le candidat 2 et demande « push to main as hardware tested! ». Promotion au principal 1.73 ; noyau compile et recettes identiques au test 2, statut et textes seuls modifies. Selection Control All et seize divisions pendant TRACK + RETRIG conserves. Cette confirmation ne mesure pas la charge CPU maximale. `tools/promote_beat_repeat.py --check` et les neuf comparaisons SHA navigateur principal/test verifient cette promotion.

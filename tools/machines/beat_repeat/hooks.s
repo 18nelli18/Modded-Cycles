@@ -1,0 +1,61 @@
+| Note 99 : ABI du getter cle et appel gain natif conserves, chainage configurable.
+    .section .text.br_key_hook,"ax"
+    .globl br_key_hook
+br_key_hook:
+    lea %sp@(-16),%sp
+    moveml %d1/%a0-%a1,%sp@
+    movel %sp@(20),%sp@-
+    jsr br_key
+    addql #4,%sp
+    tstl %d0
+    beq .Lkey_pass
+    moveal %sp@(20),%a0
+    clrl %a0@(12)
+    moveml %sp@,%d1/%a0-%a1
+    lea %sp@(16),%sp
+    moveq #0,%d0
+    rts
+.Lkey_pass:
+    moveml %sp@,%d1/%a0-%a1
+    lea %sp@(16),%sp
+    moveal br_old_key,%a0
+    tstl %a0
+    beq .Lkey_native
+    jmp %a0@
+.Lkey_native:
+    moveal %sp@(4),%a0
+    movel %a0@(12),%d0
+    rts
+    .section .text.br_gain_hook,"ax"
+    .globl br_gain_hook
+br_gain_hook:
+    lea %sp@(-16),%sp
+    moveml %d0-%d1/%a0-%a1,%sp@
+    jsr br_audio
+    moveml %sp@,%d0-%d1/%a0-%a1
+    lea %sp@(16),%sp
+    moveal br_old_gain,%a0
+    jmp %a0@
+    .section .text.br_track_keys,"ax"
+    .globl br_track_keys,br_track_leds
+br_track_keys:
+    movel %sp@(8),%sp@-
+    jsr br_key
+    addql #4,%sp
+    tstl %d0
+    beq .Ltrack_pass
+    moveal %sp@(8),%a0
+    clrl %a0@(12)
+    moveq #1,%d0
+    rts
+.Ltrack_pass:
+    moveal br_old_track_keys,%a0
+    jmp %a0@
+br_track_leds:
+    movel br_keys,%d0
+    cmpil #3,%d0
+    bne .Lled_pass
+    jmp br_leds
+.Lled_pass:
+    moveal br_old_track_leds,%a0
+    jmp %a0@
