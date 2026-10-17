@@ -9,7 +9,7 @@ import build,sprites
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 def symbols(cross,elf):
     return {x[2]:int(x[0],16) for line in subprocess.check_output([cross+'nm','--defined-only',str(elf)],text=True).splitlines() if len(x:=line.split())==3}
-def generate(catalogs):
+def generate(catalogs, source=None):
     used=[(build.BASE+w['off'],build.BASE+w['off']+len(bytes.fromhex(w['new']))) for cat in catalogs for t in cat['tweaks'] for w in t['writes']]
     gaps=[]
     for mask,row in sprites.MASKS.items():
@@ -22,7 +22,7 @@ def generate(catalogs):
     cross=next((p for p in ('m68k-linux-gnu-','m68k-elf-') if shutil.which(p+'gcc')),None)
     if not cross:raise RuntimeError('GCC ColdFire requis')
     with tempfile.TemporaryDirectory() as tmp:
-        p=pathlib.Path(tmp);src=ROOT/'tools/machines/beat_repeat'
+        p=pathlib.Path(tmp);src=pathlib.Path(source) if source else ROOT/'tools/machines/beat_repeat'
         subprocess.run([cross+'gcc','-std=gnu99','-mcpu=54418','-Os','-ffreestanding','-fno-builtin','-fno-common','-fno-pic','-fno-stack-protector','-fno-asynchronous-unwind-tables','-fno-inline','-Wall','-Wextra','-Werror','-Wno-misleading-indentation','-c',str(src/'repeat.c'),'-o',str(p/'c.o')],check=True)
         subprocess.run([cross+'gcc','-mcpu=54418','-c',str(src/'hooks.s'),'-o',str(p/'s.o')],check=True)
         subprocess.run([cross+'gcc','-mcpu=54418','-c',str(src/'popup.s'),'-o',str(p/'popup.o')],check=True)

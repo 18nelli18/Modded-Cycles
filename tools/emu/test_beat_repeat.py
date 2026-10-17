@@ -11,7 +11,7 @@ from test_sdvintage import main_os_from_syx
 ORIGIN=0x46a00000
 N=131072
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--cycles',default='firmware/model-cycles_OS1.13.syx');p.add_argument('--data',required=True);p.add_argument('--case');a=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--cycles',default='firmware/model-cycles_OS1.13.syx');p.add_argument('--data',required=True);p.add_argument('--case');p.add_argument('--meter',action='store_true');a=p.parse_args()
     data=json.loads(pathlib.Path(a.data).read_text());stock=main_os_from_syx(a.cycles)
     case=None;origin=ORIGIN
     if a.case:
@@ -25,7 +25,8 @@ def main():
     r.s={k:origin+v for k,v in data['symbols'].items()}
     if case:
         expected=bytes.fromhex(tweak['append']['parts'][0]['hex'])
-        for name in ('br_old_key','br_old_gain','br_side','br_side_on','br_mask_address','br_old_track_keys','br_old_track_leds'):
+        for name in ('br_old_key','br_old_gain','br_side','br_side_on','br_mask_address','br_old_track_keys','br_old_track_leds','br_load_address','br_avg_address','br_fading_address','br_stolen_address'):
+            if name not in data['symbols']:continue
             off=data['symbols'][name];code[off:off+4]=expected[off:off+4]
         assert bytes(code)==expected,'module navigateur different du module prouve'
         def cache(uc,pc,size,user):uc.reg_write(mk.UC_M68K_REG_PC,pc+4)
@@ -233,5 +234,28 @@ def main():
     key(4,0);key(2,0);r.fail_new=False;u.reg_write(mk.UC_M68K_REG_SR,0x2100)
     key(2);key(4);assert not get('br_history');u.reg_write(mk.UC_M68K_REG_SR,0x2000)
     print('PASS memoire indisponible/IPL : bypass, aucune allocation dans le rendu',flush=True)
+    if a.meter:
+        assert 'br_load_address' in r.s and 'br_avg_address' in r.s
+        key(4,0);key(2,0)
+        put('br_history',0x94000000)  # historique fixture deja mappe, sans nouvelle allocation
+        put('br_load_address',0x9307e000);put('br_avg_address',0x9307e004)
+        put('br_fading_address',0);put('br_stolen_address',0)
+        r.w32(0x9307e000,232);r.w32(0x9307e004,194)
+        key(2);key(4);audio(42);r.w32(0x9307e000,300);audio(42)
+        assert get('br_load_peak')==300
+        key(4,0);assert popups[-1]=='CPU 75%/117%',popups[-1]
+        key(2,0);put('br_fading_address',0x9307e010);put('br_stolen_address',0x9307e020)
+        u.mem_write(0x9307e010,bytes([0,8,0,0,0,0]));u.mem_write(0x9307e020,bytes([0,0,0,0,0,1]))
+        key(2);key(4);audio(42)
+        assert get('br_cut_seen')==34
+        assert bytes(u.mem_read(0x9307e010,6))==bytes([0,8,0,0,0,0])
+        assert bytes(u.mem_read(0x9307e020,6))==bytes([0,0,0,0,0,1])
+        u.mem_write(0x9307e010,bytes(6));u.mem_write(0x9307e020,bytes(6));audio(42)
+        key(4,0);assert popups[-1]=='CPU 75%/117% CUT 2',popups[-1]
+        key(2,0);key(2);key(4);audio(42);key(4,0)
+        assert popups[-1]=='CPU 75%/117% CUT 0',popups[-1]
+        put('br_fading_address',0);put('br_stolen_address',0)
+        key(2,0);put('br_load_address',0);put('br_avg_address',0)
+        print('PASS diagnostic : moyenne/pic Q8, CUT distinct cumulatif/reset, flags regulateur non modifies, popup UI seulement',flush=True)
     print('LIMITES : pas de mesure CPU materielle, ni clavier physique ; prototype experimental')
 if __name__=='__main__':main()
