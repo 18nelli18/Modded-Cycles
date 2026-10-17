@@ -74,3 +74,14 @@ Test3 a ete prepare dans la branche puis ouvert localement dans DigiEmu ; pas pu
 Noyau614o sur678. 2 048 blocs extremes/aleatoires : samples, etats et EMAC identiques au test3 ; resonance inchangee. Compteur instructions sans resonance +1,6 %, mais estimation statique+stalls des tables DigiEmu -6,0 % (1 361 458 vers1 279 538), resonance0,0 %. Cette estimation exclut branches dynamiques, caches/bus et deadlines ; ne pas annoncer6 % de CPU global.
 
 DigiEmu0.4.1 officiel : stock run passe, marge estimee39,6 % ; verification candidate standard echoue a reconnaitre le display detourne par Chord Keys. Adaptateur local uniquement, garde du detour, corps et trampoline, restaure la resolution panel_diff/fb_front/fb_back sans toucher le firmware ; le vrai UI candidat atteint120 frames stables et ouvre le panneau interactif. Le check standard signale aussi deux MOVEC dans le payload appendu hors de la zone qu il sait intercepter : limite de compatibilite, pas preuve d erreur hardware. Aucun PASS global ou timing six machines revendique pour ce run. GUI test3 ouverte ; firmware test4 reste a verifier sur appareil.
+
+
+## Test 5 : ordonnancement filtre complet (17/10/2026)
+
+Retour hardware AveyCole test4 :77 % moyenne /101 % pic /CUT4, clicks les moins perceptibles a ce jour. Il ajoute ensuite des pics a107 %. Le101 initial n etait pas le pire observe : ne pas marquer le probleme comme resolu. Pas de preuve que chaque click correspond au pic ; CUT observe aussi des voies deja suspendues. Principal/909 inchanges, diagnostic conserve en test.
+
+Base test4. Sans resonance : le troisieme MAC du premier sample prepare dans D7 la difference du prochain sample avec le premier pole deja mis a jour. Le quatrieme MAC avance A1 ; sortie du premier sample a -4(A1). Le deuxieme sample reutilise la difference. Chaque paire ne precharge que sa voisine : aucune lecture hors des32 samples.
+
+Avec resonance : charge de la voie feedback pendant le MAC d entree ; constantes de clamp et avance du pointeur preparees dans les six gaps MAC/resultat. D7/A5 reutilises seulement apres leurs usages precedents ; ils sont sauvegardes/restaures. Saturations, ordre des calculs et cadence restent identiques. Le chargement feedback est deplace vers D7 et le MAC le consomme directement. Noyau618o sur678.
+
+2 048 blocs extremes/aleatoires, samples/quatre etats/EMAC exacts. Estimation statique+stalls DigiEmu sans resonance :1 279 538 vers1 197 618 (-6,4 % face au test4) ; avec resonance2 050 623 vers1 624 639 (-20,8 %). Instructions +1,6 %/+10,0 % car le travail prepare pendant les stalls est explicite. Ces estimations excluent branches dynamiques, caches/bus et deadlines : aucun pourcentage CPU global ni resultat physique annonce. Hardware a verifier.
