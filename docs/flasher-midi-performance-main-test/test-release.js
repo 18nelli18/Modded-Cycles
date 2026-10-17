@@ -1,0 +1,1 @@
+window.MC_RELEASES=[{version:"MIDI-main-test.1",date:"2026-10-16",changes:[{en:"Main checklist MIDI performance test; hardware verification pending.",fr:"Test MIDI performance checklist main ; verification materielle requise."}]}];
