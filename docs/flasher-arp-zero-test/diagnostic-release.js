@@ -1,0 +1,1 @@
+window.MC_RELEASES=[{"version": "Arp-zero-test.1", "date": "2026-10-17", "changes": [{"en": "Oct0 plays only held notes on both arpeggiators. Existing saved sounds preserved. Diagnostics retained. Test only.", "fr": "Oct0 joue uniquement les notes tenues sur les deux arpegiateurs. Sons sauvegardes conserves. Diagnostics conserves. Test uniquement."}]}];
