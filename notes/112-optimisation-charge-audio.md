@@ -105,3 +105,8 @@ Deuxieme session complete : meme remplacement progressif1..6 par Swarm LITE (ID1
 ## Test 6 : observation filtre hardware
 
 Retour : resonance zero, tout moteur SY peut etre concerne, souvent piste6 mais pas exclusivement. Test6 ne revendique aucune reparation DSP. Diagnostic uniquement : dernier MACSR entrant de chaque voie active, sept entrees comme les tableaux natifs ; coefficients F/Q/MK lus a la demande sur UI pour piste6. Maintenir FUNCTION pendant le relachement TRACK+RETRIG affiche `6 F3538 Q0 K4096 M0020` dans le cas nominal cutoff126/res0. M est hexadecimal, dernier mode entrant actif, pas une mesure permanente en bypass/silence. Sans filtre selectionne : FILTER OFF. Relachement habituel conserve CPU/CUT. Aucun etat DSP ou regulateur ecrit par le popup. Principal et909 inchanges.
+
+
+## Test7 : choisir la piste du diagnostic
+
+La voie distordue n est pas toujours6. FUNCTION+TRACK+RETRIG puis pas1..6 choisit explicitement la voie audio et affiche son snapshot. Ces press/release sont possedes par le diagnostic et ne lancent pas de repeat. Relacher TRACK/RETRIG avec FUNCTION rappelle la derniere voie choisie. CPU/CUT habituel conserve. Tests des six voies, valeurs distinctes et absence de demande repeat. Aucun changement du noyau DSP face au test6.
