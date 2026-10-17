@@ -13,6 +13,9 @@ def run(case,broken):
  r.stubs[0x400826b0]=lambda args:0;u.hook_add(UC_HOOK_CODE,r.stub,begin=0x400826b0,end=0x400826b0)
  # Ancienne image : les instructions se font passer pour count/root ChordKeys.
  live=r.s['live'];expanded=r.s['expanded'];assert live==0x40187528
+ # Permettre la reconstruction du placement fautif depuis un build corrige.
+ if broken and entry!=live:
+  u.mem_write(live,before);r.w32(0x40100c44,live);entry=live
  if broken:assert live==entry and bytes(u.mem_read(0x40187548,2))==b'\x2f\x0b'
  for track in ([4] if broken else range(6)):
   if not broken:u.mem_write(live+8*track,bytes([1,60,0,0,60,0,0,0]));note=60
