@@ -41,3 +41,7 @@ Le scaffold exporte maintenant le support sans ACID avec les MEMES options UI/pe
 `test_909_combos.py` emprunte le getter `0x4007240c` final, sans forcer `set_held` : SETTINGS, ouverture Genie A, routage SCRAMBLE, ouverture B, flags slide natifs et garde mute verrouille. Objets UI, popup slide et corps musical SCRAMBLE isoles dans la fixture ; aucune preuve de leur fonctionnement physique. Le filtre est teste via `test_filter_current.py --precision-data docs/flasher/filter-load-data.js`, six voies, coupure/resonance/bypass/ABI, vrai boot/cache et code exact courant. Le test navigateur attend aussi la fin du FileReader final avant de juger le build.
 
 Test 2 experimental : `?v=2026-10-16-909-current-test-2`. SHA MAIN OS de la fixture WAV synthetique : `99cfd2d6e52ad222fd4f6e6c87ee743b851078e27130fe362101b830e88d595f`. Verification machine encore requise, notamment mute verrouille complet et charge des six pistes filtrees.
+
+## Publication 909.2
+
+AveyCole autorise la promotion de tous les changements du test 2 vers l edition 909 et demande de retirer les grands paragraphes rouges. `gen_909_release.py` reconstruit cette edition avec le meme profil, un statut teste, un en-tete bref et la limite de rechargement MIDI dans un detail. Le flasher main general conserve son firmware. Nouvelle fonction repeat MIDI demandee separement, test uniquement.

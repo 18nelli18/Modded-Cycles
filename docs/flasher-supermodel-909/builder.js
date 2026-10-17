@@ -651,7 +651,7 @@ function syntaktVersion(ap, syntaktRaw) {
  * ou compressée (ap.compress === "aplib" : aplibPack). */
 // Même coût en bits et regard d'un octet que tools/aplib_cost.py.
 // Le format et le décompresseur restent inchangés.
-function aplibCostPack(data,depth=128){
+function aplibCostPack(data,depth=128,margin=9){
  const w=new _Writer(),chains=new Map(),n=data.length,key=i=>(data[i]<<16)|(data[i+1]<<8)|data[i+2];
  const gamma=v=>2*(31-Math.clz32(v));let i=0,last=1;
  function match(at,last){
@@ -671,7 +671,7 @@ function aplibCostPack(data,depth=128){
  }
  while(i<n){
   let [score,off,length]=match(i,last);
-  if(length&&i+1<n&&match(i+1,last)[0]>score+9)score=0;
+  if(length&&i+1<n&&match(i+1,last)[0]>score+margin)score=0;
   const count=score>0?length:1;
   if(score>0){w.match(off,length,last);last=off;}else w.literal(data[i]);
   for(let pos=i;pos<Math.min(i+count,n-2);pos++){
@@ -700,7 +700,7 @@ function buildPayload(ap, syntaktRaw, mainOs) {
       if (!eq(restored, out)) throw new Error("charge precompressee differente");
       return packed;
     }
-    return ap.compress_cost ? aplibCostPack(out, ap.compress_cost) : ap.compress_depth ? aplibDensePack(out, ap.compress_depth) : aplibPack(out);
+    return ap.compress_cost ? aplibCostPack(out, ap.compress_cost, ap.compress_margin ?? 9) : ap.compress_depth ? aplibDensePack(out, ap.compress_depth) : aplibPack(out);
   }
   if (!ap.pack) return out;
   const dest = parseInt(ap.dest, 16), kept = Uint8Array.from(out), parts = [];
@@ -766,7 +766,7 @@ function build(raw, device, chosen, opts = {}) {
     const ap = t.append;
     const target=parseInt(ap.at,16),end=BASE+full.length;
     if(t.id==='chord-keys-supermodel'&&ap.zero_pad_from==='0x401aa140'&&target===0x401f8f76&&end>=0x401aa140&&end<target&&target<=END_LIMIT){const padding=new Uint8Array(target-end);full=concat(full,padding);fullDirty=concat(fullDirty,new Uint8Array(padding.length).fill(1));}
-    if(t.id==='midi-bank-bundle'&&ap.zero_pad_from==='0x401bf8c0'&&BASE+full.length>=0x401bf8c0&&BASE+full.length<parseInt(ap.at,16)&&parseInt(ap.at,16)<=END_LIMIT){const pad=new Uint8Array(parseInt(ap.at,16)-BASE-full.length);full=concat(full,pad);fullDirty=concat(fullDirty,pad);}
+    if((t.id==='supermodel-support-independent'||t.id==='supermodel-wave-support')&&ap.zero_pad_from==='0x401aa140'&&ap.at==='0x401f8f76'&&BASE+full.length>=0x401aa140&&BASE+full.length<0x401f8f76){const pad=new Uint8Array(0x401f8f76-BASE-full.length);full=concat(full,pad);fullDirty=concat(fullDirty,pad);}
     if (BASE + full.length !== parseInt(ap.at, 16)) throw new Error("l'image ne finit pas où le tweak l'attend");
     const payload = buildPayload(ap, opts.syntakt, mainOs);
     if (refOf(t) && hex(sha256(payload)) !== refOf(t).p) throw new Error(`${t.id} : charge utile differente de la reference`);
@@ -959,4 +959,3 @@ const API = { sha256, hmacSha256, writesBytes, unwrap, wrap, aplibDepack, aplibR
 if (typeof module !== "undefined" && module.exports) module.exports = API;
 if (typeof window !== "undefined") window.MCBuilder = API;
 })();
-

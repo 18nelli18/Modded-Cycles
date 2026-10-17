@@ -1538,7 +1538,7 @@ const DISCORD = "https://discord.gg/hWegtJZcmm";
 // ---------------------------------------------------------------------------
 const T = {
   en: {
-    title: "Supermodel 909 — A.V.’s Edition",
+    title: "Model:Cycles Flasher",
     tagline: "Install mods on your Elektron Model:Cycles or Model:Samples, right from your browser.",
     s1: "What do you want to install?",
     tab_mods: "Mods",
@@ -1762,7 +1762,7 @@ const T = {
     dev_mach_cos_on_samples: "This machine answers as a Model:Samples. If it runs its Model:Samples OS, choose “Model:Samples, on its own OS” in step 1. If it runs the Cycles OS with Model-TG, set Device Config › Transfer back to CYC (or restart it), then Refresh.",
     cos_mods: "To add mods, use the Mods tab and choose your Model:Samples as the machine: it installs the same Model:Cycles OS, with the mods you tick.",
     done_samples: "It restarts as a <b>Model:Samples</b>: Elektron Transfer and your computer see a “Model:Samples”. Load your samples with Transfer.",
-    pick_one: "Choose all four WAV samples (step 1).",
+    pick_one: "Select at least one mod, or switch to “Official firmware”.",
     midi_asking: "Asking for MIDI access…",
     midi_wait: "Waiting for your permission: Chrome shows a prompt near the address bar. Click “Allow”. If you blocked it before, click the icon left of the address and allow MIDI.",
     midi_denied: "MIDI access was refused. Click the icon left of the address, allow MIDI, reload the page and try again.",
@@ -1819,7 +1819,7 @@ const T = {
     log_start: "Sending {n} packets to “{port}”, margin {pace}.",
   },
   fr: {
-    title: "Supermodel 909 — Édition A.V.",
+    title: "Flasher Model:Cycles",
     tagline: "Installez des mods sur votre Elektron Model:Cycles ou Model:Samples, depuis votre navigateur.",
     s1: "Que voulez-vous installer ?",
     tab_mods: "Mods",
@@ -2041,7 +2041,7 @@ const T = {
     dev_mach_cos_on_samples: "Cette machine répond comme un Model:Samples. Si elle tourne sous son OS Model:Samples, choisissez « Model:Samples, sous son OS » à l'étape 1. Si elle tourne sous l'OS Cycles avec Model-TG, remettez Device Config › Transfer sur CYC (ou redémarrez-la), puis Rafraîchir.",
     cos_mods: "Pour ajouter des mods, utilisez l'onglet Mods et choisissez votre Model:Samples comme machine : il installe le même OS du Model:Cycles, avec les mods cochés.",
     done_samples: "Il redémarre en <b>Model:Samples</b> : Elektron Transfer et votre ordinateur voient un « Model:Samples ». Chargez vos samples avec Transfer.",
-    pick_one: "Choisissez les quatre samples WAV (étape 1).",
+    pick_one: "Cochez au moins un mod, ou passez sur « Firmware officiel ».",
     midi_asking: "Demande d'accès MIDI…",
     midi_wait: "En attente de votre autorisation : Chrome affiche une demande près de la barre d'adresse. Cliquez sur « Autoriser ». Si vous l'avez bloquée, cliquez sur l'icône à gauche de l'adresse et autorisez le MIDI.",
     midi_denied: "Accès MIDI refusé. Cliquez sur l'icône à gauche de l'adresse, autorisez le MIDI, rechargez la page et réessayez.",
@@ -2482,7 +2482,7 @@ const triedWith = (v, tg) => !!(v && (tg ? v.tg_tested : v.tested));
 
 // The mods, shown by section (cat), in FEATURES order inside a section. The build keeps FEATURES order whatever the
 // display order (chosenTweaks, REF_MAINOS keys).
-const features = () => (window.MC_TWEAKS && window.MC_TWEAKS.features) || [];
+const features = () => ((window.MC_TWEAKS && window.MC_TWEAKS.features) || [])  ;
 const featById = (id) => features().find((f) => f.id === id);
 function selOf(f) {
   return selection[f.id] ||
@@ -2511,7 +2511,8 @@ function clashVia(f, g) {
 
 // Tested or experimental, down to the exact engine combination (with Model-TG, the combined version's own tests).
 // "part": an unticked engine card that is tested with some engines only (PARTLY).
-function statusOf(f) {
+function statusOf(f) { if(f.id==='sample-preview')return 'experimental';
+  if (f.hardwareTestedByOwner) return "tested";
   const sel = selOf(f);
   if (f.engines) {
     if (!sel.on) return PARTLY && f.status === "tested" && f.combos.some((c) => !c.tested && !c.tg_tested) ? "part" : f.status;
@@ -2552,7 +2553,7 @@ function setOn(f, on) {
   if (!on) selOf(f).on = false;
   else {
     const need = f.requires && featById(f.requires);
-    if (need && !isOn(need.id)) turnOn(need);
+    if (need && !isOn(need.id)) { const chain=[]; for(let h=need;h;h=h.requires&&featById(h.requires)){if(chain.includes(h))throw new Error("Cyclic feature dependency");chain.unshift(h);}for(const h of chain)if(!isOn(h.id))turnOn(h); }
     turnOn(f);
   }
   dropOrphans();
@@ -2867,9 +2868,10 @@ Object.assign(T.en, { select_all: "Select all", select_all_note: "Selects compat
 Object.assign(T.fr, { select_all: "Tout sélectionner", select_all_note: "Sélectionne les mods compatibles en conservant Model-TG et MIDI OUT + THRU en direct. Les mods inclus restent dans Model-TG." });
 function selectAllCompatible() {
   for (const f of features()) selOf(f).on = false;
-  const preferred = ["model-tg", "midi-live-both", "scale-gen", "lfo-secondary", "supermodel-startup"].map(featById).filter(Boolean);
+  const preferred = ["sample-wizard", "chord-keys", "wave-supermodel", "supermodel-performance", "midi-live-both", "scale-gen", "lfo-secondary", "supermodel-startup"].map(featById).filter(Boolean);
   for (const f of preferred) setOn(f, true);
   for (const f of features()) {
+    if (f.id === "model-tg" || f.requires === "model-tg") continue;
     if (preferred.includes(f) || includedBy(f)) continue;
     if (features().some(g => isOn(g.id) && (excludes(f, g) || clashVia(f, g)))) continue;
     setOn(f, true);
@@ -3008,7 +3010,7 @@ function chosenTweaks() {
   return window.MCMainClearResolve ? window.MCMainClearResolve(out) : out;
 }
 function chosenLabels() {
-  if (window.MC909Labels) return window.MC909Labels;
+  if(window.MC909CurrentLabels)return window.MC909CurrentLabels;
   const tw = window.MC_TWEAKS, out = [];
   for (const f of (tw && tw.features) || []) {
     const sel = selection[f.id];
@@ -3102,8 +3104,8 @@ function loadOs(raw, name) {
   try {
     const info = window.MCFlasher.verify(raw);
     const sha = window.MCBuilder.hex(window.MCBuilder.sha256(raw));
-    if (sha !== window.MC_TWEAKS.device.stock_syx_sha256) throw new Error(document.documentElement.lang === "fr" ? "Choisissez l’OS officiel Model:Cycles 1.13." : "Choose the official Model:Cycles OS 1.13.");
-    st.machine = "cyc"; st.mode = "mods";
+    if (sha !== window.MC_TWEAKS.device.stock_syx_sha256) throw new Error(document.documentElement.lang==='fr' ? 'Choisissez l OS officiel Model:Cycles 1.13.' : 'Choose the official Model:Cycles OS 1.13.');
+    st.machine='cyc'; st.mode='mods';
     const stock = !!(window.MC_TWEAKS && sha === window.MC_TWEAKS.device.stock_syx_sha256);
     st.os = { raw, name, info, sha, stock };
     st.osError = null;
@@ -3219,9 +3221,11 @@ function prepareFirmware() {
   const makeCycles = (raw) => {
     const opts = {};
     if (REF_MAINOS[key]) opts.expectMainOsSha = REF_MAINOS[key];
-    opts.refMods = window.MC909Refs(raw, tweaks);                       // every mod, on every build (notes/49)
+    opts.refMods = REF_MODS;                       // every mod, on every build (notes/49)
     if (syntakt) opts.syntakt = syntakt;
-    const r = window.MCBuilder.build(raw, window.MC_TWEAKS.device, tweaks, opts);
+    const prepared = window.MCMidiBankCompose ? window.MCMidiBankCompose(tweaks, raw, syntakt) : {tweaks, refMods: REF_MODS};
+    opts.refMods = prepared.refMods;
+    const r = window.MCBuilder.build(raw, window.MC_TWEAKS.device, prepared.tweaks, opts);
     log(`Built ${key}: MAIN OS ${r.mainOsSha.slice(0, 12)}…, ${r.patchedBytes} bytes patched, ${r.raw.length} bytes.`, "is-ok");
     return { raw: r.raw, name: `model-cycles_OS1.13_${key}.syx`, kind: "built", mods: labels, sha: r.mainOsSha,
       ref: !!REF_MAINOS[key], modsRef: r.modsChecked, sixch: tweaks.some((x) => x.id.startsWith("6ch")),
@@ -3881,9 +3885,26 @@ for(const L of ["en","fr"])Object.assign(FEAT[L]["model-tg"],{"en": {"short": "S
 for(const L of ["en","fr"])FEAT[L]["midi-bank-bundle"].desc += " " + {"en": "FUNC + PLAY clears the selected track and both LFOs; press again to undo. In B-side keyboard mode, recorded steps are hidden, held keys light up, and the playhead remains visible. New clear/Undo and light behavior awaits hardware verification.", "fr": "FUNC + PLAY efface la piste sélectionnée et ses deux LFO ; répéter annule. Clavier B : pas enregistrés masqués, touches tenues éclairées, curseur visible. Nouveaux clear/Undo et lumières à vérifier sur machine."}[L];
 for(const L of ["en","fr"])FEAT[L]["control-all-config"]={"en": {"label": "Control All Config", "short": "Choose which audio tracks follow TRACK + knob Control All.", "desc": "Hold TRACK and tap TRIG 1–6 to exclude or include the corresponding A-side track. Lit trigs follow Control All. Any track can be excluded, including the active track. Choices reset after power-off. Hardware-tested integration by durchgemacht.", "shortcuts": ["TRACK + TRIG 1–6: exclude/include a track.", "TRACK + knob: Control All on included tracks. The active track can also be excluded."]}, "fr": {"label": "Control All Config", "short": "Choisir les pistes audio concernées par TRACK + potentiomètre.", "desc": "Tenir TRACK et appuyer sur TRIG 1–6 pour exclure ou inclure la piste A correspondante. Trigs allumés : pistes incluses ; la piste active peut aussi rester exclue. Choix réinitialisés au redémarrage. Intégration vérifiée sur matériel de durchgemacht.", "shortcuts": ["TRACK + TRIG 1–6 : exclure/inclure une piste.", "TRACK + potentiomètre : Control All sur les pistes incluses. La piste active peut aussi rester exclue."]}}[L];
 for(const L of ["en","fr"])FEAT[L].acid.desc={"en": "ACID bass with Kevin Shallvari’s retrigger click fix. Slides are preserved. Retrigger fade-in hardware tested.", "fr": "Basse ACID avec le correctif de clic au retrig de Kevin Shallvari. Slides conservés. Fondu au retrig vérifié sur matériel."}[L];
-for(const L of ["en","fr"])FEAT[L]["midi-bank-bundle"].note={"en": "Syntakt, MACRO and ACID are optional. MIDI Bank requires Model-TG, Sequence Generator, Second LFO, SCRAMBLE and Live MIDI support. ChordKeys and USB6 remain optional.", "fr": "Syntakt, MACRO et ACID sont facultatifs. Banque MIDI requiert Model-TG, générateur, Second LFO, SCRAMBLE et MIDI Live. ChordKeys et USB6 restent facultatifs."}[L];
-window.MCFlasherApp = { state: st, REF_MAINOS, REF_MODS, REF_SAMPLES_ON_CYCLES, REF_CYCLES_ON_SAMPLES, REF_SAMPLES_BACK, loadOs,
-  loadSamples, loadSyntakt, setMode, setSmpDir, setMachine, setMethod, applyLang, render,
+FEAT.en['chord-keys'].label='ChordKeys';FEAT.fr['chord-keys'].label='ChordKeys';
+
+FEAT.en['sample-wizard']={"label": "Sample Wizard", "short": "Independent sampler with Slice varispeed; works with the other Supermodel options.", "desc": "Adds Wizard as machine 7. Each machine and feature remains separately selectable. Includes sample playback modes, sample browser and Slice varispeed. Upload your own samples with Elektron Transfer in SMP mode; return to CYC before a firmware upgrade.", "shortcuts": ["FUNC + MACHINES: sample browser.", "SETTINGS + MACHINES: playback mode. SETTINGS + PUNCH: mode options.", "Slice: notes choose the slice; PITCH changes its speed/pitch."]};
+FEAT.fr['sample-wizard']={"label": "Sample Wizard", "short": "Sampler autonome avec Slice varispeed ; compatible avec les options Supermodel.", "desc": "Ajoute Wizard comme machine 7. Machines et fonctions restent s\u00e9lectionnables s\u00e9par\u00e9ment. Modes de lecture, navigateur et Slice varispeed inclus. Transf\u00e9rer vos samples en mode SMP ; revenir \u00e0 CYC avant une mise \u00e0 jour.", "shortcuts": ["FUNC + MACHINES : navigateur.", "SETTINGS + MACHINES : mode de lecture. SETTINGS + PUNCH : options.", "Slice : notes = tranche ; PITCH = vitesse/hauteur."]};
+GUIDE_OF['sample-wizard']='sample-wizard';
+FEAT.en['track-filter']={label:'Per-track filter — continuous',short:'Low-pass cutoff/resonance with continuous filter history.',desc:'Hold MACHINES and turn SWEEP for cutoff or CONTOUR for resonance. Requires Synth Attack and Wizard support. The ladder no longer clears its history on the voice-trigger flag, removing a reproduced block-edge discontinuity. Wizard keeps its own filter. Cutoff fully open and zero resonance bypasses the ladder. Hardware tested by A.V.',shortcuts:['MACHINES + SWEEP: cutoff.','MACHINES + CONTOUR: resonance.','Hold a TRIG for parameter locks; CC74 cutoff / CC71 resonance.']};
+FEAT.fr['track-filter']={label:'Filtre par piste — continu',short:'Passe-bas coupure/résonance, historique du filtre continu.',desc:'MACHINES + SWEEP : coupure ; MACHINES + CONTOUR : résonance. Requiert Attack synth et support Wizard. Le ladder ne remet plus son historique à zéro au flag de trig : une discontinuité de blocs reproduite est supprimée. Wizard conserve son filtre. Coupure maximale et résonance nulle : bypass. Testé sur machine par A.V.',shortcuts:['MACHINES + SWEEP : coupure.','MACHINES + CONTOUR : résonance.','Tenir un TRIG pour un lock ; CC74 coupure / CC71 résonance.']};
+
+FEAT.en['synth-attack']={label:'Synth Attack',short:'MACHINES + DECAY adds an attack ramp to every synth/drum track.',desc:'With Sample Wizard support selected, hold MACHINES and turn DECAY to adjust Attack on stock and added synth/drum machines. Wizard retains its own attack. Zero is a bit-exact bypass. Supports sound saves and parameter locks. Hardware tested by A.V.',shortcuts:['MACHINES + DECAY: Attack.','Hold a TRIG while adjusting to lock Attack.']};
+FEAT.fr['synth-attack']={label:'Attack synth',short:'MACHINES + DECAY : rampe d’attaque sur chaque piste synth/drum.',desc:'Avec le support Wizard, tenir MACHINES et tourner DECAY pour Attack sur les synthés/drums stock et ajoutés. Wizard conserve son attaque. Zéro : bypass exact. Sauvegarde du son et locks. Testé sur machine par A.V.',shortcuts:['MACHINES + DECAY : Attack.','Tenir un TRIG pendant le réglage pour un lock.']};
+
+FEAT.en['scale-gen'].short='Generate notes now, or queue them for the next page / full loop.';
+FEAT.en['scale-gen'].desc='SETTINGS + PAGE opens Sequence Genie. Generate is the first row; Queue at is directly beneath it. Click DATA to edit Queue at, turn to choose Loop (default) or Page, then click to finish. Loop waits for the selected track to wrap to step 1. Page waits for the next 16-step boundary (17, 33, 49, or step 1). Viewing another page does not trigger it. Stopped generation remains immediate. Works on stock and Sample Wizard tracks; Wizard keeps its sample and playback mode.';
+FEAT.fr['scale-gen'].short='Génération immédiate ou différée à la prochaine page / boucle entière.';
+FEAT.fr['scale-gen'].desc='SETTINGS + PAGE ouvre Genie. Generate est en première ligne, Queue at juste dessous. Cliquer DATA, choisir Loop (défaut) ou Page, puis confirmer. Loop attend le retour au pas 1 de la piste choisie ; Page attend le prochain début de page (17, 33, 49 ou 1). Changer la page affichée ne déclenche rien. À l’arrêt, génération immédiate. Compatible stock et Wizard ; sample et mode conservés.';
+
+FEAT.en['sample-preview'].desc='Preview samples in the Sample Wizard browser while ChordKeys is selected. Requires Sample Wizard; compatible with WAVE and ChordKeys. Select a sample in the browser, then play its track pad or keyboard to audition it.'; FEAT.fr['sample-preview'].desc='Préécoute dans le navigateur Sample Wizard avec ChordKeys sélectionné. Exige Wizard ; compatible avec WAVE et ChordKeys. Choisir un sample puis jouer le pad ou le clavier de sa piste pour l’écouter.';
+FEAT.en['sample-preview'].label='Sample Preview'; FEAT.fr['sample-preview'].label='Préécoute des samples';
+window.MCFlasherApp = { registerFeatureTexts(id, texts) { for (const L of ["en", "fr"]) FEAT[L][id] = texts[L]; }, state: st, REF_MAINOS, REF_MODS, REF_SAMPLES_ON_CYCLES, REF_CYCLES_ON_SAMPLES, REF_SAMPLES_BACK, loadOs,
+  loadSamples, loadSyntakt, chosenEngines, setMode, setSmpDir, setMachine, setMethod, applyLang, render,
   chosenTweaks, chosenLabels, CATS, isSelected: isOn };
 
 // Présentation seule : sélection et vérifications firmware restent natives.
@@ -3912,4 +3933,3 @@ function wireSupermodel() {
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
 else init();
 })();
-

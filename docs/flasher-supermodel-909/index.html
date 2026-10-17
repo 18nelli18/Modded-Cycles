@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Supermodel 909 — A.V.'s Edition</title>
-<meta name="description" content="Install mods on the Elektron Model:Cycles or Model:Samples from your browser, over USB in about 30 seconds (Web MIDI). No firmware is provided or uploaded: you bring your own official OS file.">
+<title>Supermodel 909 — A.V.’s Edition</title>
+<meta name="description" content="Install mods on the Elektron Model:Cycles or Model:Samples from your browser, over USB in about 30 seconds (Web MIDI).">
 <meta name="theme-color" content="#e3e2de" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b1b1b" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-14-supermodel-909-release">
-<link rel="stylesheet" href="style.css?v=2026-10-14-supermodel-909-release">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-16-909-current-release">
+<link rel="stylesheet" href="style.css?v=2026-10-16-909-current-release">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
-<style>#step-choose,.super-save-note,.ver,.quick-reference,.top nav{display:none!important}.fl-head{display:block}.wrap.fl{max-width:1000px}.fl-head h1{font-size:clamp(34px,5vw,58px);line-height:1.1}.edition-profile{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 24px;list-style:none;padding:0}.edition-profile li{padding:8px 0;border-bottom:1px solid var(--line)}.edition-profile li::before{content:"✓ ";font-weight:700}.notice{max-width:1000px;margin:22px auto;padding:20px 24px;text-align:left}.build-steps{grid-template-columns:repeat(3,1fr)}@media(max-width:600px){.edition-profile{grid-template-columns:1fr}}</style><style>.sample-slots{display:grid;grid-template-columns:1fr 1fr;gap:20px}.sample-slots label{display:grid;gap:8px;font-weight:600}.sample-slots output{font-weight:400;font-size:13px}.sample-slots input{max-width:100%}.build-steps{grid-template-columns:repeat(4,1fr)}@media(max-width:600px){.sample-slots{grid-template-columns:1fr}}</style><link rel="stylesheet" href="909.css?v=2026-10-14-supermodel-909-release"></head>
+<style>#step-choose{display:none!important}#step-samples label{display:grid;gap:8px;margin:16px 0}#step-samples output{font-size:13px}</style></head>
 <body data-page="flasher" class="supermodel">
 <script>
   // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-  window.MC_BUILD = "2026-10-14-supermodel-909-release";
+  window.MC_BUILD='2026-10-16-909-current-release';
   window.addEventListener("error", function (e) {
     var b = document.getElementById("errbar");
     if (!b) return;
@@ -41,24 +41,23 @@
   <button type="button" class="theme-btn" aria-label="Dark mode"><svg class="moon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 12.2A7 7 0 0 1 7.8 3.5a7 7 0 1 0 8.7 8.7z"/></svg><svg class="sun" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="3.6"/><path d="M10 1.8v2M10 16.2v2M1.8 10h2M16.2 10h2M4.2 4.2l1.4 1.4M14.4 14.4l1.4 1.4M4.2 15.8l1.4-1.4M14.4 5.6l1.4-1.4"/></svg></button>
 </header>
 
-<section class="notice" role="note"><strong><span data-l="en">909 voices hardware tested</span><span data-l="fr">Voix 909 testées sur machine</span></strong><p><span data-l="en">Dedicated edition. The six stock machines are replaced by the 909 kit. Model-TG support is included. This complete edition has been hardware tested by A.V.</span><span data-l="fr">Édition dédiée. Les six machines stock sont remplacées par le kit 909. Support Model-TG inclus. Cette édition complète a été testée sur machine par A.V.</span></p><ul class="edition-profile"><li><span data-l="en">Full 909 kit: kick, snare, hats, rim/clap, toms, cymbal</span><span data-l="fr">Kit 909 complet : kick, snare, hats, rim/clap, toms, cymbale</span></li><li><span data-l="en">ACID</span><span data-l="fr">ACID</span></li><li><span data-l="en">SCRAMBLE</span><span data-l="fr">SCRAMBLE</span></li><li><span data-l="en">Parallel six-track MIDI Bank</span><span data-l="fr">Banque MIDI parallèle de six pistes</span></li><li><span data-l="en">MIDI Out/Thru</span><span data-l="fr">MIDI Out/Thru</span></li><li><span data-l="en">Sequence Genie</span><span data-l="fr">Sequence Genie</span></li><li><span data-l="en">Latching mute mode</span><span data-l="fr">Mode mute verrouillé</span></li><li><span data-l="en">Second LFO</span><span data-l="fr">Second LFO</span></li><li><span data-l="en">Control All Config — including active-track selection</span><span data-l="fr">Control All Config — piste active sélectionnable</span></li><li>SUPERMODEL by A.V. — 909 EDITION</li></ul><p><span data-l="en">Choose your four WAV samples and the official Model:Cycles OS 1.13. Firmware is built locally in your browser. No samples are uploaded or included with this page.</span><span data-l="fr">Choisissez vos quatre WAV et l’OS officiel Model:Cycles 1.13. Le firmware est construit localement dans votre navigateur. Aucun sample n’est envoyé ni fourni avec cette page.</span></p><p><span data-l="en">Start with an empty project when changing from stock machines. MIDI Bank data is RAM-only. Control All: hold TRACK + TRIG 1–6 to include/exclude each audio track, including the selected track; TRACK + knob controls included tracks.</span><span data-l="fr">Partez d’un projet vide si vous quittez les machines stock. Banque MIDI en RAM uniquement. Control All : TRACK + TRIG 1–6 inclut/exclut chaque piste audio, même la piste active ; TRACK + potentiomètre agit sur les pistes incluses.</span></p></section>
-<main class="wrap fl">
-  <div class="fl-head">
-    <p class="edition-eyebrow">A.V.'S SUPERMODEL EDITION</p><h1>SUPERMODEL 909<span>by A.V. · 909 EDITION</span></h1><p class="release-status"><span data-l="en">Hardware tested</span><span data-l="fr">Testé sur machine</span></p>
+
+<main class="wrap fl"><p class="alert" id="beat-repeat-status"><span data-l="en"><strong>Control All Beat Repeat — hardware tested by AveyCole.</strong> Hold TRACK + RETRIG, then hold any of the sixteen TRIGs to choose a repeat division. Follows Control All Config track selection. Release either modifier to stop.</span><span data-l="fr"><strong>Beat Repeat collectif — teste sur machine par AveyCole.</strong> Maintenez TRACK + RETRIG puis un des seize TRIG pour choisir la division. Suit les pistes incluses dans Control All Config. Relachez un modificateur pour arreter.</span></p><p id="midi-saving-status" class="alert"><span data-l="en"><strong>MIDI saving is hardware tested by AveyCole, including saving into an empty project slot. Stop playback before Save Project and wait for MIDI SAVED. Saved MIDI data loads only when you enter B-side and only while playback is stopped. FUNC + SETTINGS + TRACK opens B-side. Install alone or with your machines, including RETROSYN and TINY; Sample Wizard stays optional. MIDI files are outside Elektron backups and SysEx exports.</strong></span><span data-l="fr"><strong>Sauvegarde MIDI testee sur machine par AveyCole, y compris vers un slot projet vide. Arretez avant Save Project et attendez MIDI SAVED. Les donnees MIDI sauvegardees se chargent uniquement en entrant cote B et uniquement lorsque la lecture est arretee. FUNC + SETTINGS + TRACK ouvre B. Seule ou avec vos machines, dont RETROSYN et TINY ; Sample Wizard facultatif. Fichiers MIDI hors backups et exports SysEx Elektron.</strong></span></p><h1>Supermodel 909<br><span>A.V.’s Edition</span></h1><p class="release-status"><span data-l="en">Hardware tested</span><span data-l="fr">Teste sur machine</span></p>
     <div>
       <p class="super-tagline"><span data-l="en">Choose your mods. Build your firmware. Make it your machine.</span><span data-l="fr">Choisissez vos mods. Créez votre firmware. Personnalisez votre machine.</span></p>
       <p class="ver"><span data-l="en">Version</span><span data-l="fr">Version</span> <span data-rel="version">1.0</span> · <a href="../#version"><span data-l="en">what's new</span><span data-l="fr">nouveautés</span></a> · <a href="guide.html"><span data-l="en">guide</span><span data-l="fr">guide</span></a></p>
     </div>
   </div>
 
-  <div class="alert super-save-note"><span data-l="en">MIDI Bank data is RAM-only and lost on power-off. A-side LFO 2 saves its first five settings with the sound; fade, start and mode reset on load.</span><span data-l="fr">Les données de la banque MIDI restent en RAM et sont perdues à extinction. Le LFO 2 côté A sauve ses cinq premiers réglages avec le son ; fondu, phase et mode reviennent aux défauts au chargement.</span></div>
+  <div class="alert super-save-note"><span data-l="en">A-side LFO 2 saves its first five settings with the sound; fade, start and mode reset on load.</span><span data-l="fr">Le LFO 2 côté A sauve ses cinq premiers réglages avec le son ; fondu, phase et mode reviennent aux défauts au chargement.</span></div>
 <p class="quick-reference"><a data-l="en" href="quick-reference.md" download>Download the feature and shortcut overview</a><a data-l="fr" href="quick-reference-fr.md" download>Télécharger le résumé des fonctions et raccourcis</a></p>
+<p class="quick-reference"><a href="convert.html"><span data-l="en">Open the wavetable converter</span><span data-l="fr">Ouvrir le convertisseur de tables d’ondes</span></a></p>
 <div id="errbar" class="alert bad" hidden></div>
   <div id="compat" class="alert bad" role="alert" hidden></div>
 
-<nav class="build-steps" aria-label="Installation"><a href="#step-samples"><b>1</b><span data-l="en">Choose samples</span><span data-l="fr">Choisir les samples</span></a><a href="#step-file"><b>2</b><span data-l="en">Load official OS</span><span data-l="fr">Charger l’OS officiel</span></a><a href="#step-connect"><b>3</b><span data-l="en">Connect MIDI</span><span data-l="fr">Connexion MIDI</span></a><a href="#step-flash"><b>4</b><span data-l="en">Install</span><span data-l="fr">Installer</span></a></nav>
+<nav class="build-steps"><a href="#step-samples">1 WAV</a><a href="#step-file">2 OS</a><a href="#step-connect">3 MIDI</a><a href="#step-flash">4 Install / Installer</a></nav>
   <!-- 1. Choose -->
-  <section class="step" id="step-choose" aria-labelledby="h1s">
+  <p><span data-l="en">Six 909 voices with Sample Wizard, ACID, per-track filter, slide trigs, Sequence Genie, SCRAMBLE, Second LFO, MIDI Bank and Control All Beat Repeat. Choose four WAVs and official Cycles OS 1.13.</span><span data-l="fr">Six voix 909, Sample Wizard, ACID, filtre par piste, slides, Sequence Genie, SCRAMBLE, Second LFO, banque MIDI et beat repeat Control All. Quatre WAV et OS Cycles 1.13 officiel requis.</span></p><details><summary><span data-l="en">MIDI saving</span><span data-l="fr">Sauvegarde MIDI</span></summary><p><span data-l="en">Saved MIDI loads only when entering B-side while playback is stopped.</span><span data-l="fr">Le MIDI sauvegarde charge uniquement en entrant cote B, lecture arretee.</span></p></details><section class="step" id="step-choose" aria-labelledby="h1s">
     <header><span class="num">1</span><h2 id="h1s" data-i18n="s1">What do you want to install?</h2></header>
     <div class="step-body">
       <div class="seg" role="tablist" aria-label="Mode">
@@ -151,7 +150,7 @@
   </section>
 
   <!-- 2. OS file -->
-<section class="step" id="step-samples"><header><span class="num">1</span><h2><span data-l="en">Choose your samples</span><span data-l="fr">Choisir vos samples</span></h2></header><div class="sample-slots"><label><span data-l="en">Closed hat</span><span data-l="fr">Hi-hat fermé</span><input id="sample-ch" type="file" accept=".wav,audio/wav"><output id="sample-status-ch" aria-live="polite"></output></label><label><span data-l="en">Open hat</span><span data-l="fr">Hi-hat ouvert</span><input id="sample-oh" type="file" accept=".wav,audio/wav"><output id="sample-status-oh" aria-live="polite"></output></label><label><span data-l="en">Crash</span><span data-l="fr">Crash</span><input id="sample-crash" type="file" accept=".wav,audio/wav"><output id="sample-status-crash" aria-live="polite"></output></label><label><span data-l="en">Ride</span><span data-l="fr">Ride</span><input id="sample-ride" type="file" accept=".wav,audio/wav"><output id="sample-status-ride" aria-live="polite"></output></label></div><p id="samples-status" role="status"><span data-l="en">All four WAV files are required. PCM and floating-point WAVs are supported; audio is mixed to mono and converted to 32 kHz.</span><span data-l="fr">Quatre fichiers WAV requis. PCM et flottant acceptés ; conversion mono à 32 kHz.</span></p></section>
+<section class="step" id="step-samples"><h2>909 WAV samples / Samples WAV 909</h2><label>Closed hat / Hi-hat ferme<input id="sample-ch" type="file" accept=".wav,audio/wav"><output id="sample-status-ch" aria-live="polite"></output></label><label>Open hat / Hi-hat ouvert<input id="sample-oh" type="file" accept=".wav,audio/wav"><output id="sample-status-oh" aria-live="polite"></output></label><label>Crash / Crash<input id="sample-crash" type="file" accept=".wav,audio/wav"><output id="sample-status-crash" aria-live="polite"></output></label><label>Ride / Ride<input id="sample-ride" type="file" accept=".wav,audio/wav"><output id="sample-status-ride" aria-live="polite"></output></label><p id="samples-status" role="status">4 WAV required / 4 WAV requis</p></section>
   <section class="step" id="step-file" aria-labelledby="h2s">
     <header><span class="num">2</span><h2 id="h2s" data-i18n="s2">Load your official OS file</h2></header>
     <div class="step-body">
@@ -273,16 +272,12 @@
 </footer>
 
 <!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
-<script src="../assets/release.js?v=2026-10-14-supermodel-909-release"></script>
-<script src="../assets/site.js?v=2026-10-14-supermodel-909-release"></script>
-<script src="builder.js?v=2026-10-14-supermodel-909-release"></script>
-<script src="profile.js?v=2026-10-14-supermodel-909-release"></script>
-<script src="flasher.js?v=2026-10-14-supermodel-909-release"></script>
-<script src="samples.js"></script>
-<script src="edition.js"></script>
-<script src="app.js?v=2026-10-14-supermodel-909-release"></script>
-
-</body>
+<script src="909-release.js?v=2026-10-16-909-current-release"></script>
+<script src="../assets/site.js?v=2026-10-16-909-current-release"></script>
+<script src="builder.js?v=2026-10-16-909-current-release"></script>
+<script src="tweaks.js?v=2026-10-16-909-current-release"></script>
+<script src="flasher.js?v=2026-10-16-909-current-release"></script>
+<script src="app.js?v=2026-10-16-909-current-release"></script>
+<script src="bundle.js?v=2026-10-16-909-current-release"></script>
+<script src="catalogue.js?v=2026-10-16-909-current-release"></script><script src="compose.js?v=2026-10-16-909-current-release"></script><script src="wizard-refs.js?v=2026-10-16-909-current-release"></script><script src="wizard.js?v=2026-10-16-909-current-release"></script><script src="queue-choice.js?v=2026-10-16-909-current-release"></script><script src="hardware-status.js?v=2026-10-16-909-current-release"></script><script src="genie-attack.js?v=2026-10-16-909-current-release"></script><script src="continuous-filter.js?v=2026-10-16-909-current-release"></script><script src="preview-chord.js?v=2026-10-16-909-current-release"></script><script src="tiny-data.js?v=2026-10-16-909-current-release"></script><script src="compose-normal.js?v=2026-10-16-909-current-release"></script><script src="tiny.js?v=2026-10-16-909-current-release"></script><script src="retrosyn-data.js?v=2026-10-16-909-current-release"></script><script src="retrosyn.js?v=2026-10-16-909-current-release"></script><script src="main-policy.js?v=2026-10-16-909-current-release"></script><script src="midi-bank-data.js?v=2026-10-16-909-current-release"></script><script src="midi-bank.js?v=2026-10-16-909-current-release"></script><script src="midi-persistence-data.js?v=2026-10-16-909-current-release"></script><script src="midi-persistence.js?v=2026-10-16-909-current-release"></script><script src="genie-timing-data.js?v=2026-10-16-909-current-release"></script><script src="genie-timing.js?v=2026-10-16-909-current-release"></script><script src="beat-repeat-data.js?v=2026-10-16-909-current-release"></script><script src="no-midi-capacity-data.js?v=2026-10-16-909-current-release"></script><script src="no-midi-capacity.js?v=2026-10-16-909-current-release"></script><script src="beat-repeat.js?v=2026-10-16-909-current-release"></script><script src="filter-precision-data.js?v=2026-10-16-909-current-release"></script><script src="filter-precision.js?v=2026-10-16-909-current-release"></script><script src="filter-load-data.js?v=2026-10-16-909-current-release"></script><script src="filter-load.js?v=2026-10-16-909-current-release"></script><script src="midi-experimental-status.js?v=2026-10-16-909-current-release"></script><script src="swarm-lite-data.js?v=2026-10-16-909-current-release"></script><script src="swarm-lite.js?v=2026-10-16-909-current-release"></script><script src="samples.js?v=2026-10-16-909-current-release"></script><script src="909-data.js?v=2026-10-16-909-current-release"></script><script>window.MC909Released=true;</script><script src="909-current.js?v=2026-10-16-909-current-release"></script></body>
 </html>
-
-
