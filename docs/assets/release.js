@@ -4,6 +4,16 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.81",
+  "date": "2026-10-17",
+  "changes": [
+    {
+      "en": "Main flasher: restore stock permanent quick save by holding FUNCTION + SETTINGS when Sample Wizard is installed. Other SETTINGS shortcuts retain their behavior. Diagnostic tools remain test-only.",
+      "fr": "Flasheur principal : restaure la sauvegarde rapide permanente stock en maintenant FUNCTION + SETTINGS avec Sample Wizard installe. Les autres raccourcis SETTINGS sont conserves. Diagnostics reserves aux tests."
+    }
+  ]
+},
+{
   "version": "1.80",
   "date": "2026-10-17",
   "changes": [
