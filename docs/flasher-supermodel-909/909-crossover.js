@@ -1,6 +1,8 @@
 // Note117 : reperer les copies Wizard dans le payload merge, puis appliquer les correctifs gardes.
 (()=>{const b=window.MCBuilder,n=x=>typeof x==='string'?parseInt(x,16):x,h=x=>(x>>>0).toString(16).padStart(8,'0'),hash=x=>b.hex(b.sha256(x));
+if(!window.MC909CurrentData.features.includes('arp'))window.MC909CurrentData.features.push('arp');
 window.MC909CrossoverReady=window.MC909CurrentReady.then(()=>{
+ if(!window.MC909CurrentLabels.includes('Arpeggiator A + B'))window.MC909CurrentLabels.push('Arpeggiator A + B');
  const previous=window.MCMidiBankCompose;
  window.MCMidiBankCompose=(...args)=>{
   const prior=previous(...args),r={...prior,tweaks:JSON.parse(JSON.stringify(prior.tweaks)),refMods:{...prior.refMods}};

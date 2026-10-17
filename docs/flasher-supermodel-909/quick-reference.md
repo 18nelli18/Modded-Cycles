@@ -1,10 +1,10 @@
 # Supermodel 909 — feature and shortcut overview
 
-909.3 · 17 October 2026
+909.4 · 17 October 2026
 
-Fixed 909 Edition: six 909 voices, Sample Wizard, ACID, per-track filter, slide trigs, Sequence Genie, SCRAMBLE, Second LFO, MIDI Out Bank with saving, combined MIDI OUT + THRU, latching mute, Control All Config, Control All Beat Repeat and 909 startup. Load official Cycles OS1.13 and four local WAVs for closed/open hats, crash and ride. No sample audio is hosted.
+Fixed 909 Edition: six 909 voices, Sample Wizard, ACID, per-track filter, slide trigs, Sequence Genie, SCRAMBLE, Second LFO, MIDI Out Bank with saving, combined MIDI OUT + THRU, latching mute, Control All Config, Control All Beat Repeat, A/B arpeggiators and 909 startup. Load official Cycles OS1.13 and four local WAVs for closed/open hats, crash and ride. No sample audio is hosted.
 
-Shared features match main1.83: the filter transition repair, stock permanent save (hold FUNC + SETTINGS), MIDI Oct0, first-entry B playback and one recording cursor. Each MIDI lane keeps its length and speed. Main hardware-confirmed fixes; 909 integration checked in emulation. No diagnostic display in this release.
+Shared features match main1.83: the filter transition repair, stock permanent save (hold FUNC + SETTINGS), A/B Oct0, first-entry B playback and one recording cursor. Each MIDI lane keeps its length and speed. Main hardware-confirmed fixes; 909 integration checked in emulation. No diagnostic display in this release.
 
 Stop before saving MIDI and wait for MIDI SAVED. Saved MIDI loads only when entering B-side with playback stopped; sidecar files are outside Elektron SysEx backups.
 
@@ -48,8 +48,8 @@ Long audio slices halve at slow tempos to fit the history buffer. Beat repeat af
 | Second LFO | Press LFO twice | Open LFO 2. On its page, LFO SPEED edits LFO 2. |
 | LFO 2 quick assignment | On A-side LFO 2, hold LFO and turn a parameter knob | Select that destination; further turning adjusts signed depth. |
 | Scale Lock | FUNC + PAGE | Access added scale/key settings with the performance support installed. |
-| MIDI B-side arpeggiator settings | FUNC + RETRIG | On B-side, set arp direction and Oct0–3. Oct0 uses only held notes. |
-| MIDI arpeggiator performance | Hold RETRIG while holding notes | Play the held notes through the arpeggiator; A.On provides its latch option. |
+| A/B arpeggiator settings | FUNC + RETRIG | On either side, set arp direction and Oct0–3. Oct0 uses only held notes. |
+| A/B arpeggiator performance | Hold RETRIG while holding notes | Play the held notes through the arpeggiator; A.On provides its latch option. |
 
 ## Sample Wizard and sample preview
 

@@ -14,7 +14,7 @@ Les reparations ont ete confirmees dans le principal. La nouvelle integration909
 
 L'adaptateur situe donc les fonctions Wizard dans le payload fusionne avec la table `midi_current_copies` du stage de boot. Chaque entree donne source,destination,compte de mots ; le patch est applique a la source correspondante. Le code save50octets et l'ancien corps filtre678octets sont verifies avant remplacement. Le vieux BSR filtre est aussi garde byte-a-byte avant ses deuxNOP. References et source du loader repeat recalculees apres compression.
 
-L'adaptateur du principal est ensuite repris a l'identique : garde curseur/phase612octets, affichage Oct20octets et wrapper save92octets dans le payload reserve. Aucun ChordKeys, SY, MACRO, TINY ou RETROSYN ajoute au profil909. A-side arp absent du profil : seul l'arp MIDI deja installe recoit Oct0. Les machines et donnees echantillons909 ne sont pas regenerees.
+L'adaptateur du principal est ensuite repris a l'identique : garde curseur/phase612octets, affichage Oct20octets et wrapper save92octets dans le payload reserve. Aucun ChordKeys, SY, MACRO, TINY ou RETROSYN ajoute au profil909. Dans909.3, A-side arp absent du profil : seul l'arp MIDI deja installe recoit Oct0. Les machines et donnees echantillons909 ne sont pas regenerees.
 
 ## Documentation et validation
 
@@ -25,3 +25,8 @@ Guide, references EN/FR et version909.3 propres au profil fixe. Anciens encarts 
 `test_909_combos.py` : getters apres vrai boot/cache ; Genie, SCRAMBLE, B-side, slides et mute verrouille. `test_midi_cursor.py` : sept vitesses de chaque cote, fractions, longueurs5/7/12/16/31/64 et un curseur. `test_arp_zero.py` : menu B0..3 et notes sans transposition a0. `test_quick_save_exit.py` :512cas clavier. `test_909_crossover.py` : code filtre/save exact apres bootstrap, wrapper charge hors BSS. `test_909_current.py` : les six callbacks909 compares au C hote, passage Wizard unique et zones protegees intactes.
 
 [A FAIRE sur appareil] Verifier le profil909 mis a jour dans les gestes ordinaires, entree B/REC et filtre. Les mesures de temps CPU et les I/O physiques ne sont pas deduites de l'emulateur.
+
+
+## 909.4 : arpegiateur sur les deux cotes (17/10/2026)
+
+AveyCole precise : « Oh, it needs arp on both sides I think », puis « fix that and then update again ». Ajout explicite de la carte arp au profil avant sa selection par le timer909 ; pas de modification de909-data.js ni des voix/samples. L adaptateur main1.83 applique alors aussi son changement de numerotation au menu A. FUNC+RETRIG propose Oct0..3 des deux cotes,0 ne transpose pas. Les labels et guides sont corriges pour indiquer A/B. Tests navigateur imposent presence de la recette arp. Menus/repetitions A et B executes dans le vrai firmware909, puis regressions voix, combos et cursor. Aucun diagnostic.

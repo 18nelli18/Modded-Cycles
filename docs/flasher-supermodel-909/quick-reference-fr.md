@@ -1,10 +1,10 @@
 # Supermodel 909 — fonctions et raccourcis
 
-909.3 · 17 octobre 2026
+909.4 · 17 octobre 2026
 
-Profil fixe909 : six voix909, Sample Wizard, ACID, filtre par piste, slides, Sequence Genie, SCRAMBLE, Second LFO, Banque MIDI avec sauvegarde, MIDI OUT + THRU, mutes verrouilles, Control All Config, Control All Beat Repeat et demarrage909. Charger OS Cycles1.13 officiel et quatre WAV locaux : hats ferme/ouvert, crash et ride. Aucun sample audio heberge.
+Profil fixe909 : six voix909, Sample Wizard, ACID, filtre par piste, slides, Sequence Genie, SCRAMBLE, Second LFO, Banque MIDI avec sauvegarde, MIDI OUT + THRU, mutes verrouilles, Control All Config, Control All Beat Repeat, arpegiateurs A/B et demarrage909. Charger OS Cycles1.13 officiel et quatre WAV locaux : hats ferme/ouvert, crash et ride. Aucun sample audio heberge.
 
-Fonctions partagees alignees sur main1.83 : correction transition filtre, sauvegarde permanente stock (tenir FUNC + SETTINGS), Oct0 MIDI, premiere entree B en lecture et curseur REC unique. Chaque voie MIDI garde longueur et vitesse. Corrections main confirmees sur machine ; integration909 verifiee en emulation. Aucun affichage diagnostic dans cette version.
+Fonctions partagees alignees sur main1.83 : correction transition filtre, sauvegarde permanente stock (tenir FUNC + SETTINGS), Oct0 A/B, premiere entree B en lecture et curseur REC unique. Chaque voie MIDI garde longueur et vitesse. Corrections main confirmees sur machine ; integration909 verifiee en emulation. Aucun affichage diagnostic dans cette version.
 
 Arreter avant sauvegarde MIDI et attendre MIDI SAVED. Le MIDI sauvegarde charge uniquement en entrant B, lecture arretee ; fichiers annexes hors backups SysEx Elektron.
 
@@ -48,8 +48,8 @@ Les longues boucles audio sont divisees par deux aux tempos lents selon la capac
 | Second LFO | Appuyer deux fois sur LFO | Ouvrir LFO 2. Dans cette page, LFO SPEED regle LFO 2. |
 | Assignation rapide LFO 2 | Sur LFO 2 cote A, tenir LFO et tourner un parametre | Choisir la destination, puis regler sa profondeur signee. |
 | Scale Lock | FUNC + PAGE | Acceder aux reglages ajoutes de gamme/tonalite avec le support performance installe. |
-| Reglages arpege MIDI B | FUNC + RETRIG | Cote B : direction et Oct0–3 ; Oct0 joue seulement les notes tenues. |
-| Jeu de l arpege MIDI | Tenir RETRIG avec des notes tenues | Arpeger les notes ; option A.On pour le verrouillage. |
+| Reglages arpege A/B | FUNC + RETRIG | Cotes A et B : direction et Oct0–3 ; Oct0 joue seulement les notes tenues. |
+| Jeu de l arpege A/B | Tenir RETRIG avec des notes tenues | Arpeger les notes ; option A.On pour le verrouillage. |
 
 ## Sample Wizard et preecoute
 
