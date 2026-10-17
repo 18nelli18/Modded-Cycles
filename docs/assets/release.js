@@ -4,6 +4,24 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.83",
+  "date": "2026-10-17",
+  "changes": [
+    {
+      "en": "Hardware confirmed: Octave 0 cycles only the held notes on both arpeggiators. Oct 1–3 add octave copies; existing saved settings keep their sound.",
+      "fr": "Confirme sur machine : Octave 0 parcourt seulement les notes tenues sur les deux arpegiateurs. Oct 1–3 ajoutent des octaves ; sons sauvegardes conserves."
+    },
+    {
+      "en": "Hardware confirmed: MIDI B-side joins playback on first entry and shows one recording cursor, retaining each lane’s length and speed. Repairs the ChordKeys/quick-save memory collision.",
+      "fr": "Confirme sur machine : B rejoint la lecture des la premiere entree et affiche un seul curseur REC, longueurs et vitesses propres conservees. Corrige la collision memoire ChordKeys/sauvegarde."
+    },
+    {
+      "en": "MIDI Out Bank and audio beat repeat remain independently selectable. Diagnostics stay in test builds only. MIDI saving still loads on B-side entry with playback stopped.",
+      "fr": "Banque MIDI et beat repeat audio restent selectionnables independamment. Diagnostics reserves aux tests. MIDI sauvegarde charge toujours a entree B, lecture arretee."
+    }
+  ]
+},
+{
   "version": "1.82",
   "date": "2026-10-17",
   "changes": [

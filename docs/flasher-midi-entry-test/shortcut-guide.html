@@ -3,7 +3,7 @@
 <p>Added gestures only; stock-style transport, copy, clear and paste actions are omitted.</p>
 <p>Install the relevant feature first. Hold the first button while pressing or turning the next control. TRIG means a step key; pad means a track pad; DATA means LEVEL/DATA. MACHINES is the physical button sometimes called PRESET in sampler instructions.</p>
 <h2>Current feature overview</h2>
-<p>Main flasher 1.82 · updated 17 October 2026. Install only the features you need; the flasher checks compatible combinations. <a href="../flasher-supermodel-909/">Supermodel 909 Edition</a> has its own selection and release.</p>
+<p>Main flasher 1.83 · updated 17 October 2026. Install only the features you need; the flasher checks compatible combinations. <a href="../flasher-supermodel-909/">Supermodel 909 Edition</a> has its own selection and release.</p>
 <div class="table-wrap"><table>
 <tr><th>Feature</th><th>Current behavior</th></tr>
 <tr><td>Added machines</td><td>MACRO, ACID, WAVE, TINY, RETROSYN and the selectable Syntakt-derived engines. Syntakt engines require your own Syntakt OS file.</td></tr>
@@ -14,7 +14,7 @@
 <tr><td>Control All Config / Beat Repeat</td><td>Choose included audio tracks; momentary repeat across sixteen divisions, with a brief division popup.</td></tr>
 <tr><td>MIDI Out Bank — experimental</td><td>Six parallel MIDI lanes with CC assignments/locks, slides, retrigger/arp, chance, two MIDI LFOs and project sidecar saving. Optional and installable without beat repeat. Beat repeat can also be installed without MIDI Out Bank.</td></tr>
 <tr><td>Sequence Genie / SCRAMBLE</td><td>Generate or mutate sequences, queue at Loop/Page boundaries, and randomize audio parameters or B-side CCs.</td></tr>
-<tr><td>Arpeggiator / Second LFO</td><td>Held-note arpeggiation and an additional modulation page. Main retains Oct 1–4; Oct 0 is currently test-only.</td></tr>
+<tr><td>Arpeggiator / Second LFO</td><td>Held-note arpeggiation and an additional modulation page. Oct 0 cycles only held notes; 1–3 add octave copies. Hardware confirmed on both sides.</td></tr>
 <tr><td>Performance and editing</td><td>Latching mutes, step preview, slide trigs, scrolling names, three-line browser, numeric volume/pan, dim trigless steps and trig-removal grace.</td></tr>
 <tr><td>Routing / tempo / startup</td><td>Six-channel USB audio, combined MIDI OUT + THRU, tempo up to 546 BPM and a choice of startup animation.</td></tr>
 </table></div>
@@ -83,7 +83,7 @@
 <tr><td>Combined MIDI OUT + THRU</td><td>Set CONFIG → MIDI → PORTS → OUT/THRU to THR, then FUNC + click DATA</td><td>Toggle the Cycles’ own outgoing MIDI while retaining incoming MIDI Thru.</td></tr>
 </table></div>
 <p>Saved MIDI loads only when entering B-side while playback is stopped. Stop before Save Project and wait for MIDI SAVED. Sidecar MIDI files are outside Elektron SysEx backups.</p>
-<h2>Current combined test — not released in main</h2>
+<h2>Hardware-confirmed changes — now in main 1.83</h2>
 <p><a href="../flasher-arp-zero-test/?v=2026-10-17-arp-zero-test-2">Open the Octave 0 + MIDI B-side cursor test</a>.</p>
 <div class="table-wrap"><table>
 <tr><th>Change</th><th>What to check</th></tr>
@@ -91,12 +91,12 @@
 <tr><td>B-side first entry / cursor</td><td>Open B-side during playback; verify MIDI starts without exiting/re-entering and that REC shows one cursor. Each lane retains its own length and speed.</td></tr>
 <tr><td>Test setup</td><td>Keep Control All Beat Repeat selected when installing MIDI Out Bank in this combined test. That requirement does not apply to main. CPU/peak/CUT diagnostics remain available in the test.</td></tr>
 </table></div>
-<p>Octave 0 is hardware-confirmed; the B-side cursor and crash repair still await hardware verification. Saved MIDI loading still requires stopped playback. MIDI beat repeat and MIDI filter work were canceled and are not part of this test.</p></article><article data-l="fr"><h1>Vue d’ensemble des fonctions et raccourcis</h1>
+<p>Octave 0, the B-side cursor and the crash repair were confirmed by AveyCole in test 2 and are now released in main 1.83. Saved MIDI loading still requires stopped playback. MIDI beat repeat and MIDI filter work were canceled and are not part of this test.</p></article><article data-l="fr"><h1>Vue d’ensemble des fonctions et raccourcis</h1>
 <p>A.V.’s Supermodel Edition · 17 octobre 2026</p>
 <p>Gestes ajoutes uniquement ; transports, copies, effacements et collages calques sur le stock omis.</p>
 <p>Installez la fonction correspondante. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. MACHINES est le bouton parfois nomme PRESET dans les instructions du sampler.</p>
 <h2>Vue d'ensemble actuelle</h2>
-<p>Flasheur principal 1.82 · mise à jour du 17 octobre 2026. Installez les fonctions souhaitées ; le flasheur vérifie les combinaisons compatibles. <a href="../flasher-supermodel-909/">Supermodel 909 Edition</a> possède sa propre sélection et sa propre version.</p>
+<p>Flasheur principal 1.83 · mise à jour du 17 octobre 2026. Installez les fonctions souhaitées ; le flasheur vérifie les combinaisons compatibles. <a href="../flasher-supermodel-909/">Supermodel 909 Edition</a> possède sa propre sélection et sa propre version.</p>
 <div class="table-wrap"><table>
 <tr><th>Fonction</th><th>Comportement actuel</th></tr>
 <tr><td>Machines ajoutées</td><td>MACRO, ACID, WAVE, TINY, RETROSYN et les moteurs dérivés du Syntakt au choix. Ces derniers nécessitent votre propre fichier OS Syntakt.</td></tr>
@@ -107,7 +107,7 @@
 <tr><td>Control All Config / Beat Repeat</td><td>Choix des pistes audio incluses ; répétition momentanée sur seize divisions, avec popup bref de la division.</td></tr>
 <tr><td>Banque MIDI Out — expérimentale</td><td>Six voies MIDI parallèles : CC et locks, slides, retrigger/arpège, chance, deux LFO MIDI et sauvegarde annexe au projet. Facultative et installable sans beat repeat. Le beat repeat peut aussi être installé sans Banque MIDI.</td></tr>
 <tr><td>Sequence Genie / SCRAMBLE</td><td>Génération ou mutation de séquences, attente d'une frontière Loop/Page, randomisation audio ou CC côté B.</td></tr>
-<tr><td>Arpégiateur / Second LFO</td><td>Arpège des notes tenues et page de modulation supplémentaire. Le principal garde Oct 1–4 ; Oct 0 reste réservé au test.</td></tr>
+<tr><td>Arpégiateur / Second LFO</td><td>Arpège des notes tenues et page de modulation supplémentaire. Oct 0 parcourt seulement les notes tenues ; 1–3 ajoutent des octaves. Confirmé sur les deux côtés.</td></tr>
 <tr><td>Performance et édition</td><td>Mutes verrouillés, préécoute de pas, slides, noms défilants, navigateur trois lignes, volume/pan chiffrés, trigless atténués et délai de suppression des trigs.</td></tr>
 <tr><td>Routage / tempo / démarrage</td><td>Audio USB six canaux, MIDI OUT + THRU combinés, tempo jusqu'à 546 BPM et choix d'animation de démarrage.</td></tr>
 </table></div>
@@ -176,7 +176,7 @@
 <tr><td>MIDI OUT + THRU combines</td><td>CONFIG → MIDI → PORTS → OUT/THRU : THR, puis FUNC + clic DATA</td><td>Basculer la sortie MIDI propre du Cycles tout en gardant le Thru entrant.</td></tr>
 </table></div>
 <p>Le MIDI sauvegarde charge uniquement en entrant cote B, lecture arretee. Arreter avant Save Project et attendre MIDI SAVED. Les fichiers MIDI annexes ne sont pas inclus dans les backups SysEx Elektron.</p>
-<h2>Test combiné actuel — non publié dans le principal</h2>
+<h2>Changements confirmés — publiés dans le principal 1.83</h2>
 <p><a href="../flasher-arp-zero-test/?v=2026-10-17-arp-zero-test-2">Ouvrir le test Octave 0 + curseur MIDI B</a>.</p>
 <div class="table-wrap"><table>
 <tr><th>Changement</th><th>Vérification</th></tr>
@@ -184,4 +184,4 @@
 <tr><td>Première entrée B / curseur</td><td>Ouvrir B pendant la lecture ; vérifier que le MIDI démarre sans sortir/rentrer et que REC montre un seul curseur. Chaque voie conserve sa longueur et sa vitesse.</td></tr>
 <tr><td>Configuration du test</td><td>Garder Control All Beat Repeat sélectionné avec Banque MIDI dans ce test combiné. Cette obligation ne concerne pas le principal. Les diagnostics CPU/pic/CUT restent disponibles dans le test.</td></tr>
 </table></div>
-<p>Octave 0 est confirmé sur machine ; le curseur B et la correction du crash attendent encore la vérification matérielle. Le chargement MIDI sauvegardé exige toujours la lecture arrêtée. Le beat repeat MIDI et le filtre MIDI ont été abandonnés et ne font pas partie de ce test.</p></article></main></html>
+<p>Octave 0, le curseur B et la correction du crash ont été confirmés par AveyCole dans le test 2 et sont publiés dans le principal 1.83. Le chargement MIDI sauvegardé exige toujours la lecture arrêtée. Le beat repeat MIDI et le filtre MIDI ont été abandonnés et ne font pas partie de ce test.</p></article></main></html>

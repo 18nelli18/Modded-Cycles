@@ -8,7 +8,7 @@ Installez la fonction correspondante. Maintenez le premier bouton pendant le sec
 
 ## Vue d'ensemble actuelle
 
-Flasheur principal 1.82 · mise à jour du 17 octobre 2026. Installez les fonctions souhaitées ; le flasheur vérifie les combinaisons compatibles. [Supermodel 909 Edition](../flasher-supermodel-909/) possède sa propre sélection et sa propre version.
+Flasheur principal 1.83 · mise à jour du 17 octobre 2026. Installez les fonctions souhaitées ; le flasheur vérifie les combinaisons compatibles. [Supermodel 909 Edition](../flasher-supermodel-909/) possède sa propre sélection et sa propre version.
 
 | Fonction | Comportement actuel |
 |---|---|
@@ -20,7 +20,7 @@ Flasheur principal 1.82 · mise à jour du 17 octobre 2026. Installez les foncti
 | Control All Config / Beat Repeat | Choix des pistes audio incluses ; répétition momentanée sur seize divisions, avec popup bref de la division. |
 | Banque MIDI Out — expérimentale | Six voies MIDI parallèles : CC et locks, slides, retrigger/arpège, chance, deux LFO MIDI et sauvegarde annexe au projet. Facultative et installable sans beat repeat. Le beat repeat peut aussi être installé sans Banque MIDI. |
 | Sequence Genie / SCRAMBLE | Génération ou mutation de séquences, attente d'une frontière Loop/Page, randomisation audio ou CC côté B. |
-| Arpégiateur / Second LFO | Arpège des notes tenues et page de modulation supplémentaire. Le principal garde Oct 1–4 ; Oct 0 reste réservé au test. |
+| Arpégiateur / Second LFO | Arpège des notes tenues et page de modulation supplémentaire. Oct 0 parcourt seulement les notes tenues ; 1–3 ajoutent des octaves. Confirmé sur les deux côtés. |
 | Performance et édition | Mutes verrouillés, préécoute de pas, slides, noms défilants, navigateur trois lignes, volume/pan chiffrés, trigless atténués et délai de suppression des trigs. |
 | Routage / tempo / démarrage | Audio USB six canaux, MIDI OUT + THRU combinés, tempo jusqu'à 546 BPM et choix d'animation de démarrage. |
 
@@ -98,7 +98,7 @@ Les longues boucles audio sont divisees par deux aux tempos lents selon la capac
 
 Le MIDI sauvegarde charge uniquement en entrant cote B, lecture arretee. Arreter avant Save Project et attendre MIDI SAVED. Les fichiers MIDI annexes ne sont pas inclus dans les backups SysEx Elektron.
 
-## Test combiné actuel — non publié dans le principal
+## Changements confirmés — publiés dans le principal 1.83
 
 [Ouvrir le test Octave 0 + curseur MIDI B](../flasher-arp-zero-test/?v=2026-10-17-arp-zero-test-2).
 
@@ -108,4 +108,4 @@ Le MIDI sauvegarde charge uniquement en entrant cote B, lecture arretee. Arreter
 | Première entrée B / curseur | Ouvrir B pendant la lecture ; vérifier que le MIDI démarre sans sortir/rentrer et que REC montre un seul curseur. Chaque voie conserve sa longueur et sa vitesse. |
 | Configuration du test | Garder Control All Beat Repeat sélectionné avec Banque MIDI dans ce test combiné. Cette obligation ne concerne pas le principal. Les diagnostics CPU/pic/CUT restent disponibles dans le test. |
 
-Octave 0 est confirmé sur machine ; le curseur B et la correction du crash attendent encore la vérification matérielle. Le chargement MIDI sauvegardé exige toujours la lecture arrêtée. Le beat repeat MIDI et le filtre MIDI ont été abandonnés et ne font pas partie de ce test.
+Octave 0, le curseur B et la correction du crash ont été confirmés par AveyCole dans le test 2 et sont publiés dans le principal 1.83. Le chargement MIDI sauvegardé exige toujours la lecture arrêtée. Le beat repeat MIDI et le filtre MIDI ont été abandonnés et ne font pas partie de ce test.

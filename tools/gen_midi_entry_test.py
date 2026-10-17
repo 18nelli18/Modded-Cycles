@@ -1,5 +1,5 @@
 """Note114 : test entree B en lecture, branchements natifs gardes, diagnostics conserves."""
-import argparse,json,pathlib,re,shutil
+import argparse,json,pathlib,re,shutil,subprocess
 ROOT=pathlib.Path(__file__).resolve().parents[1];STAMP='2026-10-17-midi-entry-test-4'
 JS='''// Note114 : un contexte cree pendant Play peut demarrer au tick audio suivant.
 (()=>{const a=window.MCFlasherApp,b=window.MCBuilder,n=x=>typeof x==='string'?parseInt(x,16):x,h=x=>(x>>>0).toString(16).padStart(8,'0'),hash=x=>b.hex(b.sha256(x));
@@ -46,7 +46,7 @@ def main():
  app=app.replace('    midi_denied: "Accès MIDI refusé.', '    midi_stalled: "Le navigateur n a pas termine l autorisation ou l initialisation MIDI. Si vous avez deja autorise, fermez les autres flasheurs et applications MIDI, puis cliquez Autoriser pour reessayer. Sinon, rouvrez cette page dans Chrome ou Edge. La page ne peut pas forcer une permission ou un pilote MIDI bloque.",\n    midi_denied: "Accès MIDI refusé.')
  app=app.replace('Waiting for your permission: Chrome shows a prompt near the address bar. Click “Allow”. If you blocked it before, click the icon left of the address and allow MIDI.', 'Waiting for browser MIDI permission or device initialization. Allow the browser prompt if shown. If already allowed, the MIDI device service may still be initializing; a retry message appears after 20 seconds.')
  app=app.replace('En attente de votre autorisation : Chrome affiche une demande près de la barre d’adresse. Cliquez sur « Autoriser ». Si vous l’avez bloquée, cliquez sur l’icône à gauche de l’adresse et autorisez le MIDI.', 'Attente de l autorisation ou de l initialisation MIDI du navigateur. Autorisez la demande si affichee. Un message de nouvelle tentative apparait apres 20 secondes.')
- exit_js=(ROOT/'docs/flasher/quick-save-exit.js').read_text(encoding='utf-8');exit_js=exit_js.replace('(()=>{','window.MCQuickSaveLatchReady=window.MCQuickSaveReady.then(()=>{',1).replace('})();','});');exit_data=(ROOT/'docs/flasher/quick-save-exit-data.js').read_text(encoding='utf-8')
+ exit_js=subprocess.check_output(['git','show','4412560a7456f07c186c5dfbc93a38dbbc2304f3:docs/flasher/quick-save-exit.js'],cwd=ROOT).decode('utf-8');exit_js=exit_js.replace('(()=>{','window.MCQuickSaveLatchReady=window.MCQuickSaveReady.then(()=>{',1).replace('})();','});');exit_data=subprocess.check_output(['git','show','4412560a7456f07c186c5dfbc93a38dbbc2304f3:docs/flasher/quick-save-exit-data.js'],cwd=ROOT).decode('utf-8')
  for name,text in {'quick-save-exit.js':exit_js,'quick-save-exit-data.js':exit_data,'index.html':s,'midi-entry.js':JS,'diagnostic-release.js':release,'app.js':app}.items():
   if a.check:assert (out/name).read_text(encoding='utf-8').replace('\r\n','\n')==text,name
   else:(out/name).write_text(text,encoding='utf-8')

@@ -178,4 +178,4 @@ Swarm LITE principal 1.79 : recurrence et somme trois oscillateurs assemblees pa
 
 - Test MIDI performance (note 109) : wrappers et etats originaux AveyCole / Modded-Cycles ; utilise la file MIDI existante et le repeat audio MIT credite TinyGregAudio. Aucune routine firmware extraite publiee. Nouvelle combinaison experimentale, page isolee.
 
-Sauvegarde rapide, sortie mute (17/10/2026) : tweak59-quick-save-exit, note113, code A.V. propre, handler latching drumkilla et sauvegarde stock conserves. Wrapper test3 confirme par AveyCole, masque sprite partage sans changement visuel. Aucun diagnostic dans le principal.
+Sauvegarde rapide, sortie mute (17/10/2026) : recette payload quick-save-exit composee par tools/gen_performance_release.py, notes113/116, code A.V. propre. Handler latching drumkilla et sauvegarde stock conserves. Wrapper92octets confirme, collision BSS ChordKeys corrigee et test2confirme. Bootstrap TinyGregAudio MIT du beat repeat reutilise sans fonction repeat lorsque ni Banque ni repeat ne sont installes. Ancien tweak59retire. Aucun diagnostic dans le principal.
