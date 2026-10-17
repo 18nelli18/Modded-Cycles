@@ -17,3 +17,7 @@ Courts press/release, repeat et accords consommes conservent leurs transitions ;
 Gen tools/gen_quick_save_test.py et --check ; source tools/machines/quick_save/mod.s ; constructeur tools/test_quick_save_flasher.js ; preuve tools/emu/test_quick_save.py. Vrai boot,512 combinaisons flags/etat held/used comparees au corps original : seule exception voulue long FUNC inutilise, tous autres resultats/etats identiques. Evenement intact, ABI/stack preservees. Chaine complete beat-repeat -> banque/Genie/SCRAMBLE -> Wizard verifiee avec et sans Banque MIDI. Constructeur valide aussi sans Wizard (aucun patch applique).
 
 [FAIT en emulation] Code13 et predicats stock retablis. Ne pas confondre avec preuve d ecriture disque : la permanence du projet reste un test hardware. Diagnostic CPU/CUT et filtre conserves dans cette nouvelle page de test comme demande. Aucun diagnostic dans le principal, ni modification quick-save dans le principal.
+
+## Publication principale (17/10/2026)
+
+AveyCole demande explicitement la promotion du quick-save vers le principal. Seuls le corps de 50 octets et son adaptateur gardé sont promus ; aucun diagnostic ni optimisation audio de test. Le chemin de sauvegarde natif reste intact. La demande de publication ne constitue pas un nouveau relevé de persistance matérielle.
