@@ -4,6 +4,16 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.80",
+  "date": "2026-10-17",
+  "changes": [
+    {
+      "en": "Main flasher: hardware-tested repair for distorted filtering on added machines after switching away from Sample Wizard. Removes an obsolete second filter pass and retains efficient processing. Diagnostic tools remain exclusive to test builds.",
+      "fr": "Flasheur principal : correction testee sur machine du filtre distordu sur les machines ajoutees apres sortie de Sample Wizard. Supprime un ancien second passage filtre et conserve le traitement efficace. Les outils diagnostic restent reserves aux builds de test."
+    }
+  ]
+},
+{
   "version": "1.79",
   "date": "2026-10-16",
   "changes": [
