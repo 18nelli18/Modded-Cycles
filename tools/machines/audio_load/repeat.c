@@ -124,11 +124,12 @@ static void install(i32 target,u32 now){
  u32 elapsed=((clock%division)<<4)/tempo;
  br_start=now-elapsed;br_length=length;br_valid=1;
 }
-/* Trajectoire commune aux voies, calculee une seule fois par bloc. */
+/* Trajectoire commune aux voies, calculee une seule fois par bloc.
+ * phase est l index circulaire deja additionne a br_start. */
 struct br_frame {u32 phase,envelope,wet,record;};
 static void render_channel(i32 *channel,i16 *history,u32 now,
  const struct br_frame *frames,const u32 *mix){
- u32 valid=br_valid,start=br_start;
+ u32 valid=br_valid;
  for(u32 i=0;i<32;i++){
   i32 live=channel[i];
   if(frames[i].record){
@@ -136,7 +137,7 @@ static void render_channel(i32 *channel,i16 *history,u32 now,
    history[(now+i)&MASK]=(i16)q;
   }
   if(valid&&mix[i]){
-   i32 repeated=((i32)history[(start+frames[i].phase)&MASK]*(i32)frames[i].envelope)>>1;
+   i32 repeated=((i32)history[frames[i].phase]*(i32)frames[i].envelope)>>1;
    i32 difference=((repeated>>8)-(live>>8))>>1;
    channel[i]=(i32)((u32)live+(u32)difference*(mix[i]>>9)*4u);
   }
@@ -146,11 +147,10 @@ static void render_channel(i32 *channel,i16 *history,u32 now,
  * Le chemin plein conserve exactement les bits bas du live comme auparavant.
  */
 static void render_full(i32 *channel,i16 *history,u32 now,const struct br_frame *frames){
- u32 start=br_start;
  for(u32 i=0;i<32;i++){
   i32 live=channel[i];
   if(frames[i].record){i32 q=live>>15;if(q>32767)q=32767;if(q< -32767)q=-32767;history[(now+i)&MASK]=(i16)q;}
-  i32 repeated=((i32)history[(start+frames[i].phase)&MASK]*(i32)frames[i].envelope)>>1;
+  i32 repeated=((i32)history[frames[i].phase]*(i32)frames[i].envelope)>>1;
   i32 difference=((repeated>>8)-(live>>8))>>1;
   channel[i]=(i32)((u32)live+((u32)difference<<9));
  }
@@ -182,7 +182,7 @@ static void render_plain(i32 *channel,i16 *write,i16 *read,u32 record){
 }
 static void render_tracks(u32 now,const struct br_frame *frames){
  u32 mix[32],cached=0,cached_local=0,cached_excluded=0,cached_end=0;
- u32 write=now&MASK,read=(br_start+frames[0].phase)&MASK;
+ u32 write=now&MASK,read=frames[0].phase;
  u32 plain=br_length>=32&&frames[0].envelope==65536&&frames[31].envelope==65536
   &&frames[31].phase==frames[0].phase+31&&frames[0].record==frames[31].record
   &&write<=N-32&&read<=N-32;
@@ -286,7 +286,7 @@ static void render(u32 now,i32 target){
   if(target>=0&&br_valid){wet+=1024;if(wet>65536)wet=65536;}else wet=wet>1024?wet-1024:0;
   u32 envelope=phase*scale,tail=(length-phase)*scale;
   if(envelope>tail)envelope=tail;if(envelope>65536)envelope=65536;
-  frames[i].phase=phase;frames[i].envelope=envelope;frames[i].wet=wet;
+  frames[i].phase=(br_start+phase)&MASK;frames[i].envelope=envelope;frames[i].wet=wet;
   u32 age=elapsed+i;frames[i].record=!br_valid||age<length||((age&MASK)>=length);
   if(++phase>=length)phase=0;
  }

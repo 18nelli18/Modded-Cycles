@@ -32,7 +32,7 @@ def boot(prefix,with_sram=False):
     return result+(bytes(u.mem_read(0x80000000,0x10000)),) if with_sram else result
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--case',required=True);p.add_argument('--baseline',required=True);a=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--case',required=True);p.add_argument('--baseline',required=True);p.add_argument('--blocks',type=int,default=8);a=p.parse_args()
     alias=tempfile.TemporaryDirectory();os.symlink(shutil.which('m68k-linux-gnu-objdump'),pathlib.Path(alias.name)/'m68k-elf-objdump');os.environ['PATH']=alias.name+os.pathsep+os.environ['PATH']
     baseline=boot(a.baseline);candidate=boot(a.case)
     names=next(t['machine_names'] for t in candidate[2] if t.get('machine_names'))
@@ -40,10 +40,10 @@ def main():
         engines=[Harness.engine(img,payload=(0x46700000,rt)) for img,rt,ts in (baseline,candidate)]
         for e in engines:
             for track in range(6):e.set(track,machine=machine,note=48+track*3,color=64,shape=0,sweep=64,contour=0,decay=90)
-        for block in range(8):
+        for block in range(a.blocks):
             x,y=[e.block(63 if block==0 else 0) for e in engines]
             assert np.array_equal(x,y),(name,block,int(np.max(np.abs(x-y))))
         assert not any(e.unmapped for e in engines)
         print('PASS audio identique six pistes : '+name,flush=True)
-    print('ok 17 moteurs, 8 blocs chacun, Banque inactive ; pas de mesure CPU materielle')
+    print('ok',len(names),'moteurs,',a.blocks,'blocs chacun, Banque inactive ; pas de mesure CPU materielle')
 if __name__=='__main__':main()
