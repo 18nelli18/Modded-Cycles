@@ -110,3 +110,8 @@ Retour : resonance zero, tout moteur SY peut etre concerne, souvent piste6 mais 
 ## Test7 : choisir la piste du diagnostic
 
 La voie distordue n est pas toujours6. FUNCTION+TRACK+RETRIG puis pas1..6 choisit explicitement la voie audio et affiche son snapshot. Ces press/release sont possedes par le diagnostic et ne lancent pas de repeat. Relacher TRACK/RETRIG avec FUNCTION rappelle la derniere voie choisie. CPU/CUT habituel conserve. Tests des six voies, valeurs distinctes et absence de demande repeat. Aucun changement du noyau DSP face au test6.
+
+
+## Test8 : popup compact
+
+Retour hardware : la fin du popup coupe le dernier chiffre de M002x. Format compact, mode en premier : `4M0024 F3538Q0K4096` (19 caracteres). Meme contenu et gestes, DSP inchangee. Lecture clean rapportee F0/Q0/K4096/M0024 ; degradee F3538/Q0/K4096/M002 tronque. F0 est bypass : demander une comparaison clean a126 pour distinguer un changement de coefficients inattendu.
