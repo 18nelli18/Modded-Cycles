@@ -8,5 +8,7 @@
   "sample_rate": 32000,
   "shared_features_main_version": "1.83",
   "shared_features_updated": "2026-10-17",
-  "diagnostics": false
+  "diagnostics": false,
+  "hardware_tested_version": "909.2",
+  "shared_feature_port_validation": "emulation; source fixes hardware-confirmed in main1.83"
 }
