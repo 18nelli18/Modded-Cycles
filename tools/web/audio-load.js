@@ -9,6 +9,7 @@
   if(!a.isSelected('track-filter')||t.id!=='sample-wizard')return t;
   const result=clone(t),f=d.filter,p=result.append.parts.find(p=>p.hex&&n(p.dest)<=f.at&&f.at+f.size<=n(p.dest)+p.hex.length/2);if(!p)throw Error('Audio load: filter body missing');
   const i=2*(f.at-n(p.dest));if(hash(b.fromHex(p.hex.slice(i,i+2*f.size)))!==f.old_sha256)throw Error('Audio load: current filter guard');p.hex=p.hex.slice(0,i)+f.hex+p.hex.slice(i+2*f.size);delete result.append.compressed_hex;
+  const inner=d.inner_call;if(inner){const q=result.append.parts.find(p=>p.hex&&n(p.dest)<=inner.at&&inner.at+inner.old.length/2<=n(p.dest)+p.hex.length/2);if(!q)throw Error('Wizard transition: inner filter call missing');const j=2*(inner.at-n(q.dest));if(q.hex.slice(j,j+inner.old.length)!==inner.old)throw Error('Wizard transition: inner filter call guard');q.hex=q.hex.slice(0,j)+inner.new+q.hex.slice(j+inner.old.length);}
   a.REF_MODS[result.id]={w:hash(b.writesBytes(result)),p:hash(b.buildPayload(result.append,null,null))};result.status='experimental';result.hardwareTestedByOwner=false;return result;
  });
  function filterProbe(result,syntakt,stock){
