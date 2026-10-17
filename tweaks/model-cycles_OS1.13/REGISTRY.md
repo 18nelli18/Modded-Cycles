@@ -6,7 +6,7 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 282 tweaks, 31 763 écritures.
+- 283 tweaks, 31 766 écritures.
 - Masques de sprites libérables : 164 (35 960 o), dont 47 pris (17 040 o) et **117 libres (18 920 o)**.
 - Crochets sur l'OS : 100 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
 - Pointeurs réécrits : 61 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
@@ -35,7 +35,7 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x4018a220` | `0x400ad202` | pris (359/376 o) | arp (359 o) |
 | `0x4018cd48` | `0x400acdb2` | pris (plein) | chord-keys (376 o) |
 | `0x4018d1b8` | `0x400acd76` | pris (372/376 o) | chord-keys (372 o) |
-| `0x4018d4a8` | `0x400acd56` | pris (210/376 o) | chord-keys (210 o) |
+| `0x4018d4a8` | `0x400acd56` | pris (264/376 o) | chord-keys (210 o), octave-shortcuts (264 o) |
 | `0x4018dba8` | `0x400accfe` | pris (114/376 o) | trigless-dim (114 o) |
 | `0x4018f4b4` | `0x400ac8d0` | pris (360/376 o) | level-pan-values (360 o) |
 | `0x4018fc74` | `0x400ac81c` | pris (364/376 o) | level-pan-values (364 o) |
@@ -713,6 +713,7 @@ Constantes 32 bits de l'OS (tables de fonctions, données) qui pointent maintena
 | `0x400fd174` | `4000a66a` | masque `0x40185968` +0xba | chord-keys |
 | `0x400fd190` | `4000ba7a` | masque `0x401784e8` +0x6c | lfo-plus |
 | `0x400ff9cc` | `4001a0d2` | masque `0x40185018` +0x0 | chord-keys |
+| `0x400ff9cc` | `4001a0d2` | masque `0x4018d4a8` +0x0 | octave-shortcuts |
 | `0x401005a8` | `4001e814` | masque `0x401625bc` +0x0 | track-filter |
 | `0x401016e4` | `40024e86` | masque `0x40184df8` +0x88 | lfo-plus |
 | `0x401016ec` | `400426fa` | masque `0x401780a8` +0xa2 | lfo-plus |
@@ -772,6 +773,7 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | level-pan-values | 8 | 1 | 3 | 0 | 2 | 2 | 0 |  | notes/44 |
 | trigless-dim | 8 | 1 | 3 | 0 | 2 | 2 | 0 |  | notes/45 |
 | track-filter | 40 | 1 | 6 | 3 | 15 | 15 | 0 |  | notes/47 |
+| octave-shortcuts | 3 | 0 | 0 | 1 | 1 | 1 | 0 |  | notes/73 |
 | midi-both | 3 | 3 | 0 | 0 | 0 | 0 | 0 |  | notes/53 |
 | midi-live-both | 6 | 0 | 4 | 0 | 1 | 1 | 0 |  | notes/53 |
 | lfo-plus | 30 | 0 | 12 | 4 | 7 | 7 | 0 |  | notes/56 |

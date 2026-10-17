@@ -218,11 +218,11 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
     const nEng = w.MC_TWEAKS.features.find((f) => f.engines).engines.length;
-    check(ids.slice(0, 27).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-both,midi-live-both,macro,macro-tg,macro-acid,macro-acid-tg,acid,acid-tg,chord-keys,track-filter,lfo-plus,syntakt-sd"
-      && ids.length === 26 + 8 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
+    check(ids.slice(0, 28).join() === "6ch-usbup,model-tg,model-tg-st,sample-preview,sample-preview-st,latching-mute,trig-preview,browser-scroll,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,octave-shortcuts,midi-both,midi-live-both,macro,macro-tg,macro-acid,macro-acid-tg,acid,acid-tg,chord-keys,track-filter,lfo-plus,syntakt-sd"
+      && ids.length === 27 + 8 * ((1 << nEng) - 1) && ids.includes("syntakt-sd-cp") && ids.includes("syntakt-tg-sd-cp-toy-bits")
       && ids.includes("syntakt-sd-acid") && ids.includes("syntakt-tg-sd-cp-toy-bits-swarm-macro-acid")
       && ids.includes("syntakt-sd-macro") && ids.includes("syntakt-tg-sd-cp-toy-bits-swarm-macro")
-      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 21,
+      && ids.includes("arp") && !ids.some((x) => /exact|snare|multiout/.test(x)) && w.MC_TWEAKS.features.length === 22,
       `MC_TWEAKS: only USB-friendly tweaks, one tweak per choice of the ${nEng} Syntakt engines (no SNARE replacement), alone and with Model-TG, with and without MACRO and ACID: ${ids.length} tweaks`);
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
@@ -232,8 +232,8 @@ async function main() {
     // display order: by section (Packs, Sounds & machines, Sequencer, Live playing, Screen & browsing, USB & MIDI),
     // FEATURES order inside a section; the build keeps FEATURES order (checked in 1b)
     const feats = [...doc.querySelectorAll("#features input[type=checkbox]")].map((c) => c.id);
-    check(feats.join() === "feat-model-tg,feat-macro,feat-acid,feat-track-filter,feat-lfo-plus,feat-syntakt,feat-trig-preview,feat-trig-hold,feat-arp,feat-tempo-max,feat-trigless-dim,feat-latching-mute,feat-chord-keys,feat-sample-preview,feat-browser-scroll,feat-boot-anim,feat-multiline-browser,feat-level-pan-values,feat-usb6,feat-midi-both,feat-midi-live-both",
-      "21 feature rows, by section: " + JSON.stringify(feats));
+    check(feats.join() === "feat-model-tg,feat-macro,feat-acid,feat-track-filter,feat-lfo-plus,feat-syntakt,feat-trig-preview,feat-trig-hold,feat-arp,feat-tempo-max,feat-trigless-dim,feat-latching-mute,feat-octave-shortcuts,feat-chord-keys,feat-sample-preview,feat-browser-scroll,feat-boot-anim,feat-multiline-browser,feat-level-pan-values,feat-usb6,feat-midi-both,feat-midi-live-both",
+      "22 feature rows, by section: " + JSON.stringify(feats));
     check(w.MC_TWEAKS.features.every((f) => doc.querySelector(`#cat-${f.cat || "other"} #mod-${f.id} #feat-${f.id}`)),
       "every feature has a row in its section (cat)");
     const tagOfFeat = (f) => (f.status === "tested" ? "Tested" : "Experimental");
@@ -281,6 +281,17 @@ async function main() {
     const djd = ["level-pan-values", "trigless-dim"].map((id) => doc.querySelector(`label[for=feat-${id}] .credit`));
     check(djd.every((c) => c && c.textContent === "based on a mod by djd_oz" && !c.querySelector("a")),
       "djd_oz's two mods: “based on a mod by djd_oz”, no link (no public repository)");
+    const octavePage = await load();
+    const octaveDoc = octavePage.doc;
+    octaveDoc.getElementById("feat-chord-keys").click(); await wait(5);
+    octaveDoc.getElementById("feat-octave-shortcuts").click(); await wait(5);
+    check(octaveDoc.getElementById("feat-octave-shortcuts").checked
+      && !octaveDoc.getElementById("feat-chord-keys").checked,
+      "octave shortcuts exclude Chord Keys");
+    octaveDoc.getElementById("feat-chord-keys").click(); await wait(5);
+    check(!octaveDoc.getElementById("feat-octave-shortcuts").checked,
+      "Chord Keys exclude octave shortcuts in the other direction");
+    octavePage.w.close();
     const list = [...doc.querySelectorAll("#credits-list a")].map((a) => a.textContent);
     check(list.join() === "scottmetoyer/ms-multi-output,drumkilla/elektron-model-tweaks,pichenettes/eurorack,RobinSchmidt/Open303,TinyGregAudio/Model-TG,mischa85/elektron-firmware-tool,dagargo/elektroid,mxldyn/octamax",
       "credits section lists the 8 upstream repositories");
@@ -449,6 +460,9 @@ async function main() {
       "FR switch translates the credits section");
     check(/Tempo jusqu'à 546 BPM/.test(text(doc, "features")) && doc.querySelector('label[for=feat-tempo-max] a.feat-guide, #features a[href$="#tempo"]'),
       "FR: tempo card translated, with its guide link");
+    check(/Raccourcis d'octave du clavier/.test(text(doc, "features"))
+      && doc.querySelector('#features a[href$="#octave-shortcuts"]'),
+      "FR: octave shortcut card translated, with its guide link");
     check(/Animation de démarrage modded-cycles/.test(text(doc, "features")) && doc.querySelector('#features a[href$="#boot-anim"]'),
       "FR: startup animation card translated, with its guide link");
     check(/Volume et pan en chiffres/.test(text(doc, "features")) && doc.querySelector('#features a[href$="#level-pan"]')

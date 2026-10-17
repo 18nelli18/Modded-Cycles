@@ -68,6 +68,11 @@ Confirmed under the MIT License:
 - **LFO 2, 3, 4** (`60-lfo-plus.json`): rewritten by this project from DavidCaruso's `Model-TG-VA-DR-v1` firmware;
   DavidCaruso agreed to the MIT License (relayed by Maxime on 11/10/2026).
 
+Original contributions submitted under this project's MIT License through `CONTRIBUTING.md`:
+
+- **Keyboard octave shortcuts** (`49-octave-shortcuts.json`): original assembly, generator and proof by djdoz.
+  The sources call the user's stock firmware routines; the tweak's `old` bytes remain Elektron's firmware data.
+
 ## Tools used but not included
 
 The emulation proofs import [Unicorn](https://www.unicorn-engine.org/) (GPL-2.0) and numpy (BSD-3-Clause); the

@@ -674,3 +674,22 @@ nouveau tweak en émulation.
 
 Le C [`mischa85/elektron-firmware-tool`](https://github.com/mischa85/elektron-firmware-tool) fait le même travail
 de conteneur ; voir [`notes/02-format-os-syx.md`](notes/02-format-os-syx.md).
+
+## Raccourcis d'octave du clavier (notes/73)
+
+`octave-shortcuts` : hors mode grille, TRACK + TRIG 15/16 règle le KBT réel de la piste de −/+12, visible dans Track Setup. Un changement par appui ; aucun éclairage ajouté. Prototype stock passé selon le contributeur ; intégration expérimentale. Ne pas combiner avec Model-TG ni Chord Keys.
+
+```sh
+python3 tools/gen_octave_shortcuts.py --cycles model-cycles_OS1.13.syx --check
+python3 tools/emu/test_octave_shortcuts.py --cycles model-cycles_OS1.13.syx
+python3 tools/emu/test_octave_shortcuts.py --cycles model-cycles_OS1.13.syx \
+  --with 6ch-usbup,syntakt-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,lfo-plus,midi-both \
+  --syntakt Syntakt_OS1.42.syx
+python3 tools/build.py -i model-cycles_OS1.13.syx -t octave-shortcuts -o octave-test.syx
+```
+
+| Tweaks (`-t`, avec le Syntakt officiel si demandé) | MAIN OS SHA-256 |
+|---|---|
+| `octave-shortcuts` | `4149bea08cc9aa17c790d76acd5033d22ce546ee4d2d9a0049e60ad7549c7952` |
+| `6ch-usbup,octave-shortcuts` | `23f2304006f96a60608d4a68fe8cd70a45ac85f1a98a7ee4d96199b417e500fc` |
+| `6ch-usbup,syntakt-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,lfo-plus,midi-both,octave-shortcuts` | `2d78df5301b80d669fc677ea1d7b2d37075c3b6d2f1fb1b19e5006cd7466b273` |
