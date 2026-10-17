@@ -27,7 +27,8 @@ u32 br_mask_address STATE=0,br_excluded STATE=0,br_lane_wet[6] STATE={0};
 u32 br_old_track_keys STATE=0,br_old_track_leds STATE=0;
 u32 br_filter_f_address STATE=0,br_filter_q_address STATE=0,br_filter_mk_address STATE=0,br_filter_modes_address STATE=0,br_function STATE=0,br_probe_lane STATE=5,br_probe_owned STATE=0;
 u32 br_filter_state_address STATE=0;
-volatile u32 br_filter_reset_request STATE=0;
+volatile u32 br_filter_reset_request STATE=0,br_filter_reset_done STATE=0;
+u32 br_filter_code_address STATE=0,br_filter_code_size STATE=0,br_filter_code_hash STATE=0;
 u32 br_load_address STATE=0,br_avg_address STATE=0,br_load_peak STATE=0;
 u32 br_fading_address STATE=0,br_stolen_address STATE=0,br_cut_seen STATE=0;
 const u32 br_divs[16]={QN/16,QN/12,QN/8,QN/6,QN/4,QN/3,QN/2,QN*2/3,
@@ -65,6 +66,18 @@ static void filter_popup(void){
  *p++='Q';p=filter_number(p,((volatile u32 *)br_filter_q_address)[lane]);
  *p++='K';p=filter_number(p,((volatile u32 *)br_filter_mk_address)[lane]);
  *p=0;br_popup(text);
+}
+/* Lire le code executable, sans la zone de modes modifiee par l audio. */
+static void filter_code_popup(void){
+ if(!br_filter_code_address||!br_filter_code_size||br_filter_code_size>678){br_popup("FILTER OFF");return;}
+ volatile const u8 *code=(volatile const u8 *)br_filter_code_address;u32 hash=2166136261u;
+ for(u32 i=0;i<br_filter_code_size;i++)hash=(hash^code[i])*16777619u;
+ br_popup(hash==br_filter_code_hash?"FILTER CODE OK":"FILTER CODE BAD");
+}
+static void filter_reset_popup(void){
+ static const char *const done[]={"RESET NONE","RESET 1 DONE","RESET 2 DONE","RESET 3 DONE","RESET 4 DONE","RESET 5 DONE","RESET 6 DONE"};
+ u32 lane=br_filter_reset_done;
+ br_popup(br_filter_reset_request?"RESET PENDING":done[lane<=6?lane:0]);
 }
 static void load_popup(void){
  if(!br_load_address||!br_avg_address||ipl())return;
@@ -114,10 +127,12 @@ u32 br_key(u32 *event){
  if(code<16||code>31)return 0;
  u32 step=code-16,bit=1u<<step;
  if(!down&&(br_probe_owned&bit)){br_probe_owned&=~bit;return 1;}
- if(br_keys==3&&br_function&&step<12){
-  if(fresh){br_probe_lane=step%6;br_probe_owned|=bit;
-   if(step<6)filter_popup();
-   else if(br_filter_state_address){static const char *const reset_labels[]={"1 RESET QUEUED","2 RESET QUEUED","3 RESET QUEUED","4 RESET QUEUED","5 RESET QUEUED","6 RESET QUEUED"};br_filter_reset_request=br_probe_lane+1;br_popup(reset_labels[br_probe_lane]);}
+ if(br_keys==3&&br_function&&step<14){
+  if(fresh){br_probe_owned|=bit;
+   if(step==12)filter_code_popup();
+   else if(step==13)filter_reset_popup();
+   else if(step<6){br_probe_lane=step;filter_popup();}
+   else if(br_filter_state_address){br_probe_lane=step-6;static const char *const reset_labels[]={"1 RESET QUEUED","2 RESET QUEUED","3 RESET QUEUED","4 RESET QUEUED","5 RESET QUEUED","6 RESET QUEUED"};br_filter_reset_done=0;br_filter_reset_request=br_probe_lane+1;br_popup(reset_labels[br_probe_lane]);}
    else br_popup("FILTER OFF");
   }return 1;
  }
@@ -330,6 +345,7 @@ static void filter_reset(void){
  if(request>6||!br_filter_state_address)return;
  volatile u32 *state=(volatile u32 *)br_filter_state_address;
  for(u32 pole=0;pole<4;pole++)state[7*pole+request-1]=0;
+ br_filter_reset_done=request;
 }
 void br_audio(void){filter_reset();if(br_load_address&&br_keys==3){u32 load=*(volatile u32 *)br_load_address;if(load>br_load_peak)br_load_peak=load;
  /* Observer seulement : aucun flag du regulateur n est modifie. */

@@ -21,7 +21,11 @@ def generate(source=None):
   sy=symbols(cross,p/'f.elf')
  assert len(code)<=len(old),(len(code),len(old))
  result={'at':at,'size':len(old),'old_sha256':hashlib.sha256(old).hexdigest(),'hex':(code+b'\x4e\x71'*((len(old)-len(code))//2)).hex(),'code_size':len(code)}
- if 'precise_modes' in sy:result['mode_address']=sy['precise_modes']
+ if 'precise_modes' in sy:
+  result['mode_address']=sy['precise_modes'];result['probe_size']=sy['precise_modes']-at
+  fingerprint=2166136261
+  for byte in code[:result['probe_size']]:fingerprint=((fingerprint^byte)*16777619)&0xffffffff
+  result['probe_hash']=fingerprint
  return result
 def main():
  p=argparse.ArgumentParser();p.add_argument('--output',required=True);p.add_argument('--check',action='store_true');a=p.parse_args();d=generate();text='window.MCFilterPrecision='+json.dumps(d,separators=(',',':'))+';\n';out=pathlib.Path(a.output)

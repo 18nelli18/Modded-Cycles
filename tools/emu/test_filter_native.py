@@ -18,6 +18,7 @@ def main():
     parser.add_argument('--baseline', required=True)
     parser.add_argument('--candidate', required=True)
     parser.add_argument('--cases', type=int, default=512)
+    parser.add_argument('--dirty-extensions',action='store_true')
     args = parser.parse_args()
     sys.path.insert(0, str(pathlib.Path(args.digiemu).resolve()))
     from unicorn import Uc, UC_ARCH_M68K, UC_MODE_BIG_ENDIAN, m68k_const as mk
@@ -62,7 +63,10 @@ def main():
         samples = [random_source.randrange(-0x70000000, 0x70000000)
                    for _ in range(32)]
         results = []
-        for machine, entry, probe in kernels:
+        for index,(machine, entry, probe) in enumerate(kernels):
+            if args.dirty_extensions and index==1:
+                machine.mem_write(setup+0x100,bytes.fromhex("a93c000000b0203c12345678a10070ffab00af004e75"))
+                call(machine,setup+0x100)
             for key, value in (('gflt_f', coefficient), ('gflt_q', resonance),
                                ('gflt_mk', 4096)):
                 machine.mem_write(symbols[key] + lane * 4, struct.pack('>I', value))
