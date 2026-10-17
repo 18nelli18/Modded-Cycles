@@ -193,3 +193,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [115 — Phase et curseur MIDI B](115-curseur-midi-partage.md) : un curseur REC, phase initiale native, longueurs et vitesses propres ; test uniquement.
 
 - [116 — Arpege Oct0 A/B](116-arpege-octave-zero.md) : notes tenues seules, octaves ajoutees0..3, sauvegardes et sons historiques conserves ; test uniquement.
+
+- [117 — 909, fonctions partagees](117-909-fonctions-partagees.md) : filtre, sauvegarde et arpege/curseur MIDI main1.83 ; profil909 et WAV locaux conserves, sans diagnostic.
