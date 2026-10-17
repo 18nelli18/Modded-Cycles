@@ -258,14 +258,14 @@ def main():
             for name,offset,value in [('f',0x100,3538),('q',0x120,0),('mk',0x140,4096),('modes',0x160,0x20)]:
                 put('br_filter_'+name+'_address',0x9307e000+offset);r.w32(0x9307e000+offset+20,value)
             key(2,0);key(1);key(2);key(4);key(4,0)
-            assert popups[-1]=='6 F3538 Q0 K4096 M0020',popups[-1]
+            assert popups[-1]=='6M0020 F3538Q0K4096',popups[-1]
             key(2,0);key(2);key(4)
             for lane in range(6):
                 r.w32(0x9307e100+lane*4,1000+lane);r.w32(0x9307e120+lane*4,0);r.w32(0x9307e140+lane*4,4096);r.w32(0x9307e160+lane*4,0x20)
-                key(16+lane);assert popups[-1]==str(lane+1)+' F'+str(1000+lane)+' Q0 K4096 M0020',popups[-1]
+                key(16+lane);assert popups[-1]==str(lane+1)+'M0020 F'+str(1000+lane)+'Q0K4096',popups[-1]
                 assert get('br_requested')==0xffffffff
                 key(16+lane,0)
-            key(4,0);assert popups[-1]=='6 F1005 Q0 K4096 M0020'
+            key(4,0);assert popups[-1]=='6M0020 F1005Q0K4096'
             key(2,0);put('br_filter_f_address',0);key(2);key(4);key(4,0)
             assert popups[-1]=='FILTER OFF',popups[-1]
             key(1,0)

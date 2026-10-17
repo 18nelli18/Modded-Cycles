@@ -57,11 +57,11 @@ static void filter_popup(void){
  char text[32],*p=text;
  if(!br_filter_f_address||!br_filter_modes_address){br_popup("FILTER OFF");return;}
  u32 lane=br_probe_lane<6?br_probe_lane:5;
- *p++='1'+lane;*p++=' ';*p++='F';p=filter_number(p,((volatile u32 *)br_filter_f_address)[lane]);
- *p++=' ';*p++='Q';p=filter_number(p,((volatile u32 *)br_filter_q_address)[lane]);
- *p++=' ';*p++='K';p=filter_number(p,((volatile u32 *)br_filter_mk_address)[lane]);
- *p++=' ';*p++='M';u32 mode=((volatile u32 *)br_filter_modes_address)[lane];
+ *p++='1'+lane;*p++='M';u32 mode=((volatile u32 *)br_filter_modes_address)[lane];
  for(i32 shift=12;shift>=0;shift-=4)*p++="0123456789ABCDEF"[(mode>>shift)&15];
+ *p++=' ';*p++='F';p=filter_number(p,((volatile u32 *)br_filter_f_address)[lane]);
+ *p++='Q';p=filter_number(p,((volatile u32 *)br_filter_q_address)[lane]);
+ *p++='K';p=filter_number(p,((volatile u32 *)br_filter_mk_address)[lane]);
  *p=0;br_popup(text);
 }
 static void load_popup(void){
