@@ -10,7 +10,7 @@ import emac
 ROOT=HERE.parents[1]
 def data(path):return json.loads(pathlib.Path(path).read_text().split('=',1)[1].strip().rstrip(';'))
 def main():
- p=argparse.ArgumentParser();p.add_argument('--cases',type=int,default=256);a=p.parse_args();stock=main_os_from_syx('firmware/model-cycles_OS1.13.syx');base=data('docs/flasher/filter-precision-data.js');new=data('build/filter-load-data.js');ws=json.loads((ROOT/'firmware/wizard-catalogue.json').read_text())['variants']['0']['wizard']['symbols'];ws={k:int(v,16) for k,v in ws.items()};rigs=[]
+ p=argparse.ArgumentParser();p.add_argument('--cases',type=int,default=256);p.add_argument('--baseline',default='docs/flasher/filter-precision-data.js');p.add_argument('--candidate',default='build/filter-load-data.js');p.add_argument('--min-saving',type=float,default=10);a=p.parse_args();stock=main_os_from_syx('firmware/model-cycles_OS1.13.syx');base=data(a.baseline);new=data(a.candidate);ws=json.loads((ROOT/'firmware/wizard-catalogue.json').read_text())['variants']['0']['wizard']['symbols'];ws={k:int(v,16) for k,v in ws.items()};rigs=[]
  for n,d in enumerate([base,new]):
   r=Rig(stock,{'writes':[]},{'writes':[],'symbols':{}});r.u.mem_write(d['at'],bytes.fromhex(d['hex']));path=ROOT/f'build/filter-load-{n}.bin';path.write_bytes(bytes.fromhex(d['hex']));r.emac=emac.EMAC(r.u);r.emac.install(emac.disasm(str(path),d['at'],d['at'],d['at']+d['code_size']));r.instructions=0
   def count(u,pc,size,user,r=r):r.instructions+=1
@@ -31,5 +31,5 @@ def main():
   assert outputs[0]==outputs[1],(case,f,q,mk,lane)
  print('PASS',a.cases,'blocs de 32 samples : entiers extremes/aleatoires, six pistes, resonance et etats limites ; samples/etats bit exacts')
  for q,counts in totals.items():
-  saving=100*(counts[0]-counts[1])/counts[0];assert saving>10;print('MESURE instructions resonance',q,counts,'reduction',round(saving,1),'%')
+  saving=100*(counts[0]-counts[1])/counts[0];assert saving>=a.min_saving;print('MESURE instructions resonance',q,counts,'reduction',round(saving,1),'%')
 if __name__=='__main__':main()

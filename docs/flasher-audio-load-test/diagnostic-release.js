@@ -1,0 +1,1 @@
+window.MC_RELEASES=[{version:"Audio-load-test.1",date:"2026-10-17",changes:[{en:"Shared repeat fades, cheaper filter loop and empty MIDI slide scans. CPU/CUT retained. Hardware verification pending.",fr:"Fondus repeat partages, boucle filtre allegee et balayages slides MIDI vides evites. CPU/CUT conserve. Verification machine attendue."}]}];
