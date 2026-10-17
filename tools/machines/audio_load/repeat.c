@@ -25,7 +25,7 @@ u32 br_old_key STATE=0,br_old_gain STATE=0x40056d9c;
 u32 br_side STATE=0,br_side_on STATE=0;
 u32 br_mask_address STATE=0,br_excluded STATE=0,br_lane_wet[6] STATE={0};
 u32 br_old_track_keys STATE=0,br_old_track_leds STATE=0;
-u32 br_filter_f_address STATE=0,br_filter_q_address STATE=0,br_filter_mk_address STATE=0,br_filter_modes_address STATE=0,br_function STATE=0;
+u32 br_filter_f_address STATE=0,br_filter_q_address STATE=0,br_filter_mk_address STATE=0,br_filter_modes_address STATE=0,br_function STATE=0,br_probe_lane STATE=5,br_probe_owned STATE=0;
 u32 br_load_address STATE=0,br_avg_address STATE=0,br_load_peak STATE=0;
 u32 br_fading_address STATE=0,br_stolen_address STATE=0,br_cut_seen STATE=0;
 const u32 br_divs[16]={QN/16,QN/12,QN/8,QN/6,QN/4,QN/3,QN/2,QN*2/3,
@@ -47,7 +47,7 @@ static char *load_percent(char *p,u32 q){
  if(v>=10)*p++='0'+v/10%10;
  *p++='0'+v%10;*p++='%';return p;
 }
-/* Snapshot UI piste 6 ; lecture seule, aucun calcul audio ajoute. */
+/* Snapshot UI piste choisie ; lecture seule, aucun calcul audio ajoute. */
 static char *filter_number(char *p,u32 v){
  if(v>99999){*p++='?';return p;}
  u32 d=10000;while(d>1&&v<d)d/=10;
@@ -56,10 +56,11 @@ static char *filter_number(char *p,u32 v){
 static void filter_popup(void){
  char text[32],*p=text;
  if(!br_filter_f_address||!br_filter_modes_address){br_popup("FILTER OFF");return;}
- *p++='6';*p++=' ';*p++='F';p=filter_number(p,((volatile u32 *)br_filter_f_address)[5]);
- *p++=' ';*p++='Q';p=filter_number(p,((volatile u32 *)br_filter_q_address)[5]);
- *p++=' ';*p++='K';p=filter_number(p,((volatile u32 *)br_filter_mk_address)[5]);
- *p++=' ';*p++='M';u32 mode=((volatile u32 *)br_filter_modes_address)[5];
+ u32 lane=br_probe_lane<6?br_probe_lane:5;
+ *p++='1'+lane;*p++=' ';*p++='F';p=filter_number(p,((volatile u32 *)br_filter_f_address)[lane]);
+ *p++=' ';*p++='Q';p=filter_number(p,((volatile u32 *)br_filter_q_address)[lane]);
+ *p++=' ';*p++='K';p=filter_number(p,((volatile u32 *)br_filter_mk_address)[lane]);
+ *p++=' ';*p++='M';u32 mode=((volatile u32 *)br_filter_modes_address)[lane];
  for(i32 shift=12;shift>=0;shift-=4)*p++="0123456789ABCDEF"[(mode>>shift)&15];
  *p=0;br_popup(text);
 }
@@ -110,6 +111,9 @@ u32 br_key(u32 *event){
  if(code==TRACK||code==RETRIG)return modifier(code,down,fresh);
  if(code<16||code>31)return 0;
  u32 step=code-16,bit=1u<<step;
+ if(!down&&(br_probe_owned&bit)){br_probe_owned&=~bit;return 1;}
+ if(br_keys==3&&br_function&&step<6){if(fresh){br_probe_lane=step;br_probe_owned|=bit;filter_popup();}return 1;}
+
  if(!down){
   if(!(br_owned&bit))return 0;br_owned&=~bit;br_held[step]=0;select_held();repaint();return 1;
  }
