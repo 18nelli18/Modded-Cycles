@@ -138,3 +138,14 @@ Retour test9 : piste1 atteinte cette fois, pas7 affiche 1 RESET QUEUED sans amel
 Pas13 calcule dans le thread UI une empreinte FNV32 des632 octets code/alignement avant precise_modes ; exclut les28 octets modes mutables. Compare a l empreinte generee du noyau assemble. FILTER CODE OK/BAD : permet de chercher une modification memoire au changement de machine. Ne verifie pas les instructions deja presentes dans le cache physique, ni les autres fonctions du chemin audio. Pas de reset de code automatique ou de flush cache introduit.
 
 Investigation EMAC native supplementaire :512 blocs, candidat avec ACC0 et ACCEXT01/23 deliberement sales avant chaque appel, face au meme noyau sans cette contamination. Samples/quatre etats identiques dans le runtime patche DigiEmu. Cette preuve ne couvre pas le materiel ; elle ne confirme aucun mecanisme causal. Preuves des popups : vrai code assemble au boot OK, alteration d un octet ->BAD, bornes et filtre absent, reset Pending puis Done pour six pistes. Principal et909 inchanges.
+
+
+## Test11 : isoler les multiplications EMAC sans resonance
+
+Retour test10 : FILTER CODE OK, RESET DONE, aucune amelioration. Cela confirme execution du reset demande et integrite RAM du code teste, pas le cache physique ni tout le chemin audio. Ni les coefficients observes ni l historique efface ne discriminent le defaut.
+
+Candidat isolation, aucune reparation revendiquee : quand Q=0, quatre poles Q27 par produits32 entiers ; Q>0 conserve exactement le chemin EMAC test10. Delta decompose en quotient/reste base4096 pour eviter un produit32 debordant. Deux arrondis au pair : produit arrondi a16, puis reduction par4096. Mesure native d un produit F=1 autour des demi-entiers a montre que le runtime arrondit aussi le produit a sa precision40 bits ; les premieres variantes entier demi-vers+inf puis simple troncature ne correspondaient pas. Elles restent seulement locales, jamais publiees. Code final640o sur678, y compris28o modes.
+
+Preuve native DigiEmu :2048 blocs, six pistes, F1/64/2048/3538/4095, Q0/4096, entrees limites/random, etats, plusieurs MACSR, ACC0/ACCEXT01/23 sales cote candidat. Zero difference de samples/quatre etats face au test10. Instructions noyau sans resonance :1 035 264 ->3 704 131 (environ3,58x) ; avec resonance1 791 941 identiques. Pas une optimisation ni une mesure CPU physique. Comparer d abord un seul filtre actif, cutoff126/Q0, autres pistes cutoff127 ; repeter selection Wizard -> autre machine.
+
+Le modele EMAC Python historique arrondit differemment aux bits faibles : la preuve mixte logicielle accepte explicitement une borne128 unites int32, tandis que le comparatif natif reste strictement exact. Aucun elargissement de borne par defaut (zero conserve pour les autres usages). Tests qualite/SNR, ABI, six pistes, bypass, resonance et diagnostics conserves. Principal et909 inchanges ; affichage CPU/CUT toujours en test.

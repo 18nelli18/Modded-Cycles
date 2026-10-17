@@ -9,7 +9,7 @@ from test_model_tg import engine,MIX_GAIN
 import mcengine as E
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--case',required=True);p.add_argument('--baseline',required=True);p.add_argument('--blocks',type=int,default=48);p.add_argument('--mode',choices=('off','armed','repeat'));a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('--case',required=True);p.add_argument('--baseline',required=True);p.add_argument('--blocks',type=int,default=48);p.add_argument('--max-audio-error',type=int,default=0);p.add_argument('--mode',choices=('off','armed','repeat'));a=p.parse_args()
  alias=tempfile.TemporaryDirectory();os.symlink(shutil.which('m68k-linux-gnu-objdump'),pathlib.Path(alias.name)/'m68k-elf-objdump');os.environ['PATH']=alias.name+os.pathsep+os.environ['PATH']
  cases=[boot(a.baseline),boot(a.case)]
  for repeat in ((a.mode,) if a.mode else ('off','armed','repeat')):
@@ -31,13 +31,15 @@ def main():
    e.uc.hook_add(UC_HOOK_CODE,count,begin=int(ws['gflt_run'],16),end=int(ws['gflt_run'],16)+678)
    e.uc.hook_add(UC_HOOK_CODE,count,begin=int(br['append']['dest'],16),end=int(br['append']['dest'],16)+br['append']['size'])
    engines.append((e,bs,fs))
-  totals=[0,0];voice_filters=[0,0];post_filters=[0,0];audible=False
+  totals=[0,0];voice_filters=[0,0];post_filters=[0,0];audible=False;max_error=0
   for block in range(a.blocks):
    outputs=[]
    for index,(e,bs,fs) in enumerate(engines):
     e.filter_calls=0;e.block(63 if block%4==0 else 0);voice_filters[index]+=e.filter_calls;e.filter_calls=0;e.count=0;e.call(bs['br_audio'])
     for lane in range(6):e.call(fs['avfc_run'],E.TRACK_BASE+128*lane,lane)
     post_filters[index]+=e.filter_calls;totals[index]+=e.count;outputs.append(bytes(e.uc.mem_read(E.TRACK_BASE,768)))
-   assert outputs[0]==outputs[1],(repeat,block);audible|=any(outputs[0])
-  assert audible;print('PASS Kick/Snare/Metal/Perc/Tone/SDVtg',repeat,a.blocks,'blocs exacts ; instructions filtre+repeat',totals,'appels filtre voix/post',voice_filters,post_filters,flush=True)
+   import numpy as np
+   delta=np.frombuffer(outputs[0],dtype='>i4').astype(np.int64)-np.frombuffer(outputs[1],dtype='>i4').astype(np.int64);error=int(np.max(np.abs(delta)));max_error=max(max_error,error)
+   assert error<=a.max_audio_error,(repeat,block,error);audible|=any(outputs[0])
+  assert audible;print('PASS Kick/Snare/Metal/Perc/Tone/SDVtg',repeat,a.blocks,('blocs exacts' if a.max_audio_error==0 else 'blocs a erreur bornee'),' ; instructions filtre+repeat',totals,'appels filtre voix/post',voice_filters,post_filters,'erreur maximale int32',max_error,flush=True)
 if __name__=='__main__':main()
