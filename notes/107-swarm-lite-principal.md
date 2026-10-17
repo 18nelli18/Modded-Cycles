@@ -21,3 +21,5 @@ Seuls ces calculs Swarm sont promus. Filtre, repeat et regulateur conservent les
 Statut du changement : choisi pour promotion par AveyCole sur ce retour machine. La correction globale de surcharge n est pas revendiquee.
 
 Controle catalogue historique : gen_flasher_tweaks.py --check signale un ecart deja present entre les JSON sources et docs/flasher/tweaks.js (adresses de detours existantes). Le generateur, les JSON et tweaks.js sont tous identiques a origin/main pour cette promotion ; licences concordantes. Catalogue laisse intact pour ne pas introduire de regenerations etrangeres. check_overlaps et registry --check passent.
+
+Validation finale : huit profils navigateur/Python identiques ; vrais boots/cache six regions et SRAM avec/sans Banque passes. Principal complet MIDI SHA-256 c51ce21b961a312c12fea73fbbafcb56b5e435caa4cb2cf36cf2414286d4e887 ; sans Banque 577b288b2da086676d4b690ca7fc0b9f51a03f47e21b5e18911fb11bd987bdfc. Filtre/repeat principaux compares a origin/main : aucun changement. La garde refuse aussi une selection Swarm qui n aurait pas recu exactement six edits.
