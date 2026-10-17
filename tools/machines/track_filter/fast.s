@@ -75,18 +75,19 @@ precise_filter:
     movel %a1@,%d6
     asrl #4,%d6
     macl %a3,%d6,%acc0
+    movel %d5,%d7
     movclr.l %acc0,%d6
     lsll #2,%d6
     moveal %d6,%a5
-    movel %d5,%d6
-    macl %d1,%d6,%acc0
+    macl %d1,%d7,%acc0
+    movel #268434432,%d7
     movclr.l %acc0,%d6
     lsll #2,%d6
     negl %d6
     addl %a5,%d6
-    cmpil #268434432,%d6
+    cmpl %d7,%d6
     ble .Lin_hi
-    movel #268434432,%d6
+    movel %d7,%d6
 .Lin_hi:
     cmpil #-268434432,%d6
     bge .Lcascade
@@ -95,12 +96,21 @@ precise_filter:
 .macro pole reg,tag
     subl \reg,%d6
     macl %d0,%d6,%acc0
+    .if \tag == 1
+    movel #134217728,%d7
+    .elseif \tag == 2
+    movel #134213632,%d7
+    .elseif \tag == 3
+    moveal #-134213632,%a5
+    .elseif \tag == 4
+    lea %a1@(4),%a1
+    .endif
     movclr.l %acc0,%d6
     addl %d6,\reg
     .if \tag == 1
-    cmpil #134217728,\reg
+    cmpl %d7,\reg
     ble .Lhi\tag
-    movel #134217728,\reg
+    movel %d7,\reg
 .Lhi\tag:
     cmpil #-134217728,\reg
     bge .Llo\tag
@@ -113,28 +123,34 @@ precise_filter:
     pole %d3,2
     pole %d4,3
     pole %d5,4
-    cmpil #134213632,%d6
+    cmpl %d7,%d6
     ble .Lout_hi
-    movel #134213632,%d6
+    movel %d7,%d6
 .Lout_hi:
-    cmpil #-134213632,%d6
+    cmpl %a5,%d6
     bge .Lout_lo
-    movel #-134213632,%d6
+    movel %a5,%d6
 .Lout_lo:
     lsll #4,%d6
-    movel %d6,%a1@+
+    movel %d6,%a1@(-4)
     cmpal %a2,%a1
     bne .Lsample
     bra .Lfinish
     | Chemin sans feedback choisi une seule fois par bloc ; memes arrondis.
-.macro dry_pole reg,prefetch=0
+.macro dry_pole reg,prefetch=0,ready=0
+    .if !\ready
     subl \reg,%d6
+    .endif
     macl %d0,%d6,%acc0
     | Charger/decaler le prochain sample pendant la latence EMAC.
     .if \prefetch == 1
     movel %a1@(4),%d7
     .elseif \prefetch == 2
     asrl #4,%d7
+    .elseif \prefetch == 3
+    subl %d2,%d7
+    .elseif \prefetch == 4
+    lea %a1@(4),%a1
     .endif
     movclr.l %acc0,%d6
     addl %d6,\reg
@@ -148,10 +164,10 @@ precise_filter:
     asrl #4,%d6
     .endif
 
-    dry_pole %d2,\prefetch
+    dry_pole %d2,\prefetch,\queued
     dry_pole %d3,(\prefetch*2)
-    dry_pole %d4
-    dry_pole %d5
+    dry_pole %d4,(\prefetch*3)
+    dry_pole %d5,(\prefetch*4)
     cmpil #134213632,%d6
     ble .Ldry_hi\@
     movel #134213632,%d6
@@ -161,7 +177,11 @@ precise_filter:
     movel #-134213632,%d6
 .Ldry_lo\@:
     lsll #4,%d6
+    .if \prefetch
+    movel %d6,%a1@(-4)
+    .else
     movel %d6,%a1@+
+    .endif
 .endm
 .Ldry_sample:
     dry_frame 1,0
