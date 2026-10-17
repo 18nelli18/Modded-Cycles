@@ -8,7 +8,7 @@ Install the relevant feature first. Hold the first button while pressing or turn
 
 ## Current feature overview
 
-Main flasher 1.82 · updated 17 October 2026. Install only the features you need; the flasher checks compatible combinations. [Supermodel 909 Edition](../flasher-supermodel-909/) has its own selection and release.
+Main flasher 1.83 · updated 17 October 2026. Install only the features you need; the flasher checks compatible combinations. [Supermodel 909 Edition](../flasher-supermodel-909/) has its own selection and release.
 
 | Feature | Current behavior |
 |---|---|
@@ -20,7 +20,7 @@ Main flasher 1.82 · updated 17 October 2026. Install only the features you need
 | Control All Config / Beat Repeat | Choose included audio tracks; momentary repeat across sixteen divisions, with a brief division popup. |
 | MIDI Out Bank — experimental | Six parallel MIDI lanes with CC assignments/locks, slides, retrigger/arp, chance, two MIDI LFOs and project sidecar saving. Optional and installable without beat repeat. Beat repeat can also be installed without MIDI Out Bank. |
 | Sequence Genie / SCRAMBLE | Generate or mutate sequences, queue at Loop/Page boundaries, and randomize audio parameters or B-side CCs. |
-| Arpeggiator / Second LFO | Held-note arpeggiation and an additional modulation page. Main retains Oct 1–4; Oct 0 is currently test-only. |
+| Arpeggiator / Second LFO | Held-note arpeggiation and an additional modulation page. Oct 0 cycles only held notes; 1–3 add octave copies. Hardware confirmed on both sides. |
 | Performance and editing | Latching mutes, step preview, slide trigs, scrolling names, three-line browser, numeric volume/pan, dim trigless steps and trig-removal grace. |
 | Routing / tempo / startup | Six-channel USB audio, combined MIDI OUT + THRU, tempo up to 546 BPM and a choice of startup animation. |
 
@@ -98,7 +98,7 @@ Long audio slices halve at slow tempos to fit the history buffer. Beat repeat af
 
 Saved MIDI loads only when entering B-side while playback is stopped. Stop before Save Project and wait for MIDI SAVED. Sidecar MIDI files are outside Elektron SysEx backups.
 
-## Current combined test — not released in main
+## Hardware-confirmed changes — now in main 1.83
 
 [Open the Octave 0 + MIDI B-side cursor test](../flasher-arp-zero-test/?v=2026-10-17-arp-zero-test-2).
 
@@ -108,4 +108,4 @@ Saved MIDI loads only when entering B-side while playback is stopped. Stop befor
 | B-side first entry / cursor | Open B-side during playback; verify MIDI starts without exiting/re-entering and that REC shows one cursor. Each lane retains its own length and speed. |
 | Test setup | Keep Control All Beat Repeat selected when installing MIDI Out Bank in this combined test. That requirement does not apply to main. CPU/peak/CUT diagnostics remain available in the test. |
 
-Octave 0 is hardware-confirmed; the B-side cursor and crash repair still await hardware verification. Saved MIDI loading still requires stopped playback. MIDI beat repeat and MIDI filter work were canceled and are not part of this test.
+Octave 0, the B-side cursor and the crash repair were confirmed by AveyCole in test 2 and are now released in main 1.83. Saved MIDI loading still requires stopped playback. MIDI beat repeat and MIDI filter work were canceled and are not part of this test.

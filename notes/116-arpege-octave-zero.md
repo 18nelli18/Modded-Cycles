@@ -26,3 +26,14 @@ AveyCole confirme Oct0 fonctionnel sur la machine. Ne constitue pas une autorisa
 [FAIT] Le placement quick-save main utilise40187528, mais ChordKeys y conserve `live[6]` (48octets), puis `prepared_modifiers` a40187558. Ce zero initial est un BSS vivant, pas de la place libre. L'ancien validateur avait accepte ces zeros a tort. `test_quick_save_room.py` execute `ck_midi_live_off` : note-off piste4 ecrase reellement le premier octet de l'instruction40187548. Ce chemin explique le lien possible avec les notes de l'arpege, sans reproduire toute la sequence UI physique.
 
 Test2 deplace les92octets quick-save dans le payload reserve du beat repeat et retire les ecritures code/sprite du faux cave. Donnees et code ChordKeys retrouvent leur place. Le pointeur de vtable est redirige, taille loader et references recalcules. Le cas sans MIDI est aussi corrige si ChordKeys est installe. Les512combinaisons clavier quick-save et les suites arp/cursor restent verifiees. Main conserve son firmware : correction de placement a confirmer dans ce test avant promotion.
+
+
+## Promotion demandee et confirmee (17/10/2026)
+
+AveyCole : « BOTH FIXES WORKED IN TEST 2, PUSH TO MAIN ». Oct0 A/B, entree B/curseur et correction collision confirmes. Release1.83, sans diagnostics.
+
+`gen_performance_release.py` reprend les modules confirmes de612et20octets. Si repeat est selectionne, il fournit le carrier ; sinon Banque MIDI fournit son payload compresse. Le code save92octets rejoint ce payload. Sans Banque ni repeat, un petit payload charge uniquement le wrapper save : bootstrap copie TinyGregAudio MIT deja utilise par le repeat, aucun hook audio/clavier repeat ni allocation de son buffer. La recette runtime quick-save-exit conserve le pointeur mute natif et les gardes. L'ancien tweak59dans le masque BSS est retire. Tous les placements sont demarres reellement dans Unicorn.
+
+Le packing commun sans MIDI est aussi applicable sans repeat, uniquement en cas de capacite insuffisante, pour permettre les deux exclusions avec toutes les machines. Aucun nouveau comportement DSP. Verifications : huit compositions navigateur signees, sans diagnostic ; cursor/phase avec et sans repeat ; arpege A/B ;512cas clavier save ; ecrasement ChordKeys reproduit avant et code intact apres.
+
+Controle generique `gen_flasher_tweaks.py --check` : catalogue historique deja divergent sur les recettes MACRO et les features ; aucune de ces recettes n est regeneree ici. Le tweak59retire ne faisait pas partie des cartes de ce generateur. Les huit compositions reelles du principal sont verifiees contre leurs empreintes de recettes et signees.

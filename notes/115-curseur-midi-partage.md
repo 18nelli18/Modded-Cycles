@@ -19,3 +19,8 @@ La phase initiale utilise le cycle A courant, pas un historique absolu des boucl
 `test_midi_cursor_flasher.js` : builds all-midi, bank-alone, no-midi verifies et signes. `test_midi_cursor.py` :7vitesses A x7vitesses B x4fractions x6longueurs(5,7,12,16,31,64), deadlines, pas, absence de reseed/allocation ; six pistes xquatre pages xdeux modesREC/clavier. Wrapper natif et registres verifies. Snapshots natifs simules ; code prive et garde executes dans Unicorn.
 
 [A FAIRE] Verification physique de l'entree pendant Play, du curseur unique REC et des longueurs/vitesses distinctes. Inclut la sauvegarde rapide confirmee test3. Ni diagnostics ni curseur experimental promus dans main.
+
+
+## Test materiel (17/10/2026)
+
+AveyCole confirme les deux corrections dans test2 et demande leur promotion au principal. Release1.83 sans diagnostic ; Banque MIDI reste experimental globalement. Placement autonome sans repeat documente note116.
