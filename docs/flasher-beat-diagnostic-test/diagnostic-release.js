@@ -1,0 +1,1 @@
+window.MC_RELEASES=[{version:"Beat-diagnostic-test.1",date:"2026-10-17",changes:[{en:"CPU average/peak and CUT counter on the current main checklist. Experimental diagnostic only.",fr:"CPU moyenne/pic et compteur CUT sur checklist principale. Diagnostic experimental uniquement."}]}];
