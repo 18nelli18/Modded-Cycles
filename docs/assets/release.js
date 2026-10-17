@@ -3,6 +3,16 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+{
+  "version": "1.79",
+  "date": "2026-10-16",
+  "changes": [
+    {
+      "en": "Swarm LITE replaces the original seven-oscillator Swarm in the checklist with three oscillators: fundamental plus two detuned saws. Lower processing load; a leaner, potentially quieter sound. AveyCole reports significantly reduced load and clicks on hardware. Heavy arrangements may still click. Filter, beat repeat and governor behavior are unchanged.",
+      "fr": "Swarm LITE remplace Swarm sept oscillateurs dans la selection par trois oscillateurs : fondamental et deux dents de scie desaccordees. Charge reduite ; son plus fin, parfois moins fort. AveyCole signale une nette reduction de charge et des clicks sur machine. Les arrangements lourds peuvent encore cliquer. Filtre, repeat et regulateur inchanges."
+    }
+  ]
+},
 {"version": "1.78", "date": "2026-10-16", "changes": [{"en": "Filter and beat-repeat load repairs are hardware tested by AveyCole, including the reported multiple-Syn-Swarm setup. Main now uses exactly the firmware code from filter-load test 4: reduced filter work, lighter history recording and lighter active repeat, preserving the existing sound calculations and controls. MIDI OUT Bank stays optional and experimental.", "fr": "Corrections de charge filtre et beat repeat testees sur machine par AveyCole, dont la configuration avec plusieurs SY SWARM signalee. Principal avec code firmware identique au test filtre 4 : filtre allege, capture historique et repetition active allegees, calculs sonores et commandes conserves. Banque MIDI OUT facultative et experimentale."}]},
 {"version": "1.77", "date": "2026-10-16", "changes": [{"en": "Full feature builds now fit with MIDI OUT Bank unticked, retaining Sample Wizard, TINY, RETROSYN, ChordKeys and Control All Beat Repeat. Published at AveyCole’s request with the same packing as the test. MIDI OUT Bank is experimental while filter distortion under heavy load is investigated. Slight distortion can still occur without the bank; this release does not change filter DSP.", "fr": "Le build complet tient sans Banque MIDI OUT, avec Wizard, TINY, RETROSYN, ChordKeys et beat repeat collectif. Publication demandee par AveyCole, meme packing que le test. Banque MIDI OUT experimentale pendant l enquete filtre en forte charge. Une distorsion legere peut encore apparaitre sans banque ; DSP filtre inchange."}]},
 {"version": "1.76", "date": "2026-10-16", "changes": [{"en": "Sequence Genie timing restoration is hardware tested by AveyCole. Both audio A-side and MIDI B-side show Queue with Loop/Page instead of Sound 0/1. Loop generates at the selected track loop; Page at the next 16-step page. Includes the confirmed track 6 filter repair.", "fr": "Timing Sequence Genie retabli et teste sur machine par AveyCole. A audio et B MIDI affichent Queue avec Loop/Page au lieu de Sound 0/1. Loop genere a la boucle de piste choisie ; Page a la prochaine page de 16 pas. Correction filtre piste 6 confirmee conservee."}]},

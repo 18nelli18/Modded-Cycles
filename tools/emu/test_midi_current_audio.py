@@ -13,7 +13,7 @@ from test_seq_gen_menu import Rig,STACK,STOP
 from test_sdvintage import main_os_from_syx
 import build,mcengine as E,test_model_tg as Harness
 
-def boot(prefix):
+def boot(prefix,with_sram=False):
     prefix=pathlib.Path(prefix);ts=json.loads(prefix.with_suffix('.json').read_text())['tweaks']
     img=main_os_from_syx(str(prefix.with_suffix('.syx')))
     r=Rig(img,{'writes':[]},{'writes':[],'symbols':{}});u=r.u
@@ -27,7 +27,9 @@ def boot(prefix):
     u.emu_start(0x40000530,0x4000053a,count=200_000_000)
     assert u.reg_read(mk.UC_M68K_REG_PC)==0x4000053a
     ap=next(t['append'] for t in ts if t.get('append',{}).get('dest')=='0x46700000')
-    return bytes(u.mem_read(build.BASE,0x40200000-build.BASE)),bytes(u.mem_read(0x46700000,ap['size'])),ts
+    if with_sram:r.call(0x4007929c)
+    result=bytes(u.mem_read(build.BASE,0x40200000-build.BASE)),bytes(u.mem_read(0x46700000,ap['size'])),ts
+    return result+(bytes(u.mem_read(0x80000000,0x10000)),) if with_sram else result
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--case',required=True);p.add_argument('--baseline',required=True);a=p.parse_args()
