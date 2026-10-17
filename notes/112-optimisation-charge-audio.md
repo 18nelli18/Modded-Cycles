@@ -41,3 +41,22 @@ AveyCole precise que Banque MIDI etait installee mais B jamais ouvert pour le re
 [FAIT en emulation] Kick/Snare/Metal/Perc/Tone/SDVtg : 48 blocs off/arme/repeat (premiere iteration filtre/slides) et 16 blocs repeat avec le cache de fades final ; samples identiques. Sur cette derniere fixture : instructions filtre+repeat152 472 vers147 812 face au diagnostic2, soit environ3,1 % pour ces seuls modules. Trace du chemin couvert : aucun appel gflt dans la boucle voix,96 appels pendant les16 passes post de six pistes. Pas de double filtrage dans ce chemin observe ; les peripheriques, autres chemins UI et deadlines physiques restent hors preuve.
 
 Le candidat final conserve la precision filtre, la voix SD Vintage, les cinq voix stock, stereo Wizard, masques et fades. Slides : vraie extension et cache,512 cas aussi dans le profil banque sans beat repeat. Banque native : scheduler, clavier, locks/slides, Genie et LEDs passent. Cinq builds navigateur (avec/sans banque/Wizard, diagnostic decoche, banque sans repeat) et parites passent ; verification materielle requise.
+
+
+## Test 2 : chemins partages natifs et historique (17/10/2026)
+
+AveyCole rapporte79 % moyenne /96 % pic /CUT1 dans le test1, avec encore des ticks a l ajout de SDVtg en sixieme piste. Le seuil de100 % n est pas le seul seuil du regulateur, et le compteur observe aussi les suspensions deja en cours. Pas de modification des seuils ni des fades du regulateur dans ce test.
+
+Profilage du meme type de six voix sur4 blocs :188 505 instructions voix, dont36 915 en SRAM. Les zones les plus frequentes incluent les deux oscillateurs stock0x400a80e6 et0x400a8204. Candidat : leurs indices de tables sont simplifies sans changer interpolation/EMAC.
+
+-0x400a8204 : `(phase & 0xffffff) >>16` devient SWAP + masque255. Le moveq16 devenu inutile est retire ; d3 est recharge avant son prochain usage.
+-0x400a80e6 : `(phase >>14) &1020` devient SWAP + masque255, et les deux adresses indexees prennent l echelle4. Le moveq14 est retire. Le moveb15 suivant fixe les6 bits de compteur utilises avant que d6 entier soit recharge.
+
+Les corps restent a leurs adresses, la branche arriere est corrigee de2 octets ; remplissage NOP uniquement apres RTS. Deux regions et leurs instructions sont gardees par SHA et controles de chevauchement. Aucun corps officiel exporte dans les assets : transformation uniquement depuis le fichier utilisateur. `native_index.s` valide le fragment propre au build.
+
+[FAIT en emulation] Deux fonctions completes,512 etats extremes/aleatoires chacune : samples, etat persistant, MACSR et accumulateurs identiques ; registres callee-saved et pile preserves.32 instructions gagnees par appel de32 samples, soit environ3,4 % et2,4 % de ces fonctions, pas du CPU total. Boucle des17 machines comparee separement.
+
+Le repeat partage maintenant l addition `br_start+phase` et le masque circulaire une seule fois par sample au lieu de les refaire pour chaque voie. La sequence mixte passe de-15,0 a-16,7 % d instructions repeat face au principal ;110 frontieres mono/stereo restent bit exactes. Le plateau rapide et les conversions ne changent pas. Diagnostic conserve uniquement en test ; son, nombre de voix et timing inchanges en emulation.
+
+
+Validation finale test2 : aucune branche externe ni pointeur absolu vers les regions natives decalees dans l image officielle.17 machines comparees,6 pistes de chaque type,4 blocs chacune : sorties exactes. Le cas Kick/Snare/Metal/Perc/Tone/SDVtg repete/filtre passe16 blocs : instructions des seuls modules filtre+repeat152 472 vers146 013 face au diagnostic2, sans compter les economies des fonctions voix. Registres preserves verifies explicitement dans les1 024 appels natifs aleatoires. Cinq builds navigateur/signature et parites Python passent. Publication test uniquement, sans resultat physique affirme.
