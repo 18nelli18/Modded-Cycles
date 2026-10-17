@@ -6,7 +6,7 @@
  window.MC909CurrentReady=new Promise(resolve=>setTimeout(()=>{
   const change=(id,on)=>{const el=document.getElementById('feat-'+id);if(!el)throw Error('909 profile: missing '+id);el.checked=on;el.dispatchEvent(new Event('change',{bubbles:true}));};
   document.getElementById('select-all').click();document.getElementById('super-clear').click();for(const id of d.features)change(id,true);
-  const boot=d.startup;window.MC909CurrentLabels=['909 kit','Sample Wizard','ACID','SCRAMBLE','MIDI OUT Bank + project saving','MIDI Out/Thru','Sequence Genie','Latching mute','Second LFO','Control All Config','Control All Beat Repeat','909 startup'];
+  const boot=d.startup;window.MC909CurrentLabels=['909 kit','Sample Wizard','Slide trigs','Per-track filter','ACID','SCRAMBLE','MIDI OUT Bank + project saving','MIDI Out/Thru','Sequence Genie','Latching mute','Second LFO','Control All Config','Control All Beat Repeat','909 startup'];
   window.MCMidiBankCompose=(input,cycles,syntakt)=>{
    if(!populated)throw Error(document.documentElement.lang==='fr'?'Choisissez les quatre samples WAV.':'Choose all four WAV samples.');
    const source=input.find(t=>t.id===d.original_id);if(!source)throw Error('909 profile: current ACID/Wizard source missing');

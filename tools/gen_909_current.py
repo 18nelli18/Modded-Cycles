@@ -7,6 +7,10 @@ ROOT=pathlib.Path(__file__).resolve().parents[1];PAY=0x46700000
 SLOTS=[('BD909','bd',0),('SD909','sd',1),('HATS909','hh',4),('RC909','rc',2),('TOM909','tom',3),('CYM909','cy',5)]
 def generate():
  data=json.loads((ROOT/'build/909-current/scaffold.json').read_text());ts=data['tweaks'];combined_wizard=next(t for t in ts if t['id']=='sample-wizard');wizard=data['plainWizard'];base=next(t for t in ts if t.get('append',{}).get('dest')==hex(PAY));t=copy.deepcopy(base);ap=t['append'];gs.set_base(PAY)
+ for name in ('av_perf_on','av_ui_mods'):
+  for owner in (combined_wizard,wizard):
+   offset=int(owner['symbols'][name],16)-int(owner['append']['dest'],16)
+   assert int(owner['append']['parts'][0]['hex'][2*offset:2*offset+8],16)==1,(name,'support UI/performance requis')
  # Le catalogue partiel range ses hooks moteurs chez Wizard ; les separer
  # avant le composeur MIDI actuel, sans changer les octets finaux du profil.
  stock=g7.cycles_main(str(ROOT/'firmware/model-cycles_OS1.13.syx'));plain,_=build.apply_writes(stock,[wizard])
