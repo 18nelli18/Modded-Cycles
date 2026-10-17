@@ -4,6 +4,16 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.82",
+  "date": "2026-10-17",
+  "changes": [
+    {
+      "en": "Main flasher: hardware-tested quick save now closes the underlying mute view, so FUNCTION no longer remains lit in mute mode after leaving the save menu. Hold FUNCTION + SETTINGS as usual. Diagnostic tools remain test-only.",
+      "fr": "Flasheur principal : sauvegarde rapide testee sur machine ferme la vue mute ; FUNCTION ne reste plus allume en mode mute apres sortie du menu sauvegarde. Maintenir FUNCTION + SETTINGS comme auparavant. Diagnostics reserves aux tests."
+    }
+  ]
+},
+{
   "version": "1.81",
   "date": "2026-10-17",
   "changes": [

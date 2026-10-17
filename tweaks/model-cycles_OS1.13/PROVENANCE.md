@@ -175,3 +175,7 @@ Principal 1.78 (16/10/2026) : note 105, ladder haute precision et refonte de cha
 Swarm LITE principal 1.79 : recurrence et somme trois oscillateurs assemblees par le projet (MIT), code original sous tools/machines/syntakt_load. Extraction du DSP Elektron uniquement au build depuis le fichier utilisateur, six gardes SHA ; aucun octet OS exporte. Note 107. Promotion a la demande AveyCole, baisse de charge/clicks confirmee ; correction totale des clicks non revendiquee.
 
 909 modules actuels (note 108) : DMDaudio/model909 MIT, source existante tools/machines/model909_full ; nouvelle integration sur Sample Wizard/ACID main. Rendu 909 meme source, etats/pool reloges. Code des modules courants du projet et credits existants conserves. Aucune ROM, WAV utilisateur ou firmware distribue. Nouvelle combinaison experimentale.
+
+- Test MIDI performance (note 109) : wrappers et etats originaux AveyCole / Modded-Cycles ; utilise la file MIDI existante et le repeat audio MIT credite TinyGregAudio. Aucune routine firmware extraite publiee. Nouvelle combinaison experimentale, page isolee.
+
+Sauvegarde rapide, sortie mute (17/10/2026) : tweak59-quick-save-exit, note113, code A.V. propre, handler latching drumkilla et sauvegarde stock conserves. Wrapper test3 confirme par AveyCole, masque sprite partage sans changement visuel. Aucun diagnostic dans le principal.

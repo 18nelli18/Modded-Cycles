@@ -39,3 +39,9 @@ Preuve tools/emu/test_quick_save_latch.py :512cas gardent retour/etats SETTINGS/
 Le test3 remplace le correctif test2 ; le corps quick-save de50octets publie reste intact. Wrapper92octets charge par repeat, vtable gardee sur le vrai handler latching. Marche aussi sans Wizard si ce tweak est selectionne. Aucun patch en absence de latching-mute. Principal inchange. Le test MIDI-entry1 publie separement conserve sa base test2 ; son but est l entree MIDI, pas la resolution de ce bug save.
 
 Preuve tools/emu/test_quick_save_exit.py : bootstrap reel avec/sans Banque, ancien512cas sans close contre candidat512cas ; seuls long FUNC+SETTINGS non consommes appellent le vrai0x40076126 et marquent self+48. Evenement/retour/ABI conserves. Le retrait effectif de pile des vues et la LED restent a verifier sur appareil.
+
+## Test3 confirme et promotion principale (17/10/2026)
+
+[RETOUR APPAREIL] AveyCole : quick save test functional, push to main. Le wrapper92octets exact est promu sans diagnostic. Pour ne pas imposer repeat, il reside dans le masque48x22 libre0x40187528, dont le constructeur0x400ad742 est redirige vers la copie identique0x4014b364 (sprites.py). Tweak59-quick-save-exit requiert latching-mute ; aucun effet si ce mode est absent. Tous les octets old sont gardes, chevauchements et bootstrap verifies. Le close et la sauvegarde natifs restent identiques au test3.
+
+Le compositeur garde aussi le cas Wizard qui a deja efface ce masque libere : seul le contenu original ou entierement zero est accepte, avec dependance/ordre sur son fournisseur. Aucun contenu code occupe n est remplace. Six compositions principal passent (avec/sans Banque, filtre, Wizard et repeat) sans symboles/textes diagnostics ; bootstrap et512cas close passent avec/sans Banque. Masques source/partage192octets egaux.
