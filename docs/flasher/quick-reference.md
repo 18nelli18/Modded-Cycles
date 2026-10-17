@@ -1,16 +1,38 @@
-# New feature shortcut guide
+# Feature and shortcut overview
 
-A.V.’s Supermodel Edition · 16 October 2026
+A.V.’s Supermodel Edition · 17 October 2026
 
 Added gestures only; stock-style transport, copy, clear and paste actions are omitted.
 
 Install the relevant feature first. Hold the first button while pressing or turning the next control. TRIG means a step key; pad means a track pad; DATA means LEVEL/DATA. MACHINES is the physical button sometimes called PRESET in sampler instructions.
 
+## Current feature overview
+
+Main flasher 1.82 · updated 17 October 2026. Install only the features you need; the flasher checks compatible combinations. [Supermodel 909 Edition](../flasher-supermodel-909/) has its own selection and release.
+
+| Feature | Current behavior |
+|---|---|
+| Added machines | MACRO, ACID, WAVE, TINY, RETROSYN and the selectable Syntakt-derived engines. Syntakt engines require your own Syntakt OS file. |
+| Swarm LITE | Replaces the seven-oscillator Swarm with three oscillators: fundamental plus two detuned saws. Lower CPU load, with a leaner and possibly quieter sound; heavy arrangements can still click. |
+| Sample Wizard | Independent sampler with sample locks, playback modes, slicing and resampling. Sample Preview is hardware tested. Model-TG is retired from the main flasher. |
+| RETROSYN / ChordKeys | Six retro oscillator types; ChordKeys adds scale-based chord playing and voicings. Use the flasher's compatibility checks when combining machines. Sample Wizard is optional for RETROSYN. |
+| Per-track filter / Synth Attack | Added cutoff, resonance and attack controls; filter parameter locks and Control All. The released filter includes the repair for distortion after switching away from Sample Wizard. |
+| Control All Config / Beat Repeat | Choose included audio tracks; momentary repeat across sixteen divisions, with a brief division popup. |
+| MIDI Out Bank — experimental | Six parallel MIDI lanes with CC assignments/locks, slides, retrigger/arp, chance, two MIDI LFOs and project sidecar saving. Optional and installable without beat repeat. Beat repeat can also be installed without MIDI Out Bank. |
+| Sequence Genie / SCRAMBLE | Generate or mutate sequences, queue at Loop/Page boundaries, and randomize audio parameters or B-side CCs. |
+| Arpeggiator / Second LFO | Held-note arpeggiation and an additional modulation page. Main retains Oct 1–4; Oct 0 is currently test-only. |
+| Performance and editing | Latching mutes, step preview, slide trigs, scrolling names, three-line browser, numeric volume/pan, dim trigless steps and trig-removal grace. |
+| Routing / tempo / startup | Six-channel USB audio, combined MIDI OUT + THRU, tempo up to 546 BPM and a choice of startup animation. |
+
+**Saving:** hold **FUNC + SETTINGS** for the restored stock permanent-save action. The confirmed repair also prevents FUNC remaining latched when leaving the save menu. For MIDI data, stop playback before saving and wait for **MIDI SAVED**. Saved MIDI loads **only when entering B-side, with playback stopped**; sidecar files are outside Elektron SysEx backups.
+
+**Diagnostics:** CPU/peak/CUT displays belong to test builds only and are absent from main.
+
 ## Performance and sound
 
 | Feature | Gesture | Result |
 |---|---|---|
-| Control All Config | TRACK + TRIG 1–6 | Include or exclude tracks from Control All. The active track follows the native active-track exception. Choices reset on power-off. |
+| Control All Config | TRACK + TRIG 1–6 | Include or exclude tracks from Control All. The selected track can also be excluded. Choices reset on power-off. |
 | Control All Beat Repeat | Hold TRACK + RETRIG, then hold TRIG 1–16 | Repeat the included audio tracks. The newest held TRIG chooses the division and shows a brief popup. Release the division pad or either modifier to stop. Both modifiers must stay held. |
 | Latching mute | Hold TRACK, tap FUNC | Keep mute mode open. Tap FUNC to leave. |
 | Trig preview | While stopped or paused, hold TRIG + PAGE | Audition that step with its note and locks. |
@@ -32,13 +54,13 @@ Install the relevant feature first. Hold the first button while pressing or turn
 | 7 | 1/8 | 15 | 3/4 |
 | 8 | 1/6 | 16 | 1 bar |
 
-Long audio slices halve at slow tempos to fit the history buffer. The released audio repeat does not repeat outgoing MIDI notes; the MIDI test below adds B-note retriggering.
+Long audio slices halve at slow tempos to fit the history buffer. Beat repeat affects internal audio; it does not repeat outgoing MIDI notes.
 
 ## Sequence Genie, SCRAMBLE and modulation
 
 | Feature | Gesture | Result |
 |---|---|---|
-| Sequence Genie | SETTINGS + PAGE | Open the generator for the selected audio track or B MIDI lane. DATA selects; click, turn, click to edit. Queue chooses Loop or Page boundaries. |
+| Sequence Genie | SETTINGS + PAGE | Open the generator for the selected audio track or B MIDI lane. DATA selects; click, turn, click to edit. Generate is first; Queue is second. Loop waits for the selected track’s next loop, Page for the next 16-step page. |
 | A-side SCRAMBLE | SETTINGS + TRACK | Randomize four synthesis controls. Sampler tracks are excluded. |
 | A-side step SCRAMBLE | Hold TRIG(s), then SETTINGS + TRACK | Toggle fresh randomized values on those steps each pass, retaining the base sound. |
 | B-side SCRAMBLE | SETTINGS + TRACK | Randomize the selected lane’s assigned MIDI CC values. |
@@ -76,11 +98,14 @@ Long audio slices halve at slow tempos to fit the history buffer. The released a
 
 Saved MIDI loads only when entering B-side while playback is stopped. Stop before Save Project and wait for MIDI SAVED. Sidecar MIDI files are outside Elektron SysEx backups.
 
-## Separate MIDI performance test
+## Current combined test — not released in main
 
-These two additions are experimental and available only on the [MIDI performance test page](../flasher-midi-performance-test/?v=2026-10-16-midi-performance-test-1), currently using the fixed six-voice 909 profile and four local WAVs.
+[Open the Octave 0 + MIDI B-side cursor test](../flasher-arp-zero-test/?v=2026-10-17-arp-zero-test-1).
 
-| Feature | Gesture | Result |
-|---|---|---|
-| MIDI beat repeat | Hold TRACK + RETRIG, then hold a division TRIG | Retrigger each included B lane’s latest sequenced note, using its current MIDI channel and port. Release stops the repeated notes. This repeats notes rather than capturing a MIDI phrase; native A-side MIDI output is outside this test. |
-| B-side Control All filter: audio + MIDI | In B-side, hold TRACK + MACHINES and turn SWEEP / CONTOUR | Update included internal audio filters and send CC74 / CC71 to the configured B instruments. MIDI-muted lanes receive no CC; their internal audio filters still change. |
+| Change | What to check |
+|---|---|
+| Octave 0 on A and B | FUNC + RETRIG → Oct. 0 cycles only held notes; 1 adds one octave, 2 adds two, 3 adds three. Existing saved settings keep their sound; only the displayed numbering changes. |
+| B-side first entry / cursor | Open B-side during playback; verify MIDI starts without exiting/re-entering and that REC shows one cursor. Each lane retains its own length and speed. |
+| Test setup | Keep Control All Beat Repeat selected when installing MIDI Out Bank in this combined test. That requirement does not apply to main. CPU/peak/CUT diagnostics remain available in the test. |
+
+These changes await hardware verification. Saved MIDI loading still requires stopped playback. MIDI beat repeat and MIDI filter work were canceled and are not part of this test.
