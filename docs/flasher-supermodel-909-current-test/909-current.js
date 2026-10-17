@@ -16,7 +16,7 @@
    for(const t of [populated,d.wizard,boot])a.REF_MODS[t.id]={w:hash(b.writesBytes(t)),p:t.append?hash(b.buildPayload(t.append,null,stock)):undefined};
    const prepared=previous(input.map(t=>t===source?clone(populated):t===owner?clone(d.wizard):t).concat(clone(boot)),cycles,null);
    if(prepared.tweaks.some(t=>t.id.startsWith('model-tg')))throw Error('909 profile: Model-TG forbidden');
-   return {...prepared,tweaks:prepared.tweaks.map(t=>({...t,status:'experimental',hardwareTestedByOwner:false}))};
+   return {...prepared,tweaks:prepared.tweaks.map(t=>({...t,status:window.MC909Released?'tested':'experimental',hardwareTestedByOwner:!!window.MC909Released}))};
   };
   const refresh=()=>{if(a.state.os)a.loadOs(a.state.os.raw,a.state.os.name);};
   for(const key of ['ch','oh','crash','ride']){

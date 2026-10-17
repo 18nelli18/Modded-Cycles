@@ -173,3 +173,5 @@ Optimisation propre de `precision.s` (note 102), `tools/machines/track_filter/lo
 Principal 1.78 (16/10/2026) : note 105, ladder haute precision et refonte de charge beat repeat propres au projet (algorithme repeat TinyGregAudio MIT deja credite). Code identique au test 4 confirme par AveyCole ; `gen_filter_load_main.py`. Aucun octet OS ajoute aux sources.
 
 Swarm LITE principal 1.79 : recurrence et somme trois oscillateurs assemblees par le projet (MIT), code original sous tools/machines/syntakt_load. Extraction du DSP Elektron uniquement au build depuis le fichier utilisateur, six gardes SHA ; aucun octet OS exporte. Note 107. Promotion a la demande AveyCole, baisse de charge/clicks confirmee ; correction totale des clicks non revendiquee.
+
+909 modules actuels (note 108) : DMDaudio/model909 MIT, source existante tools/machines/model909_full ; nouvelle integration sur Sample Wizard/ACID main. Rendu 909 meme source, etats/pool reloges. Code des modules courants du projet et credits existants conserves. Aucune ROM, WAV utilisateur ou firmware distribue. Nouvelle combinaison experimentale.

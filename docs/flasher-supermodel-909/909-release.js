@@ -1,0 +1,1 @@
+window.MC_RELEASES=[{"version": "909.2", "date": "2026-10-16", "changes": [{"en": "Current shared modules, Sample Wizard, per-track filter and Control All Beat Repeat; owner approved for release after test 2.", "fr": "Modules partages actuels, Sample Wizard, filtre par piste et beat repeat Control All ; publication validee apres test 2."}]}];

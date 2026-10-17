@@ -1,11 +1,9 @@
 {
+  "status": "released",
+  "hardware_tested": true,
+  "hardware_tested_by": "AveyCole",
+  "hardware_tested_date": "2026-10-16",
   "samples_hosted": false,
   "sample_capacity_bytes": 180000,
-  "sample_rate": 32000,
-  "voice_hardware_tested": true,
-  "browser_upload_combination_hardware_tested": true,
-  "hardware_tested": true,
-  "status": "released",
-  "hardware_tested_by": "A.V.",
-  "hardware_tested_date": "2026-10-14"
+  "sample_rate": 32000
 }

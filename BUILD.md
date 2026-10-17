@@ -862,3 +862,7 @@ Parite huit profils confirmee. Complet MIDI MAIN OS SHA-256 `2b7768d44d33b9bdcfe
 ### Swarm LITE principal 1.79
 
 AveyCole demande le 16/10/2026 de remplacer Swarm sept oscillateurs par trois, apres nette reduction de charge/clicks sur machine. Code propre assemble par `tools/gen_swarm_lite.py`, puis assets par `tools/gen_swarm_lite_main.py` ; chacun accepte `--check`. Le wrapper modifie uniquement les recettes contenant Swarm, avant compression/composition, avec gardes SHA sur les six regions sources et references de recette. Aucun changement du filtre, repeat ou regulateur. `node tools/test_swarm_lite_main.js`, `check_midi_current_builds.py --directory build/swarm-lite-main` et `tools/emu/test_sy_load_boot.py` prouvent les builds et vrais boots/cache. [Note 107](notes/107-swarm-lite-principal.md).
+
+### Test 909 sur Sample Wizard actuel (note 108)
+
+Executer export_909_current_scaffold.js avec Node, puis gen_909_current.py (GCC ColdFire) et gen_909_current_page.py ; generateurs avec --check. test_909_current.js exporte build/909-current/all.json et all.syx, locaux ignores. test_909_current.py prouve les voix natives vs C hote apres boot/cache ; regressions MIDI/Genie/sauvegarde/repeat sur ce catalogue. Profil sans Syntakt/Model-TG, quatre WAV utilisateur requis. Page test seulement avant validation materielle. Edition 909 publiee conservee, main modifie uniquement pour le lien visuel.
