@@ -187,3 +187,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [109 — Repeat MIDI et filtre Control All depuis B](109-midi-performance.md) : dernieres notes B, Off reserves, filtre audio + CC74/71 ; test experimental.
 
 - [113 — Sauvegarde rapide stock](113-sauvegarde-rapide-stock.md) : test separe de FUNCTION+SETTINGS maintenu ; natif restaure, permanence hardware a confirmer.
+
+- [114 — Premiere ouverture MIDI pendant lecture](114-premiere-ouverture-midi.md) : gate de contexte paresseux, test separe, diagnostics conserves.
