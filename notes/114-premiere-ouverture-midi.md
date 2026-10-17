@@ -17,3 +17,11 @@ Le compositeur recalcule compression/references et source du loader repeat. Page
 ## Preuves
 
 Generator tools/gen_midi_entry_test.py --check, navigateur tools/test_midi_entry_flasher.js (toutes machines avec Banque, Banque seule sans Wizard, et sans Banque). Vrai boot navigateur puis tools/emu/test_midi_entry.py : reference bloquee sur17pas ; candidat102 note-on six canaux, curseur0..15 puis0, Stop/Start/Pause/Continue, pattern intact et zero allocation/sortie physique depuis IRQ. Horloge et files natives executees. LEDs, port physique et ouverture via boutons restent a verifier sur appareil.
+
+## Acces MIDI navigateur, test 2 (17/10/2026)
+
+AveyCole : le navigateur semble autorise mais la page reste en attente. Code requestMIDIAccess identique au principal ; le bouton est fonctionnel avec une reponse simulee. [FAIT] La Promise navigateur pouvait rester pendante sans borne, et initMidi refusait une nouvelle tentative tant que midiState=asking. Cause navigateur/pilote concrete non determinee.
+
+Le test2 web ajoute une borne20s, distingue stalled de denied, explique permission ou initialisation en cours et autorise une nouvelle tentative par clic explicite. Le resultat tardif de la requete expiree est ignore, sans fermer de ports qui pourraient etre partages avec une nouvelle requete. Aucun contournement de permission, aucune requete automatique, aucun changement firmware, principal inchange. EN/FR.
+
+Preuve tools/test_midi_entry_access.js : reponse acceptee, permission refusee, Promise pendante puis timeout/retry avec succes, ancien resultat tardif ignore et deux langues. Tester les ports physiques reste necessaire : le timeout ne repare pas un pilote ou le service MIDI du navigateur.

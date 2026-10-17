@@ -1764,7 +1764,8 @@ const T = {
     done_samples: "It restarts as a <b>Model:Samples</b>: Elektron Transfer and your computer see a “Model:Samples”. Load your samples with Transfer.",
     pick_one: "Select at least one mod, or switch to “Official firmware”.",
     midi_asking: "Asking for MIDI access…",
-    midi_wait: "Waiting for your permission: Chrome shows a prompt near the address bar. Click “Allow”. If you blocked it before, click the icon left of the address and allow MIDI.",
+    midi_wait: "Waiting for browser MIDI permission or device initialization. Allow the browser prompt if shown. If already allowed, the MIDI device service may still be initializing; a retry message appears after 20 seconds.",
+    midi_stalled: "The browser has not finished MIDI permission or device initialization. If you already allowed it, close other flashers and MIDI apps, then click Allow MIDI access to retry. If it still stalls, reopen this page in Chrome or Edge. This page cannot override browser permission or a stalled MIDI driver.",
     midi_denied: "MIDI access was refused. Click the icon left of the address, allow MIDI, reload the page and try again.",
     midi_none: "No MIDI output found. Connect the {dev} over USB, turn it on, then click Refresh.",
     midi_pick_dev: "The {dev} USB port is selected.",
@@ -2044,6 +2045,7 @@ const T = {
     pick_one: "Cochez au moins un mod, ou passez sur « Firmware officiel ».",
     midi_asking: "Demande d'accès MIDI…",
     midi_wait: "En attente de votre autorisation : Chrome affiche une demande près de la barre d'adresse. Cliquez sur « Autoriser ». Si vous l'avez bloquée, cliquez sur l'icône à gauche de l'adresse et autorisez le MIDI.",
+    midi_stalled: "Le navigateur n a pas termine l autorisation ou l initialisation MIDI. Si vous avez deja autorise, fermez les autres flasheurs et applications MIDI, puis cliquez Autoriser pour reessayer. Sinon, rouvrez cette page dans Chrome ou Edge. La page ne peut pas forcer une permission ou un pilote MIDI bloque.",
     midi_denied: "Accès MIDI refusé. Cliquez sur l'icône à gauche de l'adresse, autorisez le MIDI, rechargez la page et réessayez.",
     midi_none: "Aucune sortie MIDI. Branchez le {dev} en USB, allumez-le, puis cliquez sur Rafraîchir.",
     midi_pick_dev: "Le port USB du {dev} est sélectionné.",
@@ -3322,6 +3324,21 @@ function checkCompat() {
   return !msg;
 }
 
+function midiAccessWithTimeout() {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      const error = new Error('Browser MIDI initialization did not finish. Close other flashers or MIDI apps, retry, or reopen this page in Chrome or Edge.');
+      error.name = 'TimeoutError'; reject(error);
+    }, 20000);
+    try {
+      Promise.resolve(navigator.requestMIDIAccess({ sysex: true })).then(
+        access => { clearTimeout(timeout); resolve(access); },
+        error => { clearTimeout(timeout); reject(error); }
+      );
+    } catch (error) { clearTimeout(timeout); reject(error); }
+  });
+}
+
 async function initMidi(silent) {
   if (!checkCompat()) { render(); return; }
   if (st.midiState === "asking") return;
@@ -3331,10 +3348,10 @@ async function initMidi(silent) {
   let done = false;
   const hint = setTimeout(() => { if (!done) { st.midiHint = true; renderMidi(); } }, 2500);
   try {
-    st.midi = await navigator.requestMIDIAccess({ sysex: true });
+    st.midi = await midiAccessWithTimeout();
   } catch (e) {
     done = true; clearTimeout(hint); st.midiHint = false;
-    st.midiState = "denied";
+    st.midiState = e && e.name === "TimeoutError" ? "stalled" : "denied";
     log("MIDI access failed: " + (e && e.message ? e.message : e), "is-bad");
     render();
     return;
@@ -3488,6 +3505,7 @@ function renderMidi() {
   $("refresh").hidden = !ready;
   const rows = [];
   if (st.midiState === "asking") rows.push(["is-busy", esc(t(st.midiHint ? "midi_wait" : "midi_asking"))]);
+  if (st.midiState === "stalled") rows.push(["is-bad", esc(t("midi_stalled"))]);
   if (st.midiState === "denied") rows.push(["is-bad", esc(t("midi_denied"))]);
   if (ready) {
     const outs = outputs();
