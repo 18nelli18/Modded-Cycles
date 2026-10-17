@@ -127,19 +127,29 @@ precise_filter:
     bne .Lsample
     bra .Lfinish
     | Chemin sans feedback choisi une seule fois par bloc ; memes arrondis.
-.macro dry_pole reg
+.macro dry_pole reg,prefetch=0
     subl \reg,%d6
     macl %d0,%d6,%acc0
+    | Charger/decaler le prochain sample pendant la latence EMAC.
+    .if \prefetch == 1
+    movel %a1@(4),%d7
+    .elseif \prefetch == 2
+    asrl #4,%d7
+    .endif
     movclr.l %acc0,%d6
     addl %d6,\reg
     movel \reg,%d6
 .endm
-.macro dry_frame
+.macro dry_frame prefetch=0,queued=0
+    .if \queued
+    movel %d7,%d6
+    .else
     movel %a1@,%d6
     asrl #4,%d6
+    .endif
 
-    dry_pole %d2
-    dry_pole %d3
+    dry_pole %d2,\prefetch
+    dry_pole %d3,(\prefetch*2)
     dry_pole %d4
     dry_pole %d5
     cmpil #134213632,%d6
@@ -154,8 +164,8 @@ precise_filter:
     movel %d6,%a1@+
 .endm
 .Ldry_sample:
-    dry_frame
-    dry_frame
+    dry_frame 1,0
+    dry_frame 0,1
     cmpal %a2,%a1
     bne .Ldry_sample
 .Lfinish:

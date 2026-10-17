@@ -60,3 +60,17 @@ Le repeat partage maintenant l addition `br_start+phase` et le masque circulaire
 
 
 Validation finale test2 : aucune branche externe ni pointeur absolu vers les regions natives decalees dans l image officielle.17 machines comparees,6 pistes de chaque type,4 blocs chacune : sorties exactes. Le cas Kick/Snare/Metal/Perc/Tone/SDVtg repete/filtre passe16 blocs : instructions des seuls modules filtre+repeat152 472 vers146 013 face au diagnostic2, sans compter les economies des fonctions voix. Registres preserves verifies explicitement dans les1 024 appels natifs aleatoires. Cinq builds navigateur/signature et parites Python passent. Publication test uniquement, sans resultat physique affirme.
+
+
+## Test 3 : isoler la regression machine (17/10/2026)
+
+AveyCole rapporte80 % moyenne /101 % pic /CUT3 pour le test2, contre79/96/CUT1 au test1. Regression observee ; les gains en instructions ne garantissent pas un gain physique. Test3 retire entierement le tweak natif oscillateurs du compositeur. Il garde la base filtre/slides/fades du test1 et uniquement le nouvel index historique repeat du test2, pour isoler les deux variables. Aucune conclusion causale avant comparaison machine. Les recettes et preuves natives restent disponibles pour recherche, mais aucune ecriture native correspondante n est appliquee. Diagnostic uniquement en test ; principal inchange.
+
+
+## Test 4 : ordonnancement EMAC du filtre (17/10/2026)
+
+Test3 a ete prepare dans la branche puis ouvert localement dans DigiEmu ; pas publie sur Pages. Le test4 repart du repeat test1 : retrait des indices natifs et de l index historique partage du test2. Seul nouveau changement DSP face au test1 : preparer le deuxieme sample de la paire pendant deux latences MAC du premier sample. D7 est temporaire, deja sauve/restaure par le contrat. Aucun acces hors des32 samples : chaque premiere position paire precharge sa voisine.
+
+Noyau614o sur678. 2 048 blocs extremes/aleatoires : samples, etats et EMAC identiques au test3 ; resonance inchangee. Compteur instructions sans resonance +1,6 %, mais estimation statique+stalls des tables DigiEmu -6,0 % (1 361 458 vers1 279 538), resonance0,0 %. Cette estimation exclut branches dynamiques, caches/bus et deadlines ; ne pas annoncer6 % de CPU global.
+
+DigiEmu0.4.1 officiel : stock run passe, marge estimee39,6 % ; verification candidate standard echoue a reconnaitre le display detourne par Chord Keys. Adaptateur local uniquement, garde du detour, corps et trampoline, restaure la resolution panel_diff/fb_front/fb_back sans toucher le firmware ; le vrai UI candidat atteint120 frames stables et ouvre le panneau interactif. Le check standard signale aussi deux MOVEC dans le payload appendu hors de la zone qu il sait intercepter : limite de compatibilite, pas preuve d erreur hardware. Aucun PASS global ou timing six machines revendique pour ce run. GUI test3 ouverte ; firmware test4 reste a verifier sur appareil.

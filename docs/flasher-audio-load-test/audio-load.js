@@ -11,26 +11,9 @@
   const i=2*(f.at-n(p.dest));if(hash(b.fromHex(p.hex.slice(i,i+2*f.size)))!==f.old_sha256)throw Error('Audio load: current filter guard');p.hex=p.hex.slice(0,i)+f.hex+p.hex.slice(i+2*f.size);delete result.append.compressed_hex;
   a.REF_MODS[result.id]={w:hash(b.writesBytes(result)),p:hash(b.buildPayload(result.append,null,null))};result.status='experimental';result.hardwareTestedByOwner=false;return result;
  });
- const addNative=(input,stock)=>{
-  const cfg=d.native,lo=cfg.at-0x40000400,old=stock.slice(lo,cfg.end-0x40000400);
-  if(hash(old)!==cfg.old_sha256)throw Error('Audio load: native oscillator guard');
-  for(const t of input.tweaks)for(const w of t.writes)if(w.off<lo+old.length&&lo<w.off+w.new.length/2)throw Error('Audio load: native oscillator overlap');
-  const head=b.fromHex(cfg.index_hex),raw=new Uint8Array(old.length);raw.set(head);raw.set(old.slice(12),head.length);raw.set(b.fromHex('4e71'),raw.length-2);
-  const view=new DataView(raw.buffer),branch=cfg.branch-cfg.at-2;if(view.getUint16(branch,false)!==0x6600)throw Error('Audio load: native oscillator branch guard');view.setInt16(branch+2,view.getInt16(branch+2,false)+2,false);
-  const pair=d.native_pair,plo=pair.at-0x40000400,pold=stock.slice(plo,pair.end-0x40000400);
-  if(hash(pold)!==pair.old_sha256)throw Error('Audio load: native pair guard');
-  for(const t of input.tweaks)for(const w of t.writes)if(w.off<plo+pold.length&&plo<w.off+w.new.length/2)throw Error('Audio load: native pair overlap');
-  const praw=new Uint8Array(pold.length);praw.set(pold.slice(2));praw.set(b.fromHex('4e71'),praw.length-2);
-  for(const [at,was,now] of [[0x400a817c,'ecac','4844'],[0x400a8184,'0284000003fc','0284000000ff'],[0x400a818c,'28744800','28744c00'],[0x400a819c,'28344804','28344c04']]){
-   const off=at-pair.at-2;if(b.hex(praw.slice(off,off+was.length/2))!==was)throw Error('Audio load: native pair instruction guard');praw.set(b.fromHex(now),off);
-  }
-  const pv=new DataView(praw.buffer),pb=pair.branch-pair.at-2;if(pv.getUint16(pb,false)!==0x6600)throw Error('Audio load: native pair branch guard');pv.setInt16(pb+2,pv.getInt16(pb+2,false)+2,false);
-  const t={id:'native-oscillator-index',order:122,status:'experimental',hardwareTestedByOwner:false,writes:[{off:lo,old:b.hex(old),new:b.hex(raw)},{off:plo,old:b.hex(pold),new:b.hex(praw)}],requires:[],conflicts:[]};
-  const refs=Object.create(input.refMods);refs[t.id]={w:hash(b.writesBytes(t))};return {...input,tweaks:[...input.tweaks,t],refMods:refs};
- };
  const previous=window.MCMidiBankCompose;
  window.MCMidiBankCompose=(...args)=>{
-  const prior=previous(...args),c=b.parseContainer(b.unwrap(args[1]).stream),section=c.sections.find(s=>s.id===3),stock=b.aplibDepack(c.blob.subarray(section.off,section.off+section.size)).data;if(!prior.tweaks.some(t=>t.id==='midi-out-bank'))return addNative(prior,stock);const result=clone(prior),bank=result.tweaks.find(t=>t.id==='midi-out-bank');
+  const prior=previous(...args),c=b.parseContainer(b.unwrap(args[1]).stream),section=c.sections.find(s=>s.id===3),stock=b.aplibDepack(c.blob.subarray(section.off,section.off+section.size)).data;if(!prior.tweaks.some(t=>t.id==='midi-out-bank'))return prior;const result=clone(prior),bank=result.tweaks.find(t=>t.id==='midi-out-bank');
   const repeat=result.tweaks.find(t=>t.id==='control-all-beat-repeat'),owner=repeat||bank,ap=owner.append,origin=(n(ap.dest)+ap.size+15)&~15,sy=d.slides.symbols,raw=b.fromHex(d.slides.hex),v=new DataView(raw.buffer),bs=bank.symbols;
   for(const off of d.slides.reloc)v.setUint32(off,v.getUint32(off,false)+origin,false);
   const at=n(bs.mlkc_slide_tick),p=bank.append.parts.find(p=>p.hex&&n(p.dest)<=at&&at+8<=n(p.dest)+p.hex.length/2);if(!p)throw Error('Audio load: slide body missing');const i=2*(at-n(p.dest)),old=p.hex.slice(i,i+16);if(old!=='4fefffd448d73cfc')throw Error('Audio load: slide prologue guard');
@@ -41,7 +24,7 @@
   if(repeat){const source=n(bank.append.at)+b.buildPayload(bank.append,args[2],stock).length;ap.at='0x'+h(source);const loader=repeat.writes.find(w=>0x40000400+w.off===window.MCBeatRepeat.boot.at);if(!loader)throw Error('Audio load: repeat boot missing');const boot=b.fromHex(loader.new),bv=new DataView(boot.buffer),bootSy=window.MCBeatRepeat.boot.symbols;bv.setUint32(bootSy.br_boot_source,source,false);bv.setUint32(bootSy.br_boot_size,ap.size,false);loader.new=b.hex(boot);}
   owner.symbols={...owner.symbols,...Object.fromEntries(Object.entries(sy).filter(([key])=>key.startsWith('ao_')).map(([key,value])=>[key,'0x'+h(origin+value)]))};
   for(const t of new Set([bank,owner])){delete t.append.compressed_hex;result.refMods[t.id]={w:hash(b.writesBytes(t)),p:hash(b.buildPayload(t.append,args[2],stock))};t.status='experimental';t.hardwareTestedByOwner=false;}
-  return addNative(result,stock);
+  return result;
  };
  });
 })();
