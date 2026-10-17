@@ -184,8 +184,6 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 
 | [108 — 909 modules actuels](108-909-modules-actuels.md) | Test 909 : Sample Wizard remplace Model-TG ; modules MIDI/Genie actuels et beat repeat, quatre WAV locaux. Nouvelle combinaison experimentale. Lien 909 prominent dans main. |
 
-- [110 — Guide des raccourcis](110-guide-raccourcis.md) : nouveaux gestes EN/FR, impression et Markdown ; actions stock exclues.
+- [109 — Repeat MIDI et filtre Control All depuis B](109-midi-performance.md) : dernieres notes B, Off reserves, filtre audio + CC74/71 ; test experimental.
 
-- [111 — Diagnostic repeat principal](111-diagnostic-repeat-principal.md) : CPU moyenne/pic et CUT sur copie main ; diagnostic experimental, DSP principal conserve.
-
-- [112 — Optimisation charge audio](112-optimisation-charge-audio.md) : fondus repeat partages, filtre exact allege, slides MIDI vides ; copie test avec CPU/CUT.
+- [113 — Sauvegarde rapide stock](113-sauvegarde-rapide-stock.md) : test separe de FUNCTION+SETTINGS maintenu ; natif restaure, permanence hardware a confirmer.
