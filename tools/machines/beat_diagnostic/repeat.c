@@ -165,8 +165,27 @@ static void render_mode(i32 *channel,i16 *history,u32 now,const struct br_frame 
  else if(mode==2)render_dry(channel,history,now,frames);
  else render_channel(channel,history,now,frames,mix);
 }
+/* Plateau plein : phase et bornes circulaires sont deja communes au bloc.
+ * Conserver les bits bas du live ; conversion/arrondi strictement identiques.
+ */
+static void render_plain(i32 *channel,i16 *write,i16 *read,u32 record){
+ if(record)for(u32 i=0;i<32;i++){
+  i32 live=channel[i],q=live>>15;
+  if(q>32767)q=32767;if(q< -32767)q=-32767;write[i]=(i16)q;
+  i32 residual=(i32)(((u32)live&511u)^256u)-256;
+  channel[i]=(i32)read[i]*32768+residual;
+ }
+ else for(u32 i=0;i<32;i++){
+  i32 live=channel[i],residual=(i32)(((u32)live&511u)^256u)-256;
+  channel[i]=(i32)read[i]*32768+residual;
+ }
+}
 static void render_tracks(u32 now,const struct br_frame *frames){
  u32 mix[32];
+ u32 write=now&MASK,read=(br_start+frames[0].phase)&MASK;
+ u32 plain=br_length>=32&&frames[0].envelope==65536&&frames[31].envelope==65536
+  &&frames[31].phase==frames[0].phase+31&&frames[0].record==frames[31].record
+  &&write<=N-32&&read<=N-32;
  for(u32 lane=0;lane<6;lane++){
   u32 local=br_lane_wet[lane],excluded=br_excluded&(1u<<lane);
   u32 mode=local==0&&(excluded||(frames[0].wet==0&&frames[31].wet==0))?2:
@@ -178,9 +197,14 @@ static void render_tracks(u32 now,const struct br_frame *frames){
    mix[i]=local;
   }
   br_lane_wet[lane]=local;
-  render_mode((i32 *)(0x80001858+128*lane),br_history+N*lane,now,frames,mix,mode);
-  if(br_side&&((u32 *)br_side_on)[lane])
-   render_mode((i32 *)(br_side+128*lane),br_history+N*(lane+6),now,frames,mix,mode);
+  i32 *channel=(i32 *)(0x80001858+128*lane);i16 *history=br_history+N*lane;
+  if(mode==1&&plain)render_plain(channel,history+write,history+read,frames[0].record);
+  else if(!(mode==2&&plain&&!frames[0].record))render_mode(channel,history,now,frames,mix,mode);
+  if(br_side&&((u32 *)br_side_on)[lane]){
+   channel=(i32 *)(br_side+128*lane);history=br_history+N*(lane+6);
+   if(mode==1&&plain)render_plain(channel,history+write,history+read,frames[0].record);
+   else if(!(mode==2&&plain&&!frames[0].record))render_mode(channel,history,now,frames,mix,mode);
+  }
  }
 }
 /* Une fois par bloc, avant le gain natif. Aucun effet sur les retours FX,
@@ -210,6 +234,35 @@ static void record_block(u32 now){
   }
  }
 }
+/* Eviter la trajectoire intermediaire quand toutes les voies sont deja
+ * etablies et que le bloc ne traverse ni enveloppe ni bord circulaire.
+ * Aucune ecriture avant validation complete des six fades.
+ */
+static u32 render_plain_block(u32 now,i32 target){
+ if(!br_valid||target<0||target!=br_active||br_wet!=65536)return 0;
+ u32 length=br_length,elapsed=now-br_start,phase=elapsed%length;
+ u32 ramp=length/4;if(ramp>32)ramp=32;if(!ramp)ramp=1;
+ u32 scale=65536/ramp,edge=(65536+scale-1)/scale;
+ if(phase<edge||length-phase<31+edge)return 0;
+ u32 record=elapsed<length||((elapsed&MASK)>=length);
+ u32 last=elapsed+31,last_record=last<length||((last&MASK)>=length);
+ u32 write=now&MASK,read=(br_start+phase)&MASK;
+ if(record!=last_record||write>N-32||read>N-32)return 0;
+ for(u32 lane=0;lane<6;lane++)
+  if(br_lane_wet[lane]!=(br_excluded&(1u<<lane)?0u:65536u))return 0;
+ for(u32 track=0;track<(br_side?12u:6u);track++){
+  u32 lane=track<6?track:track-6;
+  if(track>=6&&!((u32 *)br_side_on)[lane])continue;
+  i32 *channel=(i32 *)((track<6?0x80001858:br_side)+128*lane);
+  i16 *history=br_history+N*track;
+  if(!(br_excluded&(1u<<lane)))render_plain(channel,history+write,history+read,record);
+  else if(record)for(u32 i=0;i<32;i++){
+   i32 q=channel[i]>>15;if(q>32767)q=32767;if(q< -32767)q=-32767;
+   history[write+i]=(i16)q;
+  }
+ }
+ return 1;
+}
 static void render(u32 now,i32 target){
  if(br_valid&&target!=br_active&&br_wet)target=-1;
  else if(!br_valid||target!=br_active)install(target,now);
@@ -218,6 +271,7 @@ static void render(u32 now,i32 target){
   u32 lanes=0;for(u32 i=0;i<6;i++)lanes|=br_lane_wet[i];
   if(!lanes){record_block(now);return;}
  }
+ if(render_plain_block(now,target))return;
  u32 wet=br_wet,length=br_length,elapsed=now-br_start;
  u32 phase=br_valid?elapsed%length:0,ramp=length/4;if(ramp>32)ramp=32;if(!ramp)ramp=1;
  u32 scale=65536/ramp;struct br_frame frames[32];
