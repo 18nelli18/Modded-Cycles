@@ -1,11 +1,29 @@
-<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>New feature shortcuts — Supermodel</title><style>body{margin:0;background:#f4f2eb;color:#20241f;font:16px/1.6 system-ui,sans-serif}main,nav{max-width:1100px;margin:auto;padding:24px}nav{display:flex;gap:16px;align-items:center}button,a{color:inherit}button{padding:8px 16px;border:1px solid #777;border-radius:5px;background:white;cursor:pointer}h1{font-size:clamp(30px,5vw,52px);line-height:1.1}h2{margin-top:48px;border-bottom:2px solid #39493b;padding-bottom:10px}h3{margin-top:30px}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:15px}th,td{text-align:left;border-bottom:1px solid #bbb;padding:12px;vertical-align:top}th{background:#dfe7dc}td:nth-child(2){font-weight:650;min-width:190px}html[lang=en] [data-l=fr],html[lang=fr] [data-l=en]{display:none}@media print{nav{display:none}body{background:white;font-size:10pt}main{padding:0}h2{break-after:avoid;margin-top:20px}tr{break-inside:avoid}table{font-size:9pt}a{color:inherit;text-decoration:none}}</style><nav><a href="./">Flasher</a><button onclick="document.documentElement.lang='en'">English</button><button onclick="document.documentElement.lang='fr'">Francais</button><button onclick="window.print()">Print / Imprimer</button></nav><main><article data-l="en"><h1>New feature shortcut guide</h1>
-<p>A.V.’s Supermodel Edition · 16 October 2026</p>
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Feature and shortcut overview — Supermodel</title><style>body{margin:0;background:#f4f2eb;color:#20241f;font:16px/1.6 system-ui,sans-serif}main,nav{max-width:1100px;margin:auto;padding:24px}nav{display:flex;gap:16px;align-items:center}button,a{color:inherit}button{padding:8px 16px;border:1px solid #777;border-radius:5px;background:white;cursor:pointer}h1{font-size:clamp(30px,5vw,52px);line-height:1.1}h2{margin-top:48px;border-bottom:2px solid #39493b;padding-bottom:10px}h3{margin-top:30px}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:15px}th,td{text-align:left;border-bottom:1px solid #bbb;padding:12px;vertical-align:top}th{background:#dfe7dc}td:nth-child(2){font-weight:650;min-width:190px}html[lang=en] [data-l=fr],html[lang=fr] [data-l=en]{display:none}@media print{nav{display:none}body{background:white;font-size:10pt}main{padding:0}h2{break-after:avoid;margin-top:20px}tr{break-inside:avoid}table{font-size:9pt}a{color:inherit;text-decoration:none}}</style><nav><a href="./">Flasher</a><button onclick="document.documentElement.lang='en'">English</button><button onclick="document.documentElement.lang='fr'">Francais</button><button onclick="window.print()">Print / Imprimer</button></nav><main><article data-l="en"><h1>Feature and shortcut overview</h1>
+<p>A.V.’s Supermodel Edition · 17 October 2026</p>
 <p>Added gestures only; stock-style transport, copy, clear and paste actions are omitted.</p>
 <p>Install the relevant feature first. Hold the first button while pressing or turning the next control. TRIG means a step key; pad means a track pad; DATA means LEVEL/DATA. MACHINES is the physical button sometimes called PRESET in sampler instructions.</p>
+<h2>Current feature overview</h2>
+<p>Main flasher 1.82 · updated 17 October 2026. Install only the features you need; the flasher checks compatible combinations. <a href="../flasher-supermodel-909/">Supermodel 909 Edition</a> has its own selection and release.</p>
+<div class="table-wrap"><table>
+<tr><th>Feature</th><th>Current behavior</th></tr>
+<tr><td>Added machines</td><td>MACRO, ACID, WAVE, TINY, RETROSYN and the selectable Syntakt-derived engines. Syntakt engines require your own Syntakt OS file.</td></tr>
+<tr><td>Swarm LITE</td><td>Replaces the seven-oscillator Swarm with three oscillators: fundamental plus two detuned saws. Lower CPU load, with a leaner and possibly quieter sound; heavy arrangements can still click.</td></tr>
+<tr><td>Sample Wizard</td><td>Independent sampler with sample locks, playback modes, slicing and resampling. Sample Preview is hardware tested. Model-TG is retired from the main flasher.</td></tr>
+<tr><td>RETROSYN / ChordKeys</td><td>Six retro oscillator types; ChordKeys adds scale-based chord playing and voicings. Use the flasher's compatibility checks when combining machines. Sample Wizard is optional for RETROSYN.</td></tr>
+<tr><td>Per-track filter / Synth Attack</td><td>Added cutoff, resonance and attack controls; filter parameter locks and Control All. The released filter includes the repair for distortion after switching away from Sample Wizard.</td></tr>
+<tr><td>Control All Config / Beat Repeat</td><td>Choose included audio tracks; momentary repeat across sixteen divisions, with a brief division popup.</td></tr>
+<tr><td>MIDI Out Bank — experimental</td><td>Six parallel MIDI lanes with CC assignments/locks, slides, retrigger/arp, chance, two MIDI LFOs and project sidecar saving. Optional and installable without beat repeat. Beat repeat can also be installed without MIDI Out Bank.</td></tr>
+<tr><td>Sequence Genie / SCRAMBLE</td><td>Generate or mutate sequences, queue at Loop/Page boundaries, and randomize audio parameters or B-side CCs.</td></tr>
+<tr><td>Arpeggiator / Second LFO</td><td>Held-note arpeggiation and an additional modulation page. Main retains Oct 1–4; Oct 0 is currently test-only.</td></tr>
+<tr><td>Performance and editing</td><td>Latching mutes, step preview, slide trigs, scrolling names, three-line browser, numeric volume/pan, dim trigless steps and trig-removal grace.</td></tr>
+<tr><td>Routing / tempo / startup</td><td>Six-channel USB audio, combined MIDI OUT + THRU, tempo up to 546 BPM and a choice of startup animation.</td></tr>
+</table></div>
+<p><strong>Saving:</strong> hold <strong>FUNC + SETTINGS</strong> for the restored stock permanent-save action. The confirmed repair also prevents FUNC remaining latched when leaving the save menu. For MIDI data, stop playback before saving and wait for <strong>MIDI SAVED</strong>. Saved MIDI loads <strong>only when entering B-side, with playback stopped</strong>; sidecar files are outside Elektron SysEx backups.</p>
+<p><strong>Diagnostics:</strong> CPU/peak/CUT displays belong to test builds only and are absent from main.</p>
 <h2>Performance and sound</h2>
 <div class="table-wrap"><table>
 <tr><th>Feature</th><th>Gesture</th><th>Result</th></tr>
-<tr><td>Control All Config</td><td>TRACK + TRIG 1–6</td><td>Include or exclude tracks from Control All. The active track follows the native active-track exception. Choices reset on power-off.</td></tr>
+<tr><td>Control All Config</td><td>TRACK + TRIG 1–6</td><td>Include or exclude tracks from Control All. The selected track can also be excluded. Choices reset on power-off.</td></tr>
 <tr><td>Control All Beat Repeat</td><td>Hold TRACK + RETRIG, then hold TRIG 1–16</td><td>Repeat the included audio tracks. The newest held TRIG chooses the division and shows a brief popup. Release the division pad or either modifier to stop. Both modifiers must stay held.</td></tr>
 <tr><td>Latching mute</td><td>Hold TRACK, tap FUNC</td><td>Keep mute mode open. Tap FUNC to leave.</td></tr>
 <tr><td>Trig preview</td><td>While stopped or paused, hold TRIG + PAGE</td><td>Audition that step with its note and locks.</td></tr>
@@ -26,11 +44,11 @@
 <tr><td>7</td><td>1/8</td><td>15</td><td>3/4</td></tr>
 <tr><td>8</td><td>1/6</td><td>16</td><td>1 bar</td></tr>
 </table></div>
-<p>Long audio slices halve at slow tempos to fit the history buffer. The released audio repeat does not repeat outgoing MIDI notes; the MIDI test below adds B-note retriggering.</p>
+<p>Long audio slices halve at slow tempos to fit the history buffer. Beat repeat affects internal audio; it does not repeat outgoing MIDI notes.</p>
 <h2>Sequence Genie, SCRAMBLE and modulation</h2>
 <div class="table-wrap"><table>
 <tr><th>Feature</th><th>Gesture</th><th>Result</th></tr>
-<tr><td>Sequence Genie</td><td>SETTINGS + PAGE</td><td>Open the generator for the selected audio track or B MIDI lane. DATA selects; click, turn, click to edit. Queue chooses Loop or Page boundaries.</td></tr>
+<tr><td>Sequence Genie</td><td>SETTINGS + PAGE</td><td>Open the generator for the selected audio track or B MIDI lane. DATA selects; click, turn, click to edit. Generate is first; Queue is second. Loop waits for the selected track’s next loop, Page for the next 16-step page.</td></tr>
 <tr><td>A-side SCRAMBLE</td><td>SETTINGS + TRACK</td><td>Randomize four synthesis controls. Sampler tracks are excluded.</td></tr>
 <tr><td>A-side step SCRAMBLE</td><td>Hold TRIG(s), then SETTINGS + TRACK</td><td>Toggle fresh randomized values on those steps each pass, retaining the base sound.</td></tr>
 <tr><td>B-side SCRAMBLE</td><td>SETTINGS + TRACK</td><td>Randomize the selected lane’s assigned MIDI CC values.</td></tr>
@@ -65,20 +83,40 @@
 <tr><td>Combined MIDI OUT + THRU</td><td>Set CONFIG → MIDI → PORTS → OUT/THRU to THR, then FUNC + click DATA</td><td>Toggle the Cycles’ own outgoing MIDI while retaining incoming MIDI Thru.</td></tr>
 </table></div>
 <p>Saved MIDI loads only when entering B-side while playback is stopped. Stop before Save Project and wait for MIDI SAVED. Sidecar MIDI files are outside Elektron SysEx backups.</p>
-<h2>Separate MIDI performance test</h2>
-<p>These two additions are experimental and available only on the <a href="../flasher-midi-performance-test/?v=2026-10-16-midi-performance-test-1">MIDI performance test page</a>, currently using the fixed six-voice 909 profile and four local WAVs.</p>
+<h2>Current combined test — not released in main</h2>
+<p><a href="../flasher-arp-zero-test/?v=2026-10-17-arp-zero-test-1">Open the Octave 0 + MIDI B-side cursor test</a>.</p>
 <div class="table-wrap"><table>
-<tr><th>Feature</th><th>Gesture</th><th>Result</th></tr>
-<tr><td>MIDI beat repeat</td><td>Hold TRACK + RETRIG, then hold a division TRIG</td><td>Retrigger each included B lane’s latest sequenced note, using its current MIDI channel and port. Release stops the repeated notes. This repeats notes rather than capturing a MIDI phrase; native A-side MIDI output is outside this test.</td></tr>
-<tr><td>B-side Control All filter: audio + MIDI</td><td>In B-side, hold TRACK + MACHINES and turn SWEEP / CONTOUR</td><td>Update included internal audio filters and send CC74 / CC71 to the configured B instruments. MIDI-muted lanes receive no CC; their internal audio filters still change.</td></tr>
-</table></div></article><article data-l="fr"><h1>Guide des raccourcis des nouvelles fonctions</h1>
-<p>A.V.’s Supermodel Edition · 16 octobre 2026</p>
+<tr><th>Change</th><th>What to check</th></tr>
+<tr><td>Octave 0 on A and B</td><td>FUNC + RETRIG → Oct. 0 cycles only held notes; 1 adds one octave, 2 adds two, 3 adds three. Existing saved settings keep their sound; only the displayed numbering changes.</td></tr>
+<tr><td>B-side first entry / cursor</td><td>Open B-side during playback; verify MIDI starts without exiting/re-entering and that REC shows one cursor. Each lane retains its own length and speed.</td></tr>
+<tr><td>Test setup</td><td>Keep Control All Beat Repeat selected when installing MIDI Out Bank in this combined test. That requirement does not apply to main. CPU/peak/CUT diagnostics remain available in the test.</td></tr>
+</table></div>
+<p>These changes await hardware verification. Saved MIDI loading still requires stopped playback. MIDI beat repeat and MIDI filter work were canceled and are not part of this test.</p></article><article data-l="fr"><h1>Vue d’ensemble des fonctions et raccourcis</h1>
+<p>A.V.’s Supermodel Edition · 17 octobre 2026</p>
 <p>Gestes ajoutes uniquement ; transports, copies, effacements et collages calques sur le stock omis.</p>
 <p>Installez la fonction correspondante. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. MACHINES est le bouton parfois nomme PRESET dans les instructions du sampler.</p>
+<h2>Vue d'ensemble actuelle</h2>
+<p>Flasheur principal 1.82 · mise à jour du 17 octobre 2026. Installez les fonctions souhaitées ; le flasheur vérifie les combinaisons compatibles. <a href="../flasher-supermodel-909/">Supermodel 909 Edition</a> possède sa propre sélection et sa propre version.</p>
+<div class="table-wrap"><table>
+<tr><th>Fonction</th><th>Comportement actuel</th></tr>
+<tr><td>Machines ajoutées</td><td>MACRO, ACID, WAVE, TINY, RETROSYN et les moteurs dérivés du Syntakt au choix. Ces derniers nécessitent votre propre fichier OS Syntakt.</td></tr>
+<tr><td>Swarm LITE</td><td>Remplace les sept oscillateurs par trois : fondamentale et deux dents de scie désaccordées. Charge CPU réduite, son plus fin et parfois moins fort ; des arrangements lourds peuvent encore cliquer.</td></tr>
+<tr><td>Sample Wizard</td><td>Sampler indépendant avec sample locks, modes, découpage et rééchantillonnage. Sample Preview est testé sur machine. Model-TG est retiré du flasheur principal.</td></tr>
+<tr><td>RETROSYN / ChordKeys</td><td>Six types d'oscillateurs rétro ; ChordKeys ajoute accords selon la gamme et voicings. Suivez les vérifications de compatibilité du flasheur. Sample Wizard est facultatif avec RETROSYN.</td></tr>
+<tr><td>Filtre par piste / Synth Attack</td><td>Coupure, résonance et attaque ajoutées ; locks de filtre et Control All. Le filtre publié inclut la correction de distorsion après avoir quitté Sample Wizard.</td></tr>
+<tr><td>Control All Config / Beat Repeat</td><td>Choix des pistes audio incluses ; répétition momentanée sur seize divisions, avec popup bref de la division.</td></tr>
+<tr><td>Banque MIDI Out — expérimentale</td><td>Six voies MIDI parallèles : CC et locks, slides, retrigger/arpège, chance, deux LFO MIDI et sauvegarde annexe au projet. Facultative et installable sans beat repeat. Le beat repeat peut aussi être installé sans Banque MIDI.</td></tr>
+<tr><td>Sequence Genie / SCRAMBLE</td><td>Génération ou mutation de séquences, attente d'une frontière Loop/Page, randomisation audio ou CC côté B.</td></tr>
+<tr><td>Arpégiateur / Second LFO</td><td>Arpège des notes tenues et page de modulation supplémentaire. Le principal garde Oct 1–4 ; Oct 0 reste réservé au test.</td></tr>
+<tr><td>Performance et édition</td><td>Mutes verrouillés, préécoute de pas, slides, noms défilants, navigateur trois lignes, volume/pan chiffrés, trigless atténués et délai de suppression des trigs.</td></tr>
+<tr><td>Routage / tempo / démarrage</td><td>Audio USB six canaux, MIDI OUT + THRU combinés, tempo jusqu'à 546 BPM et choix d'animation de démarrage.</td></tr>
+</table></div>
+<p><strong>Sauvegarde :</strong> maintenez <strong>FUNC + SETTINGS</strong> pour la sauvegarde permanente stock restaurée. La correction confirmée empêche aussi FUNC de rester verrouillé à la fermeture du menu. Pour les données MIDI, arrêtez la lecture avant de sauvegarder et attendez <strong>MIDI SAVED</strong>. Le MIDI sauvegardé charge <strong>uniquement en entrant côté B, lecture arrêtée</strong> ; les fichiers annexes sont hors backups SysEx Elektron.</p>
+<p><strong>Diagnostics :</strong> les affichages CPU/pic/CUT sont réservés aux builds de test et absents du principal.</p>
 <h2>Performance et son</h2>
 <div class="table-wrap"><table>
 <tr><th>Fonction</th><th>Geste</th><th>Resultat</th></tr>
-<tr><td>Control All Config</td><td>TRACK + TRIG 1–6</td><td>Inclure ou exclure les pistes de Control All. L exception native de la piste active reste applicable. Choix remis a zero a extinction.</td></tr>
+<tr><td>Control All Config</td><td>TRACK + TRIG 1–6</td><td>Inclure ou exclure les pistes de Control All. La piste sélectionnée peut aussi être exclue. Choix remis a zero a extinction.</td></tr>
 <tr><td>Control All Beat Repeat</td><td>Tenir TRACK + RETRIG, puis un TRIG 1–16</td><td>Repeter les pistes audio incluses. Dernier TRIG tenu prioritaire, division en popup bref. Relacher le TRIG ou un modificateur arrete. Garder les deux modificateurs tenus.</td></tr>
 <tr><td>Mute verrouille</td><td>Tenir TRACK, taper FUNC</td><td>Garder le mode mute ouvert. Taper FUNC pour sortir.</td></tr>
 <tr><td>Preecoute d un pas</td><td>A l arret ou en pause, tenir TRIG + PAGE</td><td>Ecouter le pas et ses locks.</td></tr>
@@ -99,11 +137,11 @@
 <tr><td>7</td><td>1/8</td><td>15</td><td>3/4</td></tr>
 <tr><td>8</td><td>1/6</td><td>16</td><td>1 mesure</td></tr>
 </table></div>
-<p>Les longues boucles audio sont divisees par deux aux tempos lents selon la capacite du buffer. Le repeat audio publie ne repete pas les notes MIDI ; le test ci-dessous ajoute les notes B.</p>
+<p>Les longues boucles audio sont divisees par deux aux tempos lents selon la capacite du buffer. Le beat repeat agit sur l’audio interne et ne répète pas les notes MIDI sortantes.</p>
 <h2>Sequence Genie, SCRAMBLE et modulation</h2>
 <div class="table-wrap"><table>
 <tr><th>Fonction</th><th>Geste</th><th>Resultat</th></tr>
-<tr><td>Sequence Genie</td><td>SETTINGS + PAGE</td><td>Generateur de la piste audio ou voie B selectionnee. DATA choisit ; clic, tourner, clic pour editer. Queue choisit les frontieres Loop/Page.</td></tr>
+<tr><td>Sequence Genie</td><td>SETTINGS + PAGE</td><td>Generateur de la piste audio ou voie B selectionnee. DATA choisit ; clic, tourner, clic pour editer. Generate est premier, Queue second. Loop attend la prochaine boucle de piste ; Page, la prochaine page de 16 pas.</td></tr>
 <tr><td>SCRAMBLE A</td><td>SETTINGS + TRACK</td><td>Randomiser quatre parametres de synthese. Sampler exclu.</td></tr>
 <tr><td>SCRAMBLE de pas A</td><td>Tenir des TRIG, puis SETTINGS + TRACK</td><td>Basculer des valeurs aleatoires fraiches a chaque passage, son de base conserve.</td></tr>
 <tr><td>SCRAMBLE B</td><td>SETTINGS + TRACK</td><td>Randomiser les valeurs CC assignees de la voie MIDI selectionnee.</td></tr>
@@ -138,10 +176,12 @@
 <tr><td>MIDI OUT + THRU combines</td><td>CONFIG → MIDI → PORTS → OUT/THRU : THR, puis FUNC + clic DATA</td><td>Basculer la sortie MIDI propre du Cycles tout en gardant le Thru entrant.</td></tr>
 </table></div>
 <p>Le MIDI sauvegarde charge uniquement en entrant cote B, lecture arretee. Arreter avant Save Project et attendre MIDI SAVED. Les fichiers MIDI annexes ne sont pas inclus dans les backups SysEx Elektron.</p>
-<h2>Test MIDI performance separe</h2>
-<p>Ces deux ajouts experimentaux sont uniquement sur la <a href="../flasher-midi-performance-test/?v=2026-10-16-midi-performance-test-1">page de test MIDI performance</a>, profil fixe six voix 909 et quatre WAV locaux.</p>
+<h2>Test combiné actuel — non publié dans le principal</h2>
+<p><a href="../flasher-arp-zero-test/?v=2026-10-17-arp-zero-test-1">Ouvrir le test Octave 0 + curseur MIDI B</a>.</p>
 <div class="table-wrap"><table>
-<tr><th>Fonction</th><th>Geste</th><th>Resultat</th></tr>
-<tr><td>Beat repeat MIDI</td><td>Tenir TRACK + RETRIG, puis TRIG division</td><td>Repeter la derniere note sequencee des voies B incluses, canal/port actuels. Relacher arrete les notes. Pas de capture de phrase ; sortie MIDI native A hors de ce test.</td></tr>
-<tr><td>Filtre Control All depuis B : audio + MIDI</td><td>Cote B, tenir TRACK + MACHINES et tourner SWEEP / CONTOUR</td><td>Filtres audio internes inclus et CC74 / CC71 aux instruments B configures. Voies MIDI muettes sans CC ; filtres audio toujours modifies.</td></tr>
-</table></div></article></main></html>
+<tr><th>Changement</th><th>Vérification</th></tr>
+<tr><td>Octave 0 sur A et B</td><td>FUNC + RETRIG → Oct. 0 parcourt uniquement les notes tenues ; 1 ajoute une octave, 2 en ajoute deux, 3 en ajoute trois. Les anciens réglages conservent leur son ; seule la numérotation affichée change.</td></tr>
+<tr><td>Première entrée B / curseur</td><td>Ouvrir B pendant la lecture ; vérifier que le MIDI démarre sans sortir/rentrer et que REC montre un seul curseur. Chaque voie conserve sa longueur et sa vitesse.</td></tr>
+<tr><td>Configuration du test</td><td>Garder Control All Beat Repeat sélectionné avec Banque MIDI dans ce test combiné. Cette obligation ne concerne pas le principal. Les diagnostics CPU/pic/CUT restent disponibles dans le test.</td></tr>
+</table></div>
+<p>Ces changements attendent la vérification matérielle. Le chargement MIDI sauvegardé exige toujours la lecture arrêtée. Le beat repeat MIDI et le filtre MIDI ont été abandonnés et ne font pas partie de ce test.</p></article></main></html>
