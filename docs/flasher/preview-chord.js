@@ -6,7 +6,7 @@
  const wf=tw.features.find(f=>f.id==='wave-supermodel');wf.excludes=(wf.excludes||[]).filter(id=>id!=='sample-preview');
  k.excludes=(k.excludes||[]).filter(id=>id!=='sample-preview');
  c.preview.conflicts=(c.preview.conflicts||[]).filter(id=>id!=='chord-keys-supermodel');
- p.status='experimental';p.hardwareTestedByOwner=false;
+ p.status='tested';p.hardwareTestedByOwner=true;c.preview.status='tested';c.preview.hardwareTestedByOwner=true;
  const prev=window.MCMainClearResolve,prior={...a.REF_MODS},b=window.MCBuilder,hash=t=>b.hex(b.sha256(b.writesBytes(t)));
  window.MCMainClearResolve=out=>{
   for(const [id,ref] of Object.entries(prior))a.REF_MODS[id]=ref;
