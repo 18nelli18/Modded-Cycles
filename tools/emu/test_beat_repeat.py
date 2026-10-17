@@ -25,7 +25,7 @@ def main():
     r.s={k:origin+v for k,v in data['symbols'].items()}
     if case:
         expected=bytes.fromhex(tweak['append']['parts'][0]['hex'])
-        for name in ('br_old_key','br_old_gain','br_side','br_side_on','br_mask_address','br_old_track_keys','br_old_track_leds','br_load_address','br_avg_address','br_fading_address','br_stolen_address'):
+        for name in ('br_old_key','br_old_gain','br_side','br_side_on','br_mask_address','br_old_track_keys','br_old_track_leds','br_load_address','br_avg_address','br_fading_address','br_stolen_address','br_filter_f_address','br_filter_q_address','br_filter_mk_address','br_filter_modes_address'):
             if name not in data['symbols']:continue
             off=data['symbols'][name];code[off:off+4]=expected[off:off+4]
         assert bytes(code)==expected,'module navigateur different du module prouve'
@@ -254,6 +254,14 @@ def main():
         key(4,0);assert popups[-1]=='CPU 75%/117% CUT 2',popups[-1]
         key(2,0);key(2);key(4);audio(42);key(4,0)
         assert popups[-1]=='CPU 75%/117% CUT 0',popups[-1]
+        if 'br_filter_f_address' in r.s:
+            for name,offset,value in [('f',0x100,3538),('q',0x120,0),('mk',0x140,4096),('modes',0x160,0x20)]:
+                put('br_filter_'+name+'_address',0x9307e000+offset);r.w32(0x9307e000+offset+20,value)
+            key(2,0);key(1);key(2);key(4);key(4,0)
+            assert popups[-1]=='6 F3538 Q0 K4096 M0020',popups[-1]
+            key(2,0);put('br_filter_f_address',0);key(2);key(4);key(4,0)
+            assert popups[-1]=='FILTER OFF',popups[-1]
+            key(1,0)
         put('br_fading_address',0);put('br_stolen_address',0)
         key(2,0);put('br_load_address',0);put('br_avg_address',0)
         print('PASS diagnostic : moyenne/pic Q8, CUT distinct cumulatif/reset, flags regulateur non modifies, popup UI seulement',flush=True)
