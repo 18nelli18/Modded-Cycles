@@ -148,3 +148,8 @@ If a check cannot run (no network, no toolchain), say so in the PR instead of sk
   after a merge instead of resolving their conflicts by hand.
 - The PR body says what the user sees before and after, how it was proven, and **what Maxime should test on the
   machine** (which mods ticked, which buttons, what to listen or look for).
+
+
+## AveyCole test/release policy (2026-10-17)
+
+AveyCole explicitly requests the CPU average/peak and CUT diagnostic display in all future test builds, and never in released main firmware. Keep the diagnostic in test-page compositions only. When a test includes audio beat repeat and the SY load counters, retain the TRACK + RETRIG release popup. If a test lacks those counters, explain that limitation instead of fabricating readings. Do not promote diagnostic payloads or UI cards into the main release flasher when promoting a tested repair. Preserve this separation in generators and publication diffs.

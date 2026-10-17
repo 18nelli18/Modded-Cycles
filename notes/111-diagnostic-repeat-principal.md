@@ -15,3 +15,14 @@ Le wrapper de composition ne change le module repeat que lorsque la carte diagno
 ## Preuves
 
 [FAIT en emulation] Vrai boot/cache du SYX navigateur, module exact, gestes/16 divisions/64 masques/exclusions et fondus, stereo Wizard, annulation Stop/projet, ABI et allocations. Le test --meter verifie valeurs Q8, pic, CUT cumulatif/reset, flags regulateur intacts et popup UI. Navigateur : checklist complete avec/sans banque, sans Wizard et diagnostic decoche. Parite Python/navigateur pour les builds prepares. Peripheriques simules ; charge et clicks physiques a mesurer par AveyCole.
+
+
+## Test 2 et retour AveyCole (17/10/2026)
+
+AveyCole rapporte CPU 73/101 et CUT 4 avec Kick, Snare, Metal, Perc, Tone et SD Vintage, filtres et beat repeat actifs : moins de clicks mais clicks persistants. Ces mesures indiquent des pointes au-dessus du budget ; elles ne prouvent pas que chaque click vient du regulateur.
+
+Le candidat 2 specialise le plateau plein du repeat : phases contigues, enveloppe a un, capture uniforme, six fades deja etablis. Plus de trajectoire intermediaire dans ce cas. Conversion et bits bas conserves exactement : sortie = historique*32768 + residu signe des neuf bits bas du live. Si enveloppe/fondu/bord/historique impose le chemin general, celui-ci reste actif. Aucun filtre ni moteur sonore modifie.
+
+[FAIT en emulation] Audio, historiques complets et fades identiques au principal : mono/stereo, divisions et masques variables, 110 frontieres par cote (longueurs courtes, enveloppe, wrap circulaire et temps32). Instructions propres : -10,7 % sur la sequence mixte et -28,0 % sur la repetition etablie longue. Ce ne sont ni des cycles materiels ni une garantie de disparition des clicks. Diagnostic CPU/CUT conserve dans le test 2.
+
+Consigne explicite AveyCole : garder le diagnostic dans tous les futurs tests, jamais dans le principal publie. Regle ajoutee a AGENTS.md. Demande suivante : optimiser aussi l ensemble du chemin audio apres livraison du candidat repeat ; travail de profilage distinct, aucune reduction sonore implicite.
