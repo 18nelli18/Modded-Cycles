@@ -115,3 +115,17 @@ La voie distordue n est pas toujours6. FUNCTION+TRACK+RETRIG puis pas1..6 choisi
 ## Test8 : popup compact
 
 Retour hardware : la fin du popup coupe le dernier chiffre de M002x. Format compact, mode en premier : `4M0024 F3538Q0K4096` (19 caracteres). Meme contenu et gestes, DSP inchangee. Lecture clean rapportee F0/Q0/K4096/M0024 ; degradee F3538/Q0/K4096/M002 tronque. F0 est bypass : demander une comparaison clean a126 pour distinguer un changement de coefficients inattendu.
+
+
+## Retour test8 : valeurs identiques, transition Wizard
+
+AveyCole rapporte piste4 clean et degradee identiques : `4M0024 F3538Q0K4096`. Les coefficients observes et le dernier MACSR entrant ne discriminent donc pas le defaut. Il situe le debut possible dans une transition Sample Wizard vers autre machine. Cela n identifie pas encore un etat fautif.
+
+Rejeu local DigiEmu par evenements panel sur pistes4 et6 : SDVtg -> Wizard -> SDVtg, Kick -> Wizard -> Kick, Swarm -> Wizard -> Swarm ; machine reellement observee dans frames voix. Cut126/q0 imposes dans cette fixture. Pas de sample charge ; snapshot test3 plus noyau test8 injecte comme essais precedents. Valeurs et etats observes sans corruption persistante evidente, audio conserve seulement dans build/audio-load/transition-*.wav. Ne pas revendiquer reproduction causale, absence de distorsion hardware, ni validation de deadlines. Question en attente : selection seule ou chargement/lecture sample necessaire ? Aucun nouveau correctif speculative ou changement de flasher publie.
+
+
+## Test9 : intervention diagnostique sur historique
+
+AveyCole confirme que selectionner Wizard puis changer suffit : pas de sample charge/lu necessaire. Aucun mecanisme causal confirme. Ajout diagnostic test seulement : FUNCTION+TRACK+RETRIG puis pas7..12 demande reset des quatre poles de la piste audio1..6. Requete UI publiee par store32 aligne ; l interruption audio seule consomme puis efface les quatre etats avant le filtre post-voix. Pas de modification de coefficients, machine, sample/projet ou regulateur. Popup RESET QUEUED signifie demande, pas preuve que la distorsion est corrigee. Pas1..6 conservent leur lecture. Requete unique, dernier choix gagne avant prochain bloc ; aucune allocation.
+
+Preuves : six pistes, quatre poles effaces uniquement apres callback audio, septieme entree et autres pistes preservees, sans pointeur filtre aucun reset ni repeat. Gestes/ownership/repeat existants conserves. Le noyau DSP reste identique au test8. Cout repos du callback +5 instructions mesurees en emulation, pas de pourcentage CPU physique revendique. Intervention manuelle pour distinguer historique fautif d un probleme ailleurs ; aucune correction automatique publiee. Principal et909 inchanges.

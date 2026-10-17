@@ -26,6 +26,8 @@ u32 br_side STATE=0,br_side_on STATE=0;
 u32 br_mask_address STATE=0,br_excluded STATE=0,br_lane_wet[6] STATE={0};
 u32 br_old_track_keys STATE=0,br_old_track_leds STATE=0;
 u32 br_filter_f_address STATE=0,br_filter_q_address STATE=0,br_filter_mk_address STATE=0,br_filter_modes_address STATE=0,br_function STATE=0,br_probe_lane STATE=5,br_probe_owned STATE=0;
+u32 br_filter_state_address STATE=0;
+volatile u32 br_filter_reset_request STATE=0;
 u32 br_load_address STATE=0,br_avg_address STATE=0,br_load_peak STATE=0;
 u32 br_fading_address STATE=0,br_stolen_address STATE=0,br_cut_seen STATE=0;
 const u32 br_divs[16]={QN/16,QN/12,QN/8,QN/6,QN/4,QN/3,QN/2,QN*2/3,
@@ -112,7 +114,13 @@ u32 br_key(u32 *event){
  if(code<16||code>31)return 0;
  u32 step=code-16,bit=1u<<step;
  if(!down&&(br_probe_owned&bit)){br_probe_owned&=~bit;return 1;}
- if(br_keys==3&&br_function&&step<6){if(fresh){br_probe_lane=step;br_probe_owned|=bit;filter_popup();}return 1;}
+ if(br_keys==3&&br_function&&step<12){
+  if(fresh){br_probe_lane=step%6;br_probe_owned|=bit;
+   if(step<6)filter_popup();
+   else if(br_filter_state_address){static const char *const reset_labels[]={"1 RESET QUEUED","2 RESET QUEUED","3 RESET QUEUED","4 RESET QUEUED","5 RESET QUEUED","6 RESET QUEUED"};br_filter_reset_request=br_probe_lane+1;br_popup(reset_labels[br_probe_lane]);}
+   else br_popup("FILTER OFF");
+  }return 1;
+ }
 
  if(!down){
   if(!(br_owned&bit))return 0;br_owned&=~bit;br_held[step]=0;select_held();repaint();return 1;
@@ -315,7 +323,15 @@ static void render(u32 now,i32 target){
  }
  render_tracks(now,frames);br_wet=wet;
 }
-void br_audio(void){if(br_load_address&&br_keys==3){u32 load=*(volatile u32 *)br_load_address;if(load>br_load_peak)br_load_peak=load;
+/* Un seul producteur UI ; consommation audio avant le filtre post-voix.
+ * Les quatre stores restent dans la meme interruption audio, sans course UI. */
+static void filter_reset(void){
+ u32 request=br_filter_reset_request;if(!request)return;br_filter_reset_request=0;
+ if(request>6||!br_filter_state_address)return;
+ volatile u32 *state=(volatile u32 *)br_filter_state_address;
+ for(u32 pole=0;pole<4;pole++)state[7*pole+request-1]=0;
+}
+void br_audio(void){filter_reset();if(br_load_address&&br_keys==3){u32 load=*(volatile u32 *)br_load_address;if(load>br_load_peak)br_load_peak=load;
  /* Observer seulement : aucun flag du regulateur n est modifie. */
  if(br_fading_address&&br_stolen_address)for(u32 i=0;i<6;i++)
   if(((volatile u8 *)br_fading_address)[i]||((volatile u8 *)br_stolen_address)[i])br_cut_seen|=1u<<i;
