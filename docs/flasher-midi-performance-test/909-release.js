@@ -1,0 +1,1 @@
+window.MC_RELEASES=[{version:"MIDI-performance-test.1",date:"2026-10-16",changes:[{en:"Experimental MIDI beat repeat and B-side audio/MIDI filter.",fr:"Repeat MIDI et filtre audio/MIDI depuis B experimentaux."}]}];
