@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: MIT
- * KeyboardView : TRACK + TRIG 1/16 change KBT de -/+12.
+ * KeyboardView : TRACK + TRIG 15/16 change KBT de -/+12.
  * Contrat : (vue, KeyEvent), retour booléen ; préserver d2-d7/a2-a6 et la pile.
  * Appui consommé après le setter stock ; maintien consommé sans répétition.
  * Tout relâchement rejoint le callback stock, qui utilise la note mémorisée.
@@ -13,7 +13,7 @@ octave_keyboard:
  movem.l %d2/%a2-%a4,(%sp)
  move.l 24(%sp),%a2
  move.l 12(%a2),%d2
- cmpi.l #16,%d2
+ cmpi.l #30,%d2
  beq .Ledge
  cmpi.l #31,%d2
  bne .Lnative
@@ -64,7 +64,7 @@ octave_keyboard:
  move.l %a4,-(%sp)
  jsr 0x40016da6
  addq.l #4,%sp
- cmpi.l #16,%d2
+ cmpi.l #30,%d2
  bne .Lup
  subi.l #12,%d0
  bra .Lset

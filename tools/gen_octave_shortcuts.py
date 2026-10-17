@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
-"""Génère 49-octave-shortcuts.json : TRACK + TRIG 1/16 règle KBT de −/+12 (notes/73).
+"""Génère 49-octave-shortcuts.json : TRACK + TRIG 15/16 règle KBT de −/+12 (notes/73).
 
 Le callback KeyboardView rejoint le setter KBT de l'OS. Code original MIT dans
 machines/octave_shortcuts, placé dans un masque partagé exclusivement avec Chord Keys.
@@ -64,9 +64,9 @@ def build_tweak(stock):
                "new": struct.pack(">I", symbols["octave_keyboard"]).hex()}]
     tweak = {
         "id": "octave-shortcuts", "order": 49,
-        "name": "Octave du clavier avec TRACK + TRIG 1/16",
+        "name": "Octave du clavier avec TRACK + TRIG 15/16",
         "description": [
-            "Hors mode grille, TRACK + TRIG 1 descend KBT de 12 demi-tons ; TRACK + TRIG 16 le monte de 12.",
+            "Hors mode grille, TRACK + TRIG 15 descend KBT de 12 demi-tons ; TRACK + TRIG 16 le monte de 12.",
             "Le KBT réel de la piste est changé par le setter de l'OS : Track Setup affiche la même valeur, "
             "bornée entre −60 et +60. Le décalage par demi-tons est conservé sauf à ces bornes.",
             "Un changement par appui, aucun au maintien. Les raccourcis ne jouent ni n'enregistrent une note. "

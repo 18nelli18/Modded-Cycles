@@ -1,6 +1,6 @@
 # 73 — Raccourcis d'octave du clavier
 
-Demande du contributeur, transmise avec son prototype le 14/10/2026 : TRACK + TRIG 1 pour descendre le clavier d'une octave, TRACK + TRIG 16 pour monter, avec mise à jour du KBT réel dans Track Setup et sans éclairage ajouté. Contribution originale de djdoz, MIT selon `CONTRIBUTING.md`. Tweak `49-octave-shortcuts.json`, générateur `tools/gen_octave_shortcuts.py`, preuve `tools/emu/test_octave_shortcuts.py`. Adresses : VA de l'OS 1.13.
+Demande du contributeur, transmise le 14/10/2026, touches révisées le 18/10/2026 : TRACK + TRIG 15 pour descendre le clavier d'une octave, TRACK + TRIG 16 pour monter, avec mise à jour du KBT réel dans Track Setup et sans éclairage ajouté. Contribution originale de djdoz, MIT selon `CONTRIBUTING.md`. Tweak `49-octave-shortcuts.json`, générateur `tools/gen_octave_shortcuts.py`, preuve `tools/emu/test_octave_shortcuts.py`. Adresses : VA de l'OS 1.13.
 
 ## Réponse courte
 
@@ -21,7 +21,7 @@ Demande du contributeur, transmise avec son prototype le 14/10/2026 : TRACK + TR
 
 ## 2. Code et contrat
 
-Le wrapper reçoit `(KeyboardView, KeyEvent)` et renvoie un booléen consommé. Il préserve les registres non volatils et la pile. Seuls les codes 16/31, à l'appui (flag bit 0), TRACK tenu et FUNC/PATTERN/RETRIG libres, hors grille/clavier désactivé, entrent dans le raccourci. Un maintien (flag bit 3) est consommé sans changer KBT. Un appui frais appelle getter puis setter stock avec −/+12.
+Le wrapper reçoit `(KeyboardView, KeyEvent)` et renvoie un booléen consommé. Il préserve les registres non volatils et la pile. Seuls les codes 30/31, à l'appui (flag bit 0), TRACK tenu et FUNC/PATTERN/RETRIG libres, hors grille/clavier désactivé, entrent dans le raccourci. Un maintien (flag bit 3) est consommé sans changer KBT. Un appui frais appelle getter puis setter stock avec −/+12.
 
 Tout autre événement, dont tous les relâchements, rejoint `0x4001a0d2` avec les arguments d'origine. Cela garde le note-off du pitch mémorisé, même si KBT a changé entre-temps. Aucun état global ni octet de projet nouveau, aucun popup. Le KBT garde sa sauvegarde normale. Le décalage par demi-tons est conservé sauf quand une limite raccourcit le déplacement.
 
@@ -39,7 +39,7 @@ Chord Keys remplace le même callback, donc incompatibilité déclarée. Le sour
 
 | Vérification | Stock | Modifié |
 |---|---|---|
-| TRACK + TRIG 1/16, tous les KBT −60…+60 | KBT inchangé | −/+12, borné, notification stock |
+| TRACK + TRIG 15/16, tous les KBT −60…+60 | KBT inchangé | −/+12, borné, notification stock |
 | Clavier ou flag live rec | Comportement stock | Même raccourci |
 | Affichage KBT du menu | Valeur initiale | Nouvelle valeur immédiate |
 | Maintien du raccourci | Pas de changement KBT | Pas de répétition |
@@ -52,6 +52,10 @@ Chord Keys remplace le même callback, donc incompatibilité déclarée. Le sour
 
 ## 5. Retour matériel et prochain essai
 
-Le 14/10/2026, le contributeur rapporte « It has passed » pour le prototype stock OS1.13 avec ces raccourcis. Le wrapper de cette intégration est identique octet pour octet à celui du prototype ; son placement change : masque redirigé en place au lieu d'une copie au démarrage. Ce retour ne vaut pas essai du build intégré par Maxime : statut **experimental**, PR draft.
+Le 14/10/2026, le contributeur rapporte « It has passed » pour le prototype stock OS1.13 avec ces raccourcis. Ce premier prototype utilisait TRACK + TRIG 1/16. Le 18/10/2026, le contributeur demande TRACK + TRIG 15/16 : seuls les deux comparateurs du code de touche passent de 16 à 30. Le traitement et la taille du wrapper restent les mêmes ; cette révision demande un nouvel essai matériel. Ce retour ne vaut pas essai du build intégré par Maxime : statut **experimental**, PR draft.
 
 [À FAIRE] Essai du mainteneur, d'abord seul, puis avec les mods compatibles ci-dessus : KBT 0 → +12 → 0, +5 → +17 → +5, indépendance des pistes, un seul déplacement au maintien, les deux ordres de relâchement, note tenue pendant le déplacement sans note bloquée, enregistrement live sans note du raccourci, grille inchangée, bornes −60/+60, sauvegarde/rechargement normaux et mise à jour USB toujours disponible. Le flasher doit exclure Model-TG et Chord Keys dans les deux sens.
+
+## 6. Touches adjacentes (18/10/2026)
+
+À la demande du contributeur, octave bas passe à TRACK + TRIG 15 (code 30) ; octave haut reste TRACK + TRIG 16 (code 31). TRACK + TRIG 1 suit de nouveau le clavier stock. La preuve compare tous les TRIG au stock hors des deux raccourcis et couvre le relâchement du TRIG 15 déjà tenu. Le retour matériel du 14/10 concerne uniquement le premier prototype.

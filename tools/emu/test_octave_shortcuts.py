@@ -172,7 +172,7 @@ class Rig:
 
 def proof(stock_image, patched_image):
     a, b = Rig(stock_image), Rig(patched_image)
-    for k, key, live in itertools.product(range(-60, 61), (16, 31), (False, True)):
+    for k, key, live in itertools.product(range(-60, 61), (30, 31), (False, True)):
         for rig in (a, b):
             rig.reset(k, live=live)
             rig.held = {2}
@@ -180,7 +180,7 @@ def proof(stock_image, patched_image):
             rig.w32(EVT + 16, 1)
             rig.assert_(rig.call(0x40024078, VIEW, EVT) == 0, "TrackSelectionView laisse passer le TRIG")
             rig.event(key, 1)
-        expected = max(-60, min(60, k + (-12 if key == 16 else 12)))
+        expected = max(-60, min(60, k + (-12 if key == 30 else 12)))
         b.assert_(a.kbt() == k and a.notifications == 0, "KBT stock inchangé")
         b.assert_(b.kbt() == expected and b.notifications == 1, "KBT modifié via setter")
         b.assert_(not b.played and b.r32(VIEW + 0x98) == RECORDS, "aucune note du raccourci")
@@ -194,7 +194,7 @@ def proof(stock_image, patched_image):
     print("  ok    −60…+60, deux directions, clavier/live rec, limites, affichage et maintien")
     for key, flags, held, grid, blocked in itertools.product(
             range(16, 32), (0, 1, 9), (set(), {1}, {2, 1}, {2, 3}, {2, 4}, {2}), (False, True), (False, True)):
-        combo = key in (16, 31) and held == {2} and flags & 1 and not grid and not blocked
+        combo = key in (30, 31) and held == {2} and flags & 1 and not grid and not blocked
         if combo:
             continue
         for rig in (a, b):
@@ -218,10 +218,10 @@ def proof(stock_image, patched_image):
         rig.event(23, 0)
     b.assert_(a.released == b.released == [59], "note-off du pitch d'origine")
     b.reset(5)
-    b.event(16, 1)
+    b.event(30, 1)
     b.held = {2}
-    b.event(16, 0)
-    b.assert_(b.released == [57] and b.r32(VIEW + 0x98) == RECORDS, "relâchement du TRIG 1 avec TRACK tenu")
+    b.event(30, 0)
+    b.assert_(b.released == [71] and b.r32(VIEW + 0x98) == RECORDS, "relâchement du TRIG 15 avec TRACK tenu")
     print("  ok    notes déjà tenues : relâchement stock, aucune note bloquée")
     print(f"  ok    {a.calls + b.calls} appels, {a.checks + b.checks} assertions, pile et registres")
 

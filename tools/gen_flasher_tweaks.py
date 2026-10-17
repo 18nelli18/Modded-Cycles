@@ -231,8 +231,8 @@ FEATURES = [
     {
         "id": "octave-shortcuts",
         "cat": "live",
-        "label": "Octave du clavier avec TRACK + TRIG 1/16",
-        "desc": "Hors mode grille, TRACK + TRIG 1 descend le clavier d'une octave, TRACK + TRIG 16 le monte. "
+        "label": "Octave du clavier avec TRACK + TRIG 15/16",
+        "desc": "Hors mode grille, TRACK + TRIG 15 descend le clavier d'une octave, TRACK + TRIG 16 le monte. "
                 "KBT est mis à jour dans Track Setup ; un changement par appui, aucun au maintien.",
         "status": "experimental",
         "credit": {"kind": "by", "who": "djdoz"},

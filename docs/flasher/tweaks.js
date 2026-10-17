@@ -1058,9 +1058,9 @@ window.MC_TWEAKS = {
   {
    "id": "octave-shortcuts",
    "order": 49,
-   "name": "Octave du clavier avec TRACK + TRIG 1/16",
+   "name": "Octave du clavier avec TRACK + TRIG 15/16",
    "description": [
-    "Hors mode grille, TRACK + TRIG 1 descend KBT de 12 demi-tons ; TRACK + TRIG 16 le monte de 12.",
+    "Hors mode grille, TRACK + TRIG 15 descend KBT de 12 demi-tons ; TRACK + TRIG 16 le monte de 12.",
     "Le KBT réel de la piste est changé par le setter de l'OS : Track Setup affiche la même valeur, bornée entre −60 et +60. Le décalage par demi-tons est conservé sauf à ces bornes.",
     "Un changement par appui, aucun au maintien. Les raccourcis ne jouent ni n'enregistrent une note. Les relâchements gardent le traitement stock. FUNC, PATTERN ou RETRIG tenus : traitement stock.",
     "Clavier et enregistrement live ; mode grille inchangé. Aucun éclairage ajouté. Incompatible avec Chord Keys et Model-TG.",
@@ -1091,7 +1091,7 @@ window.MC_TWEAKS = {
     {
      "off": 1626280,
      "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000",
-     "new": "4feffff048d71c04246f0018242a000c0c82000000106700000c0c820000001f660000d8202a001008000000670000cc487800024eb94007faf4588f4a80670000ba487800014eb94007faf4588f4a80660000a8487800034eb94007faf4588f4a8066000096487800044eb94007faf4588f4a80660000844eb9400cf9a826402f0b4eb94006b978588f4a006600006c2f0b4eb94006bb18588f4a006600005c202a001008000003660000444eb9400cf8662f004eb94000f23e588f28402f0c4eb940016da6588f0c82000000106600000c04800000000c6000000806800000000c2f002f0c4eb940016dd6508f70014cd71c044fef00104e754cd71c044fef00104ef94001a0d2"
+     "new": "4feffff048d71c04246f0018242a000c0c820000001e6700000c0c820000001f660000d8202a001008000000670000cc487800024eb94007faf4588f4a80670000ba487800014eb94007faf4588f4a80660000a8487800034eb94007faf4588f4a8066000096487800044eb94007faf4588f4a80660000844eb9400cf9a826402f0b4eb94006b978588f4a006600006c2f0b4eb94006bb18588f4a006600005c202a001008000003660000444eb9400cf8662f004eb94000f23e588f28402f0c4eb940016da6588f0c820000001e6600000c04800000000c6000000806800000000c2f002f0c4eb940016dd6508f70014cd71c044fef00104e754cd71c044fef00104ef94001a0d2"
     }
    ]
   },
@@ -189639,8 +189639,8 @@ window.MC_TWEAKS = {
   },
   {
    "id": "octave-shortcuts",
-   "label": "Octave du clavier avec TRACK + TRIG 1/16",
-   "desc": "Hors mode grille, TRACK + TRIG 1 descend le clavier d'une octave, TRACK + TRIG 16 le monte. KBT est mis à jour dans Track Setup ; un changement par appui, aucun au maintien.",
+   "label": "Octave du clavier avec TRACK + TRIG 15/16",
+   "desc": "Hors mode grille, TRACK + TRIG 15 descend le clavier d'une octave, TRACK + TRIG 16 le monte. KBT est mis à jour dans Track Setup ; un changement par appui, aucun au maintien.",
    "status": "experimental",
    "credit": {
     "kind": "by",
