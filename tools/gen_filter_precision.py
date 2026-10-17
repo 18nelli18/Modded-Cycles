@@ -18,8 +18,11 @@ def generate(source=None):
   (p/'f.ld').write_text('\n'.join(k+' = '+hex(v)+';' for k,v in defs.items())+'\nSECTIONS { .text '+hex(at)+' : SUBALIGN(2) { *(.text) } }')
   subprocess.run([cross+'ld','-T',str(p/'f.ld'),'-o',str(p/'f.elf'),str(p/'f.o')],check=True)
   subprocess.run([cross+'objcopy','-O','binary',str(p/'f.elf'),str(p/'f.bin')],check=True);code=(p/'f.bin').read_bytes()
+  sy=symbols(cross,p/'f.elf')
  assert len(code)<=len(old),(len(code),len(old))
- return {'at':at,'size':len(old),'old_sha256':hashlib.sha256(old).hexdigest(),'hex':(code+b'\x4e\x71'*((len(old)-len(code))//2)).hex(),'code_size':len(code)}
+ result={'at':at,'size':len(old),'old_sha256':hashlib.sha256(old).hexdigest(),'hex':(code+b'\x4e\x71'*((len(old)-len(code))//2)).hex(),'code_size':len(code)}
+ if 'precise_modes' in sy:result['mode_address']=sy['precise_modes']
+ return result
 def main():
  p=argparse.ArgumentParser();p.add_argument('--output',required=True);p.add_argument('--check',action='store_true');a=p.parse_args();d=generate();text='window.MCFilterPrecision='+json.dumps(d,separators=(',',':'))+';\n';out=pathlib.Path(a.output)
  if a.check:assert out.read_text()==text

@@ -25,6 +25,7 @@ u32 br_old_key STATE=0,br_old_gain STATE=0x40056d9c;
 u32 br_side STATE=0,br_side_on STATE=0;
 u32 br_mask_address STATE=0,br_excluded STATE=0,br_lane_wet[6] STATE={0};
 u32 br_old_track_keys STATE=0,br_old_track_leds STATE=0;
+u32 br_filter_f_address STATE=0,br_filter_q_address STATE=0,br_filter_mk_address STATE=0,br_filter_modes_address STATE=0,br_function STATE=0;
 u32 br_load_address STATE=0,br_avg_address STATE=0,br_load_peak STATE=0;
 u32 br_fading_address STATE=0,br_stolen_address STATE=0,br_cut_seen STATE=0;
 const u32 br_divs[16]={QN/16,QN/12,QN/8,QN/6,QN/4,QN/3,QN/2,QN*2/3,
@@ -46,8 +47,25 @@ static char *load_percent(char *p,u32 q){
  if(v>=10)*p++='0'+v/10%10;
  *p++='0'+v%10;*p++='%';return p;
 }
+/* Snapshot UI piste 6 ; lecture seule, aucun calcul audio ajoute. */
+static char *filter_number(char *p,u32 v){
+ if(v>99999){*p++='?';return p;}
+ u32 d=10000;while(d>1&&v<d)d/=10;
+ do{*p++='0'+v/d;v%=d;d/=10;}while(d);return p;
+}
+static void filter_popup(void){
+ char text[32],*p=text;
+ if(!br_filter_f_address||!br_filter_modes_address){br_popup("FILTER OFF");return;}
+ *p++='6';*p++=' ';*p++='F';p=filter_number(p,((volatile u32 *)br_filter_f_address)[5]);
+ *p++=' ';*p++='Q';p=filter_number(p,((volatile u32 *)br_filter_q_address)[5]);
+ *p++=' ';*p++='K';p=filter_number(p,((volatile u32 *)br_filter_mk_address)[5]);
+ *p++=' ';*p++='M';u32 mode=((volatile u32 *)br_filter_modes_address)[5];
+ for(i32 shift=12;shift>=0;shift-=4)*p++="0123456789ABCDEF"[(mode>>shift)&15];
+ *p=0;br_popup(text);
+}
 static void load_popup(void){
  if(!br_load_address||!br_avg_address||ipl())return;
+ if(br_function){filter_popup();return;}
  char text[32],*p=text;*p++='C';*p++='P';*p++='U';*p++=' ';
  p=load_percent(p,*(volatile u32 *)br_avg_address);*p++='/';
  p=load_percent(p,br_load_peak);
@@ -88,6 +106,7 @@ static u32 modifier(u32 code,u32 down,u32 fresh){
 }
 u32 br_key(u32 *event){
  u32 code=event[3],flags=event[4],down=flags&1,fresh=down&&!(flags&0x28);
+ if(code==1){br_function=down;return 0;}
  if(code==TRACK||code==RETRIG)return modifier(code,down,fresh);
  if(code<16||code>31)return 0;
  u32 step=code-16,bit=1u<<step;
