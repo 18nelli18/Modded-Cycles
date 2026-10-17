@@ -49,7 +49,7 @@ def generate():
  table['hex']=raw.hex();strings+=bytes(-len(strings)%4);part(PAY+0x74000,strings);assert PAY+0x74000+len(strings)<PAY+0x76000
  ap.pop('compressed_hex',None);t.update(id='model909-wizard-acid',name='909 kit + ACID with Sample Wizard',description=['Six slots 909 sur Sample Wizard courant, ACID main conserve. Aucun Model-TG installe. Nouvelle combinaison experimentale ; note 108.'],status='experimental',requires=['sample-wizard'],conflicts=[],symbols={k:hex(v) for k,v in sy.items()},sample_slots={'table':hex(sy['samples']),'pool':hex(PAY+0x48000),'capacity':180000,'rate':32000},replacement_slots=[x[0] for x in SLOTS]);t['writes'].sort(key=lambda w:w['off']);assert ap['size']>=0x74000+len(strings)
  build.apply_writes(stock,[wizard,t])
- return dict(engine=t,wizard=wizard,original_wizard_ref=data['refs']['sample-wizard'],original_id=base['id'],original_ref=data['refs'][base['id']],features=data['features'],bss_end=hex(end),startup=next(t for t in json.loads((ROOT/'docs/flasher-supermodel-909/profile.js').read_text().split('=',1)[1].strip().rstrip(';'))['tweaks'] if t['id']=='supermodel-909-startup'))
+ return dict(engine=t,wizard=wizard,original_wizard_ref=data['refs']['sample-wizard'],original_id=base['id'],original_ref=data['refs'][base['id']],features=data['features'],bss_end=hex(end),startup=json.loads((ROOT/'tools/web/model909/startup.json').read_text(encoding='utf-8')))
 def main():
  p=argparse.ArgumentParser();p.add_argument('--check',action='store_true');a=p.parse_args();target=ROOT/'build/909-current/engine-data.js';text='window.MC909CurrentData='+json.dumps(generate(),separators=(',',':'))+';\n'
  if a.check:assert target.read_text()==text
