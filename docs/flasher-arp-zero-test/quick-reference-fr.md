@@ -100,7 +100,7 @@ Le MIDI sauvegarde charge uniquement en entrant cote B, lecture arretee. Arreter
 
 ## Test combiné actuel — non publié dans le principal
 
-[Ouvrir le test Octave 0 + curseur MIDI B](../flasher-arp-zero-test/?v=2026-10-17-arp-zero-test-1).
+[Ouvrir le test Octave 0 + curseur MIDI B](../flasher-arp-zero-test/?v=2026-10-17-arp-zero-test-2).
 
 | Changement | Vérification |
 |---|---|
@@ -108,4 +108,4 @@ Le MIDI sauvegarde charge uniquement en entrant cote B, lecture arretee. Arreter
 | Première entrée B / curseur | Ouvrir B pendant la lecture ; vérifier que le MIDI démarre sans sortir/rentrer et que REC montre un seul curseur. Chaque voie conserve sa longueur et sa vitesse. |
 | Configuration du test | Garder Control All Beat Repeat sélectionné avec Banque MIDI dans ce test combiné. Cette obligation ne concerne pas le principal. Les diagnostics CPU/pic/CUT restent disponibles dans le test. |
 
-Ces changements attendent la vérification matérielle. Le chargement MIDI sauvegardé exige toujours la lecture arrêtée. Le beat repeat MIDI et le filtre MIDI ont été abandonnés et ne font pas partie de ce test.
+Octave 0 est confirmé sur machine ; le curseur B et la correction du crash attendent encore la vérification matérielle. Le chargement MIDI sauvegardé exige toujours la lecture arrêtée. Le beat repeat MIDI et le filtre MIDI ont été abandonnés et ne font pas partie de ce test.

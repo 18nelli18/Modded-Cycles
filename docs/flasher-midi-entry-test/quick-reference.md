@@ -100,7 +100,7 @@ Saved MIDI loads only when entering B-side while playback is stopped. Stop befor
 
 ## Current combined test — not released in main
 
-[Open the Octave 0 + MIDI B-side cursor test](../flasher-arp-zero-test/?v=2026-10-17-arp-zero-test-1).
+[Open the Octave 0 + MIDI B-side cursor test](../flasher-arp-zero-test/?v=2026-10-17-arp-zero-test-2).
 
 | Change | What to check |
 |---|---|
@@ -108,4 +108,4 @@ Saved MIDI loads only when entering B-side while playback is stopped. Stop befor
 | B-side first entry / cursor | Open B-side during playback; verify MIDI starts without exiting/re-entering and that REC shows one cursor. Each lane retains its own length and speed. |
 | Test setup | Keep Control All Beat Repeat selected when installing MIDI Out Bank in this combined test. That requirement does not apply to main. CPU/peak/CUT diagnostics remain available in the test. |
 
-These changes await hardware verification. Saved MIDI loading still requires stopped playback. MIDI beat repeat and MIDI filter work were canceled and are not part of this test.
+Octave 0 is hardware-confirmed; the B-side cursor and crash repair still await hardware verification. Saved MIDI loading still requires stopped playback. MIDI beat repeat and MIDI filter work were canceled and are not part of this test.
