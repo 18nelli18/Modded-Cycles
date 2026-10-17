@@ -4,10 +4,12 @@ const os=Uint8Array.from(fs.readFileSync('firmware/model-cycles_OS1.13.syx')),st
 (async()=>{for(const [name,midi,wizard,meter] of [['all-midi',true,true,true],['all-no-midi',false,true,true],['all-no-wizard',true,false,true],['meter-off',false,true,false],['bank-no-repeat',true,true,false],['filter-off',false,true,true]]){
  const {w,errors}=open();try{
  await w.MCBeatDiagnosticReady;if(w.MCAudioLoadReady)await w.MCAudioLoadReady;const a=w.MCFlasherApp;w.document.getElementById('select-all').click();change(w,'midi-out-bank',midi);change(w,'sample-wizard',wizard);change(w,'audio-load-diagnostic',meter);if(name==='bank-no-repeat')change(w,'control-all-beat-repeat',false);if(name==='filter-off')change(w,'track-filter',false);
- const result=w.MCMidiBankCompose(a.chosenTweaks(),os,st);const beat=result.tweaks.find(t=>t.id==='control-all-beat-repeat');
+ const chosen=a.chosenTweaks();
+ if(w.MCAudioLoad?.inner_call&&wizard){const wizardT=chosen.find(t=>t.id==='sample-wizard'),call=w.MCAudioLoad.inner_call,part=wizardT.append.parts.find(p=>p.hex&&parseInt(p.dest,16)<=call.at&&call.at+4<=parseInt(p.dest,16)+p.hex.length/2);assert(part,'inner call part');const off=2*(call.at-parseInt(part.dest,16));assert.equal(part.hex.slice(off,off+call.old.length),a.isSelected('track-filter')?call.new:call.old,'inner filter ownership guard in resolved payload');}
+ const result=w.MCMidiBankCompose(chosen,os,st);const beat=result.tweaks.find(t=>t.id==='control-all-beat-repeat');
 
  const built=w.MCBuilder.build(os,w.MC_TWEAKS.device,result.tweaks,{syntakt:st,refMods:result.refMods});
- if(w.MCAudioLoad?.inner_call&&wizard){const b=w.MCBuilder,call=w.MCAudioLoad.inner_call,c=b.parseContainer(b.unwrap(built.raw).stream),section=c.sections.find(s=>s.id===3),main=b.aplibDepack(c.blob.subarray(section.off,section.off+section.size)).data,off=call.at-0x40000400;assert.equal(b.hex(main.subarray(off,off+call.old.length/2)),a.isSelected('track-filter')?call.new:call.old,'inner filter ownership guard in built firmware');}
+
  if(w.MCAudioLoadReady)assert(!result.tweaks.some(t=>t.id==='native-oscillator-index'),'audio load candidate must retain stock oscillator code');
  assert(built.modsChecked);assert(w.MCFlasher.verify(built.raw).count>0);assert(!result.tweaks.some(t=>t.symbols?.bp_menu));assert.equal(!!beat?.symbols.br_load_address,meter);assert.equal(errors.length,0,errors.join('\n'));
  if(meter){assert.equal(beat.status,'experimental');const gov=result.tweaks.find(t=>t.gov).gov,raw=Buffer.from(beat.append.parts[0].hex,'hex'),origin=parseInt(beat.append.dest,16);assert.equal(raw.readUInt32BE(parseInt(beat.symbols.br_load_address,16)-origin),parseInt(gov.gov_load,16));
