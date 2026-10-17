@@ -183,3 +183,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [107 — Swarm LITE principal](107-swarm-lite-principal.md) | Principal 1.79 : trois oscillateurs remplacent sept a la demande AveyCole ; nette baisse de charge/clicks sur machine, son plus fin/niveau parfois reduit ; filtre/repeat/regulateur inchanges. |
 
 | [108 — 909 modules actuels](108-909-modules-actuels.md) | Test 909 : Sample Wizard remplace Model-TG ; modules MIDI/Genie actuels et beat repeat, quatre WAV locaux. Nouvelle combinaison experimentale. Lien 909 prominent dans main. |
+
+- [110 — Guide des raccourcis](110-guide-raccourcis.md) : nouveaux gestes EN/FR, impression et Markdown ; actions stock exclues.
