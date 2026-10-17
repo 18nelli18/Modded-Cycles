@@ -1,74 +1,86 @@
-# Modded Cycles: A.V.’s Supermodel Edition
+# New feature shortcut guide
 
-## Quick reference · 13 October 2026
+A.V.’s Supermodel Edition · 16 October 2026
 
-Install the relevant mods first. Hold the first button, then press/turn the next control. **TRIG** = sequencer step; **pad** = track pad; **DATA** = LEVEL/DATA. **PRESET (MACHINES button)** follows Model-TG’s naming below. Independent MIDI Bank with project saving is hardware tested by AveyCole and available alone or alongside your selected machines.
+Added gestures only; stock-style transport, copy, clear and paste actions are omitted.
 
-**Storage:** **Stop playback before Save Project and wait for MIDI SAVED. Saved MIDI data loads only when you enter B-side and only while playback is stopped.** FUNC + SETTINGS + TRACK opens B-side. Unsaved edits are lost on power-off. MIDI files are outside Elektron backups and SysEx exports. A-side Second LFO saves **speed, multiplier, waveform, destination and depth** with the sound; fade, start phase and mode reset when loading a sound.
+Install the relevant feature first. Hold the first button while pressing or turning the next control. TRIG means a step key; pad means a track pad; DATA means LEVEL/DATA. MACHINES is the physical button sometimes called PRESET in sampler instructions.
 
-## Sequence Genie, Second LFO and SCRAMBLE
+## Performance and sound
 
-| Feature | How to use it |
-|---|---|
-| **Sequence Genie** | **SETTINGS + PAGE** opens the current track/lane’s generator. DATA selects; click, turn, click to edit. |
-| Generator options | Scale/root, note range, density, velocity/decay/pan ranges, Both/Rhythm/Notes, mutation and Euclidean hits/rotation. B-side uses relevant MIDI controls. |
-| Preview and queue | **PLAY / STOP** previews; **FUNC + pad** mutes that side. Generate queues the next loop during playback. **Cancel queue** cancels. Stop for **Undo**; closing discards Undo/queue. |
-| **Second LFO** | Press **LFO twice**. DATA selects and edits settings. While this page is open, **LFO SPEED** edits LFO 2. A-side synth controls and keyboard playback remain active. |
-| LFO 2 quick assignment | On A-side LFO 2, **hold LFO + turn a parameter knob** to assign its destination; further turning adjusts signed depth. |
-| **A-side SCRAMBLE** | **SETTINGS + TRACK** randomizes four machine controls. **Hold TRIG(s), then SETTINGS + TRACK** toggles fresh values each pass, preserving the base sound. Sampler excluded; no Undo. |
-| **B-side SCRAMBLE** | **SETTINGS + TRACK** randomizes the selected MIDI lane’s assigned CC values once and shows SCRAMBLE. |
+| Feature | Gesture | Result |
+|---|---|---|
+| Control All Config | TRACK + TRIG 1–6 | Include or exclude tracks from Control All. The active track follows the native active-track exception. Choices reset on power-off. |
+| Control All Beat Repeat | Hold TRACK + RETRIG, then hold TRIG 1–16 | Repeat the included audio tracks. The newest held TRIG chooses the division and shows a brief popup. Release the division pad or either modifier to stop. Both modifiers must stay held. |
+| Latching mute | Hold TRACK, tap FUNC | Keep mute mode open. Tap FUNC to leave. |
+| Trig preview | While stopped or paused, hold TRIG + PAGE | Audition that step with its note and locks. |
+| Audio slide trigs | SETTINGS + TRIG | Toggle a parameter slide on the step. |
+| Synth Attack | MACHINES + DECAY | Set the added attack control on supported synth/drum tracks. |
+| Per-track filter | MACHINES + SWEEP / CONTOUR | Cutoff / resonance. Hold TRACK as well for Control All over included audio tracks. Neutral is maximum cutoff and zero resonance. |
+| MACRO lo-fi | FUNC + PITCH on a MACRO track | Left reduces sample rate; right reduces bit depth. |
 
-## B-side: six parallel MIDI tracks
+### Beat repeat divisions
 
-M1–M6 play alongside the six audio tracks; default channels **7–12**, assignable in Scale Setup. Display and pad pulses identify B-side activity.
+| TRIG | Division | TRIG | Division |
+|---|---|---|---|
+| 1 | 1/64 | 9 | 3/16 |
+| 2 | 1/48 | 10 | 1/4 |
+| 3 | 1/32 | 11 | 1/3 |
+| 4 | 1/24 | 12 | 3/8 |
+| 5 | 1/16 | 13 | 1/2 |
+| 6 | 1/12 | 14 | 2/3 |
+| 7 | 1/8 | 15 | 3/4 |
+| 8 | 1/6 | 16 | 1 bar |
 
-| Action | Shortcut / behavior |
-|---|---|
-| Enter or leave B-side | **FUNC + SETTINGS + TRACK**. Repeat from B home to exit, or press **BACK** there. BACK inside a window returns to B. |
-| Select / play a lane | Press its **track pad**. **FUNC + pad** toggles that lane’s MIDI output without muting its A-side audio track. |
-| Grid or keyboard | **REC** toggles grid/keyboard. TRIGs place/remove steps in grid mode or play scale-aware notes otherwise. New steps: **C5**. |
-| Edit a step | **Hold TRIG + DATA** to edit; click DATA to cycle **Note → Vel → Len** (highlighted). Clearing removes locks. |
-| Live recording | **REC + PLAY** starts. Keep REC held; press PLAY again to toggle quantized/unquantized. |
-| Pages and Scale Setup | **PAGE** cycles only through pages within the lane’s length. **FUNC + PAGE** opens length, speed, scale/key and MIDI channel settings. In Scale Setup, PAGE advances length in 16-step increments. |
-| Keyboard setup | **FUNC + TRACK** opens **KbT** (keyboard transpose) and **Pad Note**. The keyboard remains playable. |
-| Retrig / arpeggiator | **FUNC + RETRIG**: lane defaults. **Hold TRIG + RETRIG**: step menu; press RETRIG again to toggle On/Off. DATA edits; TRIG release closes. |
-| Chance / conditions | Turn **CHANCE** for the lane’s stock-style menu; **hold TRIG + turn CHANCE** to lock a step. Release the TRIG to close. If CHANCE is assigned to a CC, it controls that CC instead. |
-| Lane copy / clear / paste | **FUNC + REC / PLAY / STOP** = copy / clear / paste. Repeat clear/paste on the same lane to undo. |
-| Step copy / paste | **Hold TRIG + REC** copies; **hold destination TRIG + STOP** pastes, including locks. Popup confirms. |
-| Global tempo and windows | **TEMPO** opens the stock global tempo menu for all twelve tracks. Close with BACK or TEMPO to return to B-side. Closing B-side windows returns to B-side. |
+Long audio slices halve at slow tempos to fit the history buffer. The released audio repeat does not repeat outgoing MIDI notes; the MIDI test below adds B-note retriggering.
 
-## MIDI CC knobs, locks, slides and LFOs
+## Sequence Genie, SCRAMBLE and modulation
 
-| Action | Shortcut / behavior |
-|---|---|
-| Assign a gray knob | **SETTINGS + knob** selects **OFF/CC0–127** silently. Release SETTINGS to commit; existing locks keep playing. |
-| Send / lock a CC value | Turn the assigned knob to send its base value. **Hold TRIG + turn the assigned knob** to store a step lock. |
-| Trigless locks | **FUNC + TRIG** places a dim parameter-only step. Hold it + assigned knobs to lock CCs without a note. |
-| Return to base | The **next active note without that knob’s lock** restores base. Empty/trigless steps retain the current value. |
-| Note and CC slides | **SETTINGS + TRIG** toggles a slide, with a Slide On/Off popup. Notes overlap for legato; CC values glide toward the marked step’s values. |
-| MIDI LFO 1 / 2 | Press **LFO**, then press it again for LFO 2. Each targets a CC on that lane’s channel. Keyboard playback stays active. |
-| Confirm an LFO destination | **Dst → DATA → scroll OFF, CC0–127 → DATA** confirms. **BACK** cancels; another BACK closes. Names scroll; the confirmed destination keeps playing. |
+| Feature | Gesture | Result |
+|---|---|---|
+| Sequence Genie | SETTINGS + PAGE | Open the generator for the selected audio track or B MIDI lane. DATA selects; click, turn, click to edit. Queue chooses Loop or Page boundaries. |
+| A-side SCRAMBLE | SETTINGS + TRACK | Randomize four synthesis controls. Sampler tracks are excluded. |
+| A-side step SCRAMBLE | Hold TRIG(s), then SETTINGS + TRACK | Toggle fresh randomized values on those steps each pass, retaining the base sound. |
+| B-side SCRAMBLE | SETTINGS + TRACK | Randomize the selected lane’s assigned MIDI CC values. |
+| Second LFO | Press LFO twice | Open LFO 2. On its page, LFO SPEED edits LFO 2. |
+| LFO 2 quick assignment | On A-side LFO 2, hold LFO and turn a parameter knob | Select that destination; further turning adjusts signed depth. |
+| Scale Lock | FUNC + PAGE | Access added scale/key settings with the performance support installed. |
+| Arpeggiator / ChordKeys settings | FUNC + RETRIG | Access the added direction/octave or ChordKeys options, according to the installed feature. |
+| Arpeggiator performance | Hold RETRIG while holding notes | Play the held notes through the arpeggiator; A.On provides its latch option. |
+| ChordKeys | On a CHORD track, play TRIG 1–16 | 1–7: I–VII; 8–14: one octave up; 15–16: I–II two octaves up. |
 
-## Other selectable mods
+## Sample Wizard and sample preview
 
-| Mod | Function / relevant controls |
-|---|---|
-| **Model-TG** | Sampler, resampling, master FX, synth additions, slide trigs and Scale Lock. **SETTINGS + PRESET**: Sampler playback mode; **SETTINGS + PUNCH**: mode options; **SETTINGS + REC**: resampling. **SETTINGS + RETRIG**: repeat/master FX page; **SETTINGS + BACK**: master FX off. **SETTINGS + TRIG**: audio slide; **FUNC + PAGE**: Scale Lock. **PRESET + DECAY / SWEEP / CONTOUR**: attack / filter / resonance. |
-| **Sample preview** | On a Sampler track, **FUNC + MACHINES (PRESET browser)**, select a sample, then press the pad or keyboard TRIG to audition it. Scrolling is silent. |
-| **Latching mute / trig preview** | Hold **TRACK + tap FUNC** to latch mute mode; tap FUNC to leave. With playback stopped/paused, **hold TRIG + PAGE** to audition the step and its locks. |
-| **Arpeggiator / Chord Keys** | **FUNC + RETRIG** edits Arp direction/Oct or Chord Keys setup. Arp plays held notes with **RETRIG held** or A.On. Chord Keys on a CHORD track: TRIG1–7 = I–VII, 8–14 = octave up, 15–16 = I–II two octaves up. |
-| **MACRO / ACID / Syntakt** | MACRO adds 47 Braids models: SHAPE selects; COLOR/SWEEP shape the sound; CONTOUR sets envelope amount; **FUNC + PITCH** adds lo-fi. ACID: COLOR cutoff, SHAPE resonance, SWEEP env mod, CONTOUR drive, DECAY decay; PUNCH switches saw/square. Overlapping ACID note lengths slide. Syntakt engines are added from your own uploaded Syntakt OS. |
-| **Track Filter / LFO 2, 3, 4** | Optional alternatives to Second LFO. **MACHINES + SWEEP** sets LP/OFF/HP filter; CONTOUR resonance, COLOR/SHAPE envelope. Extra-LFO option cycles pages with repeated **LFO** presses; LFO2 saves with the sound, LFO3/4 remain RAM-only. The flasher enforces conflicts. |
-| **USB audio / MIDI routing** | Six-channel USB sends six separate tracks instead of the stereo mix. The MIDI OUT + THRU combo combines outgoing and incoming MIDI. Select **CONFIG → MIDI → PORTS → OUT/THRU: THR**, then **FUNC + click DATA** to enable/disable the Cycles’ own outgoing MIDI. |
-| **Display and editing** | Three-name browser; long names scroll. **DATA** shows volume, **FUNC + DATA** pan. Dim trigless steps; half-second trig-removal grace; 546 BPM maximum. |
-| **Startup / Select All** | SUPERMODEL by A.V. replaces the startup animation. Select All prefers it over the old Modded Cycles animation, and keeps Model-TG plus Live MIDI OUT + THRU. |
+| Feature | Gesture | Result |
+|---|---|---|
+| Sample lock | Hold a step TRIG + MACHINES | Choose a sample lock for that step on a Wizard track. |
+| Playback modes | SETTINGS + MACHINES | Open the sampler’s playback-mode controls. |
+| Mode options | SETTINGS + PUNCH | Open the selected sampler mode’s options. |
+| Resampling | SETTINGS + REC | Open resampling controls. |
+| Sample Preview — hardware tested | FUNC + MACHINES; highlight a sample, then play its track pad or keyboard TRIG | Audition the highlighted sample in the Wizard browser. Scrolling alone is silent. Compatible with ChordKeys and WAVE. |
+| Slice editor: upper slices | Hold FUNC + TRIG 1–16 | Play slices 17–32 while the slice editor is open. |
+| Slice editor: zero crossing | FUNC + marker knobs 1 / 2 | Snap the respective slice marker to a zero crossing. |
+| Slice editor: remove marker | FUNC + click DATA | Remove a slice marker. DATA alone splits; PUNCH controls tap slicing. |
 
-ChordKeys requires Model-TG. MIDI Bank and extra synth machines are optional for ChordKeys; checking it does not select all mods.
+## MIDI B-side and routing
 
-Control All Config: hold TRACK + TRIG1–6 to include/exclude each audio track, including the selected track. TRACK + knob changes included tracks. Choices reset on power-off.
+| Feature | Gesture | Result |
+|---|---|---|
+| Enter / leave MIDI B-side | FUNC + SETTINGS + TRACK | Open or close the six parallel MIDI tracks. Use the combo from B home to exit; BACK there also exits. |
+| MIDI CC assignment | SETTINGS + a gray knob | Assign that knob to a MIDI CC on the selected B lane. |
+| MIDI CC lock | Hold TRIG + an assigned knob | Add a CC parameter lock to that MIDI step. |
+| MIDI note / CC slide | SETTINGS + TRIG | Enable or disable a slide. Notes overlap for legato; CCs glide toward the marked step’s values. |
+| MIDI keyboard setup | FUNC + TRACK | Set keyboard transpose and Pad Note. |
+| MIDI CC LFO 2 | Press LFO twice on B-side | Open the second MIDI CC LFO. In Dst, click DATA, choose OFF or CC0–127, then click DATA to confirm; BACK cancels. |
+| Combined MIDI OUT + THRU | Set CONFIG → MIDI → PORTS → OUT/THRU to THR, then FUNC + click DATA | Toggle the Cycles’ own outgoing MIDI while retaining incoming MIDI Thru. |
 
-## Control All Beat Repeat (hardware tested)
+Saved MIDI loads only when entering B-side while playback is stopped. Stop before Save Project and wait for MIDI SAVED. Sidecar MIDI files are outside Elektron SysEx backups.
 
-Hold TRACK + RETRIG throughout, then hold a TRIG key. Release either modifier to stop. Control All Config chooses which tracks repeat. Hold both modifiers to replace its track choices with all sixteen repeat divisions; no dedicated screen or master FX. TRIG 3 = 1/32; TRIG 5 = 1/16; TRIG 7 = 1/8; TRIG 10 = 1/4; TRIG 16 = one bar (long slices halve at slow tempos). Newest held TRIG wins. Outgoing MIDI notes are not repeated. Hardware tested by AveyCole.
+## Separate MIDI performance test
 
-Beat repeat briefly displays the selected division. In MIDI B, hold FUNC: unmuted pads stay steadily lit; muted pads stay dark except B-note pulses. Selected-track highlight returns after FUNC release.
+These two additions are experimental and available only on the [MIDI performance test page](../flasher-midi-performance-test/?v=2026-10-16-midi-performance-test-1), currently using the fixed six-voice 909 profile and four local WAVs.
+
+| Feature | Gesture | Result |
+|---|---|---|
+| MIDI beat repeat | Hold TRACK + RETRIG, then hold a division TRIG | Retrigger each included B lane’s latest sequenced note, using its current MIDI channel and port. Release stops the repeated notes. This repeats notes rather than capturing a MIDI phrase; native A-side MIDI output is outside this test. |
+| B-side Control All filter: audio + MIDI | In B-side, hold TRACK + MACHINES and turn SWEEP / CONTOUR | Update included internal audio filters and send CC74 / CC71 to the configured B instruments. MIDI-muted lanes receive no CC; their internal audio filters still change. |
