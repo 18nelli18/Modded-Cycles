@@ -59,3 +59,7 @@ Le 14/10/2026, le contributeur rapporte « It has passed » pour le prototype st
 ## 6. Touches adjacentes (18/10/2026)
 
 À la demande du contributeur, octave bas passe à TRACK + TRIG 15 (code 30) ; octave haut reste TRACK + TRIG 16 (code 31). TRACK + TRIG 1 suit de nouveau le clavier stock. La preuve compare tous les TRIG au stock hors des deux raccourcis et couvre le relâchement du TRIG 15 déjà tenu. Le retour matériel du 14/10 concerne uniquement le premier prototype.
+
+## 7. Retour du contributeur sur la v2 (18/10/2026)
+
+Le contributeur rapporte « ok hardware test works » après réception du firmware stock de test v2, avec TRACK + TRIG 15 pour octave bas et TRACK + TRIG 16 pour octave haut. Ce retour confirme le fonctionnement matériel de cette nouvelle disposition sur son Model:Cycles ; il ne détaille pas chaque point du protocole et ne couvre pas les combinaisons de mods. Le statut de l’intégration reste **experimental**, en attente de l’essai du mainteneur.
