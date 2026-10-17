@@ -6,10 +6,10 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 170 tweaks, 17 602 écritures.
-- Masques de sprites libérables : 164 (35 960 o), dont 148 pris (32 712 o) et **16 libres (3 248 o)**.
+- 171 tweaks, 17 605 écritures.
+- Masques de sprites libérables : 164 (35 960 o), dont 149 pris (32 904 o) et **15 libres (3 056 o)**.
 - Crochets sur l'OS : 108 adresses détournées, dont 68 à l'identique par des mods de familles différentes.
-- Pointeurs réécrits : 73 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
+- Pointeurs réécrits : 74 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 139 tweaks ; place restante au §3.
 
 ## 1. Masques de sprites libérés
@@ -42,7 +42,7 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x401904b4` | `0x400ac784` | pris (370/376 o) | multiline-browser (370 o) |
 | `0x40192734` | `0x400ac2b2` | pris (318/376 o) | trigless-dim (318 o) |
 
-### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 28 pris, 14 libres (2 688 o)
+### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 29 pris, 13 libres (2 496 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
@@ -74,7 +74,7 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x40184808` | `0x400adc40` | pris (4/192 o) | lfo-secondary (4 o) |
 | `0x40184af8` | `0x400adc04` | pris (4/192 o) | lfo-secondary (4 o) |
 | `0x40184c78` | `0x400adbe4` | pris (4/192 o) | lfo-secondary (4 o) |
-| `0x40187528` | `0x400ad742` | libre | |
+| `0x40187528` | `0x400ad742` | pris (92/192 o) | quick-save-exit (92 o) |
 | `0x401876a8` | `0x400ad726` | libre | |
 | `0x40188f98` | `0x400ad3a0` | libre | |
 | `0x4018a608` | `0x400ad1c6` | libre | |
@@ -640,6 +640,7 @@ Constantes 32 bits de l'OS (tables de fonctions, données) qui pointent maintena
 | `0x400ffa78` | `401bb076` | masque `0x4016fd60` +0x0 | scale-gen-queued, scale-gen-st-queued |
 | `0x401005a8` | `4001e814` | masque `0x401625bc` +0x0 | track-filter |
 | `0x401005bc` | `4001d818` | charge utile (image) +0x104ac | sample-wizard |
+| `0x40100c44` | `40148744` | masque `0x40187528` +0x0 | quick-save-exit |
 | `0x401016c8` | `40024e0c` | masque `0x4017a4d4` +0xa | lfo-secondary |
 | `0x401016e4` | `40024e86` | masque `0x4017a4d4` +0x0 | lfo-secondary |
 | `0x40103070` | `400d7648` | charge utile (mémoire) +0x7a992 | retrosyn-all-machines |
@@ -721,3 +722,4 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | scramble-st-gen-queued | 26 | 0 | 2 | 0 | 12 | 12 | 0 |  | notes/55 |
 | midi-live-both | 6 | 0 | 4 | 0 | 1 | 1 | 0 |  | notes/53 |
 | lfo-secondary | 77 | 0 | 1 | 2 | 37 | 37 | 0 |  | notes/58 |
+| quick-save-exit | 3 | 0 | 0 | 1 | 1 | 1 | 0 |  |  |

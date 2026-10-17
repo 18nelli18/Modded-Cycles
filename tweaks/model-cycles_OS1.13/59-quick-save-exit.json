@@ -1,0 +1,39 @@
+{
+ "id": "quick-save-exit",
+ "order": 59,
+ "name": "Fermer le mute apres sauvegarde rapide",
+ "description": [
+  "FUNCTION+SETTINGS long ferme la vue mute par son close natif, sans changer la sauvegarde.",
+  "Code confirme par AveyCole sur test3 le17/10/2026 ; placement dans masque sprite partage, sans diagnostic.",
+  "Generateur tools/gen_quick_save_exit_main.py ; note113."
+ ],
+ "device": "Model:Cycles",
+ "os": "1.13",
+ "section": 3,
+ "requires": [
+  "latching-mute"
+ ],
+ "conflicts": [],
+ "status": "tested",
+ "hardwareTestedByOwner": true,
+ "writes": [
+  {
+   "off": 1050692,
+   "old": "40148744",
+   "new": "40187528"
+  },
+  {
+   "off": 709442,
+   "old": "40187528",
+   "new": "4014b364"
+  },
+  {
+   "off": 1601832,
+   "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+   "new": "4feffff048d70c04246f0014266f00182f0b2f0a4eb940148744508f2f40000c2f0b4eb94007240c588f0c800000000d661c202b00100280000000220c8000000022660a2f0a4eb940076126588f202f000c4cd70c044fef00104e75"
+  }
+ ],
+ "symbols": {
+  "qs_exit": "0x40187528"
+ }
+}
