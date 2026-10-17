@@ -29,3 +29,13 @@ AveyCole signale FUNCTION allume et mute verrouille apres sortie du menu quick-s
 Le candidat test2 termine ces deux octets uniquement lors du long FUNC+SETTINGS inutilise qui atteint deja la sauvegarde native. Aucun changement sur les autres accords ni sur le code de sauvegarde. Si aucun tweak ne possede les octets latch, aucun adaptateur ajoute. Le nouveau corps de68octets est ajoute au payload repeat apres composition ; trampoline de50octets garde sur le quick-save publie. Le test impose Control All Beat Repeat comme porteur (diagnostics retenus). Le loader et les references sont recalcules apres recompression du porteur Wizard. Une premiere allocation apres Wizard etait effacee par init du support sans Banque : rejetee avant publication. Constructeur verifie taille/references. Diagnostics conserves dans le test seulement ; principal inchange.
 
 Preuve tools/emu/test_quick_save_latch.py :512cas gardent retour/etats SETTINGS/ABI/evenement, seule difference attendue = liberation latch lors du long FUNC non consomme. Ancien et candidat executent le vrai garde mute, ancien1 contre candidat0 apres relachement. La presentation/destruction du menu complet et les LEDs physiques restent a verifier sur appareil.
+
+## Test 2 insuffisant et test 3 (17/10/2026)
+
+[RETOUR APPAREIL] AveyCole : FUNCTION reste allume apres fermeture du save dans test2. Ne pas considerer les seuls flags comme preuve de fermeture d une vue. Le garde mute peut retourner0 sans que la vue sous le menu recoive le relachement FUNC qui declenche sa fermeture.
+
+[FAIT code] QuickMute vtable0x40100c3c slot+0x28 =0x40076126. Cette fonction marque self+48=1 et notifie son proprietaire ; elle ne detruit pas directement self. Test3 enveloppe uniquement le callback key de cette vue (slot0x40100c44), conserve l ancien callback0x40148744/resultat/ABI, puis appelle le close natif si le vrai getter retourne13 et flags long+FUNC. Un accord consomme retourne0 et ne ferme rien. Aucun pointeur de vue global garde, aucun changement du save natif.
+
+Le test3 remplace le correctif test2 ; le corps quick-save de50octets publie reste intact. Wrapper92octets charge par repeat, vtable gardee sur le vrai handler latching. Marche aussi sans Wizard si ce tweak est selectionne. Aucun patch en absence de latching-mute. Principal inchange. Le test MIDI-entry1 publie separement conserve sa base test2 ; son but est l entree MIDI, pas la resolution de ce bug save.
+
+Preuve tools/emu/test_quick_save_exit.py : bootstrap reel avec/sans Banque, ancien512cas sans close contre candidat512cas ; seuls long FUNC+SETTINGS non consommes appellent le vrai0x40076126 et marquent self+48. Evenement/retour/ABI conserves. Le retrait effectif de pile des vues et la LED restent a verifier sur appareil.
