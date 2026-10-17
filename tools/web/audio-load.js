@@ -14,7 +14,7 @@
  function filterProbe(result,syntakt,stock){
   const repeat=result.tweaks.find(t=>t.id==='control-all-beat-repeat');if(!repeat?.symbols.br_filter_f_address)return result;
   const wizard=result.tweaks.find(t=>t.id==='sample-wizard'),enabled=a.isSelected('track-filter')&&wizard;
-  const values={br_filter_state_address:enabled?n(wizard.symbols.gflt_y1):0,br_filter_f_address:enabled?n(wizard.symbols.gflt_f):0,br_filter_q_address:enabled?n(wizard.symbols.gflt_q):0,br_filter_mk_address:enabled?n(wizard.symbols.gflt_mk):0,br_filter_modes_address:enabled?d.filter.mode_address:0};
+  const values={br_filter_code_address:enabled?d.filter.at:0,br_filter_code_size:enabled?d.filter.probe_size:0,br_filter_code_hash:enabled?d.filter.probe_hash:0,br_filter_state_address:enabled?n(wizard.symbols.gflt_y1):0,br_filter_f_address:enabled?n(wizard.symbols.gflt_f):0,br_filter_q_address:enabled?n(wizard.symbols.gflt_q):0,br_filter_mk_address:enabled?n(wizard.symbols.gflt_mk):0,br_filter_modes_address:enabled?d.filter.mode_address:0};
   for(const [key,value] of Object.entries(values)){
    const at=n(repeat.symbols[key]),part=repeat.append.parts.find(p=>p.hex&&n(p.dest)<=at&&at+4<=n(p.dest)+p.hex.length/2);if(!part)throw Error('Filter probe: '+key);
    const off=2*(at-n(part.dest));part.hex=part.hex.slice(0,off)+h(value)+part.hex.slice(off+8);

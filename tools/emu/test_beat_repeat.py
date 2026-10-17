@@ -25,7 +25,7 @@ def main():
     r.s={k:origin+v for k,v in data['symbols'].items()}
     if case:
         expected=bytes.fromhex(tweak['append']['parts'][0]['hex'])
-        for name in ('br_old_key','br_old_gain','br_side','br_side_on','br_mask_address','br_old_track_keys','br_old_track_leds','br_load_address','br_avg_address','br_fading_address','br_stolen_address','br_filter_f_address','br_filter_q_address','br_filter_mk_address','br_filter_modes_address','br_filter_state_address'):
+        for name in ('br_old_key','br_old_gain','br_side','br_side_on','br_mask_address','br_old_track_keys','br_old_track_leds','br_load_address','br_avg_address','br_fading_address','br_stolen_address','br_filter_f_address','br_filter_q_address','br_filter_mk_address','br_filter_modes_address','br_filter_state_address','br_filter_code_address','br_filter_code_size','br_filter_code_hash'):
             if name not in data['symbols']:continue
             off=data['symbols'][name];code[off:off+4]=expected[off:off+4]
         assert bytes(code)==expected,'module navigateur different du module prouve'
@@ -237,6 +237,11 @@ def main():
     if a.meter:
         assert 'br_load_address' in r.s and 'br_avg_address' in r.s
         key(4,0);key(2,0)
+        put('br_history',0x94000000)  # historique fixture deja mappe
+        if case and 'br_filter_code_address' in r.s and get('br_filter_code_address'):
+            key(1);key(2);key(4);key(28)
+            assert popups[-1]=='FILTER CODE OK',popups[-1]
+            key(28,0);key(4,0);key(2,0);key(1,0)
         put('br_history',0x94000000)  # historique fixture deja mappe, sans nouvelle allocation
         put('br_load_address',0x9307e000);put('br_avg_address',0x9307e004)
         put('br_fading_address',0);put('br_stolen_address',0)
@@ -274,13 +279,26 @@ def main():
                     assert get('br_filter_reset_request')==lane+1
                     assert r.r32(0x9307e300+lane*4)==100+lane,'UI must not edit audio state'
                     assert get('br_requested')==0xffffffff
-                    key(22+lane,0);audio(42)
+                    key(22+lane,0)
+                    if 'br_filter_reset_done' in r.s:
+                        key(29);assert popups[-1]=='RESET PENDING';key(29,0)
+                    call('br_gain_hook',0x93090000)
                     assert get('br_filter_reset_request')==0
+                    if 'br_filter_reset_done' in r.s:
+                        key(29);assert popups[-1]=='RESET '+str(lane+1)+' DONE';key(29,0)
                     for pole in range(4):
                         for other in range(7):assert r.r32(0x9307e300+28*pole+4*other)==(0 if other==lane else 100+7*pole+other)
                 put('br_filter_state_address',0);key(22);assert popups[-1]=='FILTER OFF';key(22,0)
                 assert get('br_filter_reset_request')==0
-            key(4,0);assert popups[-1]==('1M0020 F1000Q0K4096' if 'br_filter_state_address' in r.s else '6M0020 F1005Q0K4096'),popups[-1]
+            if 'br_filter_code_address' in r.s:
+                put('br_filter_code_address',0x9307e500);put('br_filter_code_size',32)
+                raw=bytes(range(32));u.mem_write(0x9307e500,raw);fingerprint=2166136261
+                for byte in raw:fingerprint=((fingerprint^byte)*16777619)&0xffffffff
+                put('br_filter_code_hash',fingerprint);key(28);assert popups[-1]=='FILTER CODE OK';key(28,0)
+                u.mem_write(0x9307e510,b'\xff');key(28);assert popups[-1]=='FILTER CODE BAD';key(28,0)
+                put('br_filter_code_size',679);key(28);assert popups[-1]=='FILTER OFF';key(28,0)
+                put('br_filter_code_address',0);put('br_filter_code_size',0)
+            key(4,0);assert popups[-1]==('1M0020 F1000Q0K4096' if 'br_filter_state_address' in r.s and 'br_filter_code_address' not in r.s else '6M0020 F1005Q0K4096'),popups[-1]
 
             key(2,0);put('br_filter_f_address',0);key(2);key(4);key(4,0)
             assert popups[-1]=='FILTER OFF',popups[-1]
