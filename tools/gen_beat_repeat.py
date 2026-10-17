@@ -24,8 +24,8 @@ def generate(catalogs, source=None):
     with tempfile.TemporaryDirectory() as tmp:
         p=pathlib.Path(tmp);src=pathlib.Path(source) if source else ROOT/'tools/machines/beat_repeat'
         subprocess.run([cross+'gcc','-std=gnu99','-mcpu=54418','-Os','-ffreestanding','-fno-builtin','-fno-common','-fno-pic','-fno-stack-protector','-fno-asynchronous-unwind-tables','-fno-inline','-Wall','-Wextra','-Werror','-Wno-misleading-indentation','-c',str(src/'repeat.c'),'-o',str(p/'c.o')],check=True)
-        subprocess.run([cross+'gcc','-mcpu=54418','-c',str(src/'hooks.s'),'-o',str(p/'s.o')],check=True)
-        subprocess.run([cross+'gcc','-mcpu=54418','-c',str(src/'popup.s'),'-o',str(p/'popup.o')],check=True)
+        subprocess.run([cross+'gcc','-mcpu=54418','-c',str(src/'hooks.s' if (src/'hooks.s').exists() else ROOT/'tools/machines/beat_repeat/hooks.s'),'-o',str(p/'s.o')],check=True)
+        subprocess.run([cross+'gcc','-mcpu=54418','-c',str(src/'popup.s' if (src/'popup.s').exists() else ROOT/'tools/machines/beat_repeat/popup.s'),'-o',str(p/'popup.o')],check=True)
         (p/'link.ld').write_text('SECTIONS { .text 0 : { *(.text*) *(.rodata*) } . = ALIGN(4); .state : { *(.br_state) *(.data*) *(.bss*) } . = ALIGN(4); br_end = .; }')
         subprocess.run([cross+'ld','--emit-relocs','-T',str(p/'link.ld'),'-o',str(p/'e.elf'),str(p/'c.o'),str(p/'s.o'),str(p/'popup.o')],check=True)
         subprocess.run([cross+'objcopy','-O','binary',str(p/'e.elf'),str(p/'e.bin')],check=True)
@@ -33,7 +33,7 @@ def generate(catalogs, source=None):
         rel=subprocess.check_output([cross+'readelf','-rW',str(p/'e.elf')],text=True)
         offsets=[int(m.group(1),16) for m in re.finditer(r'^([0-9a-f]+)\s+\S+\s+R_68K_32\b',rel,re.M)]
         for off in offsets:assert int.from_bytes(body[off:off+4],'big')<len(body)
-        subprocess.run([cross+'gcc','-mcpu=54418','-c',str(src/'boot.s'),'-o',str(p/'boot.o')],check=True)
+        subprocess.run([cross+'gcc','-mcpu=54418','-c',str(src/'boot.s' if (src/'boot.s').exists() else ROOT/'tools/machines/beat_repeat/boot.s'),'-o',str(p/'boot.o')],check=True)
         size=int(next(line.split()[2] for line in subprocess.check_output([cross+'objdump','-h',str(p/'boot.o')],text=True).splitlines() if len(line.split())>3 and line.split()[1]=='.text'),16)
         fits=[g for g in gaps if g[1]-g[0]>=size];assert fits,('chargeur sans place',size)
         gap=min(fits,key=lambda g:g[1]-g[0]);at,_,mask=gap

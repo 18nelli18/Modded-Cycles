@@ -187,3 +187,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [110 — Guide des raccourcis](110-guide-raccourcis.md) : nouveaux gestes EN/FR, impression et Markdown ; actions stock exclues.
 
 - [111 — Diagnostic repeat principal](111-diagnostic-repeat-principal.md) : CPU moyenne/pic et CUT sur copie main ; diagnostic experimental, DSP principal conserve.
+
+- [112 — Optimisation charge audio](112-optimisation-charge-audio.md) : fondus repeat partages, filtre exact allege, slides MIDI vides ; copie test avec CPU/CUT.

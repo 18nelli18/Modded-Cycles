@@ -1,12 +1,12 @@
 // Note 111 : diagnostic seul sur principal, avec/sans banque et Wizard.
-const fs=require('fs'),assert=require('node:assert/strict');process.env.RETROSYN_PAGE='docs/flasher-beat-diagnostic-test';const {open,change}=require('./test_retrosyn_flasher');
+const fs=require('fs'),assert=require('node:assert/strict');process.env.RETROSYN_PAGE=process.env.AUDIO_LOAD_PAGE||'docs/flasher-beat-diagnostic-test';const {open,change}=require('./test_retrosyn_flasher');
 const os=Uint8Array.from(fs.readFileSync('firmware/model-cycles_OS1.13.syx')),st=Uint8Array.from(fs.readFileSync('firmware/Syntakt_OS1.42.syx'));
-(async()=>{for(const [name,midi,wizard,meter] of [['all-midi',true,true,true],['all-no-midi',false,true,true],['all-no-wizard',true,false,true],['meter-off',false,true,false]]){
+(async()=>{for(const [name,midi,wizard,meter] of [['all-midi',true,true,true],['all-no-midi',false,true,true],['all-no-wizard',true,false,true],['meter-off',false,true,false],['bank-no-repeat',true,true,false]]){
  const {w,errors}=open();try{
- await w.MCBeatDiagnosticReady;const a=w.MCFlasherApp;w.document.getElementById('select-all').click();change(w,'midi-out-bank',midi);change(w,'sample-wizard',wizard);change(w,'audio-load-diagnostic',meter);
- const result=w.MCMidiBankCompose(a.chosenTweaks(),os,st),beat=result.tweaks.find(t=>t.id==='control-all-beat-repeat'),built=w.MCBuilder.build(os,w.MC_TWEAKS.device,result.tweaks,{syntakt:st,refMods:result.refMods});
- assert(built.modsChecked);assert(w.MCFlasher.verify(built.raw).count>0);assert(!result.tweaks.some(t=>t.symbols?.bp_menu));assert.equal(!!beat.symbols.br_load_address,meter);assert.equal(errors.length,0,errors.join('\n'));
+ await w.MCBeatDiagnosticReady;if(w.MCAudioLoadReady)await w.MCAudioLoadReady;const a=w.MCFlasherApp;w.document.getElementById('select-all').click();change(w,'midi-out-bank',midi);change(w,'sample-wizard',wizard);change(w,'audio-load-diagnostic',meter);if(name==='bank-no-repeat')change(w,'control-all-beat-repeat',false);
+ const result=w.MCMidiBankCompose(a.chosenTweaks(),os,st);const beat=result.tweaks.find(t=>t.id==='control-all-beat-repeat'),built=w.MCBuilder.build(os,w.MC_TWEAKS.device,result.tweaks,{syntakt:st,refMods:result.refMods});
+ assert(built.modsChecked);assert(w.MCFlasher.verify(built.raw).count>0);assert(!result.tweaks.some(t=>t.symbols?.bp_menu));assert.equal(!!beat?.symbols.br_load_address,meter);assert.equal(errors.length,0,errors.join('\n'));
  if(meter){assert.equal(beat.status,'experimental');const gov=result.tweaks.find(t=>t.gov).gov,raw=Buffer.from(beat.append.parts[0].hex,'hex'),origin=parseInt(beat.append.dest,16);assert.equal(raw.readUInt32BE(parseInt(beat.symbols.br_load_address,16)-origin),parseInt(gov.gov_load,16));}
- const prefix='build/beat-diagnostic/'+name;fs.writeFileSync(prefix+'.json',JSON.stringify({tweaks:result.tweaks,mainOsSha:built.mainOsSha}));fs.writeFileSync(prefix+'.syx',built.raw);console.log('PASS main diagnostic',name,built.mainOsSha);
+ const prefix=(process.env.AUDIO_LOAD_OUTPUT||'build/beat-diagnostic')+'/'+name;fs.writeFileSync(prefix+'.json',JSON.stringify({tweaks:result.tweaks,mainOsSha:built.mainOsSha}));fs.writeFileSync(prefix+'.syx',built.raw);console.log('PASS main diagnostic',name,built.mainOsSha);
  }finally{w.close();}
 }})().catch(e=>{console.error(e.stack);process.exitCode=1;});
