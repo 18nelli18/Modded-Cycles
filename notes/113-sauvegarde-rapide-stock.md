@@ -21,3 +21,11 @@ Gen tools/gen_quick_save_test.py et --check ; source tools/machines/quick_save/m
 ## Publication principale (17/10/2026)
 
 AveyCole demande explicitement la promotion du quick-save vers le principal. Seuls le corps de 50 octets et son adaptateur gardé sont promus ; aucun diagnostic ni optimisation audio de test. Le chemin de sauvegarde natif reste intact. La demande de publication ne constitue pas un nouveau relevé de persistance matérielle.
+
+## Retour et test 2 (17/10/2026)
+
+AveyCole signale FUNCTION allume et mute verrouille apres sortie du menu quick-save ; un tap FUNCTION ferme ce mode. [FAIT en emulation] Le handler latching-mute 0x40148744 marque tout autre accord FUNC comme utilise (0x401487ec), et le garde 0x401486fc conserve alors le verrou 0x401487ed. SETTINGS down suivi du save long laisse 0101 et le garde retourne 1 apres relachement.
+
+Le candidat test2 termine ces deux octets uniquement lors du long FUNC+SETTINGS inutilise qui atteint deja la sauvegarde native. Aucun changement sur les autres accords ni sur le code de sauvegarde. Si aucun tweak ne possede les octets latch, aucun adaptateur ajoute. Le nouveau corps de68octets est ajoute au payload repeat apres composition ; trampoline de50octets garde sur le quick-save publie. Le test impose Control All Beat Repeat comme porteur (diagnostics retenus). Le loader et les references sont recalcules apres recompression du porteur Wizard. Une premiere allocation apres Wizard etait effacee par init du support sans Banque : rejetee avant publication. Constructeur verifie taille/references. Diagnostics conserves dans le test seulement ; principal inchange.
+
+Preuve tools/emu/test_quick_save_latch.py :512cas gardent retour/etats SETTINGS/ABI/evenement, seule difference attendue = liberation latch lors du long FUNC non consomme. Ancien et candidat executent le vrai garde mute, ancien1 contre candidat0 apres relachement. La presentation/destruction du menu complet et les LEDs physiques restent a verifier sur appareil.
