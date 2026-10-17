@@ -189,3 +189,7 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [113 — Sauvegarde rapide stock](113-sauvegarde-rapide-stock.md) : test separe de FUNCTION+SETTINGS maintenu ; natif restaure, permanence hardware a confirmer.
 
 - [114 — Premiere ouverture MIDI pendant lecture](114-premiere-ouverture-midi.md) : gate de contexte paresseux, test separe, diagnostics conserves.
+
+- [115 — Phase et curseur MIDI B](115-curseur-midi-partage.md) : un curseur REC, phase initiale native, longueurs et vitesses propres ; test uniquement.
+
+- [116 — Arpege Oct0 A/B](116-arpege-octave-zero.md) : notes tenues seules, octaves ajoutees0..3, sauvegardes et sons historiques conserves ; test uniquement.
