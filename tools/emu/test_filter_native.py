@@ -19,9 +19,10 @@ def main():
     parser.add_argument('--candidate', required=True)
     parser.add_argument('--cases', type=int, default=512)
     parser.add_argument('--dirty-extensions',action='store_true')
+    parser.add_argument('--instructions',action='store_true')
     args = parser.parse_args()
     sys.path.insert(0, str(pathlib.Path(args.digiemu).resolve()))
-    from unicorn import Uc, UC_ARCH_M68K, UC_MODE_BIG_ENDIAN, m68k_const as mk
+    from unicorn import Uc, UC_ARCH_M68K, UC_MODE_BIG_ENDIAN, UC_HOOK_CODE, m68k_const as mk
     from emu.unicorn_compat import evaluate
 
     def cpu():
@@ -34,7 +35,7 @@ def main():
     symbols = json.loads((root / 'firmware/wizard-catalogue.json').read_text(
         encoding='utf-8'))['variants']['0']['wizard']['symbols']
     symbols = {key: int(value, 16) for key, value in symbols.items()}
-    kernels = []
+    kernels = [];counts=[0,0];totals={False:[0,0],True:[0,0]}
     stack, stop, buffer, setup = 0x93008000, 0x9300f000, 0x93070000, 0x9300c000
     for path in (args.baseline, args.candidate):
         data = json.loads(pathlib.Path(path).read_text(encoding='utf-8').split(
@@ -44,6 +45,10 @@ def main():
         machine.mem_map(0x93000000, 0x100000)
         machine.mem_write(data['at'], bytes.fromhex(data['hex']))
         machine.reg_write(mk.UC_M68K_REG_SR, 0x2700)
+        if args.instructions:
+            index=len(kernels)
+            def counter(uc,pc,size,user):counts[user]+=1
+            machine.hook_add(UC_HOOK_CODE,counter,user_data=index,begin=data['at'],end=data['at']+data['code_size']-1)
         kernels.append((machine, data['at'],data.get('mode_address')))
 
     def call(machine, address, *params):
@@ -79,7 +84,9 @@ def main():
             call(machine, setup)
             actual_mode=machine.reg_read(mk.UC_M68K_REG_D0)
             machine.mem_write(buffer, struct.pack('>32i', *samples))
+            counts[index]=0
             call(machine, entry, buffer, lane)
+            totals[bool(resonance)][index]+=counts[index]
             if probe:assert struct.unpack('>I',bytes(machine.mem_read(probe+lane*4,4)))[0]==actual_mode,(case,lane,'capture MACSR')
             results.append((bytes(machine.mem_read(buffer, 128)), tuple(
                 bytes(machine.mem_read(symbols['gflt_y1'] + 28 * pole + lane * 4, 4))
@@ -87,6 +94,8 @@ def main():
         assert results[0] == results[1], (case, lane, coefficient, resonance, incoming)
     print('PASS EMAC natif DigiEmu :', args.cases,
           'blocs, six pistes, modes entrants et samples/etats exacts')
+    if args.instructions:
+        for resonance,values in totals.items():print('INSTRUCTIONS noyau resonance',int(resonance),values)
     print('LIMITES : noyau seul ; pas de deadline, cache ou validation hardware')
 
 
