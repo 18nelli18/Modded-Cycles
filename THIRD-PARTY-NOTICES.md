@@ -80,3 +80,12 @@ distributed with this repository.
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md). Contributions are accepted under the MIT License; a mod folder may carry its
 own permissive license (MIT, BSD, ISC, 0BSD) in a `LICENSE` file next to it.
+
+## Performance Mode source contribution
+
+The standalone sources under `tools/machines/performance15/`, their generator, proof and guide are contributed under
+the MIT License by **Performance Mode contributors**, with the license text alongside the sources. The contribution
+reuses this repository's existing MIT-licensed `tools/mtlib/` and build helpers rather than importing another firmware
+tool. Short stock instruction guards and replayed hook prologues are used only to check and patch the user's official
+OS; they retain the Elektron scope described above. Neither the MIT contribution license nor this notice grants rights
+to redistribute the original or rebuilt firmware. The source preview is not installed in the web-flasher catalogue.

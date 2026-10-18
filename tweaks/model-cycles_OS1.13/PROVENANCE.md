@@ -57,3 +57,9 @@ La licence du projet (MIT, [`LICENSE`](../../LICENSE)), ce qu'elle ne couvre pas
 - `tools/webxfer_check.py` : transcription en Python de fonctions d'Elektroid (David García Goñi), sous
   **GPL-3.0-or-later** comme l'original ([`LICENSES/GPL-3.0-or-later.txt`](../../LICENSES/GPL-3.0-or-later.txt)) : seul
   fichier du dépôt qui n'est pas sous MIT.
+
+## Contribution source non inscrite au catalogue
+
+| Contribution | Attribution | Origine et licence |
+| --- | --- | --- |
+| Performance15 autonome (`tools/gen_performance15.py`, `tools/machines/performance15/`) | Performance Mode contributors | Contribution source originale proposee sous MIT, attribution collective neutre autorisee ; texte dans `tools/machines/performance15/LICENSE`. Sources fonctionnelles du prototype v31, compilation selon la cible amont54418. Reutilise les outils MIT du depot ; les courts octets natifs de garde/rejeu ne sont pas relicencies. Aucun JSON catalogue ni carte de flasheur ; limites et preuve dans la note58. |
