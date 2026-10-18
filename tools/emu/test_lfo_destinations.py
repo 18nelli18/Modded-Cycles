@@ -68,6 +68,25 @@ def main():
   assert u.mem_read(machine+48,1)==bytes([int(keys=={5} and target==other)])
   assert presented[-1]==(manager,pair,1)
  print('PASS generic Machines action screen closes only underlying selector; presentation ABI and solo Machines preserved',flush=True)
+ # Vraie branche MACHINES du gestionnaire ParameterPage : LFO tenu court-circuite l'ouverture.
+ allocations=r.new_count
+ for keys in (set(),{5},{8},{5,8}):
+  held.clear();held.update(keys)
+  for event_flags in (0,1,9,33):
+   r.w32(EVENT+12,5);r.w32(EVENT+16,event_flags)
+   assert r.call(0x40024e0c,OBJ,EVENT)==0
+   if 'lf2p_menu_key' in r.s:assert r.call('lf2p_menu_key',OBJ,EVENT)==1
+   u.reg_write(mk.UC_M68K_REG_A7,STACK);u.reg_write(mk.UC_M68K_REG_D3,EVENT)
+   for reg,value in ((mk.UC_M68K_REG_D0,0x12345678),(mk.UC_M68K_REG_D1,0x23456789),(mk.UC_M68K_REG_A0,0x34567890),(mk.UC_M68K_REG_A1,0x45678901)):u.reg_write(reg,value)
+   stop=0x4001c2a8 if 8 in keys else 0x4001c25a
+   u.emu_start(0x4001c252,stop,count=10000)
+   assert u.reg_read(mk.UC_M68K_REG_PC)==stop
+   assert u.reg_read(mk.UC_M68K_REG_A7)==STACK-(0 if 8 in keys else 4)
+   for reg,value in ((mk.UC_M68K_REG_D0,0x12345678),(mk.UC_M68K_REG_D1,0x23456789),(mk.UC_M68K_REG_A0,0x34567890),(mk.UC_M68K_REG_A1,0x45678901)):assert u.reg_read(reg)==value
+   if 8 not in keys:assert r.r32(STACK-4)==EVENT and u.reg_read(mk.UC_M68K_REG_A3)==0x400724a0
+ assert r.new_count==allocations
+ print('PASS actual Machines opener: LFO held consumes press/release/hold before allocation; unmodified path and registers exact',flush=True)
+
  # Descripteurs des trois potards, obtenus par le vrai mapper non modifie.
  descriptors={}
  for descriptor in range(76):
