@@ -1,0 +1,1 @@
+window.MC_RELEASES=[{version:"Machine-combinations-test.1",date:"2026-10-17",changes:[{en:"Independent TINY/RETROSYN selections, with optional Sample Wizard. CPU/CUT diagnostic retained. Test only; main unchanged.",fr:"Selections TINY/RETROSYN independantes, Sample Wizard facultatif. Diagnostic CPU/CUT conserve. Test seulement ; principal inchange."}]}];
