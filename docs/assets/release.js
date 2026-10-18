@@ -3,6 +3,7 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.95", date: "2026-10-18", changes: [{ en: "Track Setup follows the selected track while open: MIDI Out settings for MIDI tracks, stock setup for audio tracks. MACRO fine tune remains in test; no diagnostics in main.", fr: "Track Setup suit la piste selectionnee : reglages MIDI Out pour les pistes MIDI, menu stock pour les pistes audio. Accord fin MACRO conserve en test ; aucun diagnostic dans le principal." }] },
 {
   "version": "1.94",
   "date": "2026-10-18",

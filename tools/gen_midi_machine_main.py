@@ -1,10 +1,11 @@
 """Note126 : principal fixe, seul choix USB six pistes, sans diagnostic."""
 import argparse,json,pathlib,re
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-STAMP='2026-10-18-fixed-main-194-init'
+STAMP='2026-10-18-track-setup-main-195'
 FEATURES=[
  ('Machines: six stock engines, Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, TINY, ChpHzrd / Retrosyn and MIDI Out.', 'Machines : six moteurs stock, Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, TINY, ChpHzrd / Retrosyn et MIDI Out.'),
  ('MIDI Out: silent A-side tracks with notes, 12 assignable CCs, locks, channel/port routing and two MIDI LFOs. No MIDI B-side bank.', 'MIDI Out : pistes A silencieuses avec notes,12CC assignables, locks, canal/port et deux LFO MIDI. Sans banque B.'),
+ ('Track Setup follows track selection while open, switching between MIDI Out settings and stock audio settings.', 'Track Setup suit la selection de piste, entre reglages MIDI Out et menu audio stock.'),
  ('Sound shaping: synth attack, per-track filter and envelope, filter/resonance/attack LFO destinations and quick assignment.', 'Sculpture sonore : attaque, filtre et enveloppe par piste, destinations LFO filtre/resonance/attaque et assignation rapide.'),
  ('Second audio LFO; arpeggiator with Octave 0 for held notes only; ChordKeys for in-scale chords.', 'Second LFO audio ; arpege avec octave0 pour les notes tenues seules ; ChordKeys pour les accords en gamme.'),
  ('Sequence Genie, SCRAMBLE, slide trigs, Control All configuration, audio beat repeat and latching mutes.', 'Sequence Genie, SCRAMBLE, slides, configuration Control All, beat repeat audio et mutes verrouillables.'),
@@ -18,6 +19,7 @@ def main():
  source=ROOT/'docs/flasher-midi-machine-all-test';out=ROOT/'docs/flasher'
  names=['index.html','midi-machine-all-data.js','midi-machine-all-catalogue.js','midi-machine-guide.html','lfo-destinations.js']
  files={n:(source/n).read_text(encoding='utf-8') for n in names}
+ files['midi-machine-all-data.js']=(ROOT/'docs/flasher-macro-fine-main-test/midi-machine-all-data.js').read_text(encoding='utf-8')
  html=files['index.html'];html=re.sub(r'<p role="note"><strong data-l="en">MIDI Out machine.*?</p>','',html)
  html=re.sub(r'<script src="beat-diagnostic[^\"]+"></script>','',html)
  html=html.replace('midi-machine-all.js?', 'midi-machine-main.js?')
@@ -34,10 +36,10 @@ def main():
  files['midi-machine-main.js']=(ROOT/'tools/web/midi-machine-main.js').read_text(encoding='utf-8')
  guide=files['midi-machine-guide.html'].replace('Select All test','firmware').replace('fixed test preset','firmware').replace('CPU/CUT diagnostics and ','').replace('Hardware verification is pending.','').replace('Preset fixe avec les fonctions actuelles du principal, diagnostic CPU/CUT et','Firmware complet avec les fonctions du principal et').replace('Verification materielle attendue.','')
  guide=re.sub(r'<li><b>(Load diagnostic|Diagnostic).*?</li>','',guide);files['midi-machine-guide.html']=guide
- files['BUILD.json']=json.dumps(dict(stamp=STAMP,scope='main',profile='All features, MIDI machine, no B-side; USB six-track on/off',diagnostics=False,startup='Supermodel'),indent=2)
- files['midi-machine-release.js']='window.MC_RELEASES='+json.dumps([dict(version='1.94',date='2026-10-18',changes=[dict(en='Complete firmware with MIDI Out as an A-side machine, Supermodel startup and a single optional six-track USB audio setting. CC assignment does not transmit changes; leaving MIDI Out closes its notes.',fr='Firmware complet avec machine MIDI Out sur A, demarrage Supermodel et seul choix audio USB six pistes. Assignation CC sans transmission ; quitter MIDI Out ferme ses notes.')])])+';'
+ files['BUILD.json']=json.dumps(dict(stamp=STAMP,scope='main',profile='All features, MIDI machine, no B-side; USB six-track on/off',diagnostics=False,startup='Supermodel',track_setup_follows_selection=True,macro_fine=False),indent=2)
+ files['midi-machine-release.js']='window.MC_RELEASES='+json.dumps([dict(version='1.95',date='2026-10-18',changes=[dict(en='Track Setup follows the selected track while open: MIDI Out shows its MIDI settings and audio machines show the stock setup. MACRO fine tune remains in test. No diagnostics in released firmware.',fr='Track Setup suit la piste selectionnee : reglages MIDI pour MIDI Out, menu stock pour les machines audio. Accord fin MACRO conserve en test. Aucun diagnostic dans le firmware publie.')])])+';'
  for name,text in files.items():
-  text=re.sub(r'2026-10-18-midi-machine-all-test-\d+',STAMP,text).replace('\r\n','\n').rstrip()+'\n'
+  text=re.sub(r'2026-10-18-(?:midi-machine-all-test-\d+|macro-fine-main-test-\d+)',STAMP,text).replace('\r\n','\n').rstrip()+'\n'
   if a.check:assert (out/name).read_text(encoding='utf-8')==text,name
   else:(out/name).write_text(text,encoding='utf-8')
  assert 'beat-diagnostic' not in files['index.html']
