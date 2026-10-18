@@ -20,10 +20,10 @@ const {open,change}=require('./test_retrosyn_flasher');
    if(all)for(const f of w.MC_TWEAKS.features)if(!['boot-anim','supermodel-startup'].includes(f.id))assert(a.isSelected(f.id),'Select All lost '+f.id);
    const name='retrosyn-chord-'+(full?'full':'solo')+(wizard?'-wizard':'')+(all?'-all-'+animation:'');
    const raw=Uint8Array.from(fs.readFileSync(path.resolve(__dirname,'../firmware/model-cycles_OS1.13.syx'))),st=Uint8Array.from(fs.readFileSync(path.resolve(__dirname,'../firmware/Syntakt_OS1.42.syx')));
-   const built=w.MCBuilder.build(raw,w.MC_TWEAKS.device,t,{syntakt:st,refMods:a.REF_MODS});
+   const composed=w.MCMidiBankCompose(t,raw,st),built=w.MCBuilder.build(raw,w.MC_TWEAKS.device,composed.tweaks,{syntakt:st,refMods:composed.refMods});
    assert(built.modsChecked);assert(w.MCFlasher.verify(built.raw).count>0);assert.equal(errors.length,0,errors.join('\n'));
    fs.writeFileSync(path.resolve(__dirname,'../build/'+name+'.syx'),built.raw);
-   fs.writeFileSync(path.resolve(__dirname,'../build/'+name+'.json'),JSON.stringify({tweaks:t,mainOsSha:built.mainOsSha}));
+   fs.writeFileSync(path.resolve(__dirname,'../build/'+name+'.json'),JSON.stringify({tweaks:composed.tweaks,mainOsSha:built.mainOsSha}));
    console.log('ok',name,built.mainOsSha);
   }finally{w.close();}
  }

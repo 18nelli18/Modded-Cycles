@@ -1,7 +1,7 @@
 // TINY utilise les tables combinées ; aucune machine et aucun mod n’est imposé.
 (()=>{
  const a=window.MCFlasherApp,b=window.MCBuilder,tw=window.MC_TWEAKS,c=window.MCTinyCatalogue,prev=window.MCMainClearResolve,prior={...a.REF_MODS};
- Object.assign(window.MCWizardCatalogue.variants,c.variants);Object.assign(window.MCWizardReferences.sizes,c.sizes);
+ for(const [key,value] of Object.entries(c.variants))if(!window.MCWizardCatalogue.variants[key])window.MCWizardCatalogue.variants[key]=value;Object.assign(window.MCWizardReferences.sizes,c.sizes);
  for(const name of ['w','wp','ck','engines'])Object.assign(window.MCWizardReferences.refs[name],c.wizardRefs[name]);
  for(const [key,ref] of Object.entries(c.wizardRefs.engines))a.REF_MODS[c.variants[key].engine.id]=ref;
  tw.features.push({id:'tiny',label:'TINY',short:'52 percussion models by @Glycinate.',desc:'Adds the TINY percussion engine. TINY cannot be combined with Model-TG because both use the same machine slot. Used with permission from @Glycinate; see TINY-CREDITS.txt and LICENSE-STK.',status:'tested',hardwareTestedByOwner:true,cat:'sound',excludes:['model-tg'],variants:[{id:'tiny'}],credit:{kind:'by',who:'@Glycinate'},license:'TINY-CREDITS.txt'});
@@ -13,6 +13,7 @@
   if(a.isSelected('sample-wizard'))return out.filter(t=>t.id!=='tiny');
   const codes=a.chosenEngines().map(e=>e.code),all=['sd','cp','toy','bits','swarm'];let mask=all.reduce((n,c,i)=>n+(codes.includes(c)?1<<i:0),0);
   if(a.isSelected('macro'))mask|=32;if(a.isSelected('acid'))mask|=64;if(a.isSelected('wave-supermodel'))mask|=128;
+  mask|=256;if(a.isSelected('retrosyn'))mask|=512;
   return composeTinyNormal(c,mask,out,b,a.REF_MODS);
  };
  a.applyLang(document.documentElement.lang||'en');

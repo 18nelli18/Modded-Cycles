@@ -4,6 +4,34 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.85",
+  "date": "2026-10-17",
+  "changes": [
+    {
+      "en": "Promotes machine-combinations test 3: TINY and RETROSYN work with partial machine selections, with or without Sample Wizard. Fixes Select All MIDI startup and RETROSYN + WAVE without Wizard.",
+      "fr": "Integre le test 3 des combinaisons : TINY et RETROSYN avec les selections partielles, avec ou sans Sample Wizard. Corrige le demarrage Select All MIDI et RETROSYN + WAVE sans Wizard."
+    },
+    {
+      "en": "AveyCole approved test 3 for main. 8,192 composition checks and 76 signed startup/project/cache tests passed in emulation. Diagnostic tools remain test-only.",
+      "fr": "AveyCole valide le test 3 pour le principal. 8 192 compositions et 76 tests signes de demarrage/projet/cache passent en emulation. Les diagnostics restent dans les tests."
+    }
+  ]
+},
+{
+  "version": "1.84",
+  "date": "2026-10-17",
+  "changes": [
+    {
+      "en": "TINY and RETROSYN now work with any selection of the other added machines, with or without Sample Wizard. Fixes the undefined engine error when preparing partial machine sets. Only checked machines appear in MACHINES.",
+      "fr": "TINY et RETROSYN se combinent librement avec les autres machines ajoutees, avec ou sans Sample Wizard. Corrige l’erreur engine lors de la preparation des sous-ensembles. Seules les machines cochees apparaissent dans MACHINES."
+    },
+    {
+      "en": "AveyCole confirmed the reported machine combination on hardware. All 1,536 expanded selections passed menu checks in emulation, plus signed builds and six-track audio comparisons. Voice code is unchanged. Diagnostics remain excluded from main.",
+      "fr": "AveyCole confirme la combinaison signalee sur machine. Les 1 536 selections etendues passent les menus en emulation, avec builds signes et comparaisons audio six pistes. Code des voix conserve. Aucun diagnostic dans le principal."
+    }
+  ]
+},
+{
   "version": "1.83",
   "date": "2026-10-17",
   "changes": [
