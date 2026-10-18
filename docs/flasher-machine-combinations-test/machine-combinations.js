@@ -20,7 +20,7 @@
    let copy='41f9'+source.toString(16).padStart(8,'0')+'43f9'+parseInt(ck.append.dest,16).toString(16).padStart(8,'0')+'203c'+(raw.length/8).toString(16).padStart(8,'0')+'22d8538066fa';
    while(copy.length+tail.length<loader.new.length)copy+='4e71';
    if(copy.length+tail.length!==loader.new.length)throw Error('Machine selection: ChordKeys loader size');
-   loader.new=copy+tail;engine.append.parts.push({dest:'0x'+source.toString(16),hex:raw});delete ck.append;
+   loader.new=copy+tail;engine.chord_source='0x'+source.toString(16);engine.append.parts.push({dest:'0x'+source.toString(16),hex:raw});delete ck.append;
   }
   for(const t of result){if(t===engine||t===ck||t.id==='sample-wizard')a.REF_MODS[t.id]={w:whash(t),...(t.append&&t!==engine?{p:hash(b.buildPayload(t.append,null,null))}:{})};}
   return result;
