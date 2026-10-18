@@ -1,0 +1,1 @@
+window.MC_RELEASES=[{"version": "Macro-render-test.1", "date": "2026-10-18", "changes": [{"en": "Sample-exact, same-size MACRO converter optimization. All47 models retained; main unchanged.", "fr": "Conversion MACRO optimisee a taille et sortie identiques. Les47 modeles restent ; principal inchange."}]}];
