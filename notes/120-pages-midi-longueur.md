@@ -27,3 +27,8 @@ Le wrapper de ml_clock est court, sans heap/I/O/port physique. Il appelle le vra
 Trois profils signes avant/apres : MIDI seul ; banque complete Wizard/MACRO/ChordKeys avec repeat et diagnostic ; banque complete sans Wizard ni repeat. Vrais bootstraps executes. Chaque profil compare924 etats joues au vrai fragment stock : six voies, longueurs5/16/17/31/32/48/64, pages disponibles, positions et phases de blink. Arret/pause, revendications big-endian, sortie B, polling hors page, absence d'allocation verifies.
 
 Longueurs normales1/5/16/17/31/32/48/64 : vrai clockwrap B sur deux tours et edit/config. Mode par piste :6longueurs5/7/12/16/31/64 sur80ticks, intactes ; banque vide immuable et pattern A octet-identique. Le helper et son pointeur vtable survivent au constructeur cache disque. Validation materielle utilisateur attendue.
+
+
+## 5. Promotion autorisee (17/10/2026)
+
+AveyCole repond « okay, push to main » depuis le test1. Principal1.87 autorise : helper et comportement identiques, dependance diagnostic retiree du JS, statut du correctif valide. La banque MIDI reste globalement experimentale. Documentation et raccourcis actualises ; diagnostics et page de test conserves a part. Le generateur `gen_midi_pages_main.py --check` reproduit la promotion.
