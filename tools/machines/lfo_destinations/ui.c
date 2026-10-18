@@ -1,6 +1,6 @@
 /* Note121 : noms/assignation UI uniquement ; aucun appel depuis le DSP LFO. */
 typedef unsigned int u32;
-volatile u32 ld_api[4];
+volatile u32 ld_api[6];
 static u32 ld_map_native(u32 descriptor){return ((u32(*)(u32))0x4005a4e8)(descriptor);}
 
 /* Fermeture differee native : ne detruit pas la vue pendant le dispatch. */
@@ -54,3 +54,22 @@ u32 ld_assign(u32 descriptor){
 /* Note121 : libelles de RETROSYN seulement ; descripteurs audio conserves. */
 const char ld_rs_timbre[]="Timbre",ld_rs_osc[]="Oscillator",ld_rs_sweep[]="Pitch Sweep",ld_rs_arp[]="Chord Arp";
 const char ld_rs_timbre_short[]="TIMB",ld_rs_osc_short[]="OSC",ld_rs_sweep_short[]="PSWP",ld_rs_arp_short[]="ARP";
+
+/* Apres tout quick assign, le relachement LFO ferme sa page, meme avec FUNC. */
+extern u32 ld_lfo_key_native(u32 view,u32 event);
+u32 ld_lfo_key(u32 view,u32 event){
+ if(*(volatile u32 *)(event+12)==8&&!(*(volatile u32 *)(event+16)&1)&&*(volatile unsigned char *)(view+604)){
+  *(volatile unsigned char *)(view+604)=0;
+  ((void(*)(u32))(*(volatile u32 *)(*(volatile u32 *)view+124)))(view);
+  return 1;
+ }
+ return ld_lfo_key_native(view,event);
+}
+u32 ld_second_key(u32 view,u32 event){
+ if(*(volatile u32 *)(event+12)==8&&!(*(volatile u32 *)(event+16)&1)&&*(volatile u32 *)ld_api[5]){
+  *(volatile u32 *)ld_api[5]=0;
+  ((void(*)(u32))(*(volatile u32 *)(*(volatile u32 *)view+40)))(view);
+  return 1;
+ }
+ return ((u32(*)(u32,u32))ld_api[4])(view,event);
+}
