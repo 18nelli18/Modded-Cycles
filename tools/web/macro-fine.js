@@ -13,7 +13,8 @@ window.MCMacroFineReady=Promise.all([window.MCLfoDestinationsReady,window.MCBeat
   for(const [i,value] of [index,used?n(used.symbols.mod_used):0,parseInt(knob.slice(4,12),16),key.startsWith('4ef9')?parseInt(key.slice(4,12),16):0,used?.symbols?.set_held?n(used.symbols.set_held):0].entries())view.setUint32(d.symbols.mf_api+4*i,value,false);
   owner.append.parts.push({dest:'0x'+h(origin),hex:b.hex(raw)});owner.append.size=origin+raw.length-n(owner.append.dest);delete owner.append.compressed_hex;delete owner.append.stored;
   if(!owner.append.compress){const w=owner.writes.find(w=>w.off+BASE===window.MCBeatRepeat.boot.at);if(!w)throw Error('MACRO fine: loader guard');const code=b.fromHex(w.new);new DataView(code.buffer).setUint32(window.MCBeatRepeat.boot.symbols.br_boot_size,owner.append.size,false);w.new=b.hex(code);}
-  const q={id:'macro-fine-test',status:'experimental',order:Math.max(...r.tweaks.map(t=>t.order))+1,writes:[{off:0x4001e8da-BASE,old:knob,new:'4eb9'+h(origin+d.symbols.mf_knob)+'4e71'},{off:0x40077720-BASE,old:key,new:'4ef9'+h(origin+d.symbols.mf_key_hook)+'4e71'}],symbols:{macro_fine_index:'0x'+h(index)}};
+  if(read(0x4000b82a,6)!=='2f032f002f02')throw Error('MACRO fine: native edit guard');
+  const q={id:'macro-fine-test',status:'experimental',order:Math.max(...r.tweaks.map(t=>t.order))+1,writes:[{off:0x4000b82a-BASE,old:'2f032f002f02',new:'4eb9'+h(origin+d.symbols.mf_edit_normal)},{off:0x4001e8da-BASE,old:knob,new:'4eb9'+h(origin+d.symbols.mf_knob)+'4e71'},{off:0x40077720-BASE,old:key,new:'4ef9'+h(origin+d.symbols.mf_key_hook)+'4e71'}],symbols:{macro_fine_index:'0x'+h(index)}};
   for(const [name,at] of Object.entries(d.symbols))if(name.startsWith('mf_'))q.symbols[name]='0x'+h(origin+at);
   r.tweaks.push(q);for(const t of [owner,q])r.refMods[t.id]={w:hash(b.writesBytes(t)),...(t.append?{p:hash(b.buildPayload(t.append,args[2],stock))}:{})};return r;
  };

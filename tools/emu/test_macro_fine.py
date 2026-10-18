@@ -15,6 +15,14 @@ class FineUI(UI):
    sp=u.reg_read(mk.UC_M68K_REG_A7);key=int.from_bytes(u.mem_read(sp+4,4),'big')
    u.reg_write(mk.UC_M68K_REG_D0,int(key==13 and self.settings));u.reg_write(mk.UC_M68K_REG_PC,self.u32(sp));u.reg_write(mk.UC_M68K_REG_A7,sp+4);return
   return super()._hook(u,pc,size,data)
+ def call(self,fn,*args,**kwargs):
+  if fn==0x4000b7d6 and getattr(self,'normal_edit',False):
+   args=list(args);args[4]=0
+  return super().call(fn,*args,**kwargs)
+ def edit_normal(self,desc,value,delta):
+  self.normal_edit=True
+  try:return self.edit_func(desc,value,delta)
+  finally:self.normal_edit=False
  def lookup(self,machine,knob,func):
   self.machine=machine;return super().lookup(machine,knob,func)
 def load(case):
@@ -47,6 +55,7 @@ def main():
   for cur in (0x4000,0x4002,0x40fe):
    assert after.edit_func(PITCH,cur,256)==before.edit_func(PITCH,cur,256)
    assert after.text(PITCH,cur)==before.text(PITCH,cur)
+   for delta in (32,-32,256):assert after.edit_normal(PITCH,cur,delta)==before.edit_normal(PITCH,cur,delta)
  print('PASS PITCH normal garde la fraction MACRO ; autres machines gardent edition/texte natifs')
  after.lookup(machine,2,False);after.settings=True
  if held:after.uc.mem_write(held,struct.pack('>I',1))
@@ -69,8 +78,14 @@ def main():
  after.uc.mem_write(event,struct.pack('>6I',0,0,0,13,1,0))
  after.call(0x40077720,0,event)
  assert after.edit_func(PITCH,0x4000,256)==0x4002
+ assert after.edit_normal(PITCH,0x4000,32)==0x4002
+ assert after.edit_normal(PITCH,0x4000,-32)==0x3ffe
  after.uc.mem_write(event,struct.pack('>6I',0,0,0,13,0,0));after.call(0x40077720,0,event)
  assert after.edit_func(PITCH,0x4000,256)==0x4100
+ before.lookup(machine,2,False)
+ for delta in (1,32,64,256,-1,-32,-256):
+  assert after.edit_normal(PITCH,0x4000,delta)==before.edit_normal(PITCH,0x4000,delta),delta
+ print('PASS chemin potard ordinaire vt[20] : SETTINGS donne2unites, sinon comportement stock intact')
  print('PASS vrai hook SETTINGS down/release -> PITCH : deux unites fines tenu,256unites normales relache, flag commun nul')
  # Les fractions doivent survivre au vrai codec son, pas seulement a l'UI.
  raw,record,loaded=SCRATCH+0x6000,SCRATCH+0x6100,SCRATCH+0x6200

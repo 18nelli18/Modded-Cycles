@@ -4,7 +4,7 @@ import gen_macro as gm
 from gen_seq_gen import symbols
 import gen_midi_machine_core as core
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-STAMP='2026-10-18-macro-fine-main-test-2'
+STAMP='2026-10-18-macro-fine-main-test-3'
 def main():
  p=argparse.ArgumentParser();p.add_argument('--check',action='store_true');a=p.parse_args()
  cross=gm.gx.CROSS
@@ -41,8 +41,8 @@ def main():
  html=html.replace('<main class="wrap fl">','<main class="wrap fl">'+notice)
  html=html.replace('<ul><li><span data-l="en">Machines:', '<ul><li><span data-l="en">MACRO fine tune: SETTINGS + PITCH, saved with the sound. FUNC + PITCH still controls Lo-Fi.</span><span data-l="fr">Accord MACRO : SETTINGS + PITCH, sauvegarde avec le son. FUNC + PITCH conserve le Lo-Fi.</span></li><li><span data-l="en">Machines:')
  files['index.html']=html.encode()
- files['midi-machine-release.js']=('window.MC_RELEASES='+json.dumps([dict(version='MACRO-fine-main-test.2',date='2026-10-18',changes=[dict(en='Current fixed main with MACRO fine tune included by default, USB audio on/off and test-only CPU/CUT diagnostics. SETTINGS + PITCH fine-tunes; FUNC + PITCH stays Lo-Fi. Track Setup follows the selected MIDI/audio track while open; raw SETTINGS fixes fine-tune activation. Hardware verification pending.',fr='Principal fixe actuel avec accord MACRO inclus, choix audio USB et diagnostic CPU/CUT de test. SETTINGS + PITCH accorde ; FUNC + PITCH conserve le Lo-Fi. Track Setup suit la piste MIDI/audio sans fermeture ; appui SETTINGS brut pour activer l’accord fin. Verification materielle attendue.')])])+';\n').encode()
- files['BUILD.json']=(json.dumps(dict(stamp=STAMP,scope='test-only',base='2026-10-18-fixed-main-194-init',diagnostics=True,hardware_verified=False,fine_default=True,fine_raw_settings=True,track_setup_follows_selection=True,usb_audio_optional=True,midi_machine=True,midi_bank=False),indent=2)+'\n').encode()
+ files['midi-machine-release.js']=('window.MC_RELEASES='+json.dumps([dict(version='MACRO-fine-main-test.3',date='2026-10-18',changes=[dict(en='Current fixed main with MACRO fine tune included by default, USB audio on/off and test-only CPU/CUT diagnostics. SETTINGS + PITCH fine-tunes; FUNC + PITCH stays Lo-Fi. Track Setup follows the selected MIDI/audio track while open; SETTINGS now reaches the ordinary pitch editing path as well as the fine callback; unmodified turns keep stock behavior. Hardware verification pending.',fr='Principal fixe actuel avec accord MACRO inclus, choix audio USB et diagnostic CPU/CUT de test. SETTINGS + PITCH accorde ; FUNC + PITCH conserve le Lo-Fi. Track Setup suit la piste MIDI/audio sans fermeture ; SETTINGS intercepte aussi le chemin ordinaire de PITCH ; tours simples conserves stock. Verification materielle attendue.')])])+';\n').encode()
+ files['BUILD.json']=(json.dumps(dict(stamp=STAMP,scope='test-only',base='2026-10-18-track-setup-main-195',diagnostics=True,hardware_verified=False,fine_default=True,fine_raw_settings=True,track_setup_follows_selection=True,usb_audio_optional=True,midi_machine=True,midi_bank=False),indent=2)+'\n').encode()
  for name,raw in files.items():
   istext=pathlib.Path(name).suffix in ('.js','.html','.css','.json','.md','.txt')
   if istext:raw=raw.replace(b'\r\n',b'\n').rstrip(b'\n')+b'\n'

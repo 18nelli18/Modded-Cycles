@@ -52,3 +52,16 @@ u32 mf_key(const u32 *event){
  if(!used)return 0;
  used=0;return mf_api[1]?0:1;
 }
+
+/* Le potard ordinaire passe par vt[20], pas par le callback fine du descripteur.
+ * Intercepter seulement PITCH MACRO sous SETTINGS ; deleguer tout le reste. */
+u32 mf_edit_native(u32 object,u32 descriptor,i32 value,i32 delta,u32 original){
+ if(descriptor!=42||!mf_active()||!fine_held())
+  return ((u32 (*)(u32,u32,i32,i32))original)(object,descriptor,value,delta);
+ i32 turns=delta<0?-((-delta+255)>>8):(delta+255)>>8;
+ i32 result=value+2*turns;
+ if(result<(40<<8))result=40<<8;
+ if(result>(88<<8))result=88<<8;
+ used=1;if(mf_api[1])*(volatile u32 *)mf_api[1]=1;
+ return (u32)result;
+}

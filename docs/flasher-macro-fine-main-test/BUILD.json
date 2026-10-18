@@ -1,7 +1,7 @@
 {
-  "stamp": "2026-10-18-macro-fine-main-test-2",
+  "stamp": "2026-10-18-macro-fine-main-test-3",
   "scope": "test-only",
-  "base": "2026-10-18-fixed-main-194-init",
+  "base": "2026-10-18-track-setup-main-195",
   "diagnostics": true,
   "hardware_verified": false,
   "fine_default": true,
