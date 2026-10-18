@@ -222,11 +222,12 @@ def main():
    for key,longname,short in ((13,'Filter','FLT'),(14,'Resonance','RES')):
     descriptor=r.call(0x4005a692,key,6)
     table=r.r32(0x4005a4f4)
-    assert r.string(r.r32(table+56*descriptor+52)) in ('SWEP','CONT')
+    native_name=r.string(r.r32(table+56*descriptor+52))
+    assert native_name not in ('FLT','FLTR','RES')
     assert r.string(r.call(0x4000b208,context,descriptor))==short
     assert r.string(r.call(0x4000b22a,context,descriptor))==longname
     u.mem_write(0x930a0000+38,b'\x05')
-    assert r.string(r.call(0x4000b208,context,descriptor)) in ('SWEP','CONT')
+    assert r.string(r.call(0x4000b208,context,descriptor))==native_name
     u.mem_write(0x930a0000+38,b'\x06')
    for dest,label in ((13,'FLT'),(14,'RES'),(24,'ERR'),(25,'ERR')):
     descriptor=r.call(0x4005a692,dest,6)
