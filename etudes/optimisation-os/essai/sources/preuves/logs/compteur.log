@@ -1,0 +1,66 @@
+officiel   MAIN OS cc99d4f0175d34d1e91d046e6ec85a5e8ab58ab9edbb3c24406acd48cb99ee98
+reference  MAIN OS a5ba4798d2a1131e0866ec2bbd7c523c2e0d9041c6aed322da0916d9a7286131
+optimise   MAIN OS b9b85a7623ff8e2cb7fd1556149ab13bdd1882fc0d8161ec76d821ac22855adc
+1. entrée de l'interruption de rendu (0x40058c5e)
+  ok    20 entrées, registres et minuteur au hasard : en 0x40058c66, d0-d7, a0-a7 et la pile (1,25 Ko autour de sp) identiques à l'officiel ; m_t0 = minuteur lu à l'entrée
+        (le CCR peut différer : 0x40058c66 « move.l #0x7fffffff,%d0 » le réécrit avant tout test, et le SR de la tâche interrompue revient du cadre d'exception au rte)
+2. sonde de la fonction audio (0x40059382)
+  ok    20 appels : la fonction audio voit le même sp, le même argument (fp-44) et la même pile ; au retour, mêmes d2-d7, a2-a6, sp et pile au-dessus de sp que l'officiel
+  ok    d2-d7, a2-a6 rendus, sp rendu (0x9000bf00), retour en 0x40059388
+  ok    adresse de retour vue par la fonction : 0x40059388 (officiel), 0x40167c7a (dans m_probe) : seule différence, comme pour tout appel imbriqué
+   (reference)
+3. fenêtres de 750 blocs (entrée et sonde réelles, minuteur simulé)
+        749 blocs comptés                                       -> « --/--/-- »
+        750 blocs : 50 %, un à 90 %, libre 20 %                 -> « 90/50/20 »
+        750 blocs : 30 %, un à 45 %, libre 60 %                 -> « 45/30/60 »
+        pause de 30 blocs                                       -> « 45/30/60 »
+        500 blocs après la pause                                -> « 45/30/60 »
+        750 blocs : 5 %, un à 7 %, libre 90 %                   -> « 7/5/90 »
+        750 blocs à 70 %, libre 10 %, minuteur qui déborde      -> « 70/70/10 »
+        750 blocs plus longs que la période                     -> « 99/99/0 »
+  ok    noms affichés ['--/--/--', '90/50/20', '45/30/60', '45/30/60', '45/30/60', '7/5/90', '70/70/10', '99/99/0'] = attendus ['--/--/--', '90/50/20', '45/30/60', '45/30/60', '45/30/60', '7/5/90', '70/70/10', '99/99/0']
+  ok    écritures du compteur : seulement ses variables et les 9 octets de m_name (hors pile)
+  ok    3753 blocs : d2-d7, a2-a6 et sp rendus par la sonde à chaque bloc
+   (optimise)
+3. fenêtres de 750 blocs (entrée et sonde réelles, minuteur simulé)
+        749 blocs comptés                                       -> « --/--/-- »
+        750 blocs : 50 %, un à 90 %, libre 20 %                 -> « 90/50/20 »
+        750 blocs : 30 %, un à 45 %, libre 60 %                 -> « 45/30/60 »
+        pause de 30 blocs                                       -> « 45/30/60 »
+        500 blocs après la pause                                -> « 45/30/60 »
+        750 blocs : 5 %, un à 7 %, libre 90 %                   -> « 7/5/90 »
+        750 blocs à 70 %, libre 10 %, minuteur qui déborde      -> « 70/70/10 »
+        750 blocs plus longs que la période                     -> « 99/99/0 »
+  ok    noms affichés ['--/--/--', '90/50/20', '45/30/60', '45/30/60', '45/30/60', '7/5/90', '70/70/10', '99/99/0'] = attendus ['--/--/--', '90/50/20', '45/30/60', '45/30/60', '45/30/60', '7/5/90', '70/70/10', '99/99/0']
+  ok    écritures du compteur : seulement ses variables et les 9 octets de m_name (hors pile)
+  ok    3753 blocs : d2-d7, a2-a6 et sp rendus par la sonde à chaque bloc
+4. écran MACHINES (vrai dessin, vraie police)
+        officiel, noms d'origine : colonnes [(17, 47), (13, 51), (13, 50), (17, 47), (17, 47), (13, 51)], lignes (47, 55)
+  ok    référence : les 6 machines affichent m_name (« --/--/-- » : colonnes (2, 62), lignes (47, 55))
+        « 99/99/99 » : colonnes (1, 63), lignes (47, 55)
+        « 88/88/88 » : colonnes (1, 63), lignes (47, 55)
+        « 00/00/00 » : colonnes (1, 63), lignes (47, 55)
+        « 44/44/44 » : colonnes (1, 63), lignes (47, 55)
+        « 66/66/66 » : colonnes (1, 63), lignes (47, 55)
+        « 77/77/77 » : colonnes (1, 63), lignes (47, 55)
+        « 22/22/22 » : colonnes (1, 63), lignes (47, 55)
+        « 33/33/33 » : colonnes (1, 63), lignes (47, 55)
+        « 55/55/55 » : colonnes (1, 63), lignes (47, 55)
+        « 11/11/11 » : colonnes (1, 63), lignes (47, 55)
+        « 90/50/20 » : colonnes (1, 63), lignes (47, 55)
+        « 7/5/90 » : colonnes (9, 55), lignes (47, 55)
+        « 99/99/0 » : colonnes (5, 59), lignes (47, 55)
+  ok    pire cas « 99/99/99 » : colonnes 1..63, dans la moitié gauche (0..63) où l'OS dessine le nom (centré en x = 32) ; l'image de droite est centrée en x = 96
+  ok    reference : drum_select (0x400a25e0) écrit « --/--/-- » pour les 6 machines avant la 1re mesure : [['--/--/--'], ['--/--/--'], ['--/--/--'], ['--/--/--'], ['--/--/--'], ['--/--/--']]
+  ok    optimise : drum_select (0x400a25e0) écrit « --/--/-- » pour les 6 machines avant la 1re mesure : [['--/--/--'], ['--/--/--'], ['--/--/--'], ['--/--/--'], ['--/--/--'], ['--/--/--']]
+5. temps libre (boucle d'attente 0x4000543a -> m_idle_loop)
+  ok    0x4000543a : jmp m_idle_loop (4ef940171ab8)
+        audio  77%, interface   5% : libre vrai  20.64 %, compté  20.65 % (écart +0.01 pt) ; écritures hors compteur aucune, PC hors boucle aucun
+        audio  20%, interface  10% : libre vrai  77.40 %, compté  77.59 % (écart +0.19 pt) ; écritures hors compteur aucune, PC hors boucle aucun
+        audio  61%, interface   5% : libre vrai  35.92 %, compté  35.98 % (écart +0.06 pt) ; écritures hors compteur aucune, PC hors boucle aucun
+        audio   0%, interface   0% : libre vrai  97.69 %, compté  97.97 % (écart +0.28 pt) ; écritures hors compteur aucune, PC hors boucle aucun
+  ok    temps libre compté à moins de 1,5 point du vrai ; la boucle n'écrit que idle_acc, ne sort pas, sp = celui de l'original après lea 24(sp),sp
+6. même compteur dans les deux fichiers
+  ok    masques 0x40167c50 et 0x40171a48, détours 0x40058c5e, 0x40059382, 0x4000543a et table des noms 0x401177e4 : octet pour octet identiques dans la référence et l'optimisé
+
+TOUT OK

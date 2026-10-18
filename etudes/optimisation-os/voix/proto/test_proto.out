@@ -1,0 +1,12 @@
+prototype : 204 o de code ; écritures : 0x400a7dfe, 0x400a7e24, 0x400ad9c4, 0x40185f48
+1. son, machine par machine (piste 0 seule calculée)
+  ok    KICK  réglages 0 (DEC  28, PUNCH 0) : identique jusqu'au bloc — ; ensuite référence sous le seuil ; 2e trig : écart 0.0e+00 de la crête ; autres pistes : identiques
+  ok    KICK  réglages 1 (DEC  29, PUNCH 1) : identique jusqu'au bloc — ; ensuite référence sous le seuil ; 2e trig : écart 0.0e+00 de la crête ; autres pistes : identiques
+  ok    KICK  réglages 2 (DEC  22, PUNCH 0) : identique jusqu'au bloc — ; ensuite référence sous le seuil ; 2e trig : écart 0.0e+00 de la crête ; autres pistes : identiques
+  ok    SNARE réglages 0 (DEC  40, PUNCH 0) : identique jusqu'au bloc 436 ; ensuite référence sous le seuil ; 2e trig : écart 9.2e-07 de la crête ; autres pistes : identiques
+  ok    SNARE réglages 1 (DEC  29, PUNCH 0) : identique jusqu'au bloc 241 ; ensuite référence sous le seuil ; 2e trig : écart 1.0e-07 de la crête ; autres pistes : identiques
+  ok    SNARE réglages 2 (DEC  27, PUNCH 1) : identique jusqu'au bloc 219 ; ensuite référence sous le seuil ; 2e trig : écart 8.9e-08 de la crête ; autres pistes : identiques
+  ok    METAL réglages 0 (DEC  20, PUNCH 0) : identique jusqu'au bloc 460 ; ensuite référence sous le seuil ; 2e trig : écart 1.0e-06 de la crête ; autres pistes : identiques
+  ok    METAL réglages 1 (DEC  16, PUNCH 1) : identique jusqu'au bloc 297 ; ensuite référence sous le seuil ; 2e trig : écart 1.9e-07 de la crête ; autres pistes : identiques
+  ok    METAL réglages 2 (DEC  23, PUNCH 0) : identique jusqu'au bloc 627 ; ensuite référence sous le seuil ; 2e trig : écart 1.5e-06 de la crête ; autres pistes : identiques
+  ok    PERC  réglages 0 (DEC  26, PUNCH 0) : identique jusqu'au bloc 866 ; ensuite référence sous le seuil ; 2e trig : écart 2.5e-06 de la crête ; autres pistes : identiques

@@ -1,0 +1,4 @@
+reference MAIN OS a5ba4798d2a1131e0866ec2bbd7c523c2e0d9041c6aed322da0916d9a7286131 ; scénario arret
+  chaud : 20 blocs, moyenne 78.5 %, pic 78.5 %, mini 78.4 %, voix 45.6 %, avant la fonction audio 0.9 %, 76259 instructions/bloc ; blocs de trig []
+  froid : 20 blocs, moyenne 82.0 %, pic 82.0 %, mini 82.0 %, voix 47.5 %, avant la fonction audio 1.2 %, 76259 instructions/bloc ; blocs de trig []
+(111 s)

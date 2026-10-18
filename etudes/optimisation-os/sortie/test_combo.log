@@ -1,0 +1,5 @@
+  ok    p1+p2+p3 : identique sur 400 blocs (anneau, USB, voix, SRAM entière sauf 0x8000bc98..bd98 et EMAC à chaque bloc ; lignes en DDR tous les 25 blocs)
+  phase 1 (défaut (envois 0, VOL+DIST 60)) : étage de sortie 27054 -> 11986 instr/bloc, gain +15068 = +13.92 % d'un bloc ; sauts sur 100 blocs : p1 saturateur sauté (paires) 300, p2 delay endormi 100, p2 reverb endormie 100, p3 envoi sauté 400
+  phase 2 (delay sur piste 2, VOL+DIST 90 piste 0) : étage de sortie 27061 -> 16627 instr/bloc, gain +10434 = +9.64 % d'un bloc ; sauts sur 100 blocs : p1 saturateur sauté (paires) 200, p2 delay endormi 0, p2 reverb endormie 100, p3 envoi sauté 200
+  phase 3 (+ reverb pistes 1 et 4) : étage de sortie 27068 -> 24497 instr/bloc, gain +2571 = +2.38 % d'un bloc ; sauts sur 100 blocs : p1 saturateur sauté (paires) 200, p2 delay endormi 0, p2 reverb endormie 0, p3 envoi sauté 0
+  phase 4 (tout revient à 0 / 60) : étage de sortie 27060 -> 24422 instr/bloc, gain +2638 = +2.44 % d'un bloc ; sauts sur 100 blocs : p1 saturateur sauté (paires) 200, p2 delay endormi 0, p2 reverb endormie 0, p3 envoi sauté 0

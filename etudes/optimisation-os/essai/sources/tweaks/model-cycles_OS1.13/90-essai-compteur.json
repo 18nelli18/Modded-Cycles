@@ -1,0 +1,64 @@
+{
+ "id": "essai-compteur",
+ "order": 90,
+ "name": "Essai : compteur de charge pic/moyenne/libre",
+ "description": [
+  "Fichier d'essai (étude optim, pas une carte du flasher) : nom de toutes les machines = pic/moyenne/libre",
+  "en % d'un bloc, de l'entrée de l'interruption de rendu à la fin de la fonction audio, toutes les 0,5 s.",
+  "Masques 0x40167c50 et 0x40171a48. gen_essai.py, src/compteur.S."
+ ],
+ "device": "Model:Cycles",
+ "os": "1.13",
+ "section": 3,
+ "writes": [
+  {
+   "off": 1472592,
+   "old": "ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffffe0000000ffffffff",
+   "new": "2f002039fc07000c23c040167d14201f4e56ff5848d73fff4ef940058c6623df40167d1c4eb94005979e2239fc07000c4feffff048d7003c43f940167d142011928024290004234000044a82674c908267480c80001b800062400c81001b80006306223c001b8000d1a90010d3a9001474644c0210004c401001b2a9001863042341001852a9000c2429000c0c82000002ee651e4eb940171a4870002340000c23400010234000142340001823690020001c4cd7003c4fef00102f3940167d1c4e7500000000000000000000000000000000000000000000000000000000000000000000000000002d2d2f2d2d2f2d2d00000000"
+  },
+  {
+   "off": 728350,
+   "old": "40167c50",
+   "new": "4014a660"
+  },
+  {
+   "off": 1513032,
+   "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
+   "new": "2629001074644c4230036730282900144c4340042a2900209aa9001c4c43500541e90024202900186114722f10c12004610c722f10c12005610442104e757263b0816302200172000c800000000a650a04800000000a528160ee4a81670806810000003010c106800000003010c04e754fef00182239fc07000c2039fc07000c2400948122000c82000000806206d5b940167d3460e4"
+  },
+  {
+   "off": 721644,
+   "old": "40171a48",
+   "new": "4014b364"
+  },
+  {
+   "off": 362590,
+   "old": "4e56ff5848d73fff",
+   "new": "4ef940167c504e71"
+  },
+  {
+   "off": 364418,
+   "old": "4eb94005979e",
+   "new": "4eb940167c6e"
+  },
+  {
+   "off": 20538,
+   "old": "4fef001860fe",
+   "new": "4ef940171ab8"
+  },
+  {
+   "off": 1143780,
+   "old": "401300d8401300dd401300e3401300e940129960401300ee",
+   "new": "40167d3840167d3840167d3840167d3840167d3840167d38"
+  }
+ ],
+ "symbols": {
+  "m_entry": "0x40167c50",
+  "m_probe": "0x40167c6e",
+  "m_show": "0x40171a48",
+  "m_idle_loop": "0x40171ab8",
+  "V": "0x40167d14",
+  "idle_acc": "0x40167d34",
+  "m_name": "0x40167d38"
+ }
+}

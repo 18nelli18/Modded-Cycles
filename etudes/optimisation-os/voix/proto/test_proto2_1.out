@@ -1,0 +1,9 @@
+  ok    PERC  réglages 1 (DEC  16, PUNCH 1) : identique jusqu'au bloc 459 ; ensuite référence sous le seuil ; 2e trig : écart 8.0e-07 de la crête ; autres pistes : identiques
+  ok    PERC  réglages 2 (DEC  28, PUNCH 0) : identique jusqu'au bloc — ; ensuite référence sous le seuil ; 2e trig : écart 0.0e+00 de la crête ; autres pistes : identiques
+  ok    TONE  réglages 0 (DEC  42, PUNCH 0) : identique jusqu'au bloc — ; ensuite référence sous le seuil ; 2e trig : écart 0.0e+00 de la crête ; autres pistes : identiques
+  ok    TONE  réglages 1 (DEC  15, PUNCH 1) : identique jusqu'au bloc 271 ; ensuite référence sous le seuil ; 2e trig : écart 4.1e-07 de la crête ; autres pistes : identiques
+  ok    TONE  réglages 2 (DEC  34, PUNCH 1) : identique jusqu'au bloc — ; ensuite référence sous le seuil ; 2e trig : écart 0.0e+00 de la crête ; autres pistes : identiques
+  ok    CHORD réglages 0 (DEC  64, PUNCH 0) : identique jusqu'au bloc — ; ensuite référence sous le seuil ; 2e trig : écart 0.0e+00 de la crête ; autres pistes : identiques
+  ok    CHORD réglages 1 (DEC  35, PUNCH 1) : identique jusqu'au bloc — ; ensuite référence sous le seuil ; 2e trig : écart 0.0e+00 de la crête ; autres pistes : identiques
+  ok    CHORD réglages 2 (DEC   5, PUNCH 1) : identique jusqu'au bloc 83 ; ensuite référence sous le seuil ; 2e trig : écart 1.4e-09 de la crête ; autres pistes : identiques
+TOUT OK

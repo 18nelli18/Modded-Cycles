@@ -1,0 +1,18 @@
+{
+ "id": "essai-gel-horloge",
+ "order": 92,
+ "name": "Essai : horloge MIDI sortante, anneau plein -> octet jeté",
+ "description": [
+  "D2 de optim/stabilite : bgt.s 0x4000123a -> bgt.s 0x400012c6 (sortie), sans attendre à IPL 7."
+ ],
+ "device": "Model:Cycles",
+ "os": "1.13",
+ "section": 3,
+ "writes": [
+  {
+   "off": 3654,
+   "old": "6ef2",
+   "new": "6e7e"
+  }
+ ]
+}

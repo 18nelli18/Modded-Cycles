@@ -1,0 +1,26 @@
+model-cycles_OS1.13_essai-reference.syx
+  ok    paquets SysEx valides, même produit que l'officiel (Model:Cycles, 6964 paquets)
+  ok    somme du conteneur
+  ok    HMAC du conteneur valide (clé du firmware lui-même)
+  ok    mêmes sections [5, 2, 3, 4]
+  ok    sections autres que 3 (bootloader, updater…) identiques octet pour octet à l'officiel
+  ok    section 3 = OS officiel + 1 tweaks de travail, rien d'autre (399 octets changés) ; MAIN OS a5ba4798d2a1131e0866ec2bbd7c523c2e0d9041c6aed322da0916d9a7286131
+  ok    empreinte du MAIN OS = celle qu'a imprimée build.py
+        bon fichier accepte: Model:Cycles, 6964 paquets, 891424 o
+        fichier corrompu rejete: packet 3: bad checksum — the file is corrupted, do not flash it
+        messages F0..F7: 6966
+  ok    flasher web (flasher.js) : fichier accepté, copie abîmée refusée
+model-cycles_OS1.13_essai-optimise.syx
+  ok    paquets SysEx valides, même produit que l'officiel (Model:Cycles, 7025 paquets)
+  ok    somme du conteneur
+  ok    HMAC du conteneur valide (clé du firmware lui-même)
+  ok    mêmes sections [5, 2, 3, 4]
+  ok    sections autres que 3 (bootloader, updater…) identiques octet pour octet à l'officiel
+  ok    section 3 = OS officiel + 9 tweaks de travail, rien d'autre (1524 octets changés) ; MAIN OS b9b85a7623ff8e2cb7fd1556149ab13bdd1882fc0d8161ec76d821ac22855adc
+  ok    empreinte du MAIN OS = celle qu'a imprimée build.py
+        bon fichier accepte: Model:Cycles, 7025 paquets, 899232 o
+        fichier corrompu rejete: packet 3: bad checksum — the file is corrupted, do not flash it
+        messages F0..F7: 7027
+  ok    flasher web (flasher.js) : fichier accepté, copie abîmée refusée
+
+TOUT OK

@@ -1,0 +1,37 @@
+officiel   MAIN OS cc99d4f0175d34d1e91d046e6ec85a5e8ab58ab9edbb3c24406acd48cb99ee98
+reference  MAIN OS a5ba4798d2a1131e0866ec2bbd7c523c2e0d9041c6aed322da0916d9a7286131
+optimise   MAIN OS b9b85a7623ff8e2cb7fd1556149ab13bdd1882fc0d8161ec76d821ac22855adc
+scénario silence : {'kind': 'tol', 'blocks': 1950, 'decay': 20, 'trigs': (100, 1750)}
+    … bloc 100
+    … bloc 200
+    … bloc 300
+    … bloc 400
+    … bloc 500
+    … bloc 600
+    … bloc 700
+    … bloc 800
+    … bloc 900
+    … bloc 1000
+    … bloc 1100
+    … bloc 1200
+    … bloc 1300
+    … bloc 1400
+    … bloc 1500
+    … bloc 1600
+    … bloc 1700
+    … bloc 1800
+    … bloc 1900
+  crêtes des voix (référence) : [382263492, 520754404, 265125731, 308452313, 208667809, 245743695]
+  blocs-pistes : 11700 ; identiques 5566 ; optimisé à 0 là où la référence ne l'est pas 6128 ; autres écarts 6 ; arrêtées (compteur ≥ 64) 6562
+  arrêt de chaque voix après le trig du bloc 100 : blocs [1626, 240, 557, 681, 559, 556]
+  ok    silence : les 6 voix (DECAY 20) s'arrêtent avant le retrig du bloc 1750
+  ok    silence : identique avant le 1er trig (voix jamais déclenchées) et pendant les 64 blocs qui le suivent (1re note après un arrêt au démarrage)
+  ok    silence : voix arrêtée : 0 là où la référence sort au plus 1903 après la division par 2 (-115.0 dB de la pleine échelle ; seuil 4 096 = -108.4 dB)
+  ok    silence : voix recalculée après un arrêt (retrig du bloc 1750) : écart ≤ 1.95e-06 de la crête (-114.2 dB ; limite 2,5e-6 = −112 dB)
+  anneau du codec : crête 7692859, écart max 13 (-116.2 dBFS) ; USB : crête 1969371728, écart max 3148 (-116.7 dBFS)
+  ok    silence : codec et USB à moins de −100 dBFS de la référence (-116.2 et -116.7 dBFS)
+  SRAM référence/optimisé : écarts dans 17 pages de 256 o : ['0x80001800', '0x80001900', '0x80001a00', '0x80001b00', '0x8000b900', '0x8000ba00', '0x8000be00', '0x8000bf00', '0x8000c000', '0x8000c100', '0x8000c200', '0x8000c300', '0x8000c400', '0x8000c500', '0x8000c600', '0x8000c700']
+  ok    silence : nom MACHINES après 1950 blocs : « 66/66/0 » / « 66/66/0 » (attendu « 66/66/0 »)
+(1569 s)
+
+TOUT OK

@@ -1,0 +1,9 @@
+joue   origine 0x4005979e  46020 instr (boucle des voix  42300) ; lignes de code 686 ; froid  52.1 %, chaud  47.9 % d'un bloc (modèle 1,54 CPI + 15 cycles/ligne)
+joue   proto   0x4005979e  41792 instr (boucle des voix  38072) ; lignes de code 699 ; froid  48.4 %, chaud  44.2 % d'un bloc (modèle 1,54 CPI + 15 cycles/ligne)
+       sorties des 3 derniers blocs : identiques True, crête origine 344410705, écart max 0
+muette origine 0x4005979e  45986 instr (boucle des voix  42266) ; lignes de code 683 ; froid  52.0 %, chaud  47.9 % d'un bloc (modèle 1,54 CPI + 15 cycles/ligne)
+muette proto   0x4005979e  17614 instr (boucle des voix  13894) ; lignes de code 415 ; froid  21.4 %, chaud  17.3 % d'un bloc (modèle 1,54 CPI + 15 cycles/ligne)
+       sorties des 3 derniers blocs : identiques False, crête origine 904060, écart max 607
+arret  origine 0x4005979e  49709 instr (boucle des voix  45989) ; lignes de code 308 ; froid  52.1 %, chaud  46.7 % d'un bloc (modèle 1,54 CPI + 15 cycles/ligne)
+arret  proto   0x4005979e   4280 instr (boucle des voix    560) ; lignes de code 111 ; froid   5.4 %, chaud   4.0 % d'un bloc (modèle 1,54 CPI + 15 cycles/ligne)
+       sorties des 3 derniers blocs : identiques True, crête origine 0, écart max 0

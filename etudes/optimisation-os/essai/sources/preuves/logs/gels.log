@@ -1,0 +1,90 @@
+officiel   MAIN OS cc99d4f0175d34d1e91d046e6ec85a5e8ab58ab9edbb3c24406acd48cb99ee98
+reference  MAIN OS a5ba4798d2a1131e0866ec2bbd7c523c2e0d9041c6aed322da0916d9a7286131
+optimise   MAIN OS b9b85a7623ff8e2cb7fd1556149ab13bdd1882fc0d8161ec76d821ac22855adc
+  ok    D1 0x4004df66 : 70ff (officiel, référence) -> 7006 (optimisé)
+  ok    D1 0x4004df80 : 70ff (officiel, référence) -> 7006 (optimisé)
+  ok    D2 0x40001246 : 6ef2 (officiel, référence) -> 6e7e (optimisé)
+
+===== D1, MACHINES : défaut = officiel, corrigé = optimise
+1. accesseurs des enregistrements par machine
+        stock   : n hors limites -> ['0x40a714f4'], machine -> ['0x40a714f4']
+        corrigé : n hors limites -> ['0x40a71708'], machine -> ['0x40a71708']
+  ok    accesseurs 0x4004df5c (0..6) et 0x4004df76 (0..5) identiques au stock
+  ok    stock : hors limites -> 0x40a714f4, 76 o AVANT le tableau (le défaut)
+  ok    corrigé : hors limites -> enregistrement de CHORD
+2. ouverture de MACHINES : 0x400148dc pour chaque piste
+  ok    0x400148dc, machines 0..5 : résultats identiques au stock, aucun accès faux
+        machine    6 : stock 1 lecture(s) empoisonnée(s) + Invalid memory read (UC_ERR_READ_UNMAPPED) ; corrigé 0, 5 paramètres = CHORD
+  ok    0x400148dc machine 6 : stock lit par les pointeurs d'avant le tableau, corrigé = CHORD
+        machine    7 : stock 1 lecture(s) empoisonnée(s) + Invalid memory read (UC_ERR_READ_UNMAPPED) ; corrigé 0, 5 paramètres = CHORD
+  ok    0x400148dc machine 7 : stock lit par les pointeurs d'avant le tableau, corrigé = CHORD
+        machine    9 : stock 1 lecture(s) empoisonnée(s) + Invalid memory read (UC_ERR_READ_UNMAPPED) ; corrigé 0, 5 paramètres = CHORD
+  ok    0x400148dc machine 9 : stock lit par les pointeurs d'avant le tableau, corrigé = CHORD
+        machine  100 : stock 1 lecture(s) empoisonnée(s) + Invalid memory read (UC_ERR_READ_UNMAPPED) ; corrigé 0, 5 paramètres = CHORD
+  ok    0x400148dc machine 100 : stock lit par les pointeurs d'avant le tableau, corrigé = CHORD
+        machine   -3 : stock 1 lecture(s) empoisonnée(s) + Invalid memory read (UC_ERR_READ_UNMAPPED) ; corrigé 0, 5 paramètres = CHORD
+  ok    0x400148dc machine -3 : stock lit par les pointeurs d'avant le tableau, corrigé = CHORD
+3. potards de l'écran principal
+        stock   machine 6..9 : [[2684354592, 2684354608, 2684354624, 2684354640, 2684354656, 2684354672], [2684354592, 2684354608, 2684354624, 2684354640, 2684354656, 2684354672], [2684354592, 2684354608, 2684354624, 2684354640, 2684354656, 2684354672]]
+        corrigé machine 6..9 : [[42, 75, 71, 72, 73, 74], [42, 75, 71, 72, 73, 74], [42, 75, 71, 72, 73, 74]] (CHORD [42, 75, 71, 72, 73, 74])
+  ok    potards (0x4001e814), machines 0..5 : identiques au stock
+  ok    potards, machine hors limites : corrigé -> descripteurs de CHORD, aucun accès faux
+  ok    potards, machine hors limites : stock -> autre chose (lu avant le tableau)
+4-5. molette de MACHINES et changement de machine
+        stock   : molette depuis la machine 9 (-1, +1) -> {-1: (5, 0, None), 1: (5, 0, None)}
+  ok    stock : molette + vrai changement de machine (0x40014072) depuis 9 -> 5, aucun accès faux
+        corrigé : molette depuis la machine 9 (-1, +1) -> {-1: (5, 0, None), 1: (5, 0, None)}
+  ok    corrigé : molette + vrai changement de machine (0x40014072) depuis 9 -> 5, aucun accès faux
+  ok    D1 rejouée (défaut officiel, corrigé optimise) : 0 échec(s)
+
+===== D2, horloge MIDI : défaut = officiel, corrigé = optimise
+  ok    défaut : UART libre, 0xF8 écrit dans 0xec07400c, anneau vide
+  ok    corrigé : UART libre, 0xF8 écrit dans 0xec07400c, anneau vide
+  ok    défaut : 1024 tops rangés, le 1025e ne revient pas (PC 0x40001246 dans 0x4000123a..46, SR 0x2700 : IPL 7)
+  ok    corrigé : les 1026 tops reviennent (le 1025e et le 1026e jettent leur octet)
+  ok    corrigé : les 1024 premiers tops laissent anneau, index, compte et registres identiques au défaut, top après top
+  ok    corrigé : anneau plein inchangé (compte 1024)
+  ok    D2 rejouée (défaut officiel, corrigé optimise) : 0 échec(s)
+
+===== D1, MACHINES : défaut = reference, corrigé = optimise
+1. accesseurs des enregistrements par machine
+        stock   : n hors limites -> ['0x40a714f4'], machine -> ['0x40a714f4']
+        corrigé : n hors limites -> ['0x40a71708'], machine -> ['0x40a71708']
+  ok    accesseurs 0x4004df5c (0..6) et 0x4004df76 (0..5) identiques au stock
+  ok    stock : hors limites -> 0x40a714f4, 76 o AVANT le tableau (le défaut)
+  ok    corrigé : hors limites -> enregistrement de CHORD
+2. ouverture de MACHINES : 0x400148dc pour chaque piste
+  ok    0x400148dc, machines 0..5 : résultats identiques au stock, aucun accès faux
+        machine    6 : stock 1 lecture(s) empoisonnée(s) + Invalid memory read (UC_ERR_READ_UNMAPPED) ; corrigé 0, 5 paramètres = CHORD
+  ok    0x400148dc machine 6 : stock lit par les pointeurs d'avant le tableau, corrigé = CHORD
+        machine    7 : stock 1 lecture(s) empoisonnée(s) + Invalid memory read (UC_ERR_READ_UNMAPPED) ; corrigé 0, 5 paramètres = CHORD
+  ok    0x400148dc machine 7 : stock lit par les pointeurs d'avant le tableau, corrigé = CHORD
+        machine    9 : stock 1 lecture(s) empoisonnée(s) + Invalid memory read (UC_ERR_READ_UNMAPPED) ; corrigé 0, 5 paramètres = CHORD
+  ok    0x400148dc machine 9 : stock lit par les pointeurs d'avant le tableau, corrigé = CHORD
+        machine  100 : stock 1 lecture(s) empoisonnée(s) + Invalid memory read (UC_ERR_READ_UNMAPPED) ; corrigé 0, 5 paramètres = CHORD
+  ok    0x400148dc machine 100 : stock lit par les pointeurs d'avant le tableau, corrigé = CHORD
+        machine   -3 : stock 1 lecture(s) empoisonnée(s) + Invalid memory read (UC_ERR_READ_UNMAPPED) ; corrigé 0, 5 paramètres = CHORD
+  ok    0x400148dc machine -3 : stock lit par les pointeurs d'avant le tableau, corrigé = CHORD
+3. potards de l'écran principal
+        stock   machine 6..9 : [[2684354592, 2684354608, 2684354624, 2684354640, 2684354656, 2684354672], [2684354592, 2684354608, 2684354624, 2684354640, 2684354656, 2684354672], [2684354592, 2684354608, 2684354624, 2684354640, 2684354656, 2684354672]]
+        corrigé machine 6..9 : [[42, 75, 71, 72, 73, 74], [42, 75, 71, 72, 73, 74], [42, 75, 71, 72, 73, 74]] (CHORD [42, 75, 71, 72, 73, 74])
+  ok    potards (0x4001e814), machines 0..5 : identiques au stock
+  ok    potards, machine hors limites : corrigé -> descripteurs de CHORD, aucun accès faux
+  ok    potards, machine hors limites : stock -> autre chose (lu avant le tableau)
+4-5. molette de MACHINES et changement de machine
+        stock   : molette depuis la machine 9 (-1, +1) -> {-1: (5, 0, None), 1: (5, 0, None)}
+  ok    stock : molette + vrai changement de machine (0x40014072) depuis 9 -> 5, aucun accès faux
+        corrigé : molette depuis la machine 9 (-1, +1) -> {-1: (5, 0, None), 1: (5, 0, None)}
+  ok    corrigé : molette + vrai changement de machine (0x40014072) depuis 9 -> 5, aucun accès faux
+  ok    D1 rejouée (défaut reference, corrigé optimise) : 0 échec(s)
+
+===== D2, horloge MIDI : défaut = reference, corrigé = optimise
+  ok    défaut : UART libre, 0xF8 écrit dans 0xec07400c, anneau vide
+  ok    corrigé : UART libre, 0xF8 écrit dans 0xec07400c, anneau vide
+  ok    défaut : 1024 tops rangés, le 1025e ne revient pas (PC 0x40001246 dans 0x4000123a..46, SR 0x2700 : IPL 7)
+  ok    corrigé : les 1026 tops reviennent (le 1025e et le 1026e jettent leur octet)
+  ok    corrigé : les 1024 premiers tops laissent anneau, index, compte et registres identiques au défaut, top après top
+  ok    corrigé : anneau plein inchangé (compte 1024)
+  ok    D2 rejouée (défaut reference, corrigé optimise) : 0 échec(s)
+
+TOUT OK

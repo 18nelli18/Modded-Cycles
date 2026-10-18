@@ -1,0 +1,21 @@
+  ok    OS d'origine : 0x40059382 calcule le bloc (jsr 0x4005979e), puis 0x40059392 l'envoie à l'USB (jsr 0x40002912)
+  ok    début de l'interruption de rendu : movel #32,%macsr en 0x40058ca0 (remplacé par l'appel de feed_isr)
+  ok    les deux envois de l'interruption (bloc calculé, silence) sont notés
+
+scénario : rafale à 1,0 s ; file en cases (stéréo : ring de 16 ; 6 canaux : ring de 9) ; « après » = 1,0..2,5 s, « fin » = 2,5..5 s
+                rafale | perdus | en retard |               firmware | avant | après : file, vides | fin : file, vides | sautées+doubles
+   1 bloc(s) à  110 % |      0 |         1 |  OS d'origine (stéréo) |  6..11 |  5..11,    0     |  5..11,    0   | 0
+   1 bloc(s) à  110 % |      0 |         1 |              6ch-usbup |  1..6  |  0..10,    4     |  5..10,    0   | 12002
+   1 bloc(s) à  160 % |      0 |         3 |  OS d'origine (stéréo) |  6..11 |  2..11,    0     |  5..11,    0   | 0
+   1 bloc(s) à  160 % |      0 |         3 |              6ch-usbup |  1..6  |  0..12,    6     |  7..12,    0   | 12009
+   3 bloc(s) à  125 % |      0 |         6 |  OS d'origine (stéréo) |  6..11 |  1..11,    0     |  5..11,    0   | 0
+   3 bloc(s) à  125 % |      0 |         6 |              6ch-usbup |  1..6  |  0..14,    8     |  9..14,    0   | 22
+   6 bloc(s) à  120 % |      1 |         6 |  OS d'origine (stéréo) |  6..11 |  0..10,    2     |  2..8 ,    0   | 0
+   6 bloc(s) à  120 % |      1 |         6 |              6ch-usbup |  1..6  |  0..12,   11     |  7..12,    0   | 12002
+  12 bloc(s) à  110 % |      1 |        12 |  OS d'origine (stéréo) |  6..11 |  0..10,    2     |  2..8 ,    0   | 0
+  12 bloc(s) à  110 % |      1 |        12 |              6ch-usbup |  1..6  |  0..12,   11     |  7..12,    0   | 11990
+  30 bloc(s) à  106 % |      1 |        33 |  OS d'origine (stéréo) |  6..11 |  0..11,    5     |  5..11,    0   | 0
+  30 bloc(s) à  106 % |      1 |        33 |              6ch-usbup |  1..6  |  0..15,   14     | 10..15,    0   | 22
+  60 bloc(s) à  106 % |      3 |        62 |  OS d'origine (stéréo) |  6..11 |  0..10,   14     |  3..9 ,    0   | 0
+  60 bloc(s) à  106 % |      3 |        62 |              6ch-usbup |  1..6  |  0..13,   23     |  8..13,    0   | 6664
+exit 0

@@ -1,0 +1,22 @@
+officiel   MAIN OS cc99d4f0175d34d1e91d046e6ec85a5e8ab58ab9edbb3c24406acd48cb99ee98
+reference  MAIN OS a5ba4798d2a1131e0866ec2bbd7c523c2e0d9041c6aed322da0916d9a7286131
+optimise   MAIN OS b9b85a7623ff8e2cb7fd1556149ab13bdd1882fc0d8161ec76d821ac22855adc
+scénario dist : {'kind': 'exact', 'blocks': 400, 'dist': (100, 100, 100, 80, 80, 80)}
+    … bloc 100
+    … bloc 200
+    … bloc 300
+    … bloc 400
+  400 blocs, 18 trigs (référence) ; crêtes : anneau 8388608, USB 2147483648, voix 1253324320 ; mémoire entière comparée 40 fois ; compteur de blocs faibles de l'arrêt des voix ≤ 2 (arrêt à 64)
+  ok    dist : officiel = reference sur 400 blocs (anneau, USB, 6 voix, SRAM entière, EMAC, lignes delay/reverb à chaque bloc ; toute la mémoire tous les 10 blocs (hors pile, octets d'image changés par les tweaks (399), masques de code))
+  ok    dist : reference = optimise sur 400 blocs (anneau, USB, 6 voix, SRAM entière sauf 0x8000bc98..bd98, EMAC, lignes delay/reverb à chaque bloc ; toute la mémoire tous les 10 blocs (hors pile, octets d'image changés par les tweaks (1125), masques de code))
+  ok    dist : il y a du son (crête de l'anneau 8388608)
+  ok    dist : aucune voix arrêtée (compteur ≤ 2 < 64) : cas exact attendu
+  chemins courts (optimisé) : p1 saturateur sauté 0, p2 delay endormi 400, p2 reverb endormie 400, p3 envoi sauté 1600, PUNCH chemin court 2400, PUNCH chemin d'origine 0
+  lectures du minuteur DMA 0 (officiel) : aucune
+  lectures du minuteur DMA 0 (reference) : ['0x40167c7a']
+  lectures du minuteur DMA 0 (optimise) : ['0x40167c7a']
+  ok    dist : l'OS officiel ne lit pas le minuteur dans l'interruption audio (le compteur ne peut pas changer son comportement)
+  ok    dist : saturateur calculé (Dist en service) : 0 sauts
+(821 s)
+
+TOUT OK

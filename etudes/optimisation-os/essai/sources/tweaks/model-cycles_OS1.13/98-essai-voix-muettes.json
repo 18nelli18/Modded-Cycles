@@ -1,0 +1,33 @@
+{
+ "id": "essai-voix-muettes",
+ "order": 98,
+ "name": "Essai : arrêt des voix muettes (OS seul)",
+ "description": [
+  "optim/voix §4.1 (idle_stock.S, 64 blocs sous -108 dB), masque 0x40185f48, détours 0x400a7dfe, 0x400a7e24."
+ ],
+ "device": "Model:Cycles",
+ "os": "1.13",
+ "section": 3,
+ "writes": [
+  {
+   "off": 1596232,
+   "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffff",
+   "new": "b084654441fa00be201580936614103028000c8000000040640e20464ef9400a7e044230280060f22695204372034298429842984298429842984298429853816aec4ef9400a7e384ef9400a7e24269522434fefffec48d7007c70002c3c0000100072074cd1003ce282e283e284e28548d1003cd4868082d6868083d8868084da86808543e9001053816ad8241741fa0034dc86b0866506423028006016123028000281000000ff7040b28064065281118128004cd7007c4fef00144ef9400a7e3800000000000000000000"
+  },
+  {
+   "off": 710084,
+   "old": "40185f48",
+   "new": "4016bfc8"
+  },
+  {
+   "off": 686590,
+   "old": "b08465222046",
+   "new": "4ef940185f48"
+  },
+  {
+   "off": 686628,
+   "old": "269522434280",
+   "new": "4ef940185f96"
+  }
+ ]
+}

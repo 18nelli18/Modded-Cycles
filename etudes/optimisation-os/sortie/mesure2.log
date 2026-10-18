@@ -1,0 +1,124 @@
+
+##### six — OS d'origine
+
+== six : crête voix 528804530, crête sortie 7357174
+poste                     instr   I-déf  D-déf  D-rec  SRAM l/é lignes  SDRAM l/é lignes  noncache é  % bloc
+1 gain vélocité              598      7      1      0      16/16             1/1           0      0.62
+2 volume+dist               6071     47      1      0      24/22             7/7           0      6.04
+3 clic métronome             236     11      2      2       0/0              2/4           0      0.35
+4 mixeur                    8722    167     25     15      92/48            42/33         64      9.92
+5 delay                     2659     40      1      0      24/17             2/1           0      2.83
+6 reverb                    8410    103     12      7      79/78             8/2           0      8.86
+7 dma écritures               30      9      0      0       1/1              0/0           0      0.11
+TOTAL sortie               26726    384     42     24     237/182           63/48         64     28.74
+bloc émulé entier (isr + fonction audio) : 72561 instr, 79.3 % du bloc au modèle
+hors étage de sortie : voix (0x400a7d4a + machines) 45.9, lissage (0x40058474) 1.8, lfo/mod (0x40091ab2) 1.0, autre-os 0.8, isr (0x40058c5e..) 0.5, mod. vélocité (0x40056e24) 0.2, fonction audio (0x4005979e) 0.2, memcpy (0x4008f1f0) 0.1
+
+##### six — OS d'origine
+
+== six (caches vidés) : crête voix 528804530, crête sortie 7357174
+poste                     instr   I-déf  D-déf  D-rec  SRAM l/é lignes  SDRAM l/é lignes  noncache é  % bloc
+1 gain vélocité              598      7      1      0      16/16             1/1           0      0.62
+2 volume+dist               6071     47     12      0      24/22             7/7           0      6.14
+3 clic métronome             236     11     11      2       0/0              2/4           0      0.43
+4 mixeur                    8722    167     73     12      92/48            42/33         64     10.33
+5 delay                     2659     40      2      0      24/17             2/1           0      2.84
+6 reverb                    8410    103     13      4      79/78             8/2           0      8.85
+7 dma écritures               30      9      0      0       1/1              0/0           0      0.11
+TOTAL sortie               26726    384    112     19     237/182           63/48         64     29.33
+bloc émulé entier (isr + fonction audio) : 72561 instr, 81.9 % du bloc au modèle
+hors étage de sortie : voix (0x400a7d4a + machines) 47.5, lissage (0x40058474) 1.8, lfo/mod (0x40091ab2) 1.1, autre-os 0.9, isr (0x40058c5e..) 0.6, mod. vélocité (0x40056e24) 0.3, fonction audio (0x4005979e) 0.2, usb-in(0x40002ae0) 0.1
+
+##### six — p1+p2+p3
+
+== six : crête voix 528804530, crête sortie 7357174
+poste                     instr   I-déf  D-déf  D-rec  SRAM l/é lignes  SDRAM l/é lignes  noncache é  % bloc
+1 gain vélocité              598      7      1      0      16/16             1/1           0      0.62
+2 volume+dist               1823     38      1      0      24/16             7/7           0      2.04
+3 clic métronome             236     11      2      2       0/0              2/4           0      0.35
+4 mixeur                    6366    151     24     17      57/37            33/27         64      7.61
+5 delay                       35     11      1      0       1/1              2/1           0      0.14
+6 reverb                     311     33      5      4       4/10             4/2           0      0.66
+7 dma écritures               30      9      0      0       1/1              0/0           0      0.11
+8 détours des prototypes    2259     46      7      6      76/38            10/1           0      2.62
+TOTAL sortie               11658    306     41     29     179/120           60/43         64     14.16
+bloc émulé entier (isr + fonction audio) : 57493 instr, 64.6 % du bloc au modèle
+hors étage de sortie : voix (0x400a7d4a + machines) 45.7, lissage (0x40058474) 1.8, lfo/mod (0x40091ab2) 1.0, autre-os 0.8, isr (0x40058c5e..) 0.5, mod. vélocité (0x40056e24) 0.2, fonction audio (0x4005979e) 0.2, memcpy (0x4008f1f0) 0.1
+
+##### six — p1+p2+p3
+
+== six (caches vidés) : crête voix 528804530, crête sortie 7357174
+poste                     instr   I-déf  D-déf  D-rec  SRAM l/é lignes  SDRAM l/é lignes  noncache é  % bloc
+1 gain vélocité              598      7      1      0      16/16             1/1           0      0.62
+2 volume+dist               1823     38     10      0      24/16             7/7           0      2.12
+3 clic métronome             236     11     11      2       0/0              2/4           0      0.43
+4 mixeur                    6366    153     68     14      57/37            33/27         64      8.00
+5 delay                       35     11      4      0       1/1              2/1           0      0.17
+6 reverb                     311     33      5      3       4/10             4/2           0      0.65
+7 dma écritures               30      9      0      0       1/1              0/0           0      0.11
+8 détours des prototypes    2259     46      9      0      76/38            10/1           0      2.58
+TOTAL sortie               11658    308    108     19     179/120           60/43         64     14.69
+bloc émulé entier (isr + fonction audio) : 57493 instr, 67.3 % du bloc au modèle
+hors étage de sortie : voix (0x400a7d4a + machines) 47.5, lissage (0x40058474) 1.8, lfo/mod (0x40091ab2) 1.1, autre-os 0.9, isr (0x40058c5e..) 0.6, mod. vélocité (0x40056e24) 0.3, fonction audio (0x4005979e) 0.2, usb-in(0x40002ae0) 0.1
+
+##### six_fx — OS d'origine
+
+== six_fx : crête voix 528804530, crête sortie 7348721
+poste                     instr   I-déf  D-déf  D-rec  SRAM l/é lignes  SDRAM l/é lignes  noncache é  % bloc
+1 gain vélocité              598      7      1      0      16/16             1/1           0      0.62
+2 volume+dist               6071     47      1      0      24/22             7/7           0      6.04
+3 clic métronome             236     11      2      2       0/0              2/4           0      0.35
+4 mixeur                    8722    167     25     15      92/48            42/33         64      9.92
+5 delay                     2659     40      1      0      24/17             2/1           0      2.83
+6 reverb                    8410    103     12      7      79/78             8/2           0      8.86
+7 dma écritures               30      9      0      0       1/1              0/0           0      0.11
+TOTAL sortie               26726    384     42     24     237/182           63/48         64     28.74
+bloc émulé entier (isr + fonction audio) : 72561 instr, 79.3 % du bloc au modèle
+hors étage de sortie : voix (0x400a7d4a + machines) 45.9, lissage (0x40058474) 1.8, lfo/mod (0x40091ab2) 1.0, autre-os 0.8, isr (0x40058c5e..) 0.5, mod. vélocité (0x40056e24) 0.2, fonction audio (0x4005979e) 0.2, memcpy (0x4008f1f0) 0.1
+
+##### six_fx — OS d'origine
+
+== six_fx (caches vidés) : crête voix 528804530, crête sortie 7348721
+poste                     instr   I-déf  D-déf  D-rec  SRAM l/é lignes  SDRAM l/é lignes  noncache é  % bloc
+1 gain vélocité              598      7      1      0      16/16             1/1           0      0.62
+2 volume+dist               6071     47     12      0      24/22             7/7           0      6.14
+3 clic métronome             236     11     11      2       0/0              2/4           0      0.43
+4 mixeur                    8722    167     73     12      92/48            42/33         64     10.33
+5 delay                     2659     40      2      0      24/17             2/1           0      2.84
+6 reverb                    8410    103     13      4      79/78             8/2           0      8.85
+7 dma écritures               30      9      0      0       1/1              0/0           0      0.11
+TOTAL sortie               26726    384    112     19     237/182           63/48         64     29.33
+bloc émulé entier (isr + fonction audio) : 72561 instr, 81.9 % du bloc au modèle
+hors étage de sortie : voix (0x400a7d4a + machines) 47.5, lissage (0x40058474) 1.8, lfo/mod (0x40091ab2) 1.1, autre-os 0.9, isr (0x40058c5e..) 0.6, mod. vélocité (0x40056e24) 0.3, fonction audio (0x4005979e) 0.2, usb-in(0x40002ae0) 0.1
+
+##### six_fx — p1+p2+p3
+
+== six_fx : crête voix 528804530, crête sortie 7348721
+poste                     instr   I-déf  D-déf  D-rec  SRAM l/é lignes  SDRAM l/é lignes  noncache é  % bloc
+1 gain vélocité              598      7      1      0      16/16             1/1           0      0.62
+2 volume+dist               1823     38      1      0      24/16             7/7           0      2.04
+3 clic métronome             236     11      2      2       0/0              2/4           0      0.35
+4 mixeur                    8718    167     25     14      92/48            42/30         64      9.91
+5 delay                     2657     40      1      0      24/17             2/1           0      2.83
+6 reverb                    8410    103     12      8      79/78             8/2           0      8.87
+7 dma écritures               30      9      0      0       1/1              0/0           0      0.11
+8 détours des prototypes     240     25      3      2       7/0              8/2           0      0.49
+TOTAL sortie               22712    400     45     26     244/176           71/47         64     25.22
+bloc émulé entier (isr + fonction audio) : 68547 instr, 75.9 % du bloc au modèle
+hors étage de sortie : voix (0x400a7d4a + machines) 46.0, lissage (0x40058474) 1.8, lfo/mod (0x40091ab2) 1.0, autre-os 0.8, isr (0x40058c5e..) 0.5, mod. vélocité (0x40056e24) 0.2, fonction audio (0x4005979e) 0.2, memcpy (0x4008f1f0) 0.1
+
+##### six_fx — p1+p2+p3
+
+== six_fx (caches vidés) : crête voix 528804530, crête sortie 7348721
+poste                     instr   I-déf  D-déf  D-rec  SRAM l/é lignes  SDRAM l/é lignes  noncache é  % bloc
+1 gain vélocité              598      7      1      0      16/16             1/1           0      0.62
+2 volume+dist               1823     38     10      0      24/16             7/7           0      2.12
+3 clic métronome             236     11     11      2       0/0              2/4           0      0.43
+4 mixeur                    8718    167     70     11      92/48            42/30         64     10.29
+5 delay                     2657     40      2      0      24/17             2/1           0      2.84
+6 reverb                    8410    103     13      5      79/78             8/2           0      8.86
+7 dma écritures               30      9      0      0       1/1              0/0           0      0.11
+8 détours des prototypes     240     25      7      1       7/0              8/2           0      0.52
+TOTAL sortie               22712    400    114     20     244/176           71/47         64     25.80
+bloc émulé entier (isr + fonction audio) : 68547 instr, 78.4 % du bloc au modèle
+hors étage de sortie : voix (0x400a7d4a + machines) 47.5, lissage (0x40058474) 1.8, lfo/mod (0x40091ab2) 1.1, autre-os 0.9, isr (0x40058c5e..) 0.6, mod. vélocité (0x40056e24) 0.3, fonction audio (0x4005979e) 0.2, usb-in(0x40002ae0) 0.1

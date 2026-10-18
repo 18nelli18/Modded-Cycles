@@ -1,0 +1,14 @@
+{
+ "vd_hit": "0x4016dae4",
+ "dz_sleep": "0x40189670",
+ "rz_slept": "0x4018d9be",
+ "zero_out": "0x40170cb0",
+ "QUIET": "0x4018600c",
+ "m_entry": "0x40167c50",
+ "m_probe": "0x40167c6e",
+ "m_show": "0x40171a48",
+ "m_idle_loop": "0x40171ab8",
+ "V": "0x40167d14",
+ "idle_acc": "0x40167d34",
+ "m_name": "0x40167d38"
+}

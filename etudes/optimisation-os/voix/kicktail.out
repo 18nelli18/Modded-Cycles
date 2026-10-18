@@ -1,0 +1,12 @@
+KICK  DECAY  28 : dernier bloc au-dessus du seuil 2186 (1.46 s) ; crêtes aux blocs 100/500/1000/2000/3199 : 242442462 32446019 1449417 10708 18
+KICK  DECAY  20 : dernier bloc au-dessus du seuil 1463 (0.98 s) ; crêtes aux blocs 100/500/1000/2000/3199 : 187633266 8727676 103789 69 12
+SNARE DECAY  40 : dernier bloc au-dessus du seuil 371 (0.25 s) ; crêtes aux blocs 100/500/1000/2000/3199 : 5758100 141 1 3 2
+SNARE DECAY  20 : dernier bloc au-dessus du seuil 77 (0.05 s) ; crêtes aux blocs 100/500/1000/2000/3199 : 207 1 1 1 1
+METAL DECAY  20 : dernier bloc au-dessus du seuil 395 (0.26 s) ; crêtes aux blocs 100/500/1000/2000/3199 : 18172316 144 3 2 4
+METAL DECAY  20 : dernier bloc au-dessus du seuil 395 (0.26 s) ; crêtes aux blocs 100/500/1000/2000/3199 : 18172316 144 3 2 4
+PERC  DECAY  26 : dernier bloc au-dessus du seuil 801 (0.53 s) ; crêtes aux blocs 100/500/1000/2000/3199 : 70062457 130007 262 8 11
+PERC  DECAY  20 : dernier bloc au-dessus du seuil 473 (0.32 s) ; crêtes aux blocs 100/500/1000/2000/3199 : 26198579 1039 6 4 6
+TONE  DECAY  42 : dernier bloc au-dessus du seuil 2366 (1.58 s) ; crêtes aux blocs 100/500/1000/2000/3199 : 155142978 23041031 2173992 11548 43
+TONE  DECAY  20 : dernier bloc au-dessus du seuil 396 (0.26 s) ; crêtes aux blocs 100/500/1000/2000/3199 : 15570798 201 3 2 2
+CHORD DECAY  64 : dernier bloc au-dessus du seuil 3199 (2.13 s) ; crêtes aux blocs 100/500/1000/2000/3199 : 55252030 31165704 13347105 2182402 354996
+CHORD DECAY  20 : dernier bloc au-dessus du seuil 348 (0.23 s) ; crêtes aux blocs 100/500/1000/2000/3199 : 2530401 50 2 1 1

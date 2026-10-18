@@ -1,0 +1,14 @@
+  ok    6 voix (KICK..CHORD, DECAY 20) : identiques jusqu'à leur arrêt (blocs [None, 142, 460, 538, 461, 413]), puis sous le seuil
+     bloc    0 : d'origine  45845  prototype  45491  (-0.8 %)
+     bloc    1 : d'origine  45821  prototype  45461  (-0.8 %)
+     bloc    2 : d'origine  44755  prototype  44370  (-0.9 %)
+     bloc    5 : d'origine  42290  prototype  41906  (-0.9 %)
+     bloc   50 : d'origine  42266  prototype  41882  (-0.9 %)
+     bloc  100 : d'origine  42266  prototype  41887  (-0.9 %)
+     bloc  200 : d'origine  42266  prototype  34613  (-18.1 %)
+     bloc  400 : d'origine  42266  prototype  34628  (-18.1 %)
+     bloc  600 : d'origine  42266  prototype   8068  (-80.9 %)
+     bloc  800 : d'origine  42266  prototype   8068  (-80.9 %)
+     bloc 1199 : d'origine  42266  prototype   8068  (-80.9 %)
+  ECHEC jouant : pas plus cher ; muettes : moins d'un dixième
+1 ÉCHEC(S)

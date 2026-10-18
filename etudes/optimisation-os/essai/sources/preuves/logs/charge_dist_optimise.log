@@ -1,0 +1,4 @@
+optimise MAIN OS b9b85a7623ff8e2cb7fd1556149ab13bdd1882fc0d8161ec76d821ac22855adc ; scénario dist
+  chaud : 188 blocs, moyenne 65.0 %, pic 68.9 %, mini 64.7 %, voix 40.0 %, avant la fonction audio 1.0 %, 57524 instructions/bloc ; blocs de trig [0]
+  froid : 188 blocs, moyenne 67.7 %, pic 70.8 %, mini 67.5 %, voix 41.7 %, avant la fonction audio 1.3 %, 57535 instructions/bloc ; blocs de trig [0, 187]
+(345 s)

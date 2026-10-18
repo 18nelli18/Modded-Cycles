@@ -1,0 +1,5 @@
+optimise MAIN OS b9b85a7623ff8e2cb7fd1556149ab13bdd1882fc0d8161ec76d821ac22855adc ; scénario apres
+  chaud : 20 blocs, moyenne 27.4 %, pic 27.4 %, mini 27.3 %, voix 0.3 %, avant la fonction audio 0.7 %, 26736 instructions/bloc ; blocs de trig []
+  froid : 20 blocs, moyenne 31.6 %, pic 31.6 %, mini 31.6 %, voix 0.6 %, avant la fonction audio 1.2 %, 26738 instructions/bloc ; blocs de trig []
+  voix arrêtées pendant la mesure : 6 sur 6
+(916 s)

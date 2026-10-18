@@ -1,0 +1,22 @@
+officiel   MAIN OS cc99d4f0175d34d1e91d046e6ec85a5e8ab58ab9edbb3c24406acd48cb99ee98
+reference  MAIN OS a5ba4798d2a1131e0866ec2bbd7c523c2e0d9041c6aed322da0916d9a7286131
+optimise   MAIN OS b9b85a7623ff8e2cb7fd1556149ab13bdd1882fc0d8161ec76d821ac22855adc
+scénario arret : {'kind': 'arret', 'blocks': 800}
+    … bloc 100
+    … bloc 200
+    … bloc 300
+    … bloc 400
+    … bloc 500
+    … bloc 600
+    … bloc 700
+    … bloc 800
+  ok    arret : officiel = référence sur 800 blocs (anneau, USB, voix, SRAM, EMAC, lignes à chaque bloc ; toute la mémoire tous les 10 blocs et aux blocs 749-751, où m_show écrit le nom)
+  ok    arret : référence = optimisé pour l'anneau du codec, l'USB, la sortie des 6 voix et les lignes delay/reverb ({'ring': True, 'usb': True, 'out': True, 'lines': True})
+  ok    arret : à l'arrêt, codec, USB et voix valent exactement 0 dans la référence (donc aussi dans l'optimisé)
+  SRAM référence/optimisé : écarts dans 10 pages de 256 o : ['0x8000bf00', '0x8000c000', '0x8000c100', '0x8000c200', '0x8000c300', '0x8000c400', '0x8000c500', '0x8000c600', '0x8000c700', '0x8000c800']
+  noms MACHINES (référence, optimisé) : [(749, '--/--/--', '--/--/--'), (750, '66/66/0', '66/66/0'), (751, '66/66/0', '66/66/0'), (799, '66/66/0', '66/66/0')]
+  ok    arret : nom « --/--/-- » jusqu'au bloc 750, puis « 66/66/0 » (minuteur simulé : blocs à 60000/90112 ticks, pas de temps libre), dans les deux images
+  chemins courts (optimisé) : p1 saturateur sauté 2400, p2 delay endormi 800, p2 reverb endormie 800, p3 envoi sauté 3200, PUNCH chemin court 384, PUNCH chemin d'origine 0
+(1343 s)
+
+TOUT OK

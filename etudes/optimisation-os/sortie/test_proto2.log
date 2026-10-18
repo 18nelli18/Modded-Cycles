@@ -1,0 +1,19 @@
+  bloc 49 phase 1 : crête anneau 2981071, sommeils delay 50 reverb 50
+  bloc 99 phase 1 : crête anneau 1310815, sommeils delay 100 reverb 100
+  bloc 149 phase 2 : crête anneau 2465223, sommeils delay 150 reverb 120
+  bloc 199 phase 2 : crête anneau 1873916, sommeils delay 200 reverb 120
+  bloc 249 phase 3 : crête anneau 3066424, sommeils delay 240 reverb 120
+  bloc 299 phase 3 : crête anneau 1379232, sommeils delay 240 reverb 120
+  bloc 349 phase 3 : crête anneau 2627645, sommeils delay 240 reverb 120
+  bloc 399 phase 4 : crête anneau 1985837, sommeils delay 240 reverb 120
+  bloc 449 phase 4 : crête anneau 2992262, sommeils delay 240 reverb 120
+  bloc 499 phase 5 : crête anneau 1458897, sommeils delay 240 reverb 120
+  bloc 549 phase 5 : crête anneau 2521608, sommeils delay 240 reverb 120
+  bloc 599 phase 5 : crête anneau 2059766, sommeils delay 240 reverb 120
+  ok    identique sur 600 blocs : anneau, USB, voix, SRAM entière, EMAC à chaque bloc ; lignes en DDR tous les 25 blocs
+  phase 1 (envois 0) : delay 2659 -> 463, reverb 8206 -> 1595 instr/bloc ; gain +8807 instr = +8.14 % d'un bloc ; blocs en sommeil delay 120, reverb 120 / 120
+  phase 2 (reverb seule) : delay 2659 -> 463, reverb 8206 -> 8324 instr/bloc ; gain +2078 instr = +1.92 % d'un bloc ; blocs en sommeil delay 120, reverb 0 / 120
+  phase 3 (delay + reverb) : delay 2659 -> 2689, reverb 8206 -> 8248 instr/bloc ; gain -72 instr = -0.07 % d'un bloc ; blocs en sommeil delay 0, reverb 0 / 120
+  phase 4 (restes (envois 0)) : delay 2659 -> 2689, reverb 8206 -> 8236 instr/bloc ; gain -60 instr = -0.06 % d'un bloc ; blocs en sommeil delay 0, reverb 0 / 120
+  phase 5 (restes, paramètres FX qui glissent) : delay 2659 -> 2689, reverb 8205 -> 8235 instr/bloc ; gain -60 instr = -0.06 % d'un bloc ; blocs en sommeil delay 0, reverb 0 / 120
+  a3dc (décalage de lecture des lignes modulées) : min 0 max 1

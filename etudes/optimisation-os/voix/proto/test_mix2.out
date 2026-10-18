@@ -1,0 +1,7 @@
+  ok    essai 0 : machines [1, 3, 0, 1, 2, 0], 25 trigs, 60 changements de réglages : sorties et états des 6 voix identiques sur 300 blocs ; instructions 43536 -> 39948 par bloc
+  ok    essai 1 : machines [3, 0, 1, 2, 0, 1], 25 trigs, 60 changements de réglages : sorties et états des 6 voix identiques sur 300 blocs ; instructions 43346 -> 39758 par bloc
+  ok    essai 2 : machines [3, 0, 1, 3, 0, 1], 25 trigs, 60 changements de réglages : sorties et états des 6 voix identiques sur 300 blocs ; instructions 43045 -> 39457 par bloc
+  ok    essai 3 : machines [2, 1, 2, 1, 2, 1], 25 trigs, 60 changements de réglages : sorties et états des 6 voix identiques sur 300 blocs ; instructions 42507 -> 38919 par bloc
+  ok    essai 4 : machines [1, 2, 1, 2, 2, 0], 25 trigs, 60 changements de réglages : sorties et états des 6 voix identiques sur 300 blocs ; instructions 42815 -> 39227 par bloc
+
+[killed]

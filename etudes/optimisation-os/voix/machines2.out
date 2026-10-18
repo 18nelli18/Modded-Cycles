@@ -1,0 +1,12 @@
+KICK  joue   total   9039 update   416 render  7001 crête   432734056 code 216 lignes, données {'pile(emu)': 18, 'SDRAM-cache': 84, 'SRAM': 193}
+KICK  muette total   9007 update   416 render  6969 crête          76 code 216 lignes, données {'pile(emu)': 18, 'SDRAM-cache': 84, 'SRAM': 166}
+SNARE joue   total   8767 update   502 render  6643 crête   334548634 code 212 lignes, données {'pile(emu)': 18, 'SDRAM-cache': 86, 'SRAM': 174}
+SNARE muette total   8768 update   502 render  6644 crête           1 code 212 lignes, données {'pile(emu)': 18, 'SDRAM-cache': 86, 'SRAM': 174}
+METAL joue   total   8041 update   525 render  5894 crête   301556129 code 187 lignes, données {'pile(emu)': 18, 'SDRAM-cache': 77, 'SRAM': 213}
+METAL muette total   8041 update   525 render  5894 crête           4 code 187 lignes, données {'pile(emu)': 18, 'SDRAM-cache': 77, 'SRAM': 213}
+PERC  joue   total   7689 update   511 render  5556 crête   329896890 code 163 lignes, données {'pile(emu)': 16, 'SDRAM-cache': 98, 'SRAM': 173}
+PERC  muette total   7689 update   511 render  5556 crête          12 code 163 lignes, données {'pile(emu)': 16, 'SDRAM-cache': 94, 'SRAM': 182}
+TONE  joue   total   6901 update   317 render  4962 crête    76839570 code 165 lignes, données {'pile(emu)': 16, 'SDRAM-cache': 64, 'SRAM': 172}
+TONE  muette total   6901 update   317 render  4962 crête         219 code 165 lignes, données {'pile(emu)': 16, 'SDRAM-cache': 64, 'SRAM': 164}
+CHORD joue   total   9910 update   367 render  7921 crête   155440069 code 208 lignes, données {'pile(emu)': 18, 'SDRAM-cache': 81, 'SRAM': 242}
+CHORD muette total   9910 update   367 render  7921 crête      217123 code 208 lignes, données {'pile(emu)': 18, 'SDRAM-cache': 81, 'SRAM': 223}

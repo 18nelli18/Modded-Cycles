@@ -1,0 +1,18 @@
+{
+ "id": "essai-mix2",
+ "order": 96,
+ "name": "Essai : mix2 sans sa boucle morte",
+ "description": [
+  "optim/voix §4.2 (mix2.S) : 64 o en place, 0x400a98c4..0x400a9904."
+ ],
+ "device": "Model:Cycles",
+ "os": "1.13",
+ "section": 3,
+ "writes": [
+  {
+   "off": 693444,
+   "old": "22115c8124730800243408002a301c00222900045c8122301c00a4450800a4010800a1c12b81080022115880d7b01c1822290004d9b01c180c800000008066c0",
+   "new": "22112003eb88d1b01c18222900042004eb88d1b01c18a1c0600000264e714e714e714e714e714e714e714e714e714e714e714e714e714e714e714e714e714e71"
+  }
+ ]
+}

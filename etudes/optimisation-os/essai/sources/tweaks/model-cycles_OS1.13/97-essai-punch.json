@@ -1,0 +1,28 @@
+{
+ "id": "essai-punch",
+ "order": 97,
+ "name": "Essai : PUNCH éteint par un chemin court",
+ "description": [
+  "optim/voix §4.3 (punch.S), masque 0x40186238, détour 0x400a9714."
+ ],
+ "device": "Model:Cycles",
+ "os": "1.13",
+ "section": 3,
+ "writes": [
+  {
+   "off": 1596984,
+   "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000",
+   "new": "2e2802a4221370204a8566460c8620000000663eae8a0800a2060800a2060800a2060800a2ab18060004a3c2a1c3a6020800a1c226c2ae8a0800a3c2701ea2ab18020004a1c326c353806af24ef9400a97444ef9400a971c"
+  },
+  {
+   "off": 710024,
+   "old": "40186238",
+   "new": "4016bfc8"
+  },
+  {
+   "off": 693012,
+   "old": "2e2802a42213",
+   "new": "4ef940186238"
+  }
+ ]
+}

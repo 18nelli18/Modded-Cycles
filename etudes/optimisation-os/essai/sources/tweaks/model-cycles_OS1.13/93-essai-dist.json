@@ -1,0 +1,28 @@
+{
+ "id": "essai-dist",
+ "order": 93,
+ "name": "Essai : saturateur de Dist sauté quand Dist est à 0",
+ "description": [
+  "p1 de optim/sortie (vd_skip.S), masque 0x4016dab8, détour 0x40057062."
+ ],
+ "device": "Model:Cycles",
+ "os": "1.13",
+ "section": 3,
+ "writes": [
+  {
+   "off": 1496760,
+   "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+   "new": "43f940a78c2c4ab1780066264ab178046620226f003c71510c8000003c006e12716900420c8000003c006e064ef940057100286f0038206f00404ef94005706a"
+  },
+  {
+   "off": 723832,
+   "old": "4016dab8",
+   "new": "4014b364"
+  },
+  {
+   "off": 355426,
+   "old": "286f0038206f0040",
+   "new": "4ef94016dab84e71"
+  }
+ ]
+}

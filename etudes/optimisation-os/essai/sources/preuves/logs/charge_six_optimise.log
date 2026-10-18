@@ -1,0 +1,4 @@
+optimise MAIN OS b9b85a7623ff8e2cb7fd1556149ab13bdd1882fc0d8161ec76d821ac22855adc ; scénario six
+  chaud : 188 blocs, moyenne 61.0 %, pic 65.0 %, mini 60.8 %, voix 40.0 %, avant la fonction audio 1.0 %, 53314 instructions/bloc ; blocs de trig [0]
+  froid : 188 blocs, moyenne 63.7 %, pic 66.8 %, mini 63.6 %, voix 41.7 %, avant la fonction audio 1.3 %, 53324 instructions/bloc ; blocs de trig [0, 187]
+(316 s)

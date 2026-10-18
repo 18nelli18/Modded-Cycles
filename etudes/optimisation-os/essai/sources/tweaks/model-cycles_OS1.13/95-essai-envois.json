@@ -1,0 +1,33 @@
+{
+ "id": "essai-envois",
+ "order": 95,
+ "name": "Essai : envois à gain nul sautés",
+ "description": [
+  "p3 de optim/sortie (send_skip.S), masque 0x40170c48, détours 0x40056716, 0x40056698."
+ ],
+ "device": "Model:Cycles",
+ "os": "1.13",
+ "section": 3,
+ "writes": [
+  {
+   "off": 1509448,
+   "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
+   "new": "a180206f000c809880988098809880988098206f001080988098809880988098809867444fefffe048d70cfc4ef94005671ea180206f000c8098809880988098809880988098206f00108098809880988098809880988098670e4fefffd848d73cfc4ef9400566a0206f00047208208021400008214000102140001841e80020538166ea4e75"
+  },
+  {
+   "off": 722138,
+   "old": "40170c48",
+   "new": "4014b364"
+  },
+  {
+   "off": 353046,
+   "old": "4fefffe048d70cfc",
+   "new": "4ef940170c484e71"
+  },
+  {
+   "off": 352920,
+   "old": "4fefffd848d73cfc",
+   "new": "4ef940170c7a4e71"
+  }
+ ]
+}
