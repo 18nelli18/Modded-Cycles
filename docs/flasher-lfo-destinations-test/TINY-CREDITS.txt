@@ -1,0 +1,3 @@
+TINY machine engine by @Glycinate, used in this Modded Cycles build with the creator’s permission.
+
+The engine code has no separately stated open-source license. Use is by permission; this notice does not grant broader license terms. The included Synthesis ToolKit (STK) notice for the shaker constants is preserved in LICENSE-STK.
