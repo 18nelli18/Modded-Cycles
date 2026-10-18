@@ -19,10 +19,10 @@ def main():
  for folder in ('flasher','flasher-supermodel-909'):
   out=ROOT/'docs'/folder
   html=(out/'index.html').read_text(encoding='utf-8')
-  html=re.sub(r'<script src="lfo-destinations(?:-data)?\.js\?v=[^"]+"></script>','',html)
-  html=re.sub(r'(?<=\?v=)[\w.-]+',STAMP,html)
-  html=re.sub(r"window.MC_BUILD='[^']+'",f"window.MC_BUILD='{STAMP}'",html)
-  html=html.replace('</body>',f'<script src="lfo-destinations-data.js?v={STAMP}"></script><script src="lfo-destinations.js?v={STAMP}"></script></body>')
+  # Conserver le cache courant et l'ordre des modules publies apres cette release.
+  stamp=re.search(r"window.MC_BUILD='([^']+)'",html).group(1)
+  if 'lfo-destinations.js?' not in html:
+   html=html.replace('</body>',f'<script src="lfo-destinations-data.js?v={stamp}"></script><script src="lfo-destinations.js?v={stamp}"></script></body>')
   assert 'beat-diagnostic.js' not in html and 'audio-load.js?' not in html
   files={'index.html':html,'lfo-destinations.js':(ROOT/'tools/web/lfo-destinations.js').read_text(encoding='utf-8'),'lfo-destinations-data.js':'window.MCLfoDestinations='+json.dumps(data,separators=(',',':'))+';\n'}
   for name,text in files.items():

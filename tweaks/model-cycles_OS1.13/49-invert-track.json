@@ -2,7 +2,7 @@
   "id": "invert-track",
   "order": 49,
   "name": "Pads silencieux, TRACK + pad joue",
-  "status": "experimental",
+  "status": "tested",
   "device": "Model:Cycles",
   "os": "1.13",
   "section": 3,
