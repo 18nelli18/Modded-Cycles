@@ -1,0 +1,11 @@
+{
+  "stamp": "2026-10-18-macro-fine-main-test-1",
+  "scope": "test-only",
+  "base": "2026-10-18-fixed-main-194-init",
+  "diagnostics": true,
+  "hardware_verified": false,
+  "fine_default": true,
+  "usb_audio_optional": true,
+  "midi_machine": true,
+  "midi_bank": false
+}
