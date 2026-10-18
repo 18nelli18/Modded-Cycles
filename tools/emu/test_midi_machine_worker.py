@@ -72,4 +72,14 @@ def main():
  assert ('USB',bytes((0x95,65,0))) in r.output,r.output
  assert not any(port=='DIN' and packet==bytes((0x95,65,0)) for port,packet in r.output)
  print('PASS note sequence sur canal/port propres ; expiration sur port capture apres changement de reglages')
+ # Parcours CC : ne rien transmettre, meme si un token precede le geste.
+ r.output.clear();r.queue.clear();r.word(r.s['mm_assign_lane'],6)
+ assert put(2,0,2,3,64,4)==1
+ r.word(r.s['mm_assign_lane'],2)
+ assert put(2,0,2,4,64,4)==0 and put(2,12,2,3,64,4)==0
+ r.run_worker();assert not r.output,r.output
+ assert put(1,0,1,74,75,4)==1;r.run_worker();assert ('DIN',bytes((0xb1,74,75))) in r.output
+ r.word(r.s['mm_assign_lane'],6);r.output.clear();assert put(2,0,2,3,65,4)==1;r.run_worker()
+ assert ('DIN',bytes((0xb2,3,65))) in r.output
+ print('PASS assignation : CC sequence/LFO et ancien token bloques pour la piste ; autres pistes et reprise apres release conservees')
 if __name__=='__main__':main()

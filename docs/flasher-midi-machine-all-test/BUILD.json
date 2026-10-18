@@ -1,5 +1,5 @@
 {
-  "stamp": "2026-10-18-midi-machine-all-test-4",
+  "stamp": "2026-10-18-midi-machine-all-test-5",
   "scope": "test-only",
   "profile": "Select All except MIDI B-side; silent MIDI Out machine",
   "diagnostics": true,

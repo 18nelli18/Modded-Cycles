@@ -8,6 +8,7 @@ typedef unsigned char u8;
 #ifndef MM_MACHINE
 #define MM_MACHINE 6
 #endif
+extern volatile u32 mm_assign_lane;
 extern u32 mm_cc_read(const u16 *,u32);
 extern int mm_cc_number(u32);
 extern u32 mm_cc_value(u32);
@@ -15,8 +16,9 @@ extern const u16 *mm_params(u32);
 extern u32 mm_channel(const u16 *,u32);
 extern u32 mm_port(const u16 *);
 extern void mm_live_cleanup(void) __attribute__((weak));
-static u8 mm_note_ports[16][128];
-static u32 mm_note_port,mm_note_owned,overridden;
+extern void mm_live_cleanup_track(u32) __attribute__((weak));
+static u8 mm_note_ports[16][128],mm_note_lanes[16][128];
+static u32 mm_note_port,mm_note_owned,mm_note_lane,overridden;
 /* Seule la tache native appelle ce routeur pour ses notes. Les autres appels
  * gardent AUTO=1 ; les fins de notes utilisent le port capture a l'attaque.
  */
@@ -28,7 +30,7 @@ void mm_note_route(u32 length,const u8 *bytes){
    u32 saved=mm_note_ports[channel][note];
    if(saved&0x80){port=saved&7;mm_note_ports[channel][note]=0;}
   }else if(note<128&&status==0x90&&mm_note_owned&&caller>=0x40089f00&&caller<0x4008a55a){
-   port=mm_note_port;mm_note_ports[channel][note]=0x80|port;
+   port=mm_note_port;mm_note_ports[channel][note]=0x80|port;mm_note_lanes[channel][note]=mm_note_lane+1;
   }else if(status==0xb0&&(note==120||note==123)){
    for(u32 key=0;key<128;key++)if(mm_note_ports[channel][key]&0x80){
     u8 off[3]={0x80|channel,key,0};
@@ -43,12 +45,25 @@ static volatile u32 pending[84],dirty[84],cursor,awake;
 static const u32 mm_wakeup=0x7f4d4d00;
 static u16 lock(void){u16 old;__asm__ volatile("move.w %%sr,%0\nmove.w #0x2700,%%sr":"=d"(old)::"memory","cc");return old;}
 static void unlock(u16 old){__asm__ volatile("move.w %0,%%sr"::"d"(old):"memory","cc");}
+/* Sortie de machine : fermer seulement ses notes sur leurs anciens ports. */
+void mm_leave(u32 lane){
+ if(lane>=6)return;
+ if(mm_live_cleanup_track)mm_live_cleanup_track(lane);
+ for(u32 ch=0;ch<16;ch++)for(u32 note=0;note<128;note++){
+  if(!(mm_note_ports[ch][note]&0x80)||mm_note_lanes[ch][note]!=lane+1)continue;
+  u8 bytes[3]={0x80|ch,note,0};u32 port=mm_note_ports[ch][note]&7;
+  mm_note_ports[ch][note]=0;mm_note_lanes[ch][note]=0;
+  ((void (*)(u32,const u8 *,u32))0x400826b0)(3,bytes,port);
+ }
+ u16 sr=lock();for(u32 knob=0;knob<14;knob++)dirty[14*lane+knob]=0;unlock(sr);
+}
 static void wake(void){((void (*)(u32,const void *))0x40001fba)(0x40fcb2ec,&mm_wakeup);}
 static void send(u32 value){
  u8 bytes[3]={value>>24,value>>16,value>>8};
  ((void (*)(u32,const u8 *,u32))0x400826b0)(3,bytes,value&255);
 }
 u32 mm_cc_put(u32 lane,u32 knob,u32 channel,u32 cc,u32 value,u32 port){
+ if(lane==mm_assign_lane)return 0; /* Parcourir les numeros ne transmet rien. */
  if(lane>=6||knob>=14||channel>=16||cc>=128||value>=128||port<2||port>4)return 0;
  u32 slot=14*lane+knob,packet=((0xb0|channel)<<24)|(cc<<16)|(value<<8)|port;
  u16 old=lock();pending[slot]=packet;dirty[slot]=1;
@@ -72,11 +87,11 @@ u32 mm_cc_worker(const void *packet){
    if(((u8 (*)(u32,u32))0x4001e318)(0,lane)==MM_MACHINE){
     const u16 *params=mm_params(lane);
     *(volatile u8 *)(0x40fdd580+lane)=mm_channel(params,lane);
-    overridden|=1u<<lane;mm_note_port=mm_port(params);mm_note_owned=1;
+    overridden|=1u<<lane;mm_note_lane=lane;mm_note_port=mm_port(params);mm_note_owned=1;
     for(u32 i=0;i<14;i++){
      u32 slot=14*lane+i;u16 old=lock();
      u32 value=dirty[slot]?pending[slot]:0;dirty[slot]=0;unlock(old);
-     if(value)send(value);
+     if(value&&lane!=mm_assign_lane)send(value);
     }
    }else if(overridden&(1u<<lane)){
     *(volatile u8 *)(0x40fdd580+lane)=mm_channel((const u16 *)0,lane);
@@ -90,7 +105,9 @@ u32 mm_cc_worker(const void *packet){
   for(u32 i=0;i<84;i++){
    u32 slot=cursor++;if(cursor==84)cursor=0;
    if(!dirty[slot])continue;
-   value=pending[slot];dirty[slot]=0;break;
+   value=pending[slot];dirty[slot]=0;
+   if(slot/14==mm_assign_lane){value=0;continue;}
+   break;
   }
   if(!value){awake=0;unlock(old);return 1;}
   unlock(old);

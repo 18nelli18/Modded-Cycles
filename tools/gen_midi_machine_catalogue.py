@@ -42,7 +42,7 @@ def generate(mask,wizard,controls=False):
  with tempfile.TemporaryDirectory() as tmp:
   code=pay+(0x8e000 if controls else 0x8c000)
   blob,sy,end=core.compile_core(pathlib.Path(tmp),None,code,machine=6+int(wizard)+mask.bit_count(),controls=controls)
-  reserve=pay+(0x92000 if controls else 0x8e000)
+  reserve=pay+(0x94000 if controls else 0x8e000)
   assert sy['mm_end']<=reserve,(hex(sy['mm_end']),hex(reserve))
  extra=dict(machine=dict(core.MACHINE,label='MIDI',update=sy['mm_update'],render=sy['mm_render']),parts=[dict(dest=hex(code),hex=blob.hex())],end=reserve)
  out=combinations.generate(stock,st,tiny,wiz,mask,wizard,extra=extra)

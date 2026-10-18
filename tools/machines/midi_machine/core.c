@@ -33,6 +33,10 @@ u32 mm_live_off(u32 track,u32 note) {
  return 1;
 }
 #ifdef MM_CONTROLS
+void mm_live_cleanup_track(u32 lane){
+ if(lane>=6)return;
+ for(u32 note=0;note<128;note++)if(mm_live[lane][note]&0x8000)mm_live_off(lane,note);
+}
 void mm_live_cleanup(void){
  for(u32 lane=0;lane<6;lane++)for(u32 note=0;note<128;note++)
   if(mm_live[lane][note]&0x8000)mm_live_off(lane,note);
