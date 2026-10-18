@@ -50,3 +50,7 @@ Les voix existantes conservent leurs statuts historiques ; les nouvelles combina
 AveyCole demande explicitement le 17/10/2026 de publier en test avant le principal. PR59 ne publie que `docs/flasher-machine-combinations-test/`; la recette principale et son arbre Git restent identiques. URL : https://aveycole.github.io/Modded-Cycles/flasher-machine-combinations-test/?v=2026-10-17-machine-combinations-test-1 . PR58 reste en brouillon.
 
 `tools/gen_machine_combinations_test.py --check` reproduit la copie. Diagnostic CPU/CUT facultatif conserve ; sa reference couvre toute la charge utile, dont le wrapper de sortie quick-save, au lieu du seul premier morceau. Le choix exact avec diagnostic, six variantes navigateur signees, le vrai boot/cache et les gestes/popup CPU/CUT passent en emulation. Validation materielle attendue.
+
+## 6. Teste sur la machine (17/10/2026)
+
+AveyCole confirme le test publie : « that worked push to main ». Cette confirmation concerne la combinaison signalee dans le test1 ; les autres selections du catalogue restent verifiees en emulation. Promotion de PR58 autorisee. Les scripts et payloads CPU/CUT restent uniquement dans la copie test ; ils ne sont pas charges par le principal.

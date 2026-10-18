@@ -12,8 +12,8 @@ window.MC_RELEASES = [
       "fr": "TINY et RETROSYN se combinent librement avec les autres machines ajoutees, avec ou sans Sample Wizard. Corrige l’erreur engine lors de la preparation des sous-ensembles. Seules les machines cochees apparaissent dans MACHINES."
     },
     {
-      "en": "Validated all 1,536 expanded selections in emulation, plus signed browser builds and six-track audio comparisons. Voice code is unchanged. Diagnostics remain excluded from main.",
-      "fr": "Les 1 536 selections etendues sont verifiees en emulation, avec builds navigateur signes et comparaisons audio six pistes. Code des voix conserve. Aucun diagnostic dans le principal."
+      "en": "AveyCole confirmed the reported machine combination on hardware. All 1,536 expanded selections passed menu checks in emulation, plus signed builds and six-track audio comparisons. Voice code is unchanged. Diagnostics remain excluded from main.",
+      "fr": "AveyCole confirme la combinaison signalee sur machine. Les 1 536 selections etendues passent les menus en emulation, avec builds signes et comparaisons audio six pistes. Code des voix conserve. Aucun diagnostic dans le principal."
     }
   ]
 },
