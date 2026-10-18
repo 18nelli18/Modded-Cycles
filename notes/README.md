@@ -204,4 +204,4 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 
 - [121 — Destinations LFO et gestes MACHINES](121-destinations-lfo.md) : ATK/FLT/RES, quick assign et retour piste confirmes le18/10/2026 ; principal1.90 et909.6, diagnostics reserves aux tests.
 
-- [122 — Selection silencieuse](122-selection-silencieuse.md) : contribution fournie par AveyCole, pad simple silencieux et TRACK + pad joue ; module facultatif experimental, page test seulement.
+- [122 — Selection silencieuse](122-selection-silencieuse.md) : contribution fournie par AveyCole, pad simple silencieux et TRACK + pad joue ; module facultatif teste sur la machine le18/10/2026, principal1.91, non coche par defaut.

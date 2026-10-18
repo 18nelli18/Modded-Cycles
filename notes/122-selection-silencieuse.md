@@ -24,3 +24,9 @@ Avec navigateur preset identifie par le RTTI du controleur : l’appui simple ga
 [FAIT en emulation] La comparaison module off/on ne change qu’un octet dans les quatre MAIN OS construits, avec et sans MIDI/diagnostic. Le module seul est aussi signe, sans payload. Une ancienne couche de composition mettait en cache les selections connues ; le module est maintenant retire de son input puis ajoute en dernier a la composition finale avec sa reference propre, pour que son activation soit toujours prise en compte. Le JSON garde ordre49 ; aucun autre mod ni cache principal n’est modifie.
 
 Le controle global historique gen_flasher_tweaks --check signale une difference preexistante du catalogue statique. Son rendu est identique avec/sans49-invert-track.json et le fichier principal tweaks.js est identique au commit release ; ce catalogue n’est pas regenere dans ce test. Les generateurs propres au nouveau module et a la page, le registre et les chevauchements passent.
+
+## 3. Teste sur la machine (18/10/2026)
+
+[FAIT sur machine] AveyCole confirme "that worked push to main" apres le test invert-track-test1. Promotion facultative dans principal1.91, statut tested, toujours non cochee par defaut. Le helper reprend exactement le meme octet, retire toute dependance au diagnostic et conserve le filtrage avant composition puis ajout final. Test et edition909 restent inchanges. Les firmwares signes avec/sans module doivent encore ne differer que par cet octet.
+
+[FAIT en emulation, release1.91] Quatre paires off/on signees et verifiees : Arp minimal, selection complete avec MIDI, selection complete sans MIDI, Wizard avec Attack/filtre/LFO2. Chaque paire ne differe que par MAIN118644 ; module seul signe sans payload. Bootstrap et PadsView natif repasses pour Arp minimal et selection complete MIDI. Absence de carte/script diagnostic et selection initiale desactivee verifiees. Generateurs recette/release/LFO, registre et chevauchements passent.

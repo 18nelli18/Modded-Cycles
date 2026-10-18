@@ -38,6 +38,7 @@ Going back to the official firmware is one click away.
 
 | Mod | What you get | Status |
 |---|---|---|
+| Silent track selection | Optional, hardware tested: plain track pad selects silently; TRACK + pad selects and plays. Preset preview preserved; unchecked by default. | Tested on hardware |
 | **6-channel USB audio** | Each track gets its own USB channel (48 kHz / 32-bit): record six separate stems in your DAW. OS updates over USB keep working. | ✅ Tested |
 | **Syntakt engines** | Up to five real Syntakt machines added next to the original six: **SD VINTAGE**, **CP VINTAGE**, **SY TOY**, **SY BITS** and **SY SWARM**, with the Syntakt's knob names and defaults. They are read from your own Syntakt OS file. | ✅ Tested |
 | **Sample Wizard** | Adds Wizard as machine 7: sample playback modes, a sample browser and Slice varispeed (notes choose the slice, `PITCH` changes its speed). Upload your own samples with Elektron Transfer in SMP mode, and go back to CYC before a firmware upgrade. By TinyGregAudio, roterodamus and A.V. | ✅ Tested |

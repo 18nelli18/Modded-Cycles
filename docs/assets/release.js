@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.91",
+  "date": "2026-10-18",
+  "changes": [
+    {
+      "en": "Hardware-tested optional Silent track selection: plain T1-T6 pads select without sound; TRACK + pad selects and plays, including live recording. Preset-browser preview is preserved.",
+      "fr": "Selection silencieuse facultative testee sur machine : pads T1-T6 seuls selectionnent sans son ; TRACK + pad selectionne et joue, y compris en live record. Apercu du navigateur conserve."
+    },
+    {
+      "en": "Unchecked by default. Existing selections keep the same firmware behavior until you enable it. Diagnostics remain test-only.",
+      "fr": "Non coche par defaut. Les selections existantes gardent leur comportement tant que ce module reste desactive. Diagnostics reserves aux tests."
+    }
+  ]
+},
+{
   "version": "1.90",
   "date": "2026-10-18",
   "changes": [

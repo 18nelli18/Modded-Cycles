@@ -8,8 +8,8 @@ ROOT=pathlib.Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'too
 from mtlib import aplib,container
 from mtlib.syx import unwrap
 OUT=ROOT/'tweaks/model-cycles_OS1.13/49-invert-track.json'
-def recipe():
- return dict(id='invert-track',order=49,name='Pads silencieux, TRACK + pad joue',status='experimental',device='Model:Cycles',os='1.13',section=3,requires=[],conflicts=[],description=['Pads T1-T6 : appui simple selectionne sans son ; TRACK + pad selectionne et joue, avec le relais live record natif.','Navigateur de presets : apercu sonore par appui simple conserve ; TRACK + pad selectionne et joue.','Un octet beq vers bne a0x4001d374, sans payload. Contribution fournie par AveyCole. tools/gen_invert_track.py ; notes/122.'],writes=[dict(off=118644,old='67',new='66')])
+def recipe(experimental=False):
+ return dict(id='invert-track',order=49,name='Pads silencieux, TRACK + pad joue',status='experimental' if experimental else 'tested',device='Model:Cycles',os='1.13',section=3,requires=[],conflicts=[],description=['Pads T1-T6 : appui simple selectionne sans son ; TRACK + pad selectionne et joue, avec le relais live record natif.','Navigateur de presets : apercu sonore par appui simple conserve ; TRACK + pad selectionne et joue.','Un octet beq vers bne a0x4001d374, sans payload. Contribution fournie par AveyCole. tools/gen_invert_track.py ; notes/122.'],writes=[dict(off=118644,old='67',new='66')])
 def main():
  p=argparse.ArgumentParser();p.add_argument('--check',action='store_true');a=p.parse_args()
  raw=(ROOT/'firmware/model-cycles_OS1.13.syx').read_bytes();device=json.loads((ROOT/'tweaks/model-cycles_OS1.13/device.json').read_text())
