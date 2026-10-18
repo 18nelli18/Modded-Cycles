@@ -606,6 +606,29 @@ python3 tools/emu/test_lfo_plus.py --cycles model-cycles_OS1.13.syx [--with mode
 | `macro,lfo-plus` | `3400211f0037631364435452b5491898d60b5f4473c215cfb7578d889c1e438a` |
 | `6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,trig-hold,arp,tempo-max,boot-anim,multiline-browser,lfo-plus` | `7717f596492bf1eb375e9800f7901e1769e9d1d51b0036cd8a5f28c57f5de975` |
 
+### OS optimisé (moins de charge, son identique, deux gels corrigés)
+
+L'OS d'origine allégé ([note 70](notes/70-os-optimise.md)) : saturateur de Dist, envois à 0, delay et reverb
+endormis, mix2 sans sa boucle morte, PUNCH éteint par un chemin court, voix muettes plus calculées, et les correctifs
+de gel D1 (MACHINES) et D2 (horloge MIDI). `70-os-optimise.json` (`os-optimise`) : `tools/machines/os_optimise/*.S`
+dans sept masques libérés (1 036 o), binutils seulement. Incompatible avec Model-TG, MACRO, ACID, les moteurs du
+Syntakt et SD VINTAGE (même boucle des voix) : `build.py` refuse. La preuve tourne sur `tools/emu/outrig.py`, le banc
+de l'étage de sortie (2 à 3 min par scénario de 400 blocs, une demi-heure en tout) ; `--scenario` et `--blocks` pour un
+essai rapide, `filtre` avec `track-filter` dans `--with`.
+
+```sh
+python3 tools/gen_os_optimise.py --cycles model-cycles_OS1.13.syx [--check]
+python3 tools/emu/test_os_optimise.py --cycles model-cycles_OS1.13.syx [--scenario defaut,arret --blocks 100] \
+    [--with 6ch-usbup,trig-hold,arp,tempo-max,chord-keys,track-filter --scenario defaut,filtre]
+```
+
+| `-t` | MAIN OS patché (SHA-256) |
+|---|---|
+| `os-optimise` | `521e7014a3d04a49ed5fbacbef0f19e140cb58757bbf6224e74e86e804cb078d` |
+| `6ch-usbup,trig-hold,arp,tempo-max,boot-anim,multiline-browser,os-optimise` | `43adeb540e99ad355d3c61f4f4adbe62e1ac1841cb393474b1b8c08c21cae810` |
+| `6ch-usbup,trig-hold,arp,tempo-max,chord-keys,track-filter,os-optimise` | `35939671f15db98f54ef8b60f5c61fc9c31cae60a6991b7d6dab089af15e3bd2` |
+| `6ch-usbup,trig-hold,arp,tempo-max,chord-keys,lfo-plus,os-optimise` | `441e1d67513a6fa76fef2931ed2b1d98ad516f8807c807a35d884fb7a85e504a` |
+
 ### Écoute d'un pas en pause
 
 `trig-preview` (et sa copie dans Model-TG) accepte le séquenceur en pause, où le met un Stop MIDI reçu même à l'arrêt : 3 octets

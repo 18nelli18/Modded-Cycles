@@ -6,9 +6,9 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 282 tweaks, 31 763 écritures.
-- Masques de sprites libérables : 164 (35 960 o), dont 47 pris (17 040 o) et **117 libres (18 920 o)**.
-- Crochets sur l'OS : 100 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
+- 283 tweaks, 31 790 écritures.
+- Masques de sprites libérables : 164 (35 960 o), dont 54 pris (18 760 o) et **110 libres (17 200 o)**.
+- Crochets sur l'OS : 107 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
 - Pointeurs réécrits : 61 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 262 tweaks ; place restante au §3.
 
@@ -42,7 +42,7 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x401904b4` | `0x400ac784` | pris (370/376 o) | multiline-browser (370 o) |
 | `0x40192734` | `0x400ac2b2` | pris (318/376 o) | trigless-dim (318 o) |
 
-### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 0 pris, 42 libres (8 064 o)
+### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 3 pris, 39 libres (7 488 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
@@ -54,9 +54,9 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x40168a84` | `0x400b1bc0` | libre | |
 | `0x40168da4` | `0x400b1b32` | libre | |
 | `0x4016bcd8` | `0x400b12fe` | libre | |
-| `0x4016dab8` | `0x400b0f78` | libre | |
-| `0x4016fae8` | `0x400b0b20` | libre | |
-| `0x40170c48` | `0x400b08da` | libre | |
+| `0x4016dab8` | `0x400b0f78` | pris (64/192 o) | os-optimise (64 o) |
+| `0x4016fae8` | `0x400b0b20` | pris (70/192 o) | os-optimise (70 o) |
+| `0x40170c48` | `0x400b08da` | pris (134/192 o) | os-optimise (134 o) |
 | `0x40171a48` | `0x400b06ec` | libre | |
 | `0x40172a68` | `0x400b0508` | libre | |
 | `0x40172be8` | `0x400b04ec` | libre | |
@@ -113,7 +113,7 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x401699a8` | `0x400b1500` | libre | |
 | `0x4016aa28` | `0x400b1480` | libre | |
 
-### 34×34 : 14 masques de 272 o (copie gardée `0x4016bfc8`) : 8 pris, 6 libres (1 632 o)
+### 34×34 : 14 masques de 272 o (copie gardée `0x4016bfc8`) : 11 pris, 3 libres (816 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
@@ -124,9 +124,9 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x401835b8` | `0x400adedc` | pris (270/272 o) | lfo-plus (270 o) |
 | `0x40184df8` | `0x400adbc8` | pris (248/272 o) | lfo-plus (248 o) |
 | `0x40185308` | `0x400adb8c` | pris (248/272 o) | lfo-plus (248 o) |
-| `0x40185f48` | `0x400ad9c4` | libre | |
-| `0x40186238` | `0x400ad988` | libre | |
-| `0x40189618` | `0x400ad364` | libre | |
+| `0x40185f48` | `0x400ad9c4` | pris (204/272 o) | os-optimise (204 o) |
+| `0x40186238` | `0x400ad988` | pris (88/272 o) | os-optimise (88 o) |
+| `0x40189618` | `0x400ad364` | pris (220/272 o) | os-optimise (220 o) |
 | `0x4018af88` | `0x400ad18a` | libre | |
 | `0x4018b1a8` | `0x400ad16e` | libre | |
 | `0x4018ff64` | `0x400ac7fc` | libre | |
@@ -215,11 +215,11 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x40185648` | `0x400ada58` | libre | |
 | `0x401857f8` | `0x400ada1c` | libre | |
 
-### 41×41 : 1 masques de 328 o (copie gardée `0x40187298`) : 0 pris, 1 libres (328 o)
+### 41×41 : 1 masques de 328 o (copie gardée `0x40187298`) : 1 pris, 0 libres (0 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x4018d918` | `0x400acd1a` | libre | |
+| `0x4018d918` | `0x400acd1a` | pris (256/328 o) | os-optimise (256 o) |
 
 ### 52×22 : 1 masques de 208 o (copie gardée `0x4014bfe4`) : 0 pris, 1 libres (208 o)
 
@@ -583,7 +583,13 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4004dfa2` | `704c222f0004` | jmp | charge utile (mémoire), 3 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
 | `0x40053a6c` | `4fefff8048d77cfc42af…` | jsr | OS `0x4008e6ba` | boot-anim | notes/39 |
 | `0x40056610` | `4fefffd848d73cfc` | jmp | charge utile (image) +0xdbf6 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x40056698` | `4fefffd848d73cfc` | jmp | masque `0x40170c48` +0x32 `s7_check` | os-optimise | notes/70 |
+| `0x40056716` | `4fefffe048d70cfc` | jmp | masque `0x40170c48` +0x0 `s6_check` | os-optimise | notes/70 |
 | `0x40056b38` | `4878000448798000b990` | jsr | charge utile (image) +0xab08 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x40057062` | `286f0038206f0040` | jmp | masque `0x4016dab8` +0x0 `vd_check` | os-optimise | notes/70 |
+| `0x40057516` | `2f03260dea83` | jmp | masque `0x40189618` +0x0 `dz_check` | os-optimise | notes/70 |
+| `0x40057ac8` | `2a7c8000a9b0` | jmp | masque `0x4018d918` +0x0 `rz_check` | os-optimise | notes/70 |
+| `0x40057dc6` | `207c8000ad20` | jmp | masque `0x4018d918` +0x8e `rz_mod` | os-optimise | notes/70 |
 | `0x400587f6` | `4eb940091f20` | jsr | masque `0x4018a788` +0x1b2 | arp | notes/32 |
 | `0x40058ca0` | `a93c00000020` | jsr | masque `0x4015c044` +0x1f8 | 6ch-usbup, acid, macro, macro-acid, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36 |
 | `0x40058e28` | `72ff242a0008202a000c` | jsr | masque `0x4018a788` +0x0 | arp | notes/32 |
@@ -639,11 +645,14 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x400a6816` | `206800504e90` | jsr | charge utile (image) +0x116ac | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400a7da8` | `2d41003c4a936730` | jmp | charge utile (image) +0x1f2a | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400a7dfe` | `b08465224ef9` | jmp | charge utile (mémoire), 16 cibles selon la combinaison | acid-tg, macro-acid-tg, macro-tg, syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) | notes/31, notes/36, notes/43, notes/54 |
+| `0x400a7dfe` | `b08465222046` | jmp | masque `0x40185f48` +0x0 `gate` | os-optimise | notes/70 |
 | `0x400a7dfe` | `b08465222046` | jmp | charge utile (mémoire), 12 cibles selon la combinaison | syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/36 |
 | `0x400a7e02` | `204622704c002f0a2f0e…` | jmp | charge utile (image) +0x2918 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x400a7e24` | `269522434280` | jmp | masque `0x40185f48` +0x4e `after` | os-optimise | notes/70 |
 | `0x400a7e24` | `269522434280` | jmp | charge utile (mémoire), 13 cibles selon la combinaison | syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) | notes/31, notes/36 |
 | `0x400a8906` | `287c8000caa8` | jmp | charge utile (image) +0xddf6 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400a956c` | `2f0a226f00084280` | jmp | charge utile (image) +0xddd6 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x400a9714` | `2e2802a42213` | jmp | masque `0x40186238` +0x0 | os-optimise | notes/70 |
 | `0x400a98c4` | `22115c8124730800` | jmp | charge utile (image) +0xdcda | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400a9daa` | `4feffff448d70c04` | jmp | charge utile (image) +0xdcf8 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400aae88` | `4fefffe448d71c3c` | jmp | masque `0x40185968` +0x0 `chord_audio_update` | chord-keys | notes/42 |
@@ -775,4 +784,5 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | midi-both | 3 | 3 | 0 | 0 | 0 | 0 | 0 |  | notes/53 |
 | midi-live-both | 6 | 0 | 4 | 0 | 1 | 1 | 0 |  | notes/53 |
 | lfo-plus | 30 | 0 | 12 | 4 | 7 | 7 | 0 |  | notes/56 |
+| os-optimise | 27 | 4 | 9 | 0 | 7 | 7 | 0 |  | notes/70 |
 

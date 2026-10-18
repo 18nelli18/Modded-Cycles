@@ -351,6 +351,21 @@ FEATURES = [
         "needs": "syntakt",
         "engines": True,
     },
+    {
+        "id": "os-optimise",
+        "cat": "pack",
+        "label": "OS optimise",
+        "desc": "Le meme son avec moins de calcul : delay et reverb endormis tant qu'ils ne servent pas, voix muettes "
+                "plus calculees, saturateur de Dist et envois a 0 sautes. Charge moyenne 72 -> 20 % a l'arret, "
+                "77 -> 65 % en lecture. Corrige aussi deux gels de l'OS d'origine (MACHINES, horloge MIDI).",
+        "status": "experimental",
+        "credit": None,
+        # meme boucle des voix que Model-TG, MACRO, ACID et les moteurs du Syntakt : pas encore ensemble (notes/70 §6)
+        "excludes": ["model-tg", "macro", "acid", "syntakt"],
+        "variants": [
+            {"file": "70-os-optimise", "label": None},
+        ],
+    },
 ]
 
 

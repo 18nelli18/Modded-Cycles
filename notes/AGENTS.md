@@ -14,7 +14,8 @@ sequencer, interface), 35 (USB audio driver), 38 (tempo and the musical clock).
 
 ## A new note
 
-- File `NN-<slug>.md`, next free number (57 is the last), slug in French (`38-tempo-546-bpm.md`).
+- File `NN-<slug>.md`, next free number, slug in French (`38-tempo-546-bpm.md`). On `main` 70 is the last; open PRs
+  hold 58 to 69: check them (`gh pr list`, then `git ls-tree` on each head) before picking a number.
 - Title `# NN — <what the user gets or the problem>`, then a short paragraph: the user's request and where it came
   from (Reddit, Elektronauts, Maxime, with a link and the date), the tweak file, the generator, the proof, and
   "Adresses : VA de l'OS 1.13."
