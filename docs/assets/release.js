@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.84",
+  "date": "2026-10-17",
+  "changes": [
+    {
+      "en": "TINY and RETROSYN now work with any selection of the other added machines, with or without Sample Wizard. Fixes the undefined engine error when preparing partial machine sets. Only checked machines appear in MACHINES.",
+      "fr": "TINY et RETROSYN se combinent librement avec les autres machines ajoutees, avec ou sans Sample Wizard. Corrige l’erreur engine lors de la preparation des sous-ensembles. Seules les machines cochees apparaissent dans MACHINES."
+    },
+    {
+      "en": "Validated all 1,536 expanded selections in emulation, plus signed browser builds and six-track audio comparisons. Voice code is unchanged. Diagnostics remain excluded from main.",
+      "fr": "Les 1 536 selections etendues sont verifiees en emulation, avec builds navigateur signes et comparaisons audio six pistes. Code des voix conserve. Aucun diagnostic dans le principal."
+    }
+  ]
+},
+{
   "version": "1.83",
   "date": "2026-10-17",
   "changes": [

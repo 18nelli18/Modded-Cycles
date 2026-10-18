@@ -3007,7 +3007,15 @@ function chosenTweaks() {
     const tk = tw.tweaks.find((x) => x.id === id);
     if (tk) out.push(tk);
   }
-  return window.MCMainClearResolve ? window.MCMainClearResolve(out) : out;
+  try {
+    const result = window.MCMainClearResolve ? window.MCMainClearResolve(out) : out;
+    st.selectionError = null;
+    return result;
+  } catch (error) {
+    st.selectionError = error.message || String(error);
+    st.fw = null; st.finished = null; st.buildKey = null; st.building = false;
+    return [];
+  }
 }
 function chosenLabels() {
   const tw = window.MC_TWEAKS, out = [];
@@ -3209,7 +3217,7 @@ function prepareFirmware() {
     return;
   }
   const tweaks = chosenTweaks();
-  if (!tweaks.length) { st.fw = null; st.fwError = "pick_one"; return; }
+  if (!tweaks.length) { st.fw = null; st.fwError = st.selectionError || "pick_one"; return; }
   const sdv = needsSyntakt();
   if (sdv && !st.syntakt) { st.fw = null; st.fwError = "needs_syntakt"; return; }
   const key = tweaks.map((x) => x.id).join("+");
@@ -3547,6 +3555,12 @@ function missingReason() {
 }
 
 function render() {
+  if (st.mode === "mods") chosenTweaks();
+  const selectionError = $("selection-error");
+  if (selectionError) {
+    selectionError.hidden = st.mode !== "mods" || !st.selectionError;
+    selectionError.textContent = st.selectionError || "";
+  }
   refreshDevTexts();
   // step 2 status
   $("h2s").textContent = t(needsSamplesFile() ? "s2_samples" : "s2");
