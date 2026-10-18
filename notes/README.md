@@ -197,3 +197,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [117 — 909, fonctions partagees](117-909-fonctions-partagees.md) : filtre, sauvegarde et arpege/curseur MIDI main1.83 ; profil909 et WAV locaux conserves, sans diagnostic.
 
 - [118 — Combinaisons machines](118-combinaisons-machines.md) : TINY/RETROSYN avec tous les sous-ensembles, Wizard facultatif ; combinaison signalee confirmee sur machine le 17/10/2026, catalogue verifie en emulation, aucun diagnostic principal.
+
+- [119 — MACRO lo-fi, port test](119-macro-lofi-port.md) : correction 18nelli18 FUNC + PITCH, pas/texte/dessin amont, machines au choix ; copie test avec diagnostics, principal conserve.

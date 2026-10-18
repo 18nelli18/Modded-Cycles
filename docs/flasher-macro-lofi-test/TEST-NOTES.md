@@ -1,0 +1,1 @@
+MACRO lo-fi test only. Hold FUNC and turn PITCH: centre OFF, left 46K..4K, right 12B..2B. Port of 18nelli18 commits cd905ac and 62fb099 (MIT). Existing machine-combinations test 3 fixes and optional CPU/CUT diagnostics retained. Main 1.85 unchanged. Hardware confirmation pending.
