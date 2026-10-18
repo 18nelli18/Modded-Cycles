@@ -30,3 +30,12 @@ Guide, references EN/FR et version909.3 propres au profil fixe. Anciens encarts 
 ## 909.4 : arpegiateur sur les deux cotes (17/10/2026)
 
 AveyCole precise : « Oh, it needs arp on both sides I think », puis « fix that and then update again ». Ajout explicite de la carte arp au profil avant sa selection par le timer909 ; pas de modification de909-data.js ni des voix/samples. L adaptateur main1.83 applique alors aussi son changement de numerotation au menu A. FUNC+RETRIG propose Oct0..3 des deux cotes,0 ne transpose pas. Les labels et guides sont corriges pour indiquer A/B. Tests navigateur imposent presence de la recette arp. Menus/repetitions A et B executes dans le vrai firmware909, puis regressions voix, combos et cursor. Aucun diagnostic.
+
+
+## 909.5 : rattrapage des pages et longueurs MIDI main1.89 (18/10/2026)
+
+AveyCole demande « push crossover updates to 909 edition ». Les anciens correctifs filtre/save/curseur/Oct0 portent deja les memes donnees que main1.89. Les changements partages manquants sont ceux des pages MIDI et de la longueur commune. MACRO et les combinaisons de banques de machines ne concernent pas le profil fixe909 et ne sont pas ajoutes.
+
+Le generateur copie les donnees et l adaptateur MIDI-pages approuves du principal, avec une seule adaptation : sa promesse attend `MC909CrossoverReady`, pour agir apres la fusion909/Wizard et les corrections precedentes. Les quatre LEDs PAGE suivent les modes REC natifs ; l entree B reprend la page A en mode normal ; la longueur commune est editable depuis B par FUNC+PAGE, clic DATA puis rotation, ou PAGE par16 meme hors edition. Mode par piste : longueurs MIDI independantes. Diagnostics absents ; code des six voix909 et chargement des quatre WAV inchanges.
+
+[FAIT en emulation] Vrai build signe issu de quatre uploads WAV synthetiques, remplacement puis suppression WAV, refus d image modifiee. Bootstrap/cache, gardes filtre/save, gestes Genie/SCRAMBLE/B/slides/mute verifies. Preuve MIDI-pages sur la vraie composition909 :1848 etats LED, longueurs normales, six longueurs par piste, selection DATA, cycles PAGE, notifications natives, notes preservees et reprise de page. Les six callbacks audio restent exactement egaux au C hote sur trois variantes,24blocs chacune, avec un seul passage Wizard et regions protegees intactes. Le principal1.89 reste octet-identique. Les fixes source sont confirmes sur le principal ; aucune nouvelle validation materielle909 inventee.
