@@ -16,6 +16,7 @@ extern u32 mm_cc_value(u32);
 extern void mm_popup(const char *);
 extern void mm_menu_draw(u32,u32);
 extern u32 mm_native_default(u32,u32);
+extern void mm_leave(u32);
 extern void mm_setup(u16 *);
 extern u32 mm_lfo_read(const u16 *,u32,u32);
 extern u32 mm_lfo_edit(u16 *,u32,u32,i32);
@@ -25,6 +26,8 @@ extern u32 mm_channel(const u16 *,u32);
 extern u32 mm_port(const u16 *);
 /* API[0/1] : adresses SETTINGS-held/mod-used du support commun si installe. */
 volatile u32 mm_ui_api[5];
+/* Lu par les producteurs/worker sans getter UI depuis IRQ. */
+volatile u32 mm_assign_lane=6;
 static u32 mm_settings_used,mm_settings_held,mm_func_held,mm_track_taken;
 static u32 mm_page,mm_row,mm_edit,mm_page_lane=6;
 static u32 mm_seen[6];
@@ -88,7 +91,7 @@ void mm_audio_poll(void){
   u32 machine=((u8 (*)(u32,u32))0x4001e318)(0,lane);
   if(machine==MM_MACHINE){mm_seen[lane]=1;continue;}
   if(!mm_seen[lane])continue;
-  mm_seen[lane]=0;
+  mm_seen[lane]=0;mm_leave(lane);
   u32 object=sound_object(lane);const u16 *before=params_for(object);
   if(!before||(before[32]!=0x4d49&&before[32]!=0x4d4a))continue;
   u16 after[33];for(u32 i=0;i<33;i++)after[i]=before[i];
@@ -225,6 +228,7 @@ u32 mm_encoder(const u32 *event) {
  packed=mm_cc_edit(changed,knob,delta,assign);
  publish(object,before,changed);
  if(assign){
+  mm_assign_lane=lane;
   mm_settings_used=1;
   if(mm_ui_api[1])*(volatile u32 *)mm_ui_api[1]=1;
  }else if(packed!=old&&mm_cc_number(packed)>=0){
@@ -244,7 +248,7 @@ u32 mm_encoder(const u32 *event) {
 u32 mm_ui_key(const u32 *event) {
  if(!event)return 0;
  u32 lane=selected(),code=event[3],flags=event[4];
- if(code==13)mm_settings_held=(flags&1)!=0;
+ if(code==13){mm_settings_held=(flags&1)!=0;mm_assign_lane=mm_settings_held&&midi(lane)?lane:6;}
  if(code==1)mm_func_held=(flags&1)!=0;
  if(!midi(lane))return 0;
  /* Ce detour precede le getter commun : publier aussi l'appui brut, avant

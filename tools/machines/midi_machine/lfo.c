@@ -62,6 +62,7 @@ void mm_lfo_dispatch(u8 *frame,u32 bpm,u32 triggers){
   u32 cc=mm_lfo_read(saved[lane],lfo,3),channel=mm_channel(saved[lane],lane),port=mm_port(saved[lane]);
   u32 key=(channel<<24)|(port<<16)|(cc<<8)|(u32)value;
   if(mm_lfo_last[index]==key)continue;
-  mm_lfo_last[index]=key;mm_cc_put(lane,12+lfo,channel,cc,(u32)value,port);break;
+  if(mm_cc_put(lane,12+lfo,channel,cc,(u32)value,port))mm_lfo_last[index]=key;
+  break;
  }
 }
