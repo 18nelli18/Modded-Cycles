@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.87",
+  "date": "2026-10-17",
+  "changes": [
+    {
+      "en": "Approved MIDI B-side page behavior: selected edit page solid, playing page blinking with stock timing. When they coincide, that page blinks; stopped playback shows the selected page solid.",
+      "fr": "Comportement des pages MIDI B valide : page editee fixe, page jouee clignotante au rythme natif. Si elles coincident, cette page clignote ; a l arret, page editee fixe."
+    },
+    {
+      "en": "Normal pattern length follows A-side. Per-track length mode keeps independent MIDI lane lengths. Diagnostic tools remain exclusive to test pages.",
+      "fr": "Longueur normale du pattern liee a A. Le mode par piste garde des longueurs MIDI independantes. Les diagnostics restent reserves aux pages de test."
+    }
+  ]
+},
+{
   "version": "1.86",
   "date": "2026-10-17",
   "changes": [

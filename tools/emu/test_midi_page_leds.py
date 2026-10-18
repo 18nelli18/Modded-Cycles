@@ -1,13 +1,14 @@
 """Note120 : vrai bootstrap, callback LED B et boucle PAGE stock compares."""
-import argparse,json,pathlib,struct,sys,time
+import argparse,json,os,pathlib,struct,sys,time
 from unicorn import UC_HOOK_CODE,UC_HOOK_MEM_UNMAPPED,m68k_const as mk
 HERE=pathlib.Path(__file__).resolve().parent;sys.path[:0]=[str(HERE),str(HERE.parent)]
 from test_midi_entry import boot_case
 from test_seq_gen_menu import Rig,OBJ,STACK
 ROOT=HERE.parent.parent
+CASES=os.environ.get("MIDI_PAGES_OUT","build/midi-page-leds")
 
 def run(prefix):
- img,mem,ts=boot_case(prefix);bank=next(t for t in ts if t['id']=='midi-out-bank');q=next(t for t in ts if t['id']=='midi-page-leds-test');r=Rig(img,{'writes':[]},{'writes':[],'symbols':{**bank['symbols'],**q['symbols']}});u=r.u
+ img,mem,ts=boot_case(prefix);bank=next(t for t in ts if t['id']=='midi-out-bank');q=next(t for t in ts if t['id'] in ('midi-page-leds-test','midi-page-leds'));r=Rig(img,{'writes':[]},{'writes':[],'symbols':{**bank['symbols'],**q['symbols']}});u=r.u
  for at,size in ((0x43000000,0x800000),(0x46700000,0x400000),(0x80000000,0x200000)):u.mem_map(at,size)
  for at,raw in mem:u.mem_write(at,raw)
  assert r.call('ml_prepare')==1;clock=r.r32(r.s['ml_clock_state']);active=0x930b0000;r.w32(0x40a7887c,active);r.w32(active+30706,0);assert r.call('ml_bank_ui_sync')==1;pattern=r.r32(r.s['ml_pattern']);r.w32(r.s['mlp_obj'],OBJ);r.w32(r.s['ml_play_pattern'],pattern)
@@ -75,7 +76,7 @@ def run(prefix):
 def main():
  p=argparse.ArgumentParser();p.add_argument('--watch',action='store_true');a=p.parse_args()
  for i in range(3):
-  prefix=ROOT/f'build/midi-page-leds/{i}-after';start=time.monotonic()
+  prefix=ROOT/f'{CASES}/{i}-after';start=time.monotonic()
   while not prefix.with_suffix('.syx').exists():
    if not a.watch or time.monotonic()-start>1200:raise AssertionError(('missing build',i))
    time.sleep(2)
