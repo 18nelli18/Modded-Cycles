@@ -8,7 +8,7 @@ HERE=pathlib.Path(__file__).resolve().parent;sys.path[:0]=[str(HERE),str(HERE.pa
 from test_midi_entry import boot_case
 import build
 def main():
- p=argparse.ArgumentParser();p.add_argument('--case',default='build/909-preview/all');a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('--case',default='build/909-preview/all');p.add_argument('--diagnostics',action='store_true');a=p.parse_args()
  img,memories,recipes=boot_case(a.case)
  preview=next(t for t in recipes if t['id']=='wizard-sample-preview')
  root=HERE.parent.parent
@@ -17,7 +17,7 @@ def main():
  for w in preview['writes']:
   raw=bytes.fromhex(w['new']);assert img[w['off']:w['off']+len(raw)]==raw,hex(build.BASE+w['off'])
  assert not any(t['id'].startswith('model-tg') for t in recipes)
- assert not any('br_load_address' in t.get('symbols',{}) for t in recipes)
- print('PASS preecoute identique au principal, toutes les accroches et routines preservees apres boot909, aucun Model-TG ou diagnostic')
+ if not a.diagnostics:assert not any('br_load_address' in t.get('symbols',{}) for t in recipes)
+ print('PASS preecoute identique au principal, toutes les accroches et routines preservees apres boot909, aucun Model-TG'+(' ; diagnostic test autorise' if a.diagnostics else ' ou diagnostic'))
  print('LIMITES : navigateur, fichiers samples et ecoute physique a confirmer sur appareil')
 if __name__=='__main__':main()
