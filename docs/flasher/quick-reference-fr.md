@@ -1,6 +1,6 @@
 # Vue d’ensemble des fonctions et raccourcis
 
-A.V.’s Supermodel Edition · 17 octobre 2026
+A.V.’s Supermodel Edition · 18 octobre 2026
 
 Gestes ajoutes uniquement ; transports, copies, effacements et collages calques sur le stock omis.
 
@@ -8,7 +8,7 @@ Installez la fonction correspondante. Maintenez le premier bouton pendant le sec
 
 ## Vue d'ensemble actuelle
 
-Flasheur principal 1.83 · mise à jour du 17 octobre 2026. Installez les fonctions souhaitées ; le flasheur vérifie les combinaisons compatibles. [Supermodel 909 Edition](../flasher-supermodel-909/) possède sa propre sélection et sa propre version.
+Flasheur principal 1.83 · mise à jour du 18 octobre 2026. Installez les fonctions souhaitées ; le flasheur vérifie les combinaisons compatibles. [Supermodel 909 Edition](../flasher-supermodel-909/) possède sa propre sélection et sa propre version.
 
 | Fonction | Comportement actuel |
 |---|---|
@@ -109,3 +109,7 @@ Le MIDI sauvegarde charge uniquement en entrant cote B, lecture arretee. Arreter
 | Configuration du test | Garder Control All Beat Repeat sélectionné avec Banque MIDI dans ce test combiné. Cette obligation ne concerne pas le principal. Les diagnostics CPU/pic/CUT restent disponibles dans le test. |
 
 Octave 0, le curseur B et la correction du crash ont été confirmés par AveyCole dans le test 2 et sont publiés dans le principal 1.83. Le chargement MIDI sauvegardé exige toujours la lecture arrêtée. Le beat repeat MIDI et le filtre MIDI ont été abandonnés et ne font pas partie de ce test.
+
+## Destinations LFO et assignation rapide — 1.90
+
+Attack (ATK), Filter (FLT) et Resonance (RES) sont des destinations des deux LFO audio lorsque leurs modules sont installes. Tenir LFO + MACHINES et tourner DECAY / SWEEP / CONTOUR pour assigner, puis continuer pour ajuster la profondeur. Sans MACHINES, les cibles ordinaires sont conservees. Sample Wizard utilise ses cibles natives filtre / resonance sur SWEEP / CONTOUR avec ou sans MACHINES ; les noms restent stables pendant la rotation. Les menus LFO restent ouverts apres assignation rapide. Les gestes MACHINES ne laissent pas le selecteur ouvert. Retrosyn affiche Timbre / Oscillator / Pitch Sweep / Chord Arp. Diagnostics reserves aux tests.

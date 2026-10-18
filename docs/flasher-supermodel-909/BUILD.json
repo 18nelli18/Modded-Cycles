@@ -6,7 +6,7 @@
   "samples_hosted": false,
   "sample_capacity_bytes": 180000,
   "sample_rate": 32000,
-  "shared_features_main_version": "1.89",
+  "shared_features_main_version": "1.90",
   "shared_features_updated": "2026-10-18",
   "diagnostics": false,
   "arpeggiator_sides": [
@@ -14,5 +14,5 @@
     "B"
   ],
   "hardware_tested_version": "909.2",
-  "shared_feature_port_validation": "emulation; source fixes hardware-confirmed in main1.89"
+  "shared_feature_port_validation": "emulation; source fixes hardware-confirmed by AveyCole in LFO test8"
 }
