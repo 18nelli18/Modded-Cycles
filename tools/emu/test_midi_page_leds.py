@@ -12,27 +12,35 @@ def run(prefix):
  for at,size in ((0x43000000,0x800000),(0x46700000,0x400000),(0x80000000,0x200000)):u.mem_map(at,size)
  for at,raw in mem:u.mem_write(at,raw)
  assert r.call('ml_prepare')==1;clock=r.r32(r.s['ml_clock_state']);active=0x930b0000;r.w32(0x40a7887c,active);r.w32(active+30706,0);assert r.call('ml_bank_ui_sync')==1;pattern=r.r32(r.s['ml_pattern']);r.w32(r.s['mlp_obj'],OBJ);r.w32(r.s['ml_play_pattern'],pattern)
- led=0x930b1000;claims=0x930b2000;mapping=0x930b3000;pages=[r.r32(0x400fbccc+4*i) for i in range(4)];pads=[r.r32(0x400fbc78+4*i) for i in range(6)]
+ record=[1];led=0x930b1000;claims=0x930b2000;mapping=0x930b3000;pages=[r.r32(0x400fbccc+4*i) for i in range(4)];pads=[r.r32(0x400fbc78+4*i) for i in range(6)]
  r.w32(0x404a8bc4,0x400fbccc);r.w32(0x404a8bdc,mapping);u.mem_write(mapping,struct.pack('>16I',*range(1,17)));r.w32(0x404a8ba0,0x400fbc78)
- for at,fn in ((0x400cf9a8,lambda a:0x930b4000),(0x4006b978,lambda a:0),(0x400cfaf4,lambda a:led),(0x4008e942,lambda a:a[0]),(0x4008e964,lambda a:0),(0x4008e998,lambda a:0),(0x4008e8ce,lambda a:0)):
+ for at,fn in ((0x400cf9a8,lambda a:0x930b4000),(0x4006b978,lambda a:record[0]),(0x400cfaf4,lambda a:led),(0x4008e942,lambda a:a[0]),(0x4008e964,lambda a:0),(0x4008e998,lambda a:0),(0x4008e8ce,lambda a:0)):
   r.stubs[at]=fn;u.hook_add(UC_HOOK_CODE,r.stub,begin=at,end=at)
  u.hook_add(UC_HOOK_MEM_UNMAPPED,lambda u,access,addr,size,value,data:print('UNMAPPED',hex(u.reg_read(mk.UC_M68K_REG_PC)),hex(addr),size,flush=True) or False)
  cb=r.r32(r.s['mlp_led_vt']+16);assert cb==r.s['pg_led'];allocated=r.new_count;tests=0
  def states():return [r.r32(led+40+4*i) for i in pages]
- def stock(selected,step):
+ def stock_record(selected,step):
   u.mem_write(led,bytes(256));u.reg_write(mk.UC_M68K_REG_D2,led);u.reg_write(mk.UC_M68K_REG_D5,step//16 if step>=0 else 0xffffffff);u.reg_write(mk.UC_M68K_REG_D6,selected);u.reg_write(mk.UC_M68K_REG_D7,int(step>=0 and (step&3)>1));u.reg_write(mk.UC_M68K_REG_A7,STACK);u.emu_start(0x400222f2,0x40022346,count=10000);assert u.reg_read(mk.UC_M68K_REG_PC)==0x40022346;assert u.reg_read(mk.UC_M68K_REG_A7)==STACK;return states()
- for lane in range(6):
-  r.w32(r.s['mlp_track'],lane)
-  for length in (5,16,17,31,32,48,64):
-   u.mem_write(pattern+264*lane+4,bytes([length]))
-   for selected in range((length+15)//16):
-    r.w32(r.s['mlp_step'],selected*16)
-    for step in [s for s in (0,1,2,3,14,15,16,17,30,31,32,47,48,63) if s<length]:
-     r.w32(0x40a7883c,1);r.w32(clock,1);r.w32(clock+8+8*lane,(step+1)%length);expected=stock(selected,step);u.mem_write(led,bytes(256));u.mem_write(claims,bytes(8));assert r.call(cb,OBJ+0x500,0,claims)==1;assert states()==expected,(lane,length,selected,step,states(),expected)
-     mask=r.r32(claims)<<32|r.r32(claims+4);assert mask==sum(1<<i for i in list(range(1,17))+pads+pages),hex(mask)
-     tests+=1
-    for transport in (0,2):
-     r.w32(0x40a7883c,transport);expected=stock(selected,-1);u.mem_write(led,bytes(256));assert r.call(cb,OBJ+0x500,0,claims)==1;assert states()==expected
+ def stock(selected,step,length):
+  if record[0]:return stock_record(selected,step)
+  u.mem_write(led,bytes(256));frame=0x930b5000;r.w32(frame-20,(length+15)//16)
+  for reg,value in ((mk.UC_M68K_REG_D3,led),(mk.UC_M68K_REG_D5,step//16 if step>=0 else 0xffffffff),(mk.UC_M68K_REG_D6,0),(mk.UC_M68K_REG_D7,(step&3) if step>=0 else 0),(mk.UC_M68K_REG_A5,0x40005fe6),(mk.UC_M68K_REG_A6,frame),(mk.UC_M68K_REG_A7,STACK)):u.reg_write(reg,value)
+  u.emu_start(0x4001cdf2,0x4001ce28,count=10000);assert u.reg_read(mk.UC_M68K_REG_PC)==0x4001ce28;assert u.reg_read(mk.UC_M68K_REG_A7)==STACK
+  return [value or 1 for value in states()]
+ for rec in (0,1):
+  record[0]=rec
+  for lane in range(6):
+   r.w32(r.s['mlp_track'],lane)
+   for length in (5,16,17,31,32,48,64):
+    u.mem_write(pattern+264*lane+4,bytes([length]))
+    for selected in range((length+15)//16):
+     r.w32(r.s['mlp_step'],selected*16)
+     for step in [s for s in (0,1,2,3,14,15,16,17,30,31,32,47,48,63) if s<length]:
+      r.w32(0x40a7883c,1);r.w32(clock,1);r.w32(clock+8+8*lane,(step+1)%length);expected=stock(selected,step,length);u.mem_write(led,bytes(256));u.mem_write(claims,bytes(8));assert r.call(cb,OBJ+0x500,0,claims)==1;assert states()==expected,(rec,lane,length,selected,step,states(),expected)
+      mask=r.r32(claims)<<32|r.r32(claims+4);assert mask==sum(1<<i for i in list(range(1,17))+pads+pages),hex(mask)
+      tests+=1
+     for transport in (0,2):
+      r.w32(0x40a7883c,transport);expected=stock(selected,-1,length);u.mem_write(led,bytes(256));assert r.call(cb,OBJ+0x500,0,claims)==1;assert states()==expected
  # Le retour vers A et les objets etrangers ne revendiquent pas les pages B.
  r.w32(r.s['mlp_obj'],0);u.mem_write(led,bytes(256));u.mem_write(claims,bytes(8));r.call(cb,OBJ+0x500,0,claims);assert states()==[0]*4 and r.r32(claims)==r.r32(claims+4)==0;r.w32(r.s['mlp_obj'],OBJ)
  assert r.new_count==allocated
@@ -45,6 +53,7 @@ def run(prefix):
  assert not redraw
  r.w32(clock+8,19);r.call('pg_poll');assert redraw==[OBJ];redraw.clear();r.w32(clock+8,33);r.call('pg_poll');assert redraw==[OBJ]
  assert len(poll)==23
+ redraw.clear();record[0]=0;r.call('pg_poll');assert redraw==[OBJ];redraw.clear();record[0]=1;r.call('pg_poll');assert redraw==[OBJ]
  print('PASS',prefix,tests,'playing states match actual stock PAGE loop; stopped/paused, masks, six lane lengths, B exit and off-page polling; no allocation',flush=True)
 
  # NORMAL A pilote les longueurs B ; TRACK conserve six longueurs differentes.
@@ -70,6 +79,26 @@ def run(prefix):
  assert [u.mem_read(pattern+264*lane+4,1)[0] for lane in range(6)]==lengths
  empty=r.r32(r.s['ml_bank_empty']);before=bytes(u.mem_read(empty,1584));u.mem_write(audio+30667,b'\0');u.mem_write(audio+30662,b'\x00\x20');r.call('pg_clock',r.r32(r.s['ml_runtime']),empty,clock,200000000,0);assert bytes(u.mem_read(empty,1584))==before
  assert r.new_count==allocated
+ # Ouverture : page A heritee uniquement en mode normal et apres succes natif.
+ native=[];opened=[1]
+ settings=0x930b6100;vtable=0x930b6200;page_object=0x930b6300;getter=0x930b6400
+ r.w32(settings,vtable);r.w32(vtable+40,getter);u.mem_write(getter,b'\x20\x3c'+struct.pack('>I',page_object)+b'\x4e\x75')
+ def opening(a):
+  native.append(1)
+  if opened[0]:r.w32(r.s['mlp_obj'],OBJ)
+  return opened[0]
+ for address,fn in ((r.s['mlp_open'],opening),(0x400cf866,lambda a:0x930b6000),(0x4000eb90,lambda a:settings)):
+  fresh=address not in r.stubs;r.stubs[address]=fn
+  if fresh:u.hook_add(UC_HOOK_CODE,r.stub,begin=address,end=address)
+ for mode in (0,1):
+  for length in (5,17,32,48,64):
+   u.mem_write(audio+30667,bytes([mode]));u.mem_write(audio+30662,struct.pack('>H',length))
+   for page in range((length+15)//16):
+    r.w32(r.s['mlp_obj'],0);r.w32(r.s['mlp_step'],7);r.w32(page_object+8,page);count=len(native);assert r.call('pg_open')==1;assert len(native)==count+1
+    assert r.r32(r.s['mlp_step'])==(page*16 if mode==0 else 7),(mode,length,page)
+ u.mem_write(audio+30667,b'\0');u.mem_write(audio+30662,b'\x00\x40');r.w32(r.s['mlp_obj'],0);r.w32(r.s['mlp_step'],19);r.w32(page_object+8,3);opened[0]=0;assert r.call('pg_open')==0;assert r.r32(r.s['mlp_step'])==19
+ opened[0]=1;r.w32(r.s['mlp_obj'],OBJ);assert r.call('pg_open')==1;assert r.r32(r.s['mlp_step'])==19
+ print('PASS normal-mode A-to-B page inheritance, per-track independence, native open forwarding, failed/already-open guards',prefix,flush=True)
  data=json.loads((ROOT/'docs/flasher-midi-page-leds-test/midi-page-leds-data.js').read_text().split('window.MCMidiPageLeds=',1)[1].strip().rstrip(';'));at=r.s['pg_api']-data['symbols']['pg_api'];size=len(data['hex'])//2;body=bytes(u.mem_read(at,size));slot=r.r32(r.s['mlp_led_vt']+16);r.call(0x4007929c);assert bytes(u.mem_read(at,size))==body and r.r32(r.s['mlp_led_vt']+16)==slot
  print('PASS normal length follows A 1/5/16/17/31/32/48/64, real clock wrap, independent per-track lengths/config, immutable empty bank, A bytes unchanged; no allocation',prefix,flush=True)
 
