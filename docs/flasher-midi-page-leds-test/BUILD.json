@@ -1,6 +1,6 @@
 {
-  "stamp": "2026-10-17-midi-page-leds-test-1",
+  "stamp": "2026-10-17-midi-page-leds-test-2",
   "scope": "test-only",
-  "base": "main1.86",
+  "base": "main1.87",
   "main_unchanged": true
 }

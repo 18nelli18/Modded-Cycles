@@ -32,3 +32,14 @@ Longueurs normales1/5/16/17/31/32/48/64 : vrai clockwrap B sur deux tours et edi
 ## 5. Promotion autorisee (17/10/2026)
 
 AveyCole repond « okay, push to main » depuis le test1. Principal1.87 autorise : helper et comportement identiques, dependance diagnostic retiree du JS, statut du correctif valide. La banque MIDI reste globalement experimentale. Documentation et raccourcis actualises ; diagnostics et page de test conserves a part. Le generateur `gen_midi_pages_main.py --check` reproduit la promotion.
+
+
+## 6. Revision test 2 : modes REC et page heritee (17/10/2026)
+
+AveyCole demande le rendu A natif hors REC : toutes les pages disponibles fixes a l arret, page jouee clignotante pendant lecture ; comportement REC precedent conserve. [FAIT] La boucle native `0x4001cdf2..0x4001ce28` allume les pages inferieures au nombre disponible, sauf la page jouee pendant la phase `(pas & 3)>1`. La boucle REC conserve sa phase complementaire. Le callback B utilise le vrai getter REC `0x4006b978`, et la cle de poll inclut ce mode pour rafraichir immediatement son changement.
+
+En mode longueur normale, le wrapper de `mlp_open` lit la page A avec `0x400cf866 -> 0x4000eb90 -> 0x400124b8` avant presentation B. Apres succes seulement, B reprend cette page si elle est disponible. En mode par piste, sa page reste independante. Echec et ouverture deja active ne changent pas la selection. Seul le saut absolu d ouverture prive est redirige, avec garde JS sur un seul site. Aucun changement de notes, de transport ni de page A.
+
+Le helper relogeable passe de996 a1388 octets. Trois vrais builds signes, trois vrais bootstraps ; chaque profil compare1848 etats joues aux deux boucles stock, plus arret/pause, transitions REC, masques LED et longueurs. Le getter de page A natif est execute ; presentation native simulee pour verifier succes/echec et appel unique. Longueurs1..64, six voies inegales et survie cache restent couverts. Diagnostics conserves dans le test. Principal1.87 et edition909 inchanges ; sources de promotion1.87 figees separement pour que `gen_midi_pages_main.py --check` reste reproductible pendant ce nouvel essai.
+
+[A FAIRE] Validation materielle de la revision2, surtout les modes REC et le passage page3 A vers B.
