@@ -15,7 +15,7 @@ CODES=['sd','cp','toy','bits','swarm']
 def intersect(a,b):
  return a['off']<b['off']+len(b['new'])//2 and b['off']<a['off']+len(a['new'])//2
 
-def generate(stock,st,tiny,wiz,mask,wizard):
+def generate(stock,st,tiny,wiz,mask,wizard,extra=None):
  full=copy.deepcopy(tiny['variants']['511'] if wizard else tiny['normal']['255'])
  base=full['engine'];pay=int(base['append']['dest'],16);gs.set_base(pay)
  parts=base['append']['parts'];first=7 if wizard else 6;nm=first+9
@@ -44,6 +44,7 @@ def generate(stock,st,tiny,wiz,mask,wizard):
                        update=u32(data+4*(nm+index)),render=u32(data+4*(2*nm+index))))
  retro=json.loads((R.DEV/('29-retrosyn-all-machines-wizard.json' if wizard else '28-retrosyn-all-machines.json')).read_text(encoding='utf-8'))
  if mask&512:machines.append(dict(R.MACHINE,label='RETROSYN',update=int(retro['symbols']['retrosyn_update'],16),render=int(retro['symbols']['retrosyn_render'],16)))
+ if extra:machines.append(extra['machine'])
  gs.set_base(pay);an=gs.analyse(st,gs.generation(CODES));lay=an['lay']
  syms={k:int(v,16) for k,v in base['gov'].items()}
  for j,c in enumerate(CODES):
@@ -75,12 +76,13 @@ def generate(stock,st,tiny,wiz,mask,wizard):
  ranges=[(32,0x42000,0x76000),(64,0x76000,0x79000),(256,0x7c000,0x84000)]
  reused=[copy.deepcopy(p) for p in parts if any(mask&bit and pay+lo<=int(p['dest'],16)<pay+hi for bit,lo,hi in ranges)]+native_wave
  if mask&512:reused.extend(copy.deepcopy(p) for p in retro['append']['parts'] if int(p['dest'],16)==pay+0x85000)
+ if extra:reused.extend(copy.deepcopy(extra['parts']))
  original=dict(gs.LAYOUT);maxextra=gs.MAX_EXTRA;row=gs.MARKS_ROW;marks=dict(gs.MARKS);generation=gs.generation
  try:
   gs.LAYOUT.update(STUBS=0x88000,DATA=0x89000,DESCN=0x89400,ROWSN=0x84000,CCROWSN=0x84400,RECS=0x84800)
-  gs.MAX_EXTRA=10;gs.MARKS_ROW=9;gs.MARKS['x']=68;gs.set_base(pay)
+  gs.MAX_EXTRA=11 if extra else 10;gs.MARKS_ROW=9;gs.MARKS['x']=68;gs.set_base(pay)
   gs.generation=lambda _:generation(CODES)
-  own=dict(machines=machines,bridge=br,end=pay+0x8b000,boot2=((lay['end']+15)&~15,pay+0x42000),parts=reused)
+  own=dict(machines=machines,bridge=br,end=extra['end'] if extra else pay+0x8b000,boot2=((lay['end']+15)&~15,pay+0x42000),parts=reused)
   codes=[c for i,c in enumerate(CODES) if mask&(1<<i)]
   out,_=gs.build_tweak(stock,st,codes,tg=context,own=own)
  finally:
