@@ -1,0 +1,26 @@
+"""Note121 : deux pages de test LFO, menus/quick assign et diagnostics conserves."""
+import argparse,json,pathlib,re,shutil,subprocess,tempfile
+from gen_seq_gen import symbols
+ROOT=pathlib.Path(__file__).resolve().parents[1];STAMP='2026-10-18-lfo-destinations-test-1'
+def main():
+ p=argparse.ArgumentParser();p.add_argument('--check',action='store_true');a=p.parse_args();cross=next(c for c in ('m68k-linux-gnu-','m68k-elf-') if shutil.which(c+'gcc'))
+ with tempfile.TemporaryDirectory() as tmp:
+  d=pathlib.Path(tmp);objects=[]
+  for name in ('ui.c','native.s'):
+   obj=d/(name+'.o');subprocess.run([cross+'gcc','-mcpu=54418','-Os','-ffreestanding','-fno-builtin','-fno-pic','-fno-common','-fno-stack-protector','-c',str(ROOT/'tools/machines/lfo_destinations'/name),'-o',str(obj)],check=True);objects.append(str(obj))
+  (d/'x.ld').write_text('SECTIONS { .text 0 : { *(.text*) *(.rodata*) } . = ALIGN(4); .data : { *(.data*) } . = ALIGN(4); .bss : { *(.bss*) *(COMMON) } . = ALIGN(4); ld_end = .; }');subprocess.run([cross+'ld','--emit-relocs','-T',str(d/'x.ld'),'-o',str(d/'x.elf'),*objects],check=True);subprocess.run([cross+'objcopy','-O','binary',str(d/'x.elf'),str(d/'x.bin')],check=True);sy=symbols(cross,d/'x.elf');raw=(d/'x.bin').read_bytes();raw+=bytes(sy['ld_end']-len(raw));rel=subprocess.check_output([cross+'readelf','-rW',str(d/'x.elf')],text=True);offsets=[int(m.group(1),16) for m in re.finditer(r'^([0-9a-f]+)\s+\S+\s+R_68K_32\b',rel,re.M)];assert all(int.from_bytes(raw[i:i+4],'big')<len(raw) for i in offsets);data=dict(hex=raw.hex(),symbols=sy,reloc=offsets)
+ for source,target,edition in [('flasher','flasher-lfo-destinations-test','Main 1.89'),('flasher-supermodel-909','flasher-supermodel-909-lfo-test','909.5')]:
+  folder=ROOT/'docs'/target;temp=tempfile.TemporaryDirectory(dir=ROOT/'build') if a.check else None;out=pathlib.Path(temp.name) if temp else folder;out.mkdir(exist_ok=True)
+  for f in (ROOT/'docs'/source).iterdir():
+   if f.is_file() and f.suffix!='.wav':shutil.copyfile(f,out/f.name)
+  for name in ('beat-diagnostic-data.js','beat-diagnostic.js'):shutil.copyfile(ROOT/'docs/flasher-machine-combinations-test'/name,out/name)
+  shutil.copyfile(ROOT/'tools/web/lfo-destinations.js',out/'lfo-destinations.js');(out/'lfo-destinations-data.js').write_text('window.MCLfoDestinations='+json.dumps(data,separators=(',',':'))+';\n',encoding='utf-8')
+  s=(out/'index.html').read_text(encoding='utf-8');s=re.sub(r'(?<=\?v=)[\w.-]+',STAMP,s);s=re.sub(r"window.MC_BUILD='[^']+'",f"window.MC_BUILD='{STAMP}'",s);s=s.replace('../assets/release.js?','test-release.js?').replace('909-release.js?','test-release.js?')
+  notice='<p><strong data-l="en">LFO destination / quick-assign test — '+edition+'.</strong><strong data-l="fr">Test destinations LFO et assignation rapide — '+edition+'.</strong> <span data-l="en">Look for ATK (Attack), FLT (Cutoff) and RES (Resonance) in either audio LFO. Hold LFO + MACHINES and turn DECAY / SWEEP / CONTOUR to assign Attack / Cutoff / Resonance; turn again on the assigned target to adjust depth. On the LFO 2 page the gesture assigns LFO 2. MACHINES-modified knob actions return to the main track screen after the popup, without leaving the machine selector behind. CPU/CUT diagnostics included: main needs Beat Repeat and a SY engine selected; 909 enables the diagnostic automatically. Release TRACK + RETRIG to see the readings. Audio processing is unchanged. Released flashers unchanged.</span><span data-l="fr">ATK (attaque), FLT (coupure) et RES (resonance) dans les deux LFO audio. Tenir LFO + MACHINES et tourner DECAY / SWEEP / CONTOUR pour assigner attaque / coupure / resonance ; tourner encore sur la cible assignee ajuste la profondeur. Dans la page LFO2, le geste assigne LFO2. Les gestes avec MACHINES ferment le selecteur sous-jacent : retour a la piste apres le popup. Diagnostics CPU/CUT inclus : principal avec Beat Repeat et moteur SY ; actives automatiquement dans909. Relacher TRACK + RETRIG pour les mesures. Traitement audio conserve ; versions publiees inchangees.</span></p>'
+  s=s.replace('<main class="wrap fl">','<main class="wrap fl">'+notice).replace('</body>',''.join(f'<script src="{name}?v={STAMP}"></script>' for name in ('beat-diagnostic-data.js','beat-diagnostic.js','lfo-destinations-data.js','lfo-destinations.js'))+'</body>');(out/'index.html').write_text(s,encoding='utf-8')
+  (out/'test-release.js').write_text('window.MC_RELEASES='+json.dumps([dict(version='LFO-destinations-test.1',date='2026-10-18',changes=[dict(en='Explicit ATK / FLT / RES destinations and LFO + MACHINES quick assign. Test only with CPU/CUT diagnostics. Audio routines unchanged.',fr='Destinations ATK / FLT / RES et assignation LFO + MACHINES. Test avec diagnostics CPU/CUT. Routines audio conservees.')])])+';\n',encoding='utf-8')
+  (out/'BUILD.json').write_text(json.dumps(dict(stamp=STAMP,base=edition,scope='test-only',diagnostics=True,audio_unchanged=True,released_flashers_unchanged=True),indent=2)+'\n',encoding='utf-8')
+  if a.check:
+   for f in out.iterdir():assert f.read_bytes().replace(b'\r\n',b'\n')==(folder/f.name).read_bytes().replace(b'\r\n',b'\n'),str(f)
+ print('PASS LFO destination test pages',len(raw),'bytes')
+if __name__=='__main__':main()

@@ -1,0 +1,1 @@
+Supermodel 909 909.5: shared features updated to main1.89. Existing hardware-tested six-voice 909 profile and four local WAV inputs preserved. Main hardware-confirmed filter, quick-save, MIDI entry/cursor/Oct0 and current page/length repairs integrated; 909 combination verified in emulation. No diagnostics, firmware or audio hosted.

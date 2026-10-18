@@ -201,3 +201,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [119 — MACRO lo-fi, port test](119-macro-lofi-port.md) : correction 18nelli18 FUNC + PITCH, pas/texte/dessin amont, machines au choix ; principal1.86 sans diagnostic ; copie test conservee.
 
 - [120 — Pages et longueur MIDI](120-pages-midi-longueur.md) : LEDs PAGE B comme stock ; longueur normale liee a A, voies independantes en mode par piste ; principal1.87 approuve, diagnostics en test seulement.
+
+- [121 — Destinations LFO et gestes MACHINES](121-destinations-lfo.md) : ATK/FLT/RES, quick assign et retour piste ; deux copies test avec diagnostics, audio conserve.
