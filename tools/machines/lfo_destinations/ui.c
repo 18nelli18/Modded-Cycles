@@ -50,3 +50,7 @@ u32 ld_assign(u32 descriptor){
  }
  return key;
 }
+
+/* Note121 : libelles de RETROSYN seulement ; descripteurs audio conserves. */
+const char ld_rs_timbre[]="Timbre",ld_rs_osc[]="Oscillator",ld_rs_sweep[]="Pitch Sweep",ld_rs_arp[]="Chord Arp";
+const char ld_rs_timbre_short[]="TIMB",ld_rs_osc_short[]="OSC",ld_rs_sweep_short[]="PSWP",ld_rs_arp_short[]="ARP";

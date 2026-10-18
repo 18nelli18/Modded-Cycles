@@ -38,6 +38,19 @@ def main():
    assert u.reg_read(mk.UC_M68K_REG_A7)==STACK-16
    assert r.string(r.call('ld_second',dest))==label
  print('PASS six tracks: real descriptor lookup and both explicit label routes',flush=True)
+ if 'retrosyn_labels' in r.s:
+  expected=[('Timbre','TIMB'),('Oscillator','OSC'),('Pitch Sweep','PSWP'),('Chord Arp','ARP')]
+  table=r.s['retrosyn_labels'];index=r.s['retrosyn_machine_index']
+  for track in range(6):
+   raw=0x930a0000+128*track;u.mem_write(raw+38,bytes([index]));context=kit+116+8*(63+track)
+   for i,(longname,short) in enumerate(expected):
+    descriptor=r.call(0x4005a692,11+i,index)
+    assert r.string(r.r32(table+56*i+44))==longname
+    assert r.string(r.r32(table+56*i+52))==short
+    assert r.string(r.call(0x4000b208,context,descriptor))==short
+   u.mem_write(raw+38,bytes([track]))
+  print('PASS real Retrosyn descriptor/name lookup on six tracks: Timbre/Oscillator/Pitch Sweep/Chord Arp',flush=True)
+
  # Fermeture differee native : MACHINES exact, autres vues preservees.
  manager=0x930b0000;head=manager+20;node=0x930b0100;machine=0x930b1000;other=0x930b2000;node2=node+32
  bind(0x400060d8,lambda a:manager)
