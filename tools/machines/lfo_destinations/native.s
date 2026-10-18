@@ -25,3 +25,11 @@ ld_machines_entry:
     moveml %sp@,%d0-%d1/%a0-%a1
     lea %sp@(16),%sp
     jmp 0x4001c2a8
+
+| Prologue LFOMenuView natif : argument this deja corrige pour le sous-objet.
+    .globl ld_lfo_key_native
+ld_lfo_key_native:
+    subql #4,%sp
+    movel %a2,%sp@-
+    movel %d2,%sp@-
+    jmp 0x40024e12

@@ -86,6 +86,28 @@ def main():
    if 8 not in keys:assert r.r32(STACK-4)==EVENT and u.reg_read(mk.UC_M68K_REG_A3)==0x400724a0
  assert r.new_count==allocations
  print('PASS actual Machines opener: LFO held consumes press/release/hold before allocation; unmodified path and registers exact',flush=True)
+ # Relachement apres assignation : fermeture native des deux pages, y compris FUNC.
+ lfo=0x930d0000;lfo_vt=0x930d1000;r.w32(lfo,lfo_vt);r.w32(lfo+44,manager);r.w32(lfo_vt+124,0x40076126);r.w32(lfo_vt+40,0x40076126)
+ for event_flags in (0,2):
+  for entry,argument in ((0x40024e0c,lfo),(0x40024e86,lfo+56)):
+   u.mem_write(lfo+48,b'\0');u.mem_write(lfo+604,b'\1');r.w32(EVENT+12,8);r.w32(EVENT+16,event_flags)
+   assert r.call(entry,argument,EVENT)==1
+   assert u.mem_read(lfo+48,1)==b'\1' and u.mem_read(lfo+604,1)==b'\0'
+ # Un appui, un maintien ou une autre touche ne ferme pas la page.
+ for key,event_flags in ((8,1),(8,3),(8,9),(8,33),(5,0)):
+  u.mem_write(lfo+48,b'\0');u.mem_write(lfo+604,b'\1');r.w32(EVENT+12,key);r.w32(EVENT+16,event_flags);r.call(0x40024e0c,lfo,EVENT);assert u.mem_read(lfo+48,1)==b'\0'
+ if 'lf2_key' in r.s:
+  old_callback=r.r32(r.s['lf2_open_callback']);callback=0x930d2000;launches=[];bind(callback,lambda a:launches.append(a[0]) or 1);r.w32(r.s['lf2_open_callback'],callback)
+  u.mem_write(lfo+48,b'\0');u.mem_write(lfo+604,b'\0');r.w32(EVENT+12,8);r.w32(EVENT+16,0);assert r.call('lf2_key',lfo,EVENT)==1;assert launches==[lfo] and u.mem_read(lfo+48,1)==b'\0'
+  for event_flags in (0,2):
+   u.mem_write(lfo+48,b'\0');u.mem_write(lfo+604,b'\1');r.w32(EVENT+16,event_flags);assert r.call('lf2_key',lfo,EVENT)==1;assert len(launches)==1 and u.mem_read(lfo+48,1)==b'\1'
+  r.w32(r.s['lf2_open_callback'],old_callback)
+  assigned=r.s['lf2p_assigned']
+  for event_flags in (0,2):
+   r.w32(assigned,1);u.mem_write(lfo+48,b'\0');r.w32(EVENT+16,event_flags);assert r.call('ld_second_key',lfo,EVENT)==1;assert r.r32(assigned)==0 and u.mem_read(lfo+48,1)==b'\1'
+  r.w32(assigned,1);u.mem_write(lfo+48,b'\0');r.w32(EVENT+16,1);assert r.call('ld_second_key',lfo,EVENT)==1;assert r.r32(assigned)==1 and u.mem_read(lfo+48,1)==b'\0';r.w32(assigned,0)
+ print('PASS LFO1/LFO2 quick assign release closes with/without FUNC; press/hold do not close; normal LFO2 entry preserved',flush=True)
+
 
  # Descripteurs des trois potards, obtenus par le vrai mapper non modifie.
  descriptors={}
@@ -122,6 +144,7 @@ def main():
    r.w32(mapping+8+4*index,descriptors[key]);held.update((5,8));r.call('lf2_edit',context,0,3,127);r.call('lf2_edit',context,0,7,16384)
    prior=bytes(u.mem_read(0x40fde838,192));assert r.call('lf2p_quick_assign',index,1)==1;assert u.mem_read(context+198,1)[0]==target;assert u.mem_read(context+206,2)==b'\x40\x00'
    assert r.call('lf2p_quick_assign',index,1)==1;assert u.mem_read(context+206,2)==b'\x41\x00';assert bytes(u.mem_read(0x40fde838,192))==prior
+   settings=bytes(u.mem_read(context,1240));u.mem_write(lfo+48,b'\0');r.w32(EVENT+12,8);r.w32(EVENT+16,0);assert r.call('ld_second_key',lfo,EVENT)==1;assert u.mem_read(lfo+48,1)==b'\1' and r.r32(r.s['lf2p_assigned'])==0;assert bytes(u.mem_read(context,1240))==settings
   print('PASS actual LFO2 quick assign then depth adjustment; LFO1 phase bank unchanged',flush=True)
  print('LIMIT: physical UI/audio acceptance remains hardware testing; no DSP modification',flush=True)
 if __name__=='__main__':main()
