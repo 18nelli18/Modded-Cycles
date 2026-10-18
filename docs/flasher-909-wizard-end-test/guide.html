@@ -1,0 +1,135 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Feature and shortcut overview — Supermodel 909</title><style>body{margin:0;background:#f4f2eb;color:#20241f;font:16px/1.6 system-ui,sans-serif}main,nav{max-width:1100px;margin:auto;padding:24px}nav{display:flex;gap:16px;align-items:center}button,a{color:inherit}button{padding:8px 16px;border:1px solid #777;border-radius:5px;background:white;cursor:pointer}h1{font-size:clamp(30px,5vw,52px);line-height:1.1}h2{margin-top:48px;border-bottom:2px solid #39493b;padding-bottom:10px}h3{margin-top:30px}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:15px}th,td{text-align:left;border-bottom:1px solid #bbb;padding:12px;vertical-align:top}th{background:#dfe7dc}td:nth-child(2){font-weight:650;min-width:190px}html[lang=en] [data-l=fr],html[lang=fr] [data-l=en]{display:none}@media print{nav{display:none}body{background:white;font-size:10pt}main{padding:0}h2{break-after:avoid;margin-top:20px}tr{break-inside:avoid}table{font-size:9pt}a{color:inherit;text-decoration:none}}</style><nav><a href="./">Flasher</a><button onclick="document.documentElement.lang='en'">English</button><button onclick="document.documentElement.lang='fr'">Francais</button><button onclick="window.print()">Print / Imprimer</button></nav><main><article data-l="en"><h1>Supermodel 909 — feature and shortcut overview</h1>
+<p>909.7 · 18 October 2026</p>
+<p>Fixed 909 Edition: six 909 voices, Sample Wizard, ACID, per-track filter, slide trigs, Sequence Genie, SCRAMBLE, Second LFO, MIDI Out Bank with saving, combined MIDI OUT + THRU, latching mute, Control All Config, Control All Beat Repeat, A/B arpeggiators and 909 startup. Load official Cycles OS1.13 and four local WAVs for closed/open hats, crash and ride. No sample audio is hosted.</p>
+<p>Shared features match main1.89: the filter transition repair, stock permanent save (hold FUNC + SETTINGS), A/B Oct0, first-entry B playback and one recording cursor. Normal pattern length is shared between A and B and editable from either side. In B, FUNC + PAGE opens Length: press DATA before turning, or press PAGE for 16-step sizes regardless of edit selection. Per-track mode keeps independent MIDI lengths. Page LEDs follow stock REC/non-REC modes; entering B inherits the selected A page in normal mode. MIDI speeds remain independent. Main hardware-confirmed fixes; 909 integration checked in emulation. No diagnostic display in this release.</p>
+<p>Stop before saving MIDI and wait for MIDI SAVED. Saved MIDI loads only when entering B-side with playback stopped; sidecar files are outside Elektron SysEx backups.</p>
+<p>Added shortcuts below; stock-style transport/copy/clear/paste omitted. TRIG = step key, pad = track pad, DATA = LEVEL/DATA.</p>
+<h2>Performance and sound</h2>
+<div class="table-wrap"><table>
+<tr><th>Feature</th><th>Gesture</th><th>Result</th></tr>
+<tr><td>Sample Preview</td><td>FUNC + MACHINES, highlight a sample, then play a pad or keyboard</td><td>Audition in the Sample Wizard browser before loading.</td></tr>
+<tr><td>Control All Config</td><td>TRACK + TRIG 1–6</td><td>Include or exclude tracks from Control All. The selected track can also be excluded. Choices reset on power-off.</td></tr>
+<tr><td>Control All Beat Repeat</td><td>Hold TRACK + RETRIG, then hold TRIG 1–16</td><td>Repeat the included audio tracks. The newest held TRIG chooses the division and shows a brief popup. Release the division pad or either modifier to stop. Both modifiers must stay held.</td></tr>
+<tr><td>Latching mute</td><td>Hold TRACK, tap FUNC</td><td>Keep mute mode open. Tap FUNC to leave.</td></tr>
+<tr><td>Trig preview</td><td>While stopped or paused, hold TRIG + PAGE</td><td>Audition that step with its note and locks.</td></tr>
+<tr><td>Audio slide trigs</td><td>SETTINGS + TRIG</td><td>Toggle a parameter slide on the step.</td></tr>
+<tr><td>Synth Attack</td><td>MACHINES + DECAY</td><td>Set the added attack control on supported synth/drum tracks.</td></tr>
+<tr><td>Per-track filter</td><td>MACHINES + SWEEP / CONTOUR</td><td>Cutoff / resonance. Hold TRACK as well for Control All over included audio tracks. Neutral is maximum cutoff and zero resonance.</td></tr>
+</table></div>
+<h3>Beat repeat divisions</h3>
+<div class="table-wrap"><table>
+<tr><th>TRIG</th><th>Division</th><th>TRIG</th><th>Division</th></tr>
+<tr><td>1</td><td>1/64</td><td>9</td><td>3/16</td></tr>
+<tr><td>2</td><td>1/48</td><td>10</td><td>1/4</td></tr>
+<tr><td>3</td><td>1/32</td><td>11</td><td>1/3</td></tr>
+<tr><td>4</td><td>1/24</td><td>12</td><td>3/8</td></tr>
+<tr><td>5</td><td>1/16</td><td>13</td><td>1/2</td></tr>
+<tr><td>6</td><td>1/12</td><td>14</td><td>2/3</td></tr>
+<tr><td>7</td><td>1/8</td><td>15</td><td>3/4</td></tr>
+<tr><td>8</td><td>1/6</td><td>16</td><td>1 bar</td></tr>
+</table></div>
+<p>Long audio slices halve at slow tempos to fit the history buffer. Beat repeat affects internal audio; it does not repeat outgoing MIDI notes.</p>
+<h2>Sequence Genie, SCRAMBLE and modulation</h2>
+<div class="table-wrap"><table>
+<tr><th>Feature</th><th>Gesture</th><th>Result</th></tr>
+<tr><td>Sequence Genie</td><td>SETTINGS + PAGE</td><td>Open the generator for the selected audio track or B MIDI lane. DATA selects; click, turn, click to edit. Generate is first; Queue is second. Loop waits for the selected track’s next loop, Page for the next 16-step page.</td></tr>
+<tr><td>A-side SCRAMBLE</td><td>SETTINGS + TRACK</td><td>Randomize four synthesis controls. Sampler tracks are excluded.</td></tr>
+<tr><td>A-side step SCRAMBLE</td><td>Hold TRIG(s), then SETTINGS + TRACK</td><td>Toggle fresh randomized values on those steps each pass, retaining the base sound.</td></tr>
+<tr><td>B-side SCRAMBLE</td><td>SETTINGS + TRACK</td><td>Randomize the selected lane’s assigned MIDI CC values.</td></tr>
+<tr><td>Second LFO</td><td>Press LFO twice</td><td>Open LFO 2. On its page, LFO SPEED edits LFO 2.</td></tr>
+<tr><td>LFO 2 quick assignment</td><td>On A-side LFO 2, hold LFO and turn a parameter knob</td><td>Select that destination; further turning adjusts signed depth.</td></tr>
+<tr><td>Scale Lock</td><td>FUNC + PAGE</td><td>Access added scale/key settings with the performance support installed.</td></tr>
+<tr><td>A/B arpeggiator settings</td><td>FUNC + RETRIG</td><td>On either side, set arp direction and Oct0–3. Oct0 uses only held notes.</td></tr>
+<tr><td>A/B arpeggiator performance</td><td>Hold RETRIG while holding notes</td><td>Play the held notes through the arpeggiator; A.On provides its latch option.</td></tr>
+</table></div>
+<h2>Sample Wizard and sample preview</h2>
+<div class="table-wrap"><table>
+<tr><th>Feature</th><th>Gesture</th><th>Result</th></tr>
+<tr><td>Sample lock</td><td>Hold a step TRIG + MACHINES</td><td>Choose a sample lock for that step on a Wizard track.</td></tr>
+<tr><td>Playback modes</td><td>SETTINGS + MACHINES</td><td>Open the sampler’s playback-mode controls.</td></tr>
+<tr><td>Mode options</td><td>SETTINGS + PUNCH</td><td>Open the selected sampler mode’s options.</td></tr>
+<tr><td>Resampling</td><td>SETTINGS + REC</td><td>Open resampling controls.</td></tr>
+<tr><td>Sample Preview — hardware tested</td><td>FUNC + MACHINES; highlight a sample, then play its track pad or keyboard TRIG</td><td>Audition the highlighted sample in the Wizard browser. Scrolling alone is silent. Compatible with ChordKeys and WAVE.</td></tr>
+<tr><td>Slice editor: upper slices</td><td>Hold FUNC + TRIG 1–16</td><td>Play slices 17–32 while the slice editor is open.</td></tr>
+<tr><td>Slice editor: zero crossing</td><td>FUNC + marker knobs 1 / 2</td><td>Snap the respective slice marker to a zero crossing.</td></tr>
+<tr><td>Slice editor: remove marker</td><td>FUNC + click DATA</td><td>Remove a slice marker. DATA alone splits; PUNCH controls tap slicing.</td></tr>
+</table></div>
+<h2>MIDI B-side and routing</h2>
+<div class="table-wrap"><table>
+<tr><th>Feature</th><th>Gesture</th><th>Result</th></tr>
+<tr><td>Enter / leave MIDI B-side</td><td>FUNC + SETTINGS + TRACK</td><td>Open or close the six parallel MIDI tracks. Use the combo from B home to exit; BACK there also exits.</td></tr>
+<tr><td>MIDI CC assignment</td><td>SETTINGS + a gray knob</td><td>Assign that knob to a MIDI CC on the selected B lane.</td></tr>
+<tr><td>MIDI CC lock</td><td>Hold TRIG + an assigned knob</td><td>Add a CC parameter lock to that MIDI step.</td></tr>
+<tr><td>MIDI note / CC slide</td><td>SETTINGS + TRIG</td><td>Enable or disable a slide. Notes overlap for legato; CCs glide toward the marked step’s values.</td></tr>
+<tr><td>MIDI keyboard setup</td><td>FUNC + TRACK</td><td>Set keyboard transpose and Pad Note.</td></tr>
+<tr><td>MIDI CC LFO 2</td><td>Press LFO twice on B-side</td><td>Open the second MIDI CC LFO. In Dst, click DATA, choose OFF or CC0–127, then click DATA to confirm; BACK cancels.</td></tr>
+<tr><td>Combined MIDI OUT + THRU</td><td>Set CONFIG → MIDI → PORTS → OUT/THRU to THR, then FUNC + click DATA</td><td>Toggle the Cycles’ own outgoing MIDI while retaining incoming MIDI Thru.</td></tr>
+</table></div>
+<p>Saved MIDI loads only when entering B-side while playback is stopped. Stop before Save Project and wait for MIDI SAVED. Sidecar MIDI files are outside Elektron SysEx backups.</p></article><article data-l="fr"><h1>Supermodel 909 — fonctions et raccourcis</h1>
+<p>909.7 · 18 octobre 2026</p>
+<p>Profil fixe909 : six voix909, Sample Wizard, ACID, filtre par piste, slides, Sequence Genie, SCRAMBLE, Second LFO, Banque MIDI avec sauvegarde, MIDI OUT + THRU, mutes verrouilles, Control All Config, Control All Beat Repeat, arpegiateurs A/B et demarrage909. Charger OS Cycles1.13 officiel et quatre WAV locaux : hats ferme/ouvert, crash et ride. Aucun sample audio heberge.</p>
+<p>Fonctions partagees alignees sur main1.89 : correction transition filtre, sauvegarde permanente stock (tenir FUNC + SETTINGS), Oct0 A/B, premiere entree B en lecture et curseur REC unique. Longueur normale commune A/B et editable des deux cotes. Dans B, FUNC + PAGE ouvre Len : appuyez sur DATA avant de tourner, ou PAGE par16 meme hors edition. Mode par piste : longueurs MIDI independantes. LEDs selon REC natif ; ouverture B sur la page A en mode normal. Vitesses MIDI independantes. Corrections main confirmees sur machine ; integration909 verifiee en emulation. Aucun affichage diagnostic dans cette version.</p>
+<p>Arreter avant sauvegarde MIDI et attendre MIDI SAVED. Le MIDI sauvegarde charge uniquement en entrant B, lecture arretee ; fichiers annexes hors backups SysEx Elektron.</p>
+<p>Raccourcis ajoutes ci-dessous ; transports/copies/effacements/collages stock omis. TRIG = pas, pad = piste, DATA = LEVEL/DATA.</p>
+<h2>Performance et son</h2>
+<div class="table-wrap"><table>
+<tr><th>Fonction</th><th>Geste</th><th>Resultat</th></tr>
+<tr><td>Preecoute samples</td><td>FUNC + MACHINES, choisir un sample puis jouer un pad ou clavier</td><td>Ecouter dans le navigateur Sample Wizard avant chargement.</td></tr>
+<tr><td>Control All Config</td><td>TRACK + TRIG 1–6</td><td>Inclure ou exclure les pistes de Control All. La piste sélectionnée peut aussi être exclue. Choix remis a zero a extinction.</td></tr>
+<tr><td>Control All Beat Repeat</td><td>Tenir TRACK + RETRIG, puis un TRIG 1–16</td><td>Repeter les pistes audio incluses. Dernier TRIG tenu prioritaire, division en popup bref. Relacher le TRIG ou un modificateur arrete. Garder les deux modificateurs tenus.</td></tr>
+<tr><td>Mute verrouille</td><td>Tenir TRACK, taper FUNC</td><td>Garder le mode mute ouvert. Taper FUNC pour sortir.</td></tr>
+<tr><td>Preecoute d un pas</td><td>A l arret ou en pause, tenir TRIG + PAGE</td><td>Ecouter le pas et ses locks.</td></tr>
+<tr><td>Slides audio</td><td>SETTINGS + TRIG</td><td>Activer/desactiver le slide de parametres du pas.</td></tr>
+<tr><td>Attack synth</td><td>MACHINES + DECAY</td><td>Regler l attaque ajoutee sur les pistes synth/drum compatibles.</td></tr>
+<tr><td>Filtre par piste</td><td>MACHINES + SWEEP / CONTOUR</td><td>Coupure / resonance. Ajouter TRACK pour Control All des pistes audio incluses. Neutre : coupure maximale et resonance nulle.</td></tr>
+</table></div>
+<h3>Divisions du beat repeat</h3>
+<div class="table-wrap"><table>
+<tr><th>TRIG</th><th>Division</th><th>TRIG</th><th>Division</th></tr>
+<tr><td>1</td><td>1/64</td><td>9</td><td>3/16</td></tr>
+<tr><td>2</td><td>1/48</td><td>10</td><td>1/4</td></tr>
+<tr><td>3</td><td>1/32</td><td>11</td><td>1/3</td></tr>
+<tr><td>4</td><td>1/24</td><td>12</td><td>3/8</td></tr>
+<tr><td>5</td><td>1/16</td><td>13</td><td>1/2</td></tr>
+<tr><td>6</td><td>1/12</td><td>14</td><td>2/3</td></tr>
+<tr><td>7</td><td>1/8</td><td>15</td><td>3/4</td></tr>
+<tr><td>8</td><td>1/6</td><td>16</td><td>1 mesure</td></tr>
+</table></div>
+<p>Les longues boucles audio sont divisees par deux aux tempos lents selon la capacite du buffer. Le beat repeat agit sur l’audio interne et ne répète pas les notes MIDI sortantes.</p>
+<h2>Sequence Genie, SCRAMBLE et modulation</h2>
+<div class="table-wrap"><table>
+<tr><th>Fonction</th><th>Geste</th><th>Resultat</th></tr>
+<tr><td>Sequence Genie</td><td>SETTINGS + PAGE</td><td>Generateur de la piste audio ou voie B selectionnee. DATA choisit ; clic, tourner, clic pour editer. Generate est premier, Queue second. Loop attend la prochaine boucle de piste ; Page, la prochaine page de 16 pas.</td></tr>
+<tr><td>SCRAMBLE A</td><td>SETTINGS + TRACK</td><td>Randomiser quatre parametres de synthese. Sampler exclu.</td></tr>
+<tr><td>SCRAMBLE de pas A</td><td>Tenir des TRIG, puis SETTINGS + TRACK</td><td>Basculer des valeurs aleatoires fraiches a chaque passage, son de base conserve.</td></tr>
+<tr><td>SCRAMBLE B</td><td>SETTINGS + TRACK</td><td>Randomiser les valeurs CC assignees de la voie MIDI selectionnee.</td></tr>
+<tr><td>Second LFO</td><td>Appuyer deux fois sur LFO</td><td>Ouvrir LFO 2. Dans cette page, LFO SPEED regle LFO 2.</td></tr>
+<tr><td>Assignation rapide LFO 2</td><td>Sur LFO 2 cote A, tenir LFO et tourner un parametre</td><td>Choisir la destination, puis regler sa profondeur signee.</td></tr>
+<tr><td>Scale Lock</td><td>FUNC + PAGE</td><td>Acceder aux reglages ajoutes de gamme/tonalite avec le support performance installe.</td></tr>
+<tr><td>Reglages arpege A/B</td><td>FUNC + RETRIG</td><td>Cotes A et B : direction et Oct0–3 ; Oct0 joue seulement les notes tenues.</td></tr>
+<tr><td>Jeu de l arpege A/B</td><td>Tenir RETRIG avec des notes tenues</td><td>Arpeger les notes ; option A.On pour le verrouillage.</td></tr>
+</table></div>
+<h2>Sample Wizard et preecoute</h2>
+<div class="table-wrap"><table>
+<tr><th>Fonction</th><th>Geste</th><th>Resultat</th></tr>
+<tr><td>Sample lock</td><td>Tenir TRIG + MACHINES</td><td>Choisir un sample lock de ce pas sur une piste Wizard.</td></tr>
+<tr><td>Modes de lecture</td><td>SETTINGS + MACHINES</td><td>Ouvrir les modes du sampler.</td></tr>
+<tr><td>Options du mode</td><td>SETTINGS + PUNCH</td><td>Ouvrir les options du mode sampler choisi.</td></tr>
+<tr><td>Reechantillonnage</td><td>SETTINGS + REC</td><td>Ouvrir le resampling.</td></tr>
+<tr><td>Sample Preview — teste sur machine</td><td>FUNC + MACHINES ; choisir un sample puis jouer pad ou TRIG clavier</td><td>Preecoute du sample dans le navigateur Wizard. Defilement seul silencieux. Compatible ChordKeys/WAVE.</td></tr>
+<tr><td>Editeur slices : slices hautes</td><td>FUNC + TRIG 1–16</td><td>Jouer les slices 17–32 dans l editeur.</td></tr>
+<tr><td>Editeur slices : passage zero</td><td>FUNC + potards marqueurs 1 / 2</td><td>Caler le marqueur correspondant au passage zero.</td></tr>
+<tr><td>Editeur slices : retirer marqueur</td><td>FUNC + clic DATA</td><td>Retirer un marqueur. DATA seul divise ; PUNCH controle le tap slicing.</td></tr>
+</table></div>
+<h2>MIDI B et routage</h2>
+<div class="table-wrap"><table>
+<tr><th>Fonction</th><th>Geste</th><th>Resultat</th></tr>
+<tr><td>Entrer / sortir de B</td><td>FUNC + SETTINGS + TRACK</td><td>Ouvrir/fermer les six pistes MIDI paralleles. Sortie depuis l accueil B ; BACK y sort aussi.</td></tr>
+<tr><td>Assignation CC MIDI</td><td>SETTINGS + potard gris</td><td>Assigner un CC au potard sur la voie B choisie.</td></tr>
+<tr><td>Lock CC MIDI</td><td>Tenir TRIG + potard assigne</td><td>Ajouter un lock CC sur le pas MIDI.</td></tr>
+<tr><td>Slides notes / CC</td><td>SETTINGS + TRIG</td><td>Activer/desactiver le slide : notes chevauchees en legato, CC glisses vers le pas marque.</td></tr>
+<tr><td>Reglages clavier MIDI</td><td>FUNC + TRACK</td><td>Transposition clavier et Pad Note.</td></tr>
+<tr><td>Second LFO CC MIDI</td><td>Appuyer deux fois sur LFO cote B</td><td>Ouvrir LFO CC 2. Dst : clic DATA, OFF ou CC0–127, clic DATA pour confirmer ; BACK annule.</td></tr>
+<tr><td>MIDI OUT + THRU combines</td><td>CONFIG → MIDI → PORTS → OUT/THRU : THR, puis FUNC + clic DATA</td><td>Basculer la sortie MIDI propre du Cycles tout en gardant le Thru entrant.</td></tr>
+</table></div>
+<p>Le MIDI sauvegarde charge uniquement en entrant cote B, lecture arretee. Arreter avant Save Project et attendre MIDI SAVED. Les fichiers MIDI annexes ne sont pas inclus dans les backups SysEx Elektron.</p></article></main></html>

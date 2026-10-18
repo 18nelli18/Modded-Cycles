@@ -1,0 +1,8 @@
+{
+  "stamp": "2026-10-18-909-wizard-end-test-1",
+  "scope": "test-only",
+  "base": "909.7",
+  "diagnostics": true,
+  "hardware_verified": false,
+  "released_flashers_unchanged": true
+}
