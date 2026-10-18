@@ -39,7 +39,7 @@ Flasheur principal 1.83 · mise à jour du 17 octobre 2026. Installez les foncti
 | Slides audio | SETTINGS + TRIG | Activer/desactiver le slide de parametres du pas. |
 | Attack synth | MACHINES + DECAY | Regler l attaque ajoutee sur les pistes synth/drum compatibles. |
 | Filtre par piste | MACHINES + SWEEP / CONTOUR | Coupure / resonance. Ajouter TRACK pour Control All des pistes audio incluses. Neutre : coupure maximale et resonance nulle. |
-| Lo-fi MACRO | FUNC + PITCH sur MACRO | A gauche : frequence d echantillonnage ; a droite : profondeur en bits. |
+| Lo-fi MACRO | FUNC + PITCH sur MACRO | A gauche : frequence 46K–4K ; a droite : profondeur 12B–2B ; centre OFF. Valeur affichee dans la fenetre. |
 
 ### Divisions du beat repeat
 

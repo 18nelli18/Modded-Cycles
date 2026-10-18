@@ -25,3 +25,8 @@ Le helper relogeable de436 octets est ajoute a la fin de la derniere charge util
 [À FAIRE] Validation materielle utilisateur ; statut experimental. Aucune promotion principale autorisee pour ce changement.
 
 [FAIT en emulation] Les huit profils passent : 16 images signees avant/apres, vrais bootstraps, tous les potards de chaque machine avec/sans FUNC, 648 editions, 1 024 textes et 64 fenetres comparees au chemin texte natif ; autres objets UI et code apres cache conserves. Le generateur passe `--check`. Sans modification des corps audio.
+
+
+## 4. Promotion autorisee (17/10/2026)
+
+AveyCole demande « push to main » depuis le test1. Promotion1.86 : memes octets helper et meme composition, attente diagnostic retiree du JS, libelles test retires. Aucun script/card/payload diagnostic n est copie dans le principal. Le generateur `gen_macro_lofi_main.py --check` reproduit les fichiers promus. La909 conserve sa version actuelle.

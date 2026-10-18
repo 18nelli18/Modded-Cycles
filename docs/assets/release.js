@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.86",
+  "date": "2026-10-17",
+  "changes": [
+    {
+      "en": "Includes 18nelli18’s MACRO lo-fi control fix, approved by AveyCole for main: hold FUNC and turn PITCH. Left reduces sample rate (46K–4K), right reduces bit depth (12B–2B), centre is OFF. The value popup shows the setting.",
+      "fr": "Integre la correction lo-fi MACRO de 18nelli18, validee par AveyCole pour le principal : maintenir FUNC et tourner PITCH. A gauche frequence reduite (46K–4K), a droite profondeur reduite (12B–2B), centre OFF. Valeur affichee dans la fenetre."
+    },
+    {
+      "en": "Works with selectable machine layouts; synthesis code is unchanged. Diagnostics remain exclusive to test pages.",
+      "fr": "Compatible avec les machines au choix ; code de synthese conserve. Les diagnostics restent reserves aux pages de test."
+    }
+  ]
+},
+{
   "version": "1.85",
   "date": "2026-10-17",
   "changes": [

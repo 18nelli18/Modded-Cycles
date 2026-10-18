@@ -39,7 +39,7 @@ Main flasher 1.83 · updated 17 October 2026. Install only the features you need
 | Audio slide trigs | SETTINGS + TRIG | Toggle a parameter slide on the step. |
 | Synth Attack | MACHINES + DECAY | Set the added attack control on supported synth/drum tracks. |
 | Per-track filter | MACHINES + SWEEP / CONTOUR | Cutoff / resonance. Hold TRACK as well for Control All over included audio tracks. Neutral is maximum cutoff and zero resonance. |
-| MACRO lo-fi | FUNC + PITCH on a MACRO track | Left reduces sample rate; right reduces bit depth. |
+| MACRO lo-fi | FUNC + PITCH on a MACRO track | Left: 46K–4K sample rate; right: 12B–2B bit depth; centre: OFF. The value popup shows the setting. |
 
 ### Beat repeat divisions
 
