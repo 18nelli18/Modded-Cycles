@@ -1,12 +1,16 @@
 """Note123 : copie test ciblee, source ChordKeys apres recompression Swarm."""
-import argparse,json,pathlib,re,shutil,tempfile
+import argparse,json,pathlib,re,shutil,tempfile,subprocess
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 STAMP='2026-10-18-swarm-chord-layout-test-1'
+BASELINE='f5e45e6f3b76feb914ee29007d6ba351b6bec107'
 def main():
  p=argparse.ArgumentParser();p.add_argument('--check',action='store_true');a=p.parse_args();target=ROOT/'docs/flasher-swarm-chord-layout-test'
  temp=tempfile.TemporaryDirectory(dir=ROOT/'build') if a.check else None;out=pathlib.Path(temp.name) if temp else target;out.mkdir(exist_ok=True)
- for f in (ROOT/'docs/flasher').iterdir():
-  if f.is_file() and f.suffix!='.wav':shutil.copyfile(f,out/f.name)
+ # Figer la base1.91 pour garder le test confirme reproductible apres promotion.
+ for row in subprocess.check_output(['git','ls-tree',BASELINE+':docs/flasher'],cwd=ROOT,text=True).splitlines():
+  meta,name=row.split('\t',1)
+  if ' blob ' in meta and pathlib.Path(name).suffix!='.wav':
+   (out/name).write_bytes(subprocess.check_output(['git','show',BASELINE+':docs/flasher/'+name],cwd=ROOT))
  for name in ['beat-diagnostic-data.js','beat-diagnostic.js']:shutil.copyfile(ROOT/'docs/flasher-invert-track-test'/name,out/name)
  shutil.copyfile(ROOT/'tools/web/swarm-chord-layout.js',out/'swarm-chord-layout.js')
  s=(out/'swarm-lite.js').read_text(encoding='utf-8');old='return previous(changed,cycles,syntakt);';assert s.count(old)==1

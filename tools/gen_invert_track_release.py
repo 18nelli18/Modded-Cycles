@@ -12,10 +12,11 @@ def main():
  script=script.replace('Test build; hardware verification pending.','Hardware tested by AveyCole on 18 October 2026. Optional and unchecked by default.')
  script=script.replace('Test experimental a verifier sur machine.','Teste sur machine par AveyCole le18/10/2026. Facultatif, non coche par defaut.')
  html=(out/'index.html').read_text(encoding='utf-8')
+ stamp=re.search(r"window.MC_BUILD='([^']+)'",html).group(1)
  html=re.sub(r'<script src="invert-track\.js\?v=[^"]+"></script>','',html)
- html=re.sub(r'(?<=\?v=)[\w.-]+',STAMP,html)
- html=re.sub(r"window.MC_BUILD='[^']+'",f"window.MC_BUILD='{STAMP}'",html)
- html=html.replace('</body>',f'<script src="invert-track.js?v={STAMP}"></script></body>')
+ html=re.sub(r'(?<=\?v=)[\w.-]+',stamp,html)
+ html=re.sub(r"window.MC_BUILD='[^']+'",f"window.MC_BUILD='{stamp}'",html)
+ html=html.replace('</body>',f'<script src="invert-track.js?v={stamp}"></script></body>')
  assert 'beat-diagnostic' not in html and 'audio-load.js?' not in html and 'Diagnostic' not in script
  assert html.index('lfo-destinations.js?')<html.index('invert-track.js?')
  for name,text in {'index.html':html,'invert-track.js':script}.items():

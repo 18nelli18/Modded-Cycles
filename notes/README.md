@@ -206,4 +206,4 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 
 - [122 — Selection silencieuse](122-selection-silencieuse.md) : contribution fournie par AveyCole, pad simple silencieux et TRACK + pad joue ; module facultatif teste sur la machine le18/10/2026, principal1.91, non coche par defaut.
 
-- [123 - Placement ChordKeys apres Swarm](123-placement-chord-apres-swarm.md) : refus de preparation reproduit, source ChordKeys perimee de sept octets apres Swarm LITE ; correction ciblee en test separe, principal inchange.
+- [123 - Placement ChordKeys apres Swarm](123-placement-chord-apres-swarm.md) : refus de preparation reproduit, source ChordKeys perimee de sept octets apres Swarm LITE ; correction ciblee testee sur machine le18/10/2026 et publiee dans principal1.92, sans diagnostic.

@@ -11,7 +11,7 @@ def main():
  ck=next(t for t in ts if t['id']=='chord-keys-supermodel');dest=0x401c383c
  if ck.get('append'):raw=bytes.fromhex(next(p['hex'] for p in ck['append']['parts'] if p['dest']=='0x401c383c'))
  else:
-  owner=next(t for t in ts if t.get('chord_source') or t['id']=='midi-out-bank');source=owner.get('chord_source','0x4672e900');raw=bytes.fromhex(next(p['hex'] for p in owner['append']['parts'] if p['dest']==source))
+  owner=next(t for t in ts if t.get('append') and (t.get('chord_source') or t['id']=='midi-out-bank'));source=owner.get('chord_source','0x4672e900');raw=bytes.fromhex(next(p['hex'] for p in owner['append']['parts'] if p['dest']==source))
  assert img[dest-build.BASE:dest-build.BASE+len(raw)]==raw,'ChordKeys pas charge par le bootstrap reel'
  r=Rig(img,{'writes':[]},{'writes':[],'symbols':ck['symbols']});u=r.u
  for at,size in ((0x43000000,0x800000),(0x46700000,0x400000),(0x80000000,0x200000)):u.mem_map(at,size)
