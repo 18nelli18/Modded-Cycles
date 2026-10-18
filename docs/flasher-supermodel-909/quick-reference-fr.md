@@ -1,10 +1,10 @@
 # Supermodel 909 — fonctions et raccourcis
 
-909.4 · 17 octobre 2026
+909.5 · 18 octobre 2026
 
 Profil fixe909 : six voix909, Sample Wizard, ACID, filtre par piste, slides, Sequence Genie, SCRAMBLE, Second LFO, Banque MIDI avec sauvegarde, MIDI OUT + THRU, mutes verrouilles, Control All Config, Control All Beat Repeat, arpegiateurs A/B et demarrage909. Charger OS Cycles1.13 officiel et quatre WAV locaux : hats ferme/ouvert, crash et ride. Aucun sample audio heberge.
 
-Fonctions partagees alignees sur main1.83 : correction transition filtre, sauvegarde permanente stock (tenir FUNC + SETTINGS), Oct0 A/B, premiere entree B en lecture et curseur REC unique. Chaque voie MIDI garde longueur et vitesse. Corrections main confirmees sur machine ; integration909 verifiee en emulation. Aucun affichage diagnostic dans cette version.
+Fonctions partagees alignees sur main1.89 : correction transition filtre, sauvegarde permanente stock (tenir FUNC + SETTINGS), Oct0 A/B, premiere entree B en lecture et curseur REC unique. Longueur normale commune A/B et editable des deux cotes. Dans B, FUNC + PAGE ouvre Len : appuyez sur DATA avant de tourner, ou PAGE par16 meme hors edition. Mode par piste : longueurs MIDI independantes. LEDs selon REC natif ; ouverture B sur la page A en mode normal. Vitesses MIDI independantes. Corrections main confirmees sur machine ; integration909 verifiee en emulation. Aucun affichage diagnostic dans cette version.
 
 Arreter avant sauvegarde MIDI et attendre MIDI SAVED. Le MIDI sauvegarde charge uniquement en entrant B, lecture arretee ; fichiers annexes hors backups SysEx Elektron.
 

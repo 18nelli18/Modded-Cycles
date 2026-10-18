@@ -157,7 +157,8 @@ def run(prefix):
  print('PASS normal length follows A 1/5/16/17/31/32/48/64, real clock wrap, independent per-track lengths/config, immutable empty bank, A bytes unchanged; no allocation',prefix,flush=True)
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--watch',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('--watch',action='store_true');p.add_argument('--case');a=p.parse_args()
+ if a.case:return run(pathlib.Path(a.case))
  for i in range(3):
   prefix=ROOT/f'{CASES}/{i}-after';start=time.monotonic()
   while not prefix.with_suffix('.syx').exists():

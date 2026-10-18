@@ -1,10 +1,10 @@
 # Supermodel 909 — feature and shortcut overview
 
-909.4 · 17 October 2026
+909.5 · 18 October 2026
 
 Fixed 909 Edition: six 909 voices, Sample Wizard, ACID, per-track filter, slide trigs, Sequence Genie, SCRAMBLE, Second LFO, MIDI Out Bank with saving, combined MIDI OUT + THRU, latching mute, Control All Config, Control All Beat Repeat, A/B arpeggiators and 909 startup. Load official Cycles OS1.13 and four local WAVs for closed/open hats, crash and ride. No sample audio is hosted.
 
-Shared features match main1.83: the filter transition repair, stock permanent save (hold FUNC + SETTINGS), A/B Oct0, first-entry B playback and one recording cursor. Each MIDI lane keeps its length and speed. Main hardware-confirmed fixes; 909 integration checked in emulation. No diagnostic display in this release.
+Shared features match main1.89: the filter transition repair, stock permanent save (hold FUNC + SETTINGS), A/B Oct0, first-entry B playback and one recording cursor. Normal pattern length is shared between A and B and editable from either side. In B, FUNC + PAGE opens Length: press DATA before turning, or press PAGE for 16-step sizes regardless of edit selection. Per-track mode keeps independent MIDI lengths. Page LEDs follow stock REC/non-REC modes; entering B inherits the selected A page in normal mode. MIDI speeds remain independent. Main hardware-confirmed fixes; 909 integration checked in emulation. No diagnostic display in this release.
 
 Stop before saving MIDI and wait for MIDI SAVED. Saved MIDI loads only when entering B-side with playback stopped; sidecar files are outside Elektron SysEx backups.
 
