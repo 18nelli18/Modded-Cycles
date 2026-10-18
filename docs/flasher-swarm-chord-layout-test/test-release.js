@@ -1,0 +1,1 @@
+window.MC_RELEASES=[{"version": "Swarm-Chord-test.1", "date": "2026-10-18", "changes": [{"en": "Targeted repair for stale ChordKeys payload source after Swarm LITE recompression. Main unchanged.", "fr": "Correction ciblee de source ChordKeys apres recompression Swarm LITE. Principal inchange."}]}];

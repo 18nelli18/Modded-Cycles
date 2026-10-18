@@ -1,0 +1,8 @@
+{
+  "stamp": "2026-10-18-swarm-chord-layout-test-1",
+  "scope": "test-only",
+  "base": "main1.91",
+  "hardware_verified": false,
+  "diagnostics": true,
+  "repair": "ChordKeys source relocation only"
+}
