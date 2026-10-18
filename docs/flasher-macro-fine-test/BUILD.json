@@ -1,0 +1,9 @@
+{
+  "stamp": "2026-10-18-macro-fine-test-1",
+  "scope": "test-only",
+  "diagnostics": true,
+  "hardware_verified": false,
+  "released_flashers_unchanged": true,
+  "fine_combo": "SETTINGS + PITCH",
+  "lofi_combo": "FUNC + PITCH"
+}
