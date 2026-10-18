@@ -44,3 +44,9 @@ Le generateur accepte `--check`, ainsi que `--resume` explicite pour reprendre u
 ## 4. Portee
 
 Les voix existantes conservent leurs statuts historiques ; les nouvelles combinaisons sont verifiees en emulation, sans inventer de validation materielle. Aucun diagnostic n’est ajoute au principal. Model-TG reste exclu. Le profil 909, qui a ses propres machines, n’est pas modifie par cette correction.
+
+## 5. Publication test seulement
+
+AveyCole demande explicitement le 17/10/2026 de publier en test avant le principal. PR59 ne publie que `docs/flasher-machine-combinations-test/`; la recette principale et son arbre Git restent identiques. URL : https://aveycole.github.io/Modded-Cycles/flasher-machine-combinations-test/?v=2026-10-17-machine-combinations-test-1 . PR58 reste en brouillon.
+
+`tools/gen_machine_combinations_test.py --check` reproduit la copie. Diagnostic CPU/CUT facultatif conserve ; sa reference couvre toute la charge utile, dont le wrapper de sortie quick-save, au lieu du seul premier morceau. Le choix exact avec diagnostic, six variantes navigateur signees, le vrai boot/cache et les gestes/popup CPU/CUT passent en emulation. Validation materielle attendue.
