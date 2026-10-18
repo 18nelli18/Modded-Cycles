@@ -1,0 +1,9 @@
+{
+  "stamp": "2026-10-18-macro-render-test-1",
+  "scope": "test-only",
+  "base": "main1.92",
+  "diagnostics": true,
+  "hardware_verified": false,
+  "models": 47,
+  "changed_code_bytes": 162
+}
