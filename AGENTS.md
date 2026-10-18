@@ -1,14 +1,9 @@
 # AGENTS.md — Modded Cycles
 
-Guidance for coding agents working on this repository. Read this file first, then the `AGENTS.md` of every folder
-you touch:
-
-| Folder | Read before you change |
-|---|---|
-| [`tools/AGENTS.md`](tools/AGENTS.md) | generators, the Python build, ColdFire code, emulation proofs |
-| [`tweaks/AGENTS.md`](tweaks/AGENTS.md) | the tweak JSON files and `PROVENANCE.md` |
-| [`docs/AGENTS.md`](docs/AGENTS.md) | the website, the web flasher, the guide, the release notes |
-| [`notes/AGENTS.md`](notes/AGENTS.md) | the technical notes |
+Guidance for coding agents working on this repository. This file holds what is always true; the procedures live
+in **skills** (`.agents/skills/`, loaded on demand) and the roles in **pi agents** (`.pi/agents/`). Read the skill
+that matches your task before you start: pi lists them automatically; other harnesses (Claude Code, Codex) should
+open the `SKILL.md` named in the table below.
 
 ## What this project is
 
@@ -50,121 +45,117 @@ Owner: Maxime (GitHub `18nelli18`). He tests every firmware change on his own Mo
    Marcel Bierling (MIT), Model-TG by TinyGregAudio (MIT, `LICENSE-Model-TG`), ms-multi-output by scottmetoyer (MIT,
    `LICENSE-ms-multi-output`), Braids by Émilie Gillet (MIT, `LICENSE-Braids`, compiled unchanged for MACRO), Open303
    by Robin Schmidt (MIT, `LICENSE-Open303`, the model rewritten for ACID), and `tools/webxfer_check.py`, transcribed
-   from Elektroid (GPL-3.0-or-later). Never
-   transcribe or closely paraphrase code whose license does not allow it into the repo (GPL code into MIT files, code
-   with no license); check an upstream's license before porting from it, and keep its notice next to the copy. Record
-   the origin and license of every tweak in `tweaks/model-cycles_OS1.13/PROVENANCE.md` (and outside code in
-   `THIRD-PARTY-NOTICES.md`), set `credit` on its flasher card, and serve its MIT text with the page (`license` in
-   `FEATURES`). Outside contributions are merged only under the terms of `CONTRIBUTING.md`: work sent privately needs
-   its author's written OK.
+   from Elektroid (GPL-3.0-or-later). Never transcribe or closely paraphrase code whose license does not allow it into
+   the repo (GPL code into MIT files, code with no license); check an upstream's license before porting from it, and
+   keep its notice next to the copy. Record the origin and license of every tweak in
+   `tweaks/model-cycles_OS1.13/PROVENANCE.md` (and outside code in `THIRD-PARTY-NOTICES.md`), set `credit` on its
+   flasher card, and serve its MIT text with the page (`license` in `FEATURES`). Outside contributions are merged
+   only under the terms of `CONTRIBUTING.md`: work sent privately needs its author's written OK.
+8. **Never stage blindly.** Commit explicit paths (`git add <files>`), never `git add -A` / `git add .`: the working
+   tree may hold Maxime's untracked work (e.g. `Docs Optimisations/`) and local firmware files.
 
 ## Languages
 
 - **Talk to Maxime in French.**
 - **French**: technical notes (`notes/`), `BUILD.md`, `FLASH.md`, `dossier-technique.md`, `PROVENANCE.md`, tweak
   `name`/`description`, comments and docstrings in `tools/`.
-- **English**: `README.md`, commit messages, PR titles and bodies, the code of the web pages.
+- **English**: `README.md`, commit messages, PR titles and bodies, the code of the web pages, `AGENTS.md`, skills and
+  agent definitions (`.agents/`, `.pi/`).
 - **Both, side by side**: everything users see on the site (flasher cards, guide, release notes, home page), as
   `en`/`fr` pairs or `data-l="en"`/`data-l="fr"` spans. Never add one language without the other.
 - User-facing text speaks to musicians: what the mod does on the machine, which buttons to press, its limits. No
   addresses or jargon there; those belong in the notes.
 
+## Skills (`.agents/skills/<name>/SKILL.md`)
+
+| Skill | Load it when you… |
+|---|---|
+| `modded-cycles-workflow` | start or plan a mod or a fix; need the full checklist and which files a change touches |
+| `mainos-reverse-engineering` | need an OS address, routine, structure or hook point; includes `scripts/mainos.py` and the OS map |
+| `coldfire-patching` | write ColdFire code into the OS: hook styles, stub contracts, free space, toolchain, safety rules |
+| `tweak-generators` | write or change `tools/gen_*.py` and tweak JSON; pick a tweak number; a `--check` fails |
+| `emulation-proofs` | prove a mod in Unicorn, reproduce a bug report, measure CPU cost |
+| `flasher-integration` | add or change a card in the web flasher; regenerate `tweaks.js` / `REF_MAINOS` |
+| `bilingual-user-docs` | write the guide, release notes, card texts, README row, cache stamp |
+| `french-lab-notes` | write or update `notes/`, record a hardware result |
+| `repo-validation` | validate before commit/push; includes `scripts/validate.sh` |
+| `hardware-test-handoff` | commit, open the draft PR, give Maxime a test plan, flip a mod to tested |
+| `licensing-provenance` | use outside code or a community mod; check nothing from Elektron is committed |
+
+Folder `AGENTS.md` files (`tools/`, `tweaks/`, `docs/`, `notes/`) only hold that folder's local invariants and point
+to these skills.
+
+## Pi agents (`.pi/agents/`, pi-interactive-subagents) and prompts (`.pi/prompts/`)
+
+| Agent | Model (claude-bridge) | Role |
+|---|---|---|
+| `mc-planner` | `claude-opus-5-5`, high | interactive design with Maxime (French), writes `.pi/plans/<date>-<slug>/plan.md` |
+| `mc-scout` | `claude-sonnet-5-5`, minimal | read-only map of notes, mods, free space, open branches for a request |
+| `mc-reverser` | `claude-fable-5-1`, high | reverse-engineers the OS, writes the note's OS and design sections |
+| `mc-firmware-dev` | `claude-fable-5-1`, high | ColdFire code, generator, tweak JSON, proof, registers |
+| `mc-web-dev` | `claude-sonnet-5-5`, medium | flasher card, guide, release notes, stamp, README |
+| `mc-reviewer` | `claude-opus-5-5`, high | rules and firmware-safety review, no edits |
+| `mc-validator` | `claude-haiku-4-5`, minimal | runs the validation suite, reports |
+
+Prompts: `/new-mod <request>`, `/fix-mod <id> <report>`, `/investigate <question>`, `/validate [opts]`,
+`/review-branch [branch]`, `/mark-tested <id> <date> <report>`. Plans and reviews go in `.pi/plans/` (git-ignored).
+Only one agent edits the tree at a time; read-only agents may run in parallel.
+
 ## Repository map
 
 ```
-tweaks/model-cycles_OS1.13/   tweak JSON files (generated), device.json, PROVENANCE.md
+tweaks/model-cycles_OS1.13/   tweak JSON files (generated), device.json, PROVENANCE.md, REGISTRY.md (generated)
 tools/build.py                Python build: applies tweaks, checks caves, repacks and re-signs (mtlib)
 tools/gen_*.py                one generator per mod: writes its tweak JSON, --check verifies it is up to date
 tools/machines/<mod>/         C and assembly sources compiled into the firmware
-tools/emu/                    Unicorn emulation of the OS: test_<mod>.py proofs, mcengine.py, emac.py, syntakt.py
+tools/emu/                    Unicorn emulation of the OS: test_<mod>.py proofs, mcengine.py, seqrig.py, emac.py, syntakt.py
 tools/gen_flasher_tweaks.py   FEATURES list -> docs/flasher/tweaks.js (generated)
-tools/crossflash.py, tools/mods_for_samples.py   one OS in the other machine's container (notes/41, 57): Samples OS tab,
-                              and the mods for a Model:Samples
-tools/check_overlaps.py       no firmware needed: mods that can be ticked together never write the same bytes, except
-                              the same whole write or a mod applied on top of another (`requires`) (notes/49)
-tools/registry.py             no firmware needed: builds tweaks/model-cycles_OS1.13/REGISTRY.md from the tweaks, the
-                              registry of free space (freed sprite masks, caves, payloads) and OS hooks (notes/52)
-tools/ref_mainos.py           reference hashes in docs/flasher/app.js: each mod (REF_MODS) and a sample of combinations
-                              (REF_MAINOS: each card alone, every pair, the largest ones)
+tools/check_overlaps.py       no firmware: mods that can be ticked together never write the same bytes (notes/49)
+tools/registry.py             no firmware: builds REGISTRY.md, the free space and OS hooks registry (notes/52)
+tools/ref_mainos.py           REF_MODS and REF_MAINOS hashes in docs/flasher/app.js
+tools/crossflash.py, tools/mods_for_samples.py   one OS in the other machine's container (notes/41, 57)
 tools/web*_check.*, webflash_smoke.*   checks of the web flasher against the Python build (node, jsdom)
 docs/                         GitHub Pages site: index.html, flasher/, guide/, assets/release.js
 notes/                        numbered technical notes (French), index in notes/README.md
+.agents/skills/               agent skills (procedures, references, scripts)
+.pi/agents/, .pi/prompts/     pi subagent definitions and slash-command prompts
 BUILD.md, FLASH.md            command-line build and flashing (French)
-.github/                      discord.yml + scripts/discord.mjs: new versions, mod status changes and merged PRs -> Discord
+.github/                      discord.yml + scripts/discord.mjs: new versions, mod status changes, merged PRs -> Discord
 README.md                     English overview for Model:Cycles owners (mod table)
-LICENSE, THIRD-PARTY-NOTICES.md   MIT for the project; what it does not cover; every third-party license
-CONTRIBUTING.md               terms for outside contributions
+LICENSE, THIRD-PARTY-NOTICES.md, CONTRIBUTING.md
 ```
 
-## Adding a feature for users (the usual PR)
+Official files (never committed) go in `firmware/`: `model-cycles_OS1.13.syx` (SHA-256 `44fe5862…9800640c`) and
+`Syntakt_OS1.42.syx` for the Syntakt engines, downloaded from elektron.se.
 
-Follow the shape of the last ones (tempo-max: commits `5997b4a`, `14fb9fa`, `6e592bc`; trig-hold, arp). In order:
+## The usual PR, in one breath
 
-1. **Investigate and write the note.** New file `notes/NN-<slug>.md` (next free number; 57 is the last) with the
-   user's request and its source, the OS code involved (addresses, `[FAIT]`/`[HYP]`), the design, free space used and
-   conflicts with other tweaks. Add a row to `notes/README.md`. See `notes/AGENTS.md`.
-2. **Write the generator** `tools/gen_<mod>.py` (and sources under `tools/machines/<mod>/` if it has code). It reads
-   the official `.syx`, checks the stock bytes, and writes `tweaks/model-cycles_OS1.13/NN-<id>.json`; `--check`
-   compares with the committed file. See `tools/AGENTS.md` and `tweaks/AGENTS.md`.
-3. **Prove it**: `tools/emu/test_<mod>.py`, stock vs patched, on the OS's own code, alone and with the other mods
-   (`--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,… --syntakt Syntakt_OS1.42.syx`).
-   `tools/check_overlaps.py` must pass: its writes overlap no tweak it can be installed with (run it with `--git` on
-   the open branches too), or it declares `conflicts`. Code goes in a mask marked free in
-   `tweaks/model-cycles_OS1.13/REGISTRY.md`; `python3 tools/registry.py` regenerates that file (commit it) and refuses
-   a write in a mask whose sprite is not redirected.
-4. **Register it**: `tweaks/model-cycles_OS1.13/PROVENANCE.md` row; `BUILD.md` section with the commands and the
-   MAIN OS SHA-256 of the main combinations.
-5. **Put it in the flasher**: add it to `FEATURES` in `tools/gen_flasher_tweaks.py` (`"status": "experimental"`, and
-   its section `cat`), regenerate `docs/flasher/tweaks.js`, regenerate `REF_MAINOS` and `REF_MODS` with
-   `tools/ref_mainos.py`, add its row texts (`FEAT` en + fr: `label`, `short`, `desc`) and guide anchor (`GUIDE_OF`) in
-   `docs/flasher/app.js`, update the lists checked by `tools/webflash_smoke.js`. See `docs/AGENTS.md`.
-6. **Document it for users**: a guide section in `docs/guide/index.html` (en + fr, buttons to press, limits), a new
-   release at the top of `docs/assets/release.js` (en + fr), bump the `MC_BUILD` / `?v=` stamp on the pages, a row
-   in the mod table of `README.md`.
-7. **Validate** (below), commit, push, open a **draft** PR, and tell Maxime what to test on the machine.
-8. **After his test**: a small follow-up commit flips the status to `tested` (generator `FEATURES`, `tweaks.js`,
-   guide, release notes, README, note: "Testé sur la machine (JJ/MM/AAAA)"). If he reports a problem, record it in the
-   note, fix, and bump the release.
-
-A fix to an existing mod follows the same path, minus the new files: note section, generator, proof, regenerated
-JSON/`tweaks.js`/`REF_MAINOS`, release entry.
+Note (`notes/NN-*.md`) → generator + sources → tweak JSON (`experimental`) → Unicorn proof alone and combined →
+`check_overlaps.py`, `registry.py`, `PROVENANCE.md`, `BUILD.md` → flasher card, `tweaks.js`, `REF_MAINOS`/`REF_MODS`,
+FEAT en+fr → guide, release entry, stamp, README → validation → draft PR with a test plan for Maxime → after his
+report, a separate "tested" commit. Details: skill `modded-cycles-workflow`. Reference PRs: tempo-max (`5997b4a`,
+`14fb9fa`, `6e592bc`), trig-hold, arp.
 
 ## Validation before pushing
 
-Without firmware (always possible, run them all):
-
 ```sh
-python3 tools/gen_flasher_tweaks.py --check      # tweaks.js matches tweaks/
-python3 tools/check_overlaps.py                  # mods ticked together never write the same bytes (notes/49), except the
-                                                 # same whole write or a mod on top of another (`requires`)
-python3 tools/registry.py --check                # REGISTRY.md (free space and hooks, notes/52) matches tweaks/
-python3 tools/relocate_6ch.py --check            # needs m68k binutils (below)
-tools/webbuild_check.sh                          # builder.js == build.py, byte for byte (node)
-tools/webflash_check.sh                          # flasher.js validates .syx like mtlib (node)
-tools/webflash_smoke.sh                          # the flasher page in jsdom (node, npm, network)
-python3 -m py_compile tools/*.py tools/emu/*.py
+.agents/skills/repo-validation/scripts/validate.sh            # everything that needs no firmware (+ jsdom smoke)
+.agents/skills/repo-validation/scripts/validate.sh --gen gen_<mod>.py --proof test_<mod>.py --with <ids>
+                                                              # + firmware checks when firmware/ has the official files
 ```
 
-With the official files (download them from elektron.se into `firmware/`, which is git-ignored:
-`model-cycles_OS1.13.syx`, SHA-256 `44fe5862…9800640c`; `Syntakt_OS1.42.syx` for the Syntakt engines):
-
-```sh
-python3 tools/gen_<mod>.py --cycles firmware/model-cycles_OS1.13.syx --check
-python3 tools/emu/test_<mod>.py --cycles firmware/model-cycles_OS1.13.syx
-python3 tools/ref_mainos.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --check
-tools/webflash_smoke.sh firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42.syx   # the REF_MAINOS sample, each mod checked
-```
-
-Emulation needs `pip install unicorn numpy`. Code mods need the m68k toolchain (`m68k-linux-gnu-*` from the Debian/Ubuntu
-packages `binutils-m68k-linux-gnu gcc-m68k-linux-gnu`, or `m68k-elf-*`); some committed outputs were compiled with a
-specific GCC (SD VINTAGE v2 with `m68k-elf-gcc` 16.2, notes/16 §6), so `--check` can differ with another compiler.
-If a check cannot run (no network, no toolchain), say so in the PR instead of skipping it silently.
+It runs `gen_flasher_tweaks.py --check`, `check_overlaps.py`, `registry.py --check`, `relocate_6ch.py --check`,
+`webbuild_check.sh`, `webflash_check.sh`, `webflash_smoke.sh`, `py_compile`, and with the official files
+`ref_mainos.py --check`, the smoke test on real files, the chosen generators' `--check` and proofs. Emulation needs
+`pip install unicorn numpy`; code mods need the m68k toolchain (`m68k-linux-gnu-*` or `m68k-elf-*`; some committed
+outputs depend on the exact compiler, see the `coldfire-patching` skill). If a check cannot run, say so in the PR
+instead of skipping it silently.
 
 ## Commits and PRs
 
 - Commit messages in English: a short subject saying what the user gets ("Tempo up to 546 BPM (tempo-max tweak,
   notes/38)"), a body with the why, the bullets of what changed, and how it was proven.
-- Merge `main` into a feature branch rather than rebasing shared branches; regenerate `tweaks.js` and `REF_MAINOS`/`REF_MODS`
-  after a merge instead of resolving their conflicts by hand.
+- Merge `main` into a feature branch rather than rebasing shared branches; regenerate `tweaks.js`, `REF_MAINOS`/`REF_MODS`
+  and `REGISTRY.md` after a merge instead of resolving their conflicts by hand.
 - The PR body says what the user sees before and after, how it was proven, and **what Maxime should test on the
-  machine** (which mods ticked, which buttons, what to listen or look for).
+  machine** (which mods ticked, which buttons, what to listen or look for). Template: skill `hardware-test-handoff`.
