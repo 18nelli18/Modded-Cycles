@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.90",
+  "date": "2026-10-18",
+  "changes": [
+    {
+      "en": "Hardware-tested Attack, Filter and Resonance LFO destinations and quick assignment. Hold LFO + MACHINES and turn DECAY / SWEEP / CONTOUR; further turns adjust depth. Both LFO menus stay open after assignment, without opening machine selection.",
+      "fr": "Destinations LFO attaque, filtre et resonance et assignation rapide testees sur machine. Tenir LFO + MACHINES et tourner DECAY / SWEEP / CONTOUR ; continuer ajuste la profondeur. Les deux menus restent ouverts sans ouvrir le selecteur de machine."
+    },
+    {
+      "en": "Sample Wizard uses its native Filter/Resonance destinations and keeps correct names during knob movement. Retrosyn controls now read Timbre, Oscillator, Pitch Sweep and Chord Arp. Diagnostics remain test-only.",
+      "fr": "Sample Wizard utilise ses cibles natives filtre/resonance et garde les bons noms pendant la rotation. Retrosyn affiche Timbre, Oscillator, Pitch Sweep et Chord Arp. Diagnostics reserves aux tests."
+    }
+  ]
+},
+{
   "version": "1.89",
   "date": "2026-10-18",
   "changes": [

@@ -1,6 +1,6 @@
 # Feature and shortcut overview
 
-A.V.’s Supermodel Edition · 17 October 2026
+A.V.’s Supermodel Edition · 18 October 2026
 
 Added gestures only; stock-style transport, copy, clear and paste actions are omitted.
 
@@ -8,7 +8,7 @@ Install the relevant feature first. Hold the first button while pressing or turn
 
 ## Current feature overview
 
-Main flasher 1.83 · updated 17 October 2026. Install only the features you need; the flasher checks compatible combinations. [Supermodel 909 Edition](../flasher-supermodel-909/) has its own selection and release.
+Main flasher 1.83 · updated 18 October 2026. Install only the features you need; the flasher checks compatible combinations. [Supermodel 909 Edition](../flasher-supermodel-909/) has its own selection and release.
 
 | Feature | Current behavior |
 |---|---|
@@ -109,3 +109,7 @@ Saved MIDI loads only when entering B-side while playback is stopped. Stop befor
 | Test setup | Keep Control All Beat Repeat selected when installing MIDI Out Bank in this combined test. That requirement does not apply to main. CPU/peak/CUT diagnostics remain available in the test. |
 
 Octave 0, the B-side cursor and the crash repair were confirmed by AveyCole in test 2 and are now released in main 1.83. Saved MIDI loading still requires stopped playback. MIDI beat repeat and MIDI filter work were canceled and are not part of this test.
+
+## LFO destinations and quick assignment — 1.90
+
+Attack (ATK), Filter (FLT) and Resonance (RES) are selectable in either audio LFO when their modules are installed. Hold LFO + MACHINES and turn DECAY / SWEEP / CONTOUR to assign them; turn again to adjust depth. Without MACHINES, the knobs assign their ordinary parameters. Sample Wizard uses its native Filter / Resonance destinations on SWEEP / CONTOUR in either modifier state, with stable labels during movement. Both LFO menus stay open after quick assignment. MACHINES combinations do not leave the machine selector behind. Retrosyn labels are Timbre / Oscillator / Pitch Sweep / Chord Arp. Diagnostics remain test-only.

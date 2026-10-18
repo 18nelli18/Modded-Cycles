@@ -14,8 +14,10 @@ def main():
  for at,size in ((0x43000000,0x800000),(0x46700000,0x400000),(0x80000000,0x200000)):u.mem_map(at,size)
  for at,raw in mem:u.mem_write(at,raw)
  flags=r.r32(r.s['ld_api']+4)
- if flags:r.call(0x40152dd4);r.call(0x40168e3c)
- else:r.call(0x4005a274)
+ if flags&2:r.call(0x40152dd4)
+ # Executer le constructeur effectivement installe, y compris Attack seul sans filtre.
+ assert bytes(u.mem_read(0x4004486c,2))==bytes.fromhex('4eb9')
+ r.call(r.r32(0x4004486e))
  def bind(at,fn):
   fresh=at not in r.stubs;r.stubs[at]=fn
   if fresh:u.hook_add(UC_HOOK_CODE,r.stub,begin=at,end=at)
@@ -187,13 +189,14 @@ def main():
   context=0x930c0000;frame=0x930c1000;u.mem_write(frame,bytes(476));assert r.call('lf2_init',context,frame)==1;r.w32(r.s['lf2_context'],context);r.w32(r.s['lf2p_track'],0);r.w32(r.s['lf2p_obj'],OBJ)
   # Vrai scan du menu Dest : PAN -> ATTACK -> CUTOFF -> RESO, dans les deux sens.
   r.w32(r.s['lf2p_row'],4);r.w32(r.s['lf2p_edit'],1);r.w32(EVENT+12,1);r.delta=1;held.clear();r.call('lf2_edit',context,0,3,22)
-  for value in (23,24,25):
-   r.call('lf2p_enc',OBJ,EVENT);assert u.mem_read(context+198,1)[0]==value
+  offered=[value for value in range(23,33) if not r.string(r.call('ld_second',value)).startswith('ERR')]+[127]
+  for value in offered:
+   r.call('lf2p_enc',OBJ,EVENT);assert u.mem_read(context+198,1)[0]==value,(value,u.mem_read(context+198,1)[0])
   r.delta=-1
-  for value in (24,23,22):r.call('lf2p_enc',OBJ,EVENT);assert u.mem_read(context+198,1)[0]==value
-  print('PASS real LFO2 destination menu encoder visits ATTACK/CUTOFF/RESO both directions',flush=True)
+  for value in reversed([22]+offered[:-1]):r.call('lf2p_enc',OBJ,EVENT);assert u.mem_read(context+198,1)[0]==value
+  print('PASS real LFO2 destination menu visits installed destinations only, both directions',offered,flush=True)
   mapping=0x930c2000;bind(0x4004df5c,lambda a:mapping)
-  for index,key,target in ((1,18,23),(4,13,24),(5,14,25)):
+  for index,key,target in ((1,18,23 if flags&1 else 18),(4,13,24 if flags&2 else 13),(5,14,25 if flags&2 else 14)):
    r.w32(mapping+8+4*index,descriptors[key]);held.update((5,8));r.call('lf2_edit',context,0,3,127);r.call('lf2_edit',context,0,7,16384)
    prior=bytes(u.mem_read(0x40fde838,192));assert r.call('lf2p_quick_assign',index,1)==1;assert u.mem_read(context+198,1)[0]==target;assert u.mem_read(context+206,2)==b'\x40\x00'
    assert r.call('lf2p_quick_assign',index,1)==1;assert u.mem_read(context+206,2)==b'\x41\x00';assert bytes(u.mem_read(0x40fde838,192))==prior
@@ -239,7 +242,7 @@ def main():
      assert r.call('lf2p_quick_assign',index,1)==1
      assert u.mem_read(r.r32(r.s['lf2_context'])+198,1)[0]==target
   u.mem_write(0x930a0000+38,b'\0');r.w32(r.s['mod_held'],0)
-  print('PASS Wizard native lookup and both displays: stable FLT/RES; 80 real secondary quick assigns never select absent 24/25',flush=True)
+  print('PASS Wizard native lookup and both displays: stable FLT/RES; installed secondary quick assign uses native 13/14',flush=True)
 
  print('LIMIT: physical UI/audio acceptance remains hardware testing; no DSP modification',flush=True)
 if __name__=='__main__':main()
