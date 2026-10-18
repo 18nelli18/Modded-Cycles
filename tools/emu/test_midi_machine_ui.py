@@ -32,11 +32,11 @@ def main():
  assert not r.output and r.popups[-1]=='CC01 ASSIGN 074',r.popups
  r.assign=False;assert r.call(r.s['mm_encoder'],r.event(0,1))==1
  assert r.popups[-1]=='CC01 074 = 065';assert ('DIN',bytes((0xb0,74,65))) in r.output
- assert r.call(r.s['mm_draw'],0,0x920c0000)==1
- assert r.lines[0]=='T1 MIDI OUT' and len(r.lines)==13
+ assert r.call(r.s['mm_draw'],0,0x920c0000)==0
+ assert not r.lines
  assert not any(any(w in line for w in ('Color','Shape','Sweep','Contour','Decay','Filter','Resonance')) for line in r.lines+r.popups)
  print('PASS setter natif, assignation sans CC, valeur MIDI transmise, ecran et popup MIDI seuls')
- for at,name,expected in ((0x40077532,'mm_encoder_hook','4fefffc048d70c04'),(0x4001b22a,'mm_draw_hook','4e56ffc048d73cfc'),(0x40077720,'mm_ui_key_hook','4fefffa048d77cfc')):
+ for at,name,expected in ((0x400775f8,'mm_encoder_hook','4fefffc048d70c04'),(0x4001b22a,'mm_draw_hook','4e56ffc048d73cfc'),(0x40077720,'mm_ui_key_hook','4fefffa048d77cfc')):
   assert bytes(r.u.mem_read(at,8)).hex()==expected,(hex(at),bytes(r.u.mem_read(at,8)).hex())
   r.u.mem_write(at,b'\x4e\xf9'+struct.pack('>I',r.s[name])+b'\x4e\x71')
  r.stub(0x400802e0,lambda a:(_ for _ in ()).throw(AssertionError('allocation/vue synthese depuis geste CC')))
@@ -44,16 +44,19 @@ def main():
  for lane in range(6):
   r.track=lane;r.u.mem_write(SOUND+0x1000*lane+20,struct.pack('>33H',*original))
   for knob in range(12):
-   r.assign=True;r.output.clear();assert r.call(0x40077532,0,r.event(knob,knob+1))==1
+   r.assign=False;r.output.clear();before=bytes(r.u.mem_read(SOUND+0x1000*lane+20,66));popups=len(r.popups)
+   assert r.call(0x40006158,0,r.event(knob,1))==1
+   assert bytes(r.u.mem_read(SOUND+0x1000*lane+20,66))==before and not r.output and len(r.popups)==popups
+   r.assign=True;r.output.clear();assert r.call(0x40006158,0,r.event(knob,knob+1))==1
    assert not r.output and r.popups[-1]==f'CC{knob+1:02} ASSIGN {knob:03}'
-   r.assign=False;assert r.call(0x40077532,0,r.event(knob,1))==1
+   r.assign=False;assert r.call(0x40006158,0,r.event(knob,1))==1
    assert ('DIN',bytes((0xb0,knob,65))) in r.output
   words=struct.unpack('>33H',r.u.mem_read(SOUND+0x1000*lane+20,66))
   assert words[:11]==tuple(original[:11]) and words[23:32]==tuple(original[23:32])
-  r.lines.clear();r.call(0x4001b22a,0,0x920c0000);assert r.lines[0]==f'T{lane+1} MIDI OUT' and len(r.lines)==13
+  r.lines.clear();assert r.call(r.s['mm_draw'],0,0x920c0000)==0 and not r.lines
  # La release SETTINGS est consommee apres assignation, sans ouvrir CONFIG.
- r.assign=True;r.call(0x40077532,0,r.event(0,1));r.u.mem_write(EVENT,struct.pack('>6I',0,0,0,13,0,0))
+ r.assign=True;r.call(0x400775f8,0,r.event(0,1));r.u.mem_write(EVENT,struct.pack('>6I',0,0,0,13,0,0))
  assert r.call(0x40077720,0,EVENT)==1
- print('PASS vrais dispatchs : six pistes x12potards, aucun handler/parametre synthese, ecran MIDI, release SETTINGS consommee')
+ print('PASS entree applicative native40006158 -> dispatch400775f8 : six pistes x12potards, aucun handler/parametre synthese, ecran MIDI, release SETTINGS consommee')
  print('LIMITES : locks, sauvegarde, composition complete et verification physique encore requis')
 if __name__=='__main__':main()

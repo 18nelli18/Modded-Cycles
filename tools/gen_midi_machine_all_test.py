@@ -1,7 +1,7 @@
 """Note126 : preset de test Select All avec machine MIDI, sans banque B."""
 import argparse,json,pathlib,re
 import gen_midi_machine_core as core
-ROOT=pathlib.Path(__file__).resolve().parents[1];STAMP='2026-10-18-midi-machine-all-test-1'
+ROOT=pathlib.Path(__file__).resolve().parents[1];STAMP='2026-10-18-midi-machine-all-test-2'
 def main():
  p=argparse.ArgumentParser();p.add_argument('--check',action='store_true');a=p.parse_args()
  out=ROOT/'docs/flasher-midi-machine-all-test';out.mkdir(exist_ok=True)
@@ -20,7 +20,7 @@ def main():
  html=html.replace('<main class="wrap fl">','<main class="wrap fl">'+notice);files['index.html']=html.encode()
  html=html.replace(notice,notice+'<p><a href="midi-machine-guide.html"><strong data-l="en">MIDI Out machine controls and test guide</strong><strong data-l="fr">Commandes et guide de test MIDI Out</strong></a></p>')
  html=html.replace('../assets/release.js?', 'midi-machine-release.js?');html=re.sub(r'<title>.*?</title>','<title>MIDI Out machine — Select All test</title>',html,count=1);files['index.html']=html.encode()
- files['midi-machine-release.js']=('window.MC_RELEASES='+json.dumps([dict(version='MIDI-machine-all-test.1',date='2026-10-18',changes=[dict(en='Select All preset with a silent A-side MIDI Out machine, assignable CCs/locks, two MIDI LFOs, saved channel/output routing and CPU/CUT diagnostics. No B-side bank. Experimental; hardware verification pending.',fr='Preset complet avec machine MIDI Out silencieuse sur A, CC/locks assignables, deux LFO MIDI, canal/port sauvegardes et diagnostic CPU/CUT. Sans banque B. Experimental ; verification materielle attendue.')])])+';\n').encode()
+ files['midi-machine-release.js']=('window.MC_RELEASES='+json.dumps([dict(version='MIDI-machine-all-test.2',date='2026-10-18',changes=[dict(en='Select All preset with a silent A-side MIDI Out machine, assignable CCs/locks, two MIDI LFOs, saved channel/output routing and CPU/CUT diagnostics. No B-side bank. Experimental; hardware verification pending.',fr='Preset complet avec machine MIDI Out silencieuse sur A, CC/locks assignables, deux LFO MIDI, canal/port sauvegardes et diagnostic CPU/CUT. Sans banque B. Experimental ; verification materielle attendue.')])])+';\n').encode()
  files['midi-machine-guide.html']=(ROOT/'tools/web/midi-machine-guide.html').read_bytes()
  files['midi-machine-all-catalogue.js']=b'''// Catalogue du preset MIDI seulement ; les pages publiees restent inchangees.
 (()=>{const d=window.MCMachineCombinationData,b=window.MCBuilder,x=window.MCMidiMachineAll.entry,old=d.wizard[1023];x.engine.id=old.engine.id;x.engine_sha256=b.hex(b.sha256(Uint8Array.from(unescape(encodeURIComponent(JSON.stringify(x.engine))),c=>c.charCodeAt(0))));d.wizard[1023]=x;})();
