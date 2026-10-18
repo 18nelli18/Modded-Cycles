@@ -1,0 +1,8 @@
+{
+  "stamp": "2026-10-18-midi-machine-test-1",
+  "scope": "test-only",
+  "profile": "six stock machines + MIDI live",
+  "diagnostics": "unavailable: no SY counters",
+  "hardware_verified": false,
+  "main_unchanged": true
+}
