@@ -1,6 +1,6 @@
 # Supermodel 909 — feature and shortcut overview
 
-909.5 · 18 October 2026
+909.7 · 18 October 2026
 
 Fixed 909 Edition: six 909 voices, Sample Wizard, ACID, per-track filter, slide trigs, Sequence Genie, SCRAMBLE, Second LFO, MIDI Out Bank with saving, combined MIDI OUT + THRU, latching mute, Control All Config, Control All Beat Repeat, A/B arpeggiators and 909 startup. Load official Cycles OS1.13 and four local WAVs for closed/open hats, crash and ride. No sample audio is hosted.
 
@@ -14,6 +14,7 @@ Added shortcuts below; stock-style transport/copy/clear/paste omitted. TRIG = st
 
 | Feature | Gesture | Result |
 |---|---|---|
+| Sample Preview | FUNC + MACHINES, highlight a sample, then play a pad or keyboard | Audition in the Sample Wizard browser before loading. |
 | Control All Config | TRACK + TRIG 1–6 | Include or exclude tracks from Control All. The selected track can also be excluded. Choices reset on power-off. |
 | Control All Beat Repeat | Hold TRACK + RETRIG, then hold TRIG 1–16 | Repeat the included audio tracks. The newest held TRIG chooses the division and shows a brief popup. Release the division pad or either modifier to stop. Both modifiers must stay held. |
 | Latching mute | Hold TRACK, tap FUNC | Keep mute mode open. Tap FUNC to leave. |

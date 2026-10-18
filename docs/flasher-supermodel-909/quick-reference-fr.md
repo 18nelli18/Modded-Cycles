@@ -1,6 +1,6 @@
 # Supermodel 909 — fonctions et raccourcis
 
-909.5 · 18 octobre 2026
+909.7 · 18 octobre 2026
 
 Profil fixe909 : six voix909, Sample Wizard, ACID, filtre par piste, slides, Sequence Genie, SCRAMBLE, Second LFO, Banque MIDI avec sauvegarde, MIDI OUT + THRU, mutes verrouilles, Control All Config, Control All Beat Repeat, arpegiateurs A/B et demarrage909. Charger OS Cycles1.13 officiel et quatre WAV locaux : hats ferme/ouvert, crash et ride. Aucun sample audio heberge.
 
@@ -14,6 +14,7 @@ Raccourcis ajoutes ci-dessous ; transports/copies/effacements/collages stock omi
 
 | Fonction | Geste | Resultat |
 |---|---|---|
+| Preecoute samples | FUNC + MACHINES, choisir un sample puis jouer un pad ou clavier | Ecouter dans le navigateur Sample Wizard avant chargement. |
 | Control All Config | TRACK + TRIG 1–6 | Inclure ou exclure les pistes de Control All. La piste sélectionnée peut aussi être exclue. Choix remis a zero a extinction. |
 | Control All Beat Repeat | Tenir TRACK + RETRIG, puis un TRIG 1–16 | Repeter les pistes audio incluses. Dernier TRIG tenu prioritaire, division en popup bref. Relacher le TRIG ou un modificateur arrete. Garder les deux modificateurs tenus. |
 | Mute verrouille | Tenir TRACK, taper FUNC | Garder le mode mute ouvert. Taper FUNC pour sortir. |
