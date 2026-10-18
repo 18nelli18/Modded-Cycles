@@ -3,7 +3,7 @@ function composeTinyNormal(data,mask,out,b,refs){
  const clone=x=>JSON.parse(JSON.stringify(x)),hash=t=>b.hex(b.sha256(b.writesBytes(t))),entry=data.normal[mask];
  if(!entry)throw Error('TINY: missing machine combination '+mask);
  const e=clone(entry.engine),support=out.find(t=>['supermodel-support-independent','supermodel-wave-support'].includes(t.id));
- const oldEngine=out.find(t=>t.append&&t!==support),result=out.filter(t=>t.id!=='tiny'&&t!==oldEngine&&t!==support);
+ const oldEngine=out.find(t=>t.append&&t!==support&&t.id!=='retrosyn')||out.find(t=>t.append&&t!==support),result=out.filter(t=>!['tiny','retrosyn'].includes(t.id)&&t!==oldEngine&&t!==support);
  const er=data.refs.n[mask] || window.MCMachineCombinations.normalRef(e);if(hash(e)!==er.w)throw Error('TINY: engine reference guard');
  refs[e.id]={w:er.w,p:er.p};
  if(support){
