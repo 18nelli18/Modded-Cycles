@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-12-08">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-12-08">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-18-01">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-18-01">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -61,6 +61,7 @@
         <li><a href="#track-filter"><span data-l="en">Per-track filter</span><span data-l="fr">Filtre par piste</span></a></li>
         <li><a href="#acid"><span data-l="en">ACID machine</span><span data-l="fr">Machine ACID</span></a></li>
         <li><a href="#lfo-plus">LFO 2, 3, 4</a></li>
+        <li><a href="#os-optimise"><span data-l="en">Optimised OS</span><span data-l="fr">OS optimisé</span></a></li>
         <li><a href="#mods-on-samples"><span data-l="en">Mods on a Model:Samples</span><span data-l="fr">Des mods sur un Model:Samples</span></a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
         <li><a href="#stock"><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></a></li>
@@ -765,8 +766,26 @@
         </dl>
       </section>
 
+      <section id="os-optimise">
+        <h2><span class="n">23</span><span data-l="en">Optimised OS</span><span data-l="fr">OS optimisé</span></h2>
+        <p class="lede"><span data-l="en">The same sound with far less work for the processor, so the interface stays responsive and busy patterns have more room before the sound crackles. It also fixes two freezes of the original OS.</span><span data-l="fr">Le même son avec beaucoup moins de travail pour le processeur : l'interface reste réactive et les patterns chargés ont plus de marge avant que le son ne craque. Il corrige aussi deux gels de l'OS d'origine.</span></p>
+        <ol>
+          <li><span data-l="en">Nothing to set: tick <b>Optimised OS</b> in the flasher and play as usual. The savings switch on and off by themselves.</span><span data-l="fr">Rien à régler : cochez <b>OS optimisé</b> dans le flasher et jouez comme d'habitude. Les économies se font toutes seules.</span></li>
+          <li><span data-l="en">A track that has gone silent is no longer computed until its next trig. Stopped, or with tracks that rest, this is where most of the time is saved.</span><span data-l="fr">Une piste devenue muette n'est plus calculée jusqu'à son trig suivant. À l'arrêt, ou quand des pistes se reposent, c'est là que se gagne l'essentiel du temps.</span></li>
+          <li><span data-l="en">The delay and the reverb sleep until you send them something. Once you have used them, they stay awake until you switch the machine off.</span><span data-l="fr">Le delay et la reverb dorment jusqu'à ce que vous leur envoyiez quelque chose. Une fois utilisés, ils restent éveillés jusqu'à ce que vous éteigniez la machine.</span></li>
+          <li><span data-l="en"><b>VOL+DIST</b> up to 60 (no distortion), sends at 0 and <b>PUNCH</b> at 0 cost less than before: what they would compute changes nothing, so it is skipped.</span><span data-l="fr"><b>VOL+DIST</b> jusqu'à 60 (sans distorsion), les envois à 0 et <b>PUNCH</b> à 0 coûtent moins qu'avant : ce qu'ils calculeraient ne change rien, c'est donc sauté.</span></li>
+        </ol>
+        <dl class="facts">
+          <div><dt><span data-l="en">Measured</span><span data-l="fr">Mesuré</span></dt><dd><span data-l="en">on a Model:Cycles, 6 tracks with a trig on every step, average share of each audio block: stopped 72 % → 20 %, playing 77 % → 65 %, with Dist at full 77 % → 67 %, with delay and reverb in use 77 % → 73 %.</span><span data-l="fr">sur un Model:Cycles, 6 pistes avec un trig sur chaque pas, part moyenne de chaque bloc audio : à l'arrêt 72 % → 20 %, en lecture 77 % → 65 %, avec la Dist à fond 77 % → 67 %, avec le delay et la reverb en service 77 % → 73 %.</span></dd></div>
+          <div><dt><span data-l="en">Sound</span><span data-l="fr">Son</span></dt><dd><span data-l="en">identical, sample for sample, to the original OS: checked in the emulator on the OS's own code, codec and USB outputs, with Dist, sends, delay, reverb and knobs moving. The only difference: a silent track gives true silence instead of a whisper below −108 dB.</span><span data-l="fr">identique au son de l'OS d'origine, échantillon par échantillon : vérifié en émulation sur le code même de l'OS, sorties codec et USB, avec Dist, envois, delay, reverb et potards qui bougent. Seule différence : une piste muette donne un vrai silence au lieu d'un souffle sous −108 dB.</span></dd></div>
+          <div><dt><span data-l="en">Freezes fixed</span><span data-l="fr">Gels corrigés</span></dt><dd><span data-l="en">opening <b>MACHINES</b> on a track whose machine this firmware doesn't have (a project made with MACRO, ACID or the Syntakt engines) froze the screen: it now shows CHORD. A long overload while the machine sends MIDI clock could freeze everything, sound included: a clock byte is now dropped instead.</span><span data-l="fr">ouvrir <b>MACHINES</b> sur une piste dont la machine n'existe pas dans ce firmware (un projet fait avec MACRO, ACID ou les moteurs du Syntakt) gelait l'écran : il affiche maintenant CHORD. Une longue surcharge pendant que la machine envoie l'horloge MIDI pouvait tout geler, son compris : un octet d'horloge est maintenant perdu à la place.</span></dd></div>
+          <div><dt><span data-l="en">Mods</span><span data-l="fr">Mods</span></dt><dd><span data-l="en">not with <a href="#model-tg">Model-TG</a>, <a href="#macro">MACRO</a>, <a href="#acid">ACID</a> or the <a href="#syntakt">Syntakt engines</a> for now: they compute the voices their own way (and already skip silent voices). Goes with every other mod, checked in the emulator with them.</span><span data-l="fr">pas avec <a href="#model-tg">Model-TG</a>, <a href="#macro">MACRO</a>, <a href="#acid">ACID</a> ni les <a href="#syntakt">moteurs du Syntakt</a> pour l'instant : ils calculent les voix à leur façon (et sautent déjà les voix muettes). Se combine avec tous les autres mods, vérifié en émulation avec eux.</span></dd></div>
+          <div><dt><span data-l="en">Experimental</span><span data-l="fr">Expérimental</span></dt><dd><span data-l="en">the same code was flashed on a Model:Cycles as a test file: same sound, and the loads above. Not yet tested from the flasher, nor with other mods.</span><span data-l="fr">le même code a été flashé sur un Model:Cycles en fichier d'essai : même son, et les charges ci-dessus. Pas encore testé depuis le flasher, ni avec d'autres mods.</span></dd></div>
+        </dl>
+      </section>
+
       <section id="mods-on-samples">
-        <h2><span class="n">23</span><span data-l="en">Mods on a Model:Samples</span><span data-l="fr">Des mods sur un Model:Samples</span></h2>
+        <h2><span class="n">24</span><span data-l="en">Mods on a Model:Samples</span><span data-l="fr">Des mods sur un Model:Samples</span></h2>
         <p class="lede"><span data-l="en">A Model:Samples can run the Model:Cycles OS with the same mods as a Model:Cycles. Whatever the machine, the flasher always installs the Model:Cycles OS; on a Model:Samples, <a href="#model-tg">Model-TG</a>'s Sampler plays your samples.</span><span data-l="fr">Un Model:Samples peut tourner sous l'OS du Model:Cycles avec les mêmes mods qu'un Model:Cycles. Quelle que soit la machine, le flasher installe toujours l'OS du Model:Cycles ; sur un Model:Samples, le Sampler de <a href="#model-tg">Model-TG</a> joue vos samples.</span></p>
         <ol>
           <li><span data-l="en">Back up your samples and projects with Elektron Transfer, then close Transfer.</span><span data-l="fr">Sauvegardez vos samples et vos projets avec Elektron Transfer, puis fermez Transfer.</span></li>
@@ -790,7 +809,7 @@
       </section>
 
       <section id="samples">
-        <h2><span class="n">24</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">25</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -824,13 +843,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">25</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">26</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first mod: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant un premier mod : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">With Syntakt engines, the MACRO or ACID machine or Model-TG's Sampler, first set your tracks back to an original machine.</span><span data-l="fr">Avec des moteurs du Syntakt, la machine MACRO ou ACID ou le Sampler de Model-TG, remettez d'abord vos pistes sur une machine d'origine.</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">26</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">27</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -844,7 +863,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">27</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">28</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -910,8 +929,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-12-08"></script>
-<script src="../assets/cycles.js?v=2026-10-12-08"></script>
-<script src="../assets/site.js?v=2026-10-12-08"></script>
+<script src="../assets/release.js?v=2026-10-18-01"></script>
+<script src="../assets/cycles.js?v=2026-10-18-01"></script>
+<script src="../assets/site.js?v=2026-10-18-01"></script>
 </body>
 </html>
