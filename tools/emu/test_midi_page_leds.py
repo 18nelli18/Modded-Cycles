@@ -64,7 +64,7 @@ def run(prefix):
  for length in (1,5,16,17,31,32,48,64):
   u.mem_write(audio+30667,b'\0');u.mem_write(audio+30662,struct.pack('>H',length));snapshot=bytes(u.mem_read(audio,30712));r.call('pg_poll')
   assert [u.mem_read(pattern+264*lane+4,1)[0] for lane in range(6)]==[length]*6
-  assert r.call('pg_config',pattern,2,4,63)==1;assert u.mem_read(pattern+2*264+4,1)[0]==length
+  r.w32(r.s['mlp_obj'],0);assert r.call('pg_config',pattern,2,4,63)==1;assert u.mem_read(pattern+2*264+4,1)[0]==length;r.w32(r.s['mlp_obj'],OBJ)
   r.w32(clock,0)
   for tick in range(2*length+2):
    r.call('pg_clock',r.r32(r.s['ml_runtime']),pattern,clock,100000000+tick*5400000,1)
@@ -79,6 +79,54 @@ def run(prefix):
  assert [u.mem_read(pattern+264*lane+4,1)[0] for lane in range(6)]==lengths
  empty=r.r32(r.s['ml_bank_empty']);before=bytes(u.mem_read(empty,1584));u.mem_write(audio+30667,b'\0');u.mem_write(audio+30662,b'\x00\x20');r.call('pg_clock',r.r32(r.s['ml_runtime']),empty,clock,200000000,0);assert bytes(u.mem_read(empty,1584))==before
  assert r.new_count==allocated
+ # Len commun depuis B : vrais setters Len/page A et vraies touches/encodeur B.
+ model=0x930c1000;header_vt=0x930c2000;getter=0x930c3000;notify=0x930c4000;settings_ui=0x930c5000;settings_raw=0x930c6000;settings_vt=0x930c7000
+ header=audio+30642;r.w32(model+44,header_vt);r.w32(model+60,header);r.w32(header_vt+40,getter);r.w32(header_vt+16,notify)
+ r.w32(settings_ui,settings_vt);r.w32(settings_ui+16,settings_raw);r.w32(settings_vt+40,getter);r.w32(settings_vt+16,notify)
+ u.mem_write(getter,bytes.fromhex('206f0004202800104e75'));r.w32(0x40fe4228,0x93005000);r.w32(0x40fe4218,0);notifications=[]
+ def bind(address,fn):
+  fresh=address not in r.stubs;r.stubs[address]=fn
+  if fresh:u.hook_add(UC_HOOK_CODE,r.stub,begin=address,end=address)
+ bind(0x4000f208,lambda a:model);bind(0x4000eb90,lambda a:settings_ui);bind(notify,lambda a:notifications.append(a[0]) or 0)
+ u.mem_write(audio+30667,b'\0');u.mem_write(audio+30662,b'\x00\x10');r.w32(r.s['mlp_obj'],OBJ);r.w32(r.s['mlp_track'],0)
+ notes=[bytes(u.mem_read(pattern+264*lane+8,256)) for lane in range(6)]
+ for value in (1,2,5,16,17,31,32,48,64):
+  before=bytearray(u.mem_read(audio,30712));r.w32(settings_raw+8,3);count=len(notifications)
+  assert r.call('pg_config',pattern,0,4,value)==1
+  expected=max(2,value);before[30662:30664]=struct.pack('>H',expected)
+  assert bytes(u.mem_read(audio,30712))==bytes(before)
+  assert [u.mem_read(pattern+264*lane+4,1)[0] for lane in range(6)]==[expected]*6
+  assert r.r32(settings_raw+8)==(3 if expected>48 else 0)
+  assert model+44 in notifications[count:]
+ # Les entrees invalides ne changent pas la longueur commune.
+ for value in (0,65,0xffffffff):
+  before=bytes(u.mem_read(audio,30712));assert r.call('pg_config',pattern,6,4,value)==0;assert bytes(u.mem_read(audio,30712))==before
+ # Ouverture stock FUNC+PAGE, cycles PAGE de16 et limites DATA.
+ for name in ('mlp_setup','mlp_func','mlp_func_inherited','mlp_held','mlp_edit','ml_genie_settings','TG_set_held'):
+  if name in r.s:r.w32(r.s[name],0)
+ def key(code,flags=1):return r.call('mlp_menu_key',OBJ,r.event(code,flags))
+ def turn(delta):
+  r.delta=delta;return r.call('mlp_enc',OBJ,r.event(1))
+ u.mem_write(audio+30662,b'\x00\x10');r.call('pg_poll');key(1);key(15);key(15,0);key(1,0)
+ assert r.r32(r.s['mlp_setup'])==2 and r.r32(r.s['mlp_row'])==3 and r.r32(r.s['mlp_edit'])==1
+ for expected in (32,48,64,16,32):
+  key(15);key(15,0);assert struct.unpack('>H',u.mem_read(audio+30662,2))[0]==expected
+  assert [u.mem_read(pattern+264*lane+4,1)[0] for lane in range(6)]==[expected]*6
+ turn(1);assert struct.unpack('>H',u.mem_read(audio+30662,2))[0]==33
+ turn(-1);assert struct.unpack('>H',u.mem_read(audio+30662,2))[0]==32
+ # Longueur partielle : PAGE atteint le prochain multiple de16.
+ assert r.call('pg_config',pattern,0,4,17)==1;key(15);key(15,0);assert struct.unpack('>H',u.mem_read(audio+30662,2))[0]==32
+ for _ in range(65):turn(-1)
+ assert struct.unpack('>H',u.mem_read(audio+30662,2))[0]==2
+ for _ in range(65):turn(1)
+ assert struct.unpack('>H',u.mem_read(audio+30662,2))[0]==64
+ assert [bytes(u.mem_read(pattern+264*lane+8,256)) for lane in range(6)]==notes
+ # Mode TRACK : PAGE et DATA ne modifient que la voie MIDI selectionnee.
+ u.mem_write(audio+30667,b'\x01');r.w32(r.s['mlp_track'],2)
+ for lane,length in enumerate(lengths):u.mem_write(pattern+264*lane+4,bytes([length]))
+ before=bytes(u.mem_read(audio,30712));key(15);key(15,0);assert [u.mem_read(pattern+264*lane+4,1)[0] for lane in range(6)]==[5,7,16,16,31,64]
+ turn(1);assert u.mem_read(pattern+2*264+4,1)[0]==17;assert bytes(u.mem_read(audio,30712))==before
+ print('PASS native shared A/B length setter and notifications, A page validation, FUNC+PAGE menu, PAGE16/32/48/64 wrap, DATA2..64, unchanged notes and independent per-track edits',prefix,flush=True)
  # Ouverture : page A heritee uniquement en mode normal et apres succes natif.
  native=[];opened=[1]
  settings=0x930b6100;vtable=0x930b6200;page_object=0x930b6300;getter=0x930b6400

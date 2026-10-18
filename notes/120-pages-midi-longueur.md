@@ -48,3 +48,14 @@ Le helper relogeable passe de996 a1388 octets. Trois vrais builds signes, trois 
 ## 7. Revision2 validee et promotion1.88 (17/10/2026)
 
 AveyCole confirme « works, push to main ». Helper1388 octets et comportement test2 repris dans le principal1.88, sans la dependance ni les payloads diagnostic. Sources approuvees figees actualisees ; guide et raccourcis EN/FR alignes. Banque MIDI toujours experimentale et facultative ; edition909 et pages de test inchangees. Builds signes et preuves de boot, LEDs, longueurs et ouverture relances sur les compositions de production.
+
+
+## 8. Test3 : longueur commune editable depuis B (18/10/2026)
+
+Demande AveyCole : longueur B toujours commune avec A en mode pattern, mais editable depuis B via FUNC+PAGE, soit par DATA, soit par PAGE par16 comme stock. La revision precedente substituait la longueur A a toute valeur B dans `pg_config`, ce qui bloquait les deux controles alors que leurs handlers existaient deja.
+
+Le wrapper conserve le suivi A vers B au poll et dans l horloge. Depuis la vue B, une edition du champ longueur en mode normal utilise maintenant le vrai setter Len du menu A `0x4002fbf6`. Celui-ci passe par `0x4000c9c4`, notifie l objet d en-tete, puis revalide la page A via `0x40013958`. Lecture du modele UI par `0x4000f208`, pointeur d en-tete a objet+60 ; modes UI et audio verifies normaux. Appel reserve au contexte UI (IPL nul), objet B actif et banque editee non vide. Les valeurs natives sont2..64, comme A ; les six longueurs B sont mises a jour ensemble. Les autres champs de configuration et le mode par piste gardent leur chemin precedent. Aucune ecriture directe dans les notes ou dans le buffer audio A.
+
+[FAIT en emulation] Trois builds signes et vrais bootstraps, avec MIDI seul, ensemble complet Wizard/repeat/diagnostic, ensemble sans Wizard ni repeat. La preuve execute le vrai setter Len A et celui de la page A, observe les notifications virtuelles, puis execute les vrais handlers touche et encodeur B : ouverture FUNC+PAGE, PAGE16/32/48/64/16, longueur partielle17 vers32, DATA aux bornes2 et64. Seuls les deux octets de longueur A changent dans le snapshot, toutes les notes B restent intactes. Mode par piste : seul le header de la voie selectionnee change. Tests des1848 etats LED par profil, longueurs et ouverture heritee conserves. Helper1556 octets, diagnostics dans le test ; principal1.88 et909 inchanges.
+
+[A FAIRE] Validation sur machine du test3, notamment edition pendant lecture, retour vers A et sauvegarde/rechargement du pattern.

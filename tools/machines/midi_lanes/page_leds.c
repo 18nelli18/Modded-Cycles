@@ -1,6 +1,6 @@
 /* Note120 : LEDs de pages B, mapping et writer boolean natifs.
  * API : callback precedent, poll precedent, obj, track, step, pattern, play, clock.
- * Aucun rendu audio, port MIDI ou heap ; seuls headers longueur B en NORMAL.
+ * Aucun rendu audio ni port MIDI ; longueur commune via setter natif UI.
  */
 typedef unsigned int u32;
 volatile u32 pg_api[12];
@@ -23,7 +23,22 @@ u32 pg_clock(u32 runtime,u32 pattern,u32 clock,u32 now,u32 mode){
  sync_length(pattern);return ((u32(*)(u32,u32,u32,u32,u32))pg_api[8])(runtime,pattern,clock,now,mode);
 }
 u32 pg_config(u32 pattern,u32 lane,u32 field,u32 value){
- u32 len=common();if(field==4&&len)value=len;
+ u32 len=common();
+ if(field==4&&len){
+  if(pattern==V(5)&&pattern!=V(9)&&V(2)&&lane<6&&value>=1&&value<=64){
+   u32 sr;__asm__ volatile("move.w %%sr,%0":"=d"(sr));if(sr&0x700)return 0;
+   u32 ui=*(volatile u32 *)0x40fe4228;if(!ui)return 0;
+   u32 object=((u32(*)(u32))0x4000f208)(ui);if(!object)return 0;
+   volatile unsigned char *header=*(volatile unsigned char **)(object+60);
+   if(!header||header[25]!=0)return 0;
+   /* Le setter Len stock notifie le projet et revalide aussi la page A. */
+   ((void(*)(u32,u32))0x4002fbf6)(0,value);
+   value=*(volatile unsigned short *)(header+20);
+   if(value<1||value>64)return 0;
+   volatile unsigned char *p=(volatile unsigned char *)pattern;
+   for(u32 i=0;i<6;i++,p+=264)p[4]=value;
+  }else value=len;
+ }
  return ((u32(*)(u32,u32,u32,u32))pg_api[10])(pattern,lane,field,value);
 }
 
