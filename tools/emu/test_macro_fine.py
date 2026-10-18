@@ -57,6 +57,21 @@ def main():
  api=sy['mf_api'];used=after.u32(api+4)
  assert after.call(sy['mf_key'],event)==(0 if used else 1)
  if used:assert after.u32(used)==1
+ # Vrai hook clavier physique, getter/flag commun a zero : aucune injection held.
+ after.settings=False
+ if held:after.uc.mem_write(held,bytes(4))
+ mm=next((t for t in ts if t.get('symbols',{}).get('mm_ui_api')),None)
+ if mm:
+  delegate=SCRATCH+0x7000
+  after.uc.mem_write(int(mm['symbols']['mm_ui_api'],16)+16,struct.pack('>I',delegate))
+  after.hooks[delegate]=('native-key-dispatch',0)
+ after.lookup(machine,2,False)
+ after.uc.mem_write(event,struct.pack('>6I',0,0,0,13,1,0))
+ after.call(0x40077720,0,event)
+ assert after.edit_func(PITCH,0x4000,256)==0x4002
+ after.uc.mem_write(event,struct.pack('>6I',0,0,0,13,0,0));after.call(0x40077720,0,event)
+ assert after.edit_func(PITCH,0x4000,256)==0x4100
+ print('PASS vrai hook SETTINGS down/release -> PITCH : deux unites fines tenu,256unites normales relache, flag commun nul')
  # Les fractions doivent survivre au vrai codec son, pas seulement a l'UI.
  raw,record,loaded=SCRATCH+0x6000,SCRATCH+0x6100,SCRATCH+0x6200
  for fraction in (2,126,128,254):

@@ -6,6 +6,7 @@ typedef unsigned int u32;
 typedef signed int i32;
 volatile u32 mf_api[5] __attribute__((section(".data")))={0,0,0,0,0};
 static u32 saved[4] __attribute__((section(".data")))={0,0,0,0};
+static u32 settings_raw __attribute__((section(".data")))=0;
 static u32 used __attribute__((section(".data")))=0;
 extern void mf_draw(void);
 u32 mf_active(void){
@@ -13,7 +14,7 @@ u32 mf_active(void){
  u32 lane=((u32 (*)(u32))0x40012412)(root+48);
  return lane<6&&((u32 (*)(u32,u32))0x4001e318)(0,lane)==mf_api[0];
 }
-static u32 fine_held(void){return (mf_api[4]?*(volatile u32 *)mf_api[4]:((u32 (*)(u32))0x4007faf4)(13))&&!((u32 (*)(u32))0x4007faf4)(1);}
+static u32 fine_held(void){return (settings_raw||(mf_api[4]?*(volatile u32 *)mf_api[4]:((u32 (*)(u32))0x4007faf4)(13)))&&!((u32 (*)(u32))0x4007faf4)(1);}
 static u32 step(u32 context,i32 value,i32 delta,i32 lo,i32 hi,u32 which){
  if(!mf_active())return ((u32 (*)(u32,i32,i32,i32,i32))saved[which])(context,value,delta,lo,hi);
  i32 result;
@@ -46,6 +47,7 @@ void mf_prepare(u32 machine,u32 knob,u32 func){
 }
 u32 mf_key(const u32 *event){
  if(!event||event[3]!=13)return 0;
+ settings_raw=(event[4]&1)!=0;
  if(event[4]&1){if(!(event[4]&8))used=0;return 0;}
  if(!used)return 0;
  used=0;return mf_api[1]?0:1;

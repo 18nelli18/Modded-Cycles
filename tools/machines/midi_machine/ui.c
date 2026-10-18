@@ -133,9 +133,31 @@ static void close_mute(void){
   node=*(u32 *)(node+4);
  }
 }
+/* La vraie fenetre reste ouverte : son dessin suit la piste courante. */
+static u32 track_setup_view(void){
+ u32 app=*(volatile u32 *)0x40fe4178;if(!app)return 0;
+ u32 head=app+84,node=*(u32 *)(head+4);
+ for(u32 i=0;node&&node!=head&&i<32;i++){
+  u32 view=*(u32 *)(node+8);
+  if(view&&*(u32 *)view==0x40108128&&!*(u8 *)(view+48))return view;
+  node=*(u32 *)(node+4);
+ }
+ return 0;
+}
 static void prepare_setup(u32 lane){
  u32 object=sound_object(lane);const u16 *before=params_for(object);if(!before)return;
  u16 copy[33];for(u32 i=0;i<33;i++)copy[i]=before[i];mm_setup(copy);publish(object,before,copy);
+}
+static void sync_track_setup(u32 lane){
+ if(!track_setup_view())return;
+ if(midi(lane)){
+  if(mm_page!=3||mm_page_lane!=lane){prepare_setup(lane);page(3,lane);}
+ }else if(mm_page)page(0,lane);
+}
+void mm_track_draw(u32 view,u32 canvas){
+ u32 lane=selected();sync_track_setup(lane);
+ if(midi(lane)){mm_menu_draw(view,canvas);return;}
+ ((void (*)(u32,u32))0x400426fa)(view,canvas);
 }
 static u32 track_object(u32 lane) {
  u32 root=((u32 (*)(void))0x400cf866)();
@@ -193,7 +215,7 @@ static void live_lock(u32 lane,u32 knob,u32 packed) {
 }
 u32 mm_encoder(const u32 *event) {
  if(!event||event[0]!=0x400fbebc||event[3]<1||event[3]>13)return 0;
- u32 lane=selected();if(!midi(lane))return 0;
+ u32 lane=selected();sync_track_setup(lane);if(!midi(lane))return 0;
  if(mm_page_lane!=lane)page(0,lane);
  if(event[3]==1&&(!mm_page||(mm_page!=3&&!home_visible()))){page(0,lane);return 0;}
  u32 object=sound_object(lane);const u16 *before=params_for(object);
@@ -250,6 +272,7 @@ u32 mm_ui_key(const u32 *event) {
  u32 lane=selected(),code=event[3],flags=event[4];
  if(code==13){mm_settings_held=(flags&1)!=0;mm_assign_lane=mm_settings_held&&midi(lane)?lane:6;}
  if(code==1)mm_func_held=(flags&1)!=0;
+ sync_track_setup(lane);
  if(!midi(lane))return 0;
  /* Ce detour precede le getter commun : publier aussi l'appui brut, avant
   * toute consommation. Le premier test ne simulait que son resultat. */
@@ -258,13 +281,13 @@ u32 mm_ui_key(const u32 *event) {
  if(code==2&&(mm_track_taken||mm_func_held||(flags&2)||((u32 (*)(u32))0x4007faf4)(1))){
   if((flags&9)==1){close_mute();prepare_setup(lane);page(3,lane);mm_track_taken=1;}
   if(!(flags&1))mm_track_taken=0;
-  return 1;
+  return 0; /* Ouvrir/conserver la vraie TrackMenuView native. */
  }
  if(code==8&&home_visible()){
   if((flags&9)==1){prepare_setup(lane);page(mm_page==1?2:mm_page==2?0:1,lane);}
   return 1;
  }
- if(code==12&&mm_page){if((flags&9)==1)page(0,lane);return 1;}
+ if(code==12&&mm_page){u32 native=mm_page==3&&track_setup_view();if((flags&9)==1)page(0,lane);return native?0:1;}
  if(code==32){
   if(flags&16){
    if(mm_page){mm_edit=!mm_edit;redraw();}
@@ -272,6 +295,7 @@ u32 mm_ui_key(const u32 *event) {
   return mm_page?1:0;
  }
  /* FUNC+PAGE conserve le vrai Scale Setup du pattern A. */
+ if(code==2&&track_setup_view())return 0;
  if(code==2||code==3||code==4||code==5||code==14||code==15){page(0,lane);return 0;}
  if(code!=13)return 0;
  /* FUNC+SETTINGS reste la sauvegarde native, sans menu MIDI parasite. */
@@ -297,10 +321,10 @@ void mm_menu_value(u32 self,u32 item,u32 canvas,u32 x,u32 y,u32 flags){
  if(mm_edit&&field==mm_row)((void (*)(u32,u32,u32,u32,u32,u32))0x40070efc)(canvas,x+23-6*(u32)(at-line),y-2,x+25,y+10,0xffffffffu);
 }
 u32 mm_draw(u32 view,u32 canvas) {
- (void)view;mm_audio_poll();u32 lane=selected();if(!midi(lane))return 0;
+ (void)view;mm_audio_poll();u32 lane=selected();sync_track_setup(lane);if(!midi(lane))return 0;
  if(mm_page_lane!=lane)page(0,lane);
  if(!mm_page)return 0; /* L'ecran de piste et les editeurs stock restent visibles. */
- if(mm_page==3){mm_menu_draw(view,canvas);return 1;}
+ if(mm_page==3){if(track_setup_view())return 0;mm_menu_draw(view,canvas);return 1;}
  ((void (*)(u32,u32,u32,u32,u32,u32))0x40070dea)(canvas,0,0,127,63,0);
  char line[32];char *p=word(line,"T");p=number(p,lane+1,1);p=word(p,mm_page==1?" MIDI LFO 1":mm_page==2?" MIDI LFO 2":mm_page==3?" MIDI SETUP":" MIDI OUT");*p=0;text(canvas,0,54,line);
  const u16 *params=params_for(sound_object(lane));

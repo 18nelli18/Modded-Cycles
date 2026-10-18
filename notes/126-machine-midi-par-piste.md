@@ -154,3 +154,12 @@ Le principal est genere par gen_midi_machine_main.py depuis la page de test, san
 Retour principal1.94 : erreur catalogue MIDI complet requis et absence de demande du fichier Syntakt. Le preset se lance depuis une Promise et emet des change synthetiques. Sur navigateur reel rapide, cette Promise peut finir avant DOMContentLoaded, alors que wirePicker n'a pas encore attache les handlers : cases cochees, selection interne vide. La fixture jsdom precedente masquait cet ordre des evenements.
 
 [FAIT] Les presets principal et test attendent maintenant DOMContentLoaded en plus des modules asynchrones, avant tout choix. Aucun byte firmware ne change. Regression : cinq moteurs choisis, masque1023, charger Cycles seul doit donner needs_syntakt sans firmware, puis Syntakt declenche les memes deux signatures1.94. Une fixture retarde volontairement DOMContentLoaded et confirme qu'aucun choix n'est emis avant connexion des handlers.
+
+
+## 16. Track Setup suit la piste active, test2 MACRO-main (18/10/2026)
+
+Demande AveyCole : changer de piste en gardant Track Setup ouvert doit afficher le schema MIDI sur une machine MIDI et le stock sur les autres. Le precedent overlay prive fermait/resetait sa page au changement de piste.
+
+[FAIT en emulation] FUNC+TRACK laisse maintenant ouvrir la vraie TrackMenuView. Son sous-objet View commence a+56, vtable40108128 ; seule son entree draw40108138 (400426fa) est redirigee. La vtable40108094 est le modele, pas la vue : aucun slot de modele n'est modifie. Sur MIDI, dessin prive4lignes via vrai MenuView ; sur audio, delegation directe au thunk stock400426fa. Meme instance et meme pile de vues pendant les transitions. DATA/clic appartiennent a la page MIDI seulement ; stock audio est delegue. Un changement de piste MIDI revient en navigation, sans recopier canal/port ; TRACK reste utilisable et BACK est delegue pour fermer la fenetre native.
+
+Preuve test_midi_machine_setup_switch : constructeur4003e020 execute, vrais fonts/Bitmap et assets stock (titre et cases MOut), changement audio->MIDI->17machines audio->MIDI, comparaison pixel par pixel au renderer stock sur les17destinations audio. Deux pistes MIDI gardent des canaux distincts ; DATA audio ne change aucun mot MIDI, edition remise en navigation, BACK ne laisse pas d'overlay. Captures setup-midi/audio.png sous build. Modifications reservees a flasher-macro-fine-main-test test2, aucun changement principal/909.

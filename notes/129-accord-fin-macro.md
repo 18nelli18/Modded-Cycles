@@ -28,3 +28,10 @@ AveyCole demande un nouveau test derive du principal1.94, accord fin inclus par 
 Le meme code fine.c/fine.S/fine_draw.S et le blob1116octets deja prouve sont reutilises. Le composeur attend maintenant MCMidiMachineAllReady et le diagnostic ; il s'installe apres le routeur MIDI. Aucun Select All synthetique ni changement des choix caches apres installation. Le hook clavier fine delegue au hook MIDI precedent ; le potard MIDI est deja consomme en amont. MACRO reste a l'index12 du catalogue18machines.
 
 Preuves : deux signatures navigateur USB/standard avec fine incluse automatiquement, vraie entree OS/Syntakt ; boot et setters/texte/popup/save natifs avant/apres pour les deux profils ; regression complete machine MIDI sur la composition finale. Test materiel de SETTINGS+PITCH et coexistence des controles reste attendu.
+
+
+## Retour materiel test1 de la copie principale
+
+SETTINGS+PITCH se comporte comme PITCH normal. La premiere preuve injectait settings-held et ne demontrait pas l'appui physique. Le nouveau mf_key capture down/release bruts avant delegation aux hooks MIDI et natifs. fine_held accepte cet etat directement ; aucun geste fin n'exige que le getter partage ait deja publie le flag. FUNC reste prioritaire et sa reduction Lo-Fi demeure intacte.
+
+[FAIT en emulation] Une nouvelle preuve passe par le vrai hook40077720, common-held et getter tous deux nuls, seul le gestionnaire de fenetres final instrumente. SETTINGS-down puis vrai setter PITCH donne+2unites ; SETTINGS-up donne+256unites. Aucun flag held precharge. Meme resultat sur les deux builds signes USB/standard ; save/load et128valeurs Lo-Fi toujours verifies. Le blob UI est recompile depuis les sources dans gen_macro_fine_main_test.py. Verification materielle du nouveau geste reste attendue, avec Track Setup dynamique dans test2.
