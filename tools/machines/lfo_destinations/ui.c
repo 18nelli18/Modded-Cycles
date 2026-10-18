@@ -1,6 +1,6 @@
 /* Note121 : noms/assignation UI uniquement ; aucun appel depuis le DSP LFO. */
 typedef unsigned int u32;
-volatile u32 ld_api[6];
+volatile u32 ld_api[7];
 static u32 ld_map_native(u32 descriptor){return ((u32(*)(u32))0x4005a4e8)(descriptor);}
 
 /* Fermeture differee native : ne detruit pas la vue pendant le dispatch. */
@@ -40,36 +40,35 @@ u32 ld_first(u32 context,u32 descriptor,u32 unused,u32 dest){
 u32 ld_second(u32 dest){
  u32 name=text(dest);return name?name:((u32(*)(u32))ld_api[0])(dest);
 }
+/* Une cible par evenement encodeur ; aucune substitution dans les lectures UI ordinaires. */
+volatile u32 ld_target_override;
+static u32 quick_target(u32 index){
+ u32 machines=((u32(*)(u32))0x4007faf4)(5);
+ if(!machines&&((u32(*)(u32))0x4007faf4)(1))return 0xffffffffu;
+ if(index==1)return machines&&(ld_api[1]&1)?23:18;
+ if(index==4)return machines&&(ld_api[1]&2)?24:13;
+ if(index==5)return machines&&(ld_api[1]&2)?25:14;
+ return 0xffffffffu;
+}
+extern u32 ld_primary_quick_native(u32 view,u32 index,u32 delta);
+extern u32 ld_secondary_quick_native(u32 index,u32 delta);
+u32 ld_primary_quick(u32 view,u32 index,u32 delta){
+ u32 saved=ld_target_override,target=quick_target(index);
+ ld_target_override=target==0xffffffffu?0:target+1;
+ u32 result=ld_primary_quick_native(view,index,delta);
+ ld_target_override=saved;return result;
+}
+u32 ld_secondary_quick(u32 index,u32 delta){
+ u32 saved=ld_target_override,target=quick_target(index);
+ ld_target_override=target==0xffffffffu?0:target+1;
+ u32 result=ld_secondary_quick_native(index,delta);
+ ld_target_override=saved;return result;
+}
 u32 ld_assign(u32 descriptor){
- u32 key=ld_map_native(descriptor);
- u32 sr;__asm__ volatile("move.w %%sr,%0":"=d"(sr));
- if(!(sr&0x700)&&descriptor<ld_api[3]&&((u32(*)(u32))0x4007faf4)(5)&&((u32(*)(u32))0x4007faf4)(8)){
-  if(key==18&&(ld_api[1]&1)){ld_finish();return 23;}
-  if(key==13&&(ld_api[1]&2)){ld_finish();return 24;}
-  if(key==14&&(ld_api[1]&2)){ld_finish();return 25;}
- }
- return key;
+ return ld_target_override?ld_target_override-1:ld_map_native(descriptor);
 }
 
 /* Note121 : libelles de RETROSYN seulement ; descripteurs audio conserves. */
 const char ld_rs_timbre[]="Timbre",ld_rs_osc[]="Oscillator",ld_rs_sweep[]="Pitch Sweep",ld_rs_arp[]="Chord Arp";
 const char ld_rs_timbre_short[]="TIMB",ld_rs_osc_short[]="OSC",ld_rs_sweep_short[]="PSWP",ld_rs_arp_short[]="ARP";
 
-/* Apres tout quick assign, le relachement LFO ferme sa page, meme avec FUNC. */
-extern u32 ld_lfo_key_native(u32 view,u32 event);
-u32 ld_lfo_key(u32 view,u32 event){
- if(*(volatile u32 *)(event+12)==8&&!(*(volatile u32 *)(event+16)&1)&&*(volatile unsigned char *)(view+604)){
-  *(volatile unsigned char *)(view+604)=0;
-  ((void(*)(u32))(*(volatile u32 *)(*(volatile u32 *)view+124)))(view);
-  return 1;
- }
- return ld_lfo_key_native(view,event);
-}
-u32 ld_second_key(u32 view,u32 event){
- if(*(volatile u32 *)(event+12)==8&&!(*(volatile u32 *)(event+16)&1)&&*(volatile u32 *)ld_api[5]){
-  *(volatile u32 *)ld_api[5]=0;
-  ((void(*)(u32))(*(volatile u32 *)(*(volatile u32 *)view+40)))(view);
-  return 1;
- }
- return ((u32(*)(u32,u32))ld_api[4])(view,event);
-}
