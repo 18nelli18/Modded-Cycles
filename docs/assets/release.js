@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.89",
+  "date": "2026-10-18",
+  "changes": [
+    {
+      "en": "Hardware-tested shared A/B pattern length can now be edited from MIDI B-side through FUNC + PAGE. Press DATA to select Length before turning edits it. PAGE advances through 16/32/48/64 regardless of edit selection.",
+      "fr": "Longueur commune A/B testee sur machine, editable depuis B par FUNC + PAGE. Appuyez sur DATA pour activer Len avant de tourner. PAGE passe par16/32/48/64 meme hors edition."
+    },
+    {
+      "en": "Per-track mode retains independent MIDI lengths. Page LED behavior and page carryover are preserved. Diagnostics remain excluded from the main flasher.",
+      "fr": "Mode par piste : longueurs MIDI independantes conservees. LEDs et reprise de page preservees. Aucun diagnostic dans le flasheur principal."
+    }
+  ]
+},
+{
   "version": "1.88",
   "date": "2026-10-17",
   "changes": [

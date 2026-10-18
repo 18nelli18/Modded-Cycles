@@ -59,3 +59,10 @@ Le wrapper conserve le suivi A vers B au poll et dans l horloge. Depuis la vue B
 [FAIT en emulation] Trois builds signes et vrais bootstraps, avec MIDI seul, ensemble complet Wizard/repeat/diagnostic, ensemble sans Wizard ni repeat. La preuve execute le vrai setter Len A et celui de la page A, observe les notifications virtuelles, puis execute les vrais handlers touche et encodeur B : ouverture FUNC+PAGE, PAGE16/32/48/64/16, longueur partielle17 vers32, DATA aux bornes2 et64. Seuls les deux octets de longueur A changent dans le snapshot, toutes les notes B restent intactes. Mode par piste : seul le header de la voie selectionnee change. Tests des1848 etats LED par profil, longueurs et ouverture heritee conserves. Helper1556 octets, diagnostics dans le test ; principal1.88 et909 inchanges.
 
 [A FAIRE] Validation sur machine du test3, notamment edition pendant lecture, retour vers A et sauvegarde/rechargement du pattern.
+
+
+## 9. Validation et promotion1.89, selection DATA (18/10/2026)
+
+AveyCole confirme le test3 puis demande sa promotion, avec une precision : FUNC+PAGE ne doit pas activer automatiquement l edition de Len ; clic DATA necessaire avant rotation, PAGE restant direct. La composition remplace uniquement le `moveq #1,d0` d initialisation de `mlp_edit` par `moveq #0,d0` dans le handler d ouverture Scale Setup. Garde sur la sequence exacte setup2/edit1/row3 et sur un seul site ; meme taille, aucun deplacement ni modification des handlers suivants. Le clic et la navigation gardent leurs handlers existants.
+
+Preuve sur compositions de production : ouverture sans edition, rotation initiale ne change pas Len, retour sur sa ligne, clic puis rotation modifient Len ; PAGE fonctionne avant et apres deselection. Les controles longueur commune, notes preservees, mode par piste,1848 etats LED par profil et boot sont conserves. Principal1.89 reprend le helper1556 octets approuve et le reglage DATA demande, sans diagnostic. Le test4 conserve les diagnostics et le meme reglage ; edition909 inchangee.
