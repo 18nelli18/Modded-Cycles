@@ -22,7 +22,7 @@ def main():
  held=set();bind(0x4007faf4,lambda a:int(a[0] in held))
  # Kit/sons : vraies classes OS et getter de donnees brut pour six pistes.
  kit=0x93090000;vt=0x93098000;getter=0x93099000
- bind(0x400cf866,lambda a:kit);u.mem_write(getter,bytes.fromhex('206f0004202800044e75'));r.w32(vt+40,getter);r.w32(vt+16,0x93099020);u.mem_write(0x93099020,bytes.fromhex("70004e75"))
+ bind(0x400cf866,lambda a:kit);u.mem_write(getter,bytes.fromhex('206f0004202800044e75'));r.w32(vt+40,getter);r.w32(kit+48,vt);r.w32(kit+52,0x9309f000);u.mem_write(0x9309f000,bytes(32));r.w32(vt+16,0x93099020);u.mem_write(0x93099020,bytes.fromhex("70004e75"))
  for track in range(6):
   handle=kit+212+68*track;raw=0x930a0000+track*128;owner=kit+116+8*(63+track)
   r.w32(owner,0x400fd134);r.w32(owner+4,handle);r.w32(handle,vt);r.w32(handle+4,raw);u.mem_write(raw,bytes(100));u.mem_write(raw+38,bytes([track]))
@@ -50,6 +50,21 @@ def main():
     assert r.string(r.call(0x4000b208,context,descriptor))==short
    u.mem_write(raw+38,bytes([track]))
   print('PASS real Retrosyn descriptor/name lookup on six tracks: Timbre/Oscillator/Pitch Sweep/Chord Arp',flush=True)
+
+ # Vraie liste native, pas seulement un libelle force : ATK absent avant le masque.
+ if flags&1:
+  record=r.r32(0x4005a4f4)+13*56
+  assert r.r32(record+36)==0x600, 'Attack eligibility not copied into active pool'
+  def choices(context):
+   output=0x930ef000;u.reg_write(mk.UC_M68K_REG_A0,output);r.call(0x4000bffc,context,0x600)
+   vector=r.r32(r.r32(output+4)+12)
+   return [r.call(0x4005a4e8,r.r32(i)) for i in range(r.r32(vector),r.r32(vector+4),4)]
+  for machine_index in (0,1,2,3,4,5,6):
+   u.mem_write(0x930a0000+38,bytes([machine_index]));context=kit+116+8*63
+   r.w32(record+36,0);assert 23 not in choices(context)
+   r.w32(record+36,0x600);assert 23 in choices(context)
+  u.mem_write(0x930a0000+38,b'\0')
+  print('PASS real native LFO picker: ATK excluded before eligibility correction, offered after on six stock machines and Wizard',flush=True)
 
  # Fermeture differee native : MACHINES exact, autres vues preservees.
  manager=0x930b0000;head=manager+20;node=0x930b0100;machine=0x930b1000;other=0x930b2000;node2=node+32
@@ -137,6 +152,16 @@ def main():
     r.call(0x4001eaa2,OBJ,index,1)
     assert [r.r32(outputs+4*i) for i in range(3)]==[target]*3
     assert r.r32(r.s['ld_target_override'])==0
+ if r.r32(r.s['ld_api']+32):
+  u.mem_write(0x930a0000+38,b'\x06')
+  for index,target in ((4,13),(5,14)):
+   for modified in (False,True):
+    held.clear();held.add(8)
+    if modified:held.add(5)
+    r.call(0x4001eaa2,OBJ,index,1)
+    assert [r.r32(outputs+4*i) for i in range(3)]==[target]*3
+  u.mem_write(0x930a0000+38,b'\0')
+  print('PASS primary Wizard quick-assign snapshot uses native 13/14 with either modifier state',flush=True)
  u.hook_del(flip)
  held.clear();held.update((1,8));r.call(0x4001eaa2,OBJ,5,1);assert [r.r32(outputs+4*i) for i in range(3)]==[18,13,14];assert r.r32(r.s['ld_target_override'])==0
  u.hook_del(redirect)
@@ -178,6 +203,24 @@ def main():
      assert u.mem_read(context+198,1)[0]==(alternate if modified and flags&mask else key)
      assert r.r32(r.s['ld_target_override'])==0
   print('PASS real LFO2 quick assign: 120 turns with stale/mixed descriptors, targets follow captured MACHINES state only',flush=True)
+
+ # Wizard : noms propres reactualises par sa vraie recherche de potards.
+ if r.r32(r.s['ld_api']+32):
+  context=kit+116+8*63
+  for turn in range(40):
+   keys={8,5} if turn%2 else {8};held.clear();held.update(keys)
+   u.mem_write(0x930a0000+38,b'\x06');r.w32(r.s['mod_held'],int(5 in held));r.call(0x4004df5c,7)
+   for dest,label in ((13,'FLT'),(14,'RES'),(24,'ERR'),(25,'ERR')):
+    descriptor=r.call(0x4005a692,dest,6)
+    assert r.string(r.call('ld_first',context,descriptor,0,dest))==label
+    if 'lf2p_track' in r.s:
+     r.w32(r.s['lf2p_track'],0);assert r.string(r.call('ld_second',dest))==label
+   if 'lf2p_quick_assign' in r.s:
+    for index,target in ((4,13),(5,14)):
+     assert r.call('lf2p_quick_assign',index,1)==1
+     assert u.mem_read(r.r32(r.s['lf2_context'])+198,1)[0]==target
+  u.mem_write(0x930a0000+38,b'\0');r.w32(r.s['mod_held'],0)
+  print('PASS Wizard native lookup and both displays: stable FLT/RES; 80 real secondary quick assigns never select absent 24/25',flush=True)
 
  print('LIMIT: physical UI/audio acceptance remains hardware testing; no DSP modification',flush=True)
 if __name__=='__main__':main()

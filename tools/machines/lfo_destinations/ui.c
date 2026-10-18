@@ -1,7 +1,23 @@
 /* Note121 : noms/assignation UI uniquement ; aucun appel depuis le DSP LFO. */
 typedef unsigned int u32;
-volatile u32 ld_api[7];
+volatile u32 ld_api[9];
 static u32 ld_map_native(u32 descriptor){return ((u32(*)(u32))0x4005a4e8)(descriptor);}
+static u32 context_for(u32 secondary){
+ u32 kit=((u32(*)(void))0x400cf866)();
+ if(!kit)return 0;
+ u32 track=secondary&&ld_api[7]?*(volatile u32 *)ld_api[7]:((u32(*)(u32))0x40012412)(kit+48);
+ if(track>5)return 0;
+ return ((u32(*)(u32,u32))0x400097f0)(kit+116,track);
+}
+static u32 wizard(u32 context){
+ if(!ld_api[8]||!context)return 0;
+ u32 handle=*(volatile u32 *)(context+4);
+ if(!handle)return 0;
+ u32 vt=*(volatile u32 *)handle;
+ if(!vt)return 0;
+ u32 raw=((u32(*)(u32))*(volatile u32 *)(vt+40))(handle);
+ return raw&&*(volatile unsigned char *)(raw+38)==6;
+}
 
 /* Fermeture differee native : ne detruit pas la vue pendant le dispatch. */
 void ld_finish(void){
@@ -35,17 +51,29 @@ static u32 text(u32 dest){
  return 0;
 }
 u32 ld_first(u32 context,u32 descriptor,u32 unused,u32 dest){
+ if(wizard(context)){
+  if(dest==13)return (u32)"FLT";
+  if(dest==14)return (u32)"RES";
+  if(dest==24||dest==25)return (u32)"ERR";
+ }
  u32 name=text(dest);return name?name:((u32(*)(u32,u32))0x4000b208)(context,descriptor);
 }
 u32 ld_second(u32 dest){
+ if(wizard(context_for(1))){
+  if(dest==13)return (u32)"FLT";
+  if(dest==14)return (u32)"RES";
+  if(dest==24||dest==25)return (u32)"ERR";
+ }
  u32 name=text(dest);return name?name:((u32(*)(u32))ld_api[0])(dest);
 }
 /* Une cible par evenement encodeur ; aucune substitution dans les lectures UI ordinaires. */
 volatile u32 ld_target_override;
-static u32 quick_target(u32 index){
+static u32 quick_target(u32 index,u32 secondary){
  u32 machines=((u32(*)(u32))0x4007faf4)(5);
  if(!machines&&((u32(*)(u32))0x4007faf4)(1))return 0xffffffffu;
  if(index==1)return machines&&(ld_api[1]&1)?23:18;
+ /* Wizard possede deja son filtre sur les cles natives13/14. */
+ if((index==4||index==5)&&wizard(context_for(secondary)))return index==4?13:14;
  if(index==4)return machines&&(ld_api[1]&2)?24:13;
  if(index==5)return machines&&(ld_api[1]&2)?25:14;
  return 0xffffffffu;
@@ -53,13 +81,13 @@ static u32 quick_target(u32 index){
 extern u32 ld_primary_quick_native(u32 view,u32 index,u32 delta);
 extern u32 ld_secondary_quick_native(u32 index,u32 delta);
 u32 ld_primary_quick(u32 view,u32 index,u32 delta){
- u32 saved=ld_target_override,target=quick_target(index);
+ u32 saved=ld_target_override,target=quick_target(index,0);
  ld_target_override=target==0xffffffffu?0:target+1;
  u32 result=ld_primary_quick_native(view,index,delta);
  ld_target_override=saved;return result;
 }
 u32 ld_secondary_quick(u32 index,u32 delta){
- u32 saved=ld_target_override,target=quick_target(index);
+ u32 saved=ld_target_override,target=quick_target(index,1);
  ld_target_override=target==0xffffffffu?0:target+1;
  u32 result=ld_secondary_quick_native(index,delta);
  ld_target_override=saved;return result;
