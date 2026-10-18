@@ -86,44 +86,17 @@ def main():
    if 8 not in keys:assert r.r32(STACK-4)==EVENT and u.reg_read(mk.UC_M68K_REG_A3)==0x400724a0
  assert r.new_count==allocations
  print('PASS actual Machines opener: LFO held consumes press/release/hold before allocation; unmodified path and registers exact',flush=True)
- # Relachement apres assignation : fermeture native des deux pages, y compris FUNC.
- lfo=0x930d0000;lfo_vt=0x40101644;r.w32(lfo,lfo_vt);r.w32(lfo+56,0x401016dc);r.w32(lfo+100,manager);lfo2=0x930d3000;r.w32(lfo2,0x40117920);r.w32(lfo2+44,manager)
+ # Le test6 annule release-to-exit : les gardes natifs conservent les deux menus.
+ lfo=0x930d0000;r.w32(lfo,0x40101644);r.w32(lfo+56,0x401016dc);r.w32(lfo+100,manager)
+ lfo2=0x930d3000;r.w32(lfo2,0x40117920);r.w32(lfo2+44,manager)
  for event_flags in (0,2):
-  for entry,argument in ((0x40024e0c,lfo),(0x40024e86,lfo+56)):
-   u.mem_write(lfo+104,b'\0');u.mem_write(lfo+604,b'\1');r.w32(EVENT+12,8);r.w32(EVENT+16,event_flags)
-   assert r.call(entry,argument,EVENT)==1
-   assert u.mem_read(lfo+104,1)==b'\1' and u.mem_read(lfo+604,1)==b'\0'
- # Un appui, un maintien ou une autre touche ne ferme pas la page.
- for key,event_flags in ((8,1),(8,3),(8,9),(8,33),(5,0)):
-  u.mem_write(lfo+104,b'\0');u.mem_write(lfo+604,b'\1');r.w32(EVENT+12,key);r.w32(EVENT+16,event_flags);r.call(0x40024e0c,lfo,EVENT);assert u.mem_read(lfo+104,1)==b'\0'
- if 'lf2_key' in r.s:
-  old_callback=r.r32(r.s['lf2_open_callback']);callback=0x930d2000;launches=[];bind(callback,lambda a:launches.append(a[0]) or 1);r.w32(r.s['lf2_open_callback'],callback)
-  u.mem_write(lfo+104,b'\0');u.mem_write(lfo+604,b'\0');r.w32(EVENT+12,8);r.w32(EVENT+16,0);assert r.call('lf2_key',lfo,EVENT)==1;assert launches==[lfo] and u.mem_read(lfo+104,1)==b'\0'
-  for event_flags in (0,2):
-   u.mem_write(lfo+104,b'\0');u.mem_write(lfo+604,b'\1');r.w32(EVENT+16,event_flags);assert r.call('lf2_key',lfo,EVENT)==1;assert len(launches)==1 and u.mem_read(lfo+104,1)==b'\1'
-  r.w32(r.s['lf2_open_callback'],old_callback)
-  assigned=r.s['lf2p_assigned']
-  for event_flags in (0,2):
-   r.w32(assigned,1);u.mem_write(lfo2+48,b'\0');r.w32(EVENT+16,event_flags);assert r.call('ld_second_key',lfo2,EVENT)==1;assert r.r32(assigned)==0 and u.mem_read(lfo2+48,1)==b'\1'
-  r.w32(assigned,1);u.mem_write(lfo2+48,b'\0');r.w32(EVENT+16,1);assert r.call('ld_second_key',lfo2,EVENT)==1;assert r.r32(assigned)==1 and u.mem_read(lfo2+48,1)==b'\0';r.w32(assigned,0)
- # Reproduction native : un evenement encodeur tardif effacait le marqueur du test4.
- old_site=bytes(u.mem_read(0x40024df8,6))
- for reference in (True,False):
-  if reference:u.mem_write(0x40024df8,bytes.fromhex('1540025c4200'))
-  else:u.mem_write(0x40024df8,old_site)
-  u.ctl_remove_cache(0x40024db6,0x40024e04)
-  held.clear();held.add(8);u.mem_write(lfo+604,b'\0');r.w32(EVENT+12,3);r.call(0x40024db6,lfo,EVENT);assert u.mem_read(lfo+604,1)==b'\1'
-  held.clear();r.call(0x40024db6,lfo,EVENT)
-  assert u.mem_read(lfo+604,1)==(b'\0' if reference else b'\1')
-  if not reference:
-   u.mem_write(lfo+104,b'\0');r.w32(EVENT+12,8);r.w32(EVENT+16,0)
-   assert r.call('lf2_key' if 'lf2_key' in r.s else 0x40024e0c,lfo,EVENT)==1
-   assert u.mem_read(lfo+104,1)==b'\1' and u.mem_read(lfo+604,1)==b'\0'
- # Un encodeur seul ne doit pas armer une fermeture.
- held.clear();u.mem_write(lfo+604,b'\0');r.w32(EVENT+12,3);r.call(0x40024db6,lfo,EVENT);assert u.mem_read(lfo+604,1)==b'\0'
- print('PASS real LFO1 vtable/embedded view: late encoder erases test4 marker, test5 retains it and closes on release only after gesture',flush=True)
- print('PASS LFO1/LFO2 quick assign release closes with/without FUNC; press/hold do not close; normal LFO2 entry preserved',flush=True)
-
+  u.mem_write(lfo+604,b'\1');u.mem_write(lfo+104,b'\0');r.w32(EVENT+12,8);r.w32(EVENT+16,event_flags)
+  r.call('lf2_key' if 'lf2_key' in r.s else 0x40024e0c,lfo,EVENT)
+  assert u.mem_read(lfo+104,1)==b'\0'
+  if 'lf2p_assigned' in r.s:
+   r.w32(r.s['lf2p_assigned'],1);u.mem_write(lfo2+48,b'\0');r.call('lf2p_menu_key',lfo2,EVENT);assert u.mem_read(lfo2+48,1)==b'\0'
+ if 'lf2p_assigned' in r.s:r.w32(r.s['lf2p_assigned'],0)
+ print('PASS both LFO pages retain original stay-open behavior after quick assign',flush=True)
 
  # Descripteurs des trois potards, obtenus par le vrai mapper non modifie.
  descriptors={}
@@ -133,7 +106,7 @@ def main():
  for keys in (set(),{5},{8},{5,8}):
   held.clear();held.update(keys)
   for key,target in ((18,23),(13,24),(14,25)):
-   assert r.call('ld_assign',descriptors[key])==(target if keys=={5,8} and (flags&(1 if key==18 else 2)) else key)
+   assert r.call('ld_assign',descriptors[key])==key
  # IRQ n'appelle pas les gestes UI, meme s'il passe accidentellement par le helper.
  held.update((5,8));u.reg_write(mk.UC_M68K_REG_SR,0x2500);assert r.call('ld_assign',descriptors[18])==18;u.reg_write(mk.UC_M68K_REG_SR,0x2000)
  print('PASS quick-assign mappings require both physical modifiers; native mapper unaffected and IRQ guarded',flush=True)
@@ -146,6 +119,38 @@ def main():
    assert u.mem_read(machine+48,1)==bytes([int(bool(5 in keys and ((knob==3 and flags&1) or (4<=knob<=7 and flags&2))))])
    assert snap[-1]==(OBJ,knob,0,0xffffffff)
  print('PASS knob slot preserves all four arguments/result; plain Machines and unmodified knobs do not close',flush=True)
+ # Vraie entree primaire, shim CPU du corps natif : plusieurs descripteurs contradictoires
+ # doivent donner la meme cible capturee, meme si la touche change entre ses lectures.
+ shim=0x930d5000;outputs=0x930d6000
+ native=r.s['ld_primary_quick_native'];redirect=u.hook_add(UC_HOOK_CODE,lambda u,pc,size,data:u.reg_write(mk.UC_M68K_REG_PC,shim),begin=native,end=native)
+ code=bytearray()
+ for i,key in enumerate((18,13,14)):
+  code+=bytes.fromhex('4878')+struct.pack('>H',descriptors[key])+bytes.fromhex('4eb9')+struct.pack('>I',r.s['ld_assign'])+bytes.fromhex('588f23c0')+struct.pack('>I',outputs+4*i)
+ code+=bytes.fromhex('4e75');u.mem_write(shim,bytes(code))
+ flip=u.hook_add(UC_HOOK_CODE,lambda *args:held.symmetric_difference_update({5}),begin=shim,end=shim+len(code))
+ for index,plain,alternate,mask in ((1,18,23,1),(4,13,24,2),(5,14,25,2)):
+  for modified in (False,True):
+   for turn in range(20):
+    held.clear();held.add(8)
+    if modified:held.add(5)
+    target=alternate if modified and flags&mask else plain
+    r.call(0x4001eaa2,OBJ,index,1)
+    assert [r.r32(outputs+4*i) for i in range(3)]==[target]*3
+    assert r.r32(r.s['ld_target_override'])==0
+ u.hook_del(flip)
+ held.clear();held.update((1,8));r.call(0x4001eaa2,OBJ,5,1);assert [r.r32(outputs+4*i) for i in range(3)]==[18,13,14];assert r.r32(r.s['ld_target_override'])==0
+ u.hook_del(redirect)
+ print('PASS primary physical knob snapshot: 120 turns, changing modifier during internal reads, no target flips or leaked aliases',flush=True)
+ u.reg_write(mk.UC_M68K_REG_A7,STACK);u.reg_write(mk.UC_M68K_REG_D0,0x1234);u.emu_start(r.s['ld_primary_quick_native'],0x4001eaa8,count=100)
+ assert u.reg_read(mk.UC_M68K_REG_PC)==0x4001eaa8 and u.reg_read(mk.UC_M68K_REG_A7)==STACK-60 and u.reg_read(mk.UC_M68K_REG_D0)==11
+ if 'lf2p_quick_assign' in r.s:
+  u.reg_write(mk.UC_M68K_REG_A7,STACK)
+  for reg,value in ((mk.UC_M68K_REG_D2,31),(mk.UC_M68K_REG_D3,32),(mk.UC_M68K_REG_D4,33)):u.reg_write(reg,value)
+  u.emu_start(r.s['ld_secondary_quick_native'],r.s['lf2p_quick_assign']+8,count=100)
+  assert u.reg_read(mk.UC_M68K_REG_A7)==STACK-12 and bytes(u.mem_read(STACK-12,12))==struct.pack('>III',31,32,33)
+ print('PASS primary/secondary native trampoline stack/register contracts',flush=True)
+
+
  if 'lf2p_enc' in r.s:
   context=0x930c0000;frame=0x930c1000;u.mem_write(frame,bytes(476));assert r.call('lf2_init',context,frame)==1;r.w32(r.s['lf2_context'],context);r.w32(r.s['lf2p_track'],0);r.w32(r.s['lf2p_obj'],OBJ)
   # Vrai scan du menu Dest : PAN -> ATTACK -> CUTOFF -> RESO, dans les deux sens.
@@ -160,7 +165,19 @@ def main():
    r.w32(mapping+8+4*index,descriptors[key]);held.update((5,8));r.call('lf2_edit',context,0,3,127);r.call('lf2_edit',context,0,7,16384)
    prior=bytes(u.mem_read(0x40fde838,192));assert r.call('lf2p_quick_assign',index,1)==1;assert u.mem_read(context+198,1)[0]==target;assert u.mem_read(context+206,2)==b'\x40\x00'
    assert r.call('lf2p_quick_assign',index,1)==1;assert u.mem_read(context+206,2)==b'\x41\x00';assert bytes(u.mem_read(0x40fde838,192))==prior
-   settings=bytes(u.mem_read(context,1240));u.mem_write(lfo2+48,b'\0');r.w32(EVENT+12,8);r.w32(EVENT+16,0);assert r.call('ld_second_key',lfo2,EVENT)==1;assert u.mem_read(lfo2+48,1)==b'\1' and r.r32(r.s['lf2p_assigned'])==0;assert bytes(u.mem_read(context,1240))==settings
+   settings=bytes(u.mem_read(context,1240));u.mem_write(lfo2+48,b'\0');r.w32(EVENT+12,8);r.w32(EVENT+16,0);assert r.call('lf2p_menu_key',lfo2,EVENT)==1;assert u.mem_read(lfo2+48,1)==b'\0' and r.r32(r.s['lf2p_assigned'])==0;assert bytes(u.mem_read(context,1240))==settings
   print('PASS actual LFO2 quick assign then depth adjustment; LFO1 phase bank unchanged',flush=True)
+  for index,key,alternate,mask in ((1,18,23,1),(4,13,24,2),(5,14,25,2)):
+   for modified in (False,True):
+    for turn in range(20):
+     held.clear();held.add(8)
+     if modified:held.add(5)
+     # La table alterne arbitrairement entre trois potards ; elle ne doit pas gagner.
+     r.w32(mapping+8+4*index,descriptors[(18,13,14)[turn%3]])
+     assert r.call('lf2p_quick_assign',index,1)==1
+     assert u.mem_read(context+198,1)[0]==(alternate if modified and flags&mask else key)
+     assert r.r32(r.s['ld_target_override'])==0
+  print('PASS real LFO2 quick assign: 120 turns with stale/mixed descriptors, targets follow captured MACHINES state only',flush=True)
+
  print('LIMIT: physical UI/audio acceptance remains hardware testing; no DSP modification',flush=True)
 if __name__=='__main__':main()

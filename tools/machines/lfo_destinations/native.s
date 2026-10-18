@@ -26,20 +26,14 @@ ld_machines_entry:
     lea %sp@(16),%sp
     jmp 0x4001c2a8
 
-| Prologue LFOMenuView natif : argument this deja corrige pour le sous-objet.
-    .globl ld_lfo_key_native
-ld_lfo_key_native:
-    subql #4,%sp
-    movel %a2,%sp@-
-    movel %d2,%sp@-
-    jmp 0x40024e12
-
-| L'evenement encodeur tardif sans LFO ne doit pas effacer le geste deja arme.
-    .globl ld_lfo_sticky
-ld_lfo_sticky:
-    tstb %d0
-    beq .Lld_keep_quick
-    moveb %d0,%a2@(604)
-.Lld_keep_quick:
-    clrb %d0
-    rts
+| Prologue du vrai quick assign primaire, trois arguments natifs.
+    .globl ld_primary_quick_native,ld_secondary_quick_native
+ld_primary_quick_native:
+    lea %sp@(-60),%sp
+    moveq #11,%d0
+    jmp 0x4001eaa8
+ld_secondary_quick_native:
+    lea %sp@(-12),%sp
+    moveml %d2-%d4,%sp@
+    moveal ld_api+24,%a0
+    jmp %a0@
