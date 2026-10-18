@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.92",
+  "date": "2026-10-18",
+  "changes": [
+    {
+      "en": "Hardware-confirmed repair for firmware preparation with Sample Wizard, ChordKeys, ACID, WAVE and Syntakt engines. Corrects a stale ChordKeys loader address after Swarm LITE recompression.",
+      "fr": "Correction confirmee sur machine de la preparation avec Sample Wizard, ChordKeys, ACID, WAVE et moteurs Syntakt. Corrige une adresse de chargement ChordKeys perimee apres recompression Swarm LITE."
+    },
+    {
+      "en": "Select All signed firmware remains byte-for-byte identical. Synthesis payload contents are unchanged; diagnostics remain test-only.",
+      "fr": "Le fichier signe Select All reste identique octet pour octet. Contenu des voix conserve ; diagnostics reserves aux tests."
+    }
+  ]
+},
+{
   "version": "1.91",
   "date": "2026-10-18",
   "changes": [

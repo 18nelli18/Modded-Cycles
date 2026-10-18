@@ -1,9 +1,10 @@
 // Note123 : regression exacte, sources gardees et selections valides identiques.
-process.env.RETROSYN_PAGE='docs/flasher-swarm-chord-layout-test';
+process.env.RETROSYN_PAGE=process.env.RETROSYN_PAGE||'docs/flasher-swarm-chord-layout-test';
+const release=process.env.RETROSYN_PAGE==='docs/flasher';
 const fs=require('fs'),assert=require('node:assert/strict'),{open,change}=require('./test_retrosyn_flasher');
-const os=Uint8Array.from(fs.readFileSync('firmware/model-cycles_OS1.13.syx')),st=Uint8Array.from(fs.readFileSync('firmware/Syntakt_OS1.42.syx')),out='build/swarm-chord-layout';fs.mkdirSync(out,{recursive:true});
+const os=Uint8Array.from(fs.readFileSync('firmware/model-cycles_OS1.13.syx')),st=Uint8Array.from(fs.readFileSync('firmware/Syntakt_OS1.42.syx')),out=release?'build/swarm-chord-release':'build/swarm-chord-layout';fs.mkdirSync(out,{recursive:true});
 const cases=['reported','expanded','no-swarm','no-chord','select-all','all-no-midi','diagnostic','with-midi','reported-no-invert'];
-(async()=>{for(const name of cases.filter(x=>!process.env.LAYOUT_CASE||x===process.env.LAYOUT_CASE)){const{w,errors}=open();try{
+(async()=>{for(const name of cases.filter(x=>(!release||x!=='diagnostic')&&(!process.env.LAYOUT_CASE||x===process.env.LAYOUT_CASE))){const{w,errors}=open();try{
  await Promise.all([w.MCInvertTrackReady,w.MCBeatDiagnosticReady]);const a=w.MCFlasherApp,b=w.MCBuilder;w.document.getElementById('super-clear').click();
  if(name==='select-all'||name==='all-no-midi'){w.document.getElementById('select-all').click();if(name==='all-no-midi')change(w,'midi-out-bank',false);}
  else{
@@ -13,7 +14,7 @@ const cases=['reported','expanded','no-swarm','no-chord','select-all','all-no-mi
   if(name==='no-chord')change(w,'chord-keys',false);if(name==='reported-no-invert')change(w,'invert-track',false);
   if(name==='with-midi')change(w,'midi-out-bank',true);
  }
- change(w,'audio-load-diagnostic',name==='diagnostic');
+ if(release){assert(!w.document.getElementById('feat-audio-load-diagnostic'));assert(!w.document.querySelector('script[src*="diagnostic"]'));}else change(w,'audio-load-diagnostic',name==='diagnostic');
  const fix=w.MCSwarmChordLayout;w.MCSwarmChordLayout=changed=>changed;
  let before;try{before=w.MCMidiBankCompose(a.chosenTweaks(),os,st);}catch(e){w.MCSwarmChordLayout=fix;if(name!=='with-midi')throw e;assert.equal(e.message,'MIDI Bank: unknown machine startup');assert.throws(()=>w.MCMidiBankCompose(a.chosenTweaks(),os,st),err=>err.message===e.message);console.log('PASS separate pre-existing MIDI startup error unchanged by targeted repair');continue;}
  w.MCSwarmChordLayout=fix;const after=w.MCMidiBankCompose(a.chosenTweaks(),os,st);
