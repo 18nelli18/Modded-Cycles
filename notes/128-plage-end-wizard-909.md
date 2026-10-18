@@ -25,4 +25,3 @@ Le test inclut CPU/CUT et n'est pas marque confirme sur appareil. Les flasheurs 
 ## Teste sur la machine (18/10/2026)
 
 AveyCole confirme : « sample end fix worked ». Promotion autorisee vers909 principal. Le generateur gen_909_wizard_end_release.py reprend exactement les references confirmees, retire la dependance diagnostic et publie909.8. Tests natifs release : End, crossover et preecoute ; preparation navigateur et signature. Aucun fichier du flasheur principal ordinaire ne change.
-
