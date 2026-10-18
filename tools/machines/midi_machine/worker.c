@@ -115,7 +115,9 @@ u32 mm_sequence(u32 lane,const u32 *event,u32 time,u32 notes){
   u32 packed=mm_cc_read(params,knob);int cc=mm_cc_number(packed);
   if(cc>=0)mm_cc_put(lane,knob,channel,(u32)cc,mm_cc_value(packed),port);
  }
- if(notes&&mm_sequence_api[1]&&((const u8 *)event)[20]){
+ /* La machine MIDI est toujours une sortie : le bit MOut audio du pattern
+  * peut rester nul. Il ne doit pas supprimer les trigs de cette machine. */
+ if(notes&&mm_sequence_api[1]){
   u8 *message=(u8 *)((u32 (*)(void))0x4008a5d0)();
   if(message){
    message[0]=1;*(u32 *)(message+4)=time;message[8]=lane;

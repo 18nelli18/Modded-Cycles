@@ -112,3 +112,16 @@ AveyCole : SETTINGS+PITCH change encore Pitch ; autres boutons CC3/CC4 sans assi
 [FAIT en emulation] Six pistes x12potards : SETTINGS assigne sans transmettre, mouvement normal transmet la valeur seulement, aucun Pitch ni handler audio. Les deux pointeurs SETTINGS-held/mod-used du support commun sont effectivement raccordes par le composeur ; le getter natif seul ne suffit pas quand les listeners absorbent SETTINGS. Le flag commun est prioritaire sur le fallback autonome, afin de ne pas garder une ancienne touche tenue. Potards non assignes consommes sans action.
 
 Le dessin principal est delegue a l'OS quand aucun menu MIDI explicite n'est ouvert. PAGE ferme ces menus et passe au stock ; DATA est delegue hors menu MIDI, ce qui rend FUNC+PAGE et l'edition native de longueur accessibles. Les popups CC sont transitoires. Les menus LFO/canal/port restent explicites. Test2 uniquement ; aucune modification des flashers principal/909 et aucune validation materielle revendiquee.
+
+
+## 12. Test3 : appui SETTINGS brut, Track Setup et notes sequencees (18/10/2026)
+
+Retour AveyCole test2 : potards ordinaires inactifs, SETTINGS+potard inactif, notes live seules transmises. Il demande le geste Track Setup de B, ses options KbT/Pad Note et le canal en plus.
+
+[FAIT] Le detour key precede le getter qui met set_held a jour ; consommer SETTINGS avant ce getter laissait le flag commun nul. La preuve test2 prechargeait ce flag et ratait le defaut. Le nouveau code publie le veritable appui/release brut dans ce flag, passe le down au natif et consomme la release apres assignation. Test_midi_machine_ui execute maintenant les hooks key et entree applicative encoder avec flag initial nul, sur six pistes, sans precharger held. Aucun menu MIDI ne s'ouvre sur le simple relachement SETTINGS.
+
+FUNC+TRACK ouvre Track Setup MIDI, DATA navigue et un clic active edition : Channel/Output/KbT/Pad Note. Les deux derniers utilisent les vrais getters/setters A : KbT40016da6/40016dd6, Pad40015a34/40015a64 ; notification et stockage pattern restent natifs. Le getter Pad rend seulement un octet ABI, explicitement declare u8. Rien n'est stocke dans une nouvelle zone. Les potards gris restent CC dans ce setup ; les pages LFO explicites gardent leurs huit controles. FUNC+PAGE passe au Scale Setup natif. QuickMute40100c3c est ferme par40076126 avant le setup ; les flags latch, si installes, sont effaces afin d'eviter un FUNC verrouille. Preuve menu six pistes : quatre champs, bornes, note C5, clic DATA, fermeture native QuickMute, BACK et delegation Scale Setup.
+
+[FAIT] L'emission MIDI propre etait conditionnee par event+20, le bit MOut audio. Une machine MIDI doit emettre meme si ce bit de la piste audio precedente reste nul. La condition est supprimee seulement pour la machine MIDI, sur le chemin note accepte ; lock-only reste sans note. La preuve complete cree ces evenements avec MOut=0 et ne s'arrete plus au comptage des messages : chaque vrai message produit est donne a la vraie tache MIDI, puis les envois DIN et USB sont controles sur six canaux. Les pilotes physiques seuls sont instrumentes. Les autres machines gardent leur ancien chemin.
+
+Test3 seulement, principal/909 inchanges ; verification materielle encore attendue.

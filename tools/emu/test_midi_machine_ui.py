@@ -58,5 +58,16 @@ def main():
  r.assign=True;r.call(0x400775f8,0,r.event(0,1));r.u.mem_write(EVENT,struct.pack('>6I',0,0,0,13,0,0))
  assert r.call(0x40077720,0,EVENT)==1
  print('PASS entree applicative native40006158 -> dispatch400775f8 : six pistes x12potards, aucun handler/parametre synthese, ecran MIDI, release SETTINGS consommee')
+ # Appui/release bruts : le flag partage commence a zero, aucun preset du test.
+ held=0x920d1000;used=held+4;delegate=0x92060410
+ r.word(r.s['mm_ui_api'],held);r.word(r.s['mm_ui_api']+4,used);r.word(r.s['mm_ui_api']+16,delegate);r.stub(delegate,lambda a:0);r.assign=False
+ for lane in range(6):
+  r.track=lane;r.u.mem_write(SOUND+0x1000*lane+20,struct.pack('>33H',*original));r.output.clear()
+  r.u.mem_write(EVENT,struct.pack('>6I',0,0,0,13,1,0));assert r.call(0x40077720,0,EVENT)==0 and r.word(held)==1
+  assert r.call(0x40006158,0,r.event(0,75))==1 and r.word(used)==1 and not r.output
+  assert r.popups[-1]=='CC01 ASSIGN 074'
+  r.u.mem_write(EVENT,struct.pack('>6I',0,0,0,13,0,0));assert r.call(0x40077720,0,EVENT)==1 and r.word(held)==0
+  r.call(0x40006158,0,r.event(0,1));assert ('DIN',bytes((0xb0,74,65))) in r.output
+ print('PASS regression materielle SETTINGS : vrai hook key, appui brut -> flag commun -> assignation -> release -> valeur ; aucun held simule')
  print('LIMITES : locks, sauvegarde, composition complete et verification physique encore requis')
 if __name__=='__main__':main()

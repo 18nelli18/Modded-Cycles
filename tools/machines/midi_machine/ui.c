@@ -23,7 +23,7 @@ extern u32 mm_channel(const u16 *,u32);
 extern u32 mm_port(const u16 *);
 /* API[0/1] : adresses SETTINGS-held/mod-used du support commun si installe. */
 volatile u32 mm_ui_api[5];
-static u32 mm_settings_used,mm_settings_held;
+static u32 mm_settings_used,mm_settings_held,mm_func_held,mm_track_taken;
 static u32 mm_page,mm_row,mm_edit,mm_page_lane=6;
 static void redraw(void){
  u32 app=*(volatile u32 *)0x40fe4178;
@@ -96,6 +96,21 @@ static u32 home_visible(void){
  }
  return 1;
 }
+/* FUNC a pu presenter QuickMute avant TRACK. Fermer cette seule vue pour
+ * que le setup MIDI soit devant, sans armer le verrouillage mute. */
+static void close_mute(void){
+ u32 app=*(volatile u32 *)0x40fe4178;if(!app)return;
+ u32 head=app+84,node=*(u32 *)(head+4);
+ for(u32 i=0;node&&node!=head&&i<32;i++){
+  u32 view=*(u32 *)(node+8);
+  if(view&&*(u32 *)view==0x40100c3c&&!*(u8 *)(view+48)){
+   ((void (*)(u32))0x40076126)(view);
+   if(*(volatile u32 *)0x40100c44!=0x400234b6)*(volatile u16 *)0x401487ec=0;
+   return;
+  }
+  node=*(u32 *)(node+4);
+ }
+}
 static void prepare_setup(u32 lane){
  u32 object=sound_object(lane);const u16 *before=params_for(object);if(!before)return;
  u16 copy[33];for(u32 i=0;i<33;i++)copy[i]=before[i];mm_setup(copy);publish(object,before,copy);
@@ -104,6 +119,18 @@ static u32 track_object(u32 lane) {
  u32 root=((u32 (*)(void))0x400cf866)();
  u32 pattern=((u32 (*)(u32))0x4000f208)(root);
  return pattern?((u32 (*)(u32,u32))0x4000cfcc)(pattern,lane):0;
+}
+i32 mm_track_read(u32 lane,u32 pad){
+ u32 object=track_object(lane);if(!object)return pad?60:0;
+ if(pad)return ((u8 (*)(u32))0x40015a34)(object);
+ return ((i32 (*)(u32))0x40016da6)(object);
+}
+void mm_track_edit(u32 lane,u32 pad,i32 delta){
+ u32 object=track_object(lane);if(!object)return;
+ i32 value=mm_track_read(lane,pad)+delta,lo=pad?0:-60,hi=pad?127:60;
+ if(value<lo)value=lo;
+ if(value>hi)value=hi;
+ ((void (*)(u32,i32))(pad?0x40015a64:0x40016dd6))(object,value);redraw();
 }
 static void write_lock(u32 object,u32 step,u32 slot,u32 value) {
  if(step>=64||step>=((u32 (*)(u32))0x40016402)(object))return;
@@ -152,14 +179,17 @@ u32 mm_encoder(const u32 *event) {
  u16 changed[33];for(u32 i=0;i<33;i++)changed[i]=before[i];
  i32 delta=((i32 (*)(const u32 *,u32,u32))0x4006f73a)(event,1,1);
  u32 assign=mm_ui_api[0]?*(volatile u32 *)mm_ui_api[0]:mm_settings_held||((u32 (*)(u32))0x4007faf4)(13);
- if(mm_page&&!(assign&&event[3]!=1)){
-  u32 count=mm_page==3?2:8,field=event[3]==1?mm_row:event[3]-2;
+ if(mm_page&&(event[3]==1||(mm_page<3&&!assign))){
+  u32 count=mm_page==3?4:8,field=event[3]==1?mm_row:event[3]-2;
   if(event[3]==1&&!mm_edit){
    i32 row=(i32)mm_row+delta;if(row<0)row=0;if(row>=(i32)count)row=count-1;mm_row=(u32)row;redraw();return 1;
   }
   if(field>=count)return 1;
   mm_row=field;
-  if(mm_page==3)mm_route_edit(changed,field,delta);
+  if(mm_page==3){
+   if(field<2)mm_route_edit(changed,field,delta);
+   else{mm_track_edit(lane,field-2,delta);return 1;}
+  }
   else{
    if(field!=1&&field!=3&&field!=4&&field!=6)delta*=128;
    mm_lfo_edit(changed,mm_page-1,field,delta);
@@ -196,26 +226,36 @@ u32 mm_ui_key(const u32 *event) {
  if(!event)return 0;
  u32 lane=selected(),code=event[3],flags=event[4];
  if(code==13)mm_settings_held=(flags&1)!=0;
+ if(code==1)mm_func_held=(flags&1)!=0;
  if(!midi(lane))return 0;
+ /* Ce detour precede le getter commun : publier aussi l'appui brut, avant
+  * toute consommation. Le premier test ne simulait que son resultat. */
+ if(code==13&&!(flags&32)&&mm_ui_api[0])*(volatile u32 *)mm_ui_api[0]=mm_settings_held;
  if(mm_page_lane!=lane)page(0,lane);
+ if(code==2&&(mm_track_taken||mm_func_held||(flags&2)||((u32 (*)(u32))0x4007faf4)(1))){
+  if((flags&9)==1){close_mute();prepare_setup(lane);page(3,lane);mm_track_taken=1;}
+  if(!(flags&1))mm_track_taken=0;
+  return 1;
+ }
  if(code==8&&home_visible()){
   if((flags&9)==1){prepare_setup(lane);page(mm_page==1?2:mm_page==2?0:1,lane);}
   return 1;
  }
  if(code==12&&mm_page){if((flags&9)==1)page(0,lane);return 1;}
- if(code==32&&mm_page){if(flags&16){mm_edit=!mm_edit;redraw();}return 1;}
- if(code==5||code==15){page(0,lane);return 0;}
+ if(code==32){
+  if(flags&16){
+   if(mm_page){mm_edit=!mm_edit;redraw();}
+  }
+  return mm_page?1:0;
+ }
+ /* FUNC+PAGE conserve le vrai Scale Setup du pattern A. */
+ if(code==2||code==5||code==15){page(0,lane);return 0;}
  if(code!=13)return 0;
  /* FUNC+SETTINGS reste la sauvegarde native, sans menu MIDI parasite. */
  if(((u32 (*)(u32))0x4007faf4)(1)){page(0,lane);return 0;}
- if(flags&1){if(!(flags&8))mm_settings_used=0;return 1;}
- if(!mm_settings_used&&home_visible()){
-  prepare_setup(lane);page(mm_page==3?0:3,lane);
-  if(mm_ui_api[0])*(volatile u32 *)mm_ui_api[0]=0;
-  return 1;
- }
+ if(flags&1){if(!(flags&8)){mm_settings_used=0;if(mm_ui_api[1])*(volatile u32 *)mm_ui_api[1]=0;}return 0;}
  if(!mm_settings_used)return 0;
- mm_settings_used=0;return mm_ui_api[0]?0:1;
+ mm_settings_used=0;return 1;
 }
 static void text(u32 canvas,u32 x,u32 y,const char *line) {
  ((void (*)(u32,u32,u32,u32,u32,const char *,...))0x40071a04)(canvas,0x40ea14cc,x,y,0x10,"%s",line);
@@ -229,17 +269,20 @@ u32 mm_draw(u32 view,u32 canvas) {
  const u16 *params=params_for(sound_object(lane));
  if(!params){text(canvas,0,34,"MIDI setup unavailable");return 1;}
  if(mm_page){
-  u32 count=mm_page==3?2:8;
+  u32 count=mm_page==3?4:8;
   for(u32 field=0;field<count;field++){
    char *at=line;*at++=field==mm_row?(mm_edit?'*':'>'):' ';
-   at=word(at,mm_page==3?(field?"Port ":"Chan "):fields[field]);at=word(at," ");
-   u32 value=mm_page==3?mm_route_read(params,field):mm_lfo_read(params,mm_page-1,field);
+   static const char *const setup_fields[4]={"Channel","Output","KbT","Pad Note"};
+   at=word(at,mm_page==3?setup_fields[field]:fields[field]);at=word(at," ");
+   u32 value=mm_page==3?(field<2?mm_route_read(params,field):(u32)mm_track_read(lane,field-2)):mm_lfo_read(params,mm_page-1,field);
    if(mm_page==3){
-    if(field){static const char *const ports[5]={"Global","Off","USB","DIN","Both"};at=word(at,ports[value<=4?value:0]);}
-    else at=value==16?word(at,"Global"):number(at,value+1,2);
+    if(field==1){static const char *const ports[5]={"Global","Off","USB","DIN","Both"};at=word(at,ports[value<=4?value:0]);}
+    else if(field==0)at=value==16?word(at,"Global"):number(at,value+1,2);
+    else if(field==2){if((i32)value<0){*at++='-';value=0-value;}at=number(at,value,2);}
+    else{static const char *const names[12]={"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};value=value<128?value:60;at=word(at,names[value%12]);if(value<12){*at++='-';*at++='1';}else at=number(at,value/12-1,1);}
    }else if(field==3)at=value==128?word(at,"OFF"):number(at,value,3);
    else at=number(at,(field==1||field==4||field==6)?value:value>>8,3);
-   *at=0;text(canvas,64*(field/4),43-10*(field%4),line);
+   *at=0;text(canvas,mm_page==3?0:64*(field/4),43-10*(field%4),line);
   }
   text(canvas,0,0,"DATA: select  BACK: exit");return 1;
  }
