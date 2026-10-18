@@ -31,3 +31,11 @@ Tentative de banc mixte avec vrais boots et Kick/SDVtg/MACRO3/ACID/Metal, filtre
 Le modele3 et la sequence rapportee, aux memes divisions de repeat ; CPU moyenne/pic/CUT apres relachement du combo et ecoute. Tester egalement plusieurs modeles96kHz, modeles deja alleges et lo-fi. Main reste1.92 tant que cette nouvelle optimisation n'est pas confirmee.
 
 [FAIT en emulation] tools/emu/test_macro_render_boot.py passe sur Select All, partiel, minimal et diagnostic : vrai bootstrap, memes tailles/adresses runtime, tous les autres octets RAM des payloads identiques apres remplacement inverse du seul noyau162octets.
+
+## 4. Confirmation et promotion principale (18/10/2026)
+
+[FAIT sur machine, rapport AveyCole] « That seems to have worked, push to main. » La clarification suivante attribue les clicks restants aux evenements CUT, et non a de nouveaux clicks introduits par le candidat. Promotion principale1.93 par tools/gen_macro_render_release.py : helper, donnees et integration Swarm exactement issus du test ; aucun diagnostic, aucun changement du regulateur ou de909. tools/test_macro_render_release.js compare les fichiers signes des six profils sans diagnostic au test confirme.
+
+[FAIT dans le source] GOV steal86%, target82%, peak93%, severe96% (gen_syntakt_engines.py). audio_end.S decide sur charge soutenue ou le minimum des deux derniers blocs, pas seulement depassement100%. repeat.c du diagnostic cumule le masque des pistes ayant fading/stolen non nul pendant le combo, y compris etat deja present ; CUT6 ne signifie donc pas six nouvelles extinctions simultanees. La moyenne affichee est lue au relachement, le pic observe pendant le combo n'est pas une trace exhaustive de tous les blocs.
+
+[RAPPORT] Kick / SDVtg / Swarm / ACID / Metal / Perc : clicks parfois avec pic affiche96% au plus et CUT3..6. Coincidence signalee avec CUT ; causalite non prouvee. [A FAIRE] Mesurer transitions de fade/stolen et rapport avec samples/timing dans un test separe, sans deplacer arbitrairement les seuils du principal.

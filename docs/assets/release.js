@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.93",
+  "date": "2026-10-18",
+  "changes": [
+    {
+      "en": "Hardware-confirmed MACRO converter optimization reduces processing work while preserving all 47 models and identical audio samples in emulation. Existing lower-rate models are unchanged.",
+      "fr": "Optimisation du convertisseur MACRO confirmee sur machine : calcul allege, 47 modeles conserves et samples identiques en emulation. Modeles deja alleges inchanges."
+    },
+    {
+      "en": "Diagnostics remain test-only. Heavy arrangements can still produce clicks and governor voice cuts; this release does not change the governor or claim to resolve those reports.",
+      "fr": "Diagnostics reserves aux tests. Les arrangements charges peuvent encore cliquer ou subir des extinctions par le regulateur ; cette version ne change pas le regulateur et ne pretend pas corriger ces rapports."
+    }
+  ]
+},
+{
   "version": "1.92",
   "date": "2026-10-18",
   "changes": [

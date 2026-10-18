@@ -182,4 +182,4 @@ Sauvegarde rapide, sortie mute (17/10/2026) : recette payload quick-save-exit co
 
 - `49-invert-track.json` (18/10/2026, note122) : inversion de branche fournie par AveyCole depuis une contribution communautaire (auteur non identifie dans l’extrait ; contexte Discord1557839199971975261). Generateur et integration originaux du projet. Un octet fonctionnel, aucun dump ni firmware distribue ; module facultatif confirme sur machine par AveyCole le18/10/2026, publie dans principal1.91 et non coche par defaut.
 
-- Test MACRO conversion (18/10/2026, note124) : noyau demi-bande EMAC propre de A.V./Modded-Cycles, coefficients du wrapper MACRO existant ; Braids Emilie Gillet MIT inchange. Remplacement de162octets compile du projet, sans routine Elektron, test uniquement.
+- MACRO conversion (18/10/2026, note124) : noyau demi-bande EMAC propre de A.V./Modded-Cycles, coefficients du wrapper MACRO existant ; Braids Emilie Gillet MIT inchange. Remplacement de162octets compile du projet, sans routine Elektron ; confirme par AveyCole, principal1.93 sans diagnostic, copie test conservee.

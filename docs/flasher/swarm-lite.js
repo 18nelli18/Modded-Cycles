@@ -22,7 +22,7 @@
    delete ap.compressed_hex;const n={...t,append:ap};saved.set(n.id,{w:ref.w,p:ref.p});a.REF_MODS[n.id]={w:hash(b.writesBytes(n)),p:hash(b.buildPayload(ap,syntakt,stock))};return n;
   });
   if(a.isSelected('syntakt')&&document.getElementById('eng-swarm')?.checked&&edits!==6)throw Error('Swarm LITE: selected engine was not replaced');
-  window.MCSwarmLiteApplied=edits;return previous(window.MCSwarmChordLayout(changed,input,b,a,syntakt,stock,saved),cycles,syntakt);
+  window.MCSwarmLiteApplied=edits;return previous(window.MCSwarmChordLayout(window.MCMacroRenderOptimize(changed,b,a,syntakt,stock,saved),input,b,a,syntakt,stock,saved),cycles,syntakt);
  };
  a.applyLang(document.documentElement.lang||'en');
 })();
