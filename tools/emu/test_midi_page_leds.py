@@ -108,12 +108,18 @@ def run(prefix):
  def turn(delta):
   r.delta=delta;return r.call('mlp_enc',OBJ,r.event(1))
  u.mem_write(audio+30662,b'\x00\x10');r.call('pg_poll');key(1);key(15);key(15,0);key(1,0)
- assert r.r32(r.s['mlp_setup'])==2 and r.r32(r.s['mlp_row'])==3 and r.r32(r.s['mlp_edit'])==1
+ assert r.r32(r.s['mlp_setup'])==2 and r.r32(r.s['mlp_row'])==3 and r.r32(r.s['mlp_edit'])==0
+ turn(1);assert struct.unpack('>H',u.mem_read(audio+30662,2))[0]==16 and r.r32(r.s['mlp_row'])==4
+ turn(-1);assert r.r32(r.s['mlp_row'])==3 and r.r32(r.s['mlp_edit'])==0
  for expected in (32,48,64,16,32):
   key(15);key(15,0);assert struct.unpack('>H',u.mem_read(audio+30662,2))[0]==expected
   assert [u.mem_read(pattern+264*lane+4,1)[0] for lane in range(6)]==[expected]*6
+ assert r.r32(r.s['mlp_edit'])==0;key(32,16);assert r.r32(r.s['mlp_edit'])==1
  turn(1);assert struct.unpack('>H',u.mem_read(audio+30662,2))[0]==33
  turn(-1);assert struct.unpack('>H',u.mem_read(audio+30662,2))[0]==32
+ key(32,16);assert r.r32(r.s['mlp_edit'])==0
+ key(15);key(15,0);assert struct.unpack('>H',u.mem_read(audio+30662,2))[0]==48
+ key(32,16);assert r.r32(r.s['mlp_edit'])==1
  # Longueur partielle : PAGE atteint le prochain multiple de16.
  assert r.call('pg_config',pattern,0,4,17)==1;key(15);key(15,0);assert struct.unpack('>H',u.mem_read(audio+30662,2))[0]==32
  for _ in range(65):turn(-1)
