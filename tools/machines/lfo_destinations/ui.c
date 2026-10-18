@@ -10,7 +10,7 @@ static u32 context_for(u32 secondary){
  return ((u32(*)(u32,u32))0x400097f0)(kit+116,track);
 }
 static u32 wizard(u32 context){
- if(!ld_api[8]||!context)return 0;
+ if(!ld_api[8]||!context||*(volatile u32 *)context!=0x400fd134)return 0;
  u32 handle=*(volatile u32 *)(context+4);
  if(!handle)return 0;
  u32 vt=*(volatile u32 *)handle;
@@ -18,6 +18,20 @@ static u32 wizard(u32 context){
  u32 raw=((u32(*)(u32))*(volatile u32 *)(vt+40))(handle);
  return raw&&*(volatile unsigned char *)(raw+38)==6;
 }
+/* Les noms partages sont reecrits pendant les recherches de potards d'autres machines.
+   Resoudre le nom avec le vrai contexte de son, y compris pendant le popup encodeur. */
+static u32 parameter_name(u32 context,u32 descriptor,u32 offset){
+ u32 index=descriptor<ld_api[3]?descriptor:0;
+ u32 record=*(volatile u32 *)0x4005a4f4+56*index;
+ if(wizard(context)){
+  u32 key=*(volatile u32 *)(record+4);
+  if(key==13)return offset==52?(u32)"FLT":(u32)"Filter";
+  if(key==14)return offset==52?(u32)"RES":(u32)"Resonance";
+ }
+ return *(volatile u32 *)(record+offset);
+}
+u32 ld_short(u32 context,u32 descriptor){return parameter_name(context,descriptor,52);}
+u32 ld_long(u32 context,u32 descriptor){return parameter_name(context,descriptor,44);}
 
 /* Fermeture differee native : ne detruit pas la vue pendant le dispatch. */
 void ld_finish(void){
