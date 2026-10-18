@@ -37,3 +37,7 @@ Aucune nouvelle ecriture dans les routines de synthese ou LFO audio. Donnees fir
 ## 5. Verification demandee sur appareil
 
 ATK/FLT/RES dans LFO1 et2 ; assignation puis profondeur avec LFO+MACHINES ; attaque/filtre avec ou sans TRACK ; retour piste apres popup/action, ouverture MACHINES seule normale. Les diagnostics test sont disponibles avec Beat Repeat et compteurs SY dans le principal, actives automatiquement pour909. Aucun diagnostic ajoute aux versions principales.
+
+## 6. Libelles RETROSYN (test2, 18/10/2026)
+
+AveyCole demande des noms correspondant au DSP de cette machine. COLOR devient Timbre/TIMB (rapport pulse, table, cadence bruit, boucle selon oscillateur), SHAPE Oscillator/OSC (six types), SWEEP Pitch Sweep/PSWP, CONTOUR Chord Arp/ARP. Les noms longs (+44) et courts (+52) des quatre descripteurs propres a RETROSYN changent ; bornes, valeurs, identifiants de destinations, sauvegarde et DSP restent identiques. Les autres machines et le profil909 conservent leurs noms. Le pointeur de table actif et le nombre de descripteurs donnent la derniere machine ajoutee, avec garde groupe6 et cles11..14. Si le bundle MIDI est recompresse, la source du chargeur Beat Repeat est recalculee. La preuve execute le vrai lookup de noms sur les six pistes et les builds couvrent aussi RETROSYN sans Wizard ni MIDI.
