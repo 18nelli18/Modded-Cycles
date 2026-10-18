@@ -199,3 +199,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [118 — Combinaisons machines](118-combinaisons-machines.md) : TINY/RETROSYN avec tous les sous-ensembles, Wizard facultatif ; combinaison signalee confirmee sur machine le 17/10/2026, catalogue verifie en emulation, aucun diagnostic principal.
 
 - [119 — MACRO lo-fi, port test](119-macro-lofi-port.md) : correction 18nelli18 FUNC + PITCH, pas/texte/dessin amont, machines au choix ; principal1.86 sans diagnostic ; copie test conservee.
+
+- [120 — Pages et longueur MIDI](120-pages-midi-longueur.md) : LEDs PAGE B comme stock ; longueur normale liee a A, voies independantes en mode par piste ; test seulement.
