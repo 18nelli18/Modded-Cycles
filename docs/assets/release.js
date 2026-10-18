@@ -3,6 +3,11 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.56", date: "2026-10-19", changes: [
+    { en: "New mod, Control All, your choice of tracks (under Live playing): hold TRACK and press TRIG 1–6 to leave that track out of Control All (TRACK held + knob), or to put it back. While TRACK is held, TRIG 1–6 light for the tracks that follow. The active track always follows, as on the Digitakt and Digitone; left-out tracks also keep their machine, LFO destination and PUNCH/GATE. The choice is not saved: after power-on every track follows again",
+      fr: "Nouveau mod, Control All : choix des pistes (dans Jeu live) : tenez TRACK et appuyez sur TRIG 1–6 pour écarter cette piste de Control All (TRACK tenu + potard), ou l'y remettre. TRACK tenu, les TRIG 1–6 s'allument pour les pistes qui suivent. La piste active suit toujours, comme sur les Digitakt et Digitone ; les pistes écartées gardent aussi leur machine, leur destination de LFO et PUNCH/GATE. Le choix n'est pas enregistré : après l'allumage, toutes les pistes suivent de nouveau" },
+    { en: "Control All Config 1.0 by durchgemacht (MIT), tested by its author on a Model:Cycles, placed here in four free sprite masks so that it goes with every other mod. Experimental until tested on Maxime's machine. Known limit: TRACK + LEVEL/DATA (volume, pan) still moves all six tracks",
+      fr: "Control All Config 1.0 de durchgemacht (MIT), testé par son auteur sur un Model:Cycles, logé ici dans quatre masques de sprites libres pour aller avec tous les autres mods. Expérimental jusqu'au test sur la machine de Maxime. Limite connue : TRACK + LEVEL/DATA (volume, pan) bouge encore les six pistes" },
   { version: "1.55", date: "2026-10-18", changes: [
     { en: "ACID machine, no more click at the start of notes: each new note now fades in over less than a millisecond, too short to hear as an attack, so the bass line stays punchy without the tick. Slides are unchanged",
       fr: "Machine ACID, plus de clic au début des notes : chaque nouvelle note monte maintenant en moins d'une milliseconde, trop court pour s'entendre comme une attaque, la ligne de basse garde son mordant sans le clic. Le slide ne change pas" },
