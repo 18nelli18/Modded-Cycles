@@ -38,6 +38,13 @@ def main():
    assert u.reg_read(mk.UC_M68K_REG_A7)==STACK-16
    assert r.string(r.call('ld_second',dest))==label
  print('PASS six tracks: real descriptor lookup and both explicit label routes',flush=True)
+ table=r.r32(0x4005a4f4);count=r.r32(r.s['ld_api']+12)
+ for descriptor in (*range(count),count,0xffffffff):
+  record=table+56*(descriptor if descriptor<count else 0)
+  for address,offset in ((0x4000b208,52),(0x4000b22a,44)):
+   assert r.call(address,0,descriptor)==r.r32(record+offset)
+ print('PASS short/long native name fallback preserves every descriptor and invalid-index bounds',flush=True)
+
  if 'retrosyn_labels' in r.s:
   expected=[('Timbre','TIMB'),('Oscillator','OSC'),('Pitch Sweep','PSWP'),('Chord Arp','ARP')]
   table=r.s['retrosyn_labels'];index=r.s['retrosyn_machine_index']
@@ -210,6 +217,17 @@ def main():
   for turn in range(40):
    keys={8,5} if turn%2 else {8};held.clear();held.update(keys)
    u.mem_write(0x930a0000+38,b'\x06');r.w32(r.s['mod_held'],int(5 in held));r.call(0x4004df5c,7)
+   # Reproduire le rafraichissement KICK du quick mapper : les noms partages redeviennent SWEP/CONT.
+   r.w32(r.s['mod_held'],0);r.call(0x4004df5c,1)
+   for key,longname,short in ((13,'Filter','FLT'),(14,'Resonance','RES')):
+    descriptor=r.call(0x4005a692,key,6)
+    table=r.r32(0x4005a4f4)
+    assert r.string(r.r32(table+56*descriptor+52)) in ('SWEP','CONT')
+    assert r.string(r.call(0x4000b208,context,descriptor))==short
+    assert r.string(r.call(0x4000b22a,context,descriptor))==longname
+    u.mem_write(0x930a0000+38,b'\x05')
+    assert r.string(r.call(0x4000b208,context,descriptor)) in ('SWEP','CONT')
+    u.mem_write(0x930a0000+38,b'\x06')
    for dest,label in ((13,'FLT'),(14,'RES'),(24,'ERR'),(25,'ERR')):
     descriptor=r.call(0x4005a692,dest,6)
     assert r.string(r.call('ld_first',context,descriptor,0,dest))==label
