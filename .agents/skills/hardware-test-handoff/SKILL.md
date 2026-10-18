@@ -1,6 +1,6 @@
 ---
 name: hardware-test-handoff
-description: Prepares commits, the draft pull request and the hardware test plan for Maxime (who alone tests on his Model:Cycles), then records his result - commit message style, PR body (before/after, proof, checks not run, what to test with which mods and buttons), recovery reminder, and the follow-up commit flipping a mod from experimental to tested across FEATURES, tweaks.js, guide, release notes, README and note. Use when committing, opening or updating a PR, asking Maxime to test, or when he reports a hardware result.
+description: Prepares commits, the draft pull request and the hardware test plan for Maxime (who alone tests on his Model:Cycles), then records his result - commit message style, PR body (before/after, proof, checks not run, what to test with which mods and buttons), recovery reminder, and the follow-up commit flipping a mod from experimental to tested across os.json, tweaks.js, guide, release notes, README and note. Use when committing, opening or updating a PR, asking Maxime to test, or when he reports a hardware result.
 ---
 
 # Commits, draft PR, hardware handoff
