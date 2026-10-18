@@ -25,7 +25,7 @@ def prepare(case):
  return r,img,mem,ts,sy
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--before',default='build/909-preview/all');p.add_argument('--after',default='build/909-wizard-end/all');a=p.parse_args();before=prepare(a.before);after=prepare(a.after)
+ p=argparse.ArgumentParser();p.add_argument('--before',default='build/909-preview/all');p.add_argument('--after',default='build/909-wizard-end/all');p.add_argument('--release',action='store_true');a=p.parse_args();before=prepare(a.before);after=prepare(a.after)
  for state,expected in ((before,62),(after,52)):
   r,img,mem,ts,sy=state
   assert r.call(0x4005a692,12,6)==expected
@@ -67,7 +67,7 @@ def main():
      if base<=address<base+len(raw):return raw[address-base:address-base+64]
     raise AssertionError(name)
    assert data(before)==data(after),name
- assert any('br_load_address' in t.get('symbols',{}) for t in after[3])
- print('PASS corps DSP909 conserves ; diagnostic seulement dans le test')
+ assert any('br_load_address' in t.get('symbols',{}) for t in after[3]) != a.release
+ print('PASS corps DSP909 conserves ; presence diagnostic conforme au canal test/release')
  print('LIMITES : manipulation physique des marqueurs Slice et ecoute a confirmer sur appareil')
 if __name__=='__main__':main()
