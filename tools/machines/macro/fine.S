@@ -53,3 +53,16 @@ mf_draw:
  jmp (%a1)
 1: restore
  jmp mf_draw_text
+
+/* Chemin vt[20] seulement ; le chemin fine rejoint b834 sans etre modifie. */
+ .globl mf_edit_normal
+mf_edit_normal:
+ addq.l #4,%sp
+ move.l %a3,-(%sp)
+ move.l %d3,-(%sp)
+ move.l %d0,-(%sp)
+ move.l %d2,-(%sp)
+ move.l %a2,-(%sp)
+ jsr mf_edit_native
+ addq.l #4,%sp
+ jmp 0x4000b834
