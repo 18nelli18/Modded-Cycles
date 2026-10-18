@@ -4,7 +4,7 @@ function composeTinyNormal(data,mask,out,b,refs){
  if(!entry)throw Error('TINY: missing machine combination '+mask);
  const e=clone(entry.engine),support=out.find(t=>['supermodel-support-independent','supermodel-wave-support'].includes(t.id));
  const oldEngine=out.find(t=>t.append&&t!==support),result=out.filter(t=>t.id!=='tiny'&&t!==oldEngine&&t!==support);
- const er=data.refs.n[mask] || window.MCMachineCombinations.normalRef(e);if(hash(e)!==er.w)throw Error('TINY: engine reference guard');
+ const er=data.refs.n[mask];if(hash(e)!==er.w)throw Error('TINY: engine reference guard');
  refs[e.id]={w:er.w,p:er.p};
  if(support){
   const ref=refs[support.id];if(hash(support)!==ref.w||b.hex(b.sha256(b.buildPayload(support.append,null,null)))!==ref.p)throw Error('TINY: trusted support reference mismatch');

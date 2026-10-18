@@ -15,7 +15,7 @@ Main flasher 1.83 · updated 17 October 2026. Install only the features you need
 | Added machines | MACRO, ACID, WAVE, TINY, RETROSYN and the selectable Syntakt-derived engines. Syntakt engines require your own Syntakt OS file. |
 | Swarm LITE | Replaces the seven-oscillator Swarm with three oscillators: fundamental plus two detuned saws. Lower CPU load, with a leaner and possibly quieter sound; heavy arrangements can still click. |
 | Sample Wizard | Independent sampler with sample locks, playback modes, slicing and resampling. Sample Preview is hardware tested. Model-TG is retired from the main flasher. |
-| RETROSYN / ChordKeys | Six retro oscillator types; ChordKeys adds scale-based chord playing and voicings. Choose any combination of the added machines; only checked machines appear. Sample Wizard is optional. |
+| RETROSYN / ChordKeys | Six retro oscillator types; ChordKeys adds scale-based chord playing and voicings. Use the flasher's compatibility checks when combining machines. Sample Wizard is optional for RETROSYN. |
 | Per-track filter / Synth Attack | Added cutoff, resonance and attack controls; filter parameter locks and Control All. The released filter includes the repair for distortion after switching away from Sample Wizard. |
 | Control All Config / Beat Repeat | Choose included audio tracks; momentary repeat across sixteen divisions, with a brief division popup. |
 | MIDI Out Bank — experimental | Six parallel MIDI lanes with CC assignments/locks, slides, retrigger/arp, chance, two MIDI LFOs and project sidecar saving. Optional and installable without beat repeat. Beat repeat can also be installed without MIDI Out Bank. |
