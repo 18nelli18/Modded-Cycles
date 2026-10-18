@@ -29,7 +29,7 @@ mm_encoder_hook:
 2:
  lea -64(%sp),%sp
  movem.l %d2/%a2-%a3,(%sp)
- jmp 0x4007753a
+ jmp 0x40077600
  .globl mm_draw_hook
 mm_draw_hook:
  save

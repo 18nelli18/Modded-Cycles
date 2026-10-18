@@ -31,7 +31,7 @@ def compile_core(tmp,repo,pay,bss_at=None,machine=6,controls=False):
  return raw.read_bytes(),sy,max(pay+gm.BSS_OFF+4,(sy['mm_end']+3)&~3)
 
 CONTROL_HOOKS=(
- (0x40077532,'4fefffc048d70c04','mm_encoder_hook'),
+ (0x400775f8,'4fefffc048d70c04','mm_encoder_hook'),
  (0x4001b22a,'4e56ffc048d73cfc','mm_draw_hook'),
  (0x40077720,'4fefffa048d77cfc','mm_ui_key_hook'),
  (0x4005afa0,'4feffff448d71c00','mm_save2_hook'),

@@ -25,9 +25,9 @@ def main():
  print('PASS chaines explicites ChordKeys live/sequence, stockage Wizard et second LFO audio conservees')
  for lane in range(6):
   r.track=lane;params=SOUND+0x1000*lane+20
-  r.assign=True;r.output.clear();assert r.call(0x40077532,0,r.event(0,75))==1;assert not r.output
-  r.assign=False;r.call(0x40077532,0,r.event(0,1));assert ('DIN',bytes((0xb0,74,65))) in r.output
-  r.lines.clear();r.call(0x4001b22a,0,0x920c0000);assert r.lines[0]==f'T{lane+1} MIDI OUT'
+  r.assign=True;r.word(r.word(r.s['mm_ui_api']),1);r.output.clear();assert r.call(0x40006158,0,r.event(0,75))==1;assert not r.output
+  r.assign=False;r.word(r.word(r.s['mm_ui_api']),0);r.call(0x40006158,0,r.event(0,1));assert ('DIN',bytes((0xb0,74,65))) in r.output
+  r.lines.clear();assert r.call(r.s['mm_draw'],0,0x920c0000)==0 and not r.lines
   r.call(r.s['mm_setup'],params);r.call(r.s['mm_lfo_edit'],params,0,3,-54)
   r.call(r.s['mm_route_edit'],params,0,-11);r.call(r.s['mm_route_edit'],params,1,4)
   before=bytes(r.u.mem_read(params,66));record=0x920a0000

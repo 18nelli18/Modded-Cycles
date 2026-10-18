@@ -101,3 +101,14 @@ Deux LFO MIDI utilisent les vrais calculs/temps LFO natifs avec phases privees p
 Preuves : controles/menus natifs six pistes, DATA non editant avant clic,288locks et copies/pattern save-load natifs,33mots son exacts, worker IPL0 et bornage/coalescence, deux LFO sur vrai moteur OS avec resultats audio seuls identiques, catalogue18 et indices invalides, boot du vrai preset signe, hooks partages et UI/save-load/notes des six pistes dans ce preset. La vraie file audio avec ChordKeys produit une seule note MIDI par evenement accepte et conserve le CC verrouille. CPU/CUT dans le test uniquement. Aucun resultat materiel annonce avant retour AveyCole.
 
 [A FAIRE sur appareil] Verifier projet apres extinction/rechargement, menus/labels, deux ports, notes/arpege/conditions et locks/recording, deux LFO, STOP et six pistes mixtes avec diagnostic. Les profils d'installation partiels ne sont pas proposes dans ce preset. Ne pas promouvoir cette integration vers principal sans confirmation.
+
+
+## 11. Retour materiel : entree des encodeurs et ecran principal (18/10/2026)
+
+AveyCole : SETTINGS+PITCH change encore Pitch ; autres boutons CC3/CC4 sans assignation, FUNC+PAGE masque, panneau MIDI permanent. Il demande les valeurs CC uniquement pendant le geste, aucun parametre audio, retour au principal.
+
+[FAIT] La premiere preuve appelait directement40077532 : ce n'est pas le chemin utilise par les encodeurs physiques. L'entree Application40006158 copie un EncoderEvent avec vtable400fbebc puis appelle400775f8. Le detour est deplace vers400775f8 ; prologue8octets identique, reprise40077600. Les preuves passent maintenant par40006158, sans contourner cette conversion native. La preuve precedente ne demontrait pas le routage physique et son affirmation trop large est retiree.
+
+[FAIT en emulation] Six pistes x12potards : SETTINGS assigne sans transmettre, mouvement normal transmet la valeur seulement, aucun Pitch ni handler audio. Les deux pointeurs SETTINGS-held/mod-used du support commun sont effectivement raccordes par le composeur ; le getter natif seul ne suffit pas quand les listeners absorbent SETTINGS. Le flag commun est prioritaire sur le fallback autonome, afin de ne pas garder une ancienne touche tenue. Potards non assignes consommes sans action.
+
+Le dessin principal est delegue a l'OS quand aucun menu MIDI explicite n'est ouvert. PAGE ferme ces menus et passe au stock ; DATA est delegue hors menu MIDI, ce qui rend FUNC+PAGE et l'edition native de longueur accessibles. Les popups CC sont transitoires. Les menus LFO/canal/port restent explicites. Test2 uniquement ; aucune modification des flashers principal/909 et aucune validation materielle revendiquee.

@@ -12,7 +12,7 @@ def main():
  def key(code,flags):
   r.u.mem_write(EVENT,struct.pack('>6I',0,0,0,code,flags,0));return r.call(r.s['mm_ui_key'],EVENT)
  def title():
-  r.lines.clear();assert r.call(r.s['mm_draw'],view,0x920c0000)==1;return r.lines[0]
+  r.lines.clear();active=r.call(r.s['mm_draw'],view,0x920c0000);return r.lines[0] if active else 'TRACK'
  for lane in range(6):
   r.track=lane;params=SOUND+0x1000*lane+20
   assert key(13,1)==1 and key(13,0)==1
@@ -21,14 +21,20 @@ def main():
   assert key(32,16)==1;r.call(r.s['mm_encoder'],r.event(-1,1));assert r.call(r.s['mm_route_read'],params,1)==1
   r.call(r.s['mm_encoder'],r.event(0,-13));assert r.call(r.s['mm_route_read'],params,0)==3
   r.call(r.s['mm_encoder'],r.event(1,3));assert r.call(r.s['mm_route_read'],params,1)==4
-  assert key(12,1)==1 and title()==f'T{lane+1} MIDI OUT'
+  assert key(12,1)==1 and title()=='TRACK'
   for lfo,cc in ((0,74),(1,71)):
    assert key(8,1)==1 and key(8,0)==1;assert title()==f'T{lane+1} MIDI LFO {lfo+1}'
    r.call(r.s['mm_encoder'],r.event(3,cc-128));assert r.call(r.s['mm_lfo_read'],params,lfo,3)==cc
-  key(12,1);assert title()==f'T{lane+1} MIDI OUT'
+  key(12,1);assert title()=='TRACK'
   assert key(13,1)==1;r.assign=True;r.output.clear();r.call(r.s['mm_encoder'],r.event(0,75));assert not r.output;r.assign=False
-  assert key(13,0)==1 and title()==f'T{lane+1} MIDI OUT'
+  assert key(13,0)==1 and title()=='TRACK'
   assert r.u.mem_read(manager+32,1)==b'\1','redraw natif absent'
+  assert key(15,1)==0 and title()=='TRACK'
+  assert r.call(r.s['mm_encoder'],r.event(-1,1))==0,'DATA natif FUNC+PAGE'
+  held=app+1024;used=held+4;r.word(r.s['mm_ui_api'],held);r.word(r.s['mm_ui_api']+4,used)
+  r.word(held,1);r.assign=False;r.output.clear();r.call(r.s['mm_encoder'],r.event(0,1))
+  assert r.word(used)==1 and not r.output,'SETTINGS commun ignore'
+  r.word(held,0);r.word(r.s['mm_ui_api'],0);r.word(r.s['mm_ui_api']+4,0)
  print('PASS six pistes : SETTINGS/CC sans CONFIG, canal/port, DATA clic avant edition, deux menus LFO, BACK, redraw natif')
  r.word(view,0x40117920);assert r.call(r.s['mm_encoder'],r.event(-1,1))==0
  print('PASS DATA delegue quand une fenetre native couvre le panneau MIDI ; aucun reglage audio cache dans les panneaux MIDI')

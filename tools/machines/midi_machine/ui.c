@@ -23,7 +23,7 @@ extern u32 mm_channel(const u16 *,u32);
 extern u32 mm_port(const u16 *);
 /* API[0/1] : adresses SETTINGS-held/mod-used du support commun si installe. */
 volatile u32 mm_ui_api[5];
-static u32 mm_settings_used;
+static u32 mm_settings_used,mm_settings_held;
 static u32 mm_page,mm_row,mm_edit,mm_page_lane=6;
 static void redraw(void){
  u32 app=*(volatile u32 *)0x40fe4178;
@@ -146,12 +146,13 @@ u32 mm_encoder(const u32 *event) {
  if(!event||event[0]!=0x400fbebc||event[3]<1||event[3]>13)return 0;
  u32 lane=selected();if(!midi(lane))return 0;
  if(mm_page_lane!=lane)page(0,lane);
- if(event[3]==1&&!home_visible()){page(0,lane);return 0;}
+ if(event[3]==1&&(!mm_page||!home_visible())){page(0,lane);return 0;}
  u32 object=sound_object(lane);const u16 *before=params_for(object);
  if(!before)return 1; /* Ne jamais laisser agir un parametre audio en repli. */
  u16 changed[33];for(u32 i=0;i<33;i++)changed[i]=before[i];
  i32 delta=((i32 (*)(const u32 *,u32,u32))0x4006f73a)(event,1,1);
- if(mm_page){
+ u32 assign=mm_ui_api[0]?*(volatile u32 *)mm_ui_api[0]:mm_settings_held||((u32 (*)(u32))0x4007faf4)(13);
+ if(mm_page&&!(assign&&event[3]!=1)){
   u32 count=mm_page==3?2:8,field=event[3]==1?mm_row:event[3]-2;
   if(event[3]==1&&!mm_edit){
    i32 row=(i32)mm_row+delta;if(row<0)row=0;if(row>=(i32)count)row=count-1;mm_row=(u32)row;redraw();return 1;
@@ -165,9 +166,10 @@ u32 mm_encoder(const u32 *event) {
   }
   publish(object,before,changed);return 1;
  }
- if(event[3]==1)return 1; /* DATA ne modifie jamais un volume audio cache. */
- u32 knob=event[3]-2,assign=((u32 (*)(u32))0x4007faf4)(13);
+ if(event[3]==1)return 0; /* DATA reste natif, notamment dans FUNC+PAGE. */
+ u32 knob=event[3]-2;
  u32 old=mm_cc_read(before,knob),packed=old;
+ if(!assign&&mm_cc_number(old)<0)return 1; /* Non assigne : silence, aucun parametre audio. */
  if(!assign&&grid_locks(lane,knob,delta,before,&packed)){
   char line[32];cc_text(line,knob,packed,0);mm_popup(line);return 1;
  }
@@ -193,6 +195,7 @@ u32 mm_encoder(const u32 *event) {
 u32 mm_ui_key(const u32 *event) {
  if(!event)return 0;
  u32 lane=selected(),code=event[3],flags=event[4];
+ if(code==13)mm_settings_held=(flags&1)!=0;
  if(!midi(lane))return 0;
  if(mm_page_lane!=lane)page(0,lane);
  if(code==8&&home_visible()){
@@ -201,7 +204,7 @@ u32 mm_ui_key(const u32 *event) {
  }
  if(code==12&&mm_page){if((flags&9)==1)page(0,lane);return 1;}
  if(code==32&&mm_page){if(flags&16){mm_edit=!mm_edit;redraw();}return 1;}
- if(code==5){page(0,lane);return 0;}
+ if(code==5||code==15){page(0,lane);return 0;}
  if(code!=13)return 0;
  /* FUNC+SETTINGS reste la sauvegarde native, sans menu MIDI parasite. */
  if(((u32 (*)(u32))0x4007faf4)(1)){page(0,lane);return 0;}
@@ -220,6 +223,7 @@ static void text(u32 canvas,u32 x,u32 y,const char *line) {
 u32 mm_draw(u32 view,u32 canvas) {
  (void)view;u32 lane=selected();if(!midi(lane))return 0;
  if(mm_page_lane!=lane)page(0,lane);
+ if(!mm_page)return 0; /* L'ecran de piste et les editeurs stock restent visibles. */
  ((void (*)(u32,u32,u32,u32,u32,u32))0x40070dea)(canvas,0,0,127,63,0);
  char line[32];char *p=word(line,"T");p=number(p,lane+1,1);p=word(p,mm_page==1?" MIDI LFO 1":mm_page==2?" MIDI LFO 2":mm_page==3?" MIDI SETUP":" MIDI OUT");*p=0;text(canvas,0,54,line);
  const u16 *params=params_for(sound_object(lane));

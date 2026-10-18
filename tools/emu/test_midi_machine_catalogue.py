@@ -42,10 +42,10 @@ def main():
   for part in entry['wizard']['append']['parts']:
    if 'hex' in part:r.u.mem_write(int(part['dest'],16),bytes.fromhex(part['hex']))
   for lane in range(6):
-   r.track=lane;r.assign=True;r.output.clear();r.call(0x40077532,0,r.event(0,75))
+   r.track=lane;r.assign=True;r.output.clear();r.call(0x40006158,0,r.event(0,75))
    assert not r.output and r.popups[-1]=='CC01 ASSIGN 074'
-   r.assign=False;r.call(0x40077532,0,r.event(0,1));assert ('DIN',bytes((0xb0,74,65))) in r.output
-   r.lines.clear();r.call(0x4001b22a,0,0x920c0000);assert r.lines[0]==f'T{lane+1} MIDI OUT'
+   r.assign=False;r.call(0x40006158,0,r.event(0,1));assert ('DIN',bytes((0xb0,74,65))) in r.output
+   r.lines.clear();assert r.call(r.s['mm_draw'],0,0x920c0000)==0 and not r.lines
    r.call(0x4005afa0,0x920a0000,SOUND+0x1000*lane)
    r.u.mem_write(SOUND+0x1000*lane,bytes(100));r.call(0x4005aecc,SOUND+0x1000*lane,0x920a0000)
    assert r.call(r.s['mm_cc_read'],SOUND+0x1000*lane+20,0)==75*128+65
