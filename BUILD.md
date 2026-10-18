@@ -674,3 +674,23 @@ nouveau tweak en émulation.
 
 Le C [`mischa85/elektron-firmware-tool`](https://github.com/mischa85/elektron-firmware-tool) fait le même travail
 de conteneur ; voir [`notes/02-format-os-syx.md`](notes/02-format-os-syx.md).
+
+## Prototype source autonome : Performance15
+
+Cette contribution experimentale n'est pas selectionnable dans le flasheur ni par `build.py --all`.
+Elle demande le compilateur m68k (GCC16.2.0 pour la reference versionnee, cible54418) et binutils.
+Partez de votre propre fichier officiel ; les sorties restent dans `build/` et ne doivent pas etre partagees.
+
+```sh
+python3 tools/gen_performance15.py --cycles firmware/model-cycles_OS1.13.syx --check
+python3 tools/test_performance15.py
+python3 tools/emu/test_performance15.py --cycles firmware/model-cycles_OS1.13.syx
+python3 tools/gen_performance15.py --cycles firmware/model-cycles_OS1.13.syx \
+  --output build/performance15/local-test.syx
+```
+
+Cette preuve demande `unicorn` ; les outils de construction restent en bibliotheque standard.
+La reference MAIN OS autonome est `2147110522cf891353c6bb2f52d95b1f8c06747b103f7cd47dcaaa6d7c11bc87`.
+Aucune empreinte de combinaison n'est annoncee. [Note58](notes/58-mode-performance.md),
+[commandes et limites](docs/guide/performance-mode.md). Les routines de transport/conteneur reutilisees sont
+`tools/mtlib/` (MIT, notice existante) ; aucun packer tiers supplementaire n'est copie.

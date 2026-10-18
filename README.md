@@ -158,3 +158,12 @@ contribute, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 If these mods are useful to you, you can support the project on **[Ko-fi](https://ko-fi.com/18nelli)**.
 Questions, feedback and feature requests are welcome on the **[Discord](https://discord.gg/hWegtJZcmm)**; bug reports also fit in the [issues](https://github.com/18nelli18/Modded-Cycles/issues).
+
+## Standalone source preview: Performance Mode
+
+An experimental [source contribution](tools/machines/performance15/) provides fifteen per-pattern performance macros,
+four track/FX destinations each, saved macro amounts and whole-macro copy/clear/paste. This draft is deliberately
+**not registered in the web flasher or `build.py --all`**: combination testing and maintainer hardware validation are
+pending. See the [bilingual controls guide](docs/guide/performance-mode.md), [standalone build commands](BUILD.md#prototype-source-autonome--performance15)
+and [technical note58](notes/58-mode-performance.md). The contribution is MIT-licensed with neutral collective
+attribution. No firmware image, extracted OS section or local test capture is included.

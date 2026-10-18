@@ -124,3 +124,9 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
 | Moteur de synthèse : boucle des 6 voix / tables `update` et `render` des machines | `0x400a7d4a` / `0x40118628` et `0x40118610` | non analysé |
 | Descripteurs de paramètres (entrées de `0x38` o) | `0x4010dce0` | non analysé |
 | Écran 128 × 64 : tampon de dessin, envoi des blocs changés, repère des `Bitmap` | `*0x401492f0`, `0x4008e622` ; **y = 0 en bas**, x = 0 à gauche ([39 §2](39-animation-demarrage.md)) | non analysé |
+
+## Contribution source en attente d'integration
+
+| Note | Etat |
+| --- | --- |
+| [58-mode-performance.md](58-mode-performance.md) | **Quinze macros par motif, quatre destinations, montants sauvegardes et presse-papiers de macros.** Prototype source autonome MIT, non inscrit dans le flasheur. Construction officielle seule et preuve Unicorn ; combinaisons et validation materielle du mainteneur a faire. |
