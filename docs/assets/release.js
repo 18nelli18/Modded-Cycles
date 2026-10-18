@@ -4,6 +4,20 @@
  */
 window.MC_RELEASES = [
 {
+  "version": "1.88",
+  "date": "2026-10-17",
+  "changes": [
+    {
+      "en": "Hardware-tested MIDI B-side page LEDs now follow stock record and non-record modes: available pages stay lit outside record mode, with the playing page blinking. Record-mode behavior is retained.",
+      "fr": "LEDs des pages MIDI B testees sur machine : modes natifs avec et sans enregistrement. Hors enregistrement, pages disponibles allumees et page jouee clignotante. Comportement en enregistrement conserve."
+    },
+    {
+      "en": "Entering MIDI B-side in normal pattern-length mode inherits A-side’s selected page. Per-track mode keeps independent page selection. Diagnostics remain test-only.",
+      "fr": "En mode longueur normale, ouvrir B reprend la page selectionnee dans A. En mode par piste, selection de page independante. Diagnostics reserves aux tests."
+    }
+  ]
+},
+{
   "version": "1.87",
   "date": "2026-10-17",
   "changes": [

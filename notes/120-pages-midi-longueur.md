@@ -43,3 +43,8 @@ En mode longueur normale, le wrapper de `mlp_open` lit la page A avec `0x400cf86
 Le helper relogeable passe de996 a1388 octets. Trois vrais builds signes, trois vrais bootstraps ; chaque profil compare1848 etats joues aux deux boucles stock, plus arret/pause, transitions REC, masques LED et longueurs. Le getter de page A natif est execute ; presentation native simulee pour verifier succes/echec et appel unique. Longueurs1..64, six voies inegales et survie cache restent couverts. Diagnostics conserves dans le test. Principal1.87 et edition909 inchanges ; sources de promotion1.87 figees separement pour que `gen_midi_pages_main.py --check` reste reproductible pendant ce nouvel essai.
 
 [A FAIRE] Validation materielle de la revision2, surtout les modes REC et le passage page3 A vers B.
+
+
+## 7. Revision2 validee et promotion1.88 (17/10/2026)
+
+AveyCole confirme « works, push to main ». Helper1388 octets et comportement test2 repris dans le principal1.88, sans la dependance ni les payloads diagnostic. Sources approuvees figees actualisees ; guide et raccourcis EN/FR alignes. Banque MIDI toujours experimentale et facultative ; edition909 et pages de test inchangees. Builds signes et preuves de boot, LEDs, longueurs et ouverture relances sur les compositions de production.
