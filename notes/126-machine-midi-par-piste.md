@@ -147,3 +147,10 @@ AveyCole demande de remplacer le checklist principal par une liste de fonctions,
 [FAIT] La sortie MIDI ferme les notes live et sequencees sur leur canal/port de depart avant restauration audio. Propriete de piste capturee dans le routeur natif ; mm_leave ne ferme pas les notes d'une autre piste et annule ses CC en attente. Table de propriete supplementaire2048octets ; reservation MIDI etendue jusqu'a46794000, relocation du payload suivant composee et verifiee par le builder.
 
 Le principal est genere par gen_midi_machine_main.py depuis la page de test, sans injection diagnostic. Le template generique de la page de test est conserve dans tools/web/midi-machine-base.html pour eviter les inclusions recursives apres promotion. Deux vrais builds navigateur et leurs boots natifs, pas seulement une verification des cases. Demarrage supermodel-startup, jamais boot-anim, aucune banque B. Les anciens outils de composition restent internes a la page ; seul le choix USB est visible. Version1.94. Ces nouvelles protections sont verifiees en emulation, sans revendiquer une validation materielle de ce changement.
+
+
+## 15. Initialisation navigateur reel avant DOMContentLoaded (18/10/2026)
+
+Retour principal1.94 : erreur catalogue MIDI complet requis et absence de demande du fichier Syntakt. Le preset se lance depuis une Promise et emet des change synthetiques. Sur navigateur reel rapide, cette Promise peut finir avant DOMContentLoaded, alors que wirePicker n'a pas encore attache les handlers : cases cochees, selection interne vide. La fixture jsdom precedente masquait cet ordre des evenements.
+
+[FAIT] Les presets principal et test attendent maintenant DOMContentLoaded en plus des modules asynchrones, avant tout choix. Aucun byte firmware ne change. Regression : cinq moteurs choisis, masque1023, charger Cycles seul doit donner needs_syntakt sans firmware, puis Syntakt declenche les memes deux signatures1.94. Une fixture retarde volontairement DOMContentLoaded et confirme qu'aucun choix n'est emis avant connexion des handlers.
