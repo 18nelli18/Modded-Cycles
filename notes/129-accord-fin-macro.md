@@ -39,3 +39,7 @@ SETTINGS+PITCH se comporte comme PITCH normal. La premiere preuve injectait sett
 ## Test3 : vrai chemin du potard ordinaire (18/10/2026)
 
 [FAIT] Le setter natif4000b7d6 a deux chemins. Les anciennes preuves edit_func forçaient fine=1 et exercaient le callback du descripteur. Le potard ordinaire utilise vt[20], qui contourne ces callbacks. Le test3 intercepte seulement les trois empilements du chemin ordinaire en4000b82a, puis rejoint4000b834 avec la meme profondeur de pile. SETTINGS + PITCH sur MACRO ajoute deux unites8.8 ; sans SETTINGS, delegation exacte au setter original. Ne pas annoncer que PITCH normal avance necessairement par demi-tons : conserver le comportement stock est la reference. Fine tune et diagnostic restent hors du principal1.95 ; verification materielle attendue.
+
+## Verification utilisateur et publication (18/10/2026)
+
+Utilisateur : « that worked. push to main. » pour le test3. Principal1.96 inclut exactement le correctif de chemin ordinaire, sans diagnostic. Compositeur charge apres le preset complet ; les variantes USB standard et six pistes sont verifiees separement. Les tours ordinaires restent natifs, FUNC + PITCH reste Lo-Fi.

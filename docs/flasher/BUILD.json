@@ -1,9 +1,10 @@
 {
-  "stamp": "2026-10-18-track-setup-main-195",
+  "stamp": "2026-10-18-macro-fine-main-196",
   "scope": "main",
   "profile": "All features, MIDI machine, no B-side; USB six-track on/off",
   "diagnostics": false,
   "startup": "Supermodel",
   "track_setup_follows_selection": true,
-  "macro_fine": false
+  "macro_fine": true,
+  "hardware_verified": true
 }

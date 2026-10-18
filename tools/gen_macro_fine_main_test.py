@@ -19,6 +19,7 @@ def main():
   data=dict(hex=raw.hex(),symbols=sy,reloc=offsets)
  out=ROOT/'docs/flasher-macro-fine-main-test';out.mkdir(exist_ok=True)
  files={f.name:f.read_bytes() for f in (ROOT/'docs/flasher').iterdir() if f.is_file()}
+ files.pop('macro-fine-release.js',None)
  for name in ('beat-diagnostic-data.js','beat-diagnostic.js'):
   files[name]=(ROOT/'docs/flasher-machine-combinations-test'/name).read_bytes()
  entry=json.loads((ROOT/'build/midi-machine/catalogue-1023-1-controls.json').read_text())
@@ -33,7 +34,7 @@ def main():
  preset=files['midi-machine-main.js'].decode().replace('pageReady,window.MCLfoDestinationsReady','pageReady,window.MCLfoDestinationsReady,window.MCBeatDiagnosticReady')
  preset=preset.replace("'startup-animation','boot-anim','audio-load-diagnostic'","'startup-animation','boot-anim'").replace("select('audio-load-diagnostic',false)","select('audio-load-diagnostic',true)")
  files['midi-machine-main.js']=preset.encode()
- html=files['index.html'].decode();html=re.sub(r'(?<=\?v=)[\w.-]+',STAMP,html);html=re.sub(r"window.MC_BUILD='[^']+'",f"window.MC_BUILD='{STAMP}'",html)
+ html=files['index.html'].decode();html=re.sub(r'<script src="macro-fine-(?:data|release)\.js[^"]*"></script>','',html);html=re.sub(r'(?<=\?v=)[\w.-]+',STAMP,html);html=re.sub(r"window.MC_BUILD='[^']+'",f"window.MC_BUILD='{STAMP}'",html)
  html=re.sub(r'<title>.*?</title>','<title>Supermodel — MACRO fine-tune main test</title>',html,count=1)
  html=html.replace('<script src="midi-machine-main.js?',f'<script src="beat-diagnostic-data.js?v={STAMP}"></script><script src="beat-diagnostic.js?v={STAMP}"></script><script src="midi-machine-main.js?')
  html=html.replace('</body>',f'<script src="macro-fine-data.js?v={STAMP}"></script><script src="macro-fine-main.js?v={STAMP}"></script></body>')

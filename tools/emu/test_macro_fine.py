@@ -31,7 +31,7 @@ def load(case):
  r=FineUI(img,(lo,bytes(raw)));return r,ts
 def main():
  p=argparse.ArgumentParser();p.add_argument('--profile',default='all');a=p.parse_args();prefix='build/macro-fine/'+a.profile
- before,bt=load(prefix+'-before');after,ts=load(prefix+'-after');q=next(t for t in ts if t['id']=='macro-fine-test');machine=int(q['symbols']['macro_fine_index'],16)
+ before,bt=load(prefix+'-before');after,ts=load(prefix+'-after');q=next(t for t in ts if t['id'] in ('macro-fine-test','macro-fine'));machine=int(q['symbols']['macro_fine_index'],16)
  assert before.lookup(machine,2,True)==FTUN and after.lookup(machine,2,True)==FTUN
  assert [after.text(FTUN,n<<8) for n in range(128)]==[want_text(n) for n in range(128)]
  assert after.lookup(machine,2,False)==PITCH
