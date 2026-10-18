@@ -36,6 +36,13 @@ mm_key_on_hook:
  lea 28(%sp),%sp
  jmp 0x40019f3a
 1: restore
+#ifdef MM_CONTROLS
+ tst.l mm_live_api
+ beq 2f
+ move.l mm_live_api,-(%sp)
+ rts
+2:
+#endif
  move.l %d0,-(%sp)
  jsr 0x4000f208
  jmp 0x40019eec
@@ -48,6 +55,13 @@ mm_pad_on_hook:
  lea 28(%sp),%sp
  jmp 0x4001d0f2
 1: restore
+#ifdef MM_CONTROLS
+ tst.l mm_live_api+4
+ beq 2f
+ move.l mm_live_api+4,-(%sp)
+ rts
+2:
+#endif
  lea 0x400cf866,%a2
  jmp 0x4001d09a
  .globl mm_key_off_hook
@@ -59,6 +73,13 @@ mm_key_off_hook:
  lea 16(%sp),%sp
  jmp 0x40019cf6
 1: restore
+#ifdef MM_CONTROLS
+ tst.l mm_live_api+8
+ beq 2f
+ move.l mm_live_api+8,-(%sp)
+ rts
+2:
+#endif
  move.l %d4,-(%sp)
  jsr 0x40016e90
  jmp 0x40019cc2
@@ -71,5 +92,18 @@ mm_pad_off_hook:
  lea 12(%sp),%sp
  jmp 0x4001d176
 1: restore
+#ifdef MM_CONTROLS
+ tst.l mm_live_api+12
+ beq 2f
+ move.l mm_live_api+12,-(%sp)
+ rts
+2:
+#endif
  lea 0x400cf866,%a2
  jmp 0x4001d126
+#ifdef MM_CONTROLS
+ .data
+ .globl mm_live_api
+mm_live_api:
+ .long 0,0,0,0
+#endif
