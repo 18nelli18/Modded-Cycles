@@ -42,6 +42,8 @@ CONTROL_HOOKS=(
  (0x4005919e,'42b940a78e18','mm_sequence_hook'),
  (0x40058f3c,'4fef000c60000262','mm_lock_only_hook'),
 )
+CONTROL_POINTERS=((0x40108138,'400426fa','mm_track_draw'),)
+
 def connect_controls(stock,t,sy,prior=()):
  """Accroches autonomes ; le composeur doit chainer les detours deja occupes."""
  current=build.apply_writes(stock,list(prior))[0] if prior else stock
@@ -64,6 +66,9 @@ def connect_controls(stock,t,sy,prior=()):
   t['writes'].append(dict(off=off,old=before.hex(),new='4ef9'+sy[name].to_bytes(4,'big').hex()+'4e71'*((size-6)//2)))
  zones=[(site-build.BASE+2,site-build.BASE+len(old)//2) for site,old,_ in CONTROL_HOOKS]
  sure,branches=build.refs_into(stock,zones);assert not sure and not branches,(sure,branches)
+ for site,old,name in CONTROL_POINTERS:
+  off=site-build.BASE;assert bytes(current[off:off+4]).hex()==old
+  t['writes'].append(dict(off=off,old=old,new=sy[name].to_bytes(4,'big').hex()))
  t['writes'].sort(key=lambda w:w['off'])
 
 def connect_notes(stock,t,sy):

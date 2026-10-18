@@ -26,7 +26,7 @@ def main():
   mute=app+2048;mute_node=app+2304
   r.word(manager+24,mute_node);r.word(mute_node+4,node);r.word(mute_node+8,mute);r.word(mute,0x40100c3c);r.u.mem_write(mute+48,b'\0')
   r.word(0x40100c44,0x40148744);r.u.mem_write(0x401487ec,b'\1\1')
-  assert key(1,1)==0 and key(2,3)==1 and key(2,2)==1 and key(1,0)==0
+  assert key(1,1)==0 and key(2,3)==0 and key(2,2)==0 and key(1,0)==0
   assert r.u.mem_read(mute+48,1)==b'\1' and r.u.mem_read(0x401487ec,2)==bytes(2)
   r.word(manager+24,node)
   assert title()=='Track Setup'

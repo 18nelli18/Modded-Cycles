@@ -1,10 +1,12 @@
 {
-  "stamp": "2026-10-18-macro-fine-main-test-1",
+  "stamp": "2026-10-18-macro-fine-main-test-2",
   "scope": "test-only",
   "base": "2026-10-18-fixed-main-194-init",
   "diagnostics": true,
   "hardware_verified": false,
   "fine_default": true,
+  "fine_raw_settings": true,
+  "track_setup_follows_selection": true,
   "usb_audio_optional": true,
   "midi_machine": true,
   "midi_bank": false
