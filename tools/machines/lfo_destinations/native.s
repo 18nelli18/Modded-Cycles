@@ -33,3 +33,13 @@ ld_lfo_key_native:
     movel %a2,%sp@-
     movel %d2,%sp@-
     jmp 0x40024e12
+
+| L'evenement encodeur tardif sans LFO ne doit pas effacer le geste deja arme.
+    .globl ld_lfo_sticky
+ld_lfo_sticky:
+    tstb %d0
+    beq .Lld_keep_quick
+    moveb %d0,%a2@(604)
+.Lld_keep_quick:
+    clrb %d0
+    rts
