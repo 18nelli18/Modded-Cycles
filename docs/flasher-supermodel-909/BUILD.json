@@ -17,5 +17,7 @@
   "shared_feature_port_validation": "emulation; source fixes hardware-confirmed by AveyCole in LFO test8",
   "sample_preview": true,
   "sample_preview_validation": "emulation; main feature hardware-confirmed, 909 combination pending",
-  "sample_preview_updated": "2026-10-18"
+  "sample_preview_updated": "2026-10-18",
+  "sample_end_range_fixed": true,
+  "sample_end_validation": "Hardware confirmed by AveyCole 2026-10-18"
 }
