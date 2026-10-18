@@ -22,6 +22,15 @@ mm_encoder_hook:
  moveq #1,%d0
  rts
 1: restore
+ move.l 8(%sp),-(%sp)
+ move.l 8(%sp),-(%sp)
+ bsr mm_encoder_delegate
+ addq.l #8,%sp
+ save
+ jsr mm_audio_poll
+ restore
+ rts
+mm_encoder_delegate:
  tst.l mm_ui_api+8
  beq 2f
  move.l mm_ui_api+8,-(%sp)
@@ -30,6 +39,20 @@ mm_encoder_hook:
  lea -64(%sp),%sp
  movem.l %d2/%a2-%a3,(%sp)
  jmp 0x40077600
+ .globl mm_native_default
+mm_native_default:
+ lea -16(%sp),%sp
+ move.l 24(%sp),-(%sp)
+ move.l 24(%sp),-(%sp)
+ jsr 0x4005a692
+ addq.l #8,%sp
+ move.l %d0,-(%sp)
+ lea 4(%sp),%a0
+ jsr 0x4005a65a
+ addq.l #4,%sp
+ move.l 8(%sp),%d0
+ lea 16(%sp),%sp
+ rts
  .globl mm_draw_hook
 mm_draw_hook:
  save

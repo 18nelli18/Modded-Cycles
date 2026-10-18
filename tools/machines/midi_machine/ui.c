@@ -14,6 +14,8 @@ extern u32 mm_cc_edit(u16 *,u32,i32,u32);
 extern i32 mm_cc_number(u32);
 extern u32 mm_cc_value(u32);
 extern void mm_popup(const char *);
+extern void mm_menu_draw(u32,u32);
+extern u32 mm_native_default(u32,u32);
 extern void mm_setup(u16 *);
 extern u32 mm_lfo_read(const u16 *,u32,u32);
 extern u32 mm_lfo_edit(u16 *,u32,u32,i32);
@@ -25,6 +27,7 @@ extern u32 mm_port(const u16 *);
 volatile u32 mm_ui_api[5];
 static u32 mm_settings_used,mm_settings_held,mm_func_held,mm_track_taken;
 static u32 mm_page,mm_row,mm_edit,mm_page_lane=6;
+static u32 mm_seen[6];
 static void redraw(void){
  u32 app=*(volatile u32 *)0x40fe4178;
  if(app)((void (*)(u32))0x40076bee)(app+64);
@@ -35,7 +38,8 @@ static u32 selected(void) {
  return ((u32 (*)(u32))0x40012412)(root+48);
 }
 static u32 midi(u32 lane) {
- return lane<6&&((u8 (*)(u32,u32))0x4001e318)(0,lane)==MM_MACHINE;
+ if(lane<6&&((u8 (*)(u32,u32))0x4001e318)(0,lane)==MM_MACHINE){mm_seen[lane]=1;return 1;}
+ return 0;
 }
 static u32 sound_object(u32 lane) {
  u32 root=((u32 (*)(void))0x400cf866)();
@@ -75,6 +79,21 @@ static void publish(u32 object,const u16 *before,const u16 *after) {
   u32 pair[2]={(u32)records,(u32)(records+2*count)};
   ((void (*)(u32,const u32 *))0x4001416c)(object,pair);
   redraw();
+ }
+}
+/* Les mots MIDI ne sont pas des reglages audio : revenir aux defauts du
+ * moteur cible, sans toucher machine, Pitch, notes ou donnees du pattern. */
+void mm_audio_poll(void){
+ for(u32 lane=0;lane<6;lane++){
+  u32 machine=((u8 (*)(u32,u32))0x4001e318)(0,lane);
+  if(machine==MM_MACHINE){mm_seen[lane]=1;continue;}
+  if(!mm_seen[lane])continue;
+  mm_seen[lane]=0;
+  u32 object=sound_object(lane);const u16 *before=params_for(object);
+  if(!before||(before[32]!=0x4d49&&before[32]!=0x4d4a))continue;
+  u16 after[33];for(u32 i=0;i<33;i++)after[i]=before[i];
+  for(u32 i=1;i<33;i++)if(i!=9&&i!=10)after[i]=(u16)mm_native_default(i,machine);
+  after[32]=0;publish(object,before,after);
  }
 }
 static void page(u32 value,u32 lane){mm_page=value;mm_row=0;mm_edit=0;mm_page_lane=lane;redraw();}
@@ -173,7 +192,7 @@ u32 mm_encoder(const u32 *event) {
  if(!event||event[0]!=0x400fbebc||event[3]<1||event[3]>13)return 0;
  u32 lane=selected();if(!midi(lane))return 0;
  if(mm_page_lane!=lane)page(0,lane);
- if(event[3]==1&&(!mm_page||!home_visible())){page(0,lane);return 0;}
+ if(event[3]==1&&(!mm_page||(mm_page!=3&&!home_visible()))){page(0,lane);return 0;}
  u32 object=sound_object(lane);const u16 *before=params_for(object);
  if(!before)return 1; /* Ne jamais laisser agir un parametre audio en repli. */
  u16 changed[33];for(u32 i=0;i<33;i++)changed[i]=before[i];
@@ -249,21 +268,35 @@ u32 mm_ui_key(const u32 *event) {
   return mm_page?1:0;
  }
  /* FUNC+PAGE conserve le vrai Scale Setup du pattern A. */
- if(code==2||code==5||code==15){page(0,lane);return 0;}
+ if(code==2||code==3||code==4||code==5||code==14||code==15){page(0,lane);return 0;}
  if(code!=13)return 0;
  /* FUNC+SETTINGS reste la sauvegarde native, sans menu MIDI parasite. */
  if(((u32 (*)(u32))0x4007faf4)(1)){page(0,lane);return 0;}
  if(flags&1){if(!(flags&8)){mm_settings_used=0;if(mm_ui_api[1])*(volatile u32 *)mm_ui_api[1]=0;}return 0;}
- if(!mm_settings_used)return 0;
+ if(!mm_settings_used){page(0,lane);return 0;}
  mm_settings_used=0;return 1;
 }
 static void text(u32 canvas,u32 x,u32 y,const char *line) {
  ((void (*)(u32,u32,u32,u32,u32,const char *,...))0x40071a04)(canvas,0x40ea14cc,x,y,0x10,"%s",line);
 }
+u32 mm_menu_row(void){return mm_row;}
+u32 mm_menu_edit(void){return mm_edit;}
+void mm_menu_value(u32 self,u32 item,u32 canvas,u32 x,u32 y,u32 flags){
+ (void)self;(void)flags;
+ u32 lane=selected(),field=*(u32 *)(item+80)&255;
+ const u16 *params=params_for(sound_object(lane));char line[32],*at=line;
+ if(field==0){u32 value=mm_route_read(params,0);if(value==16)at=word(at,"Glob");else at=number(at,value+1,value+1>9?2:1);}
+ else if(field==1){static const char *const ports[5]={"Glob","Off","USB","DIN","Both"};u32 value=mm_route_read(params,1);at=word(at,ports[value<=4?value:0]);}
+ else if(field==2){i32 value=mm_track_read(lane,0);if(value<0){*at++='-';value=-value;}at=number(at,(u32)value,value>9?2:1);}
+ else{static const char *const names[12]={"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};u32 value=(u32)mm_track_read(lane,1);value=value<128?value:60;at=word(at,names[value%12]);if(value<12){*at++='-';*at++='1';}else at=number(at,value/12-1,1);}
+ *at=0;((void (*)(u32,u32,u32,u32,u32,const char *,...))0x40071a04)(canvas,0x40ea14cc,x+24,y,4,"%s",line);
+ if(mm_edit&&field==mm_row)((void (*)(u32,u32,u32,u32,u32,u32))0x40070efc)(canvas,x+23-6*(u32)(at-line),y-2,x+25,y+10,0xffffffffu);
+}
 u32 mm_draw(u32 view,u32 canvas) {
- (void)view;u32 lane=selected();if(!midi(lane))return 0;
+ (void)view;mm_audio_poll();u32 lane=selected();if(!midi(lane))return 0;
  if(mm_page_lane!=lane)page(0,lane);
  if(!mm_page)return 0; /* L'ecran de piste et les editeurs stock restent visibles. */
+ if(mm_page==3){mm_menu_draw(view,canvas);return 1;}
  ((void (*)(u32,u32,u32,u32,u32,u32))0x40070dea)(canvas,0,0,127,63,0);
  char line[32];char *p=word(line,"T");p=number(p,lane+1,1);p=word(p,mm_page==1?" MIDI LFO 1":mm_page==2?" MIDI LFO 2":mm_page==3?" MIDI SETUP":" MIDI OUT");*p=0;text(canvas,0,54,line);
  const u16 *params=params_for(sound_object(lane));

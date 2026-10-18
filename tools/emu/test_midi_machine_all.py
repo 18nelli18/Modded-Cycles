@@ -43,6 +43,16 @@ def main():
  assert r.call(r.s['mm_cc_worker'],packet)==0
  assert ('DIN',bytes((0x85,63,0))) in r.output and ('USB',bytes((0x85,63,0))) in r.output
  print('PASS STOP ferme aussi les notes live capturees apres changement de machine, sur leur canal/port initial')
+ # Chaque machine audio du catalogue doit recevoir ses propres defauts apres MIDI.
+ params=SOUND+0x5000+20
+ for machine in range(17):
+  r.u.mem_write(params+18,bytes((17,0)));r.call(r.s['mm_setup'],params);r.call(r.s['mm_audio_poll'])
+  pitch=bytes(r.u.mem_read(params+20,2));r.u.mem_write(params+18,bytes((machine,0)));r.call(r.s['mm_audio_poll'])
+  words=struct.unpack('>33H',r.u.mem_read(params,66));assert words[9]==machine<<8 and words[32]==0
+  assert bytes(r.u.mem_read(params+20,2))==pitch
+  for field in range(1,32):
+   if field not in (9,10):assert words[field]==r.call(r.s['mm_native_default'],field,machine),(machine,field)
+ print('PASS transitions MIDI vers les17machines audio du preset : defauts natifs propres, machine/Pitch conserves et marqueur efface')
  from test_midi_machine_sequence import Sequence
  sq=Sequence(img,dict(hex=blob.hex(),symbols=engine['symbols'],machine=17),pay,prepared=True)
  for at,raw in mem:sq.uc.mem_write(at,raw)

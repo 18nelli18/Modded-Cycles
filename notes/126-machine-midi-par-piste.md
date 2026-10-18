@@ -125,3 +125,14 @@ FUNC+TRACK ouvre Track Setup MIDI, DATA navigue et un clic active edition : Chan
 [FAIT] L'emission MIDI propre etait conditionnee par event+20, le bit MOut audio. Une machine MIDI doit emettre meme si ce bit de la piste audio precedente reste nul. La condition est supprimee seulement pour la machine MIDI, sur le chemin note accepte ; lock-only reste sans note. La preuve complete cree ces evenements avec MOut=0 et ne s'arrete plus au comptage des messages : chaque vrai message produit est donne a la vraie tache MIDI, puis les envois DIN et USB sont controles sur six canaux. Les pilotes physiques seuls sont instrumentes. Les autres machines gardent leur ancien chemin.
 
 Test3 seulement, principal/909 inchanges ; verification materielle encore attendue.
+
+
+## 13. Test4 : vrai MenuView et retour a une machine audio (18/10/2026)
+
+Retour materiel test3 : notes sequencees et CC fonctionnent ; FUNC+TRACK reste un texte qui disparait en tournant DATA. Quitter MIDI Out laisse la nouvelle machine silencieuse, live et sequence.
+
+[FAIT en emulation] Track Setup utilise maintenant le vrai MenuView400423e4, ses polices, bordures et surbrillances. Quatre lignes Ch/Out/KbT/Pad ; Glob abrege Global. DATA navigue, un clic entre en edition, BACK ferme. Le flag edition est dans l'octet+80 du MenuItem84octets, distinct de son identifiant bas. Une vue Pads/transitoire au-dessus du principal ne fait plus perdre le menu explicite ; les autres touches de menu deleguent normalement. Captures Bitmap/polices OS reelles navigation et edition distinctes sous build/midi-machine/menu-*.png.
+
+[FAIT en emulation] Les mots CC/LFO MIDI partagent les emplacements audio : notamment Fine17, Decay18 et destination LFO4. Les reutiliser apres changement de machine peut rendre le moteur silencieux. mm_audio_poll suit les six machines et, uniquement apres sortie MIDI avec marqueur4d49/4d4a, remplace les reglages par les defauts du moteur cible. Le mapping4005a692 et les bornes/defaults4005a65a sont executes, pas une table inventee. La publication4001416c conserve notifications natives. Machine9, Pitch10, notes/grille et pattern sont preserves ; le son cible repart de ses valeurs par defaut. La verification tourne apres delegation encodeur et au dessin, jamais dans l'IRQ audio. Aucun reset repete ni changement des sons audio sans marqueur MIDI.
+
+Preuves : test_midi_machine_transition execute le detour encodeur apres delegation, six transitions et le vrai VOICE_LOOP des six moteurs stock avec sorties non nulles. test_midi_machine_all controle les17destinations audio du vrai preset signe avec leurs propres descripteurs. test_midi_machine_menu_render execute le vrai MenuView avec fonts/Bitmap OS ; test_midi_machine_menus couvre DATA sous vue transitoire. Tests CC, stockage, notes sequencees, ports et LFO conserves. Test4 uniquement, aucun changement des flashers principal/909 ; validation materielle attendue.
