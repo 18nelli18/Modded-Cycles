@@ -1,7 +1,7 @@
 """Note126 : principal fixe, seul choix USB six pistes, sans diagnostic."""
 import argparse,json,pathlib,re
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-STAMP='2026-10-18-track-setup-main-195'
+STAMP='2026-10-18-macro-fine-main-196'
 FEATURES=[
  ('Machines: six stock engines, Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, TINY, ChpHzrd / Retrosyn and MIDI Out.', 'Machines : six moteurs stock, Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, TINY, ChpHzrd / Retrosyn et MIDI Out.'),
  ('MIDI Out: silent A-side tracks with notes, 12 assignable CCs, locks, channel/port routing and two MIDI LFOs. No MIDI B-side bank.', 'MIDI Out : pistes A silencieuses avec notes,12CC assignables, locks, canal/port et deux LFO MIDI. Sans banque B.'),
@@ -11,6 +11,7 @@ FEATURES=[
  ('Sequence Genie, SCRAMBLE, slide trigs, Control All configuration, audio beat repeat and latching mutes.', 'Sequence Genie, SCRAMBLE, slides, configuration Control All, beat repeat audio et mutes verrouillables.'),
  ('Silent pad track selection; TRACK + pad plays. Trig preview, easier trig removal and dimmed trigless steps.', 'Selection silencieuse par pad ; TRACK + pad joue. Preecoute des trigs, suppression simplifiee et pas trigless attenues.'),
  ('Sample Wizard preview and slicing, scrolling long names and a multiline browser.', 'Sample Wizard : preecoute et decoupe, noms longs defilants et navigateur multiligne.'),
+ ('MACRO fine tune: SETTINGS + PITCH; plain PITCH keeps stock behavior and FUNC + PITCH remains Lo-Fi.', 'Accord fin MACRO : SETTINGS + PITCH ; PITCH seul conserve le comportement stock, FUNC + PITCH reste Lo-Fi.'),
  ('Permanent quick save, updated MACRO Lo-Fi/rendering and audio/filter fixes.', 'Sauvegarde rapide permanente, MACRO Lo-Fi/rendu actualises et corrections audio/filtre.'),
  ('Tempo up to 546 BPM, scale lock, numeric volume/pan and live MIDI OUT/THRU toggle.', 'Tempo jusqu’a546BPM, scale lock, volume/pan numeriques et bascule MIDI OUT/THRU live.'),
  ('Supermodel startup. Optional six-track USB audio; standard USB audio when unchecked.', 'Demarrage Supermodel. Audio USB six pistes en option ; audio USB standard sinon.')]
@@ -32,12 +33,17 @@ def main():
  listing+='</ul><a href="#step-file"><span data-l="en">Continue: load OS files</span><span data-l="fr">Continuer : charger les OS</span></a></div>'
  html=html.replace('<div class="super-toolbar">',listing+'<div class="super-toolbar">',1)
  html=html.replace('<h2 id="h1s" data-i18n="s1">What do you want to install?</h2>', '<h2 id="h1s"><span data-l="en">Your firmware</span><span data-l="fr">Votre firmware</span></h2>')
+ html=html.replace('</body>',f'<script src="macro-fine-data.js?v={STAMP}"></script><script src="macro-fine-release.js?v={STAMP}"></script></body>')
  files['index.html']=html
+ files['macro-fine-data.js']=(ROOT/'docs/flasher-macro-fine-main-test/macro-fine-data.js').read_text(encoding='utf-8')
+ fine=(ROOT/'docs/flasher-macro-fine-main-test/macro-fine-main.js').read_text(encoding='utf-8').replace('window.MCMidiMachineAllReady,window.MCBeatDiagnosticReady','window.MCMidiMachineAllReady').replace("id:'macro-fine-test',status:'experimental'","id:'macro-fine',status:'tested'").replace('Test adds fine pitch','Fine pitch').replace('Test : SETTINGS','SETTINGS').replace(' CPU/CUT diagnostic available. Hardware verification pending.','').replace(' Diagnostic CPU/CUT disponible. Verification materielle attendue.','')
+ assert 'MCBeatDiagnosticReady' not in fine
+ files['macro-fine-release.js']=fine
  files['midi-machine-main.js']=(ROOT/'tools/web/midi-machine-main.js').read_text(encoding='utf-8')
  guide=files['midi-machine-guide.html'].replace('Select All test','firmware').replace('fixed test preset','firmware').replace('CPU/CUT diagnostics and ','').replace('Hardware verification is pending.','').replace('Preset fixe avec les fonctions actuelles du principal, diagnostic CPU/CUT et','Firmware complet avec les fonctions du principal et').replace('Verification materielle attendue.','')
  guide=re.sub(r'<li><b>(Load diagnostic|Diagnostic).*?</li>','',guide);files['midi-machine-guide.html']=guide
- files['BUILD.json']=json.dumps(dict(stamp=STAMP,scope='main',profile='All features, MIDI machine, no B-side; USB six-track on/off',diagnostics=False,startup='Supermodel',track_setup_follows_selection=True,macro_fine=False),indent=2)
- files['midi-machine-release.js']='window.MC_RELEASES='+json.dumps([dict(version='1.95',date='2026-10-18',changes=[dict(en='Track Setup follows the selected track while open: MIDI Out shows its MIDI settings and audio machines show the stock setup. MACRO fine tune remains in test. No diagnostics in released firmware.',fr='Track Setup suit la piste selectionnee : reglages MIDI pour MIDI Out, menu stock pour les machines audio. Accord fin MACRO conserve en test. Aucun diagnostic dans le firmware publie.')])])+';'
+ files['BUILD.json']=json.dumps(dict(stamp=STAMP,scope='main',profile='All features, MIDI machine, no B-side; USB six-track on/off',diagnostics=False,startup='Supermodel',track_setup_follows_selection=True,macro_fine=True,hardware_verified=True),indent=2)
+ files['midi-machine-release.js']='window.MC_RELEASES='+json.dumps([dict(version='1.96',date='2026-10-18',changes=[dict(en='Hardware-verified MACRO fine tune: hold SETTINGS and turn PITCH. Ordinary PITCH keeps stock behavior; FUNC + PITCH retains Lo-Fi. Fine offsets save with the sound. No diagnostics in released firmware.',fr='Accord fin MACRO verifie sur appareil : tenir SETTINGS et tourner PITCH. PITCH seul conserve le comportement stock ; FUNC + PITCH reste Lo-Fi. Accord sauvegarde avec le son. Aucun diagnostic dans le firmware publie.')])])+';'
  for name,text in files.items():
   text=re.sub(r'2026-10-18-(?:midi-machine-all-test-\d+|macro-fine-main-test-\d+)',STAMP,text).replace('\r\n','\n').rstrip()+'\n'
   if a.check:assert (out/name).read_text(encoding='utf-8')==text,name
