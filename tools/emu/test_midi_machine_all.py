@@ -3,6 +3,7 @@ import json,pathlib,sys,struct,tempfile
 HERE=pathlib.Path(__file__).resolve().parent;sys.path[:0]=[str(HERE),str(HERE.parent)]
 from test_midi_entry import boot_case
 from test_midi_machine_ui import UI,SOUND,EVENT
+from test_midi_machine_worker import Worker
 from test_midi_machine_notes import PROJECT,OBJECT,VT
 from unicorn import UC_HOOK_CODE,m68k_const as mk
 from test_sdvintage_7th import ROW_COUNT
@@ -12,7 +13,7 @@ def main():
  assert not any(t['id']=='midi-out-bank' for t in ts)
  assert any(t.get('symbols',{}).get('br_load_address') for t in ts)
  pay=int(engine['append']['dest'],16);blob=next(raw for at,raw in mem if at==pay)
- r=UI(img,dict(hex=blob.hex(),symbols=engine['symbols'],machine=17),pay)
+ r=Worker(img,dict(hex=blob.hex(),symbols=engine['symbols'],machine=17),pay)
  for at,raw in mem:r.u.mem_write(at,raw)
  r.call(0x4005a274);assert r.word(ROW_COUNT)==18
  assert r.call(0x4005a4e8,126)==11 and r.call(0x4005a4e8,130)==18
@@ -25,8 +26,8 @@ def main():
  print('PASS chaines explicites ChordKeys live/sequence, stockage Wizard et second LFO audio conservees')
  for lane in range(6):
   r.track=lane;params=SOUND+0x1000*lane+20
-  r.assign=True;r.word(r.word(r.s['mm_ui_api']),1);r.output.clear();assert r.call(0x40006158,0,r.event(0,75))==1;assert not r.output
-  r.assign=False;r.word(r.word(r.s['mm_ui_api']),0);r.call(0x40006158,0,r.event(0,1));assert ('DIN',bytes((0xb0,74,65))) in r.output
+  r.assign=False;r.u.mem_write(EVENT,struct.pack('>6I',0,0,0,13,1,0));r.call(r.s['mm_ui_key'],EVENT);r.output.clear();assert r.call(0x40006158,0,r.event(0,75))==1;assert not r.output
+  r.u.mem_write(EVENT,struct.pack('>6I',0,0,0,13,0,0));assert r.call(r.s['mm_ui_key'],EVENT)==1;r.call(0x40006158,0,r.event(0,1));assert ('DIN',bytes((0xb0,74,65))) in r.output
   r.lines.clear();assert r.call(r.s['mm_draw'],0,0x920c0000)==0 and not r.lines
   r.call(r.s['mm_setup'],params);r.call(r.s['mm_lfo_edit'],params,0,3,-54)
   r.call(r.s['mm_route_edit'],params,0,-11);r.call(r.s['mm_route_edit'],params,1,4)
@@ -50,8 +51,13 @@ def main():
   sq.queue.clear();sq.sent.clear();assert sq.sequence(lane,74,17+lane)==1<<lane
   notes=[bytes(sq.uc.mem_read(pointer,16)) for pointer in sq.queue if pointer!=sq.s['mm_wakeup']]
   assert len(notes)==1 and notes[0][0]==1 and notes[0][8:11]==bytes((lane,60,97)),(lane,notes)
+  # Acheminer le vrai message produit vers la vraie tache MIDI, pas seulement le compter.
+  r.u.mem_write(SOUND+0x1000*lane+38,bytes((17,0)));params=SOUND+0x1000*lane+20
+  r.call(r.s['mm_route_edit'],params,0,-127);r.call(r.s['mm_route_edit'],params,0,lane);r.call(r.s['mm_route_edit'],params,1,127)
+  packet=r.call(0x4008a5d0);r.u.mem_write(packet,notes[0]);r.output.clear();r.queue.append(packet);r.run_worker()
+  for port in ('DIN','USB'):assert (port,bytes((0x90|lane,60,97))) in r.output,(lane,port,r.output)
   sq.drain();assert bytes((0xb0|lane,74,17+lane)) in sq.sent
- print('PASS vrai chemin sequence du preset avec ChordKeys : exactement une note MIDI et CC locks, aucune attaque double')
+ print('PASS sequence complete avec MOut audio desactive : file audio -> une note -> vrai worker -> DIN et USB sur six canaux, CC locks conserves')
  import emac
  mac=emac.EMAC(r.u);mac.macsr=0x20
  with tempfile.TemporaryDirectory() as folder:

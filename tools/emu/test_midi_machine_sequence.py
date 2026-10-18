@@ -36,12 +36,12 @@ class Sequence(Audio):
  def send_cc(self,args):
   assert not self.uc.reg_read(mk.UC_M68K_REG_SR)&0x700
   self.sent.append(bytes(self.uc.mem_read(args[1],args[0])));return 0
- def sequence(self,lane=0,cc=74,value=17,lock_only=False,on=1):
+ def sequence(self,lane=0,cc=74,value=17,lock_only=False,on=1,mout=0):
   locks=self.e.call(0x40091e66);self.uc.mem_write(RAW,b'\xff'*68)
   self.uc.mem_write(RAW+22,struct.pack('>H',(cc+1)*128+value));self.e.call(0x4005487c,locks,RAW,0,0)
   event=self.e.call(0x40091eb6)
   for offset,val in ((4,on),(8,lane),(12,1),(28,60),(40,1 if lock_only else 0x10081),(52,91),(60,127),(72,locks)):self.w32(event+offset,val)
-  self.uc.mem_write(event+20,b'\1');self.uc.mem_write(event+22,b'\x61\0')
+  self.uc.mem_write(event+20,bytes((mout,)));self.uc.mem_write(event+22,b'\x61\0')
   self.e.call(0x40092116,event);return self.run()
  def drain(self):
   self.uc.reg_write(mk.UC_M68K_REG_SR,0x2000)
