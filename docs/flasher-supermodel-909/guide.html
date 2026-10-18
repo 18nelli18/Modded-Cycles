@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Feature and shortcut overview — Supermodel 909</title><style>body{margin:0;background:#f4f2eb;color:#20241f;font:16px/1.6 system-ui,sans-serif}main,nav{max-width:1100px;margin:auto;padding:24px}nav{display:flex;gap:16px;align-items:center}button,a{color:inherit}button{padding:8px 16px;border:1px solid #777;border-radius:5px;background:white;cursor:pointer}h1{font-size:clamp(30px,5vw,52px);line-height:1.1}h2{margin-top:48px;border-bottom:2px solid #39493b;padding-bottom:10px}h3{margin-top:30px}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:15px}th,td{text-align:left;border-bottom:1px solid #bbb;padding:12px;vertical-align:top}th{background:#dfe7dc}td:nth-child(2){font-weight:650;min-width:190px}html[lang=en] [data-l=fr],html[lang=fr] [data-l=en]{display:none}@media print{nav{display:none}body{background:white;font-size:10pt}main{padding:0}h2{break-after:avoid;margin-top:20px}tr{break-inside:avoid}table{font-size:9pt}a{color:inherit;text-decoration:none}}</style><nav><a href="./">Flasher</a><button onclick="document.documentElement.lang='en'">English</button><button onclick="document.documentElement.lang='fr'">Francais</button><button onclick="window.print()">Print / Imprimer</button></nav><main><article data-l="en"><h1>Supermodel 909 — feature and shortcut overview</h1>
-<p>909.5 · 18 October 2026</p>
+<p>909.7 · 18 October 2026</p>
 <p>Fixed 909 Edition: six 909 voices, Sample Wizard, ACID, per-track filter, slide trigs, Sequence Genie, SCRAMBLE, Second LFO, MIDI Out Bank with saving, combined MIDI OUT + THRU, latching mute, Control All Config, Control All Beat Repeat, A/B arpeggiators and 909 startup. Load official Cycles OS1.13 and four local WAVs for closed/open hats, crash and ride. No sample audio is hosted.</p>
 <p>Shared features match main1.89: the filter transition repair, stock permanent save (hold FUNC + SETTINGS), A/B Oct0, first-entry B playback and one recording cursor. Normal pattern length is shared between A and B and editable from either side. In B, FUNC + PAGE opens Length: press DATA before turning, or press PAGE for 16-step sizes regardless of edit selection. Per-track mode keeps independent MIDI lengths. Page LEDs follow stock REC/non-REC modes; entering B inherits the selected A page in normal mode. MIDI speeds remain independent. Main hardware-confirmed fixes; 909 integration checked in emulation. No diagnostic display in this release.</p>
 <p>Stop before saving MIDI and wait for MIDI SAVED. Saved MIDI loads only when entering B-side with playback stopped; sidecar files are outside Elektron SysEx backups.</p>
@@ -7,6 +7,7 @@
 <h2>Performance and sound</h2>
 <div class="table-wrap"><table>
 <tr><th>Feature</th><th>Gesture</th><th>Result</th></tr>
+<tr><td>Sample Preview</td><td>FUNC + MACHINES, highlight a sample, then play a pad or keyboard</td><td>Audition in the Sample Wizard browser before loading.</td></tr>
 <tr><td>Control All Config</td><td>TRACK + TRIG 1–6</td><td>Include or exclude tracks from Control All. The selected track can also be excluded. Choices reset on power-off.</td></tr>
 <tr><td>Control All Beat Repeat</td><td>Hold TRACK + RETRIG, then hold TRIG 1–16</td><td>Repeat the included audio tracks. The newest held TRIG chooses the division and shows a brief popup. Release the division pad or either modifier to stop. Both modifiers must stay held.</td></tr>
 <tr><td>Latching mute</td><td>Hold TRACK, tap FUNC</td><td>Keep mute mode open. Tap FUNC to leave.</td></tr>
@@ -65,7 +66,7 @@
 <tr><td>Combined MIDI OUT + THRU</td><td>Set CONFIG → MIDI → PORTS → OUT/THRU to THR, then FUNC + click DATA</td><td>Toggle the Cycles’ own outgoing MIDI while retaining incoming MIDI Thru.</td></tr>
 </table></div>
 <p>Saved MIDI loads only when entering B-side while playback is stopped. Stop before Save Project and wait for MIDI SAVED. Sidecar MIDI files are outside Elektron SysEx backups.</p></article><article data-l="fr"><h1>Supermodel 909 — fonctions et raccourcis</h1>
-<p>909.5 · 18 octobre 2026</p>
+<p>909.7 · 18 octobre 2026</p>
 <p>Profil fixe909 : six voix909, Sample Wizard, ACID, filtre par piste, slides, Sequence Genie, SCRAMBLE, Second LFO, Banque MIDI avec sauvegarde, MIDI OUT + THRU, mutes verrouilles, Control All Config, Control All Beat Repeat, arpegiateurs A/B et demarrage909. Charger OS Cycles1.13 officiel et quatre WAV locaux : hats ferme/ouvert, crash et ride. Aucun sample audio heberge.</p>
 <p>Fonctions partagees alignees sur main1.89 : correction transition filtre, sauvegarde permanente stock (tenir FUNC + SETTINGS), Oct0 A/B, premiere entree B en lecture et curseur REC unique. Longueur normale commune A/B et editable des deux cotes. Dans B, FUNC + PAGE ouvre Len : appuyez sur DATA avant de tourner, ou PAGE par16 meme hors edition. Mode par piste : longueurs MIDI independantes. LEDs selon REC natif ; ouverture B sur la page A en mode normal. Vitesses MIDI independantes. Corrections main confirmees sur machine ; integration909 verifiee en emulation. Aucun affichage diagnostic dans cette version.</p>
 <p>Arreter avant sauvegarde MIDI et attendre MIDI SAVED. Le MIDI sauvegarde charge uniquement en entrant B, lecture arretee ; fichiers annexes hors backups SysEx Elektron.</p>
@@ -73,6 +74,7 @@
 <h2>Performance et son</h2>
 <div class="table-wrap"><table>
 <tr><th>Fonction</th><th>Geste</th><th>Resultat</th></tr>
+<tr><td>Preecoute samples</td><td>FUNC + MACHINES, choisir un sample puis jouer un pad ou clavier</td><td>Ecouter dans le navigateur Sample Wizard avant chargement.</td></tr>
 <tr><td>Control All Config</td><td>TRACK + TRIG 1–6</td><td>Inclure ou exclure les pistes de Control All. La piste sélectionnée peut aussi être exclue. Choix remis a zero a extinction.</td></tr>
 <tr><td>Control All Beat Repeat</td><td>Tenir TRACK + RETRIG, puis un TRIG 1–16</td><td>Repeter les pistes audio incluses. Dernier TRIG tenu prioritaire, division en popup bref. Relacher le TRIG ou un modificateur arrete. Garder les deux modificateurs tenus.</td></tr>
 <tr><td>Mute verrouille</td><td>Tenir TRACK, taper FUNC</td><td>Garder le mode mute ouvert. Taper FUNC pour sortir.</td></tr>
