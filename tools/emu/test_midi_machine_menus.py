@@ -11,6 +11,7 @@ def main():
  r.word(0x40fe4178,app);r.stub(0x400d0974,lambda args:app)
  r.word(manager+24,node);r.word(node+4,manager+20);r.word(node+8,view);r.word(view,0x400ffe20)
  r.stub(0x92060320,lambda a:TRACK_DATA+0x1000*((a[0]-TRACK)//88));r.word(VT+256+40,0x92060320);r.word(VT+256+16,0x92060400)
+ r.stub(r.s['mm_menu_draw'],lambda a:r.lines.append('Track Setup'))
  held=app+1024;used=held+4;r.word(r.s['mm_ui_api'],held);r.word(r.s['mm_ui_api']+4,used)
  def key(code,flags):
   r.u.mem_write(EVENT,struct.pack('>6I',0,0,0,code,flags,0));return r.call(r.s['mm_ui_key'],EVENT)
@@ -28,8 +29,9 @@ def main():
   assert key(1,1)==0 and key(2,3)==1 and key(2,2)==1 and key(1,0)==0
   assert r.u.mem_read(mute+48,1)==b'\1' and r.u.mem_read(0x401487ec,2)==bytes(2)
   r.word(manager+24,node)
-  assert title()==f'T{lane+1} MIDI SETUP'
-  assert all(any(name in line for line in r.lines) for name in ('Channel','Output','KbT','Pad Note'))
+  assert title()=='Track Setup'
+  r.word(view,0x40100218) # vue pads/transitoire au-dessus de MainScreen : DATA appartient au setup
+
   before=bytes(r.u.mem_read(params,66));r.call(r.s['mm_encoder'],r.event(-1,1));assert bytes(r.u.mem_read(params,66))==before
   assert key(32,16)==1;r.call(r.s['mm_encoder'],r.event(-1,4));assert r.call(r.s['mm_route_read'],params,1)==4
   key(32,16);r.call(r.s['mm_encoder'],r.event(-1,-1));key(32,16);r.call(r.s['mm_encoder'],r.event(-1,-13));assert r.call(r.s['mm_route_read'],params,0)==3
@@ -38,7 +40,7 @@ def main():
   r.call(r.s['mm_encoder'],r.event(-1,-200));assert r.call(r.s['mm_track_read'],lane,0)==0xffffffc4
   key(32,16);r.call(r.s['mm_encoder'],r.event(-1,1));key(32,16)
   r.call(r.s['mm_encoder'],r.event(-1,-127));r.call(r.s['mm_encoder'],r.event(-1,72));assert r.call(r.s['mm_track_read'],lane,1)==72,(lane,r.call(r.s['mm_track_read'],lane,1),r.lines)
-  title();assert any('Pad Note C5' in line for line in r.lines),r.lines
+  assert title()=='Track Setup';r.word(view,0x400ffe20)
   assert key(12,1)==1 and title()=='TRACK'
   for lfo,cc in ((0,74),(1,71)):
    assert key(8,1)==1 and key(8,0)==1;assert title()==f'T{lane+1} MIDI LFO {lfo+1}'

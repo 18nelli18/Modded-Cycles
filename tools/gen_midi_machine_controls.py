@@ -9,7 +9,7 @@ def main():
   gm.gx.run([gm.gx.CROSS+'gcc',*gm.gx.CFLAGS,'-std=c99','-c',str(ROOT/'tools/machines/midi_machine/controls.c'),'-o',str(obj)])
   objects=[str(obj)]
   if a.ui:
-   for name in ('ui.c','ui.S','storage.c','storage.S','worker.c','worker.S','settings.c','lfo.c','lfo.S'):
+   for name in ('ui.c','ui.S','track_menu.S','storage.c','storage.S','worker.c','worker.S','settings.c','lfo.c','lfo.S'):
     o=d/(name+'.o');gm.gx.run([gm.gx.CROSS+'gcc',*gm.gx.CFLAGS,'-std=c99','-c',str(ROOT/'tools/machines/midi_machine'/name),'-o',str(o)]);objects.append(str(o))
    popup=d/'popup.s';popup.write_text((ROOT/'tools/machines/beat_repeat/popup.s').read_text().replace('br_popup','mm_popup'))
    o=d/'popup.o';gm.gx.run([gm.gx.CROSS+'gcc',*gm.gx.CFLAGS,'-c',str(popup),'-o',str(o)]);objects.append(str(o))

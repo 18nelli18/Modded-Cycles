@@ -17,7 +17,7 @@ def compile_core(tmp,repo,pay,bss_at=None,machine=6,controls=False):
  gm.gx.run([gm.gx.CROSS+'gcc',*gm.gx.CFLAGS,*(['-DMM_CONTROLS=1'] if controls else []),'-c',str(HERE/'machines/midi_machine/live.S'),'-o',str(live)])
  objects=[str(obj),str(live)]
  if controls:
-  for name in ('controls.c','ui.c','ui.S','storage.c','storage.S','worker.c','worker.S','settings.c','lfo.c','lfo.S'):
+  for name in ('controls.c','ui.c','ui.S','track_menu.S','storage.c','storage.S','worker.c','worker.S','settings.c','lfo.c','lfo.S'):
    target=tmp/(name+'.o')
    gm.gx.run([gm.gx.CROSS+'gcc',*gm.gx.CFLAGS,'-std=c99',f'-DMM_MACHINE={machine}','-c',str(HERE/'machines/midi_machine'/name),'-o',str(target)])
    objects.append(str(target))
