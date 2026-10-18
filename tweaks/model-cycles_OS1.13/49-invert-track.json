@@ -1,0 +1,23 @@
+{
+  "id": "invert-track",
+  "order": 49,
+  "name": "Pads silencieux, TRACK + pad joue",
+  "status": "experimental",
+  "device": "Model:Cycles",
+  "os": "1.13",
+  "section": 3,
+  "requires": [],
+  "conflicts": [],
+  "description": [
+    "Pads T1-T6 : appui simple selectionne sans son ; TRACK + pad selectionne et joue, avec le relais live record natif.",
+    "Navigateur de presets : apercu sonore par appui simple conserve ; TRACK + pad selectionne et joue.",
+    "Un octet beq vers bne a0x4001d374, sans payload. Contribution fournie par AveyCole. tools/gen_invert_track.py ; notes/122."
+  ],
+  "writes": [
+    {
+      "off": 118644,
+      "old": "67",
+      "new": "66"
+    }
+  ]
+}

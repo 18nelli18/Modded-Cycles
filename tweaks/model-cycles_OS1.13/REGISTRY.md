@@ -6,7 +6,7 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 170 tweaks, 17 602 écritures.
+- 171 tweaks, 17 603 écritures.
 - Masques de sprites libérables : 164 (35 960 o), dont 148 pris (32 712 o) et **16 libres (3 248 o)**.
 - Crochets sur l'OS : 108 adresses détournées, dont 68 à l'identique par des mods de familles différentes.
 - Pointeurs réécrits : 73 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
@@ -708,6 +708,7 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | level-pan-values | 8 | 1 | 3 | 0 | 2 | 2 | 0 |  | notes/44 |
 | trigless-dim | 8 | 1 | 3 | 0 | 2 | 2 | 0 |  | notes/45 |
 | track-filter | 40 | 1 | 6 | 3 | 15 | 15 | 0 |  | notes/47 |
+| invert-track | 1 | 1 | 0 | 0 | 0 | 0 | 0 |  | notes/122 |
 | scale-gen | 104 | 0 | 1 | 5 | 49 | 49 | 0 |  | notes/56 |
 | scale-gen-queued | 138 | 0 | 3 | 5 | 65 | 65 | 0 |  | notes/56 |
 | scale-gen-st | 104 | 0 | 1 | 5 | 49 | 49 | 0 |  | notes/56 |

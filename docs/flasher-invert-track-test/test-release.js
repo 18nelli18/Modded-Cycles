@@ -1,0 +1,1 @@
+window.MC_RELEASES=[{"version": "Invert-track-test.1", "date": "2026-10-18", "changes": [{"en": "Optional silent track selection: enable its checklist entry. Includes main1.90 and test-only CPU/CUT diagnostics.", "fr": "Selection silencieuse facultative : cocher sa ligne. Principal1.90 et diagnostic CPU/CUT de test inclus."}]}];

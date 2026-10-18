@@ -1,0 +1,8 @@
+{
+  "stamp": "2026-10-18-invert-track-test-1",
+  "base": "main1.90",
+  "scope": "test-only",
+  "optional_module": "invert-track",
+  "default_enabled": false,
+  "diagnostics": true
+}
