@@ -195,3 +195,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [116 — Arpege Oct0 A/B](116-arpege-octave-zero.md) : notes tenues seules, octaves ajoutees0..3, sauvegardes et sons historiques conserves ; test uniquement.
 
 - [117 — 909, fonctions partagees](117-909-fonctions-partagees.md) : filtre, sauvegarde et arpege/curseur MIDI main1.83 ; profil909 et WAV locaux conserves, sans diagnostic.
+
+- [118 — Combinaisons machines](118-combinaisons-machines.md) : TINY/RETROSYN avec tous les sous-ensembles, Wizard facultatif ; combinaison signalee confirmee sur machine le 17/10/2026, catalogue verifie en emulation, aucun diagnostic principal.
