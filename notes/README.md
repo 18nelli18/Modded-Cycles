@@ -211,3 +211,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [124 - Conversion MACRO optimisee](124-macro-conversion-optimisee.md) : boucle demi-bande EMAC162octets, sorties47modeles identiques ; confirme sur machine le18/10/2026, principal1.93 sans diagnostic. Clicks/CUT en arrangements charges encore a investiguer.
 
 - [128 - Plage End Wizard909](128-plage-end-wizard-909.md) : collision avec RC Type binaire reproduite ; test separe avec End continu et diagnostic, descripteurs et DSP909 conserves ; verification materielle attendue.
+
+- [129 - Accord fin MACRO](129-accord-fin-macro.md) : test SETTINGS+PITCH pour la fraction native, FUNC+PITCH Lo-Fi conserve ; preuves OS, pas encore confirme sur appareil.
