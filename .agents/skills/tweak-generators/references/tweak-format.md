@@ -11,7 +11,7 @@
 | `10`–`19` | USB audio (6 channels) |
 | `20`–`29` | machines: SD VINTAGE, Syntakt engines (`24-syntakt-*`), MACRO `25`, ACID `26` |
 | `30`–`39` | Model-TG and its combinations (`30`, `31`, `32` macro-tg, `35` acid-tg), add-ons that need it (`33` sample-preview) |
-| `40`–`49` | sequencer and interface (`40` arp … `48` track-filter) |
+| `40`–`49` | sequencer and interface (`40` arp … `48` track-filter; `45` free since chord-keys was removed on 18/10/2026) |
 | `50`–`59` | MIDI (`50` midi-both, `51` midi-live-both) |
 | `60`–`69` | modulation (`60` lfo-plus) |
 | `90`–`99` | diagnostics, never offered to users |

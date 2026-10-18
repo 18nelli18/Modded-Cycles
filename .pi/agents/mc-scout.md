@@ -21,7 +21,7 @@ from facts. You do not design, edit the repo, build or run proofs.
    `rg -n '0x4005' notes/ tools/`. Read the matching sections, not just the hit lines.
 2. Find the related tweaks (`tweaks/model-cycles_OS1.13/*.json` ids, `REGISTRY.md` §4 hooks and §7 "what each mod
    touches"), generators (`tools/gen_*.py`), sources (`tools/machines/*`), proofs (`tools/emu/test_*.py`),
-   flasher card (`tools/gen_flasher_tweaks.py` FEATURES, `docs/flasher/app.js` FEAT) and guide section.
+   the feature in `os.json` and its texts (`docs/flasher/app.js` FEAT), the guide section and the `FEATURES.md` entry.
 3. Check open branches that touch the same area: `git branch -r`, `git log --oneline main..origin/<branch>`.
 4. Note the next free note number and tweak order (`ls`, never from memory).
 

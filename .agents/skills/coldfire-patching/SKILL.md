@@ -57,7 +57,7 @@ For 3–5, check `REGISTRY.md` §4: if another mod hooks the same address, eithe
 - Assemble/compile with `-mcpu=54418`; one linker script per mod (`tools/machines/<mod>/<mod>.ld`) placing a
   `.cave` (or named) section at the free address; `objcopy -O binary -j <section>`; `nm` for symbols. Copy
   `tools/machines/trig_hold/` (`.S` + `.ld`) and `gen_trig_hold.compile_hold()`.
-- Output bytes depend on the toolchain. GCC: SD VINTAGE v2 and chord-keys need m68k-elf GCC 16.2.0 / binutils
+- Output bytes depend on the toolchain. GCC: SD VINTAGE v2 and the C mods need m68k-elf GCC 16.2.0 / binutils
   2.47 (build recipe in notes/42 §16). binutils: m68k-elf `as` relaxes `lea abs.l` to `lea (d16,pc)`, so
   `relocate_6ch.py --check` only matches with `m68k-linux-gnu-` binutils. Pin the toolchain in the note when
   bytes depend on it; prefer explicit encodings (`lea (sym).l`) in new code so both assemblers agree.

@@ -11,7 +11,7 @@ $V --quick                                  # no firmware, no network: compile, 
                                             # relocate_6ch, builder.js == build.py, flasher .syx checks
 $V                                          # + jsdom smoke test of the page (npm, network)
 $V --gen gen_trig_hold.py --proof test_trig_hold.py \
-   --with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,tempo-max
+   --with model-tg-st,sample-preview-st,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-live-both,lfo-plus,syntakt-tg-sd-cp-toy-bits-swarm-macro-acid
                                             # + ref_mainos --check, smoke with the real files, generator --check,
                                             #   the proof alone and combined (needs firmware/ files, unicorn)
 $V --git origin/claude/<open-pr>            # overlaps and registry against an open branch (repeatable)

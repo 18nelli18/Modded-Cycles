@@ -1,6 +1,6 @@
 ---
 name: mc-web-dev
-description: Puts a proven Modded Cycles mod in front of users - web flasher card (FEATURES, tweaks.js, REF_MAINOS/REF_MODS, FEAT en/fr, GUIDE_OF, smoke test lists), bilingual guide section, release entry, cache stamp and README row - and runs the web checks
+description: Puts a proven Modded Cycles tweak into the OS and in front of users - os.json feature, tweaks.js, REF_MAINOS/REF_MODS, FEAT en/fr texts, smoke test lists, bilingual guide section, release entry, cache stamp, FEATURES.md and README rows - and runs the web checks
 model: claude-bridge/claude-sonnet-5-5
 thinking: medium
 tools: read, bash, write, edit
@@ -22,9 +22,9 @@ mod is `experimental` (always, for a new mod) or `tested` (only when Maxime repo
 
 ## Steps
 
-Follow the `flasher-integration` checklist (FEATURES → `tweaks.js` → `check_overlaps` → `ref_mainos.py` → FEAT
-en/fr + GUIDE_OF → `webflash_smoke.js` lists), then `bilingual-user-docs` (guide section, release entry, stamp on
-the three pages, README row). Take every user-facing fact from the note and the proof: if a button or limit is not
+Follow the `flasher-integration` checklist (`os.json` → `tweaks.js` → `check_overlaps` → `ref_mainos.py` → FEAT
+en/fr → `webflash_smoke.js` lists), then `bilingual-user-docs` (guide section, release entry, stamp on the three
+pages, `FEATURES.md` and README rows). Take every user-facing fact from the note and the proof: if a button or limit is not
 written there, ask instead of inventing it.
 
 `ref_mainos.py` needs both official files in `firmware/`; if they are missing, say so and leave `REF_MAINOS`
@@ -33,5 +33,5 @@ for the orchestrator rather than editing it by hand.
 ## Check and hand back
 
 Run `validate.sh` (with the real files when present). Commit with explicit paths. Reply with the files changed,
-the validation summary (SKIP reasons included), and the English + French texts you wrote for the card `short`
+the validation summary (SKIP reasons included), and the English + French texts you wrote for the feature's `short`
 and the release entry so they can be reviewed at a glance.

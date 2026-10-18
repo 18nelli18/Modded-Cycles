@@ -48,12 +48,13 @@ or look for, what to report (screen exception code `VEC/SR/ADDR` if it crashes).
 ## After his report
 
 Works → one commit "<Mod> tested on the Model:Cycles":
-- [ ] `"status": "tested"` in `FEATURES` (`tools/gen_flasher_tweaks.py`), regenerate `docs/flasher/tweaks.js`
+- [ ] `"status": "tested"` on the feature in `os.json` (and on the OS itself only when Maxime tested this exact
+      firmware), regenerate `docs/flasher/tweaks.js`
 - [ ] guide: *Experimental* → *Tested* line (en + fr)
 - [ ] release entry (new version, "Tested on a Model:Cycles") and the stamp
-- [ ] `README.md` row status
+- [ ] `README.md` row status, `FEATURES.md` status line
 - [ ] note: `## N. Testé sur la machine (JJ/MM/AAAA)` + index row in `notes/README.md`
-- [ ] `ref_mainos.py` rerun if `FEATURES` changed anything it reads, validation, push
+- [ ] `ref_mainos.py --check` still passes (a status change does not change the firmware), validation, push
 
 Problem → record it in the note (his words, the screen code, the combination), reproduce it as a failing check in
 the proof, fix, bump the release, and send a new test plan.

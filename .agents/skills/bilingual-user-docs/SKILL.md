@@ -38,11 +38,11 @@ Next number, before *Samples OS*; renumber the sections after it. Copy the `#tem
 </section>
 ```
 
-The anchor goes into `GUIDE_OF` in `docs/flasher/app.js`.
+The anchor is the feature's `guide` in `os.json`.
 
 ## Release entry (`docs/assets/release.js`)
 
-New object at the top of `window.MC_RELEASES`: next version after the top one (`1.54` → `1.55`), today's date
+New object at the top of `window.MC_RELEASES`: next version after the top one (`2.0` → `2.1`), today's date
 (`YYYY-MM-DD`), 2 to 4 `{ en, fr }` changes: what the user gets and how to use it, the limits, how it was
 checked (emulator / tested on a Model:Cycles), which mods it goes with, thanks to whoever asked or reported.
 After merge, the English is posted as-is to Discord #announcements (`.github/workflows/discord.yml`).
@@ -55,12 +55,14 @@ Same `YYYY-MM-DD-NN` string everywhere: `window.MC_BUILD` in `docs/flasher/index
 
 ## README
 
-One row in the mod table of `README.md` (English only, the repo overview): mod, what it does, status.
+One row in the table of `README.md` (English only, the repo overview): feature, what it does, origin, status; and a
+section in `FEATURES.md` (what it does, how to use it with the keys, limits, origin, status) plus its key combinations
+in the shortcut map at the top of that file.
 
 ## Checklist
 
 - [ ] Every new visible string has `en` and `fr`, same facts
 - [ ] Buttons, screen text and limits checked against the note and the proof (not invented)
-- [ ] Status wording matches `FEATURES` (`experimental` / `tested`)
-- [ ] `GUIDE_OF` anchor exists; the smoke test's French-row check passes
+- [ ] Status wording matches `os.json` (`experimental` / `tested`)
+- [ ] The `guide` anchor of `os.json` exists; the smoke test's French-row check passes
 - [ ] Stamp bumped on all three pages

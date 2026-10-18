@@ -11,7 +11,7 @@ Free space is scarce and every byte is accounted for. The source of truth is
   mask becomes free. The tweak that writes into a mask must include its redirect (or `requires` a tweak that does).
 - `sprites.GROUPS`: 10 groups, 164 freeable masks, 104 to 1024 bytes. Sizes and which are free: `REGISTRY.md` §1.
   Never write into a kept copy (`registry.py` refuses).
-- Big code is split over several masks (chord-keys: fourteen 47×47 masks) with one linker section per mask.
+- Big code is split over several masks (sample preview: four 47×47 masks) with one linker section per mask.
 - Two mods may share a mask only if they are never built together (or one `requires` the other), or if they never
   write the same bytes when built together (trig-hold in front of 6ch-usbup's stubs in `0x4015c044`).
   `check_overlaps.py` proves it.

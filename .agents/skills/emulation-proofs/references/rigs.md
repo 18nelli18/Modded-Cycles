@@ -16,7 +16,7 @@ All under `tools/emu/` (French docstrings: read them, they list the OS addresses
 
 | Subsystem | Proof | Notes |
 |---|---|---|
-| Keys, holds, grid view, `UIStates` | `test_trig_hold.py`, `test_chord_keys.py`, `chord_ui_checks.py` | 33, 42 |
+| Keys, holds, grid view, `UIStates` | `test_trig_hold.py` | 33 |
 | Encoders, knob → descriptor, value windows | `lofi_ui.py`, `test_level_pan.py` | 55, 44 |
 | Screen drawing, fonts, sprites | `test_boot_anim.py`, `test_multiline_browser.py`, `test_level_pan.py` | 39, 40, 44 |
 | Front-panel LEDs interrupt | `test_trigless_dim.py` | 45 |
@@ -30,6 +30,4 @@ All under `tools/emu/` (French docstrings: read them, they list the OS addresses
 | USB audio stream | `test_usb_in.py` | 35 |
 | MIDI routing, settings block | `test_midi_thru.py` | 53 |
 | Update checks, Samples packing | `test_crossflash_samples.py`, `test_mods_for_samples.py` | 41, 57 |
-| Exploration (not proofs) | `probe_chord_*.py` | 42 |
 
-Host-only unit test (no emulator): `tools/test_chord_keys.py` compiles the C core with `cc` and checks it via ctypes.

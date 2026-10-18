@@ -53,8 +53,9 @@ Methods and ideas only, no code: [octamax](https://github.com/mxldyn/octamax) by
 These mods came from people outside the project before it had a license. Written confirmation that each contribution
 is under the MIT License, like the rest of the project, is still pending (see [`CONTRIBUTING.md`](CONTRIBUTING.md)):
 
-- **Chord Keys** (`45-chord-keys.json`): by Nico Heuser ([byNicoHeuser](https://github.com/byNicoHeuser)), contributed
-  as [PR #46](https://github.com/18nelli18/Modded-Cycles/pull/46).
+- **Chord Keys**: by Nico Heuser ([byNicoHeuser](https://github.com/byNicoHeuser)), contributed as
+  [PR #46](https://github.com/18nelli18/Modded-Cycles/pull/46); removed from the project on 18/10/2026 (its files stay in
+  the git history before that date).
 - **MIDI THRU mods** (`50-midi-both.json`, `51-midi-live-both.json`): by AveyCole, from
   [AveyCole/Modded-Cycles](https://github.com/AveyCole/Modded-Cycles), a fork with no license file, also offered as
   [PR #73](https://github.com/18nelli18/Modded-Cycles/pull/73).

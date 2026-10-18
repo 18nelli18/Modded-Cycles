@@ -30,8 +30,8 @@ description: Checks licenses and records provenance when Modded Cycles uses outs
 | `tweaks/model-cycles_OS1.13/PROVENANCE.md` | row: author, origin repo + commit, license, what we changed, generator, note |
 | `THIRD-PARTY-NOTICES.md` | outside code: name, author, license, where it is used |
 | `tweaks/model-cycles_OS1.13/LICENSE-<Name>` | the license text, copied next to the tweaks |
-| `docs/flasher/LICENSE-<Name>.txt` | served with the page; `license` key on the card in `FEATURES` |
-| `FEATURES` `credit` | `{"kind": "based", "who": "<author>", "repo": "<owner/repo>"}`; without `repo`: "based on a mod by …" |
+| `docs/flasher/LICENSE-<Name>.txt` | served with the page; `license` key on the feature in `os.json` |
+| `os.json` feature `credit` | `{"kind": "based", "who": "<author>", "repo": "<owner/repo>"}`; without `repo`: "based on a mod by …" |
 | guide + release | "Based on a mod by …" / « D'après un mod de … » |
 
 ## Contributions

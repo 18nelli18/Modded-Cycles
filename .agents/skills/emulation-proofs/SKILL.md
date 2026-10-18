@@ -17,7 +17,7 @@ Copy `test_trig_hold.py` (event chain, interceptions) or `test_tempo_max.py` (se
 
 ```python
 """Preuve de … (notes/NN, tweaks/model-cycles_OS1.13/OO-<id>.json).   # French docstring: what runs, numbered checks
-    python3 tools/emu/test_<mod>.py --cycles model-cycles_OS1.13.syx [--with 6ch-usbup,arp,… --syntakt Syntakt_OS1.42.syx]
+    python3 tools/emu/test_<mod>.py --cycles model-cycles_OS1.13.syx [--with <the other tweaks of os.json> --syntakt Syntakt_OS1.42.syx]
 """
 FAIL = []
 def check(ok, msg):                    # one printed line per check: "ok" / "ECHEC" (as the existing proofs)
@@ -42,7 +42,7 @@ def main():
 - [ ] The same scenario on the stock image behaves as before (and as the note describes the original bug, if any:
       keep that check, it documents why the patch exists — tempo-max's LFO above 351.6 BPM)
 - [ ] Edge cases: limits, wrap-around of counters, re-entrancy, empty/zero inputs, every track/voice
-- [ ] Combined run: `--with 6ch-usbup,model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm,arp,trig-hold,tempo-max
+- [ ] Combined run: `--with model-tg-st,sample-preview-st,trig-hold,arp,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-live-both,lfo-plus,syntakt-tg-sd-cp-toy-bits-swarm-macro-acid (minus the tweak under test)
       --syntakt firmware/Syntakt_OS1.42.syx` plus every mod hooking near yours (`REGISTRY.md` §4)
 - [ ] Audio-path cost measured if the code runs per block (`Engine.count_instructions`)
 - [ ] Exit code non-zero on any failed check; run time stated in the docstring if long
