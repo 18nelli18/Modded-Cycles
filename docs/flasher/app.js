@@ -3933,7 +3933,7 @@ function wireSupermodel() {
   $('step-choose').appendChild(advanced);
   const body=$('step-choose').querySelector('.step-body');
   const firstTabs=body.querySelector(':scope > .seg');if(firstTabs)advanced.appendChild(firstTabs);
-  for(const node of [...$('panel-mods').children]){if(node.classList.contains('mach-q')||node.classList.contains('seg')||node.id==='mach-pane'||node.classList.contains('mods-lede'))advanced.appendChild(node);}
+  for(const node of [...$('panel-mods').children]){if((node.classList.contains('seg')&&!node.classList.contains('sub'))||node.classList.contains('mods-lede'))advanced.appendChild(node);}
   const notice=document.querySelector('.super-save-note');if(notice)advanced.appendChild(notice);
   advanced.appendChild($('select-all-note'));
 
