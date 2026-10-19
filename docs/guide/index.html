@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-19-02">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-19-02">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-20-01">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-20-01">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -48,6 +48,7 @@
         <li><a href="#syntakt"><span data-l="en">Syntakt engines</span><span data-l="fr">Moteurs du Syntakt</span></a></li>
         <li><a href="#model-tg">Model-TG</a></li>
         <li><a href="#arp"><span data-l="en">Arpeggiator</span><span data-l="fr">Arpégiateur</span></a></li>
+        <li><a href="#step-rec"><span data-l="en">Step record</span><span data-l="fr">Step record</span></a></li>
         <li><a href="#tempo"><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></a></li>
         <li><a href="#boot-anim"><span data-l="en">Startup animation</span><span data-l="fr">Animation de démarrage</span></a></li>
         <li><a href="#macro"><span data-l="en">MACRO machine</span><span data-l="fr">Machine MACRO</span></a></li>
@@ -442,8 +443,32 @@
         </dl>
       </section>
 
+      <section id="step-rec">
+        <h2><span class="n">10</span><span data-l="en">Step record</span><span data-l="fr">Step record</span></h2>
+        <p class="lede"><span data-l="en">Enter the notes of a pattern one step at a time, at your own pace, with the sequencer stopped. You play a note, it lands on the blinking step, and the next step blinks.</span><span data-l="fr">Entrez les notes d'un pattern pas à pas, à votre rythme, séquenceur à l'arrêt. Vous jouez une note, elle se pose sur le pas qui clignote, et le pas suivant se met à clignoter.</span></p>
+        <figure class="fig">
+          <div data-device data-scenes="rec @Step-rec:/>ON | rec,s1 @logo | rec,s1,t1 @logo | rec,s2 @logo | rec,s2,play @logo | rec,s3 @logo | rec,s3,stop @logo | rec,s2 @logo" data-ms="1100"></div>
+        </figure>
+        <ol>
+          <li><span data-l="en">With the sequencer stopped, press <b>REC</b> twice quickly. The screen says <i>Step-rec: ON</i>, <b>REC</b> stays lit and <b>TRIG 1</b> blinks fast: it is the current step.</span><span data-l="fr">Séquenceur à l'arrêt, appuyez deux fois vite sur <b>REC</b>. L'écran affiche <i>Step-rec: ON</i>, <b>REC</b> reste allumé et <b>TRIG 1</b> clignote vite : c'est le pas courant.</span></li>
+          <li><span data-l="en">Play a note: a <b>TRIG</b> key plays the active track chromatically, as when the sequencer is stopped; a pad <b>T1–T6</b> plays its own track. The note is written on the blinking step, with its velocity, and the step moves on when you let go.</span><span data-l="fr">Jouez une note : une touche <b>TRIG</b> joue la piste active en chromatique, comme quand le séquenceur est arrêté ; un pad <b>T1–T6</b> joue sa propre piste. La note s'écrit sur le pas qui clignote, avec sa vélocité, et le pas avance quand vous relâchez.</span></li>
+          <li><span data-l="en">Hold several notes at once (a kick and a hi-hat on two pads, for example): they all go on the same step, which moves on when you release the last one.</span><span data-l="fr">Tenez plusieurs notes ensemble (une grosse caisse et un charleston sur deux pads, par exemple) : elles vont toutes sur le même pas, qui avance quand vous relâchez la dernière.</span></li>
+          <li><span data-l="en"><b>PLAY</b> skips a step (it stays as it was), <b>STOP</b> goes back one step. <b>REC</b> stops step record; it also stops by itself after the last step of the track.</span><span data-l="fr"><b>PLAY</b> saute un pas (il reste comme il était), <b>STOP</b> recule d'un pas. <b>REC</b> arrête le step record ; il s'arrête aussi tout seul après le dernier pas de la piste.</span></li>
+        </ol>
+        <p><span data-l="en"><b>Sound per step:</b> turn the track's knobs before playing a note, and you hear the change. The note gets these values as p-locks, and so do the next notes, until you turn the knobs again. When step record ends, the track's sound comes back exactly as it was.</span><span data-l="fr"><b>Le son de chaque pas :</b> tournez les potards de la piste avant de jouer une note, vous entendez le changement. La note reçoit ces valeurs en p-locks, et les notes suivantes aussi, jusqu'à ce que vous tourniez de nouveau les potards. À la fin du step record, le son de la piste revient exactement comme avant.</span></p>
+        <dl class="facts">
+          <div><dt><span data-l="en">Lights</span><span data-l="fr">Voyants</span></dt><dd><span data-l="en">the TRIG keys show the active track's trigs on the page of the current step; the current step and its page light blink. Steps beyond the end of the track stay dark.</span><span data-l="fr">les touches TRIG montrent les trigs de la piste active sur la page du pas courant ; le pas courant et le voyant de sa page clignotent. Les pas au-delà de la fin de la piste restent éteints.</span></dd></div>
+          <div><dt><span data-l="en">A step that holds a trig</span><span data-l="fr">Un pas qui a déjà un trig</span></dt><dd><span data-l="en">a note played there replaces its note and velocity and clears its nudge, as live recording does; its other settings and p-locks stay. To leave it as it is, skip it with PLAY.</span><span data-l="fr">une note jouée dessus remplace sa note et sa vélocité et remet son décalage (nudge) à zéro, comme le live rec ; ses autres réglages et ses p-locks restent. Pour le garder tel quel, sautez-le avec PLAY.</span></dd></div>
+          <div><dt><span data-l="en">Length</span><span data-l="fr">Longueur</span></dt><dd><span data-l="en">the steps of the active track when you start (its length in the Scale menu). How long you hold a note is not recorded: each trig keeps the length its step already has (the default one on an empty pattern).</span><span data-l="fr">les pas de la piste active au moment où vous commencez (sa longueur dans le menu Scale). La durée pendant laquelle vous tenez une note n'est pas enregistrée : chaque trig garde la longueur qu'a déjà son pas (celle par défaut sur un pattern vide).</span></dd></div>
+          <div><dt><span data-l="en">MIDI</span><span data-l="fr">MIDI</span></dt><dd><span data-l="en">notes from a MIDI keyboard are recorded too, on the track they play.</span><span data-l="fr">les notes d'un clavier MIDI sont enregistrées aussi, sur la piste qu'elles jouent.</span></dd></div>
+          <div><dt><span data-l="en">Grid recording</span><span data-l="fr">Grid recording</span></dt><dd><span data-l="en">a single press on REC still turns grid recording on and off, and REC + PLAY still starts live recording. The first of the two presses turns grid recording on for an instant.</span><span data-l="fr">un seul appui sur REC allume et éteint toujours le grid recording, et REC + PLAY lance toujours le live rec. Le premier des deux appuis allume le grid recording un instant.</span></dd></div>
+          <div><dt><span data-l="en">It stops when</span><span data-l="fr">Il s'arrête si</span></dt><dd><span data-l="en">the sequencer starts (a MIDI Start, for example) or grid recording is turned on: the sound comes back as it was. If you change pattern, step record stops and the sound of the pattern you left keeps the knob changes.</span><span data-l="fr">le séquenceur démarre (un Start MIDI, par exemple) ou le grid recording est allumé : le son revient comme avant. Si vous changez de pattern, le step record s'arrête et le son du pattern quitté garde les changements de potards.</span></dd></div>
+          <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">in the emulator, on the OS's own code with everything else in the OS: the keys, notes from the TRIG keys and pads, several notes on one step, PLAY and STOP, the p-locks, the sound restored, the lights. What is written is byte for byte what live recording writes for the same notes. Not yet on the machine.</span><span data-l="fr">en émulation, sur le code même de l'OS avec tout le reste de l'OS : les touches, les notes des touches TRIG et des pads, plusieurs notes sur un pas, PLAY et STOP, les p-locks, le son rétabli, les voyants. Ce qui est écrit est octet pour octet ce que le live rec écrit pour les mêmes notes. Pas encore sur la machine.</span></dd></div>
+        </dl>
+      </section>
+
       <section id="tempo">
-        <h2><span class="n">10</span><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></h2>
+        <h2><span class="n">11</span><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></h2>
         <p class="lede"><span data-l="en">The tempo goes up to 546.0 BPM instead of 300.0, for drum and bass at double time, gabber, speedcore or very fast retrigs.</span><span data-l="fr">Le tempo monte jusqu'à 546,0 BPM au lieu de 300,0 : drum and bass en double temps, gabber, speedcore ou retrigs très rapides.</span></p>
         <ol>
           <li><span data-l="en">Press <b>TEMPO</b> and turn the knob as usual: above 300.0 it carries on, up to 546.0.</span><span data-l="fr">Appuyez sur <b>TEMPO</b> et tournez le potard comme d'habitude : au-delà de 300,0, il continue, jusqu'à 546,0.</span></li>
@@ -459,7 +484,7 @@
       </section>
 
       <section id="boot-anim">
-        <h2><span class="n">11</span><span data-l="en">Startup animation</span><span data-l="fr">Animation de démarrage</span></h2>
+        <h2><span class="n">12</span><span data-l="en">Startup animation</span><span data-l="fr">Animation de démarrage</span></h2>
         <p class="lede"><span data-l="en">When you switch the Model:Cycles on, the screen shows the modded-cycles logo instead of the original tile animation.</span><span data-l="fr">Quand vous allumez le Model:Cycles, l'écran montre le logo modded-cycles à la place de l'animation de carreaux d'origine.</span></p>
         <figure class="fig"><img src="../assets/boot-anim.gif" width="512" height="256" style="max-width:100%;height:auto;image-rendering:pixelated;border-radius:6px" alt="" loading="lazy"></figure>
         <ol>
@@ -474,7 +499,7 @@
       </section>
 
       <section id="macro">
-        <h2><span class="n">12</span><span data-l="en">MACRO machine</span><span data-l="fr">Machine MACRO</span></h2>
+        <h2><span class="n">13</span><span data-l="en">MACRO machine</span><span data-l="fr">Machine MACRO</span></h2>
         <p class="by"><span data-l="en">Based on</span><span data-l="fr">D'après</span> <a href="https://github.com/pichenettes/eurorack" target="_blank" rel="noopener">eurorack</a> <span data-l="en">by Émilie Gillet</span><span data-l="fr">d'Émilie Gillet</span> · <span data-l="en">MIT license</span><span data-l="fr">licence MIT</span></p>
         <p class="lede"><span data-l="en">One extra machine, MACRO, holds the 47 synthesis models of Braids, Émilie Gillet's open-source macro-oscillator: her own code, compiled for the Model:Cycles. In the emulator, it computes exactly the same samples as that code on a computer.</span><span data-l="fr">Une machine ajoutée, MACRO, réunit les 47 modèles de synthèse de Braids, le macro-oscillateur libre d'Émilie Gillet : son propre code, compilé pour le Model:Cycles. En émulation, il calcule exactement les mêmes échantillons que ce code sur un ordinateur.</span></p>
         <ol>
@@ -511,7 +536,7 @@
       </section>
 
       <section id="multiline">
-        <h2><span class="n">13</span><span data-l="en">Multi-line browser</span><span data-l="fr">Navigateur sur plusieurs lignes</span></h2>
+        <h2><span class="n">14</span><span data-l="en">Multi-line browser</span><span data-l="fr">Navigateur sur plusieurs lignes</span></h2>
         <p class="by"><span data-l="en">From an idea and a script by a community member</span><span data-l="fr">D'après une idée et un script d'un membre de la communauté</span></p>
         <p class="lede"><span data-l="en">The browser shows three names at once in a small font, instead of one in big letters: you see what comes before and after while you look for a sound.</span><span data-l="fr">Le navigateur affiche trois noms à la fois en petite police, au lieu d'un seul en gros caractères : vous voyez ce qui précède et ce qui suit pendant que vous cherchez un son.</span></p>
         <div class="scroll fig">
@@ -541,7 +566,7 @@
       </section>
 
       <section id="level-pan">
-        <h2><span class="n">14</span><span data-l="en">Volume and pan as numbers</span><span data-l="fr">Volume et pan en chiffres</span></h2>
+        <h2><span class="n">15</span><span data-l="en">Volume and pan as numbers</span><span data-l="fr">Volume et pan en chiffres</span></h2>
         <p class="lede"><span data-l="en">On the main screen, the volume and the pan of the selected track show as numbers while you turn LEVEL/DATA.</span><span data-l="fr">Sur l'écran principal, le volume et le pan de la piste sélectionnée s'affichent en chiffres pendant que vous tournez LEVEL/DATA.</span></p>
         <ol>
           <li><span data-l="en">On the main screen, turn <b>LEVEL/DATA</b>: the track's volume (0 to 127) shows in small digits in place of the loudspeaker, left of the volume bar.</span><span data-l="fr">Sur l'écran principal, tournez <b>LEVEL/DATA</b> : le volume de la piste (0 à 127) s'affiche en petits chiffres à la place du haut-parleur, à gauche de la barre de volume.</span></li>
@@ -557,7 +582,7 @@
       </section>
 
       <section id="trigless">
-        <h2><span class="n">15</span><span data-l="en">Dimmed trigless trigs</span><span data-l="fr">Trigless trigs atténués</span></h2>
+        <h2><span class="n">16</span><span data-l="en">Dimmed trigless trigs</span><span data-l="fr">Trigless trigs atténués</span></h2>
         <p class="lede"><span data-l="en">A trig key that holds a trigless trig lights dimmed, so you can tell it from a note trig at a glance.</span><span data-l="fr">Une touche de pas qui porte un trigless trig s'allume atténuée : on la distingue d'un trig de note d'un coup d'œil.</span></p>
         <ol>
           <li><span data-l="en">Place a trigless trig as usual: hold <b>FUNC</b> and press a trig key on an empty step.</span><span data-l="fr">Posez un trigless trig comme d'habitude : tenez <b>FUNC</b> et appuyez sur une touche de pas, sur un pas vide.</span></li>
@@ -572,7 +597,7 @@
       </section>
 
       <section id="midi-live-both">
-        <h2><span class="n">16</span><span data-l="en">Live MIDI OUT + THRU toggle</span><span data-l="fr">Basculer MIDI OUT + THRU en direct</span></h2>
+        <h2><span class="n">17</span><span data-l="en">Live MIDI OUT + THRU toggle</span><span data-l="fr">Basculer MIDI OUT + THRU en direct</span></h2>
         <p class="by"><span data-l="en">By</span><span data-l="fr">Par</span> <a href="https://github.com/AveyCole/Modded-Cycles" target="_blank" rel="noopener">AveyCole</a></p>
         <p class="lede"><span data-l="en">THR keeps forwarding incoming MIDI, and a shortcut on the machine decides whether the Cycles' own MIDI goes out too. The original OUT/THR menu doesn't change.</span><span data-l="fr">THR relaie toujours le MIDI reçu, et un raccourci sur la machine décide si le MIDI du Cycles sort aussi. Le menu OUT/THR d'origine ne change pas.</span></p>
         <ol>
@@ -592,7 +617,7 @@
       </section>
 
       <section id="acid">
-        <h2><span class="n">17</span><span data-l="en">ACID machine</span><span data-l="fr">Machine ACID</span></h2>
+        <h2><span class="n">18</span><span data-l="en">ACID machine</span><span data-l="fr">Machine ACID</span></h2>
         <p class="by"><span data-l="en">Based on</span><span data-l="fr">D'après</span> <a href="https://github.com/RobinSchmidt/Open303" target="_blank" rel="noopener">Open303</a> <span data-l="en">by Robin Schmidt</span><span data-l="fr">de Robin Schmidt</span> · <span data-l="en">MIT license</span><span data-l="fr">licence MIT</span></p>
         <p class="lede"><span data-l="en">One extra machine, ACID, is an acid bass in the style of the TB-303: a saw or square wave through a resonant filter with its own envelope and slide, and a drive to dirty it up. Its sound follows Robin Schmidt's open-source Open303 model, rewritten for the Model:Cycles' processor. Slides come from your trigs, so a 303 line is programmed with the sequencer you already know.</span><span data-l="fr">Une machine ajoutée, ACID, est une basse acide à la manière de la TB-303 : une onde en dents de scie ou carrée dans un filtre résonant avec sa propre enveloppe et le slide, plus une saturation pour la salir. Son son suit le modèle libre Open303 de Robin Schmidt, réécrit pour le processeur du Model:Cycles. Le slide vient de vos trigs : une ligne de 303 se programme avec le séquenceur que vous connaissez déjà.</span></p>
         <ol>
@@ -626,7 +651,7 @@
       </section>
 
       <section id="lfo-plus">
-        <h2><span class="n">18</span><span data-l="en">LFO 2, 3, 4</span><span data-l="fr">LFO 2, 3, 4</span></h2>
+        <h2><span class="n">19</span><span data-l="en">LFO 2, 3, 4</span><span data-l="fr">LFO 2, 3, 4</span></h2>
         <p class="by"><span data-l="en">Idea and first version by DavidCaruso (Model-TG-VA-DR-v1), rewritten for this project</span><span data-l="fr">Idée et première version de DavidCaruso (Model-TG-VA-DR-v1), réécrit pour ce projet</span></p>
         <p class="lede"><span data-l="en">Each track gets three more LFOs next to the original one, so up to four LFOs modulate a track at once. With or without Model-TG.</span><span data-l="fr">Chaque piste reçoit trois LFO de plus à côté de celui d'origine : jusqu'à quatre LFO modulent une piste en même temps. Avec ou sans Model-TG.</span></p>
         <ol>
@@ -648,7 +673,7 @@
 
       <section id="mod-settings">
         <span id="usb6"></span>
-        <h2><span class="n">19</span><span data-l="en">Mod Settings: USB audio, stereo or 6 tracks</span><span data-l="fr">Mod Settings : audio USB, stéréo ou 6 pistes</span></h2>
+        <h2><span class="n">20</span><span data-l="en">Mod Settings: USB audio, stereo or 6 tracks</span><span data-l="fr">Mod Settings : audio USB, stéréo ou 6 pistes</span></h2>
         <p class="by"><span data-l="en">6-channel audio based on</span><span data-l="fr">Audio 6 canaux d'après</span> <a href="https://github.com/scottmetoyer/ms-multi-output" target="_blank" rel="noopener">ms-multi-output</a> <span data-l="en">by</span><span data-l="fr">de</span> scottmetoyer</p>
         <p class="lede"><span data-l="en">The SETTINGS menu gets a last line, <b>Mods</b>: it opens <b>Mod Settings</b>, the page for the mods' own settings. Its first setting, <b>USB Audio</b>, sends the computer either the stereo mix (2CH, as stock) or each track on its own channel (6CH), to record six stems. No reflash needed to change it.</span><span data-l="fr">Le menu SETTINGS gagne une dernière ligne, <b>Mods</b> : elle ouvre <b>Mod Settings</b>, la page des réglages des mods. Son premier réglage, <b>USB Audio</b>, envoie à l'ordinateur soit le mix stéréo (2CH, comme d'origine), soit chaque piste sur son propre canal (6CH), pour enregistrer six pistes séparées. Pas besoin de reflasher pour en changer.</span></p>
         <ol>
@@ -708,7 +733,7 @@
       </section>
 
       <section id="mods-on-samples">
-        <h2><span class="n">20</span><span data-l="en">The OS on a Model:Samples</span><span data-l="fr">L'OS sur un Model:Samples</span></h2>
+        <h2><span class="n">21</span><span data-l="en">The OS on a Model:Samples</span><span data-l="fr">L'OS sur un Model:Samples</span></h2>
         <p class="lede"><span data-l="en">A Model:Samples runs the same Modded Cycles OS as a Model:Cycles. Whatever the machine, the flasher installs that OS; on a Model:Samples, the <a href="#model-tg">Sampler</a> plays your samples.</span><span data-l="fr">Un Model:Samples fait tourner le même Modded Cycles OS qu'un Model:Cycles. Quelle que soit la machine, le flasher installe cet OS ; sur un Model:Samples, le <a href="#model-tg">Sampler</a> joue vos samples.</span></p>
         <ol>
           <li><span data-l="en">Back up your samples and projects with Elektron Transfer, then close Transfer.</span><span data-l="fr">Sauvegardez vos samples et vos projets avec Elektron Transfer, puis fermez Transfer.</span></li>
@@ -732,7 +757,7 @@
       </section>
 
       <section id="samples">
-        <h2><span class="n">21</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">22</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -766,7 +791,7 @@
       </section>
 
       <section id="outside">
-        <h2><span class="n">22</span><span data-l="en">Not in this OS</span><span data-l="fr">Pas dans cet OS</span></h2>
+        <h2><span class="n">23</span><span data-l="en">Not in this OS</span><span data-l="fr">Pas dans cet OS</span></h2>
         <p class="lede"><span data-l="en">These features are not part of Modded Cycles OS 2.0. Their pages stay here for reference; developers can still build them from the command line.</span><span data-l="fr">Ces fonctions ne font pas partie du Modded Cycles OS 2.0. Leurs pages restent ici pour mémoire ; les développeurs peuvent toujours les construire en ligne de commande.</span></p>
         <ul>
           <li><span data-l="en"><a href="#track-filter">Per-track filter</a>: it shares its place in the sound with LFO 2, 3, 4 and does not work with Model-TG; it comes back once Model-TG's side is replaced.</span><span data-l="fr"><a href="#track-filter">Filtre par piste</a> : il partage sa place dans le son avec LFO 2, 3, 4 et ne marche pas avec Model-TG ; il reviendra quand la partie Model-TG sera remplacée.</span></li>
@@ -776,7 +801,7 @@
       </section>
 
       <section id="track-filter">
-        <h2><span class="n">23</span><span data-l="en">Per-track filter</span><span data-l="fr">Filtre par piste</span></h2>
+        <h2><span class="n">24</span><span data-l="en">Per-track filter</span><span data-l="fr">Filtre par piste</span></h2>
         <p class="note"><span data-l="en"><b>Not part of Modded Cycles OS 2.0.</b> It keeps its settings in the same place of the sound as <a href="#lfo-plus">LFO 2, 3, 4</a>, and does not work with Model-TG: it comes back once Model-TG's side is replaced. Developers can still build it from the command line.</span><span data-l="fr"><b>Ne fait pas partie du Modded Cycles OS 2.0.</b> Il range ses réglages au même endroit du son que <a href="#lfo-plus">LFO 2, 3, 4</a>, et ne marche pas avec Model-TG : il reviendra quand la partie Model-TG sera remplacée. Les développeurs peuvent toujours le construire en ligne de commande.</span></p>
         <p class="lede"><span data-l="en">A filter on every track, like on a DJ mixer: turn one way for a low-pass, the other way for a high-pass; in the centre the sound is left untouched. The Model:Samples' range, with resonance and an envelope.</span><span data-l="fr">Un filtre sur chaque piste, comme sur une table de mixage DJ : d'un côté un passe-bas, de l'autre un passe-haut ; au centre, le son n'est pas touché. La plage du Model:Samples, avec résonance et enveloppe.</span></p>
         <figure class="fig">
@@ -799,7 +824,7 @@
       </section>
 
       <section id="midi-both">
-        <h2><span class="n">24</span><span data-l="en">MIDI OUT while in THRU</span><span data-l="fr">MIDI OUT pendant THRU</span></h2>
+        <h2><span class="n">25</span><span data-l="en">MIDI OUT while in THRU</span><span data-l="fr">MIDI OUT pendant THRU</span></h2>
         <p class="note"><span data-l="en"><b>Not part of Modded Cycles OS 2.0.</b> The <a href="#midi-live-both">Live MIDI OUT + THRU toggle</a>, which is in the OS, does the same when switched on, and can be switched off. Developers can still build this one from the command line.</span><span data-l="fr"><b>Ne fait pas partie du Modded Cycles OS 2.0.</b> <a href="#midi-live-both">Basculer MIDI OUT + THRU en direct</a>, qui est dans l'OS, fait la même chose une fois activé, et se désactive. Les développeurs peuvent toujours construire celui-ci en ligne de commande.</span></p>
         <p class="by"><span data-l="en">By</span><span data-l="fr">Par</span> <a href="https://github.com/AveyCole/Modded-Cycles" target="_blank" rel="noopener">AveyCole</a></p>
         <p class="lede"><span data-l="en">With THR selected, the Model:Cycles forwards what arrives on its MIDI IN and also sends its own MIDI. Handy in the middle of a MIDI chain: what comes in goes on, and the Cycles still plays the devices after it.</span><span data-l="fr">Avec THR choisi, le Model:Cycles relaie ce qui arrive sur son MIDI IN et envoie aussi son propre MIDI. Pratique au milieu d'une chaîne MIDI : ce qui entre continue son chemin, et le Cycles joue toujours les appareils qui le suivent.</span></p>
@@ -817,13 +842,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">25</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">26</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first install: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant une première installation : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">First set the tracks that use an added machine (7 to 14: the Sampler, the Syntakt engines, MACRO, ACID) back to an original one (Kick to Chord).</span><span data-l="fr">Remettez d'abord sur une machine d'origine (de Kick à Chord) les pistes qui utilisent une machine ajoutée (7 à 14 : le Sampler, les moteurs du Syntakt, MACRO, ACID).</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">26</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">27</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -837,7 +862,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">27</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">28</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -903,8 +928,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-19-02"></script>
-<script src="../assets/cycles.js?v=2026-10-19-02"></script>
-<script src="../assets/site.js?v=2026-10-19-02"></script>
+<script src="../assets/release.js?v=2026-10-20-01"></script>
+<script src="../assets/cycles.js?v=2026-10-20-01"></script>
+<script src="../assets/site.js?v=2026-10-20-01"></script>
 </body>
 </html>

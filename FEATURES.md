@@ -10,8 +10,8 @@ documentation at its tag `v1.1.0`.
 **OS 2.0 composition:** Model-TG v1.1.0 (Sampler machine and everything it brings, including drumkilla's latching
 mute, trig preview and scrolling names), sample preview, the five Syntakt engines (SD VINTAGE, CP VINTAGE, SY TOY,
 SY BITS, SY SWARM), MACRO, ACID, arpeggiator, easier trig removal, tempo up to 546 BPM, startup animation, multi-line
-browser, volume/pan as numbers, dimmed trigless trigs, live MIDI OUT + THRU toggle, LFO 2/3/4, and Mod Settings
-(USB audio in stereo or six tracks, added on 19/10/2026).
+browser, volume/pan as numbers, dimmed trigless trigs, live MIDI OUT + THRU toggle, LFO 2/3/4, Mod Settings
+(USB audio in stereo or six tracks, added on 19/10/2026) and step record (added on 20/10/2026).
 
 How to read the status lines:
 
@@ -45,6 +45,7 @@ project's guide calls the back key **BACK**. This file uses **MACHINES** and **B
    - [3.2 Easier trig removal](#32-easier-trig-removal-trig-hold)
    - [3.3 Trig preview](#33-trig-preview)
    - [3.4 Tempo up to 546 BPM](#34-tempo-up-to-546-bpm)
+   - [3.5 Step record](#35-step-record)
 4. [Live](#4-live)
    - [4.1 Latching mute](#41-latching-mute)
    - [4.2 Live MIDI OUT + THRU toggle](#42-live-midi-out--thru-toggle)
@@ -105,10 +106,14 @@ retrig page, menus) are listed with that page as context.
 | **MACHINES**, then pick ACID / MACRO / Sampler / an engine | The added machines, after Chord | Machines | MACHINES menu, see [2.6](#26-order-of-the-machines-in-os-20) |
 | **PAGE** with a trig key held | Plays that step (note, length, p-locks, sound lock) instead of turning the page | Trig preview | Sequencer stopped or paused. Stock, changed |
 | **PATTERN** | Closes the retrig page so you can choose a pattern | Model-TG retrig page | Retrig page only |
+| **PLAY** | Skips the current step (it stays as it was) | Step record | In step record, no note held |
 | **PITCH** (turn) on a MACRO track | Note, as stock; the fine-tune parameter moved under FUNC + PITCH | MACRO | MACRO tracks |
 | **PUNCH** | Arms tap slicing (*ARMED*), or stops it | Model-TG slice editor | Slice editor only |
+| **REC** pressed twice quickly | Starts step record (*Step-rec: ON*): the notes played go one by one on the blinking step | Step record | Sequencer stopped (or paused). Stock, changed: the second press used to turn grid recording back off |
+| **REC** | Stops step record (*Step-rec: OFF*) | Step record | In step record |
 | **REC** + **PLAY** with the arpeggiator playing | Records each arpeggiated note on the step where it plays, with its length | Arpeggiator | Live recording |
 | **RETRIG** held (or A.On on) + several notes held | Arpeggio at the Rte rate. With one note: the stock retrig | Arpeggiator | Stock, changed |
+| **STOP** | Goes back one step | Step record | In step record, no note held; not before step 1 |
 | **SETTINGS** tapped | Opens its usual menu, with one more line at the end: **Mods** (a puzzle piece) | Mod Settings | Stock menu, extended |
 | **SETTINGS** held | No longer brings up the pattern save prompt; it is Model-TG's modifier key | Model-TG | Stock, changed (Model-TG's guide and this project's guide) |
 | **SETTINGS** + **BACK** | Turns the master effects off from anywhere (*Master FX off*) | Model-TG | Anywhere |
@@ -523,6 +528,48 @@ an incoming MIDI clock follow too. The project saves it.
 **Origin and license.** This project (notes/38), MIT.
 
 **Status.** Tested on a Model:Cycles on 04/10/2026.
+
+### 3.5 Step record
+
+**What it does.** With the sequencer stopped, the notes of a pattern are entered one step at a time: each note played
+lands on the current step, which then moves on.
+
+**How to use it** (guide):
+
+1. Sequencer stopped, press **REC** twice quickly. The screen shows *Step-rec: ON*, **REC** stays lit and **TRIG 1**
+   blinks fast (3.75 times a second): it is the current step.
+2. Play a note: a **TRIG** key plays the active track chromatically (as when stopped), a pad **T1–T6** its own track,
+   a MIDI keyboard the track it plays. The note and its velocity are written on the blinking step; the step moves on
+   at the release.
+3. Notes held together (two pads, for example) all go on the same step, which moves on at the last release.
+4. **PLAY** skips a step, **STOP** goes back one (not before step 1). **REC** stops; step record also stops after the
+   last step of the active track.
+5. Knobs turned before a note: the sound changes as usual (it is heard); the note gets the new values as p-locks, and
+   so do the next notes of that track, until the knobs are turned again (a value turned back to where it was is not
+   locked any more). When step record ends, the sounds come back exactly as they were.
+
+**Limits and interactions.**
+
+- A step that already holds a trig: its note and velocity are replaced and its nudge cleared, as live recording does;
+  its other settings and p-locks stay. PLAY leaves it as it is.
+- How long a note is held is not recorded: a trig keeps the length its step already has.
+- The cursor covers the steps of the active track when step record starts; a pad on a track with another length
+  writes on the same step number.
+- The lights: the active track's trigs on the page of the current step, the current step and its page light blinking,
+  REC lit.
+- A single **REC** press still toggles grid recording, and **REC + PLAY** still starts live recording. The first of
+  the two presses turns grid recording on for an instant. FUNC, TRACK, PATTERN or SETTINGS held: the keys do what
+  they always do.
+- It stops when the sequencer starts (a MIDI Start), grid recording is turned on, or the pattern changes. In the last
+  case the sound of the pattern you left keeps the knob changes (it is no longer the pattern on screen).
+- Changes that the OS does not record in live recording are not locked either (volume and pan from the main screen,
+  for instance).
+
+**Origin and license.** This project (notes/73), MIT. A request from Maxime (20/10/2026).
+
+**Status.** Experimental: checked in the emulator on the OS's own code, with everything else in OS 2.0 (what it
+writes is byte for byte what the OS's live recording writes for the same notes and knob turns), not yet on a
+Model:Cycles.
 
 ---
 

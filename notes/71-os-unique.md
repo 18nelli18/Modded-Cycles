@@ -13,6 +13,9 @@ la 2.0 est une combinaison que le flasher savait déjà construire.
 > de `6ch-usbup` sont faites en mémoire ; en 2CH, le pilote USB reste celui d'origine. L'OS a 13 tweaks et 18
 > fonctions ; MAIN OS SHA-256 `1ee74aa2fa982e2b9a63d0ea032a2b8a0a54127ff87bd7e06d120f075f9c76fa` (avec
 > `Syntakt_OS1.41.syx`). Le reste de cette note décrit la 2.0 telle que décidée le 18/10/2026.
+>
+> **Mise à jour du 20/10/2026 ([73](73-step-record.md)).** Le step record (`step-rec`, REC deux fois à l'arrêt) entre
+> aussi dans l'OS : 14 tweaks, 19 fonctions ; MAIN OS SHA-256 `82a79f453151cbaceffdd047a646c96721f3ae3849a28f7821928bfbd4a1cca9`.
 
 ## En bref
 
