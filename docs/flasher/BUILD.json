@@ -1,5 +1,5 @@
 {
-  "stamp": "2026-10-18-genie-seed-main-199",
+  "stamp": "2026-10-19-midi-chord-main-200",
   "scope": "main",
   "profile": "All features, MIDI machine, no B-side; USB six-track on/off",
   "diagnostics": false,
@@ -13,5 +13,11 @@
   "pad_mode_persistent": false,
   "sample_lock_filter": false,
   "genie_initial_seed": true,
-  "genie_initial_seed_hardware_verified": true
+  "genie_initial_seed_hardware_verified": true,
+  "midi_chord_hardware_verified": true,
+  "midi_channel_lfo_isolation": true,
+  "live_midi_single_producer": true,
+  "chord_harmony_cache": true,
+  "cut_fade_zero_endpoint": true,
+  "midi_idle_shortcut": true
 }

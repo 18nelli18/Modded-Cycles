@@ -217,3 +217,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [130 - Filtre sample locks et mode pads](130-filtre-sample-locks-et-mode-pads.md) : test Control All sur les samples verrouilles et menu Pad Setup Silent/Stock ; reglages live, diagnostics, validation materielle attendue.
 
 | [132 — Graine initiale Genie](132-graine-initiale-genie.md) | Premiere sequence variable selon le timer du premier tirage valide ; regles et suite PRNG conservees ; confirme par Austin le18/10/2026, principal1.99 sans diagnostic. |
+
+| [133 — Correctifs MIDI/Chord](133-correctifs-midi-chord.md) | Routage LFO2 isole, messages live uniques, cache Chord et fondu ; confirme par AveyCole, principal2.00 sans diagnostic. |

@@ -25,7 +25,7 @@ extern u32 mm_route_edit(u16 *,u32,i32);
 extern u32 mm_channel(const u16 *,u32);
 extern u32 mm_port(const u16 *);
 /* API[0/1] : adresses SETTINGS-held/mod-used du support commun si installe. */
-volatile u32 mm_ui_api[5];
+volatile u32 mm_ui_api[6];
 /* Lu par les producteurs/worker sans getter UI depuis IRQ. */
 volatile u32 mm_assign_lane=6;
 static u32 mm_settings_used,mm_settings_held,mm_func_held,mm_track_taken;
@@ -145,8 +145,27 @@ static u32 track_setup_view(void){
  return 0;
 }
 static void prepare_setup(u32 lane){
+ /* Une page LFO audio deja ouverte ne doit pas masquer le panneau MIDI. */
+ if(mm_ui_api[5]&&*(volatile u32 *)mm_ui_api[5]){
+  u32 view=*(volatile u32 *)mm_ui_api[5];
+  if(!*(volatile u8 *)(view+48))((void (*)(u32))0x40076126)(view);
+ }
+
  u32 object=sound_object(lane);const u16 *before=params_for(object);if(!before)return;
  u16 copy[33];for(u32 i=0;i<33;i++)copy[i]=before[i];mm_setup(copy);publish(object,before,copy);
+}
+/* Une ancienne vue LFO audio ne doit jamais ecrire k31/k32 du MIDI.
+ * Adaptation du bridge natif : meme valeur, mais banque MIDI 23..30.
+ */
+u32 mm_secondary_write(u32 lane,u32 field,u32 native){
+ if(lane>=6||field>=8||!midi(lane))return 0;
+ u32 object=sound_object(lane);const u16 *before=params_for(object);
+ if(!before)return 1;
+ u16 changed[33];for(u32 i=0;i<33;i++)changed[i]=before[i];
+ u32 value=(field==1||field==3||field==4||field==6)?native>>8:native;
+ if(field==3&&value==127)value=128;
+ mm_lfo_edit(changed,1,field,(i32)value-(i32)mm_lfo_read(changed,1,field));
+ publish(object,before,changed);return 1;
 }
 static void sync_track_setup(u32 lane){
  if(!track_setup_view())return;
@@ -283,7 +302,7 @@ u32 mm_ui_key(const u32 *event) {
   if(!(flags&1))mm_track_taken=0;
   return 0; /* Ouvrir/conserver la vraie TrackMenuView native. */
  }
- if(code==8&&home_visible()){
+ if(code==8){
   if((flags&9)==1){prepare_setup(lane);page(mm_page==1?2:mm_page==2?0:1,lane);}
   return 1;
  }
@@ -353,4 +372,31 @@ u32 mm_draw(u32 view,u32 canvas) {
   text(canvas,64*(knob/6),44-8*(knob%6),line);
  }
  return 1;
+}
+
+/* Affichage seulement : une destination indisponible dans la machine courante
+ * est OFF, comme dans la page LFO2 ; le scan des destinations garde ses ERR.
+ * Aucun parametre/canal n'est ecrit depuis le dessin.
+ */
+volatile u32 mm_name_api[1];
+u32 mm_primary_name(u32 context,u32 descriptor,u32 unused,u32 dest){
+ (void)unused;const u32 *api=(const u32 *)mm_name_api[0];
+ u32 flags=api?api[1]:0,is_wizard=0;
+ if(api&&api[8]&&context&&*(volatile u32 *)context==0x400fd134){
+  u32 handle=*(volatile u32 *)(context+4);
+  if(handle){u32 vt=*(volatile u32 *)handle;
+   if(vt){u32 raw=((u32 (*)(u32))*(volatile u32 *)(vt+40))(handle);
+    is_wizard=raw&&*(volatile u8 *)(raw+38)==6;}}
+ }
+ if(is_wizard){
+  if(dest==13)return (u32)"FLT";
+  if(dest==14)return (u32)"RES";
+  if(dest==24||dest==25)return (u32)"OFF";
+ }
+ if(dest==23&&(flags&1))return (u32)"ATK";
+ if(dest==24&&(flags&2))return (u32)"FLT";
+ if(dest==25&&(flags&2))return (u32)"RES";
+ const char *name=(const char *)((u32 (*)(u32,u32))0x4000b208)(context,descriptor);
+ if(!name||(name[0]=='E'&&name[1]=='R'&&name[2]=='R'&&!name[3]))return (u32)"OFF";
+ return (u32)name;
 }

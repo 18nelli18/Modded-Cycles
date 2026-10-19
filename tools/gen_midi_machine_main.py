@@ -1,7 +1,7 @@
 """Note126 : principal fixe, seul choix USB six pistes, sans diagnostic."""
 import argparse,json,pathlib,re
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-STAMP='2026-10-18-genie-seed-main-199'
+STAMP='2026-10-19-midi-chord-main-200'
 FEATURES=[
  ('Machines: six stock engines, Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, TINY, ChpHzrd / Retrosyn and MIDI Out.', 'Machines : six moteurs stock, Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, TINY, ChpHzrd / Retrosyn et MIDI Out.'),
  ('MIDI Out: silent A-side tracks with notes, 12 assignable CCs, locks, channel/port routing and two MIDI LFOs. No MIDI B-side bank.', 'MIDI Out : pistes A silencieuses avec notes,12CC assignables, locks, canal/port et deux LFO MIDI. Sans banque B.'),
@@ -33,8 +33,10 @@ def main():
  listing+='</ul><a href="#step-file"><span data-l="en">Continue: load OS files</span><span data-l="fr">Continuer : charger les OS</span></a></div>'
  html=html.replace('<div class="super-toolbar">',listing+'<div class="super-toolbar">',1)
  html=html.replace('<h2 id="h1s" data-i18n="s1">What do you want to install?</h2>', '<h2 id="h1s"><span data-l="en">Your firmware</span><span data-l="fr">Votre firmware</span></h2>')
- html=html.replace('</body>',f'<script src="macro-fine-data.js?v={STAMP}"></script><script src="macro-fine-release.js?v={STAMP}"></script><script src="pad-mode-data.js?v={STAMP}"></script><script src="pad-mode.js?v={STAMP}"></script><script src="genie-entropy-data.js?v={STAMP}"></script><script src="genie-entropy.js?v={STAMP}"></script></body>')
+ html=html.replace('</body>',f'<script src="macro-fine-data.js?v={STAMP}"></script><script src="macro-fine-release.js?v={STAMP}"></script><script src="pad-mode-data.js?v={STAMP}"></script><script src="pad-mode.js?v={STAMP}"></script><script src="genie-entropy-data.js?v={STAMP}"></script><script src="genie-entropy.js?v={STAMP}"></script><script src="midi-safety-data.js?v={STAMP}"></script><script src="midi-safety-release.js?v={STAMP}"></script></body>')
  files['index.html']=html
+ files['midi-safety-data.js']=(out/'midi-safety-data.js').read_text(encoding='utf-8')
+ files['midi-safety-release.js']=(ROOT/'tools/web/midi-safety-release.js').read_text(encoding='utf-8')
  files['genie-entropy-data.js']=(out/'genie-entropy-data.js').read_text(encoding='utf-8')
  files['genie-entropy.js']=(ROOT/'tools/web/genie-entropy.js').read_text(encoding='utf-8')
  files['pad-mode-data.js']=(out/'pad-mode-data.js').read_text(encoding='utf-8')
@@ -46,8 +48,8 @@ def main():
  files['midi-machine-main.js']=(ROOT/'tools/web/midi-machine-main.js').read_text(encoding='utf-8')
  guide=files['midi-machine-guide.html'].replace('Select All test','firmware').replace('fixed test preset','firmware').replace('CPU/CUT diagnostics and ','').replace('Hardware verification is pending.','').replace('Preset fixe avec les fonctions actuelles du principal, diagnostic CPU/CUT et','Firmware complet avec les fonctions du principal et').replace('Verification materielle attendue.','')
  guide=re.sub(r'<li><b>(Load diagnostic|Diagnostic).*?</li>','',guide);files['midi-machine-guide.html']=guide
- files['BUILD.json']=json.dumps(dict(stamp=STAMP,scope='main',profile='All features, MIDI machine, no B-side; USB six-track on/off',diagnostics=False,startup='Supermodel',track_setup_follows_selection=True,macro_fine=True,hardware_verified=False,scramble_short_tap=True,pad_setup_long_hold=True,pad_selection_menu=True,pad_mode_persistent=False,sample_lock_filter=False,genie_initial_seed=True,genie_initial_seed_hardware_verified=True),indent=2)
- files['midi-machine-release.js']='window.MC_RELEASES='+json.dumps([dict(version='1.99',date='2026-10-18',changes=[dict(en='Sequence Genie now varies its initial random seed using activation timing, so identical settings need not repeat the same first sequence after boot. Musical generation rules retained; confirmed on hardware by AveyCole. No diagnostics or experimental audio optimizations included.',fr='Sequence Genie varie sa graine initiale selon le moment du premier tirage : les memes reglages ne repetent plus necessairement la premiere sequence apres demarrage. Regles musicales conservees ; confirme sur appareil par AveyCole. Aucun diagnostic ni optimisation audio experimentale inclus.')])])+';'
+ files['BUILD.json']=json.dumps(dict(stamp=STAMP,scope='main',profile='All features, MIDI machine, no B-side; USB six-track on/off',diagnostics=False,startup='Supermodel',track_setup_follows_selection=True,macro_fine=True,hardware_verified=False,scramble_short_tap=True,pad_setup_long_hold=True,pad_selection_menu=True,pad_mode_persistent=False,sample_lock_filter=False,genie_initial_seed=True,genie_initial_seed_hardware_verified=True,midi_chord_hardware_verified=True,midi_channel_lfo_isolation=True,live_midi_single_producer=True,chord_harmony_cache=True,cut_fade_zero_endpoint=True,midi_idle_shortcut=True),indent=2)
+ files['midi-machine-release.js']='window.MC_RELEASES=[{"version": "2.00", "date": "2026-10-19", "changes": [{"en": "Hardware-tested MIDI/Chord repairs: LFO 2 edits preserve MIDI channel/output routing, duplicate live MIDI messages are suppressed, and unavailable LFO destinations show OFF. ChordKeys harmony caching and a faster disabled path reduce processing work; improved cut fades and idle MIDI handling are included. AveyCole reports much better behavior; heavy arrangements may still click. No diagnostic display in main.", "fr": "Correctifs MIDI/Chord confirmes sur appareil : les editions LFO2 preservent canal/port MIDI, les doublons de messages live sont supprimes et les destinations LFO indisponibles affichent OFF. Cache harmonique ChordKeys et chemin inactif allege, fondus de coupure ameliores et MIDI inactif optimise. AveyCole signale une nette amelioration ; des arrangements lourds peuvent encore cliquer. Aucun affichage diagnostic dans le principal."}]}];'
  for name,text in files.items():
   text=re.sub(r'2026-10-18-(?:midi-machine-all-test-\d+|macro-fine-main-test-\d+)',STAMP,text).replace('\r\n','\n').rstrip()+'\n'
   if a.check:assert (out/name).read_text(encoding='utf-8')==text,name
