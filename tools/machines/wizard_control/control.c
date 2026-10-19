@@ -9,18 +9,23 @@ typedef unsigned short u16;
 typedef unsigned char u8;
 volatile u32 wf_api[6] __attribute__((section(".data")))={0};
 volatile u32 wf_stock __attribute__((section(".data")))=0;
+#ifndef WF_PAD_ONLY
 static volatile u32 enabled[6] __attribute__((section(".data")))={0};
 static const volatile u16 *base[6] __attribute__((section(".data")))={0};
 static u16 prior[6][2] __attribute__((section(".data")))={{0}};
 static u32 prior_enabled[6] __attribute__((section(".data")))={0};
 static volatile u16 target[6][2] __attribute__((section(".data")))={{0}};
 static u32 gesture __attribute__((section(".data")))=0;
+#endif
 static u32 menu,editing,settings,menu_used;
+#ifndef WF_PAD_ONLY
 static u32 valid(const u16 *p){return p&&((p[9]>>8)&255)==6;}
 static u32 held(u32 key){return ((u32 (*)(u32))0x4007faf4)(key);}
+#endif
 static void repaint(void){u32 app=*(volatile u32 *)0x40fe4178;if(app)((void (*)(u32))0x40076bee)(app+64);}
 u32 wf_menu_row(void){return 0;}
 u32 wf_menu_edit(void){return editing;}
+#ifndef WF_PAD_ONLY
 void wf_before(const u32 *event){
  gesture=0;
  if(!event||event[0]!=0x400fbebc||(event[3]!=6&&event[3]!=7))return;
@@ -56,6 +61,7 @@ u32 wf_value(const u16 *frame,u32 lane,u32 field){
  }
  return value<0?0:(u32)value;
 }
+#endif
 /* Menu Pad Setup : SETTINGS + TRACK, DATA pour entrer, tourner pour choisir.
  * BACK ferme ; les autres gestes gardent leur delegation native.
  */

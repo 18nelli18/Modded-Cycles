@@ -1,10 +1,13 @@
 {
-  "stamp": "2026-10-18-macro-fine-main-196",
+  "stamp": "2026-10-18-pad-mode-main-197",
   "scope": "main",
   "profile": "All features, MIDI machine, no B-side; USB six-track on/off",
   "diagnostics": false,
   "startup": "Supermodel",
   "track_setup_follows_selection": true,
   "macro_fine": true,
-  "hardware_verified": true
+  "hardware_verified": true,
+  "pad_selection_menu": true,
+  "pad_mode_persistent": false,
+  "sample_lock_filter": false
 }

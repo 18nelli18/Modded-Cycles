@@ -3,7 +3,7 @@ import pathlib,sys,struct
 HERE=pathlib.Path(__file__).resolve().parent;sys.path[:0]=[str(HERE),str(HERE.parent)]
 from test_macro_fine import load,SCRATCH,PITCH
 def main():
- r,ts=load('build/wizard-control/usb-after');sy={k:int(v,16) for t in ts for k,v in t.get('symbols',{}).items()}
+ r,ts=load(sys.argv[1] if len(sys.argv)>1 else 'build/wizard-control/usb-after');sy={k:int(v,16) for t in ts for k,v in t.get('symbols',{}).items()}
  delegate=SCRATCH+0x7000;r.uc.mem_write(sy['mm_ui_api']+16,struct.pack('>I',delegate));r.hooks[delegate]=('native-final-dispatch',0)
  r.settings=False;r.lookup(12,2,False);event=SCRATCH+0x5000
  def key(code,flags):r.uc.mem_write(event,struct.pack('>6I',0,0,0,code,flags,0));return r.call(0x40077720,0,event)

@@ -8,7 +8,10 @@
  movem.l (%sp),%d0-%d1/%a0-%a1
  lea 16(%sp),%sp
 .endm
-.globl wf_encoder_hook,wf_key_hook,wf_draw_hook,wf_cut,wf_res,wf_pad
+.globl wf_encoder_hook,wf_key_hook,wf_draw_hook,wf_pad
+#ifndef WF_PAD_ONLY
+.globl wf_cut,wf_res
+#endif
 wf_encoder_hook:
  save
  move.l 24(%sp),-(%sp)
@@ -19,20 +22,25 @@ wf_encoder_hook:
  restore
  moveq #1,%d0
  rts
-1: move.l 24(%sp),-(%sp)
+1:
+#ifndef WF_PAD_ONLY
+ move.l 24(%sp),-(%sp)
  jsr wf_before
  addq.l #4,%sp
+#endif
  restore
  move.l 8(%sp),-(%sp)
  move.l 8(%sp),-(%sp)
  move.l wf_api,%a0
  jsr (%a0)
  addq.l #8,%sp
+#ifndef WF_PAD_ONLY
  save
  move.l 24(%sp),-(%sp)
  jsr wf_after
  addq.l #4,%sp
  restore
+#endif
  rts
 wf_key_hook:
  save
@@ -60,6 +68,7 @@ wf_draw_hook:
 1: restore
  move.l wf_api+8,-(%sp)
  rts
+#ifndef WF_PAD_ONLY
 wf_cut:
  save
  clr.l -(%sp)
@@ -80,6 +89,7 @@ wf_res:
  move.l %d0,%d4
  restore
  rts
+#endif
 /* D7 et D3 sont ceux du PadsView ; aucune modification du code en cours d'execution. */
 wf_pad:
  tst.l wf_stock
