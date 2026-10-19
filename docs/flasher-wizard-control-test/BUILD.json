@@ -1,0 +1,10 @@
+{
+  "stamp": "2026-10-18-wizard-control-test-1",
+  "base": "2026-10-18-macro-fine-main-196",
+  "scope": "test-only",
+  "diagnostics": true,
+  "hardware_verified": false,
+  "sample_lock_filter": true,
+  "pad_selection_menu": true,
+  "settings_persistent": false
+}
