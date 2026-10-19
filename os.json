@@ -72,7 +72,7 @@
       "credit": { "kind": "based", "who": "djd_oz" }, "guide": "trigless", "notes": "notes/45" },
     { "id": "midi-live-both", "cat": "io", "tweaks": ["midi-live-both"], "status": "tested",
       "credit": { "kind": "by", "who": "AveyCole", "repo": "AveyCole/Modded-Cycles" }, "guide": "midi-live-both", "notes": "notes/53" },
-    { "id": "mod-settings", "cat": "io", "tweaks": ["mod-settings"], "status": "experimental",
+    { "id": "mod-settings", "cat": "io", "tweaks": ["mod-settings"], "status": "tested",
       "credit": { "kind": "based", "who": "scottmetoyer", "repo": "scottmetoyer/ms-multi-output" },
       "license": "LICENSE-ms-multi-output", "guide": "mod-settings", "notes": "notes/72, 13, 35" }
   ]

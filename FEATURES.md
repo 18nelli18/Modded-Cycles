@@ -619,10 +619,10 @@ goes to the computer over USB:
 `6ch-usbup` (USB updates kept, steady stream). The page, the setting and the switch are this project's (notes/72):
 the 6-channel changes to the USB driver are made in memory only in 6CH, and undone for 2CH.
 
-**Status.** Experimental. 6-channel audio itself was tested on a Model:Cycles on 29/09/2026, the steady stream on
-04/10/2026, with Model-TG and the engines on 02/10 and 03/10/2026. The setting and the page were checked in the
-emulator only, on the OS's own code (Config Menu, drawing, both switches, saved settings, the USB stream after
-switching), not yet on the machine.
+**Status.** Tested on a Model:Cycles on 19/10/2026: Maxime reported "ça marche nickel" (it works perfectly) after
+the test plan of PR #100 (notes/72 §7). 6-channel audio itself was tested on 29/09/2026, the steady stream on
+04/10/2026, with Model-TG and the engines on 02/10 and 03/10/2026. Also checked in the emulator on the OS's own code
+(Config Menu, drawing, both switches, saved settings, the USB stream after switching).
 
 ---
 

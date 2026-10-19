@@ -57,7 +57,7 @@ sends it to the machine over USB. Going back to the official firmware is one cli
 | **Volume and pan as numbers** | On the main screen, `LEVEL/DATA` shows the track volume as a number; with `FUNC`, its pan. | After djd_oz | ✅ Tested |
 | **Dimmed trigless trigs** | A step that holds a trigless trig lights dimmed. | After djd_oz | ✅ Tested |
 | **Live MIDI OUT + THRU toggle** | With `THR` selected, `FUNC` + press `LEVEL/DATA` adds the Cycles' own MIDI to what it forwards, or takes it away. | [AveyCole](https://github.com/AveyCole/Modded-Cycles) | ✅ Tested |
-| **Mod Settings: USB audio** | `SETTINGS` has a last line, **Mods**, with the mods' own settings. **USB Audio** sends the computer the stereo mix (2CH, as stock) or each track on its own channel (6CH) to record stems; press `LEVEL/DATA` to switch, no reflash. | 6-channel audio after [scottmetoyer/ms-multi-output](https://github.com/scottmetoyer/ms-multi-output), MIT | 🧪 Experimental |
+| **Mod Settings: USB audio** | `SETTINGS` has a last line, **Mods**, with the mods' own settings. **USB Audio** sends the computer the stereo mix (2CH, as stock) or each track on its own channel (6CH) to record stems; press `LEVEL/DATA` to switch, no reflash. | 6-channel audio after [scottmetoyer/ms-multi-output](https://github.com/scottmetoyer/ms-multi-output), MIT | ✅ Tested |
 
 The added machines come after Chord, always in this order: 07 Sampler, 08 SDVtg, 09 CPVtg, 10 SYToy, 11 SYBit,
 12 SYSwm, 13 MACRO, 14 ACID.

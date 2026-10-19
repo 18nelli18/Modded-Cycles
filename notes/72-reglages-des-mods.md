@@ -22,7 +22,7 @@ Adresses : VA de l'OS 1.13.
 - **Bascule à chaud** : réglage enregistré, USB arrêté par la fonction de l'OS qui sert au changement de USB mode,
   modifications faites ou défaites, indices des rings remis à zéro, caches poussés, USB relancé : l'ordinateur voit
   le Model:Cycles partir et revenir environ une seconde plus tard, avec 2 ou 6 entrées.
-- `[FAIT en émulation]` tout ce qui précède (§5). À tester sur la machine : §6.
+- `[FAIT en émulation]` tout ce qui précède (§5). **Testé sur la machine le 19/10/2026** (§7).
 
 ## 1. Ce que fait l'OS
 
@@ -150,7 +150,7 @@ Non couvert par l'émulation : les caches (Unicorn n'en a pas ; le code les pous
 `CPUSHL`), le contrôleur USB réel et l'ordinateur qui réénumère, la touche LEVEL/DATA elle-même (l'appui est appelé
 directement), l'écriture en flash.
 
-## 6. Reste à vérifier sur la machine
+## 6. Plan de test sur la machine (PR #100)
 
 1. SETTINGS : la ligne Mods après Device, son icône ; LEVEL/DATA l'ouvre ; retour au menu comme pour Device.
 2. USB Audio en 2CH : l'ordinateur voit 2 entrées, son normal ; puis LEVEL/DATA : déconnexion, retour vers une
@@ -161,3 +161,10 @@ directement), l'écriture en flash.
    et les moteurs en marche.
 6. USB mode sur MID puis A+M en 6CH ; CONFIG › UPGRADE par USB en 2CH et en 6CH.
 7. Les autres réglages (MIDI, Audio, Device) gardés après extinction, avant et après une bascule.
+
+## 7. Testé sur la machine (19/10/2026)
+
+Maxime a essayé la branche `claude/mod-settings-usb` (PR #100) sur son Model:Cycles après le plan de test du §6, et
+répondu : « ça marche nickel ». Le détail point par point du §6 n'a pas été rapporté ; le réglage passe en
+`tested` (`os.json`). L'OS 2.0 entier reste `experimental` tant que Maxime n'a pas confirmé avoir flashé ce firmware
+précis (MAIN OS `1ee74aa2…76fa`).

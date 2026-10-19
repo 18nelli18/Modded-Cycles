@@ -4830,7 +4830,7 @@ window.MC_TWEAKS = {
   {
    "id": "mod-settings",
    "cat": "io",
-   "status": "experimental",
+   "status": "tested",
    "credit": {
     "kind": "based",
     "who": "scottmetoyer",
