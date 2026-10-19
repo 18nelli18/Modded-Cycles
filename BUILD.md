@@ -23,7 +23,7 @@ payloads (Model-TG's code, the Syntakt engines extracted from your Syntakt file,
 (aPLib) and re-signs the container (HMAC). It prints the SHA-256 of the patched MAIN OS. For version 2.0 it must be:
 
 ```
-1ee74aa2fa982e2b9a63d0ea032a2b8a0a54127ff87bd7e06d120f075f9c76fa
+82a79f453151cbaceffdd047a646c96721f3ae3849a28f7821928bfbd4a1cca9
 ```
 
 The same value is the `REF_MAINOS` entry of `docs/flasher/app.js`: the web flasher refuses a build whose MAIN OS
@@ -85,6 +85,7 @@ python3 tools/emu/test_arp.py --cycles firmware/model-cycles_OS1.13.syx --syntak
   --with model-tg-st,sample-preview-st,trig-hold,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-live-both,mod-settings,lfo-plus,syntakt-tg-sd-cp-toy-bits-swarm-macro-acid
 python3 tools/emu/test_mod_settings.py --cycles firmware/model-cycles_OS1.13.syx \
   --syntakt firmware/Syntakt_OS1.42.syx              # proofs that build the whole OS from os.json themselves
+python3 tools/emu/test_step_rec.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
 ```
 
 The exact runs each proof supports are in its docstring (`python3 tools/emu/test_<mod>.py --help`). The notes in

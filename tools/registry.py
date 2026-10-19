@@ -54,6 +54,9 @@ DECLARED = (
             "avec le pattern)", "notes/32 §4"),
     ("lfo-plus", "octets +88..+91 de l'enregistrement d'un son : LFO 2 empaqueté (format de DavidCaruso) ; mémoire "
                  "0x4233f000..0x4233f49b, au-dessus du BSS de l'OS, remise à zéro au premier usage", "notes/56 §3"),
+    ("step-rec", "mémoire 0x4233e800..0x4233e8ff, dans le trou libre au-dessus du BSS de l'OS (0x423380b0..0x4233efff, "
+                 "notes/56 §3.5.2) : les variables du step record, posées à son entrée (seul sr_active, dans un masque, "
+                 "vaut 0 au démarrage)", "notes/73 §3"),
     ("mod-settings", "octets 0x404e9b80..0x404e9b8f du bloc des réglages de l'OS (0x404e9b10, 272 o, flash 0x78000), "
                      "hors de sa somme de contrôle : l'enregistrement « MODS » des réglages des mods "
                      "(0x404e9b63..0x404e9c0f n'est ni lu ni écrit par l'OS)", "notes/72 §3"),
