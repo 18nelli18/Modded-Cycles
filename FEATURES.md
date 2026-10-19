@@ -567,9 +567,9 @@ lands on the current step, which then moves on.
 
 **Origin and license.** This project (notes/73), MIT. A request from Maxime (20/10/2026).
 
-**Status.** Experimental: checked in the emulator on the OS's own code, with everything else in OS 2.0 (what it
-writes is byte for byte what the OS's live recording writes for the same notes and knob turns), not yet on a
-Model:Cycles.
+**Status.** Tested on a Model:Cycles on 20/10/2026: Maxime reported "ça marche nickel" (it works perfectly) after the
+test plan of PR #101 (notes/73 §7). Also checked in the emulator on the OS's own code, with everything else in OS 2.0
+(what it writes is byte for byte what the OS's live recording writes for the same notes and knob turns).
 
 ---
 

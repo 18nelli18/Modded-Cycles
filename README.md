@@ -46,7 +46,7 @@ sends it to the machine over USB. Going back to the official firmware is one cli
 | **ACID machine** | Machine 14: an acid bass in the style of the TB-303, with cutoff, resonance, env mod, drive, saw or square, and slides from your trigs. | [RobinSchmidt/Open303](https://github.com/RobinSchmidt/Open303), MIT | ✅ Tested |
 | **LFO 2, 3, 4** | Three more LFOs per track: on the LFO page, press `LFO` again. LFO 2 is saved with the sound and can be p-locked. | After DavidCaruso | ✅ Tested |
 | **Arpeggiator** | Hold several notes with `RETRIG` and they arpeggiate; `FUNC` + `RETRIG` sets direction and range, saved with the pattern. | This project | ✅ Tested |
-| **Step record** | Sequencer stopped, press `REC` twice: each note you play (TRIG keys, pads, MIDI) lands on the blinking step. `PLAY` skips, `STOP` goes back; knobs turned first become p-locks. | This project | 🧪 Experimental |
+| **Step record** | Sequencer stopped, press `REC` twice: each note you play (TRIG keys, pads, MIDI) lands on the blinking step. `PLAY` skips, `STOP` goes back; knobs turned first become p-locks. | This project | ✅ Tested |
 | **Easier trig removal** | A quick press on a step that holds a trig removes it, instead of opening it as a hold. | This project | ✅ Tested |
 | **Trig preview** | Sequencer stopped or paused: hold a step and press `PAGE` to hear it. | drumkilla, via Model-TG | ✅ Tested |
 | **Tempo up to 546 BPM** | The `TEMPO` knob, tap tempo, MIDI clock and saved projects go past 300 BPM. | This project | ✅ Tested |

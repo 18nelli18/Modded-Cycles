@@ -4879,7 +4879,7 @@ window.MC_TWEAKS = {
   {
    "id": "step-rec",
    "cat": "seq",
-   "status": "experimental",
+   "status": "tested",
    "credit": null,
    "tweaks": [
     "step-rec"

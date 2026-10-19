@@ -21,7 +21,7 @@ l'OS 1.13.
   premier test.
 - Code dans neuf masques de sprites libérés (2 362 o) ; 248 o de variables en `0x4233e800`, dans le trou libre
   au-dessus du BSS (notes/56 §3.5.2).
-- `[FAIT en émulation]` (§5). Pas encore testé sur la machine (§6).
+- `[FAIT en émulation]` (§5). **Testé sur la machine le 20/10/2026** (§7).
 
 ## 1. Ce que fait l'OS
 
@@ -155,7 +155,7 @@ Non couvert : le vrai clavier et les vrais pads (la preuve part de `0x4008171e`,
 double appui, la répétition des touches), l'écran (le popup est construit par le vrai code, pas affiché), la
 synthèse.
 
-## 6. Reste à vérifier sur la machine
+## 6. Plan de test sur la machine (PR #101)
 
 1. À l'arrêt, deux appuis rapides sur REC : *Step-rec: ON*, REC allumé, TRIG 1 clignote vite. Un appui seul : grid
    recording comme avant ; REC + PLAY : live rec comme avant.
@@ -165,3 +165,9 @@ synthèse.
 5. Tourner DECAY puis jouer deux notes : les deux ont le lock, le son de la piste revient à la fin.
 6. Pattern de 32 ou 64 pas : la page suit le pas courant (voyant de page clignotant).
 7. Avec Model-TG (Sampler, Scale Lock) et les moteurs du Syntakt ; avec un clavier MIDI.
+
+## 7. Testé sur la machine (20/10/2026)
+
+Maxime a flashé l'OS de la branche `claude/step-record` (PR #101, MAIN OS `82a79f45…cca9`) sur son Model:Cycles,
+suivi le plan de test du §6, et répondu : « ça marche nickel. tu peux fusionner ». Le détail point par point n'a pas
+été rapporté ; la fonction passe en `tested` (`os.json`).

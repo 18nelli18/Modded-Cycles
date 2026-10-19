@@ -52,7 +52,7 @@
       "guide": "trig-hold", "notes": "notes/33" },
     { "id": "arp", "cat": "seq", "tweaks": ["arp"], "status": "tested", "credit": null,
       "guide": "arp", "notes": "notes/32" },
-    { "id": "step-rec", "cat": "seq", "tweaks": ["step-rec"], "status": "experimental", "credit": null,
+    { "id": "step-rec", "cat": "seq", "tweaks": ["step-rec"], "status": "tested", "credit": null,
       "guide": "step-rec", "notes": "notes/73" },
     { "id": "tempo-max", "cat": "seq", "tweaks": ["tempo-max"], "status": "tested", "credit": null,
       "guide": "tempo", "notes": "notes/38" },
