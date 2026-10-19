@@ -9,7 +9,9 @@ def main():
  def key(code,flags):r.uc.mem_write(event,struct.pack('>6I',0,0,0,code,flags,0));return r.call(0x40077720,0,event)
  held=r.u32(sy['mf_api']+16)
  if held:r.uc.mem_write(held,bytes(4))
- key(13,1);key(2,1);key(2,0);key(13,0)
+ key(13,1);key(2,1)
+ if 'long' in sys.argv:key(2,33)
+ key(2,0);key(13,0)
  if held:assert r.u32(held)==0
  assert r.call(sy['wf_menu_edit'])==0
  key(32,16);assert r.call(sy['wf_menu_edit'])==1
