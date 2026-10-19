@@ -27,7 +27,7 @@ const ELEKTRON_ST_DL = "https://www.elektron.se/support-downloads/syntakt";
 // same whole write or a mod applied on top of another through "requires").
 const REF_MAINOS = {
   // Modded Cycles OS 2.0: the tweaks of os.json, built by tools/build.py --os
-  "model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": "a87e70d05d213b4301a68e13ae729a62f7c898a481faaa9d9613ac518fe60ff9",
+  "model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": "1ee74aa2fa982e2b9a63d0ea032a2b8a0a54127ff87bd7e06d120f075f9c76fa",
 };
 const REF_MODS = {
   "model-tg-st": {"w": "c4686bd09a145fd10a6424b7229e414a084fbbcc212b722e4ab7d3ecd7cb7931", "p": "e269630fe5251b58c2a5eb4298e3ab09b4e6fff9f38c254afecf121c8ad446c2"},
@@ -40,6 +40,7 @@ const REF_MODS = {
   "level-pan-values": {"w": "50e0c4e6e5cb3c6de19296d2f65fec5074ea8e25322363d6bc1dad164cb131b9"},
   "trigless-dim": {"w": "4efc73f035aab33963e8ae8f3f6343925e2cd5149b4cad6780051d0c185e32e1"},
   "midi-live-both": {"w": "e7dfae924d6474abea22b375002ff58b1e3cde301aa9ca8a2ec980593316c942"},
+  "mod-settings": {"w": "c3c023276e80295a9338a80d22711469620d4b4315ae2b1e0a85c9a61e31e9bb"},
   "lfo-plus": {"w": "8443b08fdb4ce7cf1ba26821b27e7df3ab4ca5396e35e7e9a8e591fc430569b6"},
   "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": {"w": "045d7a3afb79336a765556762de67b49d1b3143dc5ee89559fae1b08529e6afe", "p": "c1f8b90c879c09659c843589daf4213c7e32696f94a80f64679c7a3e90473060"},
 };
@@ -624,6 +625,9 @@ const FEAT = {
     "midi-live-both": { label: "Live MIDI OUT + THRU toggle",
       short: "With THR selected, hold FUNC and press the LEVEL/DATA knob to add the Cycles' own MIDI to what it forwards, or take it away.",
       desc: "With THR selected in CONFIG › MIDI › PORTS › OUT/THRU, the Model:Cycles forwards incoming MIDI. Hold FUNC and press the LEVEL/DATA knob: it also sends its own clock, notes and parameter changes; press again to stop. The screen stays on THR. Best when only one side plays notes, since what comes in is passed on as it arrives. By AveyCole." },
+    "mod-settings": { label: "USB audio: stereo or 6 tracks",
+      short: "SETTINGS › Mods › USB Audio: the stereo mix (2CH) or each track on its own channel (6CH), switched from the machine.",
+      desc: "SETTINGS gets a last line, Mods, which opens Mod Settings, the page for the mods' own settings. Its first setting, USB Audio, sends the computer the stereo mix (2CH, as stock) or each of the six tracks on its own channel (6CH), to record stems. Press LEVEL/DATA to switch: the Model:Cycles reconnects to the computer about a second later with 2 or 6 inputs, and keeps the choice after power-off. In 6CH the stereo mix is not sent over USB. 6-channel audio based on ms-multi-output by scottmetoyer." },
     "mach-sampler": { label: "Model-TG sampler" },
     "mach-macro": { label: "47 models from Braids" },
     "mach-acid": { label: "acid bass in the style of the TB-303" },
@@ -690,6 +694,9 @@ const FEAT = {
     "midi-live-both": { label: "Basculer MIDI OUT + THRU en direct",
       short: "Avec THR choisi, maintenez FUNC et appuyez sur le potard LEVEL/DATA pour ajouter le MIDI du Cycles à ce qu'il relaie, ou le retirer.",
       desc: "Avec THR choisi dans CONFIG › MIDI › PORTS › OUT/THRU, le Model:Cycles relaie le MIDI reçu. Maintenez FUNC et appuyez sur le potard LEVEL/DATA : il envoie aussi sa propre horloge, ses notes et ses changements de paramètres ; appuyez encore pour arrêter. L'écran reste sur THR. Au mieux quand un seul côté joue des notes, puisque ce qui entre est relayé tel quel. Par AveyCole." },
+    "mod-settings": { label: "Audio USB : stéréo ou 6 pistes",
+      short: "SETTINGS › Mods › USB Audio : le mix stéréo (2CH) ou chaque piste sur son propre canal (6CH), au choix depuis la machine.",
+      desc: "SETTINGS gagne une dernière ligne, Mods, qui ouvre Mod Settings, la page des réglages des mods. Son premier réglage, USB Audio, envoie à l'ordinateur le mix stéréo (2CH, comme d'origine) ou chacune des six pistes sur son propre canal (6CH), pour enregistrer des pistes séparées. Appuyez sur LEVEL/DATA pour basculer : le Model:Cycles se reconnecte à l'ordinateur environ une seconde plus tard avec 2 ou 6 entrées, et garde le choix après extinction. En 6CH, le mix stéréo n'est pas envoyé en USB. Audio 6 canaux d'après ms-multi-output de scottmetoyer." },
     "mach-sampler": { label: "sampler de Model-TG" },
     "mach-macro": { label: "47 modèles de Braids" },
     "mach-acid": { label: "basse acide à la manière de la TB-303" },

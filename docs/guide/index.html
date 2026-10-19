@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-18-09">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-18-09">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-19-01">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-19-01">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -57,10 +57,10 @@
         <li><a href="#midi-live-both"><span data-l="en">Live MIDI OUT + THRU toggle</span><span data-l="fr">Basculer MIDI OUT + THRU en direct</span></a></li>
         <li><a href="#acid"><span data-l="en">ACID machine</span><span data-l="fr">Machine ACID</span></a></li>
         <li><a href="#lfo-plus"><span data-l="en">LFO 2, 3, 4</span><span data-l="fr">LFO 2, 3, 4</span></a></li>
+        <li><a href="#mod-settings"><span data-l="en">Mod Settings: USB audio</span><span data-l="fr">Mod Settings : audio USB</span></a></li>
         <li><a href="#mods-on-samples"><span data-l="en">The OS on a Model:Samples</span><span data-l="fr">L'OS sur un Model:Samples</span></a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
         <li><a href="#outside"><span data-l="en">Not in this OS</span><span data-l="fr">Pas dans cet OS</span></a></li>
-        <li><a href="#usb6"><span data-l="en">6-channel USB audio</span><span data-l="fr">Audio USB 6 canaux</span></a></li>
         <li><a href="#track-filter"><span data-l="en">Per-track filter</span><span data-l="fr">Filtre par piste</span></a></li>
         <li><a href="#midi-both"><span data-l="en">MIDI OUT while in THRU</span><span data-l="fr">MIDI OUT pendant THRU</span></a></li>
         <li><a href="#stock"><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></a></li>
@@ -646,8 +646,69 @@
         </dl>
       </section>
 
+      <section id="mod-settings">
+        <span id="usb6"></span>
+        <h2><span class="n">19</span><span data-l="en">Mod Settings: USB audio, stereo or 6 tracks</span><span data-l="fr">Mod Settings : audio USB, stéréo ou 6 pistes</span></h2>
+        <p class="by"><span data-l="en">6-channel audio based on</span><span data-l="fr">Audio 6 canaux d'après</span> <a href="https://github.com/scottmetoyer/ms-multi-output" target="_blank" rel="noopener">ms-multi-output</a> <span data-l="en">by</span><span data-l="fr">de</span> scottmetoyer</p>
+        <p class="lede"><span data-l="en">The SETTINGS menu gets a last line, <b>Mods</b>: it opens <b>Mod Settings</b>, the page for the mods' own settings. Its first setting, <b>USB Audio</b>, sends the computer either the stereo mix (2CH, as stock) or each track on its own channel (6CH), to record six stems. No reflash needed to change it.</span><span data-l="fr">Le menu SETTINGS gagne une dernière ligne, <b>Mods</b> : elle ouvre <b>Mod Settings</b>, la page des réglages des mods. Son premier réglage, <b>USB Audio</b>, envoie à l'ordinateur soit le mix stéréo (2CH, comme d'origine), soit chaque piste sur son propre canal (6CH), pour enregistrer six pistes séparées. Pas besoin de reflasher pour en changer.</span></p>
+        <ol>
+          <li><span data-l="en">Press <b>SETTINGS</b>. Turn <b>LEVEL/DATA</b> to the last line, <b>Mods</b> (the puzzle piece, after Device), and press <b>LEVEL/DATA</b>.</span><span data-l="fr">Appuyez sur <b>SETTINGS</b>. Tournez <b>LEVEL/DATA</b> jusqu'à la dernière ligne, <b>Mods</b> (la pièce de puzzle, après Device), et appuyez sur <b>LEVEL/DATA</b>.</span></li>
+          <li><span data-l="en">The page shows <b>USB Audio</b> and its value, <b>2CH</b> or <b>6CH</b>. Press <b>LEVEL/DATA</b> to switch.</span><span data-l="fr">La page affiche <b>USB Audio</b> et sa valeur, <b>2CH</b> ou <b>6CH</b>. Appuyez sur <b>LEVEL/DATA</b> pour basculer.</span></li>
+          <li><span data-l="en">The Model:Cycles leaves the computer and comes back about a second later with 2 or 6 inputs, as when you change <b>Device › USB mode</b>. Stop the recording in your DAW before switching, then pick the inputs again if it asks.</span><span data-l="fr">Le Model:Cycles se déconnecte de l'ordinateur et revient environ une seconde plus tard avec 2 ou 6 entrées, comme quand on change <b>Device › USB mode</b>. Arrêtez l'enregistrement dans votre logiciel avant de basculer, puis rechoisissez les entrées s'il le demande.</span></li>
+        </ol>
+        <figure class="fig" data-usb="mod">
+          <div class="switch" role="group" aria-label="USB Audio">
+            <button type="button" data-usb-mode="stock" aria-pressed="false">2CH</button>
+            <button type="button" data-usb-mode="mod" aria-pressed="true">6CH</button>
+          </div>
+          <div class="usb">
+            <div>
+              <div class="hd">Model:Cycles</div>
+              <div class="col"><span class="k">T1</span><span class="k">T2</span><span class="k">T3</span><span class="k">T4</span><span class="k">T5</span><span class="k">T6</span></div>
+            </div>
+            <svg viewBox="0 0 200 240" preserveAspectRatio="none" aria-hidden="true">
+              <g class="w-mod"><path d="M8 20H192"/><path d="M8 60H192"/><path d="M8 100H192"/><path d="M8 140H192"/><path d="M8 180H192"/><path d="M8 220H192"/></g>
+              <g class="w-stock">
+                <path d="M8 20C60 20 60 120 100 120"/><path d="M8 60C60 60 60 120 100 120"/><path d="M8 100C60 100 60 120 100 120"/>
+                <path d="M8 140C60 140 60 120 100 120"/><path d="M8 180C60 180 60 120 100 120"/><path d="M8 220C60 220 60 120 100 120"/>
+                <path d="M100 120C150 120 150 100 192 100"/><path d="M100 120C150 120 150 140 192 140"/>
+              </g>
+            </svg>
+            <div>
+              <div class="hd"><span class="mm"><span data-l="en">Computer, 6 inputs</span><span data-l="fr">Ordinateur, 6 entrées</span></span><span class="s"><span data-l="en">Computer, 2 inputs</span><span data-l="fr">Ordinateur, 2 entrées</span></span></div>
+              <div class="col">
+                <div class="ch off"><span class="lbl"><span class="mm">In 1</span><span class="s">–</span></span><span class="m"><i></i></span></div>
+                <div class="ch off"><span class="lbl"><span class="mm">In 2</span><span class="s">–</span></span><span class="m"><i></i></span></div>
+                <div class="ch"><span class="lbl"><span class="mm">In 3</span><span class="s">L</span></span><span class="m"><i></i></span></div>
+                <div class="ch"><span class="lbl"><span class="mm">In 4</span><span class="s">R</span></span><span class="m"><i></i></span></div>
+                <div class="ch off"><span class="lbl"><span class="mm">In 5</span><span class="s">–</span></span><span class="m"><i></i></span></div>
+                <div class="ch off"><span class="lbl"><span class="mm">In 6</span><span class="s">–</span></span><span class="m"><i></i></span></div>
+              </div>
+            </div>
+          </div>
+          <figcaption><span data-l="en">2CH: the stereo mix only, as stock. 6CH: channel 1 = track 1 … channel 6 = track 6.</span><span data-l="fr">2CH : le mix stéréo seul, comme d'origine. 6CH : canal 1 = piste 1 … canal 6 = piste 6.</span></figcaption>
+        </figure>
+        <dl class="facts">
+          <div><dt><span data-l="en">Kept</span><span data-l="fr">Gardé</span></dt><dd><span data-l="en">The choice is saved at once with the Model:Cycles' settings and comes back at the next power-on. It starts on 2CH.</span><span data-l="fr">Le choix est enregistré tout de suite avec les réglages du Model:Cycles et revient à l'allumage suivant. Il part sur 2CH.</span></dd></div>
+          <div><dt>2CH</dt><dd><span data-l="en">The USB audio is the stock one, byte for byte: the 6-channel code is not even in place.</span><span data-l="fr">L'audio USB est celui d'origine, octet pour octet : le code 6 canaux n'est même pas en place.</span></dd></div>
+          <div><dt>Format</dt><dd><span data-l="en">48 kHz, 32-bit, 6 input channels.</span><span data-l="fr">48 kHz, 32 bits, 6 canaux d'entrée.</span></dd></div>
+          <div><dt><span data-l="en">Stems</span><span data-l="fr">Pistes</span></dt><dd><span data-l="en">Mono, taken before the pan. Delay and reverb are applied to the mix, so they are not in the stems.</span><span data-l="fr">En mono, prises avant le panoramique. Le delay et la reverb s'appliquent au mix : ils ne sont pas dans les pistes.</span></dd></div>
+          <div><dt>Mix</dt><dd><span data-l="en">In 6CH the stereo mix is not sent over USB: mix the six tracks in your DAW, or switch back to 2CH.</span><span data-l="fr">En 6CH, le mix stéréo n'est pas envoyé en USB : mixez les six pistes dans votre logiciel, ou repassez en 2CH.</span></dd></div>
+          <div><dt>Mute</dt><dd><span data-l="en">A muted track plays no new trigs; on its stem, the note it was playing rings out to its end (the mute itself applies to the mix). With Model-TG too; its Sampler fades out.</span><span data-l="fr">Une piste mutée ne joue plus de trigs ; sur sa piste USB, la note en cours sonne jusqu'à sa fin (le mute lui-même s'applique au mix). Avec Model-TG aussi ; son Sampler s'éteint en fondu.</span></dd></div>
+          <div><dt><span data-l="en">Stream</span><span data-l="fr">Flux</span></dt><dd><span data-l="en">In 2CH and 6CH alike, each block leaves for the computer at the same moment, whatever the processor load (Model-TG, muted tracks, effects off): no dropouts when the load changes. Latency: one block (0.67 ms) more than the stock OS.</span><span data-l="fr">En 2CH comme en 6CH, chaque bloc part vers l'ordinateur au même instant, quelle que soit la charge du processeur (Model-TG, pistes mutées, effets éteints) : pas de trous quand la charge change. Latence : un bloc (0,67 ms) de plus que l'OS d'origine.</span></dd></div>
+          <div><dt><span data-l="en">Computer audio</span><span data-l="fr">Audio de l'ordinateur</span></dt><dd><span data-l="en">Playing the computer's audio through the Model:Cycles is not reliable in 6CH: use another output, or 2CH.</span><span data-l="fr">Faire jouer l'audio de l'ordinateur par le Model:Cycles n'est pas fiable en 6CH : utilisez une autre sortie, ou 2CH.</span></dd></div>
+          <div><dt><span data-l="en">Updates</span><span data-l="fr">Mises à jour</span></dt><dd><span data-l="en">OS updates over USB keep working.</span><span data-l="fr">La mise à jour de l'OS par USB continue de fonctionner.</span></dd></div>
+          <div><dt>macOS</dt><dd><span data-l="en">Nothing to install: in 6CH the Model:Cycles shows up with 6 inputs.</span><span data-l="fr">Rien à installer : en 6CH, le Model:Cycles apparaît avec 6 entrées.</span></dd></div>
+          <div><dt>Windows</dt><dd><span data-l="en">Through <a href="https://github.com/dechamps/FlexASIO" target="_blank" rel="noopener">FlexASIO</a> (shared WASAPI, MME or DirectSound), <code>channels = 6</code>, project at 48 kHz. If the stream doesn't start, turn the Model:Cycles off and on.</span><span data-l="fr">Avec <a href="https://github.com/dechamps/FlexASIO" target="_blank" rel="noopener">FlexASIO</a> (WASAPI partagé, MME ou DirectSound), <code>channels = 6</code>, projet à 48 kHz. Si le flux ne démarre pas, éteignez puis rallumez le Model:Cycles.</span></dd></div>
+          <div><dt>Linux</dt><dd><span data-l="en">Not tested yet.</span><span data-l="fr">Pas encore testé.</span></dd></div>
+          <div><dt><span data-l="en">USB mode</span><span data-l="fr">USB mode</span></dt><dd><span data-l="en">USB Audio counts when <b>Device › USB mode</b> is on A+M (audio and MIDI). On MID there is no USB audio at all; the setting waits for A+M.</span><span data-l="fr">USB Audio compte quand <b>Device › USB mode</b> est sur A+M (audio et MIDI). Sur MID, il n'y a pas d'audio USB du tout ; le réglage attend le retour sur A+M.</span></dd></div>
+          <div><dt><span data-l="en">Other firmwares</span><span data-l="fr">Autres firmwares</span></dt><dd><span data-l="en">The setting is saved in a free corner of the Model:Cycles' settings, which the official OS ignores: with the official OS the audio is stereo, and back on this OS your choice returns.</span><span data-l="fr">Le réglage est gardé dans un coin libre des réglages du Model:Cycles, que l'OS officiel ignore : avec l'OS officiel l'audio est stéréo, et de retour sur cet OS votre choix revient.</span></dd></div>
+          <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">6-channel audio itself: on a Model:Cycles since September 2026, with Model-TG and the Syntakt engines. The setting and the Mod Settings page: in the emulator only, on the OS's own code (the Config Menu and its drawing, the switch both ways, the saved settings, the USB stream after switching); not yet on the machine.</span><span data-l="fr">L'audio 6 canaux lui-même : sur un Model:Cycles depuis septembre 2026, avec Model-TG et les moteurs du Syntakt. Le réglage et la page Mod Settings : en émulation seulement, sur le code même de l'OS (le Config Menu et son dessin, la bascule dans les deux sens, les réglages enregistrés, le flux USB après la bascule) ; pas encore sur la machine.</span></dd></div>
+        </dl>
+      </section>
+
       <section id="mods-on-samples">
-        <h2><span class="n">19</span><span data-l="en">The OS on a Model:Samples</span><span data-l="fr">L'OS sur un Model:Samples</span></h2>
+        <h2><span class="n">20</span><span data-l="en">The OS on a Model:Samples</span><span data-l="fr">L'OS sur un Model:Samples</span></h2>
         <p class="lede"><span data-l="en">A Model:Samples runs the same Modded Cycles OS as a Model:Cycles. Whatever the machine, the flasher installs that OS; on a Model:Samples, the <a href="#model-tg">Sampler</a> plays your samples.</span><span data-l="fr">Un Model:Samples fait tourner le même Modded Cycles OS qu'un Model:Cycles. Quelle que soit la machine, le flasher installe cet OS ; sur un Model:Samples, le <a href="#model-tg">Sampler</a> joue vos samples.</span></p>
         <ol>
           <li><span data-l="en">Back up your samples and projects with Elektron Transfer, then close Transfer.</span><span data-l="fr">Sauvegardez vos samples et vos projets avec Elektron Transfer, puis fermez Transfer.</span></li>
@@ -671,7 +732,7 @@
       </section>
 
       <section id="samples">
-        <h2><span class="n">20</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">21</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -705,65 +766,13 @@
       </section>
 
       <section id="outside">
-        <h2><span class="n">21</span><span data-l="en">Not in this OS</span><span data-l="fr">Pas dans cet OS</span></h2>
+        <h2><span class="n">22</span><span data-l="en">Not in this OS</span><span data-l="fr">Pas dans cet OS</span></h2>
         <p class="lede"><span data-l="en">These features are not part of Modded Cycles OS 2.0. Their pages stay here for reference; developers can still build them from the command line.</span><span data-l="fr">Ces fonctions ne font pas partie du Modded Cycles OS 2.0. Leurs pages restent ici pour mémoire ; les développeurs peuvent toujours les construire en ligne de commande.</span></p>
         <ul>
-          <li><span data-l="en"><a href="#usb6">6-channel USB audio</a>: it replaces the stereo USB mix; a switch between stereo and 6 channels is planned.</span><span data-l="fr"><a href="#usb6">Audio USB 6 canaux</a> : il remplace le mix stéréo en USB ; un sélecteur stéréo / 6 canaux est prévu.</span></li>
           <li><span data-l="en"><a href="#track-filter">Per-track filter</a>: it shares its place in the sound with LFO 2, 3, 4 and does not work with Model-TG; it comes back once Model-TG's side is replaced.</span><span data-l="fr"><a href="#track-filter">Filtre par piste</a> : il partage sa place dans le son avec LFO 2, 3, 4 et ne marche pas avec Model-TG ; il reviendra quand la partie Model-TG sera remplacée.</span></li>
           <li><span data-l="en">Optimised OS, the same sound with far less work for the processor: not compatible yet with the Sampler, the Syntakt engines, MACRO and ACID. Porting it to this OS is the next job.</span><span data-l="fr">L'OS optimisé, le même son avec beaucoup moins de travail pour le processeur : pas encore compatible avec le Sampler, les moteurs du Syntakt, MACRO et ACID. Le porter sur cet OS est le prochain chantier.</span></li>
           <li><span data-l="en"><a href="#midi-both">MIDI OUT while in THRU</a>: the <a href="#midi-live-both">Live MIDI OUT + THRU toggle</a>, in the OS, does the same and more.</span><span data-l="fr"><a href="#midi-both">MIDI OUT pendant THRU</a> : <a href="#midi-live-both">Basculer MIDI OUT + THRU en direct</a>, dans l'OS, fait la même chose et plus.</span></li>
         </ul>
-      </section>
-
-      <section id="usb6">
-        <h2><span class="n">22</span><span data-l="en">6-channel USB audio</span><span data-l="fr">Audio USB 6 canaux</span></h2>
-        <p class="note"><span data-l="en"><b>Not part of Modded Cycles OS 2.0.</b> It replaces the stereo USB mix, so it stays out until a switch between stereo and 6 channels is ready. Developers can still build it from the command line.</span><span data-l="fr"><b>Ne fait pas partie du Modded Cycles OS 2.0.</b> Il remplace le mix stéréo en USB : il reste dehors en attendant un sélecteur stéréo / 6 canaux. Les développeurs peuvent toujours le construire en ligne de commande.</span></p>
-        <p class="by"><span data-l="en">Based on</span><span data-l="fr">D'après</span> <a href="https://github.com/scottmetoyer/ms-multi-output" target="_blank" rel="noopener">ms-multi-output</a> <span data-l="en">by</span><span data-l="fr">de</span> scottmetoyer</p>
-        <p class="lede"><span data-l="en">Each track leaves on its own USB channel. You record six stems instead of a stereo mix.</span><span data-l="fr">Chaque piste sort sur son propre canal USB. Vous enregistrez six pistes séparées au lieu d'un mix stéréo.</span></p>
-        <figure class="fig" data-usb="mod">
-          <div class="switch" role="group" aria-label="Firmware">
-            <button type="button" data-usb-mode="stock" aria-pressed="false"><span data-l="en">Stock</span><span data-l="fr">Origine</span></button>
-            <button type="button" data-usb-mode="mod" aria-pressed="true"><span data-l="en">6-channel mod</span><span data-l="fr">Mod 6 canaux</span></button>
-          </div>
-          <div class="usb">
-            <div>
-              <div class="hd">Model:Cycles</div>
-              <div class="col"><span class="k">T1</span><span class="k">T2</span><span class="k">T3</span><span class="k">T4</span><span class="k">T5</span><span class="k">T6</span></div>
-            </div>
-            <svg viewBox="0 0 200 240" preserveAspectRatio="none" aria-hidden="true">
-              <g class="w-mod"><path d="M8 20H192"/><path d="M8 60H192"/><path d="M8 100H192"/><path d="M8 140H192"/><path d="M8 180H192"/><path d="M8 220H192"/></g>
-              <g class="w-stock">
-                <path d="M8 20C60 20 60 120 100 120"/><path d="M8 60C60 60 60 120 100 120"/><path d="M8 100C60 100 60 120 100 120"/>
-                <path d="M8 140C60 140 60 120 100 120"/><path d="M8 180C60 180 60 120 100 120"/><path d="M8 220C60 220 60 120 100 120"/>
-                <path d="M100 120C150 120 150 100 192 100"/><path d="M100 120C150 120 150 140 192 140"/>
-              </g>
-            </svg>
-            <div>
-              <div class="hd"><span class="mm"><span data-l="en">Computer, 6 inputs</span><span data-l="fr">Ordinateur, 6 entrées</span></span><span class="s"><span data-l="en">Computer, 2 inputs</span><span data-l="fr">Ordinateur, 2 entrées</span></span></div>
-              <div class="col">
-                <div class="ch off"><span class="lbl"><span class="mm">In 1</span><span class="s">–</span></span><span class="m"><i></i></span></div>
-                <div class="ch off"><span class="lbl"><span class="mm">In 2</span><span class="s">–</span></span><span class="m"><i></i></span></div>
-                <div class="ch"><span class="lbl"><span class="mm">In 3</span><span class="s">L</span></span><span class="m"><i></i></span></div>
-                <div class="ch"><span class="lbl"><span class="mm">In 4</span><span class="s">R</span></span><span class="m"><i></i></span></div>
-                <div class="ch off"><span class="lbl"><span class="mm">In 5</span><span class="s">–</span></span><span class="m"><i></i></span></div>
-                <div class="ch off"><span class="lbl"><span class="mm">In 6</span><span class="s">–</span></span><span class="m"><i></i></span></div>
-              </div>
-            </div>
-          </div>
-          <figcaption><span data-l="en">Stock: the stereo mix only. Mod: channel 1 = track 1 … channel 6 = track 6.</span><span data-l="fr">Origine : le mix stéréo seul. Mod : canal 1 = piste 1 … canal 6 = piste 6.</span></figcaption>
-        </figure>
-        <dl class="facts">
-          <div><dt>Format</dt><dd><span data-l="en">48 kHz, 32-bit, 6 input channels.</span><span data-l="fr">48 kHz, 32 bits, 6 canaux d'entrée.</span></dd></div>
-          <div><dt><span data-l="en">Stems</span><span data-l="fr">Pistes</span></dt><dd><span data-l="en">Mono, taken before the pan. Delay and reverb are applied to the mix, so they are not in the stems.</span><span data-l="fr">En mono, prises avant le panoramique. Le delay et la reverb s'appliquent au mix : ils ne sont pas dans les pistes.</span></dd></div>
-          <div><dt>Mix</dt><dd><span data-l="en">No longer sent over USB: mix the six tracks in your DAW.</span><span data-l="fr">N'est plus envoyé en USB : les six pistes se mixent dans votre logiciel.</span></dd></div>
-          <div><dt>Mute</dt><dd><span data-l="en">A muted track plays no new trigs; on its stem, the note it was playing rings out to its end (the mute itself applies to the mix). With Model-TG too; its Sampler fades out.</span><span data-l="fr">Une piste mutée ne joue plus de trigs ; sur sa piste USB, la note en cours sonne jusqu'à sa fin (le mute lui-même s'applique au mix). Avec Model-TG aussi ; son Sampler s'éteint en fondu.</span></dd></div>
-          <div><dt><span data-l="en">Stream</span><span data-l="fr">Flux</span></dt><dd><span data-l="en">Each block leaves for the computer at the same moment, whatever the processor load (Model-TG, muted tracks, effects off): no dropouts when the load changes. Latency: one block (0.67 ms) more than the stock OS.</span><span data-l="fr">Chaque bloc part vers l'ordinateur au même instant, quelle que soit la charge du processeur (Model-TG, pistes mutées, effets éteints) : pas de trous quand la charge change. Latence : un bloc (0,67 ms) de plus que l'OS d'origine.</span></dd></div>
-          <div><dt><span data-l="en">Computer audio</span><span data-l="fr">Audio de l'ordinateur</span></dt><dd><span data-l="en">Playing the computer's audio through the Model:Cycles is not reliable in 6-channel mode: use another output.</span><span data-l="fr">Faire jouer l'audio de l'ordinateur par le Model:Cycles n'est pas fiable en mode 6 canaux : utilisez une autre sortie.</span></dd></div>
-          <div><dt><span data-l="en">Updates</span><span data-l="fr">Mises à jour</span></dt><dd><span data-l="en">OS updates over USB keep working.</span><span data-l="fr">La mise à jour de l'OS par USB continue de fonctionner.</span></dd></div>
-          <div><dt>macOS</dt><dd><span data-l="en">Nothing to install: the Model:Cycles shows up with 6 inputs.</span><span data-l="fr">Rien à installer : le Model:Cycles apparaît avec 6 entrées.</span></dd></div>
-          <div><dt>Windows</dt><dd><span data-l="en">Through <a href="https://github.com/dechamps/FlexASIO" target="_blank" rel="noopener">FlexASIO</a> (shared WASAPI, MME or DirectSound), <code>channels = 6</code>, project at 48 kHz. If the stream doesn't start, turn the Model:Cycles off and on.</span><span data-l="fr">Avec <a href="https://github.com/dechamps/FlexASIO" target="_blank" rel="noopener">FlexASIO</a> (WASAPI partagé, MME ou DirectSound), <code>channels = 6</code>, projet à 48 kHz. Si le flux ne démarre pas, éteignez puis rallumez le Model:Cycles.</span></dd></div>
-          <div><dt>Linux</dt><dd><span data-l="en">Not tested yet.</span><span data-l="fr">Pas encore testé.</span></dd></div>
-        </dl>
       </section>
 
       <section id="track-filter">
@@ -894,8 +903,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-18-09"></script>
-<script src="../assets/cycles.js?v=2026-10-18-09"></script>
-<script src="../assets/site.js?v=2026-10-18-09"></script>
+<script src="../assets/release.js?v=2026-10-19-01"></script>
+<script src="../assets/cycles.js?v=2026-10-19-01"></script>
+<script src="../assets/site.js?v=2026-10-19-01"></script>
 </body>
 </html>

@@ -23,7 +23,7 @@ payloads (Model-TG's code, the Syntakt engines extracted from your Syntakt file,
 (aPLib) and re-signs the container (HMAC). It prints the SHA-256 of the patched MAIN OS. For version 2.0 it must be:
 
 ```
-a87e70d05d213b4301a68e13ae729a62f7c898a481faaa9d9613ac518fe60ff9
+1ee74aa2fa982e2b9a63d0ea032a2b8a0a54127ff87bd7e06d120f075f9c76fa
 ```
 
 The same value is the `REF_MAINOS` entry of `docs/flasher/app.js`: the web flasher refuses a build whose MAIN OS
@@ -36,7 +36,7 @@ machine no longer starts, through the startup menu ([`RECOVERY.md`](RECOVERY.md)
 ## Development builds
 
 `tweaks/model-cycles_OS1.13/` is the library of every tweak the project has built and proven, including those that
-are not in the current OS (6-channel USB audio, the per-track filter, the Optimised OS, the Syntakt engine
+are not in the current OS (6-channel USB audio for good, `6ch-usbup`, the per-track filter, the Optimised OS, the Syntakt engine
 combinations, Model-TG on its own, diagnostics). `build.py -t` builds any compatible set of them:
 
 ```sh
@@ -82,7 +82,9 @@ alone and with the rest of the OS:
 ```sh
 python3 tools/emu/test_arp.py --cycles firmware/model-cycles_OS1.13.syx
 python3 tools/emu/test_arp.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx \
-  --with model-tg-st,sample-preview-st,trig-hold,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-live-both,lfo-plus,syntakt-tg-sd-cp-toy-bits-swarm-macro-acid
+  --with model-tg-st,sample-preview-st,trig-hold,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-live-both,mod-settings,lfo-plus,syntakt-tg-sd-cp-toy-bits-swarm-macro-acid
+python3 tools/emu/test_mod_settings.py --cycles firmware/model-cycles_OS1.13.syx \
+  --syntakt firmware/Syntakt_OS1.42.syx              # proofs that build the whole OS from os.json themselves
 ```
 
 The exact runs each proof supports are in its docstring (`python3 tools/emu/test_<mod>.py --help`). The notes in

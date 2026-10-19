@@ -7,6 +7,13 @@ reste à tester. Fichiers : `os.json`, `tools/gen_flasher_tweaks.py`, `tools/ref
 `docs/flasher/` (`app.js`, `index.html`, `tweaks.js`), `tools/webflash_smoke.js`. Aucun octet de tweak ne change :
 la 2.0 est une combinaison que le flasher savait déjà construire.
 
+> **Mise à jour du 19/10/2026 ([72](72-reglages-des-mods.md)).** La bascule stéréo / 6 canaux existe : la page
+> *Mod Settings* (SETTINGS › Mods), réglage **USB Audio** 2CH / 6CH, tweak `mod-settings`, entre dans l'OS avant la
+> fusion de la 2.0 (demande de Maxime). L'audio 6 canaux n'est donc plus « hors de l'OS » : en 6CH, les modifications
+> de `6ch-usbup` sont faites en mémoire ; en 2CH, le pilote USB reste celui d'origine. L'OS a 13 tweaks et 18
+> fonctions ; MAIN OS SHA-256 `1ee74aa2fa982e2b9a63d0ea032a2b8a0a54127ff87bd7e06d120f075f9c76fa` (avec
+> `Syntakt_OS1.41.syx`). Le reste de cette note décrit la 2.0 telle que décidée le 18/10/2026.
+
 ## En bref
 
 - **Une seule combinaison** de tweaks, `os.json` : `model-tg-st`, `sample-preview-st`, `trig-hold`, `arp`,

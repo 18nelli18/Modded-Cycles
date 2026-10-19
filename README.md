@@ -57,6 +57,7 @@ sends it to the machine over USB. Going back to the official firmware is one cli
 | **Volume and pan as numbers** | On the main screen, `LEVEL/DATA` shows the track volume as a number; with `FUNC`, its pan. | After djd_oz | ✅ Tested |
 | **Dimmed trigless trigs** | A step that holds a trigless trig lights dimmed. | After djd_oz | ✅ Tested |
 | **Live MIDI OUT + THRU toggle** | With `THR` selected, `FUNC` + press `LEVEL/DATA` adds the Cycles' own MIDI to what it forwards, or takes it away. | [AveyCole](https://github.com/AveyCole/Modded-Cycles) | ✅ Tested |
+| **Mod Settings: USB audio** | `SETTINGS` has a last line, **Mods**, with the mods' own settings. **USB Audio** sends the computer the stereo mix (2CH, as stock) or each track on its own channel (6CH) to record stems; press `LEVEL/DATA` to switch, no reflash. | 6-channel audio after [scottmetoyer/ms-multi-output](https://github.com/scottmetoyer/ms-multi-output), MIT | 🧪 Experimental |
 
 The added machines come after Chord, always in this order: 07 Sampler, 08 SDVtg, 09 CPVtg, 10 SYToy, 11 SYBit,
 12 SYSwm, 13 MACRO, 14 ACID.
@@ -70,8 +71,6 @@ website explains each one step by step, with the buttons to press.
 
 ### Not in the OS, and why
 
-- **6-channel USB audio** (each track on its own USB channel): kept out for now because it replaces the stereo
-  USB mix. A stereo / 6-channel switch is planned ([#82](https://github.com/18nelli18/Modded-Cycles/issues/82)).
 - **Per-track filter**: stores its settings where LFO 2, 3, 4 store theirs, and does not work with Model-TG. It
   comes back once the Sampler side is rewritten.
 - **Optimised OS** (the same sound with far less processor work): not compatible with the Sampler, MACRO, ACID and
@@ -176,7 +175,7 @@ This project stands on the work of others:
 - **[pichenettes/eurorack](https://github.com/pichenettes/eurorack)** (MIT): Émilie Gillet's Braids code, compiled as is for the synthesis models of the MACRO machine ([license](tweaks/model-cycles_OS1.13/LICENSE-Braids)).
 - **[RobinSchmidt/Open303](https://github.com/RobinSchmidt/Open303)** (MIT): Robin Schmidt's TB-303 model, rewritten in fixed point for the ACID machine ([license](tweaks/model-cycles_OS1.13/LICENSE-Open303)).
 - **DavidCaruso** (LFO 2, 3, 4), **djd_oz** (volume and pan as numbers, dimmed trigless trigs), **[AveyCole](https://github.com/AveyCole/Modded-Cycles)** (MIDI OUT + THRU), **RDS (AIM)** and **DaftMaple** (the OS on a Model:Samples), **Nico Heuser** (Chord Keys, 2026): community mods and ideas this OS grew from.
-- **[scottmetoyer/ms-multi-output](https://github.com/scottmetoyer/ms-multi-output)** (MIT): the original 6-channel USB mod, kept in the toolchain.
+- **[scottmetoyer/ms-multi-output](https://github.com/scottmetoyer/ms-multi-output)** (MIT): the original 6-channel USB mod, behind the 6CH setting of Mod Settings.
 - **[dagargo/elektroid](https://github.com/dagargo/elektroid)** (GPL-3.0): the Elektron Transfer update protocol behind fast USB flashing.
 - **[mischa85/elektron-firmware-tool](https://github.com/mischa85/elektron-firmware-tool)** (MIT): the firmware container format and its signature, on which `mtlib` is based.
 - **[mxldyn/octamax](https://github.com/mxldyn/octamax)** and **[bryantysinger/octa-bt-pt](https://github.com/bryantysinger/octa-bt-pt)**: reverse-engineering and patching methods (ideas only, no code).
