@@ -10,7 +10,8 @@ documentation at its tag `v1.1.0`.
 **OS 2.0 composition:** Model-TG v1.1.0 (Sampler machine and everything it brings, including drumkilla's latching
 mute, trig preview and scrolling names), sample preview, the five Syntakt engines (SD VINTAGE, CP VINTAGE, SY TOY,
 SY BITS, SY SWARM), MACRO, ACID, arpeggiator, easier trig removal, tempo up to 546 BPM, startup animation, multi-line
-browser, volume/pan as numbers, dimmed trigless trigs, live MIDI OUT + THRU toggle, LFO 2/3/4.
+browser, volume/pan as numbers, dimmed trigless trigs, live MIDI OUT + THRU toggle, LFO 2/3/4, Mod Settings
+(USB audio in stereo or six tracks, added on 19/10/2026) and step record (added on 20/10/2026).
 
 How to read the status lines:
 
@@ -44,9 +45,11 @@ project's guide calls the back key **BACK**. This file uses **MACHINES** and **B
    - [3.2 Easier trig removal](#32-easier-trig-removal-trig-hold)
    - [3.3 Trig preview](#33-trig-preview)
    - [3.4 Tempo up to 546 BPM](#34-tempo-up-to-546-bpm)
+   - [3.5 Step record](#35-step-record)
 4. [Live](#4-live)
    - [4.1 Latching mute](#41-latching-mute)
    - [4.2 Live MIDI OUT + THRU toggle](#42-live-midi-out--thru-toggle)
+   - [4.3 Mod Settings: USB audio, stereo or 6 tracks](#43-mod-settings-usb-audio-stereo-or-6-tracks)
 5. [Screen and browsing](#5-screen-and-browsing)
    - [5.1 Startup animation](#51-startup-animation)
    - [5.2 Multi-line browser](#52-multi-line-browser)
@@ -95,17 +98,23 @@ retrig page, menus) are listed with that page as context.
 | **LEVEL/DATA** (turn / press) | Selects a slice / splits the selected slice in two | Model-TG slice editor | Slice editor only |
 | **LEVEL/DATA** (turn right) | Shows each track's share of the processor | Model-TG System page | Device Config › System |
 | **LEVEL/DATA** (press, without FUNC) | Switches OUT/THRU to OUT, as stock; back on THR, forwarding only | Live MIDI OUT + THRU toggle | OUT/THRU row |
+| **LEVEL/DATA** (press) on **Mods** | Opens Mod Settings, the page of the mods' own settings | Mod Settings | SETTINGS menu, last line (after Device) |
+| **LEVEL/DATA** (press) on **USB Audio** | Switches between 2CH (the stereo mix, as stock) and 6CH (each track on its own channel); the Model:Cycles leaves the computer and comes back about a second later | Mod Settings: USB audio | SETTINGS › Mods |
 | **MACHINES** held + **DECAY** | Attack (instant to about 2 s) | Model-TG | Every machine, including the Syntakt engines |
 | **MACHINES** held + **SWEEP** | Filter (Model-TG's ladder low-pass) | Model-TG | Every machine. Same gesture as the per-track filter, which is why that mod is outside OS 2.0 |
 | **MACHINES** held + **CONTOUR** | Resonance | Model-TG | Same note as above |
 | **MACHINES**, then pick ACID / MACRO / Sampler / an engine | The added machines, after Chord | Machines | MACHINES menu, see [2.6](#26-order-of-the-machines-in-os-20) |
 | **PAGE** with a trig key held | Plays that step (note, length, p-locks, sound lock) instead of turning the page | Trig preview | Sequencer stopped or paused. Stock, changed |
 | **PATTERN** | Closes the retrig page so you can choose a pattern | Model-TG retrig page | Retrig page only |
+| **PLAY** | Skips the current step (it stays as it was) | Step record | In step record, no note held |
 | **PITCH** (turn) on a MACRO track | Note, as stock; the fine-tune parameter moved under FUNC + PITCH | MACRO | MACRO tracks |
 | **PUNCH** | Arms tap slicing (*ARMED*), or stops it | Model-TG slice editor | Slice editor only |
+| **REC** pressed twice quickly | Starts step record (*Step-rec: ON*): the notes played go one by one on the blinking step | Step record | Sequencer stopped (or paused). Stock, changed: the second press used to turn grid recording back off |
+| **REC** | Stops step record (*Step-rec: OFF*) | Step record | In step record |
 | **REC** + **PLAY** with the arpeggiator playing | Records each arpeggiated note on the step where it plays, with its length | Arpeggiator | Live recording |
 | **RETRIG** held (or A.On on) + several notes held | Arpeggio at the Rte rate. With one note: the stock retrig | Arpeggiator | Stock, changed |
-| **SETTINGS** tapped | Opens its usual menu | (stock) | Unchanged |
+| **STOP** | Goes back one step | Step record | In step record, no note held; not before step 1 |
+| **SETTINGS** tapped | Opens its usual menu, with one more line at the end: **Mods** (a puzzle piece) | Mod Settings | Stock menu, extended |
 | **SETTINGS** held | No longer brings up the pattern save prompt; it is Model-TG's modifier key | Model-TG | Stock, changed (Model-TG's guide and this project's guide) |
 | **SETTINGS** + **BACK** | Turns the master effects off from anywhere (*Master FX off*) | Model-TG | Anywhere |
 | **SETTINGS** + **MACHINES** | Playback mode menu (One shot, Loop, Slice, Granular, Stretch, Pluck, Wave) | Model-TG Sampler | Sampler track |
@@ -520,6 +529,48 @@ an incoming MIDI clock follow too. The project saves it.
 
 **Status.** Tested on a Model:Cycles on 04/10/2026.
 
+### 3.5 Step record
+
+**What it does.** With the sequencer stopped, the notes of a pattern are entered one step at a time: each note played
+lands on the current step, which then moves on.
+
+**How to use it** (guide):
+
+1. Sequencer stopped, press **REC** twice quickly. The screen shows *Step-rec: ON*, **REC** stays lit and **TRIG 1**
+   blinks fast (3.75 times a second): it is the current step.
+2. Play a note: a **TRIG** key plays the active track chromatically (as when stopped), a pad **T1–T6** its own track,
+   a MIDI keyboard the track it plays. The note and its velocity are written on the blinking step; the step moves on
+   at the release.
+3. Notes held together (two pads, for example) all go on the same step, which moves on at the last release.
+4. **PLAY** skips a step, **STOP** goes back one (not before step 1). **REC** stops; step record also stops after the
+   last step of the active track.
+5. Knobs turned before a note: the sound changes as usual (it is heard); the note gets the new values as p-locks, and
+   so do the next notes of that track, until the knobs are turned again (a value turned back to where it was is not
+   locked any more). When step record ends, the sounds come back exactly as they were.
+
+**Limits and interactions.**
+
+- A step that already holds a trig: its note and velocity are replaced and its nudge cleared, as live recording does;
+  its other settings and p-locks stay. PLAY leaves it as it is.
+- How long a note is held is not recorded: a trig keeps the length its step already has.
+- The cursor covers the steps of the active track when step record starts; a pad on a track with another length
+  writes on the same step number.
+- The lights: the active track's trigs on the page of the current step, the current step and its page light blinking,
+  REC lit.
+- A single **REC** press still toggles grid recording, and **REC + PLAY** still starts live recording. The first of
+  the two presses turns grid recording on for an instant. FUNC, TRACK, PATTERN or SETTINGS held: the keys do what
+  they always do.
+- It stops when the sequencer starts (a MIDI Start), grid recording is turned on, or the pattern changes. In the last
+  case the sound of the pattern you left keeps the knob changes (it is no longer the pattern on screen).
+- Changes that the OS does not record in live recording are not locked either (volume and pan from the main screen,
+  for instance).
+
+**Origin and license.** This project (notes/73), MIT. A request from Maxime (20/10/2026).
+
+**Status.** Tested on a Model:Cycles on 20/10/2026: Maxime reported "ça marche nickel" (it works perfectly) after the
+test plan of PR #101 (notes/73 §7). Also checked in the emulator on the OS's own code, with everything else in OS 2.0
+(what it writes is byte for byte what the OS's live recording writes for the same notes and knob turns).
+
 ---
 
 ## 4. Live
@@ -583,6 +634,42 @@ license file; `PROVENANCE.md` and notes/53 §10 say the license is still to be c
 
 **Status.** Tested by AveyCole on his Model:Cycles on 10/10/2026 ("tested and working!!!"). Maxime judged that
 enough and did not test it himself (notes/53 §9). Marked tested on 11/10/2026.
+
+### 4.3 Mod Settings: USB audio, stereo or 6 tracks
+
+**What it does.** The SETTINGS menu (the Config Menu) gets a ninth line, **Mods**, after Device. It opens **Mod
+Settings**, a page meant for the mods' own settings. Its first and only setting so far, **USB Audio**, chooses what
+goes to the computer over USB:
+
+- **2CH**, the default: the stereo mix, exactly as the stock OS sends it (the 6-channel code is not even in place).
+- **6CH**: each track on its own USB channel (48 kHz, 32-bit, 6 inputs): six mono stems, taken before the pan, without
+  delay and reverb. The stereo mix is not sent over USB.
+
+**How to use it** (guide):
+
+1. Press **SETTINGS**. Turn **LEVEL/DATA** to the last line, **Mods**, and press **LEVEL/DATA**.
+2. The page shows **USB Audio** and its value. Press **LEVEL/DATA** to switch between 2CH and 6CH.
+3. The Model:Cycles leaves the computer and comes back about a second later with 2 or 6 inputs, as when you change
+   **Device › USB mode**. Stop recording in the DAW before switching.
+
+**Limits and interactions.**
+
+- The choice is saved at once with the Model:Cycles' settings and comes back at power-on. It is kept in a free corner
+  of the settings that the official OS ignores: with the official OS the audio is stereo, back on this OS the choice
+  returns.
+- USB Audio only matters with **Device › USB mode** on A+M. On MID there is no USB audio; the setting waits.
+- In 6CH, playing the computer's audio through the Model:Cycles is not reliable: use another output, or 2CH.
+- macOS sees 6 inputs; on Windows use FlexASIO (channels = 6, 48 kHz); Linux not tested.
+- Mutes: in 6CH a muted track plays no new trigs; on its stem the note it was playing rings out (notes/35).
+
+**Origin and license.** The 6-channel audio is `scottmetoyer/ms-multi-output` (MIT), as rebuilt by this project in
+`6ch-usbup` (USB updates kept, steady stream). The page, the setting and the switch are this project's (notes/72):
+the 6-channel changes to the USB driver are made in memory only in 6CH, and undone for 2CH.
+
+**Status.** Tested on a Model:Cycles on 19/10/2026: Maxime reported "ça marche nickel" (it works perfectly) after
+the test plan of PR #100 (notes/72 §7). 6-channel audio itself was tested on 29/09/2026, the steady stream on
+04/10/2026, with Model-TG and the engines on 02/10 and 03/10/2026. Also checked in the emulator on the OS's own code
+(Config Menu, drawing, both switches, saved settings, the USB stream after switching).
 
 ---
 
@@ -998,7 +1085,7 @@ MACHINE)". Model-TG's "PRESET" key is **MACHINES** (key code 5 in its `INTERNALS
 | Governor never turns off the Sampler or the track being recorded or slice-edited | keep timing-critical tracks | notes/31 §4.5 |
 | Attack/Filter/Resonance p-locks reload correctly | fixed by LFO 2, 3, 4 | notes/56 |
 | Sample preview in the preset menu | Discord request | notes/46 |
-| USB tracks cut at mute with Model-TG; USB send at a fixed time | 6-channel glitches (only matters with 6-channel audio, outside OS 2.0) | notes/35 |
+| USB tracks cut at mute with Model-TG; USB send at a fixed time | 6-channel glitches (the send at a fixed time helps 2CH too; see 4.3) | notes/35 |
 
 ---
 
@@ -1006,18 +1093,10 @@ MACHINE)". Model-TG's "PRESET" key is **MACHINES** (key code 5 in its `INTERNALS
 
 ### 7.1 6-channel USB audio
 
-**What it does.** Each track goes out on its own USB channel (48 kHz, 32-bit, 6 inputs): six mono stems, taken before
-the pan, without delay and reverb. The stereo mix is no longer sent over USB.
-
-**How to use it.** Nothing to press. macOS sees 6 inputs; on Windows use FlexASIO (channels = 6, 48 kHz); Linux not
-tested.
-
-**Why it's out.** It replaces the stereo USB mix, which most users want by default. A stereo / 6-channel switch is
-planned (issue #82).
-
-**Origin.** Based on `scottmetoyer/ms-multi-output`, MIT. **Status:** tested on a Model:Cycles on 29/09/2026 (the
-version that keeps USB updates); the steady-stream fix on 04/10/2026 (notes/35); with Model-TG and the engines on
-02/10 and 03/10/2026.
+In the OS since 19/10/2026, behind the **USB Audio** setting of Mod Settings: see
+[4.3](#43-mod-settings-usb-audio-stereo-or-6-tracks). It stayed out of the first OS 2.0 draft because it replaced the
+stereo USB mix; the setting (issue #82) lets each user choose. The `6ch-usbup` tweak that installs it for good is
+still in the library, for developers.
 
 ### 7.2 Per-track filter
 
@@ -1083,7 +1162,7 @@ Separate flashing paths, not mods of the Cycles OS:
    should OS 2.0 inherit? (Checked: `tools/gen_flasher_tweaks.py`, README, guide, notes/31.)
 2. **No hardware test of the full OS 2.0 bundle** is recorded: the closest are Model-TG + 5 engines + MACRO + ACID
    (12/10 and 18/10/2026) and LFO 2, 3, 4 "with the full set" (11/10/2026). The bundle also adds midi-live-both and
-   drops 6-channel audio compared with most tested sets. (Checked: notes/31, 54, 56; draft `os.json`.)
+   adds the Mod Settings page (6CH switched in memory) compared with the tested sets. (Checked: notes/31, 54, 56; draft `os.json`.)
 3. **Model-TG features never tested by Maxime**: the notes record no test of the playback modes beyond One shot,
    mode options, slice editor and tap slicing, SEQ, resampling, stereo, the retrig page and master effects, Pump,
    Scale Lock, or the System page. Only loading and playing a sample, the Attack key, a slide trig and mutes are
@@ -1110,8 +1189,8 @@ Separate flashing paths, not mods of the Cycles OS:
     Filter, Resonance are four). (Checked: Model-TG `USER_GUIDE.md`.)
 13. **Scale Lock scales**: the list of scales behind **Scl** is not documented in the sources. (Checked: Model-TG
     `USER_GUIDE.md`, `INTERNALS.md`, guide.)
-14. **Untested combinations around resampling**: a Syntakt engine track as SRC, and USB resampling (relevant again if
-    6-channel audio comes back). (Checked: notes/31 §2, §8.)
+14. **Untested combinations around resampling**: a Syntakt engine track as SRC, and USB resampling together with
+    6CH. (Checked: notes/31 §2, §8.)
 15. **Chord Keys**: removed from the guide, README, flasher and tools on 18/10/2026 (notes/71); the old release notes
     still mention it as history, on purpose.
 16. **Optimised OS status**: notes/70 lives on `claude/os-optimise`; its flasher status and the exact list of what it

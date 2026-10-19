@@ -34,14 +34,19 @@
 Optional, already used: `append` (payload copied at boot; `compress: "aplib"` + `stored`), `gov` (load governor
 settings), `symbols` (state addresses for the proofs), `version`, `source`, `result_sha256`.
 
+`runtime` (`mod-settings`, notes/72): `[{"off": …, "len": …, "why": "…"}]`, bytes of the OS the tweak's code rewrites
+while the OS runs (no `old`/`new`: the builders ignore it). `check_overlaps.py` refuses any write there by a tweak
+that can be installed with it, even one it requires; `registry.py` lists them in §6.
+
 A new field must be read identically by `tools/build.py` and `docs/flasher/builder.js` in the same commit;
 `tools/webbuild_check.sh` and `tools/webflash_smoke.sh` verify it.
 
 ## Rules the checks enforce
 
 - `check_overlaps.py`: two installable-together tweaks never write the same bytes, except the same whole write
-  (`off`, `old`, `new`) or through `requires`; otherwise declare `conflicts`. Hex without spaces, `old`/`new` same
-  non-zero length, inside section 3, unique ids, `requires` targets exist, payload chains fit.
+  (`off`, `old`, `new`) or through `requires`; otherwise declare `conflicts`. Nobody writes a `runtime` range.
+  Hex without spaces, `old`/`new` same non-zero length, inside section 3, unique ids, `requires` targets exist,
+  payload chains fit.
 - `registry.py`: no write into a freed mask without its redirect; none into a kept copy.
 - `build.py`: every `old` matches the stock image; writes into `0xFF` zones pointed to by the stock image are refused
   unless a chosen tweak rewrites the pointer or `device.json` `cave_refs_ok` lists it.

@@ -19,18 +19,20 @@ window.MC_TWEAKS = {
   "name": "Modded Cycles OS",
   "version": "2.0",
   "status": "experimental",
-  "key": "model-tg-st+sample-preview-st+trig-hold+arp+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid",
+  "key": "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid",
   "tweaks": [
    "model-tg-st",
    "sample-preview-st",
    "trig-hold",
    "arp",
+   "step-rec",
    "tempo-max",
    "boot-anim",
    "multiline-browser",
    "level-pan-values",
    "trigless-dim",
    "midi-live-both",
+   "mod-settings",
    "lfo-plus",
    "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid"
   ],
@@ -1141,6 +1143,165 @@ window.MC_TWEAKS = {
    ]
   },
   {
+   "id": "step-rec",
+   "order": 45,
+   "name": "Step record : les notes d'un pattern pas à pas",
+   "description": [
+    "Séquenceur à l'arrêt, double appui sur REC : step record (popup « Step-rec: ON »). Chaque note jouée",
+    "(touches TRIG en chromatique sur la piste active, pads T1-T6 sur leur piste, clavier MIDI) est écrite sur",
+    "le pas courant, comme le live rec l'écrit (trig, note, vélocité) ; les notes tenues ensemble vont sur le",
+    "même pas, qui avance au relâchement de la dernière. PLAY saute un pas, STOP recule d'un pas, REC quitte ; le",
+    "step record s'arrête aussi après le dernier pas de la piste. Le pas courant et sa page clignotent vite, REC",
+    "est allumé. Potards tournés avant une note : p-locks sur ce trig et les suivants, le son de la piste revient",
+    "à son état d'avant à la sortie.",
+    "Code dans neuf masques de sprites libérés (tools/sprites.py) : 2362 o ; 248 o de variables en",
+    "0x4233e800, au-dessus du BSS. Généré par tools/gen_step_rec.py, notes/73."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "symbols": {
+    "sr_active": "0x40182ca7",
+    "cur": "0x4233e8f6",
+    "len": "0x4233e8f5",
+    "nheld": "0x4233e8f3",
+    "ntouch": "0x4233e8f2",
+    "touched": "0x4233e820",
+    "sound": "0x4233e808",
+    "vc": "0x4233e804",
+    "sr_key": "0x40182b38",
+    "sr_on": "0x40182b66",
+    "sr_off": "0x40182b82",
+    "sr_set": "0x40182b9e",
+    "sr_leds": "0x40182bcc",
+    "sr_tick": "0x40182be6",
+    "sr_transport": "0x4018d4a8",
+    "sr_tick_c": "0x4018d798"
+   },
+   "writes": [
+    {
+     "off": 26230,
+     "old": "4eb940076ca2",
+     "new": "4eb940182bcc"
+    },
+    {
+     "off": 27936,
+     "old": "4eb94006ba76",
+     "new": "4eb940182b82"
+    },
+    {
+     "off": 28188,
+     "old": "4eb94006ba76",
+     "new": "4eb940182b66"
+    },
+    {
+     "off": 32228,
+     "old": "4eb940082464",
+     "new": "4eb940182be6"
+    },
+    {
+     "off": 46816,
+     "old": "204031842a14",
+     "new": "4eb940182b9e"
+    },
+    {
+     "off": 147414,
+     "old": "700ab084673e",
+     "new": "4ef940182b38"
+    },
+    {
+     "off": 705504,
+     "old": "40190184",
+     "new": "4014b364"
+    },
+    {
+     "off": 705684,
+     "old": "4018f80c",
+     "new": "4014b364"
+    },
+    {
+     "off": 706874,
+     "old": "4018d798",
+     "new": "4014b364"
+    },
+    {
+     "off": 706902,
+     "old": "4018d4a8",
+     "new": "40172220"
+    },
+    {
+     "off": 706934,
+     "old": "4018d1b8",
+     "new": "40172220"
+    },
+    {
+     "off": 706994,
+     "old": "4018cd48",
+     "new": "40172220"
+    },
+    {
+     "off": 708038,
+     "old": "4018a608",
+     "new": "4014b364"
+    },
+    {
+     "off": 711610,
+     "old": "40182e28",
+     "new": "40172220"
+    },
+    {
+     "off": 711642,
+     "old": "40182b38",
+     "new": "40172220"
+    },
+    {
+     "off": 1582904,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffff",
+     "new": "2f022f0b2f044eb94018d4a84fef000c4a806612700ab08467064ef9400243dc4ef94002441a78014ef9400246504a3940182ca766064ef94006ba762f0a4eb940182e28588f70004e754a3940182ca766064ef94006ba762f0a4eb940182bf6588f70004e7520404a3940182ca7671e4a05671a2f082f2e00142f0a2f042f022f084eb94018a6084fef0014205f31842a144e754a3940182ca7670c2f2f00044eb94018cd48588f4ef940076ca24a3940182ca767064eb94018d7984e7510394233e8f34feffff048d70c0c266f001443f94233e8e02449304073804280b081650c66204cd70c0c4fef00104e75779175ab0008b483664677a9000175ab0010b483663a538143f21a0015910a0043f21a0115910a012008538013c04233e8f366c24a394233e8f467ba4cd70c0c70012f4000144fef00104ef94019018452805489609a206f000422502f480004226900284ed1537465702d7265633a0a4f464600537465702d7265633a0a4f4e00000000"
+    },
+    {
+     "off": 1583656,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffffffff",
+     "new": "4fefffe8700548d700fc206f001c1c2800087786b0836500010e1a280010182800114eb9400cf8662f004eb94000f2082f032f004eb94000cfcc240071b94233e8f62f002f024eb940015c204fef00144a00661871b94233e8f6487800012f002f024eb940017b484fef000c71052f0071b94233e8f62f002f024eb9400166424fef000c4a046d18798471b94233e8f62f042f002f024eb9400166c24fef000c48780040798571b94233e8f62f002f024eb9400167bc2f032f024eb94018d59070014fef001441f94233e8e093c9240813c04233e8f410394233e8f37380b3c165307608b68167122042528011861a0011851a0113c04233e8f34cd700fc41f94233e8042f50001c4fef00184ef940076c047f90be8366087fa80001be8467065289548860b84cd700fc4fef00184e754aaf000467064eb94018d2b84200487940182c8c13c040182ca713c04233e8f213c04233e8f34eb94018f80c588f20394233e8044a80670a2f4000044ef940076c044e75"
+    },
+    {
+     "off": 1614344,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
+     "new": "4fefffec700548d7043c242f0028262f001cb08265707820b883656a10394233e8f241f94233e820428495ca22487380b881655c4a8a66387820b881674828004880206f0018528413c44233e8f2c0fc000641f03a14244070064c001800d5fc4233e820138218001383180133901802356f00220004226f0024588941f94233e80821912c004cd7043c4fef00144e757b90b485660a7ba80001b6856602244852845c88608a"
+    },
+    {
+     "off": 1624392,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffff",
+     "new": "4fefffe448d700fc42864eb9400cfaf426004eb9400cf8662f0024004eb94000eb902f004eb9400124122f0228004eb94000f2082f042f004eb94000cfcc75b94233e8f679b94233e8f52e02e88f0282000000f006840000000f2f40002ce8844fef001441ef002023d04233e80471b94233e8f5b480642871b94233e8f6b480660c4a394233e8f167167a0260142f022f2f001c4eb940015c20508f4a0066ea7a012f064eb94000608c2f3c404a8cb82f05528652822f002f034eb940005f864fef00147010b08666a44282b484645ab48766084a394233e8f1674e7a022f024eb9400060ac2f3c404a8cb82f055282207c40005f862f002f034e904fef00147004b08266c62f3c404a8cb8207c40005f86487800024878001c2f034e904cef00fc00104fef002c4e757a0160b04e56fff8206e0008203c400fd0ac2d40fff82d6e000cfffc2250486efff82f08206900104e90508f4e5e4e75"
+    },
+    {
+     "off": 1625528,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffff",
+     "new": "4feffff448d7040c246f00104eb9400cf9a824004eb9400cf8662f0226004eb94006b978588f4a00670c42a72f024eb94006b9f6508f42a72f024eb94006ba902f034eb94000f2082f0345ea002c23c04233e8004eb94000eb902f004eb9400124122f002f394233e8004eb94000cfcc2f004eb9400164024fef001c23d24233e8042ebc40182c9a42b94233e80813c04233e8f542b94233e80c42b94233e81042b94233e814420042b94233e81842b94233e81c13c04233e8f013c04233e8f213c04233e8f313c04233e8f413c04233e8f6700113c04233e8f113c040182ca74eb94018f80c4cef040c000441f94233e8042f5000144fef00104ef940076c044fefffe848d73c0c45f94233e820428247f94233e8084bf94018ce7671b94233e8f2b480650a4cd73c0c4fef00184e75719226330c004a8367322f034eb940182c7c588f4a80672473aa00012240716a000441f11a147350b081661030aa000271aa00012f002f034e95508f52825c8a60aa"
+    },
+    {
+     "off": 1626280,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe",
+     "new": "4feffff4720248d7040c242f001020020680fffffff7b280640c42804cd7040c4fef000c4e75206f0018262800100803000166e648780002247c4007faf44e92588f4a0066d4487800034e92588f4a0066c84878000d4e92588f4a0066bc7009c0834a3940182ca766487209b28266aa53804a8066a47004c08344c3669e4eb94005481a53804a8067904eb9400cf9a82f004eb94006bb18588f4a006600ff7c2f2f00144eb94018d1b8588f70016000ff6c53804a8066f47009b082660c487800014eb940182f5860e04a394233e8f366da720ab282660c70012f004eb94019018460c670ff60f24fefffec48d71c0c45f94233e820428247f94233e80871b94233e8f2b480650a4cd71c0c4fef00144e757192b0af001c6646222f001c20331c004a80673a2f004eb940182c7c588f4a80672c73aa00012240776a000271711a14b083671a2f0071b94233e8f62f012f002f2f00244eb94001646a4fef001052825c8a6098"
+    },
+    {
+     "off": 1627032,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+     "new": "2f024eb9400cf8662f004eb94000f20824004eb94005481a588f53804a80671c4eb9400cf9a82f004eb94006b978588f4a006608b4b94233e8006718b4b94233e80057c2750244822f024eb940182f58588f601410394233e8f052807380e489660a13c04233e8f0241f4e754200720113c04233e8f010394233e8f1b38013c04233e8f120394233e8044a8067da2f004eb940076c0460b8"
+    },
+    {
+     "off": 1635340,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+     "new": "4e56ffec2f024ab94233e804676a486efff32f2e0008240e0682fffffff42f024eb9400f980c4878009c4eb9400802e02f022f002d40ffec4eb9400747c02f2effec486efff84eb9400d40824fef001c4297486efff82f394233e8044eb94007700e486efffc4eb9400cf23c2f024eb9400f7d5c4fef0014242effe84e5e4e75"
+    },
+    {
+     "off": 1637764,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+     "new": "420072ff13c04233e8f410394233e8f6b2af0004662c4a006708538013c04233e8f67201420041f94233e8042f50000413c14233e8f113c04233e8f04ef940076c04528013c04233e8f6718073b94233e8f5b28062cc70012f4000044ef940182f580000"
+    }
+   ]
+  },
+  {
    "id": "tempo-max",
    "order": 42,
    "name": "Tempo jusqu'à 546.0 BPM",
@@ -1516,6 +1677,264 @@ window.MC_TWEAKS = {
      "off": 1648548,
      "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffff",
      "new": "487800014eb94007faf4588f4a80670000484eb940044df84a806700003c1039404e9b500c0000026700000870026000000470014e56fffc1d40ffff48780001486effff4879404e9b504eb940044b884fef000c4e5e4e754eb940044df84a8057c0710044802f4000044ef940044dc21039404e9b500c000001670470004e7570014e75"
+    }
+   ]
+  },
+  {
+   "id": "mod-settings",
+   "order": 12,
+   "name": "Mod Settings : sortie audio USB 2CH ou 6CH",
+   "description": [
+    "SETTINGS › CONFIG : une ligne Mods de plus (après Device), qui ouvre la page Mod Settings des réglages des",
+    "mods. Premier réglage, USB Audio : 2CH (le mix stéréo, comme d'origine) ou 6CH (les six pistes, comme",
+    "6ch-usbup). LEVEL/DATA pressé change le réglage : il est enregistré avec ceux de l'OS (enregistrement de 16 o",
+    "en 0x404e9b80, hors de la somme de contrôle de l'OS), puis l'USB est coupé et rebranché, comme pour un",
+    "changement de USB mode : l'ordinateur relit les descripteurs.",
+    "En 6CH, les 15 modifications de 6ch-usbup au pilote USB et aux descripteurs sont faites en mémoire (au",
+    "démarrage, ou au changement de réglage, USB arrêté) ; les octets remplacés sont gardés et remis en 2CH. En 2CH",
+    "le pilote est celui de l'OS, octet pour octet. Les stubs de 6ch-usbup et sa correction du flux USB stéréo",
+    "(partagée avec Model-TG, notes/35) sont écrits tels quels.",
+    "Code dans huit masques de sprites libérés (tools/sprites.py) : 1899 o. Généré par tools/gen_mod_settings.py,",
+    "notes/72."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "conflicts": [
+    "6ch-multiout",
+    "6ch-usbup"
+   ],
+   "runtime": [
+    {
+     "off": 8507,
+     "len": 2,
+     "why": "USB input ring: 5 slots instead of 16"
+    },
+    {
+     "off": 8548,
+     "len": 3,
+     "why": "USB input ring: after the output ring"
+    },
+    {
+     "off": 9139,
+     "len": 2,
+     "why": "start of the output stream: 9 slots instead of 16"
+    },
+    {
+     "off": 9171,
+     "len": 5,
+     "why": "start of the output stream: slots of 168 bytes, 144 sent"
+    },
+    {
+     "off": 9192,
+     "len": 23,
+     "why": "start of the output stream: jmp to the 6-track priming stub"
+    },
+    {
+     "off": 9247,
+     "len": 2,
+     "why": "start of the output stream: 8 slots primed instead of 11"
+    },
+    {
+     "off": 9657,
+     "len": 2,
+     "why": "feed: 9 slots"
+    },
+    {
+     "off": 9682,
+     "len": 6,
+     "why": "feed: slots of 168 bytes"
+    },
+    {
+     "off": 9700,
+     "len": 11,
+     "why": "feed: jmp to the stub of the slot position"
+    },
+    {
+     "off": 9734,
+     "len": 25,
+     "why": "feed: jmp to the 6-track copy"
+    },
+    {
+     "off": 9794,
+     "len": 11,
+     "why": "feed: jmp to the stub that queues 24-byte frames"
+    },
+    {
+     "off": 10475,
+     "len": 2,
+     "why": "endpoint: MaxPacketLength 168 instead of 56"
+    },
+    {
+     "off": 1683194,
+     "len": 2,
+     "why": "descriptor: 6 channels"
+    },
+    {
+     "off": 1683335,
+     "len": 2,
+     "why": "descriptor: 6 channels"
+    },
+    {
+     "off": 1683351,
+     "len": 2,
+     "why": "descriptor: wMaxPacketSize 168"
+    }
+   ],
+   "symbols": {
+    "cfg_tail": "0x4016b6f8",
+    "usb_boot": "0x4016b70c",
+    "mods_get": "0x4016b7f4",
+    "usb_press": "0x40179730",
+    "mods_open": "0x401726d6",
+    "cache_push": "0x4016b794",
+    "cache_sync": "0x4016b79e",
+    "saved": "0x40188f98",
+    "usb6_on": "0x40187748",
+    "page_h": "0x40187724",
+    "icon_bm": "0x4018772c",
+    "ICON_MODS": "0x401876a8"
+   },
+   "writes": [
+    {
+     "off": 21356,
+     "old": "45f940004e40",
+     "new": "45f94016b70c"
+    },
+    {
+     "off": 247194,
+     "old": "4cee3cfcff98",
+     "new": "4ef94016b6f8"
+    },
+    {
+     "off": 362656,
+     "old": "a93c00000020",
+     "new": "4eb94015c23c"
+    },
+    {
+     "off": 364434,
+     "old": "4eb940002912",
+     "new": "4eb94015c2d6"
+    },
+    {
+     "off": 364494,
+     "old": "4eb940002912",
+     "new": "4eb94015c2d6"
+    },
+    {
+     "off": 686634,
+     "old": "2211e281528022c17220b28066f2",
+     "new": "41e900802211e28122c1b3c866f6"
+    },
+    {
+     "off": 708512,
+     "old": "40188f98",
+     "new": "4014b364"
+    },
+    {
+     "off": 709414,
+     "old": "401876a8",
+     "new": "4014b364"
+    },
+    {
+     "off": 709442,
+     "old": "40187528",
+     "new": "4014b364"
+    },
+    {
+     "off": 717386,
+     "old": "40179730",
+     "new": "40172220"
+    },
+    {
+     "off": 721220,
+     "old": "40172608",
+     "new": "40172220"
+    },
+    {
+     "off": 721312,
+     "old": "40171f30",
+     "new": "40172220"
+    },
+    {
+     "off": 724764,
+     "old": "4016b9e8",
+     "new": "40172220"
+    },
+    {
+     "off": 724798,
+     "old": "4016b6f8",
+     "new": "40172220"
+    },
+    {
+     "off": 745524,
+     "old": "4015c044",
+     "new": "40154ae4"
+    },
+    {
+     "off": 1424662,
+     "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+     "new": "4e71203c009000802540000424bcdead00017212e789254100204ef9400027fe"
+    },
+    {
+     "off": 1424738,
+     "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffff",
+     "new": "4e71204020042200e988e789d0812800484442444ef940002a4c"
+    },
+    {
+     "off": 1424832,
+     "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+     "new": "4fefffe448d707552241e2886f44781f2c0341f980001858cc8445f06c00241202c222c2242a008002c222c2242a010002c222c2242a018002c222c2242a020002c222c2242a028002c222c2528653806ec64cd707554fef001c4ef940002a26"
+    },
+    {
+     "off": 1424932,
+     "old": "ffffffffffffffffffffffffffffffffffffffffffff",
+     "new": "2200e988e789d0812239404a05e8d2804ef9400029ee"
+    },
+    {
+     "off": 1424956,
+     "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+     "new": "a93c000000202f0a45f94015c2fc4aaa000467404ab9404a062c670c4ab9404a06446704610000322f2a00042f1242aa00044eb940002912508f4aaa000c67142f2a000c2f2a000842aa000c4eb940002912508f245f4e7541f980008007721f70000810000767025c8041e8004053816af073b9400029b95281c2fc000304810000001090816a027000721fb0816f02200123c0404a06204e7541f94015c2fc4aa80004670850884aa80004660c20af0004216f000800044e754ef94000291200000000000000000000000000000000"
+    },
+    {
+     "off": 1487608,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffffffff",
+     "new": "2f0a4eb940171f30588f4cee3cfcff984e5e4e754eb94016b7ca4ef940004e40226f000422514e56fffc2f02486effff2f1124082f084eb9400f980c4fef000c2002242efff84e5e4e75206f0004205020102f6f000c00042f4000082f6f0010000c2f6f0014001070012f4000144ef940071da4206f00042f2f000c2f2f000c4eb94007536a508f4e75700040c046fc27004e75202f000446c04e75206f00044e71f4e84e754e7191c8f4e85288f4e85288f4e85288f4e841e8000db1fc0000100065e6203ca40ce1004e7b00024e714e7542a74eb94016b7f4588f53804a80661842b98000bc9442b98000bc90487800014eb94016b9e8588f4e754eb94016b80c4a80670c206f0004d1fc404e9b8571904e75598f203c4d4f4453b0b9404e9b8066341239404e9b8f327c005a207c404e9b841f4100031018d0893240b1fc404e9b8f66f2122f0003b3804a0057c071004480588f4e75428060f8"
+    },
+    {
+     "off": 1488360,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000",
+     "new": "4fefffec48d71c0c71b940187748242f0018b480670000b84eb94016b78241f94018752873a8000577a80004265093c92441d5fc40188f984a82661ab3c3673049f2980017949800528960f049f39800159498005289b3c366f273a8000577a8000493c92441d5fc40187582b68966525c88b1fc4018758266aa2f0013c2401877484eb94016b78c588f45f94018752847f94016b7942f124e9371aa0004205253885c8a487008004e93508fb5fc4018758266e24cd71c0c4fef00144ef94016b79e49f29800179498005289609e4cd71c0c4fef00144e7542a74eb94016b7f4588f53804a806638203c4016bb102f002f3c401301e642a748780001206f002441e8fff42f082f2f00242f3c401429ec2f2f00284eb940071c104fef00204e75203c4016bb1460c63643480032434800"
+    },
+    {
+     "off": 1514288,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffffffff",
+     "new": "4e56ffdc48d7040c260e0683fffffff445f9401726084ab940187724660000c44878023c4eb9400802e02f3c4016e9804879401876a8487800164878001f2d40ffe848794018772c4eb940070172486effef487940172060240e0682fffffff02f024eb9400f980c4fef00202ebc4018772c2f024878000148794017206d2f2effe84eb9400406d82f024eb9400f7d5c48780003242effe80682000000382f024eb94007649e4fef001c2e83487940172054203c4017207d2d40fff442aefffc202effe82f002d40fff84e922f022f2e00084879401877244eb94016b76c4fef00182f03203c401720872d40fff4203c4018772c4879401720482f2e00082d40fffc2d6e0008fff84e924cee040cffdc4fef000c4e5e4e754016b718401726d64016b7424016b718401797304016bac04d6f642053657474696e6773004d6f6453657474696e67734d656e750055534220417564696f004d6f647300"
+    },
+    {
+     "off": 1516040,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000ffffffff",
+     "new": "4e56ffb048d7040c240e0682ffffffc02d42ffbc4283487800044eb9400802e0588f226e0010204020b13800206effbc227c4002cf00208070102149000842a80004206e000c43f038005883206effbcd1aeffbc700c2151000cb08366b84878005442aefff442aefff042aefff842aefffc4eb9400802e0487800084878ffff486efff0486effe0486effd02f0226002f004eb9400734b04fef001c2e8342832f2e00084eb940072ce6508f2f024eb9400cf0445283068200000010588f7004b08366e84cee040cffb04e5e4e754e56fff4206e000820502d50fff4487940187724486efff84eb9400d807e486efff82f2efff44eb940075754486efffc4eb9400cf23c4fef00144e5e4e75"
+    },
+    {
+     "off": 1545008,
+     "old": "fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000fffffffffffe0000",
+     "new": "4feffff448d7001c206f00102050261042a74eb94016b7f4588f7201b28056c2448279824eb94016b80c4a8066247201203c4d4f445323c0404e9b80207c404e9b8513c1404e9b844218b1fc404e9b8f66f613c2404e9b85725a207c404e9b841018d0811200b1fc404e9b8f66f210800683000000384eb9400449b84eb940004d9a42b98000bc9442b98000bc902f044eb94016b9e84eb940004db42f4300144cef001c00044fef00104ef940076082"
+    },
+    {
+     "off": 1601832,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
+     "new": "4000253b0200400025640302400027b30205400027d30507400027e8170c4000281f0223400029b90225400029d20627400029e40b2d40002a06193840002a420b5140002ceb025c4019b2fa025e4019b38702604019b397026204209de821082490c4fc00a84ef94015c1164e714e714e714e714e714e714e714e714a08b20820c2fc00a84e714ef94015c2244e714e71204ef94015c1c04e714e714e714e714e714e714e714e714e712f4ef94015c1624e714e7143a80006000600a800"
+    },
+    {
+     "off": 1602216,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ff",
+     "new": "00000000000000000000000000000000000000007ffe00007ffe00007ffe00007ffe00007ffe70007ffef8007ffff8007ffff8007ffff8007ffef8007ffe70007ffe00007ffe00007ffe00007ffe00000380000007c000000fe000000fe000000fe0000007c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+     "off": 1608600,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+     "new": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
     }
    ]
   },
@@ -4458,6 +4877,16 @@ window.MC_TWEAKS = {
    "guide": "arp"
   },
   {
+   "id": "step-rec",
+   "cat": "seq",
+   "status": "tested",
+   "credit": null,
+   "tweaks": [
+    "step-rec"
+   ],
+   "guide": "step-rec"
+  },
+  {
    "id": "tempo-max",
    "cat": "seq",
    "status": "tested",
@@ -4567,6 +4996,21 @@ window.MC_TWEAKS = {
     "midi-live-both"
    ],
    "guide": "midi-live-both"
+  },
+  {
+   "id": "mod-settings",
+   "cat": "io",
+   "status": "tested",
+   "credit": {
+    "kind": "based",
+    "who": "scottmetoyer",
+    "repo": "scottmetoyer/ms-multi-output"
+   },
+   "tweaks": [
+    "mod-settings"
+   ],
+   "license": "LICENSE-ms-multi-output.txt",
+   "guide": "mod-settings"
   }
  ],
  "samples": {

@@ -10,12 +10,14 @@
     "sample-preview-st",
     "trig-hold",
     "arp",
+    "step-rec",
     "tempo-max",
     "boot-anim",
     "multiline-browser",
     "level-pan-values",
     "trigless-dim",
     "midi-live-both",
+    "mod-settings",
     "lfo-plus",
     "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid"
   ],
@@ -50,6 +52,8 @@
       "guide": "trig-hold", "notes": "notes/33" },
     { "id": "arp", "cat": "seq", "tweaks": ["arp"], "status": "tested", "credit": null,
       "guide": "arp", "notes": "notes/32" },
+    { "id": "step-rec", "cat": "seq", "tweaks": ["step-rec"], "status": "tested", "credit": null,
+      "guide": "step-rec", "notes": "notes/73" },
     { "id": "tempo-max", "cat": "seq", "tweaks": ["tempo-max"], "status": "tested", "credit": null,
       "guide": "tempo", "notes": "notes/38" },
     { "id": "latching-mute", "cat": "live", "tweaks": [], "status": "tested",
@@ -70,6 +74,9 @@
     { "id": "trigless-dim", "cat": "screen", "tweaks": ["trigless-dim"], "status": "tested",
       "credit": { "kind": "based", "who": "djd_oz" }, "guide": "trigless", "notes": "notes/45" },
     { "id": "midi-live-both", "cat": "io", "tweaks": ["midi-live-both"], "status": "tested",
-      "credit": { "kind": "by", "who": "AveyCole", "repo": "AveyCole/Modded-Cycles" }, "guide": "midi-live-both", "notes": "notes/53" }
+      "credit": { "kind": "by", "who": "AveyCole", "repo": "AveyCole/Modded-Cycles" }, "guide": "midi-live-both", "notes": "notes/53" },
+    { "id": "mod-settings", "cat": "io", "tweaks": ["mod-settings"], "status": "tested",
+      "credit": { "kind": "based", "who": "scottmetoyer", "repo": "scottmetoyer/ms-multi-output" },
+      "license": "LICENSE-ms-multi-output", "guide": "mod-settings", "notes": "notes/72, 13, 35" }
   ]
 }
