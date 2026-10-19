@@ -107,3 +107,52 @@ mm_pad_off_hook:
 mm_live_api:
  .long 0,0,0,0
 #endif
+
+
+#ifdef MM_CONTROLS
+/* Le producteur audio live peut aussi mettre une note dans la mailbox MIDI.
+ * La machine MIDI a deja son relais direct avec port/canal captures : eviter
+ * cette seconde attaque differee, tout en conservant l'enregistrement audio.
+ * Entree native d2=piste, registres volatils preserves avant le delegate.
+ */
+ .macro producer name,resume,skip
+ .globl \name
+\name:
+ save
+ move.l %d2,-(%sp)
+ clr.l -(%sp)
+ jsr 0x4001e318
+ addq.l #8,%sp
+ cmpi.b #MM_MACHINE,%d0
+ beq 1f
+ restore
+ jsr 0x4008a5d0
+ jmp \resume
+1: restore
+ jmp \skip
+ .endm
+ producer mm_live_producer_on,0x400817b0,0x400817d8
+ producer mm_live_producer_off,0x40081558,0x40081576
+
+ .globl mm_secondary_bridge
+mm_secondary_bridge:
+ save
+ move.l 28(%sp),-(%sp)
+ move.l 28(%sp),-(%sp)
+ move.l 28(%sp),-(%sp)
+ jsr mm_secondary_write
+ lea 12(%sp),%sp
+ tst.l %d0
+ beq 1f
+ restore
+ rts
+1: restore
+ lea -24(%sp),%sp
+ movem.l %d2-%d4/%a2,(%sp)
+ move.l mm_secondary_resume,-(%sp)
+ rts
+ .data
+ .globl mm_secondary_resume
+mm_secondary_resume: .long 0
+
+#endif
