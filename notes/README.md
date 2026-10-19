@@ -213,3 +213,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [128 - Plage End Wizard909](128-plage-end-wizard-909.md) : collision avec RC Type binaire reproduite ; test separe avec End continu et diagnostic, descripteurs et DSP909 conserves ; verification materielle attendue.
 
 - [129 - Accord fin MACRO](129-accord-fin-macro.md) : test SETTINGS+PITCH pour la fraction native, FUNC+PITCH Lo-Fi conserve ; preuves OS, pas encore confirme sur appareil.
+
+- [130 - Filtre sample locks et mode pads](130-filtre-sample-locks-et-mode-pads.md) : test Control All sur les samples verrouilles et menu Pad Setup Silent/Stock ; reglages live, diagnostics, validation materielle attendue.
