@@ -7,7 +7,12 @@ typedef unsigned int u32;
 typedef signed int i32;
 typedef unsigned short u16;
 typedef unsigned char u8;
+#ifdef WF_TAP_HOLD
+volatile u32 wf_api[7] __attribute__((section(".data")))={0};
+static u32 track_owned,pending;
+#else
 volatile u32 wf_api[6] __attribute__((section(".data")))={0};
+#endif
 volatile u32 wf_stock __attribute__((section(".data")))=0;
 #ifndef WF_PAD_ONLY
 static volatile u32 enabled[6] __attribute__((section(".data")))={0};
@@ -25,6 +30,22 @@ static u32 held(u32 key){return ((u32 (*)(u32))0x4007faf4)(key);}
 static void repaint(void){u32 app=*(volatile u32 *)0x40fe4178;if(app)((void (*)(u32))0x40076bee)(app+64);}
 u32 wf_menu_row(void){return 0;}
 u32 wf_menu_edit(void){return editing;}
+#ifdef WF_TAP_HOLD
+/* L'appui court est differe jusqu'au premier relachement. Reutiliser sc_key
+ * conserve notamment le SCRAMBLE des pas tenus, plutot que d'appeler sc_run. */
+static void tap(const u32 *event){
+ if(!pending)return;
+ pending=0;
+ if(wf_api[6]){
+  u32 copy[6];for(u32 i=0;i<6;i++)copy[i]=event[i];
+  u32 old=wf_api[4]?*(volatile u32 *)wf_api[4]:0;
+  if(wf_api[4])*(volatile u32 *)wf_api[4]=1;
+  copy[3]=2;copy[4]=1;((u32 (*)(const u32 *))wf_api[6])(copy);
+  copy[4]=16;((u32 (*)(const u32 *))wf_api[6])(copy);
+  if(wf_api[4])*(volatile u32 *)wf_api[4]=old;
+ }
+}
+#endif
 #ifndef WF_PAD_ONLY
 void wf_before(const u32 *event){
  gesture=0;
@@ -69,16 +90,28 @@ u32 wf_key(const u32 *event){
  if(!event)return 0;
  u32 code=event[3],flags=event[4];
  if(code==13){
+#ifdef WF_TAP_HOLD
+  if(!(flags&1))tap(event);
+#endif
   settings=(flags&1)!=0;
   if(wf_api[4])*(volatile u32 *)wf_api[4]=settings;
   /* Propager la release aux autres hooks (notamment mf_key) ; mod_used
    * empeche CONFIG d'apparaitre sans laisser SETTINGS colle ailleurs. */
   if(!settings&&menu_used){menu_used=0;if(wf_api[5])*(volatile u32 *)wf_api[5]=1;return 0;}
  }
+#ifdef WF_TAP_HOLD
+ if(code==2&&(settings||track_owned)){
+  if((flags&9)==1){track_owned=1;pending=!menu;menu_used=1;if(wf_api[5])*(volatile u32 *)wf_api[5]=1;}
+  if((flags&32)&&pending){pending=0;menu=1;editing=0;repaint();}
+  if(!(flags&1)){tap(event);track_owned=0;}
+  return 1;
+ }
+#else
  if(code==2&&(settings||menu_used)){
   if((flags&9)==1){menu=1;editing=0;menu_used=1;if(wf_api[5])*(volatile u32 *)wf_api[5]=1;repaint();}
   return 1;
  }
+#endif
  if(!menu)return 0;
  if(code==12){if((flags&9)==1){menu=0;editing=0;repaint();}return 1;}
  if(code==32){if(flags&16){editing=!editing;repaint();}return 1;}

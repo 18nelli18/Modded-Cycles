@@ -18,7 +18,9 @@ def main():
   r.stub(at,fn)
  r.word(PROJECT,0x92070010);r.word(0x92070004,0);r.call(0x4005a274);r.call(0x400e7dbc);r.call(0x40070172,0x40fe3310,48,22,0x4016bd98,r.word(0x400b12fe));r.word(0x40fe4178,0)
  def key(code,flags):r.u.mem_write(EVENT,struct.pack('>6I',0,0,0,code,flags,0));return r.call(r.s['wf_key'],EVENT)
- key(13,1);key(2,1);key(2,0);key(13,0)
+ key(13,1);key(2,1)
+ if 'long' in sys.argv:key(2,33)
+ key(2,0);key(13,0)
  canvas,fb=0x920c0000,0x920c1000;r.call(0x40070172,canvas,128,64,fb,0)
  frames=[]
  for name,mode,edit in (('silent',0,False),('stock',1,True)):

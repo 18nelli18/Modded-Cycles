@@ -31,3 +31,15 @@ Le callback valeur du menu prend cinq arguments natifs ; les appels terminaux so
 ## Retour utilisateur et publication selective (18/10/2026)
 
 Utilisateur : « keep pad mode, push that to main-filter clicks again after doing that though. » Le principal1.97 compile WF_PAD_ONLY : aucun wf_value, wf_before/after, wf_cut/res ni patch du sampler. Les coefficients/DSP restent ceux du principal1.96. Menu Silent/Stock seul confirme et publie ; test filtre non promu, clicks encore a investiguer. Diagnostic exclu du principal.
+
+
+## Test separe : tap SCRAMBLE / maintien Pad Setup
+
+Le geste immediat de 1.97 masquait SCRAMBLE. Le test pad-tap differe sc_key au premier relachement pour un appui court ; le bit natif long (32, environ 533 ms) ouvre Pad Setup sans SCRAMBLE. Les deux ordres de relachement, les repeats et la route des pas tenus sont prouves dans les deux profils USB. Le dessin natif et la chaine MACRO SETTINGS sont verifies. Diagnostic reserve au test ; principal et909 inchanges.
+
+L utilisateur signale des clics sur 1.97 menu ferme. Cent appels de dessin menu ferme ne passent ni par MenuView, ni par allocation, ni par repaint. Cela ne mesure pas les delais audio materiels et ne suffit pas a exclure une regression temporelle. Aucun correctif audio n est revendique.
+
+
+## Publication principale1.98
+
+Publication du geste court/long demandee explicitement par Austin. Aucun diagnostic dans le principal, aucun changement audio/filtre. Les preuves natives couvrent les deux profils USB ; confirmation materielle du nouveau geste encore attendue.

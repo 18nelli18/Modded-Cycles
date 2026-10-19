@@ -9,8 +9,8 @@ window.MCPadModeReady=Promise.all([window.MCMacroFineReady]).then(()=>{
   for(const at of d.reloc)v.setUint32(at,v.getUint32(at,false)+origin,false);
   const hooks=[[0x400775f8,'wf_encoder_hook'],[0x40077720,'wf_key_hook'],[0x4001b22a,'wf_draw_hook']],values=[];
   for(const [at] of hooks){const old=read(at,8);if(!old.startsWith('4ef9'))throw Error('Pad mode: UI chain guard');values.push(parseInt(old.slice(4,12),16));}
-  values.push(0,common?n(common.symbols.set_held):0,common?n(common.symbols.mod_used):0);values.forEach((value,i)=>v.setUint32(d.symbols.wf_api+4*i,value,false));
-  const q={id:'pad-selection',status:'tested',order:Math.max(...r.tweaks.map(t=>t.order))+1,writes:[],symbols:{}};
+  const scramble=r.tweaks.find(t=>t.symbols?.sc_key);if(!scramble)throw Error('Pad tap: SCRAMBLE handler missing');values.push(0,common?n(common.symbols.set_held):0,common?n(common.symbols.mod_used):0,n(scramble.symbols.sc_key));values.forEach((value,i)=>v.setUint32(d.symbols.wf_api+4*i,value,false));
+  const q={id:'pad-selection',status:'experimental',order:Math.max(...r.tweaks.map(t=>t.order))+1,writes:[],symbols:{}};
   for(const [at,symbol] of hooks)q.writes.push({off:at-BASE,old:read(at,8),new:'4ef9'+h(origin+d.symbols[symbol])+'4e71'});
   if(read(0x4001d372,6)!=='4a0766d84a03')throw Error('Pad mode: native pad guard');q.writes.push({off:0x4001d372-BASE,old:'4a0766d84a03',new:'4ef9'+h(origin+d.symbols.wf_pad)});
   owner.append.parts.push({dest:'0x'+h(origin),hex:b.hex(raw)});owner.append.size=origin+raw.length-n(owner.append.dest);delete owner.append.compressed_hex;delete owner.append.stored;
