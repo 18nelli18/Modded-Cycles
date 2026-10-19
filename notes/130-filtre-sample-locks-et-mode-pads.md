@@ -27,3 +27,7 @@ Le callback valeur du menu prend cinq arguments natifs ; les appels terminaux so
 `test_wizard_control.js` : preset complet, deux USB, demande Syntakt et upload natif, build signe et references. `test_wizard_control.py` : delegation encodeur, exclusions, cutoff/res independants, vrai bloc coefficients Wizard sur deux frames representant des sample locks, pile/registres preserves, menu et PadsView six pistes en Silent/Stock avec navigateur et release.
 
 `render_wizard_pad_menu.py` : vrais MenuView, polices et Bitmap, images navigation/edition. `test_wizard_pad_modifiers.py` : vraie chaine de touches avec fine tune MACRO. Verification manuelle des samples, du son et des gestes physiques encore requise ; aucune validation materielle revendiquee.
+
+## Retour utilisateur et publication selective (18/10/2026)
+
+Utilisateur : « keep pad mode, push that to main-filter clicks again after doing that though. » Le principal1.97 compile WF_PAD_ONLY : aucun wf_value, wf_before/after, wf_cut/res ni patch du sampler. Les coefficients/DSP restent ceux du principal1.96. Menu Silent/Stock seul confirme et publie ; test filtre non promu, clicks encore a investiguer. Diagnostic exclu du principal.

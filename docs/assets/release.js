@@ -3,6 +3,7 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "1.97", date: "2026-10-18", changes: [{ en: "Pad Setup: SETTINGS + TRACK, press DATA, choose Silent or Stock. Choice resets to Silent after reboot. Pad mode only is promoted; sample-lock filter experiment and diagnostics excluded.", fr: "Pad Setup : SETTINGS + TRACK, presser DATA, choisir Silent ou Stock. Retour Silent apres redemarrage. Seul le mode pads est publie ; filtre experimental sample locks et diagnostics exclus." }] },
   { version: "1.96", date: "2026-10-18", changes: [{ en: "Hardware-verified MACRO fine tune on SETTINGS + PITCH, saved with the sound. Plain PITCH keeps stock behavior and FUNC + PITCH remains Lo-Fi. Diagnostics excluded from main.", fr: "Accord fin MACRO verifie sur appareil : SETTINGS + PITCH, sauvegarde avec le son. PITCH seul conserve le comportement stock ; FUNC + PITCH reste Lo-Fi. Aucun diagnostic dans le principal." }] },
   { version: "1.95", date: "2026-10-18", changes: [{ en: "Track Setup follows the selected track while open: MIDI Out settings for MIDI tracks, stock setup for audio tracks. MACRO fine tune remains in test; no diagnostics in main.", fr: "Track Setup suit la piste selectionnee : reglages MIDI Out pour les pistes MIDI, menu stock pour les pistes audio. Accord fin MACRO conserve en test ; aucun diagnostic dans le principal." }] },
 {

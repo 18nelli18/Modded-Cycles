@@ -8,7 +8,7 @@ from test_midi_machine_notes import PROJECT
 from render_midi_bank import png
 ROOT=HERE.parent.parent
 def main():
- img,mem,ts=boot_case('build/wizard-control/usb-after');engine=next(t for t in ts if t.get('machine_selection')==1023);pay=int(engine['append']['dest'],16);blob=next(raw for at,raw in mem if at==pay)
+ img,mem,ts=boot_case(sys.argv[1] if len(sys.argv)>1 else 'build/wizard-control/usb-after');engine=next(t for t in ts if t.get('machine_selection')==1023);pay=int(engine['append']['dest'],16);blob=next(raw for at,raw in mem if at==pay)
  sy={k:v for t in ts for k,v in t.get('symbols',{}).items()};r=Drawing(img,dict(hex=blob.hex(),symbols=sy,machine=17),pay)
  for at,raw in mem:r.u.mem_write(at,raw)
  heap=[0x92400000]
