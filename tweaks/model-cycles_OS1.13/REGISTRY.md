@@ -6,9 +6,9 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 281 tweaks, 31 726 écritures.
-- Masques de sprites libérables : 164 (35 960 o), dont 37 pris (13 280 o) et **127 libres (22 680 o)**.
-- Crochets sur l'OS : 94 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
+- 282 tweaks, 31 754 écritures.
+- Masques de sprites libérables : 164 (35 960 o), dont 45 pris (15 736 o) et **119 libres (20 224 o)**.
+- Crochets sur l'OS : 96 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
 - Pointeurs réécrits : 58 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 262 tweaks ; place restante au §3.
 
@@ -16,15 +16,15 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 Les masques d'un groupe sont identiques octet pour octet et chacun n'est désigné que par la constante 32 bits de son constructeur (notes/14 §5, notes/32 §11, notes/52). Faire pointer cette constante sur la copie gardée libère le masque : le rendu ne change pas et l'OS, chargé en SDRAM, n'y lit plus rien. Règles : un mod qui écrit dans un masque le redirige dans le même tweak (ou dans un tweak qu'il demande) ; personne n'écrit dans une copie gardée ; deux mods ne partagent un masque que s'ils ne s'installent jamais ensemble, ou l'un par-dessus l'autre.
 
-### 47×47 : 21 masques de 376 o (copie gardée `0x40172220`) : 11 pris, 10 libres (3 760 o)
+### 47×47 : 21 masques de 376 o (copie gardée `0x40172220`) : 16 pris, 5 libres (1 880 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x4016b6f8` | `0x400b133e` | libre | |
-| `0x4016b9e8` | `0x400b131c` | libre | |
-| `0x40171f30` | `0x400b05a0` | libre | |
-| `0x40172608` | `0x400b0544` | libre | |
-| `0x40179730` | `0x400af64a` | libre | |
+| `0x4016b6f8` | `0x400b133e` | pris (348/376 o) | mod-settings (348 o) |
+| `0x4016b9e8` | `0x400b131c` | pris (304/376 o) | mod-settings (304 o) |
+| `0x40171f30` | `0x400b05a0` | pris (348/376 o) | mod-settings (348 o) |
+| `0x40172608` | `0x400b0544` | pris (268/376 o) | mod-settings (268 o) |
+| `0x40179730` | `0x400af64a` | pris (176/376 o) | mod-settings (176 o) |
 | `0x40182b38` | `0x400adfda` | libre | |
 | `0x40182e28` | `0x400adfba` | libre | |
 | `0x40183118` | `0x400adf9e` | pris (292/376 o) | sample-preview (292 o), sample-preview-st (292 o) |
@@ -42,7 +42,7 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x401904b4` | `0x400ac784` | pris (370/376 o) | multiline-browser (370 o) |
 | `0x40192734` | `0x400ac2b2` | pris (318/376 o) | trigless-dim (318 o) |
 
-### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 0 pris, 42 libres (8 064 o)
+### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 3 pris, 39 libres (7 488 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
@@ -74,9 +74,9 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x40184808` | `0x400adc40` | libre | |
 | `0x40184af8` | `0x400adc04` | libre | |
 | `0x40184c78` | `0x400adbe4` | libre | |
-| `0x40187528` | `0x400ad742` | libre | |
-| `0x401876a8` | `0x400ad726` | libre | |
-| `0x40188f98` | `0x400ad3a0` | libre | |
+| `0x40187528` | `0x400ad742` | pris (190/192 o) | mod-settings (190 o) |
+| `0x401876a8` | `0x400ad726` | pris (161/192 o) | mod-settings (161 o) |
+| `0x40188f98` | `0x400ad3a0` | pris (104/192 o) | mod-settings (104 o) |
 | `0x4018a608` | `0x400ad1c6` | libre | |
 | `0x4018b9c8` | `0x400ad048` | libre | |
 | `0x4018bb48` | `0x400ad028` | libre | |
@@ -233,7 +233,7 @@ Trois masques entièrement à 0xFF, les plus grands ; plusieurs mods s'y partage
 
 | masque | taille | constante | état | mods (octets écrits) |
 |---|---|---|---|---|
-| `0x4015c044` | 720 o | `0x400b6434` | pris (550/720 o) | 6ch-usbup (384 o), acid (208 o), macro (208 o), macro-acid (208 o), model-tg (208 o), model-tg-st (208 o), syntakt-* (32/32, 208 o), syntakt-*-acid (31/31, 208 o), syntakt-*-macro (31/31, 208 o), syntakt-*-macro-acid (31/31, 208 o), trig-hold (166 o) |
+| `0x4015c044` | 720 o | `0x400b6434` | pris (550/720 o) | 6ch-usbup (384 o), acid (208 o), macro (208 o), macro-acid (208 o), mod-settings (384 o), model-tg (208 o), model-tg-st (208 o), syntakt-* (32/32, 208 o), syntakt-*-acid (31/31, 208 o), syntakt-*-macro (31/31, 208 o), syntakt-*-macro-acid (31/31, 208 o), trig-hold (166 o) |
 | `0x4016cae8` | 1024 o | `0x400b1106` | pris (1016/1024 o) | acid (104 o), acid-tg (96 o), arp (824 o), macro (104 o), macro-acid (112 o), macro-acid-tg (104 o), macro-tg (96 o), sdvintage-7th (40 o), sdvintage-exact (40 o), sdvintage-snare (973 o), syntakt-* (32/32, 80 o), syntakt-*-acid (31/31, 188 o), syntakt-*-macro (31/31, 188 o), syntakt-*-macro-acid (31/31, 188 o), syntakt-tg-* (33/33, 172–188 o), syntakt-tg-*-acid (31/31, 180 o), syntakt-tg-*-macro (31/31, 180 o), syntakt-tg-*-macro-acid (31/31, 180 o), syntakt-vintage (40 o) |
 | `0x4018a788` | 1024 o | `0x400ad1aa` | pris (1016/1024 o) | arp (1016 o), sdvintage-snare (638 o) |
 
@@ -547,6 +547,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x40002a06` | `206f002422414281d1c5…` | jmp | masque `0x4015c044` +0x17c | 6ch-usbup | notes/36 |
 | `0x40002a42` | `721320402004e3ace788…` | jmp | OS `0x4019b182` | 6ch-multiout |  |
 | `0x40002a42` | `721320402004e3ace788…` | jmp | masque `0x4015c044` +0x11e | 6ch-usbup | notes/36 |
+| `0x4000576c` | `45f940004e40` | lea a2 | masque `0x4016b6f8` +0x14 `usb_boot` | mod-settings | notes/72 |
 | `0x40005f36` | `b2ac00286730` | jmp | masque `0x4018dba8` +0x0 | trigless-dim | notes/45 |
 | `0x40006086` | `4ef94008e77e` | jmp | masque `0x4018dba8` +0x20 | trigless-dim | notes/45 |
 | `0x400081f2` | `4eb940090f48` | jsr | masque `0x4018f4b4` +0x0 | level-pan-values | notes/44 |
@@ -570,6 +571,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4002f7d8` | `4cef7c7c0018` | jmp | charge utile (image) +0x11350 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x40032aee` | `4cef7c7c0018` | jmp | charge utile (image) +0xd424 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4003560a` | `4eb940044df84a8057c0…` | jmp | masque `0x40192ba4` +0x0 `midi_key` | midi-live-both | notes/53 |
+| `0x4003c99a` | `4cee3cfcff98` | jmp | masque `0x4016b6f8` +0x0 `cfg_tail` | mod-settings | notes/72 |
 | `0x4004486c` | `4eb94005a274` | jsr | masque `0x40166760` +0xaa `tf_boot` | track-filter | notes/47 |
 | `0x4004df40` | `704c222f0004` | jmp | charge utile (mémoire), 3 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
 | `0x4004df5c` | `7206202f0004` | jmp | charge utile (mémoire), 9 cibles selon la combinaison | acid, macro, macro-acid, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/36 |
@@ -583,12 +585,12 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x40056610` | `4fefffd848d73cfc` | jmp | charge utile (image) +0xdbf6 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x40056b38` | `4878000448798000b990` | jsr | charge utile (image) +0xab08 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400587f6` | `4eb940091f20` | jsr | masque `0x4018a788` +0x1b2 | arp | notes/32 |
-| `0x40058ca0` | `a93c00000020` | jsr | masque `0x4015c044` +0x1f8 | 6ch-usbup, acid, macro, macro-acid, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36 |
+| `0x40058ca0` | `a93c00000020` | jsr | masque `0x4015c044` +0x1f8 | 6ch-usbup, acid, macro, macro-acid, mod-settings, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36, notes/72 |
 | `0x40058e28` | `72ff242a0008202a000c` | jsr | masque `0x4018a788` +0x0 | arp | notes/32 |
 | `0x4005910e` | `4aaa0030670c2002` | jsr | masque `0x40183118` +0x0 `pv_copy` | sample-preview, sample-preview-st | notes/46 |
 | `0x40059382` | `4eb94005979e` | jsr | charge utile (mémoire), 24 cibles selon la combinaison | syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) | notes/31, notes/36 |
-| `0x40059392` | `4eb940002912` | jsr | masque `0x4015c044` +0x292 | 6ch-usbup, acid, macro, macro-acid, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36 |
-| `0x400593ce` | `4eb940002912` | jsr | masque `0x4015c044` +0x292 | 6ch-usbup, acid, macro, macro-acid, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36 |
+| `0x40059392` | `4eb940002912` | jsr | masque `0x4015c044` +0x292 | 6ch-usbup, acid, macro, macro-acid, mod-settings, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36, notes/72 |
+| `0x400593ce` | `4eb940002912` | jsr | masque `0x4015c044` +0x292 | 6ch-usbup, acid, macro, macro-acid, mod-settings, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36, notes/72 |
 | `0x400597c6` | `4eb940091ab2` | jsr | masque `0x401835b8` +0x8e `lfo_audio` | lfo-plus | notes/56 |
 | `0x4005981e` | `4eb9401b715c` | jsr | charge utile (mémoire) +0x3350e | syntakt-tg-* (1/33) | notes/31 |
 | `0x40059852` | `4eb940056f58` | jsr | masque `0x4014ab5c` +0x0 `tf_post` | track-filter | notes/47 |
@@ -720,6 +722,8 @@ Ce que les écritures ne montrent pas : les octets des structures sauvegardées 
 |---|---|---|
 | arp | octet +512 de chaque piste dans le pattern : sens de l'arpège et octaves (inutilisé par l'OS, sauvegardé avec le pattern) | notes/32 §4 |
 | lfo-plus | octets +88..+91 de l'enregistrement d'un son : LFO 2 empaqueté (format de DavidCaruso) ; mémoire 0x4233f000..0x4233f49b, au-dessus du BSS de l'OS, remise à zéro au premier usage | notes/56 §3 |
+| mod-settings | octets 0x404e9b80..0x404e9b8f du bloc des réglages de l'OS (0x404e9b10, 272 o, flash 0x78000), hors de sa somme de contrôle : l'enregistrement « MODS » des réglages des mods (0x404e9b63..0x404e9c0f n'est ni lu ni écrit par l'OS) | notes/72 §3 |
+| mod-settings | octets de l'OS réécrits pendant qu'il tourne (« runtime », vérifié par `check_overlaps.py`) : `0x4000253b` (2 o), `0x40002564` (3 o), `0x400027b3` (2 o), `0x400027d3` (5 o), `0x400027e8` (23 o), `0x4000281f` (2 o), `0x400029b9` (2 o), `0x400029d2` (6 o), `0x400029e4` (11 o), `0x40002a06` (25 o), `0x40002a42` (11 o), `0x40002ceb` (2 o), `0x4019b2fa` (2 o), `0x4019b387` (2 o), `0x4019b397` (2 o) | notes/72 |
 
 ## 7. Ce que chaque mod touche
 
@@ -732,6 +736,7 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | browser-scroll | 5 | 1 | 0 | 0 | 0 | 0 | 4 |  |  |
 | 6ch-multiout | 29 | 25 | 4 | 0 | 0 | 0 | 0 |  |  |
 | 6ch-usbup | 25 | 12 | 7 | 0 | 5 | 1 | 0 |  | notes/36 |
+| mod-settings | 28 | 1 | 5 | 0 | 13 | 9 | 0 |  | notes/72 |
 | sdvintage-snare | 10 | 4 | 0 | 2 | 2 | 2 | 0 |  | notes/16 |
 | sdvintage-exact | 9 | 4 | 1 | 2 | 1 | 1 | 0 | 205 200 o | notes/17 |
 | sdvintage-7th | 116 | 58 | 9 | 47 | 1 | 1 | 0 | 218 208 o | notes/18 |
