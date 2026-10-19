@@ -163,9 +163,30 @@ The subagents in `.pi/agents/` reference models like `claude-bridge/claude-opus-
     "git:github.com/HazAT/pi-interactive-subagents",
     "@juicesharp/rpiv-ask-user-question",
     "pi-web-access"
-  ]
+  ],
+  "defaultProvider": "claude-bridge",
+  "defaultModel": "claude-opus-5-5"
 }
 ```
+
+### Why `defaultProvider` and `defaultModel` matter
+
+When pi starts without a model (a new `pi` session, or a subagent spawned without an `agent:` definition or an
+explicit `model:`), it picks one in this order: `defaultProvider` + `defaultModel` from settings if that provider
+has credentials; otherwise its built-in provider list, where `anthropic` comes first with `claude-opus-4-8`. On a
+machine that also holds an Anthropic API key in `auth.json`, a bare start therefore goes to the Anthropic API
+directly, outside the Claude plan, and fails with
+`Third-party apps now draw from your extra usage, not your plan limits` once that usage is exhausted.
+
+The two settings above pin every bare start to the bridge. A default that is not available on a machine is
+ignored (pi falls back to its automatic choice), so the setting is harmless for contributors without the bridge.
+`/model` then `select as default` writes the same two keys. Pi reads them again only at startup: switch the
+running session with `/model` if needed.
+
+Two more guards live in the repository: every spawn names an agent (`agent: mc-…`, `mc-worker` for a task no
+role covers), so the extension passes `--model` explicitly; and the generic agents bundled with
+`pi-interactive-subagents` (`worker`, `scout`, `planner`, `reviewer`, `visual-tester`) are never used here, as
+they point at `anthropic/…` models.
 
 ### Project trust
 
@@ -186,8 +207,10 @@ Pi loads the project layer (`.pi/agents/`, `.pi/prompts/`) only after you grant 
 | `mc-web-dev` | `claude-sonnet-5-5`, medium | Flasher card, guide, release notes, stamp, README | After tweak is proven |
 | `mc-reviewer` | `claude-opus-5-5`, high | Rules and firmware-safety review, no edits | Before push, on demand |
 | `mc-validator` | `claude-haiku-4-5`, minimal | Runs `validate.sh`, reports summary | `/validate`, before push |
+| `mc-worker` | `claude-opus-5-5`, medium | Any delegated task no role covers (inventory, bulk rewrite, research with files), only the files the task names | Ad-hoc, by the orchestrator |
 
-Only one editing agent runs at a time; read-only agents may run in parallel.
+All models are `claude-bridge/…`. Only one editing agent runs at a time; read-only agents may run in parallel.
+Never spawn a subagent without `agent:` (or an explicit `model: claude-bridge/…`): see the settings section above.
 
 ### Prompts (`.pi/prompts/*.md`)
 

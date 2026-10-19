@@ -98,10 +98,16 @@ Project owner: Maxime (GitHub `18nelli18`). He tests every firmware change on hi
 | `mc-web-dev` | `claude-sonnet-5-5`, medium | `os.json` feature, flasher texts, guide, release notes, stamp, README, FEATURES.md |
 | `mc-reviewer` | `claude-opus-5-5`, high | rules and firmware-safety review, no edits |
 | `mc-validator` | `claude-haiku-4-5`, minimal | runs the validation suite, reports |
+| `mc-worker` | `claude-opus-5-5`, medium | any delegated task no role covers, touching only the files the task names |
 
 Prompts: `/new-mod <request>`, `/fix-mod <id> <report>`, `/investigate <question>`, `/validate [opts]`,
 `/review-branch [branch]`, `/mark-tested <id> <date> <report>`. Plans and reviews go in `.pi/plans/` (git-ignored).
 Only one agent edits the tree at a time; read-only agents may run in parallel. Setup: `DEVELOPMENT.md`.
+
+**Every spawn names an agent** (`agent: mc-…`; `mc-worker` when no role fits) or passes an explicit
+`model: claude-bridge/…`. A bare spawn starts on pi's automatic model, which on a machine holding an Anthropic
+API key is `anthropic/claude-opus-4-8`, billed outside the Claude plan. The generic agents bundled with the
+subagents extension (`worker`, `scout`, `planner`, `reviewer`) point at `anthropic/…` too: do not use them here.
 
 ## Repository map
 
