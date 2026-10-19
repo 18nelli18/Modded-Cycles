@@ -1,5 +1,5 @@
 {
-  "stamp": "2026-10-18-scramble-main-198",
+  "stamp": "2026-10-18-genie-seed-main-199",
   "scope": "main",
   "profile": "All features, MIDI machine, no B-side; USB six-track on/off",
   "diagnostics": false,
@@ -11,5 +11,7 @@
   "pad_setup_long_hold": true,
   "pad_selection_menu": true,
   "pad_mode_persistent": false,
-  "sample_lock_filter": false
+  "sample_lock_filter": false,
+  "genie_initial_seed": true,
+  "genie_initial_seed_hardware_verified": true
 }
