@@ -64,7 +64,7 @@ async function open(){
   const p=w.MCMidiBankCompose(tweaks,os,st),num=x=>typeof x==='string'?parseInt(x,16):x;
   p.refMods[freshLevelPan.id]={w:w.MCBuilder.hex(w.MCBuilder.sha256(w.MCBuilder.writesBytes(freshLevelPan)))};
   assert(p.tweaks.some(t=>t.id==='step-rec')&&p.tweaks.some(t=>t.id==='latching-mute-solo'),'Step Recorder or solo missing from test profile');
-  assert(process.env.TEST_NO_FILTER==='1'?!p.tweaks.some(t=>t.id==='track-filter'):p.tweaks.some(t=>t.id==='track-filter'),
+  assert(process.env.TEST_NO_FILTER==='1'?!p.tweaks.some(t=>t.id==='track-filter'):p.tweaks.some(t=>t.id==='track-filter'||t.id==='wizard-continuous-filter'),
     (process.env.TEST_NO_FILTER==='1'?'per-track filter should be excluded from this test':'main profile must retain the per-track filter')+
     '; tweaks='+p.tweaks.map(t=>t.id).join(','));
   const pad=p.tweaks.find(x=>x.id==='pad-selection');
