@@ -3,6 +3,12 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "2.0.1", date: "2026-10-20", changes: [
+    { en: "Same OS, packed tighter: the code of the added machines (the Syntakt engines, MACRO, ACID) is now compressed better inside the firmware, which frees 17 KB of the little room left in it. That room is what the next machines need. Nothing changes on the machine: once started, it runs exactly the same code as 2.0",
+      fr: "Le même OS, rangé plus serré : le code des machines ajoutées (les moteurs du Syntakt, MACRO, ACID) est maintenant mieux compressé dans le firmware, ce qui libère 17 Ko de la petite place qui y restait. C'est cette place qu'il faut aux prochaines machines. Rien ne change sur la machine : une fois démarrée, elle exécute exactement le même code qu'en 2.0" },
+    { en: "Checked in the emulator on the real start-up code: it unpacks the same bytes as before. Status: experimental until it has started on a Model:Cycles",
+      fr: "Vérifié en émulation sur le vrai code de démarrage : il décompresse les mêmes octets qu'avant. État : expérimental tant qu'il n'a pas démarré sur un Model:Cycles" },
+  ] },
   { version: "2.0", date: "2026-10-18", changes: [
     { en: "One firmware now, the Modded Cycles OS: nothing to tick any more, everyone runs the same OS. Projects, tips and bug reports now mean the same thing for everyone. The flasher's first tab lists what the OS contains, and Details on a row opens its full description and its page in the guide",
       fr: "Un seul firmware maintenant, le Modded Cycles OS : plus rien à cocher, tout le monde a le même OS. Les projets, les astuces et les rapports de bugs veulent maintenant dire la même chose pour tous. Le premier onglet du flasher liste ce que contient l'OS, et Détails sur une ligne ouvre sa description complète et sa page dans le guide" },

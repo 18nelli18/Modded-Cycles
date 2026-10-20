@@ -212,3 +212,43 @@ Fichier corrigé (`…_avec-model-tg_v2.syx`, MAIN OS `f44bfad6…`) : Model-TG 
 sample-preview-st, trig-hold, arp, tempo-max et boot-anim, construit par `build.py`. Retour de Maxime : « ça marche
 nickel ». La combinaison des 5 moteurs avec Model-TG est marquée testée (`HW_TESTED_TG` de `gen_macro_syntakt.py`) ;
 les autres combinaisons, et la version sans Model-TG, restent vérifiées en émulation seulement.
+
+## 10. Un meilleur compresseur pour la charge utile (OS 2.0.1, 20/10/2026) `[FAIT en émulation]`
+
+Demande de Maxime (20/10/2026), à la carte de décision « Place » de la machine MODAL (en préparation) :
+« Meilleur compresseur ». Il ne restait que 16 559 o sous `0x40200000` dans l'OS 2.0 (image décompressée jusqu'à
+`0x401fbf51`), et MODAL en demande environ 20 000.
+
+**Ce qui était en place** : `aplib_grow.pack` (et `aplibPack` de `docs/flasher/builder.js`) réutilisait le compresseur
+de la partie ajoutée d'une section agrandie (`_tail`) : **un seul** candidat par position (la dernière occurrence des
+4 mêmes octets), correspondances de 4 octets au moins, aucune attente. Le format aPLib d'Elektron permet bien mieux :
+correspondances de 2 et 3 octets (longueur sur 2 bits), réutilisation du dernier décalage (2 bits au lieu de 10 et
+plus).
+
+**Le nouveau compresseur** (`pack`, même format, même décompresseur : `stub.S`, `APLIB`, inchangé) :
+- chaînes de hachage sur 3 octets, 48 candidats au plus, du plus proche au plus lointain ;
+- à chaque position : le dernier décalage, les candidats de la chaîne, puis, si rien d'autre, une correspondance de
+  2 octets à moins de 128 o ;
+- chaque candidat jugé sur son gain exact en bits (9 par octet en littéral, moins le coût de la correspondance tel que
+  `_Writer.match` l'écrit : décalage ou réutilisation, longueur, une de plus au-delà de 3 328 o) ;
+- un pas d'attente : si la position suivante gagne plus d'un littéral de plus, on écrit un littéral et on y va.
+
+Charge utile de l'OS (moteurs, MACRO, ACID, 492 288 o) : **247 441 → 230 083 o** (−17 358 o), en 1,1 s (Python) et
+0,05 s (node). L'image décompressée finit maintenant en `0x401f7b83` : **marge de 33 917 o**. Pour comparer : zlib -9
+fait 218 672 o (il code ses littéraux par Huffman, aPLib à 9 bits fixes), un parcours optimal complet (programmation
+dynamique, essayé) 229 265 o en 27 s : pas retenu, le pas d'attente en a presque tout.
+
+**Ce qui change** : les octets rangés de la charge utile, donc le MAIN OS (`82a79f45…cca9` → `2a77d029…0041`, OS
+**2.0.1**) et le champ `stored` des 186 tweaks à charge utile compressée (`24-` et `31-syntakt-…-macro[-acid]`),
+régénérés par `gen_macro_syntakt.py` et `gen_acid_combos.py` (m68k-linux-gnu-gcc 13.3 d'Ubuntu 24.04, dans un
+conteneur : seuls les `stored` changent, octet pour octet). Ce qui tourne sur la machine ne change pas : la charge
+utile décompressée est la même, octet pour octet.
+
+**Preuve** : `tools/emu/test_payload_pack.py` construit l'OS de `os.json` comme `build.py --os`, puis exécute le vrai
+crochet (jsr de `0x40000530` → décompresseur → 2ᵉ étage → `boot_extra_hook` de Model-TG) : charge utile décompressée
+à `0x46700000` identique à celle de `build.py` (tables d'ondes de CHORD reprises de la SRAM par le 2ᵉ étage), SRAM
+remplie, pile et registres intacts ; `mtlib.aplib.depack` relit le flux ; `builder.js` donne les mêmes octets
+(aussi `tools/webbuild_check.sh`). TOUT OK le 20/10/2026.
+
+**À vérifier sur la machine** : flasher l'OS 2.0.1, vérifier qu'il démarre (logo, puis l'écran habituel) et que les
+machines ajoutées jouent (un moteur du Syntakt, MACRO, ACID), comme avec 2.0.
