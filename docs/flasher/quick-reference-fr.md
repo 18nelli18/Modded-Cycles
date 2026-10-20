@@ -112,7 +112,7 @@ Octave 0, le curseur B et la correction du crash ont été confirmés par AveyCo
 
 ## Destinations LFO et assignation rapide — 1.90
 
-Attack (ATK), Filter (FLT) et Resonance (RES) sont des destinations des deux LFO audio lorsque leurs modules sont installes. Tenir MACHINES et tourner DECAY / SWEEP / CONTOUR pour choisir Attack / Filter / Resonance ; relacher MACHINES pour le controle normal des potards. Pour l’assignation rapide LFO, tenir LFO + MACHINES et tourner le potard de destination ; tourner encore pour regler la profondeur. Sample Wizard utilise ses destinations natives Filter / Resonance sur SWEEP / CONTOUR avec des noms stables pendant la rotation. Les menus LFO restent ouverts apres assignation rapide. Les gestes MACHINES ne laissent pas le selecteur ouvert. Retrosyn affiche Timbre / Oscillator / Pitch Sweep / Chord Arp. Diagnostics reserves aux tests.
+Attack (ATK), Filter (FLT) et Resonance (RES) sont des destinations des deux LFO audio lorsque leurs modules sont installes. Tenir MACHINES et tourner DECAY / SWEEP / CONTOUR pour choisir Attack / Filter / Resonance ; relacher MACHINES pour le controle normal des potards. Pour l’assignation rapide LFO, tenir LFO et tourner le potard de destination. Tenir aussi MACHINES pour assigner Attack, Filter ou Resonance ; tourner encore pour regler la profondeur. Sample Wizard utilise ses destinations natives Filter / Resonance sur SWEEP / CONTOUR avec des noms stables pendant la rotation. Les menus LFO restent ouverts apres assignation rapide. Les gestes MACHINES ne laissent pas le selecteur ouvert. Retrosyn affiche Timbre / Oscillator / Pitch Sweep / Chord Arp. Diagnostics reserves aux tests.
 
 ## Selection silencieuse - 1.91
 

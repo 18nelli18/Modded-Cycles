@@ -1,7 +1,7 @@
 """Note126 : principal fixe, seul choix USB six pistes, sans diagnostic."""
 import argparse,json,pathlib,re
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-STAMP='2026-10-20-all-features-main-5'
+STAMP='2026-10-20-all-features-main-6'
 FIXED_IMAGE_JS='''window.MCFixedMainImageMeta={mainOsSha:"1c99efd17330a22dd4d70f1eb99331e4a6f804850029669b721139530cc0e1c1",syxSha256:"d54795def0611ddc82f7e532b46f9feb25c07814f04bd1f1f67ff3af02ccd5ad"};
 window.MCFixedMainImageReady=fetch(new URL("all-features-no-diagnostic.syx",window.location.href)).then(r=>{if(!r.ok)throw Error("Verified main firmware image could not be loaded");return r.arrayBuffer();}).then(b=>new Uint8Array(b));
 '''
