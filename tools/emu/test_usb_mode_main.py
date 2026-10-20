@@ -54,20 +54,20 @@ def main():
         for patch in patches:
             assert bytes(u.mem_read(patch["at"], len(patch[which]) // 2)).hex() == patch[which], hex(patch["at"])
 
-    check("six")
-    assert r.r32(symbols["wf_usb_six"]) == 1
+    check("two")
+    assert r.r32(symbols["wf_usb_six"]) == 0
     r.w32(0x40A7883C, 1)
-    assert r.call("wf_usb_set", 0) == 0
+    assert r.call("wf_usb_set", 1) == 0
     check("six")
     assert not modes
     r.w32(0x40A7883C, 0)
     for _ in range(4):
-        assert r.call("wf_usb_set", 0) == 1
-        check("two")
-        assert r.r32(symbols["wf_usb_six"]) == 0
         assert r.call("wf_usb_set", 1) == 1
         check("six")
         assert r.r32(symbols["wf_usb_six"]) == 1
+        assert r.call("wf_usb_set", 0) == 1
+        check("two")
+        assert r.r32(symbols["wf_usb_six"]) == 0
     assert modes == [2, 5] * 8
 
     # Enter the actual Pad Setup menu, select USB, and edit only after DATA.
@@ -90,13 +90,13 @@ def main():
     assert r.call("wf_menu_encoder", event) == 1
     assert r.call("wf_menu_row") == 1
     key(32, 16)
-    delta[0] = -1
+    delta[0] = 1
     assert r.call("wf_menu_encoder", event) == 1
     check("two")
     assert r.r32(symbols["wf_usb_six"]) == 0
     key(12, 1)
     assert r.call("wf_menu_encoder", event) == 0
-    print("PASS main real-boot image: 6ch default; 15 exact USB ranges; stopped-only 2ch/6ch transitions; Pad Setup DATA/BACK; filter included, diagnostics absent")
+    print("PASS main real-boot image: 2ch default; 15 exact USB ranges; stopped-only 2ch/6ch transitions; Pad Setup DATA/BACK; filter included, diagnostics absent")
     print("LIMITS: USB controller, popup pixels, and host re-enumeration remain physical-device behavior; user has already confirmed mode switch on hardware.")
 
 

@@ -1,8 +1,8 @@
-"""Note126 : principal fixe, seul choix USB six pistes, sans diagnostic."""
+"""Note126 : principal fixe, démarrage USB stéréo, sans diagnostic."""
 import argparse,json,pathlib,re
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-STAMP='2026-10-20-all-features-main-9'
-FIXED_IMAGE_JS='''window.MCFixedMainImageMeta={mainOsSha:"1c99efd17330a22dd4d70f1eb99331e4a6f804850029669b721139530cc0e1c1",syxSha256:"d54795def0611ddc82f7e532b46f9feb25c07814f04bd1f1f67ff3af02ccd5ad"};
+STAMP='2026-10-20-usb-2ch-default-main-1'
+FIXED_IMAGE_JS='''window.MCFixedMainImageMeta={mainOsSha:"c49fca8d8095d8e713df5c8aa6046868416ec37f1e9e573d5e2459c5c7dbd28a",syxSha256:"d85eb01c29b8e07dd55029be82d86552835e6e4d106d5e1e8e3fd8f13f84ee1a"};
 window.MCFixedMainImageReady=fetch(new URL("all-features-no-diagnostic.syx",window.location.href)).then(r=>{if(!r.ok)throw Error("Verified main firmware image could not be loaded");return r.arrayBuffer();}).then(b=>new Uint8Array(b));
 '''
 FEATURES=[
@@ -18,7 +18,7 @@ FEATURES=[
  ('Step Recorder: with playback stopped, double-press REC to enter; play notes to write them step by step. REC exits. In latched mute mode, hold FUNC and press a track pad to solo; press the soloed pad again or leave mute mode to restore the previous mutes.', 'Step Recorder : sequenceur arrete, double appui sur REC pour entrer ; jouez des notes pour les enregistrer pas a pas. REC quitte. En mode mute verrouille, maintenez FUNC et appuyez sur une piste pour la mettre en solo ; rappuyez sur la piste solo ou quittez le mode mute pour restaurer les mutes precedents.'),
  ('Permanent quick save, updated MACRO Lo-Fi/rendering and audio/filter fixes.', 'Sauvegarde rapide permanente, MACRO Lo-Fi/rendu actualises et corrections audio/filtre.'),
  ('Tempo up to 546 BPM, scale lock, numeric volume/pan and live MIDI OUT/THRU toggle.', 'Tempo jusqu’a546BPM, scale lock, volume/pan numeriques et bascule MIDI OUT/THRU live.'),
-   ('Supermodel startup. USB audio starts in six-channel mode; switch between six-channel and standard stereo from Mod Setup on the device.', 'Demarrage Supermodel. L’audio USB demarre en six canaux ; choisir six canaux ou stereo standard dans Mod Setup sur l’appareil.')]
+   ('Supermodel startup. USB audio starts in standard stereo (2ch); switch to six-channel audio from Mod Setup on the device.', 'Demarrage Supermodel. L’audio USB demarre en stereo standard (2ch) ; choisir six canaux dans Mod Setup sur l’appareil.')]
 def main():
  p=argparse.ArgumentParser();p.add_argument('--check',action='store_true');a=p.parse_args()
  source=ROOT/'docs/flasher-midi-machine-all-test';out=ROOT/'docs/flasher'
@@ -28,6 +28,9 @@ def main():
  # different fixed machine combination set that is incompatible with bundle.js.
  files['midi-machine-all-data.js']=(out/'midi-machine-all-data.js').read_text(encoding='utf-8')
  html=files['index.html'];html=re.sub(r'<p role="note"><strong data-l="en">MIDI Out machine.*?</p>','',html)
+ html=html.replace('    <a href="guide.html">Guide</a>\n','')
+ html=re.sub(r'<main class="wrap fl"><p><a href="midi-machine-guide\.html">.*?</p>','<main class="wrap fl">',html,count=1)
+ html=re.sub(r'\s*·\s*<a href="guide\.html"><span data-l="en">guide</span><span data-l="fr">guide</span></a>','',html,count=1)
  html=re.sub(r'<script src="beat-diagnostic[^\"]+"></script>','',html)
  html=html.replace('midi-machine-all.js?', 'midi-machine-main.js?')
  html=re.sub(r'<title>.*?</title>','<title>Supermodel — Model:Cycles firmware</title>',html,count=1)
@@ -36,7 +39,7 @@ def main():
  html=html.replace('Pad Setup', 'Mod Setup').replace('dans Pad Setup sur l’appareil.', 'dans Mod Setup sur l’appareil.')
  html=re.sub(r'<p class="quick-reference"><a data-l="en" href="quick-reference\.md[^\"]*" download>.*?</p>', '', html, count=1)
  html=html.replace('<head>','<head><style>.super-search,.super-toolbar,.super-columns,#select-all-note,.mods-lede,#tab-samples{display:none!important}.fixed-features{max-width:850px}.fixed-features li{margin:.8em 0}</style>',1)
- listing='<div class="fixed-features"><h3><span data-l="en">Included features</span><span data-l="fr">Fonctions incluses</span></h3><p><span data-l="en">One complete firmware. All features below are included. USB audio starts in six-channel mode; switch between six-channel and standard stereo from Mod Setup on the device.</span><span data-l="fr">Un firmware complet. Toutes les fonctions ci-dessous sont incluses. L’audio USB demarre en six canaux ; choisir six canaux ou stereo standard dans Mod Setup sur l’appareil.</span></p><ul>'
+ listing='<div class="fixed-features"><h3><span data-l="en">Included features</span><span data-l="fr">Fonctions incluses</span></h3><p><span data-l="en">One complete firmware. All features below are included. USB audio starts in standard stereo (2ch); switch to six-channel audio from Mod Setup on the device.</span><span data-l="fr">Un firmware complet. Toutes les fonctions ci-dessous sont incluses. L’audio USB demarre en stereo standard (2ch) ; choisir six canaux dans Mod Setup sur l’appareil.</span></p><ul>'
  listing+=''.join('<li><span data-l="en">'+en+'</span><span data-l="fr">'+fr+'</span></li>' for en,fr in FEATURES)
  listing+='</ul><a href="#step-file"><span data-l="en">Continue: load OS files</span><span data-l="fr">Continuer : charger les OS</span></a></div>'
  html=html.replace('<div class="super-toolbar">',listing+'<div class="super-toolbar">',1)
@@ -60,12 +63,12 @@ def main():
  files['midi-machine-main.js']=(ROOT/'tools/web/midi-machine-main.js').read_text(encoding='utf-8')
  guide=files['midi-machine-guide.html'].replace('Select All test','firmware').replace('fixed test preset','firmware').replace('CPU/CUT diagnostics and ','').replace('Hardware verification is pending.','').replace('Preset fixe avec les fonctions actuelles du principal, diagnostic CPU/CUT et','Firmware complet avec les fonctions du principal et').replace('Verification materielle attendue.','')
  guide=re.sub(r'<li><b>(Load diagnostic|Diagnostic).*?</li>','',guide);files['midi-machine-guide.html']=guide
- files['BUILD.json']=json.dumps(dict(stamp=STAMP,scope='main',profile='Exact verified full-feature image, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (6ch enabled)',fixed_image='all-features-no-diagnostic.syx',fixed_image_sha256='d54795def0611ddc82f7e532b46f9feb25c07814f04bd1f1f67ff3af02ccd5ad',diagnostics=False,startup='Supermodel',track_setup_follows_selection=True,macro_fine=True,hardware_verified=False,step_recorder=True,step_recorder_hardware_verified=True,latching_mute_solo=True,latching_mute_solo_hardware_verified=True,track_filter=True,usb_mode_hardware_verified=True,scramble_short_tap=True,pad_setup_long_hold=True,pad_selection_menu=True,pad_mode_persistent=False,sample_lock_filter=False,genie_initial_seed=True,genie_initial_seed_hardware_verified=True,midi_chord_hardware_verified=True,midi_channel_lfo_isolation=True,live_midi_single_producer=True,chord_harmony_cache=True,cut_fade_zero_endpoint=True,midi_idle_shortcut=True),indent=2)
- files['midi-machine-release.js']='window.MC_RELEASES=[{"version": "2.03", "date": "2026-10-20", "changes": [{"en": "The fixed main build now matches the confirmed full-feature test image, including Step Recorder, mute-mode solo, the per-track filter, and the on-device USB 2ch/6ch switch. Diagnostic window excluded.", "fr": "Le build principal fixe correspond maintenant a l’image test complete confirmee : Step Recorder, solo en mode mute, filtre par piste et choix USB 2/6 canaux sur l’appareil. Fenetre de diagnostic exclue."}]}];'
+ files['BUILD.json']=json.dumps(dict(stamp=STAMP,scope='main',profile='Exact full-feature image, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (2ch enabled)',fixed_image='all-features-no-diagnostic.syx',fixed_image_sha256='d85eb01c29b8e07dd55029be82d86552835e6e4d106d5e1e8e3fd8f13f84ee1a',diagnostics=False,startup='Supermodel',usb_audio_default='2ch',track_setup_follows_selection=True,macro_fine=True,hardware_verified=False,step_recorder=True,step_recorder_hardware_verified=True,latching_mute_solo=True,latching_mute_solo_hardware_verified=True,track_filter=True,usb_mode_hardware_verified=True,scramble_short_tap=True,pad_setup_long_hold=True,pad_selection_menu=True,pad_mode_persistent=False,sample_lock_filter=False,genie_initial_seed=True,genie_initial_seed_hardware_verified=True,midi_chord_hardware_verified=True,midi_channel_lfo_isolation=True,live_midi_single_producer=True,chord_harmony_cache=True,cut_fade_zero_endpoint=True,midi_idle_shortcut=True),indent=2)
+ files['midi-machine-release.js']='window.MC_RELEASES=[{"version": "2.04", "date": "2026-10-20", "changes": [{"en": "The fixed main firmware now starts USB audio in standard stereo (2ch). Switch to six-channel audio from Mod Setup on the device; the per-track filter and all other features remain included. Diagnostics remain excluded.", "fr": "Le firmware principal demarre maintenant l’audio USB en stereo standard (2ch). Choisissez six canaux dans Mod Setup sur l’appareil ; le filtre par piste et toutes les autres fonctions restent inclus. Les diagnostics restent exclus."}]}];'
  for name,text in files.items():
   text=re.sub(r'2026-10-18-(?:midi-machine-all-test-\d+|macro-fine-main-test-\d+)',STAMP,text).replace('2026-10-19-usb-mode-main-201',STAMP).replace('\r\n','\n').rstrip()+'\n'
   if a.check:assert (out/name).read_text(encoding='utf-8')==text,name
   else:(out/name).write_text(text,encoding='utf-8')
  assert 'beat-diagnostic' not in files['index.html']
- print('PASS principal fixe genere, USB 6ch avec bascule 2ch/6ch sur appareil, Supermodel, aucun diagnostic')
+ print('PASS fixed main generated, USB starts 2ch with on-device 2ch/6ch switch, Supermodel, no diagnostics')
 if __name__=='__main__':main()

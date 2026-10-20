@@ -1,2 +1,2 @@
-window.MCFixedMainImageMeta={mainOsSha:"1c99efd17330a22dd4d70f1eb99331e4a6f804850029669b721139530cc0e1c1",syxSha256:"d54795def0611ddc82f7e532b46f9feb25c07814f04bd1f1f67ff3af02ccd5ad"};
+window.MCFixedMainImageMeta={mainOsSha:"c49fca8d8095d8e713df5c8aa6046868416ec37f1e9e573d5e2459c5c7dbd28a",syxSha256:"d85eb01c29b8e07dd55029be82d86552835e6e4d106d5e1e8e3fd8f13f84ee1a"};
 window.MCFixedMainImageReady=fetch(new URL("all-features-no-diagnostic.syx",window.location.href)).then(r=>{if(!r.ok)throw Error("Verified main firmware image could not be loaded");return r.arrayBuffer();}).then(b=>new Uint8Array(b));
