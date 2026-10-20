@@ -1,12 +1,17 @@
 {
-  "stamp": "2026-10-19-usb-mode-main-201",
+  "stamp": "2026-10-20-all-features-main-1",
   "scope": "main",
-  "profile": "All features including per-track filter, MIDI machine, and on-device USB audio mode switch (default 6ch)",
+  "profile": "All features, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (6ch enabled)",
   "diagnostics": false,
   "startup": "Supermodel",
   "track_setup_follows_selection": true,
   "macro_fine": true,
   "hardware_verified": false,
+  "step_recorder": true,
+  "step_recorder_hardware_verified": true,
+  "latching_mute_solo": true,
+  "latching_mute_solo_hardware_verified": true,
+  "track_filter": true,
   "usb_mode_hardware_verified": true,
   "scramble_short_tap": true,
   "pad_setup_long_hold": true,
@@ -20,6 +25,5 @@
   "live_midi_single_producer": true,
   "chord_harmony_cache": true,
   "cut_fade_zero_endpoint": true,
-  "midi_idle_shortcut": true,
-  "track_filter": true
+  "midi_idle_shortcut": true
 }

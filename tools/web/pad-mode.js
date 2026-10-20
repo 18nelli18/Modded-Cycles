@@ -1,9 +1,10 @@
 // Note130 : promotion du menu pad seul, sans mutation du catalogue ou sampler.
 (()=>{const b=window.MCBuilder,d=window.MCPadMode,BASE=0x40000400,n=x=>typeof x==='string'?parseInt(x,16):x,h=x=>(x>>>0).toString(16).padStart(8,'0'),hash=x=>b.hex(b.sha256(x));
 window.MCPadModeReady=Promise.all([window.MCMacroFineReady]).then(()=>{
- const previous=window.MCMidiBankCompose;
+ const previous=window.MCMidiBankCompose,canonicalLevelPan=window.MCLevelPanCanonical;
+ if(!canonicalLevelPan||canonicalLevelPan.id!=='level-pan-values')throw Error('Mod Setup: canonical volume/pan module missing');
  window.MCMidiBankCompose=(...args)=>{
-  const prior=previous(...args),r={...prior,tweaks:JSON.parse(JSON.stringify(prior.tweaks)),refMods:{...prior.refMods}};
+  const input=args[0].map(t=>t.id===canonicalLevelPan.id?JSON.parse(JSON.stringify(canonicalLevelPan)):t),prior=previous(input,...args.slice(1)),r={...prior,tweaks:JSON.parse(JSON.stringify(prior.tweaks)),refMods:{...prior.refMods}};
   const co=b.parseContainer(b.unwrap(args[1]).stream),sec=co.sections.find(s=>s.id===3),stock=b.aplibDepack(co.blob.subarray(sec.off,sec.off+sec.size)).data,patched=b.applyWrites(stock,r.tweaks).data,read=(at,len)=>b.hex(patched.subarray(at-BASE,at-BASE+len));
   const common=r.tweaks.find(t=>t.symbols?.set_held),owner=r.tweaks.filter(t=>t.append).sort((x,y)=>n(y.append.at)-n(x.append.at))[0],origin=(n(owner.append.dest)+owner.append.size+15)&~15,raw=b.fromHex(d.hex),v=new DataView(raw.buffer);
   for(const at of d.reloc)v.setUint32(at,v.getUint32(at,false)+origin,false);
