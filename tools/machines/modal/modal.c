@@ -61,7 +61,6 @@ struct ctl {                                         /* ce que update prepare po
 };
 
 static struct ctl ctl[6];
-static const s32 silence[MB];                         /* l'entree de Rings : rien (excitateur interne) */
 
 static inline struct track *track_of(int t)
 {
@@ -156,7 +155,7 @@ void modal_render(s32 *out, char *v)
 	modal_set_model(part, c->model);
 	if (c->poly != part->poly)
 		modal_set_poly(part, c->poly);
-	modal_process(part, &c->ps, &c->pa, silence, o, a);
+	modal_process(part, &c->ps, &c->pa, (const s32 *)0, o, a);   /* pas d'entree : l'excitateur interne */
 	for (i = 0; i < MB; i++) {                       /* une sortie : ODD - EVEN (notes/74), 1,0 -> 1/2 pleine echelle */
 		s32 x = o[i] - a[i];
 		x = x > 0x1ffffff ? 0x1ffffff : (x < -0x2000000 ? -0x2000000 : x);

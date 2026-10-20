@@ -24,7 +24,7 @@ section (aPLib) and re-signs the container (HMAC). It prints the SHA-256 of the 
 must be:
 
 ```
-7cc8cd0849f6b95cc7744cb177bfae939cc2c5042c5505cac655aa787d9711af
+26aa6e432ca7ae0b552f2e86cff79d58aa86489e566512a261cd77ffcff17d33
 ```
 
 (2.0.1, without MODAL, was `2a77d029…0041`; 2.0, the same with its machine payload packed less tightly,

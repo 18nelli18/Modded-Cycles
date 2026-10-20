@@ -18,7 +18,8 @@ cœur contre Rings) et `tools/emu/test_modal.py` (la machine dans l'OS). Plan de
 - Réglages « éco » (choix de Maxime) : la moitié des modes, 4 cordes au lieu de 8.
 - **Pas encore d'entrée audio** : le sample comme excitateur, choisi dans le menu des presets, est l'étape suivante
   (§8). Cette version ne le contient pas.
-- Lourd : de 10 600 à 69 200 instructions par bloc selon le modèle et la polyphonie (§5).
+- Lourd : de 10 300 à 61 000 instructions par bloc selon le modèle et la polyphonie, après l'allègement en
+  assembleur (§5).
 - `[FAIT en émulation]` (§6.3). Pas encore testé sur la machine (§7).
 
 ## 1. Ce que Maxime a choisi (20/10/2026)
@@ -134,12 +135,12 @@ Rapport d'exploration : `build/ref/rings-scout.md` (non versionné). Ce qui comp
 
 | Où | Quoi |
 |---|---|
-| charge utile `+0x79000` | code et tables de MODAL, 32 580 o |
+| charge utile `+0x79000` | code et tables de MODAL, 36 576 o (C et `modal_asm.S`) |
 | charge utile `+0x83000` | ses variables, 11 432 o (sinus, limiteur, état des passerelles, tampons) |
 | `0x46800000..0x468effff` | l'état des 6 pistes, 160 Ko chacune |
 
-- Charge utile : 548 008 o (492 288 sans MODAL), rangée compressée en 251 364 o (230 083 sans) ; l'image
-  décompressée finit en `0x401fcea4` : **12 636 o de marge** sous `0x40200000`. Possible grâce au compresseur de
+- Charge utile : 548 008 o (492 288 sans MODAL), rangée compressée en 252 929 o (230 083 sans) ; l'image
+  décompressée finit en `0x401fd4c1` : **11 071 o de marge** sous `0x40200000`. Possible grâce au compresseur de
   notes/50 §10 (sans lui, MODAL ne tenait pas).
 - `0x46800000..` `[HYP]` : libre. La zone d'échantillons de Model-TG s'arrête à `0x46700000` (`REGION_END`,
   `ST_PATCHES`), le Mo suivant est notre charge utile ; au-dessus, Model-TG écrit que le Cycles « registers a 4 MiB
@@ -152,24 +153,65 @@ Rapport d'exploration : `build/ref/rings-scout.md` (non versionné). Ce qui comp
 
 ## 5. Charge
 
-Instructions de MODAL par bloc (`test_modal.py`, piste seule, après la 1re note), DECAY 100 :
+Instructions de MODAL par bloc (`test_modal.py`, piste seule, DECAY 100, une note pendant la mesure), avant et après
+l'allègement en assembleur (§5.1) :
 
 | Modèle | 1 voix | 2 voix | 4 voix |
 |---|---|---|---|
-| 0 modal | 26 212 | 30 978 | 25 552 |
-| 1 cordes sympathiques | 29 349 | 34 139 | 43 817 |
-| 2 corde | 17 000 | 29 993 | 55 918 |
-| 3 voix FM | 10 569 | 17 553 | 32 467 |
-| 4 cordes en accord | 29 203 | 33 960 | 43 633 |
-| 5 corde et réverbe | 30 252 | 43 268 | 69 218 |
+| 0 modal | 26 212 → 20 930 | 30 978 → 26 598 | 25 552 → 22 764 |
+| 1 cordes sympathiques | 29 349 → 22 694 | 34 139 → 27 959 | 43 817 → 32 971 |
+| 2 corde | 17 000 → 16 199 | 29 993 → 28 886 | 55 918 → 48 534 |
+| 3 voix FM | 10 569 → 10 316 | 17 553 → 17 507 | 32 467 → 32 407 |
+| 4 cordes en accord | 29 203 → 22 547 | 33 960 → 27 777 | 43 633 → 32 779 |
+| 5 corde et réverbe | 30 252 → 28 676 | 43 268 → 41 382 | 69 218 → 61 052 |
 
-TONE : 5 291 ; MACRO : 11 000 en médiane (notes/43 §8). Une piste MODAL coûte donc de 2 à 13 voix de TONE ; le
-modal en 1 voix, 5. Ce sont des instructions : les cordes lisent des lignes de 16 Ko, hors du cache de 8 Ko `[HYP]`
-plus lent encore. Le régulateur de charge des moteurs veille sur MODAL (il l'éteint en fondu sous la surcharge,
-§6) ; une voix qui ne résonne plus n'est plus calculée par lui. Pistes : une ou deux MODAL avec le reste.
+Sur le banc du cœur seul (`build/`, une note puis 20 blocs de mise en route), les voix inactives finissent de
+s'éteindre et les écarts sont plus grands en 4 voix : cordes sympathiques 42 600 → 26 900, corde 51 600 → 36 900,
+corde et réverbe 63 700 → 49 300. Le modal quand la position bouge (SWEEP tourné, ou modulé par un LFO) :
+36 700 → 22 400.
 
-Pistes d'allègement, pour plus tard : boucle des modes en assembleur (19 instructions par mode et par échantillon,
-une quinzaine possible), deux modes à la fois.
+TONE : 5 291 ; MACRO : 11 000 en médiane (notes/43 §8). Une piste MODAL coûte donc de 2 à 12 voix de TONE ; le
+modal en 1 voix, 4. Ce sont des instructions : les cordes lisent des lignes de 16 Ko, hors du cache de 8 Ko `[HYP]`
+plus lent encore ; les noyaux en assembleur enchaînent leurs produits sur plusieurs accumulateurs de l'EMAC, ce que
+le décompte d'instructions ne montre pas. Le régulateur de charge des moteurs veille sur MODAL (il l'éteint en fondu
+sous la surcharge, §6) ; une voix qui ne résonne plus n'est plus calculée par lui. Pistes : une ou deux MODAL avec
+le reste.
+
+### 5.1 L'allègement (demande de Maxime, 20/10/2026 : « allège en assembleur »)
+
+Profil sur le banc (le cœur compilé pour le ColdFire, Unicorn, instructions par ligne de source) : la boucle des modes
+(19 instructions par mode et par échantillon), les trois passes des cordes sans dispersion (50, 37, 37 par
+échantillon et par corde), la boucle de la corde avec dispersion (environ 160), la réverbe (environ 380), le
+limiteur (61), et en polyphonie la chaîne d'excitation des voix inactives.
+
+- **`modal_asm.S`** : cinq noyaux, chacun les mêmes opérations de l'EMAC que le C qu'il remplace (la preuve compare
+  la machine à `modal.c` compilé pour l'ordinateur sans eux : identique octet pour octet) :
+  - `modal_mode_run` : un mode, position fixe, 14 instructions par échantillon (registres tenus d'un bout à
+    l'autre, `ic2` dans un registre d'adresse pour `lea (a5, d2*2)`, déroulé par 8, produits sur trois
+    accumulateurs) ;
+  - `modal_mode_run_lin` : le même, l'amplitude qui avance d'un pas par échantillon (position qui bouge) ;
+  - `modal_str_read`, `modal_str_damp`, `modal_str_write` : les trois passes des cordes sans dispersion (28, 22 et
+    21 instructions par échantillon) ; le passage de la ligne par son début découpé par le C (l'échantillon qui
+    écrit en 0 fait sa lecture depuis `DLINE - 1`).
+  L'OS se sert des quatre accumulateurs le temps d'une fonction et les rend vides : ses fonctions de rendu comptent
+  sur des accumulateurs à zéro (relevé dans l'image). Les noyaux les rendent vides aussi.
+- **Ce qui change dans le C de référence** (revérifié contre Rings, `test_modal_dsp.py`) :
+  - le DampingFilter : `damping × h0` et `damping × h1` d'abord, puis une seule somme (un produit après la somme
+    avant), pour que la passe 2 tienne dans les registres : un LSB d'écart ;
+  - position qui bouge : les amplitudes des modes au début et à la fin du bloc, interpolées linéairement, au lieu
+    de la récurrence de Rings refaite à chaque échantillon : plus proche de Rings (36,3 → 41,1 dB dans le cas des
+    4 potards qui bougent), la récurrence en virgule fixe accumulant ses erreurs ;
+  - la chaîne d'excitation d'une voix inactive (son entrée est nulle) restée sous −108 dB pendant 8 blocs n'est plus
+    calculée jusqu'à sa prochaine note (`exc_quiet`) : le peigne du pincement, arrondi par défaut, oscillait sur un
+    LSB au lieu de s'éteindre ; plus proche de Rings aussi (cordes en 4 voix : 76,5 → 90,9 dB) ;
+  - en C seulement, sans changer un octet : la réverbe (débuts de lignes en constantes, compression sans branche,
+    décalages des LFO calculés quand ils changent), la boucle de la corde avec dispersion spécialisée pour des
+    réglages fixes, le mélange des voix, l'entrée absente (`NULL`) au lieu d'un tampon de zéros parcouru.
+- **Pas en assembleur, et pourquoi** : le limiteur et le filtre anti-continu (GCC en fait déjà 60 et 16
+  instructions) ; la réverbe (22 accès au tampon par échantillon : environ 250 à la main contre 300) ; la corde avec
+  dispersion (110 à 120 à la main contre 130 pour le C spécialisé, pour le noyau le plus risqué) ; la voix FM (le
+  modèle le plus léger).
+- Place : code et tables 36 576 o (32 580 avant) ; l'image finit en `0x401fd4c1`, 11 071 o de marge.
 
 ## 6. Preuves `[FAIT en émulation]`
 
@@ -222,6 +264,10 @@ Résultat : voir §6.3.
   seule (piste 5), les autres identiques ; coûts du §5.
 - Avec MODAL dans l'OS, les preuves qui construisent l'OS depuis `os.json` passent encore : `test_payload_pack.py`
   (charge utile de 548 008 o décompressée au démarrage, marge 12 636 o), `test_step_rec.py`, `test_mod_settings.py`.
+- Après l'allègement (§5.1) : `test_modal_dsp.py` TOUT OK (médiane 76,9 dB, le plus faible 37,4 dB) ; `test_modal.py`
+  complet, **81 vérifications, TOUT OK** (la machine, noyaux en assembleur compris, identique octet pour octet à
+  `modal.c` compilé pour l'ordinateur sans eux) ; `test_payload_pack.py` (marge 11 071 o) ; MAIN OS
+  `26aa6e43…7d33`.
 
 ## 7. À vérifier sur la machine
 
@@ -253,3 +299,4 @@ Demandé par Maxime, pas dans cette version. Ce qu'il faudra :
 ## 9. Chronologie
 
 - 20/10/2026 : demande, choix de Maxime (§1), cœur, passerelle, machine, preuves ; OS 2.1.
+- 20/10/2026 : « allège en assembleur » (Maxime) : `modal_asm.S` et les retouches du §5.1.

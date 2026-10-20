@@ -3,7 +3,8 @@
 du Model:Cycles (notes/74).
 
 Le son est notre code (tools/machines/modal/ : modal_dsp.h, le cœur, réécrit en virgule fixe d'après rings/dsp et
-stmlib de pichenettes/eurorack ; modal_fix.h, son arithmétique ; modal.c, la passerelle). Ses tables
+stmlib de pichenettes/eurorack ; modal_fix.h, son arithmétique ; modal_asm.S, ses boucles les plus chaudes écrites à
+la main pour le ColdFire, les mêmes calculs que le C ; modal.c, la passerelle). Ses tables
 (modal_tables.h) sont calculées ici avec les formules de rings/resources/lookup_tables.py et de stmlib/dsp/units.cc,
 arrondies en float32 comme le fait le module, puis converties en entiers. Licence : LICENSE-Rings (MIT).
 
@@ -288,15 +289,16 @@ def compile_machine(tmp, pay, tables_h):
     import gen_sdvintage_exact as gx                       # noqa: E402
     at, bss_at = pay + MODAL_AT, pay + MODAL_BSS
     (tmp / "modal_tables.h").write_text(tables_h)          # les tables de ce générateur, pas celles du dépôt
-    for f in ("modal.c", "modal_dsp.h", "modal_fix.h"):
+    for f in ("modal.c", "modal_dsp.h", "modal_fix.h", "modal_asm.S"):
         (tmp / f).write_bytes((SRC / f).read_bytes())
-    o = tmp / "modal.o"
-    gx.run([gx.CROSS + "gcc", *CFLAGS, f"-DMODAL_RAM={MODAL_RAM:#x}", f"-I{tmp}", "-c", str(tmp / "modal.c"), "-o",
-            str(o)])
+    o, oa = tmp / "modal.o", tmp / "modal_asm.o"
+    gx.run([gx.CROSS + "gcc", *CFLAGS, "-DMODAL_ASM", f"-DMODAL_RAM={MODAL_RAM:#x}", f"-I{tmp}", "-c",
+            str(tmp / "modal.c"), "-o", str(o)])
+    gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(tmp / "modal_asm.S"), "-o", str(oa)])   # notes/74 §5
     ld, elf, out = tmp / "link.ld", tmp / "modal.elf", tmp / "modal.bin"
     ld.write_text(LINK.format(code=at, bss=bss_at))
     gx.run([gx.CROSS + "ld", "-T", str(ld), "--gc-sections", "--no-warn-rwx-segments", "-e", ENTRIES[0],
-            *[a for e in ENTRIES[1:] for a in ("-u", e)], "-o", str(elf), str(o)])
+            *[a for e in ENTRIES[1:] for a in ("-u", e)], "-o", str(elf), str(o), str(oa)])
     secs = {}
     for line in gx.run([gx.CROSS + "objdump", "-h", str(elf)]).splitlines():
         f = line.split()

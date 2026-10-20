@@ -386,8 +386,8 @@ string with reverb. Rings' hidden synth (the easter egg) is not included. The co
 - One output: odd minus even, as Rings mixes them when only one jack is plugged.
 - No audio input: always Rings' internal exciter (a filtered click, a burst of noise, or the FM envelope). Using a
   sample as the exciter, chosen in the preset menu, is the next step (asked by Maxime, not in this version).
-- Heavy: 10 600 (FM voice, 1 voice) to 69 200 (string and reverb, 4 voices) instructions per block in the emulator;
-  the modal model with 1 voice, 26 000, about 5 Tone voices. One or two MODAL tracks with the rest. The load governor
+- Heavy: 10 300 (FM voice, 1 voice) to 61 000 (string and reverb, 4 voices) instructions per block in the emulator,
+  with the hottest loops written in ColdFire assembly; the modal model with 1 voice, 21 000, about 4 Tone voices. One or two MODAL tracks with the rest. The load governor
   looks after MODAL too.
 - The very first MODAL note after power-on starts about 13 ms late (tables computed over 20 blocks); the reverb of
   model 5 starts 11 ms after a track becomes MODAL (its memory is cleared over 16 blocks).
