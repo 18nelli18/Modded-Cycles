@@ -6,6 +6,7 @@ async function open(){
  const errors=[],vc=new VirtualConsole(),dir=path.join(root,'docs/flasher'),html=fs.readFileSync(path.join(dir,'index.html'),'utf8');
  const w=new JSDOM(html,{url:'https://aveycole.github.io/Modded-Cycles/flasher/',runScripts:'outside-only',virtualConsole:vc}).window;
  w.URL.createObjectURL=()=>'';w.URL.revokeObjectURL=()=>{};vc.on('jsdomError',e=>errors.push(String(e)));
+ w.fetch=async()=>{const bytes=fs.readFileSync(path.join(dir,'all-features-no-diagnostic.syx'));return{ok:true,arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength)}};
  const menu=JSON.parse(fs.readFileSync(path.join(build,'pad-mode-data.json'),'utf8'));
  let deferredPadMode='',deferredMidiSafety='',deferredStepRec='',deferredLfo='',beatRepeatBoot=null;
  for(const m of html.matchAll(/<script[^>]+src="([^"]+)"/g)){
@@ -43,6 +44,9 @@ async function open(){
  try{
   if(!beatRepeatBoot)throw Error('Test fixture did not load beat-repeat boot metadata');
   await Promise.all(Object.keys(w).filter(k=>k.endsWith('Ready')&&w[k]?.then).map(k=>w[k]));
+  const fixed=await w.MCFixedMainImageReady;
+  assert.equal(w.MCBuilder.hex(w.MCBuilder.sha256(fixed)),w.MCFixedMainImageMeta.syxSha256,'main flasher image must match the delivered, verified .syx');
+  assert(w.MCFlasher.verify(fixed).count>0,'fixed main image SYX checksum verification failed');
   if(beatRepeatBoot)w.__testBeatRepeatBoot=beatRepeatBoot;
   w.document.getElementById('select-all')?.click();
   const filter=w.document.getElementById('feat-track-filter');

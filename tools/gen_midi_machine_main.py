@@ -1,7 +1,10 @@
 """Note126 : principal fixe, seul choix USB six pistes, sans diagnostic."""
 import argparse,json,pathlib,re
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-STAMP='2026-10-20-all-features-main-3'
+STAMP='2026-10-20-all-features-main-4'
+FIXED_IMAGE_JS='''window.MCFixedMainImageMeta={mainOsSha:"1c99efd17330a22dd4d70f1eb99331e4a6f804850029669b721139530cc0e1c1",syxSha256:"d54795def0611ddc82f7e532b46f9feb25c07814f04bd1f1f67ff3af02ccd5ad"};
+window.MCFixedMainImageReady=fetch(new URL("all-features-no-diagnostic.syx",window.location.href)).then(r=>{if(!r.ok)throw Error("Verified main firmware image could not be loaded");return r.arrayBuffer();}).then(b=>new Uint8Array(b));
+'''
 FEATURES=[
  ('Machines: six stock engines, Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, TINY, ChpHzrd / Retrosyn and MIDI Out.', 'Machines : six moteurs stock, Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, TINY, ChpHzrd / Retrosyn et MIDI Out.'),
  ('MIDI Out: silent A-side tracks with notes, 12 assignable CCs, locks, channel/port routing and two MIDI LFOs. No MIDI B-side bank.', 'MIDI Out : pistes A silencieuses avec notes,12CC assignables, locks, canal/port et deux LFO MIDI. Sans banque B.'),
@@ -38,12 +41,13 @@ def main():
  listing+='</ul><a href="#step-file"><span data-l="en">Continue: load OS files</span><span data-l="fr">Continuer : charger les OS</span></a></div>'
  html=html.replace('<div class="super-toolbar">',listing+'<div class="super-toolbar">',1)
  html=html.replace('<h2 id="h1s" data-i18n="s1">What do you want to install?</h2>', '<h2 id="h1s"><span data-l="en">Your firmware</span><span data-l="fr">Votre firmware</span></h2>')
- html=html.replace('</body>',f'<script src="macro-fine-data.js?v={STAMP}"></script><script src="macro-fine-release.js?v={STAMP}"></script><script src="level-pan-main-data.js?v={STAMP}"></script><script src="pad-mode-data.js?v={STAMP}"></script><script src="pad-mode.js?v={STAMP}"></script><script src="genie-entropy-data.js?v={STAMP}"></script><script src="genie-entropy.js?v={STAMP}"></script><script src="midi-safety-data.js?v={STAMP}"></script><script src="midi-safety-release.js?v={STAMP}"></script><script src="step-rec-solo-data.js?v={STAMP}"></script><script src="step-rec-solo-main.js?v={STAMP}"></script></body>')
+ html=html.replace('</body>',f'<script src="macro-fine-data.js?v={STAMP}"></script><script src="macro-fine-release.js?v={STAMP}"></script><script src="level-pan-main-data.js?v={STAMP}"></script><script src="pad-mode-data.js?v={STAMP}"></script><script src="pad-mode.js?v={STAMP}"></script><script src="genie-entropy-data.js?v={STAMP}"></script><script src="genie-entropy.js?v={STAMP}"></script><script src="midi-safety-data.js?v={STAMP}"></script><script src="midi-safety-release.js?v={STAMP}"></script><script src="step-rec-solo-data.js?v={STAMP}"></script><script src="step-rec-solo-main.js?v={STAMP}"></script><script src="fixed-main-image.js?v={STAMP}"></script></body>')
  files['index.html']=html
  files['midi-safety-data.js']=(out/'midi-safety-data.js').read_text(encoding='utf-8')
  files['midi-safety-release.js']=(ROOT/'tools/web/midi-safety-release.js').read_text(encoding='utf-8')
  files['step-rec-solo-main.js']=(ROOT/'tools/web/step-rec-solo-main.js').read_text(encoding='utf-8')
  files['step-rec-solo-data.js']=(out/'step-rec-solo-data.js').read_text(encoding='utf-8')
+ files['fixed-main-image.js']=FIXED_IMAGE_JS
  files['genie-entropy-data.js']=(out/'genie-entropy-data.js').read_text(encoding='utf-8')
  files['genie-entropy.js']=(ROOT/'tools/web/genie-entropy.js').read_text(encoding='utf-8')
  files['pad-mode-data.js']=(out/'pad-mode-data.js').read_text(encoding='utf-8')
@@ -56,7 +60,7 @@ def main():
  files['midi-machine-main.js']=(ROOT/'tools/web/midi-machine-main.js').read_text(encoding='utf-8')
  guide=files['midi-machine-guide.html'].replace('Select All test','firmware').replace('fixed test preset','firmware').replace('CPU/CUT diagnostics and ','').replace('Hardware verification is pending.','').replace('Preset fixe avec les fonctions actuelles du principal, diagnostic CPU/CUT et','Firmware complet avec les fonctions du principal et').replace('Verification materielle attendue.','')
  guide=re.sub(r'<li><b>(Load diagnostic|Diagnostic).*?</li>','',guide);files['midi-machine-guide.html']=guide
- files['BUILD.json']=json.dumps(dict(stamp=STAMP,scope='main',profile='All features, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (6ch enabled)',diagnostics=False,startup='Supermodel',track_setup_follows_selection=True,macro_fine=True,hardware_verified=False,step_recorder=True,step_recorder_hardware_verified=True,latching_mute_solo=True,latching_mute_solo_hardware_verified=True,track_filter=True,usb_mode_hardware_verified=True,scramble_short_tap=True,pad_setup_long_hold=True,pad_selection_menu=True,pad_mode_persistent=False,sample_lock_filter=False,genie_initial_seed=True,genie_initial_seed_hardware_verified=True,midi_chord_hardware_verified=True,midi_channel_lfo_isolation=True,live_midi_single_producer=True,chord_harmony_cache=True,cut_fade_zero_endpoint=True,midi_idle_shortcut=True),indent=2)
+ files['BUILD.json']=json.dumps(dict(stamp=STAMP,scope='main',profile='Exact verified full-feature image, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (6ch enabled)',fixed_image='all-features-no-diagnostic.syx',fixed_image_sha256='d54795def0611ddc82f7e532b46f9feb25c07814f04bd1f1f67ff3af02ccd5ad',diagnostics=False,startup='Supermodel',track_setup_follows_selection=True,macro_fine=True,hardware_verified=False,step_recorder=True,step_recorder_hardware_verified=True,latching_mute_solo=True,latching_mute_solo_hardware_verified=True,track_filter=True,usb_mode_hardware_verified=True,scramble_short_tap=True,pad_setup_long_hold=True,pad_selection_menu=True,pad_mode_persistent=False,sample_lock_filter=False,genie_initial_seed=True,genie_initial_seed_hardware_verified=True,midi_chord_hardware_verified=True,midi_channel_lfo_isolation=True,live_midi_single_producer=True,chord_harmony_cache=True,cut_fade_zero_endpoint=True,midi_idle_shortcut=True),indent=2)
  files['midi-machine-release.js']='window.MC_RELEASES=[{"version": "2.03", "date": "2026-10-20", "changes": [{"en": "The fixed main build now matches the confirmed full-feature test image, including Step Recorder, mute-mode solo, the per-track filter, and the on-device USB 2ch/6ch switch. Diagnostic window excluded.", "fr": "Le build principal fixe correspond maintenant a l’image test complete confirmee : Step Recorder, solo en mode mute, filtre par piste et choix USB 2/6 canaux sur l’appareil. Fenetre de diagnostic exclue."}]}];'
  for name,text in files.items():
   text=re.sub(r'2026-10-18-(?:midi-machine-all-test-\d+|macro-fine-main-test-\d+)',STAMP,text).replace('2026-10-19-usb-mode-main-201',STAMP).replace('\r\n','\n').rstrip()+'\n'

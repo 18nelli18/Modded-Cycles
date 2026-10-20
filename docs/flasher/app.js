@@ -3216,6 +3216,34 @@ function prepareFirmware() {
     st.fwError = null;
     return;
   }
+  // The fixed main flasher serves the exact verified full-feature image. This
+  // avoids rebuilding a profile whose relocatable machine payload can vary by
+  // browser-side composition order and overlap the fixed Step Recorder region.
+  if (window.MCFixedMainImageReady) {
+    if (!st.syntakt) { st.fw = null; st.fwError = "needs_syntakt"; return; }
+    const meta = window.MCFixedMainImageMeta;
+    const fixedKey = `fixed-main:${os.sha}:${st.syntakt.version}`;
+    const makeFixed = () => window.MCFixedMainImageReady.then((raw) => {
+      const hash = window.MCBuilder.hex(window.MCBuilder.sha256(raw));
+      if (hash !== meta.syxSha256) throw new Error("Verified main firmware image checksum mismatch");
+      const verified = window.MCFlasher.verify(raw);
+      if (!verified.count) throw new Error("Verified main firmware image has no valid SYX packets");
+      return { raw, name: "all-features-no-diagnostic.syx", kind: "built", mods: ["All features"],
+        sha: meta.mainOsSha, ref: true, modsRef: true, sixch: true };
+    });
+    if (!onSamples()) { buildCached(fixedKey, makeFixed); return; }
+    const smp = st.samplesOs;
+    if (!smp) { st.fw = null; st.fwError = "needs_samples_file"; return; }
+    const into = st.machine === "smp" ? "samples" : "cycles";
+    buildCached(`${fixedKey}@${st.machine}:${smp.sha}`, async (raw) => {
+      const base = await makeFixed();
+      const r = window.MCBuilder.modsForSamples(base.raw, raw, smp.raw, into);
+      if (r.modsSha !== base.sha) throw new Error("packed MAIN OS differs from the verified full-feature build");
+      return Object.assign({}, base, { raw: r.raw, machine: st.machine,
+        name: `all-features-no-diagnostic_for-samples_${st.machine === "smp" ? "smp-os" : "cyc-os"}.syx` });
+    });
+    return;
+  }
   const tweaks = chosenTweaks();
   if (!tweaks.length) { st.fw = null; st.fwError = st.selectionError || "pick_one"; return; }
   const sdv = needsSyntakt();
@@ -3298,21 +3326,25 @@ function buildCached(key, make) {
   const osRef = st.os;
   setTimeout(() => {
     if (st.os !== osRef || st.cache[key]) return;
-    let entry;
+    let result;
     try {
-      entry = { fw: make(osRef.raw) };
+      result = make(osRef.raw);
     } catch (e) {
-      entry = { error: e.message };
+      result = Promise.reject(e);
+    }
+    Promise.resolve(result).then((fw) => ({ fw }), (e) => {
       log(`Build ${key} refused: ${e.message}`, "is-bad");
-    }
-    if (st.os !== osRef) return;              // another file was loaded meanwhile
-    st.cache[key] = entry;
-    if (st.buildKey === key) {                 // still the current choice
-      st.building = false;
-      st.fw = entry.fw || null;
-      st.fwError = entry.error || null;
-    }
-    render();
+      return { error: e.message || String(e) };
+    }).then((entry) => {
+      if (st.os !== osRef) return;              // another file was loaded meanwhile
+      st.cache[key] = entry;
+      if (st.buildKey === key) {                 // still the current choice
+        st.building = false;
+        st.fw = entry.fw || null;
+        st.fwError = entry.error || null;
+      }
+      render();
+    });
   }, 40);
 }
 

@@ -1,7 +1,9 @@
 {
-  "stamp": "2026-10-20-all-features-main-3",
+  "stamp": "2026-10-20-all-features-main-4",
   "scope": "main",
-  "profile": "All features, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (6ch enabled)",
+  "profile": "Exact verified full-feature image, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (6ch enabled)",
+  "fixed_image": "all-features-no-diagnostic.syx",
+  "fixed_image_sha256": "d54795def0611ddc82f7e532b46f9feb25c07814f04bd1f1f67ff3af02ccd5ad",
   "diagnostics": false,
   "startup": "Supermodel",
   "track_setup_follows_selection": true,
