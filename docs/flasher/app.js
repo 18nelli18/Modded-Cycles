@@ -1180,7 +1180,7 @@ const REF_MODS = {
   "tempo-max": {"w": "12115f0b665c9423922febfaa7b63d8bf5529de525ba0a51c22450e005d22f64"},
   "boot-anim": {"w": "a3681504456299c2f8c316e09181765455fdc51a9276a6a43ff11d78e2ba5382"},
   "multiline-browser": {"w": "08156ec48e8232e3337de2bf9050f2e1c3459a243fd377d7a66054ed171e1298"},
-  "level-pan-values": {"w": "50e0c4e6e5cb3c6de19296d2f65fec5074ea8e25322363d6bc1dad164cb131b9"},
+  "level-pan-values": {"w": "3f000db620ab9a4ef1d9feb089b2c8da121b78e2cb7e736edca58af061c732c4"},
   "trigless-dim": {"w": "4efc73f035aab33963e8ae8f3f6343925e2cd5149b4cad6780051d0c185e32e1"},
   "midi-both": {"w": "260b8eeba4d71e5cefdd8ccd4fc94794b76902e7675b960d3867f35c5ed6ca6c"},
   "midi-live-both": {"w": "e7dfae924d6474abea22b375002ff58b1e3cde301aa9ca8a2ec980593316c942"},

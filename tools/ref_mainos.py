@@ -117,11 +117,16 @@ class Cards:
         """Tweaks construits pour une sélection {carte: choix}, dans l'ordre des cartes (la clé de REF_MAINOS)."""
         out = []
         for f in self.features:
-            if f["id"] not in sel or f.get("joins") in sel:   # « joins » : MACRO avec les moteurs, dans leur version
+            joins = f.get("joins") or []
+            if isinstance(joins, str):
+                joins = [joins]
+            if f["id"] not in sel or any(join in sel for join in joins):   # « joins » : MACRO avec les moteurs, dans leur version
                 continue
             o = sel[f["id"]]
             if f.get("engines"):                               # avec MACRO cochée : la version avec MACRO (notes/50)
-                o = next((o[g["id"]] for g in self.features if g.get("joins") == f["id"] and g["id"] in sel), o)
+                o = next((o[g["id"]] for g in self.features
+                          if f["id"] in ([g.get("joins")] if isinstance(g.get("joins"), str)
+                                         else (g.get("joins") or [])) and g["id"] in sel), o)
                 tid = o["tg"] if "model-tg" in sel else o["id"]
             else:
                 tid = o

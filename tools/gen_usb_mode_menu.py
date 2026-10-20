@@ -39,12 +39,13 @@ def usb_patches():
     return patches
 
 
-def generate():
+def generate(volume_pan_test=False):
     patches = usb_patches()
     c = (ROOT / "tools/machines/wizard_control/control.c").read_text(encoding="utf-8")
     c = c.replace("u32 wf_menu_row(void){return 0;}", "static u32 row;\nu32 wf_menu_row(void){return row;}\nu32 uf_set(u32);")
+    c = c.replace("volatile u32 wf_api[7]", "volatile u32 wf_api[9]")
     old = "if(editing){i32 delta=((i32 (*)(const u32 *,u32,u32))0x4006f73a)(event,1,1);if(delta)wf_stock=delta>0;repaint();}"
-    new = "i32 delta=((i32 (*)(const u32 *,u32,u32))0x4006f73a)(event,1,1);if(delta){if(!editing)row=delta>0;else if(row)uf_set(delta>0);else wf_stock=delta>0;repaint();}"
+    new = "i32 delta=((i32 (*)(const u32 *,u32,u32))0x4006f73a)(event,1,1);if(delta){if(!editing)row=(row+(delta>0?1:2))%3;else if(row==1)uf_set(delta>0);else if(row==2&&wf_api[8])*(volatile u8*)wf_api[8]=delta>0?0:1;else if(!row)wf_stock=delta>0;repaint();}"
     if old not in c:
         raise SystemExit("USB mode: controleur Pad Setup inattendu")
     c = c.replace(old, new)
@@ -75,14 +76,26 @@ u32 uf_set(u32 six){
 void uf_menu_value(u32 self,u32 item,u32 canvas,u32 x,u32 y){
  (void)self;(void)item;
  ((void (*)(u32,u32,u32,u32,u32,const char *,...))0x40071a04)(canvas,0x40ea14cc,x+24,y,4,"%s",uf_six?"6ch":"2ch");
- if(editing&&row)((void (*)(u32,u32,u32,u32,u32,u32))0x40070efc)(canvas,x-13,y-2,x+25,y+10,0xffffffffu);
+ if(editing&&row==1)((void (*)(u32,u32,u32,u32,u32,u32))0x40070efc)(canvas,x-13,y-2,x+25,y+10,0xffffffffu);
+}
+'''
+    c += r'''
+void vp_menu_value(u32 self,u32 item,u32 canvas,u32 x,u32 y){
+ (void)self;(void)item;
+ u32 on=wf_api[8]?(*(volatile u8*)wf_api[8]==0):1;
+ ((void (*)(u32,u32,u32,u32,u32,const char *,...))0x40071a04)(canvas,0x40ea14cc,x+24,y,4,"%s",on?"On":"Off");
+ if(editing&&row==2)((void (*)(u32,u32,u32,u32,u32,u32))0x40070efc)(canvas,x-13,y-2,x+25,y+10,0xffffffffu);
 }
 '''
     c = c.replace("if(editing)((void", "if(editing&&!row)((void")
     menu = (ROOT / "tools/machines/wizard_control/menu.S").read_text(encoding="utf-8")
+    menu = menu.replace('.Lts_title_data: .asciz "Pad"', '.Lts_title_data: .asciz "Mod"')
     menu = menu.replace("clrb %a0@(80)", "clrb %a0@(80)\n    clrb %a0@(164)")
     menu = menu.replace("moveq #1,%d0", "moveq #2,%d0").replace('.Loutput: .asciz "Out"', '.Loutput: .asciz "USB"')
     menu += '\n    .long 0,0,0,.Loutput,0,1,.Lts_label,0,0,0,0,0,0,1,uf_menu_value,0,0,0,0,0,0\n'
+    menu = menu.replace(".Lts_count:\n    moveq #2,%d0", ".Lts_count:\n    moveq #3,%d0")
+    menu = menu.replace('.Loutput: .asciz "USB"', '.Loutput: .asciz "USB"\n.Lnum: .asciz "Num"')
+    menu += '\n    .long 0,0,0,.Lnum,0,1,.Lts_label,0,0,0,0,0,0,1,vp_menu_value,0,0,0,0,0,0\n'
     hooks = (ROOT / "tools/machines/wizard_control/hooks.S").read_text(encoding="utf-8") + r'''
 .text
 .globl uf_push
@@ -107,7 +120,9 @@ uf_atomic:
  movel %sp@+,%d2
  rts
 '''
-    with tempfile.TemporaryDirectory() as folder:
+    temp_root = ROOT / "build/volume-pan-toggle" if volume_pan_test else ROOT / "build/usb-mode"
+    temp_root.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=temp_root) as folder:
         d = pathlib.Path(folder)
         objects = []
         for name, source in (("control.c", c), ("hooks.S", hooks), ("menu.S", menu)):
@@ -128,16 +143,24 @@ uf_atomic:
         if not all(int.from_bytes(raw[i:i+4], "big") < len(raw) for i in reloc):
             raise SystemExit("USB mode: pointeur de relocalisation invalide")
     data = {"hex": raw.hex(), "symbols": sy, "reloc": reloc}
-    out = ROOT / "docs/flasher/pad-mode-data.js"
+    out = (ROOT / "build/volume-pan-toggle/pad-mode-data.json" if volume_pan_test
+           else ROOT / "docs/flasher/pad-mode-data.js")
     return data, out
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--volume-pan-test", action="store_true",
+                        help="compile the test-only third Pad Setup row for numeric volume/pan")
     args = parser.parse_args()
-    data, out = generate()
+    data, out = generate(volume_pan_test=args.volume_pan_test)
     text = "window.MCPadMode=" + json.dumps(data, separators=(",", ":")) + ";\n"
+    if args.volume_pan_test:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(data), encoding="utf-8")
+        print("PASS menu Pad Setup USB 2/6 + numeric volume/pan test row compiled")
+        return
     if args.check:
         if not out.exists() or out.read_text(encoding="utf-8") != text:
             raise SystemExit("pad-mode-data.js n'est pas a jour")

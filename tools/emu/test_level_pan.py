@@ -387,6 +387,24 @@ def draw(img, var):
         check(fb == model(r, r.st["pattern"], *shown) and (r.flags("pan")[0], r.flags("lvl")[0]) == flags and ok,
               f"{what} : {'chiffres ' + str(shown) if shown != (None, None) else 'rien'}, drapeaux {flags}")
 
+    # Pad Setup's Num=Off writes 1 to the byte exported as lp_disabled. The
+    # main-screen hook must then leave the stock screen untouched even while
+    # both numeric overlays are armed; Num=On (zero) restores the overlays.
+    disabled = int(json.loads(TWEAK.read_text(encoding="utf-8"))["symbols"]["lp_disabled"], 16)
+    r.reset()
+    r.st.update(pattern=bytes(rnd.randrange(256) for _ in range(1024)))
+    r.w32(var[0], 1000)
+    r.arm("pan", 0, 1050)
+    r.arm("lvl", 0, 1050)
+    r.uc.mem_write(disabled, b"\x01")
+    fb, ok = r.draw()
+    check(fb == r.st["pattern"] and ok and not r.bad,
+          "Num=Off (disable byte 1) suppresses both overlays; native screen preserved")
+    r.uc.mem_write(disabled, b"\x00")
+    fb, ok = r.draw()
+    check(fb != r.st["pattern"] and ok and not r.bad,
+          "Num=On (disable byte 0) restores numeric overlays")
+
 
 def pixels(img, djd, var):
     rigs = [("modifié", Rig(img, var))] + ([("djd_oz", Rig(*djd))] if djd else [])
