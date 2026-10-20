@@ -1,4 +1,4 @@
-# Modded Cycles OS 2.0: feature inventory
+# Modded Cycles OS 2.1: feature inventory
 
 This file is a complete overview of what Modded Cycles adds to or changes in the Elektron Model:Cycles OS 1.13. For
 each feature it covers the keys that reach it, what the screen shows, its limits, where it comes from and whether it
@@ -9,7 +9,7 @@ documentation at its tag `v1.1.0`.
 
 **OS 2.0 composition:** Model-TG v1.1.0 (Sampler machine and everything it brings, including drumkilla's latching
 mute, trig preview and scrolling names), sample preview, the five Syntakt engines (SD VINTAGE, CP VINTAGE, SY TOY,
-SY BITS, SY SWARM), MACRO, ACID, arpeggiator, easier trig removal, tempo up to 546 BPM, startup animation, multi-line
+SY BITS, SY SWARM), MACRO, ACID, MODAL (added in 2.1, on 20/10/2026), arpeggiator, easier trig removal, tempo up to 546 BPM, startup animation, multi-line
 browser, volume/pan as numbers, dimmed trigless trigs, live MIDI OUT + THRU toggle, LFO 2/3/4, Mod Settings
 (USB audio in stereo or six tracks, added on 19/10/2026) and step record (added on 20/10/2026).
 
@@ -37,9 +37,10 @@ project's guide calls the back key **BACK**. This file uses **MACHINES** and **B
    - [2.2 Syntakt engines](#22-syntakt-engines)
    - [2.3 MACRO machine](#23-macro-machine)
    - [2.4 ACID machine](#24-acid-machine)
-   - [2.5 LFO 2, 3, 4](#25-lfo-2-3-4)
-   - [2.6 Order of the machines in OS 2.0](#26-order-of-the-machines-in-os-20)
-   - [2.7 Load governor](#27-load-governor)
+   - [2.5 MODAL machine](#25-modal-machine)
+   - [2.6 LFO 2, 3, 4](#26-lfo-2-3-4)
+   - [2.7 Order of the machines in the OS](#27-order-of-the-machines-in-the-os)
+   - [2.8 Load governor](#28-load-governor)
 3. [Sequencer](#3-sequencer)
    - [3.1 Arpeggiator](#31-arpeggiator)
    - [3.2 Easier trig removal](#32-easier-trig-removal-trig-hold)
@@ -83,6 +84,7 @@ retrig page, menus) are listed with that page as context.
 | **FUNC** + **MACHINES**, cursor on a sample file, then press the track's pad (or its trig keys in keyboard mode) | Plays the highlighted sample with the track's settings | Sample preview | Sampler tracks only. Nothing plays while scrolling |
 | **FUNC** + **PAGE** | Scale menu, as stock, with two added items **Scl** and **Key** (Scale Lock) | Model-TG Scale Lock | Stock menu, extended |
 | **FUNC** + **PITCH** (turn) | Lo-fi: OFF in the middle, sample rate on the left (46K down to 4K), bit depth on the right (12B down to 2B) | MACRO | **MACRO tracks only.** Stock, changed: on every other machine FUNC + PITCH still moves the note by semitones |
+| **FUNC** + **SHAPE** (turn) | Polyphony: 1, 2 or 4 voices | MODAL | **MODAL tracks only.** On every other machine, FUNC + SHAPE does what it does on the stock OS |
 | **FUNC** + **RETRIG** | Retrig Setup menu, now with two more rows under Rte, Len, A.On: **Arp** (direction) and **Oct** (octaves) | Arpeggiator | Stock menu, extended |
 | **FUNC** + trig key on an empty step | Places a trigless trig (stock); the key now lights dimmed | Dimmed trigless trigs | Grid mode |
 | **FUNC** + trig key (on a step with a trig) | Stock change applied on release; now decided within 0.5 s instead of 0.2 s | Easier trig removal | Grid mode |
@@ -103,7 +105,7 @@ retrig page, menus) are listed with that page as context.
 | **MACHINES** held + **DECAY** | Attack (instant to about 2 s) | Model-TG | Every machine, including the Syntakt engines |
 | **MACHINES** held + **SWEEP** | Filter (Model-TG's ladder low-pass) | Model-TG | Every machine. Same gesture as the per-track filter, which is why that mod is outside OS 2.0 |
 | **MACHINES** held + **CONTOUR** | Resonance | Model-TG | Same note as above |
-| **MACHINES**, then pick ACID / MACRO / Sampler / an engine | The added machines, after Chord | Machines | MACHINES menu, see [2.6](#26-order-of-the-machines-in-os-20) |
+| **MACHINES**, then pick MODAL / ACID / MACRO / Sampler / an engine | The added machines, after Chord | Machines | MACHINES menu, see [2.7](#27-order-of-the-machines-in-the-os) |
 | **PAGE** with a trig key held | Plays that step (note, length, p-locks, sound lock) instead of turning the page | Trig preview | Sequencer stopped or paused. Stock, changed |
 | **PATTERN** | Closes the retrig page so you can choose a pattern | Model-TG retrig page | Retrig page only |
 | **PLAY** | Skips the current step (it stays as it was) | Step record | In step record, no note held |
@@ -148,7 +150,7 @@ Known collisions and raw spots, collected from the sources:
 - **Model-TG queued mutes** until you left mute mode. This project changed it so mutes act at once (see
   [4.1](#41-latching-mute)).
 - **Model-TG's Attack, Filter and Resonance p-locks** came back on other parameters after reloading a pattern; LFO
-  2, 3, 4 fixes it (see [2.5](#25-lfo-2-3-4)).
+  2, 3, 4 fixes it (see [2.6](#26-lfo-2-3-4)).
 
 ---
 
@@ -212,7 +214,7 @@ the same samples as the Syntakt.
 **How to use it.**
 
 1. Press **MACHINES** and pick one of them. In OS 2.0 they are machines 08 to 12 (after Chord and the Sampler, see
-   [2.6](#26-order-of-the-machines-in-os-20)).
+   [2.7](#27-order-of-the-machines-in-the-os)).
 2. The four machine knobs and **PUNCH** take the Syntakt's parameters. The screen shows their Syntakt names, and
    changing machine applies the Syntakt's defaults:
 
@@ -230,7 +232,7 @@ the same samples as the Syntakt.
 **Limits and interactions.**
 
 - A Syntakt voice costs a little more than an original voice (measured share of one audio block: original voice
-  ≈ 6 %, Syntakt voice ≈ 7 %, mix and effects ≈ 40 %). The load governor (see [2.7](#27-load-governor)) fades out the
+  ≈ 6 %, Syntakt voice ≈ 7 %, mix and effects ≈ 40 %). The load governor (see [2.8](#28-load-governor)) fades out the
   least audible voice when the load stays too high.
 - Needs the Syntakt OS file to build. No Syntakt is needed.
 - "Before flashing another choice or the official firmware, set the tracks that use an added machine back to an
@@ -310,7 +312,7 @@ in fixed point. Slides come from trig lengths.
 
 **How to use it** (guide):
 
-1. Press **MACHINES** and pick **ACID**, the last machine (14 in OS 2.0). Its icon is Tone's.
+1. Press **MACHINES** and pick **ACID**, machine 14 (before MODAL). Its icon is Tone's.
 2. Shape it with the knobs. The defaults already give the squelch.
 
 | Knob | Name on screen | What it does |
@@ -349,7 +351,56 @@ the drive (notes/54).
 MACRO, with and without Model-TG, on 12/10/2026; the anti-click fade-in on 18/10/2026 with the 5 engines and MACRO
 (release 1.55).
 
-### 2.5 LFO 2, 3, 4
+### 2.5 MODAL machine
+
+**What it does.** One extra machine, **MODAL**, a resonator after Mutable Instruments Rings by Émilie Gillet: each trig
+strikes or plucks it and the sound rings on by itself. Six models, as on Rings with its "bonus" models: modal
+resonator (bars, plates, bells), sympathetic strings, plucked string, FM voice, sympathetic strings tuned to a chord,
+string with reverb. Rings' hidden synth (the easter egg) is not included. The code is Rings' own DSP (the `Part` of
+`rings/dsp` and the parts of `stmlib` it uses), rewritten in fixed point for the ColdFire (notes/74).
+
+**How to use it** (guide):
+
+1. Press **MACHINES** and pick **MODAL**, the last machine (15). Its icon is Metal's. The MACHINES screen shows two
+   rows of eight marks.
+2. **SHAPE** picks the model (0 to 5); it can be locked on a step.
+3. The other knobs are Rings' own.
+
+| Knob | Name on screen | Rings | What it does |
+|---|---|---|---|
+| PITCH | Pitch | FREQUENCY | the root note, C4 in the middle; the keys and trig notes play as V/OCT |
+| COLOR | Brightness (BRIG) | BRIGHTNESS | wood or nylon at the bottom, glass or steel at the top |
+| SHAPE | Model (MODL) | the model button | 0 modal, 1 sympathetic strings, 2 string, 3 FM voice, 4 strings in a chord, 5 string and reverb |
+| SWEEP | Position (POS) | POSITION | where it is struck (FM voice: the feedback; model 5: how the two pickups mix) |
+| CONTOUR | Structure (STRC) | STRUCTURE | the ratios between the partials (harmonic in a notch in the first quarter); model 1: the intervals of the strings; model 4: one of 11 chords; FM voice: the frequency ratio |
+| DECAY | — | DAMPING | how long it rings, from a short knock to about ten seconds; at the top the strings ring almost forever |
+| **FUNC** + SHAPE | 1, 2 or 4 | the polyphony button | 1, 2 or 4 voices: each new note rings on the next voice while the others keep ringing |
+
+4. Velocity sets how hard the resonator is struck (the exciter's level), not the track volume: the notes still
+   ringing keep their level.
+
+**Limits and interactions.**
+
+- "Éco" settings, chosen by Maxime for the processor: half of Rings' modes (30, 2 × 14, 4 × 6 instead of 60,
+  2 × 28, 4 × 12) and 4 strings instead of 8 (with Rings' chord table for that number of strings).
+- One output: odd minus even, as Rings mixes them when only one jack is plugged.
+- No audio input: always Rings' internal exciter (a filtered click, a burst of noise, or the FM envelope). Using a
+  sample as the exciter, chosen in the preset menu, is the next step (asked by Maxime, not in this version).
+- Heavy: 10 600 (FM voice, 1 voice) to 69 200 (string and reverb, 4 voices) instructions per block in the emulator;
+  the modal model with 1 voice, 26 000, about 5 Tone voices. One or two MODAL tracks with the rest. The load governor
+  looks after MODAL too.
+- The very first MODAL note after power-on starts about 13 ms late (tables computed over 20 blocks); the reverb of
+  model 5 starts 11 ms after a track becomes MODAL (its memory is cleared over 16 blocks).
+- GATE, PUNCH and FINE do nothing (FINE holds the polyphony). The note is limited to MIDI 0..127, as on Rings.
+- Set MODAL tracks back to an original machine before flashing anything else.
+
+**Origin and license.** Rings by Émilie Gillet, MIT (`LICENSE-Rings`), rewritten in fixed point (the DSP, not the
+UI or the easter egg). Proven against Rings' own code compiled for a computer (`tools/emu/test_modal_dsp.py`: 54 cases,
+median 77 dB of signal to difference) and on the OS's own code in the emulator (`tools/emu/test_modal.py`).
+
+**Status.** Experimental: not yet tested on a Model:Cycles.
+
+### 2.6 LFO 2, 3, 4
 
 **What it does.** Each track gets three more LFOs next to the original one: up to four LFOs on a track at once. Works
 with or without Model-TG.
@@ -386,10 +437,10 @@ rewritten, then removed at Maxime's request on 11/10/2026.
 
 **Status.** Tested on a Model:Cycles on 11/10/2026 (alone, with Model-TG, and with the full set), "ça marche nickel".
 
-### 2.6 Order of the machines in OS 2.0
+### 2.7 Order of the machines in the OS
 
 The guide's rule: the added machines come after Chord; the Sampler is the 7th, the engines follow in the order SD,
-CP, TOY, BITS, SWARM, then MACRO, then ACID last. With everything in OS 2.0 (also the list in the draft `os.json`):
+CP, TOY, BITS, SWARM, then MACRO, ACID, and MODAL last (also the list in `os.json`):
 
 | # | Machine | # | Machine |
 |---|---|---|---|
@@ -397,20 +448,20 @@ CP, TOY, BITS, SWARM, then MACRO, then ACID last. With everything in OS 2.0 (als
 | 07 | Sampler (Model-TG) | 12 | SYSwm |
 | 08 | SDVtg | 13 | MACRO |
 | 09 | CPVtg | 14 | ACID |
-| 10 | SYToy | | |
+| 10 | SYToy | 15 | MODAL |
 
 A project that uses machine 08 or higher only plays the same machine on a firmware with the same layout. The single OS
 fixes this layout for everyone, which removes the "the number depends on what you ticked" problem described all over
 the guide.
 
-### 2.7 Load governor
+### 2.8 Load governor
 
 Not a feature you play, but it shapes every heavy machine above (guide, "Processor load"; notes/25, 30, 36):
 
 - It measures every audio block. Under a sustained high load, voices that are dying out are stopped earlier (below
   −66 dB). If the load stays too high, it fades out the voice heard least in the mix (a muted track first, then the
   quietest), one at a time. A single heavy block does not trigger it.
-- It covers the original machines, the Syntakt engines, MACRO and ACID. It never turns off the Sampler or the track
+- It covers the original machines, the Syntakt engines, MACRO, ACID and MODAL. It never turns off the Sampler or the track
   Model-TG is recording or slice-editing.
 - Advice from the guide when notes get cut: lower the volume of the track you can spare most, mute what you don't
   hear, shorten long decays, or use the delay and reverb less (about 12 % of the processor).
@@ -990,7 +1041,7 @@ pump. The delay and reverb receive the ducked tracks, but their own returns aren
 - On every machine: the stock ones, the Syntakt engines (notes/31 §4.4) and MACRO (notes/43). ACID is not mentioned
   in the sources.
 - Real parameters: p-locks, LFO destinations, saved with the project. The p-lock reload bug is fixed by LFO 2, 3, 4
-  ([2.5](#25-lfo-2-3-4)).
+  ([2.6](#26-lfo-2-3-4)).
 
 ### 6.10 Slide trigs
 

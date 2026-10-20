@@ -194,7 +194,7 @@ def interface(ref, fw, codes, tg):
         kept = b.uc.reg_read(mk.UC_M68K_REG_A1) == 0x12340000 + mk.UC_M68K_REG_A1
         r2 = b.call(0x4004df76, m)
         ids = struct.unpack(">17i", bytes(b.uc.mem_read(r1, REC_LEN))[8:])
-        ok &= kept and r1 == r2 == gs.RECS + 0x60 * k and ids[:6] == (42, ours[m] + 4, *range(ours[m], ours[m] + 4))
+        ok &= kept and r1 == r2 == gs.RECS + gs.REC_STRIDE * k and ids[:6] == (42, ours[m] + 4, *range(ours[m], ours[m] + 4))
         got[m] = ids[:6]
     ok &= refcount(b) == rc + 2 * n and not b.bad
     check(ok, f"enregistrements (0x4004df5c / 0x4004df76) : 0..7 et 0..6 identiques à Model-TG (Sampler compris), "
@@ -244,9 +244,9 @@ def interface(ref, fw, codes, tg):
         filled = [i for i, (k, _, _) in enumerate(marks) if k == "repère plein"]
         ys = [y for _, _, y in marks]
         rows_ok &= len(marks) == nm and filled == [m] and min(x for _, x, _ in marks) >= 64 \
-            and sorted(set(ys)) == sorted(gs.MARKS["y"]) and ys[:gs.MARKS_ROW] == [gs.MARKS["y"][0]] * gs.MARKS_ROW
+            and sorted(set(ys)) == sorted(gs.MARKS["y"]) and ys[:gs.marks_row(nm)] == [gs.MARKS["y"][0]] * gs.marks_row(nm)
         where.append(marks[m][1:])
-    check(rows_ok, f"écran MACHINES : {nm} repères sur 2 lignes dans la moitié droite (x >= 64), les 7 premiers en "
+    check(rows_ok, f"écran MACHINES : {nm} repères sur 2 lignes dans la moitié droite (x >= 64), les {gs.marks_row(nm)} premiers en "
                    f"haut (y = {gs.MARKS['y'][0]}, l'axe y monte), le plein sur la "
                    f"machine choisie (1, 7, {first + 1}, {top + 1} : {where})")
 

@@ -15,18 +15,20 @@ running the emulation proofs need more: see [`DEVELOPMENT.md`](DEVELOPMENT.md).
 
 ```sh
 python3 tools/build.py -i firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx --os \
-  -o build/modded-cycles-os_2.0.1.syx
+  -o build/modded-cycles-os_2.1.syx
 ```
 
 The build applies each tweak's writes to section 3 (the MAIN OS) of your file, checking every `old` byte, appends the
-payloads (Model-TG's code, the Syntakt engines extracted from your Syntakt file, MACRO and ACID), repacks the section
-(aPLib) and re-signs the container (HMAC). It prints the SHA-256 of the patched MAIN OS. For version 2.0.1 it must be:
+payloads (Model-TG's code, the Syntakt engines extracted from your Syntakt file, MACRO, ACID and MODAL), repacks the
+section (aPLib) and re-signs the container (HMAC). It prints the SHA-256 of the patched MAIN OS. For version 2.1 it
+must be:
 
 ```
-2a77d029a3fb113a82241efb468f4b0624b6acdb8d33b4a154d7b2c2b0140041
+7cc8cd0849f6b95cc7744cb177bfae939cc2c5042c5505cac655aa787d9711af
 ```
 
-(2.0, the same OS with its machine payload packed less tightly, was `82a79f45…cca9`.)
+(2.0.1, without MODAL, was `2a77d029…0041`; 2.0, the same with its machine payload packed less tightly,
+`82a79f45…cca9`.)
 
 The same value is the `REF_MAINOS` entry of `docs/flasher/app.js`: the web flasher refuses a build whose MAIN OS
 differs. `--expect-mainos <sha>` makes `build.py` refuse it too. The SHA-256 of the whole `.syx` depends on the
@@ -74,7 +76,15 @@ tools/webflash_smoke.sh firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42
 ```
 
 Some generators compile C with the m68k toolchain and their committed output depends on the compiler version
-(`DEVELOPMENT.md`); `--check` tells you when your toolchain does not reproduce the committed bytes.
+(`DEVELOPMENT.md`); `--check` tells you when your toolchain does not reproduce the committed bytes. The machines
+(MACRO, ACID, MODAL, `gen_macro_syntakt.py`, `gen_acid_combos.py`) are compiled with Ubuntu 24.04's
+`m68k-linux-gnu-gcc` 13.3; the tweak of the OS with MODAL:
+
+```sh
+python3 tools/gen_modal.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx \
+  --eurorack vendor/eurorack [--check]                                        # 31-…-macro-acid-modal.json
+python3 tools/gen_modal.py --tables [--check]                                 # modal_tables.h, LICENSE-Rings only
+```
 
 ## Proving a tweak
 
@@ -84,10 +94,15 @@ alone and with the rest of the OS:
 ```sh
 python3 tools/emu/test_arp.py --cycles firmware/model-cycles_OS1.13.syx
 python3 tools/emu/test_arp.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx \
-  --with model-tg-st,sample-preview-st,trig-hold,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-live-both,mod-settings,lfo-plus,syntakt-tg-sd-cp-toy-bits-swarm-macro-acid
+  --with model-tg-st,sample-preview-st,trig-hold,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-live-both,mod-settings,lfo-plus,syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal
 python3 tools/emu/test_mod_settings.py --cycles firmware/model-cycles_OS1.13.syx \
   --syntakt firmware/Syntakt_OS1.42.syx              # proofs that build the whole OS from os.json themselves
 python3 tools/emu/test_step_rec.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+python3 tools/emu/test_modal_dsp.py --eurorack vendor/eurorack                # MODAL's core against Rings' own code
+python3 tools/emu/test_modal.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx \
+  --eurorack vendor/eurorack [--quick]                                         # MODAL in the OS, byte for byte
+python3 tools/emu/test_payload_pack.py --cycles firmware/model-cycles_OS1.13.syx \
+  --syntakt firmware/Syntakt_OS1.42.syx              # the OS's boot hook unpacks the machines' payload
 ```
 
 The exact runs each proof supports are in its docstring (`python3 tools/emu/test_<mod>.py --help`). The notes in

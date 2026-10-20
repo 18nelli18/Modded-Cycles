@@ -94,7 +94,7 @@ HW_TESTED = set()
 # l'arpégiateur, construite par build.py (même MAIN OS que le flasher), « c bon ça fonctionne nickel » ; l'utilisateur
 # a demandé l'étiquette sans attendre un essai depuis le flasher.
 HW_TESTED_TG = {("sd", "cp", "toy", "bits", "swarm")}
-MAX_EXTRA = 7                # 5 moteurs, MACRO et ACID (notes/54 §11)
+MAX_EXTRA = 8                # 5 moteurs, MACRO, ACID et MODAL (notes/54 §11, notes/74)
 
 # --- Syntakt : fermeture et plages copiées -----------------------------------------------------------------
 # La copie dépend du DERNIER moteur coché (ordre du catalogue) : elle contient tout ce qu'il faut aux moteurs du
@@ -191,6 +191,13 @@ LAYOUT = dict(
 # descripteurs (14 x 32 o chacune avec Model-TG, jusqu'à 0x35be0 < RECS). Jusqu'à 6 machines, rien ne bouge : les
 # firmwares déjà testés gardent leurs octets.
 ROWS7 = dict(ROWSN=0x35860, CCROWSN=0x35a20)
+# 8 machines ajoutées (MODAL en plus, notes/74) : 116 descripteurs (0x1960 o) ; les rangées (15 x 32 o avec Model-TG),
+# puis les enregistrements, plus serrés (0x50 o chacun : 76 o + le drapeau), puis la copie d'Attack, jusqu'à 0x35fec,
+# sous les tables des moteurs (TABLES_AT). Les détours (2 040 o avec ACID) passent à 3 Ko : les données (moins de
+# 800 o pour 15 machines) ne gardent que le dernier Ko avant les descripteurs. La passerelle des moteurs, reprise telle
+# quelle, ne lit pas les données à une adresse fixe (bridge_of relit celles du tweak des moteurs seuls avant set_rows).
+ROWS8 = dict(DATA=0x33c00, ROWSN=0x35960, CCROWSN=0x35b40, RECS=0x35d20, REC_ATK=0x35fa0)
+REC_STRIDE = 0x60            # place d'un enregistrement de machine ajoutée (0x50 au-delà de 7 machines)
 
 
 def set_base(pay):
@@ -203,20 +210,25 @@ def set_base(pay):
 
 
 def set_rows(n):
-    """Rangées de l'écran des paramètres pour n machines ajoutées (ROWS7 au-delà de 6)."""
-    for k in ROWS7:
-        globals()[k] = PAY + (ROWS7[k] if n > 6 else LAYOUT[k])
+    """Rangées de l'écran des paramètres pour n machines ajoutées (ROWS7 au-delà de 6, ROWS8 au-delà de 7) et place
+    des enregistrements."""
+    global REC_STRIDE
+    for k in ("DATA", "ROWSN", "CCROWSN", "RECS", "REC_ATK"):
+        globals()[k] = PAY + (ROWS8[k] if n > 7 else ROWS7[k] if n > 6 and k in ROWS7 else LAYOUT[k])
+    REC_STRIDE = 0x50 if n > 7 else 0x60
 
 
 def check_room(n, nm):
     """Les tables de n machines ajoutées (nm machines en tout) tiennent à leur place."""
     ndesc = g7.NDESC + 5 * n
     for what, end, limit in (("descripteurs", DESCN + ndesc * g7.DSTRIDE, ROWSN), ("rangées", ROWSN + 32 * nm, CCROWSN),
-                             ("rangées CC", CCROWSN + 32 * nm, RECS), ("enregistrements", RECS + 0x60 * n, REC_ATK)):
+                             ("rangées CC", CCROWSN + 32 * nm, RECS),
+                             ("enregistrements", RECS + REC_STRIDE * n, REC_ATK),
+                             ("copie d'Attack", REC_ATK + 76, TABLES_AT)):
         if end > limit:
             raise SystemExit(f"!! {what} jusqu'à {end:#x}, au-delà de {limit:#x}")
-    if nm > 2 * MARKS_ROW:
-        raise SystemExit(f"!! {nm} machines : les repères de l'écran MACHINES n'ont que 2 lignes de {MARKS_ROW}")
+    if nm > 2 * marks_row(nm):
+        raise SystemExit(f"!! {nm} machines : les repères de l'écran MACHINES n'ont que 2 lignes de {marks_row(nm)}")
 
 
 set_base(PAY_ALONE)
@@ -470,16 +482,26 @@ MARKS_ROW = 7
 MARKS = dict(x=80, dx=7, y=(11, 4), w=4, h=4)
 
 
+def marks_row(nm):
+    """Repères par ligne de l'écran MACHINES : 7 (aux x des 7 d'origine) ; 8 au-delà de 14 machines (MODAL, notes/74),
+    de x = 73 à 122, toujours dans la moitié droite."""
+    return MARKS_ROW if nm <= 2 * MARKS_ROW else 8
+
+
+def marks_x(nm):
+    return MARKS["x"] if nm <= 2 * MARKS_ROW else MARKS["x"] - MARKS["dx"]
+
+
 def marks_asm(a, ins, lab, nm):
     """Repères de l'écran MACHINES sur 2 lignes (à la place de la boucle 0x400a26a2..0x400a26f2). Registres de la
     fonction : d2 = contexte de dessin, d3 = machine choisie ; d4, d5, a2, a3 sont rendus par sa fin (moveml)."""
     a.append("\t.globl\tmarks"); lab("marks")
     ins("lea 0x40070c4e, %a2"); ins("lea 0x40070efc, %a3"); ins("clr.l %d5")                 # creux, plein
     lab("1"); ins("move.l %d5, %d4"); ins(f"moveq #{MARKS['y'][0]}, %d1")
-    ins(f"moveq #{MARKS_ROW}, %d0"); ins("cmp.l %d0, %d4"); ins("blt.s 2f")
+    ins(f"moveq #{marks_row(nm)}, %d0"); ins("cmp.l %d0, %d4"); ins("blt.s 2f")
     ins("sub.l %d0, %d4"); ins(f"moveq #{MARKS['y'][1]}, %d1")
     lab("2"); ins("move.l %d4, %d0"); ins("lsl.l #3, %d0"); ins("sub.l %d4, %d0")             # 7 x colonne
-    ins(f"add.l #{MARKS['x']}, %d0")
+    ins(f"add.l #{marks_x(nm)}, %d0")
     ins("move.l %d1, %d4"); ins(f"addq.l #{MARKS['h']}, %d4")
     ins("pea 0x1"); ins("move.l %d4, -(%sp)"); ins("move.l %d0, -(%sp)"); ins("move.l %d1, -(%sp)")
     ins(f"subq.l #{MARKS['w']}, %d0"); ins("move.l %d0, -(%sp)"); ins("move.l %d2, -(%sp)")
@@ -489,11 +511,13 @@ def marks_asm(a, ins, lab, nm):
     ins("bne.s 1b"); ins("jmp 0x400a26f2")
 
 
-def detours_asm(n, images, firsts, tg=None, lofi=None):
+def detours_asm(n, images, firsts, tg=None, lofi=None, fine=()):
     """Détours pour n machines ajoutées (index 6..5+n), descripteurs firsts[i]..firsts[i]+4 (5 par machine).
     Avec Model-TG (tg : ses symboles), les machines ajoutées vont de 7 à 6+n (6 est son Sampler) et nos détours
     passent la main aux siens pour le reste (notes/31). lofi : rang de MACRO parmi les machines ajoutées (None
-    sans MACRO) ; FUNC + PITCH y règle FINE, son lo-fi (lofi_asm, notes/55 §8)."""
+    sans MACRO) ; FUNC + PITCH y règle FINE, son lo-fi (lofi_asm, notes/55 §8). fine : [(rang, réglage)] des
+    machines dont FUNC + un potard règle FINE avec leurs propres fonctions (réglage : potard, step, fmt, draw,
+    adresses ; MODAL, FUNC + SHAPE : sa polyphonie, notes/74), même mécanique que le lo-fi de MACRO."""
     last = 76 + 5 * n                                    # 1er descripteur après ceux des machines ajoutées
     first = TG_FIRST if tg else 6                        # index de la 1re machine ajoutée
     top = first + n - 1                                  # plus grand index de machine
@@ -573,7 +597,7 @@ def detours_asm(n, images, firsts, tg=None, lofi=None):
         lab("2"); ins("moveq #1, %d0")
         lab("3"); ins("moveq #76, %d1"); ins("muls.l %d1, %d0"); ins("add.l #REC_BASE, %d0"); ins("rts")
         for i in range(n):
-            lab(f"rec_{i}"); ins(f"lea {RECS + 0x60 * i:#x}, %a0"); ins(f"moveq #{firsts[i] - 51}, %d0"); ins("bra.w rec_build")
+            lab(f"rec_{i}"); ins(f"lea {RECS + REC_STRIDE * i:#x}, %a0"); ins(f"moveq #{firsts[i] - 51}, %d0"); ins("bra.w rec_build")
     lab("rec_build")
     ins("tst.b 76(%a0)"); ins("bne.w 9f"); ins("move.l %d2, -(%sp)"); ins("move.l %a2, -(%sp)"); ins("movea.l %a0, %a2")
     ins("move.l %d0, %d2"); ins("pea REC_SNARE"); ins("move.l %a2, -(%sp)"); ins("jsr 0x400f8f02"); ins("addq.l #8, %sp")
@@ -585,8 +609,9 @@ def detours_asm(n, images, firsts, tg=None, lofi=None):
     ins("moveq #1, %d0"); ins("move.b %d0, 76(%a2)"); ins("movea.l %a2, %a0"); ins("move.l (%sp)+, %a2")
     ins("move.l (%sp)+, %d2")
     lab("9")
-    if lofi is not None:                                 # MACRO : son entrée 16 (jamais lue par l'OS) = FINE
-        ins(f"cmpa.l #{RECS + 0x60 * lofi:#x}, %a0"); ins("bne.s 8f"); ins(f"moveq #{FTUN}, %d1")
+    for rank in ([lofi] if lofi is not None else []) + [r for r, _ in fine]:
+        # MACRO, MODAL : leur entrée 16 (jamais lue par l'OS) = FINE
+        ins(f"cmpa.l #{RECS + REC_STRIDE * rank:#x}, %a0"); ins("bne.s 8f"); ins(f"moveq #{FTUN}, %d1")
         ins("move.l %d1, 72(%a0)")
         lab("8")
     ins("move.l %a0, %d0"); ins("rts")
@@ -598,6 +623,14 @@ def detours_asm(n, images, firsts, tg=None, lofi=None):
     ins("bcc.s 1f"); ins("moveq #0, %d0"); ins("rts")                    # hors limites : les potards de KICK
     lab("1"); ins(f"moveq #{first}, %d1"); ins("cmp.l %d1, %d0")
     ins("blt.s 2f"); ins(f"lea {DATA + 12 * (first + n):#x}, %a1")
+    for rank, f in fine:
+        # même chose que le lo-fi de MACRO (plus bas), pour le potard f["knob"] et les fonctions de la machine
+        ins(f"moveq #{first + rank}, %d1"); ins("cmp.l %d1, %d0"); ins("bne.s 7f"); ins("tst.b %d5"); ins("beq.s 7f")
+        ins(f"moveq #{f['knob']}, %d1"); ins("cmp.l %d1, %d2"); ins("bne.s 7f"); ins("moveq #16, %d3")
+        for k, off in (("step", 0x50), ("fmt", 0x20), ("draw", 0x30)):
+            ins(f"move.l #{f[k]:#x}, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + off:#x}")
+        ins("bra.s 2f")
+        lab("7")
     if lofi is not None:
         # MACRO, FUNC tenu, potard PITCH (d5 : FUNC, d2 : potard, d3 = potard - 2 : l'entrée lue) : l'entrée 16 de
         # son enregistrement, FINE (0x4001e8e2 : avec FUNC, seuls les potards 14 et 15 lisent une autre entrée).
@@ -784,7 +817,7 @@ def tg_records(a, ins, lab, n, firsts, first, top, tg):
         ins(f"jsr {tg[hook]:#x}"); ins("addq.l #4, %sp"); ins("bra.w tg_sync")
     for i in range(n):
         lab(f"tg_rec_{i}"); ins("move.l %a0, -(%sp)"); ins("move.l %a1, -(%sp)")
-        ins(f"lea {RECS + 0x60 * i:#x}, %a0"); ins(f"moveq #{firsts[i] - 51}, %d0"); ins("bra.w tg_ours")
+        ins(f"lea {RECS + REC_STRIDE * i:#x}, %a0"); ins(f"moveq #{firsts[i] - 51}, %d0"); ins("bra.w tg_ours")
     lab("tg_ours")
     ins("move.l %a0, -(%sp)"); ins("move.l %d0, -(%sp)")
     ins("moveq #0, %d1"); ins(f"jsr {tg['apply_names']:#x}")              # libellés d'origine
@@ -1124,6 +1157,11 @@ def own_code(tmp, machines, rnd_at, lay, tg, own):
     return blobs, br["syms"], stubs, ssyms
 
 
+def fine_list(machines):
+    """[(rang, réglage)] des machines ajoutées dont FUNC + un potard règle FINE (detours_asm, fine)."""
+    return [(i, m["fine"]) for i, m in enumerate(machines) if m.get("fine")]
+
+
 def lofi_index(machines):
     """Rang de MACRO (lofi) parmi les machines ajoutées, pour detours_asm ; None sans elle (ACID peut la suivre)."""
     lofi = [i for i, m in enumerate(machines) if m.get("lofi")]
@@ -1135,7 +1173,7 @@ def lofi_index(machines):
 def detours_text(machines, syms, rnd_at, tg):
     """Texte des détours (à STUBS) pour ces machines ajoutées, comme compile_code."""
     return (detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))], tg,
-                        lofi=lofi_index(machines))
+                        lofi=lofi_index(machines), fine=fine_list(machines))
             + probe_asm(syms) + (dispatch_tg_asm(syms, rnd_at, tg) if tg else dispatch_asm(syms, rnd_at)))
 
 
@@ -1149,7 +1187,7 @@ def assemble_detours(tmp, machines, syms, rnd_at, tg, text=None):
     ssyms = {p[-1]: int(p[0], 16) for p in (l.split() for l in gx.run([gx.CROSS + "nm", str(e)]).splitlines()) if len(p) == 3}
     stubs = b.read_bytes()
     if STUBS + len(stubs) > DATA:
-        raise SystemExit("!! détours trop grands")
+        raise SystemExit(f"!! détours trop grands : {len(stubs)} o, {STUBS:#x}..{DATA:#x}")
     return stubs, ssyms
 
 
