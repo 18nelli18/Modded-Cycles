@@ -17,7 +17,7 @@ window.MC_TWEAKS = {
  },
  "os": {
   "name": "Modded Cycles OS",
-  "version": "2.0",
+  "version": "2.0.1",
   "status": "experimental",
   "key": "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid",
   "tweaks": [
@@ -4765,7 +4765,7 @@ window.MC_TWEAKS = {
      ]
     ],
     "compress": "aplib",
-    "stored": 247441
+    "stored": 230083
    },
    "symbols": {
     "macro_update": "0x46742000",

@@ -323,10 +323,69 @@ function aplibTail(w, data, start, lastOff) {
 }
 
 // Charge utile rangée compressée dans l'image (append.compress === "aplib", notes/50) : flux aPLib sans l'en-tête de
-// 8 o, même compresseur que la partie ajoutée (tools/aplib_grow.py pack), décompressé au démarrage (stub.S, APLIB).
+// 8 o, décompressé au démarrage (stub.S, APLIB). Même algorithme octet pour octet que pack de tools/aplib_grow.py
+// (notes/50 §10) : chaînes de hachage sur 3 octets, réutilisation du dernier décalage, correspondances de 2 octets
+// proches, coût exact en bits, un pas d'attente.
+const PACK_DEPTH = 48, PACK_NEAR2 = 128;
+const gbits = (v) => 2 * (31 - Math.clz32(v));
+function mbits(off, n, last) {
+  let b = off === last ? 3 : 9 + gbits((off + OFFSET_BIAS) >> 8);
+  const base = n - 1 - (off > FAR_THRESHOLD ? 1 : 0);
+  return b + (base <= 3 ? 2 : 2 + gbits(base - 2));
+}
 function aplibPack(data) {
+  const n = data.length, head = new Map(), prev = new Int32Array(n).fill(-1);
+  let ins = 0;
+  const key = (i) => (data[i] << 16) | (data[i + 1] << 8) | data[i + 2];
+  const mlen = (c, i, limit) => { let L = 0; while (L < limit && data[c + L] === data[i + L]) L++; return L; };
+  function best(i, last) {
+    const limit = Math.min(n - i, TAIL_MAX);
+    let bg = 0, bo = 0, bl = 0;
+    if (limit < 2) return [0, 0, 0];
+    if (last <= i) {
+      const L = mlen(i - last, i, limit);
+      if (L >= (last > FAR_THRESHOLD ? 3 : 2)) {
+        const g = 9 * L - mbits(last, L, last);
+        if (g > bg) { bg = g; bo = last; bl = L; }
+      }
+    }
+    if (limit >= 3) {
+      for (; ins < i; ins++) {
+        if (ins + 3 <= n) { const k = key(ins), h = head.get(k); prev[ins] = h === undefined ? -1 : h; head.set(k, ins); }
+      }
+      const h = head.get(key(i));
+      let c = h === undefined ? -1 : h, d = 0;
+      while (c >= 0 && d < PACK_DEPTH) {
+        const off = i - c;
+        if (bl < limit && data[c + bl] === data[i + bl]) {
+          const L = mlen(c, i, limit);
+          if (L >= (off > FAR_THRESHOLD ? 3 : 2)) {
+            const g = 9 * L - mbits(off, L, last);
+            if (g > bg) { bg = g; bo = off; bl = L; }
+          }
+        }
+        c = prev[c]; d++;
+      }
+    }
+    if (bl < 2) {
+      for (let off = 1, m = Math.min(i, PACK_NEAR2); off <= m; off++) {
+        if (data[i - off] === data[i] && data[i - off + 1] === data[i + 1]) {
+          const g = 18 - mbits(off, 2, last);
+          if (g > bg) { bg = g; bo = off; bl = 2; }
+          break;
+        }
+      }
+    }
+    return [bg, bo, bl];
+  }
   const w = new _Writer();
-  aplibTail(w, data, 0, 1);
+  let last = 1, i = 0;
+  while (i < n) {
+    let [g, off, L] = best(i, last);
+    if (g > 0 && i + 1 < n && best(i + 1, last)[0] > g + 9) g = 0;
+    if (g > 0) { w.match(off, L, last); last = off; i += L; }
+    else { w.literal(data[i]); i++; }
+  }
   w.end();
   return Uint8Array.from(w.o.slice(SECT_HDR));
 }

@@ -1,7 +1,7 @@
 {
   "_comment": "Modded Cycles OS: the one firmware the web flasher and tools/build.py --os build. Edit this file to change what the OS contains; then run tools/gen_flasher_tweaks.py and tools/ref_mainos.py (see DEVELOPMENT.md).",
   "name": "Modded Cycles OS",
-  "version": "2.0",
+  "version": "2.0.1",
   "status": "experimental",
   "base": { "device": "Model:Cycles", "os": "1.13" },
   "needs": ["cycles", "syntakt"],

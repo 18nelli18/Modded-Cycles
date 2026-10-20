@@ -142,7 +142,7 @@ async function settle(w) {
   for (let i = 0; i < 200 && w.MCFlasherApp.state.building; i++) await wait(50);
   await wait(60);
 }
-const OS_FILE = "modded-cycles-os_2.0.syx";
+const OS_FILE = "modded-cycles-os_2.0.1.syx";
 
 async function main() {
   let fail = 0;
@@ -216,7 +216,7 @@ async function main() {
       && /elektron\.se\/support-downloads\/syntakt/.test(doc.getElementById("step-file").innerHTML)
       && /Syntakt OS in step 2/.test(textOf(doc, "#mod-syntakt .need")) && text(doc, "h2s") === "Load your official OS files",
       "the OS needs the Syntakt file: its drop zone and download link are shown at once, the engines row says so, step 2 says files");
-    check(w.MCFlasherApp.chosenTweaks().map((x) => x.id).join("+") === os.key && w.MCFlasherApp.chosenLabels().join() === "Modded Cycles OS 2.0",
+    check(w.MCFlasherApp.chosenTweaks().map((x) => x.id).join("+") === os.key && w.MCFlasherApp.chosenLabels().join() === "Modded Cycles OS 2.0.1",
       "the page builds the OS and nothing else");
     // Details: opens and closes, holds the status and the guide link; the engines row lists the five engines
     const click = async (el) => { el.click(); await wait(5); };
@@ -396,7 +396,7 @@ async function main() {
     w.MC_TWEAKS.os.key = w.MC_TWEAKS.os.tweaks.join("+");
     app.loadOs(raw, "synth.syx");                                  // a new file: the build cache starts afresh
     await settle(w);
-    check(app.state.fw && app.state.fw.kind === "built" && /Firmware ready: Modded Cycles OS 2\.0\./.test(text(doc, "file-status"))
+    check(app.state.fw && app.state.fw.kind === "built" && /Firmware ready: Modded Cycles OS 2\.0\.1\./.test(text(doc, "file-status"))
       && app.state.fw.name === OS_FILE && doc.getElementById("drop3-wrap").hidden && !app.state.fw.ref && !app.state.fw.modsRef,
       "firmware built automatically (development OS on the synthetic image): " + text(doc, "file-status").slice(0, 60));
     app.setMode("restore");
@@ -533,7 +533,7 @@ async function main() {
       await wait(150);
       doc.getElementById("ack").click();
       await wait(20);
-      check(!doc.getElementById("flash").disabled && /Modded Cycles OS 2\.0 via Elektron Model:Cycles/.test(text(doc, "summary")), "ready: " + text(doc, "summary"));
+      check(!doc.getElementById("flash").disabled && /Modded Cycles OS 2\.0\.1 via Elektron Model:Cycles/.test(text(doc, "summary")), "ready: " + text(doc, "summary"));
       doc.getElementById("flash").click();
       await untilSent(w);
       check(app.state.finished === "ok" && same(dev.received, f.raw) && dev.bad.length === 0
@@ -745,7 +745,7 @@ async function main() {
     await settle(w);
     let f = app.state.fw;
     check(f && f.kind === "built" && f.machine === "smp" && f.raw[4] === 0x0f && f.ref && f.sha === app.REF_MAINOS[key]
-      && f.name === "modded-cycles-os_2.0_for-samples_smp-os.syx",
+      && f.name === "modded-cycles-os_2.0.1_for-samples_smp-os.syx",
       "the OS for a Model:Samples on its OS: same MAIN OS as the Model:Cycles build, Samples packing (" + (f ? f.name : "") + ")");
     check(/Packed for your Model:Samples \(on its own OS\)/.test(text(doc, "file-status")), "status line: " + text(doc, "file-status").slice(-60));
     doc.getElementById("allow").click();
@@ -772,7 +772,7 @@ async function main() {
     await settle(w);
     f = app.state.fw;
     check(f && f.machine === "cos" && f.raw[4] === 0x11 && f.raw[8] === 0x0c && f.sha === app.REF_MAINOS[key] && !doc.getElementById("mach-w-cos").hidden
-      && f.name === "modded-cycles-os_2.0_for-samples_cyc-os.syx",
+      && f.name === "modded-cycles-os_2.0.1_for-samples_cyc-os.syx",
       "Model:Samples already on the Cycles OS: Cycles packing with the Samples key (" + (f ? f.name : "") + ")");
     await wait(150);
     check(!doc.getElementById("flash").disabled, "ready for a machine answering Model:Cycles: " + text(doc, "missing"));

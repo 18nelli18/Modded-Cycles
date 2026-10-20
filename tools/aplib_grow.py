@@ -5,6 +5,9 @@ ajouter d'octets après la fin. repack_grow fait la même chose pour la partie d
 partie ajoutée avec un compresseur glouton simple (correspondances de 4 octets et plus, dans la partie
 ajoutée seulement). Mêmes règles d'encodage que _Writer.match : décalage >= 1, longueur >= 2
 (>= 3 au-delà de FAR_THRESHOLD), réutilisation du dernier décalage quand il est égal.
+
+pack compresse une charge utile rangée compressée dans l'image (notes/50 §10) : il cherche mieux (chaînes de
+hachage, correspondances courtes, dernier décalage, un pas d'attente), car chaque octet y compte sous 0x40200000.
 """
 from mtlib import aplib
 
@@ -73,12 +76,97 @@ def repack_grow(data, ops, dirty, orig_len):
     return bytes(body)
 
 
+# Compresseur de la charge utile (notes/50 §10) : chaînes de hachage sur 3 octets (PACK_DEPTH candidats, du plus
+# proche au plus lointain), réutilisation du dernier décalage, correspondances de 2 octets proches, coût exact en bits
+# de chaque correspondance, et un pas d'attente (« lazy ») : si la position suivante gagne plus d'un littéral de plus,
+# on y va. Même format, même décompresseur (stub.S) ; 230 000 o au lieu de 247 441 pour la charge utile de l'OS 2.0.
+PACK_DEPTH = 48
+PACK_NEAR2 = 128
+
+
+def _gbits(v):
+    return 2 * (v.bit_length() - 1)
+
+
+def _mbits(off, n, last):
+    """Bits d'une correspondance, comme _Writer.match les écrit."""
+    b = 3 if off == last else 9 + _gbits((off + aplib.OFFSET_BIAS) >> 8)
+    base = n - 1 - (1 if off > aplib.FAR_THRESHOLD else 0)
+    return b + (2 if base <= 3 else 2 + _gbits(base - 2))
+
+
 def pack(data):
-    """Flux aPLib (même variante, même compresseur glouton que la partie ajoutée), SANS l'en-tête de 8 o : charge
-    utile rangée compressée dans l'image (append.compress = "aplib", notes/50), décompressée au démarrage par
-    tools/machines/syntakt_bridge/stub.S (APLIB). Même algorithme octet pour octet que aplibPack de
-    docs/flasher/builder.js."""
+    """Flux aPLib (même variante), SANS l'en-tête de 8 o : charge utile rangée compressée dans l'image
+    (append.compress = "aplib", notes/50), décompressée au démarrage par tools/machines/syntakt_bridge/stub.S (APLIB).
+    Même algorithme octet pour octet que aplibPack de docs/flasher/builder.js."""
+    n = len(data)
+    far = aplib.FAR_THRESHOLD
+    head = {}
+    prev = [-1] * n
+    ins = 0
+
+    def mlen(c, i, limit):
+        L = 0
+        while L + 64 <= limit and data[c + L:c + L + 64] == data[i + L:i + L + 64]:
+            L += 64
+        while L < limit and data[c + L] == data[i + L]:
+            L += 1
+        return L
+
+    def best(i, last):
+        """(gain en bits, décalage, longueur) de la meilleure correspondance en i ; gain 0 : aucune."""
+        nonlocal ins
+        limit = min(n - i, MAX_MATCH)
+        bg = bo = bl = 0
+        if limit < 2:
+            return 0, 0, 0
+        if last <= i:
+            L = mlen(i - last, i, limit)
+            if L >= (3 if last > far else 2):
+                g = 9 * L - _mbits(last, L, last)
+                if g > bg:
+                    bg, bo, bl = g, last, L
+        if limit >= 3:
+            while ins < i:
+                if ins + 3 <= n:
+                    k = data[ins:ins + 3]
+                    prev[ins] = head.get(k, -1)
+                    head[k] = ins
+                ins += 1
+            c = head.get(data[i:i + 3], -1)
+            d = 0
+            while c >= 0 and d < PACK_DEPTH:
+                off = i - c
+                if bl < limit and data[c + bl] == data[i + bl]:
+                    L = mlen(c, i, limit)
+                    if L >= (3 if off > far else 2):
+                        g = 9 * L - _mbits(off, L, last)
+                        if g > bg:
+                            bg, bo, bl = g, off, L
+                c = prev[c]
+                d += 1
+        if bl < 2:
+            for off in range(1, min(i, PACK_NEAR2) + 1):
+                if data[i - off] == data[i] and data[i - off + 1] == data[i + 1]:
+                    g = 18 - _mbits(off, 2, last)
+                    if g > bg:
+                        bg, bo, bl = g, off, 2
+                    break
+        return bg, bo, bl
+
     w = aplib._Writer()
-    _tail(w, data, 0, 1)
+    last = 1
+    i = 0
+    while i < n:
+        g, off, L = best(i, last)
+        if g > 0 and i + 1 < n and best(i + 1, last)[0] > g + 9:
+            g = 0
+        if g > 0:
+            w.match(off, L, last)
+            last = off
+            i += L
+        else:
+            w.literal(data[i])
+            i += 1
     w.end()
     return bytes(w.o[aplib.SECT_HDR:])
