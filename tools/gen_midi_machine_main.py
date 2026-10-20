@@ -31,6 +31,7 @@ def main():
  html=html.replace('MIDI Out machine controls and test guide','MIDI Out machine controls').replace('Commandes et guide de test MIDI Out','Commandes MIDI Out')
  html=html.replace('Choose mods','Features').replace('Choisir les mods','Fonctions')
  html=html.replace('Pad Setup', 'Mod Setup').replace('dans Pad Setup sur l’appareil.', 'dans Mod Setup sur l’appareil.')
+ html=re.sub(r'<p class="quick-reference"><a data-l="en" href="quick-reference\.md[^\"]*" download>.*?</p>', '', html, count=1)
  html=html.replace('<head>','<head><style>.super-search,.super-toolbar,.super-columns,#select-all-note,.mods-lede,#tab-samples{display:none!important}.fixed-features{max-width:850px}.fixed-features li{margin:.8em 0}</style>',1)
  listing='<div class="fixed-features"><h3><span data-l="en">Included features</span><span data-l="fr">Fonctions incluses</span></h3><p><span data-l="en">One complete firmware. All features below are included. USB audio starts in six-channel mode; switch between six-channel and standard stereo from Mod Setup on the device.</span><span data-l="fr">Un firmware complet. Toutes les fonctions ci-dessous sont incluses. L’audio USB demarre en six canaux ; choisir six canaux ou stereo standard dans Mod Setup sur l’appareil.</span></p><ul>'
  listing+=''.join('<li><span data-l="en">'+en+'</span><span data-l="fr">'+fr+'</span></li>' for en,fr in FEATURES)

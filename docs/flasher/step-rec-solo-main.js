@@ -1,7 +1,7 @@
 // Ajoute l'enregistrement pas a pas et le solo au firmware fixe principal.
 // Le payload est range dans la plage libre deja reservee a la selection des machines.
 (()=>{
-const a=window.MCFlasherApp,b=window.MCBuilder,D=window.MCStepRecSoloData,BASE=0x40000400;
+const a=window.MCFlasherApp,b=window.MCBuilder,D=window.MCStepRecSoloData,bootMeta=window.MCBeatRepeat?.boot,BASE=0x40000400;
 const number=x=>typeof x==='string'?parseInt(x,16):x;
 const hex=x=>(x>>>0).toString(16).padStart(8,'0');
 const hash=x=>b.hex(b.sha256(x));
@@ -29,7 +29,7 @@ window.MCStepRecSoloReady=window.MCMidiSafetyReady.then(()=>{
   beat.append.parts.push({dest:runtime.dest,hex:stepHex},{dest:D.solo.dest,hex:soloHex});
   const partEnd=Math.max(0,...beat.append.parts.filter(p=>p.hex).map(p=>number(p.dest)+p.hex.length/2));
   beat.append.size=Math.max(soloAt+soloHex.length/2,partEnd)-beatStart;
-  const boot=window.MCBeatRepeat.boot,loader=beat.writes.find(w=>w.off+BASE===boot.at);
+  const boot=bootMeta,loader=beat.writes.find(w=>w.off+BASE===boot.at);
   if(!loader)throw Error('Step Recorder: beat-repeat boot loader missing');
   const bootCode=b.fromHex(loader.new);
   new DataView(bootCode.buffer).setUint32(boot.symbols.br_boot_size,beat.append.size,false);

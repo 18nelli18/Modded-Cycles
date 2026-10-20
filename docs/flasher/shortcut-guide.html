@@ -1,191 +1,59 @@
-<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Feature and shortcut overview — Supermodel</title><style>body{margin:0;background:#f4f2eb;color:#20241f;font:16px/1.6 system-ui,sans-serif}main,nav{max-width:1100px;margin:auto;padding:24px}nav{display:flex;gap:16px;align-items:center}button,a{color:inherit}button{padding:8px 16px;border:1px solid #777;border-radius:5px;background:white;cursor:pointer}h1{font-size:clamp(30px,5vw,52px);line-height:1.1}h2{margin-top:48px;border-bottom:2px solid #39493b;padding-bottom:10px}h3{margin-top:30px}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:15px}th,td{text-align:left;border-bottom:1px solid #bbb;padding:12px;vertical-align:top}th{background:#dfe7dc}td:nth-child(2){font-weight:650;min-width:190px}html[lang=en] [data-l=fr],html[lang=fr] [data-l=en]{display:none}@media print{nav{display:none}body{background:white;font-size:10pt}main{padding:0}h2{break-after:avoid;margin-top:20px}tr{break-inside:avoid}table{font-size:9pt}a{color:inherit;text-decoration:none}}</style><nav><a href="./">Flasher</a><button onclick="document.documentElement.lang='en'">English</button><button onclick="document.documentElement.lang='fr'">Francais</button><button onclick="window.print()">Print / Imprimer</button></nav><main><article data-l="en"><h1>Feature and shortcut overview</h1>
-<p>A.V.’s Supermodel Edition · 18 October 2026</p>
-<p>Added gestures only; stock-style transport, copy, clear and paste actions are omitted.</p>
-<p>Install the relevant feature first. Hold the first button while pressing or turning the next control. TRIG means a step key; pad means a track pad; DATA means LEVEL/DATA. MACHINES is the physical button sometimes called PRESET in sampler instructions.</p>
-<h2>Current feature overview</h2>
-<p>Main flasher 1.83 · updated 18 October 2026. Install only the features you need; the flasher checks compatible combinations. <a href="../flasher-supermodel-909/">Supermodel 909 Edition</a> has its own selection and release.</p>
-<div class="table-wrap"><table>
-<tr><th>Feature</th><th>Current behavior</th></tr>
-<tr><td>Added machines</td><td>MACRO, ACID, WAVE, TINY, RETROSYN and the selectable Syntakt-derived engines. Syntakt engines require your own Syntakt OS file.</td></tr>
-<tr><td>Swarm LITE</td><td>Replaces the seven-oscillator Swarm with three oscillators: fundamental plus two detuned saws. Lower CPU load, with a leaner and possibly quieter sound; heavy arrangements can still click.</td></tr>
-<tr><td>Sample Wizard</td><td>Independent sampler with sample locks, playback modes, slicing and resampling. Sample Preview is hardware tested. Model-TG is retired from the main flasher.</td></tr>
-<tr><td>RETROSYN / ChordKeys</td><td>Six retro oscillator types; ChordKeys adds scale-based chord playing and voicings. Choose any combination of the added machines; only checked machines appear. Sample Wizard is optional.</td></tr>
-<tr><td>Per-track filter / Synth Attack</td><td>Added cutoff, resonance and attack controls; filter parameter locks and Control All. The released filter includes the repair for distortion after switching away from Sample Wizard.</td></tr>
-<tr><td>Control All Config / Beat Repeat</td><td>Choose included audio tracks; momentary repeat across sixteen divisions, with a brief division popup.</td></tr>
-<tr><td>MIDI Out Bank — experimental</td><td>Six parallel MIDI lanes with CC assignments/locks, slides, retrigger/arp, chance, two MIDI LFOs and project sidecar saving. Optional and installable without beat repeat. Beat repeat can also be installed without MIDI Out Bank. Outside record mode all available pages are lit and the playing page blinks. In record mode the selected page stays solid and the playing page blinks. Normal-mode entry inherits A-side selected page. Normal length is shared with A-side and editable from B: FUNC + PAGE opens Length without entering edit mode; press DATA then turn for exact length, or press PAGE for 16-step sizes regardless of edit selection. Per-track mode keeps independent MIDI lane lengths.</td></tr>
-<tr><td>Sequence Genie / SCRAMBLE</td><td>Generate or mutate sequences, queue at Loop/Page boundaries, and randomize audio parameters or B-side CCs.</td></tr>
-<tr><td>Arpeggiator / Second LFO</td><td>Held-note arpeggiation and an additional modulation page. Oct 0 cycles only held notes; 1–3 add octave copies. Hardware confirmed on both sides.</td></tr>
-<tr><td>Performance and editing</td><td>Latching mutes, step preview, slide trigs, scrolling names, three-line browser, numeric volume/pan, dim trigless steps and trig-removal grace.</td></tr>
-<tr><td>Routing / tempo / startup</td><td>Six-channel USB audio, combined MIDI OUT + THRU, tempo up to 546 BPM and a choice of startup animation.</td></tr>
-</table></div>
-<p><strong>Saving:</strong> hold <strong>FUNC + SETTINGS</strong> for the restored stock permanent-save action. The confirmed repair also prevents FUNC remaining latched when leaving the save menu. For MIDI data, stop playback before saving and wait for <strong>MIDI SAVED</strong>. Saved MIDI loads <strong>only when entering B-side, with playback stopped</strong>; sidecar files are outside Elektron SysEx backups.</p>
-<p><strong>Diagnostics:</strong> CPU/peak/CUT displays belong to test builds only and are absent from main.</p>
-<h2>Performance and sound</h2>
-<div class="table-wrap"><table>
-<tr><th>Feature</th><th>Gesture</th><th>Result</th></tr>
-<tr><td>Control All Config</td><td>TRACK + TRIG 1–6</td><td>Include or exclude tracks from Control All. The selected track can also be excluded. Choices reset on power-off.</td></tr>
-<tr><td>Control All Beat Repeat</td><td>Hold TRACK + RETRIG, then hold TRIG 1–16</td><td>Repeat the included audio tracks. The newest held TRIG chooses the division and shows a brief popup. Release the division pad or either modifier to stop. Both modifiers must stay held.</td></tr>
-<tr><td>Latching mute</td><td>Hold TRACK, tap FUNC</td><td>Keep mute mode open. Tap FUNC to leave.</td></tr>
-<tr><td>Trig preview</td><td>While stopped or paused, hold TRIG + PAGE</td><td>Audition that step with its note and locks.</td></tr>
-<tr><td>Audio slide trigs</td><td>SETTINGS + TRIG</td><td>Toggle a parameter slide on the step.</td></tr>
-<tr><td>Synth Attack</td><td>MACHINES + DECAY</td><td>Set the added attack control on supported synth/drum tracks.</td></tr>
-<tr><td>Per-track filter</td><td>MACHINES + SWEEP / CONTOUR</td><td>Cutoff / resonance. Hold TRACK as well for Control All over included audio tracks. Neutral is maximum cutoff and zero resonance.</td></tr>
-<tr><td>Pad selection mode</td><td>Hold SETTINGS + TRACK</td><td>Press DATA, then turn to choose Silent or Stock; BACK exits. Resets to Silent after reboot.</td></tr>
-<tr><td>MACRO fine tune</td><td>SETTINGS + PITCH on MACRO</td><td>Fine pitch adjustment saved with the sound. Plain PITCH keeps stock behavior; FUNC + PITCH stays Lo-Fi.</td></tr>
-<tr><td>MACRO lo-fi</td><td>FUNC + PITCH on a MACRO track</td><td>Left: 46K–4K sample rate; right: 12B–2B bit depth; centre: OFF. The value popup shows the setting.</td></tr>
-</table></div>
-<h3>Beat repeat divisions</h3>
-<div class="table-wrap"><table>
-<tr><th>TRIG</th><th>Division</th><th>TRIG</th><th>Division</th></tr>
-<tr><td>1</td><td>1/64</td><td>9</td><td>3/16</td></tr>
-<tr><td>2</td><td>1/48</td><td>10</td><td>1/4</td></tr>
-<tr><td>3</td><td>1/32</td><td>11</td><td>1/3</td></tr>
-<tr><td>4</td><td>1/24</td><td>12</td><td>3/8</td></tr>
-<tr><td>5</td><td>1/16</td><td>13</td><td>1/2</td></tr>
-<tr><td>6</td><td>1/12</td><td>14</td><td>2/3</td></tr>
-<tr><td>7</td><td>1/8</td><td>15</td><td>3/4</td></tr>
-<tr><td>8</td><td>1/6</td><td>16</td><td>1 bar</td></tr>
-</table></div>
-<p>Long audio slices halve at slow tempos to fit the history buffer. Beat repeat affects internal audio; it does not repeat outgoing MIDI notes.</p>
-<h2>Sequence Genie, SCRAMBLE and modulation</h2>
-<div class="table-wrap"><table>
-<tr><th>Feature</th><th>Gesture</th><th>Result</th></tr>
-<tr><td>Sequence Genie</td><td>SETTINGS + PAGE</td><td>Open the generator for the selected audio track or B MIDI lane. DATA selects; click, turn, click to edit. Generate is first; Queue is second. Loop waits for the selected track’s next loop, Page for the next 16-step page.</td></tr>
-<tr><td>A-side SCRAMBLE</td><td>SETTINGS + TRACK</td><td>Short tap, then release: randomize four synthesis controls. Sampler tracks are excluded.</td></tr>
-<tr><td>A-side step SCRAMBLE</td><td>Hold TRIG(s), then SETTINGS + TRACK</td><td>Toggle fresh randomized values on those steps each pass, retaining the base sound.</td></tr>
-<tr><td>B-side SCRAMBLE</td><td>SETTINGS + TRACK</td><td>Randomize the selected lane’s assigned MIDI CC values.</td></tr>
-<tr><td>Second LFO</td><td>Press LFO twice</td><td>Open LFO 2. On its page, LFO SPEED edits LFO 2.</td></tr>
-<tr><td>LFO 2 quick assignment</td><td>On A-side LFO 2, hold LFO and turn a parameter knob</td><td>Select that destination; further turning adjusts signed depth.</td></tr>
-<tr><td>Scale Lock</td><td>FUNC + PAGE</td><td>Access added scale/key settings with the performance support installed.</td></tr>
-<tr><td>Arpeggiator / ChordKeys settings</td><td>FUNC + RETRIG</td><td>Access the added direction/octave or ChordKeys options, according to the installed feature.</td></tr>
-<tr><td>Arpeggiator performance</td><td>Hold RETRIG while holding notes</td><td>Play the held notes through the arpeggiator; A.On provides its latch option.</td></tr>
-<tr><td>ChordKeys</td><td>On a CHORD track, play TRIG 1–16</td><td>1–7: I–VII; 8–14: one octave up; 15–16: I–II two octaves up.</td></tr>
-</table></div>
-<h2>Sample Wizard and sample preview</h2>
-<div class="table-wrap"><table>
-<tr><th>Feature</th><th>Gesture</th><th>Result</th></tr>
-<tr><td>Sample lock</td><td>Hold a step TRIG + MACHINES</td><td>Choose a sample lock for that step on a Wizard track.</td></tr>
-<tr><td>Playback modes</td><td>SETTINGS + MACHINES</td><td>Open the sampler’s playback-mode controls.</td></tr>
-<tr><td>Mode options</td><td>SETTINGS + PUNCH</td><td>Open the selected sampler mode’s options.</td></tr>
-<tr><td>Resampling</td><td>SETTINGS + REC</td><td>Open resampling controls.</td></tr>
-<tr><td>Sample Preview — hardware tested</td><td>FUNC + MACHINES; highlight a sample, then play its track pad or keyboard TRIG</td><td>Audition the highlighted sample in the Wizard browser. Scrolling alone is silent. Compatible with ChordKeys and WAVE.</td></tr>
-<tr><td>Slice editor: upper slices</td><td>Hold FUNC + TRIG 1–16</td><td>Play slices 17–32 while the slice editor is open.</td></tr>
-<tr><td>Slice editor: zero crossing</td><td>FUNC + marker knobs 1 / 2</td><td>Snap the respective slice marker to a zero crossing.</td></tr>
-<tr><td>Slice editor: remove marker</td><td>FUNC + click DATA</td><td>Remove a slice marker. DATA alone splits; PUNCH controls tap slicing.</td></tr>
-</table></div>
-<h2>MIDI B-side and routing</h2>
-<div class="table-wrap"><table>
-<tr><th>Feature</th><th>Gesture</th><th>Result</th></tr>
-<tr><td>Enter / leave MIDI B-side</td><td>FUNC + SETTINGS + TRACK</td><td>Open or close the six parallel MIDI tracks. Use the combo from B home to exit; BACK there also exits.</td></tr>
-<tr><td>MIDI CC assignment</td><td>SETTINGS + a gray knob</td><td>Assign that knob to a MIDI CC on the selected B lane.</td></tr>
-<tr><td>MIDI CC lock</td><td>Hold TRIG + an assigned knob</td><td>Add a CC parameter lock to that MIDI step.</td></tr>
-<tr><td>MIDI note / CC slide</td><td>SETTINGS + TRIG</td><td>Enable or disable a slide. Notes overlap for legato; CCs glide toward the marked step’s values.</td></tr>
-<tr><td>MIDI keyboard setup</td><td>FUNC + TRACK</td><td>Set keyboard transpose and Pad Note.</td></tr>
-<tr><td>MIDI CC LFO 2</td><td>Press LFO twice on B-side</td><td>Open the second MIDI CC LFO. In Dst, click DATA, choose OFF or CC0–127, then click DATA to confirm; BACK cancels.</td></tr>
-<tr><td>Combined MIDI OUT + THRU</td><td>Set CONFIG → MIDI → PORTS → OUT/THRU to THR, then FUNC + click DATA</td><td>Toggle the Cycles’ own outgoing MIDI while retaining incoming MIDI Thru.</td></tr>
-</table></div>
-<p>Saved MIDI loads only when entering B-side while playback is stopped. Stop before Save Project and wait for MIDI SAVED. Sidecar MIDI files are outside Elektron SysEx backups.</p>
-<h2>Hardware-confirmed changes — now in main 1.83</h2>
-<p><a href="../flasher-arp-zero-test/?v=2026-10-17-arp-zero-test-2">Open the Octave 0 + MIDI B-side cursor test</a>.</p>
-<div class="table-wrap"><table>
-<tr><th>Change</th><th>What to check</th></tr>
-<tr><td>Octave 0 on A and B</td><td>FUNC + RETRIG → Oct. 0 cycles only held notes; 1 adds one octave, 2 adds two, 3 adds three. Existing saved settings keep their sound; only the displayed numbering changes.</td></tr>
-<tr><td>B-side first entry / cursor</td><td>Open B-side during playback; verify MIDI starts without exiting/re-entering and that REC shows one cursor. Each lane retains its own length and speed.</td></tr>
-<tr><td>Test setup</td><td>Keep Control All Beat Repeat selected when installing MIDI Out Bank in this combined test. That requirement does not apply to main. CPU/peak/CUT diagnostics remain available in the test.</td></tr>
-</table></div>
-<p>Octave 0, the B-side cursor and the crash repair were confirmed by AveyCole in test 2 and are now released in main 1.83. Saved MIDI loading still requires stopped playback. MIDI beat repeat and MIDI filter work were canceled and are not part of this test.</p></article><article data-l="fr"><h1>Vue d’ensemble des fonctions et raccourcis</h1>
-<p>A.V.’s Supermodel Edition · 18 octobre 2026</p>
-<p>Gestes ajoutes uniquement ; transports, copies, effacements et collages calques sur le stock omis.</p>
-<p>Installez la fonction correspondante. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. MACHINES est le bouton parfois nomme PRESET dans les instructions du sampler.</p>
-<h2>Vue d'ensemble actuelle</h2>
-<p>Flasheur principal 1.83 · mise à jour du 18 octobre 2026. Installez les fonctions souhaitées ; le flasheur vérifie les combinaisons compatibles. <a href="../flasher-supermodel-909/">Supermodel 909 Edition</a> possède sa propre sélection et sa propre version.</p>
-<div class="table-wrap"><table>
-<tr><th>Fonction</th><th>Comportement actuel</th></tr>
-<tr><td>Machines ajoutées</td><td>MACRO, ACID, WAVE, TINY, RETROSYN et les moteurs dérivés du Syntakt au choix. Ces derniers nécessitent votre propre fichier OS Syntakt.</td></tr>
-<tr><td>Swarm LITE</td><td>Remplace les sept oscillateurs par trois : fondamentale et deux dents de scie désaccordées. Charge CPU réduite, son plus fin et parfois moins fort ; des arrangements lourds peuvent encore cliquer.</td></tr>
-<tr><td>Sample Wizard</td><td>Sampler indépendant avec sample locks, modes, découpage et rééchantillonnage. Sample Preview est testé sur machine. Model-TG est retiré du flasheur principal.</td></tr>
-<tr><td>RETROSYN / ChordKeys</td><td>Six types d'oscillateurs rétro ; ChordKeys ajoute accords selon la gamme et voicings. Combinez librement les machines ajoutées ; seules les machines cochées apparaissent. Sample Wizard reste facultatif.</td></tr>
-<tr><td>Filtre par piste / Synth Attack</td><td>Coupure, résonance et attaque ajoutées ; locks de filtre et Control All. Le filtre publié inclut la correction de distorsion après avoir quitté Sample Wizard.</td></tr>
-<tr><td>Control All Config / Beat Repeat</td><td>Choix des pistes audio incluses ; répétition momentanée sur seize divisions, avec popup bref de la division.</td></tr>
-<tr><td>Banque MIDI Out — expérimentale</td><td>Six voies MIDI parallèles : CC et locks, slides, retrigger/arpège, chance, deux LFO MIDI et sauvegarde annexe au projet. Facultative et installable sans beat repeat. Le beat repeat peut aussi être installé sans Banque MIDI. Hors enregistrement, pages disponibles allumees et page jouee clignotante. En enregistrement, page editee fixe et page jouee clignotante. Ouverture en mode normal sur la page selectionnee dans A. Longueur normale commune avec A et editable depuis B : FUNC + PAGE ouvre Len sans activer son edition ; appuyez sur DATA puis tournez, ou appuyez sur PAGE par16 meme hors edition. Mode par piste : longueurs MIDI independantes.</td></tr>
-<tr><td>Sequence Genie / SCRAMBLE</td><td>Génération ou mutation de séquences, attente d'une frontière Loop/Page, randomisation audio ou CC côté B.</td></tr>
-<tr><td>Arpégiateur / Second LFO</td><td>Arpège des notes tenues et page de modulation supplémentaire. Oct 0 parcourt seulement les notes tenues ; 1–3 ajoutent des octaves. Confirmé sur les deux côtés.</td></tr>
-<tr><td>Performance et édition</td><td>Mutes verrouillés, préécoute de pas, slides, noms défilants, navigateur trois lignes, volume/pan chiffrés, trigless atténués et délai de suppression des trigs.</td></tr>
-<tr><td>Routage / tempo / démarrage</td><td>Audio USB six canaux, MIDI OUT + THRU combinés, tempo jusqu'à 546 BPM et choix d'animation de démarrage.</td></tr>
-</table></div>
-<p><strong>Sauvegarde :</strong> maintenez <strong>FUNC + SETTINGS</strong> pour la sauvegarde permanente stock restaurée. La correction confirmée empêche aussi FUNC de rester verrouillé à la fermeture du menu. Pour les données MIDI, arrêtez la lecture avant de sauvegarder et attendez <strong>MIDI SAVED</strong>. Le MIDI sauvegardé charge <strong>uniquement en entrant côté B, lecture arrêtée</strong> ; les fichiers annexes sont hors backups SysEx Elektron.</p>
-<p><strong>Diagnostics :</strong> les affichages CPU/pic/CUT sont réservés aux builds de test et absents du principal.</p>
-<h2>Performance et son</h2>
-<div class="table-wrap"><table>
-<tr><th>Fonction</th><th>Geste</th><th>Resultat</th></tr>
-<tr><td>Control All Config</td><td>TRACK + TRIG 1–6</td><td>Inclure ou exclure les pistes de Control All. La piste sélectionnée peut aussi être exclue. Choix remis a zero a extinction.</td></tr>
-<tr><td>Control All Beat Repeat</td><td>Tenir TRACK + RETRIG, puis un TRIG 1–16</td><td>Repeter les pistes audio incluses. Dernier TRIG tenu prioritaire, division en popup bref. Relacher le TRIG ou un modificateur arrete. Garder les deux modificateurs tenus.</td></tr>
-<tr><td>Mute verrouille</td><td>Tenir TRACK, taper FUNC</td><td>Garder le mode mute ouvert. Taper FUNC pour sortir.</td></tr>
-<tr><td>Preecoute d un pas</td><td>A l arret ou en pause, tenir TRIG + PAGE</td><td>Ecouter le pas et ses locks.</td></tr>
-<tr><td>Slides audio</td><td>SETTINGS + TRIG</td><td>Activer/desactiver le slide de parametres du pas.</td></tr>
-<tr><td>Attack synth</td><td>MACHINES + DECAY</td><td>Regler l attaque ajoutee sur les pistes synth/drum compatibles.</td></tr>
-<tr><td>Filtre par piste</td><td>MACHINES + SWEEP / CONTOUR</td><td>Coupure / resonance. Ajouter TRACK pour Control All des pistes audio incluses. Neutre : coupure maximale et resonance nulle.</td></tr>
-<tr><td>Mode de selection des pads</td><td>Maintenir SETTINGS + TRACK</td><td>Presser DATA, tourner pour Silent ou Stock ; BACK ferme. Retour Silent apres redemarrage.</td></tr>
-<tr><td>Accord fin MACRO</td><td>SETTINGS + PITCH sur MACRO</td><td>Accord fin sauvegarde avec le son. PITCH seul conserve le comportement stock ; FUNC + PITCH reste Lo-Fi.</td></tr>
-<tr><td>Lo-fi MACRO</td><td>FUNC + PITCH sur MACRO</td><td>A gauche : frequence 46K–4K ; a droite : profondeur 12B–2B ; centre OFF. Valeur affichee dans la fenetre.</td></tr>
-</table></div>
-<h3>Divisions du beat repeat</h3>
-<div class="table-wrap"><table>
-<tr><th>TRIG</th><th>Division</th><th>TRIG</th><th>Division</th></tr>
-<tr><td>1</td><td>1/64</td><td>9</td><td>3/16</td></tr>
-<tr><td>2</td><td>1/48</td><td>10</td><td>1/4</td></tr>
-<tr><td>3</td><td>1/32</td><td>11</td><td>1/3</td></tr>
-<tr><td>4</td><td>1/24</td><td>12</td><td>3/8</td></tr>
-<tr><td>5</td><td>1/16</td><td>13</td><td>1/2</td></tr>
-<tr><td>6</td><td>1/12</td><td>14</td><td>2/3</td></tr>
-<tr><td>7</td><td>1/8</td><td>15</td><td>3/4</td></tr>
-<tr><td>8</td><td>1/6</td><td>16</td><td>1 mesure</td></tr>
-</table></div>
-<p>Les longues boucles audio sont divisees par deux aux tempos lents selon la capacite du buffer. Le beat repeat agit sur l’audio interne et ne répète pas les notes MIDI sortantes.</p>
-<h2>Sequence Genie, SCRAMBLE et modulation</h2>
-<div class="table-wrap"><table>
-<tr><th>Fonction</th><th>Geste</th><th>Resultat</th></tr>
-<tr><td>Sequence Genie</td><td>SETTINGS + PAGE</td><td>Generateur de la piste audio ou voie B selectionnee. DATA choisit ; clic, tourner, clic pour editer. Generate est premier, Queue second. Loop attend la prochaine boucle de piste ; Page, la prochaine page de 16 pas.</td></tr>
-<tr><td>SCRAMBLE A</td><td>SETTINGS + TRACK</td><td>Randomiser quatre parametres de synthese. Sampler exclu.</td></tr>
-<tr><td>SCRAMBLE de pas A</td><td>Tenir des TRIG, puis SETTINGS + TRACK</td><td>Basculer des valeurs aleatoires fraiches a chaque passage, son de base conserve.</td></tr>
-<tr><td>SCRAMBLE B</td><td>SETTINGS + TRACK</td><td>Randomiser les valeurs CC assignees de la voie MIDI selectionnee.</td></tr>
-<tr><td>Second LFO</td><td>Appuyer deux fois sur LFO</td><td>Ouvrir LFO 2. Dans cette page, LFO SPEED regle LFO 2.</td></tr>
-<tr><td>Assignation rapide LFO 2</td><td>Sur LFO 2 cote A, tenir LFO et tourner un parametre</td><td>Choisir la destination, puis regler sa profondeur signee.</td></tr>
-<tr><td>Scale Lock</td><td>FUNC + PAGE</td><td>Acceder aux reglages ajoutes de gamme/tonalite avec le support performance installe.</td></tr>
-<tr><td>Arpege / reglages ChordKeys</td><td>FUNC + RETRIG</td><td>Options ajoutees direction/octaves ou ChordKeys selon la fonction installee.</td></tr>
-<tr><td>Jeu de l arpege</td><td>Tenir RETRIG avec des notes tenues</td><td>Arpeger les notes ; option A.On pour le verrouillage.</td></tr>
-<tr><td>ChordKeys</td><td>Sur CHORD, jouer TRIG 1–16</td><td>1–7 : I–VII ; 8–14 : octave superieure ; 15–16 : I–II deux octaves plus haut.</td></tr>
-</table></div>
-<h2>Sample Wizard et preecoute</h2>
-<div class="table-wrap"><table>
-<tr><th>Fonction</th><th>Geste</th><th>Resultat</th></tr>
-<tr><td>Sample lock</td><td>Tenir TRIG + MACHINES</td><td>Choisir un sample lock de ce pas sur une piste Wizard.</td></tr>
-<tr><td>Modes de lecture</td><td>SETTINGS + MACHINES</td><td>Ouvrir les modes du sampler.</td></tr>
-<tr><td>Options du mode</td><td>SETTINGS + PUNCH</td><td>Ouvrir les options du mode sampler choisi.</td></tr>
-<tr><td>Reechantillonnage</td><td>SETTINGS + REC</td><td>Ouvrir le resampling.</td></tr>
-<tr><td>Sample Preview — teste sur machine</td><td>FUNC + MACHINES ; choisir un sample puis jouer pad ou TRIG clavier</td><td>Preecoute du sample dans le navigateur Wizard. Defilement seul silencieux. Compatible ChordKeys/WAVE.</td></tr>
-<tr><td>Editeur slices : slices hautes</td><td>FUNC + TRIG 1–16</td><td>Jouer les slices 17–32 dans l editeur.</td></tr>
-<tr><td>Editeur slices : passage zero</td><td>FUNC + potards marqueurs 1 / 2</td><td>Caler le marqueur correspondant au passage zero.</td></tr>
-<tr><td>Editeur slices : retirer marqueur</td><td>FUNC + clic DATA</td><td>Retirer un marqueur. DATA seul divise ; PUNCH controle le tap slicing.</td></tr>
-</table></div>
-<h2>MIDI B et routage</h2>
-<div class="table-wrap"><table>
-<tr><th>Fonction</th><th>Geste</th><th>Resultat</th></tr>
-<tr><td>Entrer / sortir de B</td><td>FUNC + SETTINGS + TRACK</td><td>Ouvrir/fermer les six pistes MIDI paralleles. Sortie depuis l accueil B ; BACK y sort aussi.</td></tr>
-<tr><td>Assignation CC MIDI</td><td>SETTINGS + potard gris</td><td>Assigner un CC au potard sur la voie B choisie.</td></tr>
-<tr><td>Lock CC MIDI</td><td>Tenir TRIG + potard assigne</td><td>Ajouter un lock CC sur le pas MIDI.</td></tr>
-<tr><td>Slides notes / CC</td><td>SETTINGS + TRIG</td><td>Activer/desactiver le slide : notes chevauchees en legato, CC glisses vers le pas marque.</td></tr>
-<tr><td>Reglages clavier MIDI</td><td>FUNC + TRACK</td><td>Transposition clavier et Pad Note.</td></tr>
-<tr><td>Second LFO CC MIDI</td><td>Appuyer deux fois sur LFO cote B</td><td>Ouvrir LFO CC 2. Dst : clic DATA, OFF ou CC0–127, clic DATA pour confirmer ; BACK annule.</td></tr>
-<tr><td>MIDI OUT + THRU combines</td><td>CONFIG → MIDI → PORTS → OUT/THRU : THR, puis FUNC + clic DATA</td><td>Basculer la sortie MIDI propre du Cycles tout en gardant le Thru entrant.</td></tr>
-</table></div>
-<p>Le MIDI sauvegarde charge uniquement en entrant cote B, lecture arretee. Arreter avant Save Project et attendre MIDI SAVED. Les fichiers MIDI annexes ne sont pas inclus dans les backups SysEx Elektron.</p>
-<h2>Changements confirmés — publiés dans le principal 1.83</h2>
-<p><a href="../flasher-arp-zero-test/?v=2026-10-17-arp-zero-test-2">Ouvrir le test Octave 0 + curseur MIDI B</a>.</p>
-<div class="table-wrap"><table>
-<tr><th>Changement</th><th>Vérification</th></tr>
-<tr><td>Octave 0 sur A et B</td><td>FUNC + RETRIG → Oct. 0 parcourt uniquement les notes tenues ; 1 ajoute une octave, 2 en ajoute deux, 3 en ajoute trois. Les anciens réglages conservent leur son ; seule la numérotation affichée change.</td></tr>
-<tr><td>Première entrée B / curseur</td><td>Ouvrir B pendant la lecture ; vérifier que le MIDI démarre sans sortir/rentrer et que REC montre un seul curseur. Chaque voie conserve sa longueur et sa vitesse.</td></tr>
-<tr><td>Configuration du test</td><td>Garder Control All Beat Repeat sélectionné avec Banque MIDI dans ce test combiné. Cette obligation ne concerne pas le principal. Les diagnostics CPU/pic/CUT restent disponibles dans le test.</td></tr>
-</table></div>
-<p>Octave 0, le curseur B et la correction du crash ont été confirmés par AveyCole dans le test 2 et sont publiés dans le principal 1.83. Le chargement MIDI sauvegardé exige toujours la lecture arrêtée. Le beat repeat MIDI et le filtre MIDI ont été abandonnés et ne font pas partie de ce test.</p></article><section><h2><span data-l="en">LFO destinations and Retrosyn — 1.90</span><span data-l="fr">Destinations LFO et Retrosyn — 1.90</span></h2><p data-l="en">Attack (ATK), Filter (FLT) and Resonance (RES) are selectable in either audio LFO when their modules are installed. Hold LFO + MACHINES and turn DECAY / SWEEP / CONTOUR to assign them; turn again to adjust depth. Without MACHINES, the knobs assign their ordinary parameters. Sample Wizard uses its native Filter / Resonance destinations on SWEEP / CONTOUR in either modifier state, with stable labels during movement. Both LFO menus stay open after quick assignment. MACHINES combinations do not leave the machine selector behind. Retrosyn labels are Timbre / Oscillator / Pitch Sweep / Chord Arp. Diagnostics remain test-only.</p><p data-l="fr">Attack (ATK), Filter (FLT) et Resonance (RES) sont des destinations des deux LFO audio lorsque leurs modules sont installes. Tenir LFO + MACHINES et tourner DECAY / SWEEP / CONTOUR pour assigner, puis continuer pour ajuster la profondeur. Sans MACHINES, les cibles ordinaires sont conservees. Sample Wizard utilise ses cibles natives filtre / resonance sur SWEEP / CONTOUR avec ou sans MACHINES ; les noms restent stables pendant la rotation. Les menus LFO restent ouverts apres assignation rapide. Les gestes MACHINES ne laissent pas le selecteur ouvert. Retrosyn affiche Timbre / Oscillator / Pitch Sweep / Chord Arp. Diagnostics reserves aux tests.</p></section><section id="invert-track"><h2><span data-l="en">Silent track selection - optional</span><span data-l="fr">Selection silencieuse - facultative</span></h2><p data-l="en">Optional Silent track selection (hardware tested): plain T1-T6 pads select silently; TRACK + pad selects and plays, including live recording. Preset-browser preview is preserved. Unchecked by default.</p><p data-l="fr">Selection de piste silencieuse facultative (testee sur machine) : pad T1-T6 seul selectionne sans son ; TRACK + pad selectionne et joue, y compris en live record. Apercu du navigateur conserve. Non coche par defaut.</p></section></main></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Supermodel Edition — Features &amp; Shortcuts</title>
+<style>
+:root{color-scheme:light;--ink:#20241f;--muted:#5c625b;--paper:#f4f2eb;--line:#c9cec3;--accent:#36563e;--wash:#e5eadf}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}header,main,footer{width:min(100% - 36px,1000px);margin:auto}header{padding:30px 0 22px;border-bottom:3px solid var(--accent)}header nav{display:flex;gap:18px;justify-content:space-between;align-items:center}a{color:var(--accent)}button{border:1px solid var(--line);border-radius:7px;background:white;padding:9px 14px;color:var(--ink);font:inherit;cursor:pointer}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;margin:30px 0 8px}h2{font-size:1.55rem;margin:42px 0 10px;border-bottom:1px solid var(--line);padding-bottom:7px}h3{margin:22px 0 7px}.sub,.note{color:var(--muted)}.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:14px 0}table{width:100%;border-collapse:collapse;margin:14px 0 28px;background:#fff}th,td{text-align:left;vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--line)}th{background:var(--wash);font-weight:700}td:first-child{font-weight:650;width:25%}td:nth-child(2){white-space:nowrap;width:30%}code,kbd{font:600 .92em ui-monospace,Consolas,monospace;background:#edf0e9;border:1px solid #d7ddd1;border-radius:4px;padding:1px 5px}ul{padding-left:22px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid .card{margin:0}footer{padding:24px 0 40px;color:var(--muted)}@media(max-width:650px){.grid{grid-template-columns:1fr}table,tbody,tr,td{display:block}thead{display:none}td:first-child{width:auto;padding-bottom:2px}td:nth-child(2){white-space:normal;width:auto;padding-top:2px;color:var(--accent)}}@media print{body{background:#fff;font-size:10pt}header,main,footer{width:100%}header{padding-top:0}header nav button,header nav a{display:none}.card,table{break-inside:avoid}h2{break-after:avoid;margin-top:24px}a{color:inherit;text-decoration:none}footer{padding-bottom:0}}
+</style>
+</head>
+<body>
+<header><nav><a href="./">← Main flasher</a><button type="button" onclick="window.print()">Print this guide</button></nav><h1>Supermodel Edition</h1><div class="sub">Features and shortcut guide</div></header>
+<main>
+<p>This build includes the features below. For button combinations, hold the first button and then press the next button or turn the named knob. <b>TRIG</b> means a step key; <b>pad</b> means a track key; <b>DATA</b> means the LEVEL/DATA encoder.</p>
+<h2>Included features</h2>
+<div class="grid">
+<div class="card"><b>Machines and sound</b><br>Stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, TINY, ChpHzrd / Retrosyn and MIDI Out. Syntakt-derived engines use the supplied Syntakt OS file.</div>
+<div class="card"><b>Performance and sequencing</b><br>Arpeggiator, Octave 0 held-note mode, ChordKeys, Sequence Genie, SCRAMBLE, slide trigs, trig preview, easier trig removal, dimmed trigless trigs, latching mute and solo.</div>
+<div class="card"><b>Sound shaping</b><br>Synth Attack, per-track filter and envelope, filter/resonance/attack LFO destinations, second audio LFO, MACRO fine tune and Lo-Fi, Sample Wizard preview/slicing, and numeric volume/pan display.</div>
+<div class="card"><b>Routing and workflow</b><br>MIDI Out machine with sequenced notes, assignable CCs and locks; MIDI OUT/THRU toggle; six-channel or stereo USB audio; permanent quick save; Supermodel startup; long-name scrolling and multiline sample browser.</div>
+</div>
+<h2>Track, step and performance controls</h2>
+<table><thead><tr><th>Feature</th><th>Controls</th><th>Behavior</th></tr></thead><tbody>
+<tr><td>Step Recorder</td><td>Playback stopped: press <kbd>REC</kbd> twice</td><td>Enter step recording, then play notes to write successive steps. Press <kbd>REC</kbd> to exit.</td></tr>
+<tr><td>Latching mute</td><td><kbd>TRACK</kbd> + tap <kbd>FUNC</kbd></td><td>Latch mute mode. Tap <kbd>FUNC</kbd> again to leave.</td></tr>
+<tr><td>Solo in mute mode</td><td>In latching mute mode, hold <kbd>FUNC</kbd> + press <kbd>T1–T6</kbd></td><td>Solo that track. Press the soloed track again to restore the previous mute state; tracks already muted remain muted.</td></tr>
+<tr><td>Silent track selection</td><td>Choose Silent in <kbd>Mod Setup</kbd>; tap <kbd>T1–T6</kbd></td><td>Select a track without triggering its sound. <kbd>TRACK</kbd> + pad selects and plays. Mod Setup can restore stock pad behavior.</td></tr>
+<tr><td>Trig preview</td><td>Hold <kbd>TRIG</kbd> + <kbd>PAGE</kbd></td><td>Audition the selected step with its note and locks while stopped or paused.</td></tr>
+<tr><td>Slide trig</td><td><kbd>SETTINGS</kbd> + <kbd>TRIG</kbd></td><td>Toggle a parameter slide on the step.</td></tr>
+<tr><td>Sequence Genie</td><td><kbd>SETTINGS</kbd> + <kbd>PAGE</kbd></td><td>Open the generator for the selected track. Select with DATA; choose Generate or Queue and set Loop/Page timing.</td></tr>
+<tr><td>SCRAMBLE</td><td>Quick tap <kbd>SETTINGS</kbd> + <kbd>TRACK</kbd></td><td>On release, randomize supported synthesis parameters for the selected track. Hold selected TRIGs too to apply step variation.</td></tr>
+<tr><td>Control All setup</td><td><kbd>TRACK</kbd> + <kbd>TRIG 1–6</kbd></td><td>Include or exclude audio tracks from Control All changes.</td></tr>
+<tr><td>Audio beat repeat</td><td>Hold <kbd>TRACK</kbd> + <kbd>RETRIG</kbd>, then hold a <kbd>TRIG 1–16</kbd></td><td>The held step selects a repeat division for included audio tracks. Release a modifier or division pad to stop.</td></tr>
+<tr><td>Control All filter</td><td>Hold <kbd>TRACK</kbd> + turn <kbd>MACHINES</kbd> + <kbd>SWEEP</kbd>/<kbd>CONTOUR</kbd></td><td>Adjust cutoff/resonance across included audio tracks. Without TRACK, adjust the selected track.</td></tr>
+<tr><td>Synth Attack</td><td><kbd>MACHINES</kbd> + <kbd>DECAY</kbd></td><td>Adjust the added attack control on supported machines.</td></tr>
+<tr><td>Arpeggiator settings</td><td><kbd>FUNC</kbd> + <kbd>RETRIG</kbd></td><td>Choose direction and octave range. Octave 0 cycles only through held notes.</td></tr>
+<tr><td>ChordKeys</td><td>Select the Chord machine, then play <kbd>TRIG 1–16</kbd></td><td>Play scale-based chord voicings from the step keys.</td></tr>
+</tbody></table>
+<h2>LFO and MACRO controls</h2>
+<table><thead><tr><th>Feature</th><th>Controls</th><th>Behavior</th></tr></thead><tbody>
+<tr><td>Second audio LFO</td><td>Press <kbd>LFO</kbd> twice</td><td>Open LFO 2 and edit its speed, shape, destination and depth.</td></tr>
+<tr><td>LFO quick assignment</td><td>In an LFO page, hold <kbd>LFO</kbd> + <kbd>MACHINES</kbd> and turn a destination knob</td><td>Assign the corresponding knob destination. Release the controls to return to the normal track display.</td></tr>
+<tr><td>Attack/filter/resonance LFO targets</td><td>On an LFO page, turn <kbd>DECAY</kbd>, <kbd>SWEEP</kbd> or <kbd>CONTOUR</kbd></td><td>Select Attack, Filter or Resonance as supported by the machine. Sample Wizard labels its native filter controls Filter and Resonance.</td></tr>
+<tr><td>MACRO fine tune</td><td><kbd>SETTINGS</kbd> + turn <kbd>PITCH</kbd></td><td>Adjust fine pitch. Plain PITCH retains its regular control; <kbd>FUNC</kbd> + PITCH is MACRO Lo-Fi.</td></tr>
+</tbody></table>
+<h2>Sample Wizard and Mod Setup</h2>
+<table><thead><tr><th>Feature</th><th>Controls</th><th>Behavior</th></tr></thead><tbody>
+<tr><td>Sample Preview</td><td><kbd>FUNC</kbd> + <kbd>MACHINES</kbd>; highlight a sample, then press its track pad or keyboard trig</td><td>Audition the highlighted sample. Scrolling through the list remains silent.</td></tr>
+<tr><td>Sample lock</td><td>Hold a step <kbd>TRIG</kbd> + <kbd>MACHINES</kbd></td><td>Choose a sample for that step on a Sample Wizard track.</td></tr>
+<tr><td>Playback modes</td><td><kbd>SETTINGS</kbd> + <kbd>MACHINES</kbd></td><td>Open Sample Wizard playback-mode controls.</td></tr>
+<tr><td>Slice editor</td><td><kbd>FUNC</kbd> + step key; <kbd>FUNC</kbd> + click DATA</td><td>Play upper slices; remove a slice marker with the DATA click. Marker knobs can snap to zero crossings.</td></tr>
+<tr><td>Mod Setup</td><td>Long hold <kbd>SETTINGS</kbd> + <kbd>TRACK</kbd></td><td>Set pad selection behavior, switch USB audio between six-channel and stereo, and toggle numeric volume/pan display. Press DATA to select a row; BACK exits.</td></tr>
+<tr><td>Permanent quick save</td><td>Hold <kbd>FUNC</kbd> + <kbd>SETTINGS</kbd></td><td>Save the project permanently using the stock quick-save action.</td></tr>
+<tr><td>MIDI Out CC assignment</td><td>Hold <kbd>SETTINGS</kbd> and turn a parameter knob</td><td>Choose the CC number. Turn the knob normally afterward to send its assigned value.</td></tr>
+</tbody></table>
+<p class="note">The USB audio mode switch is stored on the device. Six-channel audio is the startup mode; standard stereo can be selected from Mod Setup.</p>
+</main>
+<footer>Supermodel Edition · Model:Cycles</footer>
+</body></html>

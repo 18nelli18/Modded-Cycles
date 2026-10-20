@@ -43,6 +43,6 @@ window.MCMidiMachineAllReady=Promise.all([pageReady,window.MCLfoDestinationsRead
  // Ce premier essai est un preset fixe, pas une promesse de combinaisons non prouvees.
  window.MC_TWEAKS.features=window.MC_TWEAKS.features.filter(f=>f.id!=='midi-out-bank');a.applyLang(document.documentElement.lang||'en');
  function freeze(){for(const e of document.querySelectorAll('input[id^="feat-"],input[id^="eng-"],button[data-off],#select-all,#super-clear'))e.disabled=e.id!=='feat-usb6';}
- const usb=document.getElementById('fixed-six-usb');usb.checked=a.isSelected('usb6');usb.addEventListener('change',()=>select('usb6',usb.checked));
+ const usb=document.getElementById('fixed-six-usb');if(usb){usb.checked=a.isSelected('usb6');usb.addEventListener('change',()=>select('usb6',usb.checked));}
  freeze();const observer=new MutationObserver(freeze);for(const id of ['features','mod-sel']){const el=document.getElementById(id);if(el)observer.observe(el,{subtree:true,childList:true});}
 });})();
