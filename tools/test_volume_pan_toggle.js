@@ -6,7 +6,7 @@ async function open(){
  const errors=[],vc=new VirtualConsole(),dir=path.join(root,'docs/flasher'),html=fs.readFileSync(path.join(dir,'index.html'),'utf8');
  const w=new JSDOM(html,{url:'https://aveycole.github.io/Modded-Cycles/flasher/',runScripts:'outside-only',virtualConsole:vc}).window;
  w.URL.createObjectURL=()=>'';w.URL.revokeObjectURL=()=>{};vc.on('jsdomError',e=>errors.push(String(e)));
- w.fetch=async()=>{const bytes=fs.readFileSync(path.join(dir,'all-features-no-diagnostic.syx'));return{ok:true,arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength)}};
+ w.fetch=async()=>{const bytes=fs.readFileSync(path.join(dir,'all-features-no-diagnostic-usb-2ch-default.syx'));return{ok:true,arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength)}};
  const menu=JSON.parse(fs.readFileSync(path.join(build,'pad-mode-data.json'),'utf8'));
  if(process.env.TEST_USB_2CH_DEFAULT==='1'){
   const at=menu.symbols.wf_usb_six,old='00000001',next='00000000';

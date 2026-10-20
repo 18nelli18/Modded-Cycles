@@ -1,8 +1,8 @@
 {
-  "stamp": "2026-10-20-usb-2ch-default-main-1",
+  "stamp": "2026-10-20-usb-2ch-default-main-2",
   "scope": "main",
   "profile": "Exact full-feature image, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (2ch enabled)",
-  "fixed_image": "all-features-no-diagnostic.syx",
+  "fixed_image": "all-features-no-diagnostic-usb-2ch-default.syx",
   "fixed_image_sha256": "d85eb01c29b8e07dd55029be82d86552835e6e4d106d5e1e8e3fd8f13f84ee1a",
   "diagnostics": false,
   "startup": "Supermodel",

@@ -3228,7 +3228,7 @@ function prepareFirmware() {
       if (hash !== meta.syxSha256) throw new Error("Verified main firmware image checksum mismatch");
       const verified = window.MCFlasher.verify(raw);
       if (!verified.count) throw new Error("Verified main firmware image has no valid SYX packets");
-      return { raw, name: "all-features-no-diagnostic.syx", kind: "built", mods: ["All features"],
+      return { raw, name: "all-features-no-diagnostic-usb-2ch-default.syx", kind: "built", mods: ["All features"],
         sha: meta.mainOsSha, ref: true, modsRef: true, sixch: true };
     });
     if (!onSamples()) { buildCached(fixedKey, makeFixed); return; }
