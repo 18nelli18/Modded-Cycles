@@ -112,7 +112,7 @@ Octave 0, the B-side cursor and the crash repair were confirmed by AveyCole in t
 
 ## LFO destinations and quick assignment — 1.90
 
-Attack (ATK), Filter (FLT) and Resonance (RES) are selectable in either audio LFO when their modules are installed. Hold LFO + MACHINES and turn DECAY / SWEEP / CONTOUR to assign them; turn again to adjust depth. Without MACHINES, the knobs assign their ordinary parameters. Sample Wizard uses its native Filter / Resonance destinations on SWEEP / CONTOUR in either modifier state, with stable labels during movement. Both LFO menus stay open after quick assignment. MACHINES combinations do not leave the machine selector behind. Retrosyn labels are Timbre / Oscillator / Pitch Sweep / Chord Arp. Diagnostics remain test-only.
+Attack (ATK), Filter (FLT) and Resonance (RES) are selectable in either audio LFO when their modules are installed. Hold MACHINES while turning DECAY / SWEEP / CONTOUR to select Attack / Filter / Resonance; release MACHINES for ordinary knob control. For LFO quick assignment, hold LFO + MACHINES while turning the destination knob; turn again to adjust depth. Sample Wizard uses its native Filter / Resonance destinations on SWEEP / CONTOUR, with stable labels during movement. Both LFO menus stay open after quick assignment. MACHINES combinations do not leave the machine selector behind. Retrosyn labels are Timbre / Oscillator / Pitch Sweep / Chord Arp. Diagnostics remain test-only.
 
 ## Silent track selection - 1.91
 
