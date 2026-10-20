@@ -48,8 +48,6 @@ lp_enc:
 	move.l	8(%sp), -(%sp)
 	bsr.w	lp_enc_orig
 	addq.l	#8, %sp
-	tst.b	lp_disabled
-	bne.s	9f				/* mode désactivé : comportement OS conservé */
 	movea.l	8(%sp), %a0
 	moveq	#1, %d1
 	cmp.l	12(%a0), %d1
@@ -88,8 +86,6 @@ lp_draw:
 	addq.l	#8, %sp
 	lea	-20(%sp), %sp
 	movem.l	%d2-%d4/%a2-%a3, (%sp)
-	tst.b	lp_disabled
-	bne.s	9f				/* dessin natif seul ; cadre créé avant le retour anticipé */
 	movea.l	28(%sp), %a2			/* le Bitmap */
 	jsr	UISTATES
 	move.l	%d0, -(%sp)
@@ -302,6 +298,4 @@ lp_font:
 	.balign	4
 lp_cnt:	.long	0				/* ticks de l'interface (30 Hz) */
 lp_pan:	.space	32				/* échéances des 6 pistes (6 mots longs), puis leurs drapeaux (+24) */
-lp_lvl:	.space 32
-	.globl	lp_disabled
-	.set	lp_disabled, lp_lvl+31	/* octet inutilisé du tableau, zéro = activé */
+lp_lvl:	.space	32

@@ -55,14 +55,12 @@ RAW = (
      "LEVEL/DATA sur l'écran principal : pea 2 -> pea 1, 2e argument de 0x4006f73a(événement, 2, 16) (pas par cran ; "
      "16 en mode rapide, inchangé)"),
 )
-SYMBOLS = ("lp_cnt", "lp_pan", "lp_lvl", "lp_disabled")
+SYMBOLS = ("lp_cnt", "lp_pan", "lp_lvl")             # pour tools/emu/test_level_pan.py
 
 
 def compile_lp():
     """Code lié (ELF) : {section: (adresse, octets)}, symboles."""
-    build_dir = HERE.parent / "build"
-    build_dir.mkdir(exist_ok=True)
-    with tempfile.TemporaryDirectory(dir=build_dir) as d:
+    with tempfile.TemporaryDirectory() as d:
         d = pathlib.Path(d)
         obj, elf = d / "lp.o", d / "lp.elf"
         gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(SRC / "level_pan.S"), "-o", str(obj)])

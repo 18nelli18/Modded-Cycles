@@ -6,9 +6,9 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 172 tweaks, 17 609 écritures.
+- 171 tweaks, 17 603 écritures.
 - Masques de sprites libérables : 164 (35 960 o), dont 148 pris (32 712 o) et **16 libres (3 248 o)**.
-- Crochets sur l'OS : 114 adresses détournées, dont 68 à l'identique par des mods de familles différentes.
+- Crochets sur l'OS : 108 adresses détournées, dont 68 à l'identique par des mods de familles différentes.
 - Pointeurs réécrits : 73 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 139 tweaks ; place restante au §3.
 
@@ -37,7 +37,7 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x4018d1b8` | `0x400acd76` | pris (372/376 o) | chord-keys (372 o) |
 | `0x4018d4a8` | `0x400acd56` | pris (210/376 o) | chord-keys (210 o) |
 | `0x4018dba8` | `0x400accfe` | pris (114/376 o) | trigless-dim (114 o) |
-| `0x4018f4b4` | `0x400ac8d0` | pris (plein) | level-pan-values (376 o) |
+| `0x4018f4b4` | `0x400ac8d0` | pris (360/376 o) | level-pan-values (360 o) |
 | `0x4018fc74` | `0x400ac81c` | pris (364/376 o) | level-pan-values (364 o) |
 | `0x401904b4` | `0x400ac784` | pris (370/376 o) | multiline-browser (370 o) |
 | `0x40192734` | `0x400ac2b2` | pris (318/376 o) | trigless-dim (318 o) |
@@ -430,18 +430,13 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x40002a42` | `721320402004e3ace788…` | jmp | masque `0x4015c044` +0x11e | 6ch-usbup | notes/36 |
 | `0x40005f36` | `b2ac00286730` | jmp | masque `0x4018dba8` +0x0 | trigless-dim | notes/45 |
 | `0x40006086` | `4ef94008e77e` | jmp | masque `0x4018dba8` +0x20 | trigless-dim | notes/45 |
-| `0x40006a76` | `4eb940076ca2` | jsr | mémoire `0x467adaf4` `sr_leds` | step-rec | notes/136 |
-| `0x40007120` | `4eb94006ba76` | jsr | mémoire `0x467adaaa` `sr_off` | step-rec | notes/136 |
-| `0x4000721c` | `4eb94006ba76` | jsr | mémoire `0x467ada8e` `sr_on` | step-rec | notes/136 |
 | `0x400081ce` | `4eb940006158` | jsr | charge utile (image) +0x6d2a | sample-wizard |  |
-| `0x400081e4` | `4eb940082464` | jsr | mémoire `0x467adb0e` `sr_tick` | step-rec | notes/136 |
 | `0x400081f2` | `4eb940090f48` | jsr | masque `0x4018f4b4` +0x0 | level-pan-values | notes/44 |
-| `0x4000bae0` | `204031842a14` | jsr | mémoire `0x467adac6` `sr_set` | step-rec | notes/136 |
 | `0x4001413e` | `205242a72f0a` | jmp | charge utile (image), 2 cibles selon la combinaison | model-tg, model-tg-st, sample-wizard | notes/31, notes/36 |
 | `0x400169f0` | `4feffff448d7040c` | jmp | charge utile (image) +0x4fb6 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4001a1c4` | `4eb940016086` | jsr | masque `0x4018a788` +0x16 | arp | notes/32 |
 | `0x4001aa4e` | `4fefffe048d70cfc` | jmp | masque `0x4018f4b4` +0xc | level-pan-values | notes/44 |
-| `0x4001b22a` | `4e56ffc048d73cfc` | jmp | masque `0x4018f4b4` +0x80 | level-pan-values | notes/44 |
+| `0x4001b22a` | `4e56ffc048d73cfc` | jmp | masque `0x4018f4b4` +0x78 | level-pan-values | notes/44 |
 | `0x4001cb3e` | `4eb94002d138` | jsr | masque `0x40179730` +0x0 `ck_ui_menu_ctor` | chord-keys | notes/42 |
 | `0x4001d25e` | `4eb940016086` | jsr | masque `0x4018a788` +0x1a | arp | notes/32 |
 | `0x4001e4ca` | `4eb94000b22a` | jsr | masque `0x40183118` +0x13c `ck_shape_name` | chord-keys | notes/42 |
@@ -452,7 +447,6 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x40022d44` | `4eb940072460` | jsr | masque `0x4015c044` +0x3a `th_hold` | trig-hold | notes/33 |
 | `0x40022da6` | `4eb94006b736` | jsr | masque `0x4015c044` +0x6c `th_release` | trig-hold | notes/33 |
 | `0x4002351a` | `2f024eb9400740ca` | jmp | cave `0x40148328` +0x0 | latching-mute, model-tg, model-tg-st | notes/31, notes/36 |
-| `0x400243d6` | `700ab084673e` | jmp | mémoire `0x467ada60` `sr_key` | step-rec | notes/136 |
 | `0x4002d480` | `4cef7c7c0018` | jmp | masque `0x4016cae8` +0xc0 | arp | notes/32 |
 | `0x4002f7d8` | `4cef7c7c0018` | jmp | charge utile (image) +0x11350 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x40032aee` | `4cef7c7c0018` | jmp | charge utile (image), 2 cibles selon la combinaison | model-tg, model-tg-st, sample-wizard | notes/31, notes/36 |
@@ -711,7 +705,6 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | multiline-browser | 16 | 10 | 4 | 0 | 1 | 1 | 0 |  | notes/40 |
 | chord-keys | 37 | 0 | 6 | 3 | 14 | 14 | 0 |  | notes/42 |
 | midi-bth-three-state | 7 | 0 | 5 | 0 | 1 | 1 | 0 |  |  |
-| step-rec | 6 | 0 | 6 | 0 | 0 | 0 | 0 |  | notes/136 |
 | level-pan-values | 8 | 1 | 3 | 0 | 2 | 2 | 0 |  | notes/44 |
 | trigless-dim | 8 | 1 | 3 | 0 | 2 | 2 | 0 |  | notes/45 |
 | track-filter | 40 | 1 | 6 | 3 | 15 | 15 | 0 |  | notes/47 |

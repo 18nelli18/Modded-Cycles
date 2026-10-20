@@ -183,7 +183,3 @@ Sauvegarde rapide, sortie mute (17/10/2026) : recette payload quick-save-exit co
 - `49-invert-track.json` (18/10/2026, note122) : inversion de branche fournie par AveyCole depuis une contribution communautaire (auteur non identifie dans l’extrait ; contexte Discord1557839199971975261). Generateur et integration originaux du projet. Un octet fonctionnel, aucun dump ni firmware distribue ; module facultatif confirme sur machine par AveyCole le18/10/2026, publie dans principal1.91 et non coche par defaut.
 
 - MACRO conversion (18/10/2026, note124) : noyau demi-bande EMAC propre de A.V./Modded-Cycles, coefficients du wrapper MACRO existant ; Braids Emilie Gillet MIT inchange. Remplacement de162octets compile du projet, sans routine Elektron ; confirme par AveyCole, principal1.93 sans diagnostic, copie test conservee.
-
-
-- `45-step-rec.json` : Step Recorder adapté de la conception de 18nelli18 (note 73, PR #101), compilé depuis `tools/machines/step_rec/` par `tools/gen_step_rec.py` ; code et hooks réutilisent l’OS 1.13, vérifiés en émulation.
-- Solo du mute verrouillé : extension originale de ce projet dans `tools/machines/step_rec/latching_solo.S`, assemblée par `tools/gen_step_rec_main_data.py` ; FUNC + pad est conditionné par l’indicateur natif du mode mute et restaure le masque antérieur. Les deux fonctions sont intégrées au preset principal fixe et confirmées sur machine par AveyCole.

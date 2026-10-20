@@ -219,5 +219,3 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [132 — Graine initiale Genie](132-graine-initiale-genie.md) | Premiere sequence variable selon le timer du premier tirage valide ; regles et suite PRNG conservees ; confirme par Austin le18/10/2026, principal1.99 sans diagnostic. |
 
 | [133 — Correctifs MIDI/Chord](133-correctifs-midi-chord.md) | Routage LFO2 isole, messages live uniques, cache Chord et fondu ; confirme par AveyCole, principal2.00 sans diagnostic. |
-
-| [136 — Step Recorder et solo du mute verrouillé](136-step-recorder-et-solo.md) | Step Recorder et solo FUNC + piste seulement en mode mute verrouillé ; restaurations des mutes conservées ; intégrés au principal fixe avec filtre et menu USB 2/6 canaux. Confirmation matérielle rapportée par AveyCole. |
