@@ -49,7 +49,7 @@ BLOCK = 32                      # le bloc du Cycles (Rings : 24)
 # MODAL_RAM (modal.c) : 0x46800000..0x468f0000, juste au-dessus de la zone d'échantillons de Model-TG et de la
 # charge utile (notes/74 §5).
 MODAL_AT = 0x79000
-MODAL_BSS = 0x83000
+MODAL_BSS = 0x86000
 MODAL_RAM = 0x46800000
 TRACK_SIZE = 0x28000
 
@@ -57,8 +57,8 @@ TRACK_SIZE = 0x28000
 # decay : DECAY (DAMPING de Rings). SHAPE choisit le modèle (0..5) ; FUNC + SHAPE la polyphonie (FINE, modal.c).
 MODELS = ("MODAL", "SYMPATHETIC STRING", "STRING", "FM VOICE", "SYMPATHETIC STRING QUANTIZED", "STRING AND REVERB")
 MACHINE = dict(name="MODAL", image=2, decay=64,
-               knobs=(("Brightness", "BRIG", 64), ("Model", "MODL", 0, 0, len(MODELS) - 1),
-                      ("Position", "POS", 40), ("Structure", "STRC", 36)))
+               knobs=(("Bright", "BRIG", 64), ("Model", "MODL", 0, 0, len(MODELS) - 1),
+                      ("Position", "POS", 40), ("Struct", "STRC", 36)))   # 8 lettres au plus par mot (gs.check_names)
 SHAPE_KNOB = 5                  # numéro de potard de SHAPE pour l'OS (PITCH = 2 : l'entrée potard - 2 de l'enregistrement)
 
 CFLAGS = ["-mcpu=54418", "-O2", "-malign-int", "-U_FORTIFY_SOURCE", "-ffreestanding", "-fno-builtin",
@@ -326,7 +326,7 @@ def modal_part(pay):
         blob, syms, end = compile_machine(pathlib.Path(d), pay, tables_header())
     machine = dict(MACHINE, label="MODAL", update=syms["modal_update"], render=syms["modal_render"],
                    fine=dict(knob=SHAPE_KNOB, step=syms["modal_poly_step"], fmt=syms["modal_poly_fmt"],
-                             draw=syms["modal_poly_draw"]))
+                             draw=syms["modal_poly_draw"], name="Voices"))
     return dict(machine=machine, at=pay + MODAL_AT, blob=blob, end=end, syms=syms)
 
 

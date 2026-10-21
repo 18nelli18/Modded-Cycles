@@ -18,8 +18,8 @@ cœur contre Rings) et `tools/emu/test_modal.py` (la machine dans l'OS). Plan de
 - Réglages « éco » (choix de Maxime) : la moitié des modes, 4 cordes au lieu de 8.
 - **Pas encore d'entrée audio** : le sample comme excitateur, choisi dans le menu des presets, est l'étape suivante
   (§8). Cette version ne le contient pas.
-- Lourd : de 10 300 à 61 000 instructions par bloc selon le modèle et la polyphonie, après l'allègement en
-  assembleur (§5).
+- Lourd : de 9 400 à 42 000 instructions par bloc selon le modèle et la polyphonie, après deux passes
+  d'allègement (§5.1, §5.2) ; de 10 600 à 69 200 au départ.
 - `[FAIT en émulation]` (§6.3). Pas encore testé sur la machine (§7).
 
 ## 1. Ce que Maxime a choisi (20/10/2026)
@@ -129,19 +129,27 @@ Rapport d'exploration : `build/ref/rings-scout.md` (non versionné). Ce qui comp
   d'interface de FINE deviennent celles de MODAL (`modal_poly_step` : un cran par tour, 1, 2, 4 ;
   `modal_poly_fmt` : « 1 », « 2 », « 4 » ; `modal_poly_draw` : ce texte dans la fenêtre de valeur, dessiné comme
   l'OS dessine le texte d'un paramètre). Le bloc de MODAL passe avant celui de MACRO.
-- Image : celle de Metal (2). Noms : Brightness (BRIG), Model (MODL), Position (POS), Structure (STRC).
+- Image : celle de Metal (2). Noms : Bright (BRIG), Model (MODL), Position (POS), Struct (STRC). Au départ
+  « Brightness » et « Structure » : ils débordaient de l'écran (§5.2).
+- **Le nom sous FUNC + SHAPE** : « Voices » (au départ « Pitch », le nom de FINE dans l'OS, relevé par Maxime).
+  `knob_vec` pose ce nom dans le descripteur de FINE (`DESCN + 43 × 0x38 + 0x2c`) pour ce réglage, et remet
+  « Pitch » à toute autre recherche de potard. Avec Model-TG, chaque lecture d'un enregistrement de machine
+  (`tg_sync`) recopie les noms de sa table (`param_table`) dans `DESCN`, juste après `knob_vec` : elle repose
+  ensuite le nom gardé dans `fine_name` (0 hors de ce réglage).
 
 ## 4. Place et mémoire
 
 | Où | Quoi |
 |---|---|
-| charge utile `+0x79000` | code et tables de MODAL, 36 576 o (C et `modal_asm.S`) |
-| charge utile `+0x83000` | ses variables, 11 432 o (sinus, limiteur, état des passerelles, tampons) |
+| charge utile `+0x79000` | code et tables de MODAL, 42 356 o (C et `modal_asm.S`) |
+| charge utile `+0x86000` | ses variables, 12 340 o (sinus, limiteur, état des passerelles, tampons) ; à `+0x83000` jusqu'au 21/10/2026, déplacées pour laisser 52 Ko au code |
 | `0x46800000..0x468effff` | l'état des 6 pistes, 160 Ko chacune |
 
-- Charge utile : 548 008 o (492 288 sans MODAL), rangée compressée en 252 929 o (230 083 sans) ; l'image
-  décompressée finit en `0x401fd4c1` : **11 071 o de marge** sous `0x40200000`. Possible grâce au compresseur de
+- Charge utile : 561 204 o (492 288 sans MODAL), rangée compressée en 256 333 o (230 083 sans) ; l'image
+  décompressée finit en `0x401fe20d` : **7 667 o de marge** sous `0x40200000`. Possible grâce au compresseur de
   notes/50 §10 (sans lui, MODAL ne tenait pas).
+- L'état d'une piste (la `Part`, 95 400 o, puis la réverbe, 64 Ko) tient dans ses 160 Ko : vérifié à la compilation
+  (`modal_track_fits`, `modal.c`), 2 904 o de marge.
 - `0x46800000..` `[HYP]` : libre. La zone d'échantillons de Model-TG s'arrête à `0x46700000` (`REGION_END`,
   `ST_PATCHES`), le Mo suivant est notre charge utile ; au-dessus, Model-TG écrit que le Cycles « registers a 4 MiB
   region at 0x4a400000 and nothing above it » (vue sans cache, soit `0x42400000..0x42800000`), et aucune opérande
@@ -153,29 +161,22 @@ Rapport d'exploration : `build/ref/rings-scout.md` (non versionné). Ce qui comp
 
 ## 5. Charge
 
-Instructions de MODAL par bloc (`test_modal.py`, piste seule, DECAY 100, une note pendant la mesure), avant et après
-l'allègement en assembleur (§5.1) :
+Instructions de MODAL par bloc (`test_modal.py`, piste seule, DECAY 100, une note pendant la mesure) : au départ
+(OS 2.1, `33802b6`), après la première passe en assembleur (§5.1, `813bfaa`) et après la deuxième (§5.2) :
 
 | Modèle | 1 voix | 2 voix | 4 voix |
 |---|---|---|---|
-| 0 modal | 26 212 → 20 930 | 30 978 → 26 598 | 25 552 → 22 764 |
-| 1 cordes sympathiques | 29 349 → 22 694 | 34 139 → 27 959 | 43 817 → 32 971 |
-| 2 corde | 17 000 → 16 199 | 29 993 → 28 886 | 55 918 → 48 534 |
-| 3 voix FM | 10 569 → 10 316 | 17 553 → 17 507 | 32 467 → 32 407 |
-| 4 cordes en accord | 29 203 → 22 547 | 33 960 → 27 777 | 43 633 → 32 779 |
-| 5 corde et réverbe | 30 252 → 28 676 | 43 268 → 41 382 | 69 218 → 61 052 |
+| 0 modal | 26 212 → 20 930 → **16 083** | 30 978 → 26 598 → **18 846** | 25 552 → 22 764 → **17 238** |
+| 1 cordes sympathiques | 29 349 → 22 694 → **19 541** | 34 139 → 27 959 → **22 471** | 43 817 → 32 971 → **25 493** |
+| 2 corde | 17 000 → 16 199 → **11 360** | 29 993 → 28 886 → **19 253** | 55 918 → 48 534 → **32 247** |
+| 3 voix FM | 10 569 → 10 316 → **9 373** | 17 553 → 17 507 → **15 713** | 32 467 → 32 407 → **27 972** |
+| 4 cordes en accord | 29 203 → 22 547 → **19 529** | 33 960 → 27 777 → **22 477** | 43 633 → 32 779 → **25 498** |
+| 5 corde et réverbe | 30 252 → 28 676 → **21 022** | 43 268 → 41 382 → **28 936** | 69 218 → 61 052 → **41 943** |
 
-Sur le banc du cœur seul (`build/`, une note puis 20 blocs de mise en route), les voix inactives finissent de
-s'éteindre et les écarts sont plus grands en 4 voix : cordes sympathiques 42 600 → 26 900, corde 51 600 → 36 900,
-corde et réverbe 63 700 → 49 300. Le modal quand la position bouge (SWEEP tourné, ou modulé par un LFO) :
-36 700 → 22 400.
-
-TONE : 5 291 ; MACRO : 11 000 en médiane (notes/43 §8). Une piste MODAL coûte donc de 2 à 12 voix de TONE ; le
-modal en 1 voix, 4. Ce sont des instructions : les cordes lisent des lignes de 16 Ko, hors du cache de 8 Ko `[HYP]`
-plus lent encore ; les noyaux en assembleur enchaînent leurs produits sur plusieurs accumulateurs de l'EMAC, ce que
-le décompte d'instructions ne montre pas. Le régulateur de charge des moteurs veille sur MODAL (il l'éteint en fondu
-sous la surcharge, §6) ; une voix qui ne résonne plus n'est plus calculée par lui. Pistes : une ou deux MODAL avec
-le reste.
+TONE : 5 291 ; MACRO : 11 000 en médiane (notes/43 §8). Ce sont des instructions : les cordes lisent des lignes de
+16 Ko, hors du cache de 8 Ko `[HYP]` ; les noyaux en assembleur enchaînent leurs produits sur plusieurs
+accumulateurs de l'EMAC, ce que le décompte d'instructions ne montre pas. Le régulateur de charge des moteurs veille
+sur MODAL (il l'éteint en fondu sous la surcharge, §6) ; une voix qui ne résonne plus n'est plus calculée par lui.
 
 ### 5.1 L'allègement (demande de Maxime, 20/10/2026 : « allège en assembleur »)
 
@@ -213,6 +214,66 @@ limiteur (61), et en polyphonie la chaîne d'excitation des voix inactives.
   modèle le plus léger).
 - Place : code et tables 36 576 o (32 580 avant) ; l'image finit en `0x401fd4c1`, 11 071 o de marge.
 
+### 5.2 Optimisation intense (demande de Maxime, 21/10/2026)
+
+Retours de Maxime sur l'OS du 20/10 (`26aa6e43…`) : « en model 2 et 5, mode polyphonie 4 voix le son est juste un
+click nul » ; FUNC + SHAPE « change bien la polyphonie, mais à l'écran c'est affiché Pitch » ; « brightness ne
+rentre pas dans l'écran faut le réduire, structure aussi ». Puis : « passe en phase d'optimisation intense.
+Actuellement la machine peut prendre jusqu'à 16 % du CPU juste pour elle-même. Je veux qu'elle prenne 2× moins,
+max 10 % ».
+
+- **Le clic `[HYP]`** : la charge. Les modèles 2 et 5 en 4 voix coûtaient 48 500 et 61 000 instructions par bloc
+  (47 000 à 63 000 avec des notes rapprochées, `build/modal_cf/dense.py`) ; à 1,54 cycle par instruction
+  (notes/31 §6), de 45 à 58 % d'un bloc, en plus du reste de l'OS (environ 45 % avec des pistes, notes/31) : au-delà
+  des seuils du régulateur (82 à 86 %, notes/27, 36), qui éteint MODAL dès l'attaque. Les modèles légers en 4 voix
+  (33 000 à 41 000) passaient. Ce qui reste du clic sur la machine dira si la deuxième passe suffit.
+- **Les noms** : la fenêtre du potard (`0x4001e40a`) coupe le nom aux espaces (`0x40096320`) et centre chaque mot
+  (police `0x4014120c`) sur des cases de 8 points en x = 32 (dessin relu dans l'émulateur : « Position », 8 lettres,
+  de x = 1 à 63 ; « Structure », 9, de 5 à 67 ; « Brightness », 10, de 1 à 71) : 8 lettres au plus par mot.
+  `gen_syntakt_engines.check_names` refuse désormais un mot plus long (tous les noms existants passent).
+- **Le cœur** (`modal_dsp.h`, `modal_asm.S`), profilé modèle par modèle, polyphonie par polyphonie
+  (`build/modal_cf` : `lines2.py`, coût par ligne de l'appelant ; `dense.py`, notes rapprochées ; `modcost.py`,
+  potard qui bouge ; `peak.py`, le bloc d'une nouvelle note ; `eq2.py`, ColdFire = ordinateur sur 36 cas) :
+  - **les modes** (modèle 0) : les états `ic1`, `ic2` du filtre d'état variable de Rings tenus dans deux
+    accumulateurs de l'EMAC pendant le bloc (8 bits sous le LSB), la sortie d'un mode `v1 = (ic1 + ic1')/2` sommée
+    sur les modes (`sc.so`, `sc.sa` : `s[k] += amp ic1 / 2`, puis `o[k] = s[k] + s[k + 1]` une fois pour tous) :
+    10 instructions par mode et par échantillon au lieu de 14, et plus proche de Rings (1 voix : 47,5 → 98,5 dB).
+    Écartée en route : une forme de Chamberlin aux mêmes pôles et zéros (9 instructions), exacte à réglages fixes
+    mais pas quand ils bougent (4 potards qui bougent : 41,1 → 22,9 dB). Ce noyau se sert du facteur d'échelle de
+    `mac.l` (`<<`, `>>`), que l'OS du Cycles n'emploie pas (le code du Syntakt, si). `emac.py` décale le produit puis
+    le tronque à 2^-39 `[HYP]` : pour `>>`, l'ordre ne change rien ; pour `<<`, si la machine tronquait avant de
+    décaler, un produit différerait de 2^-39 au plus, et l'émulation ne serait plus exacte au LSB près (l'écart
+    resterait sous −180 dB) ;
+  - **les calculs par bloc** gardés tant que leurs entrées ne changent pas (`struct vcache`) : hauteur, filtre
+    d'excitation, notes des cordes sympathiques, glissade, coefficients de dispersion (`disp_coefs`) ; les mêmes
+    nombres ;
+  - **le limiteur** : son gain au-dessus de 1,0 par une division 32/32 et une itération de Newton (`lim_gain`)
+    au lieu du flottant maison à chaque échantillon (1 LSB d'écart) ;
+  - **la chaîne d'excitation des cordes** : le filtre d'excitation sauté quand son entrée et son état sont nuls
+    (sa sortie est nulle) ; le peigne du pincement, son filtre et l'anti-continu en un noyau (`modal_pluck`, hors
+    de la bouffée de bruit) ;
+  - **la corde avec dispersion** (modèles 2 et 5) : sans modulation du retard ni mélange de l'anti-continu (STRUCTURE
+    de 31 à 103 environ), les passes de la corde simple, la lecture avec le passe-tout de l'étirement
+    (`modal_str_read_ap`), l'anti-continu et le bruit de dispersion à part (leur état seul sert aux blocs suivants) ;
+  - **la réverbe** : étage par étage sur le bloc (chaque ligne fait plus de 32 échantillons et chaque boucle passe
+    par une ligne : les mêmes nombres), des pointeurs sans masque quand aucune prise ne repasse par le début du
+    tampon (sinon, l'ancienne boucle), les passe-tout, l'entrée des branches et leur sortie en assembleur
+    (`modal_rv_ap`, `modal_rv_in`, `modal_rv_tail` : GCC faisait 16 instructions par compression en 16 bits) ;
+  - **la voix FM** : les enveloppes, qui ne dépendent pas des oscillateurs, dans une boucle à part ;
+  - le filtre d'état variable passe-bas en assembleur (`modal_svf_lp`).
+  Chaque noyau fait les mêmes opérations de l'EMAC que le C de référence ; tout le reste rend les mêmes octets
+  (vérifié à chaque étape : `modal_host` d'avant et d'après sur les 6 modèles, 3 polyphonies, réglages fixes et
+  mobiles).
+- **Pas fait, et pourquoi** : la boucle des oscillateurs FM (GCC en fait 66 instructions par échantillon, autant qu'à
+  la main) ; le limiteur en assembleur (environ 75 contre 80) ; une forme des modes plus courte (exacte seulement à
+  réglages fixes).
+- **Reste à faire `[FAIT en émulation, mesuré]`** : les calculs par bloc quand un potard bouge en continu (LFO ou
+  potard tourné). Le modal en 1 voix monte alors à 35 000 (BRIGHTNESS) et 41 000 (STRUCTURE, DAMPING)
+  instructions par bloc : les 30 modes refaits à chaque bloc en flottant maison (environ 900 instructions chacun,
+  `reso_compute`) ; le bloc d'une nouvelle note, 43 000. De même `str_block` (cordes) et `disp_coefs` (dispersion,
+  à chaque échantillon quand STRUCTURE bouge). La troisième passe.
+- Place : code et tables 42 356 o (36 576 avant), variables à `+0x86000` (§4).
+
 ## 6. Preuves `[FAIT en émulation]`
 
 ### 6.1 Le cœur contre Rings (`tools/emu/test_modal_dsp.py`)
@@ -238,8 +299,10 @@ L'OS de la version 2.1 construit comme par `build.py`, le vrai code émulé (EMA
 2. interface (`test_model_tg_syntakt.interface`) : 15 machines, rangées et enregistrements de `ROWS8`, CC 16..19,
    changement de machine réel, écran MACHINES sur 2 lignes de 8, noms et potards ;
 3. FUNC + SHAPE (`lofi_ui`, le code de l'interface de l'OS) : FINE sous FUNC + SHAPE sur MODAL seulement, un cran
-   par tour (1, 2, 4), texte et fenêtre de valeur pixel pour pixel comme l'OS dessine un texte ; les machines 1..14
-   et les 14 potards, avec et sans FUNC, comme sans MODAL ; le lo-fi de MACRO inchangé ;
+   par tour (1, 2, 4), texte et fenêtre de valeur pixel pour pixel comme l'OS dessine un texte ; le nom « Voices »
+   sous FUNC + SHAPE, « Pitch » dès la recherche suivante (MACRO comprise) ; les noms des potards de 8 lettres au
+   plus par mot ; les machines 1..14 et les 14 potards, avec et sans FUNC, comme sans MODAL ; le lo-fi de MACRO
+   inchangé ;
 4. son : ce que reçoit la passerelle à chaque bloc rejoué sur `modal.c` compilé pour l'ordinateur
    (`modal_machine_host.c`) : **sortie identique octet pour octet** (6 modèles, polyphonie 1, 2, 4, potards qui
    bougent, modèle verrouillé par pas, polyphonie changée, vélocité, hauteurs extrêmes, DAMPING maximum, machine
@@ -268,17 +331,25 @@ Résultat : voir §6.3.
   complet, **81 vérifications, TOUT OK** (la machine, noyaux en assembleur compris, identique octet pour octet à
   `modal.c` compilé pour l'ordinateur sans eux) ; `test_payload_pack.py` (marge 11 071 o) ; MAIN OS
   `26aa6e43…7d33`.
+- Après l'optimisation du 21/10 (§5.2) : `test_modal_dsp.py` TOUT OK (médiane 76,9 dB, le plus faible 37,4 dB ; le
+  modal en 1 voix de 47,5 à 98,5 dB) ; `build/modal_cf/eq2.py` : 36 cas (6 modèles, 1, 2, 4 voix, réglages fixes
+  et réglages qui bougent), le cœur compilé pour le ColdFire identique à celui de l'ordinateur ; `test_modal.py`
+  complet, **83 vérifications, TOUT OK** (coûts du §5) ; `test_payload_pack.py` (marge 7 667 o) ; MAIN OS
+  `60badb3c…52bd`.
 
 ## 7. À vérifier sur la machine
 
-Flasher l'OS 2.1, puis :
+Flasher l'OS 2.1 (MAIN OS `60badb3c…52bd`, 21/10/2026), puis :
 
 1. Démarrage normal ; MACHINES : 15 repères sur 2 lignes de 8, MODAL le dernier, icône de Metal.
 2. Une piste MODAL : chaque modèle (SHAPE 0 à 5) sonne à la bonne hauteur ; COLOR, CONTOUR, SWEEP, DECAY changent
    le son comme décrit ; DECAY en haut : les cordes résonnent presque sans fin.
-3. FUNC + SHAPE : la fenêtre affiche 1, 2, 4 ; en 4 voix, des notes rapprochées se superposent.
+3. FUNC + SHAPE : la fenêtre affiche « Voices » et 1, 2, 4 ; en 4 voix, des notes rapprochées se superposent ;
+   les modèles 2 et 5 en 4 voix sonnent (plus seulement un clic). Les noms Bright, Model, Position et Struct
+   tiennent dans l'écran.
 4. Vélocité : une note douce frappe moins fort, les notes qui résonnent ne baissent pas.
-5. Deux pistes MODAL avec les autres pistes jouant : craquements ? (la page System de Model-TG donne la charge).
+5. Deux pistes MODAL avec les autres pistes jouant : craquements ? La page System de Model-TG donne la charge :
+   noter le modèle, la polyphonie et le pourcentage, pour relier les instructions du §5 aux cycles.
 6. Six pistes MODAL longtemps (un pattern), puis changer de projet : pas de gel (la mémoire `0x46800000..`).
 7. Les autres machines comme avant (un moteur du Syntakt, MACRO, ACID, le Sampler).
 
@@ -300,3 +371,5 @@ Demandé par Maxime, pas dans cette version. Ce qu'il faudra :
 
 - 20/10/2026 : demande, choix de Maxime (§1), cœur, passerelle, machine, preuves ; OS 2.1.
 - 20/10/2026 : « allège en assembleur » (Maxime) : `modal_asm.S` et les retouches du §5.1.
+- 21/10/2026 : retours de Maxime (le clic des modèles 2 et 5 en 4 voix, « Pitch », les noms trop longs), puis
+  « phase d'optimisation intense » : §5.2.

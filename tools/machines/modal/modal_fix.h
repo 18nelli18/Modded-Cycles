@@ -86,6 +86,32 @@ static inline s32 qmac2r(s32 a, s32 b, s32 c, s32 d)
 {
 	return emac_sat(((((long long)a * b) >> 23) + (((long long)c * d) >> 23) + 128) >> 8);
 }
+
+/* Un accumulateur de l'EMAC garde d'un echantillon a l'autre (les noyaux de modal_asm.S y tiennent les etats des
+ * filtres) : la valeur en 2^-39 (8 bits sous le LSB). acc_ld : move.l Rx,ACC ; acc_rd : move.l ACC,Rx (troncature,
+ * saturation) ; emp, emp1, empr : le produit qu'ajoute (ou retire) mac.l / msac.l, sans decalage, avec << ou avec >>,
+ * tronque a 2^-39 apres le decalage. Sur le ColdFire, ces calculs n'existent qu'en assembleur. */
+typedef long long acc_t;
+static inline acc_t acc_ld(s32 x)
+{
+	return (acc_t)x * 256;
+}
+static inline s32 acc_rd(acc_t a)
+{
+	return emac_sat(a >> 8);
+}
+static inline acc_t emp(s32 a, s32 b)
+{
+	return ((acc_t)a * b) >> 23;
+}
+static inline acc_t emp1(s32 a, s32 b)
+{
+	return ((acc_t)a * b * 2) >> 23;
+}
+static inline acc_t empr(s32 a, s32 b)
+{
+	return ((acc_t)a * b) >> 24;
+}
 #endif
 
 static inline s32 shl(s32 x, int n)                  /* x << n sans comportement indefini sur les negatifs */

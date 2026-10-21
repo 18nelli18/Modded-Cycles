@@ -275,6 +275,20 @@ def poly_ui(base, fw, label):
           f"{label} : piste MODAL : FUNC + SHAPE -> {got[gmo.SHAPE_KNOB, True]} (FINE) ; SHAPE seul -> "
           f"{got[gmo.SHAPE_KNOB, False]} (Model, {first + 1}) ; FUNC + PITCH : PITCH ; les autres potards avec FUNC "
           f"comme sans")
+    gs.set_base(fw.dest)
+    fname = gs.DESCN + gs.FTUN * 0x38 + 0x2c         # le nom long de FINE, que montre la fenetre du potard
+    seen = []
+    for k_, f_ in ((gmo.SHAPE_KNOB, True), (gmo.SHAPE_KNOB, False), (gmo.SHAPE_KNOB, True), (2, True)):
+        b.lookup(m, k_, f_)
+        seen.append(b.cstr(b.u32(fname)))
+    b.lookup(fw.views["macro"].index, 2, True)
+    seen.append(b.cstr(b.u32(fname)))
+    check(seen == ["Voices", "Pitch", "Voices", "Pitch", "Pitch"],
+          f"{label} : nom dans la fenetre du potard : FUNC + SHAPE « Voices », puis « Pitch » des la recherche "
+          f"suivante (SHAPE seul, FUNC + PITCH, MACRO FUNC + PITCH) : {seen}")
+    names = [b.cstr(b.u32(gs.DESCN + (first + i) * 0x38 + 0x2c)) for i in range(4)]
+    check(all(len(w) <= gs.NAME_WORD for n_ in names for w in n_.split(" ")),
+          f"{label} : noms des potards {names} : {gs.NAME_WORD} lettres au plus par mot (la fenetre du potard)")
     b.lookup(m, gmo.SHAPE_KNOB, True)           # nos fonctions sur l'objet d'interface de FINE
     steps = {(c, d): b.edit_func(lofi_ui.FTUN, c, d) for c in (0x4000, 0x5000, 0x6000, 0x4080, 0x0, 0x7f00)
              for d in (0x100, -0x100, 0x300, -0x300, 1, -1)}

@@ -62,6 +62,9 @@ struct ctl {                                         /* ce que update prepare po
 
 static struct ctl ctl[6];
 
+/* la Part et la reverbe d'une piste tiennent dans sa place */
+typedef char modal_track_fits[(sizeof(struct track) + 2 * RV_SIZE <= TRACK_SIZE) ? 1 : -1];
+
 static inline struct track *track_of(int t)
 {
 	return (struct track *)(MODAL_RAM + (unsigned long)t * TRACK_SIZE);

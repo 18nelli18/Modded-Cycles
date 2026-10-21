@@ -517,7 +517,12 @@ def detours_asm(n, images, firsts, tg=None, lofi=None, fine=()):
     passent la main aux siens pour le reste (notes/31). lofi : rang de MACRO parmi les machines ajoutées (None
     sans MACRO) ; FUNC + PITCH y règle FINE, son lo-fi (lofi_asm, notes/55 §8). fine : [(rang, réglage)] des
     machines dont FUNC + un potard règle FINE avec leurs propres fonctions (réglage : potard, step, fmt, draw,
-    adresses ; MODAL, FUNC + SHAPE : sa polyphonie, notes/74), même mécanique que le lo-fi de MACRO."""
+    adresses ; MODAL, FUNC + SHAPE : sa polyphonie, notes/74), même mécanique que le lo-fi de MACRO. Avec un nom
+    (name_at : son adresse ; name_orig : celle du nom d'origine de FINE, « Pitch »), la fenêtre du potard montre ce
+    nom le temps de ce réglage : knob_vec le pose dans le descripteur de FINE, et remet celui d'origine à toute
+    autre recherche de potard."""
+    named = [f for _, f in fine if f.get("name_at")]     # réglages sous FUNC avec leur propre nom
+    fname = DESCN + FTUN * 0x38 + 0x2c                   # nom long du descripteur de FINE
     last = 76 + 5 * n                                    # 1er descripteur après ceux des machines ajoutées
     first = TG_FIRST if tg else 6                        # index de la 1re machine ajoutée
     top = first + n - 1                                  # plus grand index de machine
@@ -580,7 +585,7 @@ def detours_asm(n, images, firsts, tg=None, lofi=None, fine=()):
     a.append("#define REC_BASE 0x40a71540")
     a.append("#define REC_SNARE (REC_BASE + 2 * 76)")
     if tg:
-        tg_records(a, ins, lab, n, firsts, first, top, tg)
+        tg_records(a, ins, lab, n, firsts, first, top, tg, named=bool(named))
     else:
         a.append("\t.globl\trecord_at"); lab("record_at")
         ins("move.l 4(%sp), %d0")
@@ -619,17 +624,21 @@ def detours_asm(n, images, firsts, tg=None, lofi=None, fine=()):
     if first + n > MARKS_ROW:
         marks_asm(a, ins, lab, first + n)
     a.append("\t.globl\tknob_vec"); lab("knob_vec")
+    if named:                                          # le nom d'origine, sauf pour le réglage qui a le sien
+        ins("clr.l fine_name"); ins(f"move.l #{named[0]['name_orig']:#x}, %d1"); ins(f"move.l %d1, {fname:#x}")
     ins("move.l 36(%sp), %d0"); ins("movea.l 104(%a2), %a1"); ins(f"moveq #{top}, %d1"); ins("cmp.l %d0, %d1")
     ins("bcc.s 1f"); ins("moveq #0, %d0"); ins("rts")                    # hors limites : les potards de KICK
     lab("1"); ins(f"moveq #{first}, %d1"); ins("cmp.l %d1, %d0")
-    ins("blt.s 2f"); ins(f"lea {DATA + 12 * (first + n):#x}, %a1")
+    ins("blt.w 2f" if named else "blt.s 2f"); ins(f"lea {DATA + 12 * (first + n):#x}, %a1")
     for rank, f in fine:
         # même chose que le lo-fi de MACRO (plus bas), pour le potard f["knob"] et les fonctions de la machine
         ins(f"moveq #{first + rank}, %d1"); ins("cmp.l %d1, %d0"); ins("bne.s 7f"); ins("tst.b %d5"); ins("beq.s 7f")
         ins(f"moveq #{f['knob']}, %d1"); ins("cmp.l %d1, %d2"); ins("bne.s 7f"); ins("moveq #16, %d3")
         for k, off in (("step", 0x50), ("fmt", 0x20), ("draw", 0x30)):
             ins(f"move.l #{f[k]:#x}, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + off:#x}")
-        ins("bra.s 2f")
+        if f.get("name_at"):                           # tg_sync le repose apres sa copie des noms (fine_name)
+            ins(f"move.l #{f['name_at']:#x}, %d1"); ins(f"move.l %d1, {fname:#x}"); ins("move.l %d1, fine_name")
+        ins("bra.w 2f" if f.get("name_at") else "bra.s 2f")
         lab("7")
     if lofi is not None:
         # MACRO, FUNC tenu, potard PITCH (d5 : FUNC, d2 : potard, d3 = potard - 2 : l'entrée lue) : l'entrée 16 de
@@ -643,6 +652,8 @@ def detours_asm(n, images, firsts, tg=None, lofi=None, fine=()):
         ins("move.l #lofi_fmt, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x20:#x}")
         ins("move.l #lofi_draw, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x30:#x}")
     lab("2"); ins("rts")
+    if named:
+        a.append("\t.globl\tfine_name"); lab("fine_name"); ins(".long 0")   # le nom du réglage sous FUNC, ou 0
     if lofi is not None:
         a.append(lofi_asm())
     # machine d'un descripteur (applicabilité) et rangée du constructeur : descripteurs ajoutés -> leur machine
@@ -798,7 +809,7 @@ lofi_khz:	.byte	{khz}
 """
 
 
-def tg_records(a, ins, lab, n, firsts, first, top, tg):
+def tg_records(a, ins, lab, n, firsts, first, top, tg, named=False):
     """Avec Model-TG : enregistrements par machine (0x4004df5c : index machine + 1 ; 0x4004df76 : index machine).
     Les machines ajoutées ont les leurs (construits comme seuls, rec_build) ; les autres passent par les détours de
     Model-TG (descr_hook, descr_b_hook : le Sampler, et Attack sur le potard DECAY tant que la touche est tenue).
@@ -832,6 +843,9 @@ def tg_records(a, ins, lab, n, firsts, first, top, tg):
     ins(f"lea {tg['param_table'] + 44:#x}, %a0"); ins(f"lea {DESCN + 44:#x}, %a1"); ins(f"moveq #{g7.NDESC - 1}, %d1")
     lab("2"); ins("move.l (%a0), (%a1)"); ins("move.l 4(%a0), 4(%a1)"); ins("move.l 8(%a0), 8(%a1)")
     ins(f"lea {g7.DSTRIDE}(%a0), %a0"); ins(f"lea {g7.DSTRIDE}(%a1), %a1"); ins("subq.l #1, %d1"); ins("bpl.s 2b")
+    if named:                                   # le nom du réglage sous FUNC (knob_vec) : par-dessus la copie
+        ins("move.l fine_name, %d1"); ins("beq.s 3f"); ins(f"move.l %d1, {DESCN + FTUN * 0x38 + 0x2c:#x}")
+        lab("3")
     ins("movea.l (%sp)+, %a1"); ins("movea.l (%sp)+, %a0"); ins("rts")
 
 
@@ -1157,6 +1171,20 @@ def own_code(tmp, machines, rnd_at, lay, tg, own):
     return blobs, br["syms"], stubs, ssyms
 
 
+NAME_WORD = 8                # lettres par mot d'un nom long : la fenêtre du potard (0x4001e40a) coupe le nom aux
+                             # espaces et centre chaque mot sur des cases de 8 points en x = 32 : au-delà de 8, le
+                             # mot déborde de la moitié gauche de l'écran (relevé par Maxime, MODAL, 21/10/2026)
+
+
+def check_names(machines):
+    """Refuse un nom long de potard (ou du réglage sous FUNC) dont un mot dépasse NAME_WORD lettres."""
+    for m in machines:
+        names = [k[0] for k in m["knobs"]] + ([m["fine"]["name"]] if m.get("fine", {}).get("name") else [])
+        for nm_ in names:
+            if any(len(w) > NAME_WORD for w in nm_.split(" ")):
+                raise SystemExit(f"!! {m['name']} : « {nm_} », un mot de plus de {NAME_WORD} lettres (l'écran)")
+
+
 def fine_list(machines):
     """[(rang, réglage)] des machines ajoutées dont FUNC + un potard règle FINE (detours_asm, fine)."""
     return [(i, m["fine"]) for i, m in enumerate(machines) if m.get("fine")]
@@ -1280,12 +1308,18 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None, own=Non
     nm = first + n                              # machines : 6 d'origine, le Sampler avec Model-TG, puis les nôtres
     top = nm - 1                                # plus grand index de machine
     names_at, upd_at, rnd_at, vec_at, map_at = DATA, DATA + 4 * nm, DATA + 8 * nm, DATA + 12 * nm, DATA + 16 * nm
+    check_names(machines)
     strings = [m["name"] for m in machines] + [k[i] for m in machines for k in m["knobs"] for i in (0, 1)]
+    strings += [m["fine"]["name"] for m in machines if m.get("fine", {}).get("name")]
     at, addr = map_at + ((nm + 3) & ~3), {}
     for s_ in strings:
         if s_ not in addr:
             addr[s_] = at
             at += len(s_) + 1
+    for m in machines:                          # le nom du réglage sous FUNC (detours_asm : knob_vec)
+        if m.get("fine", {}).get("name"):
+            m["fine"] = dict(m["fine"], name_at=addr[m["fine"]["name"]],
+                             name_orig=u32(g7.DESC + FTUN * g7.DSTRIDE + 0x2c))
     meter_at = at                               # compteur : un nom de 8 o par machine (5 caractères au plus)
     if meter:
         at += 8 * nm
