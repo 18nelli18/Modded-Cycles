@@ -1,15 +1,15 @@
 {
-  "stamp": "2026-10-20-usb-2ch-default-main-2",
+  "stamp": "2026-10-20-harmony-slice-main-206",
   "scope": "main",
   "profile": "Exact full-feature image, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (2ch enabled)",
   "fixed_image": "all-features-no-diagnostic-usb-2ch-default.syx",
-  "fixed_image_sha256": "d85eb01c29b8e07dd55029be82d86552835e6e4d106d5e1e8e3fd8f13f84ee1a",
+  "fixed_image_sha256": "051c4e7094dd317c0f10d47dd20e81028748faebf53d117100b501e876b0b8bf",
   "diagnostics": false,
   "startup": "Supermodel",
   "usb_audio_default": "2ch",
   "track_setup_follows_selection": true,
   "macro_fine": true,
-  "hardware_verified": false,
+  "hardware_verified": true,
   "step_recorder": true,
   "step_recorder_hardware_verified": true,
   "latching_mute_solo": true,
@@ -28,5 +28,12 @@
   "live_midi_single_producer": true,
   "chord_harmony_cache": true,
   "cut_fade_zero_endpoint": true,
-  "midi_idle_shortcut": true
+  "midi_idle_shortcut": true,
+  "main_os_sha256": "38a0dea537588c244cb9fedc6e4ef262b3a455532de8fd86eb065f080af543bc",
+  "pad_selection_default": "Stock",
+  "mute_mode_default": "Stock",
+  "numbers_default": "Off",
+  "harmony_locks_live_grid": true,
+  "sample_wizard_slice_preview": true,
+  "guide_pdf": "shortcut-guide.pdf"
 }
