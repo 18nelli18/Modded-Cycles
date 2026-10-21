@@ -558,8 +558,8 @@ Même mise à jour dans son firmware Model-TG-VA-Edition (branche `plaits`), d'o
 #### 3.11.3 Conception
 
 - **T34** : un bloc de 120 o par kit (LFO 3 puis LFO 4, pistes 0..5, {SPD, MULT, WAVE, DEST, DEP}), en
-  `0x4233c000..0x4233ecff`, dans le bas du trou au-dessus du BSS (§3.5.2), suivi de 4 tampons de kit retenus
-  (`0x4233ed00..0x4233eef3`). Pas remis à zéro au démarrage : `blk34` les met aux défauts au premier usage, tant que
+  `0x42338100..0x4233acff`, dans le bas du trou au-dessus du BSS (§3.5.2), suivi de 4 tampons de kit retenus
+  (`0x4233ad00..0x4233aef3`) ; d'abord en `0x4233c000`, déplacé le 21/10/2026 (§3.11.8). Pas remis à zéro au démarrage : `blk34` les met aux défauts au premier usage, tant que
   l'octet `kready` (dans un masque, rechargé à 0) vaut 0. Le chargement du projet au démarrage passe par `kit_load`,
   donc par là.
 - **Le kit joué** : `cur34` rend le bloc de `*0x40a78888`. Moteur (`lfo_audio`, `audio_sets`), get/set des pages
@@ -584,8 +584,8 @@ Même mise à jour dans son firmware Model-TG-VA-Edition (branche `plaits`), d'o
 
 - Code et données : 2 612 o dans les dix masques réservés à ce mod (`0x40185f48`, `0x40186238`, `0x40189618`, qui
   restaient vides, sont maintenant pris).
-- Mémoire : `0x4233c000..0x4233eef3` (12 020 o), sous la mémoire de travail de §3.5.2, déclarée dans
-  `tools/registry.py`.
+- Mémoire : `0x42338100..0x4233aef3` (12 020 o), sous la mémoire de travail de §3.5.2 et sous celle du step record
+  (`0x4233e800`, notes/73), déclarée dans `tools/registry.py`.
 - Octets +648..+699 de l'enregistrement d'un kit, déclarés dans `tools/registry.py`.
 
 #### 3.11.5 Preuve `[FAIT en émulation]`
@@ -633,6 +633,18 @@ Syntakt sous la main : les combinaisons avec les moteurs du Syntakt ne sont pas 
 7. Copier un pattern et le coller ailleurs : ses LFO 3/4 suivent.
 8. Ouvrir un projet sauvé avec la version précédente : LFO 3/4 aux défauts. L'OS officiel ouvre un projet sauvé avec
    cette version.
+
+#### 3.11.8 Mise à jour du 21/10/2026 : fusion avec l'OS 2.0 `[FAIT en émulation]`
+
+- La branche a été fusionnée avec `main` (OS 2.0, un seul OS, `os.json`) : le mod reste à sa place dans `os.json`
+  (`lfo-plus`, avant les moteurs du Syntakt), son état repasse à `experimental` le temps de l'essai.
+- **Conflit de mémoire** : le step record (notes/73 §3) a pris `0x4233e800..0x4233e8ff`, qui tombait dans les blocs
+  LFO 3/4 (`0x4233c000..0x4233eef3`). Les blocs passent en `0x42338100..0x4233aef3`, juste au-dessus de la fin du BSS
+  (`0x423380b0`, arrondie au-dessus) : rien d'autre dans le dépôt ne vise `0x423380b0..0x4233e7ff` (relevé du
+  21/10/2026 sur `main` : step record en `0x4233e800`, `lfo-plus` en `0x4233f000`, la passerelle Syntakt en
+  `0x43000000` et au-delà ; `level-pan-values` tourne en place). Rien d'autre ne change : le code ne connaît les blocs
+  que par `SCR34`.
+- Le format sauvé (+648..+699 du kit) ne change pas : un projet sauvé avec la version du 14/10/2026 se relit.
 
 ---
 

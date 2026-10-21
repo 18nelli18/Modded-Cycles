@@ -353,28 +353,32 @@ def writes_ok(stock, img, tweak, every, runtimes):
           f"mémoire de travail {lo:#x}..{hi:#x} et blocs LFO 3/4 {lo2:#x}..{hi2:#x} (sans recouvrement) entre la fin du "
           f"BSS ({bss_end:#x}, 0x400004c2) et les tampons DMA ({dma:#x} = {dma & 0xf7ffffff:#x}, 0x40057798)")
     hole = (0x423380b1, 0x42340000)                     # 0x423380b0 : la borne de la remise à zéro, pas dedans
+    # l'OS ne vise rien du trou ; les autres tweaks peuvent y avoir leur propre mémoire (step-rec en 0x4233e800,
+    # notes/73), mais rien dans la nôtre (notes/56 §3.11.8)
+    ours = ((lo, hi), (lo2, hi2))
 
-    def refs_in(data):
+    def refs_in(data, ranges=(hole,)):
         n = 0
         for i in range(0, len(data) - 3):
             v = int.from_bytes(data[i:i + 4], "big") & 0xf7ffffff      # 0x4a.. (sans cache) -> 0x42..
-            if hole[0] <= v < hole[1] and i & 1 == 0:
+            if any(r0 <= v < r1 for r0, r1 in ranges) and i & 1 == 0:
                 n += 1
         return n
-    own = sum(refs_in(bytes.fromhex(w["new"])) for w in tweak["writes"])
-    others = sum(refs_in(bytes.fromhex(w["new"])) for t in every for w in t["writes"])
+    own = sum(refs_in(bytes.fromhex(w["new"]), ours) for w in tweak["writes"])
+    others = sum(refs_in(bytes.fromhex(w["new"]), ours) for t in every for w in t["writes"])
     # charges utiles de tous les tweaks : leur code à nous (morceaux « hex ») et leurs relocalisations ; les morceaux
     # recopiés de l'OS Cycles sont dans l'OS (déjà vu), ceux du Syntakt ne visent la mémoire du Cycles que par leurs
     # relocalisations
     pay = 0
     for t in every:
         ap_ = t.get("append") or {}
-        pay += sum(refs_in(bytes.fromhex(part["hex"])) for part in ap_.get("parts", []) if "hex" in part)
-        pay += sum(refs_in(bytes.fromhex(new)) for _, _, new in ap_.get("reloc", []))
+        pay += sum(refs_in(bytes.fromhex(part["hex"]), ours) for part in ap_.get("parts", []) if "hex" in part)
+        pay += sum(refs_in(bytes.fromhex(new), ours) for _, _, new in ap_.get("reloc", []))
     found = (refs_in(stock), others, pay)
     check(found == (0, 0, 0) and own > 0,
-          f"aucune adresse de {hole[0] - 1:#x}..{hole[1]:#x} (ni de sa vue sans cache) dans l'OS, les écritures des "
-          f"autres tweaks et le code et les relocalisations de leurs charges utiles {found} ; {own} dans ce tweak")
+          f"aucune adresse de {hole[0] - 1:#x}..{hole[1]:#x} (ni de sa vue sans cache) dans l'OS ; aucune de notre "
+          f"mémoire ({lo2:#x}..{hi2:#x}, {lo:#x}..{hi:#x}) dans les écritures des autres tweaks et le code et les "
+          f"relocalisations de leurs charges utiles {found} ; {own} dans ce tweak")
     lo34 = syms["lfo34"] - BASE
     check(img[syms["view"] - BASE:syms["view"] - BASE + 8] == bytes(8)
           and img[lo34:lo34 + 120] == struct.pack(">5H", *DEFAULTS) * 12,

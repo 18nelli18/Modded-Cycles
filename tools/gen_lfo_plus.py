@@ -59,7 +59,7 @@ SCR_SIZE = 1180
 # Blocs LFO 3/4 des 96 kits (96 × 120 o), puis 4 tampons de kit retenus (adresses, prochaine case, 4 × 120 o) :
 # 12 020 o dans le bas du même trou, sous SCR (notes/56 §3.11). Pas remis à zéro au démarrage : lfo_plus.S les met
 # aux défauts au premier usage, tant que l'octet kready (dans un masque) vaut 0.
-SCR34 = 0x4233c000
+SCR34 = 0x42338100
 SCR34_SIZE = 12020
 # (adresse, octets d'origine, symbole, instruction, rôle)
 HOOKS = (
