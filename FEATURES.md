@@ -388,8 +388,8 @@ string with reverb. Rings' hidden synth (the easter egg) is not included. The co
   sample as the exciter, chosen in the preset menu, is the next step (asked by Maxime, not in this version).
 - Heavy: 9 400 (FM voice, 1 voice) to 42 000 (string and reverb, 4 voices) instructions per block in the emulator,
   with the hottest loops written in ColdFire assembly; the modal model with 1 voice, 16 000, about 3 Tone voices.
-  A knob that moves all the time (an LFO on COLOR, CONTOUR or DECAY) still costs much more on the modal model
-  (about 35 000 to 41 000): the next optimisation. One or two MODAL tracks with the rest. The load governor
+  A knob that moves all the time (an LFO on COLOR, CONTOUR or DECAY) costs more: up to 26 000 on the modal model,
+  27 000 on the sympathetic strings. One or two MODAL tracks with the rest. The load governor
   looks after MODAL too.
 - The very first MODAL note after power-on starts about 13 ms late (tables computed over 20 blocks); the reverb of
   model 5 starts 11 ms after a track becomes MODAL (its memory is cleared over 16 blocks).

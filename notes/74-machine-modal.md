@@ -18,8 +18,8 @@ cœur contre Rings) et `tools/emu/test_modal.py` (la machine dans l'OS). Plan de
 - Réglages « éco » (choix de Maxime) : la moitié des modes, 4 cordes au lieu de 8.
 - **Pas encore d'entrée audio** : le sample comme excitateur, choisi dans le menu des presets, est l'étape suivante
   (§8). Cette version ne le contient pas.
-- Lourd : de 9 400 à 42 000 instructions par bloc selon le modèle et la polyphonie, après deux passes
-  d'allègement (§5.1, §5.2) ; de 10 600 à 69 200 au départ.
+- Lourd : de 9 400 à 42 000 instructions par bloc selon le modèle et la polyphonie, après trois passes
+  d'allègement (§5.1 à §5.3) ; de 10 600 à 69 200 au départ.
 - `[FAIT en émulation]` (§6.3). Pas encore testé sur la machine (§7).
 
 ## 1. Ce que Maxime a choisi (20/10/2026)
@@ -141,15 +141,15 @@ Rapport d'exploration : `build/ref/rings-scout.md` (non versionné). Ce qui comp
 
 | Où | Quoi |
 |---|---|
-| charge utile `+0x79000` | code et tables de MODAL, 42 356 o (C et `modal_asm.S`) |
-| charge utile `+0x86000` | ses variables, 12 340 o (sinus, limiteur, état des passerelles, tampons) ; à `+0x83000` jusqu'au 21/10/2026, déplacées pour laisser 52 Ko au code |
+| charge utile `+0x79000` | code et tables de MODAL, 44 308 o (C et `modal_asm.S`) |
+| charge utile `+0x86000` | ses variables, 12 084 o (sinus, limiteur, état des passerelles, tampons) ; à `+0x83000` jusqu'au 21/10/2026, déplacées pour laisser 52 Ko au code |
 | `0x46800000..0x468effff` | l'état des 6 pistes, 160 Ko chacune |
 
-- Charge utile : 561 204 o (492 288 sans MODAL), rangée compressée en 256 333 o (230 083 sans) ; l'image
-  décompressée finit en `0x401fe20d` : **7 667 o de marge** sous `0x40200000`. Possible grâce au compresseur de
+- Charge utile : 560 948 o (492 288 sans MODAL), rangée compressée en 257 796 o (230 083 sans) ; l'image
+  décompressée finit en `0x401fe7c4` : **6 204 o de marge** sous `0x40200000`. Possible grâce au compresseur de
   notes/50 §10 (sans lui, MODAL ne tenait pas).
-- L'état d'une piste (la `Part`, 95 400 o, puis la réverbe, 64 Ko) tient dans ses 160 Ko : vérifié à la compilation
-  (`modal_track_fits`, `modal.c`), 2 904 o de marge.
+- L'état d'une piste (la `Part`, 94 984 o, puis la réverbe, 64 Ko) tient dans ses 160 Ko : vérifié à la compilation
+  (`modal_track_fits`, `modal.c`), 3 320 o de marge.
 - `0x46800000..` `[HYP]` : libre. La zone d'échantillons de Model-TG s'arrête à `0x46700000` (`REGION_END`,
   `ST_PATCHES`), le Mo suivant est notre charge utile ; au-dessus, Model-TG écrit que le Cycles « registers a 4 MiB
   region at 0x4a400000 and nothing above it » (vue sans cache, soit `0x42400000..0x42800000`), et aucune opérande
@@ -267,12 +267,35 @@ max 10 % ».
 - **Pas fait, et pourquoi** : la boucle des oscillateurs FM (GCC en fait 66 instructions par échantillon, autant qu'à
   la main) ; le limiteur en assembleur (environ 75 contre 80) ; une forme des modes plus courte (exacte seulement à
   réglages fixes).
-- **Reste à faire `[FAIT en émulation, mesuré]`** : les calculs par bloc quand un potard bouge en continu (LFO ou
-  potard tourné). Le modal en 1 voix monte alors à 35 000 (BRIGHTNESS) et 41 000 (STRUCTURE, DAMPING)
-  instructions par bloc : les 30 modes refaits à chaque bloc en flottant maison (environ 900 instructions chacun,
-  `reso_compute`) ; le bloc d'une nouvelle note, 43 000. De même `str_block` (cordes) et `disp_coefs` (dispersion,
-  à chaque échantillon quand STRUCTURE bouge). La troisième passe.
 - Place : code et tables 42 356 o (36 576 avant), variables à `+0x86000` (§4).
+
+### 5.3 Les potards qui bougent (21/10/2026)
+
+Mesuré après le §5.2 (`build/modal_cf/modcost.py` : un potard qui suit un LFO, un pas par bloc ; `peak.py` : le
+bloc d'une nouvelle note) : le modal en 1 voix montait à 35 000 (BRIGHTNESS) et 41 000 (STRUCTURE, DAMPING)
+instructions par bloc, en permanence, et à 43 000 sur le bloc d'une nouvelle note : les 30 modes refaits en flottant
+maison (`reso_compute`, environ 900 instructions par mode, 22 opérations). La corde (modèles 2 et 5) avec
+STRUCTURE qui bouge : 22 500 et 31 800 (les coefficients de dispersion refaits à chaque échantillon, comme dans
+Rings).
+
+- **`reso_compute`** : les opérations du flottant maison en ligne (`xmul_i`… : la même arithmétique que les
+  fonctions, sans l'appel ni le retour d'une structure) et, toutes les grandeurs étant positives, sans le traitement
+  du signe (`xmulp`, `xaddp`, `xrecipp`, `xtop`) ; deux passes : les fréquences des partiels et leur nombre sous
+  0,49, puis les coefficients des seuls modes calculés (`(num + 1) & ~1`) ; `b = 1 − a1` au lieu de `e a1` (2 LSB au
+  plus) ; la 1re passe et les tangentes gardées tant que fréquence et structure ne changent pas (BRIGHTNESS et
+  DAMPING ne refont que les facteurs de qualité). `MAXMODES` passe de 64 à 32 (30 modes au plus en éco) : la place
+  de ces tables.
+- **`disp_apg`** : le gain du passe-tout de l'étirement, `−0,618 d / (0,15 + |d|)`, en virgule fixe (une division
+  32/32 et une itération de Newton) : 8 LSB au plus de la formule exacte.
+- **Les cordes qui bougent** (glissade des cordes sympathiques, filtre d'amortissement qui suit BRIGHTNESS ou
+  DAMPING) : les trois passes en assembleur aussi quand le retard et le filtre avancent à chaque échantillon
+  (`modal_str_read_mv`, `modal_str_damp_mv`, `modal_str_write_mv`).
+- `str_block` en ligne, essayé : 3,6 Ko de code pour un millier d'instructions, seulement quand un potard bouge ;
+  écarté (la place de l'image, 6 204 o de marge).
+
+Résultats (instructions par bloc, 1 voix, le pire potard ; avant → après) : modal 41 000 → 26 100 (BRIGHTNESS :
+35 100 → 17 400) ; corde 22 500 → 16 400 ; corde et réverbe 31 800 → 25 700 ; cordes sympathiques 27 900 → 27 200 ;
+le bloc d'une nouvelle note du modal 43 000 → 28 900. Mêmes preuves (§6.3).
 
 ## 6. Preuves `[FAIT en émulation]`
 
@@ -336,10 +359,13 @@ Résultat : voir §6.3.
   et réglages qui bougent), le cœur compilé pour le ColdFire identique à celui de l'ordinateur ; `test_modal.py`
   complet, **83 vérifications, TOUT OK** (coûts du §5) ; `test_payload_pack.py` (marge 7 667 o) ; MAIN OS
   `60badb3c…52bd`.
+- Après les potards qui bougent (§5.3) : `test_modal_dsp.py` TOUT OK (médiane 76,9 dB) ; `eq2.py` 36 cas
+  identiques ; `test_modal.py` complet, **83 vérifications, TOUT OK** ; `test_payload_pack.py` (marge 6 204 o) ;
+  MAIN OS `4c37e00b…3154`.
 
 ## 7. À vérifier sur la machine
 
-Flasher l'OS 2.1 (MAIN OS `60badb3c…52bd`, 21/10/2026), puis :
+Flasher l'OS 2.1 (MAIN OS `4c37e00b…3154`, 21/10/2026), puis :
 
 1. Démarrage normal ; MACHINES : 15 repères sur 2 lignes de 8, MODAL le dernier, icône de Metal.
 2. Une piste MODAL : chaque modèle (SHAPE 0 à 5) sonne à la bonne hauteur ; COLOR, CONTOUR, SWEEP, DECAY changent
@@ -373,3 +399,4 @@ Demandé par Maxime, pas dans cette version. Ce qu'il faudra :
 - 20/10/2026 : « allège en assembleur » (Maxime) : `modal_asm.S` et les retouches du §5.1.
 - 21/10/2026 : retours de Maxime (le clic des modèles 2 et 5 en 4 voix, « Pitch », les noms trop longs), puis
   « phase d'optimisation intense » : §5.2.
+- 21/10/2026 : les potards qui bougent (§5.3).

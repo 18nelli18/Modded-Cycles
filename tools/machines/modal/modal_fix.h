@@ -155,12 +155,21 @@ static inline xf xnorm(s32 m, s32 e)
 	return xmk(shl(m, n), e - n);
 }
 
-static __attribute__((noinline)) xf xmul(xf a, xf b)
+/* Chaque operation existe en deux formes, la meme arithmetique : _i, en ligne (les boucles par mode, reso_compute),
+ * et la fonction, pour le reste du code (la place). */
+#define XFI static inline __attribute__((always_inline))
+
+XFI xf xmul_i(xf a, xf b)
 {
 	return xnorm(qmul(a.m, b.m), a.e + b.e + 1);
 }
 
-static __attribute__((noinline)) xf xadd(xf a, xf b)
+static __attribute__((noinline)) xf xmul(xf a, xf b)
+{
+	return xmul_i(a, b);
+}
+
+XFI xf xadd_i(xf a, xf b)
 {
 	int d;
 
@@ -179,6 +188,11 @@ static __attribute__((noinline)) xf xadd(xf a, xf b)
 	return xnorm((a.m >> 1) + (b.m >> (d + 1)), a.e + 1);
 }
 
+static __attribute__((noinline)) xf xadd(xf a, xf b)
+{
+	return xadd_i(a, b);
+}
+
 static inline xf xneg(xf a)
 {
 	return xmk(-a.m, a.e);
@@ -189,7 +203,7 @@ static inline xf xsub(xf a, xf b)
 	return xadd(a, xneg(b));
 }
 
-static __attribute__((noinline)) xf xrecip(xf a)
+XFI xf xrecip_i(xf a)
 {
 	u32 am, q;
 	s32 z, xz, t;
@@ -207,14 +221,24 @@ static __attribute__((noinline)) xf xrecip(xf a)
 	return xnorm(z, -a.e);
 }
 
+static __attribute__((noinline)) xf xrecip(xf a)
+{
+	return xrecip_i(a);
+}
+
 /* v / 2^frac */
-static __attribute__((noinline)) xf xfrom(s32 v, int frac)
+XFI xf xfrom_i(s32 v, int frac)
 {
 	return xnorm(v, 30 - frac);
 }
 
+static __attribute__((noinline)) xf xfrom(s32 v, int frac)
+{
+	return xfrom_i(v, frac);
+}
+
 /* la valeur en entier a frac bits apres la virgule, saturee (troncature vers -infini) */
-static __attribute__((noinline)) s32 xto(xf a, int frac)
+XFI s32 xto_i(xf a, int frac)
 {
 	int sh;
 
@@ -228,6 +252,11 @@ static __attribute__((noinline)) s32 xto(xf a, int frac)
 	if (sh <= -32)
 		return a.m < 0 ? -1 : 0;
 	return a.m >> -sh;
+}
+
+static __attribute__((noinline)) s32 xto(xf a, int frac)
+{
+	return xto_i(a, frac);
 }
 
 /* signe de a - b */
@@ -248,9 +277,77 @@ static inline xf xscale(xf a, int n)
 	return a.m ? xmk(a.m, a.e + n) : a;
 }
 
+/* Les memes operations pour des valeurs positives ou nulles (les coefficients des modes, reso_compute) : sans le
+ * traitement du signe, la meme arithmetique. */
+XFI xf xnormp(s32 m, s32 e)
+{
+	int n;
+
+	if (m == 0)
+		return xmk(0, XF_ZE);
+	n = __builtin_clz((u32)m) - 1;
+	return xmk(shl(m, n), e - n);
+}
+
+XFI xf xmulp(xf a, xf b)
+{
+	return xnormp(qmul(a.m, b.m), a.e + b.e + 1);
+}
+
+XFI xf xaddp(xf a, xf b)
+{
+	int d;
+
+	if (a.m == 0)
+		return b;
+	if (b.m == 0)
+		return a;
+	if (a.e < b.e) {
+		xf t = a;
+		a = b;
+		b = t;
+	}
+	d = a.e - b.e;
+	if (d > 30)
+		return a;
+	return xnormp((a.m >> 1) + (b.m >> (d + 1)), a.e + 1);
+}
+
+XFI xf xrecipp(xf a)
+{
+	u32 q;
+	s32 z, t;
+
+	if (a.m == 0)
+		return xmk(Q31ONE, 1000);
+	q = 0xffffffffu / ((u32)a.m >> 15);
+	z = (s32)(q << 13);
+	t = (s32)(0x80000000u - (u32)shl(qmul(a.m, z), 1));
+	return xnormp(shl(qmul(z, t), 1), -a.e);
+}
+
+XFI xf xfromp(s32 v, int frac)
+{
+	return xnormp(v, 30 - frac);
+}
+
+XFI s32 xtop(xf a, int frac)
+{
+	int sh;
+
+	if (a.m == 0)
+		return 0;
+	sh = a.e - 30 + frac;
+	if (sh > 0)
+		return Q31ONE;
+	if (sh <= -32)
+		return 0;
+	return a.m >> -sh;
+}
+
 /* SemitonesToRatio (stmlib) : demi-tons << 16 -> rapport. Comme stmlib : index = partie entiere + 128 (tables
  * de 257 rapports), fraction tronquee en 1/256 de demi-ton. */
-static __attribute__((noinline)) xf xs2r(s32 semis)
+XFI xf xs2r_i(s32 semis)
 {
 	s32 p = semis + (128 << 16), i, j, k, oct;
 
@@ -264,6 +361,11 @@ static __attribute__((noinline)) xf xs2r(s32 semis)
 	oct = k >= 0 ? k / 12 : -((-k + 11) / 12);
 	k -= 12 * oct;
 	return xnorm(qmul(M_P12[k], M_P256[j]), oct + 1);
+}
+
+static __attribute__((noinline)) xf xs2r(s32 semis)
+{
+	return xs2r_i(semis);
 }
 
 /* Interpolate(table, x, size) de stmlib, x en Q31 dans [0, 1], size = 2^lg */

@@ -96,7 +96,7 @@ mode_fix:
 	rts
 
 /* void modal_modes_lin(struct mode *md, int n, const s32 *x, s32 *ob, s32 *ab, const s32 *amp)
- * Position qui bouge : amplitude a = amp[i] + (k + 1) da a l'echantillon k (da = amp[i + 64]),
+ * Position qui bouge : amplitude a = amp[i] + (k + 1) da a l'echantillon k (da = amp[i + 32], MAXMODES),
  * o[k] += (a ic1[k] + a ic1[k + 1]) / 2 ; tous les modes calcules. La sortie de l'echantillon k - 1 se fait au
  * debut de l'echantillon k (la 1re iteration entre apres elle).
  * Pile : 0 registres, 44 paires restantes, 48 fin de x, 52 retour, 56 md, 60 n, 64 x, 68 ob, 72 ab, 76 amp. */
@@ -125,7 +125,7 @@ modal_modes_lin:
 	lea	52(%sp), %sp
 	rts
 
-/* un mode (a3), sortie a1, amplitude (a4) et son pas (256(a4)) ; avance a3 et a4. Fin de x en 52(%sp), x en
+/* un mode (a3), sortie a1, amplitude (a4) et son pas (128(a4), MAXMODES = 32) ; avance a3 et a4. Fin de x en 52(%sp), x en
  * 68(%sp) (bsr : 4 o de plus). */
 mode_lin:
 	movem.l	(%a3), %d4-%d6		/* b, a2, a3 */
@@ -146,7 +146,7 @@ mode_lin:
 	add.l	%d3, (%a1)+
 6:
 	movea.l	%d0, %a2		/* ic1[k - 1] */
-	add.l	256(%a4), %d7		/* amp += da */
+	add.l	128(%a4), %d7		/* amp += da */
 	move.l	%acc1, %d1		/* r2 = ic2 */
 	sub.l	%d1, %d2		/* v3 = x - ic2 */
 	mac.l	%d4, %d0, <<, %acc0
@@ -160,7 +160,7 @@ mode_lin:
 	movclr.l %acc2, %d3
 	add.l	%d3, (%a1)+
 	movea.l	%d0, %a2		/* ic1[k - 1] */
-	add.l	256(%a4), %d7		/* amp += da */
+	add.l	128(%a4), %d7		/* amp += da */
 	move.l	%acc1, %d1		/* r2 = ic2 */
 	sub.l	%d1, %d2		/* v3 = x - ic2 */
 	mac.l	%d4, %d0, <<, %acc0
@@ -700,4 +700,182 @@ modal_rv_in:
 9:	move.l	%d3, %d0
 	movem.l	(%sp), %d2-%d7/%a2
 	lea	28(%sp), %sp
+	rts
+
+/* void modal_str_read_mv(const s32 *pw, s32 *st, const s32 *in, s32 *hb, int n)
+ * Corde, passe 1 quand le retard bouge (modal_dsp.h : la boucle de str_process) : pour chaque echantillon,
+ * dv += d_inc, dc += dc_inc, d = qmul(dv, dc) - 2^20, hb[k] = hermite(pw - k + (d >> 20), frac) + in[k].
+ * st : dv, dc (rendus), d_inc, dc_inc. pw : &line[w] du 1er echantillon (w recule d'un mot par echantillon). */
+	.globl	modal_str_read_mv
+modal_str_read_mv:
+	lea	-44(%sp), %sp
+	movem.l	%d2-%d7/%a2-%a6, (%sp)
+	movea.l	48(%sp), %a0		/* pw */
+	movea.l	52(%sp), %a6		/* st */
+	movea.l	56(%sp), %a5		/* in */
+	movea.l	60(%sp), %a2		/* hb */
+	move.l	64(%sp), %d0		/* n */
+	beq.w	9f
+	lea	(%a2, %d0.l*4), %a4	/* fin de hb */
+	movem.l	(%a6), %d6-%d7		/* dv, dc */
+	movea.l	#0x8000, %a3		/* l'arrondi */
+1:	add.l	8(%a6), %d6		/* dv += d_inc */
+	add.l	12(%a6), %d7		/* dc += dc_inc */
+	mac.l	%d6, %d7, %acc0
+	movclr.l %acc0, %d5
+	subi.l	#0x100000, %d5		/* d = qmul(dv, dc) - 2^20 */
+	move.l	%d5, %d4
+	asr.l	#8, %d4
+	asr.l	#8, %d4
+	asr.l	#4, %d4			/* d >> 20 */
+	lea	(%a0, %d4.l*4), %a1
+	lsl.l	#8, %d5
+	lsl.l	#3, %d5
+	bclr	#31, %d5		/* frac = (d << 11) & 0x7fffffff */
+	movem.l	-4(%a1), %d0-%d3	/* xm1, x0, x1, x2 */
+	move.l	%d2, %d4
+	sub.l	%d0, %d4
+	asr.l	#1, %d4			/* c = (x1 - xm1) >> 1 */
+	move.l	%d1, %d0
+	sub.l	%d2, %d0		/* v = x0 - x1 */
+	move.l	%d4, %d2
+	add.l	%d0, %d2		/* w = c + v */
+	sub.l	%d1, %d3
+	asr.l	#1, %d3
+	add.l	%d2, %d3
+	add.l	%d0, %d3		/* a = w + v + ((x2 - x0) >> 1) */
+	add.l	%d3, %d2		/* bn = w + a */
+	mac.l	%d3, %d5, %acc0
+	mac.l	%a3, %a3, %acc0
+	movclr.l %acc0, %d3		/* qmulr(a, f) */
+	sub.l	%d2, %d3
+	mac.l	%d3, %d5, %acc0
+	mac.l	%a3, %a3, %acc0
+	movclr.l %acc0, %d3
+	add.l	%d4, %d3
+	mac.l	%d3, %d5, %acc0
+	mac.l	%a3, %a3, %acc0
+	movclr.l %acc0, %d3
+	add.l	%d1, %d3		/* + x0 */
+	add.l	(%a5)+, %d3		/* + in[k] */
+	move.l	%d3, (%a2)+
+	subq.l	#4, %a0			/* w-- */
+	cmpa.l	%a4, %a2
+	bne.w	1b
+	movem.l	%d6-%d7, (%a6)
+9:	movem.l	(%sp), %d2-%d7/%a2-%a6
+	lea	44(%sp), %sp
+	rts
+
+/* void modal_str_damp_mv(s32 *hb, s32 *dk)
+ * Corde, passe 2 quand le filtre bouge : comme modal_str_damp, h0 et h1 refaits a chaque echantillon depuis fbr et
+ * fdmp (fir_h0, fir_h1), qui avancent de br_inc et dmp_inc apres. dk : fx1, fx2, fbr, fdmp, br_inc, dmp_inc, ib,
+ * a2, a3, ic1, ic2 ; fx1, fx2, fbr, fdmp, ic1, ic2 rendus. Pile : 0 registres, 44 br_inc, 48 dmp_inc, 52 fin,
+ * 56 retour, 60 hb, 64 dk. */
+	.globl	modal_str_damp_mv
+modal_str_damp_mv:
+	lea	-56(%sp), %sp
+	movem.l	%d2-%d7/%a2-%a6, (%sp)
+	movea.l	60(%sp), %a0		/* hb */
+	movea.l	64(%sp), %a1		/* dk */
+	move.l	16(%a1), 44(%sp)	/* br_inc */
+	move.l	20(%a1), 48(%sp)	/* dmp_inc */
+	lea	128(%a0), %a2
+	move.l	%a2, 52(%sp)		/* fin de hb */
+	movem.l	(%a1), %d4-%d7		/* fx1, fx2, fbr, fdmp */
+	movem.l	24(%a1), %a2-%a6	/* ib, a2, a3, ic1, ic2 */
+	movea.l	#0x8000, %a1		/* l'arrondi */
+1:	move.l	%d6, %d0
+	asr.l	#1, %d0
+	addi.l	#0x40000000, %d0
+	mac.l	%d7, %d0, %acc0
+	mac.l	%a1, %a1, %acc0
+	move.l	#0x20000000, %d1
+	move.l	%d6, %d2
+	asr.l	#2, %d2
+	sub.l	%d2, %d1
+	mac.l	%d7, %d1, %acc1
+	mac.l	%a1, %a1, %acc1
+	movclr.l %acc0, %d0		/* h0 = qmulr(fdmp, 0x40000000 + (fbr >> 1)) */
+	movclr.l %acc1, %d1		/* h1 = qmulr(fdmp, 0x20000000 - (fbr >> 2)) */
+	move.l	(%a0), %d2		/* x */
+	move.l	%d2, %d3
+	add.l	%d5, %d3		/* x + fx2 */
+	mac.l	%d0, %d4, %acc0		/* h0 fx1 */
+	mac.l	%d1, %d3, %acc0		/* h1 (x + fx2) */
+	mac.l	%a1, %a1, %acc0
+	move.l	%d4, %d5		/* fx2 = fx1 */
+	move.l	%d2, %d4		/* fx1 = x */
+	add.l	44(%sp), %d6		/* fbr += br_inc */
+	add.l	48(%sp), %d7		/* fdmp += dmp_inc */
+	movclr.l %acc0, %d1		/* y */
+	sub.l	%a6, %d1		/* v3 = y - ic2 */
+	mac.l	%a2, %a5, %acc0		/* ib ic1 */
+	mac.l	%a3, %d1, %acc0		/* a2 v3 */
+	mac.l	%a1, %a1, %acc0
+	mac.l	%a3, %a5, %acc1		/* a2 ic1 */
+	mac.l	%a4, %d1, %acc1		/* a3 v3 */
+	mac.l	%a1, %a1, %acc1
+	movclr.l %acc0, %d2		/* t1 */
+	movclr.l %acc1, %d3		/* t2 */
+	adda.l	%d3, %a6
+	move.l	%a6, (%a0)+		/* x = ic2 + t2 */
+	adda.l	%d3, %a6		/* ic2 = x + t2 */
+	lea	(%a5, %d2.l*2), %a5	/* ic1 += 2 t1 */
+	cmpa.l	52(%sp), %a0
+	bne.w	1b
+	movea.l	64(%sp), %a1
+	movem.l	%d4-%d7, (%a1)		/* fx1, fx2, fbr, fdmp */
+	move.l	%a5, 36(%a1)		/* ic1 */
+	move.l	%a6, 40(%a1)		/* ic2 */
+	movem.l	(%sp), %d2-%d7/%a2-%a6
+	lea	56(%sp), %sp
+	rts
+
+/* void modal_str_write_mv(const s32 *hb, s32 *pw, s32 *out, s32 *dpp, int n)
+ * Corde, passe 3 quand le retard bouge : comme modal_str_write, dv += d_inc a chaque echantillon. dpp : dv, pv
+ * (rendus), p_inc, d_inc. */
+	.globl	modal_str_write_mv
+modal_str_write_mv:
+	lea	-44(%sp), %sp
+	movem.l	%d2-%d7/%a2-%a6, (%sp)
+	movea.l	48(%sp), %a0		/* hb */
+	movea.l	52(%sp), %a1		/* pw */
+	movea.l	56(%sp), %a3		/* out ; aux = out + 128 o */
+	movea.l	60(%sp), %a2
+	movea.l	(%a2), %a5		/* dv */
+	move.l	4(%a2), %d7		/* pv */
+	movea.l	8(%a2), %a6		/* p_inc */
+	move.l	64(%sp), %d0		/* n */
+	beq.w	9f
+	lea	(%a0, %d0.l*4), %a4	/* fin de hb */
+	moveq	#20, %d5
+	moveq	#11, %d6
+1:	adda.l	12(%a2), %a5		/* dv += d_inc */
+	add.l	%a6, %d7		/* pv += p_inc */
+	mac.l	%a5, %d7, %acc0
+	movclr.l %acc0, %d0		/* comb = qmul(dv, pv) */
+	move.l	(%a0)+, %d1		/* s = hb[k] */
+	move.l	%d1, (%a1)
+	move.l	%d1, 8192(%a1)		/* line[wp], line[wp + DLINE] */
+	subq.l	#4, %a1			/* wp-- */
+	move.l	%d0, %d2
+	asr.l	%d5, %d2		/* i = comb >> 20 */
+	lsl.l	%d6, %d0
+	bclr	#31, %d0		/* frac */
+	lea	(%a1, %d2.l*4), %a2
+	movem.l	(%a2), %d3-%d4		/* l0, l1 */
+	sub.l	%d3, %d4
+	mac.l	%d4, %d0, %acc0
+	movclr.l %acc0, %d4
+	add.l	%d3, %d4
+	add.l	%d1, (%a3)+		/* out[k] += s */
+	add.l	%d4, 124(%a3)		/* aux[k] += ... */
+	movea.l	60(%sp), %a2		/* dpp (a2 a servi a la lecture) */
+	cmpa.l	%a4, %a0
+	bne.w	1b
+	move.l	%a5, (%a2)		/* dv */
+	move.l	%d7, 4(%a2)		/* pv */
+9:	movem.l	(%sp), %d2-%d7/%a2-%a6
+	lea	44(%sp), %sp
 	rts
