@@ -37,6 +37,9 @@ class Rig:
         u.mem_write(gen.RUNTIME, payload)
         self.s = {k: int(v, 16) for k, v in symbols.items()}
         self.listeners = self.dispatches = self.notices = self.keys = 0
+        self.metadata = 0
+        self.heap = HEAP + 0x40000
+        self.jobs = []
         self.descriptor = 42
         self.smooth = None
         self.stubs = {
@@ -49,6 +52,11 @@ class Rig:
             0x4001e814: lambda a: self.descriptor,
             0x40080064: self.allocate,
             0x400d1f98: self.notice,
+            0x400d0f6c: self.modified,
+            0x4008026a: lambda a: 0,
+            0x400cfb90: lambda a: 0x44890000,
+            0x40068d0a: self.enqueue,
+            0x4000eae2: lambda a: 123,
             0x4008f1f0: self.copy,
             0x40077720: self.dispatch,
             0x44004000: self.listener,
@@ -96,12 +104,34 @@ class Rig:
             return HEAP
         if a[0] == 50304:
             return HEAP + 0x20000
-        raise AssertionError('allocation non prevue : %d' % a[0])
+        assert a[0] <= 32, a[0]
+        out = self.heap
+        self.heap += 32
+        self.uc.mem_write(out, bytes(32))
+        return out
 
     def notice(self, a):
         assert a[0] == MANAGER + 0x74 and a[1] < 96
         self.notices += 1
         return 0
+
+    def modified(self, a):
+        assert a[0] == MANAGER + 0x74
+        self.metadata += 1
+        return 0
+
+    def enqueue(self, a):
+        capture = self.r(a[2])
+        self.jobs.append((self.r(a[2] + 12), self.r(capture), self.r(capture + 4), self.r(capture + 8)))
+        return 1
+
+    def drain(self):
+        pending, self.jobs = self.jobs, []
+        for callback, model, mirror, index in pending:
+            self.w(0x44889000, 0x44889100)
+            for i, value in enumerate((model, mirror, index)):
+                self.w(0x44889100 + i * 4, value)
+            self.call(callback, 0x44889000)
 
     def copy(self, a):
         assert a[2] <= 0x10000
@@ -250,6 +280,64 @@ def main():
     rig.w(0x406fa02c, 124)
     rig.call('per_tick', ROOT)
     check(rig.state('per_clip_valid') == 0, 'presse-papiers vide apres changement de projet')
+    check(rig.state('per_reload_keep') == 0, 'option de rechargement desactivee au demarrage')
+    # Rechargement TEMP : seule la copie locale du record est transformee.
+    rig.w(0x406fa02c, 123)
+    rig.stubs[rig.s['per_temp_save_stock']] = lambda a: 1
+    rig.stubs[rig.s['per_temp_reload_stock']] = lambda a: 1
+    for m in range(15):
+        rig.w(rig.s['per_amounts'] + m * 4, m + 11)
+    rig.call('per_storage_edit')
+    rig.call('per_temp_save', MANAGER, 1, 0, 1, 1)
+    record = 0x44710000
+    check(rig.call('per_temp_snapshot', 0, 123, record) == 1, 'record TEMP capture')
+    saved = bytes(rig.uc.mem_read(record, 256))
+    for enabled in (0, 1):
+        rig.w(rig.s['per_reload_keep'], enabled)
+        for m in range(15):
+            rig.w(rig.s['per_amounts'] + m * 4, 127 - m)
+        rig.call('per_temp_reload', MANAGER, 1, 0, 1, 1)
+        check(all(rig.amount(m) == (127 - m if enabled and m in (4, 9, 14) else m + 11) for m in range(15)),
+              'TEMP selectif M5/M10/M15 : option %d' % enabled)
+    rig.call('per_temp_snapshot', 0, 123, record)
+    check(bytes(rig.uc.mem_read(record, 256)) == saved, 'record TEMP inchange apres preservation')
+    check(rig.state('per_reload_context') == 0, 'contexte TEMP nettoye')
+    rig.w(rig.s['per_reload_keep'], 0)
+    rig.call('per_temp_reload', MANAGER, 1, 0, 1, 1)
+    check(all(rig.amount(m) == m + 11 for m in range(15)), 'retour OFF : les quinze montants TEMP sont restaures')
+
+    # Temoin negatif : vrai ecouteur natif, puis modifications sans cet ecouteur.
+    proof = Rig(patched, payload, manifest['symbols'])
+    proof.call('per_storage_initialize')
+    proof.call('per_storage_observe')
+    proof.w(0x800017ec, 0x12345678)
+    proof.call(0x4000e25c, 0x44886000, KIT, 0)
+    check(proof.r(0x800017ec) == 0, 'ecouteur natif complet : reset audio reproduit')
+    model = MANAGER + 0x74
+    proof.w(model, 0x400fcf3c)
+    proof.w(model + 0x10, KIT)
+    proof.w(model + 0x44, 0)
+    for offset, vector, mirror in ((0x20, 0x44884000, 0x44b00000), (0x2c, 0x44884010, 0x44c00000)):
+        proof.w(model + offset, vector)
+        proof.w(model + offset + 4, vector + 4)
+        proof.w(vector, mirror)
+    proof.w(0x800017ec, 0x12345678)
+    for m in range(15):
+        proof.w(proof.s['per_mode'], 2)
+        proof.w(proof.s['per_selected'], m)
+        proof.w(EVENT + 12, 16)
+        proof.w(EVENT + 16, 127)
+        proof.w(EVENT + 20, 0)
+        proof.call(0x40006158, ROOT, EVENT)
+        check(proof.amount(m) == 127 and proof.notices == 0 and proof.metadata == m + 1 and proof.r(0x800017ec) == 0x12345678,
+              'M%d : modification sans reset du kit audio' % (m + 1))
+        check(len(proof.jobs) == 2, 'M%d : deux miroirs natifs planifies' % (m + 1))
+        proof.drain()
+        a = bytes(proof.uc.mem_read(0x44b01d00, 256))
+        b = bytes(proof.uc.mem_read(0x44c01d00, 256))
+        proof.uc.mem_write(record, a)
+        check(a == b and proof.call('per_record_valid', record) == 1,
+              'M%d : vrais encodeurs des deux miroirs, record valide' % (m + 1))
     print('%d verifications ; voix DSP, MMC et combinaisons non emules' % checks)
 
 

@@ -29,7 +29,7 @@ Contribution source anonyme demandee le 18/10/2026 : quinze commandes de perform
 
 ## 2. Memoire et chargement
 
-[FAIT] Le chargeur est ajoute a la fin officielle de l'image, `0x401aa140`. Il appelle la vraie copie SRAM d'origine, copie notre code a `0x42339000`, puis rend la pile. Le lieur refuse que le code/etat statique depasse `0x42340000`. La reference actuelle comporte16092 octets et finit a `0x4233cedc`. Le presse-papiers occupe60 octets de cet etat. Aucun masque de sprite n'est pris.
+[FAIT] Le chargeur est ajoute a la fin officielle de l'image, `0x401aa140`. Il appelle la vraie copie SRAM d'origine, copie notre code a `0x42339000`, puis rend la pile. Le lieur refuse que le code/etat statique depasse `0x42340000`. La reference actuelle comporte17032 octets et finit a `0x4233d288`. Le presse-papiers occupe60 octets de cet etat. Aucun masque de sprite n'est pris.
 
 [FAIT] Les banques de definitions utilisent53696 octets alloues par l'allocateur natif ; la banque TEMP de session utilise50304 octets a sa premiere utilisation. Aucune allocation n'est faite dans le crochet audio ou les ponts IRQ. Le tampon audio est consomme synchroniquement par le site de lissage natif ; son cout et son absence de reentrance sous les autres mods restent a revalider avant integration.
 
@@ -67,7 +67,7 @@ python3 tools/gen_performance15.py --cycles firmware/model-cycles_OS1.13.syx \
 | Kit encode/decode | Champs natifs | Meme codec plus record de macros |
 | Projet change | Pas de presse-papiers Performance | Presse-papiers dedie invalide |
 
-La preuve comporte101 verifications ; les huit tests de catalogue et de garde passent. La reconstruction SysEx est relue : checksums, HMAC et sections autres que3 identiques. La reference MAIN OS est `2147110522cf891353c6bb2f52d95b1f8c06747b103f7cd47dcaaa6d7c11bc87` (autonome, GCC16.2.0).
+La preuve comporte154 verifications ; les huit tests de catalogue et de garde passent. La reconstruction SysEx est relue : checksums, HMAC et sections autres que3 identiques. La reference MAIN OS est `3cc3d77d057b37445e679f1de389ac7a3fdfa5942151d9f051befd511a0d0b1f` (autonome, GCC16.2.0).
 
 ## 5. Limites et integration a examiner
 
@@ -82,3 +82,13 @@ La preuve comporte101 verifications ; les huit tests de catalogue et de garde pa
 [FAIT] `gen_flasher_tweaks.py --check`, `check_overlaps.py`, `registry.py --check`, compilation Python, equivalence web/Python et validation SysEx web passent. Le smoke test utilise la meme entree JavaScript avec jsdom installe localement dans `build/`.
 
 [A FAIRE] `relocate_6ch.py --check` signale que `11-6ch-usbup.json` ne correspond pas a sa regeneration avec les outils locaux. Le generateur, ses sources USB et ce JSON ne sont pas modifies par cette contribution ; le fichier n'est pas regenere dans cette PR. Les hashes/combinaisons des moteurs Syntakt et Model-TG ne sont pas annonces comme valides pour ce prototype non inscrit au catalogue.
+
+## 7. Mise a jour du 21/10/2026 : rappel TEMP et edition en lecture
+
+[FAIT] CONFIG > MACROS propose RLD: OFF/ON. La preference de session commence OFF. ON conserve les montants courants M5/M10/M15 pendant le rechargement TEMP du motif actif ; les douze autres montants et toutes les destinations/profondeurs sont rappeles. Le record TEMP reste inchange. Le decodeur applique les trois montants avant la publication native, y compris sans cache de session ; le contexte est efface au retour. Le format schema3 reste identique. Les libelles de huit/sept caracteres evitent le depassement du panneau droit.
+
+[FAIT] L'ancienne edition emettait `0x400d1f98` sans descripteur de changement, meme pour une macro sans destination active. L'ecouteur natif du projet `0x4000e25c` appelle alors `0x4005950e`, qui efface l'etat du kit audio. La nouvelle publication de metadonnees demande directement les jobs natifs de miroirs `0x4000a12e` et `0x4000a276`, puis propage la modification au parent via `0x400d0f6c`. Les vrais encodeurs de kits conservent ainsi les records sans notifier un remplacement complet du kit a l'audio. Les notifications natives de rechargement restent actives. Aucun octet de firmware ou routine native complete n'est ajoute aux sources.
+
+[FAIT en emulation] La preuve Unicorn mise a jour comporte154 verifications : les101 precedentes, preference OFF, rappel selectif puis retour OFF sans mutation TEMP, reproduction du reset par le vrai ecouteur natif, modifications des quinze montants sans reset et vrais jobs/encodeurs pour les deux miroirs. Les services de scheduling, de parent/observable et le stockage physique restent substitues. La compilation54418 de cette PR est reverifiee separement du prototype5475.
+
+[A FAIRE] Le prototype autonome v34 a fait l'objet d'un retour positif anonyme sur appareil pour les changements de macros en lecture. Ce retour ne valide pas le binaire54418 de cette PR ni ses combinaisons : statut toujours experimental, verification du mainteneur encore requise. Aucun nom, identifiant utilisateur, chemin local ou capture de cet essai n'est publie.

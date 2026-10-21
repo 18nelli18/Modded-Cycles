@@ -166,7 +166,7 @@ static void per_clip_action(u32 id){
   per_record_routes((u8*)storage_pending(slot));storage_publish(slot);
  }
  per_clip_notice=notice;per_clip_ticks=120;storage_irq_restore(irq);
- if(notice==2||notice==3)per_storage_notice(slot);
+ if(notice==2||notice==3)per_storage_edit_notice(slot);
  if(per_main_view)invalidate((void*)per_main_view);
 }
 void per_root_key(void *root,void *event){
@@ -422,17 +422,50 @@ void per_click_open(void *capture){
  CALL(0x40075754,void(*)(void*,void*))(parent,shared);
  CALL(0x400cf23c,void(*)(void*))(shared+1);
 }
-void per_config(void *parent){
- per_config_stock(parent);
+
+/* Les libelles natifs renvoient la chaine par A0 ; ABI C preservee. */
+extern void per_macros_label(void),per_reload_label(void);
+__asm__(".text\n.globl per_macros_label\nper_macros_label:\n move.l %a0,-(%sp)\n jsr per_macros_label_out\n addq.l #4,%sp\n rts\n"
+        ".globl per_reload_label\nper_reload_label:\n move.l %a0,-(%sp)\n jsr per_reload_label_out\n addq.l #4,%sp\n rts\n");
+void per_macros_label_out(void *out){u32 allocator=0;CALL(0x400f980c,void(*)(void*,const char*,void*))(out,"MACROS",&allocator);}
+void per_reload_label_out(void *out){u32 allocator=0;CALL(0x400f980c,void(*)(void*,const char*,void*))(out,per_reload_keep?"RLD: ON":"RLD: OFF",&allocator);}
+static void per_menu_item(void *parent,void (*label_fn)(void),void (*action_fn)(void*)){
  u32 *label_capture=CALL(0x40080064,u32*(*)(u32))(1);
  u32 *action_capture=CALL(0x40080064,u32*(*)(u32))(4);*action_capture=(u32)parent;
- u32 label[4]={(u32)label_capture,0,0x4003b30e,(u32)per_click_label};
- u32 action[4]={(u32)action_capture,0,0x4003b360,(u32)per_click_open};
+ u32 label[4]={(u32)label_capture,0,0x4003b30e,(u32)label_fn};
+ u32 action[4]={(u32)action_capture,0,0x4003b360,(u32)action_fn};
  u32 empty[4]={0};
  void *item=CALL(0x40080064,void*(*)(u32))(0x54);
  CALL(0x400734b0,void(*)(void*,void*,void*,void*,void*,u32,u32))(item,label,action,empty,empty,0xffffffff,8);
  CALL(0x40072ce6,void(*)(void*,void*))(parent,item);
  CALL(0x400cf044,void(*)(void*))(action);CALL(0x400cf044,void(*)(void*))(label);
+}
+void per_reload_toggle(void *capture){
+ void *parent=**(void***)capture;
+ per_reload_keep=!per_reload_keep;
+ CALL(0x40076082,void(*)(void*))((u8*)parent+0x38);
+}
+/* Sortie partagee par A0 ; le natif attache le retour BACK au parent. */
+extern void per_menu_share(u32*,void*,void*);
+__asm__(".text\n.globl per_menu_share\nper_menu_share:\n move.l 4(%sp),%a0\n move.l 12(%sp),-(%sp)\n move.l 12(%sp),-(%sp)\n jsr 0x4007536a\n addq.l #8,%sp\n rts\n");
+void per_macros_open(void *capture){
+ void *parent=**(void***)capture;
+ void *object=CALL(0x40080064,void*(*)(u32))(0x23c);
+ if(!object)return;
+ u32 title=0,allocator=0;
+ CALL(0x400f980c,void(*)(void*,const char*,void*))(&title,"MACROS",&allocator);
+
+ CALL(0x400406d8,void(*)(void*,const char*,u32,void*,u32))(object,"PerformanceMacroSettings",4,&title,0x40fe39a0);
+ CALL(0x400f7d5c,void(*)(void*))(&title);
+ per_menu_item(object,per_reload_label,per_reload_toggle);
+ u32 shared[2];per_menu_share(shared,parent,(u8*)object+0x38);
+ CALL(0x40075754,void(*)(void*,void*))(parent,shared);
+ CALL(0x400cf23c,void(*)(void*))(shared+1);
+}
+void per_config(void *parent){
+ per_config_stock(parent);
+ per_menu_item(parent,per_click_label,per_click_open);
+ per_menu_item(parent,per_macros_label,per_macros_open);
 }
 
 extern u32 per_root_encoder_stock(void*,void*);

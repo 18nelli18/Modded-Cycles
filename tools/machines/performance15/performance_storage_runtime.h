@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: MIT
- * Mode Performance : quinze macros, quatre destinations chacune.
- * Sources autonomes de la contribution experimentale (notes/58).
+ * Persistance native des macros ; rechargement TEMP selectif et metadonnees sans reset audio.
+ * Contribution source autonome experimentale (notes/58).
  */
 #define PER_PROJECT_KITS 0x409c9c80u
 #define PER_KIT_BYTES 0x1bb6u
@@ -33,6 +33,11 @@ extern u32 per_encode_stock(void*,const void*,u32),per_decode_stock(void*,const 
 
 volatile u32 per_temp_decode_kit DATA=0,per_temp_decode_index DATA=0;
 const u8 *volatile per_temp_decode_record DATA=0;
+
+volatile u32 per_reload_keep DATA=0;
+volatile u32 per_reload_context DATA=0;
+u32 per_reload_amounts[3] DATA={0};
+static void reload_patch_record(u8 *record);
 extern void per_clear_kit_stock(void*),per_commit_stock(void*,void*);
 static u16 read16(const u8 *p){return ((u16)p[0]<<8)|p[1];}
 static u32 read32(const u8 *p){return ((u32)p[0]<<24)|((u32)p[1]<<16)|((u32)p[2]<<8)|p[3];}
@@ -65,6 +70,22 @@ u32 per_record_valid(const u8 *r){
  for(u32 i=0;i<60;i++){const u8 *p=r+16+i*4;if((r[4]==2?p[0]:(p[0]&7))>6||p[1]==128||!read16(p+2))return 0;
   if(r[4]==3&&((p[0]&8)||(i%4==1&&(p[0]&128))||(i%4>=2&&(p[0]&240))))return 0;}
  return 1;
+}
+
+/* Modifier une copie ; conserver le record TEMP et les schemas futurs opaques. */
+static void reload_patch_record(u8 *record){
+ if(!per_record_valid(record)){
+
+  if(read32(record)==0x50455246u&&record[4]>3)return;
+  record_defaults(record);
+ }
+ record[4]=3;
+ for(u32 i=0;i<3;i++){
+  u32 m=4+i*5,amount=per_reload_amounts[i];
+  record[16+m*16]=(record[16+m*16]&7)|((amount&15)<<4);
+  record[20+m*16]=(record[20+m*16]&7)|((amount>>4)<<4);
+ }
+ write32(record+12,record_crc(record+16));
 }
 static u32 storage_irq_lock(void){
  u32 saved;__asm__ volatile("move.w %%sr,%0":"=d"(saved)::"memory");
@@ -111,6 +132,8 @@ u32 per_decode(void *kit,const void *in,u32 index){
    if(!record||(u32)kit!=per_temp_decode_kit||index!=per_temp_decode_index)record=in?(const u8*)in+PER_RECORD_OFFSET:0;
    if(record&&read32(record)==0x50455246u)for(u32 i=0;i<256;i++)pending[i]=record[i];
   }
+  if((result&255)&&per_reload_context&&(u32)kit==per_temp_decode_kit&&index==per_temp_decode_index)
+   reload_patch_record((u8*)pending);
   storage_publish(slot);
  }
  if(kit&&(u32)kit==per_active_kit)per_storage_load(kit);
@@ -164,12 +187,28 @@ static void per_record_routes(u8 *r){
 static void per_storage_notice(u32 slot){
  if(slot<96){void *manager=CALL(0x400cf866,void*(*)(void))();if(manager)CALL(0x400d1f98,void(*)(void*,u32,void*))((u8*)manager+0x74,slot,0);}
 }
+
+/* Jobs natifs de miroirs puis notification du parent, sans remplacement du kit audio. */
+static void per_storage_edit_notice(u32 slot){
+ if(slot>=96)return;
+ u32 *manager=CALL(0x400cf866,u32*(*)(void))();if(!manager)return;
+ u32 *model=(u32*)((u8*)manager+0x74);
+ u32 *begin=(u32*)model[8],*end=(u32*)model[9];
+ for(u32 *p=begin;p<end;p++)if(*p&&model[4])
+  CALL(0x4000a12e,void(*)(void*,u32,u32,u32))(model,slot,*p,0);
+ if(model[17]==slot){
+  begin=(u32*)model[11];end=(u32*)model[12];
+  for(u32 *p=begin;p<end;p++)if(*p&&model[4])
+   CALL(0x4000a276,void(*)(void*,u32,u32,u32))(model,slot,*p,0);
+ }
+ CALL(0x400d0f6c,void(*)(void*,void*))(model,0);
+}
 static void per_storage_edit(void){
  s32 slot=per_storage_slot((void*)per_active_kit,1);if(slot<0)return;
  u32 pattern=per_active_pattern,kit=per_active_kit;
  per_record_routes((u8*)storage_pending(slot));
  if(pattern!=per_active_pattern||kit!=per_active_kit)return;
- storage_publish(slot);per_storage_notice(slot);
+ storage_publish(slot);per_storage_edit_notice(slot);
 }
 
 #define PER_TEMP_BYTES (96u*524u)
@@ -216,11 +255,17 @@ u32 per_temp_save(void *manager,u32 temp,u32 index,u32 sequence,u32 kit){
 u32 per_temp_reload(void *manager,u32 temp,u32 index,u32 sequence,u32 kit){
  per_storage_observe();
  u8 record[256];u32 project=0,restore=0;
+ u32 keep=per_reload_keep&&(temp&255)&&(kit&255)&&temp_current(index);
+ if(keep){
+  for(u32 i=0;i<3;i++)per_reload_amounts[i]=per_amounts[4+i*5];
+  per_temp_decode_kit=per_active_kit;per_temp_decode_index=index;
+  per_reload_context=1;
+ }
  if((temp&255)&&(kit&255)&&temp_current(index)&&per_temp_memory){project=CALL(0x4000eae2,u32(*)(void*))(manager);temp_session(project);restore=per_temp_snapshot(index,project,record);}
 
- if(restore){per_temp_decode_kit=per_active_kit;per_temp_decode_index=index;per_temp_decode_record=record;}
+ if(restore){if(keep)reload_patch_record(record);per_temp_decode_kit=per_active_kit;per_temp_decode_index=index;per_temp_decode_record=record;}
  u32 result=per_temp_reload_stock(manager,temp,index,sequence,kit);
- per_temp_decode_record=0;per_temp_decode_kit=per_temp_decode_index=0;
+ per_reload_context=0;per_temp_decode_record=0;per_temp_decode_kit=per_temp_decode_index=0;
  if((result&255)&&restore&&temp_current(index)&&project==CALL(0x4000eae2,u32(*)(void*))(manager)){
   s32 slot=per_storage_slot((void*)per_active_kit,1);
   if(slot>=0){volatile u8 *to=storage_pending(slot);for(u32 i=0;i<256;i++)to[i]=record[i];storage_publish(slot);per_storage_load((void*)per_active_kit);per_storage_notice(slot);}

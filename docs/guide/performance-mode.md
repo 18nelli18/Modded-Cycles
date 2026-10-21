@@ -63,7 +63,21 @@
 
 **FR :** A1 M1 = 127 et A2 M1 = 32 restent independants. Le retour a A1 restaure 127 et ses destinations/profondeurs. En lecture, le rappel a lieu au demarrage effectif du motif suivant. TEMP SAVE au montant 50, modification a 0, puis TEMP RELOAD restaure 50 avec les parametres natifs du motif. Sauvegardez normalement le projet pour le retrouver apres redemarrage. Les anciens enregistrements sans montant sont charges avec des montants neutres ; reglez-les et sauvegardez-les de nouveau. Les firmwares anterieurs a la sauvegarde des montants ne lisent pas les nouveaux enregistrements de macros.
 
+## Selective TEMP reload / Rappel TEMP selectif
+
+**EN:** In Config, open **MACROS** and click LEVEL/DATA on **RLD: OFF / RLD: ON** to toggle. It starts OFF on each power-up. OFF restores all fifteen saved macro amounts with FUNC + PATTERN. ON keeps the current M5, M10 and M15 amounts while restoring the other twelve amounts and all saved destinations/depths. The saved TEMP snapshot is unchanged, so switching OFF and reloading again restores all original saved amounts. Pattern switching and project recall keep their existing behavior.
+
+**FR :** Dans Config, ouvrez **MACROS** puis cliquez LEVEL/DATA sur **RLD: OFF / RLD: ON** pour basculer. Le reglage est OFF a chaque demarrage. OFF rappelle les quinze montants sauvegardes avec FUNC + PATTERN. ON conserve les montants actuels de M5, M10 et M15 tout en restaurant les douze autres montants et toutes les destinations/profondeurs sauvegardees. Le contenu TEMP reste intact : revenir sur OFF puis recharger restaure tous les montants d'origine. Le changement de motif et le rappel du projet gardent leur comportement habituel.
+
+**EN:** During playback, changing amounts or destinations, resetting MAIN, clearing and pasting macros now update the saved macro data without restarting the audio kit state. Native save mirrors stay synchronized. BACK from MACROS returns to Config.
+
+**FR :** En lecture, les modifications de montants/destinations, la remise a zero MAIN et l'effacement/collage mettent maintenant les donnees de macros a jour sans reinitialiser l'etat du kit audio. Les miroirs natifs de sauvegarde restent synchronises. BACK depuis MACROS revient a Config.
+
 ## Preview release notes / Notes de cette preversion
+
+**EN - 2026-10-21:** Added the Config selective-reload toggle with compact labels and a fix for kit-state resets when editing macros during playback. Updated source, native proofs and build reference. This remains a standalone experimental source preview, pending maintainer hardware and combination checks.
+
+**FR - 21/10/2026 :** Ajout du rappel TEMP selectif dans Config avec libelles compacts et correction de la reinitialisation du kit lors de l'edition de macros en lecture. Sources, preuves natives et reference de compilation mises a jour. Cette preversion source reste autonome et experimentale ; essais materiels du mainteneur et combinaisons a verifier.
 
 **EN - 2026-10-18:** Source preview of fifteen per-pattern performance macros, four track/FX destinations each, persistent amounts and whole-macro copy/clear/paste. Standalone source build only, MIT. No web-flasher card, firmware image, screenshot or extracted OS section is included. See [technical note 58](../../notes/58-mode-performance.md) for validation and integration limits.
 

@@ -690,7 +690,9 @@ python3 tools/gen_performance15.py --cycles firmware/model-cycles_OS1.13.syx \
 ```
 
 Cette preuve demande `unicorn` ; les outils de construction restent en bibliotheque standard.
-La reference MAIN OS autonome est `2147110522cf891353c6bb2f52d95b1f8c06747b103f7cd47dcaaa6d7c11bc87`.
+La reference MAIN OS autonome est `3cc3d77d057b37445e679f1de389ac7a3fdfa5942151d9f051befd511a0d0b1f`.
 Aucune empreinte de combinaison n'est annoncee. [Note58](notes/58-mode-performance.md),
 [commandes et limites](docs/guide/performance-mode.md). Les routines de transport/conteneur reutilisees sont
 `tools/mtlib/` (MIT, notice existante) ; aucun packer tiers supplementaire n'est copie.
+
+La preversion Performance15 inclut maintenant CONFIG > MACROS > RLD: OFF/ON (preference de session) et les modifications de macros sans invalidation du kit audio en lecture ; details dans la note58.
