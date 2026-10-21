@@ -1,5 +1,6 @@
 """Guide imprime de deux pages, issu du guide HTML canonique."""
 from pathlib import Path
+import argparse
 from html import escape
 from html.parser import HTMLParser
 from reportlab.platypus import SimpleDocTemplate,Paragraph,Spacer,Table,TableStyle,PageBreak,KeepTogether
@@ -48,7 +49,13 @@ class Parser(HTMLParser):
  def handle_data(self,data):self.stack[-1].children.append(data)
 def BeautifulSoup(raw,parser):
  p=Parser();p.feed(raw);return p.root
-soup=BeautifulSoup((ROOT/'docs/flasher/shortcut-guide.html').read_text(encoding='utf-8'),'html.parser')
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--source',default='docs/flasher/shortcut-guide.html')
+parser.add_argument('--output',default='output/pdf/Model-Cycles-Features-and-Shortcuts.pdf')
+parser.add_argument('--test',action='store_true')
+parser.add_argument('--no-publish',action='store_true')
+args=parser.parse_args()
+soup=BeautifulSoup((ROOT/args.source).read_text(encoding='utf-8'),'html.parser')
 ink=colors.HexColor('#202820');accent=colors.HexColor('#36563e');line=colors.HexColor('#c7cfc5')
 styles={
  'title':ParagraphStyle('title',fontName='Helvetica-Bold',fontSize=22,leading=25,textColor=ink,spaceAfter=4),
@@ -60,6 +67,7 @@ styles={
 }
 def text(node):
  t=node.get_text(' ',strip=True) if hasattr(node,'get_text') else str(node)
+ t=t.translate({0x2013:45,0x2014:45,0x2011:45,0x2019:39})
  for old,new in [('â€“','-'),('â€”','-'),('â€™',"'"),('\u00a0',' ')]:t=t.replace(old,new)
  return escape(' '.join(t.split()))
 def para(node,style='body'):
@@ -78,7 +86,7 @@ def table(node):
  t=Table([head]+rows,colWidths=[87,166,299],repeatRows=1,hAlign='LEFT')
  t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('BACKGROUND',(0,0),(-1,0),colors.HexColor('#e7ede4')),('LINEBELOW',(0,0),(-1,0),.6,accent),('LINEBELOW',(0,1),(-1,-1),.35,line),('LEFTPADDING',(0,0),(-1,-1),5),('RIGHTPADDING',(0,0),(-1,-1),5),('TOPPADDING',(0,0),(-1,-1),4),('BOTTOMPADDING',(0,0),(-1,-1),4)]))
  return t
-flow=[Paragraph('Supermodel Edition',styles['title']),Paragraph('Model:Cycles | Features and shortcut guide',styles['sub']),para(soup.select_one('main > p')),Spacer(1,7)]
+flow=[Paragraph('Supermodel Edition',styles['title']),Paragraph('Model:Cycles | '+('MIDI-input test v7 - no-filter / P-O-N' if args.test else 'Features and shortcut guide'),styles['sub']),para(soup.select_one('main > p')),Spacer(1,7)]
 cards=soup.select('.grid .card');grid=[]
 for i in range(0,len(cards),2):grid.append([para(n) for n in cards[i:i+2]])
 ct=Table(grid,colWidths=[276,276]);ct.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('BACKGROUND',(0,0),(-1,-1),colors.HexColor('#f0f3ed')),('BOX',(0,0),(-1,-1),.4,line),('INNERGRID',(0,0),(-1,-1),.3,line),('LEFTPADDING',(0,0),(-1,-1),7),('RIGHTPADDING',(0,0),(-1,-1),7),('TOPPADDING',(0,0),(-1,-1),6),('BOTTOMPADDING',(0,0),(-1,-1),6)]));flow.append(ct)
@@ -86,15 +94,19 @@ headings=soup.select('main > h2');tables=soup.select('main > table')
 flow.extend([section(text(headings[1])),table(tables[0]),PageBreak(),Paragraph('LFO, samples and setup',styles['title']),Paragraph('Feature and shortcut reference (continued)',styles['sub'])])
 for h,t in zip(headings[2:],tables[1:]):flow.extend([section(text(h)),table(t)])
 flow.extend([Spacer(1,9),para(soup.select_one('main > p.note'))])
-out=ROOT/'output/pdf/Model-Cycles-Features-and-Shortcuts.pdf';out.parent.mkdir(exist_ok=True,parents=True)
+out=ROOT/args.output;out.parent.mkdir(exist_ok=True,parents=True)
 def chrome(c,doc):
  c.setFillColor(accent);c.setFont('Helvetica-Bold',7);c.drawString(30,773,'SUPERMODEL EDITION | MODEL:CYCLES');c.setFont('Helvetica',7);c.drawRightString(582,773,f'Page {doc.page} / 2')
- c.setStrokeColor(line);c.line(30,25,582,25);c.setFont('Helvetica',6.5);c.drawString(30,15,'Features and shortcuts | 20 October 2026');c.drawRightString(582,15,'Stk = Stock | Startup: USB 2ch, numbers Off')
+ c.setStrokeColor(line);c.line(30,25,582,25);c.setFont('Helvetica',6.5);c.drawString(30,15,'Features and shortcuts | 21 October 2026');c.drawRightString(582,15,'Stk = Stock | Startup: USB 2ch, numbers Off')
 doc=SimpleDocTemplate(str(out),pagesize=letter,rightMargin=30,leftMargin=30,topMargin=36,bottomMargin=34,title='Supermodel Edition - Features and Shortcuts',author='A.V.')
 doc.build(flow,onFirstPage=chrome,onLaterPages=chrome)
 r=PdfReader(out);assert len(r.pages)==2,len(r.pages)
 alltext=' '.join(' '.join(p.extract_text().split()) for p in r.pages)
 for term in ('PLAY advances','STOP moves back','Mute: Latch','Num Off','MIDI Out machine only','harmony locks','sample browser must be open'):assert term in alltext,term
-for term in ('Model-TG','Model TG','B-side','diagnostic','test build'):assert term not in alltext,term
-(ROOT/'docs/flasher/shortcut-guide.pdf').write_bytes(out.read_bytes())
-print('PASS: two-page PDF, all guide tables retained, defaults and harmony locks updated:',out)
+for term in ('Channel','Output','KbT','Pad Note','Two MIDI LFOs','MIDI Out machine'):assert term in alltext,term
+for term in ('Model-TG','Model TG','B-side'):assert term not in alltext,term
+if args.test:
+ for term in ('MIDI keyboard recording','P / O / N','note-off removes'):assert term in alltext,term
+elif not args.no_publish:
+ (ROOT/'docs/flasher/shortcut-guide.pdf').write_bytes(out.read_bytes())
+print('PASS: two-page PDF, MIDI Out controls and guide tables verified:',out)

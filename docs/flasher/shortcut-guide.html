@@ -9,7 +9,7 @@
 </style>
 </head>
 <body>
-<header><nav><a href="./">← Main flasher</a><a href="shortcut-guide.pdf?v=2026-10-20-harmony-slice-main-206">Two-page PDF</a><button type="button" onclick="window.print()">Print this guide</button></nav><h1>Supermodel Edition</h1><div class="sub">Features and shortcut guide</div></header>
+<header><nav><a href="./">← Main flasher</a><a href="shortcut-guide.pdf?v=2026-10-21-midi-manual">Two-page PDF</a><button type="button" onclick="window.print()">Print this guide</button></nav><h1>Supermodel Edition</h1><div class="sub">Features and shortcut guide</div></header>
 <main>
 <p>This build includes the features below. For button combinations, hold the first button and then press the next button or turn the named knob. <b>TRIG</b> means a step key; <b>pad</b> means a track key; <b>DATA</b> means the LEVEL/DATA encoder.</p>
 <h2>Included features</h2>
@@ -50,9 +50,16 @@
 <tr><td>Sample lock</td><td>Open the sample selection menu and highlight a sample; then hold a step <kbd>TRIG</kbd> + <kbd>MACHINES</kbd></td><td>Lock the highlighted sample to that step on a Sample Wizard track. The sample browser must be open with the desired sample selected.</td></tr>
 <tr><td>Playback modes</td><td><kbd>SETTINGS</kbd> + <kbd>MACHINES</kbd></td><td>Open Sample Wizard playback-mode controls.</td></tr>
 <tr><td>Slice editor</td><td><kbd>FUNC</kbd> + step key; <kbd>FUNC</kbd> + click DATA</td><td>Play upper slices; remove a slice marker with the DATA click. Marker knobs can snap to zero crossings.</td></tr>
-<tr><td>Mod Setup</td><td>Long hold <kbd>SETTINGS</kbd> + <kbd>TRACK</kbd></td><td>Set pad behavior (Stk/Silent), mute behavior (Stk/Latch), USB audio (2ch/6ch), and Num (Off/On). Select a row, press DATA before turning to edit; BACK saves all five choices and exits; saving waits until playback stops. Delay: Stk keeps stock timing, Div enables exact divisions. Choices return after reboot. Defaults: Stk pads, Stk mutes, 2ch USB, Num Off.</td></tr>
+<tr><td>Mod Setup</td><td>Long hold <kbd>SETTINGS</kbd> + <kbd>TRACK</kbd></td><td>Pad: Stk/Silent; USB: 2ch/6ch; Num: Off/On; Mute: Stk/Latch; Delay: Stk/Div. DATA selects a row; click before editing. BACK saves all five choices; saving waits until playback stops. Defaults: Stk pads/mutes/delay, 2ch USB, Num Off. Choices return after reboot.</td></tr>
 <tr><td>Permanent quick save</td><td>Hold <kbd>FUNC</kbd> + <kbd>SETTINGS</kbd></td><td>Save the project permanently using the stock quick-save action.</td></tr>
-<tr><td>MIDI Out CC assignment<br><span class="note">MIDI Out machine only</span></td><td>On a track using the <kbd>MIDI Out</kbd> machine, hold <kbd>SETTINGS</kbd> and turn a parameter knob</td><td>Choose the CC number. Turn the knob normally afterward to send its assigned value. This assignment control is available only on MIDI Out machine tracks.</td></tr>
+
+</tbody></table>
+<h2>MIDI Out machine</h2>
+<table><thead><tr><th>Feature</th><th>Controls</th><th>Behavior</th></tr></thead><tbody>
+<tr><td>Select and set up</td><td><kbd>MACHINES</kbd>: MIDI Out; <kbd>FUNC</kbd> + <kbd>TRACK</kbd></td><td>Silent MIDI track. Track Setup: Channel, Output, KbT (keyboard transpose), Pad Note. Turn DATA to select; click DATA before editing; BACK exits. Channel: 1-16 / Global. Output: Global / Off / USB / DIN / Both.</td></tr>
+<tr><td>CC assignment and locks<br><span class="note">MIDI Out machine only</span></td><td><kbd>SETTINGS</kbd> + gray knob; hold steps + assigned knob for locks</td><td>Assign OFF or CC0-127 to twelve knobs. Turn a knob alone to send its value. Each lock keeps the CC number and value. Live recording captures knob changes.</td></tr>
+<tr><td>Two MIDI LFOs</td><td><kbd>LFO</kbd>: LFO 1, LFO 2, track screen; <kbd>BACK</kbd> exits</td><td>First eight gray knobs: Speed, Mult, Fade, CC destination, Wave, Phase, Mode, Depth. Destination: OFF or CC0-127. DATA selects a field; click to edit.</td></tr>
+<tr><td>Notes and save</td><td>Normal note/grid controls; <kbd>FUNC</kbd> + <kbd>PAGE</kbd>; <kbd>FUNC</kbd> + <kbd>SETTINGS</kbd></td><td>Use the normal pattern, note, velocity and length editors. FUNC + PAGE edits pattern length. Normal project saving or quick save keeps MIDI settings, notes and locks.</td></tr>
 </tbody></table>
 <p class="note">Startup defaults: stock track pads, stock mute behavior, stereo USB (2ch), numeric volume/pan display Off. Change these choices in Mod Setup; Stk means Stock.</p>
 </main>
