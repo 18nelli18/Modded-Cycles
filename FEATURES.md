@@ -71,7 +71,8 @@ retrig page, menus) are listed with that page as context.
 
 | Keys | What it does | Feature | Context / when it applies |
 |---|---|---|---|
-| **[LFO]** pressed again while the LFO page is open | Steps through LFO 1 → 2 → 3 → 4 (a big 2, 3 or 4 in the left box); the fifth press closes the page | LFO 2, 3, 4 | Stock, changed: the LFO page now has four layers. It always reopens on LFO 1 |
+| **[LFO]** tapped again while the LFO page is open | Steps through LFO 1 → 2 → 3 → 4 when you let go (a big 2, 3 or 4 in the left box); the fifth tap closes the page | LFO 2, 3, 4 | Stock, changed: the LFO page now has four layers. It always reopens on LFO 1 |
+| **[LFO]** held + a knob, on the LFO page | That parameter becomes the destination of the LFO on screen; the page stays | LFO 2, 3, 4 | Stock (the original OS's destination shortcut), kept: the page no longer moves on while [LFO] is held |
 | **BACK** | Resets the master effects and a latched repeat (does not close the page) | Model-TG retrig page | Only on the retrig page |
 | **BACK** | Closes the page | Model-TG mode menu, mode options, slice editor, System page | Inside those pages |
 | **FUNC** tapped alone | Leaves latched mute mode | Latching mute | Only while mute mode is latched |
@@ -357,8 +358,10 @@ with or without Model-TG.
 **How to use it** (guide):
 
 1. Press **[LFO]** to open the LFO page as usual: this is LFO 1.
-2. Press **[LFO]** again: a big **2** in the left box means you are now setting LFO 2. Again for 3, again for 4. "The
-   fifth press closes the page. Next time the page opens on LFO 1."
+2. Tap **[LFO]** again: when you let go, a big **2** in the left box means you are now setting LFO 2. Again for 3,
+   again for 4. The fifth tap closes the page. Next time the page opens on LFO 1.
+   To aim the LFO on screen at a parameter, **hold [LFO]** and turn that parameter's knob: the page does not change,
+   and pressing another key while [LFO] is held does not change it either.
 3. On pages 2, 3 and 4, the knobs **SPD**, **MULT**, **WAVE**, **DEST** and **DEP** belong to that LFO. Pick a
    destination with DEST and raise DEP to hear it.
 
@@ -368,8 +371,13 @@ with or without Model-TG.
   retrig is shared as well.
 - **LFO 2 is saved** with the sound (kit, sound pool) and can be p-locked (hold a trig and turn a knob on page 2);
   its SPD and DEP are stored a little less finely than LFO 1's (whole values shown come back exactly).
-- **LFO 3 and 4 are for live play**: one setting per track whatever the pattern, kit or sound; not saved, back to
-  defaults at power-on; cannot be p-locked ("turning a knob with a trig held changes the setting itself").
+- **LFO 3 and 4 are saved with the pattern** (in the kit record, bytes the OS neither writes nor reads): each pattern
+  has its own, they change with the pattern and come back with the project; copying or pasting a pattern (and undo)
+  takes them along. Loading a preset or pasting a single sound does not (they are not part of the sound). Projects
+  saved before open with them at their defaults; the official OS opens projects saved with them. They cannot be
+  p-locked.
+- **Clearing** a track's sound, a pattern's sounds or starting a new project puts all four LFOs back to their
+  defaults; Clear LFO clears the LFO on screen; undoing a sound clear brings back LFO 1 and 2, not 3 and 4.
 - An extra LFO aimed at LFO 1's destination does nothing. DEST skips destinations another LFO of the track already
   uses (NONE is always available). Two extra LFOs loaded onto the same destination add up.
 - Old sounds load with LFO 2 at no destination. Sounds saved with DavidCaruso's firmware keep their LFO 2. The
@@ -385,6 +393,8 @@ DavidCaruso agreed to the MIT license on 11/10/2026 (notes/56 §1.3). His trig g
 rewritten, then removed at Maxime's request on 11/10/2026.
 
 **Status.** Tested on a Model:Cycles on 11/10/2026 (alone, with Model-TG, and with the full set), "ça marche nickel".
+Tap / hold on **[LFO]** and LFO 3/4 saved with the pattern (version 2.1): **experimental**, proven in the emulator
+on the OS's own code, to be tried on a Model:Cycles.
 
 ### 2.6 Order of the machines in OS 2.0
 

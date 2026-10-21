@@ -43,7 +43,7 @@
     { "id": "acid", "cat": "sound", "tweaks": [], "status": "tested",
       "credit": { "kind": "based", "who": "Robin Schmidt", "repo": "RobinSchmidt/Open303" }, "license": "LICENSE-Open303",
       "guide": "acid", "notes": "notes/54" },
-    { "id": "lfo-plus", "cat": "sound", "tweaks": ["lfo-plus"], "status": "tested",
+    { "id": "lfo-plus", "cat": "sound", "tweaks": ["lfo-plus"], "status": "experimental",
       "credit": { "kind": "based", "who": "DavidCaruso" }, "guide": "lfo-plus", "notes": "notes/56" },
     { "id": "trig-preview", "cat": "seq", "tweaks": [], "status": "tested",
       "credit": { "kind": "by", "who": "drumkilla", "repo": "drumkilla/elektron-model-tweaks" }, "license": "LICENSE-elektron-model-tweaks",

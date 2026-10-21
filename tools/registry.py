@@ -52,8 +52,10 @@ ENGINE = re.compile(r"^(syntakt-(?:tg-)?)(?:sd|cp|toy|bits|swarm|meter|profile)(
 DECLARED = (
     ("arp", "octet +512 de chaque piste dans le pattern : sens de l'arpège et octaves (inutilisé par l'OS, sauvegardé "
             "avec le pattern)", "notes/32 §4"),
-    ("lfo-plus", "octets +88..+91 de l'enregistrement d'un son : LFO 2 empaqueté (format de DavidCaruso) ; mémoire "
-                 "0x4233f000..0x4233f49b, au-dessus du BSS de l'OS, remise à zéro au premier usage", "notes/56 §3"),
+    ("lfo-plus", "octets +88..+91 de l'enregistrement d'un son : LFO 2 empaqueté (format de DavidCaruso) ; octets "
+                 "+648..+699 de l'enregistrement d'un kit (inutilisés par l'OS) : LFO 3/4 du pattern ; mémoire "
+                 "0x42338100..0x4233aff3 (blocs LFO 3/4 des 96 kits) et 0x4233f000..0x4233f49b, au-dessus du BSS de "
+                 "l'OS, mises aux défauts / à zéro au premier usage", "notes/56 §3"),
     ("step-rec", "mémoire 0x4233e800..0x4233e8ff, dans le trou libre au-dessus du BSS de l'OS (0x423380b0..0x4233efff, "
                  "notes/56 §3.5.2) : les variables du step record, posées à son entrée (seul sr_active, dans un masque, "
                  "vaut 0 au démarrage)", "notes/73 §3"),
