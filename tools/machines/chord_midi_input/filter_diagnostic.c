@@ -1,5 +1,8 @@
 /* Profil filtre : conserver le repeat approuve et son ABI, puis afficher
- * les memes compteurs P/O/N que le profil sans filtre a la release du combo. */
+ * les memes compteurs P/O/N que le profil sans filtre a la release du combo.
+ * Lier mi_beat_popup a br_popup (entree complete), jamais br_popup_out :
+ * cet epilogue seul depile le cadre de l'appelant et corrompt le retour.
+ * Regression : tools/emu/test_filter_repeat_diagnostic.py. */
 typedef unsigned int u32;
 extern u32 mi_beat_key_original(const u32 *);
 extern volatile u32 mi_beat_keys,mi_diag_peak,mi_diag_over,mi_diag_new;

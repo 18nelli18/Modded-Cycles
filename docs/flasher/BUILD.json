@@ -1,9 +1,9 @@
 {
-  "stamp": "2026-10-21-usb-return-main-209",
+  "stamp": "2026-10-21-acid-gain-main-210",
   "scope": "main",
   "profile": "Exact full-feature image, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (2ch enabled)",
   "fixed_image": "all-features-no-diagnostic-usb-2ch-default.syx",
-  "fixed_image_sha256": "6bcdb0226a923d77089246b007cdb401e4168507c7815e964cfaabcb4fddc621",
+  "fixed_image_sha256": "5bb7426da624ee453aa4875f5d06448ff2aa7f8d4a54373e61d77b9c80a3ffd9",
   "diagnostics": false,
   "startup": "Supermodel",
   "usb_audio_default": "2ch",
@@ -29,7 +29,7 @@
   "chord_harmony_cache": true,
   "cut_fade_zero_endpoint": true,
   "midi_idle_shortcut": true,
-  "main_os_sha256": "4049b206fae14708f2eac668209425a7d1eb754bb21933673421634b67233281",
+  "main_os_sha256": "2bc8b0dc7eacb4dc2aefd7005edf6d5225d2416a6e5b65409f26ef0d93d5a299",
   "pad_selection_default": "Stock",
   "mute_mode_default": "Stock",
   "numbers_default": "Off",
@@ -42,9 +42,9 @@
   "behavior_verified_source": "all-features-usb-mod-settings-test-v3.syx",
   "layout_fix_native_verified": true,
   "guide_version": "2026-10-21-midi-slice-main-208",
-  "release": "2.09",
-  "approved_source": "all-features-usb-return-fix-test-v1.syx",
-  "approved_source_sha256": "5492fbea4e62d053e02aa7d5196227e8a082a5186fb03d99c2b1592a1ea3715d",
+  "release": "2.10",
+  "approved_source": "all-features-acid-gain-filter-no-diagnostic-v2.syx",
+  "approved_source_sha256": "5bb7426da624ee453aa4875f5d06448ff2aa7f8d4a54373e61d77b9c80a3ffd9",
   "slice_audio_event_owns_note": true,
   "slice_step_abi_fixed": true,
   "chord_names_external_midi": true,
@@ -70,5 +70,8 @@
   "usb_feedback_slots_6ch": 24,
   "usb_tx_slots_6ch": 9,
   "usb_duplex_copy": 1182482432,
-  "usb_return_user_report": "That seemed to work"
+  "usb_return_user_report": "That seemed to work",
+  "acid_gain_db": 6.020599913,
+  "acid_gain_hardware_verified": true,
+  "beat_repeat_no_diagnostic_user_report": "no crash"
 }
