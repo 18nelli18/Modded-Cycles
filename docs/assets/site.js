@@ -76,7 +76,9 @@ function renderRelease() {
       return;
     }
     const p = document.createElement("p");
-    p.textContent = (lang() === "fr" ? "Changements depuis la " : "Changes since ") + (rels[1] ? rels[1].version : "");
+    p.textContent = rels[1]
+      ? (lang() === "fr" ? "Changements depuis la " : "Changes since ") + rels[1].version
+      : (lang() === "fr" ? "Dernières nouveautés" : "Latest changes");
     const ul = document.createElement("ul");
     rel.changes.forEach((c) => {
       const li = document.createElement("li");

@@ -3,20 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Modded Cycles</title>
-<meta name="description" content="Firmware mods for the Elektron Model:Cycles: 6-channel USB audio, Syntakt engines, Sample Wizard, ACID and MACRO machines, ChordKeys, extra LFOs, sequence generator. Patched in your browser from your own OS file.">
+<title>Supermodel — Modded Cycles for Model:Cycles</title>
+<meta name="description" content="Supermodel 2.08 for Elektron Model:Cycles: added machines, Sample Wizard, MIDI Out with two MIDI LFOs, ChordKeys, Step Recorder, per-track filter, saved Mod Setup and stereo or six-channel USB audio.">
 <meta name="theme-color" content="#e3e2de" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b1b1b" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="assets/site.css?v=2026-10-21-midi-slice-main-208">
+<link rel="stylesheet" href="assets/site.css?v=2026-10-21-home-main-208">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 <style>
   .intro{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:20px 56px;align-items:end;padding:44px 0 36px}
   .intro h1{font-size:clamp(40px,5vw,64px)}
-  .intro p{font-size:19px;line-height:1.45;max-width:34ch;margin:0 0 18px}
+  .intro p{font-size:19px;line-height:1.45;max-width:40ch;margin:0 0 18px}
+  .intro .current{font-size:15px;color:var(--muted);max-width:none}
+  .bench .feature-intro{margin:0 0 20px;color:var(--ink-2);line-height:1.5}
+  .bench .reference-links{display:flex;flex-wrap:wrap;gap:12px 24px;margin-top:24px}
   .act{display:flex;flex-wrap:wrap;align-items:center;gap:14px 26px}
 
   .bench{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:56px;align-items:start}
@@ -55,8 +58,8 @@
   <nav aria-label="Site">
     <a href="flasher/">Flasher</a>
     <a href="flasher-supermodel-909/">Supermodel 909</a>
-    <a href="guide/">Guide</a>
-    <a href="https://github.com/18nelli18/Modded-Cycles" target="_blank" rel="noopener">GitHub</a>
+    <a href="flasher/shortcut-guide.html"><span data-l="en">Shortcuts</span><span data-l="fr">Raccourcis</span></a>
+    <a href="https://github.com/AveyCole/Modded-Cycles" target="_blank" rel="noopener">GitHub</a>
     <a href="https://discord.gg/hWegtJZcmm" target="_blank" rel="noopener">Discord</a>
     <a href="https://ko-fi.com/18nelli" target="_blank" rel="noopener">Ko-fi</a>
   </nav>
@@ -66,13 +69,15 @@
 
 <main class="wrap">
   <section class="intro">
-    <h1><span data-l="en">Transform your machine.</span><span data-l="fr">Transformez votre machine.</span></h1>
+    <h1><span data-l="en">Supermodel.<br>More from your Cycles.</span><span data-l="fr">Supermodel.<br>Plus avec votre Cycles.</span></h1>
     <div>
-      <p><span data-l="en">Flashing over USB in about 30 seconds, right in the browser.</span><span data-l="fr">Flash en USB en une trentaine de secondes, dans le navigateur.</span></p>
+      <p><span data-l="en">One complete firmware with added machines, sampling, MIDI sequencing and performance controls. Install over USB from your browser.</span><span data-l="fr">Un firmware complet avec de nouvelles machines, des samples, le séquençage MIDI et des commandes de jeu. Installation USB depuis votre navigateur.</span></p>
+      <p class="current"><span data-l="en">Main 2.08 · Per-track filter included · Stereo USB by default</span><span data-l="fr">Principal 2.08 · Filtre par piste inclus · USB stéréo par défaut</span></p>
       <div class="act">
         <a class="btn" href="flasher/"><span data-l="en">Open the flasher</span><span data-l="fr">Ouvrir le flasher</span></a>
         <a class="btn" href="flasher-supermodel-909/"><span data-l="en">Supermodel 909</span><span data-l="fr">Supermodel 909</span></a>
-        <a href="guide/"><span data-l="en">Read the guide</span><span data-l="fr">Lire le guide</span></a>
+        <a href="flasher/shortcut-guide.html"><span data-l="en">Features and shortcuts</span><span data-l="fr">Fonctions et raccourcis</span></a>
+        <a href="flasher/shortcut-guide.pdf"><span data-l="en">Two-page PDF</span><span data-l="fr">PDF en deux pages</span></a>
       </div>
     </div>
   </section>
@@ -80,76 +85,83 @@
   <section class="bench">
     <figure>
       <div data-device="seq"></div>
-      <figcaption><span data-l="en">Hover over a mod: the controls it touches light up.</span><span data-l="fr">Survolez un mod : les commandes qu'il touche s'allument.</span></figcaption>
+      <figcaption><span data-l="en">Hover over a feature to light up its controls.</span><span data-l="fr">Survolez une fonction pour éclairer ses commandes.</span></figcaption>
     </figure>
     <div>
-      <h2><span data-l="en">The mods</span><span data-l="fr">Les mods</span></h2>
+      <h2><span data-l="en">Included in main 2.08</span><span data-l="fr">Inclus dans le principal 2.08</span></h2>
+      <p class="feature-intro"><span data-l="en">Everything below is included in the main firmware. Load your official Model:Cycles OS 1.13 and Syntakt OS 1.42 files in the flasher; preparation stays in your browser. Choose pad, mute, USB, delay and number-display settings on the machine.</span><span data-l="fr">Toutes les fonctions ci-dessous sont incluses dans le firmware principal. Chargez vos fichiers officiels Model:Cycles OS 1.13 et Syntakt OS 1.42 dans le flasheur ; la préparation reste dans votre navigateur. Réglez pads, mutes, USB, délai et affichage numérique sur la machine.</span></p>
       <ol class="mods">
-        <li><a href="guide/#usb6" data-hl="pads" data-lcd="USB AUDIO/>6 CHANNELS">
-          <b><span data-l="en">6-channel USB audio</span><span data-l="fr">Audio USB 6 canaux</span></b>
-          <span><span data-l="en">Each track gets its own USB channel: six separate stems in your DAW.</span><span data-l="fr">Chaque piste a son propre canal USB : six pistes séparées dans votre logiciel.</span></span>
-          <em><span data-l="en">Based on the work of scottmetoyer</span><span data-l="fr">D'après le travail de scottmetoyer</span></em></a></li>
-        <li><a href="guide/#mute" data-hl="track,func" data-lcd="MUTE/>LOCKED">
-          <b><span data-l="en">Latching mute</span><span data-l="fr">Mute verrouillé</span></b>
-          <span><span data-l="en">TRACK + FUNC locks the mute mode: no more holding FUNC.</span><span data-l="fr">TRACK + FUNC verrouille le mode mute : plus besoin de tenir FUNC.</span></span>
-          <em><span data-l="en">By drumkilla</span><span data-l="fr">Par drumkilla</span></em></a></li>
-        <li><a href="guide/#preview" data-hl="s5,page" data-lcd="TRIG 5/>PREVIEW">
-          <b><span data-l="en">Trig preview</span><span data-l="fr">Écoute d'un pas</span></b>
-          <span><span data-l="en">Sequencer stopped, hold a step and press PAGE to hear it.</span><span data-l="fr">Séquenceur à l'arrêt, maintenez un pas et appuyez sur PAGE pour l'entendre.</span></span>
-          <em><span data-l="en">By drumkilla</span><span data-l="fr">Par drumkilla</span></em></a></li>
-        <li><a href="guide/#scroll" data-hl="lcd" data-lcd="~Deep Ocean Pad Wash 02">
-          <b><span data-l="en">Scrolling names</span><span data-l="fr">Noms qui défilent</span></b>
-          <span><span data-l="en">Sound names too long for the screen scroll in the browser.</span><span data-l="fr">Les noms de sons trop longs pour l'écran défilent dans le navigateur.</span></span>
-          <em><span data-l="en">By drumkilla</span><span data-l="fr">Par drumkilla</span></em></a></li>
-        <li><a href="guide/#syntakt" data-hl="lcd,machines,synth" data-lcd="menu">
+        <li><a href="flasher/#step-file" data-hl="machines,synth,lcd" data-lcd="MACHINES/&gt;SUPERMODEL">
+          <b><span data-l="en">All the machines</span><span data-l="fr">Toutes les machines</span></b>
+          <span><span data-l="en">Six original engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, TINY, ChpHzrd / Retrosyn and MIDI Out.</span><span data-l="fr">Les six moteurs d’origine plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, TINY, ChpHzrd / Retrosyn et MIDI Out.</span></span></a></li>
+        <li><a href="guide/#syntakt" data-hl="machines,synth,lcd" data-lcd="SY SWARM/&gt;LITE">
           <b><span data-l="en">Syntakt engines</span><span data-l="fr">Moteurs du Syntakt</span></b>
-          <span><span data-l="en">SD VINTAGE, CP VINTAGE, SY TOY, SY BITS and SY SWARM as extra machines, read from your Syntakt OS file.</span><span data-l="fr">SD VINTAGE, CP VINTAGE, SY TOY, SY BITS et SY SWARM en machines supplémentaires, lus dans votre fichier d'OS Syntakt.</span></span></a></li>
-        <li><a href="guide/#sample-wizard" data-hl="lcd,machines,pads" data-lcd="WIZARD/>SAMPLER">
+          <span><span data-l="en">Vintage snare and clap, SY Toy, SY Bits and Swarm LITE bring more drum and synth voices, using your supplied Syntakt OS file.</span><span data-l="fr">Caisse claire et clap Vintage, SY Toy, SY Bits et Swarm LITE ajoutent des voix de batterie et de synthèse à partir de votre fichier OS Syntakt.</span></span></a></li>
+        <li><a href="flasher/shortcut-guide.html" data-hl="machines,pads,lcd" data-lcd="WIZARD/&gt;SLICE">
           <b><span data-l="en">Sample Wizard</span><span data-l="fr">Sample Wizard</span></b>
-          <span><span data-l="en">A seventh machine: an independent sampler with playback modes, a sample browser and Slice varispeed. Upload your own samples with Elektron Transfer.</span><span data-l="fr">Une septième machine : un sampler autonome avec modes de lecture, navigateur de samples et Slice varispeed. Transférez vos samples avec Elektron Transfer.</span></span>
+          <span><span data-l="en">An independent sampler with playback modes, sample preview and locks, a sample browser, slice editing and varispeed. Recorded and manually placed Slice notes now play the same slices and pitch as trig preview. Upload samples with Elektron Transfer.</span><span data-l="fr">Un sampler autonome avec modes de lecture, préécoute et locks de samples, navigateur, édition des slices et varispeed. Les notes Slice enregistrées ou placées sur la grille jouent désormais les mêmes slices et hauteurs que leur préécoute. Transférez vos samples avec Elektron Transfer.</span></span>
           <em><span data-l="en">By TinyGregAudio, roterodamus and A.V.</span><span data-l="fr">Par TinyGregAudio, roterodamus et A.V.</span></em></a></li>
-        <li><a href="guide/#macro" data-hl="lcd,machines,synth" data-lcd="MACRO/>BRAIDS">
-          <b><span data-l="en">MACRO machine</span><span data-l="fr">Machine MACRO</span></b>
-          <span><span data-l="en">One extra machine with the 47 synthesis models of Braids: analog waves, FM, vowels, physical models, drums and wavetables.</span><span data-l="fr">Une machine supplémentaire avec les 47 modèles de synthèse de Braids : ondes analogiques, FM, voyelles, modèles physiques, percussions et wavetables.</span></span>
-          <em><span data-l="en">From Émilie Gillet's open-source Braids</span><span data-l="fr">D'après le Braids open source d'Émilie Gillet</span></em></a></li>
-        <li><a href="guide/#acid" data-hl="lcd,machines,synth" data-lcd="ACID/>303 BASS">
-          <b><span data-l="en">ACID machine</span><span data-l="fr">Machine ACID</span></b>
-          <span><span data-l="en">A TB-303-style acid bass with a drive knob. A trig longer than the next one slides into it.</span><span data-l="fr">Une basse acid façon TB-303 avec un potard de drive. Un trig plus long que le suivant glisse vers lui.</span></span>
-          <em><span data-l="en">Open303 by Robin Schmidt</span><span data-l="fr">Open303 de Robin Schmidt</span></em></a></li>
-        <li><a href="guide/#chord-keys" data-hl="trigs" data-lcd="CHORD/>KEYS">
-          <b><span data-l="en">ChordKeys</span><span data-l="fr">ChordKeys</span></b>
-          <span><span data-l="en">On a CHORD track, TRIG 1–16 play the chords of your scale.</span><span data-l="fr">Sur une piste CHORD, les TRIG 1–16 jouent les accords de votre gamme.</span></span>
-          <em><span data-l="en">By Nico Heuser</span><span data-l="fr">Par Nico Heuser</span></em></a></li>
-        <li><a href="guide/#track-filter" data-hl="machines,sweep,contour" data-lcd="FILTER/>CUTOFF">
-          <b><span data-l="en">Per-track filter</span><span data-l="fr">Filtre par piste</span></b>
-          <span><span data-l="en">Hold MACHINES and turn SWEEP for cutoff or CONTOUR for resonance, on every synth and drum track.</span><span data-l="fr">Maintenez MACHINES et tournez SWEEP pour la coupure ou CONTOUR pour la résonance, sur chaque piste synth et drum.</span></span></a></li>
-        <li><a href="guide/#lfo-plus" data-hl="lfo" data-lcd="LFO 2/>LFO 3 LFO 4">
-          <b><span data-l="en">Extra LFOs</span><span data-l="fr">LFO supplémentaires</span></b>
-          <span><span data-l="en">Press LFO again to reach LFO 2, 3 and 4 on every track. Second LFO adds its own speed knob and quick assign.</span><span data-l="fr">Appuyez de nouveau sur LFO pour atteindre LFO 2, 3 et 4 sur chaque piste. Second LFO ajoute son potard de vitesse et l'assignation rapide.</span></span>
-          <em><span data-l="en">Based on the work of DavidCaruso</span><span data-l="fr">D'après le travail de DavidCaruso</span></em></a></li>
-        <li><a href="guide/#scale-gen" data-hl="settings,page" data-lcd="SEQUENCE/>GENIE">
-          <b><span data-l="en">Sequence Generator</span><span data-l="fr">Générateur de séquence</span></b>
-          <span><span data-l="en">SETTINGS + PAGE opens Sequence Genie: scale, ranges, mutation and Euclidean rhythm, queued to the next loop or page.</span><span data-l="fr">SETTINGS + PAGE ouvre Sequence Genie : gamme, plages, mutation et rythme euclidien, lancés à la prochaine boucle ou page.</span></span></a></li>
-        <li><a href="guide/#scramble" data-hl="settings,track" data-lcd="SCRAMBLE">
-          <b><span data-l="en">SCRAMBLE</span><span data-l="fr">SCRAMBLE</span></b>
-          <span><span data-l="en">SETTINGS + TRACK randomizes the machine's four controls, or locks a fresh scramble to held steps.</span><span data-l="fr">SETTINGS + TRACK tire au hasard les quatre contrôles de la machine, ou verrouille un scramble sur les pas tenus.</span></span></a></li>
-        <li><a href="guide/#arp" data-hl="retrig,func" data-lcd="ARP/>UP 2 OCT">
-          <b><span data-l="en">Arpeggiator</span><span data-l="fr">Arpégiateur</span></b>
-          <span><span data-l="en">Hold several notes with RETRIG and they play as an arpeggio; FUNC + RETRIG sets direction and octaves.</span><span data-l="fr">Maintenez plusieurs notes avec RETRIG : elles se jouent en arpège ; FUNC + RETRIG règle le sens et les octaves.</span></span></a></li>
-        <li><a href="guide/#tempo" data-hl="tempo" data-lcd="TEMPO/>546.0 BPM">
-          <b><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></b>
-          <span><span data-l="en">The TEMPO knob, tap tempo and MIDI clock go past 300 BPM.</span><span data-l="fr">Le potard TEMPO, le tap tempo et l'horloge MIDI dépassent 300 BPM.</span></span></a></li>
-        <li><a href="guide/#samples" data-hl="lcd,pads" data-lcd="SAMPLES OS/>MODEL:SAMPLES">
-          <b><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></b>
-          <span><span data-l="en">The Model:Cycles starts as a Model:Samples and plays your own samples.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples et joue vos propres samples.</span></span></a></li>
+        <li><a href="guide/#macro" data-hl="machines,pitch,lcd" data-lcd="MACRO/&gt;47 MODELS">
+          <b><span data-l="en">MACRO, ACID and more</span><span data-l="fr">MACRO, ACID et autres machines</span></b>
+          <span><span data-l="en">MACRO includes 47 Braids synthesis models, Lo-Fi on FUNC + PITCH and fine tune on SETTINGS + PITCH. ACID adds 303-style bass and slides; WAVE, TINY and ChpHzrd / Retrosyn add further synthesis choices.</span><span data-l="fr">MACRO propose 47 modèles Braids, Lo-Fi avec FUNC + PITCH et accord fin avec SETTINGS + PITCH. ACID ajoute basse type 303 et slides ; WAVE, TINY et ChpHzrd / Retrosyn élargissent encore la palette.</span></span>
+          <em><span data-l="en">Braids by Émilie Gillet; Open303 by Robin Schmidt</span><span data-l="fr">Braids d’Émilie Gillet ; Open303 de Robin Schmidt</span></em></a></li>
+        <li><a href="flasher/midi-machine-guide.html" data-hl="machines,lfo,lfospeed,lcd" data-lcd="MIDI OUT/&gt;LFO 1">
+          <b><span data-l="en">MIDI Out machine</span><span data-l="fr">Machine MIDI Out</span></b>
+          <span><span data-l="en">Turn any track into a silent MIDI sequencer: notes, velocity, length, 12 assignable CCs, CC locks, output channel and USB/DIN routing. FUNC + TRACK opens its settings, which follow track selection. Incoming MIDI notes can be live-recorded or entered in Step Recorder.</span><span data-l="fr">Transformez une piste en séquenceur MIDI silencieux : notes, vélocité, durée, 12 CC assignables, locks CC, canal et routage USB/DIN. FUNC + TRACK ouvre les réglages, qui suivent la piste sélectionnée. Enregistrez les notes MIDI entrantes en live ou avec Step Recorder.</span></span></a></li>
+        <li><a href="flasher/midi-machine-guide.html" data-hl="lfo,lfospeed,lcd" data-lcd="MIDI LFO/&gt;DST DEP">
+          <b><span data-l="en">Two MIDI LFOs</span><span data-l="fr">Deux LFO MIDI</span></b>
+          <span><span data-l="en">Press LFO to cycle LFO 1, LFO 2 and the track screen. Menus start Wav, Mul, Dst, Dep. Browse and edit with DATA; LFO Speed adjusts the open LFO. Hold LFO and turn an assigned CC knob to choose its destination, then turn further to adjust depth.</span><span data-l="fr">LFO parcourt LFO 1, LFO 2 et l’écran de piste. Les menus commencent par Wav, Mul, Dst, Dep. DATA permet de choisir et modifier ; LFO Speed règle le LFO ouvert. Maintenez LFO et tournez un CC assigné pour choisir la destination, puis continuez pour régler la profondeur.</span></span></a></li>
+        <li><a href="guide/#chord-keys" data-hl="trigs,pads,lcd" data-lcd="CHORD/&gt;KEYS">
+          <b><span data-l="en">ChordKeys and harmony recording</span><span data-l="fr">ChordKeys et enregistrement des harmonies</span></b>
+          <span><span data-l="en">Play in-scale chords from TRIG 1–16 on a CHORD track. External MIDI notes show chord names and work with the harmony pads. Capture harmony changes in live recording, grid recording and Step Recorder; harmony locks save with the pattern.</span><span data-l="fr">Jouez les accords de la gamme avec TRIG 1–16 sur une piste CHORD. Les notes MIDI externes affichent les noms d’accords et fonctionnent avec les pads d’harmonie. Capturez les changements en live, sur la grille ou avec Step Recorder ; les locks restent dans le pattern.</span></span>
+          <em><span data-l="en">ChordKeys by Nico Heuser</span><span data-l="fr">ChordKeys de Nico Heuser</span></em></a></li>
+        <li><a href="flasher/shortcut-guide.html" data-hl="rec,play,stop,trigs" data-lcd="STEP REC/&gt;NOTE BY NOTE">
+          <b><span data-l="en">Step Recorder</span><span data-l="fr">Step Recorder</span></b>
+          <span><span data-l="en">With playback stopped, double-press REC. Play notes to write successive steps; PLAY advances, STOP moves back and REC exits. Use pads, the step keys or an external MIDI keyboard.</span><span data-l="fr">Lecture arrêtée, appuyez deux fois sur REC. Jouez pour écrire les pas successifs ; PLAY avance, STOP recule et REC quitte. Utilisez les pads, les touches de pas ou un clavier MIDI externe.</span></span></a></li>
+        <li><a href="guide/#track-filter" data-hl="machines,decay,sweep,contour" data-lcd="FILTER/&gt;CUTOFF">
+          <b><span data-l="en">Filter, envelope and synth attack</span><span data-l="fr">Filtre, enveloppe et attaque synthé</span></b>
+          <span><span data-l="en">Per-track filter and envelope are included. Hold MACHINES and turn SWEEP for cutoff, CONTOUR for resonance or DECAY for synth attack. Add TRACK to control the filter across included tracks.</span><span data-l="fr">Filtre et enveloppe par piste sont inclus. Maintenez MACHINES et tournez SWEEP pour la coupure, CONTOUR pour la résonance ou DECAY pour l’attaque synthé. Ajoutez TRACK pour agir sur les pistes incluses.</span></span></a></li>
+        <li><a href="guide/#lfo-destinations-release" data-hl="lfo,machines,decay,sweep,contour" data-lcd="LFO 2/&gt;QUICK ASSIGN">
+          <b><span data-l="en">Second audio LFO and quick assignment</span><span data-l="fr">Second LFO audio et assignation rapide</span></b>
+          <span><span data-l="en">Press LFO twice for the second audio LFO. Hold LFO and turn a knob to assign its parameter. Hold LFO + MACHINES with DECAY, SWEEP or CONTOUR for Attack, Filter or Resonance, then turn further for depth.</span><span data-l="fr">Appuyez deux fois sur LFO pour le second LFO audio. Maintenez LFO et tournez un potard pour assigner son paramètre. Avec LFO + MACHINES et DECAY, SWEEP ou CONTOUR, choisissez Attack, Filter ou Resonance, puis continuez pour la profondeur.</span></span>
+          <em><span data-l="en">Based on work by DavidCaruso and 18nelli18</span><span data-l="fr">D’après les travaux de DavidCaruso et 18nelli18</span></em></a></li>
+        <li><a href="guide/#arp" data-hl="retrig,func,trigs" data-lcd="ARP/&gt;OCTAVE 0">
+          <b><span data-l="en">Arpeggiator and scale lock</span><span data-l="fr">Arpégiateur et verrouillage de gamme</span></b>
+          <span><span data-l="en">Play held notes as an arpeggio; FUNC + RETRIG opens its settings. Octave 0 uses only the held notes. Scale lock keeps note entry within your chosen scale.</span><span data-l="fr">Jouez les notes tenues en arpège ; FUNC + RETRIG ouvre ses réglages. Octave 0 utilise seulement les notes tenues. Le verrouillage de gamme garde la saisie dans la gamme choisie.</span></span></a></li>
+        <li><a href="guide/#scale-gen" data-hl="settings,page" data-lcd="SEQUENCE/&gt;GENIE">
+          <b><span data-l="en">Sequence Genie and SCRAMBLE</span><span data-l="fr">Sequence Genie et SCRAMBLE</span></b>
+          <span><span data-l="en">SETTINGS + PAGE opens Sequence Genie for scales, note ranges, density, velocity, decay, pan, mutation and Euclidean rhythms, with queueing by loop or page. A short SETTINGS + TRACK tap runs SCRAMBLE on release; hold steps to lock a scramble.</span><span data-l="fr">SETTINGS + PAGE ouvre Sequence Genie : gammes, notes, densité, vélocité, decay, panoramique, mutation et rythmes euclidiens, avec mise en file par boucle ou page. Un appui court SETTINGS + TRACK lance SCRAMBLE au relâchement ; maintenez des pas pour le verrouiller.</span></span></a></li>
+        <li><a href="flasher/shortcut-guide.html" data-hl="track,func,pads" data-lcd="MUTE/&gt;LATCH SOLO">
+          <b><span data-l="en">Latching mutes and solo</span><span data-l="fr">Mutes verrouillés et solo</span></b>
+          <span><span data-l="en">Choose Mute: Latch in Mod Setup, then TRACK + tap FUNC locks mute mode. Hold FUNC and press T1–T6 to solo; press the soloed pad again or leave mute mode to restore the previous mutes. Stock mute behavior is the default.</span><span data-l="fr">Choisissez Mute: Latch dans Mod Setup, puis TRACK + appui sur FUNC verrouille le mode mute. Maintenez FUNC et appuyez sur T1–T6 pour un solo ; rappuyez sur la piste solo ou quittez pour rétablir les mutes précédents. Comportement stock par défaut.</span></span>
+          <em><span data-l="en">Latching mute based on drumkilla’s work</span><span data-l="fr">Mute verrouillé d’après le travail de drumkilla</span></em></a></li>
+        <li><a href="flasher/shortcut-guide.html" data-hl="track,retrig,trigs" data-lcd="BEAT REPEAT/&gt;DIVISION">
+          <b><span data-l="en">Control All and audio beat repeat</span><span data-l="fr">Control All et beat repeat audio</span></b>
+          <span><span data-l="en">TRACK + TRIG 1–6 chooses which audio tracks join Control All. Hold TRACK + RETRIG, then a TRIG 1–16 for a repeat division. Release a modifier or the last step to stop. Beat repeat processes audio; outgoing MIDI notes are not repeated.</span><span data-l="fr">TRACK + TRIG 1–6 choisit les pistes audio de Control All. Maintenez TRACK + RETRIG puis un TRIG 1–16 pour choisir une division. Relâchez un modificateur ou le dernier pas pour arrêter. Le repeat traite l’audio ; les notes MIDI sortantes ne sont pas répétées.</span></span></a></li>
+        <li><a href="flasher/shortcut-guide.html" data-hl="s5,page,settings,trigs" data-lcd="TRIG 5/&gt;PREVIEW SLIDE">
+          <b><span data-l="en">Trig preview, slides and grid editing</span><span data-l="fr">Préécoute, slides et édition de grille</span></b>
+          <span><span data-l="en">Hold a step and press PAGE to preview its note and locks while stopped or paused. SETTINGS + TRIG adds a slide. Easier trig removal and dimmed trigless steps make the grid clearer.</span><span data-l="fr">Maintenez un pas et appuyez sur PAGE pour écouter sa note et ses locks à l’arrêt ou en pause. SETTINGS + TRIG ajoute un slide. Suppression des trigs simplifiée et pas trigless atténués rendent la grille plus lisible.</span></span>
+          <em><span data-l="en">Preview and grid improvements based on drumkilla’s work</span><span data-l="fr">Préécoute et améliorations de grille d’après le travail de drumkilla</span></em></a></li>
+        <li><a href="flasher/shortcut-guide.html" data-hl="settings,track,lcd" data-lcd="MOD SETUP/&gt;PAD MUTE USB">
+          <b><span data-l="en">Saved Mod Setup and silent selection</span><span data-l="fr">Mod Setup sauvegardé et sélection silencieuse</span></b>
+          <span><span data-l="en">Long-hold SETTINGS + TRACK to set Pad (Stock/Silent), Mute (Stock/Latch), USB (2ch/6ch), Num (Off/On) and Delay (Stock/Div). Click DATA before editing; BACK saves after playback stops. All five choices return after reboot. Delay: Div enables exact divisions. Silent pads select without playing; TRACK + pad selects and plays.</span><span data-l="fr">Maintenez longtemps SETTINGS + TRACK pour Pad (Stock/Silent), Mute (Stock/Latch), USB (2ch/6ch), Num (Off/On) et Delay (Stock/Div). Cliquez sur DATA avant de modifier ; BACK sauvegarde après l’arrêt. Les cinq choix reviennent au redémarrage. Delay: Div active les divisions exactes. En Silent, les pads sélectionnent sans jouer ; TRACK + pad sélectionne et joue.</span></span></a></li>
+        <li><a href="guide/#usb6" data-hl="pads,lcd" data-lcd="USB AUDIO/&gt;2CH OR 6CH">
+          <b><span data-l="en">Stereo or six-channel USB audio</span><span data-l="fr">Audio USB stéréo ou six canaux</span></b>
+          <span><span data-l="en">USB starts in standard stereo. Choose 6ch in Mod Setup for separate track channels in your DAW; the selected mode is saved. Switching modes makes the computer detect the device again.</span><span data-l="fr">L’USB démarre en stéréo standard. Choisissez 6ch dans Mod Setup pour séparer les pistes dans votre logiciel ; le choix est sauvegardé. Le changement fait redétecter l’appareil par l’ordinateur.</span></span>
+          <em><span data-l="en">Six-channel USB based on scottmetoyer’s work</span><span data-l="fr">USB six canaux d’après le travail de scottmetoyer</span></em></a></li>
+        <li><a href="flasher/shortcut-guide.html" data-hl="tempo,settings,func,lcd" data-lcd="SUPERMODEL/&gt;SAVE AND PLAY">
+          <b><span data-l="en">More everyday controls</span><span data-l="fr">Autres commandes au quotidien</span></b>
+          <span><span data-l="en">Tempo up to 546 BPM, numeric volume/pan display, live MIDI OUT/THRU switching, permanent quick save with FUNC + SETTINGS and Supermodel startup. Scrolling long names and a multiline browser make sounds and samples easier to find.</span><span data-l="fr">Tempo jusqu’à 546 BPM, volume/pan numériques, bascule MIDI OUT/THRU live, sauvegarde rapide permanente avec FUNC + SETTINGS et démarrage Supermodel. Noms longs défilants et navigateur multiligne facilitent la recherche de sons et samples.</span></span>
+          <em><span data-l="en">Browser scrolling based on drumkilla’s work</span><span data-l="fr">Défilement du navigateur d’après le travail de drumkilla</span></em></a></li>
       </ol>
+      <div class="reference-links"><a href="flasher/shortcut-guide.html"><span data-l="en">Full feature and shortcut overview</span><span data-l="fr">Vue complète des fonctions et raccourcis</span></a><a href="flasher/midi-machine-guide.html"><span data-l="en">MIDI Out controls</span><span data-l="fr">Commandes MIDI Out</span></a><a href="flasher/shortcut-guide.pdf"><span data-l="en">Printable two-page guide</span><span data-l="fr">Guide imprimable en deux pages</span></a></div>
     </div>
   </section>
 
   <section class="release" id="version">
     <div>
-      <h2>Flasher <span data-rel="version">1.0</span></h2>
-      <time data-rel="date">2026-10-01</time>
+      <h2><span data-l="en">Current main</span><span data-l="fr">Principal actuel</span> <span data-rel="version">2.08</span></h2>
+      <time data-rel="date" datetime="2026-10-21">2026-10-21</time>
     </div>
     <div data-rel="changes"></div>
   </section>
@@ -161,12 +173,12 @@
       <span data-l="en">Independent project, not affiliated with Elektron. Flashing a modified firmware is at your own risk. If the mods are useful to you, you can support the project on <a href="https://ko-fi.com/18nelli" target="_blank" rel="noopener">Ko-fi</a>. Questions and feedback: join the <a href="https://discord.gg/hWegtJZcmm" target="_blank" rel="noopener">Discord</a>.</span>
       <span data-l="fr">Projet indépendant, non affilié à Elektron. Flasher un firmware modifié se fait à vos risques. Si ces mods vous servent, vous pouvez soutenir le projet sur <a href="https://ko-fi.com/18nelli" target="_blank" rel="noopener">Ko-fi</a>. Questions et retours : rejoignez le <a href="https://discord.gg/hWegtJZcmm" target="_blank" rel="noopener">Discord</a>.</span>
     </p>
-    <nav aria-label="Footer"><a href="https://github.com/18nelli18/Modded-Cycles" target="_blank" rel="noopener">GitHub</a><a href="https://discord.gg/hWegtJZcmm" target="_blank" rel="noopener">Discord</a><a href="https://ko-fi.com/18nelli" target="_blank" rel="noopener">Ko-fi</a></nav>
+    <nav aria-label="Footer"><a href="https://github.com/AveyCole/Modded-Cycles" target="_blank" rel="noopener">GitHub</a><a href="https://discord.gg/hWegtJZcmm" target="_blank" rel="noopener">Discord</a><a href="https://ko-fi.com/18nelli" target="_blank" rel="noopener">Ko-fi</a></nav>
   </div>
 </footer>
 
-<script src="assets/release.js?v=2026-10-21-midi-slice-main-208"></script>
-<script src="assets/cycles.js?v=2026-10-21-midi-slice-main-208"></script>
-<script src="assets/site.js?v=2026-10-21-midi-slice-main-208"></script>
+<script src="flasher/midi-machine-release.js?v=2026-10-21-home-main-208"></script>
+<script src="assets/cycles.js?v=2026-10-21-home-main-208"></script>
+<script src="assets/site.js?v=2026-10-21-home-main-208"></script>
 </body>
 </html>
