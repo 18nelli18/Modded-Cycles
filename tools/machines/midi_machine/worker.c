@@ -9,6 +9,7 @@ typedef unsigned char u8;
 #define MM_MACHINE 6
 #endif
 extern volatile u32 mm_assign_lane;
+extern volatile u32 mm_page,mm_page_lane,mm_row,mm_edit;
 extern u32 mm_cc_read(const u16 *,u32);
 extern int mm_cc_number(u32);
 extern u32 mm_cc_value(u32);
@@ -43,6 +44,12 @@ void mm_note_route(u32 length,const u8 *bytes){
 }
 static volatile u32 pending[84],dirty[84],cursor,awake;
 static const u32 mm_wakeup=0x7f4d4d00;
+/* Parcourir Dest ne doit pas moduler tous les CC traverses. Lecture de quatre
+ * mots UI seulement, sans getter ni allocation dans l'IRQ. Les CC manuels,
+ * l'autre LFO et les autres pistes restent independants. */
+static u32 destination_editing(u32 lane,u32 knob){
+ return knob>=12&&knob<14&&mm_page==knob-11&&mm_page_lane==lane&&mm_row==2&&mm_edit;
+}
 static u16 lock(void){u16 old;__asm__ volatile("move.w %%sr,%0\nmove.w #0x2700,%%sr":"=d"(old)::"memory","cc");return old;}
 static void unlock(u16 old){__asm__ volatile("move.w %0,%%sr"::"d"(old):"memory","cc");}
 /* Sortie de machine : fermer seulement ses notes sur leurs anciens ports. */
@@ -64,6 +71,7 @@ static void send(u32 value){
 }
 u32 mm_cc_put(u32 lane,u32 knob,u32 channel,u32 cc,u32 value,u32 port){
  if(lane==mm_assign_lane)return 0; /* Parcourir les numeros ne transmet rien. */
+ if(destination_editing(lane,knob))return 0;
  if(lane>=6||knob>=14||channel>=16||cc>=128||value>=128||port<2||port>4)return 0;
  u32 slot=14*lane+knob,packet=((0xb0|channel)<<24)|(cc<<16)|(value<<8)|port;
  u16 old=lock();pending[slot]=packet;dirty[slot]=1;
@@ -91,7 +99,7 @@ u32 mm_cc_worker(const void *packet){
     for(u32 i=0;i<14;i++){
      u32 slot=14*lane+i;u16 old=lock();
      u32 value=dirty[slot]?pending[slot]:0;dirty[slot]=0;unlock(old);
-     if(value&&lane!=mm_assign_lane)send(value);
+     if(value&&lane!=mm_assign_lane&&!destination_editing(lane,i))send(value);
     }
    }else if(overridden&(1u<<lane)){
     *(volatile u8 *)(0x40fdd580+lane)=mm_channel((const u16 *)0,lane);
@@ -106,7 +114,7 @@ u32 mm_cc_worker(const void *packet){
    u32 slot=cursor++;if(cursor==84)cursor=0;
    if(!dirty[slot])continue;
    value=pending[slot];dirty[slot]=0;
-   if(slot/14==mm_assign_lane){value=0;continue;}
+   if(slot/14==mm_assign_lane||destination_editing(slot/14,slot%14)){value=0;continue;}
    break;
   }
   if(!value){awake=0;unlock(old);return 1;}
@@ -128,7 +136,7 @@ u32 mm_sequence(u32 lane,const u32 *event,u32 time,u32 notes){
  if(params[9]!=(MM_MACHINE<<8))return 0;
  if(event[1]!=1)return 1;
  u32 channel=mm_channel(params,lane),port=mm_port(params);
- for(u32 knob=0;(params[32]==0x4d49||params[32]==0x4d4a)&&knob<12;knob++){
+ for(u32 knob=0;(params[32]==0x4d49||params[32]==0x4d4a||params[32]==0x4d4b)&&knob<12;knob++){
   u32 packed=mm_cc_read(params,knob);int cc=mm_cc_number(packed);
   if(cc>=0)mm_cc_put(lane,knob,channel,(u32)cc,mm_cc_value(packed),port);
  }

@@ -15,11 +15,21 @@ extern u32 mm_cc_put(u32,u32,u32,u32,u32,u32);
 extern void mm_lfo_native(void *,u32,u32,void *);
 volatile u32 mm_lfo_api[1]={0x40091ab2};
 static u32 mm_lfo_phases[2][48],mm_lfo_last[12],mm_lfo_seen,mm_lfo_divider,mm_lfo_roundrobin;
+/* Publication UI atomique : la copie audio du son peut attendre le prochain
+ * trig. Une rotation Speed doit cependant agir sur la note deja tenue.
+ * Le prochain trig reprend les valeurs du son et ses locks natifs. */
+static volatile u32 mm_lfo_live_speed_words[12];
+void mm_lfo_live_speed(u32 lane,u32 lfo,u32 value){
+ if(lane<6&&lfo<2&&value<32768)mm_lfo_live_speed_words[lfo*6+lane]=0x80000000u|value;
+}
 void mm_lfo_dispatch(u8 *frame,u32 bpm,u32 triggers){
  u16 saved[6][33];u32 mask=0;
  for(u32 lane=0;lane<6;lane++){
   u16 *p=(u16 *)(frame+14+66*lane);
-  if(p[9]!=(MM_MACHINE<<8))continue;
+  if(p[9]!=(MM_MACHINE<<8)){
+   mm_lfo_live_speed_words[lane]=mm_lfo_live_speed_words[6+lane]=0;continue;
+  }
+  if(triggers&(1u<<lane))mm_lfo_live_speed_words[lane]=mm_lfo_live_speed_words[6+lane]=0;
   mask|=1u<<lane;
   for(u32 i=0;i<33;i++)saved[lane][i]=p[i];
   p[4]=127<<8;
@@ -46,7 +56,11 @@ void mm_lfo_dispatch(u8 *frame,u32 bpm,u32 triggers){
   for(u32 lane=0;lane<6;lane++){
    u16 *p=(u16 *)(copy+14+66*lane);p[4]=127<<8;
    if(!(active[lfo]&(1u<<lane)))continue;
-   for(u32 i=0;i<8;i++)p[1+i]=saved[lane][(lfo?23:1)+i];
+   for(u32 i=0;i<8;i++){
+    u32 value=mm_lfo_read(saved[lane],lfo,i);
+    if(!i&&(mm_lfo_live_speed_words[lfo*6+lane]&0x80000000u))value=mm_lfo_live_speed_words[lfo*6+lane]&32767;
+    p[1+i]=(i==1||i==3||i==4||i==6)?value<<8:value;
+   }
    p[4]=11<<8;p[11]=16384;
   }
   mm_lfo_native(copy,bpm,triggers,mm_lfo_phases[lfo]);

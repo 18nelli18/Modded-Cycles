@@ -22,7 +22,9 @@ i32 mm_cc_number(u32 word) {
 u32 mm_cc_value(u32 word) {return word<=16511?word&127:64;}
 u32 mm_cc_read(const u16 *params,u32 knob) {
  if(!params||knob>=12)return INVALID;
- if((params[32]!=MM_CC_MAGIC&&params[32]!=MM_CC_MAGIC+1)||params[11+knob]>16511)return 64;
+ /* Speed, Swing et Chance gardent leurs commandes natives. */
+ if(knob==8||knob==10||knob==11)return INVALID;
+ if((params[32]!=MM_CC_MAGIC&&params[32]!=MM_CC_MAGIC+1&&params[32]!=MM_CC_MAGIC+2)||params[11+knob]>16511)return 64;
  return params[11+knob];
 }
 /* Mutation d'une copie UI seulement ; le caller publie via le setter OS.
@@ -30,7 +32,8 @@ u32 mm_cc_read(const u16 *params,u32 knob) {
  */
 u32 mm_cc_edit(u16 *params,u32 knob,i32 delta,u32 assign) {
  if(!params||knob>=12)return INVALID;
- if(params[32]!=MM_CC_MAGIC&&params[32]!=MM_CC_MAGIC+1){
+ if(knob==8||knob==10||knob==11)return INVALID;
+ if(params[32]!=MM_CC_MAGIC&&params[32]!=MM_CC_MAGIC+1&&params[32]!=MM_CC_MAGIC+2){
   for(u32 i=0;i<12;i++)params[11+i]=64;
   params[32]=MM_CC_MAGIC;
  }

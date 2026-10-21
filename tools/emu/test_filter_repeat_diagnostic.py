@@ -23,6 +23,7 @@ def run(path, broken):
     profile = json.loads((ROOT / 'build/volume-pan-toggle/volume-pan-toggle-test.json').read_text())
     bs = {k: int(v, 16) for t in profile['composedTweaks']
           if t['id'] == 'control-all-beat-repeat' for k, v in t['symbols'].items()}
+    bs.update(meta.get('beat_repeat_symbols', {}))
     ps = meta['pon_symbols']
     popup_count, texts = [0], []
     def entered(u, pc, size, data):

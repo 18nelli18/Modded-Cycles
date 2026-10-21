@@ -9,6 +9,8 @@ extern u32 mi_mm_draw_original(u32,u32),mi_mm_key_original(const u32 *);
 extern u32 mi_mm_encoder_original(const u32 *),mi_mm_cc_read(const u16 *,u32);
 extern int mi_mm_cc_number(u32);
 extern void mi_mm_poll(void),mi_lfo_menu_draw(u32,u32);
+extern void mx_latch_event(const u32 *);
+extern void mm_lfo_live_speed(u32,u32,u32);
 static u32 selected(void){u32 p=((u32(*)(void))0x400cf866)();return ((u32(*)(u32))0x40012412)(p+48);}
 static u32 active(u32 t){return t<6 && mi_mm_lane==t && (mi_mm_page==1 || mi_mm_page==2) && ((u32(*)(u32,u32))0x4001e318)(0,t)==17;}
 static void redraw(void){u32 app=*(volatile u32*)0x40fe4178;if(app)((void(*)(u32))0x40076bee)(app+64);}
@@ -21,6 +23,7 @@ u32 mi_lfo_scroll(void){u32 row=mi_mm_row;return row<4?0:row>5?4:row-1;}
 u32 mi_lfo_relative(void){return mi_mm_row-mi_lfo_scroll();}
 u32 mi_lfo_number(void){return mi_mm_page;}
 u32 mi_mm_key(const u32 *event){
+ mx_latch_event(event);
  if(event && ((event[3]==8 && !(event[4]&1)) || (event[3]==8 && (event[4]&9)==1) || event[3]==12))quick_reset();
  if(event && event[3]==8 && (event[4]&9)==1 && ((u32(*)(u32,u32))0x4001e318)(0,selected())==17){
   /* Une TrackMenuView native encore ouverte ne doit pas restaurer le setup
@@ -38,13 +41,19 @@ u32 mi_mm_key(const u32 *event){
 }
 u32 mi_lfo_encoder(const u32 *event){
  if(!event || event[0]!=0x400fbebc || event[3]<1 || event[3]>13)return 0;
- u32 t=selected();if(!active(t))return 0;
+ u32 t=selected();if(t>=6 || ((u32(*)(u32,u32))0x4001e318)(0,t)!=17)return 0;
  if(!((u32(*)(u32))0x4007faf4)(8))quick_reset();
  /* Meme table physique que le LFO audio : identifiant natif 29 = Speed. */
  u32 speed=0;
  if(event[3]!=1 && !((u32(*)(u32))0x4007faf4)(13)){
   const u32 *layout=(const u32*)((u32(*)(u32))0x4004df5c)(1);
   speed=layout && layout[2+event[3]-2]==29;
+ }
+ /* Speed reste un controle LFO hors page ; Swing et Chance passent au natif. */
+ if(event[3]==12 || event[3]==13)return 0;
+ if(!active(t)){
+  if(!speed)return 0;
+  mi_mm_lane=t;mi_mm_page=1;mi_mm_row=4;mi_mm_edit=0;
  }
  /* Les potards restent des CC, meme devant le menu LFO. Le raccourci
   * LFO+potard reprend uniquement son numero CC deja assigne. */
@@ -89,6 +98,7 @@ u32 mi_lfo_encoder(const u32 *event){
  for(u32 i=1;i<33;i++)if(i!=9 && i!=10 && after[i]!=before[i]){records[2*count]=i;records[2*count+1]=(u32)after[i]<<16;count++;}
  if(count){u32 root=((u32(*)(void))0x400cf866)(),bank=((u32(*)(u32))0x4000eb9c)(root),object=((u32(*)(u32,u32))0x40009c1a)(bank,t);
   u32 pair[2]={(u32)records,(u32)(records+2*count)};((void(*)(u32,const u32*))0x4001416c)(object,pair);
+  if(field==0)mm_lfo_live_speed(t,mi_mm_page-1,mi_mm_lfo_read(after,mi_mm_page-1,0));
  }
  redraw();return 1;
 }

@@ -22,6 +22,9 @@ static struct capture external[6];
 static u32 midi_owned[6][4];
 static u8 midi_sources[6][128];
 static u32 receive_skip;
+static u32 arp_owned[6][4];
+extern u32 mx_arp_wants(u32);
+extern void mx_arp_on(u32,u32,u32);
 volatile u32 mi_no_filter=0;
 extern void mi_receive_on_original(u32,u32,u32,u32);
 extern void mi_receive_off_original(u32,u32,u32);
@@ -75,7 +78,7 @@ void mi_receive_on(u32 channel,u32 raw,u32 velocity,u32 source) {
 void mi_receive_off(u32 channel,u32 raw,u32 source) {
  u32 mask=0,old=receive_skip;
  if(raw<128)for(u32 t=0;t<6;t++)
-  if((midi_owned[t][raw>>5]&(1u<<(raw&31))) && midi_sources[t][raw]==(u8)channel) {
+  if(((midi_owned[t][raw>>5]|arp_owned[t][raw>>5])&(1u<<(raw&31))) && midi_sources[t][raw]==(u8)channel) {
    mi_off(t,raw,source);mask|=1u<<t;
   }
  receive_skip=mask;mi_receive_off_original(channel,raw,source);receive_skip=old;
@@ -93,6 +96,9 @@ u32 mi_encoder_block(const u32 *event) {
  return track<6 && ((int(*)(void*,u32))0x4001e318)(0,track)!=MIDI_MACHINE;
 }
 void mi_on(u32 t,u32 n,u32 v,u32 source,u32 extra,u32 a,u32 b) {
+ if(t<6&&n<128&&v&&v<128&&mx_arp_wants(t)){
+  arp_owned[t][n>>5]|=1u<<(n&31);mx_arp_on(t,n,v);return;
+ }
  if(t<6) {
   struct capture *h=&external[t];
   h->active=0;
@@ -115,6 +121,10 @@ void mi_on(u32 t,u32 n,u32 v,u32 source,u32 extra,u32 a,u32 b) {
  ON(t,n,v,source,extra,a,b);
 }
 void mi_off(u32 t,u32 n,u32 source) {
+ if(t<6&&n<128&&(arp_owned[t][n>>5]&(1u<<(n&31)))){
+  arp_owned[t][n>>5]&=~(1u<<(n&31));
+  ((void(*)(u32,u32,u32))0x4008145e)(t,n,0x40);return;
+ }
  if(t<6 && n<128 && (midi_owned[t][n>>5]&(1u<<(n&31)))) {
   midi_owned[t][n>>5]&=~(1u<<(n&31));mm_input_off(t,n);
  }
@@ -139,6 +149,9 @@ u32 mi_pad(u32 t,u32 pad,const void *header) {
 void mi_reset(u32 t) {
  if(t>=6)return;
  external[t].active=0;
+ for(u32 n=0;n<128;n++)if(arp_owned[t][n>>5]&(1u<<(n&31))) {
+  arp_owned[t][n>>5]&=~(1u<<(n&31));OFF(t,n,0x40);
+ }
  for(u32 n=0;n<128;n++)if(midi_owned[t][n>>5]&(1u<<(n&31))) {
   midi_owned[t][n>>5]&=~(1u<<(n&31));mm_input_off(t,n);
  }

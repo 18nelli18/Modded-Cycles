@@ -60,3 +60,54 @@ reels USB oui/non constituent la validation du flasheur.
 
 [FAIT] Retour materiel : nette amelioration, promotion autorisee. Aucun engagement
 zero click sous toute charge : le processeur peut encore depasser son budget.
+
+
+## Publication 2.11 : commandes MIDI et titre Sample Wizard (21/10/2026)
+
+[FAIT] AveyCole autorise la promotion du candidat filtre v9, sans diagnostic.
+Fichier source : `all-features-midi-playability-no-diagnostic-v9.syx`, SHA-256
+`b6a49bffb29b7846a5fc2068a9448851e9f1e589bdc2c085e093141138c3e2a2`.
+MAIN OS : `bdb5ee72f18cfdef18a1a9bb5c6741fc6bd88a27b90ba7c5a71a9ad4342812aa`.
+La copie canonique du flasheur est identique octet par octet ; aucune recompilation
+lors de la promotion. Filtre inclus, USB stereo par defaut, aucun diagnostic.
+
+[FAIT sur machine] v6 : Chance, valeurs LFO, arp et Speed fonctionnent ; le titre
+restait incomplet et parcourir Dest envoyait des CC au synth externe. v9 corrige
+ces deux points. Le signalement de notes tenues apres Stop disparait apres
+redemarrage du synth ; AveyCole confirme ensuite sequence et relachements live
+normaux sur v9. Etat de sustain externe probable, CC exact non capture.
+
+Commandes : neuf CC assignables ; Speed, Swing et Chance reserves. Le setter
+Swing natif du son ne publiait pas le Swing du pattern MIDI : `mx_parameter`
+appelle aussi le setter de piste 40016378, respectant Swing All, hors IRQ et hors
+geste Nudge de pas tenu. Arp clavier : RETRIG tenu OU A. On natif, ownership
+note-off et reset conserves. TRACK tenu + FUNC arme le latch sans seuil temporel.
+Speed publie un mot atomique pour le LFO actif ; la phase continue pendant une
+note tenue et le prochain trig reprend les locks du son.
+
+[FAIT] Le titre du catalogue pointait sur le buffer mutable du nom de sample
+401b11a8 ; verifier ce seul pointeur ne prouvait pas le vrai ecran MACHINES.
+`wizard_title.S` intercepte 400a2612 pour la machine6 seulement : deux appels au
+vrai drawText, police native de la vue, Sample au-dessus de Wizard. Le masque
+opaque de l'icone gauche aurait efface le texte : seul le sprite droit est
+appele. Pile et chemin des 17 autres machines conserves. Titre catalogue
+immuable distinct du buffer des noms de samples.
+
+Edition Destination : le producteur CC et les deux chemins de vidage worker
+ignorent uniquement le LFO dont Dest est en edition. Les anciens paquets deja
+en attente sont jetes ; les CC manuels, l'autre LFO et les autres pistes restent
+actifs. Sortir du champ reprend la modulation. Aucun getter UI dans l'IRQ.
+
+Preuves : `test_sample_wizard_selection_release.py` execute le chemin MACHINES
+et les primitives/polices natives ; comparaison des 17 autres machines au v6,
+nom mutable modifie trois fois, pile equilibree et rendu PNG inspecte.
+`test_midi_lfo_destination_release.py` reproduit le defaut v6 et verifie les
+128 numeros sur les deux LFO, le vrai encodeur DATA, les queues et la reprise.
+Ces preuves utilisent les candidats et leurs metadonnees locaux sous
+output/firmware, apres bootstrap natif. Autres preuves locales : LFO Speed
+sur phase native, arp entrant jusque dans la queue audio native, valeurs
+Chance/Swing stock, Slice enregistrement/grille, repeat sans diagnostic et
+retour USB. Le worker natif emet les note-offs sur expiration et Stop dans v6
+et v9. `test_fixed_main_delivery.js` exige le SHA approuve, le telechargement
+exact dans Chromium et le refus d'une image corrompue. Generateur principal
+verifie par --check. Autres sections du conteneur officiel conservees.
