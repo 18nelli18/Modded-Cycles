@@ -183,3 +183,9 @@ h3{font-size:20px;letter-spacing:-.01em}
 @media (prefers-reduced-motion:reduce){
   *{transition:none !important;animation:none !important}
 }
+
+/* Mod Setup : comparaison des cinq preferences globales. */
+#mod-setup table{width:100%;border-collapse:collapse;margin:20px 0}
+#mod-setup th,#mod-setup td{text-align:left;vertical-align:top;padding:12px 10px;border-bottom:1px solid var(--line)}
+#mod-setup th{font-weight:700}#mod-setup th:first-child{width:12%}#mod-setup th:nth-child(2){width:22%}
+@media(max-width:650px){#mod-setup thead{display:none}#mod-setup table,#mod-setup tbody,#mod-setup tr,#mod-setup td{display:block}#mod-setup td{border:0;padding:5px 0}#mod-setup tr{padding:12px 0;border-bottom:1px solid var(--line)}}
