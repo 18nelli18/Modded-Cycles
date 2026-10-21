@@ -207,3 +207,21 @@ Le protocole proposé :
 - La surcharge pure (un bloc qui dépasse 100 %) reste possible avec Model-TG seul, qui n'a pas de régulateur ; le nôtre
   n'existe qu'avec les moteurs du Syntakt ([25](25-regulateur-de-charge.md), [30](30-regulateur-charge-soutenue.md)).
 - Toucher au code C demande `m68k-elf-gcc` 16.2 (paquet Homebrew), indisponible dans cet environnement.
+
+
+## 9. Retour USB six canaux — candidat prive (21/10/2026)
+
+AveyCole signale du son hache/distordu pour **ordinateur vers Cycles** en mode USB 6ch ; la sortie audio habituelle reste propre. Le defaut des cinq cases RX, deja mentionne au §8, se reproduit maintenant avec le vrai consommateur `0x40002ae0` et le producteur `0x400024f2` : 582 ruptures/corruptions parmi 9 312 trames verifiees par phase (paquets fixes de six trames). Les dTD sont distincts mais leurs pointeurs reviennent sur seulement cinq tampons ; un sixieme paquet ecrase une case avant la lecture des 32 trames.
+
+Le candidat conserve integralement les neuf cases TX et l'envoi a heure fixe. En mode 6ch seulement, RX dispose de huit cases de 56 octets a `0x80009600..0x800097c0`. Cette place vient des huit derniers dTD du pool feedback : son allocateur parcourt 24 entrees au lieu de 32, en `0x80009000..0x80009600`. L'amorcage natif met 16 feedbacks en file ; les tests avec acquittements de l'hote n'excedent pas 16 et refusent toute reutilisation d'un dTD encore en file. Aucun tampon ne deborde sur le ring TX en `0x80009800`, ni sur le pool generique en `0x80009f00`.
+
+`tools/machines/usb6/duplex_mode.S` est appele a la place de `wf_usb_copy` depuis son wrapper atomique existant : le code original publie les quinze plages, puis le helper regle la borne feedback a 23 (6ch) ou 31 (2ch) et pousse sa ligne de cache. L'invalidation native et la restauration IRQ sont conservees. Les valeurs stereo restent celles d'origine. Le helper est ajoute dans le dernier Mo reserve Model-TG a `0x467b4000`; le masque d'affichage partage reste intact. Les deux tables six canaux changent seulement le nombre de cases RX et leur adresse.
+
+Construction privee : `output/firmware/build_usb_return_fix_v1.py`. Preuve native complete : `tools/emu/test_usb_return.py <candidat.syx>` (metadata JSON voisine). Elle execute le bootstrap, les copies et requeues RX natives, les feedbacks et le TX natif simultanement ; trois suites de paquets (6, 5/7/6, 7/5/6) et six phases par mode. Baseline : defaut reproduit ; deux profils candidats : zero corruption apres amorcage, sans dTD feedback reutilise. Un passage TX de 60 s, charge variable et +60 ppm donne 2 878 923 trames, aucun trou/saut/doublon, file 1..7. Les preferences, reboot, changement USB arret/lecture et les diagnostics P/O/N passent sur les images finales.
+
+**Etat : experimental, validation materielle du retour USB encore necessaire.** Les fichiers prives gardent tous les correctifs v12 et P/O/N, avec et sans filtre. Le principal 2.08 publie n'est pas modifie. La completion DMA et les horloges de l'hote restent modelisees ; l'absence de defaut en emulation n'est pas une mesure materielle.
+
+
+### Retour materiel et promotion (21/10/2026)
+
+AveyCole rapporte « That seemed to work » pour le candidat retour USB, puis demande explicitement de publier la version avec filtre et sans diagnostic. Main 2.09 conserve le correctif USB approuve et toutes les fonctions precedentes ; seuls les crochets/etats et le helper P/O/N sont retires, avec restauration des octets du regulateur natif. Le firmware publie est verifie en emulation apres cette suppression ; les deux copies de test avec diagnostic restent privees. Ce retour utilisateur ne constitue pas une mesure de stabilite de longue duree.

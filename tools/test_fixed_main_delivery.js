@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),
 const {chromium}=require('playwright');
 const root=path.resolve(__dirname,'..'),site=path.join(root,'docs'),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 const expected=fs.readFileSync(path.join(site,'flasher/all-features-no-diagnostic-usb-2ch-default.syx'));
-assert.equal(hash(expected),'5c06e43c9fa1eb9ae3ffe8491c49a3aead4444779e7f62704a9edb7476b8eddf','released file must be the approved MIDI/Slice release without diagnostics');
+assert.equal(hash(expected),'6bcdb0226a923d77089246b007cdb401e4168507c7815e964cfaabcb4fddc621','released file must be the approved USB return release without diagnostics');
 const meta=JSON.parse(fs.readFileSync(path.join(site,'flasher/BUILD.json')));
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.pdf':'application/pdf','.syx':'application/octet-stream','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{
@@ -43,9 +43,9 @@ const server=http.createServer((req,res)=>{
    else{
     assert.equal(result.sha,hash(expected));assert.equal(result.sha,meta.fixed_image_sha256);assert.equal(result.main,meta.main_os_sha256);assert(result.packets>0);assert(result.disabled);
     const downloaded=page.waitForEvent('download');await page.locator('#download').click({force:true});const download=await downloaded;
-    const target=path.join(root,'tmp','main-208-browser-download.syx');await download.saveAs(target);assert.equal(hash(fs.readFileSync(target)),hash(expected));
+    const target=path.join(root,'tmp','main-209-browser-download.syx');await download.saveAs(target);assert.equal(hash(fs.readFileSync(target)),hash(expected));
     const pdf=await context.request.get(new URL('shortcut-guide.pdf?v='+meta.stamp,base).href);assert(pdf.ok());assert.equal(hash(await pdf.body()),hash(fs.readFileSync(path.join(site,'flasher/shortcut-guide.pdf'))));
-    console.log('PASS: official OS + required Syntakt upload -> exact 2.08 bytes and valid packets -> exact downloaded file',result.sha);
+    console.log('PASS: official OS + required Syntakt upload -> exact 2.09 bytes and valid packets -> exact downloaded file',result.sha);
     console.log('PASS: guide download exact, no USB selector, no automatic hardware transfer');
    }
    assert.deepEqual(errors,[]);await context.close();
