@@ -44,18 +44,19 @@ FS = 48000.0
 BLOCK = 32                      # le bloc du Cycles (Rings : 24)
 
 # Place de MODAL dans la charge utile (décalages depuis son début) : après ACID et ses variables (gen_acid_combos :
-# ACID_AT 0x76000, ACID_BSS 0x78000, jusqu'à 0x78300), le code et les tables (40 Ko au plus), puis ses variables.
-# L'état de ses 6 pistes (160 Ko chacune : la Part de Rings, puis la réverbe) est au-dessus de la charge utile, à
-# MODAL_RAM (modal.c) : 0x46800000..0x468f0000, juste au-dessus de la zone d'échantillons de Model-TG et de la
-# charge utile (notes/74 §5).
+# ACID_AT 0x76000, ACID_BSS 0x78000, jusqu'à 0x78300), le code et les tables (52 Ko au plus), puis ses variables.
+# L'état de ses 6 pistes (96 Ko chacune : la Part de Rings) est au-dessus de la charge utile, à MODAL_RAM (modal.c) :
+# 0x46800000..0x46890000, juste au-dessus de la zone d'échantillons de Model-TG et de la charge utile (notes/74 §4).
 MODAL_AT = 0x79000
 MODAL_BSS = 0x86000
 MODAL_RAM = 0x46800000
-TRACK_SIZE = 0x28000
+TRACK_SIZE = 0x18000            # la Part d'une piste (modal.c)
 
 # --- la machine (comme gm.MACHINE) : COLOR, SHAPE, SWEEP, CONTOUR = (nom long, nom court, défaut[, min, max]) ;
-# decay : DECAY (DAMPING de Rings). SHAPE choisit le modèle (0..5) ; FUNC + SHAPE la polyphonie (FINE, modal.c).
-MODELS = ("MODAL", "SYMPATHETIC STRING", "STRING", "FM VOICE", "SYMPATHETIC STRING QUANTIZED", "STRING AND REVERB")
+# decay : DECAY (DAMPING de Rings). SHAPE choisit le modèle (0..3) ; FUNC + SHAPE la polyphonie (FINE, modal.c).
+# Les modèles de Rings sauf la voix FM (3) et la corde et réverbe (5) : choix de Maxime (22/10/2026, notes/74 §5.4).
+MODELS = ("MODAL", "SYMPATHETIC STRING", "STRING", "SYMPATHETIC STRING QUANTIZED")   # par valeur de SHAPE
+RINGS_MODEL = (0, 1, 2, 4)      # SHAPE -> numéro du modèle de Rings (ResonatorModel), celui du cœur
 MACHINE = dict(name="MODAL", image=2, decay=64,
                knobs=(("Bright", "BRIG", 64), ("Model", "MODL", 0, 0, len(MODELS) - 1),
                       ("Position", "POS", 40), ("Struct", "STRC", 36)))   # 8 lettres au plus par mot (gs.check_names)
@@ -76,8 +77,8 @@ LINK = """SECTIONS
 ENTRIES = ("modal_update", "modal_render", "modal_poly_step", "modal_poly_fmt", "modal_poly_draw")
 
 LICENSE = """Machine MODAL of Modded-Cycles: fixed-point code written after Rings by Emilie Gillet (the Part of
-rings/dsp and what it uses of stmlib: modal resonator, strings, sympathetic strings and chords, FM voice,
-internal exciters, reverb, note filter, limiter; https://github.com/pichenettes/eurorack, commit 08460a6),
+rings/dsp and what it uses of stmlib: modal resonator, strings, sympathetic strings and chords, internal
+exciters, note filter, limiter; https://github.com/pichenettes/eurorack, commit 08460a6),
 under the MIT license:
 
 Copyright 2015 Emilie Gillet.
@@ -130,23 +131,6 @@ def lut_stiffness():
     return out
 
 
-def lut_fm_frequency_quantizer():
-    ratios = [0.5, 0.5 * 2 ** (16 / 1200.0), math.sqrt(2) / 2, math.pi / 4, 1.0, 1.0 * 2 ** (16 / 1200.0),
-              math.sqrt(2), math.pi / 2, 7.0 / 4, 2, 2 * 2 ** (16 / 1200.0), 9.0 / 4, 11.0 / 4, 2 * math.sqrt(2), 3,
-              math.pi, math.sqrt(3) * 2, 4, math.sqrt(2) * 3, math.pi * 3 / 2, 5, math.sqrt(2) * 4, 8]
-    scale = []
-    for r in ratios:
-        r = 12 * math.log2(r)
-        scale.extend([r, r, r])
-    size = 2 ** math.ceil(math.log2(len(scale)))
-    while len(scale) < size:
-        diffs = [scale[i + 1] - scale[i] for i in range(len(scale) - 1)]
-        gap = diffs.index(max(diffs))                    # le premier écart maximal, comme numpy.argmax
-        scale = scale[:gap + 1] + [(scale[gap] + scale[gap + 1]) / 2] + scale[gap + 1:]
-    scale.append(scale[-1])
-    return scale
-
-
 # Accords des cordes sympathiques quantifiées (part.cc, BRYAN_CHORDS, défini dans rings/dsp/dsp.h) : polyphonie 1
 # (8 cordes), 2 (4 cordes), 3 et 4 (2 cordes, la même table)
 CHORDS = [
@@ -192,40 +176,35 @@ def constants():
     pi = math.pi
     pif = f32(pi)
     a3 = f32(440.0 / FS)
-    lm, mh, lo = f32(160.0 / FS), f32(1600.0 / FS), f32(8.0 / FS)
     srb = f32(FS / BLOCK)                                 # cadence des blocs (note_filter)
     xfs = {                                               # flottants maison
-        "M_0001": 0.001, "M_02": 0.2, "M_04": 0.4, "M_049": f32(0.49), "M_0499": f32(0.499), "M_08": 0.8,
-        "M_015": 0.15, "M_255": 255.0, "M_27": 27.0, "M_9": 9.0, "M_500": 500.0, "M_A3": a3,
-        "M_F220": f32(220.0 / FS), "M_FCIDLE": f32(10.0 / FS), "M_LN1000": -math.log(f32(0.001)),
-        "M_M0618": -0.618, "M_M120": -120.0, "M_R080": f32(1.0 / f32(0.8)), "M_R100": f32(1.0 / 100.0),
-        "M_R150": f32(1.0 / 1.5), "M_RT60FM": f32(0.1 * FS), "M_RT60S": f32(f32(0.07) * FS),
+        "M_02": 0.2, "M_04": 0.4, "M_049": f32(0.49), "M_0499": f32(0.499),
+        "M_255": 255.0, "M_27": 27.0, "M_9": 9.0, "M_500": 500.0, "M_A3": a3,
+        "M_F220": f32(220.0 / FS), "M_FCIDLE": f32(10.0 / FS),
+        "M_M120": -120.0, "M_R080": f32(1.0 / f32(0.8)), "M_R100": f32(1.0 / 100.0),
+        "M_R150": f32(1.0 / 1.5), "M_RT60S": f32(f32(0.07) * FS),
     }
     k = {}
     for name, v in xfs.items():
         k[name + "_M"], k[name + "_E"] = xf(v)
     q31 = lambda x: q(x, 31)
     k.update({
-        "M_001": q31(f32(0.01)), "M_049Q": q31(f32(0.49)), "M_04999": q31(f32(0.4999)), "M_09": q31(f32(0.9)),
+        "M_001": q31(f32(0.01)), "M_049Q": q31(f32(0.49)), "M_04999": q31(f32(0.4999)),
         "M_095": q31(f32(0.95)), "M_0999": q31(f32(0.999)), "M_F220Q": q31(f32(220.0 / FS)),
-        "M_FOL_LM": q31(f32(2 * pif * lm)), "M_FOL_MH": q31(f32(2 * pif * mh)), "M_LIM_DEC": q31(f32(0.00002)),
+        "M_LIM_DEC": q31(f32(0.00002)),
         "M_NF_FAST": q31(f32(1.0 / f32(f32(0.001) * srb))), "M_NF_SLOW": q31(f32(1.0 / f32(f32(0.010) * srb))),
         "M_NF_LAG": q31(f32(1.0 / f32(f32(0.050) * srb))), "M_NF_DELAY": min(15, int(f32(f32(0.004) * srb))),
         "M_NF_JUMP": 26214, "M_POLE10": q31(f32(1.0 - 10.0 / FS)), "M_POLE20": q31(f32(1.0 - 20.0 / FS)),
         "M_0025U": q(0.025, 24), "M_005": q(0.05, 16), "M_09999Q30": q(f32(0.9999), 30),
         "M_D220": q(1.0 / f32(220.0 / FS), 20), "M_FIFTH": q(7.01955, 16),
-        "M_INC220": int(2 ** 32 * f32(220.0 / FS)),
         "M_PI27": q(pif, 27), "M_TD_A27": q(f32(f32(0.3736) * pi ** 3), 27),
         "M_TF_A26": q(f32(f32(0.326) * pi ** 3), 26), "M_TF_B25": q(f32(f32(0.1823) * pi ** 5), 25),
         "M_TA_A21": q(f32(f32(3.333314036e-01) * pi ** 3), 21), "M_TA_B21": q(f32(f32(1.333923995e-01) * pi ** 5), 21),
         "M_TA_C21": q(f32(f32(5.33740603e-02) * pi ** 7), 21), "M_TA_D21": q(f32(f32(2.900525e-03) * pi ** 9), 21),
         "M_TA_E19": q(f32(f32(9.5168091e-03) * pi ** 11), 19),
-        "M_RV_LFO1": lfo_inc(f32(f32(0.5 / FS) * 32)), "M_RV_LFO2": lfo_inc(f32(f32(0.3 / FS) * 32)),
     })
     arrays = {
         "M_DETUNE": ("s32", [q(f32(x), 16) for x in (0.013, 0.011, 0.007, 0.017)]),
-        "M_FOL_ATT": ("s32", [q31(lm), q31(f32(math.sqrt(lm * mh))), q31(f32(math.sqrt(mh * 0.5)))]),
-        "M_FOL_DEC": ("s32", [q31(f32(math.sqrt(lm * lo))), q31(lm), q31(f32(math.sqrt(mh * lm)))]),
         "M_GAINS": ("s32", [q31(f32(g) / 2) for g in (1.4, 1.0, 1.4, 0.7, 1.0, 1.4)]),
         "M_SLFO": ("u32", [lfo_inc(f32(f32(BLOCK / FS) * f32(f))) for f in (0.5, 0.4, 0.35, 0.23, 0.211, 0.2,
                                                                          0.171, 0.0)]),
@@ -243,7 +222,6 @@ def tables():
         "M_DEC4": ("s32", [q(f32(10 ** (4 * i / 256.0)), 17) for i in range(257)]),        # Q17 (1..10 000)
         "M_SVFSHIFT": ("s32", [q(f32(2.0 * math.atan(1.0 / 2.0 ** (i / 12.0)) / (2.0 * math.pi)), 31)
                               for i in range(257)]),                                       # Q31
-        "M_FMQ": ("s32", [q(f32(v), 16) for v in lut_fm_frequency_quantizer()]),           # demi-tons, Q16
         # SemitonesToRatio : 2^((i - 128) / 12) x 2^(j / 3072), mantisses Q30
         "M_P12": ("s32", [q(2 ** (n / 12.0), 30) for n in range(12)]),
         "M_P256": ("s32", [q(2 ** (j / 3072.0), 30) for j in range(256)]),
@@ -261,8 +239,7 @@ def tables_header():
            " * modifier a la main. */",
            "#ifndef MODAL_TABLES_H", "#define MODAL_TABLES_H", ""]
     for name, v in k.items():
-        out.append(f"#define {name} {v:#x}u" if name in ("M_INC220", "M_RV_LFO1", "M_RV_LFO2") else
-                   f"#define {name} ({v})")
+        out.append(f"#define {name} ({v})")
     if k:
         out.append("")
     for name, (typ, v) in t.items():

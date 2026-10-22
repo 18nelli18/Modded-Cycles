@@ -10,7 +10,8 @@
  * out : 32 x int32 (Q31).
  *
  * Potards (choix de Maxime, 20/10/2026) : PITCH = FREQUENCY de Rings (avec la note du trig : la V/OCT) ;
- * DECAY = DAMPING ; COLOR = BRIGHTNESS ; SHAPE = MODEL (descripteur 0..5) ; SWEEP = POSITION ; CONTOUR =
+ * DECAY = DAMPING ; COLOR = BRIGHTNESS ; SHAPE = MODEL (descripteur 0..3 : modal, cordes sympathiques, corde,
+ * cordes en accord ; ni la voix FM ni la corde et reverbe de Rings, choix de Maxime) ; SWEEP = POSITION ; CONTOUR =
  * STRUCTURE (et l'accord des cordes quantifiees, avec l'hysteresis de Rings, rings/cv_scaler.cc) ; FUNC + SHAPE =
  * polyphonie 1, 2 ou 4, rangee dans FINE (aucun potard ne regle FINE sur le Cycles ; les detours de l'interface
  * la mettent sous FUNC + SHAPE). Pas d'enveloppe d'ampli : la resonance s'eteint d'elle-meme (DAMPING), comme sur
@@ -46,7 +47,7 @@
 #ifndef MODAL_RAM
 #define MODAL_RAM   0x46800000
 #endif
-#define TRACK_SIZE  0x28000                          /* 160 Ko par piste : la Part, puis la reverbe */
+#define TRACK_SIZE  0x18000                          /* 96 Ko par piste : la Part */
 
 struct track {
 	struct modal_part part;
@@ -62,17 +63,15 @@ struct ctl {                                         /* ce que update prepare po
 
 static struct ctl ctl[6];
 
-/* la Part et la reverbe d'une piste tiennent dans sa place */
-typedef char modal_track_fits[(sizeof(struct track) + 2 * RV_SIZE <= TRACK_SIZE) ? 1 : -1];
+/* la Part d'une piste tient dans sa place */
+typedef char modal_track_fits[(sizeof(struct track) <= TRACK_SIZE) ? 1 : -1];
+
+/* SHAPE (0..3) -> modele de Rings (ResonatorModel, modal_dsp.h) */
+static const s8 SHAPE_MODEL[4] = { MODEL_MODAL, MODEL_SYMPATHETIC, MODEL_STRING, MODEL_SYMPATHETIC_Q };
 
 static inline struct track *track_of(int t)
 {
 	return (struct track *)(MODAL_RAM + (unsigned long)t * TRACK_SIZE);
-}
-
-static inline s16 *reverb_of(int t)
-{
-	return (s16 *)(MODAL_RAM + (unsigned long)t * TRACK_SIZE + TRACK_SIZE - 2 * RV_SIZE);
 }
 
 static inline s32 knob(s32 x)                        /* 8.8, 0..127 -> Q31 */
@@ -83,7 +82,7 @@ static inline s32 knob(s32 x)                        /* 8.8, 0..127 -> Q31 */
 
 void modal_update(s32 pmod, char *v, const char *p)
 {
-	s32 t = TRACK(v), fine, chord, h, tonic, note;
+	s32 t = TRACK(v), fine, chord, h, tonic, note, shape;
 	struct ctl *c = &ctl[t];
 
 	if (V32(MARK_OFF) != MARK) {                     /* 1re note sur cette machine */
@@ -94,11 +93,9 @@ void modal_update(s32 pmod, char *v, const char *p)
 		c->vel = V32(0x34) ? VGAIN_NEXT[t] : VGAIN[t];   /* le trig qui a choisi la machine */
 		c->vel = c->vel < 0 ? 0 : (c->vel > 127 ? 127 : c->vel);
 	}
-	c->model = (P16(0x18) + 0x80) >> 8;               /* SHAPE : 0..5 */
-	if (c->model > MODEL_N - 1)
-		c->model = MODEL_N - 1;
-	if (c->model < 0)
-		c->model = 0;
+	shape = (P16(0x18) + 0x80) >> 8;                 /* SHAPE : 0..3 */
+	shape = shape < 0 ? 0 : (shape > 3 ? 3 : shape);
+	c->model = SHAPE_MODEL[shape];
 	fine = P16(0x22);                                /* FUNC + SHAPE : 0x4000 1 voix, 0x5000 2, 0x6000 4 */
 	c->poly = fine < 0x4800 ? 1 : (fine < 0x5800 ? 2 : 4);
 	c->pa.structure = knob(P16(0x1c));
@@ -152,7 +149,7 @@ void modal_render(s32 *out, char *v)
 		c->pend = 0;
 	}
 	if (c->fresh) {
-		modal_part_init(part, reverb_of(t));
+		modal_part_init(part);
 		c->fresh = 0;
 	}
 	modal_set_model(part, c->model);

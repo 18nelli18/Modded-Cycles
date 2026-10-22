@@ -354,25 +354,26 @@ MACRO, with and without Model-TG, on 12/10/2026; the anti-click fade-in on 18/10
 ### 2.5 MODAL machine
 
 **What it does.** One extra machine, **MODAL**, a resonator after Mutable Instruments Rings by Émilie Gillet: each trig
-strikes or plucks it and the sound rings on by itself. Six models, as on Rings with its "bonus" models: modal
-resonator (bars, plates, bells), sympathetic strings, plucked string, FM voice, sympathetic strings tuned to a chord,
-string with reverb. Rings' hidden synth (the easter egg) is not included. The code is Rings' own DSP (the `Part` of
+strikes or plucks it and the sound rings on by itself. Four models: Rings' three (modal resonator: bars, plates,
+bells; sympathetic strings; plucked string) and one of its three hidden "bonus" models, sympathetic strings tuned to a
+chord. Maxime left out the two other bonus models (FM voice, string with reverb) and Rings' hidden synth (the easter
+egg). The code is Rings' own DSP (the `Part` of
 `rings/dsp` and the parts of `stmlib` it uses), rewritten in fixed point for the ColdFire (notes/74).
 
 **How to use it** (guide):
 
 1. Press **MACHINES** and pick **MODAL**, the last machine (15). Its icon is Metal's. The MACHINES screen shows two
    rows of eight marks.
-2. **SHAPE** picks the model (0 to 5); it can be locked on a step.
+2. **SHAPE** picks the model (0 to 3); it can be locked on a step.
 3. The other knobs are Rings' own.
 
 | Knob | Name on screen | Rings | What it does |
 |---|---|---|---|
 | PITCH | Pitch | FREQUENCY | the root note, C4 in the middle; the keys and trig notes play as V/OCT |
 | COLOR | Bright (BRIG) | BRIGHTNESS | wood or nylon at the bottom, glass or steel at the top |
-| SHAPE | Model (MODL) | the model button | 0 modal, 1 sympathetic strings, 2 string, 3 FM voice, 4 strings in a chord, 5 string and reverb |
-| SWEEP | Position (POS) | POSITION | where it is struck (FM voice: the feedback; model 5: how the two pickups mix) |
-| CONTOUR | Struct (STRC) | STRUCTURE | the ratios between the partials (harmonic in a notch in the first quarter); model 1: the intervals of the strings; model 4: one of 11 chords; FM voice: the frequency ratio |
+| SHAPE | Model (MODL) | the model button | 0 modal, 1 sympathetic strings, 2 string, 3 strings in a chord |
+| SWEEP | Position (POS) | POSITION | where it is struck |
+| CONTOUR | Struct (STRC) | STRUCTURE | the ratios between the partials (harmonic in a notch in the first quarter); model 1: the intervals of the strings; model 3: one of 11 chords |
 | DECAY | — | DAMPING | how long it rings, from a short knock to about ten seconds; at the top the strings ring almost forever |
 | **FUNC** + SHAPE | 1, 2 or 4 | the polyphony button | 1, 2 or 4 voices: each new note rings on the next voice while the others keep ringing |
 
@@ -384,15 +385,14 @@ string with reverb. Rings' hidden synth (the easter egg) is not included. The co
 - "Éco" settings, chosen by Maxime for the processor: half of Rings' modes (30, 2 × 14, 4 × 6 instead of 60,
   2 × 28, 4 × 12) and 4 strings instead of 8 (with Rings' chord table for that number of strings).
 - One output: odd minus even, as Rings mixes them when only one jack is plugged.
-- No audio input: always Rings' internal exciter (a filtered click, a burst of noise, or the FM envelope). Using a
+- No audio input: always Rings' internal exciter (a filtered click or a burst of noise). Using a
   sample as the exciter, chosen in the preset menu, is the next step (asked by Maxime, not in this version).
-- Heavy: 9 400 (FM voice, 1 voice) to 42 000 (string and reverb, 4 voices) instructions per block in the emulator,
-  with the hottest loops written in ColdFire assembly; the modal model with 1 voice, 16 000, about 3 Tone voices.
+- Heavy: 11 400 (string, 1 voice) to 32 000 (string, 4 voices) instructions per block in the emulator, with the
+  hottest loops written in ColdFire assembly; the modal model with 1 voice, 16 000, about 3 Tone voices.
   A knob that moves all the time (an LFO on COLOR, CONTOUR or DECAY) costs more: up to 26 000 on the modal model,
   27 000 on the sympathetic strings. One or two MODAL tracks with the rest. The load governor
   looks after MODAL too.
-- The very first MODAL note after power-on starts about 13 ms late (tables computed over 20 blocks); the reverb of
-  model 5 starts 11 ms after a track becomes MODAL (its memory is cleared over 16 blocks).
+- The very first MODAL note after power-on starts about 13 ms late (tables computed over 20 blocks).
 - GATE, PUNCH and FINE do nothing (FINE holds the polyphony). The note is limited to MIDI 0..127, as on Rings.
 - Set MODAL tracks back to an original machine before flashing anything else.
 

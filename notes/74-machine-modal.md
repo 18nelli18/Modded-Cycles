@@ -9,8 +9,9 @@ cœur contre Rings) et `tools/emu/test_modal.py` (la machine dans l'OS). Plan de
 
 ## En bref
 
-- **MODAL**, 15e machine, après ACID : les 6 modèles de Rings (modal, cordes sympathiques, corde, voix FM, cordes
-  sympathiques en accord, corde et réverbe), la polyphonie 1, 2 ou 4, l'excitateur interne de chaque modèle. Le
+- **MODAL**, 15e machine, après ACID : 4 modèles de Rings (modal, cordes sympathiques, corde, cordes sympathiques en
+  accord ; ni la voix FM ni la corde et réverbe, retirées le 22/10/2026 à la demande de Maxime, §5.4), la polyphonie
+  1, 2 ou 4, l'excitateur interne de chaque modèle. Le
   synthé caché (`StringSynthPart`) n'y est pas.
 - Le cœur est **la `Part` de Rings réécrite en virgule fixe** (le ColdFire n'a pas de FPU) : mêmes calculs, dans le
   même ordre, au même rythme, sur des blocs de 32 trames au lieu de 24. Comparé au code même de Rings compilé pour
@@ -33,6 +34,7 @@ Par les cartes de décision :
 | Le sample d'excitation | rejoué **à sa vitesse, depuis le début, à chaque trig** (comme l'entrée IN de Rings) |
 | Charge | d'abord « fidèle + régulateur », puis, devant les mesures, **« éco pour tout »** : la moitié des modes, 4 cordes |
 | Place dans l'image | **un meilleur compresseur** pour la charge utile (notes/50 §10, OS 2.0.1, PR séparée) |
+| Modèles (22/10/2026) | les 3 de la façade de Rings et les cordes en accord ; « je ne veux pas du model corde + réverb ni de la voix FM » (§5.4) |
 
 ## 2. Rings `[FAIT, source pichenettes/eurorack 08460a6]`
 
@@ -92,9 +94,9 @@ Rapport d'exploration : `build/ref/rings-scout.md` (non versionné). Ce qui comp
 | PITCH | `p+0x14` | la tonique (`tonic`) : do 60 au centre (PITCH 64) |
 | note du trig | `pmod` | la V/OCT (`note`) : note du trig − 60 ; un trig au do 60, PITCH au centre, joue le do 60 |
 | COLOR | `p+0x16` | BRIGHTNESS |
-| SHAPE | `p+0x18` (descripteur 0..5) | le modèle |
+| SHAPE | `p+0x18` (descripteur 0..3) | le modèle : 0 modal, 1 cordes sympathiques, 2 corde, 3 cordes en accord (les modèles 0, 1, 2 et 4 de Rings, `SHAPE_MODEL`) |
 | SWEEP | `p+0x1a` | POSITION |
-| CONTOUR | `p+0x1c` | STRUCTURE ; l'accord du modèle 4 : STRUCTURE × 10 avec l'hystérésis de 0,1 de `cv_scaler.cc` |
+| CONTOUR | `p+0x1c` | STRUCTURE ; l'accord des cordes en accord (SHAPE 3) : STRUCTURE × 10 avec l'hystérésis de 0,1 de `cv_scaler.cc` |
 | DECAY | `p+0x24` | DAMPING |
 | FUNC + SHAPE | FINE, `p+0x22` | la polyphonie : `0x4000` 1 voix (le défaut de FINE), `0x5000` 2, `0x6000` 4 |
 
@@ -107,10 +109,10 @@ Rapport d'exploration : `build/ref/rings-scout.md` (non versionné). Ce qui comp
   FM) au bloc suivant. Les deux gains de vélocité (`0x40fe4c90`, `0x40fe4cd0`) restent à 127 : la sortie de la piste
   n'est plus multipliée, et les voix qui résonnent encore gardent leur niveau quand une note douce arrive.
 - **Sortie** : `ODD − EVEN`, comme Rings les mélange quand une seule prise est branchée. Indice : la réverbe du
-  modèle 5 inverse sa sortie EVEN (`aux = -aux`), ce qui n'a de sens que si le mélange est une différence ; et en
+  modèle 5 de Rings inverse sa sortie EVEN (`aux = -aux`), ce qui n'a de sens que si le mélange est une différence ; et en
   polyphonie, la `Part` forme elle-même chaque voix par `out - aux`. 1,0 de Rings = ½ pleine échelle, comme MACRO.
 - **Pas d'enveloppe d'ampli** : la résonance s'éteint d'elle-même (DAMPING). GATE, PUNCH : sans effet.
-- **État** : une `Part` par piste (95 Ko avec 4 cordes) et sa réverbe (64 Ko), à `0x46800000 + 0x28000 × piste`
+- **État** : une `Part` par piste (94 400 o avec 4 cordes), à `0x46800000 + 0x18000 × piste`
   (§4), remise à neuf à la 1re note après un changement de machine (marque `'RNG1'` en `v+0x2c`, effacée par l'OS).
   Tampons de calcul en variables, pas sur la pile (l'interruption audio tourne sur la pile de la tâche
   interrompue ; MACRO et ACID restent sous 350 o).
@@ -141,15 +143,16 @@ Rapport d'exploration : `build/ref/rings-scout.md` (non versionné). Ce qui comp
 
 | Où | Quoi |
 |---|---|
-| charge utile `+0x79000` | code et tables de MODAL, 44 308 o (C et `modal_asm.S`) |
+| charge utile `+0x79000` | code et tables de MODAL, 34 916 o (C et `modal_asm.S`) |
 | charge utile `+0x86000` | ses variables, 12 084 o (sinus, limiteur, état des passerelles, tampons) ; à `+0x83000` jusqu'au 21/10/2026, déplacées pour laisser 52 Ko au code |
-| `0x46800000..0x468effff` | l'état des 6 pistes, 160 Ko chacune |
+| `0x46800000..0x4688ffff` | l'état des 6 pistes, 96 Ko chacune (160 Ko avec la réverbe, jusqu'au 22/10/2026) |
 
-- Charge utile : 560 948 o (492 288 sans MODAL), rangée compressée en 257 796 o (230 083 sans) ; l'image
-  décompressée finit en `0x401fe7c4` : **6 204 o de marge** sous `0x40200000`. Possible grâce au compresseur de
+- Charge utile : 560 948 o (492 288 sans MODAL ; les variables à `+0x86000` la font aller jusque-là), rangée
+  compressée en 252 502 o (230 083 sans) ; l'image décompressée finit en `0x401fd316` : **11 498 o de marge** sous
+  `0x40200000`. Possible grâce au compresseur de
   notes/50 §10 (sans lui, MODAL ne tenait pas).
-- L'état d'une piste (la `Part`, 94 984 o, puis la réverbe, 64 Ko) tient dans ses 160 Ko : vérifié à la compilation
-  (`modal_track_fits`, `modal.c`), 3 320 o de marge.
+- L'état d'une piste (la `Part`, 94 400 o) tient dans ses 96 Ko : vérifié à la compilation (`modal_track_fits`,
+  `modal.c`), 3 904 o de marge.
 - `0x46800000..` `[HYP]` : libre. La zone d'échantillons de Model-TG s'arrête à `0x46700000` (`REGION_END`,
   `ST_PATCHES`), le Mo suivant est notre charge utile ; au-dessus, Model-TG écrit que le Cycles « registers a 4 MiB
   region at 0x4a400000 and nothing above it » (vue sans cache, soit `0x42400000..0x42800000`), et aucune opérande
@@ -169,9 +172,9 @@ Instructions de MODAL par bloc (`test_modal.py`, piste seule, DECAY 100, une not
 | 0 modal | 26 212 → 20 930 → **16 083** | 30 978 → 26 598 → **18 846** | 25 552 → 22 764 → **17 238** |
 | 1 cordes sympathiques | 29 349 → 22 694 → **19 541** | 34 139 → 27 959 → **22 471** | 43 817 → 32 971 → **25 493** |
 | 2 corde | 17 000 → 16 199 → **11 360** | 29 993 → 28 886 → **19 253** | 55 918 → 48 534 → **32 247** |
-| 3 voix FM | 10 569 → 10 316 → **9 373** | 17 553 → 17 507 → **15 713** | 32 467 → 32 407 → **27 972** |
+| 3 voix FM (retirée, §5.4) | 10 569 → 10 316 → 9 373 | 17 553 → 17 507 → 15 713 | 32 467 → 32 407 → 27 972 |
 | 4 cordes en accord | 29 203 → 22 547 → **19 529** | 33 960 → 27 777 → **22 477** | 43 633 → 32 779 → **25 498** |
-| 5 corde et réverbe | 30 252 → 28 676 → **21 022** | 43 268 → 41 382 → **28 936** | 69 218 → 61 052 → **41 943** |
+| 5 corde et réverbe (retirée, §5.4) | 30 252 → 28 676 → 21 022 | 43 268 → 41 382 → 28 936 | 69 218 → 61 052 → 41 943 |
 
 TONE : 5 291 ; MACRO : 11 000 en médiane (notes/43 §8). Ce sont des instructions : les cordes lisent des lignes de
 16 Ko, hors du cache de 8 Ko `[HYP]` ; les noyaux en assembleur enchaînent leurs produits sur plusieurs
@@ -297,15 +300,37 @@ Résultats (instructions par bloc, 1 voix, le pire potard ; avant → après) : 
 35 100 → 17 400) ; corde 22 500 → 16 400 ; corde et réverbe 31 800 → 25 700 ; cordes sympathiques 27 900 → 27 200 ;
 le bloc d'une nouvelle note du modal 43 000 → 28 900. Mêmes preuves (§6.3).
 
+### 5.4 Quatre modèles (22/10/2026)
+
+Question de Maxime : « dans le module Rings de Mutable Instruments il n'y en a que 3 normalement ». Réponse `[FAIT,
+source]` : la façade en montre 3 (le bouton des modèles les fait tourner) ; un appui de 3 s (`kLongPressDuration`,
+`rings/ui.cc`) bascule vers le modèle « Bonus! » du même rang (`rings/dsp/part.h`) : modal → voix FM, cordes
+sympathiques → cordes en accord, corde → corde et réverbe, la LED clignotant ; présent dès le premier commit de Rings
+(2016). Ce n'est pas l'easter egg (« Disastrous Peace », un autre synthé). Puis : « je ne veux pas du model corde +
+réverb ni de la voix FM ».
+
+- SHAPE 0..3 : modal, cordes sympathiques, corde, cordes en accord (`SHAPE_MODEL` dans `modal.c` : les modèles 0, 1,
+  2 et 4 de Rings, numéros que garde le cœur ; la preuve contre Rings compare les mêmes). Un SHAPE plus grand (un son
+  fait avant) est borné à 3.
+- Retirés : la voix FM et son suiveur, la réverbe (ses noyaux `modal_rv_*`, son tampon), leurs tables
+  (`gen_modal.py`) ; l'état d'une piste passe de 160 à 96 Ko (`TRACK_SIZE` `0x18000`) : 576 Ko pour les 6 pistes au
+  lieu de 960, `0x46800000..0x4688ffff` (`REGISTRY.md`).
+- Les 4 modèles gardent leurs octets : `modal_host` d'avant et d'après sur les 4 modèles, 3 polyphonies, réglages
+  fixes et réglages qui bougent, identiques.
+- `reso_process` gardé hors de `modal_process` (`noinline`) : sans la FM et la réverbe, GCC 13 le mettait en ligne
+  et le modal coûtait de 2 à 10 % de plus dans l'OS (16 451 / 19 653 / 18 756 instructions par bloc en 1, 2, 4 voix,
+  contre 16 044 / 18 840 / 17 043 une fois séparé ; 16 083 / 18 846 / 17 075 avant le retrait).
+- Place : code et tables 34 916 o (44 308 avant) ; l'image finit en `0x401fd316`, 11 498 o de marge (6 204 avant).
+
 ## 6. Preuves `[FAIT en émulation]`
 
 ### 6.1 Le cœur contre Rings (`tools/emu/test_modal_dsp.py`)
 
 Rings compilé pour l'ordinateur depuis une copie de ses sources (clone épinglé) où ne changent que le bloc (32) et
 les réglages éco ; le cœur compilé pour l'ordinateur. Après 20 blocs de silence, des notes ; `ODD − EVEN` comparés
-sur toute la durée. 54 cas : les 6 modèles en 1, 2 et 4 voix ; les 4 potards qui bougent (5 modèles) ; 4 accords en
-1, 2 et 4 voix ; chaque modèle à MIDI 0 et 127 ; DAMPING au maximum ; potards aux bouts. **Tous au-dessus de
-35 dB, médiane 76,9 dB** ; le plus faible, le modal avec les 4 potards en mouvement (36,3 dB : la position qui
+sur toute la durée. Depuis le 22/10/2026, 41 cas : les 4 modèles en 1, 2 et 4 voix ; les 4 potards qui bougent ;
+4 accords en 1, 2 et 4 voix ; chaque modèle à MIDI 0 et 127 ; DAMPING au maximum ; potards aux bouts (54 cas avec les
+6 modèles). **Tous au-dessus de 35 dB, médiane 78,5 dB** (76,9 avec les 6) ; au départ, le plus faible, le modal avec les 4 potards en mouvement (36,3 dB : la position qui
 bouge à chaque échantillon). Les longues résonances modales (DAMPING 0,5 à 1,0, 12 s) : 72 à 86 dB, enveloppes
 identiques.
 
@@ -362,16 +387,22 @@ Résultat : voir §6.3.
 - Après les potards qui bougent (§5.3) : `test_modal_dsp.py` TOUT OK (médiane 76,9 dB) ; `eq2.py` 36 cas
   identiques ; `test_modal.py` complet, **83 vérifications, TOUT OK** ; `test_payload_pack.py` (marge 6 204 o) ;
   MAIN OS `4c37e00b…3154`.
+- Quatre modèles (§5.4, 22/10/2026) : `test_modal_dsp.py` 41 cas TOUT OK (médiane 78,5 dB, le plus faible 41,1 dB) ;
+  `eq2.py` (4 modèles, 1, 2, 4 voix, réglages fixes et mobiles) identiques ; `test_modal.py` complet, **83
+  vérifications, TOUT OK** (dont « SHAPE au-delà de 3 : borné à 3 », 6 pistes MODAL dans `0x46800000..0x46890000`) ;
+  coûts en 1, 2, 4 voix : modal 16 044 / 18 840 / 17 043, cordes sympathiques 19 501 / 22 425 / 25 365, corde
+  11 322 / 19 203 / 32 175, cordes en accord 19 499 / 22 439 / 25 380 ; `test_payload_pack.py` (marge 11 498 o) ;
+  MAIN OS `e5a333c9…cf77`.
 
 ## 7. À vérifier sur la machine
 
-Flasher l'OS 2.1 (MAIN OS `4c37e00b…3154`, 21/10/2026), puis :
+Flasher l'OS 2.1 (MAIN OS `e5a333c9…cf77`, 22/10/2026), puis :
 
 1. Démarrage normal ; MACHINES : 15 repères sur 2 lignes de 8, MODAL le dernier, icône de Metal.
-2. Une piste MODAL : chaque modèle (SHAPE 0 à 5) sonne à la bonne hauteur ; COLOR, CONTOUR, SWEEP, DECAY changent
+2. Une piste MODAL : chaque modèle (SHAPE 0 à 3) sonne à la bonne hauteur ; COLOR, CONTOUR, SWEEP, DECAY changent
    le son comme décrit ; DECAY en haut : les cordes résonnent presque sans fin.
 3. FUNC + SHAPE : la fenêtre affiche « Voices » et 1, 2, 4 ; en 4 voix, des notes rapprochées se superposent ;
-   les modèles 2 et 5 en 4 voix sonnent (plus seulement un clic). Les noms Bright, Model, Position et Struct
+   la corde (SHAPE 2) en 4 voix sonne (plus seulement un clic). Les noms Bright, Model, Position et Struct
    tiennent dans l'écran.
 4. Vélocité : une note douce frappe moins fort, les notes qui résonnent ne baissent pas.
 5. Deux pistes MODAL avec les autres pistes jouant : craquements ? La page System de Model-TG donne la charge :
@@ -400,3 +431,4 @@ Demandé par Maxime, pas dans cette version. Ce qu'il faudra :
 - 21/10/2026 : retours de Maxime (le clic des modèles 2 et 5 en 4 voix, « Pitch », les noms trop longs), puis
   « phase d'optimisation intense » : §5.2.
 - 21/10/2026 : les potards qui bougent (§5.3).
+- 22/10/2026 : les 3 modèles cachés de Rings expliqués ; la voix FM et la corde et réverbe retirées (§5.4).

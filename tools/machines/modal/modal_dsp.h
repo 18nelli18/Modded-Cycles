@@ -27,9 +27,9 @@
 #define MAXMODES    32                               /* eco : 30 modes au plus ((64 / polyphonie - 4) / 2) ; modal_asm.S */
 #define DLINE       2048                             /* kDelayLineSize */
 #define SLINE       1024
-#define RV_SIZE     32768
 
-enum { MODEL_MODAL, MODEL_SYMPATHETIC, MODEL_STRING, MODEL_FM, MODEL_SYMPATHETIC_Q, MODEL_STRING_REVERB, MODEL_N };
+/* les numeros de Rings (ResonatorModel) ; ni la voix FM (3) ni la corde et reverbe (5) : choix de Maxime (22/10/2026) */
+enum { MODEL_MODAL = 0, MODEL_SYMPATHETIC = 1, MODEL_STRING = 2, MODEL_SYMPATHETIC_Q = 4 };
 
 #define Q31(x)      ((s32)((x) * 2147483648.0 + 0.5))
 
@@ -539,7 +539,8 @@ static void mode_lin(struct mode *m, const s32 *x, s32 *o, s32 a, s32 da)
  * la recurrence des amplitudes a chaque echantillon pour chaque mode ; ici, les amplitudes du debut et de la fin du
  * bloc, et l'interpolation lineaire entre les deux, une addition par echantillon (l'ecart est de l'ordre du carre du
  * pas de la position sur un bloc : negligeable pour une position qui bouge lentement). */
-static void reso_process(struct resonator *r, const s32 *in, s32 *out, s32 *aux)
+/* noinline : en ligne dans modal_process, GCC y tient moins bien les registres (2 a 10 % de plus, 22/10/2026) */
+static __attribute__((noinline)) void reso_process(struct resonator *r, const s32 *in, s32 *out, s32 *aux)
 {
 	int num = reso_compute(r), n = (num + 1) & ~1, i, k, quiet = 1;
 	s32 *x = sc.x, *so = sc.so, *sa = sc.sa, *a0 = sc.amp, *da = sc.amp + MAXMODES;
@@ -1468,533 +1469,6 @@ static void pl_process(struct plucker *p, s32 *out, u32 *rng)
 	svf_lp_block(&p->svf, out, MB, 0, 0);
 }
 
-/* ---- voix FM (rings/dsp/fm_voice.cc, follower.h) ------------------------------------------------------------ */
-
-struct naive {
-	s32 f, lp, bp;
-};
-
-static inline s32 naive_hp(struct naive *n, s32 in)  /* NaiveSvf Process<HIGH_PASS>, amortissement 2 */
-{
-	s32 hp;
-	n->lp += qmul(n->f, n->bp);
-	hp = in - shl(n->bp, 1) - n->lp;
-	n->bp += qmul(n->f, hp);
-	return hp;
-}
-
-struct follower {
-	struct naive lm, mh;
-	s32 det[3], centroid;                            /* UNIT, Q31 */
-};
-
-struct fmvoice {
-	xf carrier;                                      /* frequence */
-	s32 ratio, brightness, damping, feedback_amount;
-	u32 prev_car, prev_mod;                          /* increments, Q32 */
-	s32 prev_bright, prev_damp, prev_fb;             /* Q31, Q30 */
-	s32 amp_env, bright_env;                         /* UNIT */
-	s32 gain;                                        /* Q27 */
-	s32 fm_amount;                                   /* Q28 */
-	u32 car_phase, mod_phase;
-	s32 prev_sample;                                 /* UNIT */
-	struct follower fol;
-	s32 kd, kvalid, k_amp, k_bright;                 /* decroissances, gardees tant que DAMPING ne change pas */
-};
-
-static void fm_init(struct fmvoice *v)
-{
-	u32 inc = M_INC220;
-
-	v->carrier = XC(M_F220);
-	v->ratio = Q31(0.5);
-	v->brightness = Q31(0.5);
-	v->damping = Q31(0.5);
-	v->feedback_amount = 0;
-	v->prev_car = inc;
-	v->prev_mod = inc;
-	v->prev_bright = v->brightness;
-	v->prev_damp = v->damping;
-	v->prev_fb = 0;
-	v->amp_env = v->bright_env = 0;
-	v->car_phase = v->mod_phase = 0;
-	v->gain = 0;
-	v->fm_amount = 0;
-	v->prev_sample = 0;
-	v->fol.lm.f = M_FOL_LM;
-	v->fol.mh.f = M_FOL_MH;
-	v->fol.lm.lp = v->fol.lm.bp = v->fol.mh.lp = v->fol.mh.bp = 0;
-	v->fol.det[0] = v->fol.det[1] = v->fol.det[2] = 0;
-	v->fol.centroid = 0;
-	v->kvalid = 0;
-}
-
-static inline s32 sine_fm(u32 phase, s32 fm)         /* fm en tours, Q28 ; rend UNIT */
-{
-	s32 i, f, a, b;
-	phase += (u32)fm << 4;
-	i = phase >> 20;
-	f = (s32)((phase << 11) & 0x7fffffffu);
-	a = m_sine[i];
-	b = m_sine[i + 1];
-	return shl(a, 9) + qmul(shl(b - a, 9), f);
-}
-
-/* 1 - 0,001^(1 / rt60) : x = ln(1000) / rt60, x - x^2/2 + x^3/6 */
-static s32 decay_coef(xf rt60)
-{
-	s32 x = xto(xmul(XC(M_LN1000), xrecip(rt60)), 31);
-	s32 x2 = qmul(x, x);
-	return x - (x2 >> 1) + qmul(qmul(x2, x), Q31(1.0 / 6));
-}
-
-/* in_zero : l'entree de ce bloc est muette (la Part le sait : seule la voix active la recoit) */
-static void fm_process(struct fmvoice *v, const s32 *in, s32 *out, s32 *aux, int in_zero)
-{
-	s32 d = v->damping, env_amount, amp_decay, bright_decay, ratio, feedback, pfb;
-	xf modf;
-	u32 car_inc, mod_inc;
-	s32 ci, mi, bi, fi;
-	s32 amp_env = v->amp_env, bright_env = v->bright_env, fm_amount = v->fm_amount, gain_ = v->gain;
-	s32 prev_sample = v->prev_sample, prev_bright = v->prev_bright, prev_fb = v->prev_fb;
-	u32 mod_phase = v->mod_phase, car_phase = v->car_phase, prev_car = v->prev_car, prev_mod = v->prev_mod;
-	s32 bv = 0, fmin = 0, fmax = 0, dlt = 0, mfb = 0;
-	struct follower *fo = &v->fol;
-	int k, quiet;
-
-	env_amount = d < M_09 ? (1 << 30) : shl(qmul(Q31ONE - d, Q31(10.0 / 16)), 3);   /* Q30 */
-	if (!v->kvalid || v->kd != d) {
-		v->k_amp = decay_coef(xmul(XC(M_RT60FM), xs2r(qmul(d, 96 << 16))));
-		v->k_bright = decay_coef(xmul(XC(M_RT60FM), xs2r(qmul(d, 84 << 16))));
-		v->kd = d;
-		v->kvalid = 1;
-	}
-	amp_decay = v->k_amp;
-	bright_decay = v->k_bright;
-	ratio = interp(M_FMQ, v->ratio, 7);
-	modf = xmul(v->carrier, xs2r(ratio));
-	if (xcmp(modf, xmk(1 << 30, -1)) > 0)
-		modf = xmk(1 << 30, -1);
-	feedback = v->feedback_amount - 0x40000000;     /* (fb - 0,5) x 2, Q30 */
-	car_inc = (u32)xto(v->carrier, 32);
-	mod_inc = (u32)xto(modf, 32);
-	if (xcmp(v->carrier, xmk(1 << 30, -1)) >= 0)
-		car_inc = 0x80000000u;
-	if (xcmp(modf, xmk(1 << 30, -1)) >= 0)
-		mod_inc = 0x80000000u;
-	ci = ((s32)(car_inc - prev_car)) / MB;
-	mi = ((s32)(mod_inc - prev_mod)) / MB;
-	bi = (v->brightness - prev_bright) / MB;
-	fi = (feedback - prev_fb) / MB;
-	pfb = feedback < 0 ? qmul(feedback, feedback) : 0;   /* fb^2 en Q29, soit 0,5 fb^2 en Q30 */
-	if (!bi) {
-		bv = qmul(prev_bright, prev_bright);
-		fmin = bv < 0x40000000 ? 0 : bv - 0x40000000;
-		fmax = bv < 0x40000000 ? bv : 0x40000000;
-		dlt = Q31(0.005 / 8) + qmul(fmax, Q31(0.015 / 4));
-	}
-	if (!fi)
-		mfb = prev_fb > 0 ? qmul(prev_fb, prev_fb) : 0;
-	/* suiveur au repos (entree nulle, filtres et detecteurs a zero) : ses bandes restent nulles */
-	quiet = in_zero && !(fo->lm.lp | fo->lm.bp | fo->mh.lp | fo->mh.bp | fo->det[0] | fo->det[1] | fo->det[2]);
-
-	/* Suiveur au repos, brillance et retour fixes : les enveloppes (amplitude, brillance, quantite de FM, gain) ne
-	 * dependent pas des oscillateurs. Deux boucles : les enveloppes, puis les oscillateurs ; les memes calculs. */
-	if (quiet && !bi && !fi) {
-		s32 *fa = sc.ck, *ga = sc.y0;
-		for (k = 0; k < MB; k++) {
-			s32 e = -fo->centroid, err, fenv, fma, gain;
-			fo->centroid += qmul(e, e > 0 ? Q31(0.05) : Q31(0.001));
-			err = -amp_env;
-			amp_env += qmul(err > 0 ? Q31(0.05) : amp_decay, err);
-			err = -bright_env;
-			bright_env += qmul(err > 0 ? Q31(0.01) : bright_decay, err);
-			fenv = (UNIT >> 1) + shl(qmul(env_amount, bright_env - (UNIT >> 1)), 1);
-			fma = (fmin >> 1) + shl(qmul(fmax, fenv), 6);
-			err = fma - fm_amount;
-			if (err > dlt)
-				err = dlt;
-			else if (err < -dlt)
-				err = -dlt;
-			fm_amount += err;
-			gain = UNIT + shl(qmul(env_amount, amp_env - UNIT), 1);
-			gain_ += qmul(Q31(0.005) + shl(qmul(Q31(0.045 / 8), fm_amount), 6), shl(gain, 3) - gain_);
-			fa[k] = fm_amount;
-			ga[k] = gain_;
-		}
-		for (k = 0; k < MB; k++) {
-			s32 mod, car;
-			prev_mod += mi;
-			prev_car += ci;
-			mod_phase += (u32)shl(qmul((s32)(prev_mod >> 1), (1 << 30) + shl(qmul(prev_sample, pfb), 7)), 2);
-			car_phase += prev_car;
-			mod = sine_fm(mod_phase, shl(qmul(mfb, prev_sample), 4));
-			car = sine_fm(car_phase, shl(qmul(fa[k], mod), 7));
-			prev_sample += qmul(Q31(0.1), car - prev_sample);
-			out[k] = shl(qmul(car + (mod >> 1), ga[k]), 4);
-			aux[k] = shl(qmul(mod >> 1, ga[k]), 4);
-		}
-		k = MB;
-	} else
-	for (k = 0; k < MB; k++) {
-		s32 ae, be, fenv, fma, err, mod, car, gain;
-		if (quiet) {
-			s32 e = -fo->centroid;
-			fo->centroid += qmul(e, e > 0 ? Q31(0.05) : Q31(0.001));
-			ae = 0;
-			be = 0;
-		} else {
-			s32 b2 = naive_hp(&fo->mh, in[k]);
-			s32 b1 = naive_hp(&fo->lm, fo->mh.lp);
-			s32 b0 = fo->lm.lp, er, w, tot, e;
-			er = iabs(b0) - fo->det[0];
-			fo->det[0] += qmul(er > 0 ? M_FOL_ATT[0] : M_FOL_DEC[0], er);
-			er = iabs(b1) - fo->det[1];
-			fo->det[1] += qmul(er > 0 ? M_FOL_ATT[1] : M_FOL_DEC[1], er);
-			er = iabs(b2) - fo->det[2];
-			fo->det[2] += qmul(er > 0 ? M_FOL_ATT[2] : M_FOL_DEC[2], er);
-			tot = fo->det[0] + fo->det[1] + fo->det[2];
-			w = (fo->det[1] >> 1) + fo->det[2];
-			e = w ? xto(xmul(xfrom(w, 24), xrecip(xadd(xfrom(tot, 24), XC(M_0001)))), 31) : 0;
-			e -= fo->centroid;
-			fo->centroid += qmul(e, e > 0 ? Q31(0.05) : Q31(0.001));
-			ae = tot;
-			/* be x 2 ae (2 - ae) */
-			be = qmul(fo->centroid, shl(qmul(ae, (2 * UNIT) - ae), 8));
-		}
-		err = ae - amp_env;
-		amp_env += qmul(err > 0 ? Q31(0.05) : amp_decay, err);
-		err = be - bright_env;
-		bright_env += qmul(err > 0 ? Q31(0.01) : bright_decay, err);
-
-		if (bi) {
-			prev_bright += bi;
-			bv = qmul(prev_bright, prev_bright);         /* Q31 */
-			fmin = bv < 0x40000000 ? 0 : bv - 0x40000000; /* 2 bv - 1, Q30 */
-			fmax = bv < 0x40000000 ? bv : 0x40000000;     /* 2 bv, Q30 */
-			dlt = Q31(0.005 / 8) + qmul(fmax, Q31(0.015 / 4));    /* Q28 */
-		}
-		fenv = (UNIT >> 1) + shl(qmul(env_amount, bright_env - (UNIT >> 1)), 1);   /* UNIT */
-		fma = (fmin >> 1) + shl(qmul(fmax, fenv), 6);         /* (min + max env) x 2, Q28 */
-		err = fma - fm_amount;
-		if (err > dlt)
-			err = dlt;
-		else if (err < -dlt)
-			err = -dlt;
-		fm_amount += err;
-
-		prev_mod += mi;
-		prev_car += ci;
-		mod_phase += (u32)shl(qmul((s32)(prev_mod >> 1), (1 << 30) + shl(qmul(prev_sample, pfb), 7)), 2);
-		car_phase += prev_car;
-		if (fi) {
-			prev_fb += fi;
-			mfb = prev_fb > 0 ? qmul(prev_fb, prev_fb) : 0;     /* 0,25 fb^2 en Q31 */
-		}
-		mod = sine_fm(mod_phase, shl(qmul(mfb, prev_sample), 4));
-		car = sine_fm(car_phase, shl(qmul(fm_amount, mod), 7));
-		prev_sample += qmul(Q31(0.1), car - prev_sample);
-		gain = UNIT + shl(qmul(env_amount, amp_env - UNIT), 1);
-		gain_ += qmul(Q31(0.005) + shl(qmul(Q31(0.045 / 8), fm_amount), 6), shl(gain, 3) - gain_);
-		out[k] = shl(qmul(car + (mod >> 1), gain_), 4);
-		aux[k] = shl(qmul(mod >> 1, gain_), 4);
-	}
-	v->amp_env = amp_env;
-	v->bright_env = bright_env;
-	v->fm_amount = fm_amount;
-	v->gain = gain_;
-	v->prev_sample = prev_sample;
-	v->mod_phase = mod_phase;
-	v->car_phase = car_phase;
-	v->prev_car = car_inc;
-	v->prev_mod = mod_inc;
-	v->prev_bright = v->brightness;
-	v->prev_fb = feedback;
-}
-
-/* ---- reverbe (rings/dsp/fx/reverb.h, fx_engine.h, 16 bits) -------------------------------------------------- */
-
-struct reverb {
-	s16 *buf;
-	s32 wp;
-	struct lfo lfo[2];
-	s32 amount, input_gain, time, diffusion, lp;    /* Q31 */
-	s32 lp1, lp2;                                    /* UNIT */
-	s32 cleared;                                     /* demi-mots deja effaces : par morceaux, RV_CHUNK par bloc */
-};
-
-#define RV_CHUNK 2048                                /* 4 Ko par bloc : 16 blocs (11 ms) pour toute la reverbe */
-
-
-static void rv_init(struct reverb *r, s16 *buf)
-{
-	r->buf = buf;
-	r->wp = 0;
-	lfo_init(&r->lfo[0], M_RV_LFO1);
-	lfo_init(&r->lfo[1], M_RV_LFO2);
-	r->lp = Q31(0.7);
-	r->diffusion = Q31(0.625);
-	r->lp1 = r->lp2 = 0;
-	r->cleared = 0;
-}
-
-/* un morceau de l'effacement (Rings efface les 64 Ko d'un coup : ici, plus d'un bloc) ; rend 1 quand c'est fini */
-static int rv_clear_step(struct reverb *r)
-{
-	u32 *b = (u32 *)(r->buf + r->cleared);
-	int i;
-
-	if (r->cleared >= RV_SIZE)
-		return 1;
-	for (i = 0; i < RV_CHUNK / 2; i++)
-		b[i] = 0;
-	r->cleared += RV_CHUNK;
-	return r->cleared >= RV_SIZE;
-}
-
-/* Compress de fx_engine : trunc(v x 32768) vers zero, sature a 16 bits ; sans branche : pour v < 0,
- * -((-v) >> 9) = (v + 511) >> 9 */
-static inline s32 rv_c(s32 v)
-{
-	s32 t = (v + ((v >> 31) & 511)) >> 9;
-
-	if ((u32)(t + 32768) > 65535u)
-		t = (t >> 31) ^ 32767;
-	return t;
-}
-
-/* les lignes de la reverbe dans le tampon : debut (RV_BASE) et derniere case (debut + longueur - 1) */
-#define RV_AP1   0
-#define RV_AP1T  149
-#define RV_AP2   151
-#define RV_AP2T  364
-#define RV_AP3   366
-#define RV_AP3T  684
-#define RV_AP4   686
-#define RV_AP4T  1212
-#define RV_D1A   1214
-#define RV_D1AT  3395
-#define RV_D1B   3397
-#define RV_D1BT  6086
-#define RV_DEL1  6088
-#define RV_D2A   10590
-#define RV_D2AT  13114
-#define RV_D2B   13116
-#define RV_D2BT  15312
-#define RV_DEL2  15314
-#define RV_TAP(o) buf[(w + (o)) & (RV_SIZE - 1)]
-#define RV_GET(o) shl(RV_TAP(o), 9)                  /* Decompress : / 32768, en UNIT */
-
-/* l'Interpolate de fx_engine sur une ligne modulee par un LFO : decalage (Q16) -> case et fraction */
-static inline void rv_mod(s32 v, s32 center, s32 depth, s32 *idx, s32 *frac)
-{
-	s32 off = (center << 16) + qmul(v, depth << 16);
-
-	*idx = off >> 16;
-	*frac = shl(off, 15) & Q31ONE;
-}
-
-/* La reverbe etage par etage sur tout le bloc : chaque ligne fait plus de 32 echantillons (la plus courte, 150), donc
- * rien de ce qu'un etage lit n'a ete ecrit dans ce bloc, et chaque boucle de retour passe par une ligne : les memes
- * calculs que l'ecriture echantillon par echantillon d'en dessous, dans un autre ordre, qui donnent les memes
- * nombres. Chaque prise avance d'une case par echantillon : un pointeur, sans masque, quand aucune ne repasse par le
- * debut du tampon dans le bloc (sinon : rv_process, echantillon par echantillon). */
-#define RV_P(o) (buf + (((w0 + (o)) & (RV_SIZE - 1))))  /* la case de l'echantillon -1 : k lit RV_P(o)[-1 - k] */
-
-#ifdef MODAL_ASM
-void modal_rv_ap(s16 *head, const s16 *tail, s32 *v, s32 k1, s32 k2);      /* rv_ap sur MB : modal_asm.S */
-void modal_rv_tail(s16 *head, const s32 *v, s32 *out, s32 amount);         /* rv_tail : modal_asm.S */
-#define rv_ap(h, t, v, k1, k2, n) modal_rv_ap(h, t, v, k1, k2)
-#define rv_tail modal_rv_tail
-#else
-/* un passe-tout de fx_engine sur n echantillons : prev = tail ; v += k1 prev ; head = Compress(v) ; v = k2 v + prev */
-static void rv_ap(s16 *head, const s16 *tail, s32 *v, s32 k1, s32 k2, int n)
-{
-	int k;
-
-	for (k = 0; k < n; k++) {
-		s32 prev = shl(*--tail, 9), x = v[k] + qmul(prev, k1);
-		*--head = (s16)rv_c(x);
-		v[k] = qmul(x, k2) + prev;
-	}
-}
-
-/* la sortie d'une branche : la ligne de retour ecrite, et le melange a la sortie */
-static void rv_tail(s16 *head, const s32 *v, s32 *out, s32 amount)
-{
-	int k;
-
-	for (k = 0; k < MB; k++) {
-		*--head = (s16)rv_c(v[k]);
-		out[k] += qmul(shl(v[k], 1) - out[k], amount);
-	}
-}
-#endif
-
-/* l'entree d'une branche du reservoir : la ligne modulee lue (deux segments : avant et apres le pas des LFO en ks),
- * le gain de reverberation, le passe-bas ; rend l'etat du passe-bas */
-#ifdef MODAL_ASM
-/* rv_branch sur les echantillons k0..k0 + n - 1 d'un meme segment : pa = RV_P(ligne) - k0 ; rend lp. modal_asm.S */
-s32 modal_rv_in(const s16 *pa, s32 f, const s32 *apout, s32 *v, int n, s32 lp, s32 klp, s32 krt);
-#endif
-
-static s32 rv_branch(s16 *buf, s32 w0, const s32 *apout, s32 *v, s32 base, s32 ks, const s32 *mi, const s32 *mf,
-		     s32 lp, s32 klp, s32 krt)
-{
-	int k;
-
-#ifdef MODAL_ASM
-	if (ks > 0)
-		lp = modal_rv_in(RV_P(base + mi[0]), mf[0], apout, v, ks, lp, klp, krt);
-	return modal_rv_in(RV_P(base + mi[1]) - ks, mf[1], apout + ks, v + ks, MB - ks, lp, klp, krt);
-#endif
-	for (k = 0; k < MB; k++) {
-		int seg = k >= ks;
-		const s16 *pa = RV_P(base + mi[seg]) - 1 - k;
-		s32 a = shl(pa[0], 9), b = shl(pa[1], 9);
-		s32 x = a + qmul(b - a, mf[seg]), acc = apout[k] + qmul(x, krt);
-		lp += qmul(klp, acc - lp);
-		v[k] = lp;
-	}
-	return lp;
-}
-
-/* rend 1 si le bloc a ete calcule ainsi (aucune prise ne repasse par le debut du tampon) */
-static int rv_block(struct reverb *r, s32 *left, s32 *right)
-{
-	const s32 kap = r->diffusion, nkap = -r->diffusion;
-	s16 *buf = r->buf;
-	s32 w0 = r->wp, ks = (w0 - 1) & 31, mi1[2], mf1[2], mi2[2], mf2[2], k;
-	s32 *v = sc.ck, *apout = sc.y0;
-	static const s16 taps[] = { RV_AP1, RV_AP1T, RV_AP2, RV_AP2T, RV_AP3, RV_AP3T, RV_AP4, RV_AP4T, RV_D1A, RV_D1AT,
-				    RV_D1B, RV_D1BT, RV_DEL1, RV_D2A, RV_D2AT, RV_D2B, RV_D2BT, RV_DEL2 };
-	struct lfo l0 = r->lfo[0], l1 = r->lfo[1];
-
-	rv_mod(l1.val, 6261, 50, &mi1[0], &mf1[0]);
-	rv_mod(l0.val, 4460, 40, &mi2[0], &mf2[0]);
-	{
-		s32 v0 = lfo_next(&l0), v1 = lfo_next(&l1);
-		rv_mod(v1, 6261, 50, &mi1[1], &mf1[1]);
-		rv_mod(v0, 4460, 40, &mi2[1], &mf2[1]);
-	}
-	for (k = 0; k < (s32)(sizeof(taps) / sizeof(taps[0])); k++)
-		if (((w0 + taps[k]) & (RV_SIZE - 1)) < MB)
-			return 0;
-	for (k = 0; k < 2; k++)
-		if (((w0 + RV_DEL2 + mi1[k]) & (RV_SIZE - 1)) < MB || ((w0 + RV_DEL1 + mi2[k]) & (RV_SIZE - 1)) < MB)
-			return 0;
-	r->lfo[0] = l0;
-	r->lfo[1] = l1;
-	for (k = 0; k < MB; k++)
-		v[k] = qmul(left[k] + right[k], r->input_gain);
-	rv_ap(RV_P(RV_AP1), RV_P(RV_AP1T), v, kap, nkap, MB);
-	rv_ap(RV_P(RV_AP2), RV_P(RV_AP2T), v, kap, nkap, MB);
-	rv_ap(RV_P(RV_AP3), RV_P(RV_AP3T), v, kap, nkap, MB);
-	rv_ap(RV_P(RV_AP4), RV_P(RV_AP4T), v, kap, nkap, MB);
-	for (k = 0; k < MB; k++)
-		apout[k] = v[k];
-	r->lp1 = rv_branch(buf, w0, apout, v, RV_DEL2, ks, mi1, mf1, r->lp1, r->lp, r->time);
-	rv_ap(RV_P(RV_D1A), RV_P(RV_D1AT), v, nkap, kap, MB);
-	rv_ap(RV_P(RV_D1B), RV_P(RV_D1BT), v, kap, nkap, MB);
-	rv_tail(RV_P(RV_DEL1), v, left, r->amount);
-	r->lp2 = rv_branch(buf, w0, apout, v, RV_DEL1, ks, mi2, mf2, r->lp2, r->lp, r->time);
-	rv_ap(RV_P(RV_D2A), RV_P(RV_D2AT), v, kap, nkap, MB);
-	rv_ap(RV_P(RV_D2B), RV_P(RV_D2BT), v, nkap, kap, MB);
-	rv_tail(RV_P(RV_DEL2), v, right, r->amount);
-	r->wp = (w0 - MB) & (RV_SIZE - 1);
-	return 1;
-}
-
-/* Reverb de Rings (rings/dsp/fx/reverb.h sur fx_engine.h, 16 bits) : les memes calculs dans le meme ordre que
- * l'ecriture directe, avec les debuts de lignes en constantes et les decalages des LFO calcules quand ils changent
- * (un pas de LFO par bloc, quand wp & 31 passe a 0). */
-static void rv_process(struct reverb *r, s32 *left, s32 *right)
-{
-	const s32 kap = r->diffusion, nkap = -r->diffusion, klp = r->lp, krt = r->time, amount = r->amount;
-	const s32 gain = r->input_gain;
-	s16 *buf = r->buf;
-	s32 lp1 = r->lp1, lp2 = r->lp2, w = r->wp, i1, f1, i2, f2;
-	int k, ks;
-
-	if (r->cleared < RV_SIZE) {
-		/* pas encore effacee : le son passe sec, mais le pointeur d'ecriture et les LFO avancent comme dans Rings
-		 * (un pas de LFO par bloc : wp & 31 vaut 0 une fois sur 32), pour garder ensuite la meme modulation */
-		r->wp = (r->wp - MB) & (RV_SIZE - 1);
-		lfo_next(&r->lfo[0]);
-		lfo_next(&r->lfo[1]);
-		return;
-	}
-	if (rv_block(r, left, right))
-		return;
-	ks = (w - 1) & 31;                               /* l'echantillon ou wp & 31 vaut 0 : les LFO avancent */
-	rv_mod(r->lfo[1].val, 6261, 50, &i1, &f1);
-	rv_mod(r->lfo[0].val, 4460, 40, &i2, &f2);
-	for (k = 0; k < MB; k++) {
-		s32 acc, prev, apout, x, a, b;
-		w = (w - 1) & (RV_SIZE - 1);
-		if (k == ks) {
-			s32 v0 = lfo_next(&r->lfo[0]), v1 = lfo_next(&r->lfo[1]);
-			rv_mod(v1, 6261, 50, &i1, &f1);
-			rv_mod(v0, 4460, 40, &i2, &f2);
-		}
-		acc = qmul(left[k] + right[k], gain);
-		prev = RV_GET(RV_AP1T);
-		acc += qmul(prev, kap);
-		RV_TAP(RV_AP1) = (s16)rv_c(acc);
-		acc = qmul(acc, nkap) + prev;
-		prev = RV_GET(RV_AP2T);
-		acc += qmul(prev, kap);
-		RV_TAP(RV_AP2) = (s16)rv_c(acc);
-		acc = qmul(acc, nkap) + prev;
-		prev = RV_GET(RV_AP3T);
-		acc += qmul(prev, kap);
-		RV_TAP(RV_AP3) = (s16)rv_c(acc);
-		acc = qmul(acc, nkap) + prev;
-		prev = RV_GET(RV_AP4T);
-		acc += qmul(prev, kap);
-		RV_TAP(RV_AP4) = (s16)rv_c(acc);
-		acc = qmul(acc, nkap) + prev;
-		apout = acc;
-		/* branche 1 */
-		a = RV_GET(RV_DEL2 + i1);
-		b = RV_GET(RV_DEL2 + i1 + 1);
-		x = a + qmul(b - a, f1);
-		acc = apout + qmul(x, krt);
-		lp1 += qmul(klp, acc - lp1);
-		acc = lp1;
-		prev = RV_GET(RV_D1AT);
-		acc += qmul(prev, nkap);
-		RV_TAP(RV_D1A) = (s16)rv_c(acc);
-		acc = qmul(acc, kap) + prev;
-		prev = RV_GET(RV_D1BT);
-		acc += qmul(prev, kap);
-		RV_TAP(RV_D1B) = (s16)rv_c(acc);
-		acc = qmul(acc, nkap) + prev;
-		RV_TAP(RV_DEL1) = (s16)rv_c(acc);
-		left[k] += qmul(shl(acc, 1) - left[k], amount);
-		/* branche 2 */
-		a = RV_GET(RV_DEL1 + i2);
-		b = RV_GET(RV_DEL1 + i2 + 1);
-		x = a + qmul(b - a, f2);
-		acc = apout + qmul(x, krt);
-		lp2 += qmul(klp, acc - lp2);
-		acc = lp2;
-		prev = RV_GET(RV_D2AT);
-		acc += qmul(prev, kap);
-		RV_TAP(RV_D2A) = (s16)rv_c(acc);
-		acc = qmul(acc, nkap) + prev;
-		prev = RV_GET(RV_D2BT);
-		acc += qmul(prev, nkap);
-		RV_TAP(RV_D2B) = (s16)rv_c(acc);
-		acc = qmul(acc, kap) + prev;
-		RV_TAP(RV_DEL2) = (s16)rv_c(acc);
-		right[k] += qmul(shl(acc, 1) - right[k], amount);
-	}
-	r->wp = w;
-	r->lp1 = lp1;
-	r->lp2 = lp2;
-}
-
 /* ---- filtre de note (rings/dsp/note_filter.h) -------------------------------------------------------------- */
 
 struct note_filter {
@@ -2090,9 +1564,7 @@ struct modal_part {
 	struct dcblock dcb[MAXPOLY];
 	struct plucker pl[MAXPOLY];
 	struct resonator reso[MAXPOLY];
-	struct fmvoice fm[MAXPOLY];
 	struct lfo slfo[NSTRINGS];
-	struct reverb rv;
 	s32 peak;                                        /* limiteur, UNIT */
 	s32 rin_zero;                                    /* rin nul a l'entree de la voix (pas d'entree) */
 	s32 exc_idle[MAXPOLY];                           /* blocs d'excitation muette d'une voix inactive (exc_quiet) */
@@ -2105,7 +1577,7 @@ static const s32 PING[8] = { 1, 0, 2, 1, 0, 2, 1, 0 };
 typedef char modal_nb_at_rin[(__builtin_offsetof(struct modal_part, nb) - __builtin_offsetof(struct modal_part, rin)
 			      == 4 * MB * sizeof(s32)) ? 1 : -1];
 
-static void modal_part_init(struct modal_part *p, s16 *reverb_buffer)
+static void modal_part_init(struct modal_part *p)
 {
 	int i;
 
@@ -2127,7 +1599,6 @@ static void modal_part_init(struct modal_part *p, s16 *reverb_buffer)
 		pl_init(&p->pl[i]);
 		dc_init(&p->dcb[i], M_POLE10);
 	}
-	rv_init(&p->rv, reverb_buffer);
 	p->peak = UNIT >> 1;
 	nf_init(&p->nf);
 }
@@ -2144,6 +1615,8 @@ static void modal_set_poly(struct modal_part *p, int n)
 
 static void modal_set_model(struct modal_part *p, int m)
 {
+	if (m != MODEL_SYMPATHETIC && m != MODEL_STRING && m != MODEL_SYMPATHETIC_Q)
+		m = MODEL_MODAL;
 	if (m != p->model) {
 		p->model = m;
 		p->dirty = 1;
@@ -2164,17 +1637,12 @@ static void configure(struct modal_part *p)
 	case MODEL_SYMPATHETIC:
 	case MODEL_STRING:
 	case MODEL_SYMPATHETIC_Q:
-	case MODEL_STRING_REVERB:
 		for (i = 0; i < NSTRINGS; i++) {
-			str_init(&p->str[i], p->model == MODEL_STRING || p->model == MODEL_STRING_REVERB);
+			str_init(&p->str[i], p->model == MODEL_STRING);
 			lfo_init(&p->slfo[i], M_SLFO[i]);
 		}
 		for (i = 0; i < p->poly; i++)
 			pl_init(&p->pl[i]);
-		break;
-	case MODEL_FM:
-		for (i = 0; i < p->poly; i++)
-			fm_init(&p->fm[i]);
 		break;
 	}
 	if (p->active >= p->poly)
@@ -2346,8 +1814,6 @@ static void render_string(struct modal_part *p, int voice, const struct modal_pe
 		s32 brightness = pa->brightness, damping = pa->damping, position = pa->position;
 		s32 glide = Q31ONE, sidx = i * (Q31ONE / ns);
 		const s32 *input = p->rin;
-		if (p->model == MODEL_STRING_REVERB)
-			damping = b2mb(damping);
 		if (i > 0 && ps->internal_exciter) {
 			s32 amount;
 			brightness = b2mb(brightness);
@@ -2406,7 +1872,6 @@ static void modal_process(struct modal_part *p, const struct modal_perf *ps, con
 		for (k = 0; k < MB; k++)                 /* l'instant : l'excitateur interne seulement) */
 			if (in[k])
 				in_zero = 0;
-	rv_clear_step(&p->rv);                           /* la reverbe s'efface par morceaux apres l'initialisation */
 	configure(p);
 	nf_process(&p->nf, ps->note, ps->strum);
 	if (ps->strum) {
@@ -2486,18 +1951,6 @@ static void modal_process(struct modal_part *p, const struct modal_perf *ps, con
 			r->position = pa->position;
 			r->damping = pa->damping;
 			reso_process(r, p->rin, p->ob, p->ab);
-		} else if (p->model == MODEL_FM) {
-			struct fmvoice *f = &p->fm[v];
-			if (ps->internal_exciter && v == p->active && ps->strum) {
-				f->amp_env = ps->level == Q31ONE ? UNIT : qmul(UNIT, ps->level);
-				f->bright_env = f->amp_env;
-			}
-			f->carrier = frequency;
-			f->ratio = pa->structure;
-			f->brightness = pa->brightness;
-			f->feedback_amount = pa->position;
-			f->damping = pa->damping;
-			fm_process(f, p->rin, p->ob, p->ab, in_zero || v != p->active);
 		} else {
 			render_string(p, v, ps, pa, frequency, fc);
 		}
@@ -2512,22 +1965,6 @@ static void modal_process(struct modal_part *p, const struct modal_perf *ps, con
 			for (k = 0; k < MB; k++)
 				d[k] += ob[k] - ab[k];
 		}
-	}
-	if (p->model == MODEL_STRING_REVERB) {
-		s32 pos = pa->position;
-		for (k = 0; k < MB; k++) {
-			s32 l = out[k], r = aux[k];
-			out[k] = qmul(l, pos) + qmul(r, Q31ONE - pos);
-			aux[k] = qmul(r, pos) + qmul(l, Q31ONE - pos);
-		}
-		p->rv.amount = Q31(0.1) + qmul(pa->damping, Q31(0.5));
-		p->rv.diffusion = Q31(0.625);
-		p->rv.time = Q31(0.35) + qmul(pa->damping, Q31(0.63));
-		p->rv.input_gain = Q31(0.2);
-		p->rv.lp = Q31(0.3) + qmul(pa->brightness, Q31(0.6));
-		rv_process(&p->rv, out, aux);
-		for (k = 0; k < MB; k++)
-			aux[k] = -aux[k];
 	}
 	/* limiteur */
 	{

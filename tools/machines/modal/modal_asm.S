@@ -473,86 +473,6 @@ modal_pluck:
 	lea	44(%sp), %sp
 	rts
 
-/* Compress de fx_engine (rv_c) de %d1 dans %d2 : (v + (v < 0 ? 511 : 0)) >> 9, sature a 16 bits ; %d7 = 9 */
-.macro	RVC
-	move.l	%d1, %d2
-	bpl.s	1f
-	addi.l	#511, %d2
-1:	asr.l	%d7, %d2
-	cmpi.l	#32767, %d2
-	bgt.s	8f
-	cmpi.l	#-32768, %d2
-	blt.s	9f
-2:
-.endm
-
-/* void modal_rv_ap(s16 *head, const s16 *tail, s32 *v, s32 k1, s32 k2)
- * rv_ap sur 32 echantillons (modal_dsp.h) : prev = *--tail << 9 ; x = v + qmul(prev, k1) ; *--head = Compress(x) ;
- * v = qmul(x, k2) + prev */
-	.globl	modal_rv_ap
-modal_rv_ap:
-	lea	-28(%sp), %sp
-	movem.l	%d2-%d7/%a2, (%sp)
-	movea.l	32(%sp), %a0		/* head */
-	movea.l	36(%sp), %a1		/* tail */
-	movea.l	40(%sp), %a2		/* v */
-	move.l	44(%sp), %d4		/* k1 */
-	move.l	48(%sp), %d5		/* k2 */
-	moveq	#9, %d7
-	moveq	#32, %d6
-3:	mvs.w	-(%a1), %d0
-	asl.l	%d7, %d0		/* prev */
-	move.l	(%a2), %d1
-	mac.l	%d0, %d4, %acc0
-	movclr.l %acc0, %d2
-	add.l	%d2, %d1		/* x */
-	RVC
-	move.w	%d2, -(%a0)
-	mac.l	%d1, %d5, %acc0
-	movclr.l %acc0, %d1
-	add.l	%d0, %d1
-	move.l	%d1, (%a2)+		/* v = qmul(x, k2) + prev */
-	subq.l	#1, %d6
-	bne.s	3b
-	movem.l	(%sp), %d2-%d7/%a2
-	lea	28(%sp), %sp
-	rts
-8:	move.l	#32767, %d2
-	bra.s	2b
-9:	move.l	#-32768, %d2
-	bra.s	2b
-
-/* void modal_rv_tail(s16 *head, const s32 *v, s32 *out, s32 amount)
- * rv_tail sur 32 echantillons : *--head = Compress(v) ; out += qmul(2 v - out, amount) */
-	.globl	modal_rv_tail
-modal_rv_tail:
-	lea	-28(%sp), %sp
-	movem.l	%d2-%d7/%a2, (%sp)
-	movea.l	32(%sp), %a0		/* head */
-	movea.l	36(%sp), %a1		/* v */
-	movea.l	40(%sp), %a2		/* out */
-	move.l	44(%sp), %d5		/* amount */
-	moveq	#9, %d7
-	moveq	#32, %d6
-3:	move.l	(%a1)+, %d1
-	RVC
-	move.w	%d2, -(%a0)
-	move.l	%d1, %d2
-	add.l	%d2, %d2
-	sub.l	(%a2), %d2
-	mac.l	%d2, %d5, %acc0
-	movclr.l %acc0, %d2
-	add.l	%d2, (%a2)+
-	subq.l	#1, %d6
-	bne.s	3b
-	movem.l	(%sp), %d2-%d7/%a2
-	lea	28(%sp), %sp
-	rts
-8:	move.l	#32767, %d2
-	bra.s	2b
-9:	move.l	#-32768, %d2
-	bra.s	2b
-
 /* void modal_str_read_ap(const s32 *ph, s32 f, s32 *hb, int n, s32 *ap)
  * Corde avec dispersion, retard fixe : la lecture (ReadHermite, comme modal_str_read, sans entree) puis le
  * passe-tout de l'etirement (str_process). ap : st (ligne de 1024 mots), swp, j (son retard), apg ; swp rendu.
@@ -656,48 +576,6 @@ modal_dc_in:
 	bne.s	1b
 	movem.l	%d2-%d3, (%a0)
 	move.l	%d4, 12(%a0)
-	movem.l	(%sp), %d2-%d7/%a2
-	lea	28(%sp), %sp
-	rts
-
-/* s32 modal_rv_in(const s16 *pa, s32 f, const s32 *apout, s32 *v, int n, s32 lp, s32 klp, s32 krt)
- * L'entree d'une branche du reservoir de la reverbe (rv_branch) sur n echantillons d'un meme segment : la ligne
- * modulee lue (a = pa[-1 - k] << 9, b = pa[-k] << 9, x = a + qmul(b - a, f)), acc = apout[k] + qmul(x, krt),
- * lp += qmul(klp, acc - lp), v[k] = lp ; rend lp. */
-	.globl	modal_rv_in
-modal_rv_in:
-	lea	-28(%sp), %sp
-	movem.l	%d2-%d7/%a2, (%sp)
-	movea.l	32(%sp), %a0		/* pa */
-	move.l	36(%sp), %d4		/* f */
-	movea.l	40(%sp), %a1		/* apout */
-	movea.l	44(%sp), %a2		/* v */
-	move.l	48(%sp), %d6		/* n */
-	move.l	52(%sp), %d3		/* lp */
-	move.l	56(%sp), %d5		/* klp */
-	moveq	#9, %d7
-	tst.l	%d6
-	beq.s	9f
-1:	mvs.w	-(%a0), %d0
-	mvs.w	2(%a0), %d1
-	asl.l	%d7, %d0		/* a */
-	asl.l	%d7, %d1		/* b */
-	sub.l	%d0, %d1
-	mac.l	%d1, %d4, %acc0
-	movclr.l %acc0, %d1
-	add.l	%d0, %d1		/* x */
-	move.l	60(%sp), %d2		/* krt */
-	mac.l	%d1, %d2, %acc0
-	movclr.l %acc0, %d1
-	add.l	(%a1)+, %d1		/* acc */
-	sub.l	%d3, %d1
-	mac.l	%d5, %d1, %acc0
-	movclr.l %acc0, %d1
-	add.l	%d1, %d3		/* lp */
-	move.l	%d3, (%a2)+
-	subq.l	#1, %d6
-	bne.s	1b
-9:	move.l	%d3, %d0
 	movem.l	(%sp), %d2-%d7/%a2
 	lea	28(%sp), %sp
 	rts

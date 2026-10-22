@@ -11,7 +11,7 @@ Le cœur en virgule fixe est compilé pour l'ordinateur (modal_host.c) avec la m
 (EMAC simulée à l'octet près, modal_fix.h) ; tools/emu/test_modal.py prouve que le code du Cycles fait les mêmes
 octets.
 
-Pour chaque cas : 20 blocs de silence (la réverbe de MODAL s'efface par morceaux, 16 blocs), puis des notes
+Pour chaque cas : 20 blocs de silence, puis des notes
 (strum) ; la sortie de Rings (ODD - EVEN) comparée à celle du cœur : rapport signal / écart sur toute la durée,
 au moins MIN_SNR dB.
 
@@ -108,26 +108,28 @@ def scenario(model, poly, blocks=300, notes=((0, 0.0), (100, 3.0), (200, -5.0)),
 
 
 def cases(quick):
+    """Les 4 modèles de MODAL (SHAPE 0..3), sous leur numéro dans Rings (gmo.RINGS_MODEL : 0, 1, 2, 4)."""
     out = []
-    for model in range(6):
+    shapes = list(enumerate(gmo.RINGS_MODEL))
+    for shape, model in shapes:
         for poly in ((1, 2, 4) if not quick else (1, 4)):
-            out.append((f"modèle {model} ({gmo.MODELS[model]}), {poly} voix", scenario(model, poly)))
+            out.append((f"SHAPE {shape} ({gmo.MODELS[shape]}), {poly} voix", scenario(model, poly)))
     ramp = lambda lo, hi: (lambda b: lo + (hi - lo) * min(max(b, 0), 200) / 200)
-    for model in (0, 1, 2, 3, 5):
-        out.append((f"modèle {model}, les 4 potards qui bougent", scenario(
+    for shape, model in shapes:
+        out.append((f"SHAPE {shape}, les 4 potards qui bougent", scenario(
             model, 1, st=ramp(0.1, 0.9), br=ramp(0.9, 0.1), da=ramp(0.3, 0.9), po=ramp(0.0, 1.0))))
     for chord in ((0, 3, 7, 10) if not quick else (5,)):
         for poly in (1, 2, 4):
-            out.append((f"cordes quantifiées, accord {chord}, {poly} voix", scenario(4, poly, chord=chord)))
-    for model in range(6):
+            out.append((f"cordes en accord, accord {chord}, {poly} voix", scenario(4, poly, chord=chord)))
+    for shape, model in shapes:
         for total in (0, 127):
-            out.append((f"modèle {model}, hauteur MIDI {total}", scenario(model, 1, notes=((0, total - 48.0),))))
+            out.append((f"SHAPE {shape}, hauteur MIDI {total}", scenario(model, 1, notes=((0, total - 48.0),))))
     out += [
-        ("modèle 1, DAMPING au maximum (résonance infinie)", scenario(1, 1, da=1.0)),
-        ("modèle 2, DAMPING au maximum", scenario(2, 2, da=1.0)),
-        ("modèle 3 (FM), BRIGHTNESS et POSITION aux bouts", scenario(3, 1, br=1.0, po=0.0)),
-        ("modèle 0, STRUCTURE et BRIGHTNESS à 0", scenario(0, 1, st=0.0, br=0.0)),
-        ("modèle 0, STRUCTURE et BRIGHTNESS au maximum", scenario(0, 4, st=1.0, br=1.0)),
+        ("SHAPE 1, DAMPING au maximum (résonance infinie)", scenario(1, 1, da=1.0)),
+        ("SHAPE 2, DAMPING au maximum", scenario(2, 2, da=1.0)),
+        ("SHAPE 2, BRIGHTNESS et POSITION aux bouts", scenario(2, 1, br=1.0, po=0.0)),
+        ("SHAPE 0, STRUCTURE et BRIGHTNESS à 0", scenario(0, 1, st=0.0, br=0.0)),
+        ("SHAPE 0, STRUCTURE et BRIGHTNESS au maximum", scenario(0, 4, st=1.0, br=1.0)),
     ]
     return out
 

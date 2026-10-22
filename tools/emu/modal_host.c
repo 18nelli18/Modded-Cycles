@@ -9,7 +9,6 @@
 #include "modal_dsp.h"
 
 static struct modal_part part;
-static s16 reverb_buffer[RV_SIZE];
 
 static s32 knob(s32 v)                               /* 0..65536 -> Q31 */
 {
@@ -22,7 +21,7 @@ int main(int argc, char **argv)
 	int ints = argc > 1 && !strcmp(argv[1], "-i"), k;
 
 	modal_init_tables();
-	modal_part_init(&part, reverb_buffer);
+	modal_part_init(&part);
 	while (fread(r, sizeof(r), 1, stdin) == 1) {
 		struct modal_perf ps;
 		struct modal_patch pa;

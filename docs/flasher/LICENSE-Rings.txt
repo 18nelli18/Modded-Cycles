@@ -1,6 +1,6 @@
 Machine MODAL of Modded-Cycles: fixed-point code written after Rings by Emilie Gillet (the Part of
-rings/dsp and what it uses of stmlib: modal resonator, strings, sympathetic strings and chords, FM voice,
-internal exciters, reverb, note filter, limiter; https://github.com/pichenettes/eurorack, commit 08460a6),
+rings/dsp and what it uses of stmlib: modal resonator, strings, sympathetic strings and chords, internal
+exciters, note filter, limiter; https://github.com/pichenettes/eurorack, commit 08460a6),
 under the MIT license:
 
 Copyright 2015 Emilie Gillet.

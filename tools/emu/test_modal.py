@@ -13,13 +13,13 @@ Référence pour ce qui ne change pas : le même OS sans MODAL (31-…-macro-aci
      voix), son texte et la fenêtre de valeur ; les autres machines et potards comme sans MODAL ; le lo-fi de MACRO
      (FUNC + PITCH) inchangé.
   4. Son, la boucle des voix (mcengine) : ce que la passerelle de MODAL reçoit à chaque bloc est rejoué sur
-     modal.c compilé pour l'ordinateur (modal_machine_host.c) : sortie identique octet pour octet, pour les 6 modèles,
+     modal.c compilé pour l'ordinateur (modal_machine_host.c) : sortie identique octet pour octet, pour les 4 modèles,
      la polyphonie 1, 2 et 4, les potards qui bougent, le modèle verrouillé par pas, la vélocité, les notes
      extrêmes, les changements de machine (machine locks) ; la note jouée est juste (fondamentale mesurée) ; les gains
      de vélocité remis à 127 (la vélocité règle la frappe, pas le volume).
   5. Les autres machines (les 6 d'origine, les moteurs, MACRO, ACID, le Sampler) : identiques à l'OS sans MODAL.
   6. Régulateur de charge : 6 pistes MODAL sous une surcharge : il les éteint en fondu, jamais le Sampler.
-  7. Mémoire : MODAL n'écrit qu'à sa place (ses variables, l'état de ses pistes à 0x46800000..0x468f0000).
+  7. Mémoire : MODAL n'écrit qu'à sa place (ses variables, l'état de ses pistes à 0x46800000..0x46890000).
   8. Coût d'une piste MODAL par modèle et polyphonie (informatif).
 
     python3 tools/emu/test_modal.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \\
@@ -180,17 +180,17 @@ def play(fw, kw, blocks, trigs=(1,), changes=None, track=0, gains=None, solo=Tru
 def cases(quick):
     """(nom, réglages, extra pour play)."""
     out = []
-    for model in range(6):
-        out.append((f"modèle {model} ({gmo.MODELS[model]}), 1 voix", dict(KW, shape=model),
+    for shape in range(len(gmo.MODELS)):
+        out.append((f"SHAPE {shape} ({gmo.MODELS[shape]}), 1 voix", dict(KW, shape=shape),
                     dict(trigs=(1, 150), blocks=260, changes={150: dict(note=55)})))
-    polys = ((0, 2), (0, 4), (1, 2), (2, 4), (3, 4), (4, 2), (5, 2)) if not quick else ((0, 4), (4, 2))
-    for model, poly in polys:
+    polys = ((0, 2), (0, 4), (1, 2), (1, 4), (2, 2), (2, 4), (3, 2), (3, 4)) if not quick else ((0, 4), (3, 2))
+    for shape, poly in polys:
         notes = {1: dict(note=48), 30: dict(note=52), 60: dict(note=55), 90: dict(note=60)}
-        out.append((f"modèle {model}, {poly} voix, 4 notes", dict(KW, shape=model, finetune=POLY_FINE[poly]),
+        out.append((f"SHAPE {shape}, {poly} voix, 4 notes", dict(KW, shape=shape, finetune=POLY_FINE[poly]),
                     dict(trigs=(1, 30, 60, 90), blocks=200, changes=notes)))
     if not quick:
         for chord in (0, 64, 127):
-            out.append((f"cordes quantifiées, STRUCTURE {chord}, 1 voix", dict(KW, shape=4, contour=chord),
+            out.append((f"cordes en accord, STRUCTURE {chord}, 1 voix", dict(KW, shape=3, contour=chord),
                         dict(trigs=(1,), blocks=120)))
     out += [
         ("potards qui bougent pendant la note (modal)", dict(KW, shape=0),
@@ -199,8 +199,9 @@ def cases(quick):
         ("potards qui bougent pendant la note (corde)", dict(KW, shape=2),
          dict(trigs=(1,), blocks=160, changes={40: dict(color=20), 60: dict(sweep=5), 80: dict(contour=127),
                                               100: dict(decay=127)})),
-        ("modèle verrouillé par pas : 0, 2, 5, 3", dict(KW, shape=0),
-         dict(trigs=(1, 40, 80, 120), blocks=180, changes={40: dict(shape=2), 80: dict(shape=5), 120: dict(shape=3)})),
+        ("modèle verrouillé par pas : 0, 2, 3, 1", dict(KW, shape=0),
+         dict(trigs=(1, 40, 80, 120), blocks=180, changes={40: dict(shape=2), 80: dict(shape=3), 120: dict(shape=1)})),
+        ("SHAPE au-delà de 3 (un son d'avant) : borné à 3", dict(KW, shape=5), dict(blocks=60)),
         ("polyphonie changée pendant le jeu : 1, 4, 2", dict(KW, shape=1),
          dict(trigs=(1, 40, 80), blocks=140, changes={40: dict(finetune=96), 80: dict(finetune=80)})),
         ("vélocité : gain 127 puis 30", dict(KW, shape=0),
@@ -209,7 +210,7 @@ def cases(quick):
         ("note 127, PITCH 127 : borné en haut", dict(KW, shape=0, note=127, pitch=127), dict(blocks=60)),
         ("DAMPING au maximum (cordes : résonance infinie)", dict(KW, shape=1, decay=127), dict(blocks=200)),
         ("BRIGHTNESS 0, POSITION 0, STRUCTURE 0", dict(KW, shape=3, color=0, sweep=0, contour=0), dict(blocks=80)),
-        ("BRIGHTNESS 127, POSITION 127, STRUCTURE 127", dict(KW, shape=5, color=127, sweep=127, contour=127),
+        ("BRIGHTNESS 127, POSITION 127, STRUCTURE 127", dict(KW, shape=2, color=127, sweep=127, contour=127),
          dict(blocks=80)),
     ]
     if not quick:
@@ -236,10 +237,10 @@ def exact(fw, host, quick, label):
 
 
 def pitch(fw, label):
-    """La note jouée : fondamentale mesurée (modal harmonique, corde, FM) pour quelques notes et PITCH."""
+    """La note jouée : fondamentale mesurée (modal harmonique, corde) pour quelques notes et PITCH."""
     bad, seen = [], []
-    for shape, note, p in ((0, 48, 64), (2, 60, 64), (3, 57, 64), (0, 60, 76), (2, 36, 52)):
-        kw = dict(KW, shape=shape, note=note, pitch=p, contour=36 if shape != 3 else 64, decay=100)
+    for shape, note, p in ((0, 48, 64), (2, 60, 64), (2, 57, 64), (0, 60, 76), (2, 36, 52)):
+        kw = dict(KW, shape=shape, note=note, pitch=p, contour=36, decay=100)
         pr, _ = play(fw, kw, 220, trigs=(1,))
         x = np.concatenate(pr.outs[0][20:]).astype(np.float64)
         x = x * np.hanning(len(x))
@@ -330,11 +331,11 @@ def memory(fw, label):
             foreign.append((hex(pc), hex(addr)))
     e.uc.hook_add(UC_HOOK_MEM_WRITE, wr)
     for t in range(6):
-        e.set(t, **dict(KW, machine=m.index, shape=t, finetune=POLY_FINE[(1, 2, 4)[t % 3]], note=40 + 4 * t))
+        e.set(t, **dict(KW, machine=m.index, shape=t % 4, finetune=POLY_FINE[(1, 2, 4)[t % 3]], note=40 + 4 * t))
     for b in range(120):
         e.block(0x3f if b in (1, 60) else 0)
     check(not stray and not foreign and not e.unmapped,
-          f"{label} : 6 pistes MODAL (les 6 modèles), 120 blocs : MODAL n'écrit que dans ses variables "
+          f"{label} : 6 pistes MODAL (les 4 modèles), 120 blocs : MODAL n'écrit que dans ses variables "
           f"({bss[0]:#x}..), l'état de ses pistes ({RAM[0]:#x}..{RAM[1]:#x}), la voix, les gains et la sortie ; "
           f"personne d'autre dans l'état de ses pistes {stray[:2]} {foreign[:2]}")
 
@@ -343,7 +344,7 @@ def memory(fw, label):
 def cost(fw, label):
     m = fw.views["modal"]
     res = []
-    for shape in range(6):
+    for shape in range(len(gmo.MODELS)):
         for poly in (1, 2, 4):
             e = fw.engine(solo=0)
             e.set(0, **dict(KW, machine=m.index, shape=shape, finetune=POLY_FINE[poly], decay=100))
@@ -359,9 +360,9 @@ def cost(fw, label):
             for b in range(16):
                 e.block(1 if b == 8 else 0)
             res.append((shape, poly, n["i"] // 16))
-    for shape in range(6):
+    for shape in range(len(gmo.MODELS)):
         row = ", ".join(f"{p} voix {i}" for s, p, i in res if s == shape)
-        print(f"      {label} : modèle {shape} ({gmo.MODELS[shape]}) : {row} instructions par bloc")
+        print(f"      {label} : SHAPE {shape} ({gmo.MODELS[shape]}) : {row} instructions par bloc")
     check(all(i < 120_000 for _, _, i in res), f"{label} : coût d'une piste MODAL mesuré (instructions de MODAL par "
                                                f"bloc, voir ci-dessus), toujours sous 120 000")
 
@@ -427,7 +428,7 @@ def main():
             check(np.array_equal(r, x) and np.abs(x).max() > 1e6 and not unm,
                   f"{label} : {name} : sortie des 6 pistes identique à l'OS sans MODAL")
         print("régulateur de charge")
-        setup = {t: dict(KW, machine=mv.index, shape=(0, 1, 2, 3, 4, 5)[t], note=40 + 5 * t, decay=110) for t in range(6)}
+        setup = {t: dict(KW, machine=mv.index, shape=(0, 1, 2, 3, 0, 2)[t], note=40 + 5 * t, decay=110) for t in range(6)}
         setup[2] = dict(KW, machine=6, decay=100)
         tac.governor(fw, tw, f"{label}", sampler=True, setup=setup, what="MODAL")
         print("mémoire")
