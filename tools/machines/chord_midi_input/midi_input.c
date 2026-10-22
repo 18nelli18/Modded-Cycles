@@ -4,6 +4,7 @@
  */
 typedef unsigned int u32;
 typedef unsigned char u8;
+typedef unsigned short u16;
 struct modifier { const void *header; u32 value; };
 extern volatile struct modifier ck_live[6], ck_prepared[6];
 extern const void *ck_header(void);
@@ -21,6 +22,11 @@ struct capture { const void *header; u32 note,velocity,source,extra,a,b,active; 
 static struct capture external[6];
 static u32 midi_owned[6][4];
 static u8 midi_sources[6][128];
+/* Capturer la vraie piste et la note traduite avant que le canal auto ou la
+ * selection ne change. Le relachement appartient a cette attaque, pas a la
+ * nouvelle piste selectionnee. Toutes les machines partagent cette regle. */
+static u16 incoming_note[6][128];
+static u8 incoming_channel[6][128];
 static u32 receive_skip;
 static u32 arp_owned[6][4];
 extern u32 mx_arp_wants(u32);
@@ -48,16 +54,19 @@ static u32 receives(u32 t,u32 channel) {
 void mi_on(u32,u32,u32,u32,u32,u32,u32);
 void mi_off(u32,u32,u32);
 void mi_on_received(u32 raw,u32 channel,u32 t,u32 n,u32 v,u32 source,u32 extra,u32 a,u32 b) {
- (void)raw;
  if(t<6 && (receive_skip&(1u<<t)))return;
  if(receive_skip && !receives(t,channel))return;
  if(t<6 && ((int(*)(void*,u32))0x4001e318)(0,t)==MIDI_MACHINE) {
   return; /* Deja traite avant le mapping percussion. */
  }
+ if(t<6&&raw<128&&n<128&&v&&v<128){
+  incoming_note[t][raw]=0x8000u|n;incoming_channel[t][raw]=(u8)channel;
+ }
  mi_on(t,n,v,source,extra,a,b);
 }
 void mi_off_received(u32 raw,u32 channel,u32 t,u32 n,u32 source) {
  (void)raw;
+ if(receive_skip)return; /* Les attaques capturees ont deja ete relachees. */
  if(t<6 && (receive_skip&(1u<<t)))return;
  if(receive_skip && !receives(t,channel))return;
  if(t<6 && ((int(*)(void*,u32))0x4001e318)(0,t)==MIDI_MACHINE)return;
@@ -73,12 +82,18 @@ void mi_receive_on(u32 channel,u32 raw,u32 velocity,u32 source) {
  /* Le mapper auto doit terminer l'ancienne attaque avant la nouvelle. */
  for(u32 t=0;t<6;t++)if(mask&(1u<<t)) {
   midi_sources[t][raw]=(u8)channel;mi_on(t,raw,velocity,source,0,0xffffffffu,0xffffffffu);
+  incoming_note[t][raw]=0x8000u|raw;incoming_channel[t][raw]=(u8)channel;
  }
 }
 void mi_receive_off(u32 channel,u32 raw,u32 source) {
  u32 mask=0,old=receive_skip;
  if(raw<128)for(u32 t=0;t<6;t++)
-  if(((midi_owned[t][raw>>5]|arp_owned[t][raw>>5])&(1u<<(raw&31))) && midi_sources[t][raw]==(u8)channel) {
+  if((incoming_note[t][raw]&0x8000u)&&incoming_channel[t][raw]==(u8)channel){
+   u32 note=incoming_note[t][raw]&127u;incoming_note[t][raw]=0;
+   mi_off(t,note,source);mask|=1u<<t;
+  }
+ if(raw<128)for(u32 t=0;t<6;t++)
+  if(!(mask&(1u<<t))&&((midi_owned[t][raw>>5]|arp_owned[t][raw>>5])&(1u<<(raw&31))) && midi_sources[t][raw]==(u8)channel) {
    mi_off(t,raw,source);mask|=1u<<t;
   }
  receive_skip=mask;mi_receive_off_original(channel,raw,source);receive_skip=old;
@@ -149,6 +164,7 @@ u32 mi_pad(u32 t,u32 pad,const void *header) {
 void mi_reset(u32 t) {
  if(t>=6)return;
  external[t].active=0;
+ for(u32 n=0;n<128;n++)incoming_note[t][n]=0;
  for(u32 n=0;n<128;n++)if(arp_owned[t][n>>5]&(1u<<(n&31))) {
   arp_owned[t][n>>5]&=~(1u<<(n&31));OFF(t,n,0x40);
  }

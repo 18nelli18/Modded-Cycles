@@ -111,3 +111,122 @@ retour USB. Le worker natif emet les note-offs sur expiration et Stop dans v6
 et v9. `test_fixed_main_delivery.js` exige le SHA approuve, le telechargement
 exact dans Chromium et le refus d'une image corrompue. Generateur principal
 verifie par --check. Autres sections du conteneur officiel conservees.
+
+
+## Candidat prive v13 : Swing physique, note-off auto et raccord CHORD (21/10/2026)
+
+[FAIT, demande utilisateur] Le v9 filtre reste publie en main 2.11. Apres la
+publication, Swing MIDI Out ne bouge plus au potard ; notes parfois tenues ;
+Attack CHORD clique a chaque nouvelle note, meme en augmentant sa valeur.
+La nouvelle enquete sur la distorsion USB est exclue de ce tour a sa demande.
+L'interaction plus large arp Tone/MIDI Out est aussi laissee de cote apres son
+message « arp thing is probably fine too ». Aucun changement USB dans v13.
+
+[FAIT en emulation] Le potard Swing entre dans le vrai TrackAccessor 400fd204.
+Son setter 40016378 change le timing, puis le pont ajoute au v6 relit le mot6
+DU SON (encore zero) et annule le mouvement. Le pont doit donc seulement agir
+sur SoundAccessor 400fd134. Preuve `test_midi_swing_encoder_release.py` : vrai
+ParameterPageView, evenement physique12, delta accelere calibre Q8 (accelerateur
+instrumente, pas son setter). Tone4 donne Swing4 ; MIDI17 donne Swing8 et le
+garde. Le constructeur d'evenement natif 400548ce rend ensuite les delais
+[0, 864000, 0, 864000] sur quatre pas alternes. Les deux variantes passent.
+
+[FAIT en emulation] Avec une note arp Tone tenue sur le canal auto, selectionner
+MIDI Out avant son relachement faisait perdre la fin de note dans v9. Capturer
+piste/note traduite/canal a l'attaque conserve le destinataire de son note-off.
+`test_midi_input_owner_release.py` reproduit v9, puis passe 24 changements par
+variante v13 (Tone0/3, MIDI1/2/4/5, notes36/60/84), sans double relachement.
+Cela ne prouve pas la disparition de toutes les causes de notes tenues.
+
+[FAIT en emulation] La rampe Attack partagee repart brutalement a zero au
+retrig : la queue CHORD precedente est coupee. Avec le vrai renderer et Attack32,
+le raccord mesure passait de 8158579 a 0 sur un echantillon. Le wrapper
+`chord_attack.c` reprend la vraie sortie du bloc precedent et compense le
+premier echantillon apres Attack/filtre par une queue lineaire de 64 echantillons
+(1,33ms). La difference et la somme sont saturees ; etat propre a chaque piste,
+aucune allocation, aucune sortie MIDI. La duree et la rampe natives restent
+identiques ; Attack=0 et les autres machines deleguent sans modifier l'audio.
+Le hook est le JSR 4014b0aa de ava_post, vers avfc_run pour filtre et ava_run
+sans filtre. La cible de delegation est capturee apres verification des octets.
+
+`test_chord_attack_release.py` : six pistes, continuite exacte au redemarrage,
+fin du raccord apres64samples, rampe native reprise exactement, Attack=0 et
+Tone/Wizard/MIDI exacts echantillon par echantillon. La fixture rejoue la copie
+native des wavetables CHORD via chord_boot_fixture ; sans ce boot2 les tables
+etaient nulles et le faux silence n'etait pas une preuve audio.
+Preuve audio locale `prove_chord_retrig_v13.py` : renderer natif, Attack32,
+retrig bloc100 ; premiere sortie du retrig=derniere sortie precedente, deux
+variantes. La preuve ne remplace pas une ecoute physique des notes isolees.
+
+Autres regressions passees sur les deux .syx finaux : 128 hauteurs entrantes x
+six pistes, live/step rec et save/load natifs, note-offs apres changement de
+machine/canal/port, reset et STOP live, sequence file audio -> worker -> USB/DIN,
+LFO1/2 et CC locks, transitions vers17machines audio, Slice preview/grille/rec,
+TRACK+FUNC, neuf CC assignables, menus/valeurs stock, Dest silencieux, Sample sur
+Wizard et sprite droit, beat repeat sans diagnostic. Sources locales des
+preuves et builder sous output/firmware ; preuves principales sous tools/emu.
+
+Les deux candidats sont experimentaux, sans diagnostics, non promus :
+- Filtre : `all-features-midi-playability-no-diagnostic-v13.syx`, SHA-256
+  `4e9d7ad55faf68e15f1df0c681ad6bc17fa650eda318b51ae4dfc9273d3b17e1`.
+- Sans filtre : `no-filter-midi-playability-no-diagnostic-v13.syx`, SHA-256
+  `c5009039f084b48cbcb9bf29421abb9110390f2a3c67b95fc2466b31d4a822b2`.
+
+[À FAIRE sur machine] Ecoute CHORD Attack (minimum, lent, isole et retrig), Swing
+MIDI Out au potard et sequences, relachements pendant les changements de piste.
+La page privee locale v13 sert exactement le candidat filtre epingle par SHA,
+et propose les deux fichiers. Le MAIN public reste le v9 approuve.
+
+[FAIT en emulation] Cout CHORD, filtre ouvert : +46instructions par piste au
+regime etabli ; +738 pendant le premier bloc du raccord (par rapport au
+delegate natif). Comptage d'instructions, pas mesure des cycles ni du temps IRQ
+sur appareil. HTTP local : les deux fichiers servis sont identiques aux
+candidats, tous checksums SysEx valides ; page epinglee SHA verifie, Connect
+active seulement apres validation, aucune connexion ni installation lancee.
+
+
+## Retour materiel v13, CHORD et Swing (21/10/2026)
+
+[FAIT sur machine, AveyCole] « chord fix worked » ; le potard Swing bougeait,
+mais les notes MIDI semblaient encore droites, y compris avec de nouveaux pas.
+Pendant l'enquete, avant toute modification du firmware, il confirme ensuite :
+« idk what changed but its working now ». Le v13 reste donc intact. Aucun v14
+compile ni servi, aucune promotion main demandee par ce retour.
+
+[FAIT en emulation] L'enquete supplementaire execute les wrappers reels du
+builder, puis l'ordonnanceur complet 400550e0..4005542e et la queue audio native.
+Swing0 : messages MIDI aux temps 5500000,10900000,16300000,21700000.
+Swing30 : 5500000,14140000,16300000,24940000. Les deux contretemps sont retardes
+de3240000 ; le message MIDI conserve sa date exacte. Conversion native du
+pattern 4005b642 puis4005b4ec conserve aussi Swing8 et les flags alternes.
+Cela complete le test precedent du seul offset du builder ; la cause du
+comportement transitoire sur appareil n'est pas etablie. Ne pas la presenter
+comme corrigee par un nouveau changement. Pas de capture MIDI ni flash lance.
+
+
+## Publication 2.12 : DX optionnel, LTC et SIL (21/10/2026)
+
+[FAIT, demande utilisateur] AveyCole demande explicitement de promouvoir le
+candidat filtre avec DX, Off par defaut, puis de raccourcir les valeurs du menu
+Latch en LTC et Silent en SIL. Cette demande remplace la politique historique
+qui reservait tout diagnostic aux tests. Aucun resultat materiel supplementaire
+n'est deduit du mot « perfect » ni de l'autorisation de publication.
+
+[FAIT en emulation] Depuis le candidat v14 epingle, seuls neuf octets des deux
+chaines changent ; tailles, pointeurs, code et etats sont identiques. Le
+conteneur est reconstruit depuis l'officiel, autres sections identiques. Le
+MenuView natif rend LTC et SIL sans chevauchement. DX Off/On, defilement,
+64 combinaisons sauvegardees, attente d'arret pour les E/S et popup P/O/N
+verifies. Le regulateur audio conserve exactement son etat avec DX Off/On.
+
+Source : `all-features-dx-ltc-main-212.syx`, SHA-256 `5111c5401520856496c9626598b6a10c4929e123052d512cc5384621b8ca73ab`.
+MAIN SHA-256 `0df3485544eba89e0e934d979f28acf512548aee074c87669114e0ffe2b1c14c`.
+Generateur : `tools/build_dx_main_release.py`. Filtre conserve ; USB2ch par
+defaut ; DX Off par defaut et sauvegarde avec les autres preferences.
+
+[FAIT en verification de livraison] Chromium charge les deux OS officiels requis,
+produit les octets exacts 2.12, telecharge le meme fichier et rejette une image
+corrompue sans fallback. PDF trois pages rendu et inspecte. Chevauchements :
+171 tweaks, aucun conflit nouveau. Les controles generiques tweaks.js/REGISTRY
+signalent des sorties deja desynchronisees ; aucun tweak ni allocation de ces
+catalogues n'est modifie par cette publication d'image fixe.

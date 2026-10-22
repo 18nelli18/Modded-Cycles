@@ -20,7 +20,11 @@ static u32 selected(void){u32 p=((u32(*)(void))0x400cf866)();return ((u32(*)(u32
  * Les pas maintenus gardent le chemin Nudge natif, distinct du Swing de base. */
 u32 mx_parameter(u32 obj,u32 id,u32 value,u32 lane,u32 record,u32 notify){
  u32 result=mx_parameter_original(obj,id,value,lane,record,notify);
- if(id!=23||lane>=6)return result;
+ /* La vue des parametres utilise le vrai TrackAccessor (400fd204) pour
+  * Swing : son setter a deja modifie le pattern. Seul le SoundAccessor
+  * (400fd134) a besoin du pont. Relire son mot6 depuis la vue de piste
+  * annulait sinon immediatement le mouvement physique du potard. */
+ if(id!=23||lane>=6||!obj||*(u32 *)obj!=0x400fd134)return result;
  u16 sr;__asm__ volatile("move.w %%sr,%0":"=d"(sr));
  if(sr&0x700)return result;
  if(((u8(*)(u32,u32))0x4001e318)(0,lane)!=17)return result;
