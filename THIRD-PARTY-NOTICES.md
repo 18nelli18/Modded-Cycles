@@ -24,3 +24,10 @@ user's firmware; Elektron's firmware is not licensed under these MIT notices.
 
 The integration remains experimental pending hardware testing. MIDI Bank
 storage hooks remain disabled; its sequences, CC assignments and locks are RAM-only.
+
+## Feral
+
+Feral synthesis engine by **Glycinate**, integrated in Supermodel 2.16.
+Attribution supplied by AveyCole on 22 October 2026. Feral is third-party
+firmware work; the project’s MIT license does not relicense it or Elektron’s
+firmware.

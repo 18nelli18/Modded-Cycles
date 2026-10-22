@@ -219,3 +219,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [132 — Graine initiale Genie](132-graine-initiale-genie.md) | Premiere sequence variable selon le timer du premier tirage valide ; regles et suite PRNG conservees ; confirme par Austin le18/10/2026, principal1.99 sans diagnostic. |
 
 | [133 — Correctifs MIDI/Chord](133-correctifs-midi-chord.md) | Routage LFO2 isole, messages live uniques, cache Chord et fondu ; confirme par AveyCole, principal2.00 sans diagnostic. |
+
+| [139 — Publication Feral et CPU](139-publication-feral-cpu.md) | Principal2.16 : fichier partagev33 exact, filtres Polivoks, optimisations cumulees, Feral de Glycinate ; notes EN/FR liees, DX Off par defaut. |

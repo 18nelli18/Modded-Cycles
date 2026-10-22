@@ -153,3 +153,19 @@ If a check cannot run (no network, no toolchain), say so in the PR instead of sk
 ## AveyCole test/release policy (2026-10-17)
 
 AveyCole explicitly requests the CPU average/peak and CUT diagnostic display in all future test builds, and never in released main firmware. Keep the diagnostic in test-page compositions only. When a test includes audio beat repeat and the SY load counters, retain the TRACK + RETRIG release popup. If a test lacks those counters, explain that limitation instead of fabricating readings. Do not promote diagnostic payloads or UI cards into the main release flasher when promoting a tested repair. Preserve this separation in generators and publication diffs.
+
+## AveyCole private companion builds (2026-10-22)
+
+AveyCole requests both shared-filter and no-shared-filter private variants by
+default for future CPU/engine tests. Both retain Sample Wizard's internal
+Polivoks-style filter unless explicitly changed. Build and prove each composition
+independently; serve separate checksum-pinned pages and cross-link them. Keep
+previous comparisons and released main fixed unless promotion is requested.
+
+## AveyCole main 2.16 promotion (2026-10-22)
+
+AveyCole explicitly approved promoting the exact shared-filter v33 file to main
+as release 2.16, retaining its saved DX toggle (Off by default). This supersedes
+the older no-diagnostics policy for this approved release. Publish that exact
+checksum-pinned image through the existing tracked fixed-main delivery path;
+do not add other firmware images or private dumps. Credit Glycinate for Feral.
