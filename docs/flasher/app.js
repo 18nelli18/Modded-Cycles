@@ -26,8 +26,8 @@ const ELEKTRON_ST_DL = "https://www.elektron.se/support-downloads/syntakt";
 // (tools/check_overlaps.py proves that tweaks built together never write the same bytes, except the
 // same whole write or a mod applied on top of another through "requires").
 const REF_MAINOS = {
-  // Modded Cycles OS 2.0.1: the tweaks of os.json, built by tools/build.py --os
-  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": "2a77d029a3fb113a82241efb468f4b0624b6acdb8d33b4a154d7b2c2b0140041",
+  // Modded Cycles OS 2.1: the tweaks of os.json, built by tools/build.py --os
+  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": "e5a333c93f3da86462b2ef7fd166af70e96b4e30280f1fb595f44876001fcf77",
 };
 const REF_MODS = {
   "model-tg-st": {"w": "c4686bd09a145fd10a6424b7229e414a084fbbcc212b722e4ab7d3ecd7cb7931", "p": "e269630fe5251b58c2a5eb4298e3ab09b4e6fff9f38c254afecf121c8ad446c2"},
@@ -43,7 +43,7 @@ const REF_MODS = {
   "midi-live-both": {"w": "e7dfae924d6474abea22b375002ff58b1e3cde301aa9ca8a2ec980593316c942"},
   "mod-settings": {"w": "c3c023276e80295a9338a80d22711469620d4b4315ae2b1e0a85c9a61e31e9bb"},
   "lfo-plus": {"w": "8443b08fdb4ce7cf1ba26821b27e7df3ab4ca5396e35e7e9a8e591fc430569b6"},
-  "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": {"w": "045d7a3afb79336a765556762de67b49d1b3143dc5ee89559fae1b08529e6afe", "p": "cf67253962a69009bcff7eb960b7b4885ff3ad8a5413d19f57ad33fb43a5741e"},
+  "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": {"w": "31d54bf9e59693eae8a3070c99a91e22426069d4a9c3687a8a91dcf87fee0eeb", "p": "344a67c0e0cdaa4df9e38ce894db27925b9d78f25075be900d4e679b1ff3796b"},
 };
 
 // "Samples OS" tab: official Model:Samples OS 1.13 inside the official Model:Cycles container
@@ -583,9 +583,13 @@ const FEAT = {
       desc: "An extra machine, the 13th, with the 47 synthesis models of Braids, from Émilie Gillet's own open-source code: analog-style waves, FM, vowels and speech, physical models, drums, wavetables and noises. SHAPE picks the model, COLOR and SWEEP shape it, CONTOUR lets the amp envelope open the timbre. Hold FUNC and turn PITCH for lo-fi: left lowers the sample rate (46K down to 4K), right the bit depth (12B down to 2B), OFF in the middle. Thirteen models are computed at 48 kHz for half the processor time.",
       note: "About as heavy on the processor as a Syntakt engine for most models; the load governor looks after MACRO voices too." },
     acid: { label: "ACID machine",
-      short: "Machine 14, the last one: an acid bass in the style of the TB-303, with a drive knob and slides from your trigs.",
-      desc: "The last machine, the 14th: an acid bass in the style of the TB-303, from Robin Schmidt's open-source Open303 model, rewritten in fixed point. COLOR is the cutoff, SHAPE the resonance, SWEEP the env mod, CONTOUR the drive (from clean to fuzz, at about the same volume) and DECAY the decay; PUNCH switches the wave from saw to square. A trig whose length (LEN) runs past the next trig slides into the next note instead of playing it again; played live, a note played while another is held slides too. Each note fades in over less than a millisecond, so there is no click.",
+      short: "Machine 14: an acid bass in the style of the TB-303, with a drive knob and slides from your trigs.",
+      desc: "An extra machine, the 14th: an acid bass in the style of the TB-303, from Robin Schmidt's open-source Open303 model, rewritten in fixed point. COLOR is the cutoff, SHAPE the resonance, SWEEP the env mod, CONTOUR the drive (from clean to fuzz, at about the same volume) and DECAY the decay; PUNCH switches the wave from saw to square. A trig whose length (LEN) runs past the next trig slides into the next note instead of playing it again; played live, a note played while another is held slides too. Each note fades in over less than a millisecond, so there is no click.",
       note: "Turn GATE on for notes that hold their whole length, as on the original. Under a very heavy load the governor can fade an ACID note out; the track's next trig then plays afresh." },
+    modal: { label: "MODAL machine",
+      short: "Machine 15, the last one: a resonator after Mutable Instruments Rings, struck or plucked by each trig. SHAPE picks the model.",
+      desc: "An extra machine, the 15th: a resonator after Rings, from Émilie Gillet's own open-source code, rewritten in fixed point. Each trig strikes or plucks it and it rings on by itself. SHAPE picks one of four models: bars, plates and bells; strings that ring in sympathy; a plucked string; strings tuned to a chord. COLOR is the brightness, CONTOUR the structure, SWEEP the position, DECAY the damping. Hold FUNC and turn SHAPE for 1, 2 or 4 voices: each new note rings on the next voice while the others keep ringing. Velocity sets how hard it is struck.",
+      note: "Heavy on the processor: count on one or two MODAL tracks next to the others; the load governor looks after it. No audio input yet: your own sample as the exciter comes later." },
     "lfo-plus": { label: "LFO 2, 3, 4",
       short: "Three more LFOs per track: on the LFO page, press LFO again for LFO 2, 3 and 4.",
       desc: "On the LFO page, press [LFO] again: a big 2, then 3, then 4 shows in the left box, and the fifth press closes the page. Each extra LFO has its own speed, multiplier, waveform, destination and depth; fade, start phase and mode stay shared with LFO 1. LFO 2 is saved with the sound and can be p-locked; LFO 3 and 4 are for live play (one setting per track, not saved). Rewritten for this project from DavidCaruso's Model-TG-VA-DR-v1 firmware." },
@@ -635,6 +639,7 @@ const FEAT = {
     "mach-sampler": { label: "Model-TG sampler" },
     "mach-macro": { label: "47 models from Braids" },
     "mach-acid": { label: "acid bass in the style of the TB-303" },
+    "mach-modal": { label: "resonator after Rings" },
   },
   fr: {
     "model-tg": { label: "Machine Sampler (Model-TG)",
@@ -655,9 +660,13 @@ const FEAT = {
       desc: "Une machine ajoutée, la 13e, avec les 47 modèles de synthèse de Braids, tirés du code libre d'Émilie Gillet : ondes analogiques, FM, voyelles et parole, modèles physiques, percussions, tables d'ondes et bruits. SHAPE choisit le modèle, COLOR et SWEEP le sculptent, CONTOUR laisse l'enveloppe d'ampli ouvrir le timbre. Maintenez FUNC et tournez PITCH pour le lo-fi : à gauche la fréquence d'échantillonnage baisse (46K à 4K), à droite la résolution (12B à 2B), OFF au milieu. Treize modèles sont calculés à 48 kHz pour moitié moins de temps processeur.",
       note: "À peu près aussi lourd pour le processeur qu'un moteur du Syntakt pour la plupart des modèles ; le régulateur de charge veille aussi sur les voix MACRO." },
     acid: { label: "Machine ACID",
-      short: "Machine 14, la dernière : une basse acide à la manière de la TB-303, avec un potard de saturation et des slides depuis vos trigs.",
-      desc: "La dernière machine, la 14e : une basse acide à la manière de la TB-303, d'après le modèle libre Open303 de Robin Schmidt, réécrit en virgule fixe. COLOR règle le cutoff, SHAPE la résonance, SWEEP l'env mod, CONTOUR la saturation (du son propre au fuzz, à volume à peu près égal) et DECAY la décroissance ; PUNCH passe l'onde de scie à carré. Un trig dont la longueur (LEN) dépasse le trig suivant glisse vers la note suivante au lieu de la rejouer ; en jeu live, une note jouée pendant qu'une autre est tenue glisse aussi. Chaque note monte en moins d'une milliseconde : pas de clic.",
+      short: "Machine 14 : une basse acide à la manière de la TB-303, avec un potard de saturation et des slides depuis vos trigs.",
+      desc: "Une machine ajoutée, la 14e : une basse acide à la manière de la TB-303, d'après le modèle libre Open303 de Robin Schmidt, réécrit en virgule fixe. COLOR règle le cutoff, SHAPE la résonance, SWEEP l'env mod, CONTOUR la saturation (du son propre au fuzz, à volume à peu près égal) et DECAY la décroissance ; PUNCH passe l'onde de scie à carré. Un trig dont la longueur (LEN) dépasse le trig suivant glisse vers la note suivante au lieu de la rejouer ; en jeu live, une note jouée pendant qu'une autre est tenue glisse aussi. Chaque note monte en moins d'une milliseconde : pas de clic.",
       note: "Mettez GATE pour des notes tenues toute leur longueur, comme sur l'original. Sous une très forte charge, le régulateur peut éteindre une note ACID en fondu ; le trig suivant de la piste rejoue alors la note." },
+    modal: { label: "Machine MODAL",
+      short: "Machine 15, la dernière : un résonateur d'après Rings de Mutable Instruments, frappé ou pincé à chaque trig. SHAPE choisit le modèle.",
+      desc: "Une machine ajoutée, la 15e : un résonateur d'après Rings, tiré du code libre d'Émilie Gillet, réécrit en virgule fixe. Chaque trig le frappe ou le pince, et il résonne tout seul. SHAPE choisit l'un des quatre modèles : barres, plaques et cloches ; cordes qui vibrent par sympathie ; corde pincée ; cordes accordées en accord. COLOR règle la brillance, CONTOUR la structure, SWEEP la position, DECAY l'amortissement. Maintenez FUNC et tournez SHAPE pour 1, 2 ou 4 voix : chaque nouvelle note résonne sur la voix suivante pendant que les autres continuent. La vélocité règle la force de la frappe.",
+      note: "Lourd pour le processeur : comptez une ou deux pistes MODAL à côté des autres ; le régulateur de charge veille sur elle. Pas encore d'entrée audio : votre propre sample comme excitateur viendra ensuite." },
     "lfo-plus": { label: "LFO 2, 3, 4",
       short: "Trois LFO de plus par piste : sur la page LFO, appuyez encore sur LFO pour LFO 2, 3 et 4.",
       desc: "Sur la page LFO, appuyez encore sur [LFO] : un grand 2, puis 3, puis 4 s'affiche dans le cadre de gauche, et le cinquième appui ferme la page. Chaque LFO de plus a sa vitesse, son multiplicateur, sa forme, sa destination et sa profondeur ; le fondu, la phase de départ et le mode restent communs avec LFO 1. LFO 2 est sauvé avec le son et se p-locke ; LFO 3 et 4 servent au live (un réglage par piste, pas sauvé). Réécrit pour ce projet d'après le firmware Model-TG-VA-DR-v1 de DavidCaruso." },
@@ -707,6 +716,7 @@ const FEAT = {
     "mach-sampler": { label: "sampler de Model-TG" },
     "mach-macro": { label: "47 modèles de Braids" },
     "mach-acid": { label: "basse acide à la manière de la TB-303" },
+    "mach-modal": { label: "résonateur d'après Rings" },
   },
 };
 

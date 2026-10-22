@@ -60,6 +60,10 @@ DECLARED = (
     ("mod-settings", "octets 0x404e9b80..0x404e9b8f du bloc des réglages de l'OS (0x404e9b10, 272 o, flash 0x78000), "
                      "hors de sa somme de contrôle : l'enregistrement « MODS » des réglages des mods "
                      "(0x404e9b63..0x404e9c0f n'est ni lu ni écrit par l'OS)", "notes/72 §3"),
+    ("syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal",
+     "mémoire 0x46800000..0x4688ffff, juste au-dessus du Mo de la charge utile (0x46700000) et de la zone "
+     "d'échantillons de Model-TG : l'état des 6 pistes de la machine MODAL (96 Ko chacune : la Part de Rings), posé "
+     "à la première note de la piste ; rien de l'OS ni de Model-TG n'y va", "notes/74 §4"),
 )
 
 

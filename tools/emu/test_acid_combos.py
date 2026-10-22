@@ -84,7 +84,7 @@ ta.OFF = OFF
 
 def engines_of(t):
     """Moteurs du Syntakt d'un tweak (syntakt-[tg-]<moteurs>[-macro][-acid])."""
-    return [c for c in t["id"].split("-") if c in gs.CATALOG and c not in ("macro", "acid")]
+    return [c for c in t["id"].split("-") if c in gs.CATALOG and c not in ("macro", "acid", "modal")]
 
 
 tmx.engines_of = engines_of          # chord_at, avec « acid » au catalogue (interface)
@@ -130,9 +130,10 @@ class Fw:
         syms = {k: int(v, 16) for k, v in t.get("symbols", {}).items()}
         first = gs.TG_FIRST if tg else 6
         self.codes = engines_of(t)
-        kinds = [k for k in ("macro", "acid") if k + "_update" in syms]
+        kinds = [k for k in ("macro", "acid", "modal") if k + "_update" in syms]
         self.nm = first + len(self.codes) + len(kinds)
-        data = dest + gs.LAYOUT["DATA"]
+        # les données : à leur place d'origine, plus haut au-delà de 7 machines ajoutées (gs.ROWS8, MODAL)
+        data = dest + (gs.ROWS8["DATA"] if len(self.codes) + len(kinds) > 7 else gs.LAYOUT["DATA"])
         u32 = lambda va: struct.unpack_from(">I", self.runtime, va - dest)[0]
         for i, k in enumerate(kinds):
             index = first + len(self.codes) + i
@@ -211,7 +212,8 @@ ta.Probe = Probe                     # test_acid.play et sequence
 def machine_window(n, nm):
     """Ce qui compte les machines dans la charge utile (décalages) : détours, données, descripteurs, rangées."""
     gs.set_rows(n)
-    end = max(gs.DESCN + (g7.NDESC + 5 * n) * g7.DSTRIDE, gs.CCROWSN + 32 * nm, gs.RECS + 0x60 * n) - gs.PAY
+    end = max(gs.DESCN + (g7.NDESC + 5 * n) * g7.DSTRIDE, gs.CCROWSN + 32 * nm, gs.RECS + gs.REC_STRIDE * n,
+              gs.REC_ATK + 76 if n > 7 else 0) - gs.PAY
     return [(gs.LAYOUT["STUBS"], end)]
 
 
@@ -352,14 +354,15 @@ def locks(fw, label):
 GAINS, FULL = tmx.GAINS, tmx.FULL
 
 
-def governor(fw, tw, label, sampler=False):
+def governor(fw, tw, label, sampler=False, setup=None, what=None):
     """Surcharge (comme test_macro_syntakt.governor) : 6 pistes ACID, ou 3 ACID et 3 MACRO (avec Model-TG, le Sampler
     en piste 3). Charge fixe de 97 % : toutes éteintes, jamais le Sampler ; 46 % + 7 % par voix calculée : une partie
     seulement ; les pistes épargnées identiques à la référence, les éteintes muettes ensuite. Le minuteur avance d'un
-    bloc à chaque bloc, plus le coût des voix ; la lecture de GOV_SKIP (ACID) n'en coûte pas."""
+    bloc à chaque bloc, plus le coût des voix ; la lecture de GOV_SKIP (ACID) n'en coûte pas. setup, what : d'autres
+    pistes, et le nom de leurs machines dans le texte (MODAL, test_modal.py)."""
     acid, macro = fw.views["acid"], fw.views.get("macro")
     sy = {k: int(v, 16) for k, v in tw["gov"].items()}
-    setup = {}
+    given, setup = setup, {}
     for t in range(6):
         if macro and t % 2:
             setup[t] = dict(tm.BASE_KW, machine=macro.index, shape=(0, 1, 2, 3, 9, 10)[t], note=48 + 5 * t,
@@ -369,6 +372,7 @@ def governor(fw, tw, label, sampler=False):
                             gate=1, decay=100)
     if sampler:
         setup[2] = dict(KW, machine=6, decay=100)
+    setup = given or setup
     cost = 2 * 7 * BLOCK // 100
 
     def play_(load_):
@@ -415,7 +419,7 @@ def governor(fw, tw, label, sampler=False):
         spared = set(range(6)) - stolen
         same_ = all(np.array_equal(ref[:, t], mod[:, t]) for t in spared)
         check(want(stolen) and same_ and silent(mod, stolen) and not unm,
-              f"{label} : surcharge ({name}) : pistes {'ACID et MACRO' if macro else 'ACID'} éteintes "
+              f"{label} : surcharge ({name}) : pistes {what or ('ACID et MACRO' if macro else 'ACID')} éteintes "
               f"{sorted(t + 1 for t in stolen)}, muettes ensuite{', jamais le Sampler (piste 3)' if sampler else ''} ; "
               f"les autres {sorted(t + 1 for t in spared)} identiques à la référence")
 

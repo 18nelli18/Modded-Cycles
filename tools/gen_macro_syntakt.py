@@ -125,10 +125,11 @@ def compile_macro(repo, pay):
     return _MACRO[repo, pay]
 
 
-def build_tweak(img, st_img, repo, codes, tg=None, macro=True, acid=None):
+def build_tweak(img, st_img, repo, codes, tg=None, macro=True, acid=None, more=()):
     """Tweak des moteurs codes avec MACRO après eux. tg : Model-TG (gs.tg_context), avec set_base(PAY_TG).
     acid : la machine ACID en plus, après MACRO (ou sans MACRO, macro=False), déjà liée à sa place
-    (gen_acid_combos.py : dict(machine, at, blob, end), notes/54 §11)."""
+    (gen_acid_combos.py : dict(machine, at, blob, end), notes/54 §11). more : d'autres machines après ACID, de la
+    même forme (MODAL, tools/gen_modal.py, notes/74)."""
     pay = gs.PAY_TG if tg else gs.PAY_ALONE
     gs.set_base(pay)
     tw = versioned(codes, bool(tg))
@@ -143,12 +144,13 @@ def build_tweak(img, st_img, repo, codes, tg=None, macro=True, acid=None):
         blob, syms, end = compile_macro(repo, pay)
         machines.append(dict(gm.MACHINE, label="MACRO", update=syms["macro_update"], render=syms["macro_render"]))
         parts.append({"dest": f"{pay + MACRO_AT:#x}", "hex": blob.hex()})
-    if acid:
-        if end > acid["at"]:
-            raise SystemExit(f"!! MACRO jusqu'à {end:#x} : ACID commence à {acid['at']:#x}")
-        machines.append(acid["machine"])
-        parts.append({"dest": f"{acid['at']:#x}", "hex": acid["blob"].hex()})
-        end = acid["end"]
+    for m_ in ([acid] if acid else []) + list(more):
+        if end > m_["at"]:
+            raise SystemExit(f"!! machine précédente jusqu'à {end:#x} : {m_['machine']['name']} commence à "
+                             f"{m_['at']:#x}")
+        machines.append(m_["machine"])
+        parts.append({"dest": f"{m_['at']:#x}", "hex": m_["blob"].hex()})
+        end = m_["end"]
     bss_end = end
     if tg and bss_end > pay + TG_ROOM:
         raise SystemExit(f"!! charge utile jusqu'à {bss_end:#x} : au-delà de la place laissée par Model-TG")

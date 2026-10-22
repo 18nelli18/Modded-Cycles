@@ -4,7 +4,7 @@
 
 **One community OS for the Elektron Model:Cycles, installed from your browser in about 30 seconds.**
 
-A Sampler machine · the Syntakt engines · MACRO and ACID machines · four LFOs per track · an arpeggiator · up to 546 BPM · and more
+A Sampler machine · the Syntakt engines · MACRO, ACID and MODAL machines · four LFOs per track · an arpeggiator · up to 546 BPM · and more
 
 [**Open the web flasher**](https://18nelli18.github.io/Modded-Cycles/flasher/) &nbsp;·&nbsp;
 [Read the guide](https://18nelli18.github.io/Modded-Cycles/guide/) &nbsp;·&nbsp;
@@ -44,6 +44,7 @@ sends it to the machine over USB. Going back to the official firmware is one cli
 | **Syntakt engines** | Five real Syntakt machines, **SD VINTAGE**, **CP VINTAGE**, **SY TOY**, **SY BITS** and **SY SWARM**, as machines 8 to 12, with the Syntakt's knob names and defaults. Their code is read from your own Syntakt OS file. | Elektron's code, from your file | ✅ Tested |
 | **MACRO machine** | Machine 13: the 47 synthesis models of Braids, Émilie Gillet's macro-oscillator. `SHAPE` picks the model, `FUNC` + `PITCH` gives lo-fi. | [pichenettes/eurorack](https://github.com/pichenettes/eurorack), MIT | ✅ Tested |
 | **ACID machine** | Machine 14: an acid bass in the style of the TB-303, with cutoff, resonance, env mod, drive, saw or square, and slides from your trigs. | [RobinSchmidt/Open303](https://github.com/RobinSchmidt/Open303), MIT | ✅ Tested |
+| **MODAL machine** | Machine 15: a resonator after Mutable Instruments Rings, struck or plucked by each trig: bars and bells, a string, sympathetic strings, strings tuned to a chord. `SHAPE` picks the model, `FUNC` + `SHAPE` sets 1, 2 or 4 voices. | Rings, [pichenettes/eurorack](https://github.com/pichenettes/eurorack), MIT | 🧪 Experimental |
 | **LFO 2, 3, 4** | Three more LFOs per track: on the LFO page, press `LFO` again. LFO 2 is saved with the sound and can be p-locked. | After DavidCaruso | ✅ Tested |
 | **Arpeggiator** | Hold several notes with `RETRIG` and they arpeggiate; `FUNC` + `RETRIG` sets direction and range, saved with the pattern. | This project | ✅ Tested |
 | **Step record** | Sequencer stopped, press `REC` twice: each note you play (TRIG keys, pads, MIDI) lands on the blinking step. `PLAY` skips, `STOP` goes back; knobs turned first become p-locks. | This project | ✅ Tested |
@@ -61,7 +62,7 @@ sends it to the machine over USB. Going back to the official firmware is one cli
 | **Mod Settings: USB audio** | `SETTINGS` has a last line, **Mods**, with the mods' own settings. **USB Audio** sends the computer the stereo mix (2CH, as stock) or each track on its own channel (6CH) to record stems; press `LEVEL/DATA` to switch, no reflash. | 6-channel audio after [scottmetoyer/ms-multi-output](https://github.com/scottmetoyer/ms-multi-output), MIT | ✅ Tested |
 
 The added machines come after Chord, always in this order: 07 Sampler, 08 SDVtg, 09 CPVtg, 10 SYToy, 11 SYBit,
-12 SYSwm, 13 MACRO, 14 ACID.
+12 SYSwm, 13 MACRO, 14 ACID, 15 MODAL.
 
 **Status of the OS itself: Experimental.** Every feature was checked in an emulator that runs the OS's own code,
 and most were tested on a real Model:Cycles on their own, but this exact firmware (version 2.0) has not run on a
@@ -111,7 +112,7 @@ CYC.
 <details>
 <summary><b>Going back to the official firmware</b></summary>
 
-First set any track that uses an added machine (7 to 14) back to one of the six original machines. Then open the
+First set any track that uses an added machine (7 to 15) back to one of the six original machines. Then open the
 flasher, choose the **Official firmware** tab, drop your official OS file and flash.
 
 </details>
@@ -175,6 +176,7 @@ This project stands on the work of others:
 - **[drumkilla/elektron-model-tweaks](https://github.com/drumkilla/elektron-model-tweaks)** (MIT): latching mute, trig preview, scrolling names, and the `mtlib` toolkit and tweak format used by the build.
 - **[pichenettes/eurorack](https://github.com/pichenettes/eurorack)** (MIT): Émilie Gillet's Braids code, compiled as is for the synthesis models of the MACRO machine ([license](tweaks/model-cycles_OS1.13/LICENSE-Braids)).
 - **[RobinSchmidt/Open303](https://github.com/RobinSchmidt/Open303)** (MIT): Robin Schmidt's TB-303 model, rewritten in fixed point for the ACID machine ([license](tweaks/model-cycles_OS1.13/LICENSE-Open303)).
+- **[pichenettes/eurorack](https://github.com/pichenettes/eurorack)** (MIT): Émilie Gillet's Rings, rewritten in fixed point for the MODAL machine ([license](tweaks/model-cycles_OS1.13/LICENSE-Rings)).
 - **DavidCaruso** (LFO 2, 3, 4), **djd_oz** (volume and pan as numbers, dimmed trigless trigs), **[AveyCole](https://github.com/AveyCole/Modded-Cycles)** (MIDI OUT + THRU), **RDS (AIM)** and **DaftMaple** (the OS on a Model:Samples), **Nico Heuser** (Chord Keys, 2026): community mods and ideas this OS grew from.
 - **[scottmetoyer/ms-multi-output](https://github.com/scottmetoyer/ms-multi-output)** (MIT): the original 6-channel USB mod, behind the 6CH setting of Mod Settings.
 - **[dagargo/elektroid](https://github.com/dagargo/elektroid)** (GPL-3.0): the Elektron Transfer update protocol behind fast USB flashing.

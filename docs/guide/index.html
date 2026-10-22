@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-20-03">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-20-03">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-22-01">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-22-01">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -57,6 +57,7 @@
         <li><a href="#trigless"><span data-l="en">Dimmed trigless trigs</span><span data-l="fr">Trigless trigs atténués</span></a></li>
         <li><a href="#midi-live-both"><span data-l="en">Live MIDI OUT + THRU toggle</span><span data-l="fr">Basculer MIDI OUT + THRU en direct</span></a></li>
         <li><a href="#acid"><span data-l="en">ACID machine</span><span data-l="fr">Machine ACID</span></a></li>
+        <li><a href="#modal"><span data-l="en">MODAL machine</span><span data-l="fr">Machine MODAL</span></a></li>
         <li><a href="#lfo-plus"><span data-l="en">LFO 2, 3, 4</span><span data-l="fr">LFO 2, 3, 4</span></a></li>
         <li><a href="#mod-settings"><span data-l="en">Mod Settings: USB audio</span><span data-l="fr">Mod Settings : audio USB</span></a></li>
         <li><a href="#mods-on-samples"><span data-l="en">The OS on a Model:Samples</span><span data-l="fr">L'OS sur un Model:Samples</span></a></li>
@@ -194,7 +195,7 @@
         <p class="lede"><span data-l="en">The Syntakt's digital engines, added as extra machines. Their code is copied from your Syntakt OS file, in your browser. In the emulator they sound like the Syntakt, sample for sample.</span><span data-l="fr">Les moteurs numériques du Syntakt, ajoutés en machines supplémentaires. Leur code est copié depuis votre fichier d'OS Syntakt, dans votre navigateur. En émulation, ils sonnent comme sur le Syntakt, échantillon par échantillon.</span></p>
 
         <h3><span data-l="en">Order in the MACHINES menu</span><span data-l="fr">Ordre dans le menu MACHINES</span></h3>
-        <p><span data-l="en">The added machines come after Chord. Their order is fixed in this OS: the <a href="#model-tg">Sampler</a> first, then the five engines, then <a href="#macro">MACRO</a> and <a href="#acid">ACID</a>.</span><span data-l="fr">Les machines ajoutées viennent après Chord. Leur ordre est fixe dans cet OS : le <a href="#model-tg">Sampler</a> d'abord, puis les cinq moteurs, puis <a href="#macro">MACRO</a> et <a href="#acid">ACID</a>.</span></p>
+        <p><span data-l="en">The added machines come after Chord. Their order is fixed in this OS: the <a href="#model-tg">Sampler</a> first, then the five engines, then <a href="#macro">MACRO</a>, <a href="#acid">ACID</a> and <a href="#modal">MODAL</a>.</span><span data-l="fr">Les machines ajoutées viennent après Chord. Leur ordre est fixe dans cet OS : le <a href="#model-tg">Sampler</a> d'abord, puis les cinq moteurs, puis <a href="#macro">MACRO</a>, <a href="#acid">ACID</a> et <a href="#modal">MODAL</a>.</span></p>
         <div class="side fig">
           <div class="lcd-box" aria-hidden="true">
             <ol>
@@ -262,7 +263,7 @@
           <p class="muted" style="font-size:15px;margin-top:12px"><span data-l="en">Measured on the hardware, as a share of one audio block. A silent voice costs nothing; shorter decays free the voices sooner.</span><span data-l="fr">Mesuré sur la machine, en part d'un bloc audio. Une voix muette ne coûte rien ; des decays plus courts libèrent les voix plus tôt.</span></p>
         </div>
 
-        <p class="note"><span data-l="en"><b>Before flashing the official firmware back,</b> set the tracks that use an added machine (7 to 14) back to an original one (Kick to Chord). The official OS doesn't have them: otherwise MACHINES can freeze on those tracks.</span><span data-l="fr"><b>Avant de reflasher le firmware officiel,</b> remettez sur une machine d'origine (de Kick à Chord) les pistes qui utilisent une machine ajoutée (7 à 14). L'OS officiel ne les a pas : sinon MACHINES peut geler sur ces pistes.</span></p>
+        <p class="note"><span data-l="en"><b>Before flashing the official firmware back,</b> set the tracks that use an added machine (7 to 15) back to an original one (Kick to Chord). The official OS doesn't have them: otherwise MACHINES can freeze on those tracks.</span><span data-l="fr"><b>Avant de reflasher le firmware officiel,</b> remettez sur une machine d'origine (de Kick à Chord) les pistes qui utilisent une machine ajoutée (7 à 15). L'OS officiel ne les a pas : sinon MACHINES peut geler sur ces pistes.</span></p>
       </section>
 
       <section id="model-tg">
@@ -621,7 +622,7 @@
         <p class="by"><span data-l="en">Based on</span><span data-l="fr">D'après</span> <a href="https://github.com/RobinSchmidt/Open303" target="_blank" rel="noopener">Open303</a> <span data-l="en">by Robin Schmidt</span><span data-l="fr">de Robin Schmidt</span> · <span data-l="en">MIT license</span><span data-l="fr">licence MIT</span></p>
         <p class="lede"><span data-l="en">One extra machine, ACID, is an acid bass in the style of the TB-303: a saw or square wave through a resonant filter with its own envelope and slide, and a drive to dirty it up. Its sound follows Robin Schmidt's open-source Open303 model, rewritten for the Model:Cycles' processor. Slides come from your trigs, so a 303 line is programmed with the sequencer you already know.</span><span data-l="fr">Une machine ajoutée, ACID, est une basse acide à la manière de la TB-303 : une onde en dents de scie ou carrée dans un filtre résonant avec sa propre enveloppe et le slide, plus une saturation pour la salir. Son son suit le modèle libre Open303 de Robin Schmidt, réécrit pour le processeur du Model:Cycles. Le slide vient de vos trigs : une ligne de 303 se programme avec le séquenceur que vous connaissez déjà.</span></p>
         <ol>
-          <li><span data-l="en">Press <b>MACHINES</b> and pick <b>ACID</b>, machine 14, the last one (after <a href="#macro">MACRO</a>). Its icon is Tone's.</span><span data-l="fr">Appuyez sur <b>MACHINES</b> et choisissez <b>ACID</b>, la machine 14, la dernière (après <a href="#macro">MACRO</a>). Son icône est celle de Tone.</span></li>
+          <li><span data-l="en">Press <b>MACHINES</b> and pick <b>ACID</b>, machine 14 (after <a href="#macro">MACRO</a>, before <a href="#modal">MODAL</a>). Its icon is Tone's.</span><span data-l="fr">Appuyez sur <b>MACHINES</b> et choisissez <b>ACID</b>, la machine 14 (après <a href="#macro">MACRO</a>, avant <a href="#modal">MODAL</a>). Son icône est celle de Tone.</span></li>
           <li><span data-l="en">Shape the sound with the four knobs of the machine (table below). The defaults already give the acid squelch: a low cutoff, a lot of resonance and of env mod. <b>DECAY</b> sets how fast the filter closes after each note, and the note's own decay. <b>PUNCH</b> off plays a saw wave, on a square wave.</span><span data-l="fr">Façonnez le son avec les quatre potards de la machine (tableau ci-dessous). Les réglages par défaut donnent déjà le son acide : un cutoff bas, beaucoup de résonance et d'env mod. <b>DECAY</b> règle la vitesse à laquelle le filtre se referme après chaque note, et la décroissance de la note elle-même. <b>PUNCH</b> éteint joue une onde en dents de scie, allumé une onde carrée.</span></li>
           <li><span data-l="en"><b>Drive:</b> turn <b>CONTOUR</b> (Drive) up to push the sound into distortion, as when a 303 goes through a pedal: some warmth in the first quarter, a crunchy growl around the middle, a fuzz at the top. The volume stays about the same as you turn it; at 0 the sound is clean. Like any knob, it can be locked on a step. Velocity (<b>VEL</b>) sets the volume of a note, as on the original machines.</span><span data-l="fr"><b>Saturation :</b> tournez <b>CONTOUR</b> (Drive) pour pousser le son dans la distorsion, comme une 303 branchée dans une pédale : un peu de chaleur dans le premier quart, un grognement granuleux vers le milieu, un fuzz en haut. Le volume reste à peu près le même quand vous le tournez ; à 0, le son est propre. Comme tout potard, il se verrouille sur un pas. La vélocité (<b>VEL</b>) règle le volume d'une note, comme sur les machines d'origine.</span></li>
           <li><span data-l="en"><b>Slide:</b> give a trig a length (<b>LEN</b>) that runs past the next trig, for example 1.06 or INF on neighbouring steps. The next note then glides from this one instead of playing again: no new attack, the pitch slides. With the default length (1/16 on neighbouring steps), every note plays again. Played live, a note played while the previous one is still held slides too.</span><span data-l="fr"><b>Slide :</b> donnez à un trig une longueur (<b>LEN</b>) qui dépasse le trig suivant, par exemple 1.06 ou INF sur des pas voisins. La note suivante glisse alors depuis celle-ci au lieu d'être rejouée : pas de nouvelle attaque, la hauteur glisse. Avec la longueur par défaut (1/16 sur des pas voisins), chaque note est rejouée. En jeu live, une note jouée pendant que la précédente est encore tenue glisse aussi.</span></li>
@@ -650,8 +651,39 @@
         <p class="note"><span data-l="en"><b>Before flashing the official firmware back,</b> set your ACID tracks back to an original machine (Kick to Chord): ACID is an added machine, and the official OS doesn't have it.</span><span data-l="fr"><b>Avant de reflasher le firmware officiel,</b> remettez vos pistes ACID sur une machine d'origine (de Kick à Chord) : ACID est une machine ajoutée, et l'OS officiel ne l'a pas.</span></p>
       </section>
 
+      <section id="modal">
+        <h2><span class="n">19</span><span data-l="en">MODAL machine</span><span data-l="fr">Machine MODAL</span></h2>
+        <p class="by"><span data-l="en">Based on</span><span data-l="fr">D'après</span> <a href="https://github.com/pichenettes/eurorack" target="_blank" rel="noopener">Rings</a> <span data-l="en">by Émilie Gillet (Mutable Instruments)</span><span data-l="fr">d'Émilie Gillet (Mutable Instruments)</span> · <span data-l="en">MIT license</span><span data-l="fr">licence MIT</span></p>
+        <p class="lede"><span data-l="en">One extra machine, MODAL, is a resonator in the spirit of Mutable Instruments Rings: struck bars, plates and bells, plucked strings, strings that ring in sympathy and chords of strings. Each trig strikes or plucks it, and the sound then rings on by itself for as long as DAMPING lets it. Its sound follows Émilie Gillet's open-source Rings code, rewritten for the Model:Cycles' processor.</span><span data-l="fr">Une machine ajoutée, MODAL, est un résonateur dans l'esprit du Rings de Mutable Instruments : barres, plaques et cloches frappées, cordes pincées, cordes qui vibrent par sympathie et accords de cordes. Chaque trig la frappe ou la pince, et le son résonne ensuite tout seul, aussi longtemps que DAMPING le laisse. Son son suit le code libre de Rings d'Émilie Gillet, réécrit pour le processeur du Model:Cycles.</span></p>
+        <ol>
+          <li><span data-l="en">Press <b>MACHINES</b> and pick <b>MODAL</b>, machine 15, the last one (after <a href="#acid">ACID</a>). Its icon is Metal's. The MACHINES screen now shows two rows of eight marks.</span><span data-l="fr">Appuyez sur <b>MACHINES</b> et choisissez <b>MODAL</b>, la machine 15, la dernière (après <a href="#acid">ACID</a>). Son icône est celle de Metal. L'écran MACHINES montre maintenant deux lignes de huit repères.</span></li>
+          <li><span data-l="en"><b>SHAPE</b> picks the model, from 0 to 3 (table below). Like any knob, it can be locked on a step: each step can strike a different resonator.</span><span data-l="fr"><b>SHAPE</b> choisit le modèle, de 0 à 3 (tableau ci-dessous). Comme tout potard, il se verrouille sur un pas : chaque pas peut frapper un résonateur différent.</span></li>
+          <li><span data-l="en">The other knobs are those of Rings: <b>COLOR</b> is the brightness (wood or nylon at the bottom, glass or steel at the top), <b>CONTOUR</b> the structure (the ratios between the partials: bar, plate, string; one position in the first quarter gives a pure, harmonic sound), <b>SWEEP</b> the position where it is struck, and <b>DECAY</b> the damping: how long it rings, from a short knock to about ten seconds, and almost forever at the very top with the strings.</span><span data-l="fr">Les autres potards sont ceux de Rings : <b>COLOR</b> la brillance (bois ou nylon en bas, verre ou acier en haut), <b>CONTOUR</b> la structure (les rapports entre les partiels : barre, plaque, corde ; une position dans le premier quart donne un son pur, harmonique), <b>SWEEP</b> la position de la frappe, et <b>DECAY</b> l'amortissement : combien de temps ça résonne, d'un coup bref à une dizaine de secondes, et presque sans fin tout en haut avec les cordes.</span></li>
+          <li><span data-l="en"><b>Polyphony:</b> hold <b>FUNC</b> and turn <b>SHAPE</b> to choose 1, 2 or 4 voices (the window shows <b>Voices</b> and 1, 2 or 4). With 2 or 4, each new note rings on the next voice while the previous ones keep ringing, as with the polyphony button of Rings. Play fast notes to strum a chord.</span><span data-l="fr"><b>Polyphonie :</b> maintenez <b>FUNC</b> et tournez <b>SHAPE</b> pour choisir 1, 2 ou 4 voix (la fenêtre affiche <b>Voices</b> et 1, 2 ou 4). Avec 2 ou 4, chaque nouvelle note résonne sur la voix suivante pendant que les précédentes continuent, comme avec le bouton de polyphonie de Rings. Jouez des notes rapprochées pour gratter un accord.</span></li>
+          <li><span data-l="en"><b>PITCH</b> sets the root note (C4 in the middle) and the keys and trig notes play as on the original machines. Velocity (<b>VEL</b>) sets how hard the resonator is struck, not the volume: a soft note sounds softer and darker, and the notes still ringing keep their level.</span><span data-l="fr"><b>PITCH</b> règle la note de base (do 4 au milieu), et les touches et les notes des trigs jouent comme sur les machines d'origine. La vélocité (<b>VEL</b>) règle la force de la frappe, pas le volume : une note douce sonne plus doucement et plus sombre, et les notes qui résonnent encore gardent leur niveau.</span></li>
+        </ol>
+        <div class="tbl">
+          <table>
+            <thead><tr><th><span data-l="en">SHAPE</span><span data-l="fr">SHAPE</span></th><th><span data-l="en">Model</span><span data-l="fr">Modèle</span></th><th><span data-l="en">What CONTOUR (structure) does</span><span data-l="fr">Ce que fait CONTOUR (structure)</span></th></tr></thead>
+            <tbody>
+              <tr><th>0</th><td><span data-l="en">Modal resonator: bars, plates, bells</span><span data-l="fr">Résonateur modal : barres, plaques, cloches</span></td><td><span data-l="en">the ratios between the partials, from a bell to a bar</span><span data-l="fr">les rapports entre les partiels, de la cloche à la barre</span></td></tr>
+              <tr><th>1</th><td><span data-l="en">Sympathetic strings</span><span data-l="fr">Cordes sympathiques</span></td><td><span data-l="en">the intervals of the strings that ring with the plucked one</span><span data-l="fr">les intervalles des cordes qui vibrent avec la corde pincée</span></td></tr>
+              <tr><th>2</th><td><span data-l="en">String, plucked</span><span data-l="fr">Corde pincée</span></td><td><span data-l="en">from a plain string to a stiff, detuned, buzzing one</span><span data-l="fr">d'une corde simple à une corde raide, désaccordée, qui frise</span></td></tr>
+              <tr><th>3</th><td><span data-l="en">Sympathetic strings tuned to a chord</span><span data-l="fr">Cordes sympathiques accordées en accord</span></td><td><span data-l="en">picks one of 11 chords</span><span data-l="fr">choisit l'un des 11 accords</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <dl class="facts">
+          <div><dt><span data-l="en">Sound</span><span data-l="fr">Son</span></dt><dd><span data-l="en">Rings' resonators, with half of its modes and four strings instead of eight, so that a track fits the processor. Rings has two outputs (odd and even); MODAL plays them mixed into one, as Rings does when only one jack is plugged.</span><span data-l="fr">les résonateurs de Rings, avec la moitié de ses modes et quatre cordes au lieu de huit, pour qu'une piste tienne dans le processeur. Rings a deux sorties (impaire et paire) ; MODAL les joue mélangées en une seule, comme Rings quand une seule prise est branchée.</span></dd></div>
+          <div><dt><span data-l="en">Processor</span><span data-l="fr">Processeur</span></dt><dd><span data-l="en">heavy: a MODAL track needs 2 to 8 times the computing of a Tone voice in the emulator, from the string on one voice (the lightest) to the string on four voices (the heaviest). An LFO on CONTOUR or DECAY costs up to half as much again. Count on one or two MODAL tracks next to the others. The load governor of the <a href="#syntakt">Syntakt engines</a> looks after MODAL too: under a very heavy load it fades a voice out until its next trig. A MODAL track that has stopped ringing is not computed.</span><span data-l="fr">lourd : une piste MODAL demande 2 à 8 fois le calcul d'une voix de Tone en émulation, de la corde sur une voix (la plus légère) à la corde sur quatre voix (la plus lourde). Un LFO sur CONTOUR ou DECAY coûte jusqu'à moitié plus. Comptez une ou deux pistes MODAL à côté des autres. Le régulateur de charge des <a href="#syntakt">moteurs du Syntakt</a> veille aussi sur MODAL : sous une très forte charge, il éteint une voix en fondu jusqu'à son prochain trig. Une piste MODAL qui ne résonne plus n'est pas calculée.</span></dd></div>
+          <div><dt><span data-l="en">Limits</span><span data-l="fr">Limites</span></dt><dd><span data-l="en">no audio input yet: the resonator is always struck by its own exciter (a click or a burst of noise, as on Rings with nothing plugged into IN); playing your own sample through it comes later. The very first MODAL note after switching the machine on starts about 13 ms late. GATE, PUNCH and FINE do nothing here (FINE holds the polyphony). Rings' FM voice, its string with reverb and its hidden synth (its easter egg) are not included.</span><span data-l="fr">pas encore d'entrée audio : le résonateur est toujours frappé par son excitateur interne (un clic ou une rafale de bruit, comme Rings sans rien dans IN) ; jouer votre propre sample à travers lui viendra ensuite. La toute première note MODAL après l'allumage part avec environ 13 ms de retard. GATE, PUNCH et FINE n'ont pas d'effet ici (FINE garde la polyphonie). La voix FM de Rings, sa corde avec réverbe et son synthé caché (son « easter egg ») n'y sont pas.</span></dd></div>
+          <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">in the emulator on the OS's own code (the four models, 1, 2 and 4 voices, knobs moving, model locks, velocity, machine locks, the MACHINES screen and FUNC + SHAPE; the other machines are unchanged), and against Rings' own code on a computer. Not yet on a Model:Cycles: experimental.</span><span data-l="fr">en émulation sur le code même de l'OS (les quatre modèles, 1, 2 et 4 voix, potards qui bougent, verrous de modèle, vélocité, verrous de machine, l'écran MACHINES et FUNC + SHAPE ; les autres machines ne changent pas), et contre le code même de Rings sur ordinateur. Pas encore sur un Model:Cycles : expérimental.</span></dd></div>
+        </dl>
+        <p class="note"><span data-l="en"><b>Before flashing the official firmware back,</b> set your MODAL tracks back to an original machine (Kick to Chord): MODAL is an added machine, and the official OS doesn't have it.</span><span data-l="fr"><b>Avant de reflasher le firmware officiel,</b> remettez vos pistes MODAL sur une machine d'origine (de Kick à Chord) : MODAL est une machine ajoutée, et l'OS officiel ne l'a pas.</span></p>
+      </section>
+
       <section id="lfo-plus">
-        <h2><span class="n">19</span><span data-l="en">LFO 2, 3, 4</span><span data-l="fr">LFO 2, 3, 4</span></h2>
+        <h2><span class="n">20</span><span data-l="en">LFO 2, 3, 4</span><span data-l="fr">LFO 2, 3, 4</span></h2>
         <p class="by"><span data-l="en">Idea and first version by DavidCaruso (Model-TG-VA-DR-v1), rewritten for this project</span><span data-l="fr">Idée et première version de DavidCaruso (Model-TG-VA-DR-v1), réécrit pour ce projet</span></p>
         <p class="lede"><span data-l="en">Each track gets three more LFOs next to the original one, so up to four LFOs modulate a track at once. With or without Model-TG.</span><span data-l="fr">Chaque piste reçoit trois LFO de plus à côté de celui d'origine : jusqu'à quatre LFO modulent une piste en même temps. Avec ou sans Model-TG.</span></p>
         <ol>
@@ -673,7 +705,7 @@
 
       <section id="mod-settings">
         <span id="usb6"></span>
-        <h2><span class="n">20</span><span data-l="en">Mod Settings: USB audio, stereo or 6 tracks</span><span data-l="fr">Mod Settings : audio USB, stéréo ou 6 pistes</span></h2>
+        <h2><span class="n">21</span><span data-l="en">Mod Settings: USB audio, stereo or 6 tracks</span><span data-l="fr">Mod Settings : audio USB, stéréo ou 6 pistes</span></h2>
         <p class="by"><span data-l="en">6-channel audio based on</span><span data-l="fr">Audio 6 canaux d'après</span> <a href="https://github.com/scottmetoyer/ms-multi-output" target="_blank" rel="noopener">ms-multi-output</a> <span data-l="en">by</span><span data-l="fr">de</span> scottmetoyer</p>
         <p class="lede"><span data-l="en">The SETTINGS menu gets a last line, <b>Mods</b>: it opens <b>Mod Settings</b>, the page for the mods' own settings. Its first setting, <b>USB Audio</b>, sends the computer either the stereo mix (2CH, as stock) or each track on its own channel (6CH), to record six stems. No reflash needed to change it.</span><span data-l="fr">Le menu SETTINGS gagne une dernière ligne, <b>Mods</b> : elle ouvre <b>Mod Settings</b>, la page des réglages des mods. Son premier réglage, <b>USB Audio</b>, envoie à l'ordinateur soit le mix stéréo (2CH, comme d'origine), soit chaque piste sur son propre canal (6CH), pour enregistrer six pistes séparées. Pas besoin de reflasher pour en changer.</span></p>
         <ol>
@@ -733,7 +765,7 @@
       </section>
 
       <section id="mods-on-samples">
-        <h2><span class="n">21</span><span data-l="en">The OS on a Model:Samples</span><span data-l="fr">L'OS sur un Model:Samples</span></h2>
+        <h2><span class="n">22</span><span data-l="en">The OS on a Model:Samples</span><span data-l="fr">L'OS sur un Model:Samples</span></h2>
         <p class="lede"><span data-l="en">A Model:Samples runs the same Modded Cycles OS as a Model:Cycles. Whatever the machine, the flasher installs that OS; on a Model:Samples, the <a href="#model-tg">Sampler</a> plays your samples.</span><span data-l="fr">Un Model:Samples fait tourner le même Modded Cycles OS qu'un Model:Cycles. Quelle que soit la machine, le flasher installe cet OS ; sur un Model:Samples, le <a href="#model-tg">Sampler</a> joue vos samples.</span></p>
         <ol>
           <li><span data-l="en">Back up your samples and projects with Elektron Transfer, then close Transfer.</span><span data-l="fr">Sauvegardez vos samples et vos projets avec Elektron Transfer, puis fermez Transfer.</span></li>
@@ -757,7 +789,7 @@
       </section>
 
       <section id="samples">
-        <h2><span class="n">22</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">23</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -791,7 +823,7 @@
       </section>
 
       <section id="outside">
-        <h2><span class="n">23</span><span data-l="en">Not in this OS</span><span data-l="fr">Pas dans cet OS</span></h2>
+        <h2><span class="n">24</span><span data-l="en">Not in this OS</span><span data-l="fr">Pas dans cet OS</span></h2>
         <p class="lede"><span data-l="en">These features are not part of Modded Cycles OS 2.0. Their pages stay here for reference; developers can still build them from the command line.</span><span data-l="fr">Ces fonctions ne font pas partie du Modded Cycles OS 2.0. Leurs pages restent ici pour mémoire ; les développeurs peuvent toujours les construire en ligne de commande.</span></p>
         <ul>
           <li><span data-l="en"><a href="#track-filter">Per-track filter</a>: it shares its place in the sound with LFO 2, 3, 4 and does not work with Model-TG; it comes back once Model-TG's side is replaced.</span><span data-l="fr"><a href="#track-filter">Filtre par piste</a> : il partage sa place dans le son avec LFO 2, 3, 4 et ne marche pas avec Model-TG ; il reviendra quand la partie Model-TG sera remplacée.</span></li>
@@ -801,7 +833,7 @@
       </section>
 
       <section id="track-filter">
-        <h2><span class="n">24</span><span data-l="en">Per-track filter</span><span data-l="fr">Filtre par piste</span></h2>
+        <h2><span class="n">25</span><span data-l="en">Per-track filter</span><span data-l="fr">Filtre par piste</span></h2>
         <p class="note"><span data-l="en"><b>Not part of Modded Cycles OS 2.0.</b> It keeps its settings in the same place of the sound as <a href="#lfo-plus">LFO 2, 3, 4</a>, and does not work with Model-TG: it comes back once Model-TG's side is replaced. Developers can still build it from the command line.</span><span data-l="fr"><b>Ne fait pas partie du Modded Cycles OS 2.0.</b> Il range ses réglages au même endroit du son que <a href="#lfo-plus">LFO 2, 3, 4</a>, et ne marche pas avec Model-TG : il reviendra quand la partie Model-TG sera remplacée. Les développeurs peuvent toujours le construire en ligne de commande.</span></p>
         <p class="lede"><span data-l="en">A filter on every track, like on a DJ mixer: turn one way for a low-pass, the other way for a high-pass; in the centre the sound is left untouched. The Model:Samples' range, with resonance and an envelope.</span><span data-l="fr">Un filtre sur chaque piste, comme sur une table de mixage DJ : d'un côté un passe-bas, de l'autre un passe-haut ; au centre, le son n'est pas touché. La plage du Model:Samples, avec résonance et enveloppe.</span></p>
         <figure class="fig">
@@ -824,7 +856,7 @@
       </section>
 
       <section id="midi-both">
-        <h2><span class="n">25</span><span data-l="en">MIDI OUT while in THRU</span><span data-l="fr">MIDI OUT pendant THRU</span></h2>
+        <h2><span class="n">26</span><span data-l="en">MIDI OUT while in THRU</span><span data-l="fr">MIDI OUT pendant THRU</span></h2>
         <p class="note"><span data-l="en"><b>Not part of Modded Cycles OS 2.0.</b> The <a href="#midi-live-both">Live MIDI OUT + THRU toggle</a>, which is in the OS, does the same when switched on, and can be switched off. Developers can still build this one from the command line.</span><span data-l="fr"><b>Ne fait pas partie du Modded Cycles OS 2.0.</b> <a href="#midi-live-both">Basculer MIDI OUT + THRU en direct</a>, qui est dans l'OS, fait la même chose une fois activé, et se désactive. Les développeurs peuvent toujours construire celui-ci en ligne de commande.</span></p>
         <p class="by"><span data-l="en">By</span><span data-l="fr">Par</span> <a href="https://github.com/AveyCole/Modded-Cycles" target="_blank" rel="noopener">AveyCole</a></p>
         <p class="lede"><span data-l="en">With THR selected, the Model:Cycles forwards what arrives on its MIDI IN and also sends its own MIDI. Handy in the middle of a MIDI chain: what comes in goes on, and the Cycles still plays the devices after it.</span><span data-l="fr">Avec THR choisi, le Model:Cycles relaie ce qui arrive sur son MIDI IN et envoie aussi son propre MIDI. Pratique au milieu d'une chaîne MIDI : ce qui entre continue son chemin, et le Cycles joue toujours les appareils qui le suivent.</span></p>
@@ -842,13 +874,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">26</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">27</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first install: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant une première installation : elle vérifie le câble et l'installation sans rien changer.</span></p>
-        <p><span data-l="en">First set the tracks that use an added machine (7 to 14: the Sampler, the Syntakt engines, MACRO, ACID) back to an original one (Kick to Chord).</span><span data-l="fr">Remettez d'abord sur une machine d'origine (de Kick à Chord) les pistes qui utilisent une machine ajoutée (7 à 14 : le Sampler, les moteurs du Syntakt, MACRO, ACID).</span></p>
+        <p><span data-l="en">First set the tracks that use an added machine (7 to 15: the Sampler, the Syntakt engines, MACRO, ACID, MODAL) back to an original one (Kick to Chord).</span><span data-l="fr">Remettez d'abord sur une machine d'origine (de Kick à Chord) les pistes qui utilisent une machine ajoutée (7 à 15 : le Sampler, les moteurs du Syntakt, MACRO, ACID, MODAL).</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">27</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">28</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -862,7 +894,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">28</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">29</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -928,8 +960,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-20-03"></script>
-<script src="../assets/cycles.js?v=2026-10-20-03"></script>
-<script src="../assets/site.js?v=2026-10-20-03"></script>
+<script src="../assets/release.js?v=2026-10-22-01"></script>
+<script src="../assets/cycles.js?v=2026-10-22-01"></script>
+<script src="../assets/site.js?v=2026-10-22-01"></script>
 </body>
 </html>
