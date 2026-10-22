@@ -274,3 +274,42 @@ La variante privee sans filtre reprend le v14 sans filtre epingle, puis les
 abreviations LTC/SIL et les memes profils/icones v15. Chapeau Wizard identique.
 SHA256 `41559fab2ce3784ab262cb35173be6f5e8bd932aa379181b8728f50147450a08`.
 Les18cartes, le bootstrap natif et le popup DX passent en emulation.
+
+
+## Popup MACRO nomme, candidat prive v16 (21/10/2026)
+
+[DEMANDE AveyCole] Afficher les noms des47algorithmes plutot que leurs nombres,
+confirmer d'abord la table0..46, puis raccourcir si necessaire pour eviter tout
+clipping. Aucun changement du main2.13 demande.
+
+[FAIT en emulation] Le premier essai avec la police de titre pouvait tronquer
+les noms longs. Version finale : petite police native40ea14cc et deux lignes
+au plus, telles que Digital LP, Chaotic / FB FM, Wave / Paraphonic. Les66lignes
+sont mesurees sur un Bitmap natif256x64 pour eviter une fausse preuve par
+troncature : tous leurs pixels restent dans x66..125. Les47popups reels gardent
+la pile, les pixels de gauche et les reperes du bas ;60autres popups sont
+identiques, dont FINE/Lo-Fi MACRO, et141editions natives conservent exactement
+les valeurs et bornes. Verifications passees dans les deux variantes.
+
+Seul le slot144 de ParameterPageView401005bc est detourne, du delegate
+401ba5ec vers macro_names_popup en467c6000. Le delegate reste appele ; seul
+le rectangle droit x64..127,y32..63 du descripteur102 (Model MACRO) est
+redessine. Code UI uniquement, runtime compresse et donnees audio identiques
+aux sourcesv15. Generateur tools/build_macro_names_test.py ; preuve
+tools/emu/test_macro_model_names.py. Les autres sections sont celles du
+conteneur officiel ; aucun setter ni format de sauvegarde n'est modifie.
+
+all-features-macro-names-test-v16.syx : `7b3f8aaecb45c4d295d19f4f484bfb20ebdff1f62e9f3320e91a9d1e0238584e`.
+
+no-filter-macro-names-test-v16.syx : `2799505aacc4ba4daf5b1ac2d0f416cbcdb88990671a8901c55a8899923b9226`.
+
+
+## Promotion 2.14 : noms des modeles MACRO (21/10/2026)
+
+[DEMANDE AveyCole] Publier le fichier filtre v16 comme .syx servi par main.
+Copie exacte du candidat approuve, sans recompilation, SHA-256
+`7b3f8aaecb45c4d295d19f4f484bfb20ebdff1f62e9f3320e91a9d1e0238584e`. MAIN SHA-256 `111c7d0d0c7c02381b767fcf2cdd5b4f4b057d6420d44a1732a2c02c25005252`.
+Les47noms,66lignes dans x66..125,60autres popups et141editions natives
+par variante ont ete verifies. Aucun nouveau resultat materiel n'est deduit
+de l'autorisation de publication. Le main reste avec filtre, nouvelles cartes,
+chapeau Wizard natif et DX sauvegarde, Off par defaut.
