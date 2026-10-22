@@ -97,12 +97,16 @@ static __attribute__((noinline)) u32 twice(const void *code, void *data)        
 	return m_time(code, data);
 }
 
+/* Le code recopie en SRAM : le bootstrap y masque les acces au code (RAMBAR 0x80000235, notes/75 §1.2) ; ses
+ * instructions passent donc par le cache d'instructions, qui peut tenir les lignes d'un essai precedent a la meme
+ * adresse : on l'invalide avant de l'executer. */
 static __attribute__((noinline)) u32 in_sram(const void *code, const void *end, void *data)
 {
 	u32 n = ((const u8 *)end - (const u8 *)code + 3) / 4, t;
 
 	copy(save, (const u32 *)SCRATCH, n);
 	copy((u32 *)SCRATCH, (const u32 *)code, n);
+	m_icinv();
 	t = twice((const void *)SCRATCH, data);
 	copy((u32 *)SCRATCH, save, n);
 	return t;
@@ -144,13 +148,16 @@ static const struct {
 	{ H_TWICE, k_rd, 0, SCRATCH },                            /* ... en SRAM */
 };
 
-static __attribute__((noinline)) u32 line_sram(void *d)    /* le code droit, recopie en SRAM */
+/* le code droit, recopie en SRAM, cache d'instructions vide : ce que coute une ligne de code lue en SRAM (a
+ * comparer a I-MISS, une ligne lue en SDRAM) */
+static __attribute__((noinline)) u32 line_sram(void *d)
 {
 	u32 n = (LINES * 16 + 2 + 3) / 4, t;
 
 	copy(save, (const u32 *)SCRATCH, n);
 	copy((u32 *)SCRATCH, (const u32 *)UNCACHED(LINE_CODE), n);
-	t = twice((const void *)SCRATCH, d);
+	m_icinv();
+	t = m_time((const void *)SCRATCH, d);
 	copy((u32 *)SCRATCH, save, n);
 	return t;
 }

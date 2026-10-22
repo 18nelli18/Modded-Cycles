@@ -51,16 +51,29 @@ cycles du processeur, d'après l'essai de l'horloge (1 056 instructions d'un cyc
 | Case | Essai |
 |---|---|
 | CPU | la fréquence du cœur : 1 056 `addq` en N ticks de 135,168 MHz |
-| ALU, ALU SR | cycles par instruction d'un noyau de calcul (`add`, `eor`, `lsl`, `sub`), dans le cache (2e passage) et recopié en SRAM |
+| ALU, ALU SR | cycles par instruction d'un noyau de calcul (`add`, `eor`, `lsl`, `sub`), dans le cache (2e passage), et recopié en SRAM (2e passage aussi) |
 | MAC, MAC SR | idem, un noyau de filtre (lecture, produits de l'EMAC, écriture) |
 | MEM, MEM SR | idem, une recopie de 1 Ko (`move.l (a0)+,(a1)+`) |
-| LINE, LINE SR | cycles par ligne de 16 o de code droit (8 `addq`), dans le cache et en SRAM |
+| LINE | cycles par ligne de 16 o de code droit (8 `addq`), dans le cache |
+| LINE SR | idem, recopié en SRAM, cache d'instructions vidé : chaque ligne lue en SRAM |
 | I-MISS | ce que coûte une ligne de code absente du cache : le code droit cache d'instructions vidé, moins dans le cache |
 | D-MISS | ce que coûte une ligne de données absente du cache : 1 Ko lu après l'avoir chassé, moins dans le cache |
 | RD SR | cycles par mot lu en SRAM |
 
 La SRAM empruntée est la zone de travail des voix (`0x8000bec0..`, notes/26), écrite avant d'être lue à chaque
-bloc : sauvée avant l'essai, rendue après. Le code droit (128 lignes, 2 Ko) est écrit au démarrage en
+bloc : sauvée avant l'essai, rendue après. Le cache d'instructions est vidé après chaque recopie de code en SRAM :
+
+- **`[FAIT]`** Le bootstrap règle RAMBAR à `0x80000235` (section 2, `movec d0,rambar`), la valeur « données
+  seulement » de NXP : les accès au code (SC, UC) sont masqués. Une instruction lue en SRAM est donc « traitée comme
+  toute autre référence » : par le cache d'instructions, puis par la porte arrière de la SRAM (crossbar). Le CACR de
+  l'OS (`0xa50ce100`) a IDCM = 0 : ce qui n'est couvert ni par RAMBAR ni par un ACR est cachable.
+  - Source : *MCF5441x Reference Manual* rev. 5, §7.2.1 (RAMBAR, table 7-3 : « Data Only 0x35 ») et §6.3.1 (CACR,
+    IDCM) ([NXP][RM-MCF]) ; le MAIN OS n'écrit jamais RAMBAR (notes/27 §3.3).
+- **`[HYP]`** Le code en SRAM prend donc de la place dans le cache d'instructions, comme celui de la SDRAM, mais une
+  ligne absente s'y lit bien plus vite qu'en DDR2 8 bits. LINE SR (cache vidé) contre I-MISS le dira ; ALU SR, MAC SR
+  et MEM SR égaux à ALU, MAC et MEM confirmeront qu'il est mis en cache.
+- Sans ce vidage, un essai pouvait exécuter des lignes de l'essai précédent recopié à la même adresse (corrigé le
+  23/10/2026, avant tout essai sur la machine). Le code droit (128 lignes, 2 Ko) est écrit au démarrage en
 `0x4233b000` par la vue sans cache, puis le cache d'instructions est invalidé.
 
 ### 1.3 Écran COLD (écran 4)
@@ -96,8 +109,8 @@ python3 tools/gen_mesure.py --cycles firmware/model-cycles_OS1.13.syx --syntakt 
   -o build/modded-cycles-os_2.1-mesure.syx
 ```
 
-Le code est compilé à chaque fois : un autre GCC donne un autre MAIN OS (`956910cc…0a2b` avec `m68k-elf-gcc` 16.2,
-`4ac9cd54…8426` avec le 13.3 d'Ubuntu 24.04), le même OS autour.
+Le code est compilé à chaque fois : un autre GCC donne un autre MAIN OS (`b1c651d7…e0b9` avec `m68k-elf-gcc` 16.2,
+`4c9ccce8…120a` avec le 13.3 d'Ubuntu 24.04), le même OS autour.
 
 ## 4. Protocole (à faire par Maxime)
 
@@ -139,3 +152,7 @@ comptée.
 ## 6. Chronologie
 
 - 22/10/2026 : demande de Maxime ; firmware, preuve, protocole.
+- 23/10/2026 : le code recopié en SRAM passe par le cache d'instructions (RAMBAR du bootstrap, §1.2) : cache vidé
+  après chaque recopie ; LINE SR mesure une ligne lue en SRAM, cache vide.
+
+[RM-MCF]: https://www.nxp.com/docs/en/reference-manual/MCF54418RM.pdf
