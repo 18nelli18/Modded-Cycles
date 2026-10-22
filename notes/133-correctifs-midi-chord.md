@@ -230,3 +230,47 @@ corrompue sans fallback. PDF trois pages rendu et inspecte. Chevauchements :
 171 tweaks, aucun conflit nouveau. Les controles generiques tweaks.js/REGISTRY
 signalent des sorties deja desynchronisees ; aucun tweak ni allocation de ces
 catalogues n'est modifie par cette publication d'image fixe.
+
+
+## Identites MACHINES privees v15 (21/10/2026)
+
+[DEMANDE AveyCole] Avant le retrait des pages de test, donner aux machines
+ajoutees des profils STR/DEX/MAG differents et des initiales anguleuses propres.
+Sample Wizard conserve explicitement son chapeau natif. Servir uniquement via
+le flasheur prive habituel ; aucun changement du principal 2.12.
+
+[FAIT en emulation] Les statistiques stock sont des images 48x33, pas des
+parametres sonores. Douze triplets uniques dans machine_identity/profiles.json ;
+onze icones 34x34 dessinees depuis les grilles originales du generateur. Les
+valeurs sont des profils visuels, sans action sur le DSP. Wizard affiche ses
+trois stats sous son titre deux lignes ; les pixels de sa moitie droite et son
+pointeur chapeau sont exactement ceux de 2.12. Les six cartes stock conservent
+leurs pixels exacts. Les 18 cartes passent le rendu natif avec pile et registres
+preserves. DX Off/On et le vrai popup P/O/N restent verifies.
+
+Trois detours UI seulement : chargement sprite gauche 46788124, droite4678813e,
+entree titre Wizard467b668c. Donnees et helpers dans 467c2000..467c47f0 ;
+les instructions audio sont identiques et les autres sections restent celles
+du conteneur officiel. Generation : tools/build_machine_identity_test.py ;
+preuve : tools/emu/test_machine_identity.py. Test materiel encore necessaire.
+
+Candidat prive : all-features-machine-identity-test-v15.syx, SHA-256
+`2b8da1cd8be34cadd6f6db83900473c1580c1085b112a480041b259c9386d99b`.
+SHA-256 du main2.12 toujours
+`5111c5401520856496c9626598b6a10c4929e123052d512cc5384621b8ca73ab`.
+La suppression des anciennes pages reste dans une branche locale separee,
+non publiee, conformement a la demande de priorite.
+
+
+## Promotion 2.13 et variante sans filtre (21/10/2026)
+
+[FAIT, demande utilisateur] « perfect, push that to main and give me the no
+filter version ». Le main2.13 sert exactement le candidat v15 approuve, SHA256
+`2b8da1cd8be34cadd6f6db83900473c1580c1085b112a480041b259c9386d99b`, sans recompilation ni modification.
+Les profils restent purement graphiques ; aucun nouveau resultat audio ou
+materiel n'est revendique. La suppression des anciennes pages reste en attente.
+
+La variante privee sans filtre reprend le v14 sans filtre epingle, puis les
+abreviations LTC/SIL et les memes profils/icones v15. Chapeau Wizard identique.
+SHA256 `41559fab2ce3784ab262cb35173be6f5e8bd932aa379181b8728f50147450a08`.
+Les18cartes, le bootstrap natif et le popup DX passent en emulation.

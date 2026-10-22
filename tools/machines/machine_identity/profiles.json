@@ -1,0 +1,14 @@
+[
+ {"machine":6,"name":"Sample Wizard","icon":"hat","class":"SAMPLE","style":"SPELL","str":1,"dex":3,"mag":5},
+ {"machine":7,"name":"SD Vintage","icon":"SD","class":"PERC","style":"SNARE","str":5,"dex":4,"mag":1},
+ {"machine":8,"name":"Clap Vintage","icon":"CP","class":"PERC","style":"CLAP","str":4,"dex":5,"mag":1},
+ {"machine":9,"name":"SY Toy","icon":"TY","class":"SYNTH","style":"TOY","str":2,"dex":4,"mag":4},
+ {"machine":10,"name":"SY Bits","icon":"BT","class":"SYNTH","style":"BITS","str":4,"dex":2,"mag":4},
+ {"machine":11,"name":"Swarm","icon":"SW","class":"SYNTH","style":"SWARM","str":5,"dex":1,"mag":4},
+ {"machine":12,"name":"MACRO","icon":"M","class":"SYNTH","style":"MULTI","str":4,"dex":4,"mag":5},
+ {"machine":13,"name":"ACID","icon":"A","class":"SYNTH","style":"ACID","str":5,"dex":3,"mag":2},
+ {"machine":14,"name":"WAVE","icon":"W","class":"SYNTH","style":"WAVE","str":3,"dex":4,"mag":3},
+ {"machine":15,"name":"TINY","icon":"T","class":"PERC","style":"KIT","str":3,"dex":5,"mag":3},
+ {"machine":16,"name":"Retrosyn","icon":"R","class":"SYNTH","style":"CHIP","str":3,"dex":3,"mag":5},
+ {"machine":17,"name":"MIDI Out","icon":"MO","class":"MIDI","style":"CTRL","str":1,"dex":5,"mag":4}
+]
