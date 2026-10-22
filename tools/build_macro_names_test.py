@@ -3,7 +3,7 @@
 La table confirme les index 0..46 de gen_macro.MODELS. Seul le slot UI144 est
 detourne ; le runtime compresse et le son restent identiques au candidat source.
 """
-import hashlib,json,os,struct,subprocess
+import argparse,hashlib,json,os,struct,subprocess
 from pathlib import Path
 from mtlib import aplib,container
 from mtlib.syx import unwrap,wrap,BYTES_PER_MSG
@@ -39,15 +39,18 @@ def read(path):
  return info,pkg,image,ops
 
 def main():
+ parser=argparse.ArgumentParser(description=__doc__)
+ parser.add_argument('--number',action='store_true',help='v17 : index0..46 sous le nom')
+ args=parser.parse_args();version='v17' if args.number else 'v16'
  assert len(NAMES)==len(MODELS)==47
  assert all(len(line)<=10 for _,a,b in NAMES for line in [a,b])
- build=OUT/'macro-names-v16';build.mkdir(exist_ok=True)
+ build=OUT/('macro-names-'+version);build.mkdir(exist_ok=True)
  labels=[dict(index=i,model=MODELS[i],name=n,lines=[a]+([b] if b else [])) for i,(n,a,b) in enumerate(NAMES)]
- (build/'macro_model_labels.inc').write_text('static const char *const macro_model_lines[47][2]={\n'+',\n'.join('{'+json.dumps(a)+','+json.dumps(b)+'}' for _,a,b in NAMES)+'\n};\n')
+ (build/'macro_model_labels.inc').write_text('static const char *const macro_model_lines[47][2]={\n'+',\n'.join('{'+json.dumps(a)+','+json.dumps(b)+'}' for _,a,b in NAMES)+'\n};\n'+('static const char *const macro_model_numbers[47]={'+','.join(json.dumps(str(i)) for i in range(47))+'};\n' if args.number else ''))
  cross=str(ROOT.parent/'retrosyn-integration/build/m68k-toolchain/pkg/bin/m68k-elf-')
  os.environ['PATH']=str(Path(cross).parent)+os.pathsep+os.environ['PATH']
  obj=build/'names.o';elf=build/'names.elf';binary=build/'names.bin';ld=build/'names.ld'
- subprocess.run([cross+'gcc.exe','-mcpu=54418','-Os','-ffreestanding','-fno-builtin','-fno-stack-protector','-I',str(build),'-c',str(SOURCE/'model_names.c'),'-o',str(obj)],check=True)
+ subprocess.run([cross+'gcc.exe','-mcpu=54418','-Os','-ffreestanding','-fno-builtin','-fno-stack-protector',*(['-DMACRO_NAMES_NUMBER=1'] if args.number else []),'-I',str(build),'-c',str(SOURCE/'model_names.c'),'-o',str(obj)],check=True)
  ld.write_text(f'SECTIONS {{ .text {ORIGIN:#x} : {{ *(.text*) *(.rodata*) }} . = ALIGN(4); macro_names_end = .; }}\nPROVIDE(macro_names_original = {DELEGATE:#x});\n')
  subprocess.run([cross+'ld.exe','-T',str(ld),'-o',str(elf),str(obj)],check=True)
  subprocess.run([cross+'objcopy.exe','-O','binary',str(elf),str(binary)],check=True)
@@ -78,12 +81,12 @@ def main():
   section=aplib_grow.repack_grow(data,ops,dirty,START);assert aplib.depack(section)[0]==data
   rebuilt=container.rebuild(op,{3:section},key)
   raw=wrap(container.build_stream(rebuilt,BYTES_PER_MSG),oi['product'],oi['start_seq'])
-  dest=OUT/(prefix+'-macro-names-test-v16.syx');dest.write_bytes(raw)
+  dest=OUT/(prefix+'-macro-names-test-'+version+'.syx');dest.write_bytes(raw)
   _,final,after,_=read(dest);assert after==data
   for s in op['sections']:
    if s['id']==3:continue
    t=next(t for t in final['sections'] if t['id']==s['id']);assert op['blob'][s['off']:s['off']+s['size']]==final['blob'][t['off']:t['off']+t['size']]
-  meta.update(base=source.name,base_sha256=expected,sha256=hashlib.sha256(raw).hexdigest(),main_os_sha256=hashlib.sha256(data).hexdigest(),macro_model_names=labels,macro_names_symbols=sy,macro_model_descriptor=102,macro_names_delegate=DELEGATE,runtime_tail_end=hex(ORIGIN+len(code)),hardware_tested=False,release=None,main_changed=False)
+  meta.update(base=source.name,base_sha256=expected,sha256=hashlib.sha256(raw).hexdigest(),main_os_sha256=hashlib.sha256(data).hexdigest(),macro_model_names=labels,macro_model_number=args.number,macro_names_symbols=sy,macro_model_descriptor=102,macro_names_delegate=DELEGATE,runtime_tail_end=hex(ORIGIN+len(code)),hardware_tested=False,release=None,main_changed=False)
   dest.with_suffix('.json').write_text(json.dumps(meta,indent=2)+'\n')
   print('BUILT',dest.name,meta['sha256'],'popup only; compressed runtime exact',flush=True)
 

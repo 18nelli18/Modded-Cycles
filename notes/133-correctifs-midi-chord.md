@@ -313,3 +313,33 @@ Les47noms,66lignes dans x66..125,60autres popups et141editions natives
 par variante ont ete verifies. Aucun nouveau resultat materiel n'est deduit
 de l'autorisation de publication. Le main reste avec filtre, nouvelles cartes,
 chapeau Wizard natif et DX sauvegarde, Off par defaut.
+
+
+## Candidat prive v17 : numero sous le nom MACRO (21/10/2026)
+
+[DEMANDE AveyCole] Ajouter le numero0..46 sur une seconde ou troisieme ligne
+pour donner une reference a l'indication BACK0 native. Aucune promotion
+demandee : main2.14 reste intact. Build avec --number et MACRO_NAMES_NUMBER.
+
+[FAIT en emulation] Nom sur une ligne : y47, numero y34. Nom sur deux lignes :
+y52,y42, numero y32. Les113lignes de47modeles sont mesurees sans troncature
+sur Bitmap256x64 : pixels dans x66..125 et y30..60. Seul le rectangle droit
+x64..127,y29..63 est redessine ; les autres pixels du popup, les reperes du
+bas et l'indication native de reset sont identiques. Les60autres popups et
+141editions natives gardent pixels, valeurs et limites. Preuves passees dans
+les deux variantes. Runtime audio et valeurs stockees inchanges.
+
+all-features-macro-names-test-v17.syx : `3087145e4f5d597e2b9574d33de55dd71056ea63cb5d473b52ee47dc0095851b`.
+
+no-filter-macro-names-test-v17.syx : `ef678c0feb5f96ebf8af471b3eb071e015cb41c673d73a6f19511115d425a1c6`.
+
+
+## Promotion 2.15 : numero sous le nom MACRO (21/10/2026)
+
+[DEMANDE AveyCole] Publier le candidat filtre v17 en main. Copie exacte, sans
+recompilation : SHA-256 `3087145e4f5d597e2b9574d33de55dd71056ea63cb5d473b52ee47dc0095851b`.
+MAIN SHA-256 `4288c62d8ff688874d5fa0af210ab5fdf514e2bcdee03191be2ee1a0c02f1c80`.
+Numeros0..46 sous les noms, reference BACK/reset et tous les autres controles
+conserves. Les47layouts113lignes passent les bornes natives x66..125/y30..60.
+Main conserve le filtre, les cartes machines, le chapeau Wizard et DX.
+Aucun nouveau resultat materiel n'est revendique.

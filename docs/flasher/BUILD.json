@@ -1,9 +1,9 @@
 {
-  "stamp": "2026-10-21-macro-names-main-214",
+  "stamp": "2026-10-21-macro-numbers-main-215",
   "scope": "main",
   "profile": "Exact full-feature image, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (2ch enabled)",
   "fixed_image": "all-features-usb-2ch-default.syx",
-  "fixed_image_sha256": "7b3f8aaecb45c4d295d19f4f484bfb20ebdff1f62e9f3320e91a9d1e0238584e",
+  "fixed_image_sha256": "3087145e4f5d597e2b9574d33de55dd71056ea63cb5d473b52ee47dc0095851b",
   "diagnostics": "toggle",
   "startup": "Supermodel",
   "usb_audio_default": "2ch",
@@ -29,7 +29,7 @@
   "chord_harmony_cache": true,
   "cut_fade_zero_endpoint": true,
   "midi_idle_shortcut": true,
-  "main_os_sha256": "111c7d0d0c7c02381b767fcf2cdd5b4f4b057d6420d44a1732a2c02c25005252",
+  "main_os_sha256": "4288c62d8ff688874d5fa0af210ab5fdf514e2bcdee03191be2ee1a0c02f1c80",
   "pad_selection_default": "Stock",
   "mute_mode_default": "Stock",
   "numbers_default": "Off",
@@ -42,9 +42,9 @@
   "behavior_verified_source": "all-features-usb-mod-settings-test-v3.syx",
   "layout_fix_native_verified": true,
   "guide_version": "2026-10-21-dx-toggle-main-212",
-  "release": "2.14",
-  "approved_source": "all-features-macro-names-test-v16.syx",
-  "approved_source_sha256": "7b3f8aaecb45c4d295d19f4f484bfb20ebdff1f62e9f3320e91a9d1e0238584e",
+  "release": "2.15",
+  "approved_source": "all-features-macro-names-test-v17.syx",
+  "approved_source_sha256": "3087145e4f5d597e2b9574d33de55dd71056ea63cb5d473b52ee47dc0095851b",
   "slice_audio_event_owns_note": true,
   "slice_step_abi_fixed": true,
   "chord_names_external_midi": true,
@@ -95,5 +95,6 @@
   "identity_hardware_verified": false,
   "macro_algorithm_names": true,
   "macro_algorithm_count": 47,
-  "macro_algorithm_names_hardware_verified": false
+  "macro_algorithm_names_hardware_verified": false,
+  "macro_algorithm_numbers": true
 }
