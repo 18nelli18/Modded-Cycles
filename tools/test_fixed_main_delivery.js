@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),
 const {chromium}=require('playwright');
 const root=path.resolve(__dirname,'..'),site=path.join(root,'docs'),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 const expected=fs.readFileSync(path.join(site,'flasher/all-features-usb-2ch-default.syx'));
-assert.equal(hash(expected),'7b3f8aaecb45c4d295d19f4f484bfb20ebdff1f62e9f3320e91a9d1e0238584e','released file must be the approved filter release with DX default Off, LTC/SIL labels distinct machine cards and named MACRO algorithms');
+assert.equal(hash(expected),'3087145e4f5d597e2b9574d33de55dd71056ea63cb5d473b52ee47dc0095851b','released file must be the approved filter release with DX default Off, LTC/SIL labels distinct machine cards and named and numbered MACRO algorithms');
 const meta=JSON.parse(fs.readFileSync(path.join(site,'flasher/BUILD.json')));
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.pdf':'application/pdf','.syx':'application/octet-stream','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{
@@ -43,9 +43,9 @@ const server=http.createServer((req,res)=>{
    else{
     assert.equal(result.sha,hash(expected));assert.equal(result.sha,meta.fixed_image_sha256);assert.equal(result.main,meta.main_os_sha256);assert(result.packets>0);assert(result.disabled);
     const downloaded=page.waitForEvent('download');await page.locator('#download').click({force:true});const download=await downloaded;
-    const target=path.join(root,'tmp','main-214-browser-download.syx');await download.saveAs(target);assert.equal(hash(fs.readFileSync(target)),hash(expected));
+    const target=path.join(root,'tmp','main-215-browser-download.syx');await download.saveAs(target);assert.equal(hash(fs.readFileSync(target)),hash(expected));
     const pdf=await context.request.get(new URL('shortcut-guide.pdf?v='+meta.stamp,base).href);assert(pdf.ok());assert.equal(hash(await pdf.body()),hash(fs.readFileSync(path.join(site,'flasher/shortcut-guide.pdf'))));
-    console.log('PASS: official OS + required Syntakt upload -> exact 2.14 bytes and valid packets -> exact downloaded file',result.sha);
+    console.log('PASS: official OS + required Syntakt upload -> exact 2.15 bytes and valid packets -> exact downloaded file',result.sha);
     console.log('PASS: guide download exact, no USB selector, no automatic hardware transfer');
    }
    assert.deepEqual(errors,[]);await context.close();
