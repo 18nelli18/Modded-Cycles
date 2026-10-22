@@ -107,10 +107,10 @@ doc=SimpleDocTemplate(str(out),pagesize=letter,rightMargin=30,leftMargin=30,topM
 doc.build(flow,onFirstPage=chrome,onLaterPages=chrome)
 r=PdfReader(out);assert len(r.pages)==pages,len(r.pages)
 alltext=' '.join(' '.join(p.extract_text().split()) for p in r.pages)
-for term in ('PLAY advances','STOP moves back','Mute: Latch','Num Off','MIDI Out machine only','harmony locks','sample browser must be open'):assert term in alltext,term
+for term in ('PLAY advances','STOP moves back','Mute: LTC','Num Off','MIDI Out machine only','harmony locks','sample browser must be open'):assert term in alltext,term
 for term in ('Channel','Output','KbT','Pad Note','Two MIDI LFOs','MIDI Out machine'):assert term in alltext,term
 if pages==3:
- for term in ('Mod Setup','Stk / Silent','2ch / 6ch','Off / On','Stk / Latch','Stk / Div','global preferences','save waits until it stops'):assert term in alltext,term
+ for term in ('DX', 'LTC', 'SIL', 'Mod Setup','Stk / SIL','2ch / 6ch','Off / On','Stk / LTC','Stk / Div','global preferences','save waits until it stops'):assert term in alltext,term
 for term in ('Model-TG','Model TG','B-side'):assert term not in alltext,term
 if args.test:
  for term in ('MIDI keyboard recording','P / O / N','note-off removes'):assert term in alltext,term

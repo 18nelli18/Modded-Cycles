@@ -386,12 +386,12 @@ def run_plock_checks(stock, patched, symbols):
     rig.call(0x40012158, PROJECT, 0, 48, 100, 0, 4, 0, 0, 0xFFFFFFFF)
     require(rig.get(0, 4) == 0, "Nouvelle note sans pad conserve une ancienne extension")
     require(rig.call(0x40015C20, rig.track(0), 4) & 0xFF, "Le hook enlève la note native")
-    for step, pad, down, expected in ((16, 1, True, -1), (17, 4, True, -1),
+    for step, pad, down, expected in ((16, 1, True, 1), (17, 4, True, 4),
                                      (18, 4, False, -1), (19, 1, False, -1)):
         rig.live(True, step)
         rig.pad(pad, down)
         require(rig.get(0, step) == expected,
-                "Le vrai chemin pad press/release perd l'appui ou enregistre un retour")
+                "Un pad en live rec doit verrouiller l'harmonie au pas courant; son relâchement ne doit rien ajouter")
     rig.live(False)
     rig.pad(6, True)
     rig.call(0x40012158, PROJECT, 0, 50, 100, 0, 20, 0, 0, 0xFFFFFFFF)

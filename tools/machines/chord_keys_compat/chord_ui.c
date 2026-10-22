@@ -109,6 +109,10 @@ static __attribute__((noinline)) void pad_live(u32 pad, u32 track, const void *h
      * Préparer le prochain appui ne touche ni la queue audio ni les P-locks.
      */
     if (key >= 16 || !KEY(key + 16)) {
+        /* In live recording a harmony pad can be added after the note has
+         * already been entered. Lock it to the sequencer's current step;
+         * ck_plock_gesture is a no-op outside live recording. */
+        ck_plock_gesture(track, pad + 1);
         return;
     }
     sr = ck_storage_irq_save();
