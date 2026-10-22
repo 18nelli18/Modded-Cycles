@@ -1,5 +1,5 @@
 {
-  "stamp": "2026-10-22-feral-cpu-main-216",
+  "stamp": "2026-10-22-feature-copy-main-216",
   "scope": "main",
   "profile": "Exact full-feature image, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (2ch enabled)",
   "fixed_image": "all-features-usb-2ch-default.syx",
