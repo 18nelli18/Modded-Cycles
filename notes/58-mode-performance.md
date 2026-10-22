@@ -25,11 +25,11 @@ Contribution source anonyme demandee le 18/10/2026 : quinze commandes de perform
 | `0x4001040e`, `0x400107d8` | Sauvegarde et rechargement natifs TEMP/motif |
 | `0x40080064` | Allocateur natif pour les grandes banques d'etat |
 
-[FAIT] Le generateur verifie le SHA-256 du SysEx officiel et du MAIN OS, puis les35 sequences `old` avant toute modification. Les detours rejouent leurs prologues courts, lus/verifies dans le fichier de l'utilisateur, et ne reproduisent pas des routines natives entieres. Les autres sections du conteneur sont conservees et verifiees apres reconstruction.
+[FAIT] Le generateur verifie le SHA-256 du SysEx officiel et du MAIN OS, puis les38 sequences `old` avant toute modification. Les detours rejouent leurs prologues courts, lus/verifies dans le fichier de l'utilisateur, et ne reproduisent pas des routines natives entieres. Les autres sections du conteneur sont conservees et verifiees apres reconstruction.
 
 ## 2. Memoire et chargement
 
-[FAIT] Le chargeur est ajoute a la fin officielle de l'image, `0x401aa140`. Il appelle la vraie copie SRAM d'origine, copie notre code a `0x42339000`, puis rend la pile. Le lieur refuse que le code/etat statique depasse `0x42340000`. La reference actuelle comporte17032 octets et finit a `0x4233d288`. Le presse-papiers occupe60 octets de cet etat. Aucun masque de sprite n'est pris.
+[FAIT] Le chargeur est ajoute a la fin officielle de l'image, `0x401aa140`. Il appelle la vraie copie SRAM d'origine, copie notre code a `0x42339000`, puis rend la pile. Le lieur refuse que le code/etat statique depasse `0x42340000`. La reference actuelle comporte17380 octets et finit a `0x4233d3e4`. Le presse-papiers occupe60 octets de cet etat. Aucun masque de sprite n'est pris.
 
 [FAIT] Les banques de definitions utilisent53696 octets alloues par l'allocateur natif ; la banque TEMP de session utilise50304 octets a sa premiere utilisation. Aucune allocation n'est faite dans le crochet audio ou les ponts IRQ. Le tampon audio est consomme synchroniquement par le site de lissage natif ; son cout et son absence de reentrance sous les autres mods restent a revalider avant integration.
 
@@ -67,7 +67,7 @@ python3 tools/gen_performance15.py --cycles firmware/model-cycles_OS1.13.syx \
 | Kit encode/decode | Champs natifs | Meme codec plus record de macros |
 | Projet change | Pas de presse-papiers Performance | Presse-papiers dedie invalide |
 
-La preuve comporte154 verifications ; les huit tests de catalogue et de garde passent. La reconstruction SysEx est relue : checksums, HMAC et sections autres que3 identiques. La reference MAIN OS est `3cc3d77d057b37445e679f1de389ac7a3fdfa5942151d9f051befd511a0d0b1f` (autonome, GCC16.2.0).
+La preuve comporte164 verifications ; les huit tests de catalogue et de garde passent. La reconstruction SysEx est relue : checksums, HMAC et sections autres que3 identiques. La reference MAIN OS est `0710c81fc22ff6c0fa36170459e7144f22f4959b44b5249eef654332955c1f9a` (autonome, GCC16.2.0).
 
 ## 5. Limites et integration a examiner
 
@@ -85,10 +85,20 @@ La preuve comporte154 verifications ; les huit tests de catalogue et de garde pa
 
 ## 7. Mise a jour du 21/10/2026 : rappel TEMP et edition en lecture
 
-[FAIT] CONFIG > MACROS propose RLD: OFF/ON. La preference de session commence OFF. ON conserve les montants courants M5/M10/M15 pendant le rechargement TEMP du motif actif ; les douze autres montants et toutes les destinations/profondeurs sont rappeles. Le record TEMP reste inchange. Le decodeur applique les trois montants avant la publication native, y compris sans cache de session ; le contexte est efface au retour. Le format schema3 reste identique. Les libelles de huit/sept caracteres evitent le depassement du panneau droit.
+[FAIT] CONFIG > MACROS propose RLD: OFF/ON. Dans la version du 21/10, la preference etait limitee a la session et commencait OFF ; la section8 decrit sa sauvegarde par projet. ON conserve les montants courants M5/M10/M15 pendant le rechargement TEMP du motif actif ; les douze autres montants et toutes les destinations/profondeurs sont rappeles. Le record TEMP reste inchange. Le decodeur applique les trois montants avant la publication native, y compris sans cache de session ; le contexte est efface au retour. Le format schema3 reste identique. Les libelles de huit/sept caracteres evitent le depassement du panneau droit.
 
 [FAIT] L'ancienne edition emettait `0x400d1f98` sans descripteur de changement, meme pour une macro sans destination active. L'ecouteur natif du projet `0x4000e25c` appelle alors `0x4005950e`, qui efface l'etat du kit audio. La nouvelle publication de metadonnees demande directement les jobs natifs de miroirs `0x4000a12e` et `0x4000a276`, puis propage la modification au parent via `0x400d0f6c`. Les vrais encodeurs de kits conservent ainsi les records sans notifier un remplacement complet du kit a l'audio. Les notifications natives de rechargement restent actives. Aucun octet de firmware ou routine native complete n'est ajoute aux sources.
 
 [FAIT en emulation] La preuve Unicorn mise a jour comporte154 verifications : les101 precedentes, preference OFF, rappel selectif puis retour OFF sans mutation TEMP, reproduction du reset par le vrai ecouteur natif, modifications des quinze montants sans reset et vrais jobs/encodeurs pour les deux miroirs. Les services de scheduling, de parent/observable et le stockage physique restent substitues. La compilation54418 de cette PR est reverifiee separement du prototype5475.
 
 [A FAIRE] Le prototype autonome v34 a fait l'objet d'un retour positif anonyme sur appareil pour les changements de macros en lecture. Ce retour ne valide pas le binaire54418 de cette PR ni ses combinaisons : statut toujours experimental, verification du mainteneur encore requise. Aucun nom, identifiant utilisateur, chemin local ou capture de cet essai n'est publie.
+
+## 8. Mise a jour du 22/10/2026 : RLD sauvegarde par projet
+
+[FAIT] Le choix RLD utilise le bloc natif de reglages de projet de512 octets, encode par `0x4005adc6` et decode par `0x4005aa8e`. Le code natif ecrit les champs jusqu'a +0x37 puis met explicitement a zero +0x38..+0x1ff. Notre record independant de16 octets occupe +0x1f0..+0x1ff, soit +0x2103f0 dans le projet complet, juste avant le marqueur de fin +0x210400. Il contient le magic PRLD et son complement, la version/valeur et son complement. Les tailles natives, la version3 des reglages et le schema3 des macros sont conserves.
+
+[FAIT] Save Project appelle ce codec natif ; le chargement et le redemarrage relisent le choix. Les valeurs manquantes/corrompues reviennent OFF. Le crochet des valeurs par defaut `0x40061676` remet OFF pour un nouveau projet. Les objets de reglages inactifs ne modifient pas le choix actif. Le rechargement TEMP et les changements de motifs n'appellent pas ces codecs. Le rejeu du crochet de valeurs par defaut s'arrete avant le branchement conditionnel natif et conserve ses indicateurs. Aucun nouvel acces direct au stockage ni allocation dans le chemin audio.
+
+[FAIT en emulation] Dix controles Unicorn supplementaires executent les vrais codecs natifs : defaut OFF, egalite des496 premiers octets avec l'origine, position/version du record, rappels ON/OFF independants, redemarrage simule, ancien projet et corruption. Total actuel164 controles, plus les huit gardes sans firmware. La reference54418 est regeneree et la reconstruction SysEx relue sans modifier les autres sections.
+
+[RETOUR APPAREIL] Le prototype autonome v35 a recu un retour positif anonyme pour cette sauvegarde par projet. Ce retour concerne la compilation5475 distribuee separement ; il ne remplace pas la validation du mainteneur pour la compilation54418 presente ici. La PR reste experimentale et absente du flasheur.

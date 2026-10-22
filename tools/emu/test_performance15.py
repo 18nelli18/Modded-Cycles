@@ -338,6 +338,33 @@ def main():
         proof.uc.mem_write(record, a)
         check(a == b and proof.call('per_record_valid', record) == 1,
               'M%d : vrais encodeurs des deux miroirs, record valide' % (m + 1))
+    # Reglages par projet : vrais codecs natifs et zone reservee de 16 octets.
+    settings, on, off, native = 0x40a700c0, 0x44720000, 0x44721000, 0x44722000
+    rig.call(0x40061676, settings)
+    check(rig.state('per_reload_keep') == 0, 'nouveau projet : RLD OFF')
+    rig.call('per_settings_encode_stock', native, settings)
+    rig.w(rig.s['per_reload_keep'], 1)
+    rig.call(0x4005adc6, on, settings)
+    check(bytes(rig.uc.mem_read(on, 496)) == bytes(rig.uc.mem_read(native, 496)),
+          'reglages natifs identiques avant le record reserve')
+    check(rig.r(on + 496) == 0x50524c44 and rig.r(on + 504) == 0x01000001,
+          'record RLD ON versionne dans les derniers16 octets')
+    rig.w(rig.s['per_reload_keep'], 0)
+    rig.call(0x4005adc6, off, settings)
+    for choice, encoded in ((1, on), (0, off), (1, on), (0, off)):
+        rig.call(0x4005aa8e, settings, encoded)
+        check(rig.state('per_reload_keep') == choice, 'projet charge : RLD %d' % choice)
+    fresh = Rig(patched, payload, manifest['symbols'])
+    fresh.uc.mem_write(on, bytes(rig.uc.mem_read(on, 512)))
+    fresh.call(0x4005aa8e, settings, on)
+    check(fresh.state('per_reload_keep') == 1, 'redemarrage simule : RLD ON relu du projet')
+    fresh.uc.mem_write(off, bytes(rig.uc.mem_read(native, 512)))
+    fresh.call(0x4005aa8e, settings, off)
+    check(fresh.state('per_reload_keep') == 0, 'ancien projet sans record : RLD OFF')
+    fresh.uc.mem_write(on + 508, bytes(4))
+    fresh.w(fresh.s['per_reload_keep'], 1)
+    fresh.call(0x4005aa8e, settings, on)
+    check(fresh.state('per_reload_keep') == 0, 'record corrompu : RLD OFF')
     print('%d verifications ; voix DSP, MMC et combinaisons non emules' % checks)
 
 

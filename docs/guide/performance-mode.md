@@ -65,15 +65,19 @@
 
 ## Selective TEMP reload / Rappel TEMP selectif
 
-**EN:** In Config, open **MACROS** and click LEVEL/DATA on **RLD: OFF / RLD: ON** to toggle. It starts OFF on each power-up. OFF restores all fifteen saved macro amounts with FUNC + PATTERN. ON keeps the current M5, M10 and M15 amounts while restoring the other twelve amounts and all saved destinations/depths. The saved TEMP snapshot is unchanged, so switching OFF and reloading again restores all original saved amounts. Pattern switching and project recall keep their existing behavior.
+**EN:** In Config, open **MACROS** and click LEVEL/DATA on **RLD: OFF / RLD: ON** to toggle. Choose the value, then use **Save Project**. Each project recalls its own saved choice on load or restart; new and older projects without this setting default OFF. OFF restores all fifteen saved macro amounts with FUNC + PATTERN. ON keeps the current M5, M10 and M15 amounts while restoring the other twelve amounts and all saved destinations/depths. The saved TEMP snapshot is unchanged, so switching OFF and reloading again restores all original saved amounts. Pattern switching leaves RLD unchanged; loading another project recalls its saved choice.
 
-**FR :** Dans Config, ouvrez **MACROS** puis cliquez LEVEL/DATA sur **RLD: OFF / RLD: ON** pour basculer. Le reglage est OFF a chaque demarrage. OFF rappelle les quinze montants sauvegardes avec FUNC + PATTERN. ON conserve les montants actuels de M5, M10 et M15 tout en restaurant les douze autres montants et toutes les destinations/profondeurs sauvegardees. Le contenu TEMP reste intact : revenir sur OFF puis recharger restaure tous les montants d'origine. Le changement de motif et le rappel du projet gardent leur comportement habituel.
+**FR :** Dans Config, ouvrez **MACROS** puis cliquez LEVEL/DATA sur **RLD: OFF / RLD: ON** pour basculer. Choisissez la valeur puis utilisez **Save Project**. Chaque projet rappelle son propre choix sauvegarde au chargement ou apres redemarrage ; les projets nouveaux ou anciens sans ce reglage commencent OFF. OFF rappelle les quinze montants sauvegardes avec FUNC + PATTERN. ON conserve les montants actuels de M5, M10 et M15 tout en restaurant les douze autres montants et toutes les destinations/profondeurs sauvegardees. Le contenu TEMP reste intact : revenir sur OFF puis recharger restaure tous les montants d'origine. Le changement de motif laisse RLD inchange ; charger un autre projet rappelle son choix sauvegarde.
 
 **EN:** During playback, changing amounts or destinations, resetting MAIN, clearing and pasting macros now update the saved macro data without restarting the audio kit state. Native save mirrors stay synchronized. BACK from MACROS returns to Config.
 
 **FR :** En lecture, les modifications de montants/destinations, la remise a zero MAIN et l'effacement/collage mettent maintenant les donnees de macros a jour sans reinitialiser l'etat du kit audio. Les miroirs natifs de sauvegarde restent synchronises. BACK depuis MACROS revient a Config.
 
 ## Preview release notes / Notes de cette preversion
+
+**EN - 2026-10-22:** RLD is now saved separately in each project. Set the toggle and Save Project to retain it through loading and restart. Existing macro records and native project fields are unchanged; older/new projects default OFF.
+
+**FR - 22/10/2026 :** RLD est maintenant sauvegarde separement dans chaque projet. Reglez le choix puis Save Project pour le conserver au chargement et apres redemarrage. Les records de macros et champs natifs du projet restent inchanges ; projets anciens/nouveaux par defaut OFF.
 
 **EN - 2026-10-21:** Added the Config selective-reload toggle with compact labels and a fix for kit-state resets when editing macros during playback. Updated source, native proofs and build reference. This remains a standalone experimental source preview, pending maintainer hardware and combination checks.
 

@@ -135,6 +135,7 @@ void per_refresh(u32 tracks){
  for(u32 t=0;t<7;t++)if(tracks&(1u<<t))per_publish(t,(const u16*)(0x800015aeu+t*66u));
 }
 #include "performance_storage_runtime.h"
+#include "performance_project_settings.h"
 
 static u32 per_ui_state_ok(void){
  u32 bad=per_mode>2||per_selected>=15||per_route>=4;

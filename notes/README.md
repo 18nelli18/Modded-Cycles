@@ -129,4 +129,4 @@ Notes de travail tirées de l'analyse de dépôts GitHub (analysés le 25/09/202
 
 | Note | Etat |
 | --- | --- |
-| [58-mode-performance.md](58-mode-performance.md) | **Quinze macros par motif, quatre destinations, montants sauvegardes et presse-papiers de macros ; rappel TEMP selectif et edition sans reset du kit audio.** Prototype source autonome MIT, non inscrit dans le flasheur. Construction officielle seule et preuve Unicorn ; combinaisons et validation materielle du mainteneur a faire. |
+| [58-mode-performance.md](58-mode-performance.md) | **Quinze macros par motif, quatre destinations, montants sauvegardes et presse-papiers de macros ; rappel TEMP selectif sauvegarde par projet et edition sans reset du kit audio.** Prototype source autonome MIT, non inscrit dans le flasheur. Construction officielle seule et preuve Unicorn ; combinaisons et validation materielle du mainteneur a faire. |

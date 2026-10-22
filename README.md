@@ -163,7 +163,7 @@ Questions, feedback and feature requests are welcome on the **[Discord](https://
 
 An experimental [source contribution](tools/machines/performance15/) provides fifteen per-pattern performance macros,
 four track/FX destinations each, saved macro amounts and whole-macro copy/clear/paste. The Config reload option
-can retain M5/M10/M15 amounts during TEMP reload; macro edits preserve the running audio kit state. This draft is deliberately
+is saved separately in each project and can retain M5/M10/M15 amounts during TEMP reload; macro edits preserve the running audio kit state. This draft is deliberately
 **not registered in the web flasher or `build.py --all`**: combination testing and maintainer hardware validation are
 pending. See the [bilingual controls guide](docs/guide/performance-mode.md), [standalone build commands](BUILD.md#prototype-source-autonome--performance15)
 and [technical note58](notes/58-mode-performance.md). The contribution is MIT-licensed with neutral collective

@@ -2,9 +2,9 @@
   "cpu": "54418",
   "stock_syx_sha256": "44fe586269631a0ca7da25a3383fc6733c314809505fc3cc52f1e0ed9800640c",
   "stock_main_sha256": "cc99d4f0175d34d1e91d046e6ec85a5e8ab58ab9edbb3c24406acd48cb99ee98",
-  "main_sha256": "3cc3d77d057b37445e679f1de389ac7a3fdfa5942151d9f051befd511a0d0b1f",
-  "payload_sha256": "cd327af7fdace80b42c67f9cc55b35a5caaecec0c5c7c7aee91fce44e0bffd3e",
+  "main_sha256": "0710c81fc22ff6c0fa36170459e7144f22f4959b44b5249eef654332955c1f9a",
+  "payload_sha256": "9582d8169bb0c1ee1a5e7281a8d7c46d072f572e3b1769504a71d980fa366b97",
   "runtime_address": "0x42339000",
-  "runtime_bytes": 17032,
+  "runtime_bytes": 17380,
   "loader_address": "0x401aa140"
 }
