@@ -41,6 +41,7 @@ import seqrig as S                  # noqa: E402
 import syntakt                      # noqa: E402
 import test_acid_combos as tac      # noqa: E402
 import test_macro_syntakt as tmx    # noqa: E402
+import test_modal as tmo            # noqa: E402
 
 BASE = G.BASE
 DTIM0 = 0xfc07000c
@@ -92,8 +93,7 @@ TRACKS = ((0, "KICK"), (7, "SDVtg"), (12, "MACRO"), (13, "ACID"), (14, "MODAL"),
 
 
 def play(fw, blocks, timer=False):
-    e = fw.engine()
-    S.ensure_map(e.uc, 0x46800000, 0x00100000)   # l'état des pistes MODAL (gen_modal.MODAL_RAM)
+    e = fw.engine()                              # test_modal.Fw : l'état des pistes MODAL en mémoire
     rig = S.Rig(e, 120, keep=fw.keep)
     for t, (m, _) in enumerate(TRACKS):
         for k, v in dict(machine=m, pitch=64, color=70, shape=40, sweep=50, contour=60, decay=70).items():
@@ -118,7 +118,7 @@ def play(fw, blocks, timer=False):
 def sound_test(stock, os_tw, me_tw, ctx, syms, blocks):
     print("2. son")
     with contextlib.redirect_stdout(io.StringIO()):
-        fa, fb = tac.Fw(stock, os_tw, ctx), tac.Fw(stock, me_tw, ctx)
+        fa, fb = tmo.Fw(stock, os_tw, ctx), tmo.Fw(stock, me_tw, ctx)     # l'EMAC exacte aussi sur MODAL
     oa, sa, ea = play(fa, blocks)
     ob, sb, eb = play(fb, blocks)
     same = np.array_equal(oa, ob) and sa == sb
