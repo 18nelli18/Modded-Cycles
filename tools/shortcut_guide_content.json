@@ -1,6 +1,6 @@
 {
-  "release": "2.23",
-  "stamp": "2026-10-22-crusher-sends-main-223",
+  "release": "2.24",
+  "stamp": "2026-10-23-fx-menu-main-224",
   "cards": [
     {
       "en": [
@@ -25,11 +25,11 @@
     {
       "en": [
         "Filters and effects",
-        "Per-track attack and resonant two-pole Polivoks-style lowpass; Wizard internal lowpass; second LFO; MACRO fine tune and Lo-Fi; Reverb/Chorus I/Chorus II and Delay/Crush1/Crush2/Both1/Both2."
+        "Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Delay/Crush combinations, Chorus 1/2 + Reverb and Vinyl + Reverb. FX menus apply only on TRACK release."
       ],
       "fr": [
         "Filtres et effets",
-        "Attaque par piste et passe-bas résonant deux pôles inspiré du Polivoks ; passe-bas interne Wizard ; second LFO ; MACRO Fine/Lo-Fi ; Reverb/Chorus I/II et Delay/Crush1/Crush2/Both1/Both2."
+        "Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK."
       ]
     },
     {
@@ -174,12 +174,12 @@
           "en": [
             "Repeat mode latch",
             "Hold TRACK + double-tap RETRIG",
-            "Release both; hold a TRIG to repeat, release it to stop. BACK exits. Copy/paste/clear blocked; plain PLAY/STOP available. Temporary, not saved."
+            "Release both; hold a TRIG to repeat, release it to stop. BACK exits. Copy/paste/clear blocked; plain PLAY/STOP available. Temporary, not saved. Stock FUNC + SETTINGS/PATTERN temp save/reload stay available; diagnostics never appear from latching."
           ],
           "fr": [
             "Verrou beat repeat",
             "Maintenir TRACK + double RETRIG",
-            "Relachez les deux ; maintenir un TRIG repete, relacher arrete. BACK quitte. Copier/coller/effacer bloques ; PLAY/STOP simples disponibles. Non sauvegarde."
+            "Relachez les deux ; maintenir un TRIG repete, relacher arrete. BACK quitte. Copier/coller/effacer bloques ; PLAY/STOP simples disponibles. Non sauvegarde. FUNC+SETTINGS/PATTERN temporaires disponibles ; aucun diagnostic depuis le verrou."
           ]
         },
         {
@@ -241,6 +241,18 @@
             "Grille : maintenir TRIG et appuyer T1–T6 ; live : accord puis pad d’harmonie",
             "Le même pad sur un pas tenu restaure son harmonie de base. Sauvegardé avec le pattern, indépendamment du LFO 2."
           ]
+        },
+        {
+          "en": [
+            "Machine browsing",
+            "MACHINES + turn DATA",
+            "Fast turns move at most one machine per accepted event, spaced by 40 ms, to avoid skipping Sample Wizard. Saved machine IDs and TINY/Shadow/MIDI order stay unchanged."
+          ],
+          "fr": [
+            "Defilement machines",
+            "MACHINES + tourner DATA",
+            "Tours rapides bornes a une machine par evenement accepte,espaces de40ms,pour ne pas sauter Wizard. IDs et ordre TINY/Shadow/MIDI conserves."
+          ]
         }
       ]
     },
@@ -252,98 +264,170 @@
       "rows": [
         {
           "en": [
-            "Chorus / Reverb mode",
-            "TRACK + REVERB SIZE",
-            "Turn right: Reverb → Chorus I → Chorus II; left to go back. Chorus I is slower/smoother; II is faster/deeper. Reverb restores normal Size/Tone. Two encoder events per change."
+            "Reverb-slot menu",
+            "Hold TRACK + REVERB SIZE",
+            "Left/up: VINYL, then VINYL+REV. Center: REVERB. Right/down: CHORUS 1, CHORUS 2, CHOR1+REV, CHOR2+REV. Browsing is silent; release TRACK to apply, BACK to cancel."
           ],
           "fr": [
-            "Mode Chorus / Reverb",
-            "TRACK + REVERB SIZE",
-            "À droite : Reverb → Chorus I → Chorus II ; à gauche pour revenir. I est lent/doux ; II plus rapide/profond. Reverb restaure Size/Tone. Deux evenements encodeur par changement."
+            "Menu slot reverb",
+            "Maintenir TRACK + REVERB SIZE",
+            "Gauche/haut : VINYL,puis VINYL+REV. Centre : REVERB. Droite/bas : CHORUS1,CHORUS2,CHOR1+REV,CHOR2+REV. Parcourir ne change pas le son ; relacher TRACK applique,BACK annule."
           ]
         },
         {
           "en": [
-            "Chorus Speed / Depth",
-            "REVERB SIZE / FUNC + REVERB SIZE",
-            "Speed / Depth, each 0–127. REVERB SEND sets the amount per track. Start at Speed 42, Depth 64 with a modest send."
+            "Delay-slot menu",
+            "Hold TRACK + DELAY TIME",
+            "Left/up: CRUSH 1, then CRUSH 2. Center: DELAY. Right/down: CRU1+DEL, CRU2+DEL. Same release-to-apply and BACK cancel."
           ],
           "fr": [
-            "Speed / Depth chorus",
-            "REVERB SIZE / FUNC + REVERB SIZE",
-            "Vitesse / profondeur 0–127. REVERB SEND dose par piste. Départ conseillé : Speed 42, Depth 64, envoi modéré."
+            "Menu slot delay",
+            "Maintenir TRACK + DELAY TIME",
+            "Gauche/haut : CRUSH1,puis CRUSH2. Centre : DELAY. Droite/bas : CRU1+DEL,CRU2+DEL. Relacher TRACK applique,BACK annule."
           ]
         },
         {
           "en": [
-            "Delay / Crush / Both mode",
-            "TRACK + DELAY TIME",
-            "Delay → Crush1 → Crush2 → Both1 → Both2; left to return. Two encoder events per change."
+            "Reverb Tone",
+            "Standard REVERB mode: FUNC + REVERB SIZE",
+            "Tone must be set in standard REVERB mode. Select REVERB, adjust Tone, then return to CHOR1+REV, CHOR2+REV or VINYL+REV; Tone carries over. SETTINGS + SIZE is not implemented in this release."
           ],
           "fr": [
-            "Mode Delay / Crush / Both",
-            "TRACK + DELAY TIME",
-            "Delay → Crush1 → Crush2 → Both1 → Both2 ; a gauche pour revenir. Deux evenements encodeur par changement."
+            "Reverb Tone",
+            "Mode REVERB standard : FUNC + REVERB SIZE",
+            "Tone se regle en mode REVERB standard. Choisissez REVERB,reglez Tone,puis revenez a CHOR1+REV,CHOR2+REV ou VINYL+REV ; Tone est conserve. SETTINGS+SIZE absent de cette version."
+          ]
+        },
+        {
+          "en": [
+            "Chorus alone",
+            "SIZE = Speed; FUNC + SIZE = Depth",
+            "Chorus I/II Speed and Depth 0-127. REVERB SEND becomes Chorus Send per track."
+          ],
+          "fr": [
+            "Chorus seul",
+            "SIZE = Speed ; FUNC + SIZE = Depth",
+            "Chorus I/II : Speed et Depth0-127. REVERB SEND devient Chorus Send par piste."
+          ]
+        },
+        {
+          "en": [
+            "Chorus + Reverb controls",
+            "SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE",
+            "Reverb Size / Chorus Speed / Chorus Depth. A held FUNC-first TRACK does not open Track Setup."
+          ],
+          "fr": [
+            "Commandes chorus + reverb",
+            "SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE",
+            "Reverb Size / Chorus Speed / Chorus Depth. Maintenir FUNC puis TRACK n’ouvre pas Track Setup."
+          ]
+        },
+        {
+          "en": [
+            "Chorus + Reverb sends",
+            "REVERB SEND / FUNC + REVERB SEND",
+            "Native Reverb Send / separate Chorus Send 0-127 per track. Either effect can be used independently."
+          ],
+          "fr": [
+            "Envois chorus + reverb",
+            "REVERB SEND / FUNC+REVERB SEND",
+            "Reverb Send natif / Chorus Send distinct0-127 par piste. Chaque effet reste independant."
+          ]
+        },
+        {
+          "en": [
+            "Vinyl alone",
+            "SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE",
+            "Crackle / Warble Amount / Warble Speed. REVERB SEND becomes Vinyl Send: 0 is dry, increasing values add effect. One Vinyl version."
+          ],
+          "fr": [
+            "Vinyl seul",
+            "SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE",
+            "Crackle / Warble Amount / Warble Speed. REVERB SEND devient Vinyl Send :0sec,effet croissant avec la valeur. Une version Vinyl."
+          ]
+        },
+        {
+          "en": [
+            "Vinyl + Reverb controls",
+            "SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE",
+            "Reverb Size / Crackle / Warble Amount. FUNC first, then TRACK + REVERB SEND adjusts Warble Speed."
+          ],
+          "fr": [
+            "Commandes Vinyl + reverb",
+            "SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE",
+            "Reverb Size / Crackle / Warble Amount. FUNC puis TRACK+REVERB SEND regle Warble Speed."
+          ]
+        },
+        {
+          "en": [
+            "Vinyl + Reverb sends",
+            "REVERB SEND / FUNC + REVERB SEND",
+            "Native Reverb Send / separate Vinyl Send per track. Vinyl Send 0 leaves normal reverb."
+          ],
+          "fr": [
+            "Envois Vinyl + reverb",
+            "REVERB SEND / FUNC+REVERB SEND",
+            "Reverb Send natif / Vinyl Send distinct par piste. Vinyl Send0 garde la reverb normale."
           ]
         },
         {
           "en": [
             "Delay Time / Feedback",
-            "In Delay mode: TIME / FUNC + TIME",
-            "Normal delay Time / Feedback. To adjust them in Both, switch to Delay, adjust, then return to Both. Delay and crusher settings remain separate."
+            "DELAY: TIME / FUNC + TIME; combined: plain TIME",
+            "Native Time remains on plain TIME in CRU1+DEL/CRU2+DEL. For Feedback there, hold FUNC first, then TRACK and turn DELAY SEND. SETTINGS + TIME is not implemented."
           ],
           "fr": [
             "Time / Feedback delay",
-            "Mode Delay : TIME / FUNC + TIME",
-            "Time / Feedback natifs. En Both, revenez à Delay pour régler puis à Both. Les réglages delay et crusher restent distincts."
+            "DELAY : TIME / FUNC+TIME ; combine : TIME simple",
+            "Time natif reste sur TIME simple en CRU1+DEL/CRU2+DEL. Feedback : maintenez FUNC puis TRACK et tournez DELAY SEND. SETTINGS+TIME absent."
           ]
         },
         {
           "en": [
             "Crusher Rate",
-            "In Crush/Both: DELAY TIME",
-            "Rate 0-127, about 750 Hz-48 kHz. Lower is rougher; higher is cleaner. Amount: DELAY SEND in Crush; FUNC + DELAY SEND in Both."
+            "CRUSH: TIME; CRU+DEL: FUNC + TIME",
+            "Rate 0-127, about 750 Hz-48 kHz. Lower is rougher; higher cleaner."
           ],
           "fr": [
             "Rate crusher",
-            "En Crush/Both : DELAY TIME",
-            "Rate0-127,environ750Hz-48kHz. Plus bas : degrade ; plus haut : propre. Dosage : DELAY SEND en Crush ; FUNC+DELAY SEND en Both."
+            "CRUSH : TIME ; CRU+DEL : FUNC+TIME",
+            "Rate0-127,environ750Hz-48kHz. Plus bas : degrade ; plus haut : propre."
           ]
         },
         {
           "en": [
             "Crusher Bits",
-            "In Crush/Both: FUNC + DELAY TIME",
-            "Bits 2–16. Lower = crunchier, including quiet signals at 2–4 bits. Silence stays silent."
+            "CRUSH: FUNC + TIME; CRU+DEL: FUNC first, then TRACK + TIME",
+            "Bits 2-16. Low values affect quiet signals too. Silence stays silent."
           ],
           "fr": [
             "Bits crusher",
-            "En Crush/Both : FUNC + DELAY TIME",
-            "Bits2–16. Plus bas = plus de grain, y compris sur les signaux faibles a2–4bits. Silence conserve."
+            "CRUSH : FUNC+TIME ; CRU+DEL : FUNC puis TRACK+TIME",
+            "Bits2-16. Les valeurs basses affectent aussi les signaux faibles. Silence conserve."
           ]
         },
         {
           "en": [
-            "Crusher / delay sends",
-            "Both: SEND / FUNC + SEND",
-            "Both1: clean direct; crushed feed into delay. Both2: direct wet/dry too, even at delay 0. SEND = delay; FUNC + SEND = crusher 0-127 per track. Crusher 0 = clean delay. Crush1/2 keep DELAY SEND."
+            "Crusher / Delay sends",
+            "Combined: DELAY SEND / FUNC + DELAY SEND",
+            "Delay Send / separate Crush Send 0-127 per track. CRU1+DEL keeps direct clean; CRU2+DEL blends direct clean/crushed even at delay 0. Crusher 0 gives clean echoes. Solo modes show Crush Send."
           ],
           "fr": [
             "Envois crusher / delay",
-            "Both : SEND / FUNC + SEND",
-            "Both1 : direct propre,entree delay ecrasee. Both2 : direct propre/ecrase aussi,meme delay0. SEND=delay ; FUNC+SEND=crusher0-127 par piste. Crusher0=delay propre. Crush1/2 gardent DELAY SEND."
+            "Combine : DELAY SEND / FUNC+DELAY SEND",
+            "Delay Send / Crush Send distinct0-127 par piste. CRU1+DEL garde le direct propre ; CRU2+DEL melange le direct meme delay0. Crusher0 donne des echos propres. Seul : Crush Send."
           ]
         },
         {
           "en": [
             "Effect settings and save",
             "Release TRACK; stop playback",
-            "Modes, Rate/Bits and per-track crusher sends save globally after playback stops. New crusher sends default 0; no p-lock/LFO destinations. Native Delay Send keeps locks. Chorus Speed/Depth use pattern Size/Tone."
+            "Global modes and effect controls, plus six separate sends per effect, save after stopping. New controls/sends have no p-lock/LFO destinations. Native delay/reverb parameters retain stock behavior."
           ],
           "fr": [
-            "Réglages d’effets et sauvegarde",
-            "Relâcher TRACK ; arrêter la lecture",
-            "Modes,Rate/Bits et envois crusher par piste sauvegardes globalement apres arret. Nouveaux envois0 par defaut,sans p-lock/LFO. Delay Send natif garde les locks. Speed/Depth utilisent Size/Tone du pattern."
+            "Reglages FX et sauvegarde",
+            "Relacher TRACK ; arreter la lecture",
+            "Modes et controles globaux,puis six envois par effet,sauvegardes apres arret. Nouveaux controles/envois sans p-lock/LFO. Parametres delay/reverb natifs conserves."
           ]
         },
         {
@@ -517,6 +601,18 @@
             "Maintenir FUNC + SETTINGS",
             "Sauvegarde permanente du projet par l’action native."
           ]
+        },
+        {
+          "en": [
+            "Temporary save / reload",
+            "Short FUNC + SETTINGS / FUNC + PATTERN",
+            "Stock temporary copy save / reload, including while retrig mode is latched."
+          ],
+          "fr": [
+            "Copie temporaire / rappel",
+            "Bref FUNC+SETTINGS / FUNC+PATTERN",
+            "Copie temporaire native / rappel,y compris pendant le verrou retrig."
+          ]
         }
       ]
     },
@@ -658,12 +754,12 @@
           "en": [
             "DX",
             "Off / On Default: Off",
-            "Enable the A/P/O/N popup after beat repeat: average and peak audio load, overloaded blocks and newly cut voices. Counters reset after the popup. Off disables the popup and counters. Saved with the other Mod Setup preferences."
+            "Optional CPU diagnostic. Physically hold TRACK + RETRIG for at least 350 ms and release. Latching retrig never triggers the popup. Off by default."
           ],
           "fr": [
             "DX",
             "Off / On ; défaut Off",
-            "On : diagnostic A/P/O/N après relâchement de TRACK + RETRIG : moyenne, pic, blocs surchargés, nouvelles voix coupées. Compteurs remis à zéro après affichage. Préférence sauvegardée."
+            "Diagnostic CPU optionnel. Maintenez physiquement TRACK+RETRIG au moins350ms puis relachez. Le verrou retrig ne declenche jamais le popup. Off par defaut."
           ]
         },
         {

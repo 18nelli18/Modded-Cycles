@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.23 - 22 October 2026
+Supermodel 2.24 - 23 October 2026
 
-Main 2.23. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.24. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
@@ -10,7 +10,7 @@ Main 2.23. Hold the first button while pressing the next button or turning the n
 
 **Performance and sequencing:** Arpeggiator, held-note octave 0, ChordKeys and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching mute and solo.
 
-**Filters and effects:** Per-track attack and resonant two-pole Polivoks-style lowpass; Wizard internal lowpass; second LFO; MACRO fine tune and Lo-Fi; Reverb/Chorus I/Chorus II and Delay/Crush1/Crush2/Both1/Both2.
+**Filters and effects:** Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Delay/Crush combinations, Chorus 1/2 + Reverb and Vinyl + Reverb. FX menus apply only on TRACK release.
 
 **Routing and workflow:** MIDI Out with nine CC knobs, locks and two MIDI LFOs; MIDI OUT/THRU toggle; USB stereo or six tracks; permanent quick save, saved Mod Setup and optional DX diagnostics.
 
@@ -28,25 +28,32 @@ Main 2.23. Hold the first button while pressing the next button or turning the n
 | SCRAMBLE | Quick tap SETTINGS + TRACK | On release, randomize the selected track’s checked parameters. Choose Pitch, Decay, Color, Shape, Sweep and Contour in Mod Setup > Scramble. The original four default On. Marked steps follow the same checklist without changing the base sound. |
 | Control All setup | TRACK + TRIG 1–6 | Include or exclude audio tracks from Control All changes. |
 | Audio beat repeat | Hold TRACK + RETRIG , then hold a TRIG 1–16 | The held step selects a repeat division for included audio tracks. Release a modifier or division pad to stop. |
-| Repeat mode latch | Hold TRACK + double-tap RETRIG | Release both; hold a TRIG to repeat, release it to stop. BACK exits. Copy/paste/clear blocked; plain PLAY/STOP available. Temporary, not saved. |
+| Repeat mode latch | Hold TRACK + double-tap RETRIG | Release both; hold a TRIG to repeat, release it to stop. BACK exits. Copy/paste/clear blocked; plain PLAY/STOP available. Temporary, not saved. Stock FUNC + SETTINGS/PATTERN temp save/reload stay available; diagnostics never appear from latching. |
 | Control All filter | Hold TRACK + MACHINES ; turn SWEEP / CONTOUR | Adjust cutoff/resonance across included audio tracks. Without TRACK, adjust the selected track. |
 | Synth Attack | MACHINES + DECAY | Adjust the added attack control on supported machines. |
 | Arpeggiator / ChordKeys settings | FUNC + RETRIG | Open the settings for the active Arpeggiator or ChordKeys feature. Arpeggiator octave 0 cycles only through held notes. |
 | ChordKeys | Select the Chord machine, then play TRIG 1–16 | Play scale-based chord voicings from the step keys. To leave a ChordKeys track you must use TRACK + Track Pad. |
 | ChordKeys harmony locks | Grid record: hold a step TRIG and press T1-T6 . Live record: play a chord and use the harmony pads. | Record the chosen harmony on the step. Press the same harmony pad again on a held grid step to restore its base harmony. Harmony locks save with the pattern independently of LFO 2. |
+| Machine browsing | MACHINES + turn DATA | Fast turns move at most one machine per accepted event, spaced by 40 ms, to avoid skipping Sample Wizard. Saved machine IDs and TINY/Shadow/MIDI order stay unchanged. |
 
 ## Effects, Elder and Shadow
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Chorus / Reverb mode | TRACK + REVERB SIZE | Turn right: Reverb → Chorus I → Chorus II; left to go back. Chorus I is slower/smoother; II is faster/deeper. Reverb restores normal Size/Tone. Two encoder events per change. |
-| Chorus Speed / Depth | REVERB SIZE / FUNC + REVERB SIZE | Speed / Depth, each 0–127. REVERB SEND sets the amount per track. Start at Speed 42, Depth 64 with a modest send. |
-| Delay / Crush / Both mode | TRACK + DELAY TIME | Delay → Crush1 → Crush2 → Both1 → Both2; left to return. Two encoder events per change. |
-| Delay Time / Feedback | In Delay mode: TIME / FUNC + TIME | Normal delay Time / Feedback. To adjust them in Both, switch to Delay, adjust, then return to Both. Delay and crusher settings remain separate. |
-| Crusher Rate | In Crush/Both: DELAY TIME | Rate 0-127, about 750 Hz-48 kHz. Lower is rougher; higher is cleaner. Amount: DELAY SEND in Crush; FUNC + DELAY SEND in Both. |
-| Crusher Bits | In Crush/Both: FUNC + DELAY TIME | Bits 2–16. Lower = crunchier, including quiet signals at 2–4 bits. Silence stays silent. |
-| Crusher / delay sends | Both: SEND / FUNC + SEND | Both1: clean direct; crushed feed into delay. Both2: direct wet/dry too, even at delay 0. SEND = delay; FUNC + SEND = crusher 0-127 per track. Crusher 0 = clean delay. Crush1/2 keep DELAY SEND. |
-| Effect settings and save | Release TRACK; stop playback | Modes, Rate/Bits and per-track crusher sends save globally after playback stops. New crusher sends default 0; no p-lock/LFO destinations. Native Delay Send keeps locks. Chorus Speed/Depth use pattern Size/Tone. |
+| Reverb-slot menu | Hold TRACK + REVERB SIZE | Left/up: VINYL, then VINYL+REV. Center: REVERB. Right/down: CHORUS 1, CHORUS 2, CHOR1+REV, CHOR2+REV. Browsing is silent; release TRACK to apply, BACK to cancel. |
+| Delay-slot menu | Hold TRACK + DELAY TIME | Left/up: CRUSH 1, then CRUSH 2. Center: DELAY. Right/down: CRU1+DEL, CRU2+DEL. Same release-to-apply and BACK cancel. |
+| Reverb Tone | Standard REVERB mode: FUNC + REVERB SIZE | Tone must be set in standard REVERB mode. Select REVERB, adjust Tone, then return to CHOR1+REV, CHOR2+REV or VINYL+REV; Tone carries over. SETTINGS + SIZE is not implemented in this release. |
+| Chorus alone | SIZE = Speed; FUNC + SIZE = Depth | Chorus I/II Speed and Depth 0-127. REVERB SEND becomes Chorus Send per track. |
+| Chorus + Reverb controls | SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Reverb Size / Chorus Speed / Chorus Depth. A held FUNC-first TRACK does not open Track Setup. |
+| Chorus + Reverb sends | REVERB SEND / FUNC + REVERB SEND | Native Reverb Send / separate Chorus Send 0-127 per track. Either effect can be used independently. |
+| Vinyl alone | SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Crackle / Warble Amount / Warble Speed. REVERB SEND becomes Vinyl Send: 0 is dry, increasing values add effect. One Vinyl version. |
+| Vinyl + Reverb controls | SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Reverb Size / Crackle / Warble Amount. FUNC first, then TRACK + REVERB SEND adjusts Warble Speed. |
+| Vinyl + Reverb sends | REVERB SEND / FUNC + REVERB SEND | Native Reverb Send / separate Vinyl Send per track. Vinyl Send 0 leaves normal reverb. |
+| Delay Time / Feedback | DELAY: TIME / FUNC + TIME; combined: plain TIME | Native Time remains on plain TIME in CRU1+DEL/CRU2+DEL. For Feedback there, hold FUNC first, then TRACK and turn DELAY SEND. SETTINGS + TIME is not implemented. |
+| Crusher Rate | CRUSH: TIME; CRU+DEL: FUNC + TIME | Rate 0-127, about 750 Hz-48 kHz. Lower is rougher; higher cleaner. |
+| Crusher Bits | CRUSH: FUNC + TIME; CRU+DEL: FUNC first, then TRACK + TIME | Bits 2-16. Low values affect quiet signals too. Silence stays silent. |
+| Crusher / Delay sends | Combined: DELAY SEND / FUNC + DELAY SEND | Delay Send / separate Crush Send 0-127 per track. CRU1+DEL keeps direct clean; CRU2+DEL blends direct clean/crushed even at delay 0. Crusher 0 gives clean echoes. Solo modes show Crush Send. |
+| Effect settings and save | Release TRACK; stop playback | Global modes and effect controls, plus six separate sends per effect, save after stopping. New controls/sends have no p-lock/LFO destinations. Native delay/reverb parameters retain stock behavior. |
 | Elder controls | Select Elder in MACHINES | COLOR = Wave; SHAPE = Warp; SWEEP = Noise; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate and Fine remain available. Original synth inspired by Junior by Fors. |
 | Saved Retrosyn sounds | Elder replaces ChpHzrd / Retrosyn | The same machine slot now plays Elder, so previous Retrosyn sounds change timbre. The other engines and previous CPU fixes are retained. Feral is by Glycinate. |
 | TINY controls | Select TINY in MACHINES | COLOR: Tone; SHAPE: Model0–51; SWEEP: Mod; CONTOUR: Excite. All52 original models; Feral and every other engine remain. |
@@ -70,6 +77,7 @@ Main 2.23. Hold the first button while pressing the next button or turning the n
 | Playback modes | SETTINGS + MACHINES | All seven modes: One-Shot, Loop, Slice, Granular, Stretch, Pluck and Wavetable. SETTINGS + PUNCH opens options for the current mode. Wizard dial values stay separate from synth values during the current MACHINES session; leaving and returning restores them. |
 | Slice editor | FUNC + step key; FUNC + click DATA | Play upper slices; remove a slice marker with the DATA click. Marker knobs can snap to zero crossings. |
 | Permanent quick save | Hold FUNC + SETTINGS | Save the project permanently using the stock quick-save action. |
+| Temporary save / reload | Short FUNC + SETTINGS / FUNC + PATTERN | Stock temporary copy save / reload, including while retrig mode is latched. |
 
 ## MIDI Out machine
 
@@ -92,7 +100,7 @@ Hold SETTINGS + TRACK until Mod Setup opens, then release both buttons. A short 
 | Num | Off / On Default: Off | Off keeps the original volume and pan display. On shows numeric volume and pan values when you adjust those controls. |
 | Mute | Stk / LTC Default: Stk | Stk keeps the original momentary mute controls. With LTC selected, hold TRACK and tap FUNC to stay in mute mode, then tap track pads to mute or unmute. Tap FUNC again to leave. In latched mute mode, hold FUNC and press a track pad to solo it; press the soloed pad again, or leave mute mode, to restore the previous mutes. |
 | Delay | Stk / Div Default: Stk | Stk preserves the original Delay Time display and timing. Div displays musical divisions, including dotted and triplet values, and corrects the matching timing positions to exact divisions of the tempo. Other Delay Time positions retain their original timing; this does not quantize every knob position. Applies while using Delay mode. |
-| DX | Off / On Default: Off | Enable the A/P/O/N popup after beat repeat: average and peak audio load, overloaded blocks and newly cut voices. Counters reset after the popup. Off disables the popup and counters. Saved with the other Mod Setup preferences. |
+| DX | Off / On Default: Off | Optional CPU diagnostic. Physically hold TRACK + RETRIG for at least 350 ms and release. Latching retrig never triggers the popup. Off by default. |
 | SCRM | DATA opens; turn and press DATA; BACK returns | Six checkboxes per track: Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay default Off; the original four default On. Choices persist across projects and power cycles; saving waits until playback stops. Wizard allows Pitch/Decay; its sample/mode controls stay excluded. |
 
 These are global preferences. BACK closes Mod Setup and saves its global preferences; each track’s Scramble checklist saves when you return from its submenu. If playback is running, the save waits until it stops. Stop playback and allow saving to finish before powering off. Saved choices return after reboot. Effect modes and crusher settings also save after playback stops.
