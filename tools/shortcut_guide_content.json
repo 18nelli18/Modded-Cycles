@@ -1,6 +1,6 @@
 {
-  "release": "2.28",
-  "stamp": "2026-10-23-scramble-decay-main-228",
+  "release": "2.29",
+  "stamp": "2026-10-23-ps1-main-229",
   "cards": [
     {
       "en": [
@@ -25,11 +25,11 @@
     {
       "en": [
         "Filters and effects",
-        "Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Delay/Crush combinations, Chorus 1/2 + Reverb and Vinyl + Reverb. FX menus apply only on TRACK release. Opaque FX overlay; SETTINGS + Size/Time adjusts Tone/Feedback in combined modes. Vinyl dust continues through musical gaps. Includes stereo Ping Pong, full-octave Shimmer 1 and the earlier mixed/diffuse Shimmer 2."
+        "Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Delay/Crush combinations, Chorus 1/2 + Reverb and Vinyl + Reverb. FX menus apply only on TRACK release. Opaque FX overlay; SETTINGS + Size/Time adjusts Tone/Feedback in combined modes. Vinyl dust continues through musical gaps. Includes stereo Ping Pong, full-octave Shimmer 1 and the earlier mixed/diffuse Shimmer 2. PS1 adds a darker, grainier stereo reverb."
       ],
       "fr": [
         "Filtres et effets",
-        "Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK. Fenetres FX opaques ; SETTINGS+Size/Time regle Tone/Feedback en modes combines. Poussiere Vinyl continue dans les pauses. Ajoute Ping Pong stereo,Shimmer 1 entierement transpose et Shimmer 2 mixte/diffuse precedent."
+        "Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK. Fenetres FX opaques ; SETTINGS+Size/Time regle Tone/Feedback en modes combines. Poussiere Vinyl continue dans les pauses. Ajoute Ping Pong stereo,Shimmer 1 entierement transpose et Shimmer 2 mixte/diffuse precedent. PS1 ajoute une reverb stereo plus sombre et granuleuse."
       ]
     },
     {
@@ -254,12 +254,12 @@
           "en": [
             "Reverb-slot menu",
             "Hold TRACK + REVERB SIZE",
-            "Opaque popup over the normal screen; three scrolling choices. Left/up: VINYL, then VINYL+REV. Center: REVERB. Right/down: CHORUS 1, CHORUS 2, CHOR1+REV, CHOR2+REV. Browse without changing sound; release TRACK to apply, BACK to cancel."
+            "Opaque popup over the normal screen; three scrolling choices. Left/up: VINYL, VINYL+REV, then PS1. Center: REVERB. Right/down: CHORUS 1, CHORUS 2, CHOR1+REV, CHOR2+REV. Browse without changing sound; release TRACK to apply, BACK to cancel."
           ],
           "fr": [
             "Menu slot reverb",
             "Maintenir TRACK + REVERB SIZE",
-            "Fenetre opaque par-dessus l’ecran normal ; trois choix defilants. Gauche/haut : VINYL,puis VINYL+REV. Centre : REVERB. Droite/bas : CHORUS1,CHORUS2,CHOR1+REV,CHOR2+REV. Parcourir ne change pas le son ; relacher TRACK applique,BACK annule."
+            "Fenetre opaque sur l ecran normal,trois choix. Gauche/haut : VINYL,VINYL+REV,PS1. Centre : REVERB. Droite/bas : CHORUS1,CHORUS2,CHOR1+REV,CHOR2+REV. Son inchange pendant le parcours ; relacher TRACK applique,BACK annule."
           ]
         },
         {
@@ -284,6 +284,18 @@
             "Reverb Tone",
             "REVERB : FUNC+SIZE ; combine : SETTINGS+SIZE",
             "En CHOR1+REV,CHOR2+REV et VINYL+REV, maintenez SETTINGS et tournez REVERB SIZE pour le Tone natif sans quitter le mode. Relacher SETTINGS revient a Reverb Size. Le mode REVERB standard garde FUNC+SIZE."
+          ]
+        },
+        {
+          "en": [
+            "PS1 reverb",
+            "REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE",
+            "PS1 Send per track / Decay / Tone. PlayStation-inspired stereo tail with a darker, grainier character. Replaces standard reverb; no combined variant."
+          ],
+          "fr": [
+            "Reverb PS1",
+            "REVERB SEND / SIZE / FUNC+SIZE ou SETTINGS+SIZE",
+            "PS1 Send par piste / Decay / Tone. Queue stereo inspiree de la PlayStation,plus sombre et granuleuse. Remplace la reverb standard ; pas de variante combinee."
           ]
         },
         {

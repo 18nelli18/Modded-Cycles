@@ -224,3 +224,8 @@ AveyCole reports "64 seemed to work for me" and requests publication with update
 ## AveyCole main2.28 promotion (2026-10-23)
 
 AveyCole tested v66 on Tone (direct and marked-step SCRAMBLE) and reports "Okay, that worked, publish 66". Publish the exact shared-filter v66 SHA256 `f94a8f52b1832099e30df16fd48361eb2934a4fe08c7e2b56f864cae5132441a` (MAIN `e1cdefe371cf938d4d4aa2c84080a50dafc3514cccc3a476490f2d396be11a8e`). Decay is slot18/CC80; use its native common descriptor for inverse validation. v65 mistakenly targeted Punch slot15/CC66 and must not be promoted. Preserve all v64 effects and prior private files. Update bilingual guides/PDF and only the established fixed-main image.
+
+
+## AveyCole main 2.29 promotion (2026-10-23)
+
+AveyCole requests "push v70" after praising PS1 reverb in v69. Publish exact shared-filter v70, SHA256 `21d21e29611a02f426c7e6f61066c771d8ed6e6c43b2695994f9b8961ed9d8b0`, MAIN `65d75a6fb846519ff3a01f9abd8c39a1a6145a14f9d88497684744467ed2c04c`. v70 builds on v66, adds PS1 reverb and excludes CLOUD. Preserve private CLOUD comparisons and the unresolved Density scrolling report. PS1 DSP is identical in v69/v70; do not claim a separate full-composition v70 hardware test. Update EN/FR shortcuts and PDF. Only the established tracked fixed-main .syx delivery path is authorized.

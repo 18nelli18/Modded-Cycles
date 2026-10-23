@@ -246,3 +246,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [155 - Ping Pong et deux Shimmer](155-ping-pong-deux-shimmer.md) | Principal2.27 : exact v64 signale fonctionnel/approuve ; Ping Pong stereo,Shimmer1 entierement octave,Shimmer2 v62 conserve ; guides EN/FR/PDF actualises. |
 
 | [156 - SCRAMBLE : vrai Decay](156-scramble-vrai-decay.md) | Principal2.28 : v66 teste Tone et approuve ; mapping natif Decay corrige en direct/pas marques,Punch conserve,v65 erronne non publie ; guides/PDF actualises. |
+
+| [153 - Reverb PS1 et publication](153-reverb-ps1-publication.md) | Principal2.29 : exact v70 approuve, PS1 inspiree16bits/24kHz, CLOUD exclu ; guides EN/FR/PDF actualises, comparaison privee preservee. |

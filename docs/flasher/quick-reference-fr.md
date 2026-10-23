@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.28 - 23 octobre2026
+Supermodel2.29 - 23 octobre2026
 
-Principal2.28. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
+Principal2.29. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
 ## Fonctions incluses
 
@@ -10,7 +10,7 @@ Principal2.28. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 **Performance et séquenceur:** Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute verrouillé et solo.
 
-**Filtres et effets:** Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK. Fenetres FX opaques ; SETTINGS+Size/Time regle Tone/Feedback en modes combines. Poussiere Vinyl continue dans les pauses. Ajoute Ping Pong stereo,Shimmer 1 entierement transpose et Shimmer 2 mixte/diffuse precedent.
+**Filtres et effets:** Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK. Fenetres FX opaques ; SETTINGS+Size/Time regle Tone/Feedback en modes combines. Poussiere Vinyl continue dans les pauses. Ajoute Ping Pong stereo,Shimmer 1 entierement transpose et Shimmer 2 mixte/diffuse precedent. PS1 ajoute une reverb stereo plus sombre et granuleuse.
 
 **Routage et travail:** MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif.
 
@@ -39,9 +39,10 @@ Principal2.28. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Menu slot reverb | Maintenir TRACK + REVERB SIZE | Fenetre opaque par-dessus l’ecran normal ; trois choix defilants. Gauche/haut : VINYL,puis VINYL+REV. Centre : REVERB. Droite/bas : CHORUS1,CHORUS2,CHOR1+REV,CHOR2+REV. Parcourir ne change pas le son ; relacher TRACK applique,BACK annule. |
+| Menu slot reverb | Maintenir TRACK + REVERB SIZE | Fenetre opaque sur l ecran normal,trois choix. Gauche/haut : VINYL,VINYL+REV,PS1. Centre : REVERB. Droite/bas : CHORUS1,CHORUS2,CHOR1+REV,CHOR2+REV. Son inchange pendant le parcours ; relacher TRACK applique,BACK annule. |
 | Menu slot delay | Maintenir TRACK + DELAY TIME | Gauche/haut depuis DELAY : CRUSH1,CRUSH2,PING PONG,SHIMMER 1,SHIMMER 2. Droite/bas : CRU1+DEL,CRU2+DEL. Fenetre opaque ; son inchange avant relachement TRACK. BACK annule. |
 | Reverb Tone | REVERB : FUNC+SIZE ; combine : SETTINGS+SIZE | En CHOR1+REV,CHOR2+REV et VINYL+REV, maintenez SETTINGS et tournez REVERB SIZE pour le Tone natif sans quitter le mode. Relacher SETTINGS revient a Reverb Size. Le mode REVERB standard garde FUNC+SIZE. |
+| Reverb PS1 | REVERB SEND / SIZE / FUNC+SIZE ou SETTINGS+SIZE | PS1 Send par piste / Decay / Tone. Queue stereo inspiree de la PlayStation,plus sombre et granuleuse. Remplace la reverb standard ; pas de variante combinee. |
 | Chorus seul | SIZE = Speed ; FUNC + SIZE = Depth | Chorus I/II : Speed et Depth0-127. REVERB SEND devient Chorus Send par piste. |
 | Commandes chorus + reverb | SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE | Reverb Size / Chorus Speed / Chorus Depth. Maintenir FUNC puis TRACK n’ouvre pas Track Setup. |
 | Envois chorus + reverb | REVERB SEND / FUNC+REVERB SEND | Reverb Send natif / Chorus Send distinct0-127 par piste. Chaque effet reste independant. |
