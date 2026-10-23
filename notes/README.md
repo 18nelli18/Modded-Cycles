@@ -244,3 +244,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [154 - Poussiere Vinyl independante](154-poussiere-vinyl-independante.md) | Principal2.26 : pops/clics independants du signal, pauses audibles, sends/volume/pan/mute respectes ; grain juge meilleur par AveyCole, preuves natives. |
 
 | [155 - Ping Pong et deux Shimmer](155-ping-pong-deux-shimmer.md) | Principal2.27 : exact v64 signale fonctionnel/approuve ; Ping Pong stereo,Shimmer1 entierement octave,Shimmer2 v62 conserve ; guides EN/FR/PDF actualises. |
+
+| [156 - SCRAMBLE : vrai Decay](156-scramble-vrai-decay.md) | Principal2.28 : v66 teste Tone et approuve ; mapping natif Decay corrige en direct/pas marques,Punch conserve,v65 erronne non publie ; guides/PDF actualises. |

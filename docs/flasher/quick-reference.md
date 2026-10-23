@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.27 - 23 October 2026
+Supermodel 2.28 - 23 October 2026
 
-Main 2.27. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.28. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
@@ -25,7 +25,7 @@ Main 2.27. Hold the first button while pressing the next button or turning the n
 | Trig preview | Hold TRIG + PAGE | Audition the selected step with its note and locks while stopped or paused. |
 | Slide trig | SETTINGS + TRIG | Toggle a parameter slide on the step. |
 | Sequence Genie | SETTINGS + PAGE | Open the generator for the selected track. Select with DATA; choose Generate or Queue and set Loop/Page timing. |
-| SCRAMBLE | Quick tap SETTINGS + TRACK | On release, randomize the selected track’s checked parameters. Choose Pitch, Decay, Color, Shape, Sweep and Contour in Mod Setup > Scramble. The original four default On. Marked steps follow the same checklist without changing the base sound. |
+| SCRAMBLE | Quick tap SETTINGS + TRACK | On release, randomize the checked Pitch, Decay, Color, Shape, Sweep and Contour parameters for this track. Choose them in Mod Setup > SCRM. Decay now works; Punch stays unchanged. The original four default On. Marked steps use the same checklist without changing the base sound. |
 | Control All setup | TRACK + TRIG 1–6 | Include or exclude audio tracks from Control All changes. |
 | Audio beat repeat | Hold TRACK + RETRIG , then hold a TRIG 1–16 | The held step selects a repeat division for included audio tracks. Release a modifier or division pad to stop. |
 | Repeat mode latch | Hold TRACK + double-tap RETRIG | Release both; hold a TRIG to repeat, release it to stop. BACK exits. Copy/paste/clear blocked; plain PLAY/STOP available. Temporary, not saved. Stock FUNC + SETTINGS/PATTERN temp save/reload stay available; diagnostics never appear from latching. |

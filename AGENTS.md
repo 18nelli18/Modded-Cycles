@@ -220,3 +220,7 @@ AveyCole explicitly requested the revised Vinyl crackle be finished and pushed t
 ## AveyCole main2.27 promotion (2026-10-23)
 
 AveyCole reports "64 seemed to work for me" and requests publication with updated shortcuts and a printable overview. Promote exact shared-filter v64 SHA256 `77f533e3d6856ab204ff121ddd9c2562d90b378cfa59d24e7befa592ccf6357a` (MAIN `2192a9ab2deba19d3362622f1f9dca5b545dda4c690b394096e737c2bf55c2a6`). Delay IDs5/6/7 are Ping Pong/Shimmer1/Shimmer2. Shimmer1 is the filtered/aligned full-octave return ; Shimmer2 preserves v62 mixed/diffused DSP. Keep prior private files. Publish only the established fixed-main image with bilingual guides/PDF. No further firmware edits are included in this approval.
+
+## AveyCole main2.28 promotion (2026-10-23)
+
+AveyCole tested v66 on Tone (direct and marked-step SCRAMBLE) and reports "Okay, that worked, publish 66". Publish the exact shared-filter v66 SHA256 `f94a8f52b1832099e30df16fd48361eb2934a4fe08c7e2b56f864cae5132441a` (MAIN `e1cdefe371cf938d4d4aa2c84080a50dafc3514cccc3a476490f2d396be11a8e`). Decay is slot18/CC80; use its native common descriptor for inverse validation. v65 mistakenly targeted Punch slot15/CC66 and must not be promoted. Preserve all v64 effects and prior private files. Update bilingual guides/PDF and only the established fixed-main image.

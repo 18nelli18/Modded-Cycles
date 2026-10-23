@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.27 - 23 octobre2026
+Supermodel2.28 - 23 octobre2026
 
-Principal2.27. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
+Principal2.28. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
 ## Fonctions incluses
 
@@ -25,7 +25,7 @@ Principal2.27. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Préécoute de pas | Maintenir TRIG + PAGE | Écoutez le pas et ses locks à l’arrêt ou en pause. |
 | Slide | SETTINGS + TRIG | Active ou désactive le glissement de paramètres sur le pas. |
 | Sequence Genie | SETTINGS + PAGE | Générateur de la piste sélectionnée. DATA choisit ; Generate ou Queue, avec frontière Loop/Page. |
-| SCRAMBLE | Appui bref SETTINGS + TRACK | Au relachement, tirez les parametres coches de la piste. Choix dans Mod Setup > Scramble : Pitch,Decay,Color,Shape,Sweep,Contour. Quatre commandes originales actives par defaut. Les pas marques suivent la meme liste, son de base intact. |
+| SCRAMBLE | Appui bref SETTINGS + TRACK | Au relachement,tirez les parametres coches de cette piste : Pitch,Decay,Color,Shape,Sweep,Contour. Choix dans Mod Setup > SCRM. Decay fonctionne ; Punch reste inchange. Quatre commandes originales actives par defaut. Pas marques : meme liste,son de base intact. |
 | Configuration Control All | TRACK + TRIG 1–6 | Inclut ou exclut les pistes audio des changements collectifs. |
 | Beat repeat audio | Maintenir TRACK + RETRIG, puis un TRIG 1–16 | Le pas choisit la division des pistes incluses. Relâchez un modificateur ou le pas pour arrêter. |
 | Verrou beat repeat | Maintenir TRACK + double RETRIG | Relachez les deux ; maintenir un TRIG repete, relacher arrete. BACK quitte. Copier/coller/effacer bloques ; PLAY/STOP simples disponibles. Non sauvegarde. FUNC+SETTINGS/PATTERN temporaires disponibles ; aucun diagnostic depuis le verrou. |
