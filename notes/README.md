@@ -232,3 +232,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [148 — SCRAMBLE par piste](148-scramble-par-piste.md) | v46/v46nf : sixcases par piste,DATA/BACK,stockage UI,preuves live/locks ; principal2.20 exact approuve. |
 
 | [149 — Valeurs machines et Wizard](149-valeurs-machines-et-wizard.md) | v48 retient six commandes, isole les dials Wizard/synth dans MACHINES ; AveyCole confirme et approuve main2.21 exact. |
+
+| [150 — Shadow et icones](150-shadow-et-icones.md) | v49 ajoute Shadow19 sans retirer de moteur ; v50 sixicones, audio exact ; AveyCole approuve main2.22 exact. |

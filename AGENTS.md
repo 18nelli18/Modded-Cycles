@@ -195,3 +195,7 @@ AveyCole reports “v46 worked, make that the main push”. Promote the exact sh
 ## AveyCole main2.21 promotion and private delivery (2026-10-22)
 
 AveyCole tested the exact shared-filter v48 and reports “this worked, push to main”. Promote SHA256 `ec6717091c7e016ead30d5d5b3e1be7a0d72c936b5c833913594830373fd92d6`, with parameter retention and separate per-track Wizard/synth dial banks during the current MACHINES session. Stock-style menu lifetime was explicitly accepted; do not claim per-engine preset banks across menu sessions. Main includes all prior v46 features. Future private tests need both direct `.syx` files; the user no longer needs private flasher pages.
+
+## AveyCole main2.22 promotion (2026-10-22)
+
+AveyCole explicitly approved the shared-filter v50 at `output/firmware/validation/all-features-polivoks-cpu-trim-test-v50.syx` with “push this to main”. SHA256 `78a0a39695cc7bf9824cd71f4f2ac0874f327046240b94028daa51db50a4a39f`. Promote exactly this image: Shadow19 after TINY18 before MIDI17, original pulsar/noise design inspired by Opal Dust by Fors, and six icons for Shadow/WAVE/TINY/MIDIOut/ACID/Feral. Preserve existing IDs, Wizard bank isolation and all prior features. Reports of icons looking great in v49 are UI feedback, not a claimed exhaustive hardware audio test. Subsequent remaining-icon and independent crusher-send requests are private follow-ups, never folded into these approved bytes.
