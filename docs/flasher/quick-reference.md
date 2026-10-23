@@ -1,12 +1,12 @@
 # Feature and shortcut guide
 
-Supermodel 2.18 - 22 October 2026
+Supermodel 2.19 - 22 October 2026
 
-Main 2.18. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.19. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
-**Machines and sound:** Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder and MIDI Out. Elder is an original synth inspired by Junior by Fors.
+**Machines and sound:** Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY and MIDI Out. Elder is an original synth inspired by Junior by Fors.
 
 **Performance and sequencing:** Arpeggiator, held-note octave 0, ChordKeys and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching mute and solo.
 
@@ -49,6 +49,7 @@ Main 2.18. Hold the first button while pressing the next button or turning the n
 | Effect settings and save | Release TRACK; stop playback | Global modes and Rate/Bits save after playback stops. Rate/Bits have no p-lock destinations; sends keep locks. Chorus Speed/Depth reuse pattern Size/Tone. Both2 adds processing. |
 | Elder controls | Select Elder in MACHINES | COLOR = Wave; SHAPE = Warp; SWEEP = Noise; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate and Fine remain available. Original synth inspired by Junior by Fors. |
 | Saved Retrosyn sounds | Elder replaces ChpHzrd / Retrosyn | The same machine slot now plays Elder, so previous Retrosyn sounds change timbre. The other engines and previous CPU fixes are retained. Feral is by Glycinate. |
+| TINY controls | Select TINY in MACHINES | COLOR: Tone; SHAPE: Model0–51; SWEEP: Mod; CONTOUR: Excite. All52 original models; Feral and every other engine remain. |
 
 ## LFO and MACRO controls
 

@@ -1,12 +1,12 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.18 - 22 octobre2026
+Supermodel2.19 - 22 octobre2026
 
-Principal2.18. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
+Principal2.19. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
 ## Fonctions incluses
 
-**Machines et son:** Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder et MIDI Out. Elder est inspiré de Junior de Fors.
+**Machines et son:** Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY et MIDI Out. Elder est inspiré de Junior de Fors.
 
 **Performance et séquenceur:** Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute verrouillé et solo.
 
@@ -49,6 +49,7 @@ Principal2.18. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Réglages d’effets et sauvegarde | Relâcher TRACK ; arrêter la lecture | Modes et Rate/Bits globaux sauvegardes apres arret. Rate/Bits sans p-locks ; envois avec locks. Speed/Depth reutilisent Size/Tone du pattern. Both2 coute plus de calcul. |
 | Commandes Elder | Choisir Elder dans MACHINES | COLOR = Wave ; SHAPE = Warp ; SWEEP = Noise ; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate et Fine conservés. Synthé original inspiré de Junior de Fors. |
 | Anciens sons Retrosyn | Elder remplace ChpHzrd / Retrosyn | Le même emplacement joue Elder : le timbre des anciens sons Retrosyn change. Autres moteurs et correctifs CPU conservés. Feral est de Glycinate. |
+| Commandes TINY | Choisir TINY dans MACHINES | COLOR : Tone ; SHAPE : Model0–51 ; SWEEP : Mod ; CONTOUR : Excite. Les52modeles originaux ; Feral et tous les autres moteurs conserves. |
 
 ## Commandes LFO et MACRO
 

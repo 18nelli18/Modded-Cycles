@@ -1,2 +1,2 @@
-window.MCFixedMainImageMeta={"mainOsSha":"8b6a2786f1bd1dd54c050f2136db3b0bc007e0d744384117a026491704d19d59","syxSha256":"ea901ab5301763d0ebdd3e4656da57857c308f2a57a5ec841af6dff5d8718560"};
-window.MCFixedMainImageReady=fetch(new URL("all-features-usb-2ch-default.syx?v=2026-10-22-crush-latch-main-218",window.location.href),{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("Verified main firmware image could not be loaded");return r.arrayBuffer();}).then(b=>new Uint8Array(b));
+window.MCFixedMainImageMeta={"mainOsSha":"20eb3afbef4977f8318cbd21b5f166afab037fcd6918d72d80d9bf30b8b73cf4","syxSha256":"106fe446fdc9a43cd3ea89c241b65ba198ae8a2b347913a4453cf81b1392ac67"};
+window.MCFixedMainImageReady=fetch(new URL("all-features-usb-2ch-default.syx?v=2026-10-22-tiny-main-219",window.location.href),{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("Verified main firmware image could not be loaded");return r.arrayBuffer();}).then(b=>new Uint8Array(b));

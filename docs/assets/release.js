@@ -4,6 +4,24 @@
  */
 window.MC_RELEASES = [
   {
+    "version": "2.19",
+    "date": "2026-10-22",
+    "changes": [
+      {
+        "en": "TINY returns as an additional engine with all 52 original models. Feral, Elder, MIDI Out and every other machine remain. Existing machine IDs and saved sounds keep their engines. TINY uses Color for Tone, Shape for Model, Sweep for Mod and Contour for Excite.",
+        "fr": "TINY revient comme machine supplementaire avec ses52modeles originaux. Feral,Elder,MIDI Out et toutes les autres machines restent presents. Numeros internes et moteurs des sons sauvegardes conserves. Color regle Tone,Shape Model,Sweep Mod,Contour Excite."
+      },
+      {
+        "en": "All v42 features remain: five crusher routes and low-bit repair, correct Tone name, chorus graphics, retrig mode latch with BACK exit and edit protection, shared and Wizard Polivoks-style lowpass filters, and cumulative CPU fixes.",
+        "fr": "Fonctions v42 conservees : cinq routes crusher et correctif bits faibles,nom Tone correct,graphiques chorus,verrou retrig avec BACK et protection edition,passe-bas partages/Wizard inspires du Polivoks et correctifs CPU cumules."
+      },
+      {
+        "en": "Main serves the approved all-features shared-filter v43. Native menu/descriptor checks cover all nineteen machines; TINY audio is compared with its original implementation. Updated guides retain the credits, including Feral by Glycinate.",
+        "fr": "Le principal sert le v43 complet approuve avec filtre partage. Menus et descripteurs natifs verifies pour les19machines ; audio TINY compare a son implementation originale. Guides actualises,credits conserves dont Feral de Glycinate."
+      }
+    ]
+  },
+  {
     "version": "2.18",
     "date": "2026-10-22",
     "changes": [

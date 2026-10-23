@@ -1,15 +1,15 @@
 {
-  "release": "2.18",
-  "stamp": "2026-10-22-crush-latch-main-218",
+  "release": "2.19",
+  "stamp": "2026-10-22-tiny-main-219",
   "cards": [
     {
       "en": [
         "Machines and sound",
-        "Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder and MIDI Out. Elder is an original synth inspired by Junior by Fors."
+        "Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY and MIDI Out. Elder is an original synth inspired by Junior by Fors."
       ],
       "fr": [
         "Machines et son",
-        "Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder et MIDI Out. Elder est inspiré de Junior de Fors."
+        "Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY et MIDI Out. Elder est inspiré de Junior de Fors."
       ]
     },
     {
@@ -368,6 +368,18 @@
             "Anciens sons Retrosyn",
             "Elder remplace ChpHzrd / Retrosyn",
             "Le même emplacement joue Elder : le timbre des anciens sons Retrosyn change. Autres moteurs et correctifs CPU conservés. Feral est de Glycinate."
+          ]
+        },
+        {
+          "en": [
+            "TINY controls",
+            "Select TINY in MACHINES",
+            "COLOR: Tone; SHAPE: Model0–51; SWEEP: Mod; CONTOUR: Excite. All52 original models; Feral and every other engine remain."
+          ],
+          "fr": [
+            "Commandes TINY",
+            "Choisir TINY dans MACHINES",
+            "COLOR : Tone ; SHAPE : Model0–51 ; SWEEP : Mod ; CONTOUR : Excite. Les52modeles originaux ; Feral et tous les autres moteurs conserves."
           ]
         }
       ]

@@ -183,3 +183,7 @@ investigation requests do not authorize silently changing these approved bytes.
 ## AveyCole main2.18 promotion (2026-10-22)
 
 AveyCole explicitly approved the attached shared-filter v42 with “perfect, push this to be main”. Its SysEx SHA256 is `ea901ab5301763d0ebdd3e4656da57857c308f2a57a5ec841af6dff5d8718560`. Promote this exact image with BACK latch exit, edit protection and the v41 Tone/crusher repairs. Preserve earlier private comparisons. The saved DX option and all cumulative CPU fixes remain in this approved image.
+
+## AveyCole main2.19 promotion (2026-10-22)
+
+AveyCole reports the TINY-addition test working and explicitly requests “push 43 all features to main”. Promote the all-features shared-filter v43, SHA256 `106fe446fdc9a43cd3ea89c241b65ba198ae8a2b347913a4453cf81b1392ac67`, retaining every v42 feature and all nineteen engines. The subsequent request to move TINY before MIDI Out concerns menu order; preserve saved machine IDs. Feral default/Color silent spots are a subsequent audit, not silently folded into this approved release.
