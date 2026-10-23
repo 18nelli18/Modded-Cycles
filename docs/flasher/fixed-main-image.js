@@ -1,2 +1,2 @@
-window.MCFixedMainImageMeta={"mainOsSha":"fd9b1283c143663171a010e4b0b07b47998ea8bf1dce7e5d5f19fe49f47f5aa7","syxSha256":"78a0a39695cc7bf9824cd71f4f2ac0874f327046240b94028daa51db50a4a39f"};
-window.MCFixedMainImageReady=fetch(new URL("all-features-usb-2ch-default.syx?v=2026-10-22-shadow-icons-main-222",window.location.href),{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("Verified main firmware image could not be loaded");return r.arrayBuffer();}).then(b=>new Uint8Array(b));
+window.MCFixedMainImageMeta={"mainOsSha":"4f595a0fb72ee18e1d030373c317e8736068a74989e15c8d237965172399341f","syxSha256":"9a3384e76134f0ed7e9fbcc700220641a9d3ee46f855ef0ae0987a8117a17d77"};
+window.MCFixedMainImageReady=fetch(new URL("all-features-usb-2ch-default.syx?v=2026-10-22-crusher-sends-main-223",window.location.href),{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("Verified main firmware image could not be loaded");return r.arrayBuffer();}).then(b=>new Uint8Array(b));

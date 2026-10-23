@@ -1,6 +1,6 @@
 {
-  "release": "2.22",
-  "stamp": "2026-10-22-shadow-icons-main-222",
+  "release": "2.23",
+  "stamp": "2026-10-22-crusher-sends-main-223",
   "cards": [
     {
       "en": [
@@ -302,12 +302,12 @@
           "en": [
             "Crusher Rate",
             "In Crush/Both: DELAY TIME",
-            "Rate 0–127, about 750 Hz–48 kHz. Lower is rougher; higher is cleaner. DELAY SEND sets the amount per track."
+            "Rate 0-127, about 750 Hz-48 kHz. Lower is rougher; higher is cleaner. Amount: DELAY SEND in Crush; FUNC + DELAY SEND in Both."
           ],
           "fr": [
             "Rate crusher",
             "En Crush/Both : DELAY TIME",
-            "Rate 0–127, environ 750 Hz–48 kHz. Plus bas : plus dégradé ; plus haut : plus propre. DELAY SEND dose par piste."
+            "Rate0-127,environ750Hz-48kHz. Plus bas : degrade ; plus haut : propre. Dosage : DELAY SEND en Crush ; FUNC+DELAY SEND en Both."
           ]
         },
         {
@@ -324,26 +324,26 @@
         },
         {
           "en": [
-            "Crusher routing",
-            "DELAY SEND per track",
-            "Crush1: clean direct + crushed send. Crush2: blends direct clean/crushed. Both1: clean direct + crushed echoes. Both2: crushed direct + echoes. Send127 removes clean direct in modes2."
+            "Crusher / delay sends",
+            "Both: SEND / FUNC + SEND",
+            "Both1: clean direct; crushed feed into delay. Both2: direct wet/dry too, even at delay 0. SEND = delay; FUNC + SEND = crusher 0-127 per track. Crusher 0 = clean delay. Crush1/2 keep DELAY SEND."
           ],
           "fr": [
-            "Routage crusher",
-            "DELAY SEND par piste",
-            "Crush1 : direct propre + envoi ecrase. Crush2 : direct propre/ecrase. Both1 : direct propre + echos ecrases. Both2 : direct et echos ecrases. Send127 retire le direct propre des modes2."
+            "Envois crusher / delay",
+            "Both : SEND / FUNC + SEND",
+            "Both1 : direct propre,entree delay ecrasee. Both2 : direct propre/ecrase aussi,meme delay0. SEND=delay ; FUNC+SEND=crusher0-127 par piste. Crusher0=delay propre. Crush1/2 gardent DELAY SEND."
           ]
         },
         {
           "en": [
             "Effect settings and save",
             "Release TRACK; stop playback",
-            "Global modes and Rate/Bits save after playback stops. Rate/Bits have no p-lock destinations; sends keep locks. Chorus Speed/Depth reuse pattern Size/Tone. Both2 adds processing."
+            "Modes, Rate/Bits and per-track crusher sends save globally after playback stops. New crusher sends default 0; no p-lock/LFO destinations. Native Delay Send keeps locks. Chorus Speed/Depth use pattern Size/Tone."
           ],
           "fr": [
             "Réglages d’effets et sauvegarde",
             "Relâcher TRACK ; arrêter la lecture",
-            "Modes et Rate/Bits globaux sauvegardes apres arret. Rate/Bits sans p-locks ; envois avec locks. Speed/Depth reutilisent Size/Tone du pattern. Both2 coute plus de calcul."
+            "Modes,Rate/Bits et envois crusher par piste sauvegardes globalement apres arret. Nouveaux envois0 par defaut,sans p-lock/LFO. Delay Send natif garde les locks. Speed/Depth utilisent Size/Tone du pattern."
           ]
         },
         {

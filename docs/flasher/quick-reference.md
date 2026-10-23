@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.22 - 22 October 2026
+Supermodel 2.23 - 22 October 2026
 
-Main 2.22. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.23. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
@@ -43,10 +43,10 @@ Main 2.22. Hold the first button while pressing the next button or turning the n
 | Chorus Speed / Depth | REVERB SIZE / FUNC + REVERB SIZE | Speed / Depth, each 0–127. REVERB SEND sets the amount per track. Start at Speed 42, Depth 64 with a modest send. |
 | Delay / Crush / Both mode | TRACK + DELAY TIME | Delay → Crush1 → Crush2 → Both1 → Both2; left to return. Two encoder events per change. |
 | Delay Time / Feedback | In Delay mode: TIME / FUNC + TIME | Normal delay Time / Feedback. To adjust them in Both, switch to Delay, adjust, then return to Both. Delay and crusher settings remain separate. |
-| Crusher Rate | In Crush/Both: DELAY TIME | Rate 0–127, about 750 Hz–48 kHz. Lower is rougher; higher is cleaner. DELAY SEND sets the amount per track. |
+| Crusher Rate | In Crush/Both: DELAY TIME | Rate 0-127, about 750 Hz-48 kHz. Lower is rougher; higher is cleaner. Amount: DELAY SEND in Crush; FUNC + DELAY SEND in Both. |
 | Crusher Bits | In Crush/Both: FUNC + DELAY TIME | Bits 2–16. Lower = crunchier, including quiet signals at 2–4 bits. Silence stays silent. |
-| Crusher routing | DELAY SEND per track | Crush1: clean direct + crushed send. Crush2: blends direct clean/crushed. Both1: clean direct + crushed echoes. Both2: crushed direct + echoes. Send127 removes clean direct in modes2. |
-| Effect settings and save | Release TRACK; stop playback | Global modes and Rate/Bits save after playback stops. Rate/Bits have no p-lock destinations; sends keep locks. Chorus Speed/Depth reuse pattern Size/Tone. Both2 adds processing. |
+| Crusher / delay sends | Both: SEND / FUNC + SEND | Both1: clean direct; crushed feed into delay. Both2: direct wet/dry too, even at delay 0. SEND = delay; FUNC + SEND = crusher 0-127 per track. Crusher 0 = clean delay. Crush1/2 keep DELAY SEND. |
+| Effect settings and save | Release TRACK; stop playback | Modes, Rate/Bits and per-track crusher sends save globally after playback stops. New crusher sends default 0; no p-lock/LFO destinations. Native Delay Send keeps locks. Chorus Speed/Depth use pattern Size/Tone. |
 | Elder controls | Select Elder in MACHINES | COLOR = Wave; SHAPE = Warp; SWEEP = Noise; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate and Fine remain available. Original synth inspired by Junior by Fors. |
 | Saved Retrosyn sounds | Elder replaces ChpHzrd / Retrosyn | The same machine slot now plays Elder, so previous Retrosyn sounds change timbre. The other engines and previous CPU fixes are retained. Feral is by Glycinate. |
 | TINY controls | Select TINY in MACHINES | COLOR: Tone; SHAPE: Model0–51; SWEEP: Mod; CONTOUR: Excite. All52 original models; Feral and every other engine remain. |

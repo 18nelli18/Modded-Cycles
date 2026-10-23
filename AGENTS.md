@@ -199,3 +199,7 @@ AveyCole tested the exact shared-filter v48 and reports “this worked, push to 
 ## AveyCole main2.22 promotion (2026-10-22)
 
 AveyCole explicitly approved the shared-filter v50 at `output/firmware/validation/all-features-polivoks-cpu-trim-test-v50.syx` with “push this to main”. SHA256 `78a0a39695cc7bf9824cd71f4f2ac0874f327046240b94028daa51db50a4a39f`. Promote exactly this image: Shadow19 after TINY18 before MIDI17, original pulsar/noise design inspired by Opal Dust by Fors, and six icons for Shadow/WAVE/TINY/MIDIOut/ACID/Feral. Preserve existing IDs, Wizard bank isolation and all prior features. Reports of icons looking great in v49 are UI feedback, not a claimed exhaustive hardware audio test. Subsequent remaining-icon and independent crusher-send requests are private follow-ups, never folded into these approved bytes.
+
+## AveyCole main2.23 promotion (2026-10-22)
+
+AveyCole reports that all-features v53 worked and explicitly requests pushing it to main. Promote the exact shared-filter image, SHA256 `9a3384e76134f0ed7e9fbcc700220641a9d3ee46f855ef0ae0987a8117a17d77`, with v51 remaining themed icons and separate per-track crusher sends in Both1/Both2. FUNC+DelaySend adjusts crusher0..127; plain DelaySend stays native. Both1 leaves direct clean, Both2 adds independent direct wet/dry. Crusher feeds native delay. The v52 missing selected-track-object exception is fixed. Sends are global per track, stopped-only saved, default0, without p-lock/LFO destinations. Preserve the exact approved bytes and all previous releases.

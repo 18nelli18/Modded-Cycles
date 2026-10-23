@@ -234,3 +234,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [149 — Valeurs machines et Wizard](149-valeurs-machines-et-wizard.md) | v48 retient six commandes, isole les dials Wizard/synth dans MACHINES ; AveyCole confirme et approuve main2.21 exact. |
 
 | [150 — Shadow et icones](150-shadow-et-icones.md) | v49 ajoute Shadow19 sans retirer de moteur ; v50 sixicones, audio exact ; AveyCole approuve main2.22 exact. |
+
+| [151 - Envois crusher distincts](151-envois-crusher-distincts.md) | V53 : FUNC+DelaySend par piste en Both1/2, getter natif corrige apres exception v52 ; AveyCole approuve main2.23 exact, guides EN/FR/PDF actualises. |
