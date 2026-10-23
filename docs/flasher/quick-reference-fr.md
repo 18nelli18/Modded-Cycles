@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.25 - 23 octobre2026
+Supermodel2.26 - 23 octobre2026
 
-Principal2.25. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
+Principal2.26. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
 ## Fonctions incluses
 
@@ -10,7 +10,7 @@ Principal2.25. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 **Performance et séquenceur:** Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute verrouillé et solo.
 
-**Filtres et effets:** Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK. Fenetres FX opaques ; SETTINGS+Size/Time regle Tone/Feedback en modes combines.
+**Filtres et effets:** Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK. Fenetres FX opaques ; SETTINGS+Size/Time regle Tone/Feedback en modes combines. Poussiere Vinyl continue dans les pauses.
 
 **Routage et travail:** MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif.
 
@@ -46,7 +46,7 @@ Principal2.25. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Chorus seul | SIZE = Speed ; FUNC + SIZE = Depth | Chorus I/II : Speed et Depth0-127. REVERB SEND devient Chorus Send par piste. |
 | Commandes chorus + reverb | SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE | Reverb Size / Chorus Speed / Chorus Depth. Maintenir FUNC puis TRACK n’ouvre pas Track Setup. |
 | Envois chorus + reverb | REVERB SEND / FUNC+REVERB SEND | Reverb Send natif / Chorus Send distinct0-127 par piste. Chaque effet reste independant. |
-| Vinyl seul | SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE | Crackle / Warble Amount / Warble Speed. REVERB SEND devient Vinyl Send :0sec,effet croissant avec la valeur. Une version Vinyl. |
+| Vinyl seul | SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE | Crackle / Warble Amount / Warble Speed. Vinyl Send0 : sec. Pops/clics brillants independants, presents dans les pauses ; Crackle0 coupe la poussiere. Volume,pan et mute de piste respectes. |
 | Commandes Vinyl + reverb | SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE | Reverb Size / Crackle / Warble Amount. FUNC puis TRACK+REVERB SEND regle Warble Speed. |
 | Envois Vinyl + reverb | REVERB SEND / FUNC+REVERB SEND | Reverb Send natif / Vinyl Send distinct par piste. Vinyl Send0 garde la reverb normale. |
 | Time / Feedback delay | DELAY : TIME / FUNC+TIME ; combine : SETTINGS+TIME | TIME simple garde Time natif en CRU1+DEL/CRU2+DEL. Maintenez SETTINGS et tournez DELAY TIME pour le Feedback natif ; relacher SETTINGS revient a Time. FUNC puis TRACK+DELAY SEND regle aussi Feedback. |

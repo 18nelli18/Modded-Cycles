@@ -211,3 +211,8 @@ AveyCole reports “Everything works great” and requests publishing the exact 
 ## AveyCole main2.25 promotion (2026-10-23)
 
 AveyCole supplied the exact shared-filter `all-features-polivoks-cpu-trim-test-v57.syx` and stated it should be the .syx the main flasher serves. SHA256 `35370f22a4d6423bb3c66f290da8e45c0fd02fe5083942fe02980bc765cce045`; MAIN SHA256 `3f9dd0211da1321e4f504bc6f0bc87306f740a4d8e1318aaf33771c8daed8b2b`. Publish exactly these bytes through the existing fixed-main delivery path. Replaces the v55 image of main2.24; the guide adds the SETTINGS + Size/Time Tone/Feedback shortcuts in combined FX modes and the opaque FX popups. No hardware result is recorded here: none was reported with the promotion.
+
+
+## AveyCole Vinyl publication (2026-10-23)
+
+AveyCole explicitly requested the revised Vinyl crackle be finished and pushed to main, then reported "Crackle sounds better" while testing the cumulative v59. Publish the identical Vinyl DSP in shared-filter v58 only, SHA256 `c155ee9df5d4b8450f2faa876ccaa51ea5addc15b60e2fce415b92d0844a6752`, through the existing fixed-main image path as2.26. This is not a claim that the exact v58 image received a complete hardware test. Ping Pong/Shimmer and their v60 repair remain private until separately approved. Preserve Claude's2.25 work and all existing main features. Only shared-filter private builds are requested at present.

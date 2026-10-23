@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.25 - 23 October 2026
+Supermodel 2.26 - 23 October 2026
 
-Main 2.25. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.26. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
@@ -10,7 +10,7 @@ Main 2.25. Hold the first button while pressing the next button or turning the n
 
 **Performance and sequencing:** Arpeggiator, held-note octave 0, ChordKeys and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching mute and solo.
 
-**Filters and effects:** Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Delay/Crush combinations, Chorus 1/2 + Reverb and Vinyl + Reverb. FX menus apply only on TRACK release. Opaque FX overlay; SETTINGS + Size/Time adjusts Tone/Feedback in combined modes.
+**Filters and effects:** Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Delay/Crush combinations, Chorus 1/2 + Reverb and Vinyl + Reverb. FX menus apply only on TRACK release. Opaque FX overlay; SETTINGS + Size/Time adjusts Tone/Feedback in combined modes. Vinyl dust continues through musical gaps.
 
 **Routing and workflow:** MIDI Out with nine CC knobs, locks and two MIDI LFOs; MIDI OUT/THRU toggle; USB stereo or six tracks; permanent quick save, saved Mod Setup and optional DX diagnostics.
 
@@ -46,7 +46,7 @@ Main 2.25. Hold the first button while pressing the next button or turning the n
 | Chorus alone | SIZE = Speed; FUNC + SIZE = Depth | Chorus I/II Speed and Depth 0-127. REVERB SEND becomes Chorus Send per track. |
 | Chorus + Reverb controls | SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Reverb Size / Chorus Speed / Chorus Depth. A held FUNC-first TRACK does not open Track Setup. |
 | Chorus + Reverb sends | REVERB SEND / FUNC + REVERB SEND | Native Reverb Send / separate Chorus Send 0-127 per track. Either effect can be used independently. |
-| Vinyl alone | SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Crackle / Warble Amount / Warble Speed. REVERB SEND becomes Vinyl Send: 0 is dry, increasing values add effect. One Vinyl version. |
+| Vinyl alone | SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Crackle / Warble Amount / Warble Speed. Vinyl Send 0 is dry. Bright independent pops/clicks continue through musical gaps; Crackle 0 switches dust off. Track level, pan and mute apply. |
 | Vinyl + Reverb controls | SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Reverb Size / Crackle / Warble Amount. FUNC first, then TRACK + REVERB SEND adjusts Warble Speed. |
 | Vinyl + Reverb sends | REVERB SEND / FUNC + REVERB SEND | Native Reverb Send / separate Vinyl Send per track. Vinyl Send 0 leaves normal reverb. |
 | Delay Time / Feedback | DELAY: TIME / FUNC + TIME; combined: SETTINGS + TIME | Plain TIME keeps native Time in CRU1+DEL/CRU2+DEL. Hold SETTINGS and turn DELAY TIME for native Feedback; releasing SETTINGS returns to Time. FUNC first, then TRACK + DELAY SEND also adjusts Feedback. |

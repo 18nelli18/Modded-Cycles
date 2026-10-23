@@ -1,6 +1,6 @@
 {
-  "release": "2.25",
-  "stamp": "2026-10-23-fx-settings-main-225",
+  "release": "2.26",
+  "stamp": "2026-10-23-vinyl-dust-main-226",
   "cards": [
     {
       "en": [
@@ -25,11 +25,11 @@
     {
       "en": [
         "Filters and effects",
-        "Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Delay/Crush combinations, Chorus 1/2 + Reverb and Vinyl + Reverb. FX menus apply only on TRACK release. Opaque FX overlay; SETTINGS + Size/Time adjusts Tone/Feedback in combined modes."
+        "Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Delay/Crush combinations, Chorus 1/2 + Reverb and Vinyl + Reverb. FX menus apply only on TRACK release. Opaque FX overlay; SETTINGS + Size/Time adjusts Tone/Feedback in combined modes. Vinyl dust continues through musical gaps."
       ],
       "fr": [
         "Filtres et effets",
-        "Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK. Fenetres FX opaques ; SETTINGS+Size/Time regle Tone/Feedback en modes combines."
+        "Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK. Fenetres FX opaques ; SETTINGS+Size/Time regle Tone/Feedback en modes combines. Poussiere Vinyl continue dans les pauses."
       ]
     },
     {
@@ -338,12 +338,12 @@
           "en": [
             "Vinyl alone",
             "SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE",
-            "Crackle / Warble Amount / Warble Speed. REVERB SEND becomes Vinyl Send: 0 is dry, increasing values add effect. One Vinyl version."
+            "Crackle / Warble Amount / Warble Speed. Vinyl Send 0 is dry. Bright independent pops/clicks continue through musical gaps; Crackle 0 switches dust off. Track level, pan and mute apply."
           ],
           "fr": [
             "Vinyl seul",
             "SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE",
-            "Crackle / Warble Amount / Warble Speed. REVERB SEND devient Vinyl Send :0sec,effet croissant avec la valeur. Une version Vinyl."
+            "Crackle / Warble Amount / Warble Speed. Vinyl Send0 : sec. Pops/clics brillants independants, presents dans les pauses ; Crackle0 coupe la poussiere. Volume,pan et mute de piste respectes."
           ]
         },
         {

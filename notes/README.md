@@ -240,3 +240,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [152 - Menus FX et Vinyl](152-menus-fx-et-vinyl.md) | v55 avec filtre partage teste et approuve par AveyCole : main2.24 exact,menus differes,Vinyl,chorus/reverb,guide Tone et controles combines ; v56 SETTINGS reste prive. |
 
 | [153 - Raccourcis SETTINGS des effets](153-raccourcis-settings-fx.md) | v57 exact servi comme main2.25 sur demande d’AveyCole : SETTINGS+Size/Time (Tone/Feedback en modes combines), popups FX opaques ; guides EN/FR/PDF actualises. |
+
+| [154 - Poussiere Vinyl independante](154-poussiere-vinyl-independante.md) | Principal2.26 : pops/clics independants du signal, pauses audibles, sends/volume/pan/mute respectes ; grain juge meilleur par AveyCole, preuves natives. |
