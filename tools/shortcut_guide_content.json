@@ -1,6 +1,6 @@
 {
-  "release": "2.24",
-  "stamp": "2026-10-23-fx-menu-main-224",
+  "release": "2.25",
+  "stamp": "2026-10-23-fx-settings-main-225",
   "cards": [
     {
       "en": [
@@ -25,11 +25,11 @@
     {
       "en": [
         "Filters and effects",
-        "Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Delay/Crush combinations, Chorus 1/2 + Reverb and Vinyl + Reverb. FX menus apply only on TRACK release."
+        "Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Delay/Crush combinations, Chorus 1/2 + Reverb and Vinyl + Reverb. FX menus apply only on TRACK release. Opaque FX overlay; SETTINGS + Size/Time adjusts Tone/Feedback in combined modes."
       ],
       "fr": [
         "Filtres et effets",
-        "Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK."
+        "Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK. Fenetres FX opaques ; SETTINGS+Size/Time regle Tone/Feedback en modes combines."
       ]
     },
     {
@@ -266,12 +266,12 @@
           "en": [
             "Reverb-slot menu",
             "Hold TRACK + REVERB SIZE",
-            "Left/up: VINYL, then VINYL+REV. Center: REVERB. Right/down: CHORUS 1, CHORUS 2, CHOR1+REV, CHOR2+REV. Browsing is silent; release TRACK to apply, BACK to cancel."
+            "Opaque popup over the normal screen; three scrolling choices. Left/up: VINYL, then VINYL+REV. Center: REVERB. Right/down: CHORUS 1, CHORUS 2, CHOR1+REV, CHOR2+REV. Browse without changing sound; release TRACK to apply, BACK to cancel."
           ],
           "fr": [
             "Menu slot reverb",
             "Maintenir TRACK + REVERB SIZE",
-            "Gauche/haut : VINYL,puis VINYL+REV. Centre : REVERB. Droite/bas : CHORUS1,CHORUS2,CHOR1+REV,CHOR2+REV. Parcourir ne change pas le son ; relacher TRACK applique,BACK annule."
+            "Fenetre opaque par-dessus l’ecran normal ; trois choix defilants. Gauche/haut : VINYL,puis VINYL+REV. Centre : REVERB. Droite/bas : CHORUS1,CHORUS2,CHOR1+REV,CHOR2+REV. Parcourir ne change pas le son ; relacher TRACK applique,BACK annule."
           ]
         },
         {
@@ -289,13 +289,13 @@
         {
           "en": [
             "Reverb Tone",
-            "Standard REVERB mode: FUNC + REVERB SIZE",
-            "Tone must be set in standard REVERB mode. Select REVERB, adjust Tone, then return to CHOR1+REV, CHOR2+REV or VINYL+REV; Tone carries over. SETTINGS + SIZE is not implemented in this release."
+            "REVERB: FUNC + SIZE; combined: SETTINGS + SIZE",
+            "In CHOR1+REV, CHOR2+REV and VINYL+REV, hold SETTINGS and turn REVERB SIZE for native Tone without leaving the mode. Releasing SETTINGS returns to Reverb Size. Standard REVERB mode keeps FUNC + SIZE."
           ],
           "fr": [
             "Reverb Tone",
-            "Mode REVERB standard : FUNC + REVERB SIZE",
-            "Tone se regle en mode REVERB standard. Choisissez REVERB,reglez Tone,puis revenez a CHOR1+REV,CHOR2+REV ou VINYL+REV ; Tone est conserve. SETTINGS+SIZE absent de cette version."
+            "REVERB : FUNC+SIZE ; combine : SETTINGS+SIZE",
+            "En CHOR1+REV,CHOR2+REV et VINYL+REV, maintenez SETTINGS et tournez REVERB SIZE pour le Tone natif sans quitter le mode. Relacher SETTINGS revient a Reverb Size. Le mode REVERB standard garde FUNC+SIZE."
           ]
         },
         {
@@ -373,13 +373,13 @@
         {
           "en": [
             "Delay Time / Feedback",
-            "DELAY: TIME / FUNC + TIME; combined: plain TIME",
-            "Native Time remains on plain TIME in CRU1+DEL/CRU2+DEL. For Feedback there, hold FUNC first, then TRACK and turn DELAY SEND. SETTINGS + TIME is not implemented."
+            "DELAY: TIME / FUNC + TIME; combined: SETTINGS + TIME",
+            "Plain TIME keeps native Time in CRU1+DEL/CRU2+DEL. Hold SETTINGS and turn DELAY TIME for native Feedback; releasing SETTINGS returns to Time. FUNC first, then TRACK + DELAY SEND also adjusts Feedback."
           ],
           "fr": [
             "Time / Feedback delay",
-            "DELAY : TIME / FUNC+TIME ; combine : TIME simple",
-            "Time natif reste sur TIME simple en CRU1+DEL/CRU2+DEL. Feedback : maintenez FUNC puis TRACK et tournez DELAY SEND. SETTINGS+TIME absent."
+            "DELAY : TIME / FUNC+TIME ; combine : SETTINGS+TIME",
+            "TIME simple garde Time natif en CRU1+DEL/CRU2+DEL. Maintenez SETTINGS et tournez DELAY TIME pour le Feedback natif ; relacher SETTINGS revient a Time. FUNC puis TRACK+DELAY SEND regle aussi Feedback."
           ]
         },
         {

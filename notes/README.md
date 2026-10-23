@@ -238,3 +238,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [151 - Envois crusher distincts](151-envois-crusher-distincts.md) | V53 : FUNC+DelaySend par piste en Both1/2, getter natif corrige apres exception v52 ; AveyCole approuve main2.23 exact, guides EN/FR/PDF actualises. |
 
 | [152 - Menus FX et Vinyl](152-menus-fx-et-vinyl.md) | v55 avec filtre partage teste et approuve par AveyCole : main2.24 exact,menus differes,Vinyl,chorus/reverb,guide Tone et controles combines ; v56 SETTINGS reste prive. |
+
+| [153 - Raccourcis SETTINGS des effets](153-raccourcis-settings-fx.md) | v57 exact servi comme main2.25 sur demande d’AveyCole : SETTINGS+Size/Time (Tone/Feedback en modes combines), popups FX opaques ; guides EN/FR/PDF actualises. |

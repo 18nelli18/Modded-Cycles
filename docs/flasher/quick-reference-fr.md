@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.24 - 23 octobre2026
+Supermodel2.25 - 23 octobre2026
 
-Principal2.24. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
+Principal2.25. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
 ## Fonctions incluses
 
@@ -10,7 +10,7 @@ Principal2.24. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 **Performance et séquenceur:** Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute verrouillé et solo.
 
-**Filtres et effets:** Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK.
+**Filtres et effets:** Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK. Fenetres FX opaques ; SETTINGS+Size/Time regle Tone/Feedback en modes combines.
 
 **Routage et travail:** MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif.
 
@@ -40,16 +40,16 @@ Principal2.24. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Menu slot reverb | Maintenir TRACK + REVERB SIZE | Gauche/haut : VINYL,puis VINYL+REV. Centre : REVERB. Droite/bas : CHORUS1,CHORUS2,CHOR1+REV,CHOR2+REV. Parcourir ne change pas le son ; relacher TRACK applique,BACK annule. |
+| Menu slot reverb | Maintenir TRACK + REVERB SIZE | Fenetre opaque par-dessus l’ecran normal ; trois choix defilants. Gauche/haut : VINYL,puis VINYL+REV. Centre : REVERB. Droite/bas : CHORUS1,CHORUS2,CHOR1+REV,CHOR2+REV. Parcourir ne change pas le son ; relacher TRACK applique,BACK annule. |
 | Menu slot delay | Maintenir TRACK + DELAY TIME | Gauche/haut : CRUSH1,puis CRUSH2. Centre : DELAY. Droite/bas : CRU1+DEL,CRU2+DEL. Relacher TRACK applique,BACK annule. |
-| Reverb Tone | Mode REVERB standard : FUNC + REVERB SIZE | Tone se regle en mode REVERB standard. Choisissez REVERB,reglez Tone,puis revenez a CHOR1+REV,CHOR2+REV ou VINYL+REV ; Tone est conserve. SETTINGS+SIZE absent de cette version. |
+| Reverb Tone | REVERB : FUNC+SIZE ; combine : SETTINGS+SIZE | En CHOR1+REV,CHOR2+REV et VINYL+REV, maintenez SETTINGS et tournez REVERB SIZE pour le Tone natif sans quitter le mode. Relacher SETTINGS revient a Reverb Size. Le mode REVERB standard garde FUNC+SIZE. |
 | Chorus seul | SIZE = Speed ; FUNC + SIZE = Depth | Chorus I/II : Speed et Depth0-127. REVERB SEND devient Chorus Send par piste. |
 | Commandes chorus + reverb | SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE | Reverb Size / Chorus Speed / Chorus Depth. Maintenir FUNC puis TRACK n’ouvre pas Track Setup. |
 | Envois chorus + reverb | REVERB SEND / FUNC+REVERB SEND | Reverb Send natif / Chorus Send distinct0-127 par piste. Chaque effet reste independant. |
 | Vinyl seul | SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE | Crackle / Warble Amount / Warble Speed. REVERB SEND devient Vinyl Send :0sec,effet croissant avec la valeur. Une version Vinyl. |
 | Commandes Vinyl + reverb | SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE | Reverb Size / Crackle / Warble Amount. FUNC puis TRACK+REVERB SEND regle Warble Speed. |
 | Envois Vinyl + reverb | REVERB SEND / FUNC+REVERB SEND | Reverb Send natif / Vinyl Send distinct par piste. Vinyl Send0 garde la reverb normale. |
-| Time / Feedback delay | DELAY : TIME / FUNC+TIME ; combine : TIME simple | Time natif reste sur TIME simple en CRU1+DEL/CRU2+DEL. Feedback : maintenez FUNC puis TRACK et tournez DELAY SEND. SETTINGS+TIME absent. |
+| Time / Feedback delay | DELAY : TIME / FUNC+TIME ; combine : SETTINGS+TIME | TIME simple garde Time natif en CRU1+DEL/CRU2+DEL. Maintenez SETTINGS et tournez DELAY TIME pour le Feedback natif ; relacher SETTINGS revient a Time. FUNC puis TRACK+DELAY SEND regle aussi Feedback. |
 | Rate crusher | CRUSH : TIME ; CRU+DEL : FUNC+TIME | Rate0-127,environ750Hz-48kHz. Plus bas : degrade ; plus haut : propre. |
 | Bits crusher | CRUSH : FUNC+TIME ; CRU+DEL : FUNC puis TRACK+TIME | Bits2-16. Les valeurs basses affectent aussi les signaux faibles. Silence conserve. |
 | Envois crusher / delay | Combine : DELAY SEND / FUNC+DELAY SEND | Delay Send / Crush Send distinct0-127 par piste. CRU1+DEL garde le direct propre ; CRU2+DEL melange le direct meme delay0. Crusher0 donne des echos propres. Seul : Crush Send. |

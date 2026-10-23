@@ -207,3 +207,7 @@ AveyCole reports that all-features v53 worked and explicitly requests pushing it
 ## AveyCole main2.24 promotion (2026-10-23)
 
 AveyCole reports “Everything works great” and requests publishing the exact shared-filter v55 as main’s served .syx. SHA256 `ed59a947965aff8fc15369c61624baf1a564c6e07e42d837b6277ca6e1405c57`; MAIN SHA256 `8701f142868f862a916037039bcab824bde002b96cab9f511b235b20eb5f8c7a`. Includes all v54 work, deferred boxed FX menus, chorus/reverb and Vinyl combinations, mixed controls, physical-only diagnostics, slower machine scrolling and retrig-latched temp shortcuts. Publish exactly these bytes through the existing fixed-main delivery path. The guide must explicitly say Reverb Tone is set in standard REVERB mode with FUNC+REVERB SIZE and carried into combined modes. The later request for SETTINGS+SIZE/TIME shortcuts belongs in private v56; user explicitly chose “Publish v55 now; test v56 separately”.
+
+## AveyCole main2.25 promotion (2026-10-23)
+
+AveyCole supplied the exact shared-filter `all-features-polivoks-cpu-trim-test-v57.syx` and stated it should be the .syx the main flasher serves. SHA256 `35370f22a4d6423bb3c66f290da8e45c0fd02fe5083942fe02980bc765cce045`; MAIN SHA256 `3f9dd0211da1321e4f504bc6f0bc87306f740a4d8e1318aaf33771c8daed8b2b`. Publish exactly these bytes through the existing fixed-main delivery path. Replaces the v55 image of main2.24; the guide adds the SETTINGS + Size/Time Tone/Feedback shortcuts in combined FX modes and the opaque FX popups. No hardware result is recorded here: none was reported with the promotion.
