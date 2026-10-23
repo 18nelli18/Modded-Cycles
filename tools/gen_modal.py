@@ -312,6 +312,7 @@ def build_tweak(img, st_img, repo):
     import gen_acid_combos as gac                          # noqa: E402
     import gen_macro as gm                                 # noqa: E402
     import gen_macro_syntakt as gms                        # noqa: E402
+    import gen_sram_hot as gh                              # noqa: E402
     import gen_syntakt_engines as gs                       # noqa: E402
     import gov_asm                                         # noqa: E402
     tg = gs.tg_context(img)
@@ -320,7 +321,8 @@ def build_tweak(img, st_img, repo):
     modal = modal_part(pay)
     if modal["end"] > pay + gms.TG_ROOM:
         raise SystemExit(f"!! charge utile jusqu'à {modal['end']:#x} : au-delà de la place laissée par Model-TG")
-    out, info = gms.build_tweak(img, st_img, repo, list(FIVE), tg, macro=True, acid=acid, more=[modal])
+    hot = dict(gh.ENTRY, end=gh.HOT_END)        # code chaud en SRAM (notes/76) : son chargeur, ajouté plus bas
+    out, info = gms.build_tweak(img, st_img, repo, list(FIVE), tg, macro=True, acid=acid, more=[modal], hot=hot)
     macro_syms = gms.compile_macro(repo, pay)[1]
     first = gs.TG_FIRST
     which = ", ".join(f"{gs.CATALOG[c]['name']} = {gs.CATALOG[c]['label']} (machine {first + i + 1})"
@@ -351,7 +353,20 @@ def build_tweak(img, st_img, repo):
     })
     gac.symbols(out, macro_syms, acid)
     out["symbols"].update({k_: f"{modal['syms'][k_]:#x}" for k_ in ENTRIES + ("ctl",)})
-    return out, dict(info, code=len(modal["blob"]), bss=modal["end"] - pay - MODAL_BSS)
+    # le chargeur du code chaud, d'après l'OS construit avec ce tweak (os.json) et le profil versionné
+    hinfo = gh.add_to(out, img, info)
+    out["description"].insert(-2, f"Code chaud en SRAM interne selon les machines du projet (notes/76) : {hinfo['units']} "
+                                  f"unités ({hinfo['bytes']} o), {hinfo['dets']} détours, chargeur à {gh.HOT_AT:#x}.")
+    import aplib_grow                                      # noqa: E402
+    import build                                           # noqa: E402
+    rt = build.payload_runtime(out, img, st_img)
+    packed = len(aplib_grow.pack(rt))
+    end = int(out["append"]["at"], 16) + packed
+    if end > gs.END_LIMIT:
+        raise SystemExit(f"!! {packed} o compressés, l'image dépasserait {gs.END_LIMIT:#x}")
+    out["append"]["stored"] = packed
+    return out, dict(info, code=len(modal["blob"]), bss=modal["end"] - pay - MODAL_BSS, size=len(rt), packed=packed,
+                     end=end, hot=hinfo)
 
 
 def main():

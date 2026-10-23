@@ -24,10 +24,10 @@ section (aPLib) and re-signs the container (HMAC). It prints the SHA-256 of the 
 must be:
 
 ```
-e5a333c93f3da86462b2ef7fd166af70e96b4e30280f1fb595f44876001fcf77
+0c59f28df20fe0f912b3c5b318707e4385ce295f23085a0cb0ede19798b247ad
 ```
 
-(2.0.1, without MODAL, was `2a77d029…0041`; 2.0, the same with its machine payload packed less tightly,
+(2.1 before the hot code in SRAM was `e5a333c9…cf77`; 2.0.1, without MODAL, `2a77d029…0041`; 2.0, the same with its machine payload packed less tightly,
 `82a79f45…cca9`.)
 
 The same value is the `REF_MAINOS` entry of `docs/flasher/app.js`: the web flasher refuses a build whose MAIN OS
@@ -98,6 +98,16 @@ python3 tools/gen_modal.py --cycles firmware/model-cycles_OS1.13.syx --syntakt f
 python3 tools/gen_modal.py --tables [--check]                                 # modal_tables.h, LICENSE-Rings only
 ```
 
+That tweak also carries the loader of the hot code in SRAM (notes/76): `gen_modal.py` calls `tools/gen_sram_hot.py`,
+which analyses the OS built from `os.json` and compiles `tools/machines/sram_hot/` with its tables. Which code is hot
+comes from a profile made in the emulator, committed as `tools/machines/sram_hot/profile.json`. When code that runs in
+the audio interrupt changes (a machine, a mod that hooks the audio, Model-TG), redo the profile, then the tweak:
+
+```sh
+python3 tools/emu/profile_hot.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx [--check]
+python3 tools/gen_sram_hot.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx  # summary
+```
+
 ## Proving a tweak
 
 Every tweak has a proof in `tools/emu/` that runs the OS's own code in the Unicorn emulator, stock against patched,
@@ -115,6 +125,8 @@ python3 tools/emu/test_modal.py --cycles firmware/model-cycles_OS1.13.syx --synt
   --eurorack vendor/eurorack [--quick]                                         # MODAL in the OS, byte for byte
 python3 tools/emu/test_payload_pack.py --cycles firmware/model-cycles_OS1.13.syx \
   --syntakt firmware/Syntakt_OS1.42.syx              # the OS's boot hook unpacks the machines' payload
+python3 tools/emu/test_sram_hot.py --cycles firmware/model-cycles_OS1.13.syx \
+  --syntakt firmware/Syntakt_OS1.42.syx [--quick]    # the hot code in SRAM: same sound, loads, pauses, gives back
 ```
 
 The exact runs each proof supports are in its docstring (`python3 tools/emu/test_<mod>.py --help`). The notes in

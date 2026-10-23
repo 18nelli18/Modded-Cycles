@@ -73,7 +73,7 @@ def build_os(cycles, syntakt):
     return main_os, patched + payload, seen
 
 
-def boot(img, dst, rt, hook):
+def boot(img, dst, rt, hook, syms=None):
     uc = Uc(UC_ARCH_M68K, UC_MODE_BIG_ENDIAN)
     uc.ctl_set_cpu_model(mk.UC_CPU_M68K_ANY)
     uc.mem_map(0x40000000, 0x02400000)
@@ -104,6 +104,10 @@ def boot(img, dst, rt, hook):
     check(pc == hook and sp == sp0 - 4 and ret == gs.BOOT_CALL + 6 and regs and not bad,
           f"jsr {gs.BOOT_CALL:#x} -> notre crochet -> boot_extra_hook {hook:#x} ; pile et d2..d7/a2..a6 intactes")
     got = bytes(uc.mem_read(dst, len(rt)))
+    if syms and "hot_boot" in syms:                       # code chaud en SRAM (notes/76) : ce que hot_boot a écrit
+        import hotboot                                    # noqa: E402
+        ok, msg, got, rt = hotboot.effects(uc, img, dst, got, rt, syms)
+        check(ok, msg)
     if got != rt:
         diff = [k for k in range(len(rt)) if got[k] != rt[k]]
         print(f"    {len(diff)} octets differents, de +{diff[0]:#x} a +{diff[-1]:#x}")
@@ -141,7 +145,7 @@ def main():
         chord = tmx.chord_tables(stock)
         want[c0:c0 + len(chord)] = chord
         gs.set_base(dst)
-        boot(img, dst, bytes(want), hook)
+        boot(img, dst, bytes(want), hook, {k: int(v, 16) for k, v in t.get("symbols", {}).items()})
         if shutil.which("node"):
             with tempfile.TemporaryDirectory() as tmp:
                 p = pathlib.Path(tmp)

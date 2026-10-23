@@ -212,6 +212,11 @@ def boot(fw, ref, tg=None, allowed=None):
           f"d'écrire (2e étage) ; Unicorn n'a pas de cache, la machine si (notes/50 §8) "
           f"{[hex(a) for a in stale[0][:4]]}")
     got = bytes(uc.mem_read(dst, len(rt)))
+    syms = {k: int(v, 16) for k, v in getattr(fw, "mine", {}).get("symbols", {}).items()}
+    if "hot_boot" in syms:                                # code chaud en SRAM (notes/76) : ce que hot_boot a écrit
+        import hotboot                                    # noqa: E402
+        ok, msg, got, rt = hotboot.effects(uc, fw.img[:len(fw.img)], dst, got, rt, syms)
+        check(ok, msg)
     check(got == rt, f"charge utile décompressée à {dst:#x} : {len(rt)} o (moteurs, MACRO et ses variables à zéro), "
                      f"rangée en {fw.packed} o dans l'image ; tables d'ondes de CHORD reprises en SRAM")
     # la partie des moteurs : celle des moteurs seuls, sauf ce qui compte les machines (détours, données,
