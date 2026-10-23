@@ -1,6 +1,6 @@
 {
-  "release": "2.26",
-  "stamp": "2026-10-23-vinyl-dust-main-226",
+  "release": "2.27",
+  "stamp": "2026-10-23-shimmer-main-227",
   "cards": [
     {
       "en": [
@@ -25,11 +25,11 @@
     {
       "en": [
         "Filters and effects",
-        "Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Delay/Crush combinations, Chorus 1/2 + Reverb and Vinyl + Reverb. FX menus apply only on TRACK release. Opaque FX overlay; SETTINGS + Size/Time adjusts Tone/Feedback in combined modes. Vinyl dust continues through musical gaps."
+        "Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Delay/Crush combinations, Chorus 1/2 + Reverb and Vinyl + Reverb. FX menus apply only on TRACK release. Opaque FX overlay; SETTINGS + Size/Time adjusts Tone/Feedback in combined modes. Vinyl dust continues through musical gaps. Includes stereo Ping Pong, full-octave Shimmer 1 and the earlier mixed/diffuse Shimmer 2."
       ],
       "fr": [
         "Filtres et effets",
-        "Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK. Fenetres FX opaques ; SETTINGS+Size/Time regle Tone/Feedback en modes combines. Poussiere Vinyl continue dans les pauses."
+        "Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK. Fenetres FX opaques ; SETTINGS+Size/Time regle Tone/Feedback en modes combines. Poussiere Vinyl continue dans les pauses. Ajoute Ping Pong stereo,Shimmer 1 entierement transpose et Shimmer 2 mixte/diffuse precedent."
       ]
     },
     {
@@ -241,25 +241,13 @@
             "Grille : maintenir TRIG et appuyer T1–T6 ; live : accord puis pad d’harmonie",
             "Le même pad sur un pas tenu restaure son harmonie de base. Sauvegardé avec le pattern, indépendamment du LFO 2."
           ]
-        },
-        {
-          "en": [
-            "Machine browsing",
-            "MACHINES + turn DATA",
-            "Fast turns move at most one machine per accepted event, spaced by 40 ms, to avoid skipping Sample Wizard. Saved machine IDs and TINY/Shadow/MIDI order stay unchanged."
-          ],
-          "fr": [
-            "Defilement machines",
-            "MACHINES + tourner DATA",
-            "Tours rapides bornes a une machine par evenement accepte,espaces de40ms,pour ne pas sauter Wizard. IDs et ordre TINY/Shadow/MIDI conserves."
-          ]
         }
       ]
     },
     {
       "title": {
-        "en": "Effects, Elder and Shadow",
-        "fr": "Effets, Elder et Shadow"
+        "en": "Effects",
+        "fr": "Effets"
       },
       "rows": [
         {
@@ -278,12 +266,12 @@
           "en": [
             "Delay-slot menu",
             "Hold TRACK + DELAY TIME",
-            "Left/up: CRUSH 1, then CRUSH 2. Center: DELAY. Right/down: CRU1+DEL, CRU2+DEL. Same release-to-apply and BACK cancel."
+            "Left/up from DELAY: CRUSH 1, CRUSH 2, PING PONG, SHIMMER 1, SHIMMER 2. Right/down: CRU1+DEL, CRU2+DEL. Opaque menu; sound stays unchanged until TRACK release. BACK cancels."
           ],
           "fr": [
             "Menu slot delay",
             "Maintenir TRACK + DELAY TIME",
-            "Gauche/haut : CRUSH1,puis CRUSH2. Centre : DELAY. Droite/bas : CRU1+DEL,CRU2+DEL. Relacher TRACK applique,BACK annule."
+            "Gauche/haut depuis DELAY : CRUSH1,CRUSH2,PING PONG,SHIMMER 1,SHIMMER 2. Droite/bas : CRU1+DEL,CRU2+DEL. Fenetre opaque ; son inchange avant relachement TRACK. BACK annule."
           ]
         },
         {
@@ -384,6 +372,30 @@
         },
         {
           "en": [
+            "Ping Pong",
+            "TIME / FUNC + TIME or SETTINGS + TIME / DELAY SEND",
+            "Time / Feedback / per-track send. Stereo echoes alternate left and right; listen on headphones or both outputs. Replaces standard delay, with no combined variant."
+          ],
+          "fr": [
+            "Ping Pong",
+            "TIME / FUNC+TIME ou SETTINGS+TIME / DELAY SEND",
+            "Temps / Feedback / envoi par piste. Echos alternes gauche/droite ; casque ou deux sorties. Remplace le delay standard,sans variante combinee."
+          ]
+        },
+        {
+          "en": [
+            "Shimmer 1 / Shimmer 2",
+            "TIME / FUNC + TIME or SETTINGS + TIME / DELAY SEND",
+            "Time / Feedback / per-track send. Shimmer 1: every echo shifts up an octave, filtered for smoother repeats. Shimmer 2: earlier clean-echo/diffuse-octave blend. No combined variants."
+          ],
+          "fr": [
+            "Shimmer 1 / Shimmer 2",
+            "TIME / FUNC+TIME ou SETTINGS+TIME / DELAY SEND",
+            "Temps / Feedback / envoi par piste. Shimmer 1 : chaque echo monte d une octave,filtre pour lisser les repetitions. Shimmer 2 : ancien melange echo propre/octave diffusee. Sans variantes combinees."
+          ]
+        },
+        {
+          "en": [
             "Crusher Rate",
             "CRUSH: TIME; CRU+DEL: FUNC + TIME",
             "Rate 0-127, about 750 Hz-48 kHz. Lower is rougher; higher cleaner."
@@ -428,6 +440,26 @@
             "Reglages FX et sauvegarde",
             "Relacher TRACK ; arreter la lecture",
             "Modes et controles globaux,puis six envois par effet,sauvegardes apres arret. Nouveaux controles/envois sans p-lock/LFO. Parametres delay/reverb natifs conserves."
+          ]
+        }
+      ]
+    },
+    {
+      "title": {
+        "en": "Machines and sound controls",
+        "fr": "Machines et commandes sonores"
+      },
+      "rows": [
+        {
+          "en": [
+            "Machine browsing",
+            "MACHINES + turn DATA",
+            "Fast turns move at most one machine per accepted event, spaced by 40 ms, to avoid skipping Sample Wizard. Saved machine IDs and TINY/Shadow/MIDI order stay unchanged."
+          ],
+          "fr": [
+            "Defilement machines",
+            "MACHINES + tourner DATA",
+            "Tours rapides bornes a une machine par evenement accepte,espaces de40ms,pour ne pas sauter Wizard. IDs et ordre TINY/Shadow/MIDI conserves."
           ]
         },
         {

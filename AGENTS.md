@@ -216,3 +216,7 @@ AveyCole supplied the exact shared-filter `all-features-polivoks-cpu-trim-test-v
 ## AveyCole Vinyl publication (2026-10-23)
 
 AveyCole explicitly requested the revised Vinyl crackle be finished and pushed to main, then reported "Crackle sounds better" while testing the cumulative v59. Publish the identical Vinyl DSP in shared-filter v58 only, SHA256 `c155ee9df5d4b8450f2faa876ccaa51ea5addc15b60e2fce415b92d0844a6752`, through the existing fixed-main image path as2.26. This is not a claim that the exact v58 image received a complete hardware test. Ping Pong/Shimmer and their v60 repair remain private until separately approved. Preserve Claude's2.25 work and all existing main features. Only shared-filter private builds are requested at present.
+
+## AveyCole main2.27 promotion (2026-10-23)
+
+AveyCole reports "64 seemed to work for me" and requests publication with updated shortcuts and a printable overview. Promote exact shared-filter v64 SHA256 `77f533e3d6856ab204ff121ddd9c2562d90b378cfa59d24e7befa592ccf6357a` (MAIN `2192a9ab2deba19d3362622f1f9dca5b545dda4c690b394096e737c2bf55c2a6`). Delay IDs5/6/7 are Ping Pong/Shimmer1/Shimmer2. Shimmer1 is the filtered/aligned full-octave return ; Shimmer2 preserves v62 mixed/diffused DSP. Keep prior private files. Publish only the established fixed-main image with bilingual guides/PDF. No further firmware edits are included in this approval.

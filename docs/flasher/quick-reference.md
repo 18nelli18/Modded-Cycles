@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.26 - 23 October 2026
+Supermodel 2.27 - 23 October 2026
 
-Main 2.26. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.27. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
@@ -10,7 +10,7 @@ Main 2.26. Hold the first button while pressing the next button or turning the n
 
 **Performance and sequencing:** Arpeggiator, held-note octave 0, ChordKeys and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching mute and solo.
 
-**Filters and effects:** Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Delay/Crush combinations, Chorus 1/2 + Reverb and Vinyl + Reverb. FX menus apply only on TRACK release. Opaque FX overlay; SETTINGS + Size/Time adjusts Tone/Feedback in combined modes. Vinyl dust continues through musical gaps.
+**Filters and effects:** Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Delay/Crush combinations, Chorus 1/2 + Reverb and Vinyl + Reverb. FX menus apply only on TRACK release. Opaque FX overlay; SETTINGS + Size/Time adjusts Tone/Feedback in combined modes. Vinyl dust continues through musical gaps. Includes stereo Ping Pong, full-octave Shimmer 1 and the earlier mixed/diffuse Shimmer 2.
 
 **Routing and workflow:** MIDI Out with nine CC knobs, locks and two MIDI LFOs; MIDI OUT/THRU toggle; USB stereo or six tracks; permanent quick save, saved Mod Setup and optional DX diagnostics.
 
@@ -34,14 +34,13 @@ Main 2.26. Hold the first button while pressing the next button or turning the n
 | Arpeggiator / ChordKeys settings | FUNC + RETRIG | Open the settings for the active Arpeggiator or ChordKeys feature. Arpeggiator octave 0 cycles only through held notes. |
 | ChordKeys | Select the Chord machine, then play TRIG 1–16 | Play scale-based chord voicings from the step keys. To leave a ChordKeys track you must use TRACK + Track Pad. |
 | ChordKeys harmony locks | Grid record: hold a step TRIG and press T1-T6 . Live record: play a chord and use the harmony pads. | Record the chosen harmony on the step. Press the same harmony pad again on a held grid step to restore its base harmony. Harmony locks save with the pattern independently of LFO 2. |
-| Machine browsing | MACHINES + turn DATA | Fast turns move at most one machine per accepted event, spaced by 40 ms, to avoid skipping Sample Wizard. Saved machine IDs and TINY/Shadow/MIDI order stay unchanged. |
 
-## Effects, Elder and Shadow
+## Effects
 
 | Feature | Controls | Behavior |
 |---|---|---|
 | Reverb-slot menu | Hold TRACK + REVERB SIZE | Opaque popup over the normal screen; three scrolling choices. Left/up: VINYL, then VINYL+REV. Center: REVERB. Right/down: CHORUS 1, CHORUS 2, CHOR1+REV, CHOR2+REV. Browse without changing sound; release TRACK to apply, BACK to cancel. |
-| Delay-slot menu | Hold TRACK + DELAY TIME | Left/up: CRUSH 1, then CRUSH 2. Center: DELAY. Right/down: CRU1+DEL, CRU2+DEL. Same release-to-apply and BACK cancel. |
+| Delay-slot menu | Hold TRACK + DELAY TIME | Left/up from DELAY: CRUSH 1, CRUSH 2, PING PONG, SHIMMER 1, SHIMMER 2. Right/down: CRU1+DEL, CRU2+DEL. Opaque menu; sound stays unchanged until TRACK release. BACK cancels. |
 | Reverb Tone | REVERB: FUNC + SIZE; combined: SETTINGS + SIZE | In CHOR1+REV, CHOR2+REV and VINYL+REV, hold SETTINGS and turn REVERB SIZE for native Tone without leaving the mode. Releasing SETTINGS returns to Reverb Size. Standard REVERB mode keeps FUNC + SIZE. |
 | Chorus alone | SIZE = Speed; FUNC + SIZE = Depth | Chorus I/II Speed and Depth 0-127. REVERB SEND becomes Chorus Send per track. |
 | Chorus + Reverb controls | SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Reverb Size / Chorus Speed / Chorus Depth. A held FUNC-first TRACK does not open Track Setup. |
@@ -50,10 +49,18 @@ Main 2.26. Hold the first button while pressing the next button or turning the n
 | Vinyl + Reverb controls | SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Reverb Size / Crackle / Warble Amount. FUNC first, then TRACK + REVERB SEND adjusts Warble Speed. |
 | Vinyl + Reverb sends | REVERB SEND / FUNC + REVERB SEND | Native Reverb Send / separate Vinyl Send per track. Vinyl Send 0 leaves normal reverb. |
 | Delay Time / Feedback | DELAY: TIME / FUNC + TIME; combined: SETTINGS + TIME | Plain TIME keeps native Time in CRU1+DEL/CRU2+DEL. Hold SETTINGS and turn DELAY TIME for native Feedback; releasing SETTINGS returns to Time. FUNC first, then TRACK + DELAY SEND also adjusts Feedback. |
+| Ping Pong | TIME / FUNC + TIME or SETTINGS + TIME / DELAY SEND | Time / Feedback / per-track send. Stereo echoes alternate left and right; listen on headphones or both outputs. Replaces standard delay, with no combined variant. |
+| Shimmer 1 / Shimmer 2 | TIME / FUNC + TIME or SETTINGS + TIME / DELAY SEND | Time / Feedback / per-track send. Shimmer 1: every echo shifts up an octave, filtered for smoother repeats. Shimmer 2: earlier clean-echo/diffuse-octave blend. No combined variants. |
 | Crusher Rate | CRUSH: TIME; CRU+DEL: FUNC + TIME | Rate 0-127, about 750 Hz-48 kHz. Lower is rougher; higher cleaner. |
 | Crusher Bits | CRUSH: FUNC + TIME; CRU+DEL: FUNC first, then TRACK + TIME | Bits 2-16. Low values affect quiet signals too. Silence stays silent. |
 | Crusher / Delay sends | Combined: DELAY SEND / FUNC + DELAY SEND | Delay Send / separate Crush Send 0-127 per track. CRU1+DEL keeps direct clean; CRU2+DEL blends direct clean/crushed even at delay 0. Crusher 0 gives clean echoes. Solo modes show Crush Send. |
 | Effect settings and save | Release TRACK; stop playback | Global modes and effect controls, plus six separate sends per effect, save after stopping. New controls/sends have no p-lock/LFO destinations. Native delay/reverb parameters retain stock behavior. |
+
+## Machines and sound controls
+
+| Feature | Controls | Behavior |
+|---|---|---|
+| Machine browsing | MACHINES + turn DATA | Fast turns move at most one machine per accepted event, spaced by 40 ms, to avoid skipping Sample Wizard. Saved machine IDs and TINY/Shadow/MIDI order stay unchanged. |
 | Elder controls | Select Elder in MACHINES | COLOR = Wave; SHAPE = Warp; SWEEP = Noise; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate and Fine remain available. Original synth inspired by Junior by Fors. |
 | Saved Retrosyn sounds | Elder replaces ChpHzrd / Retrosyn | The same machine slot now plays Elder, so previous Retrosyn sounds change timbre. The other engines and previous CPU fixes are retained. Feral is by Glycinate. |
 | TINY controls | Select TINY in MACHINES | COLOR: Tone; SHAPE: Model0–51; SWEEP: Mod; CONTOUR: Excite. All52 original models; Feral and every other engine remain. |

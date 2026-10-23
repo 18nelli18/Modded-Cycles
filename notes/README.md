@@ -242,3 +242,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [153 - Raccourcis SETTINGS des effets](153-raccourcis-settings-fx.md) | v57 exact servi comme main2.25 sur demande d’AveyCole : SETTINGS+Size/Time (Tone/Feedback en modes combines), popups FX opaques ; guides EN/FR/PDF actualises. |
 
 | [154 - Poussiere Vinyl independante](154-poussiere-vinyl-independante.md) | Principal2.26 : pops/clics independants du signal, pauses audibles, sends/volume/pan/mute respectes ; grain juge meilleur par AveyCole, preuves natives. |
+
+| [155 - Ping Pong et deux Shimmer](155-ping-pong-deux-shimmer.md) | Principal2.27 : exact v64 signale fonctionnel/approuve ; Ping Pong stereo,Shimmer1 entierement octave,Shimmer2 v62 conserve ; guides EN/FR/PDF actualises. |

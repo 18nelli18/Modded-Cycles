@@ -1,2 +1,2 @@
-window.MCFixedMainImageMeta={"mainOsSha":"1b3244ff6f4555a28f579d26ba91383e8980c87cd6a4ee918c64c030807c181d","syxSha256":"c155ee9df5d4b8450f2faa876ccaa51ea5addc15b60e2fce415b92d0844a6752"};
-window.MCFixedMainImageReady=fetch(new URL("all-features-usb-2ch-default.syx?v=2026-10-23-vinyl-dust-main-226",window.location.href),{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("Verified main firmware image could not be loaded");return r.arrayBuffer();}).then(b=>new Uint8Array(b));
+window.MCFixedMainImageMeta={"mainOsSha":"2192a9ab2deba19d3362622f1f9dca5b545dda4c690b394096e737c2bf55c2a6","syxSha256":"77f533e3d6856ab204ff121ddd9c2562d90b378cfa59d24e7befa592ccf6357a"};
+window.MCFixedMainImageReady=fetch(new URL("all-features-usb-2ch-default.syx?v=2026-10-23-shimmer-main-227",window.location.href),{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("Verified main firmware image could not be loaded");return r.arrayBuffer();}).then(b=>new Uint8Array(b));
