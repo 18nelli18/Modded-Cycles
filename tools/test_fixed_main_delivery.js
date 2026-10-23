@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),
 const {chromium}=require('playwright');
 const root=path.resolve(__dirname,'..'),site=path.join(root,'docs'),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 const expected=fs.readFileSync(path.join(site,'flasher/all-features-usb-2ch-default.syx'));
-assert.equal(hash(expected),'2db3be51ad7f7e44bfbd7919cd4babb583a38746672728bca2ef8c87d093627e','released file must be the approved shared-filter v46 release with Elder, chorus and crusher');
+assert.equal(hash(expected),'ec6717091c7e016ead30d5d5b3e1be7a0d72c936b5c833913594830373fd92d6','released file must be the approved shared-filter v48 release with Elder, chorus and crusher');
 const meta=JSON.parse(fs.readFileSync(path.join(site,'flasher/BUILD.json')));
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.pdf':'application/pdf','.syx':'application/octet-stream','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{
@@ -29,7 +29,7 @@ const server=http.createServer((req,res)=>{
    await page.evaluate(async()=>await Promise.all(Object.keys(window).filter(k=>k.endsWith('Ready')&&window[k]?.then).map(k=>window[k])));
    assert.match(await page.locator('#credits').innerText(),/Glycinate/,'Feral author credit missing');
    assert.match(await page.locator('#credits-list').innerText(),/PPPCCC/);assert.equal(await page.locator('#credits-list a[href="https://github.com/18nelli18/Modded-Cycles"]').count(),1);
-   assert(await page.locator('a[href="release-notes-2.20.html"]').count()>0,'release notes link missing');
+   assert(await page.locator('a[href="release-notes-2.21.html"]').count()>0,'release notes link missing');
    assert.equal(await page.locator('#fixed-six-usb').count(),0,'web USB build selector returned');
    assert.equal(await page.locator('a[href^="shortcut-guide.pdf"]').count(),1,'one canonical PDF guide link required');
    await page.setInputFiles('#file',path.join(root,'firmware/model-cycles_OS1.13.syx'));
@@ -46,17 +46,17 @@ const server=http.createServer((req,res)=>{
    else{
     assert.equal(result.sha,hash(expected));assert.equal(result.sha,meta.fixed_image_sha256);assert.equal(result.main,meta.main_os_sha256);assert(result.packets>0);assert(result.disabled);
     const downloaded=page.waitForEvent('download');await page.locator('#download').click({force:true});const download=await downloaded;
-    const target=path.join(root,'tmp','main-219-browser-download.syx');await download.saveAs(target);assert.equal(hash(fs.readFileSync(target)),hash(expected));
+    const target=path.join(root,'tmp','main-221-browser-download.syx');await download.saveAs(target);assert.equal(hash(fs.readFileSync(target)),hash(expected));
     const pdf=await context.request.get(new URL('shortcut-guide.pdf?v='+meta.stamp,base).href);assert(pdf.ok());assert.equal(hash(await pdf.body()),hash(fs.readFileSync(path.join(site,'flasher/shortcut-guide.pdf'))));
-    console.log('PASS: official OS + required Syntakt upload -> exact 2.20 bytes and valid packets -> exact downloaded file',result.sha);
+    console.log('PASS: official OS + required Syntakt upload -> exact 2.21 bytes and valid packets -> exact downloaded file',result.sha);
     console.log('PASS: guide download exact, no USB selector, no automatic hardware transfer');
    }
    assert.deepEqual(errors,[]);await context.close();
   }
   const notes=await browser.newPage();
-  await notes.goto(new URL('release-notes-2.20.html',base).href,{waitUntil:'load'});
+  await notes.goto(new URL('release-notes-2.21.html',base).href,{waitUntil:'load'});
   const text=await notes.locator('main').innerText();
-  assert.match(text,/Glycinate/);assert.match(text,/ChordKeys/);assert.match(text,/Wizard/);assert.match(text,/Elder/);assert.match(text,/Fors/);assert.match(text,/Crush/);assert.match(text,/Bits/);assert.match(text,/BACK/);assert.match(text,/Tone/);assert.match(text,/TINY/);assert.match(text,/Copy\/paste\/clear/);
+  assert.match(text,/Glycinate/);assert.match(text,/ChordKeys/);assert.match(text,/Wizard/);assert.match(text,/separate/);assert.match(text,/MACHINES/);assert.match(text,/Elder/);assert.match(text,/Fors/);assert.match(text,/Crush/);assert.match(text,/Bits/);assert.match(text,/BACK/);assert.match(text,/Tone/);assert.match(text,/TINY/);assert.match(text,/Copy\/paste\/clear/);
   assert.doesNotMatch(text,/machinedrum|f card|card graphic/i);
   assert.equal(await notes.locator('h1 [data-l="en"]').isVisible(),true);
   await notes.locator('[data-lang="fr"]').click();
@@ -64,7 +64,7 @@ const server=http.createServer((req,res)=>{
   assert.equal(await notes.locator('h1 [data-l="en"]').isVisible(),false);
   const mainLink=notes.locator('main a').last();await mainLink.click();
   await notes.waitForFunction(()=>!!window.MCFlasherApp);
-  console.log('PASS: linked 2.20 release notes, EN/FR switch, Glycinate credit and return to main');
+  console.log('PASS: linked 2.21 release notes, EN/FR switch, Glycinate credit and return to main');
   await notes.close();
   const guide=await browser.newPage();
   await guide.goto(new URL('shortcut-guide.html?v='+meta.stamp,base).href,{waitUntil:'load'});

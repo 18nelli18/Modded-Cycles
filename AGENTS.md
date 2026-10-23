@@ -191,3 +191,7 @@ AveyCole reports the TINY-addition test working and explicitly requests “push 
 ## AveyCole main2.20 promotion (2026-10-22)
 
 AveyCole reports “v46 worked, make that the main push”. Promote the exact shared-filter v46, SHA256 `2db3be51ad7f7e44bfbd7919cd4babb583a38746672728bca2ef8c87d093627e`, with the per-track six-parameter SCRAMBLE checklist, v45 Feral Formula startup repair and v44 menu order. Preserve saved machine IDs, all prior features and private comparisons. Subsequent label refinements belong in a separate private build.
+
+## AveyCole main2.21 promotion and private delivery (2026-10-22)
+
+AveyCole tested the exact shared-filter v48 and reports “this worked, push to main”. Promote SHA256 `ec6717091c7e016ead30d5d5b3e1be7a0d72c936b5c833913594830373fd92d6`, with parameter retention and separate per-track Wizard/synth dial banks during the current MACHINES session. Stock-style menu lifetime was explicitly accepted; do not claim per-engine preset banks across menu sessions. Main includes all prior v46 features. Future private tests need both direct `.syx` files; the user no longer needs private flasher pages.

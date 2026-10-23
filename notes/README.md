@@ -230,3 +230,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 
 | [147 — Feral Formula et ordre](147-feral-formula-et-ordre.md) | v44 ordreTINY avantMIDI sans renumeroter ; v45 demarrage Formula audible, confirme utilisateur. |
 | [148 — SCRAMBLE par piste](148-scramble-par-piste.md) | v46/v46nf : sixcases par piste,DATA/BACK,stockage UI,preuves live/locks ; principal2.20 exact approuve. |
+
+| [149 — Valeurs machines et Wizard](149-valeurs-machines-et-wizard.md) | v48 retient six commandes, isole les dials Wizard/synth dans MACHINES ; AveyCole confirme et approuve main2.21 exact. |

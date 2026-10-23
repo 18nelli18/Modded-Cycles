@@ -1,15 +1,15 @@
 {
-  "release": "2.20",
-  "stamp": "2026-10-22-scramble-main-220",
+  "release": "2.21",
+  "stamp": "2026-10-22-wizard-isolation-main-221",
   "cards": [
     {
       "en": [
         "Machines and sound",
-        "Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY and MIDI Out. Elder is an original synth inspired by Junior by Fors."
+        "Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY and MIDI Out. Elder is an original synth inspired by Junior by Fors. Machine browsing retains synth values; Wizard’s four dials stay separate while MACHINES stays open."
       ],
       "fr": [
         "Machines et son",
-        "Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY et MIDI Out. Elder est inspiré de Junior de Fors."
+        "Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY et MIDI Out. Elder est inspiré de Junior de Fors. La selection conserve les valeurs synth ; quatre commandes Wizard separees tant que MACHINES reste ouvert."
       ]
     },
     {
@@ -474,12 +474,12 @@
           "en": [
             "Playback modes",
             "SETTINGS + MACHINES",
-            "All seven modes: One-Shot, Loop, Slice, Granular, Stretch, Pluck and Wavetable. SETTINGS + PUNCH opens options for the current mode."
+            "All seven modes: One-Shot, Loop, Slice, Granular, Stretch, Pluck and Wavetable. SETTINGS + PUNCH opens options for the current mode. Wizard dial values stay separate from synth values during the current MACHINES session; leaving and returning restores them."
           ],
           "fr": [
             "Modes de lecture",
             "SETTINGS + MACHINES",
-            "One-Shot, Loop, Slice, Granular, Stretch, Pluck et Wavetable conservés. SETTINGS + PUNCH : options du mode."
+            "One-Shot, Loop, Slice, Granular, Stretch, Pluck et Wavetable conservés. SETTINGS + PUNCH : options du mode. Commandes Wizard separees des synths pendant la session MACHINES ; valeurs restaurees au retour."
           ]
         },
         {
@@ -656,12 +656,12 @@
         },
         {
           "en": [
-            "Scramble",
+            "SCRM",
             "DATA opens; turn and press DATA; BACK returns",
             "Six checkboxes per track: Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay default Off; the original four default On. Choices persist across projects and power cycles; saving waits until playback stops. Wizard allows Pitch/Decay; its sample/mode controls stay excluded."
           ],
           "fr": [
-            "Scramble",
+            "SCRM",
             "DATA ouvre ; tourner et appuyer ; BACK revient",
             "Six cases par piste : Pitch,Decay,Color,Shape,Sweep,Contour. Pitch/Decay desactives par defaut, quatre autres actives. Choix conserves entre projets et apres extinction ; sauvegarde a l’arret. Wizard autorise Pitch/Decay, commandes sample/modes exclues."
           ]
