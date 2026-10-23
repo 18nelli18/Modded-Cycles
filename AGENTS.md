@@ -169,3 +169,13 @@ as release 2.16, retaining its saved DX toggle (Off by default). This supersedes
 the older no-diagnostics policy for this approved release. Publish that exact
 checksum-pinned image through the existing tracked fixed-main delivery path;
 do not add other firmware images or private dumps. Credit Glycinate for Feral.
+
+## AveyCole main2.17 promotion (2026-10-22)
+
+AveyCole explicitly approved promoting the exact shared-filter v40 image to main,
+with updated feature/shortcut guides and PDF, after reporting “v40 worked”.
+This approved release retains DX and every cumulative CPU fix. Its SysEx SHA256
+is `8e11e8bed03666f4444f818f6a5d7dea67199f077eddf9d623de81584041e7cb`.
+Update only the established tracked fixed-main delivery image; never add other
+firmware dumps. Preserve private comparisons. Follow-up credit and low-bit
+investigation requests do not authorize silently changing these approved bytes.

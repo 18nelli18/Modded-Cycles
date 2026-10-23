@@ -57,6 +57,17 @@ parser.add_argument('--test-version',default='v7')
 parser.add_argument('--no-publish',action='store_true')
 args=parser.parse_args()
 soup=BeautifulSoup((ROOT/args.source).read_text(encoding='utf-8'),'html.parser')
+# Le PDF anglais prend le meme article canonique que la page bilingue.
+def english_only(node):
+ children=[]
+ for c in node.children:
+  if isinstance(c,Node):
+   if c.attrs.get('data-l')=='fr':continue
+   english_only(c)
+   if c.tag=='article' and c.attrs.get('data-l')=='en':children.extend(c.children);continue
+  children.append(c)
+ node.children=children
+english_only(soup)
 ink=colors.HexColor('#202820');accent=colors.HexColor('#36563e');line=colors.HexColor('#c7cfc5')
 styles={
  'title':ParagraphStyle('title',fontName='Helvetica-Bold',fontSize=22,leading=25,textColor=ink,spaceAfter=4),
@@ -68,7 +79,7 @@ styles={
 }
 def text(node):
  t=node.get_text(' ',strip=True) if hasattr(node,'get_text') else str(node)
- t=t.translate({0x2013:45,0x2014:45,0x2011:45,0x2019:39})
+ t=t.translate({0x2013:45,0x2014:45,0x2011:45,0x2019:39,0x2018:39,0x2192:62})
  for old,new in [('â€“','-'),('â€”','-'),('â€™',"'"),('\u00a0',' ')]:t=t.replace(old,new)
  return escape(' '.join(t.split()))
 def para(node,style='body'):
@@ -87,29 +98,33 @@ def table(node):
  t=Table([head]+rows,colWidths=[87,166,299],repeatRows=1,hAlign='LEFT')
  t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('BACKGROUND',(0,0),(-1,0),colors.HexColor('#e7ede4')),('LINEBELOW',(0,0),(-1,0),.6,accent),('LINEBELOW',(0,1),(-1,-1),.35,line),('LEFTPADDING',(0,0),(-1,-1),5),('RIGHTPADDING',(0,0),(-1,-1),5),('TOPPADDING',(0,0),(-1,-1),4),('BOTTOMPADDING',(0,0),(-1,-1),4)]))
  return t
-flow=[Paragraph('Supermodel Edition',styles['title']),Paragraph('Model:Cycles | '+('MIDI-input test '+args.test_version+' - no-filter / P-O-N' if args.test else 'Features and shortcut guide'),styles['sub']),para(soup.select_one('main > p')),Spacer(1,7)]
+flow=[Paragraph('Supermodel Edition',styles['title']),Paragraph('Model:Cycles | '+('MIDI-input test '+args.test_version+' - no-filter / P-O-N' if args.test else 'Supermodel 2.17 - Features and shortcut guide'),styles['sub']),para(soup.select_one('main > p')),Spacer(1,7)]
 cards=soup.select('.grid .card');grid=[]
 for i in range(0,len(cards),2):grid.append([para(n) for n in cards[i:i+2]])
 ct=Table(grid,colWidths=[276,276]);ct.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('BACKGROUND',(0,0),(-1,-1),colors.HexColor('#f0f3ed')),('BOX',(0,0),(-1,-1),.4,line),('INNERGRID',(0,0),(-1,-1),.3,line),('LEFTPADDING',(0,0),(-1,-1),7),('RIGHTPADDING',(0,0),(-1,-1),7),('TOPPADDING',(0,0),(-1,-1),6),('BOTTOMPADDING',(0,0),(-1,-1),6)]));flow.append(ct)
 headings=soup.select('main > h2');tables=soup.select('main > table')
-flow.extend([section(text(headings[1])),table(tables[0]),PageBreak(),Paragraph('LFO, samples and setup',styles['title']),Paragraph('Feature and shortcut reference (continued)',styles['sub'])])
-pages=3 if any(text(h)=='Mod Setup' for h in headings) else 2
-for h,t in zip(headings[2:],tables[1:]):
- if text(h)=='Mod Setup':
-  flow.extend([PageBreak(),Paragraph('Mod Setup',styles['title']),Paragraph('Global preferences | Stk = Stock',styles['sub']),para(soup.select_one('p.mod-setup-intro')),Spacer(1,8),table(t),Spacer(1,8),para(soup.select_one('p.mod-setup-save'))])
- else:flow.extend([section(text(h)),table(t)])
+pages=4
+for h,t in zip(headings[1:],tables):
+ title=text(h)
+ if title in ('Effects and Elder','LFO and MACRO controls','Mod Setup'):
+  flow.extend([PageBreak(),Paragraph(title,styles['title']),Paragraph('Supermodel 2.17 - Feature and shortcut reference',styles['sub'])])
+ else:flow.append(section(title))
+ if title=='Mod Setup':flow.extend([para(soup.select_one('p.mod-setup-intro')),Spacer(1,8)])
+ flow.append(table(t))
+ if title=='Mod Setup':flow.extend([Spacer(1,8),para(soup.select_one('p.mod-setup-save'))])
 flow.extend([Spacer(1,9),para(soup.select_one('main > p.note'))])
 out=ROOT/args.output;out.parent.mkdir(exist_ok=True,parents=True)
 def chrome(c,doc):
  c.setFillColor(accent);c.setFont('Helvetica-Bold',7);c.drawString(30,773,'SUPERMODEL EDITION | MODEL:CYCLES');c.setFont('Helvetica',7);c.drawRightString(582,773,f'Page {doc.page} / {pages}')
- c.setStrokeColor(line);c.line(30,25,582,25);c.setFont('Helvetica',6.5);c.drawString(30,15,'Features and shortcuts | 21 October 2026');c.drawRightString(582,15,'Stk = Stock | Startup: USB 2ch, numbers Off')
+ c.setStrokeColor(line);c.line(30,25,582,25);c.setFont('Helvetica',6.5);c.drawString(30,15,'Features and shortcuts | 22 October 2026');c.drawRightString(582,15,'Stk = Stock | Startup: USB 2ch, numbers Off')
 doc=SimpleDocTemplate(str(out),pagesize=letter,rightMargin=30,leftMargin=30,topMargin=36,bottomMargin=34,title='Supermodel Edition - Features and Shortcuts',author='A.V.')
 doc.build(flow,onFirstPage=chrome,onLaterPages=chrome)
 r=PdfReader(out);assert len(r.pages)==pages,len(r.pages)
 alltext=' '.join(' '.join(p.extract_text().split()) for p in r.pages)
-for term in ('PLAY advances','STOP moves back','Mute: LTC','Num Off','MIDI Out machine only','harmony locks','sample browser must be open'):assert term in alltext,term
+for term in ('PLAY advances','STOP moves back','Mute: LTC','Num Off','harmony locks','sample browser must be open'):assert term in alltext,term
+for term in ('Elder', 'Chorus I', 'Chorus II', 'Crush', 'Both', 'Rate 0', 'Bits 2', 'nine knobs', 'Glycinate', 'Fors'):assert term in alltext,term
 for term in ('Channel','Output','KbT','Pad Note','Two MIDI LFOs','MIDI Out machine'):assert term in alltext,term
-if pages==3:
+if pages>=3:
  for term in ('DX', 'LTC', 'SIL', 'Mod Setup','Stk / SIL','2ch / 6ch','Off / On','Stk / LTC','Stk / Div','global preferences','save waits until it stops'):assert term in alltext,term
 for term in ('Model-TG','Model TG','B-side'):assert term not in alltext,term
 if args.test:

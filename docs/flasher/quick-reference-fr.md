@@ -1,119 +1,95 @@
-# Vue d’ensemble des fonctions et raccourcis
+# Guide des fonctions et raccourcis
 
-A.V.’s Supermodel Edition · 18 octobre 2026
+Supermodel2.17 - 22 octobre2026
 
-Gestes ajoutes uniquement ; transports, copies, effacements et collages calques sur le stock omis.
+Principal2.17. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
-Installez la fonction correspondante. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. MACHINES est le bouton parfois nomme PRESET dans les instructions du sampler.
+## Fonctions incluses
 
-## Vue d'ensemble actuelle
+**Machines et son:** Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder et MIDI Out. Elder est inspiré de Junior de Fors.
 
-Flasheur principal 1.83 · mise à jour du 18 octobre 2026. Installez les fonctions souhaitées ; le flasheur vérifie les combinaisons compatibles. [Supermodel 909 Edition](../flasher-supermodel-909/) possède sa propre sélection et sa propre version.
+**Performance et séquenceur:** Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute verrouillé et solo.
 
-| Fonction | Comportement actuel |
-|---|---|
-| Machines ajoutées | MACRO, ACID, WAVE, TINY, RETROSYN et les moteurs dérivés du Syntakt au choix. Ces derniers nécessitent votre propre fichier OS Syntakt. |
-| Swarm LITE | Remplace les sept oscillateurs par trois : fondamentale et deux dents de scie désaccordées. Charge CPU réduite, son plus fin et parfois moins fort ; des arrangements lourds peuvent encore cliquer. |
-| Sample Wizard | Sampler indépendant avec sample locks, modes, découpage et rééchantillonnage. Sample Preview est testé sur machine. Model-TG est retiré du flasheur principal. |
-| RETROSYN / ChordKeys | Six types d'oscillateurs rétro ; ChordKeys ajoute accords selon la gamme et voicings. Combinez librement les machines ajoutées ; seules les machines cochées apparaissent. Sample Wizard reste facultatif. |
-| Filtre par piste / Synth Attack | Coupure, résonance et attaque ajoutées ; locks de filtre et Control All. Le filtre publié inclut la correction de distorsion après avoir quitté Sample Wizard. |
-| Control All Config / Beat Repeat | Choix des pistes audio incluses ; répétition momentanée sur seize divisions, avec popup bref de la division. |
-| Banque MIDI Out — expérimentale | Six voies MIDI parallèles : CC et locks, slides, retrigger/arpège, chance, deux LFO MIDI et sauvegarde annexe au projet. Facultative et installable sans beat repeat. Le beat repeat peut aussi être installé sans Banque MIDI. Hors enregistrement, pages disponibles allumees et page jouee clignotante. En enregistrement, page editee fixe et page jouee clignotante. Ouverture en mode normal sur la page selectionnee dans A. Longueur normale commune avec A et editable depuis B : FUNC + PAGE ouvre Len sans activer son edition ; appuyez sur DATA puis tournez, ou appuyez sur PAGE par16 meme hors edition. Mode par piste : longueurs MIDI independantes. |
-| Sequence Genie / SCRAMBLE | Génération ou mutation de séquences, attente d'une frontière Loop/Page, randomisation audio ou CC côté B. |
-| Arpégiateur / Second LFO | Arpège des notes tenues et page de modulation supplémentaire. Oct 0 parcourt seulement les notes tenues ; 1–3 ajoutent des octaves. Confirmé sur les deux côtés. |
-| Performance et édition | Mutes verrouillés, préécoute de pas, slides, noms défilants, navigateur trois lignes, volume/pan chiffrés, trigless atténués et délai de suppression des trigs. |
-| Routage / tempo / démarrage | Audio USB six canaux, MIDI OUT + THRU combinés, tempo jusqu'à 546 BPM et choix d'animation de démarrage. |
+**Filtres et effets:** Attaque par piste et passe-bas résonant deux pôles inspiré du Polivoks ; passe-bas interne Wizard ; second LFO ; MACRO Fine/Lo-Fi ; Reverb/Chorus I/II et Delay/Crush/Both.
 
-**Sauvegarde :** maintenez **FUNC + SETTINGS** pour la sauvegarde permanente stock restaurée. La correction confirmée empêche aussi FUNC de rester verrouillé à la fermeture du menu. Pour les données MIDI, arrêtez la lecture avant de sauvegarder et attendez **MIDI SAVED**. Le MIDI sauvegardé charge **uniquement en entrant côté B, lecture arrêtée** ; les fichiers annexes sont hors backups SysEx Elektron.
+**Routage et travail:** MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif.
 
-**Diagnostics :** les affichages CPU/pic/CUT sont réservés aux builds de test et absents du principal.
+## Pistes, pas et performance
 
-## Performance et son
-
-| Fonction | Geste | Resultat |
+| Fonction | Commandes | Comportement |
 |---|---|---|
-| Control All Config | TRACK + TRIG 1–6 | Inclure ou exclure les pistes de Control All. La piste sélectionnée peut aussi être exclue. Choix remis a zero a extinction. |
-| Control All Beat Repeat | Tenir TRACK + RETRIG, puis un TRIG 1–16 | Repeter les pistes audio incluses. Dernier TRIG tenu prioritaire, division en popup bref. Relacher le TRIG ou un modificateur arrete. Garder les deux modificateurs tenus. |
-| Mute verrouille | Tenir TRACK, taper FUNC | Garder le mode mute ouvert. Taper FUNC pour sortir. |
-| Preecoute d un pas | A l arret ou en pause, tenir TRIG + PAGE | Ecouter le pas et ses locks. |
-| Slides audio | SETTINGS + TRIG | Activer/desactiver le slide de parametres du pas. |
-| Attack synth | MACHINES + DECAY | Regler l attaque ajoutee sur les pistes synth/drum compatibles. |
-| Filtre par piste | MACHINES + SWEEP / CONTOUR | Coupure / resonance. Ajouter TRACK pour Control All des pistes audio incluses. Neutre : coupure maximale et resonance nulle. |
-| Lo-fi MACRO | FUNC + PITCH sur MACRO | A gauche : frequence 46K–4K ; a droite : profondeur 12B–2B ; centre OFF. Valeur affichee dans la fenetre. |
+| Step Recorder | Lecture arrêtée : REC deux fois ; PLAY avance ; STOP recule ; REC quitte | Jouez des notes pour écrire les pas successifs. PLAY avance d’un pas, STOP recule d’un pas. |
+| Mute verrouillé | TRACK + appui bref sur FUNC | Choisissez d’abord Mute: LTC dans Mod Setup. FUNC quitte le mode verrouillé ; Stk conserve le mode natif. |
+| Solo en mute | En mode mute verrouillé : FUNC + T1–T6 | Isole la piste. Rappuyez sur son pad, ou quittez le mode mute, pour restaurer les mutes précédents. |
+| Sélection silencieuse | Choisir Pad: SIL dans Mod Setup ; T1–T6 | Sélection sans déclenchement. TRACK + pad sélectionne et joue. Stk est le défaut. |
+| Préécoute de pas | Maintenir TRIG + PAGE | Écoutez le pas et ses locks à l’arrêt ou en pause. |
+| Slide | SETTINGS + TRIG | Active ou désactive le glissement de paramètres sur le pas. |
+| Sequence Genie | SETTINGS + PAGE | Générateur de la piste sélectionnée. DATA choisit ; Generate ou Queue, avec frontière Loop/Page. |
+| SCRAMBLE | Appui bref SETTINGS + TRACK | Randomise Color, Shape, Sweep et Contour au relâchement. Compatible avec les p-locks. |
+| Configuration Control All | TRACK + TRIG 1–6 | Inclut ou exclut les pistes audio des changements collectifs. |
+| Beat repeat audio | Maintenir TRACK + RETRIG, puis un TRIG 1–16 | Le pas choisit la division des pistes incluses. Relâchez un modificateur ou le pas pour arrêter. |
+| Filtre collectif | TRACK + MACHINES + SWEEP / CONTOUR | Coupure / résonance des pistes incluses. Sans TRACK : piste sélectionnée. Passe-bas deux pôles inspiré du Polivoks. |
+| Attaque synthé | MACHINES + DECAY | Règle l’attaque ajoutée sur les machines compatibles. |
+| Arpège / réglages ChordKeys | FUNC + RETRIG | Ouvre les réglages actifs. Octave 0 de l’arpège parcourt uniquement les notes tenues. |
+| ChordKeys | Sur Chord : jouer TRIG 1–16 | Voicings en gamme. TRACK + pad de piste est nécessaire pour quitter une piste ChordKeys. |
+| Locks d’harmonie ChordKeys | Grille : maintenir TRIG et appuyer T1–T6 ; live : accord puis pad d’harmonie | Le même pad sur un pas tenu restaure son harmonie de base. Sauvegardé avec le pattern, indépendamment du LFO 2. |
 
-### Divisions du beat repeat
+## Effets et Elder
 
-| TRIG | Division | TRIG | Division |
-|---|---|---|---|
-| 1 | 1/64 | 9 | 3/16 |
-| 2 | 1/48 | 10 | 1/4 |
-| 3 | 1/32 | 11 | 1/3 |
-| 4 | 1/24 | 12 | 3/8 |
-| 5 | 1/16 | 13 | 1/2 |
-| 6 | 1/12 | 14 | 2/3 |
-| 7 | 1/8 | 15 | 3/4 |
-| 8 | 1/6 | 16 | 1 mesure |
-
-Les longues boucles audio sont divisees par deux aux tempos lents selon la capacite du buffer. Le beat repeat agit sur l’audio interne et ne répète pas les notes MIDI sortantes.
-
-## Sequence Genie, SCRAMBLE et modulation
-
-| Fonction | Geste | Resultat |
+| Fonction | Commandes | Comportement |
 |---|---|---|
-| Sequence Genie | SETTINGS + PAGE | Generateur de la piste audio ou voie B selectionnee. DATA choisit ; clic, tourner, clic pour editer. Generate est premier, Queue second. Loop attend la prochaine boucle de piste ; Page, la prochaine page de 16 pas. |
-| SCRAMBLE A | SETTINGS + TRACK | Randomiser quatre parametres de synthese. Sampler exclu. |
-| SCRAMBLE de pas A | Tenir des TRIG, puis SETTINGS + TRACK | Basculer des valeurs aleatoires fraiches a chaque passage, son de base conserve. |
-| SCRAMBLE B | SETTINGS + TRACK | Randomiser les valeurs CC assignees de la voie MIDI selectionnee. |
-| Second LFO | Appuyer deux fois sur LFO | Ouvrir LFO 2. Dans cette page, LFO SPEED regle LFO 2. |
-| Assignation rapide LFO 2 | Sur LFO 2 cote A, tenir LFO et tourner un parametre | Choisir la destination, puis regler sa profondeur signee. |
-| Scale Lock | FUNC + PAGE | Acceder aux reglages ajoutes de gamme/tonalite avec le support performance installe. |
-| Arpege / reglages ChordKeys | FUNC + RETRIG | Options ajoutees direction/octaves ou ChordKeys selon la fonction installee. |
-| Jeu de l arpege | Tenir RETRIG avec des notes tenues | Arpeger les notes ; option A.On pour le verrouillage. |
-| ChordKeys | Sur CHORD, jouer TRIG 1–16 | 1–7 : I–VII ; 8–14 : octave superieure ; 15–16 : I–II deux octaves plus haut. |
+| Mode Chorus / Reverb | TRACK + REVERB SIZE | À droite : Reverb → Chorus I → Chorus II ; à gauche pour revenir. I est lent/doux ; II plus rapide/profond. Reverb restaure Size/Tone. |
+| Speed / Depth chorus | REVERB SIZE / FUNC + REVERB SIZE | Vitesse / profondeur 0–127. REVERB SEND dose par piste. Départ conseillé : Speed 42, Depth 64, envoi modéré. |
+| Mode Delay / Crush / Both | TRACK + DELAY TIME | À droite : Delay → Crush → Both ; à gauche pour revenir. Crush traite l’envoi immédiat ; Both écrase les échos. |
+| Time / Feedback delay | Mode Delay : TIME / FUNC + TIME | Time / Feedback natifs. En Both, revenez à Delay pour régler puis à Both. Les réglages delay et crusher restent distincts. |
+| Rate crusher | En Crush/Both : DELAY TIME | Rate 0–127, environ 750 Hz–48 kHz. Plus bas : plus dégradé ; plus haut : plus propre. DELAY SEND dose par piste. |
+| Bits crusher | En Crush/Both : FUNC + DELAY TIME | Bits 2–16. Moins de bits : davantage de grain. Départ conseillé : Rate 96, Bits 12, envoi modéré. |
+| Réglages d’effets et sauvegarde | Relâcher TRACK ; arrêter la lecture | Modes et Rate/Bits sont globaux et sauvegardés après arrêt. Rate/Bits sans p-locks ; envois par piste avec locks. Speed/Depth utilisent Size/Tone du pattern. Both ajoute du calcul. |
+| Commandes Elder | Choisir Elder dans MACHINES | COLOR = Wave ; SHAPE = Warp ; SWEEP = Noise ; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate et Fine conservés. Synthé original inspiré de Junior de Fors. |
+| Anciens sons Retrosyn | Elder remplace ChpHzrd / Retrosyn | Le même emplacement joue Elder : le timbre des anciens sons Retrosyn change. Autres moteurs et correctifs CPU conservés. Feral est de Glycinate. |
 
-## Sample Wizard et preecoute
+## Commandes LFO et MACRO
 
-| Fonction | Geste | Resultat |
+| Fonction | Commandes | Comportement |
 |---|---|---|
-| Sample lock | Tenir TRIG + MACHINES | Choisir un sample lock de ce pas sur une piste Wizard. |
-| Modes de lecture | SETTINGS + MACHINES | Ouvrir les modes du sampler. |
-| Options du mode | SETTINGS + PUNCH | Ouvrir les options du mode sampler choisi. |
-| Reechantillonnage | SETTINGS + REC | Ouvrir le resampling. |
-| Sample Preview — teste sur machine | FUNC + MACHINES ; choisir un sample puis jouer pad ou TRIG clavier | Preecoute du sample dans le navigateur Wizard. Defilement seul silencieux. Compatible ChordKeys/WAVE. |
-| Editeur slices : slices hautes | FUNC + TRIG 1–16 | Jouer les slices 17–32 dans l editeur. |
-| Editeur slices : passage zero | FUNC + potards marqueurs 1 / 2 | Caler le marqueur correspondant au passage zero. |
-| Editeur slices : retirer marqueur | FUNC + clic DATA | Retirer un marqueur. DATA seul divise ; PUNCH controle le tap slicing. |
+| Second LFO audio | Appuyer deux fois sur LFO | Ouvre LFO 2 et ses réglages de vitesse, forme, destination et profondeur. |
+| Assignation rapide LFO | Dans une page LFO : maintenir LFO et tourner un potard | Choisit sa destination ordinaire. Pour Attack/Filter/Resonance, maintenir aussi MACHINES. |
+| Destinations Attack / Filter / Resonance | Dans LFO : LFO + MACHINES + DECAY / SWEEP / CONTOUR | Choisit attaque / coupure / résonance selon la machine. Relâchez MACHINES pour les destinations ordinaires. |
+| Accord fin MACRO | SETTINGS + PITCH | PITCH seul reste natif. FUNC + PITCH est Lo-Fi : fréquence réduite à gauche, bits réduits à droite, centre OFF. Noms et numéros 0–46 des modèles visibles. |
 
-## MIDI B et routage
+## Sample Wizard et sauvegarde
 
-| Fonction | Geste | Resultat |
+| Fonction | Commandes | Comportement |
 |---|---|---|
-| Entrer / sortir de B | FUNC + SETTINGS + TRACK | Ouvrir/fermer les six pistes MIDI paralleles. Sortie depuis l accueil B ; BACK y sort aussi. |
-| Assignation CC MIDI | SETTINGS + potard gris | Assigner un CC au potard sur la voie B choisie. |
-| Lock CC MIDI | Tenir TRIG + potard assigne | Ajouter un lock CC sur le pas MIDI. |
-| Slides notes / CC | SETTINGS + TRIG | Activer/desactiver le slide : notes chevauchees en legato, CC glisses vers le pas marque. |
-| Reglages clavier MIDI | FUNC + TRACK | Transposition clavier et Pad Note. |
-| Second LFO CC MIDI | Appuyer deux fois sur LFO cote B | Ouvrir LFO CC 2. Dst : clic DATA, OFF ou CC0–127, clic DATA pour confirmer ; BACK annule. |
-| MIDI OUT + THRU combines | CONFIG → MIDI → PORTS → OUT/THRU : THR, puis FUNC + clic DATA | Basculer la sortie MIDI propre du Cycles tout en gardant le Thru entrant. |
+| Préécoute sample | FUNC + MACHINES ; surligner un sample ; pad ou TRIG clavier | Écoute le sample surligné. Le défilement reste silencieux. |
+| Sample lock | Navigateur ouvert : surligner le sample, puis TRIG + MACHINES | Verrouille le sample choisi sur le pas de la piste Wizard. Le navigateur doit être ouvert avec le sample surligné. |
+| Modes de lecture | SETTINGS + MACHINES | One-Shot, Loop, Slice, Granular, Stretch, Pluck et Wavetable conservés. SETTINGS + PUNCH : options du mode. |
+| Éditeur Slice | FUNC + TRIG ; FUNC + clic DATA | FUNC joue les slices 17–32 ; FUNC + clic DATA efface un marqueur. FUNC + potards 1/2 cale les marqueurs au passage zéro. |
+| Sauvegarde rapide permanente | Maintenir FUNC + SETTINGS | Sauvegarde permanente du projet par l’action native. |
 
-Le MIDI sauvegarde charge uniquement en entrant cote B, lecture arretee. Arreter avant Save Project et attendre MIDI SAVED. Les fichiers MIDI annexes ne sont pas inclus dans les backups SysEx Elektron.
+## Machine MIDI Out
 
-## Changements confirmés — publiés dans le principal 1.83
+| Fonction | Commandes | Comportement |
+|---|---|---|
+| Choix et réglages MIDI Out | MACHINES : MIDI Out ; FUNC + TRACK | Piste MIDI silencieuse. Track Setup : Channel, Output, KbT et Pad Note. DATA choisit ; clic avant édition ; BACK quitte. |
+| Assignation CC et locks - MIDI Out seulement | SETTINGS + potard gris ; pas tenu + potard assigné | Neuf potards CC. Tourner seul envoie la valeur. Chaque lock garde numéro et valeur ; enregistrement live des locks. Chance/Swing restent natifs. |
+| Deux LFO MIDI | LFO : LFO 1, LFO 2, piste ; BACK quitte | DATA choisit, clic pour éditer : Wav, Mul, Dst, Dep, Speed, Fade, Phase, Mode. LFO Speed règle le LFO ouvert ; LFO + CC choisit destination puis profondeur. |
+| Notes et sauvegarde | Notes/grille habituelles ; FUNC + PAGE ; FUNC + SETTINGS | Entrée MIDI par canal de piste ou auto ; live/step record gardent notes, vélocité et longueur. FUNC + PAGE : longueur. Sauvegarde projet : réglages et locks MIDI. |
+| MIDI OUT + THRU | CONFIG → MIDI → PORTS → OUT/THRU : THR ; puis FUNC + clic DATA | Bascule la sortie MIDI propre du Cycles en conservant le MIDI Thru entrant. |
 
-[Ouvrir le test Octave 0 + curseur MIDI B](../flasher-arp-zero-test/?v=2026-10-17-arp-zero-test-2).
+## Mod Setup
 
-| Changement | Vérification |
-|---|---|
-| Octave 0 sur A et B | FUNC + RETRIG → Oct. 0 parcourt uniquement les notes tenues ; 1 ajoute une octave, 2 en ajoute deux, 3 en ajoute trois. Les anciens réglages conservent leur son ; seule la numérotation affichée change. |
-| Première entrée B / curseur | Ouvrir B pendant la lecture ; vérifier que le MIDI démarre sans sortir/rentrer et que REC montre un seul curseur. Chaque voie conserve sa longueur et sa vitesse. |
-| Configuration du test | Garder Control All Beat Repeat sélectionné avec Banque MIDI dans ce test combiné. Cette obligation ne concerne pas le principal. Les diagnostics CPU/pic/CUT restent disponibles dans le test. |
+Maintenez SETTINGS + TRACK pour ouvrir Mod Setup puis relâchez. Un appui bref lance SCRAMBLE au relâchement. DATA choisit une ligne ; clic pour éditer, tourner, puis clic pour revenir. Stk = Stock ; SIL = Silent ; LTC = Latch.
 
-Octave 0, le curseur B et la correction du crash ont été confirmés par AveyCole dans le test 2 et sont publiés dans le principal 1.83. Le chargement MIDI sauvegardé exige toujours la lecture arrêtée. Le beat repeat MIDI et le filtre MIDI ont été abandonnés et ne font pas partie de ce test.
+| Fonction | Commandes | Comportement |
+|---|---|---|
+| Pad | Stk / SIL ; défaut Stk | Stk sélectionne et joue. SIL sélectionne silencieusement ; TRACK + pad sélectionne et joue. ChordKeys exige TRACK + pad pour quitter la piste. |
+| USB | 2ch / 6ch ; défaut 2ch | 2ch : mix stéréo avec effets. 6ch : six pistes mono avant panoramique, sans retours delay/crusher/reverb/chorus. Retour ordinateur stéréo dans les deux modes. Arrêtez avant de changer ; le périphérique USB se reconnecte. |
+| Num | Off / On ; défaut Off | On affiche volume et panoramique en chiffres ; Off garde l’affichage natif. |
+| Mute | Stk / LTC ; défaut Stk | LTC : TRACK + appui FUNC verrouille ; FUNC quitte. FUNC + pad en mute verrouillé : solo ; rappuyer ou quitter restaure les mutes. |
+| Delay | Stk / Div ; défaut Stk | Stk : Time natif. Div : divisions musicales, pointées et triolets. Positions correspondantes corrigées au tempo ; toutes les positions ne sont pas quantifiées. Utilisé en mode Delay. |
+| DX | Off / On ; défaut Off | On : diagnostic A/P/O/N après relâchement de TRACK + RETRIG : moyenne, pic, blocs surchargés, nouvelles voix coupées. Compteurs remis à zéro après affichage. Préférence sauvegardée. |
 
-## Destinations LFO et assignation rapide — 1.90
+Préférences globales. BACK ferme Mod Setup et sauvegarde les six choix ensemble. Si la lecture tourne, la sauvegarde attend son arrêt. Arrêtez et attendez la fin de sauvegarde avant extinction. Choix restaurés au redémarrage. Modes d’effets et réglages crusher sauvegardés également après arrêt.
 
-Attack (ATK), Filter (FLT) et Resonance (RES) sont des destinations des deux LFO audio lorsque leurs modules sont installes. Tenir MACHINES et tourner DECAY / SWEEP / CONTOUR pour choisir Attack / Filter / Resonance ; relacher MACHINES pour le controle normal des potards. Pour l’assignation rapide LFO, tenir LFO et tourner le potard de destination. Tenir aussi MACHINES pour assigner Attack, Filter ou Resonance ; tourner encore pour regler la profondeur. Sample Wizard utilise ses destinations natives Filter / Resonance sur SWEEP / CONTOUR avec des noms stables pendant la rotation. Les menus LFO restent ouverts apres assignation rapide. Les gestes MACHINES ne laissent pas le selecteur ouvert. Retrosyn affiche Timbre / Oscillator / Pitch Sweep / Chord Arp. Diagnostics reserves aux tests.
-
-## Selection silencieuse - 1.91
-
-**Selection de piste silencieuse** facultative (testee sur machine) : pad T1-T6 seul selectionne sans son ; **TRACK + pad** selectionne et joue, y compris en live record. Apercu du navigateur conserve. Non coche par defaut.
+Défauts : pads et mute stock ; USB 2ch ; Num Off ; DX Off. Reverb et Delay par défaut sans préférences d’effets sauvegardées. USB six canaux sans retours stéréo des effets.

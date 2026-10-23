@@ -31,3 +31,7 @@ Feral synthesis engine by **Glycinate**, integrated in Supermodel 2.16.
 Attribution supplied by AveyCole on 22 October 2026. Feral is third-party
 firmware work; the project’s MIT license does not relicense it or Elektron’s
 firmware.
+
+## Elder
+
+Elder is an original chip synthesizer inspired by [Junior by Fors](https://fors.fm/junior), introduced in Supermodel 2.17. No Junior plugin code or assets are included. The Elder icon and the chorus/crusher implementations are original project work.
