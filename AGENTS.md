@@ -187,3 +187,7 @@ AveyCole explicitly approved the attached shared-filter v42 with “perfect, pus
 ## AveyCole main2.19 promotion (2026-10-22)
 
 AveyCole reports the TINY-addition test working and explicitly requests “push 43 all features to main”. Promote the all-features shared-filter v43, SHA256 `106fe446fdc9a43cd3ea89c241b65ba198ae8a2b347913a4453cf81b1392ac67`, retaining every v42 feature and all nineteen engines. The subsequent request to move TINY before MIDI Out concerns menu order; preserve saved machine IDs. Feral default/Color silent spots are a subsequent audit, not silently folded into this approved release.
+
+## AveyCole main2.20 promotion (2026-10-22)
+
+AveyCole reports “v46 worked, make that the main push”. Promote the exact shared-filter v46, SHA256 `2db3be51ad7f7e44bfbd7919cd4babb583a38746672728bca2ef8c87d093627e`, with the per-track six-parameter SCRAMBLE checklist, v45 Feral Formula startup repair and v44 menu order. Preserve saved machine IDs, all prior features and private comparisons. Subsequent label refinements belong in a separate private build.

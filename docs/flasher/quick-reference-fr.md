@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.19 - 22 octobre2026
+Supermodel2.20 - 22 octobre2026
 
-Principal2.19. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
+Principal2.20. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
 ## Fonctions incluses
 
@@ -25,7 +25,7 @@ Principal2.19. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Préécoute de pas | Maintenir TRIG + PAGE | Écoutez le pas et ses locks à l’arrêt ou en pause. |
 | Slide | SETTINGS + TRIG | Active ou désactive le glissement de paramètres sur le pas. |
 | Sequence Genie | SETTINGS + PAGE | Générateur de la piste sélectionnée. DATA choisit ; Generate ou Queue, avec frontière Loop/Page. |
-| SCRAMBLE | Appui bref SETTINGS + TRACK | Randomise Color, Shape, Sweep et Contour au relâchement. Compatible avec les p-locks. |
+| SCRAMBLE | Appui bref SETTINGS + TRACK | Au relachement, tirez les parametres coches de la piste. Choix dans Mod Setup > Scramble : Pitch,Decay,Color,Shape,Sweep,Contour. Quatre commandes originales actives par defaut. Les pas marques suivent la meme liste, son de base intact. |
 | Configuration Control All | TRACK + TRIG 1–6 | Inclut ou exclut les pistes audio des changements collectifs. |
 | Beat repeat audio | Maintenir TRACK + RETRIG, puis un TRIG 1–16 | Le pas choisit la division des pistes incluses. Relâchez un modificateur ou le pas pour arrêter. |
 | Verrou beat repeat | Maintenir TRACK + double RETRIG | Relachez les deux ; maintenir un TRIG repete, relacher arrete. BACK quitte. Copier/coller/effacer bloques ; PLAY/STOP simples disponibles. Non sauvegarde. |
@@ -92,7 +92,8 @@ Maintenez SETTINGS + TRACK pour ouvrir Mod Setup puis relâchez. Un appui bref l
 | Mute | Stk / LTC ; défaut Stk | LTC : TRACK + appui FUNC verrouille ; FUNC quitte. FUNC + pad en mute verrouillé : solo ; rappuyer ou quitter restaure les mutes. |
 | Delay | Stk / Div ; défaut Stk | Stk : Time natif. Div : divisions musicales, pointées et triolets. Positions correspondantes corrigées au tempo ; toutes les positions ne sont pas quantifiées. Utilisé en mode Delay. |
 | DX | Off / On ; défaut Off | On : diagnostic A/P/O/N après relâchement de TRACK + RETRIG : moyenne, pic, blocs surchargés, nouvelles voix coupées. Compteurs remis à zéro après affichage. Préférence sauvegardée. |
+| Scramble | DATA ouvre ; tourner et appuyer ; BACK revient | Six cases par piste : Pitch,Decay,Color,Shape,Sweep,Contour. Pitch/Decay desactives par defaut, quatre autres actives. Choix conserves entre projets et apres extinction ; sauvegarde a l’arret. Wizard autorise Pitch/Decay, commandes sample/modes exclues. |
 
-Préférences globales. BACK ferme Mod Setup et sauvegarde les six choix ensemble. Si la lecture tourne, la sauvegarde attend son arrêt. Arrêtez et attendez la fin de sauvegarde avant extinction. Choix restaurés au redémarrage. Modes d’effets et réglages crusher sauvegardés également après arrêt.
+Préférences globales. BACK ferme Mod Setup et sauvegarde ses preferences globales ; la liste Scramble de chaque piste se sauvegarde au retour du sous-menu. Si la lecture tourne, la sauvegarde attend son arrêt. Arrêtez et attendez la fin de sauvegarde avant extinction. Choix restaurés au redémarrage. Modes d’effets et réglages crusher sauvegardés également après arrêt.
 
 Défauts : pads et mute stock ; USB 2ch ; Num Off ; DX Off. Reverb et Delay par défaut sans préférences d’effets sauvegardées. USB six canaux sans retours stéréo des effets.

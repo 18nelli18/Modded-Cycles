@@ -227,3 +227,6 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [145 — Verrou retrig et publication](145-verrou-retrig-et-publication.md) | v42 ajoute le verrou de mode, BACK et protection edition sur v41 ; principal2.18 approuve, image exacte et guides actualises. |
 
 | [146 — TINY supplementaire](146-tiny-supplementaire.md) | v43/v43nf : TINY18 revient sans retirer les18moteurs ;52modeles PCM exacts,menus19machines et bootstrap verifies ; principal2.19 approuve. |
+
+| [147 — Feral Formula et ordre](147-feral-formula-et-ordre.md) | v44 ordreTINY avantMIDI sans renumeroter ; v45 demarrage Formula audible, confirme utilisateur. |
+| [148 — SCRAMBLE par piste](148-scramble-par-piste.md) | v46/v46nf : sixcases par piste,DATA/BACK,stockage UI,preuves live/locks ; principal2.20 exact approuve. |

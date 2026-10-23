@@ -1,6 +1,6 @@
 {
-  "release": "2.19",
-  "stamp": "2026-10-22-tiny-main-219",
+  "release": "2.20",
+  "stamp": "2026-10-22-scramble-main-220",
   "cards": [
     {
       "en": [
@@ -138,12 +138,12 @@
           "en": [
             "SCRAMBLE",
             "Quick tap SETTINGS + TRACK",
-            "On release, randomize supported synthesis parameters for the selected track. SCRAMBLE is able to be parameter-locked to steps in the sequencer."
+            "On release, randomize the selected track’s checked parameters. Choose Pitch, Decay, Color, Shape, Sweep and Contour in Mod Setup > Scramble. The original four default On. Marked steps follow the same checklist without changing the base sound."
           ],
           "fr": [
             "SCRAMBLE",
             "Appui bref SETTINGS + TRACK",
-            "Randomise Color, Shape, Sweep et Contour au relâchement. Compatible avec les p-locks."
+            "Au relachement, tirez les parametres coches de la piste. Choix dans Mod Setup > Scramble : Pitch,Decay,Color,Shape,Sweep,Contour. Quatre commandes originales actives par defaut. Les pas marques suivent la meme liste, son de base intact."
           ]
         },
         {
@@ -652,6 +652,18 @@
             "DX",
             "Off / On ; défaut Off",
             "On : diagnostic A/P/O/N après relâchement de TRACK + RETRIG : moyenne, pic, blocs surchargés, nouvelles voix coupées. Compteurs remis à zéro après affichage. Préférence sauvegardée."
+          ]
+        },
+        {
+          "en": [
+            "Scramble",
+            "DATA opens; turn and press DATA; BACK returns",
+            "Six checkboxes per track: Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay default Off; the original four default On. Choices persist across projects and power cycles; saving waits until playback stops. Wizard allows Pitch/Decay; its sample/mode controls stay excluded."
+          ],
+          "fr": [
+            "Scramble",
+            "DATA ouvre ; tourner et appuyer ; BACK revient",
+            "Six cases par piste : Pitch,Decay,Color,Shape,Sweep,Contour. Pitch/Decay desactives par defaut, quatre autres actives. Choix conserves entre projets et apres extinction ; sauvegarde a l’arret. Wizard autorise Pitch/Decay, commandes sample/modes exclues."
           ]
         }
       ]

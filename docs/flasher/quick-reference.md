@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.19 - 22 October 2026
+Supermodel 2.20 - 22 October 2026
 
-Main 2.19. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.20. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
@@ -25,7 +25,7 @@ Main 2.19. Hold the first button while pressing the next button or turning the n
 | Trig preview | Hold TRIG + PAGE | Audition the selected step with its note and locks while stopped or paused. |
 | Slide trig | SETTINGS + TRIG | Toggle a parameter slide on the step. |
 | Sequence Genie | SETTINGS + PAGE | Open the generator for the selected track. Select with DATA; choose Generate or Queue and set Loop/Page timing. |
-| SCRAMBLE | Quick tap SETTINGS + TRACK | On release, randomize supported synthesis parameters for the selected track. SCRAMBLE is able to be parameter-locked to steps in the sequencer. |
+| SCRAMBLE | Quick tap SETTINGS + TRACK | On release, randomize the selected track’s checked parameters. Choose Pitch, Decay, Color, Shape, Sweep and Contour in Mod Setup > Scramble. The original four default On. Marked steps follow the same checklist without changing the base sound. |
 | Control All setup | TRACK + TRIG 1–6 | Include or exclude audio tracks from Control All changes. |
 | Audio beat repeat | Hold TRACK + RETRIG , then hold a TRIG 1–16 | The held step selects a repeat division for included audio tracks. Release a modifier or division pad to stop. |
 | Repeat mode latch | Hold TRACK + double-tap RETRIG | Release both; hold a TRIG to repeat, release it to stop. BACK exits. Copy/paste/clear blocked; plain PLAY/STOP available. Temporary, not saved. |
@@ -92,7 +92,8 @@ Hold SETTINGS + TRACK until Mod Setup opens, then release both buttons. A short 
 | Mute | Stk / LTC Default: Stk | Stk keeps the original momentary mute controls. With LTC selected, hold TRACK and tap FUNC to stay in mute mode, then tap track pads to mute or unmute. Tap FUNC again to leave. In latched mute mode, hold FUNC and press a track pad to solo it; press the soloed pad again, or leave mute mode, to restore the previous mutes. |
 | Delay | Stk / Div Default: Stk | Stk preserves the original Delay Time display and timing. Div displays musical divisions, including dotted and triplet values, and corrects the matching timing positions to exact divisions of the tempo. Other Delay Time positions retain their original timing; this does not quantize every knob position. Applies while using Delay mode. |
 | DX | Off / On Default: Off | Enable the A/P/O/N popup after beat repeat: average and peak audio load, overloaded blocks and newly cut voices. Counters reset after the popup. Off disables the popup and counters. Saved with the other Mod Setup preferences. |
+| Scramble | DATA opens; turn and press DATA; BACK returns | Six checkboxes per track: Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay default Off; the original four default On. Choices persist across projects and power cycles; saving waits until playback stops. Wizard allows Pitch/Decay; its sample/mode controls stay excluded. |
 
-These are global preferences. BACK closes Mod Setup and saves all six choices together. If playback is running, the save waits until it stops. Stop playback and allow saving to finish before powering off. Saved choices return after reboot. Effect modes and crusher settings also save after playback stops.
+These are global preferences. BACK closes Mod Setup and saves its global preferences; each track’s Scramble checklist saves when you return from its submenu. If playback is running, the save waits until it stops. Stop playback and allow saving to finish before powering off. Saved choices return after reboot. Effect modes and crusher settings also save after playback stops.
 
 Startup defaults: stock pads and mute behavior; USB 2ch; Num Off; DX Off. Reverb and Delay are the default effect modes when no effect preferences are saved. Six-channel USB excludes the stereo effect returns.
