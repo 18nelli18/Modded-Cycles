@@ -1,6 +1,6 @@
 {
-  "release": "2.17",
-  "stamp": "2026-10-22-elder-fx-main-217-credits",
+  "release": "2.18",
+  "stamp": "2026-10-22-crush-latch-main-218",
   "cards": [
     {
       "en": [
@@ -25,11 +25,11 @@
     {
       "en": [
         "Filters and effects",
-        "Per-track attack and resonant two-pole Polivoks-style lowpass; Wizard internal lowpass; second LFO; MACRO fine tune and Lo-Fi; Reverb/Chorus I/Chorus II and Delay/Crush/Both."
+        "Per-track attack and resonant two-pole Polivoks-style lowpass; Wizard internal lowpass; second LFO; MACRO fine tune and Lo-Fi; Reverb/Chorus I/Chorus II and Delay/Crush1/Crush2/Both1/Both2."
       ],
       "fr": [
         "Filtres et effets",
-        "Attaque par piste et passe-bas résonant deux pôles inspiré du Polivoks ; passe-bas interne Wizard ; second LFO ; MACRO Fine/Lo-Fi ; Reverb/Chorus I/II et Delay/Crush/Both."
+        "Attaque par piste et passe-bas résonant deux pôles inspiré du Polivoks ; passe-bas interne Wizard ; second LFO ; MACRO Fine/Lo-Fi ; Reverb/Chorus I/II et Delay/Crush1/Crush2/Both1/Both2."
       ]
     },
     {
@@ -172,6 +172,18 @@
         },
         {
           "en": [
+            "Repeat mode latch",
+            "Hold TRACK + double-tap RETRIG",
+            "Release both; hold a TRIG to repeat, release it to stop. BACK exits. Copy/paste/clear blocked; plain PLAY/STOP available. Temporary, not saved."
+          ],
+          "fr": [
+            "Verrou beat repeat",
+            "Maintenir TRACK + double RETRIG",
+            "Relachez les deux ; maintenir un TRIG repete, relacher arrete. BACK quitte. Copier/coller/effacer bloques ; PLAY/STOP simples disponibles. Non sauvegarde."
+          ]
+        },
+        {
+          "en": [
             "Control All filter",
             "Hold TRACK + MACHINES ; turn SWEEP / CONTOUR",
             "Adjust cutoff/resonance across included audio tracks. Without TRACK, adjust the selected track."
@@ -242,12 +254,12 @@
           "en": [
             "Chorus / Reverb mode",
             "TRACK + REVERB SIZE",
-            "Turn right: Reverb → Chorus I → Chorus II; left to go back. Chorus I is slower/smoother; II is faster/deeper. Reverb restores normal Size/Tone."
+            "Turn right: Reverb → Chorus I → Chorus II; left to go back. Chorus I is slower/smoother; II is faster/deeper. Reverb restores normal Size/Tone. Two encoder events per change."
           ],
           "fr": [
             "Mode Chorus / Reverb",
             "TRACK + REVERB SIZE",
-            "À droite : Reverb → Chorus I → Chorus II ; à gauche pour revenir. I est lent/doux ; II plus rapide/profond. Reverb restaure Size/Tone."
+            "À droite : Reverb → Chorus I → Chorus II ; à gauche pour revenir. I est lent/doux ; II plus rapide/profond. Reverb restaure Size/Tone. Deux evenements encodeur par changement."
           ]
         },
         {
@@ -266,12 +278,12 @@
           "en": [
             "Delay / Crush / Both mode",
             "TRACK + DELAY TIME",
-            "Turn right: Delay → Crush → Both; left to go back. Crush processes the send immediately; Both crushes the delay echoes."
+            "Delay → Crush1 → Crush2 → Both1 → Both2; left to return. Two encoder events per change."
           ],
           "fr": [
             "Mode Delay / Crush / Both",
             "TRACK + DELAY TIME",
-            "À droite : Delay → Crush → Both ; à gauche pour revenir. Crush traite l’envoi immédiat ; Both écrase les échos."
+            "Delay → Crush1 → Crush2 → Both1 → Both2 ; a gauche pour revenir. Deux evenements encodeur par changement."
           ]
         },
         {
@@ -302,24 +314,36 @@
           "en": [
             "Crusher Bits",
             "In Crush/Both: FUNC + DELAY TIME",
-            "Bits 2–16. Fewer bits sound crunchier. Start at Rate 96, Bits 12 with a modest Delay Send."
+            "Bits 2–16. Lower = crunchier, including quiet signals at 2–4 bits. Silence stays silent."
           ],
           "fr": [
             "Bits crusher",
             "En Crush/Both : FUNC + DELAY TIME",
-            "Bits 2–16. Moins de bits : davantage de grain. Départ conseillé : Rate 96, Bits 12, envoi modéré."
+            "Bits2–16. Plus bas = plus de grain, y compris sur les signaux faibles a2–4bits. Silence conserve."
+          ]
+        },
+        {
+          "en": [
+            "Crusher routing",
+            "DELAY SEND per track",
+            "Crush1: clean direct + crushed send. Crush2: blends direct clean/crushed. Both1: clean direct + crushed echoes. Both2: crushed direct + echoes. Send127 removes clean direct in modes2."
+          ],
+          "fr": [
+            "Routage crusher",
+            "DELAY SEND par piste",
+            "Crush1 : direct propre + envoi ecrase. Crush2 : direct propre/ecrase. Both1 : direct propre + echos ecrases. Both2 : direct et echos ecrases. Send127 retire le direct propre des modes2."
           ]
         },
         {
           "en": [
             "Effect settings and save",
             "Release TRACK; stop playback",
-            "Effect modes and crusher Rate/Bits are global and save after playback stops. Rate/Bits are not p-lock destinations; track sends retain their locks. Chorus Speed/Depth use the pattern’s Reverb Size/Tone values. Both adds processing cost."
+            "Global modes and Rate/Bits save after playback stops. Rate/Bits have no p-lock destinations; sends keep locks. Chorus Speed/Depth reuse pattern Size/Tone. Both2 adds processing."
           ],
           "fr": [
             "Réglages d’effets et sauvegarde",
             "Relâcher TRACK ; arrêter la lecture",
-            "Modes et Rate/Bits sont globaux et sauvegardés après arrêt. Rate/Bits sans p-locks ; envois par piste avec locks. Speed/Depth utilisent Size/Tone du pattern. Both ajoute du calcul."
+            "Modes et Rate/Bits globaux sauvegardes apres arret. Rate/Bits sans p-locks ; envois avec locks. Speed/Depth reutilisent Size/Tone du pattern. Both2 coute plus de calcul."
           ]
         },
         {

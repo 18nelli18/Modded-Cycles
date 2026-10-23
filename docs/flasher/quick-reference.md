@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.17 - 22 October 2026
+Supermodel 2.18 - 22 October 2026
 
-Main 2.17. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.18. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
@@ -10,7 +10,7 @@ Main 2.17. Hold the first button while pressing the next button or turning the n
 
 **Performance and sequencing:** Arpeggiator, held-note octave 0, ChordKeys and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching mute and solo.
 
-**Filters and effects:** Per-track attack and resonant two-pole Polivoks-style lowpass; Wizard internal lowpass; second LFO; MACRO fine tune and Lo-Fi; Reverb/Chorus I/Chorus II and Delay/Crush/Both.
+**Filters and effects:** Per-track attack and resonant two-pole Polivoks-style lowpass; Wizard internal lowpass; second LFO; MACRO fine tune and Lo-Fi; Reverb/Chorus I/Chorus II and Delay/Crush1/Crush2/Both1/Both2.
 
 **Routing and workflow:** MIDI Out with nine CC knobs, locks and two MIDI LFOs; MIDI OUT/THRU toggle; USB stereo or six tracks; permanent quick save, saved Mod Setup and optional DX diagnostics.
 
@@ -28,6 +28,7 @@ Main 2.17. Hold the first button while pressing the next button or turning the n
 | SCRAMBLE | Quick tap SETTINGS + TRACK | On release, randomize supported synthesis parameters for the selected track. SCRAMBLE is able to be parameter-locked to steps in the sequencer. |
 | Control All setup | TRACK + TRIG 1–6 | Include or exclude audio tracks from Control All changes. |
 | Audio beat repeat | Hold TRACK + RETRIG , then hold a TRIG 1–16 | The held step selects a repeat division for included audio tracks. Release a modifier or division pad to stop. |
+| Repeat mode latch | Hold TRACK + double-tap RETRIG | Release both; hold a TRIG to repeat, release it to stop. BACK exits. Copy/paste/clear blocked; plain PLAY/STOP available. Temporary, not saved. |
 | Control All filter | Hold TRACK + MACHINES ; turn SWEEP / CONTOUR | Adjust cutoff/resonance across included audio tracks. Without TRACK, adjust the selected track. |
 | Synth Attack | MACHINES + DECAY | Adjust the added attack control on supported machines. |
 | Arpeggiator / ChordKeys settings | FUNC + RETRIG | Open the settings for the active Arpeggiator or ChordKeys feature. Arpeggiator octave 0 cycles only through held notes. |
@@ -38,13 +39,14 @@ Main 2.17. Hold the first button while pressing the next button or turning the n
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Chorus / Reverb mode | TRACK + REVERB SIZE | Turn right: Reverb → Chorus I → Chorus II; left to go back. Chorus I is slower/smoother; II is faster/deeper. Reverb restores normal Size/Tone. |
+| Chorus / Reverb mode | TRACK + REVERB SIZE | Turn right: Reverb → Chorus I → Chorus II; left to go back. Chorus I is slower/smoother; II is faster/deeper. Reverb restores normal Size/Tone. Two encoder events per change. |
 | Chorus Speed / Depth | REVERB SIZE / FUNC + REVERB SIZE | Speed / Depth, each 0–127. REVERB SEND sets the amount per track. Start at Speed 42, Depth 64 with a modest send. |
-| Delay / Crush / Both mode | TRACK + DELAY TIME | Turn right: Delay → Crush → Both; left to go back. Crush processes the send immediately; Both crushes the delay echoes. |
+| Delay / Crush / Both mode | TRACK + DELAY TIME | Delay → Crush1 → Crush2 → Both1 → Both2; left to return. Two encoder events per change. |
 | Delay Time / Feedback | In Delay mode: TIME / FUNC + TIME | Normal delay Time / Feedback. To adjust them in Both, switch to Delay, adjust, then return to Both. Delay and crusher settings remain separate. |
 | Crusher Rate | In Crush/Both: DELAY TIME | Rate 0–127, about 750 Hz–48 kHz. Lower is rougher; higher is cleaner. DELAY SEND sets the amount per track. |
-| Crusher Bits | In Crush/Both: FUNC + DELAY TIME | Bits 2–16. Fewer bits sound crunchier. Start at Rate 96, Bits 12 with a modest Delay Send. |
-| Effect settings and save | Release TRACK; stop playback | Effect modes and crusher Rate/Bits are global and save after playback stops. Rate/Bits are not p-lock destinations; track sends retain their locks. Chorus Speed/Depth use the pattern’s Reverb Size/Tone values. Both adds processing cost. |
+| Crusher Bits | In Crush/Both: FUNC + DELAY TIME | Bits 2–16. Lower = crunchier, including quiet signals at 2–4 bits. Silence stays silent. |
+| Crusher routing | DELAY SEND per track | Crush1: clean direct + crushed send. Crush2: blends direct clean/crushed. Both1: clean direct + crushed echoes. Both2: crushed direct + echoes. Send127 removes clean direct in modes2. |
+| Effect settings and save | Release TRACK; stop playback | Global modes and Rate/Bits save after playback stops. Rate/Bits have no p-lock destinations; sends keep locks. Chorus Speed/Depth reuse pattern Size/Tone. Both2 adds processing. |
 | Elder controls | Select Elder in MACHINES | COLOR = Wave; SHAPE = Warp; SWEEP = Noise; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate and Fine remain available. Original synth inspired by Junior by Fors. |
 | Saved Retrosyn sounds | Elder replaces ChpHzrd / Retrosyn | The same machine slot now plays Elder, so previous Retrosyn sounds change timbre. The other engines and previous CPU fixes are retained. Feral is by Glycinate. |
 

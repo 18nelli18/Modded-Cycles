@@ -179,3 +179,7 @@ is `8e11e8bed03666f4444f818f6a5d7dea67199f077eddf9d623de81584041e7cb`.
 Update only the established tracked fixed-main delivery image; never add other
 firmware dumps. Preserve private comparisons. Follow-up credit and low-bit
 investigation requests do not authorize silently changing these approved bytes.
+
+## AveyCole main2.18 promotion (2026-10-22)
+
+AveyCole explicitly approved the attached shared-filter v42 with “perfect, push this to be main”. Its SysEx SHA256 is `ea901ab5301763d0ebdd3e4656da57857c308f2a57a5ec841af6dff5d8718560`. Promote this exact image with BACK latch exit, edit protection and the v41 Tone/crusher repairs. Preserve earlier private comparisons. The saved DX option and all cumulative CPU fixes remain in this approved image.

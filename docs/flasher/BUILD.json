@@ -1,9 +1,9 @@
 {
-  "stamp": "2026-10-22-elder-fx-main-217-credits",
+  "stamp": "2026-10-22-crush-latch-main-218",
   "scope": "main",
   "profile": "Exact full-feature image, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (2ch enabled)",
   "fixed_image": "all-features-usb-2ch-default.syx",
-  "fixed_image_sha256": "8e11e8bed03666f4444f818f6a5d7dea67199f077eddf9d623de81584041e7cb",
+  "fixed_image_sha256": "ea901ab5301763d0ebdd3e4656da57857c308f2a57a5ec841af6dff5d8718560",
   "diagnostics": "DX A/P/O/N",
   "startup": "Supermodel",
   "usb_audio_default": "2ch",
@@ -29,7 +29,7 @@
   "chord_harmony_cache": true,
   "cut_fade_zero_endpoint": true,
   "midi_idle_shortcut": true,
-  "main_os_sha256": "077797c65adc12fbf133dac095fbc12e6a8b91852766ddfb7f65a9386618c2ee",
+  "main_os_sha256": "8b6a2786f1bd1dd54c050f2136db3b0bc007e0d744384117a026491704d19d59",
   "pad_selection_default": "Stock",
   "mute_mode_default": "Stock",
   "numbers_default": "Off",
@@ -41,10 +41,10 @@
   "shared_display_mask_preserved": true,
   "behavior_verified_source": "all-features-usb-mod-settings-test-v3.syx",
   "layout_fix_native_verified": true,
-  "guide_version": "2026-10-22-elder-fx-main-217-credits",
-  "release": "2.17",
-  "approved_source": "all-features-polivoks-cpu-trim-test-v40.syx",
-  "approved_source_sha256": "8e11e8bed03666f4444f818f6a5d7dea67199f077eddf9d623de81584041e7cb",
+  "guide_version": "2026-10-22-crush-latch-main-218",
+  "release": "2.18",
+  "approved_source": "all-features-polivoks-cpu-trim-test-v42.syx",
+  "approved_source_sha256": "ea901ab5301763d0ebdd3e4656da57857c308f2a57a5ec841af6dff5d8718560",
   "slice_audio_event_owns_note": true,
   "slice_step_abi_fixed": true,
   "chord_names_external_midi": true,
@@ -109,7 +109,7 @@
   "feral_replaces_tiny": true,
   "feral_model_count": 10,
   "wizard_mode_count": 7,
-  "release_notes": "release-notes-2.17.html",
+  "release_notes": "release-notes-2.18.html",
   "elder_replaces_retrosyn": true,
   "elder_icon": "elder-gameboy",
   "stereo_chorus": true,
@@ -123,8 +123,10 @@
   "delay_crush": true,
   "delay_modes": [
     "Delay",
-    "Crush",
-    "Both"
+    "Crush 1",
+    "Crush 2",
+    "Both 1",
+    "Both 2"
   ],
   "crusher_rate_range": [
     0,
@@ -137,5 +139,13 @@
   "fx_global_modes_persistent": true,
   "crusher_settings_global": true,
   "crusher_rate_bits_plock": false,
-  "approved_user_report": "v40 worked"
+  "approved_user_report": "perfect, push this to be main",
+  "crusher_low_bits_fixed": true,
+  "tone_machine_label_fixed": true,
+  "fx_mode_encoder_events": 2,
+  "retrig_mode_latch": true,
+  "retrig_latch_exit": "BACK",
+  "retrig_latch_momentary_steps": true,
+  "retrig_latch_edit_protection": true,
+  "retrig_latch_persistent": false
 }

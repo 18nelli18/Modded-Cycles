@@ -222,3 +222,6 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 
 | [139 — Publication Feral et CPU](139-publication-feral-cpu.md) | Principal2.16 : fichier partagev33 exact, filtres Polivoks, optimisations cumulees, Feral de Glycinate ; notes EN/FR liees, DX Off par defaut. |
 | [143 — Publication Elder/effets](143-publication-elder-effets.md) | Principal2.17 : exact v40 partagé approuvé, Elder et Chorus/Crush, guides EN/FR/PDF4pages actualisés ; hashes et vraie page vérifiés. Comparaisons privées conservées. |
+
+| [144 — Crusher routage et Tone](144-crusher-routage-et-tone.md) | v41/v41nf prives : cinq routes, bits2–4 audibles, nom Tone intact, selecteurs espaces ; preuves natives DSP/UI/mixeur/chargeur. Principal v40 fixe. |
+| [145 — Verrou retrig et publication](145-verrou-retrig-et-publication.md) | v42 ajoute le verrou de mode, BACK et protection edition sur v41 ; principal2.18 approuve, image exacte et guides actualises. |

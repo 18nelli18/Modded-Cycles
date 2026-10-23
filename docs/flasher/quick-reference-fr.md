@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.17 - 22 octobre2026
+Supermodel2.18 - 22 octobre2026
 
-Principal2.17. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
+Principal2.18. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
 ## Fonctions incluses
 
@@ -10,7 +10,7 @@ Principal2.17. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 **Performance et séquenceur:** Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute verrouillé et solo.
 
-**Filtres et effets:** Attaque par piste et passe-bas résonant deux pôles inspiré du Polivoks ; passe-bas interne Wizard ; second LFO ; MACRO Fine/Lo-Fi ; Reverb/Chorus I/II et Delay/Crush/Both.
+**Filtres et effets:** Attaque par piste et passe-bas résonant deux pôles inspiré du Polivoks ; passe-bas interne Wizard ; second LFO ; MACRO Fine/Lo-Fi ; Reverb/Chorus I/II et Delay/Crush1/Crush2/Both1/Both2.
 
 **Routage et travail:** MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif.
 
@@ -28,6 +28,7 @@ Principal2.17. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | SCRAMBLE | Appui bref SETTINGS + TRACK | Randomise Color, Shape, Sweep et Contour au relâchement. Compatible avec les p-locks. |
 | Configuration Control All | TRACK + TRIG 1–6 | Inclut ou exclut les pistes audio des changements collectifs. |
 | Beat repeat audio | Maintenir TRACK + RETRIG, puis un TRIG 1–16 | Le pas choisit la division des pistes incluses. Relâchez un modificateur ou le pas pour arrêter. |
+| Verrou beat repeat | Maintenir TRACK + double RETRIG | Relachez les deux ; maintenir un TRIG repete, relacher arrete. BACK quitte. Copier/coller/effacer bloques ; PLAY/STOP simples disponibles. Non sauvegarde. |
 | Filtre collectif | TRACK + MACHINES + SWEEP / CONTOUR | Coupure / résonance des pistes incluses. Sans TRACK : piste sélectionnée. Passe-bas deux pôles inspiré du Polivoks. |
 | Attaque synthé | MACHINES + DECAY | Règle l’attaque ajoutée sur les machines compatibles. |
 | Arpège / réglages ChordKeys | FUNC + RETRIG | Ouvre les réglages actifs. Octave 0 de l’arpège parcourt uniquement les notes tenues. |
@@ -38,13 +39,14 @@ Principal2.17. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Mode Chorus / Reverb | TRACK + REVERB SIZE | À droite : Reverb → Chorus I → Chorus II ; à gauche pour revenir. I est lent/doux ; II plus rapide/profond. Reverb restaure Size/Tone. |
+| Mode Chorus / Reverb | TRACK + REVERB SIZE | À droite : Reverb → Chorus I → Chorus II ; à gauche pour revenir. I est lent/doux ; II plus rapide/profond. Reverb restaure Size/Tone. Deux evenements encodeur par changement. |
 | Speed / Depth chorus | REVERB SIZE / FUNC + REVERB SIZE | Vitesse / profondeur 0–127. REVERB SEND dose par piste. Départ conseillé : Speed 42, Depth 64, envoi modéré. |
-| Mode Delay / Crush / Both | TRACK + DELAY TIME | À droite : Delay → Crush → Both ; à gauche pour revenir. Crush traite l’envoi immédiat ; Both écrase les échos. |
+| Mode Delay / Crush / Both | TRACK + DELAY TIME | Delay → Crush1 → Crush2 → Both1 → Both2 ; a gauche pour revenir. Deux evenements encodeur par changement. |
 | Time / Feedback delay | Mode Delay : TIME / FUNC + TIME | Time / Feedback natifs. En Both, revenez à Delay pour régler puis à Both. Les réglages delay et crusher restent distincts. |
 | Rate crusher | En Crush/Both : DELAY TIME | Rate 0–127, environ 750 Hz–48 kHz. Plus bas : plus dégradé ; plus haut : plus propre. DELAY SEND dose par piste. |
-| Bits crusher | En Crush/Both : FUNC + DELAY TIME | Bits 2–16. Moins de bits : davantage de grain. Départ conseillé : Rate 96, Bits 12, envoi modéré. |
-| Réglages d’effets et sauvegarde | Relâcher TRACK ; arrêter la lecture | Modes et Rate/Bits sont globaux et sauvegardés après arrêt. Rate/Bits sans p-locks ; envois par piste avec locks. Speed/Depth utilisent Size/Tone du pattern. Both ajoute du calcul. |
+| Bits crusher | En Crush/Both : FUNC + DELAY TIME | Bits2–16. Plus bas = plus de grain, y compris sur les signaux faibles a2–4bits. Silence conserve. |
+| Routage crusher | DELAY SEND par piste | Crush1 : direct propre + envoi ecrase. Crush2 : direct propre/ecrase. Both1 : direct propre + echos ecrases. Both2 : direct et echos ecrases. Send127 retire le direct propre des modes2. |
+| Réglages d’effets et sauvegarde | Relâcher TRACK ; arrêter la lecture | Modes et Rate/Bits globaux sauvegardes apres arret. Rate/Bits sans p-locks ; envois avec locks. Speed/Depth reutilisent Size/Tone du pattern. Both2 coute plus de calcul. |
 | Commandes Elder | Choisir Elder dans MACHINES | COLOR = Wave ; SHAPE = Warp ; SWEEP = Noise ; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate et Fine conservés. Synthé original inspiré de Junior de Fors. |
 | Anciens sons Retrosyn | Elder remplace ChpHzrd / Retrosyn | Le même emplacement joue Elder : le timbre des anciens sons Retrosyn change. Autres moteurs et correctifs CPU conservés. Feral est de Glycinate. |
 
