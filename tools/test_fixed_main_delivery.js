@@ -28,6 +28,7 @@ const server=http.createServer((req,res)=>{
    await page.waitForFunction(()=>!!window.MCFlasherApp&&!!window.MCFixedMainImageReady);
    await page.evaluate(async()=>await Promise.all(Object.keys(window).filter(k=>k.endsWith('Ready')&&window[k]?.then).map(k=>window[k])));
    assert.match(await page.locator('#credits').innerText(),/Glycinate/,'Feral author credit missing');
+   assert.match(await page.locator('#credits-list').innerText(),/PPPCCC/);assert.equal(await page.locator('#credits-list a[href="https://github.com/18nelli18/Modded-Cycles"]').count(),1);
    assert(await page.locator('a[href="release-notes-2.17.html"]').count()>0,'release notes link missing');
    assert.equal(await page.locator('#fixed-six-usb').count(),0,'web USB build selector returned');
    assert.equal(await page.locator('a[href^="shortcut-guide.pdf"]').count(),1,'one canonical PDF guide link required');

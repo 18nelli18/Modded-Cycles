@@ -50,3 +50,12 @@ PPPCCC et18nelli18 aux crédits, avec lien vers le projet18nelli18/Modded-Cycles
 Puis investigation privée : Bits4et moins peu audibles ; Bits5 commence à
 s’entendre et effet perçu sous le son sec. Ne pas modifier les octets approuvés
 sans une nouvelle validation. Le routage parallel via DelaySend explique le sec.
+
+## 4. Vérification publique et crédits
+
+Push principal2.17 : `d13ede39a7ab69cdb8d1dda4b603948941fa7695`.
+Déploiement Pages réussi, puis GET publics BUILD.json/fixed-main-image.js/SysEx :
+version2.17 et SHA v40 exacts. Après cette vérification, ajout des crédits
+PPPCCC et18nelli18, ce dernier lié à `https://github.com/18nelli18/Modded-Cycles`.
+Les crédits existants restent présents. Nouveau stamp de cache suffixé `-credits`,
+aucun changement de firmware ni numéro de release.

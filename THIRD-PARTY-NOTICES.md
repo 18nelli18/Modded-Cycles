@@ -35,3 +35,8 @@ firmware.
 ## Elder
 
 Elder is an original chip synthesizer inspired by [Junior by Fors](https://fors.fm/junior), introduced in Supermodel 2.17. No Junior plugin code or assets are included. The Elder icon and the chorus/crusher implementations are original project work.
+
+## Project acknowledgements
+
+- **18nelli18**: the original [Modded-Cycles project](https://github.com/18nelli18/Modded-Cycles) and firmware modifications.
+- **PPPCCC**: project contributions, credited at AveyCole’s request.
