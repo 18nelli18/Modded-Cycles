@@ -17,6 +17,7 @@
     "level-pan-values",
     "trigless-dim",
     "midi-live-both",
+    "midi-out-fix",
     "mod-settings",
     "lfo-plus",
     "out-sleep",
@@ -84,6 +85,8 @@
       "credit": { "kind": "by", "who": "AveyCole", "repo": "AveyCole/Modded-Cycles" }, "guide": "midi-live-both", "notes": "notes/53" },
     { "id": "mod-settings", "cat": "io", "tweaks": ["mod-settings"], "status": "tested",
       "credit": { "kind": "based", "who": "scottmetoyer", "repo": "scottmetoyer/ms-multi-output" },
-      "license": "LICENSE-ms-multi-output", "guide": "mod-settings", "notes": "notes/72, 13, 35" }
+      "license": "LICENSE-ms-multi-output", "guide": "mod-settings", "notes": "notes/72, 13, 35" },
+    { "id": "midi-out-fix", "cat": "io", "tweaks": ["midi-out-fix"], "status": "experimental",
+      "credit": null, "guide": "midi-out-fix", "notes": "notes/79, 70" }
   ]
 }

@@ -52,6 +52,7 @@ project's guide calls the back key **BACK**. This file uses **MACHINES** and **B
    - [4.1 Latching mute](#41-latching-mute)
    - [4.2 Live MIDI OUT + THRU toggle](#42-live-midi-out--thru-toggle)
    - [4.3 Mod Settings: USB audio, stereo or 6 tracks](#43-mod-settings-usb-audio-stereo-or-6-tracks)
+   - [4.4 MIDI out without freezes](#44-midi-out-without-freezes)
 5. [Screen and browsing](#5-screen-and-browsing)
    - [5.1 Startup animation](#51-startup-animation)
    - [5.2 Multi-line browser](#52-multi-line-browser)
@@ -740,6 +741,18 @@ the 6-channel changes to the USB driver are made in memory only in 6CH, and undo
 the test plan of PR #100 (notes/72 §7). 6-channel audio itself was tested on 29/09/2026, the steady stream on
 04/10/2026, with Model-TG and the engines on 02/10 and 03/10/2026. Also checked in the emulator on the OS's own code
 (Config Menu, drawing, both switches, saved settings, the USB stream after switching).
+
+### 4.4 MIDI out without freezes
+
+A fix of the stock OS (guide, "MIDI out without freezes"; notes/79). Status: experimental.
+
+- The stock OS puts each MIDI-out byte in a 1 KB ring; when it is full it waits for the serial interrupt (level 4) to
+  empty it. Called at an interrupt level of 4 or more (the MIDI clock tick), that wait can never end: after a long
+  overload while sending MIDI clock (1,024 ticks unserved, about 21 s at 120 BPM) everything freezes, sound included.
+- Now the wait is kept where it can end (identical to the stock OS); where it cannot, the byte is dropped.
+- The Optimised OS's fix (notes/70, D2) dropped the byte in every case; not taken.
+- The other freeze of notes/70 (D1, MACHINES on a machine the firmware doesn't have) was already fixed in this OS by
+  the record detours of the added machines (notes/20 §5): such a track gets Kick's record.
 
 ---
 

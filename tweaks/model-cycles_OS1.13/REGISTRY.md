@@ -6,9 +6,9 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 285 tweaks, 31 911 écritures.
-- Masques de sprites libérables : 164 (35 960 o), dont 59 pris (19 560 o) et **105 libres (16 400 o)**.
-- Crochets sur l'OS : 108 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
+- 286 tweaks, 31 914 écritures.
+- Masques de sprites libérables : 164 (35 960 o), dont 60 pris (19 668 o) et **104 libres (16 292 o)**.
+- Crochets sur l'OS : 109 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
 - Pointeurs réécrits : 58 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 263 tweaks ; place restante au §3.
 
@@ -132,11 +132,11 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x4018ff64` | `0x400ac7fc` | libre | |
 | `0x40192ba4` | `0x400ac276` | pris (132/272 o) | midi-live-both (132 o) |
 
-### 27×27 : 24 masques de 108 o (copie gardée `0x4014a550`) : 0 pris, 24 libres (2 592 o)
+### 27×27 : 24 masques de 108 o (copie gardée `0x4014a550`) : 1 pris, 23 libres (2 484 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x4014a890` | `0x400bb1fc` | libre | |
+| `0x4014a890` | `0x400bb1fc` | pris (42/108 o) | midi-out-fix (42 o) |
 | `0x4014aa34` | `0x400bb178` | libre | |
 | `0x4014af84` | `0x400bb044` | libre | |
 | `0x4014b05c` | `0x400bb028` | libre | |
@@ -537,6 +537,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | adresse | origine (hex) | détour | vers | mods | notes |
 |---|---|---|---|---|---|
 | `0x400004b2` | `4feffff048d700f0` | jmp | masque `0x4016cae8` +0x0 | acid, macro, macro-acid, sdvintage-7th, sdvintage-exact, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-vintage | notes/17, notes/18, notes/36 |
+| `0x4000123a` | `20394049dccc` | jmp | masque `0x4014a890` +0x0 `ring_wait` | midi-out-fix | notes/79 |
 | `0x4000154a` | `4eb940044df8` | jsr | masque `0x40192ba4` +0x70 `midi_gate` | midi-live-both | notes/53 |
 | `0x4000156a` | `4eb940044df8` | jsr | masque `0x40192ba4` +0x70 `midi_gate` | midi-live-both | notes/53 |
 | `0x40001590` | `4eb940044df8` | jsr | masque `0x40192ba4` +0x70 `midi_gate` | midi-live-both | notes/53 |
@@ -786,6 +787,7 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | track-filter | 40 | 1 | 6 | 3 | 15 | 15 | 0 |  | notes/47 |
 | midi-both | 3 | 3 | 0 | 0 | 0 | 0 | 0 |  | notes/53 |
 | midi-live-both | 6 | 0 | 4 | 0 | 1 | 1 | 0 |  | notes/53 |
+| midi-out-fix | 3 | 0 | 1 | 0 | 1 | 1 | 0 |  | notes/79 |
 | lfo-plus | 30 | 0 | 12 | 4 | 7 | 7 | 0 |  | notes/56 |
 | out-sleep | 16 | 0 | 6 | 0 | 5 | 5 | 0 |  | notes/78 |
 

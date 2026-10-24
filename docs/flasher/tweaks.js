@@ -19,7 +19,7 @@ window.MC_TWEAKS = {
   "name": "Modded Cycles OS",
   "version": "2.1",
   "status": "experimental",
-  "key": "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+out-sleep+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal",
+  "key": "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+midi-out-fix+mod-settings+lfo-plus+out-sleep+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal",
   "tweaks": [
    "model-tg-st",
    "sample-preview-st",
@@ -32,6 +32,7 @@ window.MC_TWEAKS = {
    "level-pan-values",
    "trigless-dim",
    "midi-live-both",
+   "midi-out-fix",
    "mod-settings",
    "lfo-plus",
    "out-sleep",
@@ -1683,6 +1684,43 @@ window.MC_TWEAKS = {
      "off": 1648548,
      "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffff",
      "new": "487800014eb94007faf4588f4a80670000484eb940044df84a806700003c1039404e9b500c0000026700000870026000000470014e56fffc1d40ffff48780001486effff4879404e9b504eb940044b884fef000c4e5e4e754eb940044df84a8057c0710044802f4000044ef940044dc21039404e9b500c000001670470004e7570014e75"
+    }
+   ]
+  },
+  {
+   "id": "midi-out-fix",
+   "order": 52,
+   "name": "Sortie MIDI sans gel : l'horloge MIDI ne fige plus le Model:Cycles après une longue surcharge",
+   "description": [
+    "Un gel de l'OS 1.13 d'origine : quand la sortie MIDI est engorgée, l'OS attend qu'une place se libère, même là où rien ne peut la libérer (le top d'horloge MIDI, à un niveau d'interruption de 4 ou plus) : après une longue surcharge, tout se fige, son compris (notes/79).",
+    "Ici l'attente reste celle de l'OS quand elle peut finir ; quand elle ne le peut pas, l'octet est jeté. Identique à l'OS d'origine dans tous les cas où celui-ci revient.",
+    "Code dans un masque de sprite libéré (tools/sprites.py) : 42 o. Généré par tools/gen_midi_out_fix.py, notes/79."
+   ],
+   "device": "Model:Cycles",
+   "os": "1.13",
+   "section": 3,
+   "conflicts": [
+    "os-optimise"
+   ],
+   "symbols": {
+    "ring_wait": "0x4014a890",
+    "ring_drop": "0x4014a8ae"
+   },
+   "writes": [
+    {
+     "off": 3642,
+     "old": "20394049dccc",
+     "new": "4ef94014a890"
+    },
+    {
+     "off": 765436,
+     "old": "4014a890",
+     "new": "4014a550"
+    },
+    {
+     "off": 1352848,
+     "old": "ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffffffe0ffff",
+     "new": "20394049dccc0c80000003ff6f1640c00280000007000c800000030063e24ef9400012c64ef940001248"
     }
    ]
   },
@@ -5165,6 +5203,16 @@ window.MC_TWEAKS = {
    ],
    "license": "LICENSE-ms-multi-output.txt",
    "guide": "mod-settings"
+  },
+  {
+   "id": "midi-out-fix",
+   "cat": "io",
+   "status": "experimental",
+   "credit": null,
+   "tweaks": [
+    "midi-out-fix"
+   ],
+   "guide": "midi-out-fix"
   }
  ],
  "samples": {
