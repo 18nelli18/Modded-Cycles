@@ -24,10 +24,11 @@ section (aPLib) and re-signs the container (HMAC). It prints the SHA-256 of the 
 must be:
 
 ```
-6c327f4519f9f409c91f410f22a2c06641b878dd1584ee1cb7cabbb6c0a497d7
+9f9a3f4cf69bda83cfe664577bc73c8b0104075c4d338aa3aa1c4a78b2c2c4b5
 ```
 
-(2.1 before the lighter output stage (notes/78) was `64d162a4…9b30`; before MODAL's strings were rescheduled
+(2.1 before the MIDI-out fix (notes/79) was `6c327f45…97d7`; before the lighter output stage (notes/78),
+`64d162a4…9b30`; before MODAL's strings were rescheduled
 (notes/74 §5.5), `e5a333c9…cf77`; 2.0.1, without MODAL, was `2a77d029…0041`; 2.0, the same with its machine payload packed less tightly,
 `82a79f45…cca9`.)
 
@@ -107,10 +108,11 @@ python3 tools/gen_modal.py --cycles firmware/model-cycles_OS1.13.syx --syntakt f
 python3 tools/gen_modal.py --tables [--check]                                 # modal_tables.h, LICENSE-Rings only
 ```
 
-The lighter output stage (notes/78) is assembled with binutils only:
+The lighter output stage (notes/78) and the MIDI-out fix (notes/79) are assembled with binutils only:
 
 ```sh
 python3 tools/gen_out_sleep.py --cycles firmware/model-cycles_OS1.13.syx [--check]   # 71-out-sleep.json
+python3 tools/gen_midi_out_fix.py --cycles firmware/model-cycles_OS1.13.syx [--check] # 52-midi-out-fix.json
 ```
 
 ## Proving a tweak
@@ -132,6 +134,8 @@ python3 tools/emu/test_payload_pack.py --cycles firmware/model-cycles_OS1.13.syx
   --syntakt firmware/Syntakt_OS1.42.syx              # the OS's boot hook unpacks the machines' payload
 python3 tools/emu/test_out_sleep.py --cycles firmware/model-cycles_OS1.13.syx \
   --syntakt firmware/Syntakt_OS1.42.syx              # the lighter output stage: same sound, whole OS
+python3 tools/emu/test_midi_out_fix.py --cycles firmware/model-cycles_OS1.13.syx \
+  --syntakt firmware/Syntakt_OS1.42.syx              # MIDI out without freezes, every interrupt level
 ```
 
 The exact runs each proof supports are in its docstring (`python3 tools/emu/test_<mod>.py --help`). The notes in

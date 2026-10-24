@@ -27,7 +27,7 @@ const ELEKTRON_ST_DL = "https://www.elektron.se/support-downloads/syntakt";
 // same whole write or a mod applied on top of another through "requires").
 const REF_MAINOS = {
   // Modded Cycles OS 2.1: the tweaks of os.json, built by tools/build.py --os
-  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+out-sleep+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": "6c327f4519f9f409c91f410f22a2c06641b878dd1584ee1cb7cabbb6c0a497d7",
+  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+midi-out-fix+mod-settings+lfo-plus+out-sleep+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": "9f9a3f4cf69bda83cfe664577bc73c8b0104075c4d338aa3aa1c4a78b2c2c4b5",
 };
 const REF_MODS = {
   "model-tg-st": {"w": "c4686bd09a145fd10a6424b7229e414a084fbbcc212b722e4ab7d3ecd7cb7931", "p": "e269630fe5251b58c2a5eb4298e3ab09b4e6fff9f38c254afecf121c8ad446c2"},
@@ -41,6 +41,7 @@ const REF_MODS = {
   "level-pan-values": {"w": "50e0c4e6e5cb3c6de19296d2f65fec5074ea8e25322363d6bc1dad164cb131b9"},
   "trigless-dim": {"w": "4efc73f035aab33963e8ae8f3f6343925e2cd5149b4cad6780051d0c185e32e1"},
   "midi-live-both": {"w": "e7dfae924d6474abea22b375002ff58b1e3cde301aa9ca8a2ec980593316c942"},
+  "midi-out-fix": {"w": "9ef03612ad0067c6b9be0803b13d9d707385f880ff758abff95995f757756af8"},
   "mod-settings": {"w": "c3c023276e80295a9338a80d22711469620d4b4315ae2b1e0a85c9a61e31e9bb"},
   "lfo-plus": {"w": "8443b08fdb4ce7cf1ba26821b27e7df3ab4ca5396e35e7e9a8e591fc430569b6"},
   "out-sleep": {"w": "2465ffb9e4159117a59d6b0d6f9c657d0c24c7f0eee1df922d6cd95d8dd25b91"},
@@ -640,6 +641,9 @@ const FEAT = {
     "mod-settings": { label: "USB audio: stereo or 6 tracks",
       short: "SETTINGS › Mods › USB Audio: the stereo mix (2CH) or each track on its own channel (6CH), switched from the machine.",
       desc: "SETTINGS gets a last line, Mods, which opens Mod Settings, the page for the mods' own settings. Its first setting, USB Audio, sends the computer the stereo mix (2CH, as stock) or each of the six tracks on its own channel (6CH), to record stems. Press LEVEL/DATA to switch: the Model:Cycles reconnects to the computer about a second later with 2 or 6 inputs, and keeps the choice after power-off. In 6CH the stereo mix is not sent over USB. 6-channel audio based on ms-multi-output by scottmetoyer." },
+    "midi-out-fix": { label: "MIDI out without freezes",
+      short: "Sending MIDI clock out no longer freezes the Model:Cycles after a long overload.",
+      desc: "A freeze of the stock OS, fixed: when the MIDI output is backed up (a long processor overload while MIDI clock is sent), the OS waited for room where none could ever come, and everything froze, sound included, until power-off. Now it waits only where the wait can end, as before; where it cannot, the byte is dropped (a clock tick lost during the overload) and the Model:Cycles carries on. Everything else on the MIDI output is exactly as before." },
     "mach-sampler": { label: "Model-TG sampler" },
     "mach-macro": { label: "47 models from Braids" },
     "mach-acid": { label: "acid bass in the style of the TB-303" },
@@ -720,6 +724,9 @@ const FEAT = {
     "mod-settings": { label: "Audio USB : stéréo ou 6 pistes",
       short: "SETTINGS › Mods › USB Audio : le mix stéréo (2CH) ou chaque piste sur son propre canal (6CH), au choix depuis la machine.",
       desc: "SETTINGS gagne une dernière ligne, Mods, qui ouvre Mod Settings, la page des réglages des mods. Son premier réglage, USB Audio, envoie à l'ordinateur le mix stéréo (2CH, comme d'origine) ou chacune des six pistes sur son propre canal (6CH), pour enregistrer des pistes séparées. Appuyez sur LEVEL/DATA pour basculer : le Model:Cycles se reconnecte à l'ordinateur environ une seconde plus tard avec 2 ou 6 entrées, et garde le choix après extinction. En 6CH, le mix stéréo n'est pas envoyé en USB. Audio 6 canaux d'après ms-multi-output de scottmetoyer." },
+    "midi-out-fix": { label: "Sortie MIDI sans gel",
+      short: "Envoyer l'horloge MIDI ne fige plus le Model:Cycles après une longue surcharge.",
+      desc: "Un gel de l'OS d'origine, corrigé : quand la sortie MIDI est engorgée (une longue surcharge du processeur pendant l'envoi de l'horloge MIDI), l'OS attendait une place qui ne pouvait jamais venir, et tout se figeait, son compris, jusqu'à l'extinction. Maintenant il n'attend que là où l'attente peut finir, comme avant ; là où elle ne le peut pas, l'octet est jeté (un top d'horloge perdu pendant la surcharge) et le Model:Cycles continue. Tout le reste de la sortie MIDI est exactement comme avant." },
     "mach-sampler": { label: "sampler de Model-TG" },
     "mach-macro": { label: "47 modèles de Braids" },
     "mach-acid": { label: "basse acide à la manière de la TB-303" },

@@ -156,13 +156,13 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const os = w.MC_TWEAKS.os;
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
-    check(ids.join() === os.tweaks.join() && os.key === ids.join("+") && ids.length === 15
-      && ids.includes("model-tg-st") && ids.includes("sample-preview-st") && ids.includes("lfo-plus") && ids.includes("mod-settings") && ids.includes("step-rec") && ids.includes("out-sleep")
+    check(ids.join() === os.tweaks.join() && os.key === ids.join("+") && ids.length === 16
+      && ids.includes("model-tg-st") && ids.includes("sample-preview-st") && ids.includes("lfo-plus") && ids.includes("mod-settings") && ids.includes("step-rec") && ids.includes("out-sleep") && ids.includes("midi-out-fix")
       && ids.includes("syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal")
       && !ids.some((x) => /chord|6ch|track-filter|os-optimise|exact|snare|multiout/.test(x)) && !ids.includes("midi-both"),
       `tweaks.js carries exactly the ${ids.length} tweaks of ${os.name} ${os.version} (no picker, nothing else): ${ids.join()}`);
-    check(w.MC_TWEAKS.features.length === 21 && os.machines.length === 9 && os.machines[0].name === "Sampler" && os.machines[7].name === "ACID"
-      && os.machines[8].name === "MODAL", "21 features, 9 added machines from the Sampler to MODAL");
+    check(w.MC_TWEAKS.features.length === 22 && os.machines.length === 9 && os.machines[0].name === "Sampler" && os.machines[7].name === "ACID"
+      && os.machines[8].name === "MODAL", "22 features, 9 added machines from the Sampler to MODAL");
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
     check(["builder.js", "tweaks.js", "flasher.js", "app.js"].every((f) => srcs.some((x) => x.startsWith(f + "?")))
@@ -178,8 +178,8 @@ async function main() {
       "OS header: name, version, status tag, nothing to pick, the 8 added machines, the two files it needs");
     // the features, by section, no checkbox, no selection bar, no search
     const feats = [...doc.querySelectorAll("#features .mod")].map((d) => d.id.slice(4));
-    check(feats.join() === "model-tg,syntakt,macro,acid,modal,lfo-plus,out-sleep,trig-preview,trig-hold,arp,step-rec,tempo-max,latching-mute,sample-preview,browser-scroll,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-live-both,mod-settings",
-      "21 feature rows, by section (Sounds & machines, Sequencer, Live, Screen, USB & MIDI): " + feats.join());
+    check(feats.join() === "model-tg,syntakt,macro,acid,modal,lfo-plus,out-sleep,trig-preview,trig-hold,arp,step-rec,tempo-max,latching-mute,sample-preview,browser-scroll,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-live-both,mod-settings,midi-out-fix",
+      "22 feature rows, by section (Sounds & machines, Sequencer, Live, Screen, USB & MIDI): " + feats.join());
     check(doc.querySelectorAll("#features input").length === 0 && !doc.getElementById("mod-sel") && !doc.getElementById("mod-find")
       && !doc.getElementById("mod-q"), "nothing to tick: no checkbox, no selection bar, no search field");
     check(w.MC_TWEAKS.features.every((f) => doc.querySelector(`#cat-${f.cat} #mod-${f.id} #feat-${f.id}`)), "every feature has a row in its section (cat)");
