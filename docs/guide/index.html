@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-24-01">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-24-01">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-24-02">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-10-24-02">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -59,6 +59,7 @@
         <li><a href="#acid"><span data-l="en">ACID machine</span><span data-l="fr">Machine ACID</span></a></li>
         <li><a href="#modal"><span data-l="en">MODAL machine</span><span data-l="fr">Machine MODAL</span></a></li>
         <li><a href="#lfo-plus"><span data-l="en">LFO 2, 3, 4</span><span data-l="fr">LFO 2, 3, 4</span></a></li>
+        <li><a href="#out-sleep"><span data-l="en">Lighter output stage</span><span data-l="fr">Étage de sortie allégé</span></a></li>
         <li><a href="#mod-settings"><span data-l="en">Mod Settings: USB audio</span><span data-l="fr">Mod Settings : audio USB</span></a></li>
         <li><a href="#mods-on-samples"><span data-l="en">The OS on a Model:Samples</span><span data-l="fr">L'OS sur un Model:Samples</span></a></li>
         <li><a href="#samples"><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></a></li>
@@ -703,9 +704,22 @@
         </dl>
       </section>
 
+      <section id="out-sleep">
+        <h2><span class="n">21</span><span data-l="en">Lighter output stage</span><span data-l="fr">Étage de sortie allégé</span></h2>
+        <p class="by"><span data-l="en">This project, from its Optimised OS</span><span data-l="fr">Ce projet, d'après son OS optimisé</span></p>
+        <p class="lede"><span data-l="en">After the six voices, the stock OS runs its output stage: Volume + Dist, the sends, the delay, the reverb, the mix and the master. It computes all of it at every block, even what cannot change the sound. Here the parts that have nothing to do are skipped, and the sound stays exactly the same, sample for sample. Nothing to set: it works by itself.</span><span data-l="fr">Après les six voix, l'OS d'origine fait tourner son étage de sortie : Volume + Dist, les envois, le delay, la reverb, le mix et le master. Il calcule tout, à chaque bloc, même ce qui ne peut rien changer au son. Ici les parties qui n'ont rien à faire sont sautées, et le son reste exactement le même, échantillon par échantillon. Rien à régler : ça marche tout seul.</span></p>
+        <dl class="facts">
+          <div><dt><span data-l="en">Delay and reverb</span><span data-l="fr">Delay et reverb</span></dt><dd><span data-l="en">they sleep as long as nothing goes in or comes out: no send above 0 since power-on. Once one has received sound, it stays awake until the next power-on, because what is left in it (far below hearing) never comes back to exactly zero.</span><span data-l="fr">ils dorment tant que rien n'y entre ni n'en sort : aucun envoi au-dessus de 0 depuis l'allumage. Une fois qu'un effet a reçu du son, il reste éveillé jusqu'au prochain allumage, car ce qui reste dedans (bien en dessous de l'audible) ne revient jamais exactement à zéro.</span></dd></div>
+          <div><dt><span data-l="en">Dist</span><span data-l="fr">Dist</span></dt><dd><span data-l="en">the saturator is skipped for a pair of tracks while both have VOL+DIST at 60 or below, where it does not distort.</span><span data-l="fr">le saturateur est sauté pour une paire de pistes tant que les deux ont VOL+DIST à 60 ou moins, où il ne distord pas.</span></dd></div>
+          <div><dt><span data-l="en">Sends</span><span data-l="fr">Envois</span></dt><dd><span data-l="en">a send at 0 on all tracks is skipped.</span><span data-l="fr">un envoi à 0 sur toutes les pistes est sauté.</span></dd></div>
+          <div><dt><span data-l="en">Processor</span><span data-l="fr">Processeur</span></dt><dd><span data-l="en">with the default settings (sends at 0, no Dist) about a tenth of the processor is freed for the machines; with the delay and the reverb in use, a little. The load shown on Model-TG's System page goes up again when you raise a send: plan for it in heavy projects.</span><span data-l="fr">avec les réglages par défaut (envois à 0, pas de Dist), environ un dixième du processeur est libéré pour les machines ; avec le delay et la reverb en service, un peu. La charge de la page System de Model-TG remonte quand vous montez un envoi : prévoyez-le dans les projets chargés.</span></dd></div>
+          <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">the same code was measured on a Model:Cycles with the stock OS (Optimised OS, 18/10/2026), sound identical. In this OS: checked in the emulator on the OS's own code, Model-TG and the added machines included, sample for sample. Not yet tested on a Model:Cycles in this OS: experimental.</span><span data-l="fr">le même code a été mesuré sur un Model:Cycles avec l'OS d'origine (OS optimisé, 18/10/2026), son identique. Dans cet OS : vérifié en émulation sur le code même de l'OS, Model-TG et les machines ajoutées compris, échantillon par échantillon. Pas encore testé sur un Model:Cycles dans cet OS : expérimental.</span></dd></div>
+        </dl>
+      </section>
+
       <section id="mod-settings">
         <span id="usb6"></span>
-        <h2><span class="n">21</span><span data-l="en">Mod Settings: USB audio, stereo or 6 tracks</span><span data-l="fr">Mod Settings : audio USB, stéréo ou 6 pistes</span></h2>
+        <h2><span class="n">22</span><span data-l="en">Mod Settings: USB audio, stereo or 6 tracks</span><span data-l="fr">Mod Settings : audio USB, stéréo ou 6 pistes</span></h2>
         <p class="by"><span data-l="en">6-channel audio based on</span><span data-l="fr">Audio 6 canaux d'après</span> <a href="https://github.com/scottmetoyer/ms-multi-output" target="_blank" rel="noopener">ms-multi-output</a> <span data-l="en">by</span><span data-l="fr">de</span> scottmetoyer</p>
         <p class="lede"><span data-l="en">The SETTINGS menu gets a last line, <b>Mods</b>: it opens <b>Mod Settings</b>, the page for the mods' own settings. Its first setting, <b>USB Audio</b>, sends the computer either the stereo mix (2CH, as stock) or each track on its own channel (6CH), to record six stems. No reflash needed to change it.</span><span data-l="fr">Le menu SETTINGS gagne une dernière ligne, <b>Mods</b> : elle ouvre <b>Mod Settings</b>, la page des réglages des mods. Son premier réglage, <b>USB Audio</b>, envoie à l'ordinateur soit le mix stéréo (2CH, comme d'origine), soit chaque piste sur son propre canal (6CH), pour enregistrer six pistes séparées. Pas besoin de reflasher pour en changer.</span></p>
         <ol>
@@ -765,7 +779,7 @@
       </section>
 
       <section id="mods-on-samples">
-        <h2><span class="n">22</span><span data-l="en">The OS on a Model:Samples</span><span data-l="fr">L'OS sur un Model:Samples</span></h2>
+        <h2><span class="n">23</span><span data-l="en">The OS on a Model:Samples</span><span data-l="fr">L'OS sur un Model:Samples</span></h2>
         <p class="lede"><span data-l="en">A Model:Samples runs the same Modded Cycles OS as a Model:Cycles. Whatever the machine, the flasher installs that OS; on a Model:Samples, the <a href="#model-tg">Sampler</a> plays your samples.</span><span data-l="fr">Un Model:Samples fait tourner le même Modded Cycles OS qu'un Model:Cycles. Quelle que soit la machine, le flasher installe cet OS ; sur un Model:Samples, le <a href="#model-tg">Sampler</a> joue vos samples.</span></p>
         <ol>
           <li><span data-l="en">Back up your samples and projects with Elektron Transfer, then close Transfer.</span><span data-l="fr">Sauvegardez vos samples et vos projets avec Elektron Transfer, puis fermez Transfer.</span></li>
@@ -789,7 +803,7 @@
       </section>
 
       <section id="samples">
-        <h2><span class="n">23</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">24</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -823,17 +837,17 @@
       </section>
 
       <section id="outside">
-        <h2><span class="n">24</span><span data-l="en">Not in this OS</span><span data-l="fr">Pas dans cet OS</span></h2>
+        <h2><span class="n">25</span><span data-l="en">Not in this OS</span><span data-l="fr">Pas dans cet OS</span></h2>
         <p class="lede"><span data-l="en">These features are not part of Modded Cycles OS 2.0. Their pages stay here for reference; developers can still build them from the command line.</span><span data-l="fr">Ces fonctions ne font pas partie du Modded Cycles OS 2.0. Leurs pages restent ici pour mémoire ; les développeurs peuvent toujours les construire en ligne de commande.</span></p>
         <ul>
           <li><span data-l="en"><a href="#track-filter">Per-track filter</a>: it shares its place in the sound with LFO 2, 3, 4 and does not work with Model-TG; it comes back once Model-TG's side is replaced.</span><span data-l="fr"><a href="#track-filter">Filtre par piste</a> : il partage sa place dans le son avec LFO 2, 3, 4 et ne marche pas avec Model-TG ; il reviendra quand la partie Model-TG sera remplacée.</span></li>
-          <li><span data-l="en">Optimised OS, the same sound with far less work for the processor: not compatible yet with the Sampler, the Syntakt engines, MACRO and ACID. Porting it to this OS is the next job.</span><span data-l="fr">L'OS optimisé, le même son avec beaucoup moins de travail pour le processeur : pas encore compatible avec le Sampler, les moteurs du Syntakt, MACRO et ACID. Le porter sur cet OS est le prochain chantier.</span></li>
+          <li><span data-l="en">Optimised OS, the same sound with far less work for the processor: its output-stage part is now in the OS (<a href="#out-sleep">Lighter output stage</a>); its voice part does not work with the Sampler, the Syntakt engines, MACRO, ACID and MODAL, which handle their voices themselves.</span><span data-l="fr">L'OS optimisé, le même son avec beaucoup moins de travail pour le processeur : sa partie étage de sortie est maintenant dans l'OS (<a href="#out-sleep">Étage de sortie allégé</a>) ; sa partie voix ne marche pas avec le Sampler, les moteurs du Syntakt, MACRO, ACID et MODAL, qui gèrent leurs voix eux-mêmes.</span></li>
           <li><span data-l="en"><a href="#midi-both">MIDI OUT while in THRU</a>: the <a href="#midi-live-both">Live MIDI OUT + THRU toggle</a>, in the OS, does the same and more.</span><span data-l="fr"><a href="#midi-both">MIDI OUT pendant THRU</a> : <a href="#midi-live-both">Basculer MIDI OUT + THRU en direct</a>, dans l'OS, fait la même chose et plus.</span></li>
         </ul>
       </section>
 
       <section id="track-filter">
-        <h2><span class="n">25</span><span data-l="en">Per-track filter</span><span data-l="fr">Filtre par piste</span></h2>
+        <h2><span class="n">26</span><span data-l="en">Per-track filter</span><span data-l="fr">Filtre par piste</span></h2>
         <p class="note"><span data-l="en"><b>Not part of Modded Cycles OS 2.0.</b> It keeps its settings in the same place of the sound as <a href="#lfo-plus">LFO 2, 3, 4</a>, and does not work with Model-TG: it comes back once Model-TG's side is replaced. Developers can still build it from the command line.</span><span data-l="fr"><b>Ne fait pas partie du Modded Cycles OS 2.0.</b> Il range ses réglages au même endroit du son que <a href="#lfo-plus">LFO 2, 3, 4</a>, et ne marche pas avec Model-TG : il reviendra quand la partie Model-TG sera remplacée. Les développeurs peuvent toujours le construire en ligne de commande.</span></p>
         <p class="lede"><span data-l="en">A filter on every track, like on a DJ mixer: turn one way for a low-pass, the other way for a high-pass; in the centre the sound is left untouched. The Model:Samples' range, with resonance and an envelope.</span><span data-l="fr">Un filtre sur chaque piste, comme sur une table de mixage DJ : d'un côté un passe-bas, de l'autre un passe-haut ; au centre, le son n'est pas touché. La plage du Model:Samples, avec résonance et enveloppe.</span></p>
         <figure class="fig">
@@ -856,7 +870,7 @@
       </section>
 
       <section id="midi-both">
-        <h2><span class="n">26</span><span data-l="en">MIDI OUT while in THRU</span><span data-l="fr">MIDI OUT pendant THRU</span></h2>
+        <h2><span class="n">27</span><span data-l="en">MIDI OUT while in THRU</span><span data-l="fr">MIDI OUT pendant THRU</span></h2>
         <p class="note"><span data-l="en"><b>Not part of Modded Cycles OS 2.0.</b> The <a href="#midi-live-both">Live MIDI OUT + THRU toggle</a>, which is in the OS, does the same when switched on, and can be switched off. Developers can still build this one from the command line.</span><span data-l="fr"><b>Ne fait pas partie du Modded Cycles OS 2.0.</b> <a href="#midi-live-both">Basculer MIDI OUT + THRU en direct</a>, qui est dans l'OS, fait la même chose une fois activé, et se désactive. Les développeurs peuvent toujours construire celui-ci en ligne de commande.</span></p>
         <p class="by"><span data-l="en">By</span><span data-l="fr">Par</span> <a href="https://github.com/AveyCole/Modded-Cycles" target="_blank" rel="noopener">AveyCole</a></p>
         <p class="lede"><span data-l="en">With THR selected, the Model:Cycles forwards what arrives on its MIDI IN and also sends its own MIDI. Handy in the middle of a MIDI chain: what comes in goes on, and the Cycles still plays the devices after it.</span><span data-l="fr">Avec THR choisi, le Model:Cycles relaie ce qui arrive sur son MIDI IN et envoie aussi son propre MIDI. Pratique au milieu d'une chaîne MIDI : ce qui entre continue son chemin, et le Cycles joue toujours les appareils qui le suivent.</span></p>
@@ -874,13 +888,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">27</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">28</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first install: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant une première installation : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">First set the tracks that use an added machine (7 to 15: the Sampler, the Syntakt engines, MACRO, ACID, MODAL) back to an original one (Kick to Chord).</span><span data-l="fr">Remettez d'abord sur une machine d'origine (de Kick à Chord) les pistes qui utilisent une machine ajoutée (7 à 15 : le Sampler, les moteurs du Syntakt, MACRO, ACID, MODAL).</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">28</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">29</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -894,7 +908,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">29</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">30</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -960,8 +974,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-24-01"></script>
-<script src="../assets/cycles.js?v=2026-10-24-01"></script>
-<script src="../assets/site.js?v=2026-10-24-01"></script>
+<script src="../assets/release.js?v=2026-10-24-02"></script>
+<script src="../assets/cycles.js?v=2026-10-24-02"></script>
+<script src="../assets/site.js?v=2026-10-24-02"></script>
 </body>
 </html>

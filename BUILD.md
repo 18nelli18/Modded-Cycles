@@ -24,10 +24,11 @@ section (aPLib) and re-signs the container (HMAC). It prints the SHA-256 of the 
 must be:
 
 ```
-64d162a45abc8f54b2efd6473761e3a312755730e9981bdc194cbdb6c56a9b30
+6c327f4519f9f409c91f410f22a2c06641b878dd1584ee1cb7cabbb6c0a497d7
 ```
 
-(2.1 before MODAL's strings were rescheduled (notes/74 §5.5) was `e5a333c9…cf77`; 2.0.1, without MODAL, was `2a77d029…0041`; 2.0, the same with its machine payload packed less tightly,
+(2.1 before the lighter output stage (notes/78) was `64d162a4…9b30`; before MODAL's strings were rescheduled
+(notes/74 §5.5), `e5a333c9…cf77`; 2.0.1, without MODAL, was `2a77d029…0041`; 2.0, the same with its machine payload packed less tightly,
 `82a79f45…cca9`.)
 
 The same value is the `REF_MAINOS` entry of `docs/flasher/app.js`: the web flasher refuses a build whose MAIN OS
@@ -106,6 +107,12 @@ python3 tools/gen_modal.py --cycles firmware/model-cycles_OS1.13.syx --syntakt f
 python3 tools/gen_modal.py --tables [--check]                                 # modal_tables.h, LICENSE-Rings only
 ```
 
+The lighter output stage (notes/78) is assembled with binutils only:
+
+```sh
+python3 tools/gen_out_sleep.py --cycles firmware/model-cycles_OS1.13.syx [--check]   # 71-out-sleep.json
+```
+
 ## Proving a tweak
 
 Every tweak has a proof in `tools/emu/` that runs the OS's own code in the Unicorn emulator, stock against patched,
@@ -123,6 +130,8 @@ python3 tools/emu/test_modal.py --cycles firmware/model-cycles_OS1.13.syx --synt
   --eurorack vendor/eurorack [--quick]                                         # MODAL in the OS, byte for byte
 python3 tools/emu/test_payload_pack.py --cycles firmware/model-cycles_OS1.13.syx \
   --syntakt firmware/Syntakt_OS1.42.syx              # the OS's boot hook unpacks the machines' payload
+python3 tools/emu/test_out_sleep.py --cycles firmware/model-cycles_OS1.13.syx \
+  --syntakt firmware/Syntakt_OS1.42.syx              # the lighter output stage: same sound, whole OS
 ```
 
 The exact runs each proof supports are in its docstring (`python3 tools/emu/test_<mod>.py --help`). The notes in
