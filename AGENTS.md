@@ -259,3 +259,8 @@ User: “105 worked” then “Publish 105 retro build”. Exact regular-vocabul
 ## AveyCole main2.36 promotion (2026-10-24)
 
 User: “111 worked, push that to main”. Publish exact regular shared-filter111 SHA256 `fa66d0aa955ed68461ae5be5fbbd87c4a89fd3a53ff2cd693ccf48bd2589951a`, MAIN `a31131af8c4b93a2cab3f471612ddac84e08e2c2dbd8327cae480b8e81f00744`. Includes ACID filter-only Decay and velocity Accent, fine SY BITS detune/live compact signed decimal, Elder+6dB. RETROSYN preserved before MIDI Out. Adult remains private. Preserve the user flasher blurb verbatim.
+
+
+## AveyCole supplied blurb update (2026-10-24)
+
+After main111, AveyCole supplied a full replacement English blurb and requested the existing layout. Preserve its spelling/punctuation, including Tiny,: and varie. Keep the eight feature bullets, new WAV/DX7 importer paragraph, READ callout, donation link and sign-off. French equivalent retained. New fixed-features block SHA256 `00da19e1c4ba5c0cd9de3190e39106aa70576916f5b0c9581671af684c4cd3a7`. Future releases preserve this new supplied text unless explicitly changed. Firmware remains exact111.
