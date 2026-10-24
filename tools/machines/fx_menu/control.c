@@ -3,11 +3,27 @@ u32 fx_menu_open,fx_menu_slot,fx_menu_cursor,fx_force_active,fx_force_func,fx_fo
 u32 fx_speed=42,fx_depth=64,fx_crackle=24,fx_warble=24,fx_wspeed=32,fx_aux_ch[6],fx_aux_vi[6],fx_dirty;
 #ifdef FX_LEAN_FX
 /* IDs sauvegardes conserves, seuls les choix presents sont exposes. */
-const char *const fx_rev_names[FX_REV_COUNT]={"REVERB","CHORUS 1","CHORUS 2","VINYL",0,0,0,"PS1"};
+const char *const fx_rev_names[FX_REV_COUNT]={"REVERB","CHORUS 1","CHORUS 2","VINYL",0,0,0,"PS1"
+#ifdef FX_CHEAP
+,"ROOM"
+#endif
+};
 #ifdef FX_NO_SHIMMER
-const u32 fx_rev_order[FX_REV_MENU_COUNT]={7,3,0,1,2};
-const char *const fx_del_names[FX_DEL_COUNT]={"DELAY","CRUSH 1","CRUSH 2",0,0,"PING PONG",0,0};
-const u32 fx_del_order[FX_DEL_MENU_COUNT]={5,0,1,2};
+const u32 fx_rev_order[FX_REV_MENU_COUNT]={
+#ifdef FX_CHEAP
+8,
+#endif
+7,3,0,1,2};
+const char *const fx_del_names[FX_DEL_COUNT]={"DELAY","CRUSH 1","CRUSH 2",0,0,"PING PONG",0,0
+#ifdef FX_CHEAP
+,0,"DUB"
+#endif
+};
+const u32 fx_del_order[FX_DEL_MENU_COUNT]={
+#ifdef FX_CHEAP
+9,
+#endif
+5,0,1,2};
 #else
 const char *const fx_del_names[FX_DEL_COUNT]={"DELAY","CRUSH 1","CRUSH 2",0,0,"PING PONG","SHIMMER 1",0};
 const u32 fx_rev_order[FX_REV_MENU_COUNT]={7,3,0,1,2},fx_del_order[FX_DEL_MENU_COUNT]={6,5,2,1,0};
@@ -86,7 +102,9 @@ void fx_service(void){
 #endif
  u8 b[60]={70,88,48,49};
  if(!loaded){loaded=1;if(file(0,b)){u32 ok=b[0]==70&&b[1]==88&&b[2]==48&&b[3]==49&&b[58]==165&&b[59]==90&&b[4]<FX_REV_COUNT&&b[22]<
-#if defined(FX_PS1)&&!defined(FX_CLOUD)
+#if defined(FX_CHEAP)
+10
+#elif defined(FX_PS1)&&!defined(FX_CLOUD)
 9
 #else
 FX_DEL_COUNT

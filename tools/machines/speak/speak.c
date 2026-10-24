@@ -32,11 +32,19 @@ static s32 sample(State*s,u32 inc,u32 bank,u32 speed,u32 articulation){
  }
  const Phone*p=&SP_PHONES[id];u32 phase=s->phase;s->phase+=inc;
  s->rng^=s->rng<<13;s->rng^=s->rng>>17;s->rng^=s->rng<<5;
- s32 pulse=s->phase<phase?16384:0;s->glottal+=(pulse-s->glottal)>>1;s->dc+=(s->glottal-s->dc)>>5;
+ #ifdef SP_TALK
+ (void)phase;s->glottal=SP_GLOTTAL[s->phase>>25];
+#else
+ s32 pulse=s->phase<phase?16384:0;s->glottal+=(pulse-s->glottal)>>1;
+#endif
+ s->dc+=(s->glottal-s->dc)>>5;
 #ifdef SP_SMOOTH
  /* Enveloppes d excitation de2ms : pas de marche brutale au changement
   * voyelle/bruit, a la fin d un S ou apres le burst d une occlusive. */
  s32 vt=(s32)p->voice<<8,nt=(p->stop&&s->age>96)?0:(s32)p->noise<<8;
+#ifdef SP_TALK
+ if(p->stop)nt=s->age<128?(s32)p->noise*SP_BURST[s->age]:0;
+#endif
  s->voice_level+=(vt-s->voice_level)>>4;s->noise_level+=(nt-s->noise_level)>>4;
  s32 voice=(s->glottal-s->dc)*(s->voice_level>>8)>>8;
  s32 noise=((s32)((s->rng>>16)&65535)-32768)*(s->noise_level>>8)>>10;
@@ -45,11 +53,19 @@ static s32 sample(State*s,u32 inc,u32 bank,u32 speed,u32 articulation){
  s32 noise=((s32)((s->rng>>16)&65535)-32768)*(s32)p->noise>>10;
  if(p->stop&&s->age>96)noise=0;
 #endif
+ #ifdef SP_TALK
+ /* Articulation change les transitions, sans tripler le volume du souffle. */
+ noise=noise*(s32)(80+(articulation>>2))>>7;
+#else
  noise=noise*(s32)(64+articulation)>>7;
+#endif
  s32 x=voice+noise,sum=0;u32 smooth=5-(articulation>>5);
 #ifdef SP_SOFT
  /* Formants moins brusques pendant les transitions consonne/voyelle. */
  smooth++;
+#endif
+#ifdef SP_TALK
+ smooth=6-(articulation>>6);
 #endif
  for(u32 k=0;k<3;k++){
   const Resonator*r=&SP_RESONATORS[bank][id][k];const s32 target[3]={r->a1,r->a2,r->b};

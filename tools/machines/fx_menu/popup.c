@@ -67,6 +67,9 @@ u32 fx_popup(u32 view,u32 canvas,u32 desc,s32 value,u32 flags,u32 last){u32 resu
 #ifdef FX_PS1
  if(ch_mode==7){if(desc==27)title(canvas,"PS1","PS1 Send");if(desc==39||desc==40)title(canvas,"PS1",desc==39?"Decay":"Tone");}
 #endif
+ #ifdef FX_CHEAP
+ if(ch_mode==8){if(desc==27)title(canvas,"ROOM","Room Send");if(desc==39||desc==40)title(canvas,"ROOM",desc==39?"Decay":"Tone");}
+#endif
  if(desc==26&&(cr_mode==1||cr_mode==2))title(canvas,fx_del_names[cr_mode],"Crush Send");
  if(desc==27&&(ch_mode==1||ch_mode==2||ch_mode==3))title(canvas,fx_rev_names[ch_mode],ch_mode==3?"Vinyl Send":"Chorus Send");
  return result;

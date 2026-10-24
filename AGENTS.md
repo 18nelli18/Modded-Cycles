@@ -237,3 +237,7 @@ AveyCole reports “that worked, push v85 with updated controls and such”. Pub
 ## AveyCole main 2.31 promotion (2026-10-23)
 
 Explicit request: “perfect put the non swear version on main”, clarified “of v87”. Publish exact regular shared-filter v87 SHA256 `97d4c95a3ab7c7e5b8e5a8bb9eb10d6d004bb03a52a3937d2d6ff03ba71570bf`, MAIN `4f2800f2d7218118788a4fbd284b5486487836253649215e9fe047eb845f5b61`. The regular 128-word bank stays intact. Includes softer noisy consonants and SPEAK idle-counter handling during unfinished words; true pressure/stolen/fading rules remain. No adult bank, DUB or ROOM is authorized for this public release. Update EN/FR controls and PDF. Private files remain separate.
+
+## AveyCole main 2.32 promotion (2026-10-23)
+
+AveyCole explicitly requests “okay, push v90 to main”. Publish exact regular shared-filter v90 SHA256 `218aebccdd0b5f13896f80310a041f8eb95c90e3a98ab62b1985c9083518d008`, MAIN `413659a209f2c8c31e7080394c81c8a5e562c4bd13c5093ded00044a90f19821`, via the established fixed-main image. Includes ROOM, distinct filtered stereo DUB and calibrated/brighter SPEAK. Update EN/FR controls and PDF. Adult v90 stays private; no adult lexicon may enter the public checkout. DUCK is a subsequent private v90-based test, never included in this approved image.

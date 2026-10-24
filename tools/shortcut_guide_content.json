@@ -1,6 +1,6 @@
 {
-  "release": "2.31",
-  "stamp": "2026-10-23-speak-main-231",
+  "release": "2.32",
+  "stamp": "2026-10-23-speak-room-dub-main-232",
   "cards": [
     {
       "en": [
@@ -25,11 +25,11 @@
     {
       "en": [
         "Filters and effects",
-        "Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; PS1, Vinyl, Reverb and Chorus 1/2; Ping Pong, Delay and Crush 1/2. Opaque FX menus apply on TRACK release. Cumulative PS1/filter optimizations. Both Shimmers and all combined modes are removed."
+        "Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; ROOM, PS1, Vinyl, Reverb and Chorus 1/2; DUB, Ping Pong, Delay and Crush 1/2. Opaque FX menus apply on TRACK release. Cumulative PS1/filter optimizations. Both Shimmers and all combined modes are removed."
       ],
       "fr": [
         "Filtres et effets",
-        "Filtres pistes/Wizard inspires Polivoks, second LFO, MACRO Fine/Lo-Fi ; PS1, Vinyl, Reverb et Chorus 1/2 ; Ping Pong, Delay et Crush 1/2. Menus opaques appliques au relachement TRACK. Optimisations PS1/filtre cumulees. Les deux Shimmer et tous les modes combines sont retires."
+        "Filtres pistes/Wizard inspires Polivoks, second LFO, MACRO Fine/Lo-Fi ; ROOM, PS1, Vinyl, Reverb et Chorus 1/2 ; DUB, Ping Pong, Delay et Crush 1/2. Menus opaques appliques au relachement TRACK. Optimisations PS1/filtre cumulees. Les deux Shimmer et tous les modes combines sont retires."
       ]
     },
     {
@@ -266,24 +266,24 @@
           "en": [
             "Reverb-slot menu",
             "Hold TRACK + REVERB SIZE",
-            "Top to bottom: PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel."
+            "Top to bottom: ROOM, PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel."
           ],
           "fr": [
             "Menu reverb",
             "Maintenir TRACK + REVERB SIZE",
-            "De haut en bas : PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule."
+            "De haut en bas : ROOM, PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule."
           ]
         },
         {
           "en": [
             "Delay-slot menu",
             "Hold TRACK + DELAY TIME",
-            "Top to bottom: PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels."
+            "Top to bottom: DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels."
           ],
           "fr": [
             "Menu delay",
             "Maintenir TRACK + DELAY TIME",
-            "De haut en bas : PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule."
+            "De haut en bas : DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule."
           ]
         },
         {
@@ -296,6 +296,18 @@
             "Reverb standard",
             "REVERB SEND / SIZE / FUNC + SIZE",
             "Send par piste / Size natif, INF au maximum / Tone -64 a 0 a +63. Format natif restaure immediatement apres Chorus, meme en lecture."
+          ]
+        },
+        {
+          "en": [
+            "ROOM reverb",
+            "REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE",
+            "Room Send per track / Decay / Tone. Compact stereo room tail at 12 kHz. Select ROOM above PS1; release TRACK to apply."
+          ],
+          "fr": [
+            "Reverb ROOM",
+            "REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE",
+            "Room Send par piste / Decay / Tone. Petite ambiance stereo a 12 kHz. ROOM au-dessus de PS1 ; relacher TRACK pour appliquer."
           ]
         },
         {
@@ -344,6 +356,18 @@
             "Delay standard",
             "DELAY SEND / TIME / FUNC + TIME",
             "Delay Send par piste / Time natif / Feedback natif."
+          ]
+        },
+        {
+          "en": [
+            "DUB delay",
+            "DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME",
+            "Per-track Delay Send / native Time / Feedback. Strongly filtered echoes alternate left and right, progressively narrowing in the feedback loop. Reuses the native delay and stereo bounce routing. Headphones or both outputs reveal the movement."
+          ],
+          "fr": [
+            "Delay DUB",
+            "DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME",
+            "Delay Send par piste / Time natif / Feedback. Echos fortement filtres alternant gauche/droite, de plus en plus etroits dans la boucle. Reutilise le delay natif et le rebond stereo. Casque ou deux sorties pour le mouvement."
           ]
         },
         {
@@ -462,12 +486,12 @@
           "en": [
             "Select SPEAK",
             "MACHINES: after Shadow, immediately before MIDI Out",
-            "Original 128-word formant speech engine. Microphone icon; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Softer consonants and calibrated output: start around Vol+Dist 60 with Punch off. v87 further reduces noisy consonant harshness while retaining vowel level."
+            "Original 128-word formant speech engine. Microphone; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. v90 balances phoneme levels, smooths transitions and brightens voiced harmonics while keeping hiss reduced. Start around Vol+Dist 60, Punch off."
           ],
           "fr": [
             "Choisir SPEAK",
             "MACHINES : apres Shadow, juste avant MIDI Out",
-            "Moteur vocal original a formants, 128 mots anglais. Icone microphone ; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Consonnes adoucies, niveau calibre : commencer vers Vol+Dist 60, Punch coupe. v87 adoucit davantage le bruit des consonnes en conservant le niveau des voyelles."
+            "Moteur vocal original a formants, 128 mots anglais. Microphone ; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. v90 equilibre les phonemes, adoucit les transitions et eclaircit les harmoniques vocales sans renforcer le souffle. Commencer vers Vol+Dist 60, Punch coupe."
           ]
         },
         {

@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.31 - 23 October 2026
+Supermodel 2.32 - 23 October 2026
 
-Main 2.31. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.32. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
@@ -10,7 +10,7 @@ Main 2.31. Hold the first button while pressing the next button or turning the n
 
 **Performance and sequencing:** Arpeggiator, held-note octave 0, ChordKeys and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching mute and solo.
 
-**Filters and effects:** Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; PS1, Vinyl, Reverb and Chorus 1/2; Ping Pong, Delay and Crush 1/2. Opaque FX menus apply on TRACK release. Cumulative PS1/filter optimizations. Both Shimmers and all combined modes are removed.
+**Filters and effects:** Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; ROOM, PS1, Vinyl, Reverb and Chorus 1/2; DUB, Ping Pong, Delay and Crush 1/2. Opaque FX menus apply on TRACK release. Cumulative PS1/filter optimizations. Both Shimmers and all combined modes are removed.
 
 **Routing and workflow:** MIDI Out with nine CC knobs, locks and two MIDI LFOs; MIDI OUT/THRU toggle; USB stereo or six tracks; permanent quick save, saved Mod Setup and optional DX diagnostics.
 
@@ -40,13 +40,15 @@ Main 2.31. Hold the first button while pressing the next button or turning the n
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Reverb-slot menu | Hold TRACK + REVERB SIZE | Top to bottom: PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel. |
-| Delay-slot menu | Hold TRACK + DELAY TIME | Top to bottom: PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels. |
+| Reverb-slot menu | Hold TRACK + REVERB SIZE | Top to bottom: ROOM, PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel. |
+| Delay-slot menu | Hold TRACK + DELAY TIME | Top to bottom: DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels. |
 | Standard Reverb | REVERB SEND / SIZE / FUNC + SIZE | Per-track Send / native Size, including INF at maximum / Tone -64 through 0 to +63. Stock formatting returns immediately after leaving Chorus, even during playback. |
+| ROOM reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | Room Send per track / Decay / Tone. Compact stereo room tail at 12 kHz. Select ROOM above PS1; release TRACK to apply. |
 | PS1 reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | PS1 Send per track / Decay / Tone. PlayStation-inspired stereo tail, darker and grainier; cumulative processing optimizations retained. |
 | Chorus 1 / 2 | REVERB SEND / SIZE / FUNC + SIZE | Chorus Send per track / Speed / Depth. Speed and Depth 0-127. Replaces reverb in this slot. |
 | Vinyl | REVERB SEND; SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Vinyl Send; Crackle / Warble Amount / Warble Speed. Hold FUNC first, then TRACK for Speed. Send 0 is dry; Crackle 0 switches dust off. Bright independent pops/clicks continue through gaps. Track level, pan and mute apply. |
 | Standard Delay | DELAY SEND / TIME / FUNC + TIME | Per-track Delay Send / native Time / native Feedback. |
+| DUB delay | DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME | Per-track Delay Send / native Time / Feedback. Strongly filtered echoes alternate left and right, progressively narrowing in the feedback loop. Reuses the native delay and stereo bounce routing. Headphones or both outputs reveal the movement. |
 | Ping Pong | DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME | Per-track send / Time / Feedback. Stereo echoes alternate left and right; listen through headphones or both outputs. |
 | Crusher Rate / Bits | CRUSH 1 or 2: TIME / FUNC + TIME | Rate 0-127, about 750 Hz-48 kHz / Bits 2-16. Lower Rate or Bits is rougher. CRUSH 1 keeps the direct signal clean; CRUSH 2 blends direct clean/crushed. DELAY SEND is labeled Crush Send; no delay echoes in Crush modes. |
 | Effect settings and save | Release TRACK; stop playback | FX modes and added controls save after playback stops. Added FX controls have no p-lock/LFO destinations; native track sends retain their locks. Both Shimmers and all combined modes are removed. Old combined preferences select their standalone effect; old Shimmer/Cloud preferences select DELAY. |
@@ -65,7 +67,7 @@ Main 2.31. Hold the first button while pressing the next button or turning the n
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Select SPEAK | MACHINES: after Shadow, immediately before MIDI Out | Original 128-word formant speech engine. Microphone icon; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Softer consonants and calibrated output: start around Vol+Dist 60 with Punch off. v87 further reduces noisy consonant harshness while retaining vowel level. |
+| Select SPEAK | MACHINES: after Shadow, immediately before MIDI Out | Original 128-word formant speech engine. Microphone; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. v90 balances phoneme levels, smooths transitions and brightens voiced harmonics while keeping hiss reduced. Start around Vol+Dist 60, Punch off. |
 | Voice / Word / Speed / Articulation | COLOR / SHAPE / SWEEP / CONTOUR | Voice/formant character / Word 0-127 / Speed (64 normal, lower slower) / Articulation. SHAPE popup shows the word and index. Word changes latch at the next trig; the other three controls remain live. Slow words now continue through quiet phoneme gaps; the idle detector no longer suspends unfinished speech. |
 | Pitch and envelope | PITCH / notes; DECAY, Fine, Punch, Gate, Attack | Pitch changes independently of word speed. Begin with Decay 127 to hear complete words. Existing filters and FX sends apply. Each track has its own speech state. |
 | Word sequences and modulation | Hold a trig + SHAPE, then lock Pitch and other knobs normally | Word and other native parameters support p-locks and LFO destinations. COLOR/SHAPE/SWEEP/CONTOUR use MIDI CC 16/17/18/19. Leave space for the word or increase Speed. |

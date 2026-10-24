@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.31 - 23 octobre2026
+Supermodel2.32 - 23 octobre2026
 
-Principal2.31. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
+Principal2.32. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
 ## Fonctions incluses
 
@@ -10,7 +10,7 @@ Principal2.31. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 **Performance et séquenceur:** Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute verrouillé et solo.
 
-**Filtres et effets:** Filtres pistes/Wizard inspires Polivoks, second LFO, MACRO Fine/Lo-Fi ; PS1, Vinyl, Reverb et Chorus 1/2 ; Ping Pong, Delay et Crush 1/2. Menus opaques appliques au relachement TRACK. Optimisations PS1/filtre cumulees. Les deux Shimmer et tous les modes combines sont retires.
+**Filtres et effets:** Filtres pistes/Wizard inspires Polivoks, second LFO, MACRO Fine/Lo-Fi ; ROOM, PS1, Vinyl, Reverb et Chorus 1/2 ; DUB, Ping Pong, Delay et Crush 1/2. Menus opaques appliques au relachement TRACK. Optimisations PS1/filtre cumulees. Les deux Shimmer et tous les modes combines sont retires.
 
 **Routage et travail:** MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif.
 
@@ -40,13 +40,15 @@ Principal2.31. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Menu reverb | Maintenir TRACK + REVERB SIZE | De haut en bas : PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule. |
-| Menu delay | Maintenir TRACK + DELAY TIME | De haut en bas : PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule. |
+| Menu reverb | Maintenir TRACK + REVERB SIZE | De haut en bas : ROOM, PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule. |
+| Menu delay | Maintenir TRACK + DELAY TIME | De haut en bas : DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule. |
 | Reverb standard | REVERB SEND / SIZE / FUNC + SIZE | Send par piste / Size natif, INF au maximum / Tone -64 a 0 a +63. Format natif restaure immediatement apres Chorus, meme en lecture. |
+| Reverb ROOM | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | Room Send par piste / Decay / Tone. Petite ambiance stereo a 12 kHz. ROOM au-dessus de PS1 ; relacher TRACK pour appliquer. |
 | Reverb PS1 | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | PS1 Send par piste / Decay / Tone. Queue stereo inspiree PlayStation, sombre et granuleuse ; optimisations de traitement conservees. |
 | Chorus 1 / 2 | REVERB SEND / SIZE / FUNC + SIZE | Chorus Send par piste / Speed / Depth. Speed et Depth 0-127. Remplace la reverb du slot. |
 | Vinyl | REVERB SEND ; SIZE / FUNC + SIZE / FUNC puis TRACK + SIZE | Vinyl Send ; Crackle / Warble Amount / Warble Speed. Tenir FUNC puis TRACK pour Speed. Send 0 sec ; Crackle 0 coupe la poussiere. Pops/clics independants dans les pauses. Volume, pan et mute respectes. |
 | Delay standard | DELAY SEND / TIME / FUNC + TIME | Delay Send par piste / Time natif / Feedback natif. |
+| Delay DUB | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME | Delay Send par piste / Time natif / Feedback. Echos fortement filtres alternant gauche/droite, de plus en plus etroits dans la boucle. Reutilise le delay natif et le rebond stereo. Casque ou deux sorties pour le mouvement. |
 | Ping Pong | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME | Send par piste / Time / Feedback. Echos stereo alternes gauche/droite ; casque ou deux sorties. |
 | Crusher Rate / Bits | CRUSH 1 ou 2 : TIME / FUNC + TIME | Rate 0-127, environ 750 Hz-48 kHz / Bits 2-16. Valeurs basses plus rugueuses. CRUSH 1 garde le direct propre ; CRUSH 2 melange direct propre/crushed. DELAY SEND affiche Crush Send ; pas d echo dans ces modes. |
 | Reglages et sauvegarde FX | Relacher TRACK ; arreter la lecture | Modes FX et commandes ajoutees sauvegardes apres arret. Sans nouvelles destinations p-lock/LFO ; sends natifs conservent les locks. Les deux Shimmer et tous les modes combines sont retires. Anciens combines vers effet seul ; anciens Shimmer/Cloud vers DELAY. |
@@ -65,7 +67,7 @@ Principal2.31. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Choisir SPEAK | MACHINES : apres Shadow, juste avant MIDI Out | Moteur vocal original a formants, 128 mots anglais. Icone microphone ; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Consonnes adoucies, niveau calibre : commencer vers Vol+Dist 60, Punch coupe. v87 adoucit davantage le bruit des consonnes en conservant le niveau des voyelles. |
+| Choisir SPEAK | MACHINES : apres Shadow, juste avant MIDI Out | Moteur vocal original a formants, 128 mots anglais. Microphone ; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. v90 equilibre les phonemes, adoucit les transitions et eclaircit les harmoniques vocales sans renforcer le souffle. Commencer vers Vol+Dist 60, Punch coupe. |
 | Voice / Word / Speed / Articulation | COLOR / SHAPE / SWEEP / CONTOUR | Caractere vocal/formants / Word 0-127 / Speed (64 normal, plus bas plus lent) / Articulation. SHAPE affiche mot et index. Mot pris au prochain trig ; autres commandes en direct. Les mots lents continuent dans les silences phonemiques ; le detecteur idle ne suspend plus une parole inachevee. |
 | Hauteur et enveloppe | PITCH / notes ; DECAY, Fine, Punch, Gate, Attack | Hauteur independante de la vitesse. Commencer a Decay 127 pour les mots complets. Filtres et sends existants disponibles. Etat vocal distinct par piste. |
 | Sequences de mots et modulation | Maintenir TRIG + SHAPE, puis locks Pitch et autres commandes | Mot et autres parametres natifs acceptent p-locks et destinations LFO. COLOR/SHAPE/SWEEP/CONTOUR : MIDI CC 16/17/18/19. Espacer les mots ou augmenter Speed. |

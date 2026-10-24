@@ -254,3 +254,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [156 — SPEAK et formats Reverb](156-machine-speak-et-formats-reverb.md) | v82..v85 : machine21 SPEAK,128mots/phonemes originaux, pitch et vitesse independants, microphone/locks/CC/LFO natifs ; format Reverb corrige en lecture ; retour appareil positif v82, consonnes rapeuses82/83 rapportees, bruit adouci84, niveau calibre Vol+Dist60 et suppression SCRAMBLE fraiche85 ; v85 approuve par AveyCole et publie en principal2.30. |
 
 | [157 — SPEAK consonnes et vitesse](157-speak-consonnes-et-vitesse.md) | v87 regulier approuve pour principal2.31 : bruit consonnes adouci, voyelles conservees, silence aux faibles vitesses reproduit puis corrige par quiet local pendant le mot ; pression/vol de voix conserves. |
+
+| [158 — ROOM, DUB et voix SPEAK](158-room-dub-et-voix-speak.md) | Principal2.32 : exact v90 regulier approuve, ROOM12kHz, DUB filtre stereo distinct, voix calibree/brillante avec souffle reduit ; preuves natives et guides EN/FR/PDF. |
