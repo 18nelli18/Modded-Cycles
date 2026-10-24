@@ -1,0 +1,10 @@
+{
+  "name": "Wavetable Set",
+  "download": "https://github.com/AveyCole/Modded-Cycles/releases/download/wavetable-pack/Wavetable.Set.7z",
+  "bytes": 361173943,
+  "sha256": "02bc4dd10ec525de00e4314b2d682c7d62e4cf436ba16debd5c6cd2b6e11832c",
+  "archive_format": "7z",
+  "samples_per_frame": 2048,
+  "sample_rate": 44100,
+  "bit_depth": 32
+}

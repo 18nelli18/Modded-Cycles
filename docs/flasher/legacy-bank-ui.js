@@ -22,7 +22,11 @@ $('bank-file').onchange=async()=>{bank=null;$('bank-voices').replaceChildren();t
  const parsed=LegacyImport.parse(new Uint8Array(await f.arrayBuffer()));bank=parsed.raw;
  $('bank-label').value=f.name.replace(/\.syx$/i,'').slice(0,13);
  $('bank-voices').replaceChildren(...parsed.names.map((name,i)=>{const li=document.createElement('li');li.textContent=name||'—';li.value=i+1;return li;}));
- say('32 voices validated. Choose a library slot and send.','32 voix validees. Choisissez un emplacement et envoyez.');
+ if(parsed.adjustments.length){
+  const slots=Array.from(new Set(parsed.adjustments.map(a=>a.slot))).join(', '),count=parsed.adjustments.length;
+  say('32 voices ready. Adjusted '+count+' out-of-range value(s) in slot(s) '+slots+' for LEGACY compatibility. Your original file is unchanged. Choose a library slot and send.',
+      '32 voix pretes. '+count+' valeur(s) hors plage ajustee(s) dans les emplacements '+slots+' pour LEGACY. Votre fichier original reste intact. Choisissez un emplacement et envoyez.');
+ }else say('32 voices validated. Choose a library slot and send.','32 voix validees. Choisissez un emplacement et envoyez.');
 }catch(e){say(e.message,e.message,true);}refresh();};
 $('bank-send').onclick=async()=>{if(busy||window.MCImportBusy)return;try{
  const out=midi?.outputs.get($('bank-output').value);if(!out||out.state==='disconnected')throw Error(en()?'Connect the Model:Cycles USB output.':'Connectez la sortie USB Model:Cycles.');

@@ -73,8 +73,7 @@
     <h1><span data-l="en">Wavetable converter</span><span data-l="fr">Convertisseur de tables d'ondes</span></h1>
     <p class="lede"><span data-l="en">Turn a wavetable into a file the <b>Wave</b> machine plays on your Model:Cycles. Drop your WAV — or a whole folder, whose subfolders are kept — then download the result or send it straight to the machine.</span><span data-l="fr">Transformez une table d'ondes en un fichier que la machine <b>Wave</b> joue sur votre Model:Cycles. Déposez votre WAV — ou tout un dossier, dont les sous-dossiers sont gardés — puis téléchargez le résultat ou envoyez-le directement à la machine.</span></p>
 
-    <p><a href="AV-WAVE-Morph.wav" download><span data-l="en">Download the original starter WAV, then choose it below</span><span data-l="fr">Téléchargez le WAV de départ original puis choisissez-le ci-dessous</span></a>. <span data-l="en">Current Supermodel includes this starter table automatically. An imported table replaces it on the selected track.</span><span data-l="fr">Supermodel inclut désormais cette table initiale automatiquement. Une table importée la remplace sur la piste choisie.</span></p>
-<p class="resource-link"><span data-l="en">Find wavetables: </span><span data-l="fr">Trouver des tables d’ondes : </span><a href="https://kimurataro.com/products/scw-free-wt-dt2/" target="_blank" rel="noopener">Kimura Taro <span data-l="en">free wavetables</span><span data-l="fr">tables gratuites</span></a></p>
+    <p><a id="wavetable-pack-download" href="https://github.com/AveyCole/Modded-Cycles/releases/download/wavetable-pack/Wavetable.Set.7z" download="Wavetable Set.7z"><span data-l="en">Download Wavetable Set (.7z, 361 MB)</span><span data-l="fr">Télécharger Wavetable Set (.7z, 361 Mo)</span></a>. <span data-l="en">Extract the archive, then choose the WAV files or folder below. Supermodel’s built-in starter table stays loaded until you import a replacement on that track.</span><span data-l="fr">Extrayez l’archive, puis choisissez les fichiers WAV ou le dossier ci-dessous. La table initiale de Supermodel reste chargée jusqu’à son remplacement par un import sur la piste.</span></p>
 <div class="drop" id="drop">
       <input type="file" id="file" accept=".wav,audio/wav,audio/x-wav" multiple>
       <input type="file" id="dir" webkitdirectory directory multiple>
@@ -331,7 +330,7 @@
   drop.addEventListener("drop", function (ev) { if (ev.dataTransfer.files.length) run(ev.dataTransfer.files); });
 })();
 </script>
-<script src="legacy-import.js?v=2026-10-24-legacy-retro-main-235"></script><script src="legacy-bank-ui.js?v=2026-10-24-legacy-retro-main-235"></script>
+<script src="legacy-import.js?v=2026-10-24-dx7-bank-compat"></script><script src="legacy-bank-ui.js?v=2026-10-24-dx7-bank-compat"></script>
 </body>
 </html>
 

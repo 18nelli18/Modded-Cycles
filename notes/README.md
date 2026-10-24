@@ -267,3 +267,4 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 
 | [166 — FX par projet](166-fx-par-projet.md) | Historique116–120, reentrance119 retiree, correction120 confirmee sur appareil. |
 | [167 — FX par pattern et WAVE](167-fx-par-pattern-et-niveau-wave.md) | Principal2.38, exact121 approuve :36champs par pattern, defauts vierges, activation queuee, WAVE+6dB. |
+| [168 — Cartouches DX7 hors plage](168-import-cartouches-hors-plage.md) | Correction web : copie compatible avec LEGACY, original preserve ; ROM3A et vrai importeur121 verifies en emulation. |
