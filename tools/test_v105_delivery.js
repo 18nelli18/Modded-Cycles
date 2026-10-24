@@ -12,7 +12,7 @@ const server=http.createServer((req,res)=>{let p=path.join(site,decodeURICompone
  const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(String(e)));
  await page.goto(base);await page.waitForFunction(()=>window.MCFlasherApp&&window.MCFixedMainImageReady);
  const info=await page.evaluate(async()=>{const data=await MCFixedMainImageReady;return {product:MCFlasher.verify(data).product,length:data.length,hash:MCBuilder.hex(MCBuilder.sha256(data))};});assert.equal(info.product,17);assert.equal(info.hash,hash(raw));
- assert.match(await page.locator('a[href="convert.html#legacy-import"]').innerText(),/DX7/);
+ assert.match(await page.locator('a[href="convert.html"]').innerText(),/WAV.*DX7/);
  // Vrai chemin de construction : les OS appartiennent a l utilisateur et restent locaux.
  const firmware=process.env.MC_TEST_FIRMWARE_DIR||path.join(root,'firmware');await page.setInputFiles('#file',path.join(firmware,'model-cycles_OS1.13.syx'));await page.waitForFunction(()=>MCFlasherApp.state.os);await page.setInputFiles('#file3',path.join(firmware,'Syntakt_OS1.42.syx'));await page.waitForFunction(()=>{const s=MCFlasherApp.state;return s.syntakt&&!s.building&&(s.fw||(s.fwError&&s.fwError!=='needs_syntakt'));},{timeout:90000});
  const built=await page.evaluate(()=>({error:MCFlasherApp.state.fwError,sha:MCFlasherApp.state.fw&&MCBuilder.hex(MCBuilder.sha256(MCFlasherApp.state.fw.raw))}));assert.equal(built.error,null);assert.equal(built.sha,hash(raw));
