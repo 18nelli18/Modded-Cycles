@@ -31,7 +31,7 @@ const server=http.createServer((req,res)=>{
    await page.evaluate(async()=>await Promise.all(Object.keys(window).filter(k=>k.endsWith('Ready')&&window[k]?.then).map(k=>window[k])));
    assert.match(await page.locator('#credits').innerText(),/Glycinate/,'Feral author credit missing');
    assert.match(await page.locator('#credits-list').innerText(),/PPPCCC/);assert.equal(await page.locator('#credits-list a[href="https://github.com/18nelli18/Modded-Cycles"]').count(),1);
-   assert(await page.locator('a[href="release-notes-2.33.html"]').count()>0,'release notes link missing');
+   assert(await page.locator('a[href="release-notes-2.34.html"]').count()>0,'release notes link missing');
    assert.equal(await page.locator('#fixed-six-usb').count(),0,'web USB build selector returned');
    assert.equal(await page.locator('a[href^="shortcut-guide.pdf"]').count(),1,'one canonical PDF guide link required');
    await page.setInputFiles('#file',path.join(root,'firmware/model-cycles_OS1.13.syx'));
@@ -56,9 +56,9 @@ const server=http.createServer((req,res)=>{
    assert.deepEqual(errors,[]);await context.close();
   }
   const notes=await browser.newPage();
-  await notes.goto(new URL('release-notes-2.33.html',base).href,{waitUntil:'load'});
+  await notes.goto(new URL('release-notes-2.34.html',base).href,{waitUntil:'load'});
   const text=await notes.locator('main').innerText();
-  for(const term of ['SPEAK','ROOM','DUB','Feedback','128'])assert(text.includes(term),term);
+  for(const term of ['GATED','HALL','LEGACY','PS1','Pre-delay'])assert(text.includes(term),term);
   assert.doesNotMatch(text,/machinedrum|f card|card graphic/i);
   assert.equal(await notes.locator('h1 [data-l="en"]').isVisible(),true);
   await notes.locator('[data-lang="fr"]').click();
@@ -66,7 +66,7 @@ const server=http.createServer((req,res)=>{
   assert.equal(await notes.locator('h1 [data-l="en"]').isVisible(),false);
   const mainLink=notes.locator('main a').last();await mainLink.click();
   await notes.waitForFunction(()=>!!window.MCFlasherApp);
-  console.log('PASS: linked 2.33 release notes, EN/FR switch, Glycinate credit and return to main');
+  console.log('PASS: linked 2.34 release notes, EN/FR switch, Glycinate credit and return to main');
   await notes.close();
   const guide=await browser.newPage();
   await guide.goto(new URL('shortcut-guide.html?v='+meta.stamp,base).href,{waitUntil:'load'});
