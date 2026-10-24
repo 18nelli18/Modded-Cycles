@@ -157,6 +157,10 @@ boot_stub:
 	bne.s	3b
 #endif
 #if defined(BOOT2)
+#ifdef HOT_BOOT
+	/* code chaud en SRAM (notes/76) : ses detours, une fois tout en place */
+	jsr	HOT_BOOT
+#endif
 	rts
 #elif defined(CHAIN_TO)
 	jmp	CHAIN_TO		/* boot_extra_hook de Model-TG (ACR1, remise a zero du BSS sauf son bloc) */

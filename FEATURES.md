@@ -41,6 +41,7 @@ project's guide calls the back key **BACK**. This file uses **MACHINES** and **B
    - [2.6 LFO 2, 3, 4](#26-lfo-2-3-4)
    - [2.7 Order of the machines in the OS](#27-order-of-the-machines-in-the-os)
    - [2.8 Load governor](#28-load-governor)
+  - [2.9 Hot code in internal SRAM](#29-hot-code-in-internal-sram)
 3. [Sequencer](#3-sequencer)
    - [3.1 Arpeggiator](#31-arpeggiator)
    - [3.2 Easier trig removal](#32-easier-trig-removal-trig-hold)
@@ -467,6 +468,22 @@ Not a feature you play, but it shapes every heavy machine above (guide, "Process
   Model-TG is recording or slice-editing.
 - Advice from the guide when notes get cut: lower the volume of the track you can spare most, mute what you don't
   hear, shorten long decays, or use the delay and reverb less (about 12 % of the processor).
+
+### 2.9 Hot code in internal SRAM
+
+Not a feature you play either: it makes everything above cheaper (guide, "Processor load"; notes/76). Status:
+experimental, proven in the emulator.
+
+- The code the audio interrupt runs at every block (17 to 27 KB) was read again from the DDR2 memory each time: the
+  8 KB instruction cache keeps almost nothing from one block to the next.
+- After each project load or machine change, the hottest functions for the machines of the 6 tracks (OS, Model-TG,
+  our machines) are copied into the processor's 64 KB internal SRAM, 2 KB per block (about 15 ms), and run from there
+  during the audio.
+- The room: the Syntakt engines' code and tables when no track uses a Syntakt engine (17.5 KB), and two ends of the
+  SRAM the OS never uses (5.2 KB).
+- Picking a Syntakt engine while its code had made room: that track stays silent for about 5 ms while it comes back.
+- The sound does not change (same samples in the emulator). The saving is measured on a Model:Cycles next; the cost
+  model gives 1,488 → 441 code lines read from DDR2 per block on a project of the original machines.
 
 ---
 

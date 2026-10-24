@@ -49,6 +49,8 @@ class EMAC:
         self.fast = {}
         self.next = {}
         self.count = 0
+        self.hooks = {}                  # adresse -> crochet (install), pour drop()
+        self.seen = {}                   # crochet dynamique : adresse -> octets de l'instruction décodée
 
     # --- modes ---
     @property
@@ -69,9 +71,64 @@ class EMAC:
                 f = self._compile(addr, size, mn, ops)
                 if f is not None:
                     self.fast[addr] = f
-                self.uc.hook_add(UC_HOOK_CODE, self._hook, begin=addr, end=addr)
+                self.hooks[addr] = self.uc.hook_add(UC_HOOK_CODE, self._hook, begin=addr, end=addr)
                 n += 1
         return n
+
+    def drop(self, lo, hi):
+        """Retire les crochets posés par install() dans [lo, hi) (code qui sera remplacé : SRAM chargée à la volée)."""
+        for addr in [a for a in self.hooks if lo <= a < hi]:
+            self.uc.hook_del(self.hooks.pop(addr))
+            for d in (self.ops, self.fast, self.next):
+                d.pop(addr, None)
+
+    def dynamic(self, lo, hi):
+        """Un crochet sur [lo, hi) qui décode les instructions EMAC (ligne A) à l'exécution, d'après leurs octets du
+        moment : pour du code recopié à la volée (SRAM, notes/76). Les crochets fixes de la plage sont retirés."""
+        self.drop(lo, hi)
+        self.uc.hook_add(UC_HOOK_CODE, self._dyn, begin=lo, end=hi - 1)
+
+    def rescan(self, lo, hi):
+        """Code recopié dans [lo, hi) (SRAM, chargeur du code chaud, notes/76) : ses instructions EMAC, d'après les
+        octets du moment, à la place des crochets qu'il y avait."""
+        import tempfile, os
+        self.drop(lo, hi)
+        raw = bytes(self.uc.mem_read(lo, hi - lo))
+        with tempfile.NamedTemporaryFile(suffix=".bin", delete=False) as f:
+            f.write(raw)
+        try:
+            return self.install(disasm(f.name, lo, lo, hi))
+        finally:
+            os.unlink(f.name)
+
+    _DIS = {}
+
+    def _dyn(self, uc, addr, size, ud):
+        raw = bytes(uc.mem_read(addr, 6))
+        if raw[0] & 0xf0 != 0xa0:
+            return
+        if self.seen.get(addr) != raw:
+            if raw not in EMAC._DIS:
+                import tempfile, os
+                with tempfile.NamedTemporaryFile(suffix=".bin", delete=False) as f:
+                    f.write(raw + b"\x4e\x71" * 4)
+                try:
+                    EMAC._DIS[raw] = disasm(f.name, 0, 0, 6).get(0)
+                finally:
+                    os.unlink(f.name)
+            ins = EMAC._DIS[raw]
+            for d in (self.ops, self.fast, self.next):
+                d.pop(addr, None)
+            if ins is None:
+                raise NotImplementedError(f"{addr:#x} : EMAC non décodée ({raw.hex()})")
+            sz, mn, ops = ins
+            self.ops[addr] = ins
+            f = self._compile(addr, sz, mn, ops)
+            if f is not None:
+                self.fast[addr] = f
+            self.next[addr] = addr + sz
+            self.seen[addr] = raw
+        self._hook(uc, addr, size, ud)
 
     def r(self, name):
         return self.uc.reg_read(REG[name]) & M32

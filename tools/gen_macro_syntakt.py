@@ -125,11 +125,13 @@ def compile_macro(repo, pay):
     return _MACRO[repo, pay]
 
 
-def build_tweak(img, st_img, repo, codes, tg=None, macro=True, acid=None, more=()):
+def build_tweak(img, st_img, repo, codes, tg=None, macro=True, acid=None, more=(), hot=None):
     """Tweak des moteurs codes avec MACRO après eux. tg : Model-TG (gs.tg_context), avec set_base(PAY_TG).
     acid : la machine ACID en plus, après MACRO (ou sans MACRO, macro=False), déjà liée à sa place
     (gen_acid_combos.py : dict(machine, at, blob, end), notes/54 §11). more : d'autres machines après ACID, de la
-    même forme (MODAL, tools/gen_modal.py, notes/74)."""
+    même forme (MODAL, tools/gen_modal.py, notes/74). hot : le chargeur du code chaud en SRAM (tools/gen_sram_hot.py,
+    notes/76) : ses points d'entrée (hot_probe, hot_boot, st_away) et la fin de sa place (end) ; son code est ajouté
+    ensuite par l'appelant. Rend aussi info["audio_probe"] (la sonde de la passerelle, racine du code chaud)."""
     pay = gs.PAY_TG if tg else gs.PAY_ALONE
     gs.set_base(pay)
     tw = versioned(codes, bool(tg))
@@ -151,11 +153,11 @@ def build_tweak(img, st_img, repo, codes, tg=None, macro=True, acid=None, more=(
         machines.append(m_["machine"])
         parts.append({"dest": f"{m_['at']:#x}", "hex": m_["blob"].hex()})
         end = m_["end"]
-    bss_end = end
+    bss_end = max(end, hot["end"]) if hot else end
     if tg and bss_end > pay + TG_ROOM:
         raise SystemExit(f"!! charge utile jusqu'à {bss_end:#x} : au-delà de la place laissée par Model-TG")
     # 2e étage du crochet de démarrage (stub.S, BOOT2) : entre la fin des moteurs et nos machines
-    own = dict(machines=machines, bridge=br, end=bss_end, boot2=((lay["end"] + 15) & ~15, low), parts=parts)
+    own = dict(machines=machines, bridge=br, end=bss_end, boot2=((lay["end"] + 15) & ~15, low), parts=parts, hot=hot)
     out, ndesc = gs.build_tweak(img, st_img, codes, tg=tg, own=own)
 
     first = gs.TG_FIRST if tg else 6
@@ -201,7 +203,8 @@ def build_tweak(img, st_img, repo, codes, tg=None, macro=True, acid=None, more=(
     # place dans l'image, pour tools/check_overlaps.py (sans fichier d'Elektron) : mesurée avec le Syntakt OS du
     # générateur (1.42) ; build.py et le flasher revérifient la limite sur le vrai build
     out["append"]["stored"] = packed
-    return out, dict(ndesc=ndesc, size=len(rt), packed=packed, end=at + packed, macro=len(blob) if macro else 0)
+    return out, dict(ndesc=ndesc, size=len(rt), packed=packed, end=at + packed, macro=len(blob) if macro else 0,
+                     audio_probe=own.get("ssyms", {}).get("audio_probe"), lay=lay)
 
 
 def main():

@@ -472,7 +472,7 @@ Code trop gros pour un masque, ajouté à la fin de l'image (`at`) et copié au 
 | syntakt-tg-sd-cp-toy-bits-swarm-acid | 31 | `0x401bf8c0` | 147 726 | `0x401e39ce` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-cp-toy-bits-swarm-macro | 31 | `0x401bf8c0` | 225 442 | `0x401f6962` | `0x46700000` | 476 128 | model-tg-st |
 | syntakt-tg-sd-cp-toy-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 230 083 | `0x401f7b83` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | 31 | `0x401bf8c0` | 252 502 | `0x401fd316` | `0x46700000` | 560 948 | model-tg-st |
+| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | 31 | `0x401bf8c0` | 257 552 | `0x401fe6d0` | `0x46700000` | 598 016 | model-tg-st |
 | syntakt-tg-sd-cp-toy-macro | 31 | `0x401bf8c0` | 216 202 | `0x401f454a` | `0x46700000` | 476 128 | model-tg-st |
 | syntakt-tg-sd-cp-toy-macro-acid | 31 | `0x401bf8c0` | 220 836 | `0x401f5764` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-cp-toy-swarm | 31 | `0x401bf8c0` | 242 492 | `0x401fabfc` | `0x46700000` | 269 056 | model-tg-st |
@@ -528,7 +528,7 @@ Code trop gros pour un masque, ajouté à la fin de l'image (`at`) et copié au 
 | syntakt-tg-meter | 91 | `0x401bf8c0` | 243 472 | `0x401fafd0` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-profile | 92 | `0x401bf8c0` | 243 904 | `0x401fb180` | `0x46700000` | 269 056 | model-tg-st |
 
-Fin la plus haute : `0x401fd316`, soit 11 498 o avant la limite (une charge posée sur une autre, comme les moteurs du Syntakt sur Model-TG, est déjà comptée à sa place dans la chaîne).
+Fin la plus haute : `0x401fe6d0`, soit 6 448 o avant la limite (une charge posée sur une autre, comme les moteurs du Syntakt sur Model-TG, est déjà comptée à sa place dans la chaîne).
 
 ## 4. Points d'accroche (crochets) sur l'OS
 
@@ -733,6 +733,7 @@ Ce que les écritures ne montrent pas : les octets des structures sauvegardées 
 | mod-settings | octets 0x404e9b80..0x404e9b8f du bloc des réglages de l'OS (0x404e9b10, 272 o, flash 0x78000), hors de sa somme de contrôle : l'enregistrement « MODS » des réglages des mods (0x404e9b63..0x404e9c0f n'est ni lu ni écrit par l'OS) | notes/72 §3 |
 | syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | mémoire 0x46800000..0x4688ffff, juste au-dessus du Mo de la charge utile (0x46700000) et de la zone d'échantillons de Model-TG : l'état des 6 pistes de la machine MODAL (96 Ko chacune : la Part de Rings), posé à la première note de la piste ; rien de l'OS ni de Model-TG n'y va | notes/74 §4 |
 | mod-settings | octets de l'OS réécrits pendant qu'il tourne (« runtime », vérifié par `check_overlaps.py`) : `0x4000253b` (2 o), `0x40002564` (3 o), `0x400027b3` (2 o), `0x400027d3` (5 o), `0x400027e8` (23 o), `0x4000281f` (2 o), `0x400029b9` (2 o), `0x400029d2` (6 o), `0x400029e4` (11 o), `0x40002a06` (25 o), `0x40002a42` (11 o), `0x40002ceb` (2 o), `0x4019b2fa` (2 o), `0x4019b387` (2 o), `0x4019b397` (2 o) | notes/72 |
+| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | octets de l'OS réécrits pendant qu'il tourne (« runtime », vérifié par `check_overlaps.py`) : `0x40056524` (6 o), `0x400565c6` (8 o), `0x40056618` (6 o), `0x40056698` (8 o), `0x40056716` (8 o), `0x400567a4` (6 o), `0x400567ba` (8 o), `0x40056d9c` (8 o), `0x40056e24` (6 o), `0x40056ea0` (6 o), `0x40056ea8` (6 o), `0x40056f58` (6 o), `0x400573fa` (6 o), `0x40057488` (8 o), `0x40057942` (8 o), `0x400579c4` (8 o), `0x4005802e` (8 o), `0x40058474` (8 o), `0x4005979e` (8 o), `0x4008f1f0` (8 o), `0x400918b0` (6 o), `0x4009192c` (10 o), `0x400919ca` (10 o), `0x40091ab2` (8 o), `0x400a7d16` (8 o), `0x400a7d4a` (8 o), `0x400a7de0` (8 o), `0x400a7e6c` (8 o), `0x400a7f66` (8 o), `0x400a8060` (6 o), `0x400a8080` (6 o), `0x400a8204` (8 o), `0x400a835e` (8 o), `0x400a8722` (8 o), `0x400a8adc` (8 o), `0x400a8fc2` (8 o), `0x400a9120` (6 o), `0x400a91ea` (8 o), `0x400a9252` (8 o), `0x400a9302` (6 o), `0x400a9430` (8 o), `0x400a9504` (8 o), `0x400a967a` (8 o), `0x400a9884` (8 o), `0x400a9904` (6 o), `0x400a9a32` (8 o), `0x400a9ca8` (8 o), `0x400a9cf6` (6 o), `0x400a9d4e` (8 o), `0x400a9ebe` (8 o), `0x400a9f58` (8 o), `0x400aa08c` (8 o), `0x400aa3c4` (8 o), `0x400aa49c` (8 o), `0x400aa712` (8 o), `0x400aa7b8` (8 o), `0x400aa930` (8 o), `0x400aa998` (8 o), `0x400aacc2` (8 o), `0x400aad48` (6 o), `0x400aada4` (8 o), `0x400aae88` (8 o), `0x400ab24c` (8 o), `0x400ab3b0` (8 o), `0x400ab6e8` (8 o) | notes/36 |
 
 ## 7. Ce que chaque mod touche
 
@@ -763,7 +764,7 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | syntakt-tg-*-acid (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 138 176–147 726 o | notes/36 |
 | syntakt-tg-*-macro (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 215 872–225 442 o | notes/36 |
 | syntakt-tg-*-macro-acid (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 220 516–230 083 o | notes/36 |
-| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 252 502 o | notes/36 |
+| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 257 552 o | notes/36 |
 | macro-acid-tg | 114 | 50 | 15 | 47 | 1 | 1 | 0 | 112 092 o | notes/54 |
 | macro-tg | 114 | 50 | 15 | 47 | 1 | 1 | 0 | 105 564 o | notes/43 |
 | sample-preview | 11 | 0 | 3 | 0 | 4 | 4 | 0 |  | notes/46 |

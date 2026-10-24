@@ -950,14 +950,19 @@ LINK = """SECTIONS
 """
 
 
-def dispatch_tg_asm(syms, rnd_at, tg):
+def dispatch_tg_asm(syms, rnd_at, tg, away=None):
     """Avec Model-TG : le même détour (0x400a7dfe), mais les machines d'origine et le Sampler (index < 7) passent
     par le dispatch de Model-TG (sampler_dispatch : ses voix muettes, sa mesure par piste, son Sampler), qui finit
     en 0x400a7e24 ; nos moteurs passent par la passerelle, puis par la fin de son étage d'amplitude (ah_noenv :
     Attack, Filtre/Résonance, rééchantillonnage de la piste), et leur temps va sur sa page System (prof_trk).
     Toutes les pistes finissent en 0x400a7e24, où tg_after appelle voice_done (régulateur) puis refait les trois
-    instructions remplacées."""
+    instructions remplacées. away : mot du chargeur du code chaud (st_away, notes/76) : bit m, la machine m n'a pas
+    son code ou une table en SRAM (rendus après le passage d'autre code) ; sa piste reste muette, sans la calculer."""
     g = lambda n: f"{syms[n]:#x}"
+    gate = f"""
+	move.l	{away:#x}, %d0		/* code chaud (notes/76) : machine en pause ? */
+	btst	%d4, %d0
+	bne.s	1b""" if away else ""
     return f"""
 	.globl	dispatch
 dispatch:
@@ -974,7 +979,7 @@ dispatch:
 	move.l	(%sp)+, %d1
 	tst.l	%d0
 	beq.s	3f
-	movea.l	%d3, %a0		/* pas calculée : sortie à zéro */
+1:	movea.l	%d3, %a0		/* pas calculée : sortie à zéro */
 	moveq	#31, %d0
 2:	clr.l	(%a0)+
 	subq.l	#1, %d0
@@ -984,7 +989,8 @@ dispatch:
 	cmp.l	%d0, %d4
 	bcc.s	4f
 	jmp	{tg['sampler_dispatch']:#x}	/* machines d'origine, Sampler */
-4:	move.l	0xfc07800c, %d0		/* minuteur de la page System de Model-TG */
+4:{gate}
+	move.l	0xfc07800c, %d0		/* minuteur de la page System de Model-TG */
 	move.l	%d0, {tg['prof_ta']:#x}
 	movea.l	%d6, %a0		/* update puis render, comme l'OS */
 	movea.l	(%a0,%d4.l*4), %a1
@@ -1150,13 +1156,15 @@ def own_code(tmp, machines, rnd_at, lay, tg, own):
     if s0 != gx.DST_CODE or s1 != s0 + n0 or n0 % 4 or n1 % 4:
         raise SystemExit("!! zones de SRAM : transit au début de la charge utile, à la suite, en mots")
     lo, hi = own["boot2"]
+    hot = own.get("hot")                        # code chaud en SRAM (tools/gen_sram_hot.py, notes/76)
     blobs = {}
     for name, at, defs in ((".stub", gx.CAVE, ["-DAPLIB", f"-DAFTER={lo:#x}",
                                               f"-DPAYLOAD_SRC={(tg['at'] if tg else BASE + gx.IMAGE_LEN):#x}",
                                               *([f"-DCHAIN_TO={tg['boot_extra_hook']:#x}"] if tg else [])]),
                            (".boot2", lo, ["-DBOOT2", f"-DCHORD_AT={lay['chord_at']:#x}", f"-DSRAM_RUN_AT={r0:#x}",
                                            f"-DSRAM_LONGS={n0 // 4}", f"-DSRAM2_RUN_AT={r1:#x}",
-                                           f"-DSRAM2_LONGS={n1 // 4}"])):
+                                           f"-DSRAM2_LONGS={n1 // 4}"]
+                            + ([f"-DHOT_BOOT={hot['hot_boot']:#x}"] if hot else []))):
         o, elf, b = tmp / f"{name[1:]}.o", tmp / f"{name[1:]}.elf", tmp / f"{name[1:]}.bin"
         gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(gx.SRC / "stub.S"), "-o", str(o),
                 f"-DPAYLOAD_DST={gx.DST_CODE:#x}", *defs])
@@ -1167,7 +1175,8 @@ def own_code(tmp, machines, rnd_at, lay, tg, own):
         raise SystemExit(f"!! 2e étage du crochet : {len(blobs['.boot2'])} o, place {lo:#x}..{hi:#x}")
     br = own["bridge"]
     blobs.update({".bridge": br["bridge"], "hot": br["hot"]})
-    stubs, ssyms = assemble_detours(tmp, machines, br["syms"], rnd_at, tg)
+    stubs, ssyms = assemble_detours(tmp, machines, br["syms"], rnd_at, tg, away=hot["st_away"] if hot else None)
+    own["ssyms"] = ssyms                        # audio_probe : la racine du code chaud
     return blobs, br["syms"], stubs, ssyms
 
 
@@ -1198,17 +1207,17 @@ def lofi_index(machines):
     return lofi[0] if lofi else None
 
 
-def detours_text(machines, syms, rnd_at, tg):
-    """Texte des détours (à STUBS) pour ces machines ajoutées, comme compile_code."""
+def detours_text(machines, syms, rnd_at, tg, away=None):
+    """Texte des détours (à STUBS) pour ces machines ajoutées, comme compile_code. away : voir dispatch_tg_asm."""
     return (detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))], tg,
                         lofi=lofi_index(machines), fine=fine_list(machines))
-            + probe_asm(syms) + (dispatch_tg_asm(syms, rnd_at, tg) if tg else dispatch_asm(syms, rnd_at)))
+            + probe_asm(syms) + (dispatch_tg_asm(syms, rnd_at, tg, away) if tg else dispatch_asm(syms, rnd_at)))
 
 
-def assemble_detours(tmp, machines, syms, rnd_at, tg, text=None):
+def assemble_detours(tmp, machines, syms, rnd_at, tg, text=None, away=None):
     """Détours assemblés à STUBS : (octets, symboles)."""
     src, o, e, b = tmp / "det.S", tmp / "det.o", tmp / "det.elf", tmp / "det.bin"
-    src.write_text(text or detours_text(machines, syms, rnd_at, tg))
+    src.write_text(text or detours_text(machines, syms, rnd_at, tg, away))
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(src), "-o", str(o)])
     gx.run([gx.CROSS + "ld", "-Ttext", f"{STUBS:#x}", "-o", str(e), str(o)])
     gx.run([gx.CROSS + "objcopy", "-O", "binary", "-j", ".text", str(e), str(b)])
@@ -1449,7 +1458,8 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None, own=Non
     for va, old, sym in g7.CALLS:
         w(va, bytes.fromhex(old), bytes.fromhex("4eb9") + g7.be32(ssyms[sym]) + bytes.fromhex("4e71"))
     # sonde du régulateur de charge autour de l'appel de la fonction audio (jsr abs.l)
-    w(AUDIO_CALL, bytes.fromhex("4eb94005979e"), bytes.fromhex("4eb9") + g7.be32(ssyms["audio_probe"]))
+    probe = own["hot"]["hot_probe"] if own and own.get("hot") else ssyms["audio_probe"]   # code chaud (notes/76)
+    w(AUDIO_CALL, bytes.fromhex("4eb94005979e"), bytes.fromhex("4eb9") + g7.be32(probe))
     if PROFILE and tg and meter:                # firmware de profilage : sondes de la boucle des voix et de la sortie
         for va, name, *_ in PROF_SITES:
             w(va, cur[va - BASE:va - BASE + 6], bytes.fromhex("4eb9") + g7.be32(ssyms[name]))

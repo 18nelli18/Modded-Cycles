@@ -29,6 +29,7 @@ sys.path.insert(0, str(HERE))
 
 import build                       # noqa: E402
 import gen_sdvintage_exact as gx   # noqa: E402
+import gen_sram_hot as gh          # noqa: E402
 import sprites                     # noqa: E402
 
 SRC = HERE / "machines" / "mesure"
@@ -39,7 +40,7 @@ RAM = (0x4233a000, 0x4233b000)     # variables (.ram) ; puis le code droit et le
 # appels sondés : (site, cible attendue dans l'OS de os.json, rôle) ; dans l'ordre de m_w_0..m_w_11 (mesure_hooks.S)
 SITES = (
     (0x40059338, 0x40002ae0, "audio venu de l'USB"),
-    (0x40059382, 0x467337fc, "fonction audio (sonde des moteurs du Syntakt)"),
+    (0x40059382, gh.ENTRY["hot_probe"], "code chaud en SRAM (notes/76), puis fonction audio (sonde des moteurs)"),
     (0x400597a8, 0x40058474, "lissage des paramètres"),
     (0x400597b4, 0x40056e24, "modulation de vélocité"),
     (0x400597c6, 0x40183646, "LFO (LFO 2, 3, 4)"),
