@@ -27,7 +27,7 @@ const ELEKTRON_ST_DL = "https://www.elektron.se/support-downloads/syntakt";
 // same whole write or a mod applied on top of another through "requires").
 const REF_MAINOS = {
   // Modded Cycles OS 2.1: the tweaks of os.json, built by tools/build.py --os
-  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": "e5a333c93f3da86462b2ef7fd166af70e96b4e30280f1fb595f44876001fcf77",
+  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": "64d162a45abc8f54b2efd6473761e3a312755730e9981bdc194cbdb6c56a9b30",
 };
 const REF_MODS = {
   "model-tg-st": {"w": "c4686bd09a145fd10a6424b7229e414a084fbbcc212b722e4ab7d3ecd7cb7931", "p": "e269630fe5251b58c2a5eb4298e3ab09b4e6fff9f38c254afecf121c8ad446c2"},
@@ -43,7 +43,7 @@ const REF_MODS = {
   "midi-live-both": {"w": "e7dfae924d6474abea22b375002ff58b1e3cde301aa9ca8a2ec980593316c942"},
   "mod-settings": {"w": "c3c023276e80295a9338a80d22711469620d4b4315ae2b1e0a85c9a61e31e9bb"},
   "lfo-plus": {"w": "8443b08fdb4ce7cf1ba26821b27e7df3ab4ca5396e35e7e9a8e591fc430569b6"},
-  "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": {"w": "31d54bf9e59693eae8a3070c99a91e22426069d4a9c3687a8a91dcf87fee0eeb", "p": "344a67c0e0cdaa4df9e38ce894db27925b9d78f25075be900d4e679b1ff3796b"},
+  "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": {"w": "31d54bf9e59693eae8a3070c99a91e22426069d4a9c3687a8a91dcf87fee0eeb", "p": "ea2342a66dc316cc4a62484661fafa2fd8296b86ad502be954551193b1ab9318"},
 };
 
 // "Samples OS" tab: official Model:Samples OS 1.13 inside the official Model:Cycles container

@@ -24,10 +24,10 @@ section (aPLib) and re-signs the container (HMAC). It prints the SHA-256 of the 
 must be:
 
 ```
-e5a333c93f3da86462b2ef7fd166af70e96b4e30280f1fb595f44876001fcf77
+64d162a45abc8f54b2efd6473761e3a312755730e9981bdc194cbdb6c56a9b30
 ```
 
-(2.0.1, without MODAL, was `2a77d029…0041`; 2.0, the same with its machine payload packed less tightly,
+(2.1 before MODAL's strings were rescheduled (notes/74 §5.5) was `e5a333c9…cf77`; 2.0.1, without MODAL, was `2a77d029…0041`; 2.0, the same with its machine payload packed less tightly,
 `82a79f45…cca9`.)
 
 The same value is the `REF_MAINOS` entry of `docs/flasher/app.js`: the web flasher refuses a build whose MAIN OS
@@ -64,6 +64,14 @@ flasher, and is for measuring only:
 python3 tools/gen_mesure.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx \
   -o build/modded-cycles-os_2.1-mesure.syx
 python3 tools/emu/test_mesure.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+```
+
+What a block costs on the machine, estimated in the emulator with the processor's timings and the cache prices
+measured by that firmware (notes/77), per stage and per track:
+
+```sh
+python3 tools/emu/hwcost.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx \
+  [--project maxime|modal6|origine] [--mhz 250]
 ```
 
 ## Regenerating what is generated

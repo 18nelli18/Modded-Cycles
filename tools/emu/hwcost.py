@@ -87,7 +87,7 @@ class Cost:
     """Les cycles d'un bloc, par poste (inventory_code.Tracer : la tête, chaque poste de la fonction audio, chaque
     piste de la boucle des voix)."""
 
-    FIELDS = ("instr", "base", "emac", "rts", "imiss", "imiss_sr", "dmiss", "dpush", "unc", "periph")
+    FIELDS = ("instr", "base", "emac", "omc", "rts", "imiss", "imiss_sr", "dmiss", "dpush", "unc", "periph")
 
     def __init__(self, b, flush=False):
         self.b, self.uc, self.flush = b, b.uc, flush
@@ -164,7 +164,8 @@ class Cost:
             gap = self.n - self.last_mac[k[1]] - 1
             c["base"] += 1
             m = self.emac.macsr
-            c["emac"] += max(0, 3 - gap) + (1 if m & 0x80 or m & 0x60 == 0x60 or m & 0x30 == 0x30 else 0)
+            c["emac"] += max(0, 3 - gap)
+            c["omc"] += 1 if m & 0x80 or m & 0x60 == 0x60 or m & 0x30 == 0x30 else 0
         elif kind == "jsr":
             c["base"] += k[1]
             self.pending_ret = addr + size
@@ -221,7 +222,7 @@ class Cost:
 
 
 def cycles(c):
-    return (c.get("base", 0) + c.get("emac", 0) + c.get("rts", 0) + c.get("imiss", 0) * I_MISS
+    return (c.get("base", 0) + c.get("emac", 0) + c.get("omc", 0) + c.get("rts", 0) + c.get("imiss", 0) * I_MISS
             + c.get("imiss_sr", 0) * I_MISS_SR + c.get("dmiss", 0) * D_MISS + c.get("dpush", 0) * D_PUSH
             + c.get("unc", 0) * UNC + c.get("periph", 0) * PERIPH)
 

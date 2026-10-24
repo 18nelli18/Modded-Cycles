@@ -109,7 +109,8 @@ Le vrai code de l'interruption audio (`osbanc.OsBanc`), et ce que le ColdFire V4
 
 ## 6. Suite proposée
 
-1. MODAL : les noyaux sans attentes de l'EMAC (exact).
+1. MODAL : les noyaux sans attentes de l'EMAC (exact). `[FAIT]` le 24/10/2026 ([74 §5.5](74-machine-modal.md)) : −0,3 à
+   −1,1 point selon le modèle, moins qu'espéré (les noyaux plus longs ajoutent des lignes de code relues).
 2. L'étage de sortie en une passe (chantier 3) : 20 % sur tous les projets.
 3. Mesurer si la SRAM peut servir le code directement, sans le cache (RAMBAR « instructions et données », `0x21`,
    posé pendant l'essai LINE SR seulement) : si oui, le code chaud en SRAM, sans talons, redevient intéressant.
@@ -118,3 +119,5 @@ Le vrai code de l'interruption audio (`osbanc.OsBanc`), et ce que le ColdFire V4
 ## Chronologie
 
 - 23/10/2026 : relevés de Maxime ; modèle étalonné ; le code chaud n'est pas livré.
+- 24/10/2026 : « commence par le point 1 puis enchaîne avec le chantier de l'étage de sortie en une passe » (Maxime) ;
+  point 1 fait ([74 §5.5](74-machine-modal.md)) ; l'attente de saturation séparée dans le modèle (`omc`).

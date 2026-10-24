@@ -53,12 +53,16 @@ struct track {
 	struct modal_part part;
 };
 
+#define NKEY 9                                       /* les mots de +0x14 (PITCH) a +0x24 (DECAY) */
+
 struct ctl {                                         /* ce que update prepare pour render */
 	struct modal_perf ps;
 	struct modal_patch pa;
 	s32 model, poly, chord, fresh;
 	s32 vel;                                         /* gain de velocite du dernier trig (0..127) */
 	s32 pend;                                        /* un trig arrive pendant le calcul des tables */
+	s16 key[NKEY];                                   /* les potards du dernier calcul complet */
+	s32 kpmod, same;                                 /* sa note ; same : ce calcul a refait ctl a l'identique */
 };
 
 static struct ctl ctl[6];
@@ -82,9 +86,22 @@ static inline s32 knob(s32 x)                        /* 8.8, 0..127 -> Q31 */
 
 void modal_update(s32 pmod, char *v, const char *p)
 {
-	s32 t = TRACK(v), fine, chord, h, tonic, note, shape;
+	s32 t = TRACK(v), fine, chord, h, tonic, note, shape, chord0;
 	struct ctl *c = &ctl[t];
+	int i, same;
 
+	/* Rien n'a bouge depuis le dernier calcul complet (ni trig, ni potard, ni note), et ce calcul a redonne ctl tel
+	 * quel (l'hysteresis de l'accord en place) : le refaire redonnerait les memes valeurs. Seul strum retombe (render
+	 * peut l'avoir pose, pend). Le code relu a chaque bloc en est bien plus court (notes/74 §5.5). */
+	same = c->same && V32(MARK_OFF) == MARK && !V32(0x34) && !V32(0x38) && pmod == c->kpmod;
+	for (i = 0; same && i < NKEY; i++)
+		same = P16(0x14 + 2 * i) == c->key[i];
+	if (same) {
+		c->ps.strum = 0;
+		VGAIN[t] = VGAIN_NEXT[t] = 127;
+		return;
+	}
+	chord0 = c->chord;
 	if (V32(MARK_OFF) != MARK) {                     /* 1re note sur cette machine */
 		V32(MARK_OFF) = MARK;
 		c->fresh = 1;
@@ -126,6 +143,10 @@ void modal_update(s32 pmod, char *v, const char *p)
 	VGAIN[t] = VGAIN_NEXT[t] = 127;
 	c->ps.strum = V32(0x38) != 0;
 	c->ps.level = c->vel >= 127 ? Q31ONE : c->vel * (Q31ONE / 127);
+	for (i = 0; i < NKEY; i++)
+		c->key[i] = P16(0x14 + 2 * i);
+	c->kpmod = pmod;
+	c->same = !V32(0x34) && !V32(0x38) && c->chord == chord0;
 }
 
 void modal_render(s32 *out, char *v)
