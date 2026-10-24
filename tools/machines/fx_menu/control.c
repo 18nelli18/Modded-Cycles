@@ -1,15 +1,70 @@
 #include "fx.h"
 u32 fx_menu_open,fx_menu_slot,fx_menu_cursor,fx_force_active,fx_force_func,fx_force_track,fx_tap_force;
+#ifdef FX_INPUT_FIX
+/* Le champ +8 du vrai EncoderEvent est conserve par la copie Application.
+ * Les replays exacts d'un geste ne doivent pas incrementer un FX global.
+ * Aucun throttling des deltas physiques nouveaux, aucune minuterie d'edition. */
+static u32 input_stamp[16],input_delta[16],input_valid,last_input,input_seen;
+static void input_touch(void){last_input=*(volatile u32*)0xfc07000c;input_seen=1;}
+static u32 input_quiet(void){return !input_seen||*(volatile u32*)0xfc07000c-last_input>135168000u;}
+static u32 input_parameter(u32 field,const u32*e){
+ u32 knob=e[3],stamp=e[2],delta=e[4],bit=1u<<knob;
+ input_touch();
+ if(stamp&&(input_valid&bit)&&input_stamp[knob]==stamp&&input_delta[knob]==delta)return 1;
+ input_stamp[knob]=stamp;input_delta[knob]=delta;input_valid|=bit;
+ int step=(int)N(0x4006f73a)(e,1,1);if(step)fx_parameter(field,step);return 1;
+}
+#else
+#define input_quiet() 1
+#endif
+#ifdef FX_DUCK
+u32 fx_duck_amount=96,fx_duck_release=64;
+static void duck_settings(void){
+ static u32 once;u32 h[4]={0};u8 b[10],extra;
+ if(!once){once=1;if(!N(0x4007bc5e)("/Duck.cfg","r",h)){
+  u32 ok=N(0x4007baaa)(b,10,h)==10&&!N(0x4007baaa)(&extra,1,h);if(N(0x4007bc1c)(h))ok=0;
+  if(ok&&!fx_dirty&&b[0]==68&&b[1]==85&&b[2]==48&&b[3]==49&&b[4]<128&&b[5]<128&&b[6]==(u8)~b[4]&&b[7]==(u8)~b[5]&&b[8]==165&&b[9]==90){fx_duck_amount=b[4];fx_duck_release=b[5];}
+ }}
+ if(fx_dirty&&input_quiet()&&!N(0x4007faf4)(2)&&!fx_menu_open){
+  u8 out[10]={68,85,48,49,fx_duck_amount,fx_duck_release,(u8)~fx_duck_amount,(u8)~fx_duck_release,165,90};
+  if(!N(0x4007bc5e)("/Duck.cfg","w",h)){if(!N(0x4007bb76)(h,0,10))N(0x4007bb0a)(out,10,h);N(0x4007e2f6)(h);N(0x4007bc1c)(h);}
+ }
+}
+#endif
+#ifdef FX_EXTRA
+u32 fx_ring_freq=80,fx_ring_depth=127,fx_phase_rate=48,fx_phase_depth=112,fx_phase_feedback=64;
+/* Fichier autonome, complement de chaque octet et sentinelles obligatoires. */
+static void extra_settings(void){
+ static u32 once;u32 h[4]={0};u8 b[16]={0},extra;u32 *v[5]={&fx_ring_freq,&fx_ring_depth,&fx_phase_rate,&fx_phase_depth,&fx_phase_feedback};
+ if(!once){once=1;if(!N(0x4007bc5e)("/ExtraFx.cfg","r",h)){
+  u32 ok=N(0x4007baaa)(b,16,h)==16&&!N(0x4007baaa)(&extra,1,h);if(N(0x4007bc1c)(h))ok=0;
+  if(b[0]!=69||b[1]!=88||b[2]!=48||b[3]!=49||b[14]!=165||b[15]!=90)ok=0;
+  for(u32 i=0;i<5;i++)if(b[4+i]>127||b[9+i]!=(u8)~b[4+i])ok=0;
+  if(ok&&!fx_dirty)for(u32 i=0;i<5;i++)*v[i]=b[4+i];
+ }}
+ if(fx_dirty&&input_quiet()&&!N(0x4007faf4)(2)&&!fx_menu_open){
+  u8 out[16]={69,88,48,49,0,0,0,0,0,0,0,0,0,0,165,90};
+  for(u32 i=0;i<5;i++){out[4+i]=*v[i];out[9+i]=~out[4+i];}
+  if(!N(0x4007bc5e)("/ExtraFx.cfg","w",h)){if(!N(0x4007bb76)(h,0,16))N(0x4007bb0a)(out,16,h);N(0x4007e2f6)(h);N(0x4007bc1c)(h);}
+ }
+}
+#endif
 u32 fx_speed=42,fx_depth=64,fx_crackle=24,fx_warble=24,fx_wspeed=32,fx_aux_ch[6],fx_aux_vi[6],fx_dirty;
 #ifdef FX_LEAN_FX
 /* IDs sauvegardes conserves, seuls les choix presents sont exposes. */
 const char *const fx_rev_names[FX_REV_COUNT]={"REVERB","CHORUS 1","CHORUS 2","VINYL",0,0,0,"PS1"
 #ifdef FX_CHEAP
 ,"ROOM"
+#ifdef FX_EXTRA
+,"RING MOD"
+#endif
 #endif
 };
 #ifdef FX_NO_SHIMMER
 const u32 fx_rev_order[FX_REV_MENU_COUNT]={
+#ifdef FX_EXTRA
+9,
+#endif
 #ifdef FX_CHEAP
 8,
 #endif
@@ -17,16 +72,32 @@ const u32 fx_rev_order[FX_REV_MENU_COUNT]={
 const char *const fx_del_names[FX_DEL_COUNT]={"DELAY","CRUSH 1","CRUSH 2",0,0,"PING PONG",0,0
 #ifdef FX_CHEAP
 ,0,"DUB"
+#ifdef FX_DUCK
+,"DUCK"
+#ifdef FX_EXTRA
+,"PHASER"
+#endif
+#endif
 #endif
 };
 const u32 fx_del_order[FX_DEL_MENU_COUNT]={
+#ifdef FX_EXTRA
+11,
+#endif
+#ifdef FX_DUCK
+10,
+#endif
 #ifdef FX_CHEAP
 9,
 #endif
 5,0,1,2};
 #else
 const char *const fx_del_names[FX_DEL_COUNT]={"DELAY","CRUSH 1","CRUSH 2",0,0,"PING PONG","SHIMMER 1",0};
-const u32 fx_rev_order[FX_REV_MENU_COUNT]={7,3,0,1,2},fx_del_order[FX_DEL_MENU_COUNT]={6,5,2,1,0};
+const u32 fx_rev_order[FX_REV_MENU_COUNT]={
+#ifdef FX_EXTRA
+9,
+#endif
+7,3,0,1,2},fx_del_order[FX_DEL_MENU_COUNT]={6,5,2,1,0};
 #endif
 #else
 const char *const fx_rev_names[FX_REV_COUNT]={"REVERB","CHORUS 1","CHORUS 2","VINYL","VINYL+REV","CHOR1+REV","CHOR2+REV"
@@ -82,7 +153,7 @@ static void cloud_settings(void){
    if(ok&&!fx_dirty&&b[0]==67&&b[1]==76&&b[2]==48&&b[3]==49&&b[4]<128&&b[5]<25&&b[6]==(u8)~b[4]&&b[7]==(u8)~b[5]&&b[8]==165&&b[9]==90){fx_cloud_density=b[4];fx_cloud_pitch=b[5];}
   }
  }
- if(fx_dirty&&!N(0x4007faf4)(2)&&!fx_menu_open){
+ if(fx_dirty&&input_quiet()&&!N(0x4007faf4)(2)&&!fx_menu_open){
   u8 out[10]={67,76,48,49,fx_cloud_density,fx_cloud_pitch,(u8)~fx_cloud_density,(u8)~fx_cloud_pitch,165,90};
   if(!N(0x4007bc5e)("/Cloud.cfg","w",h)){
    if(!N(0x4007bb76)(h,0,10))N(0x4007bb0a)(out,10,h);
@@ -93,6 +164,12 @@ static void cloud_settings(void){
 #endif
 void fx_service(void){
  if(*(volatile u32*)0x40a7883c==1||!N(0x400d0a10)())return;
+#ifdef FX_DUCK
+ duck_settings();
+#endif
+#ifdef FX_EXTRA
+ extra_settings();
+#endif
 #ifdef FX_LEAN_FX
  /* Lire le vieux fichier d abord : FxMix conserve la priorite de selection. */
  cr_service();
@@ -102,7 +179,11 @@ void fx_service(void){
 #endif
  u8 b[60]={70,88,48,49};
  if(!loaded){loaded=1;if(file(0,b)){u32 ok=b[0]==70&&b[1]==88&&b[2]==48&&b[3]==49&&b[58]==165&&b[59]==90&&b[4]<FX_REV_COUNT&&b[22]<
-#if defined(FX_CHEAP)
+#if defined(FX_EXTRA)
+12
+#elif defined(FX_DUCK)
+11
+#elif defined(FX_CHEAP)
 10
 #elif defined(FX_PS1)&&!defined(FX_CLOUD)
 9
@@ -122,7 +203,7 @@ if(cr_mode==8)cr_mode=0;
 #endif
 cr_rate=b[23];cr_bits=b[24];for(u32 t=0;t<6;t++){fx_aux_ch[t]=b[10+t];fx_aux_vi[t]=b[16+t];cr_send[t]=b[25+t];}}
  }}
- if(fx_dirty&&!N(0x4007faf4)(2)&&!fx_menu_open){b[4]=ch_mode;b[5]=fx_speed;b[6]=fx_depth;b[7]=fx_crackle;b[8]=fx_warble;b[9]=fx_wspeed;b[22]=cr_mode;b[23]=cr_rate;b[24]=cr_bits;
+ if(fx_dirty&&input_quiet()&&!N(0x4007faf4)(2)&&!fx_menu_open){b[4]=ch_mode;b[5]=fx_speed;b[6]=fx_depth;b[7]=fx_crackle;b[8]=fx_warble;b[9]=fx_wspeed;b[22]=cr_mode;b[23]=cr_rate;b[24]=cr_bits;
   for(u32 t=0;t<6;t++){b[10+t]=fx_aux_ch[t];b[16+t]=fx_aux_vi[t];b[25+t]=cr_send[t];}for(u32 i=0;i<27;i++)b[31+i]=~b[4+i];b[58]=165;b[59]=90;if(file(1,b))fx_dirty=0;
  }
 }
@@ -149,14 +230,30 @@ static u32 native(u32 view,const u32*e,u32 knob,u32 func,u32 track){u32 copy[6];
 /* Champs popup :0 Rate,1 Bits,2crushsend,3speed,4depth,5chorussend,
  *6crackle,7warble,8warblespeed,9vinylsend. */
 void fx_parameter(u32 field,int delta){u32 lane=fx_selected(),*p=0,lo=0,hi=127;
- switch(field){case 0:p=(u32*)&cr_rate;break;case 1:p=(u32*)&cr_bits;lo=2;hi=16;break;case 2:if(lane<6)p=(u32*)&cr_send[lane];break;case 3:p=&fx_speed;break;case 4:p=&fx_depth;break;case 5:if(lane<6)p=&fx_aux_ch[lane];break;case 6:p=&fx_crackle;break;case 7:p=&fx_warble;break;case 8:p=&fx_wspeed;break;case 9:if(lane<6)p=&fx_aux_vi[lane];break;
-#ifdef FX_CLOUD
+ switch(field){
+#ifdef FX_EXTRA
+case 12:p=&fx_ring_freq;break;case 13:p=&fx_ring_depth;break;case 14:p=&fx_phase_rate;break;case 15:p=&fx_phase_depth;break;case 16:p=&fx_phase_feedback;break;
+#endif
+case 0:p=(u32*)&cr_rate;break;case 1:p=(u32*)&cr_bits;lo=2;hi=16;break;case 2:if(lane<6)p=(u32*)&cr_send[lane];break;case 3:p=&fx_speed;break;case 4:p=&fx_depth;break;case 5:if(lane<6)p=&fx_aux_ch[lane];break;case 6:p=&fx_crackle;break;case 7:p=&fx_warble;break;case 8:p=&fx_wspeed;break;case 9:if(lane<6)p=&fx_aux_vi[lane];break;
+#ifdef FX_DUCK
+ case 10:p=&fx_duck_amount;break;case 11:p=&fx_duck_release;break;
+#elif defined(FX_CLOUD)
  case 10:p=&fx_cloud_density;break;case 11:p=&fx_cloud_pitch;hi=24;break;
 #endif
  }
- if(!p)return;int v=(int)*p+delta;if(v<(int)lo)v=lo;if(v>(int)hi)v=hi;*p=v;fx_dirty=1;fx_show(field);
+ if(!p)return;int v=(int)*p+delta;if(v<(int)lo)v=lo;if(v>(int)hi)v=hi;*p=v;fx_dirty=1;
+#ifdef FX_INPUT_FIX
+ if(field>=10){static u32 popup_tick,popup_field=99;u32 now=*(volatile u32*)0xfc07000c;
+  if(field==popup_field&&now-popup_tick<4055040u){fx_redraw();return;}
+  popup_tick=now;popup_field=field;
+ }
+#endif
+ fx_show(field);
 }
 u32 fx_encoder(u32 view,const u32*e){
+#ifdef FX_INPUT_FIX
+ if(e)input_touch();
+#endif
 #ifdef FX_LEAN_FX
  u32 clean_rev=fx_clean_rev(ch_mode),clean_del=fx_clean_del(cr_mode);
  if(clean_rev!=ch_mode||clean_del!=cr_mode){ch_mode=clean_rev;cr_mode=clean_del;fx_dirty=1;}
@@ -173,6 +270,22 @@ u32 fx_encoder(u32 view,const u32*e){
 #ifdef FX_OVERLAY_MENU
   /* Le handler stock peut retourner0 apres l edition. Ce resultat ne doit
    * jamais relancer le routeur non modifie et produire Size/Time une seconde fois. */
+#ifdef FX_EXTRA
+  if(ch_mode==9&&e[3]==14){
+#ifdef FX_INPUT_FIX
+ return input_parameter(13,e);
+#else
+ fx_parameter(13,(int)N(0x4006f73a)(e,1,1));return 1;
+#endif
+}
+  if(cr_mode==11&&e[3]==15){
+#ifdef FX_INPUT_FIX
+ return input_parameter(16,e);
+#else
+ fx_parameter(16,(int)N(0x4006f73a)(e,1,1));return 1;
+#endif
+}
+#endif
   native(view,e,e[3],1,0);return 1;
 #else
   return native(view,e,e[3],1,0);
@@ -205,6 +318,31 @@ for(u32 i=0;i<n;i++)if(order[i]==current)fx_menu_cursor=i;motion=0;}
  if(knob!=8&&knob!=9&&knob!=14&&knob!=15)return 0;
  if(track_pending)track_used=1;
  if(fx_menu_open)return 1;
+ #ifdef FX_DUCK
+ if(cr_mode==10&&func&&track&&(knob==15||knob==8)){
+#ifdef FX_INPUT_FIX
+ return input_parameter(knob==15?10:11,e);
+#else
+ fx_parameter(knob==15?10:11,(int)N(0x4006f73a)(e,1,1));return 1;
+#endif
+}
+#endif
+#ifdef FX_EXTRA
+ if(ch_mode==9&&knob==14){
+#ifdef FX_INPUT_FIX
+ return input_parameter(func?13:12,e);
+#else
+ fx_parameter(func?13:12,(int)N(0x4006f73a)(e,1,1));return 1;
+#endif
+}
+ if(cr_mode==11&&knob==15){
+#ifdef FX_INPUT_FIX
+ return input_parameter(!func?14:track?16:15,e);
+#else
+ fx_parameter(!func?14:track?16:15,(int)N(0x4006f73a)(e,1,1));return 1;
+#endif
+}
+#endif
  if(knob==15){
 #ifdef FX_CLOUD
   if(cr_mode==8&&func){
@@ -264,6 +402,9 @@ if(track)return native(view,e,15,1,0);fx_parameter(2,(int)N(0x4006f73a)(e,1,1));
 }
 /* Appui FUNC puis TRACK : le tap reste stock ; le maintien appartient aux FX. */
 u32 fx_key(u32*e){if(!e)return 0;
+#ifdef FX_INPUT_FIX
+ input_touch();
+#endif
 #ifdef FX_CPU_OPT
  fx_diag_gesture(e);
 #endif

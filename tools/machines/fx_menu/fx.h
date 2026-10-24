@@ -11,7 +11,16 @@ extern void ch_native(s32*,const s32*,const s16*),ch_chorus(s32*,const s32*,cons
 extern u32 fx_menu_open,fx_menu_slot,fx_menu_cursor,fx_force_active,fx_force_func,fx_force_track,fx_tap_force;
 extern u32 fx_speed,fx_depth,fx_crackle,fx_warble,fx_wspeed,fx_aux_ch[6],fx_aux_vi[6],fx_dirty;
 #ifdef FX_CHEAP
+#ifdef FX_DUCK
+#ifdef FX_EXTRA
+#define FX_DEL_COUNT 12
+#else
+#define FX_DEL_COUNT 11
+#endif
+extern u32 fx_duck_amount,fx_duck_release;
+#else
 #define FX_DEL_COUNT 10
+#endif
 void fx_room_reset(void);void fx_room(s32*,const s32*,const s16*);
 #elif defined(FX_CLOUD)
 #define FX_DEL_COUNT 9
@@ -25,7 +34,15 @@ void fx_cloud_reset(void);void fx_cloud(s32*);
 #define FX_DEL_COUNT 5
 #endif
 #ifdef FX_CHEAP
+#ifdef FX_DUCK
+#ifdef FX_EXTRA
+#define FX_SPECIAL_DELAY(m) ((m)==5||(m)==9||(m)==10||(m)==11)
+#else
+#define FX_SPECIAL_DELAY(m) ((m)==5||(m)==9||(m)==10)
+#endif
+#else
 #define FX_SPECIAL_DELAY(m) ((m)==5||(m)==9)
+#endif
 #elif defined(FX_NO_SHIMMER)
 #define FX_SPECIAL_DELAY(m) ((m)==5)
 #elif defined(FX_LEAN_FX)
@@ -35,7 +52,11 @@ void fx_cloud_reset(void);void fx_cloud(s32*);
 #endif
 #ifdef FX_PS1
 #ifdef FX_CHEAP
+#ifdef FX_EXTRA
+#define FX_REV_COUNT 10
+#else
 #define FX_REV_COUNT 9
+#endif
 #else
 #define FX_REV_COUNT 8
 #endif
@@ -45,28 +66,57 @@ void fx_ps1_reset(void);void fx_ps1(s32*,const s32*,const s16*);
 #endif
 #ifdef FX_LEAN_FX
 #ifdef FX_CHEAP
+#ifdef FX_EXTRA
+#define FX_REV_MENU_COUNT 7
+#else
 #define FX_REV_MENU_COUNT 6
+#endif
 #else
 #define FX_REV_MENU_COUNT 5
 #endif
 #ifdef FX_NO_SHIMMER
 #ifdef FX_CHEAP
+#ifdef FX_DUCK
+#ifdef FX_EXTRA
+#define FX_DEL_MENU_COUNT 7
+#else
+#define FX_DEL_MENU_COUNT 6
+#endif
+#else
 #define FX_DEL_MENU_COUNT 5
+#endif
 #else
 #define FX_DEL_MENU_COUNT 4
 #endif
 #else
+#ifdef FX_DUCK
+#ifdef FX_EXTRA
+#define FX_DEL_MENU_COUNT 7
+#else
+#define FX_DEL_MENU_COUNT 6
+#endif
+#else
 #define FX_DEL_MENU_COUNT 5
+#endif
 #endif
 static inline u32 fx_clean_rev(u32 m){return m==4?3:m==5?1:m==6?2:(m<4||m==7
 #ifdef FX_CHEAP
 ||m==8
+#ifdef FX_EXTRA
+||m==9
+#endif
 #endif
 )?m:0;}
 #ifdef FX_NO_SHIMMER
 static inline u32 fx_clean_del(u32 m){return (m<3||m==5
 #ifdef FX_CHEAP
 ||m==9
+#ifdef FX_DUCK
+||m==10
+#ifdef FX_EXTRA
+||m==11
+#endif
+#endif
 #endif
 )?m:0;}
 #else
@@ -75,6 +125,10 @@ static inline u32 fx_clean_del(u32 m){return m==7?6:(m<3||m==5||m==6)?m:0;}
 #else
 #define FX_REV_MENU_COUNT FX_REV_COUNT
 #define FX_DEL_MENU_COUNT FX_DEL_COUNT
+#endif
+#ifdef FX_EXTRA
+extern u32 fx_ring_freq,fx_ring_depth,fx_phase_rate,fx_phase_depth,fx_phase_feedback;
+void fx_ring(s32*,const s32*);void fx_phaser(s32*,const s32*);void fx_extra_reset(u32);
 #endif
 extern const char *const fx_rev_names[FX_REV_COUNT],*const fx_del_names[FX_DEL_COUNT];
 extern const u32 fx_rev_order[FX_REV_MENU_COUNT],fx_del_order[FX_DEL_MENU_COUNT];

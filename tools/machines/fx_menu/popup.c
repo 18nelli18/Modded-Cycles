@@ -16,6 +16,12 @@ u32 fx_cloud_native_value(u32 field,u32 lane){
 #endif
 void fx_value(u32 field,u32*value,const char**type,const char**label){u32 lane=fx_selected();if(lane>=6)lane=0;
  *type=(field<3
+#ifdef FX_DUCK
+ ||field==10||field==11
+#ifdef FX_EXTRA
+ ||(field>=14&&field<=16)
+#endif
+#endif
 #ifdef FX_CLOUD
  ||field==10||field==11
 #ifdef FX_CLOUD_REPAIR
@@ -23,7 +29,15 @@ void fx_value(u32 field,u32*value,const char**type,const char**label){u32 lane=f
 #endif
 #endif
  ?fx_del_names[cr_mode<FX_DEL_COUNT?cr_mode:0]:fx_rev_names[ch_mode<FX_REV_COUNT?ch_mode:0]);
- switch(field){case 0:*value=cr_rate;*label="Rate";break;case 1:*value=cr_bits;*label="Bits";break;case 2:*value=cr_send[lane];*label="Crush Send";break;case 3:*value=fx_speed;*label="Speed";break;case 4:*value=fx_depth;*label="Depth";break;case 5:*value=fx_aux_ch[lane];*label="Chorus Send";break;case 6:*value=fx_crackle;*label="Crackle";break;case 7:*value=fx_warble;*label="Warble Amt";break;case 8:*value=fx_wspeed;*label="Warble Spd";break;
+ switch(field){
+#ifdef FX_EXTRA
+case 12:*value=fx_ring_freq;*label="Frequency";break;case 13:*value=fx_ring_depth;*label="Depth";break;
+case 14:*value=fx_phase_rate;*label="Rate";break;case 15:*value=fx_phase_depth;*label="Depth";break;case 16:*value=fx_phase_feedback;*label="Feedback";break;
+#endif
+case 0:*value=cr_rate;*label="Rate";break;case 1:*value=cr_bits;*label="Bits";break;case 2:*value=cr_send[lane];*label="Crush Send";break;case 3:*value=fx_speed;*label="Speed";break;case 4:*value=fx_depth;*label="Depth";break;case 5:*value=fx_aux_ch[lane];*label="Chorus Send";break;case 6:*value=fx_crackle;*label="Crackle";break;case 7:*value=fx_warble;*label="Warble Amt";break;case 8:*value=fx_wspeed;*label="Warble Spd";break;
+#ifdef FX_DUCK
+case 10:*value=fx_duck_amount;*label="Amount";break;case 11:*value=fx_duck_release;*label="Release";break;
+#endif
 #ifdef FX_CLOUD
 #ifdef FX_CLOUD_REPAIR
 case 12:case 13:case 14:*value=fx_cloud_native_value(field,lane);*label=field==12?"Window":field==13?"Feedback":"Cloud Send";break;
@@ -47,7 +61,11 @@ N(0x40070efc)(canvas,0,0,127,63,0);
  N(0x40000e6e)(line,"%u",value);N(0x40072260)(font,0x401429ec);N(0x40071a04)(canvas,font,96,34,2,"%s",line);N(0x40072080)(font);N(0x40070f6e)(canvas,0,0,63,63,0xffffffffu);return 0;
 }
 void fx_popup_bind(u32 object,u32 field){if(!popup_table[6]){const u32*n=(const u32*)0x40111bc8;for(u32 i=0;i<22;i++)popup_table[i]=n[i];popup_table[6]=(u32)fx_popup_render;}*(u32*)object=(u32)(popup_table+2);((u32*)object)[39]=field<
-#ifdef FX_CLOUD_REPAIR
+#ifdef FX_EXTRA
+17
+#elif defined(FX_DUCK)
+12
+#elif defined(FX_CLOUD_REPAIR)
 15
 #elif defined(FX_CLOUD)
 12
@@ -62,13 +80,20 @@ u32 fx_popup(u32 view,u32 canvas,u32 desc,s32 value,u32 flags,u32 last){u32 resu
  if(cr_mode==8){if(desc==26)title(canvas,"CLOUD","Cloud Send");if(desc==37||desc==38)title(canvas,"CLOUD",desc==37?"Window":"Feedback");}
  else
 #endif
- {if(desc==26)title(canvas,fx_del_names[cr_mode],"Delay Send");if(desc==37||desc==38)title(canvas,fx_del_names[cr_mode],desc==37?"Time":"Feedback");}}
+ {if(desc==26)title(canvas,fx_del_names[cr_mode],
+#ifdef FX_EXTRA
+cr_mode==11?"Phaser Send":
+#endif
+"Delay Send");if(desc==37||desc==38)title(canvas,fx_del_names[cr_mode],desc==37?"Time":"Feedback");}}
 #endif
 #ifdef FX_PS1
  if(ch_mode==7){if(desc==27)title(canvas,"PS1","PS1 Send");if(desc==39||desc==40)title(canvas,"PS1",desc==39?"Decay":"Tone");}
 #endif
  #ifdef FX_CHEAP
  if(ch_mode==8){if(desc==27)title(canvas,"ROOM","Room Send");if(desc==39||desc==40)title(canvas,"ROOM",desc==39?"Decay":"Tone");}
+#endif
+#ifdef FX_EXTRA
+ if(ch_mode==9&&desc==27)title(canvas,"RING MOD","Ring Send");
 #endif
  if(desc==26&&(cr_mode==1||cr_mode==2))title(canvas,fx_del_names[cr_mode],"Crush Send");
  if(desc==27&&(ch_mode==1||ch_mode==2||ch_mode==3))title(canvas,fx_rev_names[ch_mode],ch_mode==3?"Vinyl Send":"Chorus Send");

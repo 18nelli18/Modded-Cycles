@@ -32,6 +32,9 @@ static s32 q31(s32 x){return sat20(x)*2048;}
 static s32 scaled(s32 x,u32 a){return (x>>15)*(s32)a+(s32)(((u32)x&32767u)*a>>15);}
 static s32 wave(u32 p){u32 q=p>>16;return q<32768?(s32)q*2-32768:98303-(s32)q*2;}
 void fx_vinyl_reset(void){
+#ifdef FX_EXTRA
+ fx_extra_reset(0);
+#endif
 #ifdef FX_CHEAP
  fx_room_reset();
 #endif
@@ -143,6 +146,9 @@ ch_mode<FX_REV_COUNT?ch_mode:0;
 #ifdef FX_CHEAP
  else if(active==8)fx_room(out,in,params);
 #endif
+#endif
+#ifdef FX_EXTRA
+ else if(active==9)fx_ring(out,in);
 #endif
  else if(active==1||active==2){s16 p[2]={(s16)(fx_speed*256),(s16)(fx_depth*256)};ch_chorus(out,in,p,active,256);}
 #ifdef FX_LEAN_FX

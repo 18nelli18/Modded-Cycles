@@ -256,3 +256,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [157 — SPEAK consonnes et vitesse](157-speak-consonnes-et-vitesse.md) | v87 regulier approuve pour principal2.31 : bruit consonnes adouci, voyelles conservees, silence aux faibles vitesses reproduit puis corrige par quiet local pendant le mot ; pression/vol de voix conserves. |
 
 | [158 — ROOM, DUB et voix SPEAK](158-room-dub-et-voix-speak.md) | Principal2.32 : exact v90 regulier approuve, ROOM12kHz, DUB filtre stereo distinct, voix calibree/brillante avec souffle reduit ; preuves natives et guides EN/FR/PDF. |
+
+| [159 — Ring, Phaser, DUCK et encodeurs](159-ring-phaser-duck-et-encodeurs.md) | Principal2.33 : exact v94 regulier approuve, nouveaux FX et protection encodeurs live ; guide EN/FR/PDF. |

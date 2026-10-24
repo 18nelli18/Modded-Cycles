@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.32 - 23 octobre2026
+Supermodel2.33 - 23 octobre2026
 
-Principal2.32. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
+Principal2.33. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
 ## Fonctions incluses
 
@@ -10,7 +10,7 @@ Principal2.32. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 **Performance et séquenceur:** Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute verrouillé et solo.
 
-**Filtres et effets:** Filtres pistes/Wizard inspires Polivoks, second LFO, MACRO Fine/Lo-Fi ; ROOM, PS1, Vinyl, Reverb et Chorus 1/2 ; DUB, Ping Pong, Delay et Crush 1/2. Menus opaques appliques au relachement TRACK. Optimisations PS1/filtre cumulees. Les deux Shimmer et tous les modes combines sont retires.
+**Filtres et effets:** Filtres pistes/Wizard inspires Polivoks, second LFO, MACRO Fine/Lo-Fi ; Ring Mod, ROOM, PS1, Vinyl, Reverb et Chorus 1/2 ; Phaser, DUCK, DUB, Ping Pong, Delay et Crush 1/2. Menus opaques appliques au relachement TRACK. Optimisations PS1/filtre cumulees. Les deux Shimmer et tous les modes combines sont retires.
 
 **Routage et travail:** MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif.
 
@@ -40,9 +40,12 @@ Principal2.32. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Menu reverb | Maintenir TRACK + REVERB SIZE | De haut en bas : ROOM, PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule. |
-| Menu delay | Maintenir TRACK + DELAY TIME | De haut en bas : DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule. |
+| Menu reverb | Maintenir TRACK + REVERB SIZE | De haut en bas : RING MOD, ROOM, PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule. |
+| Menu delay | Maintenir TRACK + DELAY TIME | De haut en bas : PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule. |
 | Reverb standard | REVERB SEND / SIZE / FUNC + SIZE | Send par piste / Size natif, INF au maximum / Tone -64 a 0 a +63. Format natif restaure immediatement apres Chorus, meme en lecture. |
+| Ring Mod | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | Ring Send par piste / Frequency / Depth. Modulation en anneau sinusoidale metallique dans le slot reverb. RING MOD au-dessus de ROOM. Frequency et Depth globaux ; locks via le Send natif. |
+| Phaser | DELAY SEND / TIME / FUNC + TIME ; FUNC puis TRACK + TIME | Phaser Send par piste / Rate / Depth ; FUNC puis TRACK + TIME : Feedback (aussi SETTINGS + TIME). Phaser stereo deux etages dans le slot delay. PHASER au-dessus de DUCK. Tenir FUNC avant TRACK pour eviter le mute verrouille. |
+| Delay DUCK | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME ; FUNC puis TRACK + TIME ou DELAY SEND | Delay Send natif / Time / Feedback. Tenir FUNC avant TRACK : TIME regle Amount ; DELAY SEND regle Release. Retour attenue pendant le signal puis remontee progressive ; feedback conserve. Essayer Amount 127, Release 32-64 sur notes espacees. Amount 0 : Delay standard. |
 | Reverb ROOM | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | Room Send par piste / Decay / Tone. Petite ambiance stereo a 12 kHz. ROOM au-dessus de PS1 ; relacher TRACK pour appliquer. |
 | Reverb PS1 | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | PS1 Send par piste / Decay / Tone. Queue stereo inspiree PlayStation, sombre et granuleuse ; optimisations de traitement conservees. |
 | Chorus 1 / 2 | REVERB SEND / SIZE / FUNC + SIZE | Chorus Send par piste / Speed / Depth. Speed et Depth 0-127. Remplace la reverb du slot. |
@@ -105,7 +108,7 @@ Principal2.32. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 ## Mod Setup
 
-Maintenez SETTINGS + TRACK pour ouvrir Mod Setup puis relâchez. Un appui bref lance SCRAMBLE au relâchement. DATA choisit une ligne ; clic pour éditer, tourner, puis clic pour revenir. Stk = Stock ; SIL = Silent ; LTC = Latch.
+Maintenez SETTINGS + TRACK pour ouvrir Mod Setup puis relÃ¢chez. Un appui bref lance SCRAMBLE au relÃ¢chement. DATA choisit une ligne ; clic pour Ã©diter, tourner, puis clic pour revenir. Stk = Stock ; SIL = Silent ; LTC = Latch.
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
@@ -117,7 +120,7 @@ Maintenez SETTINGS + TRACK pour ouvrir Mod Setup puis relâchez. Un appui bref l
 | DX | Off / On ; défaut Off | DX On : appui bref FUNC, second appui sous 350 ms, maintien au moins 0,5 seconde puis relacher. Toute autre commande annule. Affiche/remet a zero A/P/O/N : charge moyenne/pic, overruns, voix coupees par le gouverneur. Remplace ancien raccourci ; verrou retrig sans diagnostic. Off par defaut. |
 | SCRM | DATA ouvre ; tourner et appuyer ; BACK revient | Six cases par piste : Pitch,Decay,Color,Shape,Sweep,Contour. Pitch/Decay desactives par defaut, quatre autres actives. Choix conserves entre projets et apres extinction ; sauvegarde a l’arret. Wizard autorise Pitch/Decay, commandes sample/modes exclues. |
 
-Préférences globales. BACK ferme Mod Setup et sauvegarde ses preferences globales ; la liste Scramble de chaque piste se sauvegarde au retour du sous-menu. Si la lecture tourne, la sauvegarde attend son arrêt. Arrêtez et attendez la fin de sauvegarde avant extinction. Choix restaurés au redémarrage. Modes d’effets et réglages crusher sauvegardés également après arrêt.
+PrÃ©fÃ©rences globales. BACK ferme Mod Setup et sauvegarde ses preferences globales ; la liste Scramble de chaque piste se sauvegarde au retour du sous-menu. Si la lecture tourne, la sauvegarde attend son arrÃªt. ArrÃªtez et attendez la fin de sauvegarde avant extinction. Choix restaurÃ©s au redÃ©marrage. Modes dâ€™effets et rÃ©glages crusher sauvegardÃ©s Ã©galement aprÃ¨s arrÃªt.
 
 ## Lexique SPEAK
 
@@ -156,4 +159,4 @@ Préférences globales. BACK ferme Mod Setup et sauvegarde ses preferences globa
 | 30 | THANK | 62 | AM | 94 | MORE | 126 | DREAM |
 | 31 | HELLO | 63 | ARE | 95 | LESS | 127 | FUTURE |
 
-Défauts : pads et mute stock ; USB 2ch ; Num Off ; DX Off. Reverb et Delay par défaut sans préférences d’effets sauvegardées. USB six canaux sans retours stéréo des effets.
+DÃ©fauts : pads et mute stock ; USB 2ch ; Num Off ; DX Off. Reverb et Delay par dÃ©faut sans prÃ©fÃ©rences dâ€™effets sauvegardÃ©es. USB six canaux sans retours stÃ©rÃ©o des effets.

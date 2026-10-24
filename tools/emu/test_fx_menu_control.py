@@ -67,7 +67,9 @@ def main():
   for field,name in [(2,'cr_send'),(5,'fx_aux_ch'),(9,'fx_aux_vi')]:
    if lean:continue
    for lane in range(6):r.w32(data+4,lane);r.call('fx_parameter',field,127);assert r.r32(s[name]+4*lane)==127;r.call('fx_parameter',field,(-999)&0xffffffff);assert r.r32(s[name]+4*lane)==0
-  h.clear();r.call('fx_service');saved=f['/FxMix.cfg'];assert len(saved)==60
+  h.clear();
+  if 'last_input' in s:r.w32(0xfc07000c,r.r32(s['last_input'])+150000000)
+  r.call('fx_service');saved=f['/FxMix.cfg'];assert len(saved)==60
   rr,ss,hh,ll,ff,*_=fixture(stem);ff['/FxMix.cfg']=saved;rr.call('fx_service');assert rr.r32(ss['ch_mode'])==r.r32(s['ch_mode'])
   print('PASS all solo/combined modifier mappings, native forwarding, six independent tracks, settings save/load',stem,flush=True)
   # FUNC d'abord : maintien consomme, tap stock differe. TRACK d'abord reste transmis.

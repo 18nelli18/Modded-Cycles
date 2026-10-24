@@ -241,3 +241,7 @@ Explicit request: “perfect put the non swear version on main”, clarified “
 ## AveyCole main 2.32 promotion (2026-10-23)
 
 AveyCole explicitly requests “okay, push v90 to main”. Publish exact regular shared-filter v90 SHA256 `218aebccdd0b5f13896f80310a041f8eb95c90e3a98ab62b1985c9083518d008`, MAIN `413659a209f2c8c31e7080394c81c8a5e562c4bd13c5093ded00044a90f19821`, via the established fixed-main image. Includes ROOM, distinct filtered stereo DUB and calibrated/brighter SPEAK. Update EN/FR controls and PDF. Adult v90 stays private; no adult lexicon may enter the public checkout. DUCK is a subsequent private v90-based test, never included in this approved image.
+
+## AveyCole main 2.33 promotion (2026-10-23)
+
+AveyCole reports “that worked, push 94 and give me the adult version”. Publish exact regular shared-filter v94 SHA256 `f0663f703bb6d85e85dfcc2fa5c99ae1785ab696bd9fe750e532759d1878e46d`, MAIN `a7a59a46646ee7e3d9f26c5d7197721b07d207e2c5fca853b99c45019ff432d8`. Includes DUCK, RING MOD, PHASER and live-trigger encoder safeguards. Update controls/PDF. Adult v94 remains private. Later experimental revisions and requested GATED reverb/menu reorder are separate tests, not included in this approved image.

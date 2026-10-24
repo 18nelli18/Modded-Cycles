@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.32 - 23 October 2026
+Supermodel 2.33 - 23 October 2026
 
-Main 2.32. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.33. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
@@ -10,7 +10,7 @@ Main 2.32. Hold the first button while pressing the next button or turning the n
 
 **Performance and sequencing:** Arpeggiator, held-note octave 0, ChordKeys and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching mute and solo.
 
-**Filters and effects:** Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; ROOM, PS1, Vinyl, Reverb and Chorus 1/2; DUB, Ping Pong, Delay and Crush 1/2. Opaque FX menus apply on TRACK release. Cumulative PS1/filter optimizations. Both Shimmers and all combined modes are removed.
+**Filters and effects:** Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Ring Mod, ROOM, PS1, Vinyl, Reverb and Chorus 1/2; Phaser, DUCK, DUB, Ping Pong, Delay and Crush 1/2. Opaque FX menus apply on TRACK release. Cumulative PS1/filter optimizations. Both Shimmers and all combined modes are removed.
 
 **Routing and workflow:** MIDI Out with nine CC knobs, locks and two MIDI LFOs; MIDI OUT/THRU toggle; USB stereo or six tracks; permanent quick save, saved Mod Setup and optional DX diagnostics.
 
@@ -40,9 +40,12 @@ Main 2.32. Hold the first button while pressing the next button or turning the n
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Reverb-slot menu | Hold TRACK + REVERB SIZE | Top to bottom: ROOM, PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel. |
-| Delay-slot menu | Hold TRACK + DELAY TIME | Top to bottom: DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels. |
+| Reverb-slot menu | Hold TRACK + REVERB SIZE | Top to bottom: RING MOD, ROOM, PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel. |
+| Delay-slot menu | Hold TRACK + DELAY TIME | Top to bottom: PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels. |
 | Standard Reverb | REVERB SEND / SIZE / FUNC + SIZE | Per-track Send / native Size, including INF at maximum / Tone -64 through 0 to +63. Stock formatting returns immediately after leaving Chorus, even during playback. |
+| Ring Mod | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | Ring Send per track / Frequency / Depth. Metallic sine ring modulation replaces the reverb return. Select RING MOD above ROOM. Global Frequency and Depth; use the native track Send for locks. |
+| Phaser | DELAY SEND / TIME / FUNC + TIME; FUNC first, then TRACK + TIME | Phaser Send per track / Rate / Depth; FUNC then TRACK + TIME is Feedback (also SETTINGS + TIME). Two-stage stereo phaser replaces the delay return. Select PHASER above DUCK. Hold FUNC before TRACK to avoid the mute latch. |
+| DUCK delay | DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME; FUNC then TRACK + TIME or DELAY SEND | Native Delay Send / Time / Feedback. Hold FUNC first, then TRACK: TIME adjusts Amount; DELAY SEND adjusts Release. Strong wet ducking while the send input plays, then a swelling return; feedback remains intact. Try Amount 127, Release 32-64 on sparse notes. Amount 0 is standard Delay. |
 | ROOM reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | Room Send per track / Decay / Tone. Compact stereo room tail at 12 kHz. Select ROOM above PS1; release TRACK to apply. |
 | PS1 reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | PS1 Send per track / Decay / Tone. PlayStation-inspired stereo tail, darker and grainier; cumulative processing optimizations retained. |
 | Chorus 1 / 2 | REVERB SEND / SIZE / FUNC + SIZE | Chorus Send per track / Speed / Depth. Speed and Depth 0-127. Replaces reverb in this slot. |
@@ -117,7 +120,7 @@ Hold SETTINGS + TRACK until Mod Setup opens, then release both buttons. A short 
 | DX | Off / On Default: Off | With DX On: tap FUNC, press FUNC again within 350 ms, hold at least 0.5 seconds, then release. Other controls cancel the gesture. Shows/resets A/P/O/N: average/peak CPU load, overruns, governor voice drops. Replaces the old shortcut; retrig latching never triggers it. Off by default. |
 | SCRM | DATA opens; turn and press DATA; BACK returns | Six checkboxes per track: Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay default Off; the original four default On. Choices persist across projects and power cycles; saving waits until playback stops. Wizard allows Pitch/Decay; its sample/mode controls stay excluded. |
 
-These are global preferences. BACK closes Mod Setup and saves its global preferences; each track’s Scramble checklist saves when you return from its submenu. If playback is running, the save waits until it stops. Stop playback and allow saving to finish before powering off. Saved choices return after reboot. Effect modes and crusher settings also save after playback stops.
+These are global preferences. BACK closes Mod Setup and saves its global preferences; each trackâ€™s Scramble checklist saves when you return from its submenu. If playback is running, the save waits until it stops. Stop playback and allow saving to finish before powering off. Saved choices return after reboot. Effect modes and crusher settings also save after playback stops.
 
 ## SPEAK word library
 
