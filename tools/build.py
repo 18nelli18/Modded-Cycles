@@ -340,6 +340,50 @@ def build_payload(chosen, main_os, syntakt_path):
     return bytes(out), apps[-1]
 
 
+def build_syx(raw, chosen, syntakt=None, force_cave=False, cave_refs_ok=None, expect_mainos=None):
+    """Le .syx de ces tweaks (déjà triés dans l'ordre), construit sur TON .syx officiel raw : écritures, charges
+    utiles, recompression de la section 3, checksums et HMAC. Rend (octets du .syx, MAIN OS patché)."""
+    stream, info = unwrap(raw)                       # verifie chaque checksum de paquet
+    c = container.parse(stream)
+    s3 = next(s for s in c["sections"] if s["id"] == 3)
+    main_os, ops = aplib.depack(c["blob"][s3["off"]:s3["off"] + s3["size"]])
+    patched, dirty = apply_writes(main_os, chosen)
+    check_caves(main_os, chosen, force_cave, dirty, patched, cave_refs_ok)
+    payload, _ = build_payload(chosen, main_os, syntakt)
+    orig_len = len(patched)
+    if payload:
+        patched = patched + payload
+        dirty = dirty + bytearray(b"\x01") * len(payload)
+    print(f"  {sum(dirty)} octets changes sur {len(patched)}")
+    print(f"  MAIN OS patche SHA-256 : {sha(patched)}")
+    if expect_mainos and sha(patched) != expect_mainos.lower():
+        raise SystemExit("!! le MAIN OS patche ne correspond pas au SHA attendu")
+
+    # reconstruction : re-emet le flux aPLib, recalcule checksums + HMAC
+    if payload:
+        import aplib_grow                               # noqa: E402
+        new_s3 = aplib_grow.repack_grow(patched, ops, dirty, orig_len)
+        if aplib.depack(new_s3)[0] != patched:
+            raise SystemExit("!! recompression de l'OS agrandi : relecture différente")
+    else:
+        new_s3 = aplib.repack(patched, ops, dirty)
+    msg = c["blob"][:len(c["blob"]) - container.DIGEST_LEN]
+    expect = c["blob"][len(c["blob"]) - container.DIGEST_LEN:]
+    # cle HMAC re-derivee depuis les sections decompressees de l'image d'origine
+    plain = []
+    for s in c["sections"]:
+        try:
+            plain.append(aplib.depack(c["blob"][s["off"]:s["off"] + s["size"]])[0])
+        except Exception:
+            pass
+    key = container.find_key(plain, msg, expect)
+    if not key:
+        raise SystemExit("!! cle HMAC introuvable — image inattendue")
+    blob = container.rebuild(c, {3: new_s3}, key)
+    out_stream = container.build_stream(blob, BYTES_PER_MSG)
+    return wrap(out_stream, info["product"], info["start_seq"]), patched
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -403,43 +447,7 @@ def main():
     chosen.sort(key=lambda t: t["order"])            # dans l'ordre des tweaks : l'un peut s'appliquer sur l'autre
     for t in chosen:
         print(f"  + {t['name']}")
-
-    patched, dirty = apply_writes(main_os, chosen)
-    check_caves(main_os, chosen, args.force_cave, dirty, patched, dev.get("cave_refs_ok"))
-    payload, _ = build_payload(chosen, main_os, args.syntakt)
-    orig_len = len(patched)
-    if payload:
-        patched = patched + payload
-        dirty = dirty + bytearray(b"\x01") * len(payload)
-    print(f"  {sum(dirty)} octets changes sur {len(patched)}")
-    print(f"  MAIN OS patche SHA-256 : {sha(patched)}")
-    if args.expect_mainos and sha(patched) != args.expect_mainos.lower():
-        raise SystemExit("!! le MAIN OS patche ne correspond pas au SHA attendu")
-
-    # reconstruction : re-emet le flux aPLib, recalcule checksums + HMAC
-    if payload:
-        import aplib_grow                               # noqa: E402
-        new_s3 = aplib_grow.repack_grow(patched, ops, dirty, orig_len)
-        if aplib.depack(new_s3)[0] != patched:
-            raise SystemExit("!! recompression de l'OS agrandi : relecture différente")
-    else:
-        new_s3 = aplib.repack(patched, ops, dirty)
-    msg = c["blob"][:len(c["blob"]) - container.DIGEST_LEN]
-    expect = c["blob"][len(c["blob"]) - container.DIGEST_LEN:]
-    # cle HMAC re-derivee depuis les sections decompressees de l'image d'origine
-    plain = []
-    for s in c["sections"]:
-        try:
-            plain.append(aplib.depack(c["blob"][s["off"]:s["off"] + s["size"]])[0])
-        except Exception:
-            pass
-    key = container.find_key(plain, msg, expect)
-    if not key:
-        raise SystemExit("!! cle HMAC introuvable — image inattendue")
-    blob = container.rebuild(c, {3: new_s3}, key)
-    out_stream = container.build_stream(blob, BYTES_PER_MSG)
-    out_raw = wrap(out_stream, info["product"], info["start_seq"])
-
+    out_raw, _ = build_syx(raw, chosen, args.syntakt, args.force_cave, dev.get("cave_refs_ok"), args.expect_mainos)
     out_path = args.output or args.input.replace(".syx", "") + "_mod.syx"
     pathlib.Path(out_path).write_bytes(out_raw)
     print(f"\n  ecrit : {out_path}  ({len(out_raw)} o)")

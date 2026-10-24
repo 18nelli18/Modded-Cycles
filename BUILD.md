@@ -54,6 +54,18 @@ python3 tools/build.py -i firmware/model-cycles_OS1.13.syx --syntakt firmware/Sy
 zone the original image points into (unless a chosen tweak redirects that pointer). These builds have no reference
 hash in the flasher and are for developers: never distribute them.
 
+## The measurement firmware (diagnostic)
+
+`tools/gen_mesure.py` builds the OS of `os.json` with probes in the audio interrupt, a counter of the interface's idle
+time and calibration tests, shown on three more screens of Model-TG's System page (notes/75). It is not in the
+flasher, and is for measuring only:
+
+```sh
+python3 tools/gen_mesure.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx \
+  -o build/modded-cycles-os_2.1-mesure.syx
+python3 tools/emu/test_mesure.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+```
+
 ## Regenerating what is generated
 
 A tweak JSON is never edited by hand: its generator writes it from the sources in `tools/machines/<mod>/` and checks
