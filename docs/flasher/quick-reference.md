@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.36 - 24 October 2026
+Supermodel 2.37 - 24 October 2026
 
-Main 2.36. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.37. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
@@ -13,6 +13,13 @@ Main 2.36. Hold the first button while pressing the next button or turning the n
 **Filters and effects:** Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; GATED, HALL, Ring Mod, ROOM, PS1, Vinyl, Reverb and Chorus 1/2; Phaser, DUCK, DUB, Ping Pong, Delay and Crush 1/2. Opaque FX menus apply on TRACK release. Cumulative PS1/filter optimizations. Both Shimmers and all combined modes are removed.
 
 **Routing and workflow:** MIDI Out with nine CC knobs, locks and two MIDI LFOs; MIDI OUT/THRU toggle; USB stereo or six tracks; permanent quick save, saved Mod Setup and optional DX diagnostics.
+
+## New in 2.37 - WAVE ready to play
+
+| Feature | Controls | Behavior |
+|---|---|---|
+| WAVE starter | Select WAVE and play | AV-WAVE-Morph is already loaded: 16 morphable frames, no first import required. COLOR selects position; SHAPE adds envelope movement. Custom tables replace the starter on their track. |
+| WAVE folder navigation | BACK in the WAVE browser | Go up one folder. At /Wavetables, BACK closes the selector. Holding or releasing BACK after moving up leaves it open. Imported tables still load with the existing YES/pad controls. |
 
 ## New in 2.36 - Acid, SY BITS and Elder
 

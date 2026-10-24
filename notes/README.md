@@ -262,3 +262,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [163 — Bibliotheque LEGACY et RETROSYN](163-legacy-bibliotheque-retrosyn.md) | Principal2.35 : exact105retro, bibliotheque DX7, importateurs WAV/DX7 cote a cote, guide et blurb utilisateur conserve. |
 
 | [164 — ACID, SY BITS et Elder](164-acid-detune-bits-niveau-elder.md) | Principal2.36 : exact111 regulier teste, DECAY filtre/Accent, detune fin et popup compact live, Elder+6dB ; blurb preserve. |
+
+| [165 — WAVE precharge et retour](165-wave-precharge-et-retour.md) | Principal2.37 : exact115 regulier teste ; table initiale, chargement natif et BACK parent ; blurb preserve. |

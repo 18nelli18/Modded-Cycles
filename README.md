@@ -168,3 +168,6 @@ The hardware-tested saving build is now in main. Extra MIDI files remain outside
 Main 1.78 uses the filter and beat-repeat workload repairs confirmed on hardware by AveyCole, including multiple Syn Swarms. Same firmware code as filter-load test 4; MIDI OUT Bank remains optional and experimental.
 
 Swarm LITE replaces the original seven-oscillator Swarm in the main flasher: fundamental plus two detuned saws, lower processing load, and a leaner, potentially quieter sound. AveyCole reports significantly reduced load and clicks on hardware (16 October 2026); heavy arrangements may still click.
+
+
+Main 2.37 serves the user-tested v115: WAVE includes the AV-WAVE-Morph starter table, custom tables still override it, and BACK goes up folders before closing at /Wavetables. [Controls and printable guide](docs/flasher/shortcut-guide.html).

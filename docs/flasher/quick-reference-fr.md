@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.36 - 24 octobre2026
+Supermodel2.37 - 24 octobre2026
 
-Principal2.36. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
+Principal2.37. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
 ## Fonctions incluses
 
@@ -13,6 +13,13 @@ Principal2.36. Maintenez le premier bouton pendant le second geste. TRIG : touch
 **Filtres et effets:** Filtres pistes/Wizard inspires Polivoks, second LFO, MACRO Fine/Lo-Fi ; GATED, HALL, Ring Mod, ROOM, PS1, Vinyl, Reverb et Chorus 1/2 ; Phaser, DUCK, DUB, Ping Pong, Delay et Crush 1/2. Menus opaques appliques au relachement TRACK. Optimisations PS1/filtre cumulees. Les deux Shimmer et tous les modes combines sont retires.
 
 **Routage et travail:** MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif.
+
+## Nouveautes2.37 - WAVE pret a jouer
+
+| Fonction | Commandes | Comportement |
+|---|---|---|
+| Table initiale WAVE | Choisir WAVE et jouer | AV-WAVE-Morph est deja chargee : 16trames a parcourir, aucun import initial requis. COLOR choisit la position ; SHAPE ajoute le mouvement d enveloppe. Une table importee remplace la table initiale sur sa piste. |
+| Dossiers WAVE | BACK dans le navigateur WAVE | Remonte un dossier. A /Wavetables, BACK ferme la selection. Maintien et relachement apres une remontee laissent la vue ouverte. Chargement des tables avec YES/pad comme auparavant. |
 
 ## Nouveautes2.36 - Acid,SY BITS et Elder
 

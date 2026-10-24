@@ -264,3 +264,8 @@ User: “111 worked, push that to main”. Publish exact regular shared-filter11
 ## AveyCole supplied blurb update (2026-10-24)
 
 After main111, AveyCole supplied a full replacement English blurb and requested the existing layout. Preserve its spelling/punctuation, including Tiny,: and varie. Keep the eight feature bullets, new WAV/DX7 importer paragraph, READ callout, donation link and sign-off. French equivalent retained. New fixed-features block SHA256 `00da19e1c4ba5c0cd9de3190e39106aa70576916f5b0c9581671af684c4cd3a7`. Future releases preserve this new supplied text unless explicitly changed. Firmware remains exact111.
+
+
+## AveyCole main2.37 promotion (2026-10-24)
+
+User: "115 worked, go ahead and push that." Exact regular shared-filter v115 SHA256 `9305c3ae7727fde21bd63fec305a7cdb89ab0bf6f77332bf372f92848fdb476a`, MAIN `6bbae768295095d82d106606af79b24f76ff868f34e35b2fc5c85b7128bfaff4`. Includes WAVE boot starter, direct-entry fallback and BACK parent navigation, safe custom-file buffers. Hardware report accepted; publish exact bytes only. Adult stays private. Preserve the supplied flasher blurb byte for byte.

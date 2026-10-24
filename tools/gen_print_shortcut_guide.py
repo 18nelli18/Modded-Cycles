@@ -1,6 +1,6 @@
 """Guide imprime avec page Mod Setup, issu du guide HTML canonique."""
 from pathlib import Path
-import argparse
+import argparse,copy
 from html import escape
 from html.parser import HTMLParser
 from reportlab.platypus import SimpleDocTemplate,Paragraph,Spacer,Table,TableStyle,PageBreak,KeepTogether
@@ -98,7 +98,7 @@ def table(node,compact=False):
  t=Table([head]+rows,colWidths=([35,103]*4 if len(head)==8 else [87,166,299]),repeatRows=1,hAlign='LEFT')
  t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('BACKGROUND',(0,0),(-1,0),colors.HexColor('#e7ede4')),('LINEBELOW',(0,0),(-1,0),.6,accent),('LINEBELOW',(0,1),(-1,-1),.35,line),('LEFTPADDING',(0,0),(-1,-1),5),('RIGHTPADDING',(0,0),(-1,-1),5),('TOPPADDING',(0,0),(-1,-1),2 if compact else 4),('BOTTOMPADDING',(0,0),(-1,-1),2 if compact else 4)]))
  return t
-flow=[Paragraph('Supermodel Edition',styles['title']),Paragraph('Model:Cycles | '+('MIDI-input test '+args.test_version+' - no-filter / P-O-N' if args.test else 'Supermodel 2.36 - Features and shortcut guide'),styles['sub']),para(soup.select_one('main > p')),Spacer(1,7)]
+flow=[Paragraph('Supermodel Edition',styles['title']),Paragraph('Model:Cycles | '+('MIDI-input test '+args.test_version+' - no-filter / P-O-N' if args.test else 'Supermodel 2.37 - Features and shortcut guide'),styles['sub']),para(soup.select_one('main > p')),Spacer(1,7)]
 cards=soup.select('.grid .card');grid=[]
 for i in range(0,len(cards),2):grid.append([para(n) for n in cards[i:i+2]])
 ct=Table(grid,colWidths=[276,276]);ct.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('BACKGROUND',(0,0),(-1,-1),colors.HexColor('#f0f3ed')),('BOX',(0,0),(-1,-1),.4,line),('INNERGRID',(0,0),(-1,-1),.3,line),('LEFTPADDING',(0,0),(-1,-1),7),('RIGHTPADDING',(0,0),(-1,-1),7),('TOPPADDING',(0,0),(-1,-1),6),('BOTTOMPADDING',(0,0),(-1,-1),6)]));flow.append(ct)
@@ -111,7 +111,7 @@ pairs.insert(next(i for i,pair in enumerate(pairs) if text(pair[0])=='LFO and MA
 for h,t in pairs:
  title=text(h)
  if title in ('Effects','Machines and sound controls','MIDI Out machine','SPEAK word library','LEGACY voice library','SPEAK voice machine'):
-  flow.extend([PageBreak(),Paragraph(title,styles['title']),Paragraph('Supermodel 2.36 - Feature and shortcut reference',styles['sub'])])
+  flow.extend([PageBreak(),Paragraph(title,styles['title']),Paragraph('Supermodel 2.37 - Feature and shortcut reference',styles['sub'])])
  else:flow.append(section(title))
  if title=='Mod Setup':flow.extend([para(soup.select_one('p.mod-setup-intro')),Spacer(1,8)])
  flow.append(table(t,title in ('Effects','Sample Wizard and saving')))
@@ -122,9 +122,11 @@ def chrome(c,doc):
  c.setFillColor(accent);c.setFont('Helvetica-Bold',7);c.drawString(30,773,'SUPERMODEL EDITION | MODEL:CYCLES');c.setFont('Helvetica',7);c.drawRightString(582,773,f'Page {doc.page} / {pages}')
  c.setStrokeColor(line);c.line(30,25,582,25);c.setFont('Helvetica',6.5);c.drawString(30,15,'Features and shortcuts | 24 October 2026');c.drawRightString(582,15,'Stk = Stock | Startup: USB 2ch, numbers Off')
 doc=SimpleDocTemplate(str(out),pagesize=letter,rightMargin=30,leftMargin=30,topMargin=36,bottomMargin=34,title='Supermodel Edition - Features and Shortcuts',author='A.V.')
-doc.build(flow[:],onFirstPage=chrome,onLaterPages=chrome)
+# ReportLab modifie les tables pendant le decoupage : chaque passe repart
+# des objets frais pour stabiliser la pagination et son total imprime.
+doc.build(copy.deepcopy(flow),onFirstPage=chrome,onLaterPages=chrome)
 pages=len(PdfReader(out).pages)
-doc.build(flow[:],onFirstPage=chrome,onLaterPages=chrome)
+doc.build(copy.deepcopy(flow),onFirstPage=chrome,onLaterPages=chrome)
 r=PdfReader(out);assert len(r.pages)==pages,len(r.pages)
 alltext=' '.join(' '.join(p.extract_text().split()) for p in r.pages)
 for term in ('PLAY advances','STOP moves back','Mute: LTC','Num Off','harmony locks','sample browser must be open'):assert term in alltext,term

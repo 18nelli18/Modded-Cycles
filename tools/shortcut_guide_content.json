@@ -1,6 +1,6 @@
 {
-  "release": "2.36",
-  "stamp": "2026-10-24-acid-bits-elder-main-236",
+  "release": "2.37",
+  "stamp": "2026-10-24-wave-starter-browser-main-237",
   "cards": [
     {
       "en": [
@@ -44,6 +44,38 @@
     }
   ],
   "sections": [
+    {
+      "title": {
+        "en": "New in 2.37 - WAVE ready to play",
+        "fr": "Nouveautes2.37 - WAVE pret a jouer"
+      },
+      "rows": [
+        {
+          "en": [
+            "WAVE starter",
+            "Select WAVE and play",
+            "AV-WAVE-Morph is already loaded: 16 morphable frames, no first import required. COLOR selects position; SHAPE adds envelope movement. Custom tables replace the starter on their track."
+          ],
+          "fr": [
+            "Table initiale WAVE",
+            "Choisir WAVE et jouer",
+            "AV-WAVE-Morph est deja chargee : 16trames a parcourir, aucun import initial requis. COLOR choisit la position ; SHAPE ajoute le mouvement d enveloppe. Une table importee remplace la table initiale sur sa piste."
+          ]
+        },
+        {
+          "en": [
+            "WAVE folder navigation",
+            "BACK in the WAVE browser",
+            "Go up one folder. At /Wavetables, BACK closes the selector. Holding or releasing BACK after moving up leaves it open. Imported tables still load with the existing YES/pad controls."
+          ],
+          "fr": [
+            "Dossiers WAVE",
+            "BACK dans le navigateur WAVE",
+            "Remonte un dossier. A /Wavetables, BACK ferme la selection. Maintien et relachement apres une remontee laissent la vue ouverte. Chargement des tables avec YES/pad comme auparavant."
+          ]
+        }
+      ]
+    },
     {
       "title": {
         "en": "New in 2.36 - Acid, SY BITS and Elder",
