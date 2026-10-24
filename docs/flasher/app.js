@@ -27,7 +27,7 @@ const ELEKTRON_ST_DL = "https://www.elektron.se/support-downloads/syntakt";
 // same whole write or a mod applied on top of another through "requires").
 const REF_MAINOS = {
   // Modded Cycles OS 2.1: the tweaks of os.json, built by tools/build.py --os
-  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": "64d162a45abc8f54b2efd6473761e3a312755730e9981bdc194cbdb6c56a9b30",
+  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+out-sleep+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": "6c327f4519f9f409c91f410f22a2c06641b878dd1584ee1cb7cabbb6c0a497d7",
 };
 const REF_MODS = {
   "model-tg-st": {"w": "c4686bd09a145fd10a6424b7229e414a084fbbcc212b722e4ab7d3ecd7cb7931", "p": "e269630fe5251b58c2a5eb4298e3ab09b4e6fff9f38c254afecf121c8ad446c2"},
@@ -43,6 +43,7 @@ const REF_MODS = {
   "midi-live-both": {"w": "e7dfae924d6474abea22b375002ff58b1e3cde301aa9ca8a2ec980593316c942"},
   "mod-settings": {"w": "c3c023276e80295a9338a80d22711469620d4b4315ae2b1e0a85c9a61e31e9bb"},
   "lfo-plus": {"w": "8443b08fdb4ce7cf1ba26821b27e7df3ab4ca5396e35e7e9a8e591fc430569b6"},
+  "out-sleep": {"w": "2465ffb9e4159117a59d6b0d6f9c657d0c24c7f0eee1df922d6cd95d8dd25b91"},
   "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": {"w": "31d54bf9e59693eae8a3070c99a91e22426069d4a9c3687a8a91dcf87fee0eeb", "p": "ea2342a66dc316cc4a62484661fafa2fd8296b86ad502be954551193b1ab9318"},
 };
 
@@ -593,6 +594,9 @@ const FEAT = {
     "lfo-plus": { label: "LFO 2, 3, 4",
       short: "Three more LFOs per track: on the LFO page, press LFO again for LFO 2, 3 and 4.",
       desc: "On the LFO page, press [LFO] again: a big 2, then 3, then 4 shows in the left box, and the fifth press closes the page. Each extra LFO has its own speed, multiplier, waveform, destination and depth; fade, start phase and mode stay shared with LFO 1. LFO 2 is saved with the sound and can be p-locked; LFO 3 and 4 are for live play (one setting per track, not saved). Rewritten for this project from DavidCaruso's Model-TG-VA-DR-v1 firmware." },
+    "out-sleep": { label: "Lighter output stage",
+      short: "Delay, reverb, Dist and sends are not computed while they can't change the sound: more room for the machines, same sound.",
+      desc: "The stock OS computes its whole output stage at every block, even what can't change the sound. Here the delay and the reverb sleep as long as nothing goes in or comes out, the Dist saturator is skipped while VOL+DIST is at 60 or below, and sends at 0 are skipped. The sound is exactly the same, sample for sample. With the default settings (sends at 0, no Dist) that frees about a tenth of the processor; with the effects in use, a little. Once the delay or the reverb has been used, it stays awake until the next power-on (what is left in it never comes back to exactly zero). From the Optimised OS of this project, measured on a Model:Cycles." },
     "trig-preview": { label: "Trig preview",
       short: "Sequencer stopped or paused: hold a step and press PAGE to hear it, with its note, length and p-locks.",
       desc: "With the sequencer stopped or paused (after a MIDI Stop too), hold a step and press PAGE: the step plays with its own note, length and p-locks. By drumkilla, part of Model-TG, with this project's fix for the paused sequencer." },
@@ -670,6 +674,9 @@ const FEAT = {
     "lfo-plus": { label: "LFO 2, 3, 4",
       short: "Trois LFO de plus par piste : sur la page LFO, appuyez encore sur LFO pour LFO 2, 3 et 4.",
       desc: "Sur la page LFO, appuyez encore sur [LFO] : un grand 2, puis 3, puis 4 s'affiche dans le cadre de gauche, et le cinquième appui ferme la page. Chaque LFO de plus a sa vitesse, son multiplicateur, sa forme, sa destination et sa profondeur ; le fondu, la phase de départ et le mode restent communs avec LFO 1. LFO 2 est sauvé avec le son et se p-locke ; LFO 3 et 4 servent au live (un réglage par piste, pas sauvé). Réécrit pour ce projet d'après le firmware Model-TG-VA-DR-v1 de DavidCaruso." },
+    "out-sleep": { label: "Étage de sortie allégé",
+      short: "Delay, reverb, Dist et envois ne sont pas calculés tant qu'ils ne peuvent rien changer au son : plus de place pour les machines, le même son.",
+      desc: "L'OS d'origine calcule tout son étage de sortie à chaque bloc, même ce qui ne peut rien changer au son. Ici le delay et la reverb dorment tant que rien n'y entre ni n'en sort, le saturateur de la Dist est sauté tant que VOL+DIST est à 60 ou moins, et les envois à 0 sont sautés. Le son est exactement le même, échantillon par échantillon. Avec les réglages par défaut (envois à 0, pas de Dist), cela libère environ un dixième du processeur ; avec les effets en service, un peu. Une fois le delay ou la reverb servi, il reste éveillé jusqu'au prochain allumage (ce qui reste dedans ne revient jamais exactement à zéro). Repris de l'OS optimisé de ce projet, mesuré sur un Model:Cycles." },
     "trig-preview": { label: "Écoute d'un pas",
       short: "Séquenceur à l'arrêt ou en pause : maintenez un pas et appuyez sur PAGE pour l'entendre, avec sa note, sa longueur et ses p-locks.",
       desc: "Séquenceur à l'arrêt ou en pause (après un Stop MIDI aussi), maintenez un pas et appuyez sur PAGE : le pas joue avec sa note, sa longueur et ses p-locks. Par drumkilla, inclus dans Model-TG, avec le correctif de ce projet pour le séquenceur en pause." },

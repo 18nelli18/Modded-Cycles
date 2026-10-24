@@ -19,6 +19,7 @@
     "midi-live-both",
     "mod-settings",
     "lfo-plus",
+    "out-sleep",
     "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal"
   ],
   "machines": [
@@ -49,6 +50,8 @@
       "guide": "modal", "notes": "notes/74" },
     { "id": "lfo-plus", "cat": "sound", "tweaks": ["lfo-plus"], "status": "tested",
       "credit": { "kind": "based", "who": "DavidCaruso" }, "guide": "lfo-plus", "notes": "notes/56" },
+    { "id": "out-sleep", "cat": "sound", "tweaks": ["out-sleep"], "status": "experimental",
+      "credit": null, "guide": "out-sleep", "notes": "notes/78, 70" },
     { "id": "trig-preview", "cat": "seq", "tweaks": [], "status": "tested",
       "credit": { "kind": "by", "who": "drumkilla", "repo": "drumkilla/elektron-model-tweaks" }, "license": "LICENSE-elektron-model-tweaks",
       "guide": "preview", "notes": "notes/15, 34" },

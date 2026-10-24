@@ -41,6 +41,7 @@ project's guide calls the back key **BACK**. This file uses **MACHINES** and **B
    - [2.6 LFO 2, 3, 4](#26-lfo-2-3-4)
    - [2.7 Order of the machines in the OS](#27-order-of-the-machines-in-the-os)
    - [2.8 Load governor](#28-load-governor)
+  - [2.9 Lighter output stage](#29-lighter-output-stage)
 3. [Sequencer](#3-sequencer)
    - [3.1 Arpeggiator](#31-arpeggiator)
    - [3.2 Easier trig removal](#32-easier-trig-removal-trig-hold)
@@ -467,6 +468,22 @@ Not a feature you play, but it shapes every heavy machine above (guide, "Process
   Model-TG is recording or slice-editing.
 - Advice from the guide when notes get cut: lower the volume of the track you can spare most, mute what you don't
   hear, shorten long decays, or use the delay and reverb less (about 12 % of the processor).
+
+### 2.9 Lighter output stage
+
+Not a feature you play: it gives the machines more room (guide, "Lighter output stage"; notes/78, 70). Status:
+experimental in this OS.
+
+- The stock OS computes its whole output stage at every block (Volume + Dist, sends, delay, reverb, mix, master), even
+  what can't change the sound. Skipped here, the sound exactly the same:
+  - the delay and the reverb while everything they read is zero (no send above 0 since power-on);
+  - the Dist saturator of a pair of tracks while the wet part is zero (VOL+DIST at 60 or below on both);
+  - a send whose gains and slopes are all zero.
+- Once used, the delay and the reverb stay awake until the next power-on: what is left in them never comes back to
+  exactly zero.
+- Gain: about a tenth of the processor with the default settings (cost model: −11 points; the same code measured on
+  a Model:Cycles with the stock OS on 18/10/2026: −10); −2 with the effects in use.
+- Origin: the output-stage part of the Optimised OS (7.3), the same 16 writes, byte for byte.
 
 ---
 
@@ -1169,8 +1186,9 @@ p-locks on added parameters goes with it.
 sends, PUNCH off) and fixes two freezes of Elektron's OS. Measured on the machine: average load 72 → 20 % stopped,
 77 → 65 % playing, same sound.
 
-**Why it's out.** Not compatible with Model-TG, MACRO, ACID or the Syntakt engines. Porting it to the single OS is the
-first job of the feature freeze.
+**Why it's out.** Its output-stage part is now in the OS ([2.9](#29-lighter-output-stage)). The rest (silent voices,
+mix2, PUNCH) works inside the voice loop, which Model-TG and the added machines replace; the two freeze fixes are a
+separate change, still to bring.
 
 **Origin.** This project, notes/70, on branch `claude/os-optimise` (not in this branch). **Status:** two test files
 flashed by Maxime on 18/10/2026, "same sound" (notes/70); its flasher status is not in this branch.

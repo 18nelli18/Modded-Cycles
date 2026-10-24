@@ -46,6 +46,7 @@ sends it to the machine over USB. Going back to the official firmware is one cli
 | **ACID machine** | Machine 14: an acid bass in the style of the TB-303, with cutoff, resonance, env mod, drive, saw or square, and slides from your trigs. | [RobinSchmidt/Open303](https://github.com/RobinSchmidt/Open303), MIT | ✅ Tested |
 | **MODAL machine** | Machine 15: a resonator after Mutable Instruments Rings, struck or plucked by each trig: bars and bells, a string, sympathetic strings, strings tuned to a chord. `SHAPE` picks the model, `FUNC` + `SHAPE` sets 1, 2 or 4 voices. | Rings, [pichenettes/eurorack](https://github.com/pichenettes/eurorack), MIT | 🧪 Experimental |
 | **LFO 2, 3, 4** | Three more LFOs per track: on the LFO page, press `LFO` again. LFO 2 is saved with the sound and can be p-locked. | After DavidCaruso | ✅ Tested |
+| **Lighter output stage** | The delay and the reverb sleep while nothing goes in, the Dist saturator and sends at 0 are skipped: about a tenth of the processor freed with the default settings, the sound exactly the same. | This project (Optimised OS) | 🧪 Experimental |
 | **Arpeggiator** | Hold several notes with `RETRIG` and they arpeggiate; `FUNC` + `RETRIG` sets direction and range, saved with the pattern. | This project | ✅ Tested |
 | **Step record** | Sequencer stopped, press `REC` twice: each note you play (TRIG keys, pads, MIDI) lands on the blinking step. `PLAY` skips, `STOP` goes back; knobs turned first become p-locks. | This project | ✅ Tested |
 | **Easier trig removal** | A quick press on a step that holds a trig removes it, instead of opening it as a hold. | This project | ✅ Tested |
@@ -75,8 +76,9 @@ website explains each one step by step, with the buttons to press.
 
 - **Per-track filter**: stores its settings where LFO 2, 3, 4 store theirs, and does not work with Model-TG. It
   comes back once the Sampler side is rewritten.
-- **Optimised OS** (the same sound with far less processor work): not compatible with the Sampler, MACRO, ACID and
-  the Syntakt engines yet. Porting it to the OS is the next job.
+- **Optimised OS** (the same sound with far less processor work): its output-stage part is in the OS (Lighter output
+  stage, above); its voice part does not work with the Sampler, the Syntakt engines, MACRO, ACID and MODAL, which
+  handle their voices themselves.
 - **MIDI OUT while in THRU**: the live toggle above does the same and more.
 - **Chord Keys** was removed from the project on 18/10/2026 because of conflicts with the rest. Thanks to Nico
   Heuser for it; its code stays in the git history.
