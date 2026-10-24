@@ -1,2 +1,2 @@
-/* Preuve canonique de livraison du principal115. */
-require("./test_v115_delivery.js");
+/* Livraison canonique exacte du principal121, blurb fourni protege. */
+require("./test_v121_delivery.js");

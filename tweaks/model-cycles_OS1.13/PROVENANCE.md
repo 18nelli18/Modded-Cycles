@@ -188,3 +188,8 @@ Sauvegarde rapide, sortie mute (17/10/2026) : recette payload quick-save-exit co
 ### Supermodel main2.37 — WAVE115
 
 WAVE et convertisseur existants : Kevin-Shallvari/Modded-Cycles, revision5b6108ee57cdee4767f91bfb894ccefaadf4210d, MIT. Table AV-WAVE-Morph originale du projet ; precharge, detours directs et BACK par cette recette. Voir notes/165-wave-precharge-et-retour.md. Image reguliere115 exacte approuvee par AveyCole ; aucun lexique adulte ajoute.
+
+
+### Supermodel main2.38 — pattern FX121
+
+Module original de persistance FX par pattern autour des codecs natifs OS1.13, sans changer leurs tailles ; recettes uniquement. WAVE existant Kevin-Shallvari/Modded-Cycles, MIT, revision5b6108ee57cdee4767f91bfb894ccefaadf4210d : gain x2 saturant ajoute en sortie. Table originale AV-WAVE-Morph conservee. Voir notes166/167. Image reguliere121 exacte approuvee par AveyCole ; aucun lexique adulte.

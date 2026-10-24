@@ -1,6 +1,6 @@
 {
-  "release": "2.37",
-  "stamp": "2026-10-24-wave-starter-browser-main-237",
+  "release": "2.38",
+  "stamp": "2026-10-24-pattern-fx-wave-level-main-238",
   "cards": [
     {
       "en": [
@@ -44,6 +44,50 @@
     }
   ],
   "sections": [
+    {
+      "title": {
+        "en": "New in 2.38 - Pattern FX and louder WAVE",
+        "fr": "Nouveautés 2.38 - FX par pattern et WAVE plus fort"
+      },
+      "rows": [
+        {
+          "en": [
+            "Pattern FX",
+            "TRACK + REVERB SIZE / DELAY TIME",
+            "Each pattern remembers its selected FX types and all added FX controls, including extra sends. Save the project to keep these settings after reloading. Native send and reverb/delay parameters keep their normal pattern behavior."
+          ],
+          "fr": [
+            "FX par pattern",
+            "TRACK + REVERB SIZE / DELAY TIME",
+            "Chaque pattern garde ses types FX et tous les réglages ajoutés, dont les envois supplémentaires. Sauvegardez le projet pour les retrouver au chargement. Les paramètres natifs gardent leur comportement habituel par pattern."
+          ]
+        },
+        {
+          "en": [
+            "Blank and queued patterns",
+            "Select or queue a pattern",
+            "A blank pattern starts with standard Delay, standard Reverb and default added FX settings. Edits stay with that pattern. A queued pattern changes the FX only when it begins playing."
+          ],
+          "fr": [
+            "Patterns vierges et en attente",
+            "Choisir ou mettre un pattern en attente",
+            "Un pattern vierge commence avec Delay et Reverb standard et les réglages ajoutés par défaut. Les modifications restent avec ce pattern. Les FX changent au début réel du pattern en attente."
+          ]
+        },
+        {
+          "en": [
+            "Louder WAVE",
+            "Select WAVE and play",
+            "Output is boosted by 6 dB for the starter and imported tables. Track LEVEL/DIST still controls the listening level."
+          ],
+          "fr": [
+            "WAVE plus fort",
+            "Choisir WAVE et jouer",
+            "Sortie augmentée de 6 dB pour la table initiale et les tables importées. LEVEL/DIST règle toujours le niveau de la piste."
+          ]
+        }
+      ]
+    },
     {
       "title": {
         "en": "New in 2.37 - WAVE ready to play",
@@ -470,12 +514,12 @@
           "en": [
             "GATED reverb",
             "REVERB SEND / SIZE; FUNC + SIZE; SETTINGS + SIZE",
-            "Gated Send / Gate Time; Pre-delay; Tone. Gate Time 0-127: about 40 ms-6.7 s after input falls quiet. Pre-delay 0-568 ms, 1 ms steps through 64 then 8 ms. No added echoes; dry hit stays immediate and the gate follows the delayed sound. Try Gate Time 16-32, Pre-delay 25-40 ms on a snare. Global gate/pre-delay save while stopped."
+            "Gated Send / Gate Time; Pre-delay; Tone. Gate Time 0-127: about 40 ms-6.7 s after input falls quiet. Pre-delay 0-568 ms, 1 ms steps through 64 then 8 ms. No added echoes; dry hit stays immediate and the gate follows the delayed sound. Try Gate Time 16-32, Pre-delay 25-40 ms on a snare. Gate Time and Pre-delay belong to each pattern; save the project to preserve them after reloading."
           ],
           "fr": [
             "Reverb GATED",
             "REVERB SEND / SIZE ; FUNC + SIZE ; SETTINGS + SIZE",
-            "Gated Send / Gate Time ; Pre-delay ; Tone. Gate Time 0-127 : environ 40 ms-6,7 s apres le signal. Pre-delay 0-568 ms : pas de 1 ms jusqu a 64 puis 8 ms. Sans echos ajoutes ; dry immediat, gate apres le signal retarde. Essayer Gate Time 16-32 et Pre-delay 25-40 ms sur caisse claire. Reglages globaux sauvegardes a l arret."
+            "Gated Send / Gate Time ; Pre-delay ; Tone. Gate Time 0-127 : environ 40 ms-6,7 s apres le signal. Pre-delay 0-568 ms : pas de 1 ms jusqu a 64 puis 8 ms. Sans echos ajoutes ; dry immediat, gate apres le signal retarde. Essayer Gate Time 16-32 et Pre-delay 25-40 ms sur caisse claire. Gate Time et Pre-delay sont propres à chaque pattern ; sauvegardez le projet pour les conserver."
           ]
         },
         {
@@ -494,12 +538,12 @@
           "en": [
             "Ring Mod",
             "REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE",
-            "Ring Send per track / Frequency / Depth. Metallic sine ring modulation replaces the reverb return. Select RING MOD below Chorus 1/2. Global Frequency and Depth; use the native track Send for locks."
+            "Ring Send per track / Frequency / Depth. Metallic sine ring modulation replaces the reverb return. Select RING MOD below Chorus 1/2. Frequency and Depth shared by tracks in this pattern; use the native track Send for locks."
           ],
           "fr": [
             "Ring Mod",
             "REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE",
-            "Ring Send par piste / Frequency / Depth. Modulation en anneau sinusoidale metallique dans le slot reverb. RING MOD sous Chorus 1/2. Frequency et Depth globaux ; locks via le Send natif."
+            "Ring Send par piste / Frequency / Depth. Modulation en anneau sinusoidale metallique dans le slot reverb. RING MOD sous Chorus 1/2. Frequency et Depth partagés par les pistes du pattern ; locks via le Send natif."
           ]
         },
         {
@@ -625,13 +669,13 @@
         {
           "en": [
             "Effect settings and save",
-            "Release TRACK; stop playback",
-            "FX modes and added controls save after playback stops. Added FX controls have no p-lock/LFO destinations; native track sends retain their locks. Both Shimmers and all combined modes are removed. Old combined preferences select their standalone effect; old Shimmer/Cloud preferences select DELAY."
+            "Save Project",
+            "FX types and added controls belong to each pattern; save the project to preserve them after reloading. Blank patterns use standard Delay/Reverb and default added controls. Added FX controls have no p-lock/LFO destinations; native track sends retain their locks. Both Shimmers and all combined modes are removed."
           ],
           "fr": [
             "Reglages et sauvegarde FX",
-            "Relacher TRACK ; arreter la lecture",
-            "Modes FX et commandes ajoutees sauvegardes apres arret. Sans nouvelles destinations p-lock/LFO ; sends natifs conservent les locks. Les deux Shimmer et tous les modes combines sont retires. Anciens combines vers effet seul ; anciens Shimmer/Cloud vers DELAY."
+            "Sauvegarder le projet",
+            "Types FX et réglages ajoutés propres à chaque pattern ; sauvegardez le projet pour les retrouver au chargement. Les patterns vierges utilisent Delay/Reverb standard et les réglages ajoutés par défaut. Pas de destination p-lock/LFO pour les réglages ajoutés ; les envois natifs gardent leurs verrous. Shimmers et modes combinés retirés."
           ]
         }
       ]

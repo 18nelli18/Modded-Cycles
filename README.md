@@ -171,3 +171,6 @@ Swarm LITE replaces the original seven-oscillator Swarm in the main flasher: fun
 
 
 Main 2.37 serves the user-tested v115: WAVE includes the AV-WAVE-Morph starter table, custom tables still override it, and BACK goes up folders before closing at /Wavetables. [Controls and printable guide](docs/flasher/shortcut-guide.html).
+
+
+Main 2.38 serves the user-tested v121: selected FX types and added settings belong to each pattern. Blank patterns start with standard Delay/Reverb; queued switches apply when the pattern starts. Save the project to preserve these settings after reloading. WAVE output gains 6 dB. [Current controls and printable guide](docs/flasher/shortcut-guide.html). [WAV/DX7 importers and resource links](docs/flasher/convert.html).

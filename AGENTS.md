@@ -269,3 +269,8 @@ After main111, AveyCole supplied a full replacement English blurb and requested 
 ## AveyCole main2.37 promotion (2026-10-24)
 
 User: "115 worked, go ahead and push that." Exact regular shared-filter v115 SHA256 `9305c3ae7727fde21bd63fec305a7cdb89ab0bf6f77332bf372f92848fdb476a`, MAIN `6bbae768295095d82d106606af79b24f76ff868f34e35b2fc5c85b7128bfaff4`. Includes WAVE boot starter, direct-entry fallback and BACK parent navigation, safe custom-file buffers. Hardware report accepted; publish exact bytes only. Adult stays private. Preserve the supplied flasher blurb byte for byte.
+
+
+## AveyCole main 2.38 promotion (2026-10-24)
+
+User: "121 worked push to main". Publish the exact regular shared-filter v121 SHA256 `8c2ed40ff1687dfa9ecaace5234b902133db1df45bb266d94f0ecfa0b5d4c834`, MAIN `cb9b7745abb1b349ed42ea0183a1c1713927d7ff9ab858e6850df7726ba3f296`. Pattern FX types/settings/sends, blank defaults, actual queued activation and WAVE +6 dB. Includes the v120 startup repair confirmed by the user before pattern work. Do not incorporate later lab refinements. Adult stays private. User additionally requests resource links on the combined importer page. Preserve the supplied flasher blurb byte for byte: "Don't edit the blurb."

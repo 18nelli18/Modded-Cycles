@@ -264,3 +264,6 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [164 — ACID, SY BITS et Elder](164-acid-detune-bits-niveau-elder.md) | Principal2.36 : exact111 regulier teste, DECAY filtre/Accent, detune fin et popup compact live, Elder+6dB ; blurb preserve. |
 
 | [165 — WAVE precharge et retour](165-wave-precharge-et-retour.md) | Principal2.37 : exact115 regulier teste ; table initiale, chargement natif et BACK parent ; blurb preserve. |
+
+| [166 — FX par projet](166-fx-par-projet.md) | Historique116–120, reentrance119 retiree, correction120 confirmee sur appareil. |
+| [167 — FX par pattern et WAVE](167-fx-par-pattern-et-niveau-wave.md) | Principal2.38, exact121 approuve :36champs par pattern, defauts vierges, activation queuee, WAVE+6dB. |
