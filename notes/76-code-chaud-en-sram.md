@@ -21,7 +21,7 @@ Générateur `tools/gen_sram_hot.py` (appelé par `tools/gen_modal.py` : le char
 | Chargeur : unités, corrections, détours, régions rendues | `[FAIT]` en émulation (§4, §5) |
 | Son identique, chargeur inerte contre chargeur lancé | `[FAIT]` en émulation, toutes les machines, changements de machine compris (§6) |
 | Gain | `[HYP]` modèle : 1 488 → 441 lignes lues en DDR2 par bloc sur un projet d'origine, les autres lues en SRAM ; à mesurer (§7) |
-| Sur la machine | à tester (§9) |
+| Sur la machine | `[FAIT]` pas plus rapide, un peu plus lent (TOTAL 80 → 86 %) : **pas livré** ([77 §2](77-cout-sur-la-machine.md)) |
 
 ## 1. Pourquoi : le code relu à chaque bloc
 
@@ -211,10 +211,23 @@ Modèle du cache d'instructions (§1), le code en SRAM compris (§3), cache gard
 - MODAL en unités plus fines (ses boucles chaudes hors des grosses fonctions).
 - Selon la mesure : RAMBAR « instructions et données » (§3), `hot_tab` en SRAM.
 
+## 11. Mesure sur la machine (23/10/2026)
+
+Projet MODAL, SNARE, METAL, ACID, KICK, CPVtg, firmware de mesure sans puis avec le code chaud : TOTAL 80 → 86 %,
+VOICES 41 → 49 %, charge de Model-TG 80 → 81 %. Détail et explication dans [77 §2](77-cout-sur-la-machine.md) :
+
+- une ligne de code en SRAM coûte 16 cycles (8 dans le cache, 31 en DDR2) : la moitié du gain espéré au mieux ;
+- avec un moteur du Syntakt dans le projet, il ne reste que 5,2 Ko de place ;
+- les talons cassent la prédiction des `rts` (pile de retour du V4) et ajoutent des lignes en SDRAM à chaque appel.
+
+Le modèle étalonné (`tools/emu/hwcost.py`) le reproduit (+2,4 points). Le chargeur reste dans la PR #108, en
+brouillon, sans être livré.
+
 ## Chronologie
 
 - 22/10/2026 : demande de Maxime ; inventaire, prototype en Python (sortie identique, défauts du cache 1 377 → 141
   dans un modèle qui comptait la SRAM hors cache).
+- 23/10/2026 : mesuré sur la machine par Maxime : plus lent, pas livré (§11).
 - 23/10/2026 : chargeur en C, profil, générateur, preuve ; RAMBAR du bootstrap relu : le code en SRAM passe par le
   cache d'instructions (§3), modèle refait, cache vidé après chaque recopie (ici et dans le firmware de mesure).
 
