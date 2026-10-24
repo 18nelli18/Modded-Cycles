@@ -322,6 +322,53 @@ réverb ni de la voix FM ».
   contre 16 044 / 18 840 / 17 043 une fois séparé ; 16 083 / 18 846 / 17 075 avant le retrait).
 - Place : code et tables 34 916 o (44 308 avant) ; l'image finit en `0x401fd316`, 11 498 o de marge (6 204 avant).
 
+### 5.5 Ce que coûte MODAL sur la machine (23 et 24/10/2026)
+
+Relevé de Maxime (notes/77 §1) : une piste MODAL prend 30 % sur la page System de Model-TG, plus que les cinq autres
+pistes ensemble. Le décompte d'instructions ne le montrait pas. Le modèle du coût sur la machine (`tools/emu/hwcost.py`,
+notes/77 §3) le reproduit : à chaque bloc, MODAL relit en DDR2 presque tout le code qu'il exécute (180 à 400 lignes de
+16 o, 23 cycles chacune), attend l'EMAC, et lit ses lignes à retard hors du cache.
+
+Demande de Maxime (24/10/2026) : « commence par le point 1 » (notes/77 §6 : sans changer le son). Ce qui est fait :
+
+- **Lecture et écriture des cordes, deux échantillons à la fois** (`modal_str_read`, `modal_str_read_mv`,
+  `modal_str_write`, `modal_str_write_mv`) : la lecture d'un accumulateur juste après un MAC vers lui attend 3 cycles
+  (MCF5441x RM §5.3.3) ; chaque échantillon y enchaîne 3 produits arrondis (Hermite) ou 2 (le peigne). Deux
+  échantillons se croisent sur les 4 accumulateurs, l'arrondi de chaque `qmulr` entre avant son produit (la même somme
+  exacte). Lecture : les deux fenêtres de 4 mots se recouvrent (5 mots lus). Écriture : les écritures et lectures
+  dans l'ordre du C (le peigne peut lire ce que l'échantillon d'avant vient d'écrire). Le dernier d'un nombre impair,
+  seul. Attentes de l'EMAC des cordes sympathiques et en accord : 2 900 → 1 500 cycles par bloc.
+- **`modal_update` sans calcul quand rien ne bouge** : ni trig, ni potard, ni note depuis le dernier calcul complet,
+  et ce calcul a redonné le même état (l'hystérésis de l'accord en place) ; seul `strum` retombe. 24 lignes de code de
+  moins relues par bloc.
+- Essayé, rejeté : tout MODAL en `-Os` (26,5 Ko au lieu de 35, mais autant de lignes exécutées par bloc et plus
+  d'instructions : +1,5 à +3 points).
+- Ce qui reste n'est pas exact à enlever : la saturation de l'EMAC (MACSR `0xa0`) coûte un cycle à chaque lecture
+  d'accumulateur (table 3-18), 700 à 2 000 cycles par bloc ; un mode qui résonne peut dépasser la pleine échelle, la
+  saturation reste.
+
+Modèle du coût sur la machine (piste MODAL seule, les défauts de MODAL : COLOR 64, SWEEP 40, CONTOUR 36, DECAY 64 ;
+en % d'un bloc à 250 MHz) :
+
+| SHAPE | Avant | Après |
+|---|---|---|
+| 0 modal | 16,7 % | 16,3 % |
+| 1 cordes sympathiques | 26,3 % | 25,4 % |
+| 2 corde, 1 voix | 17,8 % | 17,5 % |
+| 3 cordes en accord | 26,1 % | 25,0 % |
+| 2 corde, 4 voix | 33,8 % | 33,4 % |
+
+- Moins que les 2 points annoncés : les noyaux plus longs ajoutent des lignes de code relues à chaque bloc (environ
+  30), qui reprennent la moitié du gain.
+- **Preuves** : le banc ColdFire du cœur (`build/modal_cf/eq2.py`, 140 blocs : les 3 modèles à cordes, 1, 2 et 4 voix,
+  réglages fixes et qui bougent) identique à l'octet près, chaque instruction des quatre noyaux exécutée (le dernier
+  échantillon impair aussi, au passage de la tête d'écriture en 0) ; dans l'OS, l'ancien tweak contre le nouveau sur
+  6 projets tirés au hasard (4 pistes MODAL, tous les modèles et polyphonies, trigs, potards tournés, changements de
+  modèle, 160 blocs) : la sortie des 6 pistes identique ; `test_modal.py` complet.
+- Plus de gain demanderait d'approcher le son (avec l'accord de Maxime) : lignes à retard sur 16 bits, moins de modes,
+  ou la boucle par échantillon de la corde (SHAPE 2) en assembleur, qui ne sert qu'aux STRUCTURE très basses ou très
+  hautes et aux réglages qui bougent.
+
 ## 6. Preuves `[FAIT en émulation]`
 
 ### 6.1 Le cœur contre Rings (`tools/emu/test_modal_dsp.py`)
@@ -432,3 +479,5 @@ Demandé par Maxime, pas dans cette version. Ce qu'il faudra :
   « phase d'optimisation intense » : §5.2.
 - 21/10/2026 : les potards qui bougent (§5.3).
 - 22/10/2026 : les 3 modèles cachés de Rings expliqués ; la voix FM et la corde et réverbe retirées (§5.4).
+- 24/10/2026 : le coût sur la machine (Maxime : 30 % pour une piste) ; les cordes sans attente de l'EMAC, `modal_update`
+  sans calcul quand rien ne bouge (§5.5).

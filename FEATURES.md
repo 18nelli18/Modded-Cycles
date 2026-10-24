@@ -387,10 +387,10 @@ egg). The code is Rings' own DSP (the `Part` of
 - One output: odd minus even, as Rings mixes them when only one jack is plugged.
 - No audio input: always Rings' internal exciter (a filtered click or a burst of noise). Using a
   sample as the exciter, chosen in the preset menu, is the next step (asked by Maxime, not in this version).
-- Heavy: 11 400 (string, 1 voice) to 32 000 (string, 4 voices) instructions per block in the emulator, with the
-  hottest loops written in ColdFire assembly; the modal model with 1 voice, 16 000, about 3 Tone voices.
-  A knob that moves all the time (an LFO on COLOR, CONTOUR or DECAY) costs more: up to 26 000 on the modal model,
-  27 000 on the sympathetic strings. One or two MODAL tracks with the rest. The load governor
+- Heavy: on a Model:Cycles a MODAL track takes about 16 % of the processor (modal model, string on 1 voice), 25 %
+  (sympathetic strings, chords), 33 % (string on 4 voices), from the cost model calibrated on a measurement on the
+  machine (notes/77; Maxime measured 30 % for one track). The hottest loops are in ColdFire assembly. A knob that moves
+  all the time (an LFO on COLOR, CONTOUR or DECAY) costs more. One or two MODAL tracks with the rest. The load governor
   looks after MODAL too.
 - The very first MODAL note after power-on starts about 13 ms late (tables computed over 20 blocks).
 - GATE, PUNCH and FINE do nothing (FINE holds the polyphony). The note is limited to MIDI 0..127, as on Rings.
