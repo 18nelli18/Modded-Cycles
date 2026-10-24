@@ -47,6 +47,10 @@ static s32 sample(State*s,u32 inc,u32 bank,u32 speed,u32 articulation){
 #endif
  noise=noise*(s32)(64+articulation)>>7;
  s32 x=voice+noise,sum=0;u32 smooth=5-(articulation>>5);
+#ifdef SP_SOFT
+ /* Formants moins brusques pendant les transitions consonne/voyelle. */
+ smooth++;
+#endif
  for(u32 k=0;k<3;k++){
   const Resonator*r=&SP_RESONATORS[bank][id][k];const s32 target[3]={r->a1,r->a2,r->b};
   for(u32 j=0;j<3;j++)s->coef[k][j]+=(target[j]-s->coef[k][j])>>smooth;
@@ -112,7 +116,14 @@ void speak_update(s32 pmod,char*v,const char*p){struct Track*t=track(v);
 }
 void speak_render(s32*out,char*v){struct Track*t=track(v);u32 a=V32(0x230)<0?0u-(u32)V32(0x230):(u32)V32(0x230),b=V32(0x234)<0?0u-(u32)V32(0x234):(u32)V32(0x234);
  if(!V32(0x34)&&!V32(0x38)&&a<(1<<14)&&b<(1<<14)){for(u32 i=0;i<32;i++)out[i]=0;return;}
- speak_block(&t->state,&t->in,out);((void(*)(char*))0x400a9252)(v);((void(*)(s32*,char*))0x400a9430)(out,v);
+ speak_block(&t->state,&t->in,out);
+#ifdef SP_SPEED_FIX
+ /* Un silence phonemique n est pas une voix terminee. Garder le compteur
+  * idle sous son seuil pendant le mot, sans changer stolen/fading/pressure.
+  * Une enveloppe eteinte retourne ci-dessus ; un mot fini redevient idle. */
+ if(!t->state.done)*(volatile u8*)(0x4673205eu+((u32)v-0x42308828u)/0x31c)=0;
+#endif
+ ((void(*)(char*))0x400a9252)(v);((void(*)(s32*,char*))0x400a9430)(out,v);
 }
 extern u32 speak_previous_popup(u32,u32,u32,s32,u32,u32);
 u32 speak_popup(u32 view,u32 canvas,u32 desc,s32 value,u32 flags,u32 last){

@@ -233,3 +233,7 @@ AveyCole requests "push v70" after praising PS1 reverb in v69. Publish exact sha
 ## AveyCole main 2.30 promotion (2026-10-23)
 
 AveyCole reports “that worked, push v85 with updated controls and such”. Publish exact shared-filter v85, SHA256 `96f97b9fb98056978b3b30c039e43db28183cc6324d076b50f84e3d790de194a`, MAIN `7912d7c2912da1bd42ef47a607465f32267d34e0ea77dd53a951fb343247c938`, through the existing tracked fixed-main image only. Includes SPEAK with calibrated level and softened consonants, fresh SCRAMBLE deletion, immediate native Reverb formatting, cumulative PS1/filter CPU work and the FUNC tap/hold DX shortcut. Both Shimmers and all combined FX modes are removed. Preserve all private comparisons. Update EN/FR controls and printable PDF. The subsequent adult SPEAK word-bank request is private only and must never enter this public release.
+
+## AveyCole main 2.31 promotion (2026-10-23)
+
+Explicit request: “perfect put the non swear version on main”, clarified “of v87”. Publish exact regular shared-filter v87 SHA256 `97d4c95a3ab7c7e5b8e5a8bb9eb10d6d004bb03a52a3937d2d6ff03ba71570bf`, MAIN `4f2800f2d7218118788a4fbd284b5486487836253649215e9fe047eb845f5b61`. The regular 128-word bank stays intact. Includes softer noisy consonants and SPEAK idle-counter handling during unfinished words; true pressure/stolen/fading rules remain. No adult bank, DUB or ROOM is authorized for this public release. Update EN/FR controls and PDF. Private files remain separate.

@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.30 - 23 October 2026
+Supermodel 2.31 - 23 October 2026
 
-Main 2.30. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.31. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
@@ -65,8 +65,8 @@ Main 2.30. Hold the first button while pressing the next button or turning the n
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Select SPEAK | MACHINES: after Shadow, immediately before MIDI Out | Original 128-word formant speech engine. Microphone icon; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Softer consonants and calibrated output: start around Vol+Dist 60 with Punch off. |
-| Voice / Word / Speed / Articulation | COLOR / SHAPE / SWEEP / CONTOUR | Voice/formant character / Word 0-127 / Speed (64 normal, lower slower) / Articulation. SHAPE popup shows the word and index. Word changes latch at the next trig; the other three controls remain live. |
+| Select SPEAK | MACHINES: after Shadow, immediately before MIDI Out | Original 128-word formant speech engine. Microphone icon; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Softer consonants and calibrated output: start around Vol+Dist 60 with Punch off. v87 further reduces noisy consonant harshness while retaining vowel level. |
+| Voice / Word / Speed / Articulation | COLOR / SHAPE / SWEEP / CONTOUR | Voice/formant character / Word 0-127 / Speed (64 normal, lower slower) / Articulation. SHAPE popup shows the word and index. Word changes latch at the next trig; the other three controls remain live. Slow words now continue through quiet phoneme gaps; the idle detector no longer suspends unfinished speech. |
 | Pitch and envelope | PITCH / notes; DECAY, Fine, Punch, Gate, Attack | Pitch changes independently of word speed. Begin with Decay 127 to hear complete words. Existing filters and FX sends apply. Each track has its own speech state. |
 | Word sequences and modulation | Hold a trig + SHAPE, then lock Pitch and other knobs normally | Word and other native parameters support p-locks and LFO destinations. COLOR/SHAPE/SWEEP/CONTOUR use MIDI CC 16/17/18/19. Leave space for the word or increase Speed. |
 | Example sentence | SHAPE words and note locks on successive trigs | HELLO 31, I 0, AM 62, A 17, ROBOT 113, I 0, LOVE 35, MUSIC 106. Full indexed word library follows at the end of this guide. |

@@ -1,6 +1,6 @@
 {
-  "release": "2.30",
-  "stamp": "2026-10-23-speak-main-230",
+  "release": "2.31",
+  "stamp": "2026-10-23-speak-main-231",
   "cards": [
     {
       "en": [
@@ -462,24 +462,24 @@
           "en": [
             "Select SPEAK",
             "MACHINES: after Shadow, immediately before MIDI Out",
-            "Original 128-word formant speech engine. Microphone icon; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Softer consonants and calibrated output: start around Vol+Dist 60 with Punch off."
+            "Original 128-word formant speech engine. Microphone icon; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Softer consonants and calibrated output: start around Vol+Dist 60 with Punch off. v87 further reduces noisy consonant harshness while retaining vowel level."
           ],
           "fr": [
             "Choisir SPEAK",
             "MACHINES : apres Shadow, juste avant MIDI Out",
-            "Moteur vocal original a formants, 128 mots anglais. Icone microphone ; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Consonnes adoucies, niveau calibre : commencer vers Vol+Dist 60, Punch coupe."
+            "Moteur vocal original a formants, 128 mots anglais. Icone microphone ; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Consonnes adoucies, niveau calibre : commencer vers Vol+Dist 60, Punch coupe. v87 adoucit davantage le bruit des consonnes en conservant le niveau des voyelles."
           ]
         },
         {
           "en": [
             "Voice / Word / Speed / Articulation",
             "COLOR / SHAPE / SWEEP / CONTOUR",
-            "Voice/formant character / Word 0-127 / Speed (64 normal, lower slower) / Articulation. SHAPE popup shows the word and index. Word changes latch at the next trig; the other three controls remain live."
+            "Voice/formant character / Word 0-127 / Speed (64 normal, lower slower) / Articulation. SHAPE popup shows the word and index. Word changes latch at the next trig; the other three controls remain live. Slow words now continue through quiet phoneme gaps; the idle detector no longer suspends unfinished speech."
           ],
           "fr": [
             "Voice / Word / Speed / Articulation",
             "COLOR / SHAPE / SWEEP / CONTOUR",
-            "Caractere vocal/formants / Word 0-127 / Speed (64 normal, plus bas plus lent) / Articulation. SHAPE affiche mot et index. Mot pris au prochain trig ; autres commandes en direct."
+            "Caractere vocal/formants / Word 0-127 / Speed (64 normal, plus bas plus lent) / Articulation. SHAPE affiche mot et index. Mot pris au prochain trig ; autres commandes en direct. Les mots lents continuent dans les silences phonemiques ; le detecteur idle ne suspend plus une parole inachevee."
           ]
         },
         {

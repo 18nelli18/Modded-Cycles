@@ -25,8 +25,10 @@ PHONES={
 'K':(600,1900,3000,250,350,450,0,220,50,1),'G':(400,1600,2600,180,250,350,150,160,50,1),
 'CH':(500,2000,3300,220,300,380,0,220,110,0)}
 
-def header(root,smooth=False):
+def header(root,smooth=False,soft=False):
  words=json.loads((root/'tools/machines/speak/words.json').read_text());assert len(words)==128
+ assert len({w['word'] for w in words})==128
+ assert all(0<len(w['word'])<=9 and 0<len(w['phones'])<=13 and all(p in PHONES for p in w['phones']) for w in words)
  ids={p:i for i,p in enumerate(PHONES)};phones=list(PHONES.values());rows=[]
  for w in words:
   row=[ids['SIL']]+[ids[p] for p in w['phones']]+[ids['SIL'],255];assert len(row)<=16;rows.append(row+[255]*(16-len(row)))
@@ -36,17 +38,17 @@ def header(root,smooth=False):
   for f1,f2,f3,b1,b2,b3,vo,noise,ms,stop in phones:
    rr=[]
    for k,(freq,bw) in enumerate(zip((f1,f2,f3),(b1,b2,b3))):
-    r=math.exp(-math.pi*bw/8000);f=min(3800,freq*ratio)
+    r=math.exp(-math.pi*bw*(1.45 if soft and noise else 1)/8000);f=min(3800,freq*ratio)
     weights=(1,.75,.5)
     if smooth and noise:
      # Fricatives : retirer le grondement F1, conserver le souffle F2/F3.
-     weights=(.12,.9,.7) if list(PHONES)[len(br)] in ('S','Z') else (.2,.85,.6)
+     weights=((.10,.8,.45) if list(PHONES)[len(br)] in ('S','Z') else (.16,.8,.45)) if soft else ((.12,.9,.7) if list(PHONES)[len(br)] in ('S','Z') else (.2,.85,.6))
     rr.append([round(2*r*math.cos(2*math.pi*f/8000)*16384),round(-r*r*16384),round((1-r)*4096*weights[k])])
    br.append(rr)
   banks.append(br)
  arr=lambda v:str(v).replace('[','{').replace(']','}')
  text='/* Tables mathematiques et pronunciations originales ; speak_assets.py. */\n'
- text+='static const Phone SP_PHONES[]='+arr([[ms*8,vo,round(noise*(.7 if name in ('S','Z') else .8)) if smooth else noise,stop] for name,(f1,f2,f3,b1,b2,b3,vo,noise,ms,stop) in PHONES.items()])+';\n'
+ text+='static const Phone SP_PHONES[]='+arr([[ms*8,vo,round(noise*((.35 if name in ('S','Z') else .4 if name in ('SH','ZH') else .5) if soft else (.7 if name in ('S','Z') else .8))) if smooth else noise,stop] for name,(f1,f2,f3,b1,b2,b3,vo,noise,ms,stop) in PHONES.items()])+';\n'
  text+='static const Resonator SP_RESONATORS[16]['+str(len(phones))+'][3]='+arr(banks)+';\n'
  text+='static const u8 SP_WORDS[128][16]='+arr(rows)+';\n'
  text+='static const char SP_NAMES[128][10]='+arr([w['word'] for w in words]).replace("'",'"')+';\n'
@@ -67,11 +69,12 @@ def microphone():
  from build_machine_identity_test import encode
  return encode(p)
 
-def prepare(root,build,previous_popup,clear=False,smooth=False,level=False):
- src=root/'tools/machines/speak';text,words=header(root,smooth=smooth);(src/'speak_tables.h').write_text(text,encoding='utf-8')
+def prepare(root,build,previous_popup,clear=False,smooth=False,level=False,soft=False,speed_fix=False):
+ src=root/'tools/machines/speak';text,words=header(root,smooth=smooth,soft=soft);(src/'speak_tables.h').write_text(text,encoding='utf-8')
+ compile_src=src/'speak.c'
  cross=str(root.parent/'retrosyn-integration/build/m68k-toolchain/pkg/bin/m68k-elf-');os.environ['PATH']=str(Path(cross).parent)+os.pathsep+os.environ['PATH']
  obj=build/'speak.o';elf=build/'speak.elf';binary=build/'speak.bin';ld=build/'speak.ld'
- subprocess.run([cross+'gcc.exe','-mcpu=54418','-O2','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',*(['-DSP_CLEAR=1'] if clear else []),*(['-DSP_SMOOTH=1'] if smooth else []),*(['-DSP_LEVEL=1'] if level else []),'-c',str(src/'speak.c'),'-o',str(obj)],check=True)
+ subprocess.run([cross+'gcc.exe','-mcpu=54418','-O2','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',*(['-DSP_CLEAR=1'] if clear else []),*(['-DSP_SMOOTH=1'] if smooth else []),*(['-DSP_LEVEL=1'] if level else []),*(['-DSP_SOFT=1'] if soft else []),*(['-DSP_SPEED_FIX=1'] if speed_fix else []),'-c',str(compile_src),'-o',str(obj)],check=True)
  ld.write_text(f'SECTIONS {{ .text {CODE:#x} : {{ *(.text*) *(.rodata*) }} . = ALIGN(4); speak_code_end = .; .bss {BSS:#x} (NOLOAD) : {{ *(.bss*) *(COMMON) }} . = ALIGN(4); speak_end = .; }}\nspeak_previous_popup = {previous_popup:#x};\n')
  subprocess.run([cross+'ld.exe','-T',str(ld),'-o',str(elf),str(obj)],check=True);subprocess.run([cross+'objcopy.exe','-O','binary','-j','.text',str(elf),str(binary)],check=True)
  sy={v[2]:int(v[0],16) for line in subprocess.check_output([cross+'nm.exe',str(elf)],text=True).splitlines() if len(v:=line.split())==3};assert sy['speak_code_end']<BSS and sy['speak_end']<END
@@ -82,4 +85,4 @@ def prepare(root,build,previous_popup,clear=False,smooth=False,level=False):
  for desc,pixels,w,h in [(0x46823000,stats(profile),48,33),(0x4682301c,microphone(),34,34)]:
   mask=encode([[1]*w for _ in range(h)]);ptr=pos;blob[pos-CODE:pos-CODE+len(pixels)]=pixels;pos+=len(pixels);mp=pos;blob[pos-CODE:pos-CODE+len(mask)]=mask;pos+=len(mask);blob[desc-CODE:desc-CODE+28]=struct.pack('>7I',0x401117c8,w,h,2,ptr,mp,0)
  assert pos<BSS
- return bytes(blob),dict(stats_descriptor=0x46823000,icon_descriptor=0x4682301c,code=CODE,bss=BSS,end=sy['speak_end'],code_bytes=binary.stat().st_size,symbols=sy,machine=20,name='SPEAK',profile=profile,words=[w['word'] for w in words],controls=['Voice','Word','Speed','Articulation'],status='experimental',hardware_tested=False,implementation='original fixed-point formant speech, not TI ROM emulation',speech_rate=8000,clarity=clear and not smooth,smooth_consonants=smooth,level_calibrated=level,output_scale=(524288 if level else 16384 if clear else 8192),output_gain_db=(36.1236 if level else 6.0206 if clear else 0))
+ return bytes(blob),dict(stats_descriptor=0x46823000,icon_descriptor=0x4682301c,code=CODE,bss=BSS,end=sy['speak_end'],code_bytes=binary.stat().st_size,symbols=sy,machine=20,name='SPEAK',profile=profile,words=[w['word'] for w in words],controls=['Voice','Word','Speed','Articulation'],status='experimental',hardware_tested=False,implementation='original fixed-point formant speech, not TI ROM emulation',speech_rate=8000,clarity=clear and not smooth,smooth_consonants=smooth,level_calibrated=level,soft_consonants=soft,speed_idle_fixed=speed_fix,output_scale=(524288 if level else 16384 if clear else 8192),output_gain_db=(36.1236 if level else 6.0206 if clear else 0))
