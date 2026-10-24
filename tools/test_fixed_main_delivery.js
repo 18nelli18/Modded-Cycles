@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),
 const {chromium}=require('playwright');
 const root=path.resolve(__dirname,'..'),site=path.join(root,'docs'),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 const expected=fs.readFileSync(path.join(site,'flasher/all-features-usb-2ch-default.syx'));
-assert.equal(hash(expected),'f0663f703bb6d85e85dfcc2fa5c99ae1785ab696bd9fe750e532759d1878e46d','released file must be the approved regular shared-filter v94');
+assert.equal(hash(expected),'bb566c59d353fb11ac2f7edce74723d7fba5346e2934bb8f5ea4210cee405e4c','released file must be the approved regular shared-filter v94');
 const meta=JSON.parse(fs.readFileSync(path.join(site,'flasher/BUILD.json')));
 assert.equal(meta.cloud,false);assert.equal(meta.ps1_reverb,true);assert(!meta.delay_modes.includes('CLOUD'));assert(meta.chorus_modes.includes('PS1'));assert.equal(meta.speak_words,128);assert.equal(meta.combined_fx_modes,false);assert.deepEqual(meta.shimmer_modes,[]);assert.deepEqual(meta.delay_modes,['PHASER','DUCK','DUB','PING PONG','DELAY','CRUSH 1','CRUSH 2']);
 

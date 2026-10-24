@@ -245,3 +245,7 @@ AveyCole explicitly requests “okay, push v90 to main”. Publish exact regular
 ## AveyCole main 2.33 promotion (2026-10-23)
 
 AveyCole reports “that worked, push 94 and give me the adult version”. Publish exact regular shared-filter v94 SHA256 `f0663f703bb6d85e85dfcc2fa5c99ae1785ab696bd9fe750e532759d1878e46d`, MAIN `a7a59a46646ee7e3d9f26c5d7197721b07d207e2c5fca853b99c45019ff432d8`. Includes DUCK, RING MOD, PHASER and live-trigger encoder safeguards. Update controls/PDF. Adult v94 remains private. Later experimental revisions and requested GATED reverb/menu reorder are separate tests, not included in this approved image.
+
+## AveyCole main 2.34 promotion (2026-10-24)
+
+AveyCole supplied the exact shared-filter `all-features-polivoks-cpu-trim-test-v101.syx` and asked that it be the .syx the main flasher serves, with the matching 2.34 shortcut guide PDF. SHA256 `bb566c59d353fb11ac2f7edce74723d7fba5346e2934bb8f5ea4210cee405e4c`, MAIN `e59ad39ea940fb05dfd87145bfa6e42fffc79e8405cbaead04dabcd07263b920`. Publish exactly these bytes through the existing tracked fixed-main image only. Replaces the v94 image of main 2.33; per the supplied guide it adds GATED and HALL reverbs and the new reverb-slot menu order, and raises the PS1 and Vinyl wet returns by 6 dB. No hardware result was reported with the promotion, so none is claimed. Adult SPEAK banks stay private.
