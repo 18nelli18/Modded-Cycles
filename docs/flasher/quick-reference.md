@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.35 - 24 October 2026
+Supermodel 2.36 - 24 October 2026
 
-Main 2.35. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.36. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
@@ -13,6 +13,15 @@ Main 2.35. Hold the first button while pressing the next button or turning the n
 **Filters and effects:** Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; GATED, HALL, Ring Mod, ROOM, PS1, Vinyl, Reverb and Chorus 1/2; Phaser, DUCK, DUB, Ping Pong, Delay and Crush 1/2. Opaque FX menus apply on TRACK release. Cumulative PS1/filter optimizations. Both Shimmers and all combined modes are removed.
 
 **Routing and workflow:** MIDI Out with nine CC knobs, locks and two MIDI LFOs; MIDI OUT/THRU toggle; USB stereo or six tracks; permanent quick save, saved Mod Setup and optional DX diagnostics.
+
+## New in 2.36 - Acid, SY BITS and Elder
+
+| Feature | Controls | Behavior |
+|---|---|---|
+| ACID filter Decay | DECAY | Filter envelope decay only. Volume holds until note-off, then a short fixed release; the Gate switch no longer turns Decay into an amplitude envelope. Slides and existing controls remain. |
+| ACID Accent | Velocity 97-127 | Progressive filter transient and level accent. Velocity 0-96 keeps the normal unaccented response; native velocity volume response is retained. |
+| SY BITS fine detune | FUNC + COLOR | 0.01-semitone steps across -24.00 to +24.00. Small signed decimal popup updates live. Plain COLOR changes whole semitones and preserves the fractional part. Fine values survive native sound save/load and remain available to parameter locks. |
+| Louder Elder | VOL + DIST | Output raised 6 dB (2x), with bounded peaks. Wave, Warp, Noise, Motion, envelopes and Punch keep their existing behavior. |
 
 ## New in 2.35 - banks and RETROSYN
 
@@ -83,7 +92,7 @@ Main 2.35. Hold the first button while pressing the next button or turning the n
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| LEGACY / selection | MACHINES: immediately before MIDI Out | Dexed MSFA six-operator FM with all 32 algorithms; one voice per track. MIDI Out remains last. COLOR = Velocity, SHAPE = Voice, SWEEP = Brightness, CONTOUR = EG Time. Native locks/CC/LFO mappings; Voice and Velocity are captured on the next trigger. |
+| LEGACY / selection | MACHINES: before RETROSYN and MIDI Out | Dexed MSFA six-operator FM with all 32 algorithms; one voice per track. MIDI Out remains last. COLOR = Velocity, SHAPE = Voice, SWEEP = Brightness, CONTOUR = EG Time. Native locks/CC/LFO mappings; Voice and Velocity are captured on the next trigger. |
 | Voice library | SHAPE: slots 0-31 | Starts with Tooropulse, Delicho and EinstofPia. Eight quieter slots now contain PIANO 1, E.PIANO 1, BASS 1, BRASS 1, STRINGS 1, CLAV 1, E.ORGAN 1 and MARIMBA from the supplied ROM1A cartridge. |
 | Velocity / brightness | COLOR / SWEEP | Velocity 0-127 controls the cartridge operators response at each trigger; default 100. Brightness 64 preserves the patch. Lower softens modulation; higher adds bite. |
 | Envelope time | CONTOUR / DECAY | EG Time 64 preserves the patch envelope timing; lower is faster, higher slower. DECAY and gate still set the native amplitude envelope. PITCH and FINETUNE transpose the voice; fixed-frequency operators follow their cartridge settings. |

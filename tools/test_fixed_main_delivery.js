@@ -1,2 +1,2 @@
-/* Point d entree stable du test de livraison principal ; preuve105 canonique. */
-require('./test_v105_delivery.js');
+/* Preuve canonique de livraison du principal111. */
+require("./test_v111_delivery.js");

@@ -1,6 +1,6 @@
 {
-  "release": "2.35",
-  "stamp": "2026-10-24-legacy-retro-main-235",
+  "release": "2.36",
+  "stamp": "2026-10-24-acid-bits-elder-main-236",
   "cards": [
     {
       "en": [
@@ -44,6 +44,62 @@
     }
   ],
   "sections": [
+    {
+      "title": {
+        "en": "New in 2.36 - Acid, SY BITS and Elder",
+        "fr": "Nouveautes2.36 - Acid,SY BITS et Elder"
+      },
+      "rows": [
+        {
+          "en": [
+            "ACID filter Decay",
+            "DECAY",
+            "Filter envelope decay only. Volume holds until note-off, then a short fixed release; the Gate switch no longer turns Decay into an amplitude envelope. Slides and existing controls remain."
+          ],
+          "fr": [
+            "DECAY du filtre ACID",
+            "DECAY",
+            "Decroissance du filtre uniquement. Volume tenu jusqu a note-off puis relachement court fixe ; Gate ne transforme plus Decay en enveloppe de volume. Slides et commandes existantes conserves."
+          ]
+        },
+        {
+          "en": [
+            "ACID Accent",
+            "Velocity 97-127",
+            "Progressive filter transient and level accent. Velocity 0-96 keeps the normal unaccented response; native velocity volume response is retained."
+          ],
+          "fr": [
+            "Accent ACID",
+            "Velocite97-127",
+            "Accent progressif du transitoire filtre et du niveau. Velocite0-96 conserve la reponse sans accent ; volume natif de velocite conserve."
+          ]
+        },
+        {
+          "en": [
+            "SY BITS fine detune",
+            "FUNC + COLOR",
+            "0.01-semitone steps across -24.00 to +24.00. Small signed decimal popup updates live. Plain COLOR changes whole semitones and preserves the fractional part. Fine values survive native sound save/load and remain available to parameter locks."
+          ],
+          "fr": [
+            "Detune fin SY BITS",
+            "FUNC + COLOR",
+            "Pas de0.01demi-ton entre -24.00 et +24.00. Petit popup decimal signe actualise en direct. COLOR ordinaire change les demi-tons entiers sans perdre la fraction. Valeurs conservees avec les sons et disponibles aux locks."
+          ]
+        },
+        {
+          "en": [
+            "Louder Elder",
+            "VOL + DIST",
+            "Output raised 6 dB (2x), with bounded peaks. Wave, Warp, Noise, Motion, envelopes and Punch keep their existing behavior."
+          ],
+          "fr": [
+            "Elder plus fort",
+            "VOL + DIST",
+            "Sortie relevee de6dB (2x), cretes bornees. Wave,Warp,Noise,Motion,enveloppes et Punch conservent leur comportement."
+          ]
+        }
+      ]
+    },
     {
       "title": {
         "en": "New in 2.35 - banks and RETROSYN",
@@ -625,12 +681,12 @@
         {
           "en": [
             "LEGACY / selection",
-            "MACHINES: immediately before MIDI Out",
+            "MACHINES: before RETROSYN and MIDI Out",
             "Dexed MSFA six-operator FM with all 32 algorithms; one voice per track. MIDI Out remains last. COLOR = Velocity, SHAPE = Voice, SWEEP = Brightness, CONTOUR = EG Time. Native locks/CC/LFO mappings; Voice and Velocity are captured on the next trigger."
           ],
           "fr": [
             "LEGACY / selection",
-            "MACHINES : juste avant MIDI Out",
+            "MACHINES : avant RETROSYN et MIDI Out",
             "FM six operateurs Dexed MSFA, 32 algorithmes ; une voix par piste. MIDI Out toujours dernier. COLOR = Velocity, SHAPE = Voice, SWEEP = Brightness, CONTOUR = EG Time. Locks/CC/LFO natifs ; Voice et Velocity sont pris au prochain trigger."
           ]
         },

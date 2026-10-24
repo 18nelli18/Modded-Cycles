@@ -254,3 +254,8 @@ AveyCole supplied the exact shared-filter `all-features-polivoks-cpu-trim-test-v
 ## AveyCole main2.35 promotion (2026-10-24)
 
 User: “105 worked” then “Publish 105 retro build”. Exact regular-vocabulary shared-filter v105retro SHA256 `ef01ba93a63f7dda8d161d6aa7f19a60114f7b190e3d6687a5b15df42f149bc8`, MAIN `56ed414d68925c2f2f6f0d2807f120fed4e57a6e788a08afbbb83cbcd87b670a`. RETROSYN22 before MIDI Out17; 23 machines. Bank import page joins existing WAV converter side by side. Preserve the user-written flasher blurb verbatim. No adult vocabulary or ACID/SY BITS106 changes.
+
+
+## AveyCole main2.36 promotion (2026-10-24)
+
+User: “111 worked, push that to main”. Publish exact regular shared-filter111 SHA256 `fa66d0aa955ed68461ae5be5fbbd87c4a89fd3a53ff2cd693ccf48bd2589951a`, MAIN `a31131af8c4b93a2cab3f471612ddac84e08e2c2dbd8327cae480b8e81f00744`. Includes ACID filter-only Decay and velocity Accent, fine SY BITS detune/live compact signed decimal, Elder+6dB. RETROSYN preserved before MIDI Out. Adult remains private. Preserve the user flasher blurb verbatim.

@@ -260,3 +260,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [159 — Ring, Phaser, DUCK et encodeurs](159-ring-phaser-duck-et-encodeurs.md) | Principal2.33 : exact v94 regulier approuve, nouveaux FX et protection encodeurs live ; guide EN/FR/PDF. |
 
 | [163 — Bibliotheque LEGACY et RETROSYN](163-legacy-bibliotheque-retrosyn.md) | Principal2.35 : exact105retro, bibliotheque DX7, importateurs WAV/DX7 cote a cote, guide et blurb utilisateur conserve. |
+
+| [164 — ACID, SY BITS et Elder](164-acid-detune-bits-niveau-elder.md) | Principal2.36 : exact111 regulier teste, DECAY filtre/Accent, detune fin et popup compact live, Elder+6dB ; blurb preserve. |
