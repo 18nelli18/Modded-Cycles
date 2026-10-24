@@ -248,3 +248,7 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [156 - SCRAMBLE : vrai Decay](156-scramble-vrai-decay.md) | Principal2.28 : v66 teste Tone et approuve ; mapping natif Decay corrige en direct/pas marques,Punch conserve,v65 erronne non publie ; guides/PDF actualises. |
 
 | [153 - Reverb PS1 et publication](153-reverb-ps1-publication.md) | Principal2.29 : exact v70 approuve, PS1 inspiree16bits/24kHz, CLOUD exclu ; guides EN/FR/PDF actualises, comparaison privee preservee. |
+
+| [154 — Optimisation FX et DX FUNC](154-optimisation-fx-et-dx-func.md) | v71/v72 prives : Shimmer/PS1 PCM exacts avec moins d instructions ; echec geste v71 reproduit par scan natif, maintien long corrige v72 ; principal v70 fixe, marge CPU materielle a mesurer. |
+| [155 — Six pistes et cache PS1](155-optimisation-six-pistes-et-cache-ps1.md) | v73..v80 prives : cache/noyau PS1 et filtres optimises, v78 moins clicky rapporte ; v80 retire tous Shimmer et modes combines, menus/migrations prouves, essais appareil encore requis. |
+| [156 — SPEAK et formats Reverb](156-machine-speak-et-formats-reverb.md) | v82..v85 : machine21 SPEAK,128mots/phonemes originaux, pitch et vitesse independants, microphone/locks/CC/LFO natifs ; format Reverb corrige en lecture ; retour appareil positif v82, consonnes rapeuses82/83 rapportees, bruit adouci84, niveau calibre Vol+Dist60 et suppression SCRAMBLE fraiche85 ; v85 approuve par AveyCole et publie en principal2.30. |

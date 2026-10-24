@@ -134,6 +134,10 @@ class EMAC:
                 p = a * b
                 if self.frac:
                     p = (p >> 23) << 23
+                else:
+                    # NXP5.3 : seuls les40 LSB du produit entier sont conserves.
+                    p &= (1 << 40) - 1
+                    if not self.unsigned and p & (1 << 39): p -= 1 << 40
                 acc[i] += sign * p
             return f
         if mn == "movclrl":
@@ -186,6 +190,9 @@ class EMAC:
                 p >>= 1
             if self.frac:
                 p = (p >> 23) << 23   # precision de l'accumulateur (8 bits sous le LSB)
+            else:
+                p &= (1 << 40) - 1
+                if not self.unsigned and p & (1 << 39): p -= 1 << 40
             if rest:                   # MAC avec chargement : <ea>,Rw
                 ea, rw = rest[0], rest[1]
                 ad, post = self._ea(ea)

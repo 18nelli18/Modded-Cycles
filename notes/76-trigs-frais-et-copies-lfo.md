@@ -86,3 +86,8 @@ La cause reste à isoler ; ne pas réutiliser l’optimisation ni le candidat OF
 qui en dépend avant résolution. Le flasher principal n’avait pas reçu ces
 optimisations. La révision du test porte le build
 `2026-10-13-controls-baseline-lfo`.
+
+
+## Retour prive v85 (23/10/2026)
+
+AveyCole retrouve la persistance SCRAMBLE dans la composition privee v84 issue du v17 : le CALL40022dd0 y pointe encore directement40017c4e. Le wrapper de cette note est integre dans le module SCRAMBLE prive avec verification des octets, sans reutiliser son ancien masque (occupe dans cette composition). Preuve native complete reproduit le bit6 restant84 et verifie sa disparition85 sur54cycles supprimer/recreer, six pistes, quatre pages,33slots. Voir [notes/156](156-machine-speak-et-formats-reverb.md), section8. Pas de promotion du principal.

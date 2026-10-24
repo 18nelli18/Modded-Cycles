@@ -229,3 +229,7 @@ AveyCole tested v66 on Tone (direct and marked-step SCRAMBLE) and reports "Okay,
 ## AveyCole main 2.29 promotion (2026-10-23)
 
 AveyCole requests "push v70" after praising PS1 reverb in v69. Publish exact shared-filter v70, SHA256 `21d21e29611a02f426c7e6f61066c771d8ed6e6c43b2695994f9b8961ed9d8b0`, MAIN `65d75a6fb846519ff3a01f9abd8c39a1a6145a14f9d88497684744467ed2c04c`. v70 builds on v66, adds PS1 reverb and excludes CLOUD. Preserve private CLOUD comparisons and the unresolved Density scrolling report. PS1 DSP is identical in v69/v70; do not claim a separate full-composition v70 hardware test. Update EN/FR shortcuts and PDF. Only the established tracked fixed-main .syx delivery path is authorized.
+
+## AveyCole main 2.30 promotion (2026-10-23)
+
+AveyCole reports “that worked, push v85 with updated controls and such”. Publish exact shared-filter v85, SHA256 `96f97b9fb98056978b3b30c039e43db28183cc6324d076b50f84e3d790de194a`, MAIN `7912d7c2912da1bd42ef47a607465f32267d34e0ea77dd53a951fb343247c938`, through the existing tracked fixed-main image only. Includes SPEAK with calibrated level and softened consonants, fresh SCRAMBLE deletion, immediate native Reverb formatting, cumulative PS1/filter CPU work and the FUNC tap/hold DX shortcut. Both Shimmers and all combined FX modes are removed. Preserve all private comparisons. Update EN/FR controls and printable PDF. The subsequent adult SPEAK word-bank request is private only and must never enter this public release.

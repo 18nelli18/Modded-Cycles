@@ -1,0 +1,1063 @@
+[
+ {
+  "word": "I",
+  "phones": [
+   "AA",
+   "IY"
+  ]
+ },
+ {
+  "word": "YOU",
+  "phones": [
+   "Y",
+   "UW"
+  ]
+ },
+ {
+  "word": "WE",
+  "phones": [
+   "W",
+   "IY"
+  ]
+ },
+ {
+  "word": "THEY",
+  "phones": [
+   "DH",
+   "EH",
+   "IY"
+  ]
+ },
+ {
+  "word": "HE",
+  "phones": [
+   "H",
+   "IY"
+  ]
+ },
+ {
+  "word": "SHE",
+  "phones": [
+   "SH",
+   "IY"
+  ]
+ },
+ {
+  "word": "IT",
+  "phones": [
+   "IH",
+   "T"
+  ]
+ },
+ {
+  "word": "ME",
+  "phones": [
+   "M",
+   "IY"
+  ]
+ },
+ {
+  "word": "US",
+  "phones": [
+   "AH",
+   "S"
+  ]
+ },
+ {
+  "word": "THEM",
+  "phones": [
+   "DH",
+   "EH",
+   "M"
+  ]
+ },
+ {
+  "word": "MY",
+  "phones": [
+   "M",
+   "AA",
+   "IY"
+  ]
+ },
+ {
+  "word": "YOUR",
+  "phones": [
+   "Y",
+   "AO",
+   "R"
+  ]
+ },
+ {
+  "word": "OUR",
+  "phones": [
+   "AA",
+   "UH",
+   "R"
+  ]
+ },
+ {
+  "word": "THIS",
+  "phones": [
+   "DH",
+   "IH",
+   "S"
+  ]
+ },
+ {
+  "word": "THAT",
+  "phones": [
+   "DH",
+   "AE",
+   "T"
+  ]
+ },
+ {
+  "word": "THESE",
+  "phones": [
+   "DH",
+   "IY",
+   "Z"
+  ]
+ },
+ {
+  "word": "THOSE",
+  "phones": [
+   "DH",
+   "AO",
+   "UH",
+   "Z"
+  ]
+ },
+ {
+  "word": "A",
+  "phones": [
+   "AX"
+  ]
+ },
+ {
+  "word": "AN",
+  "phones": [
+   "AE",
+   "N"
+  ]
+ },
+ {
+  "word": "THE",
+  "phones": [
+   "DH",
+   "AX"
+  ]
+ },
+ {
+  "word": "AND",
+  "phones": [
+   "AE",
+   "N",
+   "D"
+  ]
+ },
+ {
+  "word": "OR",
+  "phones": [
+   "AO",
+   "R"
+  ]
+ },
+ {
+  "word": "BUT",
+  "phones": [
+   "B",
+   "AH",
+   "T"
+  ]
+ },
+ {
+  "word": "IF",
+  "phones": [
+   "IH",
+   "F"
+  ]
+ },
+ {
+  "word": "SO",
+  "phones": [
+   "S",
+   "AO",
+   "UH"
+  ]
+ },
+ {
+  "word": "BECAUSE",
+  "phones": [
+   "B",
+   "IH",
+   "K",
+   "AO",
+   "Z"
+  ]
+ },
+ {
+  "word": "YES",
+  "phones": [
+   "Y",
+   "EH",
+   "S"
+  ]
+ },
+ {
+  "word": "NO",
+  "phones": [
+   "N",
+   "AO",
+   "UH"
+  ]
+ },
+ {
+  "word": "NOT",
+  "phones": [
+   "N",
+   "AA",
+   "T"
+  ]
+ },
+ {
+  "word": "PLEASE",
+  "phones": [
+   "P",
+   "L",
+   "IY",
+   "Z"
+  ]
+ },
+ {
+  "word": "THANK",
+  "phones": [
+   "TH",
+   "AE",
+   "NG",
+   "K"
+  ]
+ },
+ {
+  "word": "HELLO",
+  "phones": [
+   "H",
+   "EH",
+   "L",
+   "AO",
+   "UH"
+  ]
+ },
+ {
+  "word": "GOODBYE",
+  "phones": [
+   "G",
+   "UH",
+   "D",
+   "B",
+   "AA",
+   "IY"
+  ]
+ },
+ {
+  "word": "GOOD",
+  "phones": [
+   "G",
+   "UH",
+   "D"
+  ]
+ },
+ {
+  "word": "BAD",
+  "phones": [
+   "B",
+   "AE",
+   "D"
+  ]
+ },
+ {
+  "word": "LOVE",
+  "phones": [
+   "L",
+   "AH",
+   "V"
+  ]
+ },
+ {
+  "word": "LIKE",
+  "phones": [
+   "L",
+   "AA",
+   "IY",
+   "K"
+  ]
+ },
+ {
+  "word": "WANT",
+  "phones": [
+   "W",
+   "AA",
+   "N",
+   "T"
+  ]
+ },
+ {
+  "word": "NEED",
+  "phones": [
+   "N",
+   "IY",
+   "D"
+  ]
+ },
+ {
+  "word": "KNOW",
+  "phones": [
+   "N",
+   "AO",
+   "UH"
+  ]
+ },
+ {
+  "word": "THINK",
+  "phones": [
+   "TH",
+   "IH",
+   "NG",
+   "K"
+  ]
+ },
+ {
+  "word": "FEEL",
+  "phones": [
+   "F",
+   "IY",
+   "L"
+  ]
+ },
+ {
+  "word": "SEE",
+  "phones": [
+   "S",
+   "IY"
+  ]
+ },
+ {
+  "word": "HEAR",
+  "phones": [
+   "H",
+   "IH",
+   "R"
+  ]
+ },
+ {
+  "word": "SAY",
+  "phones": [
+   "S",
+   "EH",
+   "IY"
+  ]
+ },
+ {
+  "word": "SPEAK",
+  "phones": [
+   "S",
+   "P",
+   "IY",
+   "K"
+  ]
+ },
+ {
+  "word": "TELL",
+  "phones": [
+   "T",
+   "EH",
+   "L"
+  ]
+ },
+ {
+  "word": "ASK",
+  "phones": [
+   "AE",
+   "S",
+   "K"
+  ]
+ },
+ {
+  "word": "DO",
+  "phones": [
+   "D",
+   "UW"
+  ]
+ },
+ {
+  "word": "MAKE",
+  "phones": [
+   "M",
+   "EH",
+   "IY",
+   "K"
+  ]
+ },
+ {
+  "word": "PLAY",
+  "phones": [
+   "P",
+   "L",
+   "EH",
+   "IY"
+  ]
+ },
+ {
+  "word": "STOP",
+  "phones": [
+   "S",
+   "T",
+   "AA",
+   "P"
+  ]
+ },
+ {
+  "word": "START",
+  "phones": [
+   "S",
+   "T",
+   "AA",
+   "R",
+   "T"
+  ]
+ },
+ {
+  "word": "GO",
+  "phones": [
+   "G",
+   "AO",
+   "UH"
+  ]
+ },
+ {
+  "word": "COME",
+  "phones": [
+   "K",
+   "AH",
+   "M"
+  ]
+ },
+ {
+  "word": "STAY",
+  "phones": [
+   "S",
+   "T",
+   "EH",
+   "IY"
+  ]
+ },
+ {
+  "word": "MOVE",
+  "phones": [
+   "M",
+   "UW",
+   "V"
+  ]
+ },
+ {
+  "word": "TURN",
+  "phones": [
+   "T",
+   "ER",
+   "N"
+  ]
+ },
+ {
+  "word": "TAKE",
+  "phones": [
+   "T",
+   "EH",
+   "IY",
+   "K"
+  ]
+ },
+ {
+  "word": "GIVE",
+  "phones": [
+   "G",
+   "IH",
+   "V"
+  ]
+ },
+ {
+  "word": "GET",
+  "phones": [
+   "G",
+   "EH",
+   "T"
+  ]
+ },
+ {
+  "word": "BE",
+  "phones": [
+   "B",
+   "IY"
+  ]
+ },
+ {
+  "word": "AM",
+  "phones": [
+   "AE",
+   "M"
+  ]
+ },
+ {
+  "word": "ARE",
+  "phones": [
+   "AA",
+   "R"
+  ]
+ },
+ {
+  "word": "IS",
+  "phones": [
+   "IH",
+   "Z"
+  ]
+ },
+ {
+  "word": "WAS",
+  "phones": [
+   "W",
+   "AH",
+   "Z"
+  ]
+ },
+ {
+  "word": "WERE",
+  "phones": [
+   "W",
+   "ER"
+  ]
+ },
+ {
+  "word": "WILL",
+  "phones": [
+   "W",
+   "IH",
+   "L"
+  ]
+ },
+ {
+  "word": "CAN",
+  "phones": [
+   "K",
+   "AE",
+   "N"
+  ]
+ },
+ {
+  "word": "COULD",
+  "phones": [
+   "K",
+   "UH",
+   "D"
+  ]
+ },
+ {
+  "word": "HAVE",
+  "phones": [
+   "H",
+   "AE",
+   "V"
+  ]
+ },
+ {
+  "word": "HAS",
+  "phones": [
+   "H",
+   "AE",
+   "Z"
+  ]
+ },
+ {
+  "word": "HAD",
+  "phones": [
+   "H",
+   "AE",
+   "D"
+  ]
+ },
+ {
+  "word": "BEEN",
+  "phones": [
+   "B",
+   "IH",
+   "N"
+  ]
+ },
+ {
+  "word": "IN",
+  "phones": [
+   "IH",
+   "N"
+  ]
+ },
+ {
+  "word": "ON",
+  "phones": [
+   "AA",
+   "N"
+  ]
+ },
+ {
+  "word": "AT",
+  "phones": [
+   "AE",
+   "T"
+  ]
+ },
+ {
+  "word": "TO",
+  "phones": [
+   "T",
+   "UW"
+  ]
+ },
+ {
+  "word": "FOR",
+  "phones": [
+   "F",
+   "AO",
+   "R"
+  ]
+ },
+ {
+  "word": "FROM",
+  "phones": [
+   "F",
+   "R",
+   "AH",
+   "M"
+  ]
+ },
+ {
+  "word": "WITH",
+  "phones": [
+   "W",
+   "IH",
+   "DH"
+  ]
+ },
+ {
+  "word": "WITHOUT",
+  "phones": [
+   "W",
+   "IH",
+   "DH",
+   "AA",
+   "UH",
+   "T"
+  ]
+ },
+ {
+  "word": "OF",
+  "phones": [
+   "AH",
+   "V"
+  ]
+ },
+ {
+  "word": "UP",
+  "phones": [
+   "AH",
+   "P"
+  ]
+ },
+ {
+  "word": "DOWN",
+  "phones": [
+   "D",
+   "AA",
+   "UH",
+   "N"
+  ]
+ },
+ {
+  "word": "HERE",
+  "phones": [
+   "H",
+   "IH",
+   "R"
+  ]
+ },
+ {
+  "word": "THERE",
+  "phones": [
+   "DH",
+   "EH",
+   "R"
+  ]
+ },
+ {
+  "word": "NOW",
+  "phones": [
+   "N",
+   "AA",
+   "UH"
+  ]
+ },
+ {
+  "word": "THEN",
+  "phones": [
+   "DH",
+   "EH",
+   "N"
+  ]
+ },
+ {
+  "word": "AGAIN",
+  "phones": [
+   "AX",
+   "G",
+   "EH",
+   "N"
+  ]
+ },
+ {
+  "word": "ALWAYS",
+  "phones": [
+   "AO",
+   "L",
+   "W",
+   "EH",
+   "IY",
+   "Z"
+  ]
+ },
+ {
+  "word": "NEVER",
+  "phones": [
+   "N",
+   "EH",
+   "V",
+   "ER"
+  ]
+ },
+ {
+  "word": "ALL",
+  "phones": [
+   "AO",
+   "L"
+  ]
+ },
+ {
+  "word": "SOME",
+  "phones": [
+   "S",
+   "AH",
+   "M"
+  ]
+ },
+ {
+  "word": "MORE",
+  "phones": [
+   "M",
+   "AO",
+   "R"
+  ]
+ },
+ {
+  "word": "LESS",
+  "phones": [
+   "L",
+   "EH",
+   "S"
+  ]
+ },
+ {
+  "word": "ONE",
+  "phones": [
+   "W",
+   "AH",
+   "N"
+  ]
+ },
+ {
+  "word": "TWO",
+  "phones": [
+   "T",
+   "UW"
+  ]
+ },
+ {
+  "word": "THREE",
+  "phones": [
+   "TH",
+   "R",
+   "IY"
+  ]
+ },
+ {
+  "word": "FOUR",
+  "phones": [
+   "F",
+   "AO",
+   "R"
+  ]
+ },
+ {
+  "word": "FIVE",
+  "phones": [
+   "F",
+   "AA",
+   "IY",
+   "V"
+  ]
+ },
+ {
+  "word": "SIX",
+  "phones": [
+   "S",
+   "IH",
+   "K",
+   "S"
+  ]
+ },
+ {
+  "word": "SEVEN",
+  "phones": [
+   "S",
+   "EH",
+   "V",
+   "AX",
+   "N"
+  ]
+ },
+ {
+  "word": "EIGHT",
+  "phones": [
+   "EH",
+   "IY",
+   "T"
+  ]
+ },
+ {
+  "word": "NINE",
+  "phones": [
+   "N",
+   "AA",
+   "IY",
+   "N"
+  ]
+ },
+ {
+  "word": "ZERO",
+  "phones": [
+   "Z",
+   "IH",
+   "R",
+   "AO",
+   "UH"
+  ]
+ },
+ {
+  "word": "MUSIC",
+  "phones": [
+   "M",
+   "Y",
+   "UW",
+   "Z",
+   "IH",
+   "K"
+  ]
+ },
+ {
+  "word": "SOUND",
+  "phones": [
+   "S",
+   "AA",
+   "UH",
+   "N",
+   "D"
+  ]
+ },
+ {
+  "word": "BEAT",
+  "phones": [
+   "B",
+   "IY",
+   "T"
+  ]
+ },
+ {
+  "word": "RHYTHM",
+  "phones": [
+   "R",
+   "IH",
+   "DH",
+   "AX",
+   "M"
+  ]
+ },
+ {
+  "word": "BASS",
+  "phones": [
+   "B",
+   "EH",
+   "IY",
+   "S"
+  ]
+ },
+ {
+  "word": "DRUM",
+  "phones": [
+   "D",
+   "R",
+   "AH",
+   "M"
+  ]
+ },
+ {
+  "word": "MACHINE",
+  "phones": [
+   "M",
+   "AX",
+   "SH",
+   "IY",
+   "N"
+  ]
+ },
+ {
+  "word": "ROBOT",
+  "phones": [
+   "R",
+   "AO",
+   "UH",
+   "B",
+   "AA",
+   "T"
+  ]
+ },
+ {
+  "word": "HUMAN",
+  "phones": [
+   "H",
+   "Y",
+   "UW",
+   "M",
+   "AX",
+   "N"
+  ]
+ },
+ {
+  "word": "TIME",
+  "phones": [
+   "T",
+   "AA",
+   "IY",
+   "M"
+  ]
+ },
+ {
+  "word": "NIGHT",
+  "phones": [
+   "N",
+   "AA",
+   "IY",
+   "T"
+  ]
+ },
+ {
+  "word": "DAY",
+  "phones": [
+   "D",
+   "EH",
+   "IY"
+  ]
+ },
+ {
+  "word": "WORLD",
+  "phones": [
+   "W",
+   "ER",
+   "L",
+   "D"
+  ]
+ },
+ {
+  "word": "FRIEND",
+  "phones": [
+   "F",
+   "R",
+   "EH",
+   "N",
+   "D"
+  ]
+ },
+ {
+  "word": "HAPPY",
+  "phones": [
+   "H",
+   "AE",
+   "P",
+   "IY"
+  ]
+ },
+ {
+  "word": "SAD",
+  "phones": [
+   "S",
+   "AE",
+   "D"
+  ]
+ },
+ {
+  "word": "NEW",
+  "phones": [
+   "N",
+   "UW"
+  ]
+ },
+ {
+  "word": "OLD",
+  "phones": [
+   "AO",
+   "UH",
+   "L",
+   "D"
+  ]
+ },
+ {
+  "word": "SOFT",
+  "phones": [
+   "S",
+   "AO",
+   "F",
+   "T"
+  ]
+ },
+ {
+  "word": "LOUD",
+  "phones": [
+   "L",
+   "AA",
+   "UH",
+   "D"
+  ]
+ },
+ {
+  "word": "DREAM",
+  "phones": [
+   "D",
+   "R",
+   "IY",
+   "M"
+  ]
+ },
+ {
+  "word": "FUTURE",
+  "phones": [
+   "F",
+   "Y",
+   "UW",
+   "CH",
+   "ER"
+  ]
+ }
+]

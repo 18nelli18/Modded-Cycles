@@ -1,16 +1,16 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.29 - 23 octobre2026
+Supermodel2.30 - 23 octobre2026
 
-Principal2.29. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
+Principal2.30. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
 ## Fonctions incluses
 
-**Machines et son:** Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow et MIDI Out. Elder est inspiré de Junior de Fors. La selection conserve les valeurs synth ; quatre commandes Wizard separees tant que MACHINES reste ouvert.
+**Machines et son:** Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK et MIDI Out. Elder est inspiré de Junior de Fors. La selection conserve les valeurs synth ; quatre commandes Wizard separees tant que MACHINES reste ouvert.
 
 **Performance et séquenceur:** Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute verrouillé et solo.
 
-**Filtres et effets:** Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK. Fenetres FX opaques ; SETTINGS+Size/Time regle Tone/Feedback en modes combines. Poussiere Vinyl continue dans les pauses. Ajoute Ping Pong stereo,Shimmer 1 entierement transpose et Shimmer 2 mixte/diffuse precedent. PS1 ajoute une reverb stereo plus sombre et granuleuse.
+**Filtres et effets:** Filtres pistes/Wizard inspires Polivoks, second LFO, MACRO Fine/Lo-Fi ; PS1, Vinyl, Reverb et Chorus 1/2 ; Ping Pong, Delay et Crush 1/2. Menus opaques appliques au relachement TRACK. Optimisations PS1/filtre cumulees. Les deux Shimmer et tous les modes combines sont retires.
 
 **Routage et travail:** MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif.
 
@@ -26,6 +26,7 @@ Principal2.29. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Slide | SETTINGS + TRIG | Active ou désactive le glissement de paramètres sur le pas. |
 | Sequence Genie | SETTINGS + PAGE | Générateur de la piste sélectionnée. DATA choisit ; Generate ou Queue, avec frontière Loop/Page. |
 | SCRAMBLE | Appui bref SETTINGS + TRACK | Au relachement,tirez les parametres coches de cette piste : Pitch,Decay,Color,Shape,Sweep,Contour. Choix dans Mod Setup > SCRM. Decay fonctionne ; Punch reste inchange. Quatre commandes originales actives par defaut. Pas marques : meme liste,son de base intact. |
+| Pas SCRAMBLE / suppression | Maintenir un pas + SETTINGS + TRACK bref ; supprimer normalement | Bascule SCRAMBLE sur ce pas. Supprimer le trig retire marque et locks ; le nouveau trig repart propre. Autres pas et pistes conserves. |
 | Configuration Control All | TRACK + TRIG 1–6 | Inclut ou exclut les pistes audio des changements collectifs. |
 | Beat repeat audio | Maintenir TRACK + RETRIG, puis un TRIG 1–16 | Le pas choisit la division des pistes incluses. Relâchez un modificateur ou le pas pour arrêter. |
 | Verrou beat repeat | Maintenir TRACK + double RETRIG | Relachez les deux ; maintenir un TRIG repete, relacher arrete. BACK quitte. Copier/coller/effacer bloques ; PLAY/STOP simples disponibles. Non sauvegarde. FUNC+SETTINGS/PATTERN temporaires disponibles ; aucun diagnostic depuis le verrou. |
@@ -39,33 +40,36 @@ Principal2.29. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Menu slot reverb | Maintenir TRACK + REVERB SIZE | Fenetre opaque sur l ecran normal,trois choix. Gauche/haut : VINYL,VINYL+REV,PS1. Centre : REVERB. Droite/bas : CHORUS1,CHORUS2,CHOR1+REV,CHOR2+REV. Son inchange pendant le parcours ; relacher TRACK applique,BACK annule. |
-| Menu slot delay | Maintenir TRACK + DELAY TIME | Gauche/haut depuis DELAY : CRUSH1,CRUSH2,PING PONG,SHIMMER 1,SHIMMER 2. Droite/bas : CRU1+DEL,CRU2+DEL. Fenetre opaque ; son inchange avant relachement TRACK. BACK annule. |
-| Reverb Tone | REVERB : FUNC+SIZE ; combine : SETTINGS+SIZE | En CHOR1+REV,CHOR2+REV et VINYL+REV, maintenez SETTINGS et tournez REVERB SIZE pour le Tone natif sans quitter le mode. Relacher SETTINGS revient a Reverb Size. Le mode REVERB standard garde FUNC+SIZE. |
-| Reverb PS1 | REVERB SEND / SIZE / FUNC+SIZE ou SETTINGS+SIZE | PS1 Send par piste / Decay / Tone. Queue stereo inspiree de la PlayStation,plus sombre et granuleuse. Remplace la reverb standard ; pas de variante combinee. |
-| Chorus seul | SIZE = Speed ; FUNC + SIZE = Depth | Chorus I/II : Speed et Depth0-127. REVERB SEND devient Chorus Send par piste. |
-| Commandes chorus + reverb | SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE | Reverb Size / Chorus Speed / Chorus Depth. Maintenir FUNC puis TRACK n’ouvre pas Track Setup. |
-| Envois chorus + reverb | REVERB SEND / FUNC+REVERB SEND | Reverb Send natif / Chorus Send distinct0-127 par piste. Chaque effet reste independant. |
-| Vinyl seul | SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE | Crackle / Warble Amount / Warble Speed. Vinyl Send0 : sec. Pops/clics brillants independants, presents dans les pauses ; Crackle0 coupe la poussiere. Volume,pan et mute de piste respectes. |
-| Commandes Vinyl + reverb | SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE | Reverb Size / Crackle / Warble Amount. FUNC puis TRACK+REVERB SEND regle Warble Speed. |
-| Envois Vinyl + reverb | REVERB SEND / FUNC+REVERB SEND | Reverb Send natif / Vinyl Send distinct par piste. Vinyl Send0 garde la reverb normale. |
-| Time / Feedback delay | DELAY : TIME / FUNC+TIME ; combine : SETTINGS+TIME | TIME simple garde Time natif en CRU1+DEL/CRU2+DEL. Maintenez SETTINGS et tournez DELAY TIME pour le Feedback natif ; relacher SETTINGS revient a Time. FUNC puis TRACK+DELAY SEND regle aussi Feedback. |
-| Ping Pong | TIME / FUNC+TIME ou SETTINGS+TIME / DELAY SEND | Temps / Feedback / envoi par piste. Echos alternes gauche/droite ; casque ou deux sorties. Remplace le delay standard,sans variante combinee. |
-| Shimmer 1 / Shimmer 2 | TIME / FUNC+TIME ou SETTINGS+TIME / DELAY SEND | Temps / Feedback / envoi par piste. Shimmer 1 : chaque echo monte d une octave,filtre pour lisser les repetitions. Shimmer 2 : ancien melange echo propre/octave diffusee. Sans variantes combinees. |
-| Rate crusher | CRUSH : TIME ; CRU+DEL : FUNC+TIME | Rate0-127,environ750Hz-48kHz. Plus bas : degrade ; plus haut : propre. |
-| Bits crusher | CRUSH : FUNC+TIME ; CRU+DEL : FUNC puis TRACK+TIME | Bits2-16. Les valeurs basses affectent aussi les signaux faibles. Silence conserve. |
-| Envois crusher / delay | Combine : DELAY SEND / FUNC+DELAY SEND | Delay Send / Crush Send distinct0-127 par piste. CRU1+DEL garde le direct propre ; CRU2+DEL melange le direct meme delay0. Crusher0 donne des echos propres. Seul : Crush Send. |
-| Reglages FX et sauvegarde | Relacher TRACK ; arreter la lecture | Modes et controles globaux,puis six envois par effet,sauvegardes apres arret. Nouveaux controles/envois sans p-lock/LFO. Parametres delay/reverb natifs conserves. |
+| Menu reverb | Maintenir TRACK + REVERB SIZE | De haut en bas : PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule. |
+| Menu delay | Maintenir TRACK + DELAY TIME | De haut en bas : PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule. |
+| Reverb standard | REVERB SEND / SIZE / FUNC + SIZE | Send par piste / Size natif, INF au maximum / Tone -64 a 0 a +63. Format natif restaure immediatement apres Chorus, meme en lecture. |
+| Reverb PS1 | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | PS1 Send par piste / Decay / Tone. Queue stereo inspiree PlayStation, sombre et granuleuse ; optimisations de traitement conservees. |
+| Chorus 1 / 2 | REVERB SEND / SIZE / FUNC + SIZE | Chorus Send par piste / Speed / Depth. Speed et Depth 0-127. Remplace la reverb du slot. |
+| Vinyl | REVERB SEND ; SIZE / FUNC + SIZE / FUNC puis TRACK + SIZE | Vinyl Send ; Crackle / Warble Amount / Warble Speed. Tenir FUNC puis TRACK pour Speed. Send 0 sec ; Crackle 0 coupe la poussiere. Pops/clics independants dans les pauses. Volume, pan et mute respectes. |
+| Delay standard | DELAY SEND / TIME / FUNC + TIME | Delay Send par piste / Time natif / Feedback natif. |
+| Ping Pong | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME | Send par piste / Time / Feedback. Echos stereo alternes gauche/droite ; casque ou deux sorties. |
+| Crusher Rate / Bits | CRUSH 1 ou 2 : TIME / FUNC + TIME | Rate 0-127, environ 750 Hz-48 kHz / Bits 2-16. Valeurs basses plus rugueuses. CRUSH 1 garde le direct propre ; CRUSH 2 melange direct propre/crushed. DELAY SEND affiche Crush Send ; pas d echo dans ces modes. |
+| Reglages et sauvegarde FX | Relacher TRACK ; arreter la lecture | Modes FX et commandes ajoutees sauvegardes apres arret. Sans nouvelles destinations p-lock/LFO ; sends natifs conservent les locks. Les deux Shimmer et tous les modes combines sont retires. Anciens combines vers effet seul ; anciens Shimmer/Cloud vers DELAY. |
 
 ## Machines et commandes sonores
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Defilement machines | MACHINES + tourner DATA | Tours rapides bornes a une machine par evenement accepte,espaces de40ms,pour ne pas sauter Wizard. IDs et ordre TINY/Shadow/MIDI conserves. |
+| Defilement machines | MACHINES + tourner DATA | Tours rapides bornes a une machine par evenement accepte,espaces de40ms,pour ne pas sauter Wizard. IDs et ordre TINY/Shadow/SPEAK/MIDI conserves. |
 | Commandes Elder | Choisir Elder dans MACHINES | COLOR = Wave ; SHAPE = Warp ; SWEEP = Noise ; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate et Fine conservés. Synthé original inspiré de Junior de Fors. |
 | Anciens sons Retrosyn | Elder remplace ChpHzrd / Retrosyn | Le même emplacement joue Elder : le timbre des anciens sons Retrosyn change. Autres moteurs et correctifs CPU conservés. Feral est de Glycinate. |
 | Commandes TINY | Choisir TINY dans MACHINES | COLOR : Tone ; SHAPE : Model0–51 ; SWEEP : Mod ; CONTOUR : Excite. Les52modeles originaux ; Feral et tous les autres moteurs conserves. |
 | Commandes Shadow | Choisir Shadow apres TINY dans MACHINES | COLOR : Grain ; SHAPE : Density ; SWEEP : Spread ; CONTOUR : Chaos. PUNCH : attaque repetee. Pitch,Fine,Decay et Gate conserves. Synthese pulsar/bruit originale inspiree de Opal Dust de Fors. |
+
+## Machine vocale SPEAK
+
+| Fonction | Commandes | Comportement |
+|---|---|---|
+| Choisir SPEAK | MACHINES : apres Shadow, juste avant MIDI Out | Moteur vocal original a formants, 128 mots anglais. Icone microphone ; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Consonnes adoucies, niveau calibre : commencer vers Vol+Dist 60, Punch coupe. |
+| Voice / Word / Speed / Articulation | COLOR / SHAPE / SWEEP / CONTOUR | Caractere vocal/formants / Word 0-127 / Speed (64 normal, plus bas plus lent) / Articulation. SHAPE affiche mot et index. Mot pris au prochain trig ; autres commandes en direct. |
+| Hauteur et enveloppe | PITCH / notes ; DECAY, Fine, Punch, Gate, Attack | Hauteur independante de la vitesse. Commencer a Decay 127 pour les mots complets. Filtres et sends existants disponibles. Etat vocal distinct par piste. |
+| Sequences de mots et modulation | Maintenir TRIG + SHAPE, puis locks Pitch et autres commandes | Mot et autres parametres natifs acceptent p-locks et destinations LFO. COLOR/SHAPE/SWEEP/CONTOUR : MIDI CC 16/17/18/19. Espacer les mots ou augmenter Speed. |
+| Exemple de phrase | Mots SHAPE et locks de notes sur des trigs successifs | HELLO 31, I 0, AM 62, A 17, ROBOT 113, I 0, LOVE 35, MUSIC 106. Lexique complet indexe a la fin du guide. |
 
 ## Commandes LFO et MACRO
 
@@ -108,9 +112,46 @@ Maintenez SETTINGS + TRACK pour ouvrir Mod Setup puis relâchez. Un appui bref l
 | Num | Off / On ; défaut Off | On affiche volume et panoramique en chiffres ; Off garde l’affichage natif. |
 | Mute | Stk / LTC ; défaut Stk | LTC : TRACK + appui FUNC verrouille ; FUNC quitte. FUNC + pad en mute verrouillé : solo ; rappuyer ou quitter restaure les mutes. |
 | Delay | Stk / Div ; défaut Stk | Stk : Time natif. Div : divisions musicales, pointées et triolets. Positions correspondantes corrigées au tempo ; toutes les positions ne sont pas quantifiées. Utilisé en mode Delay. |
-| DX | Off / On ; défaut Off | Diagnostic CPU optionnel. Maintenez physiquement TRACK+RETRIG au moins350ms puis relachez. Le verrou retrig ne declenche jamais le popup. Off par defaut. |
+| DX | Off / On ; défaut Off | DX On : appui bref FUNC, second appui sous 350 ms, maintien au moins 0,5 seconde puis relacher. Toute autre commande annule. Affiche/remet a zero A/P/O/N : charge moyenne/pic, overruns, voix coupees par le gouverneur. Remplace ancien raccourci ; verrou retrig sans diagnostic. Off par defaut. |
 | SCRM | DATA ouvre ; tourner et appuyer ; BACK revient | Six cases par piste : Pitch,Decay,Color,Shape,Sweep,Contour. Pitch/Decay desactives par defaut, quatre autres actives. Choix conserves entre projets et apres extinction ; sauvegarde a l’arret. Wizard autorise Pitch/Decay, commandes sample/modes exclues. |
 
 Préférences globales. BACK ferme Mod Setup et sauvegarde ses preferences globales ; la liste Scramble de chaque piste se sauvegarde au retour du sous-menu. Si la lecture tourne, la sauvegarde attend son arrêt. Arrêtez et attendez la fin de sauvegarde avant extinction. Choix restaurés au redémarrage. Modes d’effets et réglages crusher sauvegardés également après arrêt.
+
+## Lexique SPEAK
+
+| Index | Word | Index | Word | Index | Word | Index | Word |
+|---:|---|---:|---|---:|---|---:|---|
+| 0 | I | 32 | GOODBYE | 64 | IS | 96 | ONE |
+| 1 | YOU | 33 | GOOD | 65 | WAS | 97 | TWO |
+| 2 | WE | 34 | BAD | 66 | WERE | 98 | THREE |
+| 3 | THEY | 35 | LOVE | 67 | WILL | 99 | FOUR |
+| 4 | HE | 36 | LIKE | 68 | CAN | 100 | FIVE |
+| 5 | SHE | 37 | WANT | 69 | COULD | 101 | SIX |
+| 6 | IT | 38 | NEED | 70 | HAVE | 102 | SEVEN |
+| 7 | ME | 39 | KNOW | 71 | HAS | 103 | EIGHT |
+| 8 | US | 40 | THINK | 72 | HAD | 104 | NINE |
+| 9 | THEM | 41 | FEEL | 73 | BEEN | 105 | ZERO |
+| 10 | MY | 42 | SEE | 74 | IN | 106 | MUSIC |
+| 11 | YOUR | 43 | HEAR | 75 | ON | 107 | SOUND |
+| 12 | OUR | 44 | SAY | 76 | AT | 108 | BEAT |
+| 13 | THIS | 45 | SPEAK | 77 | TO | 109 | RHYTHM |
+| 14 | THAT | 46 | TELL | 78 | FOR | 110 | BASS |
+| 15 | THESE | 47 | ASK | 79 | FROM | 111 | DRUM |
+| 16 | THOSE | 48 | DO | 80 | WITH | 112 | MACHINE |
+| 17 | A | 49 | MAKE | 81 | WITHOUT | 113 | ROBOT |
+| 18 | AN | 50 | PLAY | 82 | OF | 114 | HUMAN |
+| 19 | THE | 51 | STOP | 83 | UP | 115 | TIME |
+| 20 | AND | 52 | START | 84 | DOWN | 116 | NIGHT |
+| 21 | OR | 53 | GO | 85 | HERE | 117 | DAY |
+| 22 | BUT | 54 | COME | 86 | THERE | 118 | WORLD |
+| 23 | IF | 55 | STAY | 87 | NOW | 119 | FRIEND |
+| 24 | SO | 56 | MOVE | 88 | THEN | 120 | HAPPY |
+| 25 | BECAUSE | 57 | TURN | 89 | AGAIN | 121 | SAD |
+| 26 | YES | 58 | TAKE | 90 | ALWAYS | 122 | NEW |
+| 27 | NO | 59 | GIVE | 91 | NEVER | 123 | OLD |
+| 28 | NOT | 60 | GET | 92 | ALL | 124 | SOFT |
+| 29 | PLEASE | 61 | BE | 93 | SOME | 125 | LOUD |
+| 30 | THANK | 62 | AM | 94 | MORE | 126 | DREAM |
+| 31 | HELLO | 63 | ARE | 95 | LESS | 127 | FUTURE |
 
 Défauts : pads et mute stock ; USB 2ch ; Num Off ; DX Off. Reverb et Delay par défaut sans préférences d’effets sauvegardées. USB six canaux sans retours stéréo des effets.

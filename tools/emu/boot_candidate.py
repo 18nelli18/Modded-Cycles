@@ -36,7 +36,7 @@ def boot(path):
     assert u.reg_read(C.UC_M68K_REG_PC)==0x4000053a
     print('PASS: native payload bootstrap and RAM clear reached native continuation',flush=True)
     main=bytes(u.mem_read(0x40000400,0x40200000-0x40000400))
-    runtime=bytes(u.mem_read(0x46700000,0x100000))
+    runtime=bytes(u.mem_read(0x46700000,0x200000 if len(image)>0 and int.from_bytes(image[0x40195ad8-0x40000400:0x40195adc-0x40000400],'big')>0x46800000-0x467ab360 else 0x100000))
     cache_dir.mkdir(parents=True,exist_ok=True)
     (cache_dir/'main.bin').write_bytes(main)
     (cache_dir/'runtime.bin').write_bytes(runtime)

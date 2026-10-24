@@ -1,16 +1,16 @@
 # Feature and shortcut guide
 
-Supermodel 2.29 - 23 October 2026
+Supermodel 2.30 - 23 October 2026
 
-Main 2.29. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.30. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
-**Machines and sound:** Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY, Shadow and MIDI Out. Elder is an original synth inspired by Junior by Fors. Machine browsing retains synth values; Wizard’s four dials stay separate while MACHINES stays open.
+**Machines and sound:** Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY, Shadow, SPEAK and MIDI Out. Elder is an original synth inspired by Junior by Fors. Machine browsing retains synth values; Wizard’s four dials stay separate while MACHINES stays open.
 
 **Performance and sequencing:** Arpeggiator, held-note octave 0, ChordKeys and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching mute and solo.
 
-**Filters and effects:** Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Delay/Crush combinations, Chorus 1/2 + Reverb and Vinyl + Reverb. FX menus apply only on TRACK release. Opaque FX overlay; SETTINGS + Size/Time adjusts Tone/Feedback in combined modes. Vinyl dust continues through musical gaps. Includes stereo Ping Pong, full-octave Shimmer 1 and the earlier mixed/diffuse Shimmer 2. PS1 adds a darker, grainier stereo reverb.
+**Filters and effects:** Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; PS1, Vinyl, Reverb and Chorus 1/2; Ping Pong, Delay and Crush 1/2. Opaque FX menus apply on TRACK release. Cumulative PS1/filter optimizations. Both Shimmers and all combined modes are removed.
 
 **Routing and workflow:** MIDI Out with nine CC knobs, locks and two MIDI LFOs; MIDI OUT/THRU toggle; USB stereo or six tracks; permanent quick save, saved Mod Setup and optional DX diagnostics.
 
@@ -26,6 +26,7 @@ Main 2.29. Hold the first button while pressing the next button or turning the n
 | Slide trig | SETTINGS + TRIG | Toggle a parameter slide on the step. |
 | Sequence Genie | SETTINGS + PAGE | Open the generator for the selected track. Select with DATA; choose Generate or Queue and set Loop/Page timing. |
 | SCRAMBLE | Quick tap SETTINGS + TRACK | On release, randomize the checked Pitch, Decay, Color, Shape, Sweep and Contour parameters for this track. Choose them in Mod Setup > SCRM. Decay now works; Punch stays unchanged. The original four default On. Marked steps use the same checklist without changing the base sound. |
+| SCRAMBLE step / delete | Hold a step + quick SETTINGS + TRACK; delete normally | Toggle SCRAMBLE on that step. Deleting its trig clears the mark and locks; a replacement trig starts clean. Neighboring steps and tracks keep their settings. |
 | Control All setup | TRACK + TRIG 1–6 | Include or exclude audio tracks from Control All changes. |
 | Audio beat repeat | Hold TRACK + RETRIG , then hold a TRIG 1–16 | The held step selects a repeat division for included audio tracks. Release a modifier or division pad to stop. |
 | Repeat mode latch | Hold TRACK + double-tap RETRIG | Release both; hold a TRIG to repeat, release it to stop. BACK exits. Copy/paste/clear blocked; plain PLAY/STOP available. Temporary, not saved. Stock FUNC + SETTINGS/PATTERN temp save/reload stay available; diagnostics never appear from latching. |
@@ -39,33 +40,36 @@ Main 2.29. Hold the first button while pressing the next button or turning the n
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Reverb-slot menu | Hold TRACK + REVERB SIZE | Opaque popup over the normal screen; three scrolling choices. Left/up: VINYL, VINYL+REV, then PS1. Center: REVERB. Right/down: CHORUS 1, CHORUS 2, CHOR1+REV, CHOR2+REV. Browse without changing sound; release TRACK to apply, BACK to cancel. |
-| Delay-slot menu | Hold TRACK + DELAY TIME | Left/up from DELAY: CRUSH 1, CRUSH 2, PING PONG, SHIMMER 1, SHIMMER 2. Right/down: CRU1+DEL, CRU2+DEL. Opaque menu; sound stays unchanged until TRACK release. BACK cancels. |
-| Reverb Tone | REVERB: FUNC + SIZE; combined: SETTINGS + SIZE | In CHOR1+REV, CHOR2+REV and VINYL+REV, hold SETTINGS and turn REVERB SIZE for native Tone without leaving the mode. Releasing SETTINGS returns to Reverb Size. Standard REVERB mode keeps FUNC + SIZE. |
-| PS1 reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | PS1 Send per track / Decay / Tone. PlayStation-inspired stereo tail with a darker, grainier character. Replaces standard reverb; no combined variant. |
-| Chorus alone | SIZE = Speed; FUNC + SIZE = Depth | Chorus I/II Speed and Depth 0-127. REVERB SEND becomes Chorus Send per track. |
-| Chorus + Reverb controls | SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Reverb Size / Chorus Speed / Chorus Depth. A held FUNC-first TRACK does not open Track Setup. |
-| Chorus + Reverb sends | REVERB SEND / FUNC + REVERB SEND | Native Reverb Send / separate Chorus Send 0-127 per track. Either effect can be used independently. |
-| Vinyl alone | SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Crackle / Warble Amount / Warble Speed. Vinyl Send 0 is dry. Bright independent pops/clicks continue through musical gaps; Crackle 0 switches dust off. Track level, pan and mute apply. |
-| Vinyl + Reverb controls | SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Reverb Size / Crackle / Warble Amount. FUNC first, then TRACK + REVERB SEND adjusts Warble Speed. |
-| Vinyl + Reverb sends | REVERB SEND / FUNC + REVERB SEND | Native Reverb Send / separate Vinyl Send per track. Vinyl Send 0 leaves normal reverb. |
-| Delay Time / Feedback | DELAY: TIME / FUNC + TIME; combined: SETTINGS + TIME | Plain TIME keeps native Time in CRU1+DEL/CRU2+DEL. Hold SETTINGS and turn DELAY TIME for native Feedback; releasing SETTINGS returns to Time. FUNC first, then TRACK + DELAY SEND also adjusts Feedback. |
-| Ping Pong | TIME / FUNC + TIME or SETTINGS + TIME / DELAY SEND | Time / Feedback / per-track send. Stereo echoes alternate left and right; listen on headphones or both outputs. Replaces standard delay, with no combined variant. |
-| Shimmer 1 / Shimmer 2 | TIME / FUNC + TIME or SETTINGS + TIME / DELAY SEND | Time / Feedback / per-track send. Shimmer 1: every echo shifts up an octave, filtered for smoother repeats. Shimmer 2: earlier clean-echo/diffuse-octave blend. No combined variants. |
-| Crusher Rate | CRUSH: TIME; CRU+DEL: FUNC + TIME | Rate 0-127, about 750 Hz-48 kHz. Lower is rougher; higher cleaner. |
-| Crusher Bits | CRUSH: FUNC + TIME; CRU+DEL: FUNC first, then TRACK + TIME | Bits 2-16. Low values affect quiet signals too. Silence stays silent. |
-| Crusher / Delay sends | Combined: DELAY SEND / FUNC + DELAY SEND | Delay Send / separate Crush Send 0-127 per track. CRU1+DEL keeps direct clean; CRU2+DEL blends direct clean/crushed even at delay 0. Crusher 0 gives clean echoes. Solo modes show Crush Send. |
-| Effect settings and save | Release TRACK; stop playback | Global modes and effect controls, plus six separate sends per effect, save after stopping. New controls/sends have no p-lock/LFO destinations. Native delay/reverb parameters retain stock behavior. |
+| Reverb-slot menu | Hold TRACK + REVERB SIZE | Top to bottom: PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel. |
+| Delay-slot menu | Hold TRACK + DELAY TIME | Top to bottom: PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels. |
+| Standard Reverb | REVERB SEND / SIZE / FUNC + SIZE | Per-track Send / native Size, including INF at maximum / Tone -64 through 0 to +63. Stock formatting returns immediately after leaving Chorus, even during playback. |
+| PS1 reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | PS1 Send per track / Decay / Tone. PlayStation-inspired stereo tail, darker and grainier; cumulative processing optimizations retained. |
+| Chorus 1 / 2 | REVERB SEND / SIZE / FUNC + SIZE | Chorus Send per track / Speed / Depth. Speed and Depth 0-127. Replaces reverb in this slot. |
+| Vinyl | REVERB SEND; SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Vinyl Send; Crackle / Warble Amount / Warble Speed. Hold FUNC first, then TRACK for Speed. Send 0 is dry; Crackle 0 switches dust off. Bright independent pops/clicks continue through gaps. Track level, pan and mute apply. |
+| Standard Delay | DELAY SEND / TIME / FUNC + TIME | Per-track Delay Send / native Time / native Feedback. |
+| Ping Pong | DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME | Per-track send / Time / Feedback. Stereo echoes alternate left and right; listen through headphones or both outputs. |
+| Crusher Rate / Bits | CRUSH 1 or 2: TIME / FUNC + TIME | Rate 0-127, about 750 Hz-48 kHz / Bits 2-16. Lower Rate or Bits is rougher. CRUSH 1 keeps the direct signal clean; CRUSH 2 blends direct clean/crushed. DELAY SEND is labeled Crush Send; no delay echoes in Crush modes. |
+| Effect settings and save | Release TRACK; stop playback | FX modes and added controls save after playback stops. Added FX controls have no p-lock/LFO destinations; native track sends retain their locks. Both Shimmers and all combined modes are removed. Old combined preferences select their standalone effect; old Shimmer/Cloud preferences select DELAY. |
 
 ## Machines and sound controls
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Machine browsing | MACHINES + turn DATA | Fast turns move at most one machine per accepted event, spaced by 40 ms, to avoid skipping Sample Wizard. Saved machine IDs and TINY/Shadow/MIDI order stay unchanged. |
+| Machine browsing | MACHINES + turn DATA | Fast turns move at most one machine per accepted event, spaced by 40 ms, to avoid skipping Sample Wizard. Saved machine IDs and TINY/Shadow/SPEAK/MIDI order stay unchanged. |
 | Elder controls | Select Elder in MACHINES | COLOR = Wave; SHAPE = Warp; SWEEP = Noise; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate and Fine remain available. Original synth inspired by Junior by Fors. |
 | Saved Retrosyn sounds | Elder replaces ChpHzrd / Retrosyn | The same machine slot now plays Elder, so previous Retrosyn sounds change timbre. The other engines and previous CPU fixes are retained. Feral is by Glycinate. |
 | TINY controls | Select TINY in MACHINES | COLOR: Tone; SHAPE: Model0–51; SWEEP: Mod; CONTOUR: Excite. All52 original models; Feral and every other engine remain. |
 | Shadow controls | Select Shadow after TINY in MACHINES | COLOR: Grain; SHAPE: Density; SWEEP: Spread; CONTOUR: Chaos. PUNCH: ratcheting attack. Pitch, Fine, Decay and Gate remain. Original pulsar/noise engine inspired by Opal Dust by Fors. |
+
+## SPEAK voice machine
+
+| Feature | Controls | Behavior |
+|---|---|---|
+| Select SPEAK | MACHINES: after Shadow, immediately before MIDI Out | Original 128-word formant speech engine. Microphone icon; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Softer consonants and calibrated output: start around Vol+Dist 60 with Punch off. |
+| Voice / Word / Speed / Articulation | COLOR / SHAPE / SWEEP / CONTOUR | Voice/formant character / Word 0-127 / Speed (64 normal, lower slower) / Articulation. SHAPE popup shows the word and index. Word changes latch at the next trig; the other three controls remain live. |
+| Pitch and envelope | PITCH / notes; DECAY, Fine, Punch, Gate, Attack | Pitch changes independently of word speed. Begin with Decay 127 to hear complete words. Existing filters and FX sends apply. Each track has its own speech state. |
+| Word sequences and modulation | Hold a trig + SHAPE, then lock Pitch and other knobs normally | Word and other native parameters support p-locks and LFO destinations. COLOR/SHAPE/SWEEP/CONTOUR use MIDI CC 16/17/18/19. Leave space for the word or increase Speed. |
+| Example sentence | SHAPE words and note locks on successive trigs | HELLO 31, I 0, AM 62, A 17, ROBOT 113, I 0, LOVE 35, MUSIC 106. Full indexed word library follows at the end of this guide. |
 
 ## LFO and MACRO controls
 
@@ -108,9 +112,46 @@ Hold SETTINGS + TRACK until Mod Setup opens, then release both buttons. A short 
 | Num | Off / On Default: Off | Off keeps the original volume and pan display. On shows numeric volume and pan values when you adjust those controls. |
 | Mute | Stk / LTC Default: Stk | Stk keeps the original momentary mute controls. With LTC selected, hold TRACK and tap FUNC to stay in mute mode, then tap track pads to mute or unmute. Tap FUNC again to leave. In latched mute mode, hold FUNC and press a track pad to solo it; press the soloed pad again, or leave mute mode, to restore the previous mutes. |
 | Delay | Stk / Div Default: Stk | Stk preserves the original Delay Time display and timing. Div displays musical divisions, including dotted and triplet values, and corrects the matching timing positions to exact divisions of the tempo. Other Delay Time positions retain their original timing; this does not quantize every knob position. Applies while using Delay mode. |
-| DX | Off / On Default: Off | Optional CPU diagnostic. Physically hold TRACK + RETRIG for at least 350 ms and release. Latching retrig never triggers the popup. Off by default. |
+| DX | Off / On Default: Off | With DX On: tap FUNC, press FUNC again within 350 ms, hold at least 0.5 seconds, then release. Other controls cancel the gesture. Shows/resets A/P/O/N: average/peak CPU load, overruns, governor voice drops. Replaces the old shortcut; retrig latching never triggers it. Off by default. |
 | SCRM | DATA opens; turn and press DATA; BACK returns | Six checkboxes per track: Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay default Off; the original four default On. Choices persist across projects and power cycles; saving waits until playback stops. Wizard allows Pitch/Decay; its sample/mode controls stay excluded. |
 
 These are global preferences. BACK closes Mod Setup and saves its global preferences; each track’s Scramble checklist saves when you return from its submenu. If playback is running, the save waits until it stops. Stop playback and allow saving to finish before powering off. Saved choices return after reboot. Effect modes and crusher settings also save after playback stops.
+
+## SPEAK word library
+
+| Index | Word | Index | Word | Index | Word | Index | Word |
+|---:|---|---:|---|---:|---|---:|---|
+| 0 | I | 32 | GOODBYE | 64 | IS | 96 | ONE |
+| 1 | YOU | 33 | GOOD | 65 | WAS | 97 | TWO |
+| 2 | WE | 34 | BAD | 66 | WERE | 98 | THREE |
+| 3 | THEY | 35 | LOVE | 67 | WILL | 99 | FOUR |
+| 4 | HE | 36 | LIKE | 68 | CAN | 100 | FIVE |
+| 5 | SHE | 37 | WANT | 69 | COULD | 101 | SIX |
+| 6 | IT | 38 | NEED | 70 | HAVE | 102 | SEVEN |
+| 7 | ME | 39 | KNOW | 71 | HAS | 103 | EIGHT |
+| 8 | US | 40 | THINK | 72 | HAD | 104 | NINE |
+| 9 | THEM | 41 | FEEL | 73 | BEEN | 105 | ZERO |
+| 10 | MY | 42 | SEE | 74 | IN | 106 | MUSIC |
+| 11 | YOUR | 43 | HEAR | 75 | ON | 107 | SOUND |
+| 12 | OUR | 44 | SAY | 76 | AT | 108 | BEAT |
+| 13 | THIS | 45 | SPEAK | 77 | TO | 109 | RHYTHM |
+| 14 | THAT | 46 | TELL | 78 | FOR | 110 | BASS |
+| 15 | THESE | 47 | ASK | 79 | FROM | 111 | DRUM |
+| 16 | THOSE | 48 | DO | 80 | WITH | 112 | MACHINE |
+| 17 | A | 49 | MAKE | 81 | WITHOUT | 113 | ROBOT |
+| 18 | AN | 50 | PLAY | 82 | OF | 114 | HUMAN |
+| 19 | THE | 51 | STOP | 83 | UP | 115 | TIME |
+| 20 | AND | 52 | START | 84 | DOWN | 116 | NIGHT |
+| 21 | OR | 53 | GO | 85 | HERE | 117 | DAY |
+| 22 | BUT | 54 | COME | 86 | THERE | 118 | WORLD |
+| 23 | IF | 55 | STAY | 87 | NOW | 119 | FRIEND |
+| 24 | SO | 56 | MOVE | 88 | THEN | 120 | HAPPY |
+| 25 | BECAUSE | 57 | TURN | 89 | AGAIN | 121 | SAD |
+| 26 | YES | 58 | TAKE | 90 | ALWAYS | 122 | NEW |
+| 27 | NO | 59 | GIVE | 91 | NEVER | 123 | OLD |
+| 28 | NOT | 60 | GET | 92 | ALL | 124 | SOFT |
+| 29 | PLEASE | 61 | BE | 93 | SOME | 125 | LOUD |
+| 30 | THANK | 62 | AM | 94 | MORE | 126 | DREAM |
+| 31 | HELLO | 63 | ARE | 95 | LESS | 127 | FUTURE |
 
 Startup defaults: stock pads and mute behavior; USB 2ch; Num Off; DX Off. Reverb and Delay are the default effect modes when no effect preferences are saved. Six-channel USB excludes the stereo effect returns.

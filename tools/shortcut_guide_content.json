@@ -1,15 +1,15 @@
 {
-  "release": "2.29",
-  "stamp": "2026-10-23-ps1-main-229",
+  "release": "2.30",
+  "stamp": "2026-10-23-speak-main-230",
   "cards": [
     {
       "en": [
         "Machines and sound",
-        "Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY, Shadow and MIDI Out. Elder is an original synth inspired by Junior by Fors. Machine browsing retains synth values; Wizard’s four dials stay separate while MACHINES stays open."
+        "Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY, Shadow, SPEAK and MIDI Out. Elder is an original synth inspired by Junior by Fors. Machine browsing retains synth values; Wizard’s four dials stay separate while MACHINES stays open."
       ],
       "fr": [
         "Machines et son",
-        "Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow et MIDI Out. Elder est inspiré de Junior de Fors. La selection conserve les valeurs synth ; quatre commandes Wizard separees tant que MACHINES reste ouvert."
+        "Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK et MIDI Out. Elder est inspiré de Junior de Fors. La selection conserve les valeurs synth ; quatre commandes Wizard separees tant que MACHINES reste ouvert."
       ]
     },
     {
@@ -25,11 +25,11 @@
     {
       "en": [
         "Filters and effects",
-        "Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Delay/Crush combinations, Chorus 1/2 + Reverb and Vinyl + Reverb. FX menus apply only on TRACK release. Opaque FX overlay; SETTINGS + Size/Time adjusts Tone/Feedback in combined modes. Vinyl dust continues through musical gaps. Includes stereo Ping Pong, full-octave Shimmer 1 and the earlier mixed/diffuse Shimmer 2. PS1 adds a darker, grainier stereo reverb."
+        "Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; PS1, Vinyl, Reverb and Chorus 1/2; Ping Pong, Delay and Crush 1/2. Opaque FX menus apply on TRACK release. Cumulative PS1/filter optimizations. Both Shimmers and all combined modes are removed."
       ],
       "fr": [
         "Filtres et effets",
-        "Filtres pistes/Wizard inspires Polivoks,second LFO,MACRO Fine/Lo-Fi ; combinaisons Delay/Crush,Chorus1/2+Reverb et Vinyl+Reverb. Menus appliques au relachement TRACK. Fenetres FX opaques ; SETTINGS+Size/Time regle Tone/Feedback en modes combines. Poussiere Vinyl continue dans les pauses. Ajoute Ping Pong stereo,Shimmer 1 entierement transpose et Shimmer 2 mixte/diffuse precedent. PS1 ajoute une reverb stereo plus sombre et granuleuse."
+        "Filtres pistes/Wizard inspires Polivoks, second LFO, MACRO Fine/Lo-Fi ; PS1, Vinyl, Reverb et Chorus 1/2 ; Ping Pong, Delay et Crush 1/2. Menus opaques appliques au relachement TRACK. Optimisations PS1/filtre cumulees. Les deux Shimmer et tous les modes combines sont retires."
       ]
     },
     {
@@ -148,6 +148,18 @@
         },
         {
           "en": [
+            "SCRAMBLE step / delete",
+            "Hold a step + quick SETTINGS + TRACK; delete normally",
+            "Toggle SCRAMBLE on that step. Deleting its trig clears the mark and locks; a replacement trig starts clean. Neighboring steps and tracks keep their settings."
+          ],
+          "fr": [
+            "Pas SCRAMBLE / suppression",
+            "Maintenir un pas + SETTINGS + TRACK bref ; supprimer normalement",
+            "Bascule SCRAMBLE sur ce pas. Supprimer le trig retire marque et locks ; le nouveau trig repart propre. Autres pas et pistes conserves."
+          ]
+        },
+        {
+          "en": [
             "Control All setup",
             "TRACK + TRIG 1–6",
             "Include or exclude audio tracks from Control All changes."
@@ -254,204 +266,120 @@
           "en": [
             "Reverb-slot menu",
             "Hold TRACK + REVERB SIZE",
-            "Opaque popup over the normal screen; three scrolling choices. Left/up: VINYL, VINYL+REV, then PS1. Center: REVERB. Right/down: CHORUS 1, CHORUS 2, CHOR1+REV, CHOR2+REV. Browse without changing sound; release TRACK to apply, BACK to cancel."
+            "Top to bottom: PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel."
           ],
           "fr": [
-            "Menu slot reverb",
+            "Menu reverb",
             "Maintenir TRACK + REVERB SIZE",
-            "Fenetre opaque sur l ecran normal,trois choix. Gauche/haut : VINYL,VINYL+REV,PS1. Centre : REVERB. Droite/bas : CHORUS1,CHORUS2,CHOR1+REV,CHOR2+REV. Son inchange pendant le parcours ; relacher TRACK applique,BACK annule."
+            "De haut en bas : PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule."
           ]
         },
         {
           "en": [
             "Delay-slot menu",
             "Hold TRACK + DELAY TIME",
-            "Left/up from DELAY: CRUSH 1, CRUSH 2, PING PONG, SHIMMER 1, SHIMMER 2. Right/down: CRU1+DEL, CRU2+DEL. Opaque menu; sound stays unchanged until TRACK release. BACK cancels."
+            "Top to bottom: PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels."
           ],
           "fr": [
-            "Menu slot delay",
+            "Menu delay",
             "Maintenir TRACK + DELAY TIME",
-            "Gauche/haut depuis DELAY : CRUSH1,CRUSH2,PING PONG,SHIMMER 1,SHIMMER 2. Droite/bas : CRU1+DEL,CRU2+DEL. Fenetre opaque ; son inchange avant relachement TRACK. BACK annule."
+            "De haut en bas : PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule."
           ]
         },
         {
           "en": [
-            "Reverb Tone",
-            "REVERB: FUNC + SIZE; combined: SETTINGS + SIZE",
-            "In CHOR1+REV, CHOR2+REV and VINYL+REV, hold SETTINGS and turn REVERB SIZE for native Tone without leaving the mode. Releasing SETTINGS returns to Reverb Size. Standard REVERB mode keeps FUNC + SIZE."
+            "Standard Reverb",
+            "REVERB SEND / SIZE / FUNC + SIZE",
+            "Per-track Send / native Size, including INF at maximum / Tone -64 through 0 to +63. Stock formatting returns immediately after leaving Chorus, even during playback."
           ],
           "fr": [
-            "Reverb Tone",
-            "REVERB : FUNC+SIZE ; combine : SETTINGS+SIZE",
-            "En CHOR1+REV,CHOR2+REV et VINYL+REV, maintenez SETTINGS et tournez REVERB SIZE pour le Tone natif sans quitter le mode. Relacher SETTINGS revient a Reverb Size. Le mode REVERB standard garde FUNC+SIZE."
+            "Reverb standard",
+            "REVERB SEND / SIZE / FUNC + SIZE",
+            "Send par piste / Size natif, INF au maximum / Tone -64 a 0 a +63. Format natif restaure immediatement apres Chorus, meme en lecture."
           ]
         },
         {
           "en": [
             "PS1 reverb",
             "REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE",
-            "PS1 Send per track / Decay / Tone. PlayStation-inspired stereo tail with a darker, grainier character. Replaces standard reverb; no combined variant."
+            "PS1 Send per track / Decay / Tone. PlayStation-inspired stereo tail, darker and grainier; cumulative processing optimizations retained."
           ],
           "fr": [
             "Reverb PS1",
-            "REVERB SEND / SIZE / FUNC+SIZE ou SETTINGS+SIZE",
-            "PS1 Send par piste / Decay / Tone. Queue stereo inspiree de la PlayStation,plus sombre et granuleuse. Remplace la reverb standard ; pas de variante combinee."
+            "REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE",
+            "PS1 Send par piste / Decay / Tone. Queue stereo inspiree PlayStation, sombre et granuleuse ; optimisations de traitement conservees."
           ]
         },
         {
           "en": [
-            "Chorus alone",
-            "SIZE = Speed; FUNC + SIZE = Depth",
-            "Chorus I/II Speed and Depth 0-127. REVERB SEND becomes Chorus Send per track."
+            "Chorus 1 / 2",
+            "REVERB SEND / SIZE / FUNC + SIZE",
+            "Chorus Send per track / Speed / Depth. Speed and Depth 0-127. Replaces reverb in this slot."
           ],
           "fr": [
-            "Chorus seul",
-            "SIZE = Speed ; FUNC + SIZE = Depth",
-            "Chorus I/II : Speed et Depth0-127. REVERB SEND devient Chorus Send par piste."
+            "Chorus 1 / 2",
+            "REVERB SEND / SIZE / FUNC + SIZE",
+            "Chorus Send par piste / Speed / Depth. Speed et Depth 0-127. Remplace la reverb du slot."
           ]
         },
         {
           "en": [
-            "Chorus + Reverb controls",
-            "SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE",
-            "Reverb Size / Chorus Speed / Chorus Depth. A held FUNC-first TRACK does not open Track Setup."
+            "Vinyl",
+            "REVERB SEND; SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE",
+            "Vinyl Send; Crackle / Warble Amount / Warble Speed. Hold FUNC first, then TRACK for Speed. Send 0 is dry; Crackle 0 switches dust off. Bright independent pops/clicks continue through gaps. Track level, pan and mute apply."
           ],
           "fr": [
-            "Commandes chorus + reverb",
-            "SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE",
-            "Reverb Size / Chorus Speed / Chorus Depth. Maintenir FUNC puis TRACK n’ouvre pas Track Setup."
+            "Vinyl",
+            "REVERB SEND ; SIZE / FUNC + SIZE / FUNC puis TRACK + SIZE",
+            "Vinyl Send ; Crackle / Warble Amount / Warble Speed. Tenir FUNC puis TRACK pour Speed. Send 0 sec ; Crackle 0 coupe la poussiere. Pops/clics independants dans les pauses. Volume, pan et mute respectes."
           ]
         },
         {
           "en": [
-            "Chorus + Reverb sends",
-            "REVERB SEND / FUNC + REVERB SEND",
-            "Native Reverb Send / separate Chorus Send 0-127 per track. Either effect can be used independently."
+            "Standard Delay",
+            "DELAY SEND / TIME / FUNC + TIME",
+            "Per-track Delay Send / native Time / native Feedback."
           ],
           "fr": [
-            "Envois chorus + reverb",
-            "REVERB SEND / FUNC+REVERB SEND",
-            "Reverb Send natif / Chorus Send distinct0-127 par piste. Chaque effet reste independant."
-          ]
-        },
-        {
-          "en": [
-            "Vinyl alone",
-            "SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE",
-            "Crackle / Warble Amount / Warble Speed. Vinyl Send 0 is dry. Bright independent pops/clicks continue through musical gaps; Crackle 0 switches dust off. Track level, pan and mute apply."
-          ],
-          "fr": [
-            "Vinyl seul",
-            "SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE",
-            "Crackle / Warble Amount / Warble Speed. Vinyl Send0 : sec. Pops/clics brillants independants, presents dans les pauses ; Crackle0 coupe la poussiere. Volume,pan et mute de piste respectes."
-          ]
-        },
-        {
-          "en": [
-            "Vinyl + Reverb controls",
-            "SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE",
-            "Reverb Size / Crackle / Warble Amount. FUNC first, then TRACK + REVERB SEND adjusts Warble Speed."
-          ],
-          "fr": [
-            "Commandes Vinyl + reverb",
-            "SIZE / FUNC+SIZE / FUNC puis TRACK+SIZE",
-            "Reverb Size / Crackle / Warble Amount. FUNC puis TRACK+REVERB SEND regle Warble Speed."
-          ]
-        },
-        {
-          "en": [
-            "Vinyl + Reverb sends",
-            "REVERB SEND / FUNC + REVERB SEND",
-            "Native Reverb Send / separate Vinyl Send per track. Vinyl Send 0 leaves normal reverb."
-          ],
-          "fr": [
-            "Envois Vinyl + reverb",
-            "REVERB SEND / FUNC+REVERB SEND",
-            "Reverb Send natif / Vinyl Send distinct par piste. Vinyl Send0 garde la reverb normale."
-          ]
-        },
-        {
-          "en": [
-            "Delay Time / Feedback",
-            "DELAY: TIME / FUNC + TIME; combined: SETTINGS + TIME",
-            "Plain TIME keeps native Time in CRU1+DEL/CRU2+DEL. Hold SETTINGS and turn DELAY TIME for native Feedback; releasing SETTINGS returns to Time. FUNC first, then TRACK + DELAY SEND also adjusts Feedback."
-          ],
-          "fr": [
-            "Time / Feedback delay",
-            "DELAY : TIME / FUNC+TIME ; combine : SETTINGS+TIME",
-            "TIME simple garde Time natif en CRU1+DEL/CRU2+DEL. Maintenez SETTINGS et tournez DELAY TIME pour le Feedback natif ; relacher SETTINGS revient a Time. FUNC puis TRACK+DELAY SEND regle aussi Feedback."
+            "Delay standard",
+            "DELAY SEND / TIME / FUNC + TIME",
+            "Delay Send par piste / Time natif / Feedback natif."
           ]
         },
         {
           "en": [
             "Ping Pong",
-            "TIME / FUNC + TIME or SETTINGS + TIME / DELAY SEND",
-            "Time / Feedback / per-track send. Stereo echoes alternate left and right; listen on headphones or both outputs. Replaces standard delay, with no combined variant."
+            "DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME",
+            "Per-track send / Time / Feedback. Stereo echoes alternate left and right; listen through headphones or both outputs."
           ],
           "fr": [
             "Ping Pong",
-            "TIME / FUNC+TIME ou SETTINGS+TIME / DELAY SEND",
-            "Temps / Feedback / envoi par piste. Echos alternes gauche/droite ; casque ou deux sorties. Remplace le delay standard,sans variante combinee."
+            "DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME",
+            "Send par piste / Time / Feedback. Echos stereo alternes gauche/droite ; casque ou deux sorties."
           ]
         },
         {
           "en": [
-            "Shimmer 1 / Shimmer 2",
-            "TIME / FUNC + TIME or SETTINGS + TIME / DELAY SEND",
-            "Time / Feedback / per-track send. Shimmer 1: every echo shifts up an octave, filtered for smoother repeats. Shimmer 2: earlier clean-echo/diffuse-octave blend. No combined variants."
+            "Crusher Rate / Bits",
+            "CRUSH 1 or 2: TIME / FUNC + TIME",
+            "Rate 0-127, about 750 Hz-48 kHz / Bits 2-16. Lower Rate or Bits is rougher. CRUSH 1 keeps the direct signal clean; CRUSH 2 blends direct clean/crushed. DELAY SEND is labeled Crush Send; no delay echoes in Crush modes."
           ],
           "fr": [
-            "Shimmer 1 / Shimmer 2",
-            "TIME / FUNC+TIME ou SETTINGS+TIME / DELAY SEND",
-            "Temps / Feedback / envoi par piste. Shimmer 1 : chaque echo monte d une octave,filtre pour lisser les repetitions. Shimmer 2 : ancien melange echo propre/octave diffusee. Sans variantes combinees."
-          ]
-        },
-        {
-          "en": [
-            "Crusher Rate",
-            "CRUSH: TIME; CRU+DEL: FUNC + TIME",
-            "Rate 0-127, about 750 Hz-48 kHz. Lower is rougher; higher cleaner."
-          ],
-          "fr": [
-            "Rate crusher",
-            "CRUSH : TIME ; CRU+DEL : FUNC+TIME",
-            "Rate0-127,environ750Hz-48kHz. Plus bas : degrade ; plus haut : propre."
-          ]
-        },
-        {
-          "en": [
-            "Crusher Bits",
-            "CRUSH: FUNC + TIME; CRU+DEL: FUNC first, then TRACK + TIME",
-            "Bits 2-16. Low values affect quiet signals too. Silence stays silent."
-          ],
-          "fr": [
-            "Bits crusher",
-            "CRUSH : FUNC+TIME ; CRU+DEL : FUNC puis TRACK+TIME",
-            "Bits2-16. Les valeurs basses affectent aussi les signaux faibles. Silence conserve."
-          ]
-        },
-        {
-          "en": [
-            "Crusher / Delay sends",
-            "Combined: DELAY SEND / FUNC + DELAY SEND",
-            "Delay Send / separate Crush Send 0-127 per track. CRU1+DEL keeps direct clean; CRU2+DEL blends direct clean/crushed even at delay 0. Crusher 0 gives clean echoes. Solo modes show Crush Send."
-          ],
-          "fr": [
-            "Envois crusher / delay",
-            "Combine : DELAY SEND / FUNC+DELAY SEND",
-            "Delay Send / Crush Send distinct0-127 par piste. CRU1+DEL garde le direct propre ; CRU2+DEL melange le direct meme delay0. Crusher0 donne des echos propres. Seul : Crush Send."
+            "Crusher Rate / Bits",
+            "CRUSH 1 ou 2 : TIME / FUNC + TIME",
+            "Rate 0-127, environ 750 Hz-48 kHz / Bits 2-16. Valeurs basses plus rugueuses. CRUSH 1 garde le direct propre ; CRUSH 2 melange direct propre/crushed. DELAY SEND affiche Crush Send ; pas d echo dans ces modes."
           ]
         },
         {
           "en": [
             "Effect settings and save",
             "Release TRACK; stop playback",
-            "Global modes and effect controls, plus six separate sends per effect, save after stopping. New controls/sends have no p-lock/LFO destinations. Native delay/reverb parameters retain stock behavior."
+            "FX modes and added controls save after playback stops. Added FX controls have no p-lock/LFO destinations; native track sends retain their locks. Both Shimmers and all combined modes are removed. Old combined preferences select their standalone effect; old Shimmer/Cloud preferences select DELAY."
           ],
           "fr": [
-            "Reglages FX et sauvegarde",
+            "Reglages et sauvegarde FX",
             "Relacher TRACK ; arreter la lecture",
-            "Modes et controles globaux,puis six envois par effet,sauvegardes apres arret. Nouveaux controles/envois sans p-lock/LFO. Parametres delay/reverb natifs conserves."
+            "Modes FX et commandes ajoutees sauvegardes apres arret. Sans nouvelles destinations p-lock/LFO ; sends natifs conservent les locks. Les deux Shimmer et tous les modes combines sont retires. Anciens combines vers effet seul ; anciens Shimmer/Cloud vers DELAY."
           ]
         }
       ]
@@ -466,12 +394,12 @@
           "en": [
             "Machine browsing",
             "MACHINES + turn DATA",
-            "Fast turns move at most one machine per accepted event, spaced by 40 ms, to avoid skipping Sample Wizard. Saved machine IDs and TINY/Shadow/MIDI order stay unchanged."
+            "Fast turns move at most one machine per accepted event, spaced by 40 ms, to avoid skipping Sample Wizard. Saved machine IDs and TINY/Shadow/SPEAK/MIDI order stay unchanged."
           ],
           "fr": [
             "Defilement machines",
             "MACHINES + tourner DATA",
-            "Tours rapides bornes a une machine par evenement accepte,espaces de40ms,pour ne pas sauter Wizard. IDs et ordre TINY/Shadow/MIDI conserves."
+            "Tours rapides bornes a une machine par evenement accepte,espaces de40ms,pour ne pas sauter Wizard. IDs et ordre TINY/Shadow/SPEAK/MIDI conserves."
           ]
         },
         {
@@ -520,6 +448,74 @@
             "Commandes Shadow",
             "Choisir Shadow apres TINY dans MACHINES",
             "COLOR : Grain ; SHAPE : Density ; SWEEP : Spread ; CONTOUR : Chaos. PUNCH : attaque repetee. Pitch,Fine,Decay et Gate conserves. Synthese pulsar/bruit originale inspiree de Opal Dust de Fors."
+          ]
+        }
+      ]
+    },
+    {
+      "title": {
+        "en": "SPEAK voice machine",
+        "fr": "Machine vocale SPEAK"
+      },
+      "rows": [
+        {
+          "en": [
+            "Select SPEAK",
+            "MACHINES: after Shadow, immediately before MIDI Out",
+            "Original 128-word formant speech engine. Microphone icon; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Softer consonants and calibrated output: start around Vol+Dist 60 with Punch off."
+          ],
+          "fr": [
+            "Choisir SPEAK",
+            "MACHINES : apres Shadow, juste avant MIDI Out",
+            "Moteur vocal original a formants, 128 mots anglais. Icone microphone ; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Consonnes adoucies, niveau calibre : commencer vers Vol+Dist 60, Punch coupe."
+          ]
+        },
+        {
+          "en": [
+            "Voice / Word / Speed / Articulation",
+            "COLOR / SHAPE / SWEEP / CONTOUR",
+            "Voice/formant character / Word 0-127 / Speed (64 normal, lower slower) / Articulation. SHAPE popup shows the word and index. Word changes latch at the next trig; the other three controls remain live."
+          ],
+          "fr": [
+            "Voice / Word / Speed / Articulation",
+            "COLOR / SHAPE / SWEEP / CONTOUR",
+            "Caractere vocal/formants / Word 0-127 / Speed (64 normal, plus bas plus lent) / Articulation. SHAPE affiche mot et index. Mot pris au prochain trig ; autres commandes en direct."
+          ]
+        },
+        {
+          "en": [
+            "Pitch and envelope",
+            "PITCH / notes; DECAY, Fine, Punch, Gate, Attack",
+            "Pitch changes independently of word speed. Begin with Decay 127 to hear complete words. Existing filters and FX sends apply. Each track has its own speech state."
+          ],
+          "fr": [
+            "Hauteur et enveloppe",
+            "PITCH / notes ; DECAY, Fine, Punch, Gate, Attack",
+            "Hauteur independante de la vitesse. Commencer a Decay 127 pour les mots complets. Filtres et sends existants disponibles. Etat vocal distinct par piste."
+          ]
+        },
+        {
+          "en": [
+            "Word sequences and modulation",
+            "Hold a trig + SHAPE, then lock Pitch and other knobs normally",
+            "Word and other native parameters support p-locks and LFO destinations. COLOR/SHAPE/SWEEP/CONTOUR use MIDI CC 16/17/18/19. Leave space for the word or increase Speed."
+          ],
+          "fr": [
+            "Sequences de mots et modulation",
+            "Maintenir TRIG + SHAPE, puis locks Pitch et autres commandes",
+            "Mot et autres parametres natifs acceptent p-locks et destinations LFO. COLOR/SHAPE/SWEEP/CONTOUR : MIDI CC 16/17/18/19. Espacer les mots ou augmenter Speed."
+          ]
+        },
+        {
+          "en": [
+            "Example sentence",
+            "SHAPE words and note locks on successive trigs",
+            "HELLO 31, I 0, AM 62, A 17, ROBOT 113, I 0, LOVE 35, MUSIC 106. Full indexed word library follows at the end of this guide."
+          ],
+          "fr": [
+            "Exemple de phrase",
+            "Mots SHAPE et locks de notes sur des trigs successifs",
+            "HELLO 31, I 0, AM 62, A 17, ROBOT 113, I 0, LOVE 35, MUSIC 106. Lexique complet indexe a la fin du guide."
           ]
         }
       ]
@@ -798,12 +794,12 @@
           "en": [
             "DX",
             "Off / On Default: Off",
-            "Optional CPU diagnostic. Physically hold TRACK + RETRIG for at least 350 ms and release. Latching retrig never triggers the popup. Off by default."
+            "With DX On: tap FUNC, press FUNC again within 350 ms, hold at least 0.5 seconds, then release. Other controls cancel the gesture. Shows/resets A/P/O/N: average/peak CPU load, overruns, governor voice drops. Replaces the old shortcut; retrig latching never triggers it. Off by default."
           ],
           "fr": [
             "DX",
             "Off / On ; défaut Off",
-            "Diagnostic CPU optionnel. Maintenez physiquement TRACK+RETRIG au moins350ms puis relachez. Le verrou retrig ne declenche jamais le popup. Off par defaut."
+            "DX On : appui bref FUNC, second appui sous 350 ms, maintien au moins 0,5 seconde puis relacher. Toute autre commande annule. Affiche/remet a zero A/P/O/N : charge moyenne/pic, overruns, voix coupees par le gouverneur. Remplace ancien raccourci ; verrou retrig sans diagnostic. Off par defaut."
           ]
         },
         {
@@ -820,5 +816,135 @@
         }
       ]
     }
+  ],
+  "speak_words": [
+    "I",
+    "YOU",
+    "WE",
+    "THEY",
+    "HE",
+    "SHE",
+    "IT",
+    "ME",
+    "US",
+    "THEM",
+    "MY",
+    "YOUR",
+    "OUR",
+    "THIS",
+    "THAT",
+    "THESE",
+    "THOSE",
+    "A",
+    "AN",
+    "THE",
+    "AND",
+    "OR",
+    "BUT",
+    "IF",
+    "SO",
+    "BECAUSE",
+    "YES",
+    "NO",
+    "NOT",
+    "PLEASE",
+    "THANK",
+    "HELLO",
+    "GOODBYE",
+    "GOOD",
+    "BAD",
+    "LOVE",
+    "LIKE",
+    "WANT",
+    "NEED",
+    "KNOW",
+    "THINK",
+    "FEEL",
+    "SEE",
+    "HEAR",
+    "SAY",
+    "SPEAK",
+    "TELL",
+    "ASK",
+    "DO",
+    "MAKE",
+    "PLAY",
+    "STOP",
+    "START",
+    "GO",
+    "COME",
+    "STAY",
+    "MOVE",
+    "TURN",
+    "TAKE",
+    "GIVE",
+    "GET",
+    "BE",
+    "AM",
+    "ARE",
+    "IS",
+    "WAS",
+    "WERE",
+    "WILL",
+    "CAN",
+    "COULD",
+    "HAVE",
+    "HAS",
+    "HAD",
+    "BEEN",
+    "IN",
+    "ON",
+    "AT",
+    "TO",
+    "FOR",
+    "FROM",
+    "WITH",
+    "WITHOUT",
+    "OF",
+    "UP",
+    "DOWN",
+    "HERE",
+    "THERE",
+    "NOW",
+    "THEN",
+    "AGAIN",
+    "ALWAYS",
+    "NEVER",
+    "ALL",
+    "SOME",
+    "MORE",
+    "LESS",
+    "ONE",
+    "TWO",
+    "THREE",
+    "FOUR",
+    "FIVE",
+    "SIX",
+    "SEVEN",
+    "EIGHT",
+    "NINE",
+    "ZERO",
+    "MUSIC",
+    "SOUND",
+    "BEAT",
+    "RHYTHM",
+    "BASS",
+    "DRUM",
+    "MACHINE",
+    "ROBOT",
+    "HUMAN",
+    "TIME",
+    "NIGHT",
+    "DAY",
+    "WORLD",
+    "FRIEND",
+    "HAPPY",
+    "SAD",
+    "NEW",
+    "OLD",
+    "SOFT",
+    "LOUD",
+    "DREAM",
+    "FUTURE"
   ]
 }
