@@ -6,7 +6,13 @@ u32 fx_menu_open,fx_menu_slot,fx_menu_cursor,fx_force_active,fx_force_func,fx_fo
  * Aucun throttling des deltas physiques nouveaux, aucune minuterie d'edition. */
 static u32 input_stamp[16],input_delta[16],input_valid,last_input,input_seen;
 static void input_touch(void){last_input=*(volatile u32*)0xfc07000c;input_seen=1;}
-static u32 input_quiet(void){return !input_seen||*(volatile u32*)0xfc07000c-last_input>135168000u;}
+#ifdef FX_GATED
+#define INPUT_QUIET_LINK
+#else
+#define INPUT_QUIET_LINK static
+#define fx_input_quiet input_quiet
+#endif
+INPUT_QUIET_LINK u32 fx_input_quiet(void){return !input_seen||*(volatile u32*)0xfc07000c-last_input>135168000u;}
 static u32 input_parameter(u32 field,const u32*e){
  u32 knob=e[3],stamp=e[2],delta=e[4],bit=1u<<knob;
  input_touch();
@@ -15,7 +21,7 @@ static u32 input_parameter(u32 field,const u32*e){
  int step=(int)N(0x4006f73a)(e,1,1);if(step)fx_parameter(field,step);return 1;
 }
 #else
-#define input_quiet() 1
+#define fx_input_quiet() 1
 #endif
 #ifdef FX_DUCK
 u32 fx_duck_amount=96,fx_duck_release=64;
@@ -25,7 +31,7 @@ static void duck_settings(void){
   u32 ok=N(0x4007baaa)(b,10,h)==10&&!N(0x4007baaa)(&extra,1,h);if(N(0x4007bc1c)(h))ok=0;
   if(ok&&!fx_dirty&&b[0]==68&&b[1]==85&&b[2]==48&&b[3]==49&&b[4]<128&&b[5]<128&&b[6]==(u8)~b[4]&&b[7]==(u8)~b[5]&&b[8]==165&&b[9]==90){fx_duck_amount=b[4];fx_duck_release=b[5];}
  }}
- if(fx_dirty&&input_quiet()&&!N(0x4007faf4)(2)&&!fx_menu_open){
+ if(fx_dirty&&fx_input_quiet()&&!N(0x4007faf4)(2)&&!fx_menu_open){
   u8 out[10]={68,85,48,49,fx_duck_amount,fx_duck_release,(u8)~fx_duck_amount,(u8)~fx_duck_release,165,90};
   if(!N(0x4007bc5e)("/Duck.cfg","w",h)){if(!N(0x4007bb76)(h,0,10))N(0x4007bb0a)(out,10,h);N(0x4007e2f6)(h);N(0x4007bc1c)(h);}
  }
@@ -42,7 +48,7 @@ static void extra_settings(void){
   for(u32 i=0;i<5;i++)if(b[4+i]>127||b[9+i]!=(u8)~b[4+i])ok=0;
   if(ok&&!fx_dirty)for(u32 i=0;i<5;i++)*v[i]=b[4+i];
  }}
- if(fx_dirty&&input_quiet()&&!N(0x4007faf4)(2)&&!fx_menu_open){
+ if(fx_dirty&&fx_input_quiet()&&!N(0x4007faf4)(2)&&!fx_menu_open){
   u8 out[16]={69,88,48,49,0,0,0,0,0,0,0,0,0,0,165,90};
   for(u32 i=0;i<5;i++){out[4+i]=*v[i];out[9+i]=~out[4+i];}
   if(!N(0x4007bc5e)("/ExtraFx.cfg","w",h)){if(!N(0x4007bb76)(h,0,16))N(0x4007bb0a)(out,16,h);N(0x4007e2f6)(h);N(0x4007bc1c)(h);}
@@ -57,18 +63,39 @@ const char *const fx_rev_names[FX_REV_COUNT]={"REVERB","CHORUS 1","CHORUS 2","VI
 ,"ROOM"
 #ifdef FX_EXTRA
 ,"RING MOD"
+#ifdef FX_GATED
+,FX_GATED_LABEL
+#ifdef FX_REVERB101
+,"HALL"
+#endif
+#endif
 #endif
 #endif
 };
 #ifdef FX_NO_SHIMMER
 const u32 fx_rev_order[FX_REV_MENU_COUNT]={
-#ifdef FX_EXTRA
+#if defined(FX_GATED)
+10,
+#ifdef FX_REVERB101
+11,
+#endif
+#elif defined(FX_EXTRA)
 9,
 #endif
 #ifdef FX_CHEAP
 8,
 #endif
-7,3,0,1,2};
+7,
+#ifdef FX_REVERB101
+0,3,
+#else
+3,0,
+#endif
+1,2
+#ifdef FX_GATED
+,9
+#endif
+};
 const char *const fx_del_names[FX_DEL_COUNT]={"DELAY","CRUSH 1","CRUSH 2",0,0,"PING PONG",0,0
 #ifdef FX_CHEAP
 ,0,"DUB"
@@ -94,10 +121,21 @@ const u32 fx_del_order[FX_DEL_MENU_COUNT]={
 #else
 const char *const fx_del_names[FX_DEL_COUNT]={"DELAY","CRUSH 1","CRUSH 2",0,0,"PING PONG","SHIMMER 1",0};
 const u32 fx_rev_order[FX_REV_MENU_COUNT]={
-#ifdef FX_EXTRA
+#if defined(FX_GATED)
+10,
+#ifdef FX_REVERB101
+11,
+#endif
+#elif defined(FX_EXTRA)
 9,
 #endif
-7,3,0,1,2},fx_del_order[FX_DEL_MENU_COUNT]={6,5,2,1,0};
+7,
+#ifdef FX_REVERB101
+0,3,
+#else
+3,0,
+#endif
+1,2},fx_del_order[FX_DEL_MENU_COUNT]={6,5,2,1,0};
 #endif
 #else
 const char *const fx_rev_names[FX_REV_COUNT]={"REVERB","CHORUS 1","CHORUS 2","VINYL","VINYL+REV","CHOR1+REV","CHOR2+REV"
@@ -130,6 +168,20 @@ const u32 fx_rev_order[FX_REV_COUNT]={
 2,1,0,3,4};
 #endif
 static u32 loaded,back_owned,held,track_pending,track_start,track_used,flush_track;
+#ifdef FX_POLISH
+static u32 track_released;
+/* Un relachement physique ne doit laisser aucune TrackSelectionView accrochee.
+ * Ne toucher ni QuickMute, ni les autres vues, ni le verrou retrig intentionnel. */
+static void release_track_view(void){
+ if(!track_released||(held&2)||bl_latched)return;track_released=0;
+ u32 app=*(volatile u32*)0x40fe4178;if(!app)return;
+ u32 head=app+84,node=*(u32*)(head+4);
+ for(u32 i=0;node&&node!=head&&i<32;i++){
+  u32 view=*(u32*)(node+8);node=*(u32*)(node+4);
+  if(view&&*(u32*)view==0x40100ee0&&!*(u8*)(view+48))N(0x40076126)(view);
+ }
+}
+#endif
 static int motion;
 #ifdef FX_CLOUD_REPAIR
 /* Une rotation modifiee conserve son champ. Apres release FUNC, jeter les
@@ -153,7 +205,7 @@ static void cloud_settings(void){
    if(ok&&!fx_dirty&&b[0]==67&&b[1]==76&&b[2]==48&&b[3]==49&&b[4]<128&&b[5]<25&&b[6]==(u8)~b[4]&&b[7]==(u8)~b[5]&&b[8]==165&&b[9]==90){fx_cloud_density=b[4];fx_cloud_pitch=b[5];}
   }
  }
- if(fx_dirty&&input_quiet()&&!N(0x4007faf4)(2)&&!fx_menu_open){
+ if(fx_dirty&&fx_input_quiet()&&!N(0x4007faf4)(2)&&!fx_menu_open){
   u8 out[10]={67,76,48,49,fx_cloud_density,fx_cloud_pitch,(u8)~fx_cloud_density,(u8)~fx_cloud_pitch,165,90};
   if(!N(0x4007bc5e)("/Cloud.cfg","w",h)){
    if(!N(0x4007bb76)(h,0,10))N(0x4007bb0a)(out,10,h);
@@ -163,12 +215,18 @@ static void cloud_settings(void){
 }
 #endif
 void fx_service(void){
+#if defined(FX_LEGACY)&&!defined(FX_BANK_SAFE)
+ extern void dx7_service(void);dx7_service();
+#endif
  if(*(volatile u32*)0x40a7883c==1||!N(0x400d0a10)())return;
 #ifdef FX_DUCK
  duck_settings();
 #endif
 #ifdef FX_EXTRA
  extra_settings();
+#endif
+#ifdef FX_GATED
+ fx_gate_settings();
 #endif
 #ifdef FX_LEAN_FX
  /* Lire le vieux fichier d abord : FxMix conserve la priorite de selection. */
@@ -203,12 +261,16 @@ if(cr_mode==8)cr_mode=0;
 #endif
 cr_rate=b[23];cr_bits=b[24];for(u32 t=0;t<6;t++){fx_aux_ch[t]=b[10+t];fx_aux_vi[t]=b[16+t];cr_send[t]=b[25+t];}}
  }}
- if(fx_dirty&&input_quiet()&&!N(0x4007faf4)(2)&&!fx_menu_open){b[4]=ch_mode;b[5]=fx_speed;b[6]=fx_depth;b[7]=fx_crackle;b[8]=fx_warble;b[9]=fx_wspeed;b[22]=cr_mode;b[23]=cr_rate;b[24]=cr_bits;
+ if(fx_dirty&&fx_input_quiet()&&!N(0x4007faf4)(2)&&!fx_menu_open){b[4]=ch_mode;b[5]=fx_speed;b[6]=fx_depth;b[7]=fx_crackle;b[8]=fx_warble;b[9]=fx_wspeed;b[22]=cr_mode;b[23]=cr_rate;b[24]=cr_bits;
   for(u32 t=0;t<6;t++){b[10+t]=fx_aux_ch[t];b[16+t]=fx_aux_vi[t];b[25+t]=cr_send[t];}for(u32 i=0;i<27;i++)b[31+i]=~b[4+i];b[58]=165;b[59]=90;if(file(1,b))fx_dirty=0;
  }
 }
 void fx_commit(void){if(!fx_menu_open)return;u32 m=(fx_menu_slot?fx_del_order:fx_rev_order)[fx_menu_cursor];
- if(fx_menu_slot)cr_mode=m;else ch_mode=m;fx_dirty=1;fx_menu_open=0;motion=0;fx_notice((fx_menu_slot?fx_del_names:fx_rev_names)[m]);fx_redraw();}
+ if(fx_menu_slot)cr_mode=m;else ch_mode=m;fx_dirty=1;fx_menu_open=0;motion=0;
+#ifndef FX_POLISH
+fx_notice((fx_menu_slot?fx_del_names:fx_rev_names)[m]);
+#endif
+fx_redraw();}
 u32 fx_query(u32 key){if(fx_force_active){
 #ifdef FX_SETTINGS_SHORTCUTS
 if(key==13)return 0;
@@ -232,6 +294,12 @@ static u32 native(u32 view,const u32*e,u32 knob,u32 func,u32 track){u32 copy[6];
 void fx_parameter(u32 field,int delta){u32 lane=fx_selected(),*p=0,lo=0,hi=127;
  switch(field){
 #ifdef FX_EXTRA
+#ifdef FX_GATED
+case 17:p=&fx_gate_time;break;
+#ifdef FX_GATE_PREDELAY
+case 18:p=&fx_gate_predelay;break;
+#endif
+#endif
 case 12:p=&fx_ring_freq;break;case 13:p=&fx_ring_depth;break;case 14:p=&fx_phase_rate;break;case 15:p=&fx_phase_depth;break;case 16:p=&fx_phase_feedback;break;
 #endif
 case 0:p=(u32*)&cr_rate;break;case 1:p=(u32*)&cr_bits;lo=2;hi=16;break;case 2:if(lane<6)p=(u32*)&cr_send[lane];break;case 3:p=&fx_speed;break;case 4:p=&fx_depth;break;case 5:if(lane<6)p=&fx_aux_ch[lane];break;case 6:p=&fx_crackle;break;case 7:p=&fx_warble;break;case 8:p=&fx_wspeed;break;case 9:if(lane<6)p=&fx_aux_vi[lane];break;
@@ -251,6 +319,10 @@ case 0:p=(u32*)&cr_rate;break;case 1:p=(u32*)&cr_bits;lo=2;hi=16;break;case 2:if
  fx_show(field);
 }
 u32 fx_encoder(u32 view,const u32*e){
+#ifdef FX_POLISH
+ extern u32 dx7_browser_encoder(const u32*);
+ if(dx7_browser_encoder(e))return 1;
+#endif
 #ifdef FX_INPUT_FIX
  if(e)input_touch();
 #endif
@@ -328,6 +400,15 @@ for(u32 i=0;i<n;i++)if(order[i]==current)fx_menu_cursor=i;motion=0;}
 }
 #endif
 #ifdef FX_EXTRA
+#ifdef FX_GATED
+ if(ch_mode==10&&knob==14){if(!func)return input_parameter(17,e);
+#ifdef FX_GATE_PREDELAY
+return input_parameter(18,e);
+#else
+return native(view,e,14,1,0);
+#endif
+}
+#endif
  if(ch_mode==9&&knob==14){
 #ifdef FX_INPUT_FIX
  return input_parameter(func?13:12,e);
@@ -409,12 +490,20 @@ u32 fx_key(u32*e){if(!e)return 0;
  fx_diag_gesture(e);
 #endif
 u32 code=e[3],flags=e[4],down=flags&1,fresh=down&&!(flags&0x28),was=held;
+#ifdef FX_POLISH
+ extern u32 dx7_browser_key(const u32*);
+ if(dx7_browser_key(e))return 1;
+#endif
  if(code==1){
 #ifdef FX_CLOUD_REPAIR
   if(fresh)cloud_owned=0;
 #endif
  if(down)held|=1;else held&=~1u;}
- if(code==2){if(down)held|=2;else held&=~2u;}
+ if(code==2){if(down)held|=2;else {held&=~2u;
+#ifdef FX_POLISH
+track_released=1;
+#endif
+}}
  if(code==12&&back_owned){if(!down)back_owned=0;return 1;}
  if(fx_menu_open&&code==12&&fresh){fx_menu_open=0;motion=0;back_owned=1;fx_redraw();return 1;}
  if(code==2){
@@ -428,8 +517,31 @@ u32 code=e[3],flags=e[4],down=flags&1,fresh=down&&!(flags&0x28),was=held;
  }
  return 0;
 }
+#ifdef FX_POLISH
+extern u32 dx7_browser_draw(u32,u32);
+#ifdef FX_BANK_SAFE
+void fx_frame_prepare(void){dx7_service();}
+#endif
+u32 fx_stack_overlay(u32 view,u32 canvas){
+ release_track_view();
+#ifndef FX_BANK_SAFE
+ dx7_service();
+#endif
+ dx7_browser_draw(view,canvas);
+#ifdef FX_BANK_GUARD
+ extern void dx7_status_draw(u32);dx7_status_draw(canvas);
+#endif
+ return fx_overlay(view,canvas);
+}
+#endif
 u32 fx_draw(u32 view,u32 canvas){
  u32 result=fx_previous_draw(view,canvas);if(flush_track){u32 e[6]={0,0,0,2,16,0};fx_native_keys(e);bl_physical&=~1u;held&=~2u;flush_track=0;}fx_tap_force=0;fx_service();
+ #ifdef FX_POLISH
+ return result;
+}
+u32 fx_overlay(u32 view,u32 canvas){
+ (void)view;u32 result=0;
+#endif
  if(!fx_menu_open)return result;
 
 #ifdef FX_OVERLAY_MENU

@@ -27,8 +27,8 @@ PHONES={
 
 def name_of_phone(phones,index):return list(PHONES)[index]
 
-def header(root,smooth=False,soft=False,talk=False,bright=False):
- words=json.loads((root/'tools/machines/speak/words.json').read_text());assert len(words)==128
+def header(root,smooth=False,word_bank=None,soft=False,talk=False,bright=False,pitch_fix=False,sheen=False):
+ words=json.loads((word_bank or root/'tools/machines/speak/words.json').read_text());assert len(words)==128
  assert len({w['word'] for w in words})==128
  assert all(0<len(w['word'])<=9 and 0<len(w['phones'])<=13 and all(p in PHONES for p in w['phones']) for w in words)
  ids={p:i for i,p in enumerate(PHONES)};phones=list(PHONES.values());rows=[]
@@ -43,7 +43,7 @@ def header(root,smooth=False,soft=False,talk=False,bright=False):
   glottal.append(round(z*1500))
  mean=sum(glottal)/128;glottal=[round(x-mean) for x in glottal]
  if bright:
-  old=glottal[:];glottal=[old[i]+4*(old[i]-old[(i-1)&127]) for i in range(128)];assert max(map(abs,glottal))<32768
+  old=glottal[:];glottal=[old[i]+(5 if sheen else 4)*(old[i]-old[(i-1)&127]) for i in range(128)];assert max(map(abs,glottal))<32768
  harmonics=[sum(glottal[i]*cmath.exp(-2j*math.pi*h*i/128) for i in range(128))/128 for h in range(1,29)]
  banks=[]
  for bank in range(16):
@@ -52,7 +52,7 @@ def header(root,smooth=False,soft=False,talk=False,bright=False):
    rr=[]
    for k,(freq,bw) in enumerate(zip((f1,f2,f3),(b1,b2,b3))):
     r=math.exp(-math.pi*bw*(1.45 if soft and noise else 1)/8000);f=min(3800,freq*ratio)
-    weights=(.95,1,.75) if bright and vo and not noise else (1,.75,.5)
+    weights=((.90,1.08,.90) if sheen else (.95,1,.75)) if bright and vo and not noise else (1,.75,.5)
     if smooth and noise:
      # Fricatives : retirer le grondement F1, conserver le souffle F2/F3.
      weights=((.10,.8,.45) if list(PHONES)[len(br)] in ('S','Z') else (.16,.8,.45)) if soft else ((.12,.9,.7) if list(PHONES)[len(br)] in ('S','Z') else (.2,.85,.6))
@@ -89,7 +89,7 @@ def header(root,smooth=False,soft=False,talk=False,bright=False):
  text+='static const Resonator SP_RESONATORS[16]['+str(len(phones))+'][3]='+arr(banks)+';\n'
  text+='static const u8 SP_WORDS[128][16]='+arr(rows)+';\n'
  text+='static const char SP_NAMES[128][10]='+arr([w['word'] for w in words]).replace("'",'"')+';\n'
- text+='static const u32 SP_INC[129]='+arr([round(2**32*min(3000,140*2**((n-60)/12))/8000) for n in range(129)])+';\n'
+ text+='static const u32 SP_INC[129]='+arr([round(2**32*min(3000,(130.8127826502993 if pitch_fix else 140)*2**((n-60)/12))/8000) for n in range(129)])+';\n'
  return text,words
 
 def microphone():
@@ -106,9 +106,15 @@ def microphone():
  from build_machine_identity_test import encode
  return encode(p)
 
-def prepare(root,build,previous_popup,clear=False,smooth=False,level=False,soft=False,speed_fix=False,talk=False,bright=False):
- src=root/'tools/machines/speak';text,words=header(root,smooth=smooth,soft=soft,talk=talk,bright=bright);(src/'speak_tables.h').write_text(text,encoding='utf-8')
+def prepare(root,build,previous_popup,clear=False,smooth=False,level=False,adult=False,soft=False,speed_fix=False,talk=False,bright=False,pitch_fix=False,sheen=False):
+ src=root/'tools/machines/speak';bank=src/'words-adult-private.json' if adult else None
+ text,words=header(root,smooth=smooth,word_bank=bank,soft=soft,talk=talk,bright=bright,pitch_fix=pitch_fix,sheen=sheen)
  compile_src=src/'speak.c'
+ if adult:
+  # Tables privees compilees a part : aucune modification du lexique public.
+  (build/'speak_tables.h').write_text(text,encoding='utf-8')
+  compile_src=build/'speak-adult-private.c';compile_src.write_bytes((src/'speak.c').read_bytes())
+ else:(src/'speak_tables.h').write_text(text,encoding='utf-8')
  cross=str(root.parent/'retrosyn-integration/build/m68k-toolchain/pkg/bin/m68k-elf-');os.environ['PATH']=str(Path(cross).parent)+os.pathsep+os.environ['PATH']
  obj=build/'speak.o';elf=build/'speak.elf';binary=build/'speak.bin';ld=build/'speak.ld'
  subprocess.run([cross+'gcc.exe','-mcpu=54418','-O2','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',*(['-DSP_CLEAR=1'] if clear else []),*(['-DSP_SMOOTH=1'] if smooth else []),*(['-DSP_LEVEL=1'] if level else []),*(['-DSP_SOFT=1'] if soft else []),*(['-DSP_SPEED_FIX=1'] if speed_fix else []),*(['-DSP_TALK=1'] if talk else []),'-c',str(compile_src),'-o',str(obj)],check=True)
@@ -122,4 +128,4 @@ def prepare(root,build,previous_popup,clear=False,smooth=False,level=False,soft=
  for desc,pixels,w,h in [(0x46823000,stats(profile),48,33),(0x4682301c,microphone(),34,34)]:
   mask=encode([[1]*w for _ in range(h)]);ptr=pos;blob[pos-CODE:pos-CODE+len(pixels)]=pixels;pos+=len(pixels);mp=pos;blob[pos-CODE:pos-CODE+len(mask)]=mask;pos+=len(mask);blob[desc-CODE:desc-CODE+28]=struct.pack('>7I',0x401117c8,w,h,2,ptr,mp,0)
  assert pos<BSS
- return bytes(blob),dict(stats_descriptor=0x46823000,icon_descriptor=0x4682301c,code=CODE,bss=BSS,end=sy['speak_end'],code_bytes=binary.stat().st_size,symbols=sy,machine=20,name='SPEAK',profile=profile,words=[w['word'] for w in words],controls=['Voice','Word','Speed','Articulation'],status='experimental',hardware_tested=False,implementation='original fixed-point formant speech, not TI ROM emulation',speech_rate=8000,clarity=clear and not smooth,smooth_consonants=smooth,level_calibrated=level,soft_consonants=soft,speed_idle_fixed=speed_fix,talk_voice=talk,bright_voiced_harmonics=bright,output_scale=(524288 if level else 16384 if clear else 8192),output_gain_db=(36.1236 if level else 6.0206 if clear else 0))
+ return bytes(blob),dict(stats_descriptor=0x46823000,icon_descriptor=0x4682301c,code=CODE,bss=BSS,end=sy['speak_end'],code_bytes=binary.stat().st_size,symbols=sy,machine=20,name='SPEAK',profile=profile,words=[w['word'] for w in words],controls=['Voice','Word','Speed','Articulation'],status='experimental',hardware_tested=False,implementation='original fixed-point formant speech, not TI ROM emulation',speech_rate=8000,clarity=clear and not smooth,smooth_consonants=smooth,level_calibrated=level,soft_consonants=soft,speed_idle_fixed=speed_fix,talk_voice=talk,bright_voiced_harmonics=bright,pitch_reference_fixed=pitch_fix,base_hz=(130.8127826502993 if pitch_fix else 140),private_adult_bank=adult,output_scale=(524288 if level else 16384 if clear else 8192),output_gain_db=(36.1236 if level else 6.0206 if clear else 0))

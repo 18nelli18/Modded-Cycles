@@ -1,18 +1,29 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.33 - 23 octobre2026
+Supermodel2.35 - 24 octobre2026
 
-Principal2.33. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
+Principal2.35. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
 ## Fonctions incluses
 
-**Machines et son:** Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK et MIDI Out. Elder est inspiré de Junior de Fors. La selection conserve les valeurs synth ; quatre commandes Wizard separees tant que MACHINES reste ouvert.
+**Machines et son:** Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN et MIDI Out. Elder est inspiré de Junior de Fors. La selection conserve les valeurs synth ; quatre commandes Wizard separees tant que MACHINES reste ouvert.
 
 **Performance et séquenceur:** Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute verrouillé et solo.
 
-**Filtres et effets:** Filtres pistes/Wizard inspires Polivoks, second LFO, MACRO Fine/Lo-Fi ; Ring Mod, ROOM, PS1, Vinyl, Reverb et Chorus 1/2 ; Phaser, DUCK, DUB, Ping Pong, Delay et Crush 1/2. Menus opaques appliques au relachement TRACK. Optimisations PS1/filtre cumulees. Les deux Shimmer et tous les modes combines sont retires.
+**Filtres et effets:** Filtres pistes/Wizard inspires Polivoks, second LFO, MACRO Fine/Lo-Fi ; GATED, HALL, Ring Mod, ROOM, PS1, Vinyl, Reverb et Chorus 1/2 ; Phaser, DUCK, DUB, Ping Pong, Delay et Crush 1/2. Menus opaques appliques au relachement TRACK. Optimisations PS1/filtre cumulees. Les deux Shimmer et tous les modes combines sont retires.
 
 **Routage et travail:** MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif.
+
+## Nouveautes 2.35 - banques et RETROSYN
+
+| Fonction | Commandes | Comportement |
+|---|---|---|
+| Importer une banque DX7 | Flasheur > Importateurs WAV / DX7 | Arretez la lecture. Choisissez une banque Yamaha .syx de 32 voix, connectez le MIDI USB Model:Cycles, choisissez 1-16 et envoyez. Attendez LEGACY BANK SAVED. Le meme emplacement est remplace. Le son actif ne change pas. |
+| Charger une banque | LEGACY : FUNC + MACHINES ; DATA ; BACK | Maintenez FUNC et appuyez MACHINES. Tournez DATA pour choisir, appuyez DATA pour charger ; BACK annule. Factory restaure les voix incluses. Une banque active de 32 voix est partagee par toutes les pistes LEGACY. Banques conservees apres redemarrage, hors sauvegarde de projet Elektron. |
+| Voix LEGACY faibles | Automatique, fixe par note | Compensation limitee du gain de sortie des carriers faibles. Velocite et enveloppes conservees ; un operateur silencieux ou desactive ne devient pas audible. Charge CPU reduite conservee. |
+| RETROSYN | MACHINES, juste avant MIDI Out | Color, Shape (six modeles), Sweep et Contour. Pitch, Decay, Gate et Punch disponibles. IDs existants conserves ; Elder reste dans la liste. MIDI Out reste dernier. |
+| Mises a jour HALL et SPEAK | HALL : SIZE ; SPEAK : SHAPE | Retour HALL releve d environ 6 dB ; SIZE maximal donne une queue amortie plus longue. SPEAK un peu plus clair, CAREFUL (123) puis CREATURE (124). Vocabulaire regulier uniquement. |
+| Menu FX superpose | Maintenir TRACK + tourner REVERB SIZE / DELAY TIME | Menu opaque complet au-dessus de Machines et des autres fenetres. Tournez pour parcourir sans changer le son ; relachez TRACK pour appliquer. Fenetre precedente conservee derriere. Selection Control All liberee au relachement TRACK. |
 
 ## Pistes, pas et performance
 
@@ -40,14 +51,16 @@ Principal2.33. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Menu reverb | Maintenir TRACK + REVERB SIZE | De haut en bas : RING MOD, ROOM, PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule. |
+| Menu reverb | Maintenir TRACK + REVERB SIZE | De haut en bas : GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule. |
 | Menu delay | Maintenir TRACK + DELAY TIME | De haut en bas : PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule. |
 | Reverb standard | REVERB SEND / SIZE / FUNC + SIZE | Send par piste / Size natif, INF au maximum / Tone -64 a 0 a +63. Format natif restaure immediatement apres Chorus, meme en lecture. |
-| Ring Mod | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | Ring Send par piste / Frequency / Depth. Modulation en anneau sinusoidale metallique dans le slot reverb. RING MOD au-dessus de ROOM. Frequency et Depth globaux ; locks via le Send natif. |
+| Reverb GATED | REVERB SEND / SIZE ; FUNC + SIZE ; SETTINGS + SIZE | Gated Send / Gate Time ; Pre-delay ; Tone. Gate Time 0-127 : environ 40 ms-6,7 s apres le signal. Pre-delay 0-568 ms : pas de 1 ms jusqu a 64 puis 8 ms. Sans echos ajoutes ; dry immediat, gate apres le signal retarde. Essayer Gate Time 16-32 et Pre-delay 25-40 ms sur caisse claire. Reglages globaux sauvegardes a l arret. |
+| Reverb HALL | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | Hall Send par piste / Decay / Tone. Queue stereo large, reflexions plus longues que ROOM. Quatre voies amorties et deux diffuseurs par canal a 12 kHz, memoire reverb reutilisee. |
+| Ring Mod | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | Ring Send par piste / Frequency / Depth. Modulation en anneau sinusoidale metallique dans le slot reverb. RING MOD sous Chorus 1/2. Frequency et Depth globaux ; locks via le Send natif. |
 | Phaser | DELAY SEND / TIME / FUNC + TIME ; FUNC puis TRACK + TIME | Phaser Send par piste / Rate / Depth ; FUNC puis TRACK + TIME : Feedback (aussi SETTINGS + TIME). Phaser stereo deux etages dans le slot delay. PHASER au-dessus de DUCK. Tenir FUNC avant TRACK pour eviter le mute verrouille. |
 | Delay DUCK | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME ; FUNC puis TRACK + TIME ou DELAY SEND | Delay Send natif / Time / Feedback. Tenir FUNC avant TRACK : TIME regle Amount ; DELAY SEND regle Release. Retour attenue pendant le signal puis remontee progressive ; feedback conserve. Essayer Amount 127, Release 32-64 sur notes espacees. Amount 0 : Delay standard. |
-| Reverb ROOM | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | Room Send par piste / Decay / Tone. Petite ambiance stereo a 12 kHz. ROOM au-dessus de PS1 ; relacher TRACK pour appliquer. |
-| Reverb PS1 | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | PS1 Send par piste / Decay / Tone. Queue stereo inspiree PlayStation, sombre et granuleuse ; optimisations de traitement conservees. |
+| Reverb ROOM | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | Room Send par piste / Decay / Tone. Petite ambiance stereo a 12 kHz. ROOM au-dessus de PS1 ; relacher TRACK pour appliquer. Retour wet releve de 6 dB aux niveaux usuels, avec compression douce des cretes ; dry inchange. |
+| Reverb PS1 | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | PS1 Send par piste / Decay / Tone. Queue stereo inspiree PlayStation, sombre et granuleuse ; optimisations de traitement conservees. Retour wet releve de 6 dB aux niveaux usuels, avec compression douce des cretes ; dry inchange. |
 | Chorus 1 / 2 | REVERB SEND / SIZE / FUNC + SIZE | Chorus Send par piste / Speed / Depth. Speed et Depth 0-127. Remplace la reverb du slot. |
 | Vinyl | REVERB SEND ; SIZE / FUNC + SIZE / FUNC puis TRACK + SIZE | Vinyl Send ; Crackle / Warble Amount / Warble Speed. Tenir FUNC puis TRACK pour Speed. Send 0 sec ; Crackle 0 coupe la poussiere. Pops/clics independants dans les pauses. Volume, pan et mute respectes. |
 | Delay standard | DELAY SEND / TIME / FUNC + TIME | Delay Send par piste / Time natif / Feedback natif. |
@@ -66,15 +79,64 @@ Principal2.33. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Commandes TINY | Choisir TINY dans MACHINES | COLOR : Tone ; SHAPE : Model0–51 ; SWEEP : Mod ; CONTOUR : Excite. Les52modeles originaux ; Feral et tous les autres moteurs conserves. |
 | Commandes Shadow | Choisir Shadow apres TINY dans MACHINES | COLOR : Grain ; SHAPE : Density ; SWEEP : Spread ; CONTOUR : Chaos. PUNCH : attaque repetee. Pitch,Fine,Decay et Gate conserves. Synthese pulsar/bruit originale inspiree de Opal Dust de Fors. |
 
+## Machine LEGACY
+
+| Fonction | Commandes | Comportement |
+|---|---|---|
+| LEGACY / selection | MACHINES : juste avant MIDI Out | FM six operateurs Dexed MSFA, 32 algorithmes ; une voix par piste. MIDI Out toujours dernier. COLOR = Velocity, SHAPE = Voice, SWEEP = Brightness, CONTOUR = EG Time. Locks/CC/LFO natifs ; Voice et Velocity sont pris au prochain trigger. |
+| Banque de voix | SHAPE : slots 0-31 | Commence par Tooropulse, Delicho et EinstofPia. Huit slots plus faibles remplacent leurs voix par PIANO 1, E.PIANO 1, BASS 1, BRASS 1, STRINGS 1, CLAV 1, E.ORGAN 1 et MARIMBA de la cartouche ROM1A fournie. |
+| Velocity / brillance | COLOR / SWEEP | Velocity 0-127 agit sur les operateurs a chaque trigger ; defaut 100. Brightness 64 conserve la voix. Plus bas adoucit la modulation ; plus haut ajoute du mordant. |
+| Duree des enveloppes | CONTOUR / DECAY | EG Time 64 conserve les durees de la voix ; plus bas accelere, plus haut ralentit. DECAY et gate conservent l enveloppe d amplitude native. PITCH/FINETUNE transposent ; operateurs a frequence fixe selon la cartouche. |
+| Importer une banque DX7 | Flasheur > Importateurs WAV / DX7 | Arretez la lecture. Choisissez une banque Yamaha .syx de 32 voix, connectez le MIDI USB Model:Cycles, choisissez 1-16 et envoyez. Attendez LEGACY BANK SAVED. Le meme emplacement est remplace. Le son actif ne change pas. |
+| Credits et charge | Dexed / Google MSFA | Composant MSFA Apache de Dexed par Google, Pascal Gauthier et contributeurs ; integration Cycles originale. Voix de cartouches fournies par l utilisateur. Certaines voix six operateurs demandent plus de calcul. |
+
+## Banque de voix LEGACY
+
+| Fonction | Commandes | Comportement |
+|---|---|---|
+| 0 | Tooropulse | Cartouche Legowelt Magic |
+| 1 | Delicho | Cartouche Legowelt Magic |
+| 2 | EinstofPia | Cartouche Legowelt Magic |
+| 3 | Overcast P | Cartouche Legowelt Magic |
+| 4 | STRINGS 1 | ROM1A |
+| 5 | PWMfuzzy | Cartouche Legowelt Magic |
+| 6 | Sharpieblo | Cartouche Legowelt Magic |
+| 7 | RoboticSeq | Cartouche Legowelt Magic |
+| 8 | SplitStran | Cartouche Legowelt Magic |
+| 9 | PIANO   1 | ROM1A |
+| 10 | Heimwave | Cartouche Legowelt Magic |
+| 11 | CLAV    1 | ROM1A |
+| 12 | Synthotape | Cartouche Legowelt Magic |
+| 13 | Wavesply | Cartouche Legowelt Magic |
+| 14 | Poldermood | Cartouche Legowelt Magic |
+| 15 | FelineSaw | Cartouche Legowelt Magic |
+| 16 | Aguirio | Cartouche Legowelt Magic |
+| 17 | E.PIANO 1 | ROM1A |
+| 18 | E.ORGAN 1 | ROM1A |
+| 19 | Pinkcookie | Cartouche Legowelt Magic |
+| 20 | ObieSplash | Cartouche Legowelt Magic |
+| 21 | MARIMBA | ROM1A |
+| 22 | Garudaydre | Cartouche Legowelt Magic |
+| 23 | VillageOrg | Cartouche Legowelt Magic |
+| 24 | BASS    1 | ROM1A |
+| 25 | Litehouze | Cartouche Legowelt Magic |
+| 26 | NostroSpli | Cartouche Legowelt Magic |
+| 27 | Velobleepb | Cartouche Legowelt Magic |
+| 28 | DimPacific | Cartouche Legowelt Magic |
+| 29 | SequenceMe | Cartouche Legowelt Magic |
+| 30 | BRASS   1 | ROM1A |
+| 31 | Swissynth | Cartouche Legowelt Magic |
+
 ## Machine vocale SPEAK
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Choisir SPEAK | MACHINES : apres Shadow, juste avant MIDI Out | Moteur vocal original a formants, 128 mots anglais. Microphone ; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. v90 equilibre les phonemes, adoucit les transitions et eclaircit les harmoniques vocales sans renforcer le souffle. Commencer vers Vol+Dist 60, Punch coupe. |
+| Choisir SPEAK | MACHINES : apres Shadow, avant LEGACY | Moteur vocal original a formants, 128 mots anglais. Microphone ; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. v90 equilibre les phonemes, adoucit les transitions et eclaircit les harmoniques vocales sans renforcer le souffle. Commencer vers Vol+Dist 60, Punch coupe. |
 | Voice / Word / Speed / Articulation | COLOR / SHAPE / SWEEP / CONTOUR | Caractere vocal/formants / Word 0-127 / Speed (64 normal, plus bas plus lent) / Articulation. SHAPE affiche mot et index. Mot pris au prochain trig ; autres commandes en direct. Les mots lents continuent dans les silences phonemiques ; le detecteur idle ne suspend plus une parole inachevee. |
 | Hauteur et enveloppe | PITCH / notes ; DECAY, Fine, Punch, Gate, Attack | Hauteur independante de la vitesse. Commencer a Decay 127 pour les mots complets. Filtres et sends existants disponibles. Etat vocal distinct par piste. |
 | Sequences de mots et modulation | Maintenir TRIG + SHAPE, puis locks Pitch et autres commandes | Mot et autres parametres natifs acceptent p-locks et destinations LFO. COLOR/SHAPE/SWEEP/CONTOUR : MIDI CC 16/17/18/19. Espacer les mots ou augmenter Speed. |
 | Exemple de phrase | Mots SHAPE et locks de notes sur des trigs successifs | HELLO 31, I 0, AM 62, A 17, ROBOT 113, I 0, LOVE 35, MUSIC 106. Lexique complet indexe a la fin du guide. |
+| Accord SPEAK | PITCH / FINETUNE | Reference corrigee d environ 1,17 demi-ton vers le bas. Registre vocal, formants et durees des mots conserves. |
 
 ## Commandes LFO et MACRO
 
@@ -153,8 +215,8 @@ PrÃ©fÃ©rences globales. BACK ferme Mod Setup et sauvegarde ses preferences g
 | 24 | SO | 56 | MOVE | 88 | THEN | 120 | HAPPY |
 | 25 | BECAUSE | 57 | TURN | 89 | AGAIN | 121 | SAD |
 | 26 | YES | 58 | TAKE | 90 | ALWAYS | 122 | NEW |
-| 27 | NO | 59 | GIVE | 91 | NEVER | 123 | OLD |
-| 28 | NOT | 60 | GET | 92 | ALL | 124 | SOFT |
+| 27 | NO | 59 | GIVE | 91 | NEVER | 123 | CAREFUL |
+| 28 | NOT | 60 | GET | 92 | ALL | 124 | CREATURE |
 | 29 | PLEASE | 61 | BE | 93 | SOME | 125 | LOUD |
 | 30 | THANK | 62 | AM | 94 | MORE | 126 | DREAM |
 | 31 | HELLO | 63 | ARE | 95 | LESS | 127 | FUTURE |

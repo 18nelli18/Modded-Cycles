@@ -17,7 +17,7 @@ def fixture(stem):
  def native(a):
   e=struct.unpack('>6I',u.mem_read(a[1],24));log.append(('native',e[3],r.r32(sy['fx_force_func']),r.r32(sy['fx_force_track'])));return 77
  bind(sy['fx_native_encoder'],native)
- kit,vt,get,data=0x93180000,0x93181000,0x93182000,0x93183000;r.w32(kit+48,vt);r.w32(vt+40,get);u.mem_write(get,b'\x20\x3c'+struct.pack('>I',data)+b'\x4e\x75');r.w32(data+4,0);bind(0x400cf866,lambda a:kit)
+ kit,vt,get,data=0x93180000,0x93181000,0x93182000,0x93183000;r.w32(kit+48,vt);r.w32(vt+40,get);u.mem_write(get,b'\x20\x3c'+struct.pack('>I',data)+b'\x4e\x75');r.w32(data+4,0);bind(0x400cf866,lambda a:kit);bind(0x4001e318,lambda a:0)
  def op(a):state.update(path=r.string(a[0]),mode=r.string(a[1]),pos=0,pending=b'');return int(state['mode']=='r' and state['path'] not in files)
  def rd(a):
   raw=files.get(state['path'],b'')[state['pos']:state['pos']+a[1]];state['pos']+=len(raw)

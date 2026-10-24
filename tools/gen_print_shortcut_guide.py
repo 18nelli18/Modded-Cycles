@@ -72,7 +72,7 @@ ink=colors.HexColor('#202820');accent=colors.HexColor('#36563e');line=colors.Hex
 styles={
  'title':ParagraphStyle('title',fontName='Helvetica-Bold',fontSize=22,leading=25,textColor=ink,spaceAfter=4),
  'sub':ParagraphStyle('sub',fontName='Helvetica',fontSize=8.2,leading=11,textColor=colors.HexColor('#566256'),spaceAfter=9),
- 'section':ParagraphStyle('section',fontName='Helvetica-Bold',fontSize=10,leading=12,textColor=accent,spaceBefore=9,spaceAfter=5),
+ 'section':ParagraphStyle('section',fontName='Helvetica-Bold',fontSize=10,leading=12,textColor=accent,spaceBefore=9,spaceAfter=5,keepWithNext=True),
  'body':ParagraphStyle('body',fontName='Helvetica',fontSize=7.3,leading=9.2,textColor=ink),
  'cell':ParagraphStyle('cell',fontName='Helvetica',fontSize=7.1,leading=8.8,textColor=ink),
  'label':ParagraphStyle('label',fontName='Helvetica-Bold',fontSize=7.2,leading=8.8,textColor=ink),
@@ -98,7 +98,7 @@ def table(node,compact=False):
  t=Table([head]+rows,colWidths=([35,103]*4 if len(head)==8 else [87,166,299]),repeatRows=1,hAlign='LEFT')
  t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('BACKGROUND',(0,0),(-1,0),colors.HexColor('#e7ede4')),('LINEBELOW',(0,0),(-1,0),.6,accent),('LINEBELOW',(0,1),(-1,-1),.35,line),('LEFTPADDING',(0,0),(-1,-1),5),('RIGHTPADDING',(0,0),(-1,-1),5),('TOPPADDING',(0,0),(-1,-1),2 if compact else 4),('BOTTOMPADDING',(0,0),(-1,-1),2 if compact else 4)]))
  return t
-flow=[Paragraph('Supermodel Edition',styles['title']),Paragraph('Model:Cycles | '+('MIDI-input test '+args.test_version+' - no-filter / P-O-N' if args.test else 'Supermodel 2.33 - Features and shortcut guide'),styles['sub']),para(soup.select_one('main > p')),Spacer(1,7)]
+flow=[Paragraph('Supermodel Edition',styles['title']),Paragraph('Model:Cycles | '+('MIDI-input test '+args.test_version+' - no-filter / P-O-N' if args.test else 'Supermodel 2.35 - Features and shortcut guide'),styles['sub']),para(soup.select_one('main > p')),Spacer(1,7)]
 cards=soup.select('.grid .card');grid=[]
 for i in range(0,len(cards),2):grid.append([para(n) for n in cards[i:i+2]])
 ct=Table(grid,colWidths=[276,276]);ct.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('BACKGROUND',(0,0),(-1,-1),colors.HexColor('#f0f3ed')),('BOX',(0,0),(-1,-1),.4,line),('INNERGRID',(0,0),(-1,-1),.3,line),('LEFTPADDING',(0,0),(-1,-1),7),('RIGHTPADDING',(0,0),(-1,-1),7),('TOPPADDING',(0,0),(-1,-1),6),('BOTTOMPADDING',(0,0),(-1,-1),6)]));flow.append(ct)
@@ -107,11 +107,11 @@ pages=4
 pairs=list(zip(headings[1:],tables))
 sample=next(pair for pair in pairs if text(pair[0])=='Sample Wizard and saving')
 pairs.remove(sample)
-pairs.insert(next(i for i,pair in enumerate(pairs) if text(pair[0])=='Effects')+1,sample)
+pairs.insert(next(i for i,pair in enumerate(pairs) if text(pair[0])=='LFO and MACRO controls')+1,sample)
 for h,t in pairs:
  title=text(h)
- if title in ('Effects','Machines and sound controls','MIDI Out machine','SPEAK word library'):
-  flow.extend([PageBreak(),Paragraph(title,styles['title']),Paragraph('Supermodel 2.33 - Feature and shortcut reference',styles['sub'])])
+ if title in ('Effects','Machines and sound controls','MIDI Out machine','SPEAK word library','LEGACY voice library','SPEAK voice machine'):
+  flow.extend([PageBreak(),Paragraph(title,styles['title']),Paragraph('Supermodel 2.35 - Feature and shortcut reference',styles['sub'])])
  else:flow.append(section(title))
  if title=='Mod Setup':flow.extend([para(soup.select_one('p.mod-setup-intro')),Spacer(1,8)])
  flow.append(table(t,title in ('Effects','Sample Wizard and saving')))
@@ -120,7 +120,7 @@ flow.extend([Spacer(1,9),para(soup.select_one('main > p.note'))])
 out=ROOT/args.output;out.parent.mkdir(exist_ok=True,parents=True)
 def chrome(c,doc):
  c.setFillColor(accent);c.setFont('Helvetica-Bold',7);c.drawString(30,773,'SUPERMODEL EDITION | MODEL:CYCLES');c.setFont('Helvetica',7);c.drawRightString(582,773,f'Page {doc.page} / {pages}')
- c.setStrokeColor(line);c.line(30,25,582,25);c.setFont('Helvetica',6.5);c.drawString(30,15,'Features and shortcuts | 23 October 2026');c.drawRightString(582,15,'Stk = Stock | Startup: USB 2ch, numbers Off')
+ c.setStrokeColor(line);c.line(30,25,582,25);c.setFont('Helvetica',6.5);c.drawString(30,15,'Features and shortcuts | 24 October 2026');c.drawRightString(582,15,'Stk = Stock | Startup: USB 2ch, numbers Off')
 doc=SimpleDocTemplate(str(out),pagesize=letter,rightMargin=30,leftMargin=30,topMargin=36,bottomMargin=34,title='Supermodel Edition - Features and Shortcuts',author='A.V.')
 doc.build(flow[:],onFirstPage=chrome,onLaterPages=chrome)
 pages=len(PdfReader(out).pages)
@@ -129,7 +129,7 @@ r=PdfReader(out);assert len(r.pages)==pages,len(r.pages)
 alltext=' '.join(' '.join(p.extract_text().split()) for p in r.pages)
 for term in ('PLAY advances','STOP moves back','Mute: LTC','Num Off','harmony locks','sample browser must be open'):assert term in alltext,term
 for term in ('Elder', 'Chorus 1', 'CHORUS 2', 'Crush', 'Rate 0', 'Bits 2', 'nine knobs', 'Glycinate', 'Fors', 'PING PONG', 'SPEAK', 'FUTURE', '350 ms', '0.5 seconds'):assert term in alltext,term
-for term in ('Channel','Output','KbT','Pad Note','Two MIDI LFOs','MIDI Out machine','SPEAK word library'):assert term in alltext,term
+for term in ('Channel','Output','KbT','Pad Note','Two MIDI LFOs','MIDI Out machine','SPEAK word library','LEGACY voice library','SPEAK voice machine'):assert term in alltext,term
 if pages>=3:
  for term in ('DX', 'LTC', 'SIL', 'Mod Setup','Stk / SIL','2ch / 6ch','Off / On','Stk / LTC','Stk / Div','global preferences','save waits until it stops'):assert term in alltext,term
 for term in ('Model-TG','Model TG','B-side'):assert term not in alltext,term

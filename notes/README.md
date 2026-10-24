@@ -258,3 +258,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [158 — ROOM, DUB et voix SPEAK](158-room-dub-et-voix-speak.md) | Principal2.32 : exact v90 regulier approuve, ROOM12kHz, DUB filtre stereo distinct, voix calibree/brillante avec souffle reduit ; preuves natives et guides EN/FR/PDF. |
 
 | [159 — Ring, Phaser, DUCK et encodeurs](159-ring-phaser-duck-et-encodeurs.md) | Principal2.33 : exact v94 regulier approuve, nouveaux FX et protection encodeurs live ; guide EN/FR/PDF. |
+
+| [163 — Bibliotheque LEGACY et RETROSYN](163-legacy-bibliotheque-retrosyn.md) | Principal2.35 : exact105retro, bibliotheque DX7, importateurs WAV/DX7 cote a cote, guide et blurb utilisateur conserve. |

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wavetable converter — Modded Cycles</title>
+<title>WAV and DX7 bank importers — Supermodel</title>
 <meta name="description" content="Convert a wavetable into a file the Wave machine reads on the Model:Cycles. Runs in your browser; your files never leave it.">
 <meta name="theme-color" content="#e3e2de" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1b1b1b" media="(prefers-color-scheme: dark)">
@@ -40,6 +40,16 @@
   .facts{margin-top:34px;border-top:1px solid var(--line)}
   .facts dt{font-weight:600;margin-top:14px}
   .facts dd{margin:2px 0 0;color:var(--ink-2)}
+
+  .importers{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);max-width:1200px;gap:0;margin:0 auto}
+  .importers>.wt{max-width:none;width:auto;min-width:0;margin:0;padding:0 34px}
+  .importers>.wt:first-child{border-right:1px solid var(--line)}
+  .importers h1{font-size:clamp(28px,3vw,42px)}
+  .bank-form{display:grid;gap:16px;margin-top:28px}.bank-form label{display:grid;gap:6px;font-weight:600}
+  .bank-form input,.bank-form select{width:100%;min-width:0;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);font:inherit}
+  .bank-form input[type=file]{font-size:14px}.bank-form .btn{justify-self:start}.bank-form button:disabled{opacity:.5}
+  #bank-status{overflow-wrap:anywhere}#bank-voices{display:grid;grid-template-columns:1fr 1fr;gap:6px 25px;padding-left:28px;font-size:14px}
+  @media(max-width:760px){.importers{grid-template-columns:1fr}.importers>.wt{padding:0}.importers>.wt:first-child{border-right:0;border-bottom:1px solid var(--line);padding-bottom:30px;margin-bottom:30px}}
 </style>
 </head>
 <body data-page="convert">
@@ -58,8 +68,8 @@
   <button type="button" class="theme-btn" aria-label="Dark mode"><svg class="moon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 12.2A7 7 0 0 1 7.8 3.5a7 7 0 1 0 8.7 8.7z"/></svg><svg class="sun" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="3.6"/><path d="M10 1.8v2M10 16.2v2M1.8 10h2M16.2 10h2M4.2 4.2l1.4 1.4M14.4 14.4l1.4 1.4M4.2 15.8l1.4-1.4M14.4 5.6l1.4-1.4"/></svg></button>
 </header>
 
-<main class="wrap">
-  <section class="wt">
+<main class="wrap"><div class="importers">
+  <section class="wt" id="wave-import">
     <h1><span data-l="en">Wavetable converter</span><span data-l="fr">Convertisseur de tables d'ondes</span></h1>
     <p class="lede"><span data-l="en">Turn a wavetable into a file the <b>Wave</b> machine plays on your Model:Cycles. Drop your WAV — or a whole folder, whose subfolders are kept — then download the result or send it straight to the machine.</span><span data-l="fr">Transformez une table d'ondes en un fichier que la machine <b>Wave</b> joue sur votre Model:Cycles. Déposez votre WAV — ou tout un dossier, dont les sous-dossiers sont gardés — puis téléchargez le résultat ou envoyez-le directement à la machine.</span></p>
 
@@ -101,7 +111,17 @@
       <dd><span data-l="en">Everything runs in the browser; nothing is uploaded.</span><span data-l="fr">Tout se passe dans le navigateur ; rien n'est envoyé.</span></dd>
     </dl>
   </section>
-</main>
+<section class="wt" id="legacy-import"><h1><span data-l="en">DX7 bank importer</span><span data-l="fr">Importateur de banques DX7</span></h1>
+<p class="lede"><span data-l="en">Load your own 32-voice DX7 cartridges into <b>LEGACY</b>. The 16 bank slots stay on your Model:Cycles after a restart.</span><span data-l="fr">Chargez vos cartouches DX7 de 32 voix dans <b>LEGACY</b>. Les 16 emplacements restent sur votre Model:Cycles apres redemarrage.</span></p>
+<p><span data-l="en">Requires Supermodel v105 or newer. Use the Model:Cycles USB MIDI port and stop playback before sending. Each slot holds 32 voices; sending to an occupied slot replaces that bank.</span><span data-l="fr">Necessite Supermodel v105 ou plus recent. Utilisez le port MIDI USB Model:Cycles et arretez la lecture avant l envoi. Chaque emplacement contient 32 voix ; un nouvel envoi remplace la banque de cet emplacement.</span></p>
+<div class="bank-form"><label for="bank-file"><span data-l="en">Choose a DX7 bank (.syx)</span><span data-l="fr">Choisir une banque DX7 (.syx)</span><input id="bank-file" type="file" accept=".syx"></label>
+<button class="btn" type="button" id="bank-connect"><span data-l="en">Connect MIDI</span><span data-l="fr">Connecter MIDI</span></button>
+<label for="bank-output"><span data-l="en">Model:Cycles USB output</span><span data-l="fr">Sortie USB Model:Cycles</span><select id="bank-output" disabled></select></label>
+<label for="bank-slot"><span data-l="en">Library slot</span><span data-l="fr">Emplacement de bibliotheque</span><select id="bank-slot"></select></label>
+<label for="bank-label"><span data-l="en">Bank name (13 characters)</span><span data-l="fr">Nom de banque (13 caracteres)</span><input id="bank-label" maxlength="13" value="DX7 BANK"></label>
+<button class="btn" type="button" id="bank-send" disabled><span data-l="en">Send bank to LEGACY</span><span data-l="fr">Envoyer la banque vers LEGACY</span></button></div>
+<p class="status" id="bank-status" role="status" aria-live="polite"><span data-l="en">Choose a Yamaha 32-voice bank (4104 bytes). Your file stays in your browser.</span><span data-l="fr">Choisissez une banque Yamaha de 32 voix (4104 octets). Votre fichier reste dans le navigateur.</span></p>
+<ol id="bank-voices"></ol><dl class="facts"><dt><span data-l="en">Load on the device</span><span data-l="fr">Charger sur l appareil</span></dt><dd><span data-l="en">Wait for <b>LEGACY BANK SAVED</b>. On a LEGACY track, hold <b>FUNC + MACHINES</b>, turn <b>DATA</b> to choose a bank and press <b>DATA</b> to load it. <b>BACK</b> cancels. <b>Factory</b> restores the included voices.</span><span data-l="fr">Attendez <b>LEGACY BANK SAVED</b>. Sur une piste LEGACY, maintenez <b>FUNC + MACHINES</b>, tournez <b>DATA</b> pour choisir et appuyez <b>DATA</b> pour charger. <b>BACK</b> annule. <b>Factory</b> restaure les voix incluses.</span></dd><dt><span data-l="en">One active bank for every LEGACY track</span><span data-l="fr">Une banque active pour toutes les pistes LEGACY</span></dt><dd><span data-l="en">Importing saves a library bank without changing the sound. Loading it changes the available voices on all LEGACY tracks. Banks are separate from Elektron project backups.</span><span data-l="fr">L import enregistre une banque sans changer le son. Son chargement change les voix disponibles sur toutes les pistes LEGACY. Les banques sont separees des sauvegardes de projets Elektron.</span></dd></dl></section></div></main>
 
 <footer class="foot">
   <div class="wrap">
@@ -182,6 +202,7 @@
         if (outs[i].name === ins[k].name) return { input: ins[k], output: outs[i] };
     return (ins.length && outs.length) ? { input: ins[0], output: outs[0] } : null;
   }
+  window.addEventListener("mc-import-busy",function(){send.disabled=reset.disabled=!!window.MCImportBusy;});
   var stopFlag = false;
   function speedText(name, s) {
     var mbps = s.seconds > 0 ? s.sent / 1048576 / s.seconds : 0;
@@ -220,7 +241,8 @@
     return { session: await window.MCFlasher.xferOpen(pair.input, pair.output), output: pair.output };
   }
   async function transfer(list) {
-    if (!midiReady()) return;
+    if (!midiReady() || window.MCImportBusy) return;
+    window.MCImportBusy=true;window.dispatchEvent(new Event("mc-import-busy"));
     var F = window.MCFlasher, paceMs = Number(pace.value) || 0;
     stopFlag = false;
     send.disabled = true; reset.disabled = true; stop.hidden = false;
@@ -277,10 +299,11 @@
       }
     } catch (e) {
       xsay(e && e.message ? e.message : String(e), true);
-    } finally { send.disabled = false; reset.disabled = false; stop.hidden = true; }
+    } finally { window.MCImportBusy=false;window.dispatchEvent(new Event("mc-import-busy"));send.disabled = false; reset.disabled = false; stop.hidden = true; }
   }
   async function backToCycles() {
-    if (!midiReady()) return;
+    if (!midiReady() || window.MCImportBusy) return;
+    window.MCImportBusy=true;window.dispatchEvent(new Event("mc-import-busy"));
     send.disabled = true; reset.disabled = true;
     try {
       var m = await openMachine();
@@ -292,7 +315,7 @@
       } finally { m.session.close(); }
     } catch (e) {
       xsay(e && e.message ? e.message : String(e), true);
-    } finally { send.disabled = false; reset.disabled = false; }
+    } finally { window.MCImportBusy=false;window.dispatchEvent(new Event("mc-import-busy"));send.disabled = false; reset.disabled = false; }
   }
   file.addEventListener("change", function () { if (file.files.length) run(file.files); });
   dir.addEventListener("change", function () { if (dir.files.length) run(dir.files); });
@@ -306,6 +329,7 @@
   drop.addEventListener("drop", function (ev) { if (ev.dataTransfer.files.length) run(ev.dataTransfer.files); });
 })();
 </script>
+<script src="legacy-import.js?v=2026-10-24-legacy-retro-main-235"></script><script src="legacy-bank-ui.js?v=2026-10-24-legacy-retro-main-235"></script>
 </body>
 </html>
 

@@ -16,7 +16,7 @@ static s32 dust_sample(u32 c,u32 amount){
  u32 r=dust_rand(c),r2=dust_rand(c);s32 pulse=0;
  /* Grain fin de poussiere : environ 3..282 petits evenements/seconde. */
  if((r&65535u)<4+3*amount){s32 a=(s32)((8192u+((r>>16)&65535u))*amount>>7);pulse=(r&0x10000u)?a:-a;}
- /* Pop plus rare, petite rafale bruitÃ©e amortie plutot qu'un grave thump. */
+ /* Pop plus rare, petite rafale bruitÃƒÂ©e amortie plutot qu'un grave thump. */
  if((r2&1048575u)<1+(amount>>2))dust_pop[c]=(s32)((65536u+((r>>16)&65535u))*amount>>7);
  if(dust_pop[c]){s32 burst=(s32)(r2>>20)-2048;pulse+=(burst*(dust_pop[c]>>3))>>8;dust_pop[c]-=dust_pop[c]>>4;if(dust_pop[c]<4)dust_pop[c]=0;}
  /* Bande poussiere audible : deux poles differents, sans grave ni DC.
@@ -32,6 +32,12 @@ static s32 q31(s32 x){return sat20(x)*2048;}
 static s32 scaled(s32 x,u32 a){return (x>>15)*(s32)a+(s32)(((u32)x&32767u)*a>>15);}
 static s32 wave(u32 p){u32 q=p>>16;return q<32768?(s32)q*2-32768:98303-(s32)q*2;}
 void fx_vinyl_reset(void){
+#ifdef FX_REVERB101
+ fx_hall_reset();
+#endif
+#ifdef FX_GATED
+ fx_gate_reset();
+#endif
 #ifdef FX_EXTRA
  fx_extra_reset(0);
 #endif
@@ -145,10 +151,16 @@ ch_mode<FX_REV_COUNT?ch_mode:0;
  else if(active==7)fx_ps1(out,in,params);
 #ifdef FX_CHEAP
  else if(active==8)fx_room(out,in,params);
+#ifdef FX_REVERB101
+ else if(active==11)fx_hall(out,in,params);
+#endif
 #endif
 #endif
 #ifdef FX_EXTRA
  else if(active==9)fx_ring(out,in);
+#ifdef FX_GATED
+ else if(active==10)fx_gated(out,in,params);
+#endif
 #endif
  else if(active==1||active==2){s16 p[2]={(s16)(fx_speed*256),(s16)(fx_depth*256)};ch_chorus(out,in,p,active,256);}
 #ifdef FX_LEAN_FX
@@ -170,6 +182,18 @@ ch_mode<FX_REV_COUNT?ch_mode:0;
     for(u32 c=0;c<2;c++){u32 j=2*i+c;s32 d=(effect[j]>>11)-(aux[j]>>11);correction[j]=((d>>8)*g)+(((d&255)*g)>>8);}
    }}else fx_vinyl_reset();
   }else if(present){s16 p[2]={(s16)(fx_speed*256),(s16)(fx_depth*256)};ch_chorus(effect,aux,p,active==6?2:1,256);for(u32 i=0;i<64;i++)out[i]=q31((out[i]>>11)+(effect[i]>>11));}
+ }
+#endif
+#ifdef FX_REVERB101
+ /* Gain wet seul, +6dB dans la zone utile. Genou continu au-dessus de-6dB
+  * de sortie pour garder de la marge aux transitoires sans wrap/clip dur. */
+ if(active==7||active==8
+#ifdef FX_POLISH
+ ||active==11
+#endif
+)for(u32 i=0;i<64;i++){
+  s32 x=out[i]>>11;u32 a=x<0?0u-(u32)x:(u32)x;
+  a=a<262144?a*2:524288+((a-262144)>>1);out[i]=q31(x<0?-(s32)a:(s32)a);
  }
 #endif
  if(gain!=256||prior_gain!=256)for(u32 i=0;i<32;i++){s32 g=(s32)prior_gain+(((s32)gain-(s32)prior_gain)*(s32)(i+1)>>5);for(u32 c=0;c<2;c++)out[2*i+c]=q31(((out[2*i+c]>>11)*g)>>8);}

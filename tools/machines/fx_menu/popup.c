@@ -31,6 +31,18 @@ void fx_value(u32 field,u32*value,const char**type,const char**label){u32 lane=f
  ?fx_del_names[cr_mode<FX_DEL_COUNT?cr_mode:0]:fx_rev_names[ch_mode<FX_REV_COUNT?ch_mode:0]);
  switch(field){
 #ifdef FX_EXTRA
+#ifdef FX_GATED
+case 17:*value=fx_gate_time;*label="Gate Time";break;
+#ifdef FX_GATE_PREDELAY
+case 18:
+#ifdef FX_REVERB101
+*value=fx_gate_delay_ms(fx_gate_predelay);*label="PreDly ms";
+#else
+*value=fx_gate_predelay;*label="Pre-delay ms";
+#endif
+break;
+#endif
+#endif
 case 12:*value=fx_ring_freq;*label="Frequency";break;case 13:*value=fx_ring_depth;*label="Depth";break;
 case 14:*value=fx_phase_rate;*label="Rate";break;case 15:*value=fx_phase_depth;*label="Depth";break;case 16:*value=fx_phase_feedback;*label="Feedback";break;
 #endif
@@ -49,6 +61,9 @@ default:*value=fx_aux_vi[lane];*label="Vinyl Send";break;}
 static void title(u32 canvas,const char*type,const char*label){N(0x40070efc)(canvas,0,33,63,63,0);N(0x40071a04)(canvas,0x40ea14cc,32,52,2,"%s",type);N(0x40071a04)(canvas,0x40ea14cc,32,40,2,"%s",label);}
 u32 fx_popup_render(u32 self,u32 canvas){u32 field=((const u32*)self)[39],value;const char*type,*label;fx_value(field,&value,&type,&label);
  u32 graphic=field==1?(value-2)*127/14:value;
+#ifdef FX_REVERB101
+ if(field==18)graphic=fx_gate_predelay;
+#endif
 #ifdef FX_CLOUD
  if(field==11)graphic=value*127/24;
 #endif
@@ -61,7 +76,11 @@ N(0x40070efc)(canvas,0,0,127,63,0);
  N(0x40000e6e)(line,"%u",value);N(0x40072260)(font,0x401429ec);N(0x40071a04)(canvas,font,96,34,2,"%s",line);N(0x40072080)(font);N(0x40070f6e)(canvas,0,0,63,63,0xffffffffu);return 0;
 }
 void fx_popup_bind(u32 object,u32 field){if(!popup_table[6]){const u32*n=(const u32*)0x40111bc8;for(u32 i=0;i<22;i++)popup_table[i]=n[i];popup_table[6]=(u32)fx_popup_render;}*(u32*)object=(u32)(popup_table+2);((u32*)object)[39]=field<
-#ifdef FX_EXTRA
+#ifdef FX_GATE_PREDELAY
+19
+#elif defined(FX_GATED)
+18
+#elif defined(FX_EXTRA)
 17
 #elif defined(FX_DUCK)
 12
@@ -90,9 +109,15 @@ cr_mode==11?"Phaser Send":
  if(ch_mode==7){if(desc==27)title(canvas,"PS1","PS1 Send");if(desc==39||desc==40)title(canvas,"PS1",desc==39?"Decay":"Tone");}
 #endif
  #ifdef FX_CHEAP
+ #ifdef FX_REVERB101
+ if(ch_mode==11){if(desc==27)title(canvas,"HALL","Hall Send");if(desc==39||desc==40)title(canvas,"HALL",desc==39?"Decay":"Tone");}
+#endif
  if(ch_mode==8){if(desc==27)title(canvas,"ROOM","Room Send");if(desc==39||desc==40)title(canvas,"ROOM",desc==39?"Decay":"Tone");}
 #endif
 #ifdef FX_EXTRA
+#ifdef FX_GATED
+ if(ch_mode==10){if(desc==27)title(canvas,FX_GATED_LABEL,"Gated Send");if(desc==40)title(canvas,FX_GATED_LABEL,"Tone");}
+#endif
  if(ch_mode==9&&desc==27)title(canvas,"RING MOD","Ring Send");
 #endif
  if(desc==26&&(cr_mode==1||cr_mode==2))title(canvas,fx_del_names[cr_mode],"Crush Send");

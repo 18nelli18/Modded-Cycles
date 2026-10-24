@@ -8,6 +8,9 @@ extern u32 fx_previous_encoder(u32,const u32*),fx_native_encoder(u32,const u32*)
 extern u32 fx_previous_popup(u32,u32,u32,s32,u32,u32);
 extern void fx_notice(const char*),fx_show(u32),cr_service(void);
 extern void ch_native(s32*,const s32*,const s16*),ch_chorus(s32*,const s32*,const s16*,u32,u32),cr_post(s32*);
+#ifdef FX_POLISH
+u32 fx_overlay(u32,u32);void dx7_service(void);
+#endif
 extern u32 fx_menu_open,fx_menu_slot,fx_menu_cursor,fx_force_active,fx_force_func,fx_force_track,fx_tap_force;
 extern u32 fx_speed,fx_depth,fx_crackle,fx_warble,fx_wspeed,fx_aux_ch[6],fx_aux_vi[6],fx_dirty;
 #ifdef FX_CHEAP
@@ -53,7 +56,13 @@ void fx_cloud_reset(void);void fx_cloud(s32*);
 #ifdef FX_PS1
 #ifdef FX_CHEAP
 #ifdef FX_EXTRA
+#ifdef FX_REVERB101
+#define FX_REV_COUNT 12
+#elif defined(FX_GATED)
+#define FX_REV_COUNT 11
+#else
 #define FX_REV_COUNT 10
+#endif
 #else
 #define FX_REV_COUNT 9
 #endif
@@ -67,7 +76,13 @@ void fx_ps1_reset(void);void fx_ps1(s32*,const s32*,const s16*);
 #ifdef FX_LEAN_FX
 #ifdef FX_CHEAP
 #ifdef FX_EXTRA
+#ifdef FX_REVERB101
+#define FX_REV_MENU_COUNT 9
+#elif defined(FX_GATED)
+#define FX_REV_MENU_COUNT 8
+#else
 #define FX_REV_MENU_COUNT 7
+#endif
 #else
 #define FX_REV_MENU_COUNT 6
 #endif
@@ -104,6 +119,12 @@ static inline u32 fx_clean_rev(u32 m){return m==4?3:m==5?1:m==6?2:(m<4||m==7
 ||m==8
 #ifdef FX_EXTRA
 ||m==9
+#ifdef FX_GATED
+||m==10
+#ifdef FX_REVERB101
+||m==11
+#endif
+#endif
 #endif
 #endif
 )?m:0;}
@@ -129,6 +150,21 @@ static inline u32 fx_clean_del(u32 m){return m==7?6:(m<3||m==5||m==6)?m:0;}
 #ifdef FX_EXTRA
 extern u32 fx_ring_freq,fx_ring_depth,fx_phase_rate,fx_phase_depth,fx_phase_feedback;
 void fx_ring(s32*,const s32*);void fx_phaser(s32*,const s32*);void fx_extra_reset(u32);
+#endif
+#ifdef FX_GATED
+#ifdef FX_GATED96
+#define FX_GATED_LABEL "GATED"
+#else
+#define FX_GATED_LABEL "Gated"
+#endif
+extern u32 fx_gate_time;
+#ifdef FX_GATE_PREDELAY
+extern u32 fx_gate_predelay;
+#ifdef FX_REVERB101
+u32 fx_gate_delay_ms(u32);void fx_hall_reset(void);void fx_hall(s32*,const s32*,const s16*);
+#endif
+#endif
+void fx_gated(s32*,const s32*,const s16*);void fx_gate_reset(void);void fx_gate_settings(void);u32 fx_input_quiet(void);
 #endif
 extern const char *const fx_rev_names[FX_REV_COUNT],*const fx_del_names[FX_DEL_COUNT];
 extern const u32 fx_rev_order[FX_REV_MENU_COUNT],fx_del_order[FX_DEL_MENU_COUNT];

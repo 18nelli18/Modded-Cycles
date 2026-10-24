@@ -249,3 +249,8 @@ AveyCole reports “that worked, push 94 and give me the adult version”. Publi
 ## AveyCole main 2.34 promotion (2026-10-24)
 
 AveyCole supplied the exact shared-filter `all-features-polivoks-cpu-trim-test-v101.syx` and asked that it be the .syx the main flasher serves, with the matching 2.34 shortcut guide PDF. SHA256 `bb566c59d353fb11ac2f7edce74723d7fba5346e2934bb8f5ea4210cee405e4c`, MAIN `e59ad39ea940fb05dfd87145bfa6e42fffc79e8405cbaead04dabcd07263b920`. Publish exactly these bytes through the existing tracked fixed-main image only. Replaces the v94 image of main 2.33; per the supplied guide it adds GATED and HALL reverbs and the new reverb-slot menu order, and raises the PS1 and Vinyl wet returns by 6 dB. No hardware result was reported with the promotion, so none is claimed. Adult SPEAK banks stay private.
+
+
+## AveyCole main2.35 promotion (2026-10-24)
+
+User: “105 worked” then “Publish 105 retro build”. Exact regular-vocabulary shared-filter v105retro SHA256 `ef01ba93a63f7dda8d161d6aa7f19a60114f7b190e3d6687a5b15df42f149bc8`, MAIN `56ed414d68925c2f2f6f0d2807f120fed4e57a6e788a08afbbb83cbcd87b670a`. RETROSYN22 before MIDI Out17; 23 machines. Bank import page joins existing WAV converter side by side. Preserve the user-written flasher blurb verbatim. No adult vocabulary or ACID/SY BITS106 changes.

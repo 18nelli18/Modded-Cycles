@@ -1,4 +1,35 @@
 .text
+#ifdef FX_BANK_SAFE
+.globl fx_frame_begin
+/* Avant ViewManager::draw et AVANT acquisition du mutex : services disque/UI.
+ * Prologue exact rejoue ; aucun appel a present() sous le verrou de dessin. */
+fx_frame_begin:
+ lea -16(%sp),%sp
+ movem.l %d0-%d1/%a0-%a1,(%sp)
+ jsr fx_frame_prepare
+ movem.l (%sp),%d0-%d1/%a0-%a1
+ lea 16(%sp),%sp
+ lea -36(%sp),%sp
+ movem.l %d2-%d4/%a2-%a5,(%sp)
+ jmp 0x40076c22
+#endif
+#ifdef FX_POLISH
+.globl fx_stack_draw
+/* Fin de ViewManager::draw, toutes vues deja dessinees ; d3=Bitmap.
+ * Replay clrb d0/moveb d0,32(a2) puis epilogue natif, ABI intacte. */
+fx_stack_draw:
+ lea -16(%sp),%sp
+ movem.l %d0-%d1/%a0-%a1,(%sp)
+ move.l %d3,-(%sp)
+ move.l %a2,-(%sp)
+ jsr fx_stack_overlay
+ addq.l #8,%sp
+ movem.l (%sp),%d0-%d1/%a0-%a1
+ lea 16(%sp),%sp
+ clr.b %d0
+ move.b %d0,32(%a2)
+ jmp 0x40076c8e
+#endif
 .globl fx_encoder_hook,fx_key_hook,fx_rfx,fx_mix_hook,fx_object,fx_machine_hook
 fx_encoder_hook:
  lea -16(%sp),%sp

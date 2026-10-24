@@ -1,15 +1,15 @@
 {
-  "release": "2.33",
-  "stamp": "2026-10-23-ring-phaser-duck-main-233",
+  "release": "2.35",
+  "stamp": "2026-10-24-legacy-retro-main-235",
   "cards": [
     {
       "en": [
         "Machines and sound",
-        "Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY, Shadow, SPEAK and MIDI Out. Elder is an original synth inspired by Junior by Fors. Machine browsing retains synth values; Wizard’s four dials stay separate while MACHINES stays open."
+        "Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN and MIDI Out. Elder is an original synth inspired by Junior by Fors. Machine browsing retains synth values; Wizard’s four dials stay separate while MACHINES stays open."
       ],
       "fr": [
         "Machines et son",
-        "Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK et MIDI Out. Elder est inspiré de Junior de Fors. La selection conserve les valeurs synth ; quatre commandes Wizard separees tant que MACHINES reste ouvert."
+        "Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN et MIDI Out. Elder est inspiré de Junior de Fors. La selection conserve les valeurs synth ; quatre commandes Wizard separees tant que MACHINES reste ouvert."
       ]
     },
     {
@@ -25,11 +25,11 @@
     {
       "en": [
         "Filters and effects",
-        "Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Ring Mod, ROOM, PS1, Vinyl, Reverb and Chorus 1/2; Phaser, DUCK, DUB, Ping Pong, Delay and Crush 1/2. Opaque FX menus apply on TRACK release. Cumulative PS1/filter optimizations. Both Shimmers and all combined modes are removed."
+        "Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; GATED, HALL, Ring Mod, ROOM, PS1, Vinyl, Reverb and Chorus 1/2; Phaser, DUCK, DUB, Ping Pong, Delay and Crush 1/2. Opaque FX menus apply on TRACK release. Cumulative PS1/filter optimizations. Both Shimmers and all combined modes are removed."
       ],
       "fr": [
         "Filtres et effets",
-        "Filtres pistes/Wizard inspires Polivoks, second LFO, MACRO Fine/Lo-Fi ; Ring Mod, ROOM, PS1, Vinyl, Reverb et Chorus 1/2 ; Phaser, DUCK, DUB, Ping Pong, Delay et Crush 1/2. Menus opaques appliques au relachement TRACK. Optimisations PS1/filtre cumulees. Les deux Shimmer et tous les modes combines sont retires."
+        "Filtres pistes/Wizard inspires Polivoks, second LFO, MACRO Fine/Lo-Fi ; GATED, HALL, Ring Mod, ROOM, PS1, Vinyl, Reverb et Chorus 1/2 ; Phaser, DUCK, DUB, Ping Pong, Delay et Crush 1/2. Menus opaques appliques au relachement TRACK. Optimisations PS1/filtre cumulees. Les deux Shimmer et tous les modes combines sont retires."
       ]
     },
     {
@@ -44,6 +44,86 @@
     }
   ],
   "sections": [
+    {
+      "title": {
+        "en": "New in 2.35 - banks and RETROSYN",
+        "fr": "Nouveautes 2.35 - banques et RETROSYN"
+      },
+      "rows": [
+        {
+          "en": [
+            "Import a DX7 bank",
+            "Flasher > WAV / DX7 bank importers",
+            "Stop playback. Choose a Yamaha 32-voice .syx bank, connect Model:Cycles USB MIDI, choose slot 1-16 and send. Wait for LEGACY BANK SAVED. Reusing a slot replaces it. Importing does not change the active sound."
+          ],
+          "fr": [
+            "Importer une banque DX7",
+            "Flasheur > Importateurs WAV / DX7",
+            "Arretez la lecture. Choisissez une banque Yamaha .syx de 32 voix, connectez le MIDI USB Model:Cycles, choisissez 1-16 et envoyez. Attendez LEGACY BANK SAVED. Le meme emplacement est remplace. Le son actif ne change pas."
+          ]
+        },
+        {
+          "en": [
+            "Load a stored bank",
+            "LEGACY: FUNC + MACHINES; DATA; BACK",
+            "Hold FUNC while pressing MACHINES to open the bank library. Turn DATA to choose; press DATA to load; BACK cancels. Factory restores the included voices. One active 32-voice bank is shared by every LEGACY track. Banks persist after reboot and are separate from Elektron project backups."
+          ],
+          "fr": [
+            "Charger une banque",
+            "LEGACY : FUNC + MACHINES ; DATA ; BACK",
+            "Maintenez FUNC et appuyez MACHINES. Tournez DATA pour choisir, appuyez DATA pour charger ; BACK annule. Factory restaure les voix incluses. Une banque active de 32 voix est partagee par toutes les pistes LEGACY. Banques conservees apres redemarrage, hors sauvegarde de projet Elektron."
+          ]
+        },
+        {
+          "en": [
+            "Quiet LEGACY voices",
+            "Automatic, fixed per note",
+            "Quiet carrier levels receive bounded output gain compensation. Velocity and envelope response are preserved; this cannot make a silent or disabled operator sound. Lower CPU cost is retained."
+          ],
+          "fr": [
+            "Voix LEGACY faibles",
+            "Automatique, fixe par note",
+            "Compensation limitee du gain de sortie des carriers faibles. Velocite et enveloppes conservees ; un operateur silencieux ou desactive ne devient pas audible. Charge CPU reduite conservee."
+          ]
+        },
+        {
+          "en": [
+            "RETROSYN",
+            "MACHINES, immediately before MIDI Out",
+            "Color, Shape (six models), Sweep and Contour. Pitch, Decay, Gate and Punch remain available. Existing engine IDs are preserved; Elder remains in the list. MIDI Out stays last."
+          ],
+          "fr": [
+            "RETROSYN",
+            "MACHINES, juste avant MIDI Out",
+            "Color, Shape (six modeles), Sweep et Contour. Pitch, Decay, Gate et Punch disponibles. IDs existants conserves ; Elder reste dans la liste. MIDI Out reste dernier."
+          ]
+        },
+        {
+          "en": [
+            "HALL and SPEAK updates",
+            "HALL: SIZE; SPEAK: SHAPE",
+            "HALL wet return raised about 6 dB; maximum SIZE gives a longer damped tail. SPEAK is slightly brighter, with CAREFUL (123) followed by CREATURE (124). Regular vocabulary only."
+          ],
+          "fr": [
+            "Mises a jour HALL et SPEAK",
+            "HALL : SIZE ; SPEAK : SHAPE",
+            "Retour HALL releve d environ 6 dB ; SIZE maximal donne une queue amortie plus longue. SPEAK un peu plus clair, CAREFUL (123) puis CREATURE (124). Vocabulaire regulier uniquement."
+          ]
+        },
+        {
+          "en": [
+            "FX menu overlay",
+            "Hold TRACK + turn REVERB SIZE / DELAY TIME",
+            "The full opaque menu appears above Machine Selection and other windows. Turn to preview choices without changing the sound; release TRACK to apply. The previous window stays behind it. Control All track selection releases when TRACK is released."
+          ],
+          "fr": [
+            "Menu FX superpose",
+            "Maintenir TRACK + tourner REVERB SIZE / DELAY TIME",
+            "Menu opaque complet au-dessus de Machines et des autres fenetres. Tournez pour parcourir sans changer le son ; relachez TRACK pour appliquer. Fenetre precedente conservee derriere. Selection Control All liberee au relachement TRACK."
+          ]
+        }
+      ]
+    },
     {
       "title": {
         "en": "Track, step and performance controls",
@@ -266,12 +346,12 @@
           "en": [
             "Reverb-slot menu",
             "Hold TRACK + REVERB SIZE",
-            "Top to bottom: RING MOD, ROOM, PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel."
+            "Top to bottom: GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel."
           ],
           "fr": [
             "Menu reverb",
             "Maintenir TRACK + REVERB SIZE",
-            "De haut en bas : RING MOD, ROOM, PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule."
+            "De haut en bas : GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule."
           ]
         },
         {
@@ -300,14 +380,38 @@
         },
         {
           "en": [
+            "GATED reverb",
+            "REVERB SEND / SIZE; FUNC + SIZE; SETTINGS + SIZE",
+            "Gated Send / Gate Time; Pre-delay; Tone. Gate Time 0-127: about 40 ms-6.7 s after input falls quiet. Pre-delay 0-568 ms, 1 ms steps through 64 then 8 ms. No added echoes; dry hit stays immediate and the gate follows the delayed sound. Try Gate Time 16-32, Pre-delay 25-40 ms on a snare. Global gate/pre-delay save while stopped."
+          ],
+          "fr": [
+            "Reverb GATED",
+            "REVERB SEND / SIZE ; FUNC + SIZE ; SETTINGS + SIZE",
+            "Gated Send / Gate Time ; Pre-delay ; Tone. Gate Time 0-127 : environ 40 ms-6,7 s apres le signal. Pre-delay 0-568 ms : pas de 1 ms jusqu a 64 puis 8 ms. Sans echos ajoutes ; dry immediat, gate apres le signal retarde. Essayer Gate Time 16-32 et Pre-delay 25-40 ms sur caisse claire. Reglages globaux sauvegardes a l arret."
+          ]
+        },
+        {
+          "en": [
+            "HALL reverb",
+            "REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE",
+            "Hall Send per track / Decay / Tone. Wide stereo tail with longer reflections than ROOM. Four damped paths and two diffusers per channel at 12 kHz reuse existing reverb memory."
+          ],
+          "fr": [
+            "Reverb HALL",
+            "REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE",
+            "Hall Send par piste / Decay / Tone. Queue stereo large, reflexions plus longues que ROOM. Quatre voies amorties et deux diffuseurs par canal a 12 kHz, memoire reverb reutilisee."
+          ]
+        },
+        {
+          "en": [
             "Ring Mod",
             "REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE",
-            "Ring Send per track / Frequency / Depth. Metallic sine ring modulation replaces the reverb return. Select RING MOD above ROOM. Global Frequency and Depth; use the native track Send for locks."
+            "Ring Send per track / Frequency / Depth. Metallic sine ring modulation replaces the reverb return. Select RING MOD below Chorus 1/2. Global Frequency and Depth; use the native track Send for locks."
           ],
           "fr": [
             "Ring Mod",
             "REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE",
-            "Ring Send par piste / Frequency / Depth. Modulation en anneau sinusoidale metallique dans le slot reverb. RING MOD au-dessus de ROOM. Frequency et Depth globaux ; locks via le Send natif."
+            "Ring Send par piste / Frequency / Depth. Modulation en anneau sinusoidale metallique dans le slot reverb. RING MOD sous Chorus 1/2. Frequency et Depth globaux ; locks via le Send natif."
           ]
         },
         {
@@ -338,24 +442,24 @@
           "en": [
             "ROOM reverb",
             "REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE",
-            "Room Send per track / Decay / Tone. Compact stereo room tail at 12 kHz. Select ROOM above PS1; release TRACK to apply."
+            "Room Send per track / Decay / Tone. Compact stereo room tail at 12 kHz. Select ROOM above PS1; release TRACK to apply. Wet return raised by 6 dB at normal levels, with a gentle peak knee; dry level is unchanged."
           ],
           "fr": [
             "Reverb ROOM",
             "REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE",
-            "Room Send par piste / Decay / Tone. Petite ambiance stereo a 12 kHz. ROOM au-dessus de PS1 ; relacher TRACK pour appliquer."
+            "Room Send par piste / Decay / Tone. Petite ambiance stereo a 12 kHz. ROOM au-dessus de PS1 ; relacher TRACK pour appliquer. Retour wet releve de 6 dB aux niveaux usuels, avec compression douce des cretes ; dry inchange."
           ]
         },
         {
           "en": [
             "PS1 reverb",
             "REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE",
-            "PS1 Send per track / Decay / Tone. PlayStation-inspired stereo tail, darker and grainier; cumulative processing optimizations retained."
+            "PS1 Send per track / Decay / Tone. PlayStation-inspired stereo tail, darker and grainier; cumulative processing optimizations retained. Wet return raised by 6 dB at normal levels, with a gentle peak knee; dry level is unchanged."
           ],
           "fr": [
             "Reverb PS1",
             "REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE",
-            "PS1 Send par piste / Decay / Tone. Queue stereo inspiree PlayStation, sombre et granuleuse ; optimisations de traitement conservees."
+            "PS1 Send par piste / Decay / Tone. Queue stereo inspiree PlayStation, sombre et granuleuse ; optimisations de traitement conservees. Retour wet releve de 6 dB aux niveaux usuels, avec compression douce des cretes ; dry inchange."
           ]
         },
         {
@@ -514,6 +618,478 @@
     },
     {
       "title": {
+        "en": "LEGACY machine",
+        "fr": "Machine LEGACY"
+      },
+      "rows": [
+        {
+          "en": [
+            "LEGACY / selection",
+            "MACHINES: immediately before MIDI Out",
+            "Dexed MSFA six-operator FM with all 32 algorithms; one voice per track. MIDI Out remains last. COLOR = Velocity, SHAPE = Voice, SWEEP = Brightness, CONTOUR = EG Time. Native locks/CC/LFO mappings; Voice and Velocity are captured on the next trigger."
+          ],
+          "fr": [
+            "LEGACY / selection",
+            "MACHINES : juste avant MIDI Out",
+            "FM six operateurs Dexed MSFA, 32 algorithmes ; une voix par piste. MIDI Out toujours dernier. COLOR = Velocity, SHAPE = Voice, SWEEP = Brightness, CONTOUR = EG Time. Locks/CC/LFO natifs ; Voice et Velocity sont pris au prochain trigger."
+          ]
+        },
+        {
+          "en": [
+            "Voice library",
+            "SHAPE: slots 0-31",
+            "Starts with Tooropulse, Delicho and EinstofPia. Eight quieter slots now contain PIANO 1, E.PIANO 1, BASS 1, BRASS 1, STRINGS 1, CLAV 1, E.ORGAN 1 and MARIMBA from the supplied ROM1A cartridge."
+          ],
+          "fr": [
+            "Banque de voix",
+            "SHAPE : slots 0-31",
+            "Commence par Tooropulse, Delicho et EinstofPia. Huit slots plus faibles remplacent leurs voix par PIANO 1, E.PIANO 1, BASS 1, BRASS 1, STRINGS 1, CLAV 1, E.ORGAN 1 et MARIMBA de la cartouche ROM1A fournie."
+          ]
+        },
+        {
+          "en": [
+            "Velocity / brightness",
+            "COLOR / SWEEP",
+            "Velocity 0-127 controls the cartridge operators response at each trigger; default 100. Brightness 64 preserves the patch. Lower softens modulation; higher adds bite."
+          ],
+          "fr": [
+            "Velocity / brillance",
+            "COLOR / SWEEP",
+            "Velocity 0-127 agit sur les operateurs a chaque trigger ; defaut 100. Brightness 64 conserve la voix. Plus bas adoucit la modulation ; plus haut ajoute du mordant."
+          ]
+        },
+        {
+          "en": [
+            "Envelope time",
+            "CONTOUR / DECAY",
+            "EG Time 64 preserves the patch envelope timing; lower is faster, higher slower. DECAY and gate still set the native amplitude envelope. PITCH and FINETUNE transpose the voice; fixed-frequency operators follow their cartridge settings."
+          ],
+          "fr": [
+            "Duree des enveloppes",
+            "CONTOUR / DECAY",
+            "EG Time 64 conserve les durees de la voix ; plus bas accelere, plus haut ralentit. DECAY et gate conservent l enveloppe d amplitude native. PITCH/FINETUNE transposent ; operateurs a frequence fixe selon la cartouche."
+          ]
+        },
+        {
+          "en": [
+            "Import a DX7 bank",
+            "Flasher > WAV / DX7 bank importers",
+            "Stop playback. Choose a Yamaha 32-voice .syx bank, connect Model:Cycles USB MIDI, choose slot 1-16 and send. Wait for LEGACY BANK SAVED. Reusing a slot replaces it. Importing does not change the active sound."
+          ],
+          "fr": [
+            "Importer une banque DX7",
+            "Flasheur > Importateurs WAV / DX7",
+            "Arretez la lecture. Choisissez une banque Yamaha .syx de 32 voix, connectez le MIDI USB Model:Cycles, choisissez 1-16 et envoyez. Attendez LEGACY BANK SAVED. Le meme emplacement est remplace. Le son actif ne change pas."
+          ]
+        },
+        {
+          "en": [
+            "Credits and load",
+            "Dexed / Google MSFA",
+            "Based on Dexed s Apache-licensed MSFA component by Google, Pascal Gauthier and contributors; original Cycles integration. Added cartridge voices supplied by the user. Six-operator patches can be more demanding than other machines."
+          ],
+          "fr": [
+            "Credits et charge",
+            "Dexed / Google MSFA",
+            "Composant MSFA Apache de Dexed par Google, Pascal Gauthier et contributeurs ; integration Cycles originale. Voix de cartouches fournies par l utilisateur. Certaines voix six operateurs demandent plus de calcul."
+          ]
+        }
+      ]
+    },
+    {
+      "title": {
+        "en": "LEGACY voice library",
+        "fr": "Banque de voix LEGACY"
+      },
+      "rows": [
+        {
+          "en": [
+            "0",
+            "Tooropulse",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "0",
+            "Tooropulse",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "1",
+            "Delicho",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "1",
+            "Delicho",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "2",
+            "EinstofPia",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "2",
+            "EinstofPia",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "3",
+            "Overcast P",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "3",
+            "Overcast P",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "4",
+            "STRINGS 1",
+            "ROM1A"
+          ],
+          "fr": [
+            "4",
+            "STRINGS 1",
+            "ROM1A"
+          ]
+        },
+        {
+          "en": [
+            "5",
+            "PWMfuzzy",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "5",
+            "PWMfuzzy",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "6",
+            "Sharpieblo",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "6",
+            "Sharpieblo",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "7",
+            "RoboticSeq",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "7",
+            "RoboticSeq",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "8",
+            "SplitStran",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "8",
+            "SplitStran",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "9",
+            "PIANO   1",
+            "ROM1A"
+          ],
+          "fr": [
+            "9",
+            "PIANO   1",
+            "ROM1A"
+          ]
+        },
+        {
+          "en": [
+            "10",
+            "Heimwave",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "10",
+            "Heimwave",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "11",
+            "CLAV    1",
+            "ROM1A"
+          ],
+          "fr": [
+            "11",
+            "CLAV    1",
+            "ROM1A"
+          ]
+        },
+        {
+          "en": [
+            "12",
+            "Synthotape",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "12",
+            "Synthotape",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "13",
+            "Wavesply",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "13",
+            "Wavesply",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "14",
+            "Poldermood",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "14",
+            "Poldermood",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "15",
+            "FelineSaw",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "15",
+            "FelineSaw",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "16",
+            "Aguirio",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "16",
+            "Aguirio",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "17",
+            "E.PIANO 1",
+            "ROM1A"
+          ],
+          "fr": [
+            "17",
+            "E.PIANO 1",
+            "ROM1A"
+          ]
+        },
+        {
+          "en": [
+            "18",
+            "E.ORGAN 1",
+            "ROM1A"
+          ],
+          "fr": [
+            "18",
+            "E.ORGAN 1",
+            "ROM1A"
+          ]
+        },
+        {
+          "en": [
+            "19",
+            "Pinkcookie",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "19",
+            "Pinkcookie",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "20",
+            "ObieSplash",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "20",
+            "ObieSplash",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "21",
+            "MARIMBA",
+            "ROM1A"
+          ],
+          "fr": [
+            "21",
+            "MARIMBA",
+            "ROM1A"
+          ]
+        },
+        {
+          "en": [
+            "22",
+            "Garudaydre",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "22",
+            "Garudaydre",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "23",
+            "VillageOrg",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "23",
+            "VillageOrg",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "24",
+            "BASS    1",
+            "ROM1A"
+          ],
+          "fr": [
+            "24",
+            "BASS    1",
+            "ROM1A"
+          ]
+        },
+        {
+          "en": [
+            "25",
+            "Litehouze",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "25",
+            "Litehouze",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "26",
+            "NostroSpli",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "26",
+            "NostroSpli",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "27",
+            "Velobleepb",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "27",
+            "Velobleepb",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "28",
+            "DimPacific",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "28",
+            "DimPacific",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "29",
+            "SequenceMe",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "29",
+            "SequenceMe",
+            "Cartouche Legowelt Magic"
+          ]
+        },
+        {
+          "en": [
+            "30",
+            "BRASS   1",
+            "ROM1A"
+          ],
+          "fr": [
+            "30",
+            "BRASS   1",
+            "ROM1A"
+          ]
+        },
+        {
+          "en": [
+            "31",
+            "Swissynth",
+            "Legowelt Magic cart"
+          ],
+          "fr": [
+            "31",
+            "Swissynth",
+            "Cartouche Legowelt Magic"
+          ]
+        }
+      ]
+    },
+    {
+      "title": {
         "en": "SPEAK voice machine",
         "fr": "Machine vocale SPEAK"
       },
@@ -521,12 +1097,12 @@
         {
           "en": [
             "Select SPEAK",
-            "MACHINES: after Shadow, immediately before MIDI Out",
+            "MACHINES: after Shadow, before LEGACY",
             "Original 128-word formant speech engine. Microphone; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. v90 balances phoneme levels, smooths transitions and brightens voiced harmonics while keeping hiss reduced. Start around Vol+Dist 60, Punch off."
           ],
           "fr": [
             "Choisir SPEAK",
-            "MACHINES : apres Shadow, juste avant MIDI Out",
+            "MACHINES : apres Shadow, avant LEGACY",
             "Moteur vocal original a formants, 128 mots anglais. Microphone ; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. v90 equilibre les phonemes, adoucit les transitions et eclaircit les harmoniques vocales sans renforcer le souffle. Commencer vers Vol+Dist 60, Punch coupe."
           ]
         },
@@ -576,6 +1152,18 @@
             "Exemple de phrase",
             "Mots SHAPE et locks de notes sur des trigs successifs",
             "HELLO 31, I 0, AM 62, A 17, ROBOT 113, I 0, LOVE 35, MUSIC 106. Lexique complet indexe a la fin du guide."
+          ]
+        },
+        {
+          "en": [
+            "SPEAK tuning",
+            "PITCH / FINETUNE",
+            "Reference tuning corrected by about 1.17 semitones downward. The existing vocal octave register, formants and word timings remain."
+          ],
+          "fr": [
+            "Accord SPEAK",
+            "PITCH / FINETUNE",
+            "Reference corrigee d environ 1,17 demi-ton vers le bas. Registre vocal, formants et durees des mots conserves."
           ]
         }
       ]
@@ -1001,8 +1589,8 @@
     "HAPPY",
     "SAD",
     "NEW",
-    "OLD",
-    "SOFT",
+    "CAREFUL",
+    "CREATURE",
     "LOUD",
     "DREAM",
     "FUTURE"

@@ -1,0 +1,26 @@
+{
+  "repository": "https://github.com/asb2m10/dexed",
+  "revision": "fea2f0f0f2c397799f59b27eb11c038cd34b22c5",
+  "component": "source/msfa",
+  "license": "Apache-2.0",
+  "files": {
+    "aligned_buf.h": "5cd1544727ee67f54339df3c79e0c9b4d6ec6ec0",
+    "synth.h": "bc6ffc2640bc28bc84a39b7e722a1b219c6c5034",
+    "fm_core.cc": "092a94b1b0bbd6041180ae320ddcdfba989140f6",
+    "fm_core.h": "8e61b2e6172b5fcf1b07d42758150b2f2be56b64",
+    "fm_op_kernel.cc": "56a4cc0502a4889e3f202414b12a33f2c7775a9d",
+    "fm_op_kernel.h": "a46f1b47acb3bdc226720ed77144c82b295ea55f",
+    "env.cc": "972e13049a029a65a25ef8772864c1e1322dee42",
+    "env.h": "9d426e48238ff4dd2150e09f5b83db76fc4cdb28",
+    "pitchenv.cc": "e46ac4b85bb91f6e22ab50265e2c6fbc7fd65f23",
+    "pitchenv.h": "e10634105ac666221373e814e232527aaa7fc067",
+    "lfo.cc": "1c7f741d78b7eb65317925d636bb589bfa93e7c2",
+    "lfo.h": "462e861561ffc7a5151ab134bd0111eef71a75dd",
+    "sin.cc": "5b09de4f23094d43efbe2fd699d5d61b5d765d9a",
+    "sin.h": "d84a7d313a942941508a732e19b5201975f47061",
+    "exp2.cc": "84feb20540e045107893929964a8ed834b2c10f5",
+    "exp2.h": "016ca331de869ca816731ea065d5d22b92eae332",
+    "freqlut.cc": "931ef672871c6023902ee95a28f7f33dc290496b",
+    "freqlut.h": "5cba4af3e238c4d67e4e5e543a338fb5a8335b33"
+  }
+}

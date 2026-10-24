@@ -1,0 +1,11 @@
+DX machine for Model:Cycles - private port, 2026
+
+Based on the MSFA component distributed with Dexed.
+Copyright Google Inc. 2012-2013, Pascal Gauthier 2017-2025 and contributors.
+MSFA remains licensed under Apache 2.0, as described by Dexed README.
+The Dexed JUCE/plugin wrapper is not included.
+Original upstream sources and headers are retained in upstream/.
+Modified files are in core/: 32-sample blocks at 48kHz, offline math tables,
+ColdFire integer/EMAC kernels, no plugin, MTS, GUI or heap dependency.
+Bank import and Cycles UI/voice integration are original port code.
+No Yamaha factory cartridge or proprietary ROM data is bundled.

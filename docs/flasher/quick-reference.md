@@ -1,18 +1,29 @@
 # Feature and shortcut guide
 
-Supermodel 2.33 - 23 October 2026
+Supermodel 2.35 - 24 October 2026
 
-Main 2.33. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.35. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
-**Machines and sound:** Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY, Shadow, SPEAK and MIDI Out. Elder is an original synth inspired by Junior by Fors. Machine browsing retains synth values; Wizard’s four dials stay separate while MACHINES stays open.
+**Machines and sound:** Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN and MIDI Out. Elder is an original synth inspired by Junior by Fors. Machine browsing retains synth values; Wizard’s four dials stay separate while MACHINES stays open.
 
 **Performance and sequencing:** Arpeggiator, held-note octave 0, ChordKeys and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching mute and solo.
 
-**Filters and effects:** Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; Ring Mod, ROOM, PS1, Vinyl, Reverb and Chorus 1/2; Phaser, DUCK, DUB, Ping Pong, Delay and Crush 1/2. Opaque FX menus apply on TRACK release. Cumulative PS1/filter optimizations. Both Shimmers and all combined modes are removed.
+**Filters and effects:** Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; GATED, HALL, Ring Mod, ROOM, PS1, Vinyl, Reverb and Chorus 1/2; Phaser, DUCK, DUB, Ping Pong, Delay and Crush 1/2. Opaque FX menus apply on TRACK release. Cumulative PS1/filter optimizations. Both Shimmers and all combined modes are removed.
 
 **Routing and workflow:** MIDI Out with nine CC knobs, locks and two MIDI LFOs; MIDI OUT/THRU toggle; USB stereo or six tracks; permanent quick save, saved Mod Setup and optional DX diagnostics.
+
+## New in 2.35 - banks and RETROSYN
+
+| Feature | Controls | Behavior |
+|---|---|---|
+| Import a DX7 bank | Flasher > WAV / DX7 bank importers | Stop playback. Choose a Yamaha 32-voice .syx bank, connect Model:Cycles USB MIDI, choose slot 1-16 and send. Wait for LEGACY BANK SAVED. Reusing a slot replaces it. Importing does not change the active sound. |
+| Load a stored bank | LEGACY: FUNC + MACHINES; DATA; BACK | Hold FUNC while pressing MACHINES to open the bank library. Turn DATA to choose; press DATA to load; BACK cancels. Factory restores the included voices. One active 32-voice bank is shared by every LEGACY track. Banks persist after reboot and are separate from Elektron project backups. |
+| Quiet LEGACY voices | Automatic, fixed per note | Quiet carrier levels receive bounded output gain compensation. Velocity and envelope response are preserved; this cannot make a silent or disabled operator sound. Lower CPU cost is retained. |
+| RETROSYN | MACHINES, immediately before MIDI Out | Color, Shape (six models), Sweep and Contour. Pitch, Decay, Gate and Punch remain available. Existing engine IDs are preserved; Elder remains in the list. MIDI Out stays last. |
+| HALL and SPEAK updates | HALL: SIZE; SPEAK: SHAPE | HALL wet return raised about 6 dB; maximum SIZE gives a longer damped tail. SPEAK is slightly brighter, with CAREFUL (123) followed by CREATURE (124). Regular vocabulary only. |
+| FX menu overlay | Hold TRACK + turn REVERB SIZE / DELAY TIME | The full opaque menu appears above Machine Selection and other windows. Turn to preview choices without changing the sound; release TRACK to apply. The previous window stays behind it. Control All track selection releases when TRACK is released. |
 
 ## Track, step and performance controls
 
@@ -40,14 +51,16 @@ Main 2.33. Hold the first button while pressing the next button or turning the n
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Reverb-slot menu | Hold TRACK + REVERB SIZE | Top to bottom: RING MOD, ROOM, PS1, VINYL, REVERB, CHORUS 1, CHORUS 2. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel. |
+| Reverb-slot menu | Hold TRACK + REVERB SIZE | Top to bottom: GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel. |
 | Delay-slot menu | Hold TRACK + DELAY TIME | Top to bottom: PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels. |
 | Standard Reverb | REVERB SEND / SIZE / FUNC + SIZE | Per-track Send / native Size, including INF at maximum / Tone -64 through 0 to +63. Stock formatting returns immediately after leaving Chorus, even during playback. |
-| Ring Mod | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | Ring Send per track / Frequency / Depth. Metallic sine ring modulation replaces the reverb return. Select RING MOD above ROOM. Global Frequency and Depth; use the native track Send for locks. |
+| GATED reverb | REVERB SEND / SIZE; FUNC + SIZE; SETTINGS + SIZE | Gated Send / Gate Time; Pre-delay; Tone. Gate Time 0-127: about 40 ms-6.7 s after input falls quiet. Pre-delay 0-568 ms, 1 ms steps through 64 then 8 ms. No added echoes; dry hit stays immediate and the gate follows the delayed sound. Try Gate Time 16-32, Pre-delay 25-40 ms on a snare. Global gate/pre-delay save while stopped. |
+| HALL reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | Hall Send per track / Decay / Tone. Wide stereo tail with longer reflections than ROOM. Four damped paths and two diffusers per channel at 12 kHz reuse existing reverb memory. |
+| Ring Mod | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | Ring Send per track / Frequency / Depth. Metallic sine ring modulation replaces the reverb return. Select RING MOD below Chorus 1/2. Global Frequency and Depth; use the native track Send for locks. |
 | Phaser | DELAY SEND / TIME / FUNC + TIME; FUNC first, then TRACK + TIME | Phaser Send per track / Rate / Depth; FUNC then TRACK + TIME is Feedback (also SETTINGS + TIME). Two-stage stereo phaser replaces the delay return. Select PHASER above DUCK. Hold FUNC before TRACK to avoid the mute latch. |
 | DUCK delay | DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME; FUNC then TRACK + TIME or DELAY SEND | Native Delay Send / Time / Feedback. Hold FUNC first, then TRACK: TIME adjusts Amount; DELAY SEND adjusts Release. Strong wet ducking while the send input plays, then a swelling return; feedback remains intact. Try Amount 127, Release 32-64 on sparse notes. Amount 0 is standard Delay. |
-| ROOM reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | Room Send per track / Decay / Tone. Compact stereo room tail at 12 kHz. Select ROOM above PS1; release TRACK to apply. |
-| PS1 reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | PS1 Send per track / Decay / Tone. PlayStation-inspired stereo tail, darker and grainier; cumulative processing optimizations retained. |
+| ROOM reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | Room Send per track / Decay / Tone. Compact stereo room tail at 12 kHz. Select ROOM above PS1; release TRACK to apply. Wet return raised by 6 dB at normal levels, with a gentle peak knee; dry level is unchanged. |
+| PS1 reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | PS1 Send per track / Decay / Tone. PlayStation-inspired stereo tail, darker and grainier; cumulative processing optimizations retained. Wet return raised by 6 dB at normal levels, with a gentle peak knee; dry level is unchanged. |
 | Chorus 1 / 2 | REVERB SEND / SIZE / FUNC + SIZE | Chorus Send per track / Speed / Depth. Speed and Depth 0-127. Replaces reverb in this slot. |
 | Vinyl | REVERB SEND; SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Vinyl Send; Crackle / Warble Amount / Warble Speed. Hold FUNC first, then TRACK for Speed. Send 0 is dry; Crackle 0 switches dust off. Bright independent pops/clicks continue through gaps. Track level, pan and mute apply. |
 | Standard Delay | DELAY SEND / TIME / FUNC + TIME | Per-track Delay Send / native Time / native Feedback. |
@@ -66,15 +79,64 @@ Main 2.33. Hold the first button while pressing the next button or turning the n
 | TINY controls | Select TINY in MACHINES | COLOR: Tone; SHAPE: Model0–51; SWEEP: Mod; CONTOUR: Excite. All52 original models; Feral and every other engine remain. |
 | Shadow controls | Select Shadow after TINY in MACHINES | COLOR: Grain; SHAPE: Density; SWEEP: Spread; CONTOUR: Chaos. PUNCH: ratcheting attack. Pitch, Fine, Decay and Gate remain. Original pulsar/noise engine inspired by Opal Dust by Fors. |
 
+## LEGACY machine
+
+| Feature | Controls | Behavior |
+|---|---|---|
+| LEGACY / selection | MACHINES: immediately before MIDI Out | Dexed MSFA six-operator FM with all 32 algorithms; one voice per track. MIDI Out remains last. COLOR = Velocity, SHAPE = Voice, SWEEP = Brightness, CONTOUR = EG Time. Native locks/CC/LFO mappings; Voice and Velocity are captured on the next trigger. |
+| Voice library | SHAPE: slots 0-31 | Starts with Tooropulse, Delicho and EinstofPia. Eight quieter slots now contain PIANO 1, E.PIANO 1, BASS 1, BRASS 1, STRINGS 1, CLAV 1, E.ORGAN 1 and MARIMBA from the supplied ROM1A cartridge. |
+| Velocity / brightness | COLOR / SWEEP | Velocity 0-127 controls the cartridge operators response at each trigger; default 100. Brightness 64 preserves the patch. Lower softens modulation; higher adds bite. |
+| Envelope time | CONTOUR / DECAY | EG Time 64 preserves the patch envelope timing; lower is faster, higher slower. DECAY and gate still set the native amplitude envelope. PITCH and FINETUNE transpose the voice; fixed-frequency operators follow their cartridge settings. |
+| Import a DX7 bank | Flasher > WAV / DX7 bank importers | Stop playback. Choose a Yamaha 32-voice .syx bank, connect Model:Cycles USB MIDI, choose slot 1-16 and send. Wait for LEGACY BANK SAVED. Reusing a slot replaces it. Importing does not change the active sound. |
+| Credits and load | Dexed / Google MSFA | Based on Dexed s Apache-licensed MSFA component by Google, Pascal Gauthier and contributors; original Cycles integration. Added cartridge voices supplied by the user. Six-operator patches can be more demanding than other machines. |
+
+## LEGACY voice library
+
+| Feature | Controls | Behavior |
+|---|---|---|
+| 0 | Tooropulse | Legowelt Magic cart |
+| 1 | Delicho | Legowelt Magic cart |
+| 2 | EinstofPia | Legowelt Magic cart |
+| 3 | Overcast P | Legowelt Magic cart |
+| 4 | STRINGS 1 | ROM1A |
+| 5 | PWMfuzzy | Legowelt Magic cart |
+| 6 | Sharpieblo | Legowelt Magic cart |
+| 7 | RoboticSeq | Legowelt Magic cart |
+| 8 | SplitStran | Legowelt Magic cart |
+| 9 | PIANO   1 | ROM1A |
+| 10 | Heimwave | Legowelt Magic cart |
+| 11 | CLAV    1 | ROM1A |
+| 12 | Synthotape | Legowelt Magic cart |
+| 13 | Wavesply | Legowelt Magic cart |
+| 14 | Poldermood | Legowelt Magic cart |
+| 15 | FelineSaw | Legowelt Magic cart |
+| 16 | Aguirio | Legowelt Magic cart |
+| 17 | E.PIANO 1 | ROM1A |
+| 18 | E.ORGAN 1 | ROM1A |
+| 19 | Pinkcookie | Legowelt Magic cart |
+| 20 | ObieSplash | Legowelt Magic cart |
+| 21 | MARIMBA | ROM1A |
+| 22 | Garudaydre | Legowelt Magic cart |
+| 23 | VillageOrg | Legowelt Magic cart |
+| 24 | BASS    1 | ROM1A |
+| 25 | Litehouze | Legowelt Magic cart |
+| 26 | NostroSpli | Legowelt Magic cart |
+| 27 | Velobleepb | Legowelt Magic cart |
+| 28 | DimPacific | Legowelt Magic cart |
+| 29 | SequenceMe | Legowelt Magic cart |
+| 30 | BRASS   1 | ROM1A |
+| 31 | Swissynth | Legowelt Magic cart |
+
 ## SPEAK voice machine
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Select SPEAK | MACHINES: after Shadow, immediately before MIDI Out | Original 128-word formant speech engine. Microphone; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. v90 balances phoneme levels, smooths transitions and brightens voiced harmonics while keeping hiss reduced. Start around Vol+Dist 60, Punch off. |
+| Select SPEAK | MACHINES: after Shadow, before LEGACY | Original 128-word formant speech engine. Microphone; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. v90 balances phoneme levels, smooths transitions and brightens voiced harmonics while keeping hiss reduced. Start around Vol+Dist 60, Punch off. |
 | Voice / Word / Speed / Articulation | COLOR / SHAPE / SWEEP / CONTOUR | Voice/formant character / Word 0-127 / Speed (64 normal, lower slower) / Articulation. SHAPE popup shows the word and index. Word changes latch at the next trig; the other three controls remain live. Slow words now continue through quiet phoneme gaps; the idle detector no longer suspends unfinished speech. |
 | Pitch and envelope | PITCH / notes; DECAY, Fine, Punch, Gate, Attack | Pitch changes independently of word speed. Begin with Decay 127 to hear complete words. Existing filters and FX sends apply. Each track has its own speech state. |
 | Word sequences and modulation | Hold a trig + SHAPE, then lock Pitch and other knobs normally | Word and other native parameters support p-locks and LFO destinations. COLOR/SHAPE/SWEEP/CONTOUR use MIDI CC 16/17/18/19. Leave space for the word or increase Speed. |
 | Example sentence | SHAPE words and note locks on successive trigs | HELLO 31, I 0, AM 62, A 17, ROBOT 113, I 0, LOVE 35, MUSIC 106. Full indexed word library follows at the end of this guide. |
+| SPEAK tuning | PITCH / FINETUNE | Reference tuning corrected by about 1.17 semitones downward. The existing vocal octave register, formants and word timings remain. |
 
 ## LFO and MACRO controls
 
@@ -153,8 +215,8 @@ These are global preferences. BACK closes Mod Setup and saves its global prefere
 | 24 | SO | 56 | MOVE | 88 | THEN | 120 | HAPPY |
 | 25 | BECAUSE | 57 | TURN | 89 | AGAIN | 121 | SAD |
 | 26 | YES | 58 | TAKE | 90 | ALWAYS | 122 | NEW |
-| 27 | NO | 59 | GIVE | 91 | NEVER | 123 | OLD |
-| 28 | NOT | 60 | GET | 92 | ALL | 124 | SOFT |
+| 27 | NO | 59 | GIVE | 91 | NEVER | 123 | CAREFUL |
+| 28 | NOT | 60 | GET | 92 | ALL | 124 | CREATURE |
 | 29 | PLEASE | 61 | BE | 93 | SOME | 125 | LOUD |
 | 30 | THANK | 62 | AM | 94 | MORE | 126 | DREAM |
 | 31 | HELLO | 63 | ARE | 95 | LESS | 127 | FUTURE |
