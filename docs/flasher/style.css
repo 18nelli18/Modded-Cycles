@@ -394,3 +394,10 @@ body.supermodel{--paper:#f5f4f0;--casing:#eeece6;--line:#d6d2ca;--line-2:#c8c5bd
 .support-link span{min-width:0}
 .support-link:hover{background:#ffe64b;color:#252525;text-decoration:none}
 .support-link:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+
+.cheddar{float:right;width:300px;margin:0 0 16px 40px;text-align:center}
+.cheddar img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(127,127,127,.4)}
+.cheddar figcaption{margin:8px 0 0;font-style:italic;font-size:17px}
+.cheddar .support-cta{margin:14px 0 0}
+.build-steps{clear:both}
+@media(max-width:760px){.cheddar{float:none;width:100%;max-width:360px;margin:20px auto 16px}}
