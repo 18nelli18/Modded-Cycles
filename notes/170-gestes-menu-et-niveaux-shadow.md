@@ -43,3 +43,7 @@ Demandes AveyCole du24/10/2026 : inverser les gestes, appui bref Mod Setup, main
 ## 8. Nom du telechargement avec version
 
 [FAIT] AveyCole demande Supermodel_2.40.syx pour le firmware genere. Le chemin fixe principal prend la version de MC_RELEASES[0], meme source que la version affichee ; version ajoutee a la cle de cache du build. Le lien download utilise ce nom. Pas de changement des octets du firmware, restauration ni fichiers importes. Controle Chromium : vrai evenement download, suggestedFilename Supermodel_2.40.syx et SHA des octets identique au127 approuve. EN/FR/mobile et blurb proteges par la meme suite. Stamp du site actualise pour charger le nouveau script.
+
+## 9. Ponctuation du blurb : substitution de police
+
+[FAIT] Capture AveyCole : fin de phrase visible en !!1. Le HTML et le DOM contiennent pourtant trois points d exclamation. Reproduction Chromium avec Familjen Grotesk : substitution contextuelle calt affiche le dernier comme1. Capture avant/apres : font-feature-settings calt0 retablit !!!. Regle limitee a fixed-features, en dehors du texte fourni ; SHA du bloc blurb strictement identique. Verification CSS calculee et capture de la vraie page locale, suite livraison exacte/download/ENFR/mobile reussie. Aucun octet firmware ni mot du blurb modifie.

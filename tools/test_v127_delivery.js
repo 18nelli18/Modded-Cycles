@@ -11,6 +11,7 @@ const server=http.createServer((req,res)=>{let p=path.join(site,decodeURICompone
 (async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port+'/flasher/';const browser=await chromium.launch({executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',headless:true});try{
  const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(String(e)));
  await page.goto(base);await page.waitForFunction(()=>window.MCFlasherApp&&window.MCFixedMainImageReady);
+ const blurbText=page.locator('.fixed-features li:first-child > span[data-l="en"]');assert((await blurbText.innerText()).endsWith('and more to explore!!!'));assert.equal(await blurbText.evaluate(n=>getComputedStyle(n).fontFeatureSettings),'"calt" 0');await page.evaluate(()=>document.fonts.ready);await blurbText.screenshot({path:path.join(root,'output/blurb-punctuation.png')});
  const info=await page.evaluate(async()=>{const data=await MCFixedMainImageReady;return {product:MCFlasher.verify(data).product,length:data.length,hash:MCBuilder.hex(MCBuilder.sha256(data))};});assert.equal(info.product,17);assert.equal(info.hash,hash(raw));
  assert.match(await page.locator('a[href="convert.html"]').innerText(),/WAV.*DX7/);
  // Vrai chemin de construction : les OS appartiennent a l utilisateur et restent locaux.
