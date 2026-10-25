@@ -304,3 +304,8 @@ User: "130 worked, push to main". Publish exact regular130 SHA `881099ad7b7d8505
 ## AveyCole main2.44 promotion (2026-10-25)
 
 User: "Go ahead and push v141". Promote exact standard shared-filter141 SHA `d6b621c9b4aee2f38a26348fa9a3ea37c42f7caff334bcfad4ff1c510a34bb76`, MAIN `0e2b8f2c14fa836532a1a7eb5f9907d29f36e36f0afa0ebe18a071f57ec40bd9`. Popup fix, full MIDI/audio word restoration before late cleanup, PUNCH engine and PUNCH-controlled Shadow distortion. Adult stays private; supplied blurb unchanged. No PUNCH/TINY decay changes.
+
+
+## AveyCole main2.45 promotion (2026-10-25)
+
+User: "Go ahead and push to main" for the supplied `all-features-polivoks-cpu-trim-test-v142.syx`. Publish exact standard shared-filter v142 SHA `1eca04fe97951920d2b57c915c0447a5da2739f6008d754e3273be46e364962a`, MAIN `12ec632b7596b23d7afd575eeeeff32a5eeaef3ea8d245b18bee94e1d9a99a68`, through the established fixed-main image only. Adds quantized mute/solo: Mod Setup (SETTINGS + TRACK) > QntM, On/Off and the time division, Off by default. No hardware result was reported with the promotion, so none is claimed. Adult stays private. The flasher blurb was changed at AveyCole's explicit request on 2026-10-25 (Sidechain bullet added after SCRAMBLE; "varie" corrected to "variate"); its fixed-features block SHA256 is now `b3486b46a278b7d5561c3edd549f4adf299d358012b2631a0a6ab353232e2205` and is the text to preserve byte for byte from here on, replacing the earlier `00da19e1…` pin.

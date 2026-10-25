@@ -1,6 +1,6 @@
 {
-  "release": "2.44",
-  "stamp": "2026-10-25-midi-return-main-244",
+  "release": "2.45",
+  "stamp": "2026-10-25-quantized-mute-main-245",
   "cards": [
     {
       "en": [
@@ -15,11 +15,11 @@
     {
       "en": [
         "Performance and sequencing",
-        "Arpeggiator, held-note octave 0, ChordKeys and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching mute and solo. Trigger-based Sidechain and per-pattern Scramble checklists."
+        "Arpeggiator, held-note octave 0, ChordKeys and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching and quantized mute and solo. Trigger-based Sidechain and per-pattern Scramble checklists."
       ],
       "fr": [
         "Performance et séquenceur",
-        "Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute verrouillé et solo. Sidechain déclenché par les notes et listes Scramble par pattern."
+        "Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute et solo verrouillés ou quantifiés. Sidechain déclenché par les notes et listes Scramble par pattern."
       ]
     },
     {
@@ -1428,6 +1428,18 @@
             "Mute",
             "Stk / LTC ; défaut Stk",
             "LTC : TRACK + appui FUNC verrouille ; FUNC quitte. FUNC + pad en mute verrouillé : solo ; rappuyer ou quitter restaure les mutes."
+          ]
+        },
+        {
+          "en": [
+            "Quantized mute/solo",
+            "Tap SETTINGS + TRACK; QntM",
+            "Turn it On or Off and select the time division your mutes and solos are quantized to. Off by default."
+          ],
+          "fr": [
+            "Mute/solo quantifiés",
+            "SETTINGS + TRACK bref ; QntM",
+            "Activez ou désactivez-le et choisissez la division temporelle sur laquelle vos mutes et solos sont quantifiés. Désactivé par défaut."
           ]
         },
         {
