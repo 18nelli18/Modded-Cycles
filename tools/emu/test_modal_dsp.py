@@ -12,8 +12,9 @@ Le cœur en virgule fixe est compilé pour l'ordinateur (modal_host.c) avec la m
 octets.
 
 Pour chaque cas : 20 blocs de silence, puis des notes
-(strum) ; la sortie de Rings (ODD - EVEN) comparée à celle du cœur : rapport signal / écart sur toute la durée,
-au moins MIN_SNR dB.
+(strum), avec l'excitateur interne ou un sample en entrée (internal_exciter = 0, rejoué depuis le début à chaque
+note : le sample excitateur de MODAL, notes/80) ; la sortie de Rings (ODD - EVEN) comparée à celle du cœur : rapport
+signal / écart sur toute la durée, au moins MIN_SNR dB.
 
     python3 tools/emu/test_modal_dsp.py --eurorack vendor/eurorack [--quick]
 """
@@ -35,6 +36,10 @@ import gen_macro as gm              # noqa: E402
 import gen_modal as gmo             # noqa: E402
 
 MIN_SNR = 35.0
+# POSITION qui balaie tout en 200 blocs (0,13 s) pendant que le sample excite encore les modes : l'écart connu des
+# amplitudes interpolées linéairement sur le bloc quand la position bouge (notes/74 §5.1), plus visible avec une
+# entrée qui dure qu'avec une frappe (POSITION seule : 37 dB avec le sample, 55 dB avec l'excitateur interne)
+MIN_SNR_SWEEP_IN = 30.0
 PRE = 20                            # blocs de silence avant la 1re note
 RINGS = ["rings/dsp/part.cc", "rings/dsp/resonator.cc", "rings/dsp/string.cc", "rings/dsp/fm_voice.cc",
          "rings/resources.cc", "stmlib/dsp/units.cc", "stmlib/utils/random.cc"]
@@ -77,11 +82,12 @@ def build(tmp, repo):
     return ref, fix
 
 
-def rec(model=0, poly=1, strum=0, chord=0, note=0.0, tonic=48.0, st=0.28, br=0.5, da=0.5, po=0.31):
-    """Un bloc (rings_ref.cc, modal_host.c) : excitateur interne, pas d'entrée."""
-    q = lambda x: int(round(x * 65536))
-    return struct.pack("<46i", model, poly, strum, 1, chord, q(note), q(tonic), 0, q(st), q(br), q(da), q(po),
-                       *([0] * 32), 0, 0)
+def rec(model=0, poly=1, strum=0, chord=0, note=0.0, tonic=48.0, st=0.28, br=0.5, da=0.5, po=0.31, x=None):
+    """Un bloc (rings_ref.cc, modal_host.c) : excitateur interne, pas d'entrée ; x : 32 échantillons d'entrée (UNIT,
+    1,0 = 2^24), l'excitateur interne coupé (le sample excitateur de MODAL, notes/80)."""
+    q = lambda v: int(round(v * 65536))
+    return struct.pack("<46i", model, poly, strum, 0 if x is not None else 1, chord, q(note), q(tonic), 0, q(st),
+                       q(br), q(da), q(po), *(list(x) if x is not None else [0] * 32), 0, 0)
 
 
 def run(exe, data):
@@ -95,16 +101,35 @@ def snr(a, b):
     return 999.0 if e == 0 else 20 * np.log10(np.sqrt(np.mean(a ** 2)) / e)
 
 
-def scenario(model, poly, blocks=300, notes=((0, 0.0), (100, 3.0), (200, -5.0)), **kw):
-    """notes : (bloc après le silence, note) ; kw : réglages, ou fonctions du bloc pour des potards qui bougent."""
+def scenario(model, poly, blocks=300, notes=((0, 0.0), (100, 3.0), (200, -5.0)), sample=None, **kw):
+    """notes : (bloc après le silence, note) ; kw : réglages, ou fonctions du bloc pour des potards qui bougent ;
+    sample : l'entrée (UNIT), rejouée depuis le début à chaque note, comme le fait la machine MODAL."""
     at = {PRE + b: n for b, n in notes}
-    out, note = [], notes[0][1]
+    out, note, pos = [], notes[0][1], None
     for b in range(PRE + blocks):
         if b in at:
             note = at[b]
+            pos = 0 if sample is not None else None
         k = {x: (v(b - PRE) if callable(v) else v) for x, v in kw.items()}
-        out.append(rec(model=model, poly=poly, strum=int(b in at), note=note, **k))
+        x = None
+        if sample is not None:
+            x = [0] * 32
+            if pos is not None:
+                x = [sample[pos + i] if pos + i < len(sample) else 0 for i in range(32)]
+                pos = pos + 32 if pos + 32 < len(sample) else None
+        out.append(rec(model=model, poly=poly, strum=int(b in at), note=note, x=x, **k))
     return out
+
+
+def unit_sample(kind, n, seed=1):
+    """Des samples de synthèse en UNIT, comme la machine les lit (int16 << 9) : frappe (bruit qui s'éteint), sinus
+    (440 Hz qui s'éteint)."""
+    k = np.arange(n)
+    if kind == "frappe":
+        v = np.random.RandomState(seed).uniform(-1, 1, n) * np.exp(-k / 400.0) * 20000
+    else:
+        v = np.sin(2 * np.pi * 440 * k / 48000) * np.exp(-k / 6000.0) * 24000
+    return [int(x) << 9 for x in np.clip(np.round(v), -32768, 32767).astype(np.int64)]
 
 
 def cases(quick):
@@ -124,6 +149,16 @@ def cases(quick):
     for shape, model in shapes:
         for total in (0, 127):
             out.append((f"SHAPE {shape}, hauteur MIDI {total}", scenario(model, 1, notes=((0, total - 48.0),))))
+    fr, si = unit_sample("frappe", 2400), unit_sample("sinus", 9000)
+    for shape, model in shapes:                      # le sample excitateur (notes/80) : l'entrée de Rings
+        for poly in ((1, 4) if not quick else (1,)):
+            out.append((f"SHAPE {shape}, sample « frappe » en entrée, {poly} voix", scenario(model, poly, sample=fr)))
+        out.append((f"SHAPE {shape}, sample « sinus » en entrée, relancé avant sa fin",
+                    scenario(model, 2, sample=si, notes=((0, 0.0), (60, 7.0), (120, -2.0)))))
+    for shape, model in shapes if not quick else shapes[:1]:
+        out.append((f"SHAPE {shape}, sample en entrée, les 4 potards qui bougent", scenario(
+            model, 1, sample=fr, st=ramp(0.1, 0.9), br=ramp(0.9, 0.1), da=ramp(0.3, 0.9), po=ramp(0.0, 1.0)),
+            MIN_SNR_SWEEP_IN))
     out += [
         ("SHAPE 1, DAMPING au maximum (résonance infinie)", scenario(1, 1, da=1.0)),
         ("SHAPE 2, DAMPING au maximum", scenario(2, 2, da=1.0)),
@@ -144,13 +179,15 @@ def main():
     with tempfile.TemporaryDirectory() as d:
         ref, fix = build(pathlib.Path(d), repo)
         worst = []
-        for name, recs in cases(args.quick):
+        for name, recs, *lim in cases(args.quick):
             data = b"".join(recs)
             a, b = run(ref, data), run(fix, data)
             s = snr(a, b)
+            floor = lim[0] if lim else MIN_SNR
             worst.append((s, name))
-            check(s >= MIN_SNR and np.abs(b).max() > 0,
-                  f"{name} : {s:.1f} dB (crête {np.abs(a).max():.3f} pour Rings, {np.abs(b).max():.3f} pour MODAL)")
+            check(s >= floor and np.abs(b).max() > 0,
+                  f"{name} : {s:.1f} dB (crête {np.abs(a).max():.3f} pour Rings, {np.abs(b).max():.3f} pour MODAL)"
+                  + (f" ; seuil {floor:.0f} dB" if lim else ""))
         worst.sort()
         print(f"\n  le plus faible : {worst[0][1]} ({worst[0][0]:.1f} dB) ; médiane {worst[len(worst) // 2][0]:.1f} dB")
     print("\nTOUT OK" if not FAIL else f"\n{len(FAIL)} ÉCHEC(S)")

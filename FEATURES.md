@@ -86,6 +86,7 @@ retrig page, menus) are listed with that page as context.
 | **FUNC** + **MACHINES**, cursor on a sample file, then press the track's pad (or its trig keys in keyboard mode) | Plays the highlighted sample with the track's settings | Sample preview | Sampler tracks only. Nothing plays while scrolling |
 | **FUNC** + **PAGE** | Scale menu, as stock, with two added items **Scl** and **Key** (Scale Lock) | Model-TG Scale Lock | Stock menu, extended |
 | **FUNC** + **PITCH** (turn) | Lo-fi: OFF in the middle, sample rate on the left (46K down to 4K), bit depth on the right (12B down to 2B) | MACRO | **MACRO tracks only.** Stock, changed: on every other machine FUNC + PITCH still moves the note by semitones |
+| **FUNC** + **MACHINES** on a MODAL track, then pick a sample | The sample becomes MODAL's exciter: each trig plays it from the start into the resonator (*Sample loaded to track N*) | MODAL | MODAL tracks. Loading a MODAL preset goes back to MODAL's own exciter |
 | **FUNC** + **SHAPE** (turn) | Polyphony: 1, 2 or 4 voices | MODAL | **MODAL tracks only.** On every other machine, FUNC + SHAPE does what it does on the stock OS |
 | **FUNC** + **RETRIG** | Retrig Setup menu, now with two more rows under Rte, Len, A.On: **Arp** (direction) and **Oct** (octaves) | Arpeggiator | Stock menu, extended |
 | **FUNC** + trig key on an empty step | Places a trigless trig (stock); the key now lights dimmed | Dimmed trigless trigs | Grid mode |
@@ -381,14 +382,23 @@ egg). The code is Rings' own DSP (the `Part` of
 
 4. Velocity sets how hard the resonator is struck (the exciter's level), not the track volume: the notes still
    ringing keep their level.
+5. **A sample as the exciter** (added on 25/10/2026, notes/80): on a MODAL track, **FUNC** + **MACHINES** (preset
+   menu) and pick a sample file, sent as for the Sampler (48 kHz WAV). Each trig then plays it from its start, at its
+   own speed, as Rings' audio input: the note tunes the resonator, COLOR (brightness) also filters the sample,
+   velocity sets its level. The sample is saved with the project like a Sampler track's; loading a MODAL preset on
+   the track goes back to the internal exciter at the next trig.
 
 **Limits and interactions.**
 
 - "Éco" settings, chosen by Maxime for the processor: half of Rings' modes (30, 2 × 14, 4 × 6 instead of 60,
   2 × 28, 4 × 12) and 4 strings instead of 8 (with Rings' chord table for that number of strings).
 - One output: odd minus even, as Rings mixes them when only one jack is plugged.
-- No audio input: always Rings' internal exciter (a filtered click or a burst of noise). Using a
-  sample as the exciter, chosen in the preset menu, is the next step (asked by Maxime, not in this version).
+- No live audio input: Rings' internal exciter (a filtered click or a burst of noise), or a sample.
+- The sample: one per track (samples on single steps are a Sampler feature); no preview in the preset menu on a MODAL
+  track; a stereo file plays as mono (its mid); the sound's name becomes Model-TG's sample tag (SMP and a code), as on
+  a Sampler track; the internal exciter plays while it loads. Model-TG still says *Select sample machine first!* when
+  the project has neither a Sampler nor a MODAL track. To make this work, three of Model-TG's "machine = Sampler"
+  tests also accept MODAL (`tools/gen_model_tg.py`, notes/80). A sample costs about the same as the internal exciter.
 - Heavy: on a Model:Cycles a MODAL track takes about 16 % of the processor (modal model, string on 1 voice), 25 %
   (sympathetic strings, chords), 33 % (string on 4 voices), from the cost model calibrated on a measurement on the
   machine (notes/77; Maxime measured 30 % for one track). The hottest loops are in ColdFire assembly. A knob that moves
@@ -399,8 +409,9 @@ egg). The code is Rings' own DSP (the `Part` of
 - Set MODAL tracks back to an original machine before flashing anything else.
 
 **Origin and license.** Rings by Émilie Gillet, MIT (`LICENSE-Rings`), rewritten in fixed point (the DSP, not the
-UI or the easter egg). Proven against Rings' own code compiled for a computer (`tools/emu/test_modal_dsp.py`: 54 cases,
-median 77 dB of signal to difference) and on the OS's own code in the emulator (`tools/emu/test_modal.py`).
+UI or the easter egg). Proven against Rings' own code compiled for a computer (`tools/emu/test_modal_dsp.py`: 57 cases,
+with and without a sample as the input, median 78 dB of signal to difference) and on the OS's own code in the
+emulator (`tools/emu/test_modal.py`, the sample as the exciter included).
 
 **Status.** Experimental: not yet tested on a Model:Cycles.
 

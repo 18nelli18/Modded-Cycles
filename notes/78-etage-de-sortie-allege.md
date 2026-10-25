@@ -114,6 +114,22 @@ compte un peu large pour les gros raccourcis (notes/70 §4.3).
 - Exact aussi, plus simple : la préparation de l'eDMA avant les voix (attente cachée, étude §5.4), la vérification
   réduite du sommeil de la reverb (étude §5.5).
 
+## 7. Sur la machine (25/10/2026)
+
+Firmware de la PR #112 (MAIN OS `84455c19…afd0` : MODAL et son sample excitateur, cet étage allégé, la sortie MIDI
+sans gel). Maxime, juste après l'allumage, aucune note jouée : « Charge juste après l'allumage 19% CPU 26% PEAK, et
+tout les track à 0% ».
+
+- `[FAIT]` relevé sur la machine : CPU 19 %, PEAK 26 % sur la page System de Model-TG ; 0 % pour chaque piste.
+- `[FAIT en émulation]` le modèle (`hwcost.py`, le projet du §1, aucune note, 60 blocs ; `build/idle_model.py`) hors
+  voix : **30,4 % sans cet étage allégé, 19,1 % avec**. Le banc calcule six voix KICK muettes (38,5 %) que la machine
+  ne montre pas (0 % par piste) : on compare hors voix. Le relevé tombe sur le modèle avec l'étage allégé.
+- `[HYP]` le gain sur la machine à l'arrêt, envois à 0 : environ −11 points. Pas de relevé avant / après sur la
+  machine : l'OS 2.1 sans cet étage (`e5a333c9…cf77`) donnerait environ 30 % au même endroit.
+- `[À FAIRE]` le son identique, monter un envoi (pas de clic, la charge remonte et reste jusqu'au prochain
+  allumage), VOL+DIST au-dessus de 60 et retour ; la charge en lecture avec le projet du §1.
+
 ## Chronologie
 
 - 24/10/2026 : demande ; coût de l'étage mesuré au modèle ; raccourcis de l'OS optimisé repris, preuve.
+- 25/10/2026 : premier relevé sur la machine, à l'allumage : 19 % (§7).

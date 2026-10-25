@@ -134,15 +134,35 @@ MC_PATCHES = (
 ST_PATCHES = (
     ("src/model_tg.s", "    REGION_END  = 0x4e800000\n", "    REGION_END  = 0x4e700000\n",
      "zone d'échantillons : 1 Mo de moins, laissé aux moteurs du Syntakt (0x46700000..0x46800000)"),
-)
+) + tuple(
+    # Le sample comme excitateur de MODAL (notes/80) : une piste MODAL (machine 14 dans le Modded Cycles OS) porte un
+    # sample comme une piste Sampler (machine 6). Trois tests « machine = 6 » acceptent aussi 14 : m & 0xf7 = 6 pour
+    # m = 6 et 14 seulement (aucune autre machine de 0 à 255). Même taille : aucune adresse de Model-TG ne bouge.
+    ("src/model_tg.s", old, new, why) for old, new, why in (
+        ("    moveb   %a2@(38),%d0          | machine index\n    andil   #0xff,%d0\n    cmpil   #6,%d0\n"
+         "    bnes    as_next\n",
+         "    moveb   %a2@(38),%d0          | machine index\n    andil   #0xf7,%d0             | Modded-Cycles: 6 or "
+         "14 (MODAL)\n    cmpil   #6,%d0\n    bnes    as_next\n",
+         "navigateur : un sample se charge aussi quand le projet a une piste MODAL (any_sampler : machine 6 ou 14)"),
+        ("    moveb   %a2@(38),%d0          | machine index\n    andil   #0xff,%d0\n    cmpil   #6,%d0\n"
+         "    bnew    np_nosmp              | only the Sampler carries a token\n",
+         "    moveb   %a2@(38),%d0          | machine index\n    andil   #0xf7,%d0             | Modded-Cycles: 6 or "
+         "14 (MODAL)\n    cmpil   #6,%d0\n    bnew    np_nosmp              | only the Sampler carries a token\n",
+         "chargement d'un projet : une piste MODAL garde le sample nommé par son son (name_probe : machine 6 ou 14)"),
+        ("    mvzb    %a0@(38),%d0\n    cmpil   #6,%d0\n    bnes    to_no\n",
+         "    mvzb    %a0@(38),%d0\n    bclr    #3,%d0                | Modded-Cycles: 6 or 14 (MODAL)\n"
+         "    subql   #6,%d0\n    bnes    to_no\n",
+         "un son MODAL nomme son sample comme un son Sampler (tok_of : préchargement, samples gardés en mémoire)"),
+    ))
 # Ses symboles dont nos détours ont besoin (gen_syntakt_engines.py --tg) : chaînage, page System, rééchantillonnage ;
 # l'état de ses slide trigs (v1.1.0), que tools/emu/test_model_tg_syntakt.py arme comme le fait son séquenceur ; et sa
-# file de mutes et son test des voix muettes (MC_PATCHES), que ce test vérifie
+# file de mutes et son test des voix muettes (MC_PATCHES), que ce test vérifie ; ses cases de samples, que MODAL lit
+# (son excitateur, notes/80)
 ST_SYMBOLS = ("blob_start", "reserved_end", "REGION_END", "param_table", "boot_extra_hook", "sampler_dispatch",
               "descr_hook", "descr_b_hook", "sampler_lfo_gate", "sampler_amp_gate", "sampler_name_table",
               "apply_names", "mod_held", "prof_t0", "prof_ta", "prof_trk", "rs_state", "rs_src", "sle_run", "sle_trk",
               "ah_noenv", "voice_ptr", "SLD_BASE", "sld_init", "blk_clk", "mq_toggle", "mq_pending", "mq_apply",
-              "voice_quiet")
+              "voice_quiet", "track_slot", "track_pend", "track_hash", "slot_base", "slot_count")
 # Symboles dont l'écoute des samples a besoin (tools/gen_sample_preview.py, notes/46), dans les deux tweaks : son code
 # appelle ces fonctions et lit ces variables de Model-TG, aux mêmes adresses dans les deux builds.
 PV_SYMBOLS = ("tok_of", "sound_obj", "ensure_loaded", "slot_hash", "pd_mode", "ld_busy", "pad_load_hook")

@@ -24,10 +24,11 @@ section (aPLib) and re-signs the container (HMAC). It prints the SHA-256 of the 
 must be:
 
 ```
-9f9a3f4cf69bda83cfe664577bc73c8b0104075c4d338aa3aa1c4a78b2c2c4b5
+84455c194cb54a151e02048478430f37d931f1aa473d1e894f806f1158e3afd0
 ```
 
-(2.1 before the MIDI-out fix (notes/79) was `6c327f45…97d7`; before the lighter output stage (notes/78),
+(2.1 before MODAL took a sample as its exciter (notes/80) was `9f9a3f4c…c4b5`; before the MIDI-out fix (notes/79),
+`6c327f45…97d7`; before the lighter output stage (notes/78),
 `64d162a4…9b30`; before MODAL's strings were rescheduled
 (notes/74 §5.5), `e5a333c9…cf77`; 2.0.1, without MODAL, was `2a77d029…0041`; 2.0, the same with its machine payload packed less tightly,
 `82a79f45…cca9`.)
@@ -107,6 +108,9 @@ python3 tools/gen_modal.py --cycles firmware/model-cycles_OS1.13.syx --syntakt f
   --eurorack vendor/eurorack [--check]                                        # 31-…-macro-acid-modal.json
 python3 tools/gen_modal.py --tables [--check]                                 # modal_tables.h, LICENSE-Rings only
 ```
+
+MODAL reads the sample slots of Model-TG for its sample exciter (notes/80): `gen_modal.py` takes their addresses from
+the symbols of `30-model-tg-st.json`, so regenerate MODAL after `tools/gen_model_tg.py` whenever Model-TG changes.
 
 The lighter output stage (notes/78) and the MIDI-out fix (notes/79) are assembled with binutils only:
 
