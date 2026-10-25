@@ -1,5 +1,5 @@
 {
-  "stamp": "2026-10-24-guide-compact-240",
+  "stamp": "2026-10-24-download-name-240",
   "scope": "main",
   "profile": "Exact full-feature image, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (2ch enabled)",
   "fixed_image": "all-features-usb-2ch-default.syx",
@@ -389,5 +389,6 @@
     "Hld",
     "Rel"
   ],
-  "shadow_output_gain_db": 12.0412
+  "shadow_output_gain_db": 12.0412,
+  "download_filename_pattern": "Supermodel_<release>.syx"
 }

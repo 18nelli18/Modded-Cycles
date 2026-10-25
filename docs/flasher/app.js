@@ -3225,13 +3225,14 @@ function prepareFirmware() {
   if (window.MCFixedMainImageReady) {
     if (!st.syntakt) { st.fw = null; st.fwError = "needs_syntakt"; return; }
     const meta = window.MCFixedMainImageMeta;
-    const fixedKey = `fixed-main:${meta.syxSha256}:${os.sha}:${st.syntakt.version}`;
+    const release = window.MC_RELEASES[0].version;
+    const fixedKey = `fixed-main:${release}:${meta.syxSha256}:${os.sha}:${st.syntakt.version}`;
     const makeFixed = () => window.MCFixedMainImageReady.then((raw) => {
       const hash = window.MCBuilder.hex(window.MCBuilder.sha256(raw));
       if (hash !== meta.syxSha256) throw new Error("Verified main firmware image checksum mismatch");
       const verified = window.MCFlasher.verify(raw);
       if (!verified.count) throw new Error("Verified main firmware image has no valid SYX packets");
-      return { raw, name: "all-features-no-diagnostic-usb-2ch-default.syx", kind: "built", mods: ["All features"],
+      return { raw, name: `Supermodel_${release}.syx`, kind: "built", mods: ["All features"],
         sha: meta.mainOsSha, ref: true, modsRef: true, sixch: true };
     });
     if (!onSamples()) { buildCached(fixedKey, makeFixed); return; }
