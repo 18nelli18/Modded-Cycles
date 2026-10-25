@@ -26,6 +26,14 @@
  * Etat : une Part de Rings par piste, en SDRAM au-dessus de la zone d'echantillons de Model-TG (MODAL_RAM : rien
  * de l'OS ni de Model-TG n'y va, notes/74), remise a neuf a la premiere note apres un changement de machine
  * (marque en v+0x2c, effacee par la remise a zero de la voix, 0x400a7ab8).
+ *
+ * Le sample comme excitateur (notes/80) : choisi dans le menu des presets, le navigateur de Model-TG le range pour la
+ * piste comme pour une piste Sampler (track_hash, track_slot : sa case parmi les samples en memoire, notes/46 §4) et
+ * dans le nom du son (le jeton « SMP » + empreinte, relu au chargement du projet). A chaque trig, MODAL le rejoue
+ * depuis le debut, a sa vitesse (48 kHz, un echantillon par trame), comme entree de Rings ; l'excitateur interne est
+ * alors coupe (internal_exciter = 0 : le filtre d'excitation de l'entree, comme le module). Sans sample, l'excitateur
+ * interne. Une case qui attend la prochaine note (track_pend, apres un chargement de projet) est prise au trig ou
+ * quand le sample s'est tu, comme le fait le Sampler (sampler_pre de Model-TG).
  */
 #include "modal_dsp.h"
 
@@ -49,6 +57,17 @@
 #endif
 #define TRACK_SIZE  0x18000                          /* 96 Ko par piste : la Part */
 
+/* Les cases de samples de Model-TG (ses symboles, 30-model-tg-st.json, passes par tools/gen_modal.py) ;
+ * tools/emu/modal_machine_host.c les redefinit pour l'ordinateur */
+#ifndef T_SLOT
+#define T_SLOT      ((volatile s32 *)TG_TRACK_SLOT)  /* case jouee par la piste ; -1 : aucune */
+#define T_PEND      ((volatile s32 *)TG_TRACK_PEND)  /* case qui attend la prochaine note (mot bas) ; -1 : aucune */
+#define S_HASH      ((const volatile u32 *)TG_SLOT_HASH)    /* 0 : case vide */
+#define S_COUNT     ((const volatile s32 *)TG_SLOT_COUNT)   /* echantillons (le plan du milieu, mono) */
+#define SLOT_PCM(s) ((const s16 *)(unsigned long)(((const volatile u32 *)TG_SLOT_BASE)[s] + 64))  /* apres l'en-tete */
+#endif
+#define MAX_SLOT    64
+
 struct track {
 	struct modal_part part;
 };
@@ -63,6 +82,8 @@ struct ctl {                                         /* ce que update prepare po
 	s32 pend;                                        /* un trig arrive pendant le calcul des tables */
 	s16 key[NKEY];                                   /* les potards du dernier calcul complet */
 	s32 kpmod, same;                                 /* sa note ; same : ce calcul a refait ctl a l'identique */
+	s32 xpos, xplay;                                 /* le sample excitateur : position, en train de jouer */
+	u32 xslot, xhash;                                /* ... sa case et son empreinte quand il est parti */
 };
 
 static struct ctl ctl[6];
@@ -107,6 +128,7 @@ void modal_update(s32 pmod, char *v, const char *p)
 		c->fresh = 1;
 		c->chord = 0;
 		c->pend = 0;
+		c->xplay = 0;
 		c->vel = V32(0x34) ? VGAIN_NEXT[t] : VGAIN[t];   /* le trig qui a choisi la machine */
 		c->vel = c->vel < 0 ? 0 : (c->vel > 127 ? 127 : c->vel);
 	}
@@ -149,9 +171,55 @@ void modal_update(s32 pmod, char *v, const char *p)
 	c->same = !V32(0x34) && !V32(0x38) && c->chord == chord0;
 }
 
+/* Le sample de la piste t (Model-TG), comme entree de Rings : rend 0 sans sample (l'excitateur interne), 1 avec
+ * (x : le bloc du sample, ou 0 quand il s'est tu : *in = 0). Au bloc du trig (v+0x34 sans v+0x38) ou sample tu, la
+ * case en attente est prise ; au strum (le bloc suivant, celui ou Rings joue la note), le sample repart du debut.
+ * Un autre sample mis sur la piste pendant qu'il joue (le navigateur, une case reprise) ne part qu'au trig suivant. */
+static int exc_sample(s32 t, struct ctl *c, const char *v, s32 *x, int *in)
+{
+	s32 s, pend = T_PEND[t], n, left, k, level = c->ps.level;
+	const s16 *pcm;
+
+	*in = 0;
+	if (pend >= 0 && ((V32(0x34) && !V32(0x38)) || !c->xplay)) {
+		T_SLOT[t] = (s16)pend;                   /* le mot bas ; PEND_SILENT (0x1ffff) : -1, plus de sample */
+		T_PEND[t] = -1;
+	}
+	s = T_SLOT[t];
+	if (s < 0 || s >= MAX_SLOT || !S_HASH[s] || (n = S_COUNT[s]) <= 0) {
+		c->xplay = 0;
+		return 0;
+	}
+	if (c->ps.strum) {
+		c->xpos = 0;
+		c->xplay = 1;
+		c->xslot = s;
+		c->xhash = S_HASH[s];
+	} else if (c->xslot != (u32)s || c->xhash != S_HASH[s]) {
+		c->xplay = 0;                            /* un autre sample sous la note (le navigateur) : il attend le trig */
+	}
+	if (!c->xplay)
+		return 1;
+	left = n - c->xpos;
+	if (left <= 0) {
+		c->xplay = 0;
+		return 1;
+	}
+	pcm = SLOT_PCM(s) + c->xpos;
+	for (k = 0; k < MB; k++) {                       /* 16 bits -> UNIT (pleine echelle = 1,0), force de la frappe */
+		s32 y = k < left ? (s32)pcm[k] << 9 : 0;
+		x[k] = level == Q31ONE ? y : qmul(y, level);
+	}
+	c->xpos += MB;
+	if (c->xpos >= n)
+		c->xplay = 0;
+	*in = 1;
+	return 1;
+}
+
 void modal_render(s32 *out, char *v)
 {
-	static s32 o[MB], a[MB];                         /* hors de la pile (modal_dsp.h, sc) */
+	static s32 o[MB], a[MB], x[MB];                  /* hors de la pile (modal_dsp.h, sc) */
 	s32 t = TRACK(v);
 	struct ctl *c = &ctl[t];
 	struct modal_part *part = &track_of(t)->part;
@@ -176,7 +244,11 @@ void modal_render(s32 *out, char *v)
 	modal_set_model(part, c->model);
 	if (c->poly != part->poly)
 		modal_set_poly(part, c->poly);
-	modal_process(part, &c->ps, &c->pa, (const s32 *)0, o, a);   /* pas d'entree : l'excitateur interne */
+	{
+		int has_in;
+		c->ps.internal_exciter = !exc_sample(t, c, v, x, &has_in);   /* le sample de la piste, ou l'interne */
+		modal_process(part, &c->ps, &c->pa, has_in ? x : (const s32 *)0, o, a);
+	}
 	for (i = 0; i < MB; i++) {                       /* une sortie : ODD - EVEN (notes/74), 1,0 -> 1/2 pleine echelle */
 		s32 x = o[i] - a[i];
 		x = x > 0x1ffffff ? 0x1ffffff : (x < -0x2000000 ? -0x2000000 : x);

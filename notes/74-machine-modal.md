@@ -17,8 +17,8 @@ cœur contre Rings) et `tools/emu/test_modal.py` (la machine dans l'OS). Plan de
   même ordre, au même rythme, sur des blocs de 32 trames au lieu de 24. Comparé au code même de Rings compilé pour
   l'ordinateur : 54 cas, médiane 77 dB de rapport signal / écart, le plus faible 36 dB (§6).
 - Réglages « éco » (choix de Maxime) : la moitié des modes, 4 cordes au lieu de 8.
-- **Pas encore d'entrée audio** : le sample comme excitateur, choisi dans le menu des presets, est l'étape suivante
-  (§8). Cette version ne le contient pas.
+- **Un sample comme excitateur**, choisi dans le menu des presets, depuis le 25/10/2026 (§8,
+  [80](80-sample-excitateur-modal.md)) ; sans sample, l'excitateur interne.
 - Lourd : de 9 400 à 42 000 instructions par bloc selon le modèle et la polyphonie, après trois passes
   d'allègement (§5.1 à §5.3) ; de 10 600 à 69 200 au départ.
 - `[FAIT en émulation]` (§6.3). Pas encore testé sur la machine (§7).
@@ -457,19 +457,12 @@ Flasher l'OS 2.1 (MAIN OS `e5a333c9…cf77`, 22/10/2026), puis :
 6. Six pistes MODAL longtemps (un pattern), puis changer de projet : pas de gel (la mémoire `0x46800000..`).
 7. Les autres machines comme avant (un moteur du Syntakt, MACRO, ACID, le Sampler).
 
-## 8. La suite : le sample comme excitateur
+## 8. Le sample comme excitateur
 
-Demandé par Maxime, pas dans cette version. Ce qu'il faudra :
-
-- le navigateur de Model-TG refuse un sample sur une piste qui n'est pas Sampler (`preset_fail_hook` → `any_sampler`,
-  machine 6 en dur, « Select sample machine first! ») ; il faudra une retouche de sa source (`MC_PATCHES`,
-  `tools/gen_model_tg.py`) ou un détour devant `preset_fail_hook`, et le nom du sample rangé dans le son de la piste
-  (`name_store`, comme le Sampler) ;
-- MODAL lirait la case du sample (`slot_hash`, `track_slot`, notes/46 §4) et le rejouerait à sa vitesse, depuis le
-  début, à chaque trig, comme entrée de Rings (`internal_exciter` à 0 : filtre d'excitation de l'entrée externe,
-  détection de strum par le trig) ;
-- les samples sont à 48 kHz dans la zone de Model-TG (vue sans cache `0x4a800000..`) : lecture d'un échantillon par
-  trame, sans rééchantillonnage.
+Demandé par Maxime avec MODAL, fait le 25/10/2026 : [80](80-sample-excitateur-modal.md). Un sample choisi dans le
+menu des presets d'une piste MODAL (trois tests « machine = 6 » de Model-TG acceptent aussi 14) est rejoué depuis le
+début à chaque trig, à sa vitesse, comme l'entrée de Rings (`internal_exciter` à 0) ; sans sample, l'excitateur
+interne.
 
 ## 9. Chronologie
 
@@ -481,3 +474,4 @@ Demandé par Maxime, pas dans cette version. Ce qu'il faudra :
 - 22/10/2026 : les 3 modèles cachés de Rings expliqués ; la voix FM et la corde et réverbe retirées (§5.4).
 - 24/10/2026 : le coût sur la machine (Maxime : 30 % pour une piste) ; les cordes sans attente de l'EMAC, `modal_update`
   sans calcul quand rien ne bouge (§5.5).
+- 25/10/2026 : le sample comme excitateur ([80](80-sample-excitateur-modal.md)).

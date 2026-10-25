@@ -260,6 +260,20 @@ def emit(path, text, check):
     return 0
 
 
+# les cases de samples de Model-TG que MODAL lit (son excitateur, notes/80) : ses symboles exportés
+TG_SAMPLES = ("track_slot", "track_pend", "slot_hash", "slot_base", "slot_count")
+
+
+def tg_defines():
+    """-D des adresses des cases de samples de Model-TG (30-model-tg-st.json, tools/gen_model_tg.py ST_SYMBOLS)."""
+    import gen_syntakt_engines as gs                       # noqa: E402
+    sy = json.loads(gs.TG_TWEAK.read_text(encoding="utf-8"))["symbols"]
+    missing = [n for n in TG_SAMPLES if n not in sy]
+    if missing:
+        raise SystemExit(f"!! symboles de Model-TG absents de {gs.TG_TWEAK.name} : {missing} (gen_model_tg.py)")
+    return [f"-DTG_{n.upper()}={sy[n]}" for n in TG_SAMPLES]
+
+
 def compile_machine(tmp, pay, tables_h):
     """Le cœur et la passerelle de MODAL liés à pay + MODAL_AT (code, tables) et pay + MODAL_BSS (variables).
     Renvoie (octets, symboles, fin du BSS)."""
@@ -269,7 +283,7 @@ def compile_machine(tmp, pay, tables_h):
     for f in ("modal.c", "modal_dsp.h", "modal_fix.h", "modal_asm.S"):
         (tmp / f).write_bytes((SRC / f).read_bytes())
     o, oa = tmp / "modal.o", tmp / "modal_asm.o"
-    gx.run([gx.CROSS + "gcc", *CFLAGS, "-DMODAL_ASM", f"-DMODAL_RAM={MODAL_RAM:#x}", f"-I{tmp}", "-c",
+    gx.run([gx.CROSS + "gcc", *CFLAGS, "-DMODAL_ASM", f"-DMODAL_RAM={MODAL_RAM:#x}", *tg_defines(), f"-I{tmp}", "-c",
             str(tmp / "modal.c"), "-o", str(o)])
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(tmp / "modal_asm.S"), "-o", str(oa)])   # notes/74 §5
     ld, elf, out = tmp / "link.ld", tmp / "modal.elf", tmp / "modal.bin"
