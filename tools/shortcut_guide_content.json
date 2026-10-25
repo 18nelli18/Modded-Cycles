@@ -1,6 +1,6 @@
 {
-  "release": "2.39",
-  "stamp": "2026-10-24-sidechain-pattern-scramble-main-239",
+  "release": "2.40",
+  "stamp": "2026-10-24-menu-shadow-main-240",
   "cards": [
     {
       "en": [
@@ -46,6 +46,50 @@
   "sections": [
     {
       "title": {
+        "en": "New in 2.40 - shortcuts, Sidechain labels and levels",
+        "fr": "Nouveautés 2.40 - raccourcis, labels Sidechain et niveaux"
+      },
+      "rows": [
+        {
+          "en": [
+            "Mod Setup / Scramble",
+            "Tap / hold SETTINGS + TRACK",
+            "Tap SETTINGS + TRACK and release to open Mod Setup. Hold the combo to run SCRAMBLE once instead; continuing to hold does not repeat it. With a TRIG held, a quick tap toggles its Scramble mark. DATA selects a row; click to edit, turn, click again to return. Stk = Stock; SIL = Silent; LTC = Latch."
+          ],
+          "fr": [
+            "Mod Setup / Scramble",
+            "SETTINGS + TRACK bref / maintien",
+            "Appuyez brièvement sur SETTINGS + TRACK puis relâchez pour ouvrir Mod Setup. Maintenez la combinaison pour lancer SCRAMBLE une seule fois ; le maintien ne répète pas le tirage. Avec un TRIG tenu, un appui bref bascule sa marque Scramble. DATA choisit une ligne ; clic pour modifier, tourner, puis clic pour revenir. Stk = Stock ; SIL = Silent ; LTC = Latch."
+          ]
+        },
+        {
+          "en": [
+            "S.Chn >",
+            "DATA opens the Sidechain submenu",
+            "Trk. N = target track; Dpt = Depth, Atk = Attack, Hld = Hold, Rel = Release. Routing and controls still save per pattern with Save Project."
+          ],
+          "fr": [
+            "S.Chn >",
+            "DATA ouvre le sous-menu Sidechain",
+            "Trk. N = piste cible ; Dpt = profondeur, Atk = attaque, Hld = maintien, Rel = relâchement. Routage et commandes toujours sauvegardés par pattern avec Save Project."
+          ]
+        },
+        {
+          "en": [
+            "Elder / Shadow levels",
+            "VOL + DIST",
+            "Elder returns to its original level. Shadow is 12 dB louder than its original level."
+          ],
+          "fr": [
+            "Niveaux Elder / Shadow",
+            "VOL + DIST",
+            "Elder retrouve son niveau original. Shadow gagne 12 dB par rapport à son niveau original."
+          ]
+        }
+      ]
+    },
+    {
+      "title": {
         "en": "New in 2.39 - Sidechain and per-pattern Scramble",
         "fr": "Nouveautés 2.39 - Sidechain et Scramble par pattern"
       },
@@ -53,25 +97,25 @@
         {
           "en": [
             "Sidechain routing",
-            "Select source track; hold SETTINGS + TRACK; Sidechain > DATA",
-            "Check any of the other five tracks with DATA to duck their volume on source note triggers. The source cannot target itself. Scroll with DATA; click a checkbox to toggle. Multiple sources use the deepest duck on each target. DUCK remains a separate delay type."
+            "Select source; tap SETTINGS + TRACK; S.Chn > DATA",
+            "Check any of the other five tracks with DATA to duck their volume on source note triggers. The source cannot target itself. Scroll with DATA; click a checkbox to toggle. Multiple sources use the deepest duck on each target. DUCK remains a separate delay type. Trk. 1–6 identify targets; the source is omitted."
           ],
           "fr": [
             "Routage Sidechain",
-            "Choisir la source ; maintenir SETTINGS + TRACK ; Sidechain > DATA",
-            "Cochez avec DATA les pistes à atténuer lors des notes de la source, parmi les cinq autres. Pas de cible vers soi-même. DATA parcourt et coche. Plusieurs sources : atténuation la plus profonde par cible. DUCK reste un type de delay séparé."
+            "Choisir la source ; SETTINGS + TRACK bref ; S.Chn > DATA",
+            "Cochez avec DATA les pistes à atténuer lors des notes de la source, parmi les cinq autres. Pas de cible vers soi-même. DATA parcourt et coche. Plusieurs sources : atténuation la plus profonde par cible. DUCK reste un type de delay séparé. Trk. 1–6 désignent les cibles ; la source est omise."
           ]
         },
         {
           "en": [
-            "Depth / Atk / Hold / Rel",
+            "Dpt / Atk / Hld / Rel",
             "Scroll below checkboxes; click DATA, turn, click to finish",
-            "Depth: 0–100%, 16 levels. Atk: 0–160 ms. Hold: 0–120 ms. Rel: 10 ms–3 s. BACK finishes editing, then returns to Mod Setup. Start with a four-on-the-floor source, Depth 60%, Attack 0 ms, Hold 0 ms, Release 150 ms. Untick all targets to disable that source."
+            "Dpt = Depth, Atk = Attack, Hld = Hold, Rel = Release. Depth: 0–100%, 16 levels. Atk: 0–160 ms. Hold: 0–120 ms. Rel: 10 ms–3 s. BACK finishes editing, then returns to Mod Setup. Start with a four-on-the-floor source, Depth 60%, Attack 0 ms, Hold 0 ms, Release 150 ms. Untick all targets to disable that source."
           ],
           "fr": [
-            "Depth / Atk / Hold / Rel",
+            "Dpt / Atk / Hld / Rel",
             "Sous les cases : clic DATA, tourner, puis clic pour finir",
-            "Depth : 0–100 %, 16 niveaux. Atk : 0–160 ms. Hold : 0–120 ms. Rel : 10 ms–3 s. BACK termine l’édition puis revient à Mod Setup. Départ conseillé : source sur chaque temps, Depth 60 %, Attack 0 ms, Hold 0 ms, Release 150 ms. Décocher toutes les cibles désactive la source."
+            "Dpt = profondeur, Atk = attaque, Hld = maintien, Rel = relâchement. Depth : 0–100 %, 16 niveaux. Atk : 0–160 ms. Hold : 0–120 ms. Rel : 10 ms–3 s. BACK termine l’édition puis revient à Mod Setup. Départ conseillé : source sur chaque temps, Depth 60 %, Attack 0 ms, Hold 0 ms, Release 150 ms. Décocher toutes les cibles désactive la source."
           ]
         },
         {
@@ -220,14 +264,14 @@
         },
         {
           "en": [
-            "Louder Elder",
+            "Elder level",
             "VOL + DIST",
-            "Output raised 6 dB (2x), with bounded peaks. Wave, Warp, Noise, Motion, envelopes and Punch keep their existing behavior."
+            "Elder returns to its original output level. The previous 6 dB boost is removed; synthesis controls are unchanged."
           ],
           "fr": [
-            "Elder plus fort",
+            "Niveau Elder",
             "VOL + DIST",
-            "Sortie relevee de6dB (2x), cretes bornees. Wave,Warp,Noise,Motion,enveloppes et Punch conservent leur comportement."
+            "Elder retrouve son niveau original. Le précédent gain de 6 dB est retiré ; commandes de synthèse inchangées."
           ]
         }
       ]
@@ -405,13 +449,13 @@
         {
           "en": [
             "SCRAMBLE",
-            "Quick tap SETTINGS + TRACK",
-            "On release, randomize the checked Pitch, Decay, Color, Shape, Sweep and Contour parameters for this track. Choose them in Mod Setup > SCRM. Decay now works; Punch stays unchanged. The original four default On. Marked steps use the same checklist without changing the base sound. The checklist now belongs to this track in the current pattern; save the project to preserve it."
+            "Hold SETTINGS + TRACK",
+            "Once the combo is held, randomize the checked Pitch, Decay, Color, Shape, Sweep and Contour parameters for this track. Choose them in Mod Setup > SCRM. Decay now works; Punch stays unchanged. The original four default On. Marked steps use the same checklist without changing the base sound. The checklist now belongs to this track in the current pattern; save the project to preserve it. Runs once per hold; release does not open the menu. A short tap without held steps opens Mod Setup instead."
           ],
           "fr": [
             "SCRAMBLE",
-            "Appui bref SETTINGS + TRACK",
-            "Au relachement,tirez les parametres coches de cette piste : Pitch,Decay,Color,Shape,Sweep,Contour. Choix dans Mod Setup > SCRM. Decay fonctionne ; Punch reste inchange. Quatre commandes originales actives par defaut. Pas marques : meme liste,son de base intact. La liste est propre à cette piste dans le pattern courant ; sauvegardez le projet pour la conserver."
+            "Maintenir SETTINGS + TRACK",
+            "Au maintien, tirez les parametres coches de cette piste : Pitch,Decay,Color,Shape,Sweep,Contour. Choix dans Mod Setup > SCRM. Decay fonctionne ; Punch reste inchange. Quatre commandes originales actives par defaut. Pas marques : meme liste,son de base intact. La liste est propre à cette piste dans le pattern courant ; sauvegardez le projet pour la conserver. Une seule fois par maintien ; le relâchement n’ouvre pas le menu. Un appui bref sans pas tenu ouvre Mod Setup."
           ]
         },
         {
@@ -794,12 +838,12 @@
           "en": [
             "Shadow controls",
             "Select Shadow after TINY in MACHINES",
-            "COLOR: Grain; SHAPE: Density; SWEEP: Spread; CONTOUR: Chaos. PUNCH: ratcheting attack. Pitch, Fine, Decay and Gate remain. Original pulsar/noise engine inspired by Opal Dust by Fors."
+            "COLOR: Grain; SHAPE: Density; SWEEP: Spread; CONTOUR: Chaos. PUNCH: ratcheting attack. Pitch, Fine, Decay and Gate remain. Original pulsar/noise engine inspired by Opal Dust by Fors. Output is now 12 dB above its original level; use VOL + DIST to set the listening level."
           ],
           "fr": [
             "Commandes Shadow",
             "Choisir Shadow apres TINY dans MACHINES",
-            "COLOR : Grain ; SHAPE : Density ; SWEEP : Spread ; CONTOUR : Chaos. PUNCH : attaque repetee. Pitch,Fine,Decay et Gate conserves. Synthese pulsar/bruit originale inspiree de Opal Dust de Fors."
+            "COLOR : Grain ; SHAPE : Density ; SWEEP : Spread ; CONTOUR : Chaos. PUNCH : attaque repetee. Pitch,Fine,Decay et Gate conserves. Synthese pulsar/bruit originale inspiree de Opal Dust de Fors. Sortie à +12 dB du niveau original ; VOL + DIST règle le niveau d’écoute."
           ]
         }
       ]
@@ -1653,13 +1697,13 @@
         {
           "en": [
             "Sidechain routing",
-            "Select source track; hold SETTINGS + TRACK; Sidechain > DATA",
-            "Check any of the other five tracks with DATA to duck their volume on source note triggers. The source cannot target itself. Scroll with DATA; click a checkbox to toggle. Multiple sources use the deepest duck on each target. DUCK remains a separate delay type."
+            "Select source; tap SETTINGS + TRACK; S.Chn > DATA",
+            "Check any of the other five tracks with DATA to duck their volume on source note triggers. The source cannot target itself. Scroll with DATA; click a checkbox to toggle. Multiple sources use the deepest duck on each target. DUCK remains a separate delay type. Trk. 1–6 identify targets; the source is omitted."
           ],
           "fr": [
             "Routage Sidechain",
-            "Choisir la source ; maintenir SETTINGS + TRACK ; Sidechain > DATA",
-            "Cochez avec DATA les pistes à atténuer lors des notes de la source, parmi les cinq autres. Pas de cible vers soi-même. DATA parcourt et coche. Plusieurs sources : atténuation la plus profonde par cible. DUCK reste un type de delay séparé."
+            "Choisir la source ; SETTINGS + TRACK bref ; S.Chn > DATA",
+            "Cochez avec DATA les pistes à atténuer lors des notes de la source, parmi les cinq autres. Pas de cible vers soi-même. DATA parcourt et coche. Plusieurs sources : atténuation la plus profonde par cible. DUCK reste un type de delay séparé. Trk. 1–6 désignent les cibles ; la source est omise."
           ]
         }
       ]

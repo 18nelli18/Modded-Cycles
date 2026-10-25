@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.39 - 24 October 2026
+Supermodel 2.40 - 24 October 2026
 
-Main 2.39. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.40. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
@@ -14,12 +14,20 @@ Main 2.39. Hold the first button while pressing the next button or turning the n
 
 **Routing and workflow:** MIDI Out with nine CC knobs, locks and two MIDI LFOs; MIDI OUT/THRU toggle; USB stereo or six tracks; permanent quick save, saved Mod Setup and optional DX diagnostics.
 
+## New in 2.40 - shortcuts, Sidechain labels and levels
+
+| Feature | Controls | Behavior |
+|---|---|---|
+| Mod Setup / Scramble | Tap / hold SETTINGS + TRACK | Tap SETTINGS + TRACK and release to open Mod Setup. Hold the combo to run SCRAMBLE once instead; continuing to hold does not repeat it. With a TRIG held, a quick tap toggles its Scramble mark. DATA selects a row; click to edit, turn, click again to return. Stk = Stock; SIL = Silent; LTC = Latch. |
+| S.Chn > | DATA opens the Sidechain submenu | Trk. N = target track; Dpt = Depth, Atk = Attack, Hld = Hold, Rel = Release. Routing and controls still save per pattern with Save Project. |
+| Elder / Shadow levels | VOL + DIST | Elder returns to its original level. Shadow is 12 dB louder than its original level. |
+
 ## New in 2.39 - Sidechain and per-pattern Scramble
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Sidechain routing | Select source track; hold SETTINGS + TRACK; Sidechain > DATA | Check any of the other five tracks with DATA to duck their volume on source note triggers. The source cannot target itself. Scroll with DATA; click a checkbox to toggle. Multiple sources use the deepest duck on each target. DUCK remains a separate delay type. |
-| Depth / Atk / Hold / Rel | Scroll below checkboxes; click DATA, turn, click to finish | Depth: 0–100%, 16 levels. Atk: 0–160 ms. Hold: 0–120 ms. Rel: 10 ms–3 s. BACK finishes editing, then returns to Mod Setup. Start with a four-on-the-floor source, Depth 60%, Attack 0 ms, Hold 0 ms, Release 150 ms. Untick all targets to disable that source. |
+| Sidechain routing | Select source; tap SETTINGS + TRACK; S.Chn > DATA | Check any of the other five tracks with DATA to duck their volume on source note triggers. The source cannot target itself. Scroll with DATA; click a checkbox to toggle. Multiple sources use the deepest duck on each target. DUCK remains a separate delay type. Trk. 1–6 identify targets; the source is omitted. |
+| Dpt / Atk / Hld / Rel | Scroll below checkboxes; click DATA, turn, click to finish | Dpt = Depth, Atk = Attack, Hld = Hold, Rel = Release. Depth: 0–100%, 16 levels. Atk: 0–160 ms. Hold: 0–120 ms. Rel: 10 ms–3 s. BACK finishes editing, then returns to Mod Setup. Start with a four-on-the-floor source, Depth 60%, Attack 0 ms, Hold 0 ms, Release 150 ms. Untick all targets to disable that source. |
 | Per-pattern saving | Save Project after edits | Sidechain routing and controls, six Scramble checklists, FX types and added FX settings belong to each pattern. Save the project to keep changes after reloading. Blank patterns have Sidechain off and the default Scramble checklist. Queued changes apply when the next pattern starts. |
 | Project compatibility | Keep a backup before downgrading | This build loads the pattern FX saved by v121. Earlier firmware cannot restore custom FX saved in v122’s new pattern records. Keep an earlier project backup if you need to return to older firmware. |
 
@@ -45,7 +53,7 @@ Main 2.39. Hold the first button while pressing the next button or turning the n
 | ACID filter Decay | DECAY | Filter envelope decay only. Volume holds until note-off, then a short fixed release; the Gate switch no longer turns Decay into an amplitude envelope. Slides and existing controls remain. |
 | ACID Accent | Velocity 97-127 | Progressive filter transient and level accent. Velocity 0-96 keeps the normal unaccented response; native velocity volume response is retained. |
 | SY BITS fine detune | FUNC + COLOR | 0.01-semitone steps across -24.00 to +24.00. Small signed decimal popup updates live. Plain COLOR changes whole semitones and preserves the fractional part. Fine values survive native sound save/load and remain available to parameter locks. |
-| Louder Elder | VOL + DIST | Output raised 6 dB (2x), with bounded peaks. Wave, Warp, Noise, Motion, envelopes and Punch keep their existing behavior. |
+| Elder level | VOL + DIST | Elder returns to its original output level. The previous 6 dB boost is removed; synthesis controls are unchanged. |
 
 ## New in 2.35 - banks and RETROSYN
 
@@ -69,7 +77,7 @@ Main 2.39. Hold the first button while pressing the next button or turning the n
 | Trig preview | Hold TRIG + PAGE | Audition the selected step with its note and locks while stopped or paused. |
 | Slide trig | SETTINGS + TRIG | Toggle a parameter slide on the step. |
 | Sequence Genie | SETTINGS + PAGE | Open the generator for the selected track. Select with DATA; choose Generate or Queue and set Loop/Page timing. |
-| SCRAMBLE | Quick tap SETTINGS + TRACK | On release, randomize the checked Pitch, Decay, Color, Shape, Sweep and Contour parameters for this track. Choose them in Mod Setup > SCRM. Decay now works; Punch stays unchanged. The original four default On. Marked steps use the same checklist without changing the base sound. The checklist now belongs to this track in the current pattern; save the project to preserve it. |
+| SCRAMBLE | Hold SETTINGS + TRACK | Once the combo is held, randomize the checked Pitch, Decay, Color, Shape, Sweep and Contour parameters for this track. Choose them in Mod Setup > SCRM. Decay now works; Punch stays unchanged. The original four default On. Marked steps use the same checklist without changing the base sound. The checklist now belongs to this track in the current pattern; save the project to preserve it. Runs once per hold; release does not open the menu. A short tap without held steps opens Mod Setup instead. |
 | SCRAMBLE step / delete | Hold a step + quick SETTINGS + TRACK; delete normally | Toggle SCRAMBLE on that step. Deleting its trig clears the mark and locks; a replacement trig starts clean. Neighboring steps and tracks keep their settings. |
 | Control All setup | TRACK + TRIG 1–6 | Include or exclude audio tracks from Control All changes. |
 | Audio beat repeat | Hold TRACK + RETRIG , then hold a TRIG 1–16 | The held step selects a repeat division for included audio tracks. Release a modifier or division pad to stop. |
@@ -110,7 +118,7 @@ Main 2.39. Hold the first button while pressing the next button or turning the n
 | Elder controls | Select Elder in MACHINES | COLOR = Wave; SHAPE = Warp; SWEEP = Noise; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate and Fine remain available. Original synth inspired by Junior by Fors. |
 | Saved Retrosyn sounds | Elder replaces ChpHzrd / Retrosyn | The same machine slot now plays Elder, so previous Retrosyn sounds change timbre. The other engines and previous CPU fixes are retained. Feral is by Glycinate. |
 | TINY controls | Select TINY in MACHINES | COLOR: Tone; SHAPE: Model0–51; SWEEP: Mod; CONTOUR: Excite. All52 original models; Feral and every other engine remain. |
-| Shadow controls | Select Shadow after TINY in MACHINES | COLOR: Grain; SHAPE: Density; SWEEP: Spread; CONTOUR: Chaos. PUNCH: ratcheting attack. Pitch, Fine, Decay and Gate remain. Original pulsar/noise engine inspired by Opal Dust by Fors. |
+| Shadow controls | Select Shadow after TINY in MACHINES | COLOR: Grain; SHAPE: Density; SWEEP: Spread; CONTOUR: Chaos. PUNCH: ratcheting attack. Pitch, Fine, Decay and Gate remain. Original pulsar/noise engine inspired by Opal Dust by Fors. Output is now 12 dB above its original level; use VOL + DIST to set the listening level. |
 
 ## LEGACY machine
 
@@ -203,7 +211,7 @@ Main 2.39. Hold the first button while pressing the next button or turning the n
 
 ## Mod Setup
 
-Hold SETTINGS + TRACK until Mod Setup opens, then release both buttons. A short tap runs SCRAMBLE on release. DATA selects a row; click to edit, turn, click again to return. Stk = Stock; SIL = Silent; LTC = Latch.
+Tap SETTINGS + TRACK and release to open Mod Setup. Hold the combo to run SCRAMBLE once instead; continuing to hold does not repeat it. With a TRIG held, a quick tap toggles its Scramble mark. DATA selects a row; click to edit, turn, click again to return. Stk = Stock; SIL = Silent; LTC = Latch.
 
 | Feature | Controls | Behavior |
 |---|---|---|
@@ -214,7 +222,7 @@ Hold SETTINGS + TRACK until Mod Setup opens, then release both buttons. A short 
 | Delay | Stk / Div Default: Stk | Stk preserves the original Delay Time display and timing. Div displays musical divisions, including dotted and triplet values, and corrects the matching timing positions to exact divisions of the tempo. Other Delay Time positions retain their original timing; this does not quantize every knob position. Applies while using Delay mode. |
 | DX | Off / On Default: Off | With DX On: tap FUNC, press FUNC again within 350 ms, hold at least 0.5 seconds, then release. Other controls cancel the gesture. Shows/resets A/P/O/N: average/peak CPU load, overruns, governor voice drops. Replaces the old shortcut; retrig latching never triggers it. Off by default. |
 | SCRM | DATA opens; turn and press DATA; BACK returns | Six checkboxes per track: Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay default Off; the original four default On. Each pattern keeps its own six checklists; Save Project preserves them after reloading. Wizard allows Pitch/Decay; its sample/mode controls stay excluded. |
-| Sidechain routing | Select source track; hold SETTINGS + TRACK; Sidechain > DATA | Check any of the other five tracks with DATA to duck their volume on source note triggers. The source cannot target itself. Scroll with DATA; click a checkbox to toggle. Multiple sources use the deepest duck on each target. DUCK remains a separate delay type. |
+| Sidechain routing | Select source; tap SETTINGS + TRACK; S.Chn > DATA | Check any of the other five tracks with DATA to duck their volume on source note triggers. The source cannot target itself. Scroll with DATA; click a checkbox to toggle. Multiple sources use the deepest duck on each target. DUCK remains a separate delay type. Trk. 1–6 identify targets; the source is omitted. |
 
 BACK closes Mod Setup and saves its global preferences. If playback is running, the save waits until it stops. Stop playback and allow saving to finish before powering off. Sidechain routing/settings, Scramble checklists and FX types/added settings are per pattern: Save Project preserves these after reloading. Closing a submenu alone does not save the project.
 

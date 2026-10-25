@@ -34,14 +34,40 @@ for name,fn,selected in [('root',d['du_root_draw'],7),('targets',d['du_sub_draw'
  raw=bytes(u.uc.mem_read(fb,1024));pixels=[0 if struct.unpack_from('>I',raw,(x*2+(63-y)//32)*4)[0]&(1<<(31-(63-y)%32)) else 255 for y in range(64) for x in range(128)];img=Image.frombytes('L',(128,64),bytes(pixels));panels.append(img)
 out=Image.new('L',(128*4+8*3,64),128)
 for i,img in enumerate(panels):out.paste(img,(i*136,0))
-path=R/'output/sidechain122-menus.png';out.resize((2144,256),Image.Resampling.NEAREST).save(path)
+path=R/'output/sidechain127-menus.png';out.resize((2144,256),Image.Resampling.NEAREST).save(path)
 print('PASS four real native menu renders and drawing ABI',path,flush=True)
+if m['sidechain'].get('control_label_x')==72:
+ controls=Image.new('L',(128*4+8*3,64),128)
+ for i,selected in enumerate(range(5,9)):
+  u.uc.mem_write(d['du_row'],struct.pack('>I',selected));u.uc.mem_write(fb,bytes(1024));u.call(d['du_sub_draw'],0,canvas);assert not u.bad and u.sp_ok
+  raw=bytes(u.uc.mem_read(fb,1024));pixels=[0 if struct.unpack_from('>I',raw,(x*2+(63-y)//32)*4)[0]&(1<<(31-(63-y)%32)) else 255 for y in range(64) for x in range(128)]
+  controls.paste(Image.frombytes('L',(128,64),bytes(pixels)),(i*136,0))
+ controls.resize((2144,256),Image.Resampling.NEAREST).save(path.with_name('controls.png'))
+ print('PASS all four selected control rows rendered natively',flush=True)
 def width(text):
  addr,pointer=0x920d000c,0x920d1000
  u.uc.mem_write(addr-12,struct.pack('>III',len(text),len(text),0)+text.encode()+b'\0');u.uc.mem_write(pointer,struct.pack('>I',addr))
  return u.call(0x40072102,0x40140ab0,0xffffffff,pointer)
-assert width('Sidechain')<=61
-for label,values in [('Depth',[str((i*100+7)//15)+'%' for i in range(16)]),('Atk',[str(i)+'ms' for i in m['sidechain']['attack_ms']]),('Hold',[str(i)+'ms' for i in m['sidechain']['hold_ms']]),('Rel',['10ms','750ms','1s','1.5s','2s','3s'])]:
- assert 65+width(label)+4<=126-max(map(width,values)),(label,values)
-assert 65+width('Track')+4<=109-max(width(str(i)) for i in range(1,7))
-print('PASS native font widths: full Sidechain, five target rows and complete control ranges fit without label/value overlap',flush=True)
+assert width(m['sidechain'].get('menu_label','Sidechain'))<=61
+labels=m['sidechain'].get('control_labels',['Depth','Atk','Hold','Rel']);label_x=m['sidechain'].get('control_label_x',65)
+for label,values in zip(labels,[[str((i*100+7)//15)+'%' for i in range(16)],[str(i)+'ms' for i in m['sidechain']['attack_ms']],[str(i)+'ms' for i in m['sidechain']['hold_ms']],['10ms','750ms','1s','1.5s','2s','3s']]):
+ assert label_x+width(label)+4<=126-max(map(width,values)),(label,values)
+if m['sidechain'].get('target_label')=='Trk.':
+ assert 72+max(width('Trk. '+str(i)) for i in range(1,7))+4<119
+else:
+ assert 65+width('Track')+4<=109-max(width(str(i)) for i in range(1,7))
+print('PASS native font widths: menu label, five target rows and complete control ranges fit without label/value overlap',flush=True)
+if m['sidechain'].get('label_left'):
+ from unicorn import UC_HOOK_CODE,m68k_const as C
+ seen=[]
+ def label_call(uc,pc,size,user):
+  sp=uc.reg_read(C.UC_M68K_REG_A7);args=struct.unpack('>7I',uc.mem_read(sp+4,28))
+  if bytes(uc.mem_read(args[5],3))==b'%s\0':
+   text=bytes(uc.mem_read(args[6],16)).split(b'\0')[0].decode('ascii',errors='replace')
+   if text in (m['sidechain']['menu_label'],'>'):seen.append((text,args[2],args[4]))
+ u.uc.mem_write(row,struct.pack('>I',7))
+ h=u.uc.hook_add(UC_HOOK_CODE,label_call,begin=0x40071a04,end=0x40071a04);u.call(d['du_root_draw'],0,canvas);u.uc.hook_del(h)
+ pos=next(x for x in seen if x[0]==m['sidechain']['menu_label']);arrow=seen[-1]
+ assert pos==(m['sidechain']['menu_label'],72,0x10) and arrow[0]=='>' and arrow[2]==4
+ assert pos[1]+width(pos[0])+4<arrow[1]-width('>')
+ print('PASS native S.Chn label left x72 matches other rows, separate > arrow and no overlap/clipping',flush=True)

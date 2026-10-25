@@ -69,10 +69,49 @@ u32 du_encoder(const u32*e){if(!menu||!e||e[0]!=0x400fbebc)return du_previous_en
 }
 u32 du_draw(u32 view,u32 canvas){if(!menu){du_page=du_edit=0;return du_previous_draw(view,canvas);}if(du_page){du_title_track.text[7]='1'+source();du_sub_draw(view,canvas);}else if(!sx_submenu)du_root_draw(view,canvas);else return du_previous_draw(view,canvas);return 1;}
 u32 du_menu_row(void){return du_row;}u32 du_menu_edit(void){return du_edit;}
-void du_root_value(u32 a,u32 b,u32 canvas,u32 x,u32 y){(void)a;(void)b;(void)x;u32 font[2];N(0x40072260)(font,0x40140ab0);N(0x40071a04)(canvas,font,126,y,4,"%s","Sidechain");N(0x40072080)(font);}
-static void value(u32 line,u32 canvas,u32 x,u32 y){(void)x;u32 font[2];N(0x40072260)(font,0x40140ab0);u32 s=source();const char*labels[9]={"Track","Track","Track","Track","Track","Depth","Atk","Hold","Rel"};
- N(0x40071a04)(canvas,font,65,y,0x10,"%s",labels[line]);
- if(line<5){u32 dst=line+(line>=s);N(0x40071a04)(canvas,font,109,y,4,"%u",dst+1);N(0x40070c4e)(canvas,119,y,126,y+7,0xffffffffu);if(du_config[s][0]&(1u<<dst))N(0x40070efc)(canvas,121,y+2,124,y+5,0xffffffffu);}
+#ifdef DU_SHORT
+#define DU_NAME "S.Chn"
+#elif defined(DU_COMPACT)
+#define DU_NAME "S.Chain"
+#else
+#define DU_NAME "Sidechain"
+#endif
+void du_root_value(u32 a,u32 b,u32 canvas,u32 x,u32 y){(void)a;(void)b;(void)x;u32 font[2];N(0x40072260)(font,0x40140ab0);
+#ifdef DU_ARROW
+N(0x40071a04)(canvas,font,
+#ifdef DU_SHORT
+72,
+#else
+68,
+#endif
+y,0x10,"%s",DU_NAME);N(0x40071a04)(canvas,font,x+24,y,4,"%s",">");
+#else
+N(0x40071a04)(canvas,font,126,y,4,"%s",DU_NAME);
+#endif
+N(0x40072080)(font);}
+static void value(u32 line,u32 canvas,u32 x,u32 y){(void)x;u32 font[2];N(0x40072260)(font,0x40140ab0);u32 s=source();
+#ifdef DU_CONTROLS
+const char*labels[9]={"Track","Track","Track","Track","Track","Dpt","Atk","Hld","Rel"};
+#else
+const char*labels[9]={"Track","Track","Track","Track","Track","Depth","Atk","Hold","Rel"};
+#endif
+#ifdef DU_TRK
+ if(line>=5)
+#endif
+ N(0x40071a04)(canvas,font,
+#ifdef DU_CONTROLS
+72,
+#else
+65,
+#endif
+y,0x10,"%s",labels[line]);
+ if(line<5){u32 dst=line+(line>=s);
+#ifdef DU_TRK
+N(0x40071a04)(canvas,font,72,y,0x10,"Trk. %u",dst+1);
+#else
+N(0x40071a04)(canvas,font,109,y,4,"%u",dst+1);
+#endif
+N(0x40070c4e)(canvas,119,y,126,y+7,0xffffffffu);if(du_config[s][0]&(1u<<dst))N(0x40070efc)(canvas,121,y+2,124,y+5,0xffffffffu);}
  else{u32 f=line-4,v=du_config[s][f];if(f==1)N(0x40071a04)(canvas,font,126,y,4,"%u%%",(v*100+7)/15);
  else{u32 ms=f==2?du_attack_ms[v]:f==3?du_hold_ms[v]:du_release_ms[v];if(ms>=1000){if(ms%1000)N(0x40071a04)(canvas,font,126,y,4,"%u.%us",ms/1000,(ms%1000)/100);else N(0x40071a04)(canvas,font,126,y,4,"%us",ms/1000);}else N(0x40071a04)(canvas,font,126,y,4,"%ums",ms);}}N(0x40072080)(font);}
 #define VALUE(i) void du_value##i(u32 a,u32 b,u32 c,u32 x,u32 y){(void)a;(void)b;value(i,c,x,y);}

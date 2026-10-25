@@ -17,6 +17,10 @@ elder_gain_render:
  movel %a2@,%d0
  addl %d0,%d0
  satsl %d0
+#ifdef SHADOW_GAIN4
+ addl %d0,%d0
+ satsl %d0
+#endif
  movel %d0,%a2@+
  subql #1,%d2
  bpls 1b

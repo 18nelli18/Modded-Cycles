@@ -279,3 +279,8 @@ User: "121 worked push to main". Publish the exact regular shared-filter v121 SH
 ## AveyCole main2.39 promotion (2026-10-24)
 
 User: "122 worked, push that to main." Publish exact regular shared-filter122 SHA256 `7d2d564cc1cf34c585ec2bad3134531197d97d2136ef57cab73ca53d31172db0`, MAIN `196f12214a3d382cfc037e5d933e17c4ffdb74171b177cf18453445a1e889a07`. Sidechain routing and controls plus Scramble masks per pattern, readable stacked Side/Chain menu. Adult stays private; preserve supplied blurb byte for byte. F2 pattern records read old FXS1;121 cannot restore new custom FX records.
+
+
+## AveyCole main2.40 promotion (2026-10-24)
+
+User: "Perfect, push v127 to main". Exact regular shared-filter127 SHA `cb19d4d68c2a341bf92a2d26c73c1f042d7f7ff335ae3fcf06d0a615439b72bb`, MAIN `04905a7ad1f75d5fd3b0a6c14e7c7e0c9c220a45c88ecd99b96fa9ec671da6e2`. Tap opens Mod Setup, hold Scramble once; held-step tap marks only. S.Chn >, Trk. N, Dpt/Atk/Hld/Rel aligned in selector. Elder original, Shadow+12dB. Adult remains private; supplied blurb unchanged.

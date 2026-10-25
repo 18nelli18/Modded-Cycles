@@ -270,3 +270,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [168 — Cartouches DX7 hors plage](168-import-cartouches-hors-plage.md) | Correction web : copie compatible avec LEGACY, original preserve ; ROM3A et vrai importeur121 verifies en emulation. |
 
 | [169 — Sidechain et Scramble par pattern](169-sidechain-et-scramble-par-pattern.md) | Principal2.39 :122 regulier approuve, six sources/cinq cibles, controles temporels, listes Scramble par pattern. |
+
+| [170 — Gestes Mod Setup et niveau Shadow](170-gestes-menu-et-niveaux-shadow.md) | Principal2.40 :127 regulier approuve ; tap menu, maintien Scramble une fois, labels S.Chn/Trk./Dpt et Elder original/Shadow+12dB. |
