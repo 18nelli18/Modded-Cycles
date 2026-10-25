@@ -1,15 +1,15 @@
 {
   "release": "2.40",
-  "stamp": "2026-10-24-guide-reference-240",
+  "stamp": "2026-10-24-guide-compact-240",
   "cards": [
     {
       "en": [
         "Machines and sound",
-        "Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN and MIDI Out. Elder is an original synth inspired by Junior by Fors. Machine browsing retains synth values; Wizard’s four dials stay separate while MACHINES stays open."
+        "Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN and MIDI Out. Elder is an original synth inspired by Junior by Fors."
       ],
       "fr": [
         "Machines et son",
-        "Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN et MIDI Out. Elder est inspiré de Junior de Fors. La selection conserve les valeurs synth ; quatre commandes Wizard separees tant que MACHINES reste ouvert."
+        "Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN et MIDI Out. Elder est inspiré de Junior de Fors."
       ]
     },
     {
@@ -25,11 +25,11 @@
     {
       "en": [
         "Filters and effects",
-        "Polivoks-style track/Wizard filters, second LFO, MACRO Fine/Lo-Fi; GATED, HALL, Ring Mod, ROOM, PS1, Vinyl, Reverb and Chorus 1/2; Phaser, DUCK, DUB, Ping Pong, Delay and Crush 1/2. Opaque FX menus apply on TRACK release. Cumulative PS1/filter optimizations. Both Shimmers and all combined modes are removed."
+        "Per-track resonant filter and attack. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod and two Choruses; DUCK, DUB, Ping Pong, Phaser and two Crushers."
       ],
       "fr": [
         "Filtres et effets",
-        "Filtres pistes/Wizard inspires Polivoks, second LFO, MACRO Fine/Lo-Fi ; GATED, HALL, Ring Mod, ROOM, PS1, Vinyl, Reverb et Chorus 1/2 ; Phaser, DUCK, DUB, Ping Pong, Delay et Crush 1/2. Menus opaques appliques au relachement TRACK. Optimisations PS1/filtre cumulees. Les deux Shimmer et tous les modes combines sont retires."
+        "Filtre résonant et attaque par piste. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod et deux Chorus ; DUCK, DUB, Ping Pong, Phaser et deux Crushers."
       ]
     },
     {
@@ -186,12 +186,12 @@
           "en": [
             "Repeat mode latch",
             "Hold TRACK + double-tap RETRIG",
-            "Release both; hold a TRIG to repeat, release it to stop. BACK exits. Copy/paste/clear blocked; plain PLAY/STOP available. Temporary, not saved. Stock FUNC + SETTINGS/PATTERN temp save/reload stay available; diagnostics never appear from latching."
+            "Release both; hold a TRIG to repeat, release it to stop. BACK exits. PLAY/STOP and FUNC + SETTINGS/PATTERN temporary save/reload remain available."
           ],
           "fr": [
             "Verrou beat repeat",
             "Maintenir TRACK + double RETRIG",
-            "Relachez les deux ; maintenir un TRIG repete, relacher arrete. BACK quitte. Copier/coller/effacer bloques ; PLAY/STOP simples disponibles. Non sauvegarde. FUNC+SETTINGS/PATTERN temporaires disponibles ; aucun diagnostic depuis le verrou."
+            "Relâchez les deux ; maintenez un TRIG pour répéter, relâchez-le pour arrêter. BACK quitte. PLAY/STOP et sauvegarde/rechargement temporaires FUNC + SETTINGS/PATTERN disponibles."
           ]
         },
         {
@@ -246,12 +246,12 @@
           "en": [
             "ChordKeys harmony locks",
             "Grid record: hold a step TRIG and press T1-T6 . Live record: play a chord and use the harmony pads.",
-            "Record the chosen harmony on the step. Press the same harmony pad again on a held grid step to restore its base harmony. Harmony locks save with the pattern independently of LFO 2."
+            "Record a harmony on the step. Press the same harmony pad again on a held step to restore its base harmony."
           ],
           "fr": [
             "Locks d’harmonie ChordKeys",
             "Grille : maintenir TRIG et appuyer T1–T6 ; live : accord puis pad d’harmonie",
-            "Le même pad sur un pas tenu restaure son harmonie de base. Sauvegardé avec le pattern, indépendamment du LFO 2."
+            "Enregistre une harmonie sur le pas. Rappuyez sur le même pad d’harmonie avec le pas tenu pour retrouver son harmonie de base."
           ]
         }
       ]
@@ -266,24 +266,24 @@
           "en": [
             "Reverb-slot menu",
             "Hold TRACK + REVERB SIZE",
-            "Top to bottom: GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel. The menu overlays the current window; that window remains open when selection closes."
+            "Top to bottom: GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel."
           ],
           "fr": [
             "Menu reverb",
             "Maintenir TRACK + REVERB SIZE",
-            "De haut en bas : GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule. Le menu se superpose à la fenêtre active, qui reste ouverte à sa fermeture."
+            "De haut en bas : GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule."
           ]
         },
         {
           "en": [
             "Delay-slot menu",
             "Hold TRACK + DELAY TIME",
-            "Top to bottom: PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels. The menu overlays the current window; that window remains open when selection closes."
+            "Top to bottom: PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels."
           ],
           "fr": [
             "Menu delay",
             "Maintenir TRACK + DELAY TIME",
-            "De haut en bas : PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule. Le menu se superpose à la fenêtre active, qui reste ouverte à sa fermeture."
+            "De haut en bas : PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule."
           ]
         },
         {
@@ -302,12 +302,12 @@
           "en": [
             "GATED reverb",
             "REVERB SEND / SIZE; FUNC + SIZE; SETTINGS + SIZE",
-            "Gated Send / Gate Time; Pre-delay; Tone. Gate Time 0-127: about 40 ms-6.7 s after input falls quiet. Pre-delay 0-568 ms, 1 ms steps through 64 then 8 ms. No added echoes; dry hit stays immediate and the gate follows the delayed sound. Try Gate Time 16-32, Pre-delay 25-40 ms on a snare. Gate Time and Pre-delay belong to each pattern; save the project to preserve them after reloading."
+            "Gated Send / Gate Time; Pre-delay; Tone. Gate Time: about 40 ms–6.7 s after input falls quiet. Pre-delay: 0–568 ms. Try Gate Time 16–32 and Pre-delay 25–40 ms on a snare."
           ],
           "fr": [
             "Reverb GATED",
             "REVERB SEND / SIZE ; FUNC + SIZE ; SETTINGS + SIZE",
-            "Gated Send / Gate Time ; Pre-delay ; Tone. Gate Time 0-127 : environ 40 ms-6,7 s apres le signal. Pre-delay 0-568 ms : pas de 1 ms jusqu a 64 puis 8 ms. Sans echos ajoutes ; dry immediat, gate apres le signal retarde. Essayer Gate Time 16-32 et Pre-delay 25-40 ms sur caisse claire. Gate Time et Pre-delay sont propres à chaque pattern ; sauvegardez le projet pour les conserver."
+            "Gated Send / Gate Time ; Pre-delay ; Tone. Gate Time : environ 40 ms–6,7 s après le signal. Pre-delay : 0–568 ms. Essayez Gate Time 16–32 et Pre-delay 25–40 ms sur une caisse claire."
           ]
         },
         {
@@ -422,12 +422,12 @@
           "en": [
             "DUB delay",
             "DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME",
-            "Per-track Delay Send / native Time / Feedback. Strongly filtered echoes alternate left and right, progressively narrowing in the feedback loop. Reuses the native delay and stereo bounce routing. Headphones or both outputs reveal the movement."
+            "Per-track Delay Send / native Time / Feedback. Strongly filtered echoes alternate left and right, progressively narrowing in the feedback loop. Headphones or both outputs reveal the movement."
           ],
           "fr": [
             "Delay DUB",
             "DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME",
-            "Delay Send par piste / Time natif / Feedback. Echos fortement filtres alternant gauche/droite, de plus en plus etroits dans la boucle. Reutilise le delay natif et le rebond stereo. Casque ou deux sorties pour le mouvement."
+            "Delay Send par piste / Time natif / Feedback. Echos fortement filtres alternant gauche/droite, de plus en plus etroits dans la boucle. Casque ou deux sorties pour le mouvement."
           ]
         },
         {
@@ -538,12 +538,12 @@
           "en": [
             "WAVE folder navigation",
             "BACK in the WAVE browser",
-            "Go up one folder. At /Wavetables, BACK closes the selector. Holding or releasing BACK after moving up leaves it open. Imported tables still load with the existing YES/pad controls."
+            "BACK goes up one folder; at /Wavetables it closes the selector."
           ],
           "fr": [
             "Dossiers WAVE",
             "BACK dans le navigateur WAVE",
-            "Remonte un dossier. A /Wavetables, BACK ferme la selection. Maintien et relachement apres une remontee laissent la vue ouverte. Chargement des tables avec YES/pad comme auparavant."
+            "BACK remonte d’un dossier ; à /Wavetables, il ferme le sélecteur."
           ]
         },
         {
@@ -574,12 +574,12 @@
           "en": [
             "SY BITS fine detune",
             "FUNC + COLOR",
-            "0.01-semitone steps across -24.00 to +24.00. Small signed decimal popup updates live. Plain COLOR changes whole semitones and preserves the fractional part. Fine values survive native sound save/load and remain available to parameter locks."
+            "0.01-semitone steps from -24.00 to +24.00. Plain COLOR changes whole semitones; FUNC + COLOR adjusts the fractional part. Supports sound saving and parameter locks."
           ],
           "fr": [
             "Detune fin SY BITS",
             "FUNC + COLOR",
-            "Pas de0.01demi-ton entre -24.00 et +24.00. Petit popup decimal signe actualise en direct. COLOR ordinaire change les demi-tons entiers sans perdre la fraction. Valeurs conservees avec les sons et disponibles aux locks."
+            "Pas de 0.01 demi-ton de -24.00 à +24.00. COLOR change les demi-tons entiers ; FUNC + COLOR règle la fraction. Sauvegarde avec les sons et locks disponibles."
           ]
         },
         {
@@ -678,12 +678,12 @@
           "en": [
             "Credits and load",
             "Dexed / Google MSFA",
-            "Based on Dexed s Apache-licensed MSFA component by Google, Pascal Gauthier and contributors; original Cycles integration. Added cartridge voices supplied by the user. Six-operator patches can be more demanding than other machines."
+            "Based on Dexed/MSFA by Google, Pascal Gauthier and contributors. Six-operator patches can use substantial CPU."
           ],
           "fr": [
             "Credits et charge",
             "Dexed / Google MSFA",
-            "Composant MSFA Apache de Dexed par Google, Pascal Gauthier et contributeurs ; integration Cycles originale. Voix de cartouches fournies par l utilisateur. Certaines voix six operateurs demandent plus de calcul."
+            "Basé sur Dexed/MSFA par Google, Pascal Gauthier et contributeurs. Les voix six opérateurs peuvent demander beaucoup de calcul."
           ]
         }
       ]
@@ -1090,12 +1090,12 @@
           "en": [
             "Select SPEAK",
             "MACHINES: after Shadow, before LEGACY",
-            "128-word formant speech engine with a microphone icon. CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Start around Vol+Dist 60, Punch off."
+            "128-word speech engine. Start around Vol+Dist 60, Punch off."
           ],
           "fr": [
             "Choisir SPEAK",
             "MACHINES : apres Shadow, avant LEGACY",
-            "Moteur vocal à formants, 128 mots anglais et icône microphone. CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Commencez vers Vol+Dist 60, Punch coupé."
+            "Moteur vocal de 128 mots. Commencez vers Vol+Dist 60, Punch coupé."
           ]
         },
         {
@@ -1114,12 +1114,12 @@
           "en": [
             "Pitch and envelope",
             "PITCH / notes; DECAY, Fine, Punch, Gate, Attack",
-            "Pitch changes independently of word speed. Begin with Decay 127 to hear complete words. Existing filters and FX sends apply. Each track has its own speech state."
+            "Pitch changes independently of word speed. Begin with Decay 127 to hear complete words. Filters and FX sends are available."
           ],
           "fr": [
             "Hauteur et enveloppe",
             "PITCH / notes ; DECAY, Fine, Punch, Gate, Attack",
-            "Hauteur independante de la vitesse. Commencer a Decay 127 pour les mots complets. Filtres et sends existants disponibles. Etat vocal distinct par piste."
+            "Hauteur indépendante de la vitesse. Commencez à Decay 127 pour entendre les mots complets. Filtres et envois FX disponibles."
           ]
         },
         {
@@ -1182,12 +1182,12 @@
           "en": [
             "Attack / Filter / Resonance LFO targets",
             "On an LFO page, hold LFO + MACHINES while turning DECAY , SWEEP or CONTOUR",
-            "Select Attack, Filter or Resonance as supported by the machine. Release MACHINES for ordinary knob control. Sample Wizard labels its native filter controls Filter and Resonance."
+            "Choose Attack, Filter or Resonance with the corresponding knob while holding MACHINES."
           ],
           "fr": [
             "Destinations Attack / Filter / Resonance",
             "Dans LFO : LFO + MACHINES + DECAY / SWEEP / CONTOUR",
-            "Choisit attaque / coupure / résonance selon la machine. Relâchez MACHINES pour les destinations ordinaires."
+            "Choisissez Attack, Filter ou Resonance avec la commande correspondante en maintenant MACHINES."
           ]
         },
         {
@@ -1238,12 +1238,12 @@
           "en": [
             "Playback modes",
             "SETTINGS + MACHINES",
-            "All seven modes: One-Shot, Loop, Slice, Granular, Stretch, Pluck and Wavetable. SETTINGS + PUNCH opens options for the current mode. Wizard dial values stay separate from synth values during the current MACHINES session; leaving and returning restores them."
+            "One-Shot, Loop, Slice, Granular, Stretch, Pluck and Wavetable. SETTINGS + PUNCH opens options for the current mode."
           ],
           "fr": [
             "Modes de lecture",
             "SETTINGS + MACHINES",
-            "One-Shot, Loop, Slice, Granular, Stretch, Pluck et Wavetable conservés. SETTINGS + PUNCH : options du mode. Commandes Wizard separees des synths pendant la session MACHINES ; valeurs restaurees au retour."
+            "One-Shot, Loop, Slice, Granular, Stretch, Pluck et Wavetable. SETTINGS + PUNCH ouvre les options du mode actif."
           ]
         },
         {
@@ -1306,7 +1306,7 @@
           "en": [
             "CC assignment and locks MIDI Out machine only",
             "SETTINGS + gray knob; hold steps + assigned knob for locks",
-            "Assign OFF or CC0-127 to nine knobs. Turn a knob alone to send its value. Each lock keeps the CC number and value. Live recording captures knob changes. Chance and Swing retain their stock controls."
+            "Assign OFF or CC0-127 to nine knobs. Turn a knob alone to send its value. Each lock keeps the CC number and value. Live recording captures knob changes."
           ],
           "fr": [
             "Assignation CC et locks - MIDI Out seulement",
@@ -1422,7 +1422,7 @@
           "en": [
             "DX",
             "Off / On Default: Off",
-            "With DX On: tap FUNC, press FUNC again within 350 ms, hold at least 0.5 seconds, then release. Other controls cancel the gesture. Shows/resets A/P/O/N: average/peak CPU load, overruns, governor voice drops. Replaces the old shortcut; retrig latching never triggers it. Off by default."
+            "With DX On: tap FUNC, press FUNC again within 350 ms, hold at least 0.5 seconds, then release. Other controls cancel the gesture. Shows/resets A/P/O/N: average/peak CPU load, overruns, governor voice drops. Off by default."
           ],
           "fr": [
             "DX",
@@ -1434,12 +1434,12 @@
           "en": [
             "SCRM",
             "DATA opens; turn and press DATA; BACK returns",
-            "Six checkboxes per track: Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay default Off; the original four default On. Each pattern keeps its own six checklists; Save Project preserves them after reloading. Wizard allows Pitch/Decay; its sample/mode controls stay excluded."
+            "Six checkboxes per track: Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay default Off; Color/Shape/Sweep/Contour default On. Each pattern keeps its own six checklists; Save Project preserves them after reloading. Wizard allows Pitch/Decay; its sample/mode controls stay excluded."
           ],
           "fr": [
             "SCRM",
             "DATA ouvre ; tourner et appuyer ; BACK revient",
-            "Six cases par piste : Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay désactivés par défaut, quatre autres activés. Six listes propres à chaque pattern ; Save Project les conserve au chargement. Wizard autorise Pitch/Decay, commandes sample/modes exclues."
+            "Six cases par piste : Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay désactivés par défaut, Color/Shape/Sweep/Contour activés. Six listes propres à chaque pattern ; Save Project les conserve au chargement. Wizard autorise Pitch/Decay, commandes sample/modes exclues."
           ]
         },
         {

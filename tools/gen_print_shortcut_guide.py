@@ -3,7 +3,7 @@ from pathlib import Path
 import argparse,copy
 from html import escape
 from html.parser import HTMLParser
-from reportlab.platypus import SimpleDocTemplate,Paragraph,Spacer,Table,TableStyle,PageBreak,KeepTogether
+from reportlab.platypus import SimpleDocTemplate,Paragraph,Spacer,Table,TableStyle,CondPageBreak
 from reportlab.lib import colors
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_LEFT
@@ -72,7 +72,7 @@ ink=colors.HexColor('#202820');accent=colors.HexColor('#36563e');line=colors.Hex
 styles={
  'title':ParagraphStyle('title',fontName='Helvetica-Bold',fontSize=22,leading=25,textColor=ink,spaceAfter=4),
  'sub':ParagraphStyle('sub',fontName='Helvetica',fontSize=8.2,leading=11,textColor=colors.HexColor('#566256'),spaceAfter=9),
- 'section':ParagraphStyle('section',fontName='Helvetica-Bold',fontSize=10,leading=12,textColor=accent,spaceBefore=9,spaceAfter=5,keepWithNext=True),
+ 'section':ParagraphStyle('section',fontName='Helvetica-Bold',fontSize=10,leading=12,textColor=accent,spaceBefore=9,spaceAfter=5),
  'body':ParagraphStyle('body',fontName='Helvetica',fontSize=7.3,leading=9.2,textColor=ink),
  'cell':ParagraphStyle('cell',fontName='Helvetica',fontSize=7.1,leading=8.8,textColor=ink),
  'label':ParagraphStyle('label',fontName='Helvetica-Bold',fontSize=7.2,leading=8.8,textColor=ink),
@@ -110,11 +110,11 @@ pairs.remove(sample)
 pairs.insert(next(i for i,pair in enumerate(pairs) if text(pair[0])=='LFO and MACRO controls')+1,sample)
 for h,t in pairs:
  title=text(h)
- if title in ('Effects','Machines and sound controls','MIDI Out machine','SPEAK word library','LEGACY voice library','SPEAK voice machine'):
-  flow.extend([PageBreak(),Paragraph(title,styles['title']),Paragraph('Supermodel 2.40 - Feature and shortcut reference',styles['sub'])])
- else:flow.append(section(title))
+ # Flux continu : les tableaux se divisent par ligne et repetent leur en-tete.
+ # Garder seulement assez de place pour le titre et le debut de sa table.
+ flow.extend([CondPageBreak(72),section(title)])
  if title=='Mod Setup':flow.extend([para(soup.select_one('p.mod-setup-intro')),Spacer(1,8)])
- flow.append(table(t,title in ('Effects','Sample Wizard and saving','Mod Setup')))
+ flow.append(table(t,title in ('Effects','Sample Wizard and saving','Mod Setup','LEGACY voice library','SPEAK word library','Track, step and performance controls')))
  if title=='Mod Setup':flow.extend([Spacer(1,8),para(soup.select_one('p.mod-setup-save'))])
 flow.extend([Spacer(1,9),para(soup.select_one('main > p.note'))])
 out=ROOT/args.output;out.parent.mkdir(exist_ok=True,parents=True)

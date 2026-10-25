@@ -35,3 +35,7 @@ Demandes AveyCole du24/10/2026 : inverser les gestes, appui bref Mod Setup, main
 ## 6. Guide de reference sans historique
 
 [FAIT] AveyCole demande de retirer les changements tels que les voix LEGACY ameliorees du guide de raccourcis. Suppression des sections New in, notes de gain, remplacement de voix et correctifs ; commandes utiles regroupees dans Machines, LEGACY, Effets et Mod Setup. Notes de version conservees ailleurs. Trois PDF regeneres sur huit pages, rendus et inspectes ; lexiques prives128mots exacts. HTML/Markdown EN/FR issus de la meme source, controle Chromium/mobile et --check passes. Firmware127 et blurb strictement inchanges. Guides adultes et prives hors depot public.
+
+## 7. Impression condensee et retrait des details internes
+
+[FAIT] Demande AveyCole : reduire le blanc initial et retirer notamment la phrase sur les quatre commandes Wizard gardees dans MACHINES. Suppression des notes de preservation de valeurs, implementation et ancien comportement ; commandes et usages conserves en EN/FR. Flux PDF continu, tableaux divisibles par ligne avec en-tete repete, moins de padding des listes. Police inchangee. Guides public/regulier/adulte de huit a six pages, premiere page remplie par les controles, tous les rendus inspectes et index128mots verifies. Test navigateur attend maintenant la fin de lecture asynchrone du fichier banque avant de compter les32voix. Firmware127 et blurb byte-identiques ; guides prives hors depot.

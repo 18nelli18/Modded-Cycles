@@ -6,11 +6,11 @@ Principal2.40. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 ## Fonctions incluses
 
-**Machines et son:** Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN et MIDI Out. Elder est inspiré de Junior de Fors. La selection conserve les valeurs synth ; quatre commandes Wizard separees tant que MACHINES reste ouvert.
+**Machines et son:** Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN et MIDI Out. Elder est inspiré de Junior de Fors.
 
 **Performance et séquenceur:** Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute verrouillé et solo. Sidechain déclenché par les notes et listes Scramble par pattern.
 
-**Filtres et effets:** Filtres pistes/Wizard inspires Polivoks, second LFO, MACRO Fine/Lo-Fi ; GATED, HALL, Ring Mod, ROOM, PS1, Vinyl, Reverb et Chorus 1/2 ; Phaser, DUCK, DUB, Ping Pong, Delay et Crush 1/2. Menus opaques appliques au relachement TRACK. Optimisations PS1/filtre cumulees. Les deux Shimmer et tous les modes combines sont retires.
+**Filtres et effets:** Filtre résonant et attaque par piste. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod et deux Chorus ; DUCK, DUB, Ping Pong, Phaser et deux Crushers.
 
 **Routage et travail:** MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif.
 
@@ -29,21 +29,21 @@ Principal2.40. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Pas SCRAMBLE / suppression | Maintenir un pas + SETTINGS + TRACK bref ; supprimer normalement | Bascule SCRAMBLE sur ce pas. Supprimer le trig retire marque et locks ; le nouveau trig repart propre. Autres pas et pistes conserves. |
 | Configuration Control All | TRACK + TRIG 1–6 | Inclut ou exclut les pistes audio des changements collectifs. |
 | Beat repeat audio | Maintenir TRACK + RETRIG, puis un TRIG 1–16 | Le pas choisit la division des pistes incluses. Relâchez un modificateur ou le pas pour arrêter. |
-| Verrou beat repeat | Maintenir TRACK + double RETRIG | Relachez les deux ; maintenir un TRIG repete, relacher arrete. BACK quitte. Copier/coller/effacer bloques ; PLAY/STOP simples disponibles. Non sauvegarde. FUNC+SETTINGS/PATTERN temporaires disponibles ; aucun diagnostic depuis le verrou. |
+| Verrou beat repeat | Maintenir TRACK + double RETRIG | Relâchez les deux ; maintenez un TRIG pour répéter, relâchez-le pour arrêter. BACK quitte. PLAY/STOP et sauvegarde/rechargement temporaires FUNC + SETTINGS/PATTERN disponibles. |
 | Filtre collectif | TRACK + MACHINES + SWEEP / CONTOUR | Coupure / résonance des pistes incluses. Sans TRACK : piste sélectionnée. Passe-bas deux pôles inspiré du Polivoks. |
 | Attaque synthé | MACHINES + DECAY | Règle l’attaque ajoutée sur les machines compatibles. |
 | Arpège / réglages ChordKeys | FUNC + RETRIG | Ouvre les réglages actifs. Octave 0 de l’arpège parcourt uniquement les notes tenues. |
 | ChordKeys | Sur Chord : jouer TRIG 1–16 | Voicings en gamme. TRACK + pad de piste est nécessaire pour quitter une piste ChordKeys. |
-| Locks d’harmonie ChordKeys | Grille : maintenir TRIG et appuyer T1–T6 ; live : accord puis pad d’harmonie | Le même pad sur un pas tenu restaure son harmonie de base. Sauvegardé avec le pattern, indépendamment du LFO 2. |
+| Locks d’harmonie ChordKeys | Grille : maintenir TRIG et appuyer T1–T6 ; live : accord puis pad d’harmonie | Enregistre une harmonie sur le pas. Rappuyez sur le même pad d’harmonie avec le pas tenu pour retrouver son harmonie de base. |
 
 ## Effets
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Menu reverb | Maintenir TRACK + REVERB SIZE | De haut en bas : GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule. Le menu se superpose à la fenêtre active, qui reste ouverte à sa fermeture. |
-| Menu delay | Maintenir TRACK + DELAY TIME | De haut en bas : PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule. Le menu se superpose à la fenêtre active, qui reste ouverte à sa fermeture. |
+| Menu reverb | Maintenir TRACK + REVERB SIZE | De haut en bas : GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule. |
+| Menu delay | Maintenir TRACK + DELAY TIME | De haut en bas : PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule. |
 | Reverb standard | REVERB SEND / SIZE / FUNC + SIZE | Send par piste / Size, INF au maximum / Tone de -64 à 0 à +63. |
-| Reverb GATED | REVERB SEND / SIZE ; FUNC + SIZE ; SETTINGS + SIZE | Gated Send / Gate Time ; Pre-delay ; Tone. Gate Time 0-127 : environ 40 ms-6,7 s apres le signal. Pre-delay 0-568 ms : pas de 1 ms jusqu a 64 puis 8 ms. Sans echos ajoutes ; dry immediat, gate apres le signal retarde. Essayer Gate Time 16-32 et Pre-delay 25-40 ms sur caisse claire. Gate Time et Pre-delay sont propres à chaque pattern ; sauvegardez le projet pour les conserver. |
+| Reverb GATED | REVERB SEND / SIZE ; FUNC + SIZE ; SETTINGS + SIZE | Gated Send / Gate Time ; Pre-delay ; Tone. Gate Time : environ 40 ms–6,7 s après le signal. Pre-delay : 0–568 ms. Essayez Gate Time 16–32 et Pre-delay 25–40 ms sur une caisse claire. |
 | Reverb HALL | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | Hall Send par piste / Decay / Tone. Queue stéréo large, réflexions plus longues que ROOM ; SIZE au maximum donne une longue queue amortie. |
 | Ring Mod | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | Ring Send par piste / Frequency / Depth. Modulation en anneau sinusoidale metallique dans le slot reverb. RING MOD sous Chorus 1/2. Frequency et Depth partagés par les pistes du pattern ; locks via le Send natif. |
 | Phaser | DELAY SEND / TIME / FUNC + TIME ; FUNC puis TRACK + TIME | Phaser Send par piste / Rate / Depth ; FUNC puis TRACK + TIME : Feedback (aussi SETTINGS + TIME). Phaser stereo deux etages dans le slot delay. PHASER au-dessus de DUCK. Tenir FUNC avant TRACK pour eviter le mute verrouille. |
@@ -53,7 +53,7 @@ Principal2.40. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Chorus 1 / 2 | REVERB SEND / SIZE / FUNC + SIZE | Chorus Send par piste / Speed / Depth. Speed et Depth 0-127. Remplace la reverb du slot. |
 | Vinyl | REVERB SEND ; SIZE / FUNC + SIZE / FUNC puis TRACK + SIZE | Vinyl Send ; Crackle / Warble Amount / Warble Speed. Tenir FUNC puis TRACK pour Speed. Send 0 sec ; Crackle 0 coupe la poussiere. Pops/clics independants dans les pauses. Volume, pan et mute respectes. |
 | Delay standard | DELAY SEND / TIME / FUNC + TIME | Delay Send par piste / Time natif / Feedback natif. |
-| Delay DUB | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME | Delay Send par piste / Time natif / Feedback. Echos fortement filtres alternant gauche/droite, de plus en plus etroits dans la boucle. Reutilise le delay natif et le rebond stereo. Casque ou deux sorties pour le mouvement. |
+| Delay DUB | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME | Delay Send par piste / Time natif / Feedback. Echos fortement filtres alternant gauche/droite, de plus en plus etroits dans la boucle. Casque ou deux sorties pour le mouvement. |
 | Ping Pong | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME | Send par piste / Time / Feedback. Echos stereo alternes gauche/droite ; casque ou deux sorties. |
 | Crusher Rate / Bits | CRUSH 1 ou 2 : TIME / FUNC + TIME | Rate 0-127, environ 750 Hz-48 kHz / Bits 2-16. Valeurs basses plus rugueuses. CRUSH 1 garde le direct propre ; CRUSH 2 melange direct propre/crushed. DELAY SEND affiche Crush Send ; pas d echo dans ces modes. |
 | Reglages et sauvegarde FX | Sauvegarder le projet | Chaque pattern garde ses types FX, commandes ajoutées et envois supplémentaires. Sauvegardez le projet pour les retrouver au chargement. Pattern vierge : Delay/Reverb standard et commandes ajoutées par défaut. Les FX d’un pattern en attente s’appliquent au début de sa lecture. Pas de destination p-lock/LFO pour les commandes ajoutées ; locks disponibles sur les envois natifs. |
@@ -67,10 +67,10 @@ Principal2.40. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Commandes TINY | Choisir TINY dans MACHINES | COLOR : Tone ; SHAPE : Model 0–51 ; SWEEP : Mod ; CONTOUR : Excite. |
 | Commandes Shadow | Choisir Shadow apres TINY dans MACHINES | COLOR : Grain ; SHAPE : Density ; SWEEP : Spread ; CONTOUR : Chaos. PUNCH : attaque répétée. Pitch, Fine, Decay et Gate disponibles. Synthé pulsar/bruit inspiré de Opal Dust de Fors. |
 | Table initiale WAVE | Choisir WAVE et jouer | AV-WAVE-Morph est deja chargee : 16trames a parcourir, aucun import initial requis. COLOR choisit la position ; SHAPE ajoute le mouvement d enveloppe. Une table importee remplace la table initiale sur sa piste. |
-| Dossiers WAVE | BACK dans le navigateur WAVE | Remonte un dossier. A /Wavetables, BACK ferme la selection. Maintien et relachement apres une remontee laissent la vue ouverte. Chargement des tables avec YES/pad comme auparavant. |
+| Dossiers WAVE | BACK dans le navigateur WAVE | BACK remonte d’un dossier ; à /Wavetables, il ferme le sélecteur. |
 | DECAY du filtre ACID | DECAY | DECAY règle la décroissance de l’enveloppe du filtre. Volume tenu jusqu’au note-off, puis relâchement court. |
 | Accent ACID | Velocite97-127 | Accent progressif du transitoire filtre et du niveau. Velocite0-96 conserve la reponse sans accent ; volume natif de velocite conserve. |
-| Detune fin SY BITS | FUNC + COLOR | Pas de0.01demi-ton entre -24.00 et +24.00. Petit popup decimal signe actualise en direct. COLOR ordinaire change les demi-tons entiers sans perdre la fraction. Valeurs conservees avec les sons et disponibles aux locks. |
+| Detune fin SY BITS | FUNC + COLOR | Pas de 0.01 demi-ton de -24.00 à +24.00. COLOR change les demi-tons entiers ; FUNC + COLOR règle la fraction. Sauvegarde avec les sons et locks disponibles. |
 | RETROSYN | MACHINES, juste avant MIDI Out | COLOR, SHAPE (six modèles), SWEEP et CONTOUR. PITCH, DECAY, Gate et Punch disponibles. |
 
 ## Machine LEGACY
@@ -83,7 +83,7 @@ Principal2.40. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Duree des enveloppes | CONTOUR / DECAY | EG Time 64 conserve les durees de la voix ; plus bas accelere, plus haut ralentit. DECAY et gate conservent l enveloppe d amplitude native. PITCH/FINETUNE transposent ; operateurs a frequence fixe selon la cartouche. |
 | Importer une banque DX7 | Flasheur > Importateurs WAV / DX7 | Arretez la lecture. Choisissez une banque Yamaha .syx de 32 voix, connectez le MIDI USB Model:Cycles, choisissez 1-16 et envoyez. Attendez LEGACY BANK SAVED. Le meme emplacement est remplace. Le son actif ne change pas. |
 | Charger une banque | LEGACY : FUNC + MACHINES ; DATA ; BACK | Maintenez FUNC et appuyez MACHINES. Tournez DATA pour choisir, appuyez DATA pour charger ; BACK annule. Factory restaure les voix incluses. Une banque active de 32 voix est partagee par toutes les pistes LEGACY. Banques conservees apres redemarrage, hors sauvegarde de projet Elektron. |
-| Credits et charge | Dexed / Google MSFA | Composant MSFA Apache de Dexed par Google, Pascal Gauthier et contributeurs ; integration Cycles originale. Voix de cartouches fournies par l utilisateur. Certaines voix six operateurs demandent plus de calcul. |
+| Credits et charge | Dexed / Google MSFA | Basé sur Dexed/MSFA par Google, Pascal Gauthier et contributeurs. Les voix six opérateurs peuvent demander beaucoup de calcul. |
 
 ## Banque de voix LEGACY
 
@@ -126,9 +126,9 @@ Principal2.40. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Choisir SPEAK | MACHINES : apres Shadow, avant LEGACY | Moteur vocal à formants, 128 mots anglais et icône microphone. CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Commencez vers Vol+Dist 60, Punch coupé. |
+| Choisir SPEAK | MACHINES : apres Shadow, avant LEGACY | Moteur vocal de 128 mots. Commencez vers Vol+Dist 60, Punch coupé. |
 | Voice / Word / Speed / Articulation | COLOR / SHAPE / SWEEP / CONTOUR | Caractère vocal/formants / Word 0-127 / Speed (64 normal, plus bas plus lent) / Articulation. SHAPE affiche le mot et son index. Mot pris au prochain trig ; autres commandes en direct. |
-| Hauteur et enveloppe | PITCH / notes ; DECAY, Fine, Punch, Gate, Attack | Hauteur independante de la vitesse. Commencer a Decay 127 pour les mots complets. Filtres et sends existants disponibles. Etat vocal distinct par piste. |
+| Hauteur et enveloppe | PITCH / notes ; DECAY, Fine, Punch, Gate, Attack | Hauteur indépendante de la vitesse. Commencez à Decay 127 pour entendre les mots complets. Filtres et envois FX disponibles. |
 | Sequences de mots et modulation | Maintenir TRIG + SHAPE, puis locks Pitch et autres commandes | Mot et autres parametres natifs acceptent p-locks et destinations LFO. COLOR/SHAPE/SWEEP/CONTOUR : MIDI CC 16/17/18/19. Espacer les mots ou augmenter Speed. |
 | Exemple de phrase | Mots SHAPE et locks de notes sur des trigs successifs | HELLO 31, I 0, AM 62, A 17, ROBOT 113, I 0, LOVE 35, MUSIC 106. Lexique complet indexe a la fin du guide. |
 
@@ -138,7 +138,7 @@ Principal2.40. Maintenez le premier bouton pendant le second geste. TRIG : touch
 |---|---|---|
 | Second LFO audio | Appuyer deux fois sur LFO | Ouvre LFO 2 et ses réglages de vitesse, forme, destination et profondeur. |
 | Assignation rapide LFO | Dans une page LFO : maintenir LFO et tourner un potard | Choisit sa destination ordinaire. Pour Attack/Filter/Resonance, maintenir aussi MACHINES. |
-| Destinations Attack / Filter / Resonance | Dans LFO : LFO + MACHINES + DECAY / SWEEP / CONTOUR | Choisit attaque / coupure / résonance selon la machine. Relâchez MACHINES pour les destinations ordinaires. |
+| Destinations Attack / Filter / Resonance | Dans LFO : LFO + MACHINES + DECAY / SWEEP / CONTOUR | Choisissez Attack, Filter ou Resonance avec la commande correspondante en maintenant MACHINES. |
 | Accord fin MACRO | SETTINGS + PITCH | PITCH seul reste natif. FUNC + PITCH est Lo-Fi : fréquence réduite à gauche, bits réduits à droite, centre OFF. Noms et numéros 0–46 des modèles visibles. |
 
 ## Sample Wizard et sauvegarde
@@ -147,7 +147,7 @@ Principal2.40. Maintenez le premier bouton pendant le second geste. TRIG : touch
 |---|---|---|
 | Préécoute sample | FUNC + MACHINES ; surligner un sample ; pad ou TRIG clavier | Écoute le sample surligné. Le défilement reste silencieux. |
 | Sample lock | Navigateur ouvert : surligner le sample, puis TRIG + MACHINES | Verrouille le sample choisi sur le pas de la piste Wizard. Le navigateur doit être ouvert avec le sample surligné. |
-| Modes de lecture | SETTINGS + MACHINES | One-Shot, Loop, Slice, Granular, Stretch, Pluck et Wavetable conservés. SETTINGS + PUNCH : options du mode. Commandes Wizard separees des synths pendant la session MACHINES ; valeurs restaurees au retour. |
+| Modes de lecture | SETTINGS + MACHINES | One-Shot, Loop, Slice, Granular, Stretch, Pluck et Wavetable. SETTINGS + PUNCH ouvre les options du mode actif. |
 | Éditeur Slice | FUNC + TRIG ; FUNC + clic DATA | FUNC joue les slices 17–32 ; FUNC + clic DATA efface un marqueur. FUNC + potards 1/2 cale les marqueurs au passage zéro. |
 | Sauvegarde rapide permanente | Maintenir FUNC + SETTINGS | Sauvegarde permanente du projet par l’action native. |
 | Copie temporaire / rappel | Bref FUNC+SETTINGS / FUNC+PATTERN | Copie temporaire native / rappel,y compris pendant le verrou retrig. |
@@ -174,7 +174,7 @@ Appuyez brièvement sur SETTINGS + TRACK puis relâchez pour ouvrir Mod Setup. M
 | Mute | Stk / LTC ; défaut Stk | LTC : TRACK + appui FUNC verrouille ; FUNC quitte. FUNC + pad en mute verrouillé : solo ; rappuyer ou quitter restaure les mutes. |
 | Delay | Stk / Div ; défaut Stk | Stk : Time natif. Div : divisions musicales, pointées et triolets. Positions correspondantes corrigées au tempo ; toutes les positions ne sont pas quantifiées. Utilisé en mode Delay. |
 | DX | Off / On ; défaut Off | DX On : appui bref FUNC, second appui sous 350 ms, maintien au moins 0,5 seconde puis relacher. Toute autre commande annule. Affiche/remet a zero A/P/O/N : charge moyenne/pic, overruns, voix coupees par le gouverneur. Remplace ancien raccourci ; verrou retrig sans diagnostic. Off par defaut. |
-| SCRM | DATA ouvre ; tourner et appuyer ; BACK revient | Six cases par piste : Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay désactivés par défaut, quatre autres activés. Six listes propres à chaque pattern ; Save Project les conserve au chargement. Wizard autorise Pitch/Decay, commandes sample/modes exclues. |
+| SCRM | DATA ouvre ; tourner et appuyer ; BACK revient | Six cases par piste : Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay désactivés par défaut, Color/Shape/Sweep/Contour activés. Six listes propres à chaque pattern ; Save Project les conserve au chargement. Wizard autorise Pitch/Decay, commandes sample/modes exclues. |
 | Routage Sidechain | Choisir la source ; SETTINGS + TRACK bref ; S.Chn > DATA | Cochez avec DATA les pistes à atténuer lors des notes de la source, parmi les cinq autres. Pas de cible vers soi-même. DATA parcourt et coche. Plusieurs sources : atténuation la plus profonde par cible. DUCK reste un type de delay séparé. Trk. 1–6 désignent les cibles ; la source est omise. |
 | Dpt / Atk / Hld / Rel | Sous les cases : clic DATA, tourner, puis clic pour finir | Dpt = profondeur, Atk = attaque, Hld = maintien, Rel = relâchement. Depth : 0–100 %, 16 niveaux. Atk : 0–160 ms. Hold : 0–120 ms. Rel : 10 ms–3 s. BACK termine l’édition puis revient à Mod Setup. Départ conseillé : source sur chaque temps, Depth 60 %, Attack 0 ms, Hold 0 ms, Release 150 ms. Décocher toutes les cibles désactive la source. |
 | Sauvegarde par pattern | Save Project après modification | Routage et commandes Sidechain, six listes Scramble, types et réglages FX ajoutés propres à chaque pattern. Sauvegardez le projet pour les conserver au chargement. Pattern vierge : Sidechain désactivé et listes Scramble par défaut. Changement en attente appliqué au début du prochain pattern. |

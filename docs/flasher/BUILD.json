@@ -1,5 +1,5 @@
 {
-  "stamp": "2026-10-24-guide-reference-240",
+  "stamp": "2026-10-24-guide-compact-240",
   "scope": "main",
   "profile": "Exact full-feature image, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (2ch enabled)",
   "fixed_image": "all-features-usb-2ch-default.syx",
@@ -41,7 +41,7 @@
   "shared_display_mask_preserved": true,
   "behavior_verified_source": "all-features-usb-mod-settings-test-v3.syx",
   "layout_fix_native_verified": true,
-  "guide_version": "2026-10-24-guide-reference-240",
+  "guide_version": "2026-10-24-guide-compact-240",
   "release": "2.40",
   "approved_source": "all-features-polivoks-cpu-trim-test-v127.syx",
   "approved_source_sha256": "cb19d4d68c2a341bf92a2d26c73c1f042d7f7ff335ae3fcf06d0a615439b72bb",
