@@ -274,3 +274,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [170 — Gestes Mod Setup et niveau Shadow](170-gestes-menu-et-niveaux-shadow.md) | Principal2.40 :127 regulier approuve ; tap menu, maintien Scramble une fois, labels S.Chn/Trk./Dpt et Elder original/Shadow+12dB. |
 
 | [171 — Sidechain et mute source](171-sidechain-mute-source.md) | Principal2.41 :128 regulier approuve, choix Mute par source/pattern, defautOff, lecture FXS1/F2/F3. |
+
+| [172 — Mod Setup vers MACHINES](172-transfert-menu-machines.md) | Principal2.42 :129 regulier approuve, fermeture du menu et restitution de la molette au selecteur natif. |

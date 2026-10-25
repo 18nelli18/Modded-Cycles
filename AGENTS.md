@@ -289,3 +289,8 @@ User: "Perfect, push v127 to main". Exact regular shared-filter127 SHA `cb19d4d6
 ## AveyCole main2.41 promotion (2026-10-24)
 
 User: "It worked, go ahead and push v128". Exact regular128 SHA `a3df9c7ca6e6f566e6747dab872223189e236a18567ba0163523b8b612a5ad0d`, MAIN `c7fcbbae50ac86ed190cb3d50eea4755137cc546dcc603e26a3f66d2b747b8e2`. S.Chn Mute On/Off per source and pattern, defaultOff. Adult remains private and blurb byte-identical. FXS1/F2 read; F3 emitted only with Mute On, older firmware cannot restore those added settings.
+
+
+## AveyCole main2.42 promotion (2026-10-24)
+
+User: "Go ahead and push that" after receiving129. Publish exact regular129 SHA `71697a12c13b38e9ec30efde7f91c378390b6a909b950389e5e8b534bc9cd55b`, MAIN `4ab1f623db445f10d58d131b8178ea40c9afb049e46af3e5e5da3e75586d38fe`. UI-only Mod Setup -> MACHINES handoff; audio and saved settings exact128. Adult remains private and supplied blurb byte-identical. No new shortcuts; existing2.41 guide still applies.

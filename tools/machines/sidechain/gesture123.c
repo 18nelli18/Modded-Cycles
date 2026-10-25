@@ -23,6 +23,12 @@ static void tap(void){
 }
 u32 wm_key(const u32*event){
  if(!event)return 0;u32 code=event[3],flags=event[4];
+#ifdef WM_MACHINE_EXIT
+ /* MACHINES ouvre une vue native. Ne pas garder le menu UI proprietaire
+  * des encodeurs derriere : les wrappers sx/du nettoient leurs sous-pages
+  * quand menu devient nul. L'evenement physique reste transmis intact. */
+ if(code==5&&(flags&0x29)==1&&wm_menu){wm_menu=wm_editing=wm_pending=0;repaint();return 0;}
+#endif
  if(code==13){
   if(!(flags&1))tap();
   wm_settings=(flags&1)!=0;
