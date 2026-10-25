@@ -14,58 +14,6 @@ Main 2.40. Hold the first button while pressing the next button or turning the n
 
 **Routing and workflow:** MIDI Out with nine CC knobs, locks and two MIDI LFOs; MIDI OUT/THRU toggle; USB stereo or six tracks; permanent quick save, saved Mod Setup and optional DX diagnostics.
 
-## New in 2.40 - shortcuts, Sidechain labels and levels
-
-| Feature | Controls | Behavior |
-|---|---|---|
-| Mod Setup / Scramble | Tap / hold SETTINGS + TRACK | Tap SETTINGS + TRACK and release to open Mod Setup. Hold the combo to run SCRAMBLE once instead; continuing to hold does not repeat it. With a TRIG held, a quick tap toggles its Scramble mark. DATA selects a row; click to edit, turn, click again to return. Stk = Stock; SIL = Silent; LTC = Latch. |
-| S.Chn > | DATA opens the Sidechain submenu | Trk. N = target track; Dpt = Depth, Atk = Attack, Hld = Hold, Rel = Release. Routing and controls still save per pattern with Save Project. |
-| Elder / Shadow levels | VOL + DIST | Elder returns to its original level. Shadow is 12 dB louder than its original level. |
-
-## New in 2.39 - Sidechain and per-pattern Scramble
-
-| Feature | Controls | Behavior |
-|---|---|---|
-| Sidechain routing | Select source; tap SETTINGS + TRACK; S.Chn > DATA | Check any of the other five tracks with DATA to duck their volume on source note triggers. The source cannot target itself. Scroll with DATA; click a checkbox to toggle. Multiple sources use the deepest duck on each target. DUCK remains a separate delay type. Trk. 1–6 identify targets; the source is omitted. |
-| Dpt / Atk / Hld / Rel | Scroll below checkboxes; click DATA, turn, click to finish | Dpt = Depth, Atk = Attack, Hld = Hold, Rel = Release. Depth: 0–100%, 16 levels. Atk: 0–160 ms. Hold: 0–120 ms. Rel: 10 ms–3 s. BACK finishes editing, then returns to Mod Setup. Start with a four-on-the-floor source, Depth 60%, Attack 0 ms, Hold 0 ms, Release 150 ms. Untick all targets to disable that source. |
-| Per-pattern saving | Save Project after edits | Sidechain routing and controls, six Scramble checklists, FX types and added FX settings belong to each pattern. Save the project to keep changes after reloading. Blank patterns have Sidechain off and the default Scramble checklist. Queued changes apply when the next pattern starts. |
-| Project compatibility | Keep a backup before downgrading | This build loads the pattern FX saved by v121. Earlier firmware cannot restore custom FX saved in v122’s new pattern records. Keep an earlier project backup if you need to return to older firmware. |
-
-## New in 2.38 - Pattern FX and louder WAVE
-
-| Feature | Controls | Behavior |
-|---|---|---|
-| Pattern FX | TRACK + REVERB SIZE / DELAY TIME | Each pattern remembers its selected FX types and all added FX controls, including extra sends. Save the project to keep these settings after reloading. Native send and reverb/delay parameters keep their normal pattern behavior. |
-| Blank and queued patterns | Select or queue a pattern | A blank pattern starts with standard Delay, standard Reverb and default added FX settings. Edits stay with that pattern. A queued pattern changes the FX only when it begins playing. |
-| Louder WAVE | Select WAVE and play | Output is boosted by 6 dB for the starter and imported tables. Track LEVEL/DIST still controls the listening level. |
-
-## New in 2.37 - WAVE ready to play
-
-| Feature | Controls | Behavior |
-|---|---|---|
-| WAVE starter | Select WAVE and play | AV-WAVE-Morph is already loaded: 16 morphable frames, no first import required. COLOR selects position; SHAPE adds envelope movement. Custom tables replace the starter on their track. |
-| WAVE folder navigation | BACK in the WAVE browser | Go up one folder. At /Wavetables, BACK closes the selector. Holding or releasing BACK after moving up leaves it open. Imported tables still load with the existing YES/pad controls. |
-
-## New in 2.36 - Acid, SY BITS and Elder
-
-| Feature | Controls | Behavior |
-|---|---|---|
-| ACID filter Decay | DECAY | Filter envelope decay only. Volume holds until note-off, then a short fixed release; the Gate switch no longer turns Decay into an amplitude envelope. Slides and existing controls remain. |
-| ACID Accent | Velocity 97-127 | Progressive filter transient and level accent. Velocity 0-96 keeps the normal unaccented response; native velocity volume response is retained. |
-| SY BITS fine detune | FUNC + COLOR | 0.01-semitone steps across -24.00 to +24.00. Small signed decimal popup updates live. Plain COLOR changes whole semitones and preserves the fractional part. Fine values survive native sound save/load and remain available to parameter locks. |
-| Elder level | VOL + DIST | Elder returns to its original output level. The previous 6 dB boost is removed; synthesis controls are unchanged. |
-
-## New in 2.35 - banks and RETROSYN
-
-| Feature | Controls | Behavior |
-|---|---|---|
-| Import a DX7 bank | Flasher > WAV / DX7 bank importers | Stop playback. Choose a Yamaha 32-voice .syx bank, connect Model:Cycles USB MIDI, choose slot 1-16 and send. Wait for LEGACY BANK SAVED. Reusing a slot replaces it. Importing does not change the active sound. |
-| Load a stored bank | LEGACY: FUNC + MACHINES; DATA; BACK | Hold FUNC while pressing MACHINES to open the bank library. Turn DATA to choose; press DATA to load; BACK cancels. Factory restores the included voices. One active 32-voice bank is shared by every LEGACY track. Banks persist after reboot and are separate from Elektron project backups. |
-| Quiet LEGACY voices | Automatic, fixed per note | Quiet carrier levels receive bounded output gain compensation. Velocity and envelope response are preserved; this cannot make a silent or disabled operator sound. Lower CPU cost is retained. |
-| RETROSYN | MACHINES, immediately before MIDI Out | Color, Shape (six models), Sweep and Contour. Pitch, Decay, Gate and Punch remain available. Existing engine IDs are preserved; Elder remains in the list. MIDI Out stays last. |
-| HALL and SPEAK updates | HALL: SIZE; SPEAK: SHAPE | HALL wet return raised about 6 dB; maximum SIZE gives a longer damped tail. SPEAK is slightly brighter, with CAREFUL (123) followed by CREATURE (124). Regular vocabulary only. |
-| FX menu overlay | Hold TRACK + turn REVERB SIZE / DELAY TIME | The full opaque menu appears above Machine Selection and other windows. Turn to preview choices without changing the sound; release TRACK to apply. The previous window stays behind it. Control All track selection releases when TRACK is released. |
-
 ## Track, step and performance controls
 
 | Feature | Controls | Behavior |
@@ -77,7 +25,7 @@ Main 2.40. Hold the first button while pressing the next button or turning the n
 | Trig preview | Hold TRIG + PAGE | Audition the selected step with its note and locks while stopped or paused. |
 | Slide trig | SETTINGS + TRIG | Toggle a parameter slide on the step. |
 | Sequence Genie | SETTINGS + PAGE | Open the generator for the selected track. Select with DATA; choose Generate or Queue and set Loop/Page timing. |
-| SCRAMBLE | Hold SETTINGS + TRACK | Once the combo is held, randomize the checked Pitch, Decay, Color, Shape, Sweep and Contour parameters for this track. Choose them in Mod Setup > SCRM. Decay now works; Punch stays unchanged. The original four default On. Marked steps use the same checklist without changing the base sound. The checklist now belongs to this track in the current pattern; save the project to preserve it. Runs once per hold; release does not open the menu. A short tap without held steps opens Mod Setup instead. |
+| SCRAMBLE | Hold SETTINGS + TRACK | Randomize the checked Pitch, Decay, Color, Shape, Sweep and Contour parameters once per hold. Choose parameters in Mod Setup > SCRM. Pitch/Decay default Off; Color/Shape/Sweep/Contour default On. Marked steps use the same checklist without changing the base sound. Checklists save per pattern with Save Project. A short tap without held steps opens Mod Setup. |
 | SCRAMBLE step / delete | Hold a step + quick SETTINGS + TRACK; delete normally | Toggle SCRAMBLE on that step. Deleting its trig clears the mark and locks; a replacement trig starts clean. Neighboring steps and tracks keep their settings. |
 | Control All setup | TRACK + TRIG 1–6 | Include or exclude audio tracks from Control All changes. |
 | Audio beat repeat | Hold TRACK + RETRIG , then hold a TRIG 1–16 | The held step selects a repeat division for included audio tracks. Release a modifier or division pad to stop. |
@@ -92,43 +40,49 @@ Main 2.40. Hold the first button while pressing the next button or turning the n
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Reverb-slot menu | Hold TRACK + REVERB SIZE | Top to bottom: GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel. |
-| Delay-slot menu | Hold TRACK + DELAY TIME | Top to bottom: PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels. |
-| Standard Reverb | REVERB SEND / SIZE / FUNC + SIZE | Per-track Send / native Size, including INF at maximum / Tone -64 through 0 to +63. Stock formatting returns immediately after leaving Chorus, even during playback. |
+| Reverb-slot menu | Hold TRACK + REVERB SIZE | Top to bottom: GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel. The menu overlays the current window; that window remains open when selection closes. |
+| Delay-slot menu | Hold TRACK + DELAY TIME | Top to bottom: PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels. The menu overlays the current window; that window remains open when selection closes. |
+| Standard Reverb | REVERB SEND / SIZE / FUNC + SIZE | Per-track Send / Size, including INF at maximum / Tone -64 through 0 to +63. |
 | GATED reverb | REVERB SEND / SIZE; FUNC + SIZE; SETTINGS + SIZE | Gated Send / Gate Time; Pre-delay; Tone. Gate Time 0-127: about 40 ms-6.7 s after input falls quiet. Pre-delay 0-568 ms, 1 ms steps through 64 then 8 ms. No added echoes; dry hit stays immediate and the gate follows the delayed sound. Try Gate Time 16-32, Pre-delay 25-40 ms on a snare. Gate Time and Pre-delay belong to each pattern; save the project to preserve them after reloading. |
-| HALL reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | Hall Send per track / Decay / Tone. Wide stereo tail with longer reflections than ROOM. Four damped paths and two diffusers per channel at 12 kHz reuse existing reverb memory. |
+| HALL reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | Hall Send per track / Decay / Tone. Wide stereo tail with longer reflections than ROOM; maximum SIZE gives a long damped tail. |
 | Ring Mod | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | Ring Send per track / Frequency / Depth. Metallic sine ring modulation replaces the reverb return. Select RING MOD below Chorus 1/2. Frequency and Depth shared by tracks in this pattern; use the native track Send for locks. |
 | Phaser | DELAY SEND / TIME / FUNC + TIME; FUNC first, then TRACK + TIME | Phaser Send per track / Rate / Depth; FUNC then TRACK + TIME is Feedback (also SETTINGS + TIME). Two-stage stereo phaser replaces the delay return. Select PHASER above DUCK. Hold FUNC before TRACK to avoid the mute latch. |
 | DUCK delay | DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME; FUNC then TRACK + TIME or DELAY SEND | Native Delay Send / Time / Feedback. Hold FUNC first, then TRACK: TIME adjusts Amount; DELAY SEND adjusts Release. Strong wet ducking while the send input plays, then a swelling return; feedback remains intact. Try Amount 127, Release 32-64 on sparse notes. Amount 0 is standard Delay. |
-| ROOM reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | Room Send per track / Decay / Tone. Compact stereo room tail at 12 kHz. Select ROOM above PS1; release TRACK to apply. Wet return raised by 6 dB at normal levels, with a gentle peak knee; dry level is unchanged. |
-| PS1 reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | PS1 Send per track / Decay / Tone. PlayStation-inspired stereo tail, darker and grainier; cumulative processing optimizations retained. Wet return raised by 6 dB at normal levels, with a gentle peak knee; dry level is unchanged. |
+| ROOM reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | Room Send per track / Decay / Tone. Compact stereo room ambience. Select ROOM above PS1; release TRACK to apply. |
+| PS1 reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | PS1 Send per track / Decay / Tone. PlayStation-inspired stereo tail with a dark, grainy character. |
 | Chorus 1 / 2 | REVERB SEND / SIZE / FUNC + SIZE | Chorus Send per track / Speed / Depth. Speed and Depth 0-127. Replaces reverb in this slot. |
 | Vinyl | REVERB SEND; SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Vinyl Send; Crackle / Warble Amount / Warble Speed. Hold FUNC first, then TRACK for Speed. Send 0 is dry; Crackle 0 switches dust off. Bright independent pops/clicks continue through gaps. Track level, pan and mute apply. |
 | Standard Delay | DELAY SEND / TIME / FUNC + TIME | Per-track Delay Send / native Time / native Feedback. |
 | DUB delay | DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME | Per-track Delay Send / native Time / Feedback. Strongly filtered echoes alternate left and right, progressively narrowing in the feedback loop. Reuses the native delay and stereo bounce routing. Headphones or both outputs reveal the movement. |
 | Ping Pong | DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME | Per-track send / Time / Feedback. Stereo echoes alternate left and right; listen through headphones or both outputs. |
 | Crusher Rate / Bits | CRUSH 1 or 2: TIME / FUNC + TIME | Rate 0-127, about 750 Hz-48 kHz / Bits 2-16. Lower Rate or Bits is rougher. CRUSH 1 keeps the direct signal clean; CRUSH 2 blends direct clean/crushed. DELAY SEND is labeled Crush Send; no delay echoes in Crush modes. |
-| Effect settings and save | Save Project | FX types and added controls belong to each pattern; save the project to preserve them after reloading. Blank patterns use standard Delay/Reverb and default added controls. Added FX controls have no p-lock/LFO destinations; native track sends retain their locks. Both Shimmers and all combined modes are removed. |
+| Effect settings and save | Save Project | Each pattern remembers its selected FX types, added controls and extra sends. Save the project to keep them after reloading. Blank patterns use standard Delay/Reverb and default added controls. A queued pattern applies its FX when it begins playing. Added FX controls have no p-lock/LFO destinations; native track sends support locks. |
 
 ## Machines and sound controls
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Machine browsing | MACHINES + turn DATA | Fast turns move at most one machine per accepted event, spaced by 40 ms, to avoid skipping Sample Wizard. Saved machine IDs and TINY/Shadow/SPEAK/MIDI order stay unchanged. |
+| Machine browsing | MACHINES + turn DATA | Turn DATA to choose a machine. MIDI Out is last. |
 | Elder controls | Select Elder in MACHINES | COLOR = Wave; SHAPE = Warp; SWEEP = Noise; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate and Fine remain available. Original synth inspired by Junior by Fors. |
-| Saved Retrosyn sounds | Elder replaces ChpHzrd / Retrosyn | The same machine slot now plays Elder, so previous Retrosyn sounds change timbre. The other engines and previous CPU fixes are retained. Feral is by Glycinate. |
-| TINY controls | Select TINY in MACHINES | COLOR: Tone; SHAPE: Model0–51; SWEEP: Mod; CONTOUR: Excite. All52 original models; Feral and every other engine remain. |
-| Shadow controls | Select Shadow after TINY in MACHINES | COLOR: Grain; SHAPE: Density; SWEEP: Spread; CONTOUR: Chaos. PUNCH: ratcheting attack. Pitch, Fine, Decay and Gate remain. Original pulsar/noise engine inspired by Opal Dust by Fors. Output is now 12 dB above its original level; use VOL + DIST to set the listening level. |
+| TINY controls | Select TINY in MACHINES | COLOR: Tone; SHAPE: Model 0–51; SWEEP: Mod; CONTOUR: Excite. |
+| Shadow controls | Select Shadow after TINY in MACHINES | COLOR: Grain; SHAPE: Density; SWEEP: Spread; CONTOUR: Chaos. PUNCH: ratcheting attack. Pitch, Fine, Decay and Gate are available. Pulsar/noise synth inspired by Opal Dust by Fors. |
+| WAVE starter | Select WAVE and play | AV-WAVE-Morph is already loaded: 16 morphable frames, no first import required. COLOR selects position; SHAPE adds envelope movement. Custom tables replace the starter on their track. |
+| WAVE folder navigation | BACK in the WAVE browser | Go up one folder. At /Wavetables, BACK closes the selector. Holding or releasing BACK after moving up leaves it open. Imported tables still load with the existing YES/pad controls. |
+| ACID filter Decay | DECAY | DECAY controls filter envelope decay. Volume holds until note-off, followed by a short release. |
+| ACID Accent | Velocity 97-127 | Progressive filter transient and level accent. Velocity 0-96 keeps the normal unaccented response; native velocity volume response is retained. |
+| SY BITS fine detune | FUNC + COLOR | 0.01-semitone steps across -24.00 to +24.00. Small signed decimal popup updates live. Plain COLOR changes whole semitones and preserves the fractional part. Fine values survive native sound save/load and remain available to parameter locks. |
+| RETROSYN | MACHINES, immediately before MIDI Out | COLOR, SHAPE (six models), SWEEP and CONTOUR. PITCH, DECAY, Gate and Punch are available. |
 
 ## LEGACY machine
 
 | Feature | Controls | Behavior |
 |---|---|---|
 | LEGACY / selection | MACHINES: before RETROSYN and MIDI Out | Dexed MSFA six-operator FM with all 32 algorithms; one voice per track. MIDI Out remains last. COLOR = Velocity, SHAPE = Voice, SWEEP = Brightness, CONTOUR = EG Time. Native locks/CC/LFO mappings; Voice and Velocity are captured on the next trigger. |
-| Voice library | SHAPE: slots 0-31 | Starts with Tooropulse, Delicho and EinstofPia. Eight quieter slots now contain PIANO 1, E.PIANO 1, BASS 1, BRASS 1, STRINGS 1, CLAV 1, E.ORGAN 1 and MARIMBA from the supplied ROM1A cartridge. |
+| Voice library | SHAPE: slots 0-31 | 32 bundled voices selected with SHAPE. The complete indexed factory voice library follows. Import a cartridge to replace the active bank. |
 | Velocity / brightness | COLOR / SWEEP | Velocity 0-127 controls the cartridge operators response at each trigger; default 100. Brightness 64 preserves the patch. Lower softens modulation; higher adds bite. |
 | Envelope time | CONTOUR / DECAY | EG Time 64 preserves the patch envelope timing; lower is faster, higher slower. DECAY and gate still set the native amplitude envelope. PITCH and FINETUNE transpose the voice; fixed-frequency operators follow their cartridge settings. |
 | Import a DX7 bank | Flasher > WAV / DX7 bank importers | Stop playback. Choose a Yamaha 32-voice .syx bank, connect Model:Cycles USB MIDI, choose slot 1-16 and send. Wait for LEGACY BANK SAVED. Reusing a slot replaces it. Importing does not change the active sound. |
+| Load a stored bank | LEGACY: FUNC + MACHINES; DATA; BACK | Hold FUNC while pressing MACHINES to open the bank library. Turn DATA to choose; press DATA to load; BACK cancels. Factory restores the included voices. One active 32-voice bank is shared by every LEGACY track. Banks persist after reboot and are separate from Elektron project backups. |
 | Credits and load | Dexed / Google MSFA | Based on Dexed s Apache-licensed MSFA component by Google, Pascal Gauthier and contributors; original Cycles integration. Added cartridge voices supplied by the user. Six-operator patches can be more demanding than other machines. |
 
 ## LEGACY voice library
@@ -172,12 +126,11 @@ Main 2.40. Hold the first button while pressing the next button or turning the n
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Select SPEAK | MACHINES: after Shadow, before LEGACY | Original 128-word formant speech engine. Microphone; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. v90 balances phoneme levels, smooths transitions and brightens voiced harmonics while keeping hiss reduced. Start around Vol+Dist 60, Punch off. |
-| Voice / Word / Speed / Articulation | COLOR / SHAPE / SWEEP / CONTOUR | Voice/formant character / Word 0-127 / Speed (64 normal, lower slower) / Articulation. SHAPE popup shows the word and index. Word changes latch at the next trig; the other three controls remain live. Slow words now continue through quiet phoneme gaps; the idle detector no longer suspends unfinished speech. |
+| Select SPEAK | MACHINES: after Shadow, before LEGACY | 128-word formant speech engine with a microphone icon. CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Start around Vol+Dist 60, Punch off. |
+| Voice / Word / Speed / Articulation | COLOR / SHAPE / SWEEP / CONTOUR | Voice/formant character / Word 0-127 / Speed (64 normal, lower slower) / Articulation. SHAPE shows the word and index. Word changes take effect at the next trig; the other three controls remain live. |
 | Pitch and envelope | PITCH / notes; DECAY, Fine, Punch, Gate, Attack | Pitch changes independently of word speed. Begin with Decay 127 to hear complete words. Existing filters and FX sends apply. Each track has its own speech state. |
 | Word sequences and modulation | Hold a trig + SHAPE, then lock Pitch and other knobs normally | Word and other native parameters support p-locks and LFO destinations. COLOR/SHAPE/SWEEP/CONTOUR use MIDI CC 16/17/18/19. Leave space for the word or increase Speed. |
 | Example sentence | SHAPE words and note locks on successive trigs | HELLO 31, I 0, AM 62, A 17, ROBOT 113, I 0, LOVE 35, MUSIC 106. Full indexed word library follows at the end of this guide. |
-| SPEAK tuning | PITCH / FINETUNE | Reference tuning corrected by about 1.17 semitones downward. The existing vocal octave register, formants and word timings remain. |
 
 ## LFO and MACRO controls
 
@@ -223,6 +176,8 @@ Tap SETTINGS + TRACK and release to open Mod Setup. Hold the combo to run SCRAMB
 | DX | Off / On Default: Off | With DX On: tap FUNC, press FUNC again within 350 ms, hold at least 0.5 seconds, then release. Other controls cancel the gesture. Shows/resets A/P/O/N: average/peak CPU load, overruns, governor voice drops. Replaces the old shortcut; retrig latching never triggers it. Off by default. |
 | SCRM | DATA opens; turn and press DATA; BACK returns | Six checkboxes per track: Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay default Off; the original four default On. Each pattern keeps its own six checklists; Save Project preserves them after reloading. Wizard allows Pitch/Decay; its sample/mode controls stay excluded. |
 | Sidechain routing | Select source; tap SETTINGS + TRACK; S.Chn > DATA | Check any of the other five tracks with DATA to duck their volume on source note triggers. The source cannot target itself. Scroll with DATA; click a checkbox to toggle. Multiple sources use the deepest duck on each target. DUCK remains a separate delay type. Trk. 1–6 identify targets; the source is omitted. |
+| Dpt / Atk / Hld / Rel | Scroll below checkboxes; click DATA, turn, click to finish | Dpt = Depth, Atk = Attack, Hld = Hold, Rel = Release. Depth: 0–100%, 16 levels. Atk: 0–160 ms. Hold: 0–120 ms. Rel: 10 ms–3 s. BACK finishes editing, then returns to Mod Setup. Start with a four-on-the-floor source, Depth 60%, Attack 0 ms, Hold 0 ms, Release 150 ms. Untick all targets to disable that source. |
+| Per-pattern saving | Save Project after edits | Sidechain routing and controls, six Scramble checklists, FX types and added FX settings belong to each pattern. Save the project to keep changes after reloading. Blank patterns have Sidechain off and the default Scramble checklist. Queued changes apply when the next pattern starts. |
 
 BACK closes Mod Setup and saves its global preferences. If playback is running, the save waits until it stops. Stop playback and allow saving to finish before powering off. Sidechain routing/settings, Scramble checklists and FX types/added settings are per pattern: Save Project preserves these after reloading. Closing a submenu alone does not save the project.
 

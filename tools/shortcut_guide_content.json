@@ -1,6 +1,6 @@
 {
   "release": "2.40",
-  "stamp": "2026-10-24-menu-shadow-main-240",
+  "stamp": "2026-10-24-guide-reference-240",
   "cards": [
     {
       "en": [
@@ -44,318 +44,6 @@
     }
   ],
   "sections": [
-    {
-      "title": {
-        "en": "New in 2.40 - shortcuts, Sidechain labels and levels",
-        "fr": "Nouveautés 2.40 - raccourcis, labels Sidechain et niveaux"
-      },
-      "rows": [
-        {
-          "en": [
-            "Mod Setup / Scramble",
-            "Tap / hold SETTINGS + TRACK",
-            "Tap SETTINGS + TRACK and release to open Mod Setup. Hold the combo to run SCRAMBLE once instead; continuing to hold does not repeat it. With a TRIG held, a quick tap toggles its Scramble mark. DATA selects a row; click to edit, turn, click again to return. Stk = Stock; SIL = Silent; LTC = Latch."
-          ],
-          "fr": [
-            "Mod Setup / Scramble",
-            "SETTINGS + TRACK bref / maintien",
-            "Appuyez brièvement sur SETTINGS + TRACK puis relâchez pour ouvrir Mod Setup. Maintenez la combinaison pour lancer SCRAMBLE une seule fois ; le maintien ne répète pas le tirage. Avec un TRIG tenu, un appui bref bascule sa marque Scramble. DATA choisit une ligne ; clic pour modifier, tourner, puis clic pour revenir. Stk = Stock ; SIL = Silent ; LTC = Latch."
-          ]
-        },
-        {
-          "en": [
-            "S.Chn >",
-            "DATA opens the Sidechain submenu",
-            "Trk. N = target track; Dpt = Depth, Atk = Attack, Hld = Hold, Rel = Release. Routing and controls still save per pattern with Save Project."
-          ],
-          "fr": [
-            "S.Chn >",
-            "DATA ouvre le sous-menu Sidechain",
-            "Trk. N = piste cible ; Dpt = profondeur, Atk = attaque, Hld = maintien, Rel = relâchement. Routage et commandes toujours sauvegardés par pattern avec Save Project."
-          ]
-        },
-        {
-          "en": [
-            "Elder / Shadow levels",
-            "VOL + DIST",
-            "Elder returns to its original level. Shadow is 12 dB louder than its original level."
-          ],
-          "fr": [
-            "Niveaux Elder / Shadow",
-            "VOL + DIST",
-            "Elder retrouve son niveau original. Shadow gagne 12 dB par rapport à son niveau original."
-          ]
-        }
-      ]
-    },
-    {
-      "title": {
-        "en": "New in 2.39 - Sidechain and per-pattern Scramble",
-        "fr": "Nouveautés 2.39 - Sidechain et Scramble par pattern"
-      },
-      "rows": [
-        {
-          "en": [
-            "Sidechain routing",
-            "Select source; tap SETTINGS + TRACK; S.Chn > DATA",
-            "Check any of the other five tracks with DATA to duck their volume on source note triggers. The source cannot target itself. Scroll with DATA; click a checkbox to toggle. Multiple sources use the deepest duck on each target. DUCK remains a separate delay type. Trk. 1–6 identify targets; the source is omitted."
-          ],
-          "fr": [
-            "Routage Sidechain",
-            "Choisir la source ; SETTINGS + TRACK bref ; S.Chn > DATA",
-            "Cochez avec DATA les pistes à atténuer lors des notes de la source, parmi les cinq autres. Pas de cible vers soi-même. DATA parcourt et coche. Plusieurs sources : atténuation la plus profonde par cible. DUCK reste un type de delay séparé. Trk. 1–6 désignent les cibles ; la source est omise."
-          ]
-        },
-        {
-          "en": [
-            "Dpt / Atk / Hld / Rel",
-            "Scroll below checkboxes; click DATA, turn, click to finish",
-            "Dpt = Depth, Atk = Attack, Hld = Hold, Rel = Release. Depth: 0–100%, 16 levels. Atk: 0–160 ms. Hold: 0–120 ms. Rel: 10 ms–3 s. BACK finishes editing, then returns to Mod Setup. Start with a four-on-the-floor source, Depth 60%, Attack 0 ms, Hold 0 ms, Release 150 ms. Untick all targets to disable that source."
-          ],
-          "fr": [
-            "Dpt / Atk / Hld / Rel",
-            "Sous les cases : clic DATA, tourner, puis clic pour finir",
-            "Dpt = profondeur, Atk = attaque, Hld = maintien, Rel = relâchement. Depth : 0–100 %, 16 niveaux. Atk : 0–160 ms. Hold : 0–120 ms. Rel : 10 ms–3 s. BACK termine l’édition puis revient à Mod Setup. Départ conseillé : source sur chaque temps, Depth 60 %, Attack 0 ms, Hold 0 ms, Release 150 ms. Décocher toutes les cibles désactive la source."
-          ]
-        },
-        {
-          "en": [
-            "Per-pattern saving",
-            "Save Project after edits",
-            "Sidechain routing and controls, six Scramble checklists, FX types and added FX settings belong to each pattern. Save the project to keep changes after reloading. Blank patterns have Sidechain off and the default Scramble checklist. Queued changes apply when the next pattern starts."
-          ],
-          "fr": [
-            "Sauvegarde par pattern",
-            "Save Project après modification",
-            "Routage et commandes Sidechain, six listes Scramble, types et réglages FX ajoutés propres à chaque pattern. Sauvegardez le projet pour les conserver au chargement. Pattern vierge : Sidechain désactivé et listes Scramble par défaut. Changement en attente appliqué au début du prochain pattern."
-          ]
-        },
-        {
-          "en": [
-            "Project compatibility",
-            "Keep a backup before downgrading",
-            "This build loads the pattern FX saved by v121. Earlier firmware cannot restore custom FX saved in v122’s new pattern records. Keep an earlier project backup if you need to return to older firmware."
-          ],
-          "fr": [
-            "Compatibilité projet",
-            "Garder une copie avant retour à un ancien firmware",
-            "Ce build charge les FX par pattern du v121. Les anciens firmwares ne restaurent pas les FX personnalisés des nouveaux records v122. Gardez une copie antérieure du projet pour un éventuel retour."
-          ]
-        }
-      ]
-    },
-    {
-      "title": {
-        "en": "New in 2.38 - Pattern FX and louder WAVE",
-        "fr": "Nouveautés 2.38 - FX par pattern et WAVE plus fort"
-      },
-      "rows": [
-        {
-          "en": [
-            "Pattern FX",
-            "TRACK + REVERB SIZE / DELAY TIME",
-            "Each pattern remembers its selected FX types and all added FX controls, including extra sends. Save the project to keep these settings after reloading. Native send and reverb/delay parameters keep their normal pattern behavior."
-          ],
-          "fr": [
-            "FX par pattern",
-            "TRACK + REVERB SIZE / DELAY TIME",
-            "Chaque pattern garde ses types FX et tous les réglages ajoutés, dont les envois supplémentaires. Sauvegardez le projet pour les retrouver au chargement. Les paramètres natifs gardent leur comportement habituel par pattern."
-          ]
-        },
-        {
-          "en": [
-            "Blank and queued patterns",
-            "Select or queue a pattern",
-            "A blank pattern starts with standard Delay, standard Reverb and default added FX settings. Edits stay with that pattern. A queued pattern changes the FX only when it begins playing."
-          ],
-          "fr": [
-            "Patterns vierges et en attente",
-            "Choisir ou mettre un pattern en attente",
-            "Un pattern vierge commence avec Delay et Reverb standard et les réglages ajoutés par défaut. Les modifications restent avec ce pattern. Les FX changent au début réel du pattern en attente."
-          ]
-        },
-        {
-          "en": [
-            "Louder WAVE",
-            "Select WAVE and play",
-            "Output is boosted by 6 dB for the starter and imported tables. Track LEVEL/DIST still controls the listening level."
-          ],
-          "fr": [
-            "WAVE plus fort",
-            "Choisir WAVE et jouer",
-            "Sortie augmentée de 6 dB pour la table initiale et les tables importées. LEVEL/DIST règle toujours le niveau de la piste."
-          ]
-        }
-      ]
-    },
-    {
-      "title": {
-        "en": "New in 2.37 - WAVE ready to play",
-        "fr": "Nouveautes2.37 - WAVE pret a jouer"
-      },
-      "rows": [
-        {
-          "en": [
-            "WAVE starter",
-            "Select WAVE and play",
-            "AV-WAVE-Morph is already loaded: 16 morphable frames, no first import required. COLOR selects position; SHAPE adds envelope movement. Custom tables replace the starter on their track."
-          ],
-          "fr": [
-            "Table initiale WAVE",
-            "Choisir WAVE et jouer",
-            "AV-WAVE-Morph est deja chargee : 16trames a parcourir, aucun import initial requis. COLOR choisit la position ; SHAPE ajoute le mouvement d enveloppe. Une table importee remplace la table initiale sur sa piste."
-          ]
-        },
-        {
-          "en": [
-            "WAVE folder navigation",
-            "BACK in the WAVE browser",
-            "Go up one folder. At /Wavetables, BACK closes the selector. Holding or releasing BACK after moving up leaves it open. Imported tables still load with the existing YES/pad controls."
-          ],
-          "fr": [
-            "Dossiers WAVE",
-            "BACK dans le navigateur WAVE",
-            "Remonte un dossier. A /Wavetables, BACK ferme la selection. Maintien et relachement apres une remontee laissent la vue ouverte. Chargement des tables avec YES/pad comme auparavant."
-          ]
-        }
-      ]
-    },
-    {
-      "title": {
-        "en": "New in 2.36 - Acid, SY BITS and Elder",
-        "fr": "Nouveautes2.36 - Acid,SY BITS et Elder"
-      },
-      "rows": [
-        {
-          "en": [
-            "ACID filter Decay",
-            "DECAY",
-            "Filter envelope decay only. Volume holds until note-off, then a short fixed release; the Gate switch no longer turns Decay into an amplitude envelope. Slides and existing controls remain."
-          ],
-          "fr": [
-            "DECAY du filtre ACID",
-            "DECAY",
-            "Decroissance du filtre uniquement. Volume tenu jusqu a note-off puis relachement court fixe ; Gate ne transforme plus Decay en enveloppe de volume. Slides et commandes existantes conserves."
-          ]
-        },
-        {
-          "en": [
-            "ACID Accent",
-            "Velocity 97-127",
-            "Progressive filter transient and level accent. Velocity 0-96 keeps the normal unaccented response; native velocity volume response is retained."
-          ],
-          "fr": [
-            "Accent ACID",
-            "Velocite97-127",
-            "Accent progressif du transitoire filtre et du niveau. Velocite0-96 conserve la reponse sans accent ; volume natif de velocite conserve."
-          ]
-        },
-        {
-          "en": [
-            "SY BITS fine detune",
-            "FUNC + COLOR",
-            "0.01-semitone steps across -24.00 to +24.00. Small signed decimal popup updates live. Plain COLOR changes whole semitones and preserves the fractional part. Fine values survive native sound save/load and remain available to parameter locks."
-          ],
-          "fr": [
-            "Detune fin SY BITS",
-            "FUNC + COLOR",
-            "Pas de0.01demi-ton entre -24.00 et +24.00. Petit popup decimal signe actualise en direct. COLOR ordinaire change les demi-tons entiers sans perdre la fraction. Valeurs conservees avec les sons et disponibles aux locks."
-          ]
-        },
-        {
-          "en": [
-            "Elder level",
-            "VOL + DIST",
-            "Elder returns to its original output level. The previous 6 dB boost is removed; synthesis controls are unchanged."
-          ],
-          "fr": [
-            "Niveau Elder",
-            "VOL + DIST",
-            "Elder retrouve son niveau original. Le précédent gain de 6 dB est retiré ; commandes de synthèse inchangées."
-          ]
-        }
-      ]
-    },
-    {
-      "title": {
-        "en": "New in 2.35 - banks and RETROSYN",
-        "fr": "Nouveautes 2.35 - banques et RETROSYN"
-      },
-      "rows": [
-        {
-          "en": [
-            "Import a DX7 bank",
-            "Flasher > WAV / DX7 bank importers",
-            "Stop playback. Choose a Yamaha 32-voice .syx bank, connect Model:Cycles USB MIDI, choose slot 1-16 and send. Wait for LEGACY BANK SAVED. Reusing a slot replaces it. Importing does not change the active sound."
-          ],
-          "fr": [
-            "Importer une banque DX7",
-            "Flasheur > Importateurs WAV / DX7",
-            "Arretez la lecture. Choisissez une banque Yamaha .syx de 32 voix, connectez le MIDI USB Model:Cycles, choisissez 1-16 et envoyez. Attendez LEGACY BANK SAVED. Le meme emplacement est remplace. Le son actif ne change pas."
-          ]
-        },
-        {
-          "en": [
-            "Load a stored bank",
-            "LEGACY: FUNC + MACHINES; DATA; BACK",
-            "Hold FUNC while pressing MACHINES to open the bank library. Turn DATA to choose; press DATA to load; BACK cancels. Factory restores the included voices. One active 32-voice bank is shared by every LEGACY track. Banks persist after reboot and are separate from Elektron project backups."
-          ],
-          "fr": [
-            "Charger une banque",
-            "LEGACY : FUNC + MACHINES ; DATA ; BACK",
-            "Maintenez FUNC et appuyez MACHINES. Tournez DATA pour choisir, appuyez DATA pour charger ; BACK annule. Factory restaure les voix incluses. Une banque active de 32 voix est partagee par toutes les pistes LEGACY. Banques conservees apres redemarrage, hors sauvegarde de projet Elektron."
-          ]
-        },
-        {
-          "en": [
-            "Quiet LEGACY voices",
-            "Automatic, fixed per note",
-            "Quiet carrier levels receive bounded output gain compensation. Velocity and envelope response are preserved; this cannot make a silent or disabled operator sound. Lower CPU cost is retained."
-          ],
-          "fr": [
-            "Voix LEGACY faibles",
-            "Automatique, fixe par note",
-            "Compensation limitee du gain de sortie des carriers faibles. Velocite et enveloppes conservees ; un operateur silencieux ou desactive ne devient pas audible. Charge CPU reduite conservee."
-          ]
-        },
-        {
-          "en": [
-            "RETROSYN",
-            "MACHINES, immediately before MIDI Out",
-            "Color, Shape (six models), Sweep and Contour. Pitch, Decay, Gate and Punch remain available. Existing engine IDs are preserved; Elder remains in the list. MIDI Out stays last."
-          ],
-          "fr": [
-            "RETROSYN",
-            "MACHINES, juste avant MIDI Out",
-            "Color, Shape (six modeles), Sweep et Contour. Pitch, Decay, Gate et Punch disponibles. IDs existants conserves ; Elder reste dans la liste. MIDI Out reste dernier."
-          ]
-        },
-        {
-          "en": [
-            "HALL and SPEAK updates",
-            "HALL: SIZE; SPEAK: SHAPE",
-            "HALL wet return raised about 6 dB; maximum SIZE gives a longer damped tail. SPEAK is slightly brighter, with CAREFUL (123) followed by CREATURE (124). Regular vocabulary only."
-          ],
-          "fr": [
-            "Mises a jour HALL et SPEAK",
-            "HALL : SIZE ; SPEAK : SHAPE",
-            "Retour HALL releve d environ 6 dB ; SIZE maximal donne une queue amortie plus longue. SPEAK un peu plus clair, CAREFUL (123) puis CREATURE (124). Vocabulaire regulier uniquement."
-          ]
-        },
-        {
-          "en": [
-            "FX menu overlay",
-            "Hold TRACK + turn REVERB SIZE / DELAY TIME",
-            "The full opaque menu appears above Machine Selection and other windows. Turn to preview choices without changing the sound; release TRACK to apply. The previous window stays behind it. Control All track selection releases when TRACK is released."
-          ],
-          "fr": [
-            "Menu FX superpose",
-            "Maintenir TRACK + tourner REVERB SIZE / DELAY TIME",
-            "Menu opaque complet au-dessus de Machines et des autres fenetres. Tournez pour parcourir sans changer le son ; relachez TRACK pour appliquer. Fenetre precedente conservee derriere. Selection Control All liberee au relachement TRACK."
-          ]
-        }
-      ]
-    },
     {
       "title": {
         "en": "Track, step and performance controls",
@@ -450,12 +138,12 @@
           "en": [
             "SCRAMBLE",
             "Hold SETTINGS + TRACK",
-            "Once the combo is held, randomize the checked Pitch, Decay, Color, Shape, Sweep and Contour parameters for this track. Choose them in Mod Setup > SCRM. Decay now works; Punch stays unchanged. The original four default On. Marked steps use the same checklist without changing the base sound. The checklist now belongs to this track in the current pattern; save the project to preserve it. Runs once per hold; release does not open the menu. A short tap without held steps opens Mod Setup instead."
+            "Randomize the checked Pitch, Decay, Color, Shape, Sweep and Contour parameters once per hold. Choose parameters in Mod Setup > SCRM. Pitch/Decay default Off; Color/Shape/Sweep/Contour default On. Marked steps use the same checklist without changing the base sound. Checklists save per pattern with Save Project. A short tap without held steps opens Mod Setup."
           ],
           "fr": [
             "SCRAMBLE",
             "Maintenir SETTINGS + TRACK",
-            "Au maintien, tirez les parametres coches de cette piste : Pitch,Decay,Color,Shape,Sweep,Contour. Choix dans Mod Setup > SCRM. Decay fonctionne ; Punch reste inchange. Quatre commandes originales actives par defaut. Pas marques : meme liste,son de base intact. La liste est propre à cette piste dans le pattern courant ; sauvegardez le projet pour la conserver. Une seule fois par maintien ; le relâchement n’ouvre pas le menu. Un appui bref sans pas tenu ouvre Mod Setup."
+            "Tire une seule fois par maintien les paramètres cochés : Pitch, Decay, Color, Shape, Sweep, Contour. Choix dans Mod Setup > SCRM. Pitch/Decay désactivés par défaut ; Color/Shape/Sweep/Contour activés. Les pas marqués suivent la même liste, sans changer le son de base. Listes sauvegardées par pattern avec Save Project. Un appui bref sans pas tenu ouvre Mod Setup."
           ]
         },
         {
@@ -578,36 +266,36 @@
           "en": [
             "Reverb-slot menu",
             "Hold TRACK + REVERB SIZE",
-            "Top to bottom: GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel."
+            "Top to bottom: GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel. The menu overlays the current window; that window remains open when selection closes."
           ],
           "fr": [
             "Menu reverb",
             "Maintenir TRACK + REVERB SIZE",
-            "De haut en bas : GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule."
+            "De haut en bas : GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule. Le menu se superpose à la fenêtre active, qui reste ouverte à sa fermeture."
           ]
         },
         {
           "en": [
             "Delay-slot menu",
             "Hold TRACK + DELAY TIME",
-            "Top to bottom: PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels."
+            "Top to bottom: PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels. The menu overlays the current window; that window remains open when selection closes."
           ],
           "fr": [
             "Menu delay",
             "Maintenir TRACK + DELAY TIME",
-            "De haut en bas : PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule."
+            "De haut en bas : PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule. Le menu se superpose à la fenêtre active, qui reste ouverte à sa fermeture."
           ]
         },
         {
           "en": [
             "Standard Reverb",
             "REVERB SEND / SIZE / FUNC + SIZE",
-            "Per-track Send / native Size, including INF at maximum / Tone -64 through 0 to +63. Stock formatting returns immediately after leaving Chorus, even during playback."
+            "Per-track Send / Size, including INF at maximum / Tone -64 through 0 to +63."
           ],
           "fr": [
             "Reverb standard",
             "REVERB SEND / SIZE / FUNC + SIZE",
-            "Send par piste / Size natif, INF au maximum / Tone -64 a 0 a +63. Format natif restaure immediatement apres Chorus, meme en lecture."
+            "Send par piste / Size, INF au maximum / Tone de -64 à 0 à +63."
           ]
         },
         {
@@ -626,12 +314,12 @@
           "en": [
             "HALL reverb",
             "REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE",
-            "Hall Send per track / Decay / Tone. Wide stereo tail with longer reflections than ROOM. Four damped paths and two diffusers per channel at 12 kHz reuse existing reverb memory."
+            "Hall Send per track / Decay / Tone. Wide stereo tail with longer reflections than ROOM; maximum SIZE gives a long damped tail."
           ],
           "fr": [
             "Reverb HALL",
             "REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE",
-            "Hall Send par piste / Decay / Tone. Queue stereo large, reflexions plus longues que ROOM. Quatre voies amorties et deux diffuseurs par canal a 12 kHz, memoire reverb reutilisee."
+            "Hall Send par piste / Decay / Tone. Queue stéréo large, réflexions plus longues que ROOM ; SIZE au maximum donne une longue queue amortie."
           ]
         },
         {
@@ -674,24 +362,24 @@
           "en": [
             "ROOM reverb",
             "REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE",
-            "Room Send per track / Decay / Tone. Compact stereo room tail at 12 kHz. Select ROOM above PS1; release TRACK to apply. Wet return raised by 6 dB at normal levels, with a gentle peak knee; dry level is unchanged."
+            "Room Send per track / Decay / Tone. Compact stereo room ambience. Select ROOM above PS1; release TRACK to apply."
           ],
           "fr": [
             "Reverb ROOM",
             "REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE",
-            "Room Send par piste / Decay / Tone. Petite ambiance stereo a 12 kHz. ROOM au-dessus de PS1 ; relacher TRACK pour appliquer. Retour wet releve de 6 dB aux niveaux usuels, avec compression douce des cretes ; dry inchange."
+            "Room Send par piste / Decay / Tone. Petite ambiance stéréo. ROOM au-dessus de PS1 ; relâchez TRACK pour appliquer."
           ]
         },
         {
           "en": [
             "PS1 reverb",
             "REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE",
-            "PS1 Send per track / Decay / Tone. PlayStation-inspired stereo tail, darker and grainier; cumulative processing optimizations retained. Wet return raised by 6 dB at normal levels, with a gentle peak knee; dry level is unchanged."
+            "PS1 Send per track / Decay / Tone. PlayStation-inspired stereo tail with a dark, grainy character."
           ],
           "fr": [
             "Reverb PS1",
             "REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE",
-            "PS1 Send par piste / Decay / Tone. Queue stereo inspiree PlayStation, sombre et granuleuse ; optimisations de traitement conservees. Retour wet releve de 6 dB aux niveaux usuels, avec compression douce des cretes ; dry inchange."
+            "PS1 Send par piste / Decay / Tone. Queue stéréo inspirée de PlayStation, sombre et granuleuse."
           ]
         },
         {
@@ -770,12 +458,12 @@
           "en": [
             "Effect settings and save",
             "Save Project",
-            "FX types and added controls belong to each pattern; save the project to preserve them after reloading. Blank patterns use standard Delay/Reverb and default added controls. Added FX controls have no p-lock/LFO destinations; native track sends retain their locks. Both Shimmers and all combined modes are removed."
+            "Each pattern remembers its selected FX types, added controls and extra sends. Save the project to keep them after reloading. Blank patterns use standard Delay/Reverb and default added controls. A queued pattern applies its FX when it begins playing. Added FX controls have no p-lock/LFO destinations; native track sends support locks."
           ],
           "fr": [
             "Reglages et sauvegarde FX",
             "Sauvegarder le projet",
-            "Types FX et réglages ajoutés propres à chaque pattern ; sauvegardez le projet pour les retrouver au chargement. Les patterns vierges utilisent Delay/Reverb standard et les réglages ajoutés par défaut. Pas de destination p-lock/LFO pour les réglages ajoutés ; les envois natifs gardent leurs verrous. Shimmers et modes combinés retirés."
+            "Chaque pattern garde ses types FX, commandes ajoutées et envois supplémentaires. Sauvegardez le projet pour les retrouver au chargement. Pattern vierge : Delay/Reverb standard et commandes ajoutées par défaut. Les FX d’un pattern en attente s’appliquent au début de sa lecture. Pas de destination p-lock/LFO pour les commandes ajoutées ; locks disponibles sur les envois natifs."
           ]
         }
       ]
@@ -790,12 +478,12 @@
           "en": [
             "Machine browsing",
             "MACHINES + turn DATA",
-            "Fast turns move at most one machine per accepted event, spaced by 40 ms, to avoid skipping Sample Wizard. Saved machine IDs and TINY/Shadow/SPEAK/MIDI order stay unchanged."
+            "Turn DATA to choose a machine. MIDI Out is last."
           ],
           "fr": [
             "Defilement machines",
             "MACHINES + tourner DATA",
-            "Tours rapides bornes a une machine par evenement accepte,espaces de40ms,pour ne pas sauter Wizard. IDs et ordre TINY/Shadow/SPEAK/MIDI conserves."
+            "Tournez DATA pour choisir une machine. MIDI Out est en dernier."
           ]
         },
         {
@@ -812,38 +500,98 @@
         },
         {
           "en": [
-            "Saved Retrosyn sounds",
-            "Elder replaces ChpHzrd / Retrosyn",
-            "The same machine slot now plays Elder, so previous Retrosyn sounds change timbre. The other engines and previous CPU fixes are retained. Feral is by Glycinate."
-          ],
-          "fr": [
-            "Anciens sons Retrosyn",
-            "Elder remplace ChpHzrd / Retrosyn",
-            "Le même emplacement joue Elder : le timbre des anciens sons Retrosyn change. Autres moteurs et correctifs CPU conservés. Feral est de Glycinate."
-          ]
-        },
-        {
-          "en": [
             "TINY controls",
             "Select TINY in MACHINES",
-            "COLOR: Tone; SHAPE: Model0–51; SWEEP: Mod; CONTOUR: Excite. All52 original models; Feral and every other engine remain."
+            "COLOR: Tone; SHAPE: Model 0–51; SWEEP: Mod; CONTOUR: Excite."
           ],
           "fr": [
             "Commandes TINY",
             "Choisir TINY dans MACHINES",
-            "COLOR : Tone ; SHAPE : Model0–51 ; SWEEP : Mod ; CONTOUR : Excite. Les52modeles originaux ; Feral et tous les autres moteurs conserves."
+            "COLOR : Tone ; SHAPE : Model 0–51 ; SWEEP : Mod ; CONTOUR : Excite."
           ]
         },
         {
           "en": [
             "Shadow controls",
             "Select Shadow after TINY in MACHINES",
-            "COLOR: Grain; SHAPE: Density; SWEEP: Spread; CONTOUR: Chaos. PUNCH: ratcheting attack. Pitch, Fine, Decay and Gate remain. Original pulsar/noise engine inspired by Opal Dust by Fors. Output is now 12 dB above its original level; use VOL + DIST to set the listening level."
+            "COLOR: Grain; SHAPE: Density; SWEEP: Spread; CONTOUR: Chaos. PUNCH: ratcheting attack. Pitch, Fine, Decay and Gate are available. Pulsar/noise synth inspired by Opal Dust by Fors."
           ],
           "fr": [
             "Commandes Shadow",
             "Choisir Shadow apres TINY dans MACHINES",
-            "COLOR : Grain ; SHAPE : Density ; SWEEP : Spread ; CONTOUR : Chaos. PUNCH : attaque repetee. Pitch,Fine,Decay et Gate conserves. Synthese pulsar/bruit originale inspiree de Opal Dust de Fors. Sortie à +12 dB du niveau original ; VOL + DIST règle le niveau d’écoute."
+            "COLOR : Grain ; SHAPE : Density ; SWEEP : Spread ; CONTOUR : Chaos. PUNCH : attaque répétée. Pitch, Fine, Decay et Gate disponibles. Synthé pulsar/bruit inspiré de Opal Dust de Fors."
+          ]
+        },
+        {
+          "en": [
+            "WAVE starter",
+            "Select WAVE and play",
+            "AV-WAVE-Morph is already loaded: 16 morphable frames, no first import required. COLOR selects position; SHAPE adds envelope movement. Custom tables replace the starter on their track."
+          ],
+          "fr": [
+            "Table initiale WAVE",
+            "Choisir WAVE et jouer",
+            "AV-WAVE-Morph est deja chargee : 16trames a parcourir, aucun import initial requis. COLOR choisit la position ; SHAPE ajoute le mouvement d enveloppe. Une table importee remplace la table initiale sur sa piste."
+          ]
+        },
+        {
+          "en": [
+            "WAVE folder navigation",
+            "BACK in the WAVE browser",
+            "Go up one folder. At /Wavetables, BACK closes the selector. Holding or releasing BACK after moving up leaves it open. Imported tables still load with the existing YES/pad controls."
+          ],
+          "fr": [
+            "Dossiers WAVE",
+            "BACK dans le navigateur WAVE",
+            "Remonte un dossier. A /Wavetables, BACK ferme la selection. Maintien et relachement apres une remontee laissent la vue ouverte. Chargement des tables avec YES/pad comme auparavant."
+          ]
+        },
+        {
+          "en": [
+            "ACID filter Decay",
+            "DECAY",
+            "DECAY controls filter envelope decay. Volume holds until note-off, followed by a short release."
+          ],
+          "fr": [
+            "DECAY du filtre ACID",
+            "DECAY",
+            "DECAY règle la décroissance de l’enveloppe du filtre. Volume tenu jusqu’au note-off, puis relâchement court."
+          ]
+        },
+        {
+          "en": [
+            "ACID Accent",
+            "Velocity 97-127",
+            "Progressive filter transient and level accent. Velocity 0-96 keeps the normal unaccented response; native velocity volume response is retained."
+          ],
+          "fr": [
+            "Accent ACID",
+            "Velocite97-127",
+            "Accent progressif du transitoire filtre et du niveau. Velocite0-96 conserve la reponse sans accent ; volume natif de velocite conserve."
+          ]
+        },
+        {
+          "en": [
+            "SY BITS fine detune",
+            "FUNC + COLOR",
+            "0.01-semitone steps across -24.00 to +24.00. Small signed decimal popup updates live. Plain COLOR changes whole semitones and preserves the fractional part. Fine values survive native sound save/load and remain available to parameter locks."
+          ],
+          "fr": [
+            "Detune fin SY BITS",
+            "FUNC + COLOR",
+            "Pas de0.01demi-ton entre -24.00 et +24.00. Petit popup decimal signe actualise en direct. COLOR ordinaire change les demi-tons entiers sans perdre la fraction. Valeurs conservees avec les sons et disponibles aux locks."
+          ]
+        },
+        {
+          "en": [
+            "RETROSYN",
+            "MACHINES, immediately before MIDI Out",
+            "COLOR, SHAPE (six models), SWEEP and CONTOUR. PITCH, DECAY, Gate and Punch are available."
+          ],
+          "fr": [
+            "RETROSYN",
+            "MACHINES, juste avant MIDI Out",
+            "COLOR, SHAPE (six modèles), SWEEP et CONTOUR. PITCH, DECAY, Gate et Punch disponibles."
           ]
         }
       ]
@@ -870,12 +618,12 @@
           "en": [
             "Voice library",
             "SHAPE: slots 0-31",
-            "Starts with Tooropulse, Delicho and EinstofPia. Eight quieter slots now contain PIANO 1, E.PIANO 1, BASS 1, BRASS 1, STRINGS 1, CLAV 1, E.ORGAN 1 and MARIMBA from the supplied ROM1A cartridge."
+            "32 bundled voices selected with SHAPE. The complete indexed factory voice library follows. Import a cartridge to replace the active bank."
           ],
           "fr": [
             "Banque de voix",
             "SHAPE : slots 0-31",
-            "Commence par Tooropulse, Delicho et EinstofPia. Huit slots plus faibles remplacent leurs voix par PIANO 1, E.PIANO 1, BASS 1, BRASS 1, STRINGS 1, CLAV 1, E.ORGAN 1 et MARIMBA de la cartouche ROM1A fournie."
+            "32 voix incluses, choisies avec SHAPE. La liste complète des voix d’usine indexées suit. Importez une cartouche pour remplacer la banque active."
           ]
         },
         {
@@ -912,6 +660,18 @@
             "Importer une banque DX7",
             "Flasheur > Importateurs WAV / DX7",
             "Arretez la lecture. Choisissez une banque Yamaha .syx de 32 voix, connectez le MIDI USB Model:Cycles, choisissez 1-16 et envoyez. Attendez LEGACY BANK SAVED. Le meme emplacement est remplace. Le son actif ne change pas."
+          ]
+        },
+        {
+          "en": [
+            "Load a stored bank",
+            "LEGACY: FUNC + MACHINES; DATA; BACK",
+            "Hold FUNC while pressing MACHINES to open the bank library. Turn DATA to choose; press DATA to load; BACK cancels. Factory restores the included voices. One active 32-voice bank is shared by every LEGACY track. Banks persist after reboot and are separate from Elektron project backups."
+          ],
+          "fr": [
+            "Charger une banque",
+            "LEGACY : FUNC + MACHINES ; DATA ; BACK",
+            "Maintenez FUNC et appuyez MACHINES. Tournez DATA pour choisir, appuyez DATA pour charger ; BACK annule. Factory restaure les voix incluses. Une banque active de 32 voix est partagee par toutes les pistes LEGACY. Banques conservees apres redemarrage, hors sauvegarde de projet Elektron."
           ]
         },
         {
@@ -1330,24 +1090,24 @@
           "en": [
             "Select SPEAK",
             "MACHINES: after Shadow, before LEGACY",
-            "Original 128-word formant speech engine. Microphone; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. v90 balances phoneme levels, smooths transitions and brightens voiced harmonics while keeping hiss reduced. Start around Vol+Dist 60, Punch off."
+            "128-word formant speech engine with a microphone icon. CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Start around Vol+Dist 60, Punch off."
           ],
           "fr": [
             "Choisir SPEAK",
             "MACHINES : apres Shadow, avant LEGACY",
-            "Moteur vocal original a formants, 128 mots anglais. Microphone ; CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. v90 equilibre les phonemes, adoucit les transitions et eclaircit les harmoniques vocales sans renforcer le souffle. Commencer vers Vol+Dist 60, Punch coupe."
+            "Moteur vocal à formants, 128 mots anglais et icône microphone. CLASS VOICE / STYLE TALK / STR 1, DEX 5, MAG 5. Commencez vers Vol+Dist 60, Punch coupé."
           ]
         },
         {
           "en": [
             "Voice / Word / Speed / Articulation",
             "COLOR / SHAPE / SWEEP / CONTOUR",
-            "Voice/formant character / Word 0-127 / Speed (64 normal, lower slower) / Articulation. SHAPE popup shows the word and index. Word changes latch at the next trig; the other three controls remain live. Slow words now continue through quiet phoneme gaps; the idle detector no longer suspends unfinished speech."
+            "Voice/formant character / Word 0-127 / Speed (64 normal, lower slower) / Articulation. SHAPE shows the word and index. Word changes take effect at the next trig; the other three controls remain live."
           ],
           "fr": [
             "Voice / Word / Speed / Articulation",
             "COLOR / SHAPE / SWEEP / CONTOUR",
-            "Caractere vocal/formants / Word 0-127 / Speed (64 normal, plus bas plus lent) / Articulation. SHAPE affiche mot et index. Mot pris au prochain trig ; autres commandes en direct. Les mots lents continuent dans les silences phonemiques ; le detecteur idle ne suspend plus une parole inachevee."
+            "Caractère vocal/formants / Word 0-127 / Speed (64 normal, plus bas plus lent) / Articulation. SHAPE affiche le mot et son index. Mot pris au prochain trig ; autres commandes en direct."
           ]
         },
         {
@@ -1384,18 +1144,6 @@
             "Exemple de phrase",
             "Mots SHAPE et locks de notes sur des trigs successifs",
             "HELLO 31, I 0, AM 62, A 17, ROBOT 113, I 0, LOVE 35, MUSIC 106. Lexique complet indexe a la fin du guide."
-          ]
-        },
-        {
-          "en": [
-            "SPEAK tuning",
-            "PITCH / FINETUNE",
-            "Reference tuning corrected by about 1.17 semitones downward. The existing vocal octave register, formants and word timings remain."
-          ],
-          "fr": [
-            "Accord SPEAK",
-            "PITCH / FINETUNE",
-            "Reference corrigee d environ 1,17 demi-ton vers le bas. Registre vocal, formants et durees des mots conserves."
           ]
         }
       ]
@@ -1704,6 +1452,30 @@
             "Routage Sidechain",
             "Choisir la source ; SETTINGS + TRACK bref ; S.Chn > DATA",
             "Cochez avec DATA les pistes à atténuer lors des notes de la source, parmi les cinq autres. Pas de cible vers soi-même. DATA parcourt et coche. Plusieurs sources : atténuation la plus profonde par cible. DUCK reste un type de delay séparé. Trk. 1–6 désignent les cibles ; la source est omise."
+          ]
+        },
+        {
+          "en": [
+            "Dpt / Atk / Hld / Rel",
+            "Scroll below checkboxes; click DATA, turn, click to finish",
+            "Dpt = Depth, Atk = Attack, Hld = Hold, Rel = Release. Depth: 0–100%, 16 levels. Atk: 0–160 ms. Hold: 0–120 ms. Rel: 10 ms–3 s. BACK finishes editing, then returns to Mod Setup. Start with a four-on-the-floor source, Depth 60%, Attack 0 ms, Hold 0 ms, Release 150 ms. Untick all targets to disable that source."
+          ],
+          "fr": [
+            "Dpt / Atk / Hld / Rel",
+            "Sous les cases : clic DATA, tourner, puis clic pour finir",
+            "Dpt = profondeur, Atk = attaque, Hld = maintien, Rel = relâchement. Depth : 0–100 %, 16 niveaux. Atk : 0–160 ms. Hold : 0–120 ms. Rel : 10 ms–3 s. BACK termine l’édition puis revient à Mod Setup. Départ conseillé : source sur chaque temps, Depth 60 %, Attack 0 ms, Hold 0 ms, Release 150 ms. Décocher toutes les cibles désactive la source."
+          ]
+        },
+        {
+          "en": [
+            "Per-pattern saving",
+            "Save Project after edits",
+            "Sidechain routing and controls, six Scramble checklists, FX types and added FX settings belong to each pattern. Save the project to keep changes after reloading. Blank patterns have Sidechain off and the default Scramble checklist. Queued changes apply when the next pattern starts."
+          ],
+          "fr": [
+            "Sauvegarde par pattern",
+            "Save Project après modification",
+            "Routage et commandes Sidechain, six listes Scramble, types et réglages FX ajoutés propres à chaque pattern. Sauvegardez le projet pour les conserver au chargement. Pattern vierge : Sidechain désactivé et listes Scramble par défaut. Changement en attente appliqué au début du prochain pattern."
           ]
         }
       ]

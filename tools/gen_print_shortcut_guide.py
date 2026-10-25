@@ -114,7 +114,7 @@ for h,t in pairs:
   flow.extend([PageBreak(),Paragraph(title,styles['title']),Paragraph('Supermodel 2.40 - Feature and shortcut reference',styles['sub'])])
  else:flow.append(section(title))
  if title=='Mod Setup':flow.extend([para(soup.select_one('p.mod-setup-intro')),Spacer(1,8)])
- flow.append(table(t,title in ('Effects','Sample Wizard and saving')))
+ flow.append(table(t,title in ('Effects','Sample Wizard and saving','Mod Setup')))
  if title=='Mod Setup':flow.extend([Spacer(1,8),para(soup.select_one('p.mod-setup-save'))])
 flow.extend([Spacer(1,9),para(soup.select_one('main > p.note'))])
 out=ROOT/args.output;out.parent.mkdir(exist_ok=True,parents=True)
