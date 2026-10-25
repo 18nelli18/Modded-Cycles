@@ -284,3 +284,7 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [174 — Marge audio PUNCH](174-marge-audio-punch.md) | Principal2.46 :145 exact approuve, A75 P99 O0 N0 sur le pattern AveyCole. |
 
 | [175 — Marge audio MACRO et HALL](175-marge-audio-macro-hall.md) | Principal2.46 :145 exact approuve, A75 P99 O0 N0 sur le pattern AveyCole. |
+
+| [176 — 176-marge-voix-sidechain](176-marge-voix-sidechain.md) | Principal2.47 :148 exact, DUB stereo sur base146, optimisations147 exclues. |
+
+| [179 — 179-dub-stereo](179-dub-stereo.md) | Principal2.47 :148 exact, DUB stereo sur base146, optimisations147 exclues. |

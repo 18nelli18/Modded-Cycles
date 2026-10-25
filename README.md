@@ -181,3 +181,5 @@ Main 2.44 serves the exact regular v141 approved by AveyCole. Includes PUNCH FM 
 Main 2.45 serves the exact regular v142 approved by AveyCole. Adds quantized mute/solo: in Mod Setup (SETTINGS + TRACK) choose QntM, switch it on and select the time division your mutes and solos are quantized to. Off by default. [Current controls and printable guide](docs/flasher/shortcut-guide.html).
 
 Main2.46 serves the exact approved standard v145, SHA256 `f7f9e92d902f92c6f56c5baa964216c14cb35175271db160d8d6557e0c52535d`. PUNCH, MACRO and HALL use less audio processing while retaining the sound and controls. AveyCole reports A75/P99/O0/N0 consistently on the same tested pattern. Existing controls guides are unchanged.
+
+Main2.47 serves approved standard v148, SHA256 `442c1720818c7c5e6798cadbebbd29e37288eae09d9a80c3ce3b7b743f2397d4`. DUB uses stereo input/output from its first echo; filtering and controls remain. Base146 optimizations, excluding147. Ping Pong retains its alternating route.

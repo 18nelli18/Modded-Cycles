@@ -1,6 +1,6 @@
 {
-  "release": "2.45",
-  "stamp": "2026-10-25-quantized-mute-main-245",
+  "release": "2.47",
+  "stamp": "2026-10-25-dub-stereo-main-247",
   "cards": [
     {
       "en": [
@@ -422,12 +422,12 @@
           "en": [
             "DUB delay",
             "DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME",
-            "Per-track Delay Send / native Time / Feedback. Strongly filtered echoes alternate left and right, progressively narrowing in the feedback loop. Headphones or both outputs reveal the movement."
+            "Per-track Delay Send / native Time / Feedback. Strongly filtered stereo echoes, progressively narrowing in the feedback loop. Centered input plays on both channels from the first echo, even with zero feedback."
           ],
           "fr": [
             "Delay DUB",
             "DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME",
-            "Delay Send par piste / Time natif / Feedback. Echos fortement filtres alternant gauche/droite, de plus en plus etroits dans la boucle. Casque ou deux sorties pour le mouvement."
+            "Delay Send par piste / Time natif / Feedback. Echos stereo fortement filtres, de plus en plus etroits dans la boucle. Une source centree joue sur les deux canaux des le premier echo, meme sans feedback."
           ]
         },
         {

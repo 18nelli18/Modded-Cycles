@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.45 - 25 October 2026
+Supermodel 2.47 - 25 October 2026
 
-Main 2.45. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.47. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
@@ -53,7 +53,7 @@ Main 2.45. Hold the first button while pressing the next button or turning the n
 | Chorus 1 / 2 | REVERB SEND / SIZE / FUNC + SIZE | Chorus Send per track / Speed / Depth. Speed and Depth 0-127. Replaces reverb in this slot. |
 | Vinyl | REVERB SEND; SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE | Vinyl Send; Crackle / Warble Amount / Warble Speed. Hold FUNC first, then TRACK for Speed. Send 0 is dry; Crackle 0 switches dust off. Bright independent pops/clicks continue through gaps. Track level, pan and mute apply. |
 | Standard Delay | DELAY SEND / TIME / FUNC + TIME | Per-track Delay Send / native Time / native Feedback. |
-| DUB delay | DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME | Per-track Delay Send / native Time / Feedback. Strongly filtered echoes alternate left and right, progressively narrowing in the feedback loop. Headphones or both outputs reveal the movement. |
+| DUB delay | DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME | Per-track Delay Send / native Time / Feedback. Strongly filtered stereo echoes, progressively narrowing in the feedback loop. Centered input plays on both channels from the first echo, even with zero feedback. |
 | Ping Pong | DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME | Per-track send / Time / Feedback. Stereo echoes alternate left and right; listen through headphones or both outputs. |
 | Crusher Rate / Bits | CRUSH 1 or 2: TIME / FUNC + TIME | Rate 0-127, about 750 Hz-48 kHz / Bits 2-16. Lower Rate or Bits is rougher. CRUSH 1 keeps the direct signal clean; CRUSH 2 blends direct clean/crushed. DELAY SEND is labeled Crush Send; no delay echoes in Crush modes. |
 | Effect settings and save | Save Project | Each pattern remembers its selected FX types, added controls and extra sends. Save the project to keep them after reloading. Blank patterns use standard Delay/Reverb and default added controls. A queued pattern applies its FX when it begins playing. Added FX controls have no p-lock/LFO destinations; native track sends support locks. |

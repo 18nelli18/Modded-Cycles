@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.45 - 25 octobre2026
+Supermodel2.47 - 25 octobre2026
 
-Principal2.45. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
+Principal2.47. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
 ## Fonctions incluses
 
@@ -53,7 +53,7 @@ Principal2.45. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Chorus 1 / 2 | REVERB SEND / SIZE / FUNC + SIZE | Chorus Send par piste / Speed / Depth. Speed et Depth 0-127. Remplace la reverb du slot. |
 | Vinyl | REVERB SEND ; SIZE / FUNC + SIZE / FUNC puis TRACK + SIZE | Vinyl Send ; Crackle / Warble Amount / Warble Speed. Tenir FUNC puis TRACK pour Speed. Send 0 sec ; Crackle 0 coupe la poussiere. Pops/clics independants dans les pauses. Volume, pan et mute respectes. |
 | Delay standard | DELAY SEND / TIME / FUNC + TIME | Delay Send par piste / Time natif / Feedback natif. |
-| Delay DUB | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME | Delay Send par piste / Time natif / Feedback. Echos fortement filtres alternant gauche/droite, de plus en plus etroits dans la boucle. Casque ou deux sorties pour le mouvement. |
+| Delay DUB | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME | Delay Send par piste / Time natif / Feedback. Echos stereo fortement filtres, de plus en plus etroits dans la boucle. Une source centree joue sur les deux canaux des le premier echo, meme sans feedback. |
 | Ping Pong | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME | Send par piste / Time / Feedback. Echos stereo alternes gauche/droite ; casque ou deux sorties. |
 | Crusher Rate / Bits | CRUSH 1 ou 2 : TIME / FUNC + TIME | Rate 0-127, environ 750 Hz-48 kHz / Bits 2-16. Valeurs basses plus rugueuses. CRUSH 1 garde le direct propre ; CRUSH 2 melange direct propre/crushed. DELAY SEND affiche Crush Send ; pas d echo dans ces modes. |
 | Reglages et sauvegarde FX | Sauvegarder le projet | Chaque pattern garde ses types FX, commandes ajoutées et envois supplémentaires. Sauvegardez le projet pour les retrouver au chargement. Pattern vierge : Delay/Reverb standard et commandes ajoutées par défaut. Les FX d’un pattern en attente s’appliquent au début de sa lecture. Pas de destination p-lock/LFO pour les commandes ajoutées ; locks disponibles sur les envois natifs. |

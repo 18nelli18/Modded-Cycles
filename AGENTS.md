@@ -314,3 +314,8 @@ User: "Go ahead and push to main" for the supplied `all-features-polivoks-cpu-tr
 ## AveyCole main2.46 promotion (2026-10-25)
 
 User: "push to main, consistently 75 99 00 during same pattern". Promote exact standard145 SHA `f7f9e92d902f92c6f56c5baa964216c14cb35175271db160d8d6557e0c52535d`, MAIN `7cf4f9f66587dc1866f679dd76c4d40d3403efa943806e3f4ac5abc1da730549`. PUNCH optimizations plus MACRO parallel filter and faster HALL, QntM retained. Hardware report is A75 P99 O0 N0 for this user pattern only. Guides remain byte-identical at the user's request; no control or sound changes. Adult stays private; protected blurb hash `b3486b46a278b7d5561c3edd549f4adf299d358012b2631a0a6ab353232e2205` preserved. Continue optimization research separately from these approved bytes.
+
+
+## AveyCole main2.47 promotion (2026-10-25)
+
+User authorizes publishing148 and continuing optimization only in test. Exact standard148 SHA `442c1720818c7c5e6798cadbebbd29e37288eae09d9a80c3ce3b7b743f2397d4`, MAIN `3a225d0ecd7e08cc14f35c7c4cf0b5a02086bd06a1aa35261d289fbb8cec8e72`. DUB stereo on base146;147 optimizations excluded after higher hardware P report. No new hardware CPU result claimed. Adult private. Update DUB guide text; protected blurb unchanged. DX7 importer reliability investigation remains separate.

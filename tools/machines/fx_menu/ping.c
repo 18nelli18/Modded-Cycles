@@ -32,7 +32,7 @@ static void duck_wet(s32*out,const s32*in){
 #endif
 void fx_delay_return(s32*work){
  if(nd_active==5
-#ifdef FX_DUB_DISTINCT
+#if defined(FX_DUB_DISTINCT)&&!defined(FX_DUB_STEREO)
  ||nd_active==9
 #endif
  )for(u32 i=0;i<32;i++){s32 x=work[2*i];work[2*i]=work[2*i+1];work[2*i+1]=x;}
@@ -56,7 +56,8 @@ void fx_delay(s32*out,const s32*in,const s16*params,const s32*dl,const s32*dr){
 #endif
  else if(nd_active==10){fx_delay_state[4]=0;((void(*)(s32*,const s32*,const s16*))0x40057488)(out,in,params);duck_wet(out,in);}
 #endif
-#if defined(FX_CHEAP)&&!defined(FX_DUB_DISTINCT)
+#if defined(FX_CHEAP)&&(!defined(FX_DUB_DISTINCT)||defined(FX_DUB_STEREO))
+ /* DUB stereo : entree L/R native, filtres dub.S et feedback conserves. */
  else if(nd_active==9){fx_delay_state[4]=0;((void(*)(s32*,const s32*,const s16*))0x40057488)(out,in,params);}
 #endif
  else{
