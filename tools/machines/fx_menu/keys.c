@@ -51,7 +51,9 @@ u32 fx_diag_key(const u32*e){u32 code=e[3],down=e[4]&1,before_physical=physical,
 #endif
 /* Un cran accepte par40ms et par evenement, pas de saut de Wizard. */
 static u32 machine_stamp,machine_valid,machine_result;
-#ifdef FX_RETROSYN_PRIVATE
+#ifdef FX_PUNCH
+#define MACHINE_COUNT 24
+#elif defined(FX_RETROSYN_PRIVATE)
 #define MACHINE_COUNT 23
 #elif defined(FX_LEGACY)
 #define MACHINE_COUNT 22
@@ -61,7 +63,9 @@ static u32 machine_stamp,machine_valid,machine_result;
 #define MACHINE_COUNT 20
 #endif
 u32 fx_machine_step(u32 machine,s32 delta){
-#ifdef FX_RETROSYN_PRIVATE
+#ifdef FX_PUNCH
+static const u8 order[MACHINE_COUNT]={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,18,19,20,21,22,23,17};
+#elif defined(FX_RETROSYN_PRIVATE)
 static const u8 order[MACHINE_COUNT]={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,18,19,20,21,22,17};
 #elif defined(FX_LEGACY)
 static const u8 order[MACHINE_COUNT]={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,18,19,20,21,17};

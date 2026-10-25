@@ -33,6 +33,11 @@ void shadow_block(State*s,const Input*in,s32*out){
    }
   }
   if(in->punch&&s->age<384){u32 x=s->age&127;sum=(sum*(s32)(127-x))>>7;}
+#ifdef SHADOW_PUNCH_DISTORTION
+  /* PUNCH : drive x4 puis ecretage symetrique, avant VCA/gate natifs.
+   * Produits bornes sur32bits ; aucune allocation ni changement de parametre. */
+  if(in->punch)sum=clip(sum*4,-32767,32767);
+#endif
   out[i]=sum*4096;s->age++;
  }
 }

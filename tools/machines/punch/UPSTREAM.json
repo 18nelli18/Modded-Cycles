@@ -1,0 +1,14 @@
+{
+  "repository": "https://github.com/100demons/cycles-engines",
+  "commit": "2b61d3947110bf87826ceffbc0d5e39bc6cc30eb",
+  "path": "engines/punch",
+  "version": "0.5",
+  "credit": "100demons",
+  "license": "MIT",
+  "sha256": {
+    "punch.c": "1c146f06889b041944e93143c447c3b42d5c8f76a13e4328e8c0c7b6c977ef6b",
+    "punch_dsp.h": "79c2d3b02f8711015fd773aa5a3afa5ab3d00ad71d15d64f3646162681b34426",
+    "punch_tables.h": "233c6a9947c6d2b16bd6673edc6bb620d0d20cae1d006c427878c774f7ba077e",
+    "punch_icons.h": "14c70d8b85bc9f549d0934dab588ba5cab6852fdbdc3774387f799b4fe8881a8"
+  }
+}

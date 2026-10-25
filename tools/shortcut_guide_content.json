@@ -1,15 +1,15 @@
 {
-  "release": "2.43",
-  "stamp": "2026-10-25-sidechain-returns-main-243",
+  "release": "2.44",
+  "stamp": "2026-10-25-midi-return-main-244",
   "cards": [
     {
       "en": [
         "Machines and sound",
-        "Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN and MIDI Out. Elder is an original synth inspired by Junior by Fors."
+        "Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN, PUNCH and MIDI Out. Elder is an original synth inspired by Junior by Fors. PUNCH is an FM percussion engine by100demons (MIT)."
       ],
       "fr": [
         "Machines et son",
-        "Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN et MIDI Out. Elder est inspiré de Junior de Fors."
+        "Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN, PUNCH et MIDI Out. Elder est inspiré de Junior de Fors. PUNCH est un moteur de percussions FM de100demons (MIT)."
       ]
     },
     {
@@ -478,12 +478,12 @@
           "en": [
             "Machine browsing",
             "MACHINES + turn DATA",
-            "Turn DATA to choose a machine. MIDI Out is last."
+            "Turn DATA to choose a machine. MIDI Out is last. Scrolling through MIDI Out preserves your previous audio settings."
           ],
           "fr": [
             "Defilement machines",
             "MACHINES + tourner DATA",
-            "Tournez DATA pour choisir une machine. MIDI Out est en dernier."
+            "Tournez DATA pour choisir une machine. MIDI Out est en dernier. Le passage par MIDI Out conserve vos réglages audio précédents."
           ]
         },
         {
@@ -514,12 +514,12 @@
           "en": [
             "Shadow controls",
             "Select Shadow after TINY in MACHINES",
-            "COLOR: Grain; SHAPE: Density; SWEEP: Spread; CONTOUR: Chaos. PUNCH: ratcheting attack. Pitch, Fine, Decay and Gate are available. Pulsar/noise synth inspired by Opal Dust by Fors."
+            "COLOR: Grain; SHAPE: Density; SWEEP: Spread; CONTOUR: Chaos. PUNCH: distortion plus ratcheting attack. Pitch, Fine, Decay and Gate are available. Pulsar/noise synth inspired by Opal Dust by Fors."
           ],
           "fr": [
             "Commandes Shadow",
             "Choisir Shadow apres TINY dans MACHINES",
-            "COLOR : Grain ; SHAPE : Density ; SWEEP : Spread ; CONTOUR : Chaos. PUNCH : attaque répétée. Pitch, Fine, Decay et Gate disponibles. Synthé pulsar/bruit inspiré de Opal Dust de Fors."
+            "COLOR : Grain ; SHAPE : Density ; SWEEP : Spread ; CONTOUR : Chaos. PUNCH : distorsion et attaque répétée. Pitch, Fine, Decay et Gate disponibles. Synthé pulsar/bruit inspiré de Opal Dust de Fors."
           ]
         },
         {
@@ -592,6 +592,18 @@
             "RETROSYN",
             "MACHINES, juste avant MIDI Out",
             "COLOR, SHAPE (six modèles), SWEEP et CONTOUR. PITCH, DECAY, Gate et Punch disponibles."
+          ]
+        },
+        {
+          "en": [
+            "PUNCH controls",
+            "Select PUNCH before MIDI Out",
+            "SHAPE selects KIK, TOM, BNG, CNG, TAI, TIM, MAR, DJB, BLK, GNG, BUB or ZAP. COLOR controls timbre; SWEEP selects the ratio; FUNC + SWEEP adjusts between ratios. CONTOUR and DECAY shape the sound. Engine by100demons, MIT."
+          ],
+          "fr": [
+            "Commandes PUNCH",
+            "Choisir PUNCH avant MIDI Out",
+            "SHAPE choisit KIK, TOM, BNG, CNG, TAI, TIM, MAR, DJB, BLK, GNG, BUB ou ZAP. COLOR règle le timbre ; SWEEP choisit le ratio ; FUNC + SWEEP règle entre les ratios. CONTOUR et DECAY façonnent le son. Moteur de100demons, MIT."
           ]
         }
       ]
@@ -1358,6 +1370,18 @@
         "fr": "Mod Setup"
       },
       "rows": [
+        {
+          "en": [
+            "Access and sound editing",
+            "Tap SETTINGS + TRACK",
+            "Available from the main screen or machine selection. DATA navigates Mod Setup; sound knobs show the edited parameter for two seconds, then return to the same menu position. BACK closes the popup first, then Mod Setup; machine selection stays open underneath."
+          ],
+          "fr": [
+            "Accès et réglage du son",
+            "Appui bref sur SETTINGS + TRACK",
+            "Disponible depuis l’écran principal ou la sélection des machines. DATA parcourt Mod Setup ; les commandes du son affichent le paramètre deux secondes puis reviennent à la même position. BACK ferme d’abord la fenêtre puis Mod Setup ; la sélection des machines reste ouverte en dessous."
+          ]
+        },
         {
           "en": [
             "Pad",

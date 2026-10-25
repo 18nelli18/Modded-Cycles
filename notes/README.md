@@ -278,3 +278,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [172 — Mod Setup vers MACHINES](172-transfert-menu-machines.md) | Principal2.42 :129 regulier approuve, fermeture du menu et restitution de la molette au selecteur natif. |
 
 | [173 — Sidechain des retours FX](173-sidechain-retours-fx.md) | Principal2.43 :130 regulier approuve ; cibles Rev./Del. par source/pattern, payload F4 dans les memes54octets, CRC24 conserve. |
+
+| [173 — Popups, MIDI et PUNCH Shadow](173-popup-midi-et-punch-shadow.md) | Principal2.44 : v141 exact approuve ; retour MIDI et affichage Mod Setup, distortion Shadow et PUNCH. |

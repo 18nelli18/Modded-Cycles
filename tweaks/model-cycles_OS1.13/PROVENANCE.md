@@ -198,3 +198,7 @@ Module original de persistance FX par pattern autour des codecs natifs OS1.13, s
 ### Supermodel main2.39 — Sidechain122
 
 Ducking original Q16 par declenchement et listes Scramble par pattern, autour des codecs et menus natifs. Aucune implementation tierce de compresseur copiee. Menu reprend le gabarit MenuView TinyGregAudio/projet MIT existant ; credits du firmware cumulatif conserves. Notes169, recettes uniquement. Image reguliere122 exacte approuvee, aucun lexique adulte.
+
+## Principal2.44 : PUNCH
+
+Moteur FM PUNCH de100demons, cycles-engines v0.5, commit2b61d3947110bf87826ceffbc0d5e39bc6cc30eb, licence MIT (`LICENSE-Punch.txt`). Sources C/H upstream conservees, empreintes dans tools/machines/punch/UPSTREAM.json. Integration privee131 promue avec le v141 regulier approuve.

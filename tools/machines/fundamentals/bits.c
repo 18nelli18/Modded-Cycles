@@ -24,7 +24,13 @@ u32 bf_fine(u32 c,s32 v,s32 d,s32 lo,s32 hi){
  if(!bf_active())return ((u32(*)(u32,s32,s32,s32,s32))saved[1])(c,v,d,lo,hi);
  return change(v,d,1);
 }
+#ifdef PUNCH_SWEEP
+extern s32 punch_turn(s32,s32);
+#endif
 u32 bf_edit(u32 o,u32 desc,s32 v,s32 d,u32 original){
+#ifdef PUNCH_SWEEP
+ if(desc==158&&d)return (u32)punch_turn(v,d);
+#endif
  if(desc==91&&bf_active())return change(v,d,0);
  return bf_native_edit(o,desc,v,d,original);
 }

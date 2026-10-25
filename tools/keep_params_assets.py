@@ -46,11 +46,19 @@ kr_reset_hook:
  addq.l #8,%sp
  jmp 0x40014804
 """
-def apply(root,build,prefix,tail,meta,patch,isolate=False,max_machine=18):
+def apply(root,build,prefix,tail,meta,patch,isolate=False,max_machine=18,midi_isolate=False,midi_boundary=False,scroll_preserve=False,midi_cleanup=False):
  from gen_governor_recovery_test import TAIL
  c_source=C;s_source=S
  if isolate:
   from wizard_isolation_assets import C as c_source,S as s_source
+ if midi_isolate:
+  from midi_isolation_assets import C as c_source,S as s_source
+ if midi_boundary:
+  from midi_boundary_assets import C as c_source,S as s_source
+ if scroll_preserve:
+  from scroll_preserve_assets import C as c_source,S as s_source
+ if midi_cleanup:
+  from midi_cleanup_assets import C as c_source,S as s_source
  if max_machine!=18:c_source=c_source.replace('old>18||machine>18','old>'+str(max_machine)+'||machine>'+str(max_machine))
  cross=str(root.parent/'retrosyn-integration/build/m68k-toolchain/pkg/bin/m68k-elf-');objects=[]
  for name,source in [('keep_params.c',c_source),('keep_params.S',s_source)]:
@@ -71,4 +79,4 @@ def apply(root,build,prefix,tail,meta,patch,isolate=False,max_machine=18):
  else:
   patch(0x400a278e,bytes.fromhex('4bf9401bb194'),bytes.fromhex('4bf94001416c'),prefix)
   patch(0x400a2832,bytes.fromhex('4eb9401bb194'),bytes.fromhex('4eb94001416c'),prefix)
- return dict(code=CODE,code_bytes=len(blob),end=sy['kr_end'],symbols=sy,parameters=['Pitch','Decay','Color','Shape','Sweep','Contour'],clamp_to_destination_bounds=True,midi_transition_native=True,wizard_preserve_pitch_decay_only=True,wizard_isolated_banks=isolate,wizard_menu_snapshot_restored=not isolate,wizard_snapshot_slots=[18,11,12,13,14],wizard_packed_options_tags=[7,15],status='experimental',hardware_tested=False)
+ return dict(code=CODE,code_bytes=len(blob),end=sy['kr_end'],symbols=sy,parameters=['Pitch','Decay','Color','Shape','Sweep','Contour'],clamp_to_destination_bounds=True,midi_transition_native=not midi_isolate,midi_isolated_banks=midi_isolate,midi_restore_after_selection=midi_boundary,canonical_scroll_bank=scroll_preserve,midi_full_audio_restore=midi_cleanup,wizard_preserve_pitch_decay_only=True,wizard_isolated_banks=isolate,wizard_menu_snapshot_restored=not isolate,wizard_snapshot_slots=[18,11,12,13,14],wizard_packed_options_tags=[7,15],status='experimental',hardware_tested=False)

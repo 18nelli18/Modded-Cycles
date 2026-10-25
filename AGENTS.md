@@ -299,3 +299,8 @@ User: "Go ahead and push that" after receiving129. Publish exact regular129 SHA 
 ## AveyCole main2.43 promotion (2026-10-25)
 
 User: "130 worked, push to main". Publish exact regular130 SHA `881099ad7b7d8505f1850f13ffb17eb5688ffa5e69e0038d9cf1e2ae5be22fb3`, MAIN `176faf7748d706a15f65652383a7e5cc495817ff78bfad830dd6de71f288fe18`. Rev./Del. Sidechain return targets per source/pattern; F4 keeps the same54reserved bytes and CRC24, reads FXS1/F2/F3. Adult private, supplied blurb identical.
+
+
+## AveyCole main2.44 promotion (2026-10-25)
+
+User: "Go ahead and push v141". Promote exact standard shared-filter141 SHA `d6b621c9b4aee2f38a26348fa9a3ea37c42f7caff334bcfad4ff1c510a34bb76`, MAIN `0e2b8f2c14fa836532a1a7eb5f9907d29f36e36f0afa0ebe18a071f57ec40bd9`. Popup fix, full MIDI/audio word restoration before late cleanup, PUNCH engine and PUNCH-controlled Shadow distortion. Adult stays private; supplied blurb unchanged. No PUNCH/TINY decay changes.
