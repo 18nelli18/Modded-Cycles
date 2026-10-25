@@ -274,3 +274,8 @@ User: "115 worked, go ahead and push that." Exact regular shared-filter v115 SHA
 ## AveyCole main 2.38 promotion (2026-10-24)
 
 User: "121 worked push to main". Publish the exact regular shared-filter v121 SHA256 `8c2ed40ff1687dfa9ecaace5234b902133db1df45bb266d94f0ecfa0b5d4c834`, MAIN `cb9b7745abb1b349ed42ea0183a1c1713927d7ff9ab858e6850df7726ba3f296`. Pattern FX types/settings/sends, blank defaults, actual queued activation and WAVE +6 dB. Includes the v120 startup repair confirmed by the user before pattern work. Do not incorporate later lab refinements. Adult stays private. User additionally requests resource links on the combined importer page. Preserve the supplied flasher blurb byte for byte: "Don't edit the blurb."
+
+
+## AveyCole main2.39 promotion (2026-10-24)
+
+User: "122 worked, push that to main." Publish exact regular shared-filter122 SHA256 `7d2d564cc1cf34c585ec2bad3134531197d97d2136ef57cab73ca53d31172db0`, MAIN `196f12214a3d382cfc037e5d933e17c4ffdb74171b177cf18453445a1e889a07`. Sidechain routing and controls plus Scramble masks per pattern, readable stacked Side/Chain menu. Adult stays private; preserve supplied blurb byte for byte. F2 pattern records read old FXS1;121 cannot restore new custom FX records.

@@ -2,7 +2,7 @@
 import json,struct,subprocess
 CODE=0x467c9000;BSS=0x467cf000;END=0x467d0000
 
-def apply(root,build,prefix,rt,tail,meta,patch,short_labels=False,decay_fix=False,native_decay=False,delete_reset=False):
+def apply(root,build,prefix,rt,tail,meta,patch,short_labels=False,decay_fix=False,native_decay=False,delete_reset=False,per_pattern=False):
  from gen_governor_recovery_test import BASE,RUNTIME,TAIL
  from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_040
  profile=json.loads((root/'build/volume-pan-toggle/volume-pan-toggle-test.json').read_text());allsy={k:int(v,16) for t in profile['composedTweaks'] for k,v in t.get('symbols',{}).items()};sy=meta['symbols'];dx=meta['dx_symbols'];sc={k:v for k,v in allsy.items() if k.startswith('sc_')}
@@ -32,7 +32,7 @@ def apply(root,build,prefix,rt,tail,meta,patch,short_labels=False,decay_fix=Fals
  sub+='\n'+''.join(f'.Lname{i}: .asciz "{"Cnt" if short_labels and label=="Contour" else label}"\n' for i,label in enumerate(labels))+'.Lallocator: .byte 0\n.balign 4\n.Lts_rows:\n'+''.join(f'.long 0,0,0,.Lname{i},0,1,.Lts_label,0,0,0,0,0,0,1,{cb},0,0,0,0,0,0\n' for i,cb in enumerate(callbacks));(build/'sx_sub.S').write_text(sub)
  cross=str(root.parent/'retrosyn-integration/build/m68k-toolchain/pkg/bin/m68k-elf-');objects=[]
  for src in (root/'tools/machines/scramble_mask/mask.c',root/'tools/machines/scramble_mask/hooks.S',build/'sx_tramp.S',build/'sx_root.S',build/'sx_sub.S',*([root/'tools/machines/scramble/step_delete.s'] if delete_reset else [])):
-  obj=build/(src.name+'.o');objects.append(obj);subprocess.run([cross+'gcc.exe','-mcpu=54418','-Os','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',*(['-DSX_DECAY_FIX=1'] if decay_fix else []),*(['-DSX_DECAY_NATIVE=1'] if native_decay else []),'-c',str(src),'-o',str(obj)],check=True)
+  obj=build/(src.name+'.o');objects.append(obj);subprocess.run([cross+'gcc.exe','-mcpu=54418','-Os','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',*(['-DSX_PATTERN=1'] if per_pattern else []),*(['-DSX_DECAY_FIX=1'] if decay_fix else []),*(['-DSX_DECAY_NATIVE=1'] if native_decay else []),'-c',str(src),'-o',str(obj)],check=True)
  ld=build/'scramble_mask.ld';elf=ld.with_suffix('.elf');binary=ld.with_suffix('.bin')
  ld.write_text(f'SECTIONS {{ .text {CODE:#x}: {{ *(.text*) *(.rodata*) }} . = ALIGN(4); .data : {{ *(.data*) }} . = ALIGN(4); sx_code_end = .; .bss {BSS:#x} (NOLOAD): {{ *(.bss*) *(COMMON) }} . = ALIGN(4); sx_end = .; }}\n'+'\n'.join(f'{k} = {v:#x};' for k,v in aliases.items()))
  subprocess.run([cross+'ld.exe','-T',str(ld),'-o',str(elf),*map(str,objects)],check=True);subprocess.run([cross+'objcopy.exe','-O','binary','-j','.text','-j','.data',str(elf),str(binary)],check=True)

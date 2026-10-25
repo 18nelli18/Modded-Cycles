@@ -193,3 +193,8 @@ WAVE et convertisseur existants : Kevin-Shallvari/Modded-Cycles, revision5b6108e
 ### Supermodel main2.38 — pattern FX121
 
 Module original de persistance FX par pattern autour des codecs natifs OS1.13, sans changer leurs tailles ; recettes uniquement. WAVE existant Kevin-Shallvari/Modded-Cycles, MIT, revision5b6108ee57cdee4767f91bfb894ccefaadf4210d : gain x2 saturant ajoute en sortie. Table originale AV-WAVE-Morph conservee. Voir notes166/167. Image reguliere121 exacte approuvee par AveyCole ; aucun lexique adulte.
+
+
+### Supermodel main2.39 — Sidechain122
+
+Ducking original Q16 par declenchement et listes Scramble par pattern, autour des codecs et menus natifs. Aucune implementation tierce de compresseur copiee. Menu reprend le gabarit MenuView TinyGregAudio/projet MIT existant ; credits du firmware cumulatif conserves. Notes169, recettes uniquement. Image reguliere122 exacte approuvee, aucun lexique adulte.

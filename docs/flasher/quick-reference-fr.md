@@ -1,18 +1,27 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.38 - 24 octobre2026
+Supermodel2.39 - 24 octobre2026
 
-Principal2.38. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
+Principal2.39. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
 ## Fonctions incluses
 
 **Machines et son:** Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN et MIDI Out. Elder est inspiré de Junior de Fors. La selection conserve les valeurs synth ; quatre commandes Wizard separees tant que MACHINES reste ouvert.
 
-**Performance et séquenceur:** Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute verrouillé et solo.
+**Performance et séquenceur:** Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute verrouillé et solo. Sidechain déclenché par les notes et listes Scramble par pattern.
 
 **Filtres et effets:** Filtres pistes/Wizard inspires Polivoks, second LFO, MACRO Fine/Lo-Fi ; GATED, HALL, Ring Mod, ROOM, PS1, Vinyl, Reverb et Chorus 1/2 ; Phaser, DUCK, DUB, Ping Pong, Delay et Crush 1/2. Menus opaques appliques au relachement TRACK. Optimisations PS1/filtre cumulees. Les deux Shimmer et tous les modes combines sont retires.
 
 **Routage et travail:** MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif.
+
+## Nouveautés 2.39 - Sidechain et Scramble par pattern
+
+| Fonction | Commandes | Comportement |
+|---|---|---|
+| Routage Sidechain | Choisir la source ; maintenir SETTINGS + TRACK ; Sidechain > DATA | Cochez avec DATA les pistes à atténuer lors des notes de la source, parmi les cinq autres. Pas de cible vers soi-même. DATA parcourt et coche. Plusieurs sources : atténuation la plus profonde par cible. DUCK reste un type de delay séparé. |
+| Depth / Atk / Hold / Rel | Sous les cases : clic DATA, tourner, puis clic pour finir | Depth : 0–100 %, 16 niveaux. Atk : 0–160 ms. Hold : 0–120 ms. Rel : 10 ms–3 s. BACK termine l’édition puis revient à Mod Setup. Départ conseillé : source sur chaque temps, Depth 60 %, Attack 0 ms, Hold 0 ms, Release 150 ms. Décocher toutes les cibles désactive la source. |
+| Sauvegarde par pattern | Save Project après modification | Routage et commandes Sidechain, six listes Scramble, types et réglages FX ajoutés propres à chaque pattern. Sauvegardez le projet pour les conserver au chargement. Pattern vierge : Sidechain désactivé et listes Scramble par défaut. Changement en attente appliqué au début du prochain pattern. |
+| Compatibilité projet | Garder une copie avant retour à un ancien firmware | Ce build charge les FX par pattern du v121. Les anciens firmwares ne restaurent pas les FX personnalisés des nouveaux records v122. Gardez une copie antérieure du projet pour un éventuel retour. |
 
 ## Nouveautés 2.38 - FX par pattern et WAVE plus fort
 
@@ -60,7 +69,7 @@ Principal2.38. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Préécoute de pas | Maintenir TRIG + PAGE | Écoutez le pas et ses locks à l’arrêt ou en pause. |
 | Slide | SETTINGS + TRIG | Active ou désactive le glissement de paramètres sur le pas. |
 | Sequence Genie | SETTINGS + PAGE | Générateur de la piste sélectionnée. DATA choisit ; Generate ou Queue, avec frontière Loop/Page. |
-| SCRAMBLE | Appui bref SETTINGS + TRACK | Au relachement,tirez les parametres coches de cette piste : Pitch,Decay,Color,Shape,Sweep,Contour. Choix dans Mod Setup > SCRM. Decay fonctionne ; Punch reste inchange. Quatre commandes originales actives par defaut. Pas marques : meme liste,son de base intact. |
+| SCRAMBLE | Appui bref SETTINGS + TRACK | Au relachement,tirez les parametres coches de cette piste : Pitch,Decay,Color,Shape,Sweep,Contour. Choix dans Mod Setup > SCRM. Decay fonctionne ; Punch reste inchange. Quatre commandes originales actives par defaut. Pas marques : meme liste,son de base intact. La liste est propre à cette piste dans le pattern courant ; sauvegardez le projet pour la conserver. |
 | Pas SCRAMBLE / suppression | Maintenir un pas + SETTINGS + TRACK bref ; supprimer normalement | Bascule SCRAMBLE sur ce pas. Supprimer le trig retire marque et locks ; le nouveau trig repart propre. Autres pas et pistes conserves. |
 | Configuration Control All | TRACK + TRIG 1–6 | Inclut ou exclut les pistes audio des changements collectifs. |
 | Beat repeat audio | Maintenir TRACK + RETRIG, puis un TRIG 1–16 | Le pas choisit la division des pistes incluses. Relâchez un modificateur ou le pas pour arrêter. |
@@ -204,9 +213,10 @@ Maintenez SETTINGS + TRACK pour ouvrir Mod Setup puis relÃ¢chez. Un appui bref
 | Mute | Stk / LTC ; défaut Stk | LTC : TRACK + appui FUNC verrouille ; FUNC quitte. FUNC + pad en mute verrouillé : solo ; rappuyer ou quitter restaure les mutes. |
 | Delay | Stk / Div ; défaut Stk | Stk : Time natif. Div : divisions musicales, pointées et triolets. Positions correspondantes corrigées au tempo ; toutes les positions ne sont pas quantifiées. Utilisé en mode Delay. |
 | DX | Off / On ; défaut Off | DX On : appui bref FUNC, second appui sous 350 ms, maintien au moins 0,5 seconde puis relacher. Toute autre commande annule. Affiche/remet a zero A/P/O/N : charge moyenne/pic, overruns, voix coupees par le gouverneur. Remplace ancien raccourci ; verrou retrig sans diagnostic. Off par defaut. |
-| SCRM | DATA ouvre ; tourner et appuyer ; BACK revient | Six cases par piste : Pitch,Decay,Color,Shape,Sweep,Contour. Pitch/Decay desactives par defaut, quatre autres actives. Choix conserves entre projets et apres extinction ; sauvegarde a l’arret. Wizard autorise Pitch/Decay, commandes sample/modes exclues. |
+| SCRM | DATA ouvre ; tourner et appuyer ; BACK revient | Six cases par piste : Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay désactivés par défaut, quatre autres activés. Six listes propres à chaque pattern ; Save Project les conserve au chargement. Wizard autorise Pitch/Decay, commandes sample/modes exclues. |
+| Routage Sidechain | Choisir la source ; maintenir SETTINGS + TRACK ; Sidechain > DATA | Cochez avec DATA les pistes à atténuer lors des notes de la source, parmi les cinq autres. Pas de cible vers soi-même. DATA parcourt et coche. Plusieurs sources : atténuation la plus profonde par cible. DUCK reste un type de delay séparé. |
 
-Préférences globales. BACK ferme Mod Setup et sauvegarde ses préférences ; la liste Scramble de chaque piste se sauvegarde au retour du sous-menu. En lecture, la sauvegarde attend son arrêt. Arrêtez et attendez la fin avant extinction. Les types FX et réglages ajoutés sont séparés : chaque pattern les garde et Save Project les conserve au chargement.
+BACK ferme Mod Setup et sauvegarde ses préférences globales ; en lecture, cette sauvegarde attend l’arrêt. Arrêtez et attendez la fin avant extinction. Routage/réglages Sidechain, listes Scramble et types/réglages FX ajoutés propres à chaque pattern : Save Project les conserve au chargement. Fermer un sous-menu ne sauvegarde pas le projet.
 
 ## Lexique SPEAK
 

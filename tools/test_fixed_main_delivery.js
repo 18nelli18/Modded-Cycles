@@ -1,2 +1,2 @@
-/* Livraison canonique exacte du principal121, blurb fourni protege. */
-require("./test_v121_delivery.js");
+/* Livraison reguliere122 exacte, blurb fourni protege. */
+require("./test_v122_delivery.js");

@@ -35,10 +35,11 @@ def apply(root,build,prefix,rt,tail,meta,patch,fx,patterns=False,tiny=None,retro
   off=at-(BASE if area is prefix else TAIL);assert bytes(area[off:off+size])==old
   tramp+=f'.globl {name}\n{name}:\n.byte '+','.join(map(str,old))+f'\njmp {at+size:#x}\n'
  (build/'fxp_tramp.S').write_text(tramp);objects=[]
- for src in [root/'tools/machines/fx_project/project.c',build/'fxp_tramp.S']+([root/'tools/machines/fx_project/patterns.c',root/'tools/machines/fx_project/pattern-switch.S'] if patterns else []):
+ for src in [root/'tools/machines/fx_project/project.c',build/'fxp_tramp.S']+([root/('tools/machines/fx_project/patterns-duck.c' if 'sidechain' in meta else 'tools/machines/fx_project/patterns.c'),root/'tools/machines/fx_project/pattern-switch.S'] if patterns else []):
   obj=build/('fxp_'+src.name+'.o');objects.append(obj);subprocess.run([cross+'gcc.exe','-mcpu=54418','-O2','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',*(['-DFX_PATTERN=1'] if patterns else []),'-I'+str(build),'-c',str(src),'-o',str(obj)],check=True)
- bss=0x468bd000 if patterns else BSS;limit=0x468c0000 if patterns else END
+ bss=0x46836000 if 'sidechain' in meta else 0x468bd000 if patterns else BSS;limit=0x46840000 if 'sidechain' in meta else 0x468c0000 if patterns else END
  ld=build/'fxp.ld';elf=build/'fxp.elf';binary=build/'fxp.bin';ld.write_text(f'SECTIONS {{ .text {CODE:#x} : {{ *(.text*) *(.rodata*) }} . = ALIGN(4); fxp_code_end = .; .bss {bss:#x} (NOLOAD) : {{ *(.bss*) *(COMMON) }} fxp_end = .; }}\nfxp_native_new = 0x40061738;\nfxp_native_frame = {frame_target:#x};\nfxs_native_copy = 0x4008f1f0;\nwave_render_original = 0x467796fc;')
+ if 'sidechain' in meta:ld.write_text(ld.read_text()+'\n'+''.join(f'{k} = {meta["sidechain"]["symbols"][k]:#x};\n' for k in ('du_config','du_reset'))+f'sx_masks = {meta["scramble_mask"]["symbols"]["sx_masks"]:#x};\n')
  subprocess.run([cross+'ld.exe','-T',str(ld),'-o',str(elf),*map(str,objects)],check=True);subprocess.run([cross+'objcopy.exe','-O','binary','-j','.text',str(elf),str(binary)],check=True)
  sy={v[2]:int(v[0],16) for line in subprocess.check_output([cross+'nm.exe',str(elf)],text=True).splitlines() if len(v:=line.split())==3};code=binary.read_bytes();assert CODE+len(code)<BSS and sy['fxp_end']<limit
  assert not any(tail[CODE-TAIL:CODE-TAIL+len(code)]),'FXP code reservation occupied'

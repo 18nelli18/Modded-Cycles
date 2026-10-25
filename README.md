@@ -174,3 +174,6 @@ Main 2.37 serves the user-tested v115: WAVE includes the AV-WAVE-Morph starter t
 
 
 Main 2.38 serves the user-tested v121: selected FX types and added settings belong to each pattern. Blank patterns start with standard Delay/Reverb; queued switches apply when the pattern starts. Save the project to preserve these settings after reloading. WAVE output gains 6 dB. [Current controls and printable guide](docs/flasher/shortcut-guide.html). [WAV/DX7 importers and resource links](docs/flasher/convert.html).
+
+
+Main 2.39 serves the user-tested regular v122. Mod Setup > Sidechain adds note-triggered volume ducking with per-source target checkboxes and Depth/Attack/Hold/Release. Sidechain and Scramble checklists save per pattern with Save Project. Blank patterns start with Sidechain off and default Scramble selections. DUCK remains a separate delay type. [Controls and printable guide](docs/flasher/shortcut-guide.html).

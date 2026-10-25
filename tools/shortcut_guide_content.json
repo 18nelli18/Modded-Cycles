@@ -1,6 +1,6 @@
 {
-  "release": "2.38",
-  "stamp": "2026-10-24-pattern-fx-wave-level-main-238",
+  "release": "2.39",
+  "stamp": "2026-10-24-sidechain-pattern-scramble-main-239",
   "cards": [
     {
       "en": [
@@ -15,11 +15,11 @@
     {
       "en": [
         "Performance and sequencing",
-        "Arpeggiator, held-note octave 0, ChordKeys and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching mute and solo."
+        "Arpeggiator, held-note octave 0, ChordKeys and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching mute and solo. Trigger-based Sidechain and per-pattern Scramble checklists."
       ],
       "fr": [
         "Performance et séquenceur",
-        "Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute verrouillé et solo."
+        "Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute verrouillé et solo. Sidechain déclenché par les notes et listes Scramble par pattern."
       ]
     },
     {
@@ -44,6 +44,62 @@
     }
   ],
   "sections": [
+    {
+      "title": {
+        "en": "New in 2.39 - Sidechain and per-pattern Scramble",
+        "fr": "Nouveautés 2.39 - Sidechain et Scramble par pattern"
+      },
+      "rows": [
+        {
+          "en": [
+            "Sidechain routing",
+            "Select source track; hold SETTINGS + TRACK; Sidechain > DATA",
+            "Check any of the other five tracks with DATA to duck their volume on source note triggers. The source cannot target itself. Scroll with DATA; click a checkbox to toggle. Multiple sources use the deepest duck on each target. DUCK remains a separate delay type."
+          ],
+          "fr": [
+            "Routage Sidechain",
+            "Choisir la source ; maintenir SETTINGS + TRACK ; Sidechain > DATA",
+            "Cochez avec DATA les pistes à atténuer lors des notes de la source, parmi les cinq autres. Pas de cible vers soi-même. DATA parcourt et coche. Plusieurs sources : atténuation la plus profonde par cible. DUCK reste un type de delay séparé."
+          ]
+        },
+        {
+          "en": [
+            "Depth / Atk / Hold / Rel",
+            "Scroll below checkboxes; click DATA, turn, click to finish",
+            "Depth: 0–100%, 16 levels. Atk: 0–160 ms. Hold: 0–120 ms. Rel: 10 ms–3 s. BACK finishes editing, then returns to Mod Setup. Start with a four-on-the-floor source, Depth 60%, Attack 0 ms, Hold 0 ms, Release 150 ms. Untick all targets to disable that source."
+          ],
+          "fr": [
+            "Depth / Atk / Hold / Rel",
+            "Sous les cases : clic DATA, tourner, puis clic pour finir",
+            "Depth : 0–100 %, 16 niveaux. Atk : 0–160 ms. Hold : 0–120 ms. Rel : 10 ms–3 s. BACK termine l’édition puis revient à Mod Setup. Départ conseillé : source sur chaque temps, Depth 60 %, Attack 0 ms, Hold 0 ms, Release 150 ms. Décocher toutes les cibles désactive la source."
+          ]
+        },
+        {
+          "en": [
+            "Per-pattern saving",
+            "Save Project after edits",
+            "Sidechain routing and controls, six Scramble checklists, FX types and added FX settings belong to each pattern. Save the project to keep changes after reloading. Blank patterns have Sidechain off and the default Scramble checklist. Queued changes apply when the next pattern starts."
+          ],
+          "fr": [
+            "Sauvegarde par pattern",
+            "Save Project après modification",
+            "Routage et commandes Sidechain, six listes Scramble, types et réglages FX ajoutés propres à chaque pattern. Sauvegardez le projet pour les conserver au chargement. Pattern vierge : Sidechain désactivé et listes Scramble par défaut. Changement en attente appliqué au début du prochain pattern."
+          ]
+        },
+        {
+          "en": [
+            "Project compatibility",
+            "Keep a backup before downgrading",
+            "This build loads the pattern FX saved by v121. Earlier firmware cannot restore custom FX saved in v122’s new pattern records. Keep an earlier project backup if you need to return to older firmware."
+          ],
+          "fr": [
+            "Compatibilité projet",
+            "Garder une copie avant retour à un ancien firmware",
+            "Ce build charge les FX par pattern du v121. Les anciens firmwares ne restaurent pas les FX personnalisés des nouveaux records v122. Gardez une copie antérieure du projet pour un éventuel retour."
+          ]
+        }
+      ]
+    },
     {
       "title": {
         "en": "New in 2.38 - Pattern FX and louder WAVE",
@@ -350,12 +406,12 @@
           "en": [
             "SCRAMBLE",
             "Quick tap SETTINGS + TRACK",
-            "On release, randomize the checked Pitch, Decay, Color, Shape, Sweep and Contour parameters for this track. Choose them in Mod Setup > SCRM. Decay now works; Punch stays unchanged. The original four default On. Marked steps use the same checklist without changing the base sound."
+            "On release, randomize the checked Pitch, Decay, Color, Shape, Sweep and Contour parameters for this track. Choose them in Mod Setup > SCRM. Decay now works; Punch stays unchanged. The original four default On. Marked steps use the same checklist without changing the base sound. The checklist now belongs to this track in the current pattern; save the project to preserve it."
           ],
           "fr": [
             "SCRAMBLE",
             "Appui bref SETTINGS + TRACK",
-            "Au relachement,tirez les parametres coches de cette piste : Pitch,Decay,Color,Shape,Sweep,Contour. Choix dans Mod Setup > SCRM. Decay fonctionne ; Punch reste inchange. Quatre commandes originales actives par defaut. Pas marques : meme liste,son de base intact."
+            "Au relachement,tirez les parametres coches de cette piste : Pitch,Decay,Color,Shape,Sweep,Contour. Choix dans Mod Setup > SCRM. Decay fonctionne ; Punch reste inchange. Quatre commandes originales actives par defaut. Pas marques : meme liste,son de base intact. La liste est propre à cette piste dans le pattern courant ; sauvegardez le projet pour la conserver."
           ]
         },
         {
@@ -1586,12 +1642,24 @@
           "en": [
             "SCRM",
             "DATA opens; turn and press DATA; BACK returns",
-            "Six checkboxes per track: Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay default Off; the original four default On. Choices persist across projects and power cycles; saving waits until playback stops. Wizard allows Pitch/Decay; its sample/mode controls stay excluded."
+            "Six checkboxes per track: Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay default Off; the original four default On. Each pattern keeps its own six checklists; Save Project preserves them after reloading. Wizard allows Pitch/Decay; its sample/mode controls stay excluded."
           ],
           "fr": [
             "SCRM",
             "DATA ouvre ; tourner et appuyer ; BACK revient",
-            "Six cases par piste : Pitch,Decay,Color,Shape,Sweep,Contour. Pitch/Decay desactives par defaut, quatre autres actives. Choix conserves entre projets et apres extinction ; sauvegarde a l’arret. Wizard autorise Pitch/Decay, commandes sample/modes exclues."
+            "Six cases par piste : Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay désactivés par défaut, quatre autres activés. Six listes propres à chaque pattern ; Save Project les conserve au chargement. Wizard autorise Pitch/Decay, commandes sample/modes exclues."
+          ]
+        },
+        {
+          "en": [
+            "Sidechain routing",
+            "Select source track; hold SETTINGS + TRACK; Sidechain > DATA",
+            "Check any of the other five tracks with DATA to duck their volume on source note triggers. The source cannot target itself. Scroll with DATA; click a checkbox to toggle. Multiple sources use the deepest duck on each target. DUCK remains a separate delay type."
+          ],
+          "fr": [
+            "Routage Sidechain",
+            "Choisir la source ; maintenir SETTINGS + TRACK ; Sidechain > DATA",
+            "Cochez avec DATA les pistes à atténuer lors des notes de la source, parmi les cinq autres. Pas de cible vers soi-même. DATA parcourt et coche. Plusieurs sources : atténuation la plus profonde par cible. DUCK reste un type de delay séparé."
           ]
         }
       ]

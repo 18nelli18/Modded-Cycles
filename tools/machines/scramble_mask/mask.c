@@ -26,7 +26,11 @@ static u32 file(u32 write,u8 *b){u32 h[4]={0},ok=0;u8 extra;if(N(0x4007bc5e)("/S
  if(write){if(!N(0x4007bb76)(h,0,18)&&N(0x4007bb0a)(b,18,h)==18&&!N(0x4007e2f6)(h))ok=1;}
  else if(N(0x4007baaa)(b,18,h)==18&&!N(0x4007baaa)(&extra,1,h))ok=1;
  if(N(0x4007bc1c)(h))ok=0;return ok;}
-static void service(void){if(*(volatile u32*)0x40a7883c==1||!N(0x400d0a10)())return;u8 b[18]={83,67,48,49,0,0,0,0,0,0,0,0,0,0,0,0,165,90};
+static void service(void){
+#ifdef SX_PATTERN
+ return;
+#endif
+if(*(volatile u32*)0x40a7883c==1||!N(0x400d0a10)())return;u8 b[18]={83,67,48,49,0,0,0,0,0,0,0,0,0,0,0,0,165,90};
  if(!loaded){loaded=1;if(file(0,b)){u32 good=b[0]==83&&b[1]==67&&b[2]==48&&b[3]==49&&b[16]==165&&b[17]==90;
   for(u32 i=0;i<6;i++)if(b[4+i]>63||b[10+i]!=(u8)~b[4+i])good=0;
   if(good)for(u32 i=0;i<6;i++)sx_masks[i]=b[4+i];}}
