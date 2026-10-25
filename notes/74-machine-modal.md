@@ -457,6 +457,28 @@ Flasher l'OS 2.1 (MAIN OS `e5a333c9…cf77`, 22/10/2026), puis :
 6. Six pistes MODAL longtemps (un pattern), puis changer de projet : pas de gel (la mémoire `0x46800000..`).
 7. Les autres machines comme avant (un moteur du Syntakt, MACRO, ACID, le Sampler).
 
+### 7.1 Premier retour sur la machine (25/10/2026)
+
+Firmware de la PR #112 (MAIN OS `84455c19…afd0`, avec §5.5 et le sample excitateur). Maxime : « Modal marche.
+seulement, il prends beaucoup de charge, environ 30% en mode 4 voix. »
+
+- `[FAIT]` MODAL marche sur la machine ; environ 30 % pour une piste en 4 voix (le modèle de Rings n'est pas précisé).
+- `[FAIT en émulation]` le modèle du coût (`hwcost.py`, `build/modal4_model.py`) : MODAL seule en 4 voix, ses
+  réglages par défaut, 5 notes à 12 blocs d'écart (les 4 voix sonnent ensemble), part de la piste :
+
+| SHAPE | DECAY 64 | DECAY 110 |
+|---|---|---|
+| 0 modal | 18,1 % | 18,3 % |
+| 1 cordes sympathiques | 31,1 % | 31,2 % |
+| 2 corde | 39,2 % | 40,8 % |
+| 3 cordes en accord | 31,1 % | 31,3 % |
+
+- Le relevé est dans la fourchette du modèle (cordes sympathiques ou en accord, ou la corde avec moins de 4 voix qui
+  sonnent). En 4 voix, MODAL calcule 4 résonateurs à la fois : pour SHAPE 1, environ 20 points d'instructions et
+  d'attentes de l'EMAC, 11 points de défauts de cache (code relu, lignes des cordes). §5.5 n'y a gagné que 0,3 à
+  1,1 point, comme prévu.
+- `[À FAIRE]` le reste du §7 et le sample excitateur ([80 §6](80-sample-excitateur-modal.md)).
+
 ## 8. Le sample comme excitateur
 
 Demandé par Maxime avec MODAL, fait le 25/10/2026 : [80](80-sample-excitateur-modal.md). Un sample choisi dans le
@@ -475,3 +497,4 @@ interne.
 - 24/10/2026 : le coût sur la machine (Maxime : 30 % pour une piste) ; les cordes sans attente de l'EMAC, `modal_update`
   sans calcul quand rien ne bouge (§5.5).
 - 25/10/2026 : le sample comme excitateur ([80](80-sample-excitateur-modal.md)).
+- 25/10/2026 : premier retour sur la machine : MODAL marche, environ 30 % en 4 voix (§7.1).
