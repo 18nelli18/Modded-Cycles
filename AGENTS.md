@@ -309,3 +309,8 @@ User: "Go ahead and push v141". Promote exact standard shared-filter141 SHA `d6b
 ## AveyCole main2.45 promotion (2026-10-25)
 
 User: "Go ahead and push to main" for the supplied `all-features-polivoks-cpu-trim-test-v142.syx`. Publish exact standard shared-filter v142 SHA `1eca04fe97951920d2b57c915c0447a5da2739f6008d754e3273be46e364962a`, MAIN `12ec632b7596b23d7afd575eeeeff32a5eeaef3ea8d245b18bee94e1d9a99a68`, through the established fixed-main image only. Adds quantized mute/solo: Mod Setup (SETTINGS + TRACK) > QntM, On/Off and the time division, Off by default. No hardware result was reported with the promotion, so none is claimed. Adult stays private. The flasher blurb was changed at AveyCole's explicit request on 2026-10-25 (Sidechain bullet added after SCRAMBLE; "varie" corrected to "variate"); its fixed-features block SHA256 is now `b3486b46a278b7d5561c3edd549f4adf299d358012b2631a0a6ab353232e2205` and is the text to preserve byte for byte from here on, replacing the earlier `00da19e1…` pin.
+
+
+## AveyCole main2.46 promotion (2026-10-25)
+
+User: "push to main, consistently 75 99 00 during same pattern". Promote exact standard145 SHA `f7f9e92d902f92c6f56c5baa964216c14cb35175271db160d8d6557e0c52535d`, MAIN `7cf4f9f66587dc1866f679dd76c4d40d3403efa943806e3f4ac5abc1da730549`. PUNCH optimizations plus MACRO parallel filter and faster HALL, QntM retained. Hardware report is A75 P99 O0 N0 for this user pattern only. Guides remain byte-identical at the user's request; no control or sound changes. Adult stays private; protected blurb hash `b3486b46a278b7d5561c3edd549f4adf299d358012b2631a0a6ab353232e2205` preserved. Continue optimization research separately from these approved bytes.

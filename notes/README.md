@@ -280,3 +280,7 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [173 — Sidechain des retours FX](173-sidechain-retours-fx.md) | Principal2.43 :130 regulier approuve ; cibles Rev./Del. par source/pattern, payload F4 dans les memes54octets, CRC24 conserve. |
 
 | [173 — Popups, MIDI et PUNCH Shadow](173-popup-midi-et-punch-shadow.md) | Principal2.44 : v141 exact approuve ; retour MIDI et affichage Mod Setup, distortion Shadow et PUNCH. |
+
+| [174 — Marge audio PUNCH](174-marge-audio-punch.md) | Principal2.46 :145 exact approuve, A75 P99 O0 N0 sur le pattern AveyCole. |
+
+| [175 — Marge audio MACRO et HALL](175-marge-audio-macro-hall.md) | Principal2.46 :145 exact approuve, A75 P99 O0 N0 sur le pattern AveyCole. |
