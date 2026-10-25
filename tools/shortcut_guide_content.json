@@ -1,6 +1,6 @@
 {
-  "release": "2.40",
-  "stamp": "2026-10-24-guide-compact-240",
+  "release": "2.41",
+  "stamp": "2026-10-24-sidechain-mute-main-241",
   "cards": [
     {
       "en": [
@@ -1464,6 +1464,18 @@
             "Dpt / Atk / Hld / Rel",
             "Sous les cases : clic DATA, tourner, puis clic pour finir",
             "Dpt = profondeur, Atk = attaque, Hld = maintien, Rel = relâchement. Depth : 0–100 %, 16 niveaux. Atk : 0–160 ms. Hold : 0–120 ms. Rel : 10 ms–3 s. BACK termine l’édition puis revient à Mod Setup. Départ conseillé : source sur chaque temps, Depth 60 %, Attack 0 ms, Hold 0 ms, Release 150 ms. Décocher toutes les cibles désactive la source."
+          ]
+        },
+        {
+          "en": [
+            "Mute (Sidechain)",
+            "Select source; S.Chn > Mute; click DATA",
+            "On: muting the source stops its sidechain action, including when excluded by solo. Off: muted sources keep ducking their targets (default). Each source saves its choice per pattern with Save Project."
+          ],
+          "fr": [
+            "Mute (Sidechain)",
+            "Choisir la source ; S.Chn > Mute ; clic DATA",
+            "On : le mute de la source coupe son action Sidechain, y compris son exclusion par solo. Off : une source muette continue d’atténuer ses cibles (défaut). Choix propre à chaque source et pattern, conservé avec Save Project."
           ]
         },
         {

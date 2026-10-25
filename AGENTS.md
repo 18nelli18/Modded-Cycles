@@ -284,3 +284,8 @@ User: "122 worked, push that to main." Publish exact regular shared-filter122 SH
 ## AveyCole main2.40 promotion (2026-10-24)
 
 User: "Perfect, push v127 to main". Exact regular shared-filter127 SHA `cb19d4d68c2a341bf92a2d26c73c1f042d7f7ff335ae3fcf06d0a615439b72bb`, MAIN `04905a7ad1f75d5fd3b0a6c14e7c7e0c9c220a45c88ecd99b96fa9ec671da6e2`. Tap opens Mod Setup, hold Scramble once; held-step tap marks only. S.Chn >, Trk. N, Dpt/Atk/Hld/Rel aligned in selector. Elder original, Shadow+12dB. Adult remains private; supplied blurb unchanged.
+
+
+## AveyCole main2.41 promotion (2026-10-24)
+
+User: "It worked, go ahead and push v128". Exact regular128 SHA `a3df9c7ca6e6f566e6747dab872223189e236a18567ba0163523b8b612a5ad0d`, MAIN `c7fcbbae50ac86ed190cb3d50eea4755137cc546dcc603e26a3f66d2b747b8e2`. S.Chn Mute On/Off per source and pattern, defaultOff. Adult remains private and blurb byte-identical. FXS1/F2 read; F3 emitted only with Mute On, older firmware cannot restore those added settings.
