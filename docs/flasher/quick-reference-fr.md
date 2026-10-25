@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.41 - 24 octobre2026
+Supermodel2.43 - 24 octobre2026
 
-Principal2.41. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
+Principal2.43. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
 ## Fonctions incluses
 
@@ -175,7 +175,7 @@ Appuyez brièvement sur SETTINGS + TRACK puis relâchez pour ouvrir Mod Setup. M
 | Delay | Stk / Div ; défaut Stk | Stk : Time natif. Div : divisions musicales, pointées et triolets. Positions correspondantes corrigées au tempo ; toutes les positions ne sont pas quantifiées. Utilisé en mode Delay. |
 | DX | Off / On ; défaut Off | DX On : appui bref FUNC, second appui sous 350 ms, maintien au moins 0,5 seconde puis relacher. Toute autre commande annule. Affiche/remet a zero A/P/O/N : charge moyenne/pic, overruns, voix coupees par le gouverneur. Remplace ancien raccourci ; verrou retrig sans diagnostic. Off par defaut. |
 | SCRM | DATA ouvre ; tourner et appuyer ; BACK revient | Six cases par piste : Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay désactivés par défaut, Color/Shape/Sweep/Contour activés. Six listes propres à chaque pattern ; Save Project les conserve au chargement. Wizard autorise Pitch/Decay, commandes sample/modes exclues. |
-| Routage Sidechain | Choisir la source ; SETTINGS + TRACK bref ; S.Chn > DATA | Cochez avec DATA les pistes à atténuer lors des notes de la source, parmi les cinq autres. Pas de cible vers soi-même. DATA parcourt et coche. Plusieurs sources : atténuation la plus profonde par cible. DUCK reste un type de delay séparé. Trk. 1–6 désignent les cibles ; la source est omise. |
+| Routage Sidechain | Choisir la source ; SETTINGS + TRACK bref ; S.Chn > DATA | Cochez les cinq autres pistes, Rev. (retour reverb) et/ou Del. (retour delay). DATA bascule chaque cible. Dpt/Atk/Hld/Rel et Mute concernent toutes les cibles choisies. Choix sauvegardes par source et pattern avec Save Project. Plusieurs sources : attenuation la plus forte par cible. DUCK reste un type de delay distinct. |
 | Dpt / Atk / Hld / Rel | Sous les cases : clic DATA, tourner, puis clic pour finir | Dpt = profondeur, Atk = attaque, Hld = maintien, Rel = relâchement. Depth : 0–100 %, 16 niveaux. Atk : 0–160 ms. Hold : 0–120 ms. Rel : 10 ms–3 s. BACK termine l’édition puis revient à Mod Setup. Départ conseillé : source sur chaque temps, Depth 60 %, Attack 0 ms, Hold 0 ms, Release 150 ms. Décocher toutes les cibles désactive la source. |
 | Mute (Sidechain) | Choisir la source ; S.Chn > Mute ; clic DATA | On : le mute de la source coupe son action Sidechain, y compris son exclusion par solo. Off : une source muette continue d’atténuer ses cibles (défaut). Choix propre à chaque source et pattern, conservé avec Save Project. |
 | Sauvegarde par pattern | Save Project après modification | Routage et commandes Sidechain, six listes Scramble, types et réglages FX ajoutés propres à chaque pattern. Sauvegardez le projet pour les conserver au chargement. Pattern vierge : Sidechain désactivé et listes Scramble par défaut. Changement en attente appliqué au début du prochain pattern. |

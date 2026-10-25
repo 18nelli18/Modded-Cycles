@@ -1,3 +1,6 @@
+#ifdef DU_RETURNS
+#include "returns.c"
+#else
 /* Ducking par declenchement : six sources, enveloppes bornees, aucun float.
  * Les gains portent sur les blocs mid/side avant gain, panoramique et envois. */
 typedef unsigned int u32;typedef int s32;typedef unsigned char u8;
@@ -151,4 +154,6 @@ VALUE(0) VALUE(1) VALUE(2) VALUE(3) VALUE(4) VALUE(5) VALUE(6) VALUE(7) VALUE(8)
 
 #ifdef DU_MUTE
 VALUE(9)
+#endif
+
 #endif

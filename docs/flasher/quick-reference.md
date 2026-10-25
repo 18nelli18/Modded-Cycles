@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.41 - 24 October 2026
+Supermodel 2.43 - 24 October 2026
 
-Main 2.41. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.43. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
@@ -175,7 +175,7 @@ Tap SETTINGS + TRACK and release to open Mod Setup. Hold the combo to run SCRAMB
 | Delay | Stk / Div Default: Stk | Stk preserves the original Delay Time display and timing. Div displays musical divisions, including dotted and triplet values, and corrects the matching timing positions to exact divisions of the tempo. Other Delay Time positions retain their original timing; this does not quantize every knob position. Applies while using Delay mode. |
 | DX | Off / On Default: Off | With DX On: tap FUNC, press FUNC again within 350 ms, hold at least 0.5 seconds, then release. Other controls cancel the gesture. Shows/resets A/P/O/N: average/peak CPU load, overruns, governor voice drops. Off by default. |
 | SCRM | DATA opens; turn and press DATA; BACK returns | Six checkboxes per track: Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay default Off; Color/Shape/Sweep/Contour default On. Each pattern keeps its own six checklists; Save Project preserves them after reloading. Wizard allows Pitch/Decay; its sample/mode controls stay excluded. |
-| Sidechain routing | Select source; tap SETTINGS + TRACK; S.Chn > DATA | Check any of the other five tracks with DATA to duck their volume on source note triggers. The source cannot target itself. Scroll with DATA; click a checkbox to toggle. Multiple sources use the deepest duck on each target. DUCK remains a separate delay type. Trk. 1–6 identify targets; the source is omitted. |
+| Sidechain routing | Select source; tap SETTINGS + TRACK; S.Chn > DATA | Check the five other tracks, Rev. (reverb-slot return), and/or Del. (delay-slot return). DATA toggles each target. Dpt/Atk/Hld/Rel and Mute apply to all selected targets. Choices save per source and pattern with Save Project. Multiple sources use the deepest duck on each target. DUCK is a separate delay type. |
 | Dpt / Atk / Hld / Rel | Scroll below checkboxes; click DATA, turn, click to finish | Dpt = Depth, Atk = Attack, Hld = Hold, Rel = Release. Depth: 0–100%, 16 levels. Atk: 0–160 ms. Hold: 0–120 ms. Rel: 10 ms–3 s. BACK finishes editing, then returns to Mod Setup. Start with a four-on-the-floor source, Depth 60%, Attack 0 ms, Hold 0 ms, Release 150 ms. Untick all targets to disable that source. |
 | Mute (Sidechain) | Select source; S.Chn > Mute; click DATA | On: muting the source stops its sidechain action, including when excluded by solo. Off: muted sources keep ducking their targets (default). Each source saves its choice per pattern with Save Project. |
 | Per-pattern saving | Save Project after edits | Sidechain routing and controls, six Scramble checklists, FX types and added FX settings belong to each pattern. Save the project to keep changes after reloading. Blank patterns have Sidechain off and the default Scramble checklist. Queued changes apply when the next pattern starts. |

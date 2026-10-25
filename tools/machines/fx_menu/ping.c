@@ -70,5 +70,9 @@ void fx_delay(s32*out,const s32*in,const s16*params,const s32*dl,const s32*dr){
   s32 g=(s32)nd_prior+(((s32)nd_gain-(s32)nd_prior)*(s32)(i+1)>>5);
   for(u32 c=0;c<2;c++)out[2*i+c]=((out[2*i+c]>>8)*g);
  }
+#ifdef FX_SIDECHAIN_RETURNS
+ /* Apres ecriture du feedback natif : la queue interne continue intacte. */
+ N(0x46835ff0)(out,1);
+#endif
  nd_prior=nd_gain;
 }

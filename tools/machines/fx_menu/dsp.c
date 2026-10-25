@@ -197,6 +197,11 @@ ch_mode<FX_REV_COUNT?ch_mode:0;
  }
 #endif
  if(gain!=256||prior_gain!=256)for(u32 i=0;i<32;i++){s32 g=(s32)prior_gain+(((s32)gain-(s32)prior_gain)*(s32)(i+1)>>5);for(u32 c=0;c<2;c++)out[2*i+c]=q31(((out[2*i+c]>>11)*g)>>8);}
+#ifdef FX_SIDECHAIN_RETURNS
+ /* Vinyl est une correction wet/dry ajoutee au postmix ; sa composante
+  * seule est attenuee. Les autres types ont un retour stereo classique. */
+ N(0x46835ff0)(correction_on?correction:out,0);
+#endif
  prior_gain=gain;
 }
 void fx_post(s32*mix){cr_post(mix);if(correction_on){for(u32 i=0;i<64;i++)mix[i]=q31((mix[i]>>11)+correction[i]);correction_on=0;}}

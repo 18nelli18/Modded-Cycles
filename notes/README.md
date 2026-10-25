@@ -276,3 +276,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [171 — Sidechain et mute source](171-sidechain-mute-source.md) | Principal2.41 :128 regulier approuve, choix Mute par source/pattern, defautOff, lecture FXS1/F2/F3. |
 
 | [172 — Mod Setup vers MACHINES](172-transfert-menu-machines.md) | Principal2.42 :129 regulier approuve, fermeture du menu et restitution de la molette au selecteur natif. |
+
+| [173 — Sidechain des retours FX](173-sidechain-retours-fx.md) | Principal2.43 :130 regulier approuve ; cibles Rev./Del. par source/pattern, payload F4 dans les memes54octets, CRC24 conserve. |

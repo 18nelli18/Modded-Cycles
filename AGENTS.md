@@ -294,3 +294,8 @@ User: "It worked, go ahead and push v128". Exact regular128 SHA `a3df9c7ca6e6f56
 ## AveyCole main2.42 promotion (2026-10-24)
 
 User: "Go ahead and push that" after receiving129. Publish exact regular129 SHA `71697a12c13b38e9ec30efde7f91c378390b6a909b950389e5e8b534bc9cd55b`, MAIN `4ab1f623db445f10d58d131b8178ea40c9afb049e46af3e5e5da3e75586d38fe`. UI-only Mod Setup -> MACHINES handoff; audio and saved settings exact128. Adult remains private and supplied blurb byte-identical. No new shortcuts; existing2.41 guide still applies.
+
+
+## AveyCole main2.43 promotion (2026-10-25)
+
+User: "130 worked, push to main". Publish exact regular130 SHA `881099ad7b7d8505f1850f13ffb17eb5688ffa5e69e0038d9cf1e2ae5be22fb3`, MAIN `176faf7748d706a15f65652383a7e5cc495817ff78bfad830dd6de71f288fe18`. Rev./Del. Sidechain return targets per source/pattern; F4 keeps the same54reserved bytes and CRC24, reads FXS1/F2/F3. Adult private, supplied blurb identical.

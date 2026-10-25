@@ -2,11 +2,16 @@
  * Le raccord au changement natif ne fait que des copies bornees en RAM. */
 typedef unsigned int u32;typedef unsigned char u8;
 #include "fields.h"
+#ifdef FXD_RETURNS
+#define FXS_N 78
+#include "../sidechain/compact-returns.h"
+#else
 #define FXS_N 72
 #ifdef FXD_MUTE
 #include "../sidechain/compact-mute.h"
 #else
 #include "../sidechain/compact.h"
+#endif
 #endif
 extern void fxp_capture(u8*),fxp_apply(const u8*),fxp_sync(void);
 extern u32 fxp_crc(const u8*,u32),fxp_values_ok(const u8*),fxp_record_valid(const u8*);

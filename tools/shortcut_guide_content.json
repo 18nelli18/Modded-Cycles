@@ -1,6 +1,6 @@
 {
-  "release": "2.41",
-  "stamp": "2026-10-24-sidechain-mute-main-241",
+  "release": "2.43",
+  "stamp": "2026-10-25-sidechain-returns-main-243",
   "cards": [
     {
       "en": [
@@ -1446,12 +1446,12 @@
           "en": [
             "Sidechain routing",
             "Select source; tap SETTINGS + TRACK; S.Chn > DATA",
-            "Check any of the other five tracks with DATA to duck their volume on source note triggers. The source cannot target itself. Scroll with DATA; click a checkbox to toggle. Multiple sources use the deepest duck on each target. DUCK remains a separate delay type. Trk. 1–6 identify targets; the source is omitted."
+            "Check the five other tracks, Rev. (reverb-slot return), and/or Del. (delay-slot return). DATA toggles each target. Dpt/Atk/Hld/Rel and Mute apply to all selected targets. Choices save per source and pattern with Save Project. Multiple sources use the deepest duck on each target. DUCK is a separate delay type."
           ],
           "fr": [
             "Routage Sidechain",
             "Choisir la source ; SETTINGS + TRACK bref ; S.Chn > DATA",
-            "Cochez avec DATA les pistes à atténuer lors des notes de la source, parmi les cinq autres. Pas de cible vers soi-même. DATA parcourt et coche. Plusieurs sources : atténuation la plus profonde par cible. DUCK reste un type de delay séparé. Trk. 1–6 désignent les cibles ; la source est omise."
+            "Cochez les cinq autres pistes, Rev. (retour reverb) et/ou Del. (retour delay). DATA bascule chaque cible. Dpt/Atk/Hld/Rel et Mute concernent toutes les cibles choisies. Choix sauvegardes par source et pattern avec Save Project. Plusieurs sources : attenuation la plus forte par cible. DUCK reste un type de delay distinct."
           ]
         },
         {
