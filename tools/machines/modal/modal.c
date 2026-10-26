@@ -91,7 +91,7 @@ struct ctl {                                         /* ce que update prepare po
 	s32 kpmod, same;                                 /* sa note ; same : ce calcul a refait ctl a l'identique */
 	s32 xpos, xplay;                                 /* le sample excitateur : position, en train de jouer */
 	u32 xslot, xhash;                                /* ... sa case et son empreinte quand il est parti */
-	s32 uh[2 * HBN - 1];                             /* sortie : les 13 derniers echantillons a 24 kHz */
+	s32 uh[2 * HBN - 1 + MB];                        /* sortie a 24 kHz : les 13 derniers echantillons, puis le bloc */
 	s32 dh[4 * HBN - 2];                             /* sample : les 26 derniers echantillons a 48 kHz */
 };
 
@@ -275,7 +275,7 @@ static void modal_up(const s32 *w, s32 *out, const s32 *c)
 
 void modal_render(s32 *out, char *v)
 {
-	static s32 oa[2 * MB], x[MB], w[2 * HBN - 1 + MB];   /* hors de la pile (modal_dsp.h, sc) ; oa : out puis aux */
+	static s32 oa[2 * MB], x[MB];                    /* hors de la pile (modal_dsp.h, sc) ; oa : out puis aux */
 	s32 t = TRACK(v);
 	struct ctl *c = &ctl[t];
 	struct modal_part *part = &track_of(t)->part;
@@ -307,8 +307,6 @@ void modal_render(s32 *out, char *v)
 	}
 	/* une sortie : ODD - EVEN (notes/74), a 24 kHz, remontee a 48 kHz (notes/81) : pour chaque trame m, l'echantillon
 	 * interpole entre ses 14 voisins (w[m + 6] et w[m + 7] au centre), puis w[m + 7] */
-	for (i = 0; i < 2 * HBN - 1; i++)
-		w[i] = c->uh[i];
 #ifdef MODAL_ASM
 	{
 		s32 k[4];                                /* le limiteur de modal_process et la difference : modal_asm.S */
@@ -316,15 +314,15 @@ void modal_render(s32 *out, char *v)
 		k[1] = M_LIM_ATK;
 		k[2] = M_LIM_DEC;
 		k[3] = M_GAINS[part->model];
-		modal_lim(oa, &w[2 * HBN - 1], &part->peak, k);
+		modal_lim(oa, &c->uh[2 * HBN - 1], &part->peak, k);
 	}
 #else
 	for (i = 0; i < MB; i++)
-		w[2 * HBN - 1 + i] = oa[i] - oa[MB + i];
+		c->uh[2 * HBN - 1 + i] = oa[i] - oa[MB + i];
 #endif
-	modal_up(w, out, M_HBI);
+	modal_up(c->uh, out, M_HBI);
 	for (i = 0; i < 2 * HBN - 1; i++)
-		c->uh[i] = w[MB + i];
+		c->uh[i] = c->uh[MB + i];
 }
 
 /* ---- FUNC + SHAPE : la polyphonie, rangee dans FINE (detours de l'interface, notes/74 §3) ------------------- *

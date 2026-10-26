@@ -1786,15 +1786,19 @@ static void nf_process(struct note_filter *n, s32 note, int strum)
 		n->prev[1] = n->prev[2];
 		n->prev[2] = n->prev[3];
 		n->prev[3] = note;
-		for (i = 0; i < 4; i++)
-			s[i] = n->prev[i];
-		for (i = 1; i < 4; i++)
-			for (j = i; j > 0 && s[j - 1] > s[j]; j--) {
-				t = s[j];
-				s[j] = s[j - 1];
-				s[j - 1] = t;
-			}
-		med = (s[1] + s[2]) >> 1;
+		if (n->prev[0] == note && n->prev[1] == note && n->prev[2] == note) {
+			med = note;                      /* quatre valeurs egales : la mediane sans le tri */
+		} else {
+			for (i = 0; i < 4; i++)
+				s[i] = n->prev[i];
+			for (i = 1; i < 4; i++)
+				for (j = i; j > 0 && s[j - 1] > s[j]; j--) {
+					t = s[j];
+					s[j] = s[j - 1];
+					s[j - 1] = t;
+				}
+			med = (s[1] + s[2]) >> 1;
+		}
 		{
 			s32 n0 = n->note, s0 = n->stable, c0 = n->coef, sc0 = n->stable_coef;
 			n->note += qmul(n->coef, med - n->note);
