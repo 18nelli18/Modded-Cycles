@@ -146,8 +146,9 @@ class Fw:
             self.views[k] = View(self, index=index, pay=pay, code_end=pay + len(part["hex"]) // 2, upd=upd, rnd=rnd,
                                  braids_render=syms.get("braids_render"))
         acid = self.views.get("acid")
+        # ACID (acid_dsp.h) et MACRO (macro_asm.S, notes/81) calculent avec l'EMAC
+        self.emac = tuple((v.pay, v.code_end) for k, v in self.views.items() if k in ("acid", "macro"))
         if acid:
-            self.emac = ((acid.pay, acid.code_end),)          # ACID calcule avec l'EMAC (acid_dsp.h)
             self.gov_skip = t["id"] not in ("acid", "acid-tg")
         self.index = self.nm - 1
 

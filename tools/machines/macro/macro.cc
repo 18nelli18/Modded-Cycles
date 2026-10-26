@@ -19,8 +19,16 @@
  * Modeles alleges (notes/55) : 13 modeles (LITE) ne dependent du temps que par leur hauteur (oscillateurs, cartes
  * d'ondes) ; rendus a 48 kHz une octave plus haut (+1536 en 1/128 de demi-ton), par blocs de 12 (toujours 4 000 rendus
  * par seconde), ils donnent le meme spectre sans le filtre, pour environ moitie moins de calcul. Leurs oscillateurs
- * plafonnent a la note 16383 : un modele n'y passe que si sa note, plus ce qu'il y ajoute (LITE : les accords de
- * WAVE PARAPHONIC, les desaccords des TRIPLE), tient sous ce plafond ; sinon il reste a 96 kHz.
+ * plafonnent, en rendu allege, une octave plus haut qu'a 96 kHz (g_pitch_offset, tools/gen_macro.py, notes/81) : le
+ * meme plafond en Hz, toutes les notes restent a 48 kHz. RATE plus bas : la frequence la plus basse ou la note, plus
+ * ce que le modele y ajoute (LITE : les accords de WAVE PARAPHONIC, les desaccords des TRIPLE), tient sous ce plafond.
+ *
+ * 48 kHz natifs (notes/81) : 9 modeles (NATIVE) calculent deja a 48 kHz dans Braids et ecrivent chaque echantillon
+ * deux fois (interpole, ou tenu) pour faire 96 kHz. On les rend comme a 96 kHz (memes rendus de 24, meme cadence) mais
+ * on garde les echantillons calcules (un sur deux) au lieu de passer par le filtre demi-bande : un petit filtre de
+ * 3 coefficients, (1 14 1) / 16 apres interpolation, (1 30 1) / 32 apres un echantillon tenu, refait la legere
+ * douceur des aigus que donnait l'aller-retour (a moins de 1 dB jusqu'a 18 kHz), pour 1 300 instructions de moins par
+ * bloc.
  *
  * Lo-fi (FUNC + PITCH, notes/55) : sur une piste MACRO, FINE n'accorde plus ; au centre (64), rien ne change.
  * En dessous, RATE : d = 64 - FINE pas, frequence 48 kHz x 2^(-86 d / 1536) (de 46 kHz a 4 kHz). Un modele allege
@@ -70,11 +78,15 @@ typedef unsigned int u32;
 
 struct Track {
 	braids::MacroOscillator osc;
-	s16 x[HIST + 64 + 16];                           /* 96 kHz : fin du bloc precedent, ce bloc, puis l'avance ;
+	alignas(4) s16 x[HIST + 64 + 16];                /* 96 kHz : fin du bloc precedent, ce bloc, puis l'avance ;
 	                                                    48 kHz : le dernier rendu (x[rd..fill)) */
 	s32 fill;                                        /* 96 kHz : echantillons rendus apres l'historique */
 	s32 rd;                                          /* 48 kHz : prochain echantillon a sortir */
-	s32 mode;                                        /* rendu en cours : 0 96 kHz, 1 48 kHz (ou moins), -1 aucun */
+	s32 mode;                                        /* rendu en cours : 0 96 kHz, 1 48 kHz (ou moins), 2 48 kHz
+	                                                    natifs, 3 48 kHz natifs par bloc entier, -1 aucun */
+	s32 r1, r2;                                      /* 48 kHz natifs : les deux derniers echantillons (filtre) */
+	s32 nat;                                         /* ... et NATIVE du modele de ce bloc */
+	s32 off;                                         /* braids::g_pitch_offset de ce bloc */
 	s32 want;                                        /* rendu demande par macro_update */
 	u32 src;                                         /* 48 kHz : un echantillon rendu par sortie (Q24, ONE : tous) */
 	u32 hold;                                        /* echantillonneur-bloqueur apres le rendu (Q24, ONE : rien) */
@@ -85,23 +97,46 @@ struct Track {
 	s32 cur;                                         /* RATE : echantillon tenu */
 };
 
+/* de combien la hauteur donnee a Braids depasse la vraie note (rendu allege : une octave et le pas de RATE ; 0 a
+ * 96 kHz), lu par les lignes de Braids qui s'en servent pour autre chose que l'accord (tools/gen_macro.py,
+ * SEMANTIC_EDITS, notes/81) ; mis avant chaque rendu */
+namespace braids {
+int32_t g_pitch_offset;
+int32_t g_native48;                                  /* rendu en 48 kHz natifs (modes 2, 3) : braids_semantic.inc */
+}
+
 /* pas de constructeurs globaux (rien ne les appellerait) : placement new a l'initialisation de la piste */
 alignas(4) static unsigned char store[6][sizeof(Track)];
 static const unsigned char no_sync[24] = { 0 };
 
 /* filtre demi-bande, 23 coefficients (Q15, minimax, somme 1/2 : gain 1 en continu) : 1/2 au centre, puis +-1, +-3,
  * ... +-11 */
-static const s16 HB[6] = { 10327, -3131, 1579, -820, 434, -197 };
+/* HB = { 10327, -3131, 1579, -820, 434, -197 } : les coefficients sont dans macro_halfband (macro_asm.S) */
+extern "C" void macro_halfband(s32 *out, const s16 *x);
 
 /* modeles alleges, rendus a 48 kHz (notes/55) : ce que le modele ajoute au-dessus de sa note (1/128 de demi-ton :
  * desaccord des TRIPLE jusqu'a 24 demi-tons, accords de WAVE PARAPHONIC jusqu'a 19 demi-tons + 5) ; -1 : 96 kHz */
 static const s16 LITE[MODELS] = {
-	0, -1, 0, -1, -1, 0, 0, -1, -1,                  /* CSAW, SAW_SQUARE, SQUARE_SUB, SAW_SUB */
+	0, -1, 0, 0, -1, 0, 0, -1, -1,                   /* CSAW, SAW_SQUARE, SINE_TRIANGLE (notes/81), SQUARE_SUB,
+	                                                    SAW_SUB */
 	3072, 3072, 3072, 3072,                          /* TRIPLE_SAW, _SQUARE, _TRIANGLE, _SINE */
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	0, 0, 0, 2437,                                   /* WAVETABLES, WAVE_MAP, WAVE_LINE, WAVE_PARAPHONIC */
 	-1, -1, -1, -1, -1,
 	0,                                               /* DIGITAL_MODULATION */
+};
+
+/* 48 kHz natifs (notes/81) : 1 echantillon interpole entre deux calcules, 2 echantillon tenu, 3 comme 1 mais un rendu
+ * par bloc (HARMONICS, braids_semantic.inc : son cout est surtout par rendu) ; 0 : non */
+static const s8 NATIVE[MODELS] = {
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1,                                               /* VOWEL_FOF */
+	3, 0, 0, 0,                                      /* HARMONICS */
+	1, 1, 0, 0,                                      /* PLUCKED, BOWED */
+	1, 1, 0, 0, 2,                                   /* STRUCK_BELL, STRUCK_DRUM ; SNARE */
+	0, 0, 0, 0, 0,
+	2, 0, 0, 2,                                      /* TWIN_PEAKS_NOISE ; PARTICLE_NOISE */
+	0,
 };
 
 /* RATE : 2^(-86 d / 1536) en Q24, d = 0..64 pas sous FINE 64 (48 kHz .. 4 kHz) */
@@ -186,9 +221,9 @@ extern "C" void macro_update(s32 pmod, char *v, const char *p)
 	 * sinon 96 kHz (puis bloque) */
 	head = LITE[shape];
 	d = -1;
-	if (head >= 0) {
-		d = TOP_NOTE - OCTAVE - head - n;
-		d = d < 0 ? -1 : (d / RATE_SHIFT > rate ? rate : d / RATE_SHIFT);
+	if (head >= 0) {                                 /* plafond releve d'une octave en rendu allege (notes/81) */
+		d = TOP_NOTE - head - n;
+		d = d < 0 ? 0 : (d / RATE_SHIFT > rate ? rate : d / RATE_SHIFT);
 	}
 	if (d >= 0) {
 		tr->want = 1;
@@ -196,8 +231,11 @@ extern "C" void macro_update(s32 pmod, char *v, const char *p)
 		tr->size = 2 * ((6 * (s32)(RATE_STEP[d] >> 8) + (1 << 15)) >> 16);   /* 4 000 rendus par seconde, pair */
 		tr->size = tr->size < 2 ? 2 : tr->size;
 		tr->osc.set_pitch(n + OCTAVE + RATE_SHIFT * d);
+		tr->off = OCTAVE + RATE_SHIFT * d;
 	} else {
-		tr->want = 0;
+		tr->want = NATIVE[shape] == 3 ? 3 : (NATIVE[shape] ? 2 : 0);
+		tr->nat = NATIVE[shape];
+		tr->off = 0;
 		d = 0;
 		tr->osc.set_pitch(n);
 	}
@@ -217,7 +255,6 @@ extern "C" void macro_update(s32 pmod, char *v, const char *p)
 extern "C" void macro_render(s32 *out, char *v)
 {
 	Track *tr = track_of(v);
-	const s16 *x;
 	u32 ph, f;
 	s32 cur, m, h;
 	int i;
@@ -231,11 +268,59 @@ extern "C" void macro_render(s32 *out, char *v)
 		for (i = 0; i < HIST; i++)
 			tr->x[i] = 0;
 		tr->fill = tr->rd = 0;
+		tr->r1 = tr->r2 = 0;
 		tr->mode = tr->want;
 	}
 	ph = tr->ph;
 	cur = tr->cur;
-	if (tr->mode) {                                  /* 48 kHz ou moins : un rendu quand le precedent est sorti */
+	braids::g_pitch_offset = tr->off;
+	braids::g_native48 = tr->mode >= 2;
+	if (tr->mode == 3) {                             /* 48 kHz natifs, un rendu de 64 par bloc : un echantillon */
+		s32 r, r1 = tr->r1, r2 = tr->r2;             /* sur deux, puis (1 14 1) / 16 */
+		const s16 *x = tr->x + 33;
+		tr->osc.Render(no_sync, tr->x + 32, 64);
+		for (i = 0; i < 32; i++) {
+			r = x[2 * i];
+			out[i] = (r2 + 14 * r1 + r) << 11;
+			r2 = r1;
+			r1 = r;
+		}
+		tr->r1 = r1;
+		tr->r2 = r2;
+	} else if (tr->mode == 2) {                      /* 48 kHz natifs : rendus de 24, un echantillon sur deux */
+		s32 r, r1 = tr->r1, r2 = tr->r2, n, j;
+		const s16 *x;
+		for (i = 0; i < 32; i += n) {
+			if (tr->rd == tr->fill) {
+				tr->osc.Render(no_sync, tr->x + 32, 24);
+				for (r = 0; r < 12; r++)
+					tr->x[r] = tr->x[33 + 2 * r];
+				tr->rd = 0;
+				tr->fill = 12;
+			}
+			n = tr->fill - tr->rd;
+			n = n > 32 - i ? 32 - i : n;
+			x = tr->x + tr->rd;
+			tr->rd += n;
+			if (tr->nat == 1) {              /* (1 14 1) / 16, a l'echelle 1/2 (Q31) */
+				for (j = 0; j < n; j++) {
+					r = x[j];
+					out[i + j] = (r2 + 14 * r1 + r) << 11;
+					r2 = r1;
+					r1 = r;
+				}
+			} else {                         /* (1 30 1) / 32 */
+				for (j = 0; j < n; j++) {
+					r = x[j];
+					out[i + j] = (r2 + 30 * r1 + r) << 10;
+					r2 = r1;
+					r1 = r;
+				}
+			}
+		}
+		tr->r1 = r1;
+		tr->r2 = r2;
+	} else if (tr->mode) {                           /* 48 kHz ou moins : un rendu quand le precedent est sorti */
 		f = tr->src;
 		for (i = 0; i < 32; i++) {
 			if (f != ONE) {
@@ -258,18 +343,10 @@ extern "C" void macro_render(s32 *out, char *v)
 			tr->osc.Render(no_sync, tr->x + HIST + tr->fill, 24);
 			tr->fill += 24;
 		}
-		/* 96 -> 48 kHz : sortie m centree sur l'echantillon 2m + 11 de x (retard de 5,5 echantillons a 48 kHz) */
-		x = tr->x;
-		for (i = 0; i < 32; i++, x += 2) {
-			s32 acc = (s32)x[11] << 14;
-			acc += HB[0] * ((s32)x[10] + x[12]);
-			acc += HB[1] * ((s32)x[8] + x[14]);
-			acc += HB[2] * ((s32)x[6] + x[16]);
-			acc += HB[3] * ((s32)x[4] + x[18]);
-			acc += HB[4] * ((s32)x[2] + x[20]);
-			acc += HB[5] * ((s32)x[0] + x[22]);
-			out[i] = acc;                    /* pleine echelle de Braids -> 1/2 pleine echelle (Q31) */
-		}
+		/* 96 -> 48 kHz : sortie m centree sur l'echantillon 2m + 11 de x (retard de 5,5 echantillons a 48 kHz) ;
+		 * pleine echelle de Braids -> 1/2 pleine echelle (Q31). Sur l'EMAC (macro_asm.S, notes/81) :
+		 *   out[m] = x[2m + 11] << 14 + sum_j HB[j] (x[2m + 10 - 2j] + x[2m + 12 + 2j]) */
+		macro_halfband(out, tr->x);
 		tr->fill -= 64;                          /* l'historique et l'avance glissent au debut */
 		for (i = 0; i < HIST + tr->fill; i++)
 			tr->x[i] = tr->x[64 + i];

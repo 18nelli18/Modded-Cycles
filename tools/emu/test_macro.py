@@ -12,8 +12,11 @@ Le vrai code de l'OS, émulé (Unicorn), avec la charge utile telle que le croch
      notes/55 §8) : la vraie recherche du descripteur d'un potard, le vrai tour de potard avec FUNC, le vrai texte.
   3. Son :
      - avant la chaîne d'ampli, la sortie de MACRO est EXACTEMENT celle de Braids compilé pour l'ordinateur depuis
-       les mêmes sources (braids_ref.cc), avec les réglages que la passerelle doit lui donner (calculés ici d'après
-       notes/43 : modèle, note, TIMBRE, COLOR, frappe), passée par le filtre demi-bande calculé ici : les 47 modèles,
+       ses sources (braids_ref.cc) avec les retouches de tools/gen_macro.py (SEMANTIC_EDITS, braids_semantic.inc,
+       notes/81 ; le firmware remplace en plus des fonctions par des versions plus rapides, FAST, qui doivent donner
+       les mêmes octets), avec les réglages que la passerelle doit lui donner (calculés ici d'après notes/43, 55 et
+       81 : modèle, note, TIMBRE, COLOR, frappe, rendu), passée par le filtre demi-bande calculé ici (ou, en 48 kHz
+       natifs, un échantillon sur deux et son petit filtre) : les 47 modèles,
        et des variantes (potards aux bouts, enveloppe sur TIMBRE, modèle et potards qui bougent pendant la note,
        notes extrêmes, PUNCH, GATE, voix qui se tait puis repart) ;
      - Braids rend par blocs de 24 échantillons, comme sur le module (4 000 par seconde) : 3, 3 puis 2 appels de
@@ -25,7 +28,8 @@ Le vrai code de l'OS, émulé (Unicorn), avec la charge utile telle que le croch
        de Braids ne tourne sans piste MACRO ;
      - MACRO avec Model-TG = MACRO seule ; machine locks ; 6 pistes MACRO ensemble ; MACRO mêlée aux machines
        d'origine (et au Sampler de Model-TG, qui reste muet sans échantillon), chaque piste identique à sa référence ;
-     - le filtre demi-bande tient sa spécification.
+     - le filtre demi-bande tient sa spécification ; les modèles allégés (48 kHz) et en 48 kHz natifs ont le spectre
+       de Braids à 96 kHz.
   4. Coût : instructions par bloc de chaque modèle (une voix, une voix muette, un changement de modèle), pile.
   5. Avec les autres mods (--with) : démarrage, machines d'origine identiques aux mêmes mods sans MACRO, et MACRO
      identique à MACRO seule (ou avec Model-TG seul, si model-tg-st est dans la liste).
@@ -80,9 +84,14 @@ OFF = 9                             # machine hors limites : la voix n'est pas c
 NAMES = gm.MODELS
 # modèles allégés et lo-fi (notes/55) : rendus à 48 kHz une octave plus haut, s'ils restent sous le plafond des
 # oscillateurs de Braids avec ce qu'ils ajoutent à leur note (désaccords des TRIPLE, accords de WAVE PARAPHONIC)
-LITE = dict(CSAW=0, SAW_SQUARE=0, SQUARE_SUB=0, SAW_SUB=0, TRIPLE_SAW=24 * 128, TRIPLE_SQUARE=24 * 128,
+LITE = dict(CSAW=0, SAW_SQUARE=0, SINE_TRIANGLE=0, SQUARE_SUB=0, SAW_SUB=0, TRIPLE_SAW=24 * 128, TRIPLE_SQUARE=24 * 128,
             TRIPLE_TRIANGLE=24 * 128, TRIPLE_SINE=24 * 128, WAVETABLES=0, WAVE_MAP=0, WAVE_LINE=0,
             WAVE_PARAPHONIC=19 * 128 + 5, DIGITAL_MODULATION=0)
+# 48 kHz natifs (notes/81) : modèles que Braids calcule à 48 kHz, chaque échantillon écrit deux fois (1 : interpolé,
+# 2 : tenu, 3 : comme 1, un rendu de 64 par bloc) ; la passerelle garde les calculés et les passe par (1 14 1) / 16 ou
+# (1 30 1) / 32
+NATIVE = dict(VOWEL_FOF=1, HARMONICS=3, PLUCKED=1, BOWED=1, STRUCK_BELL=1, STRUCK_DRUM=1, SNARE=2,
+              TWIN_PEAKS_NOISE=2, PARTICLE_NOISE=2)
 ONE = 1 << 24                       # RATE : un échantillon (Q24)
 OCTAVE, TOP_NOTE, RATE_SHIFT = 12 * 128, 16383, 86
 RATE_STEP = [round(ONE * 2 ** (-RATE_SHIFT * d / OCTAVE)) for d in range(65)]   # FINE 64 - d : 48 kHz x 2^(-86 d/1536)
@@ -120,10 +129,12 @@ class Fw:
         self.braids_render = int(ours[0]["symbols"]["braids_render"], 16)       # MacroOscillator::Render
 
     def engine(self, solo=None):
+        # le code de MACRO passe par l'EMAC (macro_asm.S, notes/81) : ses instructions interceptées (emac.py)
+        code = ((self.pay, self.code_end),) if getattr(self, "code_end", None) else ()
         if self.blob_end:
-            e = TM.engine(self.img, end=self.blob_end, payload=self.payload)
+            e = TM.engine(self.img, end=self.blob_end, payload=self.payload, payload_code=code)
         else:
-            e = E.Engine(self.img, payload=self.payload)
+            e = E.Engine(self.img, payload=self.payload, payload_code=code)
         if solo is not None:             # les autres pistes : machine hors limites, rien n'est calculé
             for t in range(6):
                 if t != solo:
@@ -214,11 +225,13 @@ class Ref:
 
     def __init__(self, tmp, repo):
         self.exe = tmp / "braids_ref"
-        subprocess.run(["g++", "-O2", "-I", str(repo), str(HERE / "braids_ref.cc"),
-                        *[str(repo / s) for s in gm.SOURCES], "-o", str(self.exe)], check=True)
+        tree = gm.braids_tree(tmp, repo, fast=False)      # les sources d'origine, et SEMANTIC_EDITS (notes/81)
+        subprocess.run(["g++", "-O2", "-I", str(tree), str(HERE / "braids_ref.cc"),
+                        *[str(tree / s) for s in gm.SOURCES], "-o", str(self.exe)], check=True)
 
     def run(self, lines):
-        """lines : (rendu, modèle, hauteur, timbre, color, frappe, mode, k, taille) par bloc ; les int16 rendus."""
+        """lines : (rendu, modèle, hauteur, timbre, color, frappe, mode, k, taille, décalage de la hauteur) par bloc ;
+        les int16 rendus."""
         text = "".join(" ".join(str(int(v)) for v in ln) + "\n" for ln in lines)
         out = subprocess.run([str(self.exe)], input=text.encode(), capture_output=True, check=True).stdout
         return np.frombuffer(out, dtype="<i2").astype(np.int64)
@@ -245,7 +258,7 @@ def spec(pmod, vb, pb):
 
 
 def settings(r):
-    """Le rendu demandé (notes/55) : mode (1 : 48 kHz ou moins, 0 : 96 kHz), hauteur donnée à Braids, pas du rendu
+    """Le rendu demandé (notes/55, 81) : mode (1 : 48 kHz ou moins, 0 : 96 kHz, 2 : 48 kHz natifs), hauteur donnée à Braids, pas du rendu
     (src : un échantillon rendu par sortie, Q24), échantillonneur-bloqueur après le rendu (hold), taille d'un rendu,
     BITS (0 : rien)."""
     fine = r["fine"]
@@ -253,12 +266,14 @@ def settings(r):
     bits = 12 - (fine - 65) * 10 // 62 if fine > 64 else 0
     head, n = LITE.get(NAMES[r["shape"]]), r["note"]
     # la fréquence de RATE, ou la plus basse dont la hauteur tient sous le plafond (puis échantillonné-bloqué)
-    fits = [d for d in range(rate + 1) if head is not None and n + OCTAVE + RATE_SHIFT * d + head <= TOP_NOTE]
-    if fits:
-        d = fits[-1]
+    # le plafond relevé d'une octave en rendu allégé (notes/81) : toujours au moins 48 kHz
+    fits = [d for d in range(rate + 1) if head is not None and n + RATE_SHIFT * d + head <= TOP_NOTE]
+    if head is not None:
+        d = fits[-1] if fits else 0
         mode, pitch, src = 1, n + OCTAVE + RATE_SHIFT * d, RATE_STEP[d]
     else:
-        mode, pitch, src, d = 0, n, ONE, 0
+        nat = NATIVE.get(NAMES[r["shape"]], 0)
+        mode, pitch, src, d = (3 if nat == 3 else 2 if nat else 0), n, ONE, 0
     size = max(2, 2 * int(6 * src / ONE + 0.5))            # environ 4 000 rendus par seconde, pair
     return dict(mode=mode, pitch=pitch, src=src, hold=ONE if d == rate else RATE_STEP[rate], size=size, bits=bits)
 
@@ -278,20 +293,34 @@ def simulate(recs, x=None):
     Avec x (sa sortie) : les 32 échantillons attendus avant la chaîne d'ampli et le nombre d'appels de Render de
     chaque bloc rendu."""
     lines, outs, calls, pos = [], [], [], 0
-    mode = ph = hph = cur = fill = avail = 0
+    mode = ph = hph = cur = fill = avail = r1 = r2 = 0
     hist = np.zeros(HIST, np.int64)
     for r in recs:
         if r["init"]:
             mode, ph, hph, cur, fill, avail, hist = -1, ONE - 1, ONE - 1, 0, 0, 0, np.zeros(HIST, np.int64)
         st = settings(r)
-        line = [r["render"], r["shape"], st["pitch"], r["timbre"], r["color"], r["strike"], st["mode"], 0, st["size"]]
+        line = [r["render"], r["shape"], st["pitch"], r["timbre"], r["color"], r["strike"], st["mode"], 0, st["size"],
+                st["pitch"] - r["note"]]
         lines.append(line)
         if not r["render"]:
             continue
         if st["mode"] != mode:                          # changement de rendu : on repart de zéro
-            mode, fill, avail, hist = st["mode"], 0, 0, np.zeros(HIST, np.int64)
+            mode, fill, avail, hist, r1, r2 = st["mode"], 0, 0, np.zeros(HIST, np.int64), 0, 0
         out, n_calls = [0] * 32, 0
-        if mode:
+        if mode in (2, 3):                              # 48 kHz natifs : un échantillon sur deux, (1 k 1)
+            if mode == 3:                               # un rendu de 64 par bloc
+                n_calls = 1
+            else:
+                while fill < 64:
+                    fill, n_calls = fill + 24, n_calls + 1
+                fill -= 64
+            if x is not None:
+                k, sh = (14, 11) if NATIVE[NAMES[r["shape"]]] in (1, 3) else (30, 10)
+                for i, v in enumerate(x[pos + 1:pos + 64:2]):
+                    out[i] = (r2 + k * r1 + int(v)) << sh
+                    r2, r1 = r1, int(v)
+                pos += 64
+        elif mode:
             for i in range(32):
                 if st["src"] != ONE:
                     ph += st["src"]
@@ -424,9 +453,20 @@ def cases(quick):
                                                                                          finetune=0), (1,), None, 60),
         ("plafond : TRIPLE SAW note 91,5, FINE 0 (48 kHz, puis bloqué)", dict(BASE_KW, shape=9, note=91.5, finetune=0),
          (1,), None, 60),
-        ("plafond : TRIPLE SAW note 100, FINE 0 (96 kHz puis bloqué)", dict(BASE_KW, shape=9, note=100, finetune=0),
-         (1,), None, 60),
-        ("plafond : CSAW note 120 (96 kHz)", dict(BASE_KW, shape=0, note=120), (1,), None, 60),
+        ("plafond : TRIPLE SAW note 100, FINE 0 (48 kHz, plafond relevé, puis bloqué)",
+         dict(BASE_KW, shape=9, note=100, finetune=0), (1,), None, 60),
+        ("plafond : TRIPLE SAW note 115 (48 kHz, le désaccord au plafond)", dict(BASE_KW, shape=9, note=115), (1,),
+         None, 60),
+        ("plafond : CSAW note 120 (48 kHz, plafond relevé)", dict(BASE_KW, shape=0, note=120), (1,), None, 60),
+        ("SINE TRIANGLE note 100 (48 kHz, le repli suit la vraie note)", dict(BASE_KW, shape=3, note=100), (1,),
+         None, 60),
+        ("HARMONICS note 100 et 118 (harmoniques à 48 kHz au-dessus de 9,75 kHz)", dict(BASE_KW, shape=24, note=100,
+                                                                                         decay=110), (1,),
+         {40: {"note": 118}}, 80),
+        ("HARMONICS, la note et TIMBRE qui bougent à chaque bloc", dict(BASE_KW, shape=24, decay=110), (1,),
+         {b: {"note": 30 + (7 * b) % 90, "color": (11 * b) % 128} for b in range(100)}, 100),
+        ("STRUCK DRUM puis STRUCK BELL, frappés souvent", dict(BASE_KW, shape=33, decay=80), (1, 20, 40, 60, 80),
+         {60: {"shape": 32}}, 120),
         ("plafond : WAVE PARAPHONIC note 105, FINE 20", dict(BASE_KW, shape=40, note=105, finetune=20), (1,), None,
          60),
         ("note qui monte au-delà du plafond, WAVE LINE FINE 10", dict(BASE_KW, shape=39, finetune=10, decay=110),
@@ -491,7 +531,8 @@ def exact(fw, ref, todo, label):
             print(f"        ECART {name} : {len(got)} blocs rendus / {len(want)} attendus, 1er bloc différent {first},"
                   f" crête {peak:.3g}, init {inits}, muets non nuls {not silent}, hors mémoire {unm[:2]}")
     check(not bad, f"{label} : avant la chaîne d'ampli, identique échantillon par échantillon à Braids compilé pour "
-                   f"l'ordinateur, rendu à 96 kHz puis filtre demi-bande, ou à 48 kHz pour les modèles allégés, puis "
+                   f"l'ordinateur (ses sources, et les retouches de tools/gen_macro.py SEMANTIC_EDITS), rendu à 96 kHz "
+                   f"puis filtre demi-bande, ou à 48 kHz pour les modèles allégés et natifs, puis "
                    f"RATE et BITS ({len(todo)} cas : les modèles et des variantes, crêtes {min(peaks):.2g} à "
                    f"{max(peaks):.2g} sur 2^31 ; blocs rendus à 48 kHz {lite_seen[0]}, dont plus lents (RATE) "
                    f"{lite_seen[1]} ; échantillonnés-bloqués {lite_seen[2]} ; BITS {lite_seen[3]}) {bad[:5]}")
@@ -663,6 +704,51 @@ def halfband():
           "au-delà de 29 kHz (ce qui se replierait sous 19 kHz)")
 
 
+def native_spectrum(ref):
+    """Les modèles en 48 kHz natifs (notes/81) : un échantillon sur deux de Braids, passé par (1 k 1), contre 96 kHz
+    puis filtre demi-bande (Braids seul, sur l'ordinateur) ; mêmes mesures que lite_spectrum. HARMONICS (mode 3) :
+    calculé autrement en 48 kHz natifs (braids_semantic.inc), comparé à sa version d'origine à 96 kHz."""
+    n, w = 4096, np.hanning(4096)
+    f = np.fft.rfftfreq(n, 1 / 48000)
+    edges = 50 * 2 ** (np.arange(28) / 3)
+    idx = [(f >= lo) & (f < hi) for lo, hi in zip(edges[:-1], edges[1:])]
+
+    def bands(x):
+        return np.array([10 * np.log10(np.array([P[k].sum() for k in idx]) + 1e-3)
+                         for P in (np.abs(np.fft.rfft(x[i:i + n] * w)) ** 2 for i in range(0, len(x) - n, n // 2))])
+    rows, worst = [], (0, 0, 0)
+    for name, nat in NATIVE.items():
+        m, ds, lv = NAMES.index(name), [], 0
+        k, sh = (14, 11) if nat in (1, 3) else (30, 10)
+        for note in (36, 60, 84):
+            for t, c in ((16384, 16384), (4000, 28000), (28000, 4000)):
+                blocks = [(1, m, note * 128, t, c, int(b % 300 == 0)) for b in range(600)]
+                x96 = ref.run([b + (0, 0, 24, 0) for b in blocks]).reshape(-1, 64)
+                hist, a = np.zeros(HIST, np.int64), []
+                for blk in x96:
+                    acc, hist = dec1(hist, blk)
+                    a.append(acc)
+                a = np.concatenate(a).astype(float) / 32768
+                odd = ref.run([b + (3 if nat == 3 else 2, 0, 24, 0) for b in blocks]).reshape(-1)[1::2]
+                b_ = ((np.concatenate([[0, 0], odd[:-2]]) + k * np.concatenate([[0], odd[:-1]]) + odd) << sh)
+                b_ = b_.astype(float) / 32768
+                A, B = bands(a), bands(b_)
+                for FA, FB in zip(A, B):
+                    if FA.max() > 60:
+                        sel = FA > FA.max() - 30
+                        ds.append(np.sqrt(np.mean((FA[sel] - FB[sel]) ** 2)))
+                ra, rb = np.sqrt(np.mean(a ** 2)), np.sqrt(np.mean(b_ ** 2))
+                lv = max(lv, abs(20 * np.log10((rb + 1e-9) / (ra + 1e-9))))
+        p50, p95 = np.median(ds), np.percentile(ds, 95)
+        rows.append(f"{name} {p50:.1f}/{p95:.1f}/{lv:.1f}")
+        worst = tuple(max(u, v) for u, v in zip(worst, (p50, p95, lv)))
+    print("        " + " ; ".join(rows) + " (dB : bandes médiane / 95 %, niveau)")
+    check(worst[0] < 1.5 and worst[1] < 4 and worst[2] < 2,
+          f"modèles en 48 kHz natifs ({len(NATIVE)}) : un échantillon sur deux (et HARMONICS calculé à 24 kHz), même "
+          f"spectre qu'à 96 kHz puis filtre demi-bande à {worst[0]:.1f} dB près en médiane par tiers d'octave "
+          f"({worst[1]:.1f} dB à 95 %), niveau à {worst[2]:.1f} dB près")
+
+
 def lite_spectrum(ref, names=None):
     """Les modèles allégés (notes/55) : rendus à 48 kHz une octave plus haut, même spectre qu'à 96 kHz puis filtre
     demi-bande (Braids seul, sur l'ordinateur) : bandes d'un tiers d'octave de 50 Hz à 16 kHz, sur des fenêtres de
@@ -681,13 +767,13 @@ def lite_spectrum(ref, names=None):
         for note in (36, 60, 84):
             for t, c in ((16384, 16384), (4000, 28000), (28000, 4000)):
                 blocks = [(1, m, note * 128, t, c, int(b % 300 == 0)) for b in range(600)]
-                x96 = ref.run([b + (0, 0, 24) for b in blocks]).reshape(-1, 64)
+                x96 = ref.run([b + (0, 0, 24, 0) for b in blocks]).reshape(-1, 64)
                 hist, a = np.zeros(HIST, np.int64), []
                 for blk in x96:
                     acc, hist = dec1(hist, blk)
                     a.append(acc)
                 a = np.concatenate(a).astype(float) / 32768
-                lines = [(r, m, p + OCTAVE, t, c, s, 1, 32, 12) for r, m, p, t, c, s in blocks]
+                lines = [(r, m, p + OCTAVE, t, c, s, 1, 32, 12, OCTAVE) for r, m, p, t, c, s in blocks]
                 b_ = ref.run(lines).astype(float)
                 A, B = bands(a), bands(b_)
                 for FA, FB in zip(A, B):
@@ -787,6 +873,7 @@ def main():
         print("son")
         halfband()
         lite_spectrum(ref)
+        native_spectrum(ref)
         exact(alone, ref, todo, "MACRO seule")
         amp_like_tone(alone)
         stock_unchanged(off, alone, "l'OS d'origine")
