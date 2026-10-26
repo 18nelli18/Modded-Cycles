@@ -821,3 +821,87 @@ macro_fluted:
 	bra.w	21b
 22:	mvs.b	4095(%a0), %d1		/* (0 - 1) % 4096 */
 	bra.w	23b
+
+/* void macro_morph(int16_t *buf, const int16_t *s2, int n, int32_t bal, int32_t f, int32_t fz, int32_t *lp,
+ *                  const int16_t *ws)
+ * MORPH (MacroOscillator::RenderMorph) : la boucle par echantillon, exacte (le reste de la fonction reste en C) :
+ *   sample = Mix(buf[k], s2[k], bal) ; lp += (sample - lp) * f >> 15 ; CLIP(lp) ;
+ *   buf[k] = Mix(sample, Interpolate88(ws, lp + 32768), fz)
+ * Mix(a, b, w) = (a (65535 - w) + b w) >> 16, comme le C (des echantillons pleine echelle : (b - a) w deborderait) ;
+ * fz nul : Mix(sample, x, 0) = (sample 65535) >> 16 = sample - 1 si sample > 0, sinon sample, sans lire la table.
+ * Pile : 0 (65535 - bal), 4 (65535 - fz), 32 registres, 40 retour, 44 buf, 48 s2, 52 n, 56 bal, 60 f, 64 fz, 68 lp,
+ * 72 ws. */
+	.globl	macro_morph
+macro_morph:
+	lea	-40(%sp), %sp
+	movem.l	%d2-%d7/%a2-%a3, 8(%sp)
+	move.l	52(%sp), %d0
+	beq.w	9f
+	movea.l	44(%sp), %a0
+	lea	(%a0,%d0.l*2), %a3	/* fin */
+	movea.l	48(%sp), %a1
+	move.l	56(%sp), %d7		/* bal */
+	move.l	#65535, %d0
+	sub.l	%d7, %d0
+	move.l	%d0, (%sp)
+	move.l	60(%sp), %d5		/* f */
+	move.l	64(%sp), %d4		/* fz */
+	move.l	#65535, %d0
+	sub.l	%d4, %d0
+	move.l	%d0, 4(%sp)
+	movea.l	68(%sp), %a2
+	move.l	(%a2), %d6		/* lp */
+	movea.l	72(%sp), %a2		/* ws */
+1:	mvs.w	(%a0), %d1
+	muls.l	(%sp), %d1		/* a (65535 - bal) */
+	mvs.w	(%a1)+, %d0
+	muls.l	%d7, %d0		/* b bal */
+	add.l	%d0, %d1
+	swap	%d1
+	ext.l	%d1			/* sample */
+	move.l	%d1, %d2
+	sub.l	%d6, %d2
+	muls.l	%d5, %d2
+	asr.l	#8, %d2
+	asr.l	#7, %d2
+	add.l	%d2, %d6		/* lp */
+	cmpi.l	#-32767, %d6
+	bge.s	2f
+	move.l	#-32767, %d6
+2:	cmpi.l	#32767, %d6
+	ble.s	3f
+	move.l	#32767, %d6
+3:	tst.l	%d4
+	beq.s	5f
+	move.l	%d6, %d0
+	addi.l	#32768, %d0		/* l'index de Interpolate88 : 1..65535 */
+	move.l	%d0, %d2
+	lsr.l	#8, %d2
+	andi.l	#255, %d0
+	mvs.w	(%a2,%d2.l*2), %d3	/* a */
+	mvs.w	2(%a2,%d2.l*2), %d2	/* b */
+	sub.l	%d3, %d2
+	muls.l	%d0, %d2
+	asr.l	#8, %d2
+	add.l	%d3, %d2		/* fuzzed */
+	muls.l	%d4, %d2		/* fuzzed fz */
+	move.l	%d1, %d0
+	muls.l	4(%sp), %d0		/* sample (65535 - fz) */
+	add.l	%d0, %d2
+	swap	%d2
+	ext.l	%d2
+	move.w	%d2, (%a0)+
+	cmpa.l	%a3, %a0
+	bne.w	1b
+	bra.s	8f
+5:	tst.l	%d1
+	ble.s	6f
+	subq.l	#1, %d1
+6:	move.w	%d1, (%a0)+
+	cmpa.l	%a3, %a0
+	bne.w	1b
+8:	movea.l	68(%sp), %a2
+	move.l	%d6, (%a2)
+9:	movem.l	8(%sp), %d2-%d7/%a2-%a3
+	lea	40(%sp), %sp
+	rts

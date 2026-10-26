@@ -141,6 +141,16 @@ FAST_INC = {"braids/digital_oscillator.cc": "braids_fast_digital.inc"}
 # ... et ce que nos versions doivent pouvoir lire : (fichier, avant, après)
 FAST_EDITS = (
     ("braids/svf.h", "  DISALLOW_COPY_AND_ASSIGN(Svf);", "  friend struct FastSvf;\n  DISALLOW_COPY_AND_ASSIGN(Svf);"),
+    # MORPH : sa boucle par échantillon en assembleur (macro_asm.S, macro_morph), au bit près
+    ("braids/macro_oscillator.cc", "namespace braids {\n",
+     "extern \"C\" void macro_morph(int16_t* buf, const int16_t* s2, int n, int32_t bal, int32_t f, int32_t fz,\n"
+     "                            int32_t* lp, const int16_t* ws);  /* Modded Cycles, notes/81 */\n\nnamespace braids {\n"),
+    ("braids/macro_oscillator.cc",
+     "  while (size--) {\n    int16_t sample = Mix(*shape_1++, *shape_2++, balance);\n"
+     "    int32_t shifted_sample = sample;\n    lp_state += (shifted_sample - lp_state) * f >> 15;\n    CLIP(lp_state)\n"
+     "    shifted_sample = lp_state + 32768;\n  \n    int16_t fuzzed = Interpolate88(ws_violent_overdrive, shifted_sample);\n"
+     "    *buffer++ = Mix(sample, fuzzed, fuzz_amount);\n  }\n",
+     "  macro_morph(shape_1, shape_2, size, balance, f, fuzz_amount, &lp_state, ws_violent_overdrive);\n"),
     # delay_ n'est lu que par BOWED, BLOWN et FLUTED : calculé pour eux seuls (d'origine : à chaque rendu). Par leurs
     # fonctions : l'énumération OSC_SHAPE_ de Braids n'est pas dans l'ordre de fn_table_ (BOWED y est la 17e)
     ("braids/digital_oscillator.cc", "  delay_ = ComputeDelay(pitch_);\n",
