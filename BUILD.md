@@ -871,3 +871,8 @@ Executer export_909_current_scaffold.js avec Node, puis gen_909_current.py (GCC 
 ## Principal2.51 - v175 exact
 
 Commande privee : `python tools/gen_governor_recovery_test.py --lfo-compact-ram --legacy-cart <cartouche-utilisateur.syx> --legacy-classics <rom-utilisateur.syx> --stage --check`. Les sources officielles et cartouches restent locales. SYX SHA `99d392585a03a0f94cab0eb76fd1c16def0cc690230e909e821a09e01fa69bee`, MAIN SHA `a04f16bf2037166cbab9f7d01d31bb04573bbf5b48c46432e96e69a04ae0e1f5`. Image servie par le chemin fixe existant, sans changer ses octets. La conservation de polarite dans les copies est un travail separe.
+
+
+## Principal2.52 - v186 exact
+
+Image fournie par l'utilisateur (`Supermodel_v186_All_LFO_Copy_ESTUS_Optimized.syx`), publiee sans changer ses octets par le chemin fixe existant. SYX SHA `5ec78631f29a4ffcaedac2d940eb6c7d87fa28de1b231e974c8e27f90704c4cb`, MAIN SHA `6be17c5d328fc87ffed9b585df853410ef0976a18ffee97d9f958a91983518d3`. Aucun resultat materiel revendique. Verification : `node tools/test_v186_delivery.js`.

@@ -339,3 +339,8 @@ User: "okay push that" for v164 label fix. Exact SHA `b5afb6e34b0fcaa0f1b3253678
 ## AveyCole main2.51 promotion (2026-10-26)
 
 User: "that worked. Let's push that to main and work on copy persistence" for exact v175. Promote SHA `99d392585a03a0f94cab0eb76fd1c16def0cc690230e909e821a09e01fa69bee`, MAIN `a04f16bf2037166cbab9f7d01d31bb04573bbf5b48c46432e96e69a04ae0e1f5`. Includes selectable1/2/3/4 LFOs, square/depth fixes, Off/ORGN/BRDS, nineteen scales, compact LFO memory, startup guards and WAVE/GATED separation. Hardware success reported; no new CPU result claimed. Sound-copy polarity remains a separate private follow-up. Keep protected fixed-features blurb unchanged.
+
+
+## AveyCole main2.52 promotion (2026-10-26)
+
+User supplied `Supermodel_v186_All_LFO_Copy_ESTUS_Optimized.syx` ("Make sure this is the .syx served by main"; Codex ran out of usage mid-push). Publish exact standard v186 SHA `5ec78631f29a4ffcaedac2d940eb6c7d87fa28de1b231e974c8e27f90704c4cb`, MAIN `6be17c5d328fc87ffed9b585df853410ef0976a18ffee97d9f958a91983518d3`, through the established fixed-main image only. Replaces v175 of main 2.51. No hardware result reported, none claimed. The release note says only "Estus Refilled." at AveyCole's request. Guides/PDF unchanged; protected blurb hash `b3486b46a278b7d5561c3edd549f4adf299d358012b2631a0a6ab353232e2205` unchanged. Adult stays private.
