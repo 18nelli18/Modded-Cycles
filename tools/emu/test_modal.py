@@ -85,7 +85,7 @@ class Fw(tac.Fw):
 
     def __init__(self, stock, tweaks, ctx):
         super().__init__(stock, tweaks, ctx)
-        self.emac = tuple((v.pay, v.code_end) for k, v in self.views.items() if k in ("acid", "modal"))
+        self.emac = tuple((v.pay, v.code_end) for k, v in self.views.items() if k in ("acid", "macro", "modal"))
 
     def engine(self, solo=None):
         e = super().engine(solo)

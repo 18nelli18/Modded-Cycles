@@ -27,6 +27,7 @@ et --check le dit.
 import argparse
 import json
 import pathlib
+import shutil
 import struct
 import subprocess
 import sys
@@ -124,6 +125,115 @@ def license_text(repo):
             "Copyright 2012-2013 Emilie Gillet.\n\n" + body + "\n")
 
 
+# Fonctions de Braids réécrites pour le ColdFire (tools/machines/macro/braids_fast_*.inc, notes/81) : mêmes calculs,
+# dans le même ordre, pour le même son au bit près (tools/emu/test_macro.py le vérifie contre les sources d'origine).
+# Dans une copie des sources, leur définition d'origine est mise hors compilation, (fichier, début, début de la
+# suivante), et notre version est incluse à la fin du même fichier (FAST_INC) : elle y voit ses tables.
+FAST = (
+    ("braids/digital_oscillator.cc", "void DigitalOscillator::RenderStruckBell(",
+     "void DigitalOscillator::RenderHarmonics96("),               # (renommée par SEMANTIC_EDITS)
+    ("braids/digital_oscillator.cc", "void DigitalOscillator::RenderStruckDrum(", "void DigitalOscillator::RenderPlucked("),
+    ("braids/digital_oscillator.cc", "void DigitalOscillator::RenderSnare(", "void DigitalOscillator::RenderCymbal("),
+    ("braids/digital_oscillator.cc", "void DigitalOscillator::RenderCymbal(", "/*\nvoid DigitalOscillator::RenderYourAlgo("),
+    ("braids/digital_oscillator.cc", "void DigitalOscillator::RenderFluted(", "struct WavetableDefinition {"),
+)
+FAST_INC = {"braids/digital_oscillator.cc": "braids_fast_digital.inc"}
+# ... et ce que nos versions doivent pouvoir lire : (fichier, avant, après)
+FAST_EDITS = (
+    ("braids/svf.h", "  DISALLOW_COPY_AND_ASSIGN(Svf);", "  friend struct FastSvf;\n  DISALLOW_COPY_AND_ASSIGN(Svf);"),
+    # MORPH : sa boucle par échantillon en assembleur (macro_asm.S, macro_morph), au bit près
+    ("braids/macro_oscillator.cc", "namespace braids {\n",
+     "extern \"C\" void macro_morph(int16_t* buf, const int16_t* s2, int n, int32_t bal, int32_t f, int32_t fz,\n"
+     "                            int32_t* lp, const int16_t* ws);  /* Modded Cycles, notes/81 */\n\nnamespace braids {\n"),
+    ("braids/macro_oscillator.cc",
+     "  while (size--) {\n    int16_t sample = Mix(*shape_1++, *shape_2++, balance);\n"
+     "    int32_t shifted_sample = sample;\n    lp_state += (shifted_sample - lp_state) * f >> 15;\n    CLIP(lp_state)\n"
+     "    shifted_sample = lp_state + 32768;\n  \n    int16_t fuzzed = Interpolate88(ws_violent_overdrive, shifted_sample);\n"
+     "    *buffer++ = Mix(sample, fuzzed, fuzz_amount);\n  }\n",
+     "  macro_morph(shape_1, shape_2, size, balance, f, fuzz_amount, &lp_state, ws_violent_overdrive);\n"),
+    # delay_ n'est lu que par BOWED, BLOWN et FLUTED : calculé pour eux seuls (d'origine : à chaque rendu). Par leurs
+    # fonctions : l'énumération OSC_SHAPE_ de Braids n'est pas dans l'ordre de fn_table_ (BOWED y est la 17e)
+    ("braids/digital_oscillator.cc", "  delay_ = ComputeDelay(pitch_);\n",
+     "  if (fn == &DigitalOscillator::RenderBowed || fn == &DigitalOscillator::RenderBlown\n"
+     "      || fn == &DigitalOscillator::RenderFluted) {\n    delay_ = ComputeDelay(pitch_);\n  }\n"),
+)
+# Le rendu allégé à 48 kHz (notes/55, 81) donne à Braids sa hauteur plus une octave (et plus le pas de RATE) : g_pitch_offset
+# dit de combien, pour les quelques lignes qui se servent de la hauteur pour autre chose que l'accord (dans le firmware
+# comme dans la référence de tools/emu/test_macro.py ; 0 à 96 kHz, rien ne change)
+OFFSET_DECL = ("namespace braids {\nextern int32_t g_pitch_offset;  /* Modded Cycles, notes/81 */\n"
+               "extern int32_t g_native48;      /* rendu en 48 kHz natifs (macro.cc, NATIVE) */\n")
+SEMANTIC_EDITS = (
+    ("braids/digital_oscillator.h", "namespace braids {\n", OFFSET_DECL),
+    # HARMONICS à 24 kHz en 48 kHz natifs (braids_semantic.inc) : l'historique de son filtre, et l'original renommé
+    ("braids/digital_oscillator.h", "struct HarmonicsState {\n  int32_t amplitude[kNumAdditiveHarmonics];\n};",
+     "struct HarmonicsState {\n  int32_t amplitude[kNumAdditiveHarmonics];\n  int32_t target[kNumAdditiveHarmonics];\n"
+     "  int32_t gain[kNumAdditiveHarmonics];\n"
+     "  int16_t hist[44];\n  int32_t pos;\n  int32_t delay[20];\n  int32_t dpos;\n  int16_t key0, key1;\n"
+     "  uint32_t key_inc;\n  int32_t valid;\n};"),
+    ("braids/digital_oscillator.h", "  void RenderHarmonics(const uint8_t*, int16_t*, size_t);",
+     "  void RenderHarmonics(const uint8_t*, int16_t*, size_t);\n"
+     "  void RenderHarmonics96(const uint8_t*, int16_t*, size_t);"),
+    ("braids/digital_oscillator.cc", "void DigitalOscillator::RenderHarmonics(", "void DigitalOscillator::RenderHarmonics96("),
+    ("braids/analog_oscillator.h", "namespace braids {\n", OFFSET_DECL),
+    # SINE TRIANGLE : le repli s'atténue avec la vraie note
+    ("braids/macro_oscillator.cc", "  int32_t attenuation_sine = 32767 - 6 * (pitch_ - (92 << 7));\n"
+     "  int32_t attenuation_tri = 32767 - 7 * (pitch_ - (80 << 7));",
+     "  int32_t attenuation_sine = 32767 - 6 * (pitch_ - g_pitch_offset - (92 << 7));\n"
+     "  int32_t attenuation_tri = 32767 - 7 * (pitch_ - g_pitch_offset - (80 << 7));"),
+    # le plafond des oscillateurs : une octave de plus en rendu allégé (la table des pas la couvre déjà), ce qui
+    # rend à 48 kHz, en Hz, le plafond de 96 kHz (note 128) : les modèles allégés le restent sur toutes les notes
+    ("braids/analog_oscillator.cc", "  if (midi_pitch >= kHighestNote) {\n    midi_pitch = kHighestNote - 1;\n  }",
+     "  if (midi_pitch >= kHighestNote + (g_pitch_offset ? kOctave : 0)) {\n"
+     "    midi_pitch = kHighestNote + (g_pitch_offset ? kOctave : 0) - 1;\n  }"),
+    ("braids/analog_oscillator.cc", "  if (pitch_ > kHighestNote) {\n    pitch_ = kHighestNote;\n  }",
+     "  if (pitch_ > kHighestNote + (g_pitch_offset ? kOctave : 0)) {\n"
+     "    pitch_ = kHighestNote + (g_pitch_offset ? kOctave : 0);\n  }"),
+    ("braids/digital_oscillator.cc", "  if (midi_pitch >= kPitchTableStart) {\n    midi_pitch = kPitchTableStart - 1;\n  }",
+     "  if (midi_pitch >= kPitchTableStart + (g_pitch_offset ? kOctave : 0)) {\n"
+     "    midi_pitch = kPitchTableStart + (g_pitch_offset ? kOctave : 0) - 1;\n  }"),
+)
+
+
+SEMANTIC_INC = {"braids/digital_oscillator.cc": "braids_semantic.inc"}
+
+
+def _edit(root, edits):
+    for f, a, b in edits:
+        p = root / f
+        s = p.read_text(encoding="utf-8")
+        if s.count(a) != 1:
+            raise SystemExit(f"!! {f} : « {a[:60]} » introuvable")
+        p.write_text(s.replace(a, b), encoding="utf-8")
+
+
+def braids_tree(tmp, repo, fast=True):
+    """Une copie des sources de Braids (braids/, stmlib/) avec SEMANTIC_EDITS, et, pour le firmware (fast), FAST,
+    FAST_INC et FAST_EDITS ; sans fast : la référence de tools/emu/test_macro.py. Rend le dossier, à passer en -I."""
+    root = tmp / ("braids_src" if fast else "braids_ref_src")
+    if root.exists():
+        return root
+    for d in ("braids", "stmlib"):
+        shutil.copytree(repo / d, root / d)
+    _edit(root, SEMANTIC_EDITS)
+    for f, inc in SEMANTIC_INC.items():
+        p = root / f
+        p.write_text(p.read_text(encoding="utf-8") + f'\n#include "{(SRC / inc).resolve()}"\n', encoding="utf-8")
+    if not fast:
+        return root
+    for f, start, nxt in FAST:
+        p = root / f
+        s = p.read_text(encoding="utf-8")
+        if s.count(start) != 1 or s.count(nxt) != 1:
+            raise SystemExit(f"!! {f} : « {start} » ou « {nxt} » introuvable")
+        p.write_text(s.replace(start, "#if 0  /* Modded Cycles : remplacée, voir FAST_INC */\n" + start)
+                      .replace(nxt, "#endif\n" + nxt), encoding="utf-8")
+    _edit(root, FAST_EDITS)
+    for f, inc in FAST_INC.items():
+        p = root / f
+        p.write_text(p.read_text(encoding="utf-8") + f'\n#include "{(SRC / inc).resolve()}"\n', encoding="utf-8")
+    return root
+
+
 def compile_machine(tmp, repo, pay, bss_at=None, code_end=None):
     """Braids + la passerelle, liés à pay (code, tables, données) et bss_at (variables ; pay + BSS_OFF par défaut).
     Le code et les données doivent finir avant code_end (gs.STUBS par défaut). Renvoie (octets de pay à la fin des
@@ -131,13 +241,17 @@ def compile_machine(tmp, repo, pay, bss_at=None, code_end=None):
     bss_at = pay + BSS_OFF if bss_at is None else bss_at
     code_end = gs.STUBS if code_end is None else code_end
     objs = []
+    tree = braids_tree(tmp, repo)
     for s in SOURCES + (SRC / "macro.cc",):
-        src = s if isinstance(s, pathlib.Path) else repo / s
+        src = s if isinstance(s, pathlib.Path) else tree / s
         o = tmp / (src.stem + ".o")
-        gx.run([gx.CROSS + "g++", *CXXFLAGS, f"-I{repo}", "-c", str(src), "-o", str(o)])
+        gx.run([gx.CROSS + "g++", *CXXFLAGS, "-DMODDED_CYCLES_FAST", f"-I{tree}", "-c", str(src), "-o", str(o)])
         objs.append(o)
     o = tmp / "rt.o"
     gx.run([gx.CROSS + "gcc", *CFLAGS_RT, "-c", str(SRC / "rt.c"), "-o", str(o)])
+    objs.append(o)
+    o = tmp / "macro_asm.o"                                  # notes/81
+    gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(SRC / "macro_asm.S"), "-o", str(o)])
     objs.append(o)
     ld, elf, out = tmp / "link.ld", tmp / "macro.elf", tmp / "macro.bin"
     ld.write_text(LINK.format(code=pay, bss=bss_at))

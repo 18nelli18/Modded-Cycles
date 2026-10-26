@@ -256,8 +256,9 @@ are not in the repository; a recipe copies them from the user's Syntakt file at 
 ### 2.3 MACRO machine
 
 **What it does.** One extra machine, **MACRO**, holds the 47 synthesis models of Braids, Émilie Gillet's open-source
-macro-oscillator. It is her own code, compiled for the Model:Cycles. In the emulator it gives exactly the samples of
-that code on a computer.
+macro-oscillator. It is her own code, compiled for the Model:Cycles, a few of its loops rewritten for its processor.
+In the emulator most models give exactly the samples of that code on a computer, the others the same spectrum within
+about 1 dB (notes/81).
 
 **How to use it** (guide):
 
@@ -288,13 +289,16 @@ that code on a computer.
 
 **Limits and interactions.**
 
-- Computed at 96 kHz as on the module, then filtered down to 48 kHz (flat to 19 kHz). Thirteen models whose sound only
-  follows the note (CSAW, SAW/SQUARE, SQUARE SUB, SAW SUB, TRIPLE SAW, SQUARE, TRIANGLE and SINE, the four wavetable
-  models, DIGITAL MODULATION) are computed at 48 kHz one octave up, for half the computing, and go back to 96 kHz on
-  the highest notes.
-- A MACRO voice costs about twice an original voice: under one for CLOCKED NOISE, about three times for HARMONICS
-  (emulator figures; "memory access can make it heavier on the machine"). On its own MACRO has no governor; in OS 2.0
-  the engines' governor looks after MACRO tracks too.
+- Computed at 96 kHz as on the module, then filtered down to 48 kHz (flat to 19 kHz). Fourteen models whose sound
+  only follows the note (CSAW, SAW/SQUARE, SINE/TRIANGLE, SQUARE SUB, SAW SUB, TRIPLE SAW, SQUARE, TRIANGLE and SINE,
+  the four wavetable models, DIGITAL MODULATION) are computed at 48 kHz one octave up, for half the computing, up to
+  the highest notes, where WAVE PARAPHONIC and WAVE MAP alias a little. Nine models that Braids already computes at
+  48 kHz inside (VOWEL FOF, HARMONICS, PLUCKED, BOWED, STRUCK BELL, STRUCK DRUM, SNARE, TWIN PEAKS NOISE, PARTICLE
+  NOISE) skip the trip through 96 kHz; HARMONICS computes its harmonics another way (notes/81).
+- Every model stays under 13 % of the processor on its track: from about 6 % (CSAW) to 12.9 % at worst (STRUCK BELL
+  while PITCH moves), against 6.8 to 8.6 % for an original machine (emulator figures from the model of notes/77,
+  which matched the machine; `tools/emu/test_budget.py`). On its own MACRO has no governor; in the OS the engines'
+  governor looks after MACRO tracks too.
 - The lo-fi replaces the fine tune on MACRO tracks only.
 - With Model-TG, MACRO gets Model-TG's Attack, Filter and Resonance, and its time shows on the System page
   (notes/43).
@@ -303,9 +307,10 @@ that code on a computer.
 **Origin and license.** Braids from `pichenettes/eurorack` by Émilie Gillet, MIT (`LICENSE-Braids`), compiled
 unchanged. Request from the Discord ("Mutable Instruments engines").
 
-**Status.** Tested on a Model:Cycles on 07/10/2026; with the 5 engines and Model-TG on 10/10/2026; the 48 kHz
-models on 11/10/2026; the lo-fi on **FUNC + PITCH** with its value on screen on 12/10/2026 (version 1.54; the first
-lo-fi did not reach the fine tune on the machine, notes/55 §8).
+**Status.** Experimental again since the lighter computing of 2.1 (notes/81, emulator only). Before it: tested on a
+Model:Cycles on 07/10/2026; with the 5 engines and Model-TG on 10/10/2026; the 48 kHz models on 11/10/2026; the lo-fi
+on **FUNC + PITCH** with its value on screen on 12/10/2026 (version 1.54; the first lo-fi did not reach the fine tune
+on the machine, notes/55 §8).
 
 ### 2.4 ACID machine
 

@@ -27,7 +27,7 @@ const ELEKTRON_ST_DL = "https://www.elektron.se/support-downloads/syntakt";
 // same whole write or a mod applied on top of another through "requires").
 const REF_MAINOS = {
   // Modded Cycles OS 2.1: the tweaks of os.json, built by tools/build.py --os
-  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+midi-out-fix+mod-settings+lfo-plus+out-sleep+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": "84455c194cb54a151e02048478430f37d931f1aa473d1e894f806f1158e3afd0",
+  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+midi-out-fix+mod-settings+lfo-plus+out-sleep+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": "92ad392437c9dab4349b0e247a0d4b5f8a72ab4746242f2cca475eed7ffa13c9",
 };
 const REF_MODS = {
   "model-tg-st": {"w": "c4686bd09a145fd10a6424b7229e414a084fbbcc212b722e4ab7d3ecd7cb7931", "p": "6356c30c4c10211f6bd47298df3d526e28039db6ecfeb59d84ce7e2b77dd3fed"},
@@ -45,7 +45,7 @@ const REF_MODS = {
   "mod-settings": {"w": "c3c023276e80295a9338a80d22711469620d4b4315ae2b1e0a85c9a61e31e9bb"},
   "lfo-plus": {"w": "8443b08fdb4ce7cf1ba26821b27e7df3ab4ca5396e35e7e9a8e591fc430569b6"},
   "out-sleep": {"w": "2465ffb9e4159117a59d6b0d6f9c657d0c24c7f0eee1df922d6cd95d8dd25b91"},
-  "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": {"w": "31d54bf9e59693eae8a3070c99a91e22426069d4a9c3687a8a91dcf87fee0eeb", "p": "b8eec89877ea3afacc03077fac14c5d558b545ddace98191c6dc6582d9d6f99c"},
+  "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": {"w": "31d54bf9e59693eae8a3070c99a91e22426069d4a9c3687a8a91dcf87fee0eeb", "p": "04edb5f1aa86a54efe49c7b054766bc0eac33867467fb079832145dbb33d3b65"},
 };
 
 // "Samples OS" tab: official Model:Samples OS 1.13 inside the official Model:Cycles container
@@ -582,8 +582,8 @@ const FEAT = {
     "eng-swarm": { short: "a swarm of detuned saws, with a sub-octave on PUNCH" },
     macro: { label: "MACRO machine",
       short: "Machine 13: the 47 synthesis models of Braids, Émilie Gillet's macro-oscillator. SHAPE picks the model.",
-      desc: "An extra machine, the 13th, with the 47 synthesis models of Braids, from Émilie Gillet's own open-source code: analog-style waves, FM, vowels and speech, physical models, drums, wavetables and noises. SHAPE picks the model, COLOR and SWEEP shape it, CONTOUR lets the amp envelope open the timbre. Hold FUNC and turn PITCH for lo-fi: left lowers the sample rate (46K down to 4K), right the bit depth (12B down to 2B), OFF in the middle. Thirteen models are computed at 48 kHz for half the processor time.",
-      note: "About as heavy on the processor as a Syntakt engine for most models; the load governor looks after MACRO voices too." },
+      desc: "An extra machine, the 13th, with the 47 synthesis models of Braids, from Émilie Gillet's own open-source code: analog-style waves, FM, vowels and speech, physical models, drums, wavetables and noises. SHAPE picks the model, COLOR and SWEEP shape it, CONTOUR lets the amp envelope open the timbre. Hold FUNC and turn PITCH for lo-fi: left lowers the sample rate (46K down to 4K), right the bit depth (12B down to 2B), OFF in the middle. Fourteen models are computed at 48 kHz for half the processor time, nine more skip the trip through 96 kHz.",
+      note: "Every model stays under 13 % of the processor on its track, from a little less than an original machine to one and a half times; the load governor looks after MACRO voices too." },
     acid: { label: "ACID machine",
       short: "Machine 14: an acid bass in the style of the TB-303, with a drive knob and slides from your trigs.",
       desc: "An extra machine, the 14th: an acid bass in the style of the TB-303, from Robin Schmidt's open-source Open303 model, rewritten in fixed point. COLOR is the cutoff, SHAPE the resonance, SWEEP the env mod, CONTOUR the drive (from clean to fuzz, at about the same volume) and DECAY the decay; PUNCH switches the wave from saw to square. A trig whose length (LEN) runs past the next trig slides into the next note instead of playing it again; played live, a note played while another is held slides too. Each note fades in over less than a millisecond, so there is no click.",
@@ -665,8 +665,8 @@ const FEAT = {
     "eng-swarm": { short: "un essaim de dents de scie désaccordées, sous-octave sur PUNCH" },
     macro: { label: "Machine MACRO",
       short: "Machine 13 : les 47 modèles de synthèse de Braids, le macro-oscillateur d'Émilie Gillet. SHAPE choisit le modèle.",
-      desc: "Une machine ajoutée, la 13e, avec les 47 modèles de synthèse de Braids, tirés du code libre d'Émilie Gillet : ondes analogiques, FM, voyelles et parole, modèles physiques, percussions, tables d'ondes et bruits. SHAPE choisit le modèle, COLOR et SWEEP le sculptent, CONTOUR laisse l'enveloppe d'ampli ouvrir le timbre. Maintenez FUNC et tournez PITCH pour le lo-fi : à gauche la fréquence d'échantillonnage baisse (46K à 4K), à droite la résolution (12B à 2B), OFF au milieu. Treize modèles sont calculés à 48 kHz pour moitié moins de temps processeur.",
-      note: "À peu près aussi lourd pour le processeur qu'un moteur du Syntakt pour la plupart des modèles ; le régulateur de charge veille aussi sur les voix MACRO." },
+      desc: "Une machine ajoutée, la 13e, avec les 47 modèles de synthèse de Braids, tirés du code libre d'Émilie Gillet : ondes analogiques, FM, voyelles et parole, modèles physiques, percussions, tables d'ondes et bruits. SHAPE choisit le modèle, COLOR et SWEEP le sculptent, CONTOUR laisse l'enveloppe d'ampli ouvrir le timbre. Maintenez FUNC et tournez PITCH pour le lo-fi : à gauche la fréquence d'échantillonnage baisse (46K à 4K), à droite la résolution (12B à 2B), OFF au milieu. Quatorze modèles sont calculés à 48 kHz pour moitié moins de temps processeur, neuf autres ne font plus le détour par 96 kHz.",
+      note: "Chaque modèle reste sous 13 % du processeur sur sa piste, d'un peu moins qu'une machine d'origine à une fois et demie ; le régulateur de charge veille aussi sur les voix MACRO." },
     acid: { label: "Machine ACID",
       short: "Machine 14 : une basse acide à la manière de la TB-303, avec un potard de saturation et des slides depuis vos trigs.",
       desc: "Une machine ajoutée, la 14e : une basse acide à la manière de la TB-303, d'après le modèle libre Open303 de Robin Schmidt, réécrit en virgule fixe. COLOR règle le cutoff, SHAPE la résonance, SWEEP l'env mod, CONTOUR la saturation (du son propre au fuzz, à volume à peu près égal) et DECAY la décroissance ; PUNCH passe l'onde de scie à carré. Un trig dont la longueur (LEN) dépasse le trig suivant glisse vers la note suivante au lieu de la rejouer ; en jeu live, une note jouée pendant qu'une autre est tenue glisse aussi. Chaque note monte en moins d'une milliseconde : pas de clic.",

@@ -51,7 +51,7 @@ import voice_loop                  # noqa: E402
 
 DEV = gs.DEV
 # Place d'ACID dans la charge utile (décalages depuis son début) : au-dessus des variables de MACRO avec les moteurs
-# (gms.MACRO_BSS + ses 6 voix : jusqu'à 0x743e0), le code (8 Ko au plus), puis ses variables (6 x 124 o).
+# (gms.MACRO_BSS + ses 6 voix : jusqu'à 0x75430), le code (8 Ko au plus), puis ses variables (6 x 124 o).
 ACID_AT = 0x76000
 ACID_BSS = 0x78000
 DEFS = ("GOV_SKIP",)

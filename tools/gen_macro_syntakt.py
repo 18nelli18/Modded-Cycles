@@ -52,7 +52,7 @@ BASE = gx.BASE
 # Place de MACRO dans la charge utile (décalages depuis son début, PAY) : au-dessus de tout ce que les moteurs y
 # mettent (lay["end"] : 0x41c00 avec les 5), le code et les tables de Braids, puis ses variables (6 voix).
 MACRO_AT = 0x42000
-MACRO_BSS = 0x5b000
+MACRO_BSS = 0x5c000          # 0x5b000 avant les fonctions réécrites de Braids (notes/81) : 4 Ko de plus pour le code
 TG_ROOM = 0x100000           # avec Model-TG : le dernier Mo de sa zone d'échantillons est à nous (notes/31 §4)
 # Combinaisons testées sur un vrai Model:Cycles (seules, puis avec Model-TG). Ajouter ici après un test réussi.
 HW_TESTED = set()
