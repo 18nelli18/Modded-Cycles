@@ -1,7 +1,7 @@
 """Mod Setup132 : overlay global, encodeurs audio et retour a la page intacte."""
 import struct,subprocess
 CODE=0x46899000;BSS=0x4689e000;END=0x468a0000
-def apply(root,build,prefix,rt,tail,meta,patch,popup_return=False,direct_popup=False,held_popup=False,nested_popup=False):
+def apply(root,build,prefix,rt,tail,meta,patch,popup_return=False,direct_popup=False,held_popup=False,nested_popup=False,popup_labels=False):
  from gen_governor_recovery_test import BASE,RUNTIME,TAIL
  from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_040
  sy=meta['symbols'];fx=meta['fx_menu']['symbols'];aliases={'mo_menu':sy['menu'],'mo_menu_encoder':meta['dx_symbols']['dx_encoder']};hooks=[]
@@ -26,7 +26,7 @@ def apply(root,build,prefix,rt,tail,meta,patch,popup_return=False,direct_popup=F
  aliases['mo_previous_frame']=int.from_bytes(raw[2:],'big');assert aliases['mo_previous_frame']==meta['fx_project']['symbols']['fxp_frame']
  cross=str(root.parent/'retrosyn-integration/build/m68k-toolchain/pkg/bin/m68k-elf-');objects=[]
  ts=build/'mod-overlay-tramp.S';ts.write_text(tramp)
- for src in (root/('tools/machines/sidechain/mod-overlay137.c' if nested_popup else 'tools/machines/sidechain/mod-overlay135.c' if held_popup else 'tools/machines/sidechain/mod-overlay134.c' if direct_popup else 'tools/machines/sidechain/mod-overlay133.c' if popup_return else 'tools/machines/sidechain/mod-overlay132.c'),ts):
+ for src in (root/('tools/machines/sidechain/mod-overlay159.c' if popup_labels else 'tools/machines/sidechain/mod-overlay137.c' if nested_popup else 'tools/machines/sidechain/mod-overlay135.c' if held_popup else 'tools/machines/sidechain/mod-overlay134.c' if direct_popup else 'tools/machines/sidechain/mod-overlay133.c' if popup_return else 'tools/machines/sidechain/mod-overlay132.c'),ts):
   obj=build/(src.name+'.o');objects.append(obj);subprocess.run([cross+'gcc.exe','-mcpu=54418','-O2','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation','-c',str(src),'-o',str(obj)],check=True)
  ld=build/'mod-overlay.ld';elf=ld.with_suffix('.elf');binary=ld.with_suffix('.bin')
  ld.write_text(f'SECTIONS {{ .text {CODE:#x} : {{ *(.text*) *(.rodata*) }} . = ALIGN(4); mo_code_end = .; .data : {{ *(.data*) }} .bss {BSS:#x} (NOLOAD) : {{ *(.bss*) *(COMMON) }} . = ALIGN(4); mo_end = .; }}\n'+''.join(f'{k} = {v:#x};\n' for k,v in aliases.items()))

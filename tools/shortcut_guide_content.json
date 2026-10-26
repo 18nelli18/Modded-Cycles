@@ -1,6 +1,6 @@
 {
-  "release": "2.47",
-  "stamp": "2026-10-25-dub-stereo-main-247",
+  "release": "2.48",
+  "stamp": "2026-10-25-wizard-groove-main-248",
   "cards": [
     {
       "en": [
@@ -138,12 +138,12 @@
           "en": [
             "SCRAMBLE",
             "Hold SETTINGS + TRACK",
-            "Randomize the checked Pitch, Decay, Color, Shape, Sweep and Contour parameters once per hold. Choose parameters in Mod Setup > SCRM. Pitch/Decay default Off; Color/Shape/Sweep/Contour default On. Marked steps use the same checklist without changing the base sound. Checklists save per pattern with Save Project. A short tap without held steps opens Mod Setup."
+            "Randomize the checked Pitch, Decay, Color, Shape, Sweep and Contour parameters once per hold. Choose parameters in Mod Setup > Track > SCRM. Pitch/Decay default Off; Color/Shape/Sweep/Contour default On. Marked steps use the same checklist without changing the base sound. Checklists save per pattern with Save Project. A short tap without held steps opens Mod Setup."
           ],
           "fr": [
             "SCRAMBLE",
             "Maintenir SETTINGS + TRACK",
-            "Tire une seule fois par maintien les paramètres cochés : Pitch, Decay, Color, Shape, Sweep, Contour. Choix dans Mod Setup > SCRM. Pitch/Decay désactivés par défaut ; Color/Shape/Sweep/Contour activés. Les pas marqués suivent la même liste, sans changer le son de base. Listes sauvegardées par pattern avec Save Project. Un appui bref sans pas tenu ouvre Mod Setup."
+            "Tire une seule fois par maintien les paramètres cochés : Pitch, Decay, Color, Shape, Sweep, Contour. Choix dans Mod Setup > Track > SCRM. Pitch/Decay désactivés par défaut ; Color/Shape/Sweep/Contour activés. Les pas marqués suivent la même liste, sans changer le son de base. Listes sauvegardées par pattern avec Save Project. Un appui bref sans pas tenu ouvre Mod Setup."
           ]
         },
         {
@@ -488,26 +488,38 @@
         },
         {
           "en": [
+            "Added-machine starting points",
+            "Check the named control",
+            "Numeric controls such as TINY Tone/Excite, PUNCH Color/Contour and Elder Wave/Warp/Noise/Motion run from 0 at the minimum to 127 at the maximum; 64 is the midpoint. Starting settings need not be zero. PITCH and FINE are centered: displayed 0 means no pitch offset. SHAPE model selectors and PUNCH ratios use their own scales. A minimum value is not a universal clean-sound setting."
+          ],
+          "fr": [
+            "Points de depart des machines ajoutees",
+            "Verifier la commande nommee",
+            "Les commandes numeriques comme Tone/Excite de TINY, Color/Contour de PUNCH et Wave/Warp/Noise/Motion de Elder vont de 0 au minimum a 127 au maximum ; 64 est le milieu. Les valeurs de depart ne sont pas forcement nulles. PITCH et FINE sont centres : 0 affiche signifie aucune transposition. Les selecteurs de modele SHAPE et les ratios PUNCH ont leurs propres echelles. Le minimum n est pas un reglage universel de son neutre."
+          ]
+        },
+        {
+          "en": [
             "Elder controls",
             "Select Elder in MACHINES",
-            "COLOR = Wave; SHAPE = Warp; SWEEP = Noise; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate and Fine remain available. Original synth inspired by Junior by Fors."
+            "COLOR = Wave; SHAPE = Warp; SWEEP = Noise; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate and Fine remain available. Original synth inspired by Junior by Fors. Starting values: Wave 0, Warp 0, Noise 0, Motion 0, Decay 50."
           ],
           "fr": [
             "Commandes Elder",
             "Choisir Elder dans MACHINES",
-            "COLOR = Wave ; SHAPE = Warp ; SWEEP = Noise ; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate et Fine conservés. Synthé original inspiré de Junior de Fors."
+            "COLOR = Wave ; SHAPE = Warp ; SWEEP = Noise ; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate et Fine conservés. Synthé original inspiré de Junior de Fors. Valeurs de depart : Wave 0, Warp 0, Noise 0, Motion 0, Decay 50."
           ]
         },
         {
           "en": [
             "TINY controls",
             "Select TINY in MACHINES",
-            "COLOR: Tone; SHAPE: Model 0–51; SWEEP: Mod; CONTOUR: Excite."
+            "COLOR: Tone; SHAPE: Model 0–51; SWEEP: Mod; CONTOUR: Excite. Starting values: Tone 64, Model 0, Mod 64, Excite 32, Decay 60."
           ],
           "fr": [
             "Commandes TINY",
             "Choisir TINY dans MACHINES",
-            "COLOR : Tone ; SHAPE : Model 0–51 ; SWEEP : Mod ; CONTOUR : Excite."
+            "COLOR : Tone ; SHAPE : Model 0–51 ; SWEEP : Mod ; CONTOUR : Excite. Valeurs de depart : Tone 64, Model 0, Mod 64, Excite 32, Decay 60."
           ]
         },
         {
@@ -598,12 +610,12 @@
           "en": [
             "PUNCH controls",
             "Select PUNCH before MIDI Out",
-            "SHAPE selects KIK, TOM, BNG, CNG, TAI, TIM, MAR, DJB, BLK, GNG, BUB or ZAP. COLOR controls timbre; SWEEP selects the ratio; FUNC + SWEEP adjusts between ratios. CONTOUR and DECAY shape the sound. Engine by100demons, MIT."
+            "SHAPE selects KIK, TOM, BNG, CNG, TAI, TIM, MAR, DJB, BLK, GNG, BUB or ZAP. COLOR controls timbre; SWEEP selects the ratio; FUNC + SWEEP adjusts between ratios. CONTOUR and DECAY shape the sound. Engine by100demons, MIT. Starting values: Color 64, KIK, ratio 4:1, Contour 40, Decay 50."
           ],
           "fr": [
             "Commandes PUNCH",
             "Choisir PUNCH avant MIDI Out",
-            "SHAPE choisit KIK, TOM, BNG, CNG, TAI, TIM, MAR, DJB, BLK, GNG, BUB ou ZAP. COLOR règle le timbre ; SWEEP choisit le ratio ; FUNC + SWEEP règle entre les ratios. CONTOUR et DECAY façonnent le son. Moteur de100demons, MIT."
+            "SHAPE choisit KIK, TOM, BNG, CNG, TAI, TIM, MAR, DJB, BLK, GNG, BUB ou ZAP. COLOR règle le timbre ; SWEEP choisit le ratio ; FUNC + SWEEP règle entre les ratios. CONTOUR et DECAY façonnent le son. Moteur de100demons, MIT. Valeurs de depart : Color 64, KIK, ratio 4:1, Contour 40, Decay 50."
           ]
         }
       ]
@@ -1372,6 +1384,18 @@
       "rows": [
         {
           "en": [
+            "Global / Track",
+            "DATA enters; BACK returns",
+            "Global: Pad, USB, Num, Mute, Dly, DX, QntM, Grv. Track: SCRM, S.Chn, Human. BACK leaves editing before returning a level. Reopening starts at the root."
+          ],
+          "fr": [
+            "Global / Track",
+            "DATA entre ; BACK revient",
+            "Global : Pad, USB, Num, Mute, Dly, DX, QntM, Grv. Track : SCRM, S.Chn, Human. BACK quitte d abord l edition puis remonte. Reouverture a la racine."
+          ]
+        },
+        {
+          "en": [
             "Access and sound editing",
             "Tap SETTINGS + TRACK",
             "Available from the main screen or machine selection. DATA navigates Mod Setup; sound knobs show the edited parameter for two seconds, then return to the same menu position. BACK closes the popup first, then Mod Setup; machine selection stays open underneath."
@@ -1524,6 +1548,62 @@
             "Sauvegarde par pattern",
             "Save Project après modification",
             "Routage et commandes Sidechain, six listes Scramble, types et réglages FX ajoutés propres à chaque pattern. Sauvegardez le projet pour les conserver au chargement. Pattern vierge : Sidechain désactivé et listes Scramble par défaut. Changement en attente appliqué au début du prochain pattern."
+          ]
+        },
+        {
+          "en": [
+            "Groove",
+            "Global > Grv > On / Type",
+            "Off uses stock Swing and remembers Type. On enables Boom Bap, Disco, Reggae, Bongo, Caixixi, Highlife or Kuduro; Swing controls strength. No stock Swing entry in Type."
+          ],
+          "fr": [
+            "Groove",
+            "Global > Grv > On / Type",
+            "Off conserve Swing natif et memorise Type. On active Boom Bap, Disco, Reggae, Bongo, Caixixi, Highlife ou Kuduro ; Swing dose la force. Pas de Swing natif dans Type."
+          ]
+        },
+        {
+          "en": [
+            "CHORD Strum",
+            "Global > Grv > Str",
+            "-80..80 ms between CHORD voices; sign reverses direction,0 plays together. Independent of Groove On/Off. Four voices at80ms span240ms."
+          ],
+          "fr": [
+            "CHORD Strum",
+            "Global > Grv > Str",
+            "-80..80 ms entre voix CHORD ; le signe inverse le sens,0 joue ensemble. Independant de Groove On/Off. Quatre voix a80ms etalees sur240ms."
+          ]
+        },
+        {
+          "en": [
+            "Humanize",
+            "Track > Human > Trk / Tim / Vel",
+            "Timing/velocity0..100 for a track or All. Global per-track preferences carry across patterns; save when playback stops."
+          ],
+          "fr": [
+            "Humanize",
+            "Track > Human > Trk / Tim / Vel",
+            "Temps/velocite0..100 pour une piste ou All. Preferences globales par piste, conservees entre patterns ; sauvegarde a l arret."
+          ]
+        }
+      ]
+    },
+    {
+      "title": {
+        "en": "Sample Wizard display",
+        "fr": "Affichage Sample Wizard"
+      },
+      "rows": [
+        {
+          "en": [
+            "Waveform and volume",
+            "Sample Wizard home screen",
+            "Sample name at top; wide waveform; selected track, duration and rectangular volume segments below. This displays the track volume setting, not an audio meter. File browser, Pitch/Fine browsing and note entry retain their controls. Start/Position marker where applicable."
+          ],
+          "fr": [
+            "Forme d onde et volume",
+            "Ecran principal Sample Wizard",
+            "Nom en haut ; grande forme d onde ; piste, duree et rectangles de volume en bas. Volume de la piste, pas un vumetre audio. Navigateur, Pitch/Fine et saisie des notes gardent leurs commandes. Marqueur Start/Position si applicable."
           ]
         }
       ]

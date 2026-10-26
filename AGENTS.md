@@ -319,3 +319,8 @@ User: "push to main, consistently 75 99 00 during same pattern". Promote exact s
 ## AveyCole main2.47 promotion (2026-10-25)
 
 User authorizes publishing148 and continuing optimization only in test. Exact standard148 SHA `442c1720818c7c5e6798cadbebbd29e37288eae09d9a80c3ce3b7b743f2397d4`, MAIN `3a225d0ecd7e08cc14f35c7c4cf0b5a02086bd06a1aa35261d289fbb8cec8e72`. DUB stereo on base146;147 optimizations excluded after higher hardware P report. No new hardware CPU result claimed. Adult private. Update DUB guide text; protected blurb unchanged. DX7 importer reliability investigation remains separate.
+
+
+## AveyCole main2.48 promotion (2026-10-25)
+
+User: "but goahead and push159 as well". Publish exact standard159 SHA `fb0d1b480d21910e6c0c63f300b6383f802a1cbbf490eb7e55f6932951a6047f`, MAIN `e743c142835072c4050c60d42d9b86f7c89e3fb209a416ff6d7b1e97416a9ec4` through the existing fixed-main path. No new hardware result claimed. Adult stays private, protected blurb unchanged. Includes waveform/footer volume, Groove/Strum, Global/Track menus, popup labels,151 bank fix and155 optimizations. Subsequent VA/LXR work stays private.

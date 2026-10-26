@@ -16,7 +16,18 @@ extern i16 *volatile br_history;
 #ifdef RR_LOCAL_PLAIN
 /* Chemin plateau du profil no-filter, porte dans le profil filtre : memes bits. */
 static __attribute__((noinline)) void rr_native_plain(i32 *channel,i16 *write,i16 *read,u32 record){
- if(record)for(u32 i=0;i<32;i++){
+#ifdef RR_HOT155
+/* Deroulement explicite par4 : write et read peuvent etre alias, donc
+ * chaque capture precede sa relecture, comme le chemin natif. */
+#define RR_FULL155(k) do { i32 live=channel[i+(k)],q=live>>15; if(q>32767)q=32767; if(q< -32767)q=-32767; write[i+(k)]=(i16)q; i32 residual=(i32)(((u32)live&511u)^256u)-256; channel[i+(k)]=(i32)read[i+(k)]*32768+residual; } while(0)
+#define RR_READ155(k) do { i32 live=channel[i+(k)],residual=(i32)(((u32)live&511u)^256u)-256; channel[i+(k)]=(i32)read[i+(k)]*32768+residual; } while(0)
+ if(record)for(u32 i=0;i<32;i+=4){RR_FULL155(0);RR_FULL155(1);RR_FULL155(2);RR_FULL155(3);}
+ else for(u32 i=0;i<32;i+=4){RR_READ155(0);RR_READ155(1);RR_READ155(2);RR_READ155(3);}
+#undef RR_FULL155
+#undef RR_READ155
+#else
+ if(record)
+ for(u32 i=0;i<32;i++){
   i32 live=channel[i],q=live>>15;
   if(q>32767)q=32767;
   if(q< -32767)q=-32767;
@@ -24,10 +35,12 @@ static __attribute__((noinline)) void rr_native_plain(i32 *channel,i16 *write,i1
   i32 residual=(i32)(((u32)live&511u)^256u)-256;
   channel[i]=(i32)read[i]*32768+residual;
  }
- else for(u32 i=0;i<32;i++){
+ else
+ for(u32 i=0;i<32;i++){
   i32 live=channel[i],residual=(i32)(((u32)live&511u)^256u)-256;
   channel[i]=(i32)read[i]*32768+residual;
  }
+#endif
 }
 #else
 extern void rr_native_plain(i32*,i16*,i16*,u32);

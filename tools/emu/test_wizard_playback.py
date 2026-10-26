@@ -33,9 +33,29 @@ def fixtures(stereo,cutoff,resonance,stems=None,native_chordkeys=False,runtime_t
    e.uc.mem_write(dst,initial[lo-0x40000400:hi-0x40000400])
   for off,at,size in [(0,0x80001c5c,0x5858),(0x5858,0x8000cac0,0x2020)]:e.uc.mem_write(at,rt[off:off+size])
   if m.get('polivoks_inspired'):
-   raw=ROOT/('output/firmware/governor-recovery-'+stem.rsplit('-',1)[-1]+'/module.bin');e.emac.install(emac.disasm(str(raw),0x467c7000,0x467c7000,0x467c7000+raw.stat().st_size))
+   raw=ROOT/('output/firmware/governor-recovery-'+stem.rsplit('-test-',1)[-1]+'/module.bin');e.emac.install(emac.disasm(str(raw),0x467c7000,0x467c7000,0x467c7000+raw.stat().st_size))
   if m.get('feral_replaces_tiny'):
-   fr=m['feral'];path=ROOT/('output/firmware/governor-recovery-'+stem.rsplit('-',1)[-1]+'/feral-code.bin');e.emac.install(emac.disasm(str(path),fr['code'],fr['code'],fr['code']+fr['code_bytes']))
+   fr=m['feral'];path=ROOT/('output/firmware/governor-recovery-'+stem.rsplit('-test-',1)[-1]+'/feral-code.bin');e.emac.install(emac.disasm(str(path),fr['code'],fr['code'],fr['code']+fr['code_bytes']))
+  if m.get('mixer_headroom'):
+   # Nouvelles copies natives hors des plages historiques de mcengine.
+   for row in m['mixer_headroom']['kernels']:
+    path=ROOT/('output/firmware/governor-recovery-'+stem.rsplit('-test-',1)[-1]+'/mixer147-'+str(row['gains'])+'.bin')
+    assert bytes(e.uc.mem_read(row['code'],row['size']))==path.read_bytes()
+    e.emac.install(emac.disasm(str(path),row['code'],row['code'],row['code']+row['size']))
+  # Decoder les copies finales hors des plages historiques, notamment ACID et
+  # HALL. Le decodeur est idempotent si un banc specialise les installe aussi.
+  extra=[]
+  for key in ('fundamentals','punch','legacy'):
+   d=m.get(key)
+   if d:extra.append((key,d['code'],d['code_bytes']))
+  hall=m.get('audio_headroom',{}).get('hall')
+  if hall:extra.append(('hall',hall['code'],hall['end']-hall['code']))
+  import hashlib
+  folder=ROOT/'tmp/emu-runtime-code';folder.mkdir(parents=True,exist_ok=True)
+  for label,at,n in extra:
+   code=bytes(e.uc.mem_read(at,n));path=folder/(label+'-'+hashlib.sha256(code).hexdigest()+'.bin')
+   if not path.exists():path.write_bytes(code)
+   e.emac.install(emac.disasm(str(path),at,at,at+n))
   def stub(u,pc,size,data):
    sp=u.reg_read(C.UC_M68K_REG_A7);u.reg_write(C.UC_M68K_REG_D0,0);u.reg_write(C.UC_M68K_REG_PC,int.from_bytes(u.mem_read(sp,4),'big'));u.reg_write(C.UC_M68K_REG_A7,sp+4)
   if not native_chordkeys:

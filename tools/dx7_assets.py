@@ -34,7 +34,7 @@ def icon():
  from build_machine_identity_test import encode
  return encode(p)
 
-def prepare(root,build,previous_popup,notice,bank_path,reference=False,classics_path=None,optimize=False,bank_safe=False,bank_guard=False):
+def prepare(root,build,previous_popup,notice,bank_path,reference=False,classics_path=None,optimize=False,bank_safe=False,bank_guard=False,bank_chunks=False,bank_queue=False,legacy_fast=False,legacy_deep=False,legacy_routing=False):
  root=root.resolve();build=build.resolve();src=root/'tools/machines/dx7';voices,bm=bank(bank_path)
  if classics_path:
   raw=Path(classics_path).read_bytes();assert len(raw)==4104 and raw[:2]==bytes([240,67]) and raw[2]<16 and raw[3:6]==bytes([9,32,0]) and raw[-1]==247 and not any(x>127 for x in raw[6:-1]) and sum(raw[6:-1])&127==0
@@ -45,21 +45,27 @@ def prepare(root,build,previous_popup,notice,bank_path,reference=False,classics_
   assert len(done)==8;bm.update(classics_file=Path(classics_path).name,classics_sha256=hashlib.sha256(raw).hexdigest(),replacements=done,names=[bytes(v[145:155]).decode('ascii').strip() for v in voices])
  generated=build/'dx7_default.cc';generated.write_text('#include <stdint.h>\nextern "C" const uint8_t dx7_default_bank[32][156]='+str(voices).replace('[','{').replace(']','}')+';\n')
  cross=str(root.parent/'retrosyn-integration/build/m68k-toolchain/pkg/bin/m68k-elf-');os.environ['PATH']=str(Path(cross).parent)+os.pathsep+os.environ['PATH'];objs=[]
- files=[src/'core'/n for n in ['fm_core.cc','fm_op_kernel.cc','env.cc','pitchenv.cc','lfo.cc','freqlut.cc','tables.cc']]+[src/n for n in ['port.cc','bank.c','bridge.c','wrap.S','hooks.S']]+([src/'library.c'] if optimize else [])+[generated]
+ files=[src/'core'/n for n in ['fm_core.cc','fm_op_kernel.cc','env.cc','pitchenv.cc','lfo.cc','freqlut.cc','tables.cc']]+[src/n for n in ['port.cc','bank.c','bridge.c','wrap.S','hooks.S']]+([src/'library.c'] if optimize else [])+([src/'kernels152.S'] if legacy_fast else [])+[generated]
  for f in files:
   obj=build/('dx7_'+f.name+'.o');objs.append(obj)
-  args=[*(['-DDX7_BANK_GUARD=1'] if bank_guard else []),*(['-DDX7_BANK_SAFE=1'] if bank_safe else []),*(['-DDX7_OPT=1'] if optimize else []),'-mcpu=54418','-O2','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-fwrapv','-Wall','-Wextra','-Wno-misleading-indentation']
+  args=[*(['-DDX7_BANK_GUARD=1'] if bank_guard else []),*(['-DDX7_BANK_CHUNKS=1'] if bank_chunks else [])+(['-DDX7_BANK_QUEUE=1'] if bank_queue else []),*(['-DDX7_BANK_SAFE=1'] if bank_safe else []),*(['-DDX7_OPT=1'] if optimize else []),'-mcpu=54418','-O2','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-fwrapv','-Wall','-Wextra','-Wno-misleading-indentation']
+  if legacy_fast:args+=['-DDX7_LEGACY_FAST=1']
+  if legacy_routing:args+=['-DDX7_ROUTING154=1']
+  if legacy_deep and f.name in ('port.cc','fm_core.cc','env.cc','pitchenv.cc','lfo.cc'):args+=['-O3','-funroll-loops','-DDX7_LEGACY_DEEP=1']
   cxx=f.suffix=='.cc'
   if cxx:args+=['-fno-exceptions','-fno-rtti','-fno-threadsafe-statics','-fno-use-cxa-atexit']
   if reference:args+=['-DDX7_REFERENCE=1']
   subprocess.run([cross+('g++.exe' if cxx else 'gcc.exe'),*args,'-c',str(f),'-o',str(obj)],check=True)
  libgcc=subprocess.check_output([cross+'gcc.exe','-mcpu=54418','-print-libgcc-file-name'],text=True).strip()
  ld=build/'dx7.ld';elf=build/'dx7.elf';binary=build/'dx7.bin'
- ld.write_text(f'SECTIONS {{ .text {CODE:#x} : {{ *(.text*) *(.rodata*) }} . = ALIGN(4); .data : {{ *(.data*) }} . = ALIGN(4); dx7_code_end = .; .bss {BSS:#x} (NOLOAD) : {{ *(.bss*) *(COMMON) }} . = ALIGN(4); dx7_end = .; /DISCARD/ : {{ *(.eh_frame*) *(.init_array*) *(.fini_array*) }} }}\ndx7_previous_popup = {previous_popup:#x};\ndx7_notice = {notice:#x};\n')
+ chunk_base = 0x468a8000 if bank_queue else 0x46880000
+ chunk_section = f'.bankchunks {chunk_base:#x} (NOLOAD) : {{ *(.bankchunks) }} dx7_chunks_end = .;' if bank_chunks else ''
+ ld.write_text(f'SECTIONS {{ .text {CODE:#x} : {{ *(.text*) *(.rodata*) }} . = ALIGN(4); .data : {{ *(.data*) }} . = ALIGN(4); dx7_code_end = .; {chunk_section} .bss {BSS:#x} (NOLOAD) : {{ *(.bss*) *(COMMON) }} . = ALIGN(4); dx7_end = .; /DISCARD/ : {{ *(.eh_frame*) *(.init_array*) *(.fini_array*) }} }}\ndx7_previous_popup = {previous_popup:#x};\ndx7_notice = {notice:#x};\n')
  subprocess.run([cross+'ld.exe','-T',str(ld),'-o',str(elf),*map(str,objs),libgcc],check=True)
  subprocess.run([cross+'objcopy.exe','-O','binary','-j','.text','-j','.data',str(elf),str(binary)],check=True)
  sy={v[2]:int(v[0],16) for line in subprocess.check_output([cross+'nm.exe','-n',str(elf)],text=True).splitlines() if len(v:=line.split())==3}
- assert sy['dx7_code_end']<=ART and sy['dx7_end']<END
+ assert sy['dx7_code_end'] <= (0x46880000 if bank_chunks else ART) and sy['dx7_end']<END
+ if bank_chunks: assert chunk_base < sy['dx7_chunks_end'] < (0x468ae000 if bank_queue else ART)
  profile=dict(machine=21,name='LEGACY',icon='six-operators',**{'class':'SYNTH'},style='DXFM',str=4,dex=5,mag=5)
  from build_machine_identity_test import stats,encode
  blob=bytearray(binary.read_bytes().ljust(sy['dx7_end']-CODE,b'\0'));pos=ART+56

@@ -1,6 +1,6 @@
 /* Import DX7 original, protocole SML du firmware105 ; MIDI USB uniquement. */
 (function(){'use strict';
-const $=id=>document.getElementById(id);let midi=null,bank=null,busy=false;
+const $=id=>document.getElementById(id);let midi=null,bank=null,busy=false,transaction=0;
 const en=()=>document.documentElement.lang!=='fr';
 const say=(a,b,error=false)=>{$('bank-status').textContent=en()?a:b;$('bank-status').classList.toggle('err',error);};
 function refresh(){
@@ -21,7 +21,7 @@ $('bank-file').onchange=async()=>{bank=null;$('bank-voices').replaceChildren();t
  const f=$('bank-file').files[0];if(!f){refresh();return;}
  const parsed=LegacyImport.parse(new Uint8Array(await f.arrayBuffer()));bank=parsed.raw;
  $('bank-label').value=f.name.replace(/\.syx$/i,'').slice(0,13);
- $('bank-voices').replaceChildren(...parsed.names.map((name,i)=>{const li=document.createElement('li');li.textContent=name||'—';li.value=i+1;return li;}));
+ $('bank-voices').replaceChildren(...parsed.names.map((name,i)=>{const li=document.createElement('li');li.textContent=name||'â€”';li.value=i+1;return li;}));
  if(parsed.adjustments.length){
   const slots=Array.from(new Set(parsed.adjustments.map(a=>a.slot))).join(', '),count=parsed.adjustments.length;
   say('32 voices ready. Adjusted '+count+' out-of-range value(s) in slot(s) '+slots+' for LEGACY compatibility. Your original file is unchanged. Choose a library slot and send.',
@@ -30,10 +30,15 @@ $('bank-file').onchange=async()=>{bank=null;$('bank-voices').replaceChildren();t
 }catch(e){say(e.message,e.message,true);}refresh();};
 $('bank-send').onclick=async()=>{if(busy||window.MCImportBusy)return;try{
  const out=midi?.outputs.get($('bank-output').value);if(!out||out.state==='disconnected')throw Error(en()?'Connect the Model:Cycles USB output.':'Connectez la sortie USB Model:Cycles.');
- const packet=LegacyImport.packet(bank,Number($('bank-slot').value),$('bank-label').value);
+ const packets=LegacyImport.chunkPackets(bank,Number($('bank-slot').value),$('bank-label').value,(transaction++&127));
  busy=true;window.MCImportBusy=true;window.dispatchEvent(new Event('mc-import-busy'));refresh();
- await out.open();out.send(packet);
- say('Sent. Wait for LEGACY BANK SAVED on the device. Then select LEGACY, hold FUNC + MACHINES, turn DATA and press DATA to load. Sending again to this slot replaces its bank.','Envoye. Attendez LEGACY BANK SAVED sur l appareil. Choisissez LEGACY, maintenez FUNC + MACHINES, tournez DATA et appuyez pour charger. Un nouvel envoi au meme emplacement remplace sa banque.');
+ await out.open();
+ for(let i=0;i<packets.length;i++){
+  if(out.state==='disconnected')throw Error(en()?'MIDI disconnected. Reconnect and send again.':'MIDI deconnecte. Reconnectez puis recommencez.');
+  out.send(packets[i]);say('Sending bank packet '+(i+1)+' / '+packets.length+'...','Envoi du paquet '+(i+1)+' / '+packets.length+'...');
+  await new Promise(resolve=>setTimeout(resolve,75));
+ }
+ say('All bank packets sent. This page cannot confirm the device saved them. Look for LEGACY BANK SAVED on the device. Then select LEGACY, hold FUNC + MACHINES, turn DATA and press DATA to load. Sending again to this slot replaces its bank.','Tous les paquets sont envoyes. Cette page ne peut pas confirmer leur sauvegarde. Verifiez LEGACY BANK SAVED sur l appareil. Choisissez LEGACY, maintenez FUNC + MACHINES, tournez DATA et appuyez pour charger. Un nouvel envoi au meme emplacement remplace sa banque.');
  /* L OS termine le petit fichier avant un nouvel envoi depuis cette page. */
  await new Promise(resolve=>setTimeout(resolve,2500));
 }catch(e){say(e.message,e.message,true);}finally{busy=false;window.MCImportBusy=false;window.dispatchEvent(new Event('mc-import-busy'));refresh();}};

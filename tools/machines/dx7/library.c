@@ -11,7 +11,13 @@ void dx7_message(const char*text){status_text=text;status_stamp=*(volatile u32*)
 #define REPORT dx7_message
 void dx7_status_draw(u32 canvas){
  if(!status_text)return;
- if(*(volatile u32*)0xfc07000c-status_stamp>270336000u){status_text=0;return;}
+ if(*(volatile u32*)0xfc07000c-status_stamp>
+#ifdef DX7_BANK_CHUNKS
+675840000u
+#else
+270336000u
+#endif
+){status_text=0;return;}
  N(0x40070efc)(canvas,8,4,119,20,0);N(0x40070c4e)(canvas,8,4,119,20,0xffffffffu);
  N(0x40071a04)(canvas,0x40ea14cc,13,8,0x10,"%s",status_text);
 }
@@ -92,3 +98,7 @@ u32 dx7_browser_draw(u32 view,u32 canvas){
  return 1;
 }
 void *memset(void *p,int c,unsigned long n){volatile u8*d=(volatile u8*)p;while(n--)*d++=(u8)c;return p;}
+
+#ifdef DX7_BANK_CHUNKS
+#include "bank_chunks150.c"
+#endif

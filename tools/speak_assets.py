@@ -106,7 +106,7 @@ def microphone():
  from build_machine_identity_test import encode
  return encode(p)
 
-def prepare(root,build,previous_popup,clear=False,smooth=False,level=False,adult=False,soft=False,speed_fix=False,talk=False,bright=False,pitch_fix=False,sheen=False,fast=False):
+def prepare(root,build,previous_popup,clear=False,smooth=False,level=False,adult=False,soft=False,speed_fix=False,talk=False,bright=False,pitch_fix=False,sheen=False,fast=False,headroom=False):
  src=root/'tools/machines/speak';bank=src/'words-adult-private.json' if adult else None
  text,words=header(root,smooth=smooth,word_bank=bank,soft=soft,talk=talk,bright=bright,pitch_fix=pitch_fix,sheen=sheen)
  compile_src=src/'speak.c'
@@ -117,7 +117,7 @@ def prepare(root,build,previous_popup,clear=False,smooth=False,level=False,adult
  else:(src/'speak_tables.h').write_text(text,encoding='utf-8')
  cross=str(root.parent/'retrosyn-integration/build/m68k-toolchain/pkg/bin/m68k-elf-');os.environ['PATH']=str(Path(cross).parent)+os.pathsep+os.environ['PATH']
  obj=build/'speak.o';elf=build/'speak.elf';binary=build/'speak.bin';ld=build/'speak.ld'
- subprocess.run([cross+'gcc.exe','-mcpu=54418','-O3' if fast else '-O2','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',*(['-DSP_CLEAR=1'] if clear else []),*(['-DSP_SMOOTH=1'] if smooth else []),*(['-DSP_LEVEL=1'] if level else []),*(['-DSP_SOFT=1'] if soft else []),*(['-DSP_SPEED_FIX=1'] if speed_fix else []),*(['-DSP_TALK=1'] if talk else []),'-c',str(compile_src),'-o',str(obj)],check=True)
+ subprocess.run([cross+'gcc.exe','-mcpu=54418','-O3' if fast else '-O2','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',*(['-DSP_HOT155=1','-fwrapv'] if headroom else []),*(['-DSP_CLEAR=1'] if clear else []),*(['-DSP_SMOOTH=1'] if smooth else []),*(['-DSP_LEVEL=1'] if level else []),*(['-DSP_SOFT=1'] if soft else []),*(['-DSP_SPEED_FIX=1'] if speed_fix else []),*(['-DSP_TALK=1'] if talk else []),'-c',str(compile_src),'-o',str(obj)],check=True)
  ld.write_text(f'SECTIONS {{ .text {CODE:#x} : {{ *(.text*) *(.rodata*) }} . = ALIGN(4); speak_code_end = .; .bss {BSS:#x} (NOLOAD) : {{ *(.bss*) *(COMMON) }} . = ALIGN(4); speak_end = .; }}\nspeak_previous_popup = {previous_popup:#x};\n')
  subprocess.run([cross+'ld.exe','-T',str(ld),'-o',str(elf),str(obj)],check=True);subprocess.run([cross+'objcopy.exe','-O','binary','-j','.text',str(elf),str(binary)],check=True)
  sy={v[2]:int(v[0],16) for line in subprocess.check_output([cross+'nm.exe',str(elf)],text=True).splitlines() if len(v:=line.split())==3};assert sy['speak_code_end']<BSS and sy['speak_end']<END

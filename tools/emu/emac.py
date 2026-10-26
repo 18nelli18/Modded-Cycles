@@ -65,11 +65,12 @@ class EMAC:
         for addr, (size, mn, ops) in instrs.items():
             if mn in ("macl", "msacl", "macw", "msacw", "movclrl") or \
                (mn == "movel" and re.search(r"%acc|%macsr|%mask", ops)):
+                known = addr in self.ops
                 self.ops[addr] = (size, mn, ops)
                 f = self._compile(addr, size, mn, ops)
                 if f is not None:
                     self.fast[addr] = f
-                self.uc.hook_add(UC_HOOK_CODE, self._hook, begin=addr, end=addr)
+                if not known:self.uc.hook_add(UC_HOOK_CODE, self._hook, begin=addr, end=addr)
                 n += 1
         return n
 

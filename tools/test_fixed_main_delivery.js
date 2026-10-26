@@ -1,2 +1,2 @@
-/* Principal2.47 : image148 exacte approuvee. */
-require("./test_v148_delivery.js");
+/* Principal2.48 : image159 standard exacte approuvee. */
+require("./test_v159_delivery.js");

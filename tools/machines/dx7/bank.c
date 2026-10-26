@@ -19,11 +19,29 @@ u32 dx7_imported,dx7_rejected;
 #ifdef DX7_OPT
 #define RX_BYTES 4121
 extern u32 dx7_library_packet(const u8*,u32,u8*);
+#ifdef DX7_BANK_CHUNKS
+extern u32 dx7_chunk_packet(u32,const u8*,u32,u8*);
+#endif
 #else
 #define RX_BYTES 4104
 #endif
 struct Rx{u8 data[RX_BYTES];u32 length,active;volatile u32 ready;};
 static struct Rx rx[2];
+#ifdef DX7_BANK_QUEUE
+/* Producteur IRQ, consommateur UI : conserver une banque complete meme si
+ * plusieurs messages USB arrivent avant le prochain rafraichissement. */
+#define BANK_QUEUE_COUNT 40
+struct BankFrame {u8 data[139];u32 length;};
+struct BankQueue {struct BankFrame frames[BANK_QUEUE_COUNT];volatile u32 read,write,dropped;u32 handled;};
+static struct BankQueue bank_queue[2] __attribute__((section(".bankchunks")));
+extern void dx7_chunk_reset(u32);
+static void queue_bank_frame(u32 port,const u8*p,u32 n){
+ struct BankQueue*q=&bank_queue[port];u32 at=q->write,next=at+1;if(next==BANK_QUEUE_COUNT)next=0;
+ if(n>139||next==q->read){q->dropped++;return;}
+ for(u32 i=0;i<n;i++)q->frames[at].data[i]=p[i];q->frames[at].length=n;
+ __asm__ volatile("":::"memory");q->write=next;
+}
+#endif
 const u8 *dx7_patch(u32 index){return bank_ready?banks[bank_active][index&31]:dx7_default_bank[index&31];}
 /* Limites exactes du format unpacked155 ; les noms sont ASCII7bits. */
 u32 dx7_valid(const u8*p){
@@ -60,7 +78,13 @@ void dx7_rx_byte(u32 port,u32 byte){
  &&byte!=125
 #endif
 ){r->active=r->length=0;return;}
- if(byte==247){r->active=0;__asm__ volatile("":::"memory");r->ready=1;}
+ if(byte==247){
+#ifdef DX7_BANK_QUEUE
+  if(r->length>=6&&r->data[1]==125&&r->data[5]==2){
+   queue_bank_frame(port,r->data,r->length);r->active=r->length=0;return;
+  }
+#endif
+  r->active=0;__asm__ volatile("":::"memory");r->ready=1;}
 }
 #ifdef DX7_BANK_GUARD
 /* Differer six octets au plus pour reconnaitre EXACTEMENT F0 7D S M L 01.
@@ -78,7 +102,11 @@ static u32 forward_byte(u32 port,u8 b,u8*out){
   if(b&128){forward_count[port]=0;out[0]=b;return 1;}return 0;
  }
  if(!n){if(b==240){forward_head[port][0]=b;forward_count[port]=1;return 0;}out[0]=b;return 1;}
- if(b==header[n]){forward_head[port][n]=b;forward_count[port]=n==5?7:n+1;return 0;}
+ if(b==header[n]
+#ifdef DX7_BANK_CHUNKS
+ ||(n==5&&b==2)
+#endif
+ ){forward_head[port][n]=b;forward_count[port]=n==5?7:n+1;return 0;}
  for(u32 j=0;j<n;j++)out[j]=forward_head[port][j];forward_count[port]=0;
  if(b==240){forward_head[port][0]=b;forward_count[port]=1;return n;}
  out[n]=b;return n+1;
@@ -143,8 +171,31 @@ void dx7_service(void){
 #endif
  static u32 loaded;if(!loaded){loaded=1;bank_read("/Dx7Bank.cfg");}
  for(u32 port=0;port<2;port++){
+#ifdef DX7_BANK_QUEUE
+  struct BankQueue*q=&bank_queue[port];
+  if(q->handled!=q->dropped){
+   q->handled=q->dropped;q->read=q->write;dx7_chunk_reset(port);dx7_rejected++;REPORT("BANK RX FULL");
+  }else{
+   /* Nombre borne ; une interruption peut ajouter des messages sans prolonger
+    * indefiniment ce passage UI. Ne liberer le slot qu'apres sa lecture. */
+   u32 end=q->write;
+   while(q->read!=end){
+    u32 at=q->read;struct BankFrame*f=&q->frames[at];
+    if(q->handled!=q->dropped)break;
+    u32 result=dx7_chunk_packet(port,f->data,f->length,(u8*)banks[bank_active^1]);
+    if(result==2)dx7_imported++;else if(!result)dx7_rejected++;
+    if(++at==BANK_QUEUE_COUNT)at=0;__asm__ volatile("":::"memory");q->read=at;
+   }
+  }
+#endif
   struct Rx*r=&rx[port];if(!r->ready)continue;u32 n=r->length;const u8*p=r->data;
 #ifdef DX7_OPT
+#ifdef DX7_BANK_CHUNKS
+  if(n>=6&&p[1]==125&&p[5]==2){
+   u32 result=dx7_chunk_packet(port,p,n,(u8*)banks[bank_active^1]);if(result==2)dx7_imported++;else if(!result)dx7_rejected++;
+   r->length=r->active=0;__asm__ volatile("":::"memory");r->ready=0;continue;
+  }
+#endif
   if(n>1&&p[1]==125){
    if(dx7_library_packet(p,n,(u8*)banks[bank_active^1])){dx7_imported++;REPORT("LEGACY BANK SAVED");}else dx7_rejected++;
    r->length=r->active=0;__asm__ volatile("":::"memory");r->ready=0;continue;

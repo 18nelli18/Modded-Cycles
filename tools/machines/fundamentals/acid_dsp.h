@@ -119,7 +119,20 @@ static inline void acid_reset(acid_t *s)
 }
 
 /* un bloc de 32 echantillons dans out (Q31, avant la chaine d'ampli de l'OS) */
-static inline void acid_block(acid_t *s, const acid_in_t *in, s32 *out)
+#ifdef ACID_FAST153
+#define ACID_R __restrict__
+#ifdef __mcoldfire__
+/* Deux produits identiques : floor(2*floor(p/2^23)/256)=floor(p/2^30).
+ * Meme troncature finale et saturation ; pas de fusion de produits distincts. */
+static inline s32 qmul_twice(s32 a,s32 b){
+ s32 r;__asm__ volatile("mac.l %1,%2,<<,%%acc0\n\tmovclr.l %%acc0,%0":"=d"(r):"r"(a),"r"(b));return r;
+}
+#endif
+#else
+#define ACID_R
+#endif
+/* Les trois zones sont disjointes dans le contrat du render natif. */
+static inline void acid_block(acid_t * ACID_R s, const acid_in_t * ACID_R in, s32 * ACID_R out)
 {
 	s32 c, e, lc, i, f, kf, r, b1, k1, g1, db, dk, dg, am, t, m, m3, xl, lp, mk;
 	u32 ph, inc;
@@ -185,6 +198,67 @@ static inline void acid_block(acid_t *s, const acid_in_t *in, s32 *out)
 		s32 x1 = s->x1, h1 = s->h1, f1 = s->f1, fh = s->fh;
 		s32 y1 = s->y1, y2 = s->y2, y3 = s->y3, y4 = s->y4;
 		ph = s->ph;
+#ifdef ACID_HOT155
+/* Meme boucle et arithmetique, choix forme/attaque une seule fois par bloc. */
+#define ACID_LOOP155(WAVE,ATTACK) 		for (n = 0; n < 32; n++) { \
+			s32 x, fb, y0, u; \
+			u32 nx = ph + inc; \
+			if (WAVE) {                              /* carre : haut sur [0, 46,9 %[ */ \
+				u32 q = ph - ACID_DUTY; \
+				x = ph < ACID_DUTY ? (1 << 25) : -(1 << 25); \
+				if (ph < inc) \
+					x -= acid_blep(ph, inc);             /* juste apres la montee */ \
+				else if (nx < ph) \
+					x += acid_blep(0 - ph, inc);         /* juste avant */ \
+				if (q < inc) \
+					x += acid_blep(q, inc);              /* juste apres la descente */ \
+				else if (nx - ACID_DUTY < q) \
+					x -= acid_blep(0 - q, inc); \
+			} else {                                     /* scie descendante, remonte a la fin du cycle */ \
+				x = (s32)(0x7fffffffu - ph) >> 6; \
+				if (ph < inc) \
+					x -= acid_blep(ph, inc); \
+				else if (nx < ph) \
+					x += acid_blep(0 - ph, inc); \
+			} \
+			ph = nx; \
+			/* passe-haut d'entree */ \
+			h1 = qmac2(ACID_HP1_B, x - x1, ACID_HP1_A, h1); \
+			x1 = x; \
+			/* contre-reaction k y4, passe-haut 150 Hz */ \
+			fb = qmul(k, y4) << 7; \
+			fh = qmac2(ACID_HPF_B, fb - f1, ACID_HPF_A, fh); \
+			f1 = fb; \
+			y0 = h1 - fh; \
+			y1 += qmul(b << 1, y0 - y1 + y2); \
+			y2 += qmul(b, y1 - (y2 << 1) + y3); \
+			y3 += qmul(b, y2 - (y3 << 1) + y4); \
+			y4 += qmul(b, y3 - (y4 << 1)); \
+			/* saturation : u - u^3 / 3 (pente 1 a l'origine, 2/3 et pente nulle au seuil), passe-bas, niveau */ \
+			x = qmul(g, y4); \
+			if (x >= xl) \
+				u = ACID_SAT; \
+			else if (x <= -xl) \
+				u = -ACID_SAT; \
+			else { \
+				u = x * m; \
+				u = qmul(u << 1, (1 << 30) - qmul(u << 2, x * m3)); \
+			} \
+			z += qmul(lp, u - z); \
+            out[n] = qmul_twice(z << 3,mk);       /* z x 12 x niveau, sature a la pleine echelle */ \
+			if (ATTACK)                   /* fondu d'entree (anti-clic) */ \
+				out[n] = (out[n] >> ACID_ATK_SH) * n; \
+			b += db; \
+			k += dk; \
+			g += dg; \
+		}
+        if(in->wave){
+            if(in->trig==ACID_TRIG){ACID_LOOP155(1,1)}else{ACID_LOOP155(1,0)}
+        }else{
+            if(in->trig==ACID_TRIG){ACID_LOOP155(0,1)}else{ACID_LOOP155(0,0)}
+        }
+#undef ACID_LOOP155
+#else
 		for (n = 0; n < 32; n++) {
 			s32 x, fb, y0, u;
 			u32 nx = ph + inc;
@@ -230,13 +304,18 @@ static inline void acid_block(acid_t *s, const acid_in_t *in, s32 *out)
 				u = qmul(u << 1, (1 << 30) - qmul(u << 2, x * m3));
 			}
 			z += qmul(lp, u - z);
-			out[n] = qmac2(z << 3, mk, z << 3, mk);       /* z x 12 x niveau, sature a la pleine echelle */
+			#if defined(ACID_FAST153) && defined(__mcoldfire__)
+            out[n] = qmul_twice(z << 3,mk);
+#else
+            out[n] = qmac2(z << 3, mk, z << 3, mk);
+#endif       /* z x 12 x niveau, sature a la pleine echelle */
 			if (in->trig == ACID_TRIG)                   /* fondu d'entree (anti-clic) */
 				out[n] = (out[n] >> ACID_ATK_SH) * n;
 			b += db;
 			k += dk;
 			g += dg;
 		}
+#endif
 		s->z = z;
 		s->x1 = x1; s->h1 = h1; s->f1 = f1; s->fh = fh;
 		s->y1 = y1; s->y2 = y2; s->y3 = y3; s->y4 = y4;

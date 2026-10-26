@@ -67,12 +67,20 @@ static s32 sample(State*s,u32 inc,u32 bank,u32 speed,u32 articulation){
 #ifdef SP_TALK
  smooth=6-(articulation>>6);
 #endif
+#ifdef SP_HOT155
+/* Trois resonateurs fixes, transitions identiques ; supprimer seulement
+ * les compteurs de boucles et les adresses recalculees a8kHz. */
+#define SP_RESONATE155(K) do { const Resonator*r=&SP_RESONATORS[bank][id][K]; s->coef[K][0]+=(r->a1-s->coef[K][0])>>smooth; s->coef[K][1]+=(r->a2-s->coef[K][1])>>smooth; s->coef[K][2]+=(r->b-s->coef[K][2])>>smooth; s32 y=((s->coef[K][0]*s->hist[K][0]+s->coef[K][1]*s->hist[K][1])>>14)+((x*s->coef[K][2])>>12); y=clip(y,-24576,24576); s->hist[K][1]=s->hist[K][0]; s->hist[K][0]=y;sum+=y;}while(0)
+ SP_RESONATE155(0);SP_RESONATE155(1);SP_RESONATE155(2);
+#undef SP_RESONATE155
+#else
  for(u32 k=0;k<3;k++){
   const Resonator*r=&SP_RESONATORS[bank][id][k];const s32 target[3]={r->a1,r->a2,r->b};
   for(u32 j=0;j<3;j++)s->coef[k][j]+=(target[j]-s->coef[k][j])>>smooth;
   s32 y=((s->coef[k][0]*s->hist[k][0]+s->coef[k][1]*s->hist[k][1])>>14)+((x*s->coef[k][2])>>12);
   y=clip(y,-24576,24576);s->hist[k][1]=s->hist[k][0];s->hist[k][0]=y;sum+=y;
  }
+#endif
  s->age++;
  if(s->remaining<=speed){s->remaining=0;s->index++;}else s->remaining-=speed;
 #if defined(SP_CLEAR)&&!defined(SP_SMOOTH)
@@ -92,7 +100,15 @@ static s32 level(s32 x){
  return x<0?-(s32)mag:(s32)mag;
 }
 #endif
-void speak_block(State*s,const Input*in,s32*out){
+#ifdef SP_HOT155
+#define SP_R155 __restrict__
+/* Interpolation : |next-last|<=8190, upsample<=5, donc |x|<=40950.
+ * floor(x*43691/2^18)+(x<0) == troncature(x/6), sans division. */
+static inline s32 interp155(s32 x){return ((x*43691)>>18)+(s32)((u32)x>>31);}
+#else
+#define SP_R155
+#endif
+void speak_block(State* SP_R155 s,const Input* SP_R155 in,s32* SP_R155 out){
  if(in->trig)reset(s,(u32)clip(in->word,0,127));
  s32 note=clip(in->note,0,127<<16);u32 n=(u32)note>>16;
  u32 inc=SP_INC[n]+(((SP_INC[n+1]-SP_INC[n])>>10)*((u32)(note&65535)>>6));
@@ -105,7 +121,11 @@ void speak_block(State*s,const Input*in,s32*out){
    s->next=x;
 #endif
   }
+#if defined(SP_HOT155) && defined(SP_LEVEL)
+  s32 v=s->last+interp155((s->next-s->last)*(s32)s->upsample);
+#else
   s32 v=s->last+(s->next-s->last)*(s32)s->upsample/6;
+#endif
 #ifndef SP_LEVEL
   if(in->punch)v=clip(v*2,-32767,32767);
 #endif

@@ -220,10 +220,26 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 
 | [133 — Correctifs MIDI/Chord](133-correctifs-midi-chord.md) | Routage LFO2 isole, messages live uniques, cache Chord et fondu ; confirme par AveyCole, principal2.00 sans diagnostic. |
 
+| [134 — Marge CPU et lowpass leger](134-marge-cpu-et-lowpass-leger.md) | Tests privesv20/v21 : lowpass deux poles inspire Polivoks, partage puis interne Wizard ; cout Wizard -47 a -67% instructions en emulation, deadline/reprise de voix ; hardware attendu. |
+
+| [135 — Audit CPU et ampli neutre](135-audit-cpu-et-ampli-neutre.md) | Audit prive v24/v25 : ampli neutre et fades partages ; v26 copie repeat armee (-16% instructions etage, -0,907% parcours combine arme), audio exact en emulation ; hardware v26 attendu. |
+
+| [136 — TRX-BD Machinedrum](136-machinedrum-vers-cycles.md) | Port prive MDBD v30 ; arithmetique64bits prouvee ; utilisateur confirme le son apres ouverture du filtre. Principal inchange, optimisations Chord suivantes sans MD. |
+
+| [137 — CHORD et audit toutes-machines](137-chord-et-audit-toutes-machines.md) | v31 Chord juge plus utilisable ; v32 SD/Clap/Toy exacts en SRAM, -6..9% instructions oscillateur, hardware v32 attendu. Audit18machines,105modeles,7modes Wizard mono/stereo ; principal fixe. |
+
+| [138 — Feral remplace TINY](138-feral-remplace-tiny.md) | Tests privesv33/v33nf : dixmodeles Feral relocalises depuis le fichier utilisateur, audio/etats exacts, carteF ; tous gains CPUv32 conserves, principal et comparaisons fixes, hardware attendu. |
+
 | [139 — Publication Feral et CPU](139-publication-feral-cpu.md) | Principal2.16 : fichier partagev33 exact, filtres Polivoks, optimisations cumulees, Feral de Glycinate ; notes EN/FR liees, DX Off par defaut. |
+
+| [140 — Junior prive](140-junior-prive.md) | Prototype original inspire de Fors Junior, index16 Retrosyn remplace ; 4bits/LFSR7bits/motion predefinie, deux variantesv34, autres moteurs exacts, main2.16 fixe. |
+
+| [141 — Chorus stereo prive](141-chorus-stereo-prive.md) | v39/v39nf : Reverb/ChorusI/II, TRACK+ReverbSize, Speed/Depth sur deux lignes et graphiques natifs ; correctif sifflement v38 confirme par AveyCole, preuves DSP/UI/chargeur passees. Principal fixe. |
+| [142 — Delay/crusher prive](142-delay-crusher-prive.md) | v40/v40nf : Delay/Crush/Both, TRACK+DelayTime ; Rate/Bits globaux distincts, UI noire/blanche et graphiques natifs, chorus v39 exact, preuves DSP/UI/chargeur. AveyCole confirme « v40 worked », variante non precisee. Main fixe. |
 | [143 — Publication Elder/effets](143-publication-elder-effets.md) | Principal2.17 : exact v40 partagé approuvé, Elder et Chorus/Crush, guides EN/FR/PDF4pages actualisés ; hashes et vraie page vérifiés. Comparaisons privées conservées. |
 
 | [144 — Crusher routage et Tone](144-crusher-routage-et-tone.md) | v41/v41nf prives : cinq routes, bits2–4 audibles, nom Tone intact, selecteurs espaces ; preuves natives DSP/UI/mixeur/chargeur. Principal v40 fixe. |
+
 | [145 — Verrou retrig et publication](145-verrou-retrig-et-publication.md) | v42 ajoute le verrou de mode, BACK et protection edition sur v41 ; principal2.18 approuve, image exacte et guides actualises. |
 
 | [146 — TINY supplementaire](146-tiny-supplementaire.md) | v43/v43nf : TINY18 revient sans retirer les18moteurs ;52modeles PCM exacts,menus19machines et bootstrap verifies ; principal2.19 approuve. |
@@ -237,54 +253,62 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 
 | [151 - Envois crusher distincts](151-envois-crusher-distincts.md) | V53 : FUNC+DelaySend par piste en Both1/2, getter natif corrige apres exception v52 ; AveyCole approuve main2.23 exact, guides EN/FR/PDF actualises. |
 
-| [152 - Menus FX et Vinyl](152-menus-fx-et-vinyl.md) | v55 avec filtre partage teste et approuve par AveyCole : main2.24 exact,menus differes,Vinyl,chorus/reverb,guide Tone et controles combines ; v56 SETTINGS reste prive. |
-
-| [153 - Raccourcis SETTINGS des effets](153-raccourcis-settings-fx.md) | v57 exact servi comme main2.25 sur demande d’AveyCole : SETTINGS+Size/Time (Tone/Feedback en modes combines), popups FX opaques ; guides EN/FR/PDF actualises. |
-
-| [154 - Poussiere Vinyl independante](154-poussiere-vinyl-independante.md) | Principal2.26 : pops/clics independants du signal, pauses audibles, sends/volume/pan/mute respectes ; grain juge meilleur par AveyCole, preuves natives. |
-
-| [155 - Ping Pong et deux Shimmer](155-ping-pong-deux-shimmer.md) | Principal2.27 : exact v64 signale fonctionnel/approuve ; Ping Pong stereo,Shimmer1 entierement octave,Shimmer2 v62 conserve ; guides EN/FR/PDF actualises. |
-
-| [156 - SCRAMBLE : vrai Decay](156-scramble-vrai-decay.md) | Principal2.28 : v66 teste Tone et approuve ; mapping natif Decay corrige en direct/pas marques,Punch conserve,v65 erronne non publie ; guides/PDF actualises. |
-
-| [153 - Reverb PS1 et publication](153-reverb-ps1-publication.md) | Principal2.29 : exact v70 approuve, PS1 inspiree16bits/24kHz, CLOUD exclu ; guides EN/FR/PDF actualises, comparaison privee preservee. |
+| [152 - Menus FX et Vinyl](152-menus-fx-et-vinyl.md) | v55/v55nf prives sur v54 : menus differes TRACK,chorus/reverb,Vinyl,sends et modificateurs ; preuves natives,checklist appareil,principal2.23 fixe. |
 
 | [154 — Optimisation FX et DX FUNC](154-optimisation-fx-et-dx-func.md) | v71/v72 prives : Shimmer/PS1 PCM exacts avec moins d instructions ; echec geste v71 reproduit par scan natif, maintien long corrige v72 ; principal v70 fixe, marge CPU materielle a mesurer. |
+
 | [155 — Six pistes et cache PS1](155-optimisation-six-pistes-et-cache-ps1.md) | v73..v80 prives : cache/noyau PS1 et filtres optimises, v78 moins clicky rapporte ; v80 retire tous Shimmer et modes combines, menus/migrations prouves, essais appareil encore requis. |
-| [156 — SPEAK et formats Reverb](156-machine-speak-et-formats-reverb.md) | v82..v85 : machine21 SPEAK,128mots/phonemes originaux, pitch et vitesse independants, microphone/locks/CC/LFO natifs ; format Reverb corrige en lecture ; retour appareil positif v82, consonnes rapeuses82/83 rapportees, bruit adouci84, niveau calibre Vol+Dist60 et suppression SCRAMBLE fraiche85 ; v85 approuve par AveyCole et publie en principal2.30. |
 
-| [157 — SPEAK consonnes et vitesse](157-speak-consonnes-et-vitesse.md) | v87 regulier approuve pour principal2.31 : bruit consonnes adouci, voyelles conservees, silence aux faibles vitesses reproduit puis corrige par quiet local pendant le mot ; pression/vol de voix conserves. |
+| [156 — SPEAK et formats Reverb](156-machine-speak-et-formats-reverb.md) | v82..v85 : machine21 SPEAK,128mots/phonemes originaux, pitch et vitesse independants, microphone/locks/CC/LFO natifs ; format Reverb corrige en lecture ; retour appareil positif v82, consonnes rapeuses82/83 rapportees, bruit adouci84, niveau calibre Vol+Dist60 et suppression SCRAMBLE fraiche85 a tester. |
 
-| [158 — ROOM, DUB et voix SPEAK](158-room-dub-et-voix-speak.md) | Principal2.32 : exact v90 regulier approuve, ROOM12kHz, DUB filtre stereo distinct, voix calibree/brillante avec souffle reduit ; preuves natives et guides EN/FR/PDF. |
+| [160 — GATED prive et Phaser96](160-gated-prive.md) | v98/v98adult : GATED en tete, Ring apres chorus, Phaser96 exact ; preuves natives/checklist appareil, principal2.33 fixe94. |
 
-| [159 — Ring, Phaser, DUCK et encodeurs](159-ring-phaser-duck-et-encodeurs.md) | Principal2.33 : exact v94 regulier approuve, nouveaux FX et protection encodeurs live ; guide EN/FR/PDF. |
+| [164 — WAVE precharge](164-wave-precharge.md) | **v114 prive : table usine16trames, fichiers hors runtime** ; lecteur natif et remplacement par piste prouves, test materiel a faire. |
 
-| [163 — Bibliotheque LEGACY et RETROSYN](163-legacy-bibliotheque-retrosyn.md) | Principal2.35 : exact105retro, bibliotheque DX7, importateurs WAV/DX7 cote a cote, guide et blurb utilisateur conserve. |
+| [165 — WAVE demarrage et retour](165-wave-demarrage-et-retour.md) | **v115 prive : precharge, entree directe et BACK parent** ; preuves natives, retour materiel attendu. |
 
-| [164 — ACID, SY BITS et Elder](164-acid-detune-bits-niveau-elder.md) | Principal2.36 : exact111 regulier teste, DECAY filtre/Accent, detune fin et popup compact live, Elder+6dB ; blurb preserve. |
+| [166 — FX par projet](166-fx-par-projet.md) | **120 prive : stockage FX + lookup sans constructeur** ;117/118 sans restauration appareil,119 retire apres crash/commandes vides ; reentrance reproduite,120 valide via vrai getter/codecs ; test appareil attendu. |
 
-| [165 — WAVE precharge et retour](165-wave-precharge-et-retour.md) | Principal2.37 : exact115 regulier teste ; table initiale, chargement natif et BACK parent ; blurb preserve. |
+| [170 — Gestes et niveau Shadow](170-gestes-menu-et-niveaux-shadow.md) | Prive125 : tap menu, hold Scramble, pas tenus conserves, Elder original, Shadow+12dB, S.Chn gauche et fleche. |
 
-| [166 — FX par projet](166-fx-par-projet.md) | Historique116–120, reentrance119 retiree, correction120 confirmee sur appareil. |
-| [167 — FX par pattern et WAVE](167-fx-par-pattern-et-niveau-wave.md) | Principal2.38, exact121 approuve :36champs par pattern, defauts vierges, activation queuee, WAVE+6dB. |
-| [168 — Cartouches DX7 hors plage](168-import-cartouches-hors-plage.md) | Correction web : copie compatible avec LEGACY, original preserve ; ROM3A et vrai importeur121 verifies en emulation. |
+| [171 — Sidechain et mute source](171-sidechain-mute-source.md) | Prive128 : Mute On/Off par source et pattern, defautOff, formats F2/F3. |
 
-| [169 — Sidechain et Scramble par pattern](169-sidechain-et-scramble-par-pattern.md) | Principal2.39 :122 regulier approuve, six sources/cinq cibles, controles temporels, listes Scramble par pattern. |
+| [172 — Menu vers MACHINES](172-transfert-menu-machines.md) | Prive129 : rendre la molette au selecteur natif en quittant Mod Setup. |
 
-| [170 — Gestes Mod Setup et niveau Shadow](170-gestes-menu-et-niveaux-shadow.md) | Principal2.40 :127 regulier approuve ; tap menu, maintien Scramble une fois, labels S.Chn/Trk./Dpt et Elder original/Shadow+12dB. |
+| [173 — Popups, MIDI et PUNCH Shadow](173-popup-midi-et-punch-shadow.md) | Prive139 : popup137 confirme, restauration MIDI finale et distortion Shadow commandee par PUNCH ; validation physique139 en attente. |
 
-| [171 — Sidechain et mute source](171-sidechain-mute-source.md) | Principal2.41 :128 regulier approuve, choix Mute par source/pattern, defautOff, lecture FXS1/F2/F3. |
+| [174 — Marge audio PUNCH](174-marge-audio-punch.md) | **143/144 prives : tables/cache/conversion puis boucles PUNCH, PCM natif exact** ; 5 % instructions sur banc mixte, mesure physique attendue. |
 
-| [172 — Mod Setup vers MACHINES](172-transfert-menu-machines.md) | Principal2.42 :129 regulier approuve, fermeture du menu et restitution de la molette au selecteur natif. |
+| [175 — Marge audio MACRO/HALL](175-marge-audio-macro-hall.md) | **145 prive : filtre EMAC parallele et HALL rapide, PCM natif exact** ;47modeles MACRO, queues HALL et mixeur verifies, gain CPU appareil attendu. |
 
-| [173 — Sidechain des retours FX](173-sidechain-retours-fx.md) | Principal2.43 :130 regulier approuve ; cibles Rev./Del. par source/pattern, payload F4 dans les memes54octets, CRC24 conserve. |
+| [176 — Marge PUNCH/Sidechain](176-marge-voix-sidechain.md) | **146 prive, PCM exact en emulation** ; environ 0,8 % instructions du banc mixte, test appareil en attente. |
 
-| [173 — Popups, MIDI et PUNCH Shadow](173-popup-midi-et-punch-shadow.md) | Principal2.44 : v141 exact approuve ; retour MIDI et affichage Mod Setup, distortion Shadow et PUNCH. |
+| [177 — Mixeur stationnaire/SPEAK](177-mixeur-stationnaire-speech.md) | **147 prive, PCM exact en emulation** ; environ2,3–2,6 % instructions mixtes en moins que146, test appareil attendu. |
 
-| [174 — Marge audio PUNCH](174-marge-audio-punch.md) | Principal2.46 :145 exact approuve, A75 P99 O0 N0 sur le pattern AveyCole. |
+| [178 — Stereo DUB/PingPong](178-diagnostic-stereo-dub-ping-pong.md) | **Diagnostic natif confirme** ; premiere repetition R seule, DUB partage cette route, biais RMS depend du feedback. Aucun correctif applique. |
 
-| [175 — Marge audio MACRO et HALL](175-marge-audio-macro-hall.md) | Principal2.46 :145 exact approuve, A75 P99 O0 N0 sur le pattern AveyCole. |
+| [179 — DUB stereo](179-dub-stereo.md) | **148 prive sur base146** ; premier echo sur deux canaux pour mono centre, filtres DUB conserves, PingPong exact, appareil attendu. |
 
-| [176 — 176-marge-voix-sidechain](176-marge-voix-sidechain.md) | Principal2.47 :148 exact, DUB stereo sur base146, optimisations147 exclues. |
+| [180 — Diagnostic des banques DX7 du navigateur](180-diagnostic-banques-dx7.md) | **Test prive, appareil attendu** ; preuve native et limites dans la note. |
 
-| [179 — 179-dub-stereo](179-dub-stereo.md) | Principal2.47 :148 exact, DUB stereo sur base146, optimisations147 exclues. |
+| [181 — Cache des cibles Harmonics MACRO](181-cache-cibles-macro.md) | **Test prive, appareil attendu** ; preuve native et limites dans la note. |
+
+| [182 — Banques LEGACY en petits messages verifies](182-transfert-banques-fragmente.md) | **Test prive, appareil attendu** ; preuve native et limites dans la note. |
+
+| [183 — File banques DX7](183-file-banques-dx7.md) | **151 prive remplace150** ; perte entre passages UI reproduite/corrigee, collision factoryWAVE de150 corrigee, appareil attendu. |
+
+| [184 — Boucles LEGACY](184-boucles-operateurs-legacy.md) | **152 prive** ; trois noyaux ColdFire,11,506% instructions moteur sur70cas, PCM/etat exacts, banque151 conservee, appareil attendu. |
+
+| [185 — Marge LEGACY/ACID](185-marge-legacy-acid.md) | **153 prive** ; calculs exacts, carrier/modulation LEGACY et boucle ACID, decodeur EMAC complete, appareil attendu. |
+
+| [186 — Routage LEGACY Hagedisk](186-routage-legacy-hagedisk.md) | **154 prive** ; routage exact et pitch, patch original ; retour appareil attendu. |
+
+| [187 — Valeurs de depart machines](187-valeurs-depart-machines.md) | **Audit UI** ;85parametres, distinction zero centre/minimum ; guide local EN/FR/PDF. |
+
+| [188 — Marge SPEAK/ACID/retrig](188-marge-speak-acid-retrig.md) | **155 prive** ; arithmetique/PCM/etat exacts, gains en instructions ; appareil attendu. |
+
+| [189 — Groove/Strum](189-groove-strum.md) | **Candidat prive experimental** ; preuves natives, appareil attendu. |
+
+| [190 — Mod Setup Global/Track](190-menu-global-piste.md) | **Candidat prive experimental** ; preuves natives, appareil attendu. |
+
+| [191 — Affichage Wizard/volume](191-affichage-wizard-volume.md) | **159 prive experimental** ; waveform, Groove On/Off, rectangles volume et labels ; preuves natives, appareil attendu. |
