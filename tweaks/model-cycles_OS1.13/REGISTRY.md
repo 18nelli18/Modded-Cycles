@@ -269,266 +269,266 @@ Code trop gros pour un masque, ajouté à la fin de l'image (`at`) et copié au 
 | syntakt-vintage | 23 | `0x401aa140` | 218 560 | `0x401df700` | `0x43000000` | 218 560 |  |
 | syntakt-bits | 24 | `0x401aa140` | 264 448 | `0x401eaa40` | `0x43000000` | 264 448 |  |
 | syntakt-bits-acid | 24 | `0x401aa140` | 141 941 | `0x401ccbb5` | `0x43000000` | 492 288 |  |
-| syntakt-bits-macro | 24 | `0x401aa140` | 222 628 | `0x401e06e4` | `0x43000000` | 481 168 |  |
-| syntakt-bits-macro-acid | 24 | `0x401aa140` | 227 273 | `0x401e1909` | `0x43000000` | 492 288 |  |
+| syntakt-bits-macro | 24 | `0x401aa140` | 222 566 | `0x401e06a6` | `0x43000000` | 481 168 |  |
+| syntakt-bits-macro-acid | 24 | `0x401aa140` | 227 207 | `0x401e18c7` | `0x43000000` | 492 288 |  |
 | syntakt-bits-swarm | 24 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-bits-swarm-acid | 24 | `0x401aa140` | 147 130 | `0x401cdffa` | `0x43000000` | 492 288 |  |
-| syntakt-bits-swarm-macro | 24 | `0x401aa140` | 227 828 | `0x401e1b34` | `0x43000000` | 481 168 |  |
-| syntakt-bits-swarm-macro-acid | 24 | `0x401aa140` | 232 467 | `0x401e2d53` | `0x43000000` | 492 288 |  |
+| syntakt-bits-swarm-macro | 24 | `0x401aa140` | 227 764 | `0x401e1af4` | `0x43000000` | 481 168 |  |
+| syntakt-bits-swarm-macro-acid | 24 | `0x401aa140` | 232 403 | `0x401e2d13` | `0x43000000` | 492 288 |  |
 | syntakt-cp | 24 | `0x401aa140` | 260 352 | `0x401e9a40` | `0x43000000` | 260 352 |  |
 | syntakt-cp-acid | 24 | `0x401aa140` | 137 968 | `0x401cbc30` | `0x43000000` | 492 288 |  |
 | syntakt-cp-bits | 24 | `0x401aa140` | 264 448 | `0x401eaa40` | `0x43000000` | 264 448 |  |
 | syntakt-cp-bits-acid | 24 | `0x401aa140` | 142 145 | `0x401ccc81` | `0x43000000` | 492 288 |  |
-| syntakt-cp-bits-macro | 24 | `0x401aa140` | 222 832 | `0x401e07b0` | `0x43000000` | 481 168 |  |
-| syntakt-cp-bits-macro-acid | 24 | `0x401aa140` | 227 466 | `0x401e19ca` | `0x43000000` | 492 288 |  |
+| syntakt-cp-bits-macro | 24 | `0x401aa140` | 222 768 | `0x401e0770` | `0x43000000` | 481 168 |  |
+| syntakt-cp-bits-macro-acid | 24 | `0x401aa140` | 227 402 | `0x401e198a` | `0x43000000` | 492 288 |  |
 | syntakt-cp-bits-swarm | 24 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-cp-bits-swarm-acid | 24 | `0x401aa140` | 147 260 | `0x401ce07c` | `0x43000000` | 492 288 |  |
-| syntakt-cp-bits-swarm-macro | 24 | `0x401aa140` | 227 960 | `0x401e1bb8` | `0x43000000` | 481 168 |  |
-| syntakt-cp-bits-swarm-macro-acid | 24 | `0x401aa140` | 232 593 | `0x401e2dd1` | `0x43000000` | 492 288 |  |
-| syntakt-cp-macro | 24 | `0x401aa140` | 218 650 | `0x401df75a` | `0x43000000` | 481 168 |  |
-| syntakt-cp-macro-acid | 24 | `0x401aa140` | 223 302 | `0x401e0986` | `0x43000000` | 492 288 |  |
+| syntakt-cp-bits-swarm-macro | 24 | `0x401aa140` | 227 898 | `0x401e1b7a` | `0x43000000` | 481 168 |  |
+| syntakt-cp-bits-swarm-macro-acid | 24 | `0x401aa140` | 232 529 | `0x401e2d91` | `0x43000000` | 492 288 |  |
+| syntakt-cp-macro | 24 | `0x401aa140` | 218 588 | `0x401df71c` | `0x43000000` | 481 168 |  |
+| syntakt-cp-macro-acid | 24 | `0x401aa140` | 223 236 | `0x401e0944` | `0x43000000` | 492 288 |  |
 | syntakt-cp-swarm | 24 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-cp-swarm-acid | 24 | `0x401aa140` | 147 090 | `0x401cdfd2` | `0x43000000` | 492 288 |  |
-| syntakt-cp-swarm-macro | 24 | `0x401aa140` | 227 785 | `0x401e1b09` | `0x43000000` | 481 168 |  |
-| syntakt-cp-swarm-macro-acid | 24 | `0x401aa140` | 232 420 | `0x401e2d24` | `0x43000000` | 492 288 |  |
+| syntakt-cp-swarm-macro | 24 | `0x401aa140` | 227 721 | `0x401e1ac9` | `0x43000000` | 481 168 |  |
+| syntakt-cp-swarm-macro-acid | 24 | `0x401aa140` | 232 355 | `0x401e2ce3` | `0x43000000` | 492 288 |  |
 | syntakt-cp-toy | 24 | `0x401aa140` | 260 352 | `0x401e9a40` | `0x43000000` | 260 352 |  |
 | syntakt-cp-toy-acid | 24 | `0x401aa140` | 138 174 | `0x401cbcfe` | `0x43000000` | 492 288 |  |
 | syntakt-cp-toy-bits | 24 | `0x401aa140` | 264 448 | `0x401eaa40` | `0x43000000` | 264 448 |  |
 | syntakt-cp-toy-bits-acid | 24 | `0x401aa140` | 142 282 | `0x401ccd0a` | `0x43000000` | 492 288 |  |
-| syntakt-cp-toy-bits-macro | 24 | `0x401aa140` | 222 968 | `0x401e0838` | `0x43000000` | 481 168 |  |
-| syntakt-cp-toy-bits-macro-acid | 24 | `0x401aa140` | 227 608 | `0x401e1a58` | `0x43000000` | 492 288 |  |
+| syntakt-cp-toy-bits-macro | 24 | `0x401aa140` | 222 906 | `0x401e07fa` | `0x43000000` | 481 168 |  |
+| syntakt-cp-toy-bits-macro-acid | 24 | `0x401aa140` | 227 544 | `0x401e1a18` | `0x43000000` | 492 288 |  |
 | syntakt-cp-toy-bits-swarm | 24 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-cp-toy-bits-swarm-acid | 24 | `0x401aa140` | 147 392 | `0x401ce100` | `0x43000000` | 492 288 |  |
-| syntakt-cp-toy-bits-swarm-macro | 24 | `0x401aa140` | 228 093 | `0x401e1c3d` | `0x43000000` | 481 168 |  |
-| syntakt-cp-toy-bits-swarm-macro-acid | 24 | `0x401aa140` | 232 731 | `0x401e2e5b` | `0x43000000` | 492 288 |  |
-| syntakt-cp-toy-macro | 24 | `0x401aa140` | 218 854 | `0x401df826` | `0x43000000` | 481 168 |  |
-| syntakt-cp-toy-macro-acid | 24 | `0x401aa140` | 223 492 | `0x401e0a44` | `0x43000000` | 492 288 |  |
+| syntakt-cp-toy-bits-swarm-macro | 24 | `0x401aa140` | 228 031 | `0x401e1bff` | `0x43000000` | 481 168 |  |
+| syntakt-cp-toy-bits-swarm-macro-acid | 24 | `0x401aa140` | 232 667 | `0x401e2e1b` | `0x43000000` | 492 288 |  |
+| syntakt-cp-toy-macro | 24 | `0x401aa140` | 218 790 | `0x401df7e6` | `0x43000000` | 481 168 |  |
+| syntakt-cp-toy-macro-acid | 24 | `0x401aa140` | 223 428 | `0x401e0a04` | `0x43000000` | 492 288 |  |
 | syntakt-cp-toy-swarm | 24 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-cp-toy-swarm-acid | 24 | `0x401aa140` | 147 216 | `0x401ce050` | `0x43000000` | 492 288 |  |
-| syntakt-cp-toy-swarm-macro | 24 | `0x401aa140` | 227 920 | `0x401e1b90` | `0x43000000` | 481 168 |  |
-| syntakt-cp-toy-swarm-macro-acid | 24 | `0x401aa140` | 232 554 | `0x401e2daa` | `0x43000000` | 492 288 |  |
+| syntakt-cp-toy-swarm-macro | 24 | `0x401aa140` | 227 859 | `0x401e1b53` | `0x43000000` | 481 168 |  |
+| syntakt-cp-toy-swarm-macro-acid | 24 | `0x401aa140` | 232 493 | `0x401e2d6d` | `0x43000000` | 492 288 |  |
 | syntakt-sd | 24 | `0x401aa140` | 260 352 | `0x401e9a40` | `0x43000000` | 260 352 |  |
 | syntakt-sd-acid | 24 | `0x401aa140` | 137 970 | `0x401cbc32` | `0x43000000` | 492 288 |  |
 | syntakt-sd-bits | 24 | `0x401aa140` | 264 448 | `0x401eaa40` | `0x43000000` | 264 448 |  |
 | syntakt-sd-bits-acid | 24 | `0x401aa140` | 142 164 | `0x401ccc94` | `0x43000000` | 492 288 |  |
-| syntakt-sd-bits-macro | 24 | `0x401aa140` | 222 850 | `0x401e07c2` | `0x43000000` | 481 168 |  |
-| syntakt-sd-bits-macro-acid | 24 | `0x401aa140` | 227 482 | `0x401e19da` | `0x43000000` | 492 288 |  |
+| syntakt-sd-bits-macro | 24 | `0x401aa140` | 222 787 | `0x401e0783` | `0x43000000` | 481 168 |  |
+| syntakt-sd-bits-macro-acid | 24 | `0x401aa140` | 227 418 | `0x401e199a` | `0x43000000` | 492 288 |  |
 | syntakt-sd-bits-swarm | 24 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-sd-bits-swarm-acid | 24 | `0x401aa140` | 147 281 | `0x401ce091` | `0x43000000` | 492 288 |  |
-| syntakt-sd-bits-swarm-macro | 24 | `0x401aa140` | 227 980 | `0x401e1bcc` | `0x43000000` | 481 168 |  |
-| syntakt-sd-bits-swarm-macro-acid | 24 | `0x401aa140` | 232 615 | `0x401e2de7` | `0x43000000` | 492 288 |  |
+| syntakt-sd-bits-swarm-macro | 24 | `0x401aa140` | 227 918 | `0x401e1b8e` | `0x43000000` | 481 168 |  |
+| syntakt-sd-bits-swarm-macro-acid | 24 | `0x401aa140` | 232 551 | `0x401e2da7` | `0x43000000` | 492 288 |  |
 | syntakt-sd-cp | 24 | `0x401aa140` | 260 352 | `0x401e9a40` | `0x43000000` | 260 352 |  |
 | syntakt-sd-cp-acid | 24 | `0x401aa140` | 138 177 | `0x401cbd01` | `0x43000000` | 492 288 |  |
 | syntakt-sd-cp-bits | 24 | `0x401aa140` | 264 448 | `0x401eaa40` | `0x43000000` | 264 448 |  |
 | syntakt-sd-cp-bits-acid | 24 | `0x401aa140` | 142 284 | `0x401ccd0c` | `0x43000000` | 492 288 |  |
-| syntakt-sd-cp-bits-macro | 24 | `0x401aa140` | 222 972 | `0x401e083c` | `0x43000000` | 481 168 |  |
-| syntakt-sd-cp-bits-macro-acid | 24 | `0x401aa140` | 227 605 | `0x401e1a55` | `0x43000000` | 492 288 |  |
+| syntakt-sd-cp-bits-macro | 24 | `0x401aa140` | 222 911 | `0x401e07ff` | `0x43000000` | 481 168 |  |
+| syntakt-sd-cp-bits-macro-acid | 24 | `0x401aa140` | 227 542 | `0x401e1a16` | `0x43000000` | 492 288 |  |
 | syntakt-sd-cp-bits-swarm | 24 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-sd-cp-bits-swarm-acid | 24 | `0x401aa140` | 147 393 | `0x401ce101` | `0x43000000` | 492 288 |  |
-| syntakt-sd-cp-bits-swarm-macro | 24 | `0x401aa140` | 228 091 | `0x401e1c3b` | `0x43000000` | 481 168 |  |
-| syntakt-sd-cp-bits-swarm-macro-acid | 24 | `0x401aa140` | 232 733 | `0x401e2e5d` | `0x43000000` | 492 288 |  |
-| syntakt-sd-cp-macro | 24 | `0x401aa140` | 218 856 | `0x401df828` | `0x43000000` | 481 168 |  |
-| syntakt-sd-cp-macro-acid | 24 | `0x401aa140` | 223 493 | `0x401e0a45` | `0x43000000` | 492 288 |  |
+| syntakt-sd-cp-bits-swarm-macro | 24 | `0x401aa140` | 228 029 | `0x401e1bfd` | `0x43000000` | 481 168 |  |
+| syntakt-sd-cp-bits-swarm-macro-acid | 24 | `0x401aa140` | 232 669 | `0x401e2e1d` | `0x43000000` | 492 288 |  |
+| syntakt-sd-cp-macro | 24 | `0x401aa140` | 218 792 | `0x401df7e8` | `0x43000000` | 481 168 |  |
+| syntakt-sd-cp-macro-acid | 24 | `0x401aa140` | 223 428 | `0x401e0a04` | `0x43000000` | 492 288 |  |
 | syntakt-sd-cp-swarm | 24 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-sd-cp-swarm-acid | 24 | `0x401aa140` | 147 225 | `0x401ce059` | `0x43000000` | 492 288 |  |
-| syntakt-sd-cp-swarm-macro | 24 | `0x401aa140` | 227 922 | `0x401e1b92` | `0x43000000` | 481 168 |  |
-| syntakt-sd-cp-swarm-macro-acid | 24 | `0x401aa140` | 232 554 | `0x401e2daa` | `0x43000000` | 492 288 |  |
+| syntakt-sd-cp-swarm-macro | 24 | `0x401aa140` | 227 861 | `0x401e1b55` | `0x43000000` | 481 168 |  |
+| syntakt-sd-cp-swarm-macro-acid | 24 | `0x401aa140` | 232 490 | `0x401e2d6a` | `0x43000000` | 492 288 |  |
 | syntakt-sd-cp-toy | 24 | `0x401aa140` | 260 352 | `0x401e9a40` | `0x43000000` | 260 352 |  |
 | syntakt-sd-cp-toy-acid | 24 | `0x401aa140` | 138 305 | `0x401cbd81` | `0x43000000` | 492 288 |  |
 | syntakt-sd-cp-toy-bits | 24 | `0x401aa140` | 264 448 | `0x401eaa40` | `0x43000000` | 264 448 |  |
 | syntakt-sd-cp-toy-bits-acid | 24 | `0x401aa140` | 142 410 | `0x401ccd8a` | `0x43000000` | 492 288 |  |
-| syntakt-sd-cp-toy-bits-macro | 24 | `0x401aa140` | 223 096 | `0x401e08b8` | `0x43000000` | 481 168 |  |
-| syntakt-sd-cp-toy-bits-macro-acid | 24 | `0x401aa140` | 227 738 | `0x401e1ada` | `0x43000000` | 492 288 |  |
+| syntakt-sd-cp-toy-bits-macro | 24 | `0x401aa140` | 223 036 | `0x401e087c` | `0x43000000` | 481 168 |  |
+| syntakt-sd-cp-toy-bits-macro-acid | 24 | `0x401aa140` | 227 675 | `0x401e1a9b` | `0x43000000` | 492 288 |  |
 | syntakt-sd-cp-toy-bits-swarm | 24 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-sd-cp-toy-bits-swarm-acid | 24 | `0x401aa140` | 147 525 | `0x401ce185` | `0x43000000` | 492 288 |  |
-| syntakt-sd-cp-toy-bits-swarm-macro | 24 | `0x401aa140` | 228 224 | `0x401e1cc0` | `0x43000000` | 481 168 |  |
-| syntakt-sd-cp-toy-bits-swarm-macro-acid | 24 | `0x401aa140` | 232 867 | `0x401e2ee3` | `0x43000000` | 492 288 |  |
-| syntakt-sd-cp-toy-macro | 24 | `0x401aa140` | 218 991 | `0x401df8af` | `0x43000000` | 481 168 |  |
-| syntakt-sd-cp-toy-macro-acid | 24 | `0x401aa140` | 223 627 | `0x401e0acb` | `0x43000000` | 492 288 |  |
+| syntakt-sd-cp-toy-bits-swarm-macro | 24 | `0x401aa140` | 228 162 | `0x401e1c82` | `0x43000000` | 481 168 |  |
+| syntakt-sd-cp-toy-bits-swarm-macro-acid | 24 | `0x401aa140` | 232 803 | `0x401e2ea3` | `0x43000000` | 492 288 |  |
+| syntakt-sd-cp-toy-macro | 24 | `0x401aa140` | 218 931 | `0x401df873` | `0x43000000` | 481 168 |  |
+| syntakt-sd-cp-toy-macro-acid | 24 | `0x401aa140` | 223 563 | `0x401e0a8b` | `0x43000000` | 492 288 |  |
 | syntakt-sd-cp-toy-swarm | 24 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-sd-cp-toy-swarm-acid | 24 | `0x401aa140` | 147 350 | `0x401ce0d6` | `0x43000000` | 492 288 |  |
-| syntakt-sd-cp-toy-swarm-macro | 24 | `0x401aa140` | 228 048 | `0x401e1c10` | `0x43000000` | 481 168 |  |
-| syntakt-sd-cp-toy-swarm-macro-acid | 24 | `0x401aa140` | 232 693 | `0x401e2e35` | `0x43000000` | 492 288 |  |
-| syntakt-sd-macro | 24 | `0x401aa140` | 218 655 | `0x401df75f` | `0x43000000` | 481 168 |  |
-| syntakt-sd-macro-acid | 24 | `0x401aa140` | 223 306 | `0x401e098a` | `0x43000000` | 492 288 |  |
+| syntakt-sd-cp-toy-swarm-macro | 24 | `0x401aa140` | 227 986 | `0x401e1bd2` | `0x43000000` | 481 168 |  |
+| syntakt-sd-cp-toy-swarm-macro-acid | 24 | `0x401aa140` | 232 629 | `0x401e2df5` | `0x43000000` | 492 288 |  |
+| syntakt-sd-macro | 24 | `0x401aa140` | 218 593 | `0x401df721` | `0x43000000` | 481 168 |  |
+| syntakt-sd-macro-acid | 24 | `0x401aa140` | 223 239 | `0x401e0947` | `0x43000000` | 492 288 |  |
 | syntakt-sd-swarm | 24 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-sd-swarm-acid | 24 | `0x401aa140` | 147 092 | `0x401cdfd4` | `0x43000000` | 492 288 |  |
-| syntakt-sd-swarm-macro | 24 | `0x401aa140` | 227 788 | `0x401e1b0c` | `0x43000000` | 481 168 |  |
-| syntakt-sd-swarm-macro-acid | 24 | `0x401aa140` | 232 423 | `0x401e2d27` | `0x43000000` | 492 288 |  |
+| syntakt-sd-swarm-macro | 24 | `0x401aa140` | 227 724 | `0x401e1acc` | `0x43000000` | 481 168 |  |
+| syntakt-sd-swarm-macro-acid | 24 | `0x401aa140` | 232 359 | `0x401e2ce7` | `0x43000000` | 492 288 |  |
 | syntakt-sd-toy | 24 | `0x401aa140` | 260 352 | `0x401e9a40` | `0x43000000` | 260 352 |  |
 | syntakt-sd-toy-acid | 24 | `0x401aa140` | 138 173 | `0x401cbcfd` | `0x43000000` | 492 288 |  |
 | syntakt-sd-toy-bits | 24 | `0x401aa140` | 264 448 | `0x401eaa40` | `0x43000000` | 264 448 |  |
 | syntakt-sd-toy-bits-acid | 24 | `0x401aa140` | 142 293 | `0x401ccd15` | `0x43000000` | 492 288 |  |
-| syntakt-sd-toy-bits-macro | 24 | `0x401aa140` | 222 984 | `0x401e0848` | `0x43000000` | 481 168 |  |
-| syntakt-sd-toy-bits-macro-acid | 24 | `0x401aa140` | 227 619 | `0x401e1a63` | `0x43000000` | 492 288 |  |
+| syntakt-sd-toy-bits-macro | 24 | `0x401aa140` | 222 923 | `0x401e080b` | `0x43000000` | 481 168 |  |
+| syntakt-sd-toy-bits-macro-acid | 24 | `0x401aa140` | 227 556 | `0x401e1a24` | `0x43000000` | 492 288 |  |
 | syntakt-sd-toy-bits-swarm | 24 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-sd-toy-bits-swarm-acid | 24 | `0x401aa140` | 147 406 | `0x401ce10e` | `0x43000000` | 492 288 |  |
-| syntakt-sd-toy-bits-swarm-macro | 24 | `0x401aa140` | 228 105 | `0x401e1c49` | `0x43000000` | 481 168 |  |
-| syntakt-sd-toy-bits-swarm-macro-acid | 24 | `0x401aa140` | 232 751 | `0x401e2e6f` | `0x43000000` | 492 288 |  |
-| syntakt-sd-toy-macro | 24 | `0x401aa140` | 218 857 | `0x401df829` | `0x43000000` | 481 168 |  |
-| syntakt-sd-toy-macro-acid | 24 | `0x401aa140` | 223 490 | `0x401e0a42` | `0x43000000` | 492 288 |  |
+| syntakt-sd-toy-bits-swarm-macro | 24 | `0x401aa140` | 228 043 | `0x401e1c0b` | `0x43000000` | 481 168 |  |
+| syntakt-sd-toy-bits-swarm-macro-acid | 24 | `0x401aa140` | 232 687 | `0x401e2e2f` | `0x43000000` | 492 288 |  |
+| syntakt-sd-toy-macro | 24 | `0x401aa140` | 218 794 | `0x401df7ea` | `0x43000000` | 481 168 |  |
+| syntakt-sd-toy-macro-acid | 24 | `0x401aa140` | 223 425 | `0x401e0a01` | `0x43000000` | 492 288 |  |
 | syntakt-sd-toy-swarm | 24 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-sd-toy-swarm-acid | 24 | `0x401aa140` | 147 220 | `0x401ce054` | `0x43000000` | 492 288 |  |
-| syntakt-sd-toy-swarm-macro | 24 | `0x401aa140` | 227 922 | `0x401e1b92` | `0x43000000` | 481 168 |  |
-| syntakt-sd-toy-swarm-macro-acid | 24 | `0x401aa140` | 232 558 | `0x401e2dae` | `0x43000000` | 492 288 |  |
+| syntakt-sd-toy-swarm-macro | 24 | `0x401aa140` | 227 861 | `0x401e1b55` | `0x43000000` | 481 168 |  |
+| syntakt-sd-toy-swarm-macro-acid | 24 | `0x401aa140` | 232 494 | `0x401e2d6e` | `0x43000000` | 492 288 |  |
 | syntakt-swarm | 24 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-swarm-acid | 24 | `0x401aa140` | 146 859 | `0x401cdeeb` | `0x43000000` | 492 288 |  |
-| syntakt-swarm-macro | 24 | `0x401aa140` | 227 561 | `0x401e1a29` | `0x43000000` | 481 168 |  |
-| syntakt-swarm-macro-acid | 24 | `0x401aa140` | 232 212 | `0x401e2c54` | `0x43000000` | 492 288 |  |
+| syntakt-swarm-macro | 24 | `0x401aa140` | 227 499 | `0x401e19eb` | `0x43000000` | 481 168 |  |
+| syntakt-swarm-macro-acid | 24 | `0x401aa140` | 232 146 | `0x401e2c12` | `0x43000000` | 492 288 |  |
 | syntakt-toy | 24 | `0x401aa140` | 260 352 | `0x401e9a40` | `0x43000000` | 260 352 |  |
 | syntakt-toy-acid | 24 | `0x401aa140` | 137 959 | `0x401cbc27` | `0x43000000` | 492 288 |  |
 | syntakt-toy-bits | 24 | `0x401aa140` | 264 448 | `0x401eaa40` | `0x43000000` | 264 448 |  |
 | syntakt-toy-bits-acid | 24 | `0x401aa140` | 142 150 | `0x401ccc86` | `0x43000000` | 492 288 |  |
-| syntakt-toy-bits-macro | 24 | `0x401aa140` | 222 835 | `0x401e07b3` | `0x43000000` | 481 168 |  |
-| syntakt-toy-bits-macro-acid | 24 | `0x401aa140` | 227 468 | `0x401e19cc` | `0x43000000` | 492 288 |  |
+| syntakt-toy-bits-macro | 24 | `0x401aa140` | 222 772 | `0x401e0774` | `0x43000000` | 481 168 |  |
+| syntakt-toy-bits-macro-acid | 24 | `0x401aa140` | 227 404 | `0x401e198c` | `0x43000000` | 492 288 |  |
 | syntakt-toy-bits-swarm | 24 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-toy-bits-swarm-acid | 24 | `0x401aa140` | 147 263 | `0x401ce07f` | `0x43000000` | 492 288 |  |
-| syntakt-toy-bits-swarm-macro | 24 | `0x401aa140` | 227 962 | `0x401e1bba` | `0x43000000` | 481 168 |  |
-| syntakt-toy-bits-swarm-macro-acid | 24 | `0x401aa140` | 232 598 | `0x401e2dd6` | `0x43000000` | 492 288 |  |
-| syntakt-toy-macro | 24 | `0x401aa140` | 218 644 | `0x401df754` | `0x43000000` | 481 168 |  |
-| syntakt-toy-macro-acid | 24 | `0x401aa140` | 223 292 | `0x401e097c` | `0x43000000` | 492 288 |  |
+| syntakt-toy-bits-swarm-macro | 24 | `0x401aa140` | 227 900 | `0x401e1b7c` | `0x43000000` | 481 168 |  |
+| syntakt-toy-bits-swarm-macro-acid | 24 | `0x401aa140` | 232 534 | `0x401e2d96` | `0x43000000` | 492 288 |  |
+| syntakt-toy-macro | 24 | `0x401aa140` | 218 582 | `0x401df716` | `0x43000000` | 481 168 |  |
+| syntakt-toy-macro-acid | 24 | `0x401aa140` | 223 226 | `0x401e093a` | `0x43000000` | 492 288 |  |
 | syntakt-toy-swarm | 24 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-toy-swarm-acid | 24 | `0x401aa140` | 147 081 | `0x401cdfc9` | `0x43000000` | 492 288 |  |
-| syntakt-toy-swarm-macro | 24 | `0x401aa140` | 227 782 | `0x401e1b06` | `0x43000000` | 481 168 |  |
-| syntakt-toy-swarm-macro-acid | 24 | `0x401aa140` | 232 420 | `0x401e2d24` | `0x43000000` | 492 288 |  |
-| macro | 25 | `0x401aa140` | 110 252 | `0x401c4fec` | `0x43000000` | 325 520 |  |
-| macro-acid | 25 | `0x401aa140` | 116 860 | `0x401c69bc` | `0x43000000` | 492 288 |  |
+| syntakt-toy-swarm-macro | 24 | `0x401aa140` | 227 718 | `0x401e1ac6` | `0x43000000` | 481 168 |  |
+| syntakt-toy-swarm-macro-acid | 24 | `0x401aa140` | 232 356 | `0x401e2ce4` | `0x43000000` | 492 288 |  |
+| macro | 25 | `0x401aa140` | 109 864 | `0x401c4e68` | `0x43000000` | 325 520 |  |
+| macro-acid | 25 | `0x401aa140` | 116 472 | `0x401c6838` | `0x43000000` | 492 288 |  |
 | acid | 26 | `0x401aa140` | 11 380 | `0x401acdb4` | `0x43000000` | 221 928 |  |
 | model-tg | 30 | `0x401aa140` | 87 936 | `0x401bf8c0` | `0x401aa140` | 87 936 |  |
 | model-tg-st | 30 | `0x401aa140` | 87 936 | `0x401bf8c0` | `0x401aa140` | 87 936 |  |
 | syntakt-tg-bits | 31 | `0x401bf8c0` | 234 548 | `0x401f8cf4` | `0x46700000` | 264 448 | model-tg-st |
 | syntakt-tg-bits-acid | 31 | `0x401bf8c0` | 142 169 | `0x401e2419` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-bits-macro | 31 | `0x401bf8c0` | 222 856 | `0x401f5f48` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-bits-macro-acid | 31 | `0x401bf8c0` | 227 498 | `0x401f716a` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-bits-macro | 31 | `0x401bf8c0` | 222 796 | `0x401f5f0c` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-bits-macro-acid | 31 | `0x401bf8c0` | 227 438 | `0x401f712e` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-bits-swarm | 31 | `0x401bf8c0` | 241 508 | `0x401fa824` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-bits-swarm-acid | 31 | `0x401bf8c0` | 147 328 | `0x401e3840` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-bits-swarm-macro | 31 | `0x401bf8c0` | 228 033 | `0x401f7381` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 232 668 | `0x401f859c` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-bits-swarm-macro | 31 | `0x401bf8c0` | 227 976 | `0x401f7348` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 232 608 | `0x401f8560` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-cp | 31 | `0x401bf8c0` | 227 772 | `0x401f727c` | `0x46700000` | 260 352 | model-tg-st |
 | syntakt-tg-cp-acid | 31 | `0x401bf8c0` | 138 187 | `0x401e148b` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-cp-bits | 31 | `0x401bf8c0` | 235 184 | `0x401f8f70` | `0x46700000` | 264 448 | model-tg-st |
 | syntakt-tg-cp-bits-acid | 31 | `0x401bf8c0` | 142 349 | `0x401e24cd` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-cp-bits-macro | 31 | `0x401bf8c0` | 223 043 | `0x401f6003` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-cp-bits-macro-acid | 31 | `0x401bf8c0` | 227 676 | `0x401f721c` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-cp-bits-macro | 31 | `0x401bf8c0` | 222 985 | `0x401f5fc9` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-cp-bits-macro-acid | 31 | `0x401bf8c0` | 227 617 | `0x401f71e1` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-cp-bits-swarm | 31 | `0x401bf8c0` | 242 020 | `0x401faa24` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-cp-bits-swarm-acid | 31 | `0x401bf8c0` | 147 461 | `0x401e38c5` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-cp-bits-swarm-macro | 31 | `0x401bf8c0` | 228 172 | `0x401f740c` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-cp-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 232 805 | `0x401f8625` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-cp-macro | 31 | `0x401bf8c0` | 218 871 | `0x401f4fb7` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-cp-macro-acid | 31 | `0x401bf8c0` | 223 514 | `0x401f61da` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-cp-bits-swarm-macro | 31 | `0x401bf8c0` | 228 114 | `0x401f73d2` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-cp-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 232 745 | `0x401f85e9` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-cp-macro | 31 | `0x401bf8c0` | 218 811 | `0x401f4f7b` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-cp-macro-acid | 31 | `0x401bf8c0` | 223 453 | `0x401f619d` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-cp-swarm | 31 | `0x401bf8c0` | 241 508 | `0x401fa824` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-cp-swarm-acid | 31 | `0x401bf8c0` | 147 283 | `0x401e3813` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-cp-swarm-macro | 31 | `0x401bf8c0` | 227 984 | `0x401f7350` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-cp-swarm-macro-acid | 31 | `0x401bf8c0` | 232 617 | `0x401f8569` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-cp-swarm-macro | 31 | `0x401bf8c0` | 227 926 | `0x401f7316` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-cp-swarm-macro-acid | 31 | `0x401bf8c0` | 232 557 | `0x401f852d` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-cp-toy | 31 | `0x401bf8c0` | 228 348 | `0x401f74bc` | `0x46700000` | 260 352 | model-tg-st |
 | syntakt-tg-cp-toy-acid | 31 | `0x401bf8c0` | 138 372 | `0x401e1544` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-cp-toy-bits | 31 | `0x401bf8c0` | 235 688 | `0x401f9168` | `0x46700000` | 264 448 | model-tg-st |
 | syntakt-tg-cp-toy-bits-acid | 31 | `0x401bf8c0` | 142 487 | `0x401e2557` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-cp-toy-bits-macro | 31 | `0x401bf8c0` | 223 186 | `0x401f6092` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-cp-toy-bits-macro-acid | 31 | `0x401bf8c0` | 227 817 | `0x401f72a9` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-cp-toy-bits-macro | 31 | `0x401bf8c0` | 223 129 | `0x401f6059` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-cp-toy-bits-macro-acid | 31 | `0x401bf8c0` | 227 758 | `0x401f726e` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-cp-toy-bits-swarm | 31 | `0x401bf8c0` | 242 512 | `0x401fac10` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-cp-toy-bits-swarm-acid | 31 | `0x401bf8c0` | 147 590 | `0x401e3946` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-cp-toy-bits-swarm-macro | 31 | `0x401bf8c0` | 228 292 | `0x401f7484` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-cp-toy-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 232 929 | `0x401f86a1` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-cp-toy-macro | 31 | `0x401bf8c0` | 219 058 | `0x401f5072` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-cp-toy-macro-acid | 31 | `0x401bf8c0` | 223 694 | `0x401f628e` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-cp-toy-bits-swarm-macro | 31 | `0x401bf8c0` | 228 235 | `0x401f744b` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-cp-toy-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 232 869 | `0x401f8665` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-cp-toy-macro | 31 | `0x401bf8c0` | 219 000 | `0x401f5038` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-cp-toy-macro-acid | 31 | `0x401bf8c0` | 223 634 | `0x401f6252` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-cp-toy-swarm | 31 | `0x401bf8c0` | 241 980 | `0x401fa9fc` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-cp-toy-swarm-acid | 31 | `0x401bf8c0` | 147 414 | `0x401e3896` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-cp-toy-swarm-macro | 31 | `0x401bf8c0` | 228 129 | `0x401f73e1` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-cp-toy-swarm-macro-acid | 31 | `0x401bf8c0` | 232 762 | `0x401f85fa` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-cp-toy-swarm-macro | 31 | `0x401bf8c0` | 228 071 | `0x401f73a7` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-cp-toy-swarm-macro-acid | 31 | `0x401bf8c0` | 232 702 | `0x401f85be` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd | 31 | `0x401bf8c0` | 227 772 | `0x401f727c` | `0x46700000` | 260 352 | model-tg-st |
 | syntakt-tg-sd-acid | 31 | `0x401bf8c0` | 138 189 | `0x401e148d` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-bits | 31 | `0x401bf8c0` | 235 196 | `0x401f8f7c` | `0x46700000` | 264 448 | model-tg-st |
 | syntakt-tg-sd-bits-acid | 31 | `0x401bf8c0` | 142 368 | `0x401e24e0` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-bits-macro | 31 | `0x401bf8c0` | 223 060 | `0x401f6014` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-sd-bits-macro-acid | 31 | `0x401bf8c0` | 227 695 | `0x401f722f` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-sd-bits-macro | 31 | `0x401bf8c0` | 223 003 | `0x401f5fdb` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-sd-bits-macro-acid | 31 | `0x401bf8c0` | 227 635 | `0x401f71f3` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-bits-swarm | 31 | `0x401bf8c0` | 242 040 | `0x401faa38` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-sd-bits-swarm-acid | 31 | `0x401bf8c0` | 147 484 | `0x401e38dc` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-bits-swarm-macro | 31 | `0x401bf8c0` | 228 190 | `0x401f741e` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-sd-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 232 826 | `0x401f863a` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-sd-bits-swarm-macro | 31 | `0x401bf8c0` | 228 132 | `0x401f73e4` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-sd-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 232 766 | `0x401f85fe` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-cp | 31 | `0x401bf8c0` | 228 360 | `0x401f74c8` | `0x46700000` | 260 352 | model-tg-st |
 | syntakt-tg-sd-cp-acid | 31 | `0x401bf8c0` | 138 376 | `0x401e1548` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-cp-bits | 31 | `0x401bf8c0` | 235 712 | `0x401f9180` | `0x46700000` | 264 448 | model-tg-st |
 | syntakt-tg-sd-cp-bits-acid | 31 | `0x401bf8c0` | 142 492 | `0x401e255c` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-cp-bits-macro | 31 | `0x401bf8c0` | 223 193 | `0x401f6099` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-sd-cp-bits-macro-acid | 31 | `0x401bf8c0` | 227 820 | `0x401f72ac` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-sd-cp-bits-macro | 31 | `0x401bf8c0` | 223 136 | `0x401f6060` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-sd-cp-bits-macro-acid | 31 | `0x401bf8c0` | 227 761 | `0x401f7271` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-cp-bits-swarm | 31 | `0x401bf8c0` | 242 532 | `0x401fac24` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-sd-cp-bits-swarm-acid | 31 | `0x401bf8c0` | 147 594 | `0x401e394a` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-cp-bits-swarm-macro | 31 | `0x401bf8c0` | 228 301 | `0x401f748d` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-sd-cp-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 232 937 | `0x401f86a9` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-cp-macro | 31 | `0x401bf8c0` | 219 060 | `0x401f5074` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-sd-cp-macro-acid | 31 | `0x401bf8c0` | 223 697 | `0x401f6291` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-sd-cp-bits-swarm-macro | 31 | `0x401bf8c0` | 228 243 | `0x401f7453` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-sd-cp-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 232 877 | `0x401f866d` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-sd-cp-macro | 31 | `0x401bf8c0` | 219 002 | `0x401f503a` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-sd-cp-macro-acid | 31 | `0x401bf8c0` | 223 639 | `0x401f6257` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-cp-swarm | 31 | `0x401bf8c0` | 242 000 | `0x401faa10` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-sd-cp-swarm-acid | 31 | `0x401bf8c0` | 147 421 | `0x401e389d` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-cp-swarm-macro | 31 | `0x401bf8c0` | 228 128 | `0x401f73e0` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-sd-cp-swarm-macro-acid | 31 | `0x401bf8c0` | 232 763 | `0x401f85fb` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-sd-cp-swarm-macro | 31 | `0x401bf8c0` | 228 070 | `0x401f73a6` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-sd-cp-swarm-macro-acid | 31 | `0x401bf8c0` | 232 703 | `0x401f85bf` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-cp-toy | 31 | `0x401bf8c0` | 228 856 | `0x401f76b8` | `0x46700000` | 260 352 | model-tg-st |
 | syntakt-tg-sd-cp-toy-acid | 31 | `0x401bf8c0` | 138 500 | `0x401e15c4` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-cp-toy-bits | 31 | `0x401bf8c0` | 236 200 | `0x401f9368` | `0x46700000` | 264 448 | model-tg-st |
 | syntakt-tg-sd-cp-toy-bits-acid | 31 | `0x401bf8c0` | 142 615 | `0x401e25d7` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-cp-toy-bits-macro | 31 | `0x401bf8c0` | 223 312 | `0x401f6110` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-sd-cp-toy-bits-macro-acid | 31 | `0x401bf8c0` | 227 946 | `0x401f732a` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-sd-cp-toy-bits-macro | 31 | `0x401bf8c0` | 223 255 | `0x401f60d7` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-sd-cp-toy-bits-macro-acid | 31 | `0x401bf8c0` | 227 887 | `0x401f72ef` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-cp-toy-bits-swarm | 31 | `0x401bf8c0` | 243 024 | `0x401fae10` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-sd-cp-toy-bits-swarm-acid | 31 | `0x401bf8c0` | 147 726 | `0x401e39ce` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-cp-toy-bits-swarm-macro | 31 | `0x401bf8c0` | 228 428 | `0x401f750c` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 233 072 | `0x401f8730` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | 31 | `0x401bf8c0` | 256 536 | `0x401fe2d8` | `0x46700000` | 561 340 | model-tg-st |
-| syntakt-tg-sd-cp-toy-macro | 31 | `0x401bf8c0` | 219 194 | `0x401f50fa` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-sd-cp-toy-macro-acid | 31 | `0x401bf8c0` | 223 825 | `0x401f6311` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-sd-cp-toy-bits-swarm-macro | 31 | `0x401bf8c0` | 228 373 | `0x401f74d5` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 233 012 | `0x401f86f4` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | 31 | `0x401bf8c0` | 257 266 | `0x401fe5b2` | `0x46700000` | 561 984 | model-tg-st |
+| syntakt-tg-sd-cp-toy-macro | 31 | `0x401bf8c0` | 219 136 | `0x401f50c0` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-sd-cp-toy-macro-acid | 31 | `0x401bf8c0` | 223 765 | `0x401f62d5` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-cp-toy-swarm | 31 | `0x401bf8c0` | 242 492 | `0x401fabfc` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-sd-cp-toy-swarm-acid | 31 | `0x401bf8c0` | 147 546 | `0x401e391a` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-cp-toy-swarm-macro | 31 | `0x401bf8c0` | 228 257 | `0x401f7461` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-sd-cp-toy-swarm-macro-acid | 31 | `0x401bf8c0` | 232 897 | `0x401f8681` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-macro | 31 | `0x401bf8c0` | 218 875 | `0x401f4fbb` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-sd-macro-acid | 31 | `0x401bf8c0` | 223 523 | `0x401f61e3` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-sd-cp-toy-swarm-macro | 31 | `0x401bf8c0` | 228 199 | `0x401f7427` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-sd-cp-toy-swarm-macro-acid | 31 | `0x401bf8c0` | 232 837 | `0x401f8645` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-sd-macro | 31 | `0x401bf8c0` | 218 815 | `0x401f4f7f` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-sd-macro-acid | 31 | `0x401bf8c0` | 223 462 | `0x401f61a6` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-swarm | 31 | `0x401bf8c0` | 241 504 | `0x401fa820` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-sd-swarm-acid | 31 | `0x401bf8c0` | 147 285 | `0x401e3815` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-swarm-macro | 31 | `0x401bf8c0` | 227 986 | `0x401f7352` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-sd-swarm-macro-acid | 31 | `0x401bf8c0` | 232 622 | `0x401f856e` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-sd-swarm-macro | 31 | `0x401bf8c0` | 227 928 | `0x401f7318` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-sd-swarm-macro-acid | 31 | `0x401bf8c0` | 232 562 | `0x401f8532` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-toy | 31 | `0x401bf8c0` | 228 348 | `0x401f74bc` | `0x46700000` | 260 352 | model-tg-st |
 | syntakt-tg-sd-toy-acid | 31 | `0x401bf8c0` | 138 373 | `0x401e1545` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-toy-bits | 31 | `0x401bf8c0` | 235 708 | `0x401f917c` | `0x46700000` | 264 448 | model-tg-st |
 | syntakt-tg-sd-toy-bits-acid | 31 | `0x401bf8c0` | 142 502 | `0x401e2566` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-toy-bits-macro | 31 | `0x401bf8c0` | 223 201 | `0x401f60a1` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-sd-toy-bits-macro-acid | 31 | `0x401bf8c0` | 227 834 | `0x401f72ba` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-sd-toy-bits-macro | 31 | `0x401bf8c0` | 223 144 | `0x401f6068` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-sd-toy-bits-macro-acid | 31 | `0x401bf8c0` | 227 774 | `0x401f727e` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-toy-bits-swarm | 31 | `0x401bf8c0` | 242 532 | `0x401fac24` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-sd-toy-bits-swarm-acid | 31 | `0x401bf8c0` | 147 608 | `0x401e3958` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-toy-bits-swarm-macro | 31 | `0x401bf8c0` | 228 313 | `0x401f7499` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-sd-toy-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 232 956 | `0x401f86bc` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-toy-macro | 31 | `0x401bf8c0` | 219 059 | `0x401f5073` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-sd-toy-macro-acid | 31 | `0x401bf8c0` | 223 697 | `0x401f6291` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-sd-toy-bits-swarm-macro | 31 | `0x401bf8c0` | 228 255 | `0x401f745f` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-sd-toy-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 232 896 | `0x401f8680` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-sd-toy-macro | 31 | `0x401bf8c0` | 219 001 | `0x401f5039` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-sd-toy-macro-acid | 31 | `0x401bf8c0` | 223 637 | `0x401f6255` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-toy-swarm | 31 | `0x401bf8c0` | 241 988 | `0x401faa04` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-sd-toy-swarm-acid | 31 | `0x401bf8c0` | 147 421 | `0x401e389d` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-toy-swarm-macro | 31 | `0x401bf8c0` | 228 130 | `0x401f73e2` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-sd-toy-swarm-macro-acid | 31 | `0x401bf8c0` | 232 765 | `0x401f85fd` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-sd-toy-swarm-macro | 31 | `0x401bf8c0` | 228 072 | `0x401f73a8` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-sd-toy-swarm-macro-acid | 31 | `0x401bf8c0` | 232 705 | `0x401f85c1` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-swarm | 31 | `0x401bf8c0` | 240 884 | `0x401fa5b4` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-swarm-acid | 31 | `0x401bf8c0` | 147 088 | `0x401e3750` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-swarm-macro | 31 | `0x401bf8c0` | 227 793 | `0x401f7291` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-swarm-macro-acid | 31 | `0x401bf8c0` | 232 437 | `0x401f84b5` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-swarm-macro | 31 | `0x401bf8c0` | 227 734 | `0x401f7256` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-swarm-macro-acid | 31 | `0x401bf8c0` | 232 377 | `0x401f8479` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-toy | 31 | `0x401bf8c0` | 227 760 | `0x401f7270` | `0x46700000` | 260 352 | model-tg-st |
 | syntakt-tg-toy-acid | 31 | `0x401bf8c0` | 138 176 | `0x401e1480` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-toy-bits | 31 | `0x401bf8c0` | 235 180 | `0x401f8f6c` | `0x46700000` | 264 448 | model-tg-st |
 | syntakt-tg-toy-bits-acid | 31 | `0x401bf8c0` | 142 353 | `0x401e24d1` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-toy-bits-macro | 31 | `0x401bf8c0` | 223 048 | `0x401f6008` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-toy-bits-macro-acid | 31 | `0x401bf8c0` | 227 681 | `0x401f7221` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-toy-bits-macro | 31 | `0x401bf8c0` | 222 990 | `0x401f5fce` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-toy-bits-macro-acid | 31 | `0x401bf8c0` | 227 622 | `0x401f71e6` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-toy-bits-swarm | 31 | `0x401bf8c0` | 242 012 | `0x401faa1c` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-toy-bits-swarm-acid | 31 | `0x401bf8c0` | 147 460 | `0x401e38c4` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-toy-bits-swarm-macro | 31 | `0x401bf8c0` | 228 166 | `0x401f7406` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-toy-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 232 803 | `0x401f8623` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-toy-macro | 31 | `0x401bf8c0` | 218 862 | `0x401f4fae` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-toy-macro-acid | 31 | `0x401bf8c0` | 223 506 | `0x401f61d2` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-toy-bits-swarm-macro | 31 | `0x401bf8c0` | 228 109 | `0x401f73cd` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-toy-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 232 743 | `0x401f85e7` | `0x46700000` | 492 288 | model-tg-st |
+| syntakt-tg-toy-macro | 31 | `0x401bf8c0` | 218 802 | `0x401f4f72` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-toy-macro-acid | 31 | `0x401bf8c0` | 223 445 | `0x401f6195` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-toy-swarm | 31 | `0x401bf8c0` | 241 492 | `0x401fa814` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-toy-swarm-acid | 31 | `0x401bf8c0` | 147 270 | `0x401e3806` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-toy-swarm-macro | 31 | `0x401bf8c0` | 227 978 | `0x401f734a` | `0x46700000` | 481 168 | model-tg-st |
-| syntakt-tg-toy-swarm-macro-acid | 31 | `0x401bf8c0` | 232 611 | `0x401f8563` | `0x46700000` | 492 288 | model-tg-st |
-| macro-acid-tg | 32 | `0x401bf8c0` | 117 192 | `0x401dc288` | `0x46700000` | 492 288 | model-tg-st |
-| macro-tg | 32 | `0x401bf8c0` | 110 664 | `0x401da908` | `0x46700000` | 325 520 | model-tg-st |
+| syntakt-tg-toy-swarm-macro | 31 | `0x401bf8c0` | 227 921 | `0x401f7311` | `0x46700000` | 481 168 | model-tg-st |
+| syntakt-tg-toy-swarm-macro-acid | 31 | `0x401bf8c0` | 232 551 | `0x401f8527` | `0x46700000` | 492 288 | model-tg-st |
+| macro-acid-tg | 32 | `0x401bf8c0` | 116 804 | `0x401dc104` | `0x46700000` | 492 288 | model-tg-st |
+| macro-tg | 32 | `0x401bf8c0` | 110 276 | `0x401da784` | `0x46700000` | 325 520 | model-tg-st |
 | acid-tg | 35 | `0x401bf8c0` | 11 792 | `0x401c26d0` | `0x46700000` | 221 928 | model-tg-st |
 | syntakt-meter | 90 | `0x401aa140` | 269 056 | `0x401ebc40` | `0x43000000` | 269 056 |  |
 | syntakt-tg-meter | 91 | `0x401bf8c0` | 243 472 | `0x401fafd0` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-profile | 92 | `0x401bf8c0` | 243 904 | `0x401fb180` | `0x46700000` | 269 056 | model-tg-st |
 
-Fin la plus haute : `0x401fe2d8`, soit 7 464 o avant la limite (une charge posée sur une autre, comme les moteurs du Syntakt sur Model-TG, est déjà comptée à sa place dans la chaîne).
+Fin la plus haute : `0x401fe5b2`, soit 6 734 o avant la limite (une charge posée sur une autre, comme les moteurs du Syntakt sur Model-TG, est déjà comptée à sa place dans la chaîne).
 
 ## 4. Points d'accroche (crochets) sur l'OS
 
@@ -759,20 +759,20 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | syntakt-vintage | 117 | 57 | 11 | 47 | 1 | 1 | 0 | 218 560 o |  |
 | syntakt-* (32 tweaks) | 124 | 56–57 | 16–17 | 47 | 2 | 2 | 0 | 260 352–269 056 o | notes/36 |
 | syntakt-*-acid (31 tweaks) | 124 | 56 | 17 | 47 | 2 | 2 | 0 | 137 959–147 525 o | notes/36 |
-| syntakt-*-macro (31 tweaks) | 124 | 56 | 17 | 47 | 2 | 2 | 0 | 218 644–228 224 o | notes/36 |
-| syntakt-*-macro-acid (31 tweaks) | 124 | 56 | 17 | 47 | 2 | 2 | 0 | 223 292–232 867 o | notes/36 |
-| macro | 122 | 56 | 14 | 48 | 2 | 2 | 0 | 110 252 o | notes/36 |
-| macro-acid | 122 | 55 | 15 | 48 | 2 | 2 | 0 | 116 860 o | notes/36 |
+| syntakt-*-macro (31 tweaks) | 124 | 56 | 17 | 47 | 2 | 2 | 0 | 218 582–228 162 o | notes/36 |
+| syntakt-*-macro-acid (31 tweaks) | 124 | 56 | 17 | 47 | 2 | 2 | 0 | 223 226–232 803 o | notes/36 |
+| macro | 122 | 56 | 14 | 48 | 2 | 2 | 0 | 109 864 o | notes/36 |
+| macro-acid | 122 | 55 | 15 | 48 | 2 | 2 | 0 | 116 472 o | notes/36 |
 | acid | 122 | 56 | 14 | 48 | 2 | 2 | 0 | 11 380 o | notes/36 |
 | model-tg | 142 | 94 | 32 | 0 | 1 | 1 | 14 | 87 936 o | notes/36 |
 | model-tg-st | 142 | 94 | 32 | 0 | 1 | 1 | 14 | 87 936 o | notes/31 |
 | syntakt-tg-* (33 tweaks) | 117–119 | 51 | 17–19 | 47 | 1 | 1 | 0 | 227 760–243 904 o | notes/31, notes/36 |
 | syntakt-tg-*-acid (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 138 176–147 726 o | notes/36 |
-| syntakt-tg-*-macro (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 218 862–228 428 o | notes/36 |
-| syntakt-tg-*-macro-acid (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 223 506–233 072 o | notes/36 |
-| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 256 536 o | notes/36 |
-| macro-acid-tg | 114 | 50 | 15 | 47 | 1 | 1 | 0 | 117 192 o | notes/54 |
-| macro-tg | 114 | 50 | 15 | 47 | 1 | 1 | 0 | 110 664 o | notes/43 |
+| syntakt-tg-*-macro (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 218 802–228 373 o | notes/36 |
+| syntakt-tg-*-macro-acid (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 223 445–233 012 o | notes/36 |
+| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 257 266 o | notes/36 |
+| macro-acid-tg | 114 | 50 | 15 | 47 | 1 | 1 | 0 | 116 804 o | notes/54 |
+| macro-tg | 114 | 50 | 15 | 47 | 1 | 1 | 0 | 110 276 o | notes/43 |
 | sample-preview | 11 | 0 | 3 | 0 | 4 | 4 | 0 |  | notes/46 |
 | sample-preview-st | 11 | 0 | 3 | 0 | 4 | 4 | 0 |  | notes/46 |
 | acid-tg | 114 | 50 | 15 | 47 | 1 | 1 | 0 | 11 792 o | notes/54 |

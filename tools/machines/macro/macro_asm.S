@@ -677,3 +677,231 @@ drum_two:
 	move.l	%d0, (%a6)		/* phase[0] */
 	move.l	352+4(%sp), %d7		/* n */
 	rts
+
+/* void macro_fluted(int16_t *buffer, int n, macro_fluted_state *st)
+ * FLUTED (DigitalOscillator::RenderFluted, braids_fast_digital.inc) : la boucle par echantillon, exacte. Ce que le C
+ * de Braids ecrit autrement, au meme resultat :
+ *   Mix(a, b, f) = (a (65535 - f) + b f) >> 16 = a + (((b - a) f - a) >> 16)     (a << 16 n'a pas de bits bas)
+ *   lp = (-fc bv + (4096 - fc) lp) >> 12 = lp + ((-fc (bv + lp)) >> 12)
+ *   l'index du 2e point, (p - 1) % L en non signe : p - 1, sauf p = 0 -> L - 1
+ *   clamp(jm << 9, 0, 65535) >> 8 = max(jm, 0) * 2   (jm <= 126 : la borne haute ne sert pas)
+ *   CLIP(bv >> 1) = m << 8, sauf m = -128 -> -32767
+ *   ++excitation_ptr quand (n - 1 - k) & 3, k l'echantillon : (fin - buffer) & 6 apres l'ecriture
+ * Etat : 0 bi, 4 bf, 8 ji, 12 jf, 16 -fc, 20 pole, 24 a de l'aleatoire, 28 breath_intensity, 32 dc_x, 36 dc_y,
+ * 40 lp, 44 rng, 48 delay_ptr, 52 &lut_blowing_envelope[excitation_ptr], 56 bore, 60 jet, 64 lut_blowing_jet.
+ * Pile : 44 registres, 44 retour, 48 buffer, 52 n, 56 st. */
+	.set	FL_BI, 0
+	.set	FL_BF, 4
+	.set	FL_JI, 8
+	.set	FL_JF, 12
+	.set	FL_NFC, 16
+	.set	FL_POLE, 20
+	.set	FL_LCG, 24
+	.set	FL_BRI, 28
+	.set	FL_DCX, 32
+	.set	FL_DCY, 36
+	.set	FL_LP, 40
+	.set	FL_RNG, 44
+	.set	FL_DP, 48
+	.set	FL_ENV, 52
+	.set	FL_BORE, 56
+	.set	FL_JET, 60
+	.set	FL_JLUT, 64
+	.globl	macro_fluted
+macro_fluted:
+	lea	-44(%sp), %sp
+	movem.l	%d2-%d7/%a2-%a6, (%sp)
+	move.l	52(%sp), %d0
+	beq.w	9f
+	movea.l	48(%sp), %a2
+	lea	(%a2,%d0.l*2), %a6	/* fin */
+	movea.l	56(%sp), %a5
+	move.l	FL_DCY(%a5), %d4
+	move.l	FL_LP(%a5), %d5
+	move.l	FL_RNG(%a5), %d6
+	move.l	FL_DP(%a5), %d7
+	movea.l	FL_ENV(%a5), %a3
+	movea.l	FL_BORE(%a5), %a0
+	movea.l	FL_JET(%a5), %a1
+	movea.l	FL_JLUT(%a5), %a4
+1:	/* jet : jm = Mix(dl_j[(dp - ji) % 1024], dl_j[(dp - ji - 1) % 1024], jf), puis lut_blowing_jet -> d2 */
+	move.l	%d7, %d0
+	sub.l	FL_JI(%a5), %d0
+	andi.l	#1023, %d0
+	beq.w	20f
+	mvs.b	-1(%a1,%d0.l), %d1	/* b */
+21:	mvs.b	(%a1,%d0.l), %d0	/* a */
+	sub.l	%d0, %d1
+	muls.l	FL_JF(%a5), %d1
+	sub.l	%d0, %d1
+	swap	%d1
+	ext.l	%d1
+	add.l	%d0, %d1		/* jm */
+	bpl.s	2f
+	moveq	#0, %d1
+2:	mvs.w	(%a4,%d1.l*4), %d2	/* lut_blowing_jet[max(jm, 0) * 2] */
+	/* bore : m = Mix(dl_b[(dp - bi) % 4096], dl_b[(dp - bi - 1) % 4096], bf), bore_value = m << 9 */
+	move.l	%d7, %d0
+	sub.l	FL_BI(%a5), %d0
+	andi.l	#4095, %d0
+	beq.w	22f
+	mvs.b	-1(%a0,%d0.l), %d1
+23:	mvs.b	(%a0,%d0.l), %d0
+	sub.l	%d0, %d1
+	muls.l	FL_BF(%a5), %d1
+	sub.l	%d0, %d1
+	swap	%d1
+	ext.l	%d1
+	add.l	%d0, %d1		/* m */
+	move.l	%d1, %d0
+	lsl.l	#8, %d0			/* bore_value >> 1 */
+	cmpi.l	#-32767, %d0
+	bge.s	3f
+	addq.l	#1, %d0
+3:	move.w	%d0, (%a2)+
+	lsl.l	#8, %d1
+	add.l	%d1, %d1		/* bore_value */
+	add.l	%d5, %d1
+	muls.l	FL_NFC(%a5), %d1
+	asr.l	#8, %d1
+	asr.l	#4, %d1
+	add.l	%d1, %d5		/* lp */
+	muls.l	FL_POLE(%a5), %d4
+	asr.l	#8, %d4
+	asr.l	#4, %d4
+	add.l	%d5, %d4
+	sub.l	FL_DCX(%a5), %d4	/* dc_y : reflection */
+	move.l	%d5, FL_DCX(%a5)
+	move.l	%d4, %d3
+	asr.l	#1, %d3			/* reflection >> 1 */
+	add.l	%d3, %d2
+	asr.l	#8, %d2
+	asr.l	#1, %d2
+	move.l	%d7, %d1
+	andi.l	#4095, %d1
+	move.b	%d2, (%a0,%d1.l)	/* dl_b[dp % 4096] */
+	/* le souffle */
+	muls.l	FL_LCG(%a5), %d6
+	addi.l	#1013904223, %d6	/* Random::GetWord */
+	move.l	%d6, %d0
+	swap	%d0
+	ext.l	%d0			/* GetSample */
+	muls.l	FL_BRI(%a5), %d0
+	asr.l	#8, %d0
+	asr.l	#4, %d0
+	mvz.w	(%a3), %d1
+	add.l	%d1, %d1		/* breath_pressure */
+	muls.l	%d1, %d0
+	asr.l	#8, %d0
+	asr.l	#7, %d0			/* random_pressure */
+	add.l	%d1, %d0
+	sub.l	%d3, %d0		/* pressure_delta */
+	asr.l	#8, %d0
+	asr.l	#1, %d0
+	move.l	%d7, %d1
+	andi.l	#1023, %d1
+	move.b	%d0, (%a1,%d1.l)	/* dl_j[dp % 1024] */
+	addq.l	#1, %d7
+	move.l	%a6, %d0
+	sub.l	%a2, %d0
+	andi.l	#6, %d0
+	beq.s	4f
+	addq.l	#2, %a3			/* ++excitation_ptr */
+4:	cmpa.l	%a6, %a2
+	bne.w	1b
+	move.l	%d4, FL_DCY(%a5)
+	move.l	%d5, FL_LP(%a5)
+	move.l	%d6, FL_RNG(%a5)
+	move.l	%d7, FL_DP(%a5)
+	move.l	%a3, FL_ENV(%a5)
+9:	movem.l	(%sp), %d2-%d7/%a2-%a6
+	lea	44(%sp), %sp
+	rts
+20:	mvs.b	1023(%a1), %d1		/* (0 - 1) % 1024 */
+	bra.w	21b
+22:	mvs.b	4095(%a0), %d1		/* (0 - 1) % 4096 */
+	bra.w	23b
+
+/* void macro_morph(int16_t *buf, const int16_t *s2, int n, int32_t bal, int32_t f, int32_t fz, int32_t *lp,
+ *                  const int16_t *ws)
+ * MORPH (MacroOscillator::RenderMorph) : la boucle par echantillon, exacte (le reste de la fonction reste en C) :
+ *   sample = Mix(buf[k], s2[k], bal) ; lp += (sample - lp) * f >> 15 ; CLIP(lp) ;
+ *   buf[k] = Mix(sample, Interpolate88(ws, lp + 32768), fz)
+ * Mix(a, b, w) = (a (65535 - w) + b w) >> 16, comme le C (des echantillons pleine echelle : (b - a) w deborderait) ;
+ * fz nul : Mix(sample, x, 0) = (sample 65535) >> 16 = sample - 1 si sample > 0, sinon sample, sans lire la table.
+ * Pile : 0 (65535 - bal), 4 (65535 - fz), 32 registres, 40 retour, 44 buf, 48 s2, 52 n, 56 bal, 60 f, 64 fz, 68 lp,
+ * 72 ws. */
+	.globl	macro_morph
+macro_morph:
+	lea	-40(%sp), %sp
+	movem.l	%d2-%d7/%a2-%a3, 8(%sp)
+	move.l	52(%sp), %d0
+	beq.w	9f
+	movea.l	44(%sp), %a0
+	lea	(%a0,%d0.l*2), %a3	/* fin */
+	movea.l	48(%sp), %a1
+	move.l	56(%sp), %d7		/* bal */
+	move.l	#65535, %d0
+	sub.l	%d7, %d0
+	move.l	%d0, (%sp)
+	move.l	60(%sp), %d5		/* f */
+	move.l	64(%sp), %d4		/* fz */
+	move.l	#65535, %d0
+	sub.l	%d4, %d0
+	move.l	%d0, 4(%sp)
+	movea.l	68(%sp), %a2
+	move.l	(%a2), %d6		/* lp */
+	movea.l	72(%sp), %a2		/* ws */
+1:	mvs.w	(%a0), %d1
+	muls.l	(%sp), %d1		/* a (65535 - bal) */
+	mvs.w	(%a1)+, %d0
+	muls.l	%d7, %d0		/* b bal */
+	add.l	%d0, %d1
+	swap	%d1
+	ext.l	%d1			/* sample */
+	move.l	%d1, %d2
+	sub.l	%d6, %d2
+	muls.l	%d5, %d2
+	asr.l	#8, %d2
+	asr.l	#7, %d2
+	add.l	%d2, %d6		/* lp */
+	cmpi.l	#-32767, %d6
+	bge.s	2f
+	move.l	#-32767, %d6
+2:	cmpi.l	#32767, %d6
+	ble.s	3f
+	move.l	#32767, %d6
+3:	tst.l	%d4
+	beq.s	5f
+	move.l	%d6, %d0
+	addi.l	#32768, %d0		/* l'index de Interpolate88 : 1..65535 */
+	move.l	%d0, %d2
+	lsr.l	#8, %d2
+	andi.l	#255, %d0
+	mvs.w	(%a2,%d2.l*2), %d3	/* a */
+	mvs.w	2(%a2,%d2.l*2), %d2	/* b */
+	sub.l	%d3, %d2
+	muls.l	%d0, %d2
+	asr.l	#8, %d2
+	add.l	%d3, %d2		/* fuzzed */
+	muls.l	%d4, %d2		/* fuzzed fz */
+	move.l	%d1, %d0
+	muls.l	4(%sp), %d0		/* sample (65535 - fz) */
+	add.l	%d0, %d2
+	swap	%d2
+	ext.l	%d2
+	move.w	%d2, (%a0)+
+	cmpa.l	%a3, %a0
+	bne.w	1b
+	bra.s	8f
+5:	tst.l	%d1
+	ble.s	6f
+	subq.l	#1, %d1
+6:	move.w	%d1, (%a0)+
+	cmpa.l	%a3, %a0
+	bne.w	1b
+8:	movea.l	68(%sp), %a2
+	move.l	%d6, (%a2)
+9:	movem.l	8(%sp), %d2-%d7/%a2-%a3
+	lea	40(%sp), %sp
+	rts
