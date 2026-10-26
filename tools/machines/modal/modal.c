@@ -34,6 +34,11 @@
  * alors coupe (internal_exciter = 0 : le filtre d'excitation de l'entree, comme le module). Sans sample, l'excitateur
  * interne. Une case qui attend la prochaine note (track_pend, apres un chargement de projet) est prise au trig ou
  * quand le sample s'est tu, comme le fait le Sampler (sampler_pre de Model-TG).
+ *
+ * 24 kHz (notes/81) : le coeur calcule Rings a 24 kHz, 16 trames par bloc (modal_cfg.h) ; la passerelle remonte sa
+ * sortie a 48 kHz par un filtre demi-bande de 27 coefficients (M_HBI, gen_modal.halfband : a 0,01 dB pres jusqu'a
+ * 8 kHz, -0,5 dB a 10 kHz, -54 dB des 15 kHz ; 12 trames de retard, 0,25 ms ; modal_up, modal_asm.S), et descend le
+ * sample excitateur, lu a 48 kHz, a 24 kHz par le meme filtre (M_HBD, M_HBC).
  */
 #include "modal_dsp.h"
 
@@ -67,6 +72,8 @@
 #define SLOT_PCM(s) ((const s16 *)(unsigned long)(((const volatile u32 *)TG_SLOT_BASE)[s] + 64))  /* apres l'en-tete */
 #endif
 #define MAX_SLOT    64
+typedef char modal_hbn[(sizeof(M_HBI) == HBN * sizeof(s32)) ? 1 : -1];
+#define XB          (2 * MB)                         /* echantillons du sample par bloc (48 kHz) */
 
 struct track {
 	struct modal_part part;
@@ -84,6 +91,8 @@ struct ctl {                                         /* ce que update prepare po
 	s32 kpmod, same;                                 /* sa note ; same : ce calcul a refait ctl a l'identique */
 	s32 xpos, xplay;                                 /* le sample excitateur : position, en train de jouer */
 	u32 xslot, xhash;                                /* ... sa case et son empreinte quand il est parti */
+	s32 uh[2 * HBN - 1];                             /* sortie : les 13 derniers echantillons a 24 kHz */
+	s32 dh[4 * HBN - 2];                             /* sample : les 26 derniers echantillons a 48 kHz */
 };
 
 static struct ctl ctl[6];
@@ -129,6 +138,8 @@ void modal_update(s32 pmod, char *v, const char *p)
 		c->chord = 0;
 		c->pend = 0;
 		c->xplay = 0;
+		for (i = 0; i < 2 * HBN - 1; i++)
+			c->uh[i] = 0;
 		c->vel = V32(0x34) ? VGAIN_NEXT[t] : VGAIN[t];   /* le trig qui a choisi la machine */
 		c->vel = c->vel < 0 ? 0 : (c->vel > 127 ? 127 : c->vel);
 	}
@@ -172,7 +183,8 @@ void modal_update(s32 pmod, char *v, const char *p)
 }
 
 /* Le sample de la piste t (Model-TG), comme entree de Rings : rend 0 sans sample (l'excitateur interne), 1 avec
- * (x : le bloc du sample, ou 0 quand il s'est tu : *in = 0). Au bloc du trig (v+0x34 sans v+0x38) ou sample tu, la
+ * (x : le bloc du sample a 24 kHz, ou 0 quand il s'est tu : *in = 0). 2 MB echantillons a 48 kHz par bloc, descendus
+ * a 24 kHz par le filtre demi-bande (10,5 trames de retard). Au bloc du trig (v+0x34 sans v+0x38) ou sample tu, la
  * case en attente est prise ; au strum (le bloc suivant, celui ou Rings joue la note), le sample repart du debut.
  * Un autre sample mis sur la piste pendant qu'il joue (le navigateur, une case reprise) ne part qu'au trig suivant. */
 static int exc_sample(s32 t, struct ctl *c, const char *v, s32 *x, int *in)
@@ -195,6 +207,8 @@ static int exc_sample(s32 t, struct ctl *c, const char *v, s32 *x, int *in)
 		c->xplay = 1;
 		c->xslot = s;
 		c->xhash = S_HASH[s];
+		for (k = 0; k < 4 * HBN - 2; k++)
+			c->dh[k] = 0;
 	} else if (c->xslot != (u32)s || c->xhash != S_HASH[s]) {
 		c->xplay = 0;                            /* un autre sample sous la note (le navigateur) : il attend le trig */
 	}
@@ -206,20 +220,62 @@ static int exc_sample(s32 t, struct ctl *c, const char *v, s32 *x, int *in)
 		return 1;
 	}
 	pcm = SLOT_PCM(s) + c->xpos;
-	for (k = 0; k < MB; k++) {                       /* 16 bits -> UNIT (pleine echelle = 1,0), force de la frappe */
-		s32 y = k < left ? (s32)pcm[k] << 9 : 0;
-		x[k] = level == Q31ONE ? y : qmul(y, level);
+	{
+		static s32 d[4 * HBN - 2 + XB];              /* l'historique, puis ce bloc (hors de la pile) */
+		for (k = 0; k < 4 * HBN - 2; k++)
+			d[k] = c->dh[k];
+		for (k = 0; k < XB; k++) {               /* 16 bits -> UNIT (pleine echelle = 1,0), force de la frappe */
+			s32 y = k < left ? (s32)pcm[k] << 9 : 0;
+			d[4 * HBN - 2 + k] = level == Q31ONE ? y : qmul(y, level);
+		}
+		for (k = 0; k < MB; k++) {               /* centre en 2 HBN + 2 k : les paires a +-1, +-3, ... +-13 */
+			const s32 *ctr = &d[2 * HBN + 2 * k];
+			s32 acc = qmul(M_HBC, ctr[0]), j;
+			for (j = 0; j < HBN; j++)
+				acc += qmul(M_HBD[j], ctr[2 * j - 2 * HBN + 1] + ctr[2 * HBN - 1 - 2 * j]);
+			x[k] = acc;
+		}
+		for (k = 0; k < 4 * HBN - 2; k++)
+			c->dh[k] = d[XB + k];
 	}
-	c->xpos += MB;
+	c->xpos += XB;
 	if (c->xpos >= n)
 		c->xplay = 0;
 	*in = 1;
 	return 1;
 }
 
+#ifdef MODAL_ASM
+void modal_up(const s32 *w, s32 *out, const s32 *c);   /* modal_asm.S */
+#else
+#ifdef __mcoldfire__
+#error "MODAL : la remontee a 48 kHz est en assembleur sur le ColdFire (modal_asm.S, -DMODAL_ASM)"
+#endif
+static inline s32 clamp2(s32 x)                      /* +-2,0 (UNIT) */
+{
+	return x > 0x1ffffff ? 0x1ffffff : (x < -0x2000000 ? -0x2000000 : x);
+}
+
+/* w : 2 HBN - 1 + MB mots (l'historique, puis o - a du bloc) ; pour chaque trame m : la somme des produits de la
+ * paire (w[m + j] + w[m + 2 HBN - 1 - j]) par c[j], une lecture de l'EMAC (8 bits sous le LSB pendant la somme),
+ * puis w[m + HBN] ; bornes a +-2,0 et << 6 (1,0 -> 1/2 pleine echelle). Les memes operations que modal_up. */
+static void modal_up(const s32 *w, s32 *out, const s32 *c)
+{
+	int m, j;
+
+	for (m = 0; m < MB; m++, w++) {
+		acc_t a = 0;
+		for (j = 0; j < HBN; j++)
+			a += emp(c[j], (s32)((u32)w[j] + (u32)w[2 * HBN - 1 - j]));
+		out[2 * m] = shl(clamp2(acc_rd(a)), 6);
+		out[2 * m + 1] = shl(clamp2(w[HBN]), 6);
+	}
+}
+#endif
+
 void modal_render(s32 *out, char *v)
 {
-	static s32 o[MB], a[MB], x[MB];                  /* hors de la pile (modal_dsp.h, sc) */
+	static s32 o[MB], a[MB], x[MB], w[2 * HBN - 1 + MB];   /* hors de la pile (modal_dsp.h, sc) */
 	s32 t = TRACK(v);
 	struct ctl *c = &ctl[t];
 	struct modal_part *part = &track_of(t)->part;
@@ -229,7 +285,7 @@ void modal_render(s32 *out, char *v)
 		/* les tables se calculent par morceaux, une vingtaine de blocs (13 ms) a la toute premiere note de MODAL
 		 * apres le demarrage : silence, et la note part des que c'est pret */
 		c->pend |= c->ps.strum;
-		for (i = 0; i < MB; i++)
+		for (i = 0; i < 2 * MB; i++)
 			out[i] = 0;
 		return;
 	}
@@ -249,11 +305,15 @@ void modal_render(s32 *out, char *v)
 		c->ps.internal_exciter = !exc_sample(t, c, v, x, &has_in);   /* le sample de la piste, ou l'interne */
 		modal_process(part, &c->ps, &c->pa, has_in ? x : (const s32 *)0, o, a);
 	}
-	for (i = 0; i < MB; i++) {                       /* une sortie : ODD - EVEN (notes/74), 1,0 -> 1/2 pleine echelle */
-		s32 x = o[i] - a[i];
-		x = x > 0x1ffffff ? 0x1ffffff : (x < -0x2000000 ? -0x2000000 : x);
-		out[i] = shl(x, 6);
-	}
+	/* une sortie : ODD - EVEN (notes/74), a 24 kHz, remontee a 48 kHz (notes/81) : pour chaque trame m, l'echantillon
+	 * interpole entre ses 14 voisins (w[m + 6] et w[m + 7] au centre), puis w[m + 7] */
+	for (i = 0; i < 2 * HBN - 1; i++)
+		w[i] = c->uh[i];
+	for (i = 0; i < MB; i++)
+		w[2 * HBN - 1 + i] = o[i] - a[i];
+	modal_up(w, out, M_HBI);
+	for (i = 0; i < 2 * HBN - 1; i++)
+		c->uh[i] = w[MB + i];
 }
 
 /* ---- FUNC + SHAPE : la polyphonie, rangee dans FINE (detours de l'interface, notes/74 §3) ------------------- *

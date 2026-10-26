@@ -256,7 +256,8 @@ def cases(quick):
         ("vélocité : gain 127 puis 30", dict(KW, shape=0),
          dict(trigs=(1, 80), blocks=160, gains={0: 127, 79: 30})),
         ("note 0, PITCH 0 : borné en bas", dict(KW, shape=2, note=0, pitch=0), dict(blocks=60)),
-        ("note 127, PITCH 127 : borné en haut", dict(KW, shape=0, note=127, pitch=127), dict(blocks=60)),
+        # à 24 kHz (notes/81), le résonateur sonne jusqu'à la note 126 (11,8 kHz) : 127 et au-delà se taisent
+        ("note 120 : la plus aiguë qui sonne", dict(KW, shape=0, note=120, pitch=64), dict(blocks=60)),
         ("DAMPING au maximum (cordes : résonance infinie)", dict(KW, shape=1, decay=127), dict(blocks=200)),
         ("BRIGHTNESS 0, POSITION 0, STRUCTURE 0", dict(KW, shape=3, color=0, sweep=0, contour=0), dict(blocks=80)),
         ("BRIGHTNESS 127, POSITION 127, STRUCTURE 127", dict(KW, shape=2, color=127, sweep=127, contour=127),

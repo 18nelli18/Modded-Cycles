@@ -4,29 +4,29 @@
  * Reecriture de la Part de Rings (Emilie Gillet, Mutable Instruments, 2015, licence MIT : LICENSE-Rings) et de
  * ce qu'elle utilise de stmlib : resonateur modal (filtres passe-bande), cordes (Karplus-Strong, dispersion,
  * cordes sympathiques, accords), voix FM, excitateurs internes (impulsion filtree, bruit pince), reverbe, filtre
- * de note, limiteur. Memes calculs, dans le meme ordre, au meme rythme ; bloc de 32 trames (le Cycles) au lieu
- * de 24 ; reglages « eco » (notes/74) : la moitie des modes de Rings, 4 cordes au lieu de 8. Le synthe cache de
- * Rings (StringSynthPart, « easter egg ») n'y est pas.
+ * de note, limiteur. Memes calculs, dans le meme ordre, au meme rythme ; reglages « eco » (notes/74) : la moitie
+ * des modes de Rings, 4 cordes au lieu de 8. Le synthe cache de Rings (StringSynthPart, « easter egg ») n'y est pas.
+ * Calcule a 24 kHz, par blocs de 16 trames (notes/81, modal_cfg.h) : ce qui compte en echantillons est recale pour
+ * garder ses durees en secondes et ses frequences en hertz (tools/emu/test_modal_dsp.py, SR24), et la passerelle
+ * (modal.c) remonte la sortie a 48 kHz.
  *
  * Ce fichier sert deux fois : compile pour le Cycles (modal.c, -mcpu=54418, l'EMAC) et pour l'ordinateur
  * (tools/emu/modal_host.c) avec la meme arithmetique a l'octet pres (modal_fix.h) ; la preuve
  * (tools/emu/test_modal_dsp.py) compare a Rings en flottant (tools/emu/rings_ref.cc).
  *
  * Formats : signaux 1,0 = 2^24 (UNIT) ; potards Q31 (0..1) ; hauteurs en demi-tons << 16 ; frequences
- * normalisees (f / 48 kHz) en Q31 ou en xf ; retards en echantillons, Q11.20.
+ * normalisees (f / 24 kHz) en Q31 ou en xf ; retards en echantillons, Q11.20.
  */
 #ifndef MODAL_DSP_H
 #define MODAL_DSP_H
 
 #include "modal_fix.h"
+#include "modal_cfg.h"                               /* MB, DLINE, SLINE (avec modal_asm.S) */
 
-#define MB          32                               /* trames par bloc */
 #define UNIT        (1 << 24)
 #define MAXPOLY     4
 #define NSTRINGS    4                                /* eco : 4 cordes au lieu de 8 */
 #define MAXMODES    32                               /* eco : 30 modes au plus ((64 / polyphonie - 4) / 2) ; modal_asm.S */
-#define DLINE       2048                             /* kDelayLineSize */
-#define SLINE       1024
 
 /* les numeros de Rings (ResonatorModel) ; ni la voix FM (3) ni la corde et reverbe (5) : choix de Maxime (22/10/2026) */
 enum { MODEL_MODAL = 0, MODEL_SYMPATHETIC = 1, MODEL_STRING = 2, MODEL_SYMPATHETIC_Q = 4 };
@@ -193,6 +193,63 @@ static __attribute__((noinline)) xf tan_accurate(s32 f)
 	return xmul(xfrom(f, 31), xfrom(p, 21));
 }
 
+/* tanf(pi f) de stmlib (OnePole::tan<FREQUENCY_EXACT>, f borne a 0,497), f en Q31 (notes/81 : a 24 kHz, les modes
+ * et les filtres montent jusqu'a 0,49, ou les approximations de Rings, faites pour 48 kHz, ne tiennent plus).
+ * sin(x) / cos(x) par leurs series jusqu'a x^11 sur [0, pi/4] (x = pi f), et tan(pi f) = 1 / tan(pi (1/2 - f))
+ * au-dela : environ 1e-9 d'ecart. */
+static __attribute__((noinline)) xf tan_exact(s32 f)
+{
+	s32 z, z2, ps, pc, sn, cs;
+	int inv;
+
+	if (f > M_0497Q)
+		f = M_0497Q;
+	inv = f > 0x20000000;
+	if (inv)
+		f = 0x40000000 - f;
+	z = shl(qmul(f, Q31(3.14159265358979 / 4)), 1);   /* x / 2, Q31 (<= pi / 8) */
+	z2 = qmul(z, z);                                   /* x^2 / 4 */
+	/* sin(x) / x = 1 - x^2/6 (1 - x^2/20 (1 - x^2/42 (1 - x^2/72 (1 - x^2/110)))) */
+	ps = Q31ONE - qmul(z2, Q31(4.0 / 110));
+	ps = Q31ONE - qmul(qmul(z2, Q31(4.0 / 72)), ps);
+	ps = Q31ONE - qmul(qmul(z2, Q31(4.0 / 42)), ps);
+	ps = Q31ONE - qmul(qmul(z2, Q31(4.0 / 20)), ps);
+	ps = Q31ONE - qmul(qmul(z2, Q31(4.0 / 6)), ps);
+	sn = qmul(z, ps);                                  /* sin(x) / 2, Q31 */
+	/* cos(x) = 1 - x^2/2 (1 - x^2/12 (1 - x^2/30 (1 - x^2/56 (1 - x^2/90)))) */
+	pc = Q31ONE - qmul(z2, Q31(4.0 / 90));
+	pc = Q31ONE - qmul(qmul(z2, Q31(4.0 / 56)), pc);
+	pc = Q31ONE - qmul(qmul(z2, Q31(4.0 / 30)), pc);
+	pc = Q31ONE - qmul(qmul(z2, Q31(4.0 / 12)), pc);
+	cs = Q31ONE - shl(qmul(z2, pc), 1);                /* cos(x), Q31 */
+	if (!sn)
+		return xfrom(0, 0);
+	return inv ? xmul(xfrom(cs, 31), xrecip(xfrom(sn, 30)))
+		   : xmul(xfrom(sn, 30), xrecip(xfrom(cs, 31)));
+}
+
+/* cos(pi f), Q31, f dans [0, 1/2] (Q31) : la table des sinus (sin(2 pi (f / 2 + 1/4))) */
+static s32 cospi_q31(s32 f)
+{
+	s32 i = 1024 + (f >> 20), fr = shl(f, 11) & Q31ONE;
+	s32 a = m_sine[i], b = m_sine[i + 1];
+	return shl(a, 16) + qmul(shl(b - a, 16), fr);
+}
+
+/* le facteur de qualite des filtres d'excitation et du pincement (notes/81) : q0 jusqu'a la coupure 0,6, puis vers
+ * 0,7071 a 0,998 (q0 + d t, d = 0,7071 - q0, t = (f - 0,6) / 0,398 borne a [0, 1]) ; rend 1 / q */
+static __attribute__((noinline)) xf q_fade_r(s32 fq, xf q0, xf d, xf r0)
+{
+	s32 t;
+
+	if (fq <= M_06Q)
+		return r0;
+	t = shl(qmul(fq - M_06Q, M_R0398), 2);           /* (f - 0,6) / 0,398, M_R0398 en Q29 */
+	if (t < 0 || t > Q31ONE)
+		t = Q31ONE;
+	return xrecip(xadd(q0, xmul(d, xfrom(t, 31))));
+}
+
 static void svf_reset(struct svf *f)
 {
 	f->ic1 = f->ic2 = 0;
@@ -317,6 +374,7 @@ struct plucker;
 void modal_modes(struct mode *md, int n, const s32 *x, s32 *so, s32 *sa, const s32 *amp, int quiet);
 void modal_modes_lin(struct mode *md, int n, const s32 *x, s32 *ob, s32 *ab, const s32 *amp);
 typedef char modal_maxmodes_32[MAXMODES == 32 ? 1 : -1];  /* modal_modes_lin lit le pas a amp + 32 mots */
+typedef char modal_mb_shift[(1 << MB_SHIFT) == MB ? 1 : -1];
 void modal_str_read(const s32 *ph, s32 f, const s32 *in, s32 *hb, int n);
 void modal_str_damp(s32 *hb, s32 *dk);
 void modal_str_write(const s32 *hb, s32 *pw, s32 *out, const s32 *dpp, int n);
@@ -333,7 +391,7 @@ struct resonator {
 	 * changent pas : BRIGHTNESS et DAMPING ne refont que les facteurs de qualite */
 	s32 kv1, ks, knum, kfresh;
 	xf kf;
-	s32 kpq[MAXMODES], kpfm[MAXMODES], kpfe[MAXMODES], kgm[MAXMODES], kge[MAXMODES];
+	s32 kpq[MAXMODES], kpfm[MAXMODES], kpfe[MAXMODES], kgm[MAXMODES], kge[MAXMODES], kcos[MAXMODES];
 	s32 amp[MAXMODES];                               /* amplitudes (position fixe), Q31 */
 	s32 resolution, nmodes;
 	xf frequency;
@@ -392,15 +450,6 @@ static void reso_amps(s32 *amp, s32 pos, int n)
 	}
 }
 
-/* tan_fast de stmlib (OnePole::tan<FREQUENCY_FAST>), f en Q31 (<= 0,5) -> g, en valeurs positives */
-static inline __attribute__((always_inline)) xf tan_fast(s32 f)
-{
-	s32 t = qmul(f, f);
-	s32 in = M_TF_A26 + shl(qmul(t, M_TF_B25), 1);  /* Q26 */
-	s32 p = M_PI27 + shl(qmul(t, in), 1);           /* Q27 */
-	return xmulp(xfromp(f, 31), xfromp(p, 27));
-}
-
 /* svf_set en ligne pour un mode (g, r = 1 / resonance), en valeurs positives ; b = e / (1 + e) = 1 - a1 (un produit
  * de moins, 2 LSB au plus d'ecart avec e a1) */
 static inline __attribute__((always_inline)) void mode_set(struct mode *m, xf g, xf rq)
@@ -415,7 +464,9 @@ static inline __attribute__((always_inline)) void mode_set(struct mode *m, xf g,
 
 /* ComputeFilters de Rings, refait quand ses entrees changent. 1re passe (frequence ou structure changee) : les
  * frequences des partiels, leur nombre sous 0,49 (num) ; 2e : les facteurs de qualite et les coefficients des seuls
- * modes calcules (reso_process en fait (num + 1) & ~1). Les memes valeurs pour ceux-la que la boucle unique de Rings. */
+ * modes calcules (reso_process en fait (num + 1) & ~1). Les memes valeurs pour ceux-la que la boucle unique de Rings.
+ * A 24 kHz (notes/81) : tangente exacte, et le facteur de qualite multiplie par cos(pi f), pour que chaque mode
+ * garde sa duree en secondes jusqu'a la moitie de la frequence d'echantillonnage. */
 static int reso_compute(struct resonator *r)
 {
 	s32 q_loss, rate, ba, br, i, n, num;
@@ -439,6 +490,7 @@ static int reso_compute(struct resonator *r)
 			}
 			r->kpfm[i] = pf.m;
 			r->kpfe[i] = pf.e;
+			r->kcos[i] = cospi_q31(r->kpq[i]);
 			stretch += stiffness >> 5;
 			stiffness = qmul(stiffness, stiffness < 0 ? Q31(0.93) : Q31(0.98));
 			harmonic = xaddp(harmonic, r->frequency);
@@ -453,7 +505,7 @@ static int reso_compute(struct resonator *r)
 	n = (num + 1) & ~1;
 	if (n > r->resolution)
 		n = r->resolution;
-	q = xmul(XC(M_500), xfrom(interp(M_DEC4, r->damping, 8), 17));
+	q = xmul(XC(M_QMODE), xfrom(interp(M_DEC4, r->damping, 8), 17));
 	ba = Q31ONE - r->structure;
 	ba = qmul(ba, ba);
 	ba = qmul(ba, ba);
@@ -464,13 +516,14 @@ static int reso_compute(struct resonator *r)
 	for (i = 0; i < n; i++) {
 		xf g;
 		if (r->kfresh) {
-			g = tan_fast(r->kpq[i]);
+			g = tan_exact(r->kpq[i]);
 			r->kgm[i] = g.m;
 			r->kge[i] = g.e;
 		} else {
 			g = xmk(r->kgm[i], r->kge[i]);
 		}
-		mode_set(&r->md[i], g, xrecipp(xaddp(xmk(1 << 30, 0), xmulp(xmk(r->kpfm[i], r->kpfe[i]), q))));
+		mode_set(&r->md[i], g, xrecipp(xmulp(xaddp(xmk(1 << 30, 0), xmulp(xmk(r->kpfm[i], r->kpfe[i]), q)),
+						     xfromp(r->kcos[i], 31))));
 		q_loss += qmul(rate, Q31ONE - q_loss);
 		q = xmulp(q, xfromp(q_loss, 31));
 	}
@@ -559,7 +612,7 @@ static __attribute__((noinline)) void reso_process(struct resonator *r, const s3
 		reso_amps(a0, pstart, n);                    /* amplitudes au debut et a la fin du bloc */
 		reso_amps(da, r->prev_position, n);
 		for (i = 0; i < n; i++)
-			da[i] = (da[i] - a0[i]) >> 5;
+			da[i] = (da[i] - a0[i]) >> MB_SHIFT;
 		r->amp_pos = -1;
 #ifdef MODAL_ASM
 		modal_modes_lin(r->md, n, x, out, aux, a0);  /* modal_asm.S */
@@ -759,10 +812,11 @@ static __attribute__((noinline)) void str_block(struct mstring *s)
 	dcoef = xto(xs2r(b16), 31);
 	bright = qmul(s->brightness, s->brightness);
 	nfilt = xto(xs2r(qmul(s->brightness - Q31ONE, 48 << 16)), 31);
+	nfilt = b2mb(nfilt);                             /* 24 kHz : deux pas de 48 kHz par pas (notes/81) */
 	dcut = (24 << 16) + qmul(qmul(s->damping, s->damping), 48 << 16) + qmul(bright, 24 << 16);
 	if (dcut > (84 << 16))
 		dcut = 84 << 16;
-	df = xto(xmin(xmul(fx, xs2r(dcut)), XC(M_0499)), 31);
+	df = xto(xmin(xscale(xmul(fx, xs2r(dcut)), -1), XC(M_0499)), 31);   /* la coupure de 48 kHz (notes/81) */
 	if (s->damping >= M_095) {
 		s32 dd = s->damping - M_095;
 		s32 ti = dd >= Q31ONE / 20 ? Q31ONE : dd * 20;   /* 20 (d - 0,95) : 1,0 au plus, sans deborder */
@@ -771,14 +825,14 @@ static __attribute__((noinline)) void str_block(struct mstring *s)
 		df += qmul(ti, M_04999 - df);
 		dcut += qmul(ti, (128 << 16) - dcut);
 	}
-	svf_set(&s->iir, tan_accurate(df), xmk(1 << 30, 1), 0, 0);
+	svf_set(&s->iir, xscale(tan_accurate(df), 1), xmk(1 << 30, 1), 0, 0);   /* son prototype de 48 kHz : 2 g48 */
 	s->k_dcomp = Q31ONE - interp(M_SVFSHIFT, dcut, 15);
 	s->k_nk = xto(xrecip(xadd(XC(M_02), xfrom(nfilt, 31))), 28);   /* 1 / (0,2 + nf), Q28 */
 	s->k_delay = delay;
 	s->k_unit = unit;
 	s->k_ratio = src_ratio;
 	s->k_dcoef = dcoef;
-	s->k_bright = bright;
+	s->k_bright = 0x60000000 + (bright >> 2);       /* 3/4 + b/4 : la courbe du FIR de 48 kHz (notes/81) */
 	s->k_nfilt = nfilt;
 	s->kf = s->frequency;
 	s->kd = s->damping;
@@ -1437,11 +1491,14 @@ static void pl_trigger(struct plucker *p, xf frequency, xf cutoff, s32 position,
 	s32 ratio = qmul(position, Q31(0.9)) + Q31(0.05);
 	xf period = xmul(xrecip(frequency), xfrom(ratio, 31));
 	p->remaining = xto(period, 0);
-	while (xcmp(period, XC(M_255)) >= 0)
+	while (xcmp(period, XC(M_PLCAP)) >= 0)
 		period = xscale(period, -1);
 	p->period = xto(period, 20);
 	p->gain = qmul(Q31ONE - position, Q31(0.8));
-	svf_set(&p->svf, tan_dirty(xto(xmin(cutoff, XC(M_0499)), 31)), xmk(1 << 30, 0), 0, 0);
+	{
+		s32 cq = xto(xmin(cutoff, XC(M_0998)), 31);
+		svf_set(&p->svf, tan_exact(cq), q_fade_r(cq, xmk(1 << 30, 0), XC(M_QD100), xmk(1 << 30, 0)), 0, 0);
+	}
 }
 
 #ifdef MODAL_ASM
@@ -1457,7 +1514,7 @@ static void pl_process(struct plucker *p, s32 *out, u32 *rng)
 	for (k = 0; k < MB; k++) {
 		s32 in = 0;
 		if (p->remaining) {
-			in = rng_q31(rng) >> 7;
+			in = qmul(rng_q31(rng) >> 7, Q31(0.70710678));   /* la meme densite par hertz (notes/81) */
 			if (p->level != Q31ONE)
 				in = qmul(in, p->level);
 			p->remaining--;
@@ -1898,12 +1955,14 @@ static void modal_process(struct modal_part *p, const struct modal_perf *ps, con
 			if (ps->internal_exciter)
 				fc = xmul(frequency, xs2r(qmul(cutoff - 0x40000000, 96 << 16)));
 			else
-				fc = xmul(XC(M_04), xs2r(qmul(cutoff - Q31ONE, 108 << 16)));
+				fc = xmul(XC(M_EXTFC), xs2r(qmul(cutoff - Q31ONE, 108 << 16)));
 			if (!act)
 				fc = XC(M_FCIDLE);
-			fc = xmin(fc, XC(M_0499));
+			fc = xmin(fc, XC(M_0998));
 			fcq = xto(fc, 31);
-			svf_set(&p->exc[v], tan_dirty(fcq), ps->internal_exciter ? XC(M_R150) : XC(M_R080), &a2x, &a3x);
+			svf_set(&p->exc[v], tan_exact(fcq), ps->internal_exciter
+				? q_fade_r(fcq, XC(M_Q150), XC(M_QD150), XC(M_R150))
+				: q_fade_r(fcq, XC(M_Q080), XC(M_QD080), XC(M_R080)), &a2x, &a3x);
 			vc->valid = 1;
 			vc->note = note;
 			vc->cut = cutoff;
@@ -1978,7 +2037,7 @@ static void modal_process(struct modal_part *p, const struct modal_perf *ps, con
 			if (t > pk)
 				pk = t;
 			err = pk - peak;
-			peak += qmul(err > 0 ? Q31(0.05) : M_LIM_DEC, err);
+			peak += qmul(err > 0 ? M_LIM_ATK : M_LIM_DEC, err);
 			g = peak <= UNIT ? Q31(0.8) : lim_gain(peak);
 			out[k] = softlimit(qmul(l, g));
 			aux[k] = softlimit(qmul(r, g));

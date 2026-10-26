@@ -1,25 +1,29 @@
 // Reference de tools/emu/test_modal_dsp.py : la Part de Rings (pichenettes/eurorack, code MIT d'Emilie Gillet),
-// en flottant, compilee pour l'ordinateur depuis une copie des sources ou ne changent que kMaxBlockSize (24 -> 32, le
-// bloc du Cycles) et les reglages eco de MODAL (test_modal_dsp.ECO), pilotee bloc par bloc comme la machine MODAL
-// pilote son coeur en virgule fixe (modal_dsp.h).
+// en flottant, compilee pour l'ordinateur depuis une copie des sources ou ne changent que les reglages eco de MODAL
+// (test_modal_dsp.ECO) et le calcul a 24 kHz par blocs de BLK trames (test_modal_dsp.SR24, notes/81), pilotee bloc
+// par bloc comme la machine MODAL pilote son coeur en virgule fixe (modal_dsp.h).
 //
-// Entree (binaire, petit-boutiste) : une suite d'enregistrements de 46 int32, un par bloc de 32 trames :
+// Entree (binaire, petit-boutiste) : une suite d'enregistrements de 14 + BLK int32, un par bloc de BLK trames :
 //   model poly strum internal_exciter chord note tonic fm (demi-tons << 16)
-//   structure brightness damping position (0..65536 = 0..1) in[32] (1,0 = 2^24) rsv[2]
-// Sortie : par bloc, out[32] puis aux[32] en float32.
+//   structure brightness damping position (0..65536 = 0..1) in[BLK] (1,0 = 2^24) rsv[2]
+// Sortie : par bloc, out[BLK] puis aux[BLK] en float32.
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
 
 #include "rings/dsp/part.h"
 
+#ifndef BLK
+#define BLK 32
+#endif
+
 static rings::Part part;
 static uint16_t reverb_buffer[32768];
 
 int main()
 {
-	int32_t r[46];
-	float in[32], out[32], aux[32];
+	int32_t r[14 + BLK];
+	float in[BLK], out[BLK], aux[BLK];
 
 	part.Init(reverb_buffer);
 	while (fread(r, sizeof(r), 1, stdin) == 1) {
@@ -41,9 +45,9 @@ int main()
 		patch.brightness = r[9] / 65536.0f;
 		patch.damping = r[10] / 65536.0f;
 		patch.position = r[11] / 65536.0f;
-		for (int i = 0; i < 32; i++)
+		for (int i = 0; i < BLK; i++)
 			in[i] = r[12 + i] / 16777216.0f;
-		part.Process(ps, patch, in, out, aux, 32);
+		part.Process(ps, patch, in, out, aux, BLK);
 		fwrite(out, sizeof(out), 1, stdout);
 		fwrite(aux, sizeof(aux), 1, stdout);
 	}

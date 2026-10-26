@@ -67,7 +67,7 @@ int main(void)
 {
 	int r[9];
 	unsigned char p[64];
-	s32 out[MB], back[5];
+	s32 out[2 * MB], back[5];                        /* 32 trames a 48 kHz (notes/81) */
 
 	if (!read_slots())
 		return 1;
