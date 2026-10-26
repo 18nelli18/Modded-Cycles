@@ -70,9 +70,13 @@ ok  relâchement d'un appui simple : rendu
 ok  une autre touche avec FUNC    : rendue telle quelle
 ```
 
-## 6. Limites
+## 6. Essai sur une machine
 
-- Rien n'est testé sur la machine de Maxime : la sauvegarde par `FUNC` + `SETTINGS` tenu est à confirmer, ainsi que
-  l'absence de prompt pendant un accord.
+**Rapport d'un utilisateur** (26/10/2026, Model:Cycles de l'utilisateur, OS 2.0 avec ce patch, firmware installé par
+Elektron Transfer) : `FUNC` + `SETTINGS` **tenu** fait bien revenir le prompt de sauvegarde du pattern, et les
+combinaisons du modificateur restent intactes (`SETTINGS` + `PRESET`/`PUNCH`/`REC`/`RETRIG`/`RETURN`/trig, et l'appui
+bref qui ouvre le menu Config), sans que le prompt surgisse pendant leur usage.
+
+**Maxime n'a pas essayé cette version** : la carte reste `experimental` jusqu'à son rapport.
 - Si un jour Model-TG prend `FUNC` + `SETTINGS` pour autre chose, le patch est à revoir (il rendrait la touche à
   l'OS au lieu de la lui laisser).
