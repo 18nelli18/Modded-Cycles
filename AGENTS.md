@@ -324,3 +324,8 @@ User authorizes publishing148 and continuing optimization only in test. Exact st
 ## AveyCole main2.48 promotion (2026-10-25)
 
 User: "but goahead and push159 as well". Publish exact standard159 SHA `fb0d1b480d21910e6c0c63f300b6383f802a1cbbf490eb7e55f6932951a6047f`, MAIN `e743c142835072c4050c60d42d9b86f7c89e3fb209a416ff6d7b1e97416a9ec4` through the existing fixed-main path. No new hardware result claimed. Adult stays private, protected blurb unchanged. Includes waveform/footer volume, Groove/Strum, Global/Track menus, popup labels,151 bank fix and155 optimizations. Subsequent VA/LXR work stays private.
+
+
+## AveyCole main 2.49 promotion (2026-10-26)
+
+User supplied `Supermodel_v163_Filter_LFO_Polarity.syx` (four new filter modes, LFO Polarity options): "Make sure this .syx is served by my main flasher." Publish exact standard v163 SHA `952b5b70dc095e3e68a68df0562d08fa300f4eca48775439d4a776f04e7d222f`, MAIN `4ac6a3c4cb0712e2a2bf80d17a8bc1b5c36326df02286c6860048eb7c133b410`, through the established fixed-main image only. Replaces v159 of main 2.48. No hardware result reported, none claimed. Adult stays private; protected blurb hash `b3486b46a278b7d5561c3edd549f4adf299d358012b2631a0a6ab353232e2205` unchanged. Shortcut guide/PDF not yet updated for the new filter modes and LFO Polarity.
