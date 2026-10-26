@@ -135,6 +135,7 @@ FAST = (
     ("braids/digital_oscillator.cc", "void DigitalOscillator::RenderStruckDrum(", "void DigitalOscillator::RenderPlucked("),
     ("braids/digital_oscillator.cc", "void DigitalOscillator::RenderSnare(", "void DigitalOscillator::RenderCymbal("),
     ("braids/digital_oscillator.cc", "void DigitalOscillator::RenderCymbal(", "/*\nvoid DigitalOscillator::RenderYourAlgo("),
+    ("braids/digital_oscillator.cc", "void DigitalOscillator::RenderFluted(", "struct WavetableDefinition {"),
 )
 FAST_INC = {"braids/digital_oscillator.cc": "braids_fast_digital.inc"}
 # ... et ce que nos versions doivent pouvoir lire : (fichier, avant, après)

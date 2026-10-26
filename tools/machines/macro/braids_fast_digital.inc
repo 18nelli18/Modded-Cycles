@@ -24,6 +24,16 @@ struct macro_drum_args {
   int32_t dual;
 };
 void macro_drum_render(int16_t* buffer, int n, macro_drum_args* g);
+struct macro_fluted_state {
+  int32_t bi, bf, ji, jf, nfc, pole, lcg, bri;
+  int32_t dcx, dcy, lp;
+  uint32_t rng, dp;
+  const uint16_t* env;
+  int8_t* bore;
+  int8_t* jet;
+  const int16_t* jet_lut;
+};
+void macro_fluted(int16_t* buffer, int n, macro_fluted_state* st);
 }
 
 namespace braids {
@@ -364,6 +374,76 @@ void DigitalOscillator::RenderStruckDrum(
     AdditiveState* a = &state_.add;
     a->partial_amplitude[i] = a->target_partial_amplitude[i];
   }
+}
+
+void DigitalOscillator::RenderFluted(
+    const uint8_t* sync,
+    int16_t* buffer,
+    size_t size) {
+  uint16_t delay_ptr = state_.phy.delay_ptr;
+  uint16_t excitation_ptr = state_.phy.excitation_ptr;
+
+  int32_t lp_state = state_.phy.lp_state;
+  int32_t dc_blocking_x0 = state_.phy.filter_state[0];
+  int32_t dc_blocking_y0 = state_.phy.filter_state[1];
+
+  int8_t* dl_b = delay_lines_.fluted.bore;
+  int8_t* dl_j = delay_lines_.fluted.jet;
+
+  if (strike_) {
+    excitation_ptr = 0;
+    memset(dl_b, 0, sizeof(delay_lines_.fluted.bore));
+    memset(dl_j, 0, sizeof(delay_lines_.fluted.jet));
+    lp_state = 0;
+    strike_ = false;
+  }
+
+  uint32_t bore_delay = (delay_ << 1) - (2 << 16);
+  uint32_t jet_delay = (bore_delay >> 8) * (48 + (parameter_[1]  >> 10));
+  bore_delay -= jet_delay;
+  while (bore_delay > ((kWGFBoreLength - 1) << 16)
+         || jet_delay > ((kWGJetLength - 1) << 16)) {
+    bore_delay >>= 1;
+    jet_delay >>= 1;
+  }
+  uint16_t breath_intensity = 2100 - (parameter_[0] >> 4);
+  uint16_t filter_coefficient = lut_flute_body_filter[pitch_ >> 7];
+
+  macro_fluted_state st;                                  /* macro_asm.S : la boucle d'origine, exacte */
+  st.bi = bore_delay >> 16;
+  st.bf = bore_delay & 0xffff;
+  st.ji = jet_delay >> 16;
+  st.jf = jet_delay & 0xffff;
+  st.nfc = -filter_coefficient;
+  st.pole = kDCBlockingPole;
+  st.lcg = 1664525;
+  st.bri = breath_intensity;
+  st.dcx = dc_blocking_x0;
+  st.dcy = dc_blocking_y0;
+  st.lp = lp_state;
+  st.rng = Random::state();
+  st.dp = delay_ptr;
+  st.env = lut_blowing_envelope + excitation_ptr;
+  st.bore = dl_b;
+  st.jet = dl_j;
+  st.jet_lut = lut_blowing_jet;
+  macro_fluted(buffer, size, &st);
+  Random::Seed(st.rng);
+  phase_ += phase_increment_ * size;                      /* phase_ += phase_increment_, a chaque echantillon */
+  delay_ptr = st.dp;
+  excitation_ptr = st.env - lut_blowing_envelope;
+  lp_state = st.lp;
+  dc_blocking_x0 = st.dcx;
+  dc_blocking_y0 = st.dcy;
+
+  if (excitation_ptr >= LUT_BLOWING_ENVELOPE_SIZE - 32) {
+    excitation_ptr = LUT_BLOWING_ENVELOPE_SIZE - 32;
+  }
+  state_.phy.delay_ptr = delay_ptr;
+  state_.phy.excitation_ptr = excitation_ptr;
+  state_.phy.lp_state = lp_state;
+  state_.phy.filter_state[0] = dc_blocking_x0;
+  state_.phy.filter_state[1] = dc_blocking_y0;
 }
 
 }  // namespace braids
