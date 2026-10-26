@@ -17,6 +17,10 @@ $V --gen gen_trig_hold.py --proof test_trig_hold.py \
 $V --git origin/claude/<open-pr>            # overlaps and registry against an open branch (repeatable)
 ```
 
+The load budget is checked apart, not by `validate.sh` (an hour or more): `python3 tools/emu/test_budget.py --cycles …
+--syntakt … --engines macro,modal,acid,syntakt --jobs 4` fails when an added machine takes more than 13 % of the
+processor on its track (notes/81). Run it after any change to a machine's code; 4 to 6 jobs, never two runs at once.
+
 Official files are taken from `firmware/model-cycles_OS1.13.syx` and `firmware/Syntakt_OS1.42.syx` when present
 (`--cycles`, `--syntakt` to override). Logs: `build/validate/*.log`. Exit 1 if anything failed.
 

@@ -175,7 +175,11 @@ python3 tools/ref_mainos.py --cycles firmware/model-cycles_OS1.13.syx --syntakt 
 python3 tools/gen_<mod>.py --cycles firmware/model-cycles_OS1.13.syx --check
 python3 tools/emu/test_<mod>.py --cycles firmware/model-cycles_OS1.13.syx [--with <the other tweaks of os.json> --syntakt …]
 tools/webflash_smoke.sh firmware/model-cycles_OS1.13.syx firmware/Syntakt_OS1.42.syx   # the OS built in the page, checked
+python3 tools/emu/test_budget.py --cycles … --syntakt … --engines macro,modal,acid,syntakt --jobs 4   # no added machine above 13 % (notes/81)
 ```
+
+Run `test_budget.py` whenever the code of an added machine changes (it takes an hour or more; `--quick` for a first
+look): Maxime's rule since 26/10/2026 is that no machine of the OS takes more than 13 % of the processor on its track.
 
 `.agents/skills/repo-validation/scripts/validate.sh` runs all of this and prints one PASS/FAIL/SKIP table. If a check
 cannot run (no network, no toolchain), say so in the PR instead of skipping it silently.

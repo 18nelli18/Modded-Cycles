@@ -16,12 +16,13 @@
  * (passe-bande 0..19 kHz a 0,04 dB pres, -46 dB des 29 kHz, ce qui se replierait sous 19 kHz). Son propre code
  * donne donc exactement le son de Braids, a 96 kHz, avant ce filtre.
  *
- * Modeles alleges (notes/55) : 13 modeles (LITE) ne dependent du temps que par leur hauteur (oscillateurs, cartes
- * d'ondes) ; rendus a 48 kHz une octave plus haut (+1536 en 1/128 de demi-ton), par blocs de 12 (toujours 4 000 rendus
- * par seconde), ils donnent le meme spectre sans le filtre, pour environ moitie moins de calcul. Leurs oscillateurs
- * plafonnent, en rendu allege, une octave plus haut qu'a 96 kHz (g_pitch_offset, tools/gen_macro.py, notes/81) : le
- * meme plafond en Hz, toutes les notes restent a 48 kHz. RATE plus bas : la frequence la plus basse ou la note, plus
- * ce que le modele y ajoute (LITE : les accords de WAVE PARAPHONIC, les desaccords des TRIPLE), tient sous ce plafond.
+ * Modeles alleges (notes/55) : 14 modeles (LITE ; SINE TRIANGLE depuis notes/81) ne dependent du temps que par leur
+ * hauteur (oscillateurs, cartes d'ondes) ; rendus a 48 kHz une octave plus haut (+1536 en 1/128 de demi-ton), par blocs
+ * de 12 (toujours 4 000 rendus par seconde), ils donnent le meme spectre sans le filtre, pour environ moitie moins de
+ * calcul. Leurs oscillateurs plafonnent, en rendu allege, une octave plus haut qu'a 96 kHz (g_pitch_offset,
+ * tools/gen_macro.py, notes/81) : le meme plafond en Hz, toutes les notes restent a 48 kHz. RATE plus bas : la
+ * frequence la plus basse ou la note, plus ce que le modele y ajoute (LITE : les accords de WAVE PARAPHONIC, les
+ * desaccords des TRIPLE), tient sous ce plafond.
  *
  * 48 kHz natifs (notes/81) : 9 modeles (NATIVE) calculent deja a 48 kHz dans Braids et ecrivent chaque echantillon
  * deux fois (interpole, ou tenu) pour faire 96 kHz. On les rend comme a 96 kHz (memes rendus de 24, meme cadence) mais

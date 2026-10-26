@@ -439,3 +439,9 @@ pas fini dans le temps alloué. `gen_acid_combos.py --check` à jour (126 fichie
 Sur la machine, la combinaison 5 moteurs + MACRO + ACID a été testée par Maxime le 12/10/2026 (notes/54 §11) avant
 cette correction ; le lo-fi qu'elle reçoit est le code testé avec MACRO seule et avec les moteurs (§8.4), à une autre
 place : son statut « testé » est gardé, à confirmer à son prochain essai.
+
+## 9. Suite : le budget de 13 % (26/10/2026)
+
+SINE TRIANGLE rejoint les modèles allégés (14), et leur plafond monte d'une octave : ils restent à 48 kHz sur toutes
+les notes au lieu de repasser à 96 kHz (§1). Neuf autres modèles sont rendus en 48 kHz natifs. Voir
+[81](81-budget-de-13-pourcent.md) §4.
