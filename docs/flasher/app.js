@@ -1467,7 +1467,7 @@ const REF_SAMPLES_BACK = "d63ce13dd1a5039d11b60d3f69d4e88e9d0f56fb2e7350c105ec64
 const CREDITS = [
   { who: "18nelli18", label: "18nelli18 / Modded-Cycles", repo: "18nelli18/Modded-Cycles",
     en: "the original Modded-Cycles project and firmware modifications", fr: "le projet Modded-Cycles d’origine et ses modifications du firmware" },
-  { who: "PPPCCC", en: "project contributions", fr: "contributions au projet" },
+  { who: "PPPCCC", repo: "gialloinfuso/PPPCCC-Model-Cycles-", en: "project contributions", fr: "contributions au projet" },
   { who: "scottmetoyer", repo: "scottmetoyer/ms-multi-output",
     en: "the 6-channel USB audio mod (MIT license)", fr: "le mod audio USB 6 canaux (licence MIT)" },
   { who: "drumkilla", repo: "drumkilla/elektron-model-tweaks",

@@ -184,6 +184,6 @@ Main2.46 serves the exact approved standard v145, SHA256 `f7f9e92d902f92c6f56c5b
 
 Main2.47 serves approved standard v148, SHA256 `442c1720818c7c5e6798cadbebbd29e37288eae09d9a80c3ce3b7b743f2397d4`. DUB uses stereo input/output from its first echo; filtering and controls remain. Base146 optimizations, excluding147. Ping Pong retains its alternating route.
 
-Main2.48 serves approved standard v159, SHA256 `fb0d1b480d21910e6c0c63f300b6383f802a1cbbf490eb7e55f6932951a6047f`. Sample Wizard waveform and segmented volume, Global/Track menus, Groove On/Off/Type, CHORD Strum and Humanize. See the updated EN/FR controls guide. Groove/Strum credit: PPPCCC/gialloinfuso (MIT).
+Main2.48 serves approved standard v159, SHA256 `fb0d1b480d21910e6c0c63f300b6383f802a1cbbf490eb7e55f6932951a6047f`. Sample Wizard waveform and segmented volume, Global/Track menus, Groove On/Off/Type, CHORD Strum and Humanize. See the updated EN/FR controls guide. Groove/Strum credit: [PPPCCC/gialloinfuso](https://github.com/gialloinfuso/PPPCCC-Model-Cycles-) (MIT).
 
 Main 2.49 serves the exact approved standard v163, SHA256 `952b5b70dc095e3e68a68df0562d08fa300f4eca48775439d4a776f04e7d222f` (MAIN `4ac6a3c4cb0712e2a2bf80d17a8bc1b5c36326df02286c6860048eb7c133b410`). Adds four new filter modes and LFO Polarity options. No hardware result is claimed with this promotion; the printable guide is not yet updated for the new options.
