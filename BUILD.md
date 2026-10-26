@@ -866,3 +866,8 @@ AveyCole demande le 16/10/2026 de remplacer Swarm sept oscillateurs par trois, a
 ### Test 909 sur Sample Wizard actuel (note 108)
 
 Executer export_909_current_scaffold.js avec Node, puis gen_909_current.py (GCC ColdFire) et gen_909_current_page.py ; generateurs avec --check. test_909_current.js exporte build/909-current/all.json et all.syx, locaux ignores. test_909_current.py prouve les voix natives vs C hote apres boot/cache ; regressions MIDI/Genie/sauvegarde/repeat sur ce catalogue. Profil sans Syntakt/Model-TG, quatre WAV utilisateur requis. Page test seulement avant validation materielle. Edition 909 publiee conservee, main modifie uniquement pour le lien visuel.
+
+
+## Principal2.51 - v175 exact
+
+Commande privee : `python tools/gen_governor_recovery_test.py --lfo-compact-ram --legacy-cart <cartouche-utilisateur.syx> --legacy-classics <rom-utilisateur.syx> --stage --check`. Les sources officielles et cartouches restent locales. SYX SHA `99d392585a03a0f94cab0eb76fd1c16def0cc690230e909e821a09e01fa69bee`, MAIN SHA `a04f16bf2037166cbab9f7d01d31bb04573bbf5b48c46432e96e69a04ae0e1f5`. Image servie par le chemin fixe existant, sans changer ses octets. La conservation de polarite dans les copies est un travail separe.

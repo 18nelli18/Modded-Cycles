@@ -314,3 +314,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [191 — Affichage Wizard/volume](191-affichage-wizard-volume.md) | **159 prive experimental** ; waveform, Groove On/Off, rectangles volume et labels ; preuves natives, appareil attendu. |
 
 - [196 - Libelle Resonance](196-libelle-resonance.md) : police adaptee et audio163 identique.
+
+- [197 - LFO, BRAIDS et memoire](197-lfo-braids-memoire.md) : v175 approuve sur appareil, principal2.51.

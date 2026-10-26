@@ -1,6 +1,6 @@
 {
-  "release": "2.48",
-  "stamp": "2026-10-26-filter-lfo-polarity-main-249",
+  "release": "2.51",
+  "stamp": "2026-10-26-lfo-braids-memory-main-251",
   "cards": [
     {
       "en": [
@@ -252,6 +252,18 @@
             "Locks d’harmonie ChordKeys",
             "Grille : maintenir TRIG et appuyer T1–T6 ; live : accord puis pad d’harmonie",
             "Enregistre une harmonie sur le pas. Rappuyez sur le même pad d’harmonie avec le pas tenu pour retrouver son harmonie de base."
+          ]
+        },
+        {
+          "en": [
+            "Scale Lock",
+            "FUNC + PAGE > Lock / Scl / Key",
+            "Off bypasses locking; ORGN maps successive scale degrees; BRDS snaps to the nearest in-scale note (ties lower). 19 whole-semitone scales. Mode/scale/key save globally while stopped."
+          ],
+          "fr": [
+            "Scale Lock",
+            "FUNC + PAGE > Lock / Scl / Key",
+            "Off desactive ; ORGN suit les degres ; BRDS choisit la note de gamme la plus proche (egalite vers le bas). 19 gammes par demi-tons. Sauvegarde globale a l arret."
           ]
         }
       ]
@@ -1180,14 +1192,38 @@
       "rows": [
         {
           "en": [
-            "Second audio LFO",
-            "Press LFO twice",
-            "Open LFO 2 and edit its speed, shape, destination and depth."
+            "Audio LFO pages",
+            "Press LFO repeatedly",
+            "Cycle through enabled LFOs. Mod Setup > Global > LFOs chooses 1/2/3/4 (default2). LFO3/4 match LFO2 controls; hidden settings are retained."
           ],
           "fr": [
-            "Second LFO audio",
-            "Appuyer deux fois sur LFO",
-            "Ouvre LFO 2 et ses réglages de vitesse, forme, destination et profondeur."
+            "Pages LFO audio",
+            "Appuis repetes sur LFO",
+            "Parcourt les LFO actifs. Global > LFOs choisit 1/2/3/4 (2 par defaut). LFO3/4 comme LFO2 ; reglages caches conserves."
+          ]
+        },
+        {
+          "en": [
+            "LFO polarity and mode",
+            "LFO menu > Pol. / Mode",
+            "Bi is bipolar; Uni is unipolar and follows signed depth, including square pulses. Mode: FRE, TRG, HLD (Hold), ONE (One-shot), HLF. LFO1/2 polarity is global per track; sound-copy persistence is pending."
+          ],
+          "fr": [
+            "Polarite et mode LFO",
+            "Menu LFO > Pol. / Mode",
+            "Bi bipolaire ; Uni unipolaire, Depth signee et impulsions carrees. Mode : FRE, TRG, HLD, ONE, HLF. Polarite LFO1/2 globale par piste ; copie en cours."
+          ]
+        },
+        {
+          "en": [
+            "LFO saving",
+            "Stop playback; Save Project for native sound settings",
+            "LFO2 speed/multiplier/waveform/destination/depth use native sounds (8-bit saved speed/depth); fade/phase/mode reset on sound load. LFO3/4 save separately per project/pattern/track while stopped, outside ordinary Elektron sound exports and native parameter locks."
+          ],
+          "fr": [
+            "Sauvegarde LFO",
+            "Arreter ; Save Project pour les sons natifs",
+            "LFO2 : vitesse/multiplicateur/forme/destination/profondeur dans le son (vitesse/profondeur 8 bits) ; fade/phase/mode remis aux defauts. LFO3/4 par projet/pattern/piste, sauvegarde separee a l arret, hors SysEx de sons et locks natifs."
           ]
         },
         {
@@ -1386,12 +1422,12 @@
           "en": [
             "Global / Track",
             "DATA enters; BACK returns",
-            "Global: Pad, USB, Num, Mute, Dly, DX, QntM, Grv. Track: SCRM, S.Chn, Human. BACK leaves editing before returning a level. Reopening starts at the root."
+            "Global: Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs. Track: SCRM, S.Chn, Human. BACK leaves editing before returning a level. Reopening starts at the root."
           ],
           "fr": [
             "Global / Track",
             "DATA entre ; BACK revient",
-            "Global : Pad, USB, Num, Mute, Dly, DX, QntM, Grv. Track : SCRM, S.Chn, Human. BACK quitte d abord l edition puis remonte. Reouverture a la racine."
+            "Global : Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs. Track : SCRM, S.Chn, Human. BACK quitte d abord l edition puis remonte. Reouverture a la racine."
           ]
         },
         {
@@ -1576,14 +1612,26 @@
         },
         {
           "en": [
-            "Humanize",
-            "Track > Human > Trk / Tim / Vel",
-            "Timing/velocity0..100 for a track or All. Global per-track preferences carry across patterns; save when playback stops."
+            "Humanize Apply / Undo",
+            "Track > Human > Trk / Tim / Vel / Apply / Undo",
+            "Set timing/velocity amounts0..100 for a track or All. Stop playback, then Apply writes changes to the pattern; Undo restores the prior values. No randomization during playback."
           ],
           "fr": [
-            "Humanize",
-            "Track > Human > Trk / Tim / Vel",
-            "Temps/velocite0..100 pour une piste ou All. Preferences globales par piste, conservees entre patterns ; sauvegarde a l arret."
+            "Humanize Apply / Undo",
+            "Track > Human > Trk / Tim / Vel / Apply / Undo",
+            "Reglez temps/velocite0..100 par piste ou All. A l arret, Apply modifie le pattern et Undo retablit les valeurs. Aucun aleatoire en lecture."
+          ]
+        },
+        {
+          "en": [
+            "Audio LFO count",
+            "Global > LFOs",
+            "1/2/3/4 LFOs per audio track; default2. Saves globally while stopped. Disabled LFOs stop running and retain their settings."
+          ],
+          "fr": [
+            "Nombre de LFO audio",
+            "Global > LFOs",
+            "1/2/3/4 par piste audio ; 2 par defaut. Sauvegarde globale a l arret. LFO inactifs arretes, reglages conserves."
           ]
         }
       ]

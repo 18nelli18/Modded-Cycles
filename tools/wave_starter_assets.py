@@ -2,7 +2,7 @@
 from pathlib import Path
 import hashlib,json,os,shutil,struct,subprocess
 CODE=0x46849000;DATA=0x46860000;LIMIT=0x46888000
-def apply(root,build,rt,tail,meta,patch,tiny,legacy,prefix):
+def apply(root,build,rt,tail,meta,patch,tiny,legacy,prefix,private_pool_safe=False):
  from gen_governor_recovery_test import TAIL,RUNTIME
  root=root.resolve();src=root/'tools/machines/wave_starter';wav=root/'docs/flasher/AV-WAVE-Morph.wav';converter=root/'docs/flasher/convert.js'
  node=os.environ.get('NODE_BINARY') or shutil.which('node');assert node,'Set NODE_BINARY to Node.js'
@@ -30,5 +30,6 @@ def apply(root,build,rt,tail,meta,patch,tiny,legacy,prefix):
  patch(0x4677a750,bytes.fromhex('4fefffc448d77fff'),bytes.fromhex('4ef9')+struct.pack('>I',sy['wave_starter_note'])+bytes.fromhex('4e71'))
  # L ancien tampon de la piste1 a46800000 chevauchait les FX ajoutes.
  # Six fenetres3Mo de46900000 a47b00000, sous la pile48000000.
- patch(0x4677a684,bytes.fromhex('068046800000'),bytes.fromhex('068046900000'))
- return dict(code=CODE,code_bytes=len(code),data=DATA,end=DATA+len(raw),symbols=sy,frames=16,samples=68608,bytes=len(raw),source='AV-WAVE-Morph.wav',source_sha256=hashlib.sha256(wav.read_bytes()).hexdigest(),pcm_sha256=hashlib.sha256(raw).hexdigest(),shared_read_only=True,per_track_override=True,extra_audio_buffers=0,custom_buffer=0x46900000,custom_buffer_end=0x47b00000,preloaded_on_boot=True,direct_engine_hook=True,browser_back_parent=True,hardware_tested=False)
+ custom_base=0x46a00000 if private_pool_safe else 0x46900000
+ patch(0x4677a684,bytes.fromhex('068046800000'),bytes.fromhex('0680')+struct.pack('>I',custom_base))
+ return dict(code=CODE,code_bytes=len(code),data=DATA,end=DATA+len(raw),symbols=sy,frames=16,samples=68608,bytes=len(raw),source='AV-WAVE-Morph.wav',source_sha256=hashlib.sha256(wav.read_bytes()).hexdigest(),pcm_sha256=hashlib.sha256(raw).hexdigest(),shared_read_only=True,per_track_override=True,extra_audio_buffers=0,custom_buffer=custom_base,custom_buffer_end=custom_base+0x1200000,preloaded_on_boot=True,direct_engine_hook=True,browser_back_parent=True,hardware_tested=False)

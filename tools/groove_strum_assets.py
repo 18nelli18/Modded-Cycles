@@ -5,7 +5,7 @@ Les tables et noyaux seuls sont portes ; aucun patch FX/gestes tiers applique.
 import struct,subprocess,json,sys,hashlib,re
 CODE=0x468b2000;UI=0x468b3000;BSS=0x468ba000;END=0x468bb000
 
-def apply(root,build,prefix,rt,tail,meta,patch,hierarchy=False,groove_switch=False):
+def apply(root,build,prefix,rt,tail,meta,patch,hierarchy=False,groove_switch=False,human_apply=False,filter_modes=False,lfo_polarity=False,lfo_options=False,lfo_compact_ram=False):
  from gen_governor_recovery_test import BASE,RUNTIME,TAIL
  from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_040
  src=root/'tools/machines/groove_strum';sys.path.insert(0,str(src));import cores156 as core
@@ -65,14 +65,16 @@ gc_hinit:
    for i,(label,fn) in enumerate(rows):text+=f'.long 0,0,0,.Llabel{i},0,1,.Lts_label,0,0,0,0,0,0,1,{fn},0,0,0,0,0,0\n'
    return text
   extra=[('gc_top.S',view('gc_top_draw','Mod','Setup',[('','gc_top_global_value'),('','gc_top_track_value')],'gc_tree_row','gc_tree_edit')),
-   ('gc_global.S',view('gc_global_draw','Global','Mod',[('Pad','wf_menu_value'),('USB','wf_usb_menu_value'),('Num','vp_menu_value'),('Mute','lm_menu_value'),('Dly','dl_menu_value'),('DX','dx_menu_value'),('QntM','gc_root_value'),('Grv','gc_root_value')],'gc_tree_row','gc_tree_edit')),
-   ('gc_track.S',view('gc_track_draw','Track','Mod',[('SCRM','sx_root_value'),('S.Chn','du_root_value'),('Human','gc_root_value')],'gc_tree_row','gc_tree_edit')),
-   ('gc_human.S',view('gc_human_draw','Human','Track',[('Trk','gc_value1'),('Tim','gc_value2'),('Vel','gc_value3')],'gc_menu_row','gc_menu_edit'))]
+   ('gc_global.S',view('gc_global_draw','Global','Mod',[('Pad','wf_menu_value'),('USB','wf_usb_menu_value'),('Num','vp_menu_value'),('Mute','lm_menu_value'),('Dly','dl_menu_value'),('DX','dx_menu_value'),('QntM','gc_root_value'),('Grv','gc_root_value')]+([('LFOs','gc_lfo_value')] if lfo_options else []),'gc_tree_row','gc_tree_edit')),
+   ('gc_track.S',view('gc_track_draw','Track','Mod',(([('SCRM','sx_root_value'),('S.Chn','du_root_value'),('Human','gc_root_value')]+([('LFO','gc_root_value')] if lfo_polarity else []))+([('LFO','gc_root_value')] if lfo_polarity else [])),'gc_tree_row','gc_tree_edit')),
+   ('gc_human.S',view('gc_human_draw','Human','Track',([('Trk','gc_value1'),('Tim','gc_value2'),('Vel','gc_value3'),('Apply','gc_value6'),('Undo','gc_value7')] if human_apply else [('Trk','gc_value1'),('Tim','gc_value2'),('Vel','gc_value3')]),'gc_menu_row','gc_menu_edit'))]
+  if lfo_polarity:extra.append(('gc_pol.S',view('gc_pol_draw','LFO','Polarity',[('Trk','gc_pol_value0'),('LFO','gc_pol_value1'),('Pol.','gc_pol_value2')],'gc_menu_row','gc_menu_edit')))
   sub=view('gc_sub_draw','Groove','Global',([('On','gc_value0'),('','gc_value5'),('Str','gc_value4')] if groove_switch else [('Grv','gc_value0'),('Str','gc_value4')]),'gc_menu_row','gc_menu_edit')
  for n,text in [('gc_root.S',rootmenu),('gc_sub.S',sub),('gc_tramp.S',tramp),('gc_pattern.S',hp)]+extra: (build/n).write_text(text)
  cross=str(root.parent/'retrosyn-integration/build/m68k-toolchain/pkg/bin/m68k-elf-');objects=[]
- for p in [src/('control158.c' if groove_switch else 'control157.c' if hierarchy else 'control156.c'),*[build/n for n in ('gc_root.S','gc_sub.S','gc_tramp.S','gc_pattern.S')]+[build/n for n,_ in extra]]:
+ for p in [src/('control175.c' if lfo_compact_ram else 'control174.c' if lfo_options else 'control163.c' if lfo_polarity else 'control162.c' if filter_modes else 'control161.c' if human_apply else 'control158.c' if groove_switch else 'control157.c' if hierarchy else 'control156.c'),*[build/n for n in ('gc_root.S','gc_sub.S','gc_tramp.S','gc_pattern.S')]+[build/n for n,_ in extra]]:
   obj=build/(p.name+'.o');objects.append(obj);subprocess.run([cross+'gcc.exe','-mcpu=54418','-O2','-fwrapv','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation','-c',str(p),'-o',str(obj)],check=True)
+ if human_apply:aliases['hu_apply']=0x468c1000
  ld=build/'groove-strum.ld';elf=ld.with_suffix('.elf');binary=ld.with_suffix('.bin')
  ld.write_text(f'SECTIONS {{ .text {UI:#x} : {{ *(.text*) *(.rodata*) }} . = ALIGN(4); .data : {{ *(.data*) }} gc_code_end = .; .bss {BSS:#x} (NOLOAD): {{ *(.bss*) *(COMMON) }} . = ALIGN(4); gc_end = .; }}\n'+''.join(f'PROVIDE({k} = {v:#x});\n' for k,v in aliases.items()))
  subprocess.run([cross+'ld.exe','-T',str(ld),'-o',str(elf),*map(str,objects)],check=True);subprocess.run([cross+'objcopy.exe','-O','binary','-j','.text','-j','.data',str(elf),str(binary)],check=True)
@@ -80,7 +82,7 @@ gc_hinit:
  assert meta['private_retrosyn']['symbols']['retrosyn_code_end']<=CODE and END<=0x468bb000
  assert len(tail)>=END-TAIL and not any(tail[CODE-TAIL:END-TAIL]),'Reservation deja occupee'
  core.AMOUNTS=sy['gc_amounts'];core.GMODE=sy['gc_groove'];core.STRUM=sy['gc_strum'];core.CNT=sy['gc_ticks'];core.G0=sy['gc_g0']
- gc,gs=core.build_g2(core.M_T,sy['gc_rng']);tc,ts=core.build_t(0x468b2300,gs['HUM']);sc,ss=core.build_strum_core()
+ gc,gs=core.build_g2(core.M_T,sy['gc_rng']);gc=(gc[:gs['HUM']-core.M_G]+bytes.fromhex('4e75')) if human_apply else gc;tc,ts=core.build_t(0x468b2300,gs['HUM']);sc,ss=core.build_strum_core()
  assert core.M_G+len(gc)<=core.M_T and core.M_T+len(tc)<=0x468b2300 and core.M_ST+len(sc)<=UI
  tables=json.loads((src/'grooves.json').read_text())['grooves'];data=b''.join(struct.pack('64b',*next(t for t in tables if t['index']==i)['offset_256th_step'])+bytes(next(t for t in tables if t['index']==i)['velocity']) for i in range(1,8));assert len(data)==7*128
  pointers=struct.pack('>7I',*[0x468b2400+128*i for i in range(7)])
@@ -91,4 +93,4 @@ gc_hinit:
  for at,old,target in hooks:put(at,old,b'\x4e\xf9'+struct.pack('>I',sy[target])+b'\x4e\x71'*((len(old)-6)//2))
  at=mq['mq_root_draw'];put(at,read(at,6),b'\x4e\xf9'+struct.pack('>I',sy['gc_root_draw']))
  (build/'groove-core.bin').write_bytes(gc);(build/'strum-core.bin').write_bytes(sc)
- return dict(code=CODE,ui=UI,bss=BSS,end=sy['gc_end'],code_bytes=sy['gc_code_end']-CODE,symbols={**sy,**{'G':gs['G'],'HUM':gs['HUM'],'T':ts['T'],'ST':ss['ST'],'G0F':ss['G0F']}},aliases=aliases,grooves=(['Boom Bap','Disco','Reggae','Bongo','Caixixi','Highlife','Kuduro'] if groove_switch else ['Swing','Boom Bap','Disco','Reggae','Bongo','Caixixi','Highlife','Kuduro']),pattern_header_bytes=[],humanize_storage="global per-track, /Groove.cfg; Chord Keys header untouched",strum_range_ms=[-80,80],settings_file='/Groove.cfg',controls=('Mod Setup > Global/Track' if hierarchy else 'Mod Setup > Grv: Mode/Trk/Time/Vel/Strum'),hierarchy=hierarchy,separate_switch=groove_switch,default=('Off, Type Boom Bap, Humanize0, Strum0' if groove_switch else 'Swing, Humanize0, Strum0'),upstream='https://github.com/gialloinfuso/PPPCCC-Model-Cycles-1.13-Mods',upstream_revision='61c7432076e49b3050c7e076a5b602747d36fb8c',license='MIT',credit='PPPCCC/gialloinfuso',status='experimental',hardware_tested=False)
+ return dict(code=CODE,ui=UI,bss=BSS,end=sy['gc_end'],code_bytes=sy['gc_code_end']-CODE,symbols={**sy,**{'G':gs['G'],'HUM':gs['HUM'],'T':ts['T'],'ST':ss['ST'],'G0F':ss['G0F']}},aliases=aliases,grooves=(['Boom Bap','Disco','Reggae','Bongo','Caixixi','Highlife','Kuduro'] if groove_switch else ['Swing','Boom Bap','Disco','Reggae','Bongo','Caixixi','Highlife','Kuduro']),pattern_header_bytes=[],humanize_storage=("Apply/Undo to pattern, stopped only; no playback randomization" if human_apply else "global per-track, /Groove.cfg; Chord Keys header untouched"),strum_range_ms=[-80,80],settings_file='/Groove.cfg',controls=('Mod Setup > Global/Track' if hierarchy else 'Mod Setup > Grv: Mode/Trk/Time/Vel/Strum'),hierarchy=hierarchy,separate_switch=groove_switch,default=('Off, Type Boom Bap, Humanize0, Strum0' if groove_switch else 'Swing, Humanize0, Strum0'),upstream='https://github.com/gialloinfuso/PPPCCC-Model-Cycles-1.13-Mods',upstream_revision='61c7432076e49b3050c7e076a5b602747d36fb8c',license='MIT',credit='PPPCCC/gialloinfuso',status='experimental',hardware_tested=False)

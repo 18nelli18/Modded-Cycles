@@ -334,3 +334,8 @@ User supplied `Supermodel_v163_Filter_LFO_Polarity.syx` (four new filter modes, 
 ## AveyCole main2.50 promotion (2026-10-26)
 
 User: "okay push that" for v164 label fix. Exact SHA `b5afb6e34b0fcaa0f1b32536781ce132a7228c965f7132a85e203d181d6326a0`, MAIN `47fe78cc738784f0719cc48d7358518ac4d0b5683b57f7d3cd28450077e1b7ce`. Only native Resonance font selection changes; audio/runtime preserved. Mod Setup popup overlap remains reported and is a separate repair. BRAIDS scale lock follows that repair. Protected blurb and2.49 controls guides remain unchanged.
+
+
+## AveyCole main2.51 promotion (2026-10-26)
+
+User: "that worked. Let's push that to main and work on copy persistence" for exact v175. Promote SHA `99d392585a03a0f94cab0eb76fd1c16def0cc690230e909e821a09e01fa69bee`, MAIN `a04f16bf2037166cbab9f7d01d31bb04573bbf5b48c46432e96e69a04ae0e1f5`. Includes selectable1/2/3/4 LFOs, square/depth fixes, Off/ORGN/BRDS, nineteen scales, compact LFO memory, startup guards and WAVE/GATED separation. Hardware success reported; no new CPU result claimed. Sound-copy polarity remains a separate private follow-up. Keep protected fixed-features blurb unchanged.

@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.48 - 25 October 2026
+Supermodel 2.51 - 26 October 2026
 
-Main 2.48. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
+Main 2.51. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.
 
 ## Included features
 
@@ -35,6 +35,7 @@ Main 2.48. Hold the first button while pressing the next button or turning the n
 | Arpeggiator / ChordKeys settings | FUNC + RETRIG | Open the settings for the active Arpeggiator or ChordKeys feature. Arpeggiator octave 0 cycles only through held notes. |
 | ChordKeys | Select the Chord machine, then play TRIG 1–16 | Play scale-based chord voicings from the step keys. To leave a ChordKeys track you must use TRACK + Track Pad. |
 | ChordKeys harmony locks | Grid record: hold a step TRIG and press T1-T6 . Live record: play a chord and use the harmony pads. | Record a harmony on the step. Press the same harmony pad again on a held step to restore its base harmony. |
+| Scale Lock | FUNC + PAGE > Lock / Scl / Key | Off bypasses locking; ORGN maps successive scale degrees; BRDS snaps to the nearest in-scale note (ties lower). 19 whole-semitone scales. Mode/scale/key save globally while stopped. |
 
 ## Effects
 
@@ -138,7 +139,9 @@ Main 2.48. Hold the first button while pressing the next button or turning the n
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Second audio LFO | Press LFO twice | Open LFO 2 and edit its speed, shape, destination and depth. |
+| Audio LFO pages | Press LFO repeatedly | Cycle through enabled LFOs. Mod Setup > Global > LFOs chooses 1/2/3/4 (default2). LFO3/4 match LFO2 controls; hidden settings are retained. |
+| LFO polarity and mode | LFO menu > Pol. / Mode | Bi is bipolar; Uni is unipolar and follows signed depth, including square pulses. Mode: FRE, TRG, HLD (Hold), ONE (One-shot), HLF. LFO1/2 polarity is global per track; sound-copy persistence is pending. |
+| LFO saving | Stop playback; Save Project for native sound settings | LFO2 speed/multiplier/waveform/destination/depth use native sounds (8-bit saved speed/depth); fade/phase/mode reset on sound load. LFO3/4 save separately per project/pattern/track while stopped, outside ordinary Elektron sound exports and native parameter locks. |
 | LFO quick assignment | On an LFO page, hold LFO and turn a destination knob | Assign the corresponding ordinary knob destination. To select the added Attack, Filter or Resonance targets, also hold MACHINES . |
 | Attack / Filter / Resonance LFO targets | On an LFO page, hold LFO + MACHINES while turning DECAY , SWEEP or CONTOUR | Choose Attack, Filter or Resonance with the corresponding knob while holding MACHINES. |
 | MACRO fine tune | SETTINGS + turn PITCH | Adjust fine pitch. Plain PITCH retains its regular control; FUNC + PITCH is MACRO Lo-Fi. Lo-Fi lowers sample rate to the left, bit depth to the right, with OFF at center. Model names and numbers 0–46 are shown. |
@@ -170,7 +173,7 @@ Tap SETTINGS + TRACK and release to open Mod Setup. Hold the combo to run SCRAMB
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Global / Track | DATA enters; BACK returns | Global: Pad, USB, Num, Mute, Dly, DX, QntM, Grv. Track: SCRM, S.Chn, Human. BACK leaves editing before returning a level. Reopening starts at the root. |
+| Global / Track | DATA enters; BACK returns | Global: Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs. Track: SCRM, S.Chn, Human. BACK leaves editing before returning a level. Reopening starts at the root. |
 | Access and sound editing | Tap SETTINGS + TRACK | Available from the main screen or machine selection. DATA navigates Mod Setup; sound knobs show the edited parameter for two seconds, then return to the same menu position. BACK closes the popup first, then Mod Setup; machine selection stays open underneath. |
 | Pad | Stk / SIL Default: Stk | Stk keeps the original track-pad behavior: a pad selects and plays its track. Silent selects the track without sounding it; hold TRACK and press a track pad to select and play. ChordKeys tracks still require TRACK + track pad to leave the track. |
 | USB | 2ch / 6ch Default: 2ch | 2ch sends the stereo mix to the computer. 6ch sends six separate mono tracks, before pan and without the mix delay/crusher/reverb/chorus returns. Stereo audio from the computer to Cycles works in both modes. Stop playback before changing this toggle. Changing modes reconnects the USB audio device; select its new channel layout in your DAW if needed. |
@@ -186,7 +189,8 @@ Tap SETTINGS + TRACK and release to open Mod Setup. Hold the combo to run SCRAMB
 | Per-pattern saving | Save Project after edits | Sidechain routing and controls, six Scramble checklists, FX types and added FX settings belong to each pattern. Save the project to keep changes after reloading. Blank patterns have Sidechain off and the default Scramble checklist. Queued changes apply when the next pattern starts. |
 | Groove | Global > Grv > On / Type | Off uses stock Swing and remembers Type. On enables Boom Bap, Disco, Reggae, Bongo, Caixixi, Highlife or Kuduro; Swing controls strength. No stock Swing entry in Type. |
 | CHORD Strum | Global > Grv > Str | -80..80 ms between CHORD voices; sign reverses direction,0 plays together. Independent of Groove On/Off. Four voices at80ms span240ms. |
-| Humanize | Track > Human > Trk / Tim / Vel | Timing/velocity0..100 for a track or All. Global per-track preferences carry across patterns; save when playback stops. |
+| Humanize Apply / Undo | Track > Human > Trk / Tim / Vel / Apply / Undo | Set timing/velocity amounts0..100 for a track or All. Stop playback, then Apply writes changes to the pattern; Undo restores the prior values. No randomization during playback. |
+| Audio LFO count | Global > LFOs | 1/2/3/4 LFOs per audio track; default2. Saves globally while stopped. Disabled LFOs stop running and retain their settings. |
 
 BACK closes Mod Setup and saves its global preferences. If playback is running, the save waits until it stops. Stop playback and allow saving to finish before powering off. Sidechain routing/settings, Scramble checklists and FX types/added settings are per pattern: Save Project preserves these after reloading. Closing a submenu alone does not save the project.
 

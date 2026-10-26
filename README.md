@@ -187,3 +187,6 @@ Main2.47 serves approved standard v148, SHA256 `442c1720818c7c5e6798cadbebbd29e3
 Main2.48 serves approved standard v159, SHA256 `fb0d1b480d21910e6c0c63f300b6383f802a1cbbf490eb7e55f6932951a6047f`. Sample Wizard waveform and segmented volume, Global/Track menus, Groove On/Off/Type, CHORD Strum and Humanize. See the updated EN/FR controls guide. Groove/Strum credit: [PPPCCC/gialloinfuso](https://github.com/gialloinfuso/PPPCCC-Model-Cycles-) (MIT).
 
 Main 2.49 serves the exact approved standard v163, SHA256 `952b5b70dc095e3e68a68df0562d08fa300f4eca48775439d4a776f04e7d222f` (MAIN `4ac6a3c4cb0712e2a2bf80d17a8bc1b5c36326df02286c6860048eb7c133b410`). Adds four new filter modes and LFO Polarity options. No hardware result is claimed with this promotion; the printable guide is not yet updated for the new options.
+
+
+Main2.51 serves the exact user-approved v175 (`99d392585a03a0f94cab0eb76fd1c16def0cc690230e909e821a09e01fa69bee`). Mod Setup > Global > LFOs selects1/2/3/4 audio LFOs, default2. FUNC+PAGE Scale Lock offers Off/ORGN/BRDS and19whole-semitone scales. Includes Uni square/depth and GATED/WAVE memory repairs. LFO3/4 save separately per project/pattern/track; native sound-copy polarity persistence remains pending. See the updated [controls guide](docs/flasher/shortcut-guide.html).

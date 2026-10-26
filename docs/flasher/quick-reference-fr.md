@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.48 - 25 octobre2026
+Supermodel2.51 - 26 octobre2026
 
-Principal2.48. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
+Principal2.51. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.
 
 ## Fonctions incluses
 
@@ -35,6 +35,7 @@ Principal2.48. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Arpège / réglages ChordKeys | FUNC + RETRIG | Ouvre les réglages actifs. Octave 0 de l’arpège parcourt uniquement les notes tenues. |
 | ChordKeys | Sur Chord : jouer TRIG 1–16 | Voicings en gamme. TRACK + pad de piste est nécessaire pour quitter une piste ChordKeys. |
 | Locks d’harmonie ChordKeys | Grille : maintenir TRIG et appuyer T1–T6 ; live : accord puis pad d’harmonie | Enregistre une harmonie sur le pas. Rappuyez sur le même pad d’harmonie avec le pas tenu pour retrouver son harmonie de base. |
+| Scale Lock | FUNC + PAGE > Lock / Scl / Key | Off desactive ; ORGN suit les degres ; BRDS choisit la note de gamme la plus proche (egalite vers le bas). 19 gammes par demi-tons. Sauvegarde globale a l arret. |
 
 ## Effets
 
@@ -138,7 +139,9 @@ Principal2.48. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Second LFO audio | Appuyer deux fois sur LFO | Ouvre LFO 2 et ses réglages de vitesse, forme, destination et profondeur. |
+| Pages LFO audio | Appuis repetes sur LFO | Parcourt les LFO actifs. Global > LFOs choisit 1/2/3/4 (2 par defaut). LFO3/4 comme LFO2 ; reglages caches conserves. |
+| Polarite et mode LFO | Menu LFO > Pol. / Mode | Bi bipolaire ; Uni unipolaire, Depth signee et impulsions carrees. Mode : FRE, TRG, HLD, ONE, HLF. Polarite LFO1/2 globale par piste ; copie en cours. |
+| Sauvegarde LFO | Arreter ; Save Project pour les sons natifs | LFO2 : vitesse/multiplicateur/forme/destination/profondeur dans le son (vitesse/profondeur 8 bits) ; fade/phase/mode remis aux defauts. LFO3/4 par projet/pattern/piste, sauvegarde separee a l arret, hors SysEx de sons et locks natifs. |
 | Assignation rapide LFO | Dans une page LFO : maintenir LFO et tourner un potard | Choisit sa destination ordinaire. Pour Attack/Filter/Resonance, maintenir aussi MACHINES. |
 | Destinations Attack / Filter / Resonance | Dans LFO : LFO + MACHINES + DECAY / SWEEP / CONTOUR | Choisissez Attack, Filter ou Resonance avec la commande correspondante en maintenant MACHINES. |
 | Accord fin MACRO | SETTINGS + PITCH | PITCH seul reste natif. FUNC + PITCH est Lo-Fi : fréquence réduite à gauche, bits réduits à droite, centre OFF. Noms et numéros 0–46 des modèles visibles. |
@@ -170,7 +173,7 @@ Appuyez brièvement sur SETTINGS + TRACK puis relâchez pour ouvrir Mod Setup. M
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Global / Track | DATA entre ; BACK revient | Global : Pad, USB, Num, Mute, Dly, DX, QntM, Grv. Track : SCRM, S.Chn, Human. BACK quitte d abord l edition puis remonte. Reouverture a la racine. |
+| Global / Track | DATA entre ; BACK revient | Global : Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs. Track : SCRM, S.Chn, Human. BACK quitte d abord l edition puis remonte. Reouverture a la racine. |
 | Accès et réglage du son | Appui bref sur SETTINGS + TRACK | Disponible depuis l’écran principal ou la sélection des machines. DATA parcourt Mod Setup ; les commandes du son affichent le paramètre deux secondes puis reviennent à la même position. BACK ferme d’abord la fenêtre puis Mod Setup ; la sélection des machines reste ouverte en dessous. |
 | Pad | Stk / SIL ; défaut Stk | Stk sélectionne et joue. SIL sélectionne silencieusement ; TRACK + pad sélectionne et joue. ChordKeys exige TRACK + pad pour quitter la piste. |
 | USB | 2ch / 6ch ; défaut 2ch | 2ch : mix stéréo avec effets. 6ch : six pistes mono avant panoramique, sans retours delay/crusher/reverb/chorus. Retour ordinateur stéréo dans les deux modes. Arrêtez avant de changer ; le périphérique USB se reconnecte. |
@@ -186,7 +189,8 @@ Appuyez brièvement sur SETTINGS + TRACK puis relâchez pour ouvrir Mod Setup. M
 | Sauvegarde par pattern | Save Project après modification | Routage et commandes Sidechain, six listes Scramble, types et réglages FX ajoutés propres à chaque pattern. Sauvegardez le projet pour les conserver au chargement. Pattern vierge : Sidechain désactivé et listes Scramble par défaut. Changement en attente appliqué au début du prochain pattern. |
 | Groove | Global > Grv > On / Type | Off conserve Swing natif et memorise Type. On active Boom Bap, Disco, Reggae, Bongo, Caixixi, Highlife ou Kuduro ; Swing dose la force. Pas de Swing natif dans Type. |
 | CHORD Strum | Global > Grv > Str | -80..80 ms entre voix CHORD ; le signe inverse le sens,0 joue ensemble. Independant de Groove On/Off. Quatre voix a80ms etalees sur240ms. |
-| Humanize | Track > Human > Trk / Tim / Vel | Temps/velocite0..100 pour une piste ou All. Preferences globales par piste, conservees entre patterns ; sauvegarde a l arret. |
+| Humanize Apply / Undo | Track > Human > Trk / Tim / Vel / Apply / Undo | Reglez temps/velocite0..100 par piste ou All. A l arret, Apply modifie le pattern et Undo retablit les valeurs. Aucun aleatoire en lecture. |
+| Nombre de LFO audio | Global > LFOs | 1/2/3/4 par piste audio ; 2 par defaut. Sauvegarde globale a l arret. LFO inactifs arretes, reglages conserves. |
 
 BACK ferme Mod Setup et sauvegarde ses préférences globales ; en lecture, cette sauvegarde attend l’arrêt. Arrêtez et attendez la fin avant extinction. Routage/réglages Sidechain, listes Scramble et types/réglages FX ajoutés propres à chaque pattern : Save Project les conserve au chargement. Fermer un sous-menu ne sauvegarde pas le projet.
 

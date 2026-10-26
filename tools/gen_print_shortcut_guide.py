@@ -96,9 +96,9 @@ def table(node,compact=False):
   rows.append([para(c,'label' if i==0 else 'cell') for i,c in enumerate(cells)])
  head=[Paragraph('<b>'+text(v)+'</b>',styles['cell']) for v in node.find_all('th')]
  t=Table([head]+rows,colWidths=([35,103]*4 if len(head)==8 else [87,166,299]),repeatRows=1,hAlign='LEFT')
- t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('BACKGROUND',(0,0),(-1,0),colors.HexColor('#e7ede4')),('LINEBELOW',(0,0),(-1,0),.6,accent),('LINEBELOW',(0,1),(-1,-1),.35,line),('LEFTPADDING',(0,0),(-1,-1),5),('RIGHTPADDING',(0,0),(-1,-1),5),('TOPPADDING',(0,0),(-1,-1),1.6 if compact else 4),('BOTTOMPADDING',(0,0),(-1,-1),1.6 if compact else 4)]))
+ t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('BACKGROUND',(0,0),(-1,0),colors.HexColor('#e7ede4')),('LINEBELOW',(0,0),(-1,0),.6,accent),('LINEBELOW',(0,1),(-1,-1),.35,line),('LEFTPADDING',(0,0),(-1,-1),5),('RIGHTPADDING',(0,0),(-1,-1),5),('TOPPADDING',(0,0),(-1,-1),1 if compact else 4),('BOTTOMPADDING',(0,0),(-1,-1),1 if compact else 4)]))
  return t
-flow=[Paragraph('Supermodel Edition',styles['title']),Paragraph('Model:Cycles | '+('MIDI-input test '+args.test_version+' - no-filter / P-O-N' if args.test else 'Supermodel 2.48 - Features and shortcut guide'),styles['sub']),para(soup.select_one('main > p')),Spacer(1,7)]
+flow=[Paragraph('Supermodel Edition',styles['title']),Paragraph('Model:Cycles | '+('MIDI-input test '+args.test_version+' - no-filter / P-O-N' if args.test else 'Supermodel 2.51 - Features and shortcut guide'),styles['sub']),para(soup.select_one('main > p')),Spacer(1,7)]
 cards=soup.select('.grid .card');grid=[]
 for i in range(0,len(cards),2):grid.append([para(n) for n in cards[i:i+2]])
 ct=Table(grid,colWidths=[276,276]);ct.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('BACKGROUND',(0,0),(-1,-1),colors.HexColor('#f0f3ed')),('BOX',(0,0),(-1,-1),.4,line),('INNERGRID',(0,0),(-1,-1),.3,line),('LEFTPADDING',(0,0),(-1,-1),7),('RIGHTPADDING',(0,0),(-1,-1),7),('TOPPADDING',(0,0),(-1,-1),6),('BOTTOMPADDING',(0,0),(-1,-1),6)]));flow.append(ct)
@@ -120,7 +120,7 @@ flow.extend([Spacer(1,9),para(soup.select_one('main > p.note'))])
 out=ROOT/args.output;out.parent.mkdir(exist_ok=True,parents=True)
 def chrome(c,doc):
  c.setFillColor(accent);c.setFont('Helvetica-Bold',7);c.drawString(30,773,'SUPERMODEL EDITION | MODEL:CYCLES');c.setFont('Helvetica',7);c.drawRightString(582,773,f'Page {doc.page} / {pages}')
- c.setStrokeColor(line);c.line(30,25,582,25);c.setFont('Helvetica',6.5);c.drawString(30,15,'Features and shortcuts | 25 October 2026');c.drawRightString(582,15,'Stk = Stock | Startup: USB 2ch, numbers Off')
+ c.setStrokeColor(line);c.line(30,25,582,25);c.setFont('Helvetica',6.5);c.drawString(30,15,'Features and shortcuts | 26 October 2026');c.drawRightString(582,15,'Stk = Stock | Startup: USB 2ch, numbers Off')
 doc=SimpleDocTemplate(str(out),pagesize=letter,rightMargin=30,leftMargin=30,topMargin=36,bottomMargin=34,title='Supermodel Edition - Features and Shortcuts',author='A.V.')
 # ReportLab modifie les tables pendant le decoupage : chaque passe repart
 # des objets frais pour stabiliser la pagination et son total imprime.
