@@ -329,3 +329,8 @@ User: "but goahead and push159 as well". Publish exact standard159 SHA `fb0d1b48
 ## AveyCole main 2.49 promotion (2026-10-26)
 
 User supplied `Supermodel_v163_Filter_LFO_Polarity.syx` (four new filter modes, LFO Polarity options): "Make sure this .syx is served by my main flasher." Publish exact standard v163 SHA `952b5b70dc095e3e68a68df0562d08fa300f4eca48775439d4a776f04e7d222f`, MAIN `4ac6a3c4cb0712e2a2bf80d17a8bc1b5c36326df02286c6860048eb7c133b410`, through the established fixed-main image only. Replaces v159 of main 2.48. No hardware result reported, none claimed. Adult stays private; protected blurb hash `b3486b46a278b7d5561c3edd549f4adf299d358012b2631a0a6ab353232e2205` unchanged. Shortcut guide/PDF not yet updated for the new filter modes and LFO Polarity.
+
+
+## AveyCole main2.50 promotion (2026-10-26)
+
+User: "okay push that" for v164 label fix. Exact SHA `b5afb6e34b0fcaa0f1b32536781ce132a7228c965f7132a85e203d181d6326a0`, MAIN `47fe78cc738784f0719cc48d7358518ac4d0b5683b57f7d3cd28450077e1b7ce`. Only native Resonance font selection changes; audio/runtime preserved. Mod Setup popup overlap remains reported and is a separate repair. BRAIDS scale lock follows that repair. Protected blurb and2.49 controls guides remain unchanged.

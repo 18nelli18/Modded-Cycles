@@ -312,3 +312,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 | [190 — Mod Setup Global/Track](190-menu-global-piste.md) | **Candidat prive experimental** ; preuves natives, appareil attendu. |
 
 | [191 — Affichage Wizard/volume](191-affichage-wizard-volume.md) | **159 prive experimental** ; waveform, Groove On/Off, rectangles volume et labels ; preuves natives, appareil attendu. |
+
+- [196 - Libelle Resonance](196-libelle-resonance.md) : police adaptee et audio163 identique.
