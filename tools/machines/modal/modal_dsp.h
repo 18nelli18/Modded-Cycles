@@ -1860,6 +1860,8 @@ struct modal_part {
 	s32 rin_zero;                                    /* rin nul a l'entree de la voix (pas d'entree) */
 	s32 exc_idle[MAXPOLY];                           /* blocs d'excitation muette d'une voix inactive (exc_quiet) */
 	s32 rin[MB], sym[MB], ob[MB], ab[MB], nb[MB];
+	/* le bloc court des cordes (modal_fast, notes/81) : ce que le dernier bloc complet a vu */
+	s32 fk_valid, fk_st, fk_b, fk_d, fk_p, fk_tonic, fk_fm, fk_chord, fk_active, fk_note, fk_amt;
 	struct mstring str[NSTRINGS];
 };
 
@@ -1891,6 +1893,7 @@ static void modal_part_init(struct modal_part *p)
 		dc_init(&p->dcb[i], M_POLE10);
 	}
 	p->peak = UNIT >> 1;
+	p->fk_valid = 0;
 	nf_init(&p->nf);
 }
 
@@ -2177,6 +2180,65 @@ static __attribute__((unused)) void modal_limiter(s32 *out, s32 *aux, s32 *peakp
 	*peakp = peak;
 }
 
+/* Les modeles a cordes quand rien n'a change depuis le bloc complet precedent (potards, notes, voix active, ni strum,
+ * ni entree, l'excitateur interne) : les memes calculs que modal_process et render_string pour ce cas, sans refaire
+ * ce qui ne bouge pas (notes/81). Seules les positions et les glissades des cordes sympathiques avancent. */
+static void modal_fast(struct modal_part *p, const struct modal_patch *pa, s32 *out, s32 *aux)
+{
+	int v, i, k, ns = p->model == MODEL_STRING ? 1 : MAXPOLY / p->poly;
+
+	for (v = 0; v < p->poly; v++) {
+		s32 *ob = p->poly == 1 ? out : p->ob, *ab = p->poly == 1 ? aux : p->ab;
+		const struct vcache *vc = &p->vc[v];
+		p->rin_zero = 1;
+		for (k = 0; k < MB; k++)
+			p->rin[k] = 0;
+		if (!exc_skip(p, v)) {
+			struct svf *e = &p->exc[v];
+			if (e->ic1 || e->ic2)
+				svf_lp_block(e, p->rin, MB, 0, 0);
+#ifdef MODAL_ASM
+			if (!p->pl[v].remaining)
+				modal_pluck(&p->pl[v], p->rin, &p->dcb[v]);
+			else
+#endif
+			{
+				pl_process(&p->pl[v], p->nb, &p->rng);
+				for (k = 0; k < MB; k++)
+					p->rin[k] = dc_one(&p->dcb[v], p->rin[k] + p->nb[k]);
+			}
+			exc_quiet(p, v, p->rin);
+		}
+		for (k = 0; k < MB; k++)
+			ob[k] = ab[k] = 0;
+		for (i = 0; i < ns; i++) {
+			struct mstring *s = &p->str[v + i * p->poly];
+			const s32 *input = p->rin;
+			if (i > 0) {
+				s->position = pa->position + qmul(lfo_next(&p->slfo[v + i * p->poly]), p->fk_amt);
+				if (p->glide == Q31ONE)
+					s->frequency = vc->freqs[i];
+				else
+					s->frequency += qmul(p->glide, vc->freqs[i] - s->frequency);
+				input = p->sym;
+			}
+			str_process(s, input, ob, ab, &p->rng);
+			if (i == 0 && ns > 1)
+				for (k = 0; k < MB; k++)
+					p->sym[k] = qmul(M_SYMG[ns], ob[k] - ab[k]);
+		}
+		if (p->poly > 1) {
+			s32 *d = (v & 1) ? aux : out;
+			if (v < 2)
+				for (k = 0; k < MB; k++)
+					d[k] = p->ob[k] - p->ab[k];
+			else
+				for (k = 0; k < MB; k++)
+					d[k] += p->ob[k] - p->ab[k];
+		}
+	}
+}
+
 /* in : l'entree (UNIT), ou NULL sans entree ; out, aux : les deux sorties de Rings, apres le limiteur (UNIT) */
 static void modal_process(struct modal_part *p, const struct modal_perf *ps, const struct modal_patch *pa,
 			  const s32 *in, s32 *out, s32 *aux)
@@ -2200,6 +2262,12 @@ static void modal_process(struct modal_part *p, const struct modal_perf *ps, con
 		}
 	}
 	p->note[p->active] = p->nf.note;
+	if (p->fk_valid && !ps->strum && !in && ps->internal_exciter && !p->dirty && p->fk_st == pa->structure
+	    && p->fk_b == pa->brightness && p->fk_d == pa->damping && p->fk_p == pa->position && p->fk_tonic == ps->tonic
+	    && p->fk_fm == ps->fm && p->fk_chord == ps->chord && p->fk_active == p->active && p->fk_note == p->nf.note) {
+		modal_fast(p, pa, out, aux);
+		goto limit;
+	}
 	cutoff = b2mb(pa->brightness);
 	for (v = 0; v < p->poly; v++) {
 		s32 note = p->note[v] + ps->tonic + ps->fm, fcq;
@@ -2281,10 +2349,24 @@ static void modal_process(struct modal_part *p, const struct modal_perf *ps, con
 					d[k] += ob[k] - ab[k];
 		}
 	}
+	/* ce que le bloc court reprendra (modal_fast) */
+	p->fk_valid = p->model != MODEL_MODAL && !in && ps->internal_exciter;
+	p->fk_st = pa->structure;
+	p->fk_b = pa->brightness;
+	p->fk_d = pa->damping;
+	p->fk_p = pa->position;
+	p->fk_tonic = ps->tonic;
+	p->fk_fm = ps->fm;
+	p->fk_chord = ps->chord;
+	p->fk_active = p->active;
+	p->fk_note = p->nf.note;
+	p->fk_amt = qmul(0x40000000 - iabs(0x40000000 - pa->position), Q31(0.9));
+limit:
 	/* le limiteur ; sur le ColdFire, la passerelle le fait avec sa difference (modal_lim, modal_asm.S) */
 #ifndef MODAL_ASM
 	modal_limiter(out, aux, &p->peak, M_GAINS[p->model]);
 #endif
+	return;
 }
 
 #endif
