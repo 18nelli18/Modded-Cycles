@@ -140,9 +140,11 @@ FAST_INC = {"braids/digital_oscillator.cc": "braids_fast_digital.inc"}
 # ... et ce que nos versions doivent pouvoir lire : (fichier, avant, après)
 FAST_EDITS = (
     ("braids/svf.h", "  DISALLOW_COPY_AND_ASSIGN(Svf);", "  friend struct FastSvf;\n  DISALLOW_COPY_AND_ASSIGN(Svf);"),
-    # delay_ n'est lu que par BOWED, BLOWN et FLUTED : calculé pour eux seuls (d'origine : à chaque rendu)
+    # delay_ n'est lu que par BOWED, BLOWN et FLUTED : calculé pour eux seuls (d'origine : à chaque rendu). Par leurs
+    # fonctions : l'énumération OSC_SHAPE_ de Braids n'est pas dans l'ordre de fn_table_ (BOWED y est la 17e)
     ("braids/digital_oscillator.cc", "  delay_ = ComputeDelay(pitch_);\n",
-     "  if (shape_ >= OSC_SHAPE_BOWED && shape_ <= OSC_SHAPE_FLUTED) {\n    delay_ = ComputeDelay(pitch_);\n  }\n"),
+     "  if (fn == &DigitalOscillator::RenderBowed || fn == &DigitalOscillator::RenderBlown\n"
+     "      || fn == &DigitalOscillator::RenderFluted) {\n    delay_ = ComputeDelay(pitch_);\n  }\n"),
 )
 # Le rendu allégé à 48 kHz (notes/55, 81) donne à Braids sa hauteur plus une octave (et plus le pas de RATE) : g_pitch_offset
 # dit de combien, pour les quelques lignes qui se servent de la hauteur pour autre chose que l'accord (dans le firmware
