@@ -146,8 +146,8 @@ void modal_update(s32 pmod, char *v, const char *p)
 	shape = (P16(0x18) + 0x80) >> 8;                 /* SHAPE : 0..3 */
 	shape = shape < 0 ? 0 : (shape > 3 ? 3 : shape);
 	c->model = SHAPE_MODEL[shape];
-	fine = P16(0x22);                                /* FUNC + SHAPE : 0x4000 1 voix, 0x5000 2, 0x6000 4 */
-	c->poly = fine < 0x4800 ? 1 : (fine < 0x5800 ? 2 : 4);
+	fine = P16(0x22);                                /* FUNC + SHAPE : 0x4000 1 voix, 0x5000 2, 0x6000 3 */
+	c->poly = fine < 0x4800 ? 1 : (fine < 0x5800 ? 2 : 3);   /* 3 au plus : le budget de 13 % (notes/81) */
 	c->pa.structure = knob(P16(0x1c));
 	c->pa.brightness = knob(P16(0x16));
 	c->pa.damping = knob(P16(0x24));
@@ -275,7 +275,7 @@ static void modal_up(const s32 *w, s32 *out, const s32 *c)
 
 void modal_render(s32 *out, char *v)
 {
-	static s32 o[MB], a[MB], x[MB], w[2 * HBN - 1 + MB];   /* hors de la pile (modal_dsp.h, sc) */
+	static s32 oa[2 * MB], x[MB], w[2 * HBN - 1 + MB];   /* hors de la pile (modal_dsp.h, sc) ; oa : out puis aux */
 	s32 t = TRACK(v);
 	struct ctl *c = &ctl[t];
 	struct modal_part *part = &track_of(t)->part;
@@ -303,14 +303,25 @@ void modal_render(s32 *out, char *v)
 	{
 		int has_in;
 		c->ps.internal_exciter = !exc_sample(t, c, v, x, &has_in);   /* le sample de la piste, ou l'interne */
-		modal_process(part, &c->ps, &c->pa, has_in ? x : (const s32 *)0, o, a);
+		modal_process(part, &c->ps, &c->pa, has_in ? x : (const s32 *)0, oa, oa + MB);
 	}
 	/* une sortie : ODD - EVEN (notes/74), a 24 kHz, remontee a 48 kHz (notes/81) : pour chaque trame m, l'echantillon
 	 * interpole entre ses 14 voisins (w[m + 6] et w[m + 7] au centre), puis w[m + 7] */
 	for (i = 0; i < 2 * HBN - 1; i++)
 		w[i] = c->uh[i];
+#ifdef MODAL_ASM
+	{
+		s32 k[4];                                /* le limiteur de modal_process et la difference : modal_asm.S */
+		k[0] = (s32)(unsigned long)m_soft;
+		k[1] = M_LIM_ATK;
+		k[2] = M_LIM_DEC;
+		k[3] = M_GAINS[part->model];
+		modal_lim(oa, &w[2 * HBN - 1], &part->peak, k);
+	}
+#else
 	for (i = 0; i < MB; i++)
-		w[2 * HBN - 1 + i] = o[i] - a[i];
+		w[2 * HBN - 1 + i] = oa[i] - oa[MB + i];
+#endif
 	modal_up(w, out, M_HBI);
 	for (i = 0; i < 2 * HBN - 1; i++)
 		c->uh[i] = w[MB + i];
@@ -320,7 +331,7 @@ void modal_render(s32 *out, char *v)
  * Memes contrats que lofi_step, lofi_fmt et lofi_draw de MACRO (tools/gen_syntakt_engines.py, notes/55 §8) :
  * l'OS les appelle par les std::function de l'objet d'interface de FINE (+0x50, +0x20, +0x30), que les detours
  * remplacent sur une piste MODAL quand FUNC est tenu et que le potard est SHAPE. Trois crans : 0x4000 (1 voix, le
- * defaut de FINE), 0x5000 (2), 0x6000 (4). */
+ * defaut de FINE), 0x5000 (2), 0x6000 (3 : 4 jusqu'au budget de 13 %, notes/81). */
 s32 modal_poly_step(void *fn, s32 value, s32 delta, s32 min, s32 max, s32 dflt)
 {
 	int i = value >= 0x5800 ? 2 : (value >= 0x4800 ? 1 : 0);
@@ -337,7 +348,7 @@ s32 modal_poly_step(void *fn, s32 value, s32 delta, s32 min, s32 max, s32 dflt)
 void modal_poly_fmt(void *fn, s32 value, char *buf)
 {
 	(void)fn;
-	buf[0] = value >= 0x5800 ? '4' : (value >= 0x4800 ? '2' : '1');
+	buf[0] = value >= 0x5800 ? '3' : (value >= 0x4800 ? '2' : '1');
 	buf[1] = 0;
 }
 

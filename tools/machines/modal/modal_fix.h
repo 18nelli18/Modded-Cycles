@@ -119,9 +119,9 @@ static inline s32 shl(s32 x, int n)                  /* x << n sans comportement
 	return (s32)((u32)x << n);
 }
 
-static inline s32 iabs(s32 x)
+static inline s32 iabs(s32 x)                        /* |x| ; -2^31 reste -2^31, sans comportement indefini */
 {
-	return x < 0 ? -x : x;
+	return x < 0 ? (s32)(0u - (u32)x) : x;
 }
 
 /* ---- xf ---------------------------------------------------------------------------------------------------- */

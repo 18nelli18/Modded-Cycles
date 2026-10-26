@@ -673,43 +673,6 @@ modal_str_read_ap:
 	lea	44(%sp), %sp
 	rts
 
-/* void modal_dc_in(struct dcblock *d, s32 *hb, const s32 *in)
- * L'anti-continu de la corde avec dispersion, quand son melange (ac) est nul : son etat seul avance (dc_one sur
- * hb[k]) ; puis hb[k] += in[k]. MB echantillons. */
-	.globl	modal_dc_in
-modal_dc_in:
-	lea	-28(%sp), %sp
-	movem.l	%d2-%d7/%a2, (%sp)
-	movea.l	32(%sp), %a0		/* d */
-	movea.l	36(%sp), %a1		/* hb */
-	movea.l	40(%sp), %a2		/* in */
-	movem.l	(%a0), %d2-%d3		/* x1, y */
-	move.l	12(%a0), %d4		/* f */
-	moveq	#MB, %d1
-1:	move.l	(%a1), %d5		/* x */
-	move.l	8(%a0), %d0		/* pole */
-	mac.l	%d0, %d3, %acc0		/* qmul(y, pole) */
-	move.l	%d3, %d6
-	muls.l	%d0, %d6		/* les 32 bits bas de y pole */
-	andi.l	#0x7fffffff, %d6
-	add.l	%d6, %d4
-	move.l	%d5, %d7
-	sub.l	%d2, %d7		/* x - x1 */
-	move.l	%d5, %d2
-	movclr.l %acc0, %d3
-	add.l	%d4, %d4		/* X = f >> 31 */
-	addx.l	%d7, %d3		/* y */
-	lsr.l	#1, %d4
-	add.l	(%a2)+, %d5
-	move.l	%d5, (%a1)+		/* hb[k] + in[k] */
-	subq.l	#1, %d1
-	bne.s	1b
-	movem.l	%d2-%d3, (%a0)
-	move.l	%d4, 12(%a0)
-	movem.l	(%sp), %d2-%d7/%a2
-	lea	28(%sp), %sp
-	rts
-
 /* void modal_str_read_mv(const s32 *pw, s32 *st, const s32 *in, s32 *hb, int n)
  * Corde, passe 1 quand le retard bouge (modal_dsp.h : la boucle de str_process) : pour chaque echantillon,
  * dv += d_inc, dc += dc_inc, d = qmul(dv, dc) - 2^20, hb[k] = hermite(pw - k + (d >> 20), frac) + in[k].
@@ -1081,6 +1044,145 @@ modal_up:
 	addq.l	#4, %a0
 	cmpa.l	%a2, %a0
 	bne.w	1b
+	movem.l	(%sp), %d2-%d7/%a2-%a6
+	lea	44(%sp), %sp
+	rts
+
+/* void modal_lim(const s32 *oa, s32 *w, s32 *peak, const s32 *k)
+ * La fin de modal_process (le limiteur de Rings, modal_dsp.h) et la difference de la passerelle (modal.c), en une
+ * passe : oa = out[MB] puis aux[MB] ; k = m_soft, ATK, DEC, pg. Pour chaque trame :
+ *   l = shl(qmul(out, pg), 1) ; r = shl(qmul(aux, pg), 1) ; pk = max(|l|, |r|, |r - l|) ; err = pk - peak ;
+ *   peak += qmul(err > 0 ? ATK : DEC, err) ; g = peak <= UNIT ? 0,8 : lim_gain(peak) ;
+ *   w[k] = softlimit(qmul(l, g)) - softlimit(qmul(r, g))
+ * softlimit au-dela de 4,0 : modal_softbig (C). Les memes operations que le C. */
+	.macro	SOFTL x, t1, t2, t3
+	move.l	\x, \t1
+	bpl.s	.Lsl1_\@
+	neg.l	\t1			/* a = |x| */
+.Lsl1_\@:
+	cmpi.l	#0x4000000, \t1
+	blt.s	.Lsl2_\@
+	lea	-20(%sp), %sp
+	movem.l	%d0-%d1/%a0-%a1, 4(%sp)
+	move.l	\t1, (%sp)
+	jsr	modal_softbig
+	move.l	%d0, \t2
+	movem.l	4(%sp), %d0-%d1/%a0-%a1
+	lea	20(%sp), %sp
+	bra.s	.Lsl3_\@
+.Lsl2_\@:
+	move.l	\t1, \t2
+	moveq	#17, \t3
+	lsr.l	\t3, \t2		/* i = a >> 17 */
+	lsl.l	#8, \t1
+	lsl.l	#6, \t1
+	bclr	#31, \t1		/* shl(a, 14) & Q31ONE */
+	move.l	(%a4, \t2\().l*4), \t3	/* m_soft[i] */
+	move.l	4(%a4, \t2\().l*4), \t2	/* m_soft[i + 1] */
+	sub.l	\t3, \t2
+	mac.l	\t2, \t1, %acc2
+	movclr.l %acc2, \t2
+	add.l	\t3, \t2		/* y */
+.Lsl3_\@:
+	tst.l	\x
+	bpl.s	.Lsl4_\@
+	neg.l	\t2
+.Lsl4_\@:
+	move.l	\t2, \x
+	.endm
+	.globl	modal_lim
+modal_lim:
+	lea	-44(%sp), %sp
+	movem.l	%d2-%d7/%a2-%a6, (%sp)
+	movea.l	48(%sp), %a0		/* out */
+	lea	4*MB(%a0), %a1		/* aux */
+	movea.l	52(%sp), %a2		/* w */
+	movea.l	56(%sp), %a3
+	move.l	(%a3), %d7		/* peak */
+	movea.l	60(%sp), %a3
+	movea.l	(%a3), %a4		/* m_soft */
+	movea.l	4(%a3), %a5		/* ATK */
+	movea.l	8(%a3), %a6		/* DEC */
+	move.l	12(%a3), %d6		/* pg */
+	lea	4*MB(%a0), %a3		/* fin de out */
+1:	move.l	(%a0)+, %d0
+	mac.l	%d0, %d6, %acc0
+	move.l	(%a1)+, %d1
+	mac.l	%d1, %d6, %acc1
+	movclr.l %acc0, %d0
+	add.l	%d0, %d0		/* l */
+	movclr.l %acc1, %d1
+	add.l	%d1, %d1		/* r */
+	move.l	%d0, %d2
+	bpl.s	2f
+	neg.l	%d2			/* pk = |l| */
+2:	move.l	%d1, %d3
+	bpl.s	3f
+	neg.l	%d3
+3:	cmp.l	%d2, %d3
+	ble.s	4f
+	move.l	%d3, %d2
+4:	move.l	%d1, %d3
+	sub.l	%d0, %d3
+	bpl.s	5f
+	neg.l	%d3
+5:	cmp.l	%d2, %d3
+	ble.s	6f
+	move.l	%d3, %d2
+6:	sub.l	%d7, %d2		/* err (le C teste le signe du resultat, qui peut deborder) */
+	tst.l	%d2
+	ble.s	7f
+	mac.l	%a5, %d2, %acc0
+	bra.s	8f
+7:	mac.l	%a6, %d2, %acc0
+8:	movclr.l %acc0, %d3
+	add.l	%d3, %d7		/* peak */
+	move.l	#0x66666666, %d4	/* Q31(0,8) */
+	cmpi.l	#0x1000000, %d7
+	ble.w	9f
+	/* lim_gain(peak) : n = clz(peak) - 1, m = peak << n, z = (0xffffffff / (m >> 15)) << 13,
+	 * t = 0x80000000 - shl(qmul(m, z), 1), z = qmul(shl(qmul(z, t), 1), 0,8), z << (n - 5) ou z >> (5 - n) */
+	move.l	%d7, %d2
+	ff1.l	%d2
+	subq.l	#1, %d2			/* n */
+	move.l	%d7, %d3
+	lsl.l	%d2, %d3		/* m */
+	move.l	%d3, %d5
+	moveq	#15, %d4
+	asr.l	%d4, %d5		/* m >> 15 */
+	moveq	#-1, %d4
+	divu.l	%d5, %d4		/* 0xffffffff / (m >> 15) */
+	moveq	#13, %d5
+	lsl.l	%d5, %d4		/* z */
+	mac.l	%d3, %d4, %acc0
+	movclr.l %acc0, %d3
+	add.l	%d3, %d3
+	move.l	#0x80000000, %d5
+	sub.l	%d3, %d5		/* t */
+	mac.l	%d4, %d5, %acc0
+	movclr.l %acc0, %d4
+	add.l	%d4, %d4
+	move.l	#0x66666666, %d5
+	mac.l	%d4, %d5, %acc0
+	movclr.l %acc0, %d4		/* 0,8 / m */
+	subq.l	#5, %d2
+	bmi.s	10f
+	lsl.l	%d2, %d4
+	bra.s	9f
+10:	neg.l	%d2
+	asr.l	%d2, %d4
+9:	mac.l	%d0, %d4, %acc0
+	mac.l	%d1, %d4, %acc1
+	movclr.l %acc0, %d0
+	movclr.l %acc1, %d1
+	SOFTL	%d0, %d2, %d3, %d5
+	SOFTL	%d1, %d2, %d3, %d5
+	sub.l	%d1, %d0
+	move.l	%d0, (%a2)+
+	cmpa.l	%a3, %a0
+	bne.w	1b
+	movea.l	56(%sp), %a3
+	move.l	%d7, (%a3)		/* peak */
 	movem.l	(%sp), %d2-%d7/%a2-%a6
 	lea	44(%sp), %sp
 	rts
