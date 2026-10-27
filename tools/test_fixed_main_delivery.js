@@ -1,2 +1,2 @@
-/* Livraison courante : hash, layout bootstrap et capacite flash. */
-require("./test_v194_delivery.js");
+/* Livraison courante : image approuvee199 et controles de capacite/layout. */
+require("./test_v199_delivery.js");

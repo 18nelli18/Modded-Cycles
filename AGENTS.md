@@ -357,3 +357,7 @@ User reports a main-flasher checksum mismatch and requests the fix. Authorizes p
 ## AveyCole main2.54 promotion (2026-10-27)
 
 User: "Push to main, make sure the file size thing doesn't happen again." Authorizes exact v194 SHA `da908d5ff722164d1fb8efaf38f508a1197a1a23b73fe27bd6e2c72d0ef4d6e1`, MAIN `bf71efa56d4780d67b6fd538129d40f0f9968148207f5fee9f786aed82cb61f4`, at the established legacy path and immutable `docs/flasher/Supermodel_2.54_da908d5ff722.syx`. Full v191 base with Page Len1–16, explicitly dark inactive trigs and Estus advanced native locks; SPEAK and Feral retained. Model:Samples exact-image preparation, native bootstrap and flash-capacity checks are release gates. No hardware result inferred from publication approval. Private no-SPEAK/no-Feral variant excluded. Protected flasher blurb unchanged.
+
+## AveyCole main2.55 promotion (2026-10-27)
+
+User tested v199 and approved "Perfect, push." Publish exact SHA `c37e8a1a97a6849ff094a095caac5de54b39d9cc03ca0e88396b629d17bba05b`, MAIN `4ad9b5bcc8cddd00db1a55bc52e0a46a175abcce89c3ee3f06a7a097530e3f85`, immutable `docs/flasher/Supermodel_2.55_c37e8a1a97a6.syx` and established legacy path. Includes sustained Warp timer fix and GRID RECORD hidden steps; user confirms both. Preserve all machines and prior features. TINY sustain/PUNCH remains private and excluded. Protected flasher blurb unchanged. Native Samples layout and flash capacity remain release gates.

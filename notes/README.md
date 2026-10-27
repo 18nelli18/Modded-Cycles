@@ -320,3 +320,4 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [198 - Estus Refilled](198-estus-refilled.md) : v186 fourni, principal2.52.
 
 - [199 - Clear LFO et destination](199-clear-lfo-affichage-destination.md) : v189 confirme, principal2.53.
+- [200 - Page Warp et grille](200-page-warp-grille.md) : v199 confirme, principal2.55 ; ISR complete et livraison Samples verifiees.

@@ -1,10 +1,10 @@
-/* 2026-10-27-main254-page-length-dark */
+/* 2026-10-27-main255-warp-grid */
 /* Meme image approuvee ; chemin immuable et repli epingle, SHA obligatoire. */
 (()=>{
   "use strict";
-  const meta=Object.freeze({"mainOsSha": "bf71efa56d4780d67b6fd538129d40f0f9968148207f5fee9f786aed82cb61f4", "syxSha256": "da908d5ff722164d1fb8efaf38f508a1197a1a23b73fe27bd6e2c72d0ef4d6e1", "file": "Supermodel_2.54_da908d5ff722.syx"});
+  const meta=Object.freeze({"mainOsSha": "4ad9b5bcc8cddd00db1a55bc52e0a46a175abcce89c3ee3f06a7a097530e3f85", "syxSha256": "c37e8a1a97a6849ff094a095caac5de54b39d9cc03ca0e88396b629d17bba05b", "file": "Supermodel_2.55_c37e8a1a97a6.syx"});
   const sources=[new URL(meta.file,window.location.href).href,
-    "https://raw.githubusercontent.com/AveyCole/Modded-Cycles/14fa072c99aa0f05b10a080d27c74074720b2f99/docs/flasher/Supermodel_2.54_da908d5ff722.syx"];
+    "https://raw.githubusercontent.com/AveyCole/Modded-Cycles/main/docs/flasher/Supermodel_2.55_c37e8a1a97a6.syx"];
   let pending;
   async function load(){
     let failure;
