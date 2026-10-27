@@ -47,7 +47,7 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
 | `0x40152d38` | `0x400b9726` | libre | |
-| `0x401592bc` | `0x400b7404` | pris (148/192 o) | model-tg (148 o), model-tg-st (148 o) |
+| `0x401592bc` | `0x400b7404` | pris (188/192 o) | model-tg (188 o), model-tg-st (188 o) |
 | `0x4015943c` | `0x400b73e4` | libre | |
 | `0x4015f38c` | `0x400b504a` | libre | |
 | `0x40165fec` | `0x400b28b4` | libre | |

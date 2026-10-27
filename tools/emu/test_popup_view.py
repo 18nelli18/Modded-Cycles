@@ -17,8 +17,9 @@ Il imprime aussi, par identifiant, UI_REC[id] (+0x2c, +0x30, +0x5c, +0x60) et pa
 min (+8) / max (+12), puis confronte les affirmations du rapport aux mesures.
 
 Puis la retouche (tools/popup_view.py) : Filtre (0x0c) dessiné comme celui du Sampler (0x49), Résonance (0x0b) comme
-0x4a, pixel pour pixel ; Attack (0x0d) comme Amp Decay (0x18) dont la courbe (x 7..56, y 8..29) est retournée de
-gauche à droite, le reste identique ; grand nombre et points pour les trois. Sort 1 si une vérification échoue ; les
+0x4a, pixel pour pixel ; Attack (0x0d) comme Amp Decay (0x18), trames en sens inverse (0 -> 13, 0x7f00 -> 0) et
+courbe (x 7..56, y 8..29) retournée de gauche à droite, le reste identique (grand nombre de la vraie valeur) ;
+grand nombre et points pour les trois. Sort 1 si une vérification échoue ; les
 affirmations du rapport (TIENT / FAUX) ne comptent pas.
 
     python3 tools/emu/test_popup_view.py --cycles firmware/model-cycles_OS1.13.syx \
@@ -361,20 +362,24 @@ def main():
         txt = [r["texts_txt"] for r in results[pid][0]] == [r["texts_txt"] for r in results[ref][0]]
         check(same and txt and all(r["vt"] == 0 for r in results[pid][0]),
               f"0x{pid:02x} : {label} (0x{ref:02x}), pixel pour pixel, même nombre ({', '.join(r['texts_txt'] for r in results[pid][0])}), 4/4 valeurs")
-    flip_ok, rest_ok = True, True
-    for a, d in zip(shots[0x0d], shots[0x18]):
-        for y in range(64):
-            for x in range(128):
-                if 8 <= y <= 29 and 7 <= x <= 56:
-                    flip_ok &= a[y][x] == d[y][7 + 56 - x]
-                else:
-                    rest_ok &= a[y][x] == d[y][x]
-    txt = [r["texts_txt"] for r in results[0x0d][0]] == [r["texts_txt"] for r in results[0x18][0]]
+    idx0d = [r["sprites_txt"].split("#")[1].split()[0] if "#" in r["sprites_txt"] else "?" for r in results[0x0d][0]]
+    flip_ok = (idx0d == ["13", "9", "6", "0"] and
+               all(shots[0x0d][ia][y][x] == shots[0x18][id_][y][7 + 56 - x]
+                   for ia, id_ in ((0, 3), (2, 2), (3, 0))
+                   for y in range(8, 30) for x in range(7, 57)))
     check(flip_ok and len(shots[0x0d]) == len(VALUES),
-          "0x0d Attack : la courbe d'Amp Decay retournée de gauche à droite (x 7..56, y 8..29), 4/4 valeurs")
-    check(rest_ok and txt and all(r["vt"] == 0 for r in results[0x0d][0]),
-          f"0x0d Attack : hors de la courbe, la fenêtre d'Amp Decay telle quelle : grand nombre "
-          f"({', '.join(r['texts_txt'] for r in results[0x0d][0])}) et points")
+          f"0x0d Attack : indice de trame inversé ({','.join(idx0d)}), courbe d'Amp Decay retournée de gauche à droite (x 7..56, y 8..29), 4/4 valeurs")
+    txt_0d = [r["texts_txt"] for r in results[0x0d][0]]
+    txt_18 = [r["texts_txt"] for r in results[0x18][0]]
+    num_ok = all(shots[0x0d][i][y][x] == shots[0x18][i][y][x]
+                 for i in range(len(VALUES)) for y in range(64) for x in range(128)
+                 if not (8 <= y <= 29 and 7 <= x <= 56))
+    check(txt_0d == txt_18 and num_ok and all(r["vt"] == 0 for r in results[0x0d][0]),
+          f"0x0d Attack : un seul texte, le grand nombre de la vraie valeur ({', '.join(txt_0d)}) ; hors de la "
+          f"courbe, la fenêtre d'Amp Decay pixel pour pixel (points compris)")
+    invoke = L.UI_REC + 100 * 0x18 + 0x60
+    check(view.u32(invoke) == 0x4004e40c,
+          f"invocateur de la courbe d'Amp Decay (0x{invoke:08x}) remis après Attack : 0x{view.u32(invoke):08x}")
     changes = len({tuple(map(tuple, s_)) for s_ in shots[0x0d]})
     check(changes == len(VALUES), f"0x0d Attack : la courbe suit la valeur ({changes} images différentes sur {len(VALUES)})")
 
