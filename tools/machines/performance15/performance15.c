@@ -50,14 +50,53 @@ static void level_overlay(u32 t,u32 base,s32 sum,u32 touched){
  if(touched)per_level_mask|=bit;else per_level_mask&=~bit;
 }
 void per_storage_observe(void);
+/* Trame audio native en SRAM : seuls les mots routes sont echanges.
+ * Masquer les interruptions jusqu'a leur restauration, avant les LFO et les
+ * observateurs. Les autres sources gardent le chemin de copie autonome. */
+static u32 storage_irq_lock(void);
+static void storage_irq_restore(u32);
+static u32 per_audio_onchip(volatile u16 *frame){
+ u32 irq=storage_irq_lock(),levels=per_level_mask,fx=per_fx_mask,sound[6];
+ for(u32 t=0;t<6;t++){
+  sound[t]=per_sound_mask[t];
+  if(levels&(1u<<t)){
+   u16 base=frame[t];per_level_audio[t]=base;
+   frame[t]=clamp((s32)base+per_level_sums[t],0,0x7f00);
+  }
+  if(!sound[t])continue;
+  for(u32 d=0;d<PER_SOUND_COUNT;d++)if(sound[t]&(1u<<d)){
+   const PerParameter *p=&per_track_params[d];u32 slot=7+t*33+p->slot;
+   u16 base=frame[slot];per_level_audio[slot]=base;
+   frame[slot]=per_param_value(p,(s32)base+per_sound_sums[t][d]);
+  }
+ }
+ for(u32 d=0;d<PER_FX_COUNT;d++)if(fx&(1u<<d)){
+  const PerParameter *p=&per_fx_params[d];u32 slot=205+p->slot;
+  u16 base=frame[slot];per_level_audio[slot]=base;
+  frame[slot]=per_param_value(p,(s32)base+per_fx_sums[d]);
+ }
+ u32 result=CALL(0x40058474,u32(*)(const u16*))((const u16*)frame);
+ for(u32 t=0;t<6;t++){
+  if(levels&(1u<<t))frame[t]=per_level_audio[t];
+  if(!sound[t])continue;
+  for(u32 d=0;d<PER_SOUND_COUNT;d++)if(sound[t]&(1u<<d)){
+   u32 slot=7+t*33+per_track_params[d].slot;frame[slot]=per_level_audio[slot];
+  }
+ }
+ for(u32 d=0;d<PER_FX_COUNT;d++)if(fx&(1u<<d)){
+  u32 slot=205+per_fx_params[d].slot;frame[slot]=per_level_audio[slot];
+ }
+ storage_irq_restore(irq);return result;
+}
 u32 per_audio_levels(const u16 *source){
  per_storage_observe();
  u32 active=per_level_mask|(per_fx_mask?64:0);for(u32 t=0;t<6;t++)if(per_sound_mask[t])active|=1u<<t;
  if(!source||!per_initialized||!active)return CALL(0x40058474,u32(*)(const u16*))(source);
+ if((u32)source==0x800015a0u)return per_audio_onchip((volatile u16*)source);
  for(u32 i=0;i<238;i++)per_level_audio[i]=source[i];
  for(u32 t=0;t<6;t++){
   if(per_level_mask&(1u<<t))per_level_audio[t]=clamp((s32)source[t]+per_level_sums[t],0,0x7f00);
-  u32 touched=per_sound_mask[t];
+  u32 touched=per_sound_mask[t];if(!touched)continue;
   for(u32 d=0;d<PER_SOUND_COUNT;d++)if(touched&(1u<<d)){
    const PerParameter *p=&per_track_params[d];u32 slot=7+t*33+p->slot;
    per_level_audio[slot]=per_param_value(p,(s32)source[slot]+per_sound_sums[t][d]);

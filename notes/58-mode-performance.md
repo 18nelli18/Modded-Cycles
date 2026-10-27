@@ -29,7 +29,7 @@ Contribution source anonyme demandee le 18/10/2026 : quinze commandes de perform
 
 ## 2. Memoire et chargement
 
-[FAIT] Le chargeur est ajoute a la fin officielle de l'image, `0x401aa140`. Il appelle la vraie copie SRAM d'origine, copie notre code a `0x42339000`, puis rend la pile. Le lieur refuse que le code/etat statique depasse `0x42340000`. La reference actuelle comporte17380 octets et finit a `0x4233d3e4`. Le presse-papiers occupe60 octets de cet etat. Aucun masque de sprite n'est pris.
+[FAIT] Le chargeur est ajoute a la fin officielle de l'image, `0x401aa140`. Il appelle la vraie copie SRAM d'origine, copie notre code a `0x42339000`, puis rend la pile. Le lieur refuse que le code/etat statique depasse `0x42340000`. La reference actuelle comporte17940 octets et finit a `0x4233d614`. Le presse-papiers occupe60 octets de cet etat. Aucun masque de sprite n'est pris.
 
 [FAIT] Les banques de definitions utilisent53696 octets alloues par l'allocateur natif ; la banque TEMP de session utilise50304 octets a sa premiere utilisation. Aucune allocation n'est faite dans le crochet audio ou les ponts IRQ. Le tampon audio est consomme synchroniquement par le site de lissage natif ; son cout et son absence de reentrance sous les autres mods restent a revalider avant integration.
 
@@ -41,7 +41,7 @@ Contribution source anonyme demandee le 18/10/2026 : quinze commandes de perform
 
 [FAIT] Schema3 : entete16 octets, soixante entrees4 octets et CRC32 de la charge240 octets. Chaque entree conserve profondeur signee et identite16 bits. Pour chaque macro, les4 bits faibles de son montant occupent le demi-octet haut de la premiere piste ; ses3 bits forts celui de la deuxieme. Les3 bits bas conservent T1-T6/FX ; les bits inutilises sont valides. Les anciens records schema2 chargent des montants nuls. Les identites indisponibles restent inactives et conservees.
 
-[FAIT] Le changement effectif de motif recharge definitions et montants ; une simple mise en file d'attente ne les change pas. Les trois ponts IRQ conservent registres et statut. Les sources canoniques des sons ne sont pas remplacees par les offsets des macros. Au rechargement TEMP, le record de session est fourni au decodeur avant sa notification native afin de ne pas publier un etat transitoire vide.
+[FAIT] Le changement effectif de motif recharge definitions et montants ; une simple mise en file d'attente ne les change pas. Les trois ponts IRQ conservent registres et statut. Les sources canoniques des sons sont restaurees avant le retour du crochet audio ; la section9 decrit leur echange temporaire sous masque IRQ. Au rechargement TEMP, le record de session est fourni au decodeur avant sa notification native afin de ne pas publier un etat transitoire vide.
 
 [FAIT] Le presse-papiers est une copie de valeurs, distincte du presse-papiers natif. Effacer le garde ; changer de projet ou redemarrer le vide. Les combinaisons possedees sont interceptees avant les ecouteurs, une seule fois par geste. Les relachements et clics synthetiques ne fuient pas vers copier/effacer/coller natifs. Hors PERF/SET ou derriere un menu natif, le chemin normal reste actif. Les mutations publient les records et recalculent les cibles anciennes/nouvelles.
 
@@ -51,6 +51,7 @@ Contribution source anonyme demandee le 18/10/2026 : quinze commandes de perform
 python3 tools/gen_performance15.py --cycles firmware/model-cycles_OS1.13.syx --check
 python3 tools/test_performance15.py
 python3 tools/emu/test_performance15.py --cycles firmware/model-cycles_OS1.13.syx
+python3 tools/emu/test_performance15_audio.py --cycles firmware/model-cycles_OS1.13.syx
 python3 tools/gen_performance15.py --cycles firmware/model-cycles_OS1.13.syx \
   --output build/performance15/local-test.syx
 ```
@@ -67,7 +68,7 @@ python3 tools/gen_performance15.py --cycles firmware/model-cycles_OS1.13.syx \
 | Kit encode/decode | Champs natifs | Meme codec plus record de macros |
 | Projet change | Pas de presse-papiers Performance | Presse-papiers dedie invalide |
 
-La preuve comporte164 verifications ; les huit tests de catalogue et de garde passent. La reconstruction SysEx est relue : checksums, HMAC et sections autres que3 identiques. La reference MAIN OS est `0710c81fc22ff6c0fa36170459e7144f22f4959b44b5249eef654332955c1f9a` (autonome, GCC16.2.0).
+La preuve comporte164 verifications ; les huit tests de catalogue et de garde passent. La reconstruction SysEx est relue : checksums, HMAC et sections autres que3 identiques. La reference MAIN OS est `4d19ca0984476d178abb31be303f27c716d57206de80a1864f155186dec00e93` (autonome, GCC16.2.0).
 
 ## 5. Limites et integration a examiner
 
@@ -102,3 +103,51 @@ La preuve comporte164 verifications ; les huit tests de catalogue et de garde pa
 [FAIT en emulation] Dix controles Unicorn supplementaires executent les vrais codecs natifs : defaut OFF, egalite des496 premiers octets avec l'origine, position/version du record, rappels ON/OFF independants, redemarrage simule, ancien projet et corruption. Total actuel164 controles, plus les huit gardes sans firmware. La reference54418 est regeneree et la reconstruction SysEx relue sans modifier les autres sections.
 
 [RETOUR APPAREIL] Le prototype autonome v35 a recu un retour positif anonyme pour cette sauvegarde par projet. Ce retour concerne la compilation5475 distribuee separement ; il ne remplace pas la validation du mainteneur pour la compilation54418 presente ici. La PR reste experimentale et absente du flasheur.
+
+## 9. Mise a jour du 28/10/2026 : budget audio, OS d'origine uniquement
+
+[FAIT] La contribution reste un ajout autonome a l'OS officiel1.13 : six machines
+stock, LFO d'origine et quatre destinations FX. Aucun moteur, profil, LFO2, effet,
+menu de machines ou hook d'une compilation combinee n'est importe. Seul le chemin
+audio des macros est optimise ; schema3, sauvegardes, commandes et metadonnees
+restent identiques.
+
+[FAIT] L'ancien crochet copiait238 mots dans une trame SDRAM, puis faisait lire
+cette copie au lissage natif. Pour la source SRAM native exacte `0x800015a0`, le
+nouveau chemin sauvegarde seulement les mots routes, pose leurs cibles, appelle le
+lissage natif inchange `0x40058474` puis restaure tous ces mots. Le masque IRQ est
+sauve, force au niveau7 pendant tout l'echange et restaure avant le retour ; les
+LFO/observateurs suivants ne voient pas la trame temporaire. Les masques des routes
+sont captures pour que la restauration suive exactement les ecritures. La sauvegarde
+utilise le tampon existant, sans allocation ; aucune interruption imbriquee ne peut
+reutiliser ce tampon pendant l'echange. La copie existante reste le fallback pour
+une autre adresse source. Les pistes sans destination sonore ne parcourent plus
+le catalogue. Aucun assembleur de copie supplementaire n'est ajoute.
+
+[FAIT en emulation] `test_performance15_audio.py` execute le vrai lissage EMAC,
+compare aux memes cibles appliquees a l'OS stock :420 cas couvrent les64 masques de
+niveaux, chaque destination sonore sur chaque piste, les FX, les signes, bornes et
+arrondis LFO, des masques mixtes et deux adresses sources (SRAM/fallback). Chaque
+sortie de476 octets et chaque etat de952 octets est identique. Sources et gardes de
+524 octets, padding de prelecture, registres non volatils, pile et masque SR sont
+verifies ; les ecritures temporaires exigent le masque IRQ7. La preuve principale
+conserve ses164 controles sur les commandes, codes natifs de sauvegarde et ponts.
+L'observation du motif stable est substituee dans la preuve audio supplementaire ;
+les voix DSP, la concurrence d'interruptions, MMC/USB et les cycles physiques ne
+sont pas simules. Les huit tests sans firmware passent.
+
+[FAIT en emulation] Sur trois routes de niveau de piste, le nombre d'instructions
+de notre charge utile par appel passe de2201 a404 (−81,6 %) sur la cible54418.
+Ce chiffre n'est ni une mesure de cycles, ni une mesure de charge globale, et ne
+promet pas le meme gain sur des destinations denses. `--previous-build` permet la
+comparaison facultative avec une construction locale precedente ; aucun ancien
+binaire n'est requis pour la preuve de justesse.
+
+[RETOUR APPAREIL INDEPENDANT] Une compilation locale combinee presentait des pics
+audio au-dessus du budget avec des macros actives ; son auteur d'essai rapporte que
+cette optimisation resout le changement sonore parasite. Ce resultat motive le
+portage du seul correctif ; il ne valide pas le binaire stock54418 de cette PR.
+Aucune image, donnees musicales ou information personnelle de cet essai n'est
+incluse. Le mainteneur doit encore verifier les six pistes actives, les routes
+niveau/son/FX et l'upgrade USB. Statut toujours experimental, PR toujours brouillon
+et absente du flasheur.

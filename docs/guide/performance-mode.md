@@ -75,6 +75,10 @@
 
 ## Preview release notes / Notes de cette preversion
 
+**EN - 2026-10-28:** Reduced active-macro audio processing overhead. Controls, destination values and saves stay the same. This standalone preview adds Performance Mode to the six stock machines, their stock LFO and global FX; it does not add other machines or LFOs. Maintainer testing of this stock-only build remains pending.
+
+**FR - 28/10/2026 :** Reduction du travail audio des macros actives. Les commandes, valeurs des destinations et sauvegardes restent identiques. Cette preversion autonome ajoute le mode Performance aux six machines d'origine, a leur LFO d'origine et aux FX globaux ; elle n'ajoute ni machine ni LFO. Les essais du mainteneur de cette compilation autonome restent a faire.
+
 **EN - 2026-10-22:** RLD is now saved separately in each project. Set the toggle and Save Project to retain it through loading and restart. Existing macro records and native project fields are unchanged; older/new projects default OFF.
 
 **FR - 22/10/2026 :** RLD est maintenant sauvegarde separement dans chaque projet. Reglez le choix puis Save Project pour le conserver au chargement et apres redemarrage. Les records de macros et champs natifs du projet restent inchanges ; projets anciens/nouveaux par defaut OFF.

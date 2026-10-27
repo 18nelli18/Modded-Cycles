@@ -685,14 +685,19 @@ Partez de votre propre fichier officiel ; les sorties restent dans `build/` et n
 python3 tools/gen_performance15.py --cycles firmware/model-cycles_OS1.13.syx --check
 python3 tools/test_performance15.py
 python3 tools/emu/test_performance15.py --cycles firmware/model-cycles_OS1.13.syx
+python3 tools/emu/test_performance15_audio.py --cycles firmware/model-cycles_OS1.13.syx
 python3 tools/gen_performance15.py --cycles firmware/model-cycles_OS1.13.syx \
   --output build/performance15/local-test.syx
 ```
 
-Cette preuve demande `unicorn` ; les outils de construction restent en bibliotheque standard.
-La reference MAIN OS autonome est `0710c81fc22ff6c0fa36170459e7144f22f4959b44b5249eef654332955c1f9a`.
+Les deux preuves demandent `unicorn` ; les outils de construction restent en bibliotheque standard.
+La reference MAIN OS autonome est `4d19ca0984476d178abb31be303f27c716d57206de80a1864f155186dec00e93`.
 Aucune empreinte de combinaison n'est annoncee. [Note58](notes/58-mode-performance.md),
 [commandes et limites](docs/guide/performance-mode.md). Les routines de transport/conteneur reutilisees sont
 `tools/mtlib/` (MIT, notice existante) ; aucun packer tiers supplementaire n'est copie.
 
 La preversion Performance15 inclut maintenant CONFIG > MACROS > RLD: OFF/ON (choix sauvegarde par projet apres Save Project) et les modifications de macros sans invalidation du kit audio en lecture ; details dans la note58.
+
+La preuve audio execute le vrai lissage EMAC sur420 cas SRAM/fallback, avec sources,
+registres et masque IRQ restaures. Le crochet en SRAM ne copie plus toute la trame ;
+la contribution reste limitee aux six machines et au LFO d'origine, sans moteur ajoute.
