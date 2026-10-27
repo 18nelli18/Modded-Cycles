@@ -876,3 +876,8 @@ Commande privee : `python tools/gen_governor_recovery_test.py --lfo-compact-ram 
 ## Principal2.52 - v186 exact
 
 Image fournie par l'utilisateur (`Supermodel_v186_All_LFO_Copy_ESTUS_Optimized.syx`), publiee sans changer ses octets par le chemin fixe existant. SYX SHA `5ec78631f29a4ffcaedac2d940eb6c7d87fa28de1b231e974c8e27f90704c4cb`, MAIN SHA `6be17c5d328fc87ffed9b585df853410ef0976a18ffee97d9f958a91983518d3`. Aucun resultat materiel revendique. Verification : `node tools/test_v186_delivery.js`.
+
+
+## Principal2.53 - v189 confirme
+
+`python tools/gen_governor_recovery_test.py --destination-abi --legacy-cart <cartouche-utilisateur.syx> --legacy-classics <rom-utilisateur.syx> --stage --check`. SHA SYX 6a729fbf198b50768ec1bfade96d6627ab11f08cea210f452586927d207a3282 ; SHA MAIN 69e7ea9c3f7c35e7e22e33d757376bc473370d8a574f72d7afeac17cdcec8626. Clear son publie les cinq champs LFO2 apres la commande native ; le prochain sync audio conserve les valeurs. Le renderer LFO1 recoit context/descripteur/destination/machine apres le tail-call natif : argument3 pour la destination. ESTUS SETTINGS reste utilisable en lecture.

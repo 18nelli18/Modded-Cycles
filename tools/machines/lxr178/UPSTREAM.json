@@ -1,0 +1,19 @@
+{
+  "repository": "https://github.com/drusanow/Model-TG-VA-Edition",
+  "revision": "b49cd51b19007a40844f3721fbaed5fbfd9c5d56",
+  "license": "GPL-3.0-only",
+  "origin": "Modified fixed-point voices derived from Erica Synths LXR-02; no affiliation or endorsement",
+  "changes": [
+    "Split identical tables across existing free RAM caves",
+    "Track bounds and explicit reset",
+    "Native Supermodel machine24 adapter",
+    "ESTUS: eight named engines on SHAPE, engine-specific macro labels"
+  ],
+  "sha256": {
+    "upstream/lxr.c": "97e9e75e070b0de530071939cfe71a2a49dc2c1ff0b28e3b2c993ee235e1888a",
+    "upstream/lxr_tables.h": "2c7e0da3dfa5f100dccf5868a13fbcf3aa89d371f28801d2b783997b4e19856a",
+    "lxr.c": "83acb1bf3be277e63613319405bb0f3f09e71cd9b2cd50aaed9dc3152583585c",
+    "lxr_tables.h": "3fa3bd36361a4bbefc006aa57d7ebca6eb274f7d7d06bb68a582c238cae67c1a",
+    "pitch178.h": "002c284d2e0cb8d1f47e0930b298b846b171d9213c6c6b521a24b98d41784f21"
+  }
+}

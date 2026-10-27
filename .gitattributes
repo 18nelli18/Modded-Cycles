@@ -1,2 +1,3 @@
 *.pdf binary
 *.syx binary
+tools/machines/lxr178/** -text whitespace=-blank-at-eol,cr-at-eol

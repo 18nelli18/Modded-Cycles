@@ -344,3 +344,8 @@ User: "that worked. Let's push that to main and work on copy persistence" for ex
 ## AveyCole main2.52 promotion (2026-10-26)
 
 User supplied `Supermodel_v186_All_LFO_Copy_ESTUS_Optimized.syx` ("Make sure this is the .syx served by main"; Codex ran out of usage mid-push). Publish exact standard v186 SHA `5ec78631f29a4ffcaedac2d940eb6c7d87fa28de1b231e974c8e27f90704c4cb`, MAIN `6be17c5d328fc87ffed9b585df853410ef0976a18ffee97d9f958a91983518d3`, through the established fixed-main image only. Replaces v175 of main 2.51. No hardware result reported, none claimed. The release note says only "Estus Refilled." at AveyCole's request. Guides/PDF unchanged; protected blurb hash `b3486b46a278b7d5561c3edd549f4adf299d358012b2631a0a6ab353232e2205` unchanged. Adult stays private.
+
+
+## AveyCole main2.53 promotion (2026-10-27)
+
+User confirmed the final v189 fixes and explicitly requested "Perfect, push it." This authorizes updating and pushing the existing tracked fixed-main firmware path docs/flasher/all-features-usb-2ch-default.syx with exact v189 SHA `6a729fbf198b50768ec1bfade96d6627ab11f08cea210f452586927d207a3282`, overriding the generic no-firmware-commit rule for this established release file only. Main2.52 release notes and protected flasher description remain unchanged. LFO clear and ESTUS live controls confirmed earlier; final destination result approved. No hardware CPU measurement claimed. Separate optional-machine flasher remains private work.

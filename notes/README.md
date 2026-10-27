@@ -317,3 +317,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 
 - [197 - LFO, BRAIDS et memoire](197-lfo-braids-memoire.md) : v175 approuve sur appareil, principal2.51.
 - [198 - Estus Refilled](198-estus-refilled.md) : v186 fourni, principal2.52.
+
+- [199 - Clear LFO et destination](199-clear-lfo-affichage-destination.md) : v189 confirme, principal2.53.

@@ -192,3 +192,6 @@ Main 2.49 serves the exact approved standard v163, SHA256 `952b5b70dc095e3e68a68
 Main2.51 serves the exact user-approved v175 (`99d392585a03a0f94cab0eb76fd1c16def0cc690230e909e821a09e01fa69bee`). Mod Setup > Global > LFOs selects1/2/3/4 audio LFOs, default2. FUNC+PAGE Scale Lock offers Off/ORGN/BRDS and19whole-semitone scales. Includes Uni square/depth and GATED/WAVE memory repairs. LFO3/4 save separately per project/pattern/track; native sound-copy polarity persistence remains pending. See the updated [controls guide](docs/flasher/shortcut-guide.html).
 
 Main2.52 serves the exact user-supplied v186 (`5ec78631f29a4ffcaedac2d940eb6c7d87fa28de1b231e974c8e27f90704c4cb`), release note "Estus Refilled." No hardware result is claimed.
+
+
+Main2.53 serves exact user-confirmed v189: clearing all four audio LFOs with a track sound/full pattern, correct LFO1 destination names, and ESTUS SETTINGS controls during playback. [Release notes](docs/flasher/release-notes-2.53.html).

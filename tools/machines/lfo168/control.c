@@ -8,6 +8,9 @@ extern u32 mx_old_prepare(u32),lf2_launch(u32),mx_old_key(u32,const u32*),mx_old
 extern void mx_old_write(u32,u32,u32),lf2_init(u32,u32),lf2_update(u32,u32,u32,u32),mx_old_dispatch(u32,u32,u32);
 extern void mx_old_render(u32,u32),mx_old_frame(void),mx_old_change(u32);
 extern u32 fxp_crc(const u8*,u32);
+#ifdef LFO_SOUND_POL
+extern u32 lp_sound_get(u32,u32);
+#endif
 volatile u32 mx_ui_context,mx_selected,mx_extra[2],mx_polarity[12];
 #ifdef MX_LAZY_START
 volatile u32 mx_armed;
@@ -64,7 +67,12 @@ u32 mx_pol_encoder(u32 view,const u32*e){
 }
 void mx_pol_value(u32 a,u32 b,u32 canvas,u32 x,u32 y){
  (void)a;(void)b;(void)x;u32 t=lf2p_track<6?lf2p_track:0;
- u32 uni=mx_selected?mx_polarity[(mx_selected-1)*6+t]:lp_two[t];
+ u32 uni=mx_selected?mx_polarity[(mx_selected-1)*6+t]:
+#ifdef LFO_SOUND_POL
+lp_sound_get(t,1);
+#else
+lp_two[t];
+#endif
  N(0x40071a04)(canvas,0x40ea14cc,120,y,4,"%s",uni?"Uni":"Bi");
 }
 static u32 active(u32 ctx){if(!ctx)return 0;const u16*p=(const u16*)(ctx+192);for(u32 t=0;t<6;t++)if(p[t*8+3]>>8<33)return 1;return 0;}
@@ -176,3 +184,91 @@ void mx_frame(void){mx_old_frame();
  if(*(volatile u32*)0x40fe4178)mx_prepare(0x8000100c);
 #endif
  service();}
+
+#ifdef LFO_COPY_FOUR
+/* Explicit user copy action only: hidden banks can be loaded without enabling
+ * their audio processing. No new boot or interrupt service is introduced. */
+u32 mx_copy_prepare(void){
+ if(!lf2_context&&!mx_old_prepare(0x8000100c))return 0;
+#ifdef MX_COMPACT_RAM
+ if(!mx_storage){mx_storage=(u8*)N(0x400802e0)(16+96*192+48+96*192);if(!mx_storage)return 0;}
+#endif
+ if(!mx_extra[0]){for(u32 b=0;b<2;b++)lf2_init((u32)contexts[b],0x8000100c);mx_extra[1]=(u32)contexts[1];mx_extra[0]=(u32)contexts[0];}
+ u32 kit=*(volatile u32*)0x40fe4228;if(!kit)return 0;u32 id=N(0x4000eae2)(kit);if(!id)return 0;
+ if(!ready||project!=id)load(id);mx_pattern(*(volatile u32*)0x40a7887c);return current<96;
+}
+void mx_copy_commit(void){capture();}
+void mx_copy_redraw(u32 track){
+ u32 view=*(volatile u32*)0x40190050;if(view&&track<6){lf2p_track=track;N(0x40076082)(view);}
+}
+#endif
+
+#ifdef LFO_LIVE_CLEAR187
+extern u32 mx_old_pattern_clear(u32,u32,u32,u32,u32,u32),mx_old_primary_name(u32,u32,u32,u32);
+static u32 clear_track_of(const u8 *raw){
+ u32 root=*(volatile u32*)0x40fe4228;if(!root)return 6;
+ for(u32 t=0;t<6;t++){u32 object=N(0x40009c1a)(root+116,t),vt=*(const u32*)object;if(vt&&N(*(const u32*)(vt+40))(object)==(u32)raw)return t;}
+ return 6;
+}
+#ifdef LFO_CLEAR_COMMIT188
+static void publish_reset(u32 t){mx_old_write(t,0,0x7000);mx_old_write(t,1,0x4a0);mx_old_write(t,4,0);mx_old_write(t,3,0x7f00);mx_old_write(t,7,0x4000);}
+#endif
+static void reset_track(u32 t,u8 *raw){
+ if(t>=6)return;const u16 primary[8]={0x7000,0x400,0x4000,0,0,0,0,0x4000};const u16 secondary[8]={0x7000,0x400,0x4000,0x7f00,0,0,0,0x4000};u32 sr=lock();
+ if(raw&&raw[38]!=17){for(u32 i=0;i<8;i++)((u16*)(raw+22))[i]=primary[i];*(u16*)(raw+76)=0x7000;*(u16*)(raw+78)=0x4a0;*(u16*)(raw+80)=0;*(u16*)(raw+82)=0;*(u16*)(raw+84)=0x4000;}
+ zero((u8*)(0x40fde838+t*32),32);lp_one[t]=lp_two[t]=0;lp_dirty=1;
+ if(lf2_context){zero((u8*)(lf2_context+t*32),32);for(u32 i=0;i<8;i++)((u16*)(lf2_context+192+t*16))[i]=secondary[i];}
+ for(u32 b=0;b<2;b++){if(mx_extra[b]){zero((u8*)(mx_extra[b]+t*32),32);for(u32 i=0;i<8;i++)((u16*)(mx_extra[b]+192+t*16))[i]=secondary[i];}mx_polarity[b*6+t]=0;}
+ unlock(sr);
+#ifdef LFO_CLEAR_COMMIT188
+ if(raw&&raw[38]!=17){publish_reset(t);if(lf2_context){sr=lock();for(u32 i=0;i<8;i++)((u16*)(lf2_context+192+t*16))[i]=secondary[i];unlock(sr);}}
+#endif
+ capture();mx_copy_redraw(t);
+}
+u32 mx_clear_sound(u8*raw,u32 preset,u32 machine){
+ u32 t=clear_track_of(raw);if(t<6)mx_copy_prepare();u32 result=N(0x40061866)(raw,preset,machine);if(t<6)reset_track(t,raw);return result;
+}
+u32 mx_clear_pattern(u32 root,u32 id,u32 seq,u32 sound,u32 undo,u32 quiet){
+ u32 loaded=sound?mx_copy_prepare():0;u32 result=mx_old_pattern_clear(root,id,seq,sound,undo,quiet);
+ if((result&255)&&sound&&loaded){if(id>95)id=95;u32 sr=lock();defaults(patterns[id]);dirty=1;unlock(sr);
+  if(id==current){for(u32 t=0;t<6;t++){u32 object=N(0x40009c1a)(root+116,t),vt=*(const u32*)object;u8*raw=vt?(u8*)N(*(const u32*)(vt+40))(object):0;reset_track(t,raw);}}
+ }
+ return result;
+}
+/* Le mapper de nom peut garder un ancien descripteur. Resoudre la cible
+ * native courante pour la vraie machine ; conserver les valeurs de p-lock. */
+u32 mx_primary_name(u32 context,u32 descriptor,u32 unused,u32 cached){
+ if(!context)return mx_old_primary_name(context,descriptor,unused,cached);u32 handle=*(const u32*)(context+4);if(!handle)return mx_old_primary_name(context,descriptor,unused,cached);
+ u32 vt=*(const u32*)handle;u8*raw=vt?(u8*)N(*(const u32*)(vt+40))(handle):0;if(!raw||raw[38]==17)return mx_old_primary_name(context,descriptor,unused,cached);
+ /* Le tail-call natif 4000a830 ->4005a692 reecrit les arguments
+  * context,dest en dest,machine. Apres son retour, les arguments3/4 du
+  * callback sont donc destination et machine, pas context et destination. */
+#ifdef LFO_DEST_ABI189
+ u32 dest=unused,machine=raw[38];
+#else
+ u32 dest=cached,machine=raw[38];
+#endif
+ if(!dest||dest==127)return (u32)"NONE";
+ if(machine==6){if(dest==13)return (u32)"FLT";if(dest==14)return (u32)"RES";if(dest==24||dest==25)return (u32)"ERR";}
+ if(dest==23)return (u32)"ATK";if(dest==24)return (u32)"FLT";if(dest==25)return (u32)"RES";
+ u32 actual=N(0x4005a692)(dest,machine);if(actual==~0u)return (u32)"ERR";return N(0x4000b208)(context,actual);
+}
+#endif
+
+#ifdef LFO_CLEAR_COMMIT188
+extern u32 mx_old_clear_command(u32,u32,u32,u32,u32);extern void lp_copy_source(u32);
+u32 mx_clear_command(u32 object,u32 machine,u32 flags,u32 undo,u32 preset){
+ u32 root=*(volatile u32*)0x40fe4228,t=6;if(root)for(u32 i=0;i<6;i++)if(N(0x40009c1a)(root+116,i)==object){t=i;break;}
+ if(t<6)mx_copy_prepare();u16 before[48];u32 phases[48],context=lf2_context,sr=lock();if(context){copy((u8*)before,(const u8*)(context+192),96);copy((u8*)phases,(const u8*)context,192);}unlock(sr);
+ lp_copy_source(t<6?t+1:0);u32 result=mx_old_clear_command(object,machine,flags,undo,preset);lp_copy_source(0);
+ if((result&255)&&t<6){
+  /* Garder le vrai control block Undo pendant les notifications de champs. */
+  u32 *owner=(u32*)N(0x400cfe46)(),saved[2]={0,0};if(owner&&owner[5]==1&&owner[3]&&owner[4]){saved[0]=owner[3];N(0x400cfae0)(saved+1,owner+4);}
+  u32 vt=*(const u32*)object;u8*raw=vt?(u8*)N(*(const u32*)(vt+40))(object):0;
+  reset_track(t,raw);
+  if(context&&lf2_context){sr=lock();for(u32 i=0;i<6;i++)if(i!=t){copy((u8*)(lf2_context+192+i*16),(const u8*)(before+i*8),16);copy((u8*)(lf2_context+i*32),(const u8*)(phases+i*8),32);}unlock(sr);}
+  if(saved[0]&&saved[1]&&owner&&!owner[3]){N(0x4006e0e6)(owner,saved,1);N(0x4006df18)(owner,1);}if(saved[1])N(0x400cf23c)(saved+1);
+ }
+ return result;
+}
+#endif

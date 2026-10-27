@@ -1,2 +1,2 @@
-/* Principal2.52 : v186 exact fourni. */
-require("./test_v186_delivery.js");
+/* Principal2.53 : v189 exact confirme. */
+require("./test_v189_delivery.js");
