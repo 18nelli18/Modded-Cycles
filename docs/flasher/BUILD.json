@@ -1,9 +1,9 @@
 {
-  "stamp": "2026-10-27-main253-samples-layout",
+  "stamp": "2026-10-27-main254-page-length-dark",
   "scope": "main",
   "profile": "Exact full-feature image, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (2ch enabled)",
-  "fixed_image": "Supermodel_2.53_6a729fbf198b.syx",
-  "fixed_image_sha256": "6a729fbf198b50768ec1bfade96d6627ab11f08cea210f452586927d207a3282",
+  "fixed_image": "Supermodel_2.54_da908d5ff722.syx",
+  "fixed_image_sha256": "da908d5ff722164d1fb8efaf38f508a1197a1a23b73fe27bd6e2c72d0ef4d6e1",
   "diagnostics": "DX A/P/O/N",
   "startup": "Supermodel",
   "usb_audio_default": "2ch",
@@ -29,7 +29,7 @@
   "chord_harmony_cache": true,
   "cut_fade_zero_endpoint": true,
   "midi_idle_shortcut": true,
-  "main_os_sha256": "69e7ea9c3f7c35e7e22e33d757376bc473370d8a574f72d7afeac17cdcec8626",
+  "main_os_sha256": "bf71efa56d4780d67b6fd538129d40f0f9968148207f5fee9f786aed82cb61f4",
   "pad_selection_default": "Stock",
   "mute_mode_default": "Stock",
   "numbers_default": "Off",
@@ -42,9 +42,9 @@
   "behavior_verified_source": "all-features-usb-mod-settings-test-v3.syx",
   "layout_fix_native_verified": true,
   "guide_version": "2026-10-26-lfo-braids-memory-main-251",
-  "release": "2.53",
-  "approved_source": "Supermodel_v189_LFO_Destination_Clear_ESTUS_Live.syx",
-  "approved_source_sha256": "6a729fbf198b50768ec1bfade96d6627ab11f08cea210f452586927d207a3282",
+  "release": "2.54",
+  "approved_source": "Supermodel_v194_Page_Length_Dark_Steps_v191_Base.syx",
+  "approved_source_sha256": "da908d5ff722164d1fb8efaf38f508a1197a1a23b73fe27bd6e2c72d0ef4d6e1",
   "slice_audio_event_owns_note": true,
   "slice_step_abi_fixed": true,
   "chord_names_external_midi": true,
@@ -109,7 +109,7 @@
   "feral_replaces_tiny": true,
   "feral_model_count": 10,
   "wizard_mode_count": 7,
-  "release_notes": "release-notes-2.53.html",
+  "release_notes": "release-notes-2.54.html",
   "elder_replaces_retrosyn": true,
   "elder_icon": "elder-gameboy",
   "stereo_chorus": true,
@@ -533,5 +533,16 @@
     "CYMBAL"
   ],
   "fixed_image_legacy": "all-features-usb-2ch-default.syx",
-  "delivery_fix": "Immutable release path, checksum-verified pinned-source fallback, independent buffers; firmware bytes unchanged"
+  "delivery_fix": "Immutable release path, checksum-verified fallback, independent buffers; exact-image Samples packing and bootstrap-layout regression gate",
+  "v194_release_approved": true,
+  "page_length": true,
+  "page_length_default": 16,
+  "page_length_range": [
+    1,
+    16
+  ],
+  "page_length_inactive_steps_dark": true,
+  "page_length_native_pattern_storage": true,
+  "estus_advanced_native_plocks": true,
+  "samples_bootstrap_layout_guard": true
 }

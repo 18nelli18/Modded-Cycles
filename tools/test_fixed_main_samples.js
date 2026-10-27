@@ -19,7 +19,7 @@ for(const mode of ['cycles','samples']){
  const changes=[];for(let i=0;i<main.length;i++)if(main[i]!==originalMain[i])changes.push(i);
  assert(changes.length>0&&changes.every(i=>i>=0x401296b2-b.BASE&&i<0x401296b2-b.BASE+32));
  if(prior)assert.deepEqual(out.c.blob,prior);prior=out.c.blob;
- fs.writeFileSync(path.join(outDir,`main-253-for-samples-${mode}.syx`),result.raw);
+ fs.writeFileSync(path.join(outDir,`fixed-main-for-samples-${mode}.syx`),result.raw);
  console.log('PASS',mode,'transport; unchanged Samples bootstrap/updater; only32 key bytes differ; HMAC/content/packet reread; safe bootstrap layout;',main.length,'MAIN bytes,',out.c.blob.length,'flash bytes');
 }
 // Une vraie collision avec l'entree non lue reste refusee, meme valide en aPLib.
@@ -34,7 +34,7 @@ console.log('PASS oversized highly-compressed image rejected when output would o
  const prepare=app.slice(app.indexOf('function prepareFirmware() {'),app.indexOf('// Model:Samples OS in the Model:Cycles container'));
  for(const machine of ['cos','smp']){
   let pending;const st={mode:'mods',machine,os:{stock:true,raw:cycles,sha:b.hex(b.sha256(cycles))},syntakt:{version:'1.42'},samplesOs:{raw:samples,sha:b.hex(b.sha256(samples))}};
-  const context={st,dropOrphans:()=>{},onSamples:()=>true,log:()=>{},window:{MCBuilder:b,MCFlasher:require('../docs/flasher/flasher.js'),MC_RELEASES:[{version:'2.53'}],MCFixedMainImageMeta:{syxSha256:meta.fixed_image_sha256,mainOsSha:meta.main_os_sha256},MCFixedMainImageReady:Promise.resolve(fixed),MCFixedMainImageLoad:async()=>new Uint8Array(fixed)},buildCached:(key,make)=>{pending=make(cycles);}};
+  const context={st,dropOrphans:()=>{},onSamples:()=>true,log:()=>{},window:{MCBuilder:b,MCFlasher:require('../docs/flasher/flasher.js'),MC_RELEASES:[{version:meta.release}],MCFixedMainImageMeta:{syxSha256:meta.fixed_image_sha256,mainOsSha:meta.main_os_sha256},MCFixedMainImageReady:Promise.resolve(fixed),MCFixedMainImageLoad:async()=>new Uint8Array(fixed)},buildCached:(key,make)=>{pending=make(cycles);}};
   vm.runInNewContext(prepare+'\nprepareFirmware();',context);const fw=await pending;
   assert.equal(fw.machine,machine);assert.equal(unpack(fw.raw).u.product,machine==='cos'?0x11:0x0f);assert(fw.name.includes('for-samples_'));
   console.log('PASS actual prepareFirmware branch:',machine==='cos'?'Model:Samples already on Cycles OS':'Model:Samples on its own OS');

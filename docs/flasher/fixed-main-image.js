@@ -1,10 +1,10 @@
-/* 2026-10-27-main253-samples-layout */
+/* 2026-10-27-main254-page-length-dark */
 /* Meme image approuvee ; chemin immuable et repli epingle, SHA obligatoire. */
 (()=>{
   "use strict";
-  const meta=Object.freeze({"mainOsSha": "69e7ea9c3f7c35e7e22e33d757376bc473370d8a574f72d7afeac17cdcec8626", "syxSha256": "6a729fbf198b50768ec1bfade96d6627ab11f08cea210f452586927d207a3282", "file": "Supermodel_2.53_6a729fbf198b.syx"});
+  const meta=Object.freeze({"mainOsSha": "bf71efa56d4780d67b6fd538129d40f0f9968148207f5fee9f786aed82cb61f4", "syxSha256": "da908d5ff722164d1fb8efaf38f508a1197a1a23b73fe27bd6e2c72d0ef4d6e1", "file": "Supermodel_2.54_da908d5ff722.syx"});
   const sources=[new URL(meta.file,window.location.href).href,
-    "https://raw.githubusercontent.com/AveyCole/Modded-Cycles/89557e1/docs/flasher/all-features-usb-2ch-default.syx"];
+    "https://raw.githubusercontent.com/AveyCole/Modded-Cycles/main/docs/flasher/Supermodel_2.54_da908d5ff722.syx"];
   let pending;
   async function load(){
     let failure;

@@ -353,3 +353,7 @@ User confirmed the final v189 fixes and explicitly requested "Perfect, push it."
 ## Main2.53 delivery repair (2026-10-27)
 
 User reports a main-flasher checksum mismatch and requests the fix. Authorizes publishing the same approved v189 bytes under `docs/flasher/Supermodel_2.53_6a729fbf198b.syx` to prevent shared-path cache collisions, retaining the established legacy path. Both files must have SHA `6a729fbf198b50768ec1bfade96d6627ab11f08cea210f452586927d207a3282`; every download source remains checksum and SysEx verified. Firmware and release version unchanged.
+
+## AveyCole main2.54 promotion (2026-10-27)
+
+User: "Push to main, make sure the file size thing doesn't happen again." Authorizes exact v194 SHA `da908d5ff722164d1fb8efaf38f508a1197a1a23b73fe27bd6e2c72d0ef4d6e1`, MAIN `bf71efa56d4780d67b6fd538129d40f0f9968148207f5fee9f786aed82cb61f4`, at the established legacy path and immutable `docs/flasher/Supermodel_2.54_da908d5ff722.syx`. Full v191 base with Page Len1–16, explicitly dark inactive trigs and Estus advanced native locks; SPEAK and Feral retained. Model:Samples exact-image preparation, native bootstrap and flash-capacity checks are release gates. No hardware result inferred from publication approval. Private no-SPEAK/no-Feral variant excluded. Protected flasher blurb unchanged.

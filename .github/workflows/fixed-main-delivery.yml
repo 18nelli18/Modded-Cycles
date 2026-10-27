@@ -1,0 +1,25 @@
+name: Fixed main firmware delivery
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/flasher/**'
+      - 'tools/test_fixed_main*'
+      - 'tools/test_v194_delivery.js'
+      - '.github/workflows/fixed-main-delivery.yml'
+  pull_request:
+    paths:
+      - 'docs/flasher/**'
+      - 'tools/test_fixed_main*'
+      - 'tools/test_v194_delivery.js'
+      - '.github/workflows/fixed-main-delivery.yml'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node tools/test_fixed_main_delivery.js
+      - run: node tools/test_fixed_main_loader.js

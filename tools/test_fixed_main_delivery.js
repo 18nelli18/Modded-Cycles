@@ -1,2 +1,2 @@
-/* Principal2.53 : v189 exact confirme. */
-require("./test_v189_delivery.js");
+/* Livraison courante : hash, layout bootstrap et capacite flash. */
+require("./test_v194_delivery.js");
