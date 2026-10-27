@@ -11,7 +11,9 @@ compilée pour l'ordinateur (rings_ref.cc) depuis une copie de ses sources où n
     hertz (SR24) ;
   - les allègements du budget de 13 % (notes/81) : la lecture linéaire de la ligne des cordes (Read au lieu de
     ReadHermite), et les cordes sympathiques sans peigne (sans leur sortie aux, la seule où joue leur position), leur
-    entrée x racine 2 ; et un plancher de 1/2 au facteur du retard de la dispersion (LITE).
+    entrée x racine 2 ; 3 cordes pour une voix (au lieu de 4), une seule par voix au-delà (au lieu de 2) ; et un
+    plancher de 1/2 au facteur du retard de la dispersion (LITE). La passerelle (modal.c) donne aux modèles à cordes 2
+    voix au plus.
 C'est la définition du son de MODAL. Un contrôle à part compare cette définition à Rings sans LITE, par tiers
 d'octave.
 Le cœur en virgule fixe est compilé pour l'ordinateur (modal_host.c) avec la même arithmétique que sur le Cycles
@@ -120,6 +122,9 @@ LITE = (  # le budget de 13 % (notes/81) : après SR24 ; (fichier, avant, après
     # pas, sur lequel compte le chemin en assembleur)
     ("rings/dsp/string.cc", "delay_fm -= curved_bridge_ * bridge_curving;",
      "delay_fm -= curved_bridge_ * bridge_curving;\n        if (delay_fm < 0.5f) delay_fm = 0.5f;", 1),
+    # les modèles sympathiques : 3 cordes pour une voix, une seule pour plusieurs (ECO : 4, 2, 1)
+    ("rings/dsp/part.cc", "num_strings = kMaxPolyphony / polyphony_;",
+     "num_strings = polyphony_ == 1 ? 3 : 1;", 1),
     # sans peigne, une corde sympathique perd en moyenne la moitié de sa puissance (out - aux) : son entrée x racine 2
     ("rings/dsp/part.cc", "float gain = 0.2f / static_cast<float>(num_strings);",
      "float gain = 0.2f * 1.41421356f / static_cast<float>(num_strings);", 1),
@@ -266,10 +271,10 @@ def lite_spectrum(ref, full):
     def notes(first, step, count, every):
         return tuple((i * every, first + step * (i % 4) - 48.0) for i in range(count))
     cases = [("cordes sympathiques, 1 voix", 1, 1, notes(48, 4, 8, 75), {}),
-             ("cordes sympathiques, 2 voix", 1, 2, notes(55, 5, 8, 75), dict(br=0.7)),
-             ("cordes en accord, 2 voix", 4, 2, notes(48, 3, 8, 75), dict(chord=3)),
+             ("cordes sympathiques, 1 voix, brillantes", 1, 1, notes(55, 5, 8, 75), dict(br=0.7)),
+             ("cordes en accord, 1 voix", 4, 1, notes(48, 3, 8, 75), dict(chord=3)),
              ("corde, 1 voix, grave et brillante", 2, 1, notes(36, 7, 4, 150), dict(br=0.9, da=0.8, st=0.6)),
-             ("corde, 3 voix, aiguë", 2, 3, notes(84, 4, 10, 60), dict(br=0.8, da=0.7))]
+             ("corde, 2 voix, aiguë", 2, 2, notes(84, 4, 10, 60), dict(br=0.8, da=0.7))]
     meds, lvls = [], []
     for name, model, poly, ns, kw in cases:
         data = b"".join(scenario(model, poly, blocks=900, notes=ns, **kw))

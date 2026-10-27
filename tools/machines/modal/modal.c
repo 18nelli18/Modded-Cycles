@@ -79,10 +79,10 @@ struct track {
 	struct modal_part part;
 };
 
-/* Les potards (et la modulation de hauteur) qui bougent sans trig ne sont repris qu'un bloc sur HOLD (5,3 ms) : un
+/* Les potards (et la modulation de hauteur) qui bougent sans trig ne sont repris qu'un bloc sur HOLD (10,7 ms) : un
  * LFO sur un potard referait sinon tous les calculs par bloc des cordes et des modes a chaque bloc (notes/81). Un
  * trig les reprend toujours tout de suite. */
-#define HOLD 8
+#define HOLD 16
 
 #define NKEY 9                                       /* les mots de +0x14 (PITCH) a +0x24 (DECAY) */
 
@@ -156,6 +156,8 @@ void modal_update(s32 pmod, char *v, const char *p)
 	c->model = SHAPE_MODEL[shape];
 	fine = P16(0x22);                                /* FUNC + SHAPE : 0x4000 1 voix, 0x5000 2, 0x6000 3 */
 	c->poly = fine < 0x4800 ? 1 : (fine < 0x5800 ? 2 : 3);   /* 3 au plus : le budget de 13 % (notes/81) */
+	if (c->model != MODEL_MODAL && c->poly > 2)
+		c->poly = 2;                             /* les cordes : 2 voix au plus (notes/81) */
 	c->pa.structure = knob(P16(0x1c));
 	c->pa.brightness = knob(P16(0x16));
 	c->pa.damping = knob(P16(0x24));

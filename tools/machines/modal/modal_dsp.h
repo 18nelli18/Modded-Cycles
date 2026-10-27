@@ -914,12 +914,18 @@ static __attribute__((noinline)) void str_fast(struct mstring *s, const s32 *in,
 	}
 	cs = cs > MB ? MB : (cs < 1 ? 1 : cs);         /* 1 : lu avant d'etre ecrit, comme dans la boucle de str_process */
 	if (cs == MB && !d_inc && !s->fap && !s->fmode) {
-		/* le cas courant : une boucle (modal_str_run) puis le peigne a part (modal_str_comb), quand sa lecture ne
-		 * tombe jamais sur la place que l'echantillon suivant va ecrire (comb >> 20 >= 1 sur tout le bloc) */
+		/* le cas courant : une boucle (modal_str_run) puis le peigne a part (modal_str_comb) ; quand sa lecture
+		 * tombe sur la place que l'echantillon suivant va ecrire (comb >> 20 nul : POSITION a un bout, une corde
+		 * aigue), l'ancien contenu de cette place, garde avant la boucle */
 		s32 pv0 = s->clamped_position;
-		if (!comb || (qmul(s->delay, pv0 + p_inc) >= (1 << 20) && qmul(s->delay, pv0 + MB * p_inc) >= (1 << 20))) {
-			s32 kk[11];
-			int n1 = wp + 1 < MB ? wp + 1 : MB, n3 = wp < MB ? wp : MB;
+		{
+			s32 kk[11], old[MB];
+			int n1 = wp + 1 < MB ? wp + 1 : MB, n3 = wp < MB ? wp : MB, k;
+			int whole = !comb || (qmul(s->delay, pv0 + p_inc) >= (1 << 20)
+					      && qmul(s->delay, pv0 + MB * p_inc) >= (1 << 20));
+			if (!whole)
+				for (k = 1; k < MB; k++)
+					old[k] = line[(wp - k) & (DLINE - 1)];
 			kk[0] = ff;
 			kk[1] = s->fh0;
 			kk[2] = s->fh1;
@@ -936,12 +942,25 @@ static __attribute__((noinline)) void str_fast(struct mstring *s, const s32 *in,
 			s->fx2 = kk[7];
 			s->iir.ic1 = kk[8];
 			s->iir.ic2 = kk[9];
-			if (comb) {
+			if (comb && whole) {
 				kk[0] = s->delay;
 				kk[1] = pv0;
 				kk[2] = p_inc;
 				modal_str_comb(n3 ? &line[wp - 1] : line, aux, n3, kk);
 				modal_str_comb(&line[DLINE - 1], aux + n3, MB - n3, kk);
+			} else if (comb) {
+				s32 pv = pv0;
+				for (k = 0; k < MB; k++) {
+					s32 cb, i, b = (wp - k - 1) & (DLINE - 1), x0, x1;
+					pv += p_inc;
+					cb = qmul(s->delay, pv);
+					i = cb >> 20;
+					x0 = !i && k < MB - 1 ? old[k + 1] : line[b + i];
+					x1 = line[b + i + 1];
+					aux[k] += x0 + qmul(x1 - x0, shl(cb, 11) & Q31ONE);
+				}
+			}
+			if (comb) {
 				s->aux1 = aux[MB - 2] - a30;
 				s->aux0 = aux[MB - 1] - a31;
 			} else {
@@ -2202,18 +2221,18 @@ static void sym_notes(struct modal_part *p, s32 tonic, s32 note, s32 parameter, 
 	}
 }
 
-/* La chaine d'excitation d'une voix inactive (son entree est nulle : filtre d'excitation, pincement, filtre
- * anti-continu) qui est restee sous -108 dB pendant EXC_IDLE blocs n'est plus calculee, jusqu'a ce que la voix
- * redevienne active : elle ne sort plus que des restes sous 2^-18 (l'arrondi par defaut du peigne du pincement la
- * laisse osciller sur un LSB au lieu de s'eteindre). Rings la calcule ; la corde ou le resonateur de la voix,
- * eux, continuent de resonner. */
+/* La chaine d'excitation d'une voix sans entree (filtre d'excitation, pincement, filtre anti-continu) qui est
+ * restee sous -108 dB pendant EXC_IDLE blocs n'est plus calculee, jusqu'a sa prochaine note (ou une entree) : elle ne
+ * sort plus que des restes sous 2^-18 (l'arrondi par defaut du peigne du pincement la laisse osciller sur un LSB au
+ * lieu de s'eteindre). Rings la calcule ; la corde ou le resonateur de la voix, eux, continuent de resonner. Depuis
+ * notes/81, la voix active aussi, entre deux notes. */
 #define EXC_IDLE 8
 
 static int exc_quiet(struct modal_part *p, int v, const s32 *x)
 {
 	int k;
 
-	if (v == p->active) {
+	if (!p->rin_zero) {                              /* une entree : jamais muette */
 		p->exc_idle[v] = 0;
 		return 0;
 	}
@@ -2227,9 +2246,17 @@ static int exc_quiet(struct modal_part *p, int v, const s32 *x)
 	return 1;
 }
 
-static inline int exc_skip(const struct modal_part *p, int v)
+static inline int exc_skip(const struct modal_part *p, int v, int strum)
 {
-	return v != p->active && p->exc_idle[v] >= EXC_IDLE;
+	return p->exc_idle[v] >= EXC_IDLE && p->rin_zero && !(strum && v == p->active);
+}
+
+/* les cordes d'une voix des modeles sympathiques : 3 pour une voix (la corde jouee et deux cordes sympathiques),
+ * 1 pour plusieurs (Rings : 8, 4, 2 pour 1, 2, 4 voix ; eco, notes/74 : 4, 2, 1 ; le budget de 13 %, notes/81 :
+ * une corde sympathique coute presque 2 % du processeur) */
+static inline int sym_strings(const struct modal_part *p)
+{
+	return p->poly == 1 ? 3 : 1;
 }
 
 /* ob, ab : les deux sorties de la voix (ab = ob + MB : str_fast) */
@@ -2243,7 +2270,7 @@ static void render_string(struct modal_part *p, int voice, const struct modal_pe
 		struct vcache *vc = &p->vc[voice];
 		s32 tonic = ps->tonic + ps->fm, note = ps->tonic + p->note[voice] + ps->fm;
 		int chord = p->model == MODEL_SYMPATHETIC ? -1 : ps->chord;
-		ns = MAXPOLY / p->poly;                      /* eco : 4, 2, 1 cordes par voix (Rings : 8, 4, 2) */
+		ns = sym_strings(p);
 		if (!vc->svalid || vc->stonic != tonic || vc->snote != note || vc->sst != st || vc->schord != chord
 		    || vc->sns != ns) {
 			s32 notes[NSTRINGS];
@@ -2262,7 +2289,7 @@ static void render_string(struct modal_part *p, int voice, const struct modal_pe
 	} else {
 		freqs[0] = xto(frequency, 31);
 	}
-	if (!exc_skip(p, voice)) {                       /* sinon : rin reste a zero (exc_quiet) */
+	if (!exc_skip(p, voice, ps->strum)) {            /* sinon : rin reste a zero (exc_quiet) */
 		struct svf *e = &p->exc[voice];
 		if (voice == p->active && !p->rin_zero) {
 			s32 g = M_SQRTG[ns];
@@ -2390,7 +2417,7 @@ static __attribute__((unused)) void modal_limiter(s32 *out, s32 *aux, s32 *lim, 
  * ce qui ne bouge pas (notes/81). Seules les glissades des cordes sympathiques avancent. */
 static void modal_fast(struct modal_part *p, s32 *out, s32 *aux)
 {
-	int v, i, k, ns = p->model == MODEL_STRING ? 1 : MAXPOLY / p->poly;
+	int v, i, k, ns = p->model == MODEL_STRING ? 1 : sym_strings(p);
 
 	for (v = 0; v < p->poly; v++) {
 		s32 *ob = p->poly == 1 ? out : p->ob, *ab = p->poly == 1 ? aux : p->ab;
@@ -2398,7 +2425,7 @@ static void modal_fast(struct modal_part *p, s32 *out, s32 *aux)
 		p->rin_zero = 1;
 		for (k = 0; k < MB; k++)
 			p->rin[k] = 0;
-		if (!exc_skip(p, v)) {
+		if (!exc_skip(p, v, 0)) {
 			struct svf *e = &p->exc[v];
 			if (e->ic1 || e->ic2)
 				svf_lp_block(e, p->rin, MB, 0, 0);
@@ -2529,7 +2556,7 @@ static void modal_process(struct modal_part *p, const struct modal_perf *ps, con
 				p2 = xto(xmul(a2x, pulse), 24);
 				p3 = xto(xmul(a3x, pulse), 24);
 			}
-			if (!exc_skip(p, v)) {
+			if (!exc_skip(p, v, ps->strum)) {
 				svf_lp_block(&p->exc[v], p->rin, MB, p2, p3);
 				exc_quiet(p, v, p->rin);
 			}
