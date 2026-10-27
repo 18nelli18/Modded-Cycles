@@ -119,6 +119,11 @@ vq_nop:
     movel   %d2,%sp@-             | the mixer's gains for this track
 '''
 MC_PATCHES = (
+    ("src/model_tg.s",
+     'str_greso:     .asciz "Resonance"\n',
+     'str_greso:     .asciz "Res"\n    .byte 0,0,0,0,0,0     | padding: same length as "Resonance"\n',
+     "noms : le Resonance de la piste ne tient pas sur la plaque du popup ; Res tient, et l'entree du "
+     "sampler garde son nom long (son popup est plus large)"),
     ("src/model_tg.s", "mq_toggle:\n    movel   %sp@(8),%d0\n    cmpil   #MAX_TRK,%d0\n",
      "mq_toggle:\n    jmp     0x40013904            | Modded-Cycles: the stock toggle, at once\n    nop\n    nop\n",
      "mode mute : chaque touche de piste mute tout de suite (mq_toggle -> 0x40013904 d'origine), sans file d'attente"),
