@@ -1050,9 +1050,9 @@ modal_up:
 
 /* void modal_lim(const s32 *oa, s32 *w, s32 *peak, const s32 *k)
  * La fin de modal_process (le limiteur de Rings, modal_dsp.h) et la difference de la passerelle (modal.c), en une
- * passe : oa = out[MB] puis aux[MB] ; k = m_soft, ATK, DEC, pg. Pour chaque trame :
+ * passe : oa = out[MB] puis aux[MB] ; peak : peak, lz, ln (modal_limiter) ; k = m_soft, ATK, DEC, pg. Par trame :
  *   l = shl(qmul(out, pg), 1) ; r = shl(qmul(aux, pg), 1) ; pk = max(|l|, |r|, |r - l|) ; err = pk - peak ;
- *   peak += qmul(err > 0 ? ATK : DEC, err) ; g = peak <= UNIT ? 0,8 : lim_gain(peak) ;
+ *   peak += qmul(err > 0 ? ATK : DEC, err) ; g = peak <= UNIT ? 0,8 : lim_gain(peak, ..., err <= 0) ;
  *   w[k] = softlimit(qmul(l, g)) - softlimit(qmul(r, g))
  * softlimit au-dela de 4,0 : modal_softbig (C). Les memes operations que le C. */
 	.macro	SOFTL x, t1, t2, t3
@@ -1092,14 +1092,16 @@ modal_up:
 	.endm
 	.globl	modal_lim
 modal_lim:
-	lea	-44(%sp), %sp
-	movem.l	%d2-%d7/%a2-%a6, (%sp)
-	movea.l	48(%sp), %a0		/* out */
+	lea	-52(%sp), %sp
+	movem.l	%d2-%d7/%a2-%a6, 8(%sp)
+	movea.l	56(%sp), %a0		/* out */
 	lea	4*MB(%a0), %a1		/* aux */
-	movea.l	52(%sp), %a2		/* w */
-	movea.l	56(%sp), %a3
+	movea.l	60(%sp), %a2		/* w */
+	movea.l	64(%sp), %a3
 	move.l	(%a3), %d7		/* peak */
-	movea.l	60(%sp), %a3
+	move.l	4(%a3), (%sp)		/* lz */
+	move.l	8(%a3), 4(%sp)		/* ln */
+	movea.l	68(%sp), %a3
 	movea.l	(%a3), %a4		/* m_soft */
 	movea.l	4(%a3), %a5		/* ATK */
 	movea.l	8(%a3), %a6		/* DEC */
@@ -1139,29 +1141,42 @@ modal_lim:
 	add.l	%d3, %d7		/* peak */
 	move.l	#0x66666666, %d4	/* Q31(0,8) */
 	cmpi.l	#0x1000000, %d7
-	ble.w	9f
-	/* lim_gain(peak) : n = clz(peak) - 1, m = peak << n, z = (0xffffffff / (m >> 15)) << 13,
-	 * t = 0x80000000 - shl(qmul(m, z), 1), z = qmul(shl(qmul(z, t), 1), 0,8), z << (n - 5) ou z >> (5 - n) */
+	bgt.s	12f
+	moveq	#-1, %d3
+	move.l	%d3, 4(%sp)		/* ln = -1 : 1 / m a refaire */
+	bra.w	9f
+	/* lim_gain(peak) : n = clz(peak) - 1, m = peak << n ; z = (0xffffffff / (m >> 15)) << 13, ou au relachement
+	 * (err <= 0) avec le meme n, le 1 / m d'avant ; t = 0x80000000 - shl(qmul(m, z), 1), z = shl(qmul(z, t), 1)
+	 * (gardes : lz, ln) ; qmul(z, 0,8) << (n - 5) ou >> (5 - n) */
+12:	move.l	%d2, %d5		/* err */
 	move.l	%d7, %d2
 	ff1.l	%d2
 	subq.l	#1, %d2			/* n */
 	move.l	%d7, %d3
 	lsl.l	%d2, %d3		/* m */
-	move.l	%d3, %d5
+	tst.l	%d5
+	bgt.s	13f			/* attaque : la division */
+	cmp.l	4(%sp), %d2
+	bne.s	13f			/* n change : la division */
+	move.l	(%sp), %d4		/* le 1 / m d'avant */
+	bra.s	14f
+13:	move.l	%d3, %d5
 	moveq	#15, %d4
 	asr.l	%d4, %d5		/* m >> 15 */
 	moveq	#-1, %d4
 	divu.l	%d5, %d4		/* 0xffffffff / (m >> 15) */
 	moveq	#13, %d5
 	lsl.l	%d5, %d4		/* z */
-	mac.l	%d3, %d4, %acc0
+14:	mac.l	%d3, %d4, %acc0
 	movclr.l %acc0, %d3
 	add.l	%d3, %d3
 	move.l	#0x80000000, %d5
 	sub.l	%d3, %d5		/* t */
 	mac.l	%d4, %d5, %acc0
 	movclr.l %acc0, %d4
-	add.l	%d4, %d4
+	add.l	%d4, %d4		/* 1 / m */
+	move.l	%d4, (%sp)		/* lz */
+	move.l	%d2, 4(%sp)		/* ln */
 	move.l	#0x66666666, %d5
 	mac.l	%d4, %d5, %acc0
 	movclr.l %acc0, %d4		/* 0,8 / m */
@@ -1181,8 +1196,10 @@ modal_lim:
 	move.l	%d0, (%a2)+
 	cmpa.l	%a3, %a0
 	bne.w	1b
-	movea.l	56(%sp), %a3
+	movea.l	64(%sp), %a3
 	move.l	%d7, (%a3)		/* peak */
-	movem.l	(%sp), %d2-%d7/%a2-%a6
-	lea	44(%sp), %sp
+	move.l	(%sp), 4(%a3)		/* lz */
+	move.l	4(%sp), 8(%a3)		/* ln */
+	movem.l	8(%sp), %d2-%d7/%a2-%a6
+	lea	52(%sp), %sp
 	rts

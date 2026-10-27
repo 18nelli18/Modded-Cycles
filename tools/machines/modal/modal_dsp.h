@@ -1860,7 +1860,7 @@ struct modal_part {
 	struct plucker pl[MAXPOLY];
 	struct resonator reso[MAXPOLY];
 	struct lfo slfo[NSTRINGS];
-	s32 peak;                                        /* limiteur, UNIT */
+	s32 peak, lz, ln;                                /* limiteur : peak (UNIT), 1 / m (Q30) et n de lim_gain ; cet ordre */
 	s32 rin_zero;                                    /* rin nul a l'entree de la voix (pas d'entree) */
 	s32 exc_idle[MAXPOLY];                           /* blocs d'excitation muette d'une voix inactive (exc_quiet) */
 	s32 rin[MB], sym[MB], ob[MB], ab[MB], nb[MB];
@@ -1897,6 +1897,7 @@ static void modal_part_init(struct modal_part *p)
 		dc_init(&p->dcb[i], M_POLE10);
 	}
 	p->peak = UNIT >> 1;
+	p->ln = -1;
 	p->fk_valid = 0;
 	nf_init(&p->nf);
 }
@@ -2147,24 +2148,32 @@ static void render_string(struct modal_part *p, int voice, const struct modal_pe
 	}
 }
 
-/* le gain du limiteur au-dessus de 1,0 : 0,8 / peak (peak en UNIT, > UNIT), en Q31. L'inverse de xrecip (une
- * division 32/32 puis une iteration de Newton, ~30 bits justes), sans le flottant maison : il change a chaque
- * echantillon. */
-static inline s32 lim_gain(s32 peak)
+/* le gain du limiteur au-dessus de 1,0 : 0,8 / peak (peak en UNIT, > UNIT), en Q31. peak = m 2^-n (m dans
+ * [2^30, 2^31), Q30) ; 1 / m par une division 32/32 puis une iteration de Newton (~30 bits justes), sans le flottant
+ * maison : il change a chaque echantillon. Quand peak descend (relachement, err <= 0 : de 4e-5 par echantillon au
+ * plus) et garde son n, l'iteration repart du 1 / m de l'echantillon d'avant, sans la division (notes/81) : l'ecart
+ * relatif de depart est sous 4e-5, son carre sous 2e-9. lz, ln : ce 1 / m (Q30) et son n (-1 : a refaire). */
+static inline s32 lim_gain(s32 peak, s32 *lz, s32 *ln, int rel)
 {
 	int n = __builtin_clz((u32)peak) - 1;            /* 1..6 : peak dans (2^24, 2^31) */
 	s32 m = shl(peak, n), z, t;                      /* [2^30, 2^31) : m / 2^30 dans [1, 2) */
 
-	z = (s32)((0xffffffffu / (u32)(m >> 15)) << 13); /* 1 / m en Q30, 16 bits justes */
+	if (rel && n == *ln)
+		z = *lz;
+	else
+		z = (s32)((0xffffffffu / (u32)(m >> 15)) << 13); /* 1 / m en Q30, 16 bits justes */
 	t = (s32)(0x80000000u - (u32)shl(qmul(m, z), 1));
-	z = qmul(shl(qmul(z, t), 1), Q31(0.8));         /* 0,8 / m, Q30 */
+	z = shl(qmul(z, t), 1);                          /* 1 / m, Q30 */
+	*lz = z;
+	*ln = n;
+	z = qmul(z, Q31(0.8));                           /* 0,8 / m, Q30 */
 	return n >= 5 ? shl(z, n - 5) : z >> (5 - n);    /* 0,8 / peak = (0,8 / m) 2^(n - 6) */
 }
 
-/* le limiteur de Rings, sur les deux sorties (UNIT), en place ; pg : le gain du modele */
-static __attribute__((unused)) void modal_limiter(s32 *out, s32 *aux, s32 *peakp, s32 pg)
+/* le limiteur de Rings, sur les deux sorties (UNIT), en place ; pg : le gain du modele ; lim : peak, lz, ln */
+static __attribute__((unused)) void modal_limiter(s32 *out, s32 *aux, s32 *lim, s32 pg)
 {
-	s32 peak = *peakp, g;
+	s32 peak = lim[0], g;
 	int k;
 
 	for (k = 0; k < MB; k++) {
@@ -2177,11 +2186,16 @@ static __attribute__((unused)) void modal_limiter(s32 *out, s32 *aux, s32 *peakp
 			pk = t;
 		err = pk - peak;
 		peak += qmul(err > 0 ? M_LIM_ATK : M_LIM_DEC, err);
-		g = peak <= UNIT ? Q31(0.8) : lim_gain(peak);
+		if (peak <= UNIT) {
+			g = Q31(0.8);
+			lim[2] = -1;
+		} else {
+			g = lim_gain(peak, &lim[1], &lim[2], err <= 0);
+		}
 		out[k] = softlimit(qmul(l, g));
 		aux[k] = softlimit(qmul(r, g));
 	}
-	*peakp = peak;
+	lim[0] = peak;
 }
 
 /* Les modeles a cordes quand rien n'a change depuis le bloc complet precedent (potards, notes, voix active, ni strum,
