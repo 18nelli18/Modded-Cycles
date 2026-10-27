@@ -89,3 +89,33 @@ pv_curve:
 	sub.l	20(%sp), %d0
 	move.l	%d0, 20(%sp)			/* (retour, foncteur, écran, x, y, valeur) */
 	jmp	0x4004e40c
+
+/* Valeur enregistrée d'Attack, du Filtre et de la Résonance (0x0d, 0x0c, 0x0b). Le chemin texte de la page
+ * (0x4000a70e, slot +0x10 des vtables de ParameterPageView) passe par le formateur de l'objet d'interface
+ * (UI_REC +0x20) : pour ces trois identifiants « Error », c'est 0x4004a440, qui imprime deux décimales
+ * (« %s%d.%02d », 0x40128641) : la valeur enregistrée s'affichait 83.00. Les vrais paramètres (0x49, 0x4a, 0x18)
+ * ont le formateur entier 0x400456c8.
+ *
+ * 0x4004a448 (movel 24(%sp),%d2 ; movel 28(%sp),%d3) devient un saut ici : le premier argument est l'objet
+ * d'interface (UI_REC + id*100 + 0x14). Pour 0x0b/0x0c/0x0d, on rend la pile d'entrée et on saute au formateur
+ * entier, mêmes arguments ; sinon on refait les deux chargements et on reprend à 0x4004a450 (tst.l d2). Le test
+ * « valeur nulle » (0 -> « 0.00 ») est donc couvert aussi. Aucun identifiant stocké (dh_pass, dh_atk) ne change. */
+	.globl	pv_text
+
+	.section .text.popup_text, "ax"
+pv_text:
+	move.l	20(%sp), %a0			/* 1er argument : UI_REC + id*100 + 0x14 */
+	lea	(0x40a71754 + 0x0b * 100 + 0x14), %a1
+	cmp.l	%a1, %a0
+	beq.s	9f
+	lea	(0x40a71754 + 0x0c * 100 + 0x14), %a1
+	cmp.l	%a1, %a0
+	beq.s	9f
+	lea	(0x40a71754 + 0x0d * 100 + 0x14), %a1
+	cmp.l	%a1, %a0
+	bne.s	8f
+9:	lea	16(%sp), %sp			/* rend la pile d'entrée du formateur stock */
+	jmp	0x400456c8			/* formateur entier, comme 0x49 / 0x4a / 0x18 */
+8:	move.l	24(%sp), %d2			/* les deux chargements écrasés par le saut */
+	move.l	28(%sp), %d3
+	jmp	0x4004a450			/* puis tst.l d2 / beq du formateur stock */

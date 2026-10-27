@@ -73,3 +73,39 @@ Rapport d'un utilisateur (27/10/2026, sa propre machine, `fastflash.py`, OS avec
 2/3/4, navigateur multiligne) : Attack, Filtre et Résonance ont leur grand nombre, leurs points et leur courbe sur
 les machines essayées ; l'animation d'Attack est celle voulue. Reste : la valeur enregistrée de Filtre et Résonance
 s'affiche `83.00` (avec décimales) là où le potard montre `83`.
+
+## 5. La valeur enregistrée de Filtre et Résonance `[FAIT en émulation]`
+
+Rapport de la même machine (27/10/2026) : le potard affiche « 83 » pendant qu'on tourne, mais la valeur enregistrée de
+Filtre et de Résonance s'affiche « 83.00 », avec deux décimales ; Attack est à vérifier. Le dessin du popup n'est pas
+en cause : c'est le **chemin texte de la page**, `0x4000a70e` (slot `+0x10` des vtables de ParameterPageView), qui
+formate la valeur par le champ `UI_REC +0x20`.
+
+- Pour `0x0b`, `0x0c` et `0x0d`, ce champ vaut `0x4004a440`. Cette fonction convertit le 16.16 en partie entière et
+  centièmes et imprime `%s%d.%02d` (`0x40128641`, signe vide `0x4012bc6f` ou « - » `0x401272fc`) : `0x5300` donne
+  « 83.00 », `0` donne « 0.00 » par le cas nul `0x4004a4b2` (« 0.00 », `0x40128e6f`).
+- Les vrais paramètres Sampler `0x49`/`0x4a` et Amp Decay `0x18` ont le formateur entier `0x400456c8`
+  (`valeur >> 8`, `%d` `0x4012a9ea`) : « 83 ». C'est la seule différence de texte ; les identifiants stockés par
+  `dh_pass` / `dh_atk` ne sont pas touchés.
+
+La retouche (toujours avec Model-TG, sans déplacer aucun de ses symboles) ajoute un second masque de sprite 48×22
+libéré, `0x40168a84` (192 o ; vérifié libre sur `refs/heads`, `origin/*` et `upstream/*`). Son code `pv_text` est
+appelé par `0x4004a448` (`movel 24(%sp),%d2 ; movel 28(%sp),%d3`), devenu `jmp 0x40168a84` : le premier argument est
+l'objet d'interface (`UI_REC + id*100 + 0x14`) ; pour `0x0b`/`0x0c`/`0x0d` il rend la pile d'entrée et saute au
+formateur entier `0x400456c8` avec les mêmes arguments, sinon il refait les deux chargements et reprend à
+`0x4004a450`. Le cas « valeur nulle » passe donc aussi par le formateur entier. Aucune écriture d'identifiant, aucun
+changement de taille : `30-model-tg` et `30-model-tg-st` ne gagnent que les deux masques, la redirection de leurs
+sprites et le saut du formateur.
+
+Preuve : `tools/emu/test_popup_view.py` appelle le vrai chemin `0x4000a70e` (vtable factice dont le slot `+0x18`
+accepte la valeur) sur l'OS d'origine et sur l'image Model-TG, valeurs 0, `0x5300`, `0x7f00` :
+
+| Identifiant | Avant (OS d'origine) | Après (Model-TG) | Référence |
+|---|---|---|---|
+| 0x0b Résonance | `0.00`, `83.00`, `127.00` | `0`, `83`, `127` | 0x4a : `0`, `83`, `127` |
+| 0x0c Filtre | `0.00`, `83.00`, `127.00` | `0`, `83`, `127` | 0x49 : `0`, `83`, `127` |
+| 0x0d Attack | `0.00`, `83.00`, `127.00` | `0`, `83`, `127` | 0x18 : `0`, `83`, `127` |
+
+Avec Model-TG seul, puis avec `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` et `Syntakt_OS1.42.syx` : `TOUT OK` dans
+les deux cas. La vérification « la valeur enregistrée sort entière 0, 83, 127 » échouait sur l'ancien code, qui
+imprimait `83.00`. Reste à confirmer sur la machine de Maxime.

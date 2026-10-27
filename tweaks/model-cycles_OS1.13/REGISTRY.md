@@ -6,9 +6,9 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 283 tweaks, 31 782 écritures.
-- Masques de sprites libérables : 164 (35 960 o), dont 55 pris (18 576 o) et **109 libres (17 384 o)**.
-- Crochets sur l'OS : 102 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
+- 283 tweaks, 31 788 écritures.
+- Masques de sprites libérables : 164 (35 960 o), dont 56 pris (18 768 o) et **108 libres (17 192 o)**.
+- Crochets sur l'OS : 103 adresses détournées, dont 57 à l'identique par des mods de familles différentes.
 - Pointeurs réécrits : 58 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 262 tweaks ; place restante au §3.
 
@@ -42,7 +42,7 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x401904b4` | `0x400ac784` | pris (370/376 o) | multiline-browser (370 o) |
 | `0x40192734` | `0x400ac2b2` | pris (318/376 o) | trigless-dim (318 o) |
 
-### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 8 pris, 34 libres (6 528 o)
+### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 9 pris, 33 libres (6 336 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
@@ -51,7 +51,7 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x4015943c` | `0x400b73e4` | libre | |
 | `0x4015f38c` | `0x400b504a` | libre | |
 | `0x40165fec` | `0x400b28b4` | libre | |
-| `0x40168a84` | `0x400b1bc0` | libre | |
+| `0x40168a84` | `0x400b1bc0` | pris (58/192 o) | model-tg (58 o), model-tg-st (58 o) |
 | `0x40168da4` | `0x400b1b32` | libre | |
 | `0x4016bcd8` | `0x400b12fe` | libre | |
 | `0x4016dab8` | `0x400b0f78` | libre | |
@@ -579,6 +579,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4003560a` | `4eb940044df84a8057c0…` | jmp | masque `0x40192ba4` +0x0 `midi_key` | midi-live-both | notes/53 |
 | `0x4003c99a` | `4cee3cfcff98` | jmp | masque `0x4016b6f8` +0x0 `cfg_tail` | mod-settings | notes/72 |
 | `0x4004486c` | `4eb94005a274` | jsr | masque `0x40166760` +0xaa `tf_boot` | track-filter | notes/47 |
+| `0x4004a448` | `242f0018262f` | jmp | masque `0x40168a84` +0x0 | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x4004df40` | `704c222f0004` | jmp | charge utile (mémoire), 3 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
 | `0x4004df5c` | `7206202f0004` | jmp | charge utile (mémoire), 9 cibles selon la combinaison | acid, macro, macro-acid, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/36 |
 | `0x4004df5c` | `4ef9401ae84e` | jmp | charge utile (mémoire), 7 cibles selon la combinaison | acid-tg, macro-acid-tg, macro-tg, syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) | notes/31, notes/36, notes/43, notes/54 |
@@ -755,8 +756,8 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | macro | 122 | 56 | 14 | 48 | 2 | 2 | 0 | 105 152 o | notes/36 |
 | macro-acid | 122 | 55 | 15 | 48 | 2 | 2 | 0 | 111 760 o | notes/36 |
 | acid | 122 | 56 | 14 | 48 | 2 | 2 | 0 | 11 380 o | notes/36 |
-| model-tg | 144 | 94 | 32 | 0 | 2 | 2 | 14 | 87 936 o | notes/82 |
-| model-tg-st | 144 | 94 | 32 | 0 | 2 | 2 | 14 | 87 936 o | notes/31 |
+| model-tg | 147 | 94 | 33 | 0 | 3 | 3 | 14 | 87 936 o | notes/82 |
+| model-tg-st | 147 | 94 | 33 | 0 | 3 | 3 | 14 | 87 936 o | notes/31 |
 | syntakt-tg-* (33 tweaks) | 117–119 | 51 | 17–19 | 47 | 1 | 1 | 0 | 227 760–243 904 o | notes/31, notes/36 |
 | syntakt-tg-*-acid (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 145 997–157 538 o | notes/36 |
 | syntakt-tg-*-macro (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 230 680–242 230 o | notes/36 |

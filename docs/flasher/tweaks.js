@@ -100,7 +100,7 @@ window.MC_TWEAKS = {
     "  - src/model_tg.s : zone d'échantillons : 1 Mo de moins, laissé aux moteurs du Syntakt (0x46700000..0x46800000)",
     "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup,",
     "et la division des pistes par 2 plus courte de la boucle des voix (tools/voice_loop.py, notes/36).",
-    "Fenêtre de valeur d'Attack, du Filtre et de la Résonance (tools/popup_view.py, notes/82) : grand nombre, points et courbe (Decay retourné pour Attack, ceux du Sampler pour Filtre et Résonance).",
+    "Fenêtre de valeur d'Attack, du Filtre et de la Résonance (tools/popup_view.py, notes/82) : grand nombre, points et courbe (Decay retourné pour Attack, ceux du Sampler pour Filtre et Résonance), et valeur enregistrée entière comme celle du Sampler.",
     "Base de la version combinée Model-TG + moteurs du Syntakt (notes/31) : ne s'installe qu'avec un tweak",
     "syntakt-tg-…, qui s'ajoute après lui et chaîne ses détours."
    ],
@@ -267,6 +267,11 @@ window.MC_TWEAKS = {
      "off": 206574,
      "old": "4cef7c7c0018",
      "new": "4ef9401b7564"
+    },
+    {
+     "off": 303176,
+     "old": "242f0018262f",
+     "new": "4ef940168a84"
     },
     {
      "off": 318300,
@@ -589,6 +594,11 @@ window.MC_TWEAKS = {
      "new": "1b3d1c"
     },
     {
+     "off": 726976,
+     "old": "40168a84",
+     "new": "4014b364"
+    },
+    {
      "off": 745524,
      "old": "4015c044",
      "new": "40154ae4"
@@ -872,6 +882,11 @@ window.MC_TWEAKS = {
      "off": 1424956,
      "old": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
      "new": "a93c000000202f0a45f94015c2fc4aaa000467404ab9404a062c670c4ab9404a06446704610000322f2a00042f1242aa00044eb940002912508f4aaa000c67142f2a000c2f2a000842aa000c4eb940002912508f245f4e7541f980008007721f70000810000767025c8041e8004053816af073b9400029b95281c2fc000304810000001090816a027000721fb0816f02200123c0404a06204e7541f94015c2fc4aa80004670850884aa80004660c20af0004216f000800044e754ef94000291200000000000000000000000000000000"
+    },
+    {
+     "off": 1476228,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
+     "new": "206f001443f940a71bb4b1c9671443f940a71c18b1c9670a43f940a71c7cb1c9660a4fef00104ef9400456c8242f0018262f001c4ef94004a450"
     }
    ],
    "append": {

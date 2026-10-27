@@ -43,6 +43,7 @@ import lofi_ui as L                 # noqa: E402
 import test_sdvintage as T          # noqa: E402
 
 STOCK_POPUP = 0x4001d818           # le code stock appelé par le slot 144 (Model-TG y saute pour ces ids)
+TEXT_PATH = 0x4000a70e             # le texte de la valeur sur la page (slot +0x10), formateur UI_REC +0x20
 PARAM_TABLE = 0x4010dce0           # descripteurs de paramètres, 56 o chacun
 VT64 = 0x4000a66a                  # vtable[64] de l'objet des paramètres : 0 = chiffres, 1 = dessin spécial
 DOT_OUTLINE, DOT_FILLED = 0x40070c4e, 0x40070efc
@@ -55,6 +56,7 @@ IDS = [
     (0x0b, "track Resonance",    None),
 ]
 VALUES = (0, 0x2000, 0x4000, 0x7f00)
+SAVED_VALUES = (0, 0x5300, 0x7f00)   # 0, 83, 127 : le rapport du 27/10/2026, valeur enregistrée
 FAIL = []
 FACTS = []
 CLAIMS = []
@@ -200,6 +202,19 @@ def px_summary(fb):
             f"crc=0x{zlib.crc32(fb) & 0xffffffff:08x}")
 
 
+def text_path(view, desc, val):
+    """Le texte que la page dessine pour ce descripteur et cette valeur (vrai chemin 0x4000a70e, formateur stock)."""
+    S = L.SCRATCH + 0x20000
+    obj, vt, buf, stub = S, S + 0x100, S + 0x200, S + 0x300
+    view.uc.mem_write(vt, bytes(0x100))                 # vtable : slot +0x18 (6) -> 1, valeur acceptée
+    view.uc.mem_write(stub, b"\x70\x01\x4e\x75")      # moveq #1,%d0 ; rts
+    view.uc.mem_write(vt + 24, struct.pack(">I", stub))
+    view.uc.mem_write(obj, struct.pack(">I", vt))
+    view.uc.mem_write(buf, bytes(32))
+    view.call(TEXT_PATH, obj, desc, val, buf)
+    return view.cstr(buf) if view.sp_ok and not view.bad else None
+
+
 def sprite_line(view, sprites):
     if not sprites:
         return "-"
@@ -247,7 +262,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--cycles", required=True)
     ap.add_argument("--with", dest="others", default="model-tg-st",
-                    help="tweaks appliqués, ids séparés par des virgules (model-tg-st toujours inclus)")
+                    help="tweaks appliqués, ids séparés par des virgules (model-tg-st ajouté si aucun model-tg)")
     ap.add_argument("--syntakt", help="Syntakt_OS1.42.syx, si un tweak --with en extrait un moteur")
     ap.add_argument("--png", help="dossier des images côte à côte (un PNG par identifiant)")
     args = ap.parse_args()
@@ -259,7 +274,7 @@ def main():
             t = json.loads(f.read_text(encoding="utf-8"))
             by_id[t["id"]] = t
     ids = [i for i in args.others.split(",") if i]
-    if "model-tg-st" not in ids:                    # le banc est défini sur l'image avec Model-TG
+    if not any(i.startswith("model-tg") for i in ids):   # le banc est défini sur l'image avec Model-TG
         ids.insert(0, "model-tg-st")
     ids = list(dict.fromkeys(ids))
     missing = [i for i in ids if i not in by_id]
@@ -324,6 +339,24 @@ def main():
                   f"0x{pid:02x} valeur 0x{val:04x} : fenêtre dessinée par 0x{STOCK_POPUP:08x} "
                   f"({row['hits']} entrée), sans accès hors mémoire")
         results[pid] = (rows, mn, mx)
+
+    # --- la valeur enregistrée (texte de la page, 0x4000a70e) -------------------------------------------------------
+    print("\nValeur enregistrée (chemin texte 0x4000a70e, formateur UI_REC +0x20)")
+    old_view = L.UI(stock, end=build.BASE + len(stock))
+    expected = ["0", "83", "127"]
+    ref = {pid: [text_path(view, pid, v) for v in SAVED_VALUES] for pid in (0x18, 0x49, 0x4a)}
+    old = {pid: [text_path(old_view, pid, v) for v in SAVED_VALUES] for pid in (0x0b, 0x0c, 0x0d)}
+    new = {pid: [text_path(view, pid, v) for v in SAVED_VALUES] for pid in (0x0b, 0x0c, 0x0d)}
+    names = {0x0b: "Résonance", 0x0c: "Filtre", 0x0d: "Attack"}
+    for pid in (0x0b, 0x0c, 0x0d):
+        print(f"  0x{pid:02x} {names[pid]:<10} avant {', '.join(old[pid]):<18} après {', '.join(new[pid])}")
+    check(all(old[pid] == ["0.00", "83.00", "127.00"] for pid in (0x0b, 0x0c, 0x0d)),
+          "0x0b/0x0c/0x0d : sur l'OS d'origine, la valeur enregistrée sort 0.00, 83.00, 127.00 (le formateur "
+          "0x4004a440, « %s%d.%02d »)")
+    check(all(new[pid] == expected for pid in (0x0b, 0x0c, 0x0d))
+          and all(ref[pid] == expected for pid in (0x18, 0x49, 0x4a)),
+          "0x0b/0x0c/0x0d : la valeur enregistrée sort entière 0, 83, 127, exactement comme 0x18/0x49/0x4a "
+          "(formateur entier 0x400456c8)")
 
     # --- confrontation au rapport ---------------------------------------------------------------------------------
     print("\nBilan des affirmations du rapport popup-envelope-re.md")
