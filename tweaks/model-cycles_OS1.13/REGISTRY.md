@@ -6,8 +6,8 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 283 tweaks, 31 778 écritures.
-- Masques de sprites libérables : 164 (35 960 o), dont 54 pris (18 384 o) et **110 libres (17 576 o)**.
+- 283 tweaks, 31 782 écritures.
+- Masques de sprites libérables : 164 (35 960 o), dont 55 pris (18 576 o) et **109 libres (17 384 o)**.
 - Crochets sur l'OS : 102 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
 - Pointeurs réécrits : 58 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 262 tweaks ; place restante au §3.
@@ -42,12 +42,12 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x401904b4` | `0x400ac784` | pris (370/376 o) | multiline-browser (370 o) |
 | `0x40192734` | `0x400ac2b2` | pris (318/376 o) | trigless-dim (318 o) |
 
-### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 7 pris, 35 libres (6 720 o)
+### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 8 pris, 34 libres (6 528 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
 | `0x40152d38` | `0x400b9726` | libre | |
-| `0x401592bc` | `0x400b7404` | libre | |
+| `0x401592bc` | `0x400b7404` | pris (148/192 o) | model-tg (148 o), model-tg-st (148 o) |
 | `0x4015943c` | `0x400b73e4` | libre | |
 | `0x4015f38c` | `0x400b504a` | libre | |
 | `0x40165fec` | `0x400b28b4` | libre | |
@@ -557,46 +557,46 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x400081f2` | `4eb940090f48` | jsr | masque `0x4018f4b4` +0x0 | level-pan-values | notes/44 |
 | `0x4000bae0` | `204031842a14` | jsr | masque `0x40182b38` +0x66 `sr_set` | step-rec | notes/73 |
 | `0x4000c140` | `4e56ffe0202e000c` | jmp | masque `0x401780a8` +0x0 `lfo_dest` | lfo-plus | notes/56 |
-| `0x4001413e` | `205242a72f0a` | jmp | charge utile (image) +0x10eb6 | model-tg, model-tg-st | notes/31, notes/36 |
-| `0x400169f0` | `4feffff448d7040c` | jmp | charge utile (image) +0x4fb6 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4001413e` | `205242a72f0a` | jmp | charge utile (image) +0x10eb6 | model-tg, model-tg-st | notes/31, notes/82 |
+| `0x400169f0` | `4feffff448d7040c` | jmp | charge utile (image) +0x4fb6 | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x4001a1c4` | `4eb940016086` | jsr | masque `0x4018a788` +0x16 | arp | notes/32 |
 | `0x4001aa4e` | `4fefffe048d70cfc` | jmp | masque `0x4018f4b4` +0xc | level-pan-values | notes/44 |
 | `0x4001b22a` | `4e56ffc048d73cfc` | jmp | masque `0x4018f4b4` +0x78 | level-pan-values | notes/44 |
 | `0x4001c3dc` | `4eb940025798` | jsr | masque `0x40173848` +0xa8 `lfo_ctor` | lfo-plus | notes/56 |
 | `0x4001d25e` | `4eb940016086` | jsr | masque `0x4018a788` +0x1a | arp | notes/32 |
 | `0x4001e8da` | `202f0020226a0068` | jsr | charge utile (mémoire), 28 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
-| `0x40021f56` | `2f034e944879404a8cb8…` | jsr | charge utile (image) +0x4f16 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x40021f56` | `2f034e944879404a8cb8…` | jsr | charge utile (image) +0x4f16 | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x4002249c` | `4eb940072490` | jsr | masque `0x4015c044` +0x28 `th_press` | trig-hold | notes/33 |
-| `0x400224ee` | `2f034eb9400724a0` | jmp | cave `0x401489fa` +0x0 | model-tg, model-tg-st, trig-preview | notes/31, notes/34, notes/36 |
+| `0x400224ee` | `2f034eb9400724a0` | jmp | cave `0x401489fa` +0x0 | model-tg, model-tg-st, trig-preview | notes/31, notes/34, notes/82 |
 | `0x40022d44` | `4eb940072460` | jsr | masque `0x4015c044` +0x3a `th_hold` | trig-hold | notes/33 |
 | `0x40022da6` | `4eb94006b736` | jsr | masque `0x4015c044` +0x6c `th_release` | trig-hold | notes/33 |
-| `0x4002351a` | `2f024eb9400740ca` | jmp | cave `0x40148328` +0x0 | latching-mute, model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4002351a` | `2f024eb9400740ca` | jmp | cave `0x40148328` +0x0 | latching-mute, model-tg, model-tg-st | notes/31, notes/82 |
 | `0x400243d6` | `700ab084673e` | jmp | masque `0x40182b38` +0x0 `sr_key` | step-rec | notes/73 |
 | `0x40025e10` | `4feffff02f0a` | jmp | masque `0x40173848` +0xf6 `lfo_gate` | lfo-plus | notes/56 |
 | `0x4002d480` | `4cef7c7c0018` | jmp | masque `0x4016cae8` +0xc0 | arp | notes/32 |
-| `0x4002f7d8` | `4cef7c7c0018` | jmp | charge utile (image) +0x11350 | model-tg, model-tg-st | notes/31, notes/36 |
-| `0x40032aee` | `4cef7c7c0018` | jmp | charge utile (image) +0xd424 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4002f7d8` | `4cef7c7c0018` | jmp | charge utile (image) +0x11350 | model-tg, model-tg-st | notes/31, notes/82 |
+| `0x40032aee` | `4cef7c7c0018` | jmp | charge utile (image) +0xd424 | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x4003560a` | `4eb940044df84a8057c0…` | jmp | masque `0x40192ba4` +0x0 `midi_key` | midi-live-both | notes/53 |
 | `0x4003c99a` | `4cee3cfcff98` | jmp | masque `0x4016b6f8` +0x0 `cfg_tail` | mod-settings | notes/72 |
 | `0x4004486c` | `4eb94005a274` | jsr | masque `0x40166760` +0xaa `tf_boot` | track-filter | notes/47 |
 | `0x4004df40` | `704c222f0004` | jmp | charge utile (mémoire), 3 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
 | `0x4004df5c` | `7206202f0004` | jmp | charge utile (mémoire), 9 cibles selon la combinaison | acid, macro, macro-acid, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/36 |
 | `0x4004df5c` | `4ef9401ae84e` | jmp | charge utile (mémoire), 7 cibles selon la combinaison | acid-tg, macro-acid-tg, macro-tg, syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) | notes/31, notes/36, notes/43, notes/54 |
-| `0x4004df5c` | `7206202f0004` | jmp | charge utile (image) +0x470e | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4004df5c` | `7206202f0004` | jmp | charge utile (image) +0x470e | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x4004df76` | `7205202f0004` | jmp | charge utile (mémoire), 9 cibles selon la combinaison | acid, macro, macro-acid, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/36 |
 | `0x4004df76` | `4ef9401b278a` | jmp | charge utile (mémoire), 7 cibles selon la combinaison | acid-tg, macro-acid-tg, macro-tg, syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) | notes/31, notes/36, notes/43, notes/54 |
-| `0x4004df76` | `7205202f0004` | jmp | charge utile (image) +0x864a | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4004df76` | `7205202f0004` | jmp | charge utile (image) +0x864a | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x4004dfa2` | `704c222f0004` | jmp | charge utile (mémoire), 3 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
 | `0x40053a6c` | `4fefff8048d77cfc42af…` | jsr | OS `0x4008e6ba` | boot-anim | notes/39 |
-| `0x40056610` | `4fefffd848d73cfc` | jmp | charge utile (image) +0xdbf6 | model-tg, model-tg-st | notes/31, notes/36 |
-| `0x40056b38` | `4878000448798000b990` | jsr | charge utile (image) +0xab08 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x40056610` | `4fefffd848d73cfc` | jmp | charge utile (image) +0xdbf6 | model-tg, model-tg-st | notes/31, notes/82 |
+| `0x40056b38` | `4878000448798000b990` | jsr | charge utile (image) +0xab08 | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x400587f6` | `4eb940091f20` | jsr | masque `0x4018a788` +0x1b2 | arp | notes/32 |
-| `0x40058ca0` | `a93c00000020` | jsr | masque `0x4015c044` +0x1f8 | 6ch-usbup, acid, macro, macro-acid, mod-settings, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36, notes/72 |
+| `0x40058ca0` | `a93c00000020` | jsr | masque `0x4015c044` +0x1f8 | 6ch-usbup, acid, macro, macro-acid, mod-settings, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36, notes/72, notes/82 |
 | `0x40058e28` | `72ff242a0008202a000c` | jsr | masque `0x4018a788` +0x0 | arp | notes/32 |
 | `0x4005910e` | `4aaa0030670c2002` | jsr | masque `0x40183118` +0x0 `pv_copy` | sample-preview, sample-preview-st | notes/46 |
 | `0x40059382` | `4eb94005979e` | jsr | charge utile (mémoire), 24 cibles selon la combinaison | syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) | notes/31, notes/36 |
-| `0x40059392` | `4eb940002912` | jsr | masque `0x4015c044` +0x292 | 6ch-usbup, acid, macro, macro-acid, mod-settings, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36, notes/72 |
-| `0x400593ce` | `4eb940002912` | jsr | masque `0x4015c044` +0x292 | 6ch-usbup, acid, macro, macro-acid, mod-settings, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36, notes/72 |
+| `0x40059392` | `4eb940002912` | jsr | masque `0x4015c044` +0x292 | 6ch-usbup, acid, macro, macro-acid, mod-settings, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36, notes/72, notes/82 |
+| `0x400593ce` | `4eb940002912` | jsr | masque `0x4015c044` +0x292 | 6ch-usbup, acid, macro, macro-acid, mod-settings, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36, notes/72, notes/82 |
 | `0x400597c6` | `4eb940091ab2` | jsr | masque `0x401835b8` +0x8e `lfo_audio` | lfo-plus | notes/56 |
 | `0x4005981e` | `4eb9401b715c` | jsr | charge utile (mémoire) +0x3350e | syntakt-tg-* (1/33) | notes/31 |
 | `0x40059852` | `4eb940056f58` | jsr | masque `0x4014ab5c` +0x0 `tf_post` | track-filter | notes/47 |
@@ -607,31 +607,31 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4005a4ea` | `202f0004b280` | jmp | masque `0x4016f8c8` +0xc0 `lfo_id2k` | lfo-plus | notes/56 |
 | `0x4005a50a` | `724c202f0004` | jmp | charge utile (mémoire), 27 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-vintage | notes/31, notes/36, notes/43, notes/54 |
 | `0x4005a6a6` | `4ef9401ae8fc` | jmp | charge utile (mémoire), 13 cibles selon la combinaison | acid-tg, macro-acid-tg, macro-tg, syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) | notes/31, notes/36, notes/43, notes/54 |
-| `0x4005a6a6` | `7205b2826430` | jmp | charge utile (image) +0x47bc | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4005a6a6` | `7205b2826430` | jmp | charge utile (image) +0x47bc | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x4005a6b6` | `4ef9401ae936` | jmp | charge utile (mémoire), 13 cibles selon la combinaison | acid-tg, macro-acid-tg, macro-tg, syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) | notes/31, notes/36, notes/43, notes/54 |
-| `0x4005a6b6` | `eb8a41f940a7` | jmp | charge utile (image) +0x47f6 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4005a6b6` | `eb8a41f940a7` | jmp | charge utile (image) +0x47f6 | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x4005a8f0` | `7405b4816532` | jmp | charge utile (mémoire), 3 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
 | `0x4005aa22` | `202f000cb481` | jmp | masque `0x40185308` +0x82 `lfo_plk_load` | lfo-plus | notes/56 |
 | `0x4005aa34` | `7417b480640c` | jmp | masque `0x40166760` +0x8a `tf_conv` | track-filter | notes/47 |
-| `0x4005aecc` | `4feffff448d7` | jmp | charge utile (image) +0x9b66 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4005aecc` | `4feffff448d7` | jmp | charge utile (image) +0x9b66 | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x4005aecc` | `4feffff448d7` | jmp | masque `0x40166760` +0x0 `tf_load` | track-filter | notes/47 |
 | `0x4005af1c` | `41f94010eea8` | jsr | masque `0x40184df8` +0x0 `lfo_unpack` | lfo-plus | notes/56 |
-| `0x4005afa0` | `4feffff448d7` | jmp | charge utile (image) +0x9ace | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4005afa0` | `4feffff448d7` | jmp | charge utile (image) +0x9ace | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x4005afa0` | `4feffff448d7` | jmp | masque `0x4016616c` +0x0 `tf_save2` | track-filter | notes/47 |
 | `0x4005b028` | `356b005e005c` | jsr | masque `0x40185308` +0x0 `lfo_pack` | lfo-plus | notes/56 |
-| `0x4005b054` | `4feffff448d7` | jmp | charge utile (image) +0x9ae8 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4005b054` | `4feffff448d7` | jmp | charge utile (image) +0x9ae8 | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x4005b054` | `4feffff448d7` | jmp | masque `0x4016616c` +0x1c `tf_save1` | track-filter | notes/47 |
 | `0x4005b0dc` | `356b005e005c` | jsr | masque `0x40185308` +0x0 `lfo_pack` | lfo-plus | notes/56 |
 | `0x4005b9c6` | `16b5480317420001` | jsr | masque `0x40185308` +0x60 `lfo_plk_save` | lfo-plus | notes/56 |
 | `0x400618e2` | `e18b35430026` | jsr | masque `0x40184df8` +0x6c `lfo_init` | lfo-plus | notes/56 |
-| `0x4007240c` | `206f00042028` | jmp | charge utile (image) +0x4828 | model-tg, model-tg-st | notes/31, notes/36 |
-| `0x40081474` | `b08365000178` | jmp | charge utile (image) +0x10ffc | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4007240c` | `206f00042028` | jmp | charge utile (image) +0x4828 | model-tg, model-tg-st | notes/31, notes/82 |
+| `0x40081474` | `b08365000178` | jmp | charge utile (image) +0x10ffc | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x4008171e` | `4ef9401b3210` | jmp | masque `0x40185968` +0x0 `pv_note` | sample-preview, sample-preview-st | notes/46 |
-| `0x4008173c` | `b083650001ce` | jmp | charge utile (image) +0x10fb2 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4008173c` | `b083650001ce` | jmp | charge utile (image) +0x10fb2 | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x40081908` | `4ebaf2ec588f` | jsr | masque `0x40189930` +0x102 | arp | notes/32 |
-| `0x40084b8e` | `487800222d48` | jmp | charge utile (image) +0x9d98 | model-tg, model-tg-st | notes/31, notes/36 |
-| `0x40084c14` | `721b4fef0028` | jmp | charge utile (image) +0x9e1e | model-tg, model-tg-st | notes/31, notes/36 |
-| `0x40094c9a` | `71aa00084fef0020` | jmp | charge utile (image) +0xd606 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x40084b8e` | `487800222d48` | jmp | charge utile (image) +0x9d98 | model-tg, model-tg-st | notes/31, notes/82 |
+| `0x40084c14` | `721b4fef0028` | jmp | charge utile (image) +0x9e1e | model-tg, model-tg-st | notes/31, notes/82 |
+| `0x40094c9a` | `71aa00084fef0020` | jmp | charge utile (image) +0xd606 | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x400a2638` | `eb8c48780001` | jmp | charge utile (mémoire), 16 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
 | `0x400a26a2` | `7850428545f9` | jmp | charge utile (mémoire), 24 cibles selon la combinaison | acid-tg, macro-acid, macro-acid-tg, macro-tg, syntakt-* (27/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) | notes/31, notes/36, notes/43, notes/54 |
 | `0x400a4dc4` | `700541e8000a` | jmp | charge utile (mémoire), 16 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
@@ -640,16 +640,16 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x400a5612` | `20522f0a20680040` | jsr | masque `0x401904b4` +0x10 `ml_bound` | multiline-browser | notes/40 |
 | `0x400a576e` | `4eb940071da4` | jsr | masque `0x401904b4` +0x102 `ml_icon` | multiline-browser | notes/40 |
 | `0x400a6426` | `4eb9400a3052` | jsr | masque `0x40185c58` +0x0 `pv_parse` | sample-preview, sample-preview-st | notes/46 |
-| `0x400a6816` | `206800504e90` | jsr | charge utile (image) +0x116ac | model-tg, model-tg-st | notes/31, notes/36 |
-| `0x400a7da8` | `2d41003c4a936730` | jmp | charge utile (image) +0x1f2a | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x400a6816` | `206800504e90` | jsr | charge utile (image) +0x116ac | model-tg, model-tg-st | notes/31, notes/82 |
+| `0x400a7da8` | `2d41003c4a936730` | jmp | charge utile (image) +0x1f2a | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x400a7dfe` | `b08465224ef9` | jmp | charge utile (mémoire), 16 cibles selon la combinaison | acid-tg, macro-acid-tg, macro-tg, syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) | notes/31, notes/36, notes/43, notes/54 |
 | `0x400a7dfe` | `b08465222046` | jmp | charge utile (mémoire), 12 cibles selon la combinaison | syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/36 |
-| `0x400a7e02` | `204622704c002f0a2f0e…` | jmp | charge utile (image) +0x2918 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x400a7e02` | `204622704c002f0a2f0e…` | jmp | charge utile (image) +0x2918 | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x400a7e24` | `269522434280` | jmp | charge utile (mémoire), 13 cibles selon la combinaison | syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) | notes/31, notes/36 |
-| `0x400a8906` | `287c8000caa8` | jmp | charge utile (image) +0xddf6 | model-tg, model-tg-st | notes/31, notes/36 |
-| `0x400a956c` | `2f0a226f00084280` | jmp | charge utile (image) +0xddd6 | model-tg, model-tg-st | notes/31, notes/36 |
-| `0x400a98c4` | `22115c8124730800` | jmp | charge utile (image) +0xdcda | model-tg, model-tg-st | notes/31, notes/36 |
-| `0x400a9daa` | `4feffff448d70c04` | jmp | charge utile (image) +0xdcf8 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x400a8906` | `287c8000caa8` | jmp | charge utile (image) +0xddf6 | model-tg, model-tg-st | notes/31, notes/82 |
+| `0x400a956c` | `2f0a226f00084280` | jmp | charge utile (image) +0xddd6 | model-tg, model-tg-st | notes/31, notes/82 |
+| `0x400a98c4` | `22115c8124730800` | jmp | charge utile (image) +0xdcda | model-tg, model-tg-st | notes/31, notes/82 |
+| `0x400a9daa` | `4feffff448d70c04` | jmp | charge utile (image) +0xdcf8 | model-tg, model-tg-st | notes/31, notes/82 |
 | `0x400d97f8` | `2f4a0008245f` | jmp | masque `0x40173848` +0xcc `lfo_dtor` | lfo-plus | notes/56 |
 
 ## 5. Pointeurs réécrits
@@ -755,8 +755,8 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | macro | 122 | 56 | 14 | 48 | 2 | 2 | 0 | 105 152 o | notes/36 |
 | macro-acid | 122 | 55 | 15 | 48 | 2 | 2 | 0 | 111 760 o | notes/36 |
 | acid | 122 | 56 | 14 | 48 | 2 | 2 | 0 | 11 380 o | notes/36 |
-| model-tg | 142 | 94 | 32 | 0 | 1 | 1 | 14 | 87 936 o | notes/36 |
-| model-tg-st | 142 | 94 | 32 | 0 | 1 | 1 | 14 | 87 936 o | notes/31 |
+| model-tg | 144 | 94 | 32 | 0 | 2 | 2 | 14 | 87 936 o | notes/82 |
+| model-tg-st | 144 | 94 | 32 | 0 | 2 | 2 | 14 | 87 936 o | notes/31 |
 | syntakt-tg-* (33 tweaks) | 117–119 | 51 | 17–19 | 47 | 1 | 1 | 0 | 227 760–243 904 o | notes/31, notes/36 |
 | syntakt-tg-*-acid (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 145 997–157 538 o | notes/36 |
 | syntakt-tg-*-macro (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 230 680–242 230 o | notes/36 |
