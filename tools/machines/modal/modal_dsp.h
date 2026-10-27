@@ -365,6 +365,8 @@ void modal_str_write(const s32 *hb, s32 *pw, s32 *out, const s32 *dpp, int n);
 void modal_str_read_ap(const s32 *ph, s32 f, s32 *hb, int n, s32 *ap);
 void modal_str_read_mv(const s32 *pw, s32 *st, const s32 *in, s32 *hb, int n);
 void modal_str_read_nz(s32 *line, s32 *hb, const s32 *in, int n, s32 *k);
+void modal_str_run(s32 *pw, const s32 *pr, const s32 *in, s32 *out, int n, s32 *k);
+void modal_str_comb(const s32 *pb, s32 *aux, int n, s32 *cp);
 void modal_str_read_cb(s32 *line, s32 *hb, const s32 *in, int n, s32 *k);
 void modal_str_damp_mv(s32 *hb, s32 *dk);
 void modal_str_write_mv(const s32 *hb, s32 *pw, s32 *out, s32 *dpp, int n);
@@ -911,6 +913,48 @@ static __attribute__((noinline)) void str_fast(struct mstring *s, const s32 *in,
 		cs = (d < d1 ? d : d1) >> 20;
 	}
 	cs = cs > MB ? MB : (cs < 1 ? 1 : cs);         /* 1 : lu avant d'etre ecrit, comme dans la boucle de str_process */
+	if (cs == MB && !d_inc && !s->fap && !s->fmode) {
+		/* le cas courant : une boucle (modal_str_run) puis le peigne a part (modal_str_comb), quand sa lecture ne
+		 * tombe jamais sur la place que l'echantillon suivant va ecrire (comb >> 20 >= 1 sur tout le bloc) */
+		s32 pv0 = s->clamped_position;
+		if (!comb || (qmul(s->delay, pv0 + p_inc) >= (1 << 20) && qmul(s->delay, pv0 + MB * p_inc) >= (1 << 20))) {
+			s32 kk[11];
+			int n1 = wp + 1 < MB ? wp + 1 : MB, n3 = wp < MB ? wp : MB;
+			kk[0] = ff;
+			kk[1] = s->fh0;
+			kk[2] = s->fh1;
+			kk[3] = -s->iir.b;
+			kk[4] = s->iir.a2;
+			kk[5] = s->iir.a3;
+			kk[6] = s->fx1;
+			kk[7] = s->fx2;
+			kk[8] = s->iir.ic1;
+			kk[9] = s->iir.ic2;
+			modal_str_run(&line[wp], &line[wp + di], in, out, n1, kk);
+			modal_str_run(&line[DLINE - 1], &line[DLINE - 1 + di], in + n1, out + n1, MB - n1, kk);
+			s->fx1 = kk[6];
+			s->fx2 = kk[7];
+			s->iir.ic1 = kk[8];
+			s->iir.ic2 = kk[9];
+			if (comb) {
+				kk[0] = s->delay;
+				kk[1] = pv0;
+				kk[2] = p_inc;
+				modal_str_comb(n3 ? &line[wp - 1] : line, aux, n3, kk);
+				modal_str_comb(&line[DLINE - 1], aux + n3, MB - n3, kk);
+				s->aux1 = aux[MB - 2] - a30;
+				s->aux0 = aux[MB - 1] - a31;
+			} else {
+				s->aux1 = s->aux0 = 0;
+			}
+			s->clamped_position = pv0 + MB * p_inc;
+			wp = (wp - MB) & (DLINE - 1);
+			s->wp = wp;
+			s->out1 = line[(wp + 2) & (DLINE - 1)];
+			s->out0 = line[(wp + 1) & (DLINE - 1)];
+			return;
+		}
+	}
 	dk[0] = s->fx1;
 	dk[1] = s->fx2;
 	dk[2] = s->fh0;
@@ -1095,9 +1139,8 @@ plan:
 }
 #endif
 
-/* s->frequency etc. deja poses ; ajoute la corde a out / aux. aux nul : sans peigne (les cordes sympathiques, notes/81) :
- * la sortie aux de la corde, la seule qui depende de sa position, n'est pas calculee. */
-static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u32 *rng)
+/* str_process, le chemin complet (str_params deja fait) */
+static __attribute__((noinline)) void str_process_full(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u32 *rng)
 {
 	s32 delay, clamped, nfilt, nk, src_ratio, swp0;
 	s32 d_inc, p_inc, disp_inc, dc_inc, dmp_inc, br_inc;
@@ -1108,15 +1151,6 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 
 	if (!wcomb)
 		aux = sc.nc;                             /* les C qui suivent y ecrivent un peigne que personne ne lit */
-	str_params(s);
-#ifdef MODAL_ASM
-	if (s->fast && s->fver == s->kver && s->fdisp == s->dispersion && (aux == out + MB || !wcomb)) {
-		s32 di = (s->k_delay - s->delay) / MB;
-		clamped = 0x40000000 - qmul(Q31(0.98), iabs(s->position - 0x40000000));
-		str_fast(s, in, out, (clamped - s->clamped_position) / MB, s->enable_dispersion ? 0 : di, rng, wcomb);
-		return;
-	}
-#endif
 	delay = s->k_delay;
 	src_ratio = s->k_ratio;
 	nfilt = s->k_nfilt;
@@ -1813,6 +1847,23 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 #ifdef MODAL_ASM
 	str_plan(s);
 #endif
+}
+
+/* s->frequency etc. deja poses ; ajoute la corde a out / aux. aux nul : sans peigne (les cordes sympathiques, notes/81) :
+ * la sortie aux de la corde, la seule qui depende de sa position, n'est pas calculee. Le chemin court (str_fast) sans
+ * entrer dans le complet : moins de code relu a chaque bloc. */
+static __attribute__((noinline)) void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u32 *rng)
+{
+	str_params(s);
+#ifdef MODAL_ASM
+	if (s->fast && s->fver == s->kver && s->fdisp == s->dispersion && (aux == out + MB || !aux)) {
+		s32 clamped = 0x40000000 - qmul(Q31(0.98), iabs(s->position - 0x40000000));
+		str_fast(s, in, out, (clamped - s->clamped_position) / MB,
+			 s->enable_dispersion ? 0 : (s->k_delay - s->delay) / MB, rng, aux != 0);
+		return;
+	}
+#endif
+	str_process_full(s, in, out, aux, rng);
 }
 
 /* ---- pincement (rings/dsp/plucker.h) ----------------------------------------------------------------------- */

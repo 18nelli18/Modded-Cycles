@@ -1218,3 +1218,115 @@ modal_str_read_cb:
 9:	movem.l	(%sp), %d2-%d7/%a2-%a6
 	lea	44(%sp), %sp
 	rts
+
+/* void modal_str_run(s32 *pw, const s32 *pr, const s32 *in, s32 *out, int n, s32 *k)
+ * Une corde au repos (str_fast, notes/81), n echantillons, ses trois passes en une boucle : la lecture lineaire,
+ * l'amortissement (FIR puis passe-bas), l'ecriture dans la ligne doublee et out. pw = &line[w], pr = &line[w + D]
+ * (D : la partie entiere du retard), qui reculent d'un mot par echantillon ; le retard depasse n, ou chaque lecture
+ * precede l'ecriture du meme echantillon : l'ordre de la boucle de str_process.
+ *   x = x0 + qmulr(x1 - x0, f) + in[k] ; y = h0 fx1 + h1 (x + fx2) (arrondi) ; fx2 = fx1 ; fx1 = x ;
+ *   v3 = y - ic2 ; t1 = ib ic1 + a2 v3 ; t2 = a2 ic1 + a3 v3 (arrondis) ; s = ic2 + t2 ; ic1 += 2 t1 ;
+ *   ic2 = s + t2 ; line[w] = line[w + DLINE] = s ; out[k] += s
+ * k : 0 f, 4 h0, 8 h1, 12 ib (-b), 16 a2, 20 a3, 24 fx1, 28 fx2, 32 ic1, 36 ic2, 40 (la fin de out) ; fx1, fx2, ic1,
+ * ic2 rendus. */
+	.globl	modal_str_run
+modal_str_run:
+	lea	-44(%sp), %sp
+	movem.l	%d2-%d7/%a2-%a6, (%sp)
+	move.l	64(%sp), %d0		/* n */
+	beq.w	9f
+	movea.l	48(%sp), %a0		/* pw */
+	movea.l	52(%sp), %a1		/* pr */
+	movea.l	56(%sp), %a2		/* in */
+	movea.l	60(%sp), %a3		/* out */
+	movea.l	68(%sp), %a4		/* k */
+	lea	(%a3, %d0.l*4), %a5
+	move.l	%a5, 40(%a4)		/* la fin de out */
+	movem.l	12(%a4), %d4-%d5	/* ib, a2 */
+	movem.l	24(%a4), %d0-%d3	/* fx1, fx2, ic1, ic2 */
+	movea.l	#0x8000, %a6		/* l'arrondi */
+1:	move.l	(%a1), %d7		/* x0 */
+	move.l	4(%a1), %d6		/* x1 */
+	sub.l	%d7, %d6
+	movea.l	(%a4), %a5		/* f */
+	mac.l	%d6, %a5, %acc0
+	mac.l	%a6, %a6, %acc0
+	add.l	(%a2)+, %d7		/* x0 + in[k] */
+	subq.l	#4, %a1
+	movclr.l %acc0, %d6
+	add.l	%d6, %d7		/* x */
+	move.l	%d7, %d6
+	add.l	%d1, %d6		/* x + fx2 */
+	movea.l	4(%a4), %a5		/* h0 */
+	mac.l	%a5, %d0, %acc0		/* h0 fx1 */
+	movea.l	8(%a4), %a5		/* h1 */
+	mac.l	%a5, %d6, %acc0		/* h1 (x + fx2) */
+	mac.l	%a6, %a6, %acc0
+	move.l	%d0, %d1		/* fx2 = fx1 */
+	move.l	%d7, %d0		/* fx1 = x */
+	movclr.l %acc0, %d7		/* y */
+	sub.l	%d3, %d7		/* v3 = y - ic2 */
+	mac.l	%d4, %d2, %acc0		/* ib ic1 */
+	mac.l	%d5, %d7, %acc0		/* a2 v3 */
+	mac.l	%a6, %a6, %acc0
+	mac.l	%d5, %d2, %acc1		/* a2 ic1 */
+	movea.l	20(%a4), %a5		/* a3 */
+	mac.l	%a5, %d7, %acc1		/* a3 v3 */
+	mac.l	%a6, %a6, %acc1
+	movclr.l %acc0, %d6		/* t1 */
+	movclr.l %acc1, %d7		/* t2 */
+	add.l	%d7, %d3		/* s = ic2 + t2 */
+	move.l	%d3, (%a0)
+	move.l	%d3, 4*DLINE(%a0)	/* line[w], line[w + DLINE] */
+	subq.l	#4, %a0
+	add.l	%d3, (%a3)+		/* out[k] += s */
+	add.l	%d7, %d3		/* ic2 = s + t2 */
+	add.l	%d6, %d2
+	add.l	%d6, %d2		/* ic1 += 2 t1 */
+	cmpa.l	40(%a4), %a3
+	bne.w	1b
+	movem.l	%d0-%d3, 24(%a4)	/* fx1, fx2, ic1, ic2 */
+9:	movem.l	(%sp), %d2-%d7/%a2-%a6
+	lea	44(%sp), %sp
+	rts
+
+/* void modal_str_comb(const s32 *pb, s32 *aux, int n, s32 *cp)
+ * Le peigne d'une corde au repos, apres modal_str_run : aux[k] += l0 + qmul(l1 - l0, frac), pv += p_inc,
+ * comb = qmul(dv, pv), l0 = pb[-k + (comb >> 20)], l1 juste apres, frac = (comb << 11) & 0x7fffffff. pb : la place
+ * ecrite par l'echantillon suivant (str_process lit apres le recul de wp). Valable quand comb >> 20 >= 1 sur tout le
+ * bloc : la boucle lirait les memes mots, qu'aucun echantillon suivant du bloc n'a encore ecrits.
+ * cp : 0 dv, 4 pv (rendu), 8 p_inc. */
+	.globl	modal_str_comb
+modal_str_comb:
+	lea	-28(%sp), %sp
+	movem.l	%d2-%d6/%a2-%a3, (%sp)
+	move.l	40(%sp), %d0		/* n */
+	beq.s	9f
+	movea.l	32(%sp), %a0		/* pb */
+	movea.l	36(%sp), %a1		/* aux */
+	movea.l	44(%sp), %a3
+	lea	(%a1, %d0.l*4), %a2	/* la fin de aux */
+	movem.l	(%a3), %d4-%d6		/* dv, pv, p_inc */
+	moveq	#20, %d3
+1:	add.l	%d6, %d5		/* pv += p_inc */
+	mac.l	%d4, %d5, %acc0
+	movclr.l %acc0, %d0		/* comb */
+	move.l	%d0, %d1
+	asr.l	%d3, %d1		/* comb >> 20 */
+	lsl.l	#8, %d0
+	lsl.l	#3, %d0
+	bclr	#31, %d0		/* frac */
+	move.l	(%a0, %d1.l*4), %d2	/* l0 */
+	move.l	4(%a0, %d1.l*4), %d1	/* l1 */
+	sub.l	%d2, %d1
+	mac.l	%d1, %d0, %acc1
+	subq.l	#4, %a0
+	movclr.l %acc1, %d1
+	add.l	%d2, %d1
+	add.l	%d1, (%a1)+
+	cmpa.l	%a2, %a1
+	bne.s	1b
+	move.l	%d5, 4(%a3)		/* pv */
+9:	movem.l	(%sp), %d2-%d6/%a2-%a3
+	lea	28(%sp), %sp
+	rts
