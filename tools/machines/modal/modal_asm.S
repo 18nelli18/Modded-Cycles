@@ -192,120 +192,59 @@ mode_lin:
 	rts
 
 /* void modal_str_read(const s32 *ph, s32 f, const s32 *in, s32 *hb, int n)
- * Corde, passe 1 du chemin rapide de str_process, retard fixe : ReadHermite (hermite de modal_dsp.h), n echantillons.
- * ph : le x0 du 1er echantillon (&line[w + partie entiere du retard]), qui recule d'un mot a chaque echantillon ;
- * f : la partie fractionnaire (Q31). hb[k] = hermite(ph - k, f) + in[k].
- * Deux echantillons a la fois (notes/74 §5.5) : leurs trois produits en chaine se croisent sur les accumulateurs
- * (acc0 et acc1, puis acc2 et acc3, puis acc0 et acc1), si bien qu'aucune lecture d'accumulateur n'attend la fin
- * du pipeline de l'EMAC ; l'arrondi de chaque qmulr entre avant son produit (la meme somme). Les deux fenetres de
- * 4 mots se recouvrent : 5 mots lus. Le dernier echantillon d'un n impair, seul. */
+ * Corde, passe 1 du chemin rapide de str_process, retard fixe : la lecture lineaire (rd_lin de modal_dsp.h, notes/81),
+ * n echantillons. ph : le x0 du 1er echantillon (&line[w + partie entiere du retard]), qui recule d'un mot a chaque
+ * echantillon ; f : la partie fractionnaire (Q31). hb[k] = x0 + qmulr(x1 - x0, f) + in[k], x0 = ph[-k], x1 = ph[1 - k] :
+ * le x1 d'un echantillon est le x0 du precedent. Deux echantillons a la fois (acc0, acc1). */
 	.globl	modal_str_read
 modal_str_read:
-	lea	-44(%sp), %sp
-	movem.l	%d2-%d7/%a2-%a6, (%sp)
-	movea.l	48(%sp), %a0		/* ph */
-	move.l	52(%sp), %d6		/* f */
-	movea.l	56(%sp), %a1		/* in */
-	movea.l	60(%sp), %a2		/* hb */
-	move.l	64(%sp), %d0		/* n */
-	beq.w	9f
-	lea	(%a2, %d0.l*4), %a4	/* fin de hb */
-	movea.l	#0x8000, %a3		/* 2^15 x 2^15 : l'arrondi de qmulr */
-	asr.l	#1, %d0
-	lsl.l	#3, %d0
-	pea	(%a2, %d0.l)		/* fin des paires, sur la pile */
-	cmpa.l	(%sp), %a2
-	beq.w	4f
-1:	mac.l	%a3, %a3, %acc0
-	mac.l	%a3, %a3, %acc1
-	movem.l	-8(%a0), %d0-%d4	/* p[-2] .. p[2] : A = p (p[-1] .. p[2]), B = p - 1 (p[-2] .. p[1]) */
-	move.l	%d3, %d5
-	sub.l	%d1, %d5
-	asr.l	#1, %d5			/* cA = (x1 - xm1) >> 1 */
-	sub.l	%d2, %d4
-	asr.l	#1, %d4			/* (x2 - x0) >> 1 de A */
-	move.l	%d2, %d7
-	sub.l	%d3, %d7		/* vA = x0 - x1 */
-	move.l	%d5, %d3
-	add.l	%d7, %d3		/* wA = cA + vA */
-	add.l	%d3, %d4
-	add.l	%d7, %d4		/* aA = wA + vA + ((x2 - x0) >> 1) */
-	add.l	%d4, %d3		/* bnA = wA + aA */
-	movea.l	%d2, %a5		/* x0A */
-	move.l	%d2, %d7
-	sub.l	%d0, %d7
-	asr.l	#1, %d7			/* cB */
-	move.l	%d1, %d0
-	sub.l	%d2, %d0		/* vB */
-	movea.l	%d1, %a6		/* x0B */
+	lea	-28(%sp), %sp
+	movem.l	%d2-%d6/%a2-%a3, (%sp)
+	movea.l	32(%sp), %a0		/* ph */
+	move.l	36(%sp), %d6		/* f */
+	movea.l	40(%sp), %a1		/* in */
+	movea.l	44(%sp), %a2		/* hb */
+	move.l	48(%sp), %d0		/* n */
+	beq.s	9f
+	lea	(%a2, %d0.l*4), %a3	/* fin de hb */
+	move.l	#0x8000, %d5		/* l'arrondi */
+	move.l	4(%a0), %d1		/* x1 du 1er */
+	btst	#0, %d0
+	beq.s	1f
+	move.l	(%a0), %d0		/* n impair : le 1er seul */
+	subq.l	#4, %a0
+	sub.l	%d0, %d1
+	mac.l	%d1, %d6, %acc0
+	mac.l	%d5, %d5, %acc0
 	move.l	%d0, %d1
-	add.l	%d7, %d1		/* wB */
-	move.l	%d1, %d2
-	add.l	%d0, %d2
-	add.l	%d5, %d2		/* aB = wB + vB + ((x2 - x0) >> 1) de B, qui est cA */
-	add.l	%d2, %d1		/* bnB = wB + aB */
-	mac.l	%d4, %d6, %acc0		/* qmulr(aA, f) */
-	mac.l	%d2, %d6, %acc1		/* qmulr(aB, f) */
-	mac.l	%a3, %a3, %acc2
-	mac.l	%a3, %a3, %acc3
-	movclr.l %acc0, %d4
-	sub.l	%d3, %d4		/* - bnA */
-	movclr.l %acc1, %d2
-	sub.l	%d1, %d2		/* - bnB */
-	mac.l	%d4, %d6, %acc2		/* qmulr(., f) */
-	mac.l	%d2, %d6, %acc3
-	mac.l	%a3, %a3, %acc0
-	mac.l	%a3, %a3, %acc1
-	movclr.l %acc2, %d4
-	add.l	%d5, %d4		/* + cA */
-	movclr.l %acc3, %d2
-	add.l	%d7, %d2		/* + cB */
-	mac.l	%d4, %d6, %acc0		/* qmulr(., f) */
-	mac.l	%d2, %d6, %acc1
-	move.l	(%a1)+, %d0		/* in[k] */
-	subq.l	#8, %a0			/* deux echantillons plus bas */
-	movclr.l %acc0, %d4
-	add.l	%d0, %d4
-	add.l	%a5, %d4		/* + x0A */
-	move.l	%d4, (%a2)+
-	movclr.l %acc1, %d2
-	add.l	(%a1)+, %d2		/* in[k + 1] */
-	add.l	%a6, %d2		/* + x0B */
-	move.l	%d2, (%a2)+
-	cmpa.l	(%sp), %a2
-	bne.w	1b
-4:	addq.l	#4, %sp
-	cmpa.l	%a4, %a2
-	beq.w	9f
-	movem.l	-4(%a0), %d0-%d3	/* le dernier : xm1, x0, x1, x2 */
-	move.l	%d2, %d4
-	sub.l	%d0, %d4
-	asr.l	#1, %d4			/* c = (x1 - xm1) >> 1 */
-	move.l	%d1, %d5
-	sub.l	%d2, %d5		/* v = x0 - x1 */
-	move.l	%d4, %d0
-	add.l	%d5, %d0		/* w = c + v */
-	sub.l	%d1, %d3
-	asr.l	#1, %d3
+	add.l	(%a1)+, %d0
+	movclr.l %acc0, %d2
+	add.l	%d2, %d0
+	move.l	%d0, (%a2)+
+	cmpa.l	%a3, %a2
+	beq.s	9f
+1:	movem.l	-4(%a0), %d2-%d3	/* x0 de B, x0 de A */
+	subq.l	#8, %a0
+	sub.l	%d3, %d1		/* A : x1 - x0 */
+	mac.l	%d1, %d6, %acc0
+	mac.l	%d5, %d5, %acc0
+	move.l	%d3, %d4
+	sub.l	%d2, %d4		/* B : x1 - x0 */
+	mac.l	%d4, %d6, %acc1
+	mac.l	%d5, %d5, %acc1
+	move.l	%d2, %d1		/* le x1 du A suivant */
+	add.l	(%a1)+, %d3
+	add.l	(%a1)+, %d2
+	movclr.l %acc0, %d0
 	add.l	%d0, %d3
-	add.l	%d5, %d3		/* a = w + v + ((x2 - x0) >> 1) */
-	add.l	%d3, %d0		/* bn = w + a */
-	mac.l	%d3, %d6, %acc0
-	mac.l	%a3, %a3, %acc0
-	movclr.l %acc0, %d3		/* qmulr(a, f) */
-	sub.l	%d0, %d3		/* - bn */
-	mac.l	%d3, %d6, %acc0
-	mac.l	%a3, %a3, %acc0
-	movclr.l %acc0, %d3		/* qmulr(., f) */
-	add.l	%d4, %d3		/* + c */
-	mac.l	%d3, %d6, %acc0
-	mac.l	%a3, %a3, %acc0
-	movclr.l %acc0, %d3		/* qmulr(., f) */
-	add.l	%d1, %d3		/* + x0 */
-	add.l	(%a1)+, %d3		/* + in[k] */
 	move.l	%d3, (%a2)+
-9:	movem.l	(%sp), %d2-%d7/%a2-%a6
-	lea	44(%sp), %sp
+	movclr.l %acc1, %d4
+	add.l	%d4, %d2
+	move.l	%d2, (%a2)+
+	cmpa.l	%a3, %a2
+	bne.s	1b
+9:	movem.l	(%sp), %d2-%d6/%a2-%a3
+	lea	28(%sp), %sp
 	rts
 
 /* void modal_str_damp(s32 *hb, s32 *dk)
@@ -604,7 +543,7 @@ modal_pluck:
 	rts
 
 /* void modal_str_read_ap(const s32 *ph, s32 f, s32 *hb, int n, s32 *ap)
- * Corde avec dispersion, retard fixe : la lecture (ReadHermite, comme modal_str_read, sans entree) puis le
+ * Corde avec dispersion, retard fixe : la lecture (lineaire, comme modal_str_read, sans entree) puis le
  * passe-tout de l'etirement (str_process). ap : st (ligne de SLINE mots), swp, j (son retard), apg ; swp rendu.
  *   rd = st[(swp + j) & (SLINE - 1)] ; wr = sv + qmulr(apg, rd) ; st[swp] = wr ; swp-- ; hb[k] = rd - qmulr(wr, apg) */
 	.globl	modal_str_read_ap
@@ -623,32 +562,13 @@ modal_str_read_ap:
 	movea.l	12(%a1), %a6		/* apg */
 	movea.l	(%a1), %a1		/* st */
 	movea.l	#0x8000, %a3		/* l'arrondi */
-1:	movem.l	-4(%a0), %d0-%d3	/* xm1, x0, x1, x2 */
+1:	movem.l	(%a0), %d1-%d2		/* x0, x1 */
 	subq.l	#4, %a0
-	move.l	%d2, %d4
-	sub.l	%d0, %d4
-	asr.l	#1, %d4			/* c */
-	move.l	%d1, %d5
-	sub.l	%d2, %d5		/* v */
-	move.l	%d4, %d0
-	add.l	%d5, %d0		/* w */
-	sub.l	%d1, %d3
-	asr.l	#1, %d3
-	add.l	%d0, %d3
-	add.l	%d5, %d3		/* a */
-	add.l	%d3, %d0		/* bn */
-	mac.l	%d3, %d6, %acc0
+	sub.l	%d1, %d2
+	mac.l	%d2, %d6, %acc0
 	mac.l	%a3, %a3, %acc0
 	movclr.l %acc0, %d3
-	sub.l	%d0, %d3
-	mac.l	%d3, %d6, %acc0
-	mac.l	%a3, %a3, %acc0
-	movclr.l %acc0, %d3
-	add.l	%d4, %d3
-	mac.l	%d3, %d6, %acc0
-	mac.l	%a3, %a3, %acc0
-	movclr.l %acc0, %d3
-	add.l	%d1, %d3		/* sv */
+	add.l	%d1, %d3		/* sv = x0 + qmulr(x1 - x0, f) */
 	move.l	%d7, %d4
 	add.l	%a5, %d4
 	andi.l	#SLINE-1, %d4
@@ -675,159 +595,46 @@ modal_str_read_ap:
 
 /* void modal_str_read_mv(const s32 *pw, s32 *st, const s32 *in, s32 *hb, int n)
  * Corde, passe 1 quand le retard bouge (modal_dsp.h : la boucle de str_process) : pour chaque echantillon,
- * dv += d_inc, dc += dc_inc, d = qmul(dv, dc) - 2^20, hb[k] = hermite(pw - k + (d >> 20), frac) + in[k].
- * st : dv, dc (rendus), d_inc, dc_inc. pw : &line[w] du 1er echantillon (w recule d'un mot par echantillon).
- * Deux echantillons a la fois, comme modal_str_read (notes/74 §5.5) : les deux qmul du retard sur acc2 et acc3, la
- * chaine de A lancee avant de preparer B, puis les deux chaines croisees ; hb[k] recoit x0 + in[k] d'abord, le
- * dernier produit s'y ajoute. dv et dc passent par st entre deux paires (les registres manquent). */
+ * dv += d_inc, dc += dc_inc, d = qmul(dv, dc) - 2^20, hb[k] = rd_lin(pw - k + (d >> 20), frac) + in[k].
+ * st : dv, dc (rendus), d_inc, dc_inc. pw : &line[w] du 1er echantillon (w recule d'un mot par echantillon). Le
+ * qmul du retard sur acc1 et la lecture sur acc0, la lecture d'un echantillon pendant le retard du suivant. */
 	.globl	modal_str_read_mv
 modal_str_read_mv:
 	lea	-44(%sp), %sp
 	movem.l	%d2-%d7/%a2-%a6, (%sp)
 	movea.l	48(%sp), %a0		/* pw */
 	movea.l	52(%sp), %a6		/* st */
-	movea.l	56(%sp), %a5		/* in */
+	movea.l	56(%sp), %a1		/* in */
 	movea.l	60(%sp), %a2		/* hb */
 	move.l	64(%sp), %d0		/* n */
-	beq.w	9f
-	lea	(%a2, %d0.l*4), %a4	/* fin de hb */
-	movem.l	(%a6), %d6-%d7		/* dv, dc */
-	movea.l	#0x8000, %a3		/* l'arrondi */
-	asr.l	#1, %d0
-	lsl.l	#3, %d0
-	pea	(%a2, %d0.l)		/* fin des paires, sur la pile ; st en 56(%sp) */
-	cmpa.l	(%sp), %a2
-	beq.w	4f
-1:	mac.l	%a3, %a3, %acc0		/* arrondis des 1ers produits de A et de B */
-	mac.l	%a3, %a3, %acc1
-	add.l	8(%a6), %d6		/* dv += d_inc (A) */
-	add.l	12(%a6), %d7		/* dc += dc_inc */
-	mac.l	%d6, %d7, %acc2		/* qmul(dv, dc) de A */
-	add.l	8(%a6), %d6		/* (B) */
-	add.l	12(%a6), %d7
-	mac.l	%d6, %d7, %acc3		/* de B */
-	movem.l	%d6-%d7, (%a6)		/* dv, dc */
-	movclr.l %acc2, %d0
-	subi.l	#0x100000, %d0		/* dA = qmul(dv, dc) - 2^20 */
-	movclr.l %acc3, %d1
-	subi.l	#0x100000, %d1		/* dB */
-	move.l	%d0, %d2
-	asr.l	#8, %d2
-	asr.l	#8, %d2
-	asr.l	#4, %d2			/* dA >> 20 */
-	lea	(%a0, %d2.l*4), %a1
+	beq.s	9f
+	lea	(%a2, %d0.l*4), %a3	/* fin de hb */
+	movem.l	(%a6), %d4-%d7		/* dv, dc, d_inc, dc_inc */
+	movea.l	#0x8000, %a4		/* l'arrondi */
+	moveq	#20, %d3
+1:	add.l	%d6, %d4		/* dv += d_inc */
+	add.l	%d7, %d5		/* dc += dc_inc */
+	mac.l	%d4, %d5, %acc1		/* qmul(dv, dc) */
+	mac.l	%a4, %a4, %acc0		/* l'arrondi de la lecture */
+	movclr.l %acc1, %d0
+	subi.l	#0x100000, %d0		/* d */
+	move.l	%d0, %d1
+	asr.l	%d3, %d1		/* d >> 20 */
 	lsl.l	#8, %d0
 	lsl.l	#3, %d0
-	bclr	#31, %d0		/* fA = (dA << 11) & 0x7fffffff */
-	movem.l	-4(%a1), %d2-%d5	/* xm1, x0, x1, x2 de A */
-	move.l	%d4, %d6
-	sub.l	%d2, %d6
-	asr.l	#1, %d6			/* cA = (x1 - xm1) >> 1 */
-	move.l	%d3, %d2
-	sub.l	%d4, %d2		/* vA = x0 - x1 */
-	sub.l	%d3, %d5
-	asr.l	#1, %d5			/* (x2 - x0) >> 1 */
-	add.l	(%a5)+, %d3
-	move.l	%d3, (%a2)		/* hb[k] = x0 + in[k] */
-	move.l	%d6, %d4
-	add.l	%d2, %d4		/* wA = cA + vA */
-	add.l	%d4, %d5
-	add.l	%d2, %d5		/* aA = wA + vA + ((x2 - x0) >> 1) */
-	add.l	%d5, %d4		/* bnA = wA + aA */
-	mac.l	%d5, %d0, %acc0		/* qmulr(aA, fA) */
-	move.l	%d1, %d2		/* B, pendant ce produit */
-	asr.l	#8, %d2
-	asr.l	#8, %d2
-	asr.l	#4, %d2			/* dB >> 20 */
-	lea	-4(%a0, %d2.l*4), %a1	/* un echantillon plus bas */
-	lsl.l	#8, %d1
-	lsl.l	#3, %d1
-	bclr	#31, %d1		/* fB */
-	movem.l	-4(%a1), %d2-%d3/%d5/%d7	/* xm1, x0, x1, x2 de B */
-	movea.l	%d3, %a1		/* x0B */
-	sub.l	%d5, %d3		/* vB = x0 - x1 */
-	sub.l	%d2, %d5
-	asr.l	#1, %d5			/* cB = (x1 - xm1) >> 1 */
-	move.l	%a1, %d2
-	sub.l	%d2, %d7
-	asr.l	#1, %d7			/* (x2 - x0) >> 1 */
-	add.l	(%a5)+, %d2
-	move.l	%d2, 4(%a2)		/* hb[k + 1] = x0 + in[k + 1] */
-	move.l	%d5, %d2
-	add.l	%d3, %d2		/* wB = cB + vB */
-	add.l	%d2, %d7
-	add.l	%d3, %d7		/* aB = wB + vB + ((x2 - x0) >> 1) */
-	add.l	%d7, %d2		/* bnB = wB + aB */
-	movclr.l %acc0, %d3
-	sub.l	%d4, %d3		/* A : - bnA */
-	mac.l	%a3, %a3, %acc2
-	mac.l	%d3, %d0, %acc2		/* A : qmulr(., fA) */
-	mac.l	%d7, %d1, %acc1		/* B : qmulr(aB, fB) */
-	mac.l	%a3, %a3, %acc0
-	mac.l	%a3, %a3, %acc3
-	movclr.l %acc2, %d3
-	add.l	%d6, %d3		/* A : + cA */
-	movclr.l %acc1, %d4
-	sub.l	%d2, %d4		/* B : - bnB */
-	mac.l	%d3, %d0, %acc0		/* A : qmulr(., fA) */
-	mac.l	%d4, %d1, %acc3		/* B : qmulr(., fB) */
-	mac.l	%a3, %a3, %acc1
-	movea.l	56(%sp), %a6		/* st */
-	movclr.l %acc0, %d3
-	add.l	%d3, (%a2)+		/* hb[k] += */
-	movclr.l %acc3, %d4
-	add.l	%d5, %d4		/* B : + cB */
-	mac.l	%d4, %d1, %acc1		/* B : qmulr(., fB) */
-	movem.l	(%a6), %d6-%d7		/* dv, dc de la paire suivante */
-	subq.l	#8, %a0			/* w -= 2 */
-	movclr.l %acc1, %d4
-	add.l	%d4, (%a2)+		/* hb[k + 1] += */
-	cmpa.l	(%sp), %a2
-	bne.w	1b
-4:	addq.l	#4, %sp
-	cmpa.l	%a4, %a2
-	beq.w	9f
-	add.l	8(%a6), %d6		/* le dernier d'un n impair, seul */
-	add.l	12(%a6), %d7
-	mac.l	%d6, %d7, %acc0
-	movclr.l %acc0, %d5
-	subi.l	#0x100000, %d5		/* d = qmul(dv, dc) - 2^20 */
-	move.l	%d5, %d4
-	asr.l	#8, %d4
-	asr.l	#8, %d4
-	asr.l	#4, %d4			/* d >> 20 */
-	lea	(%a0, %d4.l*4), %a1
-	lsl.l	#8, %d5
-	lsl.l	#3, %d5
-	bclr	#31, %d5		/* frac = (d << 11) & 0x7fffffff */
-	movem.l	-4(%a1), %d0-%d3	/* xm1, x0, x1, x2 */
-	move.l	%d2, %d4
-	sub.l	%d0, %d4
-	asr.l	#1, %d4			/* c = (x1 - xm1) >> 1 */
-	move.l	%d1, %d0
-	sub.l	%d2, %d0		/* v = x0 - x1 */
-	move.l	%d4, %d2
-	add.l	%d0, %d2		/* w = c + v */
-	sub.l	%d1, %d3
-	asr.l	#1, %d3
-	add.l	%d2, %d3
-	add.l	%d0, %d3		/* a = w + v + ((x2 - x0) >> 1) */
-	add.l	%d3, %d2		/* bn = w + a */
-	mac.l	%d3, %d5, %acc0
-	mac.l	%a3, %a3, %acc0
-	movclr.l %acc0, %d3		/* qmulr(a, f) */
-	sub.l	%d2, %d3
-	mac.l	%d3, %d5, %acc0
-	mac.l	%a3, %a3, %acc0
-	movclr.l %acc0, %d3
-	add.l	%d4, %d3
-	mac.l	%d3, %d5, %acc0
-	mac.l	%a3, %a3, %acc0
-	movclr.l %acc0, %d3
-	add.l	%d1, %d3		/* + x0 */
-	add.l	(%a5)+, %d3		/* + in[k] */
-	move.l	%d3, (%a2)+
-	movem.l	%d6-%d7, (%a6)
+	bclr	#31, %d0		/* frac = (d << 11) & 0x7fffffff */
+	lea	(%a0, %d1.l*4), %a5
+	movem.l	(%a5), %d1-%d2		/* x0, x1 */
+	subq.l	#4, %a0
+	sub.l	%d1, %d2
+	mac.l	%d2, %d0, %acc0
+	add.l	(%a1)+, %d1		/* x0 + in[k] */
+	movclr.l %acc0, %d2
+	add.l	%d2, %d1
+	move.l	%d1, (%a2)+
+	cmpa.l	%a3, %a2
+	bne.s	1b
+	movem.l	%d4-%d5, (%a6)		/* dv, dc */
 9:	movem.l	(%sp), %d2-%d7/%a2-%a6
 	lea	44(%sp), %sp
 	rts

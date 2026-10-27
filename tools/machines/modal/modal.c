@@ -79,12 +79,17 @@ struct track {
 	struct modal_part part;
 };
 
+/* Les potards (et la modulation de hauteur) qui bougent sans trig ne sont repris qu'un bloc sur HOLD (5,3 ms) : un
+ * LFO sur un potard referait sinon tous les calculs par bloc des cordes et des modes a chaque bloc (notes/81). Un
+ * trig les reprend toujours tout de suite. */
+#define HOLD 8
+
 #define NKEY 9                                       /* les mots de +0x14 (PITCH) a +0x24 (DECAY) */
 
 struct ctl {                                         /* ce que update prepare pour render */
 	struct modal_perf ps;
 	struct modal_patch pa;
-	s32 model, poly, chord, fresh;
+	s32 model, poly, chord, fresh, hold;
 	s32 vel;                                         /* gain de velocite du dernier trig (0..127) */
 	s32 pend;                                        /* un trig arrive pendant le calcul des tables */
 	s16 key[NKEY];                                   /* les potards du dernier calcul complet */
@@ -126,11 +131,14 @@ void modal_update(s32 pmod, char *v, const char *p)
 	same = c->same && V32(MARK_OFF) == MARK && !V32(0x34) && !V32(0x38) && pmod == c->kpmod;
 	for (i = 0; same && i < NKEY; i++)
 		same = P16(0x14 + 2 * i) == c->key[i];
-	if (same) {
+	if (same || (c->hold > 0 && V32(MARK_OFF) == MARK && !V32(0x34) && !V32(0x38))) {
+		if (!same)
+			c->hold--;                       /* ce qui a bouge attend la fin de HOLD */
 		c->ps.strum = 0;
 		VGAIN[t] = VGAIN_NEXT[t] = 127;
 		return;
 	}
+	c->hold = V32(0x34) || V32(0x38) ? 0 : HOLD - 1;
 	chord0 = c->chord;
 	if (V32(MARK_OFF) != MARK) {                     /* 1re note sur cette machine */
 		V32(MARK_OFF) = MARK;

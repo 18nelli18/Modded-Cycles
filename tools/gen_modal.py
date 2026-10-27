@@ -156,21 +156,6 @@ def xf(x):
     return m, e
 
 
-def lfo_inc(f):
-    """Incrément de phase (2^32 = un tour) du CosineOscillator<APPROXIMATE>(f) de stmlib, par sa constante c
-    calculée en float32 : 0,5 + 0,5 cos(n theta), cos(theta) = c / 2."""
-    f = f32(f32(f) - 0.25)
-    sign = 16.0
-    if f < 0:
-        f = -f
-    elif f > 0.5:
-        f = f32(f - 0.5)
-    else:
-        sign = -16.0
-    c = f32(f32(sign * f) * f32(1.0 - f32(2.0 * f)))
-    return int(round(math.acos(max(-1.0, min(1.0, c / 2))) / (2 * math.pi) * 2 ** 32)) & 0xffffffff
-
-
 def constants():
     """Constantes de modal_tables.h, d'après les valeurs float32 de Rings et de stmlib."""
     pi = math.pi
@@ -211,10 +196,10 @@ def constants():
     arrays = {
         "M_DETUNE": ("s32", [q(f32(x), 16) for x in (0.013, 0.011, 0.007, 0.017)]),
         "M_GAINS": ("s32", [q31(f32(g) / 2) for g in (1.4, 1.0, 1.4, 0.7, 1.0, 1.4)]),
-        "M_SLFO": ("u32", [lfo_inc(f32(f32(BLOCK / FS) * f32(f))) for f in (0.5, 0.4, 0.35, 0.23, 0.211, 0.2,
-                                                                         0.171, 0.0)]),
         "M_SQRTG": ("s32", [0] + [q31(f32(1.0 / math.sqrt(n * 2.0))) for n in range(1, 9)]),
-        "M_SYMG": ("s32", [0] + [q31(f32(0.2 / n)) for n in range(1, 9)]),
+        # l'entrée des cordes sympathiques, x racine 2 : sans peigne, elles perdent en moyenne la moitié de leur
+        # puissance (notes/81, LITE de tools/emu/test_modal_dsp.py)
+        "M_SYMG": ("s32", [0] + [q31(f32(f32(f32(0.2) * f32(1.41421356)) / n)) for n in range(1, 9)]),
     }
     return k, arrays
 

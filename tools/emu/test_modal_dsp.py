@@ -8,7 +8,11 @@ compilée pour l'ordinateur (rings_ref.cc) depuis une copie de ses sources où n
     table d'accords de Rings pour ce nombre de cordes (ECO) ;
   - Rings calculé à 24 kHz, par blocs de 16 (la moitié du bloc du Cycles), puis remonté à 48 kHz par la passerelle
     (notes/81) : ce qui compte en échantillons est recalé pour garder ses durées et ses fréquences en secondes et en
-    hertz (SR24). C'est la définition du son de MODAL ; tools/emu/modal_ecoute.py en fait des paires à écouter.
+    hertz (SR24) ;
+  - les allègements du budget de 13 % (notes/81) : la lecture linéaire de la ligne des cordes (Read au lieu de
+    ReadHermite), et les cordes sympathiques sans peigne (sans leur sortie aux, la seule où joue leur position) (LITE).
+C'est la définition du son de MODAL. Un contrôle à part compare cette définition à Rings sans LITE, par tiers
+d'octave.
 Le cœur en virgule fixe est compilé pour l'ordinateur (modal_host.c) avec la même arithmétique que sur le Cycles
 (EMAC simulée à l'octet près, modal_fix.h) ; tools/emu/test_modal.py prouve que le code du Cycles fait les mêmes
 octets.
@@ -102,6 +106,19 @@ SR24 = (  # Rings à 24 kHz (notes/81) : après ECO
     # le limiteur : ses temps en secondes (1 - (1 - a)^2 par échantillon)
     ("rings/dsp/limiter.h", "SLOPE(peak_, peak, 0.05f, 0.00002f);", "SLOPE(peak_, peak, 0.0975f, 0.00004f);"),
 )
+LITE = (  # le budget de 13 % (notes/81) : après SR24 ; (fichier, avant, après, nombre)
+    ("rings/dsp/string.cc", "string_.ReadHermite(", "string_.Read(", 3),
+    ("rings/dsp/part.cc", "    s.Process(input, out_buffer_, aux_buffer_, size);",
+     "    if (string > 0 && performance_state.internal_exciter) {\n"
+     "      static float no_comb[kMaxBlockSize];\n"
+     "      s.Process(input, out_buffer_, no_comb, size);\n"
+     "    } else {\n"
+     "      s.Process(input, out_buffer_, aux_buffer_, size);\n"
+     "    }", 1),
+    # sans peigne, une corde sympathique perd en moyenne la moitié de sa puissance (out - aux) : son entrée x racine 2
+    ("rings/dsp/part.cc", "float gain = 0.2f / static_cast<float>(num_strings);",
+     "float gain = 0.2f * 1.41421356f / static_cast<float>(num_strings);", 1),
+)
 MB = gmo.BLOCK                      # trames par bloc du cœur : 16 (24 kHz)
 FAIL = []
 
@@ -112,26 +129,34 @@ def check(ok, msg):
         FAIL.append(msg)
 
 
-def build(tmp, repo):
-    src = tmp / "src"
+def rings(tmp, repo, name, edits):
+    """Rings compilé pour l'ordinateur depuis une copie de ses sources retouchée par edits ((fichier, avant, après,
+    [nombre])) : l'exécutable tmp / name."""
+    src = tmp / (name + "_src")
     for d in ("rings/dsp", "stmlib/dsp", "stmlib/utils"):
         shutil.copytree(repo / d, src / d)
     for f in ("rings/resources.h", "rings/resources.cc", "stmlib/stmlib.h"):
         shutil.copy(repo / f, src / f)
-    for f, a, b in ECO + SR24:
+    for f, a, b, *n in edits:
         p = src / f
         s = p.read_text(encoding="utf-8")
-        if s.count(a) != 1:
+        if s.count(a) != (n[0] if n else 1):
             raise SystemExit(f"!! {f} : « {a} » introuvable")
         p.write_text(s.replace(a, b), encoding="utf-8")
     cxx = shutil.which("c++") or shutil.which("g++")
-    cc = shutil.which("cc") or shutil.which("gcc")
-    ref, fix = tmp / "rings_ref", tmp / "modal_host"
     subprocess.run([cxx, "-O2", "-DTEST", f"-DBLK={MB}", f"-I{src}", str(HERE / "rings_ref.cc"),
-                    *[str(src / f) for f in RINGS], "-o", str(ref)], check=True, capture_output=True)
+                    *[str(src / f) for f in RINGS], "-o", str(tmp / name)], check=True, capture_output=True)
+    return tmp / name
+
+
+def build(tmp, repo):
+    """(la référence : Rings avec ECO, SR24 et LITE ; Rings sans LITE ; le cœur de MODAL)"""
+    ref, full = rings(tmp, repo, "rings_ref", ECO + SR24 + LITE), rings(tmp, repo, "rings_full", ECO + SR24)
+    cc = shutil.which("cc") or shutil.which("gcc")
+    fix = tmp / "modal_host"
     subprocess.run([cc, "-O2", "-Wall", "-Wextra", "-Werror", f"-I{gmo.SRC}", str(HERE / "modal_host.c"), "-o",
                     str(fix)], check=True)
-    return ref, fix
+    return ref, full, fix
 
 
 def rec(model=0, poly=1, strum=0, chord=0, note=0.0, tonic=48.0, st=0.28, br=0.5, da=0.5, po=0.31, x=None):
@@ -221,6 +246,42 @@ def cases(quick):
     return out
 
 
+def bands(x, n=8192):
+    """Le niveau par tiers d'octave (dB) de x (24 kHz), de 50 Hz à 12 kHz, moyenne des spectres sur des fenêtres."""
+    f = np.fft.rfftfreq(n, 1 / 24000)
+    w = np.hanning(n)
+    p = np.mean([np.abs(np.fft.rfft(x[i:i + n] * w)) ** 2 for i in range(0, len(x) - n, n // 2)], axis=0)
+    edges = 50 * 2 ** (np.arange(25) / 3)
+    return np.array([10 * np.log10(p[(f >= lo) & (f < hi)].sum() + 1e-12) for lo, hi in zip(edges[:-1], edges[1:])])
+
+
+def lite_spectrum(ref, full):
+    """Ce que LITE change au son (notes/81) : Rings avec et sans LITE, par tiers d'octave (les bandes à moins de 50 dB
+    du maximum), et le niveau ; sur des suites de notes des modèles à cordes, 1 à 3 voix, graves et aigus."""
+    def notes(first, step, count, every):
+        return tuple((i * every, first + step * (i % 4) - 48.0) for i in range(count))
+    cases = [("cordes sympathiques, 1 voix", 1, 1, notes(48, 4, 8, 75), {}),
+             ("cordes sympathiques, 2 voix", 1, 2, notes(55, 5, 8, 75), dict(br=0.7)),
+             ("cordes en accord, 2 voix", 4, 2, notes(48, 3, 8, 75), dict(chord=3)),
+             ("corde, 1 voix, grave et brillante", 2, 1, notes(36, 7, 4, 150), dict(br=0.9, da=0.8, st=0.6)),
+             ("corde, 3 voix, aiguë", 2, 3, notes(84, 4, 10, 60), dict(br=0.8, da=0.7))]
+    meds, lvls = [], []
+    for name, model, poly, ns, kw in cases:
+        data = b"".join(scenario(model, poly, blocks=900, notes=ns, **kw))
+        a, b = run(full, data), run(ref, data)
+        A, B = bands(a), bands(b)
+        m = A > A.max() - 50
+        d = np.abs(A - B)[m]
+        lvl = 10 * np.log10(np.mean(b ** 2) / np.mean(a ** 2))
+        meds.append(np.median(d))
+        lvls.append(lvl)
+        print(f"        {name} : écart médian {np.median(d):.1f} dB par tiers d'octave, {d.max():.1f} dB au plus, "
+              f"niveau {lvl:+.1f} dB")
+    check(max(meds) <= 3.0 and max(abs(x) for x in lvls) <= 6.0,
+          f"LITE (lecture linéaire, cordes sympathiques sans peigne) contre Rings sans LITE : {max(meds):.1f} dB "
+          f"d'écart médian par tiers d'octave au plus, niveau à {max(abs(x) for x in lvls):.1f} dB au plus")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--eurorack", required=True, help="clone de pichenettes/eurorack au commit épinglé")
@@ -229,7 +290,7 @@ def main():
     repo = pathlib.Path(args.eurorack).resolve()
     gm.check_sources(repo)
     with tempfile.TemporaryDirectory() as d:
-        ref, fix = build(pathlib.Path(d), repo)
+        ref, full, fix = build(pathlib.Path(d), repo)
         worst = []
         for name, recs, *lim in cases(args.quick):
             data = b"".join(recs)
@@ -242,6 +303,7 @@ def main():
                   + (f" ; seuil {floor:.0f} dB" if lim else ""))
         worst.sort()
         print(f"\n  le plus faible : {worst[0][1]} ({worst[0][0]:.1f} dB) ; médiane {worst[len(worst) // 2][0]:.1f} dB")
+        lite_spectrum(ref, full)
     print("\nTOUT OK" if not FAIL else f"\n{len(FAIL)} ÉCHEC(S)")
     return 1 if FAIL else 0
 
