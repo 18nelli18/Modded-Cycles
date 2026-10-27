@@ -1055,7 +1055,7 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 	s32 dv, pv, dispv, dcv, fx1, fx2, fbr, fdmp, wp, out0, aux0, out1, aux1;
 	s32 ib, ia2, ia3, ic1, ic2;
 	s32 *line = s->line;
-	int k;
+	int k, plain;
 
 	str_params(s);
 #ifdef MODAL_ASM
@@ -1130,11 +1130,34 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 	ia3 = s->iir.a3;
 	ic1 = s->iir.ic1;
 	ic2 = s->iir.ic2;
-	if (src_ratio == (1 << 29) && !s->enable_dispersion && delay >= ((MB + 8) << 20) && s->delay >= ((MB + 8) << 20)) {
+	plain = !s->enable_dispersion;
+	if (!plain && src_ratio == (1 << 29) && !disp_inc) {
+		/* une corde avec dispersion qui n'en fait rien sur ce bloc (ni modulation du retard, ni anti-continu, ni
+		 * passe-tout de l'etirement) : le chemin sans dispersion, ses MB tirages aleatoires d'un coup (notes/81) */
+		if (!s->kdisp_valid || s->kdisp != dispv) {
+			struct dispk dk0;
+			disp_coefs(&dk0, dispv);
+			s->kdisp = dispv;
+			s->ksp = dk0.sp;
+			s->kna = dk0.na;
+			s->kbc = dk0.bc;
+			s->kac = dk0.ac;
+			s->kapg = dk0.apg;
+			s->kdisp_valid = 1;
+		}
+		if (!(s->kna | s->kbc | s->kac)) {
+			s32 d0 = qmul(dv + d_inc, dcv + dc_inc) - (1 << 20), d1 = qmul(dv + MB * d_inc, dcv + MB * dc_inc) - (1 << 20);
+			if (qmul(d0 > d1 ? d0 : d1, s->ksp) < (4 << 20))
+				plain = 2;
+		}
+	}
+	if (src_ratio == (1 << 29) && plain && delay >= ((MB + 8) << 20) && s->delay >= ((MB + 8) << 20)) {
 		/* le cas courant (pas de dispersion ni de surechantillonnage, retard de plus d'un bloc : rien de ce
 		 * qu'on lit n'est ecrit dans ce bloc), en trois passes legeres : lectures, filtres, ecritures */
 		s32 *hb = sc.x;
 		s32 dvk = dv, dck = dcv, w = wp;
+		if (plain == 2)
+			*rng = *rng * M_LCG16A + M_LCG16C;
 #ifdef MODAL_ASM
 		if (!d_inc && !dc_inc) {                     /* passe 1, retard fixe : modal_asm.S */
 			s32 d = qmul(dv, dcv) - (1 << 20), f = shl(d, 11) & Q31ONE;
