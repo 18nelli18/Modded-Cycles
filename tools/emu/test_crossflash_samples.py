@@ -110,9 +110,9 @@ BS_BASE, BS_LOADER, BS_READ, BS_CHECKS = 0x80000400, 0x80000820, 0x8000f010, (0x
 STAGE = 0x20000                                                    # ou l'OS qui tourne ecrit la mise a jour
 
 
-def boot(bootstrap, blob):
+def boot(bootstrap, blob, main_size=0x200000):
     """Fait tourner le chargeur du bootstrap sur `blob` ecrit en flash 0x20000 ; renvoie (entree, RAM depuis
-    0x40000400 sur 2 Mo, verifications appelees)."""
+    0x40000400 sur main_size octets, verifications appelees)."""
     uc = Uc(UC_ARCH_M68K, UC_MODE_BIG_ENDIAN)
     uc.ctl_set_cpu_model(mk.UC_CPU_M68K_ANY)
     uc.reg_write(mk.UC_M68K_REG_SR, 0x2700)
@@ -139,7 +139,8 @@ def boot(bootstrap, blob):
     uc.mem_write(sp, STOP.to_bytes(4, "big"))
     uc.reg_write(mk.UC_M68K_REG_A7, sp)
     uc.emu_start(BS_LOADER, STOP, count=400_000_000)
-    return uc.reg_read(mk.UC_M68K_REG_D0), bytes(uc.mem_read(0x40000400, 0x200000)), seen
+    assert uc.reg_read(mk.UC_M68K_REG_PC) == STOP, 'bootstrap did not return'
+    return uc.reg_read(mk.UC_M68K_REG_D0), bytes(uc.mem_read(0x40000400, main_size)), seen
 
 
 def blob_of(raw):

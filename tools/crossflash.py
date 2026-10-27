@@ -241,7 +241,7 @@ def cycles_for_samples(cyc, smp):
     dirty = bytearray(len(main))
     dirty[off:off + 32] = b"\1" * 32
     new_s3 = aplib.repack(bytes(patched), ops, dirty)
-    if aplib.depack(new_s3)[0] != bytes(patched):
+    if aplib.depack(new_s3, bootstrap_gap=0x40200000-MAIN_BASE)[0] != bytes(patched):
         raise SystemExit("!! recompression du MAIN OS : relecture differente")
     blob = container.rebuild(s_c, {3: new_s3}, s_key)
     out = wrap(container.build_stream(blob, BYTES_PER_MSG), s_info["product"], s_info["start_seq"])

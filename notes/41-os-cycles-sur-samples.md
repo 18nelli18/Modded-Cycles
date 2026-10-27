@@ -231,3 +231,34 @@ charge des samples en identité SMP.
   référence) ; la plus grosse finit en `0x401fae10` (< `0x40200000`) et son conteneur (948 928 o) s'arrête en
   `0x107ac0`, loin de `0x1e0000`. `cyclesForSamples` accepte déjà un `.syx` modifié. À prévoir : changer de mods plus
   tard demande un nouveau type de fichier (conteneur signé Samples dans le transport Cycles), et créditer akrism.
+
+## 9. Principal2.53 agrandi, emballage Samples (27/10/2026)
+
+Demande AveyCole : le choix « Model:Samples, already on the Cycles OS » refuse
+la preparation avec « OS agrandi au-delà de 0x40200000 ». `[FAIT]` Reproduit
+avec le principal v189 approuve, SHA SysEx
+`6a729fbf198b50768ec1bfade96d6627ab11f08cea210f452586927d207a3282`.
+Son MAIN fait3 464 242octets et finit en `0x4034e032`. L'erreur precede
+toute transmission MIDI.
+
+La borne finale de2Mo etait suffisante mais trop restrictive : la sortie
+peut reutiliser la partie deja lue du flux comprime. Le bootstrap garde son
+entree en `0x40200000` et ecrit a partir de `0x40000400`. Le decodeur JS,
+et son equivalent Python, verifient maintenant **chaque** literal/copie :
+fin de sortie <= ecart des bases + position de lecture apres les octets
+de commande consommes. Une longue copie qui rattraperait l'entree non lue
+est refusee. Cette verification porte sur le flux recompresse avec la cle
+Samples ; les32octets de cle, signatures, relectures, sections hote et
+borne de flash `0x1c0000` restent controles. La borne des constructions
+generiques n'est pas changee.
+
+`[FAIT en emulation]` `tools/test_fixed_main_samples.js` reproduit les deux
+transports : Cycles pour Samples deja converti, Samples pour premiere
+installation. Conteneur1 575 696octets, sections2/4/5 Samples identiques,
+ecart MAIN limite a la cle. `tools/emu/test_fixed_main_samples_boot.py`
+execute le **vrai** bootstrap Samples et compare les3 464 242octets RAM,
+puis les verifications natives Cycles modifie/Samples officiel : accepte ;
+Cycles officiel : refuse. Python et JS produisent le meme SysEx.
+Un flux aPLib valide mais trop compact qui ecraserait son entree est refuse
+par les deux decodeurs. Aucune nouvelle image firmware publiee ; v189 et
+version2.53 conserves. `[A FAIRE]` Confirmation sur le Model:Samples concerne.

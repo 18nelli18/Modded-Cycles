@@ -218,9 +218,17 @@ function wrap(body, product, startSeq = START_SEQ) {
 const SECT_HDR = 8, OFFSET_BIAS = 767, REUSE_GAMMA = 2, FAR_THRESHOLD = 3328, END_GAMMA = 0x1000002;
 const LITERAL = 1, MATCH = 0;
 
-function aplibDepack(stream) {
+function aplibDepack(stream, { bootLayout = false } = {}) {
   if (stream.length < SECT_HDR) throw new Error("section plus courte que son en-tete");
   let ip = SECT_HDR, tag = 0;
+  // Le bootstrap lit le flux en 0x40200000 et ecrit des 0x40000400.
+  // Une sortie plus grande que 2Mo est valide si elle ne rattrape jamais
+  // les octets comprimes non encore lus. Verifier chaque operation, y
+  // compris les longues copies, plutot que borner la seule taille finale.
+  const checkOutput = (end) => {
+    if (bootLayout && end > (0x40200000 - 0x40000400) + ip)
+      throw new Error("MAIN OS : chevauchement du flux bootstrap non encore lu");
+  };
   const bit = () => {
     tag <<= 1;
     if ((tag & 0xff) === 0) {
@@ -242,7 +250,11 @@ function aplibDepack(stream) {
   const ops = [];
   let lastOff = 1;
   while (true) {
-    if (bit()) { ops.push([LITERAL, out.length, 0, 1]); out.push(stream[ip++]); continue; }
+    if (bit()) {
+      const value = stream[ip++];
+      checkOutput(out.length + 1);
+      ops.push([LITERAL, out.length, 0, 1]); out.push(value); continue;
+    }
     const g = gamma();
     let off;
     if (g === REUSE_GAMMA) {
@@ -258,6 +270,7 @@ function aplibDepack(stream) {
     if (off > FAR_THRESHOLD) L += 1;
     const n = L + 1;
     if (off === 0 || off > out.length) throw new Error("flux corrompu : offset hors sortie");
+    checkOutput(out.length + n);
     ops.push([MATCH, out.length, off, n]);
     const src = out.length - off;
     for (let k = 0; k < n; k++) out.push(out[src + k]);
@@ -866,9 +879,8 @@ function cyclesOsInSamples(c3, cKey, sc, sKey) {
   if (!eq(old.map((b, i) => b ^ h[i] ^ hr[i]), cKey)) throw new Error("la cle du MAIN OS Cycles differe de celle du bootstrap");
   const patched = Uint8Array.from(main), dirty = new Uint8Array(main.length);
   for (let i = 0; i < 32; i++) { patched[co + i] = sKey[i] ^ h[i] ^ hr[i]; dirty[co + i] = 1; }
-  if (BASE + patched.length > END_LIMIT) throw new Error("OS agrandi au-delà de 0x40200000");
   const newS3 = aplibRepack(patched, ops, dirty);
-  if (!eq(aplibDepack(newS3).data, patched)) throw new Error("recompression du MAIN OS : relecture differente");
+  if (!eq(aplibDepack(newS3, { bootLayout: true }).data, patched)) throw new Error("recompression du MAIN OS : relecture differente");
   const blob = rebuildContainer(sc, { 3: newS3 }, sKey);
   if (blob.length > SMP_CONTAINER_MAX) throw new Error("conteneur trop grand pour la flash du Samples");
   return { blob, main: patched, mods: main, co };

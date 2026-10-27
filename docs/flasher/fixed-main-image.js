@@ -1,4 +1,4 @@
-/* 2026-10-27-lfo-clear-estus-main-253-delivery2 */
+/* 2026-10-27-main253-samples-layout */
 /* Meme image approuvee ; chemin immuable et repli epingle, SHA obligatoire. */
 (()=>{
   "use strict";

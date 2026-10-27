@@ -43,10 +43,11 @@ class _Reader:
                 raise ValueError('corrupt stream: gamma overflowed')
 
 
-def depack(stream):
+def depack(stream, *, bootstrap_gap=None):
     """stream = section bytes including the 8-byte header.
 
     Returns (data, ops) where ops is a list of (kind, out_pos, off, n).
+    bootstrap_gap, si fourni, borne chaque ecriture avant l'entree non lue.
     """
     if len(stream) < SECT_HDR:
         raise ValueError('section shorter than its header')
@@ -57,8 +58,11 @@ def depack(stream):
     while True:
         if r.bit():
             ops.append((LITERAL, len(out), 0, 1))
-            out.append(stream[r.ip])
+            value = stream[r.ip]
             r.ip += 1
+            if bootstrap_gap is not None and len(out) + 1 > bootstrap_gap + r.ip:
+                raise ValueError('MAIN OS overlaps unread bootstrap input')
+            out.append(value)
             continue
         g = r.gamma()
         if g == REUSE_GAMMA:
@@ -77,6 +81,8 @@ def depack(stream):
         n = L + 1
         if off == 0 or off > len(out):
             raise ValueError('corrupt stream: offset past the output')
+        if bootstrap_gap is not None and len(out) + n > bootstrap_gap + r.ip:
+            raise ValueError('MAIN OS overlaps unread bootstrap input')
         ops.append((MATCH, len(out), off, n))
         src = len(out) - off
         if off >= n:
