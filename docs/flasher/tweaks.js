@@ -1408,7 +1408,7 @@ window.MC_TWEAKS = {
     "Le navigateur de sons, de dossiers et d'échantillons affiche 3 noms à la fois, en petite police, au lieu d'un seul en gros caractères.",
     "« > » devant le nom sous le curseur ; le son chargé reste inversé ; un dossier a un petit repère devant son nom. Avec browser-scroll ou Model-TG, seul le nom sous le curseur défile.",
     "Idée et adresses de départ : un script d'un membre de la communauté (notes/40).",
-    "Code dans le masque de sprite 47x47 libéré 0x401904b4 (tools/sprites.py) : 370 o. Généré par tools/gen_multiline_browser.py, notes/40."
+    "Code dans le masque de sprite 47x47 libéré 0x401904b4 : 370 o, et le nom de chaque ligne dans le masque 48x22 libéré 0x40152d38 : 36 o (tools/sprites.py). Généré par tools/gen_multiline_browser.py, notes/40."
    ],
    "device": "Model:Cycles",
    "os": "1.13",
@@ -1417,7 +1417,8 @@ window.MC_TWEAKS = {
     "ml_row": "0x401904de",
     "ml_after": "0x40190512",
     "ml_icon": "0x401905b6",
-    "ml_bound": "0x401904c4"
+    "ml_bound": "0x401904c4",
+    "ml_name": "0x40152d38"
    },
    "writes": [
     {
@@ -1486,6 +1487,11 @@ window.MC_TWEAKS = {
      "new": "0009"
     },
     {
+     "off": 676748,
+     "old": "2d40ffe020454e91",
+     "new": "4eb940152d384e71"
+    },
+    {
      "off": 681396,
      "old": "0001",
      "new": "0003"
@@ -1494,6 +1500,16 @@ window.MC_TWEAKS = {
      "off": 705412,
      "old": "401904b4",
      "new": "40172220"
+    },
+    {
+     "off": 758566,
+     "old": "40152d38",
+     "new": "4014b364"
+    },
+    {
+     "off": 1386808,
+     "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+     "new": "2d40ffe02f2a00102f2a0018254c00102f0c2f0a20454e91508f255f0018255f00104e75"
     },
     {
      "off": 1638580,

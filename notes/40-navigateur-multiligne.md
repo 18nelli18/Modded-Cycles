@@ -185,3 +185,27 @@ Points qui étaient à vérifier :
 - Le son chargé en surbrillance, les dossiers (repère), un dossier vide.
 - Avec Model-TG : le choix d'un échantillon pour le Sampler (même navigateur).
 - Le crédit : le nom sous lequel l'auteur du script veut apparaître.
+
+## 7. LOCKS sur les trois lignes, à la racine de +Drive `[FAIT en émulation]`
+
+Rapport d'un utilisateur (27/10/2026, sa propre machine) : à la racine, le curseur sur la dernière entrée (`15/15`),
+les trois lignes affichent `LOCKS` ; un cran en arrière, la dernière ligne garde un carré creux sans nom. Seulement à
+la racine. `LOCKS` n'est pas un dossier de la carte : c'est l'entrée spéciale que l'OS ajoute en fin de liste de la
+racine (le `READ_DIR` du port USB ne la rend pas ; dedans, 64 emplacements `---`).
+
+Cause, dans l'OS : le getter du nom de la racine (vt[16] = `0x400a4184`, appelé en `0x400a5792` pour chaque ligne,
+index en a4) commence par `0x400a4132`, qui teste si la **sélection** est l'entrée spéciale (vt[36] `0x4007266e` ==
+nombre − 1), pas l'index demandé. Avec une ligne, c'était la même chose. Avec trois : sélection sur `LOCKS`, les trois
+lignes reçoivent son nom ; sélection ailleurs, la ligne de `LOCKS` passe par le chemin ordinaire (`0x4003f09c`) et
+n'a pas de nom. L'icône, elle, compare bien l'index de la ligne (`0x400a566c`) : d'où le carré au bon endroit.
+
+Retouche : `ml_name` (`jsr` en `0x400a578c` à la place de `move.l d0,-32(fp) ; movea.l d5,a0 ; jsr (a1)`, plus un
+`nop`). Le temps de l'appel, la sélection (`16(a2)`) vaut la ligne demandée ; vt[36] réécrit l'écart `24(a2)`, les
+deux reviennent ensuite. 36 o dans un second masque libéré, 48 × 22 `0x40152d38` (le premier est plein à 370/376 o).
+Diagnostic de l'OS : agent Claude, vérifié au désassemblage.
+
+Preuve : le banc remplace vt[16] par un getter qui se comporte comme `0x400a4184` (nom de l'entrée spéciale dès que la
+sélection est la dernière, pas de nom pour elle par le chemin ordinaire). Sur l'ancien tweak, il reproduit les deux
+symptômes de la machine (`LOCKS, LOCKS, LOCKS`, puis `DIR 12, DIR 13, ""`) ; sur le nouveau, cinq positions (curseur
+14, 13, 12 avec la 1ʳᵉ ligne 12 ; 14 avec la 1ʳᵉ ligne 13 ; 11 avec la 1ʳᵉ ligne 10) donnent les noms de la liste,
+et la sélection, la 1ʳᵉ ligne et l'écart sont inchangés après le dessin. Non testé sur la machine de Maxime.
