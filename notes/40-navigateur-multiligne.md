@@ -209,3 +209,7 @@ sélection est la dernière, pas de nom pour elle par le chemin ordinaire). Sur 
 symptômes de la machine (`LOCKS, LOCKS, LOCKS`, puis `DIR 12, DIR 13, ""`) ; sur le nouveau, cinq positions (curseur
 14, 13, 12 avec la 1ʳᵉ ligne 12 ; 14 avec la 1ʳᵉ ligne 13 ; 11 avec la 1ʳᵉ ligne 10) donnent les noms de la liste,
 et la sélection, la 1ʳᵉ ligne et l'écart sont inchangés après le dessin. Non testé sur la machine de Maxime.
+
+Rapport d'un utilisateur (27/10/2026, sa propre machine, OS construit avec Model-TG, FUNC + SETTINGS et LFO 2/3/4,
+envoyé par `fastflash.py`) : à la racine, au bout de la liste, plus de doublons ni de ligne sans nom ; `LOCKS` garde
+son repère (carré creux) et s'ouvre comme avant (64 emplacements `---`) ; les autres dossiers défilent normalement.
