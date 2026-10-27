@@ -68,3 +68,8 @@ Avec Model-TG seul, et avec model-tg-st et les cinq moteurs du Syntakt. `--png` 
   nom, grand nombre, points, courbe qui suit le potard.
 - Que le nom (cadre de gauche) reste « Attack », « Filter », « Res ».
 - Non testé sur la machine de Maxime.
+
+Rapport d'un utilisateur (27/10/2026, sa propre machine, `fastflash.py`, OS avec Model-TG, FUNC + SETTINGS, LFO
+2/3/4, navigateur multiligne) : Attack, Filtre et Résonance ont leur grand nombre, leurs points et leur courbe sur
+les machines essayées ; l'animation d'Attack est celle voulue. Reste : la valeur enregistrée de Filtre et Résonance
+s'affiche `83.00` (avec décimales) là où le potard montre `83`.
