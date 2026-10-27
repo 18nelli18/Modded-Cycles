@@ -367,6 +367,7 @@ void modal_str_read_mv(const s32 *pw, s32 *st, const s32 *in, s32 *hb, int n);
 void modal_str_read_nz(s32 *line, s32 *hb, const s32 *in, int n, s32 *k);
 void modal_str_run(s32 *pw, const s32 *pr, const s32 *in, s32 *out, int n, s32 *k);
 void modal_str_comb(const s32 *pb, s32 *aux, int n, s32 *cp);
+void modal_str_dw(const s32 *hb, s32 *pw, s32 *out, int n, s32 *k);
 void modal_str_read_cb(s32 *line, s32 *hb, const s32 *in, int n, s32 *k);
 void modal_str_damp_mv(s32 *hb, s32 *dk);
 void modal_str_write_mv(const s32 *hb, s32 *pw, s32 *out, s32 *dpp, int n);
@@ -913,66 +914,108 @@ static __attribute__((noinline)) void str_fast(struct mstring *s, const s32 *in,
 		cs = (d < d1 ? d : d1) >> 20;
 	}
 	cs = cs > MB ? MB : (cs < 1 ? 1 : cs);         /* 1 : lu avant d'etre ecrit, comme dans la boucle de str_process */
-	if (cs == MB && !d_inc && !s->fap && !s->fmode) {
-		/* le cas courant : une boucle (modal_str_run) puis le peigne a part (modal_str_comb) ; quand sa lecture
-		 * tombe sur la place que l'echantillon suivant va ecrire (comb >> 20 nul : POSITION a un bout, une corde
-		 * aigue), l'ancien contenu de cette place, garde avant la boucle */
-		s32 pv0 = s->clamped_position;
-		{
-			s32 kk[11], old[MB];
-			int n1 = wp + 1 < MB ? wp + 1 : MB, n3 = wp < MB ? wp : MB, k;
-			int whole = !comb || (qmul(s->delay, pv0 + p_inc) >= (1 << 20)
-					      && qmul(s->delay, pv0 + MB * p_inc) >= (1 << 20));
-			if (!whole)
-				for (k = 1; k < MB; k++)
-					old[k] = line[(wp - k) & (DLINE - 1)];
-			kk[0] = ff;
-			kk[1] = s->fh0;
-			kk[2] = s->fh1;
-			kk[3] = -s->iir.b;
-			kk[4] = s->iir.a2;
-			kk[5] = s->iir.a3;
-			kk[6] = s->fx1;
-			kk[7] = s->fx2;
-			kk[8] = s->iir.ic1;
-			kk[9] = s->iir.ic2;
+	if (cs == MB && !d_inc) {
+		/* le cas courant, en deux ou trois boucles : la lecture a part s'il le faut (passe-tout de l'etirement,
+		 * retard module par le bruit ou le chevalet courbe), puis une boucle (modal_str_run, ou modal_str_dw apres
+		 * cette lecture), puis le peigne a part (modal_str_comb) ; quand la lecture du peigne tombe sur la place que
+		 * l'echantillon suivant va ecrire (comb >> 20 nul : POSITION a un bout, une corde aigue), l'ancien contenu de
+		 * cette place, garde avant la boucle */
+		s32 pv0 = s->clamped_position, kk[13], old[MB + 1];
+		int n1 = wp + 1 < MB ? wp + 1 : MB, n3 = wp < MB ? wp : MB, k, rd = s->fap || s->fmode;
+		int whole = !comb || (qmul(s->delay, pv0 + p_inc) >= (1 << 20)
+				      && qmul(s->delay, pv0 + MB * p_inc) >= (1 << 20));
+		if (s->fmode == 2) {
+			kk[0] = s->fd0;
+			kk[1] = s->ksp;
+			kk[2] = s->kapg;
+			kk[3] = s->kna;
+			kk[4] = s->k_nfilt;
+			kk[5] = s->k_nk;
+			kk[6] = s->dispersion_noise;
+			kk[7] = (s32)*rng;
+			kk[8] = wp;
+			kk[9] = s->swp;
+			kk[10] = 1664525;
+			kk[11] = (s32)(unsigned long)s->stretch;
+			modal_str_read_nz(line, hb, in, n1, kk);
+			kk[8] = DLINE - 1;
+			modal_str_read_nz(line, hb + n1, in + n1, MB - n1, kk);
+			s->dispersion_noise = kk[6];
+			*rng = (u32)kk[7];
+			s->swp = kk[9];
+		} else if (s->fmode == 3) {
+			kk[0] = s->fd0;
+			kk[1] = s->kbc;
+			kk[2] = s->kac;
+			kk[3] = s->curved_bridge;
+			kk[4] = s->dc.x;
+			kk[5] = s->dc.y;
+			kk[6] = s->dc.pole;
+			kk[7] = (s32)s->dc.f;
+			kk[8] = wp;
+			kk[9] = M_0025U;
+			modal_str_read_cb(line, hb, in, n1, kk);
+			kk[8] = DLINE - 1;
+			modal_str_read_cb(line, hb + n1, in + n1, MB - n1, kk);
+			s->curved_bridge = kk[3];
+			s->dc.x = kk[4];
+			s->dc.y = kk[5];
+			s->dc.f = (u32)kk[7];
+		} else if (s->fap) {
+			kk[0] = (s32)(unsigned long)s->stretch;
+			kk[1] = s->swp;
+			kk[2] = s->fapj;
+			kk[3] = s->kapg;
+			modal_str_read_ap(&line[wp + di], ff, hb, n1, kk);
+			modal_str_read_ap(&line[DLINE - 1 + di], ff, hb + n1, MB - n1, kk);
+			s->swp = kk[1];
+			for (k = 0; k < MB; k++)
+				hb[k] += in[k];
+		}
+		if (!whole)                              /* les places que le bloc ecrit, et celle du suivant */
+			for (k = 1; k <= MB; k++)
+				old[k] = line[(wp - k) & (DLINE - 1)];
+		kk[0] = ff;
+		kk[1] = s->fh0;
+		kk[2] = s->fh1;
+		kk[3] = -s->iir.b;
+		kk[4] = s->iir.a2;
+		kk[5] = s->iir.a3;
+		kk[6] = s->fx1;
+		kk[7] = s->fx2;
+		kk[8] = s->iir.ic1;
+		kk[9] = s->iir.ic2;
+		if (rd) {
+			modal_str_dw(hb, &line[wp], out, n1, kk);
+			modal_str_dw(hb + n1, &line[DLINE - 1], out + n1, MB - n1, kk);
+		} else {
 			modal_str_run(&line[wp], &line[wp + di], in, out, n1, kk);
 			modal_str_run(&line[DLINE - 1], &line[DLINE - 1 + di], in + n1, out + n1, MB - n1, kk);
-			s->fx1 = kk[6];
-			s->fx2 = kk[7];
-			s->iir.ic1 = kk[8];
-			s->iir.ic2 = kk[9];
-			if (comb && whole) {
-				kk[0] = s->delay;
-				kk[1] = pv0;
-				kk[2] = p_inc;
-				modal_str_comb(n3 ? &line[wp - 1] : line, aux, n3, kk);
-				modal_str_comb(&line[DLINE - 1], aux + n3, MB - n3, kk);
-			} else if (comb) {
-				s32 pv = pv0;
-				for (k = 0; k < MB; k++) {
-					s32 cb, i, b = (wp - k - 1) & (DLINE - 1), x0, x1;
-					pv += p_inc;
-					cb = qmul(s->delay, pv);
-					i = cb >> 20;
-					x0 = !i && k < MB - 1 ? old[k + 1] : line[b + i];
-					x1 = line[b + i + 1];
-					aux[k] += x0 + qmul(x1 - x0, shl(cb, 11) & Q31ONE);
-				}
-			}
-			if (comb) {
-				s->aux1 = aux[MB - 2] - a30;
-				s->aux0 = aux[MB - 1] - a31;
-			} else {
-				s->aux1 = s->aux0 = 0;
-			}
-			s->clamped_position = pv0 + MB * p_inc;
-			wp = (wp - MB) & (DLINE - 1);
-			s->wp = wp;
-			s->out1 = line[(wp + 2) & (DLINE - 1)];
-			s->out0 = line[(wp + 1) & (DLINE - 1)];
-			return;
 		}
+		s->fx1 = kk[6];
+		s->fx2 = kk[7];
+		s->iir.ic1 = kk[8];
+		s->iir.ic2 = kk[9];
+		if (comb) {
+			kk[0] = s->delay;
+			kk[1] = pv0;
+			kk[2] = p_inc;
+			kk[3] = (s32)(unsigned long)&old[1];
+			modal_str_comb(n3 ? &line[wp - 1] : line, aux, n3, kk);
+			modal_str_comb(&line[DLINE - 1], aux + n3, MB - n3, kk);
+		}
+		if (comb) {
+			s->aux1 = aux[MB - 2] - a30;
+			s->aux0 = aux[MB - 1] - a31;
+		} else {
+			s->aux1 = s->aux0 = 0;
+		}
+		s->clamped_position = pv0 + MB * p_inc;
+		wp = (wp - MB) & (DLINE - 1);
+		s->wp = wp;
+		s->out1 = line[(wp + 2) & (DLINE - 1)];
+		s->out0 = line[(wp + 1) & (DLINE - 1)];
+		return;
 	}
 	dk[0] = s->fx1;
 	dk[1] = s->fx2;
@@ -995,7 +1038,7 @@ static __attribute__((noinline)) void str_fast(struct mstring *s, const s32 *in,
 		n1 = wp + 1 < c ? wp + 1 : c;            /* w de wp a 0, puis de DLINE - 1 vers le bas */
 		n3 = wp < c ? wp : c;
 		if (s->fmode == 2) {                     /* 1 : la lecture ; le bruit module le retard (str_process) */
-			s32 kk[12];
+			s32 kk[13];
 			kk[0] = s->fd0;
 			kk[1] = s->ksp;
 			kk[2] = s->kapg;
@@ -1494,7 +1537,7 @@ static __attribute__((noinline)) void str_process_full(struct mstring *s, const 
 					modal_str_read(&line[DLINE - 1 + (D >> 20)], f, in + n1, hb + n1, MB - n1);
 				}
 			} else if (mode == 2) {
-				s32 kk[12];
+				s32 kk[13];
 				kk[0] = d0;
 				kk[1] = sp;
 				kk[2] = apg;
