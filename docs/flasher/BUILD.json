@@ -1,8 +1,8 @@
 {
-  "stamp": "2026-10-27-lfo-clear-estus-main-253",
+  "stamp": "2026-10-27-lfo-clear-estus-main-253-delivery2",
   "scope": "main",
   "profile": "Exact full-feature image, per-track filter, MIDI machine; on-device USB 2ch/6ch switch (2ch enabled)",
-  "fixed_image": "all-features-usb-2ch-default.syx",
+  "fixed_image": "Supermodel_2.53_6a729fbf198b.syx",
   "fixed_image_sha256": "6a729fbf198b50768ec1bfade96d6627ab11f08cea210f452586927d207a3282",
   "diagnostics": "DX A/P/O/N",
   "startup": "Supermodel",
@@ -531,5 +531,7 @@
     "CL HAT",
     "OP HAT",
     "CYMBAL"
-  ]
+  ],
+  "fixed_image_legacy": "all-features-usb-2ch-default.syx",
+  "delivery_fix": "Immutable release path, checksum-verified pinned-source fallback, independent buffers; firmware bytes unchanged"
 }

@@ -3227,7 +3227,8 @@ function prepareFirmware() {
     const meta = window.MCFixedMainImageMeta;
     const release = window.MC_RELEASES[0].version;
     const fixedKey = `fixed-main:${release}:${meta.syxSha256}:${os.sha}:${st.syntakt.version}`;
-    const makeFixed = () => window.MCFixedMainImageReady.then((raw) => {
+    const makeFixed = () => (window.MCFixedMainImageLoad ? window.MCFixedMainImageLoad() : window.MCFixedMainImageReady).then((source) => {
+      const raw = source.slice();
       const hash = window.MCBuilder.hex(window.MCBuilder.sha256(raw));
       if (hash !== meta.syxSha256) throw new Error("Verified main firmware image checksum mismatch");
       const verified = window.MCFlasher.verify(raw);

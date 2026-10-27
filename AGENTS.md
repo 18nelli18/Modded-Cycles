@@ -349,3 +349,7 @@ User supplied `Supermodel_v186_All_LFO_Copy_ESTUS_Optimized.syx` ("Make sure thi
 ## AveyCole main2.53 promotion (2026-10-27)
 
 User confirmed the final v189 fixes and explicitly requested "Perfect, push it." This authorizes updating and pushing the existing tracked fixed-main firmware path docs/flasher/all-features-usb-2ch-default.syx with exact v189 SHA `6a729fbf198b50768ec1bfade96d6627ab11f08cea210f452586927d207a3282`, overriding the generic no-firmware-commit rule for this established release file only. Main2.52 release notes and protected flasher description remain unchanged. LFO clear and ESTUS live controls confirmed earlier; final destination result approved. No hardware CPU measurement claimed. Separate optional-machine flasher remains private work.
+
+## Main2.53 delivery repair (2026-10-27)
+
+User reports a main-flasher checksum mismatch and requests the fix. Authorizes publishing the same approved v189 bytes under `docs/flasher/Supermodel_2.53_6a729fbf198b.syx` to prevent shared-path cache collisions, retaining the established legacy path. Both files must have SHA `6a729fbf198b50768ec1bfade96d6627ab11f08cea210f452586927d207a3282`; every download source remains checksum and SysEx verified. Firmware and release version unchanged.
