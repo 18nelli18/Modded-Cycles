@@ -1,4 +1,4 @@
-/* 2026-10-27-main256-full-lite : images verifiees par edition, caches et sources independants. */
+/* 2026-10-27-main256-full-lite-copy : images verifiees par edition, caches et sources independants. */
 (()=>{
  "use strict";
  const catalogue={
