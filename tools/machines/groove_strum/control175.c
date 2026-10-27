@@ -3,6 +3,13 @@
  * Aucun appel UI/fichier dans le sequencer ni le render CHORD. */
 typedef unsigned int u32;typedef int s32;typedef unsigned char u8;typedef signed char s8;
 #define N(a) ((u32(*)())(a))
+#ifdef UI_IDLE210
+extern u32 gc_input_quiet(void);
+#define UI_QUIET() gc_input_quiet()
+#else
+#define UI_QUIET() 1
+#endif
+
 extern volatile u32 menu,row,sx_submenu,du_page,mq_page;
 extern u32 wf_menu_edit(void),gc_previous_key(const u32*),gc_previous_encoder(const u32*),gc_previous_draw(u32,u32);
 extern void gc_previous_frame(void),gc_sub_draw(u32,u32);
@@ -45,6 +52,9 @@ void gc_no_value(u32 a,u32 b,u32 c,u32 d,u32 e){(void)a;(void)b;(void)c;(void)d;
 u32 gc_tree_row(void){return gc_tree_cursor;}
 u32 gc_tree_edit(void){return gc_level==1&&gc_tree_cursor==8?gc_lfo_edit:gc_level?wf_menu_edit():0;}
 u32 gc_key(const u32*e){
+#ifdef FILTER_KEYS202
+ if(((u32(*)(const u32*))0x468d0030)(e))return 1;
+#endif
  tree_sync();if(!e)return gc_previous_key(e);u32 code=e[3],f=e[4];
  if(code==12&&owned_back){if(!(f&1))owned_back=0;return 1;}
  if(code==32&&owned_data){if(f&16){owned_data=0;
@@ -107,7 +117,7 @@ static void settings(void){u32 h[4]={0};u8 bytes[21],extra;
   u32 length=N(0x4007baaa)(bytes,21,h);u32 ok=(length==20||length==21)&&!N(0x4007baaa)(&extra,1,h);N(0x4007bc1c)(h);
   if(ok&&bytes[0]=='G'&&bytes[1]=='S'&&((bytes[2]==2&&length==20)||(bytes[2]==3&&length==21&&bytes[20]>=1&&bytes[20]<=7&&(!bytes[3]||bytes[3]==bytes[20])))&&bytes[3]<8&&(s8)bytes[4]>=-80&&(s8)bytes[4]<=80&&bytes[5]==(u8)~bytes[3]&&bytes[6]==(u8)~bytes[4]&&bytes[7]==0xa5){gc_groove=bytes[3];gc_choice=bytes[2]==3?bytes[20]:gc_groove?gc_groove:1;gc_strum=(s8)bytes[4];for(u32 i=0;i<12;i++)gc_amounts[i]=bytes[8+i]<=100?bytes[8+i]:0;}
  }}
- if(dirty&&!playing()){
+ if(dirty&&UI_QUIET()&&!playing()){
   bytes[0]='G';bytes[1]='S';bytes[2]=3;bytes[3]=gc_groove;bytes[4]=(u8)gc_strum;bytes[5]=(u8)~bytes[3];bytes[6]=(u8)~bytes[4];bytes[7]=0xa5;for(u32 i=0;i<12;i++)bytes[8+i]=gc_amounts[i];bytes[20]=gc_choice;
   if(!N(0x4007bc5e)("/Groove.cfg","w",h)){u32 ok=!N(0x4007bb76)(h,0,21)&&N(0x4007bb0a)(bytes,21,h)==21&&!N(0x4007e2f6)(h);if(N(0x4007bc1c)(h))ok=0;if(ok)dirty=0;}
  }

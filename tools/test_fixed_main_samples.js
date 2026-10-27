@@ -1,9 +1,10 @@
 /* Principal approuve sur Samples : deux transports, layout, HMAC et sections. */
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const b=require('../docs/flasher/builder.js');
-const [cyclesPath,samplesPath,outDir]=process.argv.slice(2);
+const [cyclesPath,samplesPath,outDir,edition='full']=process.argv.slice(2);
 assert(cyclesPath&&samplesPath&&outDir,'cycles.syx samples.syx output-directory');
-const root=path.resolve(__dirname,'..'),meta=JSON.parse(fs.readFileSync(path.join(root,'docs/flasher/BUILD.json')));
+const root=path.resolve(__dirname,'..'),releaseMeta=JSON.parse(fs.readFileSync(path.join(root,'docs/flasher/BUILD.json'))),entry=releaseMeta.editions[edition];assert(entry);
+const meta={release:releaseMeta.release,fixed_image:entry.file,fixed_image_sha256:entry.syxSha256,main_os_sha256:entry.mainOsSha};
 const fixed=fs.readFileSync(path.join(root,'docs/flasher',meta.fixed_image)),cycles=fs.readFileSync(cyclesPath),samples=fs.readFileSync(samplesPath);
 assert.equal(b.hex(b.sha256(samples)),'e11859b68deb7e5e3fe86ab32581212093849c4be5d3950add011eac398a2ce8');
 assert.equal(b.hex(b.sha256(fixed)),meta.fixed_image_sha256);
@@ -33,8 +34,8 @@ console.log('PASS oversized highly-compressed image rejected when output would o
  const vm=require('node:vm'),app=fs.readFileSync(path.join(root,'docs/flasher/app.js'),'utf8');
  const prepare=app.slice(app.indexOf('function prepareFirmware() {'),app.indexOf('// Model:Samples OS in the Model:Cycles container'));
  for(const machine of ['cos','smp']){
-  let pending;const st={mode:'mods',machine,os:{stock:true,raw:cycles,sha:b.hex(b.sha256(cycles))},syntakt:{version:'1.42'},samplesOs:{raw:samples,sha:b.hex(b.sha256(samples))}};
-  const context={st,dropOrphans:()=>{},onSamples:()=>true,log:()=>{},window:{MCBuilder:b,MCFlasher:require('../docs/flasher/flasher.js'),MC_RELEASES:[{version:meta.release}],MCFixedMainImageMeta:{syxSha256:meta.fixed_image_sha256,mainOsSha:meta.main_os_sha256},MCFixedMainImageReady:Promise.resolve(fixed),MCFixedMainImageLoad:async()=>new Uint8Array(fixed)},buildCached:(key,make)=>{pending=make(cycles);}};
+  let pending;const st={edition,mode:'mods',machine,os:{stock:true,raw:cycles,sha:b.hex(b.sha256(cycles))},syntakt:edition==='lite'?null:{version:'1.42'},samplesOs:{raw:samples,sha:b.hex(b.sha256(samples))}};
+  const context={st,dropOrphans:()=>{},onSamples:()=>true,log:()=>{},window:{MCBuilder:b,MCFlasher:require('../docs/flasher/flasher.js'),MC_RELEASES:[{version:meta.release}],MCFirmwareImages:{[edition]:entry},MCFirmwareImageLoad:async()=>new Uint8Array(fixed),MCFixedMainImageReady:Promise.resolve(fixed)},buildCached:(key,make)=>{assert(key.includes(`:${edition}:`));pending=make(cycles);}};
   vm.runInNewContext(prepare+'\nprepareFirmware();',context);const fw=await pending;
   assert.equal(fw.machine,machine);assert.equal(unpack(fw.raw).u.product,machine==='cos'?0x11:0x0f);assert(fw.name.includes('for-samples_'));
   console.log('PASS actual prepareFirmware branch:',machine==='cos'?'Model:Samples already on Cycles OS':'Model:Samples on its own OS');

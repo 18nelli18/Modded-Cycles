@@ -401,3 +401,6 @@ body.supermodel{--paper:#f5f4f0;--casing:#eeece6;--line:#d6d2ca;--line-2:#c8c5bd
 .cheddar .support-cta{margin:14px 0 0}
 .build-steps{clear:both}
 @media(max-width:760px){.cheddar{float:none;width:100%;max-width:360px;margin:20px auto 16px}}
+
+/* Editions fixes : le selecteur reste visible avant les options avancees. */
+.edition-choice{max-width:850px;margin:0 0 24px;padding:22px;border:2px solid var(--ink);border-radius:12px}.edition-choice label{display:block;font-weight:700;margin-bottom:12px}.edition-choice select{font:inherit;max-width:100%;width:100%;padding:12px;border:1px solid currentColor;border-radius:6px;background:var(--paper,#fff);color:var(--ink,#222)}.edition-info{max-width:850px;line-height:1.65}.edition-info[hidden],.fixed-features[hidden]{display:none!important}

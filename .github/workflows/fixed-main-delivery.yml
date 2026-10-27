@@ -5,13 +5,13 @@ on:
     paths:
       - 'docs/flasher/**'
       - 'tools/test_fixed_main*'
-      - 'tools/test_v199_delivery.js'
+      - 'tools/test_editions_ui.js'
       - '.github/workflows/fixed-main-delivery.yml'
   pull_request:
     paths:
       - 'docs/flasher/**'
       - 'tools/test_fixed_main*'
-      - 'tools/test_v199_delivery.js'
+      - 'tools/test_editions_ui.js'
       - '.github/workflows/fixed-main-delivery.yml'
 jobs:
   verify:

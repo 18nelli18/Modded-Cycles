@@ -1,7 +1,7 @@
 """200 : trois banques secondaires, une UI, quatre contributions natives."""
 import struct,json,subprocess
 CODE=0x46900000;BSS=0x46910000;END=0x46940000
-def apply(root,build,prefix,rt,tail,meta,patch,lazy_start=False,count_option=False,wave_safe=False,compact_ram=False,sound_polarity=False,copy_four=False,live_clear=False,clear_commit=False,destination_abi=False):
+def apply(root,build,prefix,rt,tail,meta,patch,lazy_start=False,count_option=False,wave_safe=False,compact_ram=False,sound_polarity=False,copy_four=False,live_clear=False,clear_commit=False,destination_abi=False,filter_defaults=False,ui_idle=False):
  from gen_governor_recovery_test import BASE,TAIL,RUNTIME
  CODE,BSS,END=(0x468f4000,0x468fc000,0x46900000) if compact_ram else (0x46900000,0x46910000,0x46940000)
  profile=json.loads((root/'build/volume-pan-toggle/volume-pan-toggle-test.json').read_text());native={k:int(v,16) for t in profile['composedTweaks'] for k,v in t.get('symbols',{}).items()}
@@ -12,6 +12,7 @@ def apply(root,build,prefix,rt,tail,meta,patch,lazy_start=False,count_option=Fal
  aliases['fxp_crc']=meta['fx_project']['symbols']['fxp_crc']
  if clear_commit:aliases['lp_copy_source']=meta['lfo_polarity']['symbols']['lp_copy_source']
  if live_clear:aliases['mx_old_primary_name']=int.from_bytes(prefix[0x40026510-BASE:0x40026514-BASE],'big')
+ if ui_idle:aliases['mx_input_quiet']=meta['fx_menu']['symbols']['fx_input_quiet']
  hooks=[('mx_old_dispatch',native['lf2_dispatch'],'mx_dispatch'),('mx_old_prepare',native['lf2_prepare'],'mx_prepare'),('mx_old_key',native['lf2p_menu_key'],'mx_key'),('mx_old_write',native['lf2n_write'],'mx_write'),('mx_old_pol_encoder',meta['lfo_polarity']['symbols']['lp2_encoder'],'mx_pol_encoder'),('mx_old_render',meta['lfo_polarity']['symbols']['lp2_render'],'mx_render'),('mx_old_frame',meta['braids_scale']['symbols']['bq_frame'],'mx_frame'),('mx_old_change',meta['fx_project']['symbols']['fxs_change'],'mx_change')]
  if live_clear:hooks.append(('mx_old_pattern_clear',0x40011a7e,'mx_clear_pattern'))
  if clear_commit:hooks.append(('mx_old_clear_command',0x400149fa,'mx_clear_command'))
@@ -27,7 +28,7 @@ def apply(root,build,prefix,rt,tail,meta,patch,lazy_start=False,count_option=Fal
   assert n>=6;tramp+=f'.globl {name}\n{name}:\n.byte '+','.join(map(str,raw[:n]))+f'\njmp {at+n:#x}\n';writes.append((at,raw[:n],target))
  (build/'mx_tramp.S').write_text(tramp)
  for source in (src/'control.c',src/'hook.S',build/'mx_tramp.S'):
-  obj=build/('mx-'+source.name+'.o');objects.append(obj);subprocess.run([cross+'gcc.exe','-mcpu=54418','-O2','-fwrapv','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',*(['-DMX_LAZY_START=1'] if lazy_start else []),*(['-DMX_COUNT_OPTION=1'] if count_option else []),*(['-DLFO_WAVE_SAFE=1'] if wave_safe else []),*(['-DMX_COMPACT_RAM=1'] if compact_ram else []),*(['-DLFO_SOUND_POL=1'] if sound_polarity else []),*(['-DLFO_COPY_FOUR=1'] if copy_four else []),*(['-DLFO_LIVE_CLEAR187=1'] if live_clear else []),*(['-DLFO_CLEAR_COMMIT188=1'] if clear_commit else []),*(['-DLFO_DEST_ABI189=1'] if destination_abi else []),'-c',str(source),'-o',str(obj)],check=True)
+  obj=build/('mx-'+source.name+'.o');objects.append(obj);subprocess.run([cross+'gcc.exe','-mcpu=54418',*(['-DUI_IDLE210=1'] if ui_idle else []),'-O2','-fwrapv','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',*(['-DMX_LAZY_START=1'] if lazy_start else []),*(['-DMX_COUNT_OPTION=1'] if count_option else []),*(['-DLFO_WAVE_SAFE=1'] if wave_safe else []),*(['-DMX_COMPACT_RAM=1'] if compact_ram else []),*(['-DLFO_SOUND_POL=1'] if sound_polarity else []),*(['-DLFO_COPY_FOUR=1'] if copy_four else []),*(['-DLFO_LIVE_CLEAR187=1'] if live_clear else []),*(['-DLFO_CLEAR_COMMIT188=1'] if clear_commit else []),*(['-DLFO_DEST_ABI189=1'] if destination_abi else []),*(['-DFILTER_DEFAULTS208=1'] if filter_defaults else []),'-c',str(source),'-o',str(obj)],check=True)
  ld=build/'lfo168.ld';elf=ld.with_suffix('.elf');binary=ld.with_suffix('.bin')
  ld.write_text(f'SECTIONS {{ .text {CODE:#x} : {{ *(.mxentry) *(.text*) *(.rodata*) }} . = ALIGN(4); .data : {{ *(.data*) }} mx_code_end = .; .bss {BSS:#x} (NOLOAD) : {{ *(.bss.mxcount) *(.bss*) *(COMMON) }} . = ALIGN(4); mx_end = .; }}\n'+''.join(f'PROVIDE({k} = {v:#x});\n' for k,v in aliases.items()))
  subprocess.run([cross+'ld.exe','-T',str(ld),'-o',str(elf),*map(str,objects)],check=True);subprocess.run([cross+'objcopy.exe','-O','binary','-j','.text','-j','.data',str(elf),str(binary)],check=True)

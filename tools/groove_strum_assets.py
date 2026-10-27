@@ -5,7 +5,7 @@ Les tables et noyaux seuls sont portes ; aucun patch FX/gestes tiers applique.
 import struct,subprocess,json,sys,hashlib,re
 CODE=0x468b2000;UI=0x468b3000;BSS=0x468ba000;END=0x468bb000
 
-def apply(root,build,prefix,rt,tail,meta,patch,hierarchy=False,groove_switch=False,human_apply=False,filter_modes=False,lfo_polarity=False,lfo_options=False,lfo_compact_ram=False):
+def apply(root,build,prefix,rt,tail,meta,patch,hierarchy=False,groove_switch=False,human_apply=False,filter_modes=False,lfo_polarity=False,lfo_options=False,lfo_compact_ram=False,filter_key_guard=False,ui_idle=False):
  from gen_governor_recovery_test import BASE,RUNTIME,TAIL
  from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_040
  src=root/'tools/machines/groove_strum';sys.path.insert(0,str(src));import cores156 as core
@@ -14,6 +14,7 @@ def apply(root,build,prefix,rt,tail,meta,patch,hierarchy=False,groove_switch=Fal
  def put(at,old,new):
   assert read(at,len(old))==old,(hex(at),read(at,len(old)).hex(),old.hex());patch(at,old,new,prefix if at<RUNTIME else rt if at<TAIL else tail)
  aliases={**meta['symbols'],**meta['mute_quant']['aliases'],**meta['mute_quant']['symbols']}
+ if ui_idle:aliases['gc_input_quiet']=meta['fx_menu']['symbols']['fx_input_quiet']
  hooks=[];tramp='.text\n';cs=Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_040)
  mq=meta['mute_quant']['symbols']
  for name,at,target in [('key',mq['mq_key'],'gc_key'),('encoder',mq['mq_encoder'],'gc_encoder'),('draw',mq['mq_draw'],'gc_draw'),('frame',mq['mq_frame'],'gc_frame')]:
@@ -73,7 +74,7 @@ gc_hinit:
  for n,text in [('gc_root.S',rootmenu),('gc_sub.S',sub),('gc_tramp.S',tramp),('gc_pattern.S',hp)]+extra: (build/n).write_text(text)
  cross=str(root.parent/'retrosyn-integration/build/m68k-toolchain/pkg/bin/m68k-elf-');objects=[]
  for p in [src/('control175.c' if lfo_compact_ram else 'control174.c' if lfo_options else 'control163.c' if lfo_polarity else 'control162.c' if filter_modes else 'control161.c' if human_apply else 'control158.c' if groove_switch else 'control157.c' if hierarchy else 'control156.c'),*[build/n for n in ('gc_root.S','gc_sub.S','gc_tramp.S','gc_pattern.S')]+[build/n for n,_ in extra]]:
-  obj=build/(p.name+'.o');objects.append(obj);subprocess.run([cross+'gcc.exe','-mcpu=54418','-O2','-fwrapv','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation','-c',str(p),'-o',str(obj)],check=True)
+  obj=build/(p.name+'.o');objects.append(obj);subprocess.run([cross+'gcc.exe','-mcpu=54418',*(['-DUI_IDLE210=1'] if ui_idle else []),*(['-DFILTER_KEYS202=1'] if filter_key_guard else []),'-O2','-fwrapv','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation','-c',str(p),'-o',str(obj)],check=True)
  if human_apply:aliases['hu_apply']=0x468c1000
  ld=build/'groove-strum.ld';elf=ld.with_suffix('.elf');binary=ld.with_suffix('.bin')
  ld.write_text(f'SECTIONS {{ .text {UI:#x} : {{ *(.text*) *(.rodata*) }} . = ALIGN(4); .data : {{ *(.data*) }} gc_code_end = .; .bss {BSS:#x} (NOLOAD): {{ *(.bss*) *(COMMON) }} . = ALIGN(4); gc_end = .; }}\n'+''.join(f'PROVIDE({k} = {v:#x});\n' for k,v in aliases.items()))

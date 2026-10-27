@@ -2,6 +2,13 @@
  * Aucun pointeur UI temporaire n'est lu par le dispatch audio. */
 typedef unsigned int u32;typedef int s32;typedef unsigned short u16;typedef unsigned char u8;
 #define N(a) ((u32(*)())(a))
+#ifdef UI_IDLE210
+extern u32 mx_input_quiet(void);
+#define UI_QUIET() mx_input_quiet()
+#else
+#define UI_QUIET() 1
+#endif
+
 extern volatile u32 lf2_context,lf2p_row,lf2p_edit,lf2p_track,lf2p_assigned;
 extern volatile u32 lp_one[6],lp_two[6],lp_dirty;
 extern u32 mx_old_prepare(u32),lf2_launch(u32),mx_old_key(u32,const u32*),mx_old_pol_encoder(u32,const u32*);
@@ -152,7 +159,7 @@ static void service(void){
  mx_pattern(*(volatile u32*)0x40a7887c);capture();
  for(u32 i=0;i<12;i++)if(last_pol[i]!=mx_polarity[i]){last_pol[i]=mx_polarity[i];dirty=1;}
  if(*(volatile u32*)0x40a78874||*(volatile u32*)0x40a7883c)return;
- if(!dirty&&saved_crc)return;
+ if(!UI_QUIET()||(!dirty&&saved_crc))return;
  copy(packet+16,(const u8*)patterns,96*ROW);copy(packet+16+96*ROW,(const u8*)mx_polarity,48);
  u32 crc=fxp_crc(packet+16,PAYLOAD);if(!dirty&&crc==saved_crc)return;
  u32*head=(u32*)packet;head[0]=0x4c333432;head[1]=project;head[2]=PAYLOAD;head[3]=crc;u32 h[4]={0};
@@ -165,7 +172,7 @@ static void count_service(void){
   u32 ok=N(0x4007baaa)(b,8,h)==8&&!N(0x4007baaa)(&extra,1,h);N(0x4007bc1c)(h);
   if(ok&&b[0]=='L'&&b[1]=='C'&&b[2]==1&&b[3]>=1&&b[3]<=4&&b[4]==(u8)~b[3]&&b[5]==165&&b[6]==90&&b[7]==0)mx_count=b[3];
  }}
- if(!count_dirty||*(volatile u32*)0x40a78874||*(volatile u32*)0x40a7883c)return;
+ if(!UI_QUIET()||!count_dirty||*(volatile u32*)0x40a78874||*(volatile u32*)0x40a7883c)return;
  b[0]='L';b[1]='C';b[2]=1;b[3]=mx_count_get();b[4]=~b[3];b[5]=165;b[6]=90;b[7]=0;
  if(!N(0x4007bc5e)("/LfoCount.cfg","w",h)){u32 ok=!N(0x4007bb76)(h,0,8)&&N(0x4007bb0a)(b,8,h)==8&&!N(0x4007e2f6)(h);if(N(0x4007bc1c)(h))ok=0;if(ok)count_dirty=0;}
 }
@@ -222,6 +229,9 @@ static void reset_track(u32 t,u8 *raw){
  unlock(sr);
 #ifdef LFO_CLEAR_COMMIT188
  if(raw&&raw[38]!=17){publish_reset(t);if(lf2_context){sr=lock();for(u32 i=0;i<8;i++)((u16*)(lf2_context+192+t*16))[i]=secondary[i];unlock(sr);}}
+#endif
+#ifdef FILTER_DEFAULTS208
+ if(raw&&raw[38]!=17)N(0x468d0100)(t);
 #endif
  capture();mx_copy_redraw(t);
 }

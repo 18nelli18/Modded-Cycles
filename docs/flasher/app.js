@@ -1541,6 +1541,8 @@ const DISCORD = "https://discord.gg/hWegtJZcmm";
 // ---------------------------------------------------------------------------
 const T = {
   en: {
+    edition_full: "Supermodel Full — all machines",
+    edition_lite: "Supermodel Lite — six stock machines",
     title: "Model:Cycles Flasher",
     tagline: "Install mods on your Elektron Model:Cycles or Model:Samples, right from your browser.",
     s1: "What do you want to install?",
@@ -1822,6 +1824,8 @@ const T = {
     log_start: "Sending {n} packets to “{port}”, margin {pace}.",
   },
   fr: {
+    edition_full: "Supermodel Full — toutes les machines",
+    edition_lite: "Supermodel Lite — six machines d’origine",
     title: "Flasher Model:Cycles",
     tagline: "Installez des mods sur votre Elektron Model:Cycles ou Model:Samples, depuis votre navigateur.",
     s1: "Que voulez-vous installer ?",
@@ -2293,6 +2297,7 @@ FEAT.fr["scale-gen"] = {"label":"Générateur de séquence","short":"Plages, ryt
 // ---------------------------------------------------------------------------
 const st = {
   lang: "en",
+  edition: "full",
   mode: "mods",            // "mods" | "restore" | "samples"
   samplesOs: null,         // official Model:Samples OS { raw, name, sha } ("samples" mode)
   smpDir: "cyc",           // "samples" mode: "cyc" Samples OS for a Model:Cycles | "smp" Cycles OS for a Model:Samples | "back" its way back
@@ -3046,6 +3051,7 @@ function chosenEngines() {
 
 // The ticked mods need the Syntakt OS file (the selection bar says so in any tab); step 2 asks for it in the Mods tab.
 function choiceNeedsSyntakt() {
+  if (window.MCFirmwareImages) return window.MCFirmwareImages[st.edition].requiresSyntakt;
   return chosenTweaks().some((x) => x.append && x.append.syntakt);
 }
 function needsSyntakt() {
@@ -3219,33 +3225,33 @@ function prepareFirmware() {
     st.fwError = null;
     return;
   }
-  // The fixed main flasher serves the exact verified full-feature image. This
-  // avoids rebuilding a profile whose relocatable machine payload can vary by
-  // browser-side composition order and overlap the fixed Step Recorder region.
+  // Chaque edition garde son image approuvee et son propre cache.
   if (window.MCFixedMainImageReady) {
-    if (!st.syntakt) { st.fw = null; st.fwError = "needs_syntakt"; return; }
-    const meta = window.MCFixedMainImageMeta;
-    const release = window.MC_RELEASES[0].version;
-    const fixedKey = `fixed-main:${release}:${meta.syxSha256}:${os.sha}:${st.syntakt.version}`;
-    const makeFixed = () => (window.MCFixedMainImageLoad ? window.MCFixedMainImageLoad() : window.MCFixedMainImageReady).then((source) => {
+    const edition = st.edition || "full";
+    const meta = window.MCFirmwareImages ? window.MCFirmwareImages[edition] : window.MCFixedMainImageMeta;
+    if (meta.requiresSyntakt !== false && !st.syntakt) { st.fw = null; st.fwError = "needs_syntakt"; return; }
+    const release = meta.release || window.MC_RELEASES[0].version;
+    const fixedKey = `fixed-main:${edition}:${release}:${meta.syxSha256}:${os.sha}:${st.syntakt ? st.syntakt.version : "none"}`;
+    const makeFixed = () => (window.MCFirmwareImageLoad ? window.MCFirmwareImageLoad(edition) : window.MCFixedMainImageLoad ? window.MCFixedMainImageLoad() : window.MCFixedMainImageReady).then((source) => {
       const raw = source.slice();
       const hash = window.MCBuilder.hex(window.MCBuilder.sha256(raw));
       if (hash !== meta.syxSha256) throw new Error("Verified main firmware image checksum mismatch");
       const verified = window.MCFlasher.verify(raw);
       if (!verified.count) throw new Error("Verified main firmware image has no valid SYX packets");
-      return { raw, name: `Supermodel_${release}.syx`, kind: "built", mods: ["All features"],
-        sha: meta.mainOsSha, ref: true, modsRef: true, sixch: true };
+      return { raw, name: `Supermodel_${edition === "lite" ? "Lite_" : ""}${release}.syx`, kind: "built", mods: [meta.productName || "Supermodel"],
+        sha: meta.mainOsSha, ref: true, modsRef: true, sixch: true, edition };
     });
     if (!onSamples()) { buildCached(fixedKey, makeFixed); return; }
     const smp = st.samplesOs;
     if (!smp) { st.fw = null; st.fwError = "needs_samples_file"; return; }
     const into = st.machine === "smp" ? "samples" : "cycles";
-    buildCached(`${fixedKey}@${st.machine}:${smp.sha}`, async (raw) => {
+    const machine = st.machine;
+    buildCached(`${fixedKey}@${machine}:${smp.sha}`, async (raw) => {
       const base = await makeFixed();
       const r = window.MCBuilder.modsForSamples(base.raw, raw, smp.raw, into);
-      if (r.modsSha !== base.sha) throw new Error("packed MAIN OS differs from the verified full-feature build");
-      return Object.assign({}, base, { raw: r.raw, machine: st.machine,
-        name: `all-features-no-diagnostic_for-samples_${st.machine === "smp" ? "smp-os" : "cyc-os"}.syx` });
+      if (r.modsSha !== base.sha) throw new Error("packed MAIN OS differs from the verified edition");
+      return Object.assign({}, base, { raw: r.raw, machine,
+        name: base.name.replace(".syx", `_for-samples_${machine === "smp" ? "smp-os" : "cyc-os"}.syx`) });
     });
     return;
   }
@@ -3592,6 +3598,8 @@ function missingReason() {
 }
 
 function render() {
+  const editionChoice = $("firmware-edition");
+  if (editionChoice) { editionChoice.value = st.edition; editionChoice.disabled = st.sending; }
   if (st.mode === "mods") chosenTweaks();
   const selectionError = $("selection-error");
   if (selectionError) {
@@ -3952,7 +3960,7 @@ FEAT.fr['scale-gen'].desc='SETTINGS + PAGE ouvre Genie. Generate est en premièr
 FEAT.en['sample-preview'].desc='Preview samples in the Sample Wizard browser while ChordKeys is selected. Requires Sample Wizard; compatible with WAVE and ChordKeys. Select a sample in the browser, then play its track pad or keyboard to audition it.'; FEAT.fr['sample-preview'].desc='Préécoute dans le navigateur Sample Wizard avec ChordKeys sélectionné. Exige Wizard ; compatible avec WAVE et ChordKeys. Choisir un sample puis jouer le pad ou le clavier de sa piste pour l’écouter.';
 FEAT.en['sample-preview'].label='Sample Preview'; FEAT.fr['sample-preview'].label='Préécoute des samples';
 window.MCFlasherApp = { registerFeatureTexts(id, texts) { for (const L of ["en", "fr"]) FEAT[L][id] = texts[L]; }, state: st, REF_MAINOS, REF_MODS, REF_SAMPLES_ON_CYCLES, REF_CYCLES_ON_SAMPLES, REF_SAMPLES_BACK, loadOs,
-  loadSamples, loadSyntakt, chosenEngines, setMode, setSmpDir, setMachine, setMethod, applyLang, render,
+  loadSamples, loadSyntakt, chosenEngines, setEdition, setMode, setSmpDir, setMachine, setMethod, applyLang, render,
   chosenTweaks, chosenLabels, CATS, isSelected: isOn };
 
 // Présentation seule : sélection et vérifications firmware restent natives.
@@ -3963,9 +3971,21 @@ function renderSupermodel() {
   filter.value=CATS.includes(previous)?previous:'';
   document.querySelectorAll('#features>.grp').forEach(g=>{g.hidden=(!!filter.value&&g.id!=='cat-'+filter.value)||!features().filter(f=>'cat-'+catOf(f)===g.id).some(matches);});
   $('super-option-count').textContent=features().length+(st.lang==='fr'?' options disponibles':' available options');
-  $('super-machine-name').textContent=st.machine==='cyc'?'Model:Cycles':'Model:Samples';
+  $('super-machine-name').textContent=(st.edition==='lite'?'Supermodel Lite':'Supermodel')+' · '+(st.machine==='cyc'?'Model:Cycles':'Model:Samples');
+  document.querySelector('.fixed-features').hidden=st.edition==='lite';
+  $('lite-info').hidden=st.edition!=='lite';
+  $('full-info').hidden=st.edition==='lite';
+}
+function setEdition(edition) {
+  if (st.sending || !["full", "lite"].includes(edition)) return false;
+  st.edition = edition;
+  window.MCFirmwareEdition = edition;
+  renderSupermodel();
+  update();
+  return true;
 }
 function wireSupermodel() {
+  $('firmware-edition').addEventListener('change',event=>setEdition(event.target.value));
   const advanced=document.createElement('details');advanced.className='super-advanced';advanced.innerHTML='<summary><span data-l="en">Machine, official firmware & compatibility options</span><span data-l="fr">Machine, firmware officiel et compatibilité</span></summary>';
   $('step-choose').appendChild(advanced);
   const body=$('step-choose').querySelector('.step-body');

@@ -107,6 +107,10 @@ extern void estus_notice(const char*);
 extern u32 estus_old_encoder(u32,const u32*);
 static u32 adv_stamp,adv_knob,adv_delta,adv_valid;
 u32 estus_encoder(u32 view,const u32*e){
+#ifdef ESTUS_FILTER204
+ /* Le geste filtre complet prime sur DRIVE (SETTINGS + SWEEP). */
+ if(e&&e[0]==0x400fbebc&&e[3]==6&&N(0x4007faf4)(5)){if(N(0x468d0000)(e))return 1;return estus_old_encoder(view,e);}
+#endif
  if(!e||e[0]!=0x400fbebc||e[3]<4||e[3]>7||estus_menu||estus_fx_open||!N(0x4007faf4)(13)||N(0x4007faf4)(1)||N(0x4007faf4)(2)||N(0x4007faf4)(8))return estus_old_encoder(view,e);
  u32 root=*(volatile u32*)0x40fe4228;if(!root||!*(volatile u32*)0x40fe4178
 #ifndef ESTUS_LIVE187

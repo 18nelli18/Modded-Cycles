@@ -1,11 +1,12 @@
 """195 : onde Uni/Bi apres fade natif, avant profondeur signee."""
 import struct,subprocess,json
 CODE=0x468e0000;BODY=0x468e1000;BSS=0x468e8000;END=0x468f0000
-def apply(root,build,prefix,rt,tail,meta,patch,wave_safe=False,sound_polarity=False,sound_copy=False,copy_live=False,copy_track_lookup=False,copy_command=False,copy_four=False,clear_commit=False):
+def apply(root,build,prefix,rt,tail,meta,patch,wave_safe=False,sound_polarity=False,sound_copy=False,copy_live=False,copy_track_lookup=False,copy_command=False,copy_four=False,clear_commit=False,filter_defaults=False,ui_idle=False):
  from gen_governor_recovery_test import BASE,TAIL
  src=root/'tools/machines/polarity163';cross=str(root.parent/'retrosyn-integration/build/m68k-toolchain/pkg/bin/m68k-elf-');objects=[]
  profile=json.loads((root/'build/volume-pan-toggle/volume-pan-toggle-test.json').read_text());native={k:int(v,16) for t in profile['composedTweaks'] for k,v in t.get('symbols',{}).items()}
  aliases={**{k:v for k,v in native.items() if k.startswith('lf2')},'lp1_old_count':0x40072514,'lp1_old_widget':0x4007292a,'lp1_old_key':int.from_bytes(prefix[0x401016c8-BASE:0x401016cc-BASE],'big'),'lp1_old_encoder':int.from_bytes(prefix[0x401016cc-BASE:0x401016d0-BASE],'big'),'sx_track':meta['scramble_mask']['symbols']['sx_track']}
+ if ui_idle:aliases['lp_input_quiet']=meta['fx_menu']['symbols']['fx_input_quiet']
  # Prologues sans branche, rejoues par des trampolines gardes.
  from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_040
  cs=Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_040);tramp='.text\n';hooks=[]
@@ -22,7 +23,7 @@ def apply(root,build,prefix,rt,tail,meta,patch,wave_safe=False,sound_polarity=Fa
  (build/'lp_tramp.S').write_text(tramp)
  (build/'lp_entry.S').write_text('.section .lpentry,"ax"\n.globl lp_entry\nlp_entry: jmp lp_frame\n')
  for source in [src/'control.c',src/'hook.S',src/'state.S',src/'ui.c',src/'ui.S',src/'layout.S',*([src/'sound176.c',src/'sound176.S'] if sound_polarity else []),*([src/'sound_copy177.c'] if sound_copy else []),build/'lp_entry.S',build/'lp_tramp.S']:
-  obj=build/(source.name+'.o');objects.append(obj);subprocess.run([cross+'gcc.exe','-mcpu=54418','-O2','-fwrapv','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',*(['-DLFO_WAVE_SAFE=1'] if wave_safe else []),*(['-DLFO_SOUND_POL=1'] if sound_polarity else []),*(['-DLFO_COPY_LIVE=1'] if copy_live else []),*(['-DLFO_TRACK_LOOKUP=1'] if copy_track_lookup else []),*(['-DLFO_COPY_COMMAND=1'] if copy_command else []),*(['-DLFO_COPY_FOUR=1'] if copy_four else []),*(['-DLFO_CLEAR_COMMIT188=1'] if clear_commit else []),'-c',str(source),'-o',str(obj)],check=True)
+  obj=build/(source.name+'.o');objects.append(obj);subprocess.run([cross+'gcc.exe','-mcpu=54418',*(['-DUI_IDLE210=1'] if ui_idle else []),'-O2','-fwrapv','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',*(['-DLFO_WAVE_SAFE=1'] if wave_safe else []),*(['-DLFO_SOUND_POL=1'] if sound_polarity else []),*(['-DLFO_COPY_LIVE=1'] if copy_live else []),*(['-DLFO_TRACK_LOOKUP=1'] if copy_track_lookup else []),*(['-DLFO_COPY_COMMAND=1'] if copy_command else []),*(['-DLFO_COPY_FOUR=1'] if copy_four else []),*(['-DLFO_CLEAR_COMMIT188=1'] if clear_commit else []),*(['-DFILTER_DEFAULTS208=1'] if filter_defaults else []),'-c',str(source),'-o',str(obj)],check=True)
  ld=build/'polarity163.ld';elf=ld.with_suffix('.elf');binary=ld.with_suffix('.bin')
  ld.write_text(f'SECTIONS {{ .lpentry {CODE:#x} : {{ *(.lpentry) }} .text {BODY:#x} : {{ *(.text*) *(.rodata*) }} . = ALIGN(4); .data : {{ *(.data*) }} lp_code_end = .; .bss {BSS:#x} (NOLOAD) : {{ *(.bss.lpstate) *(.bss*) *(COMMON) }} . = ALIGN(4); lp_end = .; }}\nPROVIDE(lp_context = 0x40184808);\n'+''.join(f'PROVIDE({k} = {v:#x});\n' for k,v in aliases.items()))
  subprocess.run([cross+'ld.exe','-T',str(ld),'-o',str(elf),*map(str,objects)],check=True);subprocess.run([cross+'objcopy.exe','-O','binary','-j','.lpentry','-j','.text','-j','.data',str(elf),str(binary)],check=True)

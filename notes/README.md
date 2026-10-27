@@ -321,3 +321,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 
 - [199 - Clear LFO et destination](199-clear-lfo-affichage-destination.md) : v189 confirme, principal2.53.
 - [200 - Page Warp et grille](200-page-warp-grille.md) : v199 confirme, principal2.55 ; ISR complete et livraison Samples verifiees.
+
+- [201 - Editions Full et Lite](201-editions-full-lite.md) : publication2.56, code204/206, changement du titre uniquement ; demarrage206 confirme, conversions Samples natives et choix navigateur verifies.

@@ -13,7 +13,7 @@ import crossflash as X
 def read(p):
  raw=Path(p).read_bytes();c=container.parse(unwrap(raw)[0]);parts={s['id']:c['blob'][s['off']:s['off']+s['size']] for s in c['sections']};return raw,c,parts
 def main():
- parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--cycles',required=True);parser.add_argument('--samples',required=True);parser.add_argument('--outputs',required=True,type=Path);a=parser.parse_args()
+ parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--cycles',required=True);parser.add_argument('--samples',required=True);parser.add_argument('--outputs',required=True,type=Path);parser.add_argument('--edition',choices=('full','lite'),default='full');a=parser.parse_args()
  smp=X.load(a.samples,'samples');cyc=X.load(a.cycles,'cycles')
  _,c,parts=read(a.outputs/'fixed-main-for-samples-cycles.syx');main=aplib.depack(parts[3],bootstrap_gap=0x40200000-X.MAIN_BASE)[0]
  entry,ram,checks=boot(smp[3][2],c['blob'],main_size=len(main))
@@ -26,7 +26,7 @@ def main():
  print('PASS native Samples OS verification accepts the same container for first installation',flush=True)
  import json
  meta=json.loads((ROOT/'docs/flasher/BUILD.json').read_text())
- _,base,source=read(ROOT/'docs/flasher'/meta['fixed_image'])
+ _,base,source=read(ROOT/'docs/flasher'/meta['editions'][a.edition]['file'])
  plain={k:aplib.depack(v)[0] if k in (2,3) else v for k,v in source.items()}
  python_raw,sha=X.cycles_for_samples((cyc[0],base,source,plain),smp)
  assert python_raw==(a.outputs/'fixed-main-for-samples-samples.syx').read_bytes() and sha==hashlib.sha256(main).hexdigest()

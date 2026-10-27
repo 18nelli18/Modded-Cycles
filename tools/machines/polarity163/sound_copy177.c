@@ -55,6 +55,10 @@ u32 lp_clip_capture(u8 *dst,const u8 *src,u32 bytes){
 source_track?source_track-1:
 #endif
 track(src),ctx=lf2_context;
+#ifdef FILTER_DEFAULTS208
+ /* Dernier mot inutilise du SoundCopy160 : garder aussi le type pour Undo. */
+ *(u32*)(dst+156)=t<6?(0x464c5400u|N(0x468d0110)(t)):0;
+#endif
 #ifdef LFO_COPY_LIVE
  u32 live=0;
  if(t<6&&ctx){
@@ -98,6 +102,9 @@ destination_track?destination_track-1:
 track(dst),ctx=lf2_context;
 #ifdef LFO_COPY_FOUR
  if(t<6&&!ctx&&extra_ready())ctx=lf2_context;
+#endif
+ #ifdef FILTER_DEFAULTS208
+ if(t<6&&(*(const u32*)(src+156)&0xfffffffcu)==0x464c5400u)N(0x468d0120)(t,*(const u32*)(src+156)&3);
 #endif
  if(t>=6||!ctx)return result;
  u16 values[8];values[2]=0x4000;values[5]=values[6]=0;
