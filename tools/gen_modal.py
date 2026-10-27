@@ -64,10 +64,10 @@ SHAPE_KNOB = 5                  # numéro de potard de SHAPE pour l'OS (PITCH = 
 
 CFLAGS = ["-mcpu=54418", "-O2", "-malign-int", "-U_FORTIFY_SOURCE", "-ffreestanding", "-fno-builtin",
           "-fno-tree-loop-distribute-patterns", "-nostdlib", "-fno-pic", "-fno-common", "-ffunction-sections",
-          "-fdata-sections", "-fomit-frame-pointer", "-Wall", "-Wextra", "-Werror"]
+          "-fdata-sections", "-fomit-frame-pointer", "-freorder-blocks-and-partition", "-Wall", "-Wextra", "-Werror"]
 LINK = """SECTIONS
 {{
-  .text {code:#x} : {{ *(.text.modal_update) *(.text.modal_render) *(.text*) }}
+  .text {code:#x} : {{ *(.text.modal_update) *(.text.modal_render) *(.text.[!u]*) *(.text) *(.text.unlikely*) }}
   .rodata ALIGN(4) : {{ *(.rodata*) }}
   .data ALIGN(4) : {{ *(.data*) }}
   .bss {bss:#x} (NOLOAD) : {{ *(.bss*) *(COMMON) }}

@@ -1349,20 +1349,23 @@ modal_str_run:
  * pb : la place ecrite par l'echantillon suivant (str_process lit apres le recul de wp). Quand comb >> 20 est nul,
  * l0 est cette place, que la boucle de str_process lirait avant que l'echantillon suivant ne l'ecrive : son ancien
  * contenu, old[k] (cp[3], garde par str_fast avant d'ecrire ; pas lu si comb >> 20 n'est jamais nul sur le bloc).
- * cp : 0 dv, 4 pv (rendu), 8 p_inc, 12 old (avance de n). */
+ * Le retard peut bouger (la glissade des cordes sympathiques) : dv += d_inc avant chaque echantillon, comme pv.
+ * cp : 0 dv (rendu), 4 pv (rendu), 8 p_inc, 12 old (avance de n), 16 d_inc. */
 	.globl	modal_str_comb
 modal_str_comb:
-	lea	-32(%sp), %sp
-	movem.l	%d2-%d6/%a2-%a4, (%sp)
-	move.l	44(%sp), %d0		/* n */
+	lea	-36(%sp), %sp
+	movem.l	%d2-%d7/%a2-%a4, (%sp)
+	move.l	48(%sp), %d0		/* n */
 	beq.s	9f
-	movea.l	36(%sp), %a0		/* pb */
-	movea.l	40(%sp), %a1		/* aux */
-	movea.l	48(%sp), %a3
+	movea.l	40(%sp), %a0		/* pb */
+	movea.l	44(%sp), %a1		/* aux */
+	movea.l	52(%sp), %a3
 	lea	(%a1, %d0.l*4), %a2	/* la fin de aux */
 	movem.l	(%a3), %d4-%d6/%a4	/* dv, pv, p_inc, old */
+	move.l	16(%a3), %d7		/* d_inc */
 	moveq	#20, %d3
-1:	add.l	%d6, %d5		/* pv += p_inc */
+1:	add.l	%d7, %d4		/* dv += d_inc */
+	add.l	%d6, %d5		/* pv += p_inc */
 	mac.l	%d4, %d5, %acc0
 	movclr.l %acc0, %d0		/* comb */
 	move.l	%d0, %d1
@@ -1385,10 +1388,10 @@ modal_str_comb:
 	add.l	%d1, (%a1)+
 	cmpa.l	%a2, %a1
 	bne.s	1b
-	move.l	%d5, 4(%a3)		/* pv */
+	movem.l	%d4-%d5, (%a3)		/* dv, pv */
 	move.l	%a4, 12(%a3)		/* old */
-9:	movem.l	(%sp), %d2-%d6/%a2-%a4
-	lea	32(%sp), %sp
+9:	movem.l	(%sp), %d2-%d7/%a2-%a4
+	lea	36(%sp), %sp
 	rts
 
 /* void modal_str_dw(const s32 *hb, s32 *pw, s32 *out, int n, s32 *k)

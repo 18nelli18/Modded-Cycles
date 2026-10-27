@@ -135,9 +135,11 @@ void modal_update(s32 pmod, char *v, const char *p)
 		if (!same)
 			c->hold--;                       /* ce qui a bouge attend la fin de HOLD */
 		c->ps.strum = 0;
+		c->ps.same = 1;                          /* ps et pa n'ont pas change */
 		VGAIN[t] = VGAIN_NEXT[t] = 127;
 		return;
 	}
+	c->ps.same = 0;
 	c->hold = V32(0x34) || V32(0x38) ? 0 : HOLD - 1;
 	chord0 = c->chord;
 	if (V32(MARK_OFF) != MARK) {                     /* 1re note sur cette machine */
@@ -291,7 +293,7 @@ void modal_render(s32 *out, char *v)
 	struct modal_part *part = &track_of(t)->part;
 	int i;
 
-	if (m_ready < MODAL_TABLES && !modal_init_step()) {
+	if (unlikely(m_ready < MODAL_TABLES) && !modal_init_step()) {
 		/* les tables se calculent par morceaux, une vingtaine de blocs (13 ms) a la toute premiere note de MODAL
 		 * apres le demarrage : silence, et la note part des que c'est pret */
 		c->pend |= c->ps.strum;
@@ -299,11 +301,11 @@ void modal_render(s32 *out, char *v)
 			out[i] = 0;
 		return;
 	}
-	if (c->pend) {
+	if (unlikely(c->pend)) {
 		c->ps.strum = 1;
 		c->pend = 0;
 	}
-	if (c->fresh) {
+	if (unlikely(c->fresh)) {
 		modal_part_init(part);
 		c->fresh = 0;
 	}

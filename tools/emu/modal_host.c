@@ -36,6 +36,7 @@ int main(int argc, char **argv)
 		ps.tonic = r[6];
 		ps.fm = r[7];
 		ps.level = Q31ONE;
+		ps.same = 0;
 		pa.structure = knob(r[8]);
 		pa.brightness = knob(r[9]);
 		pa.damping = knob(r[10]);
