@@ -189,21 +189,21 @@ def cases(quick):
     out = []
     shapes = list(enumerate(gmo.RINGS_MODEL))
     for shape, model in shapes:
-        for poly in ((1, 2, 4) if not quick else (1, 4)):
+        for poly in ((1, 2, 3, 4) if not quick else (1, 3)):        # 3 au plus dans MODAL (notes/81) ; 4 : Rings
             out.append((f"SHAPE {shape} ({gmo.MODELS[shape]}), {poly} voix", scenario(model, poly)))
     ramp = lambda lo, hi: (lambda b: lo + (hi - lo) * min(max(b, 0), 200) / 200)
     for shape, model in shapes:
         out.append((f"SHAPE {shape}, les 4 potards qui bougent", scenario(
             model, 1, st=ramp(0.1, 0.9), br=ramp(0.9, 0.1), da=ramp(0.3, 0.9), po=ramp(0.0, 1.0))))
     for chord in ((0, 3, 7, 10) if not quick else (5,)):
-        for poly in (1, 2, 4):
+        for poly in (1, 2, 3):
             out.append((f"cordes en accord, accord {chord}, {poly} voix", scenario(4, poly, chord=chord)))
     for shape, model in shapes:                      # à 24 kHz : le résonateur sonne jusqu'à la note 126 (11,8 kHz),
         for total in (0, 120 if shape == 0 else 108):  # les cordes montent jusqu'à 6 kHz (retard de 4 échantillons)
             out.append((f"SHAPE {shape}, hauteur MIDI {total}", scenario(model, 1, notes=((0, total - 48.0),))))
     fr, si = unit_sample("frappe", 1200), unit_sample("sinus", 4500)
     for shape, model in shapes:                      # le sample excitateur (notes/80) : l'entrée de Rings
-        for poly in ((1, 4) if not quick else (1,)):
+        for poly in ((1, 3) if not quick else (1,)):
             out.append((f"SHAPE {shape}, sample « frappe » en entrée, {poly} voix", scenario(model, poly, sample=fr)))
         out.append((f"SHAPE {shape}, sample « sinus » en entrée, relancé avant sa fin",
                     scenario(model, 2, sample=si, notes=((0, 0.0), (60, 7.0), (120, -2.0)))))

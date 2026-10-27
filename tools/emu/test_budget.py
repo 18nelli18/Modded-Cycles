@@ -7,7 +7,9 @@ par les relevés de Maxime, 30 % pour MODAL le 23/10/2026, 19 % à l'allumage le
 Une piste joue la machine, les cinq autres sont muettes. Le son est tenu (DECAY 110) : c'est le pire cas en continu.
 
 Pour chaque machine : ses réglages par défaut et les extrêmes des potards qui changent le calcul, une note aiguë, et
-(MODAL) la polyphonie avec toutes les voix qui sonnent, et un potard qui bouge à chaque bloc. Les machines d'origine
+(MODAL) la polyphonie avec toutes les voix qui sonnent, et un potard qui bouge à chaque bloc. MODAL est mesurée en
+régime établi : un premier trig, puis cinq notes rapprochées une fois les lignes de ses cordes écrites jusqu'au bout,
+et la moyenne juste après la cinquième. Les machines d'origine
 d'Elektron sont mesurées pour comparaison, sans contrôle.
 
     python3 tools/emu/test_budget.py --cycles model-cycles_OS1.13.syx --syntakt Syntakt_OS1.42.syx \\
@@ -32,7 +34,7 @@ PER = 250e6 * 32 / 48000            # cycles par bloc à 250 MHz (hwcost)
 ORIGINE = ("KICK", "SNARE", "METAL", "PERC", "TONE", "CHORD")
 SYNTAKT = ((7, "SDVtg"), (8, "CPVtg"), (9, "SYToy"), (10, "SYBit"), (11, "SYSwm"))
 MACRO, ACID, MODAL = 12, 13, 14     # index des machines dans l'OS
-POLY_FINE = {1: 64, 2: 80, 4: 96}   # FINE de MODAL : 1, 2, 4 voix
+POLY_FINE = {1: 64, 2: 80, 3: 96}   # FINE de MODAL : 1, 2, 3 voix (4 avant le budget, notes/81)
 
 
 def configs(engines, quick):
@@ -72,9 +74,12 @@ def configs(engines, quick):
                 if not quick:
                     sets += [("brillant, structure haute", dict(color=127, contour=127, sweep=127), None),
                              ("sombre, structure basse", dict(color=0, contour=0, sweep=0), None),
-                             ("COLOR qui bouge", {}, "color")]
+                             ("COLOR qui bouge", {}, "color"),
+                             ("notes aiguës", dict(note=84), None)]
                 for tag, kw, moving in sets:
-                    out.append((f"MODAL SHAPE {shape} {nv} voix {tag}", MODAL, dict(base, **kw), 48, 5, moving,
+                    kw = dict(kw)
+                    note = kw.pop("note", 48)
+                    out.append((f"MODAL SHAPE {shape} {nv} voix {tag}", MODAL, dict(base, **kw), note, 5, moving,
                                 True))
     return out
 
@@ -102,12 +107,14 @@ def measure(conf):
     for t in range(1, 6):
         b.rig.param(t, E.SLOT["machine"], 0)
     c = H.Cost(b)
-    trigs = (2, 14, 26, 38, 50) if notes > 1 else (2,)
-    first, blocks = (52, 110) if notes > 1 else (10, 50)
+    # MODAL (5 notes) : un trig d'abord, puis les 5 notes une fois les lignes des cordes ecrites jusqu'au bout (64
+    # blocs : leur effacement paresseux ne se refait qu'au changement de modele) ; la moyenne apres la 5e
+    trigs = (2, 90, 102, 114, 126, 138) if notes > 1 else (2,)
+    first, blocks = (140, 196) if notes > 1 else (10, 50)
     tot, n, worst = collections.Counter(), 0, 0.0
     for blk in range(blocks):
         if blk in trigs:
-            b.rig.set_step(0, 0, vel=100, length=S.LEN_1_16, note=note + 3 * trigs.index(blk))
+            b.rig.set_step(0, 0, vel=100, length=S.LEN_1_16, note=note + 3 * max(0, trigs.index(blk) - (notes > 1)))
             b.rig.schedule_step(0, 0, b.rig.now + b.rig.blk // 2)
         if moving:
             b.rig.param(0, E.SLOT[moving], (blk * 7 % 128) * 256)
